@@ -1,0 +1,80 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+
+# generic component build support... included
+# from individual component Makefiles.
+
+ARCH:sh = uname -p
+POUND_SIGN:sh = echo \\043
+
+RELEASE=5.11
+PKGVERS_COMPONENT= $(VERSION)
+PKGVERS_BUILTON= $(RELEASE)
+PKGVERS_BRANCH= 0.1
+PKGVERS= $(PKGVERS_COMPONENT),$(PKGVERS_BUILTON)-$(PKGVERS_BRANCH)
+
+C_COMPILER=developer/sunstudio12u1
+
+REPO:sh = echo $REPO
+
+i386_DEFINES=           \
+        ARCH=i386       \
+        ARCH32=i86      \
+        ARCH64=amd64    \
+        i386_ONLY=''    \
+        sparc_ONLY=$(POUND_SIGN)
+
+sparc_DEFINES=          \
+        ARCH=sparc      \
+        ARCH32=sparcv7  \
+        ARCH64=sparcv9  \
+        i386_ONLY=$(POUND_SIGN) \
+        sparc_ONLY=''
+
+ARCH_DEFINES=$($(ARCH)_DEFINES)
+
+PKGMOGRIFY_MACROS=\
+	$(ARCH_DEFINES) \
+	PKGVERS=$(PKGVERS)
+
+
+BUILD_FILE_DEPENDENCIES= 
+BUILD_PKG_DEPENDENCIES= 
+
+default: package
+
+proto:
+	mkdir -p proto
+
+echo_dependencies:
+	print "BUILD_FILE_DEPENDENCIES = [$(BUILD_FILE_DEPENDENCIES:%=\"%\",)]"
+	print "BUILD_PKG_DEPENDENCIES = [$(BUILD_PKG_DEPENDENCIES:%=\"%\",)]"
+
+check_dependencies:
+	ls $(BUILD_FILE_DEPENDENCIES) > /dev/null
+	pkg list $(BUILD_PKG_DEPENDENCIES) > /dev/null
+
+provision:
+	pfexec pkg install $(BUILD_PKG_DEPENDENCIES)
