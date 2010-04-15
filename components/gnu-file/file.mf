@@ -1,0 +1,31 @@
+set name=pkg.fmri value=pkg:/file/file@$(PKGVERS)
+set name=pkg.description \
+    value="contains unix file command"
+set name=variant.arch value=$(ARCH)
+set name=variant.opensolaris.zone value=global value=nonglobal
+dir path=usr group=bin mode=0755 owner=root
+dir path=usr/bin group=bin mode=0755 owner=root
+dir path=usr/include group=bin mode=0755 owner=root
+dir path=usr/lib group=bin mode=0755 owner=root
+dir path=usr/share group=bin mode=0755 owner=root
+dir path=usr/share/man group=bin mode=0755 owner=root
+dir path=usr/share/man/man1 group=bin mode=0755 owner=root
+dir path=usr/share/man/man3 group=bin mode=0755 owner=root
+dir path=usr/share/man/man4 group=bin mode=0755 owner=root
+dir path=usr/share/misc group=bin mode=0755 owner=root
+file usr/bin/file path=usr/bin/file group=bin mode=0755 owner=root
+file usr/include/magic.h path=usr/include/magic.h group=bin mode=0644 owner=root
+file usr/lib/libmagic.so.1.0.0 path=usr/lib/libmagic.so.1.0.0 group=bin \
+    mode=0755 owner=root
+file usr/share/man/man1/file.1 path=usr/share/man/man1/file.1 group=bin \
+    mode=0644 owner=root
+file usr/share/man/man3/libmagic.3 path=usr/share/man/man3/libmagic.3 group=bin \
+    mode=0644 owner=root
+file usr/share/man/man4/magic.4 path=usr/share/man/man4/magic.4 group=bin \
+    mode=0644 owner=root
+file usr/share/misc/magic.mgc path=usr/share/misc/magic.mgc group=bin mode=0644 \
+    owner=root
+link path=usr/lib/libmagic.so target=libmagic.so.1.0.0
+link path=usr/lib/libmagic.so.1 target=libmagic.so.1.0.0
+depend fmri=pkg:/library/zlib@1.2.3,5.11-0.135 type=require
+depend fmri=pkg:/system/library@0.5.11,5.11-0.136 type=require
