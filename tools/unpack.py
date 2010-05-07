@@ -1,0 +1,144 @@
+#!/usr/bin/python2.6
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+#
+#
+# unpack.py - an archive unpack utility
+#
+#  A simple program to uncompress and unpack source archive files into a target
+#  directory and fix permissions if requested.
+#
+
+import os
+import sys
+
+def uncompress_unpack_commands(filename, verbose=False):
+	import re
+
+	uncompress = "/bin/cat"
+
+	if (re.search("(\.bz2|\.tbz|\.tbz2)$", filename) != None):
+		uncompress = "/usr/bin/bzip2 -dc"
+	elif (re.search("(\.gz|\.tgz)$", filename) != None):
+		uncompress = "/usr/bin/gzip -dc"
+	elif (re.search("(\.Z)$", filename) != None):
+		uncompress = "/usr/bin/uncompress -c"
+	elif (re.search("(\.7z)$", filename) != None):
+		uncompress = "/usr/bin/7z --s"
+	elif (re.search("(\.zip)$", filename) != None):
+		uncompress = "/usr/bin/unzip -qo"
+
+	unpack = " | gtar -xf -"
+
+	if (re.search("(\.zip)$", filename) != None):
+		unpack = ""
+	elif (re.search("(\.jar)$", filename) != None):
+		unpack = " | jar xf -"
+
+	if (verbose == True):
+		print "command: %s %s %s" % (uncompress, filename, unpack)
+
+	return uncompress, unpack
+
+#
+# recurse down a directory tree opening permissions so that others may access
+# files in the tree.
+#
+def fixup_permissions(dir, verbose):
+	for entry in os.listdir(dir):
+		import stat
+
+		path = "%s/%s" % (dir, entry)
+
+		st = os.lstat(path)
+		mode = stat.S_IMODE(st.st_mode)
+		mode |= (stat.S_IRUSR | stat.S_IRGRP | stat.S_IROTH)
+		if stat.S_ISDIR(st.st_mode):
+			mode |= (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
+
+		if (stat.S_IMODE(st.st_mode) != mode):
+			if (verbose == True):
+				print "Changing %s from %4.4o to %4.4o" % (path,
+						stat.S_IMODE(st.st_mode), mode)
+			os.chmod(path, mode)
+
+		if stat.S_ISDIR(st.st_mode):
+			fixup_permissions(path, verbose)
+
+
+def usage():
+	print "Usage: %s [-v|--verbose] [-f|--fix-permissions] [-r|--relocate-to (dir)] (file)" % (sys.argv[0].split('/')[-1])
+	sys.exit(1)
+
+def main():
+	import getopt
+	import sys
+	import tempfile
+
+	verbose = False
+	permissions = None
+	relocate_to = None
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "fr:v",
+			["fix-permissions", "relocate-to=", "verbose"])
+	except getopt.GetoptError, err:
+		print str(err)
+		usage()
+
+	for opt, arg in opts:
+		if opt in [ "-v", "--verbose" ]:
+			verbose = True
+		elif opt in [ "-f", "--fix-permissions" ]:
+			permissions = True
+		elif opt in [ "-r", "--relocate-to" ]:
+			relocate_to = arg
+		else:
+			assert False, "unknown option"
+
+	filename = ((args[0] == '/') and "%s" or "../%s") % args[0]
+	uncompress, unpack = uncompress_unpack_commands(filename)
+	tempdir = tempfile.mkdtemp(dir='.')
+
+	# extract the archive contents
+	if (verbose == True):	
+		print "cd %s ; %s %s%s" % (tempdir, uncompress, filename,
+						unpack)
+	os.system("cd %s ; %s %s%s" % (tempdir, uncompress, filename, unpack))
+
+	# open up the permissions on what we extracted
+	if permissions:
+		fixup_permissions(tempdir, verbose)
+
+	if (relocate_to == None):
+		# move everything in the tempdir here
+		for entry in os.listdir(tempdir):
+			path= "%s/%s" % (tempdir, entry)
+			os.renames(path, entry)
+	else:
+		# rename the tempdir and open it's permissions
+		os.renames(tempdir, relocate_to)
+		os.chmod(relocate_to, 0755)
+
+
+if __name__ == "__main__":
+	main()
