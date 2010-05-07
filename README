@@ -1,0 +1,40 @@
+
+This workspace contains examples of building open source software components using three methodologies.  In the spec-files directory, the pkgbuild is use to build the components from a RPM spec file based build.  In the components directory, a make(1) based build is used.
+
+spec-files
+	spec based build
+
+components
+	GNU make based build(s)
+
+make-rules
+	Shared rules to include in component specific makefiles (instructions)
+
+	make-rules/configure.mk
+		shared rules for components using GNU auto* tools to build
+
+	make-rules/ips.mk
+		shared rules for packaging under IPS
+
+	make-rules/prep.mk
+		shared rules for downloading, unpacking, and patching component
+		source.
+
+	make-rules/setup.py.mk
+		shared rules for components using python setup.py to build
+
+	make-rules/shared-macros.mk
+		common macros that apply to building many things.
+
+tools
+	shared tools for building components
+
+transforms
+	shared pkgmogrify(1) transformations to apply to packages as they are
+	being built and published
+
+
+To build uing the GNU make based build you can
+	$ WS_TOP=$(pwd) ; cd components ; gmake -j 4 publish
+This will construct a files based repository for publishing, create a log directory, build the components (4 at a time) and publish them to the repo.  Logs of each component build will go in the logs directory
+
