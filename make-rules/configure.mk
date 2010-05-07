@@ -51,8 +51,8 @@
 CONFIG_SHELL =	/bin/bash
 
 CONFIGURE_OPTIONS += --prefix=/usr
-CONFIGURE_OPTIONS += CC="$(CC.$(BITS))"
-CONFIGURE_OPTIONS += CXX="$(CCC.$(BITS))"
+CONFIGURE_OPTIONS += CC="$(CC)"
+CONFIGURE_OPTIONS += CXX="$(CCC)"
 CONFIGURE_OPTIONS.32 += --bindir=/usr/bin
 CONFIGURE_OPTIONS.32 += --libdir=/usr/lib
 CONFIGURE_OPTIONS.64 = --bindir=/usr/bin/$(MACH64)
