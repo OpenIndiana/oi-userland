@@ -42,6 +42,8 @@ PKGDEPEND =	/usr/bin/pkgdepend
 # Add some default transforms that should apply to everyone
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/defaults
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/actuators
+PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/devel
+PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 
 .DEFAULT:	publish
 
