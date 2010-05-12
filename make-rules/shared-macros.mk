@@ -76,3 +76,4 @@ PKGSEND =	/usr/bin/pkgsend
 TOUCH =		/usr/bin/touch
 MKDIR =		/bin/mkdir -p
 RM =		/bin/rm -f
+CP =		/bin/cp -f

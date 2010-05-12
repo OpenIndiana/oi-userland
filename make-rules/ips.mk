@@ -49,14 +49,20 @@ PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 
 publish:	$(COMPONENT_SRC)/.published
 
+COPYRIGHT_FILE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
+
+$(PROTO_DIR)/$(COPYRIGHT_FILE):	$(COMPONENT_COPYRIGHT)
+	$(CP) $< $@
+
 $(COMPONENT_SRC)/manifest:	install
 	pkgsend generate $(PROTO_DIR) >$@
 
-$(COMPONENT_SRC)/manifest.mog:	$(COMPONENT_SRC)/manifest
+$(COMPONENT_SRC)/manifest.mog:	$(COMPONENT_SRC)/manifest $(PROTO_DIR)/$(COPYRIGHT_FILE)
 	echo "set name=pkg.fmri value=pkg:/$(PUBLISHER)/$(COMPONENT_NAME)@$(COMPONENT_VERSION),$(BUILD_VERSION)" >$@
 	echo "set name=pkg.description value=\"$(COMPONENT_DESCRIPTION)\"" >>$@
 	echo "set name=pkg.name value=\"$(COMPONENT_DESCRIPTION)\"" >>$@
 	echo "set name=org.opensolaris.consolidation value=$(CONSOLIDATION)" >>$@
+	echo "license $(COPYRIGHT_FILE) license=$(COPYRIGHT_FILE)" >>$@
 	pkgmogrify $(PKGMOGRIFY_MACROS:%=-D %) $(PKGMOGRIFY_TRANSFORMS) $< >>$@
 
 $(COMPONENT_SRC)/manifest.fdeps:	$(COMPONENT_SRC)/manifest.mog
