@@ -35,6 +35,7 @@ publish:	TARGET = publish
 validate:	TARGET = validate
 clean:		TARGET = clean
 clobber:	TARGET = clobber
+prep build install publish:		LOG =	>$(WS_LOGS)/$(TARGET):$@.log 2>&1
 
 .DEFAULT:	publish
 
@@ -47,7 +48,7 @@ ifeq ($(findstring file://, $(PKG_REPO)),file://)
 	$(RM) -r $(PKG_REPO:file://%=%) $(WS_LOGS)
 endif
 
-setup:	$(WS_LOGS) repo
+setup:	$(WS_LOGS) repo tools
 
 $(WS_LOGS):
 	$(MKDIR) $@
@@ -56,8 +57,11 @@ repo:
 	$(PKGSEND) -s $(PKG_REPO) create-repository \
 		--set-property publisher.prefix=$(PUBLISHER)
 
+tools:
+	@cd ../tools ; echo "building tools..." ; $(GMAKE) setup
+
 $(COMPONENT_DIRS):	FORCE
 	@cd $@ ; echo "$(TARGET) \c" ; pwd ; \
-	 $(GMAKE) $(TARGET) >$(WS_LOGS)/$(TARGET):$@.log 2>&1
+	 $(GMAKE) $(TARGET) $(LOG)
 
 FORCE:
