@@ -26,6 +26,7 @@ PUBLISHER =	$(CONSOLIDATION)-build
 BUILD_VERSION =	5.11-0.140
 
 COMPILER =		studio
+BITS =			32
 PYTHON_VERSION =	2.6
 
 TOOLS =		$(WS_TOP)/tools
@@ -34,6 +35,8 @@ MAKE_RULES =	$(WS_TOP)/components/make-rules
 
 PKG_REPO =	file://$(WS_TOP)/repo
 PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype
+
+CONSTANT_TIME =	LD_PRELOAD=$(TOOLS)/time.o
 
 MACH64 =	$(shell isainfo -k)
 
