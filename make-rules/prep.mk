@@ -52,6 +52,8 @@ $(COMPONENT_SRC)/.prep:	$(COMPONENT_SRC)/.patched
 
 prep::	$(COMPONENT_SRC)/.prep
 
+download::	$(COMPONENT_ARCHIVE)
+
 clean::
 	$(RM) -r $(CLEAN_PATHS)
 
