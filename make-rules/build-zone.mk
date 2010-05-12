@@ -42,28 +42,50 @@
 # zones when they are created.
 #
 
-ZONECFG =	/usr/sbin/zonecfg
-ZONEADM =	/usr/sbin/zoneadm
-TZ=		$(shell sed -e '/^TZ=/!d' -e 's;TZ=;;' /etc/default/init)
+ZONECFG =		/usr/sbin/zonecfg
+ZONEADM =		/usr/sbin/zoneadm
+TZ=			$(shell sed -e '/^TZ=/!d' -e 's;TZ=;;' /etc/default/init)
 
 ZONESCFG_DIR =		/etc/zones
 BUILD_ZONE_SPACE =	/rpool/zones
 
-TOUCH =		/usr/bin/touch
+TOUCH =			/usr/bin/touch
 
-SYSIDCFG =	root/etc/sysidcfg
-ZI_TAG =	root/.installed
+SYSIDCFG =		root/etc/sysidcfg
+ZI_TAG =		root/.installed
 
 # the name of the template build zone
 TMPL_ZONE_NAME =	template-build-zone
 
 # the default package set to add to the template build zone.
-TMPL_ZONE_PKGS =	sunstudio12u1
-TMPL_ZONE_PKGS +=	gcc-3
-TMPL_ZONE_PKGS +=	gnu-make
-TMPL_ZONE_PKGS +=	autoconf
-TMPL_ZONE_PKGS +=	automake-110
-TMPL_ZONE_PKGS +=	libtool
+TMPL_ZONE_PKGS +=	archiver/gnu-tar
+TMPL_ZONE_PKGS +=	compress/bzip2
+TMPL_ZONE_PKGS +=	compress/gzip
+TMPL_ZONE_PKGS +=	compress/p7zip
+TMPL_ZONE_PKGS +=	compress/unzip
+TMPL_ZONE_PKGS +=	developer/build/ant
+TMPL_ZONE_PKGS +=	developer/build/autoconf
+TMPL_ZONE_PKGS +=	developer/build/automake-110
+TMPL_ZONE_PKGS +=	developer/build/gnu-make
+TMPL_ZONE_PKGS +=	developer/build/libtool
+TMPL_ZONE_PKGS +=	developer/build/make
+TMPL_ZONE_PKGS +=	developer/gnome/gettext
+TMPL_ZONE_PKGS +=	developer/linker
+TMPL_ZONE_PKGS +=	developer/macro/gnu-m4
+TMPL_ZONE_PKGS +=	developer/object-file
+TMPL_ZONE_PKGS +=	developer/sunstudio12u1
+TMPL_ZONE_PKGS +=	file/gnu-coreutils
+TMPL_ZONE_PKGS +=	package/pkg
+TMPL_ZONE_PKGS +=	shell/bash
+TMPL_ZONE_PKGS +=	system/extended-system-utilities
+TMPL_ZONE_PKGS +=	text/gawk
+TMPL_ZONE_PKGS +=	text/gnu-diffutils
+TMPL_ZONE_PKGS +=	text/gnu-grep
+TMPL_ZONE_PKGS +=	text/gnu-patch
+TMPL_ZONE_PKGS +=	text/gnu-sed
+#TMPL_ZONE_PKGS +=	developer/gcc-3
+#TMPL_ZONE_PKGS +=	developer/gnu-binutils
+#TMPL_ZONE_PKGS +=	redistributable
 
 template-build-zone:	$(BUILD_ZONE_SPACE)/$(TMPL_ZONE_NAME)/$(SYSIDCFG)
 build-zone-1:		$(BUILD_ZONE_SPACE)/build-zone-1/$(SYSIDCFG)
@@ -78,9 +100,9 @@ build-zone-9:		$(BUILD_ZONE_SPACE)/build-zone-9/$(SYSIDCFG)
 
 # zone install options.  The template zone uses "install", while the build
 # zones "clone" the template zone.
-ZI_OPT =	clone $(TMPL_ZONE_NAME)
+ZI_OPT =				clone $(TMPL_ZONE_NAME)
 $(BUILD_ZONE_SPACE)/$(TMPL_ZONE_NAME)/$(ZI_TAG): \
-	ZI_OPT = install $(TMPL_ZONE_PKGS:%=-e %)
+	ZI_OPT = 			install $(TMPL_ZONE_PKGS:%=-e %)
 
 $(BUILD_ZONE_SPACE):
 	$(MKDIR) $@
