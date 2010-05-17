@@ -57,35 +57,44 @@ ZI_TAG =		root/.installed
 # the name of the template build zone
 TMPL_ZONE_NAME =	template-build-zone
 
-# the default package set to add to the template build zone.
-TMPL_ZONE_PKGS +=	archiver/gnu-tar
-TMPL_ZONE_PKGS +=	compress/bzip2
-TMPL_ZONE_PKGS +=	compress/gzip
-TMPL_ZONE_PKGS +=	compress/p7zip
-TMPL_ZONE_PKGS +=	compress/unzip
-TMPL_ZONE_PKGS +=	developer/build/ant
-TMPL_ZONE_PKGS +=	developer/build/autoconf
-TMPL_ZONE_PKGS +=	developer/build/automake-110
-TMPL_ZONE_PKGS +=	developer/build/gnu-make
-TMPL_ZONE_PKGS +=	developer/build/libtool
-TMPL_ZONE_PKGS +=	developer/build/make
-TMPL_ZONE_PKGS +=	developer/gnome/gettext
-TMPL_ZONE_PKGS +=	developer/linker
-TMPL_ZONE_PKGS +=	developer/macro/gnu-m4
-TMPL_ZONE_PKGS +=	developer/object-file
-TMPL_ZONE_PKGS +=	developer/sunstudio12u1
-TMPL_ZONE_PKGS +=	file/gnu-coreutils
-TMPL_ZONE_PKGS +=	package/pkg
-TMPL_ZONE_PKGS +=	shell/bash
-TMPL_ZONE_PKGS +=	system/extended-system-utilities
-TMPL_ZONE_PKGS +=	text/gawk
-TMPL_ZONE_PKGS +=	text/gnu-diffutils
-TMPL_ZONE_PKGS +=	text/gnu-grep
-TMPL_ZONE_PKGS +=	text/gnu-patch
-TMPL_ZONE_PKGS +=	text/gnu-sed
-#TMPL_ZONE_PKGS +=	developer/gcc-3
-#TMPL_ZONE_PKGS +=	developer/gnu-binutils
-#TMPL_ZONE_PKGS +=	redistributable
+#
+# The template build zone will start with 'entire' installed.  We include
+# additional packages to make the build zones more closely match most
+# components' build requirements.  This makes build zone preparation quicker.
+#
+#TMPL_ZONE_TOOLS +=	developer/gcc-3
+#TMPL_ZONE_TOOLS +=	developer/gnu-binutils
+#TMPL_ZONE_TOOLS +=	developer/sunstudio12u1
+TMPL_ZONE_TOOLS +=	archiver/gnu-tar
+TMPL_ZONE_TOOLS +=	compress/p7zip
+TMPL_ZONE_TOOLS +=	compress/unzip
+TMPL_ZONE_TOOLS +=	developer/build/ant
+TMPL_ZONE_TOOLS +=	developer/build/autoconf
+TMPL_ZONE_TOOLS +=	developer/build/automake-110
+TMPL_ZONE_TOOLS +=	developer/build/gnu-make
+TMPL_ZONE_TOOLS +=	developer/build/libtool
+TMPL_ZONE_TOOLS +=	developer/build/make
+TMPL_ZONE_TOOLS +=	developer/gnome/gettext
+TMPL_ZONE_TOOLS +=	developer/java/jdk
+TMPL_ZONE_TOOLS +=	developer/lexer/flex
+TMPL_ZONE_TOOLS +=	developer/macro/cpp
+TMPL_ZONE_TOOLS +=	developer/macro/gnu-m4
+TMPL_ZONE_TOOLS +=	developer/object-file
+TMPL_ZONE_TOOLS +=	developer/parser/bison
+TMPL_ZONE_TOOLS +=	file/gnu-coreutils
+TMPL_ZONE_TOOLS +=	file/gnu-findutils
+TMPL_ZONE_TOOLS +=	library/libxslt
+TMPL_ZONE_TOOLS +=	library/pcre
+TMPL_ZONE_TOOLS +=	text/gawk
+TMPL_ZONE_TOOLS +=	text/gnu-diffutils
+TMPL_ZONE_TOOLS +=	text/gnu-gettext
+TMPL_ZONE_TOOLS +=	text/gnu-grep
+TMPL_ZONE_TOOLS +=	text/gnu-patch
+TMPL_ZONE_TOOLS +=	text/gnu-sed
+TMPL_ZONE_TOOLS +=	text/groff
+TMPL_ZONE_TOOLS +=	text/texinfo
+
+TMPL_ZONE_PKGS =	$(TMPL_ZONE_TOOLS)
 
 template-build-zone:	$(BUILD_ZONE_SPACE)/$(TMPL_ZONE_NAME)/$(SYSIDCFG)
 build-zone-1:		$(BUILD_ZONE_SPACE)/build-zone-1/$(SYSIDCFG)
