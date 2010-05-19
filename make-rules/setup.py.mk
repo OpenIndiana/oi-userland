@@ -21,10 +21,10 @@
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
 #
 
-$(COMPONENT_SRC)/build-32/.built:	BITS=32
-$(COMPONENT_SRC)/build-64/.built:	BITS=64
-$(COMPONENT_SRC)/build-32/.installed:	BITS=32
-$(COMPONENT_SRC)/build-64/.installed:	BITS=64
+$(COMPONENT_SRC)/build-$(MACH32)/.built:	BITS=32
+$(COMPONENT_SRC)/build-$(MACH64)/.built:	BITS=32
+$(COMPONENT_SRC)/build-$(MACH32)/.installed:	BITS=32
+$(COMPONENT_SRC)/build-$(MACH64)/.installed:	BITS=64
 
 
 # build the configured source

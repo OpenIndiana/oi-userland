@@ -29,8 +29,8 @@
 # and define an "install" target appropriate to building your component.
 # Ex:
 #
-#	install:	$(COMPONENT_SRC)/build-32/.installed \
-#	 		$(COMPONENT_SRC)/build-64/.installed
+#	install:	$(COMPONENT_SRC)/build-$(MACH32)/.installed \
+#	 		$(COMPONENT_SRC)/build-$(MACH64)/.installed
 #
 # This set of rules makes the "publish" target the default target for make(1)
 #
@@ -45,6 +45,8 @@ PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/actuators
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/devel
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 
+MANIFEST =	manifest-$(MACH)
+
 .DEFAULT:	publish
 
 publish:	$(COMPONENT_SRC)/.published
@@ -54,10 +56,10 @@ COPYRIGHT_FILE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
 $(PROTO_DIR)/$(COPYRIGHT_FILE):	$(COMPONENT_COPYRIGHT)
 	$(CP) $< $@
 
-$(COMPONENT_SRC)/manifest:	install
+$(COMPONENT_SRC)/$(MANIFEST):	install
 	pkgsend generate $(PROTO_DIR) >$@
 
-$(COMPONENT_SRC)/manifest.mog:	$(COMPONENT_SRC)/manifest $(PROTO_DIR)/$(COPYRIGHT_FILE)
+$(COMPONENT_SRC)/$(MANIFEST).mog:	$(COMPONENT_SRC)/$(MANIFEST) $(PROTO_DIR)/$(COPYRIGHT_FILE)
 	echo "set name=pkg.fmri value=pkg:/$(PUBLISHER)/$(COMPONENT_NAME)@$(COMPONENT_VERSION),$(BUILD_VERSION)" >$@
 	echo "set name=pkg.description value=\"$(COMPONENT_DESCRIPTION)\"" >>$@
 	echo "set name=pkg.name value=\"$(COMPONENT_DESCRIPTION)\"" >>$@
@@ -65,13 +67,13 @@ $(COMPONENT_SRC)/manifest.mog:	$(COMPONENT_SRC)/manifest $(PROTO_DIR)/$(COPYRIGH
 	echo "license $(COPYRIGHT_FILE) license=$(COPYRIGHT_FILE)" >>$@
 	pkgmogrify $(PKGMOGRIFY_MACROS:%=-D %) $(PKGMOGRIFY_TRANSFORMS) $< >>$@
 
-$(COMPONENT_SRC)/manifest.fdeps:	$(COMPONENT_SRC)/manifest.mog
+$(COMPONENT_SRC)/$(MANIFEST).fdeps:	$(COMPONENT_SRC)/$(MANIFEST).mog
 	pkgdepend generate -m $< $(PROTO_DIR) >$@
 
-$(COMPONENT_SRC)/manifest.fdeps.res:	$(COMPONENT_SRC)/manifest.fdeps
+$(COMPONENT_SRC)/$(MANIFEST).fdeps.res:	$(COMPONENT_SRC)/$(MANIFEST).fdeps
 	pkgdepend resolve -m $<
 
-$(COMPONENT_SRC)/.published:	$(COMPONENT_SRC)/manifest.fdeps.res
+$(COMPONENT_SRC)/.published:	$(COMPONENT_SRC)/$(MANIFEST).fdeps.res
 	pkgsend -s $(PKG_REPO) publish --fmri-in-manifest \
 		-d $(PROTO_DIR) $<
 	$(TOUCH) $@

@@ -40,10 +40,8 @@ include ../../make-rules/ips.mk
 PYTHON_ENV +=	CFLAGS=-DVERSION=\\\"$(COMPONENT_VERSION)\\\"
 
 # common targets
-build:		$(COMPONENT_SRC)/build-32/.built \
-		$(COMPONENT_SRC)/build-64/.built
+build:		$(BUILD_32_and_64)
 
-install:	$(COMPONENT_SRC)/build-32/.installed \
-		$(COMPONENT_SRC)/build-64/.installed
+install:	$(INSTALL_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

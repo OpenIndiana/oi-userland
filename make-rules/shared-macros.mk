@@ -34,11 +34,28 @@ WS_LOGS =	$(WS_TOP)/logs
 MAKE_RULES =	$(WS_TOP)/components/make-rules
 
 PKG_REPO =	file://$(WS_TOP)/repo
-PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype
+PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype-$(MACH)
 
 CONSTANT_TIME =	LD_PRELOAD=$(TOOLS)/time.o
 
-MACH64 =	$(shell isainfo -k)
+# set MACH from uname -p to either sparc or i386
+MACH =		$(shell uname -p)
+
+# set MACH32 from MACH to either sparcv7 or i86
+MACH32_1 =	$(MACH:sparc=sparcv7)
+MACH32 =	$(MACH32_1:i386=i86)
+
+# set MACH64 from MACH to either sparcv9 or amd64
+MACH64_1 =	$(MACH:sparc=sparcv9)
+MACH64 =	$(MACH64_1:i386=amd64)
+
+BUILD_32 =		$(COMPONENT_SRC)/build-$(MACH32)/.built
+BUILD_64 =		$(COMPONENT_SRC)/build-$(MACH64)/.built
+BUILD_32_and_64 =	$(BUILD_32) $(BUILD_64)
+
+INSTALL_32 =		$(COMPONENT_SRC)/build-$(MACH32)/.installed
+INSTALL_64 =		$(COMPONENT_SRC)/build-$(MACH64)/.installed
+INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
 
 SPRO_ROOT =	/opt/sunstudio12.1
 GCC_ROOT =	/usr/gnu
