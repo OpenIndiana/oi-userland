@@ -31,11 +31,11 @@
 # and define "build", "install" targets appropriate to building your component.
 # Ex:
 #
-# 	build:		$(COMPONENT_SRC)/build-32/.built \
-#	 		$(COMPONENT_SRC)/build-64/.built
+# 	build:		$(COMPONENT_SRC)/build-$(MACH32)/.built \
+#	 		$(COMPONENT_SRC)/build-$(MACH64)/.built
 # 
-#	install:	$(COMPONENT_SRC)/build-32/.installed \
-#	 		$(COMPONENT_SRC)/build-64/.installed
+#	install:	$(COMPONENT_SRC)/build-$(MACH32)/.installed \
+#	 		$(COMPONENT_SRC)/build-$(MACH64)/.installed
 #
 # Any additional pre/post configure, build, or install actions can be specified
 # in your make file by setting them in on of the following macros:
@@ -58,8 +58,8 @@ CONFIGURE_OPTIONS.32 += --libdir=/usr/lib
 CONFIGURE_OPTIONS.64 = --bindir=/usr/bin/$(MACH64)
 CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/$(MACH64)
 
-$(COMPONENT_SRC)/build-32/.configured:	BITS=32
-$(COMPONENT_SRC)/build-64/.configured:	BITS=64
+$(COMPONENT_SRC)/build-$(MACH32)/.configured:	BITS=32
+$(COMPONENT_SRC)/build-$(MACH64)/.configured:	BITS=64
 
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 

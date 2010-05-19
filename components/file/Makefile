@@ -41,10 +41,8 @@ PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/archive-libraries-drop
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 
 # common targets
-build:		$(COMPONENT_SRC)/build-32/.built \
-		$(COMPONENT_SRC)/build-64/.built
+build:		$(BUILD_32_and_64)
 
-install:	$(COMPONENT_SRC)/build-32/.installed \
-		$(COMPONENT_SRC)/build-64/.installed
+install:	$(INSTALL_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
