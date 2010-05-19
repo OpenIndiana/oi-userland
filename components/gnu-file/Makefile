@@ -35,9 +35,7 @@ PATH=/usr/bin:/usr/gnu/bin
 BUILD_PKG_DEPENDENCIES= make \
 	                wget \
 			gnu-coreutils \
-			$(C_COMPILER) \
 			gnu-grep \
-			developer/object-file
 
 build:  unpack
 	$(MAKE) check_dependencies
