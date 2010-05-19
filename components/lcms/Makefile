@@ -25,13 +25,15 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		lcms
-COMPONENT_VERSION=	1.19
+COMPONENT_VERSION=	2-2.0
 COMPONENT_DESCRIPTION=	"Little Color Management System"
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_COPYRIGHT=	$(COMPONENT_SRC)/COPYING
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	d5b075ccffc0068015f74f78e4bc39138bcfe2d4
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/lcms/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)?use_mirror=voxel
+#COMPONENT_ARCHIVE_HASH=	4f192cfd36d8b819e6885571401f949220609005
+COMPONENT_ARCHIVE_URL=	http://download.sourceforge.net/project/lcms/lcms/2.0/$(COMPONENT_ARCHIVE)
+#COMPONENT_ARCHIVE_HASH=	d5b075ccffc0068015f74f78e4bc39138bcfe2d4
+#COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/lcms/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)?use_mirror=voxel
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
