@@ -23,8 +23,27 @@
 # Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
 # Use is subject to license terms.
 #
-# auto import manifests when installing live
-<transform file path=(var|etc)/svc/manifest/.*\.xml -> add restart_fmri svc:/system/manifest-import:default>
-# handle rbac fragments
-<transform file path=etc/security/[^/]+_attr.d/.+ -> add restart_fmri svc:/system/rbac:default>
-<transform file path=etc/user_attr.d/.+ -> add restart_fmri svc:/system/rbac:default>
+
+# SFW service manifests
+<transform file path=(var|lib)/svc/manifest/.*\.xml$ -> \
+    default restart_fmri svc:/system/manifest-import:default>
+
+# RBAC file fragments
+<transform file path=etc/security/[^/]+_attr.d/.+ -> \
+    default restart_fmri svc:/system/rbac:default>
+<transform file path=etc/user_attr.d/.+ -> \
+    default restart_fmri svc:/system/rbac:default>
+
+# Fonts and font configuration
+<transform file path=etc/fonts/conf\.(avail|d)/.+ -> \
+    default restart_fmri svc:/application/font/fc-cache:default>
+<transform file path=usr/share/font/.+ -> \
+    default restart_fmri svc:/application/font/fc-cache:default>
+
+# OpenGL selection scripts
+<transform file path=lib/opengl/ogl_select/.+ -> \
+    default restart_fmri svc:/application/opengl/ogl-select:default>
+
+# GNOME/XDG desktop files
+<transform file path=usr/share/applications/.*\.desktop$ -> \
+    default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
