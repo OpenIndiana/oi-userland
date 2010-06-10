@@ -22,13 +22,14 @@
 #
 
 UNPACK =	$(TOOLS)/unpack.py
+FETCH =		$(TOOLS)/fetch.py
 
 ARCHIVES += $(COMPONENT_ARCHIVE)
 CLEAN_PATHS += $(COMPONENT_SRC)
 CLOBBER_PATHS += $(COMPONENT_ARCHIVE)
 
 PATCHES =	$(shell find . -type f -name '*.patch' | \
-			 sed -e 's;^\./;;' | sort)
+			 sed -e 's;^\./;;' | grep -v $(COMPONENT_SRC) | sort)
 STAMPS =	$(PATCHES:%=$(COMPONENT_SRC)/.%ed)
 
 $(COMPONENT_SRC)/.%ed:	%
@@ -36,7 +37,9 @@ $(COMPONENT_SRC)/.%ed:	%
 	$(TOUCH) $@
 
 $(COMPONENT_ARCHIVE):
-	wget $(COMPONENT_ARCHIVE_URL)
+	$(FETCH) --file $@ \
+		$(COMPONENT_ARCHIVE_URL:%=--url %) \
+		$(COMPONENT_ARCHIVE_HASH:%=--hash %)
 
 $(COMPONENT_SRC)/.unpacked:	$(COMPONENT_ARCHIVE)
 	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE)
