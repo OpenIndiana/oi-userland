@@ -136,16 +136,19 @@ my ($tools, $files) = process_dtrace_results($file);
 my ($pkgs) = generate_package_requirements($tools, $files);
 
 if (defined($tools)) {
-	print "TOOL: $_\n" for (sort keys %$tools);
+	print "\n";
+	print "REQUIRED_TOOL +=\t$_\n" for (sort keys %$tools);
 }
 
 if (defined($files)) {
-	print "FILE: $_\n" for (sort keys %$files);
+	print "\n";
+	print "REQUIRED_FILE +=\t$_\n" for (sort keys %$files);
 }
 
 if (defined($pkgs)) {
 	@unique{values %$pkgs} = ();
-	print "PKG: $_\n" for (sort keys %unique);
+	print "\n";
+	print "REQUIRED_PKG +=\t$_\n" for (sort keys %unique);
 }
 
 exit(0);
