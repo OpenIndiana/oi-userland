@@ -26,6 +26,8 @@ include ../make-rules/shared-macros.mk
 COMPONENT_DIRS +=	lcms
 COMPONENT_DIRS +=	file
 COMPONENT_DIRS +=	pycups
+COMPONENT_DIRS +=	bind
+COMPONENT_DIRS +=	rsync
 
 download:	TARGET = download
 prep:		TARGET = prep
