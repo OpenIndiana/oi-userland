@@ -52,6 +52,7 @@ MANIFEST =	manifest-$(MACH)
 publish:	$(COMPONENT_SRC)/.published
 
 COPYRIGHT_FILE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
+IPS_COMPONENT_VERSION =	$(COMPONENT_VERSION)
 
 $(PROTO_DIR)/$(COPYRIGHT_FILE):	$(COMPONENT_COPYRIGHT)
 	$(CP) $< $@
@@ -60,7 +61,7 @@ $(COMPONENT_SRC)/$(MANIFEST):	install
 	pkgsend generate $(PROTO_DIR) >$@
 
 $(COMPONENT_SRC)/$(MANIFEST).mog:	$(COMPONENT_SRC)/$(MANIFEST) $(PROTO_DIR)/$(COPYRIGHT_FILE)
-	echo "set name=pkg.fmri value=pkg:/$(PUBLISHER)/$(COMPONENT_NAME)@$(COMPONENT_VERSION),$(BUILD_VERSION)" >$@
+	echo "set name=pkg.fmri value=pkg:/$(PUBLISHER)/$(COMPONENT_NAME)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)" >$@
 	echo "set name=pkg.description value=\"$(COMPONENT_DESCRIPTION)\"" >>$@
 	echo "set name=pkg.name value=\"$(COMPONENT_DESCRIPTION)\"" >>$@
 	echo "set name=org.opensolaris.consolidation value=$(CONSOLIDATION)" >>$@
