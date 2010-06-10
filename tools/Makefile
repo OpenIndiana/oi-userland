@@ -23,7 +23,20 @@
 
 include ../make-rules/shared-macros.mk
 
-download setup prep build install publish validate:	time.o
+download setup prep build install publish validate:	time-$(MACH32).so \
+							time-$(MACH64).so
 
-clean clobber:
-	$(RM) time.o
+time-$(MACH64).o:			BITS=64
+time-$(MACH32).o time-$(MACH64).o:	CFLAGS += -Kpic
+
+time-$(MACH32).o time-$(MACH64).o:	time.c
+	$(CC) $(CFLAGS) -c -o $@ $<
+
+time-%.so:	time-%.o
+	$(LD) -G -o $@ $<
+
+clean:
+	$(RM) time-*.o
+
+clobber:	clean
+	$(RM) time-*.so

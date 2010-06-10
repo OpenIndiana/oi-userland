@@ -36,7 +36,12 @@ MAKE_RULES =	$(WS_TOP)/components/make-rules
 PKG_REPO =	file://$(WS_TOP)/repo
 PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype-$(MACH)
 
-CONSTANT_TIME =	LD_PRELOAD=$(TOOLS)/time.o
+# work around _TIME, _DATE, embedded date chatter in component builds
+# to use, set TIME_CONSTANT in the component Makefile and add $(CONSTANT_TIME)
+# to the appropriate {CONFIGURE|BUILD|INSTALL}_ENV
+CONSTANT_TIME =		LD_PRELOAD_32=$(TOOLS)/time-$(MACH32).so
+CONSTANT_TIME +=	LD_PRELOAD_64=$(TOOLS)/time-$(MACH64).so
+CONSTANT_TIME +=	TIME_CONSTANT=$(TIME_CONSTANT)
 
 # set MACH from uname -p to either sparc or i386
 MACH =		$(shell uname -p)
@@ -75,6 +80,8 @@ CCC.gcc.64 =	$(GCC_ROOT)/bin/CC -m64
 CC =		$(CC.$(COMPILER).$(BITS))
 CCC =		$(CCC.$(COMPILER).$(BITS))
 
+LD =		/usr/bin/ld
+
 PYTHON.2.4.32 =	/usr/bin/python2.4
 PYTHON.2.4.64 =	/usr/bin/amd64/python2.4
 
@@ -94,3 +101,4 @@ TOUCH =		/usr/bin/touch
 MKDIR =		/bin/mkdir -p
 RM =		/bin/rm -f
 CP =		/bin/cp -f
+ENV =		/usr/bin/env

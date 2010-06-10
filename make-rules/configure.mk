@@ -70,7 +70,7 @@ COMPONENT_INSTALL_TARGETS =	install
 $(COMPONENT_SRC)/build-%/.configured:	$(COMPONENT_SRC)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
 	$(COMPONENT_PRE_CONFIGURE_ACTION)
-	(cd $(@D) ; env - $(CONFIGURE_ENV) $(CONFIG_SHELL) \
+	(cd $(@D) ; $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) \
 		../configure $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)))
 	$(COMPONENT_POST_CONFIGURE_ACTION)
 	$(TOUCH) $@
@@ -78,14 +78,15 @@ $(COMPONENT_SRC)/build-%/.configured:	$(COMPONENT_SRC)/.prep
 # build the configured source
 $(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/build-%/.configured
 	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(@D) ; $(COMPONENT_BUILD_ENV) $(GMAKE) $(COMPONENT_BUILD_TARGETS))
+	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
+		$(GMAKE) $(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
 # install the built source into a prototype area
 $(COMPONENT_SRC)/build-%/.installed:	$(COMPONENT_SRC)/build-%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(@D) ; $(COMPONENT_INSTALL_ENV) $(GMAKE) \
+	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) \
 			DESTDIR=$(PROTO_DIR) $(COMPONENT_INSTALL_TARGETS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@

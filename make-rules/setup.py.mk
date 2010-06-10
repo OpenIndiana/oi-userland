@@ -31,13 +31,15 @@ $(COMPONENT_SRC)/build-$(MACH64)/.installed:	BITS=64
 $(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(COMPONENT_SRC) ; env - $(PYTHON_ENV) $(PYTHON.$(BITS)) ./setup.py build --build-temp $(@D:$(COMPONENT_SRC)/%=%))
+	(cd $(COMPONENT_SRC) ; $(ENV) $(PYTHON_ENV) \
+		$(PYTHON.$(BITS)) ./setup.py build --build-temp $(@D:$(COMPONENT_SRC)/%=%))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
 # install the built source into a prototype area
 $(COMPONENT_SRC)/build-%/.installed:	$(COMPONENT_SRC)/build-%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(COMPONENT_SRC) ; env - $(PYTHON_ENV) $(PYTHON.$(BITS)) ./setup.py install --root $(PROTO_DIR))
+	(cd $(COMPONENT_SRC) ; $(ENV) $(PYTHON_ENV) \
+		$(PYTHON.$(BITS)) ./setup.py install --root $(PROTO_DIR))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@

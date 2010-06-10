@@ -23,8 +23,9 @@
 
 /*
  * This compiles to a module that can be preloaded during a build.  If this
- * is preloaded, it interposes on time(2) and returns a constant value when
- * the execname matches one of the desired "programs" and TIME_CONSTANT
+ * is preloaded, it interposes on time(2), gettimeofday(3C), and
+ * clock_gethrtime(3C) and returns a constant number of seconds since epoch
+ * when the execname matches one of the desired "programs" and TIME_CONSTANT
  * contains an integer value to be returned.
  */
 
@@ -32,9 +33,12 @@
 #include <ucontext.h>
 #include <dlfcn.h>
 #include <strings.h>
+#include <time.h>
 
 /* The list of programs that we want to use a constant time. */
-static char *programs[] = { "date", "cpp", "cc1", "perl", NULL };
+static char *programs[] = { "autogen", "bash", "cpp", "cc1", "date", "doxygen",
+	"erl", "javadoc", "ksh", "ksh93", "ld", "perl", "perl5.8.4", "perl5.10",
+	"ruby", "sh", NULL };
 
 static int
 stack_info(uintptr_t pc, int signo, void *arg)
@@ -43,7 +47,8 @@ stack_info(uintptr_t pc, int signo, void *arg)
 	void *sym;
 
 	if (dladdr1((void *)pc, &info, &sym, RTLD_DL_SYMENT) != NULL) {
-		*(char **)arg = (char *)info.dli_fname;
+		if (strstr(info.dli_fname, ".so") == NULL)
+			*(char **)arg = (char *)info.dli_fname;
 	}
 
 	return (0);
@@ -72,7 +77,7 @@ my_execname()
 }
 
 static time_t
-intercept()
+time_constant()
 {
 	char *execname = my_execname();
 	time_t result = -1;
@@ -82,13 +87,13 @@ intercept()
 
 		for (i = 0; programs[i] != NULL; i++)
 			if (strcmp(execname, programs[i]) == 0) {
-				static char *time_constant;
+				static char *time_string;
 
-				if (time_constant == NULL)
-					time_constant = getenv("TIME_CONSTANT");
+				if (time_string == NULL)
+					time_string = getenv("TIME_CONSTANT");
 
-				if (time_constant != NULL)
-					result = atoll(time_constant);
+				if (time_string != NULL)
+					result = atoll(time_string);
 
 				break;
 			}
@@ -100,7 +105,7 @@ intercept()
 time_t
 time(time_t *ptr)
 {
-	time_t result = intercept();
+	time_t result = time_constant();
 
 	if (result == (time_t)-1) {
 		static time_t (*fptr)(time_t *);
@@ -111,6 +116,46 @@ time(time_t *ptr)
 		result = (fptr)(ptr);
 	} else if (ptr != NULL)
 			*ptr = result;
+
+	return (result);
+}
+
+int
+gettimeofday(struct timeval *tp, void *tzp)
+{
+	static int (*fptr)(struct timeval *, void *);
+	int result = -1;
+
+	if (fptr == NULL)
+		fptr = (int (*)(struct timeval *, void *))dlsym(RTLD_NEXT,
+				"gettimeofday");
+
+	if ((result = (fptr)(tp, tzp)) == 0) {
+		time_t curtime = time_constant();
+
+		if (curtime != (time_t)-1)
+			tp->tv_sec = curtime;
+	}
+
+	return (result);
+}
+
+int
+clock_gettime(clockid_t clock_id, struct timespec *tp)
+{
+	static int (*fptr)(clockid_t, struct timespec *);
+	int result = -1;
+
+	if (fptr == NULL)
+		fptr = (int (*)(clockid_t, struct timespec *))dlsym(RTLD_NEXT,
+				"clock_gettime");
+
+	if ((result = (fptr)(clock_id, tp)) == 0) {
+		time_t curtime = time_constant();
+
+		if (curtime != (time_t)-1)
+			tp->tv_sec = curtime;
+	}
 
 	return (result);
 }
