@@ -27,6 +27,16 @@
 # general locale
 <transform dir file link hardlink path=.*/locale/.+ -> default facet.locale true>
 
+
+# The fix for
+#    Bug 16156
+#   pkgmogrify should allow backreferences in operation to match criteria
+# will allow something like
+#   <transform dir file link hardlink \
+#       path=.*/locale/(.+)(\..+){0,1}(/.+){0,1}$ -> \
+#       default facet.locale.%<\1> true>
+# to replace the rest of the transforms in this file
+
 # specific locale dirs 
 <transform dir file link hardlink path=.*/locale/af(/.+){0,1}$ -> \
     default facet.locale.af true>
