@@ -23,11 +23,12 @@
 
 include ../make-rules/shared-macros.mk
 
-COMPONENT_DIRS +=	lcms
-COMPONENT_DIRS +=	file
-COMPONENT_DIRS +=	pycups
-COMPONENT_DIRS +=	bind
-COMPONENT_DIRS +=	rsync
+# for now, the assumption is we build any directory with a Makefile.  This may
+# not always be the case. If we build a new make-like tool to drive the upper
+# level build, it may make different decisions and will need to include
+# appropriate dependency information.
+
+COMPONENT_DIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
 
 download:	TARGET = download
 prep:		TARGET = prep
