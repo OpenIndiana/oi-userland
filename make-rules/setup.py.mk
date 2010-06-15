@@ -22,7 +22,7 @@
 #
 
 $(COMPONENT_SRC)/build-$(MACH32)/.built:	BITS=32
-$(COMPONENT_SRC)/build-$(MACH64)/.built:	BITS=32
+$(COMPONENT_SRC)/build-$(MACH64)/.built:	BITS=64
 $(COMPONENT_SRC)/build-$(MACH32)/.installed:	BITS=32
 $(COMPONENT_SRC)/build-$(MACH64)/.installed:	BITS=64
 
