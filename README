@@ -1,40 +1,47 @@
 
-This workspace contains examples of building open source software components using three methodologies.  In the spec-files directory, the pkgbuild is use to build the components from a RPM spec file based build.  In the components directory, a make(1) based build is used.
-
-spec-files
-	spec based build
-
-components
-	GNU make based build(s)
-
-make-rules
-	Shared rules to include in component specific makefiles (instructions)
-
-	make-rules/configure.mk
-		shared rules for components using GNU auto* tools to build
-
-	make-rules/ips.mk
-		shared rules for packaging under IPS
-
-	make-rules/prep.mk
-		shared rules for downloading, unpacking, and patching component
-		source.
-
-	make-rules/setup.py.mk
-		shared rules for components using python setup.py to build
-
-	make-rules/shared-macros.mk
-		common macros that apply to building many things.
-
-tools
-	shared tools for building components
-
-transforms
-	shared pkgmogrify(1) transformations to apply to packages as they are
-	being built and published
+	    Getting started with the Userland Consolidation
 
 
-To build uing the GNU make based build you can
-	$ WS_TOP=$(pwd) ; cd components ; gmake -j 4 publish
-This will construct a files based repository for publishing, create a log directory, build the components (4 at a time) and publish them to the repo.  Logs of each component build will go in the logs directory
+Building the bits
+
+    The Userland consolidation maintains a Mercurial gate at
+    
+        ssh://anon@hg.opensolaris.org//hg/userland/gate
+        
+    This gate contains build recipies, patches, IPS manifests, etc. necessary
+    to download, prep, build, test, package and publish open source software.
+    In order to build the contents of the Userland gate, you need to clone it.
+    Since you are reading this, you probably already have, but in any event
+    you can do so with the following command
+    
+    $ hg clone ssh://anon@hg.opensolaris.org//hg/userland/gate /scratch/clone
+    
+    In order to build the bits either individually or collectively, you must
+    set the WS_TOP environment variable to point to the top of your workspace.
+    
+    $ export WS_TOP=/scratch/clone
+    
+    To build and publish the entire contents of the gate, you can use
+    
+    $ cd /scratch/clone
+    $ gmake publish
+    
+    To build and publish a specific component you need to initialize the
+    workspace by building the tools and creating a repository to publish
+    your results in.  The easiest way to do this is to
+    
+    $ cd /scratch/clone
+    $ gmake setup
+    
+    Once you have initialize the the workspace, you can build individual
+    components by
+    
+    $ cd /scratch/clone/components/(component)
+    $ gmake publish
+    
+    All of the bits are are built will be published to the repository created
+    by the setup step (file:///scratch/clone/repo/)  If you build the entire
+    contents of the gate, individual build logs for each component will be
+    located at /scratch/clone/logs/(target):(component).log
+
 

@@ -1,0 +1,70 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+#
+
+#
+# These transforms will automatically tag actions that are likely to be
+# architecture specific.  This is only meant to aid folks in generating
+# manifests that properly tag actions.  The results should be carefully
+# audited since it may tag architecture independent files that match the
+# the pattern space and may not tag architecture specific files that don't.
+#
+# It might also be useful to use "diff -rq" to determine the differences
+# between proto areas for multiple architectures, though take care to avoid
+# timestamp.
+#
+# Note: this uses and then replaces $!(ARCH) to avoid macro substitution
+#
+
+# add anything with the architecture embedded in the path
+<transform dir file link hardlink path=.*/\$\(MACH.*\) -> \
+	default variant.arch "$!(ARCH)">
+<transform dir file link hardlink \
+		path=.*/(sparcv9|sparcv7|sparc|amd64|i86|i386)(/.*){0,1}$ -> \
+	default variant.arch "$!(ARCH)">
+<transform dir file link hardlink \
+		path=.*/(sparc|i386)-(sun|pc)-solaris\d\.\d+ -> \
+	default variant.arch "$!(ARCH)">
+
+# add anything that looks like a shared object
+<transform file path=.*/.+\.so(\.\d+)*$ -> \
+	default variant.arch "$!(ARCH)">
+
+# add anything that looks like an archive library
+<transform file path=.*/lib.+\.a$ -> \
+	default variant.arch "$!(ARCH)">
+
+# add anything that looks like a libtool .la file
+<transform file path=.*/.+\.la$ -> \
+	default variant.arch "$!(ARCH)">
+
+# add "compiled" python files
+<transform dir file link hardlink path=.+\.pyc$ -> \
+	default variant.arch "$!(ARCH)">
+
+# delete "raw" python scripts that we may have accidentally picked up
+<transform dir file link hardlink path=.+\.py$ variant.arch=\$!\(ARCH\) -> \
+	delete variant.arch .*>
+
+# convert "$!(ARCH)" to "$(ARCH)"
+<transform dir file link hardlink -> \
+	edit variant.arch "\$!\((.*)\)" "$(\1)">

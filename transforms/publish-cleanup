@@ -18,23 +18,17 @@
 #
 # CDDL HEADER END
 #
-
-#
-# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
+# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
-# programs & shared objects should generally have mode 0555
+# These transforms drop the information that we don't really care about when
+# comparing manifests for change.
 #
-<transform file path=.*lib/.*\.so.* -> default mode 0555>
-<transform file path=.*bin/.* -> default mode 0555>
 
-#
-# For what's left, go with root:bin 0444 for files, 0755 for directories
-#
-<transform dir file -> default owner root>
-<transform dir file -> default group bin>
-<transform file -> default mode 0444>
-<transform dir -> default mode 0755>
+<transform set value="^$" -> drop>
+<transform set name=info.classification value=".+:\"\"" -> drop>
+
+# drop the license actions from the manifests, we aren't going to compare them
+<transform license -> drop>
 

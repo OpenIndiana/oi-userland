@@ -1,0 +1,56 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+#
+
+#
+# These transforms drop the information that we don't really care about when
+# comparing manifests for change.
+#
+
+# drop actions that don't apply to the architecture we are on
+<transform dir file link hardlink variant.arch=(?!$(ARCH)) -> drop>
+
+# drop the license actions from the manifests, we aren't going to compare them
+<transform license -> drop>
+
+# remove the version information from the dependency actions
+<transform depend -> edit fmri "@[^ \t\n\r\f\v]*" "">
+
+# normalize the pkg.fmri for the current build
+<transform set name=pkg.fmri -> \
+	edit value "@[^ \t\n\r\f\v]*" \
+		   "@$!(IPS_COMPONENT_VERSION),$!(BUILD_VERSION)">
+
+# convert temporary macro names to their real name
+<transform set -> edit value "\$!\((.*)\)" "$(\1)">
+<transform set -> edit value "\$!\((.*)\)" "$(\1)">
+
+# standardize the file hashes
+<transform file -> set action.hash 'NOHASH'>
+
+# drop extra attribute data that we don't want to compare
+<transform dir file link hardlink -> delete timestamp .*>
+<transform dir file link hardlink -> delete pkg.size .*>
+<transform dir file link hardlink -> delete owner .*>
+<transform dir file link hardlink -> delete group .*>
+<transform dir file link hardlink -> delete mode .*>
+<transform dir file link hardlink -> delete variant.arch .*>
