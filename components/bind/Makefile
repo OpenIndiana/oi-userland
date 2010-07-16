@@ -28,7 +28,7 @@ COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.7.0-P2
 COMPONENT_DESCRIPTION=	"Berkeley Internet Name Domain server and utilities"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_COPYRIGHT=	$(COMPONENT_SRC)/COPYRIGHT
+COMPONENT_PROJECT_URL =	http://www.isc.org/software/bind
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:4b805d4a66075a88c93c5b852b928da96467aa2d
 COMPONENT_ARCHIVE_URL=	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
@@ -53,6 +53,21 @@ IPS_COMPONENT_VERSION=	9.7.0
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/archive-libraries-drop
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 PKGMOGRIFY_TRANSFORMS +=	manifest-drop
+
+PKG_HARDLINKS +=	usr/sbin/named
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_addr_parse.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_buffer.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_conf_clear.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_context.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_endhostent.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_freeaddrinfo.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_freehostent.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_gabn.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_gnba.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_herror.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_inetntop.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_lwpacket_parseheader.3
+PKG_HARDLINKS +=	usr/share/man/man3/lwres_noop.3
 
 # common targets
 build:		$(BUILD_32_and_64)
