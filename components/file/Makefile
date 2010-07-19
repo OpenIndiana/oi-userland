@@ -26,7 +26,9 @@ PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		file
 COMPONENT_VERSION=	5.0.4
+IPS_PKG_NAME=		file/file
 COMPONENT_DESCRIPTION=	"command and library to determine file type"
+COMPONENT_CLASSIFICATION="Applications/System Utilities"
 COMPONENT_SRC=		$(COMPONENT_NAME)-5.04
 COMPONENT_PROJECT_URL =	ftp://ftp.astron.com/pub/file/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

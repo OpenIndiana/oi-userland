@@ -26,8 +26,9 @@
 # comparing manifests for change.
 #
 
-<transform set value="^$" -> drop>
-<transform set name=info.classification value=".+:\"\"" -> drop>
+<transform set -> edit value "\s$" "">
+<transform set value="^\s*$" -> drop>
+<transform set name=info.classification value=".+:" -> drop>
 
 # drop the license actions from the manifests, we aren't going to compare them
 <transform license -> drop>

@@ -26,7 +26,9 @@ PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		lcms
 COMPONENT_VERSION=	1.19
+IPS_PKG_NAME=		library/lcms
 COMPONENT_DESCRIPTION=	"Little Color Management System"
+COMPONENT_CLASSIFICATION="System/Multimedia Libraries"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.littlecms.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
