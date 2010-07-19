@@ -26,7 +26,9 @@ PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		pycups
 COMPONENT_VERSION=	1.9.46
+IPS_PKG_NAME=		library/python-2/pycups
 COMPONENT_DESCRIPTION=	"Python language bindings for CUPS"
+COMPONENT_CLASSIFICATION="System/Printing"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://cyberelk.net/tim/software/pycups/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2

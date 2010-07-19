@@ -26,7 +26,9 @@ PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		rsync
 COMPONENT_VERSION=	3.0.7
+IPS_PKG_NAME=		network/rsync
 COMPONENT_DESCRIPTION=	"utility for fast incremental file transfer"
+COMPONENT_CLASSIFICATION="Applications/System Utilities"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/rsync/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
