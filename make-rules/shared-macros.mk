@@ -24,9 +24,13 @@
 CONSOLIDATION =	userland
 PUBLISHER =	$(CONSOLIDATION)-build
 
+# get the most recent build number from the last mercurial tag
+LAST_HG_TAG =	$(shell hg tags -q | head -2 | tail -1)
+LAST_BUILD_NUM = $(LAST_HG_TAG:build-%=%)
+
 OS_VERSION =		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
-BUILD_NUM =		0.140
+BUILD_NUM =		0.$(shell expr $(LAST_BUILD_NUM) + 1)
 BUILD_VERSION =		$(OS_VERSION)-$(BUILD_NUM)
 
 COMPILER =		studio
