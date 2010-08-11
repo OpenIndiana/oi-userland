@@ -82,13 +82,13 @@ PKG_OPTIONS +=		-D COMPONENT_CLASSIFICATION=$(COMPONENT_CLASSIFICATION)
 
 MANIFEST_BASE =		$(COMPONENT_SRC)/manifest-$(MACH)
 
-CANONICAL_MANIFESTS =	$(wildcard *.ips)
+CANONICAL_MANIFESTS =	$(wildcard *.p5m)
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
 MANIFESTS =		$(CANONICAL_MANIFESTS:%=$(MANIFEST_BASE)-%)
 
 
-MOGRIFIED=$(CANONICAL_MANIFESTS:%.ips=$(MANIFEST_BASE)-%.resolved)
+MOGRIFIED=$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.resolved)
 PUBLISHED=$(MOGRIFIED:%.resolved=%.published)
 
 COPYRIGHT_FILE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
@@ -103,7 +103,7 @@ IPS_COMPONENT_VERSION =	$(COMPONENT_VERSION)
 
 publish:		install $(COMPONENT_SRC)/.published
 
-sample-manifest:	$(GENERATED).ips
+sample-manifest:	$(GENERATED).p5m
 
 #
 # Rules for generating a manifest automatically.  Generated manifests will
@@ -136,7 +136,7 @@ $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.fdeps
 	$(PKGDEPEND) resolve -o $< | sed -e '1d' >$@
 
 # generate a complete manifest from the pieces
-$(GENERATED).ips:	$(GENERATED).metadata $(GENERATED).actions \
+$(GENERATED).p5m:	$(GENERATED).metadata $(GENERATED).actions \
 			$(GENERATED).depend
 	cat $(COPYRIGHT_TEMPLATE) $(GENERATED).metadata $(GENERATED).actions \
 	    $(GENERATED).depend >$@
@@ -148,11 +148,11 @@ $(GENERATED).ips:	$(GENERATED).metadata $(GENERATED).actions \
 
 # Combine the canonical manifest(s) for this component and "normalize" them
 # for comparison.
-$(COMBINED).ips:	canonical-manifests
+$(COMBINED).p5m:	canonical-manifests
 	cat $(CANONICAL_MANIFESTS) | $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
  		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u | $(PKGFMT) >$@
 
-$(MANIFEST_BASE)-%.compare:		$(MANIFEST_BASE)-%.ips
+$(MANIFEST_BASE)-%.compare:		$(MANIFEST_BASE)-%.p5m
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $(COMPARISON_TRANSFORMS) $< >$@
 
 manifest-compare:	$(COMBINED).compare $(GENERATED).compare
@@ -161,7 +161,7 @@ manifest-compare:	$(COMBINED).compare $(GENERATED).compare
 
 # mogrify the canonical manifest(s) 
 #
-$(MANIFEST_BASE)-%.resolved:	%.ips manifest-compare
+$(MANIFEST_BASE)-%.resolved:	%.p5m manifest-compare
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< $(PUBLISH_TRANSFORMS) >$@
 
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.resolved

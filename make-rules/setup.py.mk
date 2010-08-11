@@ -36,10 +36,16 @@ $(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/.prep
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
+# The default is site-packages, but that directory belongs to the end-user.
+# Modules which are shipped by the OS but not with the core Python distribution
+# belong in vendor-packages.
+PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
+
 # install the built source into a prototype area
 $(COMPONENT_SRC)/build-%/.installed:	$(COMPONENT_SRC)/build-%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(COMPONENT_SRC) ; $(ENV) $(PYTHON_ENV) \
-		$(PYTHON.$(BITS)) ./setup.py install --root $(PROTO_DIR))
+		$(PYTHON.$(BITS)) ./setup.py install --root $(PROTO_DIR) \
+			--install-lib=$(PYTHON_LIB))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
