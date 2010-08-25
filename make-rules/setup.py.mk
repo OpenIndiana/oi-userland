@@ -21,11 +21,21 @@
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
 #
 
-$(COMPONENT_SRC)/build-$(MACH32)/.built:	BITS=32
-$(COMPONENT_SRC)/build-$(MACH64)/.built:	BITS=64
-$(COMPONENT_SRC)/build-$(MACH32)/.installed:	BITS=32
-$(COMPONENT_SRC)/build-$(MACH64)/.installed:	BITS=64
+$(COMPONENT_SRC)/build-%-2.6/.built:		PYTHON_VERSION=2.6
+$(COMPONENT_SRC)/build-%-2.4/.built:		PYTHON_VERSION=2.4
+$(COMPONENT_SRC)/build-$(MACH32)-%/.built:	BITS=32
+$(COMPONENT_SRC)/build-$(MACH64)-%/.built:	BITS=64
 
+$(COMPONENT_SRC)/build-%-2.6/.installed:	PYTHON_VERSION=2.6
+$(COMPONENT_SRC)/build-%-2.4/.installed:	PYTHON_VERSION=2.4
+$(COMPONENT_SRC)/build-$(MACH32)-%/.installed:	BITS=32
+$(COMPONENT_SRC)/build-$(MACH64)-%/.installed:	BITS=64
+
+BUILD_32 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH32)-%/.built)
+BUILD_64 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH64)-%/.built)
+
+INSTALL_32 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH32)-%/.installed)
+INSTALL_64 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH64)-%/.installed)
 
 # build the configured source
 $(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/.prep
