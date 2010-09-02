@@ -21,6 +21,8 @@
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
 #
 
+PATH=/usr/bin:/usr/gnu/bin
+
 CONSOLIDATION =	userland
 PUBLISHER =	$(CONSOLIDATION)-build
 
@@ -40,7 +42,7 @@ PYTHON_VERSIONS =	2.4 2.6
 
 TOOLS =		$(WS_TOP)/tools
 WS_LOGS =	$(WS_TOP)/logs
-MAKE_RULES =	$(WS_TOP)/components/make-rules
+MAKE_RULES =	$(WS_TOP)/make-rules
 
 PKG_REPO =	file://$(WS_TOP)/repo
 PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype-$(MACH)

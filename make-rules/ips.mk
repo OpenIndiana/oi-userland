@@ -172,6 +172,16 @@ $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.resolved
 $(COMPONENT_SRC)/.published:	manifest-compare $(PUBLISHED)
 	$(TOUCH) $@
 
+print-package-names:	canonical-manifests
+	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
+		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+ 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+
+print-package-paths:	canonical-manifests
+	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+ 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
+
 canonical-manifests:	$(CANONICAL_MANIFESTS)
 ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# If there were no canonical manifests in the workspace, nothing will
@@ -182,3 +192,12 @@ ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# workspace.
 	$(error Missing canonical manifest(s))
 endif
+
+# This converts required paths to containing package names for be able to
+# properly setup the build environment for a component.
+required-pkgs.mk:	Makefile
+	@echo "generating $@ from Makefile REQUIRED_* data"
+	@pkg search -H -l '<$(DEPENDS:%=% OR) /bin/true>' \
+		| sed -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@
+
+CLEAN_PATHS +=	required-pkgs.mk
