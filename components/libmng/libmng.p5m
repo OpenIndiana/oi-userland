@@ -1,0 +1,70 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/libmng@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description value="$(COMPONENT_DESCRIPTION) "
+set name=pkg.summary value="$(COMPONENT_SUMMARY) "
+set name=info.classification \
+    value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION) "
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+license LICENSE license="BSD-Like"
+dir path=usr
+dir path=usr/include
+dir path=usr/include/libmng
+dir path=usr/lib
+dir path=usr/lib/$(MACH64) variant.arch=$(ARCH)
+#dir path=usr/lib/$(MACH64)/pkgconfig variant.arch=$(ARCH)
+#dir path=usr/lib/pkgconfig
+dir path=usr/share
+dir path=usr/share/man
+dir path=usr/share/man/man3
+dir path=usr/share/man/man5
+file path=usr/include/libmng/libmng.h
+file path=usr/include/libmng/libmng_conf.h
+file path=usr/include/libmng/libmng_types.h
+file path=usr/lib/$(MACH64)/libmng.la variant.arch=$(ARCH)
+file path=usr/lib/$(MACH64)/libmng.so.1.0.0 variant.arch=$(ARCH)
+#file path=usr/lib/$(MACH64)/llib-lmng.ln
+#file path=usr/lib/$(MACH64)/pkgconfig/libmng.pc variant.arch=$(ARCH)
+file path=usr/lib/libmng.la variant.arch=$(ARCH)
+file path=usr/lib/libmng.so.1.0.0 variant.arch=$(ARCH)
+#file path=usr/lib/llib-lmng
+#file path=usr/lib/llib-lmng.ln
+#file path=usr/lib/pkgconfig/libmng.pc
+file path=usr/share/man/man3/libmng.3
+file path=usr/share/man/man5/jng.5
+file path=usr/share/man/man5/mng.5
+link path=usr/lib/$(MACH64)/libmng.so target=libmng.so.1.0.0 \
+    variant.arch=$(ARCH)
+link path=usr/lib/$(MACH64)/libmng.so.1 target=libmng.so.1.0.0 \
+    variant.arch=$(ARCH)
+link path=usr/lib/libmng.so target=libmng.so.1.0.0
+link path=usr/lib/libmng.so.1 target=libmng.so.1.0.0
+depend fmri=pkg:/image/library/libjpeg@0.5.11-0.146 type=require
+depend fmri=pkg:/library/lcms@1.19-0.146 type=require
+depend fmri=pkg:/library/zlib@1.2.3-0.146 type=require
+depend fmri=pkg:/system/library/math@0.5.11-0.146 type=require
+depend fmri=pkg:/system/library@0.5.11-0.146 type=require

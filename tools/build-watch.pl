@@ -116,7 +116,7 @@ sub generate_package_requirements
 # Main execution begins here
 #
 GetOptions("c|command=s" => \$cmd, "i|input-file=s" => \@file,
-	   "v|verbose" => \$verbose);
+	   "p|pkg" => \$pkg_flag, "v|verbose" => \$verbose);
 
 if (defined($cmd)) {
 	$file = (tempfile(UNLINK => 1))[1];
@@ -132,8 +132,10 @@ if (defined($cmd)) {
 ($verbose == 1) && printf("*** Processing results...\n");
 my ($tools, $files) = process_dtrace_results($file);
 
-($verbose == 1) && printf("*** Generating package requirements...\n");
-my ($pkgs) = generate_package_requirements($tools, $files);
+if (defined($pkg_flag)) {
+	($verbose == 1) && printf("*** Generating package requirements...\n");
+	my ($pkgs) = generate_package_requirements($tools, $files);
+}
 
 if (defined($tools)) {
 	print "\n";

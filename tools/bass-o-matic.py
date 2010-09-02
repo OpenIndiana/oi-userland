@@ -1,0 +1,169 @@
+#!/usr/bin/python2.6
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+#
+#
+# bass-o-matic.py
+#  A simple program to enumerate components in the userland gate and report
+#  on dependency related information.
+#
+
+import os
+import sys
+import re
+
+# Locate SCM directories containing Userland components by searching from
+# from a supplied top of tree for .p5m files.  Once a .p5m file is located,
+# that directory is added to the list and no children are searched.
+def FindComponentPaths(path, debug=None):
+    expression = re.compile(".+\.p5m$", re.IGNORECASE)
+
+    paths = []
+
+    if debug:
+        print >>debug, "searching %s for component directories" % path
+
+    for dirpath, dirnames, filenames in os.walk(path + '/components'):
+        found = 0
+
+        for name in filenames:
+            if expression.match(name):
+                if debug:
+                    print >>debug, "found %s" % dirpath
+                paths.append(dirpath)
+                del dirnames[:]
+                break
+
+    return sorted(paths)
+
+class BassComponent:
+    def __init__(self, path=None, debug=None):
+        self.debug = debug
+        self.path = path
+        if path:
+            # get supplied packages    (cd path ; gmake print-package-names)
+            self.supplied_packages = self.run_make(path, 'print-package-names')
+
+            # get supplied paths    (cd path ; gmake print-package-paths)
+            self.supplied_paths = self.run_make(path, 'print-package-paths')
+
+            # get required paths    (cd path ; gmake print-required-paths)
+            self.required_paths = self.run_make(path, 'print-required-paths')
+
+    def required(self, component):
+        result = False
+
+        s1 = set(self.required_paths)
+        s2 = set(component.supplied_paths)
+        if s1.intersection(s2):
+            result = True
+
+        return result
+
+    def run_make(self, path, targets):
+        import subprocess
+
+        result = list()
+
+        if self.debug:
+            print >>self.debug, "Executing 'gmake %s' in %s" % (targets, path)
+
+        proc = subprocess.Popen(['gmake', targets], cwd=path,
+                                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = proc.stdout
+
+        for out in p:
+            result.append(out)
+
+        if self.debug:
+            proc.wait()
+            if proc.returncode != 0:
+                print >>self.debug, "exit: %d, %s" % (proc.returncode, proc.stderr.read())
+    
+        return result
+
+    def __str__(self):
+        result = "Component:\n\tPath: %s\n" % self.path
+        result = result + "\tProvides Package(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_packages)
+        result = result + "\tProvides Path(s):\n\t\t%s\n" % '\t\t'.join(self.supplied_paths)
+        result = result + "\tRequired Path(s):\n\t\t%s\n" % '\t\t'.join(self.required_paths)
+
+        return result
+
+def usage():
+    print "Usage: %s [-c|--components=(path|depend)] [-z|--zone (zone)]" % (sys.argv[0].split('/')[-1])
+    sys.exit(1)
+
+def main():
+    import getopt
+    import sys
+
+    # FLUSH STDOUT 
+    sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+
+    components = {}
+    debug=None
+    components_arg=None
+    workspace = os.getenv('WS_TOP')
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "w:c:d",
+            [ "debug", "workspace=", "components=" ])
+    except getopt.GetoptError, err:
+        print str(err)
+        usage()
+
+    for opt, arg in opts:
+        if opt in [ "-w", "--workspace" ]:
+            workspace = arg
+        elif opt in [ "-l", "--components" ]:
+            components_arg = arg
+        elif opt in [ "-d", "--debug" ]:
+            debug = sys.stdout
+        else:
+            assert False, "unknown option"
+
+    component_paths = FindComponentPaths(workspace, debug)
+
+    if components_arg:
+        if components_arg in [ 'path', 'paths', 'dir', 'dirs', 'directories' ]:
+            for path in component_paths:
+                print "%s" % path
+            
+        elif components_arg in [ 'depend', 'dependencies' ]:
+            for path in component_paths:
+                components[path] = BassComponent(path, debug)
+
+            for c_path in components.keys():
+                component = components[c_path]
+
+                for d_path in components.keys():
+                    if (c_path != d_path and
+                        component.required(components[d_path])):
+                          print "%s: %s" % (c_path, d_path)
+
+        sys.exit(0)
+
+    sys.exit(1)
+
+if __name__ == "__main__":
+    main()
