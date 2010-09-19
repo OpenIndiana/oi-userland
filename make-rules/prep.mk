@@ -21,8 +21,8 @@
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
 #
 
-UNPACK =	$(TOOLS)/unpack.py
-FETCH =		$(TOOLS)/fetch.py
+UNPACK =	$(WS_TOOLS)/userland-unpack
+FETCH =		$(WS_TOOLS)/userland-fetch
 
 ARCHIVES += $(COMPONENT_ARCHIVE)
 CLEAN_PATHS += $(COMPONENT_SRC)

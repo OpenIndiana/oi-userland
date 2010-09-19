@@ -30,6 +30,7 @@
 import os
 import sys
 import re
+import subprocess
 
 # Locate SCM directories containing Userland components by searching from
 # from a supplied top of tree for .p5m files.  Once a .p5m file is located,
@@ -80,7 +81,6 @@ class BassComponent:
         return result
 
     def run_make(self, path, targets):
-        import subprocess
 
         result = list()
 
@@ -123,11 +123,15 @@ def main():
     components = {}
     debug=None
     components_arg=None
+    make_arg=None
+    component_arg=None
+    template_zone=None
     workspace = os.getenv('WS_TOP')
 
     try:
         opts, args = getopt.getopt(sys.argv[1:], "w:c:d",
-            [ "debug", "workspace=", "components=" ])
+            [ "debug", "workspace=", "components=",
+              "make", "component=", "template-zone=" ])
     except getopt.GetoptError, err:
         print str(err)
         usage()
@@ -137,12 +141,25 @@ def main():
             workspace = arg
         elif opt in [ "-l", "--components" ]:
             components_arg = arg
+        elif opt in [ "--make" ]:
+            make_arg = True
+        elif opt in [ "--component" ]:
+            component_arg = arg
+        elif opt in [ "--template-zone" ]:
+            template_zone = arg
         elif opt in [ "-d", "--debug" ]:
             debug = sys.stdout
         else:
             assert False, "unknown option"
 
     component_paths = FindComponentPaths(workspace, debug)
+
+    if make_arg:
+        if template_zone:
+            print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
+        proc = subprocess.Popen(['gmake'] + args)
+	proc.wait()
+        sys.exit(0)
 
     if components_arg:
         if components_arg in [ 'path', 'paths', 'dir', 'dirs', 'directories' ]:

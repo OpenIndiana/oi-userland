@@ -40,18 +40,22 @@ BITS =			32
 PYTHON_VERSION =	2.6
 PYTHON_VERSIONS =	2.4 2.6
 
-TOOLS =		$(WS_TOP)/tools
 WS_LOGS =	$(WS_TOP)/logs
-MAKE_RULES =	$(WS_TOP)/make-rules
+WS_REPO =	$(WS_TOP)/repo
+WS_TOOLS =	$(WS_TOP)/tools
+WS_MAKE_RULES =	$(WS_TOP)/make-rules
+WS_COMPONENTS =	$(WS_TOP)/components
 
-PKG_REPO =	file://$(WS_TOP)/repo
+BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
+
+PKG_REPO =	file:$(WS_REPO)
 PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype-$(MACH)
 
 # work around _TIME, _DATE, embedded date chatter in component builds
 # to use, set TIME_CONSTANT in the component Makefile and add $(CONSTANT_TIME)
 # to the appropriate {CONFIGURE|BUILD|INSTALL}_ENV
-CONSTANT_TIME =		LD_PRELOAD_32=$(TOOLS)/time-$(MACH32).so
-CONSTANT_TIME +=	LD_PRELOAD_64=$(TOOLS)/time-$(MACH64).so
+CONSTANT_TIME =		LD_PRELOAD_32=$(WS_TOOLS)/time-$(MACH32).so
+CONSTANT_TIME +=	LD_PRELOAD_64=$(WS_TOOLS)/time-$(MACH64).so
 CONSTANT_TIME +=	TIME_CONSTANT=$(TIME_CONSTANT)
 
 # set MACH from uname -p to either sparc or i386
