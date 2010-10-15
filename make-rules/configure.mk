@@ -55,7 +55,7 @@ CONFIGURE_OPTIONS += CC="$(CC)"
 CONFIGURE_OPTIONS += CXX="$(CCC)"
 CONFIGURE_OPTIONS.32 += --bindir=/usr/bin
 CONFIGURE_OPTIONS.32 += --libdir=/usr/lib
-CONFIGURE_OPTIONS.64 = --bindir=/usr/bin/$(MACH64)
+CONFIGURE_OPTIONS.64 += --bindir=/usr/bin/$(MACH64)
 CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/$(MACH64)
 
 $(COMPONENT_SRC)/build-$(MACH32)/.configured:	BITS=32
@@ -71,7 +71,7 @@ $(COMPONENT_SRC)/build-%/.configured:	$(COMPONENT_SRC)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
 	$(COMPONENT_PRE_CONFIGURE_ACTION)
 	(cd $(@D) ; $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) \
-		../configure $(CONFIGURE_OPTIONS) $(CONFIGURE_OPTIONS.$(BITS)))
+		../configure $(CONFIGURE_OPTIONS))
 	$(COMPONENT_POST_CONFIGURE_ACTION)
 	$(TOUCH) $@
 

@@ -36,12 +36,14 @@ $(COMPONENT_SRC)/.%ed:	%
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $<
 	$(TOUCH) $@
 
-$(COMPONENT_ARCHIVE):
+$(COMPONENT_ARCHIVE):	Makefile
 	$(FETCH) --file $@ \
 		$(COMPONENT_ARCHIVE_URL:%=--url %) \
 		$(COMPONENT_ARCHIVE_HASH:%=--hash %)
+	$(TOUCH) $@
 
-$(COMPONENT_SRC)/.unpacked:	$(COMPONENT_ARCHIVE)
+$(COMPONENT_SRC)/.unpacked:	$(COMPONENT_ARCHIVE) Makefile $(PATCHES)
+	$(RM) -r $(COMPONENT_SRC)
 	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE)
 	$(TOUCH) $@
 
