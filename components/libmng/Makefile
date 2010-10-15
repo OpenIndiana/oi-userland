@@ -76,14 +76,12 @@ install:	$(INSTALL_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 
-REQUIRED_TOOL +=	/opt/sunstudio12.1/prod/bin/CC
-REQUIRED_TOOL +=	/opt/sunstudio12.1/prod/bin/cc
 REQUIRED_TOOL +=	/sbin/uname
 REQUIRED_TOOL +=	/usr/bin/aclocal-1.10
-REQUIRED_TOOL +=	/usr/bin/amd64/ld
-REQUIRED_TOOL +=	/usr/bin/amd64/nm
-REQUIRED_TOOL +=	/usr/bin/amd64/sort
-REQUIRED_TOOL +=	/usr/bin/amd64/strip
+REQUIRED_TOOL +=	/usr/bin/$(MACH64)/ld
+REQUIRED_TOOL +=	/usr/bin/$(MACH64)/nm
+REQUIRED_TOOL +=	/usr/bin/$(MACH64)/sort
+REQUIRED_TOOL +=	/usr/bin/$(MACH64)/strip
 REQUIRED_TOOL +=	/usr/bin/arch
 REQUIRED_TOOL +=	/usr/bin/autoconf
 REQUIRED_TOOL +=	/usr/bin/autom4te
@@ -107,7 +105,7 @@ REQUIRED_TOOL +=	/usr/bin/gsed
 REQUIRED_TOOL +=	/usr/bin/gtar
 REQUIRED_TOOL +=	/usr/bin/gzip
 REQUIRED_TOOL +=	/usr/bin/hostname
-REQUIRED_TOOL +=	/usr/bin/i86/ksh93
+REQUIRED_TOOL +=	/usr/bin/$(MACH32)/ksh93
 REQUIRED_TOOL +=	/usr/bin/ld
 REQUIRED_TOOL +=	/usr/bin/libtoolize
 REQUIRED_TOOL +=	/usr/bin/ln
@@ -129,6 +127,8 @@ REQUIRED_TOOL +=	/usr/gnu/bin/m4
 REQUIRED_TOOL +=	/usr/gnu/bin/mkdir
 REQUIRED_TOOL +=	/usr/gnu/bin/sort
 REQUIRED_TOOL +=	/usr/gnu/bin/uname
+REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/cc
+REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/CC
 
 REQUIRED_FILE +=	/usr/include/jpeglib.h
 REQUIRED_FILE +=	/usr/include/lcms/lcms.h
