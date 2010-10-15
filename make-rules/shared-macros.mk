@@ -26,6 +26,9 @@ PATH=/usr/bin:/usr/gnu/bin
 CONSOLIDATION =	userland
 PUBLISHER =	$(CONSOLIDATION)-build
 
+IS_GLOBAL_ZONE =	$(shell /usr/sbin/zoneadm list | grep -c global)
+ROOT =			/
+
 # get the most recent build number from the last mercurial tag
 LAST_HG_TAG =	$(shell hg tags -q | head -2 | tail -1)
 LAST_BUILD_NUM = $(LAST_HG_TAG:build-%=%)
@@ -34,6 +37,7 @@ OS_VERSION =		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 BUILD_NUM =		0.$(shell expr $(LAST_BUILD_NUM) + 1)
 BUILD_VERSION =		$(OS_VERSION)-$(BUILD_NUM)
+
 
 COMPILER =		studio
 BITS =			32

@@ -2,46 +2,97 @@
 	    Getting started with the Userland Consolidation
 
 
-Building the bits
+Getting Started
+
+    This README provides a very brief overview of the gate, how to retrieve
+    a copy, and how to build it.  Detailed documentation about the Userland
+    gate can be found in the 'doc' directory.  Questions or comments about
+    the gate can be addressed to userland-discuss@opensolaris.org.
+
+Overview
 
     The Userland consolidation maintains a Mercurial gate at
-    
+
         ssh://anon@hg.opensolaris.org//hg/userland/gate
-        
+
     This gate contains build recipies, patches, IPS manifests, etc. necessary
     to download, prep, build, test, package and publish open source software.
-    In order to build the contents of the Userland gate, you need to clone it.
-    Since you are reading this, you probably already have, but in any event
-    you can do so with the following command
-    
-    $ hg clone ssh://anon@hg.opensolaris.org//hg/userland/gate /scratch/clone
-    
-    In order to build the bits either individually or collectively, you must
-    set the WS_TOP environment variable to point to the top of your workspace.
-    
-    $ export WS_TOP=/scratch/clone
-    
-    To build and publish the entire contents of the gate, you can use
-    
-    $ cd /scratch/clone
-    $ gmake publish
-    
-    To build and publish a specific component you need to initialize the
-    workspace by building the tools and creating a repository to publish
-    your results in.  The easiest way to do this is to
-    
-    $ cd /scratch/clone
-    $ gmake setup
-    
-    Once you have initialize the the workspace, you can build individual
-    components by
-    
-    $ cd /scratch/clone/components/(component)
-    $ gmake publish
-    
-    All of the bits are are built will be published to the repository created
-    by the setup step (file:///scratch/clone/repo/)  If you build the entire
-    contents of the gate, individual build logs for each component will be
-    located at /scratch/clone/logs/(target):(component).log
+    The build infrastructure is similiar to that of the SFW consolidation in
+    that it makes use of herarchical Makefiles which provide dependency and
+    recipe information for building the components.  In order to build the
+    contents of the Userland gate, you need to clone it.  Since you are
+    reading this, you probably already have.
 
+Getting the Bits
 
+    As mentioned, the gate is stored in a Mercurial repository.  In order to
+    build or develop in the gate, you will need to clone it.  You can do so
+    with the following command
+    
+      $ hg clone ssh://anon@hg.opensolaris.org//hg/userland/gate /scratch/clone
+
+    This will create a replica of the various pieces that are checked into the
+    source code management system, but it does not retrieve the community
+    source archives associated with the gate content.  To download the
+    community source associated with your cloned workspace, you will need to
+    execute the following:
+
+      $ export WS_TOP=/scratch/clone
+      $ cd /scratch/clone/components
+      $ gmake download
+
+    This will use GNU make and the downloading tool in the gate to walk through
+    all of the component directories downloading and validating the community
+    source archives from the gate machine or their canonical source repository.
+
+    There are two variation to this that you may find interesting.  First, you
+    can cause gmake(1) to perform it's work in parallel by adding '-j (jobs)'
+    to the command line.  Second, if you are only interested in working on a
+    particular component, you can change directories to that component's
+    directory and use 'gmake download' from that to only get it's source
+    archive.
+
+Building the Bits.
+
+    You can build individual components or the contents of the entire gate.
+    Regardless of how you build the gate, you must set WS_TOP in the calling
+    environment to point to the top of your workspace. Ex:
+
+      $ export WS_TOP=/scratch/clone
+
+  Component build
+
+    If you are only working on a single component, you can just build it using
+    following:
+
+      setup the workspace for building components
+
+        $ cd ${WS_TOP}/components ; gmake setup
+
+      build the individual component
+
+        $ cd (component-dir) ; gmake publish
+
+  Complete Top Down build  
+
+    Complete top down builds are also possible by simply running
+
+      $ cd ${WS_TOP}/components
+      $ gmake package-install
+
+    The 'package-install' target will build each component, publish it to the
+    workspace IPS repo and install it in the running environment.  As a result,
+    it is strongly recommended that you only perform complete top down builds
+    in a zone.  Tools to help facilitate build zone creation will be integrated
+    shortly.  If the zone you create to build your workspace in does not have
+    networking enabled, you can pre-download any community source archives into
+    your workspace from the global with:
+
+      $ cd ${WS_TOP}/components
+      $ gmake download
+
+  You can add parallelism to your builds by adding '-j (jobs)' to your gmake
+  command line arguments.
+
+  The gate should only incrementally build what it needs to based on what has
+  changed since you last built it.

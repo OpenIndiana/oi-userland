@@ -25,7 +25,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.7.0-P2
 IPS_PKG_NAME =		network/dns/bind
-COMPONENT_CLASSIFICATION="Applications/Internet utility"
+COMPONENT_CLASSIFICATION="Applications/Internet"
 COMPONENT_DESCRIPTION=	"Berkeley Internet Name Domain server and utilities"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL =	http://www.isc.org/software/bind

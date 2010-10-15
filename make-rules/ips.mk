@@ -39,6 +39,7 @@ PKGDEPEND =	/usr/bin/pkgdepend
 PKGFMT =	/usr/bin/pkgfmt
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 PKGSEND =	/usr/bin/pkgsend
+PKGLINT =	/usr/bin/pkglint
 
 # Package headers should all pretty much follow the same format
 METADATA_TEMPLATE =		$(WS_TOP)/transforms/manifest-metadata-template
@@ -95,11 +96,14 @@ COPYRIGHT_FILE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
 ifeq	($(IPS_PKG_NAME),)
 	IPS_PKG_NAME =	$(COMPONENT_NAME)
 endif
+ifeq	($(COMPONENT_SUMMARY),)
+	COMPONENT_SUMMARY =	$(COMPONENT_DESCRIPTION)
+endif
 IPS_COMPONENT_VERSION =	$(COMPONENT_VERSION)
 
 .DEFAULT:		publish
 
-.SECONDARY:		$(GENERATED).fdeps
+.SECONDARY:
 
 publish:		install $(COMPONENT_SRC)/.published
 
@@ -152,24 +156,31 @@ $(COMBINED).p5m:	canonical-manifests
 	cat $(CANONICAL_MANIFESTS) | $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
  		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u | $(PKGFMT) >$@
 
-$(MANIFEST_BASE)-%.compare:		$(MANIFEST_BASE)-%.p5m
+$(MANIFEST_BASE)-%.compare:		$(MANIFEST_BASE)-%.p5m canonical-manifests
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $(COMPARISON_TRANSFORMS) $< >$@
 
 manifest-compare:	$(COMBINED).compare $(GENERATED).compare
 	@echo "Manifest comparison"
 	@pkgdiff $(GENERATED).compare $(COMBINED).compare
 
+$(MANIFEST_BASE)-%.linted:	$(MANIFEST_BASE)-%.resolved
+	@echo "Linting $(@:$(MANIFEST_BASE)-%.linted=%) manifest"
+	$(PKGLINT) $<
+	$(TOUCH) $@
+
+manifest-checks:	manifest-compare $(PUBLISHED:%.published=%.linted)
+
 # mogrify the canonical manifest(s) 
 #
-$(MANIFEST_BASE)-%.resolved:	%.p5m manifest-compare
+$(MANIFEST_BASE)-%.resolved:	%.p5m canonical-manifests
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< $(PUBLISH_TRANSFORMS) >$@
 
-$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.resolved
+$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.resolved manifest-checks
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
 		-d $(PROTO_DIR) -d . $<
 	$(TOUCH) $@
 
-$(COMPONENT_SRC)/.published:	manifest-compare $(PUBLISHED)
+$(COMPONENT_SRC)/.published:	$(PUBLISHED)
 	$(TOUCH) $@
 
 print-package-names:	canonical-manifests
@@ -182,7 +193,19 @@ print-package-paths:	canonical-manifests
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
  		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
-canonical-manifests:	$(CANONICAL_MANIFESTS)
+install-packages:	publish
+	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
+	    cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
+ 		sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | sort -u | \
+		(cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
+	else ; \
+	    echo "unsafe to install package(s) automatically" ; \
+        fi
+
+$(MOGRIFIED):	install
+
+canonical-manifests:	$(CANONICAL_MANIFESTS) Makefile $(PATCHES)
 ifeq	($(strip $(CANONICAL_MANIFESTS)),)
 	# If there were no canonical manifests in the workspace, nothing will
 	# be published and we should fail.  A sample manifest can be generated
@@ -199,5 +222,8 @@ required-pkgs.mk:	Makefile
 	@echo "generating $@ from Makefile REQUIRED_* data"
 	@pkg search -H -l '<$(DEPENDS:%=% OR) /bin/true>' \
 		| sed -e 's/pkg:\/\(.*\)@.*/REQUIRED_PKGS += \1/g' >$@
+
+pre-prep:	required-pkgs.mk
+
 
 CLEAN_PATHS +=	required-pkgs.mk

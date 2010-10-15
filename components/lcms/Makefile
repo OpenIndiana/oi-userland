@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lcms
@@ -131,3 +132,5 @@ REQUIRED_FILE +=	/usr/lib/$(MACH64)/libjpeg.so
 REQUIRED_FILE +=	/usr/lib/$(MACH64)/libtiff.so
 REQUIRED_FILE +=	/usr/lib/libjpeg.so
 REQUIRED_FILE +=	/usr/lib/libtiff.so
+
+include ../../make-rules/depend.mk
