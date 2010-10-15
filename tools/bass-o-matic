@@ -158,8 +158,8 @@ def main():
         if template_zone:
             print "using template zone %s to create a build environment for %s to run '%s'" % (template_zone, component_arg, ['gmake'] + args)
         proc = subprocess.Popen(['gmake'] + args)
-	proc.wait()
-        sys.exit(0)
+	rc = proc.wait()
+        sys.exit(rc)
 
     if components_arg:
         if components_arg in [ 'path', 'paths', 'dir', 'dirs', 'directories' ]:
