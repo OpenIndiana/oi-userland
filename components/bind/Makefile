@@ -117,8 +117,8 @@ REQUIRED_TOOL +=	/usr/bin/xml2-config
 REQUIRED_TOOL +=	/usr/gnu/bin/as
 REQUIRED_TOOL +=	/usr/gnu/bin/echo
 REQUIRED_TOOL +=	/usr/gnu/bin/etags
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/cc
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/CC
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/cc
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/CC
 
 REQUIRED_FILE +=	/lib/$(MACH64)/libc.so
 REQUIRED_FILE +=	/lib/$(MACH64)/libcrypto.so

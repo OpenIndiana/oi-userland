@@ -127,8 +127,8 @@ REQUIRED_TOOL +=	/usr/gnu/bin/m4
 REQUIRED_TOOL +=	/usr/gnu/bin/mkdir
 REQUIRED_TOOL +=	/usr/gnu/bin/sort
 REQUIRED_TOOL +=	/usr/gnu/bin/uname
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/cc
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/CC
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/cc
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/CC
 
 REQUIRED_FILE +=	/usr/include/jpeglib.h
 REQUIRED_FILE +=	/usr/include/lcms/lcms.h
