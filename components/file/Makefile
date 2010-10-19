@@ -94,8 +94,8 @@ REQUIRED_TOOL +=	/usr/gnu/bin/as
 REQUIRED_TOOL +=	/usr/gnu/bin/echo
 REQUIRED_TOOL +=	/usr/gnu/bin/m4
 REQUIRED_TOOL +=	/usr/gnu/bin/mkdir
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/cc
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/CC
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/cc
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/CC
 
 REQUIRED_FILE +=	/lib/$(MACH64)/libc.so
 REQUIRED_FILE +=	/lib/$(MACH64)/libm.so

@@ -64,7 +64,7 @@ REQUIRED_TOOL +=	/usr/bin/sort
 REQUIRED_TOOL +=	/usr/bin/touch
 REQUIRED_TOOL +=	/usr/lib/python2.4/pycc
 REQUIRED_TOOL +=	/usr/lib/python2.6/pycc
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/cc
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/cc
 
 REQUIRED_FILE +=	/lib/libc.so
 REQUIRED_FILE +=	/usr/include/ctype.h

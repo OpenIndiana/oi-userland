@@ -81,14 +81,19 @@ INSTALL_32 =		$(COMPONENT_SRC)/build-$(MACH32)/.installed
 INSTALL_64 =		$(COMPONENT_SRC)/build-$(MACH64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
 
-SPRO_ROOT =	/opt/sunstudio12.1
+# BUILD_TOOLS is the root of all tools not normally installed on the system.
+BUILD_TOOLS =	/ws/onnv-tools
+
+SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
+SPRO_VROOT =	$(SPRO_ROOT)/SS12
+
 GCC_ROOT =	/usr/gnu
 
-CC.studio.32 =	$(SPRO_ROOT)/bin/cc -m32
-CCC.studio.32 =	$(SPRO_ROOT)/bin/CC -m32
+CC.studio.32 =	$(SPRO_VROOT)/bin/cc -m32
+CCC.studio.32 =	$(SPRO_VROOT)/bin/CC -m32
 
-CC.studio.64 =	$(SPRO_ROOT)/bin/cc -m64
-CCC.studio.64 =	$(SPRO_ROOT)/bin/CC -m64
+CC.studio.64 =	$(SPRO_VROOT)/bin/cc -m64
+CCC.studio.64 =	$(SPRO_VROOT)/bin/CC -m64
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/cc -m32
 CCC.gcc.32 =	$(GCC_ROOT)/bin/CC -m32

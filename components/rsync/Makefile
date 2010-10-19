@@ -80,7 +80,7 @@ REQUIRED_TOOL +=	/usr/bin/sort
 REQUIRED_TOOL +=	/usr/bin/touch
 REQUIRED_TOOL +=	/usr/bin/tr
 REQUIRED_TOOL +=	/usr/perl5/bin/perl
-REQUIRED_TOOL +=	$(SPRO_ROOT)/bin/cc
+REQUIRED_TOOL +=	$(SPRO_VROOT)/bin/cc
 
 REQUIRED_FILE +=	/lib/libnsl.so
 REQUIRED_FILE +=	/lib/libsec.so
