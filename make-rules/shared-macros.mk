@@ -55,6 +55,11 @@ BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 PKG_REPO =	file:$(WS_REPO)
 PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype-$(MACH)
 
+SFWBIN =	/usr/sfw/bin
+SFWLIB =	/usr/sfw/lib
+PROTOSFWBIN =	$(PROTO_DIR)/$(SFWBIN)
+PROTOSFWLIB =	$(PROTO_DIR)/$(SFWLIB)
+
 # work around _TIME, _DATE, embedded date chatter in component builds
 # to use, set TIME_CONSTANT in the component Makefile and add $(CONSTANT_TIME)
 # to the appropriate {CONFIGURE|BUILD|INSTALL}_ENV
@@ -85,7 +90,7 @@ INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
 BUILD_TOOLS =	/ws/onnv-tools
 
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
-SPRO_VROOT =	$(SPRO_ROOT)/SS12
+SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
 
 GCC_ROOT =	/usr/gnu
 
@@ -125,4 +130,7 @@ TOUCH =		/usr/bin/touch
 MKDIR =		/bin/mkdir -p
 RM =		/bin/rm -f
 CP =		/bin/cp -f
+LN =		/bin/ln
+SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
+INSTALL =	/usr/bin/ginstall
