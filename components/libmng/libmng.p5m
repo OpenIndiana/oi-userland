@@ -20,17 +20,6 @@
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 #
-
-set name=pkg.fmri \
-    value=pkg:/library/libmng@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description value="$(COMPONENT_DESCRIPTION) "
-set name=pkg.summary value="$(COMPONENT_SUMMARY) "
-set name=info.classification \
-    value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION) "
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set variant.arch=$(ARCH)
 license LICENSE license="BSD-Like"
 dir path=usr
 dir path=usr/include
@@ -43,29 +32,24 @@ dir path=usr/share
 dir path=usr/share/man
 dir path=usr/share/man/man3
 dir path=usr/share/man/man5
-file path=usr/include/libmng/libmng.h
-file path=usr/include/libmng/libmng_conf.h
-file path=usr/include/libmng/libmng_types.h
-file path=usr/lib/$(MACH64)/libmng.la variant.arch=$(ARCH)
-file path=usr/lib/$(MACH64)/libmng.so.1.0.0 variant.arch=$(ARCH)
-#file path=usr/lib/$(MACH64)/llib-lmng.ln
-#file path=usr/lib/$(MACH64)/pkgconfig/libmng.pc variant.arch=$(ARCH)
-file path=usr/lib/libmng.la variant.arch=$(ARCH)
-file path=usr/lib/libmng.so.1.0.0 variant.arch=$(ARCH)
-#file path=usr/lib/llib-lmng
-#file path=usr/lib/llib-lmng.ln
-#file path=usr/lib/pkgconfig/libmng.pc
-file path=usr/share/man/man3/libmng.3
-file path=usr/share/man/man5/jng.5
-file path=usr/share/man/man5/mng.5
+file NOHASH path=usr/include/libmng/libmng.h
+file NOHASH path=usr/include/libmng/libmng_conf.h
+file NOHASH path=usr/include/libmng/libmng_types.h
+file NOHASH path=usr/lib/$(MACH64)/libmng.la variant.arch=$(ARCH)
+file NOHASH path=usr/lib/$(MACH64)/libmng.so.1.0.0 variant.arch=$(ARCH)
+#file NOHASH path=usr/lib/$(MACH64)/llib-lmng.ln
+#file NOHASH path=usr/lib/$(MACH64)/pkgconfig/libmng.pc variant.arch=$(ARCH)
+file NOHASH path=usr/lib/libmng.la variant.arch=$(ARCH)
+file NOHASH path=usr/lib/libmng.so.1.0.0 variant.arch=$(ARCH)
+#file NOHASH path=usr/lib/llib-lmng
+#file NOHASH path=usr/lib/llib-lmng.ln
+#file NOHASH path=usr/lib/pkgconfig/libmng.pc
+file NOHASH path=usr/share/man/man3/libmng.3
+file NOHASH path=usr/share/man/man5/jng.5
+file NOHASH path=usr/share/man/man5/mng.5
 link path=usr/lib/$(MACH64)/libmng.so target=libmng.so.1.0.0 \
     variant.arch=$(ARCH)
 link path=usr/lib/$(MACH64)/libmng.so.1 target=libmng.so.1.0.0 \
     variant.arch=$(ARCH)
 link path=usr/lib/libmng.so target=libmng.so.1.0.0
 link path=usr/lib/libmng.so.1 target=libmng.so.1.0.0
-depend fmri=pkg:/image/library/libjpeg type=require
-depend fmri=pkg:/library/lcms type=require
-depend fmri=pkg:/library/zlib type=require
-depend fmri=pkg:/system/library/math type=require
-depend fmri=pkg:/system/library type=require

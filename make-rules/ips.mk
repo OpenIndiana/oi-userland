@@ -109,76 +109,46 @@ publish:		install $(COMPONENT_SRC)/.published
 
 sample-manifest:	$(GENERATED).p5m
 
-#
-# Rules for generating a manifest automatically.  Generated manifests will
-# contain the following:
-#    copyright - template copyright information
-#    metadata  - mogrified template metadata
-#    actions   - "normalized" actions for the paths to be installed.
-#    depends   - automatically generated dependencies
-#
-
-# transform template metadata into slightly more package specific metadata.
-$(GENERATED).metadata:	$(METADATA_TEMPLATE) install
-	$(PKGMOGRIFY) -D IPS_PKG_NAME=$(IPS_PKG_NAME) $< | \
+$(GENERATED).p5m:	install
+	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
+	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) >$@
 
-# generate actions from the proto dir
-$(GENERATED).generate:	install
-	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) >$@
+# copy the canonical manifest(s) to the build tree
+$(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
+	cat $(METADATA_TEMPLATE) $< >$@
 
-# convert actions to a "normalized" format
-$(GENERATED).actions:	$(GENERATED).generate
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< $(GENERATE_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) >$@
+# mogrify the manifest
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(METADATA_TEMPLATE) canonical-manifests
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $(METADATA_TEMPLATE) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
-# generate dependencies
-$(MANIFEST_BASE)-%.fdeps:	$(MANIFEST_BASE)-%.generate
-	$(PKGDEPEND) generate $(PKG_OPTIONS) $< $(PROTO_DIR) >$@
+# generate dependencies, drop variant.arch in set and depend actions because
+# "pkgdepend resolve" fails when it's present.
+$(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mogrified
+	$(PKGDEPEND) generate -m $< $(PROTO_DIR) | \
+	$(PKGMOGRIFY) /dev/fd/0 $(WS_TOP)/transforms/drop-variant.arch >$@
 
-$(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.fdeps
-	$(PKGDEPEND) resolve -o $< | sed -e '1d' >$@
+# resolve dependencies, prepend the mogrified manifest, less the unresolved
+# dependencies to the result.
+$(MANIFEST_BASE)-%.resolved:	$(MANIFEST_BASE)-%.depend
+	$(PKGMOGRIFY) $(@:%.resolved=%.mogrified) \
+		$(WS_TOP)/transforms/drop-unresolved-dependencies | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+	$(PKGDEPEND) resolve -o $< | sed -e '1d' >>$@
 
-# generate a complete manifest from the pieces
-$(GENERATED).p5m:	$(GENERATED).metadata $(GENERATED).actions \
-			$(GENERATED).depend
-	cat $(COPYRIGHT_TEMPLATE) $(GENERATED).metadata $(GENERATED).actions \
-	    $(GENERATED).depend >$@
-
-#
-# Rules to generate a combined manifest from the canonical manifest(s) checked
-# into the workspace.
-#
-
-# Combine the canonical manifest(s) for this component and "normalize" them
-# for comparison.
-$(COMBINED).p5m:	canonical-manifests
-	cat $(CANONICAL_MANIFESTS) | $(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u | $(PKGFMT) >$@
-
-$(MANIFEST_BASE)-%.compare:		$(MANIFEST_BASE)-%.p5m canonical-manifests
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $(COMPARISON_TRANSFORMS) $< >$@
-
-manifest-compare:	$(COMBINED).compare $(GENERATED).compare
-	@echo "Manifest comparison"
-	@pkgdiff $(GENERATED).compare $(COMBINED).compare
-
+# lint the manifest before we publish with it.
 $(MANIFEST_BASE)-%.linted:	$(MANIFEST_BASE)-%.resolved
-	@echo "Linting $(@:$(MANIFEST_BASE)-%.linted=%) manifest"
-	$(PKGLINT) $<
-	$(TOUCH) $@
+	@echo "VALIDATING MANIFEST CONTENT: $<"
+	PYTHONPATH=$(WS_TOP)/tools/python $(PKGLINT) -f $(WS_TOP)/tools/pkglintrc $<
+	$(PKGFMT) <$< >$@
 
-manifest-checks:	manifest-compare $(PUBLISHED:%.published=%.linted)
-
-# mogrify the canonical manifest(s) 
-#
-$(MANIFEST_BASE)-%.resolved:	%.p5m canonical-manifests
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $< $(PUBLISH_TRANSFORMS) >$@
-
-$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.resolved manifest-checks
+# published
+$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.linted
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
 		-d $(PROTO_DIR) -d . $<
-	$(TOUCH) $@
+	$(PKGFMT) <$< >$@
 
 $(COMPONENT_SRC)/.published:	$(PUBLISHED)
 	$(TOUCH) $@
