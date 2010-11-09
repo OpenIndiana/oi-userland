@@ -20,16 +20,6 @@
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri \
-    value=pkg:/file/file@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.description value="$(COMPONENT_DESCRIPTION) "
-set name=pkg.summary value="$(COMPONENT_SUMMARY) "
-set name=info.classification \
-    value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION) "
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set variant.arch=$(ARCH)
 license COPYING license="BSD-like"
 dir path=usr
 dir path=usr/bin
@@ -44,27 +34,22 @@ dir path=usr/share/man/man3
 dir path=usr/share/man/man4
 dir path=usr/share/man/man5
 dir path=usr/share/misc
-file path=usr/bin/$(MACH64)/file variant.arch=$(ARCH)
-file path=usr/bin/file variant.arch=$(ARCH)
-file path=usr/include/magic.h
-file path=usr/lib/$(MACH64)/libmagic.a variant.arch=$(ARCH)
-file path=usr/lib/$(MACH64)/libmagic.la variant.arch=$(ARCH)
-file path=usr/lib/$(MACH64)/libmagic.so.1.0.0 variant.arch=$(ARCH)
-file path=usr/lib/libmagic.a variant.arch=$(ARCH)
-file path=usr/lib/libmagic.la variant.arch=$(ARCH)
-file path=usr/lib/libmagic.so.1.0.0 variant.arch=$(ARCH)
-file path=usr/share/man/man1/file.1
-file path=usr/share/man/man3/libmagic.3
-file path=usr/share/man/man4/magic.4
-file path=usr/share/misc/magic.mgc
+file NOHASH path=usr/bin/$(MACH64)/file variant.arch=$(ARCH)
+file NOHASH path=usr/bin/file variant.arch=$(ARCH)
+file NOHASH path=usr/include/magic.h
+file NOHASH path=usr/lib/$(MACH64)/libmagic.a variant.arch=$(ARCH)
+file NOHASH path=usr/lib/$(MACH64)/libmagic.la variant.arch=$(ARCH)
+file NOHASH path=usr/lib/$(MACH64)/libmagic.so.1.0.0 variant.arch=$(ARCH)
+file NOHASH path=usr/lib/libmagic.a variant.arch=$(ARCH)
+file NOHASH path=usr/lib/libmagic.la variant.arch=$(ARCH)
+file NOHASH path=usr/lib/libmagic.so.1.0.0 variant.arch=$(ARCH)
+file NOHASH path=usr/share/man/man1/file.1
+file NOHASH path=usr/share/man/man3/libmagic.3
+file NOHASH path=usr/share/man/man4/magic.4
+file NOHASH path=usr/share/misc/magic.mgc
 link path=usr/lib/$(MACH64)/libmagic.so target=libmagic.so.1.0.0 \
     variant.arch=$(ARCH)
 link path=usr/lib/$(MACH64)/libmagic.so.1 target=libmagic.so.1.0.0 \
     variant.arch=$(ARCH)
 link path=usr/lib/libmagic.so target=libmagic.so.1.0.0
 link path=usr/lib/libmagic.so.1 target=libmagic.so.1.0.0
-depend fmri=pkg:/library/zlib type=require
-depend fmri=pkg:/system/library type=require
-
-
-
