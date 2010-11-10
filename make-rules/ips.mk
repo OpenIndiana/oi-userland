@@ -147,7 +147,7 @@ $(MANIFEST_BASE)-%.linted:	$(MANIFEST_BASE)-%.resolved
 # published
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.linted
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
-		-d $(PROTO_DIR) -d . $<
+		-d $(PROTO_DIR) -d $(@D) -d . $<
 	$(PKGFMT) <$< >$@
 
 $(COMPONENT_SRC)/.published:	$(PUBLISHED)
