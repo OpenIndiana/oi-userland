@@ -112,10 +112,10 @@ CCC =		$(CCC.$(COMPILER).$(BITS))
 LD =		/usr/bin/ld
 
 PYTHON.2.4.32 =	/usr/bin/python2.4
-PYTHON.2.4.64 =	/usr/bin/amd64/python2.4
+PYTHON.2.4.64 =	/usr/bin/$(MACH64)/python2.4
 
 PYTHON.2.6.32 =	/usr/bin/python2.6
-PYTHON.2.6.64 =	/usr/bin/amd64/python2.6
+PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
