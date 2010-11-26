@@ -136,6 +136,7 @@ $(MANIFEST_BASE)-%.resolved:	$(MANIFEST_BASE)-%.depend
 	$(PKGMOGRIFY) $(@:%.resolved=%.mogrified) \
 		$(WS_TOP)/transforms/drop-unresolved-dependencies | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+	echo "depend fmri=consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation type=require">>$@
 	$(PKGDEPEND) resolve -o $< | sed -e '1d' >>$@
 
 # lint the manifest before we publish with it.
@@ -149,6 +150,9 @@ $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.linted
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
 		-d $(PROTO_DIR) -d $(@D) -d . $<
 	$(PKGFMT) <$< >$@
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $@ \
+			$(WS_TOP)/transforms/print-consolidation-depend | \
+ 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u > $(WS_INCORPORATIONS)/userland/$(@:$(MANIFEST_BASE)-%.published=%.fragment)
 
 $(COMPONENT_SRC)/.published:	$(PUBLISHED)
 	$(TOUCH) $@

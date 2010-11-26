@@ -49,6 +49,7 @@ WS_REPO =	$(WS_TOP)/repo
 WS_TOOLS =	$(WS_TOP)/tools
 WS_MAKE_RULES =	$(WS_TOP)/make-rules
 WS_COMPONENTS =	$(WS_TOP)/components
+WS_INCORPORATIONS =	$(WS_TOP)/incorporations
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
