@@ -21,27 +21,25 @@
 # Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
 #
 
-include make-rules/shared-macros.mk
+include $(WS_TOP)/make-rules/shared-macros.mk
+include $(WS_TOP)/make-rules/ips.mk
 
-SUBDIRS += components incorporations
+FRAGMENTS=	$(wildcard *.fragment)
 
-download:	TARGET = download
-prep:		TARGET = prep
-build:		TARGET = build
-install:	TARGET = install
-publish:	TARGET = publish
-validate:	TARGET = validate
-clean:		TARGET = clean
-clobber:	TARGET = clobber
-setup:		TARGET = setup
+userland.mogrified:	userland.p5m
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< $(PUBLISH_TRANSFORMS) | \
+                sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+	
+userland.published:	userland.mogrified $(FRAGMENTS)
+	cat userland.mogrified $(FRAGMENTS) >$@
+	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest -d . $@
 
-.DEFAULT:	publish
+install:
 
-download setup prep build install publish validate clean clobber: $(SUBDIRS)
+publish-incorporation:	userland.published
 
-$(SUBDIRS):	FORCE
-	+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)
+clean::
+	$(RM) userland.mogrified userland.published
 
-incorporations:	components
-
-FORCE:
+clobber::	clean
+	$(RM) $(FRAGMENTS)
