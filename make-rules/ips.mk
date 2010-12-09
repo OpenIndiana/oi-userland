@@ -119,30 +119,30 @@ $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
 	cat $(METADATA_TEMPLATE) $< >$@
 
 # mogrify the manifest
-$(MANIFEST_BASE)-%.mogrified:	%.p5m $(METADATA_TEMPLATE) canonical-manifests
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $(METADATA_TEMPLATE) $< \
+$(MANIFEST_BASE)-%.mogrified:	%.p5m canonical-manifests
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # generate dependencies, drop variant.arch in set and depend actions because
 # "pkgdepend resolve" fails when it's present.
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mogrified
-	$(PKGDEPEND) generate -m $< $(PROTO_DIR) | \
-	$(PKGMOGRIFY) /dev/fd/0 $(WS_TOP)/transforms/drop-variant.arch >$@
+	$(PKGDEPEND) generate -m $< $(PROTO_DIR) >$@
 
 # resolve dependencies, prepend the mogrified manifest, less the unresolved
 # dependencies to the result.
 $(MANIFEST_BASE)-%.resolved:	$(MANIFEST_BASE)-%.depend
-	$(PKGMOGRIFY) $(@:%.resolved=%.mogrified) \
+	($(PKGMOGRIFY) $(@:%.resolved=%.mogrified) \
 		$(WS_TOP)/transforms/drop-unresolved-dependencies | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
-	echo "depend fmri=consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation type=require">>$@
-	$(PKGDEPEND) resolve -o $< | sed -e '1d' >>$@
+		sed -e '/^$$/d' -e '/^#.*$$/d' ; \
+	 $(PKGDEPEND) resolve -o $< | sed -e '1d') | uniq >$@
 
 # lint the manifest before we publish with it.
 $(MANIFEST_BASE)-%.linted:	$(MANIFEST_BASE)-%.resolved
 	@echo "VALIDATING MANIFEST CONTENT: $<"
-	PYTHONPATH=$(WS_TOP)/tools/python $(PKGLINT) -f $(WS_TOP)/tools/pkglintrc $<
+	PYTHONPATH=$(WS_TOOLS)/python $(PKGLINT) \
+		$(CANONICAL_REPO:%=-r % -c $(WS_LINT_CACHE)) \
+		-f $(WS_TOOLS)/pkglintrc $<
 	$(PKGFMT) <$< >$@
 
 # published
@@ -150,9 +150,6 @@ $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.linted
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
 		-d $(PROTO_DIR) -d $(@D) -d . $<
 	$(PKGFMT) <$< >$@
-	$(PKGMOGRIFY) $(PKG_OPTIONS) $@ \
-			$(WS_TOP)/transforms/print-consolidation-depend | \
- 		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u > $(WS_INCORPORATIONS)/userland/$(@:$(MANIFEST_BASE)-%.published=%.fragment)
 
 $(COMPONENT_SRC)/.published:	$(PUBLISHED)
 	$(TOUCH) $@

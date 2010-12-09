@@ -18,12 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/consolidation/userland/userland-incorporation@0.$(OS_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="userland consolidation incorporation "
-set name=pkg.description value="This incorporation constrains packages from the userland consolidation. "
+#
+# Legacy package information for renamed SUNWa2ps package
+#
+
+set name=pkg.fmri value=pkg:/SUNWa2ps@4.13,5.11-0.133
+set name=pkg.renamed value=true
+
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set variant.arch=$(ARCH)
+
 set name=variant.opensolaris.zone value=global value=nonglobal
+set name=variant.arch value=$(ARCH)
+
+depend fmri=print/lp/filter/a2ps@4.13-0.133 type=require

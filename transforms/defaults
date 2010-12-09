@@ -20,9 +20,23 @@
 #
 
 #
-# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
+# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
 #
+
+<transform dir path=etc$ -> default group sys>
+
+#
+# LP print service
+#
+<transform dir path=etc/lp/fd$ -> default owner root>
+<transform dir path=etc/lp/fd$ -> default mode 0755>
+<transform dir path=etc/lp(/.+){0,1}$ -> default owner lp>
+<transform dir path=etc/lp(/.+){0,1}$ -> default group lp>
+<transform dir path=etc/lp(/.+){0,1}$ -> default mode 0775>
+
+<transform dir path=usr$ -> default group sys>
+<transform dir path=usr/share$ -> default group sys>
+<transform dir path=usr/share/locale(/.+){0,1}$ -> default group other>
 
 #
 # programs & shared objects should generally have mode 0555

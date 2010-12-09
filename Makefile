@@ -23,7 +23,7 @@
 
 include make-rules/shared-macros.mk
 
-SUBDIRS += components incorporations
+SUBDIRS += components
 
 download:	TARGET = download
 prep:		TARGET = prep
@@ -41,7 +41,5 @@ download setup prep build install publish validate clean clobber: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)
-
-incorporations:	components
 
 FORCE:

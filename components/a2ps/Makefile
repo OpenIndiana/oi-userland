@@ -53,8 +53,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	 ln -s ../../doc/make-authors.pl ; \
 	 ln -s ../../doc/translators.txt)
 
-PKGMOGRIFY_TRANSFORMS +=        $(WS_TOP)/transforms/libtool-drop
-
 SFWPROGS =	a2ps card composeglyphs fixnt fixps ogonkify pdiff psmandup \
 		psset texi2dvi4a2ps
 PROTOSFWLINKS = $(SFWPROGS:%=$(PROTOSFWBIN)/%)
