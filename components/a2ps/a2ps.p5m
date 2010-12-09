@@ -20,6 +20,15 @@
 #
 # Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
 #
+set name=pkg.fmri value=pkg:/print/lp/filter/a2ps@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) "
+set name=pkg.description value="$(COMPONENT_DESCRIPTION) "
+set name=info.classification value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION) "
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set variant.arch=$(ARCH)
+
 dir path=etc
 dir path=etc/gnu
 dir path=etc/lp
@@ -81,8 +90,8 @@ dir path=usr/share/man/man1
 dir path=usr/share/ogonkify
 dir path=usr/share/ogonkify/afm
 dir path=usr/share/ogonkify/fonts
-file NOHASH path=etc/gnu/a2ps-site.cfg preserve=true original_name=SUNWa2ps:etc/gnu/a2ps-site.cfg
-file NOHASH path=etc/gnu/a2ps.cfg preserve=true original_name=SUNWa2ps:etc/gnu/a2ps.cfg
+file NOHASH path=etc/gnu/a2ps-site.cfg mode=0644 preserve=true original_name=SUNWa2ps:etc/gnu/a2ps-site.cfg
+file NOHASH path=etc/gnu/a2ps.cfg mode=0644 preserve=true original_name=SUNWa2ps:etc/gnu/a2ps.cfg
 file NOHASH path=etc/lp/fd/a2ps.fd
 file NOHASH path=usr/bin/a2ps variant.arch=$(ARCH)
 file NOHASH path=usr/bin/card
@@ -108,7 +117,7 @@ link path=usr/sfw/bin/psset target=../../bin/psset
 link path=usr/sfw/bin/texi2dvi4a2ps target=../../bin/texi2dvi4a2ps
 file NOHASH path=usr/share/a2ps/README
 file NOHASH path=usr/share/a2ps/afm/fonts.map
-file NOHASH path=usr/share/a2ps/afm/make_fonts_map.sh
+file NOHASH path=usr/share/a2ps/afm/make_fonts_map.sh mode=0555
 file NOHASH path=usr/share/a2ps/afm/pbkd.afm
 file NOHASH path=usr/share/a2ps/afm/pbkdi.afm
 file NOHASH path=usr/share/a2ps/afm/pbkl.afm
@@ -288,7 +297,6 @@ file NOHASH path=usr/share/info/a2ps.info-3
 file NOHASH path=usr/share/info/a2ps.info-4
 file NOHASH path=usr/share/info/a2ps.info-5
 file NOHASH path=usr/share/info/a2ps.info-6
-file NOHASH path=usr/share/info/dir
 file NOHASH path=usr/share/info/ogonkify.info
 file NOHASH path=usr/share/info/regex.info
 file NOHASH path=usr/share/info/regex.info-1
@@ -384,7 +392,7 @@ legacy arch=$(ARCH) category=system \
 	name="a2ps - GNU Any to PostScript filter (root)" \
 	desc="a2ps - GNU Any to PostScript filter (root) 4.13b" \
 	hotline="Please contact your local service provider" \
-	pkg=SUNWa2psu variant.arch=$(ARCH) vendor="Oracle Corporation" \
+	pkg=SUNWa2psr variant.arch=$(ARCH) vendor="Oracle Corporation" \
 	version=11.11.0,REV=2010.09.30.04.23
 
 legacy arch=$(ARCH) category=system \

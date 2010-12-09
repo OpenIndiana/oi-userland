@@ -61,7 +61,7 @@ clean:	$(COMPONENT_DIRS:%=%.nosetup)
 	$(RM) components.mk depends.mk .profile
 
 clobber:	$(COMPONENT_DIRS:%=%.nosetup) clean
-	$(RM) -r $(WS_REPO) $(WS_LOGS)
+	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE)
 
 setup:	$(WS_LOGS) repo tools .profile
 
