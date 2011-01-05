@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011 Oracle and/or it's affiliates.  All rights reserved.
 #
 
 #
@@ -49,6 +49,8 @@
 #
 
 CONFIG_SHELL =	/bin/bash
+
+CONFIGURE_ENV = CONFIG_SHELL="$(CONFIG_SHELL)"
 
 CONFIGURE_OPTIONS += --prefix=/usr
 CONFIGURE_OPTIONS += CC="$(CC)"
