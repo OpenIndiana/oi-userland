@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -36,7 +36,7 @@ components.mk:	# Makefile # $(WS_TOP)/components
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --components=paths \
 		| sed -e 's;^$(shell pwd)/;COMPONENT_DIRS += ;g' >$@
 
-include components.mk
+-include components.mk
 
 
 download:		TARGET = download
@@ -98,6 +98,6 @@ depends.mk:	components.mk
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --components=depend \
 		| sed -e 's;$(shell pwd)/;;g' >$@
 
-include depends.mk
+-include depends.mk
 
 FORCE:

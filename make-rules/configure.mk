@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011 Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -45,20 +45,33 @@
 #
 # If component specific make targets need to be used for build or install, they
 # can be specified in
+
 #	COMPONENT_BUILD_TARGETS, COMPONENT_INSTALL_TARGETS
 #
 
 CONFIG_SHELL =	/bin/bash
 
+CONFIGURE_PREFIX =	/usr
+
+CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin/$(MACH64)
+CONFIGURE_LIBDIR.32 =	$(CONFIGURE_PREFIX)/lib
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
+CONFIGURE_MANDIR =	$(CONFIGURE_PREFIX)/share/man
+CONFIGURE_LOCALEDIR =	$(CONFIGURE_PREFIX)/share/locale
+# all texinfo documentation seems to go to /usr/share/info no matter what
+CONFIGURE_INFODIR =	/usr/share/info
+
 CONFIGURE_ENV = CONFIG_SHELL="$(CONFIG_SHELL)"
 
-CONFIGURE_OPTIONS += --prefix=/usr
 CONFIGURE_OPTIONS += CC="$(CC)"
 CONFIGURE_OPTIONS += CXX="$(CCC)"
-CONFIGURE_OPTIONS.32 += --bindir=/usr/bin
-CONFIGURE_OPTIONS.32 += --libdir=/usr/lib
-CONFIGURE_OPTIONS.64 += --bindir=/usr/bin/$(MACH64)
-CONFIGURE_OPTIONS.64 += --libdir=/usr/lib/$(MACH64)
+CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
+CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
+CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
+
+COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
 
 $(COMPONENT_SRC)/build-$(MACH32)/.configured:	BITS=32
 $(COMPONENT_SRC)/build-$(MACH64)/.configured:	BITS=64
@@ -89,6 +102,6 @@ $(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/build-%/.configured
 $(COMPONENT_SRC)/build-%/.installed:	$(COMPONENT_SRC)/build-%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) \
-			DESTDIR=$(PROTO_DIR) $(COMPONENT_INSTALL_TARGETS))
+			$(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@

@@ -18,16 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 $(COMPONENT_SRC)/build-%-2.6/.built:		PYTHON_VERSION=2.6
-$(COMPONENT_SRC)/build-%-2.4/.built:		PYTHON_VERSION=2.4
 $(COMPONENT_SRC)/build-$(MACH32)-%/.built:	BITS=32
 $(COMPONENT_SRC)/build-$(MACH64)-%/.built:	BITS=64
 
 $(COMPONENT_SRC)/build-%-2.6/.installed:	PYTHON_VERSION=2.6
-$(COMPONENT_SRC)/build-%-2.4/.installed:	PYTHON_VERSION=2.4
 $(COMPONENT_SRC)/build-$(MACH32)-%/.installed:	BITS=32
 $(COMPONENT_SRC)/build-$(MACH64)-%/.installed:	BITS=64
 
