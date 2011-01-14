@@ -18,21 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 UNPACK =	$(WS_TOOLS)/userland-unpack
 FETCH =		$(WS_TOOLS)/userland-fetch
 
 ARCHIVES += $(COMPONENT_ARCHIVE)
-CLEAN_PATHS += $(COMPONENT_SRC)
+CLEAN_PATHS += $(SOURCE_DIR)
 CLOBBER_PATHS += $(COMPONENT_ARCHIVE)
 
 PATCHES =	$(shell find . -type f -name '*.patch' | \
-			 sed -e 's;^\./;;' | grep -v $(COMPONENT_SRC) | sort)
-STAMPS =	$(PATCHES:%=$(COMPONENT_SRC)/.%ed)
+			 sed -e 's;^\./;;' | grep -v $(SOURCE_DIR) | sort)
+STAMPS =	$(PATCHES:%=$(SOURCE_DIR)/.%ed)
 
-$(COMPONENT_SRC)/.%ed:	%
+$(SOURCE_DIR)/.%ed:	%
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $<
 	$(TOUCH) $@
 
@@ -42,19 +42,19 @@ $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE):	Makefile
 		$(COMPONENT_ARCHIVE_HASH:%=--hash %)
 	$(TOUCH) $@
 
-$(COMPONENT_SRC)/.unpacked:	$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) Makefile $(PATCHES)
-	$(RM) -r $(COMPONENT_SRC)
+$(SOURCE_DIR)/.unpacked:	$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) Makefile $(PATCHES)
+	$(RM) -r $(SOURCE_DIR)
 	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
 	$(TOUCH) $@
 
-$(COMPONENT_SRC)/.patched:	$(COMPONENT_SRC)/.unpacked $(STAMPS)
+$(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.unpacked $(STAMPS)
 	$(TOUCH) $@
 
-$(COMPONENT_SRC)/.prep:	$(COMPONENT_SRC)/.patched
+$(SOURCE_DIR)/.prep:	$(SOURCE_DIR)/.patched
 	$(COMPONENT_PREP_ACTION)
 	$(TOUCH) $@
 
-prep::	$(COMPONENT_SRC)/.prep
+prep::	$(SOURCE_DIR)/.prep
 
 download::	$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
 

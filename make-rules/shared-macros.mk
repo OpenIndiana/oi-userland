@@ -55,7 +55,10 @@ WS_LINT_CACHE =	$(WS_TOP)/cache
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
 PKG_REPO =	file:$(WS_REPO)
-PROTO_DIR =	$(shell pwd)/$(COMPONENT_SRC)/installed-prototype-$(MACH)
+
+SOURCE_DIR =	$(shell pwd)/$(COMPONENT_SRC)
+BUILD_DIR =	$(shell pwd)/build
+PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
 SFWBIN =	/usr/sfw/bin
 SFWLIB =	/usr/sfw/lib
@@ -80,12 +83,12 @@ MACH32 =	$(MACH32_1:i386=i86)
 MACH64_1 =	$(MACH:sparc=sparcv9)
 MACH64 =	$(MACH64_1:i386=amd64)
 
-BUILD_32 =		$(COMPONENT_SRC)/build-$(MACH32)/.built
-BUILD_64 =		$(COMPONENT_SRC)/build-$(MACH64)/.built
+BUILD_32 =		$(BUILD_DIR)/$(MACH32)/.built
+BUILD_64 =		$(BUILD_DIR)/$(MACH64)/.built
 BUILD_32_and_64 =	$(BUILD_32) $(BUILD_64)
 
-INSTALL_32 =		$(COMPONENT_SRC)/build-$(MACH32)/.installed
-INSTALL_64 =		$(COMPONENT_SRC)/build-$(MACH64)/.installed
+INSTALL_32 =		$(BUILD_DIR)/$(MACH32)/.installed
+INSTALL_64 =		$(BUILD_DIR)/$(MACH64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.

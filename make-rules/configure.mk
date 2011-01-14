@@ -31,11 +31,11 @@
 # and define "build", "install" targets appropriate to building your component.
 # Ex:
 #
-# 	build:		$(COMPONENT_SRC)/build-$(MACH32)/.built \
-#	 		$(COMPONENT_SRC)/build-$(MACH64)/.built
+# 	build:		$(SOURCE_DIR)/build/$(MACH32)/.built \
+#	 		$(SOURCE_DIR)/build/$(MACH64)/.built
 # 
-#	install:	$(COMPONENT_SRC)/build-$(MACH32)/.installed \
-#	 		$(COMPONENT_SRC)/build-$(MACH64)/.installed
+#	install:	$(SOURCE_DIR)/build/$(MACH32)/.installed \
+#	 		$(SOURCE_DIR)/build/$(MACH64)/.installed
 #
 # Any additional pre/post configure, build, or install actions can be specified
 # in your make file by setting them in on of the following macros:
@@ -73,8 +73,8 @@ CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
 
-$(COMPONENT_SRC)/build-$(MACH32)/.configured:	BITS=32
-$(COMPONENT_SRC)/build-$(MACH64)/.configured:	BITS=64
+$(BUILD_DIR)/$(MACH32)/.configured:	BITS=32
+$(BUILD_DIR)/$(MACH64)/.configured:	BITS=64
 
 CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
@@ -82,16 +82,16 @@ CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 COMPONENT_INSTALL_TARGETS =	install
 
 # configure the unpacked source for building 32 and 64 bit version
-$(COMPONENT_SRC)/build-%/.configured:	$(COMPONENT_SRC)/.prep
+$(BUILD_DIR)/%/.configured:	$(SOURCE_DIR)/.prep
 	($(RM) -rf $(@D) ; $(MKDIR) $(@D))
 	$(COMPONENT_PRE_CONFIGURE_ACTION)
 	(cd $(@D) ; $(ENV) $(CONFIGURE_ENV) $(CONFIG_SHELL) \
-		../configure $(CONFIGURE_OPTIONS))
+		$(SOURCE_DIR)/configure $(CONFIGURE_OPTIONS))
 	$(COMPONENT_POST_CONFIGURE_ACTION)
 	$(TOUCH) $@
 
 # build the configured source
-$(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/build-%/.configured
+$(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(GMAKE) $(COMPONENT_BUILD_TARGETS))
@@ -99,9 +99,12 @@ $(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/build-%/.configured
 	$(TOUCH) $@
 
 # install the built source into a prototype area
-$(COMPONENT_SRC)/build-%/.installed:	$(COMPONENT_SRC)/build-%/.built
+$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) $(GMAKE) \
 			$(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
+
+clean::
+	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)
