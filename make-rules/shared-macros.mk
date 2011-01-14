@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -42,7 +42,7 @@ BUILD_VERSION =		$(OS_VERSION)-$(BUILD_NUM)
 COMPILER =		studio
 BITS =			32
 PYTHON_VERSION =	2.6
-PYTHON_VERSIONS =	2.4 2.6
+PYTHON_VERSIONS =	2.6
 
 WS_LOGS =	$(WS_TOP)/logs
 WS_REPO =	$(WS_TOP)/repo
@@ -112,9 +112,6 @@ CC =		$(CC.$(COMPILER).$(BITS))
 CCC =		$(CCC.$(COMPILER).$(BITS))
 
 LD =		/usr/bin/ld
-
-PYTHON.2.4.32 =	/usr/bin/python2.4
-PYTHON.2.4.64 =	/usr/bin/$(MACH64)/python2.4
 
 PYTHON.2.6.32 =	/usr/bin/python2.6
 PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6

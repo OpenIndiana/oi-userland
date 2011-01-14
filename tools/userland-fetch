@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # fetch.py - a file download utility
@@ -41,10 +41,7 @@ def validate(filename, hash):
 	except IOError:
 		return False
 
-	if (hash == None):
-		return True
-
-	algorithm, value = hash.split(':')
+	algorithm, hashvalue = hash.split(':')
 	try:
 		m = hashlib.new(algorithm)
 	except ValueError:
@@ -56,7 +53,7 @@ def validate(filename, hash):
 		if block == '':
 			break
 
-	return m.hexdigest() == value
+	return "%s:%s" % (algorithm, m.hexdigest())
 
 def download(url, filename = None):
 	src = None
@@ -158,30 +155,37 @@ def main():
 
 		if scheme in [ None, 'file' ]:
 			if os.path.exists(path) == False:
-				print "not found, skipping"
+				print "not found, skipping file copy"
 				continue
 			elif name != path:
 				if link_arg == False:
-					print "copying...",
+					print "\n    copying..."
 					shutil.copy2(path, name)
 				else:
-					print "linking...",
+					print "\n    linking..."
 					os.symlink(path, name)
 			else:
 				pass
 		elif scheme in [ 'http', 'https', 'ftp' ]:
-			print "downloading...",
+			print "\n    downloading...",
 			name = download(url, file_arg)
 			if name == None:
 				print "failed"
 				continue
 
-		print "validating...",
-		if validate(name, hash_arg):
+		print "\n    validating...",
+		if hash_arg == None:
+			print "skipping (no hash)"
+			sys.exit(0)
+			
+		realhash = validate(name, hash_arg)
+		if realhash == hash_arg:
 			print "ok"
 			sys.exit(0)
 		else:
-			print "corrupt"
+			print "corruption detected"
+			print "    expected: %s" % hash_arg
+			print "    actual:   %s" % realhash
 
 		try:
 			os.remove(name)
