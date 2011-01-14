@@ -21,26 +21,27 @@
 # Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-$(COMPONENT_SRC)/build-%-2.6/.built:		PYTHON_VERSION=2.6
-$(COMPONENT_SRC)/build-$(MACH32)-%/.built:	BITS=32
-$(COMPONENT_SRC)/build-$(MACH64)-%/.built:	BITS=64
+$(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
+$(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
-$(COMPONENT_SRC)/build-%-2.6/.installed:	PYTHON_VERSION=2.6
-$(COMPONENT_SRC)/build-$(MACH32)-%/.installed:	BITS=32
-$(COMPONENT_SRC)/build-$(MACH64)-%/.installed:	BITS=64
+$(BUILD_DIR)/%-2.6/.installed:	PYTHON_VERSION=2.6
+$(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
-BUILD_32 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH32)-%/.built)
-BUILD_64 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH64)-%/.built)
+BUILD_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
+BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 
-INSTALL_32 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH32)-%/.installed)
-INSTALL_64 = $(PYTHON_VERSIONS:%=$(COMPONENT_SRC)/build-$(MACH64)-%/.installed)
+INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 
 # build the configured source
-$(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/.prep
+$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(COMPONENT_SRC) ; $(ENV) $(PYTHON_ENV) \
-		$(PYTHON.$(BITS)) ./setup.py build --build-temp $(@D:$(COMPONENT_SRC)/%=%))
+	(cd $(SOURCE_DIR) ; $(ENV) $(PYTHON_ENV) \
+		$(PYTHON.$(BITS)) ./setup.py build \
+			--build-temp $(@D:$(BUILD_DIR)/%=%))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
@@ -50,9 +51,9 @@ $(COMPONENT_SRC)/build-%/.built:	$(COMPONENT_SRC)/.prep
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 
 # install the built source into a prototype area
-$(COMPONENT_SRC)/build-%/.installed:	$(COMPONENT_SRC)/build-%/.built
+$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(COMPONENT_SRC) ; $(ENV) $(PYTHON_ENV) \
+	(cd $(SOURCE_DIR) ; $(ENV) $(PYTHON_ENV) \
 		$(PYTHON.$(BITS)) ./setup.py install --root $(PROTO_DIR) \
 			--install-lib=$(PYTHON_LIB))
 	$(COMPONENT_POST_INSTALL_ACTION)

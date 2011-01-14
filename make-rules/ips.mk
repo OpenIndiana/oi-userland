@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -29,8 +29,8 @@
 # and define an "install" target appropriate to building your component.
 # Ex:
 #
-#	install:	$(COMPONENT_SRC)/build-$(MACH32)/.installed \
-#	 		$(COMPONENT_SRC)/build-$(MACH64)/.installed
+#	install:	$(BUILD_DIR)/build/$(MACH32)/.installed \
+#	 		$(BUILD_DIR)/build/$(MACH64)/.installed
 #
 # This set of rules makes the "publish" target the default target for make(1)
 #
@@ -81,7 +81,7 @@ PKG_OPTIONS +=		-D COMPONENT_SUMMARY=$(COMPONENT_SUMMARY)
 PKG_OPTIONS +=		-D COMPONENT_DESCRIPTION=$(COMPONENT_DESCRIPTION)
 PKG_OPTIONS +=		-D COMPONENT_CLASSIFICATION=$(COMPONENT_CLASSIFICATION)
 
-MANIFEST_BASE =		$(COMPONENT_SRC)/manifest-$(MACH)
+MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
 GENERATED =		$(MANIFEST_BASE)-generated
@@ -105,7 +105,7 @@ IPS_COMPONENT_VERSION =	$(COMPONENT_VERSION)
 
 .SECONDARY:
 
-publish:		install $(COMPONENT_SRC)/.published
+publish:		install $(BUILD_DIR)/.published
 
 sample-manifest:	$(GENERATED).p5m
 
@@ -151,7 +151,7 @@ $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.linted
 		-d $(PROTO_DIR) -d $(@D) -d . $<
 	$(PKGFMT) <$< >$@
 
-$(COMPONENT_SRC)/.published:	$(PUBLISHED)
+$(BUILD_DIR)/.published:	$(PUBLISHED)
 	$(TOUCH) $@
 
 print-package-names:	canonical-manifests

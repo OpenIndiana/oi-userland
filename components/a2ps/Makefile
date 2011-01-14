@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -45,11 +45,15 @@ CONFIGURE_OPTIONS  +=		--with-medium=letter
 
 # because viewpathing isn't quite right in this version of a2ps
 COMPONENT_PREP_ACTION = \
-	(cd $(@D) ; ln -s auxdir/mkinstalldirs)
+	(cd $(@D) ; ln -s $(SOURCE_DIR)/auxdir/mkinstalldirs)
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D)/doc ; \
-	 ln -s ../../doc/make-authors.pl ; \
-	 ln -s ../../doc/translators.txt)
+	 ln -s $(SOURCE_DIR)/doc/make-authors.pl ; \
+	 ln -s $(SOURCE_DIR)/doc/translators.txt) ; \
+	(cd $(@D)/sheets ; \
+	 for sheet in $(SOURCE_DIR)/sheets/*.ssh ; do ; \
+	     ln -s $$sheet ; \
+	 done)
 
 SFWPROGS =	a2ps card composeglyphs fixnt fixps ogonkify pdiff psmandup \
 		psset texi2dvi4a2ps
