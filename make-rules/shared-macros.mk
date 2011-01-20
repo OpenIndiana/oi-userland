@@ -60,6 +60,26 @@ SOURCE_DIR =	$(shell pwd)/$(COMPONENT_SRC)
 BUILD_DIR =	$(shell pwd)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
+USRDIR =	/usr
+BINDIR =	/bin
+LIBDIR =	/lib
+USRBINDIR =	$(USRDIR)/bin
+USRLIBDIR =	$(USRDIR)/lib
+USRSHAREDIR =	$(USRDIR)/share
+USRSHAREMANDIR =	$(USRSHAREDIR)/man
+USRSHAREMAN1DIR =	$(USRSHAREMANDIR)/man1
+USRSHAREMAN3DIR =	$(USRSHAREMANDIR)/man3
+USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
+PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
+PROTOUSRBINDIR =	$(PROTO_DIR)/$(USRBINDIR)
+PROTOUSRLIBDIR =	$(PROTO_DIR)/$(USRLIBDIR)
+PROTOUSRLIBDIR64 =	$(PROTO_DIR)/$(USRLIBDIR64)
+PROTOUSRSHAREDIR =	$(PROTO_DIR)/$(USRSHAREDIR)
+PROTOUSRSHAREMANDIR =	$(PROTO_DIR)/$(USRSHAREMANDIR)
+PROTOUSRSHAREMAN1DIR =	$(PROTO_DIR)/$(USRSHAREMAN1DIR)
+PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)/$(USRSHAREMAN3DIR)
+
+
 SFWBIN =	/usr/sfw/bin
 SFWLIB =	/usr/sfw/lib
 PROTOSFWBIN =	$(PROTO_DIR)/$(SFWBIN)
@@ -83,12 +103,15 @@ MACH32 =	$(MACH32_1:i386=i86)
 MACH64_1 =	$(MACH:sparc=sparcv9)
 MACH64 =	$(MACH64_1:i386=amd64)
 
-BUILD_32 =		$(BUILD_DIR)/$(MACH32)/.built
-BUILD_64 =		$(BUILD_DIR)/$(MACH64)/.built
+BUILD_DIR_32 =		$(BUILD_DIR)/$(MACH32)
+BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
+
+BUILD_32 =		$(BUILD_DIR_32)/.built
+BUILD_64 =		$(BUILD_DIR_64)/.built
 BUILD_32_and_64 =	$(BUILD_32) $(BUILD_64)
 
-INSTALL_32 =		$(BUILD_DIR)/$(MACH32)/.installed
-INSTALL_64 =		$(BUILD_DIR)/$(MACH64)/.installed
+INSTALL_32 =		$(BUILD_DIR_32)/.installed
+INSTALL_64 =		$(BUILD_DIR_64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
@@ -114,6 +137,11 @@ CCC.gcc.64 =	$(GCC_ROOT)/bin/CC -m64
 CC =		$(CC.$(COMPILER).$(BITS))
 CCC =		$(CCC.$(COMPILER).$(BITS))
 
+lint.32 =	$(SPRO_VROOT)/bin/lint -m32
+lint.64 =	$(SPRO_VROOT)/bin/lint -m64
+
+LINT =		$(lint.$(BITS))
+
 LD =		/usr/bin/ld
 
 PYTHON.2.6.32 =	/usr/bin/python2.6
@@ -136,3 +164,75 @@ LN =		/bin/ln
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
 INSTALL =	/usr/bin/ginstall
+
+INS.dir=        $(INSTALL) -d $@
+INS.file=       $(INSTALL) -m 444 $< $(@D)
+
+# C compiler mode. Future compilers may change the default on us,
+# so force transition mode globally. Lower level makefiles can
+# override this by setting CCMODE.
+#
+CCMODE=		-Xa
+CCMODE64=	-Xa
+
+# compiler '-xarch' flag. This is here to centralize it and make it
+# overridable for testing.
+sparc_XARCH=    $(CCBITS32) -xarch=sparc
+sparcv9_XARCH=  $(CCBITS64) -xcode=abs64
+i386_XARCH=     $(CCBITS32) -xchip=pentium
+amd64_XARCH=    $(CCBITS64) -xarch=generic -Ui386 -U__i386
+
+# disable the incremental linker
+ILDOFF=         -xildoff
+
+# C99 mode
+C99_ENABLE=     -xc99=all
+C99_DISABLE=    -xc99=none
+C99MODE=        $(C99_ENABLE)
+C99LMODE=       $(C99MODE:-xc99%=-Xc99%)
+
+# XPG6 mode.  This option enables XPG6 conformance, plus extensions.
+# Amongst other things, this option will cause system calls like
+# popen (3C) and system (3C) to invoke the standards-conforming
+# shell, /usr/xpg4/bin/sh, instead of /usr/bin/sh.
+XPG6MODE=	$(C99MODE) -D_XOPEN_SOURCE=600 -D__EXTENSIONS__=1
+
+
+# The Sun Studio 11 compiler has changed the behaviour of integer
+# wrap arounds and so a flag is needed to use the legacy behaviour
+# (without this flag panics/hangs could be exposed within the source).
+#
+sparc_IROPTFLAG		= -W2,-xwrap_int
+sparcv9_IROPTFLAG	= -W2,-xwrap_int
+i386_IROPTFLAG		=
+amd64_IROPTFLAG		=
+IROPTFLAG		= $($(MACH)_IROPTFLAG)
+IROPTFLAG64		= $($(MACH64)_IROPTFLAG)
+
+sparc_CFLAGS=	$(sparc_XARCH)
+sparcv9_CFLAGS=	$(sparcv9_XARCH) -dalign $(CCVERBOSE)
+i386_CFLAGS=	$(i386_XARCH)
+amd64_CFLAGS=	$(amd64_XARCH)
+
+sparc_COPTFLAG=		-xO3
+sparcv9_COPTFLAG=	-xO3
+i386_COPTFLAG=		-xO3
+amd64_COPTFLAG=		-xO3
+COPTFLAG= $($(MACH)_COPTFLAG)
+COPTFLAG64= $($(MACH64)_COPTFLAG)
+
+sparc_XREGSFLAG		= -xregs=no%appl
+sparcv9_XREGSFLAG	= -xregs=no%appl
+i386_XREGSFLAG		=
+amd64_XREGSFLAG		=
+XREGSFLAG		= $($(MACH)_XREGSFLAG)
+XREGSFLAG64		= $($(MACH64)_XREGSFLAG)
+
+CFLAGS=  \
+	$(COPTFLAG) $($(MACH)_CFLAGS) $(CCMODE) \
+	$(ILDOFF) $(C99MODE) $(IROPTFLAG)
+
+CFLAGS64= \
+	$(COPTFLAG64) $($(MACH64)_CFLAGS) $(CCMODE64) \
+	$(ILDOFF) $(C99MODE) $(IROPTFLAG64)
+

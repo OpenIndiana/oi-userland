@@ -1,0 +1,55 @@
+--- bzip2-1.0.5/bzip2.c.orig	2008-11-28 05:47:09.537546000 -0800
++++ bzip2-1.0.5/bzip2.c	2008-11-28 05:50:37.075934000 -0800
+@@ -221,6 +221,7 @@
+ static void    copyFileName ( Char*, Char* );
+ static void*   myMalloc     ( Int32 );
+ static void    applySavedFileAttrToOutputFile ( IntNative fd );
++static void    applySavedTimeInfoToOutputFile ( Char *dstName );
+ 
+ 
+ 
+@@ -368,6 +369,7 @@
+    if (zStream != stdout) {
+       Int32 fd = fileno ( zStream );
+       if (fd < 0) goto errhandler_io;
++      applySavedTimeInfoToOutputFile ( outName ); 
+       applySavedFileAttrToOutputFile ( fd );
+       ret = fclose ( zStream );
+       outputHandleJustInCase = NULL;
+@@ -481,17 +483,18 @@
+ 
+    closeok:
+    if (ferror(zStream)) goto errhandler_io;
++   ret = fflush ( stream );
++   if (ret != 0) goto errhandler_io;
+    if (stream != stdout) {
+       Int32 fd = fileno ( stream );
+       if (fd < 0) goto errhandler_io;
++      applySavedTimeInfoToOutputFile ( outName );
+       applySavedFileAttrToOutputFile ( fd );
+    }
+    ret = fclose ( zStream );
+    if (ret == EOF) goto errhandler_io;
+ 
+    if (ferror(stream)) goto errhandler_io;
+-   ret = fflush ( stream );
+-   if (ret != 0) goto errhandler_io;
+    if (stream != stdout) {
+       ret = fclose ( stream );
+       outputHandleJustInCase = NULL;
+@@ -1297,7 +1300,6 @@
+ 
+    /*--- If there was an I/O error, we won't get here. ---*/
+    if ( srcMode == SM_F2F ) {
+-      applySavedTimeInfoToOutputFile ( outName );
+       deleteOutputOnInterrupt = False;
+       if ( !keepInputFiles ) {
+          IntNative retVal = remove ( inName );
+@@ -1475,7 +1477,6 @@
+    /*--- If there was an I/O error, we won't get here. ---*/
+    if ( magicNumberOK ) {
+       if ( srcMode == SM_F2F ) {
+-         applySavedTimeInfoToOutputFile ( outName );
+          deleteOutputOnInterrupt = False;
+          if ( !keepInputFiles ) {
+             IntNative retVal = remove ( inName );
