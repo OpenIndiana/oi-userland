@@ -1,0 +1,108 @@
+#!/usr/perl5/bin/perl
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# sunw-history-package
+#  A simple program to generate the actions contained in the SUNW package
+#  that maps between the old (pre build-133) and new ips package names.
+#
+
+$|=1;
+
+use Getopt::Long;
+use File::Basename /qw basename/;
+
+my $PKG = '/usr/bin/pkg';
+
+sub generate_manifest {
+	local ($package_name) = @_;
+	my ($package, %depends) = ();
+
+	# gather some data
+	open($FP, "$PKG contents -r -H -o action.raw $package_name |");
+
+	while (<$FP>) {	# save what we want
+		if (m{set\s+name=pkg.fmri\s+value=pkg://.+/(.+):.+$}) {
+			$package = $1;
+		} elsif (m{depend fmri=(.+)\s+type=require$}) {
+			$depends{$1} = 1;
+		}
+	}
+
+	close($FP);
+
+	# generate the manifest actions
+	print <<EOF;
+set name=pkg.fmri value=pkg:/$package
+set name=pkg.renamed value=true
+
+set name=org.opensolaris.consolidation value=\$(CONSOLIDATION)
+
+set name=variant.opensolaris.zone value=global value=nonglobal
+set name=variant.arch value=\$(ARCH)
+
+EOF
+	foreach (sort keys %depends) {
+		(m{^consolidation/}) ||
+			print "depend fmri=$_ type=require\n"
+	}
+}
+
+sub usage {
+	my $program = basename($0);
+	print <<EOF;
+Usage: $program (--package (new-ips-name)) ...
+
+EOF
+	exit(1);
+}
+
+sub main {
+	my (@current_packages, %SUNWpackages) = ();
+
+	GetOptions('package:s' => \@current_packages);
+
+	($#current_packages == -1) && usage();
+
+	# find all SUNW packages that require the supplied packages
+	foreach (@current_packages) {
+		open($FP, "$PKG search -r -H -o pkg.name 'SUNW*:depend::*/$_' |");
+	
+		while (<$FP>) {
+			chomp;
+			$SUNWpackages{$_} = 1;
+		}
+	
+		close($FP);
+	}
+
+	# generate manifests for each SUNWpackage
+	foreach (sort keys %SUNWpackages) {
+		print "\n\n$_.p5m actions:\n";
+		generate_manifest($_);
+	}
+}
+
+#
+# Main execution starts here.
+#
+main();

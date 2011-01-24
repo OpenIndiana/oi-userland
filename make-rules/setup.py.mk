@@ -41,7 +41,8 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(SOURCE_DIR) ; $(ENV) $(PYTHON_ENV) \
 		$(PYTHON.$(BITS)) ./setup.py build \
-			--build-temp $(@D:$(BUILD_DIR)/%=%))
+			--build-temp $(@D:$(BUILD_DIR)/%=%) \
+			$(COMPONENT_INSTALL_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
@@ -50,11 +51,14 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 # belong in vendor-packages.
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 
+COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR) 
+COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
+
 # install the built source into a prototype area
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) $(PYTHON_ENV) \
-		$(PYTHON.$(BITS)) ./setup.py install --root $(PROTO_DIR) \
-			--install-lib=$(PYTHON_LIB))
+	(cd $(SOURCE_DIR) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
+		$(PYTHON.$(BITS)) ./setup.py install $(COMPONENT_INSTALL_ARGS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
+
