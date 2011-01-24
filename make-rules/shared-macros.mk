@@ -236,3 +236,11 @@ CFLAGS64= \
 	$(COPTFLAG64) $($(MACH64)_CFLAGS) $(CCMODE64) \
 	$(ILDOFF) $(C99MODE) $(IROPTFLAG64)
 
+#
+# Environment variables and arguments passed into the build and install
+# environment(s).  These specifically add the bit-specific data
+#
+COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
+COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
+COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
+COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
