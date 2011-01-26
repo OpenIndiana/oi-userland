@@ -82,8 +82,23 @@ PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)/$(USRSHAREMAN3DIR)
 
 SFWBIN =	/usr/sfw/bin
 SFWLIB =	/usr/sfw/lib
+SFWSHARE =	/usr/sfw/share
+SFWSHAREMAN =	/usr/sfw/share/man
+SFWSHAREMAN1 =	/usr/sfw/share/man/man1
 PROTOSFWBIN =	$(PROTO_DIR)/$(SFWBIN)
 PROTOSFWLIB =	$(PROTO_DIR)/$(SFWLIB)
+PROTOSFWSHARE =	$(PROTO_DIR)/$(SFWSHARE)
+PROTOSFWSHAREMAN =	$(PROTO_DIR)/$(SFWSHAREMAN)
+PROTOSFWSHAREMAN1 =	$(PROTO_DIR)/$(SFWSHAREMAN1)
+
+GNUBIN =	/usr/gnu/bin
+GNUSHARE =	/usr/gnu/share
+GNUSHAREMAN =	/usr/gnu/share/man
+GNUSHAREMAN1 =	/usr/gnu/share/man/man1
+PROTOGNUBIN =	$(PROTO_DIR)/$(GNUBIN)
+PROTOGNUSHARE =	$(PROTO_DIR)/$(GNUSHARE)
+PROTOGNUSHAREMAN =	$(PROTO_DIR)/$(GNUSHAREMAN)
+PROTOGNUSHAREMAN1 =	$(PROTO_DIR)/$(GNUSHAREMAN1)
 
 # work around _TIME, _DATE, embedded date chatter in component builds
 # to use, set TIME_CONSTANT in the component Makefile and add $(CONSTANT_TIME)
@@ -236,10 +251,19 @@ CFLAGS64= \
 	$(COPTFLAG64) $($(MACH64)_CFLAGS) $(CCMODE64) \
 	$(ILDOFF) $(C99MODE) $(IROPTFLAG64)
 
-#
+# build with a non-executable stack by default.
+# override this if necessary
+LD_MAP_NOEXSTK="-M /usr/lib/ld/map.noexstk"
+LD_OPTIONS+= $(LD_MAP_NOEXSTK)
+
 # Environment variables and arguments passed into the build and install
-# environment(s).  These specifically add the bit-specific data
-#
+# environment(s).  These are the initial settings.
+COMPONENT_BUILD_ENV= \
+    LD_OPTIONS=$(LD_OPTIONS)
+COMPONENT_INSTALL_ENV= \
+    LD_OPTIONS=$(LD_OPTIONS)
+
+# Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
 COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))

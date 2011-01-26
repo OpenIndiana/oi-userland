@@ -21,15 +21,22 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/$(IPS_PKG_NAME)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY) "
-set name=pkg.description value="$(COMPONENT_DESCRIPTION) "
-set name=info.classification value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION) "
-set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set variant.arch=$(ARCH)
-set name=variant.opensolaris.zone value=global value=nonglobal
+#
+# (hopefully) helpful common targets.
+#
+PROTOSFWLINKS= $(SFWPROGS:%=$(PROTOSFWBIN)/%)
 
-license $(COPYRIGHT_FILE) license='$(COPYRIGHTS)'
+$(PROTOSFWLINKS):	$(PROTOSFWBIN)
+	$(RM) $@ ; $(SYMLINK) ../../bin/$(@F) $@
+
+PROTOSFWMAN1LINKS= $(SFWMAN1:%=$(PROTOSFWSHAREMAN1)/%)
+
+$(PROTOSFWMAN1LINKS):	$(PROTOSFWSHAREMAN1)
+	$(RM) $@ ; $(SYMLINK) ../../../../share/man/man1/$(@F) $@
+
+$(PROTOGNUBIN) \
+$(PROTOGNUSHAREMAN1) \
+$(PROTOSFWBIN) \
+$(PROTOSFWSHAREMAN1):
+	$(MKDIR) $@
 
