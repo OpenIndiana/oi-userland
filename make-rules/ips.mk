@@ -112,7 +112,8 @@ sample-manifest:	$(GENERATED).p5m
 $(GENERATED).p5m:	install
 	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR) | \
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(GENERATE_TRANSFORMS) | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) >$@
+		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
+		cat $(METADATA_TEMPLATE) - >$@
 
 # copy the canonical manifest(s) to the build tree
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
