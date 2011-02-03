@@ -142,7 +142,7 @@ $(MANIFEST_BASE)-%.resolved:	$(MANIFEST_BASE)-%.depend
 $(MANIFEST_BASE)-%.linted:	$(MANIFEST_BASE)-%.resolved
 	@echo "VALIDATING MANIFEST CONTENT: $<"
 	PYTHONPATH=$(WS_TOOLS)/python $(PKGLINT) \
-		$(CANONICAL_REPO:%=-r % -c $(WS_LINT_CACHE)) \
+		$(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 		-f $(WS_TOOLS)/pkglintrc $<
 	$(PKGFMT) <$< >$@
 
