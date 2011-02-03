@@ -50,7 +50,7 @@ WS_TOOLS =	$(WS_TOP)/tools
 WS_MAKE_RULES =	$(WS_TOP)/make-rules
 WS_COMPONENTS =	$(WS_TOP)/components
 WS_INCORPORATIONS =	$(WS_TOP)/incorporations
-WS_LINT_CACHE =	$(WS_TOP)/cache
+WS_LINT_CACHE =	$(WS_TOP)/pkglint-cache
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -170,6 +170,7 @@ GPATCH =	/usr/gnu/bin/patch
 GPATCH_FLAGS =	-p1 -b
 
 PKGSEND =	/usr/bin/pkgsend
+PKGLINT =	/usr/bin/pkglint
 
 TOUCH =		/usr/bin/touch
 MKDIR =		/bin/mkdir -p

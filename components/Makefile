@@ -63,14 +63,24 @@ clean:	$(COMPONENT_DIRS:%=%.nosetup)
 clobber:	$(COMPONENT_DIRS:%=%.nosetup) clean
 	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE)
 
-setup:	$(WS_LOGS) repo tools .profile
+setup:	$(WS_LOGS) $(WS_REPO) tools $(WS_LINT_CACHE)
 
 $(WS_LOGS):
 	$(MKDIR) $@
 
-repo:
+$(WS_REPO):
 	$(PKGSEND) -s $(PKG_REPO) create-repository \
 		--set-property publisher.prefix=$(PUBLISHER)
+
+$(WS_LINT_CACHE):	$(WS_LOGS)
+ifdef CANONICAL_REPO
+	@echo "Generating pkglint(1) cache from $(CANONICAL_REPO)..."
+	@(echo "set name=fmri value=pkg:/dummy" | $(PKGLINT) \
+		-c $(WS_LINT_CACHE) -r $(CANONICAL_REPO) /dev/fd/0 \
+		>$(WS_LOGS)/naughty-canonical-repo-actions 2>&1 ; exit 0)
+else
+	$(MKDIR) $(WS_LINT_CACHE)
+endif
 
 tools:
 	@cd ../tools ; echo "building tools..." ; $(GMAKE) setup
