@@ -56,8 +56,9 @@ BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
 PKG_REPO =	file:$(WS_REPO)
 
-SOURCE_DIR =	$(shell pwd)/$(COMPONENT_SRC)
-BUILD_DIR =	$(shell pwd)/build
+COMPONENT_DIR =	$(shell pwd)
+SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
+BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
 
 USRDIR =	/usr

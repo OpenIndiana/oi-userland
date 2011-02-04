@@ -1,0 +1,18 @@
+--- tar-1.25/gnu/xgetcwd.c.orig	Mon Nov  8 06:23:04 2010
++++ tar-1.25/gnu/xgetcwd.c	Mon Nov  8 06:29:04 2010
+@@ -36,7 +36,14 @@
+ char *
+ xgetcwd (void)
+ {
+-  char *cwd = getcwd (NULL, 0);
++  char *cwd;
++#ifdef HAVE_PARTLY_WORKING_GETCWD
++  cwd = getcwd (NULL, 0);
++#else
++  cwd = malloc(PATH_MAX);
++  if (cwd)
++    getcwd (cwd, PATH_MAX);
++#endif
+   if (! cwd && errno == ENOMEM)
+     xalloc_die ();
+   return cwd;
