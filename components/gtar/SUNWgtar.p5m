@@ -22,22 +22,15 @@
 #
 
 #
-# (hopefully) helpful common targets.
+# Legacy package information for renamed SUNWgtar package
 #
-PROTOSFWLINKS= $(SFWPROGS:%=$(PROTOSFWBIN)/%)
 
-$(PROTOSFWLINKS):	$(PROTOSFWBIN)
-	$(RM) $@ ; $(SYMLINK) ../../bin/$(@F) $@
+set name=pkg.fmri value=pkg:/SUNWgtar@1.25,5.11-0.133
+set name=pkg.renamed value=true
 
-PROTOSFWMAN1LINKS= $(SFWMAN1:%=$(PROTOSFWSHAREMAN1)/%)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-$(PROTOSFWMAN1LINKS):	$(PROTOSFWSHAREMAN1)
-	$(RM) $@ ; $(SYMLINK) ../../../../share/man/man1/$(@F) $@
+set name=variant.opensolaris.zone value=global value=nonglobal
+set name=variant.arch value=$(ARCH)
 
-$(PROTOUSRSHAREMAN1DIR) \
-$(PROTOGNUBIN) \
-$(PROTOGNUSHAREMAN1) \
-$(PROTOSFWBIN) \
-$(PROTOSFWSHAREMAN1):
-	$(MKDIR) $@
-
+depend fmri=archiver/gnu-tar@1.25-0.133 type=require
