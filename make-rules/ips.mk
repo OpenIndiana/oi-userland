@@ -47,7 +47,6 @@ COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
 
 # order is important
 GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
-GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/variant.arch
 
 COMPARISON_TRANSFORMS +=	$(WS_TOP)/transforms/comparison-cleanup
 COMPARISON_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
@@ -116,8 +115,7 @@ $(MANIFEST_BASE)-%.mogrified:	%.p5m canonical-manifests
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
-# generate dependencies, drop variant.arch in set and depend actions because
-# "pkgdepend resolve" fails when it's present.
+# generate dependencies
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mogrified
 	$(PKGDEPEND) generate -m $< $(PROTO_DIR) >$@
 
