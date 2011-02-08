@@ -24,11 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
 COMPONENT_VERSION=	1.25
-IPS_PKG_NAME=		archiver/gnu-tar
-COMPONENT_DESCRIPTION=	"GNU tar - A utility used to store, backup, and transport files"
-COMPONENT_CLASSIFICATION="Development/GNU"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha1:0f0c090e51d127cbeffbb9aeeb90db1181d82aed
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
@@ -61,7 +57,7 @@ $(PROTOGNUMAN1LINKS):	$(PROTOGNUSHAREMAN1)
 
 include ../../make-rules/shared-targets.mk
 
-COMPONENT_BUILD_TARGETS = all check
+COMPONENT_BUILD_TARGETS = all
 
 build:		$(BUILD_32)
 

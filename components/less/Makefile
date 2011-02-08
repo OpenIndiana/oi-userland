@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -25,14 +27,10 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		less
 COMPONENT_VERSION=	436
-IPS_PKG_NAME=		text/less
-COMPONENT_DESCRIPTION=	"The GNU pager (less) 436"
-COMPONENT_CLASSIFICATION="Development/GNU"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.greenwoodsoftware.com/less/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:f78998a1a79a7e1962c901dd41bdc3d1c2005471
-COMPONENT_ARCHIVE_URL=	http://www.greenwoodsoftware.com/less/less-436.tar.gz
+COMPONENT_ARCHIVE_URL=	http://www.greenwoodsoftware.com/less/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
