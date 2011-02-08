@@ -24,11 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		elinks
 COMPONENT_VERSION=	0.11.7
-IPS_PKG_NAME=		web/browser/elinks
-COMPONENT_DESCRIPTION=	"ELinks - Text-based Web browser"
-COMPONENT_CLASSIFICATION="Applications/Internet"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://elinks.or.cz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha1:d13edc1477d0ab32cafe7d3c1f3a23ae1c0a5c54
 COMPONENT_ARCHIVE_URL=	http://elinks.or.cz/download/$(COMPONENT_ARCHIVE)

@@ -18,18 +18,19 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/$(IPS_PKG_NAME)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="$(COMPONENT_SUMMARY) "
-set name=pkg.description value="$(COMPONENT_DESCRIPTION) "
-set name=info.classification value="org.opensolaris.category.2008:$(COMPONENT_CLASSIFICATION) "
-set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=pkg.fmri value=pkg:/text/less@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="pager program similar to more"
+set name=pkg.description value="The package provides less, a file pager (a memory-efficient utility for displaying text one screenful ata time)."
+set name=info.classification value="org.opensolaris.category.2008:Development/GNU"
+set name=info.upstream_url value=http://www.greenwoodsoftware.com/less/
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set variant.arch=$(ARCH)
-set name=variant.opensolaris.zone value=global value=nonglobal
 
 license less.license license='Less License'
 
@@ -45,10 +46,6 @@ file path=usr/share/man/man1/less.1
 file path=usr/share/man/man1/lessecho.1
 file path=usr/share/man/man1/lesskey.1
 
-legacy arch=$(ARCH) category=system \
+legacy	pkg=SUNWless \
 	name="The GNU pager (less)" \
-	desc="The GNU pager (less) 436" \
-	hotline="Please contact your local service provider" \
-	pkg=SUNWless variant.arch=$(ARCH) vendor="Oracle Corporation" \
-	version=11.11.0,REV=010.10.26.15.59
-
+	desc="The GNU pager (less) 436"

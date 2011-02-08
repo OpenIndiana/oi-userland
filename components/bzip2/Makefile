@@ -18,20 +18,19 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bzip2
 COMPONENT_VERSION=	1.0.6
-IPS_PKG_NAME=		compress/bzip2
-COMPONENT_DESCRIPTION=	"The bzip compression utility"
-COMPONENT_CLASSIFICATION="Applications/System Utilities"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.bzip.org
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:3f89f861209ce81a6bab1fd1998c0ef311712002
-COMPONENT_ARCHIVE_URL=	http://www.bzip.org/1.0.6/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://www.bzip.org/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

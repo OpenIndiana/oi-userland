@@ -24,14 +24,10 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		which
 COMPONENT_VERSION=	2.16
-IPS_PKG_NAME=		shell/which
-COMPONENT_DESCRIPTION=	"GNU which"
-COMPONENT_CLASSIFICATION="Applications/System Utilities"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.xs4all.nl/~carlo17/which/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:247804c95e91583020b4d57ccb517a2997041bd5
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://www.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

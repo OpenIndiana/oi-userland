@@ -18,17 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		a2ps
 COMPONENT_VERSION=	4.13
-IPS_PKG_NAME=		print/lp/filter/a2ps
-COMPONENT_DESCRIPTION=	"GNU Any to PostScript filter"
-COMPONENT_CLASSIFICATION="System/Printing"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/a2ps/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)b.tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:cfc79a3e54115e569f667fa3fd2c2ec16d22b31a
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/a2ps/$(COMPONENT_ARCHIVE)

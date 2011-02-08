@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -25,11 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		make
 COMPONENT_VERSION=	3.81
-IPS_PKG_NAME=		developer/build/gnu-make
-COMPONENT_DESCRIPTION=	"GNU make - A utility used to build software (gmake) 3.81"
-COMPONENT_CLASSIFICATION="Development/GNU"
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://http.gnu.org/software/make/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:cd4fa5a3184176492bf0799593a8f250a728210c
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/make/$(COMPONENT_ARCHIVE)
