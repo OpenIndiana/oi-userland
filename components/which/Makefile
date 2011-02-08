@@ -27,7 +27,7 @@ COMPONENT_VERSION=	2.16
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:247804c95e91583020b4d57ccb517a2997041bd5
-COMPONENT_ARCHIVE_URL=	http://www.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/which/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
