@@ -37,7 +37,13 @@
 <transform dir path=usr$ -> default group sys>
 <transform dir path=usr/share$ -> default group sys>
 <transform dir path=usr/share/doc$ -> default group other>
-<transform dir path=usr/share/locale(/.+){0,1}$ -> default group other>
+
+#
+# Most directories and files under /usr/share/locale are group other
+#
+<transform dir path=usr/share/locale(/.+){0,2}$ -> default group other>
+<transform file path=usr/share/locale(/.+){3}$ -> default group other>
+
 <transform dir path=usr/gnu/share$ -> default group sys>
 
 #

@@ -1,0 +1,11 @@
+--- grep-2.5.4/tests/foad1.sh.orig	Fri Jan 28 16:47:12 2011
++++ grep-2.5.4/tests/foad1.sh	Fri Jan 28 16:45:00 2011
+@@ -23,7 +23,7 @@
+   INPUT="$1"
+   EXPECT="$2"
+   shift 2
+-  OUTPUT=`echo -n "$INPUT" | tr "/" "\n" | "$GREP" "$@" | tr "\n" "/"`
++  OUTPUT=`printf "$INPUT" | tr "/" "\n" | "$GREP" "$@" | tr "\n" "/"`
+   if test "$OUTPUT" != "$EXPECT" || test "$VERBOSE" = "1"; then
+     echo "Testing:  $GREP $@"
+     test "$LC_ALL" != C && test "$LC_ALL" != "" && echo "  LC_ALL: \"$LC_ALL\""

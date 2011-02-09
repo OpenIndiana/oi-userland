@@ -169,8 +169,7 @@ PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
-PATCH_LEVEL =	1
-GPATCH_FLAGS =	-p$(PATCH_LEVEL) -b
+GPATCH_FLAGS =	-p1 -b
 
 PKGSEND =	/usr/bin/pkgsend
 PKGLINT =	/usr/bin/pkglint
@@ -200,6 +199,10 @@ sparc_XARCH=    $(CCBITS32) -xarch=sparc
 sparcv9_XARCH=  $(CCBITS64) -xcode=abs64
 i386_XARCH=     $(CCBITS32) -xchip=pentium
 amd64_XARCH=    $(CCBITS64) -xarch=generic -Ui386 -U__i386
+
+# allow zero-sized struct/union declarations and
+# void functions with return statements
+FEATURES_EXTENSIONS=	-features=extensions
 
 # disable the incremental linker
 ILDOFF=         -xildoff
@@ -257,15 +260,15 @@ CFLAGS64= \
 
 # build with a non-executable stack by default.
 # override this if necessary
-LD_MAP_NOEXSTK=-M /usr/lib/ld/map.noexstk
+LD_MAP_NOEXSTK="-M /usr/lib/ld/map.noexstk"
 LD_OPTIONS+= $(LD_MAP_NOEXSTK)
 
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
 COMPONENT_BUILD_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)"
+    LD_OPTIONS=$(LD_OPTIONS)
 COMPONENT_INSTALL_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)"
+    LD_OPTIONS=$(LD_OPTIONS)
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
