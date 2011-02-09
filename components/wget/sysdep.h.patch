@@ -1,0 +1,16 @@
+--- wget-1.12/src/sysdep.h.orig	Fri Sep  4 09:31:54 2009
++++ wget-1.12/src/sysdep.h	Fri Oct  2 03:03:22 2009
+@@ -67,8 +67,13 @@
+ 
+ #ifdef NAMESPACE_TWEAKS
+ 
++#if __STDC_VERSION__ >= 199901L
++/* Single UNIX Specification, Version 3 */
++#define _XOPEN_SOURCE 600
++#else
+ /* Request the "Unix 98 compilation environment". */
+ #define _XOPEN_SOURCE 500
++#endif
+ 
+ /* For Solaris: request everything else that is available and doesn't
+    conflict with the above.  */
