@@ -48,12 +48,14 @@ install-packages:	TARGET = install-packages
 validate:		TARGET = validate
 clean:			TARGET = clean
 clobber:		TARGET = clobber
-prep build install publish:		TEMPLATE_ZONE=$(ZONE)
-prep build install publish:		LOG = >$(WS_LOGS)/$@.$(TARGET).log 2>&1
+test:			TARGET = test
+prep build install publish test:	TEMPLATE_ZONE=$(ZONE)
+prep build install publish test:	LOG = >$(WS_LOGS)/$@.$(TARGET).log 2>&1
 
 .DEFAULT:	publish
 
-download prep build install publish install-packages validate: $(COMPONENT_DIRS)
+download prep build install publish install-packages validate \
+test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
 

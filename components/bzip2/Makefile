@@ -88,7 +88,10 @@ install:	build $(INSTALL_32) $(PROTODIRS) $(PROTOMAN3FILES) $(PROTOMAN1FILES)
 	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
 
 # build does this always
-test: 
+test:  build
+	@cd $(BUILD_DIR_32); $(MAKE) check
+	@cd $(BUILD_DIR_64); $(MAKE) check
+
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
