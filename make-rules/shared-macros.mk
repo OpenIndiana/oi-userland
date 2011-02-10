@@ -169,7 +169,8 @@ PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
-GPATCH_FLAGS =	-p1 -b
+PATCH_LEVEL =	1
+GPATCH_FLAGS =	-p$(PATCH_LEVEL) -b
 
 PKGSEND =	/usr/bin/pkgsend
 PKGLINT =	/usr/bin/pkglint
@@ -260,15 +261,15 @@ CFLAGS64= \
 
 # build with a non-executable stack by default.
 # override this if necessary
-LD_MAP_NOEXSTK="-M /usr/lib/ld/map.noexstk"
+LD_MAP_NOEXSTK=-M /usr/lib/ld/map.noexstk
 LD_OPTIONS+= $(LD_MAP_NOEXSTK)
 
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
 COMPONENT_BUILD_ENV= \
-    LD_OPTIONS=$(LD_OPTIONS)
+    LD_OPTIONS="$(LD_OPTIONS)"
 COMPONENT_INSTALL_ENV= \
-    LD_OPTIONS=$(LD_OPTIONS)
+    LD_OPTIONS="$(LD_OPTIONS)"
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
