@@ -45,16 +45,6 @@ GNUPROGS =	tar
 GNUMAN1 =	tar.1
 SFWPROGS =	gtar
 
-PROTOGNULINKS = $(GNUPROGS:%=$(PROTOGNUBIN)/%)
-
-$(PROTOGNULINKS):	$(PROTOGNUBIN)
-	$(RM) $@ ; $(SYMLINK) ../../bin/g$(@F) $@
-
-PROTOGNUMAN1LINKS = $(GNUMAN1:%=$(PROTOGNUSHAREMAN1)/%)
-
-$(PROTOGNUMAN1LINKS):	$(PROTOGNUSHAREMAN1)
-	$(RM) $@ ; $(SYMLINK) ../../../../share/man/man1/g$(@F) $@
-
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_BUILD_TARGETS = all
@@ -64,6 +54,9 @@ build:		$(BUILD_32)
 install: $(PROTOUSRSHAREMAN1DIR) $(INSTALL_32) \
     $(PROTOGNULINKS) $(PROTOGNUMAN1LINKS) $(PROTOSFWLINKS)
 	$(CP) -f $(COMPONENT_DIR)/gtar.1.sunman $(PROTOUSRSHAREMAN1DIR)/gtar.1
+
+test: build
+	@cd $(BUILD_DIR_32); $(MAKE) check
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

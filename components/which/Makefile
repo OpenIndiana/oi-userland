@@ -48,4 +48,7 @@ install:	$(INSTALL_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
+test: build
+	@cd $(BUILD_DIR_32); $(MAKE) check
+
 include ../../make-rules/depend.mk

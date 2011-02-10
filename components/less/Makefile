@@ -43,6 +43,9 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
+test:
+	@echo "no tests available"
+
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk

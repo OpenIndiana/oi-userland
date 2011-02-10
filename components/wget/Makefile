@@ -50,6 +50,9 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32) $(PROTOSFWLINKS)
 
+test: build
+	@cd $(BUILD_DIR_32); $(MAKE) check
+
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk

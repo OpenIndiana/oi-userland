@@ -45,16 +45,6 @@ GNUMAN1 =	make.1
 SFWPROGS=	gmake
 SFWMAN1=	gmake.1
 
-PROTOGNULINKS = $(GNUPROGS:%=$(PROTOGNUBIN)/%)
-
-$(PROTOGNULINKS):	$(PROTOGNUBIN)
-	$(RM) $@ ; $(SYMLINK) ../../bin/g$(@F) $@
-
-PROTOGNUMAN1LINKS = $(GNUMAN1:%=$(PROTOGNUSHAREMAN1)/%)
-
-$(PROTOGNUMAN1LINKS):	$(PROTOGNUSHAREMAN1)
-	$(RM) $@ ; $(SYMLINK) ../../../../share/man/man1/g$(@F) $@
-
 include ../../make-rules/shared-targets.mk
 
 # common targets
@@ -65,5 +55,8 @@ install:	$(INSTALL_32) \
     $(PROTOSFWLINKS) $(PROTOSFWMAN1LINKS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+
+test: build
+	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include ../../make-rules/depend.mk

@@ -20,42 +20,36 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		grep
-COMPONENT_VERSION=	2.5.4
+COMPONENT_NAME=		patch
+COMPONENT_VERSION=	2.5.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:9bbd4f02b18bb264e0fcb17293b6f0445c8694d2
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha1:9a69f7191576549255f046487da420989d2834a6
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CFLAGS	+=			$(FEATURES_EXTENSIONS)
-
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		--prefix=/usr
 CONFIGURE_OPTIONS  +=		--program-prefix=g
+CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-PROGS =		egrep fgrep grep
-GNUPROGS = $(PROGS)
-GNUMAN1=   $(PROGS:%=%.1)
-SFWPROGS = $(PROGS:%=g%)
+GNUPROGS =	patch
+GNUMAN1 =	patch.1
 
 include ../../make-rules/shared-targets.mk
 
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) $(PROTOSFWLINKS) $(PROTOGNULINKS) \
-		$(PROTOGNUMAN1LINKS)
+install:	$(INSTALL_32) \
+    $(PROTOGNULINKS) $(PROTOGNUMAN1LINKS)
 
-test32:		$(BUILD_32)
-	(cd $(BUILD_DIR_32); env - $(GMAKE) check)
-
-test:	test32
+test:
+	@echo "no tests available
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

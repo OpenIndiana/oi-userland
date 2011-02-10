@@ -65,6 +65,9 @@ install:	$(INSTALL_32) $(PROTODOCDIR) $(PROTODOCFILES)
 	 sed -f oracleman-stability $(COMPONENT_SRC)/doc/man/man5/elinkskeys.5 > \
 		$(PROTO_DIR)/$(USRSHAREMAN5DIR)/elinkskeys.5)
 
+test: build
+	@cd $(BUILD_DIR_32); $(MAKE) check
+
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
