@@ -21,14 +21,16 @@
 #
 
 #
-# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Some userland consolidation specific lint checks
 
 import pkg.lint.base as base
+import pkg.elf as elf
 import re
 import os.path
+
 
 class UserlandActionChecker(base.ActionChecker):
         """An opensolaris.org-specific class to check actions."""
@@ -44,64 +46,151 @@ class UserlandActionChecker(base.ActionChecker):
 			re.compile('^/usr/'),
 			re.compile('^\$ORIGIN/')
 		]
+		self.initscript_re = re.compile("^etc/(rc.|init)\.d")
                 super(UserlandActionChecker, self).__init__(config)
 
 	def startup(self, engine):
 		if self.prototype != None:
-			engine.info(_("including prototype checks: %s") % self.prototype, msgid=self.name)
+			engine.info(_("including prototype checks: %s") %
+					self.prototype, msgid=self.name)
 
-	def file_exists(self, action, manifest, engine, pkglint_id="001"):
+        def __realpath(self, path, target):
+		"""Combine path and target to get the real path."""
+
+		result = os.path.dirname(path)
+
+		for frag in target.split(os.sep):
+			if frag == '..':
+				result = os.path.dirname(result)
+			elif frag == '.':
+				pass
+			else:
+				result = os.path.join(result, frag)
+
+		return result
+
+	def __elf_runpath_check(self, path):
+		result = None
+		list = []
+
+		ed = elf.get_dynamic(path)
+		for dir in ed.get("runpath", "").split(":"):
+			if dir == None or dir == '':
+				continue
+
+			match = False
+			for expr in self.runpath_re:
+				if expr.match(dir):
+					match = True
+					break
+
+			if match == False:
+				list.append(dir)
+
+		if len(list) > 0:
+			result = _("bad RUNPATH, '%%s' includes '%s'" %
+				   ":".join(list))
+
+		return result
+
+	def __elf_wrong_location_check(self, path):
+		result = None
+
+		ei = elf.get_info(path)
+		bits = ei.get("bits")
+		frag = os.path.basename(os.path.dirname(path))
+
+		if bits == 32 and frag in ["sparcv9", "amd64", "64"]:
+			result = _("32-bit object '%s' in 64-bit path")
+		elif bits == 64 and frag not in ["sparcv9", "amd64", "64"]:
+			result = _("64-bit object '%s' in 32-bit path")
+
+		return result
+
+	def file_action(self, action, manifest, engine, pkglint_id="001"):
 		"""Checks for existence in the proto area."""
 
-		if self.prototype is None:
+		if action.name not in ["file"]:
 			return
+
+		path = action.attrs["path"]
+
+		# check for writable files without a preserve attribute
+		if 'mode' in action.attrs:
+			mode = action.attrs["mode"]
+
+			if (int(mode, 8) & 0222) != 0 and "preserve" not in action.attrs:
+				engine.error(
+				_("%(path)s is writable (%(mode)s), but missing a preserve"
+				  " attribute") %  {"path": path, "mode": mode},
+				msgid="%s%s.0" % (self.name, pkglint_id))
+
+		# checks that require a physical file to look at
+		if self.prototype is not None:
+			fullpath = self.prototype + "/" + path
+
+			if not os.path.exists(fullpath):
+				engine.info(
+					_("%s missing from proto area, skipping"
+					  " content checks") % path, 
+					msgid="%s%s.1" % (self.name, pkglint_id))
+			elif elf.is_elf_object(fullpath):
+				# 32/64 bit in wrong place
+				result = self.__elf_wrong_location_check(fullpath)
+				if result != None:
+					engine.error(result % path, 
+						msgid="%s%s.2" % (self.name, pkglint_id))
+				result = self.__elf_runpath_check(fullpath)
+				if result != None:
+					engine.error(result % path, 
+						msgid="%s%s.3" % (self.name, pkglint_id))
+
+	file_action.pkglint_desc = _("Paths should exist in the proto area.")
+
+	def link_resolves(self, action, manifest, engine, pkglint_id="002"):
+		"""Checks for link resolution."""
+
+		if action.name not in ["link", "hardlink"]:
+			return
+
+		path = action.attrs["path"]
+		target = action.attrs["target"]
+		realtarget = self.__realpath(path, target)
+		
+		resolved = False
+		for maction in manifest.gen_actions():
+			mpath = None
+			if maction.name in ["dir", "file", "link",
+						"hardlink"]:
+				mpath = maction.attrs["path"]
+
+			if mpath and mpath == realtarget:
+				resolved = True
+				break
+
+		if resolved != True:
+			engine.error(
+				_("%s %s has unresolvable target '%s'") %
+					(action.name, path, target),
+				msgid="%s%s.0" % (self.name, pkglint_id))
+
+	link_resolves.pkglint_desc = _("links should resolve.")
+
+	def init_script(self, action, manifest, engine, pkglint_id="003"):
+		"""Checks for SVR4 startup scripts."""
 
 		if action.name not in ["file", "dir", "link", "hardlink"]:
 			return
 
 		path = action.attrs["path"]
-		fullpath = self.prototype + "/" + path
-		if not os.path.exists(fullpath):
-			engine.error(
-				_("packaged path '%s' missing from proto area") % path, 
+		if self.initscript_re.match(path):
+			engine.warning(
+				_("SVR4 startup '%s', deliver SMF"
+				  " service instead") % path,
 				msgid="%s%s.0" % (self.name, pkglint_id))
 
-	file_exists.pkglint_desc = _("Paths should exist in the proto area.")
-
-	def file_content(self, action, manifest, engine, pkglint_id="002"):
-		"""Checks for file content issues."""
-
-		if self.prototype is None:
-			return
-
-		if action.name is not "file":
-			return
-
-		import pkg.elf as elf
-
-		path = action.attrs["path"]
-		fullpath = self.prototype + "/" + path
-
-		if elf.is_elf_object(fullpath):
-			ed = elf.get_dynamic(fullpath)
-			for dir in ed.get("runpath", "").split(":"):
-				if dir == None or dir == '':
-					continue
-
-				match = False
-				for expr in self.runpath_re:
-					if expr.match(dir):
-						match = True
-						break
-
-				if match == False:
-					engine.error(
-						_("%s has bad RUNPATH, "
-					  	"includes: %s") % (path, dir),
-						msgid="%s%s.1" % (self.name, pkglint_id))
-		# additional checks for different content types should go here
-
-	file_content.pkglint_desc = _("Paths should not deliver common mistakes.")
+	init_script.pkglint_desc = _(
+		"SVR4 startup scripts should not be delivered.")
 
 class UserlandManifestChecker(base.ManifestChecker):
         """An opensolaris.org-specific class to check manifests."""
@@ -112,27 +201,23 @@ class UserlandManifestChecker(base.ManifestChecker):
 		self.prototype = os.getenv('PROTO_DIR')
 		super(UserlandManifestChecker, self).__init__(config)
 
-	def unpackaged_files(self, manifest, engine, pkglint_id="001"):
-		if self.prototype == None:
+	def license_check(self, manifest, engine, pkglint_id="001"):
+		manifest_paths = []
+		files = False
+		license = False
+
+		for action in manifest.gen_actions_by_type("file"):
+			files = True
+			break
+
+		if files == False:
 			return
 
-		return	# skip this check for now.  It needs more work
+		for action in manifest.gen_actions_by_type("license"):
+			return
 
-		manifest_paths = []
+		engine.error( _("missing license action"),
+			msgid="%s%s.0" % (self.name, pkglint_id))
 
-		for action in manifest.gen_actions():
-			if action.name in ["file", "dir", "link", "hardlink"]:
-				manifest_paths.append(action.attrs.get("path"))
-
-		for dirname, dirnames, filenames in os.walk(self.prototype):
-			dir = dirname[len(self.prototype):]
-			for name in filenames + dirnames:
-				path = dir + '/' + name
-				if path not in manifest_paths:
-					engine.error(
-						_("unpackaged path '%s' missing from manifest") % path, 
-					msgid="%s%s.0" % (self.name, pkglint_id))
-
-	unpackaged_files.pkglint_dest = _(
-		"Prototype paths should be present.")
-
+	license_check.pkglint_dest = _(
+		"license actions are required if you deliver files.")
