@@ -22,34 +22,12 @@
 #
 
 #
-# (hopefully) helpful common targets.
+# Legacy package information for renamed SUNWscreen package
 #
-PROTOSFWLINKS= $(SFWPROGS:%=$(PROTOSFWBIN)/%)
 
-$(PROTOSFWLINKS):	$(PROTOSFWBIN)
-	$(RM) $@ ; $(SYMLINK) ../../bin/$(@F) $@
+set name=pkg.fmri value=pkg:/SUNWscreen@4.0.3,5.11-0.133
+set name=pkg.renamed value=true
 
-PROTOSFWMAN1LINKS= $(SFWMAN1:%=$(PROTOSFWSHAREMAN1)/%)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-$(PROTOSFWMAN1LINKS):	$(PROTOSFWSHAREMAN1)
-	$(RM) $@ ; $(SYMLINK) ../../../../share/man/man1/$(@F) $@
-
-PROTOGNULINKS= $(GNUPROGS:%=$(PROTOGNUBIN)/%)
-
-$(PROTOGNULINKS):       $(PROTOGNUBIN)
-	$(RM) $@ ; $(SYMLINK) ../../bin/g$(@F) $@
-
-PROTOGNUMAN1LINKS = $(GNUMAN1:%=$(PROTOGNUSHAREMAN1)/%)
-
-$(PROTOGNUMAN1LINKS):   $(PROTOGNUSHAREMAN1)
-	$(RM) $@ ; $(SYMLINK) ../../../../share/man/man1/g$(@F) $@
-
-
-$(PROTOETCDIR) \
-$(PROTOUSRSHAREMAN1DIR) \
-$(PROTOGNUBIN) \
-$(PROTOGNUSHAREMAN1) \
-$(PROTOSFWBIN) \
-$(PROTOSFWSHAREMAN1):
-	$(MKDIR) $@
-
+depend fmri=terminal/screen@4.0.3-0.133 type=require
