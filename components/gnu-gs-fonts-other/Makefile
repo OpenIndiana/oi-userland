@@ -49,4 +49,7 @@ install: build
 # empty test target
 test:
 
+clean::
+	$(RM) -r $(BUILD_DIR)
+
 include ../../make-rules/depend.mk
