@@ -30,7 +30,7 @@ IS_GLOBAL_ZONE =	$(shell /usr/sbin/zoneadm list | grep -c global)
 ROOT =			/
 
 # get the most recent build number from the last mercurial tag
-LAST_HG_TAG =	$(shell hg tags -q | head -2 | tail -1)
+LAST_HG_TAG =	$(shell hg tags -q | grep build- | head -1)
 LAST_BUILD_NUM = $(LAST_HG_TAG:build-%=%)
 
 OS_VERSION =		$(shell uname -r)
