@@ -54,6 +54,8 @@ WS_LINT_CACHE =	$(WS_TOP)/pkglint-cache
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
+CLONEY =	$(WS_TOOLS)/cloney
+
 PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_DIR =	$(shell pwd)

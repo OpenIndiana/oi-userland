@@ -1,0 +1,21 @@
+diff -ru tcsh-6.17.00-orig/sh.c tcsh-6.17.00/sh.c
+--- tcsh-6.17.00-orig/sh.c	2009-06-25 23:15:37.000000000 +0200
++++ tcsh-6.17.00/sh.c	2009-09-10 15:38:50.703642142 +0200
+@@ -336,12 +336,14 @@
+     fix_strcoll_bug();
+ # endif /* STRCOLLBUG */
+ 
+-    {
++    if (MB_CUR_MAX == 1) {
+ 	int     k;
+ 
+-	for (k = 0200; k <= 0377 && !Isprint(CTL_ESC(k)); k++)
++	for (k = 0200; k <= 0377 && !isprint(CTL_ESC(k)); k++)
+ 	    continue;
+-	AsciiOnly = MB_CUR_MAX == 1 && k > 0377;
++	AsciiOnly = k > 0377;
++    } else {
++	AsciiOnly = 0;
+     }
+ #else
+     AsciiOnly = getenv("LANG") == NULL && getenv("LC_CTYPE") == NULL;
