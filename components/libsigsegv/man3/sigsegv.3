@@ -1,0 +1,210 @@
+'\" te
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\"
+.TH SIGSEGV 3 "13 Jan 2009" "SunOS 5.11"
+.SH NAME
+sigsegv  \-  Handling page faults in user mode
+.sp
+.SH SYNOPSIS
+.sp
+#include <\fBsigsegv.h\fR>
+.sp
+.SH DESCRIPTION
+.sp
+.LP
+Sigsegv is a set of functions for handling page faults in user mode. Multithreading is used to improve the performance of a program.A page fault occurs when a program tries to access to a region of memory that is currently not available. Catching and handling a page fault is a useful technique for implementing:
+.RS +4
+.TP
+.ie t \(bu
+.el o
+pageable virtual memory
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+memory-mapped access to persistent databases
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+generational garbage collectors
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+stack overflow handlers
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+distributed shared memory
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+ ...
+.RE
+.sp
+.LP  
+The sigsegv functions are summarized in this section in the following
+groups:
+.sp
+.RS +4
+.TP
+.ie t \(bu
+.el o  
+Global SIGSEGV handlers
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+Local SIGSEGV handlers (a handler per memory area)
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+Stack overflow handlers
+.RE
+.sp
+.LP
+The <sigsegv.h> header defines the following symbols:
+.sp
+.RS +4
+.TP
+.ie t \(bu
+.el o
+HAVE_SIGSEGV_RECOVERY
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+HAVE_STACK_OVERFLOW_RECOVERY
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+LIBSIGSEGV_VERSION
+.RE
+.sp
+.LP
+The types listed below are defined as described in <sigsegv.h>:
+.RS +4
+.TP
+.ie t \(bu
+.el o
+sigsegv_handler_t
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+sigsegv_handler_t
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+stackoverflow_context_t
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+sigsegv_area_handler_t
+.RE
+.sp
+.SH GLOBAL SIGSEGV HANDLERS
+.sp
+int \fBsigsegv_install_handler\fR (sigsegv_handler_t handler);
+.sp
+void \fBsigsegv_deinstall_handler\fR (void);
+.sp
+.SH LOCAL SIGSEGV HANDLERS
+.sp
+void \fBsigsegv_init\fR (sigsegv_dispatcher* dispatcher);
+.sp
+void* \fBsigsegv_register\fR (sigsegv_dispatcher* dispatcher,
+.RS +24
+void* address, unsigned long len, 
+sigsegv_area_handler_t handler,
+void* handler_arg);
+.RE
+.sp
+void \fBsigsegv_unregister\fR (sigsegv_dispatcher* dispatcher, 
+.RS +25
+void* ticket);
+.RE
+.sp
+int \fBsigsegv_dispatch\fR (sigsegv_dispatcher* dispatcher, 
+.RS +22
+void* fault_address);
+.RE
+.sp
+.SH STACK OVERFLOW HANDLERS
+.sp
+int \fBstackoverflow_install_handler\fR (stackoverflow_handler_t
+.RS +27
+handler, void* extra_stack,
+unsigned long extra_stack_size);
+.RE
+.sp
+void \fBstackoverflow_deinstall_handler\fR (void);
+.sp
+.SH ATTRIBUTES
+See
+.BR attributes(5)
+for descriptions of the  following  attributes:
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilitylibrary/libsigsegv
+_
+Interface StabilityUncommitted
+_
+StandardSee \fBstandards\fR(5).
+.TE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBattributes\fR(5), \fBsigsegv\fR(3), \fBstandards\fR(5), \fBsigsegv_install_handler, \fBsigsegv_deinstall_handler\fR(3), \fBsigsegv_init\fR(3), \fBsigsegv_register\fR(3), \fBsigsegv_unregister\fR(3), \fBsigsegv_dispatch\fR(3), \fBstackoverflow_install_handler\fR(3), \fBstackoverflow_deinstall_handler\fR(3)
+
+.SH NOTES
+The libsigsegv project is located at http://libsigsegv.sourceforge.net.
+.sp
+Source for libsigsegv is available on http://opensolaris.org.
