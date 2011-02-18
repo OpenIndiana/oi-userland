@@ -1,0 +1,100 @@
+'\" te
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\"
+.TH stackoverflow_install_handler 3 "13 Jan 2009" "SunOS 5.11"
+.SH NAME
+stackoverflow_install_handler, stackoverflow_deinstall_handler \- Installs and deinstall a stack overflow handler
+.sp
+.SH SYNOPSIS
+.sp
+#include <\fBsigsegv.h\fR>
+.sp
+int \fBstackoverflow_install_handler\fR (\fIstackoverflow_handler_t\fR
+.RS +26
+\fIhandler\fR, \fIvoid* extra_stack\fR,
+.RE
+.RS +26
+\fIunsigned long extra_stack_size\fR);
+.RE
+.sp
+void \fBstackoverflow_deinstall_handler\fR (\fIvoid\fR);
+.sp
+.SH DESCRIPTION
+.sp
+.LP
+In some applications, the \fBstack\fR \fBoverflow\fR \fBhandler\fR performs some cleanup or notifies the user and then immediately terminates the application.  In other applications, the \fBstack\fR \fBoverflow\fR \fBhandler\fR longjmps back to a central point in the application.  This library supports both uses.  In the second case, the handler must ensure to restore the normal signal mask (because many signals are blocked while the handler is executed), and must also call \fBsigsegv_leave_handler()\fR to transfer control; then only it can longjmp away.
+.sp
+.LP
+The handler is run at a moment when nothing about the global state of the program is known. Therefore it cannot use facilities that manipulate global variables or locks. In particular, it cannot use malloc(); use mmap() Instead. It cannot use fopen(); use open() instead. Etc. All global variables that are accessed by the handler should be mark
+'volatile'.
+.sp
+.SH OPERANDS
+.sp
+.LP
+typedef void (*\fBstackoverflow_handler_t\fR) (\fIint emergency\fR, 
+.RS +28
+\fIstackoverflow_context_t scp\fR);
+.RE
+.sp
+\fIStackoverflow_handler_t\fR is the type of a stack overflow handler. Such a handler should perform a longjmp call in order to reduce the amount of stack needed. It must not return.The \fIemergency\fR argument is 0 when the stack could be repared, or 1 if the application should better save its state and exit now.
+.sp
+.LP
+The \fIextra_stack\fR argument is a pointer to a preallocated area used as a stack for executing the handler. It is typically allocated by use of `alloca' during `main'. Its size should be sufficiently large.
+.sp
+.LP
+The \fIextra_stack_size\fR is the size of the extra_stack argument.
+.sp
+.SH EXIT STATUS
+.sp
+.LP
+If success, \fBstackoverflow_install_handler()\fR returns 0 on success, or -1 if the system doesn't support catching stack overflow.
+.sp
+.SH ATTRIBUTES
+See
+.BR attributes(5)
+for descriptions of the  following  attributes:
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilitylibrary/libsigsegv
+_
+Interface StabilityUncommitted
+_
+StandardSee \fBstandards\fR(5).
+.TE
+
+.SH SEE ALSO
+.sp
+.LP
+\fattributes\fR(5), \fBsigsegv\fR(3), \fBstandards\fR(5)
+
+.SH NOTES
+The libsigsegv project is located at http://libsigsegv.sourceforge.net.
+.sp
+Source for libsigsegv is available on http://opensolaris.org.

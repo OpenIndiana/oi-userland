@@ -1,0 +1,126 @@
+'\" te
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\"
+.TH sigsegv_register 3 "13 Jan 2009" "SunOS 5.11"
+.SH NAME
+sigsegv_init, sigsegv_register, sigsegv_unregister, sigsegv_dispatch \- LOCAL SIGSEGV HANDLERS
+.SH SYNOPSIS
+#include <\fBsigsegv.h\fR>
+.sp
+void \fBsigsegv_init\fR (\fIsigsegv_dispatcher* dispatcher\fR);
+.sp
+void* \fBsigsegv_register\fR (\fIsigsegv_dispatcher* dispatcher\fR,
+.RS +24
+\fIvoid* address\fR, \fIunsigned long len\fR,
+\fIsigsegv_area_handler_t handler\fR,
+\fIvoid* handler_arg\fR);
+.RE
+.sp
+void \fBsigsegv_unregister\fR (\fIsigsegv_dispatcher* dispatcher\fR,
+.RS +25
+\fIvoid* ticket\fR);
+.RE
+.sp
+int \fBsigsegv_dispatch\fR (\fIsigsegv_dispatcher* dispatcher\fR,
+.RS +22
+\fIvoid* fault_address\fR);
+.RE
+.sp
+.SH DESCRIPTION
+.sp
+.LP
+The set of functions permit to define different \fBSIGSEGV\fR policies on different address ranges.
+.sp
+.LP
+\fBSigsegv_init\fR initializes a sigsegv_dispatcher structure.
+.sp
+.LP
+\fBSigsegv_register\fR adds a local SIGSEGV handler to a sigsegv_dispatcher structure. It will cover the interval [address..address+len-1]. Returns a "ticket" that can be used to remove the handler later.
+.sp
+.LP
+\fBSigsegv_unregister\fR removes a local SIGSEGV handler.
+.sp
+.LP
+\fBSigsegv_dispatch\fR call the local SIGSEGV handler responsible for the given fault address. Return the handler's return value. 0 means that no handler has been found, or that a handler was found but declined responsibility.
+.sp
+
+.SH OPERANDS
+.sp
+.LP
+typedef struct \fBsigsegv_dispatcher\fR {
+.RS +5
+void* tree;
+.RE
+}sigsegv_dispatcher;
+.sp
+.LP
+\fISigsegv_dispatcher\fR represents a table of memory areas (address range intervals), with an local SIGSEGV handler for each.
+.sp
+.LP
+The \fIaddress\fR represents the address of the memory area, and the \fIlen\fR represents the length of the memory area.
+.sp
+.LP
+typedef int (*\fBsigsegv_area_handler_t\fR) (\fIvoid* fault_address,\fR
+.RS +39
+\fIvoid* user_arg\fR);
+.RE
+.sp
+\fIsigsegv_area_handler_t\fR is the type of a local SIGSEGV handler. The fault address is passed as argument. The second argument is fixed arbitrary user data. The return value should be nonzero if the handler has done its job and no other handler should be called, or 0 if the handler declines responsibility for the given address.
+.sp
+.LP
+The \fIhandler_arg\fR is the second argument of the \fBsigsegv_area_handler_t\fR.
+.sp
+.SH EXIT STATUS
+.sp
+.LP
+Sigsegv_dispatcher returns the handler's return value. 0 means that no handler has been found, or that a handler was found but declined responsibility.
+.sp
+.SH ATTRIBUTES
+See
+.BR attributes(5)
+for descriptions of the  following  attributes:
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+ATTRIBUTE TYPEATTRIBUTE VALUE
+_
+Availabilitylibrary/libsigsegv
+_
+Interface StabilityUncommitted
+_
+StandardSee \fBstandards\fR(5).
+.TE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBattributes\fR(5), \fBsigsegv\fR(3), \fBstandards\fR(5)
+
+.SH NOTES
+The libsigsegv project is located at http://libsigsegv.sourceforge.net.
+.sp
+Source for libsigsegv is available on http://opensolaris.org.
