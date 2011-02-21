@@ -1,0 +1,27 @@
+s/zcat/gzcat/g
+s/Zcat/Gzcat/g
+s/ZCAT/GZCAT/g
+s/zcmp/gzcmp/g
+s/Zcmp/Gzcmp/g
+s/ZCMP/GZCMP/g
+s/znew/gznew/g
+s/Znew/Gznew/g
+s/ZNEW/GZNEW/g
+s/zdiff/gzdiff/g
+s/Zdiff/Gzdiff/g
+s/ZDIFF/GZDIFF/g
+s/zgrep/gzgrep/g
+s/Zgrep/Gzgrep/g
+s/ZGREP/GZGREP/g
+s/zmore/gzmore/g
+s/Zmore/Gzmore/g
+s/ZMORE/GZMORE/g
+s/zless/gzless/g
+s/Zless/Gzless/g
+s/ZLESS/GZLESS/g
+s/zforce/gzforce/g
+s/Zforce/Gzforce/g
+s/ZFORCE/GZFORCE/g
+s/zegrep/gzegrep/g
+s/zfgrep/gzfgrep/g
+s/^gzgrep /gzgrep, gzegrep, gzfgrep /
