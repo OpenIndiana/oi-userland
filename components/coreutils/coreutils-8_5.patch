@@ -1,0 +1,55 @@
+--- coreutils-8.5/configure_orig	2011-02-08 16:13:56.850317000 -0800
++++ coreutils-8.5/configure	2011-02-08 16:14:04.872411000 -0800
+@@ -53254,11 +53254,10 @@
+     optional_bin_progs="$optional_bin_progs df"
+   fi
+ }
+ fi
+ 
+-# Limit stdbuf to ELF systems with GCC
+ optional_pkglib_progs=
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether this is an ELF system" >&5
+ $as_echo_n "checking whether this is an ELF system... " >&6; }
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+@@ -53274,28 +53273,24 @@
+ fi
+ rm -f conftest*
+ 
+ { $as_echo "$as_me:${as_lineno-$LINENO}: result: $elf_sys" >&5
+ $as_echo "$elf_sys" >&6; }
+-if test "$elf_sys" = "yes" && \
+-   test "$GCC" = "yes"; then
+-  {
+-  if test -z "$optional_bin_progs"; then
+-    optional_bin_progs=stdbuf
+-  else
+-    optional_bin_progs="$optional_bin_progs stdbuf"
+-  fi
+-}
+-  {
+-  if test -z "$optional_pkglib_progs"; then
+-    optional_pkglib_progs=libstdbuf.so
+-  else
+-    optional_pkglib_progs="$optional_pkglib_progs libstdbuf.so"
+-  fi
+-}
++
++if test -z "$optional_bin_progs"; then
++  optional_bin_progs=stdbuf
++else
++  optional_bin_progs="$optional_bin_progs stdbuf"
+ fi
+ 
++if test -z "$optional_pkglib_progs"; then
++  optional_pkglib_progs=libstdbuf.so
++else
++  optional_pkglib_progs="$optional_pkglib_progs libstdbuf.so"
++fi
++
++
+ ############################################################################
+ mk="$srcdir/src/Makefile.am"
+ # Extract all literal names from the definition of $(EXTRA_PROGRAMS)
+ # in $mk but don't expand the variable references.
+ # Append each literal name to $optional_bin_progs.
