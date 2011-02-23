@@ -1,0 +1,199 @@
+diff --git Python-2.6.4/Makefile.pre.in Python-2.6.4/Makefile.pre.in
+--- Python-2.6.4/Makefile.pre.in.orig	Sun Feb 13 21:00:17 2011
++++ Python-2.6.4/Makefile.pre.in	Sun Feb 13 21:02:35 2011
+@@ -663,6 +663,8 @@
+ 
+ $(LIBRARY_OBJS) $(MODOBJS) Modules/python.o: $(PYTHON_HEADERS)
+ 
++install-pycc:	$(srcdir)/pycc
++	$(INSTALL_SCRIPT) $< $(DESTDIR)$(BINLIBDEST)
+ 
+ ######################################################################
+ 
+@@ -728,7 +728,7 @@
+                $(TESTPYTHON) $(TESTPROG) $(MEMTESTOPTS)
+ 
+ # Install everything
+-install:	@FRAMEWORKINSTALLFIRST@ altinstall bininstall maninstall @FRAMEWORKINSTALLLAST@
++install:	@FRAMEWORKINSTALLFIRST@ altinstall bininstall maninstall @FRAMEWORKINSTALLLAST@ install-pycc
+ 
+ # Install almost everything without disturbing previous versions
+ altinstall:	@FRAMEWORKALTINSTALLFIRST@ altbininstall libinstall inclinstall libainstall \
+
+diff --git Python-2.6.4/pycc Python-2.6.4/pycc
+new file mode 100644
+--- /dev/null
++++ Python-2.6.4/pycc
+@@ -0,0 +1,172 @@
++#!/bin/ksh
++#
++# Script for running the C/C++ compiler when building python modules
++#
++# CDDL HEADER START
++#
++# The contents of this file are subject to the terms of the
++# Common Development and Distribution License, Version 1.0 only
++# (the "License").  You may not use this file except in compliance
++# with the License.
++#
++# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++# or http://www.opensolaris.org/os/licensing.
++# See the License for the specific language governing permissions
++# and limitations under the License.
++#
++# When distributing Covered Code, include this CDDL HEADER in each
++# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++# If applicable, add the following below this CDDL HEADER, with the
++# fields enclosed by brackets "[]" replaced with your own identifying
++# information: Portions Copyright [yyyy] [name of copyright owner]
++#
++# CDDL HEADER END
++#
++#
++# Copyright 2004-2005 Sun Microsystems, Inc.  All rights reserved.
++# Use is subject to license terms.
++#
++
++MYNAME=`basename $0`
++
++# name of the compiler executable
++CCEXE='cc'
++# name of the GNU compiler executable
++GCCEXE='gcc'
++# name of the programming language
++CLANG='C'
++# name of the env variable for setting the compiler path
++CVAR='CC'
++
++if [ "x$PYCC_CC" != x ]; then
++    CC="$PYCC_CC"
++fi
++
++if [ "x$MYNAME" = xpyCC ]; then
++    CCEXE='CC'
++    GCCEXE='g++'
++    CLANG='C++'
++    CC="$CXX"
++    CVAR='CXX'
++    if [ "x$PYCC_CXX" != x ]; then
++        CC="$PYCC_CXX"
++    fi
++fi
++
++SAVED_IFS="$IFS"
++IFS=:
++
++# check if the CC env variable is set
++if [ "x$CC" != x ]; then
++    # verify that it doesn't point to this script
++    if /usr/bin/cmp -s "$CC" $0; then
++        echo "WARNING: "$CVAR" is set to this script; ignoring this value to avoid an infinite loop"
++	CC=
++    fi
++fi
++
++# check again if the CC env variable is set
++if [ "x$CC" != x ]; then
++    case "$CC" in
++	/* )
++	    # $CC is an absolute path name
++            # check if $CC exists
++	    if [ ! -e "$CC" ]; then
++		echo "WARNING: pycc: $CC not found" 1>&2
++		CC=
++	    else
++        # check if $CC is an executable
++		if [ ! -x "$CC" -o ! -f "$CC" ]; then
++		    echo "WARNING: pycc: $CC is not an executable" 1>&2
++		    CC=
++		fi
++	    fi
++	    ;;
++	* )
++	    # try to find $CC in the PATH
++	    NEW_CC=
++	    for dir in $PATH; do
++		if [ -x "$dir/$CC" ]; then
++		    NEW_CC="$dir/$CC"
++		    break
++		fi
++	    done
++	    if [ "x$NEW_CC" = x ]; then
++		echo "WARNING: pycc: $CC not found" 1>&2
++		CC=
++	    else
++		CC="$NEW_CC"
++	    fi
++	    ;;
++    esac
++fi
++
++if [ "x$CC" = x ]; then
++    # Look for the Sun Studio compiler in the PATH
++    for dir in $PATH; do
++	if [ -x "$dir/$CCEXE" ]; then
++	    CC="$dir/$CCEXE"
++	    break
++	fi
++    done
++fi
++
++if [ "x$CC" = x ]; then
++    # Look for gcc in the PATH
++    for dir in $PATH; do
++	if [ -x "$dir/$GCCEXE" ]; then
++	    CC="$dir/$GCCEXE"
++	    break
++	fi
++    done
++fi
++
++if [ "x$CC" = x ]; then
++    # Check for Sun Studio in /opt/SUNWspro (default install location)
++    if [ -x /opt/SUNWspro/bin/$CCEXE ]; then
++	CC=/opt/SUNWspro/bin/$CCEXE
++    fi
++fi
++
++if [ "x$CC" = x ]; then
++    # Check for the GNU compiler in /usr/sfw/bin
++    if [ -x /usr/sfw/bin/$GCCEXE ]; then
++	CC=/usr/sfw/bin/$GCCEXE
++    fi
++fi
++
++if [ "x$CC" = x ]; then
++    # Cannot continue without a C compiler
++    echo "ERROR: no $CLANG compiler not found; update your PATH or set the $CVAR env variable" 1>&2
++    exit 1
++fi
++
++IFS="$SAVED_IFS"
++
++# We need to make some modifications to adapt correctly to compiler options
++# that differ between GCC and Studio.
++
++extra_flags=
++
++is_gcc=no
++
++$CC --version >/dev/null 2>&1 && is_gcc=yes
++
++if [ "$is_gcc" = yes ]; then
++	for flag in "${@}"; do
++		# need -shared to link shared objects properly
++		if [ "$flag" = "-G" ]; then
++			extra_flags="$extra_flags -shared"
++		fi
++		# workaround for 6223255
++		if [ "$flag" = "-m64" ]; then
++			extra_flags="$extra_flags -R/usr/sfw/lib/amd64"
++		fi
++	done
++	# force PIC compilation
++	extra_flags="$extra_flags -fPIC -DPIC"
++else
++	extra_flags="$extra_flags -KPIC"
++fi
++
++exec "$CC" $extra_flags "${@}"

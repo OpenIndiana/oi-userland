@@ -33,7 +33,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CFLAGS	+=			$(FEATURES_EXTENSIONS)
+# We need to be able to return from void functions
+CFLAGS	+=			$(studio_FEATURES_EXTENSIONS)
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--prefix=/usr

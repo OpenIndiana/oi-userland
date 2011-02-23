@@ -50,7 +50,7 @@ clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
 prep build install publish test:	TEMPLATE_ZONE=$(ZONE)
-prep build install publish test:	LOG = >$(WS_LOGS)/$@.$(TARGET).log 2>&1
+prep build install publish test:	LOG = >$(WS_LOGS)/$(@F).$(TARGET).log 2>&1
 
 # turn off pkglint for the individual component builds.
 publish:		MAKEFLAGS += PKGLINT=/bin/true

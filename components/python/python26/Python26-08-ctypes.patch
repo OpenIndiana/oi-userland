@@ -1,0 +1,28 @@
+diff --git Python-2.6.4/Modules/_ctypes/callproc.c Python-2.6.4/Modules/_ctypes/callproc.c
+--- Python-2.6.4/Modules/_ctypes/callproc.c
++++ Python-2.6.4/Modules/_ctypes/callproc.c
+@@ -73,6 +73,8 @@
+ #include <malloc.h>
+ #endif
+ 
++#include <alloca.h>
++
+ #include <ffi.h>
+ #include "ctypes.h"
+ 
+diff --git Python-2.6.4/Modules/_ctypes/libffi/src/x86/ffitarget.h Python-2.6.4/Modules/_ctypes/libffi/src/x86/ffitarget.h
+--- Python-2.6.4/Modules/_ctypes/libffi/src/x86/ffitarget.h
++++ Python-2.6.4/Modules/_ctypes/libffi/src/x86/ffitarget.h
+@@ -54,10 +54,10 @@
+ #endif
+ 
+   /* ---- Intel x86 and AMD x86-64 - */
+-#if !defined(X86_WIN32) && (defined(__i386__) || defined(__x86_64__))
++#if !defined(X86_WIN32) && (defined(__i386__) || defined(__i386) || defined(__x86_64__))
+   FFI_SYSV,
+   FFI_UNIX64,   /* Unix variants all use the same ABI for x86-64  */
+-#ifdef __i386__
++#if defined (__i386__) || defined (__i386)
+   FFI_DEFAULT_ABI = FFI_SYSV,
+ #else
+   FFI_DEFAULT_ABI = FFI_UNIX64,

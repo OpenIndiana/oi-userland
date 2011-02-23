@@ -1,0 +1,190 @@
+diff --git Python-2.6.4/Modules/_multiprocessing/multiprocessing.h Python-2.6.4/Modules/_multiprocessing/multiprocessing.h
+--- Python-2.6.4/Modules/_multiprocessing/multiprocessing.h
++++ Python-2.6.4/Modules/_multiprocessing/multiprocessing.h
+@@ -3,6 +3,10 @@
+ 
+ #define PY_SSIZE_T_CLEAN
+ 
++/* needed on Solaris for the definition of CMSG_SPACE and friends */
++#define _XOPEN_SOURCE
++#define _XOPEN_SOURCE_EXTENDED 1
++
+ #include "Python.h"
+ #include "structmember.h"
+ #include "pythread.h"
+diff --git Python-2.6.4/setup.py Python-2.6.4/setup.py
+new file mode 100644
+--- Python-2.6.4/setup.py
++++ Python-2.6.4/setup.py
+@@ -309,10 +309,10 @@
+         return sys.platform
+ 
+     def detect_modules(self):
+-        # Ensure that /usr/local is always used
+-        add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
+-        add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
+-
++        if sys.platform != 'sunos5':
++            # Ensure that /usr/local is always used
++            add_dir_to_list(self.compiler.library_dirs, '/usr/local/lib')
++            add_dir_to_list(self.compiler.include_dirs, '/usr/local/include')
+         # Add paths specified in the environment variables LDFLAGS and
+         # CPPFLAGS for header and library files.
+         # We must get the values from the Makefile and not the environment
+@@ -610,11 +610,22 @@
+         exts.append( Extension('_csv', ['_csv.c']) )
+ 
+         # socket(2)
++        socket_libs = []
++        if self.compiler.find_library_file(lib_dirs,
++                                           'socket'):
++            socket_libs.append('socket')
++        if self.compiler.find_library_file(lib_dirs,
++                                           'nsl'):
++            socket_libs.append('nsl')
++        if self.compiler.find_library_file(lib_dirs,
++                                           'resolv'):
++            socket_libs.append('resolv')
+         exts.append( Extension('_socket', ['socketmodule.c'],
+-                               depends = ['socketmodule.h']) )
++                               depends = ['socketmodule.h'],
++                               libraries = socket_libs) )
+         # Detect SSL support for the socket module (via _ssl)
+         search_for_ssl_incs_in = [
+-                              '/usr/local/ssl/include',
++                              '/usr/sfw/include',
+                               '/usr/contrib/ssl/include/'
+                              ]
+         ssl_incs = find_file('openssl/ssl.h', inc_dirs,
+@@ -625,8 +636,12 @@
+                                ['/usr/kerberos/include'])
+             if krb5_h:
+                 ssl_incs += krb5_h
++        if sys.maxint == 2147483647L:
++            sfw_libdir = '/usr/sfw/lib';
++        else:
++            sfw_libdir = '/usr/sfw/lib/64';
+         ssl_libs = find_library_file(self.compiler, 'ssl',lib_dirs,
+-                                     ['/usr/local/ssl/lib',
++                                     [sfw_libdir,
+                                       '/usr/contrib/ssl/lib/'
+                                      ] )
+ 
+@@ -635,6 +650,7 @@
+             exts.append( Extension('_ssl', ['_ssl.c'],
+                                    include_dirs = ssl_incs,
+                                    library_dirs = ssl_libs,
++				   runtime_library_dirs = ssl_libs,
+                                    libraries = ['ssl', 'crypto'],
+                                    depends = ['socketmodule.h']), )
+         else:
+@@ -1079,6 +1095,14 @@
+ 
+         # Curses support, requiring the System V version of curses, often
+         # provided by the ncurses library.
++        curses_lib_dirs = []
++        curses_inc_dirs = []
++        if platform == 'sunos5':
++            # look for ncurses in /usr/gnu on Solaris
++            curses_inc_dirs.append('/usr/include/ncurses')
++            curses_lib_dirs.append('/usr/gnu/lib')
++            curses_lib_dirs.append('/usr/gnu/lib/amd64')
++            curses_lib_dirs.append('/usr/gnu/lib/sparcv9')
+         panel_library = 'panel'
+         if (self.compiler.find_library_file(lib_dirs, 'ncursesw')):
+             curses_libs = ['ncursesw']
+@@ -1087,10 +1111,13 @@
+             panel_library = 'panelw'
+             exts.append( Extension('_curses', ['_cursesmodule.c'],
+                                    libraries = curses_libs) )
+-        elif (self.compiler.find_library_file(lib_dirs, 'ncurses')):
++        elif (self.compiler.find_library_file(lib_dirs + curses_lib_dirs, 'ncurses')):
+             curses_libs = ['ncurses']
+             exts.append( Extension('_curses', ['_cursesmodule.c'],
+-                                   libraries = curses_libs) )
++                                   libraries = curses_libs,
++                                   library_dirs = curses_lib_dirs,
++                                   runtime_library_dirs = curses_lib_dirs,
++                                   include_dirs = curses_inc_dirs ) )
+         elif (self.compiler.find_library_file(lib_dirs, 'curses')
+               and platform != 'darwin'):
+                 # OSX has an old Berkeley curses, not good enough for
+@@ -1109,9 +1136,12 @@
+ 
+         # If the curses module is enabled, check for the panel module
+         if (module_enabled(exts, '_curses') and
+-            self.compiler.find_library_file(lib_dirs, panel_library)):
++            self.compiler.find_library_file(lib_dirs + curses_lib_dirs, panel_library)):
+             exts.append( Extension('_curses_panel', ['_curses_panel.c'],
+-                                   libraries = [panel_library] + curses_libs) )
++                                   libraries = [panel_library] + curses_libs,
++                                   include_dirs = curses_inc_dirs,
++                                   library_dirs = curses_lib_dirs,
++                                   runtime_library_dirs = curses_lib_dirs ) )
+         else:
+             missing.append('_curses_panel')
+ 
+@@ -1324,8 +1354,13 @@
+             if macros.get('HAVE_SEM_OPEN', False):
+                 multiprocessing_srcs.append('_multiprocessing/semaphore.c')
+ 
++        multiproc_libs = []
++        if platform == 'sunos5':
++            multiproc_libs = [ "xnet" ]
++
+         exts.append ( Extension('_multiprocessing', multiprocessing_srcs,
+                                  define_macros=macros.items(),
++                                 libraries=multiproc_libs,
+                                  include_dirs=["Modules/_multiprocessing"]))
+         # End multiprocessing
+ 
+@@ -1549,15 +1584,26 @@
+         # Assume we haven't found any of the libraries or include files
+         # The versions with dots are used on Unix, and the versions without
+         # dots on Windows, for detection by cygwin.
++        added_lib_dirs = []
++        tcl_tk_lib_dirs = ['/usr/sfw/lib']
++        tcl_tk_inc_dirs = ['/usr/sfw/include']
+         tcllib = tklib = tcl_includes = tk_includes = None
+         for version in ['8.5', '85', '8.4', '84', '8.3', '83', '8.2',
+                         '82', '8.1', '81', '8.0', '80']:
+-            tklib = self.compiler.find_library_file(lib_dirs, 'tk' + version)
+-            tcllib = self.compiler.find_library_file(lib_dirs, 'tcl' + version)
++            tklib = self.compiler.find_library_file(lib_dirs, 'tk' + version, tcl_tk_lib_dirs)
++            tcllib = self.compiler.find_library_file(lib_dirs, 'tcl' + version, tcl_tk_lib_dirs)
+             if tklib and tcllib:
+                 # Exit the loop when we've found the Tcl/Tk libraries
+                 break
+ 
++            tklib = self.compiler.find_library_file(tcl_tk_lib_dirs, 'tk' + version)
++            tcllib = self.compiler.find_library_file(tcl_tk_lib_dirs, 'tcl' + version)
++            if tklib and tcllib:
++                # found the libs in a non-standard dir
++                added_lib_dirs.append(os.path.dirname(tcllib))
++                # Exit the loop when we've found the Tcl/Tk libraries
++                break
++
+         # Now check for the header files
+         if tklib and tcllib:
+             # Check for the include files on Debian and {Free,Open}BSD, where
+@@ -1572,6 +1618,7 @@
+             for dir in inc_dirs:
+                 tcl_include_sub += [dir + os.sep + "tcl" + dotversion]
+                 tk_include_sub += [dir + os.sep + "tk" + dotversion]
++            tcl_include_sub += tcl_tk_inc_dirs
+             tk_include_sub += tcl_include_sub
+             tcl_includes = find_file('tcl.h', inc_dirs, tcl_include_sub)
+             tk_includes = find_file('tk.h', inc_dirs, tk_include_sub)
+@@ -1636,6 +1683,7 @@
+                         include_dirs = include_dirs,
+                         libraries = libs,
+                         library_dirs = added_lib_dirs,
++                        runtime_library_dirs = added_lib_dirs
+                         )
+         self.extensions.append(ext)
+ 
+diff --git Python-2.6.4/Lib/site-packages/vendor-packages.pth Python2.6.4/Lib/site-packages/vendor-packages.pth
+--- /dev/null	Sat Feb 12 00:21:26 2011
++++ Python-2.6.4/Lib/site-packages/vendor-packages.pth	Sat Feb 12 00:47:05 2011
+@@ -0,0 +1,1 @@
++import site; site.addsitedir('/usr/lib/python2.6/vendor-packages')

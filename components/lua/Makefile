@@ -33,11 +33,14 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-CFLAGS +=-KPIC -D_FILE_OFFSET_BITS=64 
+# This is because lua uses $(CC) to build it's shared libraries.
+CC +=		$(CC_BITS)
 
-COMPONENT_BUILD_ENV += CC="$(CC)"
+CFLAGS +=	$(CC_PIC) $(CPP_LARGEFILES)
+
 COMPONENT_BUILD_TARGETS += CC="$(CC)"
 COMPONENT_BUILD_TARGETS += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_TARGETS += INSTALL=$(INSTALL)
 COMPONENT_INSTALL_TARGETS += INSTALL_TOP=$(PROTOUSRDIR)
 
 include ../../make-rules/shared-targets.mk

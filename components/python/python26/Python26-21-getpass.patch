@@ -1,0 +1,31 @@
+diff --git Python-2.6.4/Lib/getpass.py Python-2.6.4/Lib/getpass.py
+--- Python-2.6.4/Lib/getpass.py
++++ Python-2.6.4/Lib/getpass.py
+@@ -62,12 +62,16 @@
+         try:
+             old = termios.tcgetattr(fd)     # a copy to save
+             new = old[:]
+-            new[3] &= ~termios.ECHO  # 3 == 'lflags'
++            new[3] &= ~(termios.ECHO|termios.ISIG)  # 3 == 'lflags'
++            tcsetattr_flags = termios.TCSAFLUSH
++            if hasattr(termios, 'TCSASOFT'):
++                tcsetattr_flags |= termios.TCSASOFT
+             try:
+-                termios.tcsetattr(fd, termios.TCSADRAIN, new)
++                termios.tcsetattr(fd, tcsetattr_flags, new)
+                 passwd = _raw_input(prompt, stream, input=input)
+             finally:
+-                termios.tcsetattr(fd, termios.TCSADRAIN, old)
++                termios.tcsetattr(fd, tcsetattr_flags, old)
++                stream.flush()  # issue7208
+         except termios.error, e:
+             if passwd is not None:
+                 # _raw_input succeeded.  The final tcsetattr failed.  Reraise
+@@ -125,6 +129,7 @@
+     if prompt:
+         stream.write(prompt)
+         stream.flush()
++    # NOTE: The Python C API calls flockfile() (and unlock) during readline.
+     line = input.readline()
+     if not line:
+         raise EOFError

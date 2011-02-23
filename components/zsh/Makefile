@@ -37,10 +37,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-LFS_CFLAGS:sh = getconf LFS_CFLAGS
-
 CONFIGURE_OPTIONS += -n
-CONFIGURE_OPTIONS += --enable-cppflags="$(LFS_CFLAGS)"
+CONFIGURE_OPTIONS += --enable-cppflags="$(CPP_LARGEFILES)"
 CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-etcdir=/etc
 CONFIGURE_OPTIONS += --enable-function-subdirs

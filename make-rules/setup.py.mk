@@ -35,14 +35,16 @@ BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 
+PYTHON_ENV =	CC="$(CC)"
+PYTHON_ENV +=	CFLAGS="$(CFLAGS)"
+
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(SOURCE_DIR) ; $(ENV) $(PYTHON_ENV) \
 		$(PYTHON.$(BITS)) ./setup.py build \
-			--build-temp $(@D:$(BUILD_DIR)/%=%) \
-			$(COMPONENT_INSTALL_ARGS))
+			--build-temp $(@D:$(BUILD_DIR)/%=%))
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
@@ -62,3 +64,5 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
+clean::
+	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)

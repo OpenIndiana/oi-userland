@@ -1,0 +1,21 @@
+diff --git Python-2.6.4/Modules/posixmodule.c Python-2.6.4/Modules/posixmodule.c
+--- Python-2.6.4/Modules/posixmodule.c
++++ Python-2.6.4/Modules/posixmodule.c
+@@ -1978,6 +1978,8 @@
+ 	char *res = NULL;
+ 	PyObject *dynamic_return;
+ 
++	int maxsize = pathconf(".", _PC_PATH_MAX);
++
+ 	Py_BEGIN_ALLOW_THREADS
+ 	do {
+ 		bufsize = bufsize + bufsize_incr;
+@@ -1994,7 +1996,7 @@
+ 		if (res == NULL) {
+ 			free(tmpbuf);
+ 		}
+-	} while ((res == NULL) && (errno == ERANGE));
++	} while ((res == NULL) && (errno == ERANGE) && (bufsize < maxsize));
+ 	Py_END_ALLOW_THREADS
+ 
+ 	if (res == NULL)

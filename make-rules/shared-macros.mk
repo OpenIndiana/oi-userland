@@ -135,6 +135,10 @@ INSTALL_32 =		$(BUILD_DIR_32)/.installed
 INSTALL_64 =		$(BUILD_DIR_64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
 
+TEST_32 =		$(BUILD_DIR_32)/.tested
+TEST_64 =		$(BUILD_DIR_64)/.tested
+TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS =	/ws/onnv-tools
 
@@ -143,11 +147,11 @@ SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
 
 GCC_ROOT =	/usr/gnu
 
-CC.studio.32 =	$(SPRO_VROOT)/bin/cc -m32
-CCC.studio.32 =	$(SPRO_VROOT)/bin/CC -m32
+CC.studio.32 =	$(SPRO_VROOT)/bin/cc
+CCC.studio.32 =	$(SPRO_VROOT)/bin/CC
 
-CC.studio.64 =	$(SPRO_VROOT)/bin/cc -m64
-CCC.studio.64 =	$(SPRO_VROOT)/bin/CC -m64
+CC.studio.64 =	$(SPRO_VROOT)/bin/cc
+CCC.studio.64 =	$(SPRO_VROOT)/bin/CC
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/cc -m32
 CCC.gcc.32 =	$(GCC_ROOT)/bin/CC -m32
@@ -174,7 +178,8 @@ PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1
-GPATCH_FLAGS =	-p$(PATCH_LEVEL) -b
+GPATCH_BACKUP =	--backup --version-control=numbered
+GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
 
 PKGSEND =	/usr/bin/pkgsend
 PKGLINT =	/usr/bin/pkglint
@@ -191,82 +196,195 @@ INSTALL =	/usr/bin/ginstall
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
 
-# C compiler mode. Future compilers may change the default on us,
-# so force transition mode globally. Lower level makefiles can
-# override this by setting CCMODE.
 #
-CCMODE=		-Xa
-CCMODE64=	-Xa
+# C preprocessor flag sets to ease feature selection.  Add the required
+# feature to your Makefile with CPPFLAGS += $(FEATURE_MACRO) and add to
+# the component build with CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)" or
+# similiar.
+#
 
-# compiler '-xarch' flag. This is here to centralize it and make it
-# overridable for testing.
-sparc_XARCH=    $(CCBITS32) -xarch=sparc
-sparcv9_XARCH=  $(CCBITS64) -xcode=abs64
-i386_XARCH=     $(CCBITS32) -xchip=pentium
-amd64_XARCH=    $(CCBITS64) -xarch=generic -Ui386 -U__i386
+# Enables visibility of some c99 math functions that aren't visible by default.
+# What other side-effects are there?
+CPP_C99_EXTENDED_MATH =	-D_STDC_99
 
-# allow zero-sized struct/union declarations and
-# void functions with return statements
-FEATURES_EXTENSIONS=	-features=extensions
+# Enables large file support for components that have no other means of doing
+# so.  Use CPP_LARGEFILES and not the .32/.64 variety directly
+CPP_LARGEFILES.32 =	$(shell getconf LFS_CFLAGS)
+CPP_LARGEFILES.64 =	$(shell getconf LFS64_CFLAGS)
+CPP_LARGEFILES =		$(CPP_LARGEFILES.$(BITS))
 
-# disable the incremental linker
-ILDOFF=         -xildoff
-
-# C99 mode
-C99_ENABLE=     -xc99=all
-C99_DISABLE=    -xc99=none
-C99MODE=        $(C99_ENABLE)
-C99LMODE=       $(C99MODE:-xc99%=-Xc99%)
+# Enables some #pragma redefine_extname to POSIX-compliant Standard C Library
+# functions. Also avoids the component's #define _POSIX_C_SOURCE to some value
+# we currently do not support.
+CPP_POSIX =	-D_POSIX_C_SOURCE=200112L -D_POSIX_PTHREAD_SEMANTICS
 
 # XPG6 mode.  This option enables XPG6 conformance, plus extensions.
 # Amongst other things, this option will cause system calls like
 # popen (3C) and system (3C) to invoke the standards-conforming
-# shell, /usr/xpg4/bin/sh, instead of /usr/bin/sh.
-XPG6MODE=	$(C99MODE) -D_XOPEN_SOURCE=600 -D__EXTENSIONS__=1
+# shell, /usr/xpg4/bin/sh, instead of /usr/bin/sh.  Add studio_XPG6MODE to
+# CFLAGS instead of using this directly
+CPP_XPG6MODE=	-D_XOPEN_SOURCE=600 -D__EXTENSIONS__=1 -D_XPG6
 
+
+#
+# Studio C compiler flag sets to ease feature selection.  Add the required
+# feature to your Makefile with CFLAGS += $(FEATURE_MACRO) and add to the
+# component build with CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.
+#
+
+# Generate 32/64 bit objects
+CC_BITS =	-m$(BITS)
+
+# Code generation instruction set and optimization 'hints'.  Use studio_XBITS
+# and not the .arch.bits variety directly.
+studio_XBITS.sparc.32 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
+studio_XBITS.sparc.64 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
+studio_XBITS.i386.32 =	-xarch=pentium
+studio_XBITS.i386.64 =	-xarch=generic64 -Ui386 -U__i386
+studio_XBITS = $(studio_XBITS.$(ARCH).$(BITS))
+
+# Turn on recognition of supported C99 language features and enable the 1999 C
+# standard library semantics of routines that appear in	both the 1990 and
+# 1999 C standard. To use set studio_C99MODE=$(studio_99_ENABLE) in your
+# component Makefile.
+studio_C99_ENABLE =		-xc99=all
+
+# Turn off recognition of C99 language features, and do not enable the 1999 C
+# standard library semantics of routines that appeared in both the 1990	and
+# 1999 C standard.  To use set studio_C99MODE=$(studio_99_DISABLE) in your
+# component Makefile.
+studio_C99_DISABLE =	-xc99=none
+
+# Use the compiler default 'xc99=all,no_lib'
+studio_C99MODE =
+
+# Allow zero-sized struct/union declarations and void functions with return
+# statements.
+studio_FEATURES_EXTENSIONS =	-features=extensions
+
+# Control the Studio optimization level.
+studio_OPT.sparc.32 =	-x04
+studio_OPT.sparc.64 =	-x04
+studio_OPT.i386.32 =	-x04
+studio_OPT.i386.64 =	-x04
+studio_OPT =		$(studio_OPT.$(ARCH).$(BITS))
+
+# Studio PIC code generation.  Use CC_PIC instead to select PIC code generation.
+studio_PIC = 	-KPIC -DPIC
 
 # The Sun Studio 11 compiler has changed the behaviour of integer
 # wrap arounds and so a flag is needed to use the legacy behaviour
 # (without this flag panics/hangs could be exposed within the source).
+# This is used through studio_IROPTS, not the 'sparc' variety.
+studio_IROPTS.sparc =	-W2,-xwrap_int
+studio_IROPTS =		$(studio_IROPTS.$(ARCH))
+
+# Control register usage for generated code.  SPARC ABI requires system
+# libraries not to use application registers.  x86 requires 'no%frameptr' at
+# x04 or higher.
+studio_XREGS.sparc =	-xregs=no%appl,float
+studio_XREGS.i386 =	-xregs=no%frameptr
+studio_XREGS =		$(studio_XREGS.$(ARCH))
+
+# See CPP_XPG6MODE comment above.
+studio_XPG6MODE =	$(studio_C99MODE) $(CPP_XPG6MODE)
+XPG6MODE =		$(studio_XPG6MODE)
+
+# Default Studio C compiler flags.  Add the required feature to your Makefile
+# with CFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add CFLAGS to any environment other than the
+# configure environment.
+CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
+			$(studio_IROPTS) $(studio_C99MODE)
+
+
 #
-sparc_IROPTFLAG		= -W2,-xwrap_int
-sparcv9_IROPTFLAG	= -W2,-xwrap_int
-i386_IROPTFLAG		=
-amd64_IROPTFLAG		=
-IROPTFLAG		= $($(MACH)_IROPTFLAG)
-IROPTFLAG64		= $($(MACH64)_IROPTFLAG)
+# GNU C compiler flag sets to ease feature selection.  Add the required
+# feature to your Makefile with CFLAGS += $(FEATURE_MACRO) and add to the
+# component build with CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.
+#
 
-sparc_CFLAGS=	$(sparc_XARCH)
-sparcv9_CFLAGS=	$(sparcv9_XARCH) -dalign $(CCVERBOSE)
-i386_CFLAGS=	$(i386_XARCH)
-amd64_CFLAGS=	$(amd64_XARCH)
+# GCC Compiler optimization flag
+gcc_OPT =	-O3
 
-sparc_COPTFLAG=		-xO3
-sparcv9_COPTFLAG=	-xO3
-i386_COPTFLAG=		-xO3
-amd64_COPTFLAG=		-xO3
-COPTFLAG= $($(MACH)_COPTFLAG)
-COPTFLAG64= $($(MACH64)_COPTFLAG)
+# GCC PIC code generation.  Use CC_PIC instead to select PIC code generation.
+gcc_PIC =	-fPIC -DPIC
 
-sparc_XREGSFLAG		= -xregs=no%appl
-sparcv9_XREGSFLAG	= -xregs=no%appl
-i386_XREGSFLAG		=
-amd64_XREGSFLAG		=
-XREGSFLAG		= $($(MACH)_XREGSFLAG)
-XREGSFLAG64		= $($(MACH64)_XREGSFLAG)
+# Generic macro for PIC code generation.  Use this macro instead of the
+# compiler specific variant.
+CC_PIC =	$($(COMPILER)_PIC)
 
-CFLAGS=  \
-	$(COPTFLAG) $($(MACH)_CFLAGS) $(CCMODE) \
-	$(ILDOFF) $(C99MODE) $(IROPTFLAG)
 
-CFLAGS64= \
-	$(COPTFLAG64) $($(MACH64)_CFLAGS) $(CCMODE64) \
-	$(ILDOFF) $(C99MODE) $(IROPTFLAG64)
+# Default GNU C compiler flags.  Add the required feature to your Makefile
+# with CFLAGS += $(FEATURE_MACRO) and add to the component build with
+# CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" or similiar.  In most cases, it
+# should not be necessary to add CFLAGS to any environment other than the
+# configure environment.
+CFLAGS.gcc +=	$(gcc_OPT)
 
-# build with a non-executable stack by default.
-# override this if necessary
-LD_MAP_NOEXSTK=-M /usr/lib/ld/map.noexstk
-LD_OPTIONS+= $(LD_MAP_NOEXSTK)
+
+# Build 32 or 64 bit objects.
+CFLAGS +=	$(CC_BITS)
+
+# Add compiler specific 'default' features
+CFLAGS +=	$(CFLAGS.$(COMPILER))
+
+
+#
+# Solaris linker flag sets to ease feature selection.  Add the required
+# feature to your Makefile with LDFLAGS += $(FEATURE_MACRO) and add to the
+# component build with CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)" or similiar.
+#
+
+# Reduce the symbol table size, effectively conflicting with -g.  We should
+# get linker guidance here.
+LD_Z_REDLOCSYM =	-z redlocsym
+
+# Cause the linker to rescan archive libraries and resolve remaining unresolved
+# symbols recursively until all symbols are resolved.  Components should be
+# linking in the libraries they need, in the required order.  This should
+# only be required if the component's native build is horribly broken.
+LD_Z_RESCAN_NOW =	-z rescan-now
+
+LD_Z_TEXT =		-z direct
+
+# make sure all symbols are defined.
+LD_Z_DEFS =		-z defs
+
+# use direct binding
+LD_B_DIRECT =		-Bdirect
+
+#
+# More Solaris linker flags that we want to be sure that everyone gets.  This
+# is automatically added to the calling environment during the 'build' and
+# 'install' phases of the component build.  Each individual feature can be
+# turned off by adding FEATURE_MACRO= to the component Makefile.
+#
+
+# Create a non-executable stack when linking.
+LD_MAP_NOEXSTK =	-M /usr/lib/ld/map.noexstk
+
+# Create a non-executable bss segment when linking.
+LD_MAP_NOEXBSS =	-M /usr/lib/ld/map.noexbss
+
+# Create a non-executable data segment when linking.  Due to PLT needs, the
+# data segment must be executable on sparc, but the bss does not.
+# see mapfile comments for more information
+LD_MAP_NOEXDATA.i386 =	-M /usr/lib/ld/map.noexdata
+LD_MAP_NOEXDATA.sparc =	$(LD_MAP_NOEXBSS)
+
+# Page alignment
+LD_MAP_PAGEALIGN =	-M /usr/lib/ld/map.pagealign
+
+# Linker options to add when only building libraries
+LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS)
+
+# Default linker options that everyone should get.  Do not add additional
+# libraries to this macro, as it will apply to everything linked during the
+# component build.
+LD_OPTIONS +=	$(LD_MAP_NOEXSTK) $(LD_MAP_NOEXDATA.$(ARCH)) \
+		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT)
 
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
