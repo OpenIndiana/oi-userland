@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -27,7 +27,7 @@
 #
 
 # drop actions that don't apply to the architecture we are on
-<transform dir file link hardlink variant.arch=(?!$(ARCH)) -> drop>
+#<transform dir file link hardlink variant.arch=(?!$(ARCH)) -> drop>
 
 # drop the license actions from the manifests, we aren't going to compare them
 <transform license -> drop>
@@ -51,7 +51,11 @@
 <transform dir file link hardlink -> delete timestamp .*>
 <transform dir file link hardlink -> delete pkg.csize .*>
 <transform dir file link hardlink -> delete pkg.chash .*>
+<transform dir file link hardlink -> delete chash .*>
 <transform dir file link hardlink -> delete pkg.size .*>
+<transform dir file link hardlink -> delete elfarch .*>
+<transform dir file link hardlink -> delete elfbits .*>
+<transform dir file link hardlink -> delete elfhash .*>
 <transform dir file link hardlink -> delete owner .*>
 <transform dir file link hardlink -> delete group .*>
 <transform dir file link hardlink -> delete mode .*>

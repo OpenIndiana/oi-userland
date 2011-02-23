@@ -75,6 +75,8 @@ PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 
+PKG_PROTO_DIRS += $(PROTO_DIR) $(@D) $(COMPONENT_DIR)
+
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
@@ -117,8 +119,9 @@ $(MANIFEST_BASE)-%.mogrified:	%.p5m canonical-manifests
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # generate dependencies
+PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mogrified
-	$(PKGDEPEND) generate -m $< $(PROTO_DIR) >$@
+	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
 # resolve dependencies, prepend the mogrified manifest, less the unresolved
 # dependencies to the result.
@@ -137,9 +140,10 @@ $(MANIFEST_BASE)-%.linted:	$(MANIFEST_BASE)-%.resolved
 	$(PKGFMT) <$< >$@
 
 # published
+PKGSEND_PUBLISH_OPTIONS = -s $(PKG_REPO) publish --fmri-in-manifest
+PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.linted
-	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
-		-d $(PROTO_DIR) -d $(@D) -d . $<
+	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
 
 $(BUILD_DIR)/.published:	$(PUBLISHED)

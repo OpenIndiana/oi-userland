@@ -41,9 +41,8 @@ LINTOUT=	lint.out
 LINTFLAGS=	-nsvx -I. $(BITS32)
 LINTFLAGS64=	-nsvx -I. $(BITS64)
 
-
-CFLAGS += -KPIC -D_FILE_OFFSET_BITS=64
-CFLAGS += $(XREGSFLAG)
+# we need to enable large file support and build PIC for our shared libraries
+CFLAGS += $(CPP_LARGEFILE) $(CC_PIC)
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_TARGETS += CC="$(CC)"

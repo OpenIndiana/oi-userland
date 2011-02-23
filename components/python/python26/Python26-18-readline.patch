@@ -1,0 +1,31 @@
+diff --git Python-2.6.4/setup.py Python-2.6.4/setup.py
+--- Python-2.6.4/setup.py
++++ Python-2.6.4/setup.py
+@@ -572,6 +572,14 @@
+                 # This way a staticly linked custom readline gets picked up
+                 # before the (broken) dynamic library in /usr/lib.
+                 readline_extra_link_args = ('-Wl,-search_paths_first',)
++            elif sys.platform == 'sunos5':
++                if sys.maxint != 9223372036854775807L:
++                    readline_extra_link_args = ('-Wl,-zrecord,-L/usr/gnu/lib,-R/usr/gnu/lib,-lreadline,-lncurses',)
++                else:
++                    if os.path.exists('/usr/gnu/lib/sparcv9'):
++                        readline_extra_link_args = ('-Wl,-zrecord,-L/usr/gnu/lib/sparcv9,-R/usr/gnu/lib/sparcv9,-lreadline,-lncurses',)
++                    else:
++                        readline_extra_link_args = ('-Wl,-zrecord,-L/usr/gnu/lib/amd64,-R/usr/gnu/lib/amd64,-lreadline,-lncurses',)
+             else:
+                 readline_extra_link_args = ()
+ 
+@@ -588,6 +596,12 @@
+                                                ['/usr/lib/termcap'],
+                                                'termcap'):
+                 readline_libs.append('termcap')
++
++            if sys.platform == 'sunos5':
++                # ugly hack to make the build respect -zrecord set in
++                # readline_extra_link_args above
++                readline_libs = []
++
+             exts.append( Extension('readline', ['readline.c'],
+                                    library_dirs=['/usr/lib/termcap'],
+                                    extra_link_args=readline_extra_link_args,

@@ -1,0 +1,84 @@
+diff --git Python-2.6.4/Python/import.c Python-2.6.4/Python/import.c
+--- Python-2.6.4/Python/import.c
++++ Python-2.6.4/Python/import.c
+@@ -866,8 +866,9 @@
+ 
+ /* Write a compiled module to a file, placing the time of last
+    modification of its source into the header.
+-   Errors are ignored, if a write error occurs an attempt is made to
+-   remove the file. */
++   Write to a temporary file first so that creating the file is atomic.
++   Errors are ignored, if a write/unlink/rename error occurs an attempt
++   is made to remove the temporary file. */
+ 
+ static void
+ write_compiled_module(PyCodeObject *co, char *cpathname, struct stat *srcstat)
+@@ -879,12 +880,21 @@
+ #else
+ 	mode_t mode = srcstat->st_mode & ~S_IXUSR & ~S_IXGRP & ~S_IXOTH;
+ #endif 
++	char *tmppathname;
++ 
++	/* the temporary file is called cpathname + ".tmp" */
++	if ((tmppathname = PyMem_Malloc(strlen(cpathname) + strlen(".tmp") + 1))
++		== NULL) {
++		return;
++	}
++	sprintf (tmppathname, "%s.tmp", cpathname);
++	fp = open_exclusive(tmppathname, mode);
+ 
+-	fp = open_exclusive(cpathname, mode);
+ 	if (fp == NULL) {
+ 		if (Py_VerboseFlag)
+ 			PySys_WriteStderr(
+-				"# can't create %s\n", cpathname);
++				"# can't create %s\n", tmppathname);
++		PyMem_Free(tmppathname);
+ 		return;
+ 	}
+ 	PyMarshal_WriteLongToFile(pyc_magic, fp, Py_MARSHAL_VERSION);
+@@ -893,10 +903,11 @@
+ 	PyMarshal_WriteObjectToFile((PyObject *)co, fp, Py_MARSHAL_VERSION);
+ 	if (fflush(fp) != 0 || ferror(fp)) {
+ 		if (Py_VerboseFlag)
+-			PySys_WriteStderr("# can't write %s\n", cpathname);
++			PySys_WriteStderr("# can't write %s\n", tmppathname);
+ 		/* Don't keep partial file */
+ 		fclose(fp);
+-		(void) unlink(cpathname);
++		(void) unlink(tmppathname);
++		PyMem_Free(tmppathname);
+ 		return;
+ 	}
+ 	/* Now write the true mtime */
+@@ -905,8 +916,30 @@
+ 	PyMarshal_WriteLongToFile((long)mtime, fp, Py_MARSHAL_VERSION);
+ 	fflush(fp);
+ 	fclose(fp);
++	/* Delete the old compiled file, if exists */
++	if (unlink (cpathname)) {
++		if ((errno != ENOENT)) {
++			/* the file exists but could not be deleted */
++			if (Py_VerboseFlag)
++				PySys_WriteStderr(
++					"# can't unlink %s\n", cpathname);
++			(void) unlink(tmppathname);
++			PyMem_Free(tmppathname);
++			return;
++		}
++	}
++	/* rename the tmp file to the real file name */
++	if (rename (tmppathname, cpathname)) {
++		if (Py_VerboseFlag)
++			PySys_WriteStderr(
++				"# can't rename %s to %s\n", tmppathname, cpathname);
++		(void) unlink(tmppathname);
++		PyMem_Free(tmppathname);
++		return;
++	}
+ 	if (Py_VerboseFlag)
+ 		PySys_WriteStderr("# wrote %s\n", cpathname);
++	PyMem_Free(tmppathname);
+ }
+ 
+ static void

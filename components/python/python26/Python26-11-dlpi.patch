@@ -1,0 +1,1328 @@
+diff --git Python-2.6.4/Modules/dlpimodule.c Python-2.6.4/Modules/dlpimodule.c
+new file mode 100644
+--- /dev/null
++++ Python-2.6.4/Modules/dlpimodule.c
+@@ -0,0 +1,1206 @@
++/*
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to
++ * deal in the Software without restriction, including without limitation the
++ * rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
++ * sell copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ *
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++ * DEALINGS IN THE SOFTWARE.
++ *
++ * Copyright 2008 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
++ */
++
++#include <Python.h>
++#include <stdio.h>
++#include <libdlpi.h>
++
++typedef struct {
++	PyObject_HEAD
++	dlpi_handle_t dlpihdl;
++} pylink_t;
++
++typedef struct {
++	PyObject *pyfunc;
++	PyObject *pyarg;
++} callback_data_t;
++
++/*
++ * dlpi_err: the only exception raised for libdlpi related error.
++ * The accompanying value is:
++ * (dlpi_error_number, string), when it's a dlpi specific error,
++ * or, (DL_SYSERR, errno, string), when it's coming from a system call.
++ */
++static PyObject *dlpi_err;
++
++static void
++dlpi_raise_exception(int err)
++{
++	PyObject *e = NULL;
++
++	if (err == DL_SYSERR) {
++		e = Py_BuildValue("(iis)", DL_SYSERR, errno, strerror(errno));
++	} else {
++		e = Py_BuildValue("(is)", err, dlpi_strerror(err));
++	}
++	if (e != NULL) {
++		PyErr_SetObject(dlpi_err, e);
++		Py_DECREF(e);
++	}
++}
++
++PyDoc_STRVAR(link_doc,
++    "link(linkname[, flags]) -> link object\n"
++    "\n"
++    "Open linkname with specified flags.\n"
++    "Three flags are supported: PASSIVE, RAW, NATIVE.\n"
++    "And these flags can be bitwise-OR'ed together(default flag is 0).\n"
++    "You need sys_net_rawaccess privilege to open a link.\n"
++    "See dlpi_open(3DLPI).\n"
++);
++static int
++link_init(PyObject *self, PyObject *args, PyObject *kwds)
++{
++	uint_t flags = 0;
++	dlpi_handle_t dh;
++	char *linkname;
++	int rval;
++	static char *keywords[] = {"linkname", "flags", NULL};
++	pylink_t *link = (pylink_t *)self;
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s|I", keywords,
++	    &linkname, &flags))
++		return (-1);
++
++	if ((rval = dlpi_open(linkname, &dh, flags)) != DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (-1);
++	}
++
++	link->dlpihdl = dh;
++
++	return (0);
++}
++
++static void
++link_dealloc(pylink_t *link)
++{
++	if (link->dlpihdl != NULL)
++		dlpi_close(link->dlpihdl);
++	link->ob_type->tp_free((PyObject *)link);
++}
++
++PyDoc_STRVAR(bind_doc,
++    "bind(sap) -> unsigned int\n"
++    "\n"
++    "Attempts to bind the link to specified SAP, or ANY_SAP.\n"
++    "Returns the SAP that the function actually bound to, which\n"
++    "could be different from the SAP requested.\n"
++    "See dlpi_bind(3DLPI).\n"
++);
++static PyObject *
++link_bind(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	uint_t sap = 0, boundsap = 0;
++	static char *keywords[] = {"sap", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "I", keywords, &sap))
++		return (NULL);
++
++	if ((rval = dlpi_bind(link->dlpihdl, sap, &boundsap)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("I", boundsap));
++}
++
++PyDoc_STRVAR(unbind_doc,
++    "unbind() -> None\n"
++    "\n"
++    "Attempts to unbind the link from previously bound sap.\n"
++    "See dlpi_unbind(3DLPI).\n"
++);
++static PyObject *
++link_unbind(pylink_t *link)
++{
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_unbind(link->dlpihdl)) != DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(send_doc,
++    "send(destaddr, message[, sap, minpri, maxpri]) -> None\n"
++    "\n"
++    "Attempts to send message over this link to sap on destaddr.\n"
++    "If SAP is not specified, the bound SAP is used\n"
++    "You can also specify priority range (minpri, maxpri).\n"
++    "See dlpi_send(3DLPI).\n"
++);
++static PyObject *
++link_send(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	char *daddr = NULL, *msgbuf = NULL;
++	size_t daddrlen = 0, msglen = 0;
++	t_scalar_t minpri = DL_QOS_DONT_CARE, maxpri = DL_QOS_DONT_CARE;
++	uint_t sap = DLPI_ANY_SAP;
++	dlpi_sendinfo_t ds, *dsp = NULL;
++	static char *keywords[] =
++	    {"destaddr", "message", "sap", "minpri", "maxpri", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#s#|Iii", keywords,
++	    &daddr, &daddrlen, &msgbuf, &msglen, &sap, &minpri, &maxpri))
++		return (NULL);
++
++	if ((sap != DLPI_ANY_SAP) || (minpri != DL_QOS_DONT_CARE) ||
++	    (maxpri != DL_QOS_DONT_CARE)) {
++		ds.dsi_sap = sap;
++		ds.dsi_prio.dl_min = minpri;
++		ds.dsi_prio.dl_max = maxpri;
++		dsp = &ds;
++	}
++
++	if ((rval = dlpi_send(link->dlpihdl, daddr, daddrlen,
++	    msgbuf, msglen, dsp)) != DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(recv_doc,
++    "recv(msglen[, timeout]) -> (string, string), or (None, None)\n"
++    "\n"
++    "Attempts to receive message over this link.\n"
++    "You need to specify the message length for the received message.\n"
++    "And you can specify timeout value in milliseconds.\n"
++    "The default timeout value is -1 (wait forever).\n"
++    "Returns (source address, message data), or (None, None) when error occurs.\n"
++    "See dlpi_recv(3DLPI).\n"
++);
++static PyObject *
++link_recv(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	PyObject *obj;
++	char *saddr = NULL, *msgbuf = NULL;
++	size_t saddrlen = 0, msglen = 0, *saddrlenp = NULL, *msglenp = NULL;
++	int msec = -1; /* block until receive data */
++	static char *keywords[] = {"msglen", "timeout", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "k|i",
++	    keywords, &msglen, &msec))
++		return (NULL);
++
++	if (msglen > 0) {
++		msgbuf = malloc(msglen);
++		if (msgbuf == NULL) {
++			dlpi_raise_exception(DL_SYSERR);
++			return (NULL);
++		}
++		saddrlen = DLPI_PHYSADDR_MAX;
++		saddr = malloc(saddrlen);
++		if (saddr == NULL) {
++			dlpi_raise_exception(DL_SYSERR);
++			free(msgbuf);
++			return (NULL);
++		}
++		msglenp = &msglen;
++		saddrlenp = &saddrlen;
++	}
++
++	if ((rval = dlpi_recv(link->dlpihdl, saddr, saddrlenp, msgbuf,
++	    msglenp, msec, NULL)) != DLPI_SUCCESS) {
++		if (msgbuf != NULL)
++			free(msgbuf);
++		if (saddr != NULL)
++			free(saddr);
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	obj = Py_BuildValue("s#s#", saddr, saddrlen, msgbuf, msglen);
++	if (msgbuf != NULL)
++		free(msgbuf);
++	if (saddr != NULL)
++		free(saddr);
++	return (obj);
++}
++
++PyDoc_STRVAR(disabmulti_doc,
++    "disabmulti(address) -> None\n"
++    "\n"
++    "Disable a specified multicast address on this link.\n"
++    "See dlpi_disabmulti(3DLPI).\n"
++);
++static PyObject *
++link_disabmulti(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	char *addr = NULL;
++	size_t addrlen = 0;
++	static char *keywords[] = {"address", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#", keywords,
++	    &addr, &addrlen))
++		return (NULL);
++
++	if ((addrlen == 0) || (addrlen > DLPI_PHYSADDR_MAX)) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_disabmulti(link->dlpihdl, addr, addrlen)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(enabmulti_doc,
++    "enabmulti(address) -> None\n"
++    "\n"
++    "Enable a specified multicast address on this link.\n"
++    "See dlpi_enabmulti(3DLPI).\n"
++);
++static PyObject *
++link_enabmulti(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	char *addr = NULL;
++	size_t addrlen = 0;
++	static char *keywords[] = {"address", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#", keywords,
++	    &addr, &addrlen))
++		return (NULL);
++
++	if ((addrlen == 0) || (addrlen > DLPI_PHYSADDR_MAX)) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_enabmulti(link->dlpihdl, addr, addrlen)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++static void
++dlpi_callback(dlpi_handle_t hdl, dlpi_notifyinfo_t *ni, void *arg)
++{
++	callback_data_t *cd = (callback_data_t *)arg;
++	PyObject *arglist, *result;
++
++	switch (ni->dni_note) {
++	case DL_NOTE_SPEED:
++		arglist = Py_BuildValue("(OII)",
++		    cd->pyarg, ni->dni_note, ni->dni_speed);
++		break;
++	case DL_NOTE_SDU_SIZE:
++		arglist = Py_BuildValue("(OII)",
++		    cd->pyarg, ni->dni_note, ni->dni_size);
++		break;
++	case DL_NOTE_PHYS_ADDR:
++		arglist = Py_BuildValue("(OIs#)",
++		    cd->pyarg, ni->dni_note, ni->dni_physaddr,
++		    ni->dni_physaddrlen);
++		break;
++	default:
++		arglist = Py_BuildValue("(OIO)", cd->pyarg, ni->dni_note,
++		    Py_None);
++	}
++
++	result = PyEval_CallObject(cd->pyfunc, arglist);
++	Py_DECREF(arglist);
++	if (result == NULL) {
++		PyErr_Clear(); /* cannot raise error */
++	}
++	Py_DECREF(result);
++	Py_DECREF(cd->pyfunc);
++	Py_XDECREF(cd->pyarg);
++	free(cd);
++}
++
++PyDoc_STRVAR(enabnotify_doc,
++    "enabnotify(events, function[, arg]) -> unsigned long\n"
++    "\n"
++    "Enables a notification callback for the set of specified events,\n"
++    "which must be one or more (by a logical OR) events listed as below:\n"
++    "NOTE_LINK_DOWN         Notify when link has gone down\n"
++    "NOTE_LINK_UP           Notify when link has come up\n"
++    "NOTE_PHYS_ADDR         Notify when address changes\n"
++    "NOTE_SDU_SIZE          Notify when MTU changes\n"
++    "NOTE_SPEED             Notify when speed changes\n"
++    "NOTE_PROMISC_ON_PHYS   Notify when PROMISC_PHYS is set\n"
++    "NOTE_PROMISC_OFF_PHYS  Notify when PROMISC_PHYS is cleared\n"
++    "Returns a handle for this registration.\n"
++    "See dlpi_enabnotify(3DLPI).\n"
++);
++static PyObject *
++link_enabnotify(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	PyObject *func = NULL, *arg = NULL;
++	callback_data_t *cd;
++	uint_t notes = 0;
++	static char *keywords[] = {"events", "function", "arg", NULL};
++	dlpi_notifyid_t id;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "IO|O",
++	    keywords, &notes, &func, &arg))
++		return (NULL);
++
++	if (!PyCallable_Check(func)) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	cd = malloc(sizeof(callback_data_t));
++	if (cd == NULL) {
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++	Py_INCREF(func);
++	Py_XINCREF(arg);
++	cd->pyfunc = func;
++	cd->pyarg = arg;
++
++	if ((rval = dlpi_enabnotify(link->dlpihdl, notes, dlpi_callback,
++	    cd, &id)) != DLPI_SUCCESS) {
++		free(cd);
++		Py_DECREF(func);
++		Py_XDECREF(arg);
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("k", id));
++}
++
++PyDoc_STRVAR(disabnotify_doc,
++    "disabnotify(handle) -> argument object, or None\n"
++    "\n"
++    "Disables the notification registration associated with handle.\n"
++    "You should get this handle by calling enabnotify().\n"
++    "Returns the argument passed in when registering the callback, or None.\n"
++    "See dlpi_disabnotify(3DLPI).\n"
++);
++static PyObject *
++link_disabnotify(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	dlpi_notifyid_t id;
++	callback_data_t *arg;
++	PyObject *pyargsaved;
++	static char *keywords[] = {"handle", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "k", keywords, &id))
++		return (NULL);
++
++	if ((rval = dlpi_disabnotify(link->dlpihdl, id, (void **)&arg)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	/* clean up */
++	pyargsaved = arg->pyarg;
++	Py_XINCREF(pyargsaved);
++	Py_XDECREF(arg->pyarg);
++	Py_DECREF(arg->pyfunc);
++	free(arg);
++
++	if (pyargsaved != NULL)
++		return (pyargsaved);
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(get_sap_doc,
++    "get_sap() -> unsigned int\n"
++    "\n"
++    "Returns the sap bound to this link.\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_sap(pylink_t *link)
++{
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("I", info.di_sap));
++}
++
++PyDoc_STRVAR(get_fd_doc,
++    "get_fd() -> int\n"
++    "\n"
++    "Returns the integer file descriptor that can be used to directly\n"
++    "operate on the link.\n"
++    "See dlpi_fd(3DLPI).\n"
++);
++static PyObject *
++link_get_fd(pylink_t *link)
++{
++	int fd;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((fd = dlpi_fd(link->dlpihdl)) == -1) {
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("i", fd));
++}
++
++PyDoc_STRVAR(get_linkname_doc,
++    "get_linkname() -> string\n"
++    "\n"
++    "Returns the name of the link.\n"
++    "See dlpi_linkname(3DLPI).\n"
++);
++static PyObject *
++link_get_linkname(pylink_t *link)
++{
++	const char *name = NULL;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((name = dlpi_linkname(link->dlpihdl)) == NULL) {
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("s", name));
++}
++
++PyDoc_STRVAR(get_bcastaddr_doc,
++    "get_bcastaddr() -> string, or None\n"
++    "\n"
++    "Returns the broadcast address of the link.\n"
++    "Returns None if the broadcast address is empty.\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_bcastaddr(pylink_t *link)
++{
++	char *addr[DLPI_PHYSADDR_MAX];
++	size_t addrlen = 0;
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	if (info.di_bcastaddrlen == 0) {
++		Py_INCREF(Py_None);
++		return (Py_None);
++	}
++
++	return (Py_BuildValue("s#", info.di_bcastaddr, info.di_bcastaddrlen));
++}
++
++PyDoc_STRVAR(get_physaddr_doc,
++    "get_physaddr(addrtype) -> string, or None\n"
++    "\n"
++    "Addrtype can be any one of the value listed below:\n"
++    "FACT_PHYS_ADDR    Factory physical address\n"
++    "CURR_PHYS_ADDR    Current physical address\n"
++    "Returns the corresponding physical address of the link.\n"
++    "See dlpi_get_physaddr(3DLPI).\n"
++);
++static PyObject *
++link_get_physaddr(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	char *addr[DLPI_PHYSADDR_MAX];
++	size_t addrlen = DLPI_PHYSADDR_MAX;
++	static char *keywords[] = {"addrtype", NULL};
++	uint_t type;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "I", keywords, &type))
++		return (NULL);
++
++	if ((rval = dlpi_get_physaddr(link->dlpihdl, type, addr, &addrlen)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("s#", addr, addrlen));
++}
++
++PyDoc_STRVAR(set_physaddr_doc,
++    "set_physaddr(address) -> None\n"
++    "\n"
++    "Sets the physical address of the link.\n"
++    "See dlpi_set_physaddr(3DLPI).\n"
++);
++static PyObject *
++link_set_physaddr(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	char *addr = NULL;
++	size_t addrlen = 0;
++	static char *keywords[] = {"address", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "s#", keywords,
++	    &addr, &addrlen))
++		return (NULL);
++
++	if ((rval = dlpi_set_physaddr(link->dlpihdl, DL_CURR_PHYS_ADDR,
++	    addr, addrlen)) != DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(promiscon_doc,
++    "promiscon([level]) -> None\n"
++    "\n"
++    "Enables promiscuous mode for the link at levels:\n"
++    "PROMISC_PHYS     Promiscuous mode at the physical level(default)\n"
++    "PROMISC_SAP      Promiscuous mode at the SAP level\n"
++    "PROMISC_MULTI    Promiscuous mode for all multicast addresses\n"
++    "See dlpi_promiscon(3DLPI).\n"
++);
++static PyObject *
++link_promiscon(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	uint_t level = DL_PROMISC_PHYS;
++	static char *keywords[] = {"level", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|I", keywords, &level))
++		return (NULL);
++
++	if ((rval = dlpi_promiscon(link->dlpihdl, level)) != DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(promiscoff_doc,
++    "promiscoff([level]) -> None\n"
++    "\n"
++    "Disables promiscuous mode for the link at levels:\n"
++    "PROMISC_PHYS     Promiscuous mode at the physical level(default)\n"
++    "PROMISC_SAP      Promiscuous mode at the SAP level\n"
++    "PROMISC_MULTI    Promiscuous mode for all multicast addresses\n"
++    "See dlpi_promiscoff(3DLPI).\n"
++);
++static PyObject *
++link_promiscoff(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	uint_t level = DL_PROMISC_PHYS;
++	static char *keywords[] = {"level", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "|I", keywords, &level))
++		return (NULL);
++
++	if ((rval = dlpi_promiscoff(link->dlpihdl, level)) != DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(get_timeout_doc,
++    "get_timeout() -> int\n"
++    "\n"
++    "Returns current time out value of the link.\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_timeout(pylink_t *link)
++{
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("i", info.di_timeout));
++}
++
++PyDoc_STRVAR(get_mactype_doc,
++    "get_mactype() -> unsigned char\n"
++    "\n"
++    "Returns MAC type of the link.\n"
++    "See <sys/dlpi.h> for the list of possible MAC types.\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_mactype(pylink_t *link)
++{
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("B", info.di_mactype));
++}
++
++PyDoc_STRVAR(set_timeout_doc,
++    "set_timeout(timeout) -> None\n"
++    "\n"
++    "Sets time out value of the link (default value: DEF_TIMEOUT).\n"
++    "See dlpi_set_timeout(3DLPI).\n"
++);
++static PyObject *
++link_set_timeout(pylink_t *link, PyObject *args, PyObject *kwds)
++{
++	int timeout = DLPI_DEF_TIMEOUT;
++	static char *keywords[] = {"timeout", NULL};
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", keywords, &timeout))
++		return (NULL);
++
++	if ((rval = dlpi_set_timeout(link->dlpihdl, timeout)) != DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	Py_INCREF(Py_None);
++	return (Py_None);
++}
++
++PyDoc_STRVAR(get_sdu_doc,
++    "get_sdu() -> (unsigned int, unsigned int)\n"
++    "\n"
++    "Returns (min sdu, max sdu).\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_sdu(pylink_t *link)
++{
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("II", info.di_min_sdu, info.di_max_sdu));
++}
++
++PyDoc_STRVAR(get_state_doc,
++    "get_state() -> unsigned int\n"
++    "\n"
++    "Returns current state of the link (either UNBOUND or IDLE).\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_state(pylink_t *link)
++{
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("I", info.di_state));
++}
++
++PyDoc_STRVAR(get_qos_select_doc,
++    "get_qos_select() -> (unsigned int, int, int, int)\n"
++    "\n"
++    "Returns (qos type, trans delay, priority, residul err).\n"
++    "Unsupported QOS parameters are set to UNKNOWN.\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_qos_select(pylink_t *link)
++{
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("Iiiii",
++	    info.di_qos_sel.dl_qos_type,
++	    info.di_qos_sel.dl_trans_delay,
++	    info.di_qos_sel.dl_priority,
++	    info.di_qos_sel.dl_residual_error));
++}
++
++PyDoc_STRVAR(get_qos_range_doc,
++    "get_qos_range() -> \n"
++    "	(unsigned int, (int, int), (int, int), (int, int), int)\n"
++    "\n"
++    "Returns (qos type, (trans delay target, trans delay accept),\n"
++    "(min priority, max priority), (min protection, max protection),\n"
++    "residual err).\n"
++    "Unsupported QOS range values are set to UNKNOWN.\n"
++    "See dlpi_info(3DLPI).\n"
++);
++static PyObject *
++link_get_qos_range(pylink_t *link)
++{
++	dlpi_info_t info;
++	int rval;
++
++	if (link->dlpihdl == NULL) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	if ((rval = dlpi_info(link->dlpihdl, &info, 0)) !=
++	    DLPI_SUCCESS) {
++		dlpi_raise_exception(rval);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("I(ii)(ii)(ii)i",
++	    info.di_qos_range.dl_qos_type,
++	    info.di_qos_range.dl_trans_delay.dl_target_value,
++	    info.di_qos_range.dl_trans_delay.dl_accept_value,
++	    info.di_qos_range.dl_priority.dl_min,
++	    info.di_qos_range.dl_priority.dl_max,
++	    info.di_qos_range.dl_protection.dl_min,
++	    info.di_qos_range.dl_protection.dl_max,
++	    info.di_qos_range.dl_residual_error));
++}
++
++static PyMethodDef pylink_methods[] = {
++	{"bind", (PyCFunction)link_bind, METH_VARARGS|METH_KEYWORDS, bind_doc},
++	{"unbind", (PyCFunction)link_unbind, METH_NOARGS, unbind_doc},
++	{"send", (PyCFunction)link_send, METH_VARARGS|METH_KEYWORDS,
++	    send_doc},
++	{"recv", (PyCFunction)link_recv, METH_VARARGS|METH_KEYWORDS,
++	    recv_doc},
++	{"disabmulti", (PyCFunction)link_disabmulti, METH_VARARGS|METH_KEYWORDS,
++	    disabmulti_doc},
++	{"enabmulti", (PyCFunction)link_enabmulti, METH_VARARGS|METH_KEYWORDS,
++	    enabmulti_doc},
++	{"enabnotify", (PyCFunction)link_enabnotify,
++	    METH_VARARGS|METH_KEYWORDS, enabnotify_doc},
++	{"disabnotify", (PyCFunction)link_disabnotify,
++	    METH_VARARGS|METH_KEYWORDS, disabnotify_doc},
++	{"get_fd", (PyCFunction)link_get_fd, METH_NOARGS, get_fd_doc},
++	{"get_sap", (PyCFunction)link_get_sap, METH_NOARGS, get_sap_doc},
++	{"get_mactype", (PyCFunction)link_get_mactype, METH_NOARGS,
++	    get_mactype_doc},
++	{"get_linkname", (PyCFunction)link_get_linkname, METH_NOARGS,
++	    get_linkname_doc},
++	{"get_bcastaddr", (PyCFunction)link_get_bcastaddr, METH_NOARGS,
++	    get_bcastaddr_doc},
++	{"get_physaddr", (PyCFunction)link_get_physaddr,
++	    METH_VARARGS|METH_KEYWORDS, get_physaddr_doc},
++	{"set_physaddr", (PyCFunction)link_set_physaddr,
++	    METH_VARARGS|METH_KEYWORDS, set_physaddr_doc},
++	{"promiscon", (PyCFunction)link_promiscon, METH_VARARGS|METH_KEYWORDS,
++	    promiscon_doc},
++	{"promiscoff", (PyCFunction)link_promiscoff, METH_VARARGS|METH_KEYWORDS,
++	    promiscoff_doc},
++	{"get_timeout", (PyCFunction)link_get_timeout, METH_NOARGS,
++	    get_timeout_doc},
++	{"set_timeout", (PyCFunction)link_set_timeout,
++	    METH_VARARGS|METH_KEYWORDS, set_timeout_doc},
++	{"get_sdu", (PyCFunction)link_get_sdu, METH_NOARGS, get_sdu_doc},
++	{"get_state", (PyCFunction)link_get_state, METH_NOARGS,
++	    get_state_doc},
++	{"get_qos_select", (PyCFunction)link_get_qos_select, METH_NOARGS,
++	    get_qos_select_doc},
++	{"get_qos_range", (PyCFunction)link_get_qos_range, METH_NOARGS,
++	    get_qos_range_doc},
++	{NULL}
++};
++
++static PyTypeObject pylink_type = {
++	PyObject_HEAD_INIT(0)	/* Must fill in type value later */
++	0,					/* ob_size */
++	"dlpi.link",				/* tp_name */
++	sizeof(pylink_t),			/* tp_basicsize */
++	0,					/* tp_itemsize */
++	(destructor)link_dealloc,		/* tp_dealloc */
++	0,					/* tp_print */
++	0,					/* tp_getattr */
++	0,					/* tp_setattr */
++	0,					/* tp_compare */
++	0,					/* tp_repr */
++	0,					/* tp_as_number */
++	0,					/* tp_as_sequence */
++	0,					/* tp_as_mapping */
++	0,					/* tp_hash */
++	0,					/* tp_call */
++	0,					/* tp_str */
++	0,					/* tp_getattro */
++	0,					/* tp_setattro */
++	0,					/* tp_as_buffer */
++	Py_TPFLAGS_DEFAULT,			/* tp_flags */
++	link_doc,				/* tp_doc */
++	0,					/* tp_traverse */
++	0,					/* tp_clear */
++	0,					/* tp_richcompare */
++	0,					/* tp_weaklistoffset */
++	0,					/* tp_iter */
++	0,					/* tp_iternext */
++	pylink_methods,				/* tp_methods */
++	0,					/* tp_members */
++	0,					/* tp_getset */
++	0,					/* tp_base */
++	0,					/* tp_dict */
++	0,					/* tp_descr_get */
++	0,					/* tp_descr_set */
++	0,					/* tp_dictoffset */
++	(initproc)link_init,			/* tp_init */
++	0,					/* tp_alloc */
++	PyType_GenericNew,			/* tp_new */
++	0,					/* tp_free */
++};
++
++PyDoc_STRVAR(arptype_doc,
++    "arptype(arptype) -> unsigned int\n"
++    "\n"
++    "Converts a DLPI MAC type to an ARP hardware type defined\n"
++    " in <netinet/arp.h>\n"
++    "See dlpi_arptype(3DLPI)\n"
++);
++static PyObject *
++arptype(PyObject *dlpi, PyObject *args, PyObject *kwds)
++{
++	static char *keywords[] = {"arptype", NULL};
++	uint_t dlpityp, arptyp;
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "I", keywords, &dlpityp))
++		return (NULL);
++
++	if ((arptyp = dlpi_arptype(dlpityp)) == 0) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("I", arptyp));
++}
++
++PyDoc_STRVAR(iftype_doc,
++    "iftype(iftype) -> unsigned int\n"
++    "\n"
++    "Converts a DLPI MAC type to a BSD socket interface type\n"
++    "defined in <net/if_types.h>\n"
++    "See dlpi_iftype(3DLPI)\n"
++);
++static PyObject *
++iftype(PyObject *dlpi, PyObject *args, PyObject *kwds)
++{
++	static char *keywords[] = {"iftype", NULL};
++	uint_t dlpityp, iftyp;
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "I", keywords, &dlpityp))
++		return (NULL);
++
++	if ((iftyp = dlpi_iftype(dlpityp)) == 0) {
++		errno = EINVAL;
++		dlpi_raise_exception(DL_SYSERR);
++		return (NULL);
++	}
++
++	return (Py_BuildValue("I", iftyp));
++}
++
++PyDoc_STRVAR(mactype_doc,
++    "mactype(mactype) -> string\n"
++    "\n"
++    "Returns a string that describes the specified mactype.\n"
++    "Valid mac types are defined in <sys/dlpi.h>.\n"
++    "See dlpi_mactype(3DLPI)\n"
++);
++static PyObject *
++mactype(PyObject *dlpi, PyObject *args, PyObject *kwds)
++{
++	static char *keywords[] = {"mactype", NULL};
++	uint_t mactyp;
++
++	if (!PyArg_ParseTupleAndKeywords(args, kwds, "I", keywords, &mactyp))
++		return (NULL);
++
++	return (Py_BuildValue("s", dlpi_mactype(mactyp)));
++}
++
++static boolean_t
++link_walker(const char *name, void *arg)
++{
++	PyObject *linkname;
++	PyObject *list = (PyObject *)arg;
++
++	if ((list == NULL) || !PyList_Check(list))
++		return (_B_FALSE);
++
++	linkname = Py_BuildValue("s", name);
++	if (PyList_Append(list, linkname) == -1)
++		return (_B_TRUE);
++
++	Py_DECREF(linkname);
++	return (_B_FALSE);
++}
++
++PyDoc_STRVAR(listlink_doc,
++    "listlink() -> list\n"
++    "\n"
++    "Returns a list containing link names of all links on the system.\n"
++);
++static PyObject *
++listlink(PyObject *dlpi)
++{
++	PyObject *list;
++
++	if ((list = PyList_New(0)) == NULL)
++		return (NULL);
++
++	dlpi_walk(link_walker, list, 0);
++	return (list);
++}
++
++static PyMethodDef dlpi_methods[] = {
++	{"arptype", (PyCFunction)arptype, METH_VARARGS|METH_KEYWORDS,
++	    arptype_doc},
++	{"iftype", (PyCFunction)iftype, METH_VARARGS|METH_KEYWORDS,
++	    iftype_doc},
++	{"mactype", (PyCFunction)mactype, METH_VARARGS|METH_KEYWORDS,
++	    mactype_doc},
++	{"listlink", (PyCFunction)listlink, METH_NOARGS, listlink_doc},
++	{NULL}
++};
++
++PyMODINIT_FUNC
++initdlpi(void)
++{
++	PyObject *mod;
++
++	if (PyType_Ready(&pylink_type) < 0)
++		return;
++
++	mod = Py_InitModule("dlpi", dlpi_methods);
++	if (mod == NULL)
++		return;
++
++	dlpi_err = PyErr_NewException("dlpi.error", NULL, NULL);
++	if (dlpi_err == NULL)
++		return;
++	PyModule_AddObject(mod, "error", dlpi_err);
++
++	Py_INCREF(&pylink_type);
++	PyModule_AddObject(mod, "link", (PyObject *)&pylink_type);
++	PyModule_AddIntConstant(mod, "PASSIVE", DLPI_PASSIVE);
++	PyModule_AddIntConstant(mod, "RAW", DLPI_RAW);
++	PyModule_AddIntConstant(mod, "NATIVE", DLPI_NATIVE);
++	PyModule_AddIntConstant(mod, "ANY_SAP", DLPI_ANY_SAP);
++	PyModule_AddIntConstant(mod, "DEF_TIMEOUT", DLPI_DEF_TIMEOUT);
++	PyModule_AddIntConstant(mod, "NOTE_LINK_DOWN", DL_NOTE_LINK_DOWN);
++	PyModule_AddIntConstant(mod, "NOTE_LINK_UP", DL_NOTE_LINK_UP);
++	PyModule_AddIntConstant(mod, "NOTE_PHYS_ADDR", DL_NOTE_PHYS_ADDR);
++	PyModule_AddIntConstant(mod, "NOTE_SDU_SIZE", DL_NOTE_SDU_SIZE);
++	PyModule_AddIntConstant(mod, "NOTE_SPEED", DL_NOTE_SPEED);
++	PyModule_AddIntConstant(mod, "NOTE_PROMISC_ON_PHYS",
++	    DL_NOTE_PROMISC_ON_PHYS);
++	PyModule_AddIntConstant(mod, "NOTE_PROMISC_OFF_PHYS",
++	    DL_NOTE_PROMISC_OFF_PHYS);
++	PyModule_AddIntConstant(mod, "FACT_PHYS_ADDR", DL_FACT_PHYS_ADDR);
++	PyModule_AddIntConstant(mod, "CURR_PHYS_ADDR", DL_CURR_PHYS_ADDR);
++	PyModule_AddIntConstant(mod, "PROMISC_PHYS", DL_PROMISC_PHYS);
++	PyModule_AddIntConstant(mod, "PROMISC_SAP", DL_PROMISC_SAP);
++	PyModule_AddIntConstant(mod, "PROMISC_MULTI", DL_PROMISC_MULTI);
++	PyModule_AddIntConstant(mod, "UNKNOWN", DL_UNKNOWN);
++	PyModule_AddIntConstant(mod, "UNBOUND", DL_UNBOUND);
++	PyModule_AddIntConstant(mod, "IDLE", DL_IDLE);
++	PyModule_AddIntConstant(mod, "SYSERR", DL_SYSERR);
++}
+diff --git Python-2.6.4/setup.py Python-2.6.4/setup.py
+--- Python-2.6.4/setup.py
++++ Python-2.6.4/setup.py
+@@ -1284,6 +1284,12 @@
+             exts.append( Extension('ucred', ['ucred.c'],
+                                    libraries = ['tsol']) )
+ 
++        # dlpi module (Solaris)
++        dlpi_inc = find_file('libdlpi.h', [], inc_dirs)
++        if dlpi_inc is not None:
++            exts.append( Extension('dlpi', ['dlpimodule.c'],
++                                   libraries = ['dlpi']) )
++
+         # Thomas Heller's _ctypes module
+         self.detect_ctypes(inc_dirs, lib_dirs)
+ 
+diff --git Python-2.6.4/lib/test/dlpitest.py Python-2.6.4/Lib/test/dlpitest.py
+new file mode 100644
+--- /dev/null	2011-02-12 03:13:26.000000000 -0600
++++ Python-2.6.4/Lib/test/dlpitest.py	2011-01-20 13:52:42.895865414 -0600
+@@ -0,0 +1,96 @@
++#!/usr/bin/python2.6
++
++import dlpi
++import sys
++import time
++import struct
++
++#test listlink
++linklist = dlpi.listlink()
++print "Found %d links:" % len(linklist)
++print linklist
++
++#pick up the first data link for below testing
++linkname = linklist[0]
++
++#open link
++print "opening link: " + linkname + "..."
++testlink = dlpi.link(linkname)
++
++#read some info of testlink
++print "linkname is %s" % testlink.get_linkname()
++print "link fd is %d" % testlink.get_fd()
++mactype = testlink.get_mactype()
++print "dlpi mactype is %d" % mactype
++print "after convert:"
++print "\tmactype is %s" % dlpi.mactype(mactype)
++print "\tiftype is %d" % dlpi.iftype(mactype)
++print "\tarptype is %d" % dlpi.arptype(mactype)
++bcastaddr = testlink.get_bcastaddr()
++print "broadcast addr is: ",
++print struct.unpack("BBBBBB",bcastaddr)
++physaddr = testlink.get_physaddr(dlpi.FACT_PHYS_ADDR)
++print "factory physical address is: ",
++print struct.unpack("BBBBBB",physaddr)
++print "current timeout value is %d" % testlink.get_timeout()
++print "sdu is:",
++print testlink.get_sdu()
++print "qos select is:",
++print testlink.get_qos_select()
++print "qos range is:",
++print testlink.get_qos_range()
++
++#set some config value of testlink and read them again
++print "setting current physiacal addr to aa:0:10:13:27:5"
++testlink.set_physaddr('\xaa\0\x10\x13\x27\5')
++physaddr = testlink.get_physaddr(dlpi.CURR_PHYS_ADDR)
++print "current physical addr is: ",
++print struct.unpack("BBBBBB",physaddr)
++print "set timeout value to 6..."
++testlink.set_timeout(6)
++print "timeout value is %d" % testlink.get_timeout()
++
++#test enable/disable multicast
++print "enable/disable multicast address 1:0:5e:0:0:5"
++testlink.enabmulti('\1\0\x5e\0\0\5')
++testlink.disabmulti('\1\0\x5e\0\0\5')
++
++#test bind
++print "binding to SAP 0x9000..."
++testlink.bind(0x9000)
++print "sap is %x" % testlink.get_sap()
++print "state is: %d"  % testlink.get_state()
++
++#test send
++print "sending broadcast loopback packet..."
++testlink.send(bcastaddr, '\0\1\2\3\4\5')
++
++#test notify functionality
++arg = "notification callback arg"
++def notify(arg, notes, value):
++	print "NOTE_PROMISC_ON_PHYS notification received with arg: '%s'" % arg
++print "enabled notification on NOTE_PROMISC_ON_PHYS"
++id = testlink.enabnotify(dlpi.NOTE_PROMISC_ON_PHYS, notify, arg) #enable notification
++testlink.promiscon() #trigger the event (will be seen while receiving pkt below)
++
++#test receive
++print "testing receiving..."
++try:
++	testlink.recv(0, 0) #should see NOTE_PROMISC_ON_PHYS event here
++except dlpi.error, err:
++	errnum, errinfo = err
++	if errnum == 10006:
++		pass #timeout error is expected here
++	else: #test fails if reach here
++		print "test failed",
++		print errnum,
++		print err
++
++testlink.promiscoff()
++testlink.disabnotify(id) #disable notification
++
++#test unbind
++print "unbinding..."
++testlink.unbind()
++print "sap is %x" % testlink.get_sap()
++print "state is: %d"  % testlink.get_state()

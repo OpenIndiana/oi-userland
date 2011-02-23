@@ -42,7 +42,7 @@ class UserlandActionChecker(base.ActionChecker):
                     "checks Userland packages for common content errors")
 		self.prototype = os.getenv('PROTO_DIR')
 		self.runpath_re = [
-			re.compile('^/lib/'),
+			re.compile('^/lib(/.*)?$'),
 			re.compile('^/usr/'),
 			re.compile('^\$ORIGIN/')
 		]

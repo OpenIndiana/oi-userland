@@ -1,0 +1,54 @@
+diff --git Python-2.6.4/Modules/socketmodule.c Python-2.6.4/Modules/socketmodule.c
+--- Python-2.6.4/Modules/socketmodule.c
++++ Python-2.6.4/Modules/socketmodule.c
+@@ -81,6 +81,14 @@
+ 
+ */
+ 
++#ifdef HAVE_NETPACKET_PACKET_H
++#ifdef sun
++#define USE_NETPACKET_PACKET_H 0
++#else
++#define USE_NETPACKET_PACKET_H 1
++#endif
++#endif
++
+ #ifdef __APPLE__
+   /*
+    * inet_aton is not available on OSX 10.3, yet we want to use a binary
+@@ -1092,7 +1100,7 @@
+ 		}
+ #endif
+ 
+-#ifdef HAVE_NETPACKET_PACKET_H
++#if USE_NETPACKET_PACKET_H
+ 	case AF_PACKET:
+ 	{
+ 		struct sockaddr_ll *a = (struct sockaddr_ll *)addr;
+@@ -1382,7 +1390,7 @@
+ 	}
+ #endif
+ 
+-#ifdef HAVE_NETPACKET_PACKET_H
++#if USE_NETPACKET_PACKET_H
+ 	case AF_PACKET:
+ 	{
+ 		struct sockaddr_ll* addr;
+@@ -1559,7 +1567,7 @@
+ 	}
+ #endif
+ 
+-#ifdef HAVE_NETPACKET_PACKET_H
++#if USE_NETPACKET_PACKET_H
+ 	case AF_PACKET:
+ 	{
+ 		*len_ret = sizeof (struct sockaddr_ll);
+@@ -4578,7 +4586,7 @@
+ 	PyModule_AddStringConstant(m, "BDADDR_LOCAL", "00:00:00:FF:FF:FF");
+ #endif
+ 
+-#ifdef HAVE_NETPACKET_PACKET_H
++#if USE_NETPACKET_PACKET_H
+ 	PyModule_AddIntConstant(m, "AF_PACKET", AF_PACKET);
+ 	PyModule_AddIntConstant(m, "PF_PACKET", PF_PACKET);
+ 	PyModule_AddIntConstant(m, "PACKET_HOST", PACKET_HOST);

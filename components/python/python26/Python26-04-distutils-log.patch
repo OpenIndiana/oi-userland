@@ -1,0 +1,30 @@
+diff --git Python-2.6.4/Lib/distutils/spawn.py Python-2.6.4/Lib/distutils/spawn.py
+--- Python-2.6.4/Lib/distutils/spawn.py
++++ Python-2.6.4/Lib/distutils/spawn.py
+@@ -73,7 +73,7 @@
+     if search_path:
+         # either we find one or it stays the same
+         executable = find_executable(executable) or executable
+-    log.info(string.join([executable] + cmd[1:], ' '))
++    log.info("%s", string.join([executable] + cmd[1:], ' '))
+     if not dry_run:
+         # spawn for NT requires a full path to the .exe
+         try:
+@@ -98,7 +98,7 @@
+     if search_path:
+         # either we find one or it stays the same
+         executable = find_executable(executable) or executable
+-    log.info(string.join([executable] + cmd[1:], ' '))
++    log.info("%s", string.join([executable] + cmd[1:], ' '))
+     if not dry_run:
+         # spawnv for OS/2 EMX requires a full path to the .exe
+         try:
+@@ -119,7 +119,7 @@
+                   verbose=0,
+                   dry_run=0):
+ 
+-    log.info(string.join(cmd, ' '))
++    log.info("%s", string.join(cmd, ' '))
+     if dry_run:
+         return
+     exec_fn = search_path and os.execvp or os.execv

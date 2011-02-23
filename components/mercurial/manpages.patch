@@ -1,0 +1,181 @@
+--- mercurial-1.3.1/doc/hg.1	Thu Jul 23 10:58:26 2009
++++ /usr/share/man/man1/hg.1	Tue Feb 19 05:28:30 2002
+@@ -1,4 +1,9 @@
+ '\" t
++.\"
++.\" Modified for Solaris to to add the Solaris stability classification,
++.\" and to add a note about source availability.
++.\"
++'\" t
+ .\"     Title: hg
+ .\"    Author: [see the "AUTHOR" section]
+ .\" Generator: DocBook XSL Stylesheets v1.75.1 <http://docbook.sf.net/>
+@@ -757,7 +762,7 @@
+ .RS 4
+ .\}
+ .nf
+-$ cp \-al REPO REPOCLONE
++$ /usr/gnu/bin/cp \-al REPO REPOCLONE
+ .fi
+ .if n \{\
+ .RE
+@@ -4331,6 +4336,12 @@
+ .RE
+ .sp
+ Some commands (e\&.g\&. revert) produce backup files ending in \&.orig, if the \&.orig file already exists and is not tracked by Mercurial, it will be overwritten\&.
++.TP
++/usr/demo/mercurial
++This directory contains assorted files which are part of the Mercurial
++distribution, but not core to its functionality&.  They will generally
++need to be copied elsewhere to be of use.
++
+ .SH "BUGS"
+ .sp
+ Probably lots, please post them to the mailing list (See Resources below) when you find them\&.
+@@ -4376,3 +4387,23 @@
+ .RS 4
+ \%http://selenic.com/mailman/listinfo/mercurial
+ .RE
++.\" Begin Sun update
++.SH ATTRIBUTES
++See
++.BR attributes (5)
++for descriptions of the following attributes:
++.sp
++.TS
++box;
++cbp-1 | cbp-1
++l | l .
++ATTRIBUTE TYPE	ATTRIBUTE VALUE
++=
++Availability	developer/versioning/mercurial
++=
++Interface Stability	Volatile
++.TE
++.PP
++.SH NOTES
++Source for Mercurial is available on http://opensolaris.org.
++.\" End Sun update
+--- mercurial-1.3.1/doc/hgrc.5	Thu Jul 23 10:58:38 2009
++++ /usr/share/man/man5/hgrc.5	Tue Feb 19 05:28:30 2002
+@@ -1,4 +1,9 @@
+ '\" t
++.\"
++.\" Modified for Solaris to to add the Solaris stability classification,
++.\" and to add a note about source availability.
++.\"
++'\" t
+ .\"     Title: hgrc
+ .\"    Author: [see the "AUTHOR" section]
+ .\" Generator: DocBook XSL Stylesheets v1.75.1 <http://docbook.sf.net/>
+@@ -27,7 +32,7 @@
+ .sp
+ Mercurial reads configuration data from several files, if they exist\&. The names of these files depend on the system on which Mercurial is installed\&. *\&.rc files from a single directory are read in alphabetical order, later ones overriding earlier ones\&. Where multiple paths are given below, settings from later paths override earlier ones\&.
+ .PP
+-(Unix) <install\-root>/etc/mercurial/hgrc\&.d/*\&.rc, (Unix) <install\-root>/etc/mercurial/hgrc
++<install\-root>/etc/mercurial/hgrc\&.d/*\&.rc, <install\-root>/etc/mercurial/hgrc
+ .RS 4
+ Per\-installation configuration files, searched for in the directory where Mercurial is installed\&.
+ <install\-root>
+@@ -36,12 +41,12 @@
+ /shared/tools/etc/mercurial/hgrc\&. Options in these files apply to all Mercurial commands executed by any user in any directory\&.
+ .RE
+ .PP
+-(Unix) /etc/mercurial/hgrc\&.d/*\&.rc, (Unix) /etc/mercurial/hgrc
++/etc/mercurial/hgrc\&.d/*\&.rc, /etc/mercurial/hgrc
+ .RS 4
+ Per\-system configuration files, for the system on which Mercurial is running\&. Options in these files apply to all Mercurial commands executed by any user in any directory\&. Options in these files override per\-installation options\&.
+ .RE
+ .PP
+-(Windows) <install\-dir>\eMercurial\&.ini, or else, (Windows) HKEY_LOCAL_MACHINE\eSOFTWARE\eMercurial, or else, (Windows) C:\eMercurial\eMercurial\&.ini
++(Windows) <install\-dir>\eMercurial\&.ini, or else
+ .RS 4
+ Per\-installation/system configuration files, for the system on which Mercurial is running\&. Options in these files apply to all Mercurial commands executed by any user in any directory\&. Registry keys contain PATH\-like strings, every part of which must reference a
+ Mercurial\&.ini
+@@ -50,7 +55,7 @@
+ files will be read\&.
+ .RE
+ .PP
+-(Unix) $HOME/\&.hgrc, (Windows) %HOME%\eMercurial\&.ini, (Windows) %HOME%\e\&.hgrc, (Windows) %USERPROFILE%\eMercurial\&.ini, (Windows) %USERPROFILE%\e\&.hgrc
++$HOME/\&.hgrc
+ .RS 4
+ Per\-user configuration file(s), for the user running Mercurial\&. On Windows 9x,
+ %HOME%
+@@ -58,7 +63,7 @@
+ %APPDATA%\&. Options in these files apply to all Mercurial commands executed by this user in any directory\&. Options in these files override per\-installation and per\-system options\&.
+ .RE
+ .PP
+-(Unix, Windows) <repo>/\&.hg/hgrc
++<repo>/\&.hg/hgrc
+ .RS 4
+ Per\-repository configuration options that only apply in a particular repository\&. This file is not version\-controlled, and will not get transferred during a "clone" operation\&. Options in this file override options in all other configuration files\&. On Unix, most of this file will be ignored if it doesn\(cqt belong to a trusted user or to a trusted group\&. See the documentation for the trusted section below for more details\&.
+ .RE
+@@ -874,7 +879,7 @@
+ patch content and patched files end of lines are preserved\&. When set to
+ \fIlf\fR
+ or
+-\fIcrlf\fR, both files end of lines are ignored when patching and the result line endings are normalized to either LF (Unix) or CRLF (Windows)\&. Default: strict\&.
++\fIcrlf\fR, both files end of lines are ignored when patching and the result line endings are normalized to either LF or CRLF (Windows)\&. Default: strict\&.
+ .RE
+ .RE
+ .PP
+@@ -1275,3 +1280,23 @@
+ .RS 4
+ \%mailto:mpm@selenic.com
+ .RE
++.\" Begin Sun update
++.SH ATTRIBUTES
++See
++.BR attributes (5)
++for descriptions of the following attributes:
++.sp
++.TS
++box;
++cbp-1 | cbp-1
++l | l .
++ATTRIBUTE TYPE	ATTRIBUTE VALUE
++=
++Availability	developer/versioning/mercurial
++=
++Interface Stability	Volatile
++.TE
++.PP
++.SH NOTES
++Source for Mercurial is available on http://opensolaris.org.
++.\" End Sun update
+--- mercurial-1.3.1/doc/hgignore.5	Thu Jul 23 10:58:30 2009
++++ /usr/share/man/man5/hgignore.5	Tue Feb 19 05:28:30 2002
+@@ -1,4 +1,9 @@
+ '\" t
++.\"
++.\" Modified for Solaris to to add the Solaris stability classification,
++.\" and to add a note about source availability.
++.\"
++'\" t
+ .\"     Title: hgignore
+ .\"    Author: [see the "AUTHOR" section]
+ .\" Generator: DocBook XSL Stylesheets v1.75.1 <http://docbook.sf.net/>
+@@ -119,3 +124,23 @@
+ .RS 4
+ \%mailto:mpm@selenic.com
+ .RE
++.\" Begin Sun update
++.SH ATTRIBUTES
++See
++.BR attributes (5)
++for descriptions of the following attributes:
++.sp
++.TS
++box;
++cbp-1 | cbp-1
++l | l .
++ATTRIBUTE TYPE	ATTRIBUTE VALUE
++=
++Availability	developer/versioning/mercurial
++=
++Interface Stability	Volatile
++.TE
++.PP
++.SH NOTES
++Source for Mercurial is available on http://opensolaris.org.
++.\" End Sun update
