@@ -74,8 +74,8 @@ $(WS_LOGS):
 	$(MKDIR) $@
 
 $(WS_REPO):
-	$(PKGSEND) -s $(PKG_REPO) create-repository \
-		--set-property publisher.prefix=$(PUBLISHER)
+	$(PKGREPO) create $(PKG_REPO)
+	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER)
 
 $(WS_LINT_CACHE):	$(WS_LOGS)
 ifdef CANONICAL_REPO
