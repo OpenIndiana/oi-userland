@@ -56,6 +56,10 @@ timeout.1 truncate.1 users.1 vdir.1 whoami.1
 NEEDMV=if [ -e $(1) ]; then $(RM) $(2); /usr/bin/mv $(1) $(2); fi
 RMDIR=/usr/bin/rmdir
 
+#
+# whoami is in both /usr/bin and /usr/gnu/bin; mistake?
+#
+
 install:	$(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) $(INSTALL_32)
 	for command in $(CMDS_NONCONFLICTING); do \
 		$(call NEEDMV,$(PROTOGNUBIN)/$$command,\
@@ -69,9 +73,6 @@ install:	$(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) $(INSTALL_32)
 		$(call NEEDMV,$(PROTOGNUSHAREMAN1)/$$manpage,\
 			$(PROTOUSRSHAREMAN1DIR)/$$manpage); \
 	done
-	#
-	# whoami is in both /usr/bin and /usr/gnu/bin; mistake?
-	#
 	$(CP) $(PROTOUSRBINDIR)/whoami $(PROTOGNUBIN)/whoami
 	$(CP) $(PROTOUSRSHAREMAN1DIR)/whoami.1 $(PROTOGNUSHAREMAN1)/whoami.1
 	$(call NEEDMV,$(PROTOGNUBIN)/install,$(PROTOUSRBINDIR)/ginstall)
