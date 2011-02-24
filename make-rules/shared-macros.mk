@@ -239,9 +239,9 @@ CC_BITS =	-m$(BITS)
 # and not the .arch.bits variety directly.
 studio_XBITS.sparc.32 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
 studio_XBITS.sparc.64 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
-studio_XBITS.i386.32 =	-xarch=pentium
+studio_XBITS.i386.32 =	-xchip=pentium
 studio_XBITS.i386.64 =	-xarch=generic64 -Ui386 -U__i386
-studio_XBITS = $(studio_XBITS.$(ARCH).$(BITS))
+studio_XBITS = $(studio_XBITS.$(MACH).$(BITS))
 
 # Turn on recognition of supported C99 language features and enable the 1999 C
 # standard library semantics of routines that appear in	both the 1990 and
@@ -263,11 +263,11 @@ studio_C99MODE =
 studio_FEATURES_EXTENSIONS =	-features=extensions
 
 # Control the Studio optimization level.
-studio_OPT.sparc.32 =	-x04
-studio_OPT.sparc.64 =	-x04
-studio_OPT.i386.32 =	-x04
-studio_OPT.i386.64 =	-x04
-studio_OPT =		$(studio_OPT.$(ARCH).$(BITS))
+studio_OPT.sparc.32 =	-xO4
+studio_OPT.sparc.64 =	-xO4
+studio_OPT.i386.32 =	-xO4
+studio_OPT.i386.64 =	-xO4
+studio_OPT =		$(studio_OPT.$(MACH).$(BITS))
 
 # Studio PIC code generation.  Use CC_PIC instead to select PIC code generation.
 studio_PIC = 	-KPIC -DPIC
@@ -277,14 +277,14 @@ studio_PIC = 	-KPIC -DPIC
 # (without this flag panics/hangs could be exposed within the source).
 # This is used through studio_IROPTS, not the 'sparc' variety.
 studio_IROPTS.sparc =	-W2,-xwrap_int
-studio_IROPTS =		$(studio_IROPTS.$(ARCH))
+studio_IROPTS =		$(studio_IROPTS.$(MACH))
 
 # Control register usage for generated code.  SPARC ABI requires system
 # libraries not to use application registers.  x86 requires 'no%frameptr' at
 # x04 or higher.
 studio_XREGS.sparc =	-xregs=no%appl,float
 studio_XREGS.i386 =	-xregs=no%frameptr
-studio_XREGS =		$(studio_XREGS.$(ARCH))
+studio_XREGS =		$(studio_XREGS.$(MACH))
 
 # See CPP_XPG6MODE comment above.
 studio_XPG6MODE =	$(studio_C99MODE) $(CPP_XPG6MODE)
@@ -383,7 +383,7 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS)
 # Default linker options that everyone should get.  Do not add additional
 # libraries to this macro, as it will apply to everything linked during the
 # component build.
-LD_OPTIONS +=	$(LD_MAP_NOEXSTK) $(LD_MAP_NOEXDATA.$(ARCH)) \
+LD_OPTIONS +=	$(LD_MAP_NOEXSTK) $(LD_MAP_NOEXDATA.$(MACH)) \
 		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT)
 
 # Environment variables and arguments passed into the build and install
