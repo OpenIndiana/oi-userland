@@ -287,6 +287,18 @@ studio_XREGS.sparc =	-xregs=no%appl,float
 studio_XREGS.i386 =	-xregs=no%frameptr
 studio_XREGS =		$(studio_XREGS.$(MACH))
 
+# Set data alignment on sparc to reasonable values, 8 byte alignment for 32 bit
+# objects and 16 byte alignment for 64 bit objects.  This is added to CFLAGS by
+# default.
+studio_ALIGN.sparc.32 =	-xmemalign=8s
+studio_ALIGN.sparc.64 =	-xmemalign=16s
+studio_ALIGN =		$(studio_ALIGN.$(MACH).$(BITS))
+
+# Studio shorthand for building multi-threaded code,  enables -D_REENTRANT and
+# linking with threadin support.  This is added to CFLAGS by default, override
+# studio_MT to turn this off.
+studio_MT =		-mt
+
 # See CPP_XPG6MODE comment above.
 studio_XPG6MODE =	$(studio_C99MODE) $(CPP_XPG6MODE)
 XPG6MODE =		$(studio_XPG6MODE)
@@ -297,8 +309,8 @@ XPG6MODE =		$(studio_XPG6MODE)
 # should not be necessary to add CFLAGS to any environment other than the
 # configure environment.
 CFLAGS.studio +=	$(studio_OPT) $(studio_XBITS) $(studio_XREGS) \
-			$(studio_IROPTS) $(studio_C99MODE)
-
+			$(studio_IROPTS) $(studio_C99MODE) $(studio_ALIGN) \
+			$(studio_MT)
 
 #
 # GNU C compiler flag sets to ease feature selection.  Add the required
