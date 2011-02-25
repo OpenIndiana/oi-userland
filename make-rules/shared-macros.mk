@@ -241,7 +241,7 @@ CC_BITS =	-m$(BITS)
 studio_XBITS.sparc.32 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
 studio_XBITS.sparc.64 =	-xtarget=ultra2 -xarch=sparcvis -xchip=ultra2
 studio_XBITS.i386.32 =	-xchip=pentium
-studio_XBITS.i386.64 =	-xarch=generic64 -Ui386 -U__i386
+studio_XBITS.i386.64 =	-xchip=generic -Ui386 -U__i386
 studio_XBITS = $(studio_XBITS.$(MACH).$(BITS))
 
 # Turn on recognition of supported C99 language features and enable the 1999 C
