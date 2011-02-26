@@ -1,0 +1,35 @@
+--- Makefile.in	2009-12-30 10:05:40.000000000 -0800
++++ Makefile.in	2011-02-04 16:31:01.659698136 -0800
+@@ -137,7 +137,7 @@
+ STATIC_LD = @STATIC_LD@
+ LOCAL_LDFLAGS = @LOCAL_LDFLAGS@
+ 
+-SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS)
++SYSTEM_FLAGS = -DPROGRAM='"$(Program)"' -DCONF_HOSTTYPE='"$(Machine)"' -DCONF_OSTYPE='"$(OS)"' -DCONF_MACHTYPE='"$(MACHTYPE)"' -DCONF_VENDOR='"$(VENDOR)"' $(LOCALE_DEFS) $(CFLAGS)
+ 
+ BASE_CCFLAGS = $(PROFILE_FLAGS) $(SYSTEM_FLAGS) $(LOCAL_DEFS) \
+ 	  $(DEFS) $(LOCAL_CFLAGS) $(INCLUDES)
+@@ -535,7 +535,7 @@
+ 
+ $(Program):  .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
+ 	$(RM) $@
+-	$(PURIFY) $(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
++	$(PURIFY) $(CC) $(CFLAGS) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS) $(LD_OPTIONS) -s
+ 	ls -l $(Program)
+ 	-$(SIZE) $(Program)
+ 
+@@ -549,10 +549,10 @@
+ 	@echo
+ 
+ bashbug: $(SUPPORT_SRC)bashbug.sh config.h Makefile $(VERSPROG)
+-	@sed -e "s%!MACHINE!%$(Machine)%" -e "s%!OS!%$(OS)%" \
+-	     -e "s%!CFLAGS!%$(CCFLAGS)%" -e "s%!CC!%$(CC)%" \
+-	     -e "s%!RELEASE!%$(Version)%" -e "s%!PATCHLEVEL!%$(PatchLevel)%" \
+-	     -e "s%!MACHTYPE!%$(MACHTYPE)%" -e "s%!RELSTATUS!%$(RELSTATUS)%" \
++	@sed -e "s^!MACHINE!^$(Machine)^" -e "s^!OS!^$(OS)^" \
++	    -e "s^!CFLAGS!^$(CCFLAGS)^" -e "s^!CC!^$(CC)^" \
++	    -e "s^!RELEASE!^$(Version)^" -e "s^!PATCHLEVEL!^$(PatchLevel)^" \
++	    -e "s^!MACHTYPE!^$(MACHTYPE)^" -e "s^!RELSTATUS!^$(RELSTATUS)^" \
+ 	     $(SUPPORT_SRC)bashbug.sh > $@
+ 	@chmod a+rx bashbug
+ 
