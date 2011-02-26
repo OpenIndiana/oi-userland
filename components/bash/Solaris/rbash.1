@@ -1,0 +1,247 @@
+'\" t
+.\"
+.\" Modified for Solaris to to add the Solaris stability classification,
+.\" and to add a note about source availability.
+.\" 
+.\"
+.\" MAN PAGE COMMENTS to
+.\"
+.\"	Chet Ramey
+.\"	Case Western Reserve University
+.\"	chet@po.cwru.edu
+.\"
+.\"	Last Change: Sat Feb  7 20:50:40 EST 2009
+.\"
+.\" bash_builtins, strip all but Built-Ins section
+.if \n(zZ=1 .ig zZ
+.if \n(zY=1 .ig zY
+.TH RBASH 1 "2009 December 30" "GNU Bash-4.1"
+.\"
+.\" There's some problem with having a `@'
+.\" in a tagged paragraph with the BSD man macros.
+.\" It has to do with `@' appearing in the }1 macro.
+.\" This is a problem on 4.3 BSD and Ultrix, but Sun
+.\" appears to have fixed it.
+.\" If you're seeing the characters
+.\" `@u-3p' appearing before the lines reading
+.\" `possible-hostname-completions
+.\" and `complete-hostname' down in READLINE,
+.\" then uncomment this redefinition.
+.\"
+.de }1
+.ds ]X \&\\*(]B\\
+.nr )E 0
+.if !"\\$1"" .nr )I \\$1n
+.}f
+.ll \\n(LLu
+.in \\n()Ru+\\n(INu+\\n()Iu
+.ti \\n(INu
+.ie !\\n()Iu+\\n()Ru-\w\\*(]Xu-3p \{\\*(]X
+.br\}
+.el \\*(]X\h|\\n()Iu+\\n()Ru\c
+.}f
+..
+.\"
+.\" File Name macro.  This used to be `.PN', for Path Name,
+.\" but Sun doesn't seem to like that very much.
+.\"
+.de FN
+\fI\|\\$1\|\fP
+..
+.SH NAME
+rbash \- restricted bash, see \fBbash\fR(1)
+.SH SYNOPSIS
+.B rbash
+.\" bash_builtins
+.if \n(zZ=1 .ig zZ
+.SH "RESTRICTED SHELL"
+.\" rbash.1
+.zY
+.PP
+If
+.B bash
+is started with the name
+.BR rbash ,
+or the
+.B \-r
+option is supplied at invocation,
+the shell becomes restricted.
+A restricted shell is used to
+set up an environment more controlled than the standard shell.
+It behaves identically to
+.B bash
+with the exception that the following are disallowed or not performed:
+.IP \(bu
+changing directories with \fBcd\fP
+.IP \(bu
+setting or unsetting the values of
+.BR SHELL ,
+.BR PATH ,
+.BR ENV ,
+or
+.B BASH_ENV
+.IP \(bu
+specifying command names containing
+.B /
+.IP \(bu
+specifying a file name containing a
+.B /
+as an argument to the
+.B .
+builtin command
+.IP \(bu
+Specifying a filename containing a slash as an argument to the
+.B \-p
+option to the
+.B hash
+builtin command
+.IP \(bu
+importing function definitions from the shell environment at startup
+.IP \(bu
+parsing the value of \fBSHELLOPTS\fP from the shell environment at startup
+.IP \(bu
+redirecting output using the >, >|, <>, >&, &>, and >> redirection operators
+.IP \(bu
+using the
+.B exec
+builtin command to replace the shell with another command
+.IP \(bu
+adding or deleting builtin commands with the
+.B \-f
+and
+.B \-d
+options to the
+.B enable
+builtin command
+.IP \(bu
+Using the \fBenable\fP builtin command to enable disabled shell builtins
+.IP \(bu
+specifying the
+.B \-p
+option to the
+.B command
+builtin command
+.IP \(bu
+turning off restricted mode with
+\fBset +r\fP or \fBset +o restricted\fP.
+.PP
+These restrictions are enforced after any startup files are read.
+.PP
+.ie \n(zY=1 When a command that is found to be a shell script is executed,
+.el \{ When a command that is found to be a shell script is executed
+(see
+.SM
+.B "COMMAND EXECUTION"
+under bash(1)),
+\}
+.B rbash
+turns off any restrictions in the shell spawned to execute the
+script.
+.\" end of rbash.1
+.if \n(zY=1 .ig zY
+.SH "SEE ALSO"
+.PD 0
+.TP
+\fIBash Reference Manual\fP, Brian Fox and Chet Ramey
+.TP
+\fIThe Gnu Readline Library\fP, Brian Fox and Chet Ramey
+.TP
+\fIThe Gnu History Library\fP, Brian Fox and Chet Ramey
+.TP
+\fIPortable Operating System Interface (POSIX) Part 2: Shell and Utilities\fP, IEEE
+.TP
+\fIsh\fP(1), \fIksh\fP(1), \fIcsh\fP(1)
+.TP
+\fIemacs\fP(1), \fIvi\fP(1)
+.TP
+\fIreadline\fP(3)
+.PD
+.SH FILES
+.PD 0
+.TP
+.FN /bin/bash
+The \fBbash\fP executable
+.TP
+.FN /bin/rbash
+The \fBrbash\fP executable
+.TP
+.FN /etc/profile
+The systemwide initialization file, executed for login shells
+.TP
+.FN ~/.bash_profile
+The personal initialization file, executed for login shells
+.TP
+.FN ~/.bashrc
+The individual per-interactive-shell startup file
+.TP
+.FN ~/.bash_logout
+The individual login shell cleanup file, executed when a login shell exits
+.TP
+.FN ~/.inputrc
+Individual \fIreadline\fP initialization file
+.PD
+.SH AUTHORS
+Brian Fox, Free Software Foundation
+.br
+bfox@gnu.org
+.PP
+Chet Ramey, Case Western Reserve University
+.br
+chet.ramey@case.edu
+.SH BUG REPORTS
+If you find a bug in
+.B bash,
+you should report it.  But first, you should
+make sure that it really is a bug, and that it appears in the latest
+version of
+.BR bash .
+The latest version is always available from
+\fIftp://ftp.gnu.org/pub/bash/\fP.
+.PP
+Once you have determined that a bug actually exists, use the
+.I bashbug
+command to submit a bug report.
+If you have a fix, you are encouraged to mail that as well!
+Suggestions and `philosophical' bug reports may be mailed
+to \fIbug-bash@gnu.org\fP or posted to the Usenet
+newsgroup
+.BR gnu.bash.bug .
+.PP
+ALL bug reports should include:
+.PP
+.PD 0
+.TP 20
+The version number of \fBbash\fR
+.TP
+The hardware and operating system
+.TP
+The compiler used to compile
+.TP
+A description of the bug behaviour
+.TP
+A short script or `recipe' which exercises the bug
+.PD
+.PP
+Comments and bug reports concerning
+this manual page should be directed to
+.IR chet@po.cwru.edu .
+.\" Begin Sun update
+.SH ATTRIBUTES
+See
+.BR attributes (5)
+for descriptions of the following attributes:
+.sp
+.TS
+box;
+cbp-1 | cbp-1
+l | l .
+ATTRIBUTE TYPE	ATTRIBUTE VALUE
+=
+Availability	shell/bash 
+=
+Interface Stability	External 
+.TE 
+.PP
+.SH NOTES
+Source for bash is available on http://opensolaris.org.
+.\" End Sun update
