@@ -28,11 +28,13 @@ ARCHIVES += $(COMPONENT_ARCHIVE)
 CLEAN_PATHS += $(SOURCE_DIR)
 CLOBBER_PATHS += $(COMPONENT_ARCHIVE)
 
-PATCHES =	$(shell find . -type f -name '*.patch' | \
-			 sed -e 's;^\./;;' | grep -v $(SOURCE_DIR) | sort)
-STAMPS =	$(PATCHES:%=$(SOURCE_DIR)/.%ed)
+PATCH_DIR =	patches
+PATCH_PATTERN =	*.patch
+PATCHES =	$(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
+				2>/dev/null | sort)
+STAMPS =	$(PATCHES:$(PATCH_DIR)/%=$(SOURCE_DIR)/.%ed)
 
-$(SOURCE_DIR)/.%ed:	%
+$(SOURCE_DIR)/.%ed:	$(PATCH_DIR)/%
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $<
 	$(TOUCH) $@
 
