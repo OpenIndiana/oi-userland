@@ -175,6 +175,8 @@ PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
+JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
+
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1
