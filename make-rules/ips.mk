@@ -134,7 +134,7 @@ $(MANIFEST_BASE)-%.resolved:	$(MANIFEST_BASE)-%.depend
 # lint the manifest before we publish with it.
 $(MANIFEST_BASE)-%.linted:	$(MANIFEST_BASE)-%.resolved
 	@echo "VALIDATING MANIFEST CONTENT: $<"
-	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_DIR=$(PROTO_DIR) \
+	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)"\
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 			-f $(WS_TOOLS)/pkglintrc $<
 	$(PKGFMT) <$< >$@
