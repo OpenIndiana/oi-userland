@@ -40,7 +40,11 @@ class UserlandActionChecker(base.ActionChecker):
         def __init__(self, config):
                 self.description = _(
                     "checks Userland packages for common content errors")
-		self.prototype = os.getenv('PROTO_DIR')
+		path = os.getenv('PROTO_PATH')
+		if path != None:
+			self.proto_path = path.split()
+		else:
+			self.proto_path = None
 		self.runpath_re = [
 			re.compile('^/lib(/.*)?$'),
 			re.compile('^/usr/'),
@@ -50,9 +54,7 @@ class UserlandActionChecker(base.ActionChecker):
                 super(UserlandActionChecker, self).__init__(config)
 
 	def startup(self, engine):
-		if self.prototype != None:
-			engine.info(_("including prototype checks: %s") %
-					self.prototype, msgid=self.name)
+		pass
 
         def __realpath(self, path, target):
 		"""Combine path and target to get the real path."""
@@ -113,7 +115,9 @@ class UserlandActionChecker(base.ActionChecker):
 		if action.name not in ["file"]:
 			return
 
-		path = action.attrs["path"]
+		path = action.hash
+		if path == None or path == 'NOHASH':
+			path = action.attrs["path"]
 
 		# check for writable files without a preserve attribute
 		if 'mode' in action.attrs:
@@ -126,8 +130,12 @@ class UserlandActionChecker(base.ActionChecker):
 				msgid="%s%s.0" % (self.name, pkglint_id))
 
 		# checks that require a physical file to look at
-		if self.prototype is not None:
-			fullpath = self.prototype + "/" + path
+		if self.proto_path is not None:
+			for directory in self.proto_path:
+				fullpath = directory + "/" + path
+
+				if os.path.exists(fullpath):
+					break
 
 			if not os.path.exists(fullpath):
 				engine.info(
@@ -198,7 +206,6 @@ class UserlandManifestChecker(base.ManifestChecker):
         name = "userland.manifest"
 
 	def __init__(self, config):
-		self.prototype = os.getenv('PROTO_DIR')
 		super(UserlandManifestChecker, self).__init__(config)
 
 	def license_check(self, manifest, engine, pkglint_id="001"):
