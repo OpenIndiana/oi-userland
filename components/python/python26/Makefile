@@ -35,6 +35,19 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+# We patch auto* files, so regenerate headers and configure
+COMPONENT_PREP_ACTION = \
+	(cd $(@D) ; autoheader ; autoconf)
+
+# This seems horribly wrong, but these defines break the ability to build c99
+# compliant modules or with gcc.
+COMPONENT_POST_CONFIGURE_ACTION = \
+	(cd $(@D) ; \
+	 perl -pi -e 's/(^\#define _POSIX_C_SOURCE.*)/\/* $$1 *\//' pyconfig.h ; \
+	 perl -pi -e 's/^(\#define _XOPEN_SOURCE.*)/\/* $$1 *\//' pyconfig.h ; \
+	 perl -pi -e 's/^(\#define _XOPEN_SOURCE_EXTENDED.*)/\/* $$1 *\//' \
+			pyconfig.h)
+
 #
 # Until the fix for "17858 pkgdepend generate hurls on some python modules" is
 # generally installed on our build systems, we need to skip the dependency
@@ -46,13 +59,19 @@ $(MANIFEST_BASE)-python-26.depend:	PKGDEPEND = /bin/true
 
 # we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
 # python-config
-CC +=	$(CC_BITS)
+CC +=	$(CFLAGS)
 
 C99MODE=
 CPPFLAGS +=	-IPython
 
+# so we find the ncurses headers
+CPPFLAGS +=	-I/usr/include/ncurses
+# enable large files how they did in JDS
+CPPFLAGS +=	-D_LARGEFILE64_SOURCE
 # libffi for _ctypes
 CPPFLAGS +=	$(shell pkg-config --cflags-only-I libffi)
+
+CCFLAGS +=		-norunpath -compat=5
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
@@ -62,6 +81,10 @@ CONFIGURE_OPTIONS  +=		--without-gcc
 CONFIGURE_OPTIONS  +=		ac_cv_opt_olimit_ok=no
 CONFIGURE_OPTIONS  +=		ac_cv_olimit_ok=no
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS  +=		CCSHARED="$(CC_PIC)"
+CONFIGURE_OPTIONS  +=		CXX="$(CCC)"
+CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CCFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
 

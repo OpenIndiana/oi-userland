@@ -1,7 +1,7 @@
 diff --git Python-2.6.4/Lib/distutils/sysconfig.py Python-2.6.4/Lib/distutils/sysconfig.py
 --- Python-2.6.4/Lib/distutils/sysconfig.py
 +++ Python-2.6.4/Lib/distutils/sysconfig.py
-@@ -166,16 +166,10 @@
+@@ -166,16 +166,12 @@
              get_config_vars('CC', 'CXX', 'OPT', 'CFLAGS',
                              'CCSHARED', 'LDSHARED', 'SO')
  
@@ -17,6 +17,8 @@ diff --git Python-2.6.4/Lib/distutils/sysconfig.py Python-2.6.4/Lib/distutils/sy
 -            cpp = cc + " -E"           # not always
 +        # On Solaris, we must always use pycc/pyCC, which will then look up
 +        # $CC and $CXX
++        cc = '/usr/lib/python2.6/pycc'
++        cxx = '/usr/lib/python2.6/pyCC'
 +        cpp = cc + " -E"
 +
          if 'LDFLAGS' in os.environ:
