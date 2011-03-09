@@ -1,0 +1,43 @@
+*** bison-2.3/lib/Makefile.in.orig	Thu Nov 16 13:34:32 2006
+--- bison-2.3/lib/Makefile.in	Thu Nov 16 13:37:18 2006
+***************
+*** 108,113 ****
+--- 108,116 ----
+  liby_a_LIBADD =
+  am_liby_a_OBJECTS = main.$(OBJEXT) yyerror.$(OBJEXT)
+  liby_a_OBJECTS = $(am_liby_a_OBJECTS)
++ 
++ main.o yyerror.o : CFLAGS += -DPIC -KPIC -xregs=no%appl
++ 
+  DEFAULT_INCLUDES = -I. -I$(srcdir) -I$(top_builddir)
+  depcomp = $(SHELL) $(top_srcdir)/build-aux/depcomp
+  am__depfiles_maybe = depfiles
+***************
+*** 248,254 ****
+  BUILT_SOURCES = $(GETOPT_H) $(STDBOOL_H) $(UNISTD_H)
+  EXTRA_DIST = getopt_.h getopt_int.h stdbool_.h
+  MOSTLYCLEANFILES = getopt.h getopt.h-t stdbool.h stdbool.h-t unistd.h
+! lib_LIBRARIES = $(YACC_LIBRARY)
+  EXTRA_LIBRARIES = liby.a
+  noinst_LIBRARIES = libbison.a
+  liby_a_SOURCES = main.c yyerror.c
+--- 251,257 ----
+  BUILT_SOURCES = $(GETOPT_H) $(STDBOOL_H) $(UNISTD_H)
+  EXTRA_DIST = getopt_.h getopt_int.h stdbool_.h
+  MOSTLYCLEANFILES = getopt.h getopt.h-t stdbool.h stdbool.h-t unistd.h
+! lib_LIBRARIES = $(YACC_LIBRARY) liby.so.1
+  EXTRA_LIBRARIES = liby.a
+  noinst_LIBRARIES = libbison.a
+  liby_a_SOURCES = main.c yyerror.c
+***************
+*** 363,368 ****
+--- 366,374 ----
+  	-rm -f liby.a
+  	$(liby_a_AR) liby.a $(liby_a_OBJECTS) $(liby_a_LIBADD)
+  	$(RANLIB) liby.a
++ liby.so.1:    $(liby_a_OBJECTS) $(liby_a_DEPENDENCIES)
++ 	-rm -f liby.so.1
++ 	$(CC) $(CFLAGS) -G -h liby.so.1 -o liby.so.1 $(liby_a_OBJECTS)
+  
+  mostlyclean-compile:
+  	-rm -f *.$(OBJEXT)

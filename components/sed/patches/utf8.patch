@@ -1,0 +1,130 @@
+diff -r -u sed-4.2.1.orig/lib/regcomp.c sed-4.2.1.patched/lib/regcomp.c
+--- sed-4.2.1.orig/lib/regcomp.c	Wed Jun  3 12:10:51 2009
++++ sed-4.2.1.patched/lib/regcomp.c	Mon Jul 27 11:09:06 2009
+@@ -32,8 +32,10 @@
+ static void free_workarea_compile (regex_t *preg);
+ static reg_errcode_t create_initial_state (re_dfa_t *dfa);
+ #ifdef RE_ENABLE_I18N
++#ifdef USE_UTF8_OPTIMIZATION
+ static void optimize_utf8 (re_dfa_t *dfa);
+ #endif
++#endif
+ static reg_errcode_t analyze (regex_t *preg);
+ static reg_errcode_t preorder (bin_tree_t *root,
+ 			       reg_errcode_t (fn (void *, bin_tree_t *)),
+@@ -642,7 +644,9 @@
+       }
+   re_free (dfa->state_table);
+ #ifdef RE_ENABLE_I18N
++#ifdef USE_UTF8_OPTIMIZATION
+   if (dfa->sb_char != utf8_sb_map)
++#endif
+     re_free (dfa->sb_char);
+ #endif
+   re_free (dfa->subexp_map);
+@@ -823,10 +827,12 @@
+     goto re_compile_internal_free_return;
+ 
+ #ifdef RE_ENABLE_I18N
++#ifdef USE_UTF8_OPTIMIZATION
+   /* If possible, do searching in single byte encoding to speed things up.  */
+   if (dfa->is_utf8 && !(syntax & RE_ICASE) && preg->translate == NULL)
+     optimize_utf8 (dfa);
+ #endif
++#endif
+ 
+   /* Then create the initial state of the dfa.  */
+   err = create_initial_state (dfa);
+@@ -889,14 +895,18 @@
+ 
+   dfa->mb_cur_max = MB_CUR_MAX;
+ #ifdef _LIBC
++#ifdef USE_UTF8_OPTIMIZATION
+   if (dfa->mb_cur_max == 6
+       && strcmp (_NL_CURRENT (LC_CTYPE, _NL_CTYPE_CODESET_NAME), "UTF-8") == 0)
+     dfa->is_utf8 = 1;
++#endif /* USE_UTF8_OPTIMIZATION */
+   dfa->map_notascii = (_NL_CURRENT_WORD (LC_CTYPE, _NL_CTYPE_MAP_TO_NONASCII)
+ 		       != 0);
+ #else
++#ifdef USE_UTF8_OPTIMIZATION
+   if (strcmp (locale_charset (), "UTF-8") == 0)
+     dfa->is_utf8 = 1;
++#endif /* USE_UTF8_OPTIMIZATION */
+ 
+   /* We check exhaustively in the loop below if this charset is a
+      superset of ASCII.  */
+@@ -906,9 +916,11 @@
+ #ifdef RE_ENABLE_I18N
+   if (dfa->mb_cur_max > 1)
+     {
++#ifdef USE_UTF8_OPTIMIZATION
+       if (dfa->is_utf8)
+ 	dfa->sb_char = (re_bitset_ptr_t) utf8_sb_map;
+       else
++#endif /* USE_UTF8_OPTIMIZATION */
+ 	{
+ 	  int i, j, ch;
+ 
+@@ -1128,7 +1140,9 @@
+ 
+   /* The search can be in single byte locale.  */
+   dfa->mb_cur_max = 1;
++#ifdef USE_UTF8_OPTIMIZATION
+   dfa->is_utf8 = 0;
++#endif
+   dfa->has_mb_node = dfa->nbackref > 0 || has_period;
+ }
+ #endif
+diff -r -u sed-4.2.1.orig/lib/regex_internal.c sed-4.2.1.patched/lib/regex_internal.c
+--- sed-4.2.1.orig/lib/regex_internal.c	Wed Jun  3 12:10:51 2009
++++ sed-4.2.1.patched/lib/regex_internal.c	Mon Jul 27 10:52:30 2009
+@@ -181,7 +181,9 @@
+   pstr->icase = icase;
+   pstr->mbs_allocated = (trans != NULL || icase);
+   pstr->mb_cur_max = dfa->mb_cur_max;
++#ifdef USE_UTF8_OPTIMIZATION
+   pstr->is_utf8 = dfa->is_utf8;
++#endif /* USE_UTF8_OPTIMIZATION */
+   pstr->map_notascii = dfa->map_notascii;
+   pstr->stop = pstr->len;
+   pstr->raw_stop = pstr->stop;
+@@ -707,6 +709,7 @@
+ 	      Idx wcs_idx;
+ 	      wint_t wc = WEOF;
+ 
++#ifdef USE_UTF8_OPTIMIZATION
+ 	      if (pstr->is_utf8)
+ 		{
+ 		  const unsigned char *raw, *p, *end;
+@@ -760,6 +763,7 @@
+ 			  break;
+ 			}
+ 		}
++#endif /* USE_UTF8_OPTIMIZATION */
+ 
+ 	      if (wc == WEOF)
+ 		pstr->valid_len = re_string_skip_chars (pstr, idx, &wc) - idx;
+diff -r -u sed-4.2.1.orig/lib/regex_internal.h sed-4.2.1.patched/lib/regex_internal.h
+--- sed-4.2.1.orig/lib/regex_internal.h	Wed Jun  3 12:10:51 2009
++++ sed-4.2.1.patched/lib/regex_internal.h	Mon Jul 27 10:52:30 2009
+@@ -406,7 +406,9 @@
+   re_const_bitset_ptr_t word_char;
+   /* true if REG_ICASE.  */
+   unsigned char icase;
++#ifdef USE_UTF8_OPTIMIZATION
+   unsigned char is_utf8;
++#endif /* USE_UTF8_OPTIMIZATION */
+   unsigned char map_notascii;
+   unsigned char mbs_allocated;
+   unsigned char offsets_needed;
+@@ -690,7 +692,9 @@
+      a node which can accept multibyte character or multi character
+      collating element.  */
+   unsigned int has_mb_node : 1;
++#ifdef USE_UTF8_OPTIMIZATION
+   unsigned int is_utf8 : 1;
++#endif /* USE_UTF8_OPTIMIZATION */
+   unsigned int map_notascii : 1;
+   unsigned int word_ops_used : 1;
+   int mb_cur_max;
