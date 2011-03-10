@@ -128,6 +128,9 @@ install: $(INSTALL_32)
 	    $(PROTO_DIR)/etc/bash/inputrc.example ; \
 	    cp -p $(COMPONENT_DIR)/Solaris/rbash.1 \
 	    $(PROTOUSRSHAREMAN1DIR)/ )
+	( mkdir -p $(PROTO_DIR)/etc/skel ; \
+	    cp -p $(COMPONENT_DIR)/Solaris/etc.skel.bashrc \
+	    $(PROTO_DIR)/etc/skel/.bashrc )
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
 	    cp -Rp "en@boldquot" en ; \
 	    cp -Rp "en@boldquot" en_CA ; \
