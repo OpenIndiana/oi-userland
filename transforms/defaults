@@ -43,10 +43,21 @@
 <transform dir path=usr/share/lib$ -> default group sys>
 
 #
-# Most directories and files under /usr/share/locale are group other
+# Most directories and files under /etc/security are group sys
+#
+<transform dir path=etc/security$ -> default group sys>
+<transform dir path=etc/security/exec_attr.d$ -> default group sys>
+<transform file path=etc/security/exec_attr.d/.* -> default group sys>
+
+#
+# Many directories and files under /usr/share are group other
 #
 <transform dir path=usr/share/locale(/.+){0,2}$ -> default group other>
 <transform file path=usr/share/locale(/.+){3}$ -> default group other>
+<transform dir path=usr/share/applications$ -> default group other>
+<transform file path=usr/share/applications/.* -> default group other>
+<transform dir path=usr/share/pixmaps$ -> default group other>
+<transform file path=usr/share/pixmaps/.* -> default group other>
 
 <transform dir path=usr/gnu/share$ -> default group sys>
 
