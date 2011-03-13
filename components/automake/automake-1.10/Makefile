@@ -18,42 +18,38 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	1.3.1
+COMPONENT_NAME=		automake
+COMPONENT_VERSION=	1.10
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:a9537fab7c7ead501a6414d1900f46e0ae3e48b8
-COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:69dc02b083b9a609b28fc4db129fef6a83ed2339
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
+include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += CFLAGS="-m$(BITS) $(CFLAGS)"
+CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
-PUBLISH_TRANSFORMS +=	demo-transform
+include $(WS_TOP)/make-rules/shared-targets.mk
 
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-	(cd $(COMPONENT_SRC)/doc ; $(MAKE) INSTALL=$(INSTALL) \
-			PREFIX=/usr DESTDIR=$(PROTO_DIR) install)
-
-test:	$(INSTALL_32)
-	(cd $(COMPONENT_SRC)/tests ; \
-	 PYTHONPATH=$(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages \
-	 $(PYTHON) ./run-tests.py)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+
+test: build
+	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include $(WS_TOP)/make-rules/depend.mk
