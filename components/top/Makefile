@@ -22,38 +22,32 @@
 #
 include ../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
-
-COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	1.3.1
+COMPONENT_NAME=		top
+COMPONENT_VERSION=	3.8beta1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:a9537fab7c7ead501a6414d1900f46e0ae3e48b8
-COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:d3f911f8cd64d21a8beb7eb3694923b40d2532e2
+COMPONENT_ARCHIVE_URL=	http://www.unixtop.org/dist/$(COMPONENT_ARCHIVE)
 
-include $(WS_TOP)/make-rules/prep.mk
-include $(WS_TOP)/make-rules/setup.py.mk
-include $(WS_TOP)/make-rules/ips.mk
+include ../../make-rules/prep.mk
+include ../../make-rules/configure.mk
+include ../../make-rules/ips.mk
 
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += CFLAGS="-m$(BITS) $(CFLAGS)"
+IPS_COMPONENT_VERSION =	3.8
 
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
-PUBLISH_TRANSFORMS +=	demo-transform
+# viewpathing support in the build is broken in the 'install' target
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
-	(cd $(COMPONENT_SRC)/doc ; $(MAKE) INSTALL=$(INSTALL) \
-			PREFIX=/usr DESTDIR=$(PROTO_DIR) install)
-
-test:	$(INSTALL_32)
-	(cd $(COMPONENT_SRC)/tests ; \
-	 PYTHONPATH=$(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages \
-	 $(PYTHON) ./run-tests.py)
+install:	$(INSTALL_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include $(WS_TOP)/make-rules/depend.mk
+test:
+	@echo "no test available"
+
+include ../../make-rules/depend.mk

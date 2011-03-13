@@ -23,6 +23,13 @@
 
 PATH=/usr/bin:/usr/gnu/bin
 
+# Default to looking for source archives on the internal mirror before we
+# hammer on the external repositories.
+export DOWNLOAD_SEARCH_PATH =	http://userland.us.oracle.com/source-archives/
+
+# The workspace starts at the mercurial root
+export WS_TOP ?=		$(shell hg root)
+
 CONSOLIDATION =	userland
 PUBLISHER =	$(CONSOLIDATION)-build
 
@@ -147,7 +154,7 @@ BUILD_TOOLS =	/ws/onnv-tools
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
 SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
 
-GCC_ROOT =	/usr/gnu
+GCC_ROOT =	/usr/sfw
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CCC.studio.32 =	$(SPRO_VROOT)/bin/CC
@@ -155,11 +162,11 @@ CCC.studio.32 =	$(SPRO_VROOT)/bin/CC
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CCC.studio.64 =	$(SPRO_VROOT)/bin/CC
 
-CC.gcc.32 =	$(GCC_ROOT)/bin/cc -m32
-CCC.gcc.32 =	$(GCC_ROOT)/bin/CC -m32
+CC.gcc.32 =	$(GCC_ROOT)/bin/gcc -m32
+CCC.gcc.32 =	$(GCC_ROOT)/bin/g++ -m32
 
-CC.gcc.64 =	$(GCC_ROOT)/bin/cc -m64
-CCC.gcc.64 =	$(GCC_ROOT)/bin/CC -m64
+CC.gcc.64 =	$(GCC_ROOT)/bin/gcc -m64
+CCC.gcc.64 =	$(GCC_ROOT)/bin/g++ -m64
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CCC =		$(CCC.$(COMPILER).$(BITS))
@@ -178,6 +185,8 @@ PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
 JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
+
+PERL =		/usr/perl5/bin/perl
 
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
