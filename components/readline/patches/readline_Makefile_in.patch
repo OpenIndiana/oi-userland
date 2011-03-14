@@ -1,0 +1,24 @@
+--- readline-5.2/Makefile.in	2005-05-07 18:11:23.000000000 -0700
++++ solaris_nv/readline-5.2/Makefile.in	2007-11-01 03:18:19.344423000 -0700
+@@ -219,11 +219,19 @@
+ 
+ install:	$(INSTALL_TARGETS)
+ 
++# modification for solaris nv sfw-workspace nightly build
++# add a test before  "$(MV) $(DESTDIR)$(libdir)/libreadline.a $(DESTDIR)$(libdir)/libreadline.old"
++# add a test before "$(MV) $(DESTDIR)$(libdir)/libhistory.a $(DESTDIR)$(libdir)/libhistory.old"
++# otherwise there will be an error if *.a doesn't exist
+ install-static: installdirs $(STATIC_LIBS) install-headers install-doc
+-	-$(MV) $(DESTDIR)$(libdir)/libreadline.a $(DESTDIR)$(libdir)/libreadline.old
++	-( if test -f  $(DESTDIR)$(libdir)/libreadline.a ; then \
++		  $(MV) $(DESTDIR)$(libdir)/libreadline.a $(DESTDIR)$(libdir)/libreadline.old ; \
++	fi )
+ 	$(INSTALL_DATA) libreadline.a $(DESTDIR)$(libdir)/libreadline.a
+ 	-test -n "$(RANLIB)" && $(RANLIB) $(DESTDIR)$(libdir)/libreadline.a
+-	-$(MV) $(DESTDIR)$(libdir)/libhistory.a $(DESTDIR)$(libdir)/libhistory.old
++	-( if test -f  $(DESTDIR)$(libdir)/libhistory.a ; then \
++		 $(MV) $(DESTDIR)$(libdir)/libhistory.a $(DESTDIR)$(libdir)/libhistory.old ; \
++	fi )
+ 	$(INSTALL_DATA) libhistory.a $(DESTDIR)$(libdir)/libhistory.a
+ 	-test -n "$(RANLIB)" && $(RANLIB) $(DESTDIR)$(libdir)/libhistory.a
+ 
