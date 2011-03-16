@@ -51,7 +51,12 @@ def validate(file, hash):
 		return False
 
 	while True:
-		block = file.read()
+		try:
+			block = file.read()
+		except IOError, err:
+			print str(err),
+			break
+
 		m.update(block)
 		if block == '':
 			break
@@ -77,7 +82,7 @@ def validate_payload(filename, hash):
 
 	try:
 		if expr_bz.match(filename):
-			file = bz2.BZFile(filename, 'r')
+			file = bz2.BZ2File(filename, 'r')
 		elif expr_gz.match(filename):
 			file = gzip.GzipFile(filename, 'r')
 		else:
