@@ -27,7 +27,9 @@ COMPONENT_VERSION=      2.0.35
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.libgd.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:ad6b6ce72c83e513ef7c31b7f8a5c6f07a2e0143
+# this is the hash of the payload because it appears to be re-compressed
+# periodically causing it to have a new hash value.
+COMPONENT_ARCHIVE_HASH= sha1:eaa077067945956930f6d9258e130f1e043d9b39
 COMPONENT_ARCHIVE_URL=  http://www.libgd.org/releases/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

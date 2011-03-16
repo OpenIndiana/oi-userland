@@ -32,15 +32,9 @@ import os
 import sys
 import shutil
 from urllib import splittype, urlopen
+import hashlib
 
-def validate(filename, hash):
-	import hashlib
-
-	try:
-		file = open(filename, 'r')
-	except IOError:
-		return False
-
+def validate(file, hash):
 	algorithm, hashvalue = hash.split(':')
 	try:
 		m = hashlib.new(algorithm)
@@ -54,6 +48,34 @@ def validate(filename, hash):
 			break
 
 	return "%s:%s" % (algorithm, m.hexdigest())
+
+def validate_container(filename, hash):
+	try:
+		file = open(filename, 'r')
+	except IOError:
+		return False
+	return validate(file, hash)
+
+
+def validate_payload(filename, hash):
+	import re
+	import gzip
+	import bz2
+
+	expr_bz = re.compile('.+\.bz2$', re.IGNORECASE)
+	expr_gz = re.compile('.+\.gz$', re.IGNORECASE)
+
+	try:
+		if expr_bz.match(filename):
+			file = bz2.BZFile(filename, 'r')
+		elif expr_gz.match(filename):
+			file = gzip.GzipFile(filename, 'r')
+		else:
+			return False
+	except IOError:
+		return False
+	return validate(file, hash)
+
 
 def download(url, filename = None):
 	src = None
@@ -178,14 +200,19 @@ def main():
 			print "skipping (no hash)"
 			sys.exit(0)
 			
-		realhash = validate(name, hash_arg)
+		realhash = validate_container(name, hash_arg)
 		if realhash == hash_arg:
 			print "ok"
 			sys.exit(0)
 		else:
+			payloadhash = validate_payload(name, hash_arg)
+			if payloadhash == hash_arg:
+				print "ok"
+				sys.exit(0)
 			print "corruption detected"
 			print "    expected: %s" % hash_arg
 			print "    actual:   %s" % realhash
+			print "    payload:  %s" % payloadhash
 
 		try:
 			os.remove(name)
