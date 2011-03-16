@@ -20,27 +20,30 @@
 #
 
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-# man pages
-<transform dir file link hardlink path=usr.*/man(/.+){0,1}$ -> \
-    default facet.doc.man true>
+OPTFLAGS=-O
 
-# texinfo docs
-<transform dir file link hardlink path=usr/.*/info(/.+){0,1}$ -> \
-    default facet.doc.info true>
+LFS_CFLAGS = $(shell getconf LFS_CFLAGS)
 
-# html docs
-<transform dir file link hardlink path=usr/.*/doc/.*(html?|css).* -> \
-    default facet.doc.html true>
-<transform dir file link hardlink path=usr/lib/help/.*\.html$ -> \
-    default facet.doc.html true>
+ALLFLAGS=${OPTFLAGS} -s -mt \
+        -DHAVE_LONG_LONG \
+        $(LFS_CFLAGS) \
+        -DENV_UNIX \
+        -DNDEBUG -D_REENTRANT \
+        $(LOCAL_FLAGS)
 
-# pdf docs
-<transform dir file link hardlink path=usr/.*/doc/.*\.pdf$ -> \
-    default facet.doc.html true>
+CXX=CC $(ALLFLAGS)
+CC=cc $(ALLFLAGS)
+CC_SHARED=-KPIC
+LINK_SHARED=-KPIC -G
+LDFLAGS = -norunpath
 
-# general documetation
-<transform dir file link hardlink path=usr/.*/doc(/.+){0,1}$ -> \
-    default facet.doc true>
+LOCAL_LIBS=-lpthread
+LOCAL_LIBS_DLL=$(LOCAL_LIBS)
+
+../../../../bin/Codecs/Rar29.so ../../../../bin/7z.so : LOCAL_LIBS += -lCrun
+
+OBJ_CRC32=$(OBJ_CRC32_C)
+
