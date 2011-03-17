@@ -26,6 +26,8 @@
 include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
 
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+
 COMPONENT_NAME=		p7zip
 COMPONENT_VERSION=	4.55
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
