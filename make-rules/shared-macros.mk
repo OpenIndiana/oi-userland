@@ -202,6 +202,7 @@ TOUCH =		/usr/bin/touch
 MKDIR =		/bin/mkdir -p
 RM =		/bin/rm -f
 CP =		/bin/cp -f
+MV =		/bin/mv -f
 LN =		/bin/ln
 SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env

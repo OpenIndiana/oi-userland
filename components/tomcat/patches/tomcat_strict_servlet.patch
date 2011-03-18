@@ -1,0 +1,58 @@
+--- apache-tomcat-6.0.20-src/bin/catalina.sh.orig	2009-03-30 14:34:02.000000000 -0700
++++ apache-tomcat-6.0.20-src/bin/catalina.sh	2009-03-30 14:40:38.000000000 -0700
+@@ -233,6 +233,7 @@
+         -Dcatalina.base="$CATALINA_BASE" \
+         -Dcatalina.home="$CATALINA_HOME" \
+         -Djava.io.tmpdir="$CATALINA_TMPDIR" \
++        -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
+         org.apache.catalina.startup.Bootstrap "$@" start
+     else
+       exec "$_RUNJDB" $JAVA_OPTS "$LOGGING_CONFIG" $CATALINA_OPTS \
+@@ -241,6 +242,7 @@
+         -Dcatalina.base="$CATALINA_BASE" \
+         -Dcatalina.home="$CATALINA_HOME" \
+         -Djava.io.tmpdir="$CATALINA_TMPDIR" \
++        -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
+         org.apache.catalina.startup.Bootstrap "$@" start
+     fi
+   fi
+@@ -258,6 +260,7 @@
+       -Dcatalina.base="$CATALINA_BASE" \
+       -Dcatalina.home="$CATALINA_HOME" \
+       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
++      -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
+       org.apache.catalina.startup.Bootstrap "$@" start
+   else
+     exec "$_RUNJAVA" $JAVA_OPTS "$LOGGING_CONFIG" $CATALINA_OPTS \
+@@ -265,6 +268,7 @@
+       -Dcatalina.base="$CATALINA_BASE" \
+       -Dcatalina.home="$CATALINA_HOME" \
+       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
++      -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
+       org.apache.catalina.startup.Bootstrap "$@" start
+   fi
+ 
+@@ -282,6 +286,7 @@
+       -Dcatalina.base="$CATALINA_BASE" \
+       -Dcatalina.home="$CATALINA_HOME" \
+       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
++      -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
+       org.apache.catalina.startup.Bootstrap "$@" start \
+       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+ 
+@@ -294,6 +299,7 @@
+       -Dcatalina.base="$CATALINA_BASE" \
+       -Dcatalina.home="$CATALINA_HOME" \
+       -Djava.io.tmpdir="$CATALINA_TMPDIR" \
++      -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
+       org.apache.catalina.startup.Bootstrap "$@" start \
+       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+ 
+@@ -316,6 +322,7 @@
+     -Dcatalina.base="$CATALINA_BASE" \
+     -Dcatalina.home="$CATALINA_HOME" \
+     -Djava.io.tmpdir="$CATALINA_TMPDIR" \
++    -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
+     org.apache.catalina.startup.Bootstrap "$@" stop
+ 
+   if [ $FORCE -eq 1 ]; then
