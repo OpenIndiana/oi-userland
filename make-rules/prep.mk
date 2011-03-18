@@ -26,7 +26,6 @@ FETCH =		$(WS_TOOLS)/userland-fetch
 
 ARCHIVES += $(COMPONENT_ARCHIVE)
 CLEAN_PATHS += $(SOURCE_DIR)
-CLOBBER_PATHS += $(COMPONENT_ARCHIVE)
 
 PATCH_DIR =	patches
 PATCH_PATTERN =	*.patch
@@ -38,13 +37,23 @@ $(SOURCE_DIR)/.%ed:	$(PATCH_DIR)/%
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $<
 	$(TOUCH) $@
 
-$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE):	Makefile
-	$(FETCH) --file $@ \
-		$(COMPONENT_ARCHIVE_URL:%=--url %) \
-		$(COMPONENT_ARCHIVE_HASH:%=--hash %)
-	$(TOUCH) $@
+# template for download rules. add new rules with $(call download-rule, suffix)
+define download-rule
+ARCHIVES += $$(COMPONENT_ARCHIVE$(1))
+CLOBBER_PATHS += $$(COMPONENT_ARCHIVE$(1))
+$$(USERLAND_ARCHIVES)$$(COMPONENT_ARCHIVE$(1)):	Makefile
+	$$(FETCH) --file $$@ \
+		$$(COMPONENT_ARCHIVE_URL$(1):%=--url %) \
+		$$(COMPONENT_ARCHIVE_HASH$(1):%=--hash %)
+	$$(TOUCH) $$@
+endef
 
-$(SOURCE_DIR)/.unpacked:	$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) Makefile $(PATCHES)
+# Generate the download rules from the above template
+NUM_ARCHIVES =	1 2 3 4 5 6 7
+$(eval $(call download-rule,))
+$(foreach suffix,$(NUM_ARCHIVES),$(eval $(call download-rule,_$(suffix))))
+
+$(SOURCE_DIR)/.unpacked:	download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR)
 	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
 	$(TOUCH) $@
@@ -58,11 +67,10 @@ $(SOURCE_DIR)/.prep:	$(SOURCE_DIR)/.patched
 
 prep::	$(SOURCE_DIR)/.prep
 
-download::	$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
+download::	$(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 
 clean::
 	$(RM) -r $(CLEAN_PATHS)
 
 clobber::	clean
 	$(RM) -r $(CLOBBER_PATHS)
-

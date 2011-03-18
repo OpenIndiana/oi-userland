@@ -1,0 +1,82 @@
+--- apache-tomcat-6.0.28-src/build.xml.orig	Tue Jun 29 07:33:40 2010
++++ apache-tomcat-6.0.28-src/build.xml	Fri Jul  9 08:12:35 2010
+@@ -471,13 +471,6 @@
+ 
+   <target name="deploy" depends="build-only,build-docs,warn.dbcp">
+ 
+-    <copy tofile="${tomcat.build}/bin/tomcat-native.tar.gz"
+-            file="${tomcat-native.tar.gz}" />
+-    <copy tofile="${tomcat.build}/bin/commons-daemon-native.tar.gz"
+-            file="${commons-daemon.native.src.tgz}" />
+-
+-    <copy tofile="${tomcat.build}/bin/commons-daemon.jar" file="${commons-daemon.jar}" />
+-
+     <!-- Copy scripts -->
+     <copy todir="${tomcat.build}/bin">
+       <fileset dir="bin">
+@@ -696,48 +689,6 @@
+           description="Download (and build as necessary) dependent components"
+           depends="build-manifests">
+ 
+-    <antcall target="downloadfile">
+-      <param name="sourcefile" value="${tomcat-native.loc}"/>
+-      <param name="destfile" value="${tomcat-native.tar.gz}"/>
+-      <param name="destdir" value="${tomcat-native.home}"/>
+-    </antcall>
+-
+-    <antcall target="downloadfile">
+-      <param name="sourcefile" value="${tomcat-native.dll}/win32/tcnative-1.dll"/>
+-      <param name="destfile" value="${tomcat-native.home}/tcnative-1.dll.x86"/>
+-      <param name="destdir" value="${tomcat-native.home}"/>
+-    </antcall>
+-
+-    <antcall target="downloadfile">
+-      <param name="sourcefile" value="${tomcat-native.dll}/win64/x64/tcnative-1.dll"/>
+-      <param name="destfile" value="${tomcat-native.home}/tcnative-1.dll.x64"/>
+-      <param name="destdir" value="${tomcat-native.home}"/>
+-    </antcall>
+-
+-    <antcall target="downloadfile">
+-      <param name="sourcefile" value="${tomcat-native.dll}/win64/ia64/tcnative-1.dll"/>
+-      <param name="destfile" value="${tomcat-native.home}/tcnative-1.dll.i64"/>
+-      <param name="destdir" value="${tomcat-native.home}"/>
+-    </antcall>
+-
+-    <!-- Download Commons Daemon -->
+-    <antcall target="downloadgz">
+-      <param name="sourcefile" value="${commons-daemon.bin.loc}"/>
+-      <param name="destfile" value="${commons-daemon.jar}"/>
+-    </antcall>
+-
+-    <antcall target="downloadfile">
+-      <param name="sourcefile" value="${commons-daemon.native.src.loc}"/>
+-      <param name="destfile" value="${commons-daemon.native.src.tgz}"/>
+-      <param name="destdir" value="${commons-daemon.home}"/>
+-    </antcall>
+-
+-    <antcall target="downloadzip">
+-      <param name="sourcefile" value="${commons-daemon.native.win.loc}"/>
+-      <param name="destfile" value="${commons-daemon.native.win.mgr.exe}"/>
+-      <param name="destdir" value="${commons-daemon.native.win.home}"/>
+-    </antcall>
+-
+     <!-- Build Tomcat DBCP bundle -->
+     <antcall target="downloadgz">
+       <param name="sourcefile" value="${commons-pool-src.loc}"/>
+@@ -763,15 +714,9 @@
+       <param name="basedir" value="${jasper-jdt.home}" />
+     </antcall>
+ 
+-    <antcall target="downloadzip">
+-      <param name="sourcefile" value="${nsis.loc}"/>
+-      <param name="destfile" value="${nsis.exe}"/>
+-      <param name="destdir" value="${nsis.home}/.."/>
+-    </antcall>
+-
+   </target>
+ 
+-  <target name="build-tomcat-dbcp" unless="jdk16.present"
++  <target name="build-tomcat-dbcp"
+           depends="build-manifests">
+     <copy todir="${tomcat-dbcp.home}">
+       <fileset dir="${commons-pool.home}">
