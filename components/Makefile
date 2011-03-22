@@ -103,6 +103,7 @@ $(COMPONENT_DIRS):	setup FORCE
 			 $(@:%=--component %) --make $(TARGET) $(LOG)
 
 publish:
+	$(PKGREPO) rebuild -s $(PKG_REPO)
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'
@@ -122,6 +123,7 @@ depends.mk:	components.mk
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --components=depend \
 		| sed -e 's;$(shell pwd)/;;g' >$@
 
--include depends.mk
+# skip dependency generation until we have a new solution for it.
+#-include depends.mk
 
 FORCE:

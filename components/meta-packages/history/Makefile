@@ -20,27 +20,22 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/shell/which@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GNU which"
-set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.upstream_url value="http://www.xs4all.nl/~carlo17/which/"
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-dir path=usr
-dir path=usr/gnu
-dir path=usr/gnu/bin
-dir path=usr/gnu/share
-dir path=usr/gnu/share/man
-dir path=usr/gnu/share/man/man1
-dir path=usr/share
-dir path=usr/share/info
-file path=usr/gnu/bin/which
-file path=usr/gnu/share/man/man1/which.1
-file path=usr/share/info/which.info
+include ../../../make-rules/shared-macros.mk
+include $(WS_TOP)/make-rules/ips.mk
 
-license which.license license="GPLv2"
+# we need a empty protodir or pkgsend will complain about it not existing
+PROTO_DIR=
 
-legacy	pkg=SUNWgnu-which \
-	name="GNU which" \
-	desc="GNU which utility (2.16)"
+# Don't really do anything for dependency generation
+PKGDEPEND=	/bin/true
+
+$(BUILD_DIR):
+	$(MKDIR) $@
+
+download prep test:
+
+build install:	$(BUILD_DIR)
+
+clobber clean:
+	$(RM) -r $(BUILD_DIR)
