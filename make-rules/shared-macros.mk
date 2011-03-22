@@ -25,13 +25,13 @@ PATH=/usr/bin:/usr/gnu/bin
 
 # Default to looking for source archives on the internal mirror before we
 # hammer on the external repositories.
-export DOWNLOAD_SEARCH_PATH ?=	http://userland.us.oracle.com/source-archives/
+export DOWNLOAD_SEARCH_PATH +=	http://userland.us.oracle.com/source-archives/
 
 # The workspace starts at the mercurial root
 export WS_TOP ?=		$(shell hg root)
 
 CONSOLIDATION =	userland
-PUBLISHER =	$(CONSOLIDATION)-build
+PUBLISHER ?=	$(CONSOLIDATION)
 
 IS_GLOBAL_ZONE =	$(shell /usr/sbin/zoneadm list | grep -c global)
 ROOT =			/
@@ -51,13 +51,13 @@ BITS =			32
 PYTHON_VERSION =	2.6
 PYTHON_VERSIONS =	2.6
 
-WS_LOGS =	$(WS_TOP)/logs
-WS_REPO =	$(WS_TOP)/repo
+WS_LOGS =	$(WS_TOP)/$(MACH)/logs
+WS_REPO =	$(WS_TOP)/$(MACH)/repo
 WS_TOOLS =	$(WS_TOP)/tools
 WS_MAKE_RULES =	$(WS_TOP)/make-rules
 WS_COMPONENTS =	$(WS_TOP)/components
 WS_INCORPORATIONS =	$(WS_TOP)/incorporations
-WS_LINT_CACHE =	$(WS_TOP)/pkglint-cache
+WS_LINT_CACHE =	$(WS_TOP)/$(MACH)/pkglint-cache
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 

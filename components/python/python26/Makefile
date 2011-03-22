@@ -48,15 +48,6 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	 perl -pi -e 's/^(\#define _XOPEN_SOURCE_EXTENDED.*)/\/* $$1 *\//' \
 			pyconfig.h)
 
-#
-# Until the fix for "17858 pkgdepend generate hurls on some python modules" is
-# generally installed on our build systems, we need to skip the dependency
-# generation step.  see https://defect.opensolaris.org/bz/show_bug.cgi?id=17858
-# When this is fixed, we need to remove the static dependencies from the
-# manifest.
-#
-$(MANIFEST_BASE)-python-26.depend:	PKGDEPEND = /bin/true
-
 # we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
 # python-config
 CC +=	$(CFLAGS)
