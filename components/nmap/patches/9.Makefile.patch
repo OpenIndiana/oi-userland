@@ -1,0 +1,140 @@
+--- nmap-5.21/Makefile.in	2009-12-12 12:26:15.000000000 -0800
++++ nmap-5.21/Makefile.in	2010-02-23 11:34:57.694961587 -0800
+@@ -1,7 +1,9 @@
++SHELL = /bin/bash
+ # Extract the version string from nmap.h.
+ export NMAP_VERSION := $(shell grep '^\#[ \t]*define[ \t]\+NMAP_VERSION' nmap.h | sed -e 's/.*"\(.*\)".*/\1/' -e 'q')
++export TOPDIR=$(shell pwd)
+ NMAP_NAME= Nmap
+-NMAP_URL= http://nmap.org
++NMAP_URL= http://nmap.org/
+ NMAP_PLATFORM=@host@
+ prefix = @prefix@
+ exec_prefix = @exec_prefix@
+@@ -13,12 +15,12 @@
+ deskdir = $(prefix)/share/applications
+ NMAPDEVDIR=~/nmap-private-dev
+ 
+-export NBASEDIR=@NBASEDIR@
+-export NSOCKDIR=@NSOCKDIR@
+-export LIBLUADIR = @LIBLUADIR@
++export NBASEDIR=$(TOPDIR)/@NBASEDIR@
++export NSOCKDIR=$(TOPDIR)/@NSOCKDIR@
++export LIBLUADIR=$(TOPDIR)/@LIBLUADIR@
+ export NDIR=$(shell pwd)
+-export LIBLUA_LIBS = @LIBLUA_LIBS@
+-export NCATDIR=@NCATDIR@
++export LIBLUA_LIBS=$(TOPDIR)/@LIBLUA_LIBS@
++export NCATDIR=$(TOPDIR)/@NCATDIR@
+ CC = @CC@
+ CXX = @CXX@
+ CCOPT = 
+@@ -26,9 +28,9 @@
+ STRIP = @STRIP@
+ LIBPCAPDIR = @libpcapdir@
+ LIBPCREDIR = @LIBPCREDIR@
+-export LIBDNETDIR = @LIBDNETDIR@
+-ZENMAPDIR = zenmap
+-NDIFFDIR = ndiff
++export LIBDNETDIR=$(TOPDIR)/@LIBDNETDIR@
++ZENMAPDIR=$(TOPDIR)/zenmap
++NDIFFDIR=$(TOPDIR)/ndiff
+ PYTHON = @PYTHON@
+ DEFS = @DEFS@ -DNMAP_NAME=\"$(NMAP_NAME)\" -DNMAP_URL=\"$(NMAP_URL)\" -DNMAP_PLATFORM=\"$(NMAP_PLATFORM)\" -DNMAPDATADIR=\"$(nmapdatadir)\"
+ # With GCC, add extra security checks to source code.
+@@ -39,13 +41,13 @@
+ # For mtrace debugging -- see MTRACE define in main.cc for instructions
+ # Should only be enabled during debugging and not in any real release.
+ # DEFS += -DMTRACE=1
+-CXXFLAGS = @CXXFLAGS@ $(DBGFLAGS) $(CCOPT) $(DEFS)
++export CXXFLAGS = @CXXFLAGS@ $(DBGFLAGS) $(CCOPT) $(DEFS) $(INCLS)
++export CFLAGS = @CFLAGS@ $(DBGFLAGS) $(CCOPT) $(DEFS) $(INCLS)
+ CPPFLAGS = @CPPFLAGS@
+-export CFLAGS = $(CXXFLAGS)
+ # CFLAGS = $(DEFS) $(INCLS)
+ STATIC =
+-LDFLAGS = @LDFLAGS@ $(DBGFLAGS) $(STATIC)
+-LIBS =  @LIBNBASE_LIBS@ @LIBNSOCK_LIBS@ @LIBPCRE_LIBS@ @LIBPCAP_LIBS@ @OPENSSL_LIBS@ @LIBDNET_LIBS@ @LIBLUA_LIBS@ @LIBS@ 
++LDFLAGS = @LDFLAGS@ $(DBGFLAGS) $(STATIC) -z ignore
++LIBS =  @LIBNBASE_LIBS@ @LIBNSOCK_LIBS@ @LIBPCRE_LIBS@ @LIBPCAP_LIBS@ @OPENSSL_LIBS@ @LIBDNET_LIBS@ @LIBLUA_LIBS@ @LIBS@ -lsocket -lnsl -lgen
+ # LIBS =  -lefence @LIBS@
+ # LIBS =  -lrmalloc @LIBS@
+ INSTALL = @INSTALL@
+@@ -95,7 +97,10 @@
+ 
+ # %.o : %.cc -- nope this is a GNU extension
+ .cc.o:
+-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
++
++.c.o:
++	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+ 
+ all: @LUA_BUILD@ @PCAP_BUILD@ @PCRE_BUILD@ @DNET_BUILD@ @NBASE_BUILD@ @NSOCK_BUILD@ @NCAT_BUILD@
+ 	$(MAKE) $(TARGET) $(BUILDZENMAP) $(BUILDNDIFF)
+@@ -103,7 +108,7 @@
+ $(TARGET): @LUA_DEPENDS@ @PCAP_DEPENDS@ @PCRE_DEPENDS@ @DNET_DEPENDS@ $(NBASEDIR)/libnbase.a $(NSOCKDIR)/src/libnsock.a $(OBJS)
+ 	@echo Compiling nmap
+ 	rm -f $@
+-	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+ 
+ pcre_build: $(LIBPCREDIR)/Makefile
+ 	@echo Compiling libpcre; cd $(LIBPCREDIR) && $(MAKE)
+@@ -207,7 +212,9 @@
+ 	         config.cache config.log config.status
+ 
+ install-nmap: $(TARGET)
+-	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1 $(DESTDIR)$(nmapdatadir)
++	$(INSTALL) -d $(DESTDIR)$(bindir)
++	$(INSTALL) -d $(DESTDIR)$(mandir)/man1
++	$(INSTALL) -d $(DESTDIR)$(nmapdatadir)
+ 	$(INSTALL) -c -m 755 nmap $(DESTDIR)$(bindir)/nmap
+ # Use strip -x to avoid stripping dynamically loaded NSE functions. See
+ # http://seclists.org/nmap-dev/2007/q4/0272.html.
+@@ -252,6 +259,8 @@
+ 	cd $(ZENMAPDIR) && $(PYTHON) setup.py build $(if $(DESTDIR),--executable "$(DEFAULT_PYTHON_PATH)")
+ 
+ install-zenmap: $(ZENMAPDIR)/setup.py
++	$(INSTALL) -d $(DESTDIR)$(bindir)
++	$(INSTALL) -d $(DESTDIR)$(mandir)/man1
+ 	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1
+ 	cd $(ZENMAPDIR) && $(PYTHON) setup.py --quiet install --prefix "$(prefix)" --force $(if $(DESTDIR),--root "$(DESTDIR)")
+ 	$(INSTALL) -c -m 644 docs/zenmap.1 $(DESTDIR)$(mandir)/man1/
+@@ -337,7 +346,7 @@
+ 	./config.status --recheck
+ 
+ makefile.dep:
+-	$(CXX) -MM $(CPPFLAGS) $(SRCS) > $@
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $(CPPFLAGS) $(SRCS) | grep -v '/usr/gnu' | grep -v '/usr/include' | grep -v '/usr/sfw' | nawk 'NR>1 { if ($$0 ~ /^.*\.o:/ && line ~ /\\$$/ ) sub(/ \\$$/, "", line); print line }  { line = $$0 } END { sub(/ \\$$/, "", line); print line }' > $@
+ include makefile.dep
+ 
+ # These the old names of scripts that have been renamed or deleted. Any
+--- nmap-5.21/Makefile.in.orig	Thu Mar 17 14:57:06 2011
++++ nmap-5.21/Makefile.in	Thu Mar 17 15:08:06 2011
+@@ -32,6 +32,7 @@
+ ZENMAPDIR=$(TOPDIR)/zenmap
+ NDIFFDIR=$(TOPDIR)/ndiff
+ PYTHON = @PYTHON@
++PYTHONDIR = @pythondir@
+ DEFS = @DEFS@ -DNMAP_NAME=\"$(NMAP_NAME)\" -DNMAP_URL=\"$(NMAP_URL)\" -DNMAP_PLATFORM=\"$(NMAP_PLATFORM)\" -DNMAPDATADIR=\"$(nmapdatadir)\"
+ # With GCC, add extra security checks to source code.
+ # http://gcc.gnu.org/ml/gcc-patches/2004-09/msg02055.html
+@@ -262,7 +263,7 @@
+ 	$(INSTALL) -d $(DESTDIR)$(bindir)
+ 	$(INSTALL) -d $(DESTDIR)$(mandir)/man1
+ 	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1
+-	cd $(ZENMAPDIR) && $(PYTHON) setup.py --quiet install --prefix "$(prefix)" --force $(if $(DESTDIR),--root "$(DESTDIR)")
++	cd $(ZENMAPDIR) && $(PYTHON) setup.py --quiet install --prefix "$(prefix)" --force $(if $(DESTDIR),--root "$(DESTDIR)") --install-lib $(PYTHONDIR)
+ 	$(INSTALL) -c -m 644 docs/zenmap.1 $(DESTDIR)$(mandir)/man1/
+ # Create a symlink from nmapfe to zenmap if nmapfe doesn't exist or is
+ # already a link.
+@@ -276,7 +277,7 @@
+ 	cd $(NDIFFDIR) && $(PYTHON) setup.py build $(if $(DESTDIR),--executable "$(DEFAULT_PYTHON_PATH)")
+ 
+ install-ndiff:
+-	cd $(NDIFFDIR) && $(PYTHON) setup.py install --prefix "$(prefix)" $(if $(DESTDIR),--root "$(DESTDIR)")
++	cd $(NDIFFDIR) && $(PYTHON) setup.py install --prefix "$(prefix)" $(if $(DESTDIR),--root "$(DESTDIR)") --install-lib $(PYTHONDIR)
+ 
+ NSE_FILES = scripts/script.db scripts/*.nse
+ NSE_LIB_LUA_FILES = nselib/*.lua

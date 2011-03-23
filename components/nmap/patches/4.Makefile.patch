@@ -1,0 +1,24 @@
+--- nmap-5.21/ncat/Makefile.in	2010-01-11 11:41:56.000000000 -0800
++++ nmap-5.21/ncat/Makefile.in	2010-03-12 08:44:44.631386263 -0800
+@@ -120,11 +120,11 @@
+ 
+ .PHONY: uninstall all clean distclean
+ 
+-$(NBASEDIR)/libnbase.a: $(NBASEDIR)/Makefile
++$(NBASEDIR)/libnbase.a:
+ 	@echo Compiling libnbase;
+ 	cd $(NBASEDIR) && $(MAKE)
+ 
+-$(NSOCKDIR)/libnsock.a: $(NSOCKDIR)/Makefile
++$(NSOCKDIR)/libnsock.a:
+ 	@echo Compiling libnsock;
+ 	cd $(NSOCKDIR) && $(MAKE)
+ 
+@@ -161,6 +161,6 @@
+ .NOEXPORT:
+ 
+ makefile.dep:
+-	$(CC) -MM $(CPPFLAGS) $(SRCS) > $@
++	$(CC) $(CPPFLAGS) $(CFLAGS) -MM $(SRCS) > $@
+ include makefile.dep
+ 

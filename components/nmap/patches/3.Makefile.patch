@@ -1,0 +1,23 @@
+--- nmap-5.21/nsock/src/Makefile.in	2009-08-07 10:53:50.000000000 -0700
++++ nmap-5.21/nsock/src/Makefile.in	2010-02-23 11:27:25.487769258 -0800
+@@ -43,11 +43,11 @@
+ 	$(AR) cr $@ $(OBJS)
+ 	$(RANLIB) $@
+ 
+-$(NBASEDIR)/libnbase.a: $(NBASEDIR)/Makefile
++$(NBASEDIR)/libnbase.a:
+ 	cd $(NBASEDIR) && $(MAKE)
+ 
+ clean:
+-	rm -f $(OBJS) $(TARGET) makefile.dep
++	rm -f $(OBJS) $(TARGET)
+ 
+ distclean: clean
+ 	rm -f Makefile config.log config.status nsock_config.h
+@@ -75,6 +75,3 @@
+ config.status: configure
+ 	./config.status --recheck
+ 
+-makefile.dep:
+-	$(CC) -MM $(CPPFLAGS) $(SRCS) > $@
+-include makefile.dep

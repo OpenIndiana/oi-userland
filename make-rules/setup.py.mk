@@ -48,10 +48,6 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	$(COMPONENT_POST_BUILD_ACTION)
 	$(TOUCH) $@
 
-# The default is site-packages, but that directory belongs to the end-user.
-# Modules which are shipped by the OS but not with the core Python distribution
-# belong in vendor-packages.
-PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 
 COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR) 
 COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
