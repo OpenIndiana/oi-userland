@@ -1,0 +1,134 @@
+--- configure	2007-10-09 14:32:10.000000000 -0700
++++ configure	2011-03-15 10:58:07.380292878 -0700
+@@ -2489,13 +2489,13 @@
+   if test "$GXX" = yes; then
+     CXXFLAGS="-g -O2"
+   else
+-    CXXFLAGS="-g"
++    CXXFLAGS="$CXXFLAGS"
+   fi
+ else
+   if test "$GXX" = yes; then
+     CXXFLAGS="-O2"
+   else
+-    CXXFLAGS=
++    CXXFLAGS="$CXXFLAGS"
+   fi
+ fi
+ for ac_declaration in \
+@@ -3319,13 +3319,13 @@
+   if test "$GCC" = yes; then
+     CFLAGS="-g -O2"
+   else
+-    CFLAGS="-g"
++    CFLAGS="$CFLAGS"
+   fi
+ else
+   if test "$GCC" = yes; then
+     CFLAGS="-O2"
+   else
+-    CFLAGS=
++    CFLAGS="$CFLAGS"
+   fi
+ fi
+ echo "$as_me:$LINENO: checking for $CC option to accept ANSI C" >&5
+@@ -4431,7 +4431,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+       # Double quotes because CPP needs to be expanded
+-    for CPP in "$CC -E" "$CC -E -traditional-cpp" "/lib/cpp"
++    for CPP in "$CPP" "$CC $CPPFLAGS $CFLAGS -E"
+     do
+       ac_preproc_ok=false
+ for ac_c_preproc_warn_flag in '' yes
+@@ -5055,7 +5055,7 @@
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+       # Double quotes because CXXCPP needs to be expanded
+-    for CXXCPP in "$CXX -E" "/lib/cpp"
++    for CXXCPP in "$CXXCPP" "$CXX $CPPFLAGS $CXXFLAGS -E " "$CXX -E"
+     do
+       ac_preproc_ok=false
+ for ac_cxx_preproc_warn_flag in '' yes
+@@ -7548,17 +7548,17 @@
+       ;;
+ 
+     solaris*)
+-      no_undefined_flag=' -z text'
++      no_undefined_flag=' -z text -z defs -z ignore'
+       if test "$GCC" = yes; then
+ 	archive_cmds='$CC -shared ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
+ 	archive_expsym_cmds='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
+ 	  $CC -shared ${wl}-M ${wl}$lib.exp ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags~$rm $lib.exp'
+       else
+-	archive_cmds='$LD -G${allow_undefined_flag} -h $soname -o $lib $libobjs $deplibs $linker_flags'
++	archive_cmds='$CC $CFLAGS $LDFLAGS  -G ${allow_undefined_flag} -h $soname -o $lib $libobjs $deplibs $linker_flags'
+ 	archive_expsym_cmds='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
+-  	$LD -G${allow_undefined_flag} -M $lib.exp -h $soname -o $lib $libobjs $deplibs $linker_flags~$rm $lib.exp'
++  	$CC $CFLAGS $LDFLAGS -G ${allow_undefined_flag} -M $lib.exp -h $soname -o $lib $libobjs $deplibs $linker_flags~$rm $lib.exp'
+       fi
+-      hardcode_libdir_flag_spec='-R$libdir'
++      hardcode_libdir_flag_spec=''
+       hardcode_shlibpath_var=no
+       case $host_os in
+       solaris2.[0-5] | solaris2.[0-5].*) ;;
+@@ -10761,12 +10761,12 @@
+     case $cc_basename in
+       CC)
+ 	# Sun C++ 4.2, 5.x and Centerline C++
+-	no_undefined_flag_CXX=' -zdefs'
+-	archive_cmds_CXX='$CC -G${allow_undefined_flag} -nolib -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
++	no_undefined_flag_CXX=' -z text -z defs -z ignore'
++	archive_cmds_CXX='$CC $CFLAGS $LDFLAGS -G ${allow_undefined_flag} -nolib -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags'
+ 	archive_expsym_cmds_CXX='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
+-	$CC -G${allow_undefined_flag} -nolib ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
++	$CC $CFLAGS $LDFLAGS -G ${allow_undefined_flag} -nolib ${wl}-M ${wl}$lib.exp -h$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$rm $lib.exp'
+ 
+-	hardcode_libdir_flag_spec_CXX='-R$libdir'
++	hardcode_libdir_flag_spec_CXX=''
+ 	hardcode_shlibpath_var_CXX=no
+ 	case $host_os in
+ 	  solaris2.[0-5] | solaris2.[0-5].*) ;;
+@@ -10788,13 +10788,13 @@
+ 	# explicitly linking system object files so we need to strip them
+ 	# from the output so that they don't get included in the library
+ 	# dependencies.
+-	output_verbose_link_cmd='templist=`$CC -G $CFLAGS -v conftest.$objext 2>&1 | grep "\-[LR]"`; list=""; for z in $templist; do case $z in conftest.$objext) list="$list $z";; *.$objext);; *) list="$list $z";;esac; done; echo $list'
++	output_verbose_link_cmd='templist=`$CC $CFLAGS $LDFLAGS -G -v conftest.$objext 2>&1 | grep "\-[LR]"`; list=""; for z in $templist; do case $z in conftest.$objext) list="$list $z";; *.$objext);; *) list="$list $z";;esac; done; echo $list'
+ 
+ 	# Archives containing C++ object files must be created using
+ 	# "CC -xar", where "CC" is the Sun C++ compiler.  This is
+ 	# necessary to make sure instantiated templates are included
+ 	# in the archive.
+-	old_archive_cmds_CXX='$CC -xar -o $oldlib $oldobjs'
++	old_archive_cmds_CXX='$CC $CFLAGS -xar -o $oldlib $oldobjs'
+ 	;;
+       gcx)
+ 	# Green Hills C++ Compiler
+@@ -14482,7 +14482,7 @@
+       ;;
+ 
+     solaris*)
+-      no_undefined_flag_F77=' -z text'
++      no_undefined_flag_F77=' -z text -z defs -z ignore'
+       if test "$GCC" = yes; then
+ 	archive_cmds_F77='$CC -shared ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags'
+ 	archive_expsym_cmds_F77='$echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~$echo "local: *; };" >> $lib.exp~
+@@ -21418,7 +21418,7 @@
+ echo "$as_me:$LINENO: checking for gcc optimization flags" >&5
+ echo $ECHO_N "checking for gcc optimization flags... $ECHO_C" >&6
+ old_cflags=$CFLAGS
+-CFLAGS="$CFLAGS -pipe"
++CFLAGS="$CFLAGS"
+ cat >conftest.$ac_ext <<_ACEOF
+ /* confdefs.h.  */
+ _ACEOF
+@@ -21456,7 +21456,7 @@
+   ac_status=$?
+   echo "$as_me:$LINENO: \$? = $ac_status" >&5
+   (exit $ac_status); }; }; then
+-   EXTRA_OPT_CFLAGS="-pipe"
++   EXTRA_OPT_CFLAGS=""
+ else
+   echo "$as_me: failed program was:" >&5
+ sed 's/^/| /' conftest.$ac_ext >&5
