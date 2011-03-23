@@ -1,0 +1,11 @@
+--- nmap-5.21/libdnet-stripped/src/intf.c	2009-08-06 17:11:57.000000000 -0700
++++ nmap-5.21/libdnet-stripped/src/intf.c	2010-03-09 20:32:28.207885025 -0800
+@@ -323,7 +323,7 @@
+ 	/* Set link-level address. */
+ 	if (entry->intf_link_addr.addr_type == ADDR_TYPE_ETH &&
+ 	    addr_cmp(&entry->intf_link_addr, &orig->intf_link_addr) != 0) {
+-#if defined(SIOCSIFHWADDR)
++#if defined(SIOCSIFHWADDR) && (!defined(sun) && !defined(__sun) && !defined(__sun))
+ 		if (addr_ntos(&entry->intf_link_addr, &ifr.ifr_hwaddr) < 0)
+ 			return (-1);
+ 		if (ioctl(intf->fd, SIOCSIFHWADDR, &ifr) < 0)

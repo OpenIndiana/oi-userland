@@ -1,0 +1,11 @@
+--- nmap-5.21/tcpip.cc	2010-01-14 19:55:23.000000000 -0800
++++ nmap-5.21/tcpip.cc	2010-03-09 20:30:38.315876272 -0800
+@@ -3124,7 +3124,7 @@
+       devs[count].device_type = devt_ethernet;
+ 
+       /* If the device type is ethernet, get the MAC address. */
+-#ifdef SIOCGIFHWADDR
++#if defined(SIOCGIFHWADDR) && (!defined(sun) && !defined(__sun) && !defined(__sun__))
+       memcpy(&tmpifr.ifr_addr, sin, MIN(sizeof(tmpifr.ifr_addr), sizeof(*sin)));
+       rc = ioctl(sd, SIOCGIFHWADDR, &tmpifr);
+       if (rc < 0 && errno != EADDRNOTAVAIL)

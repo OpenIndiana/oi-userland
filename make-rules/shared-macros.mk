@@ -184,6 +184,11 @@ PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
+# The default is site-packages, but that directory belongs to the end-user.
+# Modules which are shipped by the OS but not with the core Python distribution
+# belong in vendor-packages.
+PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
+
 JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
 
 PERL =		/usr/perl5/bin/perl
