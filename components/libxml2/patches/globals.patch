@@ -1,0 +1,231 @@
+--- libxml2-2.7.6/xpointer.c	Thu Sep 24 08:32:00 2009
++++ libxml2-2.7.3/xpointer.c	Wed Jan  3 05:07:52 2007
+@@ -1301,19 +1299,12 @@
+  *									*
+  ************************************************************************/
+ 
+-static
+ void xmlXPtrStringRangeFunction(xmlXPathParserContextPtr ctxt, int nargs);
+-static
+ void xmlXPtrStartPointFunction(xmlXPathParserContextPtr ctxt, int nargs);
+-static
+ void xmlXPtrEndPointFunction(xmlXPathParserContextPtr ctxt, int nargs);
+-static
+ void xmlXPtrHereFunction(xmlXPathParserContextPtr ctxt, int nargs);
+-static
+ void xmlXPtrOriginFunction(xmlXPathParserContextPtr ctxt, int nargs);
+-static
+ void xmlXPtrRangeInsideFunction(xmlXPathParserContextPtr ctxt, int nargs);
+-static
+ void xmlXPtrRangeFunction(xmlXPathParserContextPtr ctxt, int nargs);
+ 
+ /**
+@@ -1741,7 +1732,7 @@
+  * Function implementing here() operation 
+  * as described in 5.4.3
+  */
+-static void
++void
+ xmlXPtrHereFunction(xmlXPathParserContextPtr ctxt, int nargs) {
+     CHECK_ARITY(0);
+ 
+@@ -1759,7 +1750,7 @@
+  * Function implementing origin() operation 
+  * as described in 5.4.3
+  */
+-static void
++void
+ xmlXPtrOriginFunction(xmlXPathParserContextPtr ctxt, int nargs) {
+     CHECK_ARITY(0);
+ 
+@@ -1792,7 +1783,7 @@
+  * ----------------
+  *
+  */
+-static void
++void
+ xmlXPtrStartPointFunction(xmlXPathParserContextPtr ctxt, int nargs) {
+     xmlXPathObjectPtr tmp, obj, point;
+     xmlLocationSetPtr newset = NULL;
+@@ -1886,7 +1877,7 @@
+  *   syntax error.
+  * ----------------------------
+  */
+-static void
++void
+ xmlXPtrEndPointFunction(xmlXPathParserContextPtr ctxt, int nargs) {
+     xmlXPathObjectPtr tmp, obj, point;
+     xmlLocationSetPtr newset = NULL;
+@@ -2031,7 +2022,7 @@
+  *  location-set, a range location representing the covering range of
+  *  x is added to the result location-set.
+  */
+-static void
++void
+ xmlXPtrRangeFunction(xmlXPathParserContextPtr ctxt, int nargs) {
+     int i;
+     xmlXPathObjectPtr set;
+@@ -2177,7 +2168,7 @@
+  *  location children of x.
+  *
+  */
+-static void
++void
+ xmlXPtrRangeInsideFunction(xmlXPathParserContextPtr ctxt, int nargs) {
+     int i;
+     xmlXPathObjectPtr set;
+@@ -2765,7 +2757,7 @@
+  * all be character points.
+  * ------------------------------
+  */
+-static void
++void
+ xmlXPtrStringRangeFunction(xmlXPathParserContextPtr ctxt, int nargs) {
+     int i, startindex, endindex = 0, fendindex;
+     xmlNodePtr start, end = 0, fend;
+--- libxml2-2.7.6/tree.c	Thu Sep 24 08:32:00 2009
++++ libxml2-2.7.3/tree.c	Sat Jan 17 05:45:34 2009
+@@ -49,8 +49,7 @@
+  *									*
+  ************************************************************************/
+ 
+-static xmlNsPtr
+-xmlNewReconciliedNs(xmlDocPtr doc, xmlNodePtr tree, xmlNsPtr ns);
++xmlNsPtr xmlNewReconciliedNs(xmlDocPtr doc, xmlNodePtr tree, xmlNsPtr ns);
+ 
+ static xmlChar* xmlGetPropNodeValueInternal(xmlAttrPtr prop);
+ 
+@@ -6055,7 +6045,7 @@
+  * @tree or on one of its ancestors then a new prefix is generated.
+  * Returns the (new) namespace definition or NULL in case of error
+  */
+-static xmlNsPtr
++xmlNsPtr
+ xmlNewReconciliedNs(xmlDocPtr doc, xmlNodePtr tree, xmlNsPtr ns) {
+     xmlNsPtr def;
+     xmlChar prefix[50];
+--- libxml2-2.7.6/valid.c	Thu Sep 24 08:32:00 2009
++++ libxml2-2.7.3/valid.c	Thu Nov 27 06:04:13 2008
+@@ -637,6 +637,8 @@
+    else if ((doc->intSubset == NULL) &&				\
+ 	    (doc->extSubset == NULL)) return(0)
+ 
++xmlAttributePtr xmlScanAttributeDecl(xmlDtdPtr dtd, const xmlChar *elem);
++
+ #ifdef LIBXML_REGEXP_ENABLED
+ 
+ /************************************************************************
+@@ -1831,6 +1833,53 @@
+ 
+ #ifdef LIBXML_VALID_ENABLED
+ /**
++ * xmlScanAttributeDeclCallback:
++ * @attr:  the attribute decl
++ * @list:  the list to update
++ *
++ * Callback called by xmlScanAttributeDecl when a new attribute
++ * has to be entered in the list.
++ */
++static void
++xmlScanAttributeDeclCallback(xmlAttributePtr attr, xmlAttributePtr *list,
++	                     const xmlChar* name ATTRIBUTE_UNUSED) {
++    attr->nexth = *list;
++    *list = attr;
++}
++
++/**
++ * xmlScanAttributeDecl:
++ * @dtd:  pointer to the DTD
++ * @elem:  the element name
++ *
++ * When inserting a new element scan the DtD for existing attributes
++ * for that element and initialize the Attribute chain
++ *
++ * Returns the pointer to the first attribute decl in the chain,
++ *         possibly NULL.
++ */
++xmlAttributePtr
++xmlScanAttributeDecl(xmlDtdPtr dtd, const xmlChar *elem) {
++    xmlAttributePtr ret = NULL;
++    xmlAttributeTablePtr table;
++
++    if (dtd == NULL) {
++	return(NULL);
++    }
++    if (elem == NULL) {
++	return(NULL);
++    }
++    table = (xmlAttributeTablePtr) dtd->attributes;
++    if (table == NULL) 
++        return(NULL);
++
++    /* WRONG !!! */
++    xmlHashScan3(table, NULL, NULL, elem,
++	        (xmlHashScanner) xmlScanAttributeDeclCallback, &ret);
++    return(ret);
++}
++
++/**
+  * xmlScanIDAttributeDecl:
+  * @ctxt:  the validation context
+  * @elem:  the element name
+--- libxml2-2.7.6/parser.c	Thu Sep 24 08:31:59 2009
++++ libxml2-2.7.3/parser.c	Thu Sep  3 08:28:43 2009
+@@ -202,8 +198,8 @@
+ 
+ 
+ /* DEPR void xmlParserHandleReference(xmlParserCtxtPtr ctxt); */
+-static xmlEntityPtr xmlParseStringPEReference(xmlParserCtxtPtr ctxt,
+-                                              const xmlChar **str);
++xmlEntityPtr xmlParseStringPEReference(xmlParserCtxtPtr ctxt,
++                                       const xmlChar **str);
+ 
+ static xmlParserErrors
+ xmlParseExternalEntityPrivate(xmlDocPtr doc, xmlParserCtxtPtr oldctxt,
+@@ -1359,8 +1342,8 @@
+  *									*
+  ************************************************************************/
+ 
+-static xmlEntityPtr xmlParseStringEntityRef(xmlParserCtxtPtr ctxt,
+-                                            const xmlChar ** str);
++xmlEntityPtr xmlParseStringEntityRef(xmlParserCtxtPtr ctxt,
++                                     const xmlChar ** str);
+ 
+ #ifdef SAX2
+ /**
+@@ -4015,7 +3978,7 @@
+     return(buf);
+ }
+ 
+-static void xmlParseCharDataComplex(xmlParserCtxtPtr ctxt, int cdata);
++void xmlParseCharDataComplex(xmlParserCtxtPtr ctxt, int cdata);
+ 
+ /*
+  * used for the test in the inner loop of the char data testing
+@@ -4220,7 +4183,7 @@
+  * of xmlParseCharData() when the parsing requires handling
+  * of non-ASCII characters.
+  */
+-static void
++void
+ xmlParseCharDataComplex(xmlParserCtxtPtr ctxt, int cdata) {
+     xmlChar buf[XML_PARSER_BIG_BUFFER_SIZE + 5];
+     int nbchar = 0;
+@@ -7293,7 +7257,7 @@
+  * Returns the xmlEntityPtr if found, or NULL otherwise. The str pointer
+  * is updated to the current location in the string.
+  */
+-static xmlEntityPtr
++xmlEntityPtr
+ xmlParseStringEntityRef(xmlParserCtxtPtr ctxt, const xmlChar ** str) {
+     xmlChar *name;
+     const xmlChar *ptr;
+@@ -7701,7 +7666,7 @@
+  * Returns the string of the entity content.
+  *         str is updated to the current value of the index
+  */
+-static xmlEntityPtr
++xmlEntityPtr
+ xmlParseStringPEReference(xmlParserCtxtPtr ctxt, const xmlChar **str) {
+     const xmlChar *ptr;
+     xmlChar cur;
