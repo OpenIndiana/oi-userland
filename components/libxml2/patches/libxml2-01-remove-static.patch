@@ -1,0 +1,95 @@
+*** libxml2-2.6.23/globals.c	Tue Aug 23 18:06:28 2005
+--- libxml2-2.6.23.new/globals.c	Fri Apr  7 00:25:38 2006
+***************
+*** 344,350 ****
+   * Disabled by default
+   */
+  int xmlSaveNoEmptyTags = 0;
+! static int xmlSaveNoEmptyTagsThrDef = 0;
+  
+  #ifdef LIBXML_SAX1_ENABLED
+  /**
+--- 344,350 ----
+   * Disabled by default
+   */
+  int xmlSaveNoEmptyTags = 0;
+! int xmlSaveNoEmptyTagsThrDef = 0;
+  
+  #ifdef LIBXML_SAX1_ENABLED
+  /**
+*** libxml2-2.6.23/nanohttp.c	Thu Dec 15 11:06:31 2005
+--- libxml2-2.6.23.new/nanohttp.c	Fri Apr  7 00:33:19 2006
+***************
+*** 164,170 ****
+  static int proxyPort;	/* the proxy port if any */
+  static unsigned int timeout = 60;/* the select() timeout in seconds */
+  
+! static int xmlNanoHTTPFetchContent( void * ctx, char ** ptr, int * len );
+  
+  /**
+   * xmlHTTPErrMemory:
+--- 164,170 ----
+  static int proxyPort;	/* the proxy port if any */
+  static unsigned int timeout = 60;/* the select() timeout in seconds */
+  
+! int xmlNanoHTTPFetchContent( void * ctx, char ** ptr, int * len );
+  
+  /**
+   * xmlHTTPErrMemory:
+***************
+*** 1710,1716 ****
+   * -1 if received content length was less than specified or an error 
+   * occurred.
+   */
+! static int
+  xmlNanoHTTPFetchContent( void * ctx, char ** ptr, int * len ) {
+      xmlNanoHTTPCtxtPtr	ctxt = (xmlNanoHTTPCtxtPtr)ctx;
+  
+--- 1710,1716 ----
+   * -1 if received content length was less than specified or an error 
+   * occurred.
+   */
+! int
+  xmlNanoHTTPFetchContent( void * ctx, char ** ptr, int * len ) {
+      xmlNanoHTTPCtxtPtr	ctxt = (xmlNanoHTTPCtxtPtr)ctx;
+  
+*** libxml2-2.6.23/xmlunicode.c	Fri Jul 29 00:57:53 2005
+--- libxml2-2.6.23.new/xmlunicode.c	Fri Apr  7 00:31:57 2006
+***************
+*** 926,933 ****
+      {0x205f, 0x205f}, {0x3000, 0x3000} };
+  static xmlChRangeGroup xmlZG = {9,0,xmlZS,NULL};
+  
+! static xmlUnicodeNameTable xmlUnicodeBlockTbl = {xmlUnicodeBlocks, 128};
+! static xmlUnicodeNameTable xmlUnicodeCatTbl = {xmlUnicodeCats, 36};
+  
+  /**
+   * xmlUnicodeLookup:
+--- 926,933 ----
+      {0x205f, 0x205f}, {0x3000, 0x3000} };
+  static xmlChRangeGroup xmlZG = {9,0,xmlZS,NULL};
+  
+! xmlUnicodeNameTable xmlUnicodeBlockTbl = {xmlUnicodeBlocks, 128};
+! xmlUnicodeNameTable xmlUnicodeCatTbl = {xmlUnicodeCats, 36};
+  
+  /**
+   * xmlUnicodeLookup:
+*** libxml2-2.6.23/xpath.c	Thu Jan  5 12:33:45 2006
+--- libxml2-2.6.23.new/xpath.c	Fri Apr  7 00:58:49 2006
+***************
+*** 100,106 ****
+  double xmlXPathNAN = 0;
+  double xmlXPathPINF = 1;
+  double xmlXPathNINF = -1;
+! static double xmlXPathNZERO = 0; /* not exported from headers */
+  static int xmlXPathInitialized = 0;
+  
+  /**
+--- 100,106 ----
+  double xmlXPathNAN = 0;
+  double xmlXPathPINF = 1;
+  double xmlXPathNINF = -1;
+! double xmlXPathNZERO = 0; /* not exported from headers */
+  static int xmlXPathInitialized = 0;
+  
+  /**

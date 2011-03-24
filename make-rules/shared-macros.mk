@@ -178,11 +178,16 @@ LINT =		$(lint.$(BITS))
 
 LD =		/usr/bin/ld
 
+PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
+PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
+PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
+
 PYTHON.2.6.32 =	/usr/bin/python2.6
 PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
+PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
 # The default is site-packages, but that directory belongs to the end-user.
 # Modules which are shipped by the OS but not with the core Python distribution
