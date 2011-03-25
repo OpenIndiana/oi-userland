@@ -56,7 +56,7 @@ CONFIGURE_OPTIONS+= 	CFLAGS="$(CFLAGS)"
 
 # This is to get rid of gcc specific -Wxxx options in pwgen makefile
 #
-COMPONENT_BUILD_TARGETS= WALL_OPTS=
+COMPONENT_BUILD_ARGS = WALL_OPTS=
 
 # common targets
 build:		$(BUILD_32)

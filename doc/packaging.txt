@@ -51,18 +51,10 @@ Canonical Manifest
     the architecture that applied to the action.  Ex:
         file path=/usr/lib/$(MACH64)/libx86onlybits.so variant.arch=i386
 
-    Actions that are associated with objects that are architecture dependent
-    shoule be tagged with a 'variant.arch' attribute as follows:
-        file path=/usr/bin/ls variant.arch=$(ARCH)
-
     Actions for editable files must include an appropriate 'preserve' attribute:
-        file path=etc/gnu/a2ps.cfg preserve=true
+        file path=etc/gnu/a2ps.cfg preserve=true mode=0644
 
     license actions should be placed in the canonical manifest.
-
-    Actions that can take advantage of macros supplied at pkgmogrify time
-    should do so.  Ex:
-        file path=/usr/bin/$(MACH64)/ztest variant.arch=$(ARCH)
 
 Mogrified Manifest
     The canonical manifest is combined with a template manifest header at
@@ -72,7 +64,6 @@ Mogrified Manifest
     attributes to the various actions in the canonical manifest(s).  More
     detail about the attributes can be found in the transform file themselves.
     The macros applied at the time of mogrification are as follows:
-        $(ARCH)
         $(MACH)
         $(MACH32)
         $(MACH64)

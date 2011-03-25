@@ -65,8 +65,6 @@ CONFIGURE_OPTIONS  +=           --enable-threading
 CONFIGURE_OPTIONS  +=           --enable-posix-sem
 CONFIGURE_OPTIONS  +=           --with-pic
 
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
-
 build: $(BUILD_32_and_64)
 
 include ../../make-rules/shared-targets.mk
