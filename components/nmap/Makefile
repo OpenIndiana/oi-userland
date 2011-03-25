@@ -61,9 +61,6 @@ CONFIGURE_OPTIONS  +=   --with-ncat
 CONFIGURE_OPTIONS  +=   --with-ndiff
 CONFIGURE_OPTIONS  +=   am_cv_python_pythondir=$(PYTHON_LIB)
 
-PKG_PROTO_DIRS +=    $(SOURCE_DIR)
-PKG_PROTO_DIRS +=    $(COMPONENT_DIR)
-
 include ../../make-rules/shared-targets.mk
 
 # common targets

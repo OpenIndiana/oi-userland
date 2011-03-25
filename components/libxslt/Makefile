@@ -52,8 +52,6 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/$(COMPONENT_SRC)
-
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
 		    cp ../mapfile.exslt libexslt/libexslt.syms ; \

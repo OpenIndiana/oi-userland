@@ -37,7 +37,6 @@ Getting the Bits
     community source associated with your cloned workspace, you will need to
     execute the following:
 
-      $ export WS_TOP=/scratch/clone
       $ cd /scratch/clone/components
       $ gmake download
 
@@ -55,10 +54,6 @@ Getting the Bits
 Building the Bits.
 
     You can build individual components or the contents of the entire gate.
-    Regardless of how you build the gate, you must set WS_TOP in the calling
-    environment to point to the top of your workspace. Ex:
-
-      $ export WS_TOP=/scratch/clone
 
   Component build
 
@@ -67,7 +62,7 @@ Building the Bits.
 
       setup the workspace for building components
 
-        $ cd ${WS_TOP}/components ; gmake setup
+        $ cd (your-workspace)/components ; gmake setup
 
       build the individual component
 
@@ -77,18 +72,17 @@ Building the Bits.
 
     Complete top down builds are also possible by simply running
 
-      $ cd ${WS_TOP}/components
-      $ gmake package-install
+      $ cd (your-workspace)/components
+      $ gmake publish
 
-    The 'package-install' target will build each component, publish it to the
-    workspace IPS repo and install it in the running environment.  As a result,
-    it is strongly recommended that you only perform complete top down builds
-    in a zone.  Tools to help facilitate build zone creation will be integrated
+    The 'publish' target will build each component and publish it to the
+    workspace IPS repo.
+    Tools to help facilitate build zone creation will be integrated
     shortly.  If the zone you create to build your workspace in does not have
     networking enabled, you can pre-download any community source archives into
     your workspace from the global with:
 
-      $ cd ${WS_TOP}/components
+      $ cd (your-workspace)/components
       $ gmake download
 
   You can add parallelism to your builds by adding '-j (jobs)' to your gmake

@@ -48,11 +48,12 @@ ANT_DIST_DIRS+=-Ddist.docs=$(PROTO_DIR)/usr/share/doc/ant
 ANT_DIST_DIRS+=-Ddist.javadocs=$(PROTO_DIR)/usr/share/doc/ant/manual/api
 ANT_DIST_DIRS+=-Ddist.lib=$(PROTO_DIR)/usr/share/lib/ant
 
-COMPONENT_BUILD_TARGETS=build
-COMPONENT_BUILD_ENV+=$(ANT_ENV)
+COMPONENT_BUILD_TARGETS =	build
+COMPONENT_BUILD_ENV +=		$(ANT_ENV)
 
-COMPONENT_INSTALL_TARGETS=$(ANT_DIST_DIRS) dist
-COMPONENT_INSTALL_ENV+=$(ANT_ENV)
+COMPONENT_INSTALL_ARGS =	$(ANT_DIST_DIRS)
+COMPONENT_INSTALL_TARGETS =	dist
+COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
 
 include ../../make-rules/shared-targets.mk
 

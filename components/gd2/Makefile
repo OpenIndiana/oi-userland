@@ -57,8 +57,6 @@ CONFIGURE_OPTIONS  +=           --disable-rpath
 CONFIGURE_OPTIONS  +=           --with-x
 CONFIGURE_OPTIONS  +=           --with-pic
 
-PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
-
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf)
 
 COMPONENT_POST_BUILD_ACTION = \

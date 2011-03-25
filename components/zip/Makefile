@@ -39,13 +39,13 @@ include ../../make-rules/ips.mk
 COMPONENT_PREP_ACTION = rm -f $(SOURCE_DIR)/match.S
 
 # The Makefile we want is under unix/Makefile
-COMPONENT_BUILD_TARGETS += -f unix/Makefile generic
-COMPONENT_INSTALL_TARGETS += -f unix/Makefile
+COMPONENT_BUILD_ARGS += -f unix/Makefile
+COMPONENT_BUILD_TARGETS += generic
+COMPONENT_INSTALL_ARGS += -f unix/Makefile
 
 # This doesn't respect DESTDIR, so overload BINDIR and MANDIR when we install.
-COMPONENT_INSTALL_TARGETS += BINDIR=$(PROTOUSRBINDIR)
-COMPONENT_INSTALL_TARGETS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
-COMPONENT_INSTALL_TARGETS += install
+COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
+COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
 
 # fix the man pages
 INST_MAN1PGS = zip zipcloak zipnote zipsplit

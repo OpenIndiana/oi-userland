@@ -33,7 +33,6 @@ export WS_TOP ?=		$(shell hg root)
 CONSOLIDATION =	userland
 PUBLISHER ?=	$(CONSOLIDATION)
 
-IS_GLOBAL_ZONE =	$(shell /usr/sbin/zoneadm list | grep -c global)
 ROOT =			/
 
 # get the most recent build number from the last mercurial tag
@@ -162,11 +161,11 @@ CCC.studio.32 =	$(SPRO_VROOT)/bin/CC
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CCC.studio.64 =	$(SPRO_VROOT)/bin/CC
 
-CC.gcc.32 =	$(GCC_ROOT)/bin/gcc -m32
-CCC.gcc.32 =	$(GCC_ROOT)/bin/g++ -m32
+CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
+CCC.gcc.32 =	$(GCC_ROOT)/bin/g++
 
-CC.gcc.64 =	$(GCC_ROOT)/bin/gcc -m64
-CCC.gcc.64 =	$(GCC_ROOT)/bin/g++ -m64
+CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
+CCC.gcc.64 =	$(GCC_ROOT)/bin/g++
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CCC =		$(CCC.$(COMPILER).$(BITS))
