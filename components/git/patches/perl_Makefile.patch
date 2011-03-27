@@ -1,0 +1,28 @@
+--- git-1.7.3.2/perl/Makefile_orig	Thu Oct 21 20:49:16 2010
++++ git-1.7.3.2/perl/Makefile	Tue Mar 22 09:43:32 2011
+@@ -20,20 +20,18 @@
+ 	$(RM) $(makfile).old
+ 
+ ifdef NO_PERL_MAKEMAKER
+-instdir_SQ = $(subst ','\'',$(prefix)/lib)
++instdir_SQ = $(subst ','\'',$$(PERL_LIB))
+ $(makfile): ../GIT-CFLAGS Makefile
+ 	echo all: private-Error.pm Git.pm > $@
+ 	echo '	mkdir -p blib/lib' >> $@
+ 	echo '	$(RM) blib/lib/Git.pm; cp Git.pm blib/lib/' >> $@
+ 	echo '	$(RM) blib/lib/Error.pm' >> $@
+-	'$(PERL_PATH_SQ)' -MError -e 'exit($$Error::VERSION < 0.15009)' || \
+ 	echo '	cp private-Error.pm blib/lib/Error.pm' >> $@
+ 	echo install: >> $@
+-	echo '	mkdir -p "$$(DESTDIR)$(instdir_SQ)"' >> $@
+-	echo '	$(RM) "$$(DESTDIR)$(instdir_SQ)/Git.pm"; cp Git.pm "$$(DESTDIR)$(instdir_SQ)"' >> $@
+-	echo '	$(RM) "$$(DESTDIR)$(instdir_SQ)/Error.pm"' >> $@
+-	'$(PERL_PATH_SQ)' -MError -e 'exit($$Error::VERSION < 0.15009)' || \
+-	echo '	cp private-Error.pm "$$(DESTDIR)$(instdir_SQ)/Error.pm"' >> $@
++	echo '	mkdir -p "$$(DESTDIR)/$(instdir_SQ)"' >> $@
++	echo '	$(RM) "$$(DESTDIR)/$(instdir_SQ)/Git.pm"; cp Git.pm "$$(DESTDIR)/$(instdir_SQ)"' >> $@
++	echo '	$(RM) "$$(DESTDIR)/$(instdir_SQ)/Error.pm"' >> $@
++	echo '	cp private-Error.pm "$$(DESTDIR)/$(instdir_SQ)/Error.pm"' >> $@
+ 	echo instlibdir: >> $@
+ 	echo '	echo $(instdir_SQ)' >> $@
+ else

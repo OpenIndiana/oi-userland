@@ -95,7 +95,7 @@ IPS_COMPONENT_VERSION ?=	$(COMPONENT_VERSION)
 
 .SECONDARY:
 
-publish:		install $(BUILD_DIR)/.published-$(MACH)
+publish:		build install $(BUILD_DIR)/.published-$(MACH)
 
 sample-manifest:	$(GENERATED).p5m
 
