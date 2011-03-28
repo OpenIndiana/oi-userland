@@ -47,7 +47,8 @@ COMPONENT_PRE_BUILD_ACTION= \
 	(cd $(@D); $(ENV) -i \
 		MAKE=$(GMAKE) \
 		PATH=$(dir $(CC.studio.32)):$(PATH) \
-		./Configure -Dprefix=/usr/perl5/$(PERL_VERSION) \
+		$(CONFIG_SHELL) ./Configure \
+			    -Dprefix=/usr/perl5/$(PERL_VERSION) \
 			    -Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
 			    -Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \
 			    -Dvendorprefix=/usr/perl5/$(PERL_VERSION) \

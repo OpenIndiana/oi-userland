@@ -62,6 +62,8 @@ BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
 CLONEY =	$(WS_TOOLS)/cloney
 
+CONFIG_SHELL =	/bin/bash
+
 PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_DIR =	$(shell pwd)
