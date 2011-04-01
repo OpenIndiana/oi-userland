@@ -1,0 +1,22 @@
+--- systemv/hal_lpadmin.orig	Tue Apr 14 22:13:11 2009
++++ systemv/hal_lpadmin	Tue Apr 14 22:13:21 2009
+@@ -283,7 +284,8 @@
+         uris=["hal://%s" % self.uid]
+         if self.properties.has_key("printer.vendor"):
+             vendor = self.properties["printer.vendor"].lower ()
+-            if (self.properties.get("linux.subsystem","") == "usb" and
++            if ((self.properties.get("linux.subsystem","") == "usb" or
++                 self.properties.get("info.solaris.driver","") == "usbprn") and
+                 self.properties.has_key("printer.product")):
+                 # Use a 'usb:...' URI.  Use the same method the CUPS
+                 # usb backend uses to construct it.
+@@ -609,6 +611,9 @@
+                     resg = res.groups()
+                     serial = resg[0]
+         bus = self.properties.get ("linux.subsystem", None)
++	if ((bus == None) and
++            (self.properties.get("info.solaris.driver", None) == 'usbprn')):
++		bus = 'usb'
+         udi = self.properties.get ("info.udi", None)
+         if make:
+             makel = make.lower ()

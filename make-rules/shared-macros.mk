@@ -212,6 +212,10 @@ PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
 PKGLINT =	/usr/bin/pkglint
 
+ACLOCAL =	/usr/bin/aclocal-1.10
+AUTOMAKE =	/usr/bin/automake-1.10
+AUTORECONF = 	/usr/bin/autoreconf
+
 TOUCH =		/usr/bin/touch
 MKDIR =		/bin/mkdir -p
 RM =		/bin/rm -f
