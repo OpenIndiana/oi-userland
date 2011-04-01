@@ -25,33 +25,33 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	1.3.1
+COMPONENT_VERSION=	1.8.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:a9537fab7c7ead501a6414d1900f46e0ae3e48b8
+COMPONENT_ARCHIVE_HASH=	sha1:394e95b3ddfb9b725368b81ad60dc39382fb9e12
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += CFLAGS="-m$(BITS) $(CFLAGS)"
-
+PKG_MACROS +=		PYTHON_LIB=$(PYTHON_LIB)
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/autopyc
+
+# Set mod time of patched file from patch.  Use this to ensure that the .py
+# file consistently gets the same timestamp.
+$(SOURCE_DIR)/.https_proxy.patched: GPATCH_FLAGS += -Z
 
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-	(cd $(COMPONENT_SRC)/doc ; $(MAKE) INSTALL=$(INSTALL) \
-			PREFIX=/usr DESTDIR=$(PROTO_DIR) install)
 
 test:	$(INSTALL_32)
 	(cd $(COMPONENT_SRC)/tests ; \
-	 PYTHONPATH=$(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages \
-	 $(PYTHON) ./run-tests.py)
+	 PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) $(PYTHON) ./run-tests.py)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

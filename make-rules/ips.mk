@@ -150,6 +150,7 @@ $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
 # published
 PKGSEND_PUBLISH_OPTIONS = -s $(PKG_REPO) publish --fmri-in-manifest
 PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
+PKGSEND_PUBLISH_OPTIONS += -T \*.py
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@

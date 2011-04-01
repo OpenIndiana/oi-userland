@@ -1,14 +1,13 @@
 # 7029500 Mercurial doesn't work through https in snv_161
-#
---- mercurial-1.3.1/mercurial/keepalive.py.orig	Tue Mar 22 14:52:16 2011
-+++ mercurial-1.3.1/mercurial/keepalive.py	Tue Mar 22 14:52:58 2011
-@@ -239,6 +239,8 @@
+
+--- mercurial-1.8.2/mercurial/keepalive.py.orig	Fri Apr  1 17:41:52 2011
++++ mercurial-1.8.2/mercurial/keepalive.py	Fri Apr  1 11:07:32 2011
+@@ -249,6 +249,8 @@
              else:
                  # no (working) free connections were found.  Create a new one.
                  h = http_class(host)
-+		if req._tunnel_host:
-+			h._set_tunnel(req._tunnel_host)
-                 if DEBUG: DEBUG.info("creating new connection to %s (%d)",
-                                      host, id(h))
-                 self._cm.add(host, h, 0)
-
++                if req._tunnel_host:
++                        h._set_tunnel(req._tunnel_host)
+                 if DEBUG:
+                     DEBUG.info("creating new connection to %s (%d)",
+                                host, id(h))
