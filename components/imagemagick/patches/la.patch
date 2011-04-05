@@ -1,0 +1,53 @@
+*** ImageMagick-6.3.4/magick/module.c.orig	Thu Apr 12 20:00:07 2007
+--- ImageMagick-6.3.4/magick/module.c	Thu Apr 12 20:00:45 2007
+***************
+*** 71,77 ****
+    Define declarations.
+  */
+  #if defined(HasLTDL)
+! #  define ModuleGlobExpression "*.la"
+  #else
+  #  if defined(_DEBUG)
+  #    define ModuleGlobExpression "IM_MOD_DB_*.dll"
+--- 71,77 ----
+    Define declarations.
+  */
+  #if defined(HasLTDL)
+! #  define ModuleGlobExpression "*.so"
+  #else
+  #  if defined(_DEBUG)
+  #    define ModuleGlobExpression "IM_MOD_DB_*.dll"
+***************
+*** 1271,1277 ****
+    (void) LogMagickEvent(TraceEvent,GetMagickModule(),"%s",tag);
+    assert(name != (char *) NULL);
+  #if defined(HasLTDL)
+!   (void) FormatMagickString(name,MaxTextExtent,"%s.la",tag);
+    (void) LocaleLower(name);
+  #else
+  #if defined(__WINDOWS__)
+--- 1271,1277 ----
+    (void) LogMagickEvent(TraceEvent,GetMagickModule(),"%s",tag);
+    assert(name != (char *) NULL);
+  #if defined(HasLTDL)
+!   (void) FormatMagickString(name,MaxTextExtent,"%s.so",tag);
+    (void) LocaleLower(name);
+  #else
+  #if defined(__WINDOWS__)
+***************
+*** 1322,1328 ****
+  #if !defined(HasLTDL)
+    (void) FormatMagickString(name,MaxTextExtent,"%s.dll",tag);
+  #else
+!   (void) FormatMagickString(name,MaxTextExtent,"%s.la",tag);
+    (void) LocaleLower(name);
+  #endif
+  }
+--- 1322,1328 ----
+  #if !defined(HasLTDL)
+    (void) FormatMagickString(name,MaxTextExtent,"%s.dll",tag);
+  #else
+!   (void) FormatMagickString(name,MaxTextExtent,"%s.so",tag);
+    (void) LocaleLower(name);
+  #endif
+  }
