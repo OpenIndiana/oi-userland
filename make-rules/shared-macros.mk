@@ -64,6 +64,8 @@ CLONEY =	$(WS_TOOLS)/cloney
 
 CONFIG_SHELL =	/bin/bash
 
+MAN_STABILITY =	$(WS_TOOLS)/man-stability
+
 PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_DIR =	$(shell pwd)
