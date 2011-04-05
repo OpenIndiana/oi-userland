@@ -100,13 +100,17 @@ class UserlandActionChecker(base.ActionChecker):
 
 		ei = elf.get_info(path)
 		bits = ei.get("bits")
-		frag = os.path.basename(os.path.dirname(path))
+                elems = os.path.dirname(path).split("/")
 
-		if bits == 32 and frag in ["sparcv9", "amd64", "64"]:
+                if ("amd64" in elems) or ("sparcv9" in elems) or ("64" in elems):
+                    path64 = True
+                else:
+                    path64 = False
+
+		if bits == 32 and path64:
 			result = _("32-bit object '%s' in 64-bit path")
-		elif bits == 64 and frag not in ["sparcv9", "amd64", "64"]:
+		elif bits == 64 and not path64:
 			result = _("64-bit object '%s' in 32-bit path")
-
 		return result
 
 	def file_action(self, action, manifest, engine, pkglint_id="001"):

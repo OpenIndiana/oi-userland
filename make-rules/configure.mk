@@ -91,7 +91,6 @@ $(BUILD_DIR)/$(MACH32)/.tested:		BITS=32
 $(BUILD_DIR)/$(MACH64)/.tested:		BITS=64
 
 CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
-CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 # set the default target for installation of the component
 COMPONENT_INSTALL_TARGETS =	install

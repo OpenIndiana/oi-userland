@@ -1,0 +1,13 @@
+--- ImageMagick-6.3.4/coders/png.c.orig	Mon Aug 23 12:50:12 2010
++++ ImageMagick-6.3.4/coders/png.c	Mon Aug 23 12:51:35 2010
+@@ -76,6 +76,10 @@
+ #if defined(HasPNG)
+ #include "png.h"
+ #include "zlib.h"
++#if PNG_LIBPNG_VER >= 10400
++#define trans_values trans_color
++#define trans trans_alpha
++#endif
+ 
+ /* ImageMagick differences */
+ #define first_scene scene
