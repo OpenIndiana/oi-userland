@@ -1,0 +1,1697 @@
+--- hplip-3.10.9-orig/scan/sane/scl.c	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/scl.c	Fri Sep  4 01:06:47 2009
+@@ -160,7 +160,7 @@
+ 
+ }
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) SclSendCommand(int deviceid, int channelid, int cmd, int param)
++SANE_Status SclSendCommand(int deviceid, int channelid, int cmd, int param)
+ {
+     char buffer[LEN_SCL_BUFFER];
+     int datalen, len;
+@@ -208,7 +208,7 @@
+     return SANE_STATUS_GOOD;
+ }
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) SclInquire(int deviceid, int channelid, int cmd, int param, int * pValue, char * buffer, int maxlen)
++SANE_Status SclInquire(int deviceid, int channelid, int cmd, int param, int * pValue, char * buffer, int maxlen)
+ {
+     SANE_Status retcode;
+     int lenResponse, len, value;
+@@ -318,7 +318,7 @@
+  * Phase 2 partial rewrite. des 9/26/07
+  */
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) scl_send_cmd(HPAIO_RECORD *hpaio, const char *buf, int size)
++SANE_Status scl_send_cmd(HPAIO_RECORD *hpaio, const char *buf, int size)
+ {
+     int len;
+     
+@@ -336,7 +336,7 @@
+     return SANE_STATUS_GOOD;
+ }
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) scl_query_int(HPAIO_RECORD *hpaio, const char *buf, int size, int *result)
++SANE_Status scl_query_int(HPAIO_RECORD *hpaio, const char *buf, int size, int *result)
+ {
+     char rbuf[256];
+     int len, stat;
+--- hplip-3.10.9-orig/scan/sane/xml.c	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/xml.c	Fri Sep  4 01:07:00 2009
+@@ -32,7 +32,7 @@
+ #include <string.h>
+ #include <stdlib.h>
+ 
+-int __attribute__ ((visibility ("hidden"))) get_array_size(const char *tag)
++int get_array_size(const char *tag)
+ {
+    char *p, *tail;
+ 
+@@ -43,7 +43,7 @@
+ }
+ 
+ /* Get xml element from the buffer. The returned element is zero terminated. */
+-int __attribute__ ((visibility ("hidden"))) get_element(const char *buf, int buf_size, char *element, int element_size, char **tail)
++int get_element(const char *buf, int buf_size, char *element, int element_size, char **tail)
+ {
+    int i, j;
+ 
+@@ -61,7 +61,7 @@
+ }
+ 
+ /* Get next xml tag from the buffer. The returned xml tag is zero terminated. */
+-int __attribute__ ((visibility ("hidden"))) get_tag(const char *buf, int buf_size, char *tag, int tag_size, char **tail)
++int get_tag(const char *buf, int buf_size, char *tag, int tag_size, char **tail)
+ {
+    int i=0, j=0, dd=0, lf=0;
+ 
+--- hplip-3.10.9-orig/scan/sane/mfpdtf.h	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/mfpdtf.h	Fri Sep  4 01:05:54 2009
+@@ -243,18 +243,18 @@
+         } __attribute__(( packed) ) array;
+ } __attribute__(( packed) );
+ 
+-Mfpdtf_t __attribute__ ((visibility ("hidden"))) MfpdtfAllocate(int deviceid, int channelid);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfDeallocate(Mfpdtf_t mfpdtf);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfSetChannel(Mfpdtf_t mfpdtf, int channelid);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfLogToFile(Mfpdtf_t mfpdtf, char * filename);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetSimulateImageHeaders(Mfpdtf_t mfpdtf);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadSetSimulateImageHeaders(Mfpdtf_t mfpdtf, int simulateImageHeaders);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadStart(Mfpdtf_t mfpdtf);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadService(Mfpdtf_t mfpdtf);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetLastServiceResult(Mfpdtf_t mfpdtf);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetVariantHeader(Mfpdtf_t mfpdtf, union MfpdtfVariantHeader_u * buffer, int maxlen);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetStartPageRecord(Mfpdtf_t mfpdtf, struct MfpdtfImageStartPageRecord_s * buffer, int maxlen);
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadInnerBlock(Mfpdtf_t mfpdtf, unsigned char * buffer, int countdown);
++Mfpdtf_t MfpdtfAllocate(int deviceid, int channelid);
++int MfpdtfDeallocate(Mfpdtf_t mfpdtf);
++int MfpdtfSetChannel(Mfpdtf_t mfpdtf, int channelid);
++int MfpdtfLogToFile(Mfpdtf_t mfpdtf, char * filename);
++int MfpdtfReadGetSimulateImageHeaders(Mfpdtf_t mfpdtf);
++int MfpdtfReadSetSimulateImageHeaders(Mfpdtf_t mfpdtf, int simulateImageHeaders);
++int MfpdtfReadStart(Mfpdtf_t mfpdtf);
++int MfpdtfReadService(Mfpdtf_t mfpdtf);
++int MfpdtfReadGetLastServiceResult(Mfpdtf_t mfpdtf);
++int MfpdtfReadGetVariantHeader(Mfpdtf_t mfpdtf, union MfpdtfVariantHeader_u * buffer, int maxlen);
++int MfpdtfReadGetStartPageRecord(Mfpdtf_t mfpdtf, struct MfpdtfImageStartPageRecord_s * buffer, int maxlen);
++int MfpdtfReadInnerBlock(Mfpdtf_t mfpdtf, unsigned char * buffer, int countdown);
+ 
+ /* 
+  * Phase 2 rewrite. des
+@@ -337,6 +337,6 @@
+ #endif   // #if defined(WORDS_BIGENDIAN)
+ #endif   // #if !defined(htole16)
+ 
+-int __attribute__ ((visibility ("hidden"))) read_mfpdtf_block(int device, int channel, char *buf, int bufSize, int timeout);
++int read_mfpdtf_block(int device, int channel, char *buf, int bufSize, int timeout);
+ 
+ #endif  // _MFPDTF_H
+--- hplip-3.10.9-orig/scan/sane/io.c	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/io.c	Fri Sep  4 01:04:50 2009
+@@ -43,7 +43,7 @@
+ DBusError dbus_err;
+ DBusConnection * dbus_conn;
+ 
+-int __attribute__ ((visibility ("hidden"))) InitDbus(void)
++int InitDbus(void)
+ {
+    dbus_error_init(&dbus_err);
+    dbus_conn = dbus_bus_get(DBUS_BUS_SYSTEM, &dbus_err);
+@@ -62,7 +62,7 @@
+    return 1;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) SendScanEvent(char *device_uri, int event)
++int SendScanEvent(char *device_uri, int event)
+ {
+     DBusMessage * msg = dbus_message_new_signal(DBUS_PATH, DBUS_INTERFACE, "Event");
+     char * printer = "";
+@@ -104,11 +104,11 @@
+     return 1;
+ }
+ #else
+-int __attribute__ ((visibility ("hidden"))) InitDbus(void)
++int InitDbus(void)
+ {
+    return 1;
+ }
+-int __attribute__ ((visibility ("hidden"))) SendScanEvent(char *device_uri, int event)
++int SendScanEvent(char *device_uri, int event)
+ {
+     return 1;
+ }
+@@ -115,7 +115,7 @@
+ #endif  /* HAVE_DBUS */
+  
+ /* Read full requested data length in BUFFER_SIZE chunks. Return number of bytes read. */
+-int __attribute__ ((visibility ("hidden"))) ReadChannelEx(int deviceid, int channelid, unsigned char * buffer, int length, int timeout)
++int ReadChannelEx(int deviceid, int channelid, unsigned char * buffer, int length, int timeout)
+ {
+    int n, len, size, total=0;
+    enum HPMUD_RESULT stat;
+--- hplip-3.10.9-orig/scan/sane/common.c	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/common.c	Fri Sep  4 01:04:05 2009
+@@ -35,7 +35,7 @@
+ #define DEBUG_NOT_STATIC
+ #include "sanei_debug.h"
+ 
+-int __attribute__ ((visibility ("hidden"))) bug(const char *fmt, ...)
++int bug(const char *fmt, ...)
+ {
+    char buf[256];
+    va_list args;
+@@ -50,7 +50,7 @@
+    return n;
+ }
+ 
+-void __attribute__ ((visibility ("hidden"))) sysdump(const void *data, int size)
++void sysdump(const void *data, int size)
+ {
+     /* Dump size bytes of *data. Output looks like:
+      * [0000] 75 6E 6B 6E 6F 77 6E 20 30 FF 00 00 00 00 39 00 unknown 0.....9.
+@@ -97,7 +97,7 @@
+     }
+ }
+ 
+-void __attribute__ ((visibility ("hidden"))) bugdump(const void *data, int size)
++void bugdump(const void *data, int size)
+ {
+     /* Dump size bytes of *data. Output looks like:
+      * [0000] 75 6E 6B 6E 6F 77 6E 20 30 FF 00 00 00 00 39 00 unknown 0.....9.
+@@ -144,7 +144,7 @@
+     }
+ }
+ 
+-char __attribute__ ((visibility ("hidden"))) *psnprintf(char *buf, int bufSize, const char *fmt, ...)
++char *psnprintf(char *buf, int bufSize, const char *fmt, ...)
+ {
+    va_list args;
+    int n;
+@@ -159,7 +159,7 @@
+    return buf;
+ }
+ 
+-unsigned long __attribute__ ((visibility ("hidden"))) DivideAndShift( int line,
++unsigned long DivideAndShift( int line,
+                               unsigned long numerator1,
+                               unsigned long numerator2,
+                               unsigned long denominator,
+@@ -182,12 +182,12 @@
+     return result;
+ }
+ 
+-void __attribute__ ((visibility ("hidden"))) NumListClear( int * list )
++void NumListClear( int * list )
+ {
+     memset( list, 0, sizeof( int ) * MAX_LIST_SIZE );
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) NumListIsInList( int * list, int n )
++int NumListIsInList( int * list, int n )
+ {
+     int i;
+     for( i = 1; i < MAX_LIST_SIZE; i++ )
+@@ -200,7 +200,7 @@
+     return 0;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) NumListAdd( int * list, int n )
++int NumListAdd( int * list, int n )
+ {
+     if( NumListIsInList( list, n ) )
+     {
+@@ -215,12 +215,12 @@
+     return 1;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) NumListGetCount( int * list )
++int NumListGetCount( int * list )
+ {
+     return list[0];
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) NumListGetFirst( int * list )
++int NumListGetFirst( int * list )
+ {
+     int n = list[0];
+     if( n > 0 )
+@@ -230,12 +230,12 @@
+     return n;
+ }
+ 
+-void __attribute__ ((visibility ("hidden"))) StrListClear( const char ** list )
++void StrListClear( const char ** list )
+ {
+     memset( list, 0, sizeof( char * ) * MAX_LIST_SIZE );
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) StrListIsInList( const char ** list, char * s )
++int StrListIsInList( const char ** list, char * s )
+ {
+     while( *list )
+     {
+@@ -248,7 +248,7 @@
+     return 0;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) StrListAdd( const char ** list, char * s )
++int StrListAdd( const char ** list, char * s )
+ {
+     int i;
+     for( i = 0; i < MAX_LIST_SIZE - 1; i++ )
+--- hplip-3.10.9-orig/scan/sane/pml.c	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/pml.c	Fri Sep  4 01:06:11 2009
+@@ -36,7 +36,7 @@
+ #define DEBUG_DECLARE_ONLY
+ #include "sanei_debug.h"
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlSetID( PmlObject_t obj, char * oid )
++int PmlSetID( PmlObject_t obj, char * oid )
+ {
+     int len = 0;    /* TODO: Do we need this parameter? */
+ 
+@@ -137,12 +137,12 @@
+     return r;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlSetValue( PmlObject_t obj, int type, char * value, int len )
++int PmlSetValue( PmlObject_t obj, int type, char * value, int len )
+ {
+     return PmlSetPrefixValue( obj, type, 0, 0, value, len );
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlSetIntegerValue( PmlObject_t obj, int type, int value )
++int PmlSetIntegerValue( PmlObject_t obj, int type, int value )
+ {
+     char buffer[sizeof( int )];
+     int len = sizeof( int ), i = len - 1;
+@@ -217,12 +217,12 @@
+     return len;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlGetValue(PmlObject_t obj, int *pType, char *buffer, int maxlen)
++int PmlGetValue(PmlObject_t obj, int *pType, char *buffer, int maxlen)
+ {
+     return PmlGetPrefixValue( obj, pType, 0, 0, buffer, maxlen );
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlGetStringValue( PmlObject_t obj,
++int PmlGetStringValue( PmlObject_t obj,
+                            int * pSymbolSet,
+                            char * buffer,
+                            int maxlen )
+@@ -248,7 +248,7 @@
+     return len;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlGetIntegerValue( PmlObject_t obj, int * pType, int * pValue )
++int PmlGetIntegerValue( PmlObject_t obj, int * pType, int * pValue )
+ {
+     int type;
+     unsigned char svalue[sizeof( int )];
+@@ -289,7 +289,7 @@
+     return obj->status;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlRequestSet( int deviceid, int channelid, PmlObject_t obj )
++int PmlRequestSet( int deviceid, int channelid, PmlObject_t obj )
+ {
+     unsigned char data[PML_MAX_DATALEN];
+     int datalen=0, status=ERROR, type, result, pml_result;
+@@ -308,7 +308,7 @@
+     return status;  /* OK = valid I/O result */
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlRequestSetRetry( int deviceid, int channelid, PmlObject_t obj, int count, int delay )
++int PmlRequestSetRetry( int deviceid, int channelid, PmlObject_t obj, int count, int delay )
+ {
+    int stat=ERROR, r;
+ 
+@@ -346,7 +346,7 @@
+    return stat;  /* OK = valid I/O result AND PML result */
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlRequestGet( int deviceid, int channelid, PmlObject_t obj ) 
++int PmlRequestGet( int deviceid, int channelid, PmlObject_t obj ) 
+ {
+     unsigned char data[PML_MAX_DATALEN];
+     int datalen=0, stat=ERROR, type, pml_result;
+@@ -603,7 +603,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) pml_start(HPAIO_RECORD *hpaio)
++int pml_start(HPAIO_RECORD *hpaio)
+ {
+    MFPDTF_FIXED_HEADER *ph;
+    MFPDTF_START_PAGE *ps;
+@@ -888,7 +888,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) pml_read(HPAIO_RECORD *hpaio, SANE_Byte *data, SANE_Int maxLength, SANE_Int *pLength)
++int pml_read(HPAIO_RECORD *hpaio, SANE_Byte *data, SANE_Int maxLength, SANE_Int *pLength)
+ {
+    MFPDTF_RASTER *pd;
+    int stat=SANE_STATUS_IO_ERROR;
+@@ -1018,7 +1018,7 @@
+     return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) pml_cancel(HPAIO_RECORD *hpaio)
++int pml_cancel(HPAIO_RECORD *hpaio)
+ {
+    int oldStuff = (hpaio->preDenali || hpaio->fromDenali || hpaio->denali) ? 1 : 0;
+ 
+--- hplip-3.10.9-orig/scan/sane/hpaio.c	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/hpaio.c	Fri Sep  4 01:04:29 2009
+@@ -324,7 +324,7 @@
+     return NULL;
+ }
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneError( hpaioScanner_t hpaio )
++SANE_Status hpaioScannerToSaneError( hpaioScanner_t hpaio )
+ {
+     SANE_Status retcode;
+ 
+@@ -438,7 +438,7 @@
+ }
+ 
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneStatus( hpaioScanner_t hpaio )
++SANE_Status hpaioScannerToSaneStatus( hpaioScanner_t hpaio )
+ {
+ //BREAKPOINT;
+     
+--- hplip-3.10.9-orig/scan/sane/xml.h	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/xml.h	Fri Sep  4 01:07:05 2009
+@@ -27,10 +27,10 @@
+ #ifndef _MXML_H
+ #define _MXML_H
+ 
+-int __attribute__ ((visibility ("hidden"))) get_array_size(const char *tag);
++int get_array_size(const char *tag);
+ /* Get xml element from the buffer. The returned element is zero terminated. */
+-int __attribute__ ((visibility ("hidden"))) get_element(const char *buf, int buf_size, char *element, int element_size, char **tail);
++int get_element(const char *buf, int buf_size, char *element, int element_size, char **tail);
+ /* Get next xml tag from the buffer. The returned xml tag is zero terminated. */
+-int __attribute__ ((visibility ("hidden"))) get_tag(const char *buf, int buf_size, char *tag, int tag_size, char **tail);
++int get_tag(const char *buf, int buf_size, char *tag, int tag_size, char **tail);
+ 
+ #endif  // _MXML_H
+--- hplip-3.10.9-orig/scan/sane/scl.h	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/scl.h	Fri Sep  4 01:06:54 2009
+@@ -176,8 +176,8 @@
+ //#define LEN_SCL_BUFFER 1024
+ #define LEN_SCL_BUFFER    256 /* Increase if reading binary data. */
+ 
+-SANE_Status  __attribute__ ((visibility ("hidden"))) SclSendCommand(int deviceid, int channelid, int cmd, int param);
+-SANE_Status __attribute__ ((visibility ("hidden"))) SclInquire(int deviceid, int channelid, int cmd, int param, int *pValue, char *buffer, int maxlen);
++SANE_Status  SclSendCommand(int deviceid, int channelid, int cmd, int param);
++SANE_Status SclInquire(int deviceid, int channelid, int cmd, int param, int *pValue, char *buffer, int maxlen);
+ 
+ /*
+  * Phase 2 partial rewrite. des 9/26/07
+@@ -195,8 +195,8 @@
+ 
+ struct hpaioScanner_s;
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) scl_send_cmd(struct hpaioScanner_s *hpaio, const char *buf, int size);
+-SANE_Status __attribute__ ((visibility ("hidden"))) scl_query_int(struct hpaioScanner_s *hpaio, const char *buf, int size, int *result);
++SANE_Status scl_send_cmd(struct hpaioScanner_s *hpaio, const char *buf, int size);
++SANE_Status scl_query_int(struct hpaioScanner_s *hpaio, const char *buf, int size, int *result);
+ 
+ #endif
+ 
+--- hplip-3.10.9-orig/scan/sane/hpaio.h	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/hpaio.h	Fri Sep  4 01:04:35 2009
+@@ -271,8 +271,8 @@
+     } \
+   } while(0)
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneStatus( hpaioScanner_t hpaio );
+-SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneError( hpaioScanner_t hpaio );
++SANE_Status hpaioScannerToSaneStatus( hpaioScanner_t hpaio );
++SANE_Status hpaioScannerToSaneError( hpaioScanner_t hpaio );
+ void sane_hpaio_cancel(SANE_Handle handle);
+ 
+ #endif
+--- hplip-3.10.9-orig/scan/sane/mfpdtf.c	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/mfpdtf.c	Fri Sep  4 01:05:16 2009
+@@ -56,7 +56,7 @@
+     return seconds;
+ }
+ 
+-Mfpdtf_t __attribute__ ((visibility ("hidden"))) MfpdtfAllocate( int deviceid, int channelid )
++Mfpdtf_t MfpdtfAllocate( int deviceid, int channelid )
+ {
+     int size = sizeof( struct Mfpdtf_s );
+     Mfpdtf_t mfpdtf = malloc( size );
+@@ -74,7 +74,7 @@
+     return mfpdtf;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfDeallocate( Mfpdtf_t mfpdtf )
++int MfpdtfDeallocate( Mfpdtf_t mfpdtf )
+ {
+     if( !mfpdtf )
+     {
+@@ -86,7 +86,7 @@
+     return OK;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfSetChannel( Mfpdtf_t mfpdtf, int channelid )
++int MfpdtfSetChannel( Mfpdtf_t mfpdtf, int channelid )
+ {
+     mfpdtf->channelid = channelid;
+     /* If necessary, we can query the device ID string using the
+@@ -94,7 +94,7 @@
+     return OK;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfLogToFile( Mfpdtf_t mfpdtf, char * filename )
++int MfpdtfLogToFile( Mfpdtf_t mfpdtf, char * filename )
+ {
+     if( mfpdtf->fdLog != -1 )
+     {
+@@ -114,12 +114,12 @@
+     return OK;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetSimulateImageHeaders( Mfpdtf_t mfpdtf )
++int MfpdtfReadGetSimulateImageHeaders( Mfpdtf_t mfpdtf )
+ {
+     return mfpdtf->read.simulateImageHeaders;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadSetSimulateImageHeaders( Mfpdtf_t mfpdtf,
++int MfpdtfReadSetSimulateImageHeaders( Mfpdtf_t mfpdtf,
+                                        int simulateImageHeaders )
+ {
+     mfpdtf->read.simulateImageHeaders = simulateImageHeaders;
+@@ -126,7 +126,7 @@
+     return simulateImageHeaders;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadStart( Mfpdtf_t mfpdtf )
++int MfpdtfReadStart( Mfpdtf_t mfpdtf )
+ {
+     mfpdtf->read.lastServiceResult = 0;
+     mfpdtf->read.dataType = ERROR;
+@@ -206,7 +206,7 @@
+     return r;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadService( Mfpdtf_t mfpdtf )
++int MfpdtfReadService( Mfpdtf_t mfpdtf )
+ {
+     int result = 0;
+     int datalen, blockLength, headerLength;
+@@ -408,12 +408,12 @@
+     RETURN( ( result | mfpdtf->read.fixedHeader.pageFlags ) );
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetLastServiceResult( Mfpdtf_t mfpdtf )
++int MfpdtfReadGetLastServiceResult( Mfpdtf_t mfpdtf )
+ {
+     return mfpdtf->read.lastServiceResult;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetVariantHeader( Mfpdtf_t mfpdtf,
++int MfpdtfReadGetVariantHeader( Mfpdtf_t mfpdtf,
+                                 union MfpdtfVariantHeader_u * buffer,
+                                 int maxlen )
+ {
+@@ -433,7 +433,7 @@
+     return maxlen;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadGetStartPageRecord( Mfpdtf_t mfpdtf,
++int MfpdtfReadGetStartPageRecord( Mfpdtf_t mfpdtf,
+                                   struct MfpdtfImageStartPageRecord_s * buffer,
+                                   int maxlen )
+ {
+@@ -446,7 +446,7 @@
+     return maxlen;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MfpdtfReadInnerBlock( Mfpdtf_t mfpdtf,
++int MfpdtfReadInnerBlock( Mfpdtf_t mfpdtf,
+                           unsigned char * buffer,
+                           int countdown )
+ {
+@@ -502,7 +502,7 @@
+  * Phase 2 rewrite. des
+  */
+ 
+-int __attribute__ ((visibility ("hidden"))) read_mfpdtf_block(int device, int channel, char *buf, int bufSize, int timeout)
++int read_mfpdtf_block(int device, int channel, char *buf, int bufSize, int timeout)
+ {
+    MFPDTF_FIXED_HEADER *phd = (MFPDTF_FIXED_HEADER *)buf;
+    int size, bsize=0, len;
+--- hplip-3.10.9-orig/scan/sane/io.h	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/io.h	Fri Sep  4 01:04:55 2009
+@@ -31,9 +31,9 @@
+ #include "sane.h"
+ #include "hpmud.h"
+ 
+-int __attribute__ ((visibility ("hidden"))) InitDbus(void);
+-int __attribute__ ((visibility ("hidden"))) SendScanEvent(char * device_uri, int event);
+-int __attribute__ ((visibility ("hidden"))) ReadChannelEx(int deviceid, int channelid, unsigned char * buffer, int length, int timeout);
++int InitDbus(void);
++int SendScanEvent(char * device_uri, int event);
++int ReadChannelEx(int deviceid, int channelid, unsigned char * buffer, int length, int timeout);
+ 
+ #define EVENT_START_SCAN_JOB 2000
+ #define EVENT_END_SCAN_JOB 2001
+--- hplip-3.10.9-orig/scan/sane/common.h	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/common.h	Fri Sep  4 01:04:21 2009
+@@ -169,19 +169,19 @@
+     pXform++; \
+   } while(0)
+ 
+-int __attribute__ ((visibility ("hidden"))) bug(const char *fmt, ...);
+-void __attribute__ ((visibility ("hidden"))) sysdump(const void *data, int size);
+-void __attribute__ ((visibility ("hidden"))) bugdump(const void *data, int size);
+-char __attribute__ ((visibility ("hidden"))) *psnprintf(char *buf, int bufSize, const char *fmt, ...);
+-unsigned long __attribute__ ((visibility ("hidden"))) DivideAndShift(int line, unsigned long numerator1, unsigned long numerator2,
++int bug(const char *fmt, ...);
++void sysdump(const void *data, int size);
++void bugdump(const void *data, int size);
++char *psnprintf(char *buf, int bufSize, const char *fmt, ...);
++unsigned long DivideAndShift(int line, unsigned long numerator1, unsigned long numerator2,
+                               unsigned long denominator, int shift);
+-void __attribute__ ((visibility ("hidden"))) NumListClear( int * list );
+-int __attribute__ ((visibility ("hidden"))) NumListIsInList( int * list, int n );
+-int __attribute__ ((visibility ("hidden"))) NumListAdd( int * list, int n );
+-int __attribute__ ((visibility ("hidden"))) NumListGetCount( int * list );
+-int __attribute__ ((visibility ("hidden"))) NumListGetFirst( int * list );
+-void __attribute__ ((visibility ("hidden"))) StrListClear( const char ** list );
+-int __attribute__ ((visibility ("hidden"))) StrListIsInList( const char ** list, char * s );
+-int __attribute__ ((visibility ("hidden"))) StrListAdd( const char ** list, char * s );
++void NumListClear( int * list );
++int NumListIsInList( int * list, int n );
++int NumListAdd( int * list, int n );
++int NumListGetCount( int * list );
++int NumListGetFirst( int * list );
++void StrListClear( const char ** list );
++int StrListIsInList( const char ** list, char * s );
++int StrListAdd( const char ** list, char * s );
+ 
+ #endif
+--- hplip-3.10.9-orig/scan/sane/pml.h	Tue Aug  4 16:36:06 2009
++++ hplip-3.10.9/scan/sane/pml.h	Fri Sep  4 01:06:24 2009
+@@ -159,15 +159,15 @@
+         unsigned char   y[4];
+ } __attribute__(( packed));
+ 
+-int __attribute__ ((visibility ("hidden"))) PmlSetID(PmlObject_t obj, char * oid);
+-int __attribute__ ((visibility ("hidden"))) PmlSetValue(PmlObject_t obj, int type, char * value, int len);
+-int __attribute__ ((visibility ("hidden"))) PmlSetIntegerValue(PmlObject_t obj, int type, int value);
+-int __attribute__ ((visibility ("hidden"))) PmlGetValue(PmlObject_t obj, int * pType, char * buffer, int maxlen);
+-int __attribute__ ((visibility ("hidden"))) PmlGetStringValue(PmlObject_t obj, int * pSymbolSet, char * buffer, int maxlen);
+-int __attribute__ ((visibility ("hidden"))) PmlGetIntegerValue(PmlObject_t obj, int * pType, int * pValue);
+-int __attribute__ ((visibility ("hidden"))) PmlRequestSet(int deviceid, int channelid, PmlObject_t obj);
+-int __attribute__ ((visibility ("hidden"))) PmlRequestSetRetry(int deviceid, int channelid, PmlObject_t obj, int count, int delay);
+-int __attribute__ ((visibility ("hidden"))) PmlRequestGet(int deviceid, int channelid, PmlObject_t obj);
++int PmlSetID(PmlObject_t obj, char * oid);
++int PmlSetValue(PmlObject_t obj, int type, char * value, int len);
++int PmlSetIntegerValue(PmlObject_t obj, int type, int value);
++int PmlGetValue(PmlObject_t obj, int * pType, char * buffer, int maxlen);
++int PmlGetStringValue(PmlObject_t obj, int * pSymbolSet, char * buffer, int maxlen);
++int PmlGetIntegerValue(PmlObject_t obj, int * pType, int * pValue);
++int PmlRequestSet(int deviceid, int channelid, PmlObject_t obj);
++int PmlRequestSetRetry(int deviceid, int channelid, PmlObject_t obj, int count, int delay);
++int PmlRequestGet(int deviceid, int channelid, PmlObject_t obj);
+ 
+ /*
+  * Phase 2 rewrite. des
+@@ -174,8 +174,8 @@
+  */
+ struct hpaioScanner_s;
+ 
+-int __attribute__ ((visibility ("hidden"))) pml_start(struct hpaioScanner_s *hpaio);
+-int __attribute__ ((visibility ("hidden"))) pml_read(struct hpaioScanner_s *hpaio, SANE_Byte *data, SANE_Int maxLength, SANE_Int *pLength);
+-int __attribute__ ((visibility ("hidden"))) pml_cancel(struct hpaioScanner_s *hpaio);
++int pml_start(struct hpaioScanner_s *hpaio);
++int pml_read(struct hpaioScanner_s *hpaio, SANE_Byte *data, SANE_Int maxLength, SANE_Int *pLength);
++int pml_cancel(struct hpaioScanner_s *hpaio);
+ 
+ #endif // _PML_H
+--- hplip-3.10.9-orig/io/hpmud/pp.h	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/pp.h	Fri Sep  4 00:51:13 2009
+@@ -76,25 +76,25 @@
+ struct _mud_device;
+ struct _mud_channel;
+ 
+-extern struct _mud_device_vf __attribute__ ((visibility ("hidden"))) pp_mud_device_vf;
++extern struct _mud_device_vf pp_mud_device_vf;
+ 
+-int __attribute__ ((visibility ("hidden"))) pp_write(int fd, const void *buf, int size, int usec);
+-int __attribute__ ((visibility ("hidden"))) pp_read(int fd, void *buf, int size, int usec);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_open(struct _mud_device *pd);                 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_close(struct _mud_device *pd);                 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_get_device_id(struct _mud_device *pd, char *buf, int size, int *len);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_get_device_status(struct _mud_device *pd, unsigned int *status);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_channel_open(struct _mud_device *pd, const char *sn, HPMUD_CHANNEL *cd);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_channel_close(struct _mud_device *pd, struct _mud_channel *pc);
++int pp_write(int fd, const void *buf, int size, int usec);
++int pp_read(int fd, void *buf, int size, int usec);
++enum HPMUD_RESULT pp_open(struct _mud_device *pd);                 
++enum HPMUD_RESULT pp_close(struct _mud_device *pd);                 
++enum HPMUD_RESULT pp_get_device_id(struct _mud_device *pd, char *buf, int size, int *len);
++enum HPMUD_RESULT pp_get_device_status(struct _mud_device *pd, unsigned int *status);
++enum HPMUD_RESULT pp_channel_open(struct _mud_device *pd, const char *sn, HPMUD_CHANNEL *cd);
++enum HPMUD_RESULT pp_channel_close(struct _mud_device *pd, struct _mud_channel *pc);
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_raw_channel_open(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_raw_channel_close(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_mlc_channel_open(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_mlc_channel_close(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_dot4_channel_open(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_dot4_channel_close(struct _mud_channel *pc);
++enum HPMUD_RESULT pp_raw_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT pp_raw_channel_close(struct _mud_channel *pc);
++enum HPMUD_RESULT pp_mlc_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT pp_mlc_channel_close(struct _mud_channel *pc);
++enum HPMUD_RESULT pp_dot4_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT pp_dot4_channel_close(struct _mud_channel *pc);
+ 
+-int __attribute__ ((visibility ("hidden"))) pp_probe_devices(char *lst, int lst_size, int *cnt);
++int pp_probe_devices(char *lst, int lst_size, int *cnt);
+ 
+ #endif // _PP_H
+ 
+--- hplip-3.10.9-orig/io/hpmud/jd.c	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/jd.c	Fri Sep  4 00:55:15 2009
+@@ -34,7 +34,7 @@
+ #include "hpmud.h"
+ #include "hpmudi.h"
+ 
+-mud_device_vf __attribute__ ((visibility ("hidden"))) jd_mud_device_vf = 
++mud_device_vf jd_mud_device_vf = 
+ {
+    .open = jd_open,
+    .close = jd_close,
+@@ -60,7 +60,7 @@
+ static const int ScanPort1[] = { 0, 8290, 0, 0 };        /* hack for CLJ28xx */
+ static const int GenericPort1[] = { 0, 8292, 0, 0 };     /* hack for CLJ28xx (fax) */
+ 
+-const char __attribute__ ((visibility ("hidden"))) *kStatusOID = "1.3.6.1.4.1.11.2.3.9.1.1.7.0";            /* device id snmp oid */
++const char *kStatusOID = "1.3.6.1.4.1.11.2.3.9.1.1.7.0";            /* device id snmp oid */
+ 
+ static int ReadReply(mud_channel *pc)
+ {
+@@ -146,7 +146,7 @@
+  * JetDirect mud_device functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_open(mud_device *pd)
++enum HPMUD_RESULT jd_open(mud_device *pd)
+ {
+    char uri_model[128];
+    char model[128];
+@@ -198,7 +198,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_close(mud_device *pd)
++enum HPMUD_RESULT jd_close(mud_device *pd)
+ {
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+ 
+@@ -209,7 +209,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_get_device_id(mud_device *pd, char *buf, int size, int *len)
++enum HPMUD_RESULT jd_get_device_id(mud_device *pd, char *buf, int size, int *len)
+ {
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+    
+@@ -229,13 +229,13 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_get_device_status(mud_device *pd, unsigned int *status)
++enum HPMUD_RESULT jd_get_device_status(mud_device *pd, unsigned int *status)
+ {
+    *status = NFAULT_BIT;    /* there is no 8-bit status, so fake it */
+    return HPMUD_R_OK;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_write(mud_device *pd, mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
++enum HPMUD_RESULT jd_channel_write(mud_device *pd, mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
+ {   
+    enum HPMUD_RESULT stat;
+ 
+@@ -245,7 +245,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_read(mud_device *pd, mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
++enum HPMUD_RESULT jd_channel_read(mud_device *pd, mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
+ {   
+    enum HPMUD_RESULT stat;
+ 
+@@ -261,7 +261,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_open(mud_device *pd, const char *sn, HPMUD_CHANNEL *cd)
++enum HPMUD_RESULT jd_channel_open(mud_device *pd, const char *sn, HPMUD_CHANNEL *cd)
+ {
+    int index;
+    enum HPMUD_RESULT stat;
+@@ -290,7 +290,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_close(mud_device *pd, mud_channel *pc)
++enum HPMUD_RESULT jd_channel_close(mud_device *pd, mud_channel *pc)
+ {
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+ 
+@@ -306,7 +306,7 @@
+  * JetDirect channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_open(mud_channel *pc)
++enum HPMUD_RESULT jd_s_channel_open(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    struct sockaddr_in pin;  
+@@ -480,7 +480,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_close(mud_channel *pc)
++enum HPMUD_RESULT jd_s_channel_close(mud_channel *pc)
+ {
+    if (pc->socket >= 0)
+    {
+@@ -495,7 +495,7 @@
+    return HPMUD_R_OK;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
++enum HPMUD_RESULT jd_s_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    int len, size, total=0;
+@@ -555,7 +555,7 @@
+  * Channel_read() tries to read "length" bytes from the peripheral. The returned read count may be zero
+  * (timeout, no data available), less than "length" or equal "length".
+  */
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
++enum HPMUD_RESULT jd_s_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    int len=0;
+--- hplip-3.10.9-orig/io/hpmud/dot4.c	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/dot4.c	Fri Sep  4 00:48:13 2009
+@@ -150,7 +150,7 @@
+ }
+ 
+ /* Get command from peripheral and processes the reverse command. */
+-int __attribute__ ((visibility ("hidden"))) Dot4ReverseCmd(mud_channel *pc, int fd)
++int Dot4ReverseCmd(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];   
+@@ -274,7 +274,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4Init(mud_channel *pc, int fd)
++int Dot4Init(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -338,7 +338,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4Exit(mud_channel *pc, int fd)
++int Dot4Exit(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -374,7 +374,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4GetSocket(mud_channel *pc, int fd)
++int Dot4GetSocket(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -419,7 +419,7 @@
+ }
+ 
+ /* Write data to peripheral. */
+-int __attribute__ ((visibility ("hidden"))) Dot4ForwardData(mud_channel *pc, int fd, const void *buf, int size, int usec_timeout)
++int Dot4ForwardData(mud_channel *pc, int fd, const void *buf, int size, int usec_timeout)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    int stat=0, len, n;
+@@ -450,7 +450,7 @@
+ }
+ 
+ /* Read data from peripheral. */
+-int __attribute__ ((visibility ("hidden"))) Dot4ReverseData(mud_channel *pc, int fd, void *buf, int length, int usec_timeout)
++int Dot4ReverseData(mud_channel *pc, int fd, void *buf, int length, int usec_timeout)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    mud_channel *out_of_bound_channel;
+@@ -582,7 +582,7 @@
+    return total;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4OpenChannel(mud_channel *pc, int fd)
++int Dot4OpenChannel(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -627,7 +627,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4CloseChannel(mud_channel *pc, int fd)
++int Dot4CloseChannel(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -665,7 +665,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4Credit(mud_channel *pc, int fd, unsigned short credit)
++int Dot4Credit(mud_channel *pc, int fd, unsigned short credit)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -706,7 +706,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4CreditRequest(mud_channel *pc, int fd, unsigned short credit)
++int Dot4CreditRequest(mud_channel *pc, int fd, unsigned short credit)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+--- hplip-3.10.9-orig/io/hpmud/pml.c	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/pml.c	Fri Sep  4 00:54:19 2009
+@@ -210,7 +210,7 @@
+    return len;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) GetSnmp(const char *ip, int port, const char *szoid, void *buffer, unsigned int size, int *type, int *pml_result, int *result)
++int GetSnmp(const char *ip, int port, const char *szoid, void *buffer, unsigned int size, int *type, int *pml_result, int *result)
+ {
+    struct snmp_session session, *ss=NULL;
+    struct snmp_pdu *pdu=NULL;
+@@ -299,13 +299,13 @@
+ 
+ #else
+ 
+-int __attribute__ ((visibility ("hidden"))) SetSnmp(const char *ip, int port, const char *szoid, int type, void *buffer, unsigned int size, int *pml_result, int *result)
++int SetSnmp(const char *ip, int port, const char *szoid, int type, void *buffer, unsigned int size, int *pml_result, int *result)
+ {
+    BUG("no JetDirect support enabled\n");
+    return 0;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) GetSnmp(const char *ip, int port, const char *szoid, void *buffer, unsigned int size, int *type, int *pml_result, int *result)
++int GetSnmp(const char *ip, int port, const char *szoid, void *buffer, unsigned int size, int *type, int *pml_result, int *result)
+ {
+    BUG("no JetDirect support enabled\n");
+    return 0;
+--- hplip-3.10.9-orig/io/hpmud/musb.c	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/musb.c	Fri Sep  4 00:54:08 2009
+@@ -27,7 +27,7 @@
+ #include "hpmud.h"
+ #include "hpmudi.h"
+ 
+-mud_device_vf __attribute__ ((visibility ("hidden"))) musb_mud_device_vf = 
++mud_device_vf musb_mud_device_vf = 
+ {
+    .read = musb_read,
+    .write = musb_write,
+@@ -841,7 +841,7 @@
+  * Power up printer if necessary. Most all-in-ones have no power down state (ie: OJ K80), so they are already powered up.
+  * Newer single function printers power-up with the print job. May be called by other mud_device.
+  */
+-int __attribute__ ((visibility ("hidden"))) power_up(mud_device *pd, int fd)
++int power_up(mud_device *pd, int fd)
+ {
+    const char *pSf;
+ 
+@@ -955,7 +955,7 @@
+  * USB mud_device functions.
+  */
+ 
+-int __attribute__ ((visibility ("hidden"))) musb_write(int fd, const void *buf, int size, int usec)
++int musb_write(int fd, const void *buf, int size, int usec)
+ {
+    int len=-EIO;
+ 
+@@ -1030,7 +1030,7 @@
+    return len;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) musb_read(int fd, void *buf, int size, int usec)
++int musb_read(int fd, void *buf, int size, int usec)
+ {
+    struct timeval t1, t2;
+    int total_usec, tmo_usec=usec;
+@@ -1089,7 +1089,7 @@
+    return len;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_open(mud_device *pd)
++enum HPMUD_RESULT musb_open(mud_device *pd)
+ {
+    int len=0, fd=0;
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+@@ -1138,7 +1138,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_close(mud_device *pd)
++enum HPMUD_RESULT musb_close(mud_device *pd)
+ {
+    int i;
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+@@ -1158,7 +1158,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_get_device_id(mud_device *pd, char *buf, int size, int *len)
++enum HPMUD_RESULT musb_get_device_id(mud_device *pd, char *buf, int size, int *len)
+ {
+    int i, fd=FD_NA;
+    enum HPMUD_RESULT stat = HPMUD_R_DEVICE_BUSY;
+@@ -1214,7 +1214,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_get_device_status(mud_device *pd, unsigned int *status)
++enum HPMUD_RESULT musb_get_device_status(mud_device *pd, unsigned int *status)
+ {
+    int i, fd=FD_NA;
+    enum HPMUD_RESULT stat = HPMUD_R_DEVICE_BUSY;
+@@ -1263,7 +1263,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_write(mud_device *pd, mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
++enum HPMUD_RESULT musb_channel_write(mud_device *pd, mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
+ {   
+    enum HPMUD_RESULT stat;
+ 
+@@ -1273,7 +1273,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_read(mud_device *pd, mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
++enum HPMUD_RESULT musb_channel_read(mud_device *pd, mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
+ {   
+    enum HPMUD_RESULT stat;
+ 
+@@ -1292,7 +1292,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_open(mud_device *pd, const char *sn, HPMUD_CHANNEL *cd)
++enum HPMUD_RESULT musb_channel_open(mud_device *pd, const char *sn, HPMUD_CHANNEL *cd)
+ {
+    int index;
+    enum HPMUD_RESULT stat;
+@@ -1321,7 +1321,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_close(mud_device *pd, mud_channel *pc)
++enum HPMUD_RESULT musb_channel_close(mud_device *pd, mud_channel *pc)
+ {
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+ 
+@@ -1337,7 +1337,7 @@
+  * USB raw_channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_open(mud_channel *pc)
++enum HPMUD_RESULT musb_raw_channel_open(mud_channel *pc)
+ {
+    int fd = FD_7_1_2;
+    enum HPMUD_RESULT stat = HPMUD_R_DEVICE_BUSY;
+@@ -1355,7 +1355,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_close(mud_channel *pc)
++enum HPMUD_RESULT musb_raw_channel_close(mud_channel *pc)
+ {
+    int fd = pc->fd;
+ 
+@@ -1366,7 +1366,7 @@
+    return HPMUD_R_OK;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
++enum HPMUD_RESULT musb_raw_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
+ {
+    int len, size, total=0;
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+@@ -1404,7 +1404,7 @@
+  * Channel_read() tries to read "length" bytes from the peripheral. The returned read count may be zero
+  * (timeout, no data available), less than "length" or equal "length".
+  */
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
++enum HPMUD_RESULT musb_raw_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
+ {
+    int len=0, usec;
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+@@ -1441,7 +1441,7 @@
+  * USB comp_channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_comp_channel_open(mud_channel *pc)
++enum HPMUD_RESULT musb_comp_channel_open(mud_channel *pc)
+ {
+    int fd;
+    enum HPMUD_RESULT stat = HPMUD_R_DEVICE_BUSY;
+@@ -1490,7 +1490,7 @@
+  * USB mlc_channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_open(mud_channel *pc)
++enum HPMUD_RESULT musb_mlc_channel_open(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum FD_ID fd;
+@@ -1558,7 +1558,7 @@
+    return stat;  
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_close(mud_channel *pc)
++enum HPMUD_RESULT musb_mlc_channel_close(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char nullByte=0;
+@@ -1596,7 +1596,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
++enum HPMUD_RESULT musb_mlc_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    int ret, len, size, dlen, total=0;
+@@ -1669,7 +1669,7 @@
+  * Note, if a "timeout" occurs one peripheral to host credit is left outstanding. Which means the peripheral
+  * can send unsolicited data later.
+  */
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
++enum HPMUD_RESULT musb_mlc_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+@@ -1710,7 +1710,7 @@
+  * USB dot4_channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_open(mud_channel *pc)
++enum HPMUD_RESULT musb_dot4_channel_open(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum FD_ID fd;
+@@ -1799,7 +1799,7 @@
+    return stat;  
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_close(mud_channel *pc)
++enum HPMUD_RESULT musb_dot4_channel_close(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+@@ -1842,7 +1842,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
++enum HPMUD_RESULT musb_dot4_channel_write(mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    int ret, len, size, dlen, total=0, cnt=0;
+@@ -1919,7 +1919,7 @@
+  * Note, if a "timeout" occurs one peripheral to host credit is left outstanding. Which means the peripheral
+  * can send unsolicited data later.
+  */
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
++enum HPMUD_RESULT musb_dot4_channel_read(mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+@@ -1960,7 +1960,7 @@
+  * USB probe devices, walk the USB bus(s) looking for HP products.
+  */
+ 
+-int __attribute__ ((visibility ("hidden"))) musb_probe_devices(char *lst, int lst_size, int *cnt)
++int musb_probe_devices(char *lst, int lst_size, int *cnt)
+ {
+    struct usb_bus *bus;
+    struct usb_device *dev;
+--- hplip-3.10.9-orig/io/hpmud/hpmud.c	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/hpmud.c	Fri Sep  4 00:59:28 2009
+@@ -27,13 +27,13 @@
+ #include "hpmudi.h"
+ 
+ /* Client data. */
+-mud_session ms __attribute__ ((visibility ("hidden")));      /* mud session, one per client */
+-mud_session *msp __attribute__ ((visibility ("hidden"))) = &ms;
++mud_session ms ; /* mud session, one per client */
++mud_session *msp = &ms;
+ 
+ /*
+  * sysdump() originally came from http://sws.dett.de/mini/hexdump-c , steffen@dett.de .  
+  */
+-void __attribute__ ((visibility ("hidden"))) sysdump(const void *data, int size)
++void sysdump(const void *data, int size)
+ {
+     /* Dump size bytes of *data. Output looks like:
+      * [0000] 75 6E 6B 6E 6F 77 6E 20 30 FF 00 00 00 00 39 00 unknown 0.....9.
+@@ -81,7 +81,7 @@
+ }
+ 
+ /* Given the IEEE 1284 device id string, determine if this is a HP product. */
+-int __attribute__ ((visibility ("hidden"))) is_hp(const char *id)
++int is_hp(const char *id)
+ {
+    char *pMf;
+ 
+@@ -100,7 +100,7 @@
+    return 0;   
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) generalize_model(const char *sz, char *buf, int bufSize)
++int generalize_model(const char *sz, char *buf, int bufSize)
+ {
+    const char *pMd=sz;
+    int i, j, dd=0;
+@@ -132,7 +132,7 @@
+    return j;   /* length does not include zero termination */
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) generalize_serial(const char *sz, char *buf, int bufSize)
++int generalize_serial(const char *sz, char *buf, int bufSize)
+ {
+    const char *pMd=sz;
+    int i, j;
+@@ -152,7 +152,7 @@
+ }
+ 
+ /* Parse serial number from uri string. */
+-int __attribute__ ((visibility ("hidden"))) get_uri_serial(const char *uri, char *buf, int bufSize)
++int get_uri_serial(const char *uri, char *buf, int bufSize)
+ {
+    char *p;
+    int i;
+@@ -172,7 +172,7 @@
+    return i;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) service_to_channel(mud_device *pd, const char *sn, HPMUD_CHANNEL *index)
++enum HPMUD_RESULT service_to_channel(mud_device *pd, const char *sn, HPMUD_CHANNEL *index)
+ {
+    enum HPMUD_RESULT stat;
+ 
+--- hplip-3.10.9-orig/io/hpmud/mlc.h	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/mlc.h	Fri Sep  4 00:57:55 2009
+@@ -134,17 +134,17 @@
+ struct _mud_device;
+ struct _mud_channel;
+ 
+-int __attribute__ ((visibility ("hidden"))) cut_buf(struct _mud_channel *pc, char *buf, int size);
+-int __attribute__ ((visibility ("hidden"))) MlcInit(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) MlcExit(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) MlcConfigSocket(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) MlcForwardData(struct _mud_channel *pc, int fd, const void *buf, int size, int usec_timeout);
+-int __attribute__ ((visibility ("hidden"))) MlcReverseData(struct _mud_channel *pc, int fd, void *buf, int length, int usec_timeout);
+-int __attribute__ ((visibility ("hidden"))) MlcOpenChannel(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) MlcCloseChannel(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) MlcCredit(struct _mud_channel *pc, int fd, unsigned short credit);
+-int __attribute__ ((visibility ("hidden"))) MlcCreditRequest(struct _mud_channel *pc, int fd, unsigned short credit);
+-int __attribute__ ((visibility ("hidden"))) MlcReverseCmd(struct _mud_channel *pc, int fd);
++int cut_buf(struct _mud_channel *pc, char *buf, int size);
++int MlcInit(struct _mud_channel *pc, int fd);
++int MlcExit(struct _mud_channel *pc, int fd);
++int MlcConfigSocket(struct _mud_channel *pc, int fd);
++int MlcForwardData(struct _mud_channel *pc, int fd, const void *buf, int size, int usec_timeout);
++int MlcReverseData(struct _mud_channel *pc, int fd, void *buf, int length, int usec_timeout);
++int MlcOpenChannel(struct _mud_channel *pc, int fd);
++int MlcCloseChannel(struct _mud_channel *pc, int fd);
++int MlcCredit(struct _mud_channel *pc, int fd, unsigned short credit);
++int MlcCreditRequest(struct _mud_channel *pc, int fd, unsigned short credit);
++int MlcReverseCmd(struct _mud_channel *pc, int fd);
+ 
+ #endif // _MLC_H
+ 
+--- hplip-3.10.9-orig/io/hpmud/hpmudi.h	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/hpmudi.h	Fri Sep  4 00:59:05 2009
+@@ -190,18 +190,18 @@
+    pthread_mutex_t mutex;  
+ } mud_session;
+ 
+-extern mud_session *msp __attribute__ ((visibility ("hidden")));
++extern mud_session *msp;
+ 
+-void __attribute__ ((visibility ("hidden"))) sysdump(const void *data, int size);
+-int __attribute__ ((visibility ("hidden"))) mm_device_lock(int fd, HPMUD_DEVICE index);
+-int __attribute__ ((visibility ("hidden"))) mm_device_unlock(int fd, HPMUD_DEVICE index);
+-int __attribute__ ((visibility ("hidden"))) mm_device_trylock(int fd, HPMUD_DEVICE index);
+-int __attribute__ ((visibility ("hidden"))) is_hp(const char *id);
+-int  __attribute__ ((visibility ("hidden"))) generalize_model(const char *sz, char *buf, int bufSize);
+-int  __attribute__ ((visibility ("hidden"))) generalize_serial(const char *sz, char *buf, int bufSize);
+-int __attribute__ ((visibility ("hidden"))) get_uri_model(const char *uri, char *buf, int bufSize);
+-int __attribute__ ((visibility ("hidden"))) get_uri_serial(const char *uri, char *buf, int bufSize);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) service_to_channel(mud_device *pd, const char *sn, HPMUD_CHANNEL *index);
++void sysdump(const void *data, int size);
++int mm_device_lock(int fd, HPMUD_DEVICE index);
++int mm_device_unlock(int fd, HPMUD_DEVICE index);
++int mm_device_trylock(int fd, HPMUD_DEVICE index);
++int is_hp(const char *id);
++int  generalize_model(const char *sz, char *buf, int bufSize);
++int  generalize_serial(const char *sz, char *buf, int bufSize);
++int get_uri_model(const char *uri, char *buf, int bufSize);
++int get_uri_serial(const char *uri, char *buf, int bufSize);
++enum HPMUD_RESULT service_to_channel(mud_device *pd, const char *sn, HPMUD_CHANNEL *index);
+ 
+ #endif // _HPMUDI_H
+ 
+--- hplip-3.10.9-orig/io/hpmud/dot4.h	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/dot4.h	Fri Sep  4 00:50:05 2009
+@@ -172,16 +172,16 @@
+ typedef DOT4CloseChannelReply DOT4CreditReply;
+ typedef DOT4Exit DOT4GetSocket;
+ 
+-int __attribute__ ((visibility ("hidden"))) Dot4ReverseCmd(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) Dot4Init(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) Dot4Exit(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) Dot4GetSocket(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) Dot4ForwardData(struct _mud_channel *pc, int fd, const void *buf, int size, int usec_timeout);
+-int __attribute__ ((visibility ("hidden"))) Dot4ReverseData(struct _mud_channel *pc, int fd, void *buf, int length, int usec_timeout);
+-int __attribute__ ((visibility ("hidden"))) Dot4OpenChannel(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) Dot4CloseChannel(struct _mud_channel *pc, int fd);
+-int __attribute__ ((visibility ("hidden"))) Dot4Credit(struct _mud_channel *pc, int fd, unsigned short credit);
+-int __attribute__ ((visibility ("hidden"))) Dot4CreditRequest(struct _mud_channel *pc, int fd, unsigned short credit);
++int Dot4ReverseCmd(struct _mud_channel *pc, int fd);
++int Dot4Init(struct _mud_channel *pc, int fd);
++int Dot4Exit(struct _mud_channel *pc, int fd);
++int Dot4GetSocket(struct _mud_channel *pc, int fd);
++int Dot4ForwardData(struct _mud_channel *pc, int fd, const void *buf, int size, int usec_timeout);
++int Dot4ReverseData(struct _mud_channel *pc, int fd, void *buf, int length, int usec_timeout);
++int Dot4OpenChannel(struct _mud_channel *pc, int fd);
++int Dot4CloseChannel(struct _mud_channel *pc, int fd);
++int Dot4Credit(struct _mud_channel *pc, int fd, unsigned short credit);
++int Dot4CreditRequest(struct _mud_channel *pc, int fd, unsigned short credit);
+ 
+ #endif // _DOT4_H
+ 
+--- hplip-3.10.9-orig/io/hpmud/pp.c	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/pp.c	Fri Sep  4 00:51:58 2009
+@@ -29,7 +29,7 @@
+ #include "hpmud.h"
+ #include "hpmudi.h"
+ 
+-mud_device_vf __attribute__ ((visibility ("hidden"))) pp_mud_device_vf = 
++mud_device_vf pp_mud_device_vf = 
+ {
+    .read = pp_read,
+    .write = pp_write,
+@@ -724,7 +724,7 @@
+  * Parallel port mud_device functions.
+  */
+ 
+-int __attribute__ ((visibility ("hidden"))) pp_write(int fd, const void *buf, int size, int usec)
++int pp_write(int fd, const void *buf, int size, int usec)
+ {
+    int len=0, m;
+ 
+@@ -745,7 +745,7 @@
+    return len;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) pp_read(int fd, void *buf, int size, int usec)
++int pp_read(int fd, void *buf, int size, int usec)
+ {
+    int len=0, m;
+ //   int sec = usec/1000000;
+@@ -767,7 +767,7 @@
+    return len;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_open(mud_device *pd)
++enum HPMUD_RESULT pp_open(mud_device *pd)
+ {
+    char dev[255], uriModel[128], model[128];
+    int len, m, fd;
+@@ -827,7 +827,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_close(mud_device *pd)
++enum HPMUD_RESULT pp_close(mud_device *pd)
+ {
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+ 
+@@ -844,7 +844,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_get_device_id(mud_device *pd, char *buf, int size, int *len)
++enum HPMUD_RESULT pp_get_device_id(mud_device *pd, char *buf, int size, int *len)
+ {
+    int m, fd = pd->open_fd;
+    enum HPMUD_RESULT stat = HPMUD_R_DEVICE_BUSY;
+@@ -902,7 +902,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_get_device_status(mud_device *pd, unsigned int *status)
++enum HPMUD_RESULT pp_get_device_status(mud_device *pd, unsigned int *status)
+ {
+    int fd=pd->open_fd;
+    enum HPMUD_RESULT stat = HPMUD_R_DEVICE_BUSY;
+@@ -958,7 +958,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_channel_open(mud_device *pd, const char *sn, HPMUD_CHANNEL *cd)
++enum HPMUD_RESULT pp_channel_open(mud_device *pd, const char *sn, HPMUD_CHANNEL *cd)
+ {
+    int index;
+    enum HPMUD_RESULT stat = HPMUD_R_DEVICE_BUSY;
+@@ -987,7 +987,7 @@
+    return stat;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_channel_close(mud_device *pd, mud_channel *pc)
++enum HPMUD_RESULT pp_channel_close(mud_device *pd, mud_channel *pc)
+ {
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+ 
+@@ -1003,7 +1003,7 @@
+  * Parallel port raw_channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_raw_channel_open(mud_channel *pc)
++enum HPMUD_RESULT pp_raw_channel_open(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    if (claim_pp(pd->open_fd))
+@@ -1012,7 +1012,7 @@
+    return HPMUD_R_OK;
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_raw_channel_close(mud_channel *pc)
++enum HPMUD_RESULT pp_raw_channel_close(mud_channel *pc)
+ {
+    if (pc->fd >= 0)
+       release_pp(pc->fd);
+@@ -1024,7 +1024,7 @@
+  * Parallel port mlc_channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_mlc_channel_open(mud_channel *pc)
++enum HPMUD_RESULT pp_mlc_channel_open(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+@@ -1076,7 +1076,7 @@
+    return stat;  
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_mlc_channel_close(mud_channel *pc)
++enum HPMUD_RESULT pp_mlc_channel_close(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+@@ -1116,7 +1116,7 @@
+  * Parallel port dot4_channel functions.
+  */
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_dot4_channel_open(mud_channel *pc)
++enum HPMUD_RESULT pp_dot4_channel_open(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum HPMUD_RESULT stat = HPMUD_R_IO_ERROR;
+@@ -1168,7 +1168,7 @@
+    return stat;  
+ }
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) pp_dot4_channel_close(mud_channel *pc)
++enum HPMUD_RESULT pp_dot4_channel_close(mud_channel *pc)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    enum HPMUD_RESULT stat = HPMUD_R_OK;
+@@ -1208,7 +1208,7 @@
+  * Parallel port probe devices, walk the parallel port bus(s) looking for HP products.
+  */
+ 
+-int __attribute__ ((visibility ("hidden"))) pp_probe_devices(char *lst, int lst_size, int *cnt)
++int pp_probe_devices(char *lst, int lst_size, int *cnt)
+ {
+    struct hpmud_model_attributes ma;
+    char dev[HPMUD_LINE_SIZE];
+--- hplip-3.10.9-orig/io/hpmud/jd.h	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/jd.h	Fri Sep  4 00:58:24 2009
+@@ -34,23 +34,23 @@
+ struct _mud_device;
+ struct _mud_channel;
+ 
+-extern const char __attribute__ ((visibility ("hidden"))) *kStatusOID;            /* device id snmp oid */
++extern const char *kStatusOID;            /* device id snmp oid */
+ 
+-extern struct _mud_device_vf __attribute__ ((visibility ("hidden"))) jd_mud_device_vf;
++extern struct _mud_device_vf jd_mud_device_vf;
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_open(struct _mud_device *pd);                 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_close(struct _mud_device *pd);                 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_get_device_id(struct _mud_device *pd, char *buf, int size, int *len);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_get_device_status(struct _mud_device *pd, unsigned int *status);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_open(struct _mud_device *pd, const char *sn, HPMUD_CHANNEL *cd);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_close(struct _mud_device *pd, struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_write(struct _mud_device *pd, struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_channel_read(struct _mud_device *pd, struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_read);
++enum HPMUD_RESULT jd_open(struct _mud_device *pd);                 
++enum HPMUD_RESULT jd_close(struct _mud_device *pd);                 
++enum HPMUD_RESULT jd_get_device_id(struct _mud_device *pd, char *buf, int size, int *len);
++enum HPMUD_RESULT jd_get_device_status(struct _mud_device *pd, unsigned int *status);
++enum HPMUD_RESULT jd_channel_open(struct _mud_device *pd, const char *sn, HPMUD_CHANNEL *cd);
++enum HPMUD_RESULT jd_channel_close(struct _mud_device *pd, struct _mud_channel *pc);
++enum HPMUD_RESULT jd_channel_write(struct _mud_device *pd, struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT jd_channel_read(struct _mud_device *pd, struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_read);
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_open(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_close(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_write(struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) jd_s_channel_read(struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT jd_s_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT jd_s_channel_close(struct _mud_channel *pc);
++enum HPMUD_RESULT jd_s_channel_write(struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT jd_s_channel_read(struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_wrote);
+ 
+ #endif // _JD_H
+ 
+--- hplip-3.10.9-orig/io/hpmud/mlc.c	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/mlc.c	Fri Sep  4 00:55:47 2009
+@@ -26,7 +26,7 @@
+ #include "hpmud.h"
+ #include "hpmudi.h"
+ 
+-int __attribute__ ((visibility ("hidden"))) cut_buf(mud_channel *pc, char *buf, int size)
++int cut_buf(mud_channel *pc, char *buf, int size)
+ {
+    int len;
+ 
+@@ -157,7 +157,7 @@
+ }
+ 
+ /* Get command from peripheral and processes the reverse command. */
+-int __attribute__ ((visibility ("hidden"))) MlcReverseCmd(mud_channel *pc, int fd)
++int MlcReverseCmd(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];   
+@@ -303,7 +303,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MlcInit(mud_channel *pc, int fd)
++int MlcInit(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -365,7 +365,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MlcExit(mud_channel *pc, int fd)
++int MlcExit(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -400,7 +400,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MlcConfigSocket(mud_channel *pc, int fd)
++int MlcConfigSocket(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -446,7 +446,7 @@
+ }
+ 
+ /* Write data to peripheral. */
+-int __attribute__ ((visibility ("hidden"))) MlcForwardData(mud_channel *pc, int fd, const void *buf, int size, int usec_timeout)
++int MlcForwardData(mud_channel *pc, int fd, const void *buf, int size, int usec_timeout)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    int stat=0, len, n;
+@@ -477,7 +477,7 @@
+ }
+ 
+ /* Read data from peripheral. */
+-int __attribute__ ((visibility ("hidden"))) MlcReverseData(mud_channel *pc, int fd, void *buf, int length, int usec_timeout)
++int MlcReverseData(mud_channel *pc, int fd, void *buf, int length, int usec_timeout)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    mud_channel *out_of_bound_channel;
+@@ -610,7 +610,7 @@
+    return total;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MlcOpenChannel(mud_channel *pc, int fd)
++int MlcOpenChannel(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -651,7 +651,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MlcCloseChannel(mud_channel *pc, int fd)
++int MlcCloseChannel(mud_channel *pc, int fd)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -688,7 +688,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MlcCredit(mud_channel *pc, int fd, unsigned short credit)
++int MlcCredit(mud_channel *pc, int fd, unsigned short credit)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+@@ -728,7 +728,7 @@
+    return stat;
+ }
+ 
+-int __attribute__ ((visibility ("hidden"))) MlcCreditRequest(mud_channel *pc, int fd, unsigned short credit)
++int MlcCreditRequest(mud_channel *pc, int fd, unsigned short credit)
+ {
+    mud_device *pd = &msp->device[pc->dindex];
+    unsigned char buf[HPMUD_BUFFER_SIZE];
+--- hplip-3.10.9-orig/io/hpmud/pml.h	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/pml.h	Fri Sep  4 00:53:19 2009
+@@ -71,7 +71,7 @@
+    PML_DT_UNKNOWN = 0xff
+ };
+ 
+-int __attribute__ ((visibility ("hidden"))) GetSnmp(const char *ip, int port, const char *szoid, void *buffer, unsigned int size, int *type, int *pml_result, int *result);
++int GetSnmp(const char *ip, int port, const char *szoid, void *buffer, unsigned int size, int *type, int *pml_result, int *result);
+ 
+ #endif // _PML_H
+ 
+--- hplip-3.10.9-orig/io/hpmud/musb.h	Tue Aug  4 16:37:25 2009
++++ hplip-3.10.9/io/hpmud/musb.h	Fri Sep  4 00:53:13 2009
+@@ -80,38 +80,38 @@
+ struct _mud_device;
+ struct _mud_channel;
+ 
+-extern struct _mud_device_vf __attribute__ ((visibility ("hidden"))) musb_mud_device_vf;
++extern struct _mud_device_vf musb_mud_device_vf;
+ 
+-int __attribute__ ((visibility ("hidden"))) musb_write(int fd, const void *buf, int size, int usec_timout);    
+-int __attribute__ ((visibility ("hidden"))) musb_read(int fd, void *buf, int size, int usec_timout); 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_open(struct _mud_device *pd);                 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_close(struct _mud_device *pd);                 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_get_device_id(struct _mud_device *pd, char *buf, int size, int *len);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_get_device_status(struct _mud_device *pd, unsigned int *status);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_open(struct _mud_device *pd, const char *sn, HPMUD_CHANNEL *cd);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_close(struct _mud_device *pd, struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_write(struct _mud_device *pd, struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_channel_read(struct _mud_device *pd, struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_read);
++int musb_write(int fd, const void *buf, int size, int usec_timout);    
++int musb_read(int fd, void *buf, int size, int usec_timout); 
++enum HPMUD_RESULT musb_open(struct _mud_device *pd);                 
++enum HPMUD_RESULT musb_close(struct _mud_device *pd);                 
++enum HPMUD_RESULT musb_get_device_id(struct _mud_device *pd, char *buf, int size, int *len);
++enum HPMUD_RESULT musb_get_device_status(struct _mud_device *pd, unsigned int *status);
++enum HPMUD_RESULT musb_channel_open(struct _mud_device *pd, const char *sn, HPMUD_CHANNEL *cd);
++enum HPMUD_RESULT musb_channel_close(struct _mud_device *pd, struct _mud_channel *pc);
++enum HPMUD_RESULT musb_channel_write(struct _mud_device *pd, struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT musb_channel_read(struct _mud_device *pd, struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_read);
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_open(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_close(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_write(struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_raw_channel_read(struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT musb_raw_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT musb_raw_channel_close(struct _mud_channel *pc);
++enum HPMUD_RESULT musb_raw_channel_write(struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT musb_raw_channel_read(struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_wrote);
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_comp_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT musb_comp_channel_open(struct _mud_channel *pc);
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_open(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_close(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_write(struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_mlc_channel_read(struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT musb_mlc_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT musb_mlc_channel_close(struct _mud_channel *pc);
++enum HPMUD_RESULT musb_mlc_channel_write(struct _mud_channel *pc, const void *buf, int length, int timeout, int *bytes_wrote);
++enum HPMUD_RESULT musb_mlc_channel_read(struct _mud_channel *pc, void *buf, int length, int timeout, int *bytes_wrote);
+ 
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_open(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_close(struct _mud_channel *pc);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_write(struct _mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote);
+-enum HPMUD_RESULT __attribute__ ((visibility ("hidden"))) musb_dot4_channel_read(struct _mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read);
++enum HPMUD_RESULT musb_dot4_channel_open(struct _mud_channel *pc);
++enum HPMUD_RESULT musb_dot4_channel_close(struct _mud_channel *pc);
++enum HPMUD_RESULT musb_dot4_channel_write(struct _mud_channel *pc, const void *buf, int length, int sec_timeout, int *bytes_wrote);
++enum HPMUD_RESULT musb_dot4_channel_read(struct _mud_channel *pc, void *buf, int length, int sec_timeout, int *bytes_read);
+ 
+-int __attribute__ ((visibility ("hidden"))) musb_probe_devices(char *lst, int lst_size, int *cnt);
+-int __attribute__ ((visibility ("hidden"))) power_up(struct _mud_device *pd, int fd);
++int musb_probe_devices(char *lst, int lst_size, int *cnt);
++int power_up(struct _mud_device *pd, int fd);
+ 
+ #endif // _MUSB_H
+ 
+--- hplip-3.10.9/prnt/hpijs/hpijsfax.cpp.orig	Thu Oct  1 14:09:21 2009
++++ hplip-3.10.9/prnt/hpijs/hpijsfax.cpp	Thu Oct  1 14:09:39 2009
+@@ -587,7 +587,7 @@
+ 		ijs_server_done (ctx);
+ 	}
+ 
+-	exit(status);
++	return(status);
+ }
+ 
+ // GrayLevel = (5/16)R + (9/16)G + (2/16)B

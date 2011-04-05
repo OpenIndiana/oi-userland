@@ -216,6 +216,7 @@ ACLOCAL =	/usr/bin/aclocal-1.10
 AUTOMAKE =	/usr/bin/automake-1.10
 AUTORECONF = 	/usr/bin/autoreconf
 
+KSH93 =         /usr/bin/ksh93
 TOUCH =		/usr/bin/touch
 MKDIR =		/bin/mkdir -p
 RM =		/bin/rm -f
@@ -295,6 +296,13 @@ studio_C99MODE =
 # Allow zero-sized struct/union declarations and void functions with return
 # statements.
 studio_FEATURES_EXTENSIONS =	-features=extensions
+
+# CC requires -norunpath to avoid linking in its RUNPATH to C++ applications.
+studio_NORUNPATH =	 -norunpath
+
+# To link in standard mode (the default mode) without any C++ libraries
+# (except libCrun), use studio_LIBRARY_NONE in your compnent Makefile.
+studio_LIBRARY_NONE =	 -library=%none
 
 # Control the Studio optimization level.
 studio_OPT.sparc.32 =	-xO4
