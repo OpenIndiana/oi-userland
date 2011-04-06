@@ -408,6 +408,9 @@ LD_Z_TEXT =		-z direct
 # make sure all symbols are defined.
 LD_Z_DEFS =		-z defs
 
+# eliminate unreferenced dynamic dependencies
+LD_Z_IGNORE =		-z ignore
+
 # use direct binding
 LD_B_DIRECT =		-Bdirect
 
@@ -440,7 +443,7 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS)
 # libraries to this macro, as it will apply to everything linked during the
 # component build.
 LD_OPTIONS +=	$(LD_MAP_NOEXSTK) $(LD_MAP_NOEXDATA.$(MACH)) \
-		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT)
+		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE)
 
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
