@@ -69,6 +69,10 @@ CONFIG_SHELL =	/bin/bash
 
 PKG_REPO =	file:$(WS_REPO)
 
+# Set a default reference repository against which pkglint is run, in case it
+# hasn't been set in the environment.
+CANONICAL_REPO ?=		http://ipkg.us.oracle.com/solaris11/dev/
+
 COMPONENT_DIR =	$(shell pwd)
 SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build

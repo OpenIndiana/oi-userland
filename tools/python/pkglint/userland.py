@@ -27,10 +27,10 @@
 # Some userland consolidation specific lint checks
 
 import pkg.lint.base as base
+from pkg.lint.engine import lint_fmri_successor
 import pkg.elf as elf
 import re
 import os.path
-
 
 class UserlandActionChecker(base.ActionChecker):
         """An opensolaris.org-specific class to check actions."""
@@ -51,10 +51,134 @@ class UserlandActionChecker(base.ActionChecker):
 			re.compile('^\$ORIGIN/')
 		]
 		self.initscript_re = re.compile("^etc/(rc.|init)\.d")
+
+                self.lint_paths = {}
+                self.ref_paths = {}
+
                 super(UserlandActionChecker, self).__init__(config)
 
-	def startup(self, engine):
-		pass
+        def startup(self, engine):
+                """Initialize the checker with a dictionary of paths, so that we
+                can do link resolution.
+
+                This is copied from the core pkglint code, but should eventually
+                be made common.
+                """
+
+                def seed_dict(mf, attr, dic, atype=None, verbose=False):
+                        """Updates a dictionary of { attr: [(fmri, action), ..]}
+                        where attr is the value of that attribute from
+                        actions of a given type atype, in the given
+                        manifest."""
+
+                        pkg_vars = mf.get_all_variants()
+
+                        if atype:
+                                mfg = (a for a in mf.gen_actions_by_type(atype))
+                        else:
+                                mfg = (a for a in mf.gen_actions())
+
+                        for action in mfg:
+                                if atype and action.name != atype:
+                                        continue
+                                if attr not in action.attrs:
+                                        continue
+
+                                variants = action.get_variant_template()
+                                variants.merge_unknown(pkg_vars)
+                                action.attrs.update(variants)
+
+                                p = action.attrs[attr]
+                                dic.setdefault(p, []).append((mf.fmri, action))
+
+                # construct a set of FMRIs being presented for linting, and
+                # avoid seeding the reference dictionary with any for which
+                # we're delivering new packages.
+                lint_fmris = {}
+                for m in engine.gen_manifests(engine.lint_api_inst,
+                    release=engine.release, pattern=engine.pattern):
+                        lint_fmris.setdefault(m.fmri.get_name(), []).append(m.fmri)
+                for m in engine.lint_manifests:
+                        lint_fmris.setdefault(m.fmri.get_name(), []).append(m.fmri)
+
+                engine.logger.debug(
+                    _("Seeding reference action path dictionaries."))
+
+                for manifest in engine.gen_manifests(engine.ref_api_inst,
+                    release=engine.release):
+                        # Only put this manifest into the reference dictionary
+                        # if it's not an older version of the same package.
+                        if not any(
+                            lint_fmri_successor(fmri, manifest.fmri)
+                            for fmri
+                            in lint_fmris.get(manifest.fmri.get_name(), [])
+                        ):
+                                seed_dict(manifest, "path", self.ref_paths)
+
+                engine.logger.debug(
+                    _("Seeding lint action path dictionaries."))
+
+                # we provide a search pattern, to allow users to lint a
+                # subset of the packages in the lint_repository
+                for manifest in engine.gen_manifests(engine.lint_api_inst,
+                    release=engine.release, pattern=engine.pattern):
+                        seed_dict(manifest, "path", self.lint_paths)
+
+                engine.logger.debug(
+                    _("Seeding local action path dictionaries."))
+
+                for manifest in engine.lint_manifests:
+                        seed_dict(manifest, "path", self.lint_paths)
+
+                self.__merge_dict(self.lint_paths, self.ref_paths,
+                    ignore_pubs=engine.ignore_pubs)
+
+        def __merge_dict(self, src, target, ignore_pubs=True):
+                """Merges the given src dictionary into the target
+                dictionary, giving us the target content as it would appear,
+                were the packages in src to get published to the
+                repositories that made up target.
+
+                We need to only merge packages at the same or successive
+                version from the src dictionary into the target dictionary.
+                If the src dictionary contains a package with no version
+                information, it is assumed to be more recent than the same
+                package with no version in the target."""
+
+                for p in src:
+                        if p not in target:
+                                target[p] = src[p]
+                                continue
+
+                        def build_dic(arr):
+                                """Builds a dictionary of fmri:action entries"""
+                                dic = {}
+                                for (pfmri, action) in arr:
+                                        if pfmri in dic:
+                                                dic[pfmri].append(action)
+                                        else:
+                                                dic[pfmri] = [action]
+                                return dic
+
+                        src_dic = build_dic(src[p])
+                        targ_dic = build_dic(target[p])
+
+                        for src_pfmri in src_dic:
+                                # we want to remove entries deemed older than
+                                # src_pfmri from targ_dic.
+                                for targ_pfmri in targ_dic.copy():
+                                        sname = src_pfmri.get_name()
+                                        tname = targ_pfmri.get_name()
+                                        if lint_fmri_successor(src_pfmri,
+                                            targ_pfmri,
+                                            ignore_pubs=ignore_pubs):
+                                                targ_dic.pop(targ_pfmri)
+                        targ_dic.update(src_dic)
+                        l = []
+                        for pfmri in targ_dic:
+                                for action in targ_dic[pfmri]:
+                                        l.append((pfmri, action))
+                        target[p] = l
 
         def __realpath(self, path, target):
 		"""Combine path and target to get the real path."""
@@ -179,19 +303,11 @@ class UserlandActionChecker(base.ActionChecker):
 		path = action.attrs["path"]
 		target = action.attrs["target"]
 		realtarget = self.__realpath(path, target)
-		
-		resolved = False
-		for maction in manifest.gen_actions():
-			mpath = None
-			if maction.name in ["dir", "file", "link",
-						"hardlink"]:
-				mpath = maction.attrs["path"]
 
-			if mpath and mpath == realtarget:
-				resolved = True
-				break
-
-		if resolved != True:
+		# Check against the target image (ref_paths), since links might
+		# resolve outside the packages delivering a particular
+		# component.
+		if not self.ref_paths.get(realtarget, None):
 			engine.error(
 				_("%s %s has unresolvable target '%s'") %
 					(action.name, path, target),
