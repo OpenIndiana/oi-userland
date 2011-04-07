@@ -89,8 +89,9 @@ COMBINED =		$(MANIFEST_BASE)-combined
 MANIFESTS =		$(CANONICAL_MANIFESTS:%=$(MANIFEST_BASE)-%)
 
 
-RESOLVED=$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.resolved)
-PUBLISHED=$(RESOLVED:%.resolved=%.published)
+DEPENDED=$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend)
+RESOLVED=$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
+PUBLISHED=$(RESOLVED:%.depend.res=%.published)
 
 COPYRIGHT_FILE =	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
 IPS_COMPONENT_VERSION ?=	$(COMPONENT_VERSION)
@@ -132,15 +133,9 @@ PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
-# resolve dependencies, prepend the mogrified manifest, less the unresolved
-# dependencies to the result.
-$(MANIFEST_BASE)-%.resolved:	$(MANIFEST_BASE)-%.depend
-	($(PKGMOGRIFY) $(@:%.resolved=%.mogrified) \
-		$(WS_TOP)/transforms/drop-unresolved-dependencies | \
-		sed -e '/^$$/d' -e '/^#.*$$/d' ; \
-	 $(PKGDEPEND) resolve -o $< | sed -e '1d') | uniq >$@
-
-$(BUILD_DIR)/.resolved-$(MACH):	$(RESOLVED)
+# resolve the dependencies all at once
+$(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
+	$(PKGDEPEND) resolve -m $(DEPENDED)
 	$(TOUCH) $@
 
 # lint the manifests all at once
@@ -155,7 +150,7 @@ $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
 # published
 PKGSEND_PUBLISH_OPTIONS = -s $(PKG_REPO) publish --fmri-in-manifest
 PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
-$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.resolved $(BUILD_DIR)/.linted-$(MACH)
+$(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
 
