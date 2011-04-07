@@ -1,0 +1,64 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.040
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.040
+Problem:    When using ":e ++ff=dos fname" and the file contains a NL without
+	    a CR before it and 'ffs' contains "unix" then the fileformat
+	    becomes unix.
+Solution:   Ignore 'ffs' when using the ++ff argument. (Ben Schmidt)
+	    Also remove unreachable code.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.039/src/fileio.c	Tue Nov 11 21:55:29 2008
+--- src/fileio.c	Wed Nov 12 13:19:42 2008
+***************
+*** 932,938 ****
+--- 932,941 ----
+      else
+      {
+  	if (eap != NULL && eap->force_ff != 0)
++ 	{
+  	    fileformat = get_fileformat_force(curbuf, eap);
++ 	    try_unix = try_dos = try_mac = FALSE;
++ 	}
+  	else if (curbuf->b_p_bin)
+  	    fileformat = EOL_UNIX;		/* binary: use Unix format */
+  	else if (*p_ffs == NUL)
+***************
+*** 2341,2351 ****
+  		STRCAT(IObuff, _("[CR missing]"));
+  		c = TRUE;
+  	    }
+- 	    if (ff_error == EOL_MAC)
+- 	    {
+- 		STRCAT(IObuff, _("[NL found]"));
+- 		c = TRUE;
+- 	    }
+  	    if (split)
+  	    {
+  		STRCAT(IObuff, _("[long lines split]"));
+--- 2344,2349 ----
+*** ../vim-7.2.039/src/version.c	Wed Nov 12 15:28:37 2008
+--- src/version.c	Wed Nov 12 16:03:44 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     40,
+  /**/
+
+-- 
+If you're sending someone Styrofoam, what do you pack it in?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

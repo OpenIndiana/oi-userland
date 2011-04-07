@@ -1,0 +1,56 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.265
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.265
+Problem:    When using ":silent broken" inside try/catch silency may persist.
+	    (dr-dr xp)
+Solution:   Set msg_silent when there is an error and it's bigger than the
+	    saved value.
+Files:	    src/ex_docmd.c
+
+
+*** ../vim-7.2.264/src/ex_docmd.c	2009-07-09 20:13:59.000000000 +0200
+--- src/ex_docmd.c	2009-09-30 11:40:53.000000000 +0200
+***************
+*** 2695,2701 ****
+      {
+  	/* messages could be enabled for a serious error, need to check if the
+  	 * counters don't become negative */
+! 	if (!did_emsg)
+  	    msg_silent = save_msg_silent;
+  	emsg_silent -= did_esilent;
+  	if (emsg_silent < 0)
+--- 2695,2701 ----
+      {
+  	/* messages could be enabled for a serious error, need to check if the
+  	 * counters don't become negative */
+! 	if (!did_emsg || msg_silent > save_msg_silent)
+  	    msg_silent = save_msg_silent;
+  	emsg_silent -= did_esilent;
+  	if (emsg_silent < 0)
+*** ../vim-7.2.264/src/version.c	2009-09-23 18:14:13.000000000 +0200
+--- src/version.c	2009-09-30 13:22:47.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     265,
+  /**/
+
+-- 
+FIRST HEAD:  Oh! quick! get the sword out I want to cut his head off.
+THIRD HEAD:  Oh, cut your own head off.
+SECOND HEAD: Yes - do us all a favour.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

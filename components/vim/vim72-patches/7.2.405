@@ -1,0 +1,48 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.405
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.405
+Problem:    When built with small features the matching text is not
+	    highlighted for ":s/pat/repl/c".
+Solution:   Remove the #ifdef for IncSearch. (James Vega)
+Files:	    src/syntax.c
+
+
+*** ../vim-7.2.404/src/syntax.c	2010-03-10 13:43:22.000000000 +0100
+--- src/syntax.c	2010-03-23 14:36:10.000000000 +0100
+***************
+*** 6205,6214 ****
+      {
+  	CENT("ErrorMsg term=standout ctermbg=DarkRed ctermfg=White",
+  	     "ErrorMsg term=standout ctermbg=DarkRed ctermfg=White guibg=Red guifg=White"),
+- #ifdef FEAT_SEARCH_EXTRA
+  	CENT("IncSearch term=reverse cterm=reverse",
+  	     "IncSearch term=reverse cterm=reverse gui=reverse"),
+- #endif
+  	CENT("ModeMsg term=bold cterm=bold",
+  	     "ModeMsg term=bold cterm=bold gui=bold"),
+  	CENT("NonText term=bold ctermfg=Blue",
+--- 6205,6212 ----
+*** ../vim-7.2.404/src/version.c	2010-03-23 13:56:53.000000000 +0100
+--- src/version.c	2010-03-23 14:37:08.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     405,
+  /**/
+
+-- 
+Dreams are free, but there's a small charge for alterations.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

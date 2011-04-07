@@ -1,0 +1,62 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.202
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.202
+Problem:    BufWipeout autocommand that edits another buffer causes problems.
+Solution:   Check for the situation, give an error and quit the operation.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.201/src/fileio.c	2009-05-16 17:29:37.000000000 +0200
+--- src/fileio.c	2009-06-11 21:22:37.000000000 +0200
+***************
+*** 4824,4829 ****
+--- 4824,4831 ----
+      char_u	*sfname;
+  {
+  #ifdef FEAT_AUTOCMD
++     buf_T	*buf = curbuf;
++ 
+      /* It's like the unnamed buffer is deleted.... */
+      if (curbuf->b_p_bl)
+  	apply_autocmds(EVENT_BUFDELETE, NULL, NULL, FALSE, curbuf);
+***************
+*** 4832,4837 ****
+--- 4834,4845 ----
+      if (aborting())	    /* autocmds may abort script processing */
+  	return FAIL;
+  # endif
++     if (curbuf != buf)
++     {
++ 	/* We are in another buffer now, don't do the renaming. */
++ 	EMSG(_(e_auchangedbuf));
++ 	return FAIL;
++     }
+  #endif
+  
+      if (setfname(curbuf, fname, sfname, FALSE) == OK)
+*** ../vim-7.2.201/src/version.c	2009-06-16 15:23:07.000000000 +0200
+--- src/version.c	2009-06-16 15:28:31.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     202,
+  /**/
+
+-- 
+How To Keep A Healthy Level Of Insanity:
+14. Put mosquito netting around your work area. Play a tape of jungle
+    sounds all day.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

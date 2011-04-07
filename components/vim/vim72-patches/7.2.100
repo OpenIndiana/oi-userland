@@ -1,0 +1,132 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.100
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.100
+Problem:    When using ":source" on a FIFO or something else that can't rewind
+	    the first three bytes are skipped.
+Solution:   Instead of rewinding read the first line and detect a BOM in that.
+	    (mostly by James Vega)
+Files:	    src/ex_cmds2.c
+
+
+*** ../vim-7.2.099/src/ex_cmds2.c	Sat Nov 15 14:10:23 2008
+--- src/ex_cmds2.c	Wed Feb  4 16:05:51 2009
+***************
+*** 2842,2847 ****
+--- 2842,2848 ----
+      linenr_T		    save_sourcing_lnum;
+      char_u		    *p;
+      char_u		    *fname_exp;
++     char_u		    *firstline = NULL;
+      int			    retval = FAIL;
+  #ifdef FEAT_EVAL
+      scid_T		    save_current_SID;
+***************
+*** 2992,3014 ****
+  
+      cookie.level = ex_nesting_level;
+  #endif
+- #ifdef FEAT_MBYTE
+-     cookie.conv.vc_type = CONV_NONE;		/* no conversion */
+- 
+-     /* Try reading the first few bytes to check for a UTF-8 BOM. */
+-     {
+- 	char_u	    buf[3];
+- 
+- 	if (fread((char *)buf, sizeof(char_u), (size_t)3, cookie.fp)
+- 								  == (size_t)3
+- 		&& buf[0] == 0xef && buf[1] == 0xbb && buf[2] == 0xbf)
+- 	    /* Found BOM, setup conversion and skip over it. */
+- 	    convert_setup(&cookie.conv, (char_u *)"utf-8", p_enc);
+- 	else
+- 	    /* No BOM found, rewind. */
+- 	    fseek(cookie.fp, 0L, SEEK_SET);
+-     }
+- #endif
+  
+      /*
+       * Keep the sourcing name/lnum, for recursive calls.
+--- 2993,2998 ----
+***************
+*** 3018,3023 ****
+--- 3002,3026 ----
+      save_sourcing_lnum = sourcing_lnum;
+      sourcing_lnum = 0;
+  
++ #ifdef FEAT_MBYTE
++     cookie.conv.vc_type = CONV_NONE;		/* no conversion */
++ 
++     /* Read the first line so we can check for a UTF-8 BOM. */
++     firstline = getsourceline(0, (void *)&cookie, 0);
++     if (firstline != NULL && STRLEN(firstline) >= 3 && firstline[0] == 0xef
++ 			      && firstline[1] == 0xbb && firstline[2] == 0xbf)
++     {
++ 	/* Found BOM; setup conversion, skip over BOM and recode the line. */
++ 	convert_setup(&cookie.conv, (char_u *)"utf-8", p_enc);
++ 	p = string_convert(&cookie.conv, firstline + 3, NULL);
++ 	if (p != NULL)
++ 	{
++ 	    vim_free(firstline);
++ 	    firstline = p;
++ 	}
++     }
++ #endif
++ 
+  #ifdef STARTUPTIME
+      time_push(&tv_rel, &tv_start);
+  #endif
+***************
+*** 3111,3119 ****
+      /*
+       * Call do_cmdline, which will call getsourceline() to get the lines.
+       */
+!     do_cmdline(NULL, getsourceline, (void *)&cookie,
+  				     DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_REPEAT);
+- 
+      retval = OK;
+  
+  #ifdef FEAT_PROFILE
+--- 3114,3121 ----
+      /*
+       * Call do_cmdline, which will call getsourceline() to get the lines.
+       */
+!     do_cmdline(firstline, getsourceline, (void *)&cookie,
+  				     DOCMD_VERBOSE|DOCMD_NOWAIT|DOCMD_REPEAT);
+      retval = OK;
+  
+  #ifdef FEAT_PROFILE
+***************
+*** 3171,3176 ****
+--- 3173,3179 ----
+  #endif
+      fclose(cookie.fp);
+      vim_free(cookie.nextline);
++     vim_free(firstline);
+  #ifdef FEAT_MBYTE
+      convert_setup(&cookie.conv, NULL, NULL);
+  #endif
+*** ../vim-7.2.099/src/version.c	Wed Feb  4 17:27:50 2009
+--- src/version.c	Wed Feb  4 17:48:47 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     100,
+  /**/
+
+-- 
+Well, you come from nothing, you go back to nothing...  What have you
+lost?  Nothing!
+				-- Monty Python: The life of Brian
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

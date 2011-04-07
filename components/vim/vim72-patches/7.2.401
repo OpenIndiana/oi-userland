@@ -1,0 +1,61 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.401
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.401
+Problem:    ":e dir<Tab>" with 'wildmode' set to "list" doesn't highlight
+	    directory names with a space. (Alexandre Provencio)
+Solution:   Remove the backslash before checking if the name is a directory.
+	    (Dominique Pelle)
+Files:	    src/ex_getln.c
+
+
+*** ../vim-7.2.400/src/ex_getln.c	2010-03-02 17:23:10.000000000 +0100
+--- src/ex_getln.c	2010-03-17 19:00:54.000000000 +0100
+***************
+*** 3948,3955 ****
+  					  || xp->xp_context == EXPAND_SHELLCMD
+  					  || xp->xp_context == EXPAND_BUFFERS)
+  		{
+! 			    /* highlight directories */
+! 		    j = (mch_isdir(files_found[k]));
+  		    if (showtail)
+  			p = L_SHOWFILE(k);
+  		    else
+--- 3948,3959 ----
+  					  || xp->xp_context == EXPAND_SHELLCMD
+  					  || xp->xp_context == EXPAND_BUFFERS)
+  		{
+! 		    char_u	*halved_slash;
+! 
+! 		    /* highlight directories */
+! 		    halved_slash = backslash_halve_save(files_found[k]);
+! 		    j = mch_isdir(halved_slash);
+! 		    vim_free(halved_slash);
+  		    if (showtail)
+  			p = L_SHOWFILE(k);
+  		    else
+*** ../vim-7.2.400/src/version.c	2010-03-17 18:15:17.000000000 +0100
+--- src/version.c	2010-03-17 19:12:22.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     401,
+  /**/
+
+-- 
+Two cows are standing together in a field.  One asks the other:
+"So what do you think about this Mad Cow Disease?"
+The other replies: "That doesn't concern me. I'm a helicopter."
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

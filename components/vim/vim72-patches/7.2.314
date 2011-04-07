@@ -1,0 +1,56 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.314
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.314
+Problem:    Missing function in small build.
+Solution:   Always include concat_str.
+Files:	    src/misc1.c
+
+
+*** ../vim-7.2.313/src/misc1.c	2009-12-02 17:15:04.000000000 +0100
+--- src/misc1.c	2009-12-02 17:44:55.000000000 +0100
+***************
+*** 4666,4672 ****
+      return dest;
+  }
+  
+- #if defined(FEAT_EVAL) || defined(FEAT_GETTEXT) || defined(PROTO)
+  /*
+   * Concatenate two strings and return the result in allocated memory.
+   * Returns NULL when out of memory.
+--- 4666,4671 ----
+***************
+*** 4687,4693 ****
+      }
+      return dest;
+  }
+- #endif
+  
+  /*
+   * Add a path separator to a file name, unless it already ends in a path
+--- 4686,4691 ----
+*** ../vim-7.2.313/src/version.c	2009-12-02 17:15:04.000000000 +0100
+--- src/version.c	2009-12-02 17:47:18.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     314,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+9. All your daydreaming is preoccupied with getting a faster connection to the
+   net: 28.8...ISDN...cable modem...T1...T3.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

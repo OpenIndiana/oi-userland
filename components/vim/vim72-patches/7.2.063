@@ -1,0 +1,103 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.063
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.063
+Problem:    Warning for NULL argument of Perl_sys_init3().
+Solution:   Use Perl_sys_init() instead. (partly by Dominique Pelle)
+Files:	    src/if_perl.xs
+
+
+*** ../vim-7.2.062/src/if_perl.xs	Mon Sep  1 17:56:05 2008
+--- src/if_perl.xs	Wed Dec  3 12:44:38 2008
+***************
+*** 166,172 ****
+  # define Perl_Isv_yes_ptr dll_Perl_Isv_yes_ptr
+  # define boot_DynaLoader dll_boot_DynaLoader
+  
+! # define Perl_sys_init3 dll_Perl_sys_init3
+  # define Perl_sys_term dll_Perl_sys_term
+  # define Perl_ISv_ptr dll_Perl_ISv_ptr
+  # define Perl_Istack_max_ptr dll_Perl_Istack_max_ptr
+--- 166,172 ----
+  # define Perl_Isv_yes_ptr dll_Perl_Isv_yes_ptr
+  # define boot_DynaLoader dll_boot_DynaLoader
+  
+! # define Perl_sys_init dll_Perl_sys_init
+  # define Perl_sys_term dll_Perl_sys_term
+  # define Perl_ISv_ptr dll_Perl_ISv_ptr
+  # define Perl_Istack_max_ptr dll_Perl_Istack_max_ptr
+***************
+*** 272,278 ****
+  
+  #if (PERL_REVISION == 5) && (PERL_VERSION >= 10)
+  static void (*Perl_sv_free2)(pTHX_ SV*);
+! static void (*Perl_sys_init3)(int* argc, char*** argv, char*** env);
+  static void (*Perl_sys_term)(void);
+  static SV** (*Perl_ISv_ptr)(register PerlInterpreter*);
+  static SV*** (*Perl_Istack_max_ptr)(register PerlInterpreter*);
+--- 272,278 ----
+  
+  #if (PERL_REVISION == 5) && (PERL_VERSION >= 10)
+  static void (*Perl_sv_free2)(pTHX_ SV*);
+! static void (*Perl_sys_init)(int* argc, char*** argv);
+  static void (*Perl_sys_term)(void);
+  static SV** (*Perl_ISv_ptr)(register PerlInterpreter*);
+  static SV*** (*Perl_Istack_max_ptr)(register PerlInterpreter*);
+***************
+*** 372,378 ****
+      {"Perl_Tna_ptr", (PERL_PROC*)&Perl_Tna_ptr},
+  #else
+      {"Perl_sv_free2", (PERL_PROC*)&Perl_sv_free2},
+!     {"Perl_sys_init3", (PERL_PROC*)&Perl_sys_init3},
+      {"Perl_sys_term", (PERL_PROC*)&Perl_sys_term},
+      {"Perl_ISv_ptr", (PERL_PROC*)&Perl_ISv_ptr},
+      {"Perl_Istack_sp_ptr", (PERL_PROC*)&Perl_Istack_sp_ptr},
+--- 372,378 ----
+      {"Perl_Tna_ptr", (PERL_PROC*)&Perl_Tna_ptr},
+  #else
+      {"Perl_sv_free2", (PERL_PROC*)&Perl_sv_free2},
+!     {"Perl_sys_init", (PERL_PROC*)&Perl_sys_init},
+      {"Perl_sys_term", (PERL_PROC*)&Perl_sys_term},
+      {"Perl_ISv_ptr", (PERL_PROC*)&Perl_ISv_ptr},
+      {"Perl_Istack_sp_ptr", (PERL_PROC*)&Perl_Istack_sp_ptr},
+***************
+*** 460,466 ****
+      static char *argv[] = { "", "-e", "" };
+  
+  #if (PERL_REVISION == 5) && (PERL_VERSION >= 10)
+!     Perl_sys_init3(&argc, (char***)&argv, NULL);
+  #endif
+      perl_interp = perl_alloc();
+      perl_construct(perl_interp);
+--- 460,466 ----
+      static char *argv[] = { "", "-e", "" };
+  
+  #if (PERL_REVISION == 5) && (PERL_VERSION >= 10)
+!     Perl_sys_init(&argc, (char***)&argv);
+  #endif
+      perl_interp = perl_alloc();
+      perl_construct(perl_interp);
+*** ../vim-7.2.062/src/version.c	Wed Dec  3 11:21:20 2008
+--- src/version.c	Wed Dec  3 12:42:50 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     63,
+  /**/
+
+-- 
+Windows
+M!uqoms
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,59 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.222
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.222
+Problem:   ":mksession" doesn't work properly with 'acd' set. 
+Solution:   Make it work. (Yakov Lerner)
+Files:	    src/ex_docmd.c
+
+
+*** ../vim-7.2.221/src/ex_docmd.c	2009-05-16 17:29:37.000000000 +0200
+--- src/ex_docmd.c	2009-07-01 20:18:22.000000000 +0200
+***************
+*** 8686,8691 ****
+--- 8693,8700 ----
+      }
+  
+  #ifdef FEAT_SESSION
++     /* Use the short file name until ":lcd" is used.  We also don't use the
++      * short file name when 'acd' is set, that is checked later. */
+      did_lcd = FALSE;
+  
+      /* ":mkview" or ":mkview 9": generate file name with 'viewdir' */
+***************
+*** 10573,10578 ****
+--- 10582,10590 ----
+      if (buf->b_sfname != NULL
+  	    && flagp == &ssop_flags
+  	    && (ssop_flags & (SSOP_CURDIR | SSOP_SESDIR))
++ #ifdef FEAT_AUTOCHDIR
++ 	    && !p_acd
++ #endif
+  	    && !did_lcd)
+  	name = buf->b_sfname;
+      else
+*** ../vim-7.2.221/src/version.c	2009-07-01 18:04:30.000000000 +0200
+--- src/version.c	2009-07-01 20:16:19.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     222,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+43. You tell the kids they can't use the computer because "Daddy's got work to
+    do" and you don't even have a job.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

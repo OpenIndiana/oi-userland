@@ -1,0 +1,102 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.232
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.232
+Problem:    Cannot debug problems with being in a wrong directory.
+Solution:   When 'verbose' is 5 or higher report directory changes.
+Files:	    src/os_unix.c, src/os_unix.h, src/proto/os_unix.pro
+
+
+*** ../vim-7.2.231/src/os_unix.c	2009-07-14 12:20:28.000000000 +0200
+--- src/os_unix.c	2009-07-14 17:13:15.000000000 +0200
+***************
+*** 319,324 ****
+--- 319,341 ----
+      {-1,	    "Unknown!", FALSE}
+  };
+  
++     int
++ mch_chdir(path)
++     char *path;
++ {
++     if (p_verbose >= 5)
++     {
++ 	verbose_enter();
++ 	smsg((char_u *)"chdir(%s)", path);
++ 	verbose_leave();
++     }
++ # ifdef VMS
++     return chdir(vms_fixfilename(path));
++ # else
++     return chdir(path);
++ # endif
++ }
++ 
+  /*
+   * Write s[len] to the screen.
+   */
+***************
+*** 2424,2429 ****
+--- 2441,2452 ----
+  #ifdef HAVE_FCHDIR
+  	    if (fd >= 0)
+  	    {
++ 		if (p_verbose >= 5)
++ 		{
++ 		    verbose_enter();
++ 		    MSG("fchdir() to previous dir");
++ 		    verbose_leave();
++ 		}
+  		l = fchdir(fd);
+  		close(fd);
+  	    }
+*** ../vim-7.2.231/src/os_unix.h	2009-05-16 16:36:25.000000000 +0200
+--- src/os_unix.h	2009-07-14 16:55:05.000000000 +0200
+***************
+*** 482,492 ****
+  # else
+  int mch_rename __ARGS((const char *src, const char *dest));
+  # endif
+- # ifdef VMS
+- #  define mch_chdir(s) chdir(vms_fixfilename(s))
+- # else
+- #  define mch_chdir(s) chdir(s)
+- # endif
+  # ifndef VMS
+  #  ifdef __MVS__
+    /* on OS390 Unix getenv() doesn't return a pointer to persistent
+--- 482,487 ----
+*** ../vim-7.2.231/src/proto/os_unix.pro	2008-06-24 23:58:57.000000000 +0200
+--- src/proto/os_unix.pro	2009-07-14 16:58:08.000000000 +0200
+***************
+*** 1,4 ****
+--- 1,5 ----
+  /* os_unix.c */
++ int mch_chdir __ARGS((char *path));
+  void mch_write __ARGS((char_u *s, int len));
+  int mch_inchar __ARGS((char_u *buf, int maxlen, long wtime, int tb_change_cnt));
+  int mch_char_avail __ARGS((void));
+*** ../vim-7.2.231/src/version.c	2009-07-14 16:05:14.000000000 +0200
+--- src/version.c	2009-07-14 17:37:15.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     232,
+  /**/
+
+-- 
+From "know your smileys":
+ O:-)	Saint
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

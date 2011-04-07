@@ -1,0 +1,55 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.428
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.428
+Problem:    Using setqflist([]) to clear the error list doesn't work properly.
+Solution:   Set qf_nonevalid to TRUE when appropriate. (Christian Brabandt)
+Files:	    src/quickfix.c
+
+
+*** ../vim-7.2.427/src/quickfix.c	2010-01-19 14:59:14.000000000 +0100
+--- src/quickfix.c	2010-05-14 18:06:27.000000000 +0200
+***************
+*** 3654,3660 ****
+  	}
+      }
+  
+!     qi->qf_lists[qi->qf_curlist].qf_nonevalid = FALSE;
+      qi->qf_lists[qi->qf_curlist].qf_ptr = qi->qf_lists[qi->qf_curlist].qf_start;
+      qi->qf_lists[qi->qf_curlist].qf_index = 1;
+  
+--- 3654,3664 ----
+  	}
+      }
+  
+!     if (qi->qf_lists[qi->qf_curlist].qf_index == 0)
+! 	/* empty list or no valid entry */
+! 	qi->qf_lists[qi->qf_curlist].qf_nonevalid = TRUE;
+!     else
+! 	qi->qf_lists[qi->qf_curlist].qf_nonevalid = FALSE;
+      qi->qf_lists[qi->qf_curlist].qf_ptr = qi->qf_lists[qi->qf_curlist].qf_start;
+      qi->qf_lists[qi->qf_curlist].qf_index = 1;
+  
+*** ../vim-7.2.427/src/version.c	2010-05-14 17:52:35.000000000 +0200
+--- src/version.c	2010-05-14 18:09:32.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     428,
+  /**/
+
+-- 
+Seen it all, done it all, can't remember most of it.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

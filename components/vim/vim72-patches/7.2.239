@@ -1,0 +1,145 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.239
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.239
+Problem:    Using :diffpatch twice or when patching fails causes memory
+	    corruption and/or a crash.  (Bryan Venteicher)
+Solution:   Detect missing output file.  Avoid using non-existing buffer.
+Files:	    src/diff.c
+
+
+*** ../vim-7.2.238/src/diff.c	2009-05-14 22:19:19.000000000 +0200
+--- src/diff.c	2009-07-22 16:06:21.000000000 +0200
+***************
+*** 893,898 ****
+--- 893,899 ----
+      char_u	*browseFile = NULL;
+      int		browse_flag = cmdmod.browse;
+  #endif
++     struct stat st;
+  
+  #ifdef FEAT_BROWSE
+      if (cmdmod.browse)
+***************
+*** 999,1042 ****
+      STRCAT(buf, ".rej");
+      mch_remove(buf);
+  
+!     if (curbuf->b_fname != NULL)
+      {
+! 	newname = vim_strnsave(curbuf->b_fname,
+  					  (int)(STRLEN(curbuf->b_fname) + 4));
+! 	if (newname != NULL)
+! 	    STRCAT(newname, ".new");
+!     }
+  
+  #ifdef FEAT_GUI
+!     need_mouse_correct = TRUE;
+  #endif
+!     /* don't use a new tab page, each tab page has its own diffs */
+!     cmdmod.tab = 0;
+! 
+!     if (win_split(0, (diff_flags & DIFF_VERTICAL) ? WSP_VERT : 0) != FAIL)
+!     {
+! 	/* Pretend it was a ":split fname" command */
+! 	eap->cmdidx = CMD_split;
+! 	eap->arg = tmp_new;
+! 	do_exedit(eap, old_curwin);
+  
+! 	if (curwin != old_curwin)		/* split must have worked */
+  	{
+! 	    /* Set 'diff', 'scrollbind' on and 'wrap' off. */
+! 	    diff_win_options(curwin, TRUE);
+! 	    diff_win_options(old_curwin, TRUE);
+  
+! 	    if (newname != NULL)
+  	    {
+! 		/* do a ":file filename.new" on the patched buffer */
+! 		eap->arg = newname;
+! 		ex_file(eap);
+  
+  #ifdef FEAT_AUTOCMD
+! 		/* Do filetype detection with the new name. */
+! 		if (au_has_group((char_u *)"filetypedetect"))
+! 		    do_cmdline_cmd((char_u *)":doau filetypedetect BufRead");
+  #endif
+  	    }
+  	}
+      }
+--- 1000,1050 ----
+      STRCAT(buf, ".rej");
+      mch_remove(buf);
+  
+!     /* Only continue if the output file was created. */
+!     if (mch_stat((char *)tmp_new, &st) < 0 || st.st_size == 0)
+! 	EMSG(_("E816: Cannot read patch output"));
+!     else
+      {
+! 	if (curbuf->b_fname != NULL)
+! 	{
+! 	    newname = vim_strnsave(curbuf->b_fname,
+  					  (int)(STRLEN(curbuf->b_fname) + 4));
+! 	    if (newname != NULL)
+! 		STRCAT(newname, ".new");
+! 	}
+  
+  #ifdef FEAT_GUI
+! 	need_mouse_correct = TRUE;
+  #endif
+! 	/* don't use a new tab page, each tab page has its own diffs */
+! 	cmdmod.tab = 0;
+  
+! 	if (win_split(0, (diff_flags & DIFF_VERTICAL) ? WSP_VERT : 0) != FAIL)
+  	{
+! 	    /* Pretend it was a ":split fname" command */
+! 	    eap->cmdidx = CMD_split;
+! 	    eap->arg = tmp_new;
+! 	    do_exedit(eap, old_curwin);
+  
+! 	    /* check that split worked and editing tmp_new */
+! 	    if (curwin != old_curwin && win_valid(old_curwin))
+  	    {
+! 		/* Set 'diff', 'scrollbind' on and 'wrap' off. */
+! 		diff_win_options(curwin, TRUE);
+! 		diff_win_options(old_curwin, TRUE);
+! 
+! 		if (newname != NULL)
+! 		{
+! 		    /* do a ":file filename.new" on the patched buffer */
+! 		    eap->arg = newname;
+! 		    ex_file(eap);
+  
+  #ifdef FEAT_AUTOCMD
+! 		    /* Do filetype detection with the new name. */
+! 		    if (au_has_group((char_u *)"filetypedetect"))
+! 			do_cmdline_cmd((char_u *)":doau filetypedetect BufRead");
+  #endif
++ 		}
+  	    }
+  	}
+      }
+*** ../vim-7.2.238/src/version.c	2009-07-22 14:27:33.000000000 +0200
+--- src/version.c	2009-07-22 16:21:29.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     239,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+97. Your mother tells you to remember something, and you look for
+    a File/Save command.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

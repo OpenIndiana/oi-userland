@@ -1,0 +1,80 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.122
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.122
+Problem:    Invalid memory access when the VimResized autocommand changes
+            'columns' and/or 'lines'.
+Solution:   After VimResized check for changed values. (Dominique Pelle)
+Files:      src/screen.c
+
+
+*** ../vim-7.2.121/src/screen.c	Sun Feb 22 01:13:45 2009
+--- src/screen.c	Sun Feb 22 01:07:38 2009
+***************
+*** 7368,7374 ****
+--- 7368,7378 ----
+  #endif
+      static int	    entered = FALSE;		/* avoid recursiveness */
+      static int	    done_outofmem_msg = FALSE;	/* did outofmem message */
++ #ifdef FEAT_AUTOCMD
++     int		    retry_count = 0;
+  
++ retry:
++ #endif
+      /*
+       * Allocation of the screen buffers is done only when the size changes and
+       * when Rows and Columns have been set and we have started doing full
+***************
+*** 7643,7650 ****
+      --RedrawingDisabled;
+  
+  #ifdef FEAT_AUTOCMD
+!     if (starting == 0)
+  	apply_autocmds(EVENT_VIMRESIZED, NULL, NULL, FALSE, curbuf);
+  #endif
+  }
+  
+--- 7647,7663 ----
+      --RedrawingDisabled;
+  
+  #ifdef FEAT_AUTOCMD
+!     /*
+!      * Do not apply autocommands more than 3 times to avoid an endless loop
+!      * in case applying autocommands always changes Rows or Columns.
+!      */
+!     if (starting == 0 && ++retry_count <= 3)
+!     {
+  	apply_autocmds(EVENT_VIMRESIZED, NULL, NULL, FALSE, curbuf);
++ 	/* In rare cases, autocommands may have altered Rows or Columns,
++ 	 * jump back to check if we need to allocate the screen again. */
++ 	goto retry;
++     }
+  #endif
+  }
+  
+*** ../vim-7.2.121/src/version.c	Sun Feb 22 02:51:37 2009
+--- src/version.c	Sun Feb 22 21:11:14 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     122,
+  /**/
+
+-- 
+FIXME and XXX are two common keywords used to mark broken or incomplete code
+not only since XXX as a sex reference would grab everbodys attention but
+simply due to the fact that Vim would highlight these words.
+					-- Hendrik Scholz
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

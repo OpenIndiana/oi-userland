@@ -1,0 +1,72 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.270
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.270
+Problem:    Using ":@c" when the c register contains a CR causes the rest to
+	    be executed later. (Dexter Douglas)
+Solution:   Don't check for typeahead to start with ':', keep executing
+	    commands until all added typeahead has been used.
+Files:	    src/ex_docmd.c
+
+
+*** ../vim-7.2.269/src/ex_docmd.c	2009-09-30 13:23:57.000000000 +0200
+--- src/ex_docmd.c	2009-10-28 12:06:54.000000000 +0100
+***************
+*** 8358,8363 ****
+--- 8358,8364 ----
+      exarg_T	*eap;
+  {
+      int		c;
++     int		prev_len = typebuf.tb_len;
+  
+      curwin->w_cursor.lnum = eap->line2;
+  
+***************
+*** 8383,8393 ****
+  
+  	/*
+  	 * Execute from the typeahead buffer.
+! 	 * Originally this didn't check for the typeahead buffer to be empty,
+! 	 * thus could read more Ex commands from stdin.  It's not clear why,
+! 	 * it is certainly unexpected.
+  	 */
+! 	while ((!stuff_empty() || typebuf.tb_len > 0) && vpeekc() == ':')
+  	    (void)do_cmdline(NULL, getexline, NULL, DOCMD_NOWAIT|DOCMD_VERBOSE);
+  
+  	exec_from_reg = save_efr;
+--- 8384,8393 ----
+  
+  	/*
+  	 * Execute from the typeahead buffer.
+! 	 * Continue until the stuff buffer is empty and all added characters
+! 	 * have been consumed.
+  	 */
+! 	while (!stuff_empty() || typebuf.tb_len > prev_len)
+  	    (void)do_cmdline(NULL, getexline, NULL, DOCMD_NOWAIT|DOCMD_VERBOSE);
+  
+  	exec_from_reg = save_efr;
+*** ../vim-7.2.269/src/version.c	2009-11-03 12:10:39.000000000 +0100
+--- src/version.c	2009-11-03 12:32:47.000000000 +0100
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     270,
+  /**/
+
+-- 
+To the optimist, the glass is half full.
+To the pessimist, the glass is half empty.
+To the engineer, the glass is twice as big as it needs to be.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

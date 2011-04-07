@@ -1,0 +1,45 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.155
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.155
+Problem:    Memory leak in ":function /pat".
+Solution:   Free the memory. (Dominique Pelle)
+Files:	    src/eval.c
+
+
+*** ../vim-7.2.154/src/eval.c	Wed Apr 22 12:53:31 2009
+--- src/eval.c	Wed Apr 22 16:04:34 2009
+***************
+*** 19720,19725 ****
+--- 19720,19726 ----
+  			    list_func_head(fp, FALSE);
+  		    }
+  		}
++ 		vim_free(regmatch.regprog);
+  	    }
+  	}
+  	if (*p == '/')
+*** ../vim-7.2.154/src/version.c	Wed Apr 22 15:56:27 2009
+--- src/version.c	Wed Apr 22 16:07:27 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     155,
+  /**/
+
+-- 
+Q:   How many hardware engineers does it take to change a lightbulb?
+A:   None.  We'll fix it in software.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

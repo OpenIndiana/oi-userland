@@ -1,0 +1,168 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.264
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.264
+Problem:    GTK2: When the Vim window is maximized setting 'columns' or
+	    'lines' doesn't work.
+Solution:   Unmaximize the window before setting the size. (Vitaly Minko)
+Files:	    src/gui.c, src/gui_gtk_x11.c, src/proto/gui_gtk_x11.pro
+
+
+*** ../vim-7.2.263/src/gui.c	2009-07-29 11:10:31.000000000 +0200
+--- src/gui.c	2009-09-23 16:28:09.000000000 +0200
+***************
+*** 1386,1391 ****
+--- 1386,1395 ----
+      int		min_height;
+      int		screen_w;
+      int		screen_h;
++ #ifdef HAVE_GTK2
++     int		un_maximize = mustset;
++     int         did_adjust = 0;
++ #endif
+  
+      if (!gui.shell_created)
+  	return;
+***************
+*** 1425,1446 ****
+  	    if (Columns < MIN_COLUMNS)
+  		Columns = MIN_COLUMNS;
+  	    width = Columns * gui.char_width + base_width;
+  	}
+  	if ((direction & RESIZE_VERT) && height > screen_h)
+  	{
+  	    Rows = (screen_h - base_height) / gui.char_height;
+  	    check_shellsize();
+  	    height = Rows * gui.char_height + base_height;
+  	}
+      }
+      gui.num_cols = Columns;
+      gui.num_rows = Rows;
+  
+      min_width = base_width + MIN_COLUMNS * gui.char_width;
+      min_height = base_height + MIN_LINES * gui.char_height;
+! # ifdef FEAT_WINDOWS
+      min_height += tabline_height() * gui.char_height;
+! # endif
+  
+      gui_mch_set_shellsize(width, height, min_width, min_height,
+  					  base_width, base_height, direction);
+--- 1429,1475 ----
+  	    if (Columns < MIN_COLUMNS)
+  		Columns = MIN_COLUMNS;
+  	    width = Columns * gui.char_width + base_width;
++ #ifdef HAVE_GTK2
++ 	    ++did_adjust;
++ #endif
+  	}
+  	if ((direction & RESIZE_VERT) && height > screen_h)
+  	{
+  	    Rows = (screen_h - base_height) / gui.char_height;
+  	    check_shellsize();
+  	    height = Rows * gui.char_height + base_height;
++ #ifdef HAVE_GTK2
++ 	    ++did_adjust;
++ #endif
+  	}
++ #ifdef HAVE_GTK2
++ 	if (did_adjust == 2 || (width + gui.char_width >= screen_w
++ 				     && height + gui.char_height >= screen_h))
++ 	    /* don't unmaximize if at maximum size */
++ 	    un_maximize = FALSE;
++ #endif
+      }
+      gui.num_cols = Columns;
+      gui.num_rows = Rows;
+  
+      min_width = base_width + MIN_COLUMNS * gui.char_width;
+      min_height = base_height + MIN_LINES * gui.char_height;
+! #ifdef FEAT_WINDOWS
+      min_height += tabline_height() * gui.char_height;
+! #endif
+! 
+! #ifdef HAVE_GTK2
+!     if (un_maximize)
+!     {
+! 	/* If the window size is smaller than the screen unmaximize the
+! 	 * window, otherwise resizing won't work. */
+! 	gui_mch_get_screen_dimensions(&screen_w, &screen_h);
+! 	if ((width + gui.char_width < screen_w
+! 				   || height + gui.char_height * 2 < screen_h)
+! 		&& gui_mch_maximized())
+! 	    gui_mch_unmaximize();
+!     }
+! #endif
+  
+      gui_mch_set_shellsize(width, height, min_width, min_height,
+  					  base_width, base_height, direction);
+*** ../vim-7.2.263/src/gui_gtk_x11.c	2009-09-23 17:35:17.000000000 +0200
+--- src/gui_gtk_x11.c	2009-09-23 15:43:52.000000000 +0200
+***************
+*** 4376,4381 ****
+--- 4376,4404 ----
+  #endif
+  #endif /* HAVE_GTK2 */
+  
++ #if defined(HAVE_GTK2) || defined(PROTO)
++ /*
++  * Return TRUE if the main window is maximized.
++  */
++     int
++ gui_mch_maximized()
++ {
++     return (gui.mainwin != NULL && gui.mainwin->window != NULL
++ 	    && (gdk_window_get_state(gui.mainwin->window)
++ 					       & GDK_WINDOW_STATE_MAXIMIZED));
++ }
++ 
++ /*
++  * Unmaximize the main window
++  */
++     void
++ gui_mch_unmaximize()
++ {
++     if (gui.mainwin != NULL)
++ 	gtk_window_unmaximize(GTK_WINDOW(gui.mainwin));
++ }
++ #endif
++ 
+  /*
+   * Set the windows size.
+   */
+*** ../vim-7.2.263/src/proto/gui_gtk_x11.pro	2007-05-05 19:18:54.000000000 +0200
+--- src/proto/gui_gtk_x11.pro	2009-09-23 15:43:45.000000000 +0200
+***************
+*** 16,21 ****
+--- 16,23 ----
+  void gui_mch_exit __ARGS((int rc));
+  int gui_mch_get_winpos __ARGS((int *x, int *y));
+  void gui_mch_set_winpos __ARGS((int x, int y));
++ int gui_mch_maximized __ARGS((void));
++ void gui_mch_unmaximize __ARGS((void));
+  void gui_mch_set_shellsize __ARGS((int width, int height, int min_width, int min_height, int base_width, int base_height, int direction));
+  void gui_mch_get_screen_dimensions __ARGS((int *screen_w, int *screen_h));
+  void gui_mch_settitle __ARGS((char_u *title, char_u *icon));
+*** ../vim-7.2.263/src/version.c	2009-09-23 17:35:17.000000000 +0200
+--- src/version.c	2009-09-23 18:12:21.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     264,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+268. You get up in the morning and go online before getting your coffee.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

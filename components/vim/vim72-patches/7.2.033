@@ -1,0 +1,78 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.033
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.033
+Problem:    When detecting a little endian BOM "ucs-2le" is used, but the text
+	    might be "utf-16le".
+Solution:   Default to "utf-16le", it also works for "ucs-2le". (Jia Yanwei)
+Files:	    src/fileio.c, src/testdir/test42.ok
+
+
+*** ../vim-7.2.032/src/fileio.c	Sun Nov  9 13:43:25 2008
+--- src/fileio.c	Mon Nov  3 21:21:47 2008
+***************
+*** 5550,5558 ****
+  	    name = "ucs-4le";	/* FF FE 00 00 */
+  	    len = 4;
+  	}
+! 	else if (flags == FIO_ALL || flags == (FIO_UCS2 | FIO_ENDIAN_L))
+  	    name = "ucs-2le";	/* FF FE */
+! 	else if (flags == (FIO_UTF16 | FIO_ENDIAN_L))
+  	    name = "utf-16le";	/* FF FE */
+      }
+      else if (p[0] == 0xfe && p[1] == 0xff
+--- 5550,5559 ----
+  	    name = "ucs-4le";	/* FF FE 00 00 */
+  	    len = 4;
+  	}
+! 	else if (flags == (FIO_UCS2 | FIO_ENDIAN_L))
+  	    name = "ucs-2le";	/* FF FE */
+! 	else if (flags == FIO_ALL || flags == (FIO_UTF16 | FIO_ENDIAN_L))
+! 	    /* utf-16le is preferred, it also works for ucs-2le text */
+  	    name = "utf-16le";	/* FF FE */
+      }
+      else if (p[0] == 0xfe && p[1] == 0xff
+*** ../vim-7.2.032/src/testdir/test42.ok	Sat Mar  1 13:49:21 2008
+--- src/testdir/test42.ok	Sat Nov  1 17:09:29 2008
+***************
+*** 20,26 ****
+  ucs-2
+  
+  
+!   fileencoding=ucs-2le
+    bomb
+  ucs-2le
+  
+--- 20,26 ----
+  ucs-2
+  
+  
+!   fileencoding=utf-16le
+    bomb
+  ucs-2le
+  
+*** ../vim-7.2.032/src/version.c	Sun Nov  9 17:21:10 2008
+--- src/version.c	Tue Nov 11 21:54:14 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     33,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+234. You started college as a chemistry major, and walk out four years
+     later as an Internet provider.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.193
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.193
+Problem:    Warning for uninitialized values.
+Solution:   Initialize all the struct items.
+Files:	    src/eval.c
+
+
+*** ../vim-7.2.192/src/eval.c	2009-06-03 13:22:22.000000000 +0200
+--- src/eval.c	2009-05-29 21:13:47.000000000 +0200
+***************
+*** 286,292 ****
+  #define VV_RO		2	/* read-only */
+  #define VV_RO_SBX	4	/* read-only in the sandbox */
+  
+! #define VV_NAME(s, t)	s, {{t}}, {0}
+  
+  static struct vimvar
+  {
+--- 286,292 ----
+  #define VV_RO		2	/* read-only */
+  #define VV_RO_SBX	4	/* read-only in the sandbox */
+  
+! #define VV_NAME(s, t)	s, {{t, 0, {0}}, 0, {0}}, {0}
+  
+  static struct vimvar
+  {
+*** ../vim-7.2.192/src/version.c	2009-06-03 13:22:23.000000000 +0200
+--- src/version.c	2009-06-03 14:25:18.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     193,
+  /**/
+
+-- 
+No engineer can take a shower without wondering if some sort of Teflon coating
+would make showering unnecessary.
+				(Scott Adams - The Dilbert principle)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

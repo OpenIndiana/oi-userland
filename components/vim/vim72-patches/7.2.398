@@ -1,0 +1,152 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.398
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.398
+Problem:    When moving windows the cursor ends up in the wrong line.
+Solution:   Set the window width and height properly. (Lech Lorens)
+Files:	    src/window.c
+
+
+*** ../vim-7.2.397/src/window.c	2010-01-27 20:26:41.000000000 +0100
+--- src/window.c	2010-03-17 16:40:06.000000000 +0100
+***************
+*** 991,1018 ****
+  	wp->w_p_scr = curwin->w_p_scr;
+  	if (need_status)
+  	{
+! 	    --oldwin->w_height;
+  	    oldwin->w_status_height = need_status;
+  	}
+  	if (flags & (WSP_TOP | WSP_BOT))
+  	{
+  	    /* set height and row of new window to full height */
+  	    wp->w_winrow = tabline_height();
+! 	    wp->w_height = curfrp->fr_height - (p_ls > 0);
+  	    wp->w_status_height = (p_ls > 0);
+  	}
+  	else
+  	{
+  	    /* height and row of new window is same as current window */
+  	    wp->w_winrow = oldwin->w_winrow;
+! 	    wp->w_height = oldwin->w_height;
+  	    wp->w_status_height = oldwin->w_status_height;
+  	}
+  	frp->fr_height = curfrp->fr_height;
+  
+  	/* "new_size" of the current window goes to the new window, use
+  	 * one column for the vertical separator */
+! 	wp->w_width = new_size;
+  	if (before)
+  	    wp->w_vsep_width = 1;
+  	else
+--- 991,1018 ----
+  	wp->w_p_scr = curwin->w_p_scr;
+  	if (need_status)
+  	{
+! 	    win_new_height(oldwin, oldwin->w_height - 1);
+  	    oldwin->w_status_height = need_status;
+  	}
+  	if (flags & (WSP_TOP | WSP_BOT))
+  	{
+  	    /* set height and row of new window to full height */
+  	    wp->w_winrow = tabline_height();
+! 	    win_new_height(wp, curfrp->fr_height - (p_ls > 0));
+  	    wp->w_status_height = (p_ls > 0);
+  	}
+  	else
+  	{
+  	    /* height and row of new window is same as current window */
+  	    wp->w_winrow = oldwin->w_winrow;
+! 	    win_new_height(wp, oldwin->w_height);
+  	    wp->w_status_height = oldwin->w_status_height;
+  	}
+  	frp->fr_height = curfrp->fr_height;
+  
+  	/* "new_size" of the current window goes to the new window, use
+  	 * one column for the vertical separator */
+! 	win_new_width(wp, new_size);
+  	if (before)
+  	    wp->w_vsep_width = 1;
+  	else
+***************
+*** 1049,1061 ****
+  	if (flags & (WSP_TOP | WSP_BOT))
+  	{
+  	    wp->w_wincol = 0;
+! 	    wp->w_width = Columns;
+  	    wp->w_vsep_width = 0;
+  	}
+  	else
+  	{
+  	    wp->w_wincol = oldwin->w_wincol;
+! 	    wp->w_width = oldwin->w_width;
+  	    wp->w_vsep_width = oldwin->w_vsep_width;
+  	}
+  	frp->fr_width = curfrp->fr_width;
+--- 1049,1061 ----
+  	if (flags & (WSP_TOP | WSP_BOT))
+  	{
+  	    wp->w_wincol = 0;
+! 	    win_new_width(wp, Columns);
+  	    wp->w_vsep_width = 0;
+  	}
+  	else
+  	{
+  	    wp->w_wincol = oldwin->w_wincol;
+! 	    win_new_width(wp, oldwin->w_width);
+  	    wp->w_vsep_width = oldwin->w_vsep_width;
+  	}
+  	frp->fr_width = curfrp->fr_width;
+***************
+*** 1111,1117 ****
+      }
+  
+      /*
+!      * make the new window the current window and redraw
+       */
+      if (do_equal || dir != 0)
+  	win_equal(wp, TRUE,
+--- 1111,1117 ----
+      }
+  
+      /*
+!      * equalize the window sizes.
+       */
+      if (do_equal || dir != 0)
+  	win_equal(wp, TRUE,
+***************
+*** 1143,1148 ****
+--- 1143,1152 ----
+  	if (size != 0)
+  	    p_wh = size;
+      }
++ 
++     /*
++      * make the new window the current window
++      */
+      win_enter(wp, FALSE);
+  #ifdef FEAT_VERTSPLIT
+      if (flags & WSP_VERT)
+*** ../vim-7.2.397/src/version.c	2010-03-17 16:45:04.000000000 +0100
+--- src/version.c	2010-03-17 16:53:51.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     398,
+  /**/
+
+-- 
+It's not hard to meet expenses, they're everywhere.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

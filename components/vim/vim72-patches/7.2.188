@@ -1,0 +1,278 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.188
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.188
+Problem:    Crash with specific use of function calls. (Meikel Brandmeyer)
+Solution:   Make sure the items referenced by a function call are not freed
+	    twice.  (based on patch from Nico Weber)
+Files:	    src/eval.c
+
+
+*** ../vim-7.2.187/src/eval.c	2009-05-16 17:29:37.000000000 +0200
+--- src/eval.c	2009-05-22 20:04:22.000000000 +0200
+***************
+*** 129,136 ****
+--- 129,139 ----
+  /*
+   * When recursively copying lists and dicts we need to remember which ones we
+   * have done to avoid endless recursiveness.  This unique ID is used for that.
++  * The last bit is used for previous_funccal, ignored when comparing.
+   */
+  static int current_copyID = 0;
++ #define COPYID_INC 2
++ #define COPYID_MASK (~0x1)
+  
+  /*
+   * Array to hold the hashtab with variables local to each sourced script.
+***************
+*** 439,444 ****
+--- 442,448 ----
+  static void list_remove __ARGS((list_T *l, listitem_T *item, listitem_T *item2));
+  static char_u *list2string __ARGS((typval_T *tv, int copyID));
+  static int list_join __ARGS((garray_T *gap, list_T *l, char_u *sep, int echo, int copyID));
++ static int free_unref_items __ARGS((int copyID));
+  static void set_ref_in_ht __ARGS((hashtab_T *ht, int copyID));
+  static void set_ref_in_list __ARGS((list_T *l, int copyID));
+  static void set_ref_in_item __ARGS((typval_T *tv, int copyID));
+***************
+*** 6494,6507 ****
+      int
+  garbage_collect()
+  {
+!     dict_T	*dd;
+!     list_T	*ll;
+!     int		copyID = ++current_copyID;
+      buf_T	*buf;
+      win_T	*wp;
+      int		i;
+      funccall_T	*fc, **pfc;
+!     int		did_free = FALSE;
+  #ifdef FEAT_WINDOWS
+      tabpage_T	*tp;
+  #endif
+--- 6498,6510 ----
+      int
+  garbage_collect()
+  {
+!     int		copyID;
+      buf_T	*buf;
+      win_T	*wp;
+      int		i;
+      funccall_T	*fc, **pfc;
+!     int		did_free;
+!     int		did_free_funccal = FALSE;
+  #ifdef FEAT_WINDOWS
+      tabpage_T	*tp;
+  #endif
+***************
+*** 6511,6520 ****
+--- 6514,6538 ----
+      may_garbage_collect = FALSE;
+      garbage_collect_at_exit = FALSE;
+  
++     /* We advance by two because we add one for items referenced through
++      * previous_funccal. */
++     current_copyID += COPYID_INC;
++     copyID = current_copyID;
++ 
+      /*
+       * 1. Go through all accessible variables and mark all lists and dicts
+       *    with copyID.
+       */
++ 
++     /* Don't free variables in the previous_funccal list unless they are only
++      * referenced through previous_funccal.  This must be first, because if
++      * the item is referenced elsewhere it must not be freed. */
++     for (fc = previous_funccal; fc != NULL; fc = fc->caller)
++     {
++ 	set_ref_in_ht(&fc->l_vars.dv_hashtab, copyID + 1);
++ 	set_ref_in_ht(&fc->l_avars.dv_hashtab, copyID + 1);
++     }
++ 
+      /* script-local variables */
+      for (i = 1; i <= ga_scripts.ga_len; ++i)
+  	set_ref_in_ht(&SCRIPT_VARS(i), copyID);
+***************
+*** 6546,6556 ****
+      /* v: vars */
+      set_ref_in_ht(&vimvarht, copyID);
+  
+      /*
+!      * 2. Go through the list of dicts and free items without the copyID.
+       */
+      for (dd = first_dict; dd != NULL; )
+! 	if (dd->dv_copyID != copyID)
+  	{
+  	    /* Free the Dictionary and ordinary items it contains, but don't
+  	     * recurse into Lists and Dictionaries, they will be in the list
+--- 6564,6610 ----
+      /* v: vars */
+      set_ref_in_ht(&vimvarht, copyID);
+  
++     /* Free lists and dictionaries that are not referenced. */
++     did_free = free_unref_items(copyID);
++ 
++     /* check if any funccal can be freed now */
++     for (pfc = &previous_funccal; *pfc != NULL; )
++     {
++ 	if (can_free_funccal(*pfc, copyID))
++ 	{
++ 	    fc = *pfc;
++ 	    *pfc = fc->caller;
++ 	    free_funccal(fc, TRUE);
++ 	    did_free = TRUE;
++ 	    did_free_funccal = TRUE;
++ 	}
++ 	else
++ 	    pfc = &(*pfc)->caller;
++     }
++     if (did_free_funccal)
++ 	/* When a funccal was freed some more items might be garbage
++ 	 * collected, so run again. */
++ 	(void)garbage_collect();
++ 
++     return did_free;
++ }
++ 
++ /*
++  * Free lists and dictionaries that are no longer referenced.
++  */
++     static int
++ free_unref_items(copyID)
++     int copyID;
++ {
++     dict_T	*dd;
++     list_T	*ll;
++     int		did_free = FALSE;
++ 
+      /*
+!      * Go through the list of dicts and free items without the copyID.
+       */
+      for (dd = first_dict; dd != NULL; )
+! 	if ((dd->dv_copyID & COPYID_MASK) != (copyID & COPYID_MASK))
+  	{
+  	    /* Free the Dictionary and ordinary items it contains, but don't
+  	     * recurse into Lists and Dictionaries, they will be in the list
+***************
+*** 6565,6576 ****
+  	    dd = dd->dv_used_next;
+  
+      /*
+!      * 3. Go through the list of lists and free items without the copyID.
+!      *    But don't free a list that has a watcher (used in a for loop), these
+!      *    are not referenced anywhere.
+       */
+      for (ll = first_list; ll != NULL; )
+! 	if (ll->lv_copyID != copyID && ll->lv_watch == NULL)
+  	{
+  	    /* Free the List and ordinary items it contains, but don't recurse
+  	     * into Lists and Dictionaries, they will be in the list of dicts
+--- 6619,6631 ----
+  	    dd = dd->dv_used_next;
+  
+      /*
+!      * Go through the list of lists and free items without the copyID.
+!      * But don't free a list that has a watcher (used in a for loop), these
+!      * are not referenced anywhere.
+       */
+      for (ll = first_list; ll != NULL; )
+! 	if ((ll->lv_copyID & COPYID_MASK) != (copyID & COPYID_MASK)
+! 						      && ll->lv_watch == NULL)
+  	{
+  	    /* Free the List and ordinary items it contains, but don't recurse
+  	     * into Lists and Dictionaries, they will be in the list of dicts
+***************
+*** 6584,6603 ****
+  	else
+  	    ll = ll->lv_used_next;
+  
+-     /* check if any funccal can be freed now */
+-     for (pfc = &previous_funccal; *pfc != NULL; )
+-     {
+- 	if (can_free_funccal(*pfc, copyID))
+- 	{
+- 	    fc = *pfc;
+- 	    *pfc = fc->caller;
+- 	    free_funccal(fc, TRUE);
+- 	    did_free = TRUE;
+- 	}
+- 	else
+- 	    pfc = &(*pfc)->caller;
+-     }
+- 
+      return did_free;
+  }
+  
+--- 6639,6644 ----
+***************
+*** 18842,18847 ****
+--- 18883,18889 ----
+  {
+      hash_init(&dict->dv_hashtab);
+      dict->dv_refcount = DO_NOT_FREE_CNT;
++     dict->dv_copyID = 0;
+      dict_var->di_tv.vval.v_dict = dict;
+      dict_var->di_tv.v_type = VAR_DICT;
+      dict_var->di_tv.v_lock = VAR_FIXED;
+***************
+*** 21294,21301 ****
+      current_funccal = fc->caller;
+      --depth;
+  
+!     /* if the a:000 list and the a: dict are not referenced we can free the
+!      * funccall_T and what's in it. */
+      if (fc->l_varlist.lv_refcount == DO_NOT_FREE_CNT
+  	    && fc->l_vars.dv_refcount == DO_NOT_FREE_CNT
+  	    && fc->l_avars.dv_refcount == DO_NOT_FREE_CNT)
+--- 21336,21343 ----
+      current_funccal = fc->caller;
+      --depth;
+  
+!     /* If the a:000 list and the l: and a: dicts are not referenced we can
+!      * free the funccall_T and what's in it. */
+      if (fc->l_varlist.lv_refcount == DO_NOT_FREE_CNT
+  	    && fc->l_vars.dv_refcount == DO_NOT_FREE_CNT
+  	    && fc->l_avars.dv_refcount == DO_NOT_FREE_CNT)
+***************
+*** 21334,21340 ****
+  
+  /*
+   * Return TRUE if items in "fc" do not have "copyID".  That means they are not
+!  * referenced from anywhere.
+   */
+      static int
+  can_free_funccal(fc, copyID)
+--- 21376,21382 ----
+  
+  /*
+   * Return TRUE if items in "fc" do not have "copyID".  That means they are not
+!  * referenced from anywhere that is in use.
+   */
+      static int
+  can_free_funccal(fc, copyID)
+*** ../vim-7.2.187/src/version.c	2009-05-23 14:27:43.000000000 +0200
+--- src/version.c	2009-05-24 13:20:49.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     188,
+  /**/
+
+-- 
+ARTHUR:    ... and I am your king ....
+OLD WOMAN: Ooooh!  I didn't know we had a king.  I thought we were an
+           autonomous collective ...
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

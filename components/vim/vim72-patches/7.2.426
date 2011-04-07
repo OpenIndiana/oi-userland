@@ -1,0 +1,136 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.426
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.426
+Problem:    Commas in 'langmap' are not always handled correctly.
+Solution:   Require commas to be backslash escaped. (James Vega)
+Files:	    src/option.c
+
+
+*** ../vim-7.2.425/src/option.c	2010-05-13 13:12:01.000000000 +0200
+--- src/option.c	2010-05-14 16:04:21.000000000 +0200
+***************
+*** 10432,10437 ****
+--- 10432,10442 ----
+  	    p2 = NULL;	    /* aAbBcCdD form, p2 is NULL */
+  	while (p[0])
+  	{
++ 	    if (p[0] == ',')
++ 	    {
++ 		++p;
++ 		break;
++ 	    }
+  	    if (p[0] == '\\' && p[1] != NUL)
+  		++p;
+  #ifdef FEAT_MBYTE
+***************
+*** 10439,10464 ****
+  #else
+  	    from = p[0];
+  #endif
+  	    if (p2 == NULL)
+  	    {
+  		mb_ptr_adv(p);
+! 		if (p[0] == '\\')
+! 		    ++p;
+  #ifdef FEAT_MBYTE
+! 		to = (*mb_ptr2char)(p);
+  #else
+! 		to = p[0];
+  #endif
+  	    }
+  	    else
+  	    {
+! 		if (p2[0] == '\\')
+! 		    ++p2;
+  #ifdef FEAT_MBYTE
+! 		to = (*mb_ptr2char)(p2);
+  #else
+! 		to = p2[0];
+  #endif
+  	    }
+  	    if (to == NUL)
+  	    {
+--- 10444,10476 ----
+  #else
+  	    from = p[0];
+  #endif
++ 	    to = NUL;
+  	    if (p2 == NULL)
+  	    {
+  		mb_ptr_adv(p);
+! 		if (p[0] != ',')
+! 		{
+! 		    if (p[0] == '\\')
+! 			++p;
+  #ifdef FEAT_MBYTE
+! 		    to = (*mb_ptr2char)(p);
+  #else
+! 		    to = p[0];
+  #endif
++ 		}
+  	    }
+  	    else
+  	    {
+! 		if (p2[0] != ',')
+! 		{
+! 		    if (p2[0] == '\\')
+! 			++p2;
+  #ifdef FEAT_MBYTE
+! 		    to = (*mb_ptr2char)(p2);
+  #else
+! 		    to = p2[0];
+  #endif
++ 		}
+  	    }
+  	    if (to == NUL)
+  	    {
+***************
+*** 10476,10490 ****
+  
+  	    /* Advance to next pair */
+  	    mb_ptr_adv(p);
+! 	    if (p2 == NULL)
+! 	    {
+! 		if (p[0] == ',')
+! 		{
+! 		    ++p;
+! 		    break;
+! 		}
+! 	    }
+! 	    else
+  	    {
+  		mb_ptr_adv(p2);
+  		if (*p == ';')
+--- 10488,10494 ----
+  
+  	    /* Advance to next pair */
+  	    mb_ptr_adv(p);
+! 	    if (p2 != NULL)
+  	    {
+  		mb_ptr_adv(p2);
+  		if (*p == ';')
+*** ../vim-7.2.425/src/version.c	2010-05-14 15:42:49.000000000 +0200
+--- src/version.c	2010-05-14 17:32:11.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     426,
+  /**/
+
+-- 
+On the other hand, you have different fingers.
+                                      -- Steven Wright
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

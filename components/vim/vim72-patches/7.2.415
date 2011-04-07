@@ -1,0 +1,69 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.415
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.415
+Problem:    Win32: Can't open a remote file when starting Vim.
+Solution:   Don't invoke cygwin_conv_path() for URLs. (Tomoya Adachi)
+Files:	    src/main.c
+
+
+*** ../vim-7.2.414/src/main.c	2009-12-16 18:27:29.000000000 +0100
+--- src/main.c	2010-04-12 20:57:44.000000000 +0200
+***************
+*** 1477,1483 ****
+  	++initstr;
+      }
+  
+!     /* Avoid using evim mode for "editor". */
+      if (TOLOWER_ASC(initstr[0]) == 'e'
+  	    && (TOLOWER_ASC(initstr[1]) == 'v'
+  		|| TOLOWER_ASC(initstr[1]) == 'g'))
+--- 1477,1483 ----
+  	++initstr;
+      }
+  
+!     /* Use evim mode for "evim" and "egvim", not for "editor". */
+      if (TOLOWER_ASC(initstr[0]) == 'e'
+  	    && (TOLOWER_ASC(initstr[1]) == 'v'
+  		|| TOLOWER_ASC(initstr[1]) == 'g'))
+***************
+*** 2262,2268 ****
+  	     * Look for evidence of non-Cygwin paths before we bother.
+  	     * This is only for when using the Unix files.
+  	     */
+! 	    if (strpbrk(p, "\\:") != NULL)
+  	    {
+  		char posix_path[PATH_MAX];
+  
+--- 2262,2268 ----
+  	     * Look for evidence of non-Cygwin paths before we bother.
+  	     * This is only for when using the Unix files.
+  	     */
+! 	    if (strpbrk(p, "\\:") != NULL && !path_with_url(p))
+  	    {
+  		char posix_path[PATH_MAX];
+  
+*** ../vim-7.2.414/src/version.c	2010-05-07 16:18:08.000000000 +0200
+--- src/version.c	2010-05-07 16:34:22.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     415,
+  /**/
+
+-- 
+How To Keep A Healthy Level Of Insanity:
+6. In the memo field of all your checks, write "for sexual favors".
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

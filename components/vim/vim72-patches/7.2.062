@@ -1,0 +1,55 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.062
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.062
+Problem:    "[Scratch]" is not translated.
+Solution:   Mark the string for translation. (Dominique Pelle)
+Files:	    src/buffer.c
+
+
+*** ../vim-7.2.061/src/buffer.c	Sat Nov 15 16:05:30 2008
+--- src/buffer.c	Tue Dec  2 21:51:02 2008
+***************
+*** 5118,5124 ****
+      {
+  	if (buf->b_sfname != NULL)
+  	    return (char *)buf->b_sfname;
+! 	return "[Scratch]";
+      }
+  #endif
+      if (buf->b_fname == NULL)
+--- 5118,5124 ----
+      {
+  	if (buf->b_sfname != NULL)
+  	    return (char *)buf->b_sfname;
+! 	return _("[Scratch]");
+      }
+  #endif
+      if (buf->b_fname == NULL)
+*** ../vim-7.2.061/src/version.c	Wed Dec  3 09:51:19 2008
+--- src/version.c	Wed Dec  3 11:20:30 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     62,
+  /**/
+
+-- 
+DENNIS:  Listen -- strange women lying in ponds distributing swords is no
+         basis for a system of government.  Supreme executive power derives
+         from a mandate from the masses, not from some farcical aquatic
+         ceremony.
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

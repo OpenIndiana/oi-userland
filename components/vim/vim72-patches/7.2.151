@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.151
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.151
+Problem:    ":hist a" doesn't work like ":hist all" as the docs suggest.
+Solution:   Make ":hist a" and ":hist al" work. (Dominique Pelle)
+Files:	    src/ex_getln.c
+
+
+*** ../vim-7.2.150/src/ex_getln.c	Wed Mar 18 12:50:58 2009
+--- src/ex_getln.c	Sun Apr 12 13:36:06 2009
+***************
+*** 5686,5692 ****
+  	histype1 = get_histtype(arg);
+  	if (histype1 == -1)
+  	{
+! 	    if (STRICMP(arg, "all") == 0)
+  	    {
+  		histype1 = 0;
+  		histype2 = HIST_COUNT-1;
+--- 5686,5692 ----
+  	histype1 = get_histtype(arg);
+  	if (histype1 == -1)
+  	{
+! 	    if (STRNICMP(arg, "all", STRLEN(arg)) == 0)
+  	    {
+  		histype1 = 0;
+  		histype2 = HIST_COUNT-1;
+*** ../vim-7.2.150/src/version.c	Wed Apr 22 13:06:11 2009
+--- src/version.c	Wed Apr 22 13:49:41 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     151,
+  /**/
+
+-- 
+I'm sure that I asked CBuilder to do a "full" install.  Looks like I got
+a "fool" install, instead.		Charles E Campbell, Jr, PhD
+
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

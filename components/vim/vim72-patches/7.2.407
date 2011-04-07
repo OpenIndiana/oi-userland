@@ -1,0 +1,69 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.407
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.407
+Problem:    When using an expression in ":s" backslashes in the result are
+	    dropped. (Sergey Goldgaber, Christian Brabandt)
+Solution:   Double backslashes.
+Files:	    src/regexp.c
+
+
+*** ../vim-7.2.406/src/regexp.c	2009-11-26 20:41:19.000000000 +0100
+--- src/regexp.c	2010-03-23 16:22:35.000000000 +0100
+***************
+*** 6963,6968 ****
+--- 6963,6970 ----
+  	    eval_result = eval_to_string(source + 2, NULL, TRUE);
+  	    if (eval_result != NULL)
+  	    {
++ 		int had_backslash = FALSE;
++ 
+  		for (s = eval_result; *s != NUL; mb_ptr_adv(s))
+  		{
+  		    /* Change NL to CR, so that it becomes a line break.
+***************
+*** 6970,6976 ****
+--- 6972,6991 ----
+  		    if (*s == NL)
+  			*s = CAR;
+  		    else if (*s == '\\' && s[1] != NUL)
++ 		    {
+  			++s;
++ 			had_backslash = TRUE;
++ 		    }
++ 		}
++ 		if (had_backslash && backslash)
++ 		{
++ 		    /* Backslashes will be consumed, need to double them. */
++ 		    s = vim_strsave_escaped(eval_result, (char_u *)"\\");
++ 		    if (s != NULL)
++ 		    {
++ 			vim_free(eval_result);
++ 			eval_result = s;
++ 		    }
+  		}
+  
+  		dst += STRLEN(eval_result);
+*** ../vim-7.2.406/src/version.c	2010-03-23 15:36:29.000000000 +0100
+--- src/version.c	2010-03-23 16:26:22.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     407,
+  /**/
+
+-- 
+Sorry, no fortune today.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,120 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.289
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.289
+Problem:    Checking wrong struct member.
+Solution:   Change tb_buf to tb_noremap. (Dominique Pelle)
+Files:	    src/getchar.c
+
+
+*** ../vim-7.2.288/src/getchar.c	2009-09-30 15:15:33.000000000 +0200
+--- src/getchar.c	2009-11-11 12:50:58.000000000 +0100
+***************
+*** 22,28 ****
+   * These buffers are used for storing:
+   * - stuffed characters: A command that is translated into another command.
+   * - redo characters: will redo the last change.
+!  * - recorded chracters: for the "q" command.
+   *
+   * The bytes are stored like in the typeahead buffer:
+   * - K_SPECIAL introduces a special key (two more bytes follow).  A literal
+--- 22,28 ----
+   * These buffers are used for storing:
+   * - stuffed characters: A command that is translated into another command.
+   * - redo characters: will redo the last change.
+!  * - recorded characters: for the "q" command.
+   *
+   * The bytes are stored like in the typeahead buffer:
+   * - K_SPECIAL introduces a special key (two more bytes follow).  A literal
+***************
+*** 1283,1289 ****
+  	EMSG2(_(e_intern2), "Free typebuf 1");
+      else
+  	vim_free(typebuf.tb_buf);
+!     if (typebuf.tb_buf == noremapbuf_init)
+  	EMSG2(_(e_intern2), "Free typebuf 2");
+      else
+  	vim_free(typebuf.tb_noremap);
+--- 1283,1289 ----
+  	EMSG2(_(e_intern2), "Free typebuf 1");
+      else
+  	vim_free(typebuf.tb_buf);
+!     if (typebuf.tb_noremap == noremapbuf_init)
+  	EMSG2(_(e_intern2), "Free typebuf 2");
+      else
+  	vim_free(typebuf.tb_noremap);
+***************
+*** 1516,1522 ****
+   * wanted.
+   * This translates escaped K_SPECIAL and CSI bytes to a K_SPECIAL or CSI byte.
+   * Collects the bytes of a multibyte character into the whole character.
+!  * Returns the modifers in the global "mod_mask".
+   */
+      int
+  vgetc()
+--- 1516,1522 ----
+   * wanted.
+   * This translates escaped K_SPECIAL and CSI bytes to a K_SPECIAL or CSI byte.
+   * Collects the bytes of a multibyte character into the whole character.
+!  * Returns the modifiers in the global "mod_mask".
+   */
+      int
+  vgetc()
+***************
+*** 3320,3326 ****
+  			    retval = 1;
+  			    goto theend;
+  			}
+! 	    /* An abbrevation cannot contain white space. */
+  	    for (n = 0; n < len; ++n)
+  		if (vim_iswhite(keys[n]))
+  		{
+--- 3320,3326 ----
+  			    retval = 1;
+  			    goto theend;
+  			}
+! 	    /* An abbreviation cannot contain white space. */
+  	    for (n = 0; n < len; ++n)
+  		if (vim_iswhite(keys[n]))
+  		{
+***************
+*** 4272,4278 ****
+  
+      /*
+       * Check for word before the cursor: If it ends in a keyword char all
+!      * chars before it must be al keyword chars or non-keyword chars, but not
+       * white space. If it ends in a non-keyword char we accept any characters
+       * before it except white space.
+       */
+--- 4272,4278 ----
+  
+      /*
+       * Check for word before the cursor: If it ends in a keyword char all
+!      * chars before it must be keyword chars or non-keyword chars, but not
+       * white space. If it ends in a non-keyword char we accept any characters
+       * before it except white space.
+       */
+*** ../vim-7.2.288/src/version.c	2009-11-11 15:06:59.000000000 +0100
+--- src/version.c	2009-11-11 16:19:12.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     289,
+  /**/
+
+-- 
+A M00se once bit my sister ...
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

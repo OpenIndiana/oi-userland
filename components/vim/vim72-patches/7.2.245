@@ -1,0 +1,165 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.245
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.245
+Problem:    When 'enc' is "utf-16" and 'fenc' is "utf-8" writing a file does
+	    conversion while none should be done. (Yukihiro Nakadaira) When
+	    'fenc' is empty the file is written as utf-8 instead of utf-16.
+Solution:   Do proper comparison of encodings, taking into account that all
+	    Unicode values for 'enc' use utf-8 internally.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.244/src/fileio.c	2009-07-29 18:05:57.000000000 +0200
+--- src/fileio.c	2009-07-29 17:04:06.000000000 +0200
+***************
+*** 134,140 ****
+  #ifdef FEAT_MBYTE
+  static linenr_T readfile_linenr __ARGS((linenr_T linecnt, char_u *p, char_u *endp));
+  static int ucs2bytes __ARGS((unsigned c, char_u **pp, int flags));
+! static int same_encoding __ARGS((char_u *a, char_u *b));
+  static int get_fio_flags __ARGS((char_u *ptr));
+  static char_u *check_for_bom __ARGS((char_u *p, long size, int *lenp, int flags));
+  static int make_bom __ARGS((char_u *buf, char_u *name));
+--- 134,140 ----
+  #ifdef FEAT_MBYTE
+  static linenr_T readfile_linenr __ARGS((linenr_T linecnt, char_u *p, char_u *endp));
+  static int ucs2bytes __ARGS((unsigned c, char_u **pp, int flags));
+! static int need_conversion __ARGS((char_u *fenc));
+  static int get_fio_flags __ARGS((char_u *ptr));
+  static char_u *check_for_bom __ARGS((char_u *p, long size, int *lenp, int flags));
+  static int make_bom __ARGS((char_u *buf, char_u *name));
+***************
+*** 1043,1055 ****
+      }
+  
+      /*
+!      * Conversion is required when the encoding of the file is different
+!      * from 'encoding' or 'encoding' is UTF-16, UCS-2 or UCS-4 (requires
+!      * conversion to UTF-8).
+       */
+      fio_flags = 0;
+!     converted = (*fenc != NUL && !same_encoding(p_enc, fenc));
+!     if (converted || enc_unicode != 0)
+      {
+  
+  	/* "ucs-bom" means we need to check the first bytes of the file
+--- 1043,1054 ----
+      }
+  
+      /*
+!      * Conversion may be required when the encoding of the file is different
+!      * from 'encoding' or 'encoding' is UTF-16, UCS-2 or UCS-4.
+       */
+      fio_flags = 0;
+!     converted = need_conversion(fenc);
+!     if (converted)
+      {
+  
+  	/* "ucs-bom" means we need to check the first bytes of the file
+***************
+*** 3969,3978 ****
+  	fenc = buf->b_p_fenc;
+  
+      /*
+!      * The file needs to be converted when 'fileencoding' is set and
+!      * 'fileencoding' differs from 'encoding'.
+       */
+!     converted = (*fenc != NUL && !same_encoding(p_enc, fenc));
+  
+      /*
+       * Check if UTF-8 to UCS-2/4 or Latin1 conversion needs to be done.  Or
+--- 3968,3976 ----
+  	fenc = buf->b_p_fenc;
+  
+      /*
+!      * Check if the file needs to be converted.
+       */
+!     converted = need_conversion(fenc);
+  
+      /*
+       * Check if UTF-8 to UCS-2/4 or Latin1 conversion needs to be done.  Or
+***************
+*** 5502,5521 ****
+  }
+  
+  /*
+!  * Return TRUE if "a" and "b" are the same 'encoding'.
+!  * Ignores difference between "ansi" and "latin1", "ucs-4" and "ucs-4be", etc.
+   */
+      static int
+! same_encoding(a, b)
+!     char_u	*a;
+!     char_u	*b;
+  {
+!     int		f;
+  
+!     if (STRCMP(a, b) == 0)
+! 	return TRUE;
+!     f = get_fio_flags(a);
+!     return (f != 0 && get_fio_flags(b) == f);
+  }
+  
+  /*
+--- 5500,5536 ----
+  }
+  
+  /*
+!  * Return TRUE if file encoding "fenc" requires conversion from or to
+!  * 'encoding'.
+   */
+      static int
+! need_conversion(fenc)
+!     char_u	*fenc;
+  {
+!     int		same_encoding;
+!     int		enc_flags;
+!     int		fenc_flags;
+  
+!     if (*fenc == NUL || STRCMP(p_enc, fenc) == 0)
+! 	same_encoding = TRUE;
+!     else
+!     {
+! 	/* Ignore difference between "ansi" and "latin1", "ucs-4" and
+! 	 * "ucs-4be", etc. */
+! 	enc_flags = get_fio_flags(p_enc);
+! 	fenc_flags = get_fio_flags(fenc);
+! 	same_encoding = (enc_flags != 0 && fenc_flags == enc_flags);
+!     }
+!     if (same_encoding)
+!     {
+! 	/* Specified encoding matches with 'encoding'.  This requires
+! 	 * conversion when 'encoding' is Unicode but not UTF-8. */
+! 	return enc_unicode != 0;
+!     }
+! 
+!     /* Encodings differ.  However, conversion is not needed when 'enc' is any
+!      * Unicode encoding and the file is UTF-8. */
+!     return !(enc_utf8 && fenc_flags == FIO_UTF8);
+  }
+  
+  /*
+*** ../vim-7.2.244/src/version.c	2009-07-29 18:05:57.000000000 +0200
+--- src/version.c	2009-07-29 18:20:08.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     245,
+  /**/
+
+-- 
+An actual excerpt from a classified section of a city newspaper:
+"Illiterate?  Write today for free help!"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

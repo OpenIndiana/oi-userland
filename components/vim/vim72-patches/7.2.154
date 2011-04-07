@@ -1,0 +1,71 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.154
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.154 (after 7.2.132)
+Problem:    ":cd" is still possible in a SwapExists autocmd.
+Solution:   Set allbuf_lock in do_swapexists().
+Files:	    src/memline.c
+
+
+*** ../vim-7.2.153/src/memline.c	Wed Apr 22 15:37:12 2009
+--- src/memline.c	Wed Apr 22 15:54:48 2009
+***************
+*** 3771,3778 ****
+      set_vim_var_string(VV_SWAPCHOICE, NULL, -1);
+  
+      /* Trigger SwapExists autocommands with <afile> set to the file being
+!      * edited. */
+      apply_autocmds(EVENT_SWAPEXISTS, buf->b_fname, NULL, FALSE, NULL);
+  
+      set_vim_var_string(VV_SWAPNAME, NULL, -1);
+  
+--- 3771,3780 ----
+      set_vim_var_string(VV_SWAPCHOICE, NULL, -1);
+  
+      /* Trigger SwapExists autocommands with <afile> set to the file being
+!      * edited.  Disallow changing directory here. */
+!     ++allbuf_lock;
+      apply_autocmds(EVENT_SWAPEXISTS, buf->b_fname, NULL, FALSE, NULL);
++     --allbuf_lock;
+  
+      set_vim_var_string(VV_SWAPNAME, NULL, -1);
+  
+***************
+*** 3798,3803 ****
+--- 3800,3806 ----
+   *
+   * Note: If BASENAMELEN is not correct, you will get error messages for
+   *	 not being able to open the swapfile
++  * Note: May trigger SwapExists autocmd, pointers may change!
+   */
+      static char_u *
+  findswapname(buf, dirp, old_fname)
+*** ../vim-7.2.153/src/version.c	Wed Apr 22 15:37:12 2009
+--- src/version.c	Wed Apr 22 15:55:48 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     154,
+  /**/
+
+-- 
+ARTHUR:  Be quiet!
+DENNIS:  Well you can't expect to wield supreme executive power just 'cause
+         some watery tart threw a sword at you!
+ARTHUR:  Shut up!
+DENNIS:  I mean, if I went around sayin' I was an empereror just because some
+         moistened bint had lobbed a scimitar at me they'd put me away!
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

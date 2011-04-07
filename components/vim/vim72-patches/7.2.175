@@ -1,0 +1,51 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.175
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.175
+Problem:    Compiler warning in OpenBSD.
+Solution:   Add type cast for NULL. (Dasn)
+Files:	    src/if_cscope.c
+
+
+*** ../vim-7.2.174/src/if_cscope.c	2009-04-22 16:22:44.000000000 +0200
+--- src/if_cscope.c	2009-05-16 16:15:03.000000000 +0200
+***************
+*** 994,1000 ****
+  	vim_free(ppath);
+  
+  #if defined(UNIX)
+! 	if (execl("/bin/sh", "sh", "-c", cmd, NULL) == -1)
+  	    PERROR(_("cs_create_connection exec failed"));
+  
+  	exit(127);
+--- 994,1000 ----
+  	vim_free(ppath);
+  
+  #if defined(UNIX)
+! 	if (execl("/bin/sh", "sh", "-c", cmd, (char *)NULL) == -1)
+  	    PERROR(_("cs_create_connection exec failed"));
+  
+  	exit(127);
+*** ../vim-7.2.174/src/version.c	2009-05-15 21:31:11.000000000 +0200
+--- src/version.c	2009-05-16 16:13:15.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     175,
+  /**/
+
+-- 
+Every time I lose weight, it finds me again!
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

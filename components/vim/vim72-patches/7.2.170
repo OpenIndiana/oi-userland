@@ -1,0 +1,179 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.170
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.170
+Problem:    Using b_dev while it was not set. (Dominique Pelle)
+Solution:   Add the b_dev_valid flag.
+Files:	    src/buffer.c, src/fileio.c, src/structs.h
+
+
+*** ../vim-7.2.169/src/buffer.c	2009-05-13 12:46:36.000000000 +0200
+--- src/buffer.c	2009-05-13 20:23:51.000000000 +0200
+***************
+*** 1678,1686 ****
+      buf->b_fname = buf->b_sfname;
+  #ifdef UNIX
+      if (st.st_dev == (dev_T)-1)
+! 	buf->b_dev = -1;
+      else
+      {
+  	buf->b_dev = st.st_dev;
+  	buf->b_ino = st.st_ino;
+      }
+--- 1678,1687 ----
+      buf->b_fname = buf->b_sfname;
+  #ifdef UNIX
+      if (st.st_dev == (dev_T)-1)
+! 	buf->b_dev_valid = FALSE;
+      else
+      {
++ 	buf->b_dev_valid = TRUE;
+  	buf->b_dev = st.st_dev;
+  	buf->b_ino = st.st_ino;
+      }
+***************
+*** 2693,2701 ****
+      buf->b_fname = buf->b_sfname;
+  #ifdef UNIX
+      if (st.st_dev == (dev_T)-1)
+! 	buf->b_dev = -1;
+      else
+      {
+  	buf->b_dev = st.st_dev;
+  	buf->b_ino = st.st_ino;
+      }
+--- 2694,2703 ----
+      buf->b_fname = buf->b_sfname;
+  #ifdef UNIX
+      if (st.st_dev == (dev_T)-1)
+! 	buf->b_dev_valid = FALSE;
+      else
+      {
++ 	buf->b_dev_valid = TRUE;
+  	buf->b_dev = st.st_dev;
+  	buf->b_ino = st.st_ino;
+      }
+***************
+*** 2889,2895 ****
+  	/* If no struct stat given, get it now */
+  	if (stp == NULL)
+  	{
+! 	    if (buf->b_dev < 0 || mch_stat((char *)ffname, &st) < 0)
+  		st.st_dev = (dev_T)-1;
+  	    stp = &st;
+  	}
+--- 2891,2897 ----
+  	/* If no struct stat given, get it now */
+  	if (stp == NULL)
+  	{
+! 	    if (!buf->b_dev_valid || mch_stat((char *)ffname, &st) < 0)
+  		st.st_dev = (dev_T)-1;
+  	    stp = &st;
+  	}
+***************
+*** 2926,2936 ****
+  
+      if (buf->b_fname != NULL && mch_stat((char *)buf->b_fname, &st) >= 0)
+      {
+  	buf->b_dev = st.st_dev;
+  	buf->b_ino = st.st_ino;
+      }
+      else
+! 	buf->b_dev = -1;
+  }
+  
+  /*
+--- 2928,2939 ----
+  
+      if (buf->b_fname != NULL && mch_stat((char *)buf->b_fname, &st) >= 0)
+      {
++ 	buf->b_dev_valid = TRUE;
+  	buf->b_dev = st.st_dev;
+  	buf->b_ino = st.st_ino;
+      }
+      else
+! 	buf->b_dev_valid = FALSE;
+  }
+  
+  /*
+***************
+*** 2941,2947 ****
+      buf_T	*buf;
+      struct stat *stp;
+  {
+!     return (buf->b_dev >= 0
+  	    && stp->st_dev == buf->b_dev
+  	    && stp->st_ino == buf->b_ino);
+  }
+--- 2944,2950 ----
+      buf_T	*buf;
+      struct stat *stp;
+  {
+!     return (buf->b_dev_valid
+  	    && stp->st_dev == buf->b_dev
+  	    && stp->st_ino == buf->b_ino);
+  }
+*** ../vim-7.2.169/src/fileio.c	2009-04-29 18:01:23.000000000 +0200
+--- src/fileio.c	2009-05-13 20:24:08.000000000 +0200
+***************
+*** 4416,4422 ****
+  # endif
+  	buf_setino(buf);
+      }
+!     else if (buf->b_dev < 0)
+  	/* Set the inode when creating a new file. */
+  	buf_setino(buf);
+  #endif
+--- 4416,4422 ----
+  # endif
+  	buf_setino(buf);
+      }
+!     else if (!buf->b_dev_valid)
+  	/* Set the inode when creating a new file. */
+  	buf_setino(buf);
+  #endif
+*** ../vim-7.2.169/src/structs.h	2009-05-13 18:54:14.000000000 +0200
+--- src/structs.h	2009-05-13 20:24:54.000000000 +0200
+***************
+*** 1166,1172 ****
+      char_u	*b_fname;	/* current file name */
+  
+  #ifdef UNIX
+!     dev_t	b_dev;		/* device number (-1 if not set) */
+      ino_t	b_ino;		/* inode number */
+  #endif
+  #ifdef FEAT_CW_EDITOR
+--- 1166,1173 ----
+      char_u	*b_fname;	/* current file name */
+  
+  #ifdef UNIX
+!     int		b_dev_valid;	/* TRUE when b_dev has a valid number */
+!     dev_t	b_dev;		/* device number */
+      ino_t	b_ino;		/* inode number */
+  #endif
+  #ifdef FEAT_CW_EDITOR
+*** ../vim-7.2.169/src/version.c	2009-05-13 18:54:14.000000000 +0200
+--- src/version.c	2009-05-13 20:43:22.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     170,
+  /**/
+
+-- 
+A special cleaning ordinance bans housewives from hiding dirt and dust under a
+rug in a dwelling.
+		[real standing law in Pennsylvania, United States of America]
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

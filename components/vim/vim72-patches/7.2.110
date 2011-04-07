@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.110
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.110
+Problem:    Compiler warning for unused variable.
+Solution:   Init the variable.
+Files:      src/ex_docmd.c
+    
+
+*** ../vim-7.2.109/src/ex_docmd.c	Wed Jan 28 15:42:07 2009
+--- src/ex_docmd.c	Tue Feb 17 03:47:13 2009
+***************
+*** 5916,5922 ****
+      char_u	*q;
+  
+      char_u	*start;
+!     char_u	*end;
+      char_u	*ksp;
+      size_t	len, totlen;
+  
+--- 5916,5922 ----
+      char_u	*q;
+  
+      char_u	*start;
+!     char_u	*end = NULL;
+      char_u	*ksp;
+      size_t	len, totlen;
+  
+*** ../vim-7.2.109/src/version.c	Sat Feb 21 20:27:00 2009
+--- src/version.c	Sat Feb 21 20:35:50 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     110,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+100. The most exciting sporting events you noticed during summer 1996
+    was Netscape vs. Microsoft.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

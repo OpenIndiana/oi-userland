@@ -1,0 +1,285 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.294
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.294
+Problem:    When using TEMPDIRS dir name could get too long.
+Solution:   Overwrite tail instead of appending each time.  Use mkdtemp() when
+	    available. (James Vega)
+Files:	    src/auto/configure, src/config.h.in, src/configure.in, src/fileio.c
+
+
+*** ../vim-7.2.293/src/auto/configure	2009-09-11 13:44:33.000000000 +0200
+--- src/auto/configure	2009-11-17 12:03:15.000000000 +0100
+***************
+*** 14019,14027 ****
+  
+  
+  
+  for ac_func in bcmp fchdir fchown fseeko fsync ftello getcwd getpseudotty \
+  	getpwnam getpwuid getrlimit gettimeofday getwd lstat memcmp \
+! 	memset nanosleep opendir putenv qsort readlink select setenv \
+  	setpgid setsid sigaltstack sigstack sigset sigsetjmp sigaction \
+  	sigvec strcasecmp strerror strftime stricmp strncasecmp \
+  	strnicmp strpbrk strtol tgetent towlower towupper iswupper \
+--- 14019,14028 ----
+  
+  
+  
++ 
+  for ac_func in bcmp fchdir fchown fseeko fsync ftello getcwd getpseudotty \
+  	getpwnam getpwuid getrlimit gettimeofday getwd lstat memcmp \
+! 	memset mkdtemp nanosleep opendir putenv qsort readlink select setenv \
+  	setpgid setsid sigaltstack sigstack sigset sigsetjmp sigaction \
+  	sigvec strcasecmp strerror strftime stricmp strncasecmp \
+  	strnicmp strpbrk strtol tgetent towlower towupper iswupper \
+*** ../vim-7.2.293/src/config.h.in	2009-05-21 23:25:38.000000000 +0200
+--- src/config.h.in	2009-11-11 17:40:21.000000000 +0100
+***************
+*** 157,162 ****
+--- 157,163 ----
+  #undef HAVE_LSTAT
+  #undef HAVE_MEMCMP
+  #undef HAVE_MEMSET
++ #undef HAVE_MKDTEMP
+  #undef HAVE_NANOSLEEP
+  #undef HAVE_OPENDIR
+  #undef HAVE_FLOAT_FUNCS
+*** ../vim-7.2.293/src/configure.in	2009-09-11 13:44:33.000000000 +0200
+--- src/configure.in	2009-11-11 17:40:21.000000000 +0100
+***************
+*** 2635,2641 ****
+  dnl Check for functions in one big call, to reduce the size of configure
+  AC_CHECK_FUNCS(bcmp fchdir fchown fseeko fsync ftello getcwd getpseudotty \
+  	getpwnam getpwuid getrlimit gettimeofday getwd lstat memcmp \
+! 	memset nanosleep opendir putenv qsort readlink select setenv \
+  	setpgid setsid sigaltstack sigstack sigset sigsetjmp sigaction \
+  	sigvec strcasecmp strerror strftime stricmp strncasecmp \
+  	strnicmp strpbrk strtol tgetent towlower towupper iswupper \
+--- 2635,2641 ----
+  dnl Check for functions in one big call, to reduce the size of configure
+  AC_CHECK_FUNCS(bcmp fchdir fchown fseeko fsync ftello getcwd getpseudotty \
+  	getpwnam getpwuid getrlimit gettimeofday getwd lstat memcmp \
+! 	memset mkdtemp nanosleep opendir putenv qsort readlink select setenv \
+  	setpgid setsid sigaltstack sigstack sigset sigsetjmp sigaction \
+  	sigvec strcasecmp strerror strftime stricmp strncasecmp \
+  	strnicmp strpbrk strtol tgetent towlower towupper iswupper \
+*** ../vim-7.2.293/src/fileio.c	2009-09-11 17:24:01.000000000 +0200
+--- src/fileio.c	2009-11-11 18:01:22.000000000 +0100
+***************
+*** 146,151 ****
+--- 146,152 ----
+  # endif
+  #endif
+  static int move_lines __ARGS((buf_T *frombuf, buf_T *tobuf));
++ static void vim_settempdir __ARGS((char_u *tempdir));
+  #ifdef FEAT_AUTOCMD
+  static char *e_auchangedbuf = N_("E812: Autocommands changed buffer or buffer name");
+  #endif
+***************
+*** 6987,6992 ****
+--- 6988,7020 ----
+  #endif
+  
+  /*
++  * Directory "tempdir" was created.  Expand this name to a full path and put
++  * it in "vim_tempdir".  This avoids that using ":cd" would confuse us.
++  * "tempdir" must be no longer than MAXPATHL.
++  */
++     static void
++ vim_settempdir(tempdir)
++     char_u	*tempdir;
++ {
++     char_u	*buf;
++ 
++     buf = alloc((unsigned)MAXPATHL + 2);
++     if (buf != NULL)
++     {
++ 	if (vim_FullName(tempdir, buf, MAXPATHL, FALSE) == FAIL)
++ 	    STRCPY(buf, tempdir);
++ # ifdef __EMX__
++ 	if (vim_strchr(buf, '/') != NULL)
++ 	    STRCAT(buf, "/");
++ 	else
++ # endif
++ 	    add_pathsep(buf);
++ 	vim_tempdir = vim_strsave(buf);
++ 	vim_free(buf);
++     }
++ }
++ 
++ /*
+   * vim_tempname(): Return a unique name that can be used for a temp file.
+   *
+   * The temp file is NOT created.
+***************
+*** 7007,7014 ****
+  #ifdef TEMPDIRNAMES
+      static char	*(tempdirs[]) = {TEMPDIRNAMES};
+      int		i;
+-     long	nr;
+-     long	off;
+  # ifndef EEXIST
+      struct stat	st;
+  # endif
+--- 7035,7040 ----
+***************
+*** 7027,7032 ****
+--- 7053,7064 ----
+  	 */
+  	for (i = 0; i < (int)(sizeof(tempdirs) / sizeof(char *)); ++i)
+  	{
++ 	    size_t	itmplen;
++ # ifndef HAVE_MKDTEMP
++ 	    long	nr;
++ 	    long	off;
++ # endif
++ 
+  	    /* expand $TMP, leave room for "/v1100000/999999999" */
+  	    expand_env((char_u *)tempdirs[i], itmp, TEMPNAMELEN - 20);
+  	    if (mch_isdir(itmp))		/* directory exists */
+***************
+*** 7040,7046 ****
+--- 7072,7085 ----
+  		else
+  # endif
+  		    add_pathsep(itmp);
++ 		itmplen = STRLEN(itmp);
+  
++ # ifdef HAVE_MKDTEMP
++ 		/* Leave room for filename */
++ 		STRCAT(itmp, "vXXXXXX");
++ 		if (mkdtemp((char *)itmp) != NULL)
++ 		    vim_settempdir(itmp);
++ # else
+  		/* Get an arbitrary number of up to 6 digits.  When it's
+  		 * unlikely that it already exists it will be faster,
+  		 * otherwise it doesn't matter.  The use of mkdir() avoids any
+***************
+*** 7052,7110 ****
+  		for (off = 0; off < 10000L; ++off)
+  		{
+  		    int		r;
+! #if defined(UNIX) || defined(VMS)
+  		    mode_t	umask_save;
+! #endif
+  
+! 		    sprintf((char *)itmp + STRLEN(itmp), "v%ld", nr + off);
+! # ifndef EEXIST
+  		    /* If mkdir() does not set errno to EEXIST, check for
+  		     * existing file here.  There is a race condition then,
+  		     * although it's fail-safe. */
+  		    if (mch_stat((char *)itmp, &st) >= 0)
+  			continue;
+! # endif
+! #if defined(UNIX) || defined(VMS)
+  		    /* Make sure the umask doesn't remove the executable bit.
+  		     * "repl" has been reported to use "177". */
+  		    umask_save = umask(077);
+! #endif
+  		    r = vim_mkdir(itmp, 0700);
+! #if defined(UNIX) || defined(VMS)
+  		    (void)umask(umask_save);
+! #endif
+  		    if (r == 0)
+  		    {
+! 			char_u	*buf;
+! 
+! 			/* Directory was created, use this name.
+! 			 * Expand to full path; When using the current
+! 			 * directory a ":cd" would confuse us. */
+! 			buf = alloc((unsigned)MAXPATHL + 1);
+! 			if (buf != NULL)
+! 			{
+! 			    if (vim_FullName(itmp, buf, MAXPATHL, FALSE)
+! 								      == FAIL)
+! 				STRCPY(buf, itmp);
+! # ifdef __EMX__
+! 			    if (vim_strchr(buf, '/') != NULL)
+! 				STRCAT(buf, "/");
+! 			    else
+! # endif
+! 				add_pathsep(buf);
+! 			    vim_tempdir = vim_strsave(buf);
+! 			    vim_free(buf);
+! 			}
+  			break;
+  		    }
+! # ifdef EEXIST
+  		    /* If the mkdir() didn't fail because the file/dir exists,
+  		     * we probably can't create any dir here, try another
+  		     * place. */
+  		    if (errno != EEXIST)
+! # endif
+  			break;
+  		}
+  		if (vim_tempdir != NULL)
+  		    break;
+  	    }
+--- 7091,7131 ----
+  		for (off = 0; off < 10000L; ++off)
+  		{
+  		    int		r;
+! #  if defined(UNIX) || defined(VMS)
+  		    mode_t	umask_save;
+! #  endif
+  
+! 		    sprintf((char *)itmp + itmplen, "v%ld", nr + off);
+! #  ifndef EEXIST
+  		    /* If mkdir() does not set errno to EEXIST, check for
+  		     * existing file here.  There is a race condition then,
+  		     * although it's fail-safe. */
+  		    if (mch_stat((char *)itmp, &st) >= 0)
+  			continue;
+! #  endif
+! #  if defined(UNIX) || defined(VMS)
+  		    /* Make sure the umask doesn't remove the executable bit.
+  		     * "repl" has been reported to use "177". */
+  		    umask_save = umask(077);
+! #  endif
+  		    r = vim_mkdir(itmp, 0700);
+! #  if defined(UNIX) || defined(VMS)
+  		    (void)umask(umask_save);
+! #  endif
+  		    if (r == 0)
+  		    {
+! 			vim_settempdir(itmp);
+  			break;
+  		    }
+! #  ifdef EEXIST
+  		    /* If the mkdir() didn't fail because the file/dir exists,
+  		     * we probably can't create any dir here, try another
+  		     * place. */
+  		    if (errno != EEXIST)
+! #  endif
+  			break;
+  		}
++ # endif /* HAVE_MKDTEMP */
+  		if (vim_tempdir != NULL)
+  		    break;
+  	    }
+*** ../vim-7.2.293/src/version.c	2009-11-11 17:30:05.000000000 +0100
+--- src/version.c	2009-11-17 11:54:49.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     294,
+  /**/
+
+-- 
+ARTHUR:       Now stand aside worthy adversary.
+BLACK KNIGHT: (Glancing at his shoulder) 'Tis but a scratch.
+ARTHUR:       A scratch?  Your arm's off.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

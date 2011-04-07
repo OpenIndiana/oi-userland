@@ -1,0 +1,60 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.409
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.409
+Problem:    Summary of number of substitutes is incorrect for ":folddo". (Jean
+	    Johner)
+Solution:   Reset sub_nsubs and sub_nlines in global_exe().
+Files:	    src/ex_cmds.c
+
+
+*** ../vim-7.2.408/src/ex_cmds.c	2010-03-23 17:36:24.000000000 +0100
+--- src/ex_cmds.c	2010-03-23 17:42:49.000000000 +0100
+***************
+*** 5238,5245 ****
+  	type = *eap->cmd;
+      cmd = eap->arg;
+      which_pat = RE_LAST;	    /* default: use last used regexp */
+-     sub_nsubs = 0;
+-     sub_nlines = 0;
+  
+      /*
+       * undocumented vi feature:
+--- 5238,5243 ----
+***************
+*** 5343,5348 ****
+--- 5341,5348 ----
+      /* When the command writes a message, don't overwrite the command. */
+      msg_didout = TRUE;
+  
++     sub_nsubs = 0;
++     sub_nlines = 0;
+      global_need_beginline = FALSE;
+      global_busy = 1;
+      old_lcount = curbuf->b_ml.ml_line_count;
+*** ../vim-7.2.408/src/version.c	2010-03-23 17:36:24.000000000 +0100
+--- src/version.c	2010-03-23 17:47:53.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     409,
+  /**/
+
+-- 
+BRIDGEKEEPER: What is your favorite colour?
+LAUNCELOT:    Blue.
+BRIDGEKEEPER: Right.  Off you go.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

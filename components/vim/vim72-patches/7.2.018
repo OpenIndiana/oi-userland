@@ -1,0 +1,45 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.018
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.018
+Problem:    Memory leak when substitute is aborted.
+Solution:   Free the buffer allocated for the new text. (Dominique Pelle)
+Files:	    src/ex_cmds.c
+
+
+*** ../vim-7.2.017/src/ex_cmds.c	Wed Aug  6 15:03:07 2008
+--- src/ex_cmds.c	Sun Sep 14 13:45:03 2008
+***************
+*** 5059,5064 ****
+--- 5059,5065 ----
+  
+  	    if (did_sub)
+  		++sub_nlines;
++ 	    vim_free(new_start);	/* for when substitute was cancelled */
+  	    vim_free(sub_firstline);	/* free the copy of the original line */
+  	    sub_firstline = NULL;
+  	}
+*** ../vim-7.2.017/src/version.c	Sun Sep 14 15:57:54 2008
+--- src/version.c	Sun Sep 14 21:38:25 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     18,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+55. You ask your doctor to implant a gig in your brain.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

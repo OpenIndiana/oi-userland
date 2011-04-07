@@ -1,0 +1,52 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.425
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.425
+Problem:    Some compilers complain about fourth EX() argument.
+Solution:   Add cast to long_u.
+Files:	    src/ex_cmds.h
+
+
+*** ../vim-7.2.424/src/ex_cmds.h	2010-05-14 15:28:37.000000000 +0200
+--- src/ex_cmds.h	2010-05-14 13:08:45.000000000 +0200
+***************
+*** 74,80 ****
+  # undef EX	    /* just in case */
+  #endif
+  #ifdef DO_DECLARE_EXCMD
+! # define EX(a, b, c, d)  {(char_u *)b, c, d}
+  
+  typedef void (*ex_func_T) __ARGS((exarg_T *eap));
+  
+--- 74,80 ----
+  # undef EX	    /* just in case */
+  #endif
+  #ifdef DO_DECLARE_EXCMD
+! # define EX(a, b, c, d)  {(char_u *)b, c, (long_u)(d)}
+  
+  typedef void (*ex_func_T) __ARGS((exarg_T *eap));
+  
+*** ../vim-7.2.424/src/version.c	2010-05-14 15:28:37.000000000 +0200
+--- src/version.c	2010-05-14 15:42:23.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     425,
+  /**/
+
+-- 
+The users that I support would double-click on a landmine to find out
+what happens.				-- A system administrator
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

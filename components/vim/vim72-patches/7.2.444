@@ -1,0 +1,85 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.444
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.444 (after 7.2.442)
+Problem:    Can't build with GTK 1, gtk_selection_clear_targets() is not
+            available. (Patrick Texier)
+Solution:   Don't change the targets for GTK 1, set them once.
+Files:      src/gui_gtk_x11.c, src/option.c
+
+
+*** ../vim-7.2.443/src/gui_gtk_x11.c	2010-06-05 12:49:40.000000000 +0200
+--- src/gui_gtk_x11.c	2010-06-13 02:26:24.000000000 +0200
+***************
+*** 3478,3484 ****
+  
+      for (i = 0; i < (int)N_SELECTION_TARGETS; ++i)
+      {
+! #ifdef FEAT_MBYTE
+  	/* OpenOffice tries to use TARGET_HTML and fails when it doesn't
+  	 * return something, instead of trying another target. Therefore only
+  	 * offer TARGET_HTML when it works. */
+--- 3478,3484 ----
+  
+      for (i = 0; i < (int)N_SELECTION_TARGETS; ++i)
+      {
+! #if defined(FEAT_MBYTE) && defined(HAVE_GTK2)
+  	/* OpenOffice tries to use TARGET_HTML and fails when it doesn't
+  	 * return something, instead of trying another target. Therefore only
+  	 * offer TARGET_HTML when it works. */
+***************
+*** 3489,3496 ****
+--- 3489,3498 ----
+  	    targets[j++] = selection_targets[i];
+      }
+  
++ #ifdef HAVE_GTK2  /* GTK 1 doesn't have this function */
+      gtk_selection_clear_targets(gui.drawarea, (GdkAtom)GDK_SELECTION_PRIMARY);
+      gtk_selection_clear_targets(gui.drawarea, (GdkAtom)clip_plus.gtk_sel_atom);
++ #endif
+      gtk_selection_add_targets(gui.drawarea,
+  			      (GdkAtom)GDK_SELECTION_PRIMARY,
+  			      targets, n_targets);
+*** ../vim-7.2.443/src/option.c	2010-06-05 12:49:40.000000000 +0200
+--- src/option.c	2010-06-13 02:27:36.000000000 +0200
+***************
+*** 7112,7118 ****
+  	clip_html = new_html;
+  	vim_free(clip_exclude_prog);
+  	clip_exclude_prog = new_exclude_prog;
+! #ifdef FEAT_GUI_GTK
+  	if (gui.in_use)
+  	{
+  	    gui_gtk_set_selection_targets();
+--- 7112,7118 ----
+  	clip_html = new_html;
+  	vim_free(clip_exclude_prog);
+  	clip_exclude_prog = new_exclude_prog;
+! #ifdef HAVE_GTK2  /* for GTK 1 we can't change the list of targets */
+  	if (gui.in_use)
+  	{
+  	    gui_gtk_set_selection_targets();
+*** ../vim-7.2.443/src/version.c	2010-06-12 20:11:53.000000000 +0200
+--- src/version.c	2010-06-13 02:29:18.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     444,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+195. Your cat has its own home page.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

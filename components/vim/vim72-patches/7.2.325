@@ -1,0 +1,52 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.325
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.325
+Problem:    A stray "w" in the startup vimrc file causes the edited file to be
+	    replaced with an empty file. (Stone Kang).
+Solution:   Do not write a buffer when it has never been loaded.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.324/src/fileio.c	2009-12-02 13:32:10.000000000 +0100
+--- src/fileio.c	2009-12-31 14:08:31.000000000 +0100
+***************
+*** 2981,2986 ****
+--- 2981,2993 ----
+  
+      if (fname == NULL || *fname == NUL)	/* safety check */
+  	return FAIL;
++     if (buf->b_ml.ml_mfp == NULL)
++     {
++ 	/* This can happen during startup when there is a stray "w" in the
++ 	 * vimrc file. */
++ 	EMSG(_(e_emptybuf));
++ 	return FAIL;
++     }
+  
+      /*
+       * Disallow writing from .exrc and .vimrc in current directory for
+*** ../vim-7.2.324/src/version.c	2009-12-31 13:18:05.000000000 +0100
+--- src/version.c	2009-12-31 14:52:29.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     325,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+74. Your most erotic dreams are about cybersex
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

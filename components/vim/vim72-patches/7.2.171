@@ -1,0 +1,80 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.171
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.171 (after 7.2.169)
+Problem:    Compiler warnings. (Tony Mechelynck)
+Solution:   Add function prototype. (Patrick Texier)  Init variable.
+Files:	    src/ex_cmds.c
+
+
+*** ../vim-7.2.170/src/ex_cmds.c	2009-05-13 18:54:14.000000000 +0200
+--- src/ex_cmds.c	2009-05-14 21:11:01.000000000 +0200
+***************
+*** 4637,4643 ****
+  
+  		if (do_ask)
+  		{
+! 		    int typed;
+  
+  		    /* change State to CONFIRM, so that the mouse works
+  		     * properly */
+--- 4635,4641 ----
+  
+  		if (do_ask)
+  		{
+! 		    int typed = 0;
+  
+  		    /* change State to CONFIRM, so that the mouse works
+  		     * properly */
+***************
+*** 6553,6558 ****
+--- 6549,6555 ----
+  static sign_T	*first_sign = NULL;
+  static int	last_sign_typenr = MAX_TYPENR;	/* is decremented */
+  
++ static int sign_cmd_idx __ARGS((char_u *begin_cmd, char_u *end_cmd));
+  static void sign_list_defined __ARGS((sign_T *sp));
+  static void sign_undefine __ARGS((sign_T *sp, sign_T *sp_prev));
+  
+***************
+*** 6579,6586 ****
+   */
+      static int
+  sign_cmd_idx(begin_cmd, end_cmd)
+!     char	*begin_cmd;	/* begin of sign subcmd */
+!     char	*end_cmd;	/* just after sign subcmd */
+  {
+      int		idx;
+      char	save = *end_cmd;
+--- 6576,6583 ----
+   */
+      static int
+  sign_cmd_idx(begin_cmd, end_cmd)
+!     char_u	*begin_cmd;	/* begin of sign subcmd */
+!     char_u	*end_cmd;	/* just after sign subcmd */
+  {
+      int		idx;
+      char	save = *end_cmd;
+*** ../vim-7.2.170/src/version.c	2009-05-13 20:47:07.000000000 +0200
+--- src/version.c	2009-05-14 21:49:22.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     171,
+  /**/
+
+-- 
+Living on Earth includes an annual free trip around the Sun.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

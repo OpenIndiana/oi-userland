@@ -1,0 +1,78 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.339
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.339 (after 7.2.269)
+Problem:    Part of --startuptime patch is missing.
+Solution:   Add check for time_fd.
+Files:	    src/ex_cmds2.c
+
+
+*** ../vim-7.2.338/src/ex_cmds2.c	2010-01-19 16:21:55.000000000 +0100
+--- src/ex_cmds2.c	2010-01-19 16:02:53.000000000 +0100
+***************
+*** 3036,3042 ****
+  #endif
+  
+  #ifdef STARTUPTIME
+!     time_push(&tv_rel, &tv_start);
+  #endif
+  
+  #ifdef FEAT_EVAL
+--- 3036,3043 ----
+  #endif
+  
+  #ifdef STARTUPTIME
+!     if (time_fd != NULL)
+! 	time_push(&tv_rel, &tv_start);
+  #endif
+  
+  #ifdef FEAT_EVAL
+***************
+*** 3162,3170 ****
+  	verbose_leave();
+      }
+  #ifdef STARTUPTIME
+!     vim_snprintf((char *)IObuff, IOSIZE, "sourcing %s", fname);
+!     time_msg((char *)IObuff, &tv_start);
+!     time_pop(&tv_rel);
+  #endif
+  
+  #ifdef FEAT_EVAL
+--- 3163,3174 ----
+  	verbose_leave();
+      }
+  #ifdef STARTUPTIME
+!     if (time_fd != NULL)
+!     {
+! 	vim_snprintf((char *)IObuff, IOSIZE, "sourcing %s", fname);
+! 	time_msg((char *)IObuff, &tv_start);
+! 	time_pop(&tv_rel);
+!     }
+  #endif
+  
+  #ifdef FEAT_EVAL
+*** ../vim-7.2.338/src/version.c	2010-01-19 16:21:55.000000000 +0100
+--- src/version.c	2010-01-19 16:25:39.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     339,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+122. You ask if the Netaholics Anonymous t-shirt you ordered can be
+     sent to you via e-mail.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

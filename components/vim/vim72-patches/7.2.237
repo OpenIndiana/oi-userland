@@ -1,0 +1,76 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.237
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.237
+Problem:    Crash on exit when window icon not set.
+Solution:   Copy terminal name when using it for the icon name.
+Files:	    src/os_unix.c
+
+
+*** ../vim-7.2.236/src/os_unix.c	2009-07-14 17:38:51.000000000 +0200
+--- src/os_unix.c	2009-07-14 18:30:04.000000000 +0200
+***************
+*** 1734,1742 ****
+      if (oldicon == NULL && !test_only)
+      {
+  	if (STRNCMP(T_NAME, "builtin_", 8) == 0)
+! 	    oldicon = T_NAME + 8;
+  	else
+! 	    oldicon = T_NAME;
+      }
+  
+      return retval;
+--- 1734,1742 ----
+      if (oldicon == NULL && !test_only)
+      {
+  	if (STRNCMP(T_NAME, "builtin_", 8) == 0)
+! 	    oldicon = vim_strsave(T_NAME + 8);
+  	else
+! 	    oldicon = vim_strsave(T_NAME);
+      }
+  
+      return retval;
+***************
+*** 1939,1947 ****
+      if (!test_only)
+      {
+  	if (STRNCMP(T_NAME, "builtin_", 8) == 0)
+! 	    oldicon = T_NAME + 8;
+  	else
+! 	    oldicon = T_NAME;
+      }
+      return FALSE;
+  }
+--- 1939,1947 ----
+      if (!test_only)
+      {
+  	if (STRNCMP(T_NAME, "builtin_", 8) == 0)
+! 	    oldicon = vim_strsave(T_NAME + 8);
+  	else
+! 	    oldicon = vim_strsave(T_NAME);
+      }
+      return FALSE;
+  }
+*** ../vim-7.2.236/src/version.c	2009-07-22 11:16:54.000000000 +0200
+--- src/version.c	2009-07-22 13:26:30.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     237,
+  /**/
+
+-- 
+Common sense is what tells you that the world is flat.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

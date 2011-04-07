@@ -1,0 +1,56 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.107
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.107
+Problem:    When using a GUI dialog and ":echo" commands the messages are
+	    deleted after the dialog. (Vicent Birebent)
+Solution:   Don't call msg_end_prompt() since there was no prompt.
+Files:	    src/message.c
+
+
+*** ../vim-7.2.106/src/message.c	Tue Jan 13 16:37:31 2009
+--- src/message.c	Wed Feb 11 18:38:14 2009
+***************
+*** 3309,3315 ****
+      {
+  	c = gui_mch_dialog(type, title, message, buttons, dfltbutton,
+  								   textfield);
+! 	msg_end_prompt();
+  
+  	/* Flush output to avoid that further messages and redrawing is done
+  	 * in the wrong order. */
+--- 3309,3318 ----
+      {
+  	c = gui_mch_dialog(type, title, message, buttons, dfltbutton,
+  								   textfield);
+! 	/* avoid a hit-enter prompt without clearing the cmdline */
+! 	need_wait_return = FALSE;
+! 	emsg_on_display = FALSE;
+! 	cmdline_row = msg_row;
+  
+  	/* Flush output to avoid that further messages and redrawing is done
+  	 * in the wrong order. */
+*** ../vim-7.2.106/src/version.c	Wed Feb 11 17:57:43 2009
+--- src/version.c	Wed Feb 11 18:46:12 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     107,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+79. All of your most erotic dreams have a scrollbar at the right side.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

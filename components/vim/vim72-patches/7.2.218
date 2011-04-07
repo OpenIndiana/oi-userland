@@ -1,0 +1,52 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.218
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.218
+Problem:    Cannot build GTK with hangul_input feature. (Dominique Pelle)
+Solution:   Adjuste #ifdef.  (SungHyun Nam)
+Files:	    src/gui.c
+
+
+*** ../vim-7.2.217/src/gui.c	2009-06-16 16:01:34.000000000 +0200
+--- src/gui.c	2009-06-24 17:45:01.000000000 +0200
+***************
+*** 959,965 ****
+  		guicolor_T fg, bg;
+  
+  		if (
+! # ifdef HAVE_GTK2
+  			preedit_get_status()
+  # else
+  			im_get_status()
+--- 959,965 ----
+  		guicolor_T fg, bg;
+  
+  		if (
+! # if defined(HAVE_GTK2) && !defined(FEAT_HANGULIN)
+  			preedit_get_status()
+  # else
+  			im_get_status()
+*** ../vim-7.2.217/src/version.c	2009-06-24 18:07:55.000000000 +0200
+--- src/version.c	2009-06-24 18:31:06.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     218,
+  /**/
+
+-- 
+The users that I support would double-click on a landmine to find out
+what happens.				-- A system administrator
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

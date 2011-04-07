@@ -1,0 +1,46 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.206
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.206
+Problem:    Win32: Can't build netbeans interface with Visual Studio 2010.
+Solution:   Undefine ECONNREFUSED. (George Reilly)
+Files:	    src/netbeans.c
+
+
+*** ../vim-7.2.205/src/netbeans.c	2009-05-17 23:25:16.000000000 +0200
+--- src/netbeans.c	2009-06-16 16:39:17.000000000 +0200
+***************
+*** 32,37 ****
+--- 32,38 ----
+  /* WinSock API is separated from C API, thus we can't use read(), write(),
+   * errno... */
+  # define sock_errno WSAGetLastError()
++ # undef ECONNREFUSED
+  # define ECONNREFUSED WSAECONNREFUSED
+  # ifdef EINTR
+  #  undef EINTR
+*** ../vim-7.2.205/src/version.c	2009-06-16 16:45:14.000000000 +0200
+--- src/version.c	2009-06-16 16:57:45.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     206,
+  /**/
+
+-- 
+How To Keep A Healthy Level Of Insanity:
+18. When leaving the zoo, start running towards the parking lot,
+    yelling "run for your lives, they're loose!!"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

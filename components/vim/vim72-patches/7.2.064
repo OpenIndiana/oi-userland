@@ -1,0 +1,66 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.064
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.064
+Problem:    Screen update bug when repeating "~" on a Visual block and the
+	    last line doesn't change.
+Solution:   Keep track of changes for all lines.  (Moritz Orbach)
+Files:	    src/ops.c
+
+
+*** ../vim-7.2.063/src/ops.c	Tue Jun 24 23:59:55 2008
+--- src/ops.c	Wed Dec  3 13:12:06 2008
+***************
+*** 2209,2220 ****
+      {
+  	for (; pos.lnum <= oap->end.lnum; ++pos.lnum)
+  	{
+  	    block_prep(oap, &bd, pos.lnum, FALSE);
+  	    pos.col = bd.textcol;
+! 	    did_change = swapchars(oap->op_type, &pos, bd.textlen);
+  
+  # ifdef FEAT_NETBEANS_INTG
+! 	    if (usingNetbeans && did_change)
+  	    {
+  		char_u *ptr = ml_get_buf(curbuf, pos.lnum, FALSE);
+  
+--- 2209,2223 ----
+      {
+  	for (; pos.lnum <= oap->end.lnum; ++pos.lnum)
+  	{
++ 	    int one_change;
++ 
+  	    block_prep(oap, &bd, pos.lnum, FALSE);
+  	    pos.col = bd.textcol;
+! 	    one_change = swapchars(oap->op_type, &pos, bd.textlen);
+! 	    did_change |= one_change;
+  
+  # ifdef FEAT_NETBEANS_INTG
+! 	    if (usingNetbeans && one_change)
+  	    {
+  		char_u *ptr = ml_get_buf(curbuf, pos.lnum, FALSE);
+  
+*** ../vim-7.2.063/src/version.c	Wed Dec  3 13:18:16 2008
+--- src/version.c	Wed Dec  3 13:14:46 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     64,
+  /**/
+
+-- 
+Q:   How many hardware engineers does it take to change a lightbulb?
+A:   None.  We'll fix it in software.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,413 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.130
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.130
+Problem:    Vim may haing until CTRL-C is typed when using CTRL-Z.
+Solution:   Avoid using pause().  Also use "volatile" for variables used in
+            signal functions. (Dominique Pelle)
+Files:      src/auto/configure, src/configure.in, src/config.h.in,
+            src/globals.h, src/os_unix.c
+    
+
+*** ../vim-7.2.129/src/auto/configure	Thu Nov 20 10:36:04 2008
+--- src/auto/configure	Mon Mar  2 02:36:52 2009
+***************
+*** 11565,11570 ****
+--- 11565,11631 ----
+  
+  fi
+  
++ { $as_echo "$as_me:$LINENO: checking for working volatile" >&5
++ $as_echo_n "checking for working volatile... " >&6; }
++ if test "${ac_cv_c_volatile+set}" = set; then
++   $as_echo_n "(cached) " >&6
++ else
++   cat >conftest.$ac_ext <<_ACEOF
++ /* confdefs.h.  */
++ _ACEOF
++ cat confdefs.h >>conftest.$ac_ext
++ cat >>conftest.$ac_ext <<_ACEOF
++ /* end confdefs.h.  */
++ 
++ int
++ main ()
++ {
++ 
++ volatile int x;
++ int * volatile y = (int *) 0;
++ return !x && !y;
++   ;
++   return 0;
++ }
++ _ACEOF
++ rm -f conftest.$ac_objext
++ if { (ac_try="$ac_compile"
++ case "(($ac_try" in
++   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
++   *) ac_try_echo=$ac_try;;
++ esac
++ eval ac_try_echo="\"\$as_me:$LINENO: $ac_try_echo\""
++ $as_echo "$ac_try_echo") >&5
++   (eval "$ac_compile") 2>conftest.er1
++   ac_status=$?
++   grep -v '^ *+' conftest.er1 >conftest.err
++   rm -f conftest.er1
++   cat conftest.err >&5
++   $as_echo "$as_me:$LINENO: \$? = $ac_status" >&5
++   (exit $ac_status); } && {
++ 	 test -z "$ac_c_werror_flag" ||
++ 	 test ! -s conftest.err
++        } && test -s conftest.$ac_objext; then
++   ac_cv_c_volatile=yes
++ else
++   $as_echo "$as_me: failed program was:" >&5
++ sed 's/^/| /' conftest.$ac_ext >&5
++ 
++ 	ac_cv_c_volatile=no
++ fi
++ 
++ rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
++ fi
++ { $as_echo "$as_me:$LINENO: result: $ac_cv_c_volatile" >&5
++ $as_echo "$ac_cv_c_volatile" >&6; }
++ if test $ac_cv_c_volatile = no; then
++ 
++ cat >>confdefs.h <<\_ACEOF
++ #define volatile /**/
++ _ACEOF
++ 
++ fi
++ 
+  { $as_echo "$as_me:$LINENO: checking for mode_t" >&5
+  $as_echo_n "checking for mode_t... " >&6; }
+  if test "${ac_cv_type_mode_t+set}" = set; then
+*** ../vim-7.2.129/src/configure.in	Thu Nov 20 10:36:04 2008
+--- src/configure.in	Sun Feb 22 21:47:44 2009
+***************
+*** 2148,2153 ****
+--- 2148,2154 ----
+  dnl Checks for typedefs, structures, and compiler characteristics.
+  AC_PROG_GCC_TRADITIONAL
+  AC_C_CONST
++ AC_C_VOLATILE
+  AC_TYPE_MODE_T
+  AC_TYPE_OFF_T
+  AC_TYPE_PID_T
+*** ../vim-7.2.129/src/config.h.in	Tue Jun 24 23:47:46 2008
+--- src/config.h.in	Mon Feb 23 00:13:17 2009
+***************
+*** 50,55 ****
+--- 50,58 ----
+  /* Define to empty if the keyword does not work.  */
+  #undef const
+  
++ /* Define to empty if the keyword does not work.  */
++ #undef volatile
++ 
+  /* Define to `int' if <sys/types.h> doesn't define.  */
+  #undef mode_t
+  
+*** ../vim-7.2.129/src/globals.h	Tue Jan  6 16:13:42 2009
+--- src/globals.h	Mon Mar  2 02:40:16 2009
+***************
+*** 482,489 ****
+  /*
+   * While executing external commands or in Ex mode, should not insert GUI
+   * events in the input buffer: Set hold_gui_events to non-zero.
+   */
+! EXTERN int	hold_gui_events INIT(= 0);
+  
+  /*
+   * When resizing the shell is postponed, remember the new size, and call
+--- 482,491 ----
+  /*
+   * While executing external commands or in Ex mode, should not insert GUI
+   * events in the input buffer: Set hold_gui_events to non-zero.
++  *
++  * volatile because it is used in signal handler sig_sysmouse().
+   */
+! EXTERN volatile int hold_gui_events INIT(= 0);
+  
+  /*
+   * When resizing the shell is postponed, remember the new size, and call
+***************
+*** 597,603 ****
+  EXTERN int	really_exiting INIT(= FALSE);
+  				/* TRUE when we are sure to exit, e.g., after
+  				 * a deadly signal */
+! EXTERN int	full_screen INIT(= FALSE);
+  				/* TRUE when doing full-screen output
+  				 * otherwise only writing some messages */
+  
+--- 599,606 ----
+  EXTERN int	really_exiting INIT(= FALSE);
+  				/* TRUE when we are sure to exit, e.g., after
+  				 * a deadly signal */
+! /* volatile because it is used in signal handler deathtrap(). */
+! EXTERN volatile int full_screen INIT(= FALSE);
+  				/* TRUE when doing full-screen output
+  				 * otherwise only writing some messages */
+  
+***************
+*** 739,748 ****
+   */
+  EXTERN JMP_BUF lc_jump_env;	/* argument to SETJMP() */
+  # ifdef SIGHASARG
+! EXTERN int lc_signal;		/* catched signal number, 0 when no was signal
+! 				   catched; used for mch_libcall() */
+  # endif
+! EXTERN int lc_active INIT(= FALSE); /* TRUE when lc_jump_env is valid. */
+  #endif
+  
+  #if defined(FEAT_MBYTE) || defined(FEAT_POSTSCRIPT)
+--- 747,758 ----
+   */
+  EXTERN JMP_BUF lc_jump_env;	/* argument to SETJMP() */
+  # ifdef SIGHASARG
+! /* volatile because it is used in signal handlers. */
+! EXTERN volatile int lc_signal;	/* caught signal number, 0 when no was signal
+! 				   caught; used for mch_libcall() */
+  # endif
+! /* volatile because it is used in signal handler deathtrap(). */
+! EXTERN volatile int lc_active INIT(= FALSE); /* TRUE when lc_jump_env is valid. */
+  #endif
+  
+  #if defined(FEAT_MBYTE) || defined(FEAT_POSTSCRIPT)
+***************
+*** 986,992 ****
+  EXTERN FILE	*scriptout  INIT(= NULL);   /* stream to write script to */
+  EXTERN int	read_cmd_fd INIT(= 0);	    /* fd to read commands from */
+  
+! EXTERN int	got_int INIT(= FALSE);	    /* set to TRUE when interrupt
+  						signal occurred */
+  #ifdef USE_TERM_CONSOLE
+  EXTERN int	term_console INIT(= FALSE); /* set to TRUE when console used */
+--- 996,1003 ----
+  EXTERN FILE	*scriptout  INIT(= NULL);   /* stream to write script to */
+  EXTERN int	read_cmd_fd INIT(= 0);	    /* fd to read commands from */
+  
+! /* volatile because it is used in signal handler catch_sigint(). */
+! EXTERN volatile int got_int INIT(= FALSE);    /* set to TRUE when interrupt
+  						signal occurred */
+  #ifdef USE_TERM_CONSOLE
+  EXTERN int	term_console INIT(= FALSE); /* set to TRUE when console used */
+*** ../vim-7.2.129/src/os_unix.c	Sun Feb 22 02:51:37 2009
+--- src/os_unix.c	Mon Mar  2 01:05:50 2009
+***************
+*** 181,187 ****
+  	&& defined(FEAT_TITLE) && !defined(FEAT_GUI_GTK)
+  # define SET_SIG_ALARM
+  static RETSIGTYPE sig_alarm __ARGS(SIGPROTOARG);
+! static int sig_alarm_called;
+  #endif
+  static RETSIGTYPE deathtrap __ARGS(SIGPROTOARG);
+  
+--- 181,188 ----
+  	&& defined(FEAT_TITLE) && !defined(FEAT_GUI_GTK)
+  # define SET_SIG_ALARM
+  static RETSIGTYPE sig_alarm __ARGS(SIGPROTOARG);
+! /* volatile because it is used in signal handler sig_alarm(). */
+! static volatile int sig_alarm_called;
+  #endif
+  static RETSIGTYPE deathtrap __ARGS(SIGPROTOARG);
+  
+***************
+*** 201,213 ****
+  # define SIG_ERR	((RETSIGTYPE (*)())-1)
+  #endif
+  
+! static int	do_resize = FALSE;
+  #ifndef __EMX__
+  static char_u	*extra_shell_arg = NULL;
+  static int	show_shell_mess = TRUE;
+  #endif
+! static int	deadly_signal = 0;	    /* The signal we caught */
+! static int	in_mch_delay = FALSE;	    /* sleeping in mch_delay() */
+  
+  static int curr_tmode = TMODE_COOK;	/* contains current terminal mode */
+  
+--- 202,217 ----
+  # define SIG_ERR	((RETSIGTYPE (*)())-1)
+  #endif
+  
+! /* volatile because it is used in signal handler sig_winch(). */
+! static volatile int do_resize = FALSE;
+  #ifndef __EMX__
+  static char_u	*extra_shell_arg = NULL;
+  static int	show_shell_mess = TRUE;
+  #endif
+! /* volatile because it is used in signal handler deathtrap(). */
+! static volatile int deadly_signal = 0;	    /* The signal we caught */
+! /* volatile because it is used in signal handler deathtrap(). */
+! static volatile int in_mch_delay = FALSE;    /* sleeping in mch_delay() */
+  
+  static int curr_tmode = TMODE_COOK;	/* contains current terminal mode */
+  
+***************
+*** 802,808 ****
+  #endif
+  
+  /*
+!  * We need correct potatotypes for a signal function, otherwise mean compilers
+   * will barf when the second argument to signal() is ``wrong''.
+   * Let me try it with a few tricky defines from my own osdef.h	(jw).
+   */
+--- 806,812 ----
+  #endif
+  
+  /*
+!  * We need correct prototypes for a signal function, otherwise mean compilers
+   * will barf when the second argument to signal() is ``wrong''.
+   * Let me try it with a few tricky defines from my own osdef.h	(jw).
+   */
+***************
+*** 1068,1080 ****
+      SIGRETURN;
+  }
+  
+! #ifdef _REENTRANT
+  /*
+   * On Solaris with multi-threading, suspending might not work immediately.
+   * Catch the SIGCONT signal, which will be used as an indication whether the
+   * suspending has been done or not.
+   */
+! static int sigcont_received;
+  static RETSIGTYPE sigcont_handler __ARGS(SIGPROTOARG);
+  
+  /*
+--- 1072,1089 ----
+      SIGRETURN;
+  }
+  
+! #if defined(_REENTRANT) && defined(SIGCONT)
+  /*
+   * On Solaris with multi-threading, suspending might not work immediately.
+   * Catch the SIGCONT signal, which will be used as an indication whether the
+   * suspending has been done or not.
++  *
++  * On Linux, signal is not always handled immediately either.
++  * See https://bugs.launchpad.net/bugs/291373
++  *
++  * volatile because it is used in in signal handler sigcont_handler().
+   */
+! static volatile int sigcont_received;
+  static RETSIGTYPE sigcont_handler __ARGS(SIGPROTOARG);
+  
+  /*
+***************
+*** 1118,1132 ****
+      }
+  # endif
+  
+! # ifdef _REENTRANT
+      sigcont_received = FALSE;
+  # endif
+      kill(0, SIGTSTP);	    /* send ourselves a STOP signal */
+! # ifdef _REENTRANT
+!     /* When we didn't suspend immediately in the kill(), do it now.  Happens
+!      * on multi-threaded Solaris. */
+!     if (!sigcont_received)
+! 	pause();
+  # endif
+  
+  # ifdef FEAT_TITLE
+--- 1127,1154 ----
+      }
+  # endif
+  
+! # if defined(_REENTRANT) && defined(SIGCONT)
+      sigcont_received = FALSE;
+  # endif
+      kill(0, SIGTSTP);	    /* send ourselves a STOP signal */
+! # if defined(_REENTRANT) && defined(SIGCONT)
+!     /*
+!      * Wait for the SIGCONT signal to be handled. It generally happens
+!      * immediately, but somehow not all the time. Do not call pause()
+!      * because there would be race condition which would hang Vim if
+!      * signal happened in between the test of sigcont_received and the
+!      * call to pause(). If signal is not yet received, call sleep(0)
+!      * to just yield CPU. Signal should then be received. If somehow
+!      * it's still not received, sleep 1, 2, 3 ms. Don't bother waiting
+!      * further if signal is not received after 1+2+3+4 ms (not expected
+!      * to happen).
+!      */
+!     {
+! 	long wait;
+! 	for (wait = 0; !sigcont_received && wait <= 3L; wait++)
+! 	    /* Loop is not entered most of the time */
+! 	    mch_delay(wait, FALSE);
+!     }
+  # endif
+  
+  # ifdef FEAT_TITLE
+***************
+*** 1175,1181 ****
+  #ifdef SIGTSTP
+      signal(SIGTSTP, restricted ? SIG_IGN : SIG_DFL);
+  #endif
+! #ifdef _REENTRANT
+      signal(SIGCONT, sigcont_handler);
+  #endif
+  
+--- 1197,1203 ----
+  #ifdef SIGTSTP
+      signal(SIGTSTP, restricted ? SIG_IGN : SIG_DFL);
+  #endif
+! #if defined(_REENTRANT) && defined(SIGCONT)
+      signal(SIGCONT, sigcont_handler);
+  #endif
+  
+***************
+*** 1234,1240 ****
+  reset_signals()
+  {
+      catch_signals(SIG_DFL, SIG_DFL);
+! #ifdef _REENTRANT
+      /* SIGCONT isn't in the list, because its default action is ignore */
+      signal(SIGCONT, SIG_DFL);
+  #endif
+--- 1256,1262 ----
+  reset_signals()
+  {
+      catch_signals(SIG_DFL, SIG_DFL);
+! #if defined(_REENTRANT) && defined(SIGCONT)
+      /* SIGCONT isn't in the list, because its default action is ignore */
+      signal(SIGCONT, SIG_DFL);
+  #endif
+***************
+*** 5899,5905 ****
+--- 5921,5929 ----
+  	     * we are going to suspend or starting an external process
+  	     * so we shouldn't  have problem with this
+  	     */
++ # ifdef SIGTSTP
+  	    signal(SIGTSTP, restricted ? SIG_IGN : SIG_DFL);
++ # endif
+  	    return 1; /* succeed */
+  	}
+  	if (gpm_fd == -2)
+*** ../vim-7.2.129/src/version.c	Mon Mar  2 02:11:09 2009
+--- src/version.c	Mon Mar  2 02:36:00 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     130,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+148. You find it easier to dial-up the National Weather Service
+     Weather/your_town/now.html than to simply look out the window.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

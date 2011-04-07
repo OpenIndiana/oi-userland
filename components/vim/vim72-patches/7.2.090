@@ -1,0 +1,130 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.090
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.090
+Problem:    User command containing 0x80 in multi-byte character does not work
+	    properly. (Yasuhiro Matsumoto)
+Solution:   Undo replacement of K_SPECIAL and CSI characters when executing
+	    the command.
+Files:	    src/ex_docmd.c
+
+
+*** ../vim-7.2.089/src/ex_docmd.c	Tue Dec  9 11:17:23 2008
+--- src/ex_docmd.c	Wed Jan 28 15:34:19 2009
+***************
+*** 5482,5487 ****
+--- 5482,5490 ----
+      return OK;
+  }
+  
++ /*
++  * ":command ..."
++  */
+      static void
+  ex_command(eap)
+      exarg_T   *eap;
+***************
+*** 5914,5919 ****
+--- 5917,5923 ----
+  
+      char_u	*start;
+      char_u	*end;
++     char_u	*ksp;
+      size_t	len, totlen;
+  
+      size_t	split_len = 0;
+***************
+*** 5930,5945 ****
+  
+      /*
+       * Replace <> in the command by the arguments.
+       */
+      buf = NULL;
+      for (;;)
+      {
+! 	p = cmd->uc_rep;
+! 	q = buf;
+  	totlen = 0;
+! 	while ((start = vim_strchr(p, '<')) != NULL
+! 	       && (end = vim_strchr(start + 1, '>')) != NULL)
+  	{
+  	    /* Include the '>' */
+  	    ++end;
+  
+--- 5934,5984 ----
+  
+      /*
+       * Replace <> in the command by the arguments.
++      * First round: "buf" is NULL, compute length, allocate "buf".
++      * Second round: copy result into "buf".
+       */
+      buf = NULL;
+      for (;;)
+      {
+! 	p = cmd->uc_rep;    /* source */
+! 	q = buf;	    /* destinateion */
+  	totlen = 0;
+! 
+! 	for (;;)
+  	{
++ 	    start = vim_strchr(p, '<');
++ 	    if (start != NULL)
++ 		end = vim_strchr(start + 1, '>');
++ 	    if (buf != NULL)
++ 	    {
++ 		ksp = vim_strchr(p, K_SPECIAL);
++ 		if (ksp != NULL && (start == NULL || ksp < start || end == NULL)
++ 			&& ((ksp[1] == KS_SPECIAL && ksp[2] == KE_FILLER)
++ # ifdef FEAT_GUI
++ 			    || (ksp[1] == KS_EXTRA && ksp[2] == (int)KE_CSI)
++ # endif
++ 			    ))
++ 		{
++ 		    /* K_SPECIAL han been put in the buffer as K_SPECIAL
++ 		     * KS_SPECIAL KE_FILLER, like for mappings, but
++ 		     * do_cmdline() doesn't handle that, so convert it back.
++ 		     * Also change K_SPECIAL KS_EXTRA KE_CSI into CSI. */
++ 		    len = ksp - p;
++ 		    if (len > 0)
++ 		    {
++ 			mch_memmove(q, p, len);
++ 			q += len;
++ 		    }
++ 		    *q++ = ksp[1] == KS_SPECIAL ? K_SPECIAL : CSI;
++ 		    p = ksp + 3;
++ 		    continue;
++ 		}
++ 	    }
++ 
++ 	    /* break if there no <item> is found */
++ 	    if (start == NULL || end == NULL)
++ 		break;
++ 
+  	    /* Include the '>' */
+  	    ++end;
+  
+*** ../vim-7.2.089/src/version.c	Wed Jan 28 14:17:21 2009
+--- src/version.c	Wed Jan 28 15:37:40 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     90,
+  /**/
+
+-- 
+How To Keep A Healthy Level Of Insanity:
+17. When the money comes out the ATM, scream "I won!, I won! 3rd
+    time this week!!!!!"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

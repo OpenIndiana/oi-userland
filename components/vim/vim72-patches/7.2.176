@@ -1,0 +1,207 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.176
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.176
+Problem:    Exceptions for splint are not useful.
+Solution:   Remove the S_SPLINT_S ifdefs.
+Files:	    src/edit.c, src/ex_cmds.c, src/ex_docmd.c, src/os_unix.c,
+	    src/os_unix.h, src/os_unixx.h, src/structs.h, src/term.h
+
+
+*** ../vim-7.2.175/src/edit.c	2009-05-15 21:31:11.000000000 +0200
+--- src/edit.c	2009-05-16 16:18:35.000000000 +0200
+***************
+*** 69,79 ****
+      compl_T	*cp_prev;
+      char_u	*cp_str;	/* matched text */
+      char	cp_icase;	/* TRUE or FALSE: ignore case */
+- #ifdef S_SPLINT_S  /* splint can't handle array of pointers */
+-     char_u	**cp_text;	/* text for the menu */
+- #else
+      char_u	*(cp_text[CPT_COUNT]);	/* text for the menu */
+- #endif
+      char_u	*cp_fname;	/* file containing the match, allocated when
+  				 * cp_flags has FREE_FNAME */
+      int		cp_flags;	/* ORIGINAL_TEXT, CONT_S_IPOS or FREE_FNAME */
+--- 69,75 ----
+***************
+*** 3835,3845 ****
+      char_u	*word;
+      int		icase = FALSE;
+      int		adup = FALSE;
+- #ifdef S_SPLINT_S  /* splint doesn't parse array of pointers correctly */
+-     char_u	**cptext;
+- #else
+      char_u	*(cptext[CPT_COUNT]);
+- #endif
+  
+      if (tv->v_type == VAR_DICT && tv->vval.v_dict != NULL)
+      {
+--- 3831,3837 ----
+*** ../vim-7.2.175/src/ex_cmds.c	2009-05-15 21:31:11.000000000 +0200
+--- src/ex_cmds.c	2009-05-16 16:18:56.000000000 +0200
+***************
+*** 5776,5785 ****
+  {
+      char_u	*s, *d;
+      int		i;
+- #ifdef S_SPLINT_S  /* splint doesn't understand array of pointers */
+-     static char **mtable;
+-     static char **rtable;
+- #else
+      static char *(mtable[]) = {"*", "g*", "[*", "]*", ":*",
+  			       "/*", "/\\*", "\"*", "**",
+  			       "/\\(\\)",
+--- 5776,5781 ----
+***************
+*** 5794,5800 ****
+  			       "/\\\\?", "/\\\\z(\\\\)", "\\\\=", ":s\\\\=",
+  			       "\\[count]", "\\[quotex]", "\\[range]",
+  			       "\\[pattern]", "\\\\bar", "/\\\\%\\$"};
+- #endif
+      int flags;
+  
+      d = IObuff;		    /* assume IObuff is long enough! */
+--- 5790,5795 ----
+*** ../vim-7.2.175/src/ex_docmd.c	2009-05-15 21:31:11.000000000 +0200
+--- src/ex_docmd.c	2009-05-16 16:19:26.000000000 +0200
+***************
+*** 9395,9407 ****
+  {
+      int		len;
+      int		i;
+! #ifdef S_SPLINT_S  /* splint can't handle array of pointers */
+!     static char **spec_str;
+!     static char *(nospec_str[])
+! #else
+!     static char *(spec_str[])
+! #endif
+! 	= {
+  		    "%",
+  #define SPEC_PERC   0
+  		    "#",
+--- 9395,9401 ----
+  {
+      int		len;
+      int		i;
+!     static char *(spec_str[]) = {
+  		    "%",
+  #define SPEC_PERC   0
+  		    "#",
+*** ../vim-7.2.175/src/os_unix.c	2009-05-15 21:31:11.000000000 +0200
+--- src/os_unix.c	2009-05-16 16:20:00.000000000 +0200
+***************
+*** 199,207 ****
+  #endif
+  
+  #ifndef SIG_ERR
+! # ifndef S_SPLINT_S
+! #  define SIG_ERR	((RETSIGTYPE (*)())-1)
+! # endif
+  #endif
+  
+  /* volatile because it is used in signal handler sig_winch(). */
+--- 199,205 ----
+  #endif
+  
+  #ifndef SIG_ERR
+! # define SIG_ERR	((RETSIGTYPE (*)())-1)
+  #endif
+  
+  /* volatile because it is used in signal handler sig_winch(). */
+***************
+*** 443,451 ****
+  
+  #if defined(HAVE_TOTAL_MEM) || defined(PROTO)
+  # ifdef HAVE_SYS_RESOURCE_H
+! #  ifndef S_SPLINT_S  /* splint crashes on bits/resource.h */
+! #   include <sys/resource.h>
+! #  endif
+  # endif
+  # if defined(HAVE_SYS_SYSCTL_H) && defined(HAVE_SYSCTL)
+  #  include <sys/sysctl.h>
+--- 441,447 ----
+  
+  #if defined(HAVE_TOTAL_MEM) || defined(PROTO)
+  # ifdef HAVE_SYS_RESOURCE_H
+! #  include <sys/resource.h>
+  # endif
+  # if defined(HAVE_SYS_SYSCTL_H) && defined(HAVE_SYSCTL)
+  #  include <sys/sysctl.h>
+*** ../vim-7.2.175/src/os_unix.h	2009-05-15 21:31:11.000000000 +0200
+--- src/os_unix.h	2009-05-16 16:17:22.000000000 +0200
+***************
+*** 53,61 ****
+  #endif
+  
+  #ifdef HAVE_UNISTD_H
+! # ifndef S_SPLINT_S  /* splint crashes on bits/confname.h */
+! #  include <unistd.h>
+! # endif
+  #endif
+  
+  #ifdef HAVE_LIBC_H
+--- 53,59 ----
+  #endif
+  
+  #ifdef HAVE_UNISTD_H
+! # include <unistd.h>
+  #endif
+  
+  #ifdef HAVE_LIBC_H
+*** ../vim-7.2.175/src/structs.h	2009-05-13 20:47:07.000000000 +0200
+--- src/structs.h	2009-05-16 16:17:51.000000000 +0200
+***************
+*** 1646,1656 ****
+  #endif
+  #ifdef FEAT_DIFF
+      diff_T	    *tp_first_diff;
+- # ifdef S_SPLINT_S  /* splint doesn't understand the array of pointers */
+-     buf_T	    **tp_diffbuf;
+- # else
+      buf_T	    *(tp_diffbuf[DB_COUNT]);
+- # endif
+      int		    tp_diff_invalid;	/* list of diffs is outdated */
+  #endif
+      frame_T	    *tp_snapshot;    /* window layout snapshot */
+--- 1646,1652 ----
+*** ../vim-7.2.175/src/term.h	2009-05-13 18:54:14.000000000 +0200
+--- src/term.h	2009-05-16 16:20:06.000000000 +0200
+***************
+*** 96,106 ****
+   * - there should be code in term.c to obtain the value from the termcap
+   */
+  
+- #ifdef S_SPLINT_S  /* splint doesn't understand array of pointers */
+- extern char_u **term_strings;    /* current terminal strings */
+- #else
+  extern char_u *(term_strings[]);    /* current terminal strings */
+- #endif
+  
+  /*
+   * strings used for terminal
+--- 96,102 ----
+*** ../vim-7.2.175/src/version.c	2009-05-16 16:15:39.000000000 +0200
+--- src/version.c	2009-05-16 16:34:10.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     176,
+  /**/
+
+-- 
+Corn oil comes from corn and olive oil comes from olives, so where
+does baby oil come from?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

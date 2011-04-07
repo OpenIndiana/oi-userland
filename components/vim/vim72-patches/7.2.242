@@ -1,0 +1,89 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.242
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.242
+Problem:    Setting 'lazyredraw' causes the cursor column to be recomputed.
+	    (Tom Link)
+Solution:   Only recompute the cursor column for a boolean option if changes
+	    the cursor position.
+Files:	    src/option.c
+
+
+*** ../vim-7.2.241/src/option.c	2009-07-22 14:27:33.000000000 +0200
+--- src/option.c	2009-07-29 10:03:39.000000000 +0200
+***************
+*** 7194,7199 ****
+--- 7194,7207 ----
+  	compatible_set();
+      }
+  
++     /* 'list', 'number' */
++     else if ((int *)varp == &curwin->w_p_list
++ 	  || (int *)varp == &curwin->w_p_nu)
++     {
++ 	if (curwin->w_curswant != MAXCOL)
++ 	    curwin->w_set_curswant = TRUE;
++     }
++ 
+      else if ((int *)varp == &curbuf->b_p_ro)
+      {
+  	/* when 'readonly' is reset globally, also reset readonlymode */
+***************
+*** 7645,7650 ****
+--- 7653,7666 ----
+  	    curbuf->b_p_imsearch = B_IMODE_USE_INSERT;
+  # endif
+  	}
++ 	if (curwin->w_curswant != MAXCOL)
++ 	    curwin->w_set_curswant = TRUE;
++     }
++ 
++     else if ((int *)varp == &p_arshape)
++     {
++ 	if (curwin->w_curswant != MAXCOL)
++ 	    curwin->w_set_curswant = TRUE;
+      }
+  #endif
+  
+***************
+*** 7655,7662 ****
+      options[opt_idx].flags |= P_WAS_SET;
+  
+      comp_col();			    /* in case 'ruler' or 'showcmd' changed */
+!     if (curwin->w_curswant != MAXCOL)
+! 	curwin->w_set_curswant = TRUE;  /* in case 'list' changed */
+      check_redraw(options[opt_idx].flags);
+  
+      return NULL;
+--- 7671,7677 ----
+      options[opt_idx].flags |= P_WAS_SET;
+  
+      comp_col();			    /* in case 'ruler' or 'showcmd' changed */
+! 
+      check_redraw(options[opt_idx].flags);
+  
+      return NULL;
+*** ../vim-7.2.241/src/version.c	2009-07-29 12:09:49.000000000 +0200
+--- src/version.c	2009-07-29 15:40:43.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     242,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+117. You are more comfortable typing in html.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

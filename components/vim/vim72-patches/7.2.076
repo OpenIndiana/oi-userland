@@ -1,0 +1,86 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.076
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.076
+Problem:    rename(from, to) deletes the file if "from" and "to" are not equal
+	    but still refer to the same file.  E.g., on a FAT32 filesystem
+	    under Unix.
+Solution:   Go through another file name.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.075/src/fileio.c	Fri Nov 28 21:26:50 2008
+--- src/fileio.c	Tue Dec 30 16:04:44 2008
+***************
+*** 6119,6124 ****
+--- 6119,6165 ----
+      if (mch_stat((char *)from, &st) < 0)
+  	return -1;
+  
++ #ifdef UNIX
++     {
++ 	struct stat	st_to;
++ 	char		tempname[MAXPATHL + 1];
++ 
++ 	/* It's possible for the source and destination to be the same file.
++ 	 * This happens when "from" and "to" differ in case and are on a FAT32
++ 	 * filesystem.  In that case go through a temp file name. */
++ 	if (mch_stat((char *)to, &st_to) >= 0
++ 		&& st.st_dev == st_to.st_dev
++ 		&& st.st_ino == st_to.st_ino)
++ 	{
++ 	    /* Find a name that doesn't exist and is in the same directory.
++ 	     * Move "from" to "tempname" and then to "to". */
++ 	    if (STRLEN(from) >= MAXPATHL - 5)
++ 		return -1;
++ 	    STRCPY(tempname, from);
++ 	    for (n = 123; n < 99999; ++n)
++ 	    {
++ 		sprintf(gettail(tempname), "%d", n);
++ 		if (mch_stat(tempname, &st_to) < 0)
++ 		{
++ 		    if (mch_rename((char *)from, tempname) == 0)
++ 		    {
++ 			if (mch_rename(tempname, (char *)to) == 0)
++ 			    return 0;
++ 			/* Strange, the second step failed.  Try moving the
++ 			 * file back and return failure. */
++ 			mch_rename(tempname, (char *)from);
++ 			return -1;
++ 		    }
++ 		    /* If it fails for one temp name it will most likely fail
++ 		     * for any temp name, give up. */
++ 		    return -1;
++ 		}
++ 	    }
++ 	    return -1;
++ 	}
++     }
++ #endif
++ 
+      /*
+       * Delete the "to" file, this is required on some systems to make the
+       * mch_rename() work, on other systems it makes sure that we don't have
+*** ../vim-7.2.075/src/version.c	Wed Dec 24 14:24:41 2008
+--- src/version.c	Tue Dec 30 16:09:51 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     76,
+  /**/
+
+-- 
+FATAL ERROR! SYSTEM HALTED! - Press any key to continue doing nothing.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

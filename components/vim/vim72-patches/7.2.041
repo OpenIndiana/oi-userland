@@ -1,0 +1,709 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.041
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.041
+Problem:    In diff mode, when using two tabs, each with two diffed buffers,
+	    editing a buffer of the other tab messes up the diff.  (Matt
+	    Mzyzik)
+Solution:   Only copy options from a window where the buffer was edited that
+	    doesn't have 'diff' set or is for the current tab page.
+	    Also fix that window options for a buffer are stored with the
+	    wrong window.
+Files:	    src/buffer.c, src/ex_cmds.c, src/ex_cmds2.c, src/ex_docmd.c,
+	    src/ex_getln.c, src/if_sniff.c, src/main.c, src/netbeans.c,
+	    src/normal.c, src/popupmnu.c, src/proto/buffer.pro,
+	    src/proto/ex_cmds.pro src/quickfix.c, src/window.c
+
+
+*** ../vim-7.2.040/src/buffer.c	Wed Nov 12 12:51:38 2008
+--- src/buffer.c	Wed Nov 12 17:45:01 2008
+***************
+*** 33,39 ****
+  static char_u	*fname_match __ARGS((regprog_T *prog, char_u *name));
+  #endif
+  static void	buflist_setfpos __ARGS((buf_T *buf, win_T *win, linenr_T lnum, colnr_T col, int copy_options));
+! static wininfo_T *find_wininfo __ARGS((buf_T *buf));
+  #ifdef UNIX
+  static buf_T	*buflist_findname_stat __ARGS((char_u *ffname, struct stat *st));
+  static int	otherfile_buf __ARGS((buf_T *buf, char_u *ffname, struct stat *stp));
+--- 33,39 ----
+  static char_u	*fname_match __ARGS((regprog_T *prog, char_u *name));
+  #endif
+  static void	buflist_setfpos __ARGS((buf_T *buf, win_T *win, linenr_T lnum, colnr_T col, int copy_options));
+! static wininfo_T *find_wininfo __ARGS((buf_T *buf, int skip_diff_buffer));
+  #ifdef UNIX
+  static buf_T	*buflist_findname_stat __ARGS((char_u *ffname, struct stat *st));
+  static int	otherfile_buf __ARGS((buf_T *buf, char_u *ffname, struct stat *stp));
+***************
+*** 1093,1099 ****
+  #endif
+  	    setpcmark();
+  	    retval = do_ecmd(0, NULL, NULL, NULL, ECMD_ONE,
+! 						  forceit ? ECMD_FORCEIT : 0);
+  
+  	    /*
+  	     * do_ecmd() may create a new buffer, then we have to delete
+--- 1093,1099 ----
+  #endif
+  	    setpcmark();
+  	    retval = do_ecmd(0, NULL, NULL, NULL, ECMD_ONE,
+! 					  forceit ? ECMD_FORCEIT : 0, curwin);
+  
+  	    /*
+  	     * do_ecmd() may create a new buffer, then we have to delete
+***************
+*** 1316,1322 ****
+      setpcmark();
+      if (!cmdmod.keepalt)
+  	curwin->w_alt_fnum = curbuf->b_fnum; /* remember alternate file */
+!     buflist_altfpos();			 /* remember curpos */
+  
+  #ifdef FEAT_VISUAL
+      /* Don't restart Select mode after switching to another buffer. */
+--- 1316,1322 ----
+      setpcmark();
+      if (!cmdmod.keepalt)
+  	curwin->w_alt_fnum = curbuf->b_fnum; /* remember alternate file */
+!     buflist_altfpos(curwin);			 /* remember curpos */
+  
+  #ifdef FEAT_VISUAL
+      /* Don't restart Select mode after switching to another buffer. */
+***************
+*** 2404,2425 ****
+      return;
+  }
+  
+  /*
+   * Find info for the current window in buffer "buf".
+   * If not found, return the info for the most recently used window.
+   * Returns NULL when there isn't any info.
+   */
+      static wininfo_T *
+! find_wininfo(buf)
+      buf_T	*buf;
+  {
+      wininfo_T	*wip;
+  
+      for (wip = buf->b_wininfo; wip != NULL; wip = wip->wi_next)
+! 	if (wip->wi_win == curwin)
+  	    break;
+!     if (wip == NULL)	/* if no fpos for curwin, use the first in the list */
+! 	wip = buf->b_wininfo;
+      return wip;
+  }
+  
+--- 2404,2473 ----
+      return;
+  }
+  
++ #ifdef FEAT_DIFF
++ static int wininfo_other_tab_diff __ARGS((wininfo_T *wip));
++ 
++ /*
++  * Return TRUE when "wip" has 'diff' set and the diff is only for another tab
++  * page.  That's because a diff is local to a tab page.
++  */
++     static int
++ wininfo_other_tab_diff(wip)
++     wininfo_T	*wip;
++ {
++     win_T	*wp;
++ 
++     if (wip->wi_opt.wo_diff)
++     {
++ 	for (wp = firstwin; wp != NULL; wp = wp->w_next)
++ 	    /* return FALSE when it's a window in the current tab page, thus
++ 	     * the buffer was in diff mode here */
++ 	    if (wip->wi_win == wp)
++ 		return FALSE;
++ 	return TRUE;
++     }
++     return FALSE;
++ }
++ #endif
++ 
+  /*
+   * Find info for the current window in buffer "buf".
+   * If not found, return the info for the most recently used window.
++  * When "skip_diff_buffer" is TRUE avoid windows with 'diff' set that is in
++  * another tab page.
+   * Returns NULL when there isn't any info.
+   */
++ /*ARGSUSED*/
+      static wininfo_T *
+! find_wininfo(buf, skip_diff_buffer)
+      buf_T	*buf;
++     int		skip_diff_buffer;
+  {
+      wininfo_T	*wip;
+  
+      for (wip = buf->b_wininfo; wip != NULL; wip = wip->wi_next)
+! 	if (wip->wi_win == curwin
+! #ifdef FEAT_DIFF
+! 		&& (!skip_diff_buffer || !wininfo_other_tab_diff(wip))
+! #endif
+! 	   )
+  	    break;
+! 
+!     /* If no wininfo for curwin, use the first in the list (that doesn't have
+!      * 'diff' set and is in another tab page). */
+!     if (wip == NULL)
+!     {
+! #ifdef FEAT_DIFF
+! 	if (skip_diff_buffer)
+! 	{
+! 	    for (wip = buf->b_wininfo; wip != NULL; wip = wip->wi_next)
+! 		if (!wininfo_other_tab_diff(wip))
+! 		    break;
+! 	}
+! 	else
+! #endif
+! 	    wip = buf->b_wininfo;
+!     }
+      return wip;
+  }
+  
+***************
+*** 2440,2446 ****
+      clearFolding(curwin);
+  #endif
+  
+!     wip = find_wininfo(buf);
+      if (wip != NULL && wip->wi_optset)
+      {
+  	copy_winopt(&wip->wi_opt, &curwin->w_onebuf_opt);
+--- 2488,2494 ----
+      clearFolding(curwin);
+  #endif
+  
+!     wip = find_wininfo(buf, TRUE);
+      if (wip != NULL && wip->wi_optset)
+      {
+  	copy_winopt(&wip->wi_opt, &curwin->w_onebuf_opt);
+***************
+*** 2472,2478 ****
+      wininfo_T	*wip;
+      static pos_T no_position = {1, 0};
+  
+!     wip = find_wininfo(buf);
+      if (wip != NULL)
+  	return &(wip->wi_fpos);
+      else
+--- 2520,2526 ----
+      wininfo_T	*wip;
+      static pos_T no_position = {1, 0};
+  
+!     wip = find_wininfo(buf, FALSE);
+      if (wip != NULL)
+  	return &(wip->wi_fpos);
+      else
+***************
+*** 2793,2806 ****
+  #endif
+  
+  /*
+!  * Set alternate cursor position for current window.
+   * Also save the local window option values.
+   */
+      void
+! buflist_altfpos()
+  {
+!     buflist_setfpos(curbuf, curwin, curwin->w_cursor.lnum,
+! 						  curwin->w_cursor.col, TRUE);
+  }
+  
+  /*
+--- 2841,2854 ----
+  #endif
+  
+  /*
+!  * Set alternate cursor position for the current buffer and window "win".
+   * Also save the local window option values.
+   */
+      void
+! buflist_altfpos(win)
+!     win_T *win;
+  {
+!     buflist_setfpos(curbuf, win, win->w_cursor.lnum, win->w_cursor.col, TRUE);
+  }
+  
+  /*
+***************
+*** 4492,4498 ****
+  		      ECMD_ONE,
+  		      ((P_HID(curwin->w_buffer)
+  			   || bufIsChanged(curwin->w_buffer)) ? ECMD_HIDE : 0)
+! 							       + ECMD_OLDBUF);
+  #ifdef FEAT_AUTOCMD
+  	    if (use_firstwin)
+  		++autocmd_no_leave;
+--- 4540,4546 ----
+  		      ECMD_ONE,
+  		      ((P_HID(curwin->w_buffer)
+  			   || bufIsChanged(curwin->w_buffer)) ? ECMD_HIDE : 0)
+! 						       + ECMD_OLDBUF, curwin);
+  #ifdef FEAT_AUTOCMD
+  	    if (use_firstwin)
+  		++autocmd_no_leave;
+*** ../vim-7.2.040/src/ex_cmds.c	Sun Nov  9 13:43:25 2008
+--- src/ex_cmds.c	Wed Nov 12 22:41:41 2008
+***************
+*** 3052,3058 ****
+  	retval = 0;	/* it's in the same file */
+      }
+      else if (do_ecmd(fnum, ffname, sfname, NULL, lnum,
+! 		(P_HID(curbuf) ? ECMD_HIDE : 0) + (forceit ? ECMD_FORCEIT : 0)) == OK)
+  	retval = -1;	/* opened another file */
+      else
+  	retval = 1;	/* error encountered */
+--- 3052,3059 ----
+  	retval = 0;	/* it's in the same file */
+      }
+      else if (do_ecmd(fnum, ffname, sfname, NULL, lnum,
+! 		(P_HID(curbuf) ? ECMD_HIDE : 0) + (forceit ? ECMD_FORCEIT : 0),
+! 		curwin) == OK)
+  	retval = -1;	/* opened another file */
+      else
+  	retval = 1;	/* error encountered */
+***************
+*** 3085,3101 ****
+   *	 ECMD_OLDBUF: use existing buffer if it exists
+   *	ECMD_FORCEIT: ! used for Ex command
+   *	 ECMD_ADDBUF: don't edit, just add to buffer list
+   *
+   * return FAIL for failure, OK otherwise
+   */
+      int
+! do_ecmd(fnum, ffname, sfname, eap, newlnum, flags)
+      int		fnum;
+      char_u	*ffname;
+      char_u	*sfname;
+      exarg_T	*eap;			/* can be NULL! */
+      linenr_T	newlnum;
+      int		flags;
+  {
+      int		other_file;		/* TRUE if editing another file */
+      int		oldbuf;			/* TRUE if using existing buffer */
+--- 3086,3106 ----
+   *	 ECMD_OLDBUF: use existing buffer if it exists
+   *	ECMD_FORCEIT: ! used for Ex command
+   *	 ECMD_ADDBUF: don't edit, just add to buffer list
++  *   oldwin: Should be "curwin" when editing a new buffer in the current
++  *           window, NULL when splitting the window first.  When not NULL info
++  *           of the previous buffer for "oldwin" is stored.
+   *
+   * return FAIL for failure, OK otherwise
+   */
+      int
+! do_ecmd(fnum, ffname, sfname, eap, newlnum, flags, oldwin)
+      int		fnum;
+      char_u	*ffname;
+      char_u	*sfname;
+      exarg_T	*eap;			/* can be NULL! */
+      linenr_T	newlnum;
+      int		flags;
++     win_T	*oldwin;
+  {
+      int		other_file;		/* TRUE if editing another file */
+      int		oldbuf;			/* TRUE if using existing buffer */
+***************
+*** 3267,3273 ****
+  	{
+  	    if (!cmdmod.keepalt)
+  		curwin->w_alt_fnum = curbuf->b_fnum;
+! 	    buflist_altfpos();
+  	}
+  
+  	if (fnum)
+--- 3272,3279 ----
+  	{
+  	    if (!cmdmod.keepalt)
+  		curwin->w_alt_fnum = curbuf->b_fnum;
+! 	    if (oldwin != NULL)
+! 		buflist_altfpos(oldwin);
+  	}
+  
+  	if (fnum)
+***************
+*** 3371,3377 ****
+  
+  		/* close the link to the current buffer */
+  		u_sync(FALSE);
+! 		close_buffer(curwin, curbuf,
+  				      (flags & ECMD_HIDE) ? 0 : DOBUF_UNLOAD);
+  
+  #ifdef FEAT_AUTOCMD
+--- 3377,3383 ----
+  
+  		/* close the link to the current buffer */
+  		u_sync(FALSE);
+! 		close_buffer(oldwin, curbuf,
+  				      (flags & ECMD_HIDE) ? 0 : DOBUF_UNLOAD);
+  
+  #ifdef FEAT_AUTOCMD
+***************
+*** 5609,5615 ****
+  	     */
+  	    alt_fnum = curbuf->b_fnum;
+  	    (void)do_ecmd(0, NULL, NULL, NULL, ECMD_LASTL,
+! 						   ECMD_HIDE + ECMD_SET_HELP);
+  	    if (!cmdmod.keepalt)
+  		curwin->w_alt_fnum = alt_fnum;
+  	    empty_fnum = curbuf->b_fnum;
+--- 5615,5627 ----
+  	     */
+  	    alt_fnum = curbuf->b_fnum;
+  	    (void)do_ecmd(0, NULL, NULL, NULL, ECMD_LASTL,
+! 			  ECMD_HIDE + ECMD_SET_HELP,
+! #ifdef FEAT_WINDOWS
+! 			  NULL  /* buffer is still open, don't store info */
+! #else
+! 			  curwin
+! #endif
+! 		    );
+  	    if (!cmdmod.keepalt)
+  		curwin->w_alt_fnum = alt_fnum;
+  	    empty_fnum = curbuf->b_fnum;
+*** ../vim-7.2.040/src/ex_cmds2.c	Sun Sep  7 15:49:45 2008
+--- src/ex_cmds2.c	Wed Nov 12 17:46:41 2008
+***************
+*** 2132,2139 ****
+  	 * argument index. */
+  	if (do_ecmd(0, alist_name(&ARGLIST[curwin->w_arg_idx]), NULL,
+  		      eap, ECMD_LAST,
+! 		      (P_HID(curwin->w_buffer) ? ECMD_HIDE : 0) +
+! 				   (eap->forceit ? ECMD_FORCEIT : 0)) == FAIL)
+  	    curwin->w_arg_idx = old_arg_idx;
+  	/* like Vi: set the mark where the cursor is in the file. */
+  	else if (eap->cmdidx != CMD_argdo)
+--- 2132,2139 ----
+  	 * argument index. */
+  	if (do_ecmd(0, alist_name(&ARGLIST[curwin->w_arg_idx]), NULL,
+  		      eap, ECMD_LAST,
+! 		      (P_HID(curwin->w_buffer) ? ECMD_HIDE : 0)
+! 			 + (eap->forceit ? ECMD_FORCEIT : 0), curwin) == FAIL)
+  	    curwin->w_arg_idx = old_arg_idx;
+  	/* like Vi: set the mark where the cursor is in the file. */
+  	else if (eap->cmdidx != CMD_argdo)
+*** ../vim-7.2.040/src/ex_docmd.c	Sun Nov  9 13:43:25 2008
+--- src/ex_docmd.c	Wed Nov 12 18:04:22 2008
+***************
+*** 7488,7494 ****
+  	/* ":new" or ":tabnew" without argument: edit an new empty buffer */
+  	setpcmark();
+  	(void)do_ecmd(0, NULL, NULL, eap, ECMD_ONE,
+! 			       ECMD_HIDE + (eap->forceit ? ECMD_FORCEIT : 0));
+      }
+      else if ((eap->cmdidx != CMD_split
+  #ifdef FEAT_VERTSPLIT
+--- 7488,7495 ----
+  	/* ":new" or ":tabnew" without argument: edit an new empty buffer */
+  	setpcmark();
+  	(void)do_ecmd(0, NULL, NULL, eap, ECMD_ONE,
+! 		      ECMD_HIDE + (eap->forceit ? ECMD_FORCEIT : 0),
+! 		      old_curwin == NULL ? curwin : NULL);
+      }
+      else if ((eap->cmdidx != CMD_split
+  #ifdef FEAT_VERTSPLIT
+***************
+*** 7525,7531 ****
+  #ifdef FEAT_LISTCMDS
+  		    + (eap->cmdidx == CMD_badd ? ECMD_ADDBUF : 0 )
+  #endif
+! 		    ) == FAIL)
+  	{
+  	    /* Editing the file failed.  If the window was split, close it. */
+  #ifdef FEAT_WINDOWS
+--- 7526,7532 ----
+  #ifdef FEAT_LISTCMDS
+  		    + (eap->cmdidx == CMD_badd ? ECMD_ADDBUF : 0 )
+  #endif
+! 		    , old_curwin == NULL ? curwin : NULL) == FAIL)
+  	{
+  	    /* Editing the file failed.  If the window was split, close it. */
+  #ifdef FEAT_WINDOWS
+*** ../vim-7.2.040/src/ex_getln.c	Sun Sep 14 14:41:44 2008
+--- src/ex_getln.c	Wed Nov 12 18:06:25 2008
+***************
+*** 6051,6057 ****
+  	cmdwin_type = '-';
+  
+      /* Create the command-line buffer empty. */
+!     (void)do_ecmd(0, NULL, NULL, NULL, ECMD_ONE, ECMD_HIDE);
+      (void)setfname(curbuf, (char_u *)"[Command Line]", NULL, TRUE);
+      set_option_value((char_u *)"bt", 0L, (char_u *)"nofile", OPT_LOCAL);
+      set_option_value((char_u *)"swf", 0L, NULL, OPT_LOCAL);
+--- 6051,6057 ----
+  	cmdwin_type = '-';
+  
+      /* Create the command-line buffer empty. */
+!     (void)do_ecmd(0, NULL, NULL, NULL, ECMD_ONE, ECMD_HIDE, NULL);
+      (void)setfname(curbuf, (char_u *)"[Command Line]", NULL, TRUE);
+      set_option_value((char_u *)"bt", 0L, (char_u *)"nofile", OPT_LOCAL);
+      set_option_value((char_u *)"swf", 0L, NULL, OPT_LOCAL);
+*** ../vim-7.2.040/src/main.c	Sun Nov  9 13:43:25 2008
+--- src/main.c	Wed Nov 12 17:49:06 2008
+***************
+*** 2588,2594 ****
+  # endif
+  	    (void)do_ecmd(0, arg_idx < GARGCOUNT
+  			  ? alist_name(&GARGLIST[arg_idx]) : NULL,
+! 			  NULL, NULL, ECMD_LASTL, ECMD_HIDE);
+  # ifdef HAS_SWAP_EXISTS_ACTION
+  	    if (swap_exists_did_quit)
+  	    {
+--- 2588,2594 ----
+  # endif
+  	    (void)do_ecmd(0, arg_idx < GARGCOUNT
+  			  ? alist_name(&GARGLIST[arg_idx]) : NULL,
+! 			  NULL, NULL, ECMD_LASTL, ECMD_HIDE, curwin);
+  # ifdef HAS_SWAP_EXISTS_ACTION
+  	    if (swap_exists_did_quit)
+  	    {
+*** ../vim-7.2.040/src/netbeans.c	Sun Jul 13 19:18:03 2008
+--- src/netbeans.c	Wed Nov 12 17:49:40 2008
+***************
+*** 1795,1801 ****
+  	    buf->displayname = NULL;
+  
+  	    netbeansReadFile = 0; /* don't try to open disk file */
+! 	    do_ecmd(0, NULL, 0, 0, ECMD_ONE, ECMD_HIDE + ECMD_OLDBUF);
+  	    netbeansReadFile = 1;
+  	    buf->bufp = curbuf;
+  	    maketitle();
+--- 1795,1801 ----
+  	    buf->displayname = NULL;
+  
+  	    netbeansReadFile = 0; /* don't try to open disk file */
+! 	    do_ecmd(0, NULL, 0, 0, ECMD_ONE, ECMD_HIDE + ECMD_OLDBUF, curwin);
+  	    netbeansReadFile = 1;
+  	    buf->bufp = curbuf;
+  	    maketitle();
+***************
+*** 1960,1966 ****
+  
+  	    netbeansReadFile = 0; /* don't try to open disk file */
+  	    do_ecmd(0, (char_u *)buf->displayname, 0, 0, ECMD_ONE,
+! 						     ECMD_HIDE + ECMD_OLDBUF);
+  	    netbeansReadFile = 1;
+  	    buf->bufp = curbuf;
+  	    maketitle();
+--- 1960,1966 ----
+  
+  	    netbeansReadFile = 0; /* don't try to open disk file */
+  	    do_ecmd(0, (char_u *)buf->displayname, 0, 0, ECMD_ONE,
+! 					     ECMD_HIDE + ECMD_OLDBUF, curwin);
+  	    netbeansReadFile = 1;
+  	    buf->bufp = curbuf;
+  	    maketitle();
+***************
+*** 1979,1985 ****
+  	    vim_free(buf->displayname);
+  	    buf->displayname = nb_unquote(args, NULL);
+  	    do_ecmd(0, (char_u *)buf->displayname, NULL, NULL, ECMD_ONE,
+! 						     ECMD_HIDE + ECMD_OLDBUF);
+  	    buf->bufp = curbuf;
+  	    buf->initDone = TRUE;
+  	    doupdate = 1;
+--- 1979,1985 ----
+  	    vim_free(buf->displayname);
+  	    buf->displayname = nb_unquote(args, NULL);
+  	    do_ecmd(0, (char_u *)buf->displayname, NULL, NULL, ECMD_ONE,
+! 					     ECMD_HIDE + ECMD_OLDBUF, curwin);
+  	    buf->bufp = curbuf;
+  	    buf->initDone = TRUE;
+  	    doupdate = 1;
+*** ../vim-7.2.040/src/normal.c	Sat Nov  1 13:51:57 2008
+--- src/normal.c	Wed Nov 12 17:49:50 2008
+***************
+*** 6050,6056 ****
+  	    autowrite(curbuf, FALSE);
+  	setpcmark();
+  	(void)do_ecmd(0, ptr, NULL, NULL, ECMD_LAST,
+! 					       P_HID(curbuf) ? ECMD_HIDE : 0);
+  	if (cap->nchar == 'F' && lnum >= 0)
+  	{
+  	    curwin->w_cursor.lnum = lnum;
+--- 6050,6056 ----
+  	    autowrite(curbuf, FALSE);
+  	setpcmark();
+  	(void)do_ecmd(0, ptr, NULL, NULL, ECMD_LAST,
+! 				       P_HID(curbuf) ? ECMD_HIDE : 0, curwin);
+  	if (cap->nchar == 'F' && lnum >= 0)
+  	{
+  	    curwin->w_cursor.lnum = lnum;
+*** ../vim-7.2.040/src/popupmnu.c	Sun Jul 13 19:33:51 2008
+--- src/popupmnu.c	Wed Nov 12 18:08:07 2008
+***************
+*** 573,579 ****
+  		{
+  		    /* Don't want to sync undo in the current buffer. */
+  		    ++no_u_sync;
+! 		    res = do_ecmd(0, NULL, NULL, NULL, ECMD_ONE, 0);
+  		    --no_u_sync;
+  		    if (res == OK)
+  		    {
+--- 573,579 ----
+  		{
+  		    /* Don't want to sync undo in the current buffer. */
+  		    ++no_u_sync;
+! 		    res = do_ecmd(0, NULL, NULL, NULL, ECMD_ONE, 0, NULL);
+  		    --no_u_sync;
+  		    if (res == OK)
+  		    {
+*** ../vim-7.2.040/src/proto/buffer.pro	Sun May  6 13:57:53 2007
+--- src/proto/buffer.pro	Wed Nov 12 17:43:39 2008
+***************
+*** 33,39 ****
+  char_u *getaltfname __ARGS((int errmsg));
+  int buflist_add __ARGS((char_u *fname, int flags));
+  void buflist_slash_adjust __ARGS((void));
+! void buflist_altfpos __ARGS((void));
+  int otherfile __ARGS((char_u *ffname));
+  void buf_setino __ARGS((buf_T *buf));
+  void fileinfo __ARGS((int fullname, int shorthelp, int dont_truncate));
+--- 33,39 ----
+  char_u *getaltfname __ARGS((int errmsg));
+  int buflist_add __ARGS((char_u *fname, int flags));
+  void buflist_slash_adjust __ARGS((void));
+! void buflist_altfpos __ARGS((win_T *win));
+  int otherfile __ARGS((char_u *ffname));
+  void buf_setino __ARGS((buf_T *buf));
+  void fileinfo __ARGS((int fullname, int shorthelp, int dont_truncate));
+*** ../vim-7.2.040/src/proto/ex_cmds.pro	Sun Nov  9 13:43:25 2008
+--- src/proto/ex_cmds.pro	Wed Nov 12 17:44:27 2008
+***************
+*** 27,33 ****
+  void do_wqall __ARGS((exarg_T *eap));
+  int not_writing __ARGS((void));
+  int getfile __ARGS((int fnum, char_u *ffname, char_u *sfname, int setpm, linenr_T lnum, int forceit));
+! int do_ecmd __ARGS((int fnum, char_u *ffname, char_u *sfname, exarg_T *eap, linenr_T newlnum, int flags));
+  void ex_append __ARGS((exarg_T *eap));
+  void ex_change __ARGS((exarg_T *eap));
+  void ex_z __ARGS((exarg_T *eap));
+--- 27,33 ----
+  void do_wqall __ARGS((exarg_T *eap));
+  int not_writing __ARGS((void));
+  int getfile __ARGS((int fnum, char_u *ffname, char_u *sfname, int setpm, linenr_T lnum, int forceit));
+! int do_ecmd __ARGS((int fnum, char_u *ffname, char_u *sfname, exarg_T *eap, linenr_T newlnum, int flags, win_T *oldwin));
+  void ex_append __ARGS((exarg_T *eap));
+  void ex_change __ARGS((exarg_T *eap));
+  void ex_z __ARGS((exarg_T *eap));
+*** ../vim-7.2.040/src/quickfix.c	Thu Jul 24 18:44:59 2008
+--- src/quickfix.c	Wed Nov 12 18:12:00 2008
+***************
+*** 1420,1425 ****
+--- 1420,1426 ----
+      win_T		*win;
+      win_T		*altwin;
+  #endif
++     win_T		*oldwin = curwin;
+      int			print_message = TRUE;
+      int			len;
+  #ifdef FEAT_FOLDING
+***************
+*** 1744,1750 ****
+  	    }
+  	    else
+  		ok = do_ecmd(qf_ptr->qf_fnum, NULL, NULL, NULL, (linenr_T)1,
+! 						   ECMD_HIDE + ECMD_SET_HELP);
+  	}
+  	else
+  	    ok = buflist_getfile(qf_ptr->qf_fnum,
+--- 1745,1752 ----
+  	    }
+  	    else
+  		ok = do_ecmd(qf_ptr->qf_fnum, NULL, NULL, NULL, (linenr_T)1,
+! 					   ECMD_HIDE + ECMD_SET_HELP,
+! 					   oldwin == curwin ? curwin : NULL);
+  	}
+  	else
+  	    ok = buflist_getfile(qf_ptr->qf_fnum,
+***************
+*** 2267,2272 ****
+--- 2269,2275 ----
+      win_T	*win;
+      tabpage_T	*prevtab = curtab;
+      buf_T	*qf_buf;
++     win_T	*oldwin = curwin;
+  
+      if (eap->cmdidx == CMD_lopen || eap->cmdidx == CMD_lwindow)
+      {
+***************
+*** 2326,2339 ****
+  	    win->w_llist->qf_refcount++;
+  	}
+  
+  	if (qf_buf != NULL)
+  	    /* Use the existing quickfix buffer */
+  	    (void)do_ecmd(qf_buf->b_fnum, NULL, NULL, NULL, ECMD_ONE,
+! 						     ECMD_HIDE + ECMD_OLDBUF);
+  	else
+  	{
+  	    /* Create a new quickfix buffer */
+! 	    (void)do_ecmd(0, NULL, NULL, NULL, ECMD_ONE, ECMD_HIDE);
+  	    /* switch off 'swapfile' */
+  	    set_option_value((char_u *)"swf", 0L, NULL, OPT_LOCAL);
+  	    set_option_value((char_u *)"bt", 0L, (char_u *)"quickfix",
+--- 2329,2344 ----
+  	    win->w_llist->qf_refcount++;
+  	}
+  
++ 	if (oldwin != curwin)
++ 	    oldwin = NULL;  /* don't store info when in another window */
+  	if (qf_buf != NULL)
+  	    /* Use the existing quickfix buffer */
+  	    (void)do_ecmd(qf_buf->b_fnum, NULL, NULL, NULL, ECMD_ONE,
+! 					     ECMD_HIDE + ECMD_OLDBUF, oldwin);
+  	else
+  	{
+  	    /* Create a new quickfix buffer */
+! 	    (void)do_ecmd(0, NULL, NULL, NULL, ECMD_ONE, ECMD_HIDE, oldwin);
+  	    /* switch off 'swapfile' */
+  	    set_option_value((char_u *)"swf", 0L, NULL, OPT_LOCAL);
+  	    set_option_value((char_u *)"bt", 0L, (char_u *)"quickfix",
+*** ../vim-7.2.040/src/window.c	Wed Aug  6 18:32:11 2008
+--- src/window.c	Wed Nov 12 18:12:37 2008
+***************
+*** 531,537 ****
+  # ifdef FEAT_SCROLLBIND
+  			curwin->w_p_scb = FALSE;
+  # endif
+! 			(void)do_ecmd(0, ptr, NULL, NULL, ECMD_LASTL, ECMD_HIDE);
+  			if (nchar == 'F' && lnum >= 0)
+  			{
+  			    curwin->w_cursor.lnum = lnum;
+--- 531,538 ----
+  # ifdef FEAT_SCROLLBIND
+  			curwin->w_p_scb = FALSE;
+  # endif
+! 			(void)do_ecmd(0, ptr, NULL, NULL, ECMD_LASTL,
+! 							   ECMD_HIDE, NULL);
+  			if (nchar == 'F' && lnum >= 0)
+  			{
+  			    curwin->w_cursor.lnum = lnum;
+*** ../vim-7.2.040/src/version.c	Wed Nov 12 16:04:43 2008
+--- src/version.c	Wed Nov 12 16:54:35 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     41,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+260. Co-workers have to E-mail you about the fire alarm to get
+     you out of the building.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

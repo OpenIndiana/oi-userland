@@ -1,0 +1,180 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.440
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.440
+Problem:    Calling a function through a funcref, where the function deletes
+	    the funcref, leads to an invalid memory access.
+Solution:   Make a copy of the function name. (Lech Lorens)
+Files:	    src/eval.c, src/testdir/test34.in, src/testdir/test34.ok
+
+
+*** ../vim-7.2.439/src/eval.c	2010-05-16 13:26:19.000000000 +0200
+--- src/eval.c	2010-05-28 22:01:07.000000000 +0200
+***************
+*** 464,470 ****
+  static int find_internal_func __ARGS((char_u *name));
+  static char_u *deref_func_name __ARGS((char_u *name, int *lenp));
+  static int get_func_tv __ARGS((char_u *name, int len, typval_T *rettv, char_u **arg, linenr_T firstline, linenr_T lastline, int *doesrange, int evaluate, dict_T *selfdict));
+! static int call_func __ARGS((char_u *name, int len, typval_T *rettv, int argcount, typval_T *argvars, linenr_T firstline, linenr_T lastline, int *doesrange, int evaluate, dict_T *selfdict));
+  static void emsg_funcname __ARGS((char *ermsg, char_u *name));
+  static int non_zero_arg __ARGS((typval_T *argvars));
+  
+--- 464,470 ----
+  static int find_internal_func __ARGS((char_u *name));
+  static char_u *deref_func_name __ARGS((char_u *name, int *lenp));
+  static int get_func_tv __ARGS((char_u *name, int len, typval_T *rettv, char_u **arg, linenr_T firstline, linenr_T lastline, int *doesrange, int evaluate, dict_T *selfdict));
+! static int call_func __ARGS((char_u *func_name, int len, typval_T *rettv, int argcount, typval_T *argvars, linenr_T firstline, linenr_T lastline, int *doesrange, int evaluate, dict_T *selfdict));
+  static void emsg_funcname __ARGS((char *ermsg, char_u *name));
+  static int non_zero_arg __ARGS((typval_T *argvars));
+  
+***************
+*** 7997,8005 ****
+   * Also returns OK when an error was encountered while executing the function.
+   */
+      static int
+! call_func(name, len, rettv, argcount, argvars, firstline, lastline,
+  						doesrange, evaluate, selfdict)
+!     char_u	*name;		/* name of the function */
+      int		len;		/* length of "name" */
+      typval_T	*rettv;		/* return value goes here */
+      int		argcount;	/* number of "argvars" */
+--- 7997,8005 ----
+   * Also returns OK when an error was encountered while executing the function.
+   */
+      static int
+! call_func(func_name, len, rettv, argcount, argvars, firstline, lastline,
+  						doesrange, evaluate, selfdict)
+!     char_u	*func_name;	/* name of the function */
+      int		len;		/* length of "name" */
+      typval_T	*rettv;		/* return value goes here */
+      int		argcount;	/* number of "argvars" */
+***************
+*** 8023,8040 ****
+      int		i;
+      int		llen;
+      ufunc_T	*fp;
+-     int		cc;
+  #define FLEN_FIXED 40
+      char_u	fname_buf[FLEN_FIXED + 1];
+      char_u	*fname;
+  
+      /*
+       * In a script change <SID>name() and s:name() to K_SNR 123_name().
+       * Change <SNR>123_name() to K_SNR 123_name().
+       * Use fname_buf[] when it fits, otherwise allocate memory (slow).
+       */
+-     cc = name[len];
+-     name[len] = NUL;
+      llen = eval_fname_script(name);
+      if (llen > 0)
+      {
+--- 8023,8044 ----
+      int		i;
+      int		llen;
+      ufunc_T	*fp;
+  #define FLEN_FIXED 40
+      char_u	fname_buf[FLEN_FIXED + 1];
+      char_u	*fname;
++     char_u	*name;
++ 
++     /* Make a copy of the name, if it comes from a funcref variable it could
++      * be changed or deleted in the called function. */
++     name = vim_strnsave(func_name, len);
++     if (name == NULL)
++ 	return ret;
+  
+      /*
+       * In a script change <SID>name() and s:name() to K_SNR 123_name().
+       * Change <SNR>123_name() to K_SNR 123_name().
+       * Use fname_buf[] when it fits, otherwise allocate memory (slow).
+       */
+      llen = eval_fname_script(name);
+      if (llen > 0)
+      {
+***************
+*** 8205,8213 ****
+  	}
+      }
+  
+-     name[len] = cc;
+      if (fname != name && fname != fname_buf)
+  	vim_free(fname);
+  
+      return ret;
+  }
+--- 8209,8217 ----
+  	}
+      }
+  
+      if (fname != name && fname != fname_buf)
+  	vim_free(fname);
++     vim_free(name);
+  
+      return ret;
+  }
+*** ../vim-7.2.439/src/testdir/test34.in	2007-09-25 17:59:15.000000000 +0200
+--- src/testdir/test34.in	2010-05-28 21:54:36.000000000 +0200
+***************
+*** 35,40 ****
+--- 35,45 ----
+  :  let g:counter = 0
+  :  return ''
+  :endfunc
++ :func FuncWithRef(a)
++ :  unlet g:FuncRef
++ :  return a:a
++ :endfunc
++ :let g:FuncRef=function("FuncWithRef")
+  :let counter = 0
+  :inoremap <expr> ( ListItem()
+  :inoremap <expr> [ ListReset()
+***************
+*** 47,52 ****
+--- 52,58 ----
+   =retval
+   =Compute(45, 5, "retval")
+   =retval
++  =g:FuncRef(333)
+  
+  XX+-XX
+  ---*---
+*** ../vim-7.2.439/src/testdir/test34.ok	2006-04-30 20:49:40.000000000 +0200
+--- src/testdir/test34.ok	2010-05-28 21:56:03.000000000 +0200
+***************
+*** 1,4 ****
+! xxx4asdf fail nop ok 9
+  XX111XX
+  ---222---
+  1. one
+--- 1,4 ----
+! xxx4asdf fail nop ok 9 333
+  XX111XX
+  ---222---
+  1. one
+*** ../vim-7.2.439/src/version.c	2010-05-28 21:31:51.000000000 +0200
+--- src/version.c	2010-05-28 22:03:30.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     440,
+  /**/
+
+-- 
+Nobody will ever need more than 640 kB RAM.
+		-- Bill Gates, 1983
+Windows 98 requires 16 MB RAM.
+		-- Bill Gates, 1999
+Logical conclusion: Nobody will ever need Windows 98.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

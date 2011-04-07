@@ -1,0 +1,166 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.042
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.042
+Problem:    When using winrestview() in a BufWinEnter autocommand the window
+	    is scrolled anyway. (Matt Zyzik)
+Solution:   Don't recompute topline when above 'scrolloff' from the bottom.
+	    Don't always put the cursor halfway when entering a buffer.  Add
+	    "w_topline_was_set".
+Files:	    src/buffer.c, src/move.c, src/structs.h
+
+
+*** ../vim-7.2.041/src/buffer.c	Sat Nov 15 14:10:23 2008
+--- src/buffer.c	Sat Nov 15 14:58:52 2008
+***************
+*** 1401,1406 ****
+--- 1401,1409 ----
+      curwin->w_cursor.coladd = 0;
+  #endif
+      curwin->w_set_curswant = TRUE;
++ #ifdef FEAT_AUTOCMD
++     curwin->w_topline_was_set = FALSE;
++ #endif
+  
+      /* Make sure the buffer is loaded. */
+      if (curbuf->b_ml.ml_mfp == NULL)	/* need to load the file */
+***************
+*** 1440,1446 ****
+      maketitle();
+  #endif
+  #ifdef FEAT_AUTOCMD
+!     if (curwin->w_topline == 1)		/* when autocmds didn't change it */
+  #endif
+  	scroll_cursor_halfway(FALSE);	/* redisplay at correct position */
+  
+--- 1443,1450 ----
+      maketitle();
+  #endif
+  #ifdef FEAT_AUTOCMD
+! 	/* when autocmds didn't change it */
+!     if (curwin->w_topline == 1 && !curwin->w_topline_was_set)
+  #endif
+  	scroll_cursor_halfway(FALSE);	/* redisplay at correct position */
+  
+*** ../vim-7.2.041/src/move.c	Sun Jul 13 19:25:23 2008
+--- src/move.c	Sat Nov 15 14:56:47 2008
+***************
+*** 280,297 ****
+  
+  	if (curwin->w_botline <= curbuf->b_ml.ml_line_count)
+  	{
+! 	    if (curwin->w_cursor.lnum < curwin->w_botline
+! 		    && ((long)curwin->w_cursor.lnum
+  					     >= (long)curwin->w_botline - p_so
+  #ifdef FEAT_FOLDING
+  			|| hasAnyFolding(curwin)
+  #endif
+  			))
+! 	    {
+  		lineoff_T	loff;
+  
+! 		/* Cursor is above botline, check if there are 'scrolloff'
+! 		 * window lines below the cursor.  If not, need to scroll. */
+  		n = curwin->w_empty_rows;
+  		loff.lnum = curwin->w_cursor.lnum;
+  #ifdef FEAT_FOLDING
+--- 280,299 ----
+  
+  	if (curwin->w_botline <= curbuf->b_ml.ml_line_count)
+  	{
+! 	    if (curwin->w_cursor.lnum < curwin->w_botline)
+! 	    {
+! 	      if (((long)curwin->w_cursor.lnum
+  					     >= (long)curwin->w_botline - p_so
+  #ifdef FEAT_FOLDING
+  			|| hasAnyFolding(curwin)
+  #endif
+  			))
+! 	      {
+  		lineoff_T	loff;
+  
+! 		/* Cursor is (a few lines) above botline, check if there are
+! 		 * 'scrolloff' window lines below the cursor.  If not, need to
+! 		 * scroll. */
+  		n = curwin->w_empty_rows;
+  		loff.lnum = curwin->w_cursor.lnum;
+  #ifdef FEAT_FOLDING
+***************
+*** 317,322 ****
+--- 319,328 ----
+  		if (n >= p_so)
+  		    /* sufficient context, no need to scroll */
+  		    check_botline = FALSE;
++ 	      }
++ 	      else
++ 		  /* sufficient context, no need to scroll */
++ 		  check_botline = FALSE;
+  	    }
+  	    if (check_botline)
+  	    {
+***************
+*** 509,514 ****
+--- 515,523 ----
+      /* Approximate the value of w_botline */
+      wp->w_botline += lnum - wp->w_topline;
+      wp->w_topline = lnum;
++ #ifdef FEAT_AUTOCMD
++     wp->w_topline_was_set = TRUE;
++ #endif
+  #ifdef FEAT_DIFF
+      wp->w_topfill = 0;
+  #endif
+*** ../vim-7.2.041/src/structs.h	Sun Nov  9 13:43:25 2008
+--- src/structs.h	Sat Nov 15 14:56:42 2008
+***************
+*** 1784,1793 ****
+  #endif
+  
+      /*
+!      * The next three specify the offsets for displaying the buffer:
+       */
+      linenr_T	w_topline;	    /* buffer line number of the line at the
+  				       top of the window */
+  #ifdef FEAT_DIFF
+      int		w_topfill;	    /* number of filler lines above w_topline */
+      int		w_old_topfill;	    /* w_topfill at last redraw */
+--- 1784,1798 ----
+  #endif
+  
+      /*
+!      * "w_topline", "w_leftcol" and "w_skipcol" specify the offsets for
+!      * displaying the buffer.
+       */
+      linenr_T	w_topline;	    /* buffer line number of the line at the
+  				       top of the window */
++ #ifdef FEAT_AUTOCMD
++     char	w_topline_was_set;  /* flag set to TRUE when topline is set,
++ 				       e.g. by winrestview() */
++ #endif
+  #ifdef FEAT_DIFF
+      int		w_topfill;	    /* number of filler lines above w_topline */
+      int		w_old_topfill;	    /* w_topfill at last redraw */
+*** ../vim-7.2.041/src/version.c	Sat Nov 15 14:10:23 2008
+--- src/version.c	Sat Nov 15 16:01:29 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     42,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+261. You find diskettes in your pockets when doing laundry.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

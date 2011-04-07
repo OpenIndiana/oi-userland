@@ -1,0 +1,88 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.224
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.224
+Problem:    Crash when using 'completefunc'. (Ingo Karkat)
+Solution:   Disallow entering edit() recursively when doing completion.
+Files:	    src/edit.c
+
+
+*** ../vim-7.2.223/src/edit.c	2009-05-26 11:01:43.000000000 +0200
+--- src/edit.c	2009-07-09 18:01:49.000000000 +0200
+***************
+*** 114,119 ****
+--- 114,123 ----
+   * FALSE the word to be completed must be located. */
+  static int	  compl_started = FALSE;
+  
++ /* Set when doing something for completion that may call edit() recursively,
++  * which is not allowed. */
++ static int	  compl_busy = FALSE;
++ 
+  static int	  compl_matches = 0;
+  static char_u	  *compl_pattern = NULL;
+  static int	  compl_direction = FORWARD;
+***************
+*** 346,352 ****
+  
+  #ifdef FEAT_INS_EXPAND
+      /* Don't allow recursive insert mode when busy with completion. */
+!     if (compl_started || pum_visible())
+      {
+  	EMSG(_(e_secure));
+  	return FALSE;
+--- 350,356 ----
+  
+  #ifdef FEAT_INS_EXPAND
+      /* Don't allow recursive insert mode when busy with completion. */
+!     if (compl_started || compl_busy || pum_visible())
+      {
+  	EMSG(_(e_secure));
+  	return FALSE;
+***************
+*** 1340,1347 ****
+--- 1344,1353 ----
+  		goto normalchar;
+  
+  docomplete:
++ 	    compl_busy = TRUE;
+  	    if (ins_complete(c) == FAIL)
+  		compl_cont_status = 0;
++ 	    compl_busy = FALSE;
+  	    break;
+  #endif /* FEAT_INS_EXPAND */
+  
+***************
+*** 3172,3177 ****
+--- 3178,3184 ----
+  	vim_free(match);
+      } while (compl_curr_match != NULL && compl_curr_match != compl_first_match);
+      compl_first_match = compl_curr_match = NULL;
++     compl_shown_match = NULL;
+  }
+  
+      static void
+*** ../vim-7.2.223/src/version.c	2009-07-09 15:55:34.000000000 +0200
+--- src/version.c	2009-07-09 18:14:16.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     224,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+77. The phone company asks you to test drive their new PBX system
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

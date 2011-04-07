@@ -1,0 +1,52 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.128
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.128 (after 7.2.055)
+Problem:    Using ":lcd" makes session files not work.
+Solution:   Compare return value of mch_chdir() properly. (Andreas Bernauer)
+Files:      src/ex_docmd.c
+
+
+*** ../vim-7.2.127/src/ex_docmd.c	Sat Feb 21 20:36:30 2009
+--- src/ex_docmd.c	Sun Mar  1 02:39:38 2009
+***************
+*** 8792,8798 ****
+  		else if (*dirnow != NUL
+  			&& (ssop_flags & SSOP_CURDIR) && globaldir != NULL)
+  		{
+! 		    if (mch_chdir((char *)globaldir) == OK)
+  			shorten_fnames(TRUE);
+  		}
+  
+--- 8799,8805 ----
+  		else if (*dirnow != NUL
+  			&& (ssop_flags & SSOP_CURDIR) && globaldir != NULL)
+  		{
+! 		    if (mch_chdir((char *)globaldir) == 0)
+  			shorten_fnames(TRUE);
+  		}
+  
+*** ../vim-7.2.127/src/version.c	Tue Feb 24 04:36:50 2009
+--- src/version.c	Sun Mar  1 02:42:47 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     128,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+138. You develop a liking for cold coffee.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

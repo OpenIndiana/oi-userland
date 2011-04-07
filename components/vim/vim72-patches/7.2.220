@@ -1,0 +1,95 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.220
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.220 (after 7.2.215)
+Problem:    a BufEnter autocommand that changes directory causes problems.
+	    (Ajit Thakkar)
+Solution:   Disable autocommands when opening a hidden buffer in a window.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.219/src/fileio.c	2009-06-24 17:31:27.000000000 +0200
+--- src/fileio.c	2009-07-01 17:02:46.000000000 +0200
+***************
+*** 8441,8453 ****
+  	win_init_empty(aucmd_win); /* set cursor and topline to safe values */
+  
+  #ifdef FEAT_WINDOWS
+! 	/* Split the current window, put the aucmd_win in the upper half. */
+  	make_snapshot(SNAP_AUCMD_IDX);
+  	save_ea = p_ea;
+  	p_ea = FALSE;
+  	(void)win_split_ins(0, WSP_TOP, aucmd_win, 0);
+  	(void)win_comp_pos();   /* recompute window positions */
+  	p_ea = save_ea;
+  #endif
+  	curwin = aucmd_win;
+      }
+--- 8441,8456 ----
+  	win_init_empty(aucmd_win); /* set cursor and topline to safe values */
+  
+  #ifdef FEAT_WINDOWS
+! 	/* Split the current window, put the aucmd_win in the upper half.
+! 	 * We don't want the BufEnter or WinEnter autocommands. */
+! 	block_autocmds();
+  	make_snapshot(SNAP_AUCMD_IDX);
+  	save_ea = p_ea;
+  	p_ea = FALSE;
+  	(void)win_split_ins(0, WSP_TOP, aucmd_win, 0);
+  	(void)win_comp_pos();   /* recompute window positions */
+  	p_ea = save_ea;
++ 	unblock_autocmds();
+  #endif
+  	curwin = aucmd_win;
+      }
+***************
+*** 8474,8480 ****
+  	--curbuf->b_nwindows;
+  #ifdef FEAT_WINDOWS
+  	/* Find "aucmd_win", it can't be closed, but it may be in another tab
+! 	 * page. */
+  	if (curwin != aucmd_win)
+  	{
+  	    tabpage_T	*tp;
+--- 8477,8484 ----
+  	--curbuf->b_nwindows;
+  #ifdef FEAT_WINDOWS
+  	/* Find "aucmd_win", it can't be closed, but it may be in another tab
+! 	 * page. Do not trigger autocommands here. */
+! 	block_autocmds();
+  	if (curwin != aucmd_win)
+  	{
+  	    tabpage_T	*tp;
+***************
+*** 8498,8503 ****
+--- 8502,8508 ----
+  	last_status(FALSE);	    /* may need to remove last status line */
+  	restore_snapshot(SNAP_AUCMD_IDX, FALSE);
+  	(void)win_comp_pos();   /* recompute window positions */
++ 	unblock_autocmds();
+  
+  	if (win_valid(aco->save_curwin))
+  	    curwin = aco->save_curwin;
+*** ../vim-7.2.219/src/version.c	2009-07-01 16:12:54.000000000 +0200
+--- src/version.c	2009-07-01 17:10:22.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     220,
+  /**/
+
+-- 
+Microsoft is to software what McDonalds is to gourmet cooking
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

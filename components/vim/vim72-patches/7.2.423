@@ -1,0 +1,150 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.423
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.423
+Problem:    Crash when assigning s: to variable. (Yukihiro Nakadaira)
+Solution:   Make ga_scripts contain pointer to scriptvar_T instead of
+	    scriptvar_T itself. (Dominique Pelle)
+Files:	    src/eval.c
+
+
+*** ../vim-7.2.422/src/eval.c	2010-03-17 19:53:44.000000000 +0100
+--- src/eval.c	2010-05-14 12:02:16.000000000 +0200
+***************
+*** 145,153 ****
+      dict_T	sv_dict;
+  } scriptvar_T;
+  
+! static garray_T	    ga_scripts = {0, 0, sizeof(scriptvar_T), 4, NULL};
+! #define SCRIPT_SV(id) (((scriptvar_T *)ga_scripts.ga_data)[(id) - 1])
+! #define SCRIPT_VARS(id) (SCRIPT_SV(id).sv_dict.dv_hashtab)
+  
+  static int echo_attr = 0;   /* attributes used for ":echo" */
+  
+--- 145,153 ----
+      dict_T	sv_dict;
+  } scriptvar_T;
+  
+! static garray_T	    ga_scripts = {0, 0, sizeof(scriptvar_T *), 4, NULL};
+! #define SCRIPT_SV(id) (((scriptvar_T **)ga_scripts.ga_data)[(id) - 1])
+! #define SCRIPT_VARS(id) (SCRIPT_SV(id)->sv_dict.dv_hashtab)
+  
+  static int echo_attr = 0;   /* attributes used for ":echo" */
+  
+***************
+*** 866,875 ****
+      hash_init(&vimvarht);  /* garbage_collect() will access it */
+      hash_clear(&compat_hashtab);
+  
+-     /* script-local variables */
+-     for (i = 1; i <= ga_scripts.ga_len; ++i)
+- 	vars_clear(&SCRIPT_VARS(i));
+-     ga_clear(&ga_scripts);
+      free_scriptnames();
+  
+      /* global variables */
+--- 866,871 ----
+***************
+*** 878,883 ****
+--- 874,887 ----
+      /* autoloaded script names */
+      ga_clear_strings(&ga_loaded);
+  
++     /* script-local variables */
++     for (i = 1; i <= ga_scripts.ga_len; ++i)
++     {
++ 	vars_clear(&SCRIPT_VARS(i));
++ 	vim_free(SCRIPT_SV(i));
++     }
++     ga_clear(&ga_scripts);
++ 
+      /* unreferenced lists and dicts */
+      (void)garbage_collect();
+  
+***************
+*** 18803,18809 ****
+  	/* Must be something like "s:", otherwise "ht" would be NULL. */
+  	switch (varname[-2])
+  	{
+! 	    case 's': return &SCRIPT_SV(current_SID).sv_var;
+  	    case 'g': return &globvars_var;
+  	    case 'v': return &vimvars_var;
+  	    case 'b': return &curbuf->b_bufvar;
+--- 18807,18813 ----
+  	/* Must be something like "s:", otherwise "ht" would be NULL. */
+  	switch (varname[-2])
+  	{
+! 	    case 's': return &SCRIPT_SV(current_SID)->sv_var;
+  	    case 'g': return &globvars_var;
+  	    case 'v': return &vimvars_var;
+  	    case 'b': return &curbuf->b_bufvar;
+***************
+*** 18928,18940 ****
+  	    ht = &SCRIPT_VARS(i);
+  	    if (ht->ht_mask == HT_INIT_SIZE - 1)
+  		ht->ht_array = ht->ht_smallarray;
+! 	    sv = &SCRIPT_SV(i);
+  	    sv->sv_var.di_tv.vval.v_dict = &sv->sv_dict;
+  	}
+  
+  	while (ga_scripts.ga_len < id)
+  	{
+! 	    sv = &SCRIPT_SV(ga_scripts.ga_len + 1);
+  	    init_var_dict(&sv->sv_dict, &sv->sv_var);
+  	    ++ga_scripts.ga_len;
+  	}
+--- 18932,18945 ----
+  	    ht = &SCRIPT_VARS(i);
+  	    if (ht->ht_mask == HT_INIT_SIZE - 1)
+  		ht->ht_array = ht->ht_smallarray;
+! 	    sv = SCRIPT_SV(i);
+  	    sv->sv_var.di_tv.vval.v_dict = &sv->sv_dict;
+  	}
+  
+  	while (ga_scripts.ga_len < id)
+  	{
+! 	    sv = SCRIPT_SV(ga_scripts.ga_len + 1) = 
+! 		(scriptvar_T *)alloc_clear(sizeof(scriptvar_T));
+  	    init_var_dict(&sv->sv_dict, &sv->sv_var);
+  	    ++ga_scripts.ga_len;
+  	}
+***************
+*** 21931,21937 ****
+      if (find_viminfo_parameter('!') == NULL)
+  	return;
+  
+!     fprintf(fp, _("\n# global variables:\n"));
+  
+      todo = (int)globvarht.ht_used;
+      for (hi = globvarht.ht_array; todo > 0; ++hi)
+--- 21936,21942 ----
+      if (find_viminfo_parameter('!') == NULL)
+  	return;
+  
+!     fputs(_("\n# global variables:\n"), fp);
+  
+      todo = (int)globvarht.ht_used;
+      for (hi = globvarht.ht_array; todo > 0; ++hi)
+*** ../vim-7.2.422/src/version.c	2010-05-13 17:46:53.000000000 +0200
+--- src/version.c	2010-05-14 12:13:19.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     423,
+  /**/
+
+-- 
+He who laughs last, thinks slowest.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

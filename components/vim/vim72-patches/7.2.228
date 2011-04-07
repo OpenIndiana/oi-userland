@@ -1,0 +1,573 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.228
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.228
+Problem:    Cscope is limited to 8 connections.
+Solution:   Allocated the connection array to handle any number of
+	    connections. (Dominique Pelle)
+Files:	    runtime/doc/if_cscop.txt, src/if_cscope.h, src/if_cscope.c
+
+
+*** ../vim-7.2.227/runtime/doc/if_cscop.txt	2009-03-18 14:30:46.000000000 +0100
+--- runtime/doc/if_cscop.txt	2009-07-09 15:40:48.000000000 +0200
+***************
+*** 355,367 ****
+  The DJGPP-built version from http://cscope.sourceforge.net is known to not
+  work with Vim.
+  
+! There are a couple of hard-coded limitations:
+! 
+!     1. The maximum number of cscope connections allowed is 8.  Do you
+!     really need more?
+! 
+!     2. Doing a |:tjump| when |:cstag| searches the tag files is not
+!     configurable (e.g., you can't do a tselect instead).
+  
+  ==============================================================================
+  6. Suggested usage					*cscope-suggestions*
+--- 355,362 ----
+  The DJGPP-built version from http://cscope.sourceforge.net is known to not
+  work with Vim.
+  
+! Hard-coded limitation: doing a |:tjump| when |:cstag| searches the tag files
+! is not configurable (e.g., you can't do a tselect instead).
+  
+  ==============================================================================
+  6. Suggested usage					*cscope-suggestions*
+*** ../vim-7.2.227/src/if_cscope.h	2008-08-25 04:35:13.000000000 +0200
+--- src/if_cscope.h	2009-07-09 15:39:32.000000000 +0200
+***************
+*** 25,31 ****
+  
+  #define CSCOPE_SUCCESS		0
+  #define CSCOPE_FAILURE		-1
+- #define CSCOPE_MAX_CONNECTIONS	8   /* you actually need more? */
+  
+  #define	CSCOPE_DBFILE		"cscope.out"
+  #define	CSCOPE_PROMPT		">> "
+--- 25,30 ----
+*** ../vim-7.2.227/src/if_cscope.c	2009-05-16 17:29:37.000000000 +0200
+--- src/if_cscope.c	2009-07-09 15:39:32.000000000 +0200
+***************
+*** 46,52 ****
+  static int	    cs_find __ARGS((exarg_T *eap));
+  static int	    cs_find_common __ARGS((char *opt, char *pat, int, int, int));
+  static int	    cs_help __ARGS((exarg_T *eap));
+- static void	    cs_init __ARGS((void));
+  static void	    clear_csinfo __ARGS((int i));
+  static int	    cs_insert_filelist __ARGS((char *, char *, char *,
+  			struct stat *));
+--- 46,51 ----
+***************
+*** 66,72 ****
+  static int	    cs_show __ARGS((exarg_T *eap));
+  
+  
+! static csinfo_T	    csinfo[CSCOPE_MAX_CONNECTIONS];
+  static int	    eap_arg_len;    /* length of eap->arg, set in
+  				       cs_lookup_cmd() */
+  static cscmd_T	    cs_cmds[] =
+--- 65,74 ----
+  static int	    cs_show __ARGS((exarg_T *eap));
+  
+  
+! static csinfo_T *   csinfo = NULL;
+! static int	    csinfo_size = 0;	/* number of items allocated in
+! 					   csinfo[] */
+! 
+  static int	    eap_arg_len;    /* length of eap->arg, set in
+  				       cs_lookup_cmd() */
+  static cscmd_T	    cs_cmds[] =
+***************
+*** 144,166 ****
+  	}
+      case EXP_CSCOPE_KILL:
+  	{
+! 	    static char_u	connection[2];
+  
+  	    /* ":cscope kill" accepts connection numbers or partial names of
+  	     * the pathname of the cscope database as argument.  Only complete
+  	     * with connection numbers. -1 can also be used to kill all
+  	     * connections. */
+! 	    for (i = 0, current_idx = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	    {
+  		if (csinfo[i].fname == NULL)
+  		    continue;
+  		if (current_idx++ == idx)
+  		{
+! 		    /* Connection number fits in one character since
+! 		     * CSCOPE_MAX_CONNECTIONS is < 10 */
+! 		    connection[0] = i + '0';
+! 		    connection[1] = NUL;
+! 		    return connection;
+  		}
+  	    }
+  	    return (current_idx == idx && idx > 0) ? (char_u *)"-1" : NULL;
+--- 146,165 ----
+  	}
+      case EXP_CSCOPE_KILL:
+  	{
+! 	    static char	connection[5];
+  
+  	    /* ":cscope kill" accepts connection numbers or partial names of
+  	     * the pathname of the cscope database as argument.  Only complete
+  	     * with connection numbers. -1 can also be used to kill all
+  	     * connections. */
+! 	    for (i = 0, current_idx = 0; i < csinfo_size; i++)
+  	    {
+  		if (csinfo[i].fname == NULL)
+  		    continue;
+  		if (current_idx++ == idx)
+  		{
+! 		    vim_snprintf(connection, sizeof(connection), "%d", i);
+! 		    return (char_u *)connection;
+  		}
+  	    }
+  	    return (current_idx == idx && idx > 0) ? (char_u *)"-1" : NULL;
+***************
+*** 223,229 ****
+  {
+      cscmd_T *cmdp;
+  
+-     cs_init();
+      if ((cmdp = cs_lookup_cmd(eap)) == NULL)
+      {
+  	cs_help(eap);
+--- 222,227 ----
+***************
+*** 284,291 ****
+  {
+      int ret = FALSE;
+  
+-     cs_init();
+- 
+      if (*eap->arg == NUL)
+      {
+  	(void)EMSG(_("E562: Usage: cstag <ident>"));
+--- 282,287 ----
+***************
+*** 441,447 ****
+      if (num < 0 || num > 4 || (num > 0 && !dbpath))
+  	return FALSE;
+  
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+      {
+  	if (!csinfo[i].fname)
+  	    continue;
+--- 437,443 ----
+      if (num < 0 || num > 4 || (num > 0 && !dbpath))
+  	return FALSE;
+  
+!     for (i = 0; i < csinfo_size; i++)
+      {
+  	if (!csinfo[i].fname)
+  	    continue;
+***************
+*** 684,690 ****
+      short i;
+      short cnt = 0;
+  
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+      {
+  	if (csinfo[i].fname != NULL)
+  	    cnt++;
+--- 680,686 ----
+      short i;
+      short cnt = 0;
+  
+!     for (i = 0; i < csinfo_size; i++)
+      {
+  	if (csinfo[i].fname != NULL)
+  	    cnt++;
+***************
+*** 1112,1118 ****
+  {
+      int i;
+      char *cmd;
+!     int nummatches[CSCOPE_MAX_CONNECTIONS], totmatches;
+  #ifdef FEAT_QUICKFIX
+      char cmdletter;
+      char *qfpos;
+--- 1108,1115 ----
+  {
+      int i;
+      char *cmd;
+!     int *nummatches;
+!     int totmatches;
+  #ifdef FEAT_QUICKFIX
+      char cmdletter;
+      char *qfpos;
+***************
+*** 1123,1135 ****
+      if (cmd == NULL)
+  	return FALSE;
+  
+      /* send query to all open connections, then count the total number
+       * of matches so we can alloc matchesp all in one swell foop
+       */
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	nummatches[i] = 0;
+      totmatches = 0;
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+      {
+  	if (csinfo[i].fname == NULL || csinfo[i].to_fp == NULL)
+  	    continue;
+--- 1120,1136 ----
+      if (cmd == NULL)
+  	return FALSE;
+  
++     nummatches = (int *)alloc(sizeof(int)*csinfo_size);
++     if (nummatches == NULL)
++ 	return FALSE;
++ 
+      /* send query to all open connections, then count the total number
+       * of matches so we can alloc matchesp all in one swell foop
+       */
+!     for (i = 0; i < csinfo_size; i++)
+  	nummatches[i] = 0;
+      totmatches = 0;
+!     for (i = 0; i < csinfo_size; i++)
+      {
+  	if (csinfo[i].fname == NULL || csinfo[i].to_fp == NULL)
+  	    continue;
+***************
+*** 1154,1160 ****
+--- 1155,1164 ----
+  	char *buf;
+  
+  	if (!verbose)
++ 	{
++ 	    vim_free(nummatches);
+  	    return FALSE;
++ 	}
+  
+  	buf = (char *)alloc((unsigned)(strlen(opt) + strlen(pat) + strlen(nf)));
+  	if (buf == NULL)
+***************
+*** 1165,1170 ****
+--- 1169,1175 ----
+  	    (void)EMSG(buf);
+  	    vim_free(buf);
+  	}
++ 	vim_free(nummatches);
+  	return FALSE;
+      }
+  
+***************
+*** 1217,1222 ****
+--- 1222,1228 ----
+  		(void)EMSG(buf);
+  		vim_free(buf);
+  	    }
++ 	    vim_free(nummatches);
+  	    return FALSE;
+  	}
+      }
+***************
+*** 1264,1269 ****
+--- 1270,1276 ----
+  	}
+  	mch_remove(tmp);
+  	vim_free(tmp);
++ 	vim_free(nummatches);
+  	return TRUE;
+      }
+      else
+***************
+*** 1275,1280 ****
+--- 1282,1288 ----
+  	/* read output */
+  	cs_fill_results((char *)pat, totmatches, nummatches, &matches,
+  							 &contexts, &matched);
++ 	vim_free(nummatches);
+  	if (matches == NULL)
+  	    return FALSE;
+  
+***************
+*** 1328,1353 ****
+  } /* cs_help */
+  
+  
+- /*
+-  * PRIVATE: cs_init
+-  *
+-  * initialize cscope structure if not already
+-  */
+-     static void
+- cs_init()
+- {
+-     short i;
+-     static int init_already = FALSE;
+- 
+-     if (init_already)
+- 	return;
+- 
+-     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+- 	clear_csinfo(i);
+- 
+-     init_already = TRUE;
+- } /* cs_init */
+- 
+      static void
+  clear_csinfo(i)
+      int	    i;
+--- 1336,1341 ----
+***************
+*** 1444,1450 ****
+  #endif
+  
+      i = -1; /* can be set to the index of an empty item in csinfo */
+!     for (j = 0; j < CSCOPE_MAX_CONNECTIONS; j++)
+      {
+  	if (csinfo[j].fname != NULL
+  #if defined(UNIX)
+--- 1432,1438 ----
+  #endif
+  
+      i = -1; /* can be set to the index of an empty item in csinfo */
+!     for (j = 0; j < csinfo_size; j++)
+      {
+  	if (csinfo[j].fname != NULL
+  #if defined(UNIX)
+***************
+*** 1471,1479 ****
+  
+      if (i == -1)
+      {
+! 	if (p_csverbose)
+! 	    (void)EMSG(_("E569: maximum number of cscope connections reached"));
+! 	return -1;
+      }
+  
+      if ((csinfo[i].fname = (char *)alloc((unsigned)strlen(fname)+1)) == NULL)
+--- 1459,1483 ----
+  
+      if (i == -1)
+      {
+! 	i = csinfo_size;
+! 	if (csinfo_size == 0)
+! 	{
+! 	    /* First time allocation: allocate only 1 connection. It should
+! 	     * be enough for most users.  If more is needed, csinfo will be
+! 	     * reallocated. */
+! 	    csinfo_size = 1;
+! 	    csinfo = (csinfo_T *)alloc_clear(sizeof(csinfo_T));
+! 	}
+! 	else
+! 	{
+! 	    /* Reallocate space for more connections. */
+! 	    csinfo_size *= 2;
+! 	    csinfo = vim_realloc(csinfo, sizeof(csinfo_T)*csinfo_size);
+! 	}
+! 	if (csinfo == NULL)
+! 	    return -1;
+! 	for (j = csinfo_size/2; j < csinfo_size; j++)
+! 	    clear_csinfo(j);
+      }
+  
+      if ((csinfo[i].fname = (char *)alloc((unsigned)strlen(fname)+1)) == NULL)
+***************
+*** 1580,1594 ****
+  	/* It must be part of a name.  We will try to find a match
+  	 * within all the names in the csinfo data structure
+  	 */
+! 	for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	{
+  	    if (csinfo[i].fname != NULL && strstr(csinfo[i].fname, stok))
+  		break;
+  	}
+      }
+  
+!     if ((i >= CSCOPE_MAX_CONNECTIONS || i < -1 || csinfo[i].fname == NULL)
+! 	    && i != -1)
+      {
+  	if (p_csverbose)
+  	    (void)EMSG2(_("E261: cscope connection %s not found"), stok);
+--- 1584,1597 ----
+  	/* It must be part of a name.  We will try to find a match
+  	 * within all the names in the csinfo data structure
+  	 */
+! 	for (i = 0; i < csinfo_size; i++)
+  	{
+  	    if (csinfo[i].fname != NULL && strstr(csinfo[i].fname, stok))
+  		break;
+  	}
+      }
+  
+!     if ((i != -1) && (i >= csinfo_size || i < -1 || csinfo[i].fname == NULL))
+      {
+  	if (p_csverbose)
+  	    (void)EMSG2(_("E261: cscope connection %s not found"), stok);
+***************
+*** 1597,1603 ****
+      {
+  	if (i == -1)
+  	{
+! 	    for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	    {
+  		if (csinfo[i].fname)
+  		    cs_kill_execute(i, csinfo[i].fname);
+--- 1600,1606 ----
+      {
+  	if (i == -1)
+  	{
+! 	    for (i = 0; i < csinfo_size; i++)
+  	    {
+  		if (csinfo[i].fname)
+  		    cs_kill_execute(i, csinfo[i].fname);
+***************
+*** 1857,1863 ****
+      if (buf == NULL)
+  	return;
+  
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+      {
+  	if (nummatches_a[i] < 1)
+  	    continue;
+--- 1860,1866 ----
+      if (buf == NULL)
+  	return;
+  
+!     for (i = 0; i < csinfo_size; i++)
+      {
+  	if (nummatches_a[i] < 1)
+  	    continue;
+***************
+*** 1929,1935 ****
+      if ((cntxts = (char **)alloc(sizeof(char *) * totmatches)) == NULL)
+  	goto parse_out;
+  
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+      {
+  	if (nummatches_a[i] < 1)
+  	    continue;
+--- 1932,1938 ----
+      if ((cntxts = (char **)alloc(sizeof(char *) * totmatches)) == NULL)
+  	goto parse_out;
+  
+!     for (i = 0; i < csinfo_size; i++)
+      {
+  	if (nummatches_a[i] < 1)
+  	    continue;
+***************
+*** 2383,2392 ****
+      int	i;
+      char buf[20]; /* for sprintf " (#%d)" */
+  
+      /* malloc our db and ppath list */
+!     dblist = (char **)alloc(CSCOPE_MAX_CONNECTIONS * sizeof(char *));
+!     pplist = (char **)alloc(CSCOPE_MAX_CONNECTIONS * sizeof(char *));
+!     fllist = (char **)alloc(CSCOPE_MAX_CONNECTIONS * sizeof(char *));
+      if (dblist == NULL || pplist == NULL || fllist == NULL)
+      {
+  	vim_free(dblist);
+--- 2386,2398 ----
+      int	i;
+      char buf[20]; /* for sprintf " (#%d)" */
+  
++     if (csinfo_size == 0)
++ 	return CSCOPE_SUCCESS;
++ 
+      /* malloc our db and ppath list */
+!     dblist = (char **)alloc(csinfo_size * sizeof(char *));
+!     pplist = (char **)alloc(csinfo_size * sizeof(char *));
+!     fllist = (char **)alloc(csinfo_size * sizeof(char *));
+      if (dblist == NULL || pplist == NULL || fllist == NULL)
+      {
+  	vim_free(dblist);
+***************
+*** 2395,2401 ****
+  	return CSCOPE_FAILURE;
+      }
+  
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+      {
+  	dblist[i] = csinfo[i].fname;
+  	pplist[i] = csinfo[i].ppath;
+--- 2401,2407 ----
+  	return CSCOPE_FAILURE;
+      }
+  
+!     for (i = 0; i < csinfo_size; i++)
+      {
+  	dblist[i] = csinfo[i].fname;
+  	pplist[i] = csinfo[i].ppath;
+***************
+*** 2405,2411 ****
+      }
+  
+      /* rebuild the cscope connection list */
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+      {
+  	if (dblist[i] != NULL)
+  	{
+--- 2411,2417 ----
+      }
+  
+      /* rebuild the cscope connection list */
+!     for (i = 0; i < csinfo_size; i++)
+      {
+  	if (dblist[i] != NULL)
+  	{
+***************
+*** 2502,2508 ****
+  	MSG_PUTS_ATTR(
+  	    _(" # pid    database name                       prepend path\n"),
+  	    hl_attr(HLF_T));
+! 	for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	{
+  	    if (csinfo[i].fname == NULL)
+  		continue;
+--- 2508,2514 ----
+  	MSG_PUTS_ATTR(
+  	    _(" # pid    database name                       prepend path\n"),
+  	    hl_attr(HLF_T));
+! 	for (i = 0; i < csinfo_size; i++)
+  	{
+  	    if (csinfo[i].fname == NULL)
+  		continue;
+***************
+*** 2531,2538 ****
+  {
+      int i;
+  
+!     for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	cs_release_csp(i, TRUE);
+  }
+  
+  #endif	/* FEAT_CSCOPE */
+--- 2537,2546 ----
+  {
+      int i;
+  
+!     for (i = 0; i < csinfo_size; i++)
+  	cs_release_csp(i, TRUE);
++     vim_free(csinfo);
++     csinfo_size = 0;
+  }
+  
+  #endif	/* FEAT_CSCOPE */
+*** ../vim-7.2.227/src/version.c	2009-07-09 20:13:59.000000000 +0200
+--- src/version.c	2009-07-09 21:21:48.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     228,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+84. Books in your bookcase bear the names Bongo, WinSock and Inside OLE
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

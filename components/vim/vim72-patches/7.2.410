@@ -1,0 +1,78 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.410
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.410
+Problem:    Highlighting directories for completion doesn't work properly.
+Solution:   Don't halve backslashes when not needed, expaned "~/".
+	    (Dominique Pelle)
+Files:	    src/ex_getln.c
+
+
+*** ../vim-7.2.409/src/ex_getln.c	2010-03-17 19:13:19.000000000 +0100
+--- src/ex_getln.c	2010-03-23 18:00:56.000000000 +0100
+***************
+*** 3948,3959 ****
+  					  || xp->xp_context == EXPAND_SHELLCMD
+  					  || xp->xp_context == EXPAND_BUFFERS)
+  		{
+- 		    char_u	*halved_slash;
+- 
+  		    /* highlight directories */
+! 		    halved_slash = backslash_halve_save(files_found[k]);
+! 		    j = mch_isdir(halved_slash);
+! 		    vim_free(halved_slash);
+  		    if (showtail)
+  			p = L_SHOWFILE(k);
+  		    else
+--- 3948,3973 ----
+  					  || xp->xp_context == EXPAND_SHELLCMD
+  					  || xp->xp_context == EXPAND_BUFFERS)
+  		{
+  		    /* highlight directories */
+! 		    if (xp->xp_numfiles != -1)
+! 		    {
+! 			char_u	*halved_slash;
+! 			char_u	*exp_path;
+! 
+! 			/* Expansion was done before and special characters
+! 			 * were escaped, need to halve backslashes.  Also
+! 			 * $HOME has been replaced with ~/. */
+! 			exp_path = expand_env_save_opt(files_found[k], TRUE);
+! 			halved_slash = backslash_halve_save(
+! 				exp_path != NULL ? exp_path : files_found[k]);
+! 			j = mch_isdir(halved_slash != NULL ? halved_slash
+! 							    : files_found[k]);
+! 			vim_free(exp_path);
+! 			vim_free(halved_slash);
+! 		    }
+! 		    else
+! 			/* Expansion was done here, file names are literal. */
+! 			j = mch_isdir(files_found[k]);
+  		    if (showtail)
+  			p = L_SHOWFILE(k);
+  		    else
+*** ../vim-7.2.409/src/version.c	2010-03-23 17:49:19.000000000 +0100
+--- src/version.c	2010-03-23 18:04:25.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     410,
+  /**/
+
+-- 
+BRIDGEKEEPER: What is your favorite colour?
+GAWAIN:       Blue ...  No yelloooooww!
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,91 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.318
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.318
+Problem:    Wrong locale value breaks floating point numbers for gvim.
+Solution:   Set the locale again after doing GUI inits. (Dominique Pelle)
+Files:	    src/main.c
+
+
+*** ../vim-7.2.317/src/main.c	2009-11-17 12:31:30.000000000 +0100
+--- src/main.c	2009-12-16 18:23:46.000000000 +0100
+***************
+*** 366,379 ****
+       * Check if the GUI can be started.  Reset gui.starting if not.
+       * Don't know about other systems, stay on the safe side and don't check.
+       */
+!     if (gui.starting && gui_init_check() == FAIL)
+      {
+! 	gui.starting = FALSE;
+  
+! 	/* When running "evim" or "gvim -y" we need the menus, exit if we
+! 	 * don't have them. */
+! 	if (params.evim_mode)
+! 	    mch_exit(1);
+      }
+  # endif
+  #endif
+--- 366,386 ----
+       * Check if the GUI can be started.  Reset gui.starting if not.
+       * Don't know about other systems, stay on the safe side and don't check.
+       */
+!     if (gui.starting)
+      {
+! 	if (gui_init_check() == FAIL)
+! 	{
+! 	    gui.starting = FALSE;
+  
+! 	    /* When running "evim" or "gvim -y" we need the menus, exit if we
+! 	     * don't have them. */
+! 	    if (params.evim_mode)
+! 		mch_exit(1);
+! 	}
+! #  if defined(HAVE_LOCALE_H) || defined(X_LOCALE)
+! 	/* Re-initialize locale, it may have been altered by gui_init_check() */
+! 	init_locale();
+! #  endif
+      }
+  # endif
+  #endif
+***************
+*** 3685,3691 ****
+  	}
+  	else if (STRICMP(argv[i], "--servername") == 0)
+  	{
+! 	    /* Alredy processed. Take it out of the command line */
+  	    i++;
+  	    continue;
+  	}
+--- 3692,3698 ----
+  	}
+  	else if (STRICMP(argv[i], "--servername") == 0)
+  	{
+! 	    /* Already processed. Take it out of the command line */
+  	    i++;
+  	    continue;
+  	}
+*** ../vim-7.2.317/src/version.c	2009-12-16 18:13:04.000000000 +0100
+--- src/version.c	2009-12-16 18:26:24.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     318,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+36. You miss more than five meals a week downloading the latest games from
+    Apogee.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

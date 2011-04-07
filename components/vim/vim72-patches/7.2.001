@@ -1,0 +1,61 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.001
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.001
+Problem:    Mac: pseudo-ttys don't work properly on Leopard, resulting in the
+            shell not to have a prompt, CTRL-C not working, etc.
+Solution:   Don't use SVR4 compatible ptys, even though they are detected.
+            (Ben Schmidt)
+Files:      src/pty.c
+
+
+*** ../vim-7.2.000/src/pty.c	Wed Aug  6 19:04:29 2008
+--- src/pty.c	Fri Aug 15 04:00:34 2008
+***************
+*** 270,278 ****
+  }
+  #endif
+  
+! #if defined(HAVE_SVR4_PTYS) && !defined(PTY_DONE) && !defined(hpux)
+  
+! /* NOTE: Even though HPUX can have /dev/ptmx, the code below doesn't work! */
+  #define PTY_DONE
+      int
+  OpenPTY(ttyn)
+--- 270,279 ----
+  }
+  #endif
+  
+! #if defined(HAVE_SVR4_PTYS) && !defined(PTY_DONE) && !defined(hpux) && !defined(MACOS_X)
+  
+! /* NOTE: Even though HPUX can have /dev/ptmx, the code below doesn't work!
+!  * Same for Mac OS X Leopard. */
+  #define PTY_DONE
+      int
+  OpenPTY(ttyn)
+*** ../vim-7.2.000/src/version.c	Sat Aug  9 19:37:37 2008
+--- src/version.c	Sun Aug 17 22:56:25 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     1,
+  /**/
+
+-- 
+ARTHUR:       Now stand aside worthy adversary.
+BLACK KNIGHT: (Glancing at his shoulder) 'Tis but a scratch.
+ARTHUR:       A scratch?  Your arm's off.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

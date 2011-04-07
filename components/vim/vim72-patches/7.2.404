@@ -1,0 +1,54 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.404
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.404
+Problem:    Pointers for composing characters are not properly initialized.
+Solution:   Compute the size of the pointer, not what it points to. (Yukihiro
+	    Nakadaira)
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.403/src/screen.c	2010-02-03 15:47:59.000000000 +0100
+--- src/screen.c	2010-03-23 13:48:05.000000000 +0100
+***************
+*** 7536,7542 ****
+      new_ScreenLines = (schar_T *)lalloc((long_u)(
+  			      (Rows + 1) * Columns * sizeof(schar_T)), FALSE);
+  #ifdef FEAT_MBYTE
+!     vim_memset(new_ScreenLinesC, 0, sizeof(u8char_T) * MAX_MCO);
+      if (enc_utf8)
+      {
+  	new_ScreenLinesUC = (u8char_T *)lalloc((long_u)(
+--- 7536,7542 ----
+      new_ScreenLines = (schar_T *)lalloc((long_u)(
+  			      (Rows + 1) * Columns * sizeof(schar_T)), FALSE);
+  #ifdef FEAT_MBYTE
+!     vim_memset(new_ScreenLinesC, 0, sizeof(u8char_T *) * MAX_MCO);
+      if (enc_utf8)
+      {
+  	new_ScreenLinesUC = (u8char_T *)lalloc((long_u)(
+*** ../vim-7.2.403/src/version.c	2010-03-19 23:08:22.000000000 +0100
+--- src/version.c	2010-03-23 13:54:47.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     404,
+  /**/
+
+-- 
+LAUNCELOT: Isn't there a St. Aaaaarrrrrrggghhh's in Cornwall?
+ARTHUR:    No, that's Saint Ives.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

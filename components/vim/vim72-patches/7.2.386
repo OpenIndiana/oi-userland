@@ -1,0 +1,61 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.386
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.386
+Problem:    Focus hack for KDE 3.1 causes problems for other window managers.
+Solution:   Remove the hack. (forwarded by Joel Bradshaw)
+Files:	    src/gui_gtk.c
+
+
+*** ../vim-7.2.385/src/gui_gtk.c	2009-05-17 16:23:20.000000000 +0200
+--- src/gui_gtk.c	2010-03-10 12:07:59.000000000 +0100
+***************
+*** 2313,2331 ****
+  	gtk_widget_destroy(dialog);
+      }
+  
+-     /* Terrible hack: When the text area still has focus when we remove the
+-      * dialog, somehow gvim loses window focus.  This is with "point to type"
+-      * in the KDE 3.1 window manager.  Warp the mouse pointer to outside the
+-      * window and back to avoid that. */
+-     if (!gui.in_focus)
+-     {
+- 	int x, y;
+- 
+- 	gdk_window_get_pointer(gui.drawarea->window, &x, &y, NULL);
+- 	gui_mch_setmouse(-100, -100);
+- 	gui_mch_setmouse(x, y);
+-     }
+- 
+      return response > 0 ? response : 0;
+  }
+  
+--- 2313,2318 ----
+*** ../vim-7.2.385/src/version.c	2010-03-02 18:15:47.000000000 +0100
+--- src/version.c	2010-03-10 12:09:00.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     386,
+  /**/
+
+-- 
+ARTHUR:  Well, I AM king...
+DENNIS:  Oh king, eh, very nice.  An' how'd you get that, eh?  By exploitin'
+         the workers -- by 'angin' on to outdated imperialist dogma which
+         perpetuates the economic an' social differences in our society!  If
+         there's ever going to be any progress--
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

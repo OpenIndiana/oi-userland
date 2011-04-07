@@ -1,0 +1,310 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.215
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.215
+Problem:    ml_get error when using ":vimgrep".
+Solution:   Load the memfile for the hidden buffer before putting it in a
+	    window.  Correct the order of splitting the window and filling
+	    the window and buffer with data.
+Files:	    src/fileio.c, src/proto/window.pro, src/quickfix.c, src/window.c
+
+
+*** ../vim-7.2.214/src/fileio.c	2009-06-24 11:57:53.000000000 +0200
+--- src/fileio.c	2009-06-24 12:53:19.000000000 +0200
+***************
+*** 710,716 ****
+  #endif
+  #ifdef UNIX
+  	/* Set swap file protection bits after creating it. */
+! 	if (swap_mode > 0 && curbuf->b_ml.ml_mfp->mf_fname != NULL)
+  	    (void)mch_setperm(curbuf->b_ml.ml_mfp->mf_fname, (long)swap_mode);
+  #endif
+      }
+--- 710,717 ----
+  #endif
+  #ifdef UNIX
+  	/* Set swap file protection bits after creating it. */
+! 	if (swap_mode > 0 && curbuf->b_ml.ml_mfp != NULL
+! 			  && curbuf->b_ml.ml_mfp->mf_fname != NULL)
+  	    (void)mch_setperm(curbuf->b_ml.ml_mfp->mf_fname, (long)swap_mode);
+  #endif
+      }
+***************
+*** 8435,8443 ****
+  	 * effects, insert it in a the current tab page.
+  	 * Anything related to a window (e.g., setting folds) may have
+  	 * unexpected results. */
+! 	curwin = aucmd_win;
+! 	curwin->w_buffer = buf;
+  	++buf->b_nwindows;
+  
+  #ifdef FEAT_WINDOWS
+  	/* Split the current window, put the aucmd_win in the upper half. */
+--- 8436,8444 ----
+  	 * effects, insert it in a the current tab page.
+  	 * Anything related to a window (e.g., setting folds) may have
+  	 * unexpected results. */
+! 	aucmd_win->w_buffer = buf;
+  	++buf->b_nwindows;
++ 	win_init_empty(aucmd_win); /* set cursor and topline to safe values */
+  
+  #ifdef FEAT_WINDOWS
+  	/* Split the current window, put the aucmd_win in the upper half. */
+***************
+*** 8448,8459 ****
+  	(void)win_comp_pos();   /* recompute window positions */
+  	p_ea = save_ea;
+  #endif
+! 	/* set cursor and topline to safe values */
+! 	curwin_init();
+! #ifdef FEAT_VERTSPLIT
+! 	curwin->w_wincol = 0;
+! 	curwin->w_width = Columns;
+! #endif
+      }
+      curbuf = buf;
+      aco->new_curwin = curwin;
+--- 8449,8455 ----
+  	(void)win_comp_pos();   /* recompute window positions */
+  	p_ea = save_ea;
+  #endif
+! 	curwin = aucmd_win;
+      }
+      curbuf = buf;
+      aco->new_curwin = curwin;
+*** ../vim-7.2.214/src/proto/window.pro	2009-06-16 16:01:34.000000000 +0200
+--- src/proto/window.pro	2009-06-24 12:53:13.000000000 +0200
+***************
+*** 14,19 ****
+--- 14,20 ----
+  win_T *winframe_remove __ARGS((win_T *win, int *dirp, tabpage_T *tp));
+  void close_others __ARGS((int message, int forceit));
+  void curwin_init __ARGS((void));
++ void win_init_empty __ARGS((win_T *wp));
+  int win_alloc_first __ARGS((void));
+  void win_alloc_aucmd_win __ARGS((void));
+  void win_init_size __ARGS((void));
+*** ../vim-7.2.214/src/quickfix.c	2009-05-17 13:30:58.000000000 +0200
+--- src/quickfix.c	2009-06-24 15:30:06.000000000 +0200
+***************
+*** 3411,3424 ****
+      /* Init the options. */
+      buf_copy_options(newbuf, BCO_ENTER | BCO_NOHELP);
+  
+!     /* set curwin/curbuf to buf and save a few things */
+!     aucmd_prepbuf(&aco, newbuf);
+  
+!     /* Need to set the filename for autocommands. */
+!     (void)setfname(curbuf, fname, NULL, FALSE);
+  
+-     if (ml_open(curbuf) == OK)
+-     {
+  	/* Create swap file now to avoid the ATTENTION message. */
+  	check_need_swap(TRUE);
+  
+--- 3411,3425 ----
+      /* Init the options. */
+      buf_copy_options(newbuf, BCO_ENTER | BCO_NOHELP);
+  
+!     /* need to open the memfile before putting the buffer in a window */
+!     if (ml_open(newbuf) == OK)
+!     {
+! 	/* set curwin/curbuf to buf and save a few things */
+! 	aucmd_prepbuf(&aco, newbuf);
+  
+! 	/* Need to set the filename for autocommands. */
+! 	(void)setfname(curbuf, fname, NULL, FALSE);
+  
+  	/* Create swap file now to avoid the ATTENTION message. */
+  	check_need_swap(TRUE);
+  
+***************
+*** 3441,3450 ****
+  		newbuf = curbuf;
+  	    }
+  	}
+-     }
+  
+!     /* restore curwin/curbuf and a few other things */
+!     aucmd_restbuf(&aco);
+  
+      if (!buf_valid(newbuf))
+  	return NULL;
+--- 3442,3451 ----
+  		newbuf = curbuf;
+  	    }
+  	}
+  
+! 	/* restore curwin/curbuf and a few other things */
+! 	aucmd_restbuf(&aco);
+!     }
+  
+      if (!buf_valid(newbuf))
+  	return NULL;
+*** ../vim-7.2.214/src/window.c	2009-06-16 16:01:34.000000000 +0200
+--- src/window.c	2009-06-24 14:35:16.000000000 +0200
+***************
+*** 2354,2366 ****
+      frame_T	*frp;
+      win_T	*wp;
+  
+- #ifdef FEAT_FOLDING
+-     clearFolding(win);
+- #endif
+- 
+-     /* reduce the reference count to the argument list. */
+-     alist_unlink(win->w_alist);
+- 
+      /* Remove the window and its frame from the tree of frames. */
+      frp = win->w_frame;
+      wp = winframe_remove(win, dirp, tp);
+--- 2354,2359 ----
+***************
+*** 2386,2394 ****
+  	tabpage_close(TRUE);
+  # endif
+  
+-     while (firstwin != NULL)
+- 	(void)win_free_mem(firstwin, &dummy, NULL);
+- 
+  # ifdef FEAT_AUTOCMD
+      if (aucmd_win != NULL)
+      {
+--- 2379,2384 ----
+***************
+*** 2396,2401 ****
+--- 2386,2394 ----
+  	aucmd_win = NULL;
+      }
+  # endif
++ 
++     while (firstwin != NULL)
++ 	(void)win_free_mem(firstwin, &dummy, NULL);
+  }
+  #endif
+  
+***************
+*** 3204,3230 ****
+      void
+  curwin_init()
+  {
+!     redraw_win_later(curwin, NOT_VALID);
+!     curwin->w_lines_valid = 0;
+!     curwin->w_cursor.lnum = 1;
+!     curwin->w_curswant = curwin->w_cursor.col = 0;
+  #ifdef FEAT_VIRTUALEDIT
+!     curwin->w_cursor.coladd = 0;
+  #endif
+!     curwin->w_pcmark.lnum = 1;	/* pcmark not cleared but set to line 1 */
+!     curwin->w_pcmark.col = 0;
+!     curwin->w_prev_pcmark.lnum = 0;
+!     curwin->w_prev_pcmark.col = 0;
+!     curwin->w_topline = 1;
+  #ifdef FEAT_DIFF
+!     curwin->w_topfill = 0;
+  #endif
+!     curwin->w_botline = 2;
+  #ifdef FEAT_FKMAP
+!     if (curwin->w_p_rl)
+! 	curwin->w_farsi = W_CONV + W_R_L;
+      else
+! 	curwin->w_farsi = W_CONV;
+  #endif
+  }
+  
+--- 3197,3230 ----
+      void
+  curwin_init()
+  {
+!     win_init_empty(curwin);
+! }
+! 
+!     void
+! win_init_empty(wp)
+!     win_T *wp;
+! {
+!     redraw_win_later(wp, NOT_VALID);
+!     wp->w_lines_valid = 0;
+!     wp->w_cursor.lnum = 1;
+!     wp->w_curswant = wp->w_cursor.col = 0;
+  #ifdef FEAT_VIRTUALEDIT
+!     wp->w_cursor.coladd = 0;
+  #endif
+!     wp->w_pcmark.lnum = 1;	/* pcmark not cleared but set to line 1 */
+!     wp->w_pcmark.col = 0;
+!     wp->w_prev_pcmark.lnum = 0;
+!     wp->w_prev_pcmark.col = 0;
+!     wp->w_topline = 1;
+  #ifdef FEAT_DIFF
+!     wp->w_topfill = 0;
+  #endif
+!     wp->w_botline = 2;
+  #ifdef FEAT_FKMAP
+!     if (wp->w_p_rl)
+! 	wp->w_farsi = W_CONV + W_R_L;
+      else
+! 	wp->w_farsi = W_CONV;
+  #endif
+  }
+  
+***************
+*** 4325,4330 ****
+--- 4325,4337 ----
+  {
+      int		i;
+  
++ #ifdef FEAT_FOLDING
++     clearFolding(wp);
++ #endif
++ 
++     /* reduce the reference count to the argument list. */
++     alist_unlink(wp->w_alist);
++ 
+  #ifdef FEAT_AUTOCMD
+      /* Don't execute autocommands while the window is halfway being deleted.
+       * gui_mch_destroy_scrollbar() may trigger a FocusGained event. */
+***************
+*** 4387,4393 ****
+      }
+  #endif /* FEAT_GUI */
+  
+!     win_remove(wp, tp);
+      vim_free(wp);
+  
+  #ifdef FEAT_AUTOCMD
+--- 4394,4403 ----
+      }
+  #endif /* FEAT_GUI */
+  
+! #ifdef FEAT_AUTOCMD
+!     if (wp != aucmd_win)
+! #endif
+! 	win_remove(wp, tp);
+      vim_free(wp);
+  
+  #ifdef FEAT_AUTOCMD
+*** ../vim-7.2.214/src/version.c	2009-06-24 17:04:40.000000000 +0200
+--- src/version.c	2009-06-24 17:27:38.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     215,
+  /**/
+
+-- 
+Micro$oft: where do you want to go today?
+    Linux: where do you want to go tomorrow?
+  FreeBSD: are you guys coming, or what?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

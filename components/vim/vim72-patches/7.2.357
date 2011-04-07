@@ -1,0 +1,49 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.357
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.357
+Problem:    When changing 'fileformat' from/to "mac" and there is a CR in the
+	    text the display is wrong.
+Solution:   Redraw the text when 'fileformat' is changed. (Ben Schmidt)
+Files:	    src/option.c
+
+
+*** ../vim-7.2.356/src/option.c	2010-01-27 15:57:17.000000000 +0100
+--- src/option.c	2010-02-11 16:57:19.000000000 +0100
+***************
+*** 5867,5872 ****
+--- 5867,5876 ----
+  #endif
+  	    /* update flag in swap file */
+  	    ml_setflags(curbuf);
++ 	    /* Redraw needed when switching to/from "mac": a CR in the text
++ 	     * will be displayed differently. */
++ 	    if (get_fileformat(curbuf) == EOL_MAC || *oldval == 'm')
++ 		redraw_curbuf_later(NOT_VALID);
+  	}
+      }
+  
+*** ../vim-7.2.356/src/version.c	2010-02-03 18:14:41.000000000 +0100
+--- src/version.c	2010-02-11 17:01:36.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     357,
+  /**/
+
+-- 
+From the classified section of a city newspaper:
+Dog for sale: eats anything and is fond of children.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

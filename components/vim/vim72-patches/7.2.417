@@ -1,0 +1,72 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.417
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.417
+Problem:    When 'shell' has an argument with a slash then 'shellpipe' is not
+	    set properly. (Britton Kerin)
+Solution:   Assume there are no spaces in the path, arguments follow.
+Files:	    src/option.c
+
+
+*** ../vim-7.2.416/src/option.c	2010-02-24 14:34:10.000000000 +0100
+--- src/option.c	2010-05-13 13:05:28.000000000 +0200
+***************
+*** 3696,3704 ****
+--- 3696,3727 ----
+       * Isolate the name of the shell:
+       * - Skip beyond any path.  E.g., "/usr/bin/csh -f" -> "csh -f".
+       * - Remove any argument.  E.g., "csh -f" -> "csh".
++      * But don't allow a space in the path, so that this works:
++      *   "/usr/bin/csh --rcfile ~/.cshrc"
++      * But don't do that for Windows, it's common to have a space in the path.
+       */
++ #ifdef WIN3264
+      p = gettail(p_sh);
+      p = vim_strnsave(p, (int)(skiptowhite(p) - p));
++ #else
++     p = skiptowhite(p_sh);
++     if (*p == NUL)
++     {
++ 	/* No white space, use the tail. */
++ 	p = vim_strsave(gettail(p_sh));
++     }
++     else
++     {
++ 	char_u  *p1, *p2;
++ 
++ 	/* Find the last path separator before the space. */
++ 	p1 = p_sh;
++ 	for (p2 = p_sh; p2 < p; mb_ptr_adv(p2))
++ 	    if (vim_ispathsep(*p2))
++ 		p1 = p2 + 1;
++ 	p = vim_strnsave(p1, (int)(p - p1));
++     }
++ #endif
+      if (p != NULL)
+      {
+  	/*
+*** ../vim-7.2.416/src/version.c	2010-05-07 16:54:32.000000000 +0200
+--- src/version.c	2010-05-13 13:11:17.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     417,
+  /**/
+
+-- 
+If you put 7 of the most talented OSS developers in a room for a week
+and asked them to fix a bug in a spreadsheet program, in 1 week
+you'd have 2 new mail readers and a text-based web browser.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

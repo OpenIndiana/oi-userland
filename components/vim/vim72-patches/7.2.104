@@ -1,0 +1,51 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.104
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.104
+Problem:    When using ":saveas bar.c" the tab label isn't updated right away.
+Solution:   Set redraw_tabline. (Francois Ingelrest)
+Files:      src/ex_cmds.c
+
+
+*** ../vim-7.2.103/src/ex_cmds.c	Wed Feb  4 13:13:42 2009
+--- src/ex_cmds.c	Wed Feb 11 15:58:06 2009
+***************
+*** 2707,2713 ****
+--- 2707,2718 ----
+  	if (eap->cmdidx == CMD_saveas)
+  	{
+  	    if (retval == OK)
++ 	    {
+  		curbuf->b_p_ro = FALSE;
++ #ifdef FEAT_WINDOWS
++ 		redraw_tabline = TRUE;
++ #endif
++ 	    }
+  	    /* Change directories when the 'acd' option is set. */
+  	    DO_AUTOCHDIR
+  	}
+*** ../vim-7.2.103/src/version.c	Wed Feb 11 11:34:24 2009
+--- src/version.c	Wed Feb 11 16:02:19 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     104,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+75. You start wondering whether you could actually upgrade your brain
+    with a Pentium Pro microprocessor 80.  The upgrade works just fine.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

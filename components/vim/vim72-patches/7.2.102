@@ -1,0 +1,47 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.102
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.102 (after 7.2.100)
+Problem:    When 'encoding' is "utf-8" a BOM at the start of a Vim script is
+	    not removed. (Tony Mechelynck)
+Solution:   When no conversion is taking place make a copy of the line without
+	    the BOM.
+Files:	    src/ex_cmds2.c
+
+
+*** ../vim-7.2.101/src/ex_cmds2.c	Wed Feb  4 17:49:46 2009
+--- src/ex_cmds2.c	Thu Feb  5 20:41:56 2009
+***************
+*** 3013,3018 ****
+--- 3013,3020 ----
+  	/* Found BOM; setup conversion, skip over BOM and recode the line. */
+  	convert_setup(&cookie.conv, (char_u *)"utf-8", p_enc);
+  	p = string_convert(&cookie.conv, firstline + 3, NULL);
++ 	if (p == NULL)
++ 	    p = vim_strsave(firstline + 3);
+  	if (p != NULL)
+  	{
+  	    vim_free(firstline);
+*** ../vim-7.2.101/src/version.c	Wed Feb  4 18:34:54 2009
+--- src/version.c	Thu Feb  5 20:44:55 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     102,
+  /**/
+
+-- 
+CVS sux, men don't like commitment
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,70 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.303
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.303 (after 7.2.294)
+Problem:    Can't build on MS-Windows.
+Solution:   Add #ifdef around vim_settempdir(). (James Vega)
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.302/src/fileio.c	2009-11-17 17:13:03.000000000 +0100
+--- src/fileio.c	2009-11-18 20:06:55.000000000 +0100
+***************
+*** 146,152 ****
+--- 146,154 ----
+  # endif
+  #endif
+  static int move_lines __ARGS((buf_T *frombuf, buf_T *tobuf));
++ #ifdef TEMPDIRNAMES
+  static void vim_settempdir __ARGS((char_u *tempdir));
++ #endif
+  #ifdef FEAT_AUTOCMD
+  static char *e_auchangedbuf = N_("E812: Autocommands changed buffer or buffer name");
+  #endif
+***************
+*** 6995,7000 ****
+--- 6997,7003 ----
+  }
+  #endif
+  
++ #ifdef TEMPDIRNAMES
+  /*
+   * Directory "tempdir" was created.  Expand this name to a full path and put
+   * it in "vim_tempdir".  This avoids that using ":cd" would confuse us.
+***************
+*** 7021,7026 ****
+--- 7024,7030 ----
+  	vim_free(buf);
+      }
+  }
++ #endif
+  
+  /*
+   * vim_tempname(): Return a unique name that can be used for a temp file.
+*** ../vim-7.2.302/src/version.c	2009-11-17 17:57:10.000000000 +0100
+--- src/version.c	2009-11-18 20:07:58.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     303,
+  /**/
+
+-- 
+BEDEVERE:        Why do you think she is a witch?
+SECOND VILLAGER: She turned me into a newt.
+BEDEVERE:        A newt?
+SECOND VILLAGER: (After looking at himself for some time) I got better.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

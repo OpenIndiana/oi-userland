@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.349
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.349
+Problem:    CTRL-W gf doesn't put the new tab in the same place as "tab split"
+	    and "gf". (Tony Mechelynck)
+Solution:   Store the tab number in cmdmod.tab.
+Files:	    src/window.c
+
+
+*** ../vim-7.2.348/src/window.c	2009-06-24 17:31:27.000000000 +0200
+--- src/window.c	2010-01-27 20:23:22.000000000 +0100
+***************
+*** 626,632 ****
+  #ifdef FEAT_SEARCHPATH
+  		    case 'f':	    /* CTRL-W gf: "gf" in a new tab page */
+  		    case 'F':	    /* CTRL-W gF: "gF" in a new tab page */
+! 			cmdmod.tab = TRUE;
+  			nchar = xchar;
+  			goto wingotofile;
+  #endif
+--- 626,632 ----
+  #ifdef FEAT_SEARCHPATH
+  		    case 'f':	    /* CTRL-W gf: "gf" in a new tab page */
+  		    case 'F':	    /* CTRL-W gF: "gF" in a new tab page */
+! 			cmdmod.tab = tabpage_index(curtab) + 1;
+  			nchar = xchar;
+  			goto wingotofile;
+  #endif
+*** ../vim-7.2.348/src/version.c	2010-01-27 18:29:21.000000000 +0100
+--- src/version.c	2010-01-27 20:25:43.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     349,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+159. You get excited whenever discussing your hard drive.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

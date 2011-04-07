@@ -1,0 +1,80 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.268
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.268
+Problem:    Crash when using Python to set cursor beyond end of line.
+	    (winterTTr)
+Solution:   Check the column to be valid.
+Files:	    src/if_python.c
+
+
+*** ../vim-7.2.267/src/if_python.c	2009-07-09 20:06:30.000000000 +0200
+--- src/if_python.c	2009-10-10 14:49:10.000000000 +0200
+***************
+*** 2058,2063 ****
+--- 2058,2064 ----
+      {
+  	long lnum;
+  	long col;
++ 	long len;
+  
+  	if (!PyArg_Parse(val, "(ll)", &lnum, &col))
+  	    return -1;
+***************
+*** 2072,2081 ****
+  	if (VimErrorCheck())
+  	    return -1;
+  
+! 	/* NO CHECK ON COLUMN - SEEMS NOT TO MATTER */
+  
+  	this->win->w_cursor.lnum = lnum;
+  	this->win->w_cursor.col = col;
+  	update_screen(VALID);
+  
+  	return 0;
+--- 2073,2088 ----
+  	if (VimErrorCheck())
+  	    return -1;
+  
+! 	/* When column is out of range silently correct it. */
+! 	len = STRLEN(ml_get_buf(this->win->w_buffer, lnum, FALSE));
+! 	if (col > len)
+! 	    col = len;
+  
+  	this->win->w_cursor.lnum = lnum;
+  	this->win->w_cursor.col = col;
++ #ifdef FEAT_VIRTUALEDIT
++ 	this->win->w_cursor.coladd = 0;
++ #endif
+  	update_screen(VALID);
+  
+  	return 0;
+*** ../vim-7.2.267/src/version.c	2009-10-07 16:19:52.000000000 +0200
+--- src/version.c	2009-11-03 11:42:08.000000000 +0100
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     268,
+  /**/
+
+-- 
+VOICE OVER: As the horrendous Black Beast lunged forward, escape for Arthur
+            and his knights seemed hopeless,  when, suddenly ... the animator
+            suffered a fatal heart attack.
+ANIMATOR:   Aaaaagh!
+VOICE OVER: The cartoon peril was no more ... The Quest for Holy Grail could
+            continue.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

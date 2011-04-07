@@ -1,0 +1,143 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.253
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.253
+Problem:    Netbeans interface: getLength always uses current buffer.
+Solution:   Use ml_get_buf() instead of ml_get(). (Xavier de Gaye)
+Files:	    src/netbeans.c
+
+
+*** ../vim-7.2.252/src/netbeans.c	2009-06-24 16:49:50.000000000 +0200
+--- src/netbeans.c	2009-09-11 13:40:14.000000000 +0200
+***************
+*** 1499,1505 ****
+  		    return FAIL;
+  		}
+  		first = *pos;
+! 		nbdebug(("    FIRST POS: line %d, col %d\n", first.lnum, first.col));
+  		pos = off2pos(buf->bufp, off+count-1);
+  		if (!pos)
+  		{
+--- 1499,1506 ----
+  		    return FAIL;
+  		}
+  		first = *pos;
+! 		nbdebug(("    FIRST POS: line %d, col %d\n",
+! 						      first.lnum, first.col));
+  		pos = off2pos(buf->bufp, off+count-1);
+  		if (!pos)
+  		{
+***************
+*** 1510,1516 ****
+  		    return FAIL;
+  		}
+  		last = *pos;
+! 		nbdebug(("    LAST POS: line %d, col %d\n", last.lnum, last.col));
+  		del_from_lnum = first.lnum;
+  		del_to_lnum = last.lnum;
+  		doupdate = 1;
+--- 1511,1518 ----
+  		    return FAIL;
+  		}
+  		last = *pos;
+! 		nbdebug(("    LAST POS: line %d, col %d\n",
+! 							last.lnum, last.col));
+  		del_from_lnum = first.lnum;
+  		del_to_lnum = last.lnum;
+  		doupdate = 1;
+***************
+*** 1521,1527 ****
+  		next = off2pos(buf->bufp, off + count);
+  
+  		/* Remove part of the first line. */
+! 		if (first.col != 0 || (next != NULL && first.lnum == next->lnum))
+  		{
+  		    if (first.lnum != last.lnum
+  			    || (next != NULL && first.lnum != next->lnum))
+--- 1523,1530 ----
+  		next = off2pos(buf->bufp, off + count);
+  
+  		/* Remove part of the first line. */
+! 		if (first.col != 0
+! 				|| (next != NULL && first.lnum == next->lnum))
+  		{
+  		    if (first.lnum != last.lnum
+  			    || (next != NULL && first.lnum != next->lnum))
+***************
+*** 1584,1590 ****
+  			int id = buf_findsign_id(buf->bufp, (linenr_T)i);
+  			if (id > 0)
+  			{
+! 			    nbdebug(("    Deleting sign %d on line %d\n", id, i));
+  			    buf_delsign(buf->bufp, id);
+  			}
+  			else
+--- 1587,1594 ----
+  			int id = buf_findsign_id(buf->bufp, (linenr_T)i);
+  			if (id > 0)
+  			{
+! 			    nbdebug(("    Deleting sign %d on line %d\n",
+! 								      id, i));
+  			    buf_delsign(buf->bufp, id);
+  			}
+  			else
+***************
+*** 1593,1599 ****
+  			}
+  		    }
+  
+! 		    nbdebug(("    Deleting lines %d through %d\n", del_from_lnum, del_to_lnum));
+  		    curwin->w_cursor.lnum = del_from_lnum;
+  		    curwin->w_cursor.col = 0;
+  		    del_lines(del_to_lnum - del_from_lnum + 1, FALSE);
+--- 1597,1604 ----
+  			}
+  		    }
+  
+! 		    nbdebug(("    Deleting lines %d through %d\n",
+! 						 del_from_lnum, del_to_lnum));
+  		    curwin->w_cursor.lnum = del_from_lnum;
+  		    curwin->w_cursor.col = 0;
+  		    del_lines(del_to_lnum - del_from_lnum + 1, FALSE);
+***************
+*** 3514,3520 ****
+  	    eol_size = 1;
+  	for (lnum = 1; lnum <= bufp->b_ml.ml_line_count; ++lnum)
+  	{
+! 	    char_count += (long)STRLEN(ml_get(lnum)) + eol_size;
+  	    /* Check for a CTRL-C every 100000 characters */
+  	    if (char_count > last_check)
+  	    {
+--- 3519,3526 ----
+  	    eol_size = 1;
+  	for (lnum = 1; lnum <= bufp->b_ml.ml_line_count; ++lnum)
+  	{
+! 	    char_count += (long)STRLEN(ml_get_buf(bufp, lnum, FALSE))
+! 								   + eol_size;
+  	    /* Check for a CTRL-C every 100000 characters */
+  	    if (char_count > last_check)
+  	    {
+*** ../vim-7.2.252/src/version.c	2009-09-11 14:02:25.000000000 +0200
+--- src/version.c	2009-09-11 14:18:45.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     253,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+227. You sleep next to your monitor.  Or on top of it.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,58 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.304
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.304
+Problem:    Compiler warning for bad pointer cast.
+Solution:   Use another variable for int pointer.
+Files:	    src/ops.c
+
+
+*** ../vim-7.2.303/src/ops.c	2009-11-17 12:43:19.000000000 +0100
+--- src/ops.c	2009-11-18 15:40:26.000000000 +0100
+***************
+*** 5597,5603 ****
+  	    vc.vc_type = CONV_NONE;
+  	    if (convert_setup(&vc, p_enc, (char_u *)"latin1") == OK)
+  	    {
+! 		conv_str = string_convert(&vc, str, (int*)&len);
+  		if (conv_str != NULL)
+  		{
+  		    vim_free(str);
+--- 5597,5606 ----
+  	    vc.vc_type = CONV_NONE;
+  	    if (convert_setup(&vc, p_enc, (char_u *)"latin1") == OK)
+  	    {
+! 	        int intlen = len;
+! 
+! 		conv_str = string_convert(&vc, str, &intlen);
+! 		len = intlen;
+  		if (conv_str != NULL)
+  		{
+  		    vim_free(str);
+*** ../vim-7.2.303/src/version.c	2009-11-18 20:12:15.000000000 +0100
+--- src/version.c	2009-11-25 12:37:36.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     304,
+  /**/
+
+-- 
+I recommend ordering large cargo containers of paper towels to make up
+whatever budget underruns you have.  Paper products are always useful and they
+have the advantage of being completely flushable if you need to make room in
+the storage area later.
+				(Scott Adams - The Dilbert principle)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

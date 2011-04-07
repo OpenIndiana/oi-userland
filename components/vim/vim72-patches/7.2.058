@@ -1,0 +1,83 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.058
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.058
+Problem:    Can't add a patch name to the ":version" output.
+Solution:   Add the extra_patches array.
+Files:	    src/version.c
+
+
+*** ../vim-7.2.057/src/version.c	Sat Nov 29 20:18:44 2008
+--- src/version.c	Sun Nov 30 12:12:31 2008
+***************
+*** 794,799 ****
+--- 796,814 ----
+      0
+  };
+  
++ /*
++  * Place to put a short description when adding a feature with a patch.
++  * Keep it short, e.g.,: "relative numbers", "persistent undo".
++  * Also add a comment marker to separate the lines.
++  * See the official Vim patches for the diff format: It must use a context of
++  * one line only.  Use "diff -C2".
++  */
++ static char *(extra_patches[]) =
++ {   /* Add your patch description below this line */
++ /**/
++     NULL
++ };
++ 
+      int
+  highest_patch()
+  {
+***************
+*** 939,944 ****
+--- 954,972 ----
+  	}
+      }
+  
++     /* Print the list of extra patch descriptions if there is at least one. */
++     if (extra_patches[0] != NULL)
++     {
++ 	MSG_PUTS(_("\nExtra patches: "));
++ 	s = "";
++ 	for (i = 0; extra_patches[i] != NULL; ++i)
++ 	{
++ 	    MSG_PUTS(s);
++ 	    s = ", ";
++ 	    MSG_PUTS(extra_patches[i]);
++ 	}
++     }
++ 
+  #ifdef MODIFIED_BY
+      MSG_PUTS("\n");
+      MSG_PUTS(_("Modified by "));
+*** ../vim-7.2.057/src/version.c	Sat Nov 29 20:18:44 2008
+--- src/version.c	Sun Nov 30 12:12:31 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     58,
+  /**/
+
+-- 
+ARTHUR:    Well, it doesn't matter.  Will you go and tell your master that
+           Arthur from the Court of Camelot is here.
+GUARD #1:  Listen, in order to maintain air-speed velocity, a swallow
+           needs to beat its wings 43 times every second, right?
+ARTHUR:    Please!
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,75 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.434
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.434 (after 7.2.432)
+Problem:    Compilation fails without the multi-lang feature.
+Solution:   Add #ifdefs. (Johm Marriott)
+Files:	    src/menu.c
+
+
+*** ../vim-7.2.433/src/menu.c	2010-05-14 22:24:31.000000000 +0200
+--- src/menu.c	2010-05-16 12:28:21.000000000 +0200
+***************
+*** 1340,1346 ****
+--- 1340,1348 ----
+      if (idx == 0)	    /* first call: start at first item */
+      {
+  	menu = expand_menu;
++ #ifdef FEAT_MULTI_LANG
+  	should_advance = FALSE;
++ #endif
+      }
+  
+      /* Skip PopUp[nvoci]. */
+***************
+*** 1401,1407 ****
+--- 1403,1411 ----
+      if (idx == 0)	    /* first call: start at first item */
+      {
+  	menu = expand_menu;
++ #ifdef FEAT_MULTI_LANG
+  	should_advance = FALSE;
++ #endif
+      }
+  
+      /* Skip Browse-style entries, popup menus and separators. */
+***************
+*** 1506,1515 ****
+--- 1510,1521 ----
+      char_u	*name;
+      vimmenu_T	*menu;
+  {
++ #ifdef FEAT_MULTI_LANG
+      if (menu->en_name != NULL
+  	    && (menu_namecmp(name,menu->en_name)
+  		|| menu_namecmp(name,menu->en_dname)))
+          return TRUE;
++ #endif
+      return menu_namecmp(name, menu->name) || menu_namecmp(name, menu->dname);
+  }
+  
+*** ../vim-7.2.433/src/version.c	2010-05-14 23:14:37.000000000 +0200
+--- src/version.c	2010-05-16 12:29:40.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     434,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+43. You tell the kids they can't use the computer because "Daddy's got work to
+    do" and you don't even have a job.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

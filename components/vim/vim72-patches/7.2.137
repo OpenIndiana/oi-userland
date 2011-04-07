@@ -1,0 +1,343 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.137
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Note: The special characters in the patch may cause problems.
+
+Patch 7.2.137
+Problem:    When 'virtualedit' is set, a left shift of a blockwise selection
+	    that starts and ends inside a tab shifts too much. (Helmut
+	    Stiegler)
+Solution:   Redo the block left shift code. (Lech Lorens)
+Files:	    src/ops.c, src/testdir/Makefile, src/testdir/test66.in,
+	    src/testdir/test66.ok
+
+
+*** ../vim-7.2.136/src/ops.c	Wed Dec  3 13:38:00 2008
+--- src/ops.c	Thu Mar  5 04:47:09 2009
+***************
+*** 72,82 ****
+   */
+  struct block_def
+  {
+!     int		startspaces;	/* 'extra' cols of first char */
+!     int		endspaces;	/* 'extra' cols of first char */
+      int		textlen;	/* chars in block */
+!     char_u	*textstart;	/* pointer to 1st char in block */
+!     colnr_T	textcol;	/* cols of chars (at least part.) in block */
+      colnr_T	start_vcol;	/* start col of 1st char wholly inside block */
+      colnr_T	end_vcol;	/* start col of 1st char wholly after block */
+  #ifdef FEAT_VISUALEXTRA
+--- 72,82 ----
+   */
+  struct block_def
+  {
+!     int		startspaces;	/* 'extra' cols before first char */
+!     int		endspaces;	/* 'extra' cols after last char */
+      int		textlen;	/* chars in block */
+!     char_u	*textstart;	/* pointer to 1st char (partially) in block */
+!     colnr_T	textcol;	/* index of chars (partially) in block */
+      colnr_T	start_vcol;	/* start col of 1st char wholly inside block */
+      colnr_T	end_vcol;	/* start col of 1st char wholly after block */
+  #ifdef FEAT_VISUALEXTRA
+***************
+*** 382,396 ****
+  {
+      int			left = (oap->op_type == OP_LSHIFT);
+      int			oldstate = State;
+!     int			total, split;
+!     char_u		*newp, *oldp, *midp, *ptr;
+      int			oldcol = curwin->w_cursor.col;
+      int			p_sw = (int)curbuf->b_p_sw;
+      int			p_ts = (int)curbuf->b_p_ts;
+      struct block_def	bd;
+-     int			internal = 0;
+      int			incr;
+!     colnr_T		vcol, col = 0, ws_vcol;
+      int			i = 0, j = 0;
+      int			len;
+  
+--- 382,395 ----
+  {
+      int			left = (oap->op_type == OP_LSHIFT);
+      int			oldstate = State;
+!     int			total;
+!     char_u		*newp, *oldp;
+      int			oldcol = curwin->w_cursor.col;
+      int			p_sw = (int)curbuf->b_p_sw;
+      int			p_ts = (int)curbuf->b_p_ts;
+      struct block_def	bd;
+      int			incr;
+!     colnr_T		ws_vcol;
+      int			i = 0, j = 0;
+      int			len;
+  
+***************
+*** 456,522 ****
+      }
+      else /* left */
+      {
+! 	vcol = oap->start_vcol;
+! 	/* walk vcol past ws to be removed */
+! 	for (midp = oldp + bd.textcol;
+! 	      vcol < (oap->start_vcol + total) && vim_iswhite(*midp); )
+! 	{
+! 	    incr = lbr_chartabsize_adv(&midp, (colnr_T)vcol);
+! 	    vcol += incr;
+! 	}
+! 	/* internal is the block-internal ws replacing a split TAB */
+! 	if (vcol > (oap->start_vcol + total))
+! 	{
+! 	    /* we have to split the TAB *(midp-1) */
+! 	    internal = vcol - (oap->start_vcol + total);
+! 	}
+! 	/* if 'expandtab' is not set, use TABs */
+  
+! 	split = bd.startspaces + internal;
+! 	if (split > 0)
+! 	{
+! 	    if (!curbuf->b_p_et)
+! 	    {
+! 		for (ptr = oldp, col = 0; ptr < oldp+bd.textcol; )
+! 		    col += lbr_chartabsize_adv(&ptr, (colnr_T)col);
+  
+! 		/* col+1 now equals the start col of the first char of the
+! 		 * block (may be < oap.start_vcol if we're splitting a TAB) */
+! 		i = ((col % p_ts) + split) / p_ts; /* number of tabs */
+! 	    }
+! 	    if (i)
+! 		j = ((col % p_ts) + split) % p_ts; /* number of spp */
+! 	    else
+! 		j = split;
+! 	}
+  
+! 	newp = alloc_check(bd.textcol + i + j + (unsigned)STRLEN(midp) + 1);
+! 	if (newp == NULL)
+! 	    return;
+! 	vim_memset(newp, NUL, (size_t)(bd.textcol + i + j + STRLEN(midp) + 1));
+  
+! 	/* copy first part we want to keep */
+! 	mch_memmove(newp, oldp, (size_t)bd.textcol);
+! 	/* Now copy any TABS and spp to ensure correct alignment! */
+! 	while (vim_iswhite(*midp))
+  	{
+! 	    if (*midp == TAB)
+! 		i++;
+! 	    else /*space */
+! 		j++;
+! 	    midp++;
+  	}
+! 	/* We might have an extra TAB worth of spp now! */
+! 	if (j / p_ts && !curbuf->b_p_et)
+  	{
+! 	    i++;
+! 	    j -= p_ts;
+  	}
+- 	copy_chars(newp + bd.textcol, (size_t)i, TAB);
+- 	copy_spaces(newp + bd.textcol + i, (size_t)j);
+  
+! 	/* the end */
+! 	STRMOVE(newp + STRLEN(newp), midp);
+      }
+      /* replace the line */
+      ml_replace(curwin->w_cursor.lnum, newp, FALSE);
+--- 455,543 ----
+      }
+      else /* left */
+      {
+! 	colnr_T	    destination_col;	/* column to which text in block will
+! 					   be shifted */
+! 	char_u	    *verbatim_copy_end;	/* end of the part of the line which is
+! 					   copied verbatim */
+! 	colnr_T	    verbatim_copy_width;/* the (displayed) width of this part
+! 					   of line */
+! 	unsigned    fill;		/* nr of spaces that replace a TAB */
+! 	unsigned    new_line_len;	/* the length of the line after the
+! 					   block shift */
+! 	size_t	    block_space_width;
+! 	size_t	    shift_amount;
+! 	char_u	    *non_white = bd.textstart;
+! 	colnr_T	    non_white_col;
+  
+! 	/*
+! 	 * Firstly, let's find the first non-whitespace character that is
+! 	 * displayed after the block's start column and the character's column
+! 	 * number. Also, let's calculate the width of all the whitespace
+! 	 * characters that are displayed in the block and precede the searched
+! 	 * non-whitespace character.
+! 	 */
+  
+! 	/* If "bd.startspaces" is set, "bd.textstart" points to the character,
+! 	 * the part of which is displayed at the block's beginning. Let's start
+! 	 * searching from the next character. */
+! 	if (bd.startspaces)
+! 	    mb_ptr_adv(non_white);
+  
+! 	/* The character's column is in "bd.start_vcol".  */
+! 	non_white_col = bd.start_vcol;
+  
+! 	while (vim_iswhite(*non_white))
+  	{
+! 	    incr = lbr_chartabsize_adv(&non_white, non_white_col);
+! 	    non_white_col += incr;
+  	}
+! 
+! 	block_space_width = non_white_col - oap->start_vcol;
+! 	/* We will shift by "total" or "block_space_width", whichever is less.
+! 	 */
+! 	shift_amount = (block_space_width < total? block_space_width: total);
+! 
+! 	/* The column to which we will shift the text.  */
+! 	destination_col = non_white_col - shift_amount;
+! 
+! 	/* Now let's find out how much of the beginning of the line we can
+! 	 * reuse without modification.  */
+! 	verbatim_copy_end = bd.textstart;
+! 	verbatim_copy_width = bd.start_vcol;
+! 
+! 	/* If "bd.startspaces" is set, "bd.textstart" points to the character
+! 	 * preceding the block. We have to subtract its width to obtain its
+! 	 * column number.  */
+! 	if (bd.startspaces)
+! 	    verbatim_copy_width -= bd.start_char_vcols;
+! 	while (verbatim_copy_width < destination_col)
+  	{
+! 	    incr = lbr_chartabsize(verbatim_copy_end, verbatim_copy_width);
+! 	    if (verbatim_copy_width + incr > destination_col)
+! 		break;
+! 	    verbatim_copy_width += incr;
+! 	    mb_ptr_adv(verbatim_copy_end);
+  	}
+  
+! 	/* If "destination_col" is different from the width of the initial
+! 	 * part of the line that will be copied, it means we encountered a tab
+! 	 * character, which we will have to partly replace with spaces.  */
+! 	fill = destination_col - verbatim_copy_width;
+! 
+! 	/* The replacement line will consist of:
+! 	 * - the beginning of the original line up to "verbatim_copy_end",
+! 	 * - "fill" number of spaces,
+! 	 * - the rest of the line, pointed to by non_white.  */
+! 	new_line_len = (unsigned)(verbatim_copy_end - oldp)
+! 		       + fill
+! 		       + (unsigned)STRLEN(non_white) + 1;
+! 
+! 	newp = alloc_check(new_line_len);
+! 	if (newp == NULL)
+! 	    return;
+! 	mch_memmove(newp, oldp, (size_t)(verbatim_copy_end - oldp));
+! 	copy_spaces(newp + (verbatim_copy_end - oldp), (size_t)fill);
+! 	STRMOVE(newp + (verbatim_copy_end - oldp) + fill, non_white);
+      }
+      /* replace the line */
+      ml_replace(curwin->w_cursor.lnum, newp, FALSE);
+***************
+*** 4851,4857 ****
+   * - textlen includes the first/last char to be (partly) deleted
+   * - start/endspaces is the number of columns that are taken by the
+   *   first/last deleted char minus the number of columns that have to be
+!  *   deleted.  for yank and tilde:
+   * - textlen includes the first/last char to be wholly yanked
+   * - start/endspaces is the number of columns of the first/last yanked char
+   *   that are to be yanked.
+--- 4872,4879 ----
+   * - textlen includes the first/last char to be (partly) deleted
+   * - start/endspaces is the number of columns that are taken by the
+   *   first/last deleted char minus the number of columns that have to be
+!  *   deleted.
+!  * for yank and tilde:
+   * - textlen includes the first/last char to be wholly yanked
+   * - start/endspaces is the number of columns of the first/last yanked char
+   *   that are to be yanked.
+*** ../vim-7.2.136/src/testdir/Makefile	Wed Sep 10 18:25:18 2008
+--- src/testdir/Makefile	Thu Mar  5 04:53:58 2009
+***************
+*** 20,26 ****
+  		test48.out test49.out test51.out test52.out test53.out \
+  		test54.out test55.out test56.out test57.out test58.out \
+  		test59.out test60.out test61.out test62.out test63.out \
+! 		test64.out test65.out
+  
+  SCRIPTS_GUI = test16.out
+  
+--- 20,26 ----
+  		test48.out test49.out test51.out test52.out test53.out \
+  		test54.out test55.out test56.out test57.out test58.out \
+  		test59.out test60.out test61.out test62.out test63.out \
+! 		test64.out test65.out test66.out
+  
+  SCRIPTS_GUI = test16.out
+  
+*** ../vim-7.2.136/src/testdir/test66.in	Wed Mar 11 16:24:44 2009
+--- src/testdir/test66.in	Wed Mar 11 11:52:57 2009
+***************
+*** 0 ****
+--- 1,25 ----
++ 
++ Test for visual block shift and tab characters.
++ 
++ STARTTEST
++ :so small.vim
++ /^abcdefgh
++ 4jI    j<<11|D
++ 7|a		
++ 7|a		   
++ 7|a	       	4k13|4j<
++ :$-4,$w! test.out
++ :$-4,$s/\s\+//g
++ 4kI    j<<
++ 7|a		
++ 7|a					
++ 7|a	       		4k13|4j3<
++ :$-4,$w >> test.out
++ :qa!
++ ENDTEST
++ 
++ abcdefghijklmnopqrstuvwxyz
++ abcdefghijklmnopqrstuvwxyz
++ abcdefghijklmnopqrstuvwxyz
++ abcdefghijklmnopqrstuvwxyz
++ abcdefghijklmnopqrstuvwxyz
+*** ../vim-7.2.136/src/testdir/test66.ok	Wed Mar 11 16:24:44 2009
+--- src/testdir/test66.ok	Thu Mar  5 04:39:36 2009
+***************
+*** 0 ****
+--- 1,10 ----
++     abcdefghijklmnopqrstuvwxyz
++ abcdefghij
++     abc	    defghijklmnopqrstuvwxyz
++     abc	    defghijklmnopqrstuvwxyz
++     abc	    defghijklmnopqrstuvwxyz
++     abcdefghijklmnopqrstuvwxyz
++ abcdefghij
++     abc	    defghijklmnopqrstuvwxyz
++     abc		defghijklmnopqrstuvwxyz
++     abc	    defghijklmnopqrstuvwxyz
+*** ../vim-7.2.136/src/version.c	Wed Mar 11 15:36:01 2009
+--- src/version.c	Wed Mar 11 16:23:07 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     137,
+  /**/
+
+-- 
+% cat /usr/include/sys/errno.h
+#define	EPERM		1		/* Operation not permitted */
+#define	ENOENT		2		/* No such file or directory */
+#define	ESRCH		3		/* No such process */
+[...]
+#define EMACS		666		/* Too many macros */
+%
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

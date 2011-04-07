@@ -1,0 +1,73 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.408
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.408
+Problem:    With ":g/the/s/foo/bar/" the '[ and '] marks can be set to a line
+	    that was not changed.
+Solution:   Only set '[ and '] marks when a substitution was done.
+Files:	    src/ex_cmds.c
+
+
+*** ../vim-7.2.407/src/ex_cmds.c	2009-07-09 20:06:30.000000000 +0200
+--- src/ex_cmds.c	2010-03-23 17:31:17.000000000 +0100
+***************
+*** 4238,4243 ****
+--- 4238,4244 ----
+      char_u	*sub_firstline;		/* allocated copy of first sub line */
+      int		endcolumn = FALSE;	/* cursor in last column when done */
+      pos_T	old_cursor = curwin->w_cursor;
++     int		start_nsubs;
+  
+      cmd = eap->arg;
+      if (!global_busy)
+***************
+*** 4245,4250 ****
+--- 4246,4252 ----
+  	sub_nsubs = 0;
+  	sub_nlines = 0;
+      }
++     start_nsubs = sub_nsubs;
+  
+      if (eap->cmdidx == CMD_tilde)
+  	which_pat = RE_LAST;	/* use last used regexp */
+***************
+*** 5106,5112 ****
+      if (do_count)
+  	curwin->w_cursor = old_cursor;
+  
+!     if (sub_nsubs)
+      {
+  	/* Set the '[ and '] marks. */
+  	curbuf->b_op_start.lnum = eap->line1;
+--- 5108,5114 ----
+      if (do_count)
+  	curwin->w_cursor = old_cursor;
+  
+!     if (sub_nsubs > start_nsubs)
+      {
+  	/* Set the '[ and '] marks. */
+  	curbuf->b_op_start.lnum = eap->line1;
+*** ../vim-7.2.407/src/version.c	2010-03-23 16:27:15.000000000 +0100
+--- src/version.c	2010-03-23 17:35:40.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     408,
+  /**/
+
+-- 
+Permission is granted to read this message out aloud on Kings Cross Road,
+London, under the condition that the orator is properly dressed.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

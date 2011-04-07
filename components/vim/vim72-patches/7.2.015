@@ -1,0 +1,82 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.015
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.015
+Problem:    "make all test install" doesn't stop when the test fails. (Daniel
+	    Shahaf)
+Solution:   When test.log contains failures exit with non-zero status.
+Files:	    src/testdir/Makefile
+
+
+*** ../vim-7.2.014/src/testdir/Makefile	Wed Jun 25 00:22:53 2008
+--- src/testdir/Makefile	Sun Sep  7 21:31:49 2008
+***************
+*** 26,40 ****
+  
+  .SUFFIXES: .in .out
+  
+! nongui:	nolog $(SCRIPTS)
+! 	@echo
+! 	@cat test.log
+! 	@echo ALL DONE
+  
+! gui:	nolog $(SCRIPTS) $(SCRIPTS_GUI)
+  	@echo
+! 	@cat test.log
+! 	@echo ALL DONE
+  
+  $(SCRIPTS) $(SCRIPTS_GUI): $(VIMPROG)
+  
+--- 26,42 ----
+  
+  .SUFFIXES: .in .out
+  
+! nongui:	nolog $(SCRIPTS) report
+! 
+! gui:	nolog $(SCRIPTS) $(SCRIPTS_GUI) report
+  
+! report:
+  	@echo
+! 	@echo 'Test results:'
+! 	@/bin/sh -c "if test -f test.log; \
+! 		then cat test.log; echo TEST FAILURE; exit 1; \
+! 		else echo ALL DONE; \
+! 		fi"
+  
+  $(SCRIPTS) $(SCRIPTS_GUI): $(VIMPROG)
+  
+***************
+*** 71,74 ****
+  test60.out: test60.vim
+  
+  nolog:
+! 	-echo Test results: >test.log
+--- 73,76 ----
+  test60.out: test60.vim
+  
+  nolog:
+! 	-rm -f test.log
+*** ../vim-7.2.014/src/version.c	Wed Sep 10 15:38:13 2008
+--- src/version.c	Wed Sep 10 18:23:38 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     15,
+  /**/
+
+-- 
+Light travels faster than sound.  This is why some people
+appear bright until you hear them speak
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

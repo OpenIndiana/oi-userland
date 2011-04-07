@@ -1,0 +1,129 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.338
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.338 (after 7.2.300)
+Problem:    Part of FD_CLOEXEC change is missing.
+Solution:   Include source file skipped because of typo.
+Files:	    src/ex_cmds2.c
+
+
+*** ../vim-7.2.337/src/ex_cmds2.c	2010-01-19 16:12:53.000000000 +0100
+--- src/ex_cmds2.c	2010-01-19 16:02:53.000000000 +0100
+***************
+*** 2802,2821 ****
+  
+  static char_u *get_one_sourceline __ARGS((struct source_cookie *sp));
+  
+! #if defined(WIN32) && defined(FEAT_CSCOPE)
+  static FILE *fopen_noinh_readbin __ARGS((char *filename));
+  
+  /*
+   * Special function to open a file without handle inheritance.
+   */
+      static FILE *
+  fopen_noinh_readbin(filename)
+      char    *filename;
+  {
+!     int	fd_tmp = mch_open(filename, O_RDONLY | O_BINARY | O_NOINHERIT, 0);
+  
+      if (fd_tmp == -1)
+  	return NULL;
+      return fdopen(fd_tmp, READBIN);
+  }
+  #endif
+--- 2802,2836 ----
+  
+  static char_u *get_one_sourceline __ARGS((struct source_cookie *sp));
+  
+! #if (defined(WIN32) && defined(FEAT_CSCOPE)) || defined(HAVE_FD_CLOEXEC)
+! # define USE_FOPEN_NOINH
+  static FILE *fopen_noinh_readbin __ARGS((char *filename));
+  
+  /*
+   * Special function to open a file without handle inheritance.
++  * When possible the handle is closed on exec().
+   */
+      static FILE *
+  fopen_noinh_readbin(filename)
+      char    *filename;
+  {
+!     int	fd_tmp = mch_open(filename, O_RDONLY
+! # ifdef WIN32
+! 			  O_BINARY | O_NOINHERIT
+! # endif
+! 			  , 0);
+  
+      if (fd_tmp == -1)
+  	return NULL;
++ 
++ # ifdef HAVE_FD_CLOEXEC
++     {
++ 	int fdflags = fcntl(fd_tmp, F_GETFD);
++ 	if (fdflags >= 0 && (fdflags & FD_CLOEXEC) == 0)
++ 	    fcntl(fd_tmp, F_SETFD, fdflags | FD_CLOEXEC);
++     }
++ # endif
++ 
+      return fdopen(fd_tmp, READBIN);
+  }
+  #endif
+***************
+*** 2895,2901 ****
+      apply_autocmds(EVENT_SOURCEPRE, fname_exp, fname_exp, FALSE, curbuf);
+  #endif
+  
+! #if defined(WIN32) && defined(FEAT_CSCOPE)
+      cookie.fp = fopen_noinh_readbin((char *)fname_exp);
+  #else
+      cookie.fp = mch_fopen((char *)fname_exp, READBIN);
+--- 2910,2916 ----
+      apply_autocmds(EVENT_SOURCEPRE, fname_exp, fname_exp, FALSE, curbuf);
+  #endif
+  
+! #ifdef USE_FOPEN_NOINH
+      cookie.fp = fopen_noinh_readbin((char *)fname_exp);
+  #else
+      cookie.fp = mch_fopen((char *)fname_exp, READBIN);
+***************
+*** 2916,2922 ****
+  		*p = '.';
+  	    else
+  		*p = '_';
+! #if defined(WIN32) && defined(FEAT_CSCOPE)
+  	    cookie.fp = fopen_noinh_readbin((char *)fname_exp);
+  #else
+  	    cookie.fp = mch_fopen((char *)fname_exp, READBIN);
+--- 2931,2937 ----
+  		*p = '.';
+  	    else
+  		*p = '_';
+! #ifdef USE_FOPEN_NOINH
+  	    cookie.fp = fopen_noinh_readbin((char *)fname_exp);
+  #else
+  	    cookie.fp = mch_fopen((char *)fname_exp, READBIN);
+*** ../vim-7.2.337/src/version.c	2010-01-19 16:12:53.000000000 +0100
+--- src/version.c	2010-01-19 16:20:08.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     338,
+  /**/
+
+-- 
+~
+~
+~
+".signature" 4 lines, 50 characters written
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

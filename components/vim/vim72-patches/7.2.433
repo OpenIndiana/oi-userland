@@ -1,0 +1,208 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.433
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.433
+Problem:    Can't use cscope with QuickFixCmdPre and QuickFixCmdPost.
+Solution:   Add cscope support for these autocmd events. (Bryan Venteicher)
+Files:	    runtime/doc/autocmd.txt, src/if_cscope.c
+
+
+*** ../vim-7.2.432/runtime/doc/autocmd.txt	2009-06-24 17:51:01.000000000 +0200
+--- runtime/doc/autocmd.txt	2010-05-14 22:48:43.000000000 +0200
+***************
+*** 678,687 ****
+  QuickFixCmdPre			Before a quickfix command is run (|:make|,
+  				|:lmake|, |:grep|, |:lgrep|, |:grepadd|,
+  				|:lgrepadd|, |:vimgrep|, |:lvimgrep|,
+! 				|:vimgrepadd|, |:lvimgrepadd|). The pattern is
+! 				matched against the command being run.  When
+! 				|:grep| is used but 'grepprg' is set to
+! 				"internal" it still matches "grep".
+  				This command cannot be used to set the
+  				'makeprg' and 'grepprg' variables.
+  				If this command causes an error, the quickfix
+--- 678,687 ----
+  QuickFixCmdPre			Before a quickfix command is run (|:make|,
+  				|:lmake|, |:grep|, |:lgrep|, |:grepadd|,
+  				|:lgrepadd|, |:vimgrep|, |:lvimgrep|,
+! 				|:vimgrepadd|, |:lvimgrepadd|, |:cscope|).
+! 				The pattern is matched against the command
+! 				being run.  When |:grep| is used but 'grepprg'
+! 				is set to "internal" it still matches "grep".
+  				This command cannot be used to set the
+  				'makeprg' and 'grepprg' variables.
+  				If this command causes an error, the quickfix
+*** ../vim-7.2.432/src/if_cscope.c	2010-02-24 14:46:58.000000000 +0100
+--- src/if_cscope.c	2010-05-14 23:10:39.000000000 +0200
+***************
+*** 1113,1118 ****
+--- 1113,1182 ----
+  #ifdef FEAT_QUICKFIX
+      char cmdletter;
+      char *qfpos;
++ 
++     /* get cmd letter */
++     switch (opt[0])
++     {
++     case '0' :
++ 	cmdletter = 's';
++ 	break;
++     case '1' :
++ 	cmdletter = 'g';
++ 	break;
++     case '2' :
++ 	cmdletter = 'd';
++ 	break;
++     case '3' :
++ 	cmdletter = 'c';
++ 	break;
++     case '4' :
++ 	cmdletter = 't';
++ 	break;
++     case '6' :
++ 	cmdletter = 'e';
++ 	break;
++     case '7' :
++ 	cmdletter = 'f';
++ 	break;
++     case '8' :
++ 	cmdletter = 'i';
++ 	break;
++     default :
++ 	cmdletter = opt[0];
++     }
++ 
++     qfpos = (char *)vim_strchr(p_csqf, cmdletter);
++     if (qfpos != NULL)
++     {
++ 	qfpos++;
++ 	/* next symbol must be + or - */
++ 	if (strchr(CSQF_FLAGS, *qfpos) == NULL)
++ 	{
++ 	    char *nf = _("E469: invalid cscopequickfix flag %c for %c");
++ 	    char *buf = (char *)alloc((unsigned)strlen(nf));
++ 
++ 	    /* strlen will be enough because we use chars */
++ 	    if (buf != NULL)
++ 	    {
++ 		sprintf(buf, nf, *qfpos, *(qfpos-1));
++ 		(void)EMSG(buf);
++ 		vim_free(buf);
++ 	    }
++ 	    return FALSE;
++ 	}
++ 
++ # ifdef FEAT_AUTOCMD
++ 	if (*qfpos != '0')
++ 	{
++ 	    apply_autocmds(EVENT_QUICKFIXCMDPRE, (char_u *)"cscope",
++ 					       curbuf->b_fname, TRUE, curbuf);
++ #  ifdef FEAT_EVAL
++ 	    if (did_throw || force_abort)
++ 		return FALSE;
++ #  endif
++ 	}
++ # endif
++     }
+  #endif
+  
+      /* create the actual command to send to cscope */
+***************
+*** 1174,1231 ****
+      }
+  
+  #ifdef FEAT_QUICKFIX
+-     /* get cmd letter */
+-     switch (opt[0])
+-     {
+-     case '0' :
+- 	cmdletter = 's';
+- 	break;
+-     case '1' :
+- 	cmdletter = 'g';
+- 	break;
+-     case '2' :
+- 	cmdletter = 'd';
+- 	break;
+-     case '3' :
+- 	cmdletter = 'c';
+- 	break;
+-     case '4' :
+- 	cmdletter = 't';
+- 	break;
+-     case '6' :
+- 	cmdletter = 'e';
+- 	break;
+-     case '7' :
+- 	cmdletter = 'f';
+- 	break;
+-     case '8' :
+- 	cmdletter = 'i';
+- 	break;
+-     default :
+- 	cmdletter = opt[0];
+-     }
+- 
+-     qfpos = (char *)vim_strchr(p_csqf, cmdletter);
+-     if (qfpos != NULL)
+-     {
+- 	qfpos++;
+- 	/* next symbol must be + or - */
+- 	if (strchr(CSQF_FLAGS, *qfpos) == NULL)
+- 	{
+- 	    char *nf = _("E469: invalid cscopequickfix flag %c for %c");
+- 	    char *buf = (char *)alloc((unsigned)strlen(nf));
+- 
+- 	    /* strlen will be enough because we use chars */
+- 	    if (buf != NULL)
+- 	    {
+- 		sprintf(buf, nf, *qfpos, *(qfpos-1));
+- 		(void)EMSG(buf);
+- 		vim_free(buf);
+- 	    }
+- 	    vim_free(nummatches);
+- 	    return FALSE;
+- 	}
+-     }
+      if (qfpos != NULL && *qfpos != '0' && totmatches > 0)
+      {
+  	/* fill error list */
+--- 1238,1243 ----
+***************
+*** 1258,1263 ****
+--- 1270,1280 ----
+  		    postponed_split = 0;
+  		}
+  # endif
++ 
++ # ifdef FEAT_AUTOCMD
++ 		apply_autocmds(EVENT_QUICKFIXCMDPOST, (char_u *)"cscope",
++ 					       curbuf->b_fname, TRUE, curbuf);
++ # endif
+  		if (use_ll)
+  		    /*
+  		     * In the location list window, use the displayed location
+*** ../vim-7.2.432/src/version.c	2010-05-14 22:24:31.000000000 +0200
+--- src/version.c	2010-05-14 23:13:27.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     433,
+  /**/
+
+-- 
+The 50-50-90 rule: Anytime you have a 50-50 chance of getting
+something right, there's a 90% probability you'll get it wrong.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,100 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.431
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.431
+Problem:    ":amenu" moves the cursor when in Insert mode.
+Solution:   Use CTRL-\ CTRL-O instead of CTRL-O. (Christian Brabandt)
+Files:	    src/menu.c
+
+
+*** ../vim-7.2.430/src/menu.c	2009-05-17 13:30:58.000000000 +0200
+--- src/menu.c	2010-05-14 21:18:00.000000000 +0200
+***************
+*** 490,495 ****
+--- 490,496 ----
+      char_u	*next_name;
+      int		i;
+      int		c;
++     int		d;
+  #ifdef FEAT_GUI
+      int		idx;
+      int		new_idx;
+***************
+*** 746,751 ****
+--- 747,753 ----
+  		 * Don't do this if adding a tearbar (addtearoff == FALSE).
+  		 * Don't do this for "<Nop>". */
+  		c = 0;
++ 		d = 0;
+  		if (amenu && call_data != NULL && *call_data != NUL
+  #ifdef FEAT_GUI_W32
+  		       && addtearoff
+***************
+*** 761,778 ****
+  			    c = Ctrl_C;
+  			    break;
+  			case MENU_INSERT_MODE:
+! 			    c = Ctrl_O;
+  			    break;
+  		    }
+  		}
+  
+! 		if (c)
+  		{
+! 		    menu->strings[i] = alloc((unsigned)(STRLEN(call_data) + 4));
+  		    if (menu->strings[i] != NULL)
+  		    {
+  			menu->strings[i][0] = c;
+! 			STRCPY(menu->strings[i] + 1, call_data);
+  			if (c == Ctrl_C)
+  			{
+  			    int	    len = (int)STRLEN(menu->strings[i]);
+--- 763,787 ----
+  			    c = Ctrl_C;
+  			    break;
+  			case MENU_INSERT_MODE:
+! 			    c = Ctrl_BSL;
+! 			    d = Ctrl_O;
+  			    break;
+  		    }
+  		}
+  
+! 		if (c != 0)
+  		{
+! 		    menu->strings[i] = alloc((unsigned)(STRLEN(call_data) + 5 ));
+  		    if (menu->strings[i] != NULL)
+  		    {
+  			menu->strings[i][0] = c;
+! 			if (d == 0)
+! 			    STRCPY(menu->strings[i] + 1, call_data);
+! 			else
+! 			{
+! 			    menu->strings[i][1] = d;
+! 			    STRCPY(menu->strings[i] + 2, call_data);
+! 			}
+  			if (c == Ctrl_C)
+  			{
+  			    int	    len = (int)STRLEN(menu->strings[i]);
+*** ../vim-7.2.430/src/version.c	2010-05-14 20:41:00.000000000 +0200
+--- src/version.c	2010-05-14 21:11:40.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     431,
+  /**/
+
+-- 
+Despite the cost of living, have you noticed how it remains so popular?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

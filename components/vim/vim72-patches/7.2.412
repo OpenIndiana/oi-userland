@@ -1,0 +1,85 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.412
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.412
+Problem:    [ or ] followed by mouse click doesn't work.
+Solution:   Reverse check for key being a mouse event. (Dominique Pelle)
+Files:	    src/normal.c
+
+
+*** ../vim-7.2.411/src/normal.c	2010-03-17 13:07:01.000000000 +0100
+--- src/normal.c	2010-05-07 15:46:54.000000000 +0200
+***************
+*** 3196,3202 ****
+       * There are a few special cases where we want certain combinations of
+       * characters to be considered as a single word.  These are things like
+       * "->", "/ *", "*=", "+=", "&=", "<=", ">=", "!=" etc.  Otherwise, each
+!      * character is in it's own class.
+       */
+      if (c != NUL && vim_strchr((char_u *)"-+*/%<>&|^!=", c) != NULL)
+  	return 1;
+--- 3196,3202 ----
+       * There are a few special cases where we want certain combinations of
+       * characters to be considered as a single word.  These are things like
+       * "->", "/ *", "*=", "+=", "&=", "<=", ">=", "!=" etc.  Otherwise, each
+!      * character is in its own class.
+       */
+      if (c != NUL && vim_strchr((char_u *)"-+*/%<>&|^!=", c) != NULL)
+  	return 1;
+***************
+*** 4085,4091 ****
+  /*
+   * Command character that's ignored.
+   * Used for CTRL-Q and CTRL-S to avoid problems with terminals that use
+!  * xon/xoff
+   */
+      static void
+  nv_ignore(cap)
+--- 4085,4091 ----
+  /*
+   * Command character that's ignored.
+   * Used for CTRL-Q and CTRL-S to avoid problems with terminals that use
+!  * xon/xoff.
+   */
+      static void
+  nv_ignore(cap)
+***************
+*** 6523,6529 ****
+       * [ or ] followed by a middle mouse click: put selected text with
+       * indent adjustment.  Any other button just does as usual.
+       */
+!     else if (cap->nchar >= K_LEFTMOUSE && cap->nchar <= K_RIGHTRELEASE)
+      {
+  	(void)do_mouse(cap->oap, cap->nchar,
+  		       (cap->cmdchar == ']') ? FORWARD : BACKWARD,
+--- 6523,6529 ----
+       * [ or ] followed by a middle mouse click: put selected text with
+       * indent adjustment.  Any other button just does as usual.
+       */
+!     else if (cap->nchar >= K_RIGHTRELEASE && cap->nchar <= K_LEFTMOUSE)
+      {
+  	(void)do_mouse(cap->oap, cap->nchar,
+  		       (cap->cmdchar == ']') ? FORWARD : BACKWARD,
+*** ../vim-7.2.411/src/version.c	2010-03-23 18:22:40.000000000 +0100
+--- src/version.c	2010-05-07 15:51:35.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     412,
+  /**/
+
+-- 
+I have a drinking problem -- I don't have a drink!
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

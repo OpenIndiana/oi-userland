@@ -1,0 +1,1873 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.167
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.167
+Problem:    Splint doesn't work well for checking the code.
+Solution:   Add splint arguments in the Makefile.  Exclude some code from
+	    splint that it can't handle.  Tune splint arguments to give
+	    reasonable errors.  Add a filter for removing false warnings from
+	    splint output.  Many small changes to avoid warnings.  More to
+	    follow...
+Files:	    Filelist, src/Makefile, src/buffer.c, src/charset.c,
+	    src/cleanlint.vim, src/digraph.c, src/edit.c, src/ex_cmds.c,
+	    src/globals.h, src/ops.c, src/os_unix.c, src/os_unix.h,
+	    src/proto/buffer.pro, src/proto/edit.pro, src/screen.c,
+	    src/structs.h
+
+*** ../vim-7.2.166/Filelist	2008-09-20 16:26:10.000000000 +0200
+--- Filelist	2009-05-05 21:45:49.000000000 +0200
+***************
+*** 139,144 ****
+--- 139,145 ----
+  		src/INSTALL \
+  		src/INSTALLx.txt \
+  		src/Makefile \
++ 		src/cleanlint.vim \
+  		src/auto/configure \
+  		src/config.aap.in \
+  		src/config.h.in \
+***************
+*** 683,691 ****
+  		runtime/spell/??/main.aap \
+  		runtime/spell/yi/README.txt \
+  		runtime/spell/main.aap \
+- 		runtime/spell/cleanadd.vim \
+  		runtime/spell/*.vim \
+- 		runtime/spell/fixdup \
+  
+  # generic language files, binary
+  LANG_GEN_BIN = \
+--- 684,690 ----
+*** ../vim-7.2.166/src/Makefile	2009-04-29 18:44:45.000000000 +0200
+--- src/Makefile	2009-05-06 00:23:15.000000000 +0200
+***************
+*** 551,557 ****
+  # }}}
+  
+  # LINT - for running lint
+! LINT_OPTIONS = -beprxzF
+  
+  # PROFILING - Uncomment the next two lines to do profiling with gcc and gprof.
+  # Might not work with GUI or Perl.
+--- 551,562 ----
+  # }}}
+  
+  # LINT - for running lint
+! #  For standard lint
+! #LINT = lint
+! #LINT_OPTIONS = -beprxzF
+! #  For splint  (see cleanlint.vim for filtering the output)
+! LINT = splint
+! LINT_OPTIONS = +unixlib -weak -macrovarprefixexclude -showfunc -linelen 9999
+  
+  # PROFILING - Uncomment the next two lines to do profiling with gcc and gprof.
+  # Might not work with GUI or Perl.
+***************
+*** 1259,1274 ****
+  #     This is for cproto 3 patchlevel 8 or below
+  #     __inline, __attribute__ and __extension__ are not recognized by cproto
+  #     G_IMPLEMENT_INLINES is to avoid functions defined in glib/gutils.h.
+! NO_ATTR = -D__inline= -D__inline__= -DG_IMPLEMENT_INLINES \
+! 	  -D"__attribute__\\(x\\)=" -D"__asm__\\(x\\)=" \
+! 	  -D__extension__= -D__restrict="" \
+! 	  -D__gnuc_va_list=char -D__builtin_va_list=char
+  
+  #
+! #     This is for cproto 3 patchlevel 9 or above (currently 4.6)
+  #     __inline and __attribute__ are now recognized by cproto
+  #     -D"foo()=" is not supported by all compilers so do not use it
+! # NO_ATTR=
+  #
+  #     maybe the "/usr/bin/cc -E" has to be adjusted for some systems
+  # This is for cproto 3.5 patchlevel 3:
+--- 1264,1279 ----
+  #     This is for cproto 3 patchlevel 8 or below
+  #     __inline, __attribute__ and __extension__ are not recognized by cproto
+  #     G_IMPLEMENT_INLINES is to avoid functions defined in glib/gutils.h.
+! #NO_ATTR = -D__inline= -D__inline__= -DG_IMPLEMENT_INLINES \
+! #	  -D"__attribute__\\(x\\)=" -D"__asm__\\(x\\)=" \
+! #	  -D__extension__= -D__restrict="" \
+! #	  -D__gnuc_va_list=char -D__builtin_va_list=char
+  
+  #
+! #     This is for cproto 3 patchlevel 9 or above (currently 4.6, 4.7g)
+  #     __inline and __attribute__ are now recognized by cproto
+  #     -D"foo()=" is not supported by all compilers so do not use it
+! NO_ATTR=
+  #
+  #     maybe the "/usr/bin/cc -E" has to be adjusted for some systems
+  # This is for cproto 3.5 patchlevel 3:
+***************
+*** 1432,1437 ****
+--- 1437,1443 ----
+  	$(SNIFF_SRC) $(WORKSHOP_SRC) $(WSDEBUG_SRC) $(NETBEANS_SRC)
+  #LINT_SRC = $(SRC)
+  #LINT_SRC = $(ALL_SRC)
++ #LINT_SRC = $(BASIC_SRC)
+  
+  OBJ = \
+  	objects/buffer.o \
+***************
+*** 2272,2283 ****
+  
+  # Run lint.  Clean up the *.ln files that are sometimes left behind.
+  lint:
+! 	lint $(LINT_OPTIONS) $(LINT_CFLAGS) $(LINT_EXTRA) $(LINT_SRC)
+  	-rm -f *.ln
+  
+  # Check dosinst.c with lint.
+  lintinstall:
+! 	lint $(LINT_OPTIONS) -DWIN32 -DUNIX_LINT dosinst.c
+  	-rm -f dosinst.ln
+  
+  ###########################################################################
+--- 2279,2290 ----
+  
+  # Run lint.  Clean up the *.ln files that are sometimes left behind.
+  lint:
+! 	$(LINT) $(LINT_OPTIONS) $(LINT_CFLAGS) $(LINT_EXTRA) $(LINT_SRC)
+  	-rm -f *.ln
+  
+  # Check dosinst.c with lint.
+  lintinstall:
+! 	$(LINT) $(LINT_OPTIONS) -DWIN32 -DUNIX_LINT dosinst.c
+  	-rm -f dosinst.ln
+  
+  ###########################################################################
+*** ../vim-7.2.166/src/buffer.c	2009-02-22 00:01:42.000000000 +0100
+--- src/buffer.c	2009-05-13 12:25:29.000000000 +0200
+***************
+*** 44,49 ****
+--- 44,50 ----
+  #ifdef FEAT_TITLE
+  static int	ti_change __ARGS((char_u *str, char_u **last));
+  #endif
++ static int	append_arg_number __ARGS((win_T *wp, char_u *buf, int buflen, int add_file));
+  static void	free_buffer __ARGS((buf_T *));
+  static void	free_buffer_stuff __ARGS((buf_T *buf, int free_options));
+  static void	clear_wininfo __ARGS((buf_T *buf));
+***************
+*** 1453,1465 ****
+  
+  #ifdef FEAT_KEYMAP
+      if (curbuf->b_kmap_state & KEYMAP_INIT)
+! 	keymap_init();
+  #endif
+  #ifdef FEAT_SPELL
+      /* May need to set the spell language.  Can only do this after the buffer
+       * has been properly setup. */
+      if (!curbuf->b_help && curwin->w_p_spell && *curbuf->b_p_spl != NUL)
+! 	did_set_spelllang(curbuf);
+  #endif
+  
+      redraw_later(NOT_VALID);
+--- 1454,1466 ----
+  
+  #ifdef FEAT_KEYMAP
+      if (curbuf->b_kmap_state & KEYMAP_INIT)
+! 	(void)keymap_init();
+  #endif
+  #ifdef FEAT_SPELL
+      /* May need to set the spell language.  Can only do this after the buffer
+       * has been properly setup. */
+      if (!curbuf->b_help && curwin->w_p_spell && *curbuf->b_p_spl != NUL)
+! 	(void)did_set_spelllang(curbuf);
+  #endif
+  
+      redraw_later(NOT_VALID);
+***************
+*** 2516,2522 ****
+      buf_T	*buf;
+  {
+      wininfo_T	*wip;
+!     static pos_T no_position = {1, 0};
+  
+      wip = find_wininfo(buf, FALSE);
+      if (wip != NULL)
+--- 2517,2523 ----
+      buf_T	*buf;
+  {
+      wininfo_T	*wip;
+!     static pos_T no_position = INIT_POS_T(1, 0, 0);
+  
+      wip = find_wininfo(buf, FALSE);
+      if (wip != NULL)
+***************
+*** 2577,2584 ****
+  	{
+  	    IObuff[len++] = ' ';
+  	} while (--i > 0 && len < IOSIZE - 18);
+! 	vim_snprintf((char *)IObuff + len, IOSIZE - len, _("line %ld"),
+! 		buf == curbuf ? curwin->w_cursor.lnum
+  					       : (long)buflist_findlnum(buf));
+  	msg_outtrans(IObuff);
+  	out_flush();	    /* output one line at a time */
+--- 2578,2585 ----
+  	{
+  	    IObuff[len++] = ' ';
+  	} while (--i > 0 && len < IOSIZE - 18);
+! 	vim_snprintf((char *)IObuff + len, (size_t)(IOSIZE - len),
+! 		_("line %ld"), buf == curbuf ? curwin->w_cursor.lnum
+  					       : (long)buflist_findlnum(buf));
+  	msg_outtrans(IObuff);
+  	out_flush();	    /* output one line at a time */
+***************
+*** 2967,2973 ****
+  
+      if (fullname > 1)	    /* 2 CTRL-G: include buffer number */
+      {
+! 	sprintf((char *)buffer, "buf %d: ", curbuf->b_fnum);
+  	p = buffer + STRLEN(buffer);
+      }
+      else
+--- 2968,2974 ----
+  
+      if (fullname > 1)	    /* 2 CTRL-G: include buffer number */
+      {
+! 	vim_snprintf((char *)buffer, IOSIZE, "buf %d: ", curbuf->b_fnum);
+  	p = buffer + STRLEN(buffer);
+      }
+      else
+***************
+*** 3041,3051 ****
+  		(long)curbuf->b_ml.ml_line_count,
+  		n);
+  	validate_virtcol();
+! 	col_print(buffer + STRLEN(buffer),
+  		   (int)curwin->w_cursor.col + 1, (int)curwin->w_virtcol + 1);
+      }
+  
+!     (void)append_arg_number(curwin, buffer, !shortmess(SHM_FILE), IOSIZE);
+  
+      if (dont_truncate)
+      {
+--- 3042,3053 ----
+  		(long)curbuf->b_ml.ml_line_count,
+  		n);
+  	validate_virtcol();
+! 	len = STRLEN(buffer);
+! 	col_print(buffer + len, IOSIZE - len,
+  		   (int)curwin->w_cursor.col + 1, (int)curwin->w_virtcol + 1);
+      }
+  
+!     (void)append_arg_number(curwin, buffer, IOSIZE, !shortmess(SHM_FILE));
+  
+      if (dont_truncate)
+      {
+***************
+*** 3073,3087 ****
+  }
+  
+      void
+! col_print(buf, col, vcol)
+      char_u  *buf;
+      int	    col;
+      int	    vcol;
+  {
+      if (col == vcol)
+! 	sprintf((char *)buf, "%d", col);
+      else
+! 	sprintf((char *)buf, "%d-%d", col, vcol);
+  }
+  
+  #if defined(FEAT_TITLE) || defined(PROTO)
+--- 3075,3090 ----
+  }
+  
+      void
+! col_print(buf, buflen, col, vcol)
+      char_u  *buf;
++     size_t  buflen;
+      int	    col;
+      int	    vcol;
+  {
+      if (col == vcol)
+! 	vim_snprintf((char *)buf, buflen, "%d", col);
+      else
+! 	vim_snprintf((char *)buf, buflen, "%d-%d", col, vcol);
+  }
+  
+  #if defined(FEAT_TITLE) || defined(PROTO)
+***************
+*** 3194,3211 ****
+  		if (p == buf + off)
+  		    /* must be a help buffer */
+  		    vim_strncpy(buf + off, (char_u *)_("help"),
+! 							    IOSIZE - off - 1);
+  		else
+  		    *p = NUL;
+  
+  		/* translate unprintable chars */
+  		p = transstr(buf + off);
+! 		vim_strncpy(buf + off, p, IOSIZE - off - 1);
+  		vim_free(p);
+  		STRCAT(buf, ")");
+  	    }
+  
+! 	    append_arg_number(curwin, buf, FALSE, IOSIZE);
+  
+  #if defined(FEAT_CLIENTSERVER)
+  	    if (serverName != NULL)
+--- 3197,3214 ----
+  		if (p == buf + off)
+  		    /* must be a help buffer */
+  		    vim_strncpy(buf + off, (char_u *)_("help"),
+! 						  (size_t)(IOSIZE - off - 1));
+  		else
+  		    *p = NUL;
+  
+  		/* translate unprintable chars */
+  		p = transstr(buf + off);
+! 		vim_strncpy(buf + off, p, (size_t)(IOSIZE - off - 1));
+  		vim_free(p);
+  		STRCAT(buf, ")");
+  	    }
+  
+! 	    append_arg_number(curwin, buf, IOSIZE, FALSE);
+  
+  #if defined(FEAT_CLIENTSERVER)
+  	    if (serverName != NULL)
+***************
+*** 3520,3526 ****
+  		    n = (long)(p - t) - item[groupitem[groupdepth]].maxwid + 1;
+  
+  		*t = '<';
+! 		mch_memmove(t + 1, t + n, p - (t + n));
+  		p = p - n + 1;
+  #ifdef FEAT_MBYTE
+  		/* Fill up space left over by half a double-wide char. */
+--- 3523,3529 ----
+  		    n = (long)(p - t) - item[groupitem[groupdepth]].maxwid + 1;
+  
+  		*t = '<';
+! 		mch_memmove(t + 1, t + n, (size_t)(p - (t + n)));
+  		p = p - n + 1;
+  #ifdef FEAT_MBYTE
+  		/* Fill up space left over by half a double-wide char. */
+***************
+*** 3550,3556 ****
+  		else
+  		{
+  		    /* fill by inserting characters */
+! 		    mch_memmove(t + n - l, t, p - t);
+  		    l = n - l;
+  		    if (p + l >= out + outlen)
+  			l = (long)((out + outlen) - p - 1);
+--- 3553,3559 ----
+  		else
+  		{
+  		    /* fill by inserting characters */
+! 		    mch_memmove(t + n - l, t, (size_t)(p - t));
+  		    l = n - l;
+  		    if (p + l >= out + outlen)
+  			l = (long)((out + outlen) - p - 1);
+***************
+*** 3686,3692 ****
+  	    p = t;
+  
+  #ifdef FEAT_EVAL
+! 	    sprintf((char *)tmp, "%d", curbuf->b_fnum);
+  	    set_internal_string_var((char_u *)"actual_curbuf", tmp);
+  
+  	    o_curbuf = curbuf;
+--- 3689,3695 ----
+  	    p = t;
+  
+  #ifdef FEAT_EVAL
+! 	    vim_snprintf((char *)tmp, sizeof(tmp), "%d", curbuf->b_fnum);
+  	    set_internal_string_var((char_u *)"actual_curbuf", tmp);
+  
+  	    o_curbuf = curbuf;
+***************
+*** 3753,3765 ****
+  
+  	case STL_ALTPERCENT:
+  	    str = tmp;
+! 	    get_rel_pos(wp, str);
+  	    break;
+  
+  	case STL_ARGLISTSTAT:
+  	    fillable = FALSE;
+  	    tmp[0] = 0;
+! 	    if (append_arg_number(wp, tmp, FALSE, (int)sizeof(tmp)))
+  		str = tmp;
+  	    break;
+  
+--- 3756,3768 ----
+  
+  	case STL_ALTPERCENT:
+  	    str = tmp;
+! 	    get_rel_pos(wp, str, TMPLEN);
+  	    break;
+  
+  	case STL_ARGLISTSTAT:
+  	    fillable = FALSE;
+  	    tmp[0] = 0;
+! 	    if (append_arg_number(wp, tmp, (int)sizeof(tmp), FALSE))
+  		str = tmp;
+  	    break;
+  
+***************
+*** 3794,3800 ****
+  	case STL_BYTEVAL_X:
+  	    base = 'X';
+  	case STL_BYTEVAL:
+! 	    if (wp->w_cursor.col > STRLEN(linecont))
+  		num = 0;
+  	    else
+  	    {
+--- 3797,3803 ----
+  	case STL_BYTEVAL_X:
+  	    base = 'X';
+  	case STL_BYTEVAL:
+! 	    if (wp->w_cursor.col > (colnr_T)STRLEN(linecont))
+  		num = 0;
+  	    else
+  	    {
+***************
+*** 3967,3973 ****
+  	    if (zeropad)
+  		*t++ = '0';
+  	    *t++ = '*';
+! 	    *t++ = nbase == 16 ? base : (nbase == 8 ? 'o' : 'd');
+  	    *t = 0;
+  
+  	    for (n = num, l = 1; n >= nbase; n /= nbase)
+--- 3970,3976 ----
+  	    if (zeropad)
+  		*t++ = '0';
+  	    *t++ = '*';
+! 	    *t++ = nbase == 16 ? base : (char_u)(nbase == 8 ? 'o' : 'd');
+  	    *t = 0;
+  
+  	    for (n = num, l = 1; n >= nbase; n /= nbase)
+***************
+*** 4160,4172 ****
+  #if defined(FEAT_STL_OPT) || defined(FEAT_CMDL_INFO) \
+  	    || defined(FEAT_GUI_TABLINE) || defined(PROTO)
+  /*
+!  * Get relative cursor position in window into "str[]", in the form 99%, using
+!  * "Top", "Bot" or "All" when appropriate.
+   */
+      void
+! get_rel_pos(wp, str)
+      win_T	*wp;
+!     char_u	*str;
+  {
+      long	above; /* number of lines above window */
+      long	below; /* number of lines below window */
+--- 4163,4176 ----
+  #if defined(FEAT_STL_OPT) || defined(FEAT_CMDL_INFO) \
+  	    || defined(FEAT_GUI_TABLINE) || defined(PROTO)
+  /*
+!  * Get relative cursor position in window into "buf[buflen]", in the form 99%,
+!  * using "Top", "Bot" or "All" when appropriate.
+   */
+      void
+! get_rel_pos(wp, buf, buflen)
+      win_T	*wp;
+!     char_u	*buf;
+!     int		buflen;
+  {
+      long	above; /* number of lines above window */
+      long	below; /* number of lines below window */
+***************
+*** 4177,4210 ****
+  #endif
+      below = wp->w_buffer->b_ml.ml_line_count - wp->w_botline + 1;
+      if (below <= 0)
+! 	STRCPY(str, above == 0 ? _("All") : _("Bot"));
+      else if (above <= 0)
+! 	STRCPY(str, _("Top"));
+      else
+! 	sprintf((char *)str, "%2d%%", above > 1000000L
+  				    ? (int)(above / ((above + below) / 100L))
+  				    : (int)(above * 100L / (above + below)));
+  }
+  #endif
+  
+  /*
+!  * Append (file 2 of 8) to 'buf', if editing more than one file.
+   * Return TRUE if it was appended.
+   */
+!     int
+! append_arg_number(wp, buf, add_file, maxlen)
+      win_T	*wp;
+      char_u	*buf;
+      int		add_file;	/* Add "file" before the arg number */
+-     int		maxlen;		/* maximum nr of chars in buf or zero*/
+  {
+      char_u	*p;
+  
+      if (ARGCOUNT <= 1)		/* nothing to do */
+  	return FALSE;
+  
+!     p = buf + STRLEN(buf);		/* go to the end of the buffer */
+!     if (maxlen && p - buf + 35 >= maxlen) /* getting too long */
+  	return FALSE;
+      *p++ = ' ';
+      *p++ = '(';
+--- 4181,4215 ----
+  #endif
+      below = wp->w_buffer->b_ml.ml_line_count - wp->w_botline + 1;
+      if (below <= 0)
+! 	vim_strncpy(buf, (char_u *)(above == 0 ? _("All") : _("Bot")),
+! 							(size_t)(buflen - 1));
+      else if (above <= 0)
+! 	vim_strncpy(buf, (char_u *)_("Top"), (size_t)(buflen - 1));
+      else
+! 	vim_snprintf((char *)buf, (size_t)buflen, "%2d%%", above > 1000000L
+  				    ? (int)(above / ((above + below) / 100L))
+  				    : (int)(above * 100L / (above + below)));
+  }
+  #endif
+  
+  /*
+!  * Append (file 2 of 8) to "buf[buflen]", if editing more than one file.
+   * Return TRUE if it was appended.
+   */
+!     static int
+! append_arg_number(wp, buf, buflen, add_file)
+      win_T	*wp;
+      char_u	*buf;
++     int		buflen;
+      int		add_file;	/* Add "file" before the arg number */
+  {
+      char_u	*p;
+  
+      if (ARGCOUNT <= 1)		/* nothing to do */
+  	return FALSE;
+  
+!     p = buf + STRLEN(buf);	/* go to the end of the buffer */
+!     if (p - buf + 35 >= buflen)	/* getting too long */
+  	return FALSE;
+      *p++ = ' ';
+      *p++ = '(';
+***************
+*** 4213,4219 ****
+  	STRCPY(p, "file ");
+  	p += 5;
+      }
+!     sprintf((char *)p, wp->w_arg_idx_invalid ? "(%d) of %d)"
+  				  : "%d of %d)", wp->w_arg_idx + 1, ARGCOUNT);
+      return TRUE;
+  }
+--- 4218,4225 ----
+  	STRCPY(p, "file ");
+  	p += 5;
+      }
+!     vim_snprintf((char *)p, (size_t)(buflen - (p - buf)),
+! 		wp->w_arg_idx_invalid ? "(%d) of %d)"
+  				  : "%d of %d)", wp->w_arg_idx + 1, ARGCOUNT);
+      return TRUE;
+  }
+***************
+*** 4996,5002 ****
+  	if (tab != NULL)
+  	{
+  	    *tab++ = '\0';
+! 	    col = atoi((char *)tab);
+  	    tab = vim_strrchr(xline, '\t');
+  	    if (tab != NULL)
+  	    {
+--- 5002,5008 ----
+  	if (tab != NULL)
+  	{
+  	    *tab++ = '\0';
+! 	    col = (colnr_T)atoi((char *)tab);
+  	    tab = vim_strrchr(xline, '\t');
+  	    if (tab != NULL)
+  	    {
+***************
+*** 5034,5039 ****
+--- 5040,5046 ----
+  #endif
+      char_u	*line;
+      int		max_buffers;
++     size_t	len;
+  
+      if (find_viminfo_parameter('%') == NULL)
+  	return;
+***************
+*** 5042,5048 ****
+      max_buffers = get_viminfo_parameter('%');
+  
+      /* Allocate room for the file name, lnum and col. */
+!     line = alloc(MAXPATHL + 40);
+      if (line == NULL)
+  	return;
+  
+--- 5049,5056 ----
+      max_buffers = get_viminfo_parameter('%');
+  
+      /* Allocate room for the file name, lnum and col. */
+! #define LINE_BUF_LEN (MAXPATHL + 40)
+!     line = alloc(LINE_BUF_LEN);
+      if (line == NULL)
+  	return;
+  
+***************
+*** 5068,5074 ****
+  	    break;
+  	putc('%', fp);
+  	home_replace(NULL, buf->b_ffname, line, MAXPATHL, TRUE);
+! 	sprintf((char *)line + STRLEN(line), "\t%ld\t%d",
+  			(long)buf->b_last_cursor.lnum,
+  			buf->b_last_cursor.col);
+  	viminfo_writestring(fp, line);
+--- 5076,5083 ----
+  	    break;
+  	putc('%', fp);
+  	home_replace(NULL, buf->b_ffname, line, MAXPATHL, TRUE);
+! 	len = STRLEN(line);
+! 	vim_snprintf((char *)line + len, len - LINE_BUF_LEN, "\t%ld\t%d",
+  			(long)buf->b_last_cursor.lnum,
+  			buf->b_last_cursor.col);
+  	viminfo_writestring(fp, line);
+***************
+*** 5226,5232 ****
+      return;
+  }
+  
+!     int
+  buf_change_sign_type(buf, markId, typenr)
+      buf_T	*buf;		/* buffer to store sign in */
+      int		markId;		/* sign ID */
+--- 5235,5241 ----
+      return;
+  }
+  
+!     linenr_T
+  buf_change_sign_type(buf, markId, typenr)
+      buf_T	*buf;		/* buffer to store sign in */
+      int		markId;		/* sign ID */
+***************
+*** 5243,5252 ****
+  	}
+      }
+  
+!     return 0;
+  }
+  
+!     int_u
+  buf_getsigntype(buf, lnum, type)
+      buf_T	*buf;
+      linenr_T	lnum;
+--- 5252,5261 ----
+  	}
+      }
+  
+!     return (linenr_T)0;
+  }
+  
+!     int
+  buf_getsigntype(buf, lnum, type)
+      buf_T	*buf;
+      linenr_T	lnum;
+*** ../vim-7.2.166/src/charset.c	2008-07-24 21:30:44.000000000 +0200
+--- src/charset.c	2009-05-05 18:17:11.000000000 +0200
+***************
+*** 17,23 ****
+  static int win_nolbr_chartabsize __ARGS((win_T *wp, char_u *s, colnr_T col, int *headp));
+  #endif
+  
+! static int nr2hex __ARGS((int c));
+  
+  static int    chartab_initialized = FALSE;
+  
+--- 17,23 ----
+  static int win_nolbr_chartabsize __ARGS((win_T *wp, char_u *s, colnr_T col, int *headp));
+  #endif
+  
+! static unsigned nr2hex __ARGS((unsigned c));
+  
+  static int    chartab_initialized = FALSE;
+  
+***************
+*** 664,670 ****
+      }
+  #endif
+      buf[++i] = nr2hex((unsigned)c >> 4);
+!     buf[++i] = nr2hex(c);
+      buf[++i] = '>';
+      buf[++i] = NUL;
+  }
+--- 664,670 ----
+      }
+  #endif
+      buf[++i] = nr2hex((unsigned)c >> 4);
+!     buf[++i] = nr2hex((unsigned)c);
+      buf[++i] = '>';
+      buf[++i] = NUL;
+  }
+***************
+*** 674,682 ****
+   * Lower case letters are used to avoid the confusion of <F1> being 0xf1 or
+   * function key 1.
+   */
+!     static int
+  nr2hex(c)
+!     int		c;
+  {
+      if ((c & 0xf) <= 9)
+  	return (c & 0xf) + '0';
+--- 674,682 ----
+   * Lower case letters are used to avoid the confusion of <F1> being 0xf1 or
+   * function key 1.
+   */
+!     static unsigned
+  nr2hex(c)
+!     unsigned	c;
+  {
+      if ((c & 0xf) <= 9)
+  	return (c & 0xf) + '0';
+***************
+*** 884,890 ****
+      if (c >= 0x100)
+      {
+  	if (enc_dbcs != 0)
+! 	    return dbcs_class((unsigned)c >> 8, c & 0xff) >= 2;
+  	if (enc_utf8)
+  	    return utf_class(c) >= 2;
+      }
+--- 884,890 ----
+      if (c >= 0x100)
+      {
+  	if (enc_dbcs != 0)
+! 	    return dbcs_class((unsigned)c >> 8, (unsigned)(c & 0xff)) >= 2;
+  	if (enc_utf8)
+  	    return utf_class(c) >= 2;
+      }
+***************
+*** 1090,1096 ****
+  	 */
+  	numberextra = win_col_off(wp);
+  	col2 = col;
+! 	colmax = W_WIDTH(wp) - numberextra;
+  	if (col >= colmax)
+  	{
+  	    n = colmax + win_col_off2(wp);
+--- 1090,1096 ----
+  	 */
+  	numberextra = win_col_off(wp);
+  	col2 = col;
+! 	colmax = (colnr_T)(W_WIDTH(wp) - numberextra);
+  	if (col >= colmax)
+  	{
+  	    n = colmax + win_col_off2(wp);
+***************
+*** 1201,1217 ****
+      win_T	*wp;
+      colnr_T	vcol;
+  {
+!     colnr_T	width1;		/* width of first line (after line number) */
+!     colnr_T	width2;		/* width of further lines */
+  
+  #ifdef FEAT_VERTSPLIT
+      if (wp->w_width == 0)	/* there is no border */
+  	return FALSE;
+  #endif
+      width1 = W_WIDTH(wp) - win_col_off(wp);
+!     if (vcol < width1 - 1)
+  	return FALSE;
+!     if (vcol == width1 - 1)
+  	return TRUE;
+      width2 = width1 + win_col_off2(wp);
+      return ((vcol - width1) % width2 == width2 - 1);
+--- 1201,1217 ----
+      win_T	*wp;
+      colnr_T	vcol;
+  {
+!     int		width1;		/* width of first line (after line number) */
+!     int		width2;		/* width of further lines */
+  
+  #ifdef FEAT_VERTSPLIT
+      if (wp->w_width == 0)	/* there is no border */
+  	return FALSE;
+  #endif
+      width1 = W_WIDTH(wp) - win_col_off(wp);
+!     if ((int)vcol < width1 - 1)
+  	return FALSE;
+!     if ((int)vcol == width1 - 1)
+  	return TRUE;
+      width2 = width1 + win_col_off2(wp);
+      return ((vcol - width1) % width2 == width2 - 1);
+***************
+*** 1396,1408 ****
+  # ifdef FEAT_MBYTE
+  	/* Cannot put the cursor on part of a wide character. */
+  	ptr = ml_get_buf(wp->w_buffer, pos->lnum, FALSE);
+! 	if (pos->col < STRLEN(ptr))
+  	{
+  	    int c = (*mb_ptr2char)(ptr + pos->col);
+  
+  	    if (c != TAB && vim_isprintc(c))
+  	    {
+! 		endadd = char2cells(c) - 1;
+  		if (coladd > endadd)	/* past end of line */
+  		    endadd = 0;
+  		else
+--- 1396,1408 ----
+  # ifdef FEAT_MBYTE
+  	/* Cannot put the cursor on part of a wide character. */
+  	ptr = ml_get_buf(wp->w_buffer, pos->lnum, FALSE);
+! 	if (pos->col < (colnr_T)STRLEN(ptr))
+  	{
+  	    int c = (*mb_ptr2char)(ptr + pos->col);
+  
+  	    if (c != TAB && vim_isprintc(c))
+  	    {
+! 		endadd = (colnr_T)(char2cells(c) - 1);
+  		if (coladd > endadd)	/* past end of line */
+  		    endadd = 0;
+  		else
+*** ../vim-7.2.166/src/cleanlint.vim	2009-05-13 12:08:12.000000000 +0200
+--- src/cleanlint.vim	2009-05-05 21:34:01.000000000 +0200
+***************
+*** 0 ****
+--- 1,27 ----
++ " Vim tool: Filter output of splint
++ "
++ " Maintainer:	Bram Moolenaar <Bram@vim.org>
++ " Last Change:	2009 May 05
++ 
++ " Usage: redirect output of "make lint" to a file, edit that file with Vim and
++ " :call CleanLint()
++ " This deletes irrelevant messages.  What remains might be valid warnings.
++ 
++ fun! CleanLint()
++   g/^  Types are incompatible/lockmarks d
++   g/Assignment of dev_t to __dev_t:/lockmarks d
++   g/Assignment of __dev_t to dev_t:/lockmarks d
++   g/Operands of == have incompatible types (__dev_t, dev_t): /lockmarks d
++   g/Operands of == have incompatible types (unsigned int, int): /lockmarks d
++   g/Assignment of char to char_u: /lockmarks d
++   g/Assignment of unsigned int to int: /lockmarks d
++   g/Assignment of colnr_T to int: /lockmarks d
++   g/Assignment of int to char_u: /lockmarks d
++   g/Function .* expects arg . to be wint_t gets int: /lockmarks d
++   g/^digraph.c.*digraphdefault.*is type char, expects char_u:/lockmarks d
++   g/^digraph.c.*Additional initialization errors for digraphdefault not reported/lockmarks d
++   g/Function strncasecmp expects arg 3 to be int gets size_t: /lockmarks d
++   g/ To ignore signs in type comparisons use +ignoresigns/lockmarks d
++   g/ To allow arbitrary integral types to match any integral type, use +matchanyintegral./lockmarks d
++   g/ To allow arbitrary integral types to match long unsigned, use +longintegral./lockmarks d
++ endfun
+*** ../vim-7.2.166/src/digraph.c	2008-06-25 00:26:41.000000000 +0200
+--- src/digraph.c	2009-05-05 20:32:43.000000000 +0200
+***************
+*** 32,38 ****
+  static void printdigraph __ARGS((digr_T *));
+  
+  /* digraphs added by the user */
+! static garray_T	user_digraphs = {0, 0, sizeof(digr_T), 10, NULL};
+  
+  /*
+   * Note: Characters marked with XX are not included literally, because some
+--- 32,38 ----
+  static void printdigraph __ARGS((digr_T *));
+  
+  /* digraphs added by the user */
+! static garray_T	user_digraphs = {0, 0, (int)sizeof(digr_T), 10, NULL};
+  
+  /*
+   * Note: Characters marked with XX are not included literally, because some
+***************
+*** 2371,2380 ****
+  	}
+  	else
+  #endif
+! 	    *p++ = dp->result;
+  	if (char2cells(dp->result) == 1)
+  	    *p++ = ' ';
+! 	sprintf((char *)p, " %3d", dp->result);
+  	msg_outtrans(buf);
+      }
+  }
+--- 2371,2380 ----
+  	}
+  	else
+  #endif
+! 	    *p++ = (char_u)dp->result;
+  	if (char2cells(dp->result) == 1)
+  	    *p++ = ' ';
+! 	vim_snprintf((char *)p, sizeof(buf) - (p - buf), " %3d", dp->result);
+  	msg_outtrans(buf);
+      }
+  }
+***************
+*** 2395,2401 ****
+  static void keymap_unload __ARGS((void));
+  
+  /*
+!  * Set up key mapping tables for the 'keymap' option
+   */
+      char_u *
+  keymap_init()
+--- 2395,2404 ----
+  static void keymap_unload __ARGS((void));
+  
+  /*
+!  * Set up key mapping tables for the 'keymap' option.
+!  * Returns NULL if OK, an error message for failure.  This only needs to be
+!  * used when setting the option, not later when the value has already been
+!  * checked.
+   */
+      char_u *
+  keymap_init()
+***************
+*** 2412,2436 ****
+      else
+      {
+  	char_u	*buf;
+  
+  	/* Source the keymap file.  It will contain a ":loadkeymap" command
+  	 * which will call ex_loadkeymap() below. */
+! 	buf = alloc((unsigned)(STRLEN(curbuf->b_p_keymap)
+  # ifdef FEAT_MBYTE
+! 						       + STRLEN(p_enc)
+  # endif
+! 						       + 14));
+  	if (buf == NULL)
+  	    return e_outofmem;
+  
+  # ifdef FEAT_MBYTE
+  	/* try finding "keymap/'keymap'_'encoding'.vim"  in 'runtimepath' */
+! 	sprintf((char *)buf, "keymap/%s_%s.vim", curbuf->b_p_keymap, p_enc);
+  	if (source_runtime(buf, FALSE) == FAIL)
+  # endif
+  	{
+  	    /* try finding "keymap/'keymap'.vim" in 'runtimepath'  */
+! 	    sprintf((char *)buf, "keymap/%s.vim", curbuf->b_p_keymap);
+  	    if (source_runtime(buf, FALSE) == FAIL)
+  	    {
+  		vim_free(buf);
+--- 2415,2443 ----
+      else
+      {
+  	char_u	*buf;
++ 	size_t  buflen;
+  
+  	/* Source the keymap file.  It will contain a ":loadkeymap" command
+  	 * which will call ex_loadkeymap() below. */
+! 	buflen = STRLEN(curbuf->b_p_keymap)
+  # ifdef FEAT_MBYTE
+! 					   + STRLEN(p_enc)
+  # endif
+! 						       + 14;
+! 	buf = alloc((unsigned)buflen);
+  	if (buf == NULL)
+  	    return e_outofmem;
+  
+  # ifdef FEAT_MBYTE
+  	/* try finding "keymap/'keymap'_'encoding'.vim"  in 'runtimepath' */
+! 	vim_snprintf((char *)buf, buflen, "keymap/%s_%s.vim",
+! 						   curbuf->b_p_keymap, p_enc);
+  	if (source_runtime(buf, FALSE) == FAIL)
+  # endif
+  	{
+  	    /* try finding "keymap/'keymap'.vim" in 'runtimepath'  */
+! 	    vim_snprintf((char *)buf, buflen, "keymap/%s.vim",
+! 							  curbuf->b_p_keymap);
+  	    if (source_runtime(buf, FALSE) == FAIL)
+  	    {
+  		vim_free(buf);
+*** ../vim-7.2.166/src/edit.c	2009-02-21 20:27:00.000000000 +0100
+--- src/edit.c	2009-05-05 21:14:50.000000000 +0200
+***************
+*** 57,63 ****
+      N_(" Keyword Local completion (^N^P)"),
+  };
+  
+! static char_u e_hitend[] = N_("Hit end of paragraph");
+  
+  /*
+   * Structure used to store one match for insert completion.
+--- 57,63 ----
+      N_(" Keyword Local completion (^N^P)"),
+  };
+  
+! static char e_hitend[] = N_("Hit end of paragraph");
+  
+  /*
+   * Structure used to store one match for insert completion.
+***************
+*** 69,75 ****
+--- 69,79 ----
+      compl_T	*cp_prev;
+      char_u	*cp_str;	/* matched text */
+      char	cp_icase;	/* TRUE or FALSE: ignore case */
++ #ifdef S_SPLINT_S  /* splint can't handle array of pointers */
++     char_u	**cp_text;	/* text for the menu */
++ #else
+      char_u	*(cp_text[CPT_COUNT]);	/* text for the menu */
++ #endif
+      char_u	*cp_fname;	/* file containing the match, allocated when
+  				 * cp_flags has FREE_FNAME */
+      int		cp_flags;	/* ORIGINAL_TEXT, CONT_S_IPOS or FREE_FNAME */
+***************
+*** 306,312 ****
+      int		c = 0;
+      char_u	*ptr;
+      int		lastc;
+!     colnr_T	mincol;
+      static linenr_T o_lnum = 0;
+      int		i;
+      int		did_backspace = TRUE;	    /* previous char was backspace */
+--- 310,316 ----
+      int		c = 0;
+      char_u	*ptr;
+      int		lastc;
+!     int		mincol;
+      static linenr_T o_lnum = 0;
+      int		i;
+      int		did_backspace = TRUE;	    /* previous char was backspace */
+***************
+*** 387,393 ****
+  	if (startln)
+  	    Insstart.col = 0;
+      }
+!     Insstart_textlen = linetabsize(ml_get_curline());
+      Insstart_blank_vcol = MAXCOL;
+      if (!did_ai)
+  	ai_col = 0;
+--- 391,397 ----
+  	if (startln)
+  	    Insstart.col = 0;
+      }
+!     Insstart_textlen = (colnr_T)linetabsize(ml_get_curline());
+      Insstart_blank_vcol = MAXCOL;
+      if (!did_ai)
+  	ai_col = 0;
+***************
+*** 653,659 ****
+  	    mincol = curwin->w_wcol;
+  	    validate_cursor_col();
+  
+! 	    if ((int)curwin->w_wcol < (int)mincol - curbuf->b_p_ts
+  		    && curwin->w_wrow == W_WINROW(curwin)
+  						 + curwin->w_height - 1 - p_so
+  		    && (curwin->w_cursor.lnum != curwin->w_topline
+--- 657,663 ----
+  	    mincol = curwin->w_wcol;
+  	    validate_cursor_col();
+  
+! 	    if ((int)curwin->w_wcol < mincol - curbuf->b_p_ts
+  		    && curwin->w_wrow == W_WINROW(curwin)
+  						 + curwin->w_height - 1 - p_so
+  		    && (curwin->w_cursor.lnum != curwin->w_topline
+***************
+*** 1773,1779 ****
+  	 * Compute the screen column where the cursor should be.
+  	 */
+  	vcol = get_indent() - vcol;
+! 	curwin->w_virtcol = (vcol < 0) ? 0 : vcol;
+  
+  	/*
+  	 * Advance the cursor until we reach the right screen column.
+--- 1777,1783 ----
+  	 * Compute the screen column where the cursor should be.
+  	 */
+  	vcol = get_indent() - vcol;
+! 	curwin->w_virtcol = (colnr_T)((vcol < 0) ? 0 : vcol);
+  
+  	/*
+  	 * Advance the cursor until we reach the right screen column.
+***************
+*** 1800,1808 ****
+  	 */
+  	if (vcol != (int)curwin->w_virtcol)
+  	{
+! 	    curwin->w_cursor.col = new_cursor_col;
+  	    i = (int)curwin->w_virtcol - vcol;
+! 	    ptr = alloc(i + 1);
+  	    if (ptr != NULL)
+  	    {
+  		new_cursor_col += i;
+--- 1804,1812 ----
+  	 */
+  	if (vcol != (int)curwin->w_virtcol)
+  	{
+! 	    curwin->w_cursor.col = (colnr_T)new_cursor_col;
+  	    i = (int)curwin->w_virtcol - vcol;
+! 	    ptr = alloc((unsigned)(i + 1));
+  	    if (ptr != NULL)
+  	    {
+  		new_cursor_col += i;
+***************
+*** 1826,1832 ****
+      if (new_cursor_col <= 0)
+  	curwin->w_cursor.col = 0;
+      else
+! 	curwin->w_cursor.col = new_cursor_col;
+      curwin->w_set_curswant = TRUE;
+      changed_cline_bef_curs();
+  
+--- 1830,1836 ----
+      if (new_cursor_col <= 0)
+  	curwin->w_cursor.col = 0;
+      else
+! 	curwin->w_cursor.col = (colnr_T)new_cursor_col;
+      curwin->w_set_curswant = TRUE;
+      changed_cline_bef_curs();
+  
+***************
+*** 1966,1972 ****
+  #ifdef FEAT_MBYTE
+      if (enc_utf8 && limit_col >= 0)
+      {
+! 	int ecol = curwin->w_cursor.col + 1;
+  
+  	/* Make sure the cursor is at the start of a character, but
+  	 * skip forward again when going too far back because of a
+--- 1970,1976 ----
+  #ifdef FEAT_MBYTE
+      if (enc_utf8 && limit_col >= 0)
+      {
+! 	colnr_T ecol = curwin->w_cursor.col + 1;
+  
+  	/* Make sure the cursor is at the start of a character, but
+  	 * skip forward again when going too far back because of a
+***************
+*** 1982,1988 ****
+  	}
+  	if (*ml_get_cursor() == NUL || curwin->w_cursor.col == ecol)
+  	    return FALSE;
+! 	del_bytes((long)(ecol - curwin->w_cursor.col), FALSE, TRUE);
+      }
+      else
+  #endif
+--- 1986,1992 ----
+  	}
+  	if (*ml_get_cursor() == NUL || curwin->w_cursor.col == ecol)
+  	    return FALSE;
+! 	del_bytes((long)((int)ecol - curwin->w_cursor.col), FALSE, TRUE);
+      }
+      else
+  #endif
+***************
+*** 2201,2207 ****
+  	    actual_compl_length = compl_length;
+  
+  	/* Allocate wide character array for the completion and fill it. */
+! 	wca = (int *)alloc(actual_len * sizeof(int));
+  	if (wca != NULL)
+  	{
+  	    p = str;
+--- 2205,2211 ----
+  	    actual_compl_length = compl_length;
+  
+  	/* Allocate wide character array for the completion and fill it. */
+! 	wca = (int *)alloc((unsigned)(actual_len * sizeof(int)));
+  	if (wca != NULL)
+  	{
+  	    p = str;
+***************
+*** 2580,2586 ****
+   */
+      void
+  set_completion(startcol, list)
+!     int	    startcol;
+      list_T  *list;
+  {
+      /* If already doing completions stop it. */
+--- 2584,2590 ----
+   */
+      void
+  set_completion(startcol, list)
+!     colnr_T startcol;
+      list_T  *list;
+  {
+      /* If already doing completions stop it. */
+***************
+*** 2591,2600 ****
+      if (stop_arrow() == FAIL)
+  	return;
+  
+!     if (startcol > (int)curwin->w_cursor.col)
+  	startcol = curwin->w_cursor.col;
+      compl_col = startcol;
+!     compl_length = curwin->w_cursor.col - startcol;
+      /* compl_pattern doesn't need to be set */
+      compl_orig_text = vim_strnsave(ml_get_curline() + compl_col, compl_length);
+      if (compl_orig_text == NULL || ins_compl_add(compl_orig_text,
+--- 2595,2604 ----
+      if (stop_arrow() == FAIL)
+  	return;
+  
+!     if (startcol > curwin->w_cursor.col)
+  	startcol = curwin->w_cursor.col;
+      compl_col = startcol;
+!     compl_length = (int)curwin->w_cursor.col - (int)startcol;
+      /* compl_pattern doesn't need to be set */
+      compl_orig_text = vim_strnsave(ml_get_curline() + compl_col, compl_length);
+      if (compl_orig_text == NULL || ins_compl_add(compl_orig_text,
+***************
+*** 2860,2866 ****
+      regmatch_T	regmatch;
+      char_u	**files;
+      int		count;
+-     int		i;
+      int		save_p_scs;
+      int		dir = compl_direction;
+  
+--- 2864,2869 ----
+***************
+*** 2892,2908 ****
+      if (ctrl_x_mode == CTRL_X_WHOLE_LINE)
+      {
+  	char_u *pat_esc = vim_strsave_escaped(pat, (char_u *)"\\");
+  
+  	if (pat_esc == NULL)
+  	    goto theend;
+! 	i = (int)STRLEN(pat_esc) + 10;
+! 	ptr = alloc(i);
+  	if (ptr == NULL)
+  	{
+  	    vim_free(pat_esc);
+  	    goto theend;
+  	}
+! 	vim_snprintf((char *)ptr, i, "^\\s*\\zs\\V%s", pat_esc);
+  	regmatch.regprog = vim_regcomp(ptr, RE_MAGIC);
+  	vim_free(pat_esc);
+  	vim_free(ptr);
+--- 2895,2912 ----
+      if (ctrl_x_mode == CTRL_X_WHOLE_LINE)
+      {
+  	char_u *pat_esc = vim_strsave_escaped(pat, (char_u *)"\\");
++ 	size_t len;
+  
+  	if (pat_esc == NULL)
+  	    goto theend;
+! 	len = STRLEN(pat_esc) + 10;
+! 	ptr = alloc((unsigned)len);
+  	if (ptr == NULL)
+  	{
+  	    vim_free(pat_esc);
+  	    goto theend;
+  	}
+! 	vim_snprintf((char *)ptr, len, "^\\s*\\zs\\V%s", pat_esc);
+  	regmatch.regprog = vim_regcomp(ptr, RE_MAGIC);
+  	vim_free(pat_esc);
+  	vim_free(ptr);
+***************
+*** 2993,2999 ****
+  	{
+  	    vim_snprintf((char *)IObuff, IOSIZE,
+  			      _("Scanning dictionary: %s"), (char *)files[i]);
+! 	    msg_trunc_attr(IObuff, TRUE, hl_attr(HLF_R));
+  	}
+  
+  	if (fp != NULL)
+--- 2997,3003 ----
+  	{
+  	    vim_snprintf((char *)IObuff, IOSIZE,
+  			      _("Scanning dictionary: %s"), (char *)files[i]);
+! 	    (void)msg_trunc_attr(IObuff, TRUE, hl_attr(HLF_R));
+  	}
+  
+  	if (fp != NULL)
+***************
+*** 3311,3317 ****
+      static int
+  ins_compl_len()
+  {
+!     int off = curwin->w_cursor.col - compl_col;
+  
+      if (off < 0)
+  	return 0;
+--- 3315,3321 ----
+      static int
+  ins_compl_len()
+  {
+!     int off = (int)curwin->w_cursor.col - (int)compl_col;
+  
+      if (off < 0)
+  	return 0;
+***************
+*** 3347,3353 ****
+  
+      vim_free(compl_leader);
+      compl_leader = vim_strnsave(ml_get_curline() + compl_col,
+! 					    curwin->w_cursor.col - compl_col);
+      if (compl_leader != NULL)
+  	ins_compl_new_leader();
+  }
+--- 3351,3357 ----
+  
+      vim_free(compl_leader);
+      compl_leader = vim_strnsave(ml_get_curline() + compl_col,
+! 				     (int)(curwin->w_cursor.col - compl_col));
+      if (compl_leader != NULL)
+  	ins_compl_new_leader();
+  }
+***************
+*** 3395,3401 ****
+  ins_compl_addfrommatch()
+  {
+      char_u	*p;
+!     int		len = curwin->w_cursor.col - compl_col;
+      int		c;
+      compl_T	*cp;
+  
+--- 3399,3405 ----
+  ins_compl_addfrommatch()
+  {
+      char_u	*p;
+!     int		len = (int)curwin->w_cursor.col - (int)compl_col;
+      int		c;
+      compl_T	*cp;
+  
+***************
+*** 3961,3967 ****
+  			    : ins_buf->b_sfname == NULL
+  				? (char *)ins_buf->b_fname
+  				: (char *)ins_buf->b_sfname);
+! 		msg_trunc_attr(IObuff, TRUE, hl_attr(HLF_R));
+  	    }
+  	    else if (*e_cpt == NUL)
+  		break;
+--- 3965,3971 ----
+  			    : ins_buf->b_sfname == NULL
+  				? (char *)ins_buf->b_fname
+  				: (char *)ins_buf->b_sfname);
+! 		(void)msg_trunc_attr(IObuff, TRUE, hl_attr(HLF_R));
+  	    }
+  	    else if (*e_cpt == NUL)
+  		break;
+***************
+*** 3991,3997 ****
+  		{
+  		    type = CTRL_X_TAGS;
+  		    sprintf((char*)IObuff, _("Scanning tags."));
+! 		    msg_trunc_attr(IObuff, TRUE, hl_attr(HLF_R));
+  		}
+  		else
+  		    type = -1;
+--- 3995,4001 ----
+  		{
+  		    type = CTRL_X_TAGS;
+  		    sprintf((char*)IObuff, _("Scanning tags."));
+! 		    (void)msg_trunc_attr(IObuff, TRUE, hl_attr(HLF_R));
+  		}
+  		else
+  		    type = -1;
+***************
+*** 6320,6326 ****
+  	    ins_need_undo = FALSE;
+  	}
+  	Insstart = curwin->w_cursor;	/* new insertion starts here */
+! 	Insstart_textlen = linetabsize(ml_get_curline());
+  	ai_col = 0;
+  #ifdef FEAT_VREPLACE
+  	if (State & VREPLACE_FLAG)
+--- 6324,6330 ----
+  	    ins_need_undo = FALSE;
+  	}
+  	Insstart = curwin->w_cursor;	/* new insertion starts here */
+! 	Insstart_textlen = (colnr_T)linetabsize(ml_get_curline());
+  	ai_col = 0;
+  #ifdef FEAT_VREPLACE
+  	if (State & VREPLACE_FLAG)
+*** ../vim-7.2.166/src/ex_cmds.c	2009-04-29 18:44:38.000000000 +0200
+--- src/ex_cmds.c	2009-05-05 17:55:40.000000000 +0200
+***************
+*** 1789,1795 ****
+  	 * overwrite a user's viminfo file after a "su root", with a
+  	 * viminfo file that the user can't read.
+  	 */
+! 	st_old.st_dev = 0;
+  	st_old.st_ino = 0;
+  	st_old.st_mode = 0600;
+  	if (mch_stat((char *)fname, &st_old) == 0
+--- 1789,1795 ----
+  	 * overwrite a user's viminfo file after a "su root", with a
+  	 * viminfo file that the user can't read.
+  	 */
+! 	st_old.st_dev = (dev_t)0;
+  	st_old.st_ino = 0;
+  	st_old.st_mode = 0600;
+  	if (mch_stat((char *)fname, &st_old) == 0
+***************
+*** 3715,3721 ****
+      /* If the window options were changed may need to set the spell language.
+       * Can only do this after the buffer has been properly setup. */
+      if (did_get_winopts && curwin->w_p_spell && *curbuf->b_p_spl != NUL)
+! 	did_set_spelllang(curbuf);
+  #endif
+  
+      if (command == NULL)
+--- 3715,3721 ----
+      /* If the window options were changed may need to set the spell language.
+       * Can only do this after the buffer has been properly setup. */
+      if (did_get_winopts && curwin->w_p_spell && *curbuf->b_p_spl != NUL)
+! 	(void)did_set_spelllang(curbuf);
+  #endif
+  
+      if (command == NULL)
+***************
+*** 3788,3794 ****
+  
+  #ifdef FEAT_KEYMAP
+      if (curbuf->b_kmap_state & KEYMAP_INIT)
+! 	keymap_init();
+  #endif
+  
+      --RedrawingDisabled;
+--- 3788,3794 ----
+  
+  #ifdef FEAT_KEYMAP
+      if (curbuf->b_kmap_state & KEYMAP_INIT)
+! 	(void)keymap_init();
+  #endif
+  
+      --RedrawingDisabled;
+*** ../vim-7.2.166/src/globals.h	2009-03-05 03:13:51.000000000 +0100
+--- src/globals.h	2009-05-09 21:14:49.000000000 +0200
+***************
+*** 524,530 ****
+  EXTERN win_T	*prevwin INIT(= NULL);	/* previous window */
+  # define W_NEXT(wp) ((wp)->w_next)
+  # define FOR_ALL_WINDOWS(wp) for (wp = firstwin; wp != NULL; wp = wp->w_next)
+! #define FOR_ALL_TAB_WINDOWS(tp, wp) \
+      for ((tp) = first_tabpage; (tp) != NULL; (tp) = (tp)->tp_next) \
+  	for ((wp) = ((tp) == curtab) \
+  		? firstwin : (tp)->tp_firstwin; (wp); (wp) = (wp)->w_next)
+--- 524,530 ----
+  EXTERN win_T	*prevwin INIT(= NULL);	/* previous window */
+  # define W_NEXT(wp) ((wp)->w_next)
+  # define FOR_ALL_WINDOWS(wp) for (wp = firstwin; wp != NULL; wp = wp->w_next)
+! # define FOR_ALL_TAB_WINDOWS(tp, wp) \
+      for ((tp) = first_tabpage; (tp) != NULL; (tp) = (tp)->tp_next) \
+  	for ((wp) = ((tp) == curtab) \
+  		? firstwin : (tp)->tp_firstwin; (wp); (wp) = (wp)->w_next)
+***************
+*** 718,724 ****
+  
+  EXTERN pos_T	saved_cursor		/* w_cursor before formatting text. */
+  # ifdef DO_INIT
+! 	= INIT_POS_T
+  # endif
+  	;
+  
+--- 718,724 ----
+  
+  EXTERN pos_T	saved_cursor		/* w_cursor before formatting text. */
+  # ifdef DO_INIT
+! 	= INIT_POS_T(0, 0, 0)
+  # endif
+  	;
+  
+***************
+*** 1039,1045 ****
+  EXTERN int	did_cursorhold INIT(= FALSE); /* set when CursorHold t'gerd */
+  EXTERN pos_T	last_cursormoved	    /* for CursorMoved event */
+  # ifdef DO_INIT
+! 			= INIT_POS_T
+  # endif
+  			;
+  #endif
+--- 1039,1045 ----
+  EXTERN int	did_cursorhold INIT(= FALSE); /* set when CursorHold t'gerd */
+  EXTERN pos_T	last_cursormoved	    /* for CursorMoved event */
+  # ifdef DO_INIT
+! 			= INIT_POS_T(0, 0, 0)
+  # endif
+  			;
+  #endif
+*** ../vim-7.2.166/src/ops.c	2009-04-29 17:39:17.000000000 +0200
+--- src/ops.c	2009-05-13 12:41:02.000000000 +0200
+***************
+*** 6400,6406 ****
+  	    {
+  		getvcols(curwin, &min_pos, &max_pos, &min_pos.col,
+  								&max_pos.col);
+! 		sprintf((char *)buf1, _("%ld Cols; "),
+  			(long)(oparg.end_vcol - oparg.start_vcol + 1));
+  	    }
+  	    else
+--- 6400,6406 ----
+  	    {
+  		getvcols(curwin, &min_pos, &max_pos, &min_pos.col,
+  								&max_pos.col);
+! 		vim_snprintf((char *)buf1, sizeof(buf1), _("%ld Cols; "),
+  			(long)(oparg.end_vcol - oparg.start_vcol + 1));
+  	    }
+  	    else
+***************
+*** 6408,6420 ****
+  
+  	    if (char_count_cursor == byte_count_cursor
+  						  && char_count == byte_count)
+! 		sprintf((char *)IObuff, _("Selected %s%ld of %ld Lines; %ld of %ld Words; %ld of %ld Bytes"),
+  			buf1, line_count_selected,
+  			(long)curbuf->b_ml.ml_line_count,
+  			word_count_cursor, word_count,
+  			byte_count_cursor, byte_count);
+  	    else
+! 		sprintf((char *)IObuff, _("Selected %s%ld of %ld Lines; %ld of %ld Words; %ld of %ld Chars; %ld of %ld Bytes"),
+  			buf1, line_count_selected,
+  			(long)curbuf->b_ml.ml_line_count,
+  			word_count_cursor, word_count,
+--- 6408,6422 ----
+  
+  	    if (char_count_cursor == byte_count_cursor
+  						  && char_count == byte_count)
+! 		vim_snprintf((char *)IObuff, IOSIZE,
+! 			_("Selected %s%ld of %ld Lines; %ld of %ld Words; %ld of %ld Bytes"),
+  			buf1, line_count_selected,
+  			(long)curbuf->b_ml.ml_line_count,
+  			word_count_cursor, word_count,
+  			byte_count_cursor, byte_count);
+  	    else
+! 		vim_snprintf((char *)IObuff, IOSIZE,
+! 			_("Selected %s%ld of %ld Lines; %ld of %ld Words; %ld of %ld Chars; %ld of %ld Bytes"),
+  			buf1, line_count_selected,
+  			(long)curbuf->b_ml.ml_line_count,
+  			word_count_cursor, word_count,
+***************
+*** 6426,6445 ****
+  	{
+  	    p = ml_get_curline();
+  	    validate_virtcol();
+! 	    col_print(buf1, (int)curwin->w_cursor.col + 1,
+  		    (int)curwin->w_virtcol + 1);
+! 	    col_print(buf2, (int)STRLEN(p), linetabsize(p));
+  
+  	    if (char_count_cursor == byte_count_cursor
+  		    && char_count == byte_count)
+! 		sprintf((char *)IObuff, _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Byte %ld of %ld"),
+  		    (char *)buf1, (char *)buf2,
+  		    (long)curwin->w_cursor.lnum,
+  		    (long)curbuf->b_ml.ml_line_count,
+  		    word_count_cursor, word_count,
+  		    byte_count_cursor, byte_count);
+  	    else
+! 		sprintf((char *)IObuff, _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Char %ld of %ld; Byte %ld of %ld"),
+  		    (char *)buf1, (char *)buf2,
+  		    (long)curwin->w_cursor.lnum,
+  		    (long)curbuf->b_ml.ml_line_count,
+--- 6428,6449 ----
+  	{
+  	    p = ml_get_curline();
+  	    validate_virtcol();
+! 	    col_print(buf1, sizeof(buf1), (int)curwin->w_cursor.col + 1,
+  		    (int)curwin->w_virtcol + 1);
+! 	    col_print(buf2, sizeof(buf2), (int)STRLEN(p), linetabsize(p));
+  
+  	    if (char_count_cursor == byte_count_cursor
+  		    && char_count == byte_count)
+! 		vim_snprintf((char *)IObuff, IOSIZE,
+! 		    _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Byte %ld of %ld"),
+  		    (char *)buf1, (char *)buf2,
+  		    (long)curwin->w_cursor.lnum,
+  		    (long)curbuf->b_ml.ml_line_count,
+  		    word_count_cursor, word_count,
+  		    byte_count_cursor, byte_count);
+  	    else
+! 		vim_snprintf((char *)IObuff, IOSIZE,
+! 		    _("Col %s of %s; Line %ld of %ld; Word %ld of %ld; Char %ld of %ld; Byte %ld of %ld"),
+  		    (char *)buf1, (char *)buf2,
+  		    (long)curwin->w_cursor.lnum,
+  		    (long)curbuf->b_ml.ml_line_count,
+*** ../vim-7.2.166/src/os_unix.c	2009-03-02 02:44:54.000000000 +0100
+--- src/os_unix.c	2009-05-05 17:35:58.000000000 +0200
+***************
+*** 199,205 ****
+  #endif
+  
+  #ifndef SIG_ERR
+! # define SIG_ERR	((RETSIGTYPE (*)())-1)
+  #endif
+  
+  /* volatile because it is used in signal handler sig_winch(). */
+--- 199,207 ----
+  #endif
+  
+  #ifndef SIG_ERR
+! # ifndef S_SPLINT_S
+! #  define SIG_ERR	((RETSIGTYPE (*)())-1)
+! # endif
+  #endif
+  
+  /* volatile because it is used in signal handler sig_winch(). */
+***************
+*** 441,447 ****
+  
+  #if defined(HAVE_TOTAL_MEM) || defined(PROTO)
+  # ifdef HAVE_SYS_RESOURCE_H
+! #  include <sys/resource.h>
+  # endif
+  # if defined(HAVE_SYS_SYSCTL_H) && defined(HAVE_SYSCTL)
+  #  include <sys/sysctl.h>
+--- 443,451 ----
+  
+  #if defined(HAVE_TOTAL_MEM) || defined(PROTO)
+  # ifdef HAVE_SYS_RESOURCE_H
+! #  ifndef S_SPLINT_S  /* splint crashes on bits/resource.h */
+! #   include <sys/resource.h>
+! #  endif
+  # endif
+  # if defined(HAVE_SYS_SYSCTL_H) && defined(HAVE_SYSCTL)
+  #  include <sys/sysctl.h>
+*** ../vim-7.2.166/src/os_unix.h	2008-06-20 18:06:36.000000000 +0200
+--- src/os_unix.h	2009-05-05 17:07:45.000000000 +0200
+***************
+*** 53,59 ****
+  #endif
+  
+  #ifdef HAVE_UNISTD_H
+! # include <unistd.h>
+  #endif
+  
+  #ifdef HAVE_LIBC_H
+--- 53,61 ----
+  #endif
+  
+  #ifdef HAVE_UNISTD_H
+! # ifndef S_SPLINT_S  /* splint crashes on bits/confname.h */
+! #  include <unistd.h>
+! # endif
+  #endif
+  
+  #ifdef HAVE_LIBC_H
+*** ../vim-7.2.166/src/proto/buffer.pro	2008-11-15 14:10:23.000000000 +0100
+--- src/proto/buffer.pro	2009-05-13 12:23:41.000000000 +0200
+***************
+*** 37,49 ****
+  int otherfile __ARGS((char_u *ffname));
+  void buf_setino __ARGS((buf_T *buf));
+  void fileinfo __ARGS((int fullname, int shorthelp, int dont_truncate));
+! void col_print __ARGS((char_u *buf, int col, int vcol));
+  void maketitle __ARGS((void));
+  void resettitle __ARGS((void));
+  void free_titles __ARGS((void));
+  int build_stl_str_hl __ARGS((win_T *wp, char_u *out, size_t outlen, char_u *fmt, int use_sandbox, int fillchar, int maxwidth, struct stl_hlrec *hltab, struct stl_hlrec *tabtab));
+! void get_rel_pos __ARGS((win_T *wp, char_u *str));
+! int append_arg_number __ARGS((win_T *wp, char_u *buf, int add_file, int maxlen));
+  char_u *fix_fname __ARGS((char_u *fname));
+  void fname_expand __ARGS((buf_T *buf, char_u **ffname, char_u **sfname));
+  char_u *alist_name __ARGS((aentry_T *aep));
+--- 37,48 ----
+  int otherfile __ARGS((char_u *ffname));
+  void buf_setino __ARGS((buf_T *buf));
+  void fileinfo __ARGS((int fullname, int shorthelp, int dont_truncate));
+! void col_print __ARGS((char_u *buf, size_t buflen, int col, int vcol));
+  void maketitle __ARGS((void));
+  void resettitle __ARGS((void));
+  void free_titles __ARGS((void));
+  int build_stl_str_hl __ARGS((win_T *wp, char_u *out, size_t outlen, char_u *fmt, int use_sandbox, int fillchar, int maxwidth, struct stl_hlrec *hltab, struct stl_hlrec *tabtab));
+! void get_rel_pos __ARGS((win_T *wp, char_u *buf, int buflen));
+  char_u *fix_fname __ARGS((char_u *fname));
+  void fname_expand __ARGS((buf_T *buf, char_u **ffname, char_u **sfname));
+  char_u *alist_name __ARGS((aentry_T *aep));
+***************
+*** 54,61 ****
+  void write_viminfo_bufferlist __ARGS((FILE *fp));
+  char *buf_spname __ARGS((buf_T *buf));
+  void buf_addsign __ARGS((buf_T *buf, int id, linenr_T lnum, int typenr));
+! int buf_change_sign_type __ARGS((buf_T *buf, int markId, int typenr));
+! int_u buf_getsigntype __ARGS((buf_T *buf, linenr_T lnum, int type));
+  linenr_T buf_delsign __ARGS((buf_T *buf, int id));
+  int buf_findsign __ARGS((buf_T *buf, int id));
+  int buf_findsign_id __ARGS((buf_T *buf, linenr_T lnum));
+--- 53,60 ----
+  void write_viminfo_bufferlist __ARGS((FILE *fp));
+  char *buf_spname __ARGS((buf_T *buf));
+  void buf_addsign __ARGS((buf_T *buf, int id, linenr_T lnum, int typenr));
+! linenr_T buf_change_sign_type __ARGS((buf_T *buf, int markId, int typenr));
+! int buf_getsigntype __ARGS((buf_T *buf, linenr_T lnum, int type));
+  linenr_T buf_delsign __ARGS((buf_T *buf, int id));
+  int buf_findsign __ARGS((buf_T *buf, int id));
+  int buf_findsign_id __ARGS((buf_T *buf, linenr_T lnum));
+*** ../vim-7.2.166/src/proto/edit.pro	2008-01-16 20:03:13.000000000 +0100
+--- src/proto/edit.pro	2009-05-05 20:51:56.000000000 +0200
+***************
+*** 8,14 ****
+  void backspace_until_column __ARGS((int col));
+  int vim_is_ctrl_x_key __ARGS((int c));
+  int ins_compl_add_infercase __ARGS((char_u *str, int len, int icase, char_u *fname, int dir, int flags));
+! void set_completion __ARGS((int startcol, list_T *list));
+  void ins_compl_show_pum __ARGS((void));
+  char_u *find_word_start __ARGS((char_u *ptr));
+  char_u *find_word_end __ARGS((char_u *ptr));
+--- 8,14 ----
+  void backspace_until_column __ARGS((int col));
+  int vim_is_ctrl_x_key __ARGS((int c));
+  int ins_compl_add_infercase __ARGS((char_u *str, int len, int icase, char_u *fname, int dir, int flags));
+! void set_completion __ARGS((colnr_T startcol, list_T *list));
+  void ins_compl_show_pum __ARGS((void));
+  char_u *find_word_start __ARGS((char_u *ptr));
+  char_u *find_word_end __ARGS((char_u *ptr));
+*** ../vim-7.2.166/src/screen.c	2009-03-18 19:07:09.000000000 +0100
+--- src/screen.c	2009-05-05 17:42:45.000000000 +0200
+***************
+*** 9481,9493 ****
+      win_T	*wp;
+      int		always;
+  {
+!     char_u	buffer[70];
+      int		row;
+      int		fillchar;
+      int		attr;
+      int		empty_line = FALSE;
+      colnr_T	virtcol;
+      int		i;
+      int		o;
+  #ifdef FEAT_VERTSPLIT
+      int		this_ru_col;
+--- 9481,9495 ----
+      win_T	*wp;
+      int		always;
+  {
+! #define RULER_BUF_LEN 70
+!     char_u	buffer[RULER_BUF_LEN];
+      int		row;
+      int		fillchar;
+      int		attr;
+      int		empty_line = FALSE;
+      colnr_T	virtcol;
+      int		i;
++     size_t	len;
+      int		o;
+  #ifdef FEAT_VERTSPLIT
+      int		this_ru_col;
+***************
+*** 9602,9612 ****
+  	 * Some sprintfs return the length, some return a pointer.
+  	 * To avoid portability problems we use strlen() here.
+  	 */
+! 	sprintf((char *)buffer, "%ld,",
+  		(wp->w_buffer->b_ml.ml_flags & ML_EMPTY)
+  		    ? 0L
+  		    : (long)(wp->w_cursor.lnum));
+! 	col_print(buffer + STRLEN(buffer),
+  			empty_line ? 0 : (int)wp->w_cursor.col + 1,
+  			(int)virtcol + 1);
+  
+--- 9604,9615 ----
+  	 * Some sprintfs return the length, some return a pointer.
+  	 * To avoid portability problems we use strlen() here.
+  	 */
+! 	vim_snprintf((char *)buffer, RULER_BUF_LEN, "%ld,",
+  		(wp->w_buffer->b_ml.ml_flags & ML_EMPTY)
+  		    ? 0L
+  		    : (long)(wp->w_cursor.lnum));
+! 	len = STRLEN(buffer);
+! 	col_print(buffer + len, RULER_BUF_LEN - len,
+  			empty_line ? 0 : (int)wp->w_cursor.col + 1,
+  			(int)virtcol + 1);
+  
+***************
+*** 9616,9622 ****
+  	 * screen up on some terminals).
+  	 */
+  	i = (int)STRLEN(buffer);
+! 	get_rel_pos(wp, buffer + i + 1);
+  	o = i + vim_strsize(buffer + i + 1);
+  #ifdef FEAT_WINDOWS
+  	if (wp->w_status_height == 0)	/* can't use last char of screen */
+--- 9619,9625 ----
+  	 * screen up on some terminals).
+  	 */
+  	i = (int)STRLEN(buffer);
+! 	get_rel_pos(wp, buffer + i + 1, RULER_BUF_LEN - i - 1);
+  	o = i + vim_strsize(buffer + i + 1);
+  #ifdef FEAT_WINDOWS
+  	if (wp->w_status_height == 0)	/* can't use last char of screen */
+***************
+*** 9643,9649 ****
+  		    buffer[i++] = fillchar;
+  		++o;
+  	    }
+! 	    get_rel_pos(wp, buffer + i);
+  	}
+  	/* Truncate at window boundary. */
+  #ifdef FEAT_MBYTE
+--- 9646,9652 ----
+  		    buffer[i++] = fillchar;
+  		++o;
+  	    }
+! 	    get_rel_pos(wp, buffer + i, RULER_BUF_LEN - i);
+  	}
+  	/* Truncate at window boundary. */
+  #ifdef FEAT_MBYTE
+*** ../vim-7.2.166/src/structs.h	2008-11-15 16:05:30.000000000 +0100
+--- src/structs.h	2009-05-05 18:20:36.000000000 +0200
+***************
+*** 33,41 ****
+  } pos_T;
+  
+  #ifdef FEAT_VIRTUALEDIT
+! # define INIT_POS_T {0, 0, 0}
+  #else
+! # define INIT_POS_T {0, 0}
+  #endif
+  
+  /*
+--- 33,41 ----
+  } pos_T;
+  
+  #ifdef FEAT_VIRTUALEDIT
+! # define INIT_POS_T(l, c, ca) {l, c, ca}
+  #else
+! # define INIT_POS_T(l, c, ca) {l, c}
+  #endif
+  
+  /*
+***************
+*** 1166,1172 ****
+      char_u	*b_fname;	/* current file name */
+  
+  #ifdef UNIX
+!     int		b_dev;		/* device number (-1 if not set) */
+      ino_t	b_ino;		/* inode number */
+  #endif
+  #ifdef FEAT_CW_EDITOR
+--- 1166,1172 ----
+      char_u	*b_fname;	/* current file name */
+  
+  #ifdef UNIX
+!     dev_t	b_dev;		/* device number (-1 if not set) */
+      ino_t	b_ino;		/* inode number */
+  #endif
+  #ifdef FEAT_CW_EDITOR
+***************
+*** 1645,1651 ****
+--- 1645,1655 ----
+  #endif
+  #ifdef FEAT_DIFF
+      diff_T	    *tp_first_diff;
++ # ifdef S_SPLINT_S  /* splint doesn't understand the array of pointers */
++     buf_T	    **tp_diffbuf;
++ # else
+      buf_T	    *(tp_diffbuf[DB_COUNT]);
++ # endif
+      int		    tp_diff_invalid;	/* list of diffs is outdated */
+  #endif
+      frame_T	    *tp_snapshot;    /* window layout snapshot */
+*** ../vim-7.2.166/src/version.c	2009-04-29 18:44:38.000000000 +0200
+--- src/version.c	2009-05-13 12:06:36.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     167,
+  /**/
+
+-- 
+Snoring is prohibited unless all bedroom windows are closed and securely
+locked.
+		[real standing law in Massachusetts, United States of America]
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

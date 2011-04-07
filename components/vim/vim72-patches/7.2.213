@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.213
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.213
+Problem:    Warning for using vsprintf().
+Solution:   Use vim_vsnprintf().
+Files:	    src/netbeans.c
+
+
+*** ../vim-7.2.212/src/netbeans.c	2009-06-16 16:57:53.000000000 +0200
+--- src/netbeans.c	2009-06-24 11:26:43.000000000 +0200
+***************
+*** 2586,2592 ****
+      va_list ap;
+  
+      va_start(ap, cmd);
+!     vsprintf(buf, cmd, ap);
+      va_end(ap);
+  
+      nbdebug(("    COLONCMD %s\n", buf));
+--- 2586,2592 ----
+      va_list ap;
+  
+      va_start(ap, cmd);
+!     vim_vsnprintf(buf, sizeof(buf), cmd, ap, NULL);
+      va_end(ap);
+  
+      nbdebug(("    COLONCMD %s\n", buf));
+*** ../vim-7.2.212/src/version.c	2009-06-24 16:41:01.000000000 +0200
+--- src/version.c	2009-06-24 16:49:06.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     213,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+38. You wake up at 3 a.m. to go to the bathroom and stop and check your e-mail
+    on the way back to bed.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

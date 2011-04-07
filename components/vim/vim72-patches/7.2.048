@@ -1,0 +1,160 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.048
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.048
+Problem:    v:prevcount is changed too often.  Counts are not multiplied when
+	    setting v:count.
+Solution:   Set v:prevcount properly.  Multiply counts. (idea by Ben Schmidt)
+Files:	    src/eval.c, src/normal.c, src/proto/eval.pro
+
+
+*** ../vim-7.2.047/src/eval.c	Thu Nov 20 10:36:04 2008
+--- src/eval.c	Thu Nov 20 15:53:47 2008
+***************
+*** 18146,18159 ****
+  }
+  
+  /*
+!  * Set v:count, v:count1 and v:prevcount.
+   */
+      void
+! set_vcount(count, count1)
+      long	count;
+      long	count1;
+  {
+!     vimvars[VV_PREVCOUNT].vv_nr = vimvars[VV_COUNT].vv_nr;
+      vimvars[VV_COUNT].vv_nr = count;
+      vimvars[VV_COUNT1].vv_nr = count1;
+  }
+--- 18146,18162 ----
+  }
+  
+  /*
+!  * Set v:count to "count" and v:count1 to "count1".
+!  * When "set_prevcount" is TRUE first set v:prevcount from v:count.
+   */
+      void
+! set_vcount(count, count1, set_prevcount)
+      long	count;
+      long	count1;
++     int		set_prevcount;
+  {
+!     if (set_prevcount)
+! 	vimvars[VV_PREVCOUNT].vv_nr = vimvars[VV_COUNT].vv_nr;
+      vimvars[VV_COUNT].vv_nr = count;
+      vimvars[VV_COUNT1].vv_nr = count1;
+  }
+*** ../vim-7.2.047/src/normal.c	Sat Nov 15 14:10:23 2008
+--- src/normal.c	Thu Nov 20 16:04:44 2008
+***************
+*** 580,585 ****
+--- 580,588 ----
+      static int	old_mapped_len = 0;
+  #endif
+      int		idx;
++ #ifdef FEAT_EVAL
++     int		set_prevcount = FALSE;
++ #endif
+  
+      vim_memset(&ca, 0, sizeof(ca));	/* also resets ca.retval */
+      ca.oap = oap;
+***************
+*** 615,621 ****
+--- 618,629 ----
+      /* When not finishing an operator and no register name typed, reset the
+       * count. */
+      if (!finish_op && !oap->regname)
++     {
+  	ca.opcount = 0;
++ #ifdef FEAT_EVAL
++ 	set_prevcount = TRUE;
++ #endif
++     }
+  
+  #ifdef FEAT_AUTOCMD
+      /* Restore counts from before receiving K_CURSORHOLD.  This means after
+***************
+*** 719,725 ****
+  	     * command, so that v:count can be used in an expression mapping
+  	     * right after the count. */
+  	    if (toplevel && stuff_empty())
+! 		set_vcount(ca.count0, ca.count0 == 0 ? 1 : ca.count0);
+  #endif
+  	    if (ctrl_w)
+  	    {
+--- 727,741 ----
+  	     * command, so that v:count can be used in an expression mapping
+  	     * right after the count. */
+  	    if (toplevel && stuff_empty())
+! 	    {
+! 		long count = ca.count0;
+! 
+! 		/* multiply with ca.opcount the same way as below */
+! 		if (ca.opcount != 0)
+! 		    count = ca.opcount * (count == 0 ? 1 : count);
+! 		set_vcount(count, count == 0 ? 1 : count, set_prevcount);
+! 		set_prevcount = FALSE;  /* only set v:prevcount once */
+! 	    }
+  #endif
+  	    if (ctrl_w)
+  	    {
+***************
+*** 806,812 ****
+       * Only set v:count when called from main() and not a stuffed command.
+       */
+      if (toplevel && stuff_empty())
+! 	set_vcount(ca.count0, ca.count1);
+  #endif
+  
+      /*
+--- 822,828 ----
+       * Only set v:count when called from main() and not a stuffed command.
+       */
+      if (toplevel && stuff_empty())
+! 	set_vcount(ca.count0, ca.count1, set_prevcount);
+  #endif
+  
+      /*
+*** ../vim-7.2.047/src/proto/eval.pro	Sun Nov  9 13:43:25 2008
+--- src/proto/eval.pro	Thu Nov 20 15:53:54 2008
+***************
+*** 61,67 ****
+  long get_vim_var_nr __ARGS((int idx));
+  char_u *get_vim_var_str __ARGS((int idx));
+  list_T *get_vim_var_list __ARGS((int idx));
+! void set_vcount __ARGS((long count, long count1));
+  void set_vim_var_string __ARGS((int idx, char_u *val, int len));
+  void set_vim_var_list __ARGS((int idx, list_T *val));
+  void set_reg_var __ARGS((int c));
+--- 61,67 ----
+  long get_vim_var_nr __ARGS((int idx));
+  char_u *get_vim_var_str __ARGS((int idx));
+  list_T *get_vim_var_list __ARGS((int idx));
+! void set_vcount __ARGS((long count, long count1, int set_prevcount));
+  void set_vim_var_string __ARGS((int idx, char_u *val, int len));
+  void set_vim_var_list __ARGS((int idx, list_T *val));
+  void set_reg_var __ARGS((int c));
+*** ../vim-7.2.047/src/version.c	Thu Nov 20 14:11:47 2008
+--- src/version.c	Thu Nov 20 16:08:19 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     48,
+  /**/
+
+-- 
+Microsoft's definition of a boolean: TRUE, FALSE, MAYBE
+"Embrace and extend"...?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

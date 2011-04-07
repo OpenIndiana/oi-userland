@@ -1,0 +1,111 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.234
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.234
+Problem:    It is not possible to ignore file names without a suffix.
+Solution:   Use an empty entry in 'suffixes' for file names without a dot.
+Files:	    runtime/doc/cmdline.txt, src/misc1.c
+
+
+*** ../vim-7.2.233/runtime/doc/cmdline.txt	2008-11-09 13:43:25.000000000 +0100
+--- runtime/doc/cmdline.txt	2009-07-14 13:35:56.000000000 +0200
+***************
+*** 441,453 ****
+  those files with an extension that is in the 'suffixes' option are ignored.
+  The default is ".bak,~,.o,.h,.info,.swp,.obj", which means that files ending
+  in ".bak", "~", ".o", ".h", ".info", ".swp" and ".obj" are sometimes ignored.
+! It is impossible to ignore suffixes with two dots.  Examples:
+  
+    pattern:	files:				match:	~
+     test*	test.c test.h test.o		test.c
+     test*	test.h test.o			test.h and test.o
+     test*	test.i test.h test.c		test.i and test.c
+  
+  If there is more than one matching file (after ignoring the ones matching
+  the 'suffixes' option) the first file name is inserted.  You can see that
+  there is only one match when you type 'wildchar' twice and the completed
+--- 439,458 ----
+  those files with an extension that is in the 'suffixes' option are ignored.
+  The default is ".bak,~,.o,.h,.info,.swp,.obj", which means that files ending
+  in ".bak", "~", ".o", ".h", ".info", ".swp" and ".obj" are sometimes ignored.
+! 
+! An empty entry, two consecutive commas, match a file name that does not
+! contain a ".", thus has no suffix.  This is useful to ignore "prog" and prefer
+! "prog.c".
+! 
+! Examples:
+  
+    pattern:	files:				match:	~
+     test*	test.c test.h test.o		test.c
+     test*	test.h test.o			test.h and test.o
+     test*	test.i test.h test.c		test.i and test.c
+  
++ It is impossible to ignore suffixes with two dots.
++ 
+  If there is more than one matching file (after ignoring the ones matching
+  the 'suffixes' option) the first file name is inserted.  You can see that
+  there is only one match when you type 'wildchar' twice and the completed
+*** ../vim-7.2.233/src/misc1.c	2009-07-09 20:06:30.000000000 +0200
+--- src/misc1.c	2009-07-14 15:51:55.000000000 +0200
+***************
+*** 8533,8543 ****
+      for (setsuf = p_su; *setsuf; )
+      {
+  	setsuflen = copy_option_part(&setsuf, suf_buf, MAXSUFLEN, ".,");
+! 	if (fnamelen >= setsuflen
+! 		&& fnamencmp(suf_buf, fname + fnamelen - setsuflen,
+! 					      (size_t)setsuflen) == 0)
+! 	    break;
+! 	setsuflen = 0;
+      }
+      return (setsuflen != 0);
+  }
+--- 8534,8558 ----
+      for (setsuf = p_su; *setsuf; )
+      {
+  	setsuflen = copy_option_part(&setsuf, suf_buf, MAXSUFLEN, ".,");
+! 	if (setsuflen == 0)
+! 	{
+! 	    char_u *tail = gettail(fname);
+! 
+! 	    /* empty entry: match name without a '.' */
+! 	    if (vim_strchr(tail, '.') == NULL)
+! 	    {
+! 		setsuflen = 1;
+! 		break;
+! 	    }
+! 	}
+! 	else
+! 	{
+! 	    if (fnamelen >= setsuflen
+! 		    && fnamencmp(suf_buf, fname + fnamelen - setsuflen,
+! 						  (size_t)setsuflen) == 0)
+! 		break;
+! 	    setsuflen = 0;
+! 	}
+      }
+      return (setsuflen != 0);
+  }
+*** ../vim-7.2.233/src/version.c	2009-07-14 18:38:09.000000000 +0200
+--- src/version.c	2009-07-14 21:38:30.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     234,
+  /**/
+
+-- 
+How many light bulbs does it take to change a person?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

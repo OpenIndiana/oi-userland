@@ -1,0 +1,47 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.267
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.267
+Problem:    Crash for narrow window and double-width character.
+Solution:   Check for zero width.  (Taro Muraoka)
+Files:	    src/charset.c
+
+
+*** ../vim-7.2.266/src/charset.c	2009-09-11 14:02:25.000000000 +0200
+--- src/charset.c	2009-10-07 16:17:27.000000000 +0200
+***************
+*** 1218,1223 ****
+--- 1218,1225 ----
+      if ((int)vcol == width1 - 1)
+  	return TRUE;
+      width2 = width1 + win_col_off2(wp);
++     if (width2 <= 0)
++ 	return FALSE;
+      return ((vcol - width1) % width2 == width2 - 1);
+  }
+  #endif /* FEAT_MBYTE */
+*** ../vim-7.2.266/src/version.c	2009-09-30 15:15:33.000000000 +0200
+--- src/version.c	2009-10-07 16:19:05.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     267,
+  /**/
+
+-- 
+You got to work at a mill?  Lucky!  I got sent back to work in the
+acid-mines for my daily crust of stale bread... which not even the
+birds would eat.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

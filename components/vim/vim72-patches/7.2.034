@@ -1,0 +1,81 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.034
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.034
+Problem:    Memory leak in spell info when deleting buffer.
+Solution:   Free the memory. (Dominique Pelle)
+Files:	    src/buffer.c
+
+
+*** ../vim-7.2.033/src/buffer.c	Mon Sep  1 17:32:40 2008
+--- src/buffer.c	Wed Nov 12 11:21:49 2008
+***************
+*** 647,652 ****
+--- 647,655 ----
+      vim_free(buf->b_start_fenc);
+      buf->b_start_fenc = NULL;
+  #endif
++ #ifdef FEAT_SPELL
++     ga_clear(&buf->b_langp);
++ #endif
+  }
+  
+  /*
+***************
+*** 1237,1243 ****
+  	 * "buf" if one exists */
+  	if ((swb_flags & SWB_USEOPEN) && buf_jump_open_win(buf))
+  	    return OK;
+! 	/* If 'switchbuf' contians "usetab": jump to first window in any tab
+  	 * page containing "buf" if one exists */
+  	if ((swb_flags & SWB_USETAB) && buf_jump_open_tab(buf))
+  	    return OK;
+--- 1240,1246 ----
+  	 * "buf" if one exists */
+  	if ((swb_flags & SWB_USEOPEN) && buf_jump_open_win(buf))
+  	    return OK;
+! 	/* If 'switchbuf' contains "usetab": jump to first window in any tab
+  	 * page containing "buf" if one exists */
+  	if ((swb_flags & SWB_USETAB) && buf_jump_open_tab(buf))
+  	    return OK;
+***************
+*** 3964,3970 ****
+      width = vim_strsize(out);
+      if (maxwidth > 0 && width > maxwidth)
+      {
+! 	/* Result is too long, must trunctate somewhere. */
+  	l = 0;
+  	if (itemcnt == 0)
+  	    s = out;
+--- 3967,3973 ----
+      width = vim_strsize(out);
+      if (maxwidth > 0 && width > maxwidth)
+      {
+! 	/* Result is too long, must truncate somewhere. */
+  	l = 0;
+  	if (itemcnt == 0)
+  	    s = out;
+*** ../vim-7.2.033/src/version.c	Tue Nov 11 21:55:29 2008
+--- src/version.c	Wed Nov 12 12:51:21 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     34,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+236. You start saving URL's in your digital watch.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

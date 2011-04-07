@@ -1,0 +1,65 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.023
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.023
+Problem:    'cursorcolumn' is in the wrong place in a closed fold when the
+	    display is shifted left. (Gary Johnson)
+Solution:   Subtract w_skipcol or w_leftcol when needed.
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.022/src/screen.c	Thu Jul 24 20:29:09 2008
+--- src/screen.c	Fri Sep 26 21:23:06 2008
+***************
+*** 2439,2447 ****
+  
+  #ifdef FEAT_SYN_HL
+      /* Show 'cursorcolumn' in the fold line. */
+!     if (wp->w_p_cuc && (int)wp->w_virtcol + txtcol < W_WIDTH(wp))
+! 	ScreenAttrs[off + wp->w_virtcol + txtcol] = hl_combine_attr(
+! 		 ScreenAttrs[off + wp->w_virtcol + txtcol], hl_attr(HLF_CUC));
+  #endif
+  
+      SCREEN_LINE(row + W_WINROW(wp), W_WINCOL(wp), (int)W_WIDTH(wp),
+--- 2439,2455 ----
+  
+  #ifdef FEAT_SYN_HL
+      /* Show 'cursorcolumn' in the fold line. */
+!     if (wp->w_p_cuc)
+!     {
+! 	txtcol += wp->w_virtcol;
+! 	if (wp->w_p_wrap)
+! 	    txtcol -= wp->w_skipcol;
+! 	else
+! 	    txtcol -= wp->w_leftcol;
+! 	if (txtcol >= 0 && txtcol < W_WIDTH(wp))
+! 	    ScreenAttrs[off + txtcol] = hl_combine_attr(
+! 				 ScreenAttrs[off + txtcol], hl_attr(HLF_CUC));
+!     }
+  #endif
+  
+      SCREEN_LINE(row + W_WINROW(wp), W_WINCOL(wp), (int)W_WIDTH(wp),
+*** ../vim-7.2.022/src/version.c	Sat Sep 20 16:26:10 2008
+--- src/version.c	Wed Oct  1 21:07:31 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     23,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+124. You begin conversations with, "Who is your internet service provider?"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

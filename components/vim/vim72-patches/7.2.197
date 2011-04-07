@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.197
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.197
+Problem:    Warning for uninitialized values.
+Solution:   Initialize all the struct items of typebuf.
+Files:	    src/globals.h
+
+
+*** ../vim-7.2.196/src/globals.h	2009-05-13 12:46:36.000000000 +0200
+--- src/globals.h	2009-06-10 15:52:18.000000000 +0200
+***************
+*** 960,966 ****
+  		    ;
+  EXTERN typebuf_T typebuf		/* typeahead buffer */
+  #ifdef DO_INIT
+! 		    = {NULL, NULL}
+  #endif
+  		    ;
+  #ifdef FEAT_EX_EXTRA
+--- 967,973 ----
+  		    ;
+  EXTERN typebuf_T typebuf		/* typeahead buffer */
+  #ifdef DO_INIT
+! 		    = {NULL, NULL, 0, 0, 0, 0, 0, 0, 0}
+  #endif
+  		    ;
+  #ifdef FEAT_EX_EXTRA
+*** ../vim-7.2.196/src/version.c	2009-06-03 22:07:38.000000000 +0200
+--- src/version.c	2009-06-10 18:14:58.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     197,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+18. Your wife drapes a blond wig over your monitor to remind you of what she
+    looks like.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

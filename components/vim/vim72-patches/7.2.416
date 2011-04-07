@@ -1,0 +1,69 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.416
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.416
+Problem:    Logtalk.dict is not installed.
+Solution:   Add it to the install target. (Markus Heidelberg)
+Files:      src/Makefile
+
+
+*** ../vim-7.2.415/src/Makefile	2010-05-07 16:35:12.000000000 +0200
+--- src/Makefile	2010-04-06 20:19:48.000000000 +0200
+***************
+*** 30,36 ****
+  #	  want to disable using X11 libraries.	This speeds up starting Vim,
+  #	  but the window title will not be set and the X11 selection can not
+  #	  used.
+! #	- Uncomment the line "CONF_OPT_XSMP = --without-xsmp" if you have the
+  #	  X11 Session Management Protocol (XSMP) library (libSM) but do not
+  #	  want to use it.
+  #	  This can speedup Vim startup but Vim loses the ability to catch the
+--- 30,36 ----
+  #	  want to disable using X11 libraries.	This speeds up starting Vim,
+  #	  but the window title will not be set and the X11 selection can not
+  #	  used.
+! #	- Uncomment the line "CONF_OPT_XSMP = --disable-xsmp" if you have the
+  #	  X11 Session Management Protocol (XSMP) library (libSM) but do not
+  #	  want to use it.
+  #	  This can speedup Vim startup but Vim loses the ability to catch the
+***************
+*** 1882,1888 ****
+  	cd $(PLUGSOURCE); $(INSTALL_DATA) *.vim README.txt $(DEST_PLUG)
+  	cd $(DEST_PLUG); chmod $(HELPMOD) *.vim README.txt
+  # install the ftplugin files
+! 	cd $(FTPLUGSOURCE); $(INSTALL_DATA) *.vim README.txt $(DEST_FTP)
+  	cd $(DEST_FTP); chmod $(HELPMOD) *.vim README.txt
+  # install the compiler files
+  	cd $(COMPSOURCE); $(INSTALL_DATA) *.vim README.txt $(DEST_COMP)
+--- 1882,1888 ----
+  	cd $(PLUGSOURCE); $(INSTALL_DATA) *.vim README.txt $(DEST_PLUG)
+  	cd $(DEST_PLUG); chmod $(HELPMOD) *.vim README.txt
+  # install the ftplugin files
+! 	cd $(FTPLUGSOURCE); $(INSTALL_DATA) *.vim README.txt logtalk.dict $(DEST_FTP)
+  	cd $(DEST_FTP); chmod $(HELPMOD) *.vim README.txt
+  # install the compiler files
+  	cd $(COMPSOURCE); $(INSTALL_DATA) *.vim README.txt $(DEST_COMP)
+*** ../vim-7.2.415/src/version.c	2010-05-07 16:34:59.000000000 +0200
+--- src/version.c	2010-05-07 16:53:17.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     416,
+  /**/
+
+-- 
+How To Keep A Healthy Level Of Insanity:
+8. Don't use any punctuation marks.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

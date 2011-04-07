@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.087
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.087
+Problem:    Adding URL to 'path' doesn't work to edit a file.
+Solution:   Skip simplify_filename() for URLs. (Matt Wosniski)
+Files:	    src/misc2.c
+
+
+*** ../vim-7.2.086/src/misc2.c	Wed Dec 24 12:53:33 2008
+--- src/misc2.c	Sun Jan 18 12:26:20 2009
+***************
+*** 4696,4702 ****
+  				stackp->ffs_filearray_cur = i + 1;
+  				ff_push(search_ctx, stackp);
+  
+! 				simplify_filename(file_path);
+  				if (mch_dirname(ff_expand_buffer, MAXPATHL)
+  									== OK)
+  				{
+--- 4696,4703 ----
+  				stackp->ffs_filearray_cur = i + 1;
+  				ff_push(search_ctx, stackp);
+  
+! 				if (!path_with_url(file_path))
+! 				    simplify_filename(file_path);
+  				if (mch_dirname(ff_expand_buffer, MAXPATHL)
+  									== OK)
+  				{
+*** ../vim-7.2.086/src/version.c	Thu Jan 22 20:48:07 2009
+--- src/version.c	Thu Jan 22 21:30:36 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     87,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+21. Your dog has its own home page.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

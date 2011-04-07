@@ -1,0 +1,46 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.419
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.419
+Problem:    Memory leak in Motif when clicking on "Search Vim Help".
+Solution:   Free string returned by XmTextGetString(). (Dominique Pelle)
+Files:	    src/gui_motif.c
+
+
+*** ../vim-7.2.418/src/gui_motif.c	2009-05-21 23:25:38.000000000 +0200
+--- src/gui_motif.c	2010-05-13 16:08:14.000000000 +0200
+***************
+*** 2917,2922 ****
+--- 2917,2923 ----
+  	    *textfield = NUL;
+  	else
+  	    vim_strncpy(textfield, p, IOSIZE - 1);
++ 	XtFree((char *)p);
+      }
+  
+      suppress_dialog_mnemonics(dialogform);
+*** ../vim-7.2.418/src/version.c	2010-05-13 15:40:23.000000000 +0200
+--- src/version.c	2010-05-13 16:09:28.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     419,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+32. You don't know what sex three of your closest friends are, because they
+    have neutral nicknames and you never bothered to ask.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,69 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.356
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.356
+Problem:    When 'foldmethod' is changed not all folds are closed as expected.
+Solution:   In foldUpdate() correct the start position and reset fd_flags when
+	    w_foldinvalid is set. (Lech Lorens)
+Files:	    src/fold.c
+
+
+*** ../vim-7.2.355/src/fold.c	2010-01-19 17:24:20.000000000 +0100
+--- src/fold.c	2010-02-03 18:08:11.000000000 +0100
+***************
+*** 849,859 ****
+      fold_T	*fp;
+  
+      /* Mark all folds from top to bot as maybe-small. */
+!     (void)foldFind(&curwin->w_folds, curwin->w_cursor.lnum, &fp);
+      while (fp < (fold_T *)curwin->w_folds.ga_data + curwin->w_folds.ga_len
+  	    && fp->fd_top < bot)
+      {
+  	fp->fd_small = MAYBE;
+  	++fp;
+      }
+  
+--- 849,865 ----
+      fold_T	*fp;
+  
+      /* Mark all folds from top to bot as maybe-small. */
+!     (void)foldFind(&curwin->w_folds, top, &fp);
+      while (fp < (fold_T *)curwin->w_folds.ga_data + curwin->w_folds.ga_len
+  	    && fp->fd_top < bot)
+      {
+  	fp->fd_small = MAYBE;
++ 
++ 	/* Not sure if this is the right place to reset fd_flags (suggested by
++ 	 * Lech Lorens). */
++         if (wp->w_foldinvalid)
++             fp->fd_flags = FD_LEVEL;
++ 
+  	++fp;
+      }
+  
+*** ../vim-7.2.355/src/version.c	2010-02-03 17:42:59.000000000 +0100
+--- src/version.c	2010-02-03 18:12:34.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     356,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+190. You quickly hand over your wallet, leather jacket, and car keys
+     during a mugging, then proceed to beat the crap out of your
+     assailant when he asks for your laptop.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

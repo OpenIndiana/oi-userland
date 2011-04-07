@@ -1,0 +1,100 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.179
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.179
+Problem:    Using negative value for device number might not work.
+Solution:   Use a separate flag for whether sn_dev was set.
+Files:	    src/ex_cmds2.c
+
+
+*** ../vim-7.2.178/src/ex_cmds2.c	2009-05-14 22:19:19.000000000 +0200
+--- src/ex_cmds2.c	2009-05-16 21:13:29.000000000 +0200
+***************
+*** 28,34 ****
+  {
+      char_u	*sn_name;
+  # ifdef UNIX
+!     int		sn_dev;
+      ino_t	sn_ino;
+  # endif
+  # ifdef FEAT_PROFILE
+--- 28,35 ----
+  {
+      char_u	*sn_name;
+  # ifdef UNIX
+!     int		sn_dev_valid;
+!     dev_t	sn_dev;
+      ino_t	sn_ino;
+  # endif
+  # ifdef FEAT_PROFILE
+***************
+*** 3049,3055 ****
+  		    /* Compare dev/ino when possible, it catches symbolic
+  		     * links.  Also compare file names, the inode may change
+  		     * when the file was edited. */
+! 		    ((stat_ok && si->sn_dev != -1)
+  			&& (si->sn_dev == st.st_dev
+  			    && si->sn_ino == st.st_ino)) ||
+  # endif
+--- 3050,3056 ----
+  		    /* Compare dev/ino when possible, it catches symbolic
+  		     * links.  Also compare file names, the inode may change
+  		     * when the file was edited. */
+! 		    ((stat_ok && si->sn_dev_valid)
+  			&& (si->sn_dev == st.st_dev
+  			    && si->sn_ino == st.st_ino)) ||
+  # endif
+***************
+*** 3076,3086 ****
+  # ifdef UNIX
+  	if (stat_ok)
+  	{
+  	    si->sn_dev = st.st_dev;
+  	    si->sn_ino = st.st_ino;
+  	}
+  	else
+! 	    si->sn_dev = -1;
+  # endif
+  
+  	/* Allocate the local script variables to use for this script. */
+--- 3077,3088 ----
+  # ifdef UNIX
+  	if (stat_ok)
+  	{
++ 	    si->sn_dev_valid = TRUE;
+  	    si->sn_dev = st.st_dev;
+  	    si->sn_ino = st.st_ino;
+  	}
+  	else
+! 	    si->sn_dev_valid = FALSE;
+  # endif
+  
+  	/* Allocate the local script variables to use for this script. */
+*** ../vim-7.2.178/src/version.c	2009-05-16 21:06:36.000000000 +0200
+--- src/version.c	2009-05-16 21:15:08.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     179,
+  /**/
+
+-- 
+(letter from Mark to Mike, about the film's probable certificate)
+      I would like to get back to the Censor and agree to lose the shits, take
+      the odd Jesus Christ out and lose Oh fuck off, but to retain 'fart in
+      your general direction', 'castanets of your testicles' and 'oral sex'
+      and ask him for an 'A' rating on that basis.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

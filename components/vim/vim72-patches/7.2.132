@@ -1,0 +1,268 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.132
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.132
+Problem:    When changing directory during a SwapExists autocmd freed memory
+            may be accessed. (Dominique Pelle)
+Solution:   Add the allbuf_lock flag.
+Files:      src/ex_getln.c, src/globals.h, src/fileio.c,
+            src/proto/ex_getln.pro
+    
+
+*** ../vim-7.2.131/src/ex_getln.c	Mon Mar  2 02:11:09 2009
+--- src/ex_getln.c	Mon Mar  2 00:53:39 2009
+***************
+*** 2000,2007 ****
+  
+  #if defined(FEAT_AUTOCMD) || defined(PROTO)
+  /*
+!  * Check if "curbuf_lock" is set and return TRUE when it is and give an error
+!  * message.
+   */
+      int
+  curbuf_locked()
+--- 2000,2007 ----
+  
+  #if defined(FEAT_AUTOCMD) || defined(PROTO)
+  /*
+!  * Check if "curbuf_lock" or "allbuf_lock" is set and return TRUE when it is
+!  * and give an error message.
+   */
+      int
+  curbuf_locked()
+***************
+*** 2011,2016 ****
+--- 2011,2031 ----
+  	EMSG(_("E788: Not allowed to edit another buffer now"));
+  	return TRUE;
+      }
++     return allbuf_locked();
++ }
++ 
++ /*
++  * Check if "allbuf_lock" is set and return TRUE when it is and give an error
++  * message.
++  */
++     int
++ allbuf_locked()
++ {
++     if (allbuf_lock > 0)
++     {
++ 	EMSG(_("E811: Not allowed to change buffer information now"));
++ 	return TRUE;
++     }
+      return FALSE;
+  }
+  #endif
+*** ../vim-7.2.131/src/globals.h	Mon Mar  2 02:44:54 2009
+--- src/globals.h	Mon Mar  2 02:40:16 2009
+***************
+*** 619,624 ****
+--- 619,629 ----
+  EXTERN int	curbuf_lock INIT(= 0);
+  				/* non-zero when the current buffer can't be
+  				 * changed.  Used for FileChangedRO. */
++ EXTERN int	allbuf_lock INIT(= 0);
++ 				/* non-zero when no buffer name can be
++ 				 * changed, no buffer can be deleted and
++ 				 * current directory can't be changed.
++ 				 * Used for SwapExists et al. */
+  #endif
+  #ifdef FEAT_EVAL
+  # define HAVE_SANDBOX
+*** ../vim-7.2.131/src/fileio.c	Wed Dec 31 16:20:54 2008
+--- src/fileio.c	Sun Mar  1 23:37:10 2009
+***************
+*** 69,75 ****
+  static int au_find_group __ARGS((char_u *name));
+  
+  # define AUGROUP_DEFAULT    -1	    /* default autocmd group */
+! # define AUGROUP_ERROR	    -2	    /* errornouse autocmd group */
+  # define AUGROUP_ALL	    -3	    /* all autocmd groups */
+  #endif
+  
+--- 69,75 ----
+  static int au_find_group __ARGS((char_u *name));
+  
+  # define AUGROUP_DEFAULT    -1	    /* default autocmd group */
+! # define AUGROUP_ERROR	    -2	    /* erroneous autocmd group */
+  # define AUGROUP_ALL	    -3	    /* all autocmd groups */
+  #endif
+  
+***************
+*** 144,150 ****
+  # endif
+  #endif
+  static int move_lines __ARGS((buf_T *frombuf, buf_T *tobuf));
+! 
+  
+      void
+  filemess(buf, name, s, attr)
+--- 144,152 ----
+  # endif
+  #endif
+  static int move_lines __ARGS((buf_T *frombuf, buf_T *tobuf));
+! #ifdef FEAT_AUTOCMD
+! static char *e_auchangedbuf = N_("E812: Autocommands changed buffer or buffer name");
+! #endif
+  
+      void
+  filemess(buf, name, s, attr)
+***************
+*** 295,300 ****
+--- 297,315 ----
+      int		conv_restlen = 0;	/* nr of bytes in conv_rest[] */
+  #endif
+  
++ #ifdef FEAT_AUTOCMD
++     /* Remember the initial values of curbuf, curbuf->b_ffname and
++      * curbuf->b_fname to detect whether they are altered as a result of
++      * executing nasty autocommands.  Also check if "fname" and "sfname"
++      * point to one of these values. */
++     buf_T   *old_curbuf = curbuf;
++     char_u  *old_b_ffname = curbuf->b_ffname;
++     char_u  *old_b_fname = curbuf->b_fname;
++     int     using_b_ffname = (fname == curbuf->b_ffname)
++ 					      || (sfname == curbuf->b_ffname);
++     int     using_b_fname = (fname == curbuf->b_fname)
++ 					       || (sfname == curbuf->b_fname);
++ #endif
+      write_no_eol_lnum = 0;	/* in case it was set by the previous read */
+  
+      /*
+***************
+*** 589,595 ****
+--- 604,624 ----
+  #ifdef FEAT_QUICKFIX
+  		    if (!bt_dontwrite(curbuf))
+  #endif
++ 		    {
+  			check_need_swap(newfile);
++ #ifdef FEAT_AUTOCMD
++ 			/* SwapExists autocommand may mess things up */
++ 			if (curbuf != old_curbuf
++ 				|| (using_b_ffname
++ 					&& (old_b_ffname != curbuf->b_ffname))
++ 				|| (using_b_fname
++ 					 && (old_b_fname != curbuf->b_fname)))
++ 			{
++ 			    EMSG(_(e_auchangedbuf));
++ 			    return FAIL;
++ 			}
++ #endif
++ 		    }
+  		    if (dir_of_file_exists(fname))
+  			filemess(curbuf, sfname, (char_u *)_("[New File]"), 0);
+  		    else
+***************
+*** 668,673 ****
+--- 697,713 ----
+  #endif
+      {
+  	check_need_swap(newfile);
++ #ifdef FEAT_AUTOCMD
++ 	if (!read_stdin && (curbuf != old_curbuf
++ 		|| (using_b_ffname && (old_b_ffname != curbuf->b_ffname))
++ 		|| (using_b_fname && (old_b_fname != curbuf->b_fname))))
++ 	{
++ 	    EMSG(_(e_auchangedbuf));
++ 	    if (!read_buffer)
++ 		close(fd);
++ 	    return FAIL;
++ 	}
++ #endif
+  #ifdef UNIX
+  	/* Set swap file protection bits after creating it. */
+  	if (swap_mode > 0 && curbuf->b_ml.ml_mfp->mf_fname != NULL)
+***************
+*** 698,704 ****
+      {
+  	int	m = msg_scroll;
+  	int	n = msg_scrolled;
+- 	buf_T	*old_curbuf = curbuf;
+  
+  	/*
+  	 * The file must be closed again, the autocommands may want to change
+--- 738,743 ----
+***************
+*** 740,747 ****
+--- 779,791 ----
+  	/*
+  	 * Don't allow the autocommands to change the current buffer.
+  	 * Try to re-open the file.
++ 	 *
++ 	 * Don't allow the autocommands to change the buffer name either
++ 	 * (cd for example) if it invalidates fname or sfname.
+  	 */
+  	if (!read_stdin && (curbuf != old_curbuf
++ 		|| (using_b_ffname && (old_b_ffname != curbuf->b_ffname))
++ 		|| (using_b_fname && (old_b_fname != curbuf->b_fname))
+  		|| (fd = mch_open((char *)fname, O_RDONLY | O_EXTRA, 0)) < 0))
+  	{
+  	    --no_wait_return;
+***************
+*** 6320,6326 ****
+  
+      if (!stuff_empty() || global_busy || !typebuf_typed()
+  #ifdef FEAT_AUTOCMD
+! 			|| autocmd_busy || curbuf_lock > 0
+  #endif
+  					)
+  	need_check_timestamps = TRUE;		/* check later */
+--- 6364,6370 ----
+  
+      if (!stuff_empty() || global_busy || !typebuf_typed()
+  #ifdef FEAT_AUTOCMD
+! 			|| autocmd_busy || curbuf_lock > 0 || allbuf_lock > 0
+  #endif
+  					)
+  	need_check_timestamps = TRUE;		/* check later */
+***************
+*** 6522,6529 ****
+--- 6566,6575 ----
+  	    set_vim_var_string(VV_FCS_REASON, (char_u *)reason, -1);
+  	    set_vim_var_string(VV_FCS_CHOICE, (char_u *)"", -1);
+  # endif
++ 	    ++allbuf_lock;
+  	    n = apply_autocmds(EVENT_FILECHANGEDSHELL,
+  				      buf->b_fname, buf->b_fname, FALSE, buf);
++ 	    --allbuf_lock;
+  	    busy = FALSE;
+  	    if (n)
+  	    {
+*** ../vim-7.2.131/src/proto/ex_getln.pro	Fri Nov 28 10:59:57 2008
+--- src/proto/ex_getln.pro	Sun Mar  1 00:27:12 2009
+***************
+*** 4,9 ****
+--- 4,10 ----
+  int text_locked __ARGS((void));
+  void text_locked_msg __ARGS((void));
+  int curbuf_locked __ARGS((void));
++ int allbuf_locked __ARGS((void));
+  char_u *getexline __ARGS((int c, void *dummy, int indent));
+  char_u *getexmodeline __ARGS((int promptc, void *dummy, int indent));
+  int cmdline_overstrike __ARGS((void));
+*** ../vim-7.2.131/src/version.c	Wed Mar  4 04:11:56 2009
+--- src/version.c	Thu Mar  5 03:08:54 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     132,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+168. You have your own domain name.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

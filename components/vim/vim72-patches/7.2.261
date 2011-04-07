@@ -1,0 +1,83 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.261
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.261
+Problem:    When deleting lines with a specific folding configuration E38 may
+	    appear. (Shahaf)
+Solution:   When adjusting nested folds for deleted lines take into account
+	    that they don't start at the top of the enclosing fold.
+Files:	    src/fold.c
+
+
+*** ../vim-7.2.260/src/fold.c	2009-01-06 15:01:58.000000000 +0100
+--- src/fold.c	2009-09-18 14:43:23.000000000 +0200
+***************
+*** 1607,1617 ****
+  	    }
+  	    else
+  	    {
+- 		/* 2, 3, or 5: need to correct nested folds too */
+- 		foldMarkAdjustRecurse(&fp->fd_nested, line1 - fp->fd_top,
+- 				  line2 - fp->fd_top, amount, amount_after);
+  		if (fp->fd_top < top)
+  		{
+  		    if (last <= line2)
+  		    {
+  			/* 2. fold contains line1, line2 is below fold */
+--- 1607,1617 ----
+  	    }
+  	    else
+  	    {
+  		if (fp->fd_top < top)
+  		{
++ 		    /* 2 or 3: need to correct nested folds too */
++ 		    foldMarkAdjustRecurse(&fp->fd_nested, line1 - fp->fd_top,
++ 				  line2 - fp->fd_top, amount, amount_after);
+  		    if (last <= line2)
+  		    {
+  			/* 2. fold contains line1, line2 is below fold */
+***************
+*** 1628,1634 ****
+  		}
+  		else
+  		{
+! 		    /* 5. fold is below line1 and contains line2 */
+  		    if (amount == MAXLNUM)
+  		    {
+  			fp->fd_len -= line2 - fp->fd_top + 1;
+--- 1628,1638 ----
+  		}
+  		else
+  		{
+! 		    /* 5. fold is below line1 and contains line2; need to
+! 		     * correct nested folds too */
+! 		    foldMarkAdjustRecurse(&fp->fd_nested, line1 - fp->fd_top,
+! 				  line2 - fp->fd_top, amount,
+! 				  amount_after + (fp->fd_top - top));
+  		    if (amount == MAXLNUM)
+  		    {
+  			fp->fd_len -= line2 - fp->fd_top + 1;
+*** ../vim-7.2.260/src/version.c	2009-09-18 14:58:26.000000000 +0200
+--- src/version.c	2009-09-18 15:14:40.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     261,
+  /**/
+
+-- 
+Emacs is a nice OS - but it lacks a good text editor.
+That's why I am using Vim.  --Anonymous
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,97 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.153
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.153
+Problem:    Memory leak for ":recover empty_dir/".
+Solution:   Free files[] when it becomes empty. (Dominique Pelle)
+Files:	    src/memline.c
+
+
+*** ../vim-7.2.152/src/memline.c	Sun Jul 13 19:40:43 2008
+--- src/memline.c	Wed Apr 22 11:48:35 2009
+***************
+*** 1554,1563 ****
+  	    for (i = 0; i < num_files; ++i)
+  		if (fullpathcmp(p, files[i], TRUE) & FPC_SAME)
+  		{
+  		    vim_free(files[i]);
+! 		    --num_files;
+! 		    for ( ; i < num_files; ++i)
+! 			files[i] = files[i + 1];
+  		}
+  	}
+  	if (nr > 0)
+--- 1554,1568 ----
+  	    for (i = 0; i < num_files; ++i)
+  		if (fullpathcmp(p, files[i], TRUE) & FPC_SAME)
+  		{
++ 		    /* Remove the name from files[i].  Move further entries
++ 		     * down.  When the array becomes empty free it here, since
++ 		     * FreeWild() won't be called below. */
+  		    vim_free(files[i]);
+! 		    if (--num_files == 0)
+! 			vim_free(files);
+! 		    else
+! 			for ( ; i < num_files; ++i)
+! 			    files[i] = files[i + 1];
+  		}
+  	}
+  	if (nr > 0)
+***************
+*** 3522,3528 ****
+  	    if (errno == EINVAL || errno == ENOENT)
+  	    {
+  		/* Found non-symlink or not existing file, stop here.
+! 		 * When at the first level use the unmodifed name, skip the
+  		 * call to vim_FullName(). */
+  		if (depth == 1)
+  		    return FAIL;
+--- 3527,3533 ----
+  	    if (errno == EINVAL || errno == ENOENT)
+  	    {
+  		/* Found non-symlink or not existing file, stop here.
+! 		 * When at the first level use the unmodified name, skip the
+  		 * call to vim_FullName(). */
+  		if (depth == 1)
+  		    return FAIL;
+***************
+*** 4560,4566 ****
+  			buf->b_ml.ml_chunksize + curix,
+  			(buf->b_ml.ml_usedchunks - curix) *
+  			sizeof(chunksize_T));
+! 	    /* Compute length of first half of lines in the splitted chunk */
+  	    size = 0;
+  	    linecnt = 0;
+  	    while (curline < buf->b_ml.ml_line_count
+--- 4568,4574 ----
+  			buf->b_ml.ml_chunksize + curix,
+  			(buf->b_ml.ml_usedchunks - curix) *
+  			sizeof(chunksize_T));
+! 	    /* Compute length of first half of lines in the split chunk */
+  	    size = 0;
+  	    linecnt = 0;
+  	    while (curline < buf->b_ml.ml_line_count
+*** ../vim-7.2.152/src/version.c	Wed Apr 22 14:42:26 2009
+--- src/version.c	Wed Apr 22 15:34:18 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     153,
+  /**/
+
+-- 
+Windows
+M!uqoms
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

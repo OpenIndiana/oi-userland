@@ -1,0 +1,52 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.211
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.211
+Problem:    Memory leak when expanding a series of file names.
+Solution:   Use ga_clear_strings() instead of ga_clear().
+Files:	    src/misc1.c
+
+
+*** ../vim-7.2.210/src/misc1.c	2009-05-17 13:30:58.000000000 +0200
+--- src/misc1.c	2009-06-24 16:16:17.000000000 +0200
+***************
+*** 9193,9199 ****
+  		else if (vim_strpbrk(p, (char_u *)"$~") != NULL)
+  		{
+  		    vim_free(p);
+! 		    ga_clear(&ga);
+  		    i = mch_expand_wildcards(num_pat, pat, num_file, file,
+  								       flags);
+  		    recursive = FALSE;
+--- 9193,9199 ----
+  		else if (vim_strpbrk(p, (char_u *)"$~") != NULL)
+  		{
+  		    vim_free(p);
+! 		    ga_clear_strings(&ga);
+  		    i = mch_expand_wildcards(num_pat, pat, num_file, file,
+  								       flags);
+  		    recursive = FALSE;
+*** ../vim-7.2.210/src/version.c	2009-06-24 11:57:53.000000000 +0200
+--- src/version.c	2009-06-24 16:24:32.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     211,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+34. You laugh at people with 14400 baud modems.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

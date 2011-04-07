@@ -1,0 +1,55 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.379
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.379
+Problem:    'eventignore' is set to an invalid value inside ":doau". (Antony
+	    Scriven)
+Solution:   Don't include the leading comma when the option was empty.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.378/src/fileio.c	2010-01-19 14:59:14.000000000 +0100
+--- src/fileio.c	2010-03-01 21:01:04.000000000 +0100
+***************
+*** 7925,7931 ****
+  	new_ei = vim_strnsave(p_ei, (int)(STRLEN(p_ei) + STRLEN(what)));
+  	if (new_ei != NULL)
+  	{
+! 	    STRCAT(new_ei, what);
+  	    set_string_option_direct((char_u *)"ei", -1, new_ei,
+  							  OPT_FREE, SID_NONE);
+  	    vim_free(new_ei);
+--- 7925,7934 ----
+  	new_ei = vim_strnsave(p_ei, (int)(STRLEN(p_ei) + STRLEN(what)));
+  	if (new_ei != NULL)
+  	{
+! 	    if (*what == ',' && *p_ei == NUL)
+! 		STRCPY(new_ei, what + 1);
+! 	    else
+! 		STRCAT(new_ei, what);
+  	    set_string_option_direct((char_u *)"ei", -1, new_ei,
+  							  OPT_FREE, SID_NONE);
+  	    vim_free(new_ei);
+*** ../vim-7.2.378/src/version.c	2010-03-02 12:37:01.000000000 +0100
+--- src/version.c	2010-03-02 12:46:45.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     379,
+  /**/
+
+-- 
+Back up my hard drive?  I can't find the reverse switch!
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

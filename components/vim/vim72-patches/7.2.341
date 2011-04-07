@@ -1,0 +1,69 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.341
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.341
+Problem:    Popup menu wraps to next line when double-wide character doesn't
+	    fit. (Jiang Ma)
+Solution:   Display a ">" instead. (Dominique Pelle)
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.340/src/screen.c	2009-11-25 13:03:29.000000000 +0100
+--- src/screen.c	2010-01-19 17:34:21.000000000 +0100
+***************
+*** 6434,6439 ****
+--- 6434,6446 ----
+  		else
+  		    prev_c = u8c;
+  # endif
++ 		if (col + mbyte_cells > screen_Columns)
++ 		{
++ 		    /* Only 1 cell left, but character requires 2 cells:
++ 		     * display a '>' in the last column to avoid wrapping. */
++ 		    c = '>';
++ 		    mbyte_cells = 1;
++ 		}
+  	    }
+  	}
+  #endif
+***************
+*** 9210,9216 ****
+      int	    force;
+  {
+      /*
+!      * Don't delete it right now, when not redrawing or insided a mapping.
+       */
+      if (!redrawing() || (!force && char_avail() && !KeyTyped))
+  	redraw_cmdline = TRUE;		/* delete mode later */
+--- 9217,9223 ----
+      int	    force;
+  {
+      /*
+!      * Don't delete it right now, when not redrawing or inside a mapping.
+       */
+      if (!redrawing() || (!force && char_avail() && !KeyTyped))
+  	redraw_cmdline = TRUE;		/* delete mode later */
+*** ../vim-7.2.340/src/version.c	2010-01-19 17:24:20.000000000 +0100
+--- src/version.c	2010-01-19 17:39:56.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     341,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+124. You begin conversations with, "Who is your internet service provider?"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

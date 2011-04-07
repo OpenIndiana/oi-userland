@@ -1,0 +1,50 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.376
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.376
+Problem:    ml_get error when using SiSU syntax. (Nathan Thomas)
+Solution:   If the match ends below the last line move it to the end of the
+	    last line.
+Files:	    src/syntax.c
+
+
+*** ../vim-7.2.375/src/syntax.c	2010-01-19 14:59:14.000000000 +0100
+--- src/syntax.c	2010-02-24 17:14:13.000000000 +0100
+***************
+*** 3086,3091 ****
+--- 3086,3097 ----
+  	col = regmatch->startpos[0].col;
+  	off = spp->sp_offsets[idx];
+      }
++     if (result->lnum > syn_buf->b_ml.ml_line_count)
++     {
++ 	/* a "\n" at the end of the pattern may take us below the last line */
++ 	result->lnum = syn_buf->b_ml.ml_line_count;
++ 	col = STRLEN(ml_get_buf(syn_buf, result->lnum, FALSE));
++     }
+      if (off != 0)
+      {
+  	base = ml_get_buf(syn_buf, result->lnum, FALSE);
+*** ../vim-7.2.375/src/version.c	2010-02-24 16:58:30.000000000 +0100
+--- src/version.c	2010-02-24 17:15:48.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     376,
+  /**/
+
+-- 
+press CTRL-ALT-DEL for more information
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

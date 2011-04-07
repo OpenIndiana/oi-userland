@@ -1,0 +1,86 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.038
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.038
+Problem:    Overlapping arguments to memcpy().
+Solution:   Use mch_memmove(). (Dominique Pelle)
+Files:	    src/if_xcmdsrv.c
+
+
+*** ../vim-7.2.037/src/if_xcmdsrv.c	Wed Aug  6 18:38:13 2008
+--- src/if_xcmdsrv.c	Wed Nov 12 12:09:01 2008
+***************
+*** 736,742 ****
+  		+ serverReply.ga_len;
+  	    e.id = w;
+  	    ga_init2(&e.strings, 1, 100);
+! 	    memcpy(p, &e, sizeof(e));
+  	    serverReply.ga_len++;
+  	}
+      }
+--- 736,742 ----
+  		+ serverReply.ga_len;
+  	    e.id = w;
+  	    ga_init2(&e.strings, 1, 100);
+! 	    mch_memmove(p, &e, sizeof(e));
+  	    serverReply.ga_len++;
+  	}
+      }
+***************
+*** 1018,1024 ****
+  	p++;
+  	count = numItems - (p - regProp);
+  	if (count > 0)
+! 	    memcpy(entry, p, count);
+  	XChangeProperty(dpy, RootWindow(dpy, 0), registryProperty, XA_STRING,
+  			8, PropModeReplace, regProp,
+  			(int)(numItems - (p - entry)));
+--- 1018,1024 ----
+  	p++;
+  	count = numItems - (p - regProp);
+  	if (count > 0)
+! 	    mch_memmove(entry, p, count);
+  	XChangeProperty(dpy, RootWindow(dpy, 0), registryProperty, XA_STRING,
+  			8, PropModeReplace, regProp,
+  			(int)(numItems - (p - entry)));
+***************
+*** 1072,1078 ****
+  		p++;
+  		lastHalf = numItems - (p - regProp);
+  		if (lastHalf > 0)
+! 		    memcpy(entry, p, lastHalf);
+  		numItems = (entry - regProp) + lastHalf;
+  		p = entry;
+  		continue;
+--- 1072,1078 ----
+  		p++;
+  		lastHalf = numItems - (p - regProp);
+  		if (lastHalf > 0)
+! 		    mch_memmove(entry, p, lastHalf);
+  		numItems = (entry - regProp) + lastHalf;
+  		p = entry;
+  		continue;
+*** ../vim-7.2.037/src/version.c	Wed Nov 12 14:09:38 2008
+--- src/version.c	Wed Nov 12 14:51:00 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     38,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+241. You try to look for Net Search even when you're in File Manager.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

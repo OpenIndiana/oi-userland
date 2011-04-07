@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.437
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.437 (after 7.2.407)
+Problem:    When "\\\n" appears in the expression result the \n doesn't result
+	    in a line break. (Andy Wokula)
+Solution:   Also replace a \n after a backslash into \r.
+Files:	    src/regexp.c
+
+
+*** ../vim-7.2.436/src/regexp.c	2010-03-23 16:27:15.000000000 +0100
+--- src/regexp.c	2010-05-21 13:06:00.000000000 +0200
+***************
+*** 6974,6979 ****
+--- 6974,6986 ----
+  		    else if (*s == '\\' && s[1] != NUL)
+  		    {
+  			++s;
++ 			/* Change NL to CR here too, so that this works:
++ 			 * :s/abc\\\ndef/\="aaa\\\nbbb"/  on text:
++ 			 *   abc\
++ 			 *   def
++ 			 */
++ 			if (*s == NL)
++ 			    *s = CAR;
+  			had_backslash = TRUE;
+  		    }
+  		}
+*** ../vim-7.2.436/src/version.c	2010-05-16 13:56:01.000000000 +0200
+--- src/version.c	2010-05-21 13:07:50.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     437,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+89. In addition to your e-mail address being on your business
+    cards you even have your own domain.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

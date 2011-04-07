@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.403
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.403 (after 7.2.400)
+Problem:    Compiler warning for pointer type. (Tony Mechelynck)
+Solution:   Move type cast to the right place.
+Files:	    src/if_ruby.c
+
+
+*** ../vim-7.2.402/src/if_ruby.c	2010-03-17 18:15:17.000000000 +0100
+--- src/if_ruby.c	2010-03-19 23:08:06.000000000 +0100
+***************
+*** 722,729 ****
+  
+      if (tv->v_type == VAR_STRING)
+      {
+! 	result = rb_str_new2((char *)(tv->vval.v_string == NULL
+! 						   ? "" : tv->vval.v_string));
+      }
+      else if (tv->v_type == VAR_NUMBER)
+      {
+--- 722,729 ----
+  
+      if (tv->v_type == VAR_STRING)
+      {
+! 	result = rb_str_new2(tv->vval.v_string == NULL
+! 					  ? "" : (char *)(tv->vval.v_string));
+      }
+      else if (tv->v_type == VAR_NUMBER)
+      {
+*** ../vim-7.2.402/src/version.c	2010-03-17 19:53:44.000000000 +0100
+--- src/version.c	2010-03-19 23:07:13.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     403,
+  /**/
+
+-- 
+If "R" is Reverse, how come "D" is FORWARD?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,74 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.438
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.438 (after 7.2.427)
+Problem:    "vim -r" crashes.
+Solution:   Don't use NULL pointer argument.
+Files:	    src/memline.c
+
+
+*** ../vim-7.2.437/src/memline.c	2010-05-14 17:52:35.000000000 +0200
+--- src/memline.c	2010-05-25 21:36:01.000000000 +0200
+***************
+*** 1404,1418 ****
+      int		i;
+      char_u	*dirp;
+      char_u	*dir_name;
+!     char_u	*fname_res = *fname;
+  #ifdef HAVE_READLINK
+      char_u	fname_buf[MAXPATHL];
+  
+      /* Expand symlink in the file name, because the swap file is created with
+       * the actual file instead of with the symlink. */
+      if (resolve_symlink(*fname, fname_buf) == OK)
+  	fname_res = fname_buf;
+  #endif
+  
+      if (list)
+      {
+--- 1404,1425 ----
+      int		i;
+      char_u	*dirp;
+      char_u	*dir_name;
+!     char_u	*fname_res = NULL;
+  #ifdef HAVE_READLINK
+      char_u	fname_buf[MAXPATHL];
++ #endif
+  
++     if (fname != NULL)
++     {
++ #ifdef HAVE_READLINK
+      /* Expand symlink in the file name, because the swap file is created with
+       * the actual file instead of with the symlink. */
+      if (resolve_symlink(*fname, fname_buf) == OK)
+  	fname_res = fname_buf;
++     else
+  #endif
++ 	fname_res = *fname;
++     }
+  
+      if (list)
+      {
+*** ../vim-7.2.437/src/version.c	2010-05-21 13:08:51.000000000 +0200
+--- src/version.c	2010-05-25 21:30:12.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     438,
+  /**/
+
+-- 
+A fool learns from his mistakes, a wise man from someone else's.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

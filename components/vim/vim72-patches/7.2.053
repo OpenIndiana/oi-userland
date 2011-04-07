@@ -1,0 +1,58 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.053
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.053
+Problem:    Crash when using WorkShop command ":ws foo". (Dominique Pelle)
+Solution:   Avoid using a NULL pointer.
+Files:	    src/workshop.c
+
+
+*** ../vim-7.2.052/src/workshop.c	Tue Jun 24 23:34:50 2008
+--- src/workshop.c	Thu Nov 27 22:31:27 2008
+***************
+*** 1121,1128 ****
+  				      ? (char *)curbuf->b_sfname : "<None>");
+  #endif
+  
+!     strcpy(ffname, (char *) curbuf->b_ffname);
+!     *filename = ffname;		/* copy so nobody can change b_ffname */
+      *curLine = curwin->w_cursor.lnum;
+      *curCol = curwin->w_cursor.col;
+  
+--- 1121,1132 ----
+  				      ? (char *)curbuf->b_sfname : "<None>");
+  #endif
+  
+!     if (curbuf->b_ffname == NULL)
+! 	ffname[0] = NUL;
+!     else
+! 	/* copy so nobody can change b_ffname */
+! 	strcpy(ffname, (char *) curbuf->b_ffname);
+!     *filename = ffname;
+      *curLine = curwin->w_cursor.lnum;
+      *curCol = curwin->w_cursor.col;
+  
+*** ../vim-7.2.052/src/version.c	Fri Nov 28 11:15:10 2008
+--- src/version.c	Fri Nov 28 11:44:23 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     53,
+  /**/
+
+-- 
+What the word 'politics' means: 'Poli' in Latin meaning 'many' and 'tics'
+meaning 'bloodsucking creatures'.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

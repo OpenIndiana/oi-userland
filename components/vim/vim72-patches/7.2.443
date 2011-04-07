@@ -1,0 +1,116 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.443
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.443 
+Problem:    Using taglist() on a tag file with duplicate fields generates an 
+            internal error. (Peter Odding) 
+Solution:   Check for duplicate field names. 
+Files:      src/eval.c, src/proto/eval.pro, src/tag.c 
+
+
+*** ../vim-7.2.442/src/eval.c	2010-05-28 22:06:41.000000000 +0200
+--- src/eval.c	2010-06-12 19:59:09.000000000 +0200
+***************
+*** 451,457 ****
+  static void dictitem_remove __ARGS((dict_T *dict, dictitem_T *item));
+  static dict_T *dict_copy __ARGS((dict_T *orig, int deep, int copyID));
+  static long dict_len __ARGS((dict_T *d));
+- static dictitem_T *dict_find __ARGS((dict_T *d, char_u *key, int len));
+  static char_u *dict2string __ARGS((typval_T *tv, int copyID));
+  static int get_dict_tv __ARGS((char_u **arg, typval_T *rettv, int evaluate));
+  static char_u *echo_string __ARGS((typval_T *tv, char_u **tofree, char_u *numbuf, int copyID));
+--- 451,456 ----
+***************
+*** 7012,7018 ****
+   * If "len" is negative use strlen(key).
+   * Returns NULL when not found.
+   */
+!     static dictitem_T *
+  dict_find(d, key, len)
+      dict_T	*d;
+      char_u	*key;
+--- 7011,7017 ----
+   * If "len" is negative use strlen(key).
+   * Returns NULL when not found.
+   */
+!     dictitem_T *
+  dict_find(d, key, len)
+      dict_T	*d;
+      char_u	*key;
+*** ../vim-7.2.442/src/proto/eval.pro	2010-01-19 15:51:29.000000000 +0100
+--- src/proto/eval.pro	2010-06-12 19:59:13.000000000 +0200
+***************
+*** 56,61 ****
+--- 56,62 ----
+  void dictitem_free __ARGS((dictitem_T *item));
+  int dict_add __ARGS((dict_T *d, dictitem_T *item));
+  int dict_add_nr_str __ARGS((dict_T *d, char *key, long nr, char_u *str));
++ dictitem_T *dict_find __ARGS((dict_T *d, char_u *key, int len));
+  char_u *get_dict_string __ARGS((dict_T *d, char_u *key, int save));
+  long get_dict_number __ARGS((dict_T *d, char_u *key));
+  char_u *get_function_name __ARGS((expand_T *xp, int idx));
+*** ../vim-7.2.442/src/tag.c	2010-02-24 14:46:58.000000000 +0100
+--- src/tag.c	2010-06-12 20:01:45.000000000 +0200
+***************
+*** 3771,3777 ****
+  static int add_tag_field __ARGS((dict_T *dict, char *field_name, char_u *start, char_u *end));
+  
+  /*
+!  * Add a tag field to the dictionary "dict"
+   */
+      static int
+  add_tag_field(dict, field_name, start, end)
+--- 3771,3778 ----
+  static int add_tag_field __ARGS((dict_T *dict, char *field_name, char_u *start, char_u *end));
+  
+  /*
+!  * Add a tag field to the dictionary "dict".
+!  * Return OK or FAIL.
+   */
+      static int
+  add_tag_field(dict, field_name, start, end)
+***************
+*** 3783,3788 ****
+--- 3784,3800 ----
+      char_u	buf[MAXPATHL];
+      int		len = 0;
+  
++     /* check that the field name doesn't exist yet */
++     if (dict_find(dict, (char_u *)field_name, -1) != NULL)
++     {
++ 	if (p_verbose > 0)
++ 	{
++ 	    verbose_enter();
++ 	    smsg((char_u *)_("Duplicate field name: %s"), field_name);
++ 	    verbose_leave();
++ 	}
++ 	return FAIL;
++     }
+      if (start != NULL)
+      {
+  	if (end == NULL)
+*** ../vim-7.2.442/src/version.c	2010-06-05 12:49:40.000000000 +0200
+--- src/version.c	2010-06-12 20:05:27.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     443,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+191. You rate eating establishments not by the quality of the food,
+     but by the availability of electrical outlets for your PowerBook.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///
