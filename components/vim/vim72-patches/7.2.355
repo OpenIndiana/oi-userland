@@ -1,0 +1,88 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.355
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.355
+Problem:    Computing the cursor column in validate_cursor_col() is wrong when
+	    line numbers are used and 'n' is not in 'cpoptions', causing the
+	    popup menu to be positioned wrong.
+Solution:   Correctly use the offset. (partly by Dominique Pelle)
+Files:	    src/move.c
+
+
+*** ../vim-7.2.354/src/move.c	2009-11-03 16:22:59.000000000 +0100
+--- src/move.c	2010-02-03 17:15:16.000000000 +0100
+***************
+*** 889,894 ****
+--- 889,895 ----
+  {
+      colnr_T off;
+      colnr_T col;
++     int     width;
+  
+      validate_virtcol();
+      if (!(curwin->w_valid & VALID_WCOL))
+***************
+*** 896,910 ****
+  	col = curwin->w_virtcol;
+  	off = curwin_col_off();
+  	col += off;
+  
+  	/* long line wrapping, adjust curwin->w_wrow */
+  	if (curwin->w_p_wrap
+  		&& col >= (colnr_T)W_WIDTH(curwin)
+! 		&& W_WIDTH(curwin) - off + curwin_col_off2() > 0)
+! 	{
+! 	    col -= W_WIDTH(curwin);
+! 	    col = col % (W_WIDTH(curwin) - off + curwin_col_off2());
+! 	}
+  	if (col > (int)curwin->w_leftcol)
+  	    col -= curwin->w_leftcol;
+  	else
+--- 897,910 ----
+  	col = curwin->w_virtcol;
+  	off = curwin_col_off();
+  	col += off;
++ 	width = W_WIDTH(curwin) - off + curwin_col_off2();
+  
+  	/* long line wrapping, adjust curwin->w_wrow */
+  	if (curwin->w_p_wrap
+  		&& col >= (colnr_T)W_WIDTH(curwin)
+! 		&& width > 0)
+! 	    /* use same formula as what is used in curs_columns() */
+! 	    col -= ((col - W_WIDTH(curwin)) / width + 1) * width;
+  	if (col > (int)curwin->w_leftcol)
+  	    col -= curwin->w_leftcol;
+  	else
+***************
+*** 1041,1046 ****
+--- 1041,1047 ----
+  	/* long line wrapping, adjust curwin->w_wrow */
+  	if (curwin->w_wcol >= W_WIDTH(curwin))
+  	{
++ 	    /* this same formula is used in validate_cursor_col() */
+  	    n = (curwin->w_wcol - W_WIDTH(curwin)) / width + 1;
+  	    curwin->w_wcol -= n * width;
+  	    curwin->w_wrow += n;
+*** ../vim-7.2.354/src/version.c	2010-02-03 15:47:59.000000000 +0100
+--- src/version.c	2010-02-03 17:40:39.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     355,
+  /**/
+
+-- 
+I'm in shape.  Round IS a shape.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

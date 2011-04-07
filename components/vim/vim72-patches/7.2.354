@@ -1,0 +1,78 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.354
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.354
+Problem:    Japanese single-width double-byte characters not handled correctly.
+Solution:   Put 0x8e in ScreenLines[] and the second byte in ScreenLines2[].
+	    (partly by Kikuchan)
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.353/src/screen.c	2010-01-19 17:40:39.000000000 +0100
+--- src/screen.c	2010-02-03 15:47:19.000000000 +0100
+***************
+*** 2335,2347 ****
+  		if (cells > 1)
+  		    ScreenLines[idx + 1] = 0;
+  	    }
+! 	    else if (cells > 1)	    /* double-byte character */
+! 	    {
+! 		if (enc_dbcs == DBCS_JPNU && *p == 0x8e)
+! 		    ScreenLines2[idx] = p[1];
+! 		else
+! 		    ScreenLines[idx + 1] = p[1];
+! 	    }
+  	    col += cells;
+  	    idx += cells;
+  	    p += c_len;
+--- 2335,2346 ----
+  		if (cells > 1)
+  		    ScreenLines[idx + 1] = 0;
+  	    }
+! 	    else if (enc_dbcs == DBCS_JPNU && *p == 0x8e)
+! 		/* double-byte single width character */
+! 		ScreenLines2[idx] = p[1];
+! 	    else if (cells > 1)
+! 		/* double-width character */
+! 		ScreenLines[idx + 1] = p[1];
+  	    col += cells;
+  	    idx += cells;
+  	    p += c_len;
+***************
+*** 4631,4637 ****
+--- 4630,4640 ----
+  	    ScreenLines[off] = c;
+  #ifdef FEAT_MBYTE
+  	    if (enc_dbcs == DBCS_JPNU)
++ 	    {
++ 		if ((mb_c & 0xff00) == 0x8e00)
++ 		    ScreenLines[off] = 0x8e;
+  		ScreenLines2[off] = mb_c & 0xff;
++ 	    }
+  	    else if (enc_utf8)
+  	    {
+  		if (mb_utf8)
+*** ../vim-7.2.353/src/version.c	2010-02-03 15:14:15.000000000 +0100
+--- src/version.c	2010-02-03 15:43:43.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     354,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+189. You put your e-mail address in the upper left-hand corner of envelopes.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

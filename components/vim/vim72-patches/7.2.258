@@ -1,0 +1,74 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.258
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.258
+Problem:    v:beval_col and b:beval_text are wrong in UTF-8 text. (Tony
+	    Mechelynck)
+Solution:   Use byte number instead of character number for the column.
+Files:	    src/ui.c
+
+
+*** ../vim-7.2.257/src/ui.c	2009-07-01 18:04:30.000000000 +0200
+--- src/ui.c	2009-09-11 16:11:50.000000000 +0200
+***************
+*** 3055,3072 ****
+      int		vcol;
+  {
+      /* try to advance to the specified column */
+-     int		col = 0;
+      int		count = 0;
+      char_u	*ptr;
+  
+!     ptr = ml_get_buf(wp->w_buffer, lnum, FALSE);
+      while (count <= vcol && *ptr != NUL)
+      {
+- 	++col;
+  	count += win_lbr_chartabsize(wp, ptr, count, NULL);
+  	mb_ptr_adv(ptr);
+      }
+!     return col;
+  }
+  #endif
+  
+--- 3055,3071 ----
+      int		vcol;
+  {
+      /* try to advance to the specified column */
+      int		count = 0;
+      char_u	*ptr;
++     char_u	*start;
+  
+!     start = ptr = ml_get_buf(wp->w_buffer, lnum, FALSE);
+      while (count <= vcol && *ptr != NUL)
+      {
+  	count += win_lbr_chartabsize(wp, ptr, count, NULL);
+  	mb_ptr_adv(ptr);
+      }
+!     return (int)(ptr - start);
+  }
+  #endif
+  
+*** ../vim-7.2.257/src/version.c	2009-09-11 16:17:36.000000000 +0200
+--- src/version.c	2009-09-11 16:45:48.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     258,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+232. You start conversations with, "Have you gotten an ISDN line?"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

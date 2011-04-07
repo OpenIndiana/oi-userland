@@ -1,0 +1,111 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.439
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.439
+Problem:    Invalid memory access when doing thesaurus completion and
+	    'infercase' is set.
+Solution:   Use the minimal length of completed word and replacement.
+	    (Dominique Pelle)
+Files:	    src/edit.c
+
+
+*** ../vim-7.2.438/src/edit.c	2010-03-10 14:15:28.000000000 +0100
+--- src/edit.c	2010-05-28 21:20:29.000000000 +0200
+***************
+*** 2164,2169 ****
+--- 2164,2170 ----
+      int		i, c;
+      int		actual_len;		/* Take multi-byte characters */
+      int		actual_compl_length;	/* into account. */
++     int		min_len;
+      int		*wca;			/* Wide character array. */
+      int		has_lower = FALSE;
+      int		was_letter = FALSE;
+***************
+*** 2204,2209 ****
+--- 2205,2215 ----
+  #endif
+  	    actual_compl_length = compl_length;
+  
++ 	/* "actual_len" may be smaller than "actual_compl_length" when using
++ 	 * thesaurus, only use the minimum when comparing. */
++ 	min_len = actual_len < actual_compl_length
++ 					   ? actual_len : actual_compl_length;
++ 
+  	/* Allocate wide character array for the completion and fill it. */
+  	wca = (int *)alloc((unsigned)(actual_len * sizeof(int)));
+  	if (wca != NULL)
+***************
+*** 2219,2225 ****
+  
+  	    /* Rule 1: Were any chars converted to lower? */
+  	    p = compl_orig_text;
+! 	    for (i = 0; i < actual_compl_length; ++i)
+  	    {
+  #ifdef FEAT_MBYTE
+  		if (has_mbyte)
+--- 2225,2231 ----
+  
+  	    /* Rule 1: Were any chars converted to lower? */
+  	    p = compl_orig_text;
+! 	    for (i = 0; i < min_len; ++i)
+  	    {
+  #ifdef FEAT_MBYTE
+  		if (has_mbyte)
+***************
+*** 2247,2253 ****
+  	    if (!has_lower)
+  	    {
+  		p = compl_orig_text;
+! 		for (i = 0; i < actual_compl_length; ++i)
+  		{
+  #ifdef FEAT_MBYTE
+  		    if (has_mbyte)
+--- 2253,2259 ----
+  	    if (!has_lower)
+  	    {
+  		p = compl_orig_text;
+! 		for (i = 0; i < min_len; ++i)
+  		{
+  #ifdef FEAT_MBYTE
+  		    if (has_mbyte)
+***************
+*** 2268,2274 ****
+  
+  	    /* Copy the original case of the part we typed. */
+  	    p = compl_orig_text;
+! 	    for (i = 0; i < actual_compl_length; ++i)
+  	    {
+  #ifdef FEAT_MBYTE
+  		if (has_mbyte)
+--- 2274,2280 ----
+  
+  	    /* Copy the original case of the part we typed. */
+  	    p = compl_orig_text;
+! 	    for (i = 0; i < min_len; ++i)
+  	    {
+  #ifdef FEAT_MBYTE
+  		if (has_mbyte)
+*** ../vim-7.2.438/src/version.c	2010-05-25 21:37:12.000000000 +0200
+--- src/version.c	2010-05-28 21:30:53.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     439,
+  /**/
+
+-- 
+Corduroy pillows: They're making headlines!
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

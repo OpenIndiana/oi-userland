@@ -1,0 +1,111 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.057
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.057 (after 7.2.056)
+Problem:    Combination of int and size_t may not work.
+Solution:   Use size_t for variable.
+Files:	    src/spell.c
+
+
+*** ../vim-7.2.056/src/spell.c	Sat Nov 29 20:10:59 2008
+--- src/spell.c	Sat Nov 29 20:15:43 2008
+***************
+*** 7926,7932 ****
+      char_u	*p;
+      int		rr;
+      int		retval = OK;
+!     int		fwv = 1;  /* collect return value of fwrite() to avoid
+  			     warnings from picky compiler */
+  
+      fd = mch_fopen((char *)fname, "w");
+--- 8028,8034 ----
+      char_u	*p;
+      int		rr;
+      int		retval = OK;
+!     size_t	fwv = 1;  /* collect return value of fwrite() to avoid
+  			     warnings from picky compiler */
+  
+      fd = mch_fopen((char *)fname, "w");
+***************
+*** 7939,7944 ****
+--- 8041,8050 ----
+      /* <HEADER>: <fileID> <versionnr> */
+  							    /* <fileID> */
+      fwv &= fwrite(VIMSPELLMAGIC, VIMSPELLMAGICL, (size_t)1, fd);
++     if (fwv != (size_t)1)
++ 	/* Catch first write error, don't try writing more. */
++ 	goto theend;
++ 
+      putc(VIMSPELLVERSION, fd);				    /* <versionnr> */
+  
+      /*
+***************
+*** 8300,8310 ****
+      /* Write another byte to check for errors (file system full). */
+      if (putc(0, fd) == EOF)
+  	retval = FAIL;
+! 
+      if (fclose(fd) == EOF)
+  	retval = FAIL;
+  
+!     if (fwv != 1)
+  	retval = FAIL;
+      if (retval == FAIL)
+  	EMSG(_(e_write));
+--- 8406,8416 ----
+      /* Write another byte to check for errors (file system full). */
+      if (putc(0, fd) == EOF)
+  	retval = FAIL;
+! theend:
+      if (fclose(fd) == EOF)
+  	retval = FAIL;
+  
+!     if (fwv != (size_t)1)
+  	retval = FAIL;
+      if (retval == FAIL)
+  	EMSG(_(e_write));
+***************
+*** 9897,9903 ****
+      char_u	*p;
+      int		len;
+      int		totlen;
+!     int		x = 1;  /* collect return value of fwrite() */
+  
+      if (fd != NULL)
+  	put_bytes(fd, (long_u)gap->ga_len, 2);	    /* <prefcondcnt> */
+--- 10003,10009 ----
+      char_u	*p;
+      int		len;
+      int		totlen;
+!     size_t	x = 1;  /* collect return value of fwrite() */
+  
+      if (fd != NULL)
+  	put_bytes(fd, (long_u)gap->ga_len, 2);	    /* <prefcondcnt> */
+*** ../vim-7.2.056/src/version.c	Sat Nov 29 20:10:59 2008
+--- src/version.c	Sat Nov 29 20:13:46 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     57,
+  /**/
+
+-- 
+GUARD #1:  What -- a swallow carrying a coconut?
+ARTHUR:    It could grip it by the husk!
+GUARD #1:  It's not a question of where he grips it!  It's a simple question
+           of weight ratios!  A five ounce bird could not carry a 1 pound
+           coconut.
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

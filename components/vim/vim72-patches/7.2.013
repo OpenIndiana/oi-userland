@@ -1,0 +1,135 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.013
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.013
+Problem:    While waiting for the X selection Vim consumes a lot of CPU time
+	    and hangs until a response is received.
+Solution:   Sleep a bit when the selection event hasn't been received yet.
+	    Time out after a couple of seconds to avoid a hang when the
+	    selection owner isn't responding.
+Files:	    src/ui.c
+
+
+*** ../vim-7.2.012/src/ui.c	Mon Jul 14 21:47:49 2008
+--- src/ui.c	Sun Sep  7 16:54:35 2008
+***************
+*** 2110,2115 ****
+--- 2110,2117 ----
+      int		i;
+      int		nbytes = 0;
+      char_u	*buffer;
++     time_t	start_time;
++     int		timed_out = FALSE;
+  
+      for (i =
+  #ifdef FEAT_MBYTE
+***************
+*** 2129,2134 ****
+--- 2131,2137 ----
+  	    case 3:  type = text_atom;		break;
+  	    default: type = XA_STRING;
+  	}
++ 	success = FALSE;
+  	XtGetSelectionValue(myShell, cbd->sel_atom, type,
+  	    clip_x11_request_selection_cb, (XtPointer)&success, CurrentTime);
+  
+***************
+*** 2141,2167 ****
+  	 * characters, then they will appear before the one that requested the
+  	 * paste!  Don't worry, we will catch up with any other events later.
+  	 */
+  	for (;;)
+  	{
+  	    if (XCheckTypedEvent(dpy, SelectionNotify, &event))
+  		break;
+  	    if (XCheckTypedEvent(dpy, SelectionRequest, &event))
+  		/* We may get a SelectionRequest here and if we don't handle
+  		 * it we hang.  KDE klipper does this, for example. */
+  		XtDispatchEvent(&event);
+  
+  	    /* Do we need this?  Probably not. */
+  	    XSync(dpy, False);
+  
+! 	    /* Bernhard Walle solved a slow paste response in an X terminal by
+! 	     * adding: usleep(10000); here. */
+  	}
+  
+- 	/* this is where clip_x11_request_selection_cb() is actually called */
+- 	XtDispatchEvent(&event);
+- 
+  	if (success)
+  	    return;
+      }
+  
+      /* Final fallback position - use the X CUT_BUFFER0 store */
+--- 2144,2189 ----
+  	 * characters, then they will appear before the one that requested the
+  	 * paste!  Don't worry, we will catch up with any other events later.
+  	 */
++ 	start_time = time(NULL);
+  	for (;;)
+  	{
+  	    if (XCheckTypedEvent(dpy, SelectionNotify, &event))
++ 	    {
++ 		/* this is where clip_x11_request_selection_cb() is actually
++ 		 * called */
++ 		XtDispatchEvent(&event);
+  		break;
++ 	    }
+  	    if (XCheckTypedEvent(dpy, SelectionRequest, &event))
+  		/* We may get a SelectionRequest here and if we don't handle
+  		 * it we hang.  KDE klipper does this, for example. */
+  		XtDispatchEvent(&event);
+  
++ 	    /* Time out after 2 to 3 seconds to avoid that we hang when the
++ 	     * other process doesn't respond.  Note that the SelectionNotify
++ 	     * event may still come later when the selection owner comes back
++ 	     * to life and the text gets inserted unexpectedly (by xterm).
++ 	     * Don't know how to avoid that :-(. */
++ 	    if (time(NULL) > start_time + 2)
++ 	    {
++ 		timed_out = TRUE;
++ 		break;
++ 	    }
++ 
+  	    /* Do we need this?  Probably not. */
+  	    XSync(dpy, False);
+  
+! 	    /* Wait for 1 msec to avoid that we eat up all CPU time. */
+! 	    ui_delay(1L, TRUE);
+  	}
+  
+  	if (success)
+  	    return;
++ 
++ 	/* don't do a retry with another type after timing out, otherwise we
++ 	 * hang for 15 seconds. */
++ 	if (timed_out)
++ 	    break;
+      }
+  
+      /* Final fallback position - use the X CUT_BUFFER0 store */
+*** ../vim-7.2.012/src/version.c	Sun Sep  7 15:49:45 2008
+--- src/version.c	Sun Sep  7 21:45:55 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     13,
+  /**/
+
+-- 
+The users that I support would double-click on a landmine to find out
+what happens.				-- A system administrator
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

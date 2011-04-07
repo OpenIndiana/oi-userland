@@ -1,0 +1,107 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.436
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.436
+Problem:    Reproducible crash in syntax HL. (George Reilly, Dominique Pelle)
+Solution:   Make sst_stacksize an int instead of short. (Dominique Pelle)
+Files:	    src/structs.h
+
+
+*** ../vim-7.2.435/src/structs.h	2010-05-14 22:24:31.000000000 +0200
+--- src/structs.h	2010-05-16 13:48:26.000000000 +0200
+***************
+*** 327,333 ****
+  typedef struct m_info minfo_T;
+  
+  /*
+!  * stucture used to link chunks in one of the free chunk lists.
+   */
+  struct m_info
+  {
+--- 327,333 ----
+  typedef struct m_info minfo_T;
+  
+  /*
+!  * structure used to link chunks in one of the free chunk lists.
+   */
+  struct m_info
+  {
+***************
+*** 795,803 ****
+  	garray_T	sst_ga;	/* growarray for long state stack */
+      } sst_union;
+      int		sst_next_flags;	/* flags for sst_next_list */
+      short	*sst_next_list;	/* "nextgroup" list in this state
+  				 * (this is a copy, don't free it! */
+-     short	sst_stacksize;	/* number of states on the stack */
+      disptick_T	sst_tick;	/* tick when last displayed */
+      linenr_T	sst_change_lnum;/* when non-zero, change in this line
+  				 * may have made the state invalid */
+--- 795,803 ----
+  	garray_T	sst_ga;	/* growarray for long state stack */
+      } sst_union;
+      int		sst_next_flags;	/* flags for sst_next_list */
++     int		sst_stacksize;	/* number of states on the stack */
+      short	*sst_next_list;	/* "nextgroup" list in this state
+  				 * (this is a copy, don't free it! */
+      disptick_T	sst_tick;	/* tick when last displayed */
+      linenr_T	sst_change_lnum;/* when non-zero, change in this line
+  				 * may have made the state invalid */
+***************
+*** 2138,2144 ****
+  #define SHAPE_IDX_CI	5	/* Command line Insert mode */
+  #define SHAPE_IDX_CR	6	/* Command line Replace mode */
+  #define SHAPE_IDX_O	7	/* Operator-pending mode */
+! #define SHAPE_IDX_VE	8	/* Visual mode with 'seleciton' exclusive */
+  #define SHAPE_IDX_CLINE	9	/* On command line */
+  #define SHAPE_IDX_STATUS 10	/* A status line */
+  #define SHAPE_IDX_SDRAG 11	/* dragging a status line */
+--- 2138,2144 ----
+  #define SHAPE_IDX_CI	5	/* Command line Insert mode */
+  #define SHAPE_IDX_CR	6	/* Command line Replace mode */
+  #define SHAPE_IDX_O	7	/* Operator-pending mode */
+! #define SHAPE_IDX_VE	8	/* Visual mode with 'selection' exclusive */
+  #define SHAPE_IDX_CLINE	9	/* On command line */
+  #define SHAPE_IDX_STATUS 10	/* A status line */
+  #define SHAPE_IDX_SDRAG 11	/* dragging a status line */
+***************
+*** 2267,2273 ****
+  /*  short	index;	*/	    /* the item index within the father menu */
+      short	menu_id;	    /* the menu id to which this item belong */
+      short	submenu_id;	    /* the menu id of the children (could be
+! 				       get throught some tricks) */
+      MenuHandle	menu_handle;
+      MenuHandle	submenu_handle;
+  #endif
+--- 2267,2273 ----
+  /*  short	index;	*/	    /* the item index within the father menu */
+      short	menu_id;	    /* the menu id to which this item belong */
+      short	submenu_id;	    /* the menu id of the children (could be
+! 				       get through some tricks) */
+      MenuHandle	menu_handle;
+      MenuHandle	submenu_handle;
+  #endif
+*** ../vim-7.2.435/src/version.c	2010-05-16 13:26:19.000000000 +0200
+--- src/version.c	2010-05-16 13:54:30.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     436,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+47. You are so familiar with the WWW that you find the search engines useless.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,71 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.255
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.255 (after 7.2.242)
+Problem:    Setting 'rightleft', 'linebreak' and 'wrap' may cause cursor to be
+	    in wrong place.
+Solution:   Recompute the cursor column for these options.
+Files:	    src/option.c
+
+
+*** ../vim-7.2.254/src/option.c	2009-07-29 15:41:32.000000000 +0200
+--- src/option.c	2009-09-11 13:59:55.000000000 +0200
+***************
+*** 7430,7435 ****
+--- 7430,7437 ----
+      {
+  	if (curwin->w_p_wrap)
+  	    curwin->w_leftcol = 0;
++ 	if (curwin->w_curswant != MAXCOL)
++ 	    curwin->w_set_curswant = TRUE;
+      }
+  
+  #ifdef FEAT_WINDOWS
+***************
+*** 7664,7669 ****
+--- 7666,7687 ----
+      }
+  #endif
+  
++ #ifdef FEAT_LINEBREAK
++     if ((int *)varp == &curwin->w_p_lbr)
++     {
++ 	if (curwin->w_curswant != MAXCOL)
++ 	    curwin->w_set_curswant = TRUE;
++     }
++ #endif
++ 
++ #ifdef FEAT_RIGHTLEFT
++     if ((int *)varp == &curwin->w_p_rl)
++     {
++ 	if (curwin->w_curswant != MAXCOL)
++ 	    curwin->w_set_curswant = TRUE;
++     }
++ #endif
++ 
+      /*
+       * End of handling side effects for bool options.
+       */
+*** ../vim-7.2.254/src/version.c	2009-09-11 15:04:13.000000000 +0200
+--- src/version.c	2009-09-11 15:19:40.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     255,
+  /**/
+
+-- 
+A computer without Windows is like a fish without a bicycle.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,66 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.277
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.277
+Problem:    CTRL-Y in a diff'ed window may move the cursor outside of the
+	    window. (Lech Lorens)
+Solution:   Limit the number of filler lines to the height of the window.
+	    Don't reset filler lines to zero for an empty buffer.
+Files:	    src/move.c
+
+
+*** ../vim-7.2.276/src/move.c	2009-05-15 21:31:11.000000000 +0200
+--- src/move.c	2009-11-03 14:39:55.000000000 +0100
+***************
+*** 183,191 ****
+  	if (curwin->w_topline != 1)
+  	    redraw_later(NOT_VALID);
+  	curwin->w_topline = 1;
+- #ifdef FEAT_DIFF
+- 	curwin->w_topfill = 0;
+- #endif
+  	curwin->w_botline = 2;
+  	curwin->w_valid |= VALID_BOTLINE|VALID_BOTLINE_AP;
+  #ifdef FEAT_SCROLLBIND
+--- 183,188 ----
+***************
+*** 1257,1263 ****
+      while (line_count-- > 0)
+      {
+  #ifdef FEAT_DIFF
+! 	if (curwin->w_topfill < diff_check(curwin, curwin->w_topline))
+  	{
+  	    ++curwin->w_topfill;
+  	    ++done;
+--- 1254,1261 ----
+      while (line_count-- > 0)
+      {
+  #ifdef FEAT_DIFF
+! 	if (curwin->w_topfill < diff_check(curwin, curwin->w_topline)
+! 		&& curwin->w_topfill < curwin->w_height - 1)
+  	{
+  	    ++curwin->w_topfill;
+  	    ++done;
+*** ../vim-7.2.276/src/version.c	2009-11-03 16:03:59.000000000 +0100
+--- src/version.c	2009-11-03 16:22:04.000000000 +0100
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     277,
+  /**/
+
+-- 
+SIGFUN -- signature too funny (core dumped)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,261 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.445
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.445
+Problem:    Crash when using undo/redo and a FileChangedRO autocmd event that
+	    reloads the buffer. (Dominique Pelle)
+Solution:   Do not allow autocommands while performing and undo or redo.
+Files:	    src/misc1.c, src/undo.c
+
+
+*** ../vim-7.2.444/src/misc1.c	2010-03-23 18:22:40.000000000 +0100
+--- src/misc1.c	2010-07-07 18:18:52.000000000 +0200
+***************
+*** 2467,2476 ****
+  }
+  
+  /*
+!  * changed() is called when something in the current buffer is changed.
+   *
+   * Most often called through changed_bytes() and changed_lines(), which also
+   * mark the area of the display to be redrawn.
+   */
+      void
+  changed()
+--- 2467,2478 ----
+  }
+  
+  /*
+!  * Call this function when something in the current buffer is changed.
+   *
+   * Most often called through changed_bytes() and changed_lines(), which also
+   * mark the area of the display to be redrawn.
++  *
++  * Careful: may trigger autocommands that reload the buffer.
+   */
+      void
+  changed()
+***************
+*** 2536,2541 ****
+--- 2538,2544 ----
+   * - marks the windows on this buffer to be redisplayed
+   * - marks the buffer changed by calling changed()
+   * - invalidates cached values
++  * Careful: may trigger autocommands that reload the buffer.
+   */
+      void
+  changed_bytes(lnum, col)
+***************
+*** 2649,2654 ****
+--- 2652,2658 ----
+   * below the changed lines (BEFORE the change).
+   * When only inserting lines, "lnum" and "lnume" are equal.
+   * Takes care of calling changed() and updating b_mod_*.
++  * Careful: may trigger autocommands that reload the buffer.
+   */
+      void
+  changed_lines(lnum, col, lnume, xtra)
+***************
+*** 2716,2721 ****
+--- 2720,2730 ----
+      }
+  }
+  
++ /*
++  * Common code for when a change is was made.
++  * See changed_lines() for the arguments.
++  * Careful: may trigger autocommands that reload the buffer.
++  */
+      static void
+  changed_common(lnum, col, lnume, xtra)
+      linenr_T	lnum;
+***************
+*** 2966,2971 ****
+--- 2975,2981 ----
+   * Don't use emsg(), because it flushes the macro buffer.
+   * If we have undone all changes b_changed will be FALSE, but "b_did_warn"
+   * will be TRUE.
++  * Careful: may trigger autocommands that reload the buffer.
+   */
+      void
+  change_warning(col)
+*** ../vim-7.2.444/src/undo.c	2010-05-30 16:55:17.000000000 +0200
+--- src/undo.c	2010-07-07 18:14:44.000000000 +0200
+***************
+*** 185,191 ****
+      }
+  }
+  
+!     void
+  u_check(int newhead_may_be_NULL)
+  {
+      seen_b_u_newhead = 0;
+--- 185,191 ----
+      }
+  }
+  
+!     static void
+  u_check(int newhead_may_be_NULL)
+  {
+      seen_b_u_newhead = 0;
+***************
+*** 320,325 ****
+--- 320,328 ----
+      return TRUE;
+  }
+  
++ /*
++  * Common code for various ways to save text before a change.
++  */
+      static int
+  u_savecommon(top, bot, newbot)
+      linenr_T	top, bot;
+***************
+*** 374,380 ****
+      size = bot - top - 1;
+  
+      /*
+!      * if curbuf->b_u_synced == TRUE make a new header
+       */
+      if (curbuf->b_u_synced)
+      {
+--- 377,383 ----
+      size = bot - top - 1;
+  
+      /*
+!      * If curbuf->b_u_synced == TRUE make a new header.
+       */
+      if (curbuf->b_u_synced)
+      {
+***************
+*** 709,714 ****
+--- 712,723 ----
+  	u_oldcount = -1;
+      while (count--)
+      {
++ 	/* Do the change warning now, so that it triggers FileChangedRO when
++ 	 * needed.  This may cause the file to be reloaded, that must happen
++ 	 * before we do anything, because it may change curbuf->b_u_curhead
++ 	 * and more. */
++ 	change_warning(0);
++ 
+  	if (undo_undoes)
+  	{
+  	    if (curbuf->b_u_curhead == NULL)		/* first undo */
+***************
+*** 952,959 ****
+  	/*
+  	 * First go up the tree as much as needed.
+  	 */
+! 	for (;;)
+  	{
+  	    uhp = curbuf->b_u_curhead;
+  	    if (uhp == NULL)
+  		uhp = curbuf->b_u_newhead;
+--- 961,971 ----
+  	/*
+  	 * First go up the tree as much as needed.
+  	 */
+! 	while (!got_int)
+  	{
++ 	    /* Do the change warning now, for the same reason as above. */
++ 	    change_warning(0);
++ 
+  	    uhp = curbuf->b_u_curhead;
+  	    if (uhp == NULL)
+  		uhp = curbuf->b_u_newhead;
+***************
+*** 970,978 ****
+  	/*
+  	 * And now go down the tree (redo), branching off where needed.
+  	 */
+! 	uhp = curbuf->b_u_curhead;
+! 	while (uhp != NULL)
+  	{
+  	    /* Go back to the first branch with a mark. */
+  	    while (uhp->uh_alt_prev != NULL
+  					&& uhp->uh_alt_prev->uh_walk == mark)
+--- 982,996 ----
+  	/*
+  	 * And now go down the tree (redo), branching off where needed.
+  	 */
+! 	while (!got_int)
+  	{
++ 	    /* Do the change warning now, for the same reason as above. */
++ 	    change_warning(0);
++ 
++ 	    uhp = curbuf->b_u_curhead;
++ 	    if (uhp == NULL)
++ 		break;
++ 
+  	    /* Go back to the first branch with a mark. */
+  	    while (uhp->uh_alt_prev != NULL
+  					&& uhp->uh_alt_prev->uh_walk == mark)
+***************
+*** 1070,1075 ****
+--- 1088,1099 ----
+      int		empty_buffer;		    /* buffer became empty */
+      u_header_T	*curhead = curbuf->b_u_curhead;
+  
++ #ifdef FEAT_AUTOCMD
++     /* Don't want autocommands using the undo structures here, they are
++      * invalid till the end. */
++     block_autocmds();
++ #endif
++ 
+  #ifdef U_DEBUG
+      u_check(FALSE);
+  #endif
+***************
+*** 1099,1104 ****
+--- 1123,1131 ----
+  	if (top > curbuf->b_ml.ml_line_count || top >= bot
+  				      || bot > curbuf->b_ml.ml_line_count + 1)
+  	{
++ #ifdef FEAT_AUTOCMD
++ 	    unblock_autocmds();
++ #endif
+  	    EMSG(_("E438: u_undo: line numbers wrong"));
+  	    changed();		/* don't want UNCHANGED now */
+  	    return;
+***************
+*** 1304,1309 ****
+--- 1331,1340 ----
+      /* The timestamp can be the same for multiple changes, just use the one of
+       * the undone/redone change. */
+      curbuf->b_u_seq_time = curhead->uh_time;
++ 
++ #ifdef FEAT_AUTOCMD
++     unblock_autocmds();
++ #endif
+  #ifdef U_DEBUG
+      u_check(FALSE);
+  #endif
+*** ../vim-7.2.444/src/version.c	2010-06-13 02:35:41.000000000 +0200
+--- src/version.c	2010-07-07 18:18:27.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     445,
+  /**/
+
+-- 
+    A KNIGHT rides into shot and hacks him to the ground.  He rides off.
+    We stay for a moment on the glade.  A MIDDLE-AGED LADY in a C. & A.
+    twin-set emerges from the trees and looks in horror at the body of her
+    HUSBAND.
+MRS HISTORIAN: FRANK!
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

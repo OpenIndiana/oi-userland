@@ -1,0 +1,135 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.073
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.073
+Problem:    ":set <xHome>" has the same output as ":set <Home>". (Matt
+	    Wozniski)
+Solution:   Don't translate "x" keys to its alternative for ":set".
+Files:	    src/misc2.c, src/option.c, src/proto/misc2.pro
+
+
+*** ../vim-7.2.072/src/misc2.c	Wed Nov 12 13:07:48 2008
+--- src/misc2.c	Sun Dec 14 12:28:47 2008
+***************
+*** 2561,2567 ****
+      int		key;
+      int		dlen = 0;
+  
+!     key = find_special_key(srcp, &modifiers, keycode);
+      if (key == 0)
+  	return 0;
+  
+--- 2561,2567 ----
+      int		key;
+      int		dlen = 0;
+  
+!     key = find_special_key(srcp, &modifiers, keycode, FALSE);
+      if (key == 0)
+  	return 0;
+  
+***************
+*** 2597,2606 ****
+   * returns 0 if there is no match.
+   */
+      int
+! find_special_key(srcp, modp, keycode)
+      char_u	**srcp;
+      int		*modp;
+!     int		keycode; /* prefer key code, e.g. K_DEL instead of DEL */
+  {
+      char_u	*last_dash;
+      char_u	*end_of_name;
+--- 2597,2607 ----
+   * returns 0 if there is no match.
+   */
+      int
+! find_special_key(srcp, modp, keycode, keep_x_key)
+      char_u	**srcp;
+      int		*modp;
+!     int		keycode;     /* prefer key code, e.g. K_DEL instead of DEL */
+!     int		keep_x_key;  /* don't translate xHome to Home key */
+  {
+      char_u	*last_dash;
+      char_u	*end_of_name;
+***************
+*** 2668,2674 ****
+  	    else
+  	    {
+  		key = get_special_key_code(last_dash + 1);
+! 		key = handle_x_keys(key);
+  	    }
+  
+  	    /*
+--- 2669,2676 ----
+  	    else
+  	    {
+  		key = get_special_key_code(last_dash + 1);
+! 		if (!keep_x_key)
+! 		    key = handle_x_keys(key);
+  	    }
+  
+  	    /*
+*** ../vim-7.2.072/src/option.c	Fri Nov 28 21:26:50 2008
+--- src/option.c	Sun Dec 14 12:28:56 2008
+***************
+*** 8328,8334 ****
+      {
+  	--arg;			    /* put arg at the '<' */
+  	modifiers = 0;
+! 	key = find_special_key(&arg, &modifiers, TRUE);
+  	if (modifiers)		    /* can't handle modifiers here */
+  	    key = 0;
+      }
+--- 8328,8334 ----
+      {
+  	--arg;			    /* put arg at the '<' */
+  	modifiers = 0;
+! 	key = find_special_key(&arg, &modifiers, TRUE, TRUE);
+  	if (modifiers)		    /* can't handle modifiers here */
+  	    key = 0;
+      }
+*** ../vim-7.2.072/src/proto/misc2.pro	Thu Jul 24 20:29:37 2008
+--- src/proto/misc2.pro	Sun Dec 14 12:29:05 2008
+***************
+*** 59,65 ****
+  int handle_x_keys __ARGS((int key));
+  char_u *get_special_key_name __ARGS((int c, int modifiers));
+  int trans_special __ARGS((char_u **srcp, char_u *dst, int keycode));
+! int find_special_key __ARGS((char_u **srcp, int *modp, int keycode));
+  int extract_modifiers __ARGS((int key, int *modp));
+  int find_special_key_in_table __ARGS((int c));
+  int get_special_key_code __ARGS((char_u *name));
+--- 59,65 ----
+  int handle_x_keys __ARGS((int key));
+  char_u *get_special_key_name __ARGS((int c, int modifiers));
+  int trans_special __ARGS((char_u **srcp, char_u *dst, int keycode));
+! int find_special_key __ARGS((char_u **srcp, int *modp, int keycode, int keep_x_key));
+  int extract_modifiers __ARGS((int key, int *modp));
+  int find_special_key_in_table __ARGS((int c));
+  int get_special_key_code __ARGS((char_u *name));
+*** ../vim-7.2.072/src/version.c	Wed Dec 24 12:43:15 2008
+--- src/version.c	Wed Dec 24 12:51:26 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     73,
+  /**/
+
+
+-- 
+ARTHUR: If you do not open these doors, we will take this castle by force ...
+   [A bucket of slops land on ARTHUR.  He tries to retain his dignity.]
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

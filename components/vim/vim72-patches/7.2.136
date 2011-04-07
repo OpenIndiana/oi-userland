@@ -1,0 +1,47 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.136
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.136 (after 7.2.132)
+Problem:    ":cd" is still possible in a SwapExists autocmd.
+Solution:   Check the allbuf_lock flag in ex_cd().
+Files:	    src/ex_docmd.c
+
+
+*** ../vim-7.2.135/src/ex_docmd.c	Wed Mar 11 15:09:07 2009
+--- src/ex_docmd.c	Wed Mar 11 11:13:31 2009
+***************
+*** 7875,7880 ****
+--- 7875,7884 ----
+      else
+  #endif
+      {
++ #ifdef FEAT_AUTOCMD
++ 	if (allbuf_locked())
++ 	    return;
++ #endif
+  	if (vim_strchr(p_cpo, CPO_CHDIR) != NULL && curbufIsChanged()
+  							     && !eap->forceit)
+  	{
+*** ../vim-7.2.135/src/version.c	Wed Mar 11 15:09:07 2009
+--- src/version.c	Wed Mar 11 15:35:36 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     136,
+  /**/
+
+-- 
+Press any key to continue, press any other key to quit.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

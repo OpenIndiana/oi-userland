@@ -1,0 +1,141 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.441
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.441
+Problem:    When using ":earlier" undo information may be wrong.
+Solution:   When changing alternate branches also adjust b_u_oldhead.
+Files:	    src/undo.c
+
+
+*** ../vim-7.2.440/src/undo.c	2008-02-13 15:21:29.000000000 +0100
+--- src/undo.c	2010-05-30 16:52:47.000000000 +0200
+***************
+*** 242,248 ****
+  }
+  
+  /*
+!  * save the line "lnum" (used by ":s" and "~" command)
+   * The line is replaced, so the new bottom line is lnum + 1.
+   */
+      int
+--- 242,248 ----
+  }
+  
+  /*
+!  * Save the line "lnum" (used by ":s" and "~" command).
+   * The line is replaced, so the new bottom line is lnum + 1.
+   */
+      int
+***************
+*** 256,262 ****
+  }
+  
+  /*
+!  * a new line is inserted before line "lnum" (used by :s command)
+   * The line is inserted, so the new bottom line is lnum + 1.
+   */
+      int
+--- 256,262 ----
+  }
+  
+  /*
+!  * A new line is inserted before line "lnum" (used by :s command).
+   * The line is inserted, so the new bottom line is lnum + 1.
+   */
+      int
+***************
+*** 270,276 ****
+  }
+  
+  /*
+!  * save the lines "lnum" - "lnum" + nlines (used by delete command)
+   * The lines are deleted, so the new bottom line is lnum, unless the buffer
+   * becomes empty.
+   */
+--- 270,276 ----
+  }
+  
+  /*
+!  * Save the lines "lnum" - "lnum" + nlines (used by delete command).
+   * The lines are deleted, so the new bottom line is lnum, unless the buffer
+   * becomes empty.
+   */
+***************
+*** 996,1001 ****
+--- 996,1003 ----
+  		last->uh_alt_next = uhp;
+  		uhp->uh_alt_prev = last;
+  
++ 		if (curbuf->b_u_oldhead == uhp)
++ 		    curbuf->b_u_oldhead = last;
+  		uhp = last;
+  		if (uhp->uh_next != NULL)
+  		    uhp->uh_next->uh_prev = uhp;
+***************
+*** 1406,1415 ****
+  /*
+   * ":undolist": List the leafs of the undo tree
+   */
+- /*ARGSUSED*/
+      void
+  ex_undolist(eap)
+!     exarg_T *eap;
+  {
+      garray_T	ga;
+      u_header_T	*uhp;
+--- 1408,1416 ----
+  /*
+   * ":undolist": List the leafs of the undo tree
+   */
+      void
+  ex_undolist(eap)
+!     exarg_T *eap UNUSED;
+  {
+      garray_T	ga;
+      u_header_T	*uhp;
+***************
+*** 1529,1538 ****
+  /*
+   * ":undojoin": continue adding to the last entry list
+   */
+- /*ARGSUSED*/
+      void
+  ex_undojoin(eap)
+!     exarg_T *eap;
+  {
+      if (curbuf->b_u_newhead == NULL)
+  	return;		    /* nothing changed before */
+--- 1530,1538 ----
+  /*
+   * ":undojoin": continue adding to the last entry list
+   */
+      void
+  ex_undojoin(eap)
+!     exarg_T *eap UNUSED;
+  {
+      if (curbuf->b_u_newhead == NULL)
+  	return;		    /* nothing changed before */
+*** ../vim-7.2.440/src/version.c	2010-05-28 22:06:41.000000000 +0200
+--- src/version.c	2010-05-30 16:53:56.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     441,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+127. You bring your laptop and cellular phone to church.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

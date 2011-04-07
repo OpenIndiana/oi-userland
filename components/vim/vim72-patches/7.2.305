@@ -1,0 +1,105 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.305
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.305
+Problem:    Recursively redrawing causes a memory leak. (Dominique Pelle)
+Solution:   Disallow recursive screen updating.
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.304/src/screen.c	2009-11-11 17:07:25.000000000 +0100
+--- src/screen.c	2009-11-17 16:30:53.000000000 +0100
+***************
+*** 323,328 ****
+--- 323,329 ----
+      int		did_one;
+  #endif
+  
++     /* Don't do anything if the screen structures are (not yet) valid. */
+      if (!screen_valid(TRUE))
+  	return;
+  
+***************
+*** 342,348 ****
+      if (curwin->w_lines_valid == 0 && type < NOT_VALID)
+  	type = NOT_VALID;
+  
+!     if (!redrawing())
+      {
+  	redraw_later(type);		/* remember type for next time */
+  	must_redraw = type;
+--- 343,351 ----
+      if (curwin->w_lines_valid == 0 && type < NOT_VALID)
+  	type = NOT_VALID;
+  
+!     /* Postpone the redrawing when it's not needed and when being called
+!      * recursively. */
+!     if (!redrawing() || updating_screen)
+      {
+  	redraw_later(type);		/* remember type for next time */
+  	must_redraw = type;
+***************
+*** 582,587 ****
+--- 585,591 ----
+  
+  /*
+   * Prepare for updating one or more windows.
++  * Caller must check for "updating_screen" already set to avoid recursiveness.
+   */
+      static void
+  update_prepare()
+***************
+*** 663,669 ****
+  	    doit = TRUE;
+      }
+  
+!     if (!doit)
+  	return;
+  
+      /* update all windows that need updating */
+--- 667,675 ----
+  	    doit = TRUE;
+      }
+  
+!     /* Return when there is nothing to do or screen updating already
+!      * happening. */
+!     if (!doit || updating_screen)
+  	return;
+  
+      /* update all windows that need updating */
+***************
+*** 696,701 ****
+--- 702,711 ----
+  updateWindow(wp)
+      win_T	*wp;
+  {
++     /* return if already busy updating */
++     if (updating_screen)
++ 	return;
++ 
+      update_prepare();
+  
+  #ifdef FEAT_CLIPBOARD
+*** ../vim-7.2.304/src/version.c	2009-11-25 12:38:49.000000000 +0100
+--- src/version.c	2009-11-25 13:01:48.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     305,
+  /**/
+
+-- 
+If the Universe is constantly expanding, why can't I ever find a parking space?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

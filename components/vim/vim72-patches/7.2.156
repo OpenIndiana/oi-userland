@@ -1,0 +1,181 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.156
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.156 (after 7.2.143)
+Problem:    No completion for :scscope and :lcscope commands.
+Solution:   Implement the completion. (Dominique Pelle)
+Files:	    src/if_cscope.c, src/ex_docmd.c, src/proto/if_cscope.pro
+
+
+*** ../vim-7.2.155/src/if_cscope.c	Wed Mar 18 14:30:46 2009
+--- src/if_cscope.c	Wed Apr 22 11:57:49 2009
+***************
+*** 98,103 ****
+--- 98,104 ----
+  static enum
+  {
+      EXP_CSCOPE_SUBCMD,	/* expand ":cscope" sub-commands */
++     EXP_SCSCOPE_SUBCMD,	/* expand ":scscope" sub-commands */
+      EXP_CSCOPE_FIND,	/* expand ":cscope find" arguments */
+      EXP_CSCOPE_KILL	/* expand ":cscope kill" arguments */
+  } expand_what;
+***************
+*** 112,123 ****
+--- 113,135 ----
+      expand_T	*xp;
+      int		idx;
+  {
++     int		current_idx;
++     int		i;
++ 
+      switch (expand_what)
+      {
+      case EXP_CSCOPE_SUBCMD:
+  	/* Complete with sub-commands of ":cscope":
+  	 * add, find, help, kill, reset, show */
+  	return (char_u *)cs_cmds[idx].name;
++     case EXP_SCSCOPE_SUBCMD:
++ 	/* Complete with sub-commands of ":scscope": same sub-commands as
++ 	 * ":cscope" but skip commands which don't support split windows */
++ 	for (i = 0, current_idx = 0; cs_cmds[i].name != NULL; i++)
++ 	    if (cs_cmds[i].cansplit)
++ 		if (current_idx++ == idx)
++ 		    break;
++ 	return (char_u *)cs_cmds[i].name;
+      case EXP_CSCOPE_FIND:
+  	{
+  	    const char *query_type[] =
+***************
+*** 133,147 ****
+  	}
+      case EXP_CSCOPE_KILL:
+  	{
+- 	    int			i;
+- 	    int			current_idx = 0;
+  	    static char_u	connection[2];
+  
+  	    /* ":cscope kill" accepts connection numbers or partial names of
+  	     * the pathname of the cscope database as argument.  Only complete
+  	     * with connection numbers. -1 can also be used to kill all
+  	     * connections. */
+! 	    for (i = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	    {
+  		if (csinfo[i].fname == NULL)
+  		    continue;
+--- 145,157 ----
+  	}
+      case EXP_CSCOPE_KILL:
+  	{
+  	    static char_u	connection[2];
+  
+  	    /* ":cscope kill" accepts connection numbers or partial names of
+  	     * the pathname of the cscope database as argument.  Only complete
+  	     * with connection numbers. -1 can also be used to kill all
+  	     * connections. */
+! 	    for (i = 0, current_idx = 0; i < CSCOPE_MAX_CONNECTIONS; i++)
+  	    {
+  		if (csinfo[i].fname == NULL)
+  		    continue;
+***************
+*** 165,180 ****
+   * Handle command line completion for :cscope command.
+   */
+      void
+! set_context_in_cscope_cmd(xp, arg)
+      expand_T	*xp;
+      char_u	*arg;
+  {
+      char_u	*p;
+  
+      /* Default: expand subcommands */
+      xp->xp_context = EXPAND_CSCOPE;
+-     expand_what = EXP_CSCOPE_SUBCMD;
+      xp->xp_pattern = arg;
+  
+      /* (part of) subcommand already typed */
+      if (*arg != NUL)
+--- 175,192 ----
+   * Handle command line completion for :cscope command.
+   */
+      void
+! set_context_in_cscope_cmd(xp, arg, cmdidx)
+      expand_T	*xp;
+      char_u	*arg;
++     cmdidx_T	cmdidx;
+  {
+      char_u	*p;
+  
+      /* Default: expand subcommands */
+      xp->xp_context = EXPAND_CSCOPE;
+      xp->xp_pattern = arg;
++     expand_what = (cmdidx == CMD_scscope)
++ 			? EXP_SCSCOPE_SUBCMD : EXP_CSCOPE_SUBCMD;
+  
+      /* (part of) subcommand already typed */
+      if (*arg != NUL)
+*** ../vim-7.2.155/src/ex_docmd.c	Wed Apr 22 14:42:26 2009
+--- src/ex_docmd.c	Wed Apr 22 11:57:49 2009
+***************
+*** 3690,3696 ****
+  	    break;
+  #ifdef FEAT_CSCOPE
+  	case CMD_cscope:
+! 	    set_context_in_cscope_cmd(xp, arg);
+  	    break;
+  #endif
+  #ifdef FEAT_LISTCMDS
+--- 3690,3698 ----
+  	    break;
+  #ifdef FEAT_CSCOPE
+  	case CMD_cscope:
+! 	case CMD_lcscope:
+! 	case CMD_scscope:
+! 	    set_context_in_cscope_cmd(xp, arg, ea.cmdidx);
+  	    break;
+  #endif
+  #ifdef FEAT_LISTCMDS
+*** ../vim-7.2.155/src/proto/if_cscope.pro	Wed Mar 18 12:50:58 2009
+--- src/proto/if_cscope.pro	Wed Apr 22 11:57:49 2009
+***************
+*** 1,6 ****
+  /* if_cscope.c */
+  char_u *get_cscope_name __ARGS((expand_T *xp, int idx));
+! void set_context_in_cscope_cmd __ARGS((expand_T *xp, char_u *arg));
+  void do_cscope __ARGS((exarg_T *eap));
+  void do_scscope __ARGS((exarg_T *eap));
+  void do_cstag __ARGS((exarg_T *eap));
+--- 1,6 ----
+  /* if_cscope.c */
+  char_u *get_cscope_name __ARGS((expand_T *xp, int idx));
+! void set_context_in_cscope_cmd __ARGS((expand_T *xp, char_u *arg, cmdidx_T cmdidx));
+  void do_cscope __ARGS((exarg_T *eap));
+  void do_scscope __ARGS((exarg_T *eap));
+  void do_cstag __ARGS((exarg_T *eap));
+*** ../vim-7.2.155/src/version.c	Wed Apr 22 16:07:57 2009
+--- src/version.c	Wed Apr 22 16:21:43 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     156,
+  /**/
+
+-- 
+ARTHUR:  Shut up!  Will you shut up!
+DENNIS:  Ah, now we see the violence inherent in the system.
+ARTHUR:  Shut up!
+DENNIS:  Oh!  Come and see the violence inherent in the system!
+         HELP! HELP!  I'm being repressed!
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

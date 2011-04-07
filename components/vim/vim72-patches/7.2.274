@@ -1,0 +1,130 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.274
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.274
+Problem:    Syntax folding doesn't work properly when adding a comment.
+Solution:   Fix it and add a test. (Lech Lorens)
+Files:	    src/fold.c, src/testdir/test45.in, src/testdir/test45.ok
+
+
+*** ../vim-7.2.273/src/fold.c	2009-09-18 15:16:37.000000000 +0200
+--- src/fold.c	2009-11-03 12:36:37.000000000 +0100
+***************
+*** 2256,2261 ****
+--- 2256,2295 ----
+  	}
+      }
+  
++     /*
++      * If folding is defined by the syntax, it is possible that a change in
++      * one line will cause all sub-folds of the current fold to change (e.g.,
++      * closing a C-style comment can cause folds in the subsequent lines to
++      * appear). To take that into account we should adjust the value of "bot"
++      * to point to the end of the current fold:
++      */
++     if (foldlevelSyntax == getlevel)
++     {
++ 	garray_T *gap = &wp->w_folds;
++ 	fold_T	 *fp = NULL;
++ 	int	  current_fdl = 0;
++ 	linenr_T  fold_start_lnum = 0;
++ 	linenr_T  lnum_rel = fline.lnum;
++ 
++ 	while (current_fdl < fline.lvl)
++ 	{
++ 	    if (!foldFind(gap, lnum_rel, &fp))
++ 		break;
++ 	    ++current_fdl;
++ 
++ 	    fold_start_lnum += fp->fd_top;
++ 	    gap = &fp->fd_nested;
++ 	    lnum_rel -= fp->fd_top;
++ 	}
++ 	if (fp != NULL && current_fdl == fline.lvl)
++ 	{
++ 	    linenr_T fold_end_lnum = fold_start_lnum + fp->fd_len;
++ 
++ 	    if (fold_end_lnum > bot)
++ 		bot = fold_end_lnum;
++ 	}
++     }
++ 
+      start = fline.lnum;
+      end = bot;
+      /* Do at least one line. */
+*** ../vim-7.2.273/src/testdir/test45.in	2007-09-25 17:58:43.000000000 +0200
+--- src/testdir/test45.in	2009-11-03 12:22:38.000000000 +0100
+***************
+*** 28,36 ****
+  k:call append("$", foldlevel("."))
+  :" test syntax folding
+  :set fdm=syntax fdl=0
+! :syn region Hup start="dd" end="hh" fold
+  Gzk:call append("$", "folding " . getline("."))
+  k:call append("$", getline("."))
+  :" test expression folding
+  :fun Flvl()
+    let l = getline(v:lnum)
+--- 28,41 ----
+  k:call append("$", foldlevel("."))
+  :" test syntax folding
+  :set fdm=syntax fdl=0
+! :syn region Hup start="dd" end="ii" fold contains=Fd1,Fd2,Fd3
+! :syn region Fd1 start="ee" end="ff" fold contained
+! :syn region Fd2 start="gg" end="hh" fold contained
+! :syn region Fd3 start="commentstart" end="commentend" fold contained
+  Gzk:call append("$", "folding " . getline("."))
+  k:call append("$", getline("."))
++ jAcommentstart  Acommentend:set fdl=1
++ 3j:call append("$", getline("."))
+  :" test expression folding
+  :fun Flvl()
+    let l = getline(v:lnum)
+*** ../vim-7.2.273/src/testdir/test45.ok	2004-06-13 17:47:37.000000000 +0200
+--- src/testdir/test45.ok	2009-11-03 12:22:50.000000000 +0100
+***************
+*** 8,15 ****
+  0
+  indent 2
+  1
+! folding 8 hh
+      3 cc
+  expr 2
+  1
+  2
+--- 8,16 ----
+  0
+  indent 2
+  1
+! folding 9 ii
+      3 cc
++ 7 gg
+  expr 2
+  1
+  2
+*** ../vim-7.2.273/src/version.c	2009-11-03 14:26:29.000000000 +0100
+--- src/version.c	2009-11-03 14:44:21.000000000 +0100
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     274,
+  /**/
+
+-- 
+BRIDGEKEEPER: What is your favorite colour?
+LAUNCELOT:    Blue.
+BRIDGEKEEPER: Right.  Off you go.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

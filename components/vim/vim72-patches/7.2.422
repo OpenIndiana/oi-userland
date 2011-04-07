@@ -1,0 +1,67 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.422
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.422
+Problem:    May get E763 when using spell dictionaries.
+Solution:   Avoid utf-8 case folded character to be truncated to 8 bits and
+	    differ from latin1. (Dominique Pelle)
+Files:	    src/spell.c
+
+
+*** ../vim-7.2.421/src/spell.c	2010-01-19 13:06:42.000000000 +0100
+--- src/spell.c	2010-05-13 17:29:28.000000000 +0200
+***************
+*** 9780,9789 ****
+      {
+  	for (i = 128; i < 256; ++i)
+  	{
+  	    spelltab.st_isu[i] = utf_isupper(i);
+  	    spelltab.st_isw[i] = spelltab.st_isu[i] || utf_islower(i);
+! 	    spelltab.st_fold[i] = utf_fold(i);
+! 	    spelltab.st_upper[i] = utf_toupper(i);
+  	}
+      }
+      else
+--- 9780,9795 ----
+      {
+  	for (i = 128; i < 256; ++i)
+  	{
++ 	    int f = utf_fold(i);
++ 	    int u = utf_toupper(i);
++ 
+  	    spelltab.st_isu[i] = utf_isupper(i);
+  	    spelltab.st_isw[i] = spelltab.st_isu[i] || utf_islower(i);
+! 	    /* The folded/upper-cased value is different between latin1 and
+! 	     * utf8 for 0xb5, causing E763 for no good reason.  Use the latin1
+! 	     * value for utf-8 to avoid this. */
+! 	    spelltab.st_fold[i] = (f < 256) ? f : i;
+! 	    spelltab.st_upper[i] = (u < 256) ? u : i;
+  	}
+      }
+      else
+*** ../vim-7.2.421/src/version.c	2010-05-13 17:35:52.000000000 +0200
+--- src/version.c	2010-05-13 17:46:03.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     422,
+  /**/
+
+-- 
+Q. What happens to programmers when they die?
+A: MS-Windows programmers are reinstalled.  C++ programmers become undefined,
+   anyone who refers to them will die as well.  Java programmers reincarnate
+   after being garbage collected.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

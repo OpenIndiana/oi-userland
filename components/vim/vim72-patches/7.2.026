@@ -1,0 +1,105 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.026
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.026 (after 7.2.010)
+Problem:    "K" doesn't use the length of the identifier but uses the rest of
+	    the line.
+Solution:   Copy the desired number of characters first.
+Files:	    src/normal.c
+
+
+*** ../vim-7.2.025/src/normal.c	Thu Oct  2 22:55:17 2008
+--- src/normal.c	Sat Nov  1 13:41:03 2008
+***************
+*** 183,188 ****
+--- 183,190 ----
+  static void	nv_cursorhold __ARGS((cmdarg_T *cap));
+  #endif
+  
++ static char *e_noident = N_("E349: No identifier under cursor");
++ 
+  /*
+   * Function to be called for a Normal or Visual mode command.
+   * The argument is a cmdarg_T.
+***************
+*** 3510,3516 ****
+  	if (find_type & FIND_STRING)
+  	    EMSG(_("E348: No string under cursor"));
+  	else
+! 	    EMSG(_("E349: No identifier under cursor"));
+  	return 0;
+      }
+      ptr += col;
+--- 3512,3518 ----
+  	if (find_type & FIND_STRING)
+  	    EMSG(_("E348: No string under cursor"));
+  	else
+! 	    EMSG(_(e_noident));
+  	return 0;
+      }
+      ptr += col;
+***************
+*** 5472,5479 ****
+  	    {
+  		/* An external command will probably use an argument starting
+  		 * with "-" as an option.  To avoid trouble we skip the "-". */
+! 		while (*ptr == '-')
+  		    ++ptr;
+  
+  		/* When a count is given, turn it into a range.  Is this
+  		 * really what we want? */
+--- 5474,5490 ----
+  	    {
+  		/* An external command will probably use an argument starting
+  		 * with "-" as an option.  To avoid trouble we skip the "-". */
+! 		while (*ptr == '-' && n > 0)
+! 		{
+  		    ++ptr;
++ 		    --n;
++ 		}
++ 		if (n == 0)
++ 		{
++ 		    EMSG(_(e_noident));	 /* found dashes only */
++ 		    vim_free(buf);
++ 		    return;
++ 		}
+  
+  		/* When a count is given, turn it into a range.  Is this
+  		 * really what we want? */
+***************
+*** 5520,5526 ****
+--- 5531,5539 ----
+      if (cmdchar == 'K' && !kp_help)
+      {
+  	/* Escape the argument properly for a shell command */
++ 	ptr = vim_strnsave(ptr, n);
+  	p = vim_strsave_shellescape(ptr, TRUE);
++ 	vim_free(ptr);
+  	if (p == NULL)
+  	{
+  	    vim_free(buf);
+*** ../vim-7.2.025/src/version.c	Thu Oct  2 22:55:17 2008
+--- src/version.c	Sat Nov  1 13:50:53 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     26,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+161. You get up before the sun rises to check your e-mail, and you
+     find yourself in the very same chair long after the sun has set.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

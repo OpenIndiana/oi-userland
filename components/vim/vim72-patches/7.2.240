@@ -1,0 +1,69 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.240
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.240
+Problem:    Crash when using find/replace dialog repeatedly. (Michiel
+	    Hartsuiker)
+Solution:   Avoid doing the operation while busy or recursively.  Also refuse
+	    replace when text is locked.
+Files:	    src/gui.c
+
+
+*** ../vim-7.2.239/src/gui.c	2009-06-24 18:31:36.000000000 +0200
+--- src/gui.c	2009-07-22 16:54:16.000000000 +0200
+***************
+*** 5004,5009 ****
+--- 5004,5022 ----
+      char_u	*p;
+      regmatch_T	regmatch;
+      int		save_did_emsg = did_emsg;
++     static int  busy = FALSE;
++ 
++     /* When the screen is being updated we should not change buffers and
++      * windows structures, it may cause freed memory to be used.  Also don't
++      * do this recursively (pressing "Find" quickly several times. */
++     if (updating_screen || busy)
++ 	return FALSE;
++ 
++     /* refuse replace when text cannot be changed */
++     if ((type == FRD_REPLACE || type == FRD_REPLACEALL) && text_locked())
++ 	return FALSE;
++ 
++     busy = TRUE;
+  
+      ga_init2(&ga, 1, 100);
+      if (type == FRD_REPLACEALL)
+***************
+*** 5094,5099 ****
+--- 5107,5113 ----
+      }
+  
+      vim_free(ga.ga_data);
++     busy = FALSE;
+      return (ga.ga_len > 0);
+  }
+  
+*** ../vim-7.2.239/src/version.c	2009-07-22 16:22:33.000000000 +0200
+--- src/version.c	2009-07-29 11:09:13.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     240,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+113. You are asked about a bus schedule, you wonder if it is 16 or 32 bits.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

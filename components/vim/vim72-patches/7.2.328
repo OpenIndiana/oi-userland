@@ -1,0 +1,52 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.328
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.328
+Problem:    has("win64") does not return 1 on 64 bit MS-Windows version.
+Solution:   Also check for _WIN64 besides WIN64.
+Files:	    src/eval.c
+
+
+*** ../vim-7.2.327/src/eval.c	2009-12-31 13:18:05.000000000 +0100
+--- src/eval.c	2010-01-06 16:28:23.000000000 +0100
+***************
+*** 11453,11459 ****
+  #if defined(UNIX) && (defined(__CYGWIN32__) || defined(__CYGWIN__))
+  	"win32unix",
+  #endif
+! #ifdef WIN64
+  	"win64",
+  #endif
+  #ifdef EBCDIC
+--- 11453,11459 ----
+  #if defined(UNIX) && (defined(__CYGWIN32__) || defined(__CYGWIN__))
+  	"win32unix",
+  #endif
+! #if defined(WIN64) || defined(_WIN64)
+  	"win64",
+  #endif
+  #ifdef EBCDIC
+*** ../vim-7.2.327/src/version.c	2010-01-06 18:24:53.000000000 +0100
+--- src/version.c	2010-01-12 12:10:06.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     328,
+  /**/
+
+-- 
+From "know your smileys":
+ :.-(	Crying
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

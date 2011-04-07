@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.012
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.012
+Problem:    Compiler warnings when building with startup timing.
+Solution:   Add type casts.
+Files:	    src/ex_cmds2.c
+
+
+*** ../vim-7.2.011/src/ex_cmds2.c	Sun Jul 13 19:36:09 2008
+--- src/ex_cmds2.c	Tue Sep  2 11:14:41 2008
+***************
+*** 3145,3152 ****
+  	verbose_leave();
+      }
+  #ifdef STARTUPTIME
+!     vim_snprintf(IObuff, IOSIZE, "sourcing %s", fname);
+!     time_msg(IObuff, &tv_start);
+      time_pop(&tv_rel);
+  #endif
+  
+--- 3145,3152 ----
+  	verbose_leave();
+      }
+  #ifdef STARTUPTIME
+!     vim_snprintf((char *)IObuff, IOSIZE, "sourcing %s", fname);
+!     time_msg((char *)IObuff, &tv_start);
+      time_pop(&tv_rel);
+  #endif
+  
+*** ../vim-7.2.011/src/version.c	Sun Sep  7 13:54:31 2008
+--- src/version.c	Sun Sep  7 15:49:00 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     12,
+  /**/
+
+-- 
+He who laughs last, thinks slowest.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

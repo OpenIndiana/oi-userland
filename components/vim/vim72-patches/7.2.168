@@ -1,0 +1,74 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.168
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.168
+Problem:    When no ctags program can be found, "make tags" attempts to
+	    execute the first C file.
+Solution:   Default to "ctags" when no ctags program can be found.
+Files:	    src/configure.in, src/auto/configure
+
+
+*** ../vim-7.2.167/src/configure.in	2009-04-22 17:50:53.000000000 +0200
+--- src/configure.in	2009-05-05 17:46:45.000000000 +0200
+***************
+*** 2968,2974 ****
+  dnl Link with xpg4, it is said to make Korean locale working
+  AC_CHECK_LIB(xpg4, _xpg4_setrunelocale, [LIBS="$LIBS -lxpg4"],,)
+  
+! dnl Check how we can run ctags
+  dnl --version for Exuberant ctags (preferred)
+  dnl       Add --fields=+S to get function signatures for omni completion.
+  dnl -t for typedefs (many ctags have this)
+--- 2968,2974 ----
+  dnl Link with xpg4, it is said to make Korean locale working
+  AC_CHECK_LIB(xpg4, _xpg4_setrunelocale, [LIBS="$LIBS -lxpg4"],,)
+  
+! dnl Check how we can run ctags.  Default to "ctags" when nothing works.
+  dnl --version for Exuberant ctags (preferred)
+  dnl       Add --fields=+S to get function signatures for omni completion.
+  dnl -t for typedefs (many ctags have this)
+***************
+*** 2980,2985 ****
+--- 2980,2986 ----
+  if (eval ctags --version /dev/null | grep Exuberant) < /dev/null 1>&AC_FD_CC 2>&1; then
+    TAGPRG="ctags -I INIT+ --fields=+S"
+  else
++   TAGPRG="ctags"
+    (eval etags	   /dev/null) < /dev/null 1>&AC_FD_CC 2>&1 && TAGPRG="etags"
+    (eval etags -c   /dev/null) < /dev/null 1>&AC_FD_CC 2>&1 && TAGPRG="etags -c"
+    (eval ctags	   /dev/null) < /dev/null 1>&AC_FD_CC 2>&1 && TAGPRG="ctags"
+*** ../vim-7.2.167/src/auto/configure	2009-04-22 17:50:53.000000000 +0200
+--- src/auto/configure	2009-05-13 14:38:10.000000000 +0200
+***************
+*** 15707,15712 ****
+--- 15723,15729 ----
+  if (eval ctags --version /dev/null | grep Exuberant) < /dev/null 1>&5 2>&1; then
+    TAGPRG="ctags -I INIT+ --fields=+S"
+  else
++   TAGPRG="ctags"
+    (eval etags	   /dev/null) < /dev/null 1>&5 2>&1 && TAGPRG="etags"
+    (eval etags -c   /dev/null) < /dev/null 1>&5 2>&1 && TAGPRG="etags -c"
+    (eval ctags	   /dev/null) < /dev/null 1>&5 2>&1 && TAGPRG="ctags"
+*** ../vim-7.2.167/src/version.c	2009-05-13 12:46:36.000000000 +0200
+--- src/version.c	2009-05-13 14:46:35.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     168,
+  /**/
+
+-- 
+Zen Microsystems: we're the om in .commmmmmmmm
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

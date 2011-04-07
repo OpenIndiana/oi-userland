@@ -1,0 +1,48 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.298
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.298
+Problem:    ":vimgrep" crashes when there is an autocommand that sets a
+	    window-local variable.
+Solution:   Initialize the w: hashtab for re-use. (Yukihiro Nakadaira)
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.297/src/fileio.c	2009-11-17 12:08:48.000000000 +0100
+--- src/fileio.c	2009-11-17 13:22:06.000000000 +0100
+***************
+*** 8597,8602 ****
+--- 8605,8611 ----
+  	    curwin = firstwin;
+  # ifdef FEAT_EVAL
+  	vars_clear(&aucmd_win->w_vars.dv_hashtab);  /* free all w: variables */
++ 	hash_init(&aucmd_win->w_vars.dv_hashtab);   /* re-use the hashtab */
+  # endif
+  #else
+  	curwin = aco->save_curwin;
+*** ../vim-7.2.297/src/version.c	2009-11-17 12:43:19.000000000 +0100
+--- src/version.c	2009-11-17 14:56:19.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     298,
+  /**/
+
+-- 
+Eye have a spelling checker, it came with my PC;
+It plainly marks four my revue mistakes I cannot sea.
+I've run this poem threw it, I'm sure your please to no,
+It's letter perfect in it's weigh, my checker tolled me sew!
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

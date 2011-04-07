@@ -1,0 +1,93 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.414
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.414
+Problem:    CTRK-K <space> <space> does not produce 0xa0 as expected. (Tony
+	    Mechelynck)
+Solution:   Remove the Unicode range 0xe000 - 0xefff from digraphs, these are
+	    not valid characters.
+Files:	    src/digraph.c
+
+
+*** ../vim-7.2.413/src/digraph.c	2009-05-13 14:12:14.000000000 +0200
+--- src/digraph.c	2010-04-11 17:28:22.000000000 +0200
+***************
+*** 1933,1977 ****
+  	{'7', 'c', 0x3226},
+  	{'8', 'c', 0x3227},
+  	{'9', 'c', 0x3228},
+! 	{' ', ' ', 0xe000},
+! 	{'/', 'c', 0xe001},
+! 	{'U', 'A', 0xe002},
+! 	{'U', 'B', 0xe003},
+! 	{'"', '3', 0xe004},
+! 	{'"', '1', 0xe005},
+! 	{'"', '!', 0xe006},
+! 	{'"', '\'', 0xe007},
+! 	{'"', '>', 0xe008},
+! 	{'"', '?', 0xe009},
+! 	{'"', '-', 0xe00a},
+! 	{'"', '(', 0xe00b},
+! 	{'"', '.', 0xe00c},
+! 	{'"', ':', 0xe00d},
+! 	{'"', '0', 0xe00e},
+! 	{'"', '"', 0xe00f},
+! 	{'"', '<', 0xe010},
+! 	{'"', ',', 0xe011},
+! 	{'"', ';', 0xe012},
+! 	{'"', '_', 0xe013},
+! 	{'"', '=', 0xe014},
+! 	{'"', '/', 0xe015},
+! 	{'"', 'i', 0xe016},
+! 	{'"', 'd', 0xe017},
+! 	{'"', 'p', 0xe018},
+! 	{';', ';', 0xe019},
+! 	{',', ',', 0xe01a},
+! 	{'b', '3', 0xe01b},
+! 	{'C', 'i', 0xe01c},
+! 	{'f', '(', 0xe01d},
+! 	{'e', 'd', 0xe01e},
+! 	{'a', 'm', 0xe01f},
+! 	{'p', 'm', 0xe020},
+! 	{'F', 'l', 0xe023},
+! 	{'G', 'F', 0xe024},
+! 	{'>', 'V', 0xe025},
+! 	{'!', '*', 0xe026},
+! 	{'?', '*', 0xe027},
+! 	{'J', '<', 0xe028},
+  	{'f', 'f', 0xfb00},
+  	{'f', 'i', 0xfb01},
+  	{'f', 'l', 0xfb02},
+--- 1933,1940 ----
+  	{'7', 'c', 0x3226},
+  	{'8', 'c', 0x3227},
+  	{'9', 'c', 0x3228},
+! 	/* code points 0xe000 - 0xefff excluded, they have no assigned
+! 	 * characters, only used in proposals. */
+  	{'f', 'f', 0xfb00},
+  	{'f', 'i', 0xfb01},
+  	{'f', 'l', 0xfb02},
+*** ../vim-7.2.413/src/version.c	2010-05-07 16:05:48.000000000 +0200
+--- src/version.c	2010-05-07 16:17:26.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     414,
+  /**/
+
+-- 
+How To Keep A Healthy Level Of Insanity:
+4. Put your garbage can on your desk and label it "in".
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

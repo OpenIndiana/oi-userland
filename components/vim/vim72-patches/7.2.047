@@ -1,0 +1,88 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.047
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.047
+Problem:    Starting Vim with the -nb argument while it's not supported causes
+	    the other side to hang.
+Solution:   When -nb is used while it's not supported exit Vim. (Xavier de
+	    Gaye)
+Files:	    src/main.c, src/vim.h
+
+
+*** ../vim-7.2.046/src/main.c	Sat Nov 15 14:10:23 2008
+--- src/main.c	Thu Nov 20 14:09:27 2008
+***************
+*** 1510,1516 ****
+  early_arg_scan(parmp)
+      mparm_T	*parmp;
+  {
+! #if defined(FEAT_XCLIPBOARD) || defined(FEAT_CLIENTSERVER)
+      int		argc = parmp->argc;
+      char	**argv = parmp->argv;
+      int		i;
+--- 1510,1517 ----
+  early_arg_scan(parmp)
+      mparm_T	*parmp;
+  {
+! #if defined(FEAT_XCLIPBOARD) || defined(FEAT_CLIENTSERVER) \
+! 	|| !defined(FEAT_NETBEANS_INTG)
+      int		argc = parmp->argc;
+      char	**argv = parmp->argv;
+      int		i;
+***************
+*** 1582,1587 ****
+--- 1583,1596 ----
+  	else if (STRICMP(argv[i], "--echo-wid") == 0)
+  	    echo_wid_arg = TRUE;
+  # endif
++ # ifndef FEAT_NETBEANS_INTG
++ 	else if (strncmp(argv[i], "-nb", (size_t)3) == 0)
++         {
++             mch_errmsg(_("'-nb' cannot be used: not enabled at compile time\n"));
++             mch_exit(2);
++         }
++ # endif
++ 
+      }
+  #endif
+  }
+*** ../vim-7.2.046/src/vim.h	Thu Nov 20 10:26:19 2008
+--- src/vim.h	Thu Nov 20 12:06:14 2008
+***************
+*** 1986,1991 ****
+--- 1986,1994 ----
+  # endif
+  #endif
+  
++ #ifndef FEAT_NETBEANS_INTG
++ # undef NBDEBUG
++ #endif
+  #ifdef NBDEBUG /* Netbeans debugging. */
+  # include "nbdebug.h"
+  #else
+*** ../vim-7.2.046/src/version.c	Thu Nov 20 11:55:53 2008
+--- src/version.c	Thu Nov 20 14:07:57 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     47,
+  /**/
+
+-- 
+FIRST HEAD:  Oh! quick! get the sword out I want to cut his head off.
+THIRD HEAD:  Oh, cut your own head off.
+SECOND HEAD: Yes - do us all a favour.
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

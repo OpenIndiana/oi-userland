@@ -1,0 +1,48 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.306
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.306
+Problem:    shellescape("10%%", 1) only escapes first %. (Christian Brabandt)
+Solution:   Don't copy the character after the escaped one.
+Files:	    src/misc2.c
+
+
+*** ../vim-7.2.305/src/misc2.c	2009-11-11 16:56:13.000000000 +0100
+--- src/misc2.c	2009-11-25 17:11:49.000000000 +0100
+***************
+*** 1390,1395 ****
+--- 1390,1396 ----
+  		*d++ = '\\';		/* insert backslash */
+  		while (--l >= 0)	/* copy the var */
+  		    *d++ = *p++;
++ 		continue;
+  	    }
+  
+  	    MB_COPY_CHAR(p, d);
+*** ../vim-7.2.305/src/version.c	2009-11-25 13:03:29.000000000 +0100
+--- src/version.c	2009-11-25 17:13:54.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     306,
+  /**/
+
+-- 
+Article in the first Free Software Magazine: "Bram Moolenaar studied electrical
+engineering at the Technical University of Delft and graduated in 1985 on a
+multi-processor Unix architecture."
+Response by "dimator": Could the school not afford a proper stage for the
+ceremony?
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

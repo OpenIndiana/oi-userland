@@ -1,0 +1,145 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.148
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.148
+Problem:    When searching for "$" while 'hlsearch' is set, highlighting the
+	    character after the line does not work in the cursor column.
+	    Also highlighting for Visual mode after the line end when this
+	    isn't needed.  (Markus Heidelberg)
+Solution:   Only compare the cursor column in the cursor line.  Only highlight
+	    for Visual selection after the last character when it's needed to
+	    see where the Visual selection ends.
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.147/src/screen.c	Wed Mar 18 16:26:31 2009
+--- src/screen.c	Wed Mar 18 17:24:56 2009
+***************
+*** 2889,2896 ****
+  	}
+  	else
+  	    tocol = MAXCOL;
+! 	if (fromcol == tocol)		/* do at least one character */
+! 	    tocol = fromcol + 1;	/* happens when past end of line */
+  	area_highlighting = TRUE;
+  	attr = hl_attr(HLF_I);
+      }
+--- 2889,2897 ----
+  	}
+  	else
+  	    tocol = MAXCOL;
+! 	/* do at least one character; happens when past end of line */
+! 	if (fromcol == tocol)
+! 	    tocol = fromcol + 1;
+  	area_highlighting = TRUE;
+  	attr = hl_attr(HLF_I);
+      }
+***************
+*** 4118,4123 ****
+--- 4119,4125 ----
+  # endif
+  				    (col < W_WIDTH(wp)))
+  				&& !(noinvcur
++ 				    && lnum == wp->w_cursor.lnum
+  				    && (colnr_T)vcol == wp->w_virtcol)))
+  			&& lcs_eol_one >= 0)
+  		{
+***************
+*** 4259,4265 ****
+  	 * preedit_changed and commit.  Thus Vim can't set "im_is_active", use
+  	 * im_is_preediting() here. */
+  	if (xic != NULL
+! 		&& lnum == curwin->w_cursor.lnum
+  		&& (State & INSERT)
+  		&& !p_imdisable
+  		&& im_is_preediting()
+--- 4261,4267 ----
+  	 * preedit_changed and commit.  Thus Vim can't set "im_is_active", use
+  	 * im_is_preediting() here. */
+  	if (xic != NULL
+! 		&& lnum == wp->w_cursor.lnum
+  		&& (State & INSERT)
+  		&& !p_imdisable
+  		&& im_is_preediting()
+***************
+*** 4268,4274 ****
+  	    colnr_T tcol;
+  
+  	    if (preedit_end_col == MAXCOL)
+! 		getvcol(curwin, &(curwin->w_cursor), &tcol, NULL, NULL);
+  	    else
+  		tcol = preedit_end_col;
+  	    if ((long)preedit_start_col <= vcol && vcol < (long)tcol)
+--- 4270,4276 ----
+  	    colnr_T tcol;
+  
+  	    if (preedit_end_col == MAXCOL)
+! 		getvcol(curwin, &(wp->w_cursor), &tcol, NULL, NULL);
+  	    else
+  		tcol = preedit_end_col;
+  	    if ((long)preedit_start_col <= vcol && vcol < (long)tcol)
+***************
+*** 4365,4371 ****
+  	    }
+  #endif
+  	    if (lcs_eol == lcs_eol_one
+! 		    && ((area_attr != 0 && vcol == fromcol && c == NUL)
+  #ifdef FEAT_SEARCH_EXTRA
+  			/* highlight 'hlsearch' match at end of line */
+  			|| (prevcol_hl_flag == TRUE
+--- 4367,4379 ----
+  	    }
+  #endif
+  	    if (lcs_eol == lcs_eol_one
+! 		    && ((area_attr != 0 && vcol == fromcol
+! #ifdef FEAT_VISUAL
+! 			    && (VIsual_mode != Ctrl_V
+! 				|| lnum == VIsual.lnum
+! 				|| lnum == curwin->w_cursor.lnum)
+! #endif
+! 			    && c == NUL)
+  #ifdef FEAT_SEARCH_EXTRA
+  			/* highlight 'hlsearch' match at end of line */
+  			|| (prevcol_hl_flag == TRUE
+***************
+*** 4459,4465 ****
+  	if (c == NUL)
+  	{
+  #ifdef FEAT_SYN_HL
+! 	    if (eol_hl_off > 0 && vcol - eol_hl_off == (long)wp->w_virtcol)
+  	    {
+  		/* highlight last char after line */
+  		--col;
+--- 4467,4474 ----
+  	if (c == NUL)
+  	{
+  #ifdef FEAT_SYN_HL
+! 	    if (eol_hl_off > 0 && vcol - eol_hl_off == (long)wp->w_virtcol
+! 		    && lnum == wp->w_cursor.lnum)
+  	    {
+  		/* highlight last char after line */
+  		--col;
+*** ../vim-7.2.147/src/version.c	Wed Mar 18 16:26:31 2009
+--- src/version.c	Wed Mar 18 19:05:37 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     148,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+239. You think "surfing" is something you do on dry land.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

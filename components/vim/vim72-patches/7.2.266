@@ -1,0 +1,244 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.266
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.266
+Problem:    When an expression abbreviation is triggered, the typed character
+	    is unknown.
+Solution:   Make the typed character available in v:char.
+Files:	    runtime/doc/map.txt, src/eval.c, src/getchar.c, src/ops.c,
+	    src/proto/eval.pro
+
+
+*** ../vim-7.2.265/runtime/doc/map.txt	2008-08-09 19:36:49.000000000 +0200
+--- runtime/doc/map.txt	2009-09-23 19:39:19.000000000 +0200
+***************
+*** 224,229 ****
+--- 224,233 ----
+  The result of the InsertDot() function will be inserted.  It could check the
+  text before the cursor and start omni completion when some condition is met.
+  
++ For abbreviations |v:char| is set to the character that was typed to trigger
++ the abbreviation.  You can use this to decide how to expand the {lhs}.  You
++ can't change v:char and you should not insert it.
++ 
+  Be very careful about side effects!  The expression is evaluated while
+  obtaining characters, you may very well make the command dysfunctional.
+  For this reason the following is blocked:
+*** ../vim-7.2.265/src/eval.c	2009-06-03 14:25:47.000000000 +0200
+--- src/eval.c	2009-09-23 19:36:32.000000000 +0200
+***************
+*** 18101,18106 ****
+--- 18101,18131 ----
+  }
+  
+  /*
++  * Set v:char to character "c".
++  */
++     void
++ set_vim_var_char(c)
++     int c;
++ {
++ #ifdef FEAT_MBYTE
++     char_u	buf[MB_MAXBYTES];
++ #else
++     char_u	buf[2];
++ #endif
++ 
++ #ifdef FEAT_MBYTE
++     if (has_mbyte)
++ 	buf[(*mb_char2bytes)(c, buf)] = NUL;
++     else
++ #endif
++     {
++ 	buf[0] = c;
++ 	buf[1] = NUL;
++     }
++     set_vim_var_string(VV_CHAR, buf, -1);
++ }
++ 
++ /*
+   * Set v:count to "count" and v:count1 to "count1".
+   * When "set_prevcount" is TRUE first set v:prevcount from v:count.
+   */
+*** ../vim-7.2.265/src/getchar.c	2009-07-14 13:44:43.000000000 +0200
+--- src/getchar.c	2009-09-23 19:35:54.000000000 +0200
+***************
+*** 129,135 ****
+  static void	validate_maphash __ARGS((void));
+  static void	showmap __ARGS((mapblock_T *mp, int local));
+  #ifdef FEAT_EVAL
+! static char_u	*eval_map_expr __ARGS((char_u *str));
+  #endif
+  
+  /*
+--- 129,135 ----
+  static void	validate_maphash __ARGS((void));
+  static void	showmap __ARGS((mapblock_T *mp, int local));
+  #ifdef FEAT_EVAL
+! static char_u	*eval_map_expr __ARGS((char_u *str, int c));
+  #endif
+  
+  /*
+***************
+*** 2446,2452 ****
+  			    if (tabuf.typebuf_valid)
+  			    {
+  				vgetc_busy = 0;
+! 				s = eval_map_expr(mp->m_str);
+  				vgetc_busy = save_vgetc_busy;
+  			    }
+  			    else
+--- 2446,2452 ----
+  			    if (tabuf.typebuf_valid)
+  			    {
+  				vgetc_busy = 0;
+! 				s = eval_map_expr(mp->m_str, NUL);
+  				vgetc_busy = save_vgetc_busy;
+  			    }
+  			    else
+***************
+*** 4367,4375 ****
+  	     * abbreviation, but is not inserted into the input stream.
+  	     */
+  	    j = 0;
+- 					/* special key code, split up */
+  	    if (c != Ctrl_RSB)
+  	    {
+  		if (IS_SPECIAL(c) || c == K_SPECIAL)
+  		{
+  		    tb[j++] = K_SPECIAL;
+--- 4367,4375 ----
+  	     * abbreviation, but is not inserted into the input stream.
+  	     */
+  	    j = 0;
+  	    if (c != Ctrl_RSB)
+  	    {
++ 					/* special key code, split up */
+  		if (IS_SPECIAL(c) || c == K_SPECIAL)
+  		{
+  		    tb[j++] = K_SPECIAL;
+***************
+*** 4398,4404 ****
+  	    }
+  #ifdef FEAT_EVAL
+  	    if (mp->m_expr)
+! 		s = eval_map_expr(mp->m_str);
+  	    else
+  #endif
+  		s = mp->m_str;
+--- 4398,4404 ----
+  	    }
+  #ifdef FEAT_EVAL
+  	    if (mp->m_expr)
+! 		s = eval_map_expr(mp->m_str, c);
+  	    else
+  #endif
+  		s = mp->m_str;
+***************
+*** 4434,4441 ****
+   * special characters.
+   */
+      static char_u *
+! eval_map_expr(str)
+      char_u	*str;
+  {
+      char_u	*res;
+      char_u	*p;
+--- 4434,4442 ----
+   * special characters.
+   */
+      static char_u *
+! eval_map_expr(str, c)
+      char_u	*str;
++     int		c;	    /* NUL or typed character for abbreviation */
+  {
+      char_u	*res;
+      char_u	*p;
+***************
+*** 4452,4457 ****
+--- 4453,4459 ----
+  #ifdef FEAT_EX_EXTRA
+      ++ex_normal_lock;
+  #endif
++     set_vim_var_char(c);  /* set v:char to the typed character */
+      save_cursor = curwin->w_cursor;
+      p = eval_to_string(str, NULL, FALSE);
+      --textlock;
+*** ../vim-7.2.265/src/ops.c	2009-07-01 18:04:30.000000000 +0200
+--- src/ops.c	2009-09-23 19:11:40.000000000 +0200
+***************
+*** 4473,4483 ****
+      int		use_sandbox = was_set_insecurely((char_u *)"formatexpr",
+  								   OPT_LOCAL);
+      int		r;
+- #ifdef FEAT_MBYTE
+-     char_u	buf[MB_MAXBYTES];
+- #else
+-     char_u	buf[2];
+- #endif
+  
+      /*
+       * Set v:lnum to the first line number and v:count to the number of lines.
+--- 4473,4478 ----
+***************
+*** 4485,4501 ****
+       */
+      set_vim_var_nr(VV_LNUM, lnum);
+      set_vim_var_nr(VV_COUNT, count);
+! 
+! #ifdef FEAT_MBYTE
+!     if (has_mbyte)
+! 	buf[(*mb_char2bytes)(c, buf)] = NUL;
+!     else
+! #endif
+!     {
+! 	buf[0] = c;
+! 	buf[1] = NUL;
+!     }
+!     set_vim_var_string(VV_CHAR, buf, -1);
+  
+      /*
+       * Evaluate the function.
+--- 4480,4486 ----
+       */
+      set_vim_var_nr(VV_LNUM, lnum);
+      set_vim_var_nr(VV_COUNT, count);
+!     set_vim_var_char(c);
+  
+      /*
+       * Evaluate the function.
+*** ../vim-7.2.265/src/proto/eval.pro	2008-11-20 16:11:03.000000000 +0100
+--- src/proto/eval.pro	2009-09-23 19:36:30.000000000 +0200
+***************
+*** 61,66 ****
+--- 61,67 ----
+  long get_vim_var_nr __ARGS((int idx));
+  char_u *get_vim_var_str __ARGS((int idx));
+  list_T *get_vim_var_list __ARGS((int idx));
++ void set_vim_var_char __ARGS((int c));
+  void set_vcount __ARGS((long count, long count1, int set_prevcount));
+  void set_vim_var_string __ARGS((int idx, char_u *val, int len));
+  void set_vim_var_list __ARGS((int idx, list_T *val));
+*** ../vim-7.2.265/src/version.c	2009-09-30 13:23:57.000000000 +0200
+--- src/version.c	2009-09-30 15:11:29.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     266,
+  /**/
+
+-- 
+Life would be so much easier if we could just look at the source code.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

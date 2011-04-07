@@ -1,0 +1,162 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.424
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.424
+Problem:    ":colorscheme" without an argument doesn't do anything.
+Solution:   Make it echo the current color scheme name.  (partly by Christian
+	    Brabandt)
+Files:	    runtime/doc/syntax.txt, src/ex_cmds.h, src/ex_docmd.c
+
+
+*** ../vim-7.2.423/runtime/doc/syntax.txt	2008-08-09 19:36:52.000000000 +0200
+--- runtime/doc/syntax.txt	2010-05-14 15:27:47.000000000 +0200
+***************
+*** 113,118 ****
+--- 113,121 ----
+      :syntax off		$VIMRUNTIME/syntax/nosyntax.vim
+  Also see |syntax-loading|.
+  
++ NOTE: If displaying long lines is slow and switching off syntax highlighting
++ makes it fast, consider setting the 'synmaxcol' option to a lower value.
++ 
+  ==============================================================================
+  2. Syntax files						*:syn-files*
+  
+***************
+*** 3829,3841 ****
+  in their own color.
+  
+  						*:colo* *:colorscheme* *E185*
+  :colo[rscheme] {name}	Load color scheme {name}.  This searches 'runtimepath'
+  			for the file "colors/{name}.vim.  The first one that
+  			is found is loaded.
+! 			To see the name of the currently active color scheme
+! 			(if there is one): >
+! 				:echo g:colors_name
+! <			Doesn't work recursively, thus you can't use
+  			":colorscheme" in a color scheme script.
+  			After the color scheme has been loaded the
+  			|ColorScheme| autocommand event is triggered.
+--- 3871,3890 ----
+  in their own color.
+  
+  						*:colo* *:colorscheme* *E185*
++ :colo[rscheme]		Output the name of the currently active color scheme.
++ 			This is basically the same as >
++ 				:echo g:colors_name
++ <			In case g:colors_name has not been defined :colo will
++ 			output "default".  When compiled without the |+eval|
++ 			feature it will output "unknown".
++ 
+  :colo[rscheme] {name}	Load color scheme {name}.  This searches 'runtimepath'
+  			for the file "colors/{name}.vim.  The first one that
+  			is found is loaded.
+! 			To see the name of the currently active color scheme: >
+! 				:colo
+! <			The name is also stored in the g:colors_name variable.
+! 			Doesn't work recursively, thus you can't use
+  			":colorscheme" in a color scheme script.
+  			After the color scheme has been loaded the
+  			|ColorScheme| autocommand event is triggered.
+***************
+*** 4032,4038 ****
+  	colors.
+  	When a colorscheme is being used, changing 'background' causes it to
+  	be reloaded, which may reset all colors (including Normal).  First
+! 	delete the "colors_name" variable when you don't want this.
+  
+  	When you have set "ctermfg" or "ctermbg" for the Normal group, Vim
+  	needs to reset the color when exiting.	This is done with the "op"
+--- 4081,4087 ----
+  	colors.
+  	When a colorscheme is being used, changing 'background' causes it to
+  	be reloaded, which may reset all colors (including Normal).  First
+! 	delete the "g:colors_name" variable when you don't want this.
+  
+  	When you have set "ctermfg" or "ctermbg" for the Normal group, Vim
+  	needs to reset the color when exiting.	This is done with the "op"
+*** ../vim-7.2.423/src/ex_cmds.h	2010-05-13 16:46:16.000000000 +0200
+--- src/ex_cmds.h	2010-05-14 13:08:45.000000000 +0200
+***************
+*** 256,262 ****
+  EX(CMD_colder,		"colder",	qf_age,
+  			RANGE|NOTADR|COUNT|TRLBAR),
+  EX(CMD_colorscheme,	"colorscheme",	ex_colorscheme,
+! 			NEEDARG|WORD1|TRLBAR|CMDWIN),
+  EX(CMD_command,		"command",	ex_command,
+  			EXTRA|BANG|NOTRLCOM|USECTRLV|CMDWIN),
+  EX(CMD_comclear,	"comclear",	ex_comclear,
+--- 256,262 ----
+  EX(CMD_colder,		"colder",	qf_age,
+  			RANGE|NOTADR|COUNT|TRLBAR),
+  EX(CMD_colorscheme,	"colorscheme",	ex_colorscheme,
+! 			WORD1|TRLBAR|CMDWIN),
+  EX(CMD_command,		"command",	ex_command,
+  			EXTRA|BANG|NOTRLCOM|USECTRLV|CMDWIN),
+  EX(CMD_comclear,	"comclear",	ex_comclear,
+*** ../vim-7.2.423/src/ex_docmd.c	2010-03-02 15:55:51.000000000 +0100
+--- src/ex_docmd.c	2010-05-14 15:26:14.000000000 +0200
+***************
+*** 6226,6232 ****
+  ex_colorscheme(eap)
+      exarg_T	*eap;
+  {
+!     if (load_colors(eap->arg) == FAIL)
+  	EMSG2(_("E185: Cannot find color scheme %s"), eap->arg);
+  }
+  
+--- 6226,6256 ----
+  ex_colorscheme(eap)
+      exarg_T	*eap;
+  {
+!     if (*eap->arg == NUL)
+!     {
+! #ifdef FEAT_EVAL
+! 	char_u *expr = vim_strsave((char_u *)"g:colors_name");
+! 	char_u *p = NULL;
+! 
+! 	if (expr != NULL)
+! 	{
+! 	    ++emsg_off;
+! 	    p = eval_to_string(expr, NULL, FALSE);
+! 	    --emsg_off;
+! 	    vim_free(expr);
+! 	}
+! 	if (p != NULL)
+! 	{
+! 	    MSG(p);
+! 	    vim_free(p);
+! 	}
+! 	else
+! 	    MSG("default");
+! #else
+! 	MSG(_("unknown"));
+! #endif
+!     }
+!     else if (load_colors(eap->arg) == FAIL)
+  	EMSG2(_("E185: Cannot find color scheme %s"), eap->arg);
+  }
+  
+*** ../vim-7.2.423/src/version.c	2010-05-14 12:16:19.000000000 +0200
+--- src/version.c	2010-05-14 15:23:20.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     424,
+  /**/
+
+-- 
+Everyone has a photographic memory. Some don't have film.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

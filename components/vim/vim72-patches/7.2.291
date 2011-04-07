@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.291
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.291
+Problem:    Reading uninitialised memory in arabic mode.
+Solution:   Use utfc_ptr2char_len() rather than utfc_ptr2char().  (Dominique
+	    Pelle)
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.290/src/screen.c	2009-11-03 17:36:09.000000000 +0100
+--- src/screen.c	2009-11-11 17:04:53.000000000 +0100
+***************
+*** 6413,6419 ****
+  		    }
+  		    else
+  		    {
+! 			nc = utfc_ptr2char(ptr + mbyte_blen, pcc);
+  			nc1 = pcc[0];
+  		    }
+  		    pc = prev_c;
+--- 6413,6420 ----
+  		    }
+  		    else
+  		    {
+! 			nc = utfc_ptr2char_len(ptr + mbyte_blen, pcc,
+! 				      (int)((text + len) - ptr - mbyte_blen));
+  			nc1 = pcc[0];
+  		    }
+  		    pc = prev_c;
+*** ../vim-7.2.290/src/version.c	2009-11-11 16:56:13.000000000 +0100
+--- src/version.c	2009-11-11 17:06:48.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     291,
+  /**/
+
+-- 
+The problem with political jokes is that they get elected.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

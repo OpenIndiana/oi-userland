@@ -1,0 +1,54 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.025
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.025
+Problem:    When a CursorHold event invokes system() it is retriggered over
+	    and over again.
+Solution:   Don't reset did_cursorhold when getting K_IGNORE.
+Files:	    src/normal.c
+
+
+*** ../vim-7.2.024/src/normal.c	Sat Sep  6 16:44:06 2008
+--- src/normal.c	Sat Sep 27 13:03:34 2008
+***************
+*** 1132,1138 ****
+  	out_flush();
+  #endif
+  #ifdef FEAT_AUTOCMD
+!     did_cursorhold = FALSE;
+  #endif
+  
+      State = NORMAL;
+--- 1132,1139 ----
+  	out_flush();
+  #endif
+  #ifdef FEAT_AUTOCMD
+!     if (ca.cmdchar != K_IGNORE)
+! 	did_cursorhold = FALSE;
+  #endif
+  
+      State = NORMAL;
+*** ../vim-7.2.024/src/version.c	Thu Oct  2 22:48:01 2008
+--- src/version.c	Thu Oct  2 22:54:41 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     25,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+128. You can access the Net -- via your portable and cellular phone.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

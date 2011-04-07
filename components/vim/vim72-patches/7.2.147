@@ -1,0 +1,53 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.147
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.147
+Problem:    When compiled as small version and 'number' is on the cursor is
+	    displayed in the wrong position after a tab. (James Vega)
+Solution:   Don't increment vcol when still displaying the line number.
+Files:	    src/screen.c
+
+
+*** ../vim-7.2.146/src/screen.c	Wed Mar 11 17:57:05 2009
+--- src/screen.c	Wed Mar 18 16:18:00 2009
+***************
+*** 4665,4671 ****
+  	    --n_skip;
+  
+  	/* Only advance the "vcol" when after the 'number' column. */
+! 	if (draw_state >= WL_SBR
+  #ifdef FEAT_DIFF
+  		&& filler_todo <= 0
+  #endif
+--- 4665,4671 ----
+  	    --n_skip;
+  
+  	/* Only advance the "vcol" when after the 'number' column. */
+! 	if (draw_state > WL_NR
+  #ifdef FEAT_DIFF
+  		&& filler_todo <= 0
+  #endif
+*** ../vim-7.2.146/src/version.c	Wed Mar 18 15:40:03 2009
+--- src/version.c	Wed Mar 18 16:26:00 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     147,
+  /**/
+
+-- 
+You can tune a file system, but you can't tuna fish
+							-- man tunefs
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

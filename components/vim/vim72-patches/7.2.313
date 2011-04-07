@@ -1,0 +1,117 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.313
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.313
+Problem:    Command line completion doesn't work after "%:h" and similar.
+Solution:   Expand these items before doing the completion.
+Files:	    src/ex_getln.c, src/misc1.c, src/proto/misc1.pro
+
+
+*** ../vim-7.2.312/src/ex_getln.c	2009-09-18 17:24:54.000000000 +0200
+--- src/ex_getln.c	2009-12-02 16:40:06.000000000 +0100
+***************
+*** 4422,4428 ****
+  	    flags |= EW_FILE;
+  	else
+  	    flags = (flags | EW_DIR) & ~EW_FILE;
+! 	ret = expand_wildcards(1, &pat, num_file, file, flags);
+  	if (free_pat)
+  	    vim_free(pat);
+  	return ret;
+--- 4422,4429 ----
+  	    flags |= EW_FILE;
+  	else
+  	    flags = (flags | EW_DIR) & ~EW_FILE;
+! 	/* Expand wildcards, supporting %:h and the like. */
+! 	ret = expand_wildcards_eval(&pat, num_file, file, flags);
+  	if (free_pat)
+  	    vim_free(pat);
+  	return ret;
+*** ../vim-7.2.312/src/misc1.c	2009-11-17 16:08:12.000000000 +0100
+--- src/misc1.c	2009-12-02 17:06:49.000000000 +0100
+***************
+*** 8447,8452 ****
+--- 8447,8492 ----
+  }
+  
+  /*
++  * Invoke expand_wildcards() for one pattern.
++  * Expand items like "%:h" before the expansion.
++  * Returns OK or FAIL.
++  */
++     int
++ expand_wildcards_eval(pat, num_file, file, flags)
++     char_u	 **pat;		/* pointer to input pattern */
++     int		  *num_file;	/* resulting number of files */
++     char_u	***file;	/* array of resulting files */
++     int		   flags;	/* EW_DIR, etc. */
++ {
++     int		ret = FAIL;
++     char_u	*eval_pat = NULL;
++     char_u	*exp_pat = *pat;
++     char_u      *ignored_msg;
++     int		usedlen;
++ 
++     if (*exp_pat == '%' || *exp_pat == '#' || *exp_pat == '<')
++     {
++ 	++emsg_off;
++ 	eval_pat = eval_vars(exp_pat, exp_pat, &usedlen,
++ 						    NULL, &ignored_msg, NULL);
++ 	--emsg_off;
++ 	if (eval_pat != NULL)
++ 	    exp_pat = concat_str(eval_pat, exp_pat + usedlen);
++     }
++ 
++     if (exp_pat != NULL)
++ 	ret = expand_wildcards(1, &exp_pat, num_file, file, flags);
++ 
++     if (eval_pat != NULL)
++     {
++ 	vim_free(exp_pat);
++ 	vim_free(eval_pat);
++     }
++ 
++     return ret;
++ }
++ 
++ /*
+   * Expand wildcards.  Calls gen_expand_wildcards() and removes files matching
+   * 'wildignore'.
+   * Returns OK or FAIL.
+*** ../vim-7.2.312/src/proto/misc1.pro	2007-09-26 22:36:32.000000000 +0200
+--- src/proto/misc1.pro	2009-12-02 16:41:52.000000000 +0100
+***************
+*** 85,90 ****
+--- 85,91 ----
+  int vim_fexists __ARGS((char_u *fname));
+  void line_breakcheck __ARGS((void));
+  void fast_breakcheck __ARGS((void));
++ int expand_wildcards_eval __ARGS((char_u **pat, int *num_file, char_u ***file, int flags));
+  int expand_wildcards __ARGS((int num_pat, char_u **pat, int *num_file, char_u ***file, int flags));
+  int match_suffix __ARGS((char_u *fname));
+  int unix_expandpath __ARGS((garray_T *gap, char_u *path, int wildoff, int flags, int didstar));
+*** ../vim-7.2.312/src/version.c	2009-12-02 15:03:24.000000000 +0100
+--- src/version.c	2009-12-02 17:14:02.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     313,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+8. You spend half of the plane trip with your laptop on your lap...and your
+   child in the overhead compartment.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,49 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.231
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.231
+Problem:    Warning for unreacheable code.
+Solution:   Add #ifdef.
+Files:	    src/if_perl.xs
+
+
+*** ../vim-7.2.230/src/if_perl.xs	2009-07-09 20:06:30.000000000 +0200
+--- src/if_perl.xs	2009-07-09 13:02:16.000000000 +0200
+***************
+*** 720,728 ****
+--- 720,730 ----
+  #ifdef HAVE_SANDBOX
+      if (sandbox)
+      {
++ # ifndef MAKE_TEST  /* avoid a warning for unreachable code */
+  	if ((safe = perl_get_sv( "VIM::safe", FALSE )) == NULL || !SvTRUE(safe))
+  	    EMSG(_("E299: Perl evaluation forbidden in sandbox without the Safe module"));
+  	else
++ # endif
+  	{
+  	    PUSHMARK(SP);
+  	    XPUSHs(safe);
+*** ../vim-7.2.230/src/version.c	2009-07-14 13:44:43.000000000 +0200
+--- src/version.c	2009-07-14 16:04:07.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     231,
+  /**/
+
+-- 
+From "know your smileys":
+ ~#:-(	I just washed my hair, and I can't do nuthin' with it.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

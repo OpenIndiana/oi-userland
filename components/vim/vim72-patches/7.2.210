@@ -1,0 +1,58 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.210
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.210
+Problem:    When a file that is being edited has its timestamp updated outside
+	    of Vim and ":checktime" is used still get a warning when writing
+	    the file. (Matt Mueller)
+Solution:   Store the timestamp in b_mtime_read when the timestamp is the only
+	    thing that changed.
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.209/src/fileio.c	2009-06-16 16:01:34.000000000 +0200
+--- src/fileio.c	2009-06-20 13:29:41.000000000 +0200
+***************
+*** 6627,6633 ****
+  			mesg = _("W16: Warning: Mode of file \"%s\" has changed since editing started");
+  			mesg2 = _("See \":help W16\" for more info.");
+  		    }
+! 		    /* Else: only timestamp changed, ignored */
+  		}
+  	    }
+  	}
+--- 6627,6636 ----
+  			mesg = _("W16: Warning: Mode of file \"%s\" has changed since editing started");
+  			mesg2 = _("See \":help W16\" for more info.");
+  		    }
+! 		    else
+! 			/* Only timestamp changed, store it to avoid a warning
+! 			 * in check_mtime() later. */
+! 			buf->b_mtime_read = buf->b_mtime;
+  		}
+  	    }
+  	}
+*** ../vim-7.2.209/src/version.c	2009-06-16 18:29:37.000000000 +0200
+--- src/version.c	2009-06-24 11:57:08.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     210,
+  /**/
+
+-- 
+Have you heard about the new Beowulf cluster? It's so fast, it executes
+an infinite loop in 6 seconds.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,50 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.024
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.024
+Problem:    It's possible to set 'history' to a negative value and that causes
+	    an out-of-memory error.
+Solution:   Check that 'history' has a positive value. (Doug Kearns)
+Files:	    src/option.c
+
+
+*** ../vim-7.2.023/src/option.c	Thu Jul 24 18:45:15 2008
+--- src/option.c	Fri Sep 26 22:20:20 2008
+***************
+*** 7974,7979 ****
+--- 7974,7984 ----
+  	else /* curwin->w_p_scr > curwin->w_height */
+  	    curwin->w_p_scr = curwin->w_height;
+      }
++     if (p_hi < 0)
++     {
++ 	errmsg = e_positive;
++ 	p_hi = 0;
++     }
+      if (p_report < 0)
+      {
+  	errmsg = e_positive;
+*** ../vim-7.2.023/src/version.c	Wed Oct  1 21:09:02 2008
+--- src/version.c	Thu Oct  2 22:47:22 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     24,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+127. You bring your laptop and cellular phone to church.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

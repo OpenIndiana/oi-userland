@@ -1,0 +1,68 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.421
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.421
+Problem:    Folds are sometimes not updated properly and there is no way to
+	    force an update.
+Solution:   Make "zx" and "zX" recompute folds (suggested by Christian
+	    Brabandt)
+Files:	    src/normal.c
+
+
+*** ../vim-7.2.420/src/normal.c	2010-05-07 15:51:59.000000000 +0200
+--- src/normal.c	2010-05-13 16:43:05.000000000 +0200
+***************
+*** 4936,4948 ****
+  
+  		/* "zx": re-apply 'foldlevel' and open folds at the cursor */
+      case 'x':	curwin->w_p_fen = TRUE;
+! 		newFoldLevel();		/* update right now */
+  		foldOpenCursor();
+  		break;
+  
+  		/* "zX": undo manual opens/closes, re-apply 'foldlevel' */
+      case 'X':	curwin->w_p_fen = TRUE;
+! 		old_fdl = -1;		/* force an update */
+  		break;
+  
+  		/* "zm": fold more */
+--- 4936,4950 ----
+  
+  		/* "zx": re-apply 'foldlevel' and open folds at the cursor */
+      case 'x':	curwin->w_p_fen = TRUE;
+! 		curwin->w_foldinvalid = TRUE;	/* recompute folds */
+! 		newFoldLevel();			/* update right now */
+  		foldOpenCursor();
+  		break;
+  
+  		/* "zX": undo manual opens/closes, re-apply 'foldlevel' */
+      case 'X':	curwin->w_p_fen = TRUE;
+! 		curwin->w_foldinvalid = TRUE;	/* recompute folds */
+! 		old_fdl = -1;			/* force an update */
+  		break;
+  
+  		/* "zm": fold more */
+*** ../vim-7.2.420/src/version.c	2010-05-13 16:46:16.000000000 +0200
+--- src/version.c	2010-05-13 17:33:34.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     421,
+  /**/
+
+-- 
+My sister Cecilia opened a computer store in Hawaii.
+She sells C shells by the seashore.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

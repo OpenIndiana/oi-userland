@@ -1,0 +1,69 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.429
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.429
+Problem:    A file that exists but access is denied may result in a "new file"
+	    message.  E.g. when its directory is unreadable.
+Solution:   Specifically check for ENOENT to decide a file doesn't exist.
+	    (partly by James Vega)
+Files:	    src/fileio.c
+
+
+*** ../vim-7.2.428/src/fileio.c	2010-03-02 12:47:58.000000000 +0100
+--- src/fileio.c	2010-05-14 18:30:09.000000000 +0200
+***************
+*** 595,601 ****
+  #endif
+  	    if (newfile)
+  	    {
+! 		if (perm < 0)
+  		{
+  		    /*
+  		     * Set the 'new-file' flag, so that when the file has
+--- 595,605 ----
+  #endif
+  	    if (newfile)
+  	    {
+! 		if (perm < 0
+! #ifdef ENOENT
+! 			&& errno == ENOENT
+! #endif
+! 		   )
+  		{
+  		    /*
+  		     * Set the 'new-file' flag, so that when the file has
+***************
+*** 664,669 ****
+--- 668,676 ----
+  # ifdef EFBIG
+  			    (errno == EFBIG) ? _("[File too big]") :
+  # endif
++ # ifdef EOVERFLOW
++ 			    (errno == EOVERFLOW) ? _("[File too big]") :
++ # endif
+  						_("[Permission Denied]")), 0);
+  		    curbuf->b_p_ro = TRUE;	/* must use "w!" now */
+  		}
+*** ../vim-7.2.428/src/version.c	2010-05-14 18:10:23.000000000 +0200
+--- src/version.c	2010-05-14 18:55:11.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     429,
+  /**/
+
+-- 
+Those who live by the sword get shot by those who don't.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

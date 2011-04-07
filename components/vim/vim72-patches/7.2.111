@@ -1,0 +1,88 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.111
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.111
+Problem:    When using Visual block mode with 'cursorcolumn' it's unclear what
+            is selected.
+Solution:   Don't use 'cursorcolumn' highlighting inside the Visual selection.
+            (idea by Dominique Pelle)
+Files:      src/screen.c
+    
+
+*** ../vim-7.2.110/src/screen.c	Wed Oct  1 21:09:02 2008
+--- src/screen.c	Sat Feb 21 21:04:19 2009
+***************
+*** 2596,2601 ****
+--- 2596,2602 ----
+      int		noinvcur = FALSE;	/* don't invert the cursor */
+  #ifdef FEAT_VISUAL
+      pos_T	*top, *bot;
++     int		lnum_in_visual_area = FALSE;
+  #endif
+      pos_T	pos;
+      long	v;
+***************
+*** 2792,2800 ****
+  	    top = &VIsual;
+  	    bot = &curwin->w_cursor;
+  	}
+  	if (VIsual_mode == Ctrl_V)	/* block mode */
+  	{
+! 	    if (lnum >= top->lnum && lnum <= bot->lnum)
+  	    {
+  		fromcol = wp->w_old_cursor_fcol;
+  		tocol = wp->w_old_cursor_lcol;
+--- 2793,2802 ----
+  	    top = &VIsual;
+  	    bot = &curwin->w_cursor;
+  	}
++ 	lnum_in_visual_area = (lnum >= top->lnum && lnum <= bot->lnum);
+  	if (VIsual_mode == Ctrl_V)	/* block mode */
+  	{
+! 	    if (lnum_in_visual_area)
+  	    {
+  		fromcol = wp->w_old_cursor_fcol;
+  		tocol = wp->w_old_cursor_lcol;
+***************
+*** 4557,4563 ****
+  	 * highlight the cursor position itself. */
+  	if (wp->w_p_cuc && vcol == (long)wp->w_virtcol
+  		&& lnum != wp->w_cursor.lnum
+! 		&& draw_state == WL_LINE)
+  	{
+  	    vcol_save_attr = char_attr;
+  	    char_attr = hl_combine_attr(char_attr, hl_attr(HLF_CUC));
+--- 4560,4567 ----
+  	 * highlight the cursor position itself. */
+  	if (wp->w_p_cuc && vcol == (long)wp->w_virtcol
+  		&& lnum != wp->w_cursor.lnum
+! 		&& draw_state == WL_LINE
+! 		&& !lnum_in_visual_area)
+  	{
+  	    vcol_save_attr = char_attr;
+  	    char_attr = hl_combine_attr(char_attr, hl_attr(HLF_CUC));
+*** ../vim-7.2.110/src/version.c	Sat Feb 21 20:36:30 2009
+--- src/version.c	Sat Feb 21 21:08:14 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     111,
+  /**/
+
+-- 
+Contrary to popular belief, Unix is user friendly.
+It just happens to be selective about who it makes friends with.
+                                               -- Dave Parnas
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,121 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.391
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.391
+Problem:    Internal alloc(0) error when doing "CTRL-V $ c". (Martti Kuparinen)
+Solution:   Fix computations in getvcol(). (partly by Lech Lorens)
+Files:	    src/charset.c, src/memline.c
+
+
+*** ../vim-7.2.390/src/charset.c	2009-11-03 16:03:59.000000000 +0100
+--- src/charset.c	2010-03-10 14:38:14.000000000 +0100
+***************
+*** 1255,1261 ****
+  
+      vcol = 0;
+      ptr = ml_get_buf(wp->w_buffer, pos->lnum, FALSE);
+!     posptr = ptr + pos->col;
+  
+      /*
+       * This function is used very often, do some speed optimizations.
+--- 1255,1264 ----
+  
+      vcol = 0;
+      ptr = ml_get_buf(wp->w_buffer, pos->lnum, FALSE);
+!     if (pos->col == MAXCOL)
+! 	posptr = NULL;  /* continue until the NUL */
+!     else
+! 	posptr = ptr + pos->col;
+  
+      /*
+       * This function is used very often, do some speed optimizations.
+***************
+*** 1313,1319 ****
+  		    incr = CHARSIZE(c);
+  	    }
+  
+! 	    if (ptr >= posptr)	/* character at pos->col */
+  		break;
+  
+  	    vcol += incr;
+--- 1316,1322 ----
+  		    incr = CHARSIZE(c);
+  	    }
+  
+! 	    if (posptr != NULL && ptr >= posptr) /* character at pos->col */
+  		break;
+  
+  	    vcol += incr;
+***************
+*** 1334,1340 ****
+  		break;
+  	    }
+  
+! 	    if (ptr >= posptr)	/* character at pos->col */
+  		break;
+  
+  	    vcol += incr;
+--- 1337,1343 ----
+  		break;
+  	    }
+  
+! 	    if (posptr != NULL && ptr >= posptr) /* character at pos->col */
+  		break;
+  
+  	    vcol += incr;
+*** ../vim-7.2.390/src/memline.c	2010-02-11 18:54:38.000000000 +0100
+--- src/memline.c	2010-03-10 14:38:25.000000000 +0100
+***************
+*** 2113,2124 ****
+      if (buf->b_ml.ml_mfp == NULL)	/* there are no lines */
+  	return (char_u *)"";
+  
+! /*
+!  * See if it is the same line as requested last time.
+!  * Otherwise may need to flush last used line.
+!  * Don't use the last used line when 'swapfile' is reset, need to load all
+!  * blocks.
+!  */
+      if (buf->b_ml.ml_line_lnum != lnum || mf_dont_release)
+      {
+  	ml_flush_line(buf);
+--- 2113,2124 ----
+      if (buf->b_ml.ml_mfp == NULL)	/* there are no lines */
+  	return (char_u *)"";
+  
+!     /*
+!      * See if it is the same line as requested last time.
+!      * Otherwise may need to flush last used line.
+!      * Don't use the last used line when 'swapfile' is reset, need to load all
+!      * blocks.
+!      */
+      if (buf->b_ml.ml_line_lnum != lnum || mf_dont_release)
+      {
+  	ml_flush_line(buf);
+*** ../vim-7.2.390/src/version.c	2010-03-10 14:15:28.000000000 +0100
+--- src/version.c	2010-03-10 14:31:02.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     391,
+  /**/
+
+-- 
+WOMAN:   King of the who?
+ARTHUR:  The Britons.
+WOMAN:   Who are the Britons?
+ARTHUR:  Well, we all are. we're all Britons and I am your king.
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

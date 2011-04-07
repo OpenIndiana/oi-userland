@@ -1,0 +1,57 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.217
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.217
+Problem:    Running tests with valgrind doesn't work as advertised.
+Solution:   Fix the line in the Makefile.
+Files:	    src/testdir/Makefile
+
+
+*** ../vim-7.2.216/src/testdir/Makefile	2009-03-11 16:26:01.000000000 +0100
+--- src/testdir/Makefile	2009-06-24 14:59:42.000000000 +0200
+***************
+*** 4,12 ****
+  
+  VIMPROG = ../vim
+  
+! # Uncomment this line for using valgrind.
+! # The output goes into a file "valgrind.$PID" (sorry, no test number).
+! # VALGRIND = valgrind --tool=memcheck --leak-check=yes --num-callers=15 --logfile=valgrind
+  
+  SCRIPTS = test1.out test2.out test3.out test4.out test5.out test6.out \
+  		test7.out test8.out test9.out test10.out test11.out \
+--- 4,14 ----
+  
+  VIMPROG = ../vim
+  
+! # Uncomment this line to use valgrind for memory leaks and extra warnings.
+! #   The output goes into a file "valgrind.testN"
+! #   Vim should be compiled with EXITFREE to avoid false warnings.
+! #   This will make testing about 10 times as slow.
+! # VALGRIND = valgrind --tool=memcheck --leak-check=yes --num-callers=15 --log-file=valgrind.$*
+  
+  SCRIPTS = test1.out test2.out test3.out test4.out test5.out test6.out \
+  		test7.out test8.out test9.out test10.out test11.out \
+*** ../vim-7.2.216/src/version.c	2009-06-24 17:51:01.000000000 +0200
+--- src/version.c	2009-06-24 18:07:07.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     217,
+  /**/
+
+-- 
+A day without sunshine is like, well, night.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

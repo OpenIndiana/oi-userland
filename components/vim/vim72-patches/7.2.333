@@ -1,0 +1,371 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.333
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.333
+Problem:    Warnings from static code analysis.
+Solution:   Small changes to various lines. (Dominique Pelle)
+Files:	    src/buffer.c, src/edit.c, src/ex_getln.c, src/fileio.c,
+	    src/if_cscope.c, src/netbeans.c, src/ops.c, src/quickfix.c,
+	    src/syntax.c, src/ui.c
+
+
+*** ../vim-7.2.332/src/buffer.c	2009-05-17 13:30:58.000000000 +0200
+--- src/buffer.c	2010-01-19 12:50:24.000000000 +0100
+***************
+*** 315,321 ****
+  {
+  #ifdef FEAT_AUTOCMD
+      int		is_curbuf;
+!     int		nwindows = buf->b_nwindows;
+  #endif
+      int		unload_buf = (action != 0);
+      int		del_buf = (action == DOBUF_DEL || action == DOBUF_WIPE);
+--- 315,321 ----
+  {
+  #ifdef FEAT_AUTOCMD
+      int		is_curbuf;
+!     int		nwindows;
+  #endif
+      int		unload_buf = (action != 0);
+      int		del_buf = (action == DOBUF_DEL || action == DOBUF_WIPE);
+*** ../vim-7.2.332/src/edit.c	2009-12-24 15:45:53.000000000 +0100
+--- src/edit.c	2010-01-19 12:53:18.000000000 +0100
+***************
+*** 4048,4054 ****
+  	    save_p_ic = p_ic;
+  	    p_ic = ignorecase(compl_pattern);
+  
+! 	    /* Find up to TAG_MANY matches.  Avoids that an enourmous number
+  	     * of matches is found when compl_pattern is empty */
+  	    if (find_tags(compl_pattern, &num_matches, &matches,
+  		    TAG_REGEXP | TAG_NAMES | TAG_NOIC |
+--- 4048,4054 ----
+  	    save_p_ic = p_ic;
+  	    p_ic = ignorecase(compl_pattern);
+  
+! 	    /* Find up to TAG_MANY matches.  Avoids that an enormous number
+  	     * of matches is found when compl_pattern is empty */
+  	    if (find_tags(compl_pattern, &num_matches, &matches,
+  		    TAG_REGEXP | TAG_NAMES | TAG_NOIC |
+***************
+*** 4219,4225 ****
+  						 || IObuff[len - 2] == '!'))))
+  					IObuff[len++] = ' ';
+  				}
+! 				/* copy as much as posible of the new word */
+  				if (tmp_ptr - ptr >= IOSIZE - len)
+  				    tmp_ptr = ptr + IOSIZE - len - 1;
+  				STRNCPY(IObuff + len, ptr, tmp_ptr - ptr);
+--- 4219,4225 ----
+  						 || IObuff[len - 2] == '!'))))
+  					IObuff[len++] = ' ';
+  				}
+! 				/* copy as much as possible of the new word */
+  				if (tmp_ptr - ptr >= IOSIZE - len)
+  				    tmp_ptr = ptr + IOSIZE - len - 1;
+  				STRNCPY(IObuff + len, ptr, tmp_ptr - ptr);
+***************
+*** 5827,5836 ****
+  #endif
+  		&& !has_format_option(FO_WRAP))
+  
+- 	{
+- 	    textwidth = 0;
+  	    break;
+- 	}
+  	if ((startcol = curwin->w_cursor.col) == 0)
+  	    break;
+  
+--- 5827,5833 ----
+*** ../vim-7.2.332/src/ex_getln.c	2009-12-02 17:15:04.000000000 +0100
+--- src/ex_getln.c	2010-01-19 12:54:47.000000000 +0100
+***************
+*** 2193,2199 ****
+      {
+  	if (ga_grow(&line_ga, 40) == FAIL)
+  	    break;
+- 	pend = (char_u *)line_ga.ga_data + line_ga.ga_len;
+  
+  	/* Get one character at a time.  Don't use inchar(), it can't handle
+  	 * special characters. */
+--- 2193,2198 ----
+***************
+*** 3314,3320 ****
+  		    WILD_HOME_REPLACE|WILD_ADD_SLASH|WILD_SILENT|WILD_ESCAPE
+  							      |options, type);
+  	    vim_free(p1);
+! 	    /* longest match: make sure it is not shorter (happens with :help */
+  	    if (p2 != NULL && type == WILD_LONGEST)
+  	    {
+  		for (j = 0; j < xp->xp_pattern_len; ++j)
+--- 3313,3319 ----
+  		    WILD_HOME_REPLACE|WILD_ADD_SLASH|WILD_SILENT|WILD_ESCAPE
+  							      |options, type);
+  	    vim_free(p1);
+! 	    /* longest match: make sure it is not shorter, happens with :help */
+  	    if (p2 != NULL && type == WILD_LONGEST)
+  	    {
+  		for (j = 0; j < xp->xp_pattern_len; ++j)
+*** ../vim-7.2.332/src/fileio.c	2009-12-31 14:52:48.000000000 +0100
+--- src/fileio.c	2010-01-19 12:56:59.000000000 +0100
+***************
+*** 7072,7079 ****
+  	 */
+  	for (i = 0; i < (int)(sizeof(tempdirs) / sizeof(char *)); ++i)
+  	{
+- 	    size_t	itmplen;
+  # ifndef HAVE_MKDTEMP
+  	    long	nr;
+  	    long	off;
+  # endif
+--- 7072,7079 ----
+  	 */
+  	for (i = 0; i < (int)(sizeof(tempdirs) / sizeof(char *)); ++i)
+  	{
+  # ifndef HAVE_MKDTEMP
++ 	    size_t	itmplen;
+  	    long	nr;
+  	    long	off;
+  # endif
+***************
+*** 7091,7097 ****
+  		else
+  # endif
+  		    add_pathsep(itmp);
+- 		itmplen = STRLEN(itmp);
+  
+  # ifdef HAVE_MKDTEMP
+  		/* Leave room for filename */
+--- 7091,7096 ----
+***************
+*** 7104,7109 ****
+--- 7103,7109 ----
+  		 * otherwise it doesn't matter.  The use of mkdir() avoids any
+  		 * security problems because of the predictable number. */
+  		nr = (mch_get_pid() + (long)time(NULL)) % 1000000L;
++ 		itmplen = STRLEN(itmp);
+  
+  		/* Try up to 10000 different values until we find a name that
+  		 * doesn't exist. */
+*** ../vim-7.2.332/src/if_cscope.c	2009-07-09 21:22:36.000000000 +0200
+--- src/if_cscope.c	2010-01-19 12:57:58.000000000 +0100
+***************
+*** 2069,2075 ****
+  	    continue;
+  	(void)strcpy(tbuf, matches[idx]);
+  
+! 	if ((fname = strtok(tbuf, (const char *)"\t")) == NULL)
+  	    continue;
+  	if ((fname = strtok(NULL, (const char *)"\t")) == NULL)
+  	    continue;
+--- 2069,2075 ----
+  	    continue;
+  	(void)strcpy(tbuf, matches[idx]);
+  
+! 	if (strtok(tbuf, (const char *)"\t") == NULL)
+  	    continue;
+  	if ((fname = strtok(NULL, (const char *)"\t")) == NULL)
+  	    continue;
+*** ../vim-7.2.332/src/netbeans.c	2009-09-11 14:19:41.000000000 +0200
+--- src/netbeans.c	2010-01-19 13:57:11.000000000 +0100
+***************
+*** 873,879 ****
+      {
+  #ifdef NBDEBUG
+  	/*
+! 	 * This happens because the ExtEd can send a cammand or 2 after
+  	 * doing a stopDocumentListen command. It doesn't harm anything
+  	 * so I'm disabling it except for debugging.
+  	 */
+--- 883,889 ----
+      {
+  #ifdef NBDEBUG
+  	/*
+! 	 * This happens because the ExtEd can send a command or 2 after
+  	 * doing a stopDocumentListen command. It doesn't harm anything
+  	 * so I'm disabling it except for debugging.
+  	 */
+***************
+*** 1174,1180 ****
+  		break;
+  	}
+      }
+!     *q++ = '\0';
+  
+      return buf;
+  }
+--- 1184,1190 ----
+  		break;
+  	}
+      }
+!     *q = '\0';
+  
+      return buf;
+  }
+***************
+*** 3070,3076 ****
+  }
+  
+  /*
+!  * Send netbeans an unmodufied command.
+   */
+      void
+  netbeans_unmodified(buf_T *bufp UNUSED)
+--- 3080,3086 ----
+  }
+  
+  /*
+!  * Send netbeans an unmodified command.
+   */
+      void
+  netbeans_unmodified(buf_T *bufp UNUSED)
+***************
+*** 3366,3372 ****
+  
+  
+  /*
+!  * Add a sign of the reqested type at the requested location.
+   *
+   * Reverse engineering:
+   * Apparently an annotation is defined the first time it is used in a buffer.
+--- 3380,3386 ----
+  
+  
+  /*
+!  * Add a sign of the requested type at the requested location.
+   *
+   * Reverse engineering:
+   * Apparently an annotation is defined the first time it is used in a buffer.
+*** ../vim-7.2.332/src/ops.c	2009-11-25 12:38:49.000000000 +0100
+--- src/ops.c	2010-01-19 13:04:46.000000000 +0100
+***************
+*** 5591,5603 ****
+  	 */
+  	if (has_mbyte)
+  	{
+- 	    char_u	*conv_str = str;
+  	    vimconv_T	vc;
+  
+  	    vc.vc_type = CONV_NONE;
+  	    if (convert_setup(&vc, p_enc, (char_u *)"latin1") == OK)
+  	    {
+! 	        int intlen = len;
+  
+  		conv_str = string_convert(&vc, str, &intlen);
+  		len = intlen;
+--- 5598,5610 ----
+  	 */
+  	if (has_mbyte)
+  	{
+  	    vimconv_T	vc;
+  
+  	    vc.vc_type = CONV_NONE;
+  	    if (convert_setup(&vc, p_enc, (char_u *)"latin1") == OK)
+  	    {
+! 		int	intlen = len;
+! 		char_u	*conv_str;
+  
+  		conv_str = string_convert(&vc, str, &intlen);
+  		len = intlen;
+*** ../vim-7.2.332/src/quickfix.c	2009-06-24 17:31:27.000000000 +0200
+--- src/quickfix.c	2010-01-19 13:12:29.000000000 +0100
+***************
+*** 1899,1905 ****
+      int		i;
+      int		idx1 = 1;
+      int		idx2 = -1;
+-     int		need_return = TRUE;
+      char_u	*arg = eap->arg;
+      int		all = eap->forceit;	/* if not :cl!, only show
+  						   recognised errors */
+--- 1899,1904 ----
+***************
+*** 1939,1951 ****
+      {
+  	if ((qfp->qf_valid || all) && idx1 <= i && i <= idx2)
+  	{
+! 	    if (need_return)
+! 	    {
+! 		msg_putchar('\n');
+! 		if (got_int)
+! 		    break;
+! 		need_return = FALSE;
+! 	    }
+  
+  	    fname = NULL;
+  	    if (qfp->qf_fnum != 0
+--- 1938,1946 ----
+      {
+  	if ((qfp->qf_valid || all) && idx1 <= i && i <= idx2)
+  	{
+! 	    msg_putchar('\n');
+! 	    if (got_int)
+! 		break;
+  
+  	    fname = NULL;
+  	    if (qfp->qf_fnum != 0
+***************
+*** 1988,1994 ****
+  							      IObuff, IOSIZE);
+  	    msg_prt_line(IObuff, FALSE);
+  	    out_flush();		/* show one line at a time */
+- 	    need_return = TRUE;
+  	}
+  
+  	qfp = qfp->qf_next;
+--- 1983,1988 ----
+*** ../vim-7.2.332/src/syntax.c	2009-12-16 18:13:04.000000000 +0100
+--- src/syntax.c	2010-01-19 13:12:56.000000000 +0100
+***************
+*** 4167,4173 ****
+  	if (!HASHITEM_EMPTY(hi))
+  	{
+  	    --todo;
+- 	    kp = HI2KE(hi);
+  	    for (kp = HI2KE(hi); kp != NULL; kp = kp_next)
+  	    {
+  		kp_next = kp->ke_next;
+--- 4167,4172 ----
+*** ../vim-7.2.332/src/ui.c	2009-09-11 16:48:06.000000000 +0200
+--- src/ui.c	2010-01-19 13:14:04.000000000 +0100
+***************
+*** 2383,2389 ****
+  	 * 'enc' anyway. */
+  	if (has_mbyte)
+  	{
+! 	    char_u	*conv_buf = buffer;
+  	    vimconv_T	vc;
+  
+  	    vc.vc_type = CONV_NONE;
+--- 2383,2389 ----
+  	 * 'enc' anyway. */
+  	if (has_mbyte)
+  	{
+! 	    char_u	*conv_buf;
+  	    vimconv_T	vc;
+  
+  	    vc.vc_type = CONV_NONE;
+*** ../vim-7.2.332/src/version.c	2010-01-19 13:06:42.000000000 +0100
+--- src/version.c	2010-01-19 14:55:50.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     333,
+  /**/
+
+-- 
+An actual excerpt from a classified section of a city newspaper:
+"Illiterate?  Write today for free help!"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

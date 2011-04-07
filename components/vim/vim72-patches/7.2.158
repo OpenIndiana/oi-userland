@@ -1,0 +1,63 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.158
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.158
+Problem:    Warnings from VisualC compiler.
+Solution:   Add type casts. (George Reilly)
+Files:	    src/ops.c
+
+
+*** ../vim-7.2.157/src/ops.c	Wed Mar 11 16:26:01 2009
+--- src/ops.c	Wed Apr 22 13:01:46 2009
+***************
+*** 495,504 ****
+  	block_space_width = non_white_col - oap->start_vcol;
+  	/* We will shift by "total" or "block_space_width", whichever is less.
+  	 */
+! 	shift_amount = (block_space_width < total? block_space_width: total);
+  
+  	/* The column to which we will shift the text.  */
+! 	destination_col = non_white_col - shift_amount;
+  
+  	/* Now let's find out how much of the beginning of the line we can
+  	 * reuse without modification.  */
+--- 495,505 ----
+  	block_space_width = non_white_col - oap->start_vcol;
+  	/* We will shift by "total" or "block_space_width", whichever is less.
+  	 */
+! 	shift_amount = (block_space_width < (size_t)total
+! 					 ? block_space_width : (size_t)total);
+  
+  	/* The column to which we will shift the text.  */
+! 	destination_col = (colnr_T)(non_white_col - shift_amount);
+  
+  	/* Now let's find out how much of the beginning of the line we can
+  	 * reuse without modification.  */
+*** ../vim-7.2.157/src/version.c	Wed Apr 22 16:42:24 2009
+--- src/version.c	Wed Apr 22 17:42:19 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     158,
+  /**/
+
+-- 
+ARTHUR:        What?
+BLACK KNIGHT:  None shall pass.
+ARTHUR:        I have no quarrel with you, good Sir knight, but I must cross
+               this bridge.
+BLACK KNIGHT:  Then you shall die.
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

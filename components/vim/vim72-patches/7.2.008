@@ -1,0 +1,63 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.008
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.008
+Problem:    With a BufHidden autocommand that invokes ":bunload" the window
+	    count for a buffer can be wrong. (Bob Hiestand)
+Solution:   Don't call enter_buffer() when already in that buffer.
+Files:	    src/buffer.c
+
+
+*** ../vim-7.2.007/src/buffer.c	Wed Aug  6 18:32:40 2008
+--- src/buffer.c	Mon Sep  1 14:25:45 2008
+***************
+*** 1351,1361 ****
+  	}
+      }
+  #ifdef FEAT_AUTOCMD
+  # ifdef FEAT_EVAL
+!     /* An autocommand may have deleted buf or aborted the script processing! */
+!     if (buf_valid(buf) && !aborting())
+  # else
+!     if (buf_valid(buf))	    /* an autocommand may have deleted buf! */
+  # endif
+  #endif
+  	enter_buffer(buf);
+--- 1351,1362 ----
+  	}
+      }
+  #ifdef FEAT_AUTOCMD
++     /* An autocommand may have deleted "buf", already entered it (e.g., when
++      * it did ":bunload") or aborted the script processing! */
+  # ifdef FEAT_EVAL
+!     if (buf_valid(buf) && buf != curbuf && !aborting())
+  # else
+!     if (buf_valid(buf) && buf != curbuf)
+  # endif
+  #endif
+  	enter_buffer(buf);
+*** ../vim-7.2.007/src/version.c	Mon Sep  1 16:50:09 2008
+--- src/version.c	Mon Sep  1 17:31:28 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     8,
+  /**/
+
+-- 
+If Pacman had affected us as kids we'd be running around in dark rooms,
+munching pills and listening to repetitive music.
+                       -- Marcus Brigstocke
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

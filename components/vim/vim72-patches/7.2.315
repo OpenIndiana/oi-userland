@@ -1,0 +1,134 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.315
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.315
+Problem:    Python libs can't be found on 64 bit system.
+Solution:   Add lib64 to the list of directories. (Michael Henry)
+Files:	    src/auto/configure, src/configure.in
+
+
+*** ../vim-7.2.314/src/auto/configure	2009-11-17 17:13:03.000000000 +0100
+--- src/auto/configure	2009-12-02 17:21:20.000000000 +0100
+***************
+*** 5126,5132 ****
+  
+  	vi_cv_path_python_conf=
+  	for path in "${vi_cv_path_python_pfx}" "${vi_cv_path_python_epfx}"; do
+! 	  for subdir in lib share; do
+  	    d="${path}/${subdir}/python${vi_cv_var_python_version}/config"
+  	    if test -d "$d" && test -f "$d/config.c"; then
+  	      vi_cv_path_python_conf="$d"
+--- 5126,5132 ----
+  
+  	vi_cv_path_python_conf=
+  	for path in "${vi_cv_path_python_pfx}" "${vi_cv_path_python_epfx}"; do
+! 	  for subdir in lib64 lib share; do
+  	    d="${path}/${subdir}/python${vi_cv_var_python_version}/config"
+  	    if test -d "$d" && test -f "$d/config.c"; then
+  	      vi_cv_path_python_conf="$d"
+***************
+*** 13718,13725 ****
+  $as_echo "pty mode: $vim_cv_tty_mode, group: $vim_cv_tty_group" >&6; }
+        else
+  	vim_cv_tty_group=world
+! 	{ $as_echo "$as_me:$LINENO: result: ptys are world accessable" >&5
+! $as_echo "ptys are world accessable" >&6; }
+        fi
+  
+  else
+--- 13718,13725 ----
+  $as_echo "pty mode: $vim_cv_tty_mode, group: $vim_cv_tty_group" >&6; }
+        else
+  	vim_cv_tty_group=world
+! 	{ $as_echo "$as_me:$LINENO: result: ptys are world accessible" >&5
+! $as_echo "ptys are world accessible" >&6; }
+        fi
+  
+  else
+***************
+*** 13730,13737 ****
+  ( exit $ac_status )
+  
+        vim_cv_tty_group=world
+!       { $as_echo "$as_me:$LINENO: result: can't determine - assume ptys are world accessable" >&5
+! $as_echo "can't determine - assume ptys are world accessable" >&6; }
+  
+  fi
+  rm -rf conftest.dSYM
+--- 13730,13737 ----
+  ( exit $ac_status )
+  
+        vim_cv_tty_group=world
+!       { $as_echo "$as_me:$LINENO: result: can't determine - assume ptys are world accessible" >&5
+! $as_echo "can't determine - assume ptys are world accessible" >&6; }
+  
+  fi
+  rm -rf conftest.dSYM
+*** ../vim-7.2.314/src/configure.in	2009-11-17 17:13:03.000000000 +0100
+--- src/configure.in	2009-12-02 17:21:10.000000000 +0100
+***************
+*** 686,692 ****
+        [
+  	vi_cv_path_python_conf=
+  	for path in "${vi_cv_path_python_pfx}" "${vi_cv_path_python_epfx}"; do
+! 	  for subdir in lib share; do
+  	    d="${path}/${subdir}/python${vi_cv_var_python_version}/config"
+  	    if test -d "$d" && test -f "$d/config.c"; then
+  	      vi_cv_path_python_conf="$d"
+--- 686,692 ----
+        [
+  	vi_cv_path_python_conf=
+  	for path in "${vi_cv_path_python_pfx}" "${vi_cv_path_python_epfx}"; do
+! 	  for subdir in lib64 lib share; do
+  	    d="${path}/${subdir}/python${vi_cv_var_python_version}/config"
+  	    if test -d "$d" && test -f "$d/config.c"; then
+  	      vi_cv_path_python_conf="$d"
+***************
+*** 2557,2567 ****
+  	AC_MSG_RESULT([pty mode: $vim_cv_tty_mode, group: $vim_cv_tty_group])
+        else
+  	vim_cv_tty_group=world
+! 	AC_MSG_RESULT([ptys are world accessable])
+        fi
+      ],[
+        vim_cv_tty_group=world
+!       AC_MSG_RESULT([can't determine - assume ptys are world accessable])
+      ],[
+        AC_MSG_ERROR(cross-compiling: please set 'vim_cv_tty_group' and 'vim_cv_tty_mode')
+      ])
+--- 2557,2567 ----
+  	AC_MSG_RESULT([pty mode: $vim_cv_tty_mode, group: $vim_cv_tty_group])
+        else
+  	vim_cv_tty_group=world
+! 	AC_MSG_RESULT([ptys are world accessible])
+        fi
+      ],[
+        vim_cv_tty_group=world
+!       AC_MSG_RESULT([can't determine - assume ptys are world accessible])
+      ],[
+        AC_MSG_ERROR(cross-compiling: please set 'vim_cv_tty_group' and 'vim_cv_tty_mode')
+      ])
+*** ../vim-7.2.314/src/version.c	2009-12-02 17:47:46.000000000 +0100
+--- src/version.c	2009-12-02 17:57:39.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     315,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+10. And even your night dreams are in HTML.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

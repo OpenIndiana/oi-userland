@@ -1,0 +1,48 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.309
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.309 (after 7.2.308)
+Problem:    Warning for missing function prototype. (Patrick Texier)
+Solution:   Add the prototype.
+Files:	    src/regexp.c
+
+
+*** ../vim-7.2.308/src/regexp.c	2009-11-25 19:51:56.000000000 +0100
+--- src/regexp.c	2009-11-26 20:39:18.000000000 +0100
+***************
+*** 7214,7219 ****
+--- 7214,7221 ----
+  }
+  
+  #ifdef FEAT_EVAL
++ static char_u *reg_getline_submatch __ARGS((linenr_T lnum));
++ 
+  /*
+   * Call reg_getline() with the line numbers from the submatch.  If a
+   * substitute() was used the reg_maxline and other values have been
+*** ../vim-7.2.308/src/version.c	2009-11-25 19:51:56.000000000 +0100
+--- src/version.c	2009-11-26 20:40:11.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     309,
+  /**/
+
+-- 
+Female engineers become irresistible at the age of consent and remain that
+way until about thirty minutes after their clinical death.  Longer if it's a
+warm day.
+				(Scott Adams - The Dilbert principle)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,65 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.019
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.019
+Problem:    Completion of ":noautocmd" doesn't work and exists(":noautocmd")
+	    returns zero. (Ben Fritz)
+Solution:   Add "noautocmd" to the list of modifiers and commands.
+Files:	    src/ex_cmds.h, src/ex_docmd.c
+
+
+*** ../vim-7.2.018/src/ex_cmds.h	Wed Jun 25 00:44:40 2008
+--- src/ex_cmds.h	Sat Sep 13 18:37:25 2008
+***************
+*** 635,640 ****
+--- 635,642 ----
+  			RANGE|NOTADR|ZEROR|EXTRA|TRLBAR|NOTRLCOM|USECTRLV|CMDWIN),
+  EX(CMD_noremap,		"noremap",	ex_map,
+  			BANG|EXTRA|TRLBAR|NOTRLCOM|USECTRLV|CMDWIN),
++ EX(CMD_noautocmd,	"noautocmd",	ex_wrongmodifier,
++ 			NEEDARG|EXTRA|NOTRLCOM),
+  EX(CMD_nohlsearch,	"nohlsearch",	ex_nohlsearch,
+  			TRLBAR|SBOXOK|CMDWIN),
+  EX(CMD_noreabbrev,	"noreabbrev",	ex_abbreviate,
+*** ../vim-7.2.018/src/ex_docmd.c	Sat Jul 26 16:04:39 2008
+--- src/ex_docmd.c	Mon Sep 15 20:04:53 2008
+***************
+*** 2978,2983 ****
+--- 2979,2985 ----
+      {"keepmarks", 3, FALSE},
+      {"leftabove", 5, FALSE},
+      {"lockmarks", 3, FALSE},
++     {"noautocmd", 3, FALSE},
+      {"rightbelow", 6, FALSE},
+      {"sandbox", 3, FALSE},
+      {"silent", 3, FALSE},
+*** ../vim-7.2.018/src/version.c	Sun Sep 14 21:40:26 2008
+--- src/version.c	Thu Sep 18 12:39:56 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     19,
+  /**/
+
+-- 
+Proof techniques #2: Proof by Oddity.
+	SAMPLE: To prove that horses have an infinite number of legs.
+(1) Horses have an even number of legs.
+(2) They have two legs in back and fore legs in front.
+(3) This makes a total of six legs, which certainly is an odd number of
+    legs for a horse.
+(4) But the only number that is both odd and even is infinity.
+(5) Therefore, horses must have an infinite number of legs.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

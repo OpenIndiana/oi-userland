@@ -1,0 +1,411 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.051
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.051
+Problem:    Can't avoid 'wildignore' and 'suffixes' for glob() and globpath().
+Solution:   Add an extra argument to these functions. (Ingo Karkat)
+Files:	    src/eval.c, src/ex_getln.c, src/proto/ex_getln.pro,
+	    runtime/doc/eval.txt, runtime/doc/options.txt
+
+
+*** ../vim-7.2.050/src/eval.c	Thu Nov 20 16:11:03 2008
+--- src/eval.c	Thu Nov 27 22:15:40 2008
+***************
+*** 7564,7571 ****
+      {"getwinposx",	0, 0, f_getwinposx},
+      {"getwinposy",	0, 0, f_getwinposy},
+      {"getwinvar",	2, 2, f_getwinvar},
+!     {"glob",		1, 1, f_glob},
+!     {"globpath",	2, 2, f_globpath},
+      {"has",		1, 1, f_has},
+      {"has_key",		2, 2, f_has_key},
+      {"haslocaldir",	0, 0, f_haslocaldir},
+--- 7564,7571 ----
+      {"getwinposx",	0, 0, f_getwinposx},
+      {"getwinposy",	0, 0, f_getwinposy},
+      {"getwinvar",	2, 2, f_getwinvar},
+!     {"glob",		1, 2, f_glob},
+!     {"globpath",	2, 3, f_globpath},
+      {"has",		1, 1, f_has},
+      {"has_key",		2, 2, f_has_key},
+      {"haslocaldir",	0, 0, f_haslocaldir},
+***************
+*** 9557,9563 ****
+      else
+      {
+  	/* When the optional second argument is non-zero, don't remove matches
+! 	 * for 'suffixes' and 'wildignore' */
+  	if (argvars[1].v_type != VAR_UNKNOWN
+  				    && get_tv_number_chk(&argvars[1], &error))
+  	    flags |= WILD_KEEP_ALL;
+--- 9557,9563 ----
+      else
+      {
+  	/* When the optional second argument is non-zero, don't remove matches
+! 	 * for 'wildignore' and don't put matches for 'suffixes' at the end. */
+  	if (argvars[1].v_type != VAR_UNKNOWN
+  				    && get_tv_number_chk(&argvars[1], &error))
+  	    flags |= WILD_KEEP_ALL;
+***************
+*** 11323,11335 ****
+      typval_T	*argvars;
+      typval_T	*rettv;
+  {
+      expand_T	xpc;
+  
+!     ExpandInit(&xpc);
+!     xpc.xp_context = EXPAND_FILES;
+!     rettv->v_type = VAR_STRING;
+!     rettv->vval.v_string = ExpandOne(&xpc, get_tv_string(&argvars[0]),
+! 				     NULL, WILD_USE_NL|WILD_SILENT, WILD_ALL);
+  }
+  
+  /*
+--- 11323,11347 ----
+      typval_T	*argvars;
+      typval_T	*rettv;
+  {
++     int		flags = WILD_SILENT|WILD_USE_NL;
+      expand_T	xpc;
++     int		error = FALSE;
+  
+!     /* When the optional second argument is non-zero, don't remove matches
+!     * for 'wildignore' and don't put matches for 'suffixes' at the end. */
+!     if (argvars[1].v_type != VAR_UNKNOWN
+! 				&& get_tv_number_chk(&argvars[1], &error))
+! 	flags |= WILD_KEEP_ALL;
+!     rettv->v_type = VAR_STRING;
+!     if (!error)
+!     {
+! 	ExpandInit(&xpc);
+! 	xpc.xp_context = EXPAND_FILES;
+! 	rettv->vval.v_string = ExpandOne(&xpc, get_tv_string(&argvars[0]),
+! 						       NULL, flags, WILD_ALL);
+!     }
+!     else
+! 	rettv->vval.v_string = NULL;
+  }
+  
+  /*
+***************
+*** 11340,11353 ****
+      typval_T	*argvars;
+      typval_T	*rettv;
+  {
+      char_u	buf1[NUMBUFLEN];
+      char_u	*file = get_tv_string_buf_chk(&argvars[1], buf1);
+  
+      rettv->v_type = VAR_STRING;
+!     if (file == NULL)
+  	rettv->vval.v_string = NULL;
+      else
+! 	rettv->vval.v_string = globpath(get_tv_string(&argvars[0]), file);
+  }
+  
+  /*
+--- 11352,11373 ----
+      typval_T	*argvars;
+      typval_T	*rettv;
+  {
++     int		flags = 0;
+      char_u	buf1[NUMBUFLEN];
+      char_u	*file = get_tv_string_buf_chk(&argvars[1], buf1);
++     int		error = FALSE;
+  
++     /* When the optional second argument is non-zero, don't remove matches
++     * for 'wildignore' and don't put matches for 'suffixes' at the end. */
++     if (argvars[2].v_type != VAR_UNKNOWN
++ 				&& get_tv_number_chk(&argvars[2], &error))
++ 	flags |= WILD_KEEP_ALL;
+      rettv->v_type = VAR_STRING;
+!     if (file == NULL || error)
+  	rettv->vval.v_string = NULL;
+      else
+! 	rettv->vval.v_string = globpath(get_tv_string(&argvars[0]), file,
+! 								       flags);
+  }
+  
+  /*
+*** ../vim-7.2.050/src/ex_getln.c	Sat Nov 15 14:10:23 2008
+--- src/ex_getln.c	Thu Nov 20 18:37:20 2008
+***************
+*** 2524,2530 ****
+  	    && ccline.xpc->xp_context != EXPAND_NOTHING
+  	    && ccline.xpc->xp_context != EXPAND_UNSUCCESSFUL)
+      {
+! 	int i = ccline.xpc->xp_pattern - p;
+  
+  	/* If xp_pattern points inside the old cmdbuff it needs to be adjusted
+  	 * to point into the newly allocated memory. */
+--- 2524,2530 ----
+  	    && ccline.xpc->xp_context != EXPAND_NOTHING
+  	    && ccline.xpc->xp_context != EXPAND_UNSUCCESSFUL)
+      {
+! 	int i = (int)(ccline.xpc->xp_pattern - p);
+  
+  	/* If xp_pattern points inside the old cmdbuff it needs to be adjusted
+  	 * to point into the newly allocated memory. */
+***************
+*** 4897,4903 ****
+      if (s == NULL)
+  	return FAIL;
+      sprintf((char *)s, "%s/%s*.vim", dirname, pat);
+!     all = globpath(p_rtp, s);
+      vim_free(s);
+      if (all == NULL)
+  	return FAIL;
+--- 4897,4903 ----
+      if (s == NULL)
+  	return FAIL;
+      sprintf((char *)s, "%s/%s*.vim", dirname, pat);
+!     all = globpath(p_rtp, s, 0);
+      vim_free(s);
+      if (all == NULL)
+  	return FAIL;
+***************
+*** 4938,4946 ****
+   * newlines.  Returns NULL for an error or no matches.
+   */
+      char_u *
+! globpath(path, file)
+      char_u	*path;
+      char_u	*file;
+  {
+      expand_T	xpc;
+      char_u	*buf;
+--- 4938,4947 ----
+   * newlines.  Returns NULL for an error or no matches.
+   */
+      char_u *
+! globpath(path, file, expand_options)
+      char_u	*path;
+      char_u	*file;
++     int		expand_options;
+  {
+      expand_T	xpc;
+      char_u	*buf;
+***************
+*** 4969,4978 ****
+  	{
+  	    add_pathsep(buf);
+  	    STRCAT(buf, file);
+! 	    if (ExpandFromContext(&xpc, buf, &num_p, &p, WILD_SILENT) != FAIL
+! 								 && num_p > 0)
+  	    {
+! 		ExpandEscape(&xpc, buf, num_p, p, WILD_SILENT);
+  		for (len = 0, i = 0; i < num_p; ++i)
+  		    len += (int)STRLEN(p[i]) + 1;
+  
+--- 4970,4979 ----
+  	{
+  	    add_pathsep(buf);
+  	    STRCAT(buf, file);
+! 	    if (ExpandFromContext(&xpc, buf, &num_p, &p,
+! 			     WILD_SILENT|expand_options) != FAIL && num_p > 0)
+  	    {
+! 		ExpandEscape(&xpc, buf, num_p, p, WILD_SILENT|expand_options);
+  		for (len = 0, i = 0; i < num_p; ++i)
+  		    len += (int)STRLEN(p[i]) + 1;
+  
+*** ../vim-7.2.050/src/proto/ex_getln.pro	Wed May 28 16:49:01 2008
+--- src/proto/ex_getln.pro	Thu Nov 20 18:27:57 2008
+***************
+*** 31,37 ****
+  void set_cmd_context __ARGS((expand_T *xp, char_u *str, int len, int col));
+  int expand_cmdline __ARGS((expand_T *xp, char_u *str, int col, int *matchcount, char_u ***matches));
+  int ExpandGeneric __ARGS((expand_T *xp, regmatch_T *regmatch, int *num_file, char_u ***file, char_u *((*func)(expand_T *, int))));
+! char_u *globpath __ARGS((char_u *path, char_u *file));
+  void init_history __ARGS((void));
+  int get_histtype __ARGS((char_u *name));
+  void add_to_history __ARGS((int histype, char_u *new_entry, int in_map, int sep));
+--- 31,37 ----
+  void set_cmd_context __ARGS((expand_T *xp, char_u *str, int len, int col));
+  int expand_cmdline __ARGS((expand_T *xp, char_u *str, int col, int *matchcount, char_u ***matches));
+  int ExpandGeneric __ARGS((expand_T *xp, regmatch_T *regmatch, int *num_file, char_u ***file, char_u *((*func)(expand_T *, int))));
+! char_u *globpath __ARGS((char_u *path, char_u *file, int expand_options));
+  void init_history __ARGS((void));
+  int get_histtype __ARGS((char_u *name));
+  void add_to_history __ARGS((int histype, char_u *new_entry, int in_map, int sep));
+*** ../vim-7.2.050/runtime/doc/eval.txt	Sun Nov  9 13:43:25 2008
+--- runtime/doc/eval.txt	Thu Nov 27 22:17:13 2008
+***************
+*** 1,4 ****
+! *eval.txt*	For Vim version 7.2.  Last change: 2008 Nov 02
+  
+  
+  		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+--- 1,4 ----
+! *eval.txt*	For Vim version 7.2.  Last change: 2008 Nov 27
+  
+  
+  		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+***************
+*** 1706,1712 ****
+  exists( {expr})			Number	TRUE if {expr} exists
+  extend({expr1}, {expr2} [, {expr3}])
+  				List/Dict insert items of {expr2} into {expr1}
+! expand( {expr})			String	expand special keywords in {expr}
+  feedkeys( {string} [, {mode}])	Number	add key sequence to typeahead buffer
+  filereadable( {file})		Number	TRUE if {file} is a readable file
+  filewritable( {file})		Number	TRUE if {file} is a writable file
+--- 1709,1715 ----
+  exists( {expr})			Number	TRUE if {expr} exists
+  extend({expr1}, {expr2} [, {expr3}])
+  				List/Dict insert items of {expr2} into {expr1}
+! expand( {expr} [, {flag}])	String	expand special keywords in {expr}
+  feedkeys( {string} [, {mode}])	Number	add key sequence to typeahead buffer
+  filereadable( {file})		Number	TRUE if {file} is a readable file
+  filewritable( {file})		Number	TRUE if {file} is a writable file
+***************
+*** 1758,1765 ****
+  getwinposx()			Number	X coord in pixels of GUI Vim window
+  getwinposy()			Number	Y coord in pixels of GUI Vim window
+  getwinvar( {nr}, {varname})	any	variable {varname} in window {nr}
+! glob( {expr})			String	expand file wildcards in {expr}
+! globpath( {path}, {expr})	String	do glob({expr}) for all dirs in {path}
+  has( {feature})			Number	TRUE if feature {feature} supported
+  has_key( {dict}, {key})		Number	TRUE if {dict} has entry {key}
+  haslocaldir()			Number	TRUE if current window executed |:lcd|
+--- 1761,1769 ----
+  getwinposx()			Number	X coord in pixels of GUI Vim window
+  getwinposy()			Number	Y coord in pixels of GUI Vim window
+  getwinvar( {nr}, {varname})	any	variable {varname} in window {nr}
+! glob( {expr} [, {flag}])	String	expand file wildcards in {expr}
+! globpath( {path}, {expr} [, {flag}])
+! 				String	do glob({expr}) for all dirs in {path}
+  has( {feature})			Number	TRUE if feature {feature} supported
+  has_key( {dict}, {key})		Number	TRUE if {dict} has entry {key}
+  haslocaldir()			Number	TRUE if current window executed |:lcd|
+***************
+*** 3286,3299 ****
+  			:let list_is_on = getwinvar(2, '&list')
+  			:echo "myvar = " . getwinvar(1, 'myvar')
+  <
+! 							*glob()*
+! glob({expr})	Expand the file wildcards in {expr}.  See |wildcards| for the
+  		use of special characters.
+  		The result is a String.
+  		When there are several matches, they are separated by <NL>
+  		characters.
+! 		The 'wildignore' option applies: Names matching one of the
+! 		patterns in 'wildignore' will be skipped.
+  		If the expansion fails, the result is an empty string.
+  		A name for a non-existing file is not included.
+  
+--- 3290,3305 ----
+  			:let list_is_on = getwinvar(2, '&list')
+  			:echo "myvar = " . getwinvar(1, 'myvar')
+  <
+! glob({expr} [, {flag}])					*glob()*
+! 		Expand the file wildcards in {expr}.  See |wildcards| for the
+  		use of special characters.
+  		The result is a String.
+  		When there are several matches, they are separated by <NL>
+  		characters.
+! 		Unless the optional {flag} argument is given and is non-zero,
+! 		the 'suffixes' and 'wildignore' options apply: Names matching
+! 		one of the patterns in 'wildignore' will be skipped and
+! 		'suffixes' affect the ordering of matches.
+  		If the expansion fails, the result is an empty string.
+  		A name for a non-existing file is not included.
+  
+***************
+*** 3307,3326 ****
+  		See |expand()| for expanding special Vim variables.  See
+  		|system()| for getting the raw output of an external command.
+  
+! globpath({path}, {expr})				*globpath()*
+  		Perform glob() on all directories in {path} and concatenate
+  		the results.  Example: >
+  			:echo globpath(&rtp, "syntax/c.vim")
+  <		{path} is a comma-separated list of directory names.  Each
+  		directory name is prepended to {expr} and expanded like with
+! 		glob().  A path separator is inserted when needed.
+  		To add a comma inside a directory name escape it with a
+  		backslash.  Note that on MS-Windows a directory may have a
+  		trailing backslash, remove it if you put a comma after it.
+  		If the expansion fails for one of the directories, there is no
+  		error message.
+! 		The 'wildignore' option applies: Names matching one of the
+! 		patterns in 'wildignore' will be skipped.
+  
+  		The "**" item can be used to search in a directory tree.
+  		For example, to find all "README.txt" files in the directories
+--- 3313,3334 ----
+  		See |expand()| for expanding special Vim variables.  See
+  		|system()| for getting the raw output of an external command.
+  
+! globpath({path}, {expr} [, {flag}])			*globpath()*
+  		Perform glob() on all directories in {path} and concatenate
+  		the results.  Example: >
+  			:echo globpath(&rtp, "syntax/c.vim")
+  <		{path} is a comma-separated list of directory names.  Each
+  		directory name is prepended to {expr} and expanded like with
+! 		|glob()|.  A path separator is inserted when needed.
+  		To add a comma inside a directory name escape it with a
+  		backslash.  Note that on MS-Windows a directory may have a
+  		trailing backslash, remove it if you put a comma after it.
+  		If the expansion fails for one of the directories, there is no
+  		error message.
+! 		Unless the optional {flag} argument is given and is non-zero,
+! 		the 'suffixes' and 'wildignore' options apply: Names matching
+! 		one of the patterns in 'wildignore' will be skipped and
+! 		'suffixes' affect the ordering of matches.
+  
+  		The "**" item can be used to search in a directory tree.
+  		For example, to find all "README.txt" files in the directories
+*** ../vim-7.2.050/runtime/doc/options.txt	Sat Aug  9 19:36:49 2008
+--- runtime/doc/options.txt	Tue Nov 25 23:43:55 2008
+***************
+*** 1,4 ****
+! *options.txt*	For Vim version 7.2.  Last change: 2008 Aug 06
+  
+  
+  		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+--- 1,4 ----
+! *options.txt*	For Vim version 7.2.  Last change: 2008 Nov 25
+  
+  
+  		  VIM REFERENCE MANUAL	  by Bram Moolenaar
+***************
+*** 7472,7478 ****
+  			{not available when compiled without the |+wildignore|
+  			feature}
+  	A list of file patterns.  A file that matches with one of these
+! 	patterns is ignored when completing file or directory names.
+  	The pattern is used like with |:autocmd|, see |autocmd-patterns|.
+  	Also see 'suffixes'.
+  	Example: >
+--- 7481,7489 ----
+  			{not available when compiled without the |+wildignore|
+  			feature}
+  	A list of file patterns.  A file that matches with one of these
+! 	patterns is ignored when completing file or directory names, and
+! 	influences the result of |expand()|, |glob()| and |globpath()| unless
+! 	a flag is passed to disable this.
+  	The pattern is used like with |:autocmd|, see |autocmd-patterns|.
+  	Also see 'suffixes'.
+  	Example: >
+*** ../vim-7.2.050/src/version.c	Fri Nov 28 10:08:05 2008
+--- src/version.c	Fri Nov 28 10:55:44 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     51,
+  /**/
+
+-- 
+Not too long ago, unzipping in public was illegal...
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

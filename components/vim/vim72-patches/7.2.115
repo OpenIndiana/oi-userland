@@ -1,0 +1,133 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.115
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.115
+Problem:    Some debugging code is never used.
+Solution:   Remove nbtrace() and nbprt(). (Dominique Pelle)
+Files:      src/nbdebug.c, src/nbdebug.h
+
+*** ../vim-7.2.114/src/nbdebug.c	Tue Jun 24 23:54:30 2008
+--- src/nbdebug.c	Tue Feb 17 03:26:07 2009
+***************
+*** 33,39 ****
+  u_int		 nb_dlevel = 0;		/* nb_debug verbosity level */
+  
+  void		 nbdb(char *, ...);
+- void		 nbtrace(char *, ...);
+  
+  static int	 lookup(char *);
+  #ifdef USE_NB_ERRORHANDLER
+--- 33,38 ----
+***************
+*** 100,124 ****
+  }    /* end nbdebug_log_init */
+  
+  
+- 
+- 
+- void
+- nbtrace(
+- 	char		*fmt,
+- 	...)
+- {
+- 	va_list		 ap;
+- 
+- 	if (nb_debug!= NULL && (nb_dlevel & (NB_TRACE | NB_TRACE_VERBOSE))) {
+- 		va_start(ap, fmt);
+- 		vfprintf(nb_debug, fmt, ap);
+- 		va_end(ap);
+- 		fflush(nb_debug);
+- 	}
+- 
+- }    /* end nbtrace */
+- 
+- 
+  void
+  nbdbg(
+  	char		*fmt,
+--- 99,104 ----
+***************
+*** 136,158 ****
+  }    /* end nbdbg */
+  
+  
+- void
+- nbprt(
+- 	char		*fmt,
+- 	...)
+- {
+- 	va_list		 ap;
+- 
+- 	if (nb_debug != NULL && nb_dlevel & NB_PRINT) {
+- 		va_start(ap, fmt);
+- 		vfprintf(nb_debug, fmt, ap);
+- 		va_end(ap);
+- 		fflush(nb_debug);
+- 	}
+- 
+- }    /* end nbprt */
+- 
+- 
+  static int
+  lookup(
+  	char		*file)
+--- 116,121 ----
+*** ../vim-7.2.114/src/nbdebug.h	Wed Jun 25 00:47:21 2008
+--- src/nbdebug.h	Tue Feb 17 03:26:38 2009
+***************
+*** 43,50 ****
+  
+  
+  void		 nbdbg(char *, ...);
+- void		 nbprt(char *, ...);
+- void		 nbtrace(char *, ...);
+  
+  void nbdebug_wait __ARGS((u_int wait_flags, char *wait_var, u_int wait_secs));
+  void nbdebug_log_init __ARGS((char *log_var, char *level_var));
+--- 43,48 ----
+***************
+*** 70,88 ****
+  {
+  }
+  
+- void
+- nbprt(
+- 	char		*fmt,
+- 	...)
+- {
+- }
+- 
+- void
+- nbtrace(
+- 	char		*fmt,
+- 	...)
+- {
+- }
+- 
+  #endif /* NBDEBUG */
+  #endif /* NBDEBUG_H */
+--- 68,72 ----
+*** ../vim-7.2.114/src/version.c	Sat Feb 21 22:12:43 2009
+--- src/version.c	Sat Feb 21 22:28:21 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     115,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+105. When someone asks you for your address, you tell them your URL.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

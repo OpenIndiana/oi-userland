@@ -1,0 +1,207 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.427
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.427
+Problem:    The swapfile is created using the destination of a symlink, but
+	    recovery doesn't follow symlinks.
+Solution:   When recovering, resolve symlinks. (James Vega)
+Files:	    src/memline.c
+
+
+*** ../vim-7.2.426/src/memline.c	2010-03-10 14:46:21.000000000 +0100
+--- src/memline.c	2010-05-14 17:28:29.000000000 +0200
+***************
+*** 245,250 ****
+--- 245,253 ----
+  #ifdef FEAT_BYTEOFF
+  static void ml_updatechunk __ARGS((buf_T *buf, long line, long len, int updtype));
+  #endif
++ #ifdef HAVE_READLINK
++ static int resolve_symlink __ARGS((char_u *fname, char_u *buf));
++ #endif
+  
+  /*
+   * Open a new memline for "buf".
+***************
+*** 1401,1410 ****
+      int		i;
+      char_u	*dirp;
+      char_u	*dir_name;
+  
+      if (list)
+      {
+! 	    /* use msg() to start the scrolling properly */
+  	msg((char_u *)_("Swap files found:"));
+  	msg_putchar('\n');
+      }
+--- 1404,1422 ----
+      int		i;
+      char_u	*dirp;
+      char_u	*dir_name;
++     char_u	*fname_res = *fname;
++ #ifdef HAVE_READLINK
++     char_u	fname_buf[MAXPATHL];
++ 
++     /* Expand symlink in the file name, because the swap file is created with
++      * the actual file instead of with the symlink. */
++     if (resolve_symlink(*fname, fname_buf) == OK)
++ 	fname_res = fname_buf;
++ #endif
+  
+      if (list)
+      {
+! 	/* use msg() to start the scrolling properly */
+  	msg((char_u *)_("Swap files found:"));
+  	msg_putchar('\n');
+      }
+***************
+*** 1453,1459 ****
+  #endif
+  	    }
+  	    else
+! 		num_names = recov_file_names(names, *fname, TRUE);
+  	}
+  	else			    /* check directory dir_name */
+  	{
+--- 1465,1471 ----
+  #endif
+  	    }
+  	    else
+! 		num_names = recov_file_names(names, fname_res, TRUE);
+  	}
+  	else			    /* check directory dir_name */
+  	{
+***************
+*** 1490,1501 ****
+  		if (after_pathsep(dir_name, p) && p[-1] == p[-2])
+  		{
+  		    /* Ends with '//', Use Full path for swap name */
+! 		    tail = make_percent_swname(dir_name, *fname);
+  		}
+  		else
+  #endif
+  		{
+! 		    tail = gettail(*fname);
+  		    tail = concat_fnames(dir_name, tail, TRUE);
+  		}
+  		if (tail == NULL)
+--- 1502,1513 ----
+  		if (after_pathsep(dir_name, p) && p[-1] == p[-2])
+  		{
+  		    /* Ends with '//', Use Full path for swap name */
+! 		    tail = make_percent_swname(dir_name, fname_res);
+  		}
+  		else
+  #endif
+  		{
+! 		    tail = gettail(fname_res);
+  		    tail = concat_fnames(dir_name, tail, TRUE);
+  		}
+  		if (tail == NULL)
+***************
+*** 1535,1545 ****
+  	    struct stat	    st;
+  	    char_u	    *swapname;
+  
+  #if defined(VMS) || defined(RISCOS)
+! 	    swapname = modname(*fname, (char_u *)"_swp", FALSE);
+  #else
+! 	    swapname = modname(*fname, (char_u *)".swp", TRUE);
+  #endif
+  	    if (swapname != NULL)
+  	    {
+  		if (mch_stat((char *)swapname, &st) != -1)	    /* It exists! */
+--- 1547,1559 ----
+  	    struct stat	    st;
+  	    char_u	    *swapname;
+  
++ 	    swapname = modname(fname_res,
+  #if defined(VMS) || defined(RISCOS)
+! 			       (char_u *)"_swp", FALSE
+  #else
+! 			       (char_u *)".swp", TRUE
+  #endif
++ 			      );
+  	    if (swapname != NULL)
+  	    {
+  		if (mch_stat((char *)swapname, &st) != -1)	    /* It exists! */
+***************
+*** 3508,3515 ****
+  }
+  
+  #ifdef HAVE_READLINK
+- static int resolve_symlink __ARGS((char_u *fname, char_u *buf));
+- 
+  /*
+   * Resolve a symlink in the last component of a file name.
+   * Note that f_resolve() does it for every part of the path, we don't do that
+--- 3522,3527 ----
+***************
+*** 3601,3609 ****
+      char_u	*dir_name;
+  {
+      char_u	*r, *s;
+  #ifdef HAVE_READLINK
+      char_u	fname_buf[MAXPATHL];
+-     char_u	*fname_res;
+  #endif
+  
+  #if defined(UNIX) || defined(WIN3264)  /* Need _very_ long file names */
+--- 3613,3621 ----
+      char_u	*dir_name;
+  {
+      char_u	*r, *s;
++     char_u	*fname_res = fname;
+  #ifdef HAVE_READLINK
+      char_u	fname_buf[MAXPATHL];
+  #endif
+  
+  #if defined(UNIX) || defined(WIN3264)  /* Need _very_ long file names */
+***************
+*** 3625,3632 ****
+       * actual file instead of with the symlink. */
+      if (resolve_symlink(fname, fname_buf) == OK)
+  	fname_res = fname_buf;
+-     else
+- 	fname_res = fname;
+  #endif
+  
+      r = buf_modname(
+--- 3637,3642 ----
+***************
+*** 3639,3649 ****
+  	    /* Avoid problems if fname has special chars, eg <Wimp$Scrap> */
+  	    ffname,
+  #else
+- # ifdef HAVE_READLINK
+  	    fname_res,
+- # else
+- 	    fname,
+- # endif
+  #endif
+  	    (char_u *)
+  #if defined(VMS) || defined(RISCOS)
+--- 3649,3655 ----
+*** ../vim-7.2.426/src/version.c	2010-05-14 17:32:53.000000000 +0200
+--- src/version.c	2010-05-14 17:50:43.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     427,
+  /**/
+
+-- 
+Change is inevitable, except from a vending machine.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

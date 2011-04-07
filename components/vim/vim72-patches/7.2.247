@@ -1,0 +1,86 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.247
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.247
+Problem:    Mzscheme interface minor problem.
+Solution:   Better error message when build fails. (Sergey Khorev)
+Files:	    src/if_mzsch.c
+
+
+*** ../vim-7.2.246/src/if_mzsch.c	2009-07-09 20:06:30.000000000 +0200
+--- src/if_mzsch.c	2009-09-11 11:20:39.000000000 +0200
+***************
+*** 635,642 ****
+  #endif /* DYNAMIC_MZSCHEME */
+  
+  /* need to put it here for dynamic stuff to work */
+! #ifdef INCLUDE_MZSCHEME_BASE
+  # include "mzscheme_base.c"
+  #endif
+  
+  /*
+--- 635,644 ----
+  #endif /* DYNAMIC_MZSCHEME */
+  
+  /* need to put it here for dynamic stuff to work */
+! #if defined(INCLUDE_MZSCHEME_BASE)
+  # include "mzscheme_base.c"
++ #elif MZSCHEME_VERSION_MAJOR >= 400
++ # error MzScheme 4.x must include mzscheme_base.c, for MinGW32 you need to define MZSCHEME_GENERATE_BASE=yes
+  #endif
+  
+  /*
+***************
+*** 875,888 ****
+  #ifdef INCLUDE_MZSCHEME_BASE
+      {
+  	/*
+! 	 * versions 4.x do not provide Scheme bindings by defaults
+  	 * we need to add them explicitly
+  	 */
+  	Scheme_Object *scheme_base_symbol = NULL;
+  	MZ_GC_DECL_REG(1);
+  	MZ_GC_VAR_IN_REG(0, scheme_base_symbol);
+  	MZ_GC_REG();
+! 	/* invoke function from generated and included base.c */
+  	declare_modules(environment);
+  	scheme_base_symbol = scheme_intern_symbol("scheme/base");
+  	MZ_GC_CHECK();
+--- 877,890 ----
+  #ifdef INCLUDE_MZSCHEME_BASE
+      {
+  	/*
+! 	 * versions 4.x do not provide Scheme bindings by default
+  	 * we need to add them explicitly
+  	 */
+  	Scheme_Object *scheme_base_symbol = NULL;
+  	MZ_GC_DECL_REG(1);
+  	MZ_GC_VAR_IN_REG(0, scheme_base_symbol);
+  	MZ_GC_REG();
+! 	/* invoke function from generated and included mzscheme_base.c */
+  	declare_modules(environment);
+  	scheme_base_symbol = scheme_intern_symbol("scheme/base");
+  	MZ_GC_CHECK();
+*** ../vim-7.2.246/src/version.c	2009-09-11 11:30:12.000000000 +0200
+--- src/version.c	2009-09-11 11:53:59.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     247,
+  /**/
+
+-- 
+Your fault: core dumped
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,98 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.027
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.027
+Problem:    Can use cscope commands in the sandbox.
+Solution:   Disallow them, they might not be safe.
+Files:	    src/ex_cmds.h
+
+
+*** ../vim-7.2.026/src/ex_cmds.h	Thu Sep 18 12:43:21 2008
+--- src/ex_cmds.h	Thu Sep 18 22:18:14 2008
+***************
+*** 278,284 ****
+  EX(CMD_crewind,		"crewind",	ex_cc,
+  			RANGE|NOTADR|COUNT|TRLBAR|BANG),
+  EX(CMD_cscope,		"cscope",	do_cscope,
+! 			EXTRA|NOTRLCOM|SBOXOK|XFILE),
+  EX(CMD_cstag,		"cstag",	do_cstag,
+  			BANG|TRLBAR|WORD1),
+  EX(CMD_cunmap,		"cunmap",	ex_unmap,
+--- 278,284 ----
+  EX(CMD_crewind,		"crewind",	ex_cc,
+  			RANGE|NOTADR|COUNT|TRLBAR|BANG),
+  EX(CMD_cscope,		"cscope",	do_cscope,
+! 			EXTRA|NOTRLCOM|XFILE),
+  EX(CMD_cstag,		"cstag",	do_cstag,
+  			BANG|TRLBAR|WORD1),
+  EX(CMD_cunmap,		"cunmap",	ex_unmap,
+***************
+*** 506,512 ****
+  EX(CMD_lclose,		"lclose",	ex_cclose,
+  			RANGE|NOTADR|COUNT|TRLBAR),
+  EX(CMD_lcscope,		"lcscope",	do_cscope,
+! 			EXTRA|NOTRLCOM|SBOXOK|XFILE),
+  EX(CMD_left,		"left",		ex_align,
+  			TRLBAR|RANGE|WHOLEFOLD|EXTRA|CMDWIN|MODIFY),
+  EX(CMD_leftabove,	"leftabove",	ex_wrongmodifier,
+--- 506,512 ----
+  EX(CMD_lclose,		"lclose",	ex_cclose,
+  			RANGE|NOTADR|COUNT|TRLBAR),
+  EX(CMD_lcscope,		"lcscope",	do_cscope,
+! 			EXTRA|NOTRLCOM|XFILE),
+  EX(CMD_left,		"left",		ex_align,
+  			TRLBAR|RANGE|WHOLEFOLD|EXTRA|CMDWIN|MODIFY),
+  EX(CMD_leftabove,	"leftabove",	ex_wrongmodifier,
+***************
+*** 653,658 ****
+--- 653,660 ----
+  			EXTRA|TRLBAR|NOTRLCOM|USECTRLV|CMDWIN),
+  EX(CMD_open,		"open",		ex_open,
+  			RANGE|EXTRA),
++ EX(CMD_oldfiles,	"oldfiles",	ex_oldfiles,
++ 			BANG|TRLBAR|SBOXOK|CMDWIN),
+  EX(CMD_omap,		"omap",		ex_map,
+  			EXTRA|TRLBAR|NOTRLCOM|USECTRLV|CMDWIN),
+  EX(CMD_omapclear,	"omapclear",	ex_mapclear,
+***************
+*** 804,810 ****
+  EX(CMD_scriptencoding,	"scriptencoding", ex_scriptencoding,
+  			WORD1|TRLBAR|CMDWIN),
+  EX(CMD_scscope,		"scscope",	do_scscope,
+! 			EXTRA|NOTRLCOM|SBOXOK),
+  EX(CMD_set,		"set",		ex_set,
+  			TRLBAR|EXTRA|CMDWIN|SBOXOK),
+  EX(CMD_setfiletype,	"setfiletype",	ex_setfiletype,
+--- 806,812 ----
+  EX(CMD_scriptencoding,	"scriptencoding", ex_scriptencoding,
+  			WORD1|TRLBAR|CMDWIN),
+  EX(CMD_scscope,		"scscope",	do_scscope,
+! 			EXTRA|NOTRLCOM),
+  EX(CMD_set,		"set",		ex_set,
+  			TRLBAR|EXTRA|CMDWIN|SBOXOK),
+  EX(CMD_setfiletype,	"setfiletype",	ex_setfiletype,
+*** ../vim-7.2.026/src/version.c	Sat Nov  1 13:51:57 2008
+--- src/version.c	Thu Nov  6 10:21:21 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     27,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+179. You wonder why your household garbage can doesn't have an
+     "empty recycle bin" button.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,218 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.381
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.381
+Problem:    No completion for :behave.
+Solution:   Add :behave completion.  Minor related fixes. (Dominique Pelle)
+Files:	    src/ex_docmd.c, src/ex_getln.c, src/proto/ex_docmd.pro, src/vim.h
+
+
+*** ../vim-7.2.380/src/ex_docmd.c	2010-02-03 15:14:15.000000000 +0100
+--- src/ex_docmd.c	2010-03-02 15:55:05.000000000 +0100
+***************
+*** 26,35 ****
+      long_u	uc_argt;	/* The argument type */
+      char_u	*uc_rep;	/* The command's replacement string */
+      long	uc_def;		/* The default value for a range/count */
+-     scid_T	uc_scriptID;	/* SID where the command was defined */
+      int		uc_compl;	/* completion type */
+! # if defined(FEAT_EVAL) && defined(FEAT_CMDL_COMPL)
+      char_u	*uc_compl_arg;	/* completion argument if any */
+  # endif
+  } ucmd_T;
+  
+--- 26,37 ----
+      long_u	uc_argt;	/* The argument type */
+      char_u	*uc_rep;	/* The command's replacement string */
+      long	uc_def;		/* The default value for a range/count */
+      int		uc_compl;	/* completion type */
+! # ifdef FEAT_EVAL
+!     scid_T	uc_scriptID;	/* SID where the command was defined */
+! #  ifdef FEAT_CMDL_COMPL
+      char_u	*uc_compl_arg;	/* completion argument if any */
++ #  endif
+  # endif
+  } ucmd_T;
+  
+***************
+*** 3156,3172 ****
+  	    return NULL;
+  	}
+  	for (ea.cmdidx = (cmdidx_T)0; (int)ea.cmdidx < (int)CMD_SIZE;
+! 					 ea.cmdidx = (cmdidx_T)((int)ea.cmdidx + 1))
+! 	    if (STRNCMP(cmdnames[(int)ea.cmdidx].cmd_name, cmd, (size_t)len) == 0)
+  		break;
+  
+  #ifdef FEAT_USR_CMDS
+  	if (cmd[0] >= 'A' && cmd[0] <= 'Z')
+- 	{
+  	    while (ASCII_ISALNUM(*p) || *p == '*')	/* Allow * wild card */
+  		++p;
+- 	    len = (int)(p - cmd);
+- 	}
+  #endif
+      }
+  
+--- 3158,3172 ----
+  	    return NULL;
+  	}
+  	for (ea.cmdidx = (cmdidx_T)0; (int)ea.cmdidx < (int)CMD_SIZE;
+! 				   ea.cmdidx = (cmdidx_T)((int)ea.cmdidx + 1))
+! 	    if (STRNCMP(cmdnames[(int)ea.cmdidx].cmd_name, cmd,
+! 							    (size_t)len) == 0)
+  		break;
+  
+  #ifdef FEAT_USR_CMDS
+  	if (cmd[0] >= 'A' && cmd[0] <= 'Z')
+  	    while (ASCII_ISALNUM(*p) || *p == '*')	/* Allow * wild card */
+  		++p;
+  #endif
+      }
+  
+***************
+*** 3809,3814 ****
+--- 3809,3817 ----
+  	    set_context_in_profile_cmd(xp, arg);
+  	    break;
+  #endif
++ 	case CMD_behave:
++ 	    xp->xp_context = EXPAND_BEHAVE;
++ 	    break;
+  
+  #endif /* FEAT_CMDL_COMPL */
+  
+***************
+*** 10847,10852 ****
+--- 10850,10873 ----
+  	EMSG2(_(e_invarg2), eap->arg);
+  }
+  
++ #if defined(FEAT_CMDL_COMPL) || defined(PROTO)
++ /*
++  * Function given to ExpandGeneric() to obtain the possible arguments of the
++  * ":behave {mswin,xterm}" command.
++  */
++     char_u *
++ get_behave_arg(xp, idx)
++     expand_T	*xp UNUSED;
++     int		idx;
++ {
++     if (idx == 0)
++ 	return (char_u *)"mswin";
++     if (idx == 1)
++ 	return (char_u *)"xterm";
++     return NULL;
++ }
++ #endif
++ 
+  #ifdef FEAT_AUTOCMD
+  static int filetype_detect = FALSE;
+  static int filetype_plugin = FALSE;
+*** ../vim-7.2.380/src/ex_getln.c	2010-02-03 15:14:15.000000000 +0100
+--- src/ex_getln.c	2010-03-02 15:28:13.000000000 +0100
+***************
+*** 4492,4497 ****
+--- 4492,4498 ----
+  	} tab[] =
+  	{
+  	    {EXPAND_COMMANDS, get_command_name, FALSE},
++ 	    {EXPAND_BEHAVE, get_behave_arg, TRUE},
+  #ifdef FEAT_USR_CMDS
+  	    {EXPAND_USER_COMMANDS, get_user_commands, FALSE},
+  	    {EXPAND_USER_CMD_FLAGS, get_user_cmd_flags, FALSE},
+*** ../vim-7.2.380/src/proto/ex_docmd.pro	2008-07-04 11:43:13.000000000 +0200
+--- src/proto/ex_docmd.pro	2010-03-02 15:37:37.000000000 +0100
+***************
+*** 52,55 ****
+--- 52,56 ----
+  int put_eol __ARGS((FILE *fd));
+  int put_line __ARGS((FILE *fd, char *s));
+  void dialog_msg __ARGS((char_u *buff, char *format, char_u *fname));
++ char_u *get_behave_arg __ARGS((expand_T *xp, int idx));
+  /* vim: set ft=c : */
+*** ../vim-7.2.380/src/vim.h	2010-02-24 14:46:58.000000000 +0100
+--- src/vim.h	2010-03-02 15:30:13.000000000 +0100
+***************
+*** 595,601 ****
+  
+  /*
+   * Terminal highlighting attribute bits.
+!  * Attibutes above HL_ALL are used for syntax highlighting.
+   */
+  #define HL_NORMAL		0x00
+  #define HL_INVERSE		0x01
+--- 595,601 ----
+  
+  /*
+   * Terminal highlighting attribute bits.
+!  * Attributes above HL_ALL are used for syntax highlighting.
+   */
+  #define HL_NORMAL		0x00
+  #define HL_INVERSE		0x01
+***************
+*** 721,726 ****
+--- 721,727 ----
+  #define EXPAND_CSCOPE		33
+  #define EXPAND_SIGN		34
+  #define EXPAND_PROFILE		35
++ #define EXPAND_BEHAVE		36
+  
+  /* Values for exmode_active (0 is no exmode) */
+  #define EXMODE_NORMAL		1
+***************
+*** 1262,1268 ****
+  } hlf_T;
+  
+  /* The HL_FLAGS must be in the same order as the HLF_ enums!
+!  * When chainging this also adjust the default for 'highlight'. */
+  #define HL_FLAGS {'8', '@', 'd', 'e', 'h', 'i', 'l', 'm', 'M', \
+  		  'n', 'r', 's', 'S', 'c', 't', 'v', 'V', 'w', 'W', \
+  		  'f', 'F', 'A', 'C', 'D', 'T', '>', \
+--- 1263,1269 ----
+  } hlf_T;
+  
+  /* The HL_FLAGS must be in the same order as the HLF_ enums!
+!  * When changing this also adjust the default for 'highlight'. */
+  #define HL_FLAGS {'8', '@', 'd', 'e', 'h', 'i', 'l', 'm', 'M', \
+  		  'n', 'r', 's', 'S', 'c', 't', 'v', 'V', 'w', 'W', \
+  		  'f', 'F', 'A', 'C', 'D', 'T', '>', \
+***************
+*** 1430,1436 ****
+  #ifdef FEAT_MBYTE
+  /* We need to call mb_stricmp() even when we aren't dealing with a multi-byte
+   * encoding because mb_stricmp() takes care of all ascii and non-ascii
+!  * encodings, including characters with umluats in latin1, etc., while
+   * STRICMP() only handles the system locale version, which often does not
+   * handle non-ascii properly. */
+  
+--- 1431,1437 ----
+  #ifdef FEAT_MBYTE
+  /* We need to call mb_stricmp() even when we aren't dealing with a multi-byte
+   * encoding because mb_stricmp() takes care of all ascii and non-ascii
+!  * encodings, including characters with umlauts in latin1, etc., while
+   * STRICMP() only handles the system locale version, which often does not
+   * handle non-ascii properly. */
+  
+*** ../vim-7.2.380/src/version.c	2010-03-02 15:14:22.000000000 +0100
+--- src/version.c	2010-03-02 15:51:24.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     381,
+  /**/
+
+-- 
+I'd like to meet the man who invented sex and see what he's working on now.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

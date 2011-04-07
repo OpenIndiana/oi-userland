@@ -27,10 +27,17 @@ FETCH =		$(WS_TOOLS)/userland-fetch
 ARCHIVES += $(COMPONENT_ARCHIVE)
 CLEAN_PATHS += $(SOURCE_DIR)
 
-PATCH_DIR =	patches
-PATCH_PATTERN =	*.patch
+# In order to override PATCH_DIR and PATCH_PATTERN in component makefiles, they
+# need to be conditionally set here.  This means that the override needs to
+# happen prior to including prep.mk.  Otherwise other variables set here which
+# are based on those will be expanded too early for the override to take effect.
+# You also can't override PATCHES after including prep.mk; if you want to
+# append filenames to PATCHES, you'll have to set $(EXTRA_PATCHES) prior to
+# inclusion.
+PATCH_DIR ?=	patches
+PATCH_PATTERN ?=	*.patch
 PATCHES =	$(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
-				2>/dev/null | sort)
+				2>/dev/null | sort) $(EXTRA_PATCHES)
 STAMPS =	$(PATCHES:$(PATCH_DIR)/%=$(SOURCE_DIR)/.%ed)
 
 $(SOURCE_DIR)/.%ed:	$(PATCH_DIR)/%

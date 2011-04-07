@@ -1,0 +1,91 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.402
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.402
+Problem:    This gives a #705 error: let X = function('haslocaldir')
+	    let X = function('getcwd')
+Solution:   Don't give E705 when the name is found in the hashtab. (Sergey
+	    Khorev)
+Files:	    src/eval.c
+
+
+*** ../vim-7.2.401/src/eval.c	2010-03-10 13:43:22.000000000 +0100
+--- src/eval.c	2010-03-17 19:35:01.000000000 +0100
+***************
+*** 19103,19108 ****
+--- 19103,19116 ----
+      hashtab_T	*ht;
+      char_u	*p;
+  
++     ht = find_var_ht(name, &varname);
++     if (ht == NULL || *varname == NUL)
++     {
++ 	EMSG2(_(e_illvar), name);
++ 	return;
++     }
++     v = find_var_in_ht(ht, varname, TRUE);
++ 
+      if (tv->v_type == VAR_FUNC)
+      {
+  	if (!(vim_strchr((char_u *)"wbs", name[0]) != NULL && name[1] == ':')
+***************
+*** 19112,19118 ****
+  	    EMSG2(_("E704: Funcref variable name must start with a capital: %s"), name);
+  	    return;
+  	}
+! 	if (function_exists(name))
+  	{
+  	    EMSG2(_("E705: Variable name conflicts with existing function: %s"),
+  									name);
+--- 19120,19129 ----
+  	    EMSG2(_("E704: Funcref variable name must start with a capital: %s"), name);
+  	    return;
+  	}
+! 	/* Don't allow hiding a function.  When "v" is not NULL we migth be
+! 	 * assigning another function to the same var, the type is checked
+! 	 * below. */
+! 	if (v == NULL && function_exists(name))
+  	{
+  	    EMSG2(_("E705: Variable name conflicts with existing function: %s"),
+  									name);
+***************
+*** 19120,19133 ****
+  	}
+      }
+  
+-     ht = find_var_ht(name, &varname);
+-     if (ht == NULL || *varname == NUL)
+-     {
+- 	EMSG2(_(e_illvar), name);
+- 	return;
+-     }
+- 
+-     v = find_var_in_ht(ht, varname, TRUE);
+      if (v != NULL)
+      {
+  	/* existing variable, need to clear the value */
+--- 19131,19136 ----
+*** ../vim-7.2.401/src/version.c	2010-03-17 19:13:19.000000000 +0100
+--- src/version.c	2010-03-17 19:36:09.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     402,
+  /**/
+
+-- 
+Michael: There is no such thing as a dump question.
+Bernard: Sure there is.  For example "what is a core dump?"
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

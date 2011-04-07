@@ -1,0 +1,60 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.229
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.229
+Problem:    Warning for shadowed variable.
+Solution:   Rename "wait" to "wait_time".
+Files:	    src/os_unix.c
+
+
+*** ../vim-7.2.228/src/os_unix.c	2009-06-16 15:12:11.000000000 +0200
+--- src/os_unix.c	2009-07-09 16:24:14.000000000 +0200
+***************
+*** 1138,1147 ****
+       * to happen).
+       */
+      {
+! 	long wait;
+! 	for (wait = 0; !sigcont_received && wait <= 3L; wait++)
+  	    /* Loop is not entered most of the time */
+! 	    mch_delay(wait, FALSE);
+      }
+  # endif
+  
+--- 1138,1147 ----
+       * to happen).
+       */
+      {
+! 	long wait_time;
+! 	for (wait_time = 0; !sigcont_received && wait_time <= 3L; wait_time++)
+  	    /* Loop is not entered most of the time */
+! 	    mch_delay(wait_time, FALSE);
+      }
+  # endif
+  
+*** ../vim-7.2.228/src/version.c	2009-07-09 21:22:36.000000000 +0200
+--- src/version.c	2009-07-14 12:18:21.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     229,
+  /**/
+
+-- 
+From "know your smileys":
+ :-)	Funny
+ |-)	Funny Oriental
+ (-:	Funny Australian
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

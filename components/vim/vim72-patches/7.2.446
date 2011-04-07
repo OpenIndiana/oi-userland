@@ -1,0 +1,91 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.446
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.446
+Problem:    Crash in GUI when closing the last window in a tabpage. (ryo7000)
+Solution:   Remove the tabpage from the list before freeing the window.
+Files:	    src/window.c
+
+
+*** ../vim-7.2.445/src/window.c	2010-03-17 16:54:51.000000000 +0100
+--- src/window.c	2010-07-11 13:18:31.000000000 +0200
+***************
+*** 2304,2309 ****
+--- 2304,2310 ----
+      win_T	*wp;
+      int		dir;
+      tabpage_T   *ptp = NULL;
++     int		free_tp = FALSE;
+  
+      /* Close the link to the buffer. */
+      close_buffer(win, win->w_buffer, free_buf ? DOBUF_UNLOAD : 0);
+***************
+*** 2321,2331 ****
+      if (wp == NULL)
+  	return;
+  
+-     /* Free the memory used for the window. */
+-     wp = win_free_mem(win, &dir, tp);
+- 
+      /* When closing the last window in a tab page remove the tab page. */
+!     if (wp == NULL)
+      {
+  	if (tp == first_tabpage)
+  	    first_tabpage = tp->tp_next;
+--- 2322,2329 ----
+      if (wp == NULL)
+  	return;
+  
+      /* When closing the last window in a tab page remove the tab page. */
+!     if (tp == NULL ? firstwin == lastwin : tp->tp_firstwin == tp->tp_lastwin)
+      {
+  	if (tp == first_tabpage)
+  	    first_tabpage = tp->tp_next;
+***************
+*** 2341,2348 ****
+  	    }
+  	    ptp->tp_next = tp->tp_next;
+  	}
+! 	free_tabpage(tp);
+      }
+  }
+  
+  /*
+--- 2339,2352 ----
+  	    }
+  	    ptp->tp_next = tp->tp_next;
+  	}
+! 	free_tp = TRUE;
+      }
++ 
++     /* Free the memory used for the window. */
++     win_free_mem(win, &dir, tp);
++ 
++     if (free_tp)
++ 	free_tabpage(tp);
+  }
+  
+  /*
+*** ../vim-7.2.445/src/version.c	2010-07-07 18:20:21.000000000 +0200
+--- src/version.c	2010-07-12 21:36:05.000000000 +0200
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     446,
+  /**/
+
+-- 
+Not too long ago, compress was something you did to garbage...
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

@@ -1,0 +1,85 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.135
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.135
+Problem:    Memory leak when redefining user command with complete argument.
+Solution:   Free the old complete argument. (Dominique Pelle)
+Files:	    src/ex_docmd.c
+
+
+*** ../vim-7.2.134/src/ex_docmd.c	Sun Mar  1 02:43:50 2009
+--- src/ex_docmd.c	Wed Mar 11 11:13:31 2009
+***************
+*** 5124,5130 ****
+  	    }
+  
+  	    vim_free(cmd->uc_rep);
+! 	    cmd->uc_rep = 0;
+  	    break;
+  	}
+  
+--- 5124,5134 ----
+  	    }
+  
+  	    vim_free(cmd->uc_rep);
+! 	    cmd->uc_rep = NULL;
+! #if defined(FEAT_EVAL) && defined(FEAT_CMDL_COMPL)
+! 	    vim_free(cmd->uc_compl_arg);
+! 	    cmd->uc_compl_arg = NULL;
+! #endif
+  	    break;
+  	}
+  
+***************
+*** 5941,5947 ****
+      for (;;)
+      {
+  	p = cmd->uc_rep;    /* source */
+! 	q = buf;	    /* destinateion */
+  	totlen = 0;
+  
+  	for (;;)
+--- 5945,5951 ----
+      for (;;)
+      {
+  	p = cmd->uc_rep;    /* source */
+! 	q = buf;	    /* destination */
+  	totlen = 0;
+  
+  	for (;;)
+***************
+*** 7846,7851 ****
+--- 7850,7858 ----
+  {
+      vim_free(prev_dir);
+      prev_dir = NULL;
++ 
++     vim_free(globaldir);
++     globaldir = NULL;
+  }
+  #endif
+  
+*** ../vim-7.2.134/src/version.c	Wed Mar 11 13:09:30 2009
+--- src/version.c	Wed Mar 11 15:06:23 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     135,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+194. Your business cards contain your e-mail and home page address.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

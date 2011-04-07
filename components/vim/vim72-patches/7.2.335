@@ -1,0 +1,103 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.335
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.335
+Problem:    The CTRL-] command escapes too many characters.
+Solution:   Use a different list of characters to be escaped. (Sergey Khorev)
+Files:	    src/normal.c
+
+
+*** ../vim-7.2.334/src/normal.c	2010-01-12 15:42:03.000000000 +0100
+--- src/normal.c	2010-01-19 15:20:11.000000000 +0100
+***************
+*** 5406,5411 ****
+--- 5406,5412 ----
+      int		n = 0;		/* init for GCC */
+      int		cmdchar;
+      int		g_cmd;		/* "g" command */
++     int		tag_cmd = FALSE;
+      char_u	*aux_ptr;
+      int		isman;
+      int		isman_s;
+***************
+*** 5515,5520 ****
+--- 5516,5522 ----
+  	    break;
+  
+  	case ']':
++ 	    tag_cmd = TRUE;
+  #ifdef FEAT_CSCOPE
+  	    if (p_cst)
+  		STRCPY(buf, "cstag ");
+***************
+*** 5526,5535 ****
+  	default:
+  	    if (curbuf->b_help)
+  		STRCPY(buf, "he! ");
+- 	    else if (g_cmd)
+- 		STRCPY(buf, "tj ");
+  	    else
+! 		sprintf((char *)buf, "%ldta ", cap->count0);
+      }
+  
+      /*
+--- 5528,5541 ----
+  	default:
+  	    if (curbuf->b_help)
+  		STRCPY(buf, "he! ");
+  	    else
+! 	    {
+! 		tag_cmd = TRUE;
+! 		if (g_cmd)
+! 		    STRCPY(buf, "tj ");
+! 		else
+! 		    sprintf((char *)buf, "%ldta ", cap->count0);
+! 	    }
+      }
+  
+      /*
+***************
+*** 5562,5569 ****
+  	    aux_ptr = (char_u *)(p_magic ? "/.*~[^$\\" : "/^$\\");
+  	else if (cmdchar == '#')
+  	    aux_ptr = (char_u *)(p_magic ? "/?.*~[^$\\" : "/?^$\\");
+! 	else
+  	    /* Don't escape spaces and Tabs in a tag with a backslash */
+  	    aux_ptr = (char_u *)"\\|\"\n*?[";
+  
+  	p = buf + STRLEN(buf);
+--- 5568,5577 ----
+  	    aux_ptr = (char_u *)(p_magic ? "/.*~[^$\\" : "/^$\\");
+  	else if (cmdchar == '#')
+  	    aux_ptr = (char_u *)(p_magic ? "/?.*~[^$\\" : "/?^$\\");
+! 	else if (tag_cmd)
+  	    /* Don't escape spaces and Tabs in a tag with a backslash */
++ 	    aux_ptr = (char_u *)"\\|\"\n[";
++ 	else
+  	    aux_ptr = (char_u *)"\\|\"\n*?[";
+  
+  	p = buf + STRLEN(buf);
+*** ../vim-7.2.334/src/version.c	2010-01-19 15:12:33.000000000 +0100
+--- src/version.c	2010-01-19 15:22:44.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     335,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+120. You ask a friend, "What's that big shiny thing?" He says, "It's the sun."
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

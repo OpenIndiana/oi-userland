@@ -1,0 +1,316 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.050
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.050
+Problem:    Warnings for not checking return value of fwrite(). (Chip Campbell)
+Solution:   Use the return value.
+Files:	    src/spell.c
+
+
+*** ../vim-7.2.049/src/spell.c	Mon Aug 25 04:12:38 2008
+--- src/spell.c	Thu Nov 20 17:28:01 2008
+***************
+*** 7926,7931 ****
+--- 7926,7933 ----
+      char_u	*p;
+      int		rr;
+      int		retval = OK;
++     int		fwv = 1;  /* collect return value of fwrite() to avoid
++ 			     warnings from picky compiler */
+  
+      fd = mch_fopen((char *)fname, "w");
+      if (fd == NULL)
+***************
+*** 7936,7946 ****
+  
+      /* <HEADER>: <fileID> <versionnr> */
+  							    /* <fileID> */
+!     if (fwrite(VIMSPELLMAGIC, VIMSPELLMAGICL, (size_t)1, fd) != 1)
+!     {
+! 	EMSG(_(e_write));
+! 	retval = FAIL;
+!     }
+      putc(VIMSPELLVERSION, fd);				    /* <versionnr> */
+  
+      /*
+--- 7938,7944 ----
+  
+      /* <HEADER>: <fileID> <versionnr> */
+  							    /* <fileID> */
+!     fwv &= fwrite(VIMSPELLMAGIC, VIMSPELLMAGICL, (size_t)1, fd);
+      putc(VIMSPELLVERSION, fd);				    /* <versionnr> */
+  
+      /*
+***************
+*** 7955,7961 ****
+  
+  	i = (int)STRLEN(spin->si_info);
+  	put_bytes(fd, (long_u)i, 4);			/* <sectionlen> */
+! 	fwrite(spin->si_info, (size_t)i, (size_t)1, fd); /* <infotext> */
+      }
+  
+      /* SN_REGION: <regionname> ...
+--- 7953,7959 ----
+  
+  	i = (int)STRLEN(spin->si_info);
+  	put_bytes(fd, (long_u)i, 4);			/* <sectionlen> */
+! 	fwv &= fwrite(spin->si_info, (size_t)i, (size_t)1, fd); /* <infotext> */
+      }
+  
+      /* SN_REGION: <regionname> ...
+***************
+*** 7966,7972 ****
+  	putc(SNF_REQUIRED, fd);				/* <sectionflags> */
+  	l = spin->si_region_count * 2;
+  	put_bytes(fd, (long_u)l, 4);			/* <sectionlen> */
+! 	fwrite(spin->si_region_name, (size_t)l, (size_t)1, fd);
+  							/* <regionname> ... */
+  	regionmask = (1 << spin->si_region_count) - 1;
+      }
+--- 7964,7970 ----
+  	putc(SNF_REQUIRED, fd);				/* <sectionflags> */
+  	l = spin->si_region_count * 2;
+  	put_bytes(fd, (long_u)l, 4);			/* <sectionlen> */
+! 	fwv &= fwrite(spin->si_region_name, (size_t)l, (size_t)1, fd);
+  							/* <regionname> ... */
+  	regionmask = (1 << spin->si_region_count) - 1;
+      }
+***************
+*** 8016,8022 ****
+  	}
+  
+  	put_bytes(fd, (long_u)l, 2);			/* <folcharslen> */
+! 	fwrite(folchars, (size_t)l, (size_t)1, fd);	/* <folchars> */
+      }
+  
+      /* SN_MIDWORD: <midword> */
+--- 8014,8020 ----
+  	}
+  
+  	put_bytes(fd, (long_u)l, 2);			/* <folcharslen> */
+! 	fwv &= fwrite(folchars, (size_t)l, (size_t)1, fd); /* <folchars> */
+      }
+  
+      /* SN_MIDWORD: <midword> */
+***************
+*** 8027,8033 ****
+  
+  	i = (int)STRLEN(spin->si_midword);
+  	put_bytes(fd, (long_u)i, 4);			/* <sectionlen> */
+! 	fwrite(spin->si_midword, (size_t)i, (size_t)1, fd); /* <midword> */
+      }
+  
+      /* SN_PREFCOND: <prefcondcnt> <prefcond> ... */
+--- 8025,8032 ----
+  
+  	i = (int)STRLEN(spin->si_midword);
+  	put_bytes(fd, (long_u)i, 4);			/* <sectionlen> */
+! 	fwv &= fwrite(spin->si_midword, (size_t)i, (size_t)1, fd);
+! 							/* <midword> */
+      }
+  
+      /* SN_PREFCOND: <prefcondcnt> <prefcond> ... */
+***************
+*** 8113,8119 ****
+  		p = rr == 1 ? ftp->ft_from : ftp->ft_to;
+  		l = (int)STRLEN(p);
+  		putc(l, fd);
+! 		fwrite(p, l, (size_t)1, fd);
+  	    }
+  	}
+  
+--- 8112,8118 ----
+  		p = rr == 1 ? ftp->ft_from : ftp->ft_to;
+  		l = (int)STRLEN(p);
+  		putc(l, fd);
+! 		fwv &= fwrite(p, l, (size_t)1, fd);
+  	    }
+  	}
+  
+***************
+*** 8131,8141 ****
+  							/* <sectionlen> */
+  
+  	put_bytes(fd, (long_u)l, 2);			/* <sofofromlen> */
+! 	fwrite(spin->si_sofofr, l, (size_t)1, fd);	/* <sofofrom> */
+  
+  	l = (int)STRLEN(spin->si_sofoto);
+  	put_bytes(fd, (long_u)l, 2);			/* <sofotolen> */
+! 	fwrite(spin->si_sofoto, l, (size_t)1, fd);	/* <sofoto> */
+      }
+  
+      /* SN_WORDS: <word> ...
+--- 8130,8140 ----
+  							/* <sectionlen> */
+  
+  	put_bytes(fd, (long_u)l, 2);			/* <sofofromlen> */
+! 	fwv &= fwrite(spin->si_sofofr, l, (size_t)1, fd); /* <sofofrom> */
+  
+  	l = (int)STRLEN(spin->si_sofoto);
+  	put_bytes(fd, (long_u)l, 2);			/* <sofotolen> */
+! 	fwv &= fwrite(spin->si_sofoto, l, (size_t)1, fd); /* <sofoto> */
+      }
+  
+      /* SN_WORDS: <word> ...
+***************
+*** 8160,8166 ****
+  		    l = (int)STRLEN(hi->hi_key) + 1;
+  		    len += l;
+  		    if (round == 2)			/* <word> */
+! 			fwrite(hi->hi_key, (size_t)l, (size_t)1, fd);
+  		    --todo;
+  		}
+  	    if (round == 1)
+--- 8159,8165 ----
+  		    l = (int)STRLEN(hi->hi_key) + 1;
+  		    len += l;
+  		    if (round == 2)			/* <word> */
+! 			fwv &= fwrite(hi->hi_key, (size_t)l, (size_t)1, fd);
+  		    --todo;
+  		}
+  	    if (round == 1)
+***************
+*** 8176,8182 ****
+  	putc(0, fd);					/* <sectionflags> */
+  	l = spin->si_map.ga_len;
+  	put_bytes(fd, (long_u)l, 4);			/* <sectionlen> */
+! 	fwrite(spin->si_map.ga_data, (size_t)l, (size_t)1, fd);
+  							/* <mapstr> */
+      }
+  
+--- 8175,8181 ----
+  	putc(0, fd);					/* <sectionflags> */
+  	l = spin->si_map.ga_len;
+  	put_bytes(fd, (long_u)l, 4);			/* <sectionlen> */
+! 	fwv &= fwrite(spin->si_map.ga_data, (size_t)l, (size_t)1, fd);
+  							/* <mapstr> */
+      }
+  
+***************
+*** 8232,8241 ****
+  	{
+  	    p = ((char_u **)(spin->si_comppat.ga_data))[i];
+  	    putc((int)STRLEN(p), fd);			/* <comppatlen> */
+! 	    fwrite(p, (size_t)STRLEN(p), (size_t)1, fd);/* <comppattext> */
+  	}
+  							/* <compflags> */
+! 	fwrite(spin->si_compflags, (size_t)STRLEN(spin->si_compflags),
+  							       (size_t)1, fd);
+      }
+  
+--- 8231,8241 ----
+  	{
+  	    p = ((char_u **)(spin->si_comppat.ga_data))[i];
+  	    putc((int)STRLEN(p), fd);			/* <comppatlen> */
+! 	    fwv &= fwrite(p, (size_t)STRLEN(p), (size_t)1, fd);
+! 							/* <comppattext> */
+  	}
+  							/* <compflags> */
+! 	fwv &= fwrite(spin->si_compflags, (size_t)STRLEN(spin->si_compflags),
+  							       (size_t)1, fd);
+      }
+  
+***************
+*** 8259,8265 ****
+  
+  	l = (int)STRLEN(spin->si_syllable);
+  	put_bytes(fd, (long_u)l, 4);			/* <sectionlen> */
+! 	fwrite(spin->si_syllable, (size_t)l, (size_t)1, fd); /* <syllable> */
+      }
+  
+      /* end of <SECTIONS> */
+--- 8259,8266 ----
+  
+  	l = (int)STRLEN(spin->si_syllable);
+  	put_bytes(fd, (long_u)l, 4);			/* <sectionlen> */
+! 	fwv &= fwrite(spin->si_syllable, (size_t)l, (size_t)1, fd);
+! 							/* <syllable> */
+      }
+  
+      /* end of <SECTIONS> */
+***************
+*** 8295,8307 ****
+  	(void)put_node(fd, tree, 0, regionmask, round == 3);
+      }
+  
+!     /* Write another byte to check for errors. */
+      if (putc(0, fd) == EOF)
+  	retval = FAIL;
+  
+      if (fclose(fd) == EOF)
+  	retval = FAIL;
+  
+      return retval;
+  }
+  
+--- 8296,8313 ----
+  	(void)put_node(fd, tree, 0, regionmask, round == 3);
+      }
+  
+!     /* Write another byte to check for errors (file system full). */
+      if (putc(0, fd) == EOF)
+  	retval = FAIL;
+  
+      if (fclose(fd) == EOF)
+  	retval = FAIL;
+  
++     if (fwv != 1)
++ 	retval = FAIL;
++     if (retval == FAIL)
++ 	EMSG(_(e_write));
++ 
+      return retval;
+  }
+  
+***************
+*** 9890,9895 ****
+--- 9896,9902 ----
+      char_u	*p;
+      int		len;
+      int		totlen;
++     int		x = 1;  /* collect return value of fwrite() */
+  
+      if (fd != NULL)
+  	put_bytes(fd, (long_u)gap->ga_len, 2);	    /* <prefcondcnt> */
+***************
+*** 9906,9912 ****
+  	    if (fd != NULL)
+  	    {
+  		fputc(len, fd);
+! 		fwrite(p, (size_t)len, (size_t)1, fd);
+  	    }
+  	    totlen += len;
+  	}
+--- 9913,9919 ----
+  	    if (fd != NULL)
+  	    {
+  		fputc(len, fd);
+! 		x &= fwrite(p, (size_t)len, (size_t)1, fd);
+  	    }
+  	    totlen += len;
+  	}
+*** ../vim-7.2.049/src/version.c	Thu Nov 20 17:09:09 2008
+--- src/version.c	Fri Nov 28 10:06:13 2008
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     50,
+  /**/
+
+-- 
+You got to work at a mill?  Lucky!  I got sent back to work in the
+acid-mines for my daily crust of stale bread... which not even the
+birds would eat.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

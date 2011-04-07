@@ -1,0 +1,72 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.105
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.105
+Problem:    Modeline setting for 'foldmethod' overrules diff options. (Ingo
+	    Karkat)
+Solution:   Don't set 'foldmethod' and 'wrap' from a modeline when 'diff' is
+	    on.
+Files:	    src/option.c
+
+
+*** ../vim-7.2.104/src/option.c	Wed Feb 11 11:34:24 2009
+--- src/option.c	Wed Feb 11 16:29:56 2009
+***************
+*** 4119,4129 ****
+  					   && options[opt_idx].var == VAR_WIN)
+  		goto skip;
+  
+! 	    /* Disallow changing some options from modelines */
+! 	    if ((opt_flags & OPT_MODELINE) && (flags & P_SECURE))
+  	    {
+! 		errmsg = (char_u *)_("E520: Not allowed in a modeline");
+! 		goto skip;
+  	    }
+  
+  #ifdef HAVE_SANDBOX
+--- 4119,4139 ----
+  					   && options[opt_idx].var == VAR_WIN)
+  		goto skip;
+  
+! 	    /* Disallow changing some options from modelines. */
+! 	    if (opt_flags & OPT_MODELINE)
+  	    {
+! 		if (flags & P_SECURE)
+! 		{
+! 		    errmsg = (char_u *)_("E520: Not allowed in a modeline");
+! 		    goto skip;
+! 		}
+! 		/* In diff mode some options are overruled.  This avoids that
+! 		 * 'foldmethod' becomes "marker" instead of "diff" and that
+! 		 * "wrap" gets set. */
+! 		if (curwin->w_p_diff
+! 			&& (options[opt_idx].indir == PV_FDM
+! 			    || options[opt_idx].indir == PV_WRAP))
+! 		    goto skip;
+  	    }
+  
+  #ifdef HAVE_SANDBOX
+*** ../vim-7.2.104/src/version.c	Wed Feb 11 16:02:29 2009
+--- src/version.c	Wed Feb 11 16:40:35 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     105,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+76. Your ISP regards you as a business partner rather than as a customer.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

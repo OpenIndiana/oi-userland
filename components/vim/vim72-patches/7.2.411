@@ -1,0 +1,47 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.411
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.411
+Problem:    When parsing 'cino' a comma isn't skipped properly.
+Solution:   Skip the comma. (Lech Lorens)
+Files:	    src/misc1.c
+
+
+*** ../vim-7.2.410/src/misc1.c	2010-03-02 12:37:01.000000000 +0100
+--- src/misc1.c	2010-03-23 18:18:15.000000000 +0100
+***************
+*** 6270,6275 ****
+--- 6270,6277 ----
+  	    case 'l': ind_keep_case_label = n; break;
+  	    case '#': ind_hash_comment = n; break;
+  	}
++ 	if (*options == ',')
++ 	    ++options;
+      }
+  
+      /* remember where the cursor was when we started */
+*** ../vim-7.2.410/src/version.c	2010-03-23 18:06:47.000000000 +0100
+--- src/version.c	2010-03-23 18:22:13.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     411,
+  /**/
+
+-- 
+BRIDGEKEEPER: What is your favorite editor?
+GAWAIN:       Emacs ...  No, Viiiiiiiiiiimmmmmmm!
+           "Monty Python and the Holy editor wars" PYTHON (MONTY) SOFTWARE LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

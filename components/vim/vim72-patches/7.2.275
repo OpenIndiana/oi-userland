@@ -1,0 +1,95 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.275
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.275
+Problem:    Warning for unused argument and comparing signed and unsigned.
+Solution:   Add type cast.
+Files:	    src/memline.c
+
+
+*** ../vim-7.2.274/src/memline.c	2009-11-03 13:06:03.000000000 +0100
+--- src/memline.c	2009-10-29 20:55:08.000000000 +0100
+***************
+*** 1285,1291 ****
+  		    for (i = 0; i < dp->db_line_count; ++i)
+  		    {
+  			txt_start = (dp->db_index[i] & DB_INDEX_MASK);
+! 			if (txt_start <= HEADER_SIZE
+  					  || txt_start >= (int)dp->db_txt_end)
+  			{
+  			    p = (char_u *)"???";
+--- 1285,1291 ----
+  		    for (i = 0; i < dp->db_line_count; ++i)
+  		    {
+  			txt_start = (dp->db_index[i] & DB_INDEX_MASK);
+! 			if (txt_start <= (int)HEADER_SIZE
+  					  || txt_start >= (int)dp->db_txt_end)
+  			{
+  			    p = (char_u *)"???";
+***************
+*** 1296,1302 ****
+  			ml_append(lnum++, p, (colnr_T)0, TRUE);
+  		    }
+  		    if (has_error)
+! 			ml_append(lnum++, (char_u *)_("???END"), (colnr_T)0, TRUE);
+  		}
+  	    }
+  	}
+--- 1296,1303 ----
+  			ml_append(lnum++, p, (colnr_T)0, TRUE);
+  		    }
+  		    if (has_error)
+! 			ml_append(lnum++, (char_u *)_("???END"),
+! 							    (colnr_T)0, TRUE);
+  		}
+  	    }
+  	}
+***************
+*** 3576,3586 ****
+   * Make swap file name out of the file name and a directory name.
+   * Returns pointer to allocated memory or NULL.
+   */
+- /*ARGSUSED*/
+      char_u *
+  makeswapname(fname, ffname, buf, dir_name)
+      char_u	*fname;
+!     char_u	*ffname;
+      buf_T	*buf;
+      char_u	*dir_name;
+  {
+--- 3577,3586 ----
+   * Make swap file name out of the file name and a directory name.
+   * Returns pointer to allocated memory or NULL.
+   */
+      char_u *
+  makeswapname(fname, ffname, buf, dir_name)
+      char_u	*fname;
+!     char_u	*ffname UNUSED;
+      buf_T	*buf;
+      char_u	*dir_name;
+  {
+*** ../vim-7.2.274/src/version.c	2009-11-03 14:46:35.000000000 +0100
+--- src/version.c	2009-11-03 15:28:33.000000000 +0100
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     275,
+  /**/
+
+-- 
+BRIDGEKEEPER: What is your favorite colour?
+GAWAIN:       Blue ...  No yelloooooww!
+                 "Monty Python and the Holy Grail" PYTHON (MONTY) PICTURES LTD
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

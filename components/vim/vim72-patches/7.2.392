@@ -1,0 +1,184 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.392
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.392
+Problem:    Netbeans hangs reading from a socket at the maximum block size.
+Solution:   Use select() or poll(). (Xavier de Gaye)
+Files:	    src/vim.h, src/os_unixx.h, src/if_xcmdsrv.c, src/netbeans.c
+
+
+*** ../vim-7.2.391/src/vim.h	2010-03-02 15:55:51.000000000 +0100
+--- src/vim.h	2010-03-10 15:14:03.000000000 +0100
+***************
+*** 477,482 ****
+--- 477,499 ----
+  # include <stdarg.h>
+  #endif
+  
++ # if defined(HAVE_SYS_SELECT_H) && \
++ 	(!defined(HAVE_SYS_TIME_H) || defined(SYS_SELECT_WITH_SYS_TIME))
++ #  include <sys/select.h>
++ # endif
++ 
++ # ifndef HAVE_SELECT
++ #  ifdef HAVE_SYS_POLL_H
++ #   include <sys/poll.h>
++ #   define HAVE_POLL
++ #  else
++ #   ifdef HAVE_POLL_H
++ #    include <poll.h>
++ #    define HAVE_POLL
++ #   endif
++ #  endif
++ # endif
++ 
+  /* ================ end of the header file puzzle =============== */
+  
+  /*
+*** ../vim-7.2.391/src/os_unixx.h	2006-03-25 22:48:00.000000000 +0100
+--- src/os_unixx.h	2010-03-10 15:14:49.000000000 +0100
+***************
+*** 28,38 ****
+  #  include <sys/wait.h>
+  # endif
+  
+- # if defined(HAVE_SYS_SELECT_H) && \
+- 	(!defined(HAVE_SYS_TIME_H) || defined(SYS_SELECT_WITH_SYS_TIME))
+- #  include <sys/select.h>
+- # endif
+- 
+  # ifndef WEXITSTATUS
+  #  ifdef HAVE_UNION_WAIT
+  #   define WEXITSTATUS(stat_val) ((stat_val).w_T.w_Retcode)
+--- 28,33 ----
+***************
+*** 65,80 ****
+  # include <string.h>
+  #endif
+  
+- #ifndef HAVE_SELECT
+- # ifdef HAVE_SYS_POLL_H
+- #  include <sys/poll.h>
+- # else
+- #  ifdef HAVE_POLL_H
+- #   include <poll.h>
+- #  endif
+- # endif
+- #endif
+- 
+  #ifdef HAVE_SYS_STREAM_H
+  # include <sys/stream.h>
+  #endif
+--- 60,65 ----
+*** ../vim-7.2.391/src/if_xcmdsrv.c	2009-05-16 17:29:37.000000000 +0200
+--- src/if_xcmdsrv.c	2010-03-10 15:14:09.000000000 +0100
+***************
+*** 21,41 ****
+  #  include <X11/Xatom.h>
+  # endif
+  
+- # if defined(HAVE_SYS_SELECT_H) && \
+- 	(!defined(HAVE_SYS_TIME_H) || defined(SYS_SELECT_WITH_SYS_TIME))
+- #  include <sys/select.h>
+- # endif
+- 
+- # ifndef HAVE_SELECT
+- #  ifdef HAVE_SYS_POLL_H
+- #   include <sys/poll.h>
+- #  else
+- #   ifdef HAVE_POLL_H
+- #    include <poll.h>
+- #   endif
+- #  endif
+- # endif
+- 
+  /*
+   * This file provides procedures that implement the command server
+   * functionality of Vim when in contact with an X11 server.
+--- 21,26 ----
+*** ../vim-7.2.391/src/netbeans.c	2010-01-19 15:12:33.000000000 +0100
+--- src/netbeans.c	2010-03-10 15:21:37.000000000 +0100
+***************
+*** 736,741 ****
+--- 736,749 ----
+  #ifndef FEAT_GUI_GTK
+      static int		level = 0;
+  #endif
++ #ifdef HAVE_SELECT
++     struct timeval	tval;
++     fd_set		rfds;
++ #else
++ # ifdef HAVE_POLL
++     struct pollfd	fds;
++ # endif
++ #endif
+  
+      if (sd < 0)
+      {
+***************
+*** 755,763 ****
+  	    return;	/* out of memory! */
+      }
+  
+!     /* Keep on reading for as long as there is something to read. */
+      for (;;)
+      {
+  	len = sock_read(sd, buf, MAXMSGSIZE);
+  	if (len <= 0)
+  	    break;	/* error or nothing more to read */
+--- 763,788 ----
+  	    return;	/* out of memory! */
+      }
+  
+!     /* Keep on reading for as long as there is something to read.
+!      * Use select() or poll() to avoid blocking on a message that is exactly
+!      * MAXMSGSIZE long. */
+      for (;;)
+      {
++ #ifdef HAVE_SELECT
++ 	FD_ZERO(&rfds);
++         FD_SET(sd, &rfds);
++         tval.tv_sec = 0;
++         tval.tv_usec = 0;
++         if (select(sd + 1, &rfds, NULL, NULL, &tval) <= 0)
++             break;
++ #else
++ # ifdef HAVE_POLL
++ 	fds.fd = sd;
++ 	fds.events = POLLIN;
++         if (poll(&fds, 1, 0) <= 0)
++             break;
++ # endif
++ #endif
+  	len = sock_read(sd, buf, MAXMSGSIZE);
+  	if (len <= 0)
+  	    break;	/* error or nothing more to read */
+*** ../vim-7.2.391/src/version.c	2010-03-10 14:46:21.000000000 +0100
+--- src/version.c	2010-03-10 16:10:48.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     392,
+  /**/
+
+-- 
+WOMAN:   I didn't know we had a king. I thought we were an autonomous
+         collective.
+DENNIS:  You're fooling yourself.  We're living in a dictatorship.  A
+         self-perpetuating autocracy in which the working classes--
+WOMAN:   Oh there you go, bringing class into it again.
+DENNIS:  That's what it's all about if only people would--
+                                  The Quest for the Holy Grail (Monty Python)
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

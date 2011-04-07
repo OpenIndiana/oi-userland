@@ -1,0 +1,60 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.198
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.198
+Problem:    Size of buffer used for tgetent() may be too small.
+Solution:   Use the largest known size everywhere.
+Files:	    src/vim.h
+
+
+*** ../vim-7.2.197/src/vim.h	2009-05-14 22:19:19.000000000 +0200
+--- src/vim.h	2009-06-07 20:37:48.000000000 +0200
+***************
+*** 1345,1355 ****
+  # define MSG_BUF_CLEN  MSG_BUF_LEN	    /* cell length */
+  #endif
+  
+! #if defined(AMIGA) || defined(__linux__) || defined(__QNX__) || defined(__CYGWIN32__) || defined(_AIX)
+! # define TBUFSZ 2048		/* buffer size for termcap entry */
+! #else
+! # define TBUFSZ 1024		/* buffer size for termcap entry */
+! #endif
+  
+  /*
+   * Maximum length of key sequence to be mapped.
+--- 1345,1355 ----
+  # define MSG_BUF_CLEN  MSG_BUF_LEN	    /* cell length */
+  #endif
+  
+! /* Size of the buffer used for tgetent().  Unfortunately this is largely
+!  * undocumented, some systems use 1024.  Using a buffer that is too small
+!  * causes a buffer overrun and a crash.  Use the maximum known value to stay
+!  * on the safe side. */
+! #define TBUFSZ 2048		/* buffer size for termcap entry */
+  
+  /*
+   * Maximum length of key sequence to be mapped.
+*** ../vim-7.2.197/src/version.c	2009-06-10 18:15:49.000000000 +0200
+--- src/version.c	2009-06-16 11:06:45.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     198,
+  /**/
+
+-- 
+How To Keep A Healthy Level Of Insanity:
+7. Finish all your sentences with "in accordance with the prophecy".
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

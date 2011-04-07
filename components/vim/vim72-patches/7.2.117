@@ -1,0 +1,107 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.117
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.117
+Problem:    Location list incorrectly labelled "Quickfix List".
+Solution:   Break out of both loops for finding window for location list
+            buffer. (Lech Lorens)
+Files:      src/buffer.c, src/quickfix.c, src/screen.c
+
+
+*** ../vim-7.2.116/src/buffer.c	Tue Jan  6 16:13:42 2009
+--- src/buffer.c	Tue Feb 17 04:00:51 2009
+***************
+*** 5098,5104 ****
+  	 */
+  	FOR_ALL_TAB_WINDOWS(tp, win)
+  	    if (win->w_buffer == buf)
+! 		break;
+  	if (win != NULL && win->w_llist_ref != NULL)
+  	    return _("[Location List]");
+  	else
+--- 5098,5105 ----
+  	 */
+  	FOR_ALL_TAB_WINDOWS(tp, win)
+  	    if (win->w_buffer == buf)
+! 		goto win_found;
+! win_found:
+  	if (win != NULL && win->w_llist_ref != NULL)
+  	    return _("[Location List]");
+  	else
+*** ../vim-7.2.116/src/quickfix.c	Sat Nov 15 14:10:23 2008
+--- src/quickfix.c	Sat Feb 21 22:54:25 2009
+***************
+*** 1610,1619 ****
+  		{
+  		    goto_tabpage_win(tp, wp);
+  		    usable_win = 1;
+! 		    break;
+  		}
+  	    }
+  	}
+  
+  	/*
+  	 * If there is only one window and it is the quickfix window, create a
+--- 1612,1622 ----
+  		{
+  		    goto_tabpage_win(tp, wp);
+  		    usable_win = 1;
+! 		    goto win_found;
+  		}
+  	    }
+  	}
++ win_found:
+  
+  	/*
+  	 * If there is only one window and it is the quickfix window, create a
+*** ../vim-7.2.116/src/screen.c	Sat Feb 21 21:22:44 2009
+--- src/screen.c	Sat Feb 21 21:04:19 2009
+***************
+*** 7452,7461 ****
+  	{
+  	    outofmem = TRUE;
+  #ifdef FEAT_WINDOWS
+! 	    break;
+  #endif
+  	}
+      }
+  
+  #ifdef FEAT_MBYTE
+      for (i = 0; i < p_mco; ++i)
+--- 7452,7464 ----
+  	{
+  	    outofmem = TRUE;
+  #ifdef FEAT_WINDOWS
+! 	    goto give_up;
+  #endif
+  	}
+      }
++ #ifdef FEAT_WINDOWS
++ give_up:
++ #endif
+  
+  #ifdef FEAT_MBYTE
+      for (i = 0; i < p_mco; ++i)
+*** ../vim-7.2.116/src/version.c	Sat Feb 21 22:57:10 2009
+--- src/version.c	Sat Feb 21 23:58:24 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     117,
+  /**/
+
+-- 
+Laughing helps. It's like jogging on the inside.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

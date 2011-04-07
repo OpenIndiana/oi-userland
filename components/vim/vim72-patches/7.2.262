@@ -1,0 +1,189 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.262
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.262
+Problem:    When using custom completion for a user command the pattern string
+	    goes beyond the cursor position. (Hari Krishna Dara)
+Solution:   Truncate the string at the cursor position.
+Files:	    src/ex_getln.c, src/structs.h
+
+
+*** ../vim-7.2.261/src/ex_getln.c	2009-06-24 17:04:40.000000000 +0200
+--- src/ex_getln.c	2009-09-18 16:58:16.000000000 +0200
+***************
+*** 3266,3272 ****
+      int		i, j;
+      char_u	*p1;
+      char_u	*p2;
+-     int		oldlen;
+      int		difflen;
+      int		v;
+  
+--- 3266,3271 ----
+***************
+*** 3291,3297 ****
+      out_flush();
+  
+      i = (int)(xp->xp_pattern - ccline.cmdbuff);
+!     oldlen = ccline.cmdpos - i;
+  
+      if (type == WILD_NEXT || type == WILD_PREV)
+      {
+--- 3290,3296 ----
+      out_flush();
+  
+      i = (int)(xp->xp_pattern - ccline.cmdbuff);
+!     xp->xp_pattern_len = ccline.cmdpos - i;
+  
+      if (type == WILD_NEXT || type == WILD_PREV)
+      {
+***************
+*** 3305,3322 ****
+  	/*
+  	 * Translate string into pattern and expand it.
+  	 */
+! 	if ((p1 = addstar(&ccline.cmdbuff[i], oldlen, xp->xp_context)) == NULL)
+  	    p2 = NULL;
+  	else
+  	{
+! 	    p2 = ExpandOne(xp, p1, vim_strnsave(&ccline.cmdbuff[i], oldlen),
+  		    WILD_HOME_REPLACE|WILD_ADD_SLASH|WILD_SILENT|WILD_ESCAPE
+  							      |options, type);
+  	    vim_free(p1);
+  	    /* longest match: make sure it is not shorter (happens with :help */
+  	    if (p2 != NULL && type == WILD_LONGEST)
+  	    {
+! 		for (j = 0; j < oldlen; ++j)
+  		     if (ccline.cmdbuff[i + j] == '*'
+  			     || ccline.cmdbuff[i + j] == '?')
+  			 break;
+--- 3304,3323 ----
+  	/*
+  	 * Translate string into pattern and expand it.
+  	 */
+! 	if ((p1 = addstar(xp->xp_pattern, xp->xp_pattern_len,
+! 						     xp->xp_context)) == NULL)
+  	    p2 = NULL;
+  	else
+  	{
+! 	    p2 = ExpandOne(xp, p1,
+! 			 vim_strnsave(&ccline.cmdbuff[i], xp->xp_pattern_len),
+  		    WILD_HOME_REPLACE|WILD_ADD_SLASH|WILD_SILENT|WILD_ESCAPE
+  							      |options, type);
+  	    vim_free(p1);
+  	    /* longest match: make sure it is not shorter (happens with :help */
+  	    if (p2 != NULL && type == WILD_LONGEST)
+  	    {
+! 		for (j = 0; j < xp->xp_pattern_len; ++j)
+  		     if (ccline.cmdbuff[i + j] == '*'
+  			     || ccline.cmdbuff[i + j] == '?')
+  			 break;
+***************
+*** 3331,3337 ****
+  
+      if (p2 != NULL && !got_int)
+      {
+! 	difflen = (int)STRLEN(p2) - oldlen;
+  	if (ccline.cmdlen + difflen > ccline.cmdbufflen - 4)
+  	{
+  	    v = realloc_cmdbuff(ccline.cmdlen + difflen);
+--- 3332,3338 ----
+  
+      if (p2 != NULL && !got_int)
+      {
+! 	difflen = (int)STRLEN(p2) - xp->xp_pattern_len;
+  	if (ccline.cmdlen + difflen > ccline.cmdbufflen - 4)
+  	{
+  	    v = realloc_cmdbuff(ccline.cmdlen + difflen);
+***************
+*** 3620,3625 ****
+--- 3621,3627 ----
+      expand_T	*xp;
+  {
+      xp->xp_pattern = NULL;
++     xp->xp_pattern_len = 0;
+      xp->xp_backslash = XP_BS_NONE;
+  #ifndef BACKSLASH_IN_FILENAME
+      xp->xp_shell = FALSE;
+***************
+*** 4311,4318 ****
+      }
+  
+      /* add star to file name, or convert to regexp if not exp. files. */
+!     file_str = addstar(xp->xp_pattern,
+! 			   (int)(str + col - xp->xp_pattern), xp->xp_context);
+      if (file_str == NULL)
+  	return EXPAND_UNSUCCESSFUL;
+  
+--- 4313,4320 ----
+      }
+  
+      /* add star to file name, or convert to regexp if not exp. files. */
+!     xp->xp_pattern_len = (int)(str + col - xp->xp_pattern);
+!     file_str = addstar(xp->xp_pattern, xp->xp_pattern_len, xp->xp_context);
+      if (file_str == NULL)
+  	return EXPAND_UNSUCCESSFUL;
+  
+***************
+*** 4781,4787 ****
+  	sprintf((char *)num, "%d", ccline.cmdpos);
+  	args[1] = ccline.cmdbuff;
+      }
+!     args[0] = xp->xp_pattern;
+      args[2] = num;
+  
+      /* Save the cmdline, we don't know what the function may do. */
+--- 4783,4789 ----
+  	sprintf((char *)num, "%d", ccline.cmdpos);
+  	args[1] = ccline.cmdbuff;
+      }
+!     args[0] = vim_strnsave(xp->xp_pattern, xp->xp_pattern_len);
+      args[2] = num;
+  
+      /* Save the cmdline, we don't know what the function may do. */
+***************
+*** 4797,4802 ****
+--- 4799,4805 ----
+      if (ccline.cmdbuff != NULL)
+  	ccline.cmdbuff[ccline.cmdlen] = keep;
+  
++     vim_free(args[0]);
+      return ret;
+  }
+  
+*** ../vim-7.2.261/src/structs.h	2009-07-29 12:09:49.000000000 +0200
+--- src/structs.h	2009-09-18 15:33:15.000000000 +0200
+***************
+*** 432,437 ****
+--- 432,438 ----
+  {
+      int		xp_context;		/* type of expansion */
+      char_u	*xp_pattern;		/* start of item to expand */
++     int		xp_pattern_len;		/* bytes in xp_pattern before cursor */
+  #if defined(FEAT_USR_CMDS) && defined(FEAT_EVAL) && defined(FEAT_CMDL_COMPL)
+      char_u	*xp_arg;		/* completion function */
+      int		xp_scriptID;		/* SID for completion function */
+*** ../vim-7.2.261/src/version.c	2009-09-18 15:16:37.000000000 +0200
+--- src/version.c	2009-09-18 17:23:20.000000000 +0200
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     262,
+  /**/
+
+-- 
+hundred-and-one symptoms of being an internet addict:
+252. You vote for foreign officials.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

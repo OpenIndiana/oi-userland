@@ -1,0 +1,229 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.079
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.079
+Problem:    "killed" netbeans events are not handled correctly.
+Solution:   A "killed" netbeans event is sent when the buffer is deleted or
+	    wiped out (in this case, the netbeans annotations in this buffer
+	    have been removed).  A user can still remove a sign with the
+	    command ":sign unplace" and this does not trigger a "killed"
+	    event.  (Xavier de Gaye)
+Files:	    runtime/doc/netbeans.txt, src/buffer.c, src/globals.h,
+	    src/netbeans.c, src/proto/netbeans.pro
+
+
+*** ../vim-7.2.078/runtime/doc/netbeans.txt	Sat Aug  9 19:36:49 2008
+--- runtime/doc/netbeans.txt	Tue Jan  6 15:23:39 2009
+***************
+*** 1,4 ****
+! *netbeans.txt*  For Vim version 7.2.  Last change: 2008 Jun 28
+  
+  
+  		  VIM REFERENCE MANUAL    by Gordon Prieur et al.
+--- 1,4 ----
+! *netbeans.txt*  For Vim version 7.2.  Last change: 2009 Jan 06
+  
+  
+  		  VIM REFERENCE MANUAL    by Gordon Prieur et al.
+***************
+*** 722,729 ****
+  		of the cursor.
+  		New in version 2.1.
+  
+! killed		A file was closed by the user.  Only for files that have been
+! 		assigned a number by the IDE.
+  
+  newDotAndMark off off
+  		Reports the position of the cursor being at "off" bytes into
+--- 722,731 ----
+  		of the cursor.
+  		New in version 2.1.
+  
+! killed		A file was deleted or wiped out by the user and the buffer
+! 		annotations have been removed.  The bufID number for this
+! 		buffer has become invalid.  Only for files that have been
+! 		assigned a bufID number by the IDE.
+  
+  newDotAndMark off off
+  		Reports the position of the cursor being at "off" bytes into
+*** ../vim-7.2.078/src/buffer.c	Wed Dec  3 11:21:20 2008
+--- src/buffer.c	Tue Jan  6 15:23:02 2009
+***************
+*** 437,446 ****
+  	return;
+  #endif
+  
+- #ifdef FEAT_NETBEANS_INTG
+-     if (usingNetbeans)
+- 	netbeans_file_closed(buf);
+- #endif
+      /* Change directories when the 'acd' option is set. */
+      DO_AUTOCHDIR
+  
+--- 437,442 ----
+***************
+*** 639,644 ****
+--- 635,644 ----
+  #ifdef FEAT_SIGNS
+      buf_delete_signs(buf);		/* delete any signs */
+  #endif
++ #ifdef FEAT_NETBEANS_INTG
++     if (usingNetbeans)
++         netbeans_file_killed(buf);
++ #endif
+  #ifdef FEAT_LOCALMAP
+      map_clear_int(buf, MAP_ALL_MODES, TRUE, FALSE);  /* clear local mappings */
+      map_clear_int(buf, MAP_ALL_MODES, TRUE, TRUE);   /* clear local abbrevs */
+***************
+*** 815,823 ****
+      int		bnr;		/* buffer number */
+      char_u	*p;
+  
+- #ifdef FEAT_NETBEANS_INTG
+-     netbeansCloseFile = 1;
+- #endif
+      if (addr_count == 0)
+      {
+  	(void)do_buffer(command, DOBUF_CURRENT, FORWARD, 0, forceit);
+--- 815,820 ----
+***************
+*** 912,920 ****
+  	}
+      }
+  
+- #ifdef FEAT_NETBEANS_INTG
+-     netbeansCloseFile = 0;
+- #endif
+  
+      return errormsg;
+  }
+--- 909,914 ----
+*** ../vim-7.2.078/src/globals.h	Fri Nov 28 21:26:50 2008
+--- src/globals.h	Tue Jan  6 15:23:02 2009
+***************
+*** 1340,1346 ****
+  
+  #ifdef FEAT_NETBEANS_INTG
+  EXTERN char *netbeansArg INIT(= NULL);	/* the -nb[:host:port:passwd] arg */
+- EXTERN int netbeansCloseFile INIT(= 0);	/* send killed if != 0 */
+  EXTERN int netbeansFireChanges INIT(= 1); /* send buffer changes if != 0 */
+  EXTERN int netbeansForcedQuit INIT(= 0);/* don't write modified files */
+  EXTERN int netbeansReadFile INIT(= 1);	/* OK to read from disk if != 0 */
+--- 1340,1345 ----
+*** ../vim-7.2.078/src/netbeans.c	Wed Dec 24 12:20:10 2008
+--- src/netbeans.c	Tue Jan  6 15:23:02 2009
+***************
+*** 2921,2964 ****
+  }
+  
+  /*
+!  * Tell netbeans a file was closed.
+   */
+      void
+! netbeans_file_closed(buf_T *bufp)
+  {
+      int		bufno = nb_getbufno(bufp);
+      nbbuf_T	*nbbuf = nb_get_buf(bufno);
+      char	buffer[2*MAXPATHL];
+  
+!     if (!haveConnection || bufno < 0)
+  	return;
+  
+!     if (!netbeansCloseFile)
+!     {
+! 	nbdebug(("Ignoring file_closed for %s. File was closed from IDE\n",
+! 		    bufp->b_ffname));
+! 	return;
+!     }
+! 
+!     nbdebug(("netbeans_file_closed:\n"));
+!     nbdebug(("    Closing bufno: %d", bufno));
+!     if (curbuf != NULL && curbuf != bufp)
+!     {
+! 	nbdebug(("    Curbuf bufno:  %d\n", nb_getbufno(curbuf)));
+!     }
+!     else if (curbuf == bufp)
+!     {
+! 	nbdebug(("    curbuf == bufp\n"));
+!     }
+! 
+!     if (bufno <= 0)
+! 	return;
+  
+      sprintf(buffer, "%d:killed=%d\n", bufno, r_cmdno);
+  
+      nbdebug(("EVT: %s", buffer));
+  
+!     nb_send(buffer, "netbeans_file_closed");
+  
+      if (nbbuf != NULL)
+  	nbbuf->bufp = NULL;
+--- 2921,2946 ----
+  }
+  
+  /*
+!  * Tell netbeans that a file was deleted or wiped out.
+   */
+      void
+! netbeans_file_killed(buf_T *bufp)
+  {
+      int		bufno = nb_getbufno(bufp);
+      nbbuf_T	*nbbuf = nb_get_buf(bufno);
+      char	buffer[2*MAXPATHL];
+  
+!     if (!haveConnection || bufno == -1)
+  	return;
+  
+!     nbdebug(("netbeans_file_killed:\n"));
+!     nbdebug(("    Killing bufno: %d", bufno));
+  
+      sprintf(buffer, "%d:killed=%d\n", bufno, r_cmdno);
+  
+      nbdebug(("EVT: %s", buffer));
+  
+!     nb_send(buffer, "netbeans_file_killed");
+  
+      if (nbbuf != NULL)
+  	nbbuf->bufp = NULL;
+*** ../vim-7.2.078/src/proto/netbeans.pro	Tue Jun 24 23:25:53 2008
+--- src/proto/netbeans.pro	Tue Jan  6 15:23:02 2009
+***************
+*** 11,17 ****
+  void netbeans_frame_moved __ARGS((int new_x, int new_y));
+  void netbeans_file_activated __ARGS((buf_T *bufp));
+  void netbeans_file_opened __ARGS((buf_T *bufp));
+! void netbeans_file_closed __ARGS((buf_T *bufp));
+  void netbeans_inserted __ARGS((buf_T *bufp, linenr_T linenr, colnr_T col, char_u *txt, int newlen));
+  void netbeans_removed __ARGS((buf_T *bufp, linenr_T linenr, colnr_T col, long len));
+  void netbeans_unmodified __ARGS((buf_T *bufp));
+--- 11,17 ----
+  void netbeans_frame_moved __ARGS((int new_x, int new_y));
+  void netbeans_file_activated __ARGS((buf_T *bufp));
+  void netbeans_file_opened __ARGS((buf_T *bufp));
+! void netbeans_file_killed __ARGS((buf_T *bufp));
+  void netbeans_inserted __ARGS((buf_T *bufp, linenr_T linenr, colnr_T col, char_u *txt, int newlen));
+  void netbeans_removed __ARGS((buf_T *bufp, linenr_T linenr, colnr_T col, long len));
+  void netbeans_unmodified __ARGS((buf_T *bufp));
+*** ../vim-7.2.078/src/version.c	Tue Jan  6 15:01:58 2009
+--- src/version.c	Tue Jan  6 16:11:11 2009
+***************
+*** 678,679 ****
+--- 678,681 ----
+  {   /* Add new patch number below this line */
++ /**/
++     79,
+  /**/
+
+-- 
+Friends?  I have lots of friends!  In fact, I have every episode ever made.
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///

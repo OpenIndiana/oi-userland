@@ -1,0 +1,70 @@
+To: vim-dev@vim.org
+Subject: Patch 7.2.297
+Fcc: outbox
+From: Bram Moolenaar <Bram@moolenaar.net>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+------------
+
+Patch 7.2.297
+Problem:    Reading freed memory when writing ":reg" output to a register.
+	    (Dominique Pelle)
+Solution:   Skip the register being written to.
+Files:	    src/ops.c
+
+
+*** ../vim-7.2.296/src/ops.c	2009-11-11 17:22:30.000000000 +0100
+--- src/ops.c	2009-11-11 19:30:47.000000000 +0100
+***************
+*** 3991,3996 ****
+--- 3991,4004 ----
+  	}
+  	else
+  	    yb = &(y_regs[i]);
++ 
++ #ifdef FEAT_EVAL
++ 	if (name == MB_TOLOWER(redir_reg)
++ 		|| (redir_reg == '"' && yb == y_previous))
++ 	    continue;	    /* do not list register being written to, the
++ 			     * pointer can be freed */
++ #endif
++ 
+  	if (yb->y_array != NULL)
+  	{
+  	    msg_putchar('\n');
+***************
+*** 6090,6096 ****
+      long	maxlen;
+  #endif
+  
+!     if (y_ptr->y_array == NULL)		/* NULL means emtpy register */
+  	y_ptr->y_size = 0;
+  
+      /*
+--- 6098,6104 ----
+      long	maxlen;
+  #endif
+  
+!     if (y_ptr->y_array == NULL)		/* NULL means empty register */
+  	y_ptr->y_size = 0;
+  
+      /*
+*** ../vim-7.2.296/src/version.c	2009-11-17 12:31:30.000000000 +0100
+--- src/version.c	2009-11-17 12:42:28.000000000 +0100
+***************
+*** 683,684 ****
+--- 683,686 ----
+  {   /* Add new patch number below this line */
++ /**/
++     297,
+  /**/
+
+-- 
+"Beware of bugs in the above code; I have only proved
+it correct, not tried it." -- Donald Knuth
+
+ /// Bram Moolenaar -- Bram@Moolenaar.net -- http://www.Moolenaar.net   \\\
+///        sponsor Vim, vote for features -- http://www.Vim.org/sponsor/ \\\
+\\\        download, build and distribute -- http://www.A-A-P.org        ///
+ \\\            help me help AIDS victims -- http://ICCF-Holland.org    ///
