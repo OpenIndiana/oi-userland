@@ -1,0 +1,19 @@
+# This patch is to work around a core dump issue when we try to build cStringIO
+# with -zignore in LD_OPTIONS. 
+#
+--- Python-2.6.4/setup.pyy	Thu Apr  7 10:38:59 2011
++++ Python-2.6.4/setup.py	Thu Apr  7 12:04:36 2011
+@@ -235,7 +235,13 @@
+                 return
+ 
+         try:
++            ldo = None
++	    if ext.name == 'cStringIO' and 'LD_OPTIONS' in os.environ:
++                ldo = os.environ['LD_OPTIONS']
++		del os.environ['LD_OPTIONS']
+             build_ext.build_extension(self, ext)
++            if ldo != None:
++	        os.environ['LD_OPTIONS'] = ldo
+         except (CCompilerError, DistutilsError), why:
+             self.announce('WARNING: building of extension "%s" failed: %s' %
+                           (ext.name, sys.exc_info()[1]))
