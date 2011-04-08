@@ -1,0 +1,95 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+
+# Since in general, all NTP servers can be NTP clients and vice
+# versa, all of the information in the /etc/inet/ntp.client file
+# applies to NTP server setup as well. However, a certain kind
+# NTP server, called a Stratum 1 server, has one or more devices
+# designed to provide very accurate time to the server. These 
+# devices are configured using the "server" keyword, just as the
+# servers used by the client are, but instead of a hostname or 
+# IP address, a format resembling an IP address is used. The first
+# two octets of "127.127" are used to designate that this 
+# line is referring to a clock and not an network NTP server. 
+# The next octet is used to designate which type of device is used. 
+# And the last octet is used to specify a unit number if more than
+# one is used. Notice that the resulting number looks like the 
+# localhost address, it is not the same. The real localhost
+# address (127.0.0.1) does not have the second octet of 127 as
+# the hardware clock designator does. 
+#
+# XType Device    RefID          Description
+# -------------------------------------------------------
+#  1    local     LCL            Undisciplined Local Clock
+#  3    pst       WWV            PSTI/Traconex WWV/WWVH Receiver
+#  4    wwvb      WWVB           Spectracom WWVB Receiver
+#  5    true      TRUE           TrueTime GPS/GOES Receivers
+#  6    irig      IRIG           IRIG Audio Decoder
+#  7    chu       CHU            Scratchbuilt CHU Receiver
+#  8    parse     ----           Generic Reference Clock Driver
+#  9    mx4200    GPS            Magnavox MX4200 GPS Receiver
+# 10    as2201    GPS            Austron 2201A GPS Receiver
+# 11    arbiter   GPS            Arbiter 1088A/B GPS Receiver
+# 12    tpro      IRIG           KSI/Odetics TPRO/S IRIG Interface
+# 13    leitch    ATOM           Leitch CSD 5300 Master Clock Controller
+# 17    datum     DATM           Datum Precision Time System
+# 18    acts      ACTS           NIST Automated Computer Time Service
+# 19    heath     WWV            Heath WWV/WWVH Receiver
+# 20    nmea      GPS            Generic NMEA GPS Receiver
+# 21    gpsvme                   GPS VME
+# 22    atom      PPS            PPS Clock Discipline
+# 26    hpgps     GPS            Hewlett Packard 58503A GPS Receiver
+# 27    arc       MSFa           Arcron MSF Receiver
+# 28    shm                      Shared memory driver
+# 29    palisade                 Palisade
+# 30    oncore                   Oncore
+# 31    jupiter                  Jupiter GPS
+# 32    chronolog                Chronolog
+# 33    dumbclock                Dumbclock
+# 34    ulink                    Ulink
+# 35    pcf                      PCF
+# 36    wwv                      WWV Audio
+# 37    fg                       FG
+# 38    hopfser                  HOPF Serial
+# 39    hopfpci                  HOPF PCI
+# 40    jjy                      JJY
+# 41    tt560                    TT560
+# 42    zyfer                    ZYFER
+# 43    ripencc                  RIPEENCC
+# 44    neoclock4x               NEOCLOCK 4X
+
+# While all the current refclock drivers are configured and compiled,
+# not all the actual hardware can be supported on all systems. The
+# gpsvme driver can only be expected to work on systems with a VME 
+# bus. The WWV audio driver can only be used on systems with audio
+# input. 
+#  
+# In general, refclock type 1, the LOCAL clock is not necessary and
+# should not be configured. It should only be used when either there
+# is some other process being used to synchronize the clock, such as
+# with hardware with vendor provided drivers, or when it is desired
+# that a server without access to a real NTP time source needs to 
+# act as a multicast or broadcast server. The LOCAL clock should not
+# be configured as a "backup" to other external servers. 
+
+# Some of the devices have tuning parameters, called "fudge" factors, 
+# that can be set on the server line.  See the ntpd documentation.
