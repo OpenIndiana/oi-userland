@@ -1,0 +1,216 @@
+*** emacs-23.1/src/ChangeLog.orig	Wed Oct 14 16:57:29 2009
+--- emacs-23.1/src/ChangeLog	Wed Oct 14 17:35:12 2009
+***************
+*** 1,3 ****
+--- 1,19 ----
++ 2009-09-02  Jan Djärv  <jan.h.d@swipnet.se>
++ 
++ 	* xterm.h: Rename x_non_menubar_window_to_frame to
++ 	x_menubar_window_to_frame
++ 
++ 	* xterm.c: Remove declarations also in xterm.h
++ 	(XTmouse_position): Do not return valid positions
++ 	for clicks in the menubar and the toolbar for Gtk+.
++ 
++ 	* xfns.c (x_any_window_to_frame): Assume less about Gtk+ internals,
++ 	if the widget for the event has the same top level as a frame,
++ 	return the frame.
++ 	(x_menubar_window_to_frame): Detect menu bar even with Gtk+
++ 	internal windows, bug #4122.
++ 	(x_non_menubar_window_to_frame): Remove.
++ 	
+  2009-07-29  Chong Yidong  <cyd@stupidchicken.com>
+  
+  	* Version 23.1 released.
+*** emacs-23.1/src/xfns.c.orig	Wed Oct 14 16:50:22 2009
+--- emacs-23.1/src/xfns.c	Wed Oct 14 17:35:12 2009
+***************
+*** 374,383 ****
+  #ifdef USE_GTK
+                GtkWidget *gwdesc = xg_win_to_widget (dpyinfo->display, wdesc);
+                if (gwdesc != 0
+!                   && (gwdesc == x->widget
+!                       || gwdesc == x->edit_widget
+!                       || gwdesc == x->vbox_widget
+!                       || gwdesc == x->menubar_widget))
+                  found = f;
+  #else
+  	      if (wdesc == XtWindow (x->widget)
+--- 374,380 ----
+  #ifdef USE_GTK
+                GtkWidget *gwdesc = xg_win_to_widget (dpyinfo->display, wdesc);
+                if (gwdesc != 0
+!                   && gtk_widget_get_toplevel(gwdesc) == x->widget)
+                  found = f;
+  #else
+  	      if (wdesc == XtWindow (x->widget)
+***************
+*** 398,451 ****
+    return found;
+  }
+  
+- /* Likewise, but exclude the menu bar widget.  */
+- 
+- struct frame *
+- x_non_menubar_window_to_frame (dpyinfo, wdesc)
+-      struct x_display_info *dpyinfo;
+-      int wdesc;
+- {
+-   Lisp_Object tail, frame;
+-   struct frame *f;
+-   struct x_output *x;
+- 
+-   if (wdesc == None) return 0;
+- 
+-   for (tail = Vframe_list; CONSP (tail); tail = XCDR (tail))
+-     {
+-       frame = XCAR (tail);
+-       if (!FRAMEP (frame))
+-         continue;
+-       f = XFRAME (frame);
+-       if (!FRAME_X_P (f) || FRAME_X_DISPLAY_INFO (f) != dpyinfo)
+- 	continue;
+-       x = f->output_data.x;
+-       /* This frame matches if the window is any of its widgets.  */
+-       if (x->hourglass_window == wdesc)
+- 	return f;
+-       else if (x->widget)
+- 	{
+- #ifdef USE_GTK
+-           GtkWidget *gwdesc = xg_win_to_widget (dpyinfo->display, wdesc);
+-           if (gwdesc != 0
+-               && (gwdesc == x->widget
+-                   || gwdesc == x->edit_widget
+-                   || gwdesc == x->vbox_widget))
+-             return f;
+- #else
+- 	  if (wdesc == XtWindow (x->widget)
+- 	      || wdesc == XtWindow (x->column_widget)
+- 	      || wdesc == XtWindow (x->edit_widget))
+- 	    return f;
+- #endif
+- 	}
+-       else if (FRAME_X_WINDOW (f) == wdesc)
+- 	/* A tooltip frame.  */
+- 	return f;
+-     }
+-   return 0;
+- }
+- 
+  /* Likewise, but consider only the menu bar widget.  */
+  
+  struct frame *
+--- 395,400 ----
+***************
+*** 473,487 ****
+        if (x->menubar_widget)
+          {
+            GtkWidget *gwdesc = xg_win_to_widget (dpyinfo->display, wdesc);
+-           int found = 0;
+  
+!           BLOCK_INPUT;
+            if (gwdesc != 0
+                && (gwdesc == x->menubar_widget
+!                   || gtk_widget_get_parent (gwdesc) == x->menubar_widget))
+!             found = 1;
+!           UNBLOCK_INPUT;
+!           if (found) return f;
+          }
+  #else
+        if (x->menubar_widget
+--- 422,435 ----
+        if (x->menubar_widget)
+          {
+            GtkWidget *gwdesc = xg_win_to_widget (dpyinfo->display, wdesc);
+  
+! 	  /* This gives false positives, but the rectangle check in xterm.c
+! 	     where this is called takes care of that. */
+            if (gwdesc != 0
+                && (gwdesc == x->menubar_widget
+! 		  || gtk_widget_is_ancestor (x->menubar_widget, gwdesc)
+! 		  || gtk_widget_is_ancestor (gwdesc, x->menubar_widget)))
+! 	    return f;
+          }
+  #else
+        if (x->menubar_widget
+*** emacs-23.1/src/xterm.c.orig	Wed Oct 14 16:37:20 2009
+--- emacs-23.1/src/xterm.c	Wed Oct 14 17:35:12 2009
+***************
+*** 109,116 ****
+  #if defined (USE_X_TOOLKIT) || defined (USE_GTK)
+  
+  extern void free_frame_menubar P_ ((struct frame *));
+- extern struct frame *x_menubar_window_to_frame P_ ((struct x_display_info *,
+- 						    int));
+  #endif
+  
+  #ifdef USE_X_TOOLKIT
+--- 109,114 ----
+***************
+*** 143,153 ****
+  
+  #endif /* USE_X_TOOLKIT */
+  
+- #if ! defined (USE_X_TOOLKIT) && ! defined (USE_GTK)
+- #define x_any_window_to_frame x_window_to_frame
+- #define x_top_window_to_frame x_window_to_frame
+- #endif
+- 
+  #ifdef USE_X_TOOLKIT
+  #include "widget.h"
+  #ifndef XtNinitialState
+--- 141,146 ----
+***************
+*** 3916,3921 ****
+--- 3909,3923 ----
+  		if (child == None || child == win)
+  		  break;
+  
++ #ifdef USE_GTK
++ 		/* We don't wan't to know the innermost window.  We
++ 		   want the edit window.  For non-Gtk+ the innermost
++ 		   window is the edit window.  For Gtk+ it might not
++ 		   be.  It might be the tool bar for example.  */
++ 		if (x_window_to_frame (FRAME_X_DISPLAY_INFO (*fp), win))
++ 		  break;
++ #endif
++ 
+  		win = child;
+  		parent_x = win_x;
+  		parent_y = win_y;
+***************
+*** 3932,3939 ****
+--- 3934,3947 ----
+  	       parent_{x,y} are invalid, but that's okay, because we'll
+  	       never use them in that case.)  */
+  
++ #ifdef USE_GTK
++ 	     /* We don't wan't to know the innermost window. We
++ 		want the edit window. */
++ 	    f1 = x_window_to_frame (FRAME_X_DISPLAY_INFO (*fp), win);
++ #else
+  	    /* Is win one of our frames?  */
+  	    f1 = x_any_window_to_frame (FRAME_X_DISPLAY_INFO (*fp), win);
++ #endif
+  
+  #ifdef USE_X_TOOLKIT
+  	    /* If we end up with the menu bar window, say it's not
+*** emacs-23.1/src/xterm.h.orig	Wed Oct 14 15:08:03 2009
+--- emacs-23.1/src/xterm.h	Wed Oct 14 17:35:12 2009
+***************
+*** 374,380 ****
+  
+  #if defined (USE_X_TOOLKIT) || defined (USE_GTK)
+  extern struct frame *x_any_window_to_frame P_ ((struct x_display_info *, int));
+! extern struct frame *x_non_menubar_window_to_frame P_ ((struct x_display_info *, int));
+  extern struct frame *x_top_window_to_frame P_ ((struct x_display_info *, int));
+  #endif
+  
+--- 374,380 ----
+  
+  #if defined (USE_X_TOOLKIT) || defined (USE_GTK)
+  extern struct frame *x_any_window_to_frame P_ ((struct x_display_info *, int));
+! extern struct frame *x_menubar_window_to_frame P_ ((struct x_display_info *, int));
+  extern struct frame *x_top_window_to_frame P_ ((struct x_display_info *, int));
+  #endif
+  

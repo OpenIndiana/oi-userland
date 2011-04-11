@@ -1,0 +1,59 @@
+#!/bin/sh
+#
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+
+# GNU emacs is delivered to Solaris as a core package (pkg:/editor/gnu-emacs)
+# that contains a complete emacs environment, minus the actual emacs
+# binaries. There are multiple binaries, which are optionally
+# installed from separate packages:
+#
+#	emacs-gtk (pkg:/editor/gnu-emacs/gnu-emacs-gtk)
+#		X11 support, using the GTK toolkit.
+#
+#	emacs-x (pkg:/editor/gnu-emacs/gnu-emacs-x11)
+#		X11 support, using the Athena (Xaw) toolkit.
+#
+#	emacs-nox (pkg:/editor/gnu-emacs/gnu-emacs-x11)
+#		Pure tty emacs, without any X Window support.
+#		emacs-nox can run on a system minimized to not include
+#		the X11 libraries.
+#
+# This script is installed as /usr/bin/emacs. It examines the
+# emacs binaries on the system, and runs the "best" version available.
+#
+for EXE in emacs-gtk emacs-x emacs-nox; do
+	if [ -f /usr/bin/$EXE ]; then
+		exec /usr/bin/$EXE "$@"
+	fi
+done
+
+# If we get here, the system has pkg:/editor/gnu-emacs installed without
+# one of the packages that deliver the executables. That's not supposed to
+# happen, because the packages specify dependencies to prevent it, but
+# if it does, issue an appropriate message.
+#
+echo "$0: no emacs binaries available. Install software package pkg:/editor/gnu-emacs/gnu-emacs-gtk, pkg:/editor/gnu-emacs/gnu-emacs-x11, or pkg:/editor/gnu-emacs/gnu-emacs-x11" 1>&2
+
+exit 1
