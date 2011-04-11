@@ -1,0 +1,11 @@
+--- tcl8.4.18/generic/tclIO.c.orig	Tue Aug 11 16:30:20 2009
++++ tcl8.4.18/generic/tclIO.c	Tue Aug 11 16:31:20 2009
+@@ -230,7 +230,7 @@
+ 	     statePtr != NULL;
+ 	     statePtr = statePtr->nextCSPtr) {
+ 	    chanPtr = statePtr->topChanPtr;
+-	    if (!(statePtr->flags & CHANNEL_DEAD)) {
++	    if (!(statePtr->flags & (CHANNEL_INCLOSE|CHANNEL_CLOSED|CHANNEL_DEAD))) {
+ 		active = 1;
+ 		break;
+ 	    }
