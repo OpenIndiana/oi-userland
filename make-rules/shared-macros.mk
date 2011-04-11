@@ -430,7 +430,8 @@ LD_B_DIRECT =		-Bdirect
 #
 
 # Create a non-executable stack when linking.
-LD_MAP_NOEXSTK =	-M /usr/lib/ld/map.noexstk
+LD_MAP_NOEXSTK.i386 =	-M /usr/lib/ld/map.noexstk
+LD_MAP_NOEXSTK.sparc =	-M /usr/lib/ld/map.noexstk
 
 # Create a non-executable bss segment when linking.
 LD_MAP_NOEXBSS =	-M /usr/lib/ld/map.noexbss
@@ -450,7 +451,7 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS)
 # Default linker options that everyone should get.  Do not add additional
 # libraries to this macro, as it will apply to everything linked during the
 # component build.
-LD_OPTIONS +=	$(LD_MAP_NOEXSTK) $(LD_MAP_NOEXDATA.$(MACH)) \
+LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
 		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE)
 
 # Environment variables and arguments passed into the build and install

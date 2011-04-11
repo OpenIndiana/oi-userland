@@ -1,0 +1,32 @@
+*** emacs-23.1/src/s/sol2-6.h.orig	Wed Oct 14 17:55:32 2009
+--- emacs-23.1/src/s/sol2-6.h	Wed Oct 14 17:56:46 2009
+***************
+*** 2,11 ****
+  
+  #include "sol2-5.h"
+  
+! #if 0 /* dldump does not handle all the extensions used by GNU ld.  */
+  #undef UNEXEC
+  #define UNEXEC unexsol.o
+- #endif
+  
+  /* arch-tag: 71ea3857-89dc-4395-9623-77964e6ed3ca
+     (do not change this comment) */
+--- 2,18 ----
+  
+  #include "sol2-5.h"
+  
+! /*
+!  * Use the Solaris dldump() function to dump emacs, instead of
+!  * the generic unexelf code.
+!  *
+!  * If you encounter a problem using dldump(), please consider sending
+!  * a message to the OpenSolaris tools-linking mailing list:
+!  *      http://mail.opensolaris.org/mailman/listinfo/tools-linking
+!  */
+! 
+  #undef UNEXEC
+  #define UNEXEC unexsol.o
+  
+  /* arch-tag: 71ea3857-89dc-4395-9623-77964e6ed3ca
+     (do not change this comment) */

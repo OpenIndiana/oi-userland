@@ -1,0 +1,129 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+NAME:             emacs
+VERSION:          23.1
+DESCRIPTION:      GNU Emacs editor
+LICENSE:          GPLv3
+BUGTRAQ:          solaris/utility/emacs
+COMMENTS:         
+
+This file contains information about the emacs package within the Userland
+consolidation. Along with the comments in the Makefile, it documents any
+deviations from standard Userland or emacs practice, as well as miscellaneous
+information needed to understand how this component is put together.
+
+
+- We patch the following changes to the emacs sources:
+
+	buffer_menu.patch
+	    Fixes an issue with GTK and the Buffers menu where the
+	    menu contents is not updated to show the current buffers
+	    and instead shows a stale list. I based these patches
+	    on the official ones applied to the emacs development branch:
+
+	    http://lists.gnu.org/archive/html/emacs-diffs/2009-09/msg00039.html
+
+	sysmalloc.patch
+	    Use the system malloc instead of the built in one
+
+	dldump.patch
+	    Use the native Solaris dldump() function (emacs/src/unexsol.c)
+	    to produce the dumped emacs, rather than the generic ELF
+	    code (emacs-22.1/src/unexelf.c).
+
+	xft.patch
+	    Patch configure script to provide necessary missing
+	    libraries for the GTK version of emacs.
+
+
+- Emacs can be built as either 32-bit or 64-bit, depending on the target
+  machine. The benefit of a 64-bit emacs is that the size of the files it
+  can handle is not limited to 128MB, as it is with the 32-bit version.
+
+  For Solaris, we used to build both versions, using /usr/lib/isaexec to
+  run the 64-bit version if possible, and the 32-bit version otherwise. Note
+  that this was only done for the emacs binary itself, as there is no
+  technical need for 64-bit versions of the ancillary programs that come
+  with emacs (etags, emacsclient, etc).
+
+  Fortunately, the vast majority of the files in an emacs tree are identical,
+  regardless of the platform and/or word size, which makes this particularly
+  easy to do.
+
+  With Solaris 11, all kernels are 64-bit, and we therefore do not need
+  the 32-bit executables. As such, we only supply 64-bit emacs binaries now,
+  and the use of usr/lib/isaexec has been removed: This cuts the number of
+  builds necessary in half, and also the binary package size. It also
+  simplifies packaging, and the user's view of /usr/bin/emacs*.
+
+  Note that we're installing a 64-bit objects in /bin, and
+  usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR). pkglint considers
+  these to be a "32-bit path". There is an RFE to suppress lint for specific
+  attributes, but until then, we simply assert that the whole action for
+  those files is linted.
+
+- There are three different toolkit options: None, Athena widgets
+  (aka Xaw, or lucid), and gtk. It would be nice to only support gtk,
+  but for purposes of minimization and user preference, we supply binaries
+  for all three. We follow the Linux model in this regard. The Xaw and no-X
+  versions are quite stable from release to release, so this isn't a large
+  burden.
+
+- We deliver the following packages:
+
+	gnu-emacs - Everything you need to run emacs, except the
+	    emacs binaries.
+
+	gnu-emacs-gtk - Binaries for the X11 version using the GTK toolkit.
+
+	gnu-emacs-no-x11 - Pure tty emacs binaries, built without
+	    any X11 linkage. Ideal for headless server systems.
+
+	gnu-emacs-x11 - Binaries for the X11 version using the Athena
+	    widget (Xaw) toolkit.
+
+	gnu-emacs-lisp - The compressed LISP files for which compiled
+	    versions are delivered by gnu-emacs. These are only needed
+	    for emacs developers and those who like to read source code.
+
+  The core gnu-emacs package is required by all of the other packages.
+  In turn, gnu-emacs requires at least one of the packages supplying an
+  emacs binary to be installed.
+
+- We do not ship any suid/sgid binaries for obvious security reasons.
+
+  We do not install the files under /var/games/emacs. The reason for
+  this is that we do not install update-game-score as setuid, and
+  therefore the game files are not usable. This the same decision made
+  by Debian, among others.
+
+- The depend line in gnu-emacs.p5m is currently commented out, pending
+  the resolution of
+
+	Bug 18043 - renamed packages in an image cause problems
+            with require-any dependencies
+	https://defect.opensolaris.org/bz/show_bug.cgi?id=18043
+
+  This can be reversed once the minimum build system for userland
+  is >= snv_162.
