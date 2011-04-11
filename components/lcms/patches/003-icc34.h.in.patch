@@ -1,0 +1,20 @@
+--- include/icc34.h.in	2007-05-25 07:04:02.000000000 -0700
++++ include/icc34.h.in	2011-03-29 16:11:47.693553324 -0700
+@@ -144,7 +144,7 @@
+  */
+ 
+ 
+-#ifdef PACKAGE_NAME
++#if !defined(HAVE_INTTYPES_H) || !defined(HAVE_STDINT_H)
+ /*
+   June 9, 2003, Adapted for use with configure by Bob Friesenhahn
+   Added the stupid check for autoconf by Marti Maria. 
+@@ -214,6 +214,8 @@
+ 
+ #if defined (__MINGW) || defined(__MINGW32__)
+ #include <stdint.h>
++#elif defined(_sun)
++#include <inttypes.h>
+ #endif
+ 
+ 

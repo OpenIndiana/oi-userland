@@ -1,0 +1,22 @@
+--- include/curl/Makefile.in	2010-10-01 13:49:18.000000000 -0700
++++ include/curl/Makefile.in	2011-03-31 11:29:48.945604347 -0700
+@@ -306,18 +306,8 @@
+ $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
+ 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
+ 
+-curlbuild.h: stamp-h3
+-	@if test ! -f $@; then \
+-	  rm -f stamp-h3; \
+-	  $(MAKE) stamp-h3; \
+-	else :; fi
+-
+-stamp-h3: $(srcdir)/curlbuild.h.in $(top_builddir)/config.status
++stamp-h3:
+ 	@rm -f stamp-h3
+-	cd $(top_builddir) && $(SHELL) ./config.status include/curl/curlbuild.h
+-$(srcdir)/curlbuild.h.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
+-	cd $(top_srcdir) && $(AUTOHEADER)
+-	rm -f stamp-h3
+ 	touch $@
+ 
+ distclean-hdr:
