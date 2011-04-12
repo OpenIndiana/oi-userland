@@ -1,0 +1,22 @@
+--- ghostscript-8.64/ijs/Makefile.am.orig	Tue Mar 29 04:38:15 2011
++++ ghostscript-8.64/ijs/Makefile.am	Tue Mar 29 04:38:26 2011
+@@ -24,7 +24,7 @@
+ 
+ ## Process this file with automake to produce Makefile.in.
+ 
+-AUTOMAKE_OPTIONS = 1.6 foreign dist-bzip2 no-dependencies 
++AUTOMAKE_OPTIONS = 1.10 foreign dist-bzip2 no-dependencies 
+ 
+ @SET_MAKE@
+ 
+--- ghostscript-8.64/ijs/autogen.sh.orig	Tue Mar 29 04:39:57 2011
++++ ghostscript-8.64/ijs/autogen.sh	Tue Mar 29 04:39:17 2011
+@@ -33,7 +33,7 @@
+ 
+ # do we need automake?
+ (grep "^AM_INIT_AUTOMAKE" "$CONFIG_AC" >/dev/null) && {
+-  AM_NEEDED=`fgrep AUTOMAKE_OPTIONS Makefile.am | $VERSIONGREP`
++  AM_NEEDED=`fgrep AUTOMAKE_OPTIONS Makefile.am | nawk '{print $3}'`
+   AM_NMAJOR=`echo $AM_NEEDED |cut -d. -f1`
+   AM_NMINOR=`echo $AM_NEEDED |cut -d. -f2`
+   AM_NPATCHLEVEL=`echo $AM_NEEDED |cut -d. -f3`
