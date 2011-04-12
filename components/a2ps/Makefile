@@ -51,7 +51,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	 ln -s $(SOURCE_DIR)/doc/make-authors.pl ; \
 	 ln -s $(SOURCE_DIR)/doc/translators.txt) ; \
 	(cd $(@D)/sheets ; \
-	 for sheet in $(SOURCE_DIR)/sheets/*.ssh ; do ; \
+	 for sheet in $(SOURCE_DIR)/sheets/*.ssh ; do \
 	     ln -s $$sheet ; \
 	 done)
 
