@@ -1,0 +1,215 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# To configure this interface script under Solaris LP use the following
+# command:
+#
+#	lpadmin -p printer -v /dev/... -I"postscript,pdf" -Tunknown \
+#		-i /usr/sfw/share/ghostscript/interfaces/GSinterface \
+#		-o GS_DEVICE=(gs-device-type) \
+#		[-o OutputFile=(file/device)] [-o PAPERSIZE=(size)] \
+#		[-o RESOLUTION=XxY] [-o banner-type=(ascii|postscript)] \
+#		[-o GS_OPTIONS="-sIjsServer=... -sIjsParams=..."]
+#
+#	see gs(1) for more information about values that can be used for
+#	GS_DEVICE, PAPERSIZE, and RESOLUTION, and GS_OPTIONS.
+#
+#	There is a known problem printing through a /dev/lp? parallel port
+#	on a Solaris x86 machine.  If you have selected the correct GS_DEVICE
+#	and get garbled output when printing under this configuration, running
+#		"lpadmin -p printer -H nopush"
+#	should fix the problem.
+
+PATH=/usr/sfw/bin:/usr/lib/lp/bin:/bin export PATH
+
+
+if [ $# -lt 5 ] ; then
+	logger -p lpr.err -t "GSinterface" \
+		"wrong number of arguments to interface program" 1>&2
+	logger -p lpr.err -t "GSinterface" "$0 $*"
+	echo "wrong number of arguments to interface program" 1>&2
+	exit 1
+fi
+
+
+printer=`basename $0`
+request_id=$1
+user_name=$2
+title=$3
+copies=$4
+option_list=$5
+
+shift 5
+files="$*"
+
+tag="GSinterface: ${request_id}"
+error_file="/tmp/${printer}-log.$$"
+
+logger -p lpr.debug -t ${tag} "INPUT"
+logger -p lpr.debug -t ${tag} "    printer : ${printer}"
+logger -p lpr.debug -t ${tag} "    request_id : ${request_id}"
+logger -p lpr.debug -t ${tag} "    user_name : ${user_name}"
+logger -p lpr.debug -t ${tag} "    title : ${title}"
+logger -p lpr.debug -t ${tag} "    copies : ${copies}"
+logger -p lpr.debug -t ${tag} "    option_list : ${option_list}"
+logger -p lpr.debug -t ${tag} "    files : ${files}"
+
+
+parse () {
+	echo "`expr \"$1\" : \"^[^=]*=\(.*\)\"`"
+}
+
+banner="postscript_banner"
+nobanner="no"
+nofilebreak="no"
+OutputFile=
+GS_DEVICE=nullpage
+GS_OPTIONS=
+inlist=
+
+for i in ${option_list}
+do
+	case "${inlist}${i}" in
+
+	nobanner )
+		nobanner="yes"
+		;;
+
+	nofilebreak )
+		nofilebreak="yes"
+		;;
+
+	banner-type=* )
+		banner="`parse ${i}`_banner"
+		;;
+
+	GS_DEVICE=* )
+		GS_DEVICE=`parse ${i}`
+		;;
+
+	OutputFile=* )
+		GS_OPTIONS="-sOutputFile=`parse ${i}` ${GS_OPTIONS}"
+		OutputFile="yes"
+		;;
+
+	RESOLUTION=* )
+		GS_OPTIONS="-r`parse ${i}` ${GS_OPTIONS}"
+		;;
+
+	PAPERSIZE=* )
+		GS_OPTIONS="-sPAPERSIZE=`parse ${i}` ${GS_OPTIONS}"
+		;;
+
+	GS_OPTIONS=* )
+		GS_OPTIONS="`parse ${i}` ${GS_OPTIONS}"
+		;;
+
+	* )
+		logger -p lpr.error -t ${tag} \
+			"unrecognized \"-o ${i}\" option, ignored" 1>&2
+		;;
+	esac
+done
+
+if [ "${OutputFile}" = "" ] ; then
+	GS_OPTIONS="-sOutputFile=- ${GS_OPTIONS}"
+fi
+
+# Don't pause between pages, exit upon completion, don't print startup and
+# page messages, don't allow deletefile, rename, or write access to files
+GS_OPTIONS="-dNOPAUSE -dBATCH -dQUIET -dSAFER ${GS_OPTIONS}"
+
+export GS_DEVICE GS_OPTIONS PATH
+
+logger -p lpr.debug -t ${tag} "ENVIRONMENT"
+env | logger -p lpr.debug -t "${tag}:    "
+
+#
+#	Generate an ASCII banner page and pass it to the printer
+# This is much faster than the PostScript(TM) banner
+#
+ascii_banner() {
+	cat <<EOF
+	${title}
+	Request: ${request_id}
+	User: ${user_name}
+	Printer: ${printer}
+	Time: `date`
+	Copies: ${copies}
+EOF
+	tput ff
+}
+
+#
+#	Generate a PostScript(TM) banner page and run it through GhostScript.
+# This assumes an 8.5x11 page size.
+#
+postscript_banner() {
+	cat <<EOF | gs - 2>> ${error_file}
+%!ps
+/PrintLine { exch findfont exch scalefont setfont moveto show } def
+newpath 4 setlinewidth 1 setlinejoin
+15 760 moveto 595 760 lineto 595 585 lineto 15 585 lineto closepath
+gsave .75 setgray fill grestore
+0 setgray stroke
+(${user_name}) 30 730 /Times-Bold 24 PrintLine
+(${request_id}) 415 730 /Times-Bold 24 PrintLine
+(${printer}) 30 600 /Times-Bold 16 PrintLine
+(`date`) 350 600 /Times-Roman 16 PrintLine
+(${title}) 100 660 /Times-Bold 36 PrintLine
+(Copies: ${copies}) 30 25 /Times-Roman 16 PrintLine
+showpage
+EOF
+}
+
+#
+# should create a banner
+#	a simple text or PCL banner would be prefered, because a PS one
+#	would require GhostScript to RIP and pass the whole image to the
+#	printer.
+#
+case "${nobanner}" in
+	"no")
+		(eval "${banner}" 1>&3 2>&1) | lp.cat 0
+	;;
+esac
+
+#
+# process the files
+#
+i=1
+while [ $i -le $copies ] ; do
+	for file in $files ; do
+		gs $file 2>> ${error_file} | lp.cat 0
+	done
+	i=`expr $i + 1`
+done
+
+if [ -s ${error_file} ] ; then
+	logger -p lpr.debug -t ${tag} "GS ERRORS"
+	cat ${error_file} | logger -p lpr.debug -t "${tag}:    "
+	rm -f ${error_file}
+fi
+
+exit 0

@@ -1,0 +1,63 @@
+.\" $Id$
+.TH GSinterface 1 "15 October 2002" Ghostscript \" -*- nroff -*-
+.SH NAME
+GSinterface \- LP interface script for using ghostscript under lpsched
+.SH SYNOPSIS
+.na
+\fBGSinterface\fB 
+[request\-id] [user] [title] [copies] [options] [files]
+.SH DESCRIPTION
+This shell script is intended to be uses as an LP interface script on
+Solaris 2.6 and later systems.  It allows print queues to be configured
+under LP using Ghostscript to render for the printer.
+.PP
+Configuration under lpsched is performed via the
+.BR lpadmin(1M)
+command.  
+.PP
+.nf
+.na
+	# lpadmin -p printer -v /dev/... -I"postscript,pdf" -Tunknown \\
+		-i /usr/sfw/share/ghostscript/interfaces/GSinterface \\
+		-o GS_DEVICE=(gs-device-type) \\
+		[-o OutputFile=(file/device)] [-o PAPERSIZE=(size)] \\
+		[-o RESOLUTION=XxY] [-o banner-type=(ascii|postscript)] \\
+		[-o GS_OPTIONS="-sIjsServer=... -sIjsParams=..."]
+.ad
+.fi
+.PP
+Valid values for the GS_DEVICE setting can be obtained from Ghostscript by
+running: "gs \-h". This will dump a variety of information about Ghostscript's
+usage and compile time configuration.  The "Available devices:" section
+lists the formats that Ghostscript will render to.  You will need to match one
+of these formats to the format that your printer takes as input.
+
+.SH EXAMPLES
+.br
+.PP
+To configure a Canon Bublejet 800c (NeWSprinter CL+) printer connected to an ECP parallel port:
+.nf
+.na
+
+	# lpadmin -p printer -v /dev/ecpp0 -I"postscript,pdf" -Tunknown \\
+		-i /usr/sfw/share/ghostscript/interfaces/GSinterface \\
+		-o GS_DEVICE=bjc800
+	# accept printer
+	# enable printer
+.ad
+.fi	
+.PP
+To configure an HP DeskJet 990 printer connected via a USB interface using IJS support:
+.nf
+.na
+
+	# lpadmin -p printer -v /dev/usb/lp1 -I"postscript,pdf" -Tunknown \\
+		-i /usr/sfw/share/ghostscript/interfaces/GSinterface \\
+		-o GS_DEVICE=ijs \\
+		-o GS_OPTIONS="-sIjsServer=hpijs -sDeviceManufacturer=HEWLETT-PACKARD -sDeviceModel='DESKJET 990' -DIjsUseOutputFD"
+	# accept printer
+	# enable printer
+.ad
+.fi	
+.SH SEE ALSO
+gs(1)
