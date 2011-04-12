@@ -50,7 +50,7 @@ COMPONENT_PRE_INSTALL_ACTION = \
 COMPONENT_POST_INSTALL_ACTION = \
 	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) ; do \
 		cd $$dir; \
-	 	for zfile in `ls z*`; do ; \
+	 	for zfile in `ls z*`; do \
 			mv $$zfile g$$zfile ; \
 		done ; \
 	 done)

@@ -30,6 +30,9 @@ export DOWNLOAD_SEARCH_PATH +=	http://userland.us.oracle.com/source-archives/
 # The workspace starts at the mercurial root
 export WS_TOP ?=		$(shell hg root)
 
+export SHELLOPTS = pipefail
+SHELL=	/bin/bash
+
 CONSOLIDATION =	userland
 PUBLISHER ?=	$(CONSOLIDATION)
 
