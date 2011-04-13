@@ -42,17 +42,15 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 PROTOTERMINFODIR=$(PROTOUSRSHAREDIR)/lib/terminfo
 
 $(PROTOTERMINFODIR):
-	$(MKDIR) $@ 
+	$(MKDIR) $@
 
-include ../../make-rules/shared-targets.mk
+$(INSTALL_32):	$(PROTOTERMINFODIR)
 
-build: $(BUILD_32)
+build:		$(BUILD_32)
 
-install: $(PROTOETCDIR) $(PROTOTERMINFODIR) $(INSTALL_32)
-	$(CP) $(COMPONENT_SRC)/etc/screenrc $(PROTOETCDIR)
+install:	$(INSTALL_32)
 
-test:
-	@echo "no tests available"
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

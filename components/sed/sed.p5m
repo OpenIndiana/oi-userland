@@ -23,14 +23,20 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/text/gnu-sed@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="gsed - GNU implementation of sed, the Unix stream editor"
-set name=pkg.description value="sed takes text input and performs some operation (or set of operations) on it and outputs the modified text."
-set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.upstream_url value=http://www.gnu.org/software/sed/
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/text/gnu-sed@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="sed takes text input and performs some operation (or set of operations) on it and outputs the modified text."
+set name=pkg.summary \
+    value="gsed - GNU implementation of sed, the Unix stream editor"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/System Utilities"
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/sed/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2008/254
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 dir path=usr
 dir path=usr/bin
 dir path=usr/gnu
@@ -154,12 +160,9 @@ file path=usr/share/locale/vi/LC_MESSAGES/sed.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/sed.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/sed.mo
 file path=usr/share/man/man1/gsed.1
+legacy pkg=SUNWgsed desc="gsed - GNU sed 4.2.1" \
+    name="gsed - GNU implementation of sed, the Unix stream editor"
+license sed.license license=GPLv3
 link path=usr/gnu/bin/sed target=../../bin/gsed
 link path=usr/gnu/share/man/man1/sed.1 \
     target=../../../../share/man/man1/gsed.1
-
-license sed.license license="GPLv3"
-
-legacy	pkg=SUNWgsed \
-	name="gsed - GNU implementation of sed, the Unix stream editor" \
-	desc="gsed - GNU sed 4.2.1"

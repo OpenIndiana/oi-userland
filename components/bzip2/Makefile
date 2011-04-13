@@ -35,11 +35,9 @@ COMPONENT_ARCHIVE_URL=	http://www.bzip.org/$(COMPONENT_VERSION)/$(COMPONENT_ARCH
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
+include ../../make-rules/lint-libraries.mk
 
-LIBNAME=	bz2
-LINTOUT=	lint.out
-LINTFLAGS=	-nsvx -I. $(BITS32)
-LINTFLAGS64=	-nsvx -I. $(BITS64)
+LINT_FLAGS +=	-I.
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILE) $(CC_PIC)
@@ -53,35 +51,19 @@ COMPONENT_PRE_BUILD_ACTION= \
 	(cd $(@D) ; \
 	    cp ../../oldapi.c . )
 
-COMPONENT_POST_BUILD_ACTION= \
-	(cd $(@D) ; \
-	    $(LINT) -o $(LIBNAME) ../../llib-lbz2 > $(LINTOUT) 2>&1)
-
-
 # common targets
 build:		$(BUILD_32) $(BUILD_64)
 
-MAN1FILES= bunzip2.1 bzcat.1 bzdiff.1 bzgrep.1 \
-    bzip2.1 bzip2recover.1 bzmore.1
-MAN3FILES=libbz2.3
-
-include ../../make-rules/shared-targets.mk
-
-install:	build $(INSTALL_32) $(PROTOMAN3FILES) $(PROTOMAN1FILES)
+install:	build $(INSTALL_32)
 	$(INSTALL) $(BUILD_DIR_32)/libbz2.so.1 $(PROTOUSRLIBDIR)
 	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
-	$(INSTALL) llib-lbz2 $(PROTOUSRLIBDIR)
-	$(INSTALL) $(BUILD_DIR_32)/llib-lbz2.ln $(PROTOUSRLIBDIR)
 	$(MKDIR) $(PROTOUSRLIBDIR64)
 	$(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64)
 	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
 	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
 
 # build does this always
-test:  build
-	@cd $(BUILD_DIR_32); $(MAKE) check
-	@cd $(BUILD_DIR_64); $(MAKE) check
-
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

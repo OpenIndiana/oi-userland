@@ -81,22 +81,10 @@ CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
 
-$(BUILD_DIR)/$(MACH32)/.configured:	BITS=32
-$(BUILD_DIR)/$(MACH64)/.configured:	BITS=64
-$(BUILD_DIR)/$(MACH32)/.built:		BITS=32
-$(BUILD_DIR)/$(MACH64)/.built:		BITS=64
-$(BUILD_DIR)/$(MACH32)/.installed:	BITS=32
-$(BUILD_DIR)/$(MACH64)/.installed:	BITS=64
-$(BUILD_DIR)/$(MACH32)/.tested:		BITS=32
-$(BUILD_DIR)/$(MACH64)/.tested:		BITS=64
+$(BUILD_DIR_32)/.configured:	BITS=32
+$(BUILD_DIR_64)/.configured:	BITS=64
 
 CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
-
-# set the default target for installation of the component
-COMPONENT_INSTALL_TARGETS =	install
-
-# set the default target for test of the component
-COMPONENT_TEST_TARGETS =	check
 
 # configure the unpacked source for building 32 and 64 bit version
 CONFIGURE_SCRIPT =	$(SOURCE_DIR)/configure

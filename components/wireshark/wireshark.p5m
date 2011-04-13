@@ -20,14 +20,19 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/diagnostic/wireshark@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Wireshark - Network protocol analyzer"
-set name=pkg.description value="Wireshark - Network protocol analyzer (1.4.2)"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
-set name=info.upstream_url value="http://www.wireshark.org/"
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/diagnostic/wireshark@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description value="Wireshark - Network protocol analyzer (1.4.2)"
+set name=pkg.summary value="Wireshark - Network protocol analyzer"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.wireshark.org/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2007/334
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=etc
 dir path=etc/security
 dir path=etc/security/exec_attr.d
@@ -81,7 +86,8 @@ file path=usr/sbin/rawshark
 file path=usr/sbin/text2pcap
 file path=usr/sbin/tshark
 file path=usr/sbin/wireshark
-file wireshark-$(IPS_COMPONENT_VERSION)/wireshark.desktop path=usr/share/applications/wireshark.desktop
+file wireshark-$(IPS_COMPONENT_VERSION)/wireshark.desktop \
+    path=usr/share/applications/wireshark.desktop
 file path=usr/share/man/man1/capinfos.1
 file path=usr/share/man/man1/dumpcap.1
 file path=usr/share/man/man1/editcap.1
@@ -91,7 +97,8 @@ file path=usr/share/man/man1/text2pcap.1
 file path=usr/share/man/man1/tshark.1
 file path=usr/share/man/man1/wireshark.1
 file path=usr/share/man/man4/wireshark-filter.4
-file wireshark-$(IPS_COMPONENT_VERSION)/image/wsicon64.png path=usr/share/pixmaps/wireshark.png
+file wireshark-$(IPS_COMPONENT_VERSION)/image/wsicon64.png \
+    path=usr/share/pixmaps/wireshark.png
 file path=usr/share/wireshark/AUTHORS-SHORT
 file path=usr/share/wireshark/COPYING
 file path=usr/share/wireshark/capinfos.html
@@ -284,16 +291,14 @@ file path=usr/share/wireshark/wimaxasncp/dictionary.xml
 file path=usr/share/wireshark/wireshark-filter.html
 file path=usr/share/wireshark/wireshark.html
 file path=usr/share/wireshark/ws.css
+legacy pkg=SUNWwireshark desc="Wireshark - Network protocol analyzer" \
+    name="Wireshark - Network protocol analyzer"
+
+
+license wireshark.license license=GPLv3
 link path=usr/lib/libwireshark.so target=libwireshark.so.0.0.1
 link path=usr/lib/libwireshark.so.0 target=libwireshark.so.0.0.1
 link path=usr/lib/libwiretap.so target=libwiretap.so.0.0.1
 link path=usr/lib/libwiretap.so.0 target=libwiretap.so.0.0.1
 link path=usr/lib/libwsutil.so target=libwsutil.so.0.0.0
 link path=usr/lib/libwsutil.so.0 target=libwsutil.so.0.0.0
-
-
-license wireshark.license license="GPLv3"
-
-legacy	pkg=SUNWwireshark \
-	name="Wireshark - Network protocol analyzer" \
-	desc="Wireshark - Network protocol analyzer"

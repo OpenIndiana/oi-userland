@@ -24,7 +24,6 @@
 #
 
 include ../../make-rules/shared-macros.mk
-include ../../make-rules/shared-targets.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
@@ -66,7 +65,7 @@ install:	build $(INSTALL_32) $(EXTRATARGETS)
 COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
 
 # build does this always
-test:
+test:	$(BUILD_32)
 	cd $(BUILD_DIR_32) && $(MAKE) -e test P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
 	cd $(BUILD_DIR_32) && $(MAKE) -e test_7z P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin
 	cd $(BUILD_DIR_32) && $(MAKE) -e test_7zr P7ZIP_HOME_DIR=$(BUILD_DIR_32)/bin

@@ -61,24 +61,12 @@ CONFIGURE_OPTIONS  +=   --with-ncat
 CONFIGURE_OPTIONS  +=   --with-ndiff
 CONFIGURE_OPTIONS  +=   am_cv_python_pythondir=$(PYTHON_LIB)
 
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 		
 install:	$(INSTALL_32) 
-		sed -f oracleman-stability $(COMPONENT_SRC)/docs/nmap.1 \
-			> $(PROTOUSRSHAREMAN1DIR)/nmap.1
-		sed -f oracleman-stability $(COMPONENT_SRC)/docs/zenmap.1 \
-			> $(PROTOUSRSHAREMAN1DIR)/zenmap.1
-		sed -f oracleman-stability $(COMPONENT_SRC)/ncat/docs/ncat.1 \
-			> $(PROTOUSRSHAREMAN1DIR)/ncat.1
-		sed -f oracleman-stability $(COMPONENT_SRC)/ndiff/docs/ndiff.1 \
-			> $(PROTOUSRSHAREMAN1DIR)/ndiff.1
 
-test:
-		@echo "no tests available"
-	
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

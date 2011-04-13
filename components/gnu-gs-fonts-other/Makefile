@@ -46,8 +46,7 @@ install: build
 	$(MKDIR) -m 755 -p $(PROTOGSSHAREDIR)
 	$(CP) -r $(SOURCE_DIR)/* $(PROTOGSSHAREDIR)
 
-# empty test target
-test:
+test:	$(NO_TESTS)
 
 clean::
 	$(RM) -r $(BUILD_DIR)

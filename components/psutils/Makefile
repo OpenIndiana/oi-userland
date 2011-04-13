@@ -52,7 +52,7 @@ COMPONENT_BUILD_ENV += PERL=$(PERL)
 
 # slightly hacky, since COMPONENT_BUILD_TARGETS are just arguments passed to
 # make
-COMPONENT_BUILD_TARGETS = -e -f Makefile.unix
+COMPONENT_BUILD_ARGS = -e -f Makefile.unix
 
 COMPONENT_INSTALL_ENV += BINDIR=$(PROTO_DIR)/usr/bin
 COMPONENT_INSTALL_ENV += INCLUDEDIR=$(PROTO_DIR)/usr/share/psutils
@@ -63,16 +63,15 @@ COMPONENT_INSTALL_ENV += INSTALLMAN="$(INSTALL) -m 0444"
 
 # slightly hacky, since COMPONENT_BUILD_TARGETS are just arguments passed to
 # make
-COMPONENT_INSTALL_TARGETS = -e -f Makefile.unix install
+COMPONENT_INSTALL_ARGS = -e -f Makefile.unix
 
 build:		$(BUILD_32)
 
-$(INSTALL_32): $(PROTOUSRSHAREMAN1DIR) $(PROTOSFWBIN)
-
 install:	$(INSTALL_32)
 
-test: build
-	@echo no tests for psutils
+$(INSTALL_32):	$(PROTOUSRSHAREMAN1DIR) $(PROTOUSRBIN)
+
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

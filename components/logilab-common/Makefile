@@ -36,18 +36,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/setup.py.mk
 
-MAN3FILES =	logilab-common.3
-
-include ../../make-rules/shared-targets.mk
-
-$(PROTOMAN3FILES):
-	$(CP) $(MAN3FILES) $(PROTOMAN3FILES)
-
 # common targets
 
 build:		$(BUILD_32)
 
-install:	$(PROTOMAN3FILES) $(INSTALL_32)
+install:	$(INSTALL_32)
 
 # Expected failures for test target:
 # In unittest_modutils.py, one failure in

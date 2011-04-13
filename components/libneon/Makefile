@@ -56,22 +56,13 @@ CONFIGURE_OPTIONS += --with-ssl=openssl
 CONFIGURE_OPTIONS += --with-libproxy
 CONFIGURE_OPTIONS += --with-libxml2
 
-build: $(BUILD_32) $(BUILD_64)
+COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
-GSED =	/usr/gnu/bin/sed
+build:		$(BUILD_32_and_64)
 
-include ../../make-rules/shared-targets.mk
+install:	$(INSTALL_32_and_64)
 
-install: $(INSTALL_32) $(INSTALL_64)
-	$(GSED) -f oracleman-stability $(PROTOUSRSHAREMAN3DIR)/neon.3 > \
-	    $(PROTOUSRSHAREMAN3DIR)/neon.3.sed
-	cp -fp $(PROTOUSRSHAREMAN3DIR)/neon.3.sed \
-	    $(PROTOUSRSHAREMAN3DIR)/neon.3
-	rm -f $(PROTOUSRSHAREMAN3DIR)/neon.3.sed
-
-test: $(BUILD_32_and_64)
-	@cd $(BUILD_DIR_32); env PATH="$(GNUBIN):$(PATH)" $(GMAKE) check
-	@cd $(BUILD_DIR_64); env PATH="$(GNUBIN):$(PATH)" $(GMAKE) check
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 

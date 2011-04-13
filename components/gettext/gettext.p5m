@@ -21,14 +21,18 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/$(IPS_PKG_NAME)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GNU gettext"
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/text/gnu-gettext@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description value="GNU gettext - message handling utilities"
-set name=info.classification value="org.opensolaris.category.2008:Development/GNU"
-set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=pkg.summary value="GNU gettext"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/GNU
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/gettext/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2007/635
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 dir path=usr
 dir path=usr/bin
 dir path=usr/gnu
@@ -300,7 +304,8 @@ file path=usr/share/doc/gettext/examples/build-aux/javaexec.m4
 file path=usr/share/doc/gettext/examples/build-aux/javaexec.sh.in
 file path=usr/share/doc/gettext/examples/hello-c++-gnome/INSTALL
 file path=usr/share/doc/gettext/examples/hello-c++-gnome/Makefile.am
-file path=usr/share/doc/gettext/examples/hello-c++-gnome/autoclean.sh mode=0555
+file path=usr/share/doc/gettext/examples/hello-c++-gnome/autoclean.sh \
+    mode=0555
 file path=usr/share/doc/gettext/examples/hello-c++-gnome/autogen.sh mode=0555
 file path=usr/share/doc/gettext/examples/hello-c++-gnome/configure.ac
 file path=usr/share/doc/gettext/examples/hello-c++-gnome/hello.cc
@@ -448,8 +453,10 @@ file path=usr/share/doc/gettext/examples/hello-c++-qt/po/zh_HK.po
 file path=usr/share/doc/gettext/examples/hello-c++-qt/po/zh_TW.po
 file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/INSTALL
 file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/Makefile.am
-file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/autoclean.sh mode=0555
-file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/autogen.sh mode=0555
+file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/autoclean.sh \
+    mode=0555
+file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/autogen.sh \
+    mode=0555
 file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/configure.ac
 file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/hello.cc
 file path=usr/share/doc/gettext/examples/hello-c++-wxwidgets/m4/Makefile.am
@@ -638,8 +645,10 @@ file path=usr/share/doc/gettext/examples/hello-csharp-forms/BUGS
 file path=usr/share/doc/gettext/examples/hello-csharp-forms/INSTALL
 file path=usr/share/doc/gettext/examples/hello-csharp-forms/Makefile.am
 file path=usr/share/doc/gettext/examples/hello-csharp-forms/README
-file path=usr/share/doc/gettext/examples/hello-csharp-forms/autoclean.sh mode=0555
-file path=usr/share/doc/gettext/examples/hello-csharp-forms/autogen.sh mode=0555
+file path=usr/share/doc/gettext/examples/hello-csharp-forms/autoclean.sh \
+    mode=0555
+file path=usr/share/doc/gettext/examples/hello-csharp-forms/autogen.sh \
+    mode=0555
 file path=usr/share/doc/gettext/examples/hello-csharp-forms/configure.ac
 file path=usr/share/doc/gettext/examples/hello-csharp-forms/hello.cs
 file path=usr/share/doc/gettext/examples/hello-csharp-forms/m4/Makefile.am
@@ -823,7 +832,8 @@ file path=usr/share/doc/gettext/examples/hello-java-swing/BUGS
 file path=usr/share/doc/gettext/examples/hello-java-swing/Hello.java
 file path=usr/share/doc/gettext/examples/hello-java-swing/INSTALL
 file path=usr/share/doc/gettext/examples/hello-java-swing/Makefile.am
-file path=usr/share/doc/gettext/examples/hello-java-swing/autoclean.sh mode=0555
+file path=usr/share/doc/gettext/examples/hello-java-swing/autoclean.sh \
+    mode=0555
 file path=usr/share/doc/gettext/examples/hello-java-swing/autogen.sh mode=0555
 file path=usr/share/doc/gettext/examples/hello-java-swing/configure.ac
 file path=usr/share/doc/gettext/examples/hello-java-swing/m4/Makefile.am
@@ -932,7 +942,8 @@ file path=usr/share/doc/gettext/examples/hello-librep/po/zh_HK.po
 file path=usr/share/doc/gettext/examples/hello-librep/po/zh_TW.po
 file path=usr/share/doc/gettext/examples/hello-objc-gnome/INSTALL
 file path=usr/share/doc/gettext/examples/hello-objc-gnome/Makefile.am
-file path=usr/share/doc/gettext/examples/hello-objc-gnome/autoclean.sh mode=0555
+file path=usr/share/doc/gettext/examples/hello-objc-gnome/autoclean.sh \
+    mode=0555
 file path=usr/share/doc/gettext/examples/hello-objc-gnome/autogen.sh mode=0555
 file path=usr/share/doc/gettext/examples/hello-objc-gnome/configure.ac
 file path=usr/share/doc/gettext/examples/hello-objc-gnome/hello.m
@@ -979,8 +990,10 @@ file path=usr/share/doc/gettext/examples/hello-objc-gnustep/GNUmakefile
 file path=usr/share/doc/gettext/examples/hello-objc-gnustep/Hello.h
 file path=usr/share/doc/gettext/examples/hello-objc-gnustep/Hello.m
 file path=usr/share/doc/gettext/examples/hello-objc-gnustep/INSTALL
-file path=usr/share/doc/gettext/examples/hello-objc-gnustep/autoclean.sh mode=0555
-file path=usr/share/doc/gettext/examples/hello-objc-gnustep/autogen.sh mode=0555
+file path=usr/share/doc/gettext/examples/hello-objc-gnustep/autoclean.sh \
+    mode=0555
+file path=usr/share/doc/gettext/examples/hello-objc-gnustep/autogen.sh \
+    mode=0555
 file path=usr/share/doc/gettext/examples/hello-objc-gnustep/main.m
 file path=usr/share/doc/gettext/examples/hello-objc-gnustep/po/GNUmakefile
 file path=usr/share/doc/gettext/examples/hello-objc-gnustep/po/LINGUAS
@@ -1234,7 +1247,8 @@ file path=usr/share/doc/gettext/examples/hello-sh/po/zh_HK.po
 file path=usr/share/doc/gettext/examples/hello-sh/po/zh_TW.po
 file path=usr/share/doc/gettext/examples/hello-smalltalk/INSTALL
 file path=usr/share/doc/gettext/examples/hello-smalltalk/Makefile.am
-file path=usr/share/doc/gettext/examples/hello-smalltalk/autoclean.sh mode=0555
+file path=usr/share/doc/gettext/examples/hello-smalltalk/autoclean.sh \
+    mode=0555
 file path=usr/share/doc/gettext/examples/hello-smalltalk/autogen.sh mode=0555
 file path=usr/share/doc/gettext/examples/hello-smalltalk/configure.ac
 file path=usr/share/doc/gettext/examples/hello-smalltalk/hello.st.in
@@ -1648,6 +1662,10 @@ file path=usr/share/man/man1/msgmerge.1
 file path=usr/share/man/man1/msgunfmt.1
 file path=usr/share/man/man1/msguniq.1
 file path=usr/share/man/man1/ngettext.1
+legacy pkg=SUNWgnu-gettext \
+    desc="GNU gettext - message handling utilities (0.16.1)" \
+    name="GNU gettext"
+license gettext.license license=GPLv2
 link path=usr/gnu/bin/gettext target=../../bin/ggettext
 link path=usr/gnu/bin/msgfmt target=../../bin/gmsgfmt
 link path=usr/gnu/bin/xgettext target=../../bin/gxgettext
@@ -1657,9 +1675,3 @@ link path=usr/gnu/share/man/man1/msgfmt.1 \
     target=../../../../share/man/man1/gmsgfmt.1
 link path=usr/gnu/share/man/man1/xgettext.1 \
     target=../../../../share/man/man1/gxgettext.1
-
-license gettext.license license="GPLv2"
-
-legacy	pkg=SUNWgnu-gettext \
-	name="GNU gettext" \
-	desc="GNU gettext - message handling utilities (0.16.1)"

@@ -42,23 +42,15 @@ COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 COMPONENT_INSTALL_ARGS += INSTALL=$(INSTALL)
 COMPONENT_INSTALL_ARGS += INSTALL_TOP=$(PROTOUSRDIR)
-
-include ../../make-rules/shared-targets.mk
+$(INSTALL_64):	COMPONENT_INSTALL_ARGS += INSTALL_LIB=$(PROTOUSRLIBDIR64)
+$(INSTALL_64):	COMPONENT_INSTALL_ARGS += INSTALL_BIN=$(PROTOUSRBINDIR64)
 
 # common targets
 build:		$(BUILD_32_and_64)
-
 	
-install:	build $(INSTALL_32)
-		$(MKDIR) $(PROTOUSRDIR)/lib/pkgconfig
-		$(CP) $(SOURCE_DIR)/etc/lua.pc $(PROTOUSRDIR)/lib/pkgconfig
-		$(MKDIR) $(PROTOUSRLIBDIR64) 
-		$(INSTALL) $(BUILD_DIR_64)/src/liblua.so $(PROTOUSRLIBDIR64)
+install:	$(INSTALL_32_and_64)
 		
-test:  build
-	@cd $(BUILD_DIR_32); $(MAKE) check
-	@cd $(BUILD_DIR_64); $(MAKE) check
-
+test: 		$(TEST_32_and_64)
 		
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

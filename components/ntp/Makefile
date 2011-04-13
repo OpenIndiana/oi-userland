@@ -39,7 +39,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS) $(studio_C99_ENABLE) -D_XOPEN_SOURCE=600 -D__EXTENSIONS__"
+CFLAGS +=	$(studio_C99_ENABLE) -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
+
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
@@ -59,7 +61,6 @@ BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 build:		$(BUILD_32)
 install:	$(INSTALL_32)
-test:
-	@echo "no tests available"
+test:		$(NO_TESTS)
 
 include ../../make-rules/depend.mk

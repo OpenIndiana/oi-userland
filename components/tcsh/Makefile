@@ -52,34 +52,13 @@ LOCALEDIR=$(PROTO_DIR)/$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-MAN1FILES= tcsh.1
-
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) install-locales $(PROTOMAN1FILES)
-
-# we don't agree on locale names
-install-locales:
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/et.cat $(LOCALEDIR)/et/LC_MESSAGES/tcsh.cat 
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/finnish.cat $(LOCALEDIR)/fi/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/french.cat $(LOCALEDIR)/fr/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/german.cat $(LOCALEDIR)/de/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/greek.cat $(LOCALEDIR)/el/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/italian.cat $(LOCALEDIR)/it/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/ja.cat $(LOCALEDIR)/ja/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/pl.cat $(LOCALEDIR)/pl/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/russian.cat $(LOCALEDIR)/ru/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/spanish.cat $(LOCALEDIR)/es/LC_MESSAGES/tcsh.cat
-	$(INSTALL) -D $(BUILD_DIR_32)/nls/ukrainian.cat $(LOCALEDIR)/uk/LC_MESSAGES/tcsh.cat
-
+install:	$(INSTALL_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-# they don't seem quite doable for us
-test: 
-	@echo "no tests available"
+test: 		$(NO_TESTS)
 
 include ../../make-rules/depend.mk

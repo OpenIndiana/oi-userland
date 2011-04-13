@@ -47,30 +47,12 @@ COMPONENT_INSTALL_ARGS += -f unix/Makefile
 COMPONENT_INSTALL_ARGS += BINDIR=$(PROTOUSRBINDIR)
 COMPONENT_INSTALL_ARGS += MANDIR=$(PROTOUSRSHAREMAN1DIR)
 
-# fix the man pages
-INST_MAN1PGS = zip zipcloak zipnote zipsplit
-INST_MANSCRIPT = oracleman-stability
-PROTOMAN1 = $(INST_MAN1PGS:%=$(PROTOUSRSHAREMAN1DIR)/%.1)
-
-# Manpage files are already created by INSTALL_32 target
-# so currently only the contents of files could be changed.
-$(PROTOMAN1):	$(INST_MAN1PGS:%=$(SOURCE_DIR)/man/%.1)
-	sed -f $(INST_MANSCRIPT) < $(SOURCE_DIR)/man/$(@F) > $@
-
-# It should be done without checking time-stamps of targets.
-.PHONY: $(PROTOMAN1)
-
-# But do no do it before the INSTALL_32 is really finished.
-$(INST_MAN1PGS:%=$(SOURCE_DIR)/man/%.1):	$(INSTALL_32)
-
 # common targets
-
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) $(PROTOMAN1)
+install:	$(INSTALL_32)
 
-test:
-	@echo "no tests available"
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

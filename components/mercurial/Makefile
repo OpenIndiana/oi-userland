@@ -40,7 +40,6 @@ PYTHON_ENV += CFLAGS="-m$(BITS) $(CFLAGS)"
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
-PUBLISH_TRANSFORMS +=	demo-transform
 
 # common targets
 build:		$(BUILD_32)

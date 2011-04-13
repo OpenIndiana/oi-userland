@@ -42,21 +42,15 @@ CONFIGURE_LIBDIR.64 =   $(SFWLIB)/$(MACH64)
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-SFWPROGS=	bison
-
-include ../../make-rules/shared-targets.mk
+$(INSTALL_32):	$(INSTALL_64)
 
 # common targets
-build:		$(BUILD_32) $(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	build $(INSTALL_32) $(PROTOSFWLINKS)
-	cd $(PROTOSFWLIB); rm -f liby.so; ln -s liby.so.1 liby.so
-	$(INSTALL) -D $(BUILD_DIR_64)/lib/liby.so.1 $(PROTOSFWLIB64)/liby.so.1
-	cd $(PROTOSFWLIB64); rm -f liby.so; ln -s liby.so.1 liby.so
+install:	$(INSTALL_32_and_64)
+
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include ../../make-rules/depend.mk

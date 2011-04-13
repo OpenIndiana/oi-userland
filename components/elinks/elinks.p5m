@@ -20,14 +20,20 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/web/browser/elinks@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+<transform file path=usr/share/doc/elinks/(.+$) -> set action.hash doc/%<\1> >
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/web/browser/elinks@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="ELinks is a feature-rich program for browsing the web in text mode.  It is like enhanced Lynx and Links."
 set name=pkg.summary value="advanced text-mode WWW browser"
-set name=pkg.description value="ELinks is a feature-rich program for browsing the web in text mode.  It is like enhanced Lynx and Links."
-set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
-set name=info.upstream_url value="http://elinks.or.cz/"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://elinks.or.cz/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2009/028
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 dir path=usr
 dir path=usr/bin
 dir path=usr/share
@@ -99,8 +105,8 @@ dir path=usr/share/man/man1
 dir path=usr/share/man/man5
 file path=usr/bin/elinks
 file path=usr/share/doc/elinks/bittorrent.txt
-file path=usr/share/doc/elinks/color-model.txt
 file path=usr/share/doc/elinks/bookmarks.txt
+file path=usr/share/doc/elinks/color-model.txt
 file path=usr/share/doc/elinks/dev-intro.txt
 file path=usr/share/doc/elinks/ecmascript.txt
 file path=usr/share/doc/elinks/elinks.1.txt
@@ -156,9 +162,6 @@ file path=usr/share/locale/uk/LC_MESSAGES/elinks.mo
 file path=usr/share/man/man1/elinks.1
 file path=usr/share/man/man5/elinks.conf.5
 file path=usr/share/man/man5/elinkskeys.5
-
-license elinks.license license="GPLv2"
-
-legacy	pkg=SUNWelinks \
-	name="ELinks" \
-	desc="ELinks - Text-based Web browser (0.11.7)"
+legacy pkg=SUNWelinks desc="ELinks - Text-based Web browser (0.11.7)" \
+    name=ELinks
+license elinks.license license=GPLv2

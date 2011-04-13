@@ -34,24 +34,16 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS	+=	--libexecdir=/usr/lib
+CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
-
-include ../../make-rules/shared-targets.mk
 
 # common targets
 build:		$(BUILD_32)
 
-install:	$(PROTOGNUBIN) $(PROTOGNUSHAREMAN1) $(INSTALL_32)
-	$(RM) $(PROTOGNUBIN)/awk
-	$(SYMLINK) ../../bin/gawk $(PROTOGNUBIN)/awk
-	$(RM) $(PROTOGNUSHAREMAN1)/awk.1
-	$(SYMLINK) ../../../../share/man/man1/gawk.1 \
-			$(PROTOGNUSHAREMAN1)/awk.1
+install:	$(INSTALL_32)
+
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include ../../make-rules/depend.mk

@@ -1,0 +1,253 @@
+--- readline-5.2/doc/history.3.orig	Mon Apr  4 00:12:21 2011
++++ readline-5.2/doc/history.3	Mon Apr  4 00:13:09 2011
+@@ -19,16 +19,16 @@
+ .ds lp \fR\|(\fP
+ .ds rp \fR\|)\fP
+ .\" FnN return-value fun-name N arguments
+-.de Fn1
++.de F1
+ \fI\\$1\fP \fB\\$2\fP \\*(lp\fI\\$3\fP\\*(rp
+ .br
+ ..
+-.de Fn2
++.de F2
+ .if t \fI\\$1\fP \fB\\$2\fP \\*(lp\fI\\$3,\|\\$4\fP\\*(rp
+ .if n \fI\\$1\fP \fB\\$2\fP \\*(lp\fI\\$3, \\$4\fP\\*(rp
+ .br
+ ..
+-.de Fn3
++.de F3
+ .if t \fI\\$1\fP \fB\\$2\fP \\*(lp\fI\\$3,\|\\$4,\|\\$5\fP\|\\*(rp
+ .if n \fI\\$1\fP \fB\\$2\fP \\*(lp\fI\\$3, \\$4, \\$5\fP\\*(rp
+ .br
+@@ -331,14 +331,14 @@
+ the state of the History library when you want to use the history
+ functions in your program.
+ 
+-.Fn1 void using_history void
++.F1 void using_history void
+ Begin a session in which the history functions might be used.  This
+ initializes the interactive variables.
+ 
+-.Fn1 "HISTORY_STATE *" history_get_history_state void
++.F1 "HISTORY_STATE *" history_get_history_state void
+ Return a structure describing the current state of the input history.
+ 
+-.Fn1 void history_set_history_state "HISTORY_STATE *state"
++.F1 void history_set_history_state "HISTORY_STATE *state"
+ Set the state of the history list according to \fIstate\fP.
+ 
+ .SS History List Management
+@@ -346,43 +346,43 @@
+ These functions manage individual entries on the history list, or set
+ parameters managing the list itself.
+ 
+-.Fn1 void add_history "const char *string"
++.F1 void add_history "const char *string"
+ Place \fIstring\fP at the end of the history list.  The associated data
+ field (if any) is set to \fBNULL\fP.
+ 
+-.Fn1 void add_history_time "const char *string"
++.F1 void add_history_time "const char *string"
+ Change the time stamp associated with the most recent history entry to
+ \fIstring\fP.
+ 
+-.Fn1 "HIST_ENTRY *" remove_history "int which"
++.F1 "HIST_ENTRY *" remove_history "int which"
+ Remove history entry at offset \fIwhich\fP from the history.  The
+ removed element is returned so you can free the line, data,
+ and containing structure.
+ 
+-.Fn1 "histdata_t" free_history_entry "HIST_ENTRY *histent"
++.F1 "histdata_t" free_history_entry "HIST_ENTRY *histent"
+ Free the history entry \fIhistent\fP and any history library private
+ data associated with it.  Returns the application-specific data
+ so the caller can dispose of it.
+ 
+-.Fn3 "HIST_ENTRY *" replace_history_entry "int which" "const char *line" "histdata_t data"
++.F3 "HIST_ENTRY *" replace_history_entry "int which" "const char *line" "histdata_t data"
+ Make the history entry at offset \fIwhich\fP have \fIline\fP and \fIdata\fP.
+ This returns the old entry so the caller can dispose of any
+ application-specific data.  In the case
+ of an invalid \fIwhich\fP, a \fBNULL\fP pointer is returned.
+ 
+-.Fn1 void clear_history "void"
++.F1 void clear_history "void"
+ Clear the history list by deleting all the entries.
+ 
+-.Fn1 void stifle_history "int max"
++.F1 void stifle_history "int max"
+ Stifle the history list, remembering only the last \fImax\fP entries.
+ 
+-.Fn1 int unstifle_history "void"
++.F1 int unstifle_history "void"
+ Stop stifling the history.  This returns the previously-set
+ maximum number of history entries (as set by \fBstifle_history()\fP).
+ history was stifled.  The value is positive if the history was
+ stifled, negative if it wasn't.
+ 
+-.Fn1 int history_is_stifled "void"
++.F1 int history_is_stifled "void"
+ Returns non-zero if the history is stifled, zero if it is not.
+ 
+ .SS Information About the History List
+@@ -390,29 +390,29 @@
+ These functions return information about the entire history list or
+ individual list entries.
+ 
+-.Fn1 "HIST_ENTRY **" history_list "void"
++.F1 "HIST_ENTRY **" history_list "void"
+ Return a \fBNULL\fP terminated array of \fIHIST_ENTRY *\fP which is the
+ current input history.  Element 0 of this list is the beginning of time.
+ If there is no history, return \fBNULL\fP.
+ 
+-.Fn1 int where_history "void"
++.F1 int where_history "void"
+ Returns the offset of the current history element.
+ 
+-.Fn1 "HIST_ENTRY *" current_history "void"
++.F1 "HIST_ENTRY *" current_history "void"
+ Return the history entry at the current position, as determined by
+ \fBwhere_history()\fP.  If there is no entry there, return a \fBNULL\fP
+ pointer.
+ 
+-.Fn1 "HIST_ENTRY *" history_get "int offset"
++.F1 "HIST_ENTRY *" history_get "int offset"
+ Return the history entry at position \fIoffset\fP, starting from
+ \fBhistory_base\fP.
+ If there is no entry there, or if \fIoffset\fP
+ is greater than the history length, return a \fBNULL\fP pointer.
+ 
+-.Fn1 "time_t" history_get_time "HIST_ENTRY *"
++.F1 "time_t" history_get_time "HIST_ENTRY *"
+ Return the time stamp associated with the history entry passed as the argument.
+ 
+-.Fn1 int history_total_bytes "void"
++.F1 int history_total_bytes "void"
+ Return the number of bytes that the primary history entries are using.
+ This function returns the sum of the lengths of all the lines in the
+ history.
+@@ -422,18 +422,18 @@
+ These functions allow the current index into the history list to be
+ set or changed.
+ 
+-.Fn1 int history_set_pos "int pos"
++.F1 int history_set_pos "int pos"
+ Set the current history offset to \fIpos\fP, an absolute index
+ into the list.
+ Returns 1 on success, 0 if \fIpos\fP is less than zero or greater
+ than the number of history entries.
+ 
+-.Fn1 "HIST_ENTRY *" previous_history "void"
++.F1 "HIST_ENTRY *" previous_history "void"
+ Back up the current history offset to the previous history entry, and
+ return a pointer to that entry.  If there is no previous entry, return
+ a \fBNULL\fP pointer.
+ 
+-.Fn1 "HIST_ENTRY *" next_history "void"
++.F1 "HIST_ENTRY *" next_history "void"
+ Move the current history offset forward to the next history entry, and
+ return the a pointer to that entry.  If there is no next entry, return
+ a \fBNULL\fP pointer.
+@@ -445,7 +445,7 @@
+ from the current history position.  The search may be \fIanchored\fP,
+ meaning that the string must match at the beginning of the history entry.
+ 
+-.Fn2 int history_search "const char *string" "int direction"
++.F2 int history_search "const char *string" "int direction"
+ Search the history for \fIstring\fP, starting at the current history offset.
+ If \fIdirection\fP is less than 0, then the search is through
+ previous entries, otherwise through subsequent entries.
+@@ -455,7 +455,7 @@
+ \fIstring\fP was found.  Otherwise, nothing is changed, and a -1 is
+ returned.
+ 
+-.Fn2 int history_search_prefix "const char *string" "int direction"
++.F2 int history_search_prefix "const char *string" "int direction"
+ Search the history for \fIstring\fP, starting at the current history
+ offset.  The search is anchored: matching lines must begin with
+ \fIstring\fP.  If \fIdirection\fP is less than 0, then the search is
+@@ -464,7 +464,7 @@
+ current history index is set to that entry, and the return value is 0. 
+ Otherwise, nothing is changed, and a -1 is returned. 
+ 
+-.Fn3 int history_search_pos "const char *string" "int direction" "int pos"
++.F3 int history_search_pos "const char *string" "int direction" "int pos"
+ Search for \fIstring\fP in the history list, starting at \fIpos\fP, an
+ absolute index into the list.  If \fIdirection\fP is negative, the search
+ proceeds backward from \fIpos\fP, otherwise forward.  Returns the absolute
+@@ -474,12 +474,12 @@
+ The History library can read the history from and write it to a file.
+ This section documents the functions for managing a history file.
+ 
+-.Fn1 int read_history "const char *filename"
++.F1 int read_history "const char *filename"
+ Add the contents of \fIfilename\fP to the history list, a line at a time.
+ If \fIfilename\fP is \fBNULL\fP, then read from \fI~/.history\fP.
+ Returns 0 if successful, or \fBerrno\fP if not.
+ 
+-.Fn3 int read_history_range "const char *filename" "int from" "int to"
++.F3 int read_history_range "const char *filename" "int from" "int to"
+ Read a range of lines from \fIfilename\fP, adding them to the history list.
+ Start reading at line \fIfrom\fP and end at \fIto\fP.
+ If \fIfrom\fP is zero, start at the beginning.  If \fIto\fP is less than
+@@ -487,7 +487,7 @@
+ \fBNULL\fP, then read from \fI~/.history\fP.  Returns 0 if successful,
+ or \fBerrno\fP if not.
+ 
+-.Fn1 int write_history "const char *filename"
++.F1 int write_history "const char *filename"
+ Write the current history to \fIfilename\fP, overwriting \fIfilename\fP
+ if necessary.
+ If \fIfilename\fP is \fBNULL\fP, then write the history list to \fI~/.history\fP.
+@@ -494,12 +494,12 @@
+ Returns 0 on success, or \fBerrno\fP on a read or write error.
+ 
+ 
+-.Fn2 int append_history "int nelements" "const char *filename"
++.F2 int append_history "int nelements" "const char *filename"
+ Append the last \fInelements\fP of the history list to \fIfilename\fP.
+ If \fIfilename\fP is \fBNULL\fP, then append to \fI~/.history\fP.
+ Returns 0 on success, or \fBerrno\fP on a read or write error.
+ 
+-.Fn2 int history_truncate_file "const char *filename" "int nlines"
++.F2 int history_truncate_file "const char *filename" "int nlines"
+ Truncate the history file \fIfilename\fP, leaving only the last
+ \fInlines\fP lines.
+ If \fIfilename\fP is \fBNULL\fP, then \fI~/.history\fP is truncated.
+@@ -509,7 +509,7 @@
+ 
+ These functions implement history expansion.
+ 
+-.Fn2 int history_expand "char *string" "char **output"
++.F2 int history_expand "char *string" "char **output"
+ Expand \fIstring\fP, placing the result into \fIoutput\fP, a pointer
+ to a string.  Returns:
+ .RS
+@@ -534,7 +534,7 @@
+ If an error ocurred in expansion, then \fIoutput\fP contains a descriptive
+ error message.
+ 
+-.Fn3 "char *" get_history_event "const char *string" "int *cindex" "int qchar"
++.F3 "char *" get_history_event "const char *string" "int *cindex" "int qchar"
+ Returns the text of the history event beginning at \fIstring\fP +
+ \fI*cindex\fP.  \fI*cindex\fP is modified to point to after the event
+ specifier.  At function entry, \fIcindex\fP points to the index into
+@@ -542,7 +542,7 @@
+ is a character that is allowed to end the event specification in addition
+ to the ``normal'' terminating characters.
+ 
+-.Fn1 "char **" history_tokenize "const char *string"
++.F1 "char **" history_tokenize "const char *string"
+ Return an array of tokens parsed out of \fIstring\fP, much as the
+ shell might.
+ The tokens are split on the characters in the
+@@ -549,7 +549,7 @@
+ \fBhistory_word_delimiters\fP variable,
+ and shell quoting conventions are obeyed.
+ 
+-.Fn3 "char *" history_arg_extract "int first" "int last" "const char *string"
++.F3 "char *" history_arg_extract "int first" "int last" "const char *string"
+ Extract a string segment consisting of the \fIfirst\fP through \fIlast\fP
+ arguments present in \fIstring\fP.  Arguments are split using
+ \fBhistory_tokenize()\fP.

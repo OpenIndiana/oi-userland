@@ -20,13 +20,19 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/print/filter/gutenprint@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers"
-set name=info.classification value="org.opensolaris.category.2008:System/Printing"
-set name=info.upstream_url value=http://www.gutenprint.org/software/gutenprint
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/print/filter/gutenprint@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Printing
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gutenprint.org/software/gutenprint
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2009/469
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=usr
 dir path=usr/bin
 dir path=usr/include
@@ -162,18 +168,18 @@ file path=usr/share/gutenprint/5.2/xml/escp2/inks/cmykrb.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/cmykro.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/cx3650.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/defaultblack.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360_photo.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360_photo7_japan.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360_ultrachrome.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360_ultrachrome_k3.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360_ultrachrome_k3v.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360_ultrachrome.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/inks/f360.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/nx100.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_gen0.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_gen1.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_gen2.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_gen3_4.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_gen3.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_gen3_4.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_gen4.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/photo_pigment.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/picturemate_4.xml
@@ -181,17 +187,18 @@ file path=usr/share/gutenprint/5.2/xml/escp2/inks/picturemate_6.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/pro_gen1.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/pro_gen2.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/pro_pigment.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/inks/pro_ultrachrome_k3.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/pro_ultrachrome.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/inks/standard_gen0.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/inks/pro_ultrachrome_k3.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/standard.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/inks/standard_gen0.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/ultrachrome.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/wf40.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/wf500.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inks/x80.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/artisan.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/b500.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cd_cutter_roll_feed.xml
+file \
+    path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cd_cutter_roll_feed.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cd_roll_feed.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/cutter_roll_feed.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/inputslots/default.xml
@@ -215,18 +222,18 @@ file path=usr/share/gutenprint/5.2/xml/escp2/media/cmy.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/cmykrb.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/cmykro.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/cx3650.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/media/f360.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/f360_photo.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/f360_photo7_japan.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/media/f360_ultrachrome.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/f360_ultrachrome_k3.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/f360_ultrachrome_k3v.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/media/f360_ultrachrome.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/media/f360.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/nx100.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_gen0.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_gen1.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_gen2.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_gen3_4.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_gen3.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_gen3_4.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_gen4.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/photo_pigment.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/picturemate_4.xml
@@ -234,11 +241,11 @@ file path=usr/share/gutenprint/5.2/xml/escp2/media/picturemate_6.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/pro_gen1.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/pro_gen2.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/pro_pigment.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/media/pro_ultrachrome_k3.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/pro_ultrachrome.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/media/pro_ultrachrome_k3.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/r800.xml
-file path=usr/share/gutenprint/5.2/xml/escp2/media/standard_gen0.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/standard.xml
+file path=usr/share/gutenprint/5.2/xml/escp2/media/standard_gen0.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/ultrachrome.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/wf500.xml
 file path=usr/share/gutenprint/5.2/xml/escp2/media/x80.xml
@@ -354,14 +361,14 @@ file path=usr/share/gutenprint/5.2/xml/escp2/weaves/standard.xml
 file path=usr/share/gutenprint/5.2/xml/papers.xml
 file path=usr/share/gutenprint/5.2/xml/printers.xml
 file path=usr/share/gutenprint/doc/AUTHORS
-file path=usr/share/gutenprint/doc/ChangeLog
 file path=usr/share/gutenprint/doc/COPYING
+file path=usr/share/gutenprint/doc/ChangeLog
 file path=usr/share/gutenprint/doc/FAQ.html
+file path=usr/share/gutenprint/doc/NEWS
+file path=usr/share/gutenprint/doc/README
 file path=usr/share/gutenprint/doc/gutenprint-users-manual.odt
 file path=usr/share/gutenprint/doc/gutenprint-users-manual.pdf
 file path=usr/share/gutenprint/doc/gutenprint.pdf
-file path=usr/share/gutenprint/doc/NEWS
-file path=usr/share/gutenprint/doc/README
 file path=usr/share/gutenprint/doc/reference-html/book1.html
 file path=usr/share/gutenprint/doc/reference-html/c1717.html
 file path=usr/share/gutenprint/doc/reference-html/c194.html
@@ -408,13 +415,11 @@ file path=usr/share/man/man1/ijsgutenprint.1
 file path=usr/share/man/man8/cups-calibrate.8
 file path=usr/share/man/man8/cups-genppd.8
 file path=usr/share/man/man8/cups-genppdupdate.8
+legacy pkg=SUNWgutenprint \
+    desc="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers (5.2.4)" \
+    name="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers"
+license gutenprint.license license=GPLv2
 link path=usr/lib/libgutenprint.so target=libgutenprint.so.2.0.5
 link path=usr/lib/libgutenprint.so.2 target=libgutenprint.so.2.0.5
 link path=usr/lib/libgutenprintui2.so target=libgutenprintui2.so.1.0.0
 link path=usr/lib/libgutenprintui2.so.1 target=libgutenprintui2.so.1.0.0
-
-license gutenprint.license license="GPLv2"
-
-legacy	pkg=SUNWgutenprint \
-	name="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers" \
-	desc="gutenprint - Drivers for Canon, Epson, Lexmark & PCL printers (5.2.4)"

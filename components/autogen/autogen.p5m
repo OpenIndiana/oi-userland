@@ -21,16 +21,19 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/developer/build/autogen@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/developer/build/autogen@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="AutoGen is a tool designed to simplify the creation and maintenance of programs that contain large amounts of repetitious text."
 set name=pkg.summary value="GNU autogen utility"
-set name=pkg.description value="AutoGen is a tool designed to simplify the creation and maintenance of programs that contain large amounts of repetitious text."
-set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
-set name=info.upstream_url value="http://www.gnu.org/software/autogen/"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Other Languages"
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/autogen/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2008/315
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license autogen.license license="GPLv2"
-
 dir path=usr
 dir path=usr/bin
 dir path=usr/include
@@ -108,11 +111,10 @@ file path=usr/share/man/man3/streqvcmp.3
 file path=usr/share/man/man3/streqvmap.3
 file path=usr/share/man/man3/strneqvcmp.3
 file path=usr/share/man/man3/strtransform.3
+legacy pkg=SUNWautogen desc="GNU autogen - repetitious text utility (5.9.0)" \
+    name="autogen - GNU autogen utility"
+license autogen.license license=GPLv2
 link path=usr/lib/libguileopts.so target=libguileopts.so.0.0.1
 link path=usr/lib/libguileopts.so.0 target=libguileopts.so.0.0.1
 link path=usr/lib/libopts.so target=libopts.so.25.3.0
 link path=usr/lib/libopts.so.25 target=libopts.so.25.3.0
-
-legacy pkg=SUNWautogen \
-	name="autogen - GNU autogen utility" \
-	desc="GNU autogen - repetitious text utility (5.9.0)"

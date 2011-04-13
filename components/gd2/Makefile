@@ -35,9 +35,7 @@ COMPONENT_ARCHIVE_URL=  http://www.libgd.org/releases/$(COMPONENT_ARCHIVE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-LIBNAME =       gd
-LINTOUT =       lint.out
+include ../../make-rules/lint-libraries.mk
 
 PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
@@ -59,26 +57,11 @@ CONFIGURE_OPTIONS  +=           --with-pic
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf)
 
-COMPONENT_POST_BUILD_ACTION = \
-	 (cd $(@D); $(LINT) -nsvx $(CC_BITS) -o $(LIBNAME) -I$(@D) \
-			-I$(COMPONENT_DIR)/$(COMPONENT_SRC) \
-			$(COMPONENT_DIR)/llib-l$(LIBNAME) > $(LINTOUT) 2>&1)
-
-COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(@D); $(INSTALL) llib-l$(LIBNAME).ln \
-			$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS)))
-
-PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/gd2/html
-
 build: $(BUILD_32_and_64)
-
-GSED =	/usr/gnu/bin/sed
-
-include ../../make-rules/shared-targets.mk
 
 install: $(INSTALL_32_and_64)
 
-test: $(BUILD_32_and_64)
+test: 	$(NO_TESTS)
 	@echo "There is no test harness for libgd2."
 	@echo "Test programs must be run manually and their output"
 	@echo "should be visually inspected."

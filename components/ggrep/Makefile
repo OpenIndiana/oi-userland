@@ -40,23 +40,12 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--prefix=/usr
 CONFIGURE_OPTIONS  +=		--program-prefix=g
 
-PROGS =		egrep fgrep grep
-GNUPROGS = $(PROGS)
-GNUMAN1=   $(PROGS:%=%.1)
-SFWPROGS = $(PROGS:%=g%)
-
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) $(PROTOSFWLINKS) $(PROTOGNULINKS) \
-		$(PROTOGNUMAN1LINKS)
+install:	$(INSTALL_32)
 
-test32:		$(BUILD_32)
-	(cd $(BUILD_DIR_32); env - $(GMAKE) check)
-
-test:	test32
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

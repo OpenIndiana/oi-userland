@@ -45,25 +45,13 @@ CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 
-
-include ../../make-rules/shared-targets.mk
-
 # common targets
-build:		$(BUILD_32) $(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32) $(INSTALL_64)
-	$(MKDIR) $(PROTO_DIR)/usr/demo/readline
-	$(INSTALL) -D \
-	    $(SOURCE_DIR)/examples/Inputrc $(PROTO_DIR)/usr/demo/readline
-	sed -f oracleman-stability $(COMPONENT_SRC)/doc/history.3 \
-	    > $(PROTOUSRSHAREMAN3DIR)/history.3
-	sed -f oracleman-stability $(COMPONENT_SRC)/doc/readline.3 \
-	    > $(PROTOUSRSHAREMAN3DIR)/readline.3
+install:	$(INSTALL_32_and_64)
 
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include ../../make-rules/depend.mk

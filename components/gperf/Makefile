@@ -33,7 +33,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_PREFIX    =	/usr
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	--docdir=/usr/share/doc/gperf
 CFLAGS		   +=	-norunpath
@@ -44,13 +43,9 @@ CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CFLAGS)"
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-	sed -f solarisman-stability $(COMPONENT_SRC)/doc/gperf.1 > \
-				   $(PROTOUSRSHAREMAN1DIR)/gperf.1
+
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: build
-	# tests fail at languages.gperf
-	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include ../../make-rules/depend.mk

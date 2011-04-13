@@ -40,19 +40,13 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CCFLAGS +=	$(CFLAGS) -norunpath
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CCFLAGS)"
 
-PKG_PROTO_DIRS +=	$(COMPONENT_DIR) \
-	$(COMPONENT_DIR)/$(COMPONENT_SRC)
-
 # common targets
 build:		$(BUILD_32)
-
-include ../../make-rules/shared-targets.mk
 
 install:	$(INSTALL_32)
 
 # Fails due to deprecated OCAML example and boost library problems
-test:	build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -20,14 +20,20 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/file/gnu-coreutils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GNU Core Utilities"
-set name=pkg.description value="GNU Core Utilities are the basic file, shell and text manipulation utilities"
-set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.upstream_url value=http://ftp.gnu.org/gnu/coreutils/
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/file/gnu-coreutils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="GNU Core Utilities are the basic file, shell and text manipulation utilities"
+set name=pkg.summary value="GNU Core Utilities"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://ftp.gnu.org/gnu/coreutils/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2010/170
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=usr
 dir path=usr/bin
 dir path=usr/gnu
@@ -158,33 +164,33 @@ dir path=usr/share
 dir path=usr/share/info
 dir path=usr/share/man
 dir path=usr/share/man/man1
-file path=usr/bin/[
-file path=usr/bin/base64
-file path=usr/bin/dir
-file path=usr/bin/dircolors
-file path=usr/bin/ginstall
-file path=usr/bin/md5sum
-file path=usr/bin/nproc
-file path=usr/bin/pinky
-file path=usr/bin/printenv
-file path=usr/bin/ptx
-file path=usr/bin/readlink
-file path=usr/bin/seq
-file path=usr/bin/sha1sum
-file path=usr/bin/sha224sum
-file path=usr/bin/sha256sum
-file path=usr/bin/sha384sum
-file path=usr/bin/sha512sum
-file path=usr/bin/shred
-file path=usr/bin/shuf
-file path=usr/bin/stat
-file path=usr/bin/stdbuf
-file path=usr/bin/tac
-file path=usr/bin/timeout
-file path=usr/bin/truncate
-file path=usr/bin/users
-file path=usr/bin/vdir
-file path=usr/bin/whoami
+file usr/gnu/bin/[ path=usr/bin/[
+file usr/gnu/bin/base64 path=usr/bin/base64
+file usr/gnu/bin/dir path=usr/bin/dir
+file usr/gnu/bin/dircolors path=usr/bin/dircolors
+file usr/gnu/bin/install path=usr/bin/ginstall
+file usr/gnu/bin/md5sum path=usr/bin/md5sum
+file usr/gnu/bin/nproc path=usr/bin/nproc
+file usr/gnu/bin/pinky path=usr/bin/pinky
+file usr/gnu/bin/printenv path=usr/bin/printenv
+file usr/gnu/bin/ptx path=usr/bin/ptx
+file usr/gnu/bin/readlink path=usr/bin/readlink
+file usr/gnu/bin/seq path=usr/bin/seq
+file usr/gnu/bin/sha1sum path=usr/bin/sha1sum
+file usr/gnu/bin/sha224sum path=usr/bin/sha224sum
+file usr/gnu/bin/sha256sum path=usr/bin/sha256sum
+file usr/gnu/bin/sha384sum path=usr/bin/sha384sum
+file usr/gnu/bin/sha512sum path=usr/bin/sha512sum
+file usr/gnu/bin/shred path=usr/bin/shred
+file usr/gnu/bin/shuf path=usr/bin/shuf
+file usr/gnu/bin/stat path=usr/bin/stat
+file usr/gnu/bin/stdbuf path=usr/bin/stdbuf
+file usr/gnu/bin/tac path=usr/bin/tac
+file usr/gnu/bin/timeout path=usr/bin/timeout
+file usr/gnu/bin/truncate path=usr/bin/truncate
+file usr/gnu/bin/users path=usr/bin/users
+file usr/gnu/bin/vdir path=usr/bin/vdir
+file usr/gnu/bin/whoami path=usr/bin/whoami
 file path=usr/gnu/bin/basename
 file path=usr/gnu/bin/cat
 file path=usr/gnu/bin/chgrp
@@ -259,83 +265,44 @@ file path=usr/gnu/bin/who
 file path=usr/gnu/bin/whoami
 file path=usr/gnu/bin/yes
 file path=usr/gnu/share/locale/af/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/af/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/be/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/be/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/bg/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/bg/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/ca/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/ca/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/cs/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/cs/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/da/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/da/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/de/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/de/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/el/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/el/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/en/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/en/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/es/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/es/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/et/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/et/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/eu/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/eu/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/fi/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/fi/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/fr/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/fr/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/ga/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/ga/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/gl/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/gl/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/hu/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/hu/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/id/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/id/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/it/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/it/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/ja/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/ja/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/ko/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/ko/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/lg/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/lg/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/lt/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/lt/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/ms/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/ms/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/nb/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/nb/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/nl/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/nl/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/pl/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/pl/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
-file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/pt_BR/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/pt/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/pt/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
+file path=usr/gnu/share/locale/pt_BR/LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/ro/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/ro/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/ru/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/ru/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/sk/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/sk/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/sl/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/sl/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/sv/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/sv/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/tr/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/tr/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/uk/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/uk/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/vi/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/vi/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/zh_CN/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/zh_CN/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/locale/zh_TW/LC_MESSAGES/coreutils.mo
-link path=usr/gnu/share/locale/zh_TW/LC_TIME/coreutils.mo target=../LC_MESSAGES/coreutils.mo
 file path=usr/gnu/share/man/man1/basename.1
 file path=usr/gnu/share/man/man1/cat.1
 file path=usr/gnu/share/man/man1/chgrp.1
@@ -409,37 +376,112 @@ file path=usr/gnu/share/man/man1/wc.1
 file path=usr/gnu/share/man/man1/who.1
 file path=usr/gnu/share/man/man1/whoami.1
 file path=usr/gnu/share/man/man1/yes.1
-file path=usr/lib/libstdbuf.so
+file usr/lib/coreutils/libstdbuf.so path=usr/lib/libstdbuf.so
 file path=usr/share/info/coreutils.info
-file path=usr/share/man/man1/base64.1
-file path=usr/share/man/man1/dir.1
-file path=usr/share/man/man1/dircolors.1
-file path=usr/share/man/man1/ginstall.1
-file path=usr/share/man/man1/md5sum.1
-file path=usr/share/man/man1/nproc.1
-file path=usr/share/man/man1/pinky.1
-file path=usr/share/man/man1/printenv.1
-file path=usr/share/man/man1/ptx.1
-file path=usr/share/man/man1/readlink.1
-file path=usr/share/man/man1/seq.1
-file path=usr/share/man/man1/sha1sum.1
-file path=usr/share/man/man1/sha224sum.1
-file path=usr/share/man/man1/sha256sum.1
-file path=usr/share/man/man1/sha384sum.1
-file path=usr/share/man/man1/sha512sum.1
-file path=usr/share/man/man1/shred.1
-file path=usr/share/man/man1/shuf.1
-file path=usr/share/man/man1/stat.1
-file path=usr/share/man/man1/stdbuf.1
-file path=usr/share/man/man1/tac.1
-file path=usr/share/man/man1/timeout.1
-file path=usr/share/man/man1/truncate.1
-file path=usr/share/man/man1/users.1
-file path=usr/share/man/man1/vdir.1
-file path=usr/share/man/man1/whoami.1
-
-license coreutils.license license="GPLv3"
-
-legacy	pkg=SUNWgnu-coreutils \
-	name="coreutils - GNU core utilities" \
-	desc="GNU core utilities (8.5)"
+file usr/gnu/share/man/man1/base64.1 path=usr/share/man/man1/base64.1
+file usr/gnu/share/man/man1/dir.1 path=usr/share/man/man1/dir.1
+file usr/gnu/share/man/man1/dircolors.1 path=usr/share/man/man1/dircolors.1
+file usr/gnu/share/man/man1/install.1 path=usr/share/man/man1/ginstall.1
+file usr/gnu/share/man/man1/md5sum.1 path=usr/share/man/man1/md5sum.1
+file usr/gnu/share/man/man1/nproc.1 path=usr/share/man/man1/nproc.1
+file usr/gnu/share/man/man1/pinky.1 path=usr/share/man/man1/pinky.1
+file usr/gnu/share/man/man1/printenv.1 path=usr/share/man/man1/printenv.1
+file usr/gnu/share/man/man1/ptx.1 path=usr/share/man/man1/ptx.1
+file usr/gnu/share/man/man1/readlink.1 path=usr/share/man/man1/readlink.1
+file usr/gnu/share/man/man1/seq.1 path=usr/share/man/man1/seq.1
+file usr/gnu/share/man/man1/sha1sum.1 path=usr/share/man/man1/sha1sum.1
+file usr/gnu/share/man/man1/sha224sum.1 path=usr/share/man/man1/sha224sum.1
+file usr/gnu/share/man/man1/sha256sum.1 path=usr/share/man/man1/sha256sum.1
+file usr/gnu/share/man/man1/sha384sum.1 path=usr/share/man/man1/sha384sum.1
+file usr/gnu/share/man/man1/sha512sum.1 path=usr/share/man/man1/sha512sum.1
+file usr/gnu/share/man/man1/shred.1 path=usr/share/man/man1/shred.1
+file usr/gnu/share/man/man1/shuf.1 path=usr/share/man/man1/shuf.1
+file usr/gnu/share/man/man1/stat.1 path=usr/share/man/man1/stat.1
+file usr/gnu/share/man/man1/stdbuf.1 path=usr/share/man/man1/stdbuf.1
+file usr/gnu/share/man/man1/tac.1 path=usr/share/man/man1/tac.1
+file usr/gnu/share/man/man1/timeout.1 path=usr/share/man/man1/timeout.1
+file usr/gnu/share/man/man1/truncate.1 path=usr/share/man/man1/truncate.1
+file usr/gnu/share/man/man1/users.1 path=usr/share/man/man1/users.1
+file usr/gnu/share/man/man1/vdir.1 path=usr/share/man/man1/vdir.1
+file usr/gnu/share/man/man1/whoami.1 path=usr/share/man/man1/whoami.1
+legacy pkg=SUNWgnu-coreutils desc="GNU core utilities (8.5)" \
+    name="coreutils - GNU core utilities"
+license coreutils.license license=GPLv3
+link path=usr/gnu/share/locale/af/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/be/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/bg/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/ca/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/cs/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/da/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/de/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/el/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/en/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/es/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/et/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/eu/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/fi/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/fr/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/ga/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/gl/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/hu/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/id/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/it/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/ja/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/ko/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/lg/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/lt/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/ms/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/nb/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/nl/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/pl/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/pt/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/pt_BR/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/ro/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/ru/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/sk/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/sl/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/sv/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/tr/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/uk/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/vi/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/zh_CN/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo
+link path=usr/gnu/share/locale/zh_TW/LC_TIME/coreutils.mo \
+    target=../LC_MESSAGES/coreutils.mo

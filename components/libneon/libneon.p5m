@@ -20,12 +20,19 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/library/neon@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/library/neon@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="An HTTP and WebDAV client library, with a C interface"
 set name=pkg.summary value="The Neon WebDAV library"
-set name=pkg.description value="An HTTP and WebDAV client library, with a C interface"
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
-set name=info.upstream_url value="http://www.webdav.org/neon/"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.webdav.org/neon/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2006/563
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir path=usr
@@ -34,15 +41,12 @@ dir path=usr/include
 dir path=usr/include/neon
 dir path=usr/lib
 dir path=usr/lib/$(MACH64)
-dir path=usr/lib/pkgconfig
 dir path=usr/lib/$(MACH64)/pkgconfig
+dir path=usr/lib/pkgconfig
 dir path=usr/share
 dir path=usr/share/doc
 dir path=usr/share/doc/neon-$(COMPONENT_VERSION)
 dir path=usr/share/doc/neon-$(COMPONENT_VERSION)/html
-dir path=usr/share/man
-dir path=usr/share/man/man1
-dir path=usr/share/man/man3
 dir path=usr/share/locale
 dir path=usr/share/locale/cs
 dir path=usr/share/locale/cs/LC_MESSAGES
@@ -62,6 +66,9 @@ dir path=usr/share/locale/tr
 dir path=usr/share/locale/tr/LC_MESSAGES
 dir path=usr/share/locale/zh_CN
 dir path=usr/share/locale/zh_CN/LC_MESSAGES
+dir path=usr/share/man
+dir path=usr/share/man/man1
+dir path=usr/share/man/man3
 #
 file path=usr/bin/neon-config
 file path=usr/include/neon/ne_207.h
@@ -88,10 +95,10 @@ file path=usr/include/neon/ne_uri.h
 file path=usr/include/neon/ne_utils.h
 file path=usr/include/neon/ne_xml.h
 file path=usr/include/neon/ne_xmlreq.h
-file path=usr/lib/libneon.so.27.2.5
-file path=usr/lib/pkgconfig/neon.pc
 file path=usr/lib/$(MACH64)/libneon.so.27.2.5
 file path=usr/lib/$(MACH64)/pkgconfig/neon.pc
+file path=usr/lib/libneon.so.27.2.5
+file path=usr/lib/pkgconfig/neon.pc
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/api.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/biblio.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/compliance.html
@@ -138,6 +145,15 @@ file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/refxml.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/security.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/using.html
 file path=usr/share/doc/neon-$(COMPONENT_VERSION)/html/xml.html
+file path=usr/share/locale/cs/LC_MESSAGES/neon.mo
+file path=usr/share/locale/de/LC_MESSAGES/neon.mo
+file path=usr/share/locale/fr/LC_MESSAGES/neon.mo
+file path=usr/share/locale/ja/LC_MESSAGES/neon.mo
+file path=usr/share/locale/nn/LC_MESSAGES/neon.mo
+file path=usr/share/locale/pl/LC_MESSAGES/neon.mo
+file path=usr/share/locale/ru/LC_MESSAGES/neon.mo
+file path=usr/share/locale/tr/LC_MESSAGES/neon.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/neon.mo
 file path=usr/share/man/man1/neon-config.1
 file path=usr/share/man/man3/ne_add_request_header.3
 file path=usr/share/man/man3/ne_addr_destroy.3
@@ -230,24 +246,14 @@ file path=usr/share/man/man3/ne_version_string.3
 file path=usr/share/man/man3/ne_xml_create.3
 file path=usr/share/man/man3/ne_xml_destroy.3
 file path=usr/share/man/man3/neon.3
-file path=usr/share/locale/cs/LC_MESSAGES/neon.mo
-file path=usr/share/locale/de/LC_MESSAGES/neon.mo
-file path=usr/share/locale/fr/LC_MESSAGES/neon.mo
-file path=usr/share/locale/ja/LC_MESSAGES/neon.mo
-file path=usr/share/locale/nn/LC_MESSAGES/neon.mo
-file path=usr/share/locale/pl/LC_MESSAGES/neon.mo
-file path=usr/share/locale/ru/LC_MESSAGES/neon.mo
-file path=usr/share/locale/tr/LC_MESSAGES/neon.mo
-file path=usr/share/locale/zh_CN/LC_MESSAGES/neon.mo
 #
-link path=usr/lib/libneon.so.27 target=libneon.so.27.2.5
-link path=usr/lib/libneon.so target=libneon.so.27.2.5
-link path=usr/lib/$(MACH64)/libneon.so.27 target=libneon.so.27.2.5
-link path=usr/lib/$(MACH64)/libneon.so target=libneon.so.27.2.5
+legacy pkg=SUNWneon desc="The Neon WebDAV library (0.29.5)" \
+    name="The Neon WebDAV library"
 #
 license libneon.license license="LGPLv2, GPLv2"
+link path=usr/lib/$(MACH64)/libneon.so target=libneon.so.27.2.5
+link path=usr/lib/$(MACH64)/libneon.so.27 target=libneon.so.27.2.5
+link path=usr/lib/libneon.so target=libneon.so.27.2.5
 #
-legacy pkg=SUNWneon \
-    desc="The Neon WebDAV library (0.29.5)" \
-    name="The Neon WebDAV library"
+link path=usr/lib/libneon.so.27 target=libneon.so.27.2.5
 

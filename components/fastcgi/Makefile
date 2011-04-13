@@ -35,9 +35,7 @@ COMPONENT_ARCHIVE_URL=	http://www.fastcgi.com/dist/$(COMPONENT_ARCHIVE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-LIBNAME=        fcgi
-LINTOUT=        lint.out
+include ../../make-rules/lint-libraries.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
@@ -45,24 +43,12 @@ CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS)"
 
-PUBLISH_TRANSFORMS +=	doc-transform
-
-COMPONENT_POST_BUILD_ACTION = \
-         (cd $(@D); $(LINT) -nsvx $(CC_BITS) -o $(LIBNAME) -I$(@D) \
-                        -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include \
-                        $(COMPONENT_DIR)/llib-lfcgi > $(LINTOUT) 2>&1)
-
-COMPONENT_POST_INSTALL_ACTION = \
-        (cd $(@D); $(INSTALL) llib-lfcgi.ln \
-                        $(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS)))
-
 # common targets
 build:     $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-test:
-	@echo "no tests available"
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

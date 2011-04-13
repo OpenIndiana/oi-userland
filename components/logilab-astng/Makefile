@@ -36,8 +36,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/setup.py.mk
 
-include ../../make-rules/shared-targets.mk
-
 # common targets
 
 build:		$(BUILD_32)
@@ -50,8 +48,7 @@ install:	$(INSTALL_32)
 #        (cd $(COMPONENT_SRC)/test; $(ENV) - \
 #        PYTHONPATH=$(PROTO_DIR)/usr/lib/python2.6/vendor-packages \
 #        ./fulltest.sh)
-test:
-	@echo "no tests available"
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

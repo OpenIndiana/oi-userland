@@ -91,13 +91,12 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: build
+test:		$(TEST_32)
 	#
 	# 2 expected failures because of the use of cloney in this build.
 	# Without cloney all tests pass.
 	#
-	@cd $(BUILD_DIR_32); $(MAKE) check
+
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk

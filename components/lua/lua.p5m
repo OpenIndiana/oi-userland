@@ -20,14 +20,20 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/runtime/lua@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="Lua Programming language"
-set name=pkg.description value="Lua is a powerful, fast, lightweight, embeddable scripting language."
-set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
-set name=info.upstream_url value=http://www.lua.org
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/runtime/lua@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="Lua is a powerful, fast, lightweight, embeddable scripting language."
+set name=pkg.summary value="Lua Programming language"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Other Languages"
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.lua.org
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2009/013
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=usr
 dir path=usr
 dir path=usr/bin
@@ -43,51 +49,49 @@ dir path=usr/share/doc
 dir path=usr/share/doc/lua
 dir path=usr/share/man
 dir path=usr/share/man/man1
-file path=usr/share/doc/lua/manual.html
-file path=usr/bin/lua 
-file path=usr/share/doc/lua/readme.html 
-file path=usr/share/doc/lua/lua.html 
-file path=usr/demo/lua/test/table.lua
-file path=usr/share/man/man1/luac.1 
-file path=usr/demo/lua/test/trace-globals.lua 
-file path=usr/share/doc/lua/logo.gif 
-file path=usr/include/lauxlib.h 
-file path=usr/lib/pkgconfig/lua.pc 
-file path=usr/share/doc/lua/luac.html
-file path=usr/demo/lua/test/globals.lua 
+file path=usr/bin/lua
+file path=usr/bin/luac
+file path=usr/demo/lua/test/bisect.lua
+file path=usr/demo/lua/test/cf.lua
+file path=usr/demo/lua/test/echo.lua
+file path=usr/demo/lua/test/env.lua
+file path=usr/demo/lua/test/factorial.lua
+file path=usr/demo/lua/test/fib.lua
+file path=usr/demo/lua/test/fibfor.lua
+file path=usr/demo/lua/test/globals.lua
+file path=usr/demo/lua/test/hello.lua
+file path=usr/demo/lua/test/life.lua
+file path=usr/demo/lua/test/luac.lua
+file path=usr/demo/lua/test/printf.lua
 file path=usr/demo/lua/test/readonly.lua
-file path=usr/demo/lua/test/hello.lua 
-file path=usr/demo/lua/test/cf.lua 
-file path=usr/demo/lua/test/fib.lua 
-file path=usr/demo/lua/test/fibfor.lua 
-file path=usr/lib/liblua.so 
+file path=usr/demo/lua/test/sieve.lua
+file path=usr/demo/lua/test/sort.lua
+file path=usr/demo/lua/test/table.lua
+file path=usr/demo/lua/test/trace-calls.lua
+file path=usr/demo/lua/test/trace-globals.lua
+file path=usr/demo/lua/test/xd.lua
+file path=usr/include/lauxlib.h
+file path=usr/include/lua.h
+file path=usr/include/luaconf.h
+file path=usr/include/lualib.h
+file path=usr/lib/$(MACH64)/liblua.so
+file path=usr/lib/liblua.so
+file $(MACH32)/etc/lua.pc path=usr/lib/pkgconfig/lua.pc
+file path=usr/share/doc/lua/amazon.gif
+file path=usr/share/doc/lua/contents.html
+file path=usr/share/doc/lua/cover.png
+file path=usr/share/doc/lua/logo.gif
+file path=usr/share/doc/lua/lua.css
+file path=usr/share/doc/lua/lua.html
+file path=usr/share/doc/lua/luac.html
 file path=usr/share/doc/lua/manual.css
-file path=usr/demo/lua/test/luac.lua 
-file path=usr/demo/lua/test/life.lua 
-file path=usr/demo/lua/test/sieve.lua 
-file path=usr/demo/lua/test/sort.lua 
-file path=usr/share/man/man1/lua.1 
-file path=usr/demo/lua/test/echo.lua 
-file path=usr/bin/luac 
-file path=usr/share/doc/lua/lua.css 
-file path=usr/demo/lua/test/trace-calls.lua 
-file path=usr/share/doc/lua/cover.png 
-file path=usr/share/doc/lua/amazon.gif 
-file path=usr/include/luaconf.h 
-file path=usr/demo/lua/test/env.lua 
-file path=usr/share/doc/lua/contents.html 
-file path=usr/include/lua.h 
-file path=usr/demo/lua/test/xd.lua 
-file path=usr/lib/$(MACH64)/liblua.so 
-file path=usr/include/lualib.h 
-file path=usr/demo/lua/test/bisect.lua 
-file path=usr/demo/lua/test/factorial.lua 
-file path=usr/demo/lua/test/printf.lua 
+file path=usr/share/doc/lua/manual.html
+file path=usr/share/doc/lua/readme.html
+file path=usr/share/man/man1/lua.1
+file path=usr/share/man/man1/luac.1
+legacy pkg=SUNWlua desc="lua - Lua Programming language 5.1.4" \
+    name="lua - Lua Programming language"
 
 
-license lua.license license="MIT"
-
-legacy  pkg=SUNWlua \
-	name="lua - Lua Programming language" \
-	desc="lua - Lua Programming language 5.1.4" 
+license lua.license license=MIT
 

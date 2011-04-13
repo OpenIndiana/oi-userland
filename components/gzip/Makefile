@@ -66,8 +66,7 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32) $(GZGREP_MAN_VARIANTS)
 
-test:
-	@echo "no tests available"
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

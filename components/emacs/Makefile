@@ -134,34 +134,18 @@ COMPONENT_POST_INSTALL_ACTION += rm -rf $(PVAR) ;
 COMPONENT_POST_INSTALL_ACTION += mv $(PETC)/DOC-$(COMPONENT_VERSION).2 \
 					$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
 
-# Throw away the manpages that were installed, and generate them again, using
-# sed to bolt on an ATTRIBUTES section. ctags is special in that it simply
-# inlines etags.1, and should not pass through solman.pl.
-SOLMAN=perl tools/solman.pl
-SOLMAN_CORE= $(SOLMAN) editor/gnu-emacs
-MAN_DIST_PCORE= $(SOLMAN_CORE) < $(COMPONENT_SRC)/doc/man/XXX \
-	> $(PSHAREMAN1)/XXX
-
-COMPONENT_POST_INSTALL_ACTION += rm $(PSHAREMAN1)/* ;
-COMPONENT_POST_INSTALL_ACTION += $(MAN_DIST_PCORE:XXX=b2m.1) ;
-COMPONENT_POST_INSTALL_ACTION += $(MAN_DIST_PCORE:XXX=ebrowse.1) ;
-COMPONENT_POST_INSTALL_ACTION += $(MAN_DIST_PCORE:XXX=emacs.1) ;
-COMPONENT_POST_INSTALL_ACTION += $(MAN_DIST_PCORE:XXX=emacsclient.1) ;
-COMPONENT_POST_INSTALL_ACTION += $(MAN_DIST_PCORE:XXX=grep-changelog.1) ;
-COMPONENT_POST_INSTALL_ACTION += $(MAN_DIST_PCORE:XXX=rcs-checkin.1) ;
-
-COMPONENT_POST_INSTALL_ACTION += $(SOLMAN) editor/gnu-emacs/gnu-emacs-gtk \
-	< augment/man/man1/emacs-gtk.1 > $(PSHAREMAN1)/emacs-gtk.1 ;
-COMPONENT_POST_INSTALL_ACTION += $(SOLMAN) editor/gnu-emacs/gnu-emacs-no-x11 \
-	< augment/man/man1/emacs-nox.1 > $(PSHAREMAN1)/emacs-nox.1 ;
-COMPONENT_POST_INSTALL_ACTION += $(SOLMAN) editor/gnu-emacs/gnu-emacs-x11 \
-	< augment/man/man1/emacs-x.1 > $(PSHAREMAN1)/emacs-x.1 ;
+COMPONENT_POST_INSTALL_ACTION += cp augment/man/man1/emacs-gtk.1 \
+			$(PSHAREMAN1)/emacs-gtk.1 ;
+COMPONENT_POST_INSTALL_ACTION += cp augment/man/man1/emacs-nox.1 \
+			$(PSHAREMAN1)/emacs-nox.1 ;
+COMPONENT_POST_INSTALL_ACTION += cp augment/man/man1/emacs-x.1 \
+			$(PSHAREMAN1)/emacs-x.1 ;
 
 COMPONENT_POST_INSTALL_ACTION += mkdir -p $(PGSHAREMAN1) ;
 COMPONENT_POST_INSTALL_ACTION += cp $(COMPONENT_SRC)/doc/man/ctags.1 \
 					$(PGSHAREMAN1)/ctags.1 ;
-COMPONENT_POST_INSTALL_ACTION += $(SOLMAN_CORE) \
-	< $(COMPONENT_SRC)/doc/man/etags.1 > $(PGSHAREMAN1)/etags.1 ;
+COMPONENT_POST_INSTALL_ACTION += cp $(COMPONENT_SRC)/doc/man/etags.1 \
+					$(PGSHAREMAN1)/etags.1 ;
 
 # Throw away usr/share/info/dir. This file is the topmost node of the Info
 # hierarchy. Emacs builds it, as presumably do all GNU packages, but on

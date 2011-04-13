@@ -57,6 +57,8 @@ CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads
 CONFIGURE_OPTIONS.64	+= --enable-64bit
 
+COMPONENT_TEST_TARGETS = test
+
 # common targets
 build:		$(BUILD_32_and_64)
 
@@ -66,10 +68,7 @@ install:	$(INSTALL_32_and_64)
 		$(MV) $(PROTOUSRLIBDIR)/tclConfig.sh.new $(PROTOUSRLIBDIR)/tclConfig.sh
 		$(CHMOD) 555 $(PROTOUSRLIBDIR)/tclConfig.sh
 
-test: 		build
-		@cd $(BUILD_DIR_32); $(MAKE) test
-		@cd $(BUILD_DIR_64); $(MAKE) test
-
+test: 		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

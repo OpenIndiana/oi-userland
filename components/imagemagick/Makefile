@@ -84,7 +84,7 @@ install:	$(INSTALL_32_and_64)
 # can be run only after ImageMagick is actually installed and this is not 
 # possible, so the tests are not invoked.
 #
-test:
+test:		$(NO_TESTS)
 	@echo "Tests can be run only after ImageMagick is installed."
 
 BUILD_PKG_DEPENDENCIES= $(BUILD_TOOLS)

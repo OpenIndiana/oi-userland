@@ -88,7 +88,7 @@ build:		$(BUILD_32) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
 install:	build $(INSTALL_32) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
 
 # build does this always
-test:
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
