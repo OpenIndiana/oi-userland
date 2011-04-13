@@ -33,17 +33,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# Some of the GNU COPYING (GPL licence) files are delivered to the end
-# user by the emacs packages, so add the disclaimer text to all such
-# files as part of the prep. Copy one of these files into the component
-# directory to serve as emacs.license
-COMPONENT_PREP_ACTION = \
-	for F in `find $(@D) -name COPYING`; do \
-		mv $$F $$F.orig; \
-		cat augment/disclaimer $$F.orig > $$F; \
-	done; \
-	cp $(@D)/COPYING emacs.license
-
 # we build three different variants of emacs for our users. As Solaris
 # always has a 64-bit kernel, and 64-bit emacs can handle larger files,
 # we only build and deliver 64-bit binaries.
@@ -184,8 +173,6 @@ COMPONENT_POST_INSTALL_ACTION += rm $(PROTO_DIR)/usr/share/info/dir ;
 build:          $(BUILD_64)
 
 install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed 
-
-CLEAN_PATHS +=	emacs.license
 
 test:
 	@echo "no tests available"
