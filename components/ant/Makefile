@@ -55,19 +55,14 @@ COMPONENT_INSTALL_ARGS =	$(ANT_DIST_DIRS)
 COMPONENT_INSTALL_TARGETS =	dist
 COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
 
-include ../../make-rules/shared-targets.mk
-
-MAN1FILES=ant.1 
-
-$(PROTOMAN1FILES): $(PROTOUSRSHAREMAN1DIR)
-	$(CP) $(COMPONENT_DIR)/$(@F).sunman $@ 
+COMPONENT_TEST_TARGETS =	test
+COMPONENT_TEST_ENV +=		$(ANT_ENV)
 
 build:	$(BUILD_32)
 
-install: $(INSTALL_32) $(PROTOMAN1FILES)
+install: $(INSTALL_32)
 
-test:  build
-	@cd $(BUILD_DIR_32); $(ENV) $(ANT_ENV) ./build.sh test
+test:  $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

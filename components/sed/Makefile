@@ -40,20 +40,13 @@ CONFIGURE_OPTIONS  +=		--program-prefix=g
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-GNUPROGS =	sed
-GNUMAN1 =	sed.1
-
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) \
-    $(PROTOGNULINKS) $(PROTOGNUMAN1LINKS)
+install:	$(INSTALL_32)
+
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include ../../make-rules/depend.mk

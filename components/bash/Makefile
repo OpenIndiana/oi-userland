@@ -37,6 +37,7 @@ include ../../make-rules/ips.mk
 IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).9
 PATCH_LEVEL = 0
 
+PKG_PROTO_DIRS += $(COMPONENT_DIR)/Solaris
 
 # Enable C99 mode + -Xc for it's additional warnings.
 studio_C99MODE = -Xc $(studio_C99_ENABLE)
@@ -116,40 +117,19 @@ CONFIGURE_OPTIONS  += 		--with-curses
 CONFIGURE_OPTIONS  += 		--with-installed-readline=no	
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 
+TEST_ENV +=	-i
+TEST_ENV +=	$(TEST_PATH)
+TEST_ENV +=	$(TARGET_ENV)
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
-	( mkdir -p $(PROTO_DIR)/etc/bash/bash_completion.d ; \
-	    cp -p $(COMPONENT_DIR)/Solaris/etc.bash.bash_completion \
-	    $(PROTO_DIR)/etc/bash/bash_completion.example ; \
-	    cp -p $(COMPONENT_DIR)/Solaris/etc.bash.bashrc \
-	    $(PROTO_DIR)/etc/bash/bashrc.example ; \
-	    cp -p $(COMPONENT_DIR)/Solaris/etc.bash.inputrc \
-	    $(PROTO_DIR)/etc/bash/inputrc.example ; \
-	    cp -p $(COMPONENT_DIR)/Solaris/rbash.1 \
-	    $(PROTOUSRSHAREMAN1DIR)/ )
-	( mkdir -p $(PROTO_DIR)/etc/skel ; \
-	    cp -p $(COMPONENT_DIR)/Solaris/etc.skel.bashrc \
-	    $(PROTO_DIR)/etc/skel/.bashrc )
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
 	    cp -Rp "en@boldquot" en ; \
 	    cp -Rp "en@boldquot" en_CA ; \
 	    cp -Rp "en@boldquot" en_GB )
-	sed -f oracleman-stability $(PROTOUSRSHAREMAN1DIR)/bash.1 > \
-	    $(PROTOUSRSHAREMAN1DIR)/bash.1.sed
-	cp -fp $(PROTOUSRSHAREMAN1DIR)/bash.1.sed \
-	    $(PROTOUSRSHAREMAN1DIR)/bash.1
-	sed -f oracleman-stability $(PROTOUSRSHAREMAN1DIR)/rbash.1 > \
-	    $(PROTOUSRSHAREMAN1DIR)/rbash.1.sed
-	cp -fp $(PROTOUSRSHAREMAN1DIR)/rbash.1.sed \
-	    $(PROTOUSRSHAREMAN1DIR)/rbash.1
-	rm -f $(PROTOUSRSHAREMAN1DIR)/bash.1.sed \
-	    $(PROTOUSRSHAREMAN1DIR)/rbash.1.sed
 
-test: $(BUILD_32)
-	( cd $(BUILD_DIR_32) ; \
-	    env - $(TEST_PATH) $(TARGET_ENV) $(GMAKE) check > \
-	    $(TEST_OUTPUT) 2>&1 )
+test: $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 

@@ -29,7 +29,6 @@ COMPONENT_NAME=		gettext
 COMPONENT_VERSION=	0.16.1
 IPS_PKG_NAME=		text/gnu-gettext
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:8642f4346dfd6a18ecd883329e150bfe9e0886c3
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
@@ -45,33 +44,6 @@ CONFIGURE_OPTIONS  +=		--disable-openmp
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-shared
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
-MAN1PAGES =	autopoint
-MAN1PAGES +=	envsubst
-MAN1PAGES +=	gettext
-MAN1PAGES +=	gettextize
-MAN1PAGES +=	msgattrib
-MAN1PAGES +=	msgcat
-MAN1PAGES +=	msgcmp
-MAN1PAGES +=	msgcomm
-MAN1PAGES +=	msgconv
-MAN1PAGES +=	msgen
-MAN1PAGES +=	msgexec
-MAN1PAGES +=	msgfilter
-MAN1PAGES +=	msgfmt
-MAN1PAGES +=	msggrep
-MAN1PAGES +=	msginit
-MAN1PAGES +=	msgmerge
-MAN1PAGES +=	msgunfmt
-MAN1PAGES +=	msguniq
-MAN1PAGES +=	ngettext
-MAN1PAGES +=	xgettext
-
-COMPONENT_POST_INSTALL_ACTION = \
-	$(MAN_STABILITY) -n "GNU gettext" -p $(IPS_PKG_NAME) -s Uncommitted \
-	    $(MAN1PAGES:%=$(PROTOUSRSHAREMAN1DIR)/%.1) ; \
-
-include ../../make-rules/shared-targets.mk
 
 # common targets
 build:		$(BUILD_32)

@@ -41,32 +41,9 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 # common targets
 build:		$(BUILD_32)
 
-DOCFILES= bittorrent.txt color-model.txt bookmarks.txt dev-intro.txt \
-	ecmascript.txt elinks.1.txt elinks.conf.5.txt elinkskeys.5.txt \
-	events.txt exmode.txt faq.txt feedback.txt hacking.txt \
-	installation.txt introduction.txt lua-scripting.txt mailcap.txt \
-	manual.txt marks.txt mime.txt remote.txt small.txt tabs.txt \
-	terminals.txt urlshortcuts.txt
+install:	$(INSTALL_32)
 
-PROTODOCDIR = $(PROTO_DIR)/usr/share/doc/elinks
-PROTODOCFILES=$(DOCFILES:%=$(PROTODOCDIR)/%)
-
-$(PROTODOCDIR):	$(INSTALL_32)
-	$(MKDIR) $@
-
-$(PROTODOCFILES):	$(PROTODOCDIR)
-	$(INSTALL) -m 444 $(COMPONENT_SRC)/doc/$(@F) $(@D)
-
-install:	$(INSTALL_32) $(PROTODOCDIR) $(PROTODOCFILES)
-	(sed -f oracleman-stability $(COMPONENT_SRC)/doc/man/man1/elinks.1.in > \
-		$(PROTO_DIR)/$(USRSHAREMAN1DIR)/elinks.1 ; \
-	 sed -f oracleman-stability $(COMPONENT_SRC)/doc/man/man5/elinks.conf.5 > \
-		$(PROTO_DIR)/$(USRSHAREMAN5DIR)/elinks.conf.5 ; \
-	 sed -f oracleman-stability $(COMPONENT_SRC)/doc/man/man5/elinkskeys.5 > \
-		$(PROTO_DIR)/$(USRSHAREMAN5DIR)/elinkskeys.5)
-
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -36,18 +36,16 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS  +=	--with-external-zlib
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
+# "check" is not working yet.  It's asking for a password.
+COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
+COMPONENT_TEST_TARGETS = localcheck
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-	sed -f solarisman-stability $(COMPONENT_SRC)/doc/cvs.1 > \
-				   $(PROTOUSRSHAREMAN1DIR)/cvs.1
-	sed -f solarisman-stability $(COMPONENT_SRC)/man/cvs.5 > \
-				   $(PROTOUSRSHAREMAN5DIR)/cvs.5
+
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-# "check" is not working yet.  It's asking for a password.
-test: build
-	@cd $(BUILD_DIR_32); PATH=/usr/gnu/bin:$(PATH) $(MAKE) localcheck
 
 include ../../make-rules/depend.mk

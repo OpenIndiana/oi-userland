@@ -67,8 +67,6 @@ CLONEY =	$(WS_TOOLS)/cloney
 
 CONFIG_SHELL =	/bin/bash
 
-MAN_STABILITY =	$(WS_TOOLS)/man-stability
-
 PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_DIR =	$(shell pwd)
@@ -156,14 +154,26 @@ BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
 BUILD_32 =		$(BUILD_DIR_32)/.built
 BUILD_64 =		$(BUILD_DIR_64)/.built
 BUILD_32_and_64 =	$(BUILD_32) $(BUILD_64)
+$(BUILD_DIR_32)/.built:		BITS=32
+$(BUILD_DIR_64)/.built:		BITS=64
 
 INSTALL_32 =		$(BUILD_DIR_32)/.installed
 INSTALL_64 =		$(BUILD_DIR_64)/.installed
 INSTALL_32_and_64 =	$(INSTALL_32) $(INSTALL_64)
+$(BUILD_DIR_32)/.install:       BITS=32
+$(BUILD_DIR_64)/.install:       BITS=64
+
+# set the default target for installation of the component
+COMPONENT_INSTALL_TARGETS =	install
 
 TEST_32 =		$(BUILD_DIR_32)/.tested
 TEST_64 =		$(BUILD_DIR_64)/.tested
 TEST_32_and_64 =	$(TEST_32) $(TEST_64)
+$(BUILD_DIR_32)/.tested:       BITS=32
+$(BUILD_DIR_64)/.tested:       BITS=64
+
+# set the default target for test of the component
+COMPONENT_TEST_TARGETS =	check
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS =	/ws/onnv-tools
@@ -469,3 +479,8 @@ COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
 COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
+
+# If there are no tests to execute
+NO_TESTS =	test-nothing
+test-nothing:
+	@echo "There are no tests available at this time."

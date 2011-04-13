@@ -20,16 +20,20 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/developer/gperf@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/developer/gperf@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="GNU gperf is a perfect hash function generator. For a given list of strings, it produces a hash function and hash table, in form of C or C++ code, for looking up a value depending on the input string."
 set name=pkg.summary value="GNU gperf"
-set name=pkg.description value="GNU gperf is a perfect hash function generator. For a given list of strings, it produces a hash function and hash table, in form of C or C++ code, for looking up a value depending on the input string."
-set name=info.classification value="org.opensolaris.category.2008:Development/GNU"
-set name=info.upstream_url value="http://www.gnu.org/software/gperf"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/GNU
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/gperf
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2008/123
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license gperf.license license="GPLv2"
-
 dir path=usr
 dir path=usr/bin
 dir path=usr/share
@@ -42,7 +46,7 @@ file path=usr/bin/gperf
 file path=usr/share/doc/gperf/gperf.html
 file path=usr/share/info/gperf.info
 file path=usr/share/man/man1/gperf.1
-
-legacy	pkg=SUNWgnu-gperf \
-	name="GNU gperf - perfect hash function generator" \
-	desc="GNU gperf - perfect hash function generator (3.0.3)"
+legacy pkg=SUNWgnu-gperf \
+    desc="GNU gperf - perfect hash function generator (3.0.3)" \
+    name="GNU gperf - perfect hash function generator"
+license gperf.license license=GPLv2

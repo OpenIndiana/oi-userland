@@ -41,20 +41,13 @@ CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 CONFIGURE_OPTIONS +=	--program-prefix=g
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
-GNUPROGS =	tar
-GNUMAN1 =	tar.1
-SFWPROGS =	gtar
-
-include ../../make-rules/shared-targets.mk
-
 COMPONENT_BUILD_TARGETS = all
 
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

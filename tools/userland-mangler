@@ -1,0 +1,272 @@
+#!/usr/bin/python2.6
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+#
+# userland-mangler - a file mangling utility
+#
+#  A simple program to mangle files to conform to Solaris WOS or Consoldation
+#  requirements.
+#
+
+import os
+import sys
+import re
+
+import pkg.fmri
+import pkg.manifest
+import pkg.actions
+import pkg.elf as elf
+
+attribute_table_header = """
+.SH ATTRIBUTES
+See
+.BR attributes (5)
+for descriptions of the following attributes:
+.sp
+.TS
+box;
+cbp-1 | cbp-1
+l | l .
+ATTRIBUTE TYPE	ATTRIBUTE VALUE """
+
+attribute_table_availability = """
+=
+Availability	%s"""
+
+attribute_table_stability = """
+=
+Stability	%s"""
+
+attribute_table_footer = """
+.TE 
+.PP
+"""
+def write_attributes_section(ofp, availability, stability):
+	# is there anything to do?
+	if availability is None and stability is None:
+		return
+
+	# append the ATTRIBUTES section
+	ofp.write(attribute_table_header)
+	if availability is not None:
+		ofp.write(attribute_table_availability % availability)
+	if stability is not None:
+		ofp.write(attribute_table_stability % stability.capitalize())
+	ofp.write(attribute_table_footer)
+
+
+notes_header = """
+.SH NOTES
+"""
+
+notes_community = """
+Further information about this software can be found on the open source community website at %s.
+"""
+notes_source = """
+This software was built from source available at http://opensolaris.org/.  The original community source was downloaded from  %s
+"""
+
+def write_notes_section(ofp, header_seen, community, source):
+	# is there anything to do?
+	if community is None and source is None:
+		return
+
+	# append the NOTES section
+	if header_seen == False:
+		ofp.write(notes_header)
+	if source is not None:
+		ofp.write(notes_source % source)
+	if community is not None:
+		ofp.write(notes_community % community)
+
+
+section_re = re.compile('\.SH "?([^"]+).*$', re.IGNORECASE)
+#
+# mangler.man.stability = (mangler.man.stability)
+# mangler.man.availability = (pkg.fmri)
+# mangler.man.source_url = (pkg.source_url)
+# mangler.man.upstream_url = (pkg.upstream_url)
+#
+def mangle_manpage(manifest, action, src, dest):
+	# manpages must have a taxonomy defined
+	stability = action.attrs.pop('mangler.man.stability', None)
+	if stability is None:
+		sys.stderr.write("ERROR: manpage action missing mangler.man.stability: %s" % action)
+		sys.exit(1)
+
+	attributes_written = False
+	notes_seen = False
+
+	if 'pkg.fmri' in manifest.attributes:
+		fmri = pkg.fmri.PkgFmri(manifest.attributes['pkg.fmri'])
+		availability = fmri.pkg_name
+
+	if 'info.upstream_url' in manifest.attributes:
+		community = manifest.attributes['info.upstream_url']
+
+	if 'info.source_url' in manifest.attributes:
+		source = manifest.attributes['info.source_url']
+
+	# create a directory to write to
+	destdir = os.path.dirname(dest)
+	if not os.path.exists(destdir):
+		os.makedirs(destdir)
+
+	# read the source document
+	ifp = open(src, "r")
+	lines = ifp.readlines()
+	ifp.close()
+
+	# skip reference only pages
+	if lines[0].startswith(".so "):
+		return
+
+	# open a destination
+	ofp = open(dest, "w+")
+
+	# tell man that we want tables (and eqn)
+	ofp.write("'\\\" te\n")
+
+	# write the orginal data
+	for line in lines:
+		match = section_re.match(line)
+		if match is not None:
+			section = match.group(1)
+			if section in ['SEE ALSO', 'NOTES']:
+				if attributes_written == False:
+					write_attributes_section(ofp,
+								 availability,
+								 stability)
+					attributes_written = True
+				if section == 'NOTES':
+					notes_seen = True
+		ofp.write(line)
+
+	if attributes_written == False:
+		write_attributes_section(ofp, availability, stability)
+
+	write_notes_section(ofp, notes_seen, community, source)
+
+	ofp.close()
+
+
+#
+# mangler.elf.strip = (true|false)
+#
+def mangle_elf(manifest, action, src, dest):
+	pass
+
+#
+# mangler.script.file-magic =
+#
+def mangle_script(manifest, action, src, dest):
+	pass
+
+def mangle_path(manifest, action, src, dest):
+	if 'facet.doc.man' in action.attrs:
+		 mangle_manpage(manifest, action, src, dest)
+	elif 'mode' in action.attrs and int(action.attrs['mode'], 8) & 0111 != 0:
+		if elf.is_elf_object(src):
+			 mangle_elf(manifest, action, src, dest)
+		else:
+			 mangle_script(manifest, action, src, dest)
+
+#
+# mangler.bypass = (true|false)
+#
+def mangle_paths(manifest, search_paths, destination):
+	for action in manifest.gen_actions_by_type("file"):
+		bypass = action.attrs.pop('mangler.bypass', 'false').lower()
+		if bypass == 'true':
+			continue
+
+		path = None
+		if 'path' in action.attrs:
+			path = action.attrs['path']
+		if action.hash and action.hash != 'NOHASH':
+			path = action.hash
+		if not path:
+			continue
+
+		dest = os.path.join(destination, path)
+		for directory in search_paths:
+			if directory != destination:
+				src = os.path.join(directory, path)
+				if os.path.exists(src):
+					mangle_path(manifest, action, src, dest)
+					break
+
+def load_manifest(manifest_file):
+	manifest = pkg.manifest.Manifest()
+	manifest.set_content(pathname=manifest_file)
+
+	return manifest
+
+def usage():
+	print "Usage: %s [-m|--manifest (file)] [-d|--search-directory (dir)] [-D|--destination (dir)] " % (sys.argv[0].split('/')[-1])
+	sys.exit(1)
+
+def main():
+	import getopt
+
+	# FLUSH STDOUT 
+	sys.stdout = os.fdopen(sys.stdout.fileno(), 'w', 0)
+
+	search_paths = []
+	destination = None
+	manifests = []
+
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], "D:d:m:",
+			["destination=", "search-directory=", "manifest="])
+	except getopt.GetoptError, err:
+		print str(err)
+		usage()
+
+	for opt, arg in opts:
+		if opt in [ "-D", "--destination" ]:
+			destination = arg
+		elif opt in [ "-d", "--search-directory" ]:
+			search_paths.append(arg)
+		elif opt in [ "-m", "--manifest" ]:
+			try:
+				manifest = load_manifest(arg)
+			except IOError, err:
+				print "oops, %s: %s" % (arg, str(err))
+				usage()
+			else:
+				manifests.append(manifest)
+		else:
+			usage()
+
+	if destination == None:
+		usage()
+
+	for manifest in manifests:
+		mangle_paths(manifest, search_paths, destination)
+		print manifest
+
+	sys.exit(0)
+
+if __name__ == "__main__":
+	main()

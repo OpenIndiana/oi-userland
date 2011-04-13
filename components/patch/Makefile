@@ -37,19 +37,12 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS  +=		--program-prefix=g
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-GNUPROGS =	patch
-GNUMAN1 =	patch.1
-
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) \
-    $(PROTOGNULINKS) $(PROTOGNUMAN1LINKS)
+install:	$(INSTALL_32)
 
-test:
-	@echo "no tests available
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

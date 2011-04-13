@@ -51,12 +51,8 @@ install: build
 	cd $(SOURCE_DIR) ; \
 		$(MAKE) prefix=$(PROTO_DIR)/usr/ INSTALL=ginstall \
 			man1dir=$(PROTOUSRSHAREMAN1DIR) install
-	sed -f solarisman-stability $(SOURCE_DIR)/slib.1 > \
-	    $(PROTOUSRSHAREMAN1DIR)/slib.1
 
-# no tests
-test:
-	@echo "no tests available"
+test:	$(NO_TESTS)
 
 clean::
 	$(RM) -r $(BUILD_DIR)

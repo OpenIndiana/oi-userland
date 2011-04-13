@@ -223,7 +223,7 @@ class UserlandManifestChecker(base.ManifestChecker):
 	def __init__(self, config):
 		super(UserlandManifestChecker, self).__init__(config)
 
-	def license_check(self, manifest, engine, pkglint_id="001"):
+	def component_check(self, manifest, engine, pkglint_id="001"):
 		manifest_paths = []
 		files = False
 		license = False
@@ -236,10 +236,16 @@ class UserlandManifestChecker(base.ManifestChecker):
 			return
 
 		for action in manifest.gen_actions_by_type("license"):
-			return
+			license = True
+			break
 
-		engine.error( _("missing license action"),
-			msgid="%s%s.0" % (self.name, pkglint_id))
+		if license == False:
+			engine.error( _("missing license action"),
+				msgid="%s%s.0" % (self.name, pkglint_id))
 
-	license_check.pkglint_dest = _(
-		"license actions are required if you deliver files.")
+		if 'opensolaris.arc_url' not in manifest:
+			engine.error( _("missing ARC data (opensolaris.arc_url)"),
+				msgid="%s%s.0" % (self.name, pkglint_id))
+
+	component_check.pkglint_dest = _(
+		"license actions and iARC information are required if you deliver files.")

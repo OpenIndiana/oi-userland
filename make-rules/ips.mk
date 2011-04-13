@@ -40,6 +40,7 @@ PKGFMT =	/usr/bin/pkgfmt
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 PKGSEND =	/usr/bin/pkgsend
 PKGLINT =	/usr/bin/pkglint
+PKGMANGLE =	$(WS_TOOLS)/userland-mangler
 
 # Package headers should all pretty much follow the same format
 METADATA_TEMPLATE =		$(WS_TOP)/transforms/manifest-metadata-template
@@ -64,7 +65,6 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 PKG_MACROS +=		MACH=$(MACH)
 PKG_MACROS +=		MACH32=$(MACH32)
 PKG_MACROS +=		MACH64=$(MACH64)
-PKG_MACROS +=		IPS_PKG_NAME=$(IPS_PKG_NAME)
 PKG_MACROS +=		PUBLISHER=$(PUBLISHER)
 PKG_MACROS +=		CONSOLIDATION=$(CONSOLIDATION)
 PKG_MACROS +=		BUILD_VERSION=$(BUILD_VERSION)
@@ -77,7 +77,9 @@ PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 
-PKG_PROTO_DIRS += $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC)
+MANGLED_DIR =	$(PROTO_DIR)/mangled
+
+PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT_SRC)
 
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
@@ -117,9 +119,17 @@ $(MANIFEST_BASE)-%.mogrified:	%.p5m canonical-manifests
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
+# mangle the file contents
+$(MANGLED_DIR):
+	$(MKDIR) $@
+
+PKGMANGLE_OPTIONS = -D $(MANGLED_DIR) $(PKG_PROTO_DIRS:%=-d %)
+$(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
+	$(PKGMANGLE) $(PKGMANGLE_OPTIONS) -m $< >$@
+
 # generate dependencies
 PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
-$(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mogrified
+$(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
 # resolve dependencies, prepend the mogrified manifest, less the unresolved

@@ -67,22 +67,9 @@ CONFIGURE_OPTIONS  +=           --with-pic
 
 build: $(BUILD_32_and_64)
 
-MAN1LIST = exrenvmap.1 exrheader.1 exrmakepreview.1 \
-	   exrmaketiled.1 exrstdattr.1
+install:	$(INSTALL_32_and_64)
 
-include ../../make-rules/shared-targets.mk
-
-install: $(INSTALL_32_and_64)
-	$(MKDIR) $(PROTOUSRSHAREMAN1DIR) ; \
-	    list1='$(MAN1LIST)'; for f in $$list1; do \
-	    $(INSTALL) -m 0644 Solaris/$$f $(PROTOUSRSHAREMAN1DIR)/ ; \
-	    done
-	$(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
-	$(INSTALL) -m 0644 Solaris/libopenexr.3lib $(PROTOUSRSHAREMAN3DIR)/
-
-test: $(BUILD_32_and_64)
-	@cd $(BUILD_DIR_32); $(GMAKE) check
-	@cd $(BUILD_DIR_64); $(GMAKE) check
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 

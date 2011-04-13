@@ -41,16 +41,13 @@ CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-include $(WS_TOP)/make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+test:		$(TEST_32_and_64)
 
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk

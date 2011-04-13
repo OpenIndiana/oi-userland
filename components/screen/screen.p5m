@@ -20,14 +20,19 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/terminal/screen@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GNU Screen"
-set name=pkg.description value="GNU Screen terminal multiplexer"
-set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.upstream_url value="http://www.gnu.org/software/screen"
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/terminal/screen@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description value="GNU Screen terminal multiplexer"
+set name=pkg.summary value="GNU Screen"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/screen
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2008/413
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=etc
 dir path=usr
 dir path=usr/bin
@@ -40,7 +45,8 @@ dir path=usr/share/man
 dir path=usr/share/man/man1
 dir path=usr/share/screen
 dir path=usr/share/screen/utf8encodings
-file path=etc/screenrc mode=0644 group=sys preserve=renamenew original_name=SUNWscreen:etc/screenrc
+file path=etc/screenrc group=sys mode=0644 \
+    original_name=SUNWscreen:etc/screenrc preserve=renamenew
 file path=usr/bin/screen
 file path=usr/share/info/screen.info
 file path=usr/share/info/screen.info-1
@@ -48,8 +54,8 @@ file path=usr/share/info/screen.info-2
 file path=usr/share/info/screen.info-3
 file path=usr/share/info/screen.info-4
 file path=usr/share/info/screen.info-5
-file path=usr/share/lib/terminfo/s/screen-s
 file path=usr/share/lib/terminfo/s/screen-bce
+file path=usr/share/lib/terminfo/s/screen-s
 file path=usr/share/man/man1/screen.1
 file path=usr/share/screen/utf8encodings/01
 file path=usr/share/screen/utf8encodings/02
@@ -68,10 +74,7 @@ file path=usr/share/screen/utf8encodings/c8
 file path=usr/share/screen/utf8encodings/cc
 file path=usr/share/screen/utf8encodings/cd
 file path=usr/share/screen/utf8encodings/d6
+legacy pkg=SUNWscreen desc="GNU Screen terminal multiplexer" name="GNU Screen"
 
 
-license screen.license license="GPLv2"
-
-legacy	pkg=SUNWscreen \
-	name="GNU Screen" \
-	desc="GNU Screen terminal multiplexer"
+license screen.license license=GPLv2

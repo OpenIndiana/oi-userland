@@ -20,14 +20,20 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/web/wget@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="wget - GNU wget"
-set name=pkg.description value="GNU wget - a utility to retrieve files from the World Wide Web"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
-set name=info.upstream_url value="http://www.gnu.org/software/wget/"
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/web/wget@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="GNU wget - a utility to retrieve files from the World Wide Web"
+set name=pkg.summary value="wget - GNU wget"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Applications/Internet
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/wget/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2000/488
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=etc
 dir path=usr
 dir path=usr/bin
@@ -122,7 +128,8 @@ dir path=usr/share/locale/zh_TW
 dir path=usr/share/locale/zh_TW/LC_MESSAGES
 dir path=usr/share/man
 dir path=usr/share/man/man1
-file path=etc/wgetrc mode=0644 group=sys preserve=renamenew original_name=SUNWwget:etc/wgetrc
+file path=etc/wgetrc group=sys mode=0644 original_name=SUNWwget:etc/wgetrc \
+    preserve=renamenew
 file path=usr/bin/wget
 file path=usr/share/info/wget.info
 file path=usr/share/locale/be/LC_MESSAGES/wget.mo
@@ -168,11 +175,10 @@ file path=usr/share/locale/vi/LC_MESSAGES/wget.mo
 file path=usr/share/locale/zh_CN/LC_MESSAGES/wget.mo
 file path=usr/share/locale/zh_TW/LC_MESSAGES/wget.mo
 file path=usr/share/man/man1/wget.1
+legacy pkg=SUNWwget \
+    desc="GNU wget - a utility to retrieve files from the World Wide Web 1.12" \
+    name="wget - GNU wget"
+
+
+license wget.license license=GPLv3
 link path=usr/sfw/bin/wget target=../../bin/wget
-
-
-license wget.license license="GPLv3"
-
-legacy	pkg=SUNWwget \
-	name="wget - GNU wget" \
-	desc="GNU wget - a utility to retrieve files from the World Wide Web 1.12"

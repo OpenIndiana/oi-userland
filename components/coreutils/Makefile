@@ -39,57 +39,16 @@ CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
-
-CMDS_NONCONFLICTING=\[ base64 dir dircolors md5sum nproc pinky \
-printenv ptx readlink seq sha1sum sha224sum sha256sum sha384sum sha512sum \
-shred shuf stat stdbuf tac timeout truncate users vdir whoami
-
-MANS_NONCONFLICTING=base64.1 dir.1 dircolors.1 md5sum.1 nproc.1 pinky.1 \
-printenv.1 ptx.1 readlink.1 seq.1 sha1sum.1 sha224sum.1 sha256sum.1 \
-sha384sum.1 sha512sum.1 shred.1 shuf.1 stat.1 stdbuf.1 tac.1 \
-timeout.1 truncate.1 users.1 vdir.1 whoami.1
-
-NEEDMV=if [ -e $(1) ]; then $(RM) $(2); /usr/bin/mv $(1) $(2); fi
-RMDIR=/usr/bin/rmdir
 
 #
 # whoami is in both /usr/bin and /usr/gnu/bin; mistake?
 #
+install:	$(INSTALL_32)
 
-install:	$(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) $(INSTALL_32)
-	for command in $(CMDS_NONCONFLICTING); do \
-		$(call NEEDMV,$(PROTOGNUBIN)/$$command,\
-			$(PROTOUSRBINDIR)/$$command) \
-	done
-	for manpage in $(COMPONENT_SRC)/man/*.1; do \
-		sed -f oracleman-stability $$manpage > \
-			$(PROTO_DIR)/$(GNUSHAREMAN1)/`basename $$manpage`; \
-	done
-	for manpage in $(MANS_NONCONFLICTING); do \
-		$(call NEEDMV,$(PROTOGNUSHAREMAN1)/$$manpage,\
-			$(PROTOUSRSHAREMAN1DIR)/$$manpage); \
-	done
-	$(CP) $(PROTOUSRBINDIR)/whoami $(PROTOGNUBIN)/whoami
-	$(CP) $(PROTOUSRSHAREMAN1DIR)/whoami.1 $(PROTOGNUSHAREMAN1)/whoami.1
-	$(call NEEDMV,$(PROTOGNUBIN)/install,$(PROTOUSRBINDIR)/ginstall)
-	$(call NEEDMV,$(PROTOGNUSHAREMAN1)/install.1,\
-		$(PROTOUSRSHAREMAN1DIR)/ginstall.1)
-	$(call NEEDMV,$(PROTOUSRLIBDIR)/coreutils/libstdbuf.so,\
-		$(PROTOUSRLIBDIR)/libstdbuf.so)
-	-$(RMDIR) $(PROTOUSRLIBDIR)/coreutils
-	$(RM) $(PROTOGNUBIN)/chcon
-	$(RM) $(PROTOGNUBIN)/runcon
-	$(RM) $(PROTOGNUSHAREMAN1)/chcon.1
-	$(RM) $(PROTOGNUSHAREMAN1)/runcon.1
-	$(RM) $(PROTOUSRLIBDIR)/charset.alias
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
-
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
 
 include ../../make-rules/depend.mk

@@ -81,21 +81,6 @@ Print \fBntpdate\fR's version identification string during program startup.
 Time adjustments are made by \fBntpdate\fR in one of two ways. If \fBntpdate\fR determines the clock is in error more than 0.5 second it will simply step the time by calling the system \fBsettimeofday()\fR routine. If the error is less than 0.5 seconds, it will slew the time by calling the system \fBadjtime()\fR routine. The latter technique is less disruptive and more accurate when the error is small, and works quite well when \fBntpdate\fR is run by \fBcron\fR every hour or two.
 \fBntpdate\fR will decline to set the date if an NTP server daemon (e.g., \fBntpd\fR) is running on the same host. When running \fBntpdate\fR on a regular basis from \fBcron\fR as an alternative to running a daemon, doing so once every hour or two will result in precise enough timekeeping to avoid stepping the clock.
 Note that in contexts where a host name is expected, a \fB-4\fR qualifier preceding the host name forces DNS resolution to the IPv4 namespace, while a \fB-6\fR qualifier forces DNS resolution to the IPv6 namespace.
-.SH ATTRIBUTES
-See
-.BR attributes (5)
-for descriptions of the following attributes:
-.sp
-.TS
-box;
-cbp-1 | cbp-1
-l | l .
-ATTRIBUTE TYPE	ATTRIBUTE VALUE
-=
-Availability	service/network/ntp
-=
-Interface Stability	Uncommitted Obsolete
-.TE 
 .PP
 .SH NOTES
 Source for ntpdate is available on http://src.opensolaris.org.

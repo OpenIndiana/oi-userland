@@ -40,15 +40,9 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 # common targets
 build:		$(BUILD_32_and_64)
 
-include ../../make-rules/shared-targets.mk
+install:	$(INSTALL_32_and_64)
 
-install:	$(PROTOUSRSHAREMAN3DIR) $(INSTALL_32_and_64)
-	$(CP) -f $(COMPONENT_DIR)/man3/*.3 $(PROTOUSRSHAREMAN3DIR)
-
-# build does this always
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
-	@cd $(BUILD_DIR_64); $(MAKE) check
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

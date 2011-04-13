@@ -35,9 +35,7 @@ COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-LIBNAME=	xml2
-LINTOUT=	lint.out
+include ../../make-rules/lint-libraries.mk
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
@@ -52,24 +50,14 @@ CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoconf)
 
-COMPONENT_POST_BUILD_ACTION = \
-	 (cd $(@D); $(LINT) -nsvx $(CC_BITS) -o $(LIBNAME) -I$(@D) \
-			-I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include \
-			$(COMPONENT_DIR)/llib-l$(LIBNAME) > $(LINTOUT) 2>&1)
-
-COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(@D); $(INSTALL) llib-l$(LIBNAME).ln \
-			$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS)))
+COMPONENT_TEST_TARGETS = tests
 
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(TEST_32_and_64)
-
-$(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
-	(cd $(@D) ; gmake tests || exit 0)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

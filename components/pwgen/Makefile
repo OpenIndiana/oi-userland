@@ -62,10 +62,8 @@ COMPONENT_BUILD_ARGS = WALL_OPTS=
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
-	sed -f pwgen.1.oracleman-stability $(COMPONENT_SRC)/pwgen.1 > \
-				   $(PROTO_DIR)/$(USRSHAREMAN1DIR)/pwgen.1
-test:
-	@echo "no tests available"
+
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

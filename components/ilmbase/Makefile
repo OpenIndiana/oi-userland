@@ -67,15 +67,9 @@ CONFIGURE_OPTIONS  +=           --with-pic
 
 build: $(BUILD_32_and_64)
 
-include ../../make-rules/shared-targets.mk
-
 install: $(INSTALL_32_and_64)
-	$(MKDIR) $(PROTOUSRSHAREMAN3DIR) ; \
-	$(INSTALL) -m 0644 Solaris/libilmbase.3lib $(PROTOUSRSHAREMAN3DIR)/
 
-test: $(BUILD_32_and_64)
-	@cd $(BUILD_DIR_32); $(GMAKE) check
-	@cd $(BUILD_DIR_64); $(GMAKE) check
+test:	 $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 

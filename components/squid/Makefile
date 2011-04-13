@@ -95,37 +95,12 @@ COMPONENT_POST_BUILD_ACTION= \
                 -e 's/^\# +dns_testnames.*/dns_testnames localhost/g' \
                		src/squid.conf.default )
 
-
-PKG_PROTO_DIRS +=       $(SOURCE_DIR)
-PKG_PROTO_DIRS +=       $(COMPONENT_DIR)
-
-
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32) 
 
 install:	$(INSTALL_32) 
-		sed -f oracleman-stability $(BUILD_DIR_32)/doc/squid.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/squid.8
-		sed -f oracleman-stability $(BUILD_DIR_32)/doc/cachemgr.cgi.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/cachemgr.cgi.8
-		sed -f oracleman-stability $(SOURCE_DIR)/helpers/basic_auth/NCSA/ncsa_auth.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/ncsa_auth.8
-		sed -f oracleman-stability $(SOURCE_DIR)/helpers/basic_auth/PAM/pam_auth.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/pam_auth.8
-		sed -f oracleman-stability $(BUILD_DIR_32)/helpers/basic_auth/DB/squid_db_auth.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/squid_db_auth.8
-		sed -f oracleman-stability $(SOURCE_DIR)/helpers/basic_auth/LDAP/squid_ldap_auth.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/squid_ldap_auth.8
-		sed -f oracleman-stability $(SOURCE_DIR)/helpers/external_acl/ldap_group/squid_ldap_group.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/squid_ldap_group.8
-		sed -f oracleman-stability $(SOURCE_DIR)/helpers/external_acl/unix_group/squid_unix_group.8 \
-			> $(PROTOUSRDIR)/squid/man/man8/squid_unix_group.8
 		
-test:
-	@echo "no tests available"
-
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

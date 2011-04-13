@@ -40,16 +40,13 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-include $(WS_TOP)/make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+test:		$(TEST_32)
 
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk

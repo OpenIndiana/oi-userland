@@ -21,16 +21,19 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/print/cups/hal-cups-utils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="hal-cups-utils is a Hardware Abstraction Layer (HAL) plugin module that automatically creates print queues under the Common UNIX Printing System (CUPS) for printers detected by HAL."
 set name=pkg.summary value="Automatic queue creation for CUPS"
-set name=pkg.description value="hal-cups-utils is a Hardware Abstraction Layer (HAL) plugin module that automatically creates print queues under the Common UNIX Printing System (CUPS) for printers detected by HAL."
-set name=pkg.fmri value=pkg:/print/cups/hal-cups-utils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=info.classification value="org.opensolaris.category.2008:System/Printing"
-set name=info.upstream_url value="http://fedorahosted.org/hal-cups-utils/"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Printing
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://fedorahosted.org/hal-cups-utils/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2009/240
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license hal-cups-utils.copyright license="CUPS license"
-
 dir path=etc
 dir path=etc/hal
 dir path=etc/hal/fdi
@@ -45,13 +48,11 @@ dir path=usr/share
 dir path=usr/share/man
 dir path=usr/share/man/man5
 file path=etc/hal/fdi/policy/10osvendor/10-hal_lpadmin.fdi
-file hal-cups-utils.5 path=usr/share/man/man5/hal-cups-utils.5
 file path=usr/lib/cups/backend/hal mode=0555
 file path=usr/lib/hal/hal_lpadmin mode=0555 pkg.depend.bypass-generate=.*
-
-legacy pkg=SUNWhal-cups-utils \
-	desc="Automatic queue creation for CUPS" \
-	name="hal-cups-utils (usr)"
-legacy pkg=SUNWhal-cups-utilsr \
-	desc="Automatic queue configuration for CUPS" \
-	name="hal-cups-utils (root)"
+file hal-cups-utils.5 path=usr/share/man/man5/hal-cups-utils.5
+legacy pkg=SUNWhal-cups-utils desc="Automatic queue creation for CUPS" \
+    name="hal-cups-utils (usr)"
+legacy pkg=SUNWhal-cups-utilsr desc="Automatic queue configuration for CUPS" \
+    name="hal-cups-utils (root)"
+license hal-cups-utils.copyright license="CUPS license"

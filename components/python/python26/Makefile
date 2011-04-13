@@ -79,6 +79,8 @@ CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CCFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
 
+COMPONENT_TEST_TARGETS =	test
+
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python2.6/lib-dynload
 
@@ -89,10 +91,7 @@ $(INSTALL_32):	$(INSTALL_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(TEST_32_and_64)
-
-$(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
-	(cd $(@D) ; gmake test || exit 0) 
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

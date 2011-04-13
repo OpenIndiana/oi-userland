@@ -48,8 +48,7 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

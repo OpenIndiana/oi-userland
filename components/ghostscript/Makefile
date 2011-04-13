@@ -70,7 +70,7 @@ $(GS_VARIANT)/.installed: COMPONENT_INSTALL_TARGETS += \
 
 $(IJS_VARIANT)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR)/ijs $(@D); \
-	cd $(@D) ; $(ENV) $(CONFIGURE_ENV) autogen.sh )
+	cd $(@D) ; $(ENV) $(CONFIGURE_ENV) ./autogen.sh )
 
 CONFIGURE_SCRIPT = ./configure
 

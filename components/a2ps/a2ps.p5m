@@ -20,14 +20,21 @@
 #
 # Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/print/lp/filter/a2ps@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GNU a2ps - 'Anything to PostScript' converter and pretty printer"
-set name=pkg.description value="GNU a2ps converts files into PostScript for printing or viewing."
-set name=info.classification value="org.opensolaris.category.2008:System/Printing"
-set name=info.upstream_url value=http://www.gnu.org/software/a2ps/
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/print/lp/filter/a2ps@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="GNU a2ps converts files into PostScript for printing or viewing."
+set name=pkg.summary \
+    value="GNU a2ps - 'Anything to PostScript' converter and pretty printer"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Printing
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/a2ps/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2004/262
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=etc
 dir path=etc/gnu
 dir path=etc/lp
@@ -89,9 +96,11 @@ dir path=usr/share/man/man1
 dir path=usr/share/ogonkify
 dir path=usr/share/ogonkify/afm
 dir path=usr/share/ogonkify/fonts
-file path=etc/gnu/a2ps-site.cfg mode=0644 preserve=true original_name=SUNWa2ps:etc/gnu/a2ps-site.cfg
-file path=etc/gnu/a2ps.cfg mode=0644 preserve=true original_name=SUNWa2ps:etc/gnu/a2ps.cfg
-file path=etc/lp/fd/a2ps.fd
+file path=etc/gnu/a2ps-site.cfg mode=0644 \
+    original_name=SUNWa2ps:etc/gnu/a2ps-site.cfg preserve=true
+file path=etc/gnu/a2ps.cfg mode=0644 original_name=SUNWa2ps:etc/gnu/a2ps.cfg \
+    preserve=true
+file a2ps.fd path=etc/lp/fd/a2ps.fd
 file path=usr/bin/a2ps
 file path=usr/bin/card
 file path=usr/bin/composeglyphs
@@ -104,16 +113,6 @@ file path=usr/bin/psset
 file path=usr/bin/texi2dvi4a2ps
 file path=usr/include/liba2ps.h
 file path=usr/lib/liba2ps.so.1.0.0
-link path=usr/sfw/bin/a2ps target=../../bin/a2ps
-link path=usr/sfw/bin/card target=../../bin/card
-link path=usr/sfw/bin/composeglyphs target=../../bin/composeglyphs
-link path=usr/sfw/bin/fixnt target=../../bin/fixnt
-link path=usr/sfw/bin/fixps target=../../bin/fixps
-link path=usr/sfw/bin/ogonkify target=../../bin/ogonkify
-link path=usr/sfw/bin/pdiff target=../../bin/pdiff
-link path=usr/sfw/bin/psmandup target=../../bin/psmandup
-link path=usr/sfw/bin/psset target=../../bin/psset
-link path=usr/sfw/bin/texi2dvi4a2ps target=../../bin/texi2dvi4a2ps
 file path=usr/share/a2ps/README
 file path=usr/share/a2ps/afm/fonts.map
 file path=usr/share/a2ps/afm/make_fonts_map.sh mode=0555
@@ -382,15 +381,20 @@ file path=usr/share/ogonkify/ptmb-o.ps
 file path=usr/share/ogonkify/ptmbi-o.ps
 file path=usr/share/ogonkify/ptmr-o.ps
 file path=usr/share/ogonkify/ptmri-o.ps
+legacy pkg=SUNWa2psr desc="a2ps - GNU Any to PostScript filter (root) 4.13b" \
+    name="a2ps - GNU Any to PostScript filter (root)"
+legacy pkg=SUNWa2psu desc="a2ps - GNU Any to PostScript filter (usr) 4.13b" \
+    name="a2ps - GNU Any to PostScript filter (usr)"
+license a2ps.license license=GPLv2
 link path=usr/lib/liba2ps.so target=liba2ps.so.1.0.0
 link path=usr/lib/liba2ps.so.1 target=liba2ps.so.1.0.0
-
-license a2ps.license license="GPLv2"
-
-legacy	pkg=SUNWa2psr \
-	name="a2ps - GNU Any to PostScript filter (root)" \
-	desc="a2ps - GNU Any to PostScript filter (root) 4.13b"
-
-legacy	pkg=SUNWa2psu \
-	name="a2ps - GNU Any to PostScript filter (usr)" \
-	desc="a2ps - GNU Any to PostScript filter (usr) 4.13b"
+link path=usr/sfw/bin/a2ps target=../../bin/a2ps
+link path=usr/sfw/bin/card target=../../bin/card
+link path=usr/sfw/bin/composeglyphs target=../../bin/composeglyphs
+link path=usr/sfw/bin/fixnt target=../../bin/fixnt
+link path=usr/sfw/bin/fixps target=../../bin/fixps
+link path=usr/sfw/bin/ogonkify target=../../bin/ogonkify
+link path=usr/sfw/bin/pdiff target=../../bin/pdiff
+link path=usr/sfw/bin/psmandup target=../../bin/psmandup
+link path=usr/sfw/bin/psset target=../../bin/psset
+link path=usr/sfw/bin/texi2dvi4a2ps target=../../bin/texi2dvi4a2ps

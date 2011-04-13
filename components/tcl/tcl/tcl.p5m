@@ -20,6 +20,7 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 set name=pkg.fmri \
     value=pkg:/runtime/tcl-8@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description \
@@ -29,14 +30,15 @@ set name=info.classification \
     value="org.opensolaris.category.2008:Development/Other Languages"
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream_url value=http://prdownloads.sourceforge.net/tcl/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2007/317
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
 dir path=usr
 dir path=usr/bin
-dir path=usr/bin/$(MACH64) 
+dir path=usr/bin/$(MACH64)
 dir path=usr/include
 dir path=usr/lib
-dir path=usr/lib/$(MACH64) 	
+dir path=usr/lib/$(MACH64)
 dir path=usr/lib/tcl8.4
 dir path=usr/lib/tcl8.4/encoding
 dir path=usr/lib/tcl8.4/http1.0
@@ -353,6 +355,9 @@ file path=usr/share/man/man3tcl/Tcl_UniCharIsAlnum.3tcl
 file path=usr/share/man/man3tcl/Tcl_UniCharToUpper.3tcl
 file path=usr/share/man/man3tcl/Tcl_UpVar.3tcl
 file path=usr/share/man/man3tcl/Tcl_WrongNumArgs.3tcl
+legacy pkg=SUNWTcl desc="Tcl - Tool Command Language (8.4.18)" \
+    name="Tcl - Tool Command Language "
+license tcl.license license=BSD-like
 link path=usr/bin/$(MACH64)/tclsh target=tclsh8.4
 link path=usr/bin/tclsh target=tclsh8.4
 link path=usr/share/man/man1t/auto_import.1t target=auto_execok.1t
@@ -1069,11 +1074,5 @@ link path=usr/share/man/man3tcl/ckfree.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/ckrealloc.3tcl target=Tcl_Alloc.3tcl
 link path=usr/share/man/man3tcl/panic.3tcl target=Tcl_Panic.3tcl
 link path=usr/share/man/man3tcl/panicVA.3tcl target=Tcl_Panic.3tcl
-
-license tcl.license license=BSD-like
-
-legacy pkg=SUNWTcl \
-    name="Tcl - Tool Command Language " \
-    desc="Tcl - Tool Command Language (8.4.18)"
 
 

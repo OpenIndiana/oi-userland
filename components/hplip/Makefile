@@ -76,8 +76,6 @@ install: COMPONENT_INSTALL_ENV += halpredir=/etc/hal/fdi/preprobe/10osvendor
 
 COMPONENT_INSTALL_ARGS += -e
 
-include ../../make-rules/shared-targets.mk
-
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
@@ -106,7 +104,6 @@ install: $(VARIANTS:%=%/.installed)
 		$(KSH93) cache.ksh)
 
 # empty test target
-test:
-	@echo "no tests available"
+test:	$(NO_TESTS)
 
 include ../../make-rules/depend.mk

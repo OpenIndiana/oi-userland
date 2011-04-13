@@ -55,28 +55,12 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	     ln -s $$sheet ; \
 	 done)
 
-SFWPROGS =	a2ps card composeglyphs fixnt fixps ogonkify pdiff psmandup \
-		psset texi2dvi4a2ps
-
-PROTOETCLPFD = $(PROTO_DIR)/etc/lp/fd
-FILTERDEFS =	a2ps.fd
-PROTOFILTERDEFS = $(FILTERDEFS:%=$(PROTOETCLPFD)/%)
-
-$(PROTOFILTERDEFS):	$(PROTOETCLPFD)
-	$(INSTALL) -m 444 $(@F) $(@D)
-
-$(PROTOETCLPFD):	$(INSTALL_32)
-	$(MKDIR) $@
-
-include ../../make-rules/shared-targets.mk
-
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) $(PROTOFILTERDEFS) $(PROTOSFWLINKS)
+install:	$(INSTALL_32)
 
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

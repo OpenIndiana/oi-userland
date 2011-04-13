@@ -42,16 +42,11 @@ CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 
-SFWPROGS =	wget
-
-include ../../make-rules/shared-targets.mk
-
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32) $(PROTOSFWLINKS)
+install:	$(INSTALL_32)
 
-test: build
-	@cd $(BUILD_DIR_32); $(MAKE) check
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

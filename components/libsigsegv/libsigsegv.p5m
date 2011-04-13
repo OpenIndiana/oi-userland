@@ -20,14 +20,23 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-set name=pkg.fmri value=pkg:/library/libsigsegv@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="libsigsegv - handling page faults in user mode"
-set name=pkg.description value="libsigsegv provides a set of functions for handling page faults in user mode"
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
-set name=info.upstream_url value="http://www.gnu.org/software/libsigsegv/"
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+# pull the manpages out of the component dir
+<transform file path=usr/share/man/(man3/.+$) -> set action.hash %<\1> >
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/library/libsigsegv@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="libsigsegv provides a set of functions for handling page faults in user mode"
+set name=pkg.summary value="libsigsegv - handling page faults in user mode"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.gnu.org/software/libsigsegv/
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2009/107
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=usr
 dir path=usr/include
 dir path=usr/lib
@@ -35,25 +44,23 @@ dir path=usr/lib/$(MACH64)
 dir path=usr/share
 dir path=usr/share/man
 dir path=usr/share/man/man3
-file path=usr/share/man/man3/sigsegv_deinstall_handler.3
-file path=usr/share/man/man3/sigsegv_dispatch.3
-file path=usr/share/man/man3/sigsegv_install_handler.3
-file path=usr/share/man/man3/sigsegv_init.3
-file path=usr/share/man/man3/stackoverflow_deinstall_handler.3
-file path=usr/share/man/man3/sigsegv_unregister.3
-file path=usr/share/man/man3/stackoverflow_install_handler.3
-file path=usr/share/man/man3/sigsegv_register.3
-file path=usr/share/man/man3/sigsegv.3
 file path=usr/include/sigsegv.h
 file path=usr/lib/$(MACH64)/libsigsegv.so.0.0.0
+file path=usr/lib/libsigsegv.so.0.0.0
+file path=usr/share/man/man3/sigsegv.3
+file path=usr/share/man/man3/sigsegv_deinstall_handler.3
+file path=usr/share/man/man3/sigsegv_dispatch.3
+file path=usr/share/man/man3/sigsegv_init.3
+file path=usr/share/man/man3/sigsegv_install_handler.3
+file path=usr/share/man/man3/sigsegv_register.3
+file path=usr/share/man/man3/sigsegv_unregister.3
+file path=usr/share/man/man3/stackoverflow_deinstall_handler.3
+file path=usr/share/man/man3/stackoverflow_install_handler.3
+legacy pkg=SUNWlibsigsegv \
+    desc="libsigsegv - handling page faults in user mode(2.6)" \
+    name="libsigsegv - handling page faults in user mode"
+license libsigsegv.license license=GPLv2
 link path=usr/lib/$(MACH64)/libsigsegv.so target=./libsigsegv.so.0.0.0
 link path=usr/lib/$(MACH64)/libsigsegv.so.0 target=./libsigsegv.so.0.0.0
-file path=usr/lib/libsigsegv.so.0.0.0
 link path=usr/lib/libsigsegv.so target=./libsigsegv.so.0.0.0
 link path=usr/lib/libsigsegv.so.0 target=./libsigsegv.so.0.0.0
-
-license libsigsegv.license license="GPLv2"
-
-legacy	pkg=SUNWlibsigsegv \
-	name="libsigsegv - handling page faults in user mode" \
-	desc="libsigsegv - handling page faults in user mode(2.6)"

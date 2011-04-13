@@ -35,10 +35,9 @@ COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxslt/$(COMPONENT_ARCHIVE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+include ../../make-rules/lint-libraries.mk
 
-LIBNAME=	xslt
-LIBNAME2=	exslt
-LINTOUT=	lint.out
+LINT_FLAGS +=	-I/usr/include/libxml2 
 
 CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
@@ -52,6 +51,8 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
+COMPONENT_TEST_TARGETS = tests
+
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
 		    cp ../mapfile.exslt libexslt/libexslt.syms ; \
@@ -59,31 +60,12 @@ COMPONENT_PREP_ACTION = \
 		    libtoolize --force --copy ; aclocal-1.10 ; \
 		    automake-1.10 --addmissing --copy ; autoconf)
 
-COMPONENT_POST_BUILD_ACTION = \
-	(cd $(@D); $(LINT) -nsvx $(CC_BITS) -o $(LIBNAME) -I$(@D) \
-			-I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include \
-			-I/usr/include/libxml2 \
-			$(COMPONENT_DIR)/llib-l$(LIBNAME) > $(LINTOUT) 2>&1 ; \
-	 	    $(LINT) -nsvx $(CC_BITS) -o $(LIBNAME2) -I$(@D) \
-			-I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include \
-			-I/usr/include/libxml2 \
-			$(COMPONENT_DIR)/llib-l$(LIBNAME2) >> $(LINTOUT) 2>&1)
-
-COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(@D); $(INSTALL) llib-l$(LIBNAME).ln \
-			$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS)) ; \
-		   $(INSTALL) llib-l$(LIBNAME2).ln \
-			$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS)))
-
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:	$(TEST_32_and_64)
-
-$(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
-	(cd $(@D) ; gmake tests || exit 0)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
