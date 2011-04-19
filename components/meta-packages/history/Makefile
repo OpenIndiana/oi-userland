@@ -22,20 +22,41 @@
 #
 
 include ../../../make-rules/shared-macros.mk
-include $(WS_TOP)/make-rules/ips.mk
 
-# we need a empty protodir or pkgsend will complain about it not existing
-PROTO_DIR=
+# $(WS_TOP)/make-rules/ips.mk really isn't set up to allow you to bypass all
+# the automatic (and lengthy) manifest manipulation that it does, which we
+# really don't need to do for these static, uninteresting packages.  So we just
+# write a simple set of publication rules to get the packages into the repo.
 
-# Don't really do anything for dependency generation
-PKGDEPEND=	/bin/true
+PKGSEND =	/usr/bin/pkgsend
+PKGLINT =	/usr/bin/pkglint
+PKGMOGRIFY =	/usr/bin/pkgmogrify
+
+CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
+MOGRIFIED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.mogrified)
+PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
 $(BUILD_DIR):
 	$(MKDIR) $@
 
-download prep test:
+$(MANIFEST_BASE)-%.mogrified: %.p5m $(BUILD_DIR)
+	$(PKGMOGRIFY) -D CONSOLIDATION=$(CONSOLIDATION) $< > $@
 
-build install:	$(BUILD_DIR)
+$(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.mogrified $(BUILD_DIR)
+	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest $<
+	$(TOUCH) $@
+
+$(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(BUILD_DIR)
+	$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
+		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
+			-f $(WS_TOOLS)/pkglintrc $(MOGRIFIED)
+	$(TOUCH) $@
+
+$(BUILD_DIR)/.published-$(MACH): $(BUILD_DIR)/.linted-$(MACH) $(PUBLISHED)
+	$(TOUCH) $@
+
+publish: $(BUILD_DIR)/.published-$(MACH)
 
 clobber clean:
 	$(RM) -r $(BUILD_DIR)
