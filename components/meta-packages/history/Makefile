@@ -37,6 +37,9 @@ MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 MOGRIFIED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.mogrified)
 PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
+download prep build install:
+	@echo "nothing to be done for $@"
+
 $(BUILD_DIR):
 	$(MKDIR) $@
 
