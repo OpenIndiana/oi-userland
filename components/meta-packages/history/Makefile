@@ -45,7 +45,7 @@ $(MANIFEST_BASE)-%.mogrified: %.p5m $(BUILD_DIR)
 
 $(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.mogrified $(BUILD_DIR)
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest $<
-	$(TOUCH) $@
+	$(CP) $< $@
 
 $(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(BUILD_DIR)
 	$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
