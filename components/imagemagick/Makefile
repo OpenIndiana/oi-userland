@@ -57,11 +57,6 @@ COMPONENT_PREP_ACTION= (cd $(@D) ; $(RM) magick/magick-config.h)
 #
 COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
-# Studio 12.1 -xO4 + -zignore on sparc causes linker core dump prior to
-# build 163.
-studio_OPT.sparc.32 =	-xO3
-studio_OPT.sparc.64 =	-xO3
-
 # Show name of "error tag" as part of the warning
 #
 CFLAGS+= -errtags
