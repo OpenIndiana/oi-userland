@@ -39,7 +39,8 @@ include ../../make-rules/ips.mk
 # remove the unwanted file.
 COMPONENT_PREP_ACTION = $(RM) $(SOURCE_DIR)/crc_i386.S
 
-TARGET_ENV +=   "LOCAL_UNZIP=-DUNICODE_SUPPORT"
+COMPONENT_BUILD_ENV += \
+ "LOCAL_UNZIP=-DUNICODE_SUPPORT -DNO_WORKING_ISPRINT -DUNICODE_WCHAR"
 
 # The Makefile we want is under unix/Makefile
 COMPONENT_BUILD_ARGS += -f unix/Makefile
