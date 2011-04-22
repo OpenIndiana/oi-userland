@@ -100,7 +100,11 @@ IPS_COMPONENT_VERSION ?=	$(COMPONENT_VERSION)
 
 .SECONDARY:
 
-publish:		build install $(BUILD_DIR)/.published-$(MACH)
+# allow publishing to be overridden, such as when
+# a package is for one architecture only.
+PUBLISH_STAMP ?= $(BUILD_DIR)/.published-$(MACH)
+
+publish:		build install $(PUBLISH_STAMP)
 
 sample-manifest:	$(GENERATED).p5m
 

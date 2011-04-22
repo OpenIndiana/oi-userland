@@ -33,6 +33,10 @@ PKGLINT =	/usr/bin/pkglint
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
+GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.p5m)
+CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
+
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 MOGRIFIED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.mogrified)
 PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
@@ -61,5 +65,8 @@ $(BUILD_DIR)/.published-$(MACH): $(BUILD_DIR)/.linted-$(MACH) $(PUBLISHED)
 
 publish: $(BUILD_DIR)/.published-$(MACH)
 
+%.p5m: 	%.p5m.$(MACH)
+	$(CP) $< $@
+	
 clobber clean:
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR) $(GENERATED_ARCH_MANIFESTS)
