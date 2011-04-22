@@ -1,0 +1,195 @@
+diff -Naupr pmtools-20071116/acpidump/acpidump.c acpidump-solaris/acpidump/acpidump.c
+--- pmtools-20071116/acpidump/acpidump.c	2007-11-17 02:27:17.000000000 +0800
++++ acpidump-solaris/acpidump/acpidump.c	2009-01-14 16:42:09.000000000 +0800
+@@ -81,13 +81,14 @@ static u8 *acpi_map_memory(unsigned long
+ {
+ 	unsigned long offset;
+ 	u8 *there;
+-	int fd = open("/dev/mem", O_RDONLY);
++	int fd = open(DEFAULT_MEM_DEV, O_RDONLY);
+ 	if (fd < 0) {
+-		fprintf(stderr, "acpi_os_map_memory: cannot open /dev/mem\n");
++		fprintf(stderr, "acpi_os_map_memory: cannot open %s\n",
++			DEFAULT_MEM_DEV);
+ 		exit(1);
+ 	}
+ 	offset = where % psz;
+-	there = mmap(NULL, length + offset, PROT_READ, MAP_PRIVATE,
++	there = mmap(NULL, length + offset, PROT_READ, MAP_FLAGS,
+ 			 fd, where - offset);
+ 	close(fd);
+ 	if (there == MAP_FAILED) return 0;
+diff -Naupr pmtools-20071116/acpidump/Makefile acpidump-solaris/acpidump/Makefile
+--- pmtools-20071116/acpidump/Makefile	2006-11-30 20:41:15.000000000 +0800
++++ acpidump-solaris/acpidump/Makefile	2009-01-18 14:02:17.850743693 +0800
+@@ -12,3 +12,6 @@ CLEANFILES= $(PROG)
+ clean : 
+ 	rm -f $(CLEANFILES) $(patsubst %.c,%.o, $(SRCS)) *~
+ 
++install:
++	cp $(PROG)	$(DESTDIR)
++
+diff -Naupr pmtools-20071116/acpixtract/Makefile acpidump-solaris/acpixtract/Makefile
+--- pmtools-20071116/acpixtract/Makefile	2006-11-30 20:45:06.000000000 +0800
++++ acpidump-solaris/acpixtract/Makefile	2009-01-18 14:02:38.805550620 +0800
+@@ -12,3 +12,6 @@ CLEANFILES= $(PROG)
+ 
+ clean : 
+ 	rm -f $(CLEANFILES) $(patsubst %.c,%.o, $(SRCS))
++
++install:
++	cp $(PROG)	$(DESTDIR)
+diff -Naupr pmtools-20071116/include/acpi/platform/acenv.h acpidump-solaris/include/acpi/platform/acenv.h
+--- pmtools-20071116/include/acpi/platform/acenv.h	2005-11-12 01:07:04.000000000 +0800
++++ acpidump-solaris/include/acpi/platform/acenv.h	2009-01-14 16:39:17.000000000 +0800
+@@ -146,6 +146,9 @@
+ #elif defined(NETWARE)
+ #include "acnetware.h"
+ 
++#elif defined(__sun)
++#include "acsolaris.h"
++
+ #else
+ 
+ /* All other environments */
+diff -Naupr pmtools-20071116/include/acpi/platform/aclinux.h acpidump-solaris/include/acpi/platform/aclinux.h
+--- pmtools-20071116/include/acpi/platform/aclinux.h	2005-11-12 01:07:04.000000000 +0800
++++ acpidump-solaris/include/acpi/platform/aclinux.h	2009-01-14 16:37:48.000000000 +0800
+@@ -47,6 +47,9 @@
+ #define ACPI_USE_SYSTEM_CLIBRARY
+ #define ACPI_USE_DO_WHILE_0
+ 
++#define	DEFAULT_MEM_DEV "/dev/mem"
++#define	MAP_FLAGS MAP_PRIVATE
++
+ #ifdef __KERNEL__
+ 
+ #include <linux/config.h>
+diff -Naupr pmtools-20071116/include/acpi/platform/acsolaris.h acpidump-solaris/include/acpi/platform/acsolaris.h
+--- pmtools-20071116/include/acpi/platform/acsolaris.h	1970-01-01 08:00:00.000000000 +0800
++++ acpidump-solaris/include/acpi/platform/acsolaris.h	2009-01-14 16:37:00.000000000 +0800
+@@ -0,0 +1,95 @@
++/******************************************************************************
++ *
++ * Name: acsolaris.h - OS specific defines, etc.
++ *
++ *****************************************************************************/
++
++/*
++ * Copyright (C) 2000 - 2005, R. Byron Moore
++ * All rights reserved.
++ *
++ * Redistribution and use in source and binary forms, with or without
++ * modification, are permitted provided that the following conditions
++ * are met:
++ * 1. Redistributions of source code must retain the above copyright
++ *    notice, this list of conditions, and the following disclaimer,
++ *    without modification.
++ * 2. Redistributions in binary form must reproduce at minimum a disclaimer
++ *    substantially similar to the "NO WARRANTY" disclaimer below
++ *    ("Disclaimer") and any redistribution must be conditioned upon
++ *    including a substantially similar Disclaimer requirement for further
++ *    binary redistribution.
++ * 3. Neither the names of the above-listed copyright holders nor the names
++ *    of any contributors may be used to endorse or promote products derived
++ *    from this software without specific prior written permission.
++ *
++ * Alternatively, this software may be distributed under the terms of the
++ * GNU General Public License ("GPL") version 2 as published by the Free
++ * Software Foundation.
++ *
++ * NO WARRANTY
++ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
++ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
++ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR
++ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
++ * HOLDERS OR CONTRIBUTORS BE LIABLE FOR SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
++ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
++ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
++ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
++ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
++ * IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
++ * POSSIBILITY OF SUCH DAMAGES.
++ */
++
++#ifndef __ACSOLARIS_H__
++#define __ACSOLARIS_H__
++
++#define ACPI_USE_SYSTEM_CLIBRARY
++#define ACPI_USE_DO_WHILE_0
++
++#define	DEFAULT_MEM_DEV "/dev/xsvc"
++#define	MAP_FLAGS MAP_SHARED | MAP_NORESERVE
++
++#ifdef __KERNEL__
++
++#include <linux/config.h>
++#include <linux/string.h>
++#include <linux/kernel.h>
++#include <linux/ctype.h>
++#include <asm/system.h>
++#include <asm/atomic.h>
++#include <asm/div64.h>
++#include <asm/acpi.h>
++
++#define strtoul simple_strtoul
++
++#define ACPI_MACHINE_WIDTH  BITS_PER_LONG
++
++#else /* !__KERNEL__ */
++
++#include <stdarg.h>
++#include <string.h>
++#include <stdlib.h>
++#include <ctype.h>
++#include <unistd.h>
++
++#if defined(__ia64__) || defined(__x86_64__)
++#define ACPI_MACHINE_WIDTH          64
++#define COMPILER_DEPENDENT_INT64    long
++#define COMPILER_DEPENDENT_UINT64   unsigned long
++#else
++#define ACPI_MACHINE_WIDTH          32
++#define COMPILER_DEPENDENT_INT64    long long
++#define COMPILER_DEPENDENT_UINT64   unsigned long long
++#define ACPI_USE_NATIVE_DIVIDE
++#endif
++
++#define __cdecl
++#define ACPI_FLUSH_CPU_CACHE()
++#endif /* __KERNEL__ */
++
++/* Solaris uses GCC */
++
++#include "acgcc.h"
++
++#endif /* __ACSOLARIS_H__ */
+diff -Naupr pmtools-20071116/madt/Makefile acpidump-solaris/madt/Makefile
+--- pmtools-20071116/madt/Makefile	2007-11-17 02:48:56.000000000 +0800
++++ acpidump-solaris/madt/Makefile	2009-01-18 14:02:58.243462763 +0800
+@@ -14,3 +14,6 @@ CLEANFILES= $(PROG)
+ clean : 
+ 	rm -f $(CLEANFILES) $(patsubst %.c,%.o, $(SRCS)) *~
+ 
++install:
++	cp $(PROG)	$(DESTDIR)
++
+diff -Naupr pmtools-20071116/Makefile acpidump-solaris/Makefile
+--- pmtools-20071116/Makefile	2007-11-17 02:46:10.000000000 +0800
++++ acpidump-solaris/Makefile	2009-01-18 14:07:53.943658824 +0800
+@@ -1,4 +1,6 @@
+ DIRS = acpidump acpixtract madt
++
++
+ 
+ all:
+ 	for i in $(DIRS); do $(MAKE) -C $$i $@; done
+@@ -6,4 +8,7 @@ all:
+ clean:
+ 	for i in $(DIRS); do $(MAKE) -C $$i $@; done
+ 
+-.PHONY: all clean
++install:
++	for i in $(DIRS); do $(MAKE) -C $$i $@; done
++
++.PHONY: all clean install

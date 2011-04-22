@@ -1,0 +1,122 @@
+'\" te
+.\"
+.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.TH acpidump 1 "24 Apr 2009" "SunOS 5.11" "User Commands"
+.SH NAME
+acpidump - dump the raw contents of ACPI tables
+.SH SYNOPSIS
+.LP
+.nf
+\fBacpidump\fB [\fB-a\fR \fIaddress\fR] [\fB-b\fR] [\fI-h\fR] 
+    [\fB-l\fR \fIlength\fR] [\fB-o\fR \fIfile\fR] [\fB-s\fR \fIcount\fR] 
+    [\fB-t\fR \fItable\fR]
+.fi
+
+.SH DESCRIPTION
+.sp
+.LP
+This utility will read the ACPI tables, if any, that were presented to the
+kernel from the BIOS at boot and display the information.  The tables will be
+printed out in hexidecimal format and can be parsed with the acpixtract(1) and
+madt(1) utilities.
+
+.SH OPTIONS
+.sp
+.LP
+The following options are supported:
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-a\fR [\fIaddress\fR]\fR
+.ad
+.sp .6
+.RS 4n
+Allows the user to specify the starting address from which to dump the tables.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-b\fR
+.ad
+.sp .6
+.RS 4n
+Dump the ACPI tables in binary mode.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-h\fR
+.ad
+.sp .6
+.RS 4n
+Display the help menu containing the options supported by the utility.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-l\fR [\fIlength\fR]\fR
+.ad
+.sp .6
+.RS 4n
+Requires a starting address, specified with -a, and will dump the range of
+physical address but makes no attempt to understand the contents of that memory.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-o\fR [\fIfile\fR]\fR
+.ad
+.sp .6
+.RS 4n
+Redirect the output provided by the utility to the specified file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-s\fR [\fIcount\fR]\fR
+.ad
+.sp .6
+.RS 4n
+Skip \fIcount\fR tables of the given name
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-t\fR [\fItable\fR]\fR
+.ad
+.sp .6
+.RS 4n
+Dump only the table with the \fItable\fR signature.
+.RE
+
+
+.SH SEE ALSO
+.sp
+.LP
+\fBacpixtract\fR(1), \fBmadt\fR(1)
+.RE
+
+.SH RESOURCES
+.sp
+.LP
+http://www.lesswatts.org/projects/acpi/utilities.php
+.sp
+
+.SH NOTES
+.sp
+.LP
+The PRIV_FILE_DAC_READ privilege is necessary to use this utility.
