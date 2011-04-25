@@ -1,0 +1,13 @@
+--- ruby-1.8.7-p334.orig/lib/rdoc/rdoc.rb	Mon Feb 12 15:01:19 2007
++++ ruby-1.8.7-p334/lib/rdoc/rdoc.rb	Fri Mar 25 11:17:13 2011
+@@ -200,7 +200,9 @@
+     # we may well contain subdirectories which must
+     # be tested for .document files
+     def list_files_in_directory(dir, options)
+-      normalized_file_list(options, Dir.glob(File.join(dir, "*")), false, options.exclude)
++      # Fix for CR6650926, we're sorting the file list alphabetically to ensure that rdoc traverses the input in a predictable manner.
++      #normalized_file_list(options, Dir.glob(File.join(dir, "*")), false, options.exclude)
++       normalized_file_list(options, Dir.glob(File.join(dir, "*")).sort, false, options.exclude)
+     end
+ 
+ 

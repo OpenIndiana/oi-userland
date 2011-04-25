@@ -1,0 +1,87 @@
+#!/usr/ruby/1.8/bin/ruby
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+ 
+#
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+require 'optparse'
+
+pass_on_opts = ["lock"]
+suppress = false
+deprecation_msg =  "WARNING: gemlock has been deprecated and will be removed in a future release of Solaris, use 'gem lock' instead. (use '-s' to suppress these warnings)\n\n"
+
+options = OptionParser.new do |opts|
+  opts.banner = "Usage: gemlock [options] GEM_NAME_VERSION..."
+  opts.separator ""
+  opts.separator "Where options are:"
+
+  opts.on('-s', '--[no-]strict',
+         "Fails if unable to satisfy a dependency"
+     ) do |value|
+       pass_on_opts  << '-s'
+  end
+
+  opts.on('-n', '--nowarn',
+         "Suppress deprecation warning"
+     ) do |value|
+       suppress = true
+  end
+
+  opts.on_tail('-V', '--version',
+          "Show version"
+        ) do |value|
+          pass_on_opts << '-V'
+        end
+
+  opts.on_tail('-v', '--verbose',
+         "Verbose output"
+     ) do |value|
+      pass_on_opts << '-v'
+  end
+
+  opts.on_tail('-h', '--help', "Show this message"
+     ) do
+      puts opts
+      exit
+  end
+
+end
+
+ARGV << '-h' if ARGV.empty?
+
+begin
+  options.parse!(ARGV)
+rescue OptionParser::InvalidArgument => err
+  puts options
+  puts
+  puts err.message
+  exit(-1)
+end
+
+print deprecation_msg unless suppress
+
+ARGV.each do |arg|
+  pass_on_opts << arg
+end
+
+system("gem", *pass_on_opts)
