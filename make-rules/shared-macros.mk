@@ -287,6 +287,9 @@ CPP_POSIX =	-D_POSIX_C_SOURCE=200112L -D_POSIX_PTHREAD_SEMANTICS
 # CFLAGS instead of using this directly
 CPP_XPG6MODE=	-D_XOPEN_SOURCE=600 -D__EXTENSIONS__=1 -D_XPG6
 
+# XPG5 mode. These options are specific for C++, where _XPG6,
+# _XOPEN_SOURCE=600 and C99 are illegal. -D__EXTENSIONS__=1 is legal in C++.
+CPP_XPG5MODE=   -D_XOPEN_SOURCE=500 -D__EXTENSIONS__=1 -D_XPG5
 
 #
 # Studio C compiler flag sets to ease feature selection.  Add the required
@@ -319,6 +322,16 @@ studio_C99_DISABLE =	-xc99=none
 
 # Use the compiler default 'xc99=all,no_lib'
 studio_C99MODE =
+
+# For C++, compatibility with C99 (which is technically illegal) is
+# enabled in a different way. So, we must use a different macro for it.
+studio_cplusplus_C99_ENABLE = 	-xlang=c99
+
+# Turn it off.
+studio_cplusplus_C99_DISABLE =
+
+# And this is the macro you should actually use
+studio_cplusplus_C99MODE = 
 
 # Allow zero-sized struct/union declarations and void functions with return
 # statements.
@@ -370,6 +383,10 @@ studio_MT =		-mt
 # See CPP_XPG6MODE comment above.
 studio_XPG6MODE =	$(studio_C99MODE) $(CPP_XPG6MODE)
 XPG6MODE =		$(studio_XPG6MODE)
+
+# See CPP_XPG5MODE comment above. You can only use this in C++, not in C99.
+studio_XPG5MODE =	$(studio_cplusplus_C99MODE) $(CPP_XPG5MODE)
+XPG5MODE =		$(studio_XPG5MODE)
 
 # Default Studio C compiler flags.  Add the required feature to your Makefile
 # with CFLAGS += $(FEATURE_MACRO) and add to the component build with
