@@ -1,0 +1,22 @@
+--- ruby-1.8.7-p334.orig/mkconfig.rb	Tue Nov 23 23:38:41 2010
++++ ruby-1.8.7-p334/mkconfig.rb	Fri Mar 25 10:31:24 2011
+@@ -56,14 +56,13 @@
+       continued_name = name
+       next
+     end
+-  when /^"(.+)"\s*(\\)?$/
++  when /^"(.*)"\s*(\\)?$/
+     if continued_line
+       continued_line <<  $1
+-      unless $2
+-	val = continued_line.join("")
+-	name = continued_name
+-	continued_line = nil
+-      end
++      next if $2
++      val = continued_line.join("")
++      name = continued_name
++      continued_line = nil
+     end
+   when /^(?:ac_given_)?INSTALL=(.*)/
+     v_fast << "  CONFIG[\"INSTALL\"] = " + $1 + "\n"

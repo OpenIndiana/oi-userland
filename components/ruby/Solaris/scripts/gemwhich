@@ -1,0 +1,90 @@
+#!/usr/ruby/1.8/bin/ruby
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+ 
+#
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+require 'optparse'
+
+pass_on_opts = ["which"]
+pass_on_opts << "--no-verbose"
+suppress = false
+deprecation_msg =  "WARNING: gemwhich has been deprecated and will be removed in a future release of Solaris, use 'gem which' instead. (use '-s' to suppress these warnings)\n\n"
+
+options = OptionParser.new do |opts|
+  opts.banner = "gemwhich -- Find the location of a library module."
+  opts.separator ""
+  opts.separator "Usage: gemwhich [options] [libname]..."
+
+  opts.on('-a', '--all',
+         "Show all matching files"
+     ) do |value|
+       pass_on_opts  << '-a'
+  end
+
+  opts.on('-g', '--gems-first',
+          "Search GEM libraries before non-GEMs"
+        ) do |value|
+          pass_on_opts << '-g'
+        end
+
+  opts.on_tail('-v', '--verbose',
+         "Enable verbose output"
+     ) do |value|
+      pass_on_opts << '-v'
+  end
+
+  opts.on_tail('-s', '--suppress-warnings',
+         "Suppress deprecation warning"
+     ) do |value|
+       suppress = true
+   end
+
+  opts.on_tail('-h', '--help', "Display this help message"
+     ) do
+      print deprecation_msg
+      puts opts
+      exit
+  end
+
+end
+
+
+ARGV << '-h' if ARGV.empty?
+
+begin
+  options.parse!(ARGV)
+rescue OptionParser::InvalidArgument => err
+  puts options
+  puts
+  puts err.message
+  exit(-1)
+end
+
+ARGV.each do |arg|
+  pass_on_opts << arg
+end
+
+print deprecation_msg unless suppress
+
+system("gem", *pass_on_opts)

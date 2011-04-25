@@ -1,0 +1,109 @@
+--- ruby-1.8.7-p334/ruby.1	2007-02-12 15:01:19.000000000 -0800
++++ ruby-1.8.7-p334/../ruby.1	2008-02-28 03:00:23.255784000 -0800
+@@ -104,8 +104,79 @@
+ .Ux
+ systems, you can load object files into the Ruby interpreter
+ on-the-fly.
++.Pp
++.It Sy "DTrace Probes"
++Ruby has a set of DTrace probes that can be used to debug a running Ruby/Rails
++application. NOTE: This is on x86/x64 platform only.
++.Pp
++.Nm function-entry
++.Nd Probe that fires when a Ruby method is entered
++.Pp
++.Nm function-return
++.Nd Probe that fires when a Ruby method returns
++.Pp
++.Nm raise
++.Nd Probe that fires when a Ruby exception is raised
++.Pp
++.Nm rescue
++.Nd Probe that fires when a Ruby exception is rescued
++.Pp
++.Nm line
++.Nd Probe that fires for every line of Ruby executed
++.Pp
++.Nm gc-begin
++.Nd Probe that fires right before a GC cycle begins
++.Pp
++.Nm gc-end
++.Nd Probe that fires right after a GC cycle finishes
++.Pp
++.Nm object-create-start
++.Nd Probe that fires directly before a Ruby object is allocated
++.Pp
++.Nm object-create-done
++.Nd Probe that fires when Ruby is finished allocating an object
++.Pp
++.Nm object-free
++.Nd Probe that fires every time a Ruby object is freed
++.Pp
++.Nm ruby-probe
++.Nd Probe that can be fired from Ruby code (see below)
++.Pp
++.Sy "Probe Arguments"
+ .El
+ .Pp
++.Nm function-entry
++.Ar "Ruby class" Ar "Method name" Ar "Source file" Ar "Line number"
++.Pp
++.Nm function-return
++.Ar "Ruby class" Ar "Method name" Ar "Source file" Ar "Line number"
++.Pp
++.Nm raise
++.Ar "Ruby class" Ar "Source file" Ar "Line number"
++.Pp
++.Nm rescue
++.Ar "Source file" Ar "Line number"
++.Pp
++.Nm line
++.Ar "Source file" Ar "Line number"
++.Pp
++.Nm gc-begin
++.Ar ""
++.Pp
++.Nm gc-end
++.Ar ""
++.Pp
++.Nm object-create-start
++.Ar "Ruby type" Ar "Source file" Ar "Line number"
++.Pp
++.Nm object-create-done
++.Ar "Ruby type" Ar "Source file" Ar "Line number"
++.Pp
++.Nm object-free
++.Ar "Ruby type"
++.Nm ruby-probe
++.Ar "Arbitrary string" Ar "Arbitrary string"
++.Pp
+ .Sh OPTIONS
+ Ruby interpreter accepts following command-line options (switches).
+ They are quite similar to those of
+@@ -154,9 +225,9 @@
+ .Li #!
+ on machines that don't support it, in the following manner:
+ .Bd -literal -offset indent
+-#! /usr/local/bin/ruby
++#! /usr/bin/ruby
+ # This line makes the next one a comment in Ruby \e
+-  exec /usr/local/bin/ruby -S $0 $*
++  exec /usr/bin/ruby -S $0 $*
+ .Ed
+ .Pp
+ .It Fl T Ns Op Ar level
+@@ -251,7 +322,7 @@
+ .Li ARGV
+ and set the corresponding variable in the script.  For example:
+ .Bd -literal -offset indent
+-#! /usr/local/bin/ruby -s
++#! /usr/bin/ruby -s
+ # prints "true" if invoked with `-xyz' switch.
+ print "true\en" if $xyz
+ .Ed
+@@ -349,3 +420,5 @@
+ .Sh AUTHORS
+ Ruby is designed and implemented by
+ .An Yukihiro Matsumoto Aq matz@netlab.jp .
++.Sh SEE ALSO
++.Nm gem(1)
