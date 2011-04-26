@@ -1,0 +1,14 @@
+--- gnuplot-4.4.0/term/gd.trm.orig	Wed Feb 24 18:29:20 2010
++++ gnuplot-4.4.0/term/gd.trm	Mon Mar 28 16:41:55 2011
+@@ -978,7 +978,11 @@
+ 	if (external_default)
+ 		png_state.ttffont = gp_strdup(external_default);
+ 	else	/* Might as well try some plausible font; it's no worse than failing immediately */
++#ifndef sun
+ 		png_state.ttffont = gp_strdup("arial");
++#else /* sun */
++		png_state.ttffont = gp_strdup("LiberationSans-Regular");
++#endif /* sun */
+ 
+ 	free(png_state.default_ttffont);
+ 	png_state.default_ttffont = gp_strdup(png_state.ttffont);
