@@ -2287,14 +2287,14 @@ file path=usr/share/man/man1/rcs-checkin.1
 # for the case where no binary is present, that's not a useful configuration.
 # Therefore, require at least one of the binary supplying packages.
 #
-# Uncomment the following once the minimum Userland build system is at
-# snv_162 or newer. We require the fix for
+# The use of pkg.linted=true is a workaround for
 #
-#    Bug 18043 - renamed packages in an image cause problems
-#        with require-any dependencies
-#    https://defect.opensolaris.org/bz/show_bug.cgi?id=18043
+#    Bug 18202 - pkglint AttributeError when using require-any depend action
+#    https://defect.opensolaris.org/bz/show_bug.cgi?id=18202
 #
-#depend type=require-any \
-#	fmri=pkg:/editor/gnu-emacs/gnu-emacs-gtk \
-#	fmri=pkg:/editor/gnu-emacs/gnu-emacs-x11 \
-#	fmri=pkg:/editor/gnu-emacs/gnu-emacs-no-x11
+# and can be removed when that bug is fixed.
+#
+depend type=require-any pkg.linted=true \
+	fmri=pkg:/editor/gnu-emacs/gnu-emacs-gtk \
+	fmri=pkg:/editor/gnu-emacs/gnu-emacs-x11 \
+	fmri=pkg:/editor/gnu-emacs/gnu-emacs-no-x11
