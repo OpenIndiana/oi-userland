@@ -1,0 +1,30 @@
+--- misc/unix/start.c.orig	Fri Sep 19 11:41:54 2008
++++ misc/unix/start.c	Fri Sep 19 11:44:38 2008
+@@ -23,6 +23,9 @@
+ #include "apr_arch_proc_mutex.h" /* for apr_proc_mutex_unix_setup_lock() */
+ #include "apr_arch_internal_time.h"
+ 
++#if defined(SOLARIS2) && !defined(_LP64)
++#include <stdio_ext.h>
++#endif
+ 
+ APR_DECLARE(apr_status_t) apr_app_initialize(int *argc, 
+                                              const char * const * *argv, 
+@@ -47,6 +50,17 @@
+         return APR_SUCCESS;
+     }
+ 
++#if defined(SOLARIS2) && !defined(_LP64)
++    if (enable_extended_FILE_stdio (-1, -1) < 0) {
++        /* if the process has already enabled the extended file stdio 
++         * then, the above call will return an error. It should be
++         * ignored. 
++         */
++        if ((errno != EAGAIN) && (errno != EEXIST))
++            return APR_FROM_OS_ERROR(errno);
++    }
++#endif
++
+ #if !defined(BEOS) && !defined(OS2)
+     apr_proc_mutex_unix_setup_lock();
+     apr_unix_setup_time();
