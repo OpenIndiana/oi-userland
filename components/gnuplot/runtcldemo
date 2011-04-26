@@ -1,0 +1,131 @@
+#!/bin/sh
+
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+# Unfortunately, the gnuplot demo wants run in the
+# /usr/demo/gnuplot directory.  While there it wants to read and
+# create files.  But ordinary users can't create files there.  So
+# we will create a temporary directory, put in symlinks to the
+# gnuplot data files, and run the gnuplot command from there.
+# This will allow us to run the gnuplot demo from any directory.
+#
+# If the environment variable $GNUPLOT_DEMO_SAVE_FILES is set to y,
+# then we will save any new files that get created back to the
+# current directory.  This can also be accomplished by
+# "runtcldemo -save-files".
+#
+# There are two font files that are not included.  Set
+# corresponding environment variables for sfrm1000.pfb and
+# cmmi10.pfb if running the demo fontfile_latex.dem.
+#
+# One easy way to run the gnuplot demo is "runtcldemo"
+
+GNUPLOT_DEMO_DIR="${GNUPLOT_DEMO_DIR:-/usr/demo/gnuplot}"
+GNUPLOT_DEMO_PROGRAM="${GNUPLOT_DEMO_PROGRAM:-./gpdemos.tcl}"
+GNUPLOT_DEMO_GSFONTS="${GNUPLOT_DEMO_GSFONTS:-/usr/share/ghostscript/fonts}"
+GNUPLOT_DEMO_P052003L_PFB="${GNUPLOT_DEMO_P052003L_PFB:-$GNUPLOT_DEMO_GSFONTS/p052003l.pfb}"
+GNUPLOT_DEMO_P052023L_PFB="${GNUPLOT_DEMO_P052023L_PFB:-$GNUPLOT_DEMO_GSFONTS/p052023l.pfb}"
+GNUPLOT_DEMO_TMPDIR="/tmp/gnuplot_demo_`logname`_$$"
+GNUPLOT_DEMO_LIST="$GNUPLOT_DEMO_DIR/*.bin \
+    $GNUPLOT_DEMO_DIR/*.cfg \
+    $GNUPLOT_DEMO_DIR/*.cor \
+    $GNUPLOT_DEMO_DIR/*.csv \
+    $GNUPLOT_DEMO_DIR/*.dat \
+    $GNUPLOT_DEMO_DIR/*.dem \
+    $GNUPLOT_DEMO_DIR/*.edf \
+    $GNUPLOT_DEMO_DIR/*.fnc \
+    $GNUPLOT_DEMO_DIR/*.inc \
+    $GNUPLOT_DEMO_DIR/*.par \
+    $GNUPLOT_DEMO_DIR/*.pdb \
+    $GNUPLOT_DEMO_DIR/*.r3d \
+    $GNUPLOT_DEMO_DIR/*.rgb \
+    $GNUPLOT_DEMO_DIR/*.rot \
+    $GNUPLOT_DEMO_DIR/binary[123] \
+    $GNUPLOT_DEMO_DIR/bldg.png \
+    $GNUPLOT_DEMO_DIR/gnu-valley \
+    $GNUPLOT_DEMO_DIR/random-points \
+    $GNUPLOT_DEMO_DIR/gpdemos.tcl \
+    $GNUPLOT_DEMO_P052003L_PFB \
+    $GNUPLOT_DEMO_P052023L_PFB \
+    $GNUPLOT_DEMO_CMMI10_PFB \
+    $GNUPLOT_DEMO_SFRM1000_PFB"
+GNUPLOT_DEMO_SAVE_FILES=${GNUPLOT_DEMO_SAVE_FILES:-n}
+
+if [ "x$1" = "x-save-files" ]
+then
+	GNUPLOT_DEMO_SAVE_FILES="y"
+	shift
+
+elif [ "x$1" = "x-delete-files" ]
+then
+	GNUPLOT_DEMO_SAVE_FILES="n"
+	shift
+fi
+
+# if we are interrupted or terminated, remove the temporary
+# directory we will create.
+
+if [ "$GNUPLOT_DEMO_SAVE_FILES" = "y" ]
+then
+	trap "find $GNUPLOT_DEMO_TMPDIR -type f -a -exec cp -p {} . \; ; rm -rf $GNUPLOT_DEMO_TMPDIR; exit 1" INT TERM
+else
+	trap "rm -rf $GNUPLOT_DEMO_TMPDIR; exit 1" INT TERM
+fi
+
+# Create a writeable temporary directory to run the demo from.
+
+mkdir $GNUPLOT_DEMO_TMPDIR
+chmod u+rwx $GNUPLOT_DEMO_TMPDIR
+
+# Make symlinks in that directory to the demo sources
+
+for GNUPLOT_DEMO_FILE in $GNUPLOT_DEMO_LIST
+do
+	ln -s $GNUPLOT_DEMO_FILE $GNUPLOT_DEMO_TMPDIR
+done
+
+# Run the gnuplot demo in that directory.
+
+(cd $GNUPLOT_DEMO_TMPDIR;
+    exec $GNUPLOT_DEMO_PROGRAM $*)
+
+# Save the gnuplot exit status
+
+GNUPLOT_DEMO_EXITSTATUS="$?"
+
+# If desired save any new files that got created in the temporary
+# directory
+
+if [ "$GNUPLOT_DEMO_SAVE_FILES" = "y" ]
+then
+	find $GNUPLOT_DEMO_TMPDIR -type f -exec cp -p {} . \;
+fi
+
+# Remove the temporary directory
+
+rm -rf $GNUPLOT_DEMO_TMPDIR
+
+# exit with the exit status from the gnuplot command
+
+exit $GNUPLOT_DEMO_EXITSTATUS

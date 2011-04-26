@@ -1,0 +1,22 @@
+--- gnuplot-4.4.0/src/Makefile.am.orig	Fri Mar  5 18:09:39 2010
++++ gnuplot-4.4.0/src/Makefile.am	Tue Apr 19 15:59:18 2011
+@@ -51,7 +51,7 @@
+ template.h term_api.h term.c term.h time.c unset.c util.c util.h \
+ util3d.c util3d.h variable.c variable.h version.c version.h
+ 
+-gnuplot_LDADD = $(TERMLIBS) $(TERMXLIBS) $(WX_LIBS)
++gnuplot_LDADD = $(shell echo -lpng $(TERMLIBS) $(TERMXLIBS) $(WX_LIBS) | sed -e s,-lpng[0123456789]*,-lpng12,g)
+ 
+ pkglibexec_PROGRAMS = 
+ 
+--- gnuplot-4.4.0/src/Makefile.in.orig	Sat Mar 13 13:20:04 2010
++++ gnuplot-4.4.0/src/Makefile.in	Tue Apr 19 16:46:03 PDT 2011
+@@ -347,7 +347,7 @@
+ 	template.h term_api.h term.c term.h time.c unset.c util.c \
+ 	util.h util3d.c util3d.h variable.c variable.h version.c \
+ 	version.h $(am__append_2) $(am__append_3)
+-gnuplot_LDADD = $(TERMLIBS) $(TERMXLIBS) $(WX_LIBS)
++gnuplot_LDADD = $(shell echo -lpng $(TERMLIBS) $(TERMXLIBS) $(WX_LIBS) | sed -e s,-lpng[0123456789]*,-lpng12,g)
+ @BUILD_GNUPLOT_X11_TRUE@gnuplot_x11_SOURCES = gplt_x11.c gplt_x11.h gpexecute.c gpexecute.h mousecmn.h
+ @BUILD_GNUPLOT_X11_TRUE@XLIBS = @LIBRARIES_FOR_X@
+ @BUILD_GNUPLOT_X11_TRUE@gnuplot_x11_LDADD = getcolor_x11.o $(XLIBS)
