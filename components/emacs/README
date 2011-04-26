@@ -78,10 +78,21 @@ information needed to understand how this component is put together.
   simplifies packaging, and the user's view of /usr/bin/emacs*.
 
   Note that we're installing a 64-bit objects in /bin, and
-  usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR). pkglint considers
-  these to be a "32-bit path". There is an RFE to suppress lint for specific
-  attributes, but until then, we simply assert that the whole action for
-  those files is linted.
+  usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR). The userland
+  pkglint plugin considers these to be a "32-bit path". There is an
+  RFE to suppress lint for specific attributes:
+
+        Bug 17777 - it would be nice if pkglint could suppress specific
+                    messages for specific actions
+        https://defect.opensolaris.org/bz/show_bug.cgi?id=17777
+
+  Until then, we simply assert that the whole action for those files is
+  linted with
+
+        pkg.linted=True
+
+  This disables all lint checking for these items, so extra care is needed
+  not to introduce some other error.
 
 - There are three different toolkit options: None, Athena widgets
   (aka Xaw, or lucid), and gtk. It would be nice to only support gtk,
@@ -118,12 +129,9 @@ information needed to understand how this component is put together.
   therefore the game files are not usable. This the same decision made
   by Debian, among others.
 
-- The depend line in gnu-emacs.p5m is currently commented out, pending
+- The depend line in gnu-emacs.p5m requiring one of the three toolkit versions
+  to be installed currently has the pkg.linted=true attribute set, pending
   the resolution of
 
-	Bug 18043 - renamed packages in an image cause problems
-            with require-any dependencies
-	https://defect.opensolaris.org/bz/show_bug.cgi?id=18043
-
-  This can be reversed once the minimum build system for userland
-  is >= snv_162.
+        Bug 18202 - pkglint AttributeError when using require-any depend action
+        https://defect.opensolaris.org/bz/show_bug.cgi?id=18202
