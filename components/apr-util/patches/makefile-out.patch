@@ -1,0 +1,14 @@
+--- Makefile.in.orig	Mon Apr 18 02:03:58 2011
++++ Makefile.in	Mon Apr 18 02:09:09 2011
+@@ -71,7 +71,10 @@
+ 
+ # Create apu-config script suitable for the install tree
+ apu-config.out: $(APU_CONFIG)
+-	sed 's,^\(location=\).*$$,\1installed,' < $(APU_CONFIG) > $@
++	sed -e 's,^\(location=\).*$$,\1installed,' \
++	    -e '/^APU_SOURCE_DIR=/s,/.*",/usr/apr-util/1.3",' \
++	    -e '/^APU_BUILD_DIR=/s,/.*",/usr/apr-util/1.3",' \
++	     < $(APU_CONFIG) > $@
+ 
+ install: $(TARGETS) install-modules
+ 	$(APR_MKDIR) $(DESTDIR)$(includedir) $(DESTDIR)$(libdir)/pkgconfig \
