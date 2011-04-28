@@ -35,23 +35,14 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-APRUTIL_PREFIX=/usr/apr-util/1.3
+CONFIGURE_PREFIX=/usr/apr-util/1.3
 
-# CONFIGURE_OPTIONS need to be reset so that pre-defined layout can be
-# used without being overwritten with default configure paths.
-# CC and CFLAGS are here just for configure needs as during the build are
-# used those from apr-1-config. Therefore also PATH definition bellow
-# contains compiler path as the first item.
-CONFIGURE_OPTIONS  =	--prefix=$(APRUTIL_PREFIX)
 CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.1
 CONFIGURE_OPTIONS +=	--with-expat=/usr
 CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
 CONFIGURE_OPTIONS +=	--with-ldap=ldap
 CONFIGURE_OPTIONS +=	--without-odbc
-CONFIGURE_OPTIONS +=	CC="$(CC)"
-CONFIGURE_OPTIONS +=	CXX="$(CCC)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
 CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/1.3/bin/apr-1-config
@@ -71,7 +62,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D); autoconf);
 # Documentation is generated in and directly packaged from 32 bit build
 # directory using doxygen.
 PKG_PROTO_DIRS += $(BUILD_DIR)/$(MACH32)/docs/dox/html
-PUBLISH_TRANSFORMS += doc-transform
+
 docs: $(BUILD_DIR)/$(MACH32)/.built
 	cd $(BUILD_DIR)/$(MACH32); doxygen docs/doxygen.conf
 

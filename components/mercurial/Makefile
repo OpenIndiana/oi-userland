@@ -38,7 +38,6 @@ include $(WS_TOP)/make-rules/ips.mk
 PKG_MACROS +=		PYTHON_LIB=$(PYTHON_LIB)
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/contrib
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
-PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/autopyc
 
 # Set mod time of patched file from patch.  Use this to ensure that the .py
 # file consistently gets the same timestamp.

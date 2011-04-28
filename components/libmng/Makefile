@@ -52,20 +52,12 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
-CFLAGS += -Xc $(CC_BITS)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_POSIX)
+# because Solaris installed the lcms headers elsewhere
 CFLAGS += `pkg-config --cflags lcms`
-CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
-CPPFLAGS += `pkg-config --cflags lcms`
-LDFLAGS += `pkg-config --libs lcms`
+# because it's unclear that --enable-largefile works properly
+CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV += LD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += CCLD="$(CC) $(CFLAGS) $(LDFLAGS)"
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
 CONFIGURE_OPTIONS += --disable-static
@@ -85,49 +77,19 @@ CONFIGURE_OPTIONS += --with-lcms
 CONFIGURE_OPTIONS += --with-zlib
 CONFIGURE_OPTIONS += --with-jpeg
 
-GSED = /usr/gnu/bin/sed
-
-PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/libmng/html
-PROTOUSRLIBPKGCONFIGDIR = $(PROTOUSRLIBDIR)/pkgconfig
-PROTOUSRLIB64PKGCONFIGDIR = $(PROTOUSRLIBDIR64)/pkgconfig
-
-HTMLDOCLIST = index.html  \
-	      mng-1.0-20010209-pdg.html \
-	      mng-lc-1.0-20010209-pdg.html \
-	      mng-vlc-1.0-20010209-pdg.html \
-	      jng-1.0-20010209-pdg.html
-
-PNGLIST = Plan1.png Plan2.png
-
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) ; \
 	    $(CP) makefiles/configure.in makefiles/Makefile.am . ; \
 		    libtoolize --force --copy ; aclocal-1.10 ; \
 		    automake-1.10 --add-missing --copy ; autoconf )
 
+$(BUILD_DIR)/libmng-64.pc:	Solaris/libmng-64.pc
+	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
+
 # common targets
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64)
-	$(MKDIR) $(PROTOUSRSHAREDOCDIR) ; \
-	$(MKDIR) $(PROTOUSRLIBPKGCONFIGDIR) ; \
-	$(MKDIR) $(PROTOUSRLIB64PKGCONFIGDIR) ; \
-	    list1='$(HTMLDOCLIST)' ; for f in $$list1; do \
-	    $(INSTALL) -m 0644 $(COMPONENT_DIR)/$$f \
-		$(PROTOUSRSHAREDOCDIR)/ ; \
-	    done 
-	    list2='$(PNGLIST)' ; for f in $$list2 ; do \
-	    $(INSTALL) -m 0644 $(COMPONENT_DIR)/$(COMPONENT_SRC)/doc/$$f \
-		$(PROTOUSRSHAREDOCDIR)/ ; \
-	    done 
-	    $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmng.pc \
-		$(PROTOUSRLIBPKGCONFIGDIR)/
-	    $(GSED) -e "s#MACH64#$(MACH64)#g" \
-		$(COMPONENT_DIR)/Solaris/libmng-64.pc > \
-		    $(COMPONENT_DIR)/libmng.pc
-	    $(INSTALL) -m 0644 $(COMPONENT_DIR)/libmng.pc \
-		$(PROTOUSRLIB64PKGCONFIGDIR)/
-	    $(RM) $(COMPONENT_DIR)/libmng.pc
+install:	$(INSTALL_32_and_64) $(BUILD_DIR)/libmng-64.pc
 
 test:	$(NO_TESTS)
 

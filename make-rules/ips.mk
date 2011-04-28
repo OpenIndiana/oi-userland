@@ -54,6 +54,7 @@ COMPARISON_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 
 # order is important
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/variant-cleanup
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/autopyc
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/defaults
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/actuators
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/devel

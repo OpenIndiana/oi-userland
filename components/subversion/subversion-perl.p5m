@@ -22,9 +22,11 @@
 #
 <transform file path=usr/perl5/5.8.4/man.+ -> default mangler.man.stability uncommitted>
 
+<transform file path=(usr/perl5/vendor_perl/5.8.4/)(SVN/.+) -> \
+	set action.hash %<\1>$(PERLARCH)/%<\2> >
+
 set name=pkg.fmri value=pkg:/library/perl-5/subversion@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Perl bindings for the Subversion SCM"
-set name=pkg.description value="Perl bindings for the Subversion SCM"
 set name=info.classification value="org.opensolaris.category.2008:Development/Source Code Management"
 set name=info.upstream_url value="http://subversion.apache.org/"
 set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
@@ -43,6 +45,16 @@ dir path=usr/perl5/5.8.4/man/man3
 dir path=usr/perl5/vendor_perl
 dir path=usr/perl5/vendor_perl/5.8.4
 dir path=usr/perl5/vendor_perl/5.8.4/SVN
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Client
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Core
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Delta
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Fs
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Ra
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Repos
+dir path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Wc
 #
 file path=usr/lib/svn/libsvn_swig_perl-1.so.0.0.0
 file path=usr/perl5/5.8.4/man/man3/SVN::Base.3
@@ -53,14 +65,28 @@ file path=usr/perl5/5.8.4/man/man3/SVN::Fs.3
 file path=usr/perl5/5.8.4/man/man3/SVN::Ra.3
 file path=usr/perl5/5.8.4/man/man3/SVN::Repos.3
 file path=usr/perl5/5.8.4/man/man3/SVN::Wc.3
-file path=usr/perl5/vendor_perl/5.8.4/SVN/Wc.pm
-file path=usr/perl5/vendor_perl/5.8.4/SVN/Delta.pm
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Client/_Client.bs
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Client/_Client.so
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Core/_Core.bs
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Core/_Core.so pkg.depend.bypass-generate=.*
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Delta/_Delta.bs
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Delta/_Delta.so
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Fs/_Fs.bs
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Fs/_Fs.so
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Ra/_Ra.bs
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Ra/_Ra.so
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Repos/_Repos.bs
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Repos/_Repos.so
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Wc/_Wc.bs
+file path=usr/perl5/vendor_perl/5.8.4/$(PERLARCH)/auto/SVN/_Wc/_Wc.so
+file path=usr/perl5/vendor_perl/5.8.4/SVN/Base.pm
 file path=usr/perl5/vendor_perl/5.8.4/SVN/Client.pm
 file path=usr/perl5/vendor_perl/5.8.4/SVN/Core.pm
-file path=usr/perl5/vendor_perl/5.8.4/SVN/Ra.pm
+file path=usr/perl5/vendor_perl/5.8.4/SVN/Delta.pm
 file path=usr/perl5/vendor_perl/5.8.4/SVN/Fs.pm
-file path=usr/perl5/vendor_perl/5.8.4/SVN/Base.pm
+file path=usr/perl5/vendor_perl/5.8.4/SVN/Ra.pm
 file path=usr/perl5/vendor_perl/5.8.4/SVN/Repos.pm
+file path=usr/perl5/vendor_perl/5.8.4/SVN/Wc.pm
 #
 link path=usr/lib/svn/libsvn_swig_perl-1.so target=libsvn_swig_perl-1.so.0.0.0
 link path=usr/lib/svn/libsvn_swig_perl-1.so.0 target=libsvn_swig_perl-1.so.0.0.0
@@ -70,4 +96,3 @@ license subversion.license license="Subversion License"
 legacy pkg=SUNWsvn-perl \
     desc="Perl Bindings for the Subversion Source Control Management System" \
     name="Subversion Perl Bindings"
-

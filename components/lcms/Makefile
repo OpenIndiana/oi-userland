@@ -30,57 +30,28 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha1:d5b075ccffc0068015f74f78e4bc39138bcfe2d4
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/lcms/files/lcms/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
-PYTHON_VERSION = 2.6
-
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
-PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
-
 PATCH_LEVEL = 0
 
-# These aren't set by default.
-PYTHON.$(PYTHON_VERSION).32 = /usr/bin/python2.6
-PYTHON.$(PYTHON_VERSION).64 = /usr/bin/$(MACH64)/python2.6
+# adding to the C++ compiler because libtool appears to strip it from CXXFLAGS
+CXX +=	$(studio_NORUNPATH)
 
-PYTHONMODULEDIR_32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
-PYTHONMODULEDIR_64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
-PROTOPYTHONMODULE32DIR = $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages
-PROTOPYTHONMODULE64DIR = $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION)/vendor-packages/64
-PROTOUSRINCLUDEDIR = $(PROTO_DIR)/usr/include
+# It seems that we have no other way to designate that we want large file support
+CFLAGS += $(CPP_LARGEFILES)
+CXXFLAGS += $(CPP_LARGEFILES)
+# non-default C++ flags
+CXXFLAGS += -features=extensions,nestedaccess,tmplrefstatic
+CXXFLAGS += -template=geninlinefuncs
 
-# We have to do this because libtool builds the C++ library with an
-# incorrect RUNPATH/RPATH
-CCC += -norunpath
-
-CFLAGS += -Xc -xnorunpath $(CC_BITS)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_POSIX) $(CPP_LARGEFILES)
-CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES) -DNDEBUG
-CXXFLAGS += -mt -library=Crun -library=Cstd -compat=5
-CXXFLAGS += -features=anachronisms,except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
-CXXFLAGS += -instances=global -template=geninlinefuncs -xlang=c99
-CXXFLAGS += -xbuiltin=%none -xinline=%auto
-CXXFLAGS += -D_XPG5 -D_XOPEN_SOURCE=500 -D__EXTENSIONS__=1
-CXXFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES) $(CC_BITS)
-LDFLAGS += -lpython$(PYTHON_VERSION) -lc -lm
-PYTHONPATH_32 = /usr/lib/python$(PYTHON_VERSION)
-PYTHONPATH_64 = /usr/lib/$(MACH64)/python$(PYTHON_VERSION)
-
-CONFIGURE_ENV += CXX="$(CCC)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += CCLD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += CXXLD="$(CCC) $(CXXFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += CXXCPP="$(CCC) $(CPPFLAGS) $(CXXFLAGS) -E"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += PYTHON="$(PYTHON)"
-CONFIGURE_ENV += PYTHONPATH="$(PYTHONPATH_$(BITS))"
-CONFIGURE_ENV += PYTHONMODULEDIR="$(PYTHONMODULEDIR_$(BITS))"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
+CONFIGURE_ENV += PYTHONMODULEDIR="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS  +=           --includedir=/usr/include/lcms
 CONFIGURE_OPTIONS  +=           --enable-shared
@@ -92,6 +63,9 @@ CONFIGURE_OPTIONS  +=           --with-python
 CONFIGURE_OPTIONS  +=           --with-pic
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
+
+# in order to run the tests, we need to use cloney
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 COMPONENT_POST_CONFIGURE_ACTION = \
     ( cd $(@D); \
