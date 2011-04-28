@@ -36,7 +36,7 @@ include ../../make-rules/ips.mk
 
 # We need to be able to return from void functions
 CC += $(studio_FEATURES_EXTENSIONS)
-CCC += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_LIBRARY_NONE)
+CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_LIBRARY_NONE)
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 

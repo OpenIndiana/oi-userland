@@ -1,5 +1,5 @@
---- Makefile.in	2010-11-25 09:55:59.000000000 -0800
-+++ Makefile.in	2011-04-14 11:19:09.472192719 -0700
+--- Makefile.in.~1~	Thu Nov 25 09:55:59 2010
++++ Makefile.in	Wed Apr 27 08:31:51 2011
 @@ -76,8 +76,8 @@
  swig_rb_libdir = @libdir@
  
@@ -11,3 +11,35 @@
  swig_pldir = @libdir@/svn-perl
  swig_rbdir = $(SWIG_RB_SITE_ARCH_DIR)/svn/ext
  contribdir = @bindir@/svn-contrib
+@@ -682,7 +682,14 @@
+ 	./config.status subversion/bindings/swig/perl/native/Makefile.PL
+ 
+ $(SWIG_PL_DIR)/native/Makefile: $(SWIG_PL_DIR)/native/Makefile.PL
+-	cd $(SWIG_PL_DIR)/native; $(PERL) Makefile.PL
++	(cd $(SWIG_PL_DIR)/native; $(PERL) Makefile.PL)
++	(cd $(SWIG_PL_DIR)/native; \
++	 for file in Makefile Makefile.client Makefile.delta Makefile.fs Makefile.ra \
++			Makefile.repos Makefile.wc ; do \
++		cp -f $$file $$file.orig ; \
++		sed -e 's;^LD_RUN_PATH.*$$;LD_RUN_PATH=/usr/lib/svn;g' $$file.orig >$$file ; \
++		rm -f $$file.orig ; \
++	 done)
+ 
+ # There is a "readlink -f" command on some systems for the same purpose,
+ # but it's not as portable (e.g. Mac OS X doesn't have it).  These should
+@@ -696,13 +703,13 @@
+ 	if test "`$(READLINK_PL) $(SWIG_PL_DIR)`" != "`$(READLINK_PL) $(SWIG_PL_SRC_DIR)`"; then \
+ 	  ln -sf $(SWIG_PL_SRC_DIR)/native/*.c $(SWIG_PL_DIR)/native; \
+ 	fi
+-	cd $(SWIG_PL_DIR)/native; $(MAKE) OPTIMIZE="" OTHERLDFLAGS="$(SWIG_LDFLAGS)"
++	cd $(SWIG_PL_DIR)/native; $(MAKE) -e OPTIMIZE="" OTHERLDFLAGS="$(SWIG_LDFLAGS)" LD_RUN_PATH=""
+ 
+ check-swig-pl: swig-pl swig-pl-lib
+ 	cd $(SWIG_PL_DIR)/native; $(MAKE) test
+ 
+ install-swig-pl: swig-pl install-swig-pl-lib
+-	cd $(SWIG_PL_DIR)/native; $(MAKE) install
++	cd $(SWIG_PL_DIR)/native; $(MAKE) -e install_vendor DESTDIR=$(DESTDIR) LD_RUN_PATH=""
+ 
+ EXTRACLEAN_SWIG_PL=rm -f $(SWIG_PL_SRC_DIR)/native/svn_*.c \
+                          $(SWIG_PL_SRC_DIR)/native/core.c

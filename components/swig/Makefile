@@ -37,8 +37,7 @@ include ../../make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION =      ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CCFLAGS +=	$(CFLAGS) -norunpath
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CCFLAGS)"
+CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 
 # common targets
 build:		$(BUILD_32)

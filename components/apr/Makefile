@@ -35,24 +35,18 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-APR_PREFIX=/usr/apr/1.3
+CONFIGURE_PREFIX=/usr/apr/1.3
 
-# CONFIGURE_OPTIONS need to be reset so that pre-defined layout can be
-# used without being overwritten with default configure paths.
-CONFIGURE_OPTIONS  =	--prefix=$(APR_PREFIX)
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS +=	--enable-other-child
 CONFIGURE_OPTIONS +=	--enable-nonportable-atomics
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	CC="$(CC)"
-CONFIGURE_OPTIONS +=	CXX="$(CCC)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--tag=CC --silent"
-CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(BITS))
 CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
-CONFIGURE_OPTIONS.32 +=	--with-installbuilddir=$(APR_PREFIX)/build
-CONFIGURE_OPTIONS.64 +=	--with-installbuilddir=$(APR_PREFIX)/build/$(MACH64)
+CONFIGURE_OPTIONS.32 +=	--with-installbuilddir=$(CONFIGURE_PREFIX)/build
+CONFIGURE_OPTIONS.64 +=	--with-installbuilddir=$(CONFIGURE_PREFIX)/build/$(MACH64)
 
 COMPONENT_TEST_TARGETS=	test
 
@@ -71,7 +65,7 @@ $(BUILD_DIR_64)/.installed: COMPONENT_POST_INSTALL_ACTION = \
 # Documentation is generated in and directly packaged from 32 bit build
 # directory using doxygen.
 PKG_PROTO_DIRS += $(BUILD_DIR_32)/docs/dox/html
-PUBLISH_TRANSFORMS += doc-transform
+
 docs: $(BUILD_DIR_32)/.built
 	cd $(BUILD_DIR_32); doxygen docs/doxygen.conf
 

@@ -34,31 +34,22 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
-
 PATCH_LEVEL = 0
 
-# Prevent RPATH/RUNPATH, even in ./configure. If conftest
-# can't find something in the default search RUNPATH, we'd
-# like to know why.
-CFLAGS += -Xc -xnorunpath
-CFLAGS += $(studio_C99_ENABLE) $(CPP_POSIX) $(CPP_LARGEFILES)
-CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
-CXXFLAGS += $(CC_BITS) -mt -library=Crun -library=Cstd -compat=5
-CXXFLAGS += -D_XPG5 -D_XOPEN_SOURCE=500 -D__EXTENSIONS__=1
-CXXFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
-LDFLAGS += -lpthread -lc -lm
-LD_OPTIONS += -z ignore
+# configure seems to add -nolibs, so we add that back to the C++ runtime and
+# stdlib
+CXXFLAGS += $(studio_CXXLIB_CSTD)
+# there seems to be no other way to enable large files support
+CXXFLAGS += $(CPP_LARGEFILES)
+# it seems that --with-pic doesn't get PIC flags to the C++ compiler
+CXXFLAGS += $(CC_PIC)
+# libtools seems to be forcing -nolibs, so we have to add back libc and libm
+LDFLAGS += -lc -lm
 
-CONFIGURE_ENV += CXX="$(CCC)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += CXXLINK="$(CCC) $(CXXFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += CXXCPP="$(CCC) $(CPPFLAGS) $(CXXFLAGS) -E"
 CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
+CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-threading

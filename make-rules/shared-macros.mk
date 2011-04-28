@@ -188,19 +188,19 @@ SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
 GCC_ROOT =	/usr/sfw
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
-CCC.studio.32 =	$(SPRO_VROOT)/bin/CC
+CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
 
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
-CCC.studio.64 =	$(SPRO_VROOT)/bin/CC
+CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
-CCC.gcc.32 =	$(GCC_ROOT)/bin/g++
+CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
 
 CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
-CCC.gcc.64 =	$(GCC_ROOT)/bin/g++
+CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
 
 CC =		$(CC.$(COMPILER).$(BITS))
-CCC =		$(CCC.$(COMPILER).$(BITS))
+CXX =		$(CXX.$(COMPILER).$(BITS))
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
 lint.64 =	$(SPRO_VROOT)/bin/lint -m64
@@ -257,6 +257,11 @@ CHMOD =		/usr/bin/chmod
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
+
+PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
+PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
+PKG_CONFIG_PATH = PKG_CONFIG_PATH.$(BITS)
+
 
 #
 # C preprocessor flag sets to ease feature selection.  Add the required
@@ -336,13 +341,6 @@ studio_cplusplus_C99MODE =
 # Allow zero-sized struct/union declarations and void functions with return
 # statements.
 studio_FEATURES_EXTENSIONS =	-features=extensions
-
-# CC requires -norunpath to avoid linking in its RUNPATH to C++ applications.
-studio_NORUNPATH =	 -norunpath
-
-# To link in standard mode (the default mode) without any C++ libraries
-# (except libCrun), use studio_LIBRARY_NONE in your compnent Makefile.
-studio_LIBRARY_NONE =	 -library=%none
 
 # Control the Studio optimization level.
 studio_OPT.sparc.32 =	-xO4
@@ -429,11 +427,43 @@ CFLAGS +=	$(CC_BITS)
 CFLAGS +=	$(CFLAGS.$(COMPILER))
 
 
+# C++ compiler usually wants all of the C compiler options too
+CXXFLAGS +=	$(CFLAGS)
+
+# Studio C++ requires -norunpath to avoid adding its location into the RUNPATH
+# to C++ applications.
+studio_NORUNPATH =	 -norunpath
+
+# To link in standard mode (the default mode) without any C++ libraries
+# (except libCrun), use studio_LIBRARY_NONE in your component Makefile.
+studio_LIBRARY_NONE =	 -library=%none
+
+# Don't link C++ with any C++ Runtime or Standard C++ library
+studio_CXXLIB_NONE =	-xnolib
+
+# Link C++ with the Studio C++ Runtime and Standard C++ library.  This is the
+# default for "standard" mode.
+studio_CXXLIB_CSTD =	-library=Cstd,Crun
+
+# link C++ with the Studio  C++ Runtime and Apache Standard C++ library
+studio_CXXLIB_APACHE =	-library=stdcxx4,Crun
+
+# Add the C++ ABI compatibility flags for older ABI compatibility.  The default
+# is "standard mode" (-compat=5)
+studio_COMPAT_VERSION_4 =	-compat=4
+
+# Tell the compiler that we don't want the studio runpath added to the
+# linker flags.  We never want the Studio location added to the RUNPATH.
+CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
+
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
 # feature to your Makefile with LDFLAGS += $(FEATURE_MACRO) and add to the
 # component build with CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)" or similiar.
 #
+
+# set the bittedness that we want to link
+LD_BITS =	-$(BITS)
 
 # Reduce the symbol table size, effectively conflicting with -g.  We should
 # get linker guidance here.
@@ -488,6 +518,9 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS)
 LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
 		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE)
 
+# We want to add bittedness to the default linker flags
+LDFLAGS += $(LD_BITS)
+
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
 COMPONENT_BUILD_ENV= \
@@ -500,6 +533,9 @@ COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
 COMPONENT_BUILD_ARGS += $(COMPONENT_BUILD_ARGS.$(BITS))
 COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
+
+# declare these phony so that we avoid filesystem conflicts.
+.PHONY:	download prep build install publish test clean clobber
 
 # If there are no tests to execute
 NO_TESTS =	test-nothing

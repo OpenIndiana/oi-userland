@@ -35,29 +35,15 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
-PKG_CONFIG_PATH_32 = /usr/lib/pkgconfig
-PKG_CONFIG_PATH_64 = /usr/lib/$(MACH64)/pkgconfig
-
 PATCH_LEVEL = 0
 
 GSSAPI_LIBDIR_32 = /usr/lib
 GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
 
-# Enable C99 mode
-studio_C99MODE = $(studio_C99_ENABLE)
+CFLAGS += $(CPP_LARGEFILES)
 
-# And we want -Xc too
-CFLAGS += $(CC_BITS) -Xc -xnorunpath $(XPG6MODE)
-CFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
-CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES) -D__EXTENSIONS__=1 -DNDEBUG
-LDFLAGS += -lpthread -lc -lm -lgss -lsocket -lresolv -lnsl -lgen
-
-CONFIGURE_ENV += CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += CCLD="$(CC) $(CFLAGS) $(LDFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
+CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp
@@ -82,7 +68,7 @@ CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
-LINT_FLAGS += -I$(COMPONENT_DIR)/$(COMPONENT_SRC)/include
+LINT_FLAGS += -I$(SOURCE_DIR)/include
 
 build: $(BUILD_32_and_64)
 
