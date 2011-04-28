@@ -535,7 +535,7 @@ COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
 
 # declare these phony so that we avoid filesystem conflicts.
-.PHONY:	download prep build install publish test clean clobber
+.PHONY:	prep build install publish test clean clobber
 
 # If there are no tests to execute
 NO_TESTS =	test-nothing
