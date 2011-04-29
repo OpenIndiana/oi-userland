@@ -1,0 +1,65 @@
+--- libevent-1.3e/Makefile.in.orig	Wed Apr 27 11:58:08 2011
++++ libevent-1.3e/Makefile.in	Wed Apr 27 11:58:30 2011
+@@ -63,12 +63,11 @@
+ am__DEPENDENCIES_1 =
+ libevent_la_DEPENDENCIES = @LTLIBOBJS@ $(am__DEPENDENCIES_1)
+ am__libevent_la_SOURCES_DIST = event.c buffer.c evbuffer.c log.c \
+-	event_tagging.c http.c evhttp.h http-internal.h evdns.c \
+-	evdns.h strlcpy.c strlcpy-internal.h WIN32-Code/misc.c \
++	event_tagging.c strlcpy.c strlcpy-internal.h WIN32-Code/misc.c \
+ 	WIN32-Code/win32.c
+ @BUILD_WIN32_TRUE@am__objects_1 = misc.lo win32.lo
+ am_libevent_la_OBJECTS = event.lo buffer.lo evbuffer.lo log.lo \
+-	event_tagging.lo http.lo evdns.lo strlcpy.lo $(am__objects_1)
++	event_tagging.lo strlcpy.lo $(am__objects_1)
+ libevent_la_OBJECTS = $(am_libevent_la_OBJECTS)
+ libevent_la_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+@@ -105,7 +104,7 @@
+   distclean-recursive maintainer-clean-recursive
+ ETAGS = etags
+ CTAGS = ctags
+-DIST_SUBDIRS = . sample test
++DIST_SUBDIRS = .
+ DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
+ distdir = $(PACKAGE)-$(VERSION)
+ top_distdir = $(distdir)
+@@ -230,11 +229,6 @@
+ 	event.3 \
+ 	kqueue.c epoll_sub.c epoll.c select.c rtsig.c poll.c signal.c \
+ 	evport.c devpoll.c event_rpcgen.py \
+-	sample/Makefile.am sample/Makefile.in sample/event-test.c \
+-	sample/signal-test.c sample/time-test.c \
+-	test/Makefile.am test/Makefile.in test/bench.c test/regress.c \
+-	test/test-eof.c test/test-weof.c test/test-time.c \
+-	test/test-init.c test/test.sh \
+ 	compat/sys/queue.h compat/sys/tree.h compat/sys/_time.h \
+ 	WIN32-Code/config.h WIN32-Code/misc.c \
+ 	WIN32-Code/win32.c WIN32-Code/misc.h \
+@@ -244,8 +238,8 @@
+ 	WIN32-Prj/time_test/time_test.dsp
+ 
+ lib_LTLIBRARIES = libevent.la
+-@BUILD_WIN32_FALSE@SUBDIRS = . sample test
+-@BUILD_WIN32_TRUE@SUBDIRS = . sample
++@BUILD_WIN32_FALSE@SUBDIRS = .
++@BUILD_WIN32_TRUE@SUBDIRS = .
+ @BUILD_WIN32_FALSE@SYS_LIBS = 
+ @BUILD_WIN32_TRUE@SYS_LIBS = -lws2_32
+ @BUILD_WIN32_FALSE@SYS_SRC = 
+@@ -253,13 +247,12 @@
+ @BUILD_WIN32_FALSE@SYS_INCLUDES = 
+ @BUILD_WIN32_TRUE@SYS_INCLUDES = -IWIN32-Code
+ libevent_la_SOURCES = event.c buffer.c evbuffer.c log.c event_tagging.c \
+-	http.c evhttp.h http-internal.h evdns.c evdns.h strlcpy.c \
+-	strlcpy-internal.h strlcpy-internal.h \
++	strlcpy.c strlcpy-internal.h strlcpy-internal.h \
+ 	$(SYS_SRC)
+ 
+ libevent_la_LIBADD = @LTLIBOBJS@ $(SYS_LIBS)
+ libevent_la_LDFLAGS = -release @VERSION@ -version-info 1:3:0
+-include_HEADERS = event.h evhttp.h evdns.h
++include_HEADERS = event.h
+ INCLUDES = -Icompat $(SYS_INCLUDES)
+ man_MANS = event.3 evdns.3
+ DISTCLEANFILES = *~

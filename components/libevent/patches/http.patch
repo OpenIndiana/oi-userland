@@ -1,0 +1,18 @@
+--- libevent-1.3e/http.c.orig	Wed Apr 27 12:06:56 2011
++++ libevent-1.3e/http.c	Wed Apr 27 12:07:14 2011
+@@ -157,10 +157,13 @@
+ 		return NULL;
+ 	tok = *s;
+ 	d = strstr(tok, del);
+-	if (d)
++	if (d) {
+ 		*s = d + strlen(del);
+-	else
++		d[0]='\0';
++	} else {
+ 		*s = NULL;
++	}
++
+ 	return tok;
+ }
+ #endif
