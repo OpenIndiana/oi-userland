@@ -102,6 +102,11 @@ def download(url, filename = None):
 		printIOError(e, "Can't open url " + url)
 		return None
 
+	# 3xx, 4xx and 5xx (f|ht)tp codes designate unsuccessfull action
+	if 3 <= int(src.getcode()/100) <= 5:
+		print "Error code: " + str(src.getcode())
+		return None
+
 	if filename == None:
 		filename = src.geturl().split('/')[-1]
 
