@@ -27,25 +27,21 @@ include ../../make-rules/shared-macros.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
-COMPONENT_NAME=		squid
-COMPONENT_VERSION=	2.7.STABLE9
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:6d90fe06468b662b2eefd7ffeb47b9a78f0a871d
-COMPONENT_ARCHIVE_URL=	http://www.squid-cache.org/Versions/v2/2.7/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=         squid
+COMPONENT_VERSION=      3.1.8
+COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha1:1b3e14e653a77462607aefa7931605a5e24829b9
+COMPONENT_ARCHIVE_URL=  http://www.squid-cache.org/Versions/v3/3.1/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-IPS_COMPONENT_VERSION=	2.7.9
+COMPILER = gcc
 
 CFLAGS += -I/usr/include/kerberosv5
-CFLAGS += -DSOLARIS_11
-CFLAGS += -D__BIG_ENDIAN__
 CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += $(studio_FEATURES_EXTENSIONS)
-
 
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
@@ -73,13 +69,13 @@ CONFIGURE_OPTIONS += --enable-icmp
 CONFIGURE_OPTIONS += --enable-large-cache-files
 CONFIGURE_OPTIONS += --enable-multicast-miss
 CONFIGURE_OPTIONS += --enable-negotiate-auth-helpers='squid_kerb_auth'
-CONFIGURE_OPTIONS += --enable-ntlm-auth-helpers='SMB,fakeauth,no_check'
+CONFIGURE_OPTIONS += --enable-ntlm-auth-helpers='smb_lm,fakeauth,no_check'
 CONFIGURE_OPTIONS += --enable-ntlm-fail-open
 CONFIGURE_OPTIONS += --enable-referer-log
 CONFIGURE_OPTIONS += --enable-removal-policies='heap,lru'
 CONFIGURE_OPTIONS += --enable-snmp
 CONFIGURE_OPTIONS += --enable-ssl
-CONFIGURE_OPTIONS += --enable-storeio='aufs,coss,diskd,ufs,null'
+CONFIGURE_OPTIONS += --enable-storeio='aufs,diskd,ufs'
 CONFIGURE_OPTIONS += --enable-useragent-log
 CONFIGURE_OPTIONS += --enable-x-accelerator-vary
 CONFIGURE_OPTIONS += --with-aio
@@ -89,11 +85,8 @@ CONFIGURE_OPTIONS += --with-build-environment=POSIX_V6_ILP32_OFFBIG
 CONFIGURE_OPTIONS += --with-pthreads
 
 COMPONENT_POST_BUILD_ACTION= \
-		(cd $(@D) ; $(PERL) -pi \
-                -e 'print q{visible_hostname localhost} if $$. == 1;' \
-                -e 's/^\# +cache_effective_user.*/cache_effective_user webservd/g;' \
-                -e 's/^\# +dns_testnames.*/dns_testnames localhost/g' \
-               		src/squid.conf.default )
+                (cd $(COMPONENT_DIR) ; \
+                 $(CP) squid.conf.default $(@D)/src)
 
 # common targets
 build:		$(BUILD_32) 

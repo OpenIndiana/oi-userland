@@ -1,34 +1,11 @@
---- squid-2.7.STABLE9/helpers/basic_auth/SASL/Makefile.in.orig  Wed Mar 23 01:57:21 2011
-+++ squid-2.7.STABLE9/helpers/basic_auth/SASL/Makefile.in       Wed Mar 23 01:57:54 2011
-@@ -216,7 +216,7 @@
- top_builddir = @top_builddir@
- top_srcdir = @top_srcdir@
- INCLUDES = -I$(top_srcdir)/include
--LDADD = -L$(top_builddir)/lib -lmiscutil $(LIBSASL) $(XTRA_LIBS)
-+LDADD = -L$(top_builddir)/lib -lmiscutil -lsasl $(XTRA_LIBS)
- EXTRA_DIST = squid_sasl_auth squid_sasl_auth.conf
- all: all-am
-
---- squid-2.7.STABLE9/helpers/negotiate_auth/squid_kerb_auth/Makefile.in.orig	Thu Feb 24 14:16:07 2011
-+++ squid-2.7.STABLE9/helpers/negotiate_auth/squid_kerb_auth/Makefile.in	Thu Feb 24 14:16:17 2011
-@@ -230,7 +230,7 @@
+--- squid-3.1.8/helpers/basic_auth/SASL/Makefile.in.orig	Wed Mar 23 01:33:05 2011
++++ squid-3.1.8/helpers/basic_auth/SASL/Makefile.in	Wed Mar 23 01:35:04 2011
+@@ -286,7 +286,7 @@
+ LDADD = \
+ 	$(top_builddir)/compat/libcompat.la \
+ 	-L$(top_builddir)/lib -lmiscutil \
+-	$(LIBSASL) \
++	-lsasl \
+ 	$(XTRA_LIBS)
  
- # MIT
- KERBINC = 
--KERBLIBS = -lgssapi_krb5 -lkrb5 -lcom_err
-+KERBLIBS =-R /usr/lib/gss -L/usr/lib/gss -lgss /usr/lib/gss/mech_krb5.so -lkrb5 -lsocket 
- all: all-am
- 
- .SUFFIXES:
-
---- squid-2.7.STABLE9/helpers/negotiate_auth/squid_kerb_auth/Makefile.am.orig	Thu Feb 24 14:15:59 2011
-+++ squid-2.7.STABLE9/helpers/negotiate_auth/squid_kerb_auth/Makefile.am	Thu Feb 24 14:16:17 2011
-@@ -23,5 +23,5 @@
- 
- # MIT
- KERBINC = 
--KERBLIBS = -lgssapi_krb5 -lkrb5 -lcom_err
-+KERBLIBS =-R /usr/lib/gss -L/usr/lib/gss -lgss /usr/lib/gss/mech_krb5.so -lkrb5 -lsocket 
- 
-
-
+ EXTRA_DIST = squid_sasl_auth squid_sasl_auth.conf config.test
