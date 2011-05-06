@@ -35,6 +35,21 @@ include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
 #
+# Override these compiler settings because they are causing problems
+# in the ON build of the contrib components.
+# ON doesn't use or need these settings or the compiler has some of them
+# on by default.
+# This also produces a perl more inline with past perl's.  For better
+# or worse.
+#
+studio_XBITS=
+studio_XREGS=
+studio_IROPTS=
+studio_C99MODE=
+studio_ALIGN=
+studio_MT=
+
+#
 # The extra Configure parameters (cf_email, cf_by, myhostname) and
 # the gawk and sed that follow are attempting to sanatize the
 # resulting config.sh of values from our build environment that
