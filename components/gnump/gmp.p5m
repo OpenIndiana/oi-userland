@@ -1,0 +1,85 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/library/gmp@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="GNU MP"
+set name=pkg.description value="The GNU Multiple Precision Bignum Library"
+set name=info.classification value="org.opensolaris.category.2008:Development/High Performance Computing"
+set name=info.upstream_url value="http://gmplib.org/"
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/LSARC/2008/634
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+dir path=usr
+dir path=usr/include
+dir path=usr/include/gmp
+dir path=usr/lib
+dir path=usr/lib/$(MACH64)
+dir path=usr/lib/pkgconfig
+dir path=usr/lib/$(MACH64)/pkgconfig
+dir path=usr/share
+dir path=usr/share/doc
+dir path=usr/share/doc/gmp
+dir path=usr/share/doc/gmp/html
+dir path=usr/share/man
+dir path=usr/share/man/man3
+dir path=usr/share/info
+#
+file path=usr/include/gmp/gmp.h
+file path=usr/include/gmp/mp.h
+file path=usr/include/gmp/gmpxx.h
+file path=usr/lib/libgmpxx.so.4.1.2
+file path=usr/lib/$(MACH64)/libgmpxx.so.4.1.2
+file path=usr/lib/libgmp.so.3.5.2
+file path=usr/lib/$(MACH64)/libgmp.so.3.5.2
+file path=usr/lib/llib-lgmp.ln
+file path=usr/lib/$(MACH64)/llib-lgmp.ln
+file path=usr/lib/llib-lgmp
+file path=usr/lib/pkgconfig/libgmp.pc
+file path=usr/lib/pkgconfig/libgmpxx.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libgmp.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libgmpxx.pc
+file path=usr/share/doc/gmp/html/index.html
+file path=usr/share/man/man3/libgmp.3
+file path=usr/share/info/gmp.info
+file path=usr/share/info/gmp.info-1
+file path=usr/share/info/gmp.info-2
+#
+link path=usr/lib/libgmp.so.3 target=libgmp.so.3.5.2
+link path=usr/lib/libgmp.so target=libgmp.so.3.5.2
+link path=usr/lib/libgmpxx.so.4 target=libgmpxx.so.4.1.2
+link path=usr/lib/libgmpxx.so target=libgmpxx.so.4.1.2
+
+link path=usr/lib/$(MACH64)/libgmp.so.3 target=libgmp.so.3.5.2
+link path=usr/lib/$(MACH64)/libgmp.so target=libgmp.so.3.5.2
+link path=usr/lib/$(MACH64)/libgmpxx.so.4 target=libgmpxx.so.4.1.2
+link path=usr/lib/$(MACH64)/libgmpxx.so target=libgmpxx.so.4.1.2
+#
+license gmp.license license="LGPLv3, GPLv3, FDLv1.3"
+#
+legacy pkg=SUNWgnu-mp \
+    desc="GNU MP 4.3.2" \
+    name="The GNU Multiple Precision (Bignum) Library (4.3.2)"
+

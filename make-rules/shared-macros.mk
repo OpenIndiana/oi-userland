@@ -427,9 +427,6 @@ CFLAGS +=	$(CC_BITS)
 CFLAGS +=	$(CFLAGS.$(COMPILER))
 
 
-# C++ compiler usually wants all of the C compiler options too
-CXXFLAGS +=	$(CFLAGS)
-
 # Studio C++ requires -norunpath to avoid adding its location into the RUNPATH
 # to C++ applications.
 studio_NORUNPATH =	 -norunpath
@@ -455,6 +452,9 @@ studio_COMPAT_VERSION_4 =	-compat=4
 # Tell the compiler that we don't want the studio runpath added to the
 # linker flags.  We never want the Studio location added to the RUNPATH.
 CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
+
+# Build 32 or 64 bit objects in C++ as well.
+CXXFLAGS +=	$(CC_BITS)
 
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
