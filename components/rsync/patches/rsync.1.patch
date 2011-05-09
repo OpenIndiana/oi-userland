@@ -1,0 +1,22 @@
+--- rsync-3.0.6.ori/rsync.1	Wed May  4 09:58:49 2011
++++ rsync-3.0.6/rsync.1	Thu May  5 10:23:18 2011
+@@ -1213,9 +1213,8 @@
+ up less space on the destination.  Conflicts with \fB\-\-inplace\fP because it's
+ not possible to overwrite data in a sparse fashion.
+ .IP 
+-NOTE: Don't use this option when the destination is a Solaris \(lqtmpfs\(rq
+-filesystem. It doesn't seem to handle seeks over null regions
+-correctly and ends up corrupting the files.
++NOTE: This option has no effect if the destination is a Solaris "tmpfs"
++filesystem.  The files won't be sparse\&.
+ .IP 
+ .IP "\fB\-n, \-\-dry\-run\fP"
+ This makes rsync perform a trial run that doesn't
+@@ -3472,3 +3471,7 @@
+ .PP 
+ Mailing lists for support and development are available at
+ http://lists.samba.org
++.SH "NOTES"
++WARNING: Daemon mode does not participate in the core 
++Solaris security policies, including Authentication, limit 
++of privileges, Audit and Audit of any subprocessing. 
