@@ -1,0 +1,35 @@
+--- init/cups.xml.in.orig	Fri Oct  2 22:41:34 2009
++++ init/cups.xml.in	Fri Oct  2 22:42:36 2009
+@@ -60,6 +60,14 @@
+         <service_fmri value='svc:/application/print/server' />
+     </dependency>
+ 
++    <dependency
++        name='ipp-listener'
++        grouping='exclude_all'
++        restart_on='none'
++        type='service'>
++        <service_fmri value='svc:/application/print/ipp-listener' />
++    </dependency>
++
+     <exec_method
+         type='method'
+         name='stop'
+@@ -90,7 +98,7 @@
+             <propval name='action_authorization' type='astring'
+                 value='solaris.smf.manage.cups' />
+             <propval name='value_authorization' type='astring'
+-                value='solaris.smf.value.cups' />
++                value='solaris.smf.manage.cups' />
+         </property_group>
+ 
+         <template>
+@@ -190,7 +198,7 @@
+             <propval name='action_authorization' type='astring'
+                 value='solaris.smf.manage.cups' />
+             <propval name='value_authorization' type='astring'
+-                value='solaris.smf.value.cups' />
++                value='solaris.smf.manage.cups' />
+         </property_group>
+ 
+         <template>
