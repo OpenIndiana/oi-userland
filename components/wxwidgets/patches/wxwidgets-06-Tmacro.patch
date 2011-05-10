@@ -1,0 +1,31 @@
+From 5e1b0e4ade49f064c19d8b0e8fcdb31dc04c039b Mon Sep 17 00:00:00 2001
+From: Vadim Zeitlin <vadim@wxwidgets.org>
+Date: Wed, 9 Sep 2009 15:48:05 +0200
+Subject: [PATCH 5/5] Predefine wxNEEDS_T to fix wxrc compilation with Sun CC.
+
+After the recent changes _T() is not defined any longer when using Sun CC but
+this file does need it to be defined and seems to compile fine when it is, so
+define wxNEEDS_T before including any wx headers.
+
+See #10660.
+---
+ utils/wxrc/wxrc.cpp |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git a/utils/wxrc/wxrc.cpp b/utils/wxrc/wxrc.cpp
+index cca4ba1..c255db7 100644
+--- a/utils/wxrc/wxrc.cpp
++++ b/utils/wxrc/wxrc.cpp
+@@ -8,6 +8,9 @@
+ // Licence:     wxWindows licence
+ /////////////////////////////////////////////////////////////////////////////
+ 
++// To fix compilation when using Sun CC we must define _T() for this file.
++#define wxNEEDS_T
++
+ // For compilers that support precompilation, includes "wx/wx.h".
+ #include "wx/wxprec.h"
+ 
+-- 
+1.6.3.3
+

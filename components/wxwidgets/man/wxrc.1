@@ -1,0 +1,126 @@
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+'\" te
+.TH wxrc 1 "5 Aug 2008" "SunOS 5.11" "User Commands"
+.SH NAME
+wxrc \- compile binary xml resource files
+.SH SYNOPSIS
+.LP
+.nf
+\fBwxrc\fR [\fB\fIresource_filename\fR] 
+.fi
+
+.LP
+.nf
+\fBwxrc\fR [\fB\fIresource_filename\fR] [\fB\fIoptions\fR]... 
+.fi
+
+.SH DESCRIPTION
+.LP
+The \fBwxrc\fR utility compiles binary xml resource files. It takes one or more file parameters (the input XRC files).
+.SH OPTIONS
+.LP
+The following options are supported:
+.TP
+\fB-h\fR
+.TP
+\fB--help\fR
+Show a help message.
+
+.TP
+\fB-v\fR
+.TP
+\fB--verbose\fR
+Show verbose logging information
+
+.TP
+\fB-c\fR
+.TP
+\fB--cpp-code\fR
+Write C++ source rather than a XRS file
+
+.TP
+\fB-e\fR
+.TP
+\fB--extra-cpp-code\fR
+If used together with -c, generates C++ header file containing class definitions for the windows defined by the XRC file (see special subsection)
+
+.TP
+\fB-u\fR
+.TP
+\fB--uncompressed\fR
+Do not compress XML files (C++ only)
+
+.TP
+\fB-g\fR
+.TP
+\fB--gettext\fR
+Output underscore-wrapped strings that poEdit or gettext can scan. Outputs to stdout, of a file -o is used.
+
+.TP
+\fB-n\fR
+.TP
+\fB--function\fR
+<name>: Specify C++ function name (use with -c)
+
+.TP
+\fB-o\fR
+.TP
+\fB--output\fR
+<filename>: Specify the output file, such as resource .xrs or resource .cpp.
+
+.TP
+\fB-l\fR
+.TP
+\fB--list-of-handlers\fR
+<filename>: Output a list of necessary handlers to this file
+
+.SH EXAMPLES
+.LP
+\fBExample 1 \fRCompiling resource .xrc file
+.LP
+
+.sp
+.in +2
+.nf
+example$ wxrc reource.xrc
+example$ wxrc -o reource.xrs
+.fi
+.in -2
+.sp
+
+.LP
+\fBExample 2 \fRCompiling resource .cpp file
+.LP
+
+.sp
+.in +2
+.nf
+example$ wxrc -v -c -o resource.cpp
+.fi
+.in -2
+.sp
+
+.SH SEE ALSO
+.LP
+\fBwx-config\fR(1)
