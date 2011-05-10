@@ -1,0 +1,1341 @@
+Copyright (C) 2004  Internet Systems Consortium, Inc. ("ISC")
+Copyright (C) 2000, 2001, 2003  Internet Software Consortium.
+See COPYRIGHT in the source root or http://isc.org/copyright.html for
+terms.
+
+		   BIND 8 to BIND 9 Migration Notes
+	      includes BIND 9.2.4 to BIND 9.3.4 changes
+
+
+BIND 9 is designed to be mostly upwards compatible with BIND 8, but
+there is still a number of caveats you should be aware of when
+upgrading an existing BIND 8 installation to use BIND 9.
+
+Introduction
+------------
+
+This document provides information about differences between BIND 8 and
+BIND 9. BIND 9 is upwards compatible with most BIND 8 features. However,
+there are still a number of caveats you should be aware of when upgrading
+an existing BIND 8 installation to use BIND 9. Be sure to read this
+entire document before installing and using BIND 9.
+
+This document contains the following sections:
+	* Section A, 1-7 Overview of Differences Between BIND 8 and BIND 9
+	* Section 8      BIND 9 name server and the Service Management Facility
+	* Appendix I     Implementing rndc
+	* Appendix II    BIND 9 Commands, Options, Files, and Tools
+	* Appendix III   The named.conf Options
+
+Additional information and documentation about BIND 9, including an
+Administrator Reference Manual (ARM) is available on the ISC web site
+at http://www.isc.org
+
+The words "named", "DNS server", "name server" and "BIND 9 server"
+are used interchangeably to denote the Internet Systems Consortium
+BIND version 9 DNS server throughout this document.
+
+Overview of Differences Between BIND 8 and BIND 9
+-------------------------------------------------
+
+Below is a list of changes between BIND 8 and BIND 9, including brief
+descriptions. For more detailed information, see the appropriate
+subsection for each item.
+
+Configuration File Compatibility, 	Section 1.0
+    * unimplemented options warning message	1.1
+    * "transfer-format" option changes		1.1
+    * configuration file errors 		1.2
+    * logging categories have changed		1.3
+    * configuration file startup errors		1.3
+    * "query-source" is deprecated		1.4
+    * multiple classes change			1.5
+
+Zone File Compatibility, 		Section 2.0
+    * stricter rules for TTLs in zone file	2.1
+    * SOA serial number changes			2.2
+    * unbalanced quotes cause errors		2.3
+    * line breaks, syntax change		2.4
+    * use /$ instead of $$ in domain names	2.5
+
+Interoperability Impact of New Protocol
+Features,				Section 3.0
+    * EDNS0 new in BIND 9			3.1
+    * zone transfers default change		3.2
+
+Unrestricted Character Set,		Section 4.0
+    * no restrictions on character set		4.0
+    * security issue, improper naming		4.0
+
+Server Administration Tools, 		Section 5.0
+    * the rndc program replaces ndc		5.1
+    * nsupdate: changes in multiple updates 	5.2
+
+No Information Leakage Between Zones,	Section 6.0
+    * glue NS records handled differently	6.0
+
+Umask Not Modified,			Section 7.0
+    * possible umask permissions issues		7.0
+
+
+
+1. Configuration File Compatibility
+
+1.1. Unimplemented Options and Changed Defaults
+
+The BIND 9 name server supports most, but not all, of the configuration
+options of the BIND 8 name server. For a complete list of implemented
+options, see Appendix III of this document.
+
+If your named.conf file uses an unimplemented option, the BIND 9 name
+server will log a warning message. A message is also logged about each
+option whose default has changed unless the option is set explicitly
+in named.conf.
+
+The default of the "transfer-format" option has changed from
+"one-answer" to "many-answers".  If you have slave servers that do
+not understand the "many-answers" zone transfer format (e.g., BIND
+4.9.5 and older) you need to explicitly specify
+"transfer-format one-answer;" in either the options block or a
+server statement.
+
+1.2. Handling of Configuration File Errors
+
+In BIND 9, named refuses to start if it detects an error in
+named.conf.  Earlier versions would start despite errors, causing
+the server to run with a partial configuration.  Errors detected
+during subsequent reloads do not cause the server to exit.
+
+Errors in master files do not cause the server to exit, but they
+do cause the zone not to load.
+
+1.3. Logging
+
+The set of logging categories in BIND 9 is different from that
+in BIND 8.  If you have customized your logging on a per-category
+basis, you need to modify your logging statement to use the
+new categories.
+
+Another difference is that the "logging" statement only takes effect
+after the entire named.conf file has been read.  This means that when
+the server starts up, any messages about errors in the configuration
+file are always logged to the default destination (syslog) when the
+server first starts up, regardless of the contents of the "logging"
+statement.  In BIND 8, the new logging configuration took effect
+immediately after the "logging" statement was read.
+
+1.4. Notify Messages and Refresh Queries
+
+The source address and port for these is now controlled by
+"notify-source" and "transfer-source", respectively, rather than
+"query-source" as in BIND 8.
+
+1.5. Multiple Classes
+
+Multiple classes have to be put into explicit views for each class.
+
+
+2. Zone File Compatibility
+
+2.1. Strict RFC1035 Interpretation of TTLs in Zone Files
+
+BIND 9 strictly complies with the RFC1035 and RFC2308 rules regarding
+omitted time-to-live (TTL) entries in zone files.  Omitted TTLs are
+replaced by the value specified with the $TTL directive, or by the
+previous explicit TTL if there is no $TTL directive.
+
+If there is no $TTL directive and the first Resource Record (RR) in the
+file does not have an explicit TTL field, the zone file is illegal
+according to RFC1035 since the TTL of the first RR is undefined.
+Unfortunately, BIND 4 and many versions of BIND 8 accept such files
+without warning and use the value of the SOA MINTTL field as a default
+for missing TTL values.
+
+Earlier versions of BIND 9 refused to load such files. However, BIND
+9.2.4 loads the files anyway (provided the SOA is the first record
+in the file), but will issue a TTL warning message.
+
+To avoid problems, we recommend that you use a $TTL directive in each
+zone file.
+
+2.2. Periods in SOA Serial Numbers Deprecated
+
+Some versions of BIND allow SOA serial numbers with an embedded
+period, like "3.002", and convert them into integers in a rather
+unintuitive way.  This feature is not supported by BIND 9; serial
+numbers must be integers.
+
+2.3. Handling of Unbalanced Quotes
+
+TXT records with unbalanced quotes, like 'host TXT "foo', were not
+treated as errors in some versions of BIND.  If your zone files
+contain such records, you will get potentially confusing error
+messages like "unexpected end of file" because BIND 9 will interpret
+everything up to the next quote character as a literal string.
+
+2.4. Handling of Line Breaks
+
+Some versions of BIND accept RRs containing line breaks that are not
+properly quoted with parentheses, like the following SOA:
+
+	@	IN SOA	ns.example. hostmaster.example.
+			( 1 3600 1800 1814400 3600 )
+
+This is not legal master file syntax and will be treated as an error
+by BIND 9. The fix is to move the opening parenthesis to the first
+line.
+
+2.5. Unimplemented BIND 8 Extensions
+
+$GENERATE: The "$$" construct for getting a literal $ into a domain
+name is deprecated.  Use \$ instead.
+
+2.6. TXT records are no longer automatically split.
+
+Some versions of BIND accepted strings TXT RDATA that contained more
+than 255 characters and silently split them in to multiple RDATA
+records to comply with protocol.  This feature has been removed, and
+the following error is produced upon reading these records:
+        "dns_rdata_fromtext: local.db:119: ran out of space"
+To address split the string in the zone data file at or before the 255
+character in to two or more TXT records.
+
+3. Interoperability Impact of New Protocol Features
+
+3.1. EDNS0
+
+BIND 9 uses EDNS0 (RFC2671) to advertise its receive buffer size.  It
+also sets an EDNS flag bit in queries to indicate that it wishes to
+receive DNSSEC responses; this flag bit usage is not yet standardised,
+but we hope it will be.
+
+Most older servers that do not support EDNS0, including prior versions
+of BIND, will send a FORMERR or NOTIMP response to these queries.
+When this happens, BIND 9 will automatically retry the query without
+EDNS0.
+
+Unfortunately, there exists at least one non-BIND name server
+implementation that silently ignores these queries instead of sending
+an error response.  Resolving names in zones where all or most
+authoritative servers use this server will be very slow or fail
+completely. The manufacturer of the name server is working on a
+solution.
+
+When BIND 9 communicates with a server that does support EDNS0, such
+as another BIND 9 server, responses of up to 4096 bytes may be
+transmitted as a single UDP datagram which is subject to fragmentation
+at the IP level.  If a firewall incorrectly drops IP fragments, it can
+cause resolution to slow down dramatically or fail.
+
+3.2. Zone Transfers
+
+Outgoing zone transfers now use the "many-answers" format by default.
+This format is not understood by certain old versions of BIND 4.
+You can work around this problem using the option "transfer-format
+one-answer;", but since these old versions all have known security
+problems, the correct fix is to upgrade the slave servers.
+
+Zone transfers to Windows 2000 DNS servers sometimes fail due to a
+bug in the Windows 2000 DNS server where DNS messages larger than
+16K are not handled properly.  Obtain the latest service pack for
+Windows 2000 from Microsoft to address this issue.  In the meantime,
+the problem can be worked around by setting "transfer-format
+one-answer;".
+http://support.microsoft.com/default.aspx?scid=kb;en-us;297936
+
+4. Unrestricted Character Set
+
+BIND 9 does not restrict the character set of domain names; it is
+fully 8-bit clean in accordance with RFC2181 section 11.
+
+It is strongly recommended that hostnames published in the DNS follow
+the RFC952 rules, but BIND 9.2.4 and above will not enforce this
+restriction.
+
+Historically, some applications have suffered from security flaws
+where data originating from the network, such as names returned by
+gethostbyaddr(), are used with insufficient checking and may cause a
+breach of security when containing unexpected characters; see
+<http://www.cert.org/advisories/CA-96.04.corrupt_info_from_servers.html>
+for details.  Some earlier versions of BIND attempt to protect these
+flawed applications from attack by discarding data containing
+characters deemed inappropriate in host names or mail addresses, under
+the control of the "check-names" option in named.conf and/or "options
+no-check-names" in resolv.conf.  BIND 9.2.4 provided no such
+protection; advice was that applications with these flaws should be
+upgraded. Subsequently however, BIND 9.3.x implements 'check-names'.
+
+
+5. Server Administration Tools
+
+5.1 ndc Replaced by rndc
+
+The "ndc" program has been replaced by "rndc", which is capable of
+remote operation.  Unlike ndc, rndc requires a configuration file.
+The easiest way to generate a configuration file is to run
+"rndc-confgen -a"; see the man pages for rndc(1M), rndc-confgen(1M),
+and rndc.conf(5) for details. While upgrading from previous Solaris
+releases to Solaris 10, the upgrade process will detect if a
+/etc/rndc.key or /etc/rndc.conf file exists. If neither file is
+found, it runs "rndc-confgen -a" and generates /etc/rndc.key
+so that rndc can be run with a local DNS name server without
+further user intervention.
+
+More information about rndc is available in "Implementing rndc",
+later in this document.
+
+
+
+5.2. nsupdate Differences
+
+The BIND 8 implementation of nsupdate had an undocumented feature
+where an update request would be broken down into multiple requests
+based upon the discovered zones that contained the records.  This
+behaviour has not been implemented in BIND 9.  Each update request
+must pertain to a single zone, but it is still possible to do
+multiple updates in a single invocation of nsupdate by terminating
+each update with an empty line or a "send" command.
+
+
+6. No Information Leakage Between Zones
+
+BIND 9 stores the authoritative data for each zone in a separate data
+structure, as recommended in RFC1035 and as required by DNSSEC and
+IXFR.  When a BIND 9 server is authoritative for both a child zone
+and its parent, it will have two distinct sets of NS records at the
+delegation point: the authoritative NS records at the child's apex,
+and a set of glue NS records in the parent.
+
+BIND 8 was unable to properly distinguish between these two sets of
+NS records and would "leak" the child's NS records into the parent,
+effectively causing the parent zone to be silently modified: responses
+and zone transfers from the parent contained the child's NS records
+rather than the glue configured into the parent (if any).  In the
+case of children of type "stub", this behaviour was documented as a
+feature, allowing the glue NS records to be omitted from the parent
+configuration.
+
+Sites that were relying on this BIND 8 behaviour need to add any
+omitted glue NS records, and any necessary glue A records, to the
+parent zone.
+
+Although stub zones can no longer be used as a mechanism for
+injecting NS records into their parent zones, they are still useful
+as a way of directing queries for a given domain to a particular
+set of name servers.
+
+
+7. Umask Not Modified
+
+The BIND 8 named unconditionally sets the umask to 022.  BIND 9 does
+not; the umask inherited from the parent process remains in effect.
+This may cause files created by named, such as journal files, to be
+created with different file permissions than they did in BIND 8.  If
+necessary, the umask should be set explicitly in the script used to
+start the named process.
+
+8. BIND 9 name server and the Service Management Facility
+
+The DNS BIND 9 named(1M) service can be managed by using the Service
+Management Facility (SMF). For more information, see the smf(5) man
+page. The SUNWbindr package provides the BIND 9 service manifest
+and must be installed.
+
+When you use SMF, the following items apply.
+
+- Administrative actions on this service, such as enabling, disabling,
+or restarting, can be performed by using the svcadm(1M) command.
+
+- The default Fault Managed Resource Identifier (FMRI) for the BIND 9
+DNS server is svc:/network/dns/server. The FMRI for the DNS client is
+svc:/network/dns/client.
+
+- You can query the state of the BIND 9 DNS service by using svcs(1).
+  For example:
+
+	# svcs svc:network/dns/server:default
+	STATE          STIME    FMRI
+	online         16:24:04 svc:/network/dns/server:default
+
+The upgrade to Solaris 10 will detect an existing /etc/named.conf file
+and enable the BIND 9 service to startup after the upgrade is completed
+and the system is rebooted.
+
+To start the BIND 9 DNS service on a Solaris 10 system:
+
+a. Create/Copy a valid /etc/named.conf file.
+b. Verify that the SUNWbind and SUNWbindr packages, including any
+   required packages are installed correctly.
+c. Enable the default service instance using svcadm(1M). For example:
+	# svcadm enable svc:network/dns/server:default
+
+While it is recommended that you use svcadm(1M) to administer the server,
+you can use rndc(1M) as well. SMF is aware of the state change of the BIND
+9 named service, whether administered by using svcadm(1M) or rndc(1M).
+
+NOTE: smf(5) will not be aware of the BIND 9 named(1M) service
+if the service is manually executed from the command line.
+
+NOTE: rndc(1M) is not able to stop the service when used in a chroot(2)
+environment under smf(1M) control.
+
+8.1 Name Server SMF Properties
+
+Relevant named(1M) options for use with smf(1) may be applied using
+service application properties:
+
+ - options/configuration_file
+
+	Specifies  the configuration file   to be used instead of
+	the  default /etc/named.conf.   To ensure  that reloading
+	the configuration file continues to work after the server
+	has  changed its working directory due  to  to a possible
+	directory  option    in   the  configuration   file,  the
+	configuration file should be  an absolute  pathname.  The
+	configuration  pathname should not include the chroot_dir
+	pathname.  This property is synonymous to the -c option.
+
+ - options/ip_interfaces
+
+	specifies  which  IP  transport  BIND  will transmit  on.
+	Possible values are 'IPv4' or  'IPv6'.  Any other setting
+	assumes 'all',  the default.  This property is synonymous
+	to command line option '-4' or '-6'
+
+ - options/listen_on_port
+
+	Specifies the default UDP and TCP port which will be used
+	to listen for  DNS requests.  This property is synonymous
+	to command line option '-p port'.
+
+
+ - options/debug_level
+
+	Specifies the default debug  level.  The default is 0; no
+	debugging. The  Higher the number  the more verbose debug
+	information becomes.  Synonymous  to command  line option
+	'-d debug-level'.
+
+ - options/threads
+
+	 Specifies  the number of cpu  worker  threads to create.
+	 The default of  0 causes named to  try and determine the
+	 number  of CPUs  present    and create one   thread  per
+	 CPU. Synonymous to command line option '-n #cpus'.
+
+ - options/chroot_dir
+
+	Specifies the directory to be  used as the root directory
+	after processing SMF   properties and  the  command  line
+	arguments but before reading the configuration file.  Use
+	this   property  when  using   a   chroot(2) environment.
+	Synonymous to command line option '-t <pathname>'.
+
+	When using chroot(2) named is unable  to disable its self
+	when receiving rndc(1M) stop or halt commands and you must
+	instead use the svcadm(1M) disable command.
+
+- options/server
+
+	Specifies an alternative execution path.  If unset then the
+	default server /usr/sbin/named is assumed.
+
+The following examples show how the application properties may be used:
+
+  Example 1: Configuring named(1m) in future to only transmit
+             over IPv4 networks:
+
+	# svccfg -s svc:network/dns/server:default setprop \
+	options/ip_interfaces=IPv4
+	# svcadm refresh svc:network/dns/server:default
+	# scvadm restart svc:network/dns/server:default
+
+  Example 2: List current configuration file and change to
+             an alternative file:
+
+	# svcprop -p options/configuration_file dns/server:default
+	""
+	# svccfg -s dns/server:default setprop \
+	options/configuration_file=/var/named/named.conf
+	# svcadm refresh dns/server:default
+	# svcprop -p options/configuration_file dns/server:default
+	/var/named/named.conf
+	# scvadm restart svc:network/dns/server:default
+
+The dns/server smf_method(5) script converts the application properties
+to the relevant command line option.
+
+Changing the "start method" property of the BIND 9 service is no longer
+recommended as was stated here previously.
+
+For more information about the Service Management Facility, refer to
+"Managing Services (Overview)" in System Administration Guide: Basic
+Administration, available on http://docs.sun.com. Also refer to smf(5),
+svcs(1), svcadm(1M), svccfg(1M) man pages and the BIND 9 name service
+manifest server.xml in /lib/svc/manifest/network/dns.
+
+
+		*************************************
+
+
+			    APPENDICES I-III
+
+
+Appendix I. Implementing rndc
+            -----------------
+
+The BIND 8 ndc(1M) and BIND 9 rndc(1M) name server control tools are
+NOT backward compatible: rndc can't talk to the BIND 8 name server
+and ndc can't talk to the BIND 9 name server. Features, options,
+default modes of operation, and configuration file requirements
+have changed.
+
+
+Ia. The rndc.conf Configuration File
+    --------------------------------
+
+The most significant difference between ndc in BIND 8 and rndc in BIND 9
+is that rndc needs its own configuration file, rndc.conf. This file can
+be generated by rndc-confgen(1M) commands. The rndc.conf file specifies
+which server controls and what algorithm the server should use. Note that
+the /etc/rndc.conf and matching /etc/named.conf information is only needed
+when using rndc to manage a remote BIND 9 name server. If rndc is only
+used to manage a local BIND 9 name server, the /etc/rndc.key is sufficient.
+
+     Sample rndc.conf File
+     ---------------------
+
+     options {
+             default-server localhost;
+             default-key "rndc-key";
+     };
+
+     key "rndc-key" {
+             algorithm hmac-md5;
+             secret "qPWZ3Ndl81aBRY9AmJhVtU==";
+     };
+
+
+     Sample named.conf File Entry for rndc
+     -------------------------------------
+
+     controls {
+             inet * allow { any; } keys { "rndc-key"; };
+     };
+
+     key "rndc-key" {
+             algorithm hmac-md5;
+             secret "qPWZ3Ndl81aBRY9AmJhVtU==";
+     };
+
+
+
+Ib. Differences in the Control Channels
+    -----------------------------------
+
+Both the ndc(1M) and the rndc(1M) utilities use a control channel to
+send commands to and retrieve information from a name server. However,
+there are differences between the utilities.
+
+  * In BIND 8, ndc can use AF_UNIX domain sockets (UNIX control
+    channel) or TCP/IP sockets (inet control channel). By default, ndc
+    does not need any support in /etc/named.conf, because BIND 8
+    servers use a UNIX domain socket with a path (/var/run/ndc.d/ndc)
+    compiled into in.named.
+
+In BIND 9, rndc uses an authenticated TCP/IP inet control channel,
+by default and is not backward compatible with BIND 8.
+
+  * When using rndc, you need to specify a 'key' clause to communicate
+    with the name server. It is mandatory that the BIND 9 server and
+    the rndc client share the same key. Using the BIND 8 controls
+    entry in BIND 9 will result in an error message.
+
+  * Some command options have changed from the ndc to the rndc
+    implementation. This includes the "-c" option, which has a
+    different syntax in BIND 9. Therefore, to specify the control
+    channel in BIND 9, use "rndc -s <server> -p <port>".
+
+
+Ic. Commands of BIND 9.3 rndc
+    ---------------------------
+  reload			 Reload configuration file and zones.
+  reload zone [class [view]]	 Reload a single zone.
+  refresh zone [class [view]] 	 Schedule immediate maintenance
+				  for a zone.
+  retransfer zone [class [view]] Retransfer a single zone without
+                                  checking serial number.
+  freeze zone [class [view]]**   Suspend updates to a dynamic zone.
+  thaw zone [class [view]]**     Enable updates to a frozen dynamic
+                                  zone and reload it.
+  reconfig      		 Reload configuration file and new
+				  zones only.
+  stats 			 Write server statistics to the
+				  statistics file.
+  querylog      		 Toggle query logging.
+  dumpdb [-all|-cache|-zones] [view ...]**
+  			         Dump cache(s) to the dump file
+				  (named_dump.db).
+  stop [-p]**		         Save pending updates to master files
+				  and stop the server; report process
+				  number if -p provided.
+  halt [-p]**                    Stop the server without saving
+				  pending updates; report process
+				  number if -p provided
+  trace				 Increment debugging level by one.
+  trace level			 Change the debugging level.
+  notrace			 Set debugging level to 0.
+  flush				 Flushes all of the server's caches.
+  flush [view]			 Flushes the server's cache for a view.
+  status			 Display status of the server.
+  recursing**		         Dump the queries that are currently
+				  recursing (named.recursing)
+  restart*			 Restart the server.
+
+  *  = not yet implemented
+  ** = New command or option in bind 9.3.
+
+
+Appendix II        BIND 9 Commands, Files, Tools, and Options
+                   ------------------------------------------
+
+IIa. Comparison of BIND 8 and BIND 9 Commands and Files
+     --------------------------------------------------
+
+The table below compares BIND 8 and BIND 9 commands and
+configuration files. BIND 9 man pages install in /usr/man.
+
+    -------------------------------------------------
+    |   BIND 8 Command     | BIND 9.3 replacement   |
+    -------------------------------------------------
+    |   dnskeygen(1M)      |   dnssec-keygen(1M)    |
+    |   ndc(1M)            |   rndc(1M)             |
+    |   named-bootconf(1M) |   NONE NEEDED          |
+    |   nsupdate(1M)       |   nsupdate(1M)         |
+    |   nslookup(1M)       |   nslookup(1M)         |
+    |   named-xfer(1M)     |   NONE NEEDED          |
+    |   in.named(1M)       |   named(1M)            |
+    |   named.conf(4)      |   named.conf*          |
+    |   dig(1M)            |   dig(1M)              |
+    -------------------------------------------------
+
+* A detailed named.conf man page was not included with BIND 9 originally.
+Appendix III includes a summary of the named.conf options that are
+supported in BIND 9.3.x at this time.
+
+
+ IIb. BIND 9 Tools and Configuration Files
+      ------------------------------------
+
+The following BIND 9.3 tools are available in the SUNWbind
+package and installed in /usr/sbin:
+
+  named
+  nsupdate
+  rndc
+  dnssec-keygen
+  nslookup
+  dig
+  dnssec-signzone
+  named-checkconf
+  named-checkzone
+  rndc-confgen
+  host
+
+The following BIND 9.3 configuration files are supported.
+
+  /etc/rndc.conf
+
+
+IIc. Descriptions of Command and Option Changes from 8.x to 9.x
+     ----------------------------------------------------------
+
+Listed below are BIND 8 features/interfaces that are not supported in
+the equivalent BIND 9 binary. This is not intended to be an exhaustive
+list of the options, command line options or features for any BIND 9.x
+command.
+
+1. in.named(1M): DNS Name server in.named command line options.
+
+   In the BIND 9.3 name server, the "-g group_name", "-q", "-r" and "-w
+   directory" options are not supported, and "-c config_file" replaces
+   the BIND 8.x "-b config_file". See the named man page for further
+   details.
+
+2. dnssec-keygen: dnskeygen(1M) in BIND 8.x and dnssec-keygen from BIND
+   9.2.x and above, have no common options. See the dnssec-keygen man
+   page or further details.
+
+3. rndc(1M): See Appendix I in this document.
+
+4. nsupdate(1M): in BIND 9.2.x and above, the syntax of the "-k" option
+   changes in nsupdate. Instead of "-k keydir::keyname" the syntax is now
+   "-k keyfile". The only other difference is that whereas a blank line was
+   used to signal sending the input to the server, an explicit "send"
+   sub-command is now used to do the same. See the nsupdate man page for
+   further details.
+
+5. nslookup(1M): the following options are unsupported in the
+   BIND 9.2.x and above version.
+
+   help, host server, set ignoretc, set noignoretc,
+   set srch[list]=N1[/N2/.../N6], set ro[ot]=host, root,
+   finger [USER], ls [opt] DOMAIN [> FILE].
+
+6. named.conf: several options are unsupported, not implemented or
+   have changed defaults. For a list of the option changes and a
+   summary of all named.conf options, see Appendix III.
+
+IId. Differences in BIND 9.3 from BIND 9.2
+     -------------------------------------
+
+BIND 9.3 provides several changes from BIND 9.2, including but
+not limited to:
+
+1. DNSSEC tools provided by BIND 9.2.4 are not compatible with BIND 9.3.4
+   and are replaced where applicable.  Specifically, DNSSEC-bis
+   functionality removes the need for dnssec-signkey(1M) and
+   dnssec-makekeyset(1M); dnssec-keygen(1M) and dnssec-signzone(1M) now
+   provide alternative functionality.
+
+2. dig(1M) and nslookup(1M) now report "Not Implemented" as NOTIMP rather
+   than NOTIMPL. This will have impact on scripts that are looking for
+   NOTIMPL.
+
+3. named(1M): BIND server process includes new command line options to
+   overcome certain operating environment issues; CR 6320428.  These
+   options are:
+
+     * '-4' specifies to only send queries on IPv4 interfaces
+     * '-6' specifies to only send queries on IPv6 interfaces.
+
+   named(1M) by default will reject master zone files where hostnames
+   or mail domain names have invalid syntax or characters. The rules
+   for legal hostnames / mail domains are derived from RFC 952 and RFC
+   821 as modified by RFC 1123.
+
+     * Corrective action should be to change the host names with
+       illegal syntax or characters, such as underscore (_)
+       characters.  Use "named-checkconf -z /etc/named.conf" to check
+       validity of the named configuration file and any zone files
+       referenced by it.
+
+       To aid migration the default functionality may be
+       overridden using the check-names option of named.conf.  For
+       example to allow zones with name failures to load but log
+       warning messages (as is the default for slave (secondary)
+       zones) modify or add an option statement to named.conf:
+
+        	options {
+			check-names master warn;
+		};
+
+   named(1M) no longer provides the following functionality:
+
+   * Inverse IPv6 queries to the obsolete ip6.int domain.  The
+     ip6.arpa domain is obsoleted by the ip6.int domain.  See RFC
+     3596.
+
+   * IPv6 does not forward A6 lookups, deprecated by RFC 3363
+
+   * IPv6 "bitstring" not supported, primary will refuse to load zone
+     files with binary labels.  Deprecated by rfc3363.
+
+   * Zones containing MD (Mail Destination) and MF (Mail Forwarder)
+     will now be rejected.  The MD and MF resource record (RR) types
+     were originally introduced in RFC 882 and subsequently obsoleted
+     in RFC 1035 by the MX RR.
+
+4. named.conf: Has additional options:
+
+     * allow-update-forwarding
+     * alt-transfer-source
+     * alt-transfer-source-v6
+     * avoid-v4-udp-ports
+     * avoid-v6-udp-ports
+     * check-names: Validate names in zones (from BIND 8).
+     * disable-algorithms
+     * dnssec-enable
+     * dnssec-lookaside
+     * dnssec-must-be-secure
+     * dual-stack-servers: provides IPv4/IPv6 transition support.
+     * edns-udp-size: Set advertised EDNS UDP size.
+     * flush-zones-on-shutdown
+     * hostname (chaos)'
+     * ixfr-from-differences: use IXFR deltas when loading master files.
+     * masters: define masters for a zone.
+     * max-journal-size: specify the size of a journal
+     * multi-master
+     * querylog
+     * server-id (chaos)
+     * Server statement grammar includes:
+       * transfer-source
+       * transfer-source-v6
+     * tcp-listen-queue
+     * use-alt-transfer-source
+     * zone statement grammar:
+       * multi-master
+       * key-directory
+
+   named.conf removed options:
+
+     * allow-v6-synthesis: Obsolete. Caused named to translate ip6.int
+       requests to ip6.arpa requests.  As the ip6.int domain is now
+       obsolete this option has been removed.
+
+     * zone-statistics has been removed from the 'view' statement.
+
+5. dig(1M) has new command line options:
+    -4: use IPv4 query transport only
+    -6: use IPv6 query transport only
+    +[no]aaflag: Set AA flag in query (+[no]aaflag)
+    +[no]cl: Control display of class in records
+    +[no]ttlid: Control display of ttls in records
+    +tries=#: Set number of UDP attempts [3]
+    +retry=#: Set number of UDP retries [2]
+
+6. named.checkconf(1M) has new options:
+    -z: Perform a check load of the master zone files found in named.conf.
+    -j: When loading a  zonefile read the journal if it exists.
+
+7. named-checkzone(1M) has new options:
+    -k mode: Perform "check-name" checks with the specified failure mode.
+    -n mode: Check NS records are addresses, mode is warn, fail or ignore.
+    -o filename: Write zone output to filename.
+    -t directory: chroot to directory, useful for include statements.
+    -w directory: chdir to directory, useful for include statements.
+    -D: Dump zone file in canonical format.
+
+8. rndc(1M) has several new subcommands including:
+   freeze,  thaw, flushname and  recursing (see above).
+   Several subcommands have new options namely stop, halt and dumpdb.
+
+9. nsupdate(1M) generates SIG(0) signed messages.
+
+
+Appendix III   The named.conf Options
+               ----------------------
+
+IIIa.   Changes in the Options Section
+        ------------------------------
+
+The following list compares the named.conf options between BIND 8
+and BIND 9. It also provides a brief description of the change.
+"OK" denotes the option works unchanged for the BIND 9 named.
+
+   options {
+     [ version version_string; ]		  OK
+     [ directory path_name; ]			  OK
+     [ named-xfer path_name; ] 			  Obsolete (*1)
+     [ dump-file path_name; ] 			  OK
+     [ memstatistics-file path_name; ] 		  Not Implemented
+     [ pid-file path_name; ] 			  OK
+     [ statistics-file path_name; ]		  OK
+     [ auth-nxdomain yes_or_no; ] 		  OK (*2)
+     [ dialup yes_or_no; ]			  OK
+     [ fake-iquery yes_or_no; ] 		  Obsolete
+     [ fetch-glue yes_or_no; ]			  Obsolete
+     [ has-old-clients yes_or_no; ]		  Obsolete
+     [ host-statistics yes_or_no; ]		  Not Implemented
+     [ host-statistics-max number; ]		  Not Implemented
+     [ multiple-cnames yes_or_no; ]		  Obsolete
+     [ notify yes_or_no | explicit; ]		  OK
+     [ recursion yes_or_no; ]			  OK
+     [ rfc2308-type1 yes_or_no; ]		  Not Implemented
+     [ use-id-pool yes_or_no; ]			  Obsolete
+     [ treat-cr-as-space yes_or_no; ]		  Obsolete
+     [ also-notify yes_or_no; ] 		  Syntax Changed (*3)
+     [ forward ( only | first ); ] 		  OK (*4)
+     [ forwarders { in_addr ; \
+       [ in_addr ; ... ] }; ] 			  OK (*5)
+     [ check-names ( master | slave | \
+       response ) ( warn | fail | ignore); ] 	  OK (*8)
+     [ allow-query { address_match_list }; ]	  OK
+     [ allow-recursion { address_match_list }; ]  OK
+     [ allow-transfer { address_match_list }; ]	  OK
+     [ blackhole { address_match_list }; ]	  OK
+     [ listen-on [ port ip_port ] \
+       { address_match_list }; ]		  OK
+     [ query-source [ address ( ip_addr | * ) ]	\
+       [ port ( ip_port | * ) ] ; ]	 	  OK
+     [ lame-ttl number; ]			  OK
+     [ max-transfer-time-in number; ]		  OK
+     [ max-ncache-ttl number; ]			  OK
+     [ min-roots number; ]			  Not Implemented
+     [ transfer-format ( one-answer | \
+       many-answers ); ] 			  OK (*6)
+     [ transfers-in  number; ]			  OK
+     [ transfers-out number; ]			  OK
+     [ transfers-per-ns number; ]		  OK
+     [ transfer-source ip_addr; ]		  OK
+     [ maintain-ixfr-base yes_or_no; ]		  Obsolete
+     [ max-ixfr-log-size number; ]		  Obsolete (*7)
+     [ coresize size_spec ; ]			  OK
+     [ datasize size_spec ; ]			  OK
+     [ files size_spec ; ]			  OK
+     [ stacksize size_spec ; ]			  OK
+     [ cleaning-interval number; ]		  OK
+     [ heartbeat-interval number; ]		  OK
+     [ interface-interval number; ]		  OK
+     [ statistics-interval number; ]		  Not Implemented
+     [ topology { address_match_list }; ]	  Not Implemented
+     [ sortlist { address_match_list }; ]	  OK
+     [ rrset-order { order_spec ; \
+     [ order_spec ; ... ] }; ]			  Not Implemented
+     };
+
+(*1) Obsolete due to architectural differences.
+(*2) Default set to yes in BIND 8, no in BIND 9.
+(*3) Needs an IP address for "yes".
+(*4) Doesn't work if no forwarder specified; Gives an error of "no
+     matching 'forwarders' statement" in that case.
+(*5) See [ forward ] clause
+(*6) Default set to one-answer in BIND 8 and many-answers in BIND 9.
+(*7) No need for this option as BIND 9 trims the size of its
+     log file automatically.
+(*8) Implemented in BIND 9.3.4
+
+
+IIIb.	Statements in BIND 9
+        --------------------
+
+The Controls Statement
+----------------------
+  Syntax
+     controls {
+       [ inet ip_addr
+         port ip_port
+         allow { address_match_list; }; ]	OK
+       [ unix path_name
+         perm number
+         owner number
+         group number; ]			Not Implemented
+     };
+
+  Note: "unix" is the default for ndc(1M) and all of the arguments
+  are compiled in.
+
+  "inet" is the only option for rndc and nothing is compiled in.
+
+  Logging syntax has changed significantly. See section IIIc for a
+  list of named.conf options.
+
+
+The Zone Statement
+------------------
+  The syntax for the zone statement in the BIND 8 named.conf man page
+  is mostly supported for BIND 9 except for the following:
+
+  [ pubkey number number number string; ]	Obsolete
+
+
+The ACL Statement
+-----------------
+  Syntax
+     acl name {
+       address_match_list
+     };
+
+  Works unchanged in BIND 9.
+
+
+The Key Statement
+-----------------
+  Syntax
+     key key_id {
+       algorithm algorithm_id;
+       secret secret_string;
+     };
+
+  Works unchanged in BIND 9.
+
+
+The Trusted-Keys Statement
+--------------------------
+  Syntax
+     trusted-keys {
+       [ domain_name flags protocol algorithm key; ]
+     };
+
+  Works unchanged, however the code to use this
+  statement has been turned off in BIND 9.2.4.
+
+
+The Server Statement
+--------------------
+  Syntax
+     server ip_addr {
+       [ bogus yes_or_no; ]
+       [ transfers number; ]
+       [ transfer-format ( one-answer | many-answers ); ]
+       [ keys { key_id [ key_id ... ] }; ]
+       [ edns yes_or_no; ]
+     };
+
+  "support-ixfr" is obsolete, however all of the above options work
+  unchanged in BIND 9. Note the default for transfer-format has changed.
+
+
+The Include Statement
+---------------------
+  Syntax
+     include path_name;
+
+  Works unchanged in BIND 9.
+
+
+
+
+IIIc.	Summary of the named.conf Options
+	---------------------------------
+
+A detailed named.conf man page was not included with BIND 9 originally.
+Following is a summary of the named.conf options that are
+supported in BIND 9.3.6
+
+acl string { address_match_element; ... };
+
+key domain_name {
+     algorithm string;
+     secret string;
+};
+
+masters string [ port integer ] {
+     ( masters | ipv4_address [port integer] |
+     ipv6_address [port integer] ) [ key string ]; ...
+};
+
+server ( ipv4_address | ipv6_address ) {
+     bogus boolean;
+     edns boolean;
+     provide-ixfr boolean;
+     request-ixfr boolean;
+     keys server_key;
+     transfers integer;
+     transfer-format ( many-answers | one-answer );
+     transfer-source ( ipv4_address | * )
+          [ port ( integer | * ) ];
+     transfer-source-v6 ( ipv6_address | * )
+          [ port ( integer | * ) ];
+     support-ixfr boolean; // obsolete
+};
+
+trusted-keys {
+     domain_name flags protocol algorithm key; ...
+};
+
+controls {
+     inet ( ipv4_address | ipv6_address | * )
+          [ port ( integer | * ) ]
+          allow { address_match_element; ... }
+          [ keys { string; ... } ];
+     unix unsupported; // not implemented
+};
+
+logging {
+     channel string {
+          file log_file;
+          syslog optional_facility;
+          null;
+          stderr;
+          severity log_severity;
+          print-time boolean;
+          print-severity boolean;
+          print-category boolean;
+     };
+     category string { string; ... };
+};
+
+options {
+     avoid-v4-udp-ports { port; ... };
+     avoid-v6-udp-ports { port; ... };
+     blackhole { address_match_element; ... };
+     coresize size;
+     datasize size;
+     directory quoted_string;
+     cache-file quoted_string; // test option
+     dump-file quoted_string;
+     files size;
+     heartbeat-interval integer;
+     host-statistics boolean; // not implemented
+     host-statistics-max number; // not implemented
+     hostname ( quoted_string | none );
+     interface-interval integer;
+     listen-on [ port integer ] { address_match_element; ... };
+     listen-on-v6 [ port integer ] { address_match_element; ... };
+     match-mapped-addresses boolean;
+     memstatistics-file quoted_string;
+     pid-file ( quoted_string | none );
+     port integer;
+     querylog boolean;
+     recursing-file quoted_string;
+     reserved-sockets integer;
+     random-device quoted_string;
+     recursive-clients integer;
+     serial-query-rate integer;
+     server-id ( quoted_string | none );
+     stacksize size;
+     statistics-file quoted_string;
+     statistics-interval integer; // not yet implemented
+     tcp-clients integer;
+     tcp-listen-queue integer;
+     tkey-dhkey quoted_string integer;
+     tkey-gssapi-credential quoted_string;
+     tkey-domain quoted_string;
+     transfers-per-ns integer;
+     transfers-in integer;
+     transfers-out integer;
+     use-ixfr boolean;
+     version ( quoted_string | none );
+     allow-recursion { address_match_element; ... };
+     sortlist { address_match_element; ... };
+     topology { address_match_element; ... }; // not implemented
+     auth-nxdomain boolean; // default changed
+     minimal-responses boolean;
+     recursion boolean;
+     rrset-order {
+          [ class string ] [ type string ]
+          [ name quoted_string ] string string; ...
+     };
+     provide-ixfr boolean;
+     request-ixfr boolean;
+     rfc2308-type1 boolean; // not yet implemented
+     additional-from-auth boolean;
+     additional-from-cache boolean;
+     query-source [ address ( ipv4_address | * ) ] [ port ( integer | * ) ];
+     query-source-v6 [ address ( ipv6_address | * ) ] [ port ( integer | * ) ];
+     cleaning-interval integer;
+     min-roots integer; // not implemented
+     lame-ttl integer;
+     max-ncache-ttl integer;
+     max-cache-ttl integer;
+     transfer-format ( many-answers | one-answer );
+     max-cache-size size_no_default;
+     check-names ( master | slave | response )
+          ( fail | warn | ignore );
+     cache-file quoted_string;
+     suppress-initial-notify boolean; // not yet implemented
+     preferred-glue string;
+     dual-stack-servers [ port integer ] {
+          ( quoted_string [port integer] |
+          ipv4_address [port integer] |
+          ipv6_address [port integer] ); ...
+     }
+     edns-udp-size integer;
+     root-delegation-only [ exclude { quoted_string; ... } ];
+     disable-algorithms string { string; ... };
+     dnssec-enable boolean;
+     dnssec-lookaside string trust-anchor string;
+     dnssec-must-be-secure string boolean;
+     dialup dialuptype;
+     ixfr-from-differences ixfrdiff;
+     allow-query { address_match_element; ... };
+     allow-transfer { address_match_element; ... };
+     allow-update-forwarding { address_match_element; ... };
+     notify notifytype;
+     notify-source ( ipv4_address | * ) [ port ( integer | * ) ];
+     notify-source-v6 ( ipv6_address | * ) [ port ( integer | * ) ];
+     also-notify [ port integer ] { ( ipv4_address | ipv6_address )
+          [ port integer ]; ... };
+     allow-notify { address_match_element; ... };
+     forward ( first | only );
+     forwarders [ port integer ] {
+          ( ipv4_address | ipv6_address ) [ port integer ]; ...
+     };
+     max-journal-size size_no_default;
+     max-transfer-time-in integer;
+     max-transfer-time-out integer;
+     max-transfer-idle-in integer;
+     max-transfer-idle-out integer;
+     max-retry-time integer;
+     min-retry-time integer;
+     max-refresh-time integer;
+     min-refresh-time integer;
+     multi-master boolean;
+     sig-validity-interval integer;
+     transfer-source ( ipv4_address | * )
+          [ port ( integer | * ) ];
+     transfer-source-v6 ( ipv6_address | * )
+          [ port ( integer | * ) ];
+     alt-transfer-source ( ipv4_address | * )
+          [ port ( integer | * ) ];
+     alt-transfer-source-v6 ( ipv6_address | * )
+          [ port ( integer | * ) ];
+     use-alt-transfer-source boolean;
+     zone-statistics boolean;
+     key-directory quoted_string;
+     allow-v6-synthesis { address_match_element; ... }; // obsolete
+     deallocate-on-exit boolean; // obsolete
+     fake-iquery boolean; // obsolete
+     fetch-glue boolean; // obsolete
+     has-old-clients boolean; // obsolete
+     maintain-ixfr-base boolean; // obsolete
+     max-ixfr-log-size size; // obsolete
+     multiple-cnames boolean; // obsolete
+     named-xfer quoted_string; // obsolete
+     serial-queries integer; // obsolete
+     treat-cr-as-space boolean; // obsolete
+     use-id-pool boolean; // obsolete
+};
+
+view string optional_class {
+     match-clients { address_match_element; ... };
+     match-destinations { address_match_element; ... };
+     match-recursive-only boolean;
+     key string {
+          algorithm string;
+          secret string;
+     };
+     zone string optional_class {
+          ...
+     };
+     server ( ipv4_address | ipv6_address ) {
+          ...
+     };
+     trusted-keys {
+          string integer integer integer quoted_string; ...
+     };
+     allow-recursion { address_match_element; ... };
+     sortlist { address_match_element; ... };
+     topology { address_match_element; ... }; // not implemented
+     auth-nxdomain boolean; // default changed
+     minimal-responses boolean;
+     recursion boolean;
+     rrset-order {
+          [ class string ] [ type string ]
+          [ name quoted_string ] string string; ...
+     };
+     provide-ixfr boolean;
+     request-ixfr boolean;
+     rfc2308-type1 boolean; // not yet implemented
+     additional-from-auth boolean;
+     additional-from-cache boolean;
+     query-source [ address ( ipv4_address | * ) ] [ port ( integer | * ) ];
+     query-source-v6 [ address ( ipv6_address | * ) ] [ port ( integer | * ) ];
+     cleaning-interval integer;
+     min-roots integer; // not implemented
+     lame-ttl integer;
+     max-ncache-ttl integer;
+     max-cache-ttl integer;
+     transfer-format ( many-answers | one-answer );
+     max-cache-size size_no_default;
+     check-names ( master | slave | response )
+          ( fail | warn | ignore );
+     cache-file quoted_string;
+     suppress-initial-notify boolean; // not yet implemented
+     preferred-glue string;
+     dual-stack-servers [ port integer ] {
+          ( quoted_string [port integer] |
+          ipv4_address [port integer] |
+          ipv6_address [port integer] ); ...
+     };
+     edns-udp-size integer;
+     root-delegation-only [ exclude { quoted_string; ... } ];
+     disable-algorithms string { string; ... };
+     dnssec-enable boolean;
+     dnssec-lookaside string trust-anchor string;
+     dnssec-must-be-secure string boolean;
+     dialup dialuptype;
+     ixfr-from-differences ixfrdiff;
+     allow-query { address_match_element; ... };
+     allow-transfer { address_match_element; ... };
+     allow-update-forwarding { address_match_element; ... };
+     notify notifytype;
+     notify-source ( ipv4_address | * ) [ port ( integer | * ) ];
+     notify-source-v6 ( ipv6_address | * ) [ port ( integer | * ) ];
+     also-notify [ port integer ] { ( ipv4_address | ipv6_address )
+          [ port integer ]; ... };
+     allow-notify { address_match_element; ... };
+     forward ( first | only );
+     forwarders [ port integer ] {
+          ( ipv4_address | ipv6_address ) [ port integer ]; ...
+     };
+     max-journal-size size_no_default;
+     max-transfer-time-in integer;
+     max-transfer-time-out integer;
+     max-transfer-idle-in integer;
+     max-transfer-idle-out integer;
+     max-retry-time integer;
+     min-retry-time integer;
+     max-refresh-time integer;
+     min-refresh-time integer;
+     multi-master boolean;
+     sig-validity-interval integer;
+     transfer-source ( ipv4_address | * )
+          [ port ( integer | * ) ];
+     transfer-source-v6 ( ipv6_address | * )
+          [ port ( integer | * ) ];
+     alt-transfer-source ( ipv4_address | * )
+          [ port ( integer | * ) ];
+     alt-transfer-source-v6 ( ipv6_address | * )
+          [ port ( integer | * ) ];
+     use-alt-transfer-source boolean;
+     zone-statistics boolean;
+     key-directory quoted_string;
+     allow-v6-synthesis { address_match_element; ... }; // obsolete
+     fetch-glue boolean; // obsolete
+     maintain-ixfr-base boolean; // obsolete
+     max-ixfr-log-size size; // obsolete
+};
+
+zone string optional_class {
+     type ( master | slave | stub | hint |
+          forward | delegation-only );
+     file quoted_string;
+     masters [ port integer ] {
+          ( masters |
+          ipv4_address [port integer] |
+          ipv6_address [ port integer ] ) [ key string ]; ...
+     };
+     database string;
+     delegation-only boolean;
+     check-names ( fail | warn | ignore );
+     dialup dialuptype;
+     ixfr-from-differences boolean;
+     allow-query { address_match_element; ... };
+     allow-transfer { address_match_element; ... };
+     allow-update { address_match_element; ... };
+     allow-update-forwarding { address_match_element; ... };
+     update-policy {
+          ( grant | deny ) string
+          ( name | subdomain | wildcard | self ) string
+          rrtypelist; ...
+     };
+     notify notifytype;
+     notify-source ( ipv4_address | * ) [ port ( integer | * ) ];
+     notify-source-v6 ( ipv6_address | * ) [ port ( integer | * ) ];
+     also-notify [ port integer ] { ( ipv4_address | ipv6_address )
+          [ port integer ]; ... };
+     allow-notify { address_match_element; ... };
+     forward ( first | only );
+     forwarders [ port integer ] {
+          ( ipv4_address | ipv6_address ) [ port integer ]; ...
+     };
+     max-journal-size size_no_default;
+     max-transfer-time-in integer;
+     max-transfer-time-out integer;
+     max-transfer-idle-in integer;
+     max-transfer-idle-out integer;
+     max-retry-time integer;
+     min-retry-time integer;
+     max-refresh-time integer;
+     min-refresh-time integer;
+     multi-master boolean;
+     sig-validity-interval integer;
+     transfer-source ( ipv4_address | * )
+          [ port ( integer | * ) ];
+     transfer-source-v6 ( ipv6_address | * )
+          [ port ( integer | * ) ];
+     alt-transfer-source ( ipv4_address | * )
+          [ port ( integer | * ) ];
+     alt-transfer-source-v6 ( ipv6_address | * )
+          [ port ( integer | * ) ];
+     use-alt-transfer-source boolean;
+     zone-statistics boolean;
+     key-directory quoted_string;
+     ixfr-base quoted_string; // obsolete
+     ixfr-tmp-file quoted_string; // obsolete
+     maintain-ixfr-base boolean; // obsolete
+     max-ixfr-log-size size; // obsolete
+     pubkey integer integer integer quoted_string; // obsolete
+};

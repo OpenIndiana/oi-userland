@@ -262,6 +262,8 @@ SYMLINK =	/bin/ln -s
 ENV =		/usr/bin/env
 INSTALL =	/usr/bin/ginstall
 CHMOD =		/usr/bin/chmod
+NAWK =		/usr/bin/nawk
+TEE =		/usr/bin/tee
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)
