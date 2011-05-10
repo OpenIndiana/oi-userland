@@ -1,0 +1,1675 @@
+From 8c62f99535aa8bfa13dd705166d0f3afbc918674 Mon Sep 17 00:00:00 2001
+From: Vadim Zeitlin <vadim@wxwidgets.org>
+Date: Sat, 5 Sep 2009 15:55:13 +0200
+Subject: [PATCH 4/5] Don't use _T() in public headers used under Unix.
+
+Avoid conflict with the Sun CC standard headers (see #10660).
+---
+ include/wx/arrstr.h           |    4 +-
+ include/wx/artprov.h          |    6 ++--
+ include/wx/buffer.h           |    2 +-
+ include/wx/cocoa/dirdlg.h     |    2 +-
+ include/wx/confbase.h         |    4 +-
+ include/wx/cppunit.h          |    2 +-
+ include/wx/cshelp.h           |    2 +-
+ include/wx/datectrl.h         |    2 +-
+ include/wx/datetime.h         |   42 ++++++++++++++++----------------
+ include/wx/dbgrid.h           |    6 ++--
+ include/wx/dbtable.h          |    2 +-
+ include/wx/dcbuffer.h         |    6 ++--
+ include/wx/dcmirror.h         |    6 ++--
+ include/wx/debug.h            |    6 ++--
+ include/wx/debugrpt.h         |    2 +-
+ include/wx/defs.h             |   18 +++++++-------
+ include/wx/dynlib.h           |    2 +-
+ include/wx/dynload.h          |    2 +-
+ include/wx/event.h            |    4 +-
+ include/wx/ffile.h            |    4 +-
+ include/wx/filefn.h           |    2 +-
+ include/wx/filename.h         |    4 +-
+ include/wx/generic/calctrl.h  |    6 ++--
+ include/wx/generic/combo.h    |    4 +-
+ include/wx/generic/grid.h     |   14 +++++-----
+ include/wx/generic/gridctrl.h |    4 +-
+ include/wx/generic/spinctlg.h |    8 +++---
+ include/wx/generic/splitter.h |    2 +-
+ include/wx/glcanvas.h         |    2 +-
+ include/wx/gtk/checklst.h     |    6 ++--
+ include/wx/gtk/spinctrl.h     |    4 +-
+ include/wx/gtk1/checklst.h    |    6 ++--
+ include/wx/gtk1/spinctrl.h    |    4 +-
+ include/wx/imagbmp.h          |   26 ++++++++++----------
+ include/wx/image.h            |   12 ++++----
+ include/wx/imagtiff.h         |    8 +++---
+ include/wx/intl.h             |   16 ++++++------
+ include/wx/list.h             |    2 +-
+ include/wx/longlong.h         |    8 +++---
+ include/wx/mimetype.h         |    6 ++--
+ include/wx/module.h           |    2 +-
+ include/wx/msgdlg.h           |    4 +-
+ include/wx/object.h           |    2 +-
+ include/wx/palette.h          |    2 +-
+ include/wx/private/fileback.h |    2 +-
+ include/wx/protocol/ftp.h     |    2 +-
+ include/wx/recguard.h         |    2 +-
+ include/wx/selstore.h         |    2 +-
+ include/wx/sound.h            |    2 +-
+ include/wx/spinbutt.h         |    2 +-
+ include/wx/stopwatch.h        |    2 +-
+ include/wx/string.h           |   30 +++++++++++-----------
+ include/wx/tbarbase.h         |    4 +-
+ include/wx/thrimpl.cpp        |   22 ++++++++--------
+ include/wx/tokenzr.h          |    2 +-
+ include/wx/univ/button.h      |    8 +++---
+ include/wx/univ/checkbox.h    |    6 ++--
+ include/wx/univ/checklst.h    |    2 +-
+ include/wx/univ/combobox.h    |    6 ++--
+ include/wx/univ/control.h     |    4 +-
+ include/wx/univ/inpcons.h     |    2 +-
+ include/wx/univ/inphand.h     |   30 +++++++++++-----------
+ include/wx/univ/listbox.h     |   36 ++++++++++++++--------------
+ include/wx/univ/menuitem.h    |    4 +-
+ include/wx/univ/notebook.h    |    6 ++--
+ include/wx/univ/scrolbar.h    |   18 +++++++-------
+ include/wx/univ/slider.h      |   20 ++++++++--------
+ include/wx/univ/spinbutt.h    |    4 +-
+ include/wx/univ/textctrl.h    |   52 ++++++++++++++++++++--------------------
+ include/wx/univ/toolbar.h     |    4 +-
+ include/wx/univ/toplevel.h    |   12 ++++----
+ include/wx/valtext.h          |    4 +-
+ include/wx/vector.h           |    2 +-
+ include/wx/version.h          |    4 +-
+ include/wx/vlbox.h            |    4 +-
+ include/wx/wfstream.h         |    4 +-
+ include/wx/wxchar.h           |    6 ++--
+ include/wx/x11/textctrl.h     |   50 +++++++++++++++++++-------------------
+ include/wx/xrc/xmlres.h       |    2 +-
+ 79 files changed, 320 insertions(+), 320 deletions(-)
+
+diff --git a/include/wx/arrstr.h b/include/wx/arrstr.h
+index 9ad3b4a..e6e6e8f 100644
+--- a/include/wx/arrstr.h
++++ b/include/wx/arrstr.h
+@@ -152,7 +152,7 @@ public:
+   wxString& Item(size_t nIndex) const
+     {
+         wxASSERT_MSG( nIndex < m_nCount,
+-                      _T("wxArrayString: index out of bounds") );
++                      wxT("wxArrayString: index out of bounds") );
+ 
+         return *(wxString *)&(m_pItems[nIndex]);
+     }
+@@ -163,7 +163,7 @@ public:
+   wxString& Last() const
+   {
+       wxASSERT_MSG( !IsEmpty(),
+-                    _T("wxArrayString: index out of bounds") );
++                    wxT("wxArrayString: index out of bounds") );
+       return Item(Count() - 1);
+   }
+ 
+diff --git a/include/wx/artprov.h b/include/wx/artprov.h
+index c45ad59..42ee28d 100644
+--- a/include/wx/artprov.h
++++ b/include/wx/artprov.h
+@@ -27,10 +27,10 @@ class wxArtProviderModule;
+ typedef wxString wxArtClient;
+ typedef wxString wxArtID;
+ 
+-#define wxART_MAKE_CLIENT_ID_FROM_STR(id)  (id + _T("_C"))
+-#define wxART_MAKE_CLIENT_ID(id)           _T(#id) _T("_C")
++#define wxART_MAKE_CLIENT_ID_FROM_STR(id)  (id + wxT("_C"))
++#define wxART_MAKE_CLIENT_ID(id)           wxT(#id) wxT("_C")
+ #define wxART_MAKE_ART_ID_FROM_STR(id)     (id)
+-#define wxART_MAKE_ART_ID(id)              _T(#id)
++#define wxART_MAKE_ART_ID(id)              wxT(#id)
+ 
+ // ----------------------------------------------------------------------------
+ // Art clients
+diff --git a/include/wx/buffer.h b/include/wx/buffer.h
+index a47a3e2..1a26ead 100644
+--- a/include/wx/buffer.h
++++ b/include/wx/buffer.h
+@@ -286,7 +286,7 @@ public:
+     // Other ways to append to the buffer
+     void  AppendByte(char data)
+     {
+-        wxCHECK_RET( m_bufdata->m_data, _T("invalid wxMemoryBuffer") );
++        wxCHECK_RET( m_bufdata->m_data, wxT("invalid wxMemoryBuffer") );
+ 
+         m_bufdata->ResizeIfNeeded(m_bufdata->m_len + 1);
+         *(((char*)m_bufdata->m_data) + m_bufdata->m_len) = data;
+diff --git a/include/wx/confbase.h b/include/wx/confbase.h
+index 2d20b52..ae0b053 100644
+--- a/include/wx/confbase.h
++++ b/include/wx/confbase.h
+@@ -30,13 +30,13 @@ class WXDLLIMPEXP_FWD_BASE wxArrayString;
+ 
+ /// separates group and entry names (probably shouldn't be changed)
+ #ifndef wxCONFIG_PATH_SEPARATOR
+-  #define   wxCONFIG_PATH_SEPARATOR     _T('/')
++  #define   wxCONFIG_PATH_SEPARATOR     wxT('/')
+ #endif
+ 
+ /// introduces immutable entries
+ // (i.e. the ones which can't be changed from the local config file)
+ #ifndef wxCONFIG_IMMUTABLE_PREFIX
+-  #define   wxCONFIG_IMMUTABLE_PREFIX   _T('!')
++  #define   wxCONFIG_IMMUTABLE_PREFIX   wxT('!')
+ #endif
+ 
+ #if wxUSE_CONFIG
+diff --git a/include/wx/cppunit.h b/include/wx/cppunit.h
+index c4a0954..d21a271 100644
+--- a/include/wx/cppunit.h
++++ b/include/wx/cppunit.h
+@@ -69,7 +69,7 @@
+     if (Condition) \
+         { anyTest; } \
+     else \
+-        wxLogInfo(wxString::Format(_T("skipping: %s.%s\n  reason: %s equals false\n"), \
++        wxLogInfo(wxString::Format(wxT("skipping: %s.%s\n  reason: %s equals false\n"), \
+                                     wxString(suiteName, wxConvUTF8).c_str(), \
+                                     wxString(#testMethod, wxConvUTF8).c_str(), \
+                                     wxString(#Condition, wxConvUTF8).c_str()))
+diff --git a/include/wx/cshelp.h b/include/wx/cshelp.h
+index e80c2d0..066c9fd 100644
+--- a/include/wx/cshelp.h
++++ b/include/wx/cshelp.h
+@@ -134,7 +134,7 @@ public:
+                                  const wxPoint& pt,
+                                  wxHelpEvent::Origin origin)
+     {
+-        wxCHECK_MSG( window, false, _T("window must not be NULL") );
++        wxCHECK_MSG( window, false, wxT("window must not be NULL") );
+ 
+         m_helptextAtPoint = pt;
+         m_helptextOrigin = origin;
+diff --git a/include/wx/datectrl.h b/include/wx/datectrl.h
+index 81f6c0d..822902f 100644
+--- a/include/wx/datectrl.h
++++ b/include/wx/datectrl.h
+@@ -19,7 +19,7 @@
+ #include "wx/control.h"         // the base class
+ #include "wx/datetime.h"
+ 
+-#define wxDatePickerCtrlNameStr _T("datectrl")
++#define wxDatePickerCtrlNameStr wxT("datectrl")
+ 
+ // wxDatePickerCtrl styles
+ enum
+diff --git a/include/wx/datetime.h b/include/wx/datetime.h
+index 8fd9bd4..cedc452 100644
+--- a/include/wx/datetime.h
++++ b/include/wx/datetime.h
+@@ -951,37 +951,37 @@ public:
+ 
+     inline bool operator<(const wxDateTime& dt) const
+     {
+-        wxASSERT_MSG( IsValid() && dt.IsValid(), _T("invalid wxDateTime") );
++        wxASSERT_MSG( IsValid() && dt.IsValid(), wxT("invalid wxDateTime") );
+         return GetValue() < dt.GetValue();
+     }
+ 
+     inline bool operator<=(const wxDateTime& dt) const
+     {
+-        wxASSERT_MSG( IsValid() && dt.IsValid(), _T("invalid wxDateTime") );
++        wxASSERT_MSG( IsValid() && dt.IsValid(), wxT("invalid wxDateTime") );
+         return GetValue() <= dt.GetValue();
+     }
+ 
+     inline bool operator>(const wxDateTime& dt) const
+     {
+-        wxASSERT_MSG( IsValid() && dt.IsValid(), _T("invalid wxDateTime") );
++        wxASSERT_MSG( IsValid() && dt.IsValid(), wxT("invalid wxDateTime") );
+         return GetValue() > dt.GetValue();
+     }
+ 
+     inline bool operator>=(const wxDateTime& dt) const
+     {
+-        wxASSERT_MSG( IsValid() && dt.IsValid(), _T("invalid wxDateTime") );
++        wxASSERT_MSG( IsValid() && dt.IsValid(), wxT("invalid wxDateTime") );
+         return GetValue() >= dt.GetValue();
+     }
+ 
+     inline bool operator==(const wxDateTime& dt) const
+     {
+-        wxASSERT_MSG( IsValid() && dt.IsValid(), _T("invalid wxDateTime") );
++        wxASSERT_MSG( IsValid() && dt.IsValid(), wxT("invalid wxDateTime") );
+         return GetValue() == dt.GetValue();
+     }
+ 
+     inline bool operator!=(const wxDateTime& dt) const
+     {
+-        wxASSERT_MSG( IsValid() && dt.IsValid(), _T("invalid wxDateTime") );
++        wxASSERT_MSG( IsValid() && dt.IsValid(), wxT("invalid wxDateTime") );
+         return GetValue() != dt.GetValue();
+     }
+ 
+@@ -1075,15 +1075,15 @@ public:
+     wxString Format(const wxChar *format = wxDefaultDateTimeFormat,
+                     const TimeZone& tz = Local) const;
+         // preferred date representation for the current locale
+-    wxString FormatDate() const { return Format(_T("%x")); }
++    wxString FormatDate() const { return Format(wxT("%x")); }
+         // preferred time representation for the current locale
+-    wxString FormatTime() const { return Format(_T("%X")); }
++    wxString FormatTime() const { return Format(wxT("%X")); }
+         // returns the string representing the date in ISO 8601 format
+         // (YYYY-MM-DD)
+-    wxString FormatISODate() const { return Format(_T("%Y-%m-%d")); }
++    wxString FormatISODate() const { return Format(wxT("%Y-%m-%d")); }
+         // returns the string representing the time in ISO 8601 format
+         // (HH:MM:SS)
+-    wxString FormatISOTime() const { return Format(_T("%H:%M:%S")); }
++    wxString FormatISOTime() const { return Format(wxT("%H:%M:%S")); }
+ 
+     // implementation
+     // ------------------------------------------------------------------------
+@@ -1647,7 +1647,7 @@ inline wxDateTime::wxDateTime(double jdn)
+ 
+ inline wxDateTime& wxDateTime::Set(const Tm& tm)
+ {
+-    wxASSERT_MSG( tm.IsValid(), _T("invalid broken down date/time") );
++    wxASSERT_MSG( tm.IsValid(), wxT("invalid broken down date/time") );
+ 
+     return Set(tm.mday, (Month)tm.mon, tm.year,
+                tm.hour, tm.min, tm.sec, tm.msec);
+@@ -1678,14 +1678,14 @@ inline wxDateTime::wxDateTime(wxDateTime_t day,
+ 
+ inline wxLongLong wxDateTime::GetValue() const
+ {
+-    wxASSERT_MSG( IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime"));
+ 
+     return m_time;
+ }
+ 
+ inline time_t wxDateTime::GetTicks() const
+ {
+-    wxASSERT_MSG( IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime"));
+     if ( !IsInStdRange() )
+     {
+         return (time_t)-1;
+@@ -1753,21 +1753,21 @@ inline wxDateTime wxDateTime::GetYearDay(wxDateTime_t yday) const
+ 
+ inline bool wxDateTime::IsEqualTo(const wxDateTime& datetime) const
+ {
+-    wxASSERT_MSG( IsValid() && datetime.IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid() && datetime.IsValid(), wxT("invalid wxDateTime"));
+ 
+     return m_time == datetime.m_time;
+ }
+ 
+ inline bool wxDateTime::IsEarlierThan(const wxDateTime& datetime) const
+ {
+-    wxASSERT_MSG( IsValid() && datetime.IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid() && datetime.IsValid(), wxT("invalid wxDateTime"));
+ 
+     return m_time < datetime.m_time;
+ }
+ 
+ inline bool wxDateTime::IsLaterThan(const wxDateTime& datetime) const
+ {
+-    wxASSERT_MSG( IsValid() && datetime.IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid() && datetime.IsValid(), wxT("invalid wxDateTime"));
+ 
+     return m_time > datetime.m_time;
+ }
+@@ -1824,14 +1824,14 @@ inline bool wxDateTime::IsEqualUpTo(const wxDateTime& dt,
+ 
+ inline wxDateTime wxDateTime::Add(const wxTimeSpan& diff) const
+ {
+-    wxASSERT_MSG( IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime"));
+ 
+     return wxDateTime(m_time + diff.GetValue());
+ }
+ 
+ inline wxDateTime& wxDateTime::Add(const wxTimeSpan& diff)
+ {
+-    wxASSERT_MSG( IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime"));
+ 
+     m_time += diff.GetValue();
+ 
+@@ -1845,14 +1845,14 @@ inline wxDateTime& wxDateTime::operator+=(const wxTimeSpan& diff)
+ 
+ inline wxDateTime wxDateTime::Subtract(const wxTimeSpan& diff) const
+ {
+-    wxASSERT_MSG( IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime"));
+ 
+     return wxDateTime(m_time - diff.GetValue());
+ }
+ 
+ inline wxDateTime& wxDateTime::Subtract(const wxTimeSpan& diff)
+ {
+-    wxASSERT_MSG( IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid(), wxT("invalid wxDateTime"));
+ 
+     m_time -= diff.GetValue();
+ 
+@@ -1866,7 +1866,7 @@ inline wxDateTime& wxDateTime::operator-=(const wxTimeSpan& diff)
+ 
+ inline wxTimeSpan wxDateTime::Subtract(const wxDateTime& datetime) const
+ {
+-    wxASSERT_MSG( IsValid() && datetime.IsValid(), _T("invalid wxDateTime"));
++    wxASSERT_MSG( IsValid() && datetime.IsValid(), wxT("invalid wxDateTime"));
+ 
+     return wxTimeSpan(GetValue() - datetime.GetValue());
+ }
+diff --git a/include/wx/dbgrid.h b/include/wx/dbgrid.h
+index b08f2c6..2d9db9a 100644
+--- a/include/wx/dbgrid.h
++++ b/include/wx/dbgrid.h
+@@ -23,7 +23,7 @@
+ #include "wx/grid.h"
+ #include "wx/dbkeyg.h"
+ 
+-#define wxGRID_VALUE_DBAUTO     _T("dbauto")
++#define wxGRID_VALUE_DBAUTO     wxT("dbauto")
+ 
+ WX_DECLARE_USER_EXPORTED_OBJARRAY(GenericKey,keyarray,WXDLLIMPEXP_DBGRID);
+ 
+@@ -119,12 +119,12 @@ public:
+ 
+     virtual int GetNumberRows()
+     {
+-        wxLogDebug(_T(" GetNumberRows() = %i"),m_rowtotal);
++        wxLogDebug(wxT(" GetNumberRows() = %i"),m_rowtotal);
+         return m_rowtotal;
+     }
+     virtual int GetNumberCols()
+     {
+-        wxLogDebug(_T(" GetNumberCols() = %i"),m_nocols);
++        wxLogDebug(wxT(" GetNumberCols() = %i"),m_nocols);
+         return m_nocols;
+     }
+     virtual bool     IsEmptyCell(int row, int col) ;
+diff --git a/include/wx/dbtable.h b/include/wx/dbtable.h
+index 5e7ff17..f29754c 100644
+--- a/include/wx/dbtable.h
++++ b/include/wx/dbtable.h
+@@ -305,7 +305,7 @@ public:
+     HSTMT          *NewCursor(bool setCursor = false, bool bindColumns = true) {  return GetNewCursor(setCursor,bindColumns); }
+ #endif
+ 
+-    ULONG           Count(const wxString &args=_T("*"));
++    ULONG           Count(const wxString &args=wxT("*"));
+     int             DB_STATUS(void) { return(pDb->DB_STATUS); }
+ 
+     bool            IsColNull(UWORD colNumber) const;
+diff --git a/include/wx/dcbuffer.h b/include/wx/dcbuffer.h
+index 0f4e896..41b536f 100644
+--- a/include/wx/dcbuffer.h
++++ b/include/wx/dcbuffer.h
+@@ -100,8 +100,8 @@ public:
+     // blitting to) is destroyed.
+     void UnMask()
+     {
+-        wxCHECK_RET( m_dc, _T("no underlying wxDC?") );
+-        wxASSERT_MSG( m_buffer && m_buffer->IsOk(), _T("invalid backing store") );
++        wxCHECK_RET( m_dc, wxT("no underlying wxDC?") );
++        wxASSERT_MSG( m_buffer && m_buffer->IsOk(), wxT("invalid backing store") );
+ 
+         wxCoord x = 0,
+                 y = 0;
+@@ -122,7 +122,7 @@ private:
+     // common part of Init()s
+     void InitCommon(wxDC *dc, int style)
+     {
+-        wxASSERT_MSG( !m_dc, _T("wxBufferedDC already initialised") );
++        wxASSERT_MSG( !m_dc, wxT("wxBufferedDC already initialised") );
+ 
+         m_dc = dc;
+         m_style = style;
+diff --git a/include/wx/dcmirror.h b/include/wx/dcmirror.h
+index 0bcc54f..f1c95ce 100644
+--- a/include/wx/dcmirror.h
++++ b/include/wx/dcmirror.h
+@@ -135,7 +135,7 @@ protected:
+                            wxCoord x2, wxCoord y2,
+                            wxCoord xc, wxCoord yc)
+     {
+-        wxFAIL_MSG( _T("this is probably wrong") );
++        wxFAIL_MSG( wxT("this is probably wrong") );
+ 
+         m_dc.DoDrawArc(GetX(x1, y1), GetY(x1, y1),
+                        GetX(x2, y2), GetY(x2, y2),
+@@ -152,7 +152,7 @@ protected:
+     virtual void DoDrawEllipticArc(wxCoord x, wxCoord y, wxCoord w, wxCoord h,
+                                    double sa, double ea)
+     {
+-        wxFAIL_MSG( _T("this is probably wrong") );
++        wxFAIL_MSG( wxT("this is probably wrong") );
+ 
+         m_dc.DoDrawEllipticArc(GetX(x, y), GetY(x, y),
+                                GetX(w, h), GetY(w, h),
+@@ -256,7 +256,7 @@ protected:
+ 
+     virtual void DoSetClippingRegionAsRegion(const wxRegion& WXUNUSED(region))
+     {
+-        wxFAIL_MSG( _T("not implemented") );
++        wxFAIL_MSG( wxT("not implemented") );
+     }
+ 
+     virtual void DoSetClippingRegion(wxCoord x, wxCoord y,
+diff --git a/include/wx/debug.h b/include/wx/debug.h
+index 84f101d..1ef9a17 100644
+--- a/include/wx/debug.h
++++ b/include/wx/debug.h
+@@ -123,13 +123,13 @@
+       if ( cond )                                                             \
+       {}                                                                      \
+       else                                                                    \
+-          wxOnAssert(__TFILE__, __LINE__, __WXFUNCTION__, _T(#cond), msg)
++          wxOnAssert(__TFILE__, __LINE__, __WXFUNCTION__, wxT(#cond), msg)
+   #else
+     #define wxASSERT_MSG(cond, msg)                                           \
+       if ( cond )                                                             \
+           ;                                                                   \
+       else                                                                    \
+-          wxOnAssert(__TFILE__, __LINE__, __WXFUNCTION__, _T(#cond), msg)
++          wxOnAssert(__TFILE__, __LINE__, __WXFUNCTION__, wxT(#cond), msg)
+   #endif
+ 
+   /*  special form of assert: always triggers it (in debug mode) */
+@@ -140,7 +140,7 @@
+ 
+   /*  FAIL with some message and a condition */
+   #define wxFAIL_COND_MSG(cond, msg)                                          \
+-      wxOnAssert(__TFILE__, __LINE__,  __WXFUNCTION__, _T(cond), msg)
++      wxOnAssert(__TFILE__, __LINE__,  __WXFUNCTION__, wxT(cond), msg)
+ 
+   /*  An assert helper used to avoid warning when testing constant expressions, */
+   /*  i.e. wxASSERT( sizeof(int) == 4 ) can generate a compiler warning about */
+diff --git a/include/wx/debugrpt.h b/include/wx/debugrpt.h
+index 86ecdb5..02c895c 100644
+--- a/include/wx/debugrpt.h
++++ b/include/wx/debugrpt.h
+@@ -161,7 +161,7 @@ public:
+     wxDebugReportUpload(const wxString& url,
+                         const wxString& input,
+                         const wxString& action,
+-                        const wxString& curl = _T("curl"));
++                        const wxString& curl = wxT("curl"));
+ 
+ protected:
+     virtual bool DoProcess();
+diff --git a/include/wx/defs.h b/include/wx/defs.h
+index 35afe0d..0139d64 100644
+--- a/include/wx/defs.h
++++ b/include/wx/defs.h
+@@ -915,28 +915,28 @@ inline void *wxUIntToPtr(wxUIntPtr p)
+ #if (defined(__VISUALC__) && defined(__WIN32__))
+     #define wxLongLong_t __int64
+     #define wxLongLongSuffix i64
+-    #define wxLongLongFmtSpec _T("I64")
++    #define wxLongLongFmtSpec wxT("I64")
+ #elif defined(__BORLANDC__) && defined(__WIN32__) && (__BORLANDC__ >= 0x520)
+     #define wxLongLong_t __int64
+     #define wxLongLongSuffix i64
+-    #define wxLongLongFmtSpec _T("L")
++    #define wxLongLongFmtSpec wxT("L")
+ #elif (defined(__WATCOMC__) && (defined(__WIN32__) || defined(__DOS__) || defined(__OS2__)))
+       #define wxLongLong_t __int64
+       #define wxLongLongSuffix i64
+-      #define wxLongLongFmtSpec _T("L")
++      #define wxLongLongFmtSpec wxT("L")
+ #elif defined(__DIGITALMARS__)
+       #define wxLongLong_t __int64
+       #define wxLongLongSuffix LL
+-      #define wxLongLongFmtSpec _T("ll")
++      #define wxLongLongFmtSpec wxT("ll")
+ #elif defined(__MINGW32__)
+     #define wxLongLong_t long long
+     #define wxLongLongSuffix ll
+-    #define wxLongLongFmtSpec _T("I64")
++    #define wxLongLongFmtSpec wxT("I64")
+ #elif defined(__MWERKS__)
+     #if __option(longlong)
+         #define wxLongLong_t long long
+         #define wxLongLongSuffix ll
+-        #define wxLongLongFmtSpec _T("ll")
++        #define wxLongLongFmtSpec wxT("ll")
+     #else
+         #error "The 64 bit integer support in CodeWarrior has been disabled."
+         #error "See the documentation on the 'longlong' pragma."
+@@ -944,7 +944,7 @@ inline void *wxUIntToPtr(wxUIntPtr p)
+ #elif defined(__WXPALMOS__)
+     #define wxLongLong_t int64_t
+     #define wxLongLongSuffix ll
+-    #define wxLongLongFmtSpec _T("ll")
++    #define wxLongLongFmtSpec wxT("ll")
+ #elif defined(__VISAGECPP__) && __IBMCPP__ >= 400
+     #define wxLongLong_t long long
+ #elif (defined(SIZEOF_LONG_LONG) && SIZEOF_LONG_LONG >= 8)  || \
+@@ -954,11 +954,11 @@ inline void *wxUIntToPtr(wxUIntPtr p)
+         (defined(__DJGPP__) && __DJGPP__ >= 2)
+     #define wxLongLong_t long long
+     #define wxLongLongSuffix ll
+-    #define wxLongLongFmtSpec _T("ll")
++    #define wxLongLongFmtSpec wxT("ll")
+ #elif defined(SIZEOF_LONG) && (SIZEOF_LONG == 8)
+     #define wxLongLong_t long
+     #define wxLongLongSuffix l
+-    #define wxLongLongFmtSpec _T("l")
++    #define wxLongLongFmtSpec wxT("l")
+     #define wxLongLongIsLong
+ #endif
+ 
+diff --git a/include/wx/dynlib.h b/include/wx/dynlib.h
+index 3bf267f..35e9b36 100644
+--- a/include/wx/dynlib.h
++++ b/include/wx/dynlib.h
+@@ -116,7 +116,7 @@ enum wxPluginCategory
+ // type only once, as the first parameter, and creating a variable of this type
+ // called "pfn<name>" initialized with the "name" from the "dynlib"
+ #define wxDYNLIB_FUNCTION(type, name, dynlib) \
+-    type pfn ## name = (type)(dynlib).GetSymbol(_T(#name))
++    type pfn ## name = (type)(dynlib).GetSymbol(wxT(#name))
+ 
+ // ----------------------------------------------------------------------------
+ // wxDynamicLibraryDetails: contains details about a loaded wxDynamicLibrary
+diff --git a/include/wx/dynload.h b/include/wx/dynload.h
+index 2b08fe2..dba1a21 100644
+--- a/include/wx/dynload.h
++++ b/include/wx/dynload.h
+@@ -71,7 +71,7 @@ public:
+     void  RefObj() { ++m_objcount; }
+     void  UnrefObj()
+     {
+-        wxASSERT_MSG( m_objcount > 0, _T("Too many objects deleted??") );
++        wxASSERT_MSG( m_objcount > 0, wxT("Too many objects deleted??") );
+         --m_objcount;
+     }
+ 
+diff --git a/include/wx/event.h b/include/wx/event.h
+index e9ee49a..db8fe4b 100644
+--- a/include/wx/event.h
++++ b/include/wx/event.h
+@@ -451,7 +451,7 @@ public:
+     wxPropagateOnce(wxEvent& event) : m_event(event)
+     {
+         wxASSERT_MSG( m_event.m_propagationLevel > 0,
+-                        _T("shouldn't be used unless ShouldPropagate()!") );
++                        wxT("shouldn't be used unless ShouldPropagate()!") );
+ 
+         m_event.m_propagationLevel--;
+     }
+@@ -1398,7 +1398,7 @@ public:
+         // m_loggingOff flag is only used by wxEVT_[QUERY_]END_SESSION, it
+         // doesn't make sense for wxEVT_CLOSE_WINDOW
+         wxASSERT_MSG( m_eventType != wxEVT_CLOSE_WINDOW,
+-                      _T("this flag is for end session events only") );
++                      wxT("this flag is for end session events only") );
+ 
+         return m_loggingOff;
+     }
+diff --git a/include/wx/ffile.h b/include/wx/ffile.h
+index 58aca44..a159aff 100644
+--- a/include/wx/ffile.h
++++ b/include/wx/ffile.h
+@@ -37,13 +37,13 @@ public:
+     // def ctor
+   wxFFile() { m_fp = NULL; }
+     // open specified file (may fail, use IsOpened())
+-  wxFFile(const wxChar *filename, const wxChar *mode = _T("r"));
++  wxFFile(const wxChar *filename, const wxChar *mode = wxT("r"));
+     // attach to (already opened) file
+   wxFFile(FILE *lfp) { m_fp = lfp; }
+ 
+   // open/close
+     // open a file (existing or not - the mode controls what happens)
+-  bool Open(const wxChar *filename, const wxChar *mode = _T("r"));
++  bool Open(const wxChar *filename, const wxChar *mode = wxT("r"));
+     // closes the opened file (this is a NOP if not opened)
+   bool Close();
+ 
+diff --git a/include/wx/filefn.h b/include/wx/filefn.h
+index 19e682b..f65cdac 100644
+--- a/include/wx/filefn.h
++++ b/include/wx/filefn.h
+@@ -406,7 +406,7 @@ enum wxFileKind
+             #define wxHAS_LARGE_FFILES
+         #endif
+     #else
+-        #define wxFileOffsetFmtSpec _T("")
++        #define wxFileOffsetFmtSpec wxT("")
+     #endif
+     // functions
+     #define   wxClose      close
+diff --git a/include/wx/filename.h b/include/wx/filename.h
+index c2f51c4..ffd3f9f 100644
+--- a/include/wx/filename.h
++++ b/include/wx/filename.h
+@@ -488,10 +488,10 @@ public:
+     static wxULongLong GetSize(const wxString &file);
+ 
+         // returns the size in a human readable form
+-    wxString GetHumanReadableSize(const wxString &nullsize = wxGetTranslation(_T("Not available")),
++    wxString GetHumanReadableSize(const wxString &nullsize = wxGetTranslation(wxT("Not available")),
+                                   int precision = 1) const;
+     static wxString GetHumanReadableSize(const wxULongLong &sz,
+-                                         const wxString &nullsize = wxGetTranslation(_T("Not available")),
++                                         const wxString &nullsize = wxGetTranslation(wxT("Not available")),
+                                          int precision = 1);
+ 
+ 
+diff --git a/include/wx/generic/calctrl.h b/include/wx/generic/calctrl.h
+index 08acaca..2971a40 100644
+--- a/include/wx/generic/calctrl.h
++++ b/include/wx/generic/calctrl.h
+@@ -19,7 +19,7 @@ class WXDLLIMPEXP_FWD_CORE wxComboBox;
+ class WXDLLIMPEXP_FWD_CORE wxStaticText;
+ class WXDLLIMPEXP_FWD_CORE wxSpinCtrl;
+ 
+-#define wxCalendarNameStr _T("CalendarCtrl")
++#define wxCalendarNameStr wxT("CalendarCtrl")
+ 
+ // ----------------------------------------------------------------------------
+ // wxCalendarCtrl: a control allowing the user to pick a date interactively
+@@ -124,14 +124,14 @@ public:
+ 
+     wxCalendarDateAttr *GetAttr(size_t day) const
+     {
+-        wxCHECK_MSG( day > 0 && day < 32, NULL, _T("invalid day") );
++        wxCHECK_MSG( day > 0 && day < 32, NULL, wxT("invalid day") );
+ 
+         return m_attrs[day - 1];
+     }
+ 
+     void SetAttr(size_t day, wxCalendarDateAttr *attr)
+     {
+-        wxCHECK_RET( day > 0 && day < 32, _T("invalid day") );
++        wxCHECK_RET( day > 0 && day < 32, wxT("invalid day") );
+ 
+         delete m_attrs[day - 1];
+         m_attrs[day - 1] = attr;
+diff --git a/include/wx/generic/combo.h b/include/wx/generic/combo.h
+index 8ed30e4..0a0e9e3 100644
+--- a/include/wx/generic/combo.h
++++ b/include/wx/generic/combo.h
+@@ -26,8 +26,8 @@
+ // all actions of single line text controls are supported
+ 
+ // popup/dismiss the choice window
+-#define wxACTION_COMBOBOX_POPUP     _T("popup")
+-#define wxACTION_COMBOBOX_DISMISS   _T("dismiss")
++#define wxACTION_COMBOBOX_POPUP     wxT("popup")
++#define wxACTION_COMBOBOX_DISMISS   wxT("dismiss")
+ 
+ #endif
+ 
+diff --git a/include/wx/generic/grid.h b/include/wx/generic/grid.h
+index 6389ca6..e6b2aae 100644
+--- a/include/wx/generic/grid.h
++++ b/include/wx/generic/grid.h
+@@ -42,11 +42,11 @@ extern WXDLLIMPEXP_DATA_ADV(const wxChar) wxGridNameStr[];
+ #define WXGRID_DEFAULT_SCROLLBAR_WIDTH        16
+ 
+ // type names for grid table values
+-#define wxGRID_VALUE_STRING     _T("string")
+-#define wxGRID_VALUE_BOOL       _T("bool")
+-#define wxGRID_VALUE_NUMBER     _T("long")
+-#define wxGRID_VALUE_FLOAT      _T("double")
+-#define wxGRID_VALUE_CHOICE     _T("choice")
++#define wxGRID_VALUE_STRING     wxT("string")
++#define wxGRID_VALUE_BOOL       wxT("bool")
++#define wxGRID_VALUE_NUMBER     wxT("long")
++#define wxGRID_VALUE_FLOAT      wxT("double")
++#define wxGRID_VALUE_CHOICE     wxT("choice")
+ 
+ #define wxGRID_VALUE_TEXT wxGRID_VALUE_STRING
+ #define wxGRID_VALUE_LONG wxGRID_VALUE_NUMBER
+@@ -472,7 +472,7 @@ protected:
+ 
+     // string representation of m_valueOld
+     wxString GetString() const
+-        { return wxString::Format(_T("%ld"), m_valueOld); }
++        { return wxString::Format(wxT("%ld"), m_valueOld); }
+ 
+ private:
+     int m_min,
+@@ -552,7 +552,7 @@ public:
+ 
+     // set the string values returned by GetValue() for the true and false
+     // states, respectively
+-    static void UseStringValues(const wxString& valueTrue = _T("1"),
++    static void UseStringValues(const wxString& valueTrue = wxT("1"),
+                                 const wxString& valueFalse = wxEmptyString);
+ 
+     // return true if the given string is equal to the string representation of
+diff --git a/include/wx/generic/gridctrl.h b/include/wx/generic/gridctrl.h
+index 2ee1c10..79939f8 100644
+--- a/include/wx/generic/gridctrl.h
++++ b/include/wx/generic/gridctrl.h
+@@ -16,8 +16,8 @@
+ 
+ #if wxUSE_GRID
+ 
+-#define wxGRID_VALUE_CHOICEINT    _T("choiceint")
+-#define wxGRID_VALUE_DATETIME     _T("datetime")
++#define wxGRID_VALUE_CHOICEINT    wxT("choiceint")
++#define wxGRID_VALUE_DATETIME     wxT("datetime")
+ 
+ #if wxUSE_DATETIME
+ 
+diff --git a/include/wx/generic/spinctlg.h b/include/wx/generic/spinctlg.h
+index 3d63773..8bd374d 100644
+--- a/include/wx/generic/spinctlg.h
++++ b/include/wx/generic/spinctlg.h
+@@ -41,7 +41,7 @@ public:
+                const wxSize& size = wxDefaultSize,
+                long style = wxSP_ARROW_KEYS,
+                int min = 0, int max = 100, int initial = 0,
+-               const wxString& name = _T("wxSpinCtrl"))
++               const wxString& name = wxT("wxSpinCtrl"))
+     {
+         Init();
+         Create(parent, id, value, pos, size, style, min, max, initial, name);
+@@ -54,7 +54,7 @@ public:
+                 const wxSize& size = wxDefaultSize,
+                 long style = wxSP_ARROW_KEYS,
+                 int min = 0, int max = 100, int initial = 0,
+-                const wxString& name = _T("wxSpinCtrl"));
++                const wxString& name = wxT("wxSpinCtrl"));
+ 
+     virtual ~wxSpinCtrl();
+ 
+@@ -125,7 +125,7 @@ public:
+                const wxSize& size = wxDefaultSize,
+                long style = wxSP_ARROW_KEYS,
+                int min = 0, int max = 100, int initial = 0,
+-               const wxString& name = _T("wxSpinCtrl"))
++               const wxString& name = wxT("wxSpinCtrl"))
+     {
+         Create(parent, id, value, pos, size, style, min, max, initial, name);
+     }
+@@ -137,7 +137,7 @@ public:
+                 const wxSize& size = wxDefaultSize,
+                 long style = wxSP_ARROW_KEYS,
+                 int min = 0, int max = 100, int initial = 0,
+-                const wxString& name = _T("wxSpinCtrl"))
++                const wxString& name = wxT("wxSpinCtrl"))
+     {
+         SetRange(min, max);
+ 
+diff --git a/include/wx/generic/splitter.h b/include/wx/generic/splitter.h
+index 0e7c694..3ce17f0 100644
+--- a/include/wx/generic/splitter.h
++++ b/include/wx/generic/splitter.h
+@@ -91,7 +91,7 @@ public:
+     void SetSplitMode(int mode)
+     {
+         wxASSERT_MSG( mode == wxSPLIT_VERTICAL || mode == wxSPLIT_HORIZONTAL,
+-                      _T("invalid split mode") );
++                      wxT("invalid split mode") );
+ 
+         m_splitMode = (wxSplitMode)mode;
+     }
+diff --git a/include/wx/glcanvas.h b/include/wx/glcanvas.h
+index 4e3e432..27e79ef 100644
+--- a/include/wx/glcanvas.h
++++ b/include/wx/glcanvas.h
+@@ -44,7 +44,7 @@ enum
+     WX_GL_MIN_ACCUM_ALPHA  /* use alpha buffer with most bits (> MIN_ACCUM_ALPHA bits) */
+ };
+ 
+-#define wxGLCanvasName _T("GLCanvas")
++#define wxGLCanvasName wxT("GLCanvas")
+ 
+ #if defined(__WXMSW__)
+ #include "wx/msw/glcanvas.h"
+diff --git a/include/wx/gtk/checklst.h b/include/wx/gtk/checklst.h
+index cc8accd..c3aa5e6 100644
+--- a/include/wx/gtk/checklst.h
++++ b/include/wx/gtk/checklst.h
+@@ -18,10 +18,10 @@
+ // there is no "right" choice of the checkbox indicators, so allow the user to
+ // define them himself if he wants
+ #ifndef wxCHECKLBOX_CHECKED
+-    #define wxCHECKLBOX_CHECKED   _T('x')
+-    #define wxCHECKLBOX_UNCHECKED _T(' ')
++    #define wxCHECKLBOX_CHECKED   wxT('x')
++    #define wxCHECKLBOX_UNCHECKED wxT(' ')
+ 
+-    #define wxCHECKLBOX_STRING    _T("[ ] ")
++    #define wxCHECKLBOX_STRING    wxT("[ ] ")
+ #endif
+ 
+ //-----------------------------------------------------------------------------
+diff --git a/include/wx/gtk/spinctrl.h b/include/wx/gtk/spinctrl.h
+index 898f1dc..6f73236 100644
+--- a/include/wx/gtk/spinctrl.h
++++ b/include/wx/gtk/spinctrl.h
+@@ -26,7 +26,7 @@ public:
+                const wxSize& size = wxDefaultSize,
+                long style = wxSP_ARROW_KEYS,
+                int min = 0, int max = 100, int initial = 0,
+-               const wxString& name = _T("wxSpinCtrl"))
++               const wxString& name = wxT("wxSpinCtrl"))
+     {
+         Create(parent, id, value, pos, size, style, min, max, initial, name);
+     }
+@@ -38,7 +38,7 @@ public:
+                 const wxSize& size = wxDefaultSize,
+                 long style = wxSP_ARROW_KEYS,
+                 int min = 0, int max = 100, int initial = 0,
+-                const wxString& name = _T("wxSpinCtrl"));
++                const wxString& name = wxT("wxSpinCtrl"));
+ 
+     void SetValue(const wxString& text);
+     void SetSelection(long from, long to);
+diff --git a/include/wx/gtk1/checklst.h b/include/wx/gtk1/checklst.h
+index ba0368b..e96e56a 100644
+--- a/include/wx/gtk1/checklst.h
++++ b/include/wx/gtk1/checklst.h
+@@ -18,10 +18,10 @@
+ // there is no "right" choice of the checkbox indicators, so allow the user to
+ // define them himself if he wants
+ #ifndef wxCHECKLBOX_CHECKED
+-    #define wxCHECKLBOX_CHECKED   _T('x')
+-    #define wxCHECKLBOX_UNCHECKED _T(' ')
++    #define wxCHECKLBOX_CHECKED   wxT('x')
++    #define wxCHECKLBOX_UNCHECKED wxT(' ')
+ 
+-    #define wxCHECKLBOX_STRING    _T("[ ] ")
++    #define wxCHECKLBOX_STRING    wxT("[ ] ")
+ #endif
+ 
+ //-----------------------------------------------------------------------------
+diff --git a/include/wx/gtk1/spinctrl.h b/include/wx/gtk1/spinctrl.h
+index 3237b1e..e748a60 100644
+--- a/include/wx/gtk1/spinctrl.h
++++ b/include/wx/gtk1/spinctrl.h
+@@ -32,7 +32,7 @@ public:
+                const wxSize& size = wxDefaultSize,
+                long style = wxSP_ARROW_KEYS,
+                int min = 0, int max = 100, int initial = 0,
+-               const wxString& name = _T("wxSpinCtrl"))
++               const wxString& name = wxT("wxSpinCtrl"))
+     {
+         Create(parent, id, value, pos, size, style, min, max, initial, name);
+     }
+@@ -44,7 +44,7 @@ public:
+                 const wxSize& size = wxDefaultSize,
+                 long style = wxSP_ARROW_KEYS,
+                 int min = 0, int max = 100, int initial = 0,
+-                const wxString& name = _T("wxSpinCtrl"));
++                const wxString& name = wxT("wxSpinCtrl"));
+ 
+     void SetValue(const wxString& text);
+     void SetSelection(long from, long to);
+diff --git a/include/wx/imagbmp.h b/include/wx/imagbmp.h
+index c70dd6c..4785a5a 100644
+--- a/include/wx/imagbmp.h
++++ b/include/wx/imagbmp.h
+@@ -14,7 +14,7 @@
+ 
+ // defines for saving the BMP file in different formats, Bits Per Pixel
+ // USE: wximage.SetOption( wxIMAGE_OPTION_BMP_FORMAT, wxBMP_xBPP );
+-#define wxIMAGE_OPTION_BMP_FORMAT wxString(_T("wxBMP_FORMAT"))
++#define wxIMAGE_OPTION_BMP_FORMAT wxString(wxT("wxBMP_FORMAT"))
+ 
+ // These two options are filled in upon reading CUR file and can (should) be
+ // specified when saving a CUR file - they define the hotspot of the cursor:
+@@ -52,10 +52,10 @@ class WXDLLEXPORT wxBMPHandler : public wxImageHandler
+ public:
+     wxBMPHandler()
+     {
+-        m_name = _T("Windows bitmap file");
+-        m_extension = _T("bmp");
++        m_name = wxT("Windows bitmap file");
++        m_extension = wxT("bmp");
+         m_type = wxBITMAP_TYPE_BMP;
+-        m_mime = _T("image/x-bmp");
++        m_mime = wxT("image/x-bmp");
+     }
+ 
+ #if wxUSE_STREAMS
+@@ -86,10 +86,10 @@ class WXDLLEXPORT wxICOHandler : public wxBMPHandler
+ public:
+     wxICOHandler()
+     {
+-        m_name = _T("Windows icon file");
+-        m_extension = _T("ico");
++        m_name = wxT("Windows icon file");
++        m_extension = wxT("ico");
+         m_type = wxBITMAP_TYPE_ICO;
+-        m_mime = _T("image/x-ico");
++        m_mime = wxT("image/x-ico");
+     }
+ 
+ #if wxUSE_STREAMS
+@@ -115,10 +115,10 @@ class WXDLLEXPORT wxCURHandler : public wxICOHandler
+ public:
+     wxCURHandler()
+     {
+-        m_name = _T("Windows cursor file");
+-        m_extension = _T("cur");
++        m_name = wxT("Windows cursor file");
++        m_extension = wxT("cur");
+         m_type = wxBITMAP_TYPE_CUR;
+-        m_mime = _T("image/x-cur");
++        m_mime = wxT("image/x-cur");
+     }
+ 
+     // VS: This handler's meat is implemented inside wxICOHandler (the two
+@@ -142,10 +142,10 @@ class WXDLLEXPORT wxANIHandler : public wxCURHandler
+ public:
+     wxANIHandler()
+     {
+-        m_name = _T("Windows animated cursor file");
+-        m_extension = _T("ani");
++        m_name = wxT("Windows animated cursor file");
++        m_extension = wxT("ani");
+         m_type = wxBITMAP_TYPE_ANI;
+-        m_mime = _T("image/x-ani");
++        m_mime = wxT("image/x-ani");
+     }
+ 
+ 
+diff --git a/include/wx/image.h b/include/wx/image.h
+index df7b056..85d0baf 100644
+--- a/include/wx/image.h
++++ b/include/wx/image.h
+@@ -27,14 +27,14 @@
+ // which breaks the compilation below
+ #undef index
+ 
+-#define wxIMAGE_OPTION_QUALITY  wxString(_T("quality"))
+-#define wxIMAGE_OPTION_FILENAME wxString(_T("FileName"))
++#define wxIMAGE_OPTION_QUALITY  wxString(wxT("quality"))
++#define wxIMAGE_OPTION_FILENAME wxString(wxT("FileName"))
+ 
+-#define wxIMAGE_OPTION_RESOLUTION            wxString(_T("Resolution"))
+-#define wxIMAGE_OPTION_RESOLUTIONX           wxString(_T("ResolutionX"))
+-#define wxIMAGE_OPTION_RESOLUTIONY           wxString(_T("ResolutionY"))
++#define wxIMAGE_OPTION_RESOLUTION            wxString(wxT("Resolution"))
++#define wxIMAGE_OPTION_RESOLUTIONX           wxString(wxT("ResolutionX"))
++#define wxIMAGE_OPTION_RESOLUTIONY           wxString(wxT("ResolutionY"))
+ 
+-#define wxIMAGE_OPTION_RESOLUTIONUNIT        wxString(_T("ResolutionUnit"))
++#define wxIMAGE_OPTION_RESOLUTIONUNIT        wxString(wxT("ResolutionUnit"))
+ 
+ // constants used with wxIMAGE_OPTION_RESOLUTIONUNIT
+ enum
+diff --git a/include/wx/imagtiff.h b/include/wx/imagtiff.h
+index 536cf39..dc14258 100644
+--- a/include/wx/imagtiff.h
++++ b/include/wx/imagtiff.h
+@@ -21,10 +21,10 @@
+ #include "wx/image.h"
+ 
+ // defines for wxImage::SetOption
+-#define wxIMAGE_OPTION_BITSPERSAMPLE               wxString(_T("BitsPerSample"))
+-#define wxIMAGE_OPTION_SAMPLESPERPIXEL             wxString(_T("SamplesPerPixel"))
+-#define wxIMAGE_OPTION_COMPRESSION                 wxString(_T("Compression"))
+-#define wxIMAGE_OPTION_IMAGEDESCRIPTOR             wxString(_T("ImageDescriptor"))
++#define wxIMAGE_OPTION_BITSPERSAMPLE               wxString(wxT("BitsPerSample"))
++#define wxIMAGE_OPTION_SAMPLESPERPIXEL             wxString(wxT("SamplesPerPixel"))
++#define wxIMAGE_OPTION_COMPRESSION                 wxString(wxT("Compression"))
++#define wxIMAGE_OPTION_IMAGEDESCRIPTOR             wxString(wxT("ImageDescriptor"))
+ 
+ class WXDLLEXPORT wxTIFFHandler: public wxImageHandler
+ {
+diff --git a/include/wx/intl.h b/include/wx/intl.h
+index fe003dd..ec17ef3 100644
+--- a/include/wx/intl.h
++++ b/include/wx/intl.h
+@@ -45,13 +45,13 @@ enum wxLayoutDirection
+ // --keyword="_" --keyword="wxPLURAL:1,2" options
+ // to extract the strings from the sources)
+ #ifndef WXINTL_NO_GETTEXT_MACRO
+-    #define _(s)                     wxGetTranslation(_T(s))
+-    #define wxPLURAL(sing, plur, n)  wxGetTranslation(_T(sing), _T(plur), n)
++    #define _(s)                     wxGetTranslation(wxT(s))
++    #define wxPLURAL(sing, plur, n)  wxGetTranslation(wxT(sing), wxT(plur), n)
+ #endif
+ 
+ // another one which just marks the strings for extraction, but doesn't
+ // perform the translation (use -kwxTRANSLATE with xgettext!)
+-#define wxTRANSLATE(str) _T(str)
++#define wxTRANSLATE(str) wxT(str)
+ 
+ // ----------------------------------------------------------------------------
+ // forward decls
+@@ -603,12 +603,12 @@ wxGetTranslation(const wxChar *sz1, const wxChar *sz2,
+ 
+ #if !defined(WXINTL_NO_GETTEXT_MACRO)
+     #if !defined(_)
+-        #define _(s)                 (_T(s))
++        #define _(s)                 (wxT(s))
+     #endif
+-    #define wxPLURAL(sing, plur, n)  ((n) == 1 ? _T(sing) : _T(plur))
++    #define wxPLURAL(sing, plur, n)  ((n) == 1 ? wxT(sing) : wxT(plur))
+ #endif
+ 
+-#define wxTRANSLATE(str) _T(str)
++#define wxTRANSLATE(str) wxT(str)
+ 
+ inline const wxChar *
+ wxGetTranslation(const wxChar *sz, const wxChar * WXUNUSED(domain) = NULL)
+@@ -622,10 +622,10 @@ wxGetTranslation(const wxChar *sz, const wxChar * WXUNUSED(domain) = NULL)
+ // wxTRANSLATE) too
+ #if !defined(WXINTL_NO_GETTEXT_MACRO)
+     #if !defined(gettext_noop)
+-        #define gettext_noop(str) _T(str)
++        #define gettext_noop(str) wxT(str)
+     #endif
+     #if !defined(N_)
+-        #define N_(s)             _T(s)
++        #define N_(s)             wxT(s)
+     #endif
+ #endif
+ 
+diff --git a/include/wx/list.h b/include/wx/list.h
+index 5d04a36..83019bc 100644
+--- a/include/wx/list.h
++++ b/include/wx/list.h
+@@ -207,7 +207,7 @@ private:
+             bool operator==(const compatibility_iterator& i) const            \
+             {                                                                 \
+                 wxASSERT_MSG( m_list && i.m_list,                             \
+-                              _T("comparing invalid iterators is illegal") ); \
++                              wxT("comparing invalid iterators is illegal") ); \
+                 return (m_list == i.m_list) && (m_iter == i.m_iter);          \
+             }                                                                 \
+             bool operator!=(const compatibility_iterator& i) const            \
+diff --git a/include/wx/longlong.h b/include/wx/longlong.h
+index f8f8e16..2cb8a69 100644
+--- a/include/wx/longlong.h
++++ b/include/wx/longlong.h
+@@ -177,7 +177,7 @@ public:
+     long ToLong() const
+     {
+         wxASSERT_MSG( (m_ll >= LONG_MIN) && (m_ll <= LONG_MAX),
+-                      _T("wxLongLong to long conversion loss of precision") );
++                      wxT("wxLongLong to long conversion loss of precision") );
+ 
+         return wx_truncate_cast(long, m_ll);
+     }
+@@ -405,7 +405,7 @@ public:
+     unsigned long ToULong() const
+     {
+         wxASSERT_MSG( m_ll <= LONG_MAX,
+-                      _T("wxULongLong to long conversion loss of precision") );
++                      wxT("wxULongLong to long conversion loss of precision") );
+ 
+         return wx_truncate_cast(unsigned long, m_ll);
+     }
+@@ -683,7 +683,7 @@ public:
+     long ToLong() const
+     {
+         wxASSERT_MSG( (m_hi == 0l) || (m_hi == -1l),
+-                      _T("wxLongLong to long conversion loss of precision") );
++                      wxT("wxLongLong to long conversion loss of precision") );
+ 
+         return (long)m_lo;
+     }
+@@ -908,7 +908,7 @@ public:
+     unsigned long ToULong() const
+     {
+         wxASSERT_MSG( m_hi == 0ul,
+-                      _T("wxULongLong to long conversion loss of precision") );
++                      wxT("wxULongLong to long conversion loss of precision") );
+ 
+         return (unsigned long)m_lo;
+     }
+diff --git a/include/wx/mimetype.h b/include/wx/mimetype.h
+index cca3c4f..9ad9e0c 100644
+--- a/include/wx/mimetype.h
++++ b/include/wx/mimetype.h
+@@ -51,12 +51,12 @@ class WXDLLIMPEXP_BASE wxMimeType : public wxString
+ public:
+     // all string ctors here
+ 
+-    wxString GetType() const { return BeforeFirst(_T('/')); }
+-    wxString GetSubType() const { return AfterFirst(_T('/')); }
++    wxString GetType() const { return BeforeFirst(wxT('/')); }
++    wxString GetSubType() const { return AfterFirst(wxT('/')); }
+ 
+     void SetSubType(const wxString& subtype)
+     {
+-        *this = GetType() + _T('/') + subtype;
++        *this = GetType() + wxT('/') + subtype;
+     }
+ 
+     bool Matches(const wxMimeType& wildcard)
+diff --git a/include/wx/module.h b/include/wx/module.h
+index e255fe8..874557f 100644
+--- a/include/wx/module.h
++++ b/include/wx/module.h
+@@ -68,7 +68,7 @@ protected:
+     // after that
+     void AddDependency(wxClassInfo *dep)
+     {
+-        wxCHECK_RET( dep, _T("NULL module dependency") );
++        wxCHECK_RET( dep, wxT("NULL module dependency") );
+ 
+         m_dependencies.Add(dep);
+     }
+diff --git a/include/wx/msgdlg.h b/include/wx/msgdlg.h
+index 2b779a7..3c36dbc 100644
+--- a/include/wx/msgdlg.h
++++ b/include/wx/msgdlg.h
+@@ -23,10 +23,10 @@ protected:
+     void SetMessageDialogStyle(long style)
+     {
+         wxASSERT_MSG( ((style & wxYES_NO) == wxYES_NO) || ((style & wxYES_NO) == 0),
+-                      _T("wxYES and wxNO may only be used together in wxMessageDialog") );
++                      wxT("wxYES and wxNO may only be used together in wxMessageDialog") );
+ 
+         wxASSERT_MSG( (style & wxID_OK) != wxID_OK,
+-                      _T("wxMessageBox: Did you mean wxOK (and not wxID_OK)?") );
++                      wxT("wxMessageBox: Did you mean wxOK (and not wxID_OK)?") );
+ 
+         m_dialogStyle = style;
+     }
+diff --git a/include/wx/object.h b/include/wx/object.h
+index 0acba7a..2bf5eaa 100644
+--- a/include/wx/object.h
++++ b/include/wx/object.h
+@@ -311,7 +311,7 @@ name##PluginSentinel  m_pluginsentinel;
+ #ifdef __WXDEBUG__
+ inline void* wxCheckCast(void *ptr)
+ {
+-    wxASSERT_MSG( ptr, _T("wxStaticCast() used incorrectly") );
++    wxASSERT_MSG( ptr, wxT("wxStaticCast() used incorrectly") );
+     return ptr;
+ }
+ #define wxStaticCast(obj, className) \
+diff --git a/include/wx/palette.h b/include/wx/palette.h
+index b04f513..1577d63 100644
+--- a/include/wx/palette.h
++++ b/include/wx/palette.h
+@@ -27,7 +27,7 @@ public:
+ 
+     virtual bool Ok() const { return IsOk(); }
+     virtual bool IsOk() const = 0;
+-    virtual int GetColoursCount() const { wxFAIL_MSG( _T("not implemented") ); return 0; }
++    virtual int GetColoursCount() const { wxFAIL_MSG( wxT("not implemented") ); return 0; }
+ };
+ 
+ #if defined(__WXPALMOS__)
+diff --git a/include/wx/private/fileback.h b/include/wx/private/fileback.h
+index 8567852..fe07138 100644
+--- a/include/wx/private/fileback.h
++++ b/include/wx/private/fileback.h
+@@ -33,7 +33,7 @@ public:
+     // backing file is never created and the backing is done with memory.
+     wxBackingFile(wxInputStream *stream,
+                   size_t bufsize = DefaultBufSize,
+-                  const wxString& prefix = _T("wxbf"));
++                  const wxString& prefix = wxT("wxbf"));
+ 
+     wxBackingFile() : m_impl(NULL) { }
+     ~wxBackingFile();
+diff --git a/include/wx/protocol/ftp.h b/include/wx/protocol/ftp.h
+index 0133637..d541a28 100644
+--- a/include/wx/protocol/ftp.h
++++ b/include/wx/protocol/ftp.h
+@@ -175,7 +175,7 @@ protected:
+ 
+ // the trace mask used by assorted wxLogTrace() in ftp code, do
+ // wxLog::AddTraceMask(FTP_TRACE_MASK) to see them in output
+-#define FTP_TRACE_MASK _T("ftp")
++#define FTP_TRACE_MASK wxT("ftp")
+ 
+ #endif // wxUSE_PROTOCOL_FTP
+ 
+diff --git a/include/wx/recguard.h b/include/wx/recguard.h
+index 010637e..3b7fe8e 100644
+--- a/include/wx/recguard.h
++++ b/include/wx/recguard.h
+@@ -35,7 +35,7 @@ public:
+ 
+     ~wxRecursionGuard()
+     {
+-        wxASSERT_MSG( m_flag > 0, _T("unbalanced wxRecursionGuards!?") );
++        wxASSERT_MSG( m_flag > 0, wxT("unbalanced wxRecursionGuards!?") );
+ 
+         m_flag--;
+     }
+diff --git a/include/wx/selstore.h b/include/wx/selstore.h
+index b0c0b4e..dfd96d4 100644
+--- a/include/wx/selstore.h
++++ b/include/wx/selstore.h
+@@ -51,7 +51,7 @@ public:
+     void Clear() { m_itemsSel.Clear(); m_count = 0; m_defaultState = false; }
+ 
+     // must be called when a new item is inserted/added
+-    void OnItemAdd(size_t WXUNUSED(item)) { wxFAIL_MSG( _T("TODO") ); }
++    void OnItemAdd(size_t WXUNUSED(item)) { wxFAIL_MSG( wxT("TODO") ); }
+ 
+     // must be called when an item is deleted
+     void OnItemDelete(size_t item);
+diff --git a/include/wx/sound.h b/include/wx/sound.h
+index 37315eb..e2d4245 100644
+--- a/include/wx/sound.h
++++ b/include/wx/sound.h
+@@ -43,7 +43,7 @@ public:
+     {
+         wxASSERT_MSG( (flags & wxSOUND_LOOP) == 0 ||
+                       (flags & wxSOUND_ASYNC) != 0,
+-                     _T("sound can only be looped asynchronously") );
++                     wxT("sound can only be looped asynchronously") );
+         return DoPlay(flags);
+     }
+ #if WXWIN_COMPATIBILITY_2_4
+diff --git a/include/wx/spinbutt.h b/include/wx/spinbutt.h
+index 776868f..3415eee 100644
+--- a/include/wx/spinbutt.h
++++ b/include/wx/spinbutt.h
+@@ -23,7 +23,7 @@
+ #include "wx/control.h"
+ #include "wx/event.h"
+ 
+-#define wxSPIN_BUTTON_NAME _T("wxSpinButton")
++#define wxSPIN_BUTTON_NAME wxT("wxSpinButton")
+ 
+ // ----------------------------------------------------------------------------
+ //  The wxSpinButton is like a small scrollbar than is often placed next
+diff --git a/include/wx/stopwatch.h b/include/wx/stopwatch.h
+index dec4fa2..84f8ff8 100644
+--- a/include/wx/stopwatch.h
++++ b/include/wx/stopwatch.h
+@@ -40,7 +40,7 @@ public:
+     void Resume()
+     {
+         wxASSERT_MSG( m_pauseCount > 0,
+-                      _T("Resuming stop watch which is not paused") );
++                      wxT("Resuming stop watch which is not paused") );
+ 
+         if ( --m_pauseCount == 0 )
+             Start(m_pause);
+diff --git a/include/wx/string.h b/include/wx/string.h
+index 67f33ea..8a2d50b 100644
+--- a/include/wx/string.h
++++ b/include/wx/string.h
+@@ -70,7 +70,7 @@ class WXDLLIMPEXP_FWD_BASE wxString;
+ 
+ // implementation only
+ #define   wxASSERT_VALID_INDEX(i) \
+-    wxASSERT_MSG( (size_t)(i) <= length(), _T("invalid index in wxString") )
++    wxASSERT_MSG( (size_t)(i) <= length(), wxT("invalid index in wxString") )
+ 
+ // ----------------------------------------------------------------------------
+ // constants
+@@ -349,7 +349,7 @@ public:
+   wxStringBase(const wxStringBase& stringSrc)
+   {
+     wxASSERT_MSG( stringSrc.GetStringData()->IsValid(),
+-                  _T("did you forget to call UngetWriteBuf()?") );
++                  wxT("did you forget to call UngetWriteBuf()?") );
+ 
+     if ( stringSrc.empty() ) {
+       // nothing to do for an empty string
+@@ -376,7 +376,7 @@ public:
+   wxStringBase(const wxStringBase& str, size_t nPos, size_t nLen)
+   {
+     wxASSERT_MSG( str.GetStringData()->IsValid(),
+-                  _T("did you forget to call UngetWriteBuf()?") );
++                  wxT("did you forget to call UngetWriteBuf()?") );
+     Init();
+     size_t strLen = str.length() - nPos; nLen = strLen < nLen ? strLen : nLen;
+     InitWith(str.c_str(), nPos, nLen);
+@@ -754,7 +754,7 @@ public:
+   {
+     Truncate(0);
+ 
+-    wxASSERT_MSG( empty(), _T("string not empty after call to Empty()?") );
++    wxASSERT_MSG( empty(), wxT("string not empty after call to Empty()?") );
+   }
+     // empty the string and free memory
+   void Clear()
+@@ -785,7 +785,7 @@ public:
+     // get last character
+     wxChar  Last() const
+       {
+-          wxASSERT_MSG( !empty(), _T("wxString: index out of bounds") );
++          wxASSERT_MSG( !empty(), wxT("wxString: index out of bounds") );
+ 
+           return at(length() - 1);
+       }
+@@ -793,7 +793,7 @@ public:
+     // get writable last character
+     wxChar& Last()
+       {
+-          wxASSERT_MSG( !empty(), _T("wxString: index out of bounds") );
++          wxASSERT_MSG( !empty(), wxT("wxString: index out of bounds") );
+           return at(length() - 1);
+       }
+ 
+@@ -993,7 +993,7 @@ public:
+   {
+ #if !wxUSE_STL
+     wxASSERT_MSG( s.GetStringData()->IsValid(),
+-                  _T("did you forget to call UngetWriteBuf()?") );
++                  wxT("did you forget to call UngetWriteBuf()?") );
+ #endif
+ 
+     append(s);
+@@ -1058,36 +1058,36 @@ public:
+   // stream-like functions
+       // insert an int into string
+   wxString& operator<<(int i)
+-    { return (*this) << Format(_T("%d"), i); }
++    { return (*this) << Format(wxT("%d"), i); }
+       // insert an unsigned int into string
+   wxString& operator<<(unsigned int ui)
+-    { return (*this) << Format(_T("%u"), ui); }
++    { return (*this) << Format(wxT("%u"), ui); }
+       // insert a long into string
+   wxString& operator<<(long l)
+-    { return (*this) << Format(_T("%ld"), l); }
++    { return (*this) << Format(wxT("%ld"), l); }
+       // insert an unsigned long into string
+   wxString& operator<<(unsigned long ul)
+-    { return (*this) << Format(_T("%lu"), ul); }
++    { return (*this) << Format(wxT("%lu"), ul); }
+ #if defined wxLongLong_t && !defined wxLongLongIsLong
+       // insert a long long if they exist and aren't longs
+   wxString& operator<<(wxLongLong_t ll)
+     {
+-      const wxChar *fmt = _T("%") wxLongLongFmtSpec _T("d");
++      const wxChar *fmt = wxT("%") wxLongLongFmtSpec wxT("d");
+       return (*this) << Format(fmt, ll);
+     }
+       // insert an unsigned long long
+   wxString& operator<<(wxULongLong_t ull)
+     {
+-      const wxChar *fmt = _T("%") wxLongLongFmtSpec _T("u");
++      const wxChar *fmt = wxT("%") wxLongLongFmtSpec wxT("u");
+       return (*this) << Format(fmt , ull);
+     }
+ #endif
+       // insert a float into string
+   wxString& operator<<(float f)
+-    { return (*this) << Format(_T("%f"), f); }
++    { return (*this) << Format(wxT("%f"), f); }
+       // insert a double into string
+   wxString& operator<<(double d)
+-    { return (*this) << Format(_T("%g"), d); }
++    { return (*this) << Format(wxT("%g"), d); }
+ 
+   // string comparison
+     // case-sensitive comparison (returns a value < 0, = 0 or > 0)
+diff --git a/include/wx/tbarbase.h b/include/wx/tbarbase.h
+index 1f54ea3..2e10456 100644
+--- a/include/wx/tbarbase.h
++++ b/include/wx/tbarbase.h
+@@ -115,7 +115,7 @@ public:
+ 
+     wxControl *GetControl() const
+     {
+-        wxASSERT_MSG( IsControl(), _T("this toolbar tool is not a control") );
++        wxASSERT_MSG( IsControl(), wxT("this toolbar tool is not a control") );
+ 
+         return m_control;
+     }
+@@ -129,7 +129,7 @@ public:
+     int GetStyle() const { return m_toolStyle; }
+     wxItemKind GetKind() const
+     {
+-        wxASSERT_MSG( IsButton(), _T("only makes sense for buttons") );
++        wxASSERT_MSG( IsButton(), wxT("only makes sense for buttons") );
+ 
+         return m_kind;
+     }
+diff --git a/include/wx/thrimpl.cpp b/include/wx/thrimpl.cpp
+index ba4aa31..12f5a87 100644
+--- a/include/wx/thrimpl.cpp
++++ b/include/wx/thrimpl.cpp
+@@ -39,7 +39,7 @@ bool wxMutex::IsOk() const
+ wxMutexError wxMutex::Lock()
+ {
+     wxCHECK_MSG( m_internal, wxMUTEX_INVALID,
+-                 _T("wxMutex::Lock(): not initialized") );
++                 wxT("wxMutex::Lock(): not initialized") );
+ 
+     return m_internal->Lock();
+ }
+@@ -47,7 +47,7 @@ wxMutexError wxMutex::Lock()
+ wxMutexError wxMutex::TryLock()
+ {
+     wxCHECK_MSG( m_internal, wxMUTEX_INVALID,
+-                 _T("wxMutex::TryLock(): not initialized") );
++                 wxT("wxMutex::TryLock(): not initialized") );
+ 
+     return m_internal->TryLock();
+ }
+@@ -55,7 +55,7 @@ wxMutexError wxMutex::TryLock()
+ wxMutexError wxMutex::Unlock()
+ {
+     wxCHECK_MSG( m_internal, wxMUTEX_INVALID,
+-                 _T("wxMutex::Unlock(): not initialized") );
++                 wxT("wxMutex::Unlock(): not initialized") );
+ 
+     return m_internal->Unlock();
+ }
+@@ -243,7 +243,7 @@ bool wxCondition::IsOk() const
+ wxCondError wxCondition::Wait()
+ {
+     wxCHECK_MSG( m_internal, wxCOND_INVALID,
+-                 _T("wxCondition::Wait(): not initialized") );
++                 wxT("wxCondition::Wait(): not initialized") );
+ 
+     return m_internal->Wait();
+ }
+@@ -251,7 +251,7 @@ wxCondError wxCondition::Wait()
+ wxCondError wxCondition::WaitTimeout(unsigned long milliseconds)
+ {
+     wxCHECK_MSG( m_internal, wxCOND_INVALID,
+-                 _T("wxCondition::Wait(): not initialized") );
++                 wxT("wxCondition::Wait(): not initialized") );
+ 
+     return m_internal->WaitTimeout(milliseconds);
+ }
+@@ -259,7 +259,7 @@ wxCondError wxCondition::WaitTimeout(unsigned long milliseconds)
+ wxCondError wxCondition::Signal()
+ {
+     wxCHECK_MSG( m_internal, wxCOND_INVALID,
+-                 _T("wxCondition::Signal(): not initialized") );
++                 wxT("wxCondition::Signal(): not initialized") );
+ 
+     return m_internal->Signal();
+ }
+@@ -267,7 +267,7 @@ wxCondError wxCondition::Signal()
+ wxCondError wxCondition::Broadcast()
+ {
+     wxCHECK_MSG( m_internal, wxCOND_INVALID,
+-                 _T("wxCondition::Broadcast(): not initialized") );
++                 wxT("wxCondition::Broadcast(): not initialized") );
+ 
+     return m_internal->Broadcast();
+ }
+@@ -299,7 +299,7 @@ bool wxSemaphore::IsOk() const
+ wxSemaError wxSemaphore::Wait()
+ {
+     wxCHECK_MSG( m_internal, wxSEMA_INVALID,
+-                 _T("wxSemaphore::Wait(): not initialized") );
++                 wxT("wxSemaphore::Wait(): not initialized") );
+ 
+     return m_internal->Wait();
+ }
+@@ -307,7 +307,7 @@ wxSemaError wxSemaphore::Wait()
+ wxSemaError wxSemaphore::TryWait()
+ {
+     wxCHECK_MSG( m_internal, wxSEMA_INVALID,
+-                 _T("wxSemaphore::TryWait(): not initialized") );
++                 wxT("wxSemaphore::TryWait(): not initialized") );
+ 
+     return m_internal->TryWait();
+ }
+@@ -315,7 +315,7 @@ wxSemaError wxSemaphore::TryWait()
+ wxSemaError wxSemaphore::WaitTimeout(unsigned long milliseconds)
+ {
+     wxCHECK_MSG( m_internal, wxSEMA_INVALID,
+-                 _T("wxSemaphore::WaitTimeout(): not initialized") );
++                 wxT("wxSemaphore::WaitTimeout(): not initialized") );
+ 
+     return m_internal->WaitTimeout(milliseconds);
+ }
+@@ -323,7 +323,7 @@ wxSemaError wxSemaphore::WaitTimeout(unsigned long milliseconds)
+ wxSemaError wxSemaphore::Post()
+ {
+     wxCHECK_MSG( m_internal, wxSEMA_INVALID,
+-                 _T("wxSemaphore::Post(): not initialized") );
++                 wxT("wxSemaphore::Post(): not initialized") );
+ 
+     return m_internal->Post();
+ }
+diff --git a/include/wx/tokenzr.h b/include/wx/tokenzr.h
+index d47d52c..95d3716 100644
+--- a/include/wx/tokenzr.h
++++ b/include/wx/tokenzr.h
+@@ -21,7 +21,7 @@
+ // ----------------------------------------------------------------------------
+ 
+ // default: delimiters are usual white space characters
+-#define wxDEFAULT_DELIMITERS (_T(" \t\r\n"))
++#define wxDEFAULT_DELIMITERS (wxT(" \t\r\n"))
+ 
+ // wxStringTokenizer mode flags which determine its behaviour
+ enum wxStringTokenizerMode
+diff --git a/include/wx/valtext.h b/include/wx/valtext.h
+index 1bea80e..aeaaa3c 100644
+--- a/include/wx/valtext.h
++++ b/include/wx/valtext.h
+@@ -99,9 +99,9 @@ protected:
+     bool CheckValidator() const
+     {
+         wxCHECK_MSG( m_validatorWindow, false,
+-                     _T("No window associated with validator") );
++                     wxT("No window associated with validator") );
+         wxCHECK_MSG( m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl)), false,
+-                     _T("wxTextValidator is only for wxTextCtrl's") );
++                     wxT("wxTextValidator is only for wxTextCtrl's") );
+ 
+         return true;
+     }
+diff --git a/include/wx/vector.h b/include/wx/vector.h
+index f8aa562..c724186 100644
+--- a/include/wx/vector.h
++++ b/include/wx/vector.h
+@@ -105,7 +105,7 @@ public:
+     {
+         if ( !Alloc(n) )
+         {
+-            wxFAIL_MSG( _T("out of memory in wxVector::reserve()") );
++            wxFAIL_MSG( wxT("out of memory in wxVector::reserve()") );
+         }
+     }
+ 
+diff --git a/include/wx/version.h b/include/wx/version.h
+index 8af3f27..cd5dda0 100644
+--- a/include/wx/version.h
++++ b/include/wx/version.h
+@@ -30,7 +30,7 @@
+ #define wxMINOR_VERSION      8
+ #define wxRELEASE_NUMBER     10
+ #define wxSUBRELEASE_NUMBER  0
+-#define wxVERSION_STRING   _T("wxWidgets 2.8.10")
++#define wxVERSION_STRING   wxT("wxWidgets 2.8.10")
+ 
+ /*  nothing to update below this line when updating the version */
+ /*  ---------------------------------------------------------------------------- */
+@@ -54,7 +54,7 @@
+ #define wxMAKE_VERSION_STRING_T(x, y, z) \
+     wxSTRINGIZE_T(x) wxSTRINGIZE_T(y) wxSTRINGIZE_T(z)
+ #define wxMAKE_VERSION_DOT_STRING_T(x, y, z) \
+-    wxSTRINGIZE_T(x) _T(".") wxSTRINGIZE_T(y) _T(".") wxSTRINGIZE_T(z)
++    wxSTRINGIZE_T(x) wxT(".") wxSTRINGIZE_T(y) wxT(".") wxSTRINGIZE_T(z)
+ 
+ /*  these are used by src/msw/version.rc and should always be ASCII, not Unicode */
+ #define wxVERSION_NUM_STRING \
+diff --git a/include/wx/vlbox.h b/include/wx/vlbox.h
+index f89e876..e774e22 100644
+--- a/include/wx/vlbox.h
++++ b/include/wx/vlbox.h
+@@ -17,7 +17,7 @@
+ 
+ class WXDLLIMPEXP_FWD_CORE wxSelectionStore;
+ 
+-#define wxVListBoxNameStr _T("wxVListBox")
++#define wxVListBoxNameStr wxT("wxVListBox")
+ 
+ // ----------------------------------------------------------------------------
+ // wxVListBox
+@@ -86,7 +86,7 @@ public:
+     int GetSelection() const
+     {
+         wxASSERT_MSG( !HasMultipleSelection(),
+-                        _T("GetSelection() can't be used with wxLB_MULTIPLE") );
++                        wxT("GetSelection() can't be used with wxLB_MULTIPLE") );
+ 
+         return m_current;
+     }
+diff --git a/include/wx/wfstream.h b/include/wx/wfstream.h
+index b8b954e..9c2a30b 100644
+--- a/include/wx/wfstream.h
++++ b/include/wx/wfstream.h
+@@ -132,7 +132,7 @@ private:
+ class WXDLLIMPEXP_BASE wxFFileInputStream : public wxInputStream
+ {
+ public:
+-    wxFFileInputStream(const wxString& fileName, const wxChar *mode = _T("rb"));
++    wxFFileInputStream(const wxString& fileName, const wxChar *mode = wxT("rb"));
+     wxFFileInputStream(wxFFile& file);
+     wxFFileInputStream(FILE *file);
+     virtual ~wxFFileInputStream();
+@@ -160,7 +160,7 @@ protected:
+ class WXDLLIMPEXP_BASE wxFFileOutputStream : public wxOutputStream
+ {
+ public:
+-    wxFFileOutputStream(const wxString& fileName, const wxChar *mode = _T("w+b"));
++    wxFFileOutputStream(const wxString& fileName, const wxChar *mode = wxT("w+b"));
+     wxFFileOutputStream(wxFFile& file);
+     wxFFileOutputStream(FILE *file);
+     virtual ~wxFFileOutputStream();
+diff --git a/include/wx/wxchar.h b/include/wx/wxchar.h
+index 0850ef4..2ebae6b 100644
+--- a/include/wx/wxchar.h
++++ b/include/wx/wxchar.h
+@@ -264,10 +264,10 @@
+ #endif /* wxNEEDS__T */
+ 
+ /* this macro exists only for forward compatibility with wx 3.0 */
+-#define wxS(x)       _T(x)
++#define wxS(x)       wxT(x)
+ 
+ /* a helper macro allowing to make another macro Unicode-friendly, see below */
+-#define wxAPPLY_T(x) _T(x)
++#define wxAPPLY_T(x) wxT(x)
+ 
+ /* Unicode-friendly __FILE__, __DATE__ and __TIME__ analogs */
+ #ifndef __TFILE__
+@@ -1126,7 +1126,7 @@ WXDLLIMPEXP_BASE bool wxOKlibc(); /* for internal use */
+ 
+ #ifdef _WIN32_WCE
+     #if _WIN32_WCE <= 211
+-        #define isspace(c) ((c) == _T(' ') || (c) == _T('\t'))
++        #define isspace(c) ((c) == wxT(' ') || (c) == wxT('\t'))
+     #endif
+ #endif /* _WIN32_WCE */
+ 
+diff --git a/include/wx/xrc/xmlres.h b/include/wx/xrc/xmlres.h
+index a98f7d4..c96e7cb 100644
+--- a/include/wx/xrc/xmlres.h
++++ b/include/wx/xrc/xmlres.h
+@@ -59,7 +59,7 @@ class wxXmlResourceModule;
+ #define WX_XMLRES_CURRENT_VERSION_MINOR            5
+ #define WX_XMLRES_CURRENT_VERSION_RELEASE          3
+ #define WX_XMLRES_CURRENT_VERSION_REVISION         0
+-#define WX_XMLRES_CURRENT_VERSION_STRING       _T("2.5.3.0")
++#define WX_XMLRES_CURRENT_VERSION_STRING       wxT("2.5.3.0")
+ 
+ #define WX_XMLRES_CURRENT_VERSION \
+                 (WX_XMLRES_CURRENT_VERSION_MAJOR * 256*256*256 + \
+-- 
+1.6.3.3
+

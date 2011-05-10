@@ -1,0 +1,238 @@
+diff -u -r a/contrib/src//gizmos/editlbox.cpp b/contrib/src//gizmos/editlbox.cpp
+--- a/contrib/src//gizmos/editlbox.cpp	Wed Sep 16 03:37:52 2009
++++ b/contrib/src//gizmos/editlbox.cpp	Wed Sep 16 03:39:23 2009
+@@ -45,7 +45,7 @@
+ 
+     void CreateColumns()
+     {
+-        InsertColumn(0, _T("item"));
++        InsertColumn(0, wxT("item"));
+         SizeColumns();
+     }
+ 
+diff -u -r a/contrib/src//gizmos/ledctrl.cpp b/contrib/src//gizmos/ledctrl.cpp
+--- a/contrib/src//gizmos/ledctrl.cpp	Wed Sep 16 03:37:52 2009
++++ b/contrib/src//gizmos/ledctrl.cpp	Wed Sep 16 03:40:26 2009
+@@ -187,51 +187,51 @@
+         wxChar c = m_Value.GetChar(offset);
+ 
+         // Draw faded lines if wanted.
+-        if (m_DrawFaded && (c != _T('.')))
++        if (m_DrawFaded && (c != wxT('.')))
+             DrawDigit(MemDc, DIGITALL, i);
+ 
+         // Draw the digits.
+         switch (c)
+         {
+-            case _T('0') :
++            case wxT('0') :
+                 DrawDigit(MemDc, DIGIT0, i);
+                 break;
+-            case _T('1') :
++            case wxT('1') :
+                 DrawDigit(MemDc, DIGIT1, i);
+                 break;
+-            case _T('2') :
++            case wxT('2') :
+                 DrawDigit(MemDc, DIGIT2, i);
+                 break;
+-            case _T('3') :
++            case wxT('3') :
+                 DrawDigit(MemDc, DIGIT3, i);
+                 break;
+-            case _T('4') :
++            case wxT('4') :
+                 DrawDigit(MemDc, DIGIT4, i);
+                 break;
+-            case _T('5') :
++            case wxT('5') :
+                 DrawDigit(MemDc, DIGIT5, i);
+                 break;
+-            case _T('6') :
++            case wxT('6') :
+                 DrawDigit(MemDc, DIGIT6, i);
+                 break;
+-            case _T('7') :
++            case wxT('7') :
+                 DrawDigit(MemDc, DIGIT7, i);
+                 break;
+-            case _T('8') :
++            case wxT('8') :
+                 DrawDigit(MemDc, DIGIT8, i);
+                 break;
+-            case _T('9') :
++            case wxT('9') :
+                 DrawDigit(MemDc, DIGIT9, i);
+                 break;
+-            case _T('-') :
++            case wxT('-') :
+                 DrawDigit(MemDc, DASH, i);
+                 break;
+-            case _T('.') :
++            case wxT('.') :
+                 // Display the decimal in the previous segment
+                 i--;
+                 DrawDigit(MemDc, DECIMALSIGN, i);
+                 break;
+-            case _T(' ') :
++            case wxT(' ') :
+                 // just skip it
+                 break;
+             default :
+diff -u -r a/contrib/src//gizmos/multicell.cpp b/contrib/src//gizmos/multicell.cpp
+--- a/contrib/src//gizmos/multicell.cpp	Wed Sep 16 03:37:52 2009
++++ b/contrib/src//gizmos/multicell.cpp	Wed Sep 16 03:40:40 2009
+@@ -623,9 +623,9 @@
+ {
+   // thanks to unsigned data row and col are always >= 0
+     wxASSERT_MSG( /* row >= 0 && */ row < m_maxRows,
+-                 wxString::Format(_T("Row %d out of bounds (0..%d)"), row, m_maxRows) );
++                 wxString::Format(wxT("Row %d out of bounds (0..%d)"), row, m_maxRows) );
+     wxASSERT_MSG( /* col >= 0 && */ col < m_maxCols,
+-                 wxString::Format(_T("Column %d out of bounds (0..%d)"), col, m_maxCols) );
++                 wxString::Format(wxT("Column %d out of bounds (0..%d)"), col, m_maxCols) );
+ 
+     wxASSERT_MSG(m_cells[CELL_LOC(row, col)] == NULL, wxT("Cell already occupied"));
+ 
+diff -u -r a/contrib/src//plot/plot.cpp b/contrib/src//plot/plot.cpp
+--- a/contrib/src//plot/plot.cpp	Wed Sep 16 03:37:52 2009
++++ b/contrib/src//plot/plot.cpp	Wed Sep 16 03:42:38 2009
+@@ -134,7 +134,7 @@
+ 
+ void wxPlotOnOffCurve::Add( wxInt32 on, wxInt32 off, void *clientData )
+ {
+-    wxASSERT_MSG( on > 0, _T("plot index < 0") );
++    wxASSERT_MSG( on > 0, wxT("plot index < 0") );
+     wxASSERT( on <= off );
+ 
+     if (m_minX == -1)
+@@ -202,7 +202,7 @@
+ END_EVENT_TABLE()
+ 
+ wxPlotArea::wxPlotArea( wxPlotWindow *parent )
+-        : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER, _T("plotarea") )
++        : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSIMPLE_BORDER, wxT("plotarea") )
+ {
+     m_owner = parent;
+ 
+@@ -456,7 +456,7 @@
+ END_EVENT_TABLE()
+ 
+ wxPlotXAxisArea::wxPlotXAxisArea( wxPlotWindow *parent )
+-        : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxSize(wxDefaultCoord,40), 0, _T("plotxaxisarea") )
++        : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxSize(wxDefaultCoord,40), 0, wxT("plotxaxisarea") )
+ {
+     m_owner = parent;
+ 
+@@ -552,14 +552,14 @@
+             wxString label;
+             if (range < 50)
+             {
+-                label.Printf( _T("%f"), current );
+-                while (label.Last() == _T('0'))
++                label.Printf( wxT("%f"), current );
++                while (label.Last() == wxT('0'))
+                     label.RemoveLast();
+-                if ((label.Last() == _T('.')) || (label.Last() == _T(',')))
+-                    label.Append( _T('0') );
++                if ((label.Last() == wxT('.')) || (label.Last() == wxT(',')))
++                    label.Append( wxT('0') );
+             }
+             else
+-                label.Printf( _T("%d"), (int)floor(current) );
++                label.Printf( wxT("%d"), (int)floor(current) );
+             dc.DrawText( label, x-4, 20 );
+         }
+ 
+@@ -583,7 +583,7 @@
+ END_EVENT_TABLE()
+ 
+ wxPlotYAxisArea::wxPlotYAxisArea( wxPlotWindow *parent )
+-        : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxSize(60,wxDefaultCoord), 0, _T("plotyaxisarea") )
++        : wxWindow( parent, wxID_ANY, wxDefaultPosition, wxSize(60,wxDefaultCoord), 0, wxT("plotyaxisarea") )
+ {
+     m_owner = parent;
+ 
+@@ -658,14 +658,14 @@
+             wxString label;
+             if (range < 50)
+             {
+-                label.Printf( _T("%f"), current );
+-                while (label.Last() == _T('0'))
++                label.Printf( wxT("%f"), current );
++                while (label.Last() == wxT('0'))
+                     label.RemoveLast();
+-                if ((label.Last() == _T('.')) || (label.Last() == _T(',')))
+-                    label.Append( _T('0') );
++                if ((label.Last() == wxT('.')) || (label.Last() == wxT(',')))
++                    label.Append( wxT('0') );
+             }
+             else
+-                label.Printf( _T("%d"), (int)floor(current) );
++                label.Printf( wxT("%d"), (int)floor(current) );
+             dc.DrawText( label, 5, y-7 );
+         }
+ 
+@@ -707,7 +707,7 @@
+ END_EVENT_TABLE()
+ 
+ wxPlotWindow::wxPlotWindow( wxWindow *parent, wxWindowID id, const wxPoint &pos, const wxSize &size, int flag )
+-        : wxScrolledWindow( parent, id, pos, size, flag, _T("plotcanvas") ),
++        : wxScrolledWindow( parent, id, pos, size, flag, wxT("plotcanvas") ),
+           m_titleStaticText( NULL )
+ {
+     m_xUnitsPerValue = 1.0;
+@@ -1088,7 +1088,7 @@
+         s_loaded = true; // set it to true anyhow, we won't try again
+ 
+         #if defined(__WXMSW__) || defined(__WXPM__)
+-            s_bitmap = new wxBitmap(_T("plot_enl_bmp"), wxBITMAP_TYPE_RESOURCE);
++            s_bitmap = new wxBitmap(wxT("plot_enl_bmp"), wxBITMAP_TYPE_RESOURCE);
+         #else
+             s_bitmap = new wxBitmap( plot_enl_xpm );
+         #endif
+@@ -1107,7 +1107,7 @@
+         s_loaded = true; // set it to true anyhow, we won't try again
+ 
+         #if defined(__WXMSW__) || defined(__WXPM__)
+-            s_bitmap = new wxBitmap(_T("plot_shr_bmp"), wxBITMAP_TYPE_RESOURCE);
++            s_bitmap = new wxBitmap(wxT("plot_shr_bmp"), wxBITMAP_TYPE_RESOURCE);
+         #else
+             s_bitmap = new wxBitmap( plot_shr_xpm );
+         #endif
+@@ -1126,7 +1126,7 @@
+         s_loaded = true; // set it to true anyhow, we won't try again
+ 
+         #if defined(__WXMSW__) || defined(__WXPM__)
+-            s_bitmap = new wxBitmap(_T("plot_zin_bmp"), wxBITMAP_TYPE_RESOURCE);
++            s_bitmap = new wxBitmap(wxT("plot_zin_bmp"), wxBITMAP_TYPE_RESOURCE);
+         #else
+             s_bitmap = new wxBitmap( plot_zin_xpm );
+         #endif
+@@ -1145,7 +1145,7 @@
+         s_loaded = true; // set it to true anyhow, we won't try again
+ 
+         #if defined(__WXMSW__) || defined(__WXPM__)
+-            s_bitmap = new wxBitmap(_T("plot_zot_bmp"), wxBITMAP_TYPE_RESOURCE);
++            s_bitmap = new wxBitmap(wxT("plot_zot_bmp"), wxBITMAP_TYPE_RESOURCE);
+         #else
+             s_bitmap = new wxBitmap( plot_zot_xpm );
+         #endif
+@@ -1164,7 +1164,7 @@
+         s_loaded = true; // set it to true anyhow, we won't try again
+ 
+         #if defined(__WXMSW__) || defined(__WXPM__)
+-            s_bitmap = new wxBitmap(_T("plot_up_bmp"), wxBITMAP_TYPE_RESOURCE);
++            s_bitmap = new wxBitmap(wxT("plot_up_bmp"), wxBITMAP_TYPE_RESOURCE);
+         #else
+             s_bitmap = new wxBitmap( plot_up_xpm );
+         #endif
+@@ -1183,7 +1183,7 @@
+         s_loaded = true; // set it to true anyhow, we won't try again
+ 
+         #if defined(__WXMSW__) || defined(__WXPM__)
+-            s_bitmap = new wxBitmap(_T("plot_dwn_bmp"), wxBITMAP_TYPE_RESOURCE);
++            s_bitmap = new wxBitmap(wxT("plot_dwn_bmp"), wxBITMAP_TYPE_RESOURCE);
+         #else
+             s_bitmap = new wxBitmap( plot_dwn_xpm );
+         #endif

@@ -1,0 +1,139 @@
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+'\" te
+.TH wx-config 1 "5 Aug 2008" "SunOS 5.11" "User Commands"
+.SH NAME
+wx-config \- wxWidgets configuration search and query tool
+.SH SYNOPSIS
+.LP
+.nf
+\fBwx-config\fR [ \fB\fIoptions...\fR ] [ \fB\fIlib...\fR ] 
+.fi
+
+.SH DESCRIPTION
+.LP
+\fBwx-config\fR returns  information about the wxWidgets libraries available on your system.  It may be used to retrieve the information you require to build applications using these libraries.
+
+Changing  the  library  options  you  wish  to  use  for an application previously involved managing alternative  configurations  by  a  system dependent  means.   It  is  now  possible  to  select  from  any of the configurations installed on your system via this single tool.  You  can view  all  available  configurations  installed  in  the system default prefix with the command wx-config --list and select from them by  using the feature options described below.
+
+Optional  LIB  arguments  (comma  or  space  separated)  may be used to specify individually the wxWidgets component libraries that you wish to use,  or  to  specify  additional  components  not ususally included by default.  The magic token std may be used to import all libraries  that would be used by default if none were specified explicitly.
+eg.  wx-config --libs std,gizmos
+
+.SH OPTIONS
+.LP
+wx-config  accepts  the following options with no restrictions on their order as was required in previous releases:
+.TP
+Installed root
+.LP
+These options change or query the filesystem root  for  the  operations listed below.
+.TP
+\fB--prefix[=PREFIX]\fR
+Without  the optional argument, the current default pre-fix will be output.  If the argument is supplied, PREFIX will  be  searched  for matching configs in place of the default.  You may use both forms in the same command.
+
+.TP
+\fB--exec-prefix=[EXEC-PREFIX]\fR
+Similar to --prefix, but acts on  the  exec-prefix.   If not specified will default to the value of prefix.
+
+.TP
+Query Options
+.LP
+These  options  return  information about the wxWidgets default version and installed alternatives.
+.TP
+\fB--list\fR
+List all configs in prefix and show those that match any additional feature options given.
+
+.TP
+\fB--release\fR
+Output the wxWidgets release number.
+
+.TP
+\fB--version-full\fR
+Output the wxWidgets version number in all its glory.
+
+.TP
+\fB--basename\fR
+Output the base name of the wxWidgets libraries.
+
+.TP
+Feature Options
+.LP
+These  options select features which determine which wxWidgets configuration to use.
+.TP
+\fB---host=HOST\fR
+Specify a (posix extended)  regex  of  host  aliases  to match    for   cross   compiled   configurations.    eg. --host=i586-mingw32msvc, --host=.*  If unspecified,  the default  is  to  match only configurations native to the build machine.
+
+.TP
+\fB--toolkit=TOOLKIT\fR
+Specify a (posix extended)  regex  of  the  toolkits  to match.   The toolkit is responsible for look and feel of the compiled application.  eg. gtk,  gtk2,  motif,  msw. If  unspecified  the default is to prefer the system default toolkit, but to match any toolkit in  the  absence of a stricter specification.
+
+.TP
+\fB--version[=VERSION]\fR
+Without the optional argument, return the wxWidgets version.  If the argument is supplied it specifies a (posix extended)  regex  of the versions to match.  If unspecified the default is to prefer the  system  default  version,  but  to  match  any  version  in the absence of a stricter specification.
+
+.TP
+\fB--unicode[=yes|no]\fR
+Specify the default character type for the  application. If  unspecified,  the  system default will be preferred, but any type may match in  the  absence  of  a  stricter specification.
+
+.TP
+\fB--debug[=yes|no]\fR
+Specify  whether  to create a debug or release build for the application.  If  unspecified,  the  system  default (release)  will  be preferred, but any type may match in the absence of a stricter specification.   Debug  builds should  never be uploaded to Debian, but are very useful for finding certain common failure idioms.  You are  encouraged to use them during active development of applications.  They are not binary compatible  with  the  release libraries.
+
+.TP
+\fB--static[=yes|no]\fR
+Specify whether to statically or dynamically link wxWidgets libraries into your application.   If  unspecified, the  system default (dynamic) will be preferred, but any type may match in the absence of a  stricter  specification.   Static  linking is mainly useful still for cross ports not natively supported by Debian, and can be  hazardous  in conjunction with the gtk toolkits.  Note that static libraries are no longer  supplied  in  the  wxGTK packages any more.
+
+.TP
+Compiler Options
+.LP
+These  options generate output required to build an application using a particular wxWidgets configuration.
+.TP
+\fB--libs\fR
+Output link flags required for a wxWidgets  application.
+
+.TP
+\fB--cppflags\fR
+Output parameters required by the C preprocessor.
+
+.TP
+\fB--cflags\fR
+Output parameters required by the C compiler.
+
+.TP
+\fB--cxxflags\fR
+Output parameters required by the C++ compiler.
+
+.TP
+\fB--cc\fR
+Output the name of the C compiler $(CC).
+
+.TP
+\fB--cxx\fR
+Output the name of the C++ compiler $(CXX).
+
+.TP
+\fB--ld\fR
+Output the linker command.
+
+.SH SEE ALSO
+.LP
+\fBwxrc\fR(1)

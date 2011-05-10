@@ -1,0 +1,63 @@
+From edb725ec268bed5a940c29d0ee51e0d72eb51715 Mon Sep 17 00:00:00 2001
+From: Vadim Zeitlin <vadim@wxwidgets.org>
+Date: Sat, 5 Sep 2009 15:53:32 +0200
+Subject: [PATCH 1/5] Work around conflict between _T() and Sun CC standard headers.
+
+This change fixes the build of wxWidgets itself by undefining _T() before
+including any standard headers and redefining it after including them.
+
+See #10660.
+---
+ include/wx/afterstd.h  |   18 ++++++++++++++++++
+ include/wx/beforestd.h |   10 ++++++++++
+ 2 files changed, 28 insertions(+), 0 deletions(-)
+
+diff --git a/include/wx/afterstd.h b/include/wx/afterstd.h
+index 6fdbb31..3de6507 100644
+--- a/include/wx/afterstd.h
++++ b/include/wx/afterstd.h
+@@ -46,3 +46,23 @@
+     #endif
+ #endif
+ 
++/*
++    See comment about Sun C++ compiler in wx/beforestd.h.
++ */
++#if defined(WXBUILDING) || defined(wxNEEDS_T)
++#if defined(__SUNPRO_CC) || defined(__SUNPRO_C)
++    /*
++        Undefine _T in case it was defined in the standard header.
++     */
++    #undef _T
++
++    /*
++        And define it again in the same way as it's done in wx/wxchar.h.
++     */
++    #if wxUSE_UNICODE
++        #define _T(x) wxCONCAT_HELPER(L, x)
++    #else /* !Unicode */
++        #define _T(x) x
++    #endif /* Unicode/!Unicode */
++#endif /* defined(__SUNPRO_CC) || defined(__SUNPRO_C) */
++#endif /* defined(WXBUILDING) */
+diff --git a/include/wx/beforestd.h b/include/wx/beforestd.h
+index 684b842..f75f392 100644
+--- a/include/wx/beforestd.h
++++ b/include/wx/beforestd.h
+@@ -63,3 +63,13 @@
+     #pragma warning(disable:4786)
+ #endif // VC++ < 7
+ 
++/*
++    Recent versions of Sun C++ compiler use _T in their standard headers and
++    our definition of it in wx/wxchar.h conflicts with them and breaks
++    compilation, so undefine _T before including them and redefine it back in
++    wx/afterstd.h.
++ */
++#if defined(__SUNPRO_CC) || defined(__SUNPRO_C)
++    #undef _T
++#endif /* SUNCC */
++
+-- 
+1.6.3.3
+
