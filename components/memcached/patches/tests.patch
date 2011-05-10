@@ -1,0 +1,15 @@
+--- memcached-1.4.5/Makefile.in.orig	Mon May  9 12:37:54 2011
++++ memcached-1.4.5/Makefile.in	Mon May  9 12:38:40 2011
+@@ -1194,9 +1194,9 @@
+ 	$(DTRACE) $(DTRACEFLAGS) -G -o memcached_debug_dtrace.o -s ${srcdir}/memcached_dtrace.d $(memcached_debug_OBJECTS)
+ 
+ test:	memcached-debug sizes testapp
+-	$(srcdir)/sizes
+-	$(srcdir)/testapp
+-	prove $(srcdir)/t
++	./sizes
++	./testapp
++	prove ./t
+ 	@if test `basename $(PROFILER)` = "gcov"; then \
+ 	  for file in memcached_debug-*.gc??; do \
+ 	    mv -f $$file `echo $$file | sed 's/memcached_debug-//'`; \
