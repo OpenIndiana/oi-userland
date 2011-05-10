@@ -1,0 +1,77 @@
+#!/bin/bash
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, Oracle and/or it's affiliates.  All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+TEXINFO_DATA_DIR="/var/info"
+
+function populate_texinfo_directory() {
+	directory=$(dirname $1)
+	dir_file=$(readlink -f $1)
+
+	[[ ${dir_file} -ot ${directory} ]] || return
+
+	case "${dir_file}" in
+	/var/info/*)	# Only process if the link resolves inside /var/info.
+		echo "populating ${dir_file} from ${directory}"
+		/bin/rm -f ${dir_file}.new
+		for info_file in $(find ${directory} -type f | \
+				   egrep -v -e '-[0-9]+$') ; do
+			/usr/bin/install-info --dir-file=${dir_file}.new \
+				--info-file=${info_file}
+		done
+		/bin/mv -f ${dir_file}.new ${dir_file}
+		/bin/ln -s ${1} ${dir_file}.backlink 2>/dev/null
+		;;
+	esac
+}
+
+### Begin Here ###
+
+case "$1" in
+'start'|'refresh')
+	# refresh texinfo directories
+	for dir_link in $(pkg search -H -l -o path ':link:path:*/info/dir' | \
+			  sort -u) ; do
+		populate_texinfo_directory /${dir_link}
+	done
+	# remove any unreferenced directories
+	for link in $(find ${TEXINFO_DATA_DIR} -type l -name '*.backlink') ; do
+		path=$(readlink ${link})
+		if [[ ! -L ${path} ]] ; then
+			file=$(expr "${link}" : "\(.*\)\.backlink")
+			echo -n "removing unreferenced texinfo directory: "
+			echo "${file} ${link}"
+			/bin/rm -f ${file} ${link}
+		fi
+	done
+	;;
+*)
+	echo "Usage: $0 (start|refresh)"
+	exit 1
+	;;
+esac
+exit $SMF_EXIT_OK

@@ -30,6 +30,9 @@
 # texinfo docs
 <transform dir file link hardlink path=usr/.*/info(/.+){0,1}$ -> \
     default facet.doc.info true>
+<transform file path=usr/.*/info/.+$ -> \
+    add restart_fmri texinfo-svc>
+<transform file path=usr/.*/info/dir$ -> exit 1 "Error: packaged texinfo directory file (%<action.path>)" >
 
 # html docs
 <transform dir file link hardlink path=usr/.*/doc/.*(html?|css).* -> \
