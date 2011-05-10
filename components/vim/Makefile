@@ -28,26 +28,42 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	7.2
-IPS_COMPONENT_VERSION=	$(shell find $(PATCH_DIR) -name $(PATCH_PATTERN) | \
-				sort | tail -1 | cut -d/ -f2)
-COMPONENT_SRC=		vim72
+COMPONENT_VERSION=	7.3
+IPS_COMPONENT_VERSION=	$(shell echo $(COMPONENT_HG_REV) | sed -e 's/-/./g' -e 's/v//')
+COMPONENT_SRC=		vim-$(COMPONENT_HG_REV)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
-COMPONENT_ARCHIVE=	vim-$(COMPONENT_VERSION).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:a4b6641ca528fada71ea77c998a441495ed4984c
-COMPONENT_ARCHIVE_URL=	ftp://ftp.vim.org/pub/vim/unix/$(COMPONENT_ARCHIVE)
-
-PATCH_DIR =	$(COMPONENT_SRC)-patches
-PATCH_PATTERN =	$(COMPONENT_VERSION).*
-EXTRA_PATCHES =	$(PATCH_DIR)/runtime.patch $(PATCH_DIR)/vim-help.patch
+COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).tar.bz2
+COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:c6458484b1cdcf6a54f5c686db8a68fa221ba3a2
+COMPONENT_HG_URL=	https://vim.googlecode.com/hg
+COMPONENT_HG_REV=	v7-3-244
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+HGREPODIR=		$(COMPONENT_NAME).hg
+TARBALLDIR=		$(COMPONENT_NAME)-$(COMPONENT_HG_REV)
+
+$(HGREPODIR)/.hg:
+	hg clone -U $(COMPONENT_HG_URL) $(@D)
+
+# Create the tarball.  It should contain the working directory of the repo at
+# the desired revision, but not the .hg directory.  Note that the digest will
+# be different every time because .hg doesn't set the timestamps of the files
+# in the working directory.
+hgball: $(HGREPODIR)/.hg
+	hg -R $(HGREPODIR) pull
+	hg -R $(HGREPODIR) tags | awk '$$1 ~ /^v7-/ {print $$1; exit}'
+	rm -rf $(TARBALLDIR)
+	hg clone -u $(COMPONENT_HG_REV) $(HGREPODIR) $(TARBALLDIR)
+	rm -rf $(TARBALLDIR)/.hg
+	tar jcf $(COMPONENT_ARCHIVE) $(TARBALLDIR)
+	digest -a sha1 $(COMPONENT_ARCHIVE)
+
 PATCH_LEVEL =	0
 
-PKG_MACROS +=	VIMVER=$(COMPONENT_SRC)
+PKG_MACROS +=	VIMVER=vim73
 
 X_VARIANT =	$(BUILD_DIR)/$(MACH32)-gvim
 NOX_VARIANT =	$(BUILD_DIR)/$(MACH32)-vim
@@ -65,6 +81,20 @@ INSTALL_32 = 	$(NOX_VARIANT)/.installed
 TEST_32 = 	$(NOX_VARIANT)/.tested
 
 CONFIGURE_OPTIONS +=	--with-features=huge
+CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
+CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"
+CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
+# XXX Perl compilation fails, for some reason.
+# - Perl_croak_nocontext is redefined (embed.h, line 5157), having something to
+#   do with PERL_IMPLICIT_CONTEXT, which is discussed in perlguts(1).  This is
+#   just a warning, but looks like it might have nasty consequences.
+# - The declaration of Perl_Gthr_key_ptr() has a problem with its argument of
+#   type pTHX.  if_perl.xs defines that to void if it's not already defined,
+#   but perl.h probably does something else to it, not sure what yet.  This
+#   also appears to have something to do with PERL_IMPLICIT_CONTEXT.
+# CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
+CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic
+CONFIGURE_OPTIONS +=	--enable-rubyinterp=dynamic
 
 # We build two variants: with and without X support.
 $(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --without-x

@@ -121,11 +121,15 @@ def mangle_manpage(manifest, action, src, dest):
 		fmri = pkg.fmri.PkgFmri(manifest.attributes['pkg.fmri'])
 		availability = fmri.pkg_name
 
+	community = None
 	if 'info.upstream_url' in manifest.attributes:
 		community = manifest.attributes['info.upstream_url']
 
+	source = None
 	if 'info.source_url' in manifest.attributes:
 		source = manifest.attributes['info.source_url']
+	elif 'info.repository_url' in manifest.attributes:
+		source = manifest.attributes['info.repository_url']
 
 	# create a directory to write to
 	destdir = os.path.dirname(dest)

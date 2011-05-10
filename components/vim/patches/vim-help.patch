@@ -1,6 +1,6 @@
---- src/ex_cmds.c.orig	Tue Apr 12 14:21:15 2011
-+++ src/ex_cmds.c	Wed Apr 13 13:05:28 2011
-@@ -5489,6 +5489,8 @@
+--- src/ex_cmds.c	Thu Apr 21 16:23:08 2011
++++ src/ex_cmds.c	Thu Apr 21 16:23:08 2011
+@@ -5525,6 +5525,8 @@
      int		len;
      char_u	*lang;
  #endif
@@ -9,7 +9,7 @@
  
      if (eap != NULL)
      {
-@@ -5540,6 +5542,23 @@
+@@ -5576,6 +5578,23 @@
      n = find_help_tags(arg, &num_matches, &matches,
  						 eap != NULL && eap->forceit);
  
@@ -33,7 +33,7 @@
      i = 0;
  #ifdef FEAT_MULTI_LANG
      if (n != FAIL && lang != NULL)
-@@ -5552,7 +5571,7 @@
+@@ -5588,7 +5607,7 @@
  		break;
  	}
  #endif
@@ -42,7 +42,7 @@
      {
  #ifdef FEAT_MULTI_LANG
  	if (lang != NULL)
-@@ -5565,9 +5584,11 @@
+@@ -5601,9 +5620,11 @@
  	return;
      }
  
@@ -57,7 +57,7 @@
  
  #ifdef FEAT_GUI
      need_mouse_correct = TRUE;
-@@ -5599,12 +5620,14 @@
+@@ -5635,12 +5656,14 @@
  	     * There is no help window yet.
  	     * Try to open the file specified by the "helpfile" option.
  	     */
@@ -77,7 +77,7 @@
  
  #ifdef FEAT_WINDOWS
  	    /* Split off help window; put it at far top if no position
-@@ -5635,7 +5658,7 @@
+@@ -5671,7 +5694,7 @@
  	     * Set the alternate file to the previously edited file.
  	     */
  	    alt_fnum = curbuf->b_fnum;
@@ -86,7 +86,7 @@
  			  ECMD_HIDE + ECMD_SET_HELP,
  #ifdef FEAT_WINDOWS
  			  NULL  /* buffer is still open, don't store info */
-@@ -5652,7 +5675,7 @@
+@@ -5688,7 +5711,7 @@
      if (!p_im)
  	restart_edit = 0;	    /* don't want insert mode in help file */
  
@@ -95,7 +95,7 @@
  	do_tag(tag, DT_HELP, 1, FALSE, TRUE);
  
      /* Delete the empty buffer if we're not using it.  Careful: autocommands
-@@ -5670,7 +5693,8 @@
+@@ -5706,7 +5729,8 @@
  	curwin->w_alt_fnum = alt_fnum;
  
  erret:
