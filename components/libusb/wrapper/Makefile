@@ -42,6 +42,10 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 $(SOURCE_DIR)/.prep:
 	$(TOUCH) $@
 
+download:
+
+clobber:	clean
+
 prep:	$(SOURCE_DIR)/.prep
 
 build:		$(BUILD_32_and_64)
