@@ -1,0 +1,27 @@
+--- expect5.45/Makefile.in.~1~	2010-09-30 10:14:07.000000000 -0700
++++ expect5.45/Makefile.in	2011-05-10 14:12:01.229523073 -0700
+@@ -236,10 +236,10 @@
+ 	    $(INSTALL_DATA) $(srcdir)/$$i $(DESTDIR)$(includedir) ; \
+ 	done;
+ # install standalone scripts and their man pages, if requested
+-	@mkdir -p $(DESTDIR)$(prefix)/bin
++	@mkdir -p $(DESTDIR)$(prefix)/demo/expect
+ 	-for i in $(SCRIPT_LIST) ; do \
+ 	  if [ -f $$i ] ; then \
+-	    $(INSTALL_PROGRAM) $$i $(DESTDIR)$(prefix)/bin/$$i ; \
++	    $(INSTALL_PROGRAM) $$i $(DESTDIR)$(prefix)/demo/expect/$$i ; \
+ 	    rm -f $$i ; \
+ 	  else true; fi ; \
+ 	done
+@@ -257,9 +257,10 @@
+ 	$(INSTALL_DATA) $(srcdir)/expect.man $(DESTDIR)$(mandir)/man1/expect.1
+ # install man page for Expect library
+ 	$(INSTALL_DATA) $(srcdir)/libexpect.man $(DESTDIR)$(mandir)/man3/libexpect.3
++	@mkdir -p $(DESTDIR)$(prefix)/demo/expect/man/man1
+ 	-for i in $(SCRIPT_MANPAGE_LIST) ; do \
+ 	  if [ -f $(srcdir)/example/$$i.man ] ; then \
+-	    $(INSTALL_DATA) $(srcdir)/example/$$i.man $(DESTDIR)$(mandir)/man1/$$i.1 ; \
++	    $(INSTALL_DATA) $(srcdir)/example/$$i.man $(DESTDIR)$(prefix)/demo/expect/man/man1/$$i.1 ; \
+ 	  else true; fi ; \
+ 	done
+ 
