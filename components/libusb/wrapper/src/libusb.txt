@@ -1,0 +1,1509 @@
+
+		libusb: user-space usb library
+
+
+Table of Contents:
+
+	1.0 	libusb: user-space usb library
+
+	2.0 	Opensource applications that use libusb
+
+	3.0 	libusb interfaces and data structures
+		& writing libusb applications
+
+
+
+-------------------------------------
+1.0 	libusb: user-space usb library
+-------------------------------------
+	libusb is a usb library/API that lets user-space applications
+	access and operate usb devices.  The library contains interfaces for 
+	managing USB devices  without a kernel driver.  It is an opensource API 
+	that is also supported on Linux, MacOS X, and  NetBSD.    
+	See http://libusb.sourceforge.net.
+
+	libusb has been implemented for both Sun Ray and Solaris platforms
+	using the interfaces defined in the usb.h header file.
+
+	For solaris please refer to ugen(7d) man page of how to bind ugen to
+	devices before accessing them via libusb. This is not needed for Sun Ray.
+	Note that in most cases explicitly binding ugen to the device is not
+	needed, particularly if no driver has been found for the device.
+
+	For the latest on USB, refer to:
+	http://www.sun.com/io
+	http://www.sun.com/io_technologies/USB-Faq.html
+
+LICENSE
+	usb.h has been licensed under LGPL and BSD.
+
+AUTHOR
+	Johannes Erdfelt started the libusb project, did the libusb implementation 
+	for linux and is responsible for the libusb API definition.
+	Solaris and Sun Ray implementations were done by Sun based on
+	the interfaces in usb.h.
+
+
+	To Build and Compile:
+	--------------------
+
+	cc [ flag... ] -I/usr/include file... \
+	-L/usr/lib -R/usr/lib\
+	-lusb  [ library... ]
+
+     	#include <usb.h>
+
+	Files
+	-----
+
+	/usr/lib/libusb.so.1        shared object
+
+	/usr/lib/libusb_plugins     implementation-specific
+                                     	libusb plugins directory
+					{libusbut.so.1, libusbugen.so.1}
+
+
+     	/usr/bin/libusb-config      script to determine linking
+                                     	environment
+
+     	/usr/include/usb.h          libusb header file
+
+
+	Packages  
+	--------
+
+	The following packages are available:
+
+	SUNWlibusb      Sun's libusb wrapper library that handles Solaris and 
+		        Sun Ray plugin
+	SUNWlibusbS	source
+
+	SUNWlibusbugen  Solaris libusb plugin
+	SUNWlibusbugenS	source
+
+	The following package is installed as part of SRSS 3.0 and later
+	installations:
+
+	SUNWlibusbut    Sun Ray libusb plugin
+
+
+	Environment Variables:
+	----------------------
+
+	Sun's libusb implementation makes use of a number of environment 
+	variables
+
+	SUN_LIBUSB_ALLBUS
+	To access devices attached to Sun Ray usb port and also the
+	Sun Ray server usb port.
+
+	SUN_LIBUSBPLUGIN_DIR
+	To change path of the libusb plugins. Default location is
+	/usr/lib/libusb_plugins.
+
+	SUN_LIBUSB_DEBUG
+	SUN_LIBUSBUGEN_DEBUG
+	SUN_LIBUSBUT_DEBUG
+
+	The above are variables used to enable debugging at various
+	levels in wrapper library and plugins. 
+	Each can be set to values from 1 to 5 with 5 being the most
+	verbose/detailed.
+
+	Setting the environment variable SUN_LIBUSB_DEBUG will enable
+	debugging at that level for both the wrapper and any platform-specific
+	libraries that the wrapper loads. If the variable SUN_LIBUSBUGEN_DEBUG
+	(ugen) or SUN_LIBUSBUT_DEBUG (Sun Ray) is also set, it will take
+	precedence.
+
+	The environment variables overrides what the application sets by
+	calling usb_set_debug().
+
+-----------------------------------------------
+2.0 	Opensource applications that use libusb
+-----------------------------------------------
+
+There are a number of opensource applications that make use of the libusb 
+library to drive the backends for a range of usb based devices like image 
+scanners, digital still cameras, palm pilots, and others.  We will only cover 
+some of these here but there are others and there always exists the option for the
+user to write their own libusb application for the device of interest.
+
+For now please check the Sun Download Center (www.sun.com/software/download)
+for solaris binaries of these packages and documentation.
+One may also check www.sun.com site for skeleton drivers and sample code or
+send may to usb-help@sun.com for the latest status on porting libusb applications
+to Solaris.
+
+blastwave (http://www.blastwave.org) and www.sunfreeware.com are sites that
+host solaris binaries for a host of opensrc applications.
+
+To build the following please use gmake and gcc for simplicity.
+Have /usr/bin in your path to build and run the open source applications.
+(The /usr packages are required to build and run these apps).
+
+The following package is also required to run certain apps if you do not have 
+the gnu environment. This can be downloaded from www.sunfreeware.com.
+	SMClibgcc     [libgcc-3.4.1-sol9-sparc-local.gz]
+
+
+--------
+2.1 SANE
+--------
+
+SANE stands for (Scanner Access Now Easy).  Information on SANE can be found at
+http://www.sane-project.org.  It is a framework that consists of backends that
+make use of libusb to drive the various usb scanners and frontends that are 
+used for displaying the image acquired.
+
+To Build SANE
+
+      1. Please only work with SANE v1.0.14 or later and
+         always build with posix thread enabled.
+
+Building the SANE Backend package
+
+      1. Extract the sane-backend package
+
+      2. cd into the sane-backend directory
+
+      3. run configure to generate the makefiles etc
+            e.g. LD_LIBRARY_PATH=/usr/lib configure \
+		 --oldincludedir=/usr/include \
+		 --prefix=/opt/sane --disable-fork-process
+
+      4. use gmake to build SANE
+            e.g. LD_LIBRARY_PATH=/usr/lib gmake -e MAKE=gmake
+
+      5. run gmake install 
+
+* [ Note the disable-fork-process option above ]
+
+
+Building the SANE Frontend package
+
+      1. Extract the sane-frontend package
+
+      2. cd into the sane-frontend directory
+
+      3. Make sure /opt/sane/bin is in your path (this is required to locate 
+	 the sane backend)
+
+      4. run configure to generate the makefiles etc.
+            e.g. LD_LIBRARY_PATH=/usr/lib configure --prefix=/opt/sane
+
+      5. use gmake to build SANE
+            e.g. LD_LIBRARY_PATH=/usr/lib gmake -e MAKE=gmake
+
+      6. run gmake install 
+
+
+To Use SANE
+
+      Run the sane frontends scanimage or xscanimage (GUI)
+
+      1. scanimage --help
+      2. xscanimage --help
+
+NOTE:	sane/etc/sane.d dir has conf files for each scanner driver 
+	and may need entries that specify the usb vid/pid of the device.
+	Some scanners require a firmware upload and the entry in the
+	.conf file needs to be filled in with the path and f/w file
+
+
+------------------
+2.2 Gphoto & gtkam
+------------------
+
+Gphoto can be used to drive usb based digital still cameras.
+http://www.gphoto.org/
+
+Gphoto & gtkam are installed in /usr/bin and generally there is no need
+to build the binaries. However, instructions are below.
+
+Packages available are:
+
+SUNWgnome-camera	-  GNOME Digital Camera Tool
+SUNWgnome-camera-devel	-  GNOME Digital Camera Tool  - developer files
+SUNWgnome-camera-share	-  GNOME Digital Camera Tool - platform independent files
+							/usr/share
+
+
+To Build Gphoto (libgphoto package)
+(using version 2.1.4 and up)
+
+      1. Extract the libgphoto package 
+
+      2. cd into the libgphoto directory
+
+      3. Make sure /usr/bin is in your path
+
+      4. Run configure to build the make files
+            e.g. LD_LIBRARY_PATH=/usr/lib ./configure --prefix=/opt/gphoto \
+	         --oldincludedir=/usr/include 
+
+      5. use gmake to build libgphoto
+
+      6. run gmake install 
+
+
+Building the Gphoto2 package
+
+      1. Extract the gphoto package
+
+      2. cd into the gphoto directory
+
+      3. Run configure to build the make files
+            e.g. PKG_CONFIG_PATH=/opt/gphoto/lib/pkgconfig ./configure \
+		 --prefix=/opt/gphoto --without-pkgconfig --without-readline 
+
+      4. Edit Makefile in the gphoto2 sub directory to include -lgphoto2
+	 and -lgphoto2_port to the lines the begin with LIBS= 
+	 e.g. LIBS = -lgphoto2 -lgphoto2_port
+
+      5. use gmake to build gphoto
+            e.g. gmake -e MAKE=gmake -e CFLAGS=-I/usr/include
+
+      6. run gmake install 
+
+
+To Use gphoto
+
+      1. Run the command gphoto2 --help
+
+      2. Use gphoto2 -P to download pictures from the digital camera to the
+         current directory.
+
+For example:
+
+%  /usr/bin/gphoto2 --auto-detect
+Model                          Port                                            
+----------------------------------------------------------
+Canon PowerShot S110           usb: 
+           
+% cd /tmp
+% /usr/bin/gphoto2 --get-all-thumbnails
+Detected a 'Canon:PowerShot S110'.                                             
+Downloading 'IMG_2207.JPG' from folder '/DCIM/122CANON'...
+Downloading 'IMG_2207.JPG' from folder '/DCIM/122CANON'...
+Saving file as thumb_IMG_2207.jpg
+Downloading 'IMG_2208.JPG' from folder '/DCIM/122CANON'...
+Downloading 'IMG_2208.JPG' from folder '/DCIM/122CANON'...
+Saving file as thumb_IMG_2208.jpg
+
+alternatively, use gtkam, select your camera and view the pictures
+(This is a gui).
+%  /usr/bin/gtkam
+
+
+--------------
+2.3 pilot-xfer
+--------------
+
+pilot-xfer is installed in /usr/bin. Refer to pilot-xfer(1).
+
+pilot-xfer allows the user to install databases contained in
+the  standard  .prc  (Palm  Resource  Database),  .pdb (Palm
+Record Database), and .pqa (Palm Query Application)  formats
+onto  a  Palm,  retrieve  databases  from the Palm, list the
+databases contained in a Palm, and backup or restore all  of
+the databases at once, and many other powerful operations.
+
+The following packages are available:
+
+SUNWpltlk	- includes pilot-xfer, libpisock, libpisync	
+SUNWpltlkS	- source package
+
+------------
+2.4 ColdSync
+------------
+
+pilot-xfer is preferred over ColdSync.
+http://www.coldsync.org/
+
+(using version 3.0-pre4)
+To build ColdSync
+
+      1. Extract the coldsync package
+
+      2. cd into the coldsync directory
+
+      3. Run configure to build the make files 
+
+      4. Run configure to build the make files
+            e.g LDFLAGS=-L/usr/lib CFLAGS=-I/usr/include ./configure \
+	        --prefix=/tmp/coldsync --with-libusb
+
+      5. If solaris 9 edit the file src/config.c and add the function below
+         to the code
+
+int     setenv(name, value, clobber)
+char   *name;
+char   *value;
+int     clobber;
+{
+    char   *malloc();
+    char   *getenv();
+    char   *cp;
+
+    if (clobber == 0 && getenv(name) != 0)
+        return (0);
+    if ((cp = malloc(strlen(name) + strlen(value) + 2)) == 0)
+        return (1);
+    sprintf(cp, "%s=%s", name, value);
+    return (putenv(cp));
+}
+
+      6. The code suffers from endian issues relating to the numports in the file 
+         libpconn/PConnection_libusb.c in particular the function pconn_libusb_open().
+	 To fix this for big endian machines add the line shown below before the
+	 following code:
+
+      for (i = 0; i < ci.numPorts; i++) {
+               IO_TRACE(2)
+               fprintf(stderr,
+                       "ConnectionInfo: entry %d function %s on port %d\n",
+                       i,
+                       (ci.connections[i].portFunctionID <= hs_usbfun_MAX)
+                         ? hs_usb_functions[ci.connections[i].portFunctionID]
+                         : "unknown",
+                       ci.connections[i].port);
+
+               if (ci.connections[i].portFunctionID == hs_usbfun_Hotsync)
+                       u->hotsync_ep = ci.connections[i].port;
+       }
+
+      Line to add for big endian machines (sparc)
+
+     ci.numPorts=(((ci.numPorts &0xff) <<8) | (((ci.numPorts) & 0xff00) >> 8));
+
+      7. type gmake to build coldsync
+
+      8. type gmake install to install coldsync
+
+
+To use ColdSync
+
+      1. Run the command coldsync --help
+
+      2. Use coldsync -m list -t libusb to list files.
+
+      3. Use coldsync -t libusb -mb /tmp to backup device to /tmp directory
+
+------------------------
+2.5 USB CCID IFD Handler
+------------------------
+
+This is the opensource USB CCID IFD Handler built to operate
+with the Solaris Smartcard Framework. It supports a number
+of USB CCID compliant smartcard readers.
+Refer to usb_ccid_ifd(3SMARTCARD).
+
+Packages available are:
+
+SUNWusbccid	- ifdh_usbccid.so
+SUNWusbccidS	- the source package
+
+
+
+-------------------------------------------------
+3.0 	libusb data structures and interfaces and 
+	writing libusb applications
+-------------------------------------------------
+
+3.1 libusb data structures and interfaces
+
+3.2 Writing libusb applications
+
+
+Please also see the programming info/docs in http://www.libusb.sourceforge.net
+
+
+3.1 libusb data structures and interfaces
+-----------------------------------------
+
+Data Structures:
+
+    usb_descriptor_header -- standard USB descriptor header
+    usb_device_descriptor -- standard USB device descriptor
+    usb_config_descriptor -- standard USB configuration descriptor with
+                           some extras
+    usb_interface_descriptor -- stardard USB interface descriptor with some
+                           extras
+    usb_endpoint_descriptor -- standard USB endpoint descriptor with some
+                           extras
+    usb_hid_descriptor  -- standard USB HID descriptor
+    usb_string_descriptor -- standard string descriptor
+
+    usb_ctrl_setup      -- standard USB setup bytes
+
+- Libusb data structures
+
+    usb_bus             -- structure describing a USB bus in the system
+    usb_device          -- structure describing a device on a USB bus
+    usb_interface       -- structure describing a USB interface
+
+- Initialization and discovery
+
+    usb_init            -- Initializes libusb
+    usb_find_busses     -- Finds all USB busses in the system
+    usb_find_devices    -- Finds all devices on all USB busses
+    usb_busses          -- Linked list of USB busses in the system
+    usb_get_busses      -- Returns usb_busses
+
+- Device operations
+
+    usb_open            -- Opens a USB device
+    usb_close           -- Closes a USB device
+    usb_claim_interface -- Claim an interface of a device
+    usb_release_interface -- Releases a previously claimed interface
+
+- Control Transfers
+
+    usb_control_msg     -- Send a control message to a device
+    usb_get_string      -- Retrieves a string descriptor from a device
+    usb_get_string_simple -- Retrieves a string descriptor from a device
+                            using the first language
+    usb_get_descriptor  -- Retrieves the Device / Config Descriptor
+    usb_get_descriptor_by_endpoint -- Retrieves Descriptor using non default
+				      control endpint (*)
+
+    usb_set_configuration -- Sets the active configuration of a device
+    usb_set_altinterface -- Sets the active alternate setting of the
+                            current interface
+    usb_clear_halt      -- Clears any halt status on an endpoint
+    usb_resetep         -- Resets state of an endpoint
+    usb_reset           -- Resets a device
+
+- Bulk Transfers
+
+    usb_bulk_write      -- Write data to a bulk endpoint
+    usb_bulk_read       -- Read data from a bulk endpoint
+
+- Interrupt Transfers
+
+    usb_interrupt_write -- Write data to an interrupt endpoint (**)
+    usb_interrupt_read  -- Read data from an interrupt endpoint
+
+- Miscellaneous
+
+    usb_strerror        -- usb error string
+    usb_set_debug       -- set debug level
+
+NOTE:
+(*) Not implemented for Sun plugins (Solaris , Sun Ray)
+(**) Not implemented for Sun Ray plugins
+
+(Refer to www.libusb.sourceforge.net and www.usb.org for more details)
+
+For all libusb interfaces:
+
+SYNOPSIS
+     cc [ flag ...]  -I/usr/include  file  [  library  ...  ]
+     -L/usr/lib -R/usr/lib -lusb
+
+     #include <usb.h>
+
+    ____________________________________________________________
+    |       ATTRIBUTE TYPE        |       ATTRIBUTE VALUE       |
+    |_____________________________|_____________________________|
+    | Interface Stability         | External                    |
+    |_____________________________|_____________________________|
+    | MT-Level                    | Unsafe                      |
+    |_____________________________|_____________________________|
+
+
+
+libusb Library Data Structures
+
+NAME
+     usb_descriptor_header - structure describing the standard USB
+			     descriptor header  
+
+
+DESCRIPTION
+    The usb_descriptor_header structure has the following fields:
+
+    uint8_t	bLength		length of the descriptor
+    uint8_t	bDescriptorType type of the descriptor
+
+    The following sizes are defined
+
+    USB_DT_DEVICE_SIZE
+    USB_DT_CONFIG_SIZE
+    USB_DT_INTERFACE_SIZE
+    USB_DT_ENDPOINT_SIZE
+    USB_DT_ENDPOINT_AUDIO_SIZE
+    USB_DT_HUB_NONVAR_SIZE
+
+    The following types are defined
+
+    USB_DT_DEVICE
+    USB_DT_CONFIG
+    USB_DT_STRING
+    USB_DT_INTERFACE
+    USB_DT_ENDPOINT
+    USB_DT_HID
+    USB_DT_REPORT
+    USB_DT_PHYSICAL
+    USB_DT_HUB
+
+NAME
+     usb_device_descriptor - standard USB device descriptor
+
+DESCRIPTION
+    The device descriptor usb_device_descriptor defines device-wide attributes.
+    Please refer to the USB 2.0 spec, section 9.6.1.  The USB 2.0 spec is
+    available at www.usb.org.
+
+    The usb_device_descriptor structure has the following fields:
+
+    A device descriptor has the following fields:
+
+        uint8_t         bLength                 Size of this descriptor,
+                                                in bytes.
+
+        uint8_t         bDescriptorType         Set to USB_DT_DEVICE.
+
+        uint16_t        bcdUSB                  USB specification release
+                                                number supported, in bcd.
+
+        uint8_t         bDeviceClass            Class code (see below).
+
+        uint8_t         bDeviceSubClass         Subclass code (see USB 2.0
+                                                specification of applicable
+                                                device class for information.)
+
+        uint8_t         bDeviceProtocol         Protocol code (see USB 2.0
+                                                specification of applicable
+                                                device class for information.)
+
+        uint8_t         bMaxPacketSize0         Maximum packet size of
+                                                endpoint 0.
+
+        uint16_t        idVendor                vendor ID value.
+
+        uint16_t        idProduct               product ID value.
+
+        uint16_t        bcdDevice               Device release number in
+                                                binary coded decimal.
+
+        uint8_t         iManufacturer           Index of optional manufacturer
+                                                description string.
+                                                Valid if > 0.
+
+        uint8_t         iProduct                Index of optional product
+                                                description string.
+                                                Valid if > 0.
+
+        uint8_t         iSerialNumber           Index of optional serial
+                                                number string.
+                                                Valid if > 0.
+
+        uint8_t         bNumConfigurations      Number of available
+                                                configurations.
+
+
+     The following values are defined for the bDeviceClass field:
+
+     USB_CLASS_PER_INTERFACE
+     USB_CLASS_AUDIO
+     USB_CLASS_COMM
+     USB_CLASS_HID
+     USB_CLASS_PRINTER
+     USB_CLASS_MASS_STORAGE
+     USB_CLASS_HUB
+     USB_CLASS_DATA
+     USB_CLASS_VENDOR_SPEC
+
+
+NAME
+     usb_config_descriptor - USB configuration descriptor
+
+DESCRIPTION
+    The configuration descriptor usb_config_descriptor defines attributes of a
+    configuration.  A configuration contains of one or more interfaces.  A
+    configuration descriptor acts as a header for the group of other
+    descriptors describing the subcomponents (i.e. interfaces, endpoints) of
+    a configuration.  Please refer to the USB 2.0 spec, section 9.6.3.
+    The USB 2.0 spec is available at www.usb.org.
+
+    A configuration descriptor has the following fields:
+
+        uint8_t         bLength                 Size of this descriptor,
+                                                in bytes.
+
+        uint8_t         bDescriptorType         Set to USB_DT_CONFIG
+
+        uint16_t        wTotalLength            Total length of data returned,
+                                                including this and all other
+                                                descriptors in this
+                                                configuration.
+
+        uint8_t         bNumInterfaces          Number of interfaces in this
+                                                configuration.
+
+        uint8_t         bConfigurationValue     ID of this configuration
+                                                (1-based).
+
+        uint8_t         iConfiguration          Index of optional configuration
+                                                string.  Valid if > 0.
+
+        uint8_t         bmAttributes            Configuration characteristics
+                                                (see below).
+
+        uint8_t         bMaxPower               Maximum power consumption, in
+                                                2mA units.
+	struct usb_interface
+			*interface		pointer to interface descriptor
+	uchar_t		*extra			extra descriptors
+	int		extralen		length of extra descriptors
+
+     USB_MAXCONFIG provides the limit on the number of configurations.
+
+
+NAME
+     usb_interface_descriptor - USB interface descriptor
+
+DESCRIPTION
+    The interface descriptor usb_interface_descriptor defines attributes of an
+    interface.  A configuration contains one or more interfaces.  An
+    interface contains one or more endpoints.
+
+    Please refer to the USB 2.0 spec, section 9.6.5.  The USB 2.0 spec is
+    available at www.usb.org.
+
+    An interface descriptor has the following fields:
+
+        uint8_t         bLength                 Size of this descriptor,
+                                                in bytes.
+
+        uint8_t         bDescriptorType         Set to USB_DT_INTERFACE
+
+        uint8_t         bInterfaceNumber        Interface number (0-based).
+
+        uint8_t         bAlternateSetting       Alternate setting number for
+                                                this interface and its
+                                                endpoints (0-based).
+
+        uint8_t         bNumEndpoints           Number of endpoints,
+                                                excluding endpoint 0.
+
+        uint8_t         bInterfaceClass         Interface Class code
+                                                (see below).
+
+        uint8_t         bInterfaceSubClass      Sub class code.  (See USB 2.0
+                                                specification of applicable
+                                                interface class for
+                                                information.)
+
+        uint8_t         bInterfaceProtocol      Protocol code.  (See USB 2.0
+                                                specification of applicable
+                                                interface class for
+                                                information.)
+
+        uint8_t         iInterface              Index of optional string
+                                                describing this interface.
+                                                Valid if > 0.
+
+	uchar_t         *extra                  extra descriptors
+
+	int             extralen                length of extra descriptors
+
+
+
+     The following values are defined for the bInterfaceClass field:
+
+     USB_CLASS_AUDIO
+     USB_CLASS_COMM
+     USB_CLASS_HID
+     USB_CLASS_PRINTER
+     USB_CLASS_MASS_STORAGE
+     USB_CLASS_HUB
+     USB_CLASS_DATA
+     USB_CLASS_VENDOR_SPEC
+
+     Refer to www.usb.org for details about USB device classes.
+
+     USB_MAXINTERFACES provides the limit on the number of interfaces.
+
+
+NAME
+     usb_endpoint_descriptor - USB endpoint descriptor
+
+DESCRIPTION
+    The endpoint descriptor usb_endpoint_descriptor defines attributes of an
+    endpoint.  An endpoint is a uniquely addressable portion of a USB device
+    that is a source or sink of data.
+
+    Please refer to the USB 2.0 spec, section 9.6.6.  The USB 2.0 spec is
+    available at www.usb.org.
+
+    An endpoint descriptor has the following fields:
+
+        uint8_t         bLength                 Size of this descriptor,
+                                                in bytes.
+
+        uint8_t         bDescriptorType         Set to USB_DT_ENDPOINT
+
+        uint8_t         bEndpointAddress        Address of this endpoint.
+
+        uint8_t         bmAttributes            Endpoint attributes (see
+                                                below).
+
+        uint16_t        wMaxPacketSize          Maximum packet size.
+
+        uint8_t         bInterval               Polling interval for interrupt
+                                                and isochronous endpoints.
+                                                NAK rate for high-speed control
+                                                and bulk endpoints.
+	uint8_t		bRefresh
+	uint8_t		bSynchAddress
+	uchar_t		*extra			extra descriptors
+	int		extralen		length of extra descriptors
+
+     The following values are defined for endpoint descriptor fields:
+
+     USB_ENDPOINT_ADDRESS_MASK
+     USB_ENDPOINT_DIR_MASK
+     USB_ENDPOINT_IN
+     USB_ENDPOINT_OUT
+     USB_ENDPOINT_TYPE_MASK
+     USB_ENDPOINT_TYPE_CONTROL
+     USB_ENDPOINT_TYPE_ISOCHRONOUS
+     USB_ENDPOINT_TYPE_BULK
+     USB_ENDPOINT_TYPE_INTERRUPT
+
+
+NAME
+     usb_hid_descriptor - USB hid descriptor
+
+DESCRIPTION
+     The hid descriptor has the following fields:
+
+        uint8_t		bLength			size of descriptor in bytes
+        uint8_t		bDescriptorType		set to USB_DT_HID
+        uint8_t		bcdHID			HID spec release
+        uint8_t		bCountryCode		country code
+        uint8_t		bNumDescriptors		no. of class descriptors
+
+
+NAME
+     usb_string_descriptor - USB string descriptor
+
+DESCRIPTION
+     The string descriptor has the following fields:
+
+        uint8_t		bLength			size of descriptor in bytes
+        uint8_t		bDescriptorType		set to USB_DT_STRING
+	uint16_t	wData[1];		unicode data
+
+NAME
+     usb_ctrl_setup - USB control setup bytes
+
+DESCRIPTION
+     The usb_ctrl_setup structure has the following fields:
+
+        uint8_t		bRequestType	characteristics of request
+	uint8_t		bRequest	request or command
+	uint16_t	wValue		value which varies according
+					to command
+	uint16_t	wIndex		value which varies according
+					to command
+	uint16_t	wLength		number of bytes to transfer
+
+     The following values are defined for bRequestType:
+
+     USB_TYPE_STANDARD
+     USB_TYPE_CLASS
+     USB_TYPE_VENDOR
+     USB_TYPE_RESERVED
+     USB_RECIP_DEVICE
+     USB_RECIP_INTERFACE
+     USB_RECIP_ENDPOINT
+     USB_RECIP_OTHER
+
+     The following values are defined for bRequest:
+
+     USB_REQ_GET_STATUS
+     USB_REQ_CLEAR_FEATURE
+     USB_REQ_SET_FEATURE
+     USB_REQ_SET_ADDRESS
+     USB_REQ_GET_DESCRIPTOR
+     USB_REQ_SET_DESCRIPTOR
+     USB_REQ_GET_CONFIGURATION
+     USB_REQ_SET_CONFIGURATION
+     USB_REQ_GET_INTERFACE
+     USB_REQ_SET_INTERFACE
+     USB_REQ_SYNCH_FRAME
+	
+
+     Refer to www.usb.org for details.
+
+     To assist in byte swapping:
+
+     USB_LE16_TO_CPU		macro to swap bytes
+
+NAME
+     usb_bus - structure describing a USB bus in the system
+
+DESCRIPTION
+    A usb_bus structure describes a bus.
+    All usb_bus structures are linked in the usb_busses linked list. 
+
+    The usb_bus structure has the following fields:
+
+    struct usb_device   *next, *prev	linked list entries
+    char		dirname		directory name of the USB bus
+    struct usb_device   *devices	linked list of usb_device structures
+    uint32_t		location
+
+
+NAME
+     usb_device - structure describing a USB device on a USB bus 
+
+DESCRIPTION
+    A usb_device structure describes a USB device.
+    All usb_device structures are linked in the usb_busses devices
+    linked list. 
+
+    The usb_device structure has the following fields:
+
+    struct usb_device	*next, *prev	linked list entries
+    char		filename	device node name
+    struct usb_bus	*bus		pointer to its usb_bus structure
+    struct usb_device_descriptor
+			descriptor	standard USB device descriptor
+    struct usb_config_descriptor
+			*config		pointer to standard USB config
+					descriptor
+    void		*dev		OS Specific
+    
+
+NAME
+     usb_interface - structure describing a USB interface on a USB device 
+
+DESCRIPTION
+    A usb_interface structure describes an interface on a USB device.
+
+    The usb_interface structure has the following fields:
+
+    struct usb_interface_descriptor
+			*altsetting	pointer to standard USB interface
+					descriptor 
+    int			num_altsetting  number of alternates
+
+    USB_MAXALTSETTING is the limit on num_altsetting.
+
+
+Initialization and discovery
+----------------------------
+
+libusb Library Functions
+
+(NOTE: The error return values mentioned are not part of standard libusb
+       spec. There is inconsistency in the error return values of the
+       various libusb implementations)
+
+NAME
+     usb_init - initialization of libusb.
+
+     void usb_init();
+
+DESCRIPTION
+     usb_init sets up some internal structures. usb_init must be called
+     before any other libusb functions.
+
+-------------
+
+NAME
+usb_find_busses - finds all USB devices on all USB busses in the
+		  system.
+
+     int usb_find_busses(void);
+
+DESCRIPTION
+     usb_find_busses finds all busses in the system and returns the
+     number of changes compared to the previous call to usb_find_busses.
+
+RETURN VALUES
+     Returns the total of new and removed busses.
+
+
+
+NAME
+     usb_find_devices - finds all devices on each bus.
+
+     int usb_find_devices(void);
+
+DESCRIPTION
+     usb_find_devices will find all of the devices on each bus.
+     This function should be called after usb_find_busses. It returns the
+     number of changes previous to this call
+
+RETURN VALUES
+     Returns the total of new devices and devices removed.
+
+
+
+NAME
+	usb_get_busses - returns usb_busses linked list.
+usb_busses - linked list.
+    
+     struct usb_bus *usb_busses;
+     struct usb_bus *usb_get_busses(void);
+
+DESCRIPTION
+     usb_get_busses returns a pointer the the usb_busses linked list.
+     Applications can also directly access this linked list through
+     the external variable usb_busses.
+
+
+Device Operations
+-----------------
+
+NAME
+     usb_open - open a usb device and return a device handle
+     usb_dev_handle *usb_open(usb_device *device);
+
+PARAMETERS
+     device	pointer to usb_device structure
+
+DESCRIPTION
+     usb_open is required for opening a device for use. usb_open must be
+     called before attempting to perform any operations to the device.
+     It accepts a pointer to the usb_device struct which is used to build
+     the device lists.  The usb_dev_handle pointer that is returned is for
+     a particular interface that will be claimed (see usb_claim_interface).
+     For operating on another interface usb_open will need to be called
+     again for a unique dev_handle pointer.
+
+     Upon successful completion, usb_open() returns a  pointer  to
+     the  usb_dev_handle structure. This handle is opaque and
+     the struct usb_dev_handle is not visible to the application.
+     Upon failure, usb_open() returns  NULL.
+
+RETURN VALUES
+     NULL	the device could not be opened.
+     != NULL	valid usb_dev_handle pointer
+
+
+NAME
+     usb_close - closes a usb device
+
+     int  usb_close(usb_dev_handle *dev);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+
+DESCRIPTION
+     usb_close closes a device opened with usb_open. No further operations
+     may be performed on the handle after usb_close is called.  usb_close
+     must be called after the application has completed performing all
+     operations to the device. It takes the device handle as an
+     argument. The application is responsible for releasing the interface
+     before calling usb_close.
+     If the device can not be closed, a negative errno is returned.
+
+RETURN VALUES
+     < 0	the device could not be closed. A negative errno
+		is returned:
+
+		EINTR		interrupted system call
+		EIO		error accessing device
+		ENOMEM		not enough memory
+		EACCESS		permission denied
+		EBUSY		device is busy
+		ENODEV		device does not exist
+		EINVAL		invalid usb_dev_handle pointer
+
+     == 0	device was successfully closed
+
+NAME
+     usb_claim_interface - claims an interface from the active configuration
+
+     int  usb_claim_interface(usb_dev_handle *dev, int interface);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+     interface	interface number
+
+DESCRIPTION
+     usb_claim_interface claims the interface for the active configuration
+     of a device. dev is the device handle for the device whose interface is
+     to be accessed.
+     The interface value is the bInterfaceNumber field from the
+     interface descriptor.
+     If the interface can not be claimed, a negative errno is returned.
+
+     usb_claim_interface must be performed prior to any endpoint access.
+
+RETURN VALUES
+     < 0	the interface could not claimed. A negative errno
+		is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied
+                EBUSY           interface is already claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer or interface
+
+     == 0	the interface was successfully claimed
+		
+NAME
+     usb_release_interface - releases an interface
+
+     int  usb_release_interface(usb_dev_handle *dev, int interface);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+     interface	interface number
+
+DESCRIPTION
+     usb_release_interface releases an interface previously claimed
+     by usb_claim_interface.
+     The interface value is the bInterfaceNumber field from the
+     interface descriptor.
+     If the interface can not be released, a negative errno is returned.
+
+RETURN VALUES
+     < 0	the interface could not claimed. A negative errno
+		is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+				or interface was not claimed
+
+     == 0	the interface was successfully released
+		
+
+Control Transfers
+-----------------
+
+NAME
+     usb_control_msg - Performs a control request
+
+     int usb_control_msg(usb_dev_handle *dev, int requesttype,
+	int request, int value, int index, char *bytes, int size,
+        int timeout);
+
+
+PARAMETERS
+     dev	 pointer to a usb device handle acquired through usb_open
+     requesttype bmRequestType
+     request	 bRequest
+     value	 wValue
+     index	 wIndex
+     bytes	 data buffer
+     size	 length of data buffer 
+     timeout	 timeout in milliseconds
+
+DESCRIPTION
+     usb_control_msg performs a control request to the default control pipe
+     on a device.
+     The parameters mirror the types of the similar name in the USB
+     specification.
+
+RETURN VALUES
+     < 0        the request could not be performed. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device or timeout
+                ENOMEM          not enough memory
+                EACCESS         permission denied or
+                                interface was not claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+
+     >= 0       the request was successfully performed
+		0 or more bytes were transferred. 
+
+NAME
+     usb_get_string - Retrieves a string descriptor from a device
+		      and returns a Unicode string
+     usb_get_string_simple - Retrieves a string descriptor from a device
+		      and returns an ASCII string
+
+     int usb_get_string(usb_dev_handle *dev, int index, int langid,
+	char *buf, size_t buflen);
+
+     int usb_get_string_simple(usb_dev_handle *dev, int index,
+        char *buf, size_t buflen);
+
+PARAMETERS
+     dev	 pointer to a usb device handle acquired through usb_open
+     index	 string index
+     langid	 language identifier
+     buf	 data buffer
+     buflen	 length of data buffer 
+
+DESCRIPTION
+     usb_get_string retrieves the string descriptor specified by index
+     and langid from a device.
+
+     The string will be returned in Unicode as specified by the USB
+     specification.
+
+     usb_get_string_simple is a wrapper around usb_get_string that
+     retrieves the string description specified by index in the first
+     language for the descriptor and converts it into C style ASCII.
+
+RETURN VALUES
+     < 0        the request could not be performed. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device or timeout
+                ENOMEM          not enough memory
+                EACCESS         permission denied
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+
+     >= 0       the request was successfully performed
+		0 or more bytes were transferred. 
+
+NAME
+
+     usb_get_descriptor  - Retrives a descriptor given the descriptor
+			   type
+
+     usb_get_descriptor(usb_dev_handle *dev, uchar_t type,
+                        uchar_t index, void *buf, int size);
+
+PARAMETERS
+     dev	 pointer to a usb device handle acquired through usb_open
+     type	 descriptor type
+     index	 descriptor index
+     buf	 data buffer
+     size 	 size of descriptor requested
+
+DESCRIPTION
+     usb_get_descriptor  returns the descriptor given a descriptor
+     type
+
+RETURN VALUES
+     < 0	Could not retrieve the descriptor. A negative errno
+		is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied
+                EBUSY           interfaces are still claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+				or invalid configuration value
+
+     == 0	returned requested descriptor.
+		
+
+NAME
+     usb_set_configuration - configures a usb device
+
+     int  usb_set_configuration(usb_dev_handle *dev, int configuration);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+     confvalue 	configuration value
+
+DESCRIPTION
+     usb_set_configuration sets the active configuration of a device.
+     dev is the device handle for the device whose configuration is to
+     be changed.
+     The argument configuration is the bConfigurationValue
+     field of the configuration descriptor for this device.
+     All interfaces must be released prior to setting the configuration.
+
+RETURN VALUES
+     < 0	the configuration could not set. A negative errno
+		is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied
+                EBUSY           interfaces are still claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+				or invalid configuration value
+
+     == 0	the configuration was successfully set
+		
+
+NAME
+     usb_set_altinterface - Sets the alternate interface setting of the
+     active interface
+
+     int  usb_set_altinterface(usb_dev_handle *dev, int alternate);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+     alternate	a valid alternate setting
+
+DESCRIPTION
+     usb_set_altinterface sets the alternate setting for the active
+     interface to the given argument alternate. dev is the device handle for
+     the device whose interface is to be changed. The alternate argument needs
+     to be a valid bAlternateSetting entry of the interface descriptor.
+     This operation can only be performed after the interface has been
+     claimed. 
+
+RETURN VALUES
+     < 0        the alternate could not set. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied or
+                                interface was not claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer or alternate
+
+     == 0       the interface was successfully claimed
+
+NAME
+     usb_resetep -- Resets state for an endpoint
+
+     int usb_resetep(usb_dev_handle *dev, unsigned int ep);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+     ep		a valid endpoint address
+
+DESCRIPTION
+     usb_resetep resets all state for the specified endpoint.
+
+RETURN VALUES
+     < 0        the endpoint status could not be reset. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer or alternate
+                ENOSUP          operation not supported
+
+     == 0       the endpoint state was successfully reset
+
+
+NAME
+     usb_clear_halt - Clears a endpoint halt status
+
+     int usb_clear_halt(usb_dev_handle *dev, unsigned int ep);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+     ep		a valid endpoint address
+
+DESCRIPTION
+     usb_clear_halt clears any halt status on the specified endpoint.
+     The ep parameter is the value specified in the endpoint descriptor
+     field bEndpointAddress.
+
+     If the underlying implementation supports autoclearing of stalls then
+     usb_clear_halt will return success immediately.
+
+RETURN VALUES
+     < 0        the endpoint halt status could not be cleared. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied or
+                                interface was not claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer or endpoint
+				address
+
+     == 0       the endpoint halt status was successfully cleared
+
+NAME
+     usb_reset - Resets a device
+
+     int usb_reset(usb_dev_handle *dev);
+
+PARAMETERS
+     dev	pointer to a usb device handle acquired through usb_open
+
+DESCRIPTION
+     usb_reset resets the specified device by sending a RESET down
+     the port the device is connected to.
+
+     After calling usb_reset, the device will need to
+     re-enumerated and therefore requires finding the new device and
+     opening a new handle.
+     The handle used to call usb_reset will no longer work and
+     the device should be released using usb_close(3LIB).
+
+RETURN VALUES
+     < 0        the device could not be reset. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device
+                ENOMEM          not enough memory
+                EACCESS         permission denied
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+		ENOSUP		usb_reset is not supported
+		ENOSUP		operation is not supported
+
+     == 0       the device was successfully reset
+
+
+Bulk Transfers
+--------------
+
+NAME
+     usb_bulk_write - Performs a bulk OUT request
+     usb_bulk_read - Performs a bulk IN request
+
+SYNOPSIS
+     int usb_bulk_write(usb_dev_handle *dev, int ep, char *bytes,
+     	int size, int timeout);
+     int usb_bulk_read(usb_dev_handle *dev, int ep, char *bytes,
+     	int size, int timeout);
+
+
+PARAMETERS
+     dev	 pointer to a usb device handle acquired through usb_open
+     ep		 endpoint address
+     bytes	 data buffer
+     size	 length of data buffer 
+     timeout	 timeout in milliseconds
+
+DESCRIPTION
+     usb_bulk_write performs a bulk OUT request to the endpoint specified
+     by ep. It returns the number of bytes transferred or a negative errno.
+     usb_bulk_read performs a bulk IN request from the endpoint specified
+     by ep. It returns the number of bytes transferred or a negative errno.
+
+RETURN VALUES
+     < 0        the request could not be performed. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device or timeout
+                ENOMEM          not enough memory
+                EACCESS         permission denied or
+                                interface was not claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+
+     >= 0       the request was successfully performed
+		0 or more bytes were transferred. 
+
+
+Interrupt Transfers
+-------------------
+
+libusb Library Functions                        usb_interrupt_write(3LIB)
+
+NAME
+     usb_interrupt_write - Performs an interrupt OUT request
+     usb_interrupt_read - Performs an interrupt IN request
+
+     int usb_interrupt_write(usb_dev_handle *dev, int ep, char *bytes,
+     	int size, int timeout);
+     int usb_interrupt_read(usb_dev_handle *dev, int ep, char *bytes,
+     	int size, int timeout);
+
+PARAMETERS
+     dev	 pointer to a usb device handle acquired through usb_open
+     ep		 endpoint address
+     bytes	 data buffer
+     size	 length of data buffer 
+     timeout	 timeout in milliseconds
+
+DESCRIPTION
+     usb_interrupt_write performs a interrupt OUT request to the endpoint
+     specified by ep.
+     It returns the number of bytes transferred or a negative errno.
+     usb_interrupt_read performs a interrupt IN request from the endpoint
+     specified by ep.
+     It returns the number of bytes transferred or a negative errno.
+
+RETURN VALUES
+     < 0        the request could not be performed. A negative errno
+                is returned:
+
+                EINTR           interrupted system call
+                EIO             error accessing device or timeout
+                ENOMEM          not enough memory
+                EACCESS         permission denied or
+                                interface was not claimed
+                ENODEV          device does not exist
+                EINVAL          invalid usb_device pointer
+                ENOSUP          operation not supported
+
+     >= 0       the request was successfully performed
+		0 or more bytes were transferred. 
+
+
+Miscellaneous
+-------------
+
+NAME
+     usb_strerror - returns error message string 
+
+     char *usb_strerror(void);
+
+DESCRIPTION
+     usb_strerror is a wrapper around strerror(3C). It returns
+     a libusb-specific string if available, otherwise it calls
+     usb_strerror using errno returned by the implementation.
+
+RETURN VALUES
+     returns error string
+
+
+NAME
+     usb_set_debug - Set debug level
+
+     void usb_set_debug(int level);
+
+PARAMETERS
+    level	debug level (0 is no debug messages)
+
+DESCRIPTION
+    usb_set_debug enables debug messages. level determines the
+    level of detail of the debug messages. Level ranges from
+    1 to 5 with 5 being the most verbose.
+
+-------
+
+3.2 Programming guideline
+
+Using libusb involves the following steps:
+
+        o usb_init() which initializes the library.
+        o usb_find_busses() which initializes the usb_busses list.
+        o usb_find_devices() which finds all USB devices.
+        o By traversing the usb_busses linked list, the application can
+          search for a device of interest and acquire a handle on the
+          device using usb_open().
+        o The application can set the device configuration of the device
+          using usb_set_config().
+        o The application claims an interface using usb_claim_interface().
+        o The application can access the default endpoint using
+          usb_control_msg(),  bulk endpoints using usb_bulk_read() or
+          usb_bulk_write(), and interrupt endpoints using usb_interrupt_read()
+	  or interrupt write
+        o The application releases the interface using usb_release_interface().
+        o The application closes the device using usb_close();
+
+Please also check the libusb developers guide in libusb.sourceforge.net
+for more info and sample programs
+
+-------
