@@ -38,6 +38,9 @@ $(BUILD_DIR_32)/.installed:	BITS=32
 $(BUILD_DIR_64)/.installed:	BITS=64
 COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 
+download:
+
+clobber:	clean
 
 # common targets
 $(SOURCE_DIR)/.prep:
