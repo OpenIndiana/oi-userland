@@ -1,0 +1,107 @@
+------------
+Bugid#: 5010373:
+Need libusb library implementation in s10 freeware gate
+
+Plugin Notes:
+---------------
+
+- Plugins implement the usb interfaces
+  For interfaces that are not supported return ENOTSUP
+
+- Implement bus / device support locally.
+  Wrapper is responsible for presenting a unified global view
+
+- There are two ways that interfaces can be handled.
+  Either use the same symbol names as the usb.h interfaces
+  or use a prefixed symbol
+	Eg. usb_init
+		ut_usb_init where the prefix is ut_
+  The prefix info is read by the wrapper using a libusb_prefix
+  symbol. This variable needs to be initialized by the plugin.
+
+- If prefixed symbol is not being used please use the
+  -B direct flag to ensure that symbol collision does not
+  take place. i.e usb_xx symbol of the plugin does not collide
+  with the usb_xx of the wrapper
+
+- All plugin errors are simply passed up by the wrapper to the app.
+
+- wrapper makes use of the following and these need to be implemented
+  by the plugins
+	- libusb_prefix
+	- libusb_version
+	- libusb_init
+	- libusb_fini
+
+	libusb_prefix:
+	discussed earlier
+
+	libusb_version:
+	 will be  a const char * and initialzied by the
+	plugin to following the ON library/module format of major
+	# / minor #. So we will start with 1.1. Note that this has
+	nothing to do with the libusb API version. The libusb
+	API being implemented will occur in only two places.
+	The version of the library will be reflected in the mapfiles
+	of the wrapper and the plugin libraries.
+
+	- DESC string of the package for the plugin
+	- libusb-config file shipped with the wrapper
+
+	Other than this the versioning of the wrapper and the packages
+	and the versioning of the plugins will following the ON model.
+	For minor changes to the interface 1.x -> 1.y. For interface
+	changes that are not backward compatible (eg libusb 1.0) the
+	versioning wil be changed to 2.x to reflect this.
+
+	libusb_init:
+	Return values are as follows:
+		SUCCESS	- 	0
+		FAILURE	-	-1
+		PLUGIN_EXCLUSIVE	-2
+	(Note: initial ARC case only specified the 0 and -1)
+	The plugin exclusive will need to be added as closed fast
+	track approved.
+
+	PLUGIN_EXCLUSIVE is used to indicate to the wrapper that this
+	plugin desires exclusive use and no other bus support will be
+	visible to the application. This is a user settable feature
+	and plugins can return SUCCESS/PLUGIN_EXCLUSIVE depending 
+	upon the environment.
+
+	libusb_fini:
+		called by the wrapper when a plugin is unloaded.
+		wrapper will not check the return values for this
+	
+wrapper notes:
+----------------
+
+wrapper is responsibe for the following:
+
+	- loading the plugins
+	- supporting alternate load dirs
+	- loading all the plugin symbols
+	- passing app calls to plugin calls.
+
+The wrapper is also responsible for the following:
+
+	- if multiple plugins are loaded and they are all active
+	  then link up a busses pointer for each plugin to give the
+	  app a unified view of the busses and the devices hanging off
+	  of these busses.
+	  This is done by the wrapper when the usb_find_busess is called
+	  by the app and the wrapper makes successive find_busses calls
+	  into each plugin
+
+	-  The wrapper needs to be able to map a function call to the
+	   correct plugin. For this reason it maintains a list of 
+	   device handles for each plugin. When an app makes a call
+	   and passes in the usb_dev_handle call the wrapper searches its
+	   list of open device handles and finds the matching plugin to
+	   use. For this reason add and delete of device handles is implemented
+	   in the wrapper.
+
+	- usb_strerror() - since we cannot tell which plugins error
+	should be returned. not good to return all so we keep track
+	of the last plugin that was called and return the strerror
+	for the plugin.
