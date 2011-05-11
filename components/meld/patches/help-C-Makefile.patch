@@ -1,0 +1,30 @@
+--- meld-1.4.0/help/C/Makefile	Sun Sep 26 15:25:02 2010
++++ meld-1.4.0/help/C/new.Makefile	Thu Apr 21 11:06:37 2011
+@@ -2,12 +2,12 @@
+ .SUFFIXES :
+ include ../../INSTALL
+ 
+-LANG := $(notdir $(CURDIR))
+-XML_DIR_ := $(DESTDIR)$(helpdir)/meld/$(LANG)
+-OMF_NAME := meld-$(LANG).omf
++XLANG := $(notdir $(CURDIR))
++XML_DIR_ := $(DESTDIR)$(helpdir)/meld/$(XLANG)
++OMF_NAME := meld-$(XLANG).omf
+ OMF_DIR_ := $(DESTDIR)$(sharedir)/omf/meld
+ OMF_STATE:= $(DESTDIR)$(localstatedir)/lib/scrollkeeper
+-INST_XML := $(helpdir_)/$(LANG)/meld.xml
++INST_XML := $(helpdir_)/$(XLANG)/meld.xml
+ 
+ .PHONY : all
+ all $(OMF_NAME).install : $(OMF_NAME)
+@@ -16,8 +16,8 @@
+ .PHONY : install
+ install : $(OMF_NAME).install
+ 	-mkdir -m 755 -p $(OMF_DIR_) $(XML_DIR_)
+-	install -m 644 meld.xml $(XML_DIR_)/meld.xml
+-	-install -m 644 $< $(OMF_DIR_)/$(OMF_NAME)
++	ginstall -m 444 meld.xml $(XML_DIR_)/meld.xml
++	-ginstall -m 444 $< $(OMF_DIR_)/$(OMF_NAME)
+ 	-scrollkeeper-update -p $(OMF_STATE) -o $(OMF_DIR_)
+ 
+ .PHONY : uninstall
