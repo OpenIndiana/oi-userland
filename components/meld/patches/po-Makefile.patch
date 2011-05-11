@@ -1,0 +1,13 @@
+--- meld-1.4.0/po/Makefile	Sun Sep 26 15:25:02 2010
++++ meld-1.4.0/po/new.Makefile	Thu Apr 21 11:14:21 2011
+@@ -30,8 +30,8 @@
+ #	intltool-update $*
+ 
+ $(DESTDIR)$(localedir)/%/LC_MESSAGES/meld.mo : %/LC_MESSAGES/meld.mo
+-	mkdir -m 755 -p $(dir $@) && install -m 644 $< $@
++	mkdir -m 755 -p $(dir $@) && ginstall -m 444 $< $@
+ 
+ %/LC_MESSAGES/meld.mo : %.po
+-	mkdir -m 755 -p $(dir $@) && msgfmt -c -o $@ $<
++	mkdir -m 755 -p $(dir $@) && msgfmt -o $@ $<
+ 
