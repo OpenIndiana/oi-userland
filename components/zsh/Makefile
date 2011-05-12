@@ -27,10 +27,10 @@ include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	4.3.10
+COMPONENT_VERSION=	4.3.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:132f9ce411bf318abccbae9cdc2f8cc14f8be85b
+COMPONENT_ARCHIVE_HASH=	sha1:8fd7a6d841770c8b12cf3ae8229dd857ecdbad93
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh-dev/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -43,11 +43,12 @@ CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-etcdir=/etc
 CONFIGURE_OPTIONS += --enable-function-subdirs
 CONFIGURE_OPTIONS += --enable-ldflags="-zignore"
+CONFIGURE_OPTIONS += --enable-libs="-lnsl"
 CONFIGURE_OPTIONS += --enable-maildir-support
 CONFIGURE_OPTIONS += --enable-multibyte
 CONFIGURE_OPTIONS += --enable-pcre
 CONFIGURE_OPTIONS += --with-tcsetpgrp
-CONFIGURE_OPTIONS += --disable-gdm
+CONFIGURE_OPTIONS += --disable-gdbm
 
 # pcre-config --libs unnecessarily emits "-L/usr/lib -R/usr/lib"; we remove it
 # so that it doesn't end up in the binaries.
@@ -88,7 +89,7 @@ build:		$(BUILD_32) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
 install:	build $(INSTALL_32) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
 
 # build does this always
-test:		$(NO_TESTS)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
