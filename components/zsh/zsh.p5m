@@ -43,6 +43,7 @@ dir path=usr/share/zsh
 dir path=usr/share/zsh/$(COMPONENT_VERSION)
 dir path=usr/share/zsh/$(COMPONENT_VERSION)/functions
 dir path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Calendar
+dir path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Chpwd
 dir path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion
 dir path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/AIX
 dir path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD
@@ -135,6 +136,14 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Calendar/calendar_show
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Calendar/calendar_showdate
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Calendar/calendar_sort
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Chpwd/_cdr
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Chpwd/cdr
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Chpwd/chpwd_recent_add
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Chpwd/chpwd_recent_dirs
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Chpwd/chpwd_recent_filehandler
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Chpwd/zsh_directory_name_cdr
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/AIX/_floppy
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/AIX/_logical_volumes
@@ -157,14 +166,20 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_cvsup
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_fetch
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_freebsd-update
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_fstat
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_kld
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_pfctl
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_portaudit
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_portlint
 file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_portmaster
+file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_portsnap
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_powerd
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_procstat
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/BSD/_sockstat
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_all_labels
 file \
@@ -322,6 +337,8 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_aptitude
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_auto-apt
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_axi-cache
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_bts
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_bug
 file \
@@ -358,6 +375,8 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_dput
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_dupload
 file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_git-buildpackage
+file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_grep-excuses
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_invoke-rc.d
@@ -377,6 +396,8 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_mergechanges
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_module-assistant
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_pbuilder
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_piuparts
 file \
@@ -449,14 +470,13 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_vserver
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_wakeup_capable_devices
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_wpa_cli
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_yast
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Mandriva/_rebootin
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Mandriva/_urpmi
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Redhat/_rpm
-file \
-    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Redhat/_service
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Redhat/_yum
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Solaris/_coreadm
@@ -513,6 +533,7 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_arch_namespace
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_arp
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_arping
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_at
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_attr
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_awk
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_baz
@@ -588,10 +609,13 @@ file \
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_enscript
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_env
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_espeak
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_fakeroot
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_feh
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_fetchmail
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ffmpeg
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_figlet
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_file_systems
@@ -628,6 +652,8 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gpg
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gphoto2
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gprof
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_graphicsmagick
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_grep
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_groff
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_groups
@@ -636,6 +662,7 @@ file \
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gs
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_guilt
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gzip
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_hg
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_have_glob_qual
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_hosts
@@ -647,6 +674,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_iftop
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_imagemagick
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_init_d
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_initctl
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ip
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_irssi
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ispell
@@ -686,8 +714,6 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_man
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_md5sum
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mencal
 file \
-    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mercurial
-file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_metaflac
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mh
 file \
@@ -716,8 +742,11 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_newsgroups
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nice
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nmap
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_notmuch
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_npm
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nslookup
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_osc
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_other_accounts
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_pack
@@ -738,6 +767,7 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_perl_modules
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_perldoc
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_pgrep
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_php
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_pids
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_pine
@@ -788,6 +818,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_samba
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_sccs
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_screen
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_sed
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_service
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_services
 file \
@@ -838,6 +869,7 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_time_zone
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_tin
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_tla
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_tmux
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_todo.sh
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_toilet
@@ -852,6 +884,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_uname
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_unexpand
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_uniq
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_unison
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_units
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_urls
 file \
@@ -861,6 +894,7 @@ file \
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_users
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_users_on
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_uzbl
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_vim
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_vorbis
 file \
@@ -896,11 +930,14 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_gnome-gv
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_gqview
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_gv
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_kfmclient
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_matlab
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_mozilla
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_mplayer
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_nautilus
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_nedit
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_netscape
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_okular
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_pdftk
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_qiv
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_setxkbmap
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_urxvt
@@ -938,6 +975,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_xfig
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_xloadimage
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_xmodmap
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_xournal
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_xpdf
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/X/_xrandr
 file \
@@ -1046,6 +1084,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_vared
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_vars
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_wait
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_which
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zargs
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zattr
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zcalc_line
@@ -1058,7 +1097,10 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zmodload
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zmv
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zpty
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zsh-mime-handler
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_zstyle
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_ztodo
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/bashcompinit
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/compaudit
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/compdump
@@ -1079,9 +1121,13 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/is-at-least
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/mere
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/nslookup
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/promptnl
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/regexp-replace
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/relative
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/run-help
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/run-help-git
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/run-help-openssl
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/run-help-p4
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/run-help-sudo
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/run-help-svk
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/run-help-svn
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/sticky-note
@@ -1095,6 +1141,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/zmathfuncdef
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/zmv
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/zrecompile
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/zstyle+
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Misc/ztodo
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Newuser/zsh-newuser-install
 file \
@@ -1159,6 +1206,8 @@ file \
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_detect_darcs
 file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_detect_fossil
+file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_detect_git
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_detect_hg
@@ -1180,6 +1229,8 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_get_data_cvs
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_get_data_darcs
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_get_data_fossil
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/Backends/VCS_INFO_get_data_git
 file \
@@ -1205,15 +1256,21 @@ file \
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_get_cmd
 file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_hook
+file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_maxexports
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_nvcsformats
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_quilt
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_realpath
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_reposub
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/VCS_INFO_set
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/vcs_info
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/vcs_info_hookadd
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/vcs_info_hookdel
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/VCS_Info/vcs_info_lastmsg
 file \
@@ -1301,10 +1358,12 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/replace-string
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/replace-string-again
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/select-word-style
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/send-invisible
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/smart-insert-last-word
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/split-shell-arguments
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/transpose-lines
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/transpose-words-match
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/up-case-word-match
