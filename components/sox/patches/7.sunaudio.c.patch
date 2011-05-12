@@ -1,0 +1,25 @@
+--- sox-14.3.0/src/sunaudio.c	Wed Aug 19 16:15:20 2009
++++ sox-14.3.0/src/sunaudio.c.new	Wed Aug 19 16:24:29 2009
+@@ -172,8 +172,11 @@
+ #else
+     ioctl(fileno(ft->fp), I_FLUSH, FLUSHR);
+ #endif
++
++#if !defined sun
+     /* Change to non-buffered I/O*/
+     setvbuf(ft->fp, NULL, _IONBF, sizeof(char) * file->size);
++#endif
+ 
+     return (SOX_SUCCESS);
+ }
+@@ -299,8 +302,10 @@
+         lsx_fail_errno(ft,errno,"Unable to initialize encoding for /dev/audio");
+         return(SOX_EOF);
+     }
++#if !defined sun
+     /* Change to non-buffered I/O */
+     setvbuf(ft->fp, NULL, _IONBF, sizeof(char) * file->size);
++#endif
+ 
+     return (SOX_SUCCESS);
+ }

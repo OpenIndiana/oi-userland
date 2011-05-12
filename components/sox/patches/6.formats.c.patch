@@ -1,0 +1,11 @@
+--- sox-14.3.0/src/formats.c	Wed Aug 19 16:15:15 2009
++++ sox-14.3.0/src/formats.c.new	Wed Aug 19 16:23:06 2009
+@@ -397,6 +397,8 @@
+   fp->_r += AUTO_DETECT_SIZE;
+ #elif defined __GLIBC__
+   fp->_IO_read_ptr = fp->_IO_read_base;
++#elif defined sun
++  #define NO_REWIND_PIPE
+ #elif defined _MSC_VER || defined __MINGW_H || defined _ISO_STDIO_ISO_H
+   fp->_ptr = fp->_base;
+ #else

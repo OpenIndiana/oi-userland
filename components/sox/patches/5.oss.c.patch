@@ -1,0 +1,13 @@
+--- sox-14.3.0/src/oss.c	Wed Aug 19 16:15:08 2009
++++ sox-14.3.0/src/oss.c.new	Wed Aug 19 16:23:46 2009
+@@ -190,8 +190,10 @@
+         return (SOX_EOF);
+     }
+ 
++#if !defined sun
+     /* Change to non-buffered I/O */
+     setvbuf(ft->fp, NULL, _IONBF, sizeof(char) * file->size);
++#endif
+     return(SOX_SUCCESS);
+ }
+ 
