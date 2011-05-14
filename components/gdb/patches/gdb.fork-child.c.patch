@@ -1,0 +1,74 @@
+--- gdb-6.8.orig/gdb/fork-child.c	Tue Jan 29 13:11:24 2008
++++ gdb-6.8-64/gdb/fork-child.c	Fri Sep  3 15:08:51 2010
+@@ -40,6 +40,16 @@
+ 
+ extern char **environ;
+ 
++/* On Solaris, the SHELL may be a hard link to /usr/lib/isaexec.
++   If so, there will be one more exec trap to skip while starting
++   the inferior.  */
++
++#include <fcntl.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++
++static int isaexec_shell;
++
+ /* Break up SCRATCH into an argument vector suitable for passing to
+    execvp and store it in ARGV.  E.g., on "run a b c d" this routine
+    would get as input the string "a b c d", and as output it would
+@@ -136,6 +146,8 @@
+   static char **argv;
+   const char *inferior_io_terminal = get_inferior_io_terminal ();
+ 
++  isaexec_shell = 0;  /* Solaris only */
++
+   /* If no exec file handed to us, get it from the exec-file command
+      -- with a good, common error message if none is specified.  */
+   exec_file = exec_file_arg;
+@@ -148,6 +160,9 @@
+   shell_file = shell_file_arg;
+   if (STARTUP_WITH_SHELL)
+     {
++      /* Solaris only, is the shell a hard link to isaexec?  */
++      struct stat buf1, buf2;
++
+       /* Figure out what shell to start up the user program under.  */
+       if (shell_file == NULL)
+ 	shell_file = getenv ("SHELL");
+@@ -154,6 +169,25 @@
+       if (shell_file == NULL)
+ 	shell_file = default_shell_file;
+       shell = 1;
++
++      /* Solaris only, is the shell a hard link to isaexec?
++	 If either stat call fails or the user's shell is
++	 not linked to isaexec, proceed with gdb's normal
++	 behavior, i.e. do not skip an extra exec.
++
++	 Assume that two files are the same if their inode
++	 numbers, device numbers, and number of links match.
++	 Is it possible to get a false positive if the shell
++	 and isaexec are located on different file systems?  */
++      if (
++	stat ("/usr/lib/isaexec", &buf1) == 0 &&
++	stat (shell_file, &buf2) == 0 &&
++	buf1.st_ino == buf2.st_ino &&
++	buf1.st_dev == buf2.st_dev &&
++	buf1.st_nlink == buf2.st_nlink
++      ) {
++	isaexec_shell = 1;
++      }
+     }
+ 
+   /* Multiplying the length of exec_file by 4 is to account for the
+@@ -395,6 +429,9 @@
+   int pending_execs = ntraps;
+   int terminal_initted = 0;
+ 
++  /* Solaris only, increment ntraps if shell is isaexec'ed.  */
++  pending_execs += isaexec_shell;
++
+   /* The process was started by the fork that created it, but it will
+      have stopped one instruction after execing the shell.  Here we
+      must get it up to actual execution of the real program.  */

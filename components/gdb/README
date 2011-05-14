@@ -1,0 +1,60 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+NAME:             gdb
+VERSION:          6.8
+DESCRIPTION:      GDB: The GNU Project Debugger
+LICENSE:          GPLv3
+BUGTRAQ:          solaris/utility/gnu_compiler
+COMMENTS:         
+
+This file contains information about the emacs package within the Userland
+consolidation. Along with the comments in the Makefile, it documents any
+deviations from standard Userland or emacs practice, as well as miscellaneous
+information needed to understand how this component is put together.
+
+
+We made the following changes to the gdb sources:
+
+gdb/auxv.c (gdb.auxv.c.patch);
+    This patch accounts for differences between the aux vector on
+    solaris versus Linux and big endian (Sparc) versus little
+    endian (AMD/Intel):
+
+    - Solaris pads out the auxv for 32 bit process to 64 bits when
+      being read by a 64 bit process.  Use the native pointer size in
+      gdb itself to determine the auxv field size.
+
+    - On 64 bit Solaris SPARC, i.e. big endian, the type will be in the
+      left 4 bytes for 32 bit processes and the right 4 bytes for 64
+      bit processes.  The padding is 0.
+
+gdb/fork-child.c (gdb.fork-child.c.patch):
+    Solaris could require 2 or 3 exec's to start the debugged process
+    depending on whether the user's SHELL is isaexec'ed or not.  Modify
+    startup_inferior to loop until it finds the correct process rather
+    than assuming a fixed count.
+
+gdb/solib-svr4.c (gdb.solib-svr4.patch):
+    Enhance gdb's dectection of the runtime linker to include amd64 and
+    sparcv9 when debugging 64 bit processes.
