@@ -27,39 +27,45 @@
 # prototype to final package shape. It collects all of the
 # info originally held in install-sfw and prototype_* files.
 #
-# to re-create .p5m file when this -template is changed:
-#   cp cups.p5m-template cups.p5m
-#   pkgfmt cups.p5m
+# Significant portion of this file was created by hand-editing.
+# So please do not reformat/sort the lines of this file strip the
+# comments by using of the automate reformating tools.
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-set name=pkg.fmri \
-    value=pkg:/print/cups@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+set name=pkg.fmri value=pkg:/print/cups@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Common Unix Print System"
-set name=info.classification \
-    value=org.opensolaris.category.2008:System/Printing
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.classification value="org.opensolaris.category.2008:System/Printing"
 set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
-set name=opensolaris.arc_url \
-    value=http://arc.opensolaris.org/caselog/PSARC/2008/130
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=opensolaris.arc_url value=http://arc.opensolaris.org/caselog/PSARC/2008/130
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license cups-license license="CUPS, GPLv2, LGPLv2.1, Aladdin, Unicode"
 
 # dependency to fmri=library/print/cups-libs is needed
 
 dir path=etc
 
 #
-dir path=etc/cups group=lp
-dir path=etc/cups/interfaces group=lp
-dir path=etc/cups/ppd group=lp
-dir path=etc/cups/ssl group=lp
+dir group=lp path=etc/cups
+dir group=lp path=etc/cups/interfaces
+dir group=lp path=etc/cups/ppd
+dir group=lp path=etc/cups/ssl
+
 dir path=etc/dbus-1
 dir path=etc/dbus-1/system.d
+
+dir path=etc/security/auth_attr.d
+dir path=etc/security/prof_attr.d
+
 dir path=lib
 dir path=lib/svc
 dir path=lib/svc/manifest
 
 #
-dir path=lib/svc/manifest/application group=sys
+dir group=sys path=lib/svc/manifest/application
+
 dir path=lib/svc/method
 dir path=usr
 dir path=usr/bin
@@ -77,6 +83,7 @@ dir path=usr/lib/cups/notifier
 
 # SMF help dir
 dir path=usr/lib/help/auths/locale/C
+
 dir path=usr/lib/pkgconfig
 dir path=usr/sbin
 dir path=usr/share
@@ -145,42 +152,74 @@ dir path=usr/share/locale/sv
 dir path=usr/share/locale/zh_CN
 dir path=usr/share/locale/zh_TW
 dir path=usr/share/man
-dir path=usr/share/man/man1
-dir path=usr/share/man/man1m
+dir path=usr/share/man/man1cups
 dir path=usr/share/man/man5
 dir path=usr/share/man/man7
 dir path=var
 dir path=var/cache
 
 #
-dir path=var/cache/cups group=lp
-dir path=var/cache/cups/rss group=lp
-dir path=var/log group=sys
-dir path=var/log/cups group=lp
+dir group=lp path=var/cache/cups
+dir group=lp path=var/cache/cups/rss
+dir group=sys path=var/log
+dir group=lp path=var/log/cups
+
 dir path=var/spool
 
 #
-dir path=var/spool/cups group=lp
-dir path=var/spool/cups/tmp group=lp
+dir group=lp path=var/spool/cups
+dir group=lp path=var/spool/cups/tmp
 
 # edited file-objects
-file path=etc/cups/cupsd.conf group=lp mode=0640 preserve=true
+file group=lp mode=0640 path=etc/cups/cupsd.conf preserve=true
+file Solaris/print-service-selector mode=0555 \
+     path=lib/svc/method/print-service-selector
+file Solaris/service-selector.xml mode=0444 \
+     path=lib/svc/manifest/application/print/service-selector.xml \
+     restart_fmri=svc:/system/manifest-import:default
+file path=lib/svc/manifest/application/cups.xml mode=0444 \
+     restart_fmri=svc:/system/manifest-import:default
+
+# SMF help
+file Solaris/ManageCUPS.html mode=0444 \
+     path=usr/lib/help/auths/locale/C/ManageCUPS.html
+
+# move: cancel lp lpr lpstat lpq lprm
+# from usr/bin to usr/lib/cups/bin
+file usr/bin/cancel path=usr/lib/cups/bin/cancel
+file usr/bin/lp path=usr/lib/cups/bin/lp
+file usr/bin/lpr path=usr/lib/cups/bin/lpr
+file usr/bin/lpstat path=usr/lib/cups/bin/lpstat
+file usr/bin/lpq path=usr/lib/cups/bin/lpq
+file usr/bin/lprm path=usr/lib/cups/bin/lprm
+
+# move: cupsaccept lpc lpmove lpadmin lpinfo
+# from usr/sbin to usr/lib/cups/bin
+file usr/sbin/cupsaccept path=usr/lib/cups/bin/cupsaccept
+file usr/sbin/lpc path=usr/lib/cups/bin/lpc
+file usr/sbin/lpmove path=usr/lib/cups/bin/lpmove
+file usr/sbin/lpadmin path=usr/lib/cups/bin/lpadmin
+file usr/sbin/lpinfo path=usr/lib/cups/bin/lpinfo
+
+# install the desktop menu related bits
+file Solaris/desktop-print-management mode=0555 \
+     path=usr/lib/cups/bin/desktop-print-management
+file Solaris/desktop-print-management-applet mode=0555 \
+     path=usr/lib/cups/bin/desktop-print-management-applet
+file Solaris/smb mode=0555 \
+     path=usr/lib/cups/backend/smb
+
+# install the service to set up CUPS as the default print service
+file Solaris/auth_attr path=etc/security/auth_attr.d/cups
+file Solaris/prof_attr path=etc/security/prof_attr.d/cups
+
+# fix to not conflict with JDS
+file usr/share/locale/zh/cups_zh.po path=usr/share/locale/zh_CN/cups_zh.po
 
 # file-objects from sample-manifest
 file path=etc/cups/cupsd.conf.default
 file path=etc/cups/snmp.conf
 file path=etc/dbus-1/system.d/cups.conf
-
-# install the service to set up CUPS as the default print service
-file Solaris/auth_attr path=etc/security/auth_attr.d/cups
-file Solaris/prof_attr path=etc/security/prof_attr.d/cups
-file path=lib/svc/manifest/application/cups.xml mode=0444 \
-    restart_fmri=svc:/system/manifest-import:default
-file Solaris/service-selector.xml \
-    path=lib/svc/manifest/application/print/service-selector.xml mode=0444 \
-    restart_fmri=svc:/system/manifest-import:default
-file Solaris/print-service-selector path=lib/svc/method/print-service-selector \
-    mode=0555
 file path=usr/bin/cups-config
 file path=usr/bin/cupstestdsc
 file path=usr/bin/cupstestppd
@@ -216,33 +255,9 @@ file path=usr/lib/cups/backend/lpd
 file path=usr/lib/cups/backend/parallel
 file path=usr/lib/cups/backend/scsi
 file path=usr/lib/cups/backend/serial
-file Solaris/smb path=usr/lib/cups/backend/smb mode=0555
 file path=usr/lib/cups/backend/snmp
 file path=usr/lib/cups/backend/socket
 file path=usr/lib/cups/backend/usb
-
-# move: cancel lp lpr lpstat lpq lprm
-# from usr/bin to usr/lib/cups/bin
-file usr/bin/cancel path=usr/lib/cups/bin/cancel
-
-# move: cupsaccept lpc lpmove lpadmin lpinfo
-# from usr/sbin to usr/lib/cups/bin
-file usr/sbin/cupsaccept path=usr/lib/cups/bin/cupsaccept
-
-# install the desktop menu related bits
-file Solaris/desktop-print-management \
-    path=usr/lib/cups/bin/desktop-print-management mode=0555
-file Solaris/desktop-print-management-applet \
-    path=usr/lib/cups/bin/desktop-print-management-applet mode=0555
-file usr/bin/lp path=usr/lib/cups/bin/lp
-file usr/sbin/lpadmin path=usr/lib/cups/bin/lpadmin
-file usr/sbin/lpc path=usr/lib/cups/bin/lpc
-file usr/sbin/lpinfo path=usr/lib/cups/bin/lpinfo
-file usr/sbin/lpmove path=usr/lib/cups/bin/lpmove
-file usr/bin/lpq path=usr/lib/cups/bin/lpq
-file usr/bin/lpr path=usr/lib/cups/bin/lpr
-file usr/bin/lprm path=usr/lib/cups/bin/lprm
-file usr/bin/lpstat path=usr/lib/cups/bin/lpstat
 file path=usr/lib/cups/cgi-bin/admin.cgi
 file path=usr/lib/cups/cgi-bin/classes.cgi
 file path=usr/lib/cups/cgi-bin/help.cgi
@@ -273,10 +288,6 @@ file path=usr/lib/cups/monitor/tbcp
 file path=usr/lib/cups/notifier/dbus
 file path=usr/lib/cups/notifier/mailto
 file path=usr/lib/cups/notifier/rss
-
-# SMF help
-file Solaris/ManageCUPS.html path=usr/lib/help/auths/locale/C/ManageCUPS.html \
-    mode=0444
 file path=usr/lib/libcupscgi.so.1
 file path=usr/lib/libcupsdriver.so.1
 file path=usr/lib/libcupsmime.so.1
@@ -1121,40 +1132,38 @@ file path=usr/share/locale/pt/cups_pt.po
 file path=usr/share/locale/pt_BR/cups_pt_BR.po
 file path=usr/share/locale/ru/cups_ru.po
 file path=usr/share/locale/sv/cups_sv.po
-
-# fix to not conflict with JDS
-file usr/share/locale/zh/cups_zh.po path=usr/share/locale/zh_CN/cups_zh.po
 file path=usr/share/locale/zh_TW/cups_zh_TW.po
-file path=usr/share/man/man1/cancel.1
-file path=usr/share/man/man1/cups-config.1
-file path=usr/share/man/man1/cupstestdsc.1
-file path=usr/share/man/man1/cupstestppd.1
-file path=usr/share/man/man1/lp.1
-file path=usr/share/man/man1/lpoptions.1
-file path=usr/share/man/man1/lppasswd.1
-file path=usr/share/man/man1/lpq.1
-file path=usr/share/man/man1/lpr.1
-file path=usr/share/man/man1/lprm.1
-file path=usr/share/man/man1/lpstat.1
-file path=usr/share/man/man1/ppdc.1
-file path=usr/share/man/man1/ppdhtml.1
-file path=usr/share/man/man1/ppdi.1
-file path=usr/share/man/man1/ppdmerge.1
-file path=usr/share/man/man1/ppdpo.1
-file path=usr/share/man/man1m/cups-deviced.1m
-file path=usr/share/man/man1m/cups-driverd.1m
-file path=usr/share/man/man1m/cups-lpd.1m
-file path=usr/share/man/man1m/cups-polld.1m
-file path=usr/share/man/man1m/cupsaccept.1m
-file path=usr/share/man/man1m/cupsaddsmb.1m
-file path=usr/share/man/man1m/cupsctl.1m
-file path=usr/share/man/man1m/cupsd.1m
-file path=usr/share/man/man1m/cupsenable.1m
-file path=usr/share/man/man1m/cupsfilter.1m
-file path=usr/share/man/man1m/lpadmin.1m
-file path=usr/share/man/man1m/lpc.1m
-file path=usr/share/man/man1m/lpinfo.1m
-file path=usr/share/man/man1m/lpmove.1m
+# Pages from "1" and "1m" sections should be moved to "1cups" section.
+file usr/share/man/man1/cancel.1 path=usr/share/man/man1cups/cancel.1cups
+file usr/share/man/man1/cups-config.1 path=usr/share/man/man1cups/cups-config.1cups
+file usr/share/man/man1/cupstestdsc.1 path=usr/share/man/man1cups/cupstestdsc.1cups
+file usr/share/man/man1/cupstestppd.1 path=usr/share/man/man1cups/cupstestppd.1cups
+file usr/share/man/man1/lp.1 path=usr/share/man/man1cups/lp.1cups
+file usr/share/man/man1/lpoptions.1 path=usr/share/man/man1cups/lpoptions.1cups
+file usr/share/man/man1/lppasswd.1 path=usr/share/man/man1cups/lppasswd.1cups
+file usr/share/man/man1/lpq.1 path=usr/share/man/man1cups/lpq.1cups
+file usr/share/man/man1/lpr.1 path=usr/share/man/man1cups/lpr.1cups
+file usr/share/man/man1/lprm.1 path=usr/share/man/man1cups/lprm.1cups
+file usr/share/man/man1/lpstat.1 path=usr/share/man/man1cups/lpstat.1cups
+file usr/share/man/man1/ppdc.1 path=usr/share/man/man1cups/ppdc.1cups
+file usr/share/man/man1/ppdhtml.1 path=usr/share/man/man1cups/ppdhtml.1cups
+file usr/share/man/man1/ppdi.1 path=usr/share/man/man1cups/ppdi.1cups
+file usr/share/man/man1/ppdmerge.1 path=usr/share/man/man1cups/ppdmerge.1cups
+file usr/share/man/man1/ppdpo.1 path=usr/share/man/man1cups/ppdpo.1cups
+file usr/share/man/man1m/cups-deviced.1m path=usr/share/man/man1cups/cups-deviced.1cups
+file usr/share/man/man1m/cups-driverd.1m path=usr/share/man/man1cups/cups-driverd.1cups
+file usr/share/man/man1m/cups-lpd.1m path=usr/share/man/man1cups/cups-lpd.1cups
+file usr/share/man/man1m/cups-polld.1m path=usr/share/man/man1cups/cups-polld.1cups
+file usr/share/man/man1m/cupsaccept.1m path=usr/share/man/man1cups/cupsaccept.1cups
+file usr/share/man/man1m/cupsaddsmb.1m path=usr/share/man/man1cups/cupsaddsmb.1cups
+file usr/share/man/man1m/cupsctl.1m path=usr/share/man/man1cups/cupsctl.1cups
+file usr/share/man/man1m/cupsd.1m path=usr/share/man/man1cups/cupsd.1cups
+file usr/share/man/man1m/cupsenable.1m path=usr/share/man/man1cups/cupsenable.1cups
+file usr/share/man/man1m/cupsfilter.1m path=usr/share/man/man1cups/cupsfilter.1cups
+file usr/share/man/man1m/lpadmin.1m path=usr/share/man/man1cups/lpadmin.1cups
+file usr/share/man/man1m/lpc.1m path=usr/share/man/man1cups/lpc.1cups
+file usr/share/man/man1m/lpinfo.1m path=usr/share/man/man1cups/lpinfo.1cups
+file usr/share/man/man1m/lpmove.1m path=usr/share/man/man1cups/lpmove.1cups
 file path=usr/share/man/man5/classes.conf.5
 file path=usr/share/man/man5/client.conf.5
 file path=usr/share/man/man5/cups-snmp.conf.5
@@ -1168,24 +1177,32 @@ file path=usr/share/man/man5/subscriptions.conf.5
 file path=usr/share/man/man7/backend.7
 file path=usr/share/man/man7/filter.7
 file path=usr/share/man/man7/notifier.7
-legacy pkg=SUNWcups desc="Common Unix Print System" \
-    name="Common Unix Print System"
-license cups-license license="CUPS, GPLv2, LGPLv2.1, Aladdin, Unicode"
+
+# fix to not conflict with JDS
+link path=usr/share/locale/zh target=zh_CN
+
 link path=usr/lib/cups/backend/http target=ipp
-link path=usr/lib/cups/bin/accept target=cupsaccept
-link path=usr/lib/cups/bin/cupsdisable target=cupsaccept
-link path=usr/lib/cups/bin/cupsenable target=cupsaccept
-link path=usr/lib/cups/bin/cupsreject target=cupsaccept
-link path=usr/lib/cups/bin/reject target=cupsaccept
 link path=usr/lib/cups/filter/rastertodymo target=rastertolabel
 link path=usr/lib/libcupscgi.so target=libcupscgi.so.1
 link path=usr/lib/libcupsdriver.so target=libcupsdriver.so.1
 link path=usr/lib/libcupsmime.so target=libcupsmime.so.1
 link path=usr/lib/libcupsppdc.so target=libcupsppdc.so.1
 
-# fix to not conflict with JDS
-link path=usr/share/locale/zh target=zh_CN
-link path=usr/share/man/man1m/accept.1m target=cupsaccept.1m
-link path=usr/share/man/man1m/cupsdisable.1m target=cupsenable.1m
-link path=usr/share/man/man1m/cupsreject.1m target=cupsaccept.1m
-link path=usr/share/man/man1m/reject.1m target=cupsaccept.1m
+link path=usr/lib/cups/bin/accept target=cupsaccept
+link path=usr/lib/cups/bin/cupsdisable target=cupsaccept
+link path=usr/lib/cups/bin/cupsenable target=cupsaccept
+link path=usr/lib/cups/bin/cupsreject target=cupsaccept
+link path=usr/lib/cups/bin/reject target=cupsaccept
+
+link path=usr/share/man/man1cups/accept.1cups target=cupsaccept.1cups
+link path=usr/share/man/man1cups/cupsdisable.1cups target=cupsenable.1cups
+link path=usr/share/man/man1cups/cupsreject.1cups target=cupsaccept.1cups
+link path=usr/share/man/man1cups/reject.1cups target=cupsaccept.1cups
+
+legacy pkg=SUNWcupsr \
+       desc="Common Unix Print System v1.4 (root)" \
+       name="Common Unix Print System v1.4 (root)"
+
+legacy pkg=SUNWcupsu \
+       desc="Common Unix Print System v1.4 (usr)" \
+       name="Common Unix Print System v1.4 (usr)"
