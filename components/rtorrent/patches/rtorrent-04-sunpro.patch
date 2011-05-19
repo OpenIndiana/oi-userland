@@ -1,0 +1,712 @@
+--- rtorrent-0.8.2.orig/rak/string_manip.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/string_manip.h	2008-06-25 02:14:10.028329996 -0400
+@@ -62,7 +62,7 @@
+ 
+ template <typename Sequence>
+ Sequence trim_end(const Sequence& seq) {
+-  if (seq.empty() || !std::isspace(*(--seq.end())))
++  if (seq.empty() || !std::isspace(*(seq.end()-1)))
+     return seq;
+ 
+   typename Sequence::size_type pos = seq.size();
+@@ -93,7 +93,7 @@
+ 
+ template <typename Sequence>
+ Sequence trim_end_classic(const Sequence& seq) {
+-  if (seq.empty() || !std::isspace(*(--seq.end()), std::locale::classic()))
++  if (seq.empty() || !std::isspace(*(seq.end()-1), std::locale::classic()))
+     return seq;
+ 
+   typename Sequence::size_type pos = seq.size();
+--- rtorrent-0.8.2.orig/rak/path.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/path.h	2008-06-25 01:57:52.656513911 -0400
+@@ -42,6 +42,7 @@
+ 
+ #include <cstdlib>
+ #include <string>
++#include <algorithm>
+ 
+ namespace rak {
+ 
+@@ -91,7 +92,7 @@
+     if (home == NULL)
+       return first;
+ 
+-    first += strlcpy(first, home, std::distance(first, last));
++    first += strlcpy(first, home, last-first);
+ 
+     if (first > last)
+       return last;
+@@ -99,7 +100,7 @@
+     src++;
+   }
+ 
+-  return std::min(first + strlcpy(first, src, std::distance(first, last)), last);
++  return std::min(first + strlcpy(first, src, last-first), last);
+ }
+ 
+ }
+--- rtorrent-0.8.2.orig/rak/unordered_vector.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/unordered_vector.h	2008-06-25 02:29:35.381434005 -0400
+@@ -90,7 +90,7 @@
+ unordered_vector<_Tp>::insert(iterator position, const value_type& x) {
+   Base::push_back(x);
+ 
+-  return --end();
++  return end()-1;
+ }
+ 
+ template <typename _Tp>
+--- rtorrent-0.8.2.orig/rak/socket_address.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/socket_address.h	2008-06-25 01:58:48.126132462 -0400
+@@ -50,6 +50,7 @@
+ #include <cstring>
+ #include <string>
+ #include <stdexcept>
++#include <algorithm>
+ #include <arpa/inet.h>
+ #include <netinet/in.h>
+ #include <sys/types.h>
+--- rtorrent-0.8.2.orig/rak/regex.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/regex.h	2008-06-25 02:10:05.332867456 -0400
+@@ -75,7 +75,7 @@
+   std::list<unsigned int> paths;
+   paths.push_front(0);
+ 
+-  for (std::string::const_iterator itrText = ++text.begin(), lastText = text.end(); itrText != lastText; ++itrText) {
++  for (std::string::const_iterator itrText = text.begin()+1, lastText = text.end(); itrText != lastText; ++itrText) {
+     
+     for (std::list<unsigned int>::iterator itrPaths = paths.begin(), lastPaths = paths.end(); itrPaths != lastPaths; ) {
+ 
+--- rtorrent-0.8.2.orig/rak/algorithm.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/algorithm.h	2008-06-25 17:27:39.728352000 -0400
+@@ -40,6 +40,63 @@
+ #include <algorithm>
+ #include <functional>
+ 
++#ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
++namespace std {
++  template <class Iterator> struct iterator_traits
++  {
++    typedef typename Iterator::value_type value_type;
++    typedef typename Iterator::difference_type difference_type;
++    typedef typename Iterator::pointer pointer;
++    typedef typename Iterator::reference reference;
++    typedef typename Iterator::iterator_category iterator_category;
++  };
++  template <class T> struct iterator_traits<T*>
++  {
++    typedef T value_type;
++    typedef ptrdiff_t difference_type;
++    typedef T* pointer;
++    typedef T& reference;
++    typedef random_access_iterator_tag iterator_category;
++  };
++  template <class T> struct iterator_traits<const T*>
++  {
++    typedef T value_type;
++    typedef ptrdiff_t difference_type;
++    typedef const T* pointer;
++    typedef const T& reference;
++    typedef random_access_iterator_tag iterator_category;
++  };
++
++  template <class ForwardIterator>
++  inline typename iterator_traits<ForwardIterator>::difference_type
++  distance (ForwardIterator first, ForwardIterator last)
++  {
++    typename iterator_traits<ForwardIterator>::difference_type n = 0;
++    __distance(first, last, n, 
++               iterator_traits<ForwardIterator>::iterator_category());
++    return n;
++  }
++
++  template <class InputIterator, class T>
++  inline typename iterator_traits<InputIterator>::difference_type
++  count (InputIterator first, InputIterator last, const T& value)
++  {
++    typename iterator_traits<InputIterator>::difference_type n = 0;
++    count(first, last, value, n);
++    return n;
++  }
++
++  template <class InputIterator, class Predicate>
++  inline typename iterator_traits<InputIterator>::difference_type
++  count_if (InputIterator first, InputIterator last, Predicate pred)
++  {
++    typename iterator_traits<InputIterator>::difference_type n = 0;
++    count_if(first, last, pred, n);
++    return n;
++  }
++}
++#endif
++
+ namespace rak {
+ 
+ template <typename _InputIter, typename _Function>
+--- rtorrent-0.8.2.orig/src/command_file.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/command_file.cc	2008-06-25 18:06:51.985365949 -0400
+@@ -64,7 +64,7 @@
+   torrent::Object resultRaw(*file->path()->begin());
+   torrent::Object::string_type& result = resultRaw.as_string();
+ 
+-  for (torrent::Path::const_iterator itr = ++file->path()->begin(), last = file->path()->end(); itr != last; itr++)
++  for (torrent::Path::const_iterator itr = (file->path()->begin())+1, last = file->path()->end(); itr != last; itr++)
+     result += '/' + *itr;
+ 
+   return resultRaw;
+--- rtorrent-0.8.2.orig/src/display/window_download_list.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_download_list.cc	2008-06-25 03:05:03.087916943 -0400
+@@ -90,9 +90,9 @@
+     ++range.second;
+ 
+   int pos = 1;
++  char* buffer = new char[m_canvas->width() + 1];
+ 
+   while (range.first != range.second) {
+-    char buffer[m_canvas->width() + 1];
+     char* position;
+     char* last = buffer + m_canvas->width() - 2 + 1;
+ 
+@@ -107,6 +107,8 @@
+ 
+     ++range.first;
+   }    
++
++  delete buffer;
+ }
+ 
+ }
+--- rtorrent-0.8.2.orig/src/display/window_text.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_text.cc	2008-06-25 03:18:19.930779231 -0400
+@@ -93,8 +93,9 @@
+   if (m_canvas->height() == 0)
+     return;
+ 
++  char* buffer = new char[m_canvas->width() + 1];
++
+   if (m_errorHandler != NULL && m_target.second == NULL) {
+-    char buffer[m_canvas->width() + 1];
+ 
+     Canvas::attributes_list attributes;
+     attributes.push_back(Attributes(buffer, Attributes::a_normal, Attributes::color_default));
+@@ -102,6 +103,9 @@
+     char* last = m_errorHandler->print(buffer, buffer + m_canvas->width(), &attributes, m_target);
+ 
+     m_canvas->print_attributes(0, position, buffer, last, &attributes);
++
++    delete buffer;
++
+     return;
+   }
+ 
+@@ -109,8 +113,6 @@
+     if (*itr == NULL)
+       continue;
+ 
+-    char buffer[m_canvas->width() + 1];
+-
+     Canvas::attributes_list attributes;
+     attributes.push_back(Attributes(buffer, Attributes::a_normal, Attributes::color_default));
+ 
+@@ -118,6 +120,8 @@
+ 
+     m_canvas->print_attributes(0, position, buffer, last, &attributes);
+   }
++
++  delete buffer;
+ }
+ 
+ }
+--- rtorrent-0.8.2.orig/src/display/frame.h	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/frame.h	2008-06-25 02:47:06.518734587 -0400
+@@ -92,9 +92,9 @@
+ 
+   Window*             window() const                    { return m_window; }
+ 
+-  Frame*              frame(size_type idx)              { return m_container[idx]; }
++  Frame*              frame(size_type idx)              { return m_container.frames[idx]; }
+ 
+-  size_type           container_size() const            { return m_containerSize; }
++  size_type           container_size() const            { return m_container.size; }
+   void                set_container_size(size_type size);
+ 
+   void                initialize_window(Window* window);
+@@ -120,13 +120,14 @@
+   uint32_t            m_width;
+   uint32_t            m_height;
+ 
++  typedef struct {
++    size_type           size;
++    Frame*              frames[max_size];
++  } container_t;
++
+   union {
+     Window*             m_window;
+-    
+-    struct {
+-      size_type           m_containerSize;
+-      Frame*              m_container[max_size];
+-    };
++    container_t         m_container;
+   };
+ };
+ 
+--- rtorrent-0.8.2.orig/src/display/text_element_string.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/text_element_string.cc	2008-06-25 02:57:08.521853302 -0400
+@@ -36,6 +36,7 @@
+ 
+ #include "config.h"
+ 
++#include <rak/algorithm.h>
+ #include <rak/string_manip.h>
+ 
+ #include "rpc/parse_commands.h"
+@@ -52,17 +52,21 @@
+     return first;
+ 
+   if (m_flags & flag_escape_hex) {
+-    char buffer[last - first];
++    char* buffer = new char[last - first];
+     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
+ 
+     first = rak::transform_hex(buffer, bufferLast, first, last);
+ 
++    delete buffer;
++
+   } else if (m_flags & flag_escape_html) {
+-    char buffer[last - first];
++    char* buffer = new char[last - first];
+     char* bufferLast = copy_string(buffer, buffer + (last - first), target);
+ 
+     first = rak::copy_escape_html(buffer, bufferLast, first, last);
+ 
++    delete buffer;
++
+   } else {
+     first = copy_string(first, last, target);
+   }  
+--- rtorrent-0.8.2.orig/src/display/window.h	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window.h	2008-06-26 00:42:49.975992333 -0400
+@@ -41,6 +41,7 @@
+ #include <rak/functional.h>
+ 
+ #include "canvas.h"
++#include "manager.h"
+ #include "globals.h"
+ 
+ namespace display {
+--- rtorrent-0.8.2.orig/src/display/window_statusbar.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_statusbar.cc	2008-06-25 03:15:15.445557476 -0400
+@@ -53,7 +53,7 @@
+   m_canvas->erase();
+ 
+   // TODO: Make a buffer with size = get_width?
+-  char buffer[m_canvas->width() + 1];
++  char* buffer = new char[m_canvas->width() + 1];
+   char* position;
+   char* last = buffer + m_canvas->width();
+ 
+@@ -68,6 +68,8 @@
+   }
+ 
+   m_lastTick = control->tick();
++
++  delete buffer;
+ }
+ 
+ }
+--- rtorrent-0.8.2.orig/src/display/window_file_list.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_file_list.cc	2008-06-25 03:08:33.655012018 -0400
+@@ -84,7 +84,7 @@
+   if (fl->size_files() == 0 || m_canvas->height() < 2)
+     return;
+ 
+-  iterator entries[m_canvas->height() - 1];
++  iterator* entries = new iterator[m_canvas->height() - 1];
+ 
+   unsigned int last = 0;
+ 
+@@ -134,7 +134,7 @@
+       m_canvas->print(16 + itr.depth() - 1, pos, "/");
+ 
+     } else if (itr.is_file()) {
+-      char buffer[std::max<unsigned int>(m_canvas->width() + 1, 256)];
++      char* buffer = new char[std::max<unsigned int>(m_canvas->width() + 1, 256)];
+       Canvas::attributes_list attributes;
+ 
+       torrent::File* e = *itr;
+@@ -169,6 +169,8 @@
+ 
+       m_canvas->print_attributes(0, pos, buffer, buffer + std::strlen(buffer), &attributes);
+ 
++      delete buffer;
++
+     } else {
+       m_canvas->print(0, pos, "BORK BORK");
+     }
+@@ -179,6 +181,8 @@
+     pos++;
+     first = (first + 1) % (m_canvas->height() - 1);
+   }
++
++  delete entries;
+ }
+ 
+ int
+--- rtorrent-0.8.2.orig/src/display/window_log.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_log.cc	2008-06-25 03:13:37.195603865 -0400
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <ctime>
++#include <rak/algorithm.h>
+ 
+ #include "canvas.h"
+ #include "utils.h"
+--- rtorrent-0.8.2.orig/src/display/frame.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/frame.cc	2008-06-25 02:51:41.636803977 -0400
+@@ -41,6 +41,8 @@
+ #include <rak/algorithm.h>
+ #include <torrent/exceptions.h>
+ 
++#include "manager.h"
++
+ #include "frame.h"
+ #include "window.h"
+ 
+@@ -63,8 +65,8 @@
+ 
+   case TYPE_ROW:
+   case TYPE_COLUMN:
+-    for (size_type i = 0; i < m_containerSize; ++i)
+-      if (m_container[i]->is_width_dynamic())
++    for (size_type i = 0; i < m_container.size; ++i)
++      if (m_container.frames[i]->is_width_dynamic())
+         return true;
+ 
+     return false;
+@@ -81,8 +83,8 @@
+ 
+   case TYPE_ROW:
+   case TYPE_COLUMN:
+-    for (size_type i = 0; i < m_containerSize; ++i)
+-      if (m_container[i]->is_height_dynamic())
++    for (size_type i = 0; i < m_container.size; ++i)
++      if (m_container.frames[i]->is_height_dynamic())
+         return true;
+ 
+     return false;
+@@ -99,8 +101,8 @@
+   case TYPE_WINDOW: return m_window->is_active() && m_window->is_left();
+ 
+   case TYPE_COLUMN:
+-    for (size_type i = 0; i < m_containerSize; ++i)
+-      if (m_container[i]->has_left_frame())
++    for (size_type i = 0; i < m_container.size; ++i)
++      if (m_container.frames[i]->has_left_frame())
+         return true;
+ 
+     return false;
+@@ -117,8 +119,8 @@
+   case TYPE_WINDOW: return m_window->is_active() && m_window->is_bottom();
+ 
+   case TYPE_ROW:
+-    for (size_type i = 0; i < m_containerSize; ++i)
+-      if (m_container[i]->has_bottom_frame())
++    for (size_type i = 0; i < m_container.size; ++i)
++      if (m_container.frames[i]->has_bottom_frame())
+         return true;
+ 
+     return false;
+@@ -145,8 +147,8 @@
+     {
+       bounds_type accum(0, 0, 0, 0);
+ 
+-      for (size_type i = 0; i < m_containerSize; ++i) {
+-        bounds_type p = m_container[i]->preferred_size();
++      for (size_type i = 0; i < m_container.size; ++i) {
++        bounds_type p = m_container.frames[i]->preferred_size();
+  
+         accum.minWidth += p.minWidth;
+         accum.minHeight += p.minHeight;
+@@ -174,13 +176,13 @@
+   if ((m_type != TYPE_ROW && m_type != TYPE_COLUMN) || size >= max_size)
+     throw torrent::internal_error("Frame::set_container_size(...) Bad state.");
+ 
+-  while (m_containerSize > size) {
+-    delete m_container[--m_containerSize];
+-    m_container[m_containerSize] = NULL;
++  while (m_container.size > size) {
++    delete m_container.frames[--m_container.size];
++    m_container.frames[m_container.size] = NULL;
+   }
+ 
+-  while (m_containerSize < size) {
+-    m_container[m_containerSize++] = new Frame();
++  while (m_container.size < size) {
++    m_container.frames[m_container.size++] = new Frame();
+   }
+ }
+ 
+@@ -202,10 +204,10 @@
+     throw torrent::internal_error("Frame::initialize_container(...) size >= max_size.");
+ 
+   m_type = TYPE_ROW;
+-  m_containerSize = size;
++  m_container.size = size;
+ 
+-  for (size_type i = 0; i < m_containerSize; ++i)
+-    m_container[i] = new Frame();
++  for (size_type i = 0; i < m_container.size; ++i)
++    m_container.frames[i] = new Frame();
+ }
+ 
+ void
+@@ -217,10 +219,10 @@
+     throw torrent::internal_error("Frame::initialize_container(...) size >= max_size.");
+ 
+   m_type = TYPE_COLUMN;
+-  m_containerSize = size;
++  m_container.size = size;
+ 
+-  for (size_type i = 0; i < m_containerSize; ++i)
+-    m_container[i] = new Frame();
++  for (size_type i = 0; i < m_container.size; ++i)
++    m_container.frames[i] = new Frame();
+ }
+ 
+ void
+@@ -234,9 +236,9 @@
+     
+   case TYPE_ROW:
+   case TYPE_COLUMN:
+-    for (size_type i = 0; i < m_containerSize; ++i) {
+-      m_container[i]->clear();
+-      delete m_container[i];
++    for (size_type i = 0; i < m_container.size; ++i) {
++      m_container.frames[i]->clear();
++      delete m_container.frames[i];
+     }
+     break;
+ 
+@@ -261,7 +263,7 @@
+ 
+   case TYPE_ROW:
+   case TYPE_COLUMN:
+-    for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr)
++    for (Frame **itr = m_container.frames, **last = m_container.frames + m_container.size; itr != last; ++itr)
+       (*itr)->refresh();
+ 
+     break;
+@@ -282,7 +284,7 @@
+ 
+   case TYPE_ROW:
+   case TYPE_COLUMN:
+-    for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr)
++    for (Frame **itr = m_container.frames, **last = m_container.frames + m_container.size; itr != last; ++itr)
+       (*itr)->redraw();
+ 
+     break;
+@@ -343,7 +345,7 @@
+ 
+   int remaining = height;
+   
+-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
++  for (Frame **itr = m_container.frames, **last = m_container.frames + m_container.size; itr != last; ++itr) {
+     bounds_type bounds = (*itr)->preferred_size();
+     
+     if ((*itr)->is_height_dynamic()) {
+@@ -391,7 +393,7 @@
+   // the frame is too small, it will set the remaining windows to zero
+   // extent which will flag them as offscreen.
+ 
+-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
++  for (Frame **itr = m_container.frames, **last = m_container.frames + m_container.size; itr != last; ++itr) {
+     // If there is any remaining space, check if we want to shift
+     // the subsequent frames to the other side of this frame.
+     if (remaining > 0 && (*itr)->has_bottom_frame()) {
+@@ -417,7 +419,7 @@
+ 
+   int remaining = width;
+   
+-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
++  for (Frame **itr = m_container.frames, **last = m_container.frames + m_container.size; itr != last; ++itr) {
+     bounds_type bounds = (*itr)->preferred_size();
+     
+     if ((*itr)->is_width_dynamic()) {
+@@ -465,7 +469,7 @@
+   // the frame is too small, it will set the remaining windows to zero
+   // extent which will flag them as offscreen.
+ 
+-  for (Frame **itr = m_container, **last = m_container + m_containerSize; itr != last; ++itr) {
++  for (Frame **itr = m_container.frames, **last = m_container.frames + m_container.size; itr != last; ++itr) {
+     // If there is any remaining space, check if we want to shift
+     // the subsequent frames to the other side of this frame.
+     if (remaining > 0 && (*itr)->has_left_frame()) {
+--- rtorrent-0.8.2.orig/src/display/window_download_statusbar.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_download_statusbar.cc	2008-06-25 03:05:11.110750771 -0400
+@@ -61,7 +61,7 @@
+ 
+   m_canvas->erase();
+ 
+-  char buffer[m_canvas->width()];
++  char* buffer = new char[m_canvas->width()];
+   char* position;
+   char* last = buffer + m_canvas->width() - 2;
+ 
+@@ -88,6 +88,8 @@
+                   m_download->tracker_list()->has_active() ? 'C' : ' ',
+                   (int)(m_download->download()->tracker_list()->time_next_connection()),
+                   buffer);
++
++  delete buffer;
+ }
+ 
+ }
+--- rtorrent-0.8.2.orig/src/core/scheduler.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/scheduler.cc	2008-06-25 02:19:20.043037414 -0400
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <algorithm>
++#include <rak/algorithm.h>
+ #include <rak/functional.h>
+ #include <torrent/exceptions.h>
+ 
+--- rtorrent-0.8.2.orig/src/core/view.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/view.cc	2008-06-25 02:28:36.651635274 -0400
+@@ -38,6 +38,7 @@
+ 
+ #include <algorithm>
+ #include <functional>
++#include <rak/algorithm.h>
+ #include <rak/functional.h>
+ #include <rak/functional_fun.h>
+ #include <rpc/parse_commands.h>
+--- rtorrent-0.8.2.orig/src/core/manager.cc	2008-06-25 01:44:38.134154000 -0400
++++ rtorrent-0.8.2/src/core/manager.cc	2008-06-25 02:08:43.144712661 -0400
+@@ -352,19 +352,25 @@
+   int port;
+   rak::address_info* ai;
+ 
+-  char buf[addr.length() + 1];
++  char* buf = new char[addr.length() + 1];
+ 
+   int err = std::sscanf(addr.c_str(), "%[^:]:%i", buf, &port);
+ 
+-  if (err <= 0)
++  if (err <= 0) {
++    delete buf;
+     throw torrent::input_error("Could not parse proxy address.");
++  }
+ 
+   if (err == 1)
+     port = 80;
+ 
+-  if ((err = rak::address_info::get_address_info(buf, PF_INET, SOCK_STREAM, &ai)) != 0)
++  if ((err = rak::address_info::get_address_info(buf, PF_INET, SOCK_STREAM, &ai)) != 0) {
++    delete buf;
+     throw torrent::input_error("Could not set proxy address: " + std::string(rak::address_info::strerror(err)) + ".");
+-  
++  }
++
++  delete buf;
++
+   try {
+ 
+     ai->address()->set_port(port);
+--- rtorrent-0.8.2.orig/src/rpc/parse.cc	2008-05-07 08:19:10.000000000 -0400
++++ rtorrent-0.8.2/src/rpc/parse.cc	2008-06-25 17:30:55.775246860 -0400
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <locale>
++#include <rak/algorithm.h>
+ #include <rak/path.h>
+ #include <torrent/exceptions.h>
+ 
+--- rtorrent-0.8.2.orig/src/rpc/xmlrpc.cc	2008-05-07 08:19:10.000000000 -0400
++++ rtorrent-0.8.2/src/rpc/xmlrpc.cc	2008-06-25 17:54:04.404987582 -0400
+@@ -477,7 +477,8 @@
+   xmlrpc_env_init(&localEnv);
+ 
+   xmlrpc_registry_add_method_w_doc(&localEnv, (xmlrpc_registry*)m_registry, NULL, name,
+-                                   &xmlrpc_call_command, const_cast<char*>(name), parm, doc);
++                                   (const xmlrpc_method)(&xmlrpc_call_command),
++				   const_cast<char*>(name), parm, doc);
+ 
+   if (localEnv.fault_occurred)
+     throw torrent::internal_error("Fault occured while inserting xmlrpc call.");
+--- rtorrent-0.8.2.orig/src/rpc/scgi.cc	2008-06-25 01:44:38.128033000 -0400
++++ rtorrent-0.8.2/src/rpc/scgi.cc	2008-06-25 17:32:13.998638901 -0400
+@@ -85,7 +85,7 @@
+   if (filename.empty() || filename.size() > 4096)
+     throw torrent::resource_error("Invalid filename length.");
+ 
+-  char buffer[sizeof(sockaddr_un) + filename.size()];
++  char* buffer = new char[sizeof(sockaddr_un) + filename.size()];
+   sockaddr_un* sa = reinterpret_cast<sockaddr_un*>(buffer);
+ 
+   sa->sun_family = AF_UNIX;
+@@ -96,6 +96,7 @@
+ 
+   open(sa, offsetof(struct sockaddr_un, sun_path) + filename.size() + 1);
+   m_path = filename;
++  delete buffer;
+ }
+ 
+ void
+--- rtorrent-0.8.2.orig/src/rpc/scgi_task.cc	2008-05-07 08:19:10.000000000 -0400
++++ rtorrent-0.8.2/src/rpc/scgi_task.cc	2008-06-25 17:41:41.493886588 -0400
+@@ -134,7 +134,7 @@
+     if (current == m_buffer || *current != ':' || headerSize < 17 || headerSize > max_header_size)
+       goto event_read_failed;
+ 
+-    if (std::distance(++current, m_position) < headerSize + 1)
++    if (m_position - (++current) < headerSize + 1)
+       return;
+ 
+     if (std::memcmp(current, "CONTENT_LENGTH", 15) != 0)
+@@ -147,7 +147,7 @@
+       goto event_read_failed;
+ 
+     m_body = current + headerSize + 1;
+-    headerSize = std::distance(m_buffer, m_body);
++    headerSize = m_body - m_buffer;
+ 
+     if ((unsigned int)(contentSize + headerSize) < m_bufferSize) {
+       m_bufferSize = contentSize + headerSize;
+@@ -155,26 +155,26 @@
+     } else if ((unsigned int)contentSize <= default_buffer_size) {
+       m_bufferSize = contentSize;
+ 
+-      std::memmove(m_buffer, m_body, std::distance(m_body, m_position));
+-      m_position = m_buffer + std::distance(m_body, m_position);
++      std::memmove(m_buffer, m_body, m_position - m_body);
++      m_position = m_buffer + (m_position - m_body);
+       m_body = m_buffer;
+ 
+     } else {
+-      realloc_buffer((m_bufferSize = contentSize) + 1, m_body, std::distance(m_body, m_position));
++      realloc_buffer((m_bufferSize = contentSize) + 1, m_body, m_position - m_body);
+ 
+-      m_position = m_buffer + std::distance(m_body, m_position);
++      m_position = m_buffer + (m_position - m_body);
+       m_body = m_buffer;
+     }
+   }
+ 
+-  if ((unsigned int)std::distance(m_buffer, m_position) != m_bufferSize)
++  if ((unsigned int)(m_position - m_buffer) != m_bufferSize)
+     return;
+ 
+   control->poll()->remove_read(this);
+   control->poll()->insert_write(this);
+ 
+   // Close if the call failed, else stay open to write back data.
+-  if (!m_parent->receive_call(this, m_body, m_bufferSize - std::distance(m_buffer, m_body)))
++  if (!m_parent->receive_call(this, m_body, m_bufferSize - (m_body - m_buffer)))
+     close();
+ 
+   return;

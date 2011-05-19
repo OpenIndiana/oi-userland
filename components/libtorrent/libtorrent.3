@@ -1,0 +1,156 @@
+'\" t
+.TH "LIBTORRENT" "3" "03 Jun 2009" "SunOS 5.11"
+
+.SH NAME
+libtorrent \- a BitTorrent library
+.sp
+.SH DESCRIPTION
+.sp
+.LP
+LibTorrent is a BitTorrent library written in C++ for *nix, with a focus on high performance and good code. The library differentiates itself from other implementations by transfering directly from file pages to the network stack. On high-bandwidth connections it is able to seed at 3 times the speed of the official client.
+.sp
+Torrent State 
+.RS +4
+.TP
+.ie t \(bu
+.el o
+Closed
+.sp
+This is the initial state of a download. When switching to this mode, 
+all tracker requests are closed and the bitfield of completed 
+chunks is cleared. File paths can only be changed in this state.
+Functions for getting information on bitfields, chunk count and 
+various others will return size 0 in this state. 
+.sp
+.nf
+torrent::Download::is_open() == false;
+torrent::Download::is_active() == false;
+torrent::Download::is_tracker_busy() == false;
+.fi
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+Open
+.sp
+This is the state after a successfull call to torrent::Download::open().  
+This  function  throws torrent::local_error if the download could not be 
+opened. All files in the download have been created  and are open. The 
+initial hash check must be done to get a valid bitfield of completed chunks.
+.sp
+.nf
+torrent::Download::is_open() == true;
+torrent::Download::is_active() == false;
+.fi
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+Active
+.sp
+A  download  is  active  after   calling   torrent::Download::start(). 
+Only downloads that are in an open state and has a valid bitfield of 
+completed chunks can be activated.
+.sp
+.nf
+torrent::Download::is_open() == true;
+torrent::Download::is_active() == true;
+torrent::Download::is_hash_checked() == true;
+.fi
+
+A tracker request will be made when torrent::Download::stop()  is
+called  on an active download. It is not required to wait for the
+tracker  request  to   finish   before   calling   torrent::Down
+load::close(),  but  it  is  recommened so the tracker knows this
+client is not available.File
+.RE
+
+.TP
+Paths
+.sp
+The paths of files in a  Download  consists  of two parts, the 
+root directory and the paths of each file. The file paths are 
+read from the torrent file and  the files usually reside in the 
+root directory. The root directory is by default "./" for single 
+file torrents and  "./[torrent_name]/" for multifile torrents.
+.sp
+.nf
+// Get and set the root directory.
+std::string    torrent::Download::get_root_dir();
+void           torrent::Download::set_root_dir(const std::string& dir);
+
+// Get the torrent::Entry class for each file in the download.
+torrent::Entry torrent::Download::get_entry(uint32_t index);
+uint32_t       torrent::Download::get_entry_size();
+
+typedef std::list<std::string> torrent::Entry::Path;
+
+// Get and set the file path.
+std::string    torrent::Entry::get_path();
+const Path&    torrent::Entry::get_path_list();
+void           torrent::Entry::set_path_list(const Path& l);
+.fi
+.sp
+The  modifications  can  only  be done while the download is in a
+closed state. Modifying the file paths will not change the  "info
+hash" part of the bencoded torrent associated with the download.
+
+.TP
+Http handler Introduction
+.sp
+LibTorrent depends on the client to handle http downloads, thus 
+the  library does  not have a dependency on any specific http library. 
+The library provides a base class named torrent::Http with virtual 
+member  functions  that the client must implement, and a sigc++ slot
+which must be set to create  an  instance  of  the  derived  tor
+rent::Http  class  when  called.  
+
+The torrent::Http class and the factory slot related functions can 
+be found in the  header  "torrent/http.h".  
+The http handler should have reasonable connection timeouts, be 
+nonblocking and not do reconnects on  failed  downloads.
+
+.TP
+Factory Slot
+.sp
+The client registers the desired factory slot with the static 
+torrent::Http::set_factory member function. Using
+sigc++ the client may bind values to the arguments of their func
+tion to avoid depending on globals. The factory slot must  return
+a pointer to a new instance with the base type torrent::Http, and
+the caller takes responsibility of deleting  the  object.  (Note:
+consider  making  the cleanup a slot)
+
+.TP
+Output Stream
+.sp
+The data downloaded  by the http handler is to be written to
+torrent::Http::m_stream which is a pointer to an std::iostream. 
+The http handler must not change any of the flags on the stream.
+
+StartHttp::start is called by the library when it wishes to initiate a
+http download. Your Http derived class must implement this  func
+tion. It must be nonblocking and threadsafe. This means that if
+a seperate thread is used for downloading then it must  not  emit
+any  signal  while  the  main  thread is inside the library.
+
+closeHttp::close is used by the library to stop and close a  download.
+No signals may be emited after this. Http::m_data should not be
+cleared. The library may clear the Http::m_data pointer after
+this.
+
+.TP
+Signals
+.sp
+There  are  two mutually exclusive signals that are
+called when the download has stopped. The signal tor
+rent::Http::m_signalDone is called if the download was successful
+and torrent::Http::m_stream contains the complete data. Or if the
+download was unsuccessful for some reason, then tor
+rent::Http::m_signalFailed is called with an error message.
+.SH SEE ALSO
+.sp
+.LP
+\fBrtorrent\fR(1)

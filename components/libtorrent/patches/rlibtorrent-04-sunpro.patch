@@ -1,0 +1,887 @@
+--- rtorrent-0.8.2.orig/rak/string_manip.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/string_manip.h	2008-06-25 02:14:10.028329996 -0400
+@@ -62,7 +62,7 @@
+ 
+ template <typename Sequence>
+ Sequence trim_end(const Sequence& seq) {
+-  if (seq.empty() || !std::isspace(*(--seq.end())))
++  if (seq.empty() || !std::isspace(*(seq.end()-1)))
+     return seq;
+ 
+   typename Sequence::size_type pos = seq.size();
+@@ -93,7 +93,7 @@
+ 
+ template <typename Sequence>
+ Sequence trim_end_classic(const Sequence& seq) {
+-  if (seq.empty() || !std::isspace(*(--seq.end()), std::locale::classic()))
++  if (seq.empty() || !std::isspace(*(seq.end()-1), std::locale::classic()))
+     return seq;
+ 
+   typename Sequence::size_type pos = seq.size();
+--- libtorrent-0.12.2.orig/rak/path.h	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/rak/path.h	2008-06-25 01:57:52.656513911 -0400
+@@ -42,6 +42,7 @@
+ 
+ #include <cstdlib>
+ #include <string>
++#include <algorithm>
+ 
+ namespace rak {
+ 
+@@ -91,7 +92,7 @@
+     if (home == NULL)
+       return first;
+ 
+-    first += strlcpy(first, home, std::distance(first, last));
++    first += strlcpy(first, home, last-first);
+ 
+     if (first > last)
+       return last;
+@@ -99,7 +100,7 @@
+     src++;
+   }
+ 
+-  return std::max(first + strlcpy(first, src, std::distance(first, last)), last);
++  return std::max(first + strlcpy(first, src, last-first), last);
+ }
+ 
+ }
+--- rtorrent-0.8.2.orig/rak/unordered_vector.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/unordered_vector.h	2008-06-25 02:29:35.381434005 -0400
+@@ -90,7 +90,7 @@
+ unordered_vector<_Tp>::insert(iterator position, const value_type& x) {
+   Base::push_back(x);
+ 
+-  return --end();
++  return end()-1;
+ }
+ 
+ template <typename _Tp>
+--- rtorrent-0.8.2.orig/rak/socket_address.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/socket_address.h	2008-06-25 01:58:48.126132462 -0400
+@@ -50,6 +50,7 @@
+ #include <cstring>
+ #include <string>
+ #include <stdexcept>
++#include <algorithm>
+ #include <arpa/inet.h>
+ #include <netinet/in.h>
+ #include <sys/types.h>
+--- rtorrent-0.8.2.orig/rak/regex.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/regex.h	2008-06-25 02:10:05.332867456 -0400
+@@ -75,7 +75,7 @@
+   std::list<unsigned int> paths;
+   paths.push_front(0);
+ 
+-  for (std::string::const_iterator itrText = ++text.begin(), lastText = text.end(); itrText != lastText; ++itrText) {
++  for (std::string::const_iterator itrText = text.begin()+1, lastText = text.end(); itrText != lastText; ++itrText) {
+     
+     for (std::list<unsigned int>::iterator itrPaths = paths.begin(), lastPaths = paths.end(); itrPaths != lastPaths; ) {
+ 
+--- rtorrent-0.8.2.orig/rak/algorithm.h	2008-05-07 08:19:12.000000000 -0400
++++ rtorrent-0.8.2/rak/algorithm.h	2008-06-25 17:27:39.728352000 -0400
+@@ -40,6 +40,63 @@
+ #include <algorithm>
+ #include <functional>
+ 
++#ifdef _RWSTD_NO_CLASS_PARTIAL_SPEC
++namespace std {
++  template <class Iterator> struct iterator_traits
++  {
++    typedef typename Iterator::value_type value_type;
++    typedef typename Iterator::difference_type difference_type;
++    typedef typename Iterator::pointer pointer;
++    typedef typename Iterator::reference reference;
++    typedef typename Iterator::iterator_category iterator_category;
++  };
++  template <class T> struct iterator_traits<T*>
++  {
++    typedef T value_type;
++    typedef ptrdiff_t difference_type;
++    typedef T* pointer;
++    typedef T& reference;
++    typedef random_access_iterator_tag iterator_category;
++  };
++  template <class T> struct iterator_traits<const T*>
++  {
++    typedef T value_type;
++    typedef ptrdiff_t difference_type;
++    typedef const T* pointer;
++    typedef const T& reference;
++    typedef random_access_iterator_tag iterator_category;
++  };
++
++  template <class ForwardIterator>
++  inline typename iterator_traits<ForwardIterator>::difference_type
++  distance (ForwardIterator first, ForwardIterator last)
++  {
++    typename iterator_traits<ForwardIterator>::difference_type n = 0;
++    __distance(first, last, n, 
++               iterator_traits<ForwardIterator>::iterator_category());
++    return n;
++  }
++
++  template <class InputIterator, class T>
++  inline typename iterator_traits<InputIterator>::difference_type
++  count (InputIterator first, InputIterator last, const T& value)
++  {
++    typename iterator_traits<InputIterator>::difference_type n = 0;
++    count(first, last, value, n);
++    return n;
++  }
++
++  template <class InputIterator, class Predicate>
++  inline typename iterator_traits<InputIterator>::difference_type
++  count_if (InputIterator first, InputIterator last, Predicate pred)
++  {
++    typename iterator_traits<InputIterator>::difference_type n = 0;
++    count_if(first, last, pred, n);
++    return n;
++  }
++}
++#endif
++
+ namespace rak {
+ 
+ template <typename _InputIter, typename _Function>
+--- libtorrent-0.12.2.orig/src/download/choke_manager.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/download/choke_manager.cc	2008-06-24 13:40:32.322166472 -0400
+@@ -41,8 +41,10 @@
+ #include <numeric>
+ #include <cstdlib>
+ 
++#include "rak/algorithm.h"
+ #include "protocol/peer_connection_base.h"
+ #include "torrent/peer/connection_list.h"
++#include "resource_manager.h"
+ 
+ #include "choke_manager.h"
+ #include "choke_manager_node.h"
+@@ -261,7 +263,7 @@
+                                         rak::less(i * ChokeManager::order_base + (ChokeManager::order_base - 1),
+                                                   rak::mem_ref(&ChokeManager::value_type::second)));
+ 
+-    if (std::distance(target[i].second, target[i + 1].second) != 0)
++    if (target[i].second != target[i + 1].second)
+       weightTotal += weights[i];
+   }
+ 
+--- libtorrent-0.12.2.orig/src/download/delegator.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/download/delegator.cc	2008-06-24 13:42:52.016431294 -0400
+@@ -46,7 +46,9 @@
+ #include "torrent/data/block.h"
+ #include "torrent/data/block_list.h"
+ #include "torrent/data/block_transfer.h"
++#include "torrent/data/file_list.h"
+ #include "protocol/peer_chunks.h"
++#include "download/chunk_selector.h"
+ 
+ #include "delegator.h"
+ 
+--- libtorrent-0.12.2.orig/src/download/download_constructor.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/download/download_constructor.cc	2008-06-24 14:56:59.728556042 -0400
+@@ -317,7 +317,7 @@
+   Path p;
+   p.set_encoding(enc);
+ 
+-  std::transform(plist.begin(), plist.end(), std::back_inserter(p), std::mem_fun_ref<const Object::string_type&>(&Object::as_string));
++  std::transform(((Object::list_type&)plist).begin(), ((Object::list_type&)plist).end(), std::back_inserter(p), std::mem_fun_ref<Object::string_type&>(&Object::as_string));
+ 
+   return p;
+ }
+--- libtorrent-0.12.2.orig/src/download/download_info.h	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/download/download_info.h	2008-06-28 00:07:50.060545422 -0400
+@@ -186,10 +186,13 @@
+ };
+ 
+ // Move somewhere else.
++#if defined(__APPLE__) || defined(__SUNPRO_CC)
++#pragma pack(1)
++#endif
+ struct SocketAddressCompact {
+-  SocketAddressCompact() {}
+-  SocketAddressCompact(uint32_t a, uint16_t p) : addr(a), port(p) {}
+-  SocketAddressCompact(const rak::socket_address_inet* sa) : addr(sa->address_n()), port(sa->port_n()) {}
++  //SocketAddressCompact() {}
++  //SocketAddressCompact(uint32_t a, uint16_t p) : addr(a), port(p) {}
++  //SocketAddressCompact(const rak::socket_address_inet* sa) : addr(sa->address_n()), port(sa->port_n()) {}
+ 
+   operator rak::socket_address () const {
+     rak::socket_address sa;
+@@ -205,6 +208,9 @@
+ 
+   const char*         c_str() const { return reinterpret_cast<const char*>(this); }
+ } __attribute__ ((packed));
++#if defined(__APPLE__) || defined(__SUNPRO_CC)
++#pragma pack()
++#endif
+ 
+ }
+ 
+--- libtorrent-0.12.2.orig/src/download/download_main.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/download/download_main.cc	2008-06-28 16:05:20.725211632 -0400
+@@ -356,8 +356,13 @@
+     PeerConnectionBase* pcb = (*itr)->m_ptr();
+     const rak::socket_address* sa = rak::socket_address::cast_from(pcb->peer_info()->socket_address());
+ 
+-    if (pcb->peer_info()->listen_port() != 0 && sa->family() == rak::socket_address::af_inet)
+-      current.push_back(SocketAddressCompact(sa->sa_inet()->address_n(), pcb->peer_info()->listen_port()));
++    if (pcb->peer_info()->listen_port() != 0 && sa->family() == rak::socket_address::af_inet) {
++      SocketAddressCompact s = {
++        sa->sa_inet()->address_n(),
++        pcb->peer_info()->listen_port()
++      };
++      current.push_back(s);
++    }
+ 
+     if (!pcb->extensions()->is_remote_supported(ProtocolExtension::UT_PEX))
+       continue;
+--- libtorrent-0.12.2.orig/src/dht/dht_router.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_router.cc	2008-06-24 13:22:15.691370259 -0400
+@@ -88,7 +88,7 @@
+   }
+ 
+   set_bucket(new DhtBucket(zero_id, ones_id));
+-  m_routingTable.insert(std::make_pair(bucket()->id_range_end(), bucket()));
++  m_routingTable.insert(DhtBucketList::value_type(bucket()->id_range_end(), bucket()));
+ 
+   if (cache.has_key("nodes")) {
+     const Object::map_type& nodes = cache.get_key_map("nodes");
+@@ -163,12 +163,12 @@
+   if (!create)
+     return NULL;
+ 
+-  std::pair<DhtTrackerList::accessor, bool> res = m_trackers.insert(std::make_pair(hash, new DhtTracker()));
++  std::pair<DhtTrackerList::iterator, bool> res = m_trackers.insert(std::make_pair(hash, new DhtTracker()));
+ 
+   if (!res.second)
+     throw internal_error("DhtRouter::get_tracker did not actually insert tracker.");
+ 
+-  return res.first.tracker();
++  return (*res.first).second;
+ }
+ 
+ bool
+@@ -552,7 +552,7 @@
+     throw internal_error("DhtRouter::split_bucket router ID ended up in wrong bucket.");
+ 
+   // Insert new bucket with iterator hint = just before current bucket.
+-  DhtBucketList::iterator other = m_routingTable.insert(itr, std::make_pair(newBucket->id_range_end(), newBucket));
++  DhtBucketList::iterator other = m_routingTable.insert(itr, DhtBucketList::value_type(newBucket->id_range_end(), newBucket));
+ 
+   // Check that the bucket we're not adding the node to isn't empty.
+   if (other->second->is_in_range(node->id())) {
+--- libtorrent-0.12.2.orig/src/dht/dht_router.h	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_router.h	2008-06-24 13:05:12.790210488 -0400
+@@ -137,7 +137,7 @@
+   // Maximum number of potential contacts to keep until bootstrap complete.
+   static const unsigned int num_bootstrap_contacts = 64;
+ 
+-  typedef std::map<const HashString, DhtBucket*> DhtBucketList;
++  typedef std::map<HashString, DhtBucket*> DhtBucketList;
+ 
+   DhtBucketList::iterator find_bucket(const HashString& id);
+ 
+--- libtorrent-0.12.2.orig/src/dht/dht_server.h	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_server.h	2008-06-28 00:08:34.254158759 -0400
+@@ -108,6 +108,9 @@
+ 
+   typedef std::deque<DhtTransactionPacket*> packet_queue;
+ 
++#if defined(__APPLE__) || defined(__SUNPRO_CC)
++#pragma pack(1)
++#endif
+   struct compact_node_info {
+     char                 _id[20];
+     SocketAddressCompact _addr;
+@@ -115,6 +118,9 @@
+     HashString&          id()          { return *HashString::cast_from(_id); }
+     rak::socket_address  address()     { return rak::socket_address(_addr); }
+   } __attribute__ ((packed));
++#if defined(__APPLE__) || defined(__SUNPRO_CC)
++#pragma pack()
++#endif
+   typedef std::list<compact_node_info> node_info_list;
+ 
+   // Pending transactions.
+--- libtorrent-0.12.2.orig/src/dht/dht_transaction.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_transaction.cc	2008-06-24 13:33:28.590473835 -0400
+@@ -68,7 +68,7 @@
+   if (m_concurrency != 3)
+     throw internal_error("DhtSearch::~DhtSearch with invalid concurrency limit.");
+ 
+-  for (accessor itr = begin(); itr != end(); ++itr)
++  for (accessor itr = begin(); static_cast<const_accessor>(itr) != end(); ++itr)
+     delete itr.node();
+ }
+ 
+@@ -141,7 +141,7 @@
+   // We're done if we can't find any more nodes to contact.
+   m_next = end();
+ 
+-  for (accessor itr = base_type::begin(); itr != end(); ) {
++  for (accessor itr = base_type::begin(); static_cast<const_accessor>(itr) != end(); ) {
+     // If we have all we need, delete current node unless it is
+     // currently being contacted.
+     if (!itr.node()->is_active() && needClosest <= 0 && (!itr.node()->is_good() || needGood <= 0)) {
+@@ -264,7 +264,7 @@
+ void
+ DhtTransactionPacket::build_buffer(const Object& data) {
+   char buffer[1500];  // If the message would exceed an Ethernet frame, something went very wrong.
+-  object_buffer_t result = object_write_bencode_c(object_write_to_buffer, NULL, std::make_pair(buffer, buffer + sizeof(buffer)), &data);
++  object_buffer_t result = object_write_bencode_c(object_write_to_buffer, NULL, std::make_pair((char*)buffer, buffer + sizeof(buffer)), &data);
+ 
+   m_length = result.second - buffer;
+   m_data = new char[m_length];
+--- libtorrent-0.12.2.orig/src/dht/dht_bucket.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_bucket.cc	2008-06-24 02:41:04.089051646 -0400
+@@ -36,6 +36,7 @@
+ 
+ #include "config.h"
+ 
++#include "rak/algorithm.h"
+ #include "torrent/exceptions.h"
+ 
+ #include "dht_bucket.h"
+--- libtorrent-0.12.2.orig/src/dht/dht_node.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_node.cc	2008-06-28 15:57:24.639449987 -0400
+@@ -77,7 +77,10 @@
+ DhtNode::store_compact(char* buffer) const {
+   HashString::cast_from(buffer)->assign(data());
+ 
+-  SocketAddressCompact sa(address()->sa_inet());
++  SocketAddressCompact sa = {
++    m_socketAddress.sa_inet()->address_n(),
++    m_socketAddress.sa_inet()->port_n()
++  };
+   std::memcpy(buffer + 20, sa.c_str(), 6);
+ 
+   return buffer + 26;
+--- libtorrent-0.12.2.orig/src/dht/dht_server.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_server.cc	2008-06-24 13:24:40.374916857 -0400
+@@ -582,7 +582,7 @@
+   }
+ 
+   // We know where to insert it, so pass that as hint.
+-  insertItr = m_transactions.insert(insertItr, std::make_pair(transaction->key(id), transaction));
++  insertItr = m_transactions.insert(insertItr, transaction_map::value_type(transaction->key(id), transaction));
+ 
+   create_query(insertItr, id, transaction->address(), priority);
+ 
+--- libtorrent-0.12.2.orig/src/dht/dht_tracker.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/dht/dht_tracker.cc	2008-06-28 16:03:29.929469325 -0400
+@@ -47,7 +47,7 @@
+   if (port == 0)
+     return;
+ 
+-  SocketAddressCompact compact(addr, port);
++  SocketAddressCompact compact = { addr, port };
+ 
+   unsigned int oldest = 0;
+   uint32_t minSeen = ~uint32_t();
+--- libtorrent-0.12.2.orig/src/protocol/extensions.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/protocol/extensions.cc	2008-06-24 15:01:20.887800483 -0400
+@@ -119,7 +119,7 @@
+   message.insert_key("reqq", 2048);  // maximum request queue size
+ 
+   char buffer[1024];
+-  object_buffer_t result = object_write_bencode_c(object_write_to_buffer, NULL, std::make_pair(buffer, buffer + sizeof(buffer)), &message);
++  object_buffer_t result = object_write_bencode_c(object_write_to_buffer, NULL, std::make_pair((char*)buffer, buffer + sizeof(buffer)), &message);
+ 
+   int length = result.second - buffer;
+   char* copy = new char[length];
+--- libtorrent-0.12.2.orig/src/protocol/peer_connection_leech.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/protocol/peer_connection_leech.cc	2008-06-24 15:19:28.492038823 -0400
+@@ -697,7 +697,9 @@
+   }
+ }
+ 
++#ifndef __SUNPRO_CC
+ template<>
++#endif
+ void
+ PeerConnection<Download::CONNECTION_INITIAL_SEED>::offer_chunk() {
+   // If bytes left to send in this chunk minus bytes about to be sent is zero,
+@@ -718,7 +720,9 @@
+   m_data.bytesLeft = m_download->file_list()->chunk_index_size(index);
+ }
+ 
++#ifndef __SUNPRO_CC
+ template<>
++#endif
+ bool
+ PeerConnection<Download::CONNECTION_INITIAL_SEED>::should_upload() {
+   // For initial seeding, check if chunk is well seeded now, and if so
+--- libtorrent-0.12.2.orig/src/protocol/handshake_manager.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/protocol/handshake_manager.cc	2008-06-24 15:11:50.179786185 -0400
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <rak/socket_address.h>
++#include <rak/algorithm.h>
+ 
+ #include "torrent/exceptions.h"
+ #include "torrent/error.h"
+--- libtorrent-0.12.2.orig/src/protocol/handshake.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/protocol/handshake.cc	2008-06-24 15:05:32.683533289 -0400
+@@ -36,8 +36,10 @@
+ 
+ #include "config.h"
+ 
++#include "rak/algorithm.h"
+ #include "download/download_info.h"
+ #include "download/download_main.h"
++#include "download/download_manager.h"
+ #include "net/throttle_list.h"
+ #include "torrent/dht_manager.h"
+ #include "torrent/exceptions.h"
+@@ -324,14 +326,16 @@
+       return false;
+   }
+ 
++  uint32_t len = std::distance(m_readBuffer.position(), itr);
++
+   if (m_incoming) {
+     // We've found HASH('req1' + S), skip that and go on reading the
+     // SKEY hash.
+-    m_readBuffer.consume(std::distance(m_readBuffer.position(), itr) + 20);
++    m_readBuffer.consume(len + 20);
+     m_state = READ_ENC_SKEY;
+ 
+   } else {
+-    m_readBuffer.consume(std::distance(m_readBuffer.position(), itr));
++    m_readBuffer.consume(len);
+     m_state = READ_ENC_NEGOT;
+   }
+ 
+@@ -935,10 +939,12 @@
+   m_writeBuffer.move_end(96);
+ 
+   int length = random() % enc_pad_size;
+-  char pad[length];
++  char* pad = new char[length];
+ 
+   std::generate_n(pad, length, &::random);
+   m_writeBuffer.write_len(pad, length);
++
++  delete pad;
+ }
+ 
+ void
+--- libtorrent-0.12.2.orig/src/data/memory_chunk.h	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/data/memory_chunk.h	2008-06-25 21:14:31.067671826 -0400
+@@ -47,28 +47,30 @@
+   // Consider information about whetever the memory maps to a file or
+   // not, since mincore etc can only be called on files.
+ 
+-  static const int prot_exec              = PROT_EXEC;
+-  static const int prot_read              = PROT_READ;
+-  static const int prot_write             = PROT_WRITE;
+-  static const int prot_none              = PROT_NONE;
+-  static const int map_shared             = MAP_SHARED;
++  enum {
++    prot_exec              = PROT_EXEC,
++    prot_read              = PROT_READ,
++    prot_write             = PROT_WRITE,
++    prot_none              = PROT_NONE,
++    map_shared             = MAP_SHARED,
+ 
+ #ifdef USE_MADVISE
+-  static const int advice_normal          = MADV_NORMAL;
+-  static const int advice_random          = MADV_RANDOM;
+-  static const int advice_sequential      = MADV_SEQUENTIAL;
+-  static const int advice_willneed        = MADV_WILLNEED;
+-  static const int advice_dontneed        = MADV_DONTNEED;
++    advice_normal          = MADV_NORMAL,
++    advice_random          = MADV_RANDOM,
++    advice_sequential      = MADV_SEQUENTIAL,
++    advice_willneed        = MADV_WILLNEED,
++    advice_dontneed        = MADV_DONTNEED,
+ #else
+-  static const int advice_normal          = 0;
+-  static const int advice_random          = 1;
+-  static const int advice_sequential      = 2;
+-  static const int advice_willneed        = 3;
+-  static const int advice_dontneed        = 4;
++    advice_normal          = 0,
++    advice_random          = 1,
++    advice_sequential      = 2,
++    advice_willneed        = 3,
++    advice_dontneed        = 4,
+ #endif
+-  static const int sync_sync              = MS_SYNC;
+-  static const int sync_async             = MS_ASYNC;
+-  static const int sync_invalidate        = MS_INVALIDATE;
++    sync_sync              = MS_SYNC,
++    sync_async             = MS_ASYNC,
++    sync_invalidate        = MS_INVALIDATE,
++  };
+ 
+   MemoryChunk() { clear(); }
+   ~MemoryChunk() { clear(); }
+--- libtorrent-0.12.2.orig/src/data/chunk_list.cc	2008-06-25 01:44:37.768468000 -0400
++++ libtorrent-0.12.2/src/data/chunk_list.cc	2008-06-25 23:55:12.466495173 -0400
+@@ -301,27 +301,18 @@
+ 
+ std::pair<int, bool>
+ ChunkList::sync_options(ChunkListNode* node, int flags) {
+-  // Using if statements since some linkers have problem with static
+-  // const int members inside the ?: operators. The compiler should
+-  // be optimizing this anyway.
++  int sync = MemoryChunk::sync_async;
++  bool end = true;
+ 
+-  if (flags & sync_force) {
++  if (flags & sync_safe) {
+ 
+-    if (flags & sync_safe)
+-      return std::make_pair(MemoryChunk::sync_sync, true);
++    if (flags & sync_force || node->sync_triggered())
++      sync = MemoryChunk::sync_sync;
+     else
+-      return std::make_pair(MemoryChunk::sync_async, true);
+-
+-  } else if (flags & sync_safe) {
+-      
+-    if (node->sync_triggered())
+-      return std::make_pair(MemoryChunk::sync_sync, true);
+-    else
+-      return std::make_pair(MemoryChunk::sync_async, false);
+-
+-  } else {
+-    return std::make_pair(MemoryChunk::sync_async, true);
++      end = false;
+   }
++
++  return std::make_pair(sync, end);
+ }
+ 
+ // Using a rather simple algorithm for now. This should really be more
+--- libtorrent-0.12.2.orig/src/data/memory_chunk.cc	2008-06-23 17:08:43.395684068 -0400
++++ libtorrent-0.12.2/src/data/memory_chunk.cc	2008-06-24 02:39:28.399927218 -0400
+@@ -152,11 +152,15 @@
+ bool
+ MemoryChunk::is_incore(uint32_t offset, uint32_t length) {
+   uint32_t size = pages_touched(offset, length);
+-  char buf[size];
++  char* buf = new char[size];
+   
+   incore(buf, offset, length);
+ 
+-  return std::find(buf, buf + size, 0) == buf + size;
++  bool ret = (std::find(buf, buf + size, 0) == buf + size);
++
++  delete buf;
++
++  return ret;
+ }
+ 
+ }
+--- libtorrent-0.12.2.orig/src/data/hash_torrent.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/data/hash_torrent.cc	2008-06-24 02:36:22.017033961 -0400
+@@ -38,6 +38,7 @@
+ 
+ #include "data/chunk_list.h"
+ #include "torrent/exceptions.h"
++#include "download/download_wrapper.h"
+ 
+ #include "hash_torrent.h"
+ #include "hash_queue.h"
+--- libtorrent-0.12.2.orig/src/data/hash_queue.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/data/hash_queue.cc	2008-06-23 19:17:24.270411715 -0400
+@@ -39,6 +39,7 @@
+ #include <functional>
+ 
+ #include "torrent/exceptions.h"
++#include "download/download_wrapper.h"
+ 
+ #include "hash_queue.h"
+ #include "hash_chunk.h"
+--- libtorrent-0.12.2.orig/src/data/chunk_part.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/data/chunk_part.cc	2008-06-23 19:16:19.997055043 -0400
+@@ -39,6 +39,7 @@
+ #include <algorithm>
+ #include <unistd.h>
+ 
++#include "rak/algorithm.h"
+ #include "torrent/exceptions.h"
+ #include "chunk_part.h"
+ 
+@@ -70,11 +71,13 @@
+ 
+   int length = size() - pos;
+   int touched = m_chunk.pages_touched(pos, length);
+-  char buf[touched];
++  char* buf = new char[touched];
+ 
+   m_chunk.incore(buf, pos, length);
+ 
+   int dist = std::distance(buf, std::find(buf, buf + touched, 0));
++
++  delete buf;
+ 
+   return std::min(dist ? (dist * m_chunk.page_size() - m_chunk.page_align()) : 0,
+                   size() - pos);
+--- libtorrent-0.12.2.orig/src/data/chunk_list.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/data/chunk_list.cc	2008-06-23 19:14:40.468978454 -0400
+@@ -38,6 +38,8 @@
+ 
+ #include "torrent/exceptions.h"
+ #include "torrent/chunk_manager.h"
++#include "torrent/data/file_utils.h"
++#include "download/download_wrapper.h"
+ 
+ #include "chunk_list.h"
+ #include "chunk.h"
+@@ -349,16 +351,18 @@
+     bool required = std::find_if(itr, range, std::bind1st(std::mem_fun(&ChunkList::check_node), this)) != range;
+     dontSkip = dontSkip || required;
+ 
+-    if (!required && std::distance(itr, range) < maxDistance) {
++    unsigned int l = range - itr;
++
++    if (!required && l < maxDistance) {
+       // Don't sync this range.
+-      unsigned int l = std::min(range - itr, itr - first);
++      l = std::min(l, (unsigned int)(itr - first));
+       std::swap_ranges(first, first + l, range - l);
+ 
+       first += l;
+ 
+     } else {
+       // This probably increases too fast.
+-      weight -= std::distance(itr, range) * std::distance(itr, range);
++      weight -= l * l;
+     }
+ 
+     itr = range;
+--- libtorrent-0.12.2.orig/src/utils/sha1.h	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/utils/sha1.h	2008-06-24 02:34:12.101392402 -0400
+@@ -37,11 +37,10 @@
+ #ifndef LIBTORRENT_HASH_COMPUTE_H
+ #define LIBTORRENT_HASH_COMPUTE_H
+ 
+-#include <cstring>
+-
+ #if defined USE_NSS_SHA
+ #include "sha_fast.h"
+ #elif defined USE_OPENSSL_SHA
++#include <stdlib.h>
+ #include <openssl/sha.h>
+ #else
+ #error "No SHA1 implementation selected, choose between Mozilla's NSS and OpenSSL."
+--- libtorrent-0.12.2.orig/src/tracker/tracker_http.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/tracker/tracker_http.cc	2008-06-24 15:21:07.562782258 -0400
+@@ -48,6 +48,7 @@
+ #include "torrent/http.h"
+ #include "torrent/object_stream.h"
+ #include "torrent/tracker_list.h"
++#include "torrent/data/file_list.h"
+ 
+ #include "tracker_http.h"
+ 
+--- libtorrent-0.12.2.orig/src/tracker/tracker_manager.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/tracker/tracker_manager.cc	2008-06-24 15:23:58.547482693 -0400
+@@ -36,7 +36,9 @@
+ 
+ #include "config.h"
+ 
++#include "rak/algorithm.h"
+ #include "download/download_info.h"
++#include "download/download_wrapper.h"
+ #include "torrent/exceptions.h"
+ #include "torrent/tracker.h"
+ #include "torrent/tracker_list.h"
+--- libtorrent-0.12.2.orig/src/tracker/tracker_udp.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/tracker/tracker_udp.cc	2008-06-24 15:35:31.207275209 -0400
+@@ -45,6 +45,7 @@
+ #include "torrent/connection_manager.h"
+ #include "torrent/poll.h"
+ #include "torrent/tracker_list.h"
++#include "torrent/data/file_list.h"
+ 
+ #include "tracker_udp.h"
+ #include "manager.h"
+@@ -325,7 +326,7 @@
+       m_readBuffer->read_32() != m_transactionId)
+     return false;
+ 
+-  receive_failed("Received error message: " + std::string(m_readBuffer->position(), m_readBuffer->end()));
++  receive_failed("Received error message: " + std::string((char*)m_readBuffer->position(), m_readBuffer->remaining()));
+   return true;
+ }
+ 
+--- libtorrent-0.12.2.orig/src/torrent/chunk_manager.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/chunk_manager.cc	2008-06-23 18:46:12.474491305 -0400
+@@ -112,7 +112,7 @@
+   if (itr == base_type::end())
+     throw internal_error("ChunkManager::erase(...) itr == base_type::end().");
+ 
+-  std::iter_swap(itr, --base_type::end());
++  std::iter_swap(itr, base_type::end()-1);
+   base_type::pop_back();
+ 
+   chunkList->set_manager(NULL);
+--- libtorrent-0.12.2.orig/src/torrent/peer/connection_list.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/peer/connection_list.cc	2008-06-23 18:42:38.710410872 -0400
+@@ -141,7 +141,7 @@
+   // Need to do it one connection at the time to ensure that when the
+   // signal is emited everything is in a valid state.
+   while (pos != end())
+-    erase(--end(), flags);
++    erase(end()-1, flags);
+ 
+   m_download->info()->set_accepting_new_peers(size() < m_maxSize);
+ }
+--- libtorrent-0.12.2.orig/src/torrent/object_stream.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/object_stream.cc	2008-06-23 22:07:52.705714634 -0400
+@@ -39,6 +39,7 @@
+ #include <iterator>
+ #include <iostream>
+ #include <rak/functional.h>
++#include <rak/algorithm.h>
+ 
+ #include "utils/sha1.h"
+ 
+@@ -233,7 +234,7 @@
+     src /= 10;
+   }
+ 
+-  object_write_bencode_c_string(output, first, 20 - std::distance(buffer, first));
++  object_write_bencode_c_string(output, first, 20 - (first - buffer));
+ }
+ 
+ void
+--- libtorrent-0.12.2.orig/src/torrent/download.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/download.cc	2008-06-23 18:56:21.847160292 -0400
+@@ -36,6 +36,7 @@
+ 
+ #include "config.h"
+ 
++#include <rak/algorithm.h>
+ #include <rak/functional.h>
+ #include <sigc++/adaptors/bind.h>
+ #include <sigc++/adaptors/hide.h>
+--- libtorrent-0.12.2.orig/src/torrent/data/file_list.cc	2008-06-23 18:17:42.415878000 -0400
++++ libtorrent-0.12.2/src/torrent/data/file_list.cc	2008-06-23 18:21:51.029221269 -0400
+@@ -42,6 +42,7 @@
+ #include <limits>
+ #include <memory>
+ #include <set>
++#include <rak/algorithm.h>
+ #include <rak/error_number.h>
+ #include <rak/file_stat.h>
+ #include <rak/fs_stat.h>
+--- libtorrent-0.12.2.orig/src/torrent/data/file_utils.cc	2008-06-23 18:25:06.488832000 -0400
++++ libtorrent-0.12.2/src/torrent/data/file_utils.cc	2008-06-23 18:25:31.066012126 -0400
+@@ -60,7 +60,7 @@
+   FileList::split_type* splitItr = splitList;
+ 
+   unsigned int nameSize = srcPath->back().size() + suffix.size();
+-  char         name[nameSize + 4];
++  char* name = new char[nameSize + 4];
+ 
+   std::memcpy(name, srcPath->back().c_str(), srcPath->back().size());
+   std::memcpy(name + srcPath->back().size(), suffix.c_str(), suffix.size());
+@@ -80,6 +80,8 @@
+     splitItr->second.back() = name;
+   }
+ 
++  delete name;
++
+   return fileList->split(position, splitList, splitItr).second;
+ }
+ 
+--- libtorrent-0.12.2.orig/src/torrent/data/block.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/data/block.cc	2008-06-23 17:24:05.346918013 -0400
+@@ -38,6 +38,7 @@
+ 
+ #include <algorithm>
+ #include <functional>
++#include <rak/algorithm.h>
+ #include <rak/functional.h>
+ 
+ #include "peer/peer_info.h"
+--- libtorrent-0.12.2.orig/src/torrent/data/transfer_list.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/data/transfer_list.cc	2008-06-24 15:09:29.809436919 -0400
+@@ -39,9 +39,12 @@
+ #include <algorithm>
+ #include <functional>
+ #include <set>
++#include <rak/algorithm.h>
+ #include <rak/functional.h>
+ 
+ #include "data/chunk.h"
++#include "download/download_main.h"
++#include "download/chunk_selector.h"
+ #include "peer/peer_info.h"
+ 
+ #include "block_failed.h"
+--- libtorrent-0.12.2.orig/src/torrent/poll_select.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/poll_select.cc	2008-06-23 19:06:09.911597997 -0400
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <algorithm>
++#include <functional>
+ 
+ #include <unistd.h>
+ #include <sys/time.h>
+--- libtorrent-0.12.2.orig/src/torrent/hash_string.h	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/hash_string.h	2008-06-23 17:11:39.337687346 -0400
+@@ -56,8 +56,16 @@
+   typedef const value_type*                       const_iterator;
+   typedef std::size_t                             size_type;
+   typedef std::ptrdiff_t                          difference_type;
++#ifndef __SUNPRO_CC
+   typedef std::reverse_iterator<iterator>         reverse_iterator;
+   typedef std::reverse_iterator<const_iterator>   const_reverse_iterator;
++#else
++  typedef std::reverse_iterator<iterator, std::random_access_iterator_tag,
++                                int, int&, int*, ptrdiff_t> reverse_iterator;
++
++  typedef std::reverse_iterator<const_iterator, std::random_access_iterator_tag,
++                                int, const int&, const int*, ptrdiff_t> const_reverse_iterator;
++#endif /* SIGC_HAVE_SUN_REVERSE_ITERATOR */
+ 
+   static const size_type size_data = 20;
+ 
+--- libtorrent-0.12.2.orig/src/torrent/resume.cc	2008-05-07 08:19:13.000000000 -0400
++++ libtorrent-0.12.2/src/torrent/resume.cc	2008-06-28 15:58:08.634117091 -0400
+@@ -310,8 +310,13 @@
+ 
+     const rak::socket_address* sa = rak::socket_address::cast_from(itr->second->socket_address());
+ 
+-    if (sa->family() == rak::socket_address::af_inet)
+-      peer.insert_key("inet", std::string(SocketAddressCompact(sa->sa_inet()->address_n(), htons(itr->second->listen_port())).c_str(), sizeof(SocketAddressCompact)));
++    if (sa->family() == rak::socket_address::af_inet) {
++      SocketAddressCompact s = {
++        sa->sa_inet()->address_n(),
++        htons(itr->second->listen_port())
++      };
++      peer.insert_key("inet", std::string(s.c_str(), sizeof(SocketAddressCompact)));
++    }
+ 
+     peer.insert_key("failed",  itr->second->failed_counter());
+     peer.insert_key("last",    itr->second->is_connected() ? cachedTime.seconds() : itr->second->last_connection());
+--- libtorrent-0.12.2.orig/src/net/throttle_list.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/net/throttle_list.cc	2008-06-24 15:00:32.453025557 -0400
+@@ -40,6 +40,8 @@
+ #include <limits>
+ #include <torrent/exceptions.h>
+ 
++#include "socket_base.h"
++
+ #include "throttle_list.h"
+ #include "throttle_node.h"
+ 
+--- libtorrent-0.12.2.orig/src/net/listen.cc	2008-05-07 08:19:12.000000000 -0400
++++ libtorrent-0.12.2/src/net/listen.cc	2008-06-24 14:59:01.383033240 -0400
+@@ -45,6 +45,7 @@
+ #include "torrent/exceptions.h"
+ #include "torrent/connection_manager.h"
+ #include "torrent/poll.h"
++#include "protocol/handshake_manager.h"
+ 
+ #include "listen.h"
+ #include "manager.h"

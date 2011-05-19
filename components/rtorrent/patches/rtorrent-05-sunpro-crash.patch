@@ -1,0 +1,52 @@
+--- rtorrent-0.8.2.orig/src/ui/download_list.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/ui/download_list.cc	2008-06-27 21:16:40.822674954 -0400
+@@ -234,7 +234,7 @@
+ 
+   input::PathInput* input = new input::PathInput;
+ 
+-  const char* title;
++  std::string title;
+ 
+   switch (type) {
+   case INPUT_LOAD_DEFAULT:
+--- rtorrent-0.8.2.orig/src/display/window_input.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_input.cc	2008-06-27 21:12:27.929764942 -0400
+@@ -43,6 +43,11 @@
+ 
+ namespace display {
+ 
++WindowInput::WindowInput() :
++  Window(new Canvas, 0, 0, 1, extent_full, 1),
++  m_input(NULL),
++  m_focus(false) {}
++
+ void
+ WindowInput::redraw() {
+   m_canvas->erase();
+--- rtorrent-0.8.2.orig/src/display/window_input.h	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/display/window_input.h	2008-06-27 20:40:35.526518241 -0400
+@@ -49,10 +49,7 @@
+ 
+ class WindowInput : public Window {
+ public:
+-  WindowInput() :
+-    Window(new Canvas, 0, 0, 1, extent_full, 1),
+-    m_input(NULL),
+-    m_focus(false) {}
++  WindowInput();
+ 
+   input::TextInput*   input()                            { return m_input; }
+   void                set_input(input::TextInput* input) { m_input = input; }
+--- rtorrent-0.8.2.orig/src/core/manager.cc	2008-06-26 00:37:03.743465000 -0400
++++ rtorrent-0.8.2/src/core/manager.cc	2008-06-26 22:13:52.331952728 -0400
+@@ -219,7 +219,9 @@
+   m_downloadList->slot_map_insert()["1_connect_logs"] = "d.initialize_logs=";
+   m_downloadList->slot_map_erase()["9_delete_tied"]   = "d.delete_tied=";
+ 
+-  torrent::connection_manager()->set_signal_handshake_log(sigc::mem_fun(this, &Manager::handshake_log));
++  torrent::ConnectionManager::signal_handshake_type& s = torrent::connection_manager()->signal_handshake_log();
++  s.connect(sigc::mem_fun(this, &Manager::handshake_log));
++  //torrent::connection_manager()->set_signal_handshake_log(sigc::mem_fun(this, &Manager::handshake_log));
+ }
+ 
+ void
