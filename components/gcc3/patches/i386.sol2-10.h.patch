@@ -1,0 +1,29 @@
+*** gcc-3.4.3/gcc/config/i386/sol2-10.h.orig	Wed Nov 17 09:59:39 2004
+--- gcc-3.4.3/gcc/config/i386/sol2-10.h	Mon Jan 28 13:39:30 2008
+***************
+*** 69,80 ****
+     %{YP,*} \
+     %{R*} \
+     %{compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/ucblib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64} \
+!              %{!p:%{!pg:-Y P,/usr/ucblib/64:/lib:/usr/lib/64}}} \
+!              -R /usr/ucblib/64} \
+     %{!compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/lib/libp/64:/lib/64:/usr/lib/64} \
+!              %{!p:%{!pg:-Y P,/lib/64:/usr/lib/64}}}}"
+  
+  #undef LINK_ARCH64_SPEC
+  #define LINK_ARCH64_SPEC LINK_ARCH64_SPEC_BASE
+--- 69,80 ----
+     %{YP,*} \
+     %{R*} \
+     %{compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/ucblib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64:/usr/sfw/lib/64 -R /usr/ucblib/64:/usr/lib/libp/64:/lib/64:/usr/lib/64:/usr/sfw/lib/64} \
+!              %{!p:%{!pg:-Y P,/usr/ucblib/64:/lib/64:/usr/lib/64:/usr/sfw/lib/64 -R /usr/ucblib/64:/lib/64:/usr/lib/64:/usr/sfw/lib/64}}} \
+!              } \
+     %{!compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/lib/libp/64:/lib/64:/usr/lib/64:/usr/sfw/lib/64 -R /usr/lib/libp/64:/lib/64:/usr/lib/64:/usr/sfw/lib/64} \
+!              %{!p:%{!pg:-Y P,/lib/64:/usr/lib/64:/usr/sfw/lib/64 -R /lib/64:/usr/lib/64:/usr/sfw/lib/64}}}}"
+  
+  #undef LINK_ARCH64_SPEC
+  #define LINK_ARCH64_SPEC LINK_ARCH64_SPEC_BASE

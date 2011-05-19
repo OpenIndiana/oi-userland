@@ -1,0 +1,29 @@
+*** gcc-3.4.3/gcc/config/sol2.h.orig	Thu Sep 23 00:27:08 2004
+--- gcc-3.4.3/gcc/config/sol2.h	Mon Jan 28 13:33:35 2008
+***************
+*** 130,141 ****
+     %{YP,*} \
+     %{R*} \
+     %{compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/ucblib:/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/usr/lib} \
+!              %{!p:%{!pg:-Y P,/usr/ucblib:/usr/ccs/lib:/usr/lib}}} \
+!              -R /usr/ucblib} \
+     %{!compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/usr/lib} \
+!              %{!p:%{!pg:-Y P,/usr/ccs/lib:/usr/lib}}}}"
+  
+  #undef LINK_ARCH32_SPEC
+  #define LINK_ARCH32_SPEC LINK_ARCH32_SPEC_BASE
+--- 130,141 ----
+     %{YP,*} \
+     %{R*} \
+     %{compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/ucblib:/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib -R /usr/ucblib:/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib} \
+!              %{!p:%{!pg:-Y P,/usr/ucblib:/usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib -R /usr/ucblib:/usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib}}} \
+!              } \
+     %{!compat-bsd: \
+!      %{!YP,*:%{p|pg:-Y P,/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib -R /usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib} \
+!              %{!p:%{!pg:-Y P,/usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib -R /usr/ccs/lib:/lib:/usr/lib:/usr/sfw/lib}}}}"
+  
+  #undef LINK_ARCH32_SPEC
+  #define LINK_ARCH32_SPEC LINK_ARCH32_SPEC_BASE
