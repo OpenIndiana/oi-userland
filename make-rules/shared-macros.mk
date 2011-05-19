@@ -528,9 +528,6 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS)
 LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
 		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE)
 
-# We want to add bittedness to the default linker flags
-LDFLAGS += $(LD_BITS)
-
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
 COMPONENT_BUILD_ENV= \
