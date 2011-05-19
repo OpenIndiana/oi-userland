@@ -1,0 +1,15 @@
+--- pth.h.in	Thu Jun  8 10:54:02 2006
++++ pth.h.in	Thu Sep 17 09:06:18 2009
+@@ -89,10 +89,12 @@
+ 
+     /* check if the user requests a bigger FD_SETSIZE than we can handle */
+ #if defined(FD_SETSIZE)
++#ifndef _LP64
+ #if FD_SETSIZE > @PTH_FDSETSIZE@
+ #error "FD_SETSIZE is larger than what GNU Pth can handle."
+ #endif
+ #endif
++#endif
+ 
+ BEGIN_DECLARATION
+ 
