@@ -42,12 +42,14 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
+# COMPONENT_TEST_CMD = ./fulltest.sh
+# COMPONENT_TEST_ARGS = $(PYTHON_VERSION)
+
 # No runnable tests; the existing tests are missing a runtests.py
 # file, which isn't fixed until logilab-ast version 0.20.1.
-# When logilab-astng is updated, we can change this test target to do:
-#        (cd $(COMPONENT_SRC)/test; $(ENV) - \
-#        PYTHONPATH=$(PROTO_DIR)/usr/lib/python2.6/vendor-packages \
-#        ./fulltest.sh)
+# When logilab-astng is updated, uncomment the above COMPONENT_TEST*
+# variables and change $(NO_TESTS) below to $(TEST_32)
+
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
