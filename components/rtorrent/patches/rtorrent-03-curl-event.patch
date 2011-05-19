@@ -1,0 +1,490 @@
+diff -urN rtorrent-0.8.2.orig/src/core/curl_event.cc rtorrent-0.8.2/src/core/curl_event.cc
+--- rtorrent-0.8.2.orig/src/core/curl_event.cc	1969-12-31 19:00:00.000000000 -0500
++++ rtorrent-0.8.2/src/core/curl_event.cc	2008-06-10 14:40:41.403064000 -0400
+@@ -0,0 +1,63 @@
++// libTorrent - BitTorrent library
++// Copyright (C) 2008 Albert Lee
++//
++// This program is free software; you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation; either version 2 of the License, or
++// (at your option) any later version.
++// 
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++// 
++// You should have received a copy of the GNU General Public License
++// along with this program; if not, write to the Free Software
++// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++//
++// In addition, as a special exception, the copyright holders give
++// permission to link the code of portions of this program with the
++// OpenSSL library under certain conditions as described in each
++// individual source file, and distribute linked combinations
++// including the two.
++//
++// You must obey the GNU General Public License in all respects for
++// all of the code used other than OpenSSL.  If you modify file(s)
++// with this exception, you may extend this exception to your version
++// of the file(s), but you are not obligated to do so.  If you do not
++// wish to do so, delete this exception statement from your version.
++// If you delete this exception statement from all source files in the
++// program, then also delete it here.
++//
++// Contact:  Jari Sundell <jaris@ifi.uio.no>
++//
++//           Skomakerveien 33
++//           3185 Skoppum, NORWAY
++
++#include "config.h"
++
++#include <torrent/exceptions.h>
++
++#include "rak/functional.h"
++
++#include "curl_event.h"
++#include "curl_stack.h"
++
++namespace core {
++
++void
++CurlEvent::event_read() {
++  m_stack->perform(m_fileDesc);
++}
++
++void
++CurlEvent::event_write() {
++  m_stack->perform(m_fileDesc);
++}
++
++void
++CurlEvent::event_error() {
++  m_stack->perform(m_fileDesc);
++}
++
++}
+diff -urN rtorrent-0.8.2.orig/src/core/curl_event.h rtorrent-0.8.2/src/core/curl_event.h
+--- rtorrent-0.8.2.orig/src/core/curl_event.h	1969-12-31 19:00:00.000000000 -0500
++++ rtorrent-0.8.2/src/core/curl_event.h	2008-06-10 14:37:59.758119000 -0400
+@@ -0,0 +1,61 @@
++// libTorrent - BitTorrent library
++// Copyright (C) 2008 Albert Lee
++//
++// This program is free software; you can redistribute it and/or modify
++// it under the terms of the GNU General Public License as published by
++// the Free Software Foundation; either version 2 of the License, or
++// (at your option) any later version.
++// 
++// This program is distributed in the hope that it will be useful,
++// but WITHOUT ANY WARRANTY; without even the implied warranty of
++// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++// GNU General Public License for more details.
++// 
++// You should have received a copy of the GNU General Public License
++// along with this program; if not, write to the Free Software
++// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
++//
++// In addition, as a special exception, the copyright holders give
++// permission to link the code of portions of this program with the
++// OpenSSL library under certain conditions as described in each
++// individual source file, and distribute linked combinations
++// including the two.
++//
++// You must obey the GNU General Public License in all respects for
++// all of the code used other than OpenSSL.  If you modify file(s)
++// with this exception, you may extend this exception to your version
++// of the file(s), but you are not obligated to do so.  If you do not
++// wish to do so, delete this exception statement from your version.
++// If you delete this exception statement from all source files in the
++// program, then also delete it here.
++//
++// Contact:  Jari Sundell <jaris@ifi.uio.no>
++//
++//           Skomakerveien 33
++//           3185 Skoppum, NORWAY
++
++#ifndef RTORRENT_CORE_CURL_EVENT_H
++#define RTORRENT_CORE_CURL_EVENT_H
++
++#include <torrent/event.h>
++
++namespace core {
++
++class CurlStack;
++
++class CurlEvent : public torrent::Event {
++public:
++  CurlEvent(CurlStack* s, int fd) : m_stack(s) { m_fileDesc = fd; }
++  virtual ~CurlEvent() {}
++
++  virtual void        event_read();
++  virtual void        event_write();
++  virtual void        event_error();
++
++protected:
++  CurlStack*          m_stack;
++};
++
++}
++
++#endif
+diff -urN rtorrent-0.8.2.orig/src/core/curl_stack.cc rtorrent-0.8.2/src/core/curl_stack.cc
+--- rtorrent-0.8.2.orig/src/core/curl_stack.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/curl_stack.cc	2008-06-10 14:32:12.992249000 -0400
+@@ -44,13 +44,77 @@
+ #include "rak/functional.h"
+ #include "curl_get.h"
+ #include "curl_stack.h"
++#include "curl_event.h"
++
++#include "poll_manager.h"
+ 
+ namespace core {
+ 
+-CurlStack::CurlStack() :
++#if LIBCURL_VERSION_NUM >= 0x071000
++static void timer_callback(curl_socket_t socket, int action, void* event_data)
++{
++  CurlStack* s = static_cast<CurlStack*>(event_data);
++  CURLM* handle = (CURLM*)(s->handle());
++  CURLMcode rc;
++  int count;
++
++  while (CURLM_CALL_MULTI_PERFORM == (rc = curl_multi_socket(handle, CURL_SOCKET_TIMEOUT, &count)));
++}
++#endif
++
++static int socket_callback(CURL *easy, curl_socket_t socket, int action, void* socket_data, void* assign_data)
++{
++  CurlStack* stack = static_cast<CurlStack*>(socket_data);
++  torrent::Event* event = static_cast<torrent::Event*>(assign_data);
++  torrent::Poll* poll = stack->poll();
++
++  if (!event) {
++    event = new CurlEvent(stack, socket);
++    curl_multi_assign((CURLM*)(stack->handle()), socket, event);
++    if (socket > poll->open_max())
++      throw torrent::internal_error("Socket too large for " + poll->open_max());
++    poll->open(event);
++  } else {
++    poll->remove_read(event);
++    poll->remove_write(event);
++    poll->remove_error(event);
++  }
++
++  switch (action) {
++    case CURL_POLL_NONE:
++      break;
++    case CURL_POLL_IN:
++      poll->insert_read(event);
++      break;
++    case CURL_POLL_OUT:
++      poll->insert_write(event);
++      break;
++    case CURL_POLL_INOUT:
++      poll->insert_read(event);
++      poll->insert_write(event);
++      break;
++    case CURL_POLL_REMOVE:
++      poll->close(event);
++      delete event;
++      break;
++    default:
++      throw torrent::internal_error("socket_callback(...) called with unsupported action");
++  }
++
++  return 0;
++}
++
++CurlStack::CurlStack(torrent::Poll* poll) :
+   m_handle((void*)curl_multi_init()),
++  m_poll(poll),
+   m_active(0),
+   m_maxActive(32) {
++  curl_multi_setopt(m_handle, CURLMOPT_SOCKETDATA, this);
++  curl_multi_setopt(m_handle, CURLMOPT_SOCKETFUNCTION, socket_callback);
++#if LIBCURL_VERSION_NUM >= 0x071000
++  curl_multi_setopt(m_handle, CURLMOPT_TIMERDATA, this);
++  curl_multi_setopt(m_handle, CURLMOPT_TIMERFUNCTION, timer_callback);
++#endif
+ }
+ 
+ CurlStack::~CurlStack() {
+@@ -66,35 +130,59 @@
+ }
+ 
+ void
+-CurlStack::perform() {
++CurlStack::process() {
++  int t;
++  CURLMsg* msg;
++
++  while ((msg = curl_multi_info_read((CURLM*)m_handle, &t)) != NULL) {
++    if (msg->msg != CURLMSG_DONE)
++      throw torrent::internal_error("CurlStack::process() msg->msg != CURLMSG_DONE.");
++
++    iterator itr = std::find_if(begin(), end(), rak::equal(msg->easy_handle, std::mem_fun(&CurlGet::handle)));
++
++    if (itr == end())
++      throw torrent::internal_error("Could not find CurlGet with the right easy_handle.");
++        
++    if (msg->data.result == CURLE_OK)
++      (*itr)->signal_done().emit();
++    else
++      (*itr)->signal_failed().emit(curl_easy_strerror(msg->data.result));
++  }
++}
++
++void
++CurlStack::perform(curl_socket_t sockfd) {
+   CURLMcode code;
+ 
+   do {
+     int count;
+-    code = curl_multi_perform((CURLM*)m_handle, &count);
++    code = curl_multi_socket((CURLM*)m_handle, sockfd, &count);
+ 
+     if (code > 0)
+-      throw torrent::internal_error("Error calling curl_multi_perform.");
++      throw torrent::internal_error("Error calling curl_multi_socket.");
+ 
+     if ((unsigned int)count != size()) {
+       // Done with some handles.
+-      int t;
+-      CURLMsg* msg;
++      process();
++    }
+ 
+-      while ((msg = curl_multi_info_read((CURLM*)m_handle, &t)) != NULL) {
+-        if (msg->msg != CURLMSG_DONE)
+-          throw torrent::internal_error("CurlStack::perform() msg->msg != CURLMSG_DONE.");
++  } while (code == CURLM_CALL_MULTI_PERFORM);
++}
+ 
+-        iterator itr = std::find_if(begin(), end(), rak::equal(msg->easy_handle, std::mem_fun(&CurlGet::handle)));
++void
++CurlStack::perform() {
++  CURLMcode code;
+ 
+-        if (itr == end())
+-          throw torrent::internal_error("Could not find CurlGet with the right easy_handle.");
+-        
+-        if (msg->data.result == CURLE_OK)
+-          (*itr)->signal_done().emit();
+-        else
+-          (*itr)->signal_failed().emit(curl_easy_strerror(msg->data.result));
+-      }
++  do {
++    int count;
++    code = curl_multi_perform((CURLM*)m_handle, &count);
++
++    if (code > 0)
++      throw torrent::internal_error("Error calling curl_multi_perform.");
++
++    if ((unsigned int)count != size()) {
++      // Done with some handles.
++      process();
+     }
+ 
+   } while (code == CURLM_CALL_MULTI_PERFORM);
+diff -urN rtorrent-0.8.2.orig/src/core/curl_stack.h rtorrent-0.8.2/src/core/curl_stack.h
+--- rtorrent-0.8.2.orig/src/core/curl_stack.h	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/curl_stack.h	2008-06-10 13:54:21.695024000 -0400
+@@ -40,11 +40,19 @@
+ #include <deque>
+ #include <string>
+ #include <sigc++/functors/slot.h>
++#include <curl/curl.h>
++
++class torrent::Poll;
+ 
+ namespace core {
+ 
+ class CurlGet;
+ 
++#if LIBCURL_VERSION_NUM >= 0x071000
++static void timer_callback(curl_socket_t socket, int action, void* event_data);
++#endif
++static int socket_callback(CURL *easy, curl_socket_t socket, int action, void* socket_data, void* assign_data);
++
+ // By using a deque instead of vector we allow for cheaper removal of
+ // the oldest elements, those that will be first in the in the
+ // deque.
+@@ -76,16 +84,19 @@
+   using base_type::size;
+   using base_type::empty;
+ 
+-  CurlStack();
++  CurlStack(torrent::Poll* poll);
+   ~CurlStack();
+ 
+   CurlGet*            new_object();
+ 
++  void                perform(curl_socket_t sockfd);
+   void                perform();
+ 
+   // TODO: Set fd_set's only once?
+   unsigned int        fdset(fd_set* readfds, fd_set* writefds, fd_set* exceptfds);
+ 
++  void*               handle()                               { return m_handle; }
++  torrent::Poll*      poll()                                 { return m_poll; }         
+   unsigned int        active() const                         { return m_active; }
+   unsigned int        max_active() const                     { return m_maxActive; }
+   void                set_max_active(unsigned int a)         { m_maxActive = a; }
+@@ -111,12 +122,14 @@
+  protected:
+   void                add_get(CurlGet* get);
+   void                remove_get(CurlGet* get);
++  void                process();
+ 
+  private:
+   CurlStack(const CurlStack&);
+   void operator = (const CurlStack&);
+ 
+   void*               m_handle;
++  torrent::Poll*      m_poll;
+ 
+   unsigned int        m_active;
+   unsigned int        m_maxActive;
+diff -urN rtorrent-0.8.2.orig/src/core/Makefile.am rtorrent-0.8.2/src/core/Makefile.am
+--- rtorrent-0.8.2.orig/src/core/Makefile.am	2008-06-10 15:13:49.786345331 -0400
++++ rtorrent-0.8.2/src/core/Makefile.am	2008-06-10 02:25:32.809721000 -0400
+@@ -1,6 +1,8 @@
+ noinst_LIBRARIES = libsub_core.a
+ 
+ libsub_core_a_SOURCES = \
++	curl_event.cc \
++	curl_event.h \
+ 	curl_get.cc \
+ 	curl_get.h \
+ 	curl_stack.cc \
+diff -urN rtorrent-0.8.2.orig/src/core/poll_manager_epoll.cc rtorrent-0.8.2/src/core/poll_manager_epoll.cc
+--- rtorrent-0.8.2.orig/src/core/poll_manager_epoll.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/poll_manager_epoll.cc	2008-06-10 14:17:27.568558000 -0400
+@@ -67,6 +67,7 @@
+   torrent::perform();
+   timeout = std::min(timeout, rak::timer(torrent::next_timeout())) + 1000;
+ 
++#if 0
+   if (!m_httpStack.empty()) {
+     // When we're using libcurl we need to use select, but as this is
+     // inefficient we try avoiding it whenever possible.
+@@ -101,6 +102,7 @@
+     // Clear the timeout since we've already used it in the select call.
+     timeout = rak::timer();
+   }
++#endif
+ 
+   // Yes, below is how much code really *should* have been in this
+   // function. ;)
+diff -urN rtorrent-0.8.2.orig/src/core/poll_manager_kqueue.cc rtorrent-0.8.2/src/core/poll_manager_kqueue.cc
+--- rtorrent-0.8.2.orig/src/core/poll_manager_kqueue.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/poll_manager_kqueue.cc	2008-06-10 14:17:31.672907000 -0400
+@@ -68,6 +68,7 @@
+   torrent::perform();
+   timeout = std::min(timeout, rak::timer(torrent::next_timeout())) + 1000;
+ 
++#if 0
+   if (!m_httpStack.empty()) {
+     // When we're using libcurl we need to use select, but as this is
+     // inefficient we try avoiding it whenever possible.
+@@ -102,6 +103,7 @@
+     // Clear the timeout since we've already used it in the select call.
+     timeout = rak::timer();
+   }
++#endif
+ 
+   // Yes, below is how much code really *should* have been in this
+   // function. ;)
+diff -urN rtorrent-0.8.2.orig/src/core/poll_manager_ports.cc rtorrent-0.8.2/src/core/poll_manager_ports.cc
+--- rtorrent-0.8.2.orig/src/core/poll_manager_ports.cc	2008-06-10 15:13:49.790288665 -0400
++++ rtorrent-0.8.2/src/core/poll_manager_ports.cc	2008-06-10 14:31:09.552278000 -0400
+@@ -68,6 +68,7 @@
+   torrent::perform();
+   timeout = std::min(timeout, rak::timer(torrent::next_timeout())) + 1000;
+ 
++#if 0
+   if (!m_httpStack.empty()) {
+     // When we're using libcurl we need to use select, but as this is
+     // inefficient we try avoiding it whenever possible.
+@@ -103,6 +104,7 @@
+     // Clear the timeout since we've already used it in the select call.
+     timeout = rak::timer();
+   }
++#endif
+ 
+   // Yes, below is how much code really *should* have been in this
+   // function. ;)
+diff -urN rtorrent-0.8.2.orig/src/core/poll_manager_select.cc rtorrent-0.8.2/src/core/poll_manager_select.cc
+--- rtorrent-0.8.2.orig/src/core/poll_manager_select.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/poll_manager_select.cc	2008-06-10 02:37:17.419878000 -0400
+@@ -77,16 +77,16 @@
+ 
+   unsigned int maxFd = static_cast<torrent::PollSelect*>(m_poll)->fdset(m_readSet, m_writeSet, m_errorSet);
+ 
+-  if (!m_httpStack.empty())
+-    maxFd = std::max(maxFd, m_httpStack.fdset(m_readSet, m_writeSet, m_errorSet));
++  if (!m_httpStack->empty())
++    maxFd = std::max(maxFd, m_httpStack->fdset(m_readSet, m_writeSet, m_errorSet));
+ 
+   timeval t = timeout.tval();
+ 
+   if (select(maxFd + 1, m_readSet, m_writeSet, m_errorSet, &t) == -1)
+     return check_error();
+ 
+-  if (!m_httpStack.empty())
+-    m_httpStack.perform();
++  if (!m_httpStack->empty())
++    m_httpStack->perform();
+ 
+   torrent::perform();
+   static_cast<torrent::PollSelect*>(m_poll)->perform(m_readSet, m_writeSet, m_errorSet);
+diff -urN rtorrent-0.8.2.orig/src/core/poll_manager.cc rtorrent-0.8.2/src/core/poll_manager.cc
+--- rtorrent-0.8.2.orig/src/core/poll_manager.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/poll_manager.cc	2008-06-10 02:35:35.523377000 -0400
+@@ -44,7 +44,8 @@
+ namespace core {
+ 
+ PollManager::PollManager(torrent::Poll* poll) :
+-  m_poll(poll) {
++  m_poll(poll),
++  m_httpStack(new CurlStack(poll)) {
+ 
+   if (m_poll == NULL)
+     throw std::logic_error("PollManager::PollManager(...) received poll == NULL");
+@@ -74,10 +75,11 @@
+ 
+   // Call this so curl has valid fd_set pointers if curl_multi_perform
+   // is called before it gets set when polling.
+-  m_httpStack.fdset(m_readSet, m_writeSet, m_errorSet);
++  m_httpStack->fdset(m_readSet, m_writeSet, m_errorSet);
+ }
+ 
+ PollManager::~PollManager() {
++  delete m_httpStack;
+   delete m_poll;
+ 
+ #if defined USE_VARIABLE_FDSET
+diff -urN rtorrent-0.8.2.orig/src/core/poll_manager.h rtorrent-0.8.2/src/core/poll_manager.h
+--- rtorrent-0.8.2.orig/src/core/poll_manager.h	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/poll_manager.h	2008-06-10 02:34:57.898088000 -0400
+@@ -58,7 +58,7 @@
+ 
+   unsigned int        get_open_max() const         { return m_poll->open_max(); }
+ 
+-  CurlStack*          get_http_stack()             { return &m_httpStack; }
++  CurlStack*          get_http_stack()             { return m_httpStack; }
+   torrent::Poll*      get_torrent_poll()           { return m_poll; }
+ 
+   virtual void        poll(rak::timer timeout) = 0;
+@@ -70,7 +70,7 @@
+   void                check_error();
+ 
+   torrent::Poll*      m_poll;
+-  CurlStack           m_httpStack;
++  CurlStack*          m_httpStack;
+ 
+   unsigned int        m_setSize;
+   fd_set*             m_readSet;

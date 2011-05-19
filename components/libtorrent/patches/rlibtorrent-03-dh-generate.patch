@@ -1,0 +1,93 @@
+--- libtorrent-0.12.2.orig/src/utils/diffie_hellman.cc	Wed May  7 12:19:12 2008
++++ libtorrent-0.12.2/src/utils/diffie_hellman.cc	Sun Jun 15 10:51:31 2008
+@@ -47,6 +47,80 @@
+ 
+ namespace torrent {
+ 
++static int generate_key(DH *dh)
++	{
++	int ok=0;
++	int generate_new_key=0;
++	unsigned l;
++	BN_CTX *ctx;
++	BN_MONT_CTX *mont=NULL;
++	BIGNUM *pub_key=NULL,*priv_key=NULL;
++
++	ctx = BN_CTX_new();
++	if (ctx == NULL) goto err;
++
++	if (dh->priv_key == NULL)
++		{
++		priv_key=BN_new();
++		if (priv_key == NULL) goto err;
++		generate_new_key=1;
++		}
++	else
++		priv_key=dh->priv_key;
++
++	if (dh->pub_key == NULL)
++		{
++		pub_key=BN_new();
++		if (pub_key == NULL) goto err;
++		}
++	else
++		pub_key=dh->pub_key;
++
++
++	if (dh->flags & DH_FLAG_CACHE_MONT_P)
++		{
++		mont = BN_MONT_CTX_set_locked((BN_MONT_CTX **)(&dh->method_mont_p),
++				CRYPTO_LOCK_DH, dh->p, ctx);
++		if (!mont)
++			goto err;
++		}
++
++	if (generate_new_key)
++		{
++		l = dh->length ? dh->length : BN_num_bits(dh->p)-1; /* secret exponent length */
++		if (!BN_rand(priv_key, l, 0, 0))
++			if (!BN_pseudo_rand(priv_key, l, 0, 0)) goto err;
++		}
++
++	{
++		BIGNUM local_prk;
++		BIGNUM *prk;
++
++		if ((dh->flags & DH_FLAG_NO_EXP_CONSTTIME) == 0)
++			{
++			BN_init(&local_prk);
++			prk = &local_prk;
++			BN_with_flags(prk, priv_key, BN_FLG_EXP_CONSTTIME);
++			}
++		else
++			prk = priv_key;
++
++		if (!dh->meth->bn_mod_exp(dh, pub_key, dh->g, prk, dh->p, ctx, mont)) goto err;
++	}
++
++	dh->pub_key=pub_key;
++	dh->priv_key=priv_key;
++	ok=1;
++err:
++	if (ok != 1) {
++	}
++
++	if ((pub_key != NULL)  && (dh->pub_key == NULL))  BN_free(pub_key);
++	if ((priv_key != NULL) && (dh->priv_key == NULL)) BN_free(priv_key);
++	BN_CTX_free(ctx);
++	return(ok);
++}
++
+ DiffieHellman::DiffieHellman(const unsigned char *prime, int primeLength,
+                              const unsigned char *generator, int generatorLength) :
+   m_secret(NULL) {
+@@ -56,7 +130,8 @@
+   m_dh->p = BN_bin2bn(prime, primeLength, NULL);
+   m_dh->g = BN_bin2bn(generator, generatorLength, NULL);
+ 
+-  DH_generate_key(m_dh);
++  if (!generate_key(m_dh))
++    throw internal_error("Unable to generate encryption key.");
+ #else
+   throw internal_error("Compiled without encryption support.");
+ #endif

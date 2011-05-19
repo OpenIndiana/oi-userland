@@ -1,0 +1,131 @@
+--- rtorrent-0.8.2/src/input/input_event.cc.orig	2008-05-10 18:44:08.970350312 +1200
++++ rtorrent-0.8.2/src/input/input_event.cc	2008-05-10 18:44:41.438283333 +1200
+@@ -37,6 +37,7 @@
+ #include "config.h"
+ 
+ #include <ncurses.h>
++#define NCURSES_ERR -1
+ 
+ #include "input_event.h"
+ 
+@@ -58,7 +59,7 @@
+ InputEvent::event_read() {
+   int c;
+ 
+-  while ((c = getch()) != ERR)
++  while ((c = getch()) != NCURSES_ERR)
+     m_slotPressed(c);
+ }
+ 
+--- rtorrent-0.8.2/src/input/path_input.cc.orig	2008-05-08 00:19:11.000000000 +1200
++++ rtorrent-0.8.2/src/input/path_input.cc	2008-05-10 18:46:38.159258850 +1200
+@@ -42,7 +42,8 @@
+ #include <rak/path.h>
+ 
+ #include <sys/types.h>
+-#include <sys/dir.h>
++#include <sys/dirent.h>
++#include <sys/stat.h>
+ 
+ #include "path_input.h"
+ 
+@@ -71,9 +72,12 @@
+ }
+ 
+ struct _transform_filename {
++  struct stat s;
+   void operator () (utils::directory_entry& entry) {
+-    if (entry.d_type == DT_DIR)
++    stat(entry.d_name.c_str(), &s);
++    if (s.st_mode & S_IFDIR) {
+       entry.d_name += '/';
++    }
+   }
+ };
+ 
+--- rtorrent-0.8.2/src/utils/directory.h.orig	2008-05-08 00:19:11.000000000 +1200
++++ rtorrent-0.8.2/src/utils/directory.h	2008-05-10 18:40:49.485871875 +1200
+@@ -48,9 +48,7 @@
+   bool is_file() const { return true; }
+ 
+   // The name and types should match POSIX.
+-  uint32_t            d_fileno;
+   uint32_t            d_reclen;
+-  uint8_t             d_type;
+ 
+   std::string         d_name;
+ };
+--- rtorrent-0.8.2/src/utils/directory.cc.orig	2008-05-08 00:19:11.000000000 +1200
++++ rtorrent-0.8.2/src/utils/directory.cc	2008-05-10 18:40:49.485525951 +1200
+@@ -76,9 +76,7 @@
+ 
+     iterator itr = base_type::insert(end(), value_type());
+ 
+-    itr->d_fileno = entry->d_fileno;
+     itr->d_reclen = entry->d_reclen;
+-    itr->d_type   = entry->d_type;
+ 
+ #ifdef DIRENT_NAMLEN_EXISTS_FOOBAR
+     itr->d_name   = std::string(entry->d_name, entry->d_name + entry->d_namlen);
+--- rtorrent-0.8.2/src/signal_handler.h.orig	2008-05-08 00:19:11.000000000 +1200
++++ rtorrent-0.8.2/src/signal_handler.h	2008-05-10 18:40:49.485083889 +1200
+@@ -37,7 +37,7 @@
+ #ifndef RTORRENT_SIGNAL_HANDLER_H
+ #define RTORRENT_SIGNAL_HANDLER_H
+ 
+-#include <sys/signal.h>
++#include <signal.h>
+ #include <sigc++/functors/slot.h>
+ 
+ class SignalHandler {
+--- rtorrent-0.8.2/src/rpc/scgi.cc.orig	2008-05-08 00:19:10.000000000 +1200
++++ rtorrent-0.8.2/src/rpc/scgi.cc	2008-05-10 18:40:49.457064063 +1200
+@@ -88,7 +88,7 @@
+   char buffer[sizeof(sockaddr_un) + filename.size()];
+   sockaddr_un* sa = reinterpret_cast<sockaddr_un*>(buffer);
+ 
+-  sa->sun_family = AF_LOCAL;
++  sa->sun_family = AF_UNIX;
+   std::memcpy(sa->sun_path, filename.c_str(), filename.size() + 1);
+ 
+   if (!get_fd().open_local())
+diff -urN rtorrent-0.8.2.orig/src/core/curl_get.cc rtorrent-0.8.2/src/core/curl_get.cc
+--- rtorrent-0.8.2.orig/src/core/curl_get.cc	2008-05-07 08:19:11.000000000 -0400
++++ rtorrent-0.8.2/src/core/curl_get.cc	2008-05-24 04:58:48.995868197 -0400
+@@ -81,7 +81,7 @@
+   curl_easy_setopt(m_handle, CURLOPT_NOSIGNAL,       1);
+   curl_easy_setopt(m_handle, CURLOPT_FOLLOWLOCATION, 1);
+   curl_easy_setopt(m_handle, CURLOPT_MAXREDIRS,      5);
+-  curl_easy_setopt(m_handle, CURLOPT_IPRESOLVE,      CURL_IPRESOLVE_V4);
++  curl_easy_setopt(m_handle, CURLOPT_IPRESOLVE,      CURL_IPRESOLVE_WHATEVER);
+   curl_easy_setopt(m_handle, CURLOPT_ENCODING,       "");
+ 
+   m_stack->add_get(this);
+--- rtorrent-0.8.2.orig/src/main.cc	2008-07-01 16:49:14.445080000 -0400
++++ rtorrent-0.8.2/src/main.cc	2008-07-02 10:37:19.052279890 -0400
+@@ -44,7 +44,13 @@
+ #include <torrent/torrent.h>
+ #include <torrent/exceptions.h>
+ #include <rak/functional.h>
++#include <locale.h>
+ 
++#if defined(__sun) && defined(__SVR4)
++#include <stdio.h>
++#include <stdio_ext.h>
++#endif
++
+ #ifdef USE_EXECINFO
+ #include <execinfo.h>
+ #endif
+@@ -165,6 +170,11 @@
+     SignalHandler::set_handler(SIGSEGV,  sigc::bind(sigc::ptr_fun(&do_panic), SIGSEGV));
+     SignalHandler::set_handler(SIGBUS,   sigc::bind(sigc::ptr_fun(&do_panic), SIGBUS));
+     SignalHandler::set_handler(SIGFPE,   sigc::bind(sigc::ptr_fun(&do_panic), SIGFPE));
++    SignalHandler::set_handler(SIGABRT,   sigc::bind(sigc::ptr_fun(&do_panic), SIGABRT));
++
++#if defined(__sun) && defined(__SVR4)
++    enable_extended_FILE_stdio(-1, SIGABRT);
++#endif
+ 
+     control->core()->initialize_first();
+ 
