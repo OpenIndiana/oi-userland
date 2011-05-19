@@ -1,0 +1,119 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/developer/python/pylint@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="pylint - python code static checker"
+set name=pkg.description value="pylint is a Python source code analyzer which looks for programming errors and helps enforce a coding standard"
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2009/325
+
+dir path=usr
+dir path=usr/bin
+dir path=usr/lib
+dir path=usr/lib/python2.6
+dir path=usr/lib/python2.6/vendor-packages
+dir path=usr/lib/python2.6/vendor-packages/pylint
+dir \
+    path=usr/lib/python2.6/vendor-packages/pylint-$(COMPONENT_VERSION)-py2.6.egg-info
+dir path=usr/lib/python2.6/vendor-packages/pylint/checkers
+dir path=usr/lib/python2.6/vendor-packages/pylint/pyreverse
+dir path=usr/lib/python2.6/vendor-packages/pylint/reporters
+dir path=usr/share
+dir path=usr/share/man
+dir path=usr/share/man/man1
+
+file path=usr/bin/epylint
+file path=usr/bin/pylint
+file path=usr/bin/pylint-gui
+file path=usr/bin/pyreverse
+file path=usr/bin/symilar
+file \
+    path=usr/lib/python2.6/vendor-packages/pylint-$(COMPONENT_VERSION)-py2.6.egg-info/PKG-INFO
+file \
+    path=usr/lib/python2.6/vendor-packages/pylint-$(COMPONENT_VERSION)-py2.6.egg-info/SOURCES.txt
+file \
+    path=usr/lib/python2.6/vendor-packages/pylint-$(COMPONENT_VERSION)-py2.6.egg-info/dependency_links.txt
+file \
+    path=usr/lib/python2.6/vendor-packages/pylint-$(COMPONENT_VERSION)-py2.6.egg-info/requires.txt
+file \
+    path=usr/lib/python2.6/vendor-packages/pylint-$(COMPONENT_VERSION)-py2.6.egg-info/top_level.txt
+file path=usr/lib/python2.6/vendor-packages/pylint/__init__.py
+file path=usr/lib/python2.6/vendor-packages/pylint/__pkginfo__.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/__init__.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/base.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/classes.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/design_analysis.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/exceptions.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/format.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/imports.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/misc.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/newstyle.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/raw_metrics.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/similar.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/typecheck.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/utils.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/variables.py
+file path=usr/lib/python2.6/vendor-packages/pylint/config.py
+file path=usr/lib/python2.6/vendor-packages/pylint/epylint.py
+file path=usr/lib/python2.6/vendor-packages/pylint/gui.py
+file path=usr/lib/python2.6/vendor-packages/pylint/interfaces.py
+file path=usr/lib/python2.6/vendor-packages/pylint/lint.py
+file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/__init__.py
+file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/diadefslib.py
+file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/diagrams.py
+file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/main.py
+file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/utils.py
+file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/writer.py
+file path=usr/lib/python2.6/vendor-packages/pylint/reporters/__init__.py
+file path=usr/lib/python2.6/vendor-packages/pylint/reporters/html.py
+file path=usr/lib/python2.6/vendor-packages/pylint/reporters/text.py
+file path=usr/lib/python2.6/vendor-packages/pylint/utils.py
+file manpages/epylint.1 path=usr/share/man/man1/epylint.1
+file man/pylint.1 path=usr/share/man/man1/pylint.1
+file manpages/pylint-gui.1 path=usr/share/man/man1/pylint-gui.1
+file man/pyreverse.1 path=usr/share/man/man1/pyreverse.1
+file manpages/symilar.1 path=usr/share/man/man1/symilar.1
+
+license pylint.license license="GPLv2"
+
+legacy pkg=SUNWpylint \
+    desc="Python source code analyzer (0.18.0)" \
+    name="pylint python code static checker"
+
+# pkgdepend should have picked up the dependency on 
+# /library/python-2/logilab-common and /library/python-2/logilab-astng; 
+# this explicit depend action can be removed if pkgdepend is fixed later
+depend fmri=__TBD \
+    pkg.debug.depend.file=usr/lib/python2.6/vendor-packages/logilab/common/textutils.py \
+    pkg.debug.reason=usr/lib/python2.6/vendor-packages/pylint/utils.py \
+    type=require
+depend fmri=__TBD \
+    pkg.debug.depend.file=usr/lib/python2.6/vendor-packages/logilab/astng/nodes.py \
+    pkg.debug.reason=usr/lib/python2.6/vendor-packages/pylint/lint.py \
+    type=require

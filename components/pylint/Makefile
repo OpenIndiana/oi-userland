@@ -17,7 +17,6 @@
 # information: Portions Copyright [yyyy] [name of copyright owner]
 #
 # CDDL HEADER END
-#
 
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
@@ -25,16 +24,17 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		logilab-common
-COMPONENT_VERSION=	0.40.0
+COMPONENT_NAME=		pylint
+COMPONENT_VERSION=	0.18.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:4020a550c083f9c4cffdf9bc95f5d957b25ba95b
-COMPONENT_ARCHIVE_URL=	http://ftp.logilab.org/pub/common/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:5d54ae25c29cdcab7bdfaef87e5f5ed2cc183b75
+COMPONENT_ARCHIVE_URL=	http://ftp.logilab.org/pub/pylint/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
 
-include ../../make-rules/prep.mk
-include ../../make-rules/ips.mk
-include ../../make-rules/setup.py.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/setup.py.mk
 
 # common targets
 
@@ -42,15 +42,8 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# Expected failures for test target:
-# 722 test cases, 17 errors, 5 failures, 56 skipped
-# 43 modules OK (7 failed)
-COMPONENT_TEST_DIR = $(COMPONENT_SRC)
-COMPONENT_TEST_CMD = bin/pytest
-COMPONENT_TEST_ARGS = test
-
-test:	$(TEST_32)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
