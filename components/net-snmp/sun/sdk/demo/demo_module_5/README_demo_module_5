@@ -1,0 +1,248 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+
+README for demo_module_5
+***********************************************************************
+
+This code example demonstrates how to implement data persistence
+for a module, across agent restarts.  See the System Management
+Agent Developer's Guide for more information about storing persistent
+data.
+
+
+Introduction
+------------
+	
+The demo_module_5 is based on the SDK-DEMO5-MIB.txt MIB, which implements
+the me5FileGroup objects. me5FileTable monitors a set of files. File size
+and file permissions are monitored for each file. By default, the 
+following files are monitored:
+
+/etc/hosts
+/etc/group
+/etc/passwd
+/etc/system
+
+The module user can specify different files to be monitored by using 
+snmp SET requests. Any changes to the list of monitored files are persistent
+across agent restarts. In other words, when the agent is restarted, the 
+list of files being monitored is the same as before restart.
+
+
+Files
+-----
+
+The demo_module_5 code example includes the following files, by default located
+in the directory /usr/demo/sma_snmp/demo_module_5.
+
+Makefile - makefile to build demo_module_5.so shared library file
+demo_module_5.c - module source code
+demo_module_5.h - module header file
+SDK-DEMO5-MIB.txt - MIB file for this module
+
+
+How to Build the demo_module_5 Code Example
+===========================================
+
+To set up your build environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+   % cp -R /usr/demo/sma_snmp/demo_module_5  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries 
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the 
+   demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/mibs
+
+
+4. Set the CC environment variable to the location of the C compiler to 
+   be used.
+   For example, if you are using Sun ONE Studio:
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+   
+   
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_5
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp demo_module_5.so /home/username/demo/lib
+   
+
+4. Copy the SDK-DEMO5-MIB.txt file to the mibs directory you created for 
+   the demos.
+   For example:
+     
+   % cp SDK-DEMO5-MIB.txt /home/username/demo/mibs
+   
+   
+
+Setting Up Agent to Run the demo_module_5 Module
+=================================================
+
+1. As root, edit the agent's configuration file /etc/sma/snmp/snmpd.conf,
+   and insert a dlmod statement for the module. This statement enables 
+   the agent to load the module.
+   For example:
+   
+   dlmod demo_module_5 /home/username/demo/lib/demo_module_5.so
+    
+    
+2. As root, start the SMA snmp agent. If the agent is already running, 
+   stop and restart it in debug mode.
+   For example:
+   
+   # /etc/init.d/init.sma stop
+   # /usr/sbin/snmpd -Ddemo_module_5
+    
+   The optional -Ddemo_module_5 argument sends debugging statements from 
+   demo_module_5 to the /var/log/snmpd.log file. You can also use the -L 
+   and -f options to send  debugging statements to the screen instead.
+
+   When the module is started, the file /var/sma_snmp/demo_module_5.conf
+   is read and then the latest token values are appended to the file.
+   The demo_module_5.conf file is created if it doesn't exist.  When you 
+   later use snmpset to specify new token values, the new values are 
+   appended to the file.
+   
+
+
+Testing the demo_module_5 Module
+================================
+
+1. Set your MIBS and MIBDIRS environment variables to
+   include the appropriate paths.  
+   For example, in the csh: 
+    
+   % setenv MIBDIRS .:/home/username/demo/mibs:/etc/sma/snmp/mibs
+   % setenv MIBS +SDK-DEMO5-MIB
+   
+   Note that step 1 is not required, but it enables snmp commands to access 
+   the MIB to provide variable names instead of OIDs in its output. 
+   
+   
+2. Issue an snmpget or snmpwalk request to test the module.
+   For example:
+
+   % snmpwalk -v1 -c public localhost 1.3.6.1.4.1.42.2.2.4.4.5
+   
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.1 = Gauge32: 1
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.2 = Gauge32: 2
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.3 = Gauge32: 3
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.4 = Gauge32: 4
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.1 = STRING: "/usr/sbin/snmpd"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.2 = STRING: "/tmp/asdf"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.3 = STRING: "/etc/hosts"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.4 = STRING: "/etc/sma/snmp/snmp.conf" 
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.1 = Gauge32: 229376
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.2 = Gauge32: 17
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.3 = Gauge32: 74
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.4 = Gauge32: 2904
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.1 = STRING: "755"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.2 = STRING: "644"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.3 = STRING: "444"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.4 = STRING: "755"
+  
+  
+3. Issue an snmpset command to specify a different file name.
+   For example, to monitor file /var/sma_snmp/snmpd.conf:
+
+   % snmpset -v2c -c private localhost .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.1 \
+     s "/var/sma_snmp/snmpd.conf" .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.1 = STRING: \
+     "/var/sma_snmp/snmpd.conf"
+
+ 
+4. Verify the results of the set request by using the snmpwalk command.
+   For example: 
+
+   % snmpwalk -v1 -c public localhost 1.3.6.1.4.1.42.2.2.4.4.5
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.1 = Gauge32: 1
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.2 = Gauge32: 2
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.3 = Gauge32: 3
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.4 = Gauge32: 4
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.1 = STRING: "/var/sma_snmp/snmpd.conf"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.2 = STRING: "/tmp/asdf"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.3 = STRING: "/etc/hosts"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.4 = STRING: "/etc/sma/snmp/snmp.conf"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.1 = Gauge32: 489
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.2 = Gauge32: 17
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.3 = Gauge32: 74
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.4 = Gauge32: 2904
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.1 = STRING: "600"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.2 = STRING: "644"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.3 = STRING: "444"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.4 = STRING: "755"
+
+
+5. Verify that the file information that you changed is saved across
+   agent restarts by restarting the agent (as root) and repeating the snmpwalk
+   in step 4.
+   
+   For example:
+   
+   # /etc/init.d/init.sma restart
+   # /usr/bin/snmpwalk -v1 -c public localhost 1.3.6.1.4.1.42.2.2.4.4.5
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.1 = Gauge32: 1
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.2 = Gauge32: 2
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.3 = Gauge32: 3
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.1.4 = Gauge32: 4
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.1 = STRING: "/var/sma_snmp/snmpd.conf"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.2 = STRING: "/tmp/asdf"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.3 = STRING: "/etc/hosts"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.2.4 = STRING: "/etc/sma/snmp/snmp.conf"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.1 = Gauge32: 489
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.2 = Gauge32: 17
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.3 = Gauge32: 74
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.3.4 = Gauge32: 2904
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.1 = STRING: "600"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.2 = STRING: "644"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.3 = STRING: "444"
+   .1.3.6.1.4.1.42.2.2.4.4.5.2.1.1.4.4 = STRING: "755"
+
+
+

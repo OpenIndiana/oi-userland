@@ -1,0 +1,53 @@
+#
+# Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# ident  "@(#)masfd	1.5 03/06/25 SMI"
+
+SUNWMASF_PKGLIB=`pkgparam SUNWmasf BASEDIR`
+SNMPD=$SUNWMASF_PKGLIB/SUNWmasf/sbin/snmpd
+SUNWMASF_PKGLIB=$SUNWMASF_PKGLIB/SUNWmasf/lib
+CONF_FILE=/etc/opt/SUNWmasf/conf/snmpd.conf
+TIMEOUT=5
+
+if [ ! -f ${CONF_FILE} ]; then
+	exit 0
+fi
+
+export SUNWMASF_PKGLIB
+
+PATTERN=`echo $SNMPD | sed 's/\\//\\\\\\//g'` 
+
+is_running() {
+        /usr/bin/pgrep -x -f "$PATTERN -X"> /dev/null 2>&1 
+}
+
+case "$1" in
+start)
+        if is_running ; then
+                echo "Agent already running" >&2
+                exit 1
+        else
+		{
+                        # allow time for agentX master agent to open socket
+			sleep 30
+	        	$SNMPD -X > /dev/null 2>&1
+		} &
+        fi
+	;;
+stop)
+        TIME=0
+	/usr/bin/pkill -x -f "$PATTERN -X"
+        # Allow time for final poll to complete, before relinquishing control
+        # and allowing picld to be stopped
+        while is_running && [ $TIME -lt $TIMEOUT ] ; do
+                sleep 1
+                TIME=`/usr/bin/expr $TIME + 1`
+        done
+	;;
+*)
+	echo "Usage: $0 {start|stop}" >&2
+	exit 1
+	;;
+esac
+
+exit 0

@@ -1,0 +1,231 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+
+README for demo_module_4
+***********************************************************************
+
+This example module demonstrates the following features:
+     - Automatic Refresh of data at regular intervals
+     - Check for alarm condition at regular intervals and generate trap if 
+       needed.
+     - Read threshold values from configuration file demo_module_4.conf
+     - use of SNMP_CALLBACK_POST_READ_CONFIG
+     
+See the System Management Agent Developer's Guide for more information 
+about traps, and demo_module_4.
+     
+     
+
+How to Use the demo_module_4 Code Example
+==========================================
+
+The demo_module_4 code example includes the following files, by default 
+located in the directory /usr/demo/sma_snmp/demo_module_4.
+
+Files:
+
+o Makefile - Compiles the module source code
+o me4LoadGroup.c - Source code for the module
+o me4LoadGroup.h - Header file for the module
+o SDK-DEMO4-MIB.txt - MIB file used in the module
+o demo_module_4.conf - configuration file used by the module
+
+
+
+To set up your environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+
+   % cp -R /usr/demo/sma_snmp/demo_module_4  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries  
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the 
+   demo code examples, if you have not already done so. 
+   For example:
+
+   % mkdir /home/username/demo/mibs
+   
+   
+4. Set the CC environment variable to the location of the C compiler to be 
+   used. For example, if you are using Sun ONE Studio:
+
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+   
+      
+
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_4
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp demo_module_4.so /home/username/demo/lib
+   
+   
+4. Copy the SDK-DEMO4-MIB.txt file to the mibs directory you created for 
+   the demos.
+   For example:
+  
+   % cp SDK-DEMO4-MIB.txt /home/username/demo/mibs
+
+
+5. Copy the demo_module_4.conf file to a .snmp directory in your home 
+   directory.
+   For example:
+   
+   % mkdir /home/username/.snmp
+   % cp demo_module_4.conf /home/username/.snmp
+   
+
+
+
+Setting Up Agent to Run demo_module_4
+=====================================
+    
+1. As root, edit the agent's configuration file /etc/sma/snmp/snmpd.conf,
+   and insert a dlmod statement for the module. This statement enables the 
+   agent to load the module.
+   For example:
+   
+   dlmod demo_module_4 /home/username/demo/lib/demo_module_4.so
+   
+    
+2. As root, start the SMA snmp agent. If the agent is already running, 
+   stop and  restart it in debug mode.
+   For example:
+   
+    # /etc/init.d/init.sma stop
+    # /usr/sbin/snmpd -Ddemo_module_4
+    
+    The optional -Ddemo_module_4 argument sends debugging statements from 
+    demo_module_4 to the /var/log/snmpd.log file. You can also use 
+    the -L and -f options to send debugging statements to the screen instead.
+
+
+
+Testing the Module
+==================
+
+1. Set your MIBS and MIBDIRS environment variables to
+   include the appropriate paths.  
+   For example, in the csh: 
+    
+   % setenv MIBDIRS .:/home/username/demo/mibs:/etc/sma/snmp/mibs
+   % setenv MIBS +SDK-DEMO4-MIB
+   
+   
+2. To get data from the module, issue an snmpwalk request.
+   For example:
+
+   % snmpwalk -v1 -c public localhost 1.3.6.1.4.1.42.2.2.4.4.4
+   .1.3.6.1.4.1.42.2.2.4.4.4.1.1.0 = STRING: "0.043"
+   .1.3.6.1.4.1.42.2.2.4.4.4.1.2.0 = STRING: "0.031"
+   .1.3.6.1.4.1.42.2.2.4.4.4.1.3.0 = STRING: "0.027"
+  
+
+
+To catch traps generated by the module:
+
+
+1. Edit the /home/username/.snmp/demo_module_4.conf file and set the 
+   thresholds to values that are less than the current load values that 
+   were returned in the snmpwalk command.
+   
+2. As root, edit the /etc/sma/snmp/snmpd.conf file and add
+   the following lines to configure the snmp agent to send traps.
+   
+   trapcommunity  public
+   trapsink localhost
+
+
+3. Open a second terminal window and, as root, start snmptrapd in that window.
+   For example, this command starts snmpdtrapd and specifies the format
+   of the output to stderr:
+   
+   # /usr/sbin/snmptrapd -P -F "TRAP from %B on %m/%l/%y at %h:%j:%k \
+     Enterprise=%N Type=%w SubType=%q \nwith Varbinds: %v \n\n" localhost:162
+   
+   2003-06-20 12:37:53 NET-SNMP version 5.0.8 Started.
+     
+     
+4. In the first window, as root, restart the agent.
+   For example:
+   
+   # /etc/init.d/init.sma restart
+   
+
+5. In the terminal where snmptrapd is running you should see traps that are 
+   generated by the agent.
+   
+   Trap output should be similar to the following:
+
+   TRAP from sqa-blade-2 on 6/20/2003 at 12:37:57 Enterprise=. Type=0 SubType=0 
+   with Varbinds:  .1.3.6.1.2.1.1.3.0 = Timeticks: (13) 0:00:00.13 .1.3.6.1.6.3.1.1.4.1.0 = OID: 
+   .1.3.6.1.4.1.42.2.2.4.4.4.2.1     .1.3.6.1.4.1.42.2.2.4.4.4.3.1.0 = STRING: sqa-blade-2        
+   .1.3.6.1.4.1.42.2.2.4.4.4.3.2.0 = STRING: demo_module_4 .1.3.6.1.4.1.42.2.2.4.4.4.3.3.0 = OID: 
+   .1.3.6.1.4.1.42.2.2.4.4.4.1.1.0       .1.3.6.1.4.1.42.2.2.4.4.4.3.4.0 = STRING: ERROR 
+   .1.3.6.1.4.1.42.2.2.4.4.4.3.5.0 = STRING: Load Average over last 1 minute crossed the threshold  
+
+   TRAP from sqa-blade-2 on 6/20/2003 at 12:37:57 Enterprise=. Type=0 SubType=0 
+   with Varbinds:  .1.3.6.1.2.1.1.3.0 = Timeticks: (13) 0:00:00.13 .1.3.6.1.6.3.1.1.4.1.0 = OID: 
+   .1.3.6.1.4.1.42.2.2.4.4.4.2.1     .1.3.6.1.4.1.42.2.2.4.4.4.3.1.0 = STRING: sqa-blade-2        
+   .1.3.6.1.4.1.42.2.2.4.4.4.3.2.0 = STRING: demo_module_4 .1.3.6.1.4.1.42.2.2.4.4.4.3.3.0 = OID: 
+   .1.3.6.1.4.1.42.2.2.4.4.4.1.2.0       .1.3.6.1.4.1.42.2.2.4.4.4.3.4.0 = STRING: ERROR 
+   .1.3.6.1.4.1.42.2.2.4.4.4.3.5.0 = STRING: Load Average over last 5 minute crossed the threshold  
+
+   TRAP from sqa-blade-2 on 6/20/2003 at 12:37:57 Enterprise=. Type=0 SubType=0 
+   with Varbinds:  .1.3.6.1.2.1.1.3.0 = Timeticks: (13) 0:00:00.13 .1.3.6.1.6.3.1.1.4.1.0 = OID: 
+   .1.3.6.1.4.1.42.2.2.4.4.4.2.1     .1.3.6.1.4.1.42.2.2.4.4.4.3.1.0 = STRING: sqa-blade-2        
+   .1.3.6.1.4.1.42.2.2.4.4.4.3.2.0 = STRING: demo_module_4 .1.3.6.1.4.1.42.2.2.4.4.4.3.3.0 = OID: 
+   .1.3.6.1.4.1.42.2.2.4.4.4.1.3.0       .1.3.6.1.4.1.42.2.2.4.4.4.3.4.0 = STRING: ERROR 
+   .1.3.6.1.4.1.42.2.2.4.4.4.3.5.0 = STRING: Load Average over last 15 minute crossed the threshold  
+
+
+
+
+
+

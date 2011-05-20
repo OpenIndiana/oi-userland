@@ -1,0 +1,180 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+README for demo_module_8
+********************************************************************
+
+This code example creates an agentX subagent that calls a module that returns 
+load averages.  See the System Management Agent Developer's Guide for
+more information about creating a subagent.
+
+
+How to Build the demo_module_8 Code Example
+===========================================
+
+The demo_module_8 code example includes the following files, by default located
+in the directory /usr/demo/sma_snmp/demo_module_8.
+
+Files:
+
+o Makefile - Compiles the subagent and module source code
+o demo_module_8.c - Source code for agentX subagent
+o me1LoadGroup.c - Source code for module that returns load averages
+o me1LoadGroup.h - Header file for module
+o getme1LoadGroup - Script that executes snmpget requests on the OIDs defined 
+		    in the module
+o SDK-DEMO1-MIB.txt - MIB file
+
+
+To set up your build environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+   % cp -R /usr/demo/sma_snmp/demo_module_8  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries 
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the demo
+   code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/mibs
+
+
+4. Set the CC environment variable to the location of the C compiler to be 
+   used.
+   For example, if you are using Sun ONE Studio:
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+      
+    
+
+
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_8
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp me1LoadGroup.so /home/username/demo/lib
+
+   
+4. This example uses the SDK-DEMO1-MIB.txt file from demo_module_1.  If you 
+   have not already done so, copy this file to the mibs directory you created 
+   for the demos.
+   For example:
+  
+   % cp SDK-DEMO1-MIB.txt /home/username/demo/mibs
+   
+   
+5. As root, edit the /etc/sma/snmp/snmpd.conf file by adding the following 
+   line to enable AgentX master agent support. This causes agentX to be 
+   started when the SMA agent starts. Make sure that there are no dlmod 
+   statements for the module:
+
+   master agentx
+
+
+6. As root, start the SMA snmp agent. If the agent is already running, stop 
+   and restart it.
+   For example:
+   
+    # /etc/init.d/init.sma stop
+    # /usr/sbin/snmpd -Dagentx
+    
+    The optional -Dagentx argument sends debugging statements from agentX to 
+    the /var/log/snmpd.log file. You can also use the -L and -f options to 
+    send debugging statements to the screen instead.
+
+
+7. As root, set the LD_LIBRARY_PATH environment variable. 
+   For example, if you are using the C shell:
+    
+   In the 64-bit Solaris kernel:
+   # LD_LIBRARY_PATH=/home/username/demo/lib:/usr/lib/sparcv9:/usr/openwin/lib
+   # export LD_LIBRARY_PATH  
+    
+   In the 32-bit or x86 Solaris kernel:
+   # LD_LIBRARY_PATH=/home/username/demo/lib:/usr/lib:/usr/openwin/lib
+   # export LD_LIBRARY_PATH  
+  
+  
+8. As root, change to the directory where the demo_module_8 subagent is 
+   located and start the subagent in the background. For example:
+
+   # cd /home/username/demo/demo_module_8
+   # ./demo_module_8 &
+
+   The demon listens for agentX requests from the SMA agent.
+   
+
+
+Testing the Example Subagent 
+============================
+  
+1. Set your MIBS and MIBDIRS environment variables to
+   include the appropriate paths.  
+   For example, in the csh: 
+    
+   % setenv MIBDIRS .:/home/username/demo/mibs:/etc/sma/snmp/mibs
+   % setenv MIBS +SDK-DEMO1-MIB
+   
+   Note that step 1 is not required, but it enables snmpget to access the MIB
+   to provide variable names instead of OIDs in its output in Step 2.
+   
+   
+2. Run the getme1LoadGroup script to execute snmpget commands against 
+   the OIDs defined in the module:
+
+   % getme1LoadGroup
+  
+   SDK-DEMO1-MIB::me1SystemLoadAvg1min.0 = STRING: 3.906250e-02 Jobs
+   SDK-DEMO1-MIB::me1SystemLoadAvg5min.0 = STRING: 2.734375e-02 Jobs
+   SDK-DEMO1-MIB::me1SystemLoadAvg15min.0 = STRING: 3.906250e-02 Jobs
+
+
+3. View the /var/log/snmpd.log file. Near the beginning of the log file, 
+   you should see output similar to the following:
+    
+    agentx/subagent: init_subagent sess 0012bfd8
+    Turning on AgentX master support.
+    agentx/master: initializing...
+    agentx/master: initializing...   DONE 

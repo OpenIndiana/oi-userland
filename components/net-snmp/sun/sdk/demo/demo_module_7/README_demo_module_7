@@ -1,0 +1,235 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+README for demo_module_7
+***********************************************************************
+
+This code example demonstrates how to dynamically update multi-instance 
+modules. See the System Management Agent Developer's Guide for
+more information about dynamically updating multi-instance modules.
+
+You can follow these guidelines when you need to add new instances after 
+a module has been registered with the agent.
+
+
+Introduction
+============
+
+The demo_module_7 code example module registers context name strings that 
+represent files. Get requests to these contexts will retrieve the size of 
+the file.
+
+The module can be dynamically updated to register new file names, by issuing 
+an snmpset command.  You do not need to edit the module. An application passes
+the file name to the module by issuing an snmpset command, such as the 
+following:
+
+	/usr/bin/snmpset -v 3 -u < user_name >
+	-l authNoPriv -A " <password >" < agent_host_name > 
+	< createContext OID > s <file_name>
+
+The module registers the set_createContext handler to handle incoming snmpset
+requests for this OID. The set_createContext handler registers the new filename
+as a context string in the contextName member of the 
+netsnmp_registration_handler struct for the me1filesize_oid.
+
+Subsequent snmpget requests for the size of the file will return its size in
+blocks:  For example:
+
+	/usr/bin/snmpget -v 3 -u < user_name >  -n < context_name>
+	-l authNoPriv -A "< password  >" < agent_host_name > < filesize_oid > 
+
+Note that you can use -m MIB[:...] to load given list of MIBs 
+(ALL loads everything).
+For more information on loading MIBs refer to the snmpcmd man page.  
+
+
+
+How to Build the demo_module_7 Code Example
+===========================================
+
+The demo_module_7 code example includes the following files, by default located
+in the directory /usr/demo/sma_snmp/demo_module_7.
+
+Files:
+
+Makefile - makefile to build the demo_module_7.so shared library file
+demo_module_7.c  - module source code
+demo_module_7.h - module header file
+get_filesize - Script that executes snmpget on a file.
+register_file - Script that executes snmpset on the createContext OID
+unregister_file - Script that executes snmpset on the removeContext OID
+SDK-DEMO6-MIB.txt - MIB file from demo_module_6, also used in demo_module_7
+
+
+To set up your build environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+   % cp -R /usr/demo/sma_snmp/demo_module_7  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries 
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the demo 
+   code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/mibs
+
+
+4. Set the CC environment variable to the location of the C compiler to be 
+   used.
+   For example, if you are using Sun ONE Studio:
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+   
+
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_7
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp demo_module_7.so /home/username/demo/lib
+   
+
+4. This module uses the SDK-DEMO6-MIB.txt file from demo_module_6.  If you have
+   not already done so, copy this file to the mibs directory you created for 
+   the demos. 
+   For example:
+     
+   % cp SDK-DEMO6-MIB.txt /home/username/demo/mibs
+
+
+Setting Up Agent to Run the Multi-Instance Module
+=================================================
+
+To run this module, the agent must be configured for SNMPv3.
+
+
+ 1. As root, stop the SNMP agent if it is running.
+    For example:
+    
+    # /etc/init.d/init.sma stop
+    
+     
+ 2. Set up an SNMP v3 user as follows, if you have not already done so. 
+    Note that you should use "myuser" and "mypassword" -- do not replace with
+    other values because the test script expects these values.
+ 
+    # /usr/bin/net-snmp-config --create-snmpv3-user myuser
+ 
+    Enter authentication pass-phrase: 
+    mypassword
+ 
+    Enter encryption pass-phrase: 
+    [press return to reuse the authentication pass-phrase]
+    <Return>
+ 
+     
+ 3. Edit the agent's configuration file /etc/sma/snmp/snmpd.conf,
+    and insert a dlmod statement for the module. This statement enables the 
+    agent to load the module.
+    For example:
+   
+    dlmod demo_module_7 /home/username/demo/lib/demo_module_7.so
+   
+    
+ 4. Start the SMA snmp agent. If the agent is already running, stop and 
+    restart it in debug mode.
+    For example:
+   
+    # /usr/sbin/snmpd -Ddemo_module_7
+    
+    The optional -Ddemo_module_7 argument sends debugging statements from 
+    demo_module_7 to the /var/log/snmpd.log file. You can also use the -L 
+    and -f options to send debugging statements to the screen instead.
+
+
+    
+    
+Testing the demo_module_7 Module
+================================
+    
+1. Set your MIBS and MIBDIRS environment variables to
+   include the appropriate paths.  
+   For example, in the csh: 
+    
+   % setenv MIBDIRS .:/home/username/demo/mibs:/etc/sma/snmp/mibs
+   % setenv MIBS +SDK-DEMO6-MIB
+   
+   Note that step 1 is not required, but it enables snmpget to access the MIB
+   to provide variable names instead of OIDs in its output. 
+   
+   
+2. Run the get_filesize script to get the filesize of the file 
+   /home/username/demo/lib/demo_module_7.so. For example:
+
+   % get_filesize
+
+   This file has not yet been registered so the agent will timeout.
+
+   Timeout: No Response from localhost.
+
+
+3. Run the register_file script to register the file 
+   /home/username/demo/lib/demo_module_7.so with the module:
+
+   % register_file
+      
+    SDK-DEMO6-MIB::me1createContext.0 = STRING: "/home/username/demo/lib/demo_module_7.so"
+  
+  
+4. Run the get_filesize script again to query for the filesize.
+
+   % get_filesize
+   
+    SDK-DEMO6-MIB::me1FileSize.0 = INTEGER: 28144
+    
+      
+5. Run the unregister_file script to unregister the file.
+
+   % unregister_file
+
+    SDK-DEMO6-MIB::me1removeContext.0 = STRING: "/home/username/demo/lib/demo_module_7.so"
+ 
+ 
+

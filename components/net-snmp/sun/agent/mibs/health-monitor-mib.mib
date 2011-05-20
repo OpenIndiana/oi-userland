@@ -1,0 +1,487 @@
+
+--
+-- Copyright (c) 1999, 2011, Oracle and/or its affiliates. All rights reserved.
+--
+-- U.S. Government Rights - Commercial software. Government users are subject
+-- to the Sun Microsystems, Inc. standard license agreement and applicable
+-- provisions of the FAR and its supplements.
+--
+--
+-- This distribution may include materials developed by third parties. Sun,
+-- Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+-- trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+--
+--
+-------------------------------------------------------
+-- Sun Management Center
+-------------------------------------------------------
+
+
+HEALTH-MONITOR-SUNMANAGEMENTCENTER-MIB DEFINITIONS ::= BEGIN
+
+
+  IMPORTS
+        enterprises, MODULE-IDENTITY, OBJECT-TYPE,  Integer32, Unsigned32
+                FROM SNMPv2-SMI
+         OBJECT-GROUP
+                FROM SNMPv2-CONF
+         DisplayString
+               FROM SNMPv2-TC;
+
+
+healthMonitor MODULE-IDENTITY
+    LAST-UPDATED "0009181435Z"
+    ORGANIZATION "Sun Microsystems Inc."
+    CONTACT-INFO
+        "        Sun Microsystems Inc.
+       Customer Support
+            Postal: 901 San Antonio Road
+       Palo Alto, CA-94303-4900
+    USA
+                         Tel: 650-960-1300
+                E-mail: service@sun.com"
+    DESCRIPTION
+        "Health Monitor allows to monitor the overall state of the machine,
+	including the state of the disk, networks, RAM, and so on.
+	This module uses a set of performance rules to determine valid
+	component states."
+
+    REVISION  "9907201505Z"
+    DESCRIPTION
+        "Rev 1.0  20th July 1999 15:05, Initial version Of MIB."
+    REVISION  "0009181435Z"
+    DESCRIPTION
+         "Rev 1.1  18th Sep 2000 14:35. Changed the type of mibnode hmDNLCHits 
+          and hmDNLCMisses from Integer32 to Unsigned32."
+    ::= { modules 11 }
+
+sun       OBJECT IDENTIFIER ::= { enterprises 42 }
+products      OBJECT IDENTIFIER ::= { sun 2 }
+sunsymon  OBJECT IDENTIFIER ::= { products 12 }
+agent     OBJECT IDENTIFIER ::= { sunsymon 2 }
+modules   OBJECT IDENTIFIER ::= { agent 2 }
+
+hmSwap  OBJECT IDENTIFIER ::= { healthMonitor 1 }
+
+hmKernelcontention      OBJECT IDENTIFIER ::= { healthMonitor 2 }
+
+hmNFS   OBJECT IDENTIFIER ::= { healthMonitor 3 }
+
+hmCPU   OBJECT IDENTIFIER ::= { healthMonitor 4 }
+
+hmDiskGroup OBJECT-GROUP
+        OBJECTS {  hmDiskName, hmDiskAliasName, hmAvgWaitTransactions, 
+		hmDiskBusyPcnt, hmAvgDiskSvcTime }
+        STATUS current
+        DESCRIPTION
+        "Disk related statistics."
+        ::= { healthMonitor 5 }
+
+
+
+
+hmRAM   OBJECT IDENTIFIER ::= { healthMonitor 6 }
+
+hmKMEM  OBJECT IDENTIFIER ::= { healthMonitor 7 }
+
+hmDNLC  OBJECT IDENTIFIER ::= { healthMonitor 8 }
+
+
+
+hmSwapSpaceGroup OBJECT-GROUP
+        OBJECTS { hmAvailableSwapSpace, hmReservedSwapSpace, 
+		hmAllocatedSwapSpace, hmUsedSwapSpace }
+        STATUS current
+        DESCRIPTION
+        "Swap space related statistics."
+        ::= { hmSwap 1 }
+
+
+hmAvailableSwapSpace OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "kB"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The total swap space (in 1024 byte blocks) that is currently
+		available for reservation and allocation."
+    ::= { hmSwapSpaceGroup 1 }
+
+hmReservedSwapSpace OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "kB"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The total amount of swap space (in 1024 byte blocks) that is
+		not currently allocated, but is claimed by memory mappings for
+		possible future use."
+    ::= { hmSwapSpaceGroup 2 }
+
+hmAllocatedSwapSpace OBJECT-TYPE
+    SYNTAX      Integer32
+   UNITS       "kB"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The total amount of swap space (in 1024 byte blocks) 
+		currently allocated for use."
+    ::= { hmSwapSpaceGroup 3 }
+
+hmUsedSwapSpace OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "kB"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The total amount of swap space (in 1024 byte blocks) that is 
+		either allocated or reserved."
+    ::= { hmSwapSpaceGroup 4 }
+
+
+hmMutexGroup OBJECT-GROUP
+        OBJECTS { hmSpinsOnMutexes, hmTotNumOfCPUs }
+        STATUS current
+        DESCRIPTION
+                "Mutex related statistics."
+        ::= { hmKernelcontention 1 }
+
+
+hmSpinsOnMutexes OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Sum of spins on mutexes (lock not  acquired  on first try) 
+		for all CPUs."
+    ::= { hmMutexGroup 1 }
+
+hmTotNumOfCPUs OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Total number of CPUs."
+    ::= { hmMutexGroup 2 }
+
+
+hmNFSClientRPCGroup OBJECT-GROUP
+        OBJECTS { hmTotRPCCalls, hmTotBadRPCCalls, hmTotRPCRetransmissions, 
+		hmTotBadRPCReplies, hmTotRPCCallsTimedOut, 
+		hmTotNumOfAuthRefresh, hmTotFailedCallsBV, hmTimers, 
+		hmTotMemAllocFails, hmTotSendFails }
+        STATUS current
+        DESCRIPTION
+                "Client RPC call-related statistics."
+        ::= { hmNFS 1 }
+
+
+hmTotRPCCalls OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Total number of RPC calls received."
+    ::= { hmNFSClientRPCGroup 1 }
+
+hmTotBadRPCCalls OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Total number of calls rejected by the RPC layer."
+    ::= { hmNFSClientRPCGroup 2 }
+
+hmTotRPCRetransmissions OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Total number of calls retransmitted due to a timeout."
+    ::= { hmNFSClientRPCGroup 3 }
+
+hmTotBadRPCReplies OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of replies from server that do not correspond to 
+		any outside call."
+    ::= { hmNFSClientRPCGroup 4 }
+
+hmTotRPCCallsTimedOut OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of calls timed out while waiting for a reply from 
+		server."
+    ::= { hmNFSClientRPCGroup 5 }
+
+hmTotNumOfAuthRefresh OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of times authentication information was refreshed."
+    ::= { hmNFSClientRPCGroup 6 }
+
+hmTotFailedCallsBV OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of calls failed due to a bad verifier in response."
+    ::= { hmNFSClientRPCGroup 7 }
+
+hmTimers OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of times calculated time-out exceeds minimum 
+		specified timeout value for a call."
+    ::= { hmNFSClientRPCGroup 8 }
+
+hmTotMemAllocFails OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of failures to allocate memory."
+    ::= { hmNFSClientRPCGroup 9 }
+
+hmTotSendFails OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of failures where client is not able to send 
+		the packets for any reason."
+    ::= { hmNFSClientRPCGroup 10 }
+
+
+
+hmCPUProcInStatesGroup OBJECT-GROUP
+        OBJECTS { hmTotProcInRunQueue, hmTotProcBlocked, hmTotProcReadyInSwap } 
+        STATUS current
+        DESCRIPTION
+        "Statistics related to the number of processes in different states."
+        ::= { hmCPU 1 }
+
+
+hmTotProcInRunQueue OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of processes in the run queue."
+    ::= { hmCPUProcInStatesGroup 1 }
+
+hmTotProcBlocked OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of processes blocked for resources."
+    ::= { hmCPUProcInStatesGroup 2 }
+
+hmTotProcReadyInSwap OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of processes runnable but swapped."
+    ::= { hmCPUProcInStatesGroup 3 }
+
+
+hmDiskTable OBJECT-TYPE
+    SYNTAX      SEQUENCE OF HmDiskEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+                "Table of information for all the disks installed on 
+		the system."
+    ::= { hmDiskGroup 1 }
+
+hmDiskEntry OBJECT-TYPE
+    SYNTAX      HmDiskEntry
+    MAX-ACCESS  not-accessible
+    STATUS      current
+    DESCRIPTION
+                "Monitoring information for one disk on the system."
+    INDEX   { hmDiskName }
+    ::= { hmDiskTable 1 }
+
+HmDiskEntry ::=
+    SEQUENCE {
+        hmDiskName
+            DisplayString,
+        hmDiskAliasName
+            DisplayString,
+        hmAvgWaitTransactions
+            DisplayString,
+        hmDiskBusyPcnt
+            DisplayString,
+        hmAvgDiskSvcTime
+            DisplayString
+    }
+
+
+hmDiskName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Name of the disk."
+    ::= { hmDiskEntry 1 }
+
+hmDiskAliasName OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Name of the disk alias (for example, c0t0d0)."
+    ::= { hmDiskEntry 2 }
+
+
+hmAvgWaitTransactions OBJECT-TYPE
+    SYNTAX      DisplayString
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Average number of transactions waiting for service."
+    ::= { hmDiskEntry 3 }
+
+hmDiskBusyPcnt OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "%"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Percent of time the disk is busy."
+    ::= { hmDiskEntry 4 }
+
+hmAvgDiskSvcTime OBJECT-TYPE
+    SYNTAX      DisplayString
+    UNITS       "msec"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Average service time."
+    ::= { hmDiskEntry 5 }
+
+
+
+hmRamMemoryPagingGroup OBJECT-GROUP
+        OBJECTS { hmHandspread, hmPageScanRate } 
+        STATUS current
+        DESCRIPTION
+        "Memory paging-related statistics."
+        ::= { hmRAM 1 }
+
+hmHandspread OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "MB"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The distance (in pages) between front and back pageout 
+		daemon hands. The pageout daemon manages two hands on 
+		the clock.  The front hand moves through memory, clearing 
+		the reference bit, and stealing pages from processes that 
+		exceed the value maxrss.  The back hand travels behind the 
+		front hand, freeing pages that have not been referenced 
+		since the front hand passed. If the pages have been modified, 
+		they are pushed to the swap space before being freed. After 
+		pageout examines a page of memory, the amount of time that 
+		is needed to reclaim the page increases as the distance 
+		increases between the two hands, and decreases as the scan 
+		rate rises."
+    ::= { hmRamMemoryPagingGroup 1 }
+
+hmPageScanRate OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Number of pages scanned per second."
+    ::= { hmRamMemoryPagingGroup 2 }
+
+
+hmKmemStatisticsGroup OBJECT-GROUP
+        OBJECTS { hmKmemErrors, hmKmemFreeMem } 
+        STATUS current
+        DESCRIPTION
+                "Kernel-memory-related statistics."
+        ::= { hmKMEM 1 }
+
+
+hmKmemErrors OBJECT-TYPE
+    SYNTAX      Integer32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Total number of error occured related to kernel memory.  
+		These errors may be..
+		KMERR_MODIFIED: buffer modified after being fread
+		KMERR_READZONE:	readzone violation, write past end of buffer
+		KMERR_BADADDR: invalid free
+		KMERR_DUPFREE: duplicate free
+		KMERR_BADBUFTAG: boundary tag corrupted
+		etc."
+    ::= { hmKmemStatisticsGroup 1 }
+
+hmKmemFreeMem OBJECT-TYPE
+    SYNTAX      Integer32
+    UNITS       "MB"
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "Total amount of free kernel memory in MB."
+    ::= { hmKmemStatisticsGroup 2 }
+
+
+hmDNLCStatGroup OBJECT-GROUP
+        OBJECTS { hmDNLCHits, hmDNLCMisses, hmDNLCHitRate, hmDNLCRefRate } 
+        STATUS current
+        DESCRIPTION
+                "DNLC related statistics."
+        ::= { hmDNLC 1 }
+
+
+hmDNLCHits OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The number of times a name is looked up and is found in DNLC 
+		(Directory Name Lookup Cache)."
+    ::= { hmDNLCStatGroup 1 }
+
+hmDNLCMisses OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The number of times a name is looked up and is not found in DNLC 
+		(Directory Name Lookup Cache). "
+    ::= { hmDNLCStatGroup 2 }
+
+hmDNLCHitRate OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The number of DNLC hits as a proportion of all DNLC lookups."
+    ::= { hmDNLCStatGroup 3 }
+
+hmDNLCRefRate OBJECT-TYPE
+    SYNTAX      Unsigned32
+    MAX-ACCESS  read-only
+    STATUS      current
+    DESCRIPTION
+                "The number of times per second, the DNLC is looked up."
+    ::= { hmDNLCStatGroup 4 }
+
+END

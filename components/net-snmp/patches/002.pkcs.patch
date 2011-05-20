@@ -1,0 +1,31 @@
+--- net-snmp-5.4.1/snmplib/pkcs.c	Tue Nov  6 02:00:04 2007
++++ net-snmp-5.4.1/snmplib/pkcs.mod.c	Tue Nov  6 01:58:30 2007
+@@ -1,5 +1,5 @@
+ /*
+- * Copyright Copyright 2003 Sun Microsystems, Inc. All rights reserved.
++ * Copyright 2007 Sun Microsystems, Inc. All rights reserved.
+  * Use is subject to license terms specified in the COPYING file
+  * distributed with the Net-SNMP package.
+  */
+@@ -107,10 +107,12 @@
+ {
+     int            slotcount, i;
+ 
++    (void) C_Finalize(NULL);
++
+     if (pSlot != NULL) {
+         slotcount = pSlot->count;
+         for (i = 0; i < slotcount; i++) {
+-            if (pSlot->pSession->hdl != NULL) {
++            if (pSlot->pSession != NULL) {
+                 free(pSlot->pSession->hdl);
+             }
+         }
+@@ -117,7 +119,6 @@
+         free(pSlot);
+     }
+ 
+-    (void) C_Finalize(NULL);
+     return 0;
+ }
+ 
