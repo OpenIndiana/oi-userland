@@ -45,7 +45,7 @@ define lintlib-rule
 $(BUILD_DIR_32)/$(1).ln:	BITS=32
 $(BUILD_DIR_64)/$(1).ln:	BITS=64
 
-$$(BUILD_DIR)/%/$(1).ln:	$(1) $(BUILD_DIR)/%/.built
+$$(BUILD_DIR)/%/$(1).ln:	$(1) $(BUILD_DIR)/%/.installed
 	(cd $$(@D) ; $$(LINT) $$(LINT_FLAGS) -o $$(@F:llib-l%.ln=%) ../../$$<)
 
 $$(PROTOUSRLIBDIR)/$(1):	$(1)
