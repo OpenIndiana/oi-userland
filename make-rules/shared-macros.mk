@@ -237,6 +237,7 @@ JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
 
 PERL =		/usr/perl5/bin/perl
 
+CCSMAKE =   /usr/ccs/bin/make
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1

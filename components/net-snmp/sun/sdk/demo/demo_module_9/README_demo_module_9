@@ -1,0 +1,210 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+README for demo_module_9
+***********************************************************************
+
+This code example demonstrates how to implement objects for long running
+data collection. These objects are implemented in a way that allows the
+agent to respond to other requests while external data collection occurs. 
+When data collection is complete, the agent can reply to the request. 
+
+This example uses the following features of SMA:
+
+- Setting the delegated member of the requests structure to 1 to indicate to 
+  the agent that this request should be delayed.  The agent queues this request
+  to be handled later and then is available to handle other requests.  The
+  agent is not blocked by this request.
+
+- Registering an SNMP alarm to update the results at a later time.
+
+
+
+
+How to Build the demo_module_9 Code Example
+===========================================
+
+The demo_module_9 code example includes the following files, by default located
+in the directory /usr/demo/sma_snmp/demo_module_9.
+
+Files:
+
+demo_module_9.c  - module source code
+demo_module_9.h - module header file
+Makefile - makefile to build the demo_module_9.so shared library file
+SDK-DEMO9-MIB.txt - MIB file
+get_demo_module_9 - Script that executes snmpget on the delayed OID
+set_demo_module_9 - Script that executes snmpset on the delayed OID
+walk_demo_module_9 - Script that executes snmpwalk on the SYSTEM table
+
+
+To set up your build environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+   % cp -R /usr/demo/sma_snmp/demo_module_9  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries 
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the demo 
+   code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/mibs
+
+
+4. Set the CC environment variable to the location of the C compiler to be 
+   used. For example, if you are using Sun ONE Studio:
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+   
+      
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_9
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp demo_module_9.so /home/username/demo/lib
+
+   
+4. Copy SDK-DEMO9-MIB.txt to the mibs directory you created for the demos.
+   For example:
+  
+   % cp SDK-DEMO9-MIB.txt /home/username/demo/mibs
+   
+       
+
+
+Setting Up Agent to Run the demo_module_9 Module
+=================================================
+
+1. As root, edit the agent's configuration file /etc/sma/snmp/snmpd.conf,
+   and insert a dlmod statement for the module. This statement enables the 
+   agent to load the module.
+   For example:
+   
+   dlmod demo_module_9 /home/username/demo/lib/demo_module_9.so
+    
+    
+2. As root, start the SMA snmp agent. If the agent is already running, stop 
+   and restart it in debug mode.
+   For example:
+   
+   # /etc/init.d/init.sma stop
+   # /usr/sbin/snmpd -Ddemo_module_9
+    
+   The optional -Ddemo_module_9 argument sends debugging statements from 
+   demo_module_9 to the /var/log/snmpd.log file. You can also use the -L 
+   and -f options to send debugging statements to the screen instead.
+
+
+
+   
+Testing the demo_module_9 Module
+================================
+
+1. Run the get_demo_module_9 script to get the default value of 
+   the my_delayed_oid object, which is 1 second.
+   For example:
+
+   % get_demo_module_9
+   SDK-DEMO9-MIB::delayedInstanceOid.0 = INTEGER: 1
+
+
+2. Run the set_demo_module_9 script to set the value of the
+   my_delayed_oid object to 10 seconds. 
+   For example:
+   
+   % set_demo_module_9
+   SDK-DEMO9-MIB::delayedInstanceOid.0 = INTEGER: 10
+   
+   The set_demo_module_9 script specifies a time-out value of three
+   seconds (-t 3). The module uses the my_delayed_oid value as the time 
+   interval at which an SNMP alarm is sent to the module. 
+   
+   SET requests through this object take longer, since the delay is applied 
+   to each internal transaction phase, which could result in delays of up to 
+   4 times the value of this object. 
+   
+   For example, initially, the default my_delayed_oid value is 1 second. 
+   Therefore, the script uses a 3 second time-out value on the snmpset 
+   command line. 
+
+
+*******************************************************************************
+* NOTE: You must comment out the following line in the                       **
+* /etc/sma/snmp/snmpd.conf file                                              **
+* rwcommunity  private localhost .1.3.6.1.4.1.42.2.15                        **
+* and UNCOMMENT the line                                                     **
+* rwcommunity private                                                        **
+* Otherwise write access would be restricted to the .1.3.6.1.4.1.42.2.15 OID **
+*                                                                            **
+* When you are done with this demo you should revert your changes for        **
+* security reasons                                                           **
+*******************************************************************************
+
+
+
+3  Open two terminal windows so you can run two scripts at the same time, as
+   follows:
+
+   In the first window, run the get_demo_module_9 script:
+   % get_demo_module_9
+   
+   
+   In the second window, run the walk_demo_module_9 script:
+   % walk_demo_module_9
+ 
+   SNMPv2-MIB::sysDescr.0 = STRING: SunOS myhost 5.10 s10_35 sun4u
+   SNMPv2-MIB::sysObjectID.0 = OID: NET-SNMP-TC::solaris
+   DISMAN-EVENT-MIB::sysUpTimeInstance = Timeticks: (497128) 1:22:51.28
+   SNMPv2-MIB::sysContact.0 = STRING: "Administrator's Name"
+   SNMPv2-MIB::sysName.0 = STRING: myhost
+   SNMPv2-MIB::sysLocation.0 = STRING: My Town
+   SNMPv2-MIB::sysORLastChange.0 = Timeticks: (8) 0:00:00.08
+   SNMPv2-MIB::sysORID.1 = OID: IF-MIB::ifMIB
+
+
+   This example demonstrates that the agent is not blocked and does respond to
+   the snmpwalk request, while the snmpget request executed in the first window
+   is still pending.
+

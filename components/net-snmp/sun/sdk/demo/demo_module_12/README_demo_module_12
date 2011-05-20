@@ -1,0 +1,149 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+README for demo_module_12
+********************************************************************
+
+This code example shows how to generate code templates from a MIB for
+the System Management Agent, and how to generate code templates from
+a MIB in Solstice Enterprise Agents (SEA).  This information should be 
+helpful if you are migrating a SEA subagent to use as a module with the 
+System Management Agent.
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+NOTE: You must have installed the SEA Software Developer's Kit to use  
+this demo. The SEA SDK includes the mibcodegen utility used to generate 
+templates from MIBs for SEA.
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+See the Solaris System Management Agent Developer's Guide for more 
+information about migrating SEA subagents.  The guide explains how to
+use the templates produced in this example.
+
+
+
+How to Use the demo_module_12 Code Example
+===========================================
+
+The demo_module_12 code example includes the following files, by default 
+located in the directory /usr/demo/sma_snmp/demo_module_12.
+
+Files:
+
+o EXAMPLE-MIB.txt - Sample MIB used in this demo
+o runmib2c - Script that runs mib2c on the MIB
+o runmibcodegen - Script that runs the SEA mibcodegen utility
+
+
+To set up your environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+   % cp -R /usr/demo/sma_snmp/demo_module_12  /home/username/demo
+
+
+2. Create a mibs directory that you can use to store MIB files for the 
+   demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/mibs
+
+
+3. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+      
+
+4. Change to the directory where you copied the demo_module_12 files.
+   For example:
+   
+   % cd /home/username/demo/demo_module_12
+
+   
+5. Copy the EXAMPLE-MIB.txt file to the mibs directory you created for the 
+   demos.
+   For example:
+  
+   % cp EXAMPLE-MIB.txt /home/username/demo/mibs
+ 
+   
+6. Set your MIBS and MIBDIRS environment variables to
+   include the appropriate paths.  
+   For example, in the csh: 
+    
+   % setenv MIBDIRS .:/home/username/demo/mibs:/etc/sma/snmp/mibs
+   % setenv MIBS +EXAMPLE-MIB
+   
+          
+
+
+
+To generate SMA template code from the EXAMPLE-MIB:
+
+
+1. Use the runmib2c script to run mib2c on groups in the MIB.
+   For example:
+   
+   % ./runmib2c
+   
+   writing to scalarTypes.h
+   writing to scalarTypes.c
+   running indent on scalarTypes.h
+   indent: Command line: unknown parameter "-orig"
+   running indent on scalarTypes.c
+   indent: Command line: unknown parameter "-orig"
+   writing to tableType.h
+   writing to tableType.c
+   running indent on tableType.h
+   indent: Command line: unknown parameter "-orig"
+   running indent on tableType.c
+   indent: Command line: unknown parameter "-orig"
+   
+   
+   NOTE: Ignore the messages about the unknown parameter "-orig".
+   
+   The script runs mib2c twice, with the appropriate configuration options,
+   to produce the following files:
+   
+   scalarTypes.c
+   scalarTypes.h
+   tableType.c
+   tableType.h
+   
+   
+
+To generate SEA template code from the EXAMPLE-MIB:
+
+
+1. Use the runmibcodegen script to run mibcodegen on the MIB.
+   For example:
+   
+   % ./runmibcodegen
+
+
+   Creating example_tree.c ...
+   Creating example_stub.h ...
+   Creating example_stub.c ...
+   Creating example_rwTableEntry.c ...
+   Creating example_appl.c ...
+   Creating example_trap.c ...
+
+
+   The mibcodegen utility creates the template files listed above.
+   
+
+   The System Management Agent Developer's Guide describes the template
+   files produced in this demo, and how you can use them to determine how
+   to modify the SMA templates to create your module. 

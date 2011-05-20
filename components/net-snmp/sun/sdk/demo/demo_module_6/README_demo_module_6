@@ -1,0 +1,202 @@
+#
+# Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+# U.S. Government Rights - Commercial software. Government users are subject
+# to the Sun Microsystems, Inc. standard license agreement and applicable
+# provisions of the FAR and its supplements.
+#
+#
+# This distribution may include materials developed by third parties. Sun,
+# Sun Microsystems, the Sun logo and Solaris are trademarks or registered
+# trademarks of Sun Microsystems, Inc. in the U.S. and other countries.
+#
+#
+
+README for demo_module_6
+***********************************************************************
+
+This code example demonstrates how to implement a module in such a way that
+more than one instance of the module can run simultaneously on a single host. 
+See the System Management Agent Developer's Guide for more information about 
+implementing multi-instance modules.
+
+
+Introduction
+============
+
+The demo_module_6.c file shows how to write a module that registers an object
+in two different contexts. It also shows how to check for the contextName in 
+a request and return a different value depending on the value of the 
+contextName. 
+    
+The code example registers one object, filesize, in two different contexts, 
+fileX and fileY. This example registers the OIDs using a read-only instance 
+handler helper. The OIDs do not need to be read-only. You could also register 
+the OIDs using any of the SMA instance handler helper APIs. 
+    
+The function get_filesize is registered to handle get requests for instances 
+of  the filesize object. This function checks the contextName in the reginfo 
+structure that is passed to the function by the SMA agent. If the value of 
+contextName is fileX, the function returns fileX_data, which has been set to 
+the integer 111. If the value of contextName is fileY, the function returns 
+fileY_data, which has been set to the integer 999. 
+
+
+How to Build the demo_module_6 Code Example
+===========================================
+
+The demo_module_6 code example includes the following files, by default located
+in the directory /usr/demo/sma_snmp/demo_module_6.
+
+
+Files:
+
+Makefile - makefile to build demo_module_6.so shared library file
+demo_module_6.c  - module source code
+demo_module_6.h - module header file
+SDK-DEMO6-MIB.txt - MIB file
+get_demo_module_6 - Script that executes snmpget against the OID defined 
+		    in the module.
+
+
+To set up your build environment for the demo:
+
+1. Copy the demo code to a directory for which you have write permission.
+   For example:
+   % cp -R /usr/demo/sma_snmp/demo_module_6  /home/username/demo
+
+
+2. Create a lib directory that you can use to store shared object libraries 
+   that you generate from demo code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/lib
+
+    
+3. Create a mibs directory that you can use to store MIB files for the demo 
+   code examples, if you have not already done so. 
+   For example:
+   % mkdir /home/username/demo/mibs
+
+
+4. Set the CC environment variable to the location of the C compiler to be 
+   used. For example, if you are using Sun ONE Studio:
+   % setenv CC /opt/SUNWspro/bin/cc
+
+
+5. Set your PATH environment variable to include the appropriate paths, so that
+   needed binaries can be found during the compilation process. 
+   For example, in the csh: 
+    
+   % setenv PATH .:/usr/bin:$PATH
+   
+
+To build the example:
+
+1. Change to the directory where you copied the demo module files. 
+   For example:
+
+   % cd /home/username/demo/demo_module_6
+   
+
+2. Use the make command to generate object files.
+  
+   If you are running the 64-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make
+   
+   If you are running the 32-bit SPARC Solaris kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+   If you are running the Solaris x86 kernel, type:
+   % /usr/ccs/bin/make ARCH=32
+   
+
+3. Copy the module shared library object to the lib directory you created. 
+   For example:
+
+   % cp demo_module_6.so /home/username/demo/lib
+   
+
+4. Copy the SDK-DEMO6-MIB.tx file to the mibs directory you created for the 
+   demos.
+   For example:
+     
+   % cp SDK-DEMO6-MIB.txt /home/username/demo/mibs
+
+
+
+Setting Up Agent to Run the Multi-Instance Module
+=================================================
+
+To run this module, the agent must be configured for SNMPv3.
+
+
+ 1. As root, stop the SNMP agent if it is running.
+    For example:
+    
+    # /etc/init.d/init.sma stop
+    
+     
+ 2. Set up an SNMP v3 user as follows, if you have not already done so. 
+    Note that you should use "myuser" and "mypassword" -- do not replace with
+    other values because the test script expects these values.
+ 
+    # /usr/bin/net-snmp-config --create-snmpv3-user myuser
+ 
+    Enter authentication pass-phrase: 
+    mypassword
+ 
+    Enter encryption pass-phrase: 
+    [press return to reuse the authentication pass-phrase]
+    <Return>
+ 
+      
+ 3. Edit the agent's configuration file /etc/sma/snmp/snmpd.conf,
+    and insert a dlmod statement for the module. This statement enables 
+    the agent to load the module.
+    For example:
+   
+    dlmod demo_module_6 /home/username/demo/lib/demo_module_6.so
+   
+    
+ 4. Start the SMA snmp agent in debug mode.
+    For example:
+   
+    # /usr/sbin/snmpd -Ddemo_module_6
+    
+    The optional -Ddemo_module_6 argument sends debugging statements from 
+    demo_module_6 to the /var/log/snmpd.log file. You can also use the -L 
+    and -f options to send debugging statements to the screen instead.
+
+
+    
+
+
+Testing the demo_module_6 Module
+================================
+    
+1. Set your MIBS and MIBDIRS environment variables to
+   include the appropriate paths.  
+   For example, in the csh: 
+    
+   % setenv MIBDIRS .:/home/username/demo/mibs:/etc/sma/snmp/mibs
+   % setenv MIBS +SDK-DEMO6-MIB
+   
+   Note that step 1 is not required, but it enables snmpget to access the MIB
+   to provide variable names instead of OIDs in its output.   
+   
+   
+2. Run the get_demo_module_6 script to access the agent: 
+ 
+   % get_demo_module_6
+    
+   SMA-SDK-MODULE-EXAMPLE1-MIB::me1FileSize.0 = INTEGER: 111
+   SMA-SDK-MODULE-EXAMPLE1-MIB::me1FileSize.0 = INTEGER: 999
+  
+      
+   The first snmpget in the script accesses the module whose contextName is 
+   fileX, and the second snmpget accesses the module whose contextName is 
+   fileY.  
+      
+
+
+  

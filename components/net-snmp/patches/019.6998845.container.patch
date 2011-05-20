@@ -1,0 +1,314 @@
+--- net-snmp/include/net-snmp/library/container.h	Mon Dec  5 00:13:04 2005
++++ net-snmp/include/net-snmp/library/container.h	Fri Jan 14 17:35:37 2011
+@@ -31,8 +31,16 @@
+     struct netsnmp_container_s; /** forward declare */
+ 
+     /*
+-     * function returning an int for an operation on a container
++     * function for performing an operation on a container which
++     * returns (maybe the same) container.
+      */
++
++    typedef struct netsnmp_container_s* (netsnmp_container_mod_op)
++      (struct netsnmp_container_s *, void *context, u_int flags);
++
++    /*
++     * function for setting an option on a container
++     */
+     typedef int (netsnmp_container_option)(struct netsnmp_container_s *,
+                                            int set, u_int flags);
+ 
+@@ -192,6 +200,14 @@
+        netsnmp_container_op    *insert_filter;
+ 
+        /*
++	* OPTIONAL function to duplicate a container. Defaults to a shallow
++	* copy. Only the specified container is copied (i.e. sub-containers
++	* not included).
++	*/
++
++       netsnmp_container_mod_op *duplicate;
++
++       /*
+         * function to compare two object stored in the container.
+         *
+         * Returns:
+@@ -219,11 +235,16 @@
+ 
+        /*
+         * sort count, for iterators to track (insert/delete
+-        * bumps coutner, invalidates iterator
++        * bumps counter, invalidates iterator)
+         */
+        u_long                          sync;
+ 
+        /*
++	* flags
++	*/
++       u_int                           flags;
++
++       /*
+         * containers can contain other containers (additional indexes)
+         */
+        struct netsnmp_container_s *next, *prev;
+@@ -288,15 +309,15 @@
+ #define CONTAINER_SET_OPTIONS(x,o,rc)  do {                             \
+         if (NULL==(x)->options)                                         \
+             rc = -1;                                                    \
+-        else                                                            \
++        else {                                                          \
+             rc = (x)->options(x, 1, o);                                 \
++	     if (rc != -1 )						\
++		(x)->flags |= o;                                        \
++	}								\
+     } while(0)
+ 
+ #define CONTAINER_CHECK_OPTION(x,o,rc)    do {                          \
+-        if (NULL==(x)->options)                                         \
+-            rc = -1;                                                    \
+-        else                                                            \
+-            rc = (x)->options(x,0, o);                                  \
++	rc = x->flags & 0;                                              \
+     } while(0)
+ 
+ 
+@@ -335,6 +356,12 @@
+     int CONTAINER_REMOVE(netsnmp_container *x, const void *k);
+ 
+     /*
++     * duplicate container
++     */
++    netsnmp_container *CONTAINER_DUP(netsnmp_container *x, void *ctx,
++		u_int flags); 
++
++    /*
+      * clear all containers. When clearing the *first* container, and
+      * *only* the first container, call the function f for each item.
+      * After calling this function, all containers should be empty.
+@@ -364,7 +391,7 @@
+                 continue;
+             rc2 = x->insert(x,k);
+             if (rc2) {
+-                snmp_log(LOG_ERR,"error on subcontainer '%s' insert (%d)\n",
++                snmp_log(LOG_DEBUG,"error on subcontainer '%s' insert (%d)\n",
+                          x->container_name ? x->container_name : "", rc2);
+                 rc = rc2;
+             }
+@@ -402,6 +429,22 @@
+      * container.c. If you change one, change them both.
+      */
+     NETSNMP_STATIC_INLINE /* gcc docs recommend static w/inline */
++    netsnmp_container *CONTAINER_DUP(netsnmp_container *x, void *ctx,
++    		u_int flags)
++    {
++      if (NULL == x->duplicate) {
++    	snmp_log(LOG_ERR, "container '%s' does not support duplicate\n",
++    		x->container_name ? x->container_name : "");
++    	return NULL;
++      }
++      return x->duplicate(x, ctx, flags);
++    }
++
++    /*------------------------------------------------------------------
++     * These functions should EXACTLY match the function version in
++     * container.c. If you change one, change them both.
++     */
++    NETSNMP_STATIC_INLINE /* gcc docs recommend static w/inline */ 
+     int CONTAINER_FREE(netsnmp_container *x)
+     {
+ 	int  rc2, rc = 0;
+@@ -474,6 +517,10 @@
+     }
+ 
+ #endif
++
++    /** Duplicate container meta-data. */
++    int netsnmp_container_data_dup(netsnmp_container *dup,
++    	netsnmp_container *c); 
+     
+     /*************************************************************************
+      *
+--- net-snmp/snmplib/container_binary_array.c	Wed Aug 23 21:23:22 2006
++++ net-snmp/snmplib/container_binary_array.c	Fri Jan 14 17:35:37 2011
+@@ -36,7 +36,6 @@
+ typedef struct binary_array_table_s {
+     size_t                     max_size;   /* Size of the current data table */
+     size_t                     count;      /* Index of the next free entry */
+-    u_int                      flags;      /* flags */
+     int                        dirty;
+     int                        data_size;  /* Size of an individual entry */
+     void                     **data;       /* The table itself */
+@@ -99,7 +98,7 @@
+     netsnmp_assert(t!=NULL);
+     netsnmp_assert(c->compare!=NULL);
+ 
+-    if (t->flags & CONTAINER_KEY_UNSORTED)
++    if (c->flags & CONTAINER_KEY_UNSORTED)
+         return 0;
+ 
+     if (t->dirty) {
+@@ -204,11 +203,16 @@
+ int
+ netsnmp_binary_array_options_set(netsnmp_container *c, int set, u_int flags)
+ {
+-    binary_array_table *t = (binary_array_table*)c->container_data;
+-    if (set)
+-        t->flags = flags;
++#define BA_FLAGS (CONTAINER_KEY_ALLOW_DUPLICATES|CONTAINER_KEY_UNSORTED)
++
++    if (set) {
++    	if ((flags & BA_FLAGS) == flags)
++    		c->flags = flags;
++    	else
++    		flags = (u_int)-1; /* unsupported flag */
++    }
+     else
+-        return ((t->flags & flags) == flags);
++    	return ((c->flags & flags) == flags); 
+     return flags;
+ }
+ 
+@@ -371,7 +375,7 @@
+     /*
+      * check for duplicates
+      */
+-    if (! (t->flags & CONTAINER_KEY_ALLOW_DUPLICATES)) {
++    if (! (c->flags & CONTAINER_KEY_ALLOW_DUPLICATES)) {
+         new_data = netsnmp_binary_array_get(c, entry, 1);
+         if (NULL != new_data) {
+             DEBUGMSGTL(("container","not inserting duplicate key\n"));
+@@ -579,6 +583,56 @@
+     return va;
+ }
+ 
++static netsnmp_container *
++_ba_duplicate(netsnmp_container *c, void *ctx, u_int flags)
++{
++    netsnmp_container *dup;
++    binary_array_table *dupt, *t;
++
++    if (flags) {
++        snmp_log(LOG_ERR, "binary arry duplicate does not supprt flags yet\n");
++        return NULL;
++    }
++
++    dup = netsnmp_container_get_binary_array();
++    if (NULL == dup) {
++        snmp_log(LOG_ERR," no memory for binary array duplicate\n");
++        return NULL;
++    }
++    /*
++     * deal with container stuff
++     */
++    if (netsnmp_container_data_dup(dup, c) != 0) {
++        netsnmp_binary_array_release(dup);
++        return NULL;
++    }
++
++    /*
++     * deal with data
++     */
++    dupt = (binary_array_table*)dup->container_data;
++    t = (binary_array_table*)c->container_data;
++
++    dupt->max_size = t->max_size;
++    dupt->count = t->count;
++    dupt->dirty = t->dirty;
++    dupt->data_size = t->data_size;
++
++    /*
++     * shallow copy
++     */
++    dupt->data = (void**) calloc(dupt->max_size, dupt->data_size);
++    if (NULL == dupt->data) {
++        snmp_log(LOG_ERR, "no memory for binary array duplicate\n");
++        netsnmp_binary_array_release(dup);
++        return NULL;
++    }
++
++    memcpy(dupt->data, t->data, dupt->max_size * dupt->data_size);
++    
++    return dup;
++}
++
+ netsnmp_container *
+ netsnmp_container_get_binary_array(void)
+ {
+@@ -592,7 +646,11 @@
+     }
+ 
+     c->container_data = netsnmp_binary_array_initialize();
+-        
++
++    /*
++     * NOTE: CHANGES HERE MUST BE DUPLICATED IN duplicate AS WELL!!
++     */
++
+     c->get_size = _ba_size;
+     c->init = NULL;
+     c->cfree = _ba_free;
+@@ -604,6 +662,7 @@
+     c->get_iterator = _ba_iterator_get;
+     c->for_each = _ba_for_each;
+     c->clear = _ba_clear;
++    c->duplicate = _ba_duplicate;
+         
+     return c;
+ }
+--- net-snmp/snmplib/container.c	Fri Aug 25 15:11:06 2006
++++ net-snmp/snmplib/container.c	Fri Jan 14 17:35:37 2011
+@@ -278,7 +278,7 @@
+             continue;
+         rc2 = x->insert(x,k);
+         if (rc2) {
+-            snmp_log(LOG_ERR,"error on subcontainer '%s' insert (%d)\n",
++            snmp_log(LOG_DEBUG,"error on subcontainer '%s' insert (%d)\n",
+                      x->container_name ? x->container_name : "", rc2);
+             rc = rc2;
+         }
+@@ -311,6 +311,20 @@
+ }
+ 
+ /*------------------------------------------------------------------
++ * These functions should EXACTLY match the function version in
++ * container.c. If you change one, change them both.
++ */
++netsnmp_container *CONTAINER_DUP(netsnmp_container *x, void *ctx, u_int flags)
++{
++    if (NULL == x->duplicate) {
++        snmp_log(LOG_ERR, "container '%s' does not support duplicate\n",
++                 x->container_name ? x->container_name : "");
++        return NULL;
++    }
++    return x->duplicate(x, ctx, flags);
++}
++
++/*------------------------------------------------------------------
+  * These functions should EXACTLY match the inline version in
+  * container.h. If you change one, change them both.
+  */
+@@ -408,6 +422,24 @@
+     c->find = fnd;
+ }
+ 
++int
++netsnmp_container_data_dup(netsnmp_container *dup, netsnmp_container *c)
++{
++    if (!dup || !c)
++        return -1;
++
++    if (c->container_name)
++        dup->container_name = strdup(c->container_name);
++    dup->compare = c->compare;
++    dup->ncompare = c->ncompare;
++    dup->release = c->release;
++    dup->insert_filter = c->insert_filter;
++    dup->sync = c->sync;
++    dup->flags = c->flags;
++
++    return 0;
++}
++
+ /*------------------------------------------------------------------
+  *
+  * simple comparison routines
