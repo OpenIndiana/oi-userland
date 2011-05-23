@@ -1,0 +1,473 @@
+--- src/tcs/rpc/tcstp/rpc.c.orig	Fri Jun  5 12:45:50 2009
++++ src/tcs/rpc/tcstp/rpc.c	Thu Sep 10 13:05:33 2009
+@@ -385,134 +385,134 @@
+ typedef struct tdDispatchTable {
+ 	TSS_RESULT (*Func) (struct tcsd_thread_data *);
+ 	const char *name;
++	UINT32 ordinal;
+ } DispatchTable;
+ 
+ DispatchTable tcs_func_table[TCSD_MAX_NUM_ORDS] = {
+-	{tcs_wrap_Error,"Error"},   /* 0 */
+-	{tcs_wrap_OpenContext,"OpenContext"},
+-	{tcs_wrap_CloseContext,"CloseContext"},
+-	{tcs_wrap_Error,"Error"},
+-	{tcs_wrap_TCSGetCapability,"TCSGetCapability"},
+-	{tcs_wrap_RegisterKey,"RegisterKey"}, /* 5 */
+-	{tcs_wrap_UnregisterKey,"UnregisterKey"},
+-	{tcs_wrap_EnumRegisteredKeys,"EnumRegisteredKeys"},
+-	{tcs_wrap_Error,"Error"},
+-	{tcs_wrap_GetRegisteredKeyBlob,"GetRegisteredKeyBlob"},
+-	{tcs_wrap_GetRegisteredKeyByPublicInfo,"GetRegisteredKeyByPublicInfo"}, /* 10 */
+-	{tcs_wrap_LoadKeyByBlob,"LoadKeyByBlob"},
+-	{tcs_wrap_LoadKeyByUUID,"LoadKeyByUUID"},
+-	{tcs_wrap_EvictKey,"EvictKey"},
+-	{tcs_wrap_CreateWrapKey,"CreateWrapKey"},
+-	{tcs_wrap_GetPubkey,"GetPubkey"}, /* 15 */
+-	{tcs_wrap_MakeIdentity,"MakeIdentity"},
+-	{tcs_wrap_LogPcrEvent,"LogPcrEvent"},
+-	{tcs_wrap_GetPcrEvent,"GetPcrEvent"},
+-	{tcs_wrap_GetPcrEventsByPcr,"GetPcrEventsByPcr"},
+-	{tcs_wrap_GetPcrEventLog,"GetPcrEventLog"}, /* 20 */
+-	{tcs_wrap_SetOwnerInstall,"SetOwnerInstall"},
+-	{tcs_wrap_TakeOwnership,"TakeOwnership"},
+-	{tcs_wrap_OIAP,"OIAP"},
+-	{tcs_wrap_OSAP,"OSAP"},
+-	{tcs_wrap_ChangeAuth,"ChangeAuth"}, /* 25 */
+-	{tcs_wrap_ChangeAuthOwner,"ChangeAuthOwner"},
+-	{tcs_wrap_Error,"Error"},
+-	{tcs_wrap_Error,"Error"},
+-	{tcs_wrap_TerminateHandle,"TerminateHandle"},
+-	{tcs_wrap_ActivateIdentity,"ActivateIdentity"}, /* 30 */
+-	{tcs_wrap_Extend,"Extend"},
+-	{tcs_wrap_PcrRead,"PcrRead"},
+-	{tcs_wrap_Quote,"Quote"},
+-	{tcs_wrap_DirWriteAuth,"DirWriteAuth"},
+-	{tcs_wrap_DirRead,"DirRead"}, /* 35 */
+-	{tcs_wrap_Seal,"Seal"},
+-	{tcs_wrap_UnSeal,"UnSeal"},
+-	{tcs_wrap_UnBind,"UnBind"},
+-	{tcs_wrap_CreateMigrationBlob,"CreateMigrationBlob"},
+-	{tcs_wrap_ConvertMigrationBlob,"ConvertMigrationBlob"}, /* 40 */
+-	{tcs_wrap_AuthorizeMigrationKey,"AuthorizeMigrationKey"},
+-	{tcs_wrap_CertifyKey,"CertifyKey"},
+-	{tcs_wrap_Sign,"Sign"},
+-	{tcs_wrap_GetRandom,"GetRandom"},
+-	{tcs_wrap_StirRandom,"StirRandom"}, /* 45 */
+-	{tcs_wrap_GetCapability,"GetCapability"},
+-	{tcs_wrap_Error,"Error"},
+-	{tcs_wrap_GetCapabilityOwner,"GetCapabilityOwner"},
+-	{tcs_wrap_CreateEndorsementKeyPair,"CreateEndorsementKeyPair"},
+-	{tcs_wrap_ReadPubek,"ReadPubek"}, /* 50 */
+-	{tcs_wrap_DisablePubekRead,"DisablePubekRead"},
+-	{tcs_wrap_OwnerReadPubek,"OwnerReadPubek"},
+-	{tcs_wrap_SelfTestFull,"SelfTestFull"},
+-	{tcs_wrap_CertifySelfTest,"CertifySelfTest"},
+-	{tcs_wrap_Error,"Error"}, /* 55 */
+-	{tcs_wrap_GetTestResult,"GetTestResult"},
+-	{tcs_wrap_OwnerSetDisable,"OwnerSetDisable"},
+-	{tcs_wrap_OwnerClear,"OwnerClear"},
+-	{tcs_wrap_DisableOwnerClear,"DisableOwnerClear"},
+-	{tcs_wrap_ForceClear,"ForceClear"}, /* 60 */
+-	{tcs_wrap_DisableForceClear,"DisableForceClear"},
+-	{tcs_wrap_PhysicalDisable,"PhysicalDisable"},
+-	{tcs_wrap_PhysicalEnable,"PhysicalEnable"},
+-	{tcs_wrap_PhysicalSetDeactivated,"PhysicalSetDeactivated"},
+-	{tcs_wrap_SetTempDeactivated,"SetTempDeactivated"}, /* 65 */
+-	{tcs_wrap_PhysicalPresence,"PhysicalPresence"},
+-	{tcs_wrap_Error,"Error"},
+-	{tcs_wrap_Error,"Error"},
+-	{tcs_wrap_CreateMaintenanceArchive,"CreateMaintenanceArchive"},
+-	{tcs_wrap_LoadMaintenanceArchive,"LoadMaintenanceArchive"}, /* 70 */
+-	{tcs_wrap_KillMaintenanceFeature,"KillMaintenanceFeature"},
+-	{tcs_wrap_LoadManuMaintPub,"LoadManuMaintPub"},
+-	{tcs_wrap_ReadManuMaintPub,"ReadManuMaintPub"},
+-	{tcs_wrap_DaaJoin,"DaaJoin"},
+-	{tcs_wrap_DaaSign,"DaaSign"}, /* 75 */
+-	{tcs_wrap_SetCapability,"SetCapability"},
+-	{tcs_wrap_ResetLockValue,"ResetLockValue"},
+-	{tcs_wrap_PcrReset,"PcrReset"},
+-	{tcs_wrap_ReadCounter,"ReadCounter"},
+-	{tcs_wrap_CreateCounter,"CreateCounter"}, /* 80 */
+-	{tcs_wrap_IncrementCounter,"IncrementCounter"},
+-	{tcs_wrap_ReleaseCounter,"ReleaseCounter"},
+-	{tcs_wrap_ReleaseCounterOwner,"ReleaseCounterOwner"},
+-	{tcs_wrap_ReadCurrentTicks,"ReadCurrentTicks"},
+-	{tcs_wrap_TickStampBlob,"TicksStampBlob"}, /* 85 */
+-	{tcs_wrap_GetCredential,"GetCredential"},
+-	{tcs_wrap_NV_DefineOrReleaseSpace,"NVDefineOrReleaseSpace"},
+-	{tcs_wrap_NV_WriteValue,"NVWriteValue"},
+-	{tcs_wrap_NV_WriteValueAuth,"NVWriteValueAuth"},
+-	{tcs_wrap_NV_ReadValue,"NVReadValue"}, /* 90 */
+-	{tcs_wrap_NV_ReadValueAuth,"NVReadValueAuth"},
+-	{tcs_wrap_EstablishTransport,"EstablishTransport"},
+-	{tcs_wrap_ExecuteTransport,"ExecuteTransport"},
+-	{tcs_wrap_ReleaseTransportSigned,"ReleaseTransportSigned"},
+-	{tcs_wrap_SetOrdinalAuditStatus,"SetOrdinalAuditStatus"}, /* 95 */
+-	{tcs_wrap_GetAuditDigest,"GetAuditDigest"},
+-	{tcs_wrap_GetAuditDigestSigned,"GetAuditDigestSigned"},
+-	{tcs_wrap_Sealx,"Sealx"},
+-	{tcs_wrap_SetOperatorAuth,"SetOperatorAuth"},
+-	{tcs_wrap_OwnerReadInternalPub,"OwnerReadInternalPub"}, /* 100 */
+-	{tcs_wrap_EnumRegisteredKeys2,"EnumRegisteredKeys2"},
+-	{tcs_wrap_SetTempDeactivated2,"SetTempDeactivated2"},
+-	{tcs_wrap_Delegate_Manage,"Delegate_Manage"},
+-	{tcs_wrap_Delegate_CreateKeyDelegation,"Delegate_CreateKeyDelegation"},
+-	{tcs_wrap_Delegate_CreateOwnerDelegation,"Delegate_CreateOwnerDelegation"}, /* 105 */
+-	{tcs_wrap_Delegate_LoadOwnerDelegation,"Delegate_LoadOwnerDelegation"},
+-	{tcs_wrap_Delegate_ReadTable,"Delegate_ReadTable"},
+-	{tcs_wrap_Delegate_UpdateVerificationCount,"Delegate_UpdateVerificationCount"},
+-	{tcs_wrap_Delegate_VerifyDelegation,"Delegate_VerifyDelegation"},
+-	{tcs_wrap_CreateRevocableEndorsementKeyPair,"CreateRevocableEndorsementKeyPair"}, /* 110 */
+-	{tcs_wrap_RevokeEndorsementKeyPair,"RevokeEndorsementKeyPair"},
+-	{tcs_wrap_Error,"Error - was MakeIdentity2"},
+-	{tcs_wrap_Quote2,"Quote2"},
+-	{tcs_wrap_CMK_SetRestrictions,"CMK_SetRestrictions"},
+-	{tcs_wrap_CMK_ApproveMA,"CMK_ApproveMA"}, /* 115 */
+-	{tcs_wrap_CMK_CreateKey,"CMK_CreateKey"},
+-	{tcs_wrap_CMK_CreateTicket,"CMK_CreateTicket"},
+-	{tcs_wrap_CMK_CreateBlob,"CMK_CreateBlob"},
+-	{tcs_wrap_CMK_ConvertMigration,"CMK_ConvertMigration"},
+-	{tcs_wrap_FlushSpecific,"FlushSpecific"}, /* 120 */
+-	{tcs_wrap_KeyControlOwner, "KeyControlOwner"},
+-	{tcs_wrap_DSAP, "DSAP"}
+-};
+-
++ 	{tcs_wrap_Error,"Error", 0},   /* 0 */
++ 	{tcs_wrap_OpenContext,"OpenContext", 0},
++ 	{tcs_wrap_CloseContext,"CloseContext", 0},
++ 	{tcs_wrap_Error,"Error", 0},
++ 	{tcs_wrap_TCSGetCapability,"TCSGetCapability", 0},
++ 	{tcs_wrap_RegisterKey,"RegisterKey", 0}, /* 5 */
++ 	{tcs_wrap_UnregisterKey,"UnregisterKey", 0},
++ 	{tcs_wrap_EnumRegisteredKeys,"EnumRegisteredKeys", 0},
++ 	{tcs_wrap_Error,"Error", 0},
++ 	{tcs_wrap_GetRegisteredKeyBlob,"GetRegisteredKeyBlob", 0},
++ 	{tcs_wrap_GetRegisteredKeyByPublicInfo,"GetRegisteredKeyByPublicInfo", 0}, /* 10 */
++ 	{tcs_wrap_LoadKeyByBlob,"LoadKeyByBlob", 0},
++ 	{tcs_wrap_LoadKeyByUUID,"LoadKeyByUUID", 0},
++ 	{tcs_wrap_EvictKey,"EvictKey", 0},
++ 	{tcs_wrap_CreateWrapKey,"CreateWrapKey", 0},
++ 	{tcs_wrap_GetPubkey,"GetPubkey", 0}, /* 15 */
++ 	{tcs_wrap_MakeIdentity,"MakeIdentity", 0},
++ 	{tcs_wrap_LogPcrEvent,"LogPcrEvent", 0},
++ 	{tcs_wrap_GetPcrEvent,"GetPcrEvent", 0},
++ 	{tcs_wrap_GetPcrEventsByPcr,"GetPcrEventsByPcr", 0},
++ 	{tcs_wrap_GetPcrEventLog,"GetPcrEventLog", 0}, /* 20 */
++ 	{tcs_wrap_SetOwnerInstall,"SetOwnerInstall", TPM_ORD_SetOwnerInstall},
++ 	{tcs_wrap_TakeOwnership,"TakeOwnership", TPM_ORD_TakeOwnership},
++ 	{tcs_wrap_OIAP,"OIAP", 0},
++ 	{tcs_wrap_OSAP,"OSAP", 0},
++ 	{tcs_wrap_ChangeAuth,"ChangeAuth", 0}, /* 25 */
++ 	{tcs_wrap_ChangeAuthOwner,"ChangeAuthOwner", 0},
++ 	{tcs_wrap_Error,"Error", 0},
++ 	{tcs_wrap_Error,"Error", 0},
++ 	{tcs_wrap_TerminateHandle,"TerminateHandle", 0},
++ 	{tcs_wrap_ActivateIdentity,"ActivateIdentity", 0}, /* 30 */
++ 	{tcs_wrap_Extend,"Extend", 0},
++ 	{tcs_wrap_PcrRead,"PcrRead", 0},
++ 	{tcs_wrap_Quote,"Quote", 0},
++ 	{tcs_wrap_DirWriteAuth,"DirWriteAuth", 0},
++ 	{tcs_wrap_DirRead,"DirRead", 0}, /* 35 */
++ 	{tcs_wrap_Seal,"Seal", 0},
++ 	{tcs_wrap_UnSeal,"UnSeal", 0},
++ 	{tcs_wrap_UnBind,"UnBind", 0},
++ 	{tcs_wrap_CreateMigrationBlob,"CreateMigrationBlob", 0},
++ 	{tcs_wrap_ConvertMigrationBlob,"ConvertMigrationBlob", 0}, /* 40 */
++ 	{tcs_wrap_AuthorizeMigrationKey,"AuthorizeMigrationKey", 0},
++ 	{tcs_wrap_CertifyKey,"CertifyKey", 0},
++ 	{tcs_wrap_Sign,"Sign", 0},
++ 	{tcs_wrap_GetRandom,"GetRandom", 0},
++ 	{tcs_wrap_StirRandom,"StirRandom", 0}, /* 45 */
++ 	{tcs_wrap_GetCapability,"GetCapability", 0},
++ 	{tcs_wrap_Error,"Error", 0},
++ 	{tcs_wrap_GetCapabilityOwner,"GetCapabilityOwner", 0},
++ 	{tcs_wrap_CreateEndorsementKeyPair,"CreateEndorsementKeyPair", 0},
++ 	{tcs_wrap_ReadPubek,"ReadPubek", 0}, /* 50 */
++ 	{tcs_wrap_DisablePubekRead,"DisablePubekRead", 0},
++ 	{tcs_wrap_OwnerReadPubek,"OwnerReadPubek", 0},
++ 	{tcs_wrap_SelfTestFull,"SelfTestFull", TPM_ORD_SelfTestFull},
++ 	{tcs_wrap_CertifySelfTest,"CertifySelfTest", TPM_ORD_CertifySelfTest},
++ 	{tcs_wrap_Error,"Error", 0}, /* 55 */
++ 	{tcs_wrap_GetTestResult,"GetTestResult", 0},
++ 	{tcs_wrap_OwnerSetDisable,"OwnerSetDisable", TPM_ORD_OwnerSetDisable},
++ 	{tcs_wrap_OwnerClear,"OwnerClear", TPM_ORD_OwnerClear},
++ 	{tcs_wrap_DisableOwnerClear,"DisableOwnerClear", TPM_ORD_DisableOwnerClear},
++ 	{tcs_wrap_ForceClear,"ForceClear", TPM_ORD_ForceClear}, /* 60 */
++ 	{tcs_wrap_DisableForceClear,"DisableForceClear", TPM_ORD_DisableForceClear},
++ 	{tcs_wrap_PhysicalDisable,"PhysicalDisable", TPM_ORD_PhysicalDisable},
++ 	{tcs_wrap_PhysicalEnable,"PhysicalEnable", TPM_ORD_PhysicalEnable},
++ 	{tcs_wrap_PhysicalSetDeactivated,"PhysicalSetDeactivated", TPM_ORD_PhysicalSetDeactivated},
++ 	{tcs_wrap_SetTempDeactivated,"SetTempDeactivated", TPM_ORD_SetTempDeactivated}, /* 65 */
++ 	{tcs_wrap_PhysicalPresence,"PhysicalPresence", TSC_ORD_PhysicalPresence},
++ 	{tcs_wrap_Error,"Error", 0},
++ 	{tcs_wrap_Error,"Error", 0},
++ 	{tcs_wrap_CreateMaintenanceArchive,"CreateMaintenanceArchive", 0},
++ 	{tcs_wrap_LoadMaintenanceArchive,"LoadMaintenanceArchive", 0}, /* 70 */
++ 	{tcs_wrap_KillMaintenanceFeature,"KillMaintenanceFeature", 0},
++ 	{tcs_wrap_LoadManuMaintPub,"LoadManuMaintPub", 0},
++ 	{tcs_wrap_ReadManuMaintPub,"ReadManuMaintPub", 0},
++ 	{tcs_wrap_DaaJoin,"DaaJoin", 0},
++ 	{tcs_wrap_DaaSign,"DaaSign", 0}, /* 75 */
++ 	{tcs_wrap_SetCapability,"SetCapability", 0},
++ 	{tcs_wrap_ResetLockValue,"ResetLockValue", TPM_ORD_ResetLockValue},
++ 	{tcs_wrap_PcrReset,"PcrReset", 0},
++ 	{tcs_wrap_ReadCounter,"ReadCounter", 0},
++ 	{tcs_wrap_CreateCounter,"CreateCounter", 0}, /* 80 */
++ 	{tcs_wrap_IncrementCounter,"IncrementCounter", 0},
++ 	{tcs_wrap_ReleaseCounter,"ReleaseCounter", 0},
++ 	{tcs_wrap_ReleaseCounterOwner,"ReleaseCounterOwner", 0},
++ 	{tcs_wrap_ReadCurrentTicks,"ReadCurrentTicks", 0},
++ 	{tcs_wrap_TickStampBlob,"TicksStampBlob", 0}, /* 85 */
++ 	{tcs_wrap_GetCredential,"GetCredential", 0},
++ 	{tcs_wrap_NV_DefineOrReleaseSpace,"NVDefineOrReleaseSpace", 0},
++ 	{tcs_wrap_NV_WriteValue,"NVWriteValue", 0},
++ 	{tcs_wrap_NV_WriteValueAuth,"NVWriteValueAuth", 0},
++ 	{tcs_wrap_NV_ReadValue,"NVReadValue", 0}, /* 90 */
++ 	{tcs_wrap_NV_ReadValueAuth,"NVReadValueAuth", 0},
++ 	{tcs_wrap_EstablishTransport,"EstablishTransport", 0},
++ 	{tcs_wrap_ExecuteTransport,"ExecuteTransport", 0},
++ 	{tcs_wrap_ReleaseTransportSigned,"ReleaseTransportSigned", 0},
++ 	{tcs_wrap_SetOrdinalAuditStatus,"SetOrdinalAuditStatus", 0}, /* 95 */
++ 	{tcs_wrap_GetAuditDigest,"GetAuditDigest", 0},
++ 	{tcs_wrap_GetAuditDigestSigned,"GetAuditDigestSigned", 0},
++ 	{tcs_wrap_Sealx,"Sealx", 0},
++ 	{tcs_wrap_SetOperatorAuth,"SetOperatorAuth", TPM_ORD_SetOperatorAuth},
++ 	{tcs_wrap_OwnerReadInternalPub,"OwnerReadInternalPub", 0}, /* 100 */
++ 	{tcs_wrap_EnumRegisteredKeys2,"EnumRegisteredKeys2", 0},
++ 	{tcs_wrap_SetTempDeactivated2,"SetTempDeactivated2", 0},
++ 	{tcs_wrap_Delegate_Manage,"Delegate_Manage", 0},
++ 	{tcs_wrap_Delegate_CreateKeyDelegation,"Delegate_CreateKeyDelegation", 0},
++ 	{tcs_wrap_Delegate_CreateOwnerDelegation,"Delegate_CreateOwnerDelegation", 0}, /* 105 */
++ 	{tcs_wrap_Delegate_LoadOwnerDelegation,"Delegate_LoadOwnerDelegation", 0},
++ 	{tcs_wrap_Delegate_ReadTable,"Delegate_ReadTable", 0},
++ 	{tcs_wrap_Delegate_UpdateVerificationCount,"Delegate_UpdateVerificationCount", 0},
++ 	{tcs_wrap_Delegate_VerifyDelegation,"Delegate_VerifyDelegation", 0},
++ 	{tcs_wrap_CreateRevocableEndorsementKeyPair,"CreateRevocableEndorsementKeyPair", 0}, /* 110 */
++ 	{tcs_wrap_RevokeEndorsementKeyPair,"RevokeEndorsementKeyPair", 0},
++	{tcs_wrap_Error,"Error - was MakeIdentity2", 0},
++ 	{tcs_wrap_Quote2,"Quote2", 0},
++ 	{tcs_wrap_CMK_SetRestrictions,"CMK_SetRestrictions", 0},
++ 	{tcs_wrap_CMK_ApproveMA,"CMK_ApproveMA", 0}, /* 115 */
++ 	{tcs_wrap_CMK_CreateKey,"CMK_CreateKey", 0},
++ 	{tcs_wrap_CMK_CreateTicket,"CMK_CreateTicket", 0},
++ 	{tcs_wrap_CMK_CreateBlob,"CMK_CreateBlob", 0},
++ 	{tcs_wrap_CMK_ConvertMigration,"CMK_ConvertMigration", 0},
++ 	{tcs_wrap_FlushSpecific,"FlushSpecific", 0}, /* 120 */
++ 	{tcs_wrap_KeyControlOwner, "KeyControlOwner", 0},
++ 	{tcs_wrap_DSAP, "DSAP", 0}
++  };
+ int
+ access_control(struct tcsd_thread_data *thread_data)
+ {
+@@ -562,11 +562,190 @@
+ 	return 1;
+ }
+ 
++#if defined (SOLARIS)
++
++#include <ucred.h>
++#include <bsm/adt.h>
++#include <bsm/adt_event.h>
++
++static void
++audit_tpm(UINT32 cmd, struct tcsd_thread_data *data)
++{
++	adt_session_data_t *ah = NULL;
++	adt_event_data_t *event = NULL;
++	ucred_t *uc = NULL;
++	int adterr, msgid;
++	int adtstatus = ADT_FAILURE;
++
++	if (getpeerucred(data->sock, &uc)) {
++		LogError("Audit Failed - getpeerucred failed (%s)",
++		    strerror(errno));
++		return;
++	}
++	if (adt_start_session(&ah, NULL, ADT_USE_PROC_DATA) != 0) {
++		LogError("Audit Failed - adt_start_session failed (%s)",
++		    strerror(errno));
++		goto end;
++	}
++
++	if (adt_set_from_ucred(ah, uc, ADT_NEW) != 0) {
++		LogError("Audit Failed - adt_set_from_ucred failed (%s)",
++		    strerror(errno));
++		goto end;
++	}
++
++	/*
++	 * NOTE: It is important that the ordering of the
++	 * error message definitions in the adt.xml IDL from the
++	 * libbsm library source matches the numerical ordering of
++	 * the TPM_E_* error codes in /usr/include/tss/tpm_error.h
++	 */
++	if (data->comm.hdr.u.result == TSS_SUCCESS) {
++		adtstatus = ADT_SUCCESS;
++		adterr = ADT_SUCCESS;
++		/*
++		 * Use literal value here until the
++		 * build system is updated with latest adt_event.h
++		 * 4102 = ADT_TPM_E_NO_MSG (build 123).
++		 * Change this later.
++		 */
++		msgid = 4102;
++	} else if (data->comm.hdr.u.result & TPM_E_NON_FATAL) {
++		/*
++		 * NON_FATAL TPM errors are masked (0x800) so they are not in numerical
++		 * sequence with the rest of the TPM errors.
++		 */
++		msgid = ADT_TPM_E_RETRY +
++		    (data->comm.hdr.u.result - TPM_E_RETRY);
++		adterr = ADT_FAIL_VALUE_PROGRAM;
++	} else {
++		msgid = ADT_TPM_E_AUTHFAIL +
++		    (data->comm.hdr.u.result - TPM_E_AUTHFAIL);
++		adterr = ADT_FAIL_VALUE_PROGRAM;
++	}
++	switch(cmd) {
++		case TPM_ORD_CertifySelfTest:
++			event = adt_alloc_event(ah, ADT_tpm_certifyselftest);
++			if (event != NULL)
++				event->adt_tpm_certifyselftest.message = msgid;
++			break;
++		case TPM_ORD_OwnerClear:
++			event = adt_alloc_event(ah, ADT_tpm_ownerclear);
++			if (event != NULL)
++				event->adt_tpm_ownerclear.message = msgid;
++			break;
++		case TPM_ORD_ContinueSelfTest:
++			event = adt_alloc_event(ah, ADT_tpm_continueselftest);
++			if (event != NULL)
++				event->adt_tpm_continueselftest.message = msgid;
++			break;
++		case TPM_ORD_DisableForceClear:
++			event = adt_alloc_event(ah, ADT_tpm_disableforceclear);
++			if (event != NULL)
++				event->adt_tpm_disableforceclear.message = msgid;
++			break;
++		case TPM_ORD_DisableOwnerClear:
++			event = adt_alloc_event(ah, ADT_tpm_disableownerclear);
++			if (event != NULL)
++				event->adt_tpm_disableownerclear.message = msgid;
++			break;
++		case TPM_ORD_FieldUpgrade:
++			event = adt_alloc_event(ah, ADT_tpm_fieldupgrade);
++			if (event != NULL)
++				event->adt_tpm_fieldupgrade.message = msgid;
++			break;
++		case TPM_ORD_ForceClear:
++			event = adt_alloc_event(ah, ADT_tpm_forceclear);
++			if (event != NULL)
++				event->adt_tpm_forceclear.message = msgid;
++			break;
++		case TPM_ORD_OwnerSetDisable:
++			event = adt_alloc_event(ah, ADT_tpm_ownersetdisable);
++			if (event != NULL)
++				event->adt_tpm_ownersetdisable.message = msgid;
++			break;
++		case TPM_ORD_PhysicalEnable:
++			event = adt_alloc_event(ah, ADT_tpm_physicalenable);
++			if (event != NULL)
++				event->adt_tpm_physicalenable.message = msgid;
++			break;
++		case TPM_ORD_PhysicalDisable:
++			event = adt_alloc_event(ah, ADT_tpm_physicaldisable);
++			if (event != NULL)
++				event->adt_tpm_physicaldisable.message = msgid;
++			break;
++		case TPM_ORD_PhysicalSetDeactivated:
++			event = adt_alloc_event(ah, ADT_tpm_physicaldeactivate);
++			if (event != NULL)
++				event->adt_tpm_physicaldeactivate.message = msgid;
++			break;
++		case TSC_ORD_PhysicalPresence:
++			event = adt_alloc_event(ah, ADT_tpm_physicalpresence);
++			if (event != NULL)
++				event->adt_tpm_physicalpresence.message = msgid;
++			break;
++		case TPM_ORD_ResetLockValue:
++			event = adt_alloc_event(ah, ADT_tpm_resetlockvalue);
++			if (event != NULL)
++				event->adt_tpm_resetlockvalue.message = msgid;
++			break;
++		case TPM_ORD_SelfTestFull:
++			event = adt_alloc_event(ah, ADT_tpm_selftestfull);
++			if (event != NULL)
++				event->adt_tpm_selftestfull.message = msgid;
++			break;
++		case TPM_ORD_SetOperatorAuth:
++			event = adt_alloc_event(ah, ADT_tpm_setoperatorauth);
++			if (event != NULL)
++				event->adt_tpm_setoperatorauth.message = msgid;
++			break;
++		case TPM_ORD_SetOwnerInstall:
++			event = adt_alloc_event(ah, ADT_tpm_setownerinstall);
++			if (event != NULL)
++				event->adt_tpm_setownerinstall.message = msgid;
++			break;
++		case TPM_ORD_SetTempDeactivated:
++			event = adt_alloc_event(ah, ADT_tpm_settempdeactivated);
++			if (event != NULL)
++				event->adt_tpm_settempdeactivated.message = msgid;
++			break;
++		case TPM_ORD_TakeOwnership:
++			event = adt_alloc_event(ah, ADT_tpm_takeownership);
++			if (event != NULL)
++				event->adt_tpm_takeownership.message = msgid;
++			break;
++		default:
++			/* command not audited */
++			goto end;	
++	}
++	if (event == NULL) {
++		LogError("Audit Failed - Failed to allocate event (%s)",
++		    strerror(errno));
++		goto end;
++	}
++
++	if (adt_put_event(event, adtstatus, adterr)) {
++		LogError("Audit Failed - Failed to put audit event (%s)",
++		    strerror(errno));
++	}
++
++end:
++	ucred_free(uc);
++	adt_free_event(event);
++	(void) adt_end_session(ah);
++	
++	return;
++}
++#endif /* SOLARIS */
++
+ TSS_RESULT
+ dispatchCommand(struct tcsd_thread_data *data)
+ {
+ 	UINT64 offset;
+ 	TSS_RESULT result;
++#if defined (SOLARIS)
++	UINT32 cmd;
++#endif
+ 
+ 	/* First, check the ordinal bounds */
+ 	if (data->comm.hdr.u.ordinal >= TCSD_MAX_NUM_ORDS) {
+@@ -596,6 +775,9 @@
+ 	}
+ 
+ 	/* Now, dispatch */
++#if defined (SOLARIS)
++	cmd = tcs_func_table[data->comm.hdr.u.ordinal].ordinal;
++#endif
+ 	if ((result = tcs_func_table[data->comm.hdr.u.ordinal].Func(data)) == TSS_SUCCESS) {
+ 		/* set the comm buffer */
+ 		offset = 0;
+@@ -607,6 +789,9 @@
+ 		LoadBlob_UINT32(&offset, data->comm.hdr.parm_size, data->comm.buf);
+ 		LoadBlob_UINT32(&offset, data->comm.hdr.parm_offset, data->comm.buf);
+ 	}
++#if defined (SOLARIS)
++	audit_tpm(cmd, data);
++#endif
+ 
+ 	return result;
+ 

@@ -1,0 +1,53 @@
+--- src/tspi/rpc/hosttable.c.old	Thu Jan 28 13:27:59 2010
++++ src/tspi/rpc/hosttable.c	Thu Aug  5 14:24:00 2010
+@@ -22,7 +22,7 @@
+ struct host_table *ht = NULL;
+ 
+ TSS_RESULT
+-host_table_init()
++static host_table_init()
+ {
+ 	ht = calloc(1, sizeof(struct host_table));
+ 	if (ht == NULL) {
+@@ -36,8 +36,7 @@
+ }
+ 
+ #ifdef SOLARIS
+-#pragma init(_init)
+-void _init(void)
++static void my_init(void)
+ #else
+ void __attribute__ ((constructor)) my_init(void)
+ #endif
+@@ -46,7 +45,7 @@
+ 	__tspi_obj_list_init();
+ }
+ 
+-void
++static void
+ host_table_final()
+ {
+ 	struct host_table_entry *hte, *next = NULL;
+@@ -70,8 +69,7 @@
+ }
+ 
+ #ifdef SOLARIS
+-#pragma fini(_fini)
+-void _fini(void)
++static void my_fini(void)
+ #else
+ void __attribute__ ((destructor)) my_fini(void)
+ #endif
+@@ -79,6 +77,11 @@
+ 	host_table_final();
+ }
+ 
++#ifdef SOLARIS
++#pragma init(my_init)
++#pragma fini(my_fini)
++#endif
++
+ TSS_RESULT
+ __tspi_add_table_entry(TSS_HCONTEXT tspContext, BYTE *host, int type, struct host_table_entry **ret)
+ {
+

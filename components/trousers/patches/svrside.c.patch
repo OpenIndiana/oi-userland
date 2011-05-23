@@ -1,0 +1,118 @@
+--- src/tcsd/svrside.c.orig	Thu Jan 21 15:18:55 2010
++++ src/tcsd/svrside.c	Thu Jan 28 17:37:07 2010
+@@ -27,6 +27,13 @@
+ #include <arpa/inet.h>
+ #include <errno.h>
+ #include <getopt.h>
++#ifdef SOLARIS
++#include <priv.h>
++#endif
++#ifndef HAVE_DAEMON
++#include <fcntl.h>
++#endif
++
+ #include "trousers/tss.h"
+ #include "trousers_types.h"
+ #include "tcs_tsp.h"
+@@ -207,6 +214,79 @@
+ }
+ 
+ 
++#ifdef SOLARIS
++
++/*
++ * For Solaris, make the tcsd privilege aware and drop
++ * risky privileges if they are not needed.
++ */
++static int
++drop_privs()
++{
++	priv_set_t *myprivs;
++	int rv;
++
++	/*
++	 * Drop unneeded privs such as fork/exec.
++	 *
++	 * Get "basic" privs and remove the ones we don't want.
++	 */
++	if ((myprivs = priv_str_to_set("basic", ",", NULL)) == NULL) {
++		LogError("priv_str_to_set failed: %s", strerror(errno));
++		return (1);
++	} else {
++		(void) priv_delset(myprivs, PRIV_PROC_EXEC);
++		(void) priv_delset(myprivs, PRIV_PROC_FORK);
++		(void) priv_delset(myprivs, PRIV_FILE_LINK_ANY);
++		(void) priv_delset(myprivs, PRIV_PROC_INFO);
++		(void) priv_delset(myprivs, PRIV_PROC_SESSION);
++		(void) priv_delset(myprivs, PRIV_PROC_SETID);
++
++		/* for auditing */
++		(void) priv_addset(myprivs, PRIV_PROC_AUDIT);
++
++		if ((rv = setppriv(PRIV_SET, PRIV_PERMITTED, myprivs)))
++			return (rv);
++		if ((rv = setppriv(PRIV_SET, PRIV_LIMIT, myprivs)))
++			return (rv);
++		if ((rv = setppriv(PRIV_SET, PRIV_INHERITABLE, myprivs)))
++			return (rv);
++
++		(void) priv_freeset(myprivs);
++	}
++	return (0);
++}
++#endif /* SOLARIS */
++
++#ifndef HAVE_DAEMON
++static int
++daemon(int nochdir, int noclose) {
++	int rv, fd;
++
++	switch (fork()) {
++		case -1:
++			return (-1);
++		case 0:
++			break;
++		default:
++		exit (0);
++	}
++
++	if (setsid() == -1)
++		return (-1);
++	if (!nochdir)
++		(void) chdir("/");
++	if (!noclose && (fd = open("/dev/null", O_RDWR, 0)) != -1) {
++		(void) dup2(fd, STDIN_FILENO);
++		(void) dup2(fd, STDOUT_FILENO);
++		(void) dup2(fd, STDERR_FILENO);
++		if (fd > 2)
++			(void)close (fd);
++	}
++	return (0);
++}
++#endif /* !HAVE_DAEMON */
++
+ int
+ main(int argc, char **argv)
+ {
+@@ -222,6 +302,9 @@
+ 		{"foreground", 0, NULL, 'f'},
+ 		{0, 0, 0, 0}
+ 	};
++#ifdef SOLARIS
++	int rv;
++#endif
+ 
+ 	while ((c = getopt_long(argc, argv, "fh", long_options, &option_index)) != -1) {
+ 		switch (c) {
+@@ -287,6 +372,11 @@
+ 			return -1;
+ 		}
+ 	}
++#ifdef SOLARIS
++	/* For Solaris, drop privileges for security. */
++	if ((rv = drop_privs()))
++		return (rv);
++#endif /* SOLARIS */
+ 
+ 	LogInfo("%s: TCSD up and running.", PACKAGE_STRING);
+ 	do {

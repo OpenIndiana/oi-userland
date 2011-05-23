@@ -1,0 +1,54 @@
+--- src/tcs/rpc/tcstp/rpc_ps.c.orig	2011-03-23 11:01:54.707428173 -0700
++++ src/tcs/rpc/tcstp/rpc_ps.c	2011-03-23 11:27:00.753845441 -0700
+@@ -26,6 +26,29 @@
+ #include "tcs_utils.h"
+ #include "rpc_tcstp_tcs.h"
+ 
++#ifdef SOLARIS
++#include <ucred.h>
++#include <errno.h>
++
++static TSS_RESULT
++verify_peer(struct tcsd_thread_data *data)
++{
++	ucred_t *uc = NULL;
++	if (getpeerucred(data->sock, &uc)) {
++		LogError("Failed to get peer credential (%s)",
++		    strerror(errno));
++		return TCSERR(TSS_E_TSP_AUTHFAIL);
++	}
++	if (ucred_geteuid(uc) != 0) {
++		LogError("Unauthorized attempt to modify a system key",
++		    strerror(errno));
++		ucred_free(uc);
++		return TCSERR(TSS_E_TSP_AUTHFAIL);
++	}
++	ucred_free(uc);
++	return (TSS_SUCCESS);
++}
++#endif
+ 
+ TSS_RESULT
+ tcs_wrap_RegisterKey(struct tcsd_thread_data *data)
+@@ -38,6 +61,10 @@
+ 	UINT32 cVendorData;
+ 	BYTE *gbVendorData;
+ 	TSS_RESULT result;
++#ifdef SOLARIS
++	if ( (result = verify_peer(data)) != TSS_SUCCESS)
++		return (result);
++#endif
+ 
+ 	if (getData(TCSD_PACKET_TYPE_UINT32, 0, &hContext, 0, &data->comm))
+ 		return TCSERR(TSS_E_INTERNAL_ERROR);
+@@ -99,6 +126,10 @@
+ 	TCS_CONTEXT_HANDLE hContext;
+ 	TSS_UUID uuid;
+ 	TSS_RESULT result;
++#ifdef SOLARIS
++	if ( (result = verify_peer(data)) != TSS_SUCCESS)
++		return (result);
++#endif
+ 
+ 	if (getData(TCSD_PACKET_TYPE_UINT32, 0, &hContext, 0, &data->comm))
+ 		return TCSERR(TSS_E_INTERNAL_ERROR);

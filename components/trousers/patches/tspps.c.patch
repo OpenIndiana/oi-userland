@@ -1,0 +1,55 @@
+--- src/tspi/ps/tspps.c.orig	2011-03-24 13:06:14.607907754 -0700
++++ src/tspi/ps/tspps.c	2011-03-24 13:07:30.668528209 -0700
+@@ -70,9 +70,12 @@
+ 	TSS_RESULT result;
+ 	char *file_name = NULL, *home_dir = NULL;
+ 	struct passwd *pwp;
+-#if (defined (__linux) || defined (linux) || defined(__GLIBC__))
++#if (defined (__linux) || defined (linux) || defined(__GLIBC__) || defined(SOLARIS))
+ 	struct passwd pw;
+ #endif
++#ifdef SOLARIS
++	char pwbuf[PASSWD_BUFSIZE];
++#endif
+ 	struct stat stat_buf;
+ 	char buf[PASSWD_BUFSIZE];
+ 	uid_t euid;
+@@ -94,9 +97,16 @@
+          * in the user's home directory, which may be shared
+          * by multiple systems.
+          *
+-         * The directory path on Solaris is /var/tpm/userps/[EUID]/
++         * The directory path on Solaris is /var/user[USERNAME]/tpm/userps
+          */
+-        rc = snprintf(buf, sizeof (buf), "%s/%d", TSS_USER_PS_DIR, euid);
++
++	pwp = getpwuid_r(euid, &pw, pwbuf, sizeof (pwbuf));
++	if (pwp != NULL) {
++		rc = snprintf(buf, sizeof (buf), "/var/user/%s/tpm/userps",
++		    pwp->pw_name);
++	} else {
++		return TSPERR(TSS_E_INTERNAL_ERROR);
++	}
+ #else
+ 	setpwent();
+ 	while (1) {
+@@ -142,7 +152,7 @@
+ 		if (errno == ENOENT) {
+ 			errno = 0;
+ 			/* Create the user's ps directory if it is not there. */
+-			if ((rc = mkdir(buf, 0700)) == -1) {
++			if ((rc = mkdirp(buf, 0700)) == -1) {
+ 				LogDebugFn("USER PS: Error creating dir: %s: %s", buf,
+ 					   strerror(errno));
+ 				result = TSPERR(TSS_E_INTERNAL_ERROR);
+@@ -157,8 +167,8 @@
+ 
+ 	/* Directory exists or has been created, return the path to the file */
+ #if defined (SOLARIS)
+-	rc = snprintf(buf, sizeof (buf), "%s/%d/%s", TSS_USER_PS_DIR, euid,
+-		      TSS_USER_PS_FILE);
++	rc = snprintf(buf, sizeof (buf), "/var/user/%s/tpm/userps/%s",
++	    pwp->pw_name, TSS_USER_PS_FILE);
+ #else
+ 	rc = snprintf(buf, sizeof (buf), "%s/%s/%s", home_dir, TSS_USER_PS_DIR,
+ 		      TSS_USER_PS_FILE);
