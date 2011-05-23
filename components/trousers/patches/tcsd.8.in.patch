@@ -1,0 +1,76 @@
+--- man/man8/tcsd.8.in	2009-09-08 07:39:30.000000000 -0700
++++ man/man8/tcsd.8.in.new	2010-09-16 08:13:25.613336616 -0700
+@@ -74,12 +74,32 @@
+ the TCS and stays valid across application lifetimes, \fBtcsd\fR restarts and 
+ system resets. Data registered in system PS stays valid until an application 
+ requests that it be removed. User PS files are by default stored as 
+-/var/tpm/user.{pid} and the system PS file by default is /var/tpm/system.data. 
+-The system PS file is initially created when ownership of the TPM is first 
+-taken.
++/var/user/$USERNAME/tpm/userps/user.data and the system PS file by default is
++/var/tpm/system/system.data.  The system PS file is initially created when 
++ownership of the TPM is first taken.
++.PP
++\fB/var/tpm/system/system.data\fR
++.ad
++.RS 4n
++Contains the system PS (persistent storage) data controlled by the TCS.  By default,
++the SRK key is installed in PS and does not require owner authorization to use.  If the
++TPM has previously been provisioned and owner-auth is required to load the SRK,
++then the /var/tpm/system/system.data.auth file should be moved to 
++/var/tpm/system/system.data before starting the TCS (See NOTES).
++.RE
++.sp
++.PP
++\fB/var/tpm/system/system.data.auth\fR
++.ad
++.RS 4n
++This is the default PS data file to use if the TPM has been previously 
++configured to require owner-auth to access the SRK.  Copy this file 
++to /var/tpm/system/system.data prior to starting the TCS if owner-auth is
++needed, otherwise this file can be ignored.
++.RE
+ 
+ .SH "CONFIGURATION"
+-\fBtcsd\fR configuration is stored by default in /etc/tcsd.conf
++\fBtcsd\fR configuration is stored by default in /etc/security/tcsd.conf
+ 
+ .SH "DEBUG OUTPUT"
+ If TrouSerS has been compiled with debugging enabled, the debugging output
+@@ -88,8 +108,9 @@
+ .SH "DEVICE DRIVERS"
+ .PP
+ \fBtcsd\fR is compatible with the IBM Research TPM device driver available
+-from http://www.research.ibm.com/gsal/tcpa and the TPM device driver available
+-from http://sf.net/projects/tmpdd
++from http://www.research.ibm.com/gsal/tcpa and the TPM device driver for 
++Linux available from http://sf.net/projects/tmpdd.  It is also compatible 
++with the TPM device driver for Solaris which is available in the driver/crypto/tpm package.
+ 
+ .SH "CONFORMING TO"
+ .PP
+@@ -98,7 +119,23 @@
+ 
+ .SH "SEE ALSO"
+ .PP
+-\fBtcsd.conf\fR(5)
++\fBtcsd.conf\fR(5), \fBsvcadm\fR(1M), \fBsmf\fR(5)
++
++.SH "NOTES"
++.sp
++.LP
++The \fBtcsd\fR service is managed by the service management facility, \fBsmf\fR(5), under
++the service identifier:
++.sp
++.in +2
++.nf
++svc:/application/security/tcsd:default
++.fi
++.in -2
++.sp
++.LP
++Administrative actions on this service, such as enabling, disabling, or requesting restart, can be
++performed using \fBsvcadm\fR(1M). The service's status can be queried using the \fBsvcs\fR(1) command.
+ 
+ .SH "AUTHOR"
+ Kent Yoder

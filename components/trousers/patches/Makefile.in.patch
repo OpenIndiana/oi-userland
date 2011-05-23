@@ -1,0 +1,30 @@
+--- src/tcsd/Makefile.in.old	Thu Jan 28 13:56:46 2010
++++ src/tcsd/Makefile.in	Wed Mar  3 16:35:23 2010
+@@ -47,7 +47,7 @@
+ mkinstalldirs = $(install_sh) -d
+ CONFIG_CLEAN_FILES =
+ CONFIG_CLEAN_VPATH_FILES =
+-am__installdirs = "$(DESTDIR)$(sbindir)"
++am__installdirs = "$(DESTDIR)$(libdir)"
+ PROGRAMS = $(sbin_PROGRAMS)
+ am_tcsd_OBJECTS = tcsd-svrside.$(OBJEXT) tcsd-tcsd_conf.$(OBJEXT) \
+ 	tcsd-tcsd_threads.$(OBJEXT) tcsd-platform.$(OBJEXT)
+@@ -185,7 +185,7 @@
+ prefix = @prefix@
+ program_transform_name = @program_transform_name@
+ psdir = @psdir@
+-sbindir = @sbindir@
++sbindir = @libdir@
+ sharedstatedir = @sharedstatedir@
+ srcdir = @srcdir@
+ sysconfdir = @sysconfdir@
+@@ -200,7 +200,8 @@
+ tcsd_CFLAGS = -DAPPID=\"TCSD\" -DVAR_PREFIX=\"@localstatedir@\" \
+ 	-DETC_PREFIX=\"@sysconfdir@\" -I${top_srcdir}/src/include \
+ 	$(am__append_1) $(am__append_2)
+-tcsd_LDADD = ${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a -lpthread @CRYPTOLIB@
++tcsd_LDADD = ${top_builddir}/src/tcs/libtcs.a ${top_builddir}/src/tddl/libtddl.a \
++	-lpthread -lbsm -lscf -lresolv @CRYPTOLIB@
+ tcsd_SOURCES = svrside.c tcsd_conf.c tcsd_threads.c platform.c
+ all: all-am
+ 

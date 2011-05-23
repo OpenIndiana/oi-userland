@@ -1,0 +1,22 @@
+--- src/include/tspps.h.old	2009-09-08 07:39:30.000000000 -0700
++++ src/include/tspps.h	2010-09-16 08:09:37.980051068 -0700
+@@ -13,13 +13,17 @@
+ 
+ #define PASSWD_BUFSIZE		4096
+ 
++#ifdef SOLARIS
++#define TSS_USER_PS_DIR		"/var/user/"
++#else
+ #define TSS_USER_PS_DIR		".trousers"
++#endif
+ #define TSS_USER_PS_FILE	"user.data"
+ 
+ TSS_RESULT	   get_file(int *);
+ int		   put_file(int);
+-inline TSS_RESULT  read_data(int, void *, UINT32);
+-inline TSS_RESULT  write_data(int, void *, UINT32);
++TSS_RESULT         read_data(int, void *, UINT32);
++TSS_RESULT         write_data(int, void *, UINT32);
+ UINT32		   psfile_get_num_keys(int);
+ TSS_RESULT	   psfile_get_parent_uuid_by_uuid(int, TSS_UUID *, TSS_UUID *);
+ TSS_RESULT	   psfile_remove_key_by_uuid(int, TSS_UUID *);

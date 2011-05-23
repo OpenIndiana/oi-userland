@@ -1,0 +1,63 @@
+*** src/tddl/tddl.c.old	Fri Dec  5 08:13:11 2008
+--- src/tddl/tddl.c	Fri Dec  5 08:16:20 2008
+@@ -18,13 +18,17 @@
+ 
+ #include "trousers/tss.h"
+ #include "trousers_types.h"
++#ifndef SOLARIS
+ #include "linux/tpm.h"
++#endif
+ #include "tcslog.h"
+ #include "tddl.h"
+ 
+ struct tpm_device_node tpm_device_nodes[] = {
++#ifndef SOLARIS
+ 	{"/dev/tpm0", TDDL_UNDEF, TDDL_UNDEF},
+ 	{"/udev/tpm0", TDDL_UNDEF, TDDL_UNDEF},
++#endif
+ 	{"/dev/tpm", TDDL_UNDEF, TDDL_UNDEF},
+ 	{NULL, 0, 0}
+ };
+@@ -105,8 +109,11 @@
+ 		/* tpm_device_paths is filled out in tddl.h */
+ 		for (i = 0; tpm_device_nodes[i].path != NULL; i++) {
+ 			errno = 0;
+-			if ((fd = open(tpm_device_nodes[i].path, O_RDWR)) >= 0)
++			if ((fd = open(tpm_device_nodes[i].path, O_RDWR)) >= 0) {
++				fprintf(stderr, "Error opening %s: %s\n",
++				    tpm_device_nodes[i].path, strerror(errno));
+ 				break;
++			}
+ 		}
+ 	}
+ 	
+@@ -181,11 +188,13 @@
+ 			/* fall through */
+ 		case TDDL_TRANSMIT_IOCTL:
+ 			errno = 0;
++#ifndef SOLARIS
+ 			if ((sizeResult = ioctl(opened_device->fd, TPMIOC_TRANSMIT, txBuffer)) != -1) {
+ 				opened_device->transmit = TDDL_TRANSMIT_IOCTL;
+ 				break;
+ 			}
+ 			LogWarn("ioctl: (%d) %s", errno, strerror(errno));
++#endif
+ 			LogInfo("Falling back to Read/Write device support.");
+ 			/* fall through */
+ 		case TDDL_TRANSMIT_RW:
+@@ -255,6 +264,7 @@
+ 
+ TSS_RESULT Tddli_Cancel(void)
+ {
++#ifndef SOLARIS
+ 	int rc;
+ 
+ 	if (opened_device->transmit == TDDL_TRANSMIT_IOCTL) {
+@@ -270,4 +280,7 @@
+ 	} else {
+ 		return TDDLERR(TSS_E_NOTIMPL);
+ 	}
++#else
++	return TDDLERR(TSS_E_NOTIMPL);
++#endif /* SOLARIS */
+ }

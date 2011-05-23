@@ -1,0 +1,87 @@
+--- src/trspi/crypto/openssl/hash.c.old	2011-05-09 06:20:09.505021734 -0700
++++ src/trspi/crypto/openssl/hash.c	2011-05-09 06:19:04.603252090 -0700
+@@ -56,45 +56,21 @@
+ TSS_RESULT
+ Trspi_Hash(UINT32 HashType, UINT32 BufSize, BYTE* Buf, BYTE* Digest)
+ {
+-	EVP_MD_CTX md_ctx;
+-	unsigned int result_size;
+-	int rv;
++	Trspi_HashCtx ctx;
++	TSS_RESULT rv;
+ 
+-	switch (HashType) {
+-		case TSS_HASH_SHA1:
+-			rv = EVP_DigestInit(&md_ctx, EVP_sha1());
+-			break;
+-		default:
+-			rv = TSPERR(TSS_E_BAD_PARAMETER);
+-			goto out;
+-			break;
+-	}
++	rv = Trspi_HashInit(&ctx, HashType);
++	if (rv != TSS_SUCCESS)
++		return rv;
+ 
+-	if (rv != EVP_SUCCESS) {
+-		rv = TSPERR(TSS_E_INTERNAL_ERROR);
+-		goto err;
+-	}
+-
+-	rv = EVP_DigestUpdate(&md_ctx, Buf, BufSize);
+-	if (rv != EVP_SUCCESS) {
+-		rv = TSPERR(TSS_E_INTERNAL_ERROR);
+-		goto err;
++	rv = Trspi_HashUpdate(&ctx, BufSize, Buf);
++	if (rv != TSS_SUCCESS) {
++		EVP_MD_CTX_destroy(ctx.ctx);
++		return rv;
+ 	}
++	rv = Trspi_HashFinal(&ctx, Digest);
+ 
+-	result_size = EVP_MD_CTX_size(&md_ctx);
+-	rv = EVP_DigestFinal(&md_ctx, Digest, &result_size);
+-	if (rv != EVP_SUCCESS) {
+-		rv = TSPERR(TSS_E_INTERNAL_ERROR);
+-		goto err;
+-	} else
+-		rv = TSS_SUCCESS;
+-
+-	goto out;
+-
+-err:
+-	DEBUG_print_openssl_errors();
+-out:
+-        return rv;
++	return (rv);
+ }
+ 
+ TSS_RESULT
+@@ -112,7 +88,8 @@
+ 			break;
+ 	}
+ 
+-	if ((ctx->ctx = malloc(sizeof(EVP_MD_CTX))) == NULL)
++	ctx->ctx = EVP_MD_CTX_create();
++	if (ctx->ctx == NULL)
+ 		return TSPERR(TSS_E_OUTOFMEMORY);
+ 
+ 	rv = EVP_DigestInit((EVP_MD_CTX *)ctx->ctx, (const EVP_MD *)md);
+@@ -142,7 +119,7 @@
+ 	rv = EVP_DigestUpdate(ctx->ctx, data, size);
+ 	if (rv != EVP_SUCCESS) {
+ 		DEBUG_print_openssl_errors();
+-		free(ctx->ctx);
++		EVP_MD_CTX_destroy(ctx->ctx);
+ 		ctx->ctx = NULL;
+ 		return TSPERR(TSS_E_INTERNAL_ERROR);
+ 	}
+@@ -164,7 +141,7 @@
+ 	if (rv != EVP_SUCCESS)
+ 		return TSPERR(TSS_E_INTERNAL_ERROR);
+ 
+-	free(ctx->ctx);
++	EVP_MD_CTX_destroy(ctx->ctx);
+ 	ctx->ctx = NULL;
+ 
+ 	return TSS_SUCCESS;
