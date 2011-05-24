@@ -20,27 +20,44 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		DBI
-COMPONENT_VERSION=	1.58
+COMPONENT_NAME=		XML-Simple
+COMPONENT_VERSION=	2.18
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:5f5861728c85b3998eb5a6db3703f46d0fc6faf1
-COMPONENT_ARCHIVE_URL=	http://backpan.perl.org/authors/id/T/TI/TIMB/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~timb/DBI/
+COMPONENT_ARCHIVE_HASH=	sha1:81d38dd9fd955b0322ac64099f2d116c296267d1
+COMPONENT_ARCHIVE_URL=	http://www.cpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk
 
+# man pages go in the common area
+COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
+
+# look in XML::Parser's proto area
+PERL_FLAGS = -I$(COMPONENT_DIR)/../xml-parser/build/prototype/$(MACH)/usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)
+
+
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
+# The tests with perl 5.8.4 are clean.
+# Perl 5.12.3 has lots of failures and issues.
 COMPONENT_TEST_TARGETS = test
 test:		$(TEST_32)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
+# special targets; need xml-parser built and installed first
+../xml-parser/build/5.8.4/.installed ../xml-parser/build/5.12/.installed:
+	(cd ../xml-parser ; $(GMAKE) install)
+
+$(SOURCE_DIR)/.prep:	../xml-parser/build/5.8.4/.installed \
+			../xml-parser/build/5.12/.installed
+
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk

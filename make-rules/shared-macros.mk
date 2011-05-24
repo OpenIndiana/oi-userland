@@ -235,9 +235,29 @@ PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 
 JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
 
-PERL =		/usr/perl5/bin/perl
+# This is the default BUILD version of perl
+# Not necessarily the system's default version, i.e. /usr/bin/perl
+PERL_VERSION =  5.8.4
 
-CCSMAKE =   /usr/ccs/bin/make
+PERL_VERSIONS = 5.8.4 5.12
+
+PERL.5.8.4 =    /usr/perl5/5.8.4/bin/perl
+PERL.5.12 =     /usr/perl5/5.12/bin/perl
+
+PERL =          $(PERL.$(PERL_VERSION))
+
+PERL_ARCH =     $(shell $(PERL) -e 'use Config; print $$Config{archname}')
+# Optimally we should ask perl which C compiler was used but it doesn't
+# result in a full path name.  Only "c" is being recorded
+# inside perl builds while we actually need a full path to
+# the studio compiler.
+#PERL_CC =      $(shell $(PERL) -e 'use Config; print $$Config{cc}')
+PERL_OPTIMIZE = $(shell $(PERL) -e 'use Config; print $$Config{optimize}')
+
+PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
+PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
+
+CCSMAKE =	/usr/ccs/bin/make
 GMAKE =		/usr/gnu/bin/make
 GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1
