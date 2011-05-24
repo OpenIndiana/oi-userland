@@ -21,7 +21,19 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/SUNWpmdbi@1.58,5.11-0.133
-set name=pkg.renamed value=true
+set name=pkg.fmri value=pkg:/library/perl-5/xml-parser@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="XML::Parser - A perl module for parsing XML documents"
+set name=pkg.description value="This module provides ways to parse XML documents. It is built on top of XML::Parser::Expat."
+set name=info.classification value="org.opensolaris.category.2008:Development/Perl"
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-depend fmri=library/perl-5/database@1.58,5.11-0.133 type=require
+# perl 5.8.4
+depend fmri=library/perl-5/xml-parser-584 predicate=runtime/perl-584 \
+    type=conditional
+# perl 5.12
+depend fmri=library/perl-5/xml-parser-512 predicate=runtime/perl-512 \
+    type=conditional
+legacy pkg=SUNWperl-xml-parser \
+	desc="Perl XML::Parser and XML::Simple PERL modules - development files v5.8.4" \
+	name="Perl XML::Parser and XML::Simple PERL modules"

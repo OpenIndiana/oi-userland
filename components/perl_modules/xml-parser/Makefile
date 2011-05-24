@@ -20,8 +20,30 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
+include ../../../make-rules/shared-macros.mk
 
-set name=pkg.fmri value=pkg:/SUNWpmdbi@1.58,5.11-0.133
-set name=pkg.renamed value=true
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-depend fmri=library/perl-5/database@1.58,5.11-0.133 type=require
+COMPONENT_NAME=		XML-Parser
+COMPONENT_VERSION=	2.36
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha1:74acac4f939ebf788d8ef5163cbc9802b1b04bfa
+COMPONENT_ARCHIVE_URL=	http://www.cpan.org/authors/id/M/MS/MSERGEANT/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://search.cpan.org/~msergeant/
+
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/makemaker.mk
+
+# man pages go in the common area
+COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
+
+build:		$(BUILD_32)
+
+install:	$(INSTALL_32)
+
+COMPONENT_TEST_TARGETS = test
+test:		$(TEST_32)
+
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+
+include $(WS_TOP)/make-rules/depend.mk
