@@ -1,0 +1,98 @@
+--- samba-3.0.25/source/configure.in	Mon Apr  9 10:31:00 2007
++++ samba-3.0.25-fix/source/configure.in	Wed Apr 11 02:48:55 2007
+@@ -3299,6 +3299,20 @@
+     with_ldap_support=yes
+     AC_MSG_CHECKING(whether LDAP support is used)
+     AC_MSG_RESULT(yes)
++
++    ################################
++    # Check if the Netscape LDAP SDK
++    AC_CACHE_CHECK([for LDAP_OPT_SIZELIMIT macro],samba_cv_HAVE_LDAP_NSC,[
++    AC_TRY_COMPILE([
++#include <stdio.h>
++#include <ldap.h>],
++    [printf("%s\n", LDAP_OPT_SIZELIMIT);],
++    samba_cv_HAVE_LDAP_NSC=yes,samba_cv_HAVE_LDAP_NSC=no)])
++    if test x"$samba_cv_HAVE_LDAP_NSC" = x"yes"; then
++	AC_DEFINE(HAVE_HAVE_LDAP_NSC,1,
++		[Whether the LDAP API is Netscape SDK])
++    fi
++
+   else
+     if test x"$with_ldap_support" = x"yes"; then
+ 	AC_MSG_ERROR(libldap is needed for LDAP support)
+@@ -3361,15 +3375,25 @@
+     fi
+     ;;
+ 	*)
+-    AC_CHECK_FUNC_EXT(ldap_initialize,$LDAP_LIBS)
++    # Omit the ldap_initialize() test if there is a Netscape SDK
++    # (Mozilla Directory server 5)
++    if test x"$samba_cv_HAVE_LDAP_NSC" = x"no"; then
+ 
+-    if test x"$ac_cv_func_ext_ldap_initialize" != x"yes"; then
+-	if test x"$with_ads_support" = x"yes"; then
+-	    AC_MSG_ERROR(Active Directory support requires ldap_initialize)
+-	elif test x"$with_ads_support" = x"auto"; then
+-	    AC_MSG_WARN(Disabling Active Directory support (requires ldap_initialize))
+-	    with_ads_support=no
++	AC_CHECK_FUNC_EXT(ldap_initialize,$LDAP_LIBS)
++
++	if test x"$ac_cv_func_ext_ldap_initialize" != x"yes"; then
++	    if test x"$with_ads_support" = x"yes"; then
++		AC_MSG_ERROR(Active Directory support requires ldap_initialize)
++	    elif test x"$with_ads_support" = x"auto"; then
++		AC_MSG_WARN(Disabling Active Directory support (requires ldap_in
++itialize))
++		with_ads_support=no
++	    fi
++
+ 	fi
++     else
++	AC_MSG_RESULT(Active Directory support on Netscape LDAP SDK - limited fu
++nctionality?)
+     fi
+     ;;
+ esac
+@@ -3425,6 +3449,19 @@
+   #################################################
+   # check for krb5-config from recent MIT and Heimdal kerberos 5
+   AC_PATH_PROG(KRB5CONFIG, krb5-config)
++
++  #################################################
++  # check if MIT krb5 API is present
++  AC_MSG_CHECKING(for type of kerberos)
++  if $KRB5CONFIG --version | grep -s MIT > /dev/null ; then
++    FOUND_KRB5_MIT=yes
++    AC_MSG_RESULT(yes)
++    AC_DEFINE(HAVE_KRB5_MIT,1,[Whether the krb5 API is MIT])
++  else
++    FOUND_KRB5_MIT=no
++    AC_MSG_RESULT(no)
++  fi
++
+   AC_MSG_CHECKING(for working krb5-config)
+   if test -x "$KRB5CONFIG"; then
+     ac_save_CFLAGS=$CFLAGS
+@@ -3431,10 +3468,17 @@
+     CFLAGS="";export CFLAGS
+     ac_save_LDFLAGS=$LDFLAGS
+     LDFLAGS="";export LDFLAGS
+-    KRB5_LIBS="`$KRB5CONFIG --libs gssapi`"
+-    KRB5_LDFLAGS="`$KRB5CONFIG --libs gssapi | sed s/-lgss.*//`"
+-    KRB5_CFLAGS="`$KRB5CONFIG --cflags | sed s/@INCLUDE_des@//`"
+-    KRB5_CPPFLAGS="`$KRB5CONFIG --cflags | sed s/@INCLUDE_des@//`"
++    if test x"$FOUND_KRB5_MIT" = x"yes"; then
++	KRB5_LIBS="`$KRB5CONFIG --libs | sed s/-lkrb5//`"
++	KRB5_LDFLAGS="-lkrb5 -lgss"
++	KRB5_CFLAGS=""
++	KRB5_CPPFLAGS="`$KRB5CONFIG --cflags`" 
++    else
++	KRB5_LIBS="`$KRB5CONFIG --libs gssapi`"
++	KRB5_LDFLAGS="`$KRB5CONFIG --libs gssapi | sed s/-lgss.*//`"
++	KRB5_CFLAGS="`$KRB5CONFIG --cflags | sed s/@INCLUDE_des@//`"
++	KRB5_CPPFLAGS="`$KRB5CONFIG --cflags | sed s/@INCLUDE_des@//`"
++    fi
+     CFLAGS=$ac_save_CFLAGS;export CFLAGS
+     LDFLAGS=$ac_save_LDFLAGS;export LDFLAGS
+     FOUND_KRB5=yes

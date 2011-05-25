@@ -1,0 +1,109 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+# Correct version of this pkg is $(IPS_COMPONENT_VERSION) -> 3.0.37
+# but people deriving this package from samba does not read PSARC/2009/682.
+# There is no way back. Otherwise the clients will not update to pkg
+# having the release# lower than before.
+# Please see CR 7010973 for detailed description how the legal conditions
+# originally set by LSARC/2006/350 will be kept after update to samba released
+# under GPLv3.
+set name=pkg.fmri value=pkg:/library/samba/libsmbclient@3.5.8,$(BUILD_VERSION)
+set name=pkg.description \
+    value="Mozilla Directory Server (LDAP) 6 C-API (Private interface for Samba)"
+set name=pkg.summary \
+    value="A library that permits GPLv2 applications to manipulate CIFS/SMB network resources"
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Libraries"
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2000/488
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license mozldap.license license="LGPLv2.1 GPLv2"
+
+dir path=etc group=sys
+dir path=etc/sfw
+dir path=etc/sfw/private mode=500
+dir path=usr group=sys
+dir path=usr/include
+dir path=usr/include/samba
+dir path=usr/include/samba/ldap6
+dir path=usr/lib
+dir path=usr/lib/$(MACH64)
+dir path=usr/sfw
+dir path=usr/sfw/include
+dir path=usr/sfw/lib
+dir path=var group=sys
+dir path=var/samba
+dir path=var/samba/locks
+dir path=var/samba/log
+dir path=var/spool
+dir path=var/spool/samba mode=1777
+#
+file path=usr/include/samba/ldap6/disptmpl.h
+file path=usr/include/samba/ldap6/iutil.h
+file path=usr/include/samba/ldap6/lber.h
+file path=usr/include/samba/ldap6/ldap-deprecated.h
+file path=usr/include/samba/ldap6/ldap-extension.h
+file path=usr/include/samba/ldap6/ldap-platform.h
+file path=usr/include/samba/ldap6/ldap-standard.h
+file path=usr/include/samba/ldap6/ldap-to-be-deprecated.h
+file path=usr/include/samba/ldap6/ldap.h
+file path=usr/include/samba/ldap6/ldap_ssl.h
+file path=usr/include/samba/ldap6/ldappr.h
+file path=usr/include/samba/ldap6/ldif.h
+file path=usr/include/samba/ldap6/srchpref.h
+file path=usr/sfw/include/libsmbclient.h
+file usr/lib/$(MACH64)/libldap60.so \
+     path=usr/lib/$(MACH64)/libldap60.so.1
+file usr/lib/$(MACH64)/libldif60.so \
+     path=usr/lib/$(MACH64)/libldif60.so.1
+file usr/lib/$(MACH64)/libprldap60.so \
+     path=usr/lib/$(MACH64)/libprldap60.so.1
+file usr/lib/$(MACH64)/libssldap60.so \
+     path=usr/lib/$(MACH64)/libssldap60.so.1
+file usr/lib/libldap60.so path=usr/lib/libldap60.so.1
+file usr/lib/libldif60.so path=usr/lib/libldif60.so.1
+file usr/lib/libprldap60.so path=usr/lib/libprldap60.so.1
+file usr/lib/libssldap60.so path=usr/lib/libssldap60.so.1
+file usr/sfw/lib/libsmbclient.so path=usr/sfw/lib/libsmbclient.so.0
+#
+link path=usr/lib/$(MACH64)/libldap60.so \
+     target=libldap60.so.1
+link path=usr/lib/$(MACH64)/libldif60.so \
+     target=libldif60.so.1
+link path=usr/lib/$(MACH64)/libprldap60.so \
+     target=libprldap60.so.1
+link path=usr/lib/$(MACH64)/libssldap60.so \
+     target=libssldap60.so.1
+link path=usr/lib/libldap60.so target=libldap60.so.1
+link path=usr/lib/libldif60.so target=libldif60.so.1
+link path=usr/lib/libprldap60.so target=libprldap60.so.1
+link path=usr/lib/libssldap60.so target=libssldap60.so.1
+link path=usr/sfw/lib/libsmbclient.so target=libsmbclient.so.0
+
+legacy	pkg=SUNWmozldapC-SDK \
+	name="Mozilla Directory Server (LDAP) 6 C-API (Private interface for Samba)" \
+	desc="Mozilla Directory Server (LDAP) 6 C-API (Private interface for Samba)"

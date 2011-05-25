@@ -1,0 +1,175 @@
+--- source3/modules/vfs_samfs.c	2010-07-07 10:22:33.756895700 -0700
++++ source3/modules/vfs_samfs.c	2010-07-07 07:13:55.603441200 -0700
+@@ -0,0 +1,172 @@
++/*
++ * Support for offline files with Sun SAM-QFS
++ *
++ * Copyright (C) Dirk Nitschke, 2009
++ *
++ * Modified by Jiri Sasek, 2010
++ * To conform the samba-vfs api
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License as published by
++ * the Free Software Foundation; either version 3 of the License, or
++ * (at your option) any later version.
++ *
++ * This program is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++ * GNU General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public License
++ * along with this program; if not, see <http://www.gnu.org/licenses/>.
++ *
++ */
++
++#include "includes.h"
++/*
++ * Include files for Sun SAM-QFS
++ *
++ */
++#include <pub/stat.h>
++#include <pub/lib.h>
++
++#undef DBGC_CLASS
++#define DBGC_CLASS DBGC_VFS
++
++#define SAMFS_MODULE_NAME "samfs"
++
++NTSTATUS vfs_samfs_init(void);
++
++/*
++ * samfs_is_offline()
++ * check if the local file is offline in the sense of SAM-QFS
++ *
++ * A segmented file is offline if the file's index inode is
++ * offline or at least one of it's segments is offline.
++ *
++ * See sam_stat(3) and sam_segment_stat(3) for details.
++ *
++ * If something goes wrong we assume that the file is offline.
++ */
++static bool samfs_is_offline(struct vfs_handle_struct *handle, const char *path, SMB_STRUCT_STAT *sbuf)
++{
++	struct sam_stat file_info;
++	struct sam_stat *seg_info_ptr;
++	bool offline;
++	int number_of_segments;
++	int result;
++	int i;
++
++	offline = false;
++	if (ISDOT(path) || ISDOTDOT(path)) {
++		return false;
++	}
++
++	/*
++	 * Initialize file_info to be all zero bits
++	 */
++	memset((void *)&file_info, 0, sizeof(struct sam_stat));
++
++	/*
++	 * Stat the file using the regular sam_stat function
++	 */
++	result = sam_stat(path, &file_info, sizeof(struct sam_stat));
++
++	if (result != 0) {
++		DEBUG(10,("samfs_is_offline: cannot sam_stat %s, %s\nAssuming file is offline.\n", \
++				path, strerror(errno)));
++		return true;
++	}
++
++	/*
++	 * Check if file is offline
++	 */
++	if (SS_ISOFFLINE(file_info.attr)) {
++		DEBUG(10,("samfs_is_offline: file %s is offline.\n", path));
++		return true;
++	}
++
++	/*
++	 * Check for segmented file
++	 */
++	if (SS_ISSEGMENT_F(file_info.attr)) {
++		number_of_segments = NUM_SEGS(&file_info);
++		seg_info_ptr = (struct sam_stat *)malloc(number_of_segments *
++						sizeof(struct sam_stat));
++		if (seg_info_ptr != NULL) {
++			/*
++			 * Initialize seg_info_ptr to be all zero bits
++			 */
++			memset((void *)seg_info_ptr, 0, number_of_segments *
++					sizeof(struct sam_stat));
++			/*
++			 * Stat all segments
++			 */
++			result = sam_segment_stat(path, seg_info_ptr,
++					number_of_segments * sizeof(struct sam_stat));
++			if (result != 0) {
++				DEBUG(10,("samfs_is_offline: cannot sam_segment_stat %s, %s\nAssuming file is offline.\n", \
++						path, strerror(errno)));
++				offline = true;
++			}
++			/*
++			 * Loop over segments until we have checked all segments
++			 * or found one which is offline.
++			 */
++			i = 0;
++			while (!offline && (i < number_of_segments)) {
++				if (SS_ISOFFLINE(seg_info_ptr[i].attr)) {
++					DEBUG(10,("samfs_is_offline: file %s has offline segment %d\n", \
++							path, i+1));
++					offline = true;
++				}
++				i++;
++			}
++			SAFE_FREE(seg_info_ptr);
++		} else {
++			DEBUG(10,("samfs_is_offline: cannot malloc for segment stat info %s\nAssuming file is offline.\n", \
++					path));
++			offline = true;
++                }
++	
++	}
++	return offline;
++}
++
++/*
++ * release a file-command to SAM-stagger
++ */
++extern int sam_release(const char *path, const char *command);
++
++/*
++ * samfs_set_offline()
++ *
++ * Release the local file in the sense of SAM-QFS.
++ * See sam_release(3) for details.
++ *
++ */
++static int samfs_set_offline(struct vfs_handle_struct *handle, const char *path)
++{
++	int result;
++
++	result = sam_release(path, "i");
++	if (result != 0) {
++		DEBUG(10,("samfs_set_offline: sam_release %s returned %s\n", \
++				path, strerror(errno)));
++		return -1;
++	}
++	return 0;
++}
++
++/* VFS operations structure */
++
++static struct vfs_fn_pointers samfs_fns = {
++	.is_offline = samfs_is_offline,
++	.set_offline = samfs_set_offline
++};
++
++NTSTATUS vfs_samfs_init(void);
++NTSTATUS vfs_samfs_init(void)
++{
++	return smb_register_vfs(SMB_VFS_INTERFACE_VERSION, SAMFS_MODULE_NAME,
++				&samfs_fns);
++}

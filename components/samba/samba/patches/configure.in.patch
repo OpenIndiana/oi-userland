@@ -1,0 +1,33 @@
+--- source3/configure.in	Mon Jan 18 12:38:09 2010
++++ source3/configure.in	Sat Mar 13 19:19:27 2010
+@@ -3282,6 +3360,22 @@
+     fi
+   fi
+ 
++  if test x$FOUND_KRB5 = x"no"; then
++    #################################################
++    # see if this box has Solaris MIT kerberos implementation
++    AC_MSG_CHECKING(for Solaris MIT kerberos)
++    if test -x "$KRB5CONFIG" && $KRB5CONFIG --version | grep -s Solaris | grep -s MIT > /dev/null ; then
++	FOUND_KRB5=yes
++	KRB5_LIBS="`$KRB5CONFIG --libs | sed s/-lkrb5//`"
++	KRB5_LDFLAGS="-lkrb5 -lgss"
++	KRB5_CFLAGS="`$KRB5CONFIG --cflags`"
++	KRB5_CPPFLAGS="`$KRB5CONFIG --cflags`"
++	AC_MSG_RESULT(yes)
++    else
++      AC_MSG_RESULT(${KRB5CONFIG_VER_S})
++    fi
++  fi
++
+   ac_save_CFLAGS=$CFLAGS
+   ac_save_CPPFLAGS=$CPPFLAGS
+   ac_save_LDFLAGS=$LDFLAGS
+@@ -6313,6 +6353,7 @@
+ SMB_MODULE(vfs_preopen, \$(VFS_PREOPEN_OBJ), "bin/preopen.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_syncops, \$(VFS_SYNCOPS_OBJ), "bin/syncops.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_zfsacl, \$(VFS_ZFSACL_OBJ), "bin/zfsacl.$SHLIBEXT", VFS)
++SMB_MODULE(vfs_samfs, \$(VFS_SAMFS_OBJ), "bin/samfs.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_notify_fam, \$(VFS_NOTIFY_FAM_OBJ), "bin/notify_fam.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_acl_xattr, \$(VFS_ACL_XATTR_OBJ), "bin/acl_xattr.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_acl_tdb, \$(VFS_ACL_TDB_OBJ), "bin/acl_tdb.$SHLIBEXT", VFS)

@@ -1,0 +1,56 @@
+--- source3/configure.in	Mon Jan 18 12:38:09 2010
++++ source3/configure.in	Sat Mar 13 19:19:27 2010
+@@ -3063,6 +3063,20 @@
+     with_ldap_support=yes
+     AC_MSG_CHECKING(whether LDAP support is used)
+     AC_MSG_RESULT(yes)
++
++    ################################
++    # Check if the Netscape LDAP SDK
++    AC_CACHE_CHECK([for LDAP_OPT_SIZELIMIT macro],samba_cv_HAVE_LDAP_NSC,[
++    AC_TRY_COMPILE([
++#include <stdio.h>
++#include <ldap.h>],
++    [printf("%s\n", LDAP_OPT_SIZELIMIT);],
++    samba_cv_HAVE_LDAP_NSC=yes,samba_cv_HAVE_LDAP_NSC=no)])
++    if test x"$samba_cv_HAVE_LDAP_NSC" = x"yes"; then
++	AC_DEFINE(HAVE_HAVE_LDAP_NSC,1,
++		[Whether the LDAP API is Netscape SDK])
++    fi
++
+   else
+     if test x"$with_ldap_support" = x"yes"; then
+ 	AC_MSG_ERROR(libldap is needed for LDAP support)
+@@ -3125,15 +3139,25 @@
+     fi
+     ;;
+ 	*)
+-    AC_CHECK_FUNC_EXT(ldap_initialize,$LDAP_LIBS)
++    # Omit the ldap_initialize() test if there is a Netscape SDK
++    # (Mozilla Directory server 5)
++    if test x"$samba_cv_HAVE_LDAP_NSC" = x"no"; then
+ 
+-    if test x"$ac_cv_func_ext_ldap_initialize" != x"yes"; then
+-	if test x"$with_ads_support" = x"yes"; then
+-	    AC_MSG_ERROR(Active Directory support requires ldap_initialize)
+-	elif test x"$with_ads_support" = x"auto"; then
+-	    AC_MSG_WARN(Disabling Active Directory support (requires ldap_initialize))
+-	    with_ads_support=no
++	AC_CHECK_FUNC_EXT(ldap_initialize,$LDAP_LIBS)
++
++	if test x"$ac_cv_func_ext_ldap_initialize" != x"yes"; then
++	    if test x"$with_ads_support" = x"yes"; then
++		AC_MSG_ERROR(Active Directory support requires ldap_initialize)
++	    elif test x"$with_ads_support" = x"auto"; then
++		AC_MSG_WARN(Disabling Active Directory support (requires ldap_in
++itialize))
++		with_ads_support=no
++	    fi
++
+ 	fi
++     else
++	AC_MSG_RESULT(Active Directory support on Netscape LDAP SDK - limited fu
++nctionality?)
+     fi
+     ;;
+ esac

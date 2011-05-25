@@ -1,0 +1,14 @@
+--- docs-xml/smbdotconf/generate-file-list.sh	Sat Feb 20 01:12:25 2010
++++ docs-xml/smbdotconf/generate-file-list.sh	Mon Jan 18 03:38:09 2010
+@@ -9,7 +9,10 @@
+ cd $DIR
+ 
+ echo "<section xmlns:xi=\"http://www.w3.org/2003/XInclude\">"
+-for I in `find . -mindepth 2 -type f -name '*.xml' | sort -t/ -k3 | xargs`
++
++#for I in `find . -mindepth 2 -type f -name '*.xml' | sort -t/ -k3 | xargs`
++# Remove lines containing just one slash
++for I in `find . -type f -name '*.xml' | grep -v '^[^/]*/[^/]*$' | sort -t/ -k3 | xargs`
+ do 
+ 	echo "<xi:include href='$I' parse='xml'/>"
+ done
