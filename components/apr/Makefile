@@ -60,7 +60,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += (cd $(@D); autoconf);
 APRH=include/apr.h
 $(BUILD_DIR_64)/.installed: COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/diff -D __$(MACH64) $(BUILD_DIR_32)/$(APRH) \
-	  $(BUILD_DIR_64)/$(APRH) > $(PROTO_DIR)/$(APR_PREFIX)/$(APRH); true
+	  $(BUILD_DIR_64)/$(APRH) > $(PROTO_DIR)/$(CONFIGURE_PREFIX)/$(APRH); true
 
 # Documentation is generated in and directly packaged from 32 bit build
 # directory using doxygen.
