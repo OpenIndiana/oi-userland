@@ -1,0 +1,68 @@
+--- lablgtk-2.10.1/src/ml_gobject.c.orig	Wed May 18 09:58:53 2011
++++ lablgtk-2.10.1/src/ml_gobject.c	Wed May 18 10:12:57 2011
+@@ -267,7 +267,7 @@
+ 
+ #define DATA  (val->data[0])
+ 
+-static value g_value_get_variant (GValue *val)
++static value mylocal_g_value_get_variant (GValue *val)
+ {
+     CAMLparam0();
+     CAMLlocal1(tmp);
+@@ -353,9 +353,9 @@
+     CAMLreturn(ret);
+ }
+ 
+-ML_1 (g_value_get_variant, GValue_val, ID)
++ML_1 (mylocal_g_value_get_variant, GValue_val, ID)
+ 
+-static void g_value_set_variant (GValue *val, value arg)
++static void mylocal_g_value_set_variant (GValue *val, value arg)
+ {
+     value tag = Field(arg,0);
+     value data = Field(arg,1);
+@@ -439,7 +439,7 @@
+     return;
+ }
+ 
+-ML_2 (g_value_set_variant, GValue_val, ID, Unit)
++ML_2 (mylocal_g_value_set_variant, GValue_val, ID, Unit)
+ 
+ CAMLprim value ml_g_value_get_nativeint(value arg) {
+     GValue *val = GValue_val(arg);
+@@ -510,7 +510,7 @@
+         pspec = g_object_class_find_property (class, param->name);
+         if (!pspec) failwith ("Gobject.create");
+         g_value_init (&param->value, pspec->value_type);
+-        g_value_set_variant (&param->value, Field(Field(cell,0),1));
++        mylocal_g_value_set_variant (&param->value, Field(Field(cell,0),1));
+         param++;
+       }
+     }
+@@ -533,7 +533,7 @@
+   value ret;
+   g_value_init (&val, tp);
+   g_object_get_property (obj, String_val(prop), &val);
+-  ret = g_value_get_variant (&val);
++  ret = mylocal_g_value_get_variant (&val);
+   g_value_unset (&val);
+   return ret;
+ }
+@@ -544,7 +544,7 @@
+   GType tp = my_g_object_get_property_type(obj, String_val(prop));
+   GValue val = {0};
+   g_value_init (&val, tp);
+-  g_value_set_variant (&val, arg);
++  mylocal_g_value_set_variant (&val, arg);
+   g_object_set_property (obj, String_val(prop), &val);
+   g_value_unset (&val);
+   return Val_unit;
+@@ -587,7 +587,7 @@
+     for (i = 0; i < query.n_params; i++) {
+         g_value_init (&iparams[i+1],
+                       query.param_types[i] & ~G_SIGNAL_TYPE_STATIC_SCOPE);
+-        g_value_set_variant (&iparams[i+1], Field(params,i));
++        mylocal_g_value_set_variant (&iparams[i+1], Field(params,i));
+     }
+     g_signal_emitv (iparams, signal_id, detail, (ret ? GValue_val(ret) : 0));
+     for (i = 0; i < query.n_params + 1; i++)
