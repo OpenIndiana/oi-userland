@@ -1,0 +1,22 @@
+--- source3/Makefile.in.orig	2009-07-03 04:21:14.000000000 -0700
++++ source3/Makefile.in	2009-09-01 07:36:38.949874725 -0700
+@@ -663,6 +663,8 @@
+ VFS_AIXACL2_OBJ = modules/vfs_aixacl2.o modules/vfs_aixacl_util.o modules/nfs4_acls.o
+ VFS_SOLARISACL_OBJ = modules/vfs_solarisacl.o
+ VFS_ZFSACL_OBJ = modules/vfs_zfsacl.o modules/nfs4_acls.o
++VFS_SAMFS_OBJ = modules/vfs_samfs.o
++SAMFS_LIBS = -R/opt/SUNWsamfs/lib -zlazyload -lsam -znolazyload
+ VFS_HPUXACL_OBJ = modules/vfs_hpuxacl.o
+ VFS_IRIXACL_OBJ = modules/vfs_irixacl.o
+ VFS_TRU64ACL_OBJ = modules/vfs_tru64acl.o
+@@ -2573,6 +2574,10 @@
+ 	@echo "Building plugin $@"
+ 	@$(SHLD_MODULE) $(VFS_ZFSACL_OBJ)
+ 
++bin/samfs.@SHLIBEXT@: $(BINARY_PREREQS) $(VFS_SAMFS_OBJ)
++	@echo "Building plugin $@"
++	@$(SHLD_MODULE) $(VFS_SAMFS_OBJ) $(SAMFS_LIBS)
++
+ bin/irixacl.@SHLIBEXT@: $(BINARY_PREREQS) $(VFS_IRIXACL_OBJ)
+ 	@echo "Building plugin $@"
+ 	@$(SHLD_MODULE) $(VFS_IRIXACL_OBJ)

@@ -1,0 +1,52 @@
+--- docs-xml/build/catalog.xml.in-bkp	2011-05-23 11:41:02.207116056 +0200
++++ docs-xml/build/catalog.xml.in	2011-05-23 12:09:22.968664219 +0200
+@@ -2,6 +2,49 @@
+ <!DOCTYPE catalog PUBLIC "-//OASIS//DTD Entity Resolution XML Catalog V1.0//EN" "http://www.oasis-open.org/committees/entity/release/1.0/catalog.dtd">
+ <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
+ 
++<!-- There is obsolete release of the docbook-xml in Solaris so we should
++     download more recent release and rewrite references to it -->
++
++   <delegatePublic
++	publicIdStartString="-//OASIS//ENTITIES DocBook XML"
++	catalog="file:///usr/share/sgml/docbook/xmlcatalog"/>
++
++   <delegatePublic
++	publicIdStartString="-//OASIS//DTD DocBook XML"
++	catalog="file:///usr/share/sgml/docbook/xmlcatalog"/>
++
++   <delegatePublic
++	publicIdStartString="ISO 8879:1986"
++	catalog="file:///usr/share/sgml/docbook/xmlcatalog"/>
++
++   <delegateSystem
++	systemIdStartString="http://www.oasis-open.org/docbook/"
++	catalog="file:///usr/share/sgml/docbook/xmlcatalog"/>
++
++   <delegateURI
++	uriStartString="http://www.oasis-open.org/docbook/"
++	catalog="file:///usr/share/sgml/docbook/xmlcatalog"/>
++
++   <rewriteSystem
++	systemIdStartString="http://docbook.sourceforge.net/release/xsl/@DOCBOOKXSLVER@"
++	rewritePrefix="file:///@DOCBOOKXSLDIR@"/>
++
++   <rewriteURI
++	uriStartString="http://docbook.sourceforge.net/release/xsl/@DOCBOOKXSLVER@"
++	rewritePrefix="file:///@DOCBOOKXSLDIR@"/>
++
++   <rewriteSystem
++	systemIdStartString="http://docbook.sourceforge.net/release/xsl/current"
++	rewritePrefix="file:///@DOCBOOKXSLDIR@"/>
++
++   <rewriteURI
++	uriStartString="http://docbook.sourceforge.net/release/xsl/current"
++	rewritePrefix="file:///@DOCBOOKXSLDIR@"/>
++
++   <rewriteSystem
++	systemIdStartString="http://scrollkeeper.sourceforge.net/dtds/scrollkeeper-omf-1.0"
++	rewritePrefix="file:///usr/share/xml/scrollkeeper/dtds"/>
++
+ <!--  XML Catalog file for SAMBA. -->
+ 
+     <rewriteURI

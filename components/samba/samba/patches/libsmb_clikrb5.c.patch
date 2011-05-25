@@ -1,0 +1,22 @@
+--- source3/libsmb/clikrb5.c-bkp	2010-11-16 06:25:10.974288877 -0800
++++ source3/libsmb/clikrb5.c	2010-11-16 06:44:09.764248834 -0800
+@@ -912,8 +912,17 @@
+ 	}
+ #endif
+ 
+-	retval = krb5_mk_req_extended(context, auth_context, ap_req_options, 
+-				      &in_data, credsp, outbuf);
++	retval = krb5_mk_req_extended(context, auth_context, ap_req_options,
++#if defined(HAVE_SHORT_KRB5_MK_ERROR_INTERFACE)
++				      /* MIT implementation does not use the
++				       * 4-th. parameter (krb5_data *) by the
++				       * same way as Heimdal. Set to NULL .
++				       */
++				      NULL
++#else
++				      &in_data
++#endif
++				      , credsp, outbuf);
+ 	if (retval) {
+ 		DEBUG(1,("ads_krb5_mk_req: krb5_mk_req_extended failed (%s)\n", 
+ 			 error_message(retval)));
