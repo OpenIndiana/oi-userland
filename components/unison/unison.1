@@ -1,0 +1,2233 @@
+'\" t
+.\"
+.TH "UNISON" "1" "03/21/2008" "" ""
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.SH "NAME"
+unison \- File Synchronizer
+.SH "SYNOPSIS"
+.sp
+.nf
+unison [options]
+unison root1 root2 [options]
+unison profilename [options]
+.fi
+.SH "DESCRIPTION"
+.sp
+Unison is a file\-synchronization tool for Unix and Windows. It allows
+two replicas of a collection of files and directories to be stored on
+different hosts (or different disks on the same host), modified
+separately, and then brought up to date by propagating the changes in
+each replica to the other.
+.sp
+Preliminaries
+.sp
+.nf
+Unison can be used with either of the two user interfaces:
+ 1. a straightforward textual interface and
+ 2. a more sophisticated graphical interface
+.fi
+.sp
+The textual interface is convenient for running through the scripts and
+works on dumb terminals. The graphical interface is better for most
+interactive use. For this tutorial, you can use either of the two interfaces.
+If you are invoking Unison through the command line, then type unison in
+the command prompt. You can select either the text or the graphical interface,
+depending upon the type of the interface that you had selected as default
+when the executable was built. You can still choose the text interface even
+if graphical interface is the default by adding \-ui text. The other
+command\-line arguments to both versions are identical.
+.fi
+.sp
+The graphical version can also be run directly by clicking on its
+icon, but this may require a little set\-up (see the section
+"Click\-starting Unison" ). For this tutorial, it is assumed that you are
+using the command line.
+.sp
+Unison can synchronize files and directories on a single machine, or
+between two machines on a network. (The same program runs on both
+machines; the only difference is with the user interface.) If you want a
+single\-machine setup, then call that machine as the CLIENT. If
+you are synchronizing two machines, call them CLIENT and SERVER.
+.sp
+Local Usage
+.sp
+This tutorial lets you know how to get the client machine set up first and
+then how to synchronize two directories on a single machine.
+.sp
+Follow the instructions in the "Installation" section to either
+download or build an executable version of Unison, and to install it
+on your search path. 
+.sp
+Note: If you want to use the textual
+user interface, download the appropriate textui binary. If you
+want the graphical interface\-\-or if you want to use both of the interfaces
+[the gtkui binary actually has both compiled in]\-\-then download the
+gtkui binary.
+.sp
+Create a small test directory a.tmp containing a couple of files
+and/or subdirectories, e.g.,
+.nf
+    mkdir a.tmp
+    touch a.tmp/a a.tmp/b
+    mkdir a.tmp/d
+    touch a.tmp/d/f
+.fi
+.sp
+Copy this directory to b.tmp:
+.nf
+    cp \-r a.tmp b.tmp
+.fi
+.sp
+Synchronize a.tmp and b.tmp. 
+.sp
+Note: Since they are identical, synchronizing them would not propagate
+any changes, but Unison remembers the current state of both
+directories so that it can keep track of the changes.  Type:
+.nf
+    unison a.tmp b.tmp
+.fi
+.sp
+Textual Interface:
+.nf
+  * You should see a message notifying you that all the files are
+    actually equal. Return to the command line.
+.fi
+.sp
+Graphical Interface:
+.nf
+  * You should get a big empty window with a message at the bottom
+    notifying you that all files are identical. Choose the Exit item
+    from the File menu to get back to the command line.
+.fi
+.sp
+Change a.tmp and/or b.tmp file. For example:
+.nf
+     rm a.tmp/a
+     echo "Hello" > a.tmp/b
+     echo "Hello" > b.tmp/b
+     date > b.tmp/c
+     echo "Hi there" > a.tmp/d/h
+     echo "Hello there" > b.tmp/d/h
+.fi
+.sp
+Run Unison again:
+.nf
+    unison a.tmp b.tmp
+.fi
+.sp
+User interface displays only the files that have
+changed. If a file has been modified in a single replica, it is
+displayed with an arrow indicating the direction that the change
+needs to be propagated. For example,
+.nf
+              <\-\-\-  new file   c  [f]
+.fi
+.sp
+indicates that the file c has been modified only in the second
+replica, and that the default action is therefore to propagate the new
+version to the first replica. To follow Unison's recommendation, press
+"f" at the prompt.
+.sp
+If both replicas are modified and their contents are different, then
+the changes that are in conflict: <\-?\-> are displayed to indicate that
+Unison needs guidance on which replica should override the other.
+.nf
+  new file  <\-?\->  new file   d/h  []
+.fi
+.sp
+By default, neither version is propagated and both replicas
+remains as they are.
+.sp
+If both replicas have been modified but their new contents are the
+same as that of the file b, then no propagation is necessary and
+nothing is shown. Unison note downs that the file is up to date.
+.sp
+These display conventions are used by both of the user
+interfaces. The only difference lies in the way in which Unison's
+default actions are either accepted or overriden by the user.
+.sp
+Textual Interface:
+.sp
+.nf
+  * The status of each modified file is displayed. When the
+    copies of a file in the two replicas are not identical, the user
+    interface asks for the instructions to propagate the
+    changes. If there is a need of any default action, as indicated by
+    an arrow, you can press Return to go to the next changed file. If you
+    want to do change this file, press "<" or ">" to
+    force the change to propagate from right to left or from left
+    to right, or else press "/" to skip this file and leave both
+    replicas alone. When it reaches the end of the list of modified
+    files, Unison prompts you one more time whether it should proceed
+    with the updates that have been selected.
+    When Unison stops to wait for input from the user, pressing "?"
+    gives a list of possible responses and their meanings.
+.fi
+.sp
+Graphical Interface:
+.sp
+.nf
+  * The main window shows all the files that have been modified in
+    either a.tmp or b.tmp. To override a default action or to select
+    an action in the case when there is no default, select the
+    file, either by clicking on its name or by using the up\- and
+    down\-arrow keys. Press either the left\-arrow or "<" key to
+    cause the version in b.tmp to propagate to a.tmp or the
+    right\-arrow or ">" key which makes the a.tmp version to override
+    b.tmp.
+    Every keyboard command can also be invoked from the menus at the
+    top of the user interface. Conversely, each menu item is
+    annotated with its keyboard equivalent, if it has one.
+    When you finish setting the directions for propagating the
+    changes as shown in the main window, click "Go" button to set
+    them in motion. A check sign is be displayed next to each
+    filename when the file has been dealt with.
+.fi
+Remote Usage
+.sp
+.sp
+This section lets you know how to set up the Unison to synchronize replicas on two different
+machines.
+.sp
+Follow the instructions in the Installation section to download or
+build an executable version of Unison on the server machine, and
+install it somewhere on your search path. 
+Note: It does not matter whether
+you install the textual or graphical version, since the copy of Unison
+on the server does not need to display any user interface.
+.sp
+It is important that the version of Unison installed on the server
+machine is the same as that of the client machine.
+But some flexibility on the version of Unison at the client side can
+be achieved by using the \-addversionno option; see the "Preferences" section.
+.sp
+Unison provides two methods for
+communicating between the client and the server:
+.nf
+  * Remote shell method: To use this method, you must have some way of
+    invoking remote commands on the server from the client's command
+    line, using a facility such as ssh. This method is more convenient
+    since there is no need to manually start a "unison server"
+    process on the server. Remote shell method is secure when you use
+    ssh.
+  * Socket method: This method requires TCP
+    packets from the client to the server and back. A draconian
+    firewall can prevent this process, but it works in all the other cases.
+.fi
+.sp
+Decide which of these you want to try, and continue with the section
+"Remote Shell Method" or the section "Socket Method" , as appropriate.
+.sp
+Remote Shell Method
+.sp
+.sp
+The standard remote shell facility on Unix systems is ssh, which
+provides the same functionality as the older rsh but much better
+security. Ssh is available at ftp://ftp.cs.hut.fi/pub/ssh/;
+up\-to\-date binaries for some architectures can also be found at
+ftp://ftp.faqs.org/ssh/contrib. See section [1]A.2 for installation
+instructions for the Windows version.
+.sp
+Running ssh requires coordination between the client and server
+machines to establish that the client is allowed to invoke commands on
+the server. Refer to the ssh documentation for information
+on how to set this up. The examples in this section use ssh, but you
+can substitute rsh for ssh if you wish.
+.sp
+First, test whether you can invoke Unison on the server from the client.
+by typing the following
+.nf
+     ssh remotehostname unison \-version
+.fi
+.sp
+This prints the same version information as running
+.nf
+     unison \-version
+.fi
+.sp
+locally on the client. If remote execution fails, it means that there is a
+problem with the ssh setup such as the denial of the permission. It can
+also fail when the search path that is used when executing commands on
+the server does not contain the unison executable. For example: command not
+found.
+.sp
+Create a test directory a.tmp in your home directory on the client
+machine.
+.sp
+Test that the local unison client can start and connect to the remote
+server. Type
+.nf
+       unison \-testServer a.tmp ssh://remotehostname/a.tmp
+.fi
+.sp
+Enter your home directory with the help of cd command.Type:
+.nf
+       unison a.tmp ssh://remotehostname/a.tmp
+.fi
+.sp
+The result should be that the entire directory a.tmp is propagated
+from the client to your home directory on the server.
+.sp
+After finishing the first synchronization, change a few files and try
+synchronizing again. You should see similar results as in the local
+case.
+.sp
+If your user name on the server is not the same as on the client, you
+need to specify it on the command line:
+.nf
+       unison a.tmp ssh://username@remotehostname/a.tmp
+.fi
+.sp
+Notes:
+.nf
+  * If you want to put a.tmp some place other than your home directory
+    on the remote host, you can give an absolute path for it by adding
+    an extra slash between remotehostname and the beginning of the
+    path:
+       unison a.tmp ssh://remotehostname//absolute/path/to/a.tmp
+  * You can give an explicit path for the unison executable on the
+    server by using the command\-line option "\-servercmd
+    /full/path/name/of/unison" or adding
+    "servercmd=/full/path/name/of/unison" to your profile. See the
+    Profile section for more information. Similarly, you can specify an
+    explicit path for the ssh program using the "\-sshcmd" option.
+    Extra arguments can be passed to ssh by setting the \-sshargs
+    preference.
+.fi
+.sp
+Socket Method
+.sp
+.sp
+Warning: The socket method is insecure: not only are the texts of
+your changes transmitted over the network in unprotected form, it
+is also possible for anyone in the world to connect to the server
+process and read out the contents of your filesystem! 
+To do this they must understand the protocol that Unison uses to
+communicate between client and server, but all they need for this
+is a copy of the Unison sources. The socket method is provided
+only for expert users with specific needs. Everyone else should use
+the ssh method.
+.sp
+To run Unison over a socket connection, you must start a Unison daemon
+process on the server. This process runs continuously, waiting for
+connections over a given socket from client machines running Unison
+and processing their requests in turn.
+.sp
+Type the following to tart the daemon
+.nf
+    unison \-socket NNNN
+.fi
+.sp
+on the server machine, where NNNN is the socket number that the daemon
+should listen on for connections from clients. NNNN can be any large
+number that is not being used by some other program; if NNNN is
+already in use, Unison exits with an error message. Note that
+paths specified by the client is interpreted as relative to the
+directory in which you start the server process. This behavior is
+different from that of the ssh case, where the path is relative to your home
+directory on the server.
+.sp
+Create a test directory a.tmp in your home directory on the client
+machine. Type:
+.nf
+    unison a.tmp socket://remotehostname:NNNN/a.tmp
+.fi
+.sp
+The result should be that the entire directory a.tmp is propagated
+from the client to the server (a.tmp is be created on the server in
+the directory that the server was started from). After finishing the
+first synchronization, change a few files and try synchronizing again.
+You should see similar results as in the local case.
+.sp
+Since the socket method is not used by many people, its functionality
+is rather limited. For example, the server can only deal with one
+client at a time.
+.sp
+Using Unison for All Your Files
+.sp
+.sp
+Once you are comfortable with the basic operation of Unison, you may
+find it easy to use it regularly to synchronize your commonly
+used files. There are several possible ways to do this:
+.nf
+ 1. Synchronize your whole home directory, using the Ignore facility
+    to avoid synchronizing temporary files and others that belong to
+    a single host. See the Ignore section to find more
+    information.
+ 2. Create a subdirectory called shared in your home directory on each
+    host, and put all the files you want to synchronize into this
+    directory.
+ 3. Create a subdirectory called shared in your home directory on each
+    host, and put links to all the files you want to synchronize into
+    this directory. Use the follow preference to make Unison treat
+    these links as transparent. See the Symbolic Links for more information. 
+ 4. Make your home directory the root of the synchronization, but specify
+    to synchronize only some of the files and subdirectories
+    within it on any given run. This can be accomplished by using the
+    \-path switch on the command line:
+    unison /home/username ssh://remotehost//home/username \-path shared
+    The \-path option can be used as many times as needed, to
+    synchronize several files or subdirectories:
+    unison /home/username ssh://remotehost//home/username \\
+       \-path shared \\
+       \-path pub \\
+       \-path .netscape/bookmarks.html
+    These \-path arguments can also be put in your preference file. See
+    the section "Preferences" for an example.
+.fi
+.sp
+You may find that you need to maintain one or more profiles 
+on one of the hosts that they synchronize, since Unison is
+always initiated from this host. For example, if you are synchronizing
+a laptop with a fileserver, you can run Unison on the
+laptop. This is different from the usual situation with
+asymmetric mirroring programs like rdist, where the mirroring
+operation typically needs to be initiated from the machine with the
+most recent changes. The section "Profile" covers the syntax of Unison
+profiles, together with some sample profiles.
+.sp
+Tips on improving Unison's performance can be found on the
+Frequently Asked Questions page
+(http://www.cis.upenn.edu/~bcpierce/unison/faq.html).
+.sp
+Using Unison to Synchronize More Than Two Machines
+.sp
+.sp
+Unison is designed for synchronizing pairs of replicas. However, it is
+possible to use it to keep larger groups of machines in synchronization by
+performing multiple pairwise synchronizations.
+.sp
+If you need to do this, the most reliable way to set things up is to
+organize the machines into a star topology, with one machine
+designated as the hub and the other as spokes. Each spoke
+machine synchronizes only with the hub. The advantage of the star
+topology is that it eliminates the possibility of confusing spurious
+conflicts that arises from the fact that a separate archive is maintained
+by Unison for every pair of hosts that it synchronizes.
+.sp
+Going Further
+.sp
+.sp
+On\-line documentation for the various features of Unison can be
+obtained either by typing
+.nf
+     unison \-doc topics
+.fi
+.sp
+at the command line, or by selecting the Help menu in the graphical
+user interface. The same information is also available in a typeset
+User's Manual (HTML or PostScript format) through
+http://www.cis.upenn.edu/~bcpierce/unison.
+.sp
+If you use Unison regularly, you should subscribe to one of the
+mailing lists, to receive announcements of new versions. See the
+section "Mailing Lists" .
+.sp
+Basic Concepts
+.sp
+.sp
+To understand how Unison works, it is necessary to discuss a few
+straightforward concepts. These concepts are developed more rigorously
+and at more length in a number of papers, available at
+http://www.cis.upenn.edu/~bcpierce/papers. But the informal
+presentation here should be enough for most users.
+.sp
+Roots
+.sp
+.sp
+A replica's root tells Unison where to find a set of files to be
+synchronized, either on the local machine or on a remote host. For
+example,
+.nf
+   relative/path/of/root
+.fi
+.sp
+specifies a local root relative to the directory where Unison is
+started, while
+.nf
+   /absolute/path/of/root
+.fi
+.sp
+specifies a root relative to the top of the local filesystem,
+independent of where Unison is running. Remote roots can begin with
+ssh://, rsh:// to indicate that the remote server should be started
+with rsh or ssh:
+.nf
+   ssh://remotehost//absolute/path/of/root
+   rsh://user@remotehost/relative/path/of/root
+.fi
+.sp
+If the remote server is already running in the socket mode, then the
+syntax
+.nf
+   socket://remotehost:portnum//absolute/path/of/root
+   socket://remotehost:portnum/relative/path/of/root
+.fi
+.sp
+is used to specify the hostname and the port that the client Unison
+should use to contact it.
+.sp
+The syntax for roots is based on that of URIs described in RFC 2396.
+The full grammar is:
+.sp
+.nf
+replica ::= [protocol:]//[user@][host][:port][/path]
+         |  path
+.fi
+.sp
+.nf
+protocol ::= file
+          |  socket
+          |  ssh
+          |  rsh
+.fi
+.sp
+.nf
+user ::= [\-_a\-zA\-Z0\-9]+
+.fi
+.sp
+.nf
+host ::= [\-_a\-zA\-Z0\-9.]+
+.fi
+.sp
+.nf
+port ::= [0\-9]+
+.fi
+.sp
+When path is given without any protocol prefix, the protocol is
+assumed to be file:. Under Windows, it is possible to synchronize with
+a remote directory using the file: protocol over the Windows Network
+Neighborhood. For example,
+.nf
+    unison foo //host/drive/bar
+.fi
+.sp
+synchronizes the local directory foo with the directory drive:\\bar on
+the machine host, provided that host is accessible via Network
+Neighborhood. When the file: protocol is used in this way, there is no
+need for a Unison server to be running on the remote host. However,
+running Unison this way is only a good idea if the remote host is
+reached by a very fast network connection, since the full contents of
+every file in the remote replica have to be transferred to the
+local machine to detect updates.
+.sp
+The names of roots are canonized by Unison before it uses them to
+compute the names of the corresponding archive files, so
+//saul//home/bcpierce/common and //saul.cis.upenn.edu/common is
+recognized as the same replica under different names.
+.sp
+Paths
+.sp
+.sp
+A path refers to a point within a set of files being synchronized; it
+is specified relative to the root of the replica.
+.sp
+Formally, a path is just a sequence of names, separated by /. Note
+that the path separator character is always a forward slash, no matter
+what operating system Unison is running on. Forward slashes are
+converted to backslashes as necessary when paths are converted to
+filenames in the local filesystem on a particular host. (For example,
+suppose if you run Unison on a Windows system, synchronizing the
+local root c:\\pierce with the root
+ssh://saul.cis.upenn.edu/home/bcpierce on a Unix server. Then the path
+current/todo.txt refers to the file c:\\pierce\\current\\todo.txt on the
+client and /home/bcpierce/current/todo.txt on the server.)
+.sp
+The empty path (i.e., the empty sequence of names) denotes the whole
+replica. Unison displays the empty path as "[root]."
+.sp
+If p is a path and q is a path beginning with p, then q is said to be
+a descendant of p. (Each path is also a descendant of itself.)
+.sp
+What is an Update?
+.sp
+.sp
+The contents of a path p in a particular replica could be a file, a
+directory, a symbolic link, or absent (if p does not refer to anything
+at all in that replica). More specifically:
+.nf
+  * If p refers to an ordinary file, then the contents of p are the
+    actual contents of this file (a string of bytes) plus the current
+    permission bits of the file.
+  * If p refers to a symbolic link, then the contents of p are just
+    the string specifying where the link points.
+  * If p refers to a directory, then the contents of p are just the
+    token "DIRECTORY" plus the current permission bits of the
+    directory.
+  * If p does not refer to anything in this replica, then the contents
+    of p are the token "ABSENT."
+.fi
+.sp
+Unison keeps a record of the contents of each path after each
+successful synchronization of that path (i.e., it remembers the
+contents at the last moment when they were the same in the two
+replicas).
+.sp
+This means that a path is updated (in some replica) if its current
+contents are different from its contents the last time it was
+successfully synchronized. Note that whether a path is updated has
+nothing to do with its last modification time\-\-Unison considers only
+the contents when determining whether an update has occurred. This
+means that touching a file without changing its contents will not be
+recognized as an update. A file can even be changed several times and
+then changed back to its original contents; as long as Unison is only
+run at the end of this process, no update is be recognized.
+.sp
+What Unison actually calculates is a close approximation to this
+definition; see the section "Caveats and Shortcomings" .
+.sp
+What is a Conflict?
+.sp
+.sp
+A path is said to be conflicting if the following conditions all hold:
+.nf
+ 1. it has been updated in one replica,
+ 2. it or any of its descendants has been updated in the other
+    replica, and
+ 3. its contents in the two replicas are not identical.
+.fi
+.sp
+Reconciliation
+.sp
+.sp
+Unison operates in several distinct stages:
+.nf
+ 1. On each host, it compares its archive file (which records the
+    state of each path in the replica when it was last synchronized)
+    with the current contents of the replica, to determine which paths
+    have been updated.
+ 2. It checks for "false conflicts" \-\- paths that have been updated on
+    both replicas, but whose current values are identical. These paths
+    are silently marked as synchronized in the archive files in both
+    replicas.
+ 3. It displays all the updated paths to the user. For updates that do
+    not conflict, it suggests a default action (propagating the new
+    contents from the updated replica to the other). Conflicting
+    updates are just displayed. The user is given an opportunity to
+    examine the current state of affairs, change the default actions
+    for nonconflicting updates, and choose actions for conflicting
+    updates.
+ 4. It performs the selected actions, one at a time. Each action is
+    performed by first transferring the new contents to a temporary
+    file on the receiving host, then atomically moving them into
+    place.
+ 5. It updates its archive files to reflect the new state of the
+    replicas.
+.fi
+.sp
+Invariants
+.sp
+.sp
+Given the importance and delicacy of the job that it performs, it is
+important to understand both what a synchronizer does under normal
+conditions and what can happen under unusual conditions such as system
+crashes and communication failures.
+.sp
+Unison is careful to protect both its internal state and the state of
+the replicas at every point in this process. Specifically, the
+following guarantees are enforced:
+.nf
+  * At every moment, each path in each replica has either (1) its
+    original contents (i.e., no change at all has been made to this
+    path), or (2) its correct final contents (i.e., the value that the
+    user expected to be propagated from the other replica).
+  * At every moment, the information stored on disk about Unison's
+    private state can be either (1) unchanged, or (2) updated to
+    reflect those paths that have been successfully synchronized.
+.fi
+.sp
+The upshot is that it is safe to interrupt Unison at any time, either
+manually or accidentally. [Caveat: the above is almost true there are
+occasionally brief periods where it is not (and, because of
+shortcoming of the Posix filesystem API, cannot be); in particular,
+when it is copying a file onto a directory or vice versa, it must
+first move the original contents out of the way. If Unison gets
+interrupted during one of these periods, some manual cleanup may be
+required. In this case, a file called DANGER.README is left in
+your home directory, containing information about the operation that
+was interrupted. The next time you try to run Unison, it notices
+this file and warn you about it.]
+.sp
+If an interruption happens while it is propagating updates, then there
+may be some paths for which an update has been propagated but which
+have not been marked as synchronized in Unison's archives. This is no
+problem: the next time Unison runs, it detects changes to these
+paths in both replicas, notice that the contents are now equal, and
+mark the paths as successfully updated when it writes back its private
+state at the end of this run.
+.sp
+If Unison is interrupted, it may sometimes leave temporary working
+files (with suffix .tmp) in the replicas. It is safe to delete these
+files. Also, if the backups flag is set, Unison leaves around old
+versions of files that it overwrites, with names like
+file.0.unison.bak. These can be deleted safely when they are no longer
+wanted.
+.sp
+Unison is not bothered by clock skew between the different hosts on
+which it is running. It only performs comparisons between timestamps
+obtained from the same host, and the only assumption it makes about
+them is that the clock on each system always runs forward.
+.sp
+If Unison finds that its archive files have been deleted (or that the
+archive format has changed and they cannot be read, or that they do not
+exist because this is the first run of Unison on these particular
+roots), it takes a conservative approach: it behaves as though the
+replicas had both been completely empty at the point of the last
+synchronization. The effect of this is that, on the first run, files
+that exist in only one replica will be propagated to the other, while
+files that exist in both replicas but are unequal will be marked as
+conflicting.
+.sp
+Touching a file without changing its contents should never affect
+whether or not Unison does an update. (When running with the fastcheck
+preference set to true\-\-the default on Unix systems\-\-Unison uses file
+modtimes for a quick first pass to tell which files have definitely
+not changed; then, for each file that might have changed, it computes
+a fingerprint of the file's contents and compares it against the
+last\-synchronized contents. Also, the \-times option allows you to
+synchronize file times, but it does not cause identical files to be
+changed; Unison modifies the file times.)
+.sp
+It is safe to "brainwash" Unison by deleting its archive files on both
+replicas. The next time it runs, it assumes that all the files it
+sees in the replicas are new.
+.sp
+It is safe to modify files while Unison is working. If Unison
+discovers that it has propagated an out\-of\-date change, or that the
+file it is updating has changed on the target replica, it indicates
+a failure signal for that file. Run Unison again to propagate the latest
+change.
+.sp
+Changes to the ignore patterns from the user interface (e.g., using
+the `i' key) are immediately reflected in the current profile.
+.sp
+Caveats and Shortcomings
+.sp
+.sp
+Here are some things to be careful of when using Unison.
+.nf
+  * In the interests of speed, the update detection algorithm may
+    (depending on which OS architecture that you run Unison on)
+    actually use an approximation to the definition given in the
+    section "What is an Update?" .
+    In particular, the Unix implementation does not compare the actual
+    contents of files to their previous contents, but simply looks at
+    each file's inode number and modtime; if neither of these have
+    changed, then it concludes that the file has not been changed.
+    Under normal circumstances, this approximation is safe, in the
+    sense that it may sometimes detect "false updates" will never miss
+    a real one. However, it is possible to fool it, for example by
+    using retouch to change a file's modtime back to a time in the
+    past.
+  * If you synchronize between a single\-user filesystem and a shared
+    Unix server, you should pay attention to your permission bits: by
+    default, Unison synchronizes permissions verbatim, which may
+    leave group\-writable files on the server that could be written
+    over by a lot of people.
+    You can control this by setting your umask on both computers to
+    something like 022, masking out the "world write" and "group
+    write" permission bits.
+    Unison does not synchronize the setuid and setgid bits, for
+    security.
+  * The graphical user interface is single\-threaded. This means that
+    if Unison is performing some long\-running operation, the display
+    is not repainted until it finishes. It is recommended not to try
+    anything with the user interface while Unison is in the
+    middle of detecting changes or propagating files.
+  * Unison does not understand hard links.
+  * It is important to be a little careful when renaming directories
+    containing "ignore"d files.
+    For example, suppose Unison is synchronizing directory A between
+    the two machines called the "local" and the "remote" machine;
+    suppose directory A contains a subdirectory D; and suppose D on
+    the local machine contains a file or subdirectory P that matches
+    an ignore directive in the profile used to synchronize. Thus path
+    A/D/P exists on the local machine but not on the remote machine.
+    If D is renamed to D' on the remote machine, and this change is
+    propagated to the local machine, all such files or subdirectories
+    P are deleted. This is because Unison sees the rename as a
+    delete and a separate create: it deletes the old directory
+    (including the ignored files) and creates a new one (not including
+    the ignored files, since they are completely invisible to it).
+  * Unison does not support synchronization of ACL and extended file attributes.
+.fi
+.sp
+Running Unison
+.sp
+.sp
+There are several ways to start Unison.
+.nf
+  * Typing "unison profile" on the command line. Unison looks for
+    a file profile.prf in the .unison directory. If this file does not
+    specify a pair of roots, Unison prompts for them and add them
+    to the information specified by the profile.
+  * Typing "unison profile root1 root2" on the command line. In this
+    case, Unison uses a profile, which does not contain any root
+    directives.
+  * Typing "unison root1 root2" on the command line. This has the same
+    effect as typing "unison default root1 root2."
+  * Typing just "unison" (or invoking Unison by clicking on a desktop
+    icon). In this case, Unison asks for the profile to use for
+    synchronization (or create a new one, if necessary).
+.fi
+.sp
+The .unison Directory
+.sp
+.sp
+Unison stores a variety of information in a private directory on each
+host. If the environment variable UNISON is defined, then its value
+is used as the name of this directory. If UNISON is not defined,
+then the name of the directory depends on which operating system you
+are using. In Unix, the default is to use $HOME/.unison. In Windows,
+if the environment variable USERPROFILE is defined, then the directory
+will be $USERPROFILE\\.unison; otherwise if HOME is defined, it will be
+$HOME\\.unison; otherwise, it will be c:\\.unison.
+.sp
+The archive file for each replica is found in the .unison directory on
+that replica's host. Profiles (described below) are always taken from
+the .unison directory on the client host.
+.sp
+Note that Unison maintains a completely different set of archive files
+for each pair of roots.
+.sp
+It is not recommended to synchronize the whole .unison directory, as this
+involves frequent propagation of large archive files. It should be
+safe to do it, though, if you really want to. Synchronizing just the
+profile files in the .unison directory is definitely OK.
+.sp
+Archive Files
+.sp
+.sp
+The name of the archive file on each replica is calculated from
+.nf
+  * the canonical names of all the hosts (short names like saul are
+    converted into full addresses like saul.cis.upenn.edu),
+  * the paths to the replicas on all the hosts (again, relative
+    pathnames, symbolic links, etc. are converted into full, absolute
+    paths), and
+  * an internal version number that is changed whenever a new Unison
+    release changes the format of the information stored in the
+    archive.
+.fi
+.sp
+This method should work well for most users. However, it is
+occasionally useful to change the way archive names are generated.
+Unison provides two ways of doing this.
+.sp
+The function that finds the canonical hostname of the local host
+(which is used, for example, in calculating the name of the archive
+file used to remember which files have been synchronized) normally
+uses the gethostname operating system call. However, if the
+environment variable UNISONLOCALHOSTNAME is set, its value will be
+used instead. This makes it easier to use Unison in situations where a
+machine's name changes frequently (e.g., because it is a laptop and
+gets moved around a lot).
+.sp
+A more powerful way of changing archive names is provided by the
+rootalias preference. The preference file may contain any number of
+lines of the form:
+.nf
+ rootalias = //hostnameA//path\-to\-replicaA \-> //hostnameB//path\-to\-replicaB
+.fi
+.sp
+When calculating the name of the archive files for a given pair of
+roots, Unison replaces any root that matches the left\-hand side of any
+rootalias rule by the corresponding right\-hand side.
+.sp
+So, if you need to relocate a root on one of the hosts, you can add a
+rule of the form:
+.nf
+ rootalias = //new\-hostname//new\-path \-> //old\-hostname//old\-path
+.fi
+.sp
+Warning: The rootalias option is dangerous and should only be used if
+you are sure that you know what you are doing. In particular, it should only
+be used if you are positive that either (1) both the original root and
+the new alias refer to the same set of files, or (2) the files have
+been relocated so that the original name is now invalid and will never
+be used again. (If the original root and the alias refer to different
+sets of files, Unison's update detector could get confused.) After
+introducing a new rootalias, it is a good idea to run Unison a few
+times interactively (with the batch flag off, etc.) and carefully
+check that things look reasonable\-\-in particular, that update
+detection is working as expected.
+Preferences
+.sp
+.sp
+Many details of Unison's behavior are configurable by user\-settable
+"preferences."
+.sp
+Some preferences are boolean\-valued; these are often called flags.
+Others take numeric or string arguments, indicated in the preferences
+list by n or xxx. Most of the string preferences can be given several
+times; the arguments are accumulated into a list internally.
+.sp
+There are two ways to set the values of preferences: temporarily, by
+providing command\-line arguments to a particular run of Unison, or
+permanently, by adding commands to a profile in the .unison directory
+on the client host. The order of preferences (either on the command
+line or in preference files) is not significant. On the command line,
+preferences and other arguments (the profile name and roots) can be
+intermixed in any order.
+.sp
+To set the value of a preference p from the command line, add an
+argument \-p (for a boolean flag) or \-p n or \-p xxx (for a numeric or
+string preference) anywhere on the command line. To set a boolean flag
+to false on the command line, use \-p=false.
+.sp
+Here are all the preferences supported by Unison. This list can be
+obtained by typing unison \-help.
+.sp
+.SH "USAGE: UNISON [OPTIONS]"
+.sp
+.nf
+or unison root1 root2 [options]
+or unison profilename [options]
+.fi
+.SH "OPTIONS:"
+.sp
+.nf
+  \-addprefsto xxx     file to add new prefs to
+  \-addversionno       add version number to name of unison executable on server
+  \-auto               automatically accept default actions
+  \-backup xxx         add a pattern to the backup list
+  \-backupcurrent xxx  add a pattern to the backupcurrent list
+  \-backupcurrentnot xxx  add a pattern to the backupcurrentnot list
+  \-backupdir xxx      Directory for storing centralized backups
+  \-backuplocation xxx  where backups are stored ('local' or 'central')
+  \-backupnot xxx      add a pattern to the backupnot list
+  \-backupprefix xxx   prefix for the names of backup files
+  \-backups            keep backup copies of all files (see also 'backup')
+  \-backupsuffix xxx   a suffix to be added to names of backup files
+  \-batch              batch mode: ask no questions at all
+  \-confirmbigdeletes      request confirmation for whole\-replica deletes
+  \-confirmmerge       ask for confirmation before commiting results of a merge
+  \-contactquietly      Suppress the 'contacting server' message during startup
+  \-debug xxx          debug module xxx ('all' \-> everything, 'verbose' \-> more)
+  \-doc xxx            show documentation ('\-doc topics' lists topics)
+  \-dumbtty            do not try to change terminal settings in text UI
+  \-fastcheck xxx      do fast update detection (`true', `false', or `default')
+  \-follow xxx         add a pattern to the follow list
+  \-force xxx          force changes from this replica to the other
+  \-forcepartial xxx   add a pattern to the forcepartial list
+  \-group              synchronize group
+  \-height n           height (in lines) of main window in graphical interface
+  \-host xxx           bind the socket to this host name in server socket mode
+  \-ignore xxx         add a pattern to the ignore list
+  \-ignorecase xxx     ignore upper/lowercase in filenames (`true', `false', or
+`default')
+  \-ignorelocks        ignore locks left over from previous run (dangerous!)
+  \-ignorenot xxx      add a pattern to the ignorenot list
+  \-immutable xxx      add a pattern to the immutable list
+  \-immutablenot xxx   add a pattern to the immutablenot list
+  \-key xxx            define a keyboard shortcut for this profile (in some UIs)
+  \-killserver         kill server when done (even when using sockets)
+  \-label xxx          provide a descriptive string label for this profile
+  \-log                record actions in file specified by logfile preference
+  \-logfile xxx        Log file name
+  \-maxbackups n       number of backed up versions of a file
+  \-maxthreads n       maximum number of simultaneous file transfers
+  \-merge xxx          add a pattern to the merge list
+  \-mountpoint xxx     abort if this path does not exist
+  \-numericids         do not map uid/gid values by user/group names
+  \-owner              synchronize owner
+  \-path xxx           path to synchronize
+  \-perms n            part of the permissions which is synchronized
+  \-prefer xxx         choose this replica's version for conflicting changes
+  \-preferpartial xxx  add a pattern to the preferpartial list
+  \-pretendwin         Use creation times for detecting updates
+  \-repeat xxx         synchronize repeatedly (text interface only)
+  \-retry n            re\-try failed synchronizations N times (text interface on
+ly)
+  \-root xxx           root of a replica
+  \-rootalias xxx      Register alias for canonical root names
+  \-rsrc xxx           synchronize resource forks and HFS meta\-data (`true', `fa
+lse', or `default')
+  \-rsync              activate the rsync transfer mode
+  \-selftest           run internal tests and exit
+  \-servercmd xxx      name of unison executable on remote server
+  \-showarchive        show name of archive and 'true names' (for rootalias) of
+roots
+  \-silent             print nothing (except error messages)
+  \-socket xxx         act as a server on a socket
+  \-sortbysize         list changed files by size, not name
+  \-sortfirst xxx      add a pattern to the sortfirst list
+  \-sortlast xxx       add a pattern to the sortlast list
+  \-sortnewfirst       list new before changed files
+  \-sshargs xxx        other arguments (if any) for remote shell command
+  \-sshcmd xxx         path to the ssh executable
+  \-terse              suppress status messages
+  \-testserver         exit immediately after the connection to the server
+  \-times              synchronize modification times
+  \-ui xxx             select user interface ('text' or 'graphic'); command\-line
+ only
+  \-version            print version and exit
+  \-xferbycopying      optimize transfers using local copies, if possible
+.fi
+.sp
+Here, in more detail, are what they do. Many are discussed in even
+greater detail in other sections of the manual.
+.nf
+addprefsto xxx
+       By default, new preferences added by Unison (e.g., new ignore
+       clauses) will be appended to whatever preference file Unison
+       was told to load at the beginning of the run. Setting the
+       preference addprefsto filename makes Unison add new preferences
+       to the file named filename instead.
+addversionno
+       When this flag is set to true, Unison will use
+       unison\-currentversionnumber instead of just unison as the
+       remote server command. This allows multiple binaries for
+       different versions of unison to coexist conveniently on the
+       same server: whichever version is run on the client, the same
+       version will be selected on the server.
+auto
+       When set to true, this flag causes the user interface to skip
+       asking for confirmations on non\-conflicting changes. (More
+       precisely, when the user interface is done setting the
+       propagation direction for one entry and is about to move to the
+       next, it will skip over all non\-conflicting entries and go
+       directly to the next conflict.)
+backup xxx
+       Including the preference \-backup pathspec causes Unison to keep
+       backup files for each path that matches pathspec. These backup
+       files are kept in the directory specified by the backuplocation
+       preference. The backups are named according to the backupprefix
+       and backupsuffix preferences. The number of versions that are
+       kept is determined by the maxbackups preference.
+       The syntax of pathspec is described in the section "Path
+       Specification" .
+backupcurrent xxx
+       Including the preference \-backupcurrent pathspec causes Unison
+       to keep a backup of the current version of every file matching
+       pathspec. This file will be saved as a backup with version
+       number 000. Such backups can be used as inputs to external
+       merging programs, for instance. See the documentatation for the
+       merge preference. For more details, see the section "Merging
+       Conflicting Versions" .
+       The syntax of pathspec is described in the section "Path
+       Specification" .
+backupcurrentnot xxx
+       Exceptions to backupcurrent, like the ignorenot preference.
+backupdir xxx
+       If this preference is set, Unison will use it as the name of
+       the directory used to store backup files specified by the
+       backup preference, when backuplocation is set to central. It is
+       checked after the UNISONBACKUPDIR environment variable.
+backuplocation xxx
+       This preference determines whether backups should be kept
+       locally, near the original files, or in a central directory
+       specified by the backupdir preference. If set to local, backups
+       will be kept in the same directory as the original files, and
+       if set to central, backupdir will be used instead.
+backupnot xxx
+       The values of this preference specify paths or individual files
+       or regular expressions that should not be backed up, even if
+       the backup preference selects them\-\-i.e., it selectively
+       overrides backup. The same caveats apply here as with ignore
+       and t ignorenot.
+backupprefix xxx
+       When a backup for a file NAME is created, it is stored in a
+       directory specified by backuplocation, in a file called
+       backupprefixNAMEbackupsuffix. backupprefix can include a
+       directory name (causing Unison to keep all backup files for a
+       given directory in a subdirectory with this name), and both
+       backupprefix and backupsuffix can contain the string$VERSION,
+       which will be replaced by the age of the backup (1 for the most
+       recent, 2 for the second most recent, and so on...). This
+       keyword is ignored if it appears in a directory name in the
+       prefix; if it does not appear anywhere in the prefix or the
+       suffix, it will be automatically placed at the beginning of the
+       suffix.
+backups
+       Setting this flag to true is equivalent to setting
+       backuplocation to local and backup to Name *.
+backupsuffix xxx
+       See backupprefix for full documentation.
+batch
+       When this is set to true, the user interface will ask no
+       questions at all. Non\-conflicting changes will be propagated;
+       conflicts will be skipped.
+confirmbigdeletes
+       When this is set to true, Unison will request an extra
+       confirmation if it appears that the entire replica has been
+       deleted, before propagating the change. If the batch flag is
+       also set, synchronization will be aborted. When the path
+       preference is used, the same confirmation will be requested for
+       top\-level paths. (At the moment, this flag only affects the
+       text user interface.) See also the mountpoint preference.
+confirmmerge
+       Setting this preference causes both the text and graphical
+       interfaces to ask the user if the results of a merge command
+       may be commited to the replica or not. Since the merge command
+       works on temporary files, the user can then cancel all the
+       effects of applying the merge if it turns out that the result
+       is not satisfactory. In batch\-mode, this preference has no
+       effect.
+contactquietly
+       If this flag is set, Unison will skip displaying the
+       `Contacting server' message (which some users find annoying)
+       during startup.
+debug xxx
+       This preference is used to make Unison print various sorts of
+       information about what it is doing internally on the standard
+       error stream. It can be used many times, each time with the
+       name of a module for which debugging information should be
+       printed. Possible arguments for debug can be found by looking
+       for calls to Util.debug in the sources (using, e.g., grep).
+       Setting \-debug all causes information from all modules to be
+       printed (this mode of usage is the first one to try, if you are
+       trying to understand something that Unison seems to be doing
+       wrong); \-debug verbose turns on some additional debugging
+       output from some modules (e.g., it will show exactly what bytes
+       are being sent across the network).
+diff xxx
+       This preference can be used to control the name and
+       command\-line arguments of the system utility used to generate
+       displays of file differences. The default is `diff \-u CURRENT2
+       CURRENT1'. If the value of this preference contains the
+       substrings CURRENT1 and CURRENT2, these will be replaced by the
+       names of the files to be diffed. If not, the two filenames will
+       be appended to the command. In both cases, the filenames are
+       suitably quoted.
+doc xxx
+       The command\-line argument \-doc secname causes unison to display
+       section secname of the manual on the standard output and then
+       exit. Use \-doc all to display the whole manual, which includes
+       exactly the same information as the printed and HTML manuals,
+       modulo formatting. Use \-doc topics to obtain a list of the
+       names of the various sections that can be printed.
+dumbtty
+       When set to true, this flag makes the text mode user interface
+       avoid trying to change any of the terminal settings. (Normally,
+       Unison puts the terminal in `raw mode', so that it can do
+       things like overwriting the current line.) This is useful, for
+       example, when Unison runs in a shell inside of Emacs.
+       When dumbtty is set, commands to the user interface need to be
+       followed by a carriage return before Unison will execute them.
+       (When it is off, Unison recognizes keystrokes as soon as they
+       are typed.)
+       This preference has no effect on the graphical user interface.
+dumparchives
+       When this preference is set, Unison will create a file
+       unison.dump on each host, containing a text summary of the
+       archive, immediately after loading it.
+fastcheck xxx
+       When this preference is set to true, Unison will use the
+       modification time and length of a file as a `pseudo inode
+       number' when scanning replicas for updates, instead of reading
+       the full contents of every file. Under Windows, this may cause
+       Unison to miss propagating an update if the modification time
+       and length of the file are both unchanged by the update.
+       However, Unison will never overwrite such an update with a
+       change from the other replica, since it always does a safe
+       check for updates just before propagating a change. Thus, it is
+       reasonable to use this switch under Windows most of the time
+       and occasionally run Unison once with fastcheck set to false,
+       if you are worried that Unison may have overlooked an update.
+       The default value of the preference is auto, which causes
+       Unison to use fast checking on Unix replicas (where it is safe)
+       and slow checking on Windows replicas. For backward
+       compatibility, yes, no, and default can be used in place of
+       true, false, and auto. See the section "Fast Checking" for more
+       information.
+follow xxx
+       Including the preference \-follow pathspec causes Unison to
+       treat symbolic links matching pathspec as `invisible' and
+       behave as if the object pointed to by the link had appeared
+       literally at this position in the replica. See the section
+       "Symbolic Links" for more details. The syntax of pathspec> is
+       described in the section "Path Specification" .
+force xxx
+       Including the preference \-force root causes Unison to resolve
+       all differences (even non\-conflicting changes) in favor of
+       root. This effectively changes Unison from a synchronizer into
+       a mirroring utility.
+       You can also specify \-force newer (or \-force older) to force
+       Unison to choose the file with the later (earlier) modtime. In
+       this case, the \-times preference must also be enabled.
+       This preference is overridden by the forcepartial preference.
+       This preference should be used only if you are sure you know
+       what you are doing!
+forcepartial xxx
+       Including the preference forcepartial PATHSPEC \-> root causes
+       Unison to resolve all differences (even non\-conflicting
+       changes) in favor of root for the files in PATHSPEC (see the
+       section "Path Specification" for more information). This
+       effectively changes Unison from a synchronizer into a mirroring
+       utility.
+       You can also specify forcepartial PATHSPEC \-> newer (or
+       forcepartial PATHSPEC older) to force Unison to choose the file
+       with the later (earlier) modtime. In this case, the \-times
+       preference must also be enabled.
+       This preference should be used only if you are sure you know
+       what you are doing!
+group
+       When this flag is set to true, the group attributes of the
+       files are synchronized. Whether the group names or the group
+       identifiers are synchronizeddepends on the preference numerids.
+height n
+       Used to set the height (in lines) of the main window in the
+       graphical user interface.
+ignore xxx
+       Including the preference \-ignore pathspec causes Unison to
+       completely ignore paths that match pathspec (as well as their
+       children). This is useful for avoiding synchronizing temporary
+       files, object files, etc. The syntax of pathspec is described
+       in the section "Path Specification" , and further details on
+       ignoring paths is found in the section "Ignoring Paths" .
+ignorecase xxx
+       When set to true, this flag causes Unison to treat filenames as
+       case insensitive\-\-i.e., files in the two replicas whose names
+       differ in (upper\- and lower\-case) `spelling' are treated as the
+       same file. When the flag is set to false, Unison will treat all
+       filenames as case sensitive. Ordinarily, when the flag is set
+       to t default, filenames are automatically taken to be
+       case\-insensitive if either host is running Windows or OSX. In
+       rare circumstances it is useful to set the flag manually (e.g.
+       when running Unison on a Unix system with a FAT [Windows]
+       volume mounted).
+ignorelocks
+       When this preference is set, Unison will ignore any lock files
+       that may have been left over from a previous run of Unison that
+       was interrupted while reading or writing archive files; by
+       default, when Unison sees these lock files it will stop and
+       request manualintervention. This option should be set only if
+       you are positive that no other instance of Unison might be
+       concurrently accessing the same archive files (e.g., because
+       there was only one instance of unison running and it has just
+       crashed or you have just killed it). It is probably not a good
+       idea to set this option in a profile: it is intended for
+       command\-line use.
+ignorenot xxx
+       This preference overrides the preference ignore. It gives a
+       list of patterns (in the same format as ignore) for paths that
+       should definitely not be ignored, whether or not they happen to
+       match one of the ignore patterns.
+       Note that the semantics of ignore and ignorenot is a little
+       counter\-intuitive. When detecting updates, Unison examines
+       paths in depth\-first order, starting from the roots of the
+       replicas and working downwards. Before examining each path, it
+       checks whether it matches ignore and does not match ignorenot;
+       in this case it skips this path and all its descendants. This
+       means that, if some parent of a given path matches an ignore
+       pattern, then it will be skipped even if the path itself
+       matches an ignorenot pattern. In particular, putting ignore =
+       Path * in your profile and then using t ignorenot to select
+       particular paths to be synchronized will not work. Instead, you
+       should use the path preference to choose particular paths to
+       synchronize.
+immutable xxx
+       This preference specifies paths for directories whose children
+       are all immutable files \-\- i.e., once a file has been created,
+       its contents never changes. When scanning for updates, Unison
+       does not check whether these files have been modified; this can
+       speed update detection significantly (in particular, for mail
+       directories).
+immutablenot xxx
+       This preference overrides immutable.
+key xxx
+       Used in a profile to define a numeric key (0\-9) that can be
+       used in the graphical user interface to switch immediately to
+       this profile.
+killserver
+       When set to true, this flag causes Unison to kill the remote
+       server process when the synchronization is finished. This
+       behavior is the default for ssh connections, so this preference
+       is not normally needed when running over ssh; it is provided so
+       that socket\-mode servers can be killed off after a single run
+       of Unison, rather than waiting to accept future connections.
+       (Some users prefer to start a remote socket server for each run
+       of Unison, rather than leaving one running all the time.)
+label xxx
+       Used in a profile to provide a descriptive string documenting
+       its settings. (This is useful for users that switch between
+       several profiles, especially using the `fast switch' feature of
+       the graphical user interface.)
+log
+       When this flag is set, Unison will log all changes to the
+       filesystems on a file.
+logfile xxx
+       By default, logging messages will be appended to the file
+       unison.log in your HOME directory. Set this preference if you
+       prefer another file.
+maxbackups n
+       This preference specifies the number of backup versions that
+       will be kept by unison, for each path that matches the
+       predicate backup. The default is 2.
+maxthreads n
+       This preference controls how much concurrency is allowed during
+       the transport phase. Normally, it should be set reasonably high
+       (default is 20) to maximize performance, but when Unison is
+       used over a low\-bandwidth link it may be helpful to set it
+       lower (e.g. to 1) so that Unison does not soak up all the
+       available bandwidth.
+merge xxx
+       This preference can be used to run a merge program which will
+       create a new version for each of the files and the backup, with
+       the last backup and the both replicas. Setting the merge
+       preference for a path will also cause this path to be backed
+       up, just like t backup. The syntax of pathspec>cmd is described
+       in the section "Path Specification" , and further details on
+       Merging functions are present in the section "Merging files" .
+mountpoint xxx
+       Including the preference \-mountpoint PATH causes Unison to
+       double\-check, at the end of update detection, that PATH exists
+       and abort if it does not. This is useful when Unison is used to
+       synchronize removable media. This preference can be given more
+       than once. See the section "Mount Points" .
+numericids
+       When this flag is set to true, groups and users are
+       synchronized numerically, rather than by name.
+       The special uid 0 and the special group 0 are never mapped via
+       user/group names even if this preference is not set.
+owner
+       When this flag is set to true, the owner attributes of the
+       files are synchronized. Whether the owner names or the owner
+       identifiers are synchronizeddepends on the preference
+       extttnumerids.
+path xxx
+       When no path preference is given, Unison will simply
+       synchronize the two entire replicas, beginning from the given
+       pair of roots. If one or more path preferences are given, then
+       Unison will synchronize only these paths and their children.
+       (This is useful for doing a fast sync of just one directory,
+       for example.) Note that path preferences are intepreted
+       literally\-\-they are not regular expressions.
+perms n
+       The integer value of this preference is a mask indicating which
+       permission bits should be synchronized. It is set by default to
+       0o1777: all bits but the set\-uid and set\-gid bits are
+       synchronised (synchronizing theses latter bits can be a
+       security hazard). If you want to synchronize all bits, you can
+       set the value of this preference to \-1.
+prefer xxx
+       Including the preference \-prefer root causes Unison always to
+       resolve conflicts in favor of root, rather than asking for
+       guidance from the user. (The syntax of root is the same as for
+       the root preference, plus the special values newer and older.)
+       This preference is overridden by the preferpartial preference.
+       This preference should be used only if you are sure you know
+       what you are doing!
+preferpartial xxx
+       Including the preference preferpartial PATHSPEC \-> root causes
+       Unison always to resolve conflicts in favor of root, rather
+       than asking for guidance from the user, for the files in
+       PATHSPEC (see the section "Path Specification" for more
+       information). (The syntax of root is the same as for the root
+       preference, plus the special values newer and older.)
+       This preference should be used only if you are sure you know
+       what you are doing!
+pretendwin
+       When set to true, this preference makes Unison use
+       Windows\-style fast update detection (using file creation times
+       as "pseudo\-inode\-numbers"), even when running on a Unix system.
+       This switch should be used with care, as it is less safe than
+       the standard update detection method, but it can be useful for
+       synchronizing VFAT filesystems (which do not support inode
+       numbers) mounted on Unix systems. The fastcheck option should
+       also be set to true.
+repeat xxx
+       Setting this preference causes the text\-mode interface to
+       synchronize repeatedly, rather than doing it just once and
+       stopping. If the argument is a number, Unison will pause for
+       that many seconds before beginning again.
+retry n
+       Setting this preference causes the text\-mode interface to try
+       again to synchronize updated paths where synchronization fails.
+       Each such path will be tried N times.
+root xxx
+       Each use of this preference names the root of one of the
+       replicas for Unison to synchronize. Exactly two roots are
+       needed, so normal modes of usage are either to give two values
+       for root in the profile, or to give no values in the profile
+       and provide two on the command line. Details of the syntax of
+       roots can be found in the section "Roots" .
+       The two roots can be given in either order; Unison will sort
+       them into a canonical order before doing anything else. It also
+       tries to `canonize' the machine names and paths that appear in
+       the roots, so that, if Unison is invoked later with a slightly
+       different name for the same root, it will be able to locate the
+       correct archives.
+rootalias xxx
+       When calculating the name of the archive files for a given pair
+       of roots, Unison replaces any roots matching the left\-hand side
+       of any rootalias rule by the corresponding right\-hand side.
+rshargs xxx
+       The string value of this preference will be passed as
+       additional arguments (besides the host name and the name of the
+       Unison executable on the remote system) to the rsh command used
+       to invoke the remote server.
+rshcmd xxx
+       This preference can be used to explicitly set the name of the
+       rsh executable (e.g., giving a full path name), if necessary.
+rsrc xxx
+       When set to true, this flag causes Unison to synchronize
+       resource forks and HFS meta\-data. On filesystems that do not
+       natively support resource forks, this data is stored in
+       Carbon\-compatible ._ AppleDouble files. When the flag is set to
+       false, Unison will not synchronize these data. Ordinarily, the
+       flag is set to default, and these data are automatically
+       synchronized if either host is running OSX. In rare
+       circumstances it is useful to set the flag manually.
+rsync
+       Unison uses the 'rsync algorithm' for 'diffs\-only' transfer of
+       updates to large files. Setting this flag to false makes Unison
+       use whole\-file transfers instead. Under normal circumstances,
+       there is no reason to do this, but if you are having trouble
+       with repeated 'rsync failure' errors, setting it to false
+       should permit you to synchronize the offending files.
+selftest
+       Run internal tests and exit. This option is mostly for
+       developers and must be used carefully: in particular, it will
+       delete the contents of both roots, so that it can install its
+       own files for testing. This flag only makes sense on the
+       command line. When it is provided, no preference file is read:
+       all preferences must be specified on thecommand line. Also,
+       since the self\-test procedure involves overwriting the roots
+       and backup directory, the names of the roots and of the
+       backupdir preference must include the string "test" or else the
+       tests will be aborted. (If these are not given on the command
+       line, dummy subdirectories in the current directory will be
+       created automatically.)
+servercmd xxx
+       This preference can be used to explicitly set the name of the
+       Unison executable on the remote server (e.g., giving a full
+       path name), if necessary.
+showarchive
+       When this preference is set, Unison will print out the 'true
+       names'of the roots, in the same form as is expected by the
+       rootaliaspreference.
+silent
+       When this preference is set to true, the textual user interface
+       will print nothing at all, except in the case of errors.
+       Setting silent to true automatically sets the batch preference
+       to true.
+sortbysize
+       When this flag is set, the user interface will list changed
+       files by size (smallest first) rather than by name. This is
+       useful, for example, for synchronizing over slow links, since
+       it puts very large files at the end of the list where they will
+       not prevent smaller files from being transferred quickly.
+       This preference (as well as the other sorting flags, but not
+       the sorting preferences that require patterns as arguments) can
+       be set interactively and temporarily using the 'Sort' menu in
+       the graphical user interface.
+sortfirst xxx
+       Each argument to sortfirst is a pattern pathspec, which
+       describes a set of paths. Files matching any of these patterns
+       will be listed first in the user interface. The syntax of
+       pathspec is described in the section "Path Specification" .
+sortlast xxx
+       Similar to sortfirst, except that files matching one of these
+       patterns will be listed at the very end.
+sortnewfirst
+       When this flag is set, the user interface will list newly
+       created files before all others. This is useful, for example,
+       for checking that newly created files are not `junk', i.e.,
+       ones that should be ignored or deleted rather than
+       synchronized.
+sshargs xxx
+       The string value of this preference will be passed as
+       additional arguments (besides the host name and the name of the
+       Unison executable on the remote system) to the ssh command used
+       to invoke the remote server.
+sshcmd xxx
+       This preference can be used to explicitly set the name of the
+       ssh executable (e.g., giving a full path name), if necessary.
+sshversion xxx
+       This preference can be used to control which version of ssh
+       should be used to connect to the server. Legal values are 1 and
+       2, which will cause unison to try to use ssh1 orssh2 instead of
+       just ssh to invoke ssh. The default value is empty, which will
+       make unison use whatever version of ssh is installed as the
+       default `ssh' command.
+terse
+       When this preference is set to true, the user interface will
+       not print status messages.
+testserver
+       Setting this flag on the command line causes Unison to attempt
+       to connect to the remote server and, if successful, print a
+       message and immediately exit. Useful for debugging installation
+       problems. Should not be set in preference files.
+times
+       When this flag is set to true, file modification times (but not
+       directory modtimes) are propagated.
+ui xxx
+       This preference selects either the graphical or the textual
+       user interface. Legal values are graphic or text.
+       Because this option is processed specially during Unison's
+       start\-up sequence, it can only be used on the command line. In
+       preference files it has no effect.
+       If the Unison executable was compiled with only a textual
+       interface, this option has no effect. (The pre\-compiled
+       binaries are all compiled with both interfaces available.)
+version
+       Print the current version number and exit. (This option only
+       makes sense on the command line.)
+xferbycopying
+       When this preference is set, Unison will try to avoid
+       transferring file contents across the network by recognizing
+       when a file with the required contents already exists in the
+       target replica. This usually allows file moves to be propagated
+       very quickly. The default value istrue.
+.fi
+.sp
+Profiles
+.sp
+.sp
+A profile is a text file that specifies permanent settings for roots,
+paths, ignore patterns, and other preferences, so that they do not
+need to be typed at the command line every time Unison is run.
+Profiles should reside in the .unison directory on the client machine.
+If Unison is started with just one argument name on the command line,
+it looks for a profile called name.prf in the .unison directory. If it
+is started with no arguments, it scans the .unison directory for files
+whose names end in .prf and offers a menu (provided that the Unison
+executable is compiled with the graphical user interface). If a file
+named default.prf is found, its settings will be offered as the
+default choices.
+.sp
+To set the value of a preference p permanently, add to the appropriate
+profile a line of the form
+.nf
+     p = true
+.fi
+.sp
+for a boolean flag or
+.nf
+     p = <value>
+.fi
+.sp
+for a preference of any other type.
+.sp
+Whitespaces around p and xxx are ignored. A profile may also include
+blank lines and lines beginning with #; both are ignored.
+.sp
+When Unison starts, it first reads the profile and then the command
+line, so command\-line options will override settings from the profile.
+.sp
+Profiles may also include lines of the form include name, which will
+cause the file name (or name.prf, if name does not exist in the
+.unison directory) to be read at the point, and included as if its
+contents, instead of the include line, was part of the profile.
+Include lines allows settings common to several profiles to be stored
+in one place.
+.sp
+A profile may include a preference `label = desc' to provide a
+description of the options selected in this profile. The string desc
+is listed along with the profile name in the profile selection dialog,
+and displayed in the top\-right corner of the main Unison window in the
+graphical user interface.
+.sp
+The graphical user\-interface also supports one\-key shortcuts for
+commonly used profiles. If a profile contains a preference of the form
+`key = n', where n is a single digit, then pressing this digit key
+will cause Unison to immediately switch to this profile and begin
+synchronization again from scratch. In this case, all actions that
+have been selected for a set of changes currently being displayed will
+be discarded.
+.sp
+Sample Profiles
+.sp
+A Minimal Profile
+.sp
+.sp
+Here is a very minimal profile file, such as might be found in
+ .unison/default.prf:
+.nf
+ # Roots of the synchronization
+ root = /home/bcpierce
+ root = ssh://saul//home/bcpierce
+.fi
+.sp
+.nf
+# Paths to synchronize
+path = current
+path = common
+path = .netscape/bookmarks.html
+.fi
+.sp
+A Basic Profile
+.sp
+.sp
+Here is a more sophisticated profile, illustrating some other useful
+features.
+.nf
+ # Roots of the synchronization
+ root = /home/bcpierce
+ root = ssh://saul//home/bcpierce
+.fi
+.sp
+.nf
+# Paths to synchronize
+path = current
+path = common
+path = .netscape/bookmarks.html
+.fi
+.sp
+.nf
+# Some regexps specifying names and paths to ignore
+ignore = Name temp.*
+ignore = Name *~
+ignore = Name .*~
+ignore = Path */pilot/backup/Archive_*
+ignore = Name *.o
+ignore = Name *.tmp
+.fi
+.sp
+.nf
+# Window height
+height = 37
+.fi
+.sp
+.nf
+# Keep a backup copy of every file in a central location
+backuplocation = central
+backupdir = /home/bcpierce/backups
+backup = Name *
+backupprefix = $VERSION.
+backupsuffix =
+.fi
+.sp
+.nf
+# Use this command for displaying diffs
+diff = diff \-y \-W 79 \-\-suppress\-common\-lines
+.fi
+.sp
+.nf
+# Log actions to the terminal
+log = true
+.fi
+A Power\-User Profile
+.sp
+.sp
+When Unison is used with large replicas, it is often convenient to be
+able to synchronize just a part of the replicas on a given run (this
+saves the time of detecting updates in the other parts). This can be
+accomplished by splitting up the profile into several parts \-\- a
+common part containing most of the preference settings, plus one
+"top\-level" file for each set of paths that need to be synchronized.
+(The include mechanism can also be used to allow the same set of
+preference settings to be used with different roots.)
+.sp
+The collection of profiles implementing this scheme might look as
+follows. The file default.prf is empty except for an include
+directive:
+.nf
+ # Include the contents of the file common
+ include common
+.fi
+.sp
+Note that the name of the common file is common, not common.prf; this
+prevents Unison from offering common as one of the list of profiles in
+the opening dialog (in the graphical UI).
+.sp
+The file common contains the real preferences:
+.nf
+ # Roots of the synchronization
+ root = /home/bcpierce
+ root = ssh://saul//home/bcpierce
+.fi
+.sp
+.nf
+# (... other preferences ...)
+.fi
+.sp
+.nf
+# If any new preferences are added by Unison (e.g. 'ignore'
+# preferences added via the graphical UI), then store them in the
+# file 'common' rathen than in the top\-level preference file
+addprefsto = common
+.fi
+.sp
+.nf
+# Names and paths to ignore:
+ignore = Name temp.*
+ignore = Name *~
+ignore = Name .*~
+ignore = Path */pilot/backup/Archive_*
+ignore = Name *.o
+ignore = Name *.tmp
+.fi
+.sp
+Note that there are no path preferences in common. This means that,
+when you invoke Unison with the default profile (e.g., by typing
+\'unison default' or just 'unison' on the command line), the whole
+replica is synchronized. (If you do not want to synchronize the
+whole replicas, then default.prf would instead include settings for
+all the paths that are usually synchronized.)
+.sp
+To synchronize just part of the replicas, Unison is invoked with an
+alternate preference file\-\-e.g., doing 'unison workingset', where the
+preference file workingset.prf contains
+.nf
+ path = current/papers
+ path = Mail/inbox
+ path = Mail/drafts
+ include common
+.fi
+.sp
+causes Unison to synchronize just the listed subdirectories.
+.sp
+The key preference can be used in combination with the graphical UI to
+quickly switch between different sets of paths. For example, if the
+file mail.prf contains
+.nf
+ path = Mail
+ batch = true
+ key = 2
+ include common
+.fi
+.sp
+then pressing 2 will cause Unison to look for updates in the Mail
+subdirectory and (because the batch flag is set) immediately propagate
+any that it finds.
+.sp
+Keeping Backups
+.sp
+.sp
+When Unison overwrites a file or directory by propagating a new
+version from the other replica, it can keep the old version around as
+a backup. There are several preferences that control precisely where
+these backups are stored and how they are named.
+.sp
+To enable backups, you must give one or more backup preferences. Each
+of these has the form
+.nf
+ backup = <pathspec>
+.fi
+.sp
+where <pathspec> has the same form as for the ignore preference. For
+example,
+.nf
+ backup = Name *
+.fi
+.sp
+causes Unison to keep backups of all files and directories. The
+backupnot preference can be used to give a few exceptions: it
+specifies which files and directories should not be backed up, even if
+they match the backup pathspec.
+.sp
+It is important to note that the pathspec is matched against the path
+that is being updated by Unison, not its descendants. For example, if
+you set backup = Name *.txt and then delete a whole directory named
+foo containing some text files, these files will not be backed up
+because Unison will just check that foo does not match *.txt.
+Similarly, if the directory itself happened to be called foo.txt, then
+the whole directory and all the files in it will be backed up,
+regardless of their names.
+.sp
+Backup files can be stored either centrally or locally. This behavior
+is controlled by the preference backuplocation, whose value must be
+either central or local. (The default is central.)
+.sp
+When backups are stored locally, they are kept in the same directory
+as the original.
+.sp
+When backups are stored centrally, the directory used to hold them is
+controlled by the preference backupdir and the environment variable
+UNISONBACKUPDIR. (The environment variable is checked first.) If
+neither of these are set, then the directory .unison/backup in the
+your home directory is used.
+.sp
+The preference maxbackups controls how many previous versions of each
+file are kept (including the current version).
+.sp
+By default, backup files are named .bak.VERSION.FILENAME, where
+FILENAME is the original filename and VERSION is the backup number (1
+for the most recent, 2 for the next most recent, etc.). This can be
+changed by setting the preferences backupprefix and/or backupsuffix.
+If desired, backupprefix may include a directory prefix; this can be
+used with backuplocation = local to put all backup files for each
+directory into a single subdirectory. For example, setting
+.nf
+ backuplocation = local
+ backupprefix = .unison/$VERSION.
+ backupsuffix =
+.fi
+.sp
+will put all backups in a local subdirectory named .unison. Also, note
+that the string $VERSION in either backupprefix or backupsuffix (it
+must appear in one or the other) is replaced by the version number.
+This can be used, for example, to ensure that backup files retain the
+same extension as the originals.
+.sp
+For backward compatibility, the backups preference is also supported.
+It simply means backup = Name * and backuplocation = local.
+.sp
+Merging Conflicting Versions
+.sp
+.sp
+Unison can invoke external programs to merge conflicting versions of a
+file. The preference merge controls this process.
+.sp
+The merge preference may be given once or several times in a
+preference file (it can also be given on the command line, of course,
+but this tends to be awkward because of the spaces and special
+characters involved). Each instance of the preference looks like this:
+.nf
+ merge = <PATHSPEC> \-> <MERGECMD>
+.fi
+.sp
+The <PATHSPEC> here has exactly the same format as for the ignore
+preference (see the section "Path specification" ). For example, using
+"Name *.txt" as the <PATHSPEC> tells Unison that this command should
+be used whenever a file with extension .txt needs to be merged.
+.sp
+Many external merging programs require as inputs not just the two
+files that need to be merged, but also a file containing the last
+synchronized version. You can ask Unison to keep a copy of the last
+synchronized version for some files using the backupcurrent
+preference. This preference is used in exactly the same way as backup
+and its meaning is similar, except that it causes backups to be kept
+of the current contents of each file after it has been synchronized by
+Unison, rather than the previous contents that Unison overwrote. These
+backups are kept on both replicas in the same place as ordinary backup
+files\-\-i.e. according to the backuplocation and backupdir preferences.
+They are named like the original files if backupslocation is set to
+\'central' and otherwise, Unison uses the backupprefix and backupsuffix
+preferences and assumes a version number 000 for these backups.
+.sp
+The <MERGECMD> part of the preference specifies what external command
+should be invoked to merge files at paths matching the <PATHSPEC>.
+Within this string, several special substrings are recognized; these
+will be substituted with appropriate values before invoking a
+sub\-shell to execute the command.
+.nf
+  * CURRENT1 is replaced by the name of (a temporary copy of) the
+    local variant of the file.
+  * CURRENT2 is replaced by the name of a temporary file, into which
+    the contents of the remote variant of the file have been
+    transferred by Unison prior to performing the merge.
+  * CURRENTARCH is replaced by the name of the backed up copy of the
+    original version of the file (i.e., the file saved by Unison if
+    the current filename matches the path specifications for the
+    backupcurrent preference, as explained above), if one exists. If
+    no archive exists and CURRENTARCH appears in the merge command,
+    then an error is signalled.
+  * CURRENTARCHOPT is replaced by the name of the backed up copy of
+    the original version of the file (i.e., its state at the end of
+    the last successful run of Unison), if one exists, or the empty
+    string if no archive exists.
+  * NEW is replaced by the name of a temporary file that Unison
+    expects to be written by the merge program when it finishes,
+    giving the desired new contents of the file.
+  * PATH is replaced by the path (relative to the roots of the
+    replicas) of the file being merged.
+  * NEW1 and NEW2 are replaced by the names of temporary files that
+    Unison expects to be written by the merge program when it is only
+    able to partially merge the originals; in this case, NEW1 will be
+    written back to the local replica and NEW2 to the remote replica;
+    NEWARCH, if present, will be used as the "last common state" of
+    the replicas. (These three options are provided for later
+    compatibility with the Harmony data synchronizer.)
+.fi
+.sp
+To accomodate the wide variety of programs that users might want to
+use for merging, Unison checks for several possible situations when
+the merge program exits:
+.nf
+  * If the merge program exits with a non\-zero status, then merge is
+    considered to have failed and the replicas are not changed.
+  * If the file NEW has been created, it is written back to both
+    replicas (and stored in the backup directory). Similarly, if just
+    the file NEW1 has been created, it is written back to both
+    replicas.
+  * If neither NEW nor NEW1 have been created, then Unison examines
+    the temporary files CURRENT1 and CURRENT2 that were given as
+    inputs to the merge program. If either has been changed (or both
+    have been changed in identical ways), then its new contents are
+    written back to both replicas. If either CURRENT1 or CURRENT2 has
+    been deleted, then the contents of the other are written back to
+    both replicas.
+  * If the files NEW1, NEW2, and NEWARCH have all been created, they
+    are written back to the local replica, remote replica, and backup
+    directory, respectively. If the files NEW1, NEW2 have been
+    created, but NEWARCH has not, then these files are written back to
+    the local replica and remote replica, respectively. Also, if NEW1
+    and NEW2 have identical contents, then the same contents are
+    stored as a backup (if the backupcurrent preference is set for
+    this path) to reflect the fact that the path is currently in sync.
+  * If NEW1 and NEW2 (resp. CURRENT1 and CURRENT2) are created (resp.
+    overwritten) with different contents but the merge command did not
+    fail (i.e., it exited with status code 0), then copy NEW1
+    (resp. CURRENT1) to the other replica and to the archive.
+    This behavior is a design choice made to handle the case where a
+    merge command only synchronizes some specific contents between two
+    files, skipping some irrelevant information (order between
+    entries, for instance). It is assumed that, if the merge command exits
+    normally, then the two resulting files are "as good as equal."
+    (The reason of copying one on top of the other is to avoid Unison
+    detecting that the files are unequal the next time it is run and
+    trying again to merge them when, in fact, the merge program has
+    already made them as similar as it is able to.)
+.fi
+.sp
+If the confirmmerge preference is set and Unison is not run in batch
+mode, then Unison will always ask for confirmation before actually
+committing the results of the merge to the replicas.
+.sp
+A large number of external merging programs are available. For
+example, on Unix systems setting the merge preference to
+.nf
+ merge = Name *.txt \-> diff3 CURRENT1 CURRENTARCH CURRENT2 \-m > NEW
+.fi
+.sp
+will tell Unison to use the external diff3 program for merging.
+Alternatively, users of emacs may find the following settings
+convenient:
+.nf
+ merge = Name *.txt \-> emacs \-q \-\-eval '(ediff\-merge\-files\-with\-ancestor
+                          "CURRENT1" "CURRENT2" "CURRENTARCH" nil "NEW")'
+.fi
+.sp
+(These commands are displayed here on two lines to avoid running off
+the edge of the page. In your preference file, each command should be
+written on a single line.)
+.sp
+Users running emacs under windows may find something like this useful:
+.nf
+merge = Name * \-> C:\\Progra~1\\Emacs\\emacs\\bin\\emacs.exe \-q \-\-eval
+                         "(ediff\-files """CURRENT1""" """CURRENT2""")"
+.fi
+.sp
+Users running Mac OS X (you may need the Developer Tools installed to
+get the opendiff utility) may prefer
+.nf
+    merge = Name *.txt \-> opendiff CURRENT1 CURRENT2 \-ancestor CURRENTARCH \-mer
+ge NEW
+.fi
+.sp
+Here is a slightly more involved hack. The opendiff program can
+operate either with or without an archive file. A merge command of
+this form
+.nf
+    merge = Name *.txt \->
+              if [ CURRENTARCHOPTx = x ];
+              then opendiff CURRENT1 CURRENT2 \-merge NEW;
+              else opendiff CURRENT1 CURRENT2 \-ancestor CURRENTARCHOPT \-merge N
+EW;
+              fi
+.fi
+.sp
+(still all on one line in the preference file!) will test whether an
+archive file exists and use the appropriate variant of the arguments
+to opendiff.
+.sp
+Ordinarily, external merge programs are only invoked when Unison is
+not running in batch mode. To specify an external merge program that
+should be used no matter the setting of the batch flag, use the
+mergebatch preference instead of merge.
+.sp
+Post your suggestions for other useful values of the merge
+preference to the unison\-users mailing list\-\- 
+Several examples are shown here.
+.sp
+The User Interface
+.sp
+.sp
+Both the textual and the graphical user interfaces are intended to be
+mostly self\-explanatory. Here are just a few tricks:
+.nf
+  * By default, when running on Unix the textual user interface will
+    try to put the terminal into the "raw mode" so that it reads the
+    input a character at a time rather than a line at a time. (This
+    means you can type just the single keystroke ">" to tell Unison to
+    propagate a file from left to right, rather than "> Enter.")
+    There are some situations, though, where this will not work \-\- for
+    example, when Unison is running in a shell window inside Emacs.
+    Setting the dumbtty preference will force Unison to leave the
+    terminal alone and process input a line at a time.
+.fi
+.sp
+Exit code
+.sp
+.sp
+When running in the textual mode, Unison returns an exit status, which
+describes whether, and at which level, the synchronization was
+successful. The exit status could be useful when Unison is invoked
+from a script. Currently, there are four possible values for the exit
+status:
+.nf
+  * 0: successful synchronization; everything is up\-to\-date now.
+  * 1: some files were skipped, but all file transfers were
+    successful.
+  * 2: non\-fatal failures occurred during file transfer.
+  * 3: a fatal error occurred, or the execution was interrupted.
+.fi
+.sp
+The graphical interface does not return any useful information through
+the exit status.
+.sp
+Path specification
+.sp
+.sp
+Several Unison preferences (e.g., ignore/ignorenot, follow,
+sortfirst/sortlast, backup, merge, etc.) specify individual paths or
+sets of paths. These preferences share a common syntax based on
+regular\-expressions. Each preference is associated with a list of path
+patterns; the paths specified are those that match any one of the path
+pattern.
+.nf
+  * Pattern preferences can be given on the command line, or, more
+    often, stored in profiles, using the same syntax as other
+    preferences. For example, a profile line of the form
+          ignore = pattern
+    adds pattern to the list of patterns to be ignored.
+  * Each pattern can have one of three forms. The most general form is
+    a Posix extended regular expression introduced by the keyword
+    Regex. (The collating sequences and character classes of full
+    Posix regexps are not currently supported).
+              Regex regexp
+    For convenience, two other styles of pattern are also recognized:
+              Name name
+    matches any path in which the last component matches name, while
+              Path path
+    matches exactly the path path. The name and path arguments of the
+    latter forms of patterns are not regular expressions. Instead,
+    standard "globbing" conventions can be used in name and path:
+       + a * matches any sequence of characters not including / (and
+         not beginning with ., when used at the beginning of a name)
+       + a ? matches any single character except / (and leading .)
+       + [xyz] matches any character from the set {x, y, z }
+       + {a,bb,ccc} matches any one of a, bb, or ccc.
+  * The path separator in path patterns is always the forward\-slash
+    character "/" \-\- even when the client or server is running under
+    Windows, where the normal separator character is a backslash. This
+    makes it possible to use the same set of path patterns for both
+    Unix and Windows file systems.
+.fi
+.sp
+Some examples of path patterns appear in the section "Ignoring Paths."
+.sp
+Ignoring Paths
+.sp
+.sp
+Most users of Unison will find that their replicas contain lots of
+files that they do not ever want to synchronize \-\- temporary files,
+very large files, old stuff, architecture\-specific binaries, etc. They
+can instruct Unison to ignore these paths using patterns introduced in
+the section "Path Patterns" .
+.sp
+For example, the following pattern will make Unison ignore any path
+containing the name CVS or a name ending in .cmo:
+.nf
+          ignore = Name {CVS,*.cmo}
+.fi
+.sp
+The next pattern makes Unison ignore the path a/b:
+.nf
+          ignore = Path a/b
+.fi
+.sp
+Path patterns do not skip filesnames beginning with . (as Name
+patterns do). For example,
+.nf
+          ignore = Path */tmp
+.fi
+.sp
+will include .foo/tmp in the set of ignore directories, as it is a
+path, not a name, that is ignored.
+.sp
+The following pattern makes Unison ignore any path beginning with a/b
+and ending with a name ending by .ml.
+.nf
+          ignore = Regex a/b/.*\\.ml
+.fi
+.sp
+Note that regular expression patterns are "anchored": they must match
+the whole path, not just a substring of the path.
+.sp
+Here are a few extra points regarding the ignore preference.
+.nf
+  * If a directory is ignored, all its descendents will be too.
+  * The user interface provides some convenient commands for adding
+    new patterns to be ignored. To ignore a particular file, select it
+    and press "i". To ignore all files with the same extension, select
+    it and press "E" (with the shift key). To ignore all files with
+    the same name, no matter what directory they appear in, select it
+    and press "N". These new patterns become permanent: they are
+    immediately added to the current profile on disk.
+  * If you use the include directive to include a common collection of
+    preferences in several top\-level preference files, you will
+    probably also want to set the addprefsto preference to the name of
+    this file. This will cause any new ignore patterns that you add
+    from inside Unison to be appended to this file, instead of
+    whichever top\-level preference file you started Unison with.
+  * Ignore patterns can also be specified on the command line, if you
+    like (this is probably not very useful), using an option like
+    \-ignore 'Name temp.txt'.
+  * Be careful about renaming directories containing ignored files.
+    Because Unison understands the rename as a delete plus a create,
+    any ignored files in the directory will be lost (since they are
+    invisible to Unison and therefore they do not get recreated in the
+    new version of the directory).
+  * There is also an ignorenot preference, which specifies a set of
+    patterns for paths that should not be ignored, even if they match
+    an ignore pattern. However, the interaction of these two sets of
+    patterns can be a little tricky. Here is exactly how it works:
+       + Unison starts detecting updates from the root of the
+         replicas\-\-i.e., from the empty path. If the empty path
+         matches an ignore pattern and does not match an ignorenot
+         pattern, then the whole replica will be ignored. (For this
+         reason, it is not a good idea to include Name * as an ignore
+         pattern. If you want to ignore everything except a certain
+         set of files, use Name ?*.)
+       + If the root is a directory, Unison continues looking for
+         updates in all the immediate children of the root. Again, if
+         the name of some child matches an ignore pattern and does not
+         match an ignorenot pattern, then this whole path including
+         everything below it will be ignored.
+       + If any of the non\-ignored children are directories, then the
+         process continues recursively.
+.fi
+.sp
+Symbolic Links
+.sp
+.sp
+Ordinarily, Unison treats symbolic links in Unix replicas as "opaque":
+it considers the contents of the link to be just the string specifying
+where the link points, and it will propagate changes in this string to
+the other replica.
+.sp
+It is sometimes useful to treat a symbolic link "transparently,"
+acting as though whatever it points to were physically in the replica
+at the point where the symbolic link appears. To tell Unison to treat
+a link in this manner, add a line of the form
+.nf
+          follow = pathspec
+.fi
+.sp
+to the profile, where pathspec is a path pattern as described in the
+section "Path Patterns" .
+.sp
+Windows file systems do not support symbolic links; Unison will refuse
+to propagate an opaque symbolic link from Unix to Windows and flag the
+path as erroneous. When a Unix replica is to be synchronized with a
+Windows system, all symbolic links should match either an ignore
+pattern or a follow pattern.
+.sp
+Permissions
+.sp
+.sp
+Synchronizing the permission bits of files is slightly tricky when two
+different filesytems are involved (e.g., when synchronizing a Windows
+client and a Unix server). A detailed explanation is as below:
+.nf
+  * When the permission bits of an existing file or directory are
+    changed, the values of those bits that make sense on both
+    operating systems will be propagated to the other replica. The
+    other bits will not be changed.
+  * When a newly created file is propagated to a remote replica, the
+    permission bits that make sense in both operating systems are also
+    propagated. The values of the other bits are set to default values
+    (they are taken from the current umask, if the receiving host is a
+    Unix system).
+  * For security reasons, the Unix setuid and setgid bits are not
+    propagated.
+  * The Unix owner and group ids are not propagated. (What would this
+    mean, in general?) All files are created with the owner and group
+    of the server process.
+.fi
+Cross\-Platform Synchronization
+.sp
+.sp
+If you use Unison to synchronize files between Windows and Unix
+systems, there are a few special issues to be aware of.
+.sp
+Case conflicts. In Unix, filenames are case sensitive: foo and FOO can
+refer to different files. In Windows, on the other hand, filenames are
+not case sensitive: foo and FOO can only refer to the same file. This
+means that a Unix foo and FOO cannot be synchronized onto a Windows
+system \-\- Windows would not allow two different files to have the "same"
+name. Unison detects this situation for you, and reports that it
+cannot synchronize the files.
+.sp
+You can deal with a case conflict in a couple of ways. If you need to
+have both files on the Windows system, your only choice is to rename
+one of the Unix files to avoid the case conflict, and re\-synchronize.
+If you do not need the files on the Windows system, you can simply
+disregard Unison's warning message, and go ahead with the
+synchronization; Unison would not touch those files. If you do not want to
+see the warning on each synchronization, you can tell Unison to ignore
+the files (see the section "Ignore" ).
+.sp
+Illegal filenames. Unix allows some filenames that are illegal in
+Windows. For example, colons (`:') are not allowed in Windows
+filenames, but they are legal in Unix filenames. This means that a
+Unix file foo:bar can not be synchronized to a Windows system. As with
+case conflicts, Unison detects this situation for you, and you have
+the same options: you can either rename the Unix file and
+re\-synchronize, or you can ignore it.
+.sp
+Slow Links
+.sp
+.sp
+Unison is built to run well even over relatively slow links such as
+modems and DSL connections.
+.sp
+Unison uses the "rsync protocol" designed by Andrew Tridgell and Paul
+Mackerras to greatly speed up transfers of large files in which only
+small changes have been made. More information about the rsync
+protocol can be found at the rsync web site
+(http://samba.anu.edu.au/rsync/).
+.sp
+If you are using Unison with ssh, you may get some speed improvement
+by enabling ssh's compression feature. Do this by adding the option
+"\-rshargs \-C" to the command line or "rshargs = \-C" to your profile.
+.sp
+Fast Update Detection
+.sp
+.sp
+If your replicas are large and at least one of them is on a Windows
+system, you may find that Unison's default method for detecting
+changes which involves scanning the full contents of every file on
+every sync\-\-the only completely safe way to do it under Windows is
+too slow. Unison provides a preference fastcheck that, when set to
+true, causes it to use file creation times as 'pseudo inode numbers'
+when scanning replicas for updates, instead of reading the full
+contents of every file.
+.sp
+When fastcheck is set to no, Unison will perform slow
+checking\-\-re\-scanning the contents of each file on each
+synchronization\-\-on all replicas. When fastcheck is set to default
+(which, naturally, is the default), Unison will use fast checks on
+Unix replicas and slow checks on Windows replicas.
+.sp
+This strategy may cause Unison to miss propagating an update if the
+modification time and length of the file are both unchanged by the
+update. However, Unison will never overwrite such an update with a
+change from the other replica, since it always does a safe check for
+updates just before propagating a change. Thus, it is reasonable to
+use this switch most of the time and occasionally run Unison once with
+fastcheck set to no, if you are worried that Unison may have
+overlooked an update.
+.sp
+Fastcheck is always automatically disabled for files with extension
+.xls or .mpp, to prevent Unison from being confused by the process
+of updating files without
+changing their modification times. This happens in the case of an Excel application.
+.sp
+Mount Points and Removable Media
+.sp
+.sp
+Using Unison removable media such as USB drives can be dangerous
+unless you are careful. If you synchronize a directory that is stored
+on removable media when the media is not present, it will look to
+Unison as though the whole directory has been deleted, and it will
+proceed to delete the directory from the other replica\-\-probably not
+what you want!
+.sp
+To prevent accidents, Unison provides a preference called mountpoint.
+Including a line like
+.nf
+          mountpoint = /mnt/foo
+.fi
+.sp
+in your preference file makes Unison to check whether there exists anything at /mnt/foo path
+on both replicas. This is usually done when it finishes
+detecting the updates. If it does not find anything, the Unison aborts to run.
