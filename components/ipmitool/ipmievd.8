@@ -1,0 +1,209 @@
+'\" t
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\"
+.\" Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.\" ipmievd man page
+.\"
+.TH "ipmievd" "8" "29 November 2006"
+.SH "NAME"
+ipmievd \- IPMI event daemon for sending events to syslog
+.SH "SYNOPSIS"
+.B ipmievd
+[\-chvV] \-I lan \-H hostname [ \-p <port>] [\-U <username>] [ \-f <password_file>] [\-S <sdrcache>] sel [<option>]
+
+.B ipmievd
+[\-chvV] \-I lanplus \-H hostname [\-p <port>] [\-U <username>] [\-f <password_file>] [\-S <sdrcache>] sel [<option>]
+
+.B ipmievd
+[\-chvV] \-I bmc [\-S <sdrcache>] sel [<option>]
+
+.SH "DESCRIPTION"
+\fBipmievd\fP is a daemon that listens for events from the
+Baseboard Management Controller (BMC) which are being sent to the 
+System Event Log (SEL), and logs those messages to
+syslog. The daemon actively polls the contents of the SEL for 
+new events.
+When an event is received, it is logged to
+syslog using the
+\fILOG_LOCAL4\fP facility.  On Solaris, it has been made to use
+\fILOG_DAEMON\fP instead, so that no changes to /etc/syslog.conf are necessary.
+.LP
+\fBipmievd\fP is based on the \fBipmitool\fR utility and it shares the same 
+Intelligent Platform Management Interface (IPMI)
+support and session setup options.  The
+\fBipmitool\fR man page provides more information on supported IPMI
+interfaces.
+.SH "OPTIONS"
+.TP 
+.B \-c
+Present output in comma separated variable (CSV) format.
+.TP 
+.BI \-f " password_file"
+Specify a file containing the remote server password. If this
+option is absent, or if password_file is empty, the password
+will default to NULL.
+.IP
+If the 
+.B \-f 
+option is not present, ipmitool will prompt the
+user for a password. If no password is entered at the prompt,
+the remote server password will default to NULL.
+.IP
+For IPMI v1.5, the maximum password length is 16 characters.
+Passwords longer than 16 characters will be truncated.
+.IP
+For IPMI v2.0, the maximum password length is 20 characters.
+Passwords longer than 20 characters will be truncated.
+The longer password length is supported by the 
+.B lanplus 
+interface.
+.TP 
+.B \-h
+Get basic usage help from the command line.
+.TP 
+.BI \-H " hostname"
+Remote server address, which can be an IP address or hostname.  This 
+option is required for the LAN interface connection.
+.TP 
+.BI \-I " interface"
+Selects IPMI interface to use. Possible interfaces are:
+
+.TS
+tab(+);
+l l .
+bmc+IPMI v2.0 BMC interface [default]
+lan+IPMI v1.5 LAN Interface
+lanplus+IPMI v2.0 RMCP+ LAN Interface
+.TE
+.TP 
+.BI \-p " port"
+Remote server UDP port to connect to (default is 623).
+.TP 
+.BI \-S " sdrcache"
+Use local file for remote Sensor Data Repository (SDR) cache. 
+Using a local SDR cache can drastically increase performance
+for commands that require knowledge of the entire SDR to perform
+their function.
+.TP 
+\.BI \-U " username"
+Remote server username; default is NULL user.
+.TP 
+.B \-v
+Increase verbose output level.  This option can be specified
+multiple times to increase the level of debug output.  If given
+three times, you will get hexdumps of all incoming and
+outgoing packets.
+.TP 
+.B \-V
+Display version information.
+.SH "COMMANDS"
+.TP 
+\fIhelp\fP
+This can be used to get command\-line help.  It can also be
+placed at the end of commands to get option usage help.
+
+> ipmievd bmc help
+.br 
+Commands:
+    sel      Poll SEL for notification of events
+.TP 
+\fIsel\fP
+This command starts 
+.B ipmievd 
+with the SEL Polling event watching
+mechanism.  This will poll the SEL periodically to determine if
+new events have been logged.  This command should work with all
+BMCs and is capable of using the LAN interface as well to monitor
+a remote system and log its events to a local syslog.
+.RS
+.TP 
+\fBdaemon\fP
+Launch process as a daemon and reparent to init process.
+All messages will be sent to syslog.  This is the default action.
+.TP 
+\fBnodaemon\fP
+Do \fInot\fP become a daemon; instead, log all messages to stderr.
+.TP
+\fBpidfile\fR=\fIfilename\fR
+Save process ID to this file when in daemon mode.  Defaults to
+/var/run/ipmievd.pid.
+.TP 
+\fBtimeout\fR=\fIseconds\fR
+Time between checks for SEL polling method.  Default is 10 seconds.
+.SH "EXIT STATUS"
+Upon successful completion, 
+.B ipmievd 
+returns 0.  On failure, 1 is returned.
+.SH "EXAMPLE"
+Local non\-daemon process checking remote SEL every 30
+seconds:
+
+> ipmievd \-I lan \-H 1.2.3.4 \-f passfile sel nodaemon timeout=30
+.br 
+Reading Sensors...
+.br 
+Waiting for Events...
+.SH "FILES"
+\fB/platform/i86pc/kernel/drv/bmc\fR
+.in +30n
+.sp
+32-bit \fBELF\fR kernel module for the bmc driver.
+.sp
+.in -30n
+\fB/platform/i86pc/kernel/drv/amd64/bmc\fR
+.in +30n
+.sp
+64-bit \fBELF\fR kernel module for the bmc driver.
+.in -30n
+\fB/dev/bmc\fR
+.in +30n
+.sp
+Character device node used to communicate with the bmc driver.
+.in -30n
+.SH "SEE ALSO"
+attributes(5),
+ipmitool(1M), 
+smf(5), 
+svcadm(1M), 
+svccfg(1M), 
+svcs(1)
+.TP 
+IPMItool Homepage
+http://ipmitool.sourceforge.net
+.TP 
+Intelligent Platform Management Interface Specification
+http://www.intel.com/design/servers/ipmi/spec.htm
+.TP 
+OpenIPMI Homepage
+http://openipmi.sourceforge.net
+.SH "NOTES"
+The
+.B ipmievd 
+daemon is managed by the service management
+facility, smf(5), under the service identifier:
+svc:/network/ipmievd:default.
+.LP
+Administrative actions on this service, such as enabling
+or disabling, can be performed using svcadm(1M). Use 
+svccfg(1M) to make configuration changes and
+svcs(1) to view configuration information and service status.

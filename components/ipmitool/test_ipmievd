@@ -1,0 +1,290 @@
+#!/bin/sh
+
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+# ----------------------------------------------------------------------------
+# test_ipmievd		confirm basic ipmievd functionality works
+#
+# exercise syslog event reporting via event injection via ipmitool
+# ----------------------------------------------------------------------------
+
+cmd_name="`basename $0`"		# the name of this command
+
+cmd_err="${cmd_name}: error:"		# the (fatal) error header
+cmd_warn="${cmd_name}: warning:"	# the warning header
+cmd_info="${cmd_name}: info:"		# the informational header
+cmd_query="${cmd_name}: query:"		# the interrogative header
+
+bin_path="/usr/sbin:/usr/lib"	# path(s) to needed binary executable(s)
+proto_root=""			# path to proto root from build
+state_fn="/tmp/$cnd_name.$$.db"	# state file for cleanup
+
+# Design_Note: typically it takes about 4 seconds for an event to be syslogged,
+#              let's allow at least 12 seconds for it to be syslogged.
+
+SYSLOG_DELAY_SEC=12	# max wait in sec for event to be syslogged
+
+# ----------------------------------------------------------------------------
+
+usage()
+{
+    echo "usage: $cmd_name [-r <proto_root>]"
+    echo "       -r  path to proto root of recent build of tool+daemon"
+    echo "purpose: confirm basic ipmievd functionality works;"
+    echo "         this is NOT a comprehensive test"
+    echo "examples:"
+    echo "	$cmd_name -r \$CODEMGR_WS/proto/root_\`uname -p\`"
+    echo "caveats: installs and leaves installed new tool+daemon on error"
+} # usage()
+
+# ----------------------------------------------------------------------------
+
+show_env()
+{
+    echo "$cmd_info general environment:"
+    date ; id ; uname -a ; pwd ; echo "$PATH"
+    [ -r /etc/release ] && cat /etc/release
+    [ -r /etc/motd ] && grep bfu /etc/motd
+    ipmievd -V
+    ipmitool -V
+} # usage()
+
+# ----------------------------------------------------------------------------
+
+enforce_i386()
+{
+    proctype=`uname -p`
+    [ "$proctype" != "i386" ] && {
+	echo "$cmd_err processor type $proctype != i386"
+	exit 1
+    }
+} # enforce_i386()
+
+# ----------------------------------------------------------------------------
+
+install_proto()
+{
+    [ "$proto_root" = "" ] && {
+	echo "$cmd_info skipping install of unset proto_root" ; return 0
+    }
+    [ ! -r /usr/sbin/ipmitool.orig ] && {
+	cp -p /usr/sbin/ipmitool /usr/sbin/ipmitool.orig
+    }
+    [ ! -r /usr/lib/ipmievd.orig ] && {
+	cp -p /usr/lib/ipmievd /usr/lib/ipmievd.orig
+    }
+
+    # disable/kill ipmievd before overwriting binary
+
+    sstate=`svcs | grep '/ipmievd:' | awk '{print $1}'`
+    echo "ipmievd_svc_state: $sstate" > $state_fn
+    [ "$sstate" = "online" ] && {
+	echo "$cmd_info disabling ipmievd service per proto_root"
+	svcadm disable -ts ipmievd
+    }
+    pkill -x ipmievd	# may or may not have been running as a service
+
+    echo "$cmd_info installing proto_root tool+daemon"
+    cp $proto_root/usr/sbin/ipmitool /usr/sbin/ipmitool
+    cp $proto_root/usr/lib/ipmievd   /usr/lib/ipmievd
+
+} # install_proto()
+
+# ----------------------------------------------------------------------------
+
+uninstall_proto()
+{
+    [ "$proto_root" = "" ] && {
+	echo "$cmd_info skipping uninstall of unset proto_root" ; return 0
+    }
+
+    # disable/kill ipmievd before overwriting binary
+
+    sstate=`svcs | grep '/ipmievd:' | awk '{print $1}'`
+    [ "$sstate" = "online" ] && {
+	echo "$cmd_info disabling ipmievd service per proto_root"
+	svcadm disable -ts ipmievd
+    }
+    pkill -x ipmievd	# may or may not have been running as a service
+
+    echo "$cmd_info uninstalling proto_root tool+daemon"
+    [ -r /usr/sbin/ipmitool.orig ] && {
+	cp -p /usr/sbin/ipmitool.orig /usr/sbin/ipmitool
+    }
+    [ -r /usr/lib/ipmievd.orig ] && {
+	cp -p /usr/lib/ipmievd.orig /usr/lib/ipmievd
+    }
+
+    # restore initial state of ipmievd svc if known
+
+    [ ! -r $state_fn ] && return 0
+
+    was_online=`grep -c "ipmievd_svc_state.*online" $state_fn`
+    [ $was_online -ne 0 ] && {
+	echo "$cmd_info enabling ipmievd service per initial state"
+	svcadm enable -s ipmievd
+    }
+} # uninstall_proto()
+
+# ----------------------------------------------------------------------------
+
+test_opt_version()
+{
+    tnm="version option"
+    ipmievd -V > ipmievd_V.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -i -c 'version.*[0-9][0-9]*\.[0-9]' ipmievd_V.out`
+    [ $cnt -le 0 ] && {
+	echo "$cmd_err $tnm output missing version" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_opt_version()
+
+# ----------------------------------------------------------------------------
+
+test_opt_help()
+{
+    tnm="help option"
+    ipmievd -h > ipmievd_h.out 2>&1
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -i 'interface' ipmievd_h.out | grep -i -c 'bmc'`
+    [ $cnt -le 0 ] && {
+	echo "$cmd_err $tnm output missing bmc interface" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_opt_help()
+
+# ----------------------------------------------------------------------------
+
+test_svc_online()
+{
+    tnm="service online check"
+    sstate=`svcs | grep '/ipmievd:' | awk '{print $1}'`
+    [ "$sstate" = "online" ] && {
+	echo "$cmd_info disabling ipmievd service"
+	svcadm disable -ts ipmievd
+    }
+
+    echo "$cmd_info enabling ipmievd service"
+    svcadm enable -ts ipmievd
+    sstate=`svcs | grep '/ipmievd:' | awk '{print $1}'`
+    [ "$sstate" != "online" ] && {
+	echo "$cmd_err $tnm ipmievd service state $sstate != online" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_svc_online()
+
+# ----------------------------------------------------------------------------
+
+test_syslog_init()
+{
+    tnm="syslog initial entries"
+    # Reading|Waiting events below are generated by bringing svc online;
+    # wait some for them to be syslogged.
+    echo "$cmd_info may wait $SYSLOG_DELAY_SEC sec per expected syslog entry"
+    sleep $SYSLOG_DELAY_SEC
+    cnt1=`grep -i -c 'ipmievd.*Reading' /var/adm/messages`
+    cnt2=`grep -i -c 'ipmievd.*Waiting' /var/adm/messages`
+    grep ipmievd /var/adm/messages > ipmievd.syslog_init.out
+    [ $cnt1 -lt 1 ] || [ $cnt2 -lt 1 ] && {
+	echo "$cmd_err $tnm ipmievd too few initial syslog entries" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_syslog_init()
+
+# ----------------------------------------------------------------------------
+
+test_syslog_event()
+{
+    num="$1"	# event number being tested
+
+    tnm="syslog event $num entry"
+    now=`date | awk '{print $2 " " $3}'`
+    cnt1=`grep -i -c "$now.*ipmievd" /var/adm/messages`
+    ipmitool event $num > ipmitool.syslog_event_$num.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_warn $tnm ipmitool exit code $rc"
+    }
+    sleep $SYSLOG_DELAY_SEC
+    cnt2=`grep -i -c "$now.*ipmievd" /var/adm/messages`
+    cnt3=`expr $cnt1 + 1` # expected val
+    [ $cnt2 -lt $cnt3 ] && {
+	echo "$cmd_err $tnm not syslogged in $SYSLOG_DELAY_SEC sec" ; exit 1
+    }
+    [ $cnt2 -gt $cnt3 ] && {
+	echo "$cmd_warn $tnm more syslog entries seen than expected"
+    }
+    echo "$cmd_info $tnm passed"
+} # test_syslog_event()
+
+# ----------------------------------------------------------------------------
+
+# main()
+
+while getopts r: opt; do # {
+    case $opt in
+	r)  proto_root="$OPTARG";;
+	-)  break;;
+	\?) echo "$cmd_err bad option(s)" ; usage ; exit 22;;
+    esac
+done # } while grabbing cmd line args
+
+shift `expr $OPTIND - 1`
+
+too_much="$1"
+[ "$too_much" != "" ] && {
+    echo "$cmd_err too few/many args" ; usage ; exit 7
+}
+[ "$proto_root" != "" ] && [ ! -d $proto_root ] && {
+    echo "$cmd_err proto_root $proto_root not a dir" ; usage ; exit 20
+}
+
+PATH="${bin_path}:$PATH"
+export PATH
+
+# ----------------------------------------------------------------------------
+
+enforce_i386
+install_proto
+show_env
+
+test_opt_version
+test_opt_help
+test_svc_online
+test_syslog_init
+# Design_Note: not all platforms appear to support event 3 (ECC);
+#              so skip it and just do events 1 and 2.
+for n in 1 2; do
+    test_syslog_event $n
+done
+
+uninstall_proto
+
+echo "$cmd_info all tests passed"	# if reach here then aok

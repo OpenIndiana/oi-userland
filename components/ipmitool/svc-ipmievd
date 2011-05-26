@@ -1,0 +1,66 @@
+#!/bin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+# These are the SMF start/stop/restart methods for ipmievd.
+
+# smf(5)
+. /lib/svc/share/smf_include.sh
+
+SMF_FMRI="svc:/network/ipmievd:default"
+
+if [ $# -eq 0 ]; then
+    # No arguments provided - report current status (use "-c" option to
+    # svcprop to get the current properties, otherwise false will result)
+    if [ "`/usr/bin/svcprop -c -p general/enabled $SMF_FMRI`" = "true" ]
+    then
+        echo "svc-ipmievd: ipmievd is enabled"
+    else
+        echo "svc-ipmievd: ipmievd is disabled"
+    fi
+else
+    case "$1" in
+	'start')
+		# ipmievd requires the presence of a BMC character device
+		# to run.  If one is not detected, then disable the service
+		# and exit.
+
+		if [ ! -c /dev/bmc ]; then
+			echo "$0:  No BMC device found: disabling."
+			/usr/sbin/svcadm disable $SMF_FMRI
+			exit $SMF_EXIT_OK
+		fi
+
+		/usr/lib/ipmievd sel
+		[ $? -ne 0 ] && exit 1
+		;;
+
+	*)
+		echo "Usage: $0 start"
+		exit 1
+		;;
+    esac
+fi
+
+exit $SMF_EXIT_OK

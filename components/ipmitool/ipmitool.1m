@@ -1,0 +1,2145 @@
+'\" t
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.TH ipmitool 1m "10 December 2008"
+.SH NAME
+ipmitool \- utility for controlling IPMI\-enabled devices
+.SH SYNOPSIS 
+.B ipmitool 
+[\-chvV] \-I lan \-H hostname  [\-p <port>] [\-U <username>] [\-f <password_file>] [\-S <sdrcache>] <command>
+
+.B ipmitool 
+[\-chvV] \-I lanplus \-H hostname  [\-p <port>] [\-U <username>] [\-f <password_file>] [\-S <sdrcache>] <command>
+
+.B ipmitool 
+[\-chvV] \-I bmc [\-S <sdrcache>] <command>
+
+.SH DESCRIPTION
+This program lets you manage Intelligent Platform Management Interface 
+(IPMI) functions of either the local system, via a kernel device driver,
+or a remote system, using IPMI v1.5 and IPMI v2.0. These functions include printing 
+FRU information, LAN configuration, sensor readings, and remote chassis 
+power control.
+     
+IPMI management by a remote station is disabled on platforms as they 
+are shipped. It can be enabled only by the root user on the local system.
+
+.SH SECURITY WARNING
+There are several security issues to be considered before enabling the
+IPMI LAN interface. A remote station has the ability to control a system's power 
+state as well as being able to gather certain platform information. To reduce 
+vulnerability it is strongly advised that the IPMI LAN interface only be 
+enabled in 'trusted' environments where system security is not an issue or 
+where there is a dedicated secure 'management network'. 
+
+Further it is strongly advised that you should not enable IPMI for
+remote access without setting a password, and that that password should
+not be the same as any other password on that system.  
+        
+When an IPMI password is changed on a remote machine the new password is 
+sent across the network as clear text. This could be observed and then 
+used to attack the remote system. It is thus recommended that IPMI
+password management only be done using a tool, such as 'ipmitool', running
+on the local station.
+        	  
+.SH OPTIONS
+.TP
+\-c
+Present output in CSV (comma separated variable) format.
+.TP    
+\-f <password_file>
+Specifies a file containing the remote server password. If this
+option is absent, or if password_file is empty, the password
+will default to NULL.
+
+If the \-f option is not present, ipmitool will prompt the
+user for a password. If no password is entered at the prompt,
+the remote server password will default to NULL.
+
+For IPMI v1.5, the maximum password length is 16 characters.
+Passwords longer than 16 characters will be truncated.
+
+For IPMI v2.0, the maximum password length is 20 characters;
+longer passwords are truncated.
+The longer password length is supported by the lanplus interface.
+.TP
+\-h
+Get basic usage help from the command line.
+.TP
+\-H <hostname>
+Remote server address, can be IP address  or  hostname.
+This  option  is required for the LAN interface connection.
+.TP
+\-I <interface>
+Selects IPMI interface to use.  Possible interfaces are
+lan, lanplus or bmc.
+.TP          
+\-p <port>
+Selects remote port (default is 623).
+.TP
+\-S <sdrcache>
+Uses Sensor Data Repository information from the file
+<sdrcache> to dramatically speed up the `sdr' and
+`sel elist' commands.  This file is typically created
+with the `sdr dump <sdrcache>' command.
+.TP
+\-U <username>
+Remote username, default is NULL user. 
+.TP
+\-v
+Increase verbose output  level.   This  option  may  be
+specified multiple times to increase the level of debug
+output.  If given three times you will get hexdumps  of
+all incoming and outgoing packets.
+.TP
+\-V
+Display version information.
+
+
+.SH COMMANDS
+.TP
+help This can be used to get command\-line help  on  ipmitool
+commands.  It may also be placed at the end of commands
+to get option usage help.
+
+ipmitool \-I bmc help
+.br
+Commands:
+        raw          Send a RAW IPMI request and print
+                     response
+        i2c          Send an I2C Master Write-Read
+                     command and print response
+        spd          Print SPD information from remote
+                     I2C device
+        lan          Configure LAN Channels
+        chassis      Get chassis status and set power
+                     state
+        power        Alias for chassis power commands
+        event        Send pre-defined events to MC
+        mc           Management Controller status and
+                     global enables
+        sdr          Print Sensor Data Repository
+                     entries and readings
+        sensor       Print detailed sensor information
+        fru          Print built-in FRU and scan SDR
+                     for FRU locators
+        sel          Print System Event Log (SEL)
+        pef          Configure Platform Event Filtering
+                     (PEF)
+        sol          Configure IPMIv2.0 Serial-over-LAN
+        isol         Configure IPMIv1.5 Serial-over-LAN
+        user         Configure Management Controller
+                     users
+        channel      Configure Management Controller
+                     channels
+        sunoem       OEM Commands for Sun servers
+        kontronoem   OEM Commands for Kontron
+        picmg        Run a PICMG/ATA extended command
+        firewall     Configure firmware firewall
+        session      Print session information
+        exec         Run list of commands from file
+        set          Set runtime variable for shell and
+                     exec
+        echo         Echo lines to stdout in scripts
+        ekanalyzer   Run FRU-Ekeying analyzer using FRU
+                     files
+
+ipmitool \-I bmc chassis help
+.br
+Chassis Commands:  status, power, identify, policy, restart_cause, poh, bootdev, bootparam, selftest
+
+ipmitool \-I bmc chassis power help
+.br
+chassis power Commands: status, on, off, cycle, reset, diag, soft
+.TP
+bmc|mc
+.RS
+.TP
+reset <warm|cold>
+.br
+
+Instructs the BMC to perform a warm or cold reset.
+.TP
+info
+.br
+
+Displays information about the BMC hardware, including device revision,
+firmware revision, IPMI version supported, manufacturer ID,
+and information on additional device support.
+.TP 
+watchdog
+.br 
+
+These commands allow a user to view and change the current 
+state of the watchdog timer.
+.RS
+.TP 
+get
+.br
+
+Show current Watchdog Timer settings and countdown state.
+.TP 
+reset
+.br
+
+Reset the Watchdog Timer to its most recent state and restart the 
+countdown timer.
+.TP 
+off
+.br
+
+Turn off a currently running Watchdog countdown timer.
+.RE
+.TP 
+selftest
+.br 
+
+Check on the basic health of the BMC by executing the Get Self Test
+results command and reporting the results.
+.TP
+getenables
+.br
+
+Displays a list of the currently enabled options for the BMC.
+.br
+.TP
+setenables <option>=[on|off]
+.br
+
+Enables or disables the given \fIoption\fR.  Currently supported
+values for \fIoption\fR include:
+.RS
+.TP
+recv_msg_intr
+.br
+
+Receive Message Queue Interrupt
+.TP
+event_msg_intr
+.br
+
+Event Message Buffer Full Interrupt
+.TP
+event_msg
+.br
+
+Event Message Buffer
+.TP
+system_event_log
+.br
+
+System Event Logging
+.TP
+oem0
+.br
+
+OEM-Defined option #0
+.TP
+oem1
+.br
+
+OEM-Defined option #1
+.TP
+oem2
+.br
+
+OEM-Defined option #2
+.RE
+.RE
+.TP
+channel
+.RS
+.TP
+authcap <channel number> <max priv>
+
+Displays  information  about  the
+authentication capabilities of the selected channel
+at the specified privilege level.
+.RS
+.TP
+Possible privilege levels are:
+.br
+1   Callback level
+.br
+2   User level
+.br
+3   Operator level
+.br
+4   Administrator level
+.br
+5   OEM Proprietary level
+.RE
+.TP
+info [channel number]
+
+Displays  information  about  the
+selected  channel.  If no channel is given it will
+display information about the currently used channel:
+.RS
+.PP
+ipmitool \-I bmc channel info
+.br
+Channel 0xf info:
+.br
+  Channel Medium Type   : System Interface
+.br
+  Channel Protocol Type : KCS
+.br
+  Session Support       : session\-less
+.br
+  Active Session Count  : 0
+.br
+  Protocol Vendor ID    : 7154
+.RE
+.TP
+getaccess <channel number> [userid]
+.br
+
+Configure the given userid as the default on the given channel number.
+When the given channel is subsequently used, the user is identified
+implicitly by the given userid.
+.TP
+setaccess <channel number> <userid> [callin=on|off]
+ [ipmi=on|off] [link=on|off] [privilege=level]
+.br
+
+Configure user access information on the given channel for the given userid.
+.TP
+getciphers <all | supported> <ipmi | sol> [channel]
+.br
+
+Displays the list of cipher suites supported for the given
+application (ipmi or sol) on the given channel.
+.RE
+.TP
+chassis
+.RS
+.TP
+status
+.br
+
+Displays information regarding the high-level
+status of the system chassis and main power
+subsystem.
+.TP
+poh
+.br
+
+This  command  will  return  the  Power\-On Hours counter.
+.TP
+identify <interval>
+
+Control the front panel identify  light.   Default interval
+is 15 seconds.  Use 0 to turn off.  Use "force" to turn on 
+indefinitely.
+.TP
+restart_cause
+.br
+
+Query the chassis for the cause of the last system restart.
+.TP 
+selftest
+.br 
+
+Check on the basic health of the BMC by executing the Get Self Test
+results command and reporting the results.
+.TP
+policy
+.br
+
+Set the chassis power policy in  the  event  power failure.
+.RS
+.TP
+list
+.br
+
+Return supported policies.
+.TP
+always\-on
+.br
+
+Turn on when power is restored.
+.TP
+previous
+.br
+
+Returned to  previous  state  when  power  is restored.
+.TP
+always\-off
+.br
+
+Stay off after power is restored.
+.RE
+.TP
+power
+.br
+
+Performs a chassis control  command  to  view  and
+change the power state.
+.RS
+.TP
+status
+.br
+
+Show current chassis power status.
+.TP
+on
+.br
+
+Power up chassis.
+.TP
+off
+.br
+
+Power  down  chassis  into  soft  off  (S4/S5
+state).   WARNING: This command does not initiate a clean 
+shutdown of the operating  system prior to powering down the system.
+.TP
+cycle
+.br
+
+Provides a power off interval of
+at least 1 second.  No action should occur if
+chassis power is in S4/S5 state,  but  it  is
+recommended  to  check  power state first and
+only issue a power cycle command if the  system  power is 
+on or in lower sleep state than S4/S5.
+.TP
+reset
+.br
+
+This command will perform a hard reset.
+.TP
+diag
+.br
+
+Pulse a  diagnostic  interrupt (NMI) directly to the processor(s).
+.TP
+soft
+.br 
+
+Initiate a soft\-shutdown of OS  via  ACPI  by
+emulating a fatal overtemperature.
+.RE
+.TP
+bootdev <device> [clear-cmos=yes|no] [options=help,...]
+.br
+
+Request the system to boot from an alternate boot device on next reboot.  If the optional
+`clear-cmos` argument is present, the parameter given will be used to determine if the
+values stored in persistent CMOS memory are cleared the next time the system is rebooted.
+Note that this command is not supported on many platforms.
+Various options may be used to modify the boot device settings.
+Run "bootdev none options=help" for a list of available boot device
+modifiers/options.
+
+.RS
+.TP
+Currently supported values for <device> are:
+.TP
+pxe
+.br
+
+Force PXE boot
+.TP
+disk
+.br
+
+Force boot from BIOS default boot device
+.TP
+safe
+.br
+
+Force boot from BIOS default boot device, request Safe Mode
+.TP
+diag
+.br
+
+Force boot from diagnostic partition
+.TP
+cdrom
+.br
+
+Force boot from CD/DVD
+.TP
+bios
+.br
+
+Force boot into BIOS setup
+.TP 
+floppy
+.br 
+
+Force boot from Floppy/primary removable media
+.RE
+.TP 
+bootparam
+.br 
+
+Get or set various system boot option parameters.
+.RS
+.TP 
+get <param #>
+.br 
+
+Get boot parameter. Currently supported values for <param #> are:
+
+0 - Set In Progress
+
+1 - Service Partition Selector
+
+2 - Service Partition Scan
+
+3 - BMC Boot Flag Valid Bit Clearing
+
+4 - Boot Info Acknowledge 
+
+5 - Boot Flags
+
+6 - Boot Initiator Info
+
+7 - Boot Initiator Mailbox
+.br 
+
+.TP 
+set <option> [value ...]
+.br 
+
+Set boot parameter.
+
+.RS
+.TP 
+Currently supported values for <option> are:
+.TP 
+force_pxe
+.br 
+
+Force PXE boot
+.TP 
+force_disk
+.br 
+
+Force boot from default hard-drive
+.TP 
+force_safe
+.br 
+
+Force boot from default hard-drive, request Safe Mode
+.TP 
+force_diag
+.br 
+
+Force boot from diagnostic partition
+.TP 
+force_cdrom
+.br 
+
+Force boot from CD/DVD 
+.TP 
+force_bios
+.br 
+
+Force boot into BIOS setup
+
+.RE
+.RE
+.RE
+.TP
+ekanalyzer <command> <xx=file1> <xx=file2> [<rc=file3>] ...
+.RS
+
+.br
+NOTE : This command can support a maximum of 8 files per command line
+.TP
+file1
+.br
+binary file that stores FRU data of a Carrier or an AMC module
+.TP
+file2
+.br
+binary file that stores FRU data of an AMC module.
+These binary files can be generated from command:
+ipmitool fru read <id> <file>
+.TP
+file3
+.br
+configuration file used for configuring On-Carrier Device ID
+or OEM GUID. This file is optional.
+.TP
+.br
+xx : indicates the type of the file.
+.br
+It can take the following value:
+.RS
+.TP
+.br
+oc : On-Carrier device
+.TP
+.br
+a1 : AMC slot A1
+.TP
+.br
+a2 : AMC slot A2
+.TP
+.br
+a3 : AMC slot A3
+.TP
+.br
+a4 : AMC slot A4
+.TP
+.br
+b1 : AMC slot B1
+.TP
+.br
+b2 : AMC slot B2
+.TP
+.br
+b3 : AMC slot B3
+.TP
+.br
+b4 : AMC slot B4
+.TP
+.br
+sm : Shelf Manager
+
+.RE
+.TP
+.br
+The available commands for ekanalyzer are:
+
+.TP
+print [<carrier | power | all>]
+.RS
+.TP
+carrier (default) <oc=file1> <oc=file2> ...
+.br
+
+Display point-to-point physical connectivity between carriers and AMC modules.
+ Example:
+   ipmitool ekanalyzer print carrier oc=fru oc=carrierfru
+   From Carrier file: fru
+      Number of AMC bays supported by Carrier: 2 
+      AMC slot B1 topology:
+         Port 0 =====> On Carrier Device ID 0, Port 16
+         Port 1 =====> On Carrier Device ID 0, Port 12
+         Port 2 =====> AMC slot B2, Port 2
+      AMC slot B2 topology:
+         Port 0 =====> On Carrier Device ID 0, Port 3
+         Port 2 =====> AMC slot B1, Port 2
+   *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+   From Carrier file: carrierfru
+      On Carrier Device ID 0 topology:
+         Port 0 =====> AMC slot B1, Port 4
+         Port 1 =====> AMC slot B1, Port 5
+         Port 2 =====> AMC slot B2, Port 6
+         Port 3 =====> AMC slot B2, Port 7
+      AMC slot B1 topology:
+         Port 0 =====> AMC slot B2, Port 0
+      AMC slot B1 topology:
+         Port 1 =====> AMC slot B2, Port 1
+      Number of AMC bays supported by Carrier: 2
+
+.TP
+power <xx=file1> <xx=file2> ...
+.br
+
+Display power supply information between carrier and AMC modules.
+.TP
+all <xx=file> <xx=file> ...
+.br
+
+Display both physical connectivity and power supply of each carrier and AMC
+modules.
+
+.RE
+.TP
+frushow <xx=file>
+.br
+
+Convert a binary FRU file into human readable text format. Use -v option to get
+more display information.
+
+.RE
+.RS
+.TP
+summary [<match | unmatch | all>]
+.RS
+.TP
+match (default) <xx=file> <xx=file> ...
+.br
+
+Display only matched results of Ekeying match between an On-Carrier device
+and an AMC module or between 2 AMC modules. Example:
+ ipmitool ekanalyzer summary match oc=fru b1=amcB1 a2=amcA2
+ On-Carrier Device vs AMC slot B1
+  AMC slot B1 port 0 ==> On-Carrier Device 0 port 16
+   Matching Result
+   - From On-Carrier Device ID 0
+    -Channel ID 11 || Lane 0: enable
+    -Link Type: AMC.2 Ethernet
+    -Link Type extension: 1000BASE-BX (SerDES Gigabit) Ethernet link
+    -Link Group ID: 0 || Link Asym. Match: exact match
+   - To AMC slot B1
+    -Channel ID 0 || Lane 0: enable
+    -Link Type: AMC.2 Ethernet
+    -Link Type extension: 1000BASE-BX (SerDES Gigabit) Ethernet link
+    -Link Group ID: 0 || Link Asym. Match: exact match
+   *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+  AMC slot B1 port 1 ==> On-Carrier Device 0 port 12
+   Matching Result
+   - From On-Carrier Device ID 0
+    -Channel ID 6 || Lane 0: enable
+    -Link Type: AMC.2 Ethernet
+    -Link Type extension: 1000BASE-BX (SerDES Gigabit) Ethernet link
+    -Link Group ID: 0 || Link Asym. Match: exact match
+   - To AMC slot B1
+    -Channel ID 1 || Lane 0: enable
+    -Link Type: AMC.2 Ethernet
+    -Link Type extension: 1000BASE-BX (SerDES Gigabit) Ethernet link
+    -Link Group ID: 0 || Link Asym. Match: exact match
+   *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+ On-Carrier Device vs AMC slot A2
+  AMC slot A2 port 0 ==> On-Carrier Device 0 port 3
+   Matching Result
+   - From On-Carrier Device ID 0
+    -Channel ID 9 || Lane 0: enable
+    -Link Type: AMC.2 Ethernet
+    -Link Type extension: 1000BASE-BX (SerDES Gigabit) Ethernet link
+    -Link Group ID: 0 || Link Asym. Match: exact match
+   - To AMC slot A2
+    -Channel ID 0 || Lane 0: enable
+    -Link Type: AMC.2 Ethernet
+    -Link Type extension: 1000BASE-BX (SerDES Gigabit) Ethernet link
+    -Link Group ID: 0 || Link Asym. Match: exact match
+   *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+ AMC slot B1 vs AMC slot A2
+  AMC slot A2 port 2 ==> AMC slot B1 port 2
+   Matching Result
+   - From AMC slot B1
+    -Channel ID 2 || Lane 0: enable
+    -Link Type: AMC.3 Storage
+    -Link Type extension: Serial Attached SCSI (SAS/SATA)
+    -Link Group ID: 0 || Link Asym. Match: FC or SAS interface {exact match}
+   - To AMC slot A2
+    -Channel ID 2 || Lane 0: enable
+    -Link Type: AMC.3 Storage
+    -Link Type extension: Serial Attached SCSI (SAS/SATA)
+    -Link Group ID: 0 || Link Asym. Match: FC or SAS interface {exact match}
+ *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
+.TP
+unmatch <xx=file> <xx=file> ...
+.br
+
+Display the unmatched results of Ekeying match between an On-Carrier device
+and an AMC module or between 2 AMC modules
+.TP
+all <xx=file> <xx=file> ...
+.br
+
+Display both matched result and unmatched results of Ekeying match between two
+cards or two modules.
+.RE
+.RE
+.TP
+event
+.RS
+.TP
+<predefined event number n>
+.br
+
+Send a pre-defined test event to the System Event Log.  The following events are
+included as a means to test the functionality of the System Event Log component
+of the BMC (an entry will be added each time the event \fIn\fR command is
+executed).
+
+Currently supported values for \fIn\fR are:
+.br
+1	Temperature: Upper Critical: Going High
+.br
+2	Voltage Threshold: Lower Critical: Going Low
+.br
+3	Memory: Correctable ECC
+.br
+
+\fINOTE\fR: These pre-defined events will likely not
+produce "accurate" SEL records for a particular system because they will
+not be correctly tied to a valid sensor number, but they are sufficient
+to verify correct operation of the SEL.
+
+.TP
+file <filename>
+.br
+
+Event log records specified in \fIfilename\fR will be added to the System Event Log.
+
+The format of each line in the file is as follows:
+
+<{EvM Revision} {Sensor Type} {Sensor Num} {Event Dir/Type} {Event Data 0} {Event Data 1} {Event Data 2}>[# COMMENT]
+
+e.g.:
+.br
+0x4 0x2 0x60 0x1 0x52 0x0 0x0 # Voltage threshold: Lower Critical: Going Low
+.br 
+
+EvM Revision - 
+The "Event Message Revision" is 0x04 for messages that comply with the IPMI 2.0 
+Specification and 0x03 for messages that comply with the IPMI 1.0 Specification.
+
+Sensor Type - 
+Indicates the Event Type or Class.
+
+Sensor Num - 
+Represents the 'sensor' within the management controller that generated 
+the Event Message.
+
+Event Dir/Type - 
+This field is encoded with the event direction as the high bit 
+(bit 7) and the event type as the low 7 bits.  Event direction is 
+0 for an assertion event and 1 for a deassertion event. 
+
+See the IPMI 2.0 specification for further details on the definitions for
+each field.
+
+.TP 
+<sensorid> <list>
+.br 
+
+Get a list of all the possible Sensor States and pre-defined Sensor State
+Shortcuts available for a particular sensor.   \fIsensorid\fR is the character 
+string representation of the sensor and must be enclosed in double quotes
+if it includes white space.  Several different commands including 
+\fIipmitool sensor list\fR may be used to obtain a list that includes 
+the \fIsensorid\fR strings representing the sensors on a given system. 
+.RS
+.PP 
+ipmitool \-I open event "PS 2T Fan Fault" list
+.br 
+Finding sensor PS 2T Fan Fault... ok
+.br 
+Sensor States:
+.br 
+  State Deasserted
+.br 
+  State Asserted
+.br 
+Sensor State Shortcuts:
+.br 
+  present    absent
+.br 
+  assert     deassert
+.br 
+  limit      nolimit
+.br 
+  fail       nofail
+.br 
+  yes        no
+.br 
+  on         off
+.br 
+  up         down
+
+.RE
+.TP 
+<sensorid> <sensor state> [<direction>]
+
+Generate a custom event based on existing sensor information.
+The optional event \fBdirection\fR can be either \fIassert\fR
+(the default) or \fIdeassert\fR.  
+
+.RS
+.PP 
+ipmitool event "PS 2T Fan Fault" "State Asserted"
+.br 
+Finding sensor PS 2T Fan Fault... ok
+.br 
+   0 | Pre-Init Time-stamp   | Fan PS 2T Fan Fault | State Asserted
+.RE
+.RS
+.PP 
+ipmitool event "PS 2T Fan Fault" "State Deasserted"
+.br 
+Finding sensor PS 2T Fan Fault... ok
+.br 
+   0 | Pre-Init Time-stamp   | Fan PS 2T Fan Fault | State Desserted
+.RE
+.RS
+.PP 
+.RE
+
+.RE
+.TP
+exec <filename>
+
+.RS
+Execute ipmitool commands from \fIfilename\fR.  Each line
+is a complete command.  The syntax of the commands
+are defined by the COMMANDS section in this manpage.
+Each line may have an optional comment at the end
+of the line, delimited with a `#' symbol.
+
+e.g., a command file with one line:
+
+sdr list # get a list of sdr records
+.br
+.RE
+.TP
+fru
+.RS
+.TP
+print
+.br
+
+This command will read all Field  Replaceable  Unit (FRU)
+inventory  data  and  extract  such information as
+serial number, part number, asset tags, and  short
+strings describing the chassis, board, or product.
+.TP 
+read <fru id> <fru file>
+.br 
+
+\fIfru id\fR is the digit ID of the FRU (see output of 'fru print').
+\fIfru file\fR is the absolute pathname of a file in which to dump the
+binary FRU data pertaining to the specified FRU entity.
+.TP 
+write <fru id> <fru file>
+.br 
+
+\fIfru id\fR is the digit ID of the FRU (see output of 'fru print').
+\fIfru file\fR is the absolute pathname of a file from which to pull
+the binary FRU data before uploading it to the specified FRU.
+.TP 
+upgEkey <fru id> <fru file>
+.br 
+
+Update a multirecord FRU location.
+\fIfru id\fR is the digit ID of the FRU (see output of 'fru print').
+\fIfru file\fR is the absolute pathname of a file from which to pull the
+binary FRU data to upload into the specified multirecord FRU entity.
+
+.TP 
+edit <fru id> 
+.br 
+
+This command provides interactive editing of some supported records, namely
+PICMG Carrier Activation Record.  \fIfru id\fR is the digit ID of the FRU 
+(see output of 'fru print'); default is 0.
+
+.TP 
+edit <fru id> field <section> <index> <string>
+.br 
+
+This command may be used to set a field string to a new value.  It replaces 
+the FRU data found at \fIindex\fR in the specified \fIsection\fR with the 
+supplied \fIstring\fR.  
+
+.RS
+.TP
+fru id
+.br
+
+is the digit ID of the FRU (see output of 'fru print').
+.TP
+section
+.br
+
+is a string which refers to FRU Inventory Information
+Storage Areas and may be refer to:
+.RS
+.TP 
+c FRU Inventory Chassis Info Area
+.br
+.TP
+b FRU Inventory Board Info Area
+.br
+.TP
+p FRU Inventory Product Info Area
+.RE
+.TP
+index
+.br
+
+specifies the field number. Field numbering starts on the first 'english text' field type. For instance in the <\fBboard\fR> info area field '0' is <\fBBoard Manufacturer\fR> and field '2' is <\fBBoard Serial Number\fR>; see IPMI Platform Management FRU Information Storage Definition v1.0 R1.1 for field locations.
+.TP
+string
+.br
+
+must be the same length as the string being replaced and must be 8-bit ASCII (0xCx).
+.RE
+.TP 
+edit <fru id> oem iana <record> <format> [<args>]
+.br 
+
+This command edits the data found in the multirecord area. Support for
+OEM specific records is limited. 
+.RE
+.TP 
+firewall
+.br 
+
+This command supports the firmware firewall capability.  It may be used to 
+add or remove security-based restrictions on certain commands/command 
+sub-functions  or to list the current firmware firewall restrictions set on 
+any commands.  For each firmware firewall command listed below, parameters 
+may be included to cause the command to be executed with increasing 
+granularity on a specific LUN, for a specific NetFn, for a specific IPMI 
+Command, and finally for a specific command's sub-function (see Appendix H in the 
+IPMI 2.0 Specification for a listing of any sub-function numbers that may 
+be associated with a particular command).
+
+Parameter syntax and dependencies are as follows:
+
+[<channel H>] [<lun L> [<netfn N> [<command C [<subfn S>]]]] 
+
+Note that if "netfn <\fBN\fR>" is specified, then "lun <\fBL\fR>" must also be 
+specified;  if "command <\fBC\fR>" is specified, then "netfn <\fBN\fR>" (and
+therefore "lun <\fBL\fR>") must also be specified, and so forth.
+
+"channel <\fBH\fR>" is an optional and standalone parameter.  If not specified,
+the requested operation will be performed on the current channel.  Note that
+command support may vary from channel to channel. 
+
+Firmware firewall commands:
+.RS
+.TP 
+info [<parms as described above>]
+.br 
+
+List firmware firewall information for the specified LUN, NetFn, and 
+Command (if supplied) on the current or specified channel.  Listed
+information includes the support, configurable, and enabled bits for
+the specified command or commands.
+
+Some usage examples:
+.RS
+.TP 
+info [<channel H>] [<lun L>] 
+.br 
+
+This command will list firmware firewall information for all NetFns for the 
+specified LUN on either the current or the specified channel.
+.TP 
+info [<channel H>] [<lun L> [<netfn N>]] 
+.br 
+
+This command will print out all command information for a single LUN/NetFn pair.
+.TP 
+info [<channel H>] [<lun L> [<netfn N> [<command C]]] 
+.br 
+
+This prints out detailed, human-readable information showing the support, configurable,
+and enabled bits for the specified command on the specified LUN/NetFn pair.  Information
+will be printed about each of the command subfunctions.
+.TP 
+info [<channel H>] [<lun L> [<netfn N> [<command C [<subfn S>]]]] 
+.br 
+
+Print out information for a specific sub-function.
+.RE
+.TP 
+enable [<parms as described above>]
+.br 
+
+This command is used to enable commands for a given NetFn/LUN combination on
+the specified channel. 
+.TP 
+disable [<parms as described above>] [force]
+.br 
+
+This command is used to disable commands for a given NetFn/LUN combination on
+the specified channel.   Great care should be taken if using the "force"
+option so as not to disable the "Set Command Enables" command.
+.TP 
+reset [<parms as described above>]
+.br 
+
+This command may be used to reset the firmware firewall back to a state
+where all commands and command sub-functions are enabled.
+
+.RE
+.TP
+i2c <i2caddr> <read bytes> [<write data>]
+.br
+
+Sends an I^2C Master Write-Read command (if <write data> is supplied,
+it is written to the I^2C master first)
+to the device at address <i2caddr> and displays <read bytes> bytes of response.
+.br
+
+Note: this command is not supported by all BMCs.
+.br
+
+The following command writes the values 0x2, 0x3, and 0x4, then attempts to read 5 bytes from the I^2C master
+at address 0xa:
+.br
+
+ipmitool i2c 0xa 5 0x2 0x3 0x4
+
+.TP
+isol
+.RS
+.TP 
+info
+.br 
+
+Retrieve information about the Intel IPMI v1.5 Serial\-Over\-LAN
+configuration.
+.TP 
+set <parameter> <value>
+.br 
+
+Configure parameters for Intel IPMI v1.5 Serial\-over\-LAN.
+.RS
+.TP
+Valid parameters and values are:
+.br
+.TP
+enabled
+true, false
+.TP
+privilege\-level
+user, operator, admin, oem
+.TP
+bit\-rate
+9.6, 19.2, 38.4, 57.6, 115.2
+.RE
+.TP
+activate
+.br
+
+Causes ipmitool to enter Intel IPMI v1.5 Serial Over LAN mode. An RMCP+
+connection is made to the BMC, the terminal is set to raw mode, and user
+input is sent to the serial console on the remote server. On exit, the
+the SOL payload mode is deactivated and the terminal is reset to its
+original settings.
+.RS
+
+Special escape sequences are provided to control the SOL session:
+.RS
+.TP
+~.        Terminate connection
+.TP
+~^Z       Suspend ipmitool
+.TP
+~^X       Suspend ipmitool, but don't restore tty on restart
+.TP
+~B        Send break
+.TP
+~~        Send the escape character by typing it twice
+.TP
+~?        Print the supported escape sequences
+.RE
+
+Note that escapes are only recognized immediately after newline.
+.RE
+
+.RE
+.TP 
+kontronoem
+.RS
+
+OEM commands specific to Kontron devices.
+.TP
+setsn
+.br
+
+Set FRU serial number.
+.TP
+setmfgdate
+.br
+
+Set FRU manufacturing date.
+.TP
+nextboot <boot device>
+.br
+
+Select the next boot order on the Kontron CP6012.
+.RE
+.TP
+lan
+.RS
+.TP
+print [<channel>]
+.br
+
+Print the  current  configuration  for  the  given channel.
+The default will print information on the first found LAN channel.
+.TP
+set <channel> <command> <parameter>
+.br
+
+Set the given  command and parameter  on  the  given  channel.
+Valid command/parameters are:
+.RS
+.TP
+ipaddr <x.x.x.x>
+.br
+
+Set the IP address for this channel.
+.TP
+netmask <x.x.x.x>
+.br
+
+Set the netmask for this channel.
+.TP
+macaddr <xx:xx:xx:xx:xx:xx>
+.br
+
+Set the MAC address for this channel.
+.TP
+defgw ipaddr <x.x.x.x>
+.br
+
+Set the default gateway IP address.
+.TP
+defgw macaddr <xx:xx:xx:xx:xx:xx>
+.br
+
+Set the default gateway MAC address.
+.TP
+bakgw ipaddr <x.x.x.x>
+.br
+
+Set the backup gateway IP address.
+.TP
+bakgw macaddr <xx:xx:xx:xx:xx:xx>
+.br
+
+Set the backup gateway MAC address.
+.TP
+password <pass>
+.br
+
+Set the null user password.
+.TP
+snmp <community string>
+.br
+
+Set the SNMP community string.
+.TP
+user
+.br
+
+Enable user access mode for userid 1 (issue the `user'
+command to display information about userids for a given channel).
+.TP
+access <on|off>
+.br
+
+Set LAN channel access mode.
+.TP 
+alert <on|off>
+.br 
+
+Enable or disable PEF alerting for this channel.
+.TP
+ipsrc <source>
+.br
+
+Set the IP address source:
+.br
+none = unspecified
+.br
+static = manually configured static IP address
+.br
+dhcp = address obtained by BMC running DHCP
+.br
+bios = address loaded by BIOS or system software
+.TP
+arp respond <on|off>
+.br
+
+Set BMC generated ARP responses.
+.TP
+arp generate <on|off>
+.br
+
+Set BMC generated gratuitous ARPs.
+.TP
+arp interval <seconds>
+.br
+
+Set BMC generated gratuitous ARP interval.
+.TP
+auth <level,...> <type,...>
+.br
+
+Set the valid  authtypes  for  a  given  auth level.
+.br
+Levels: callback, user, operator, admin
+.br
+Types: none, md2, md5, password, oem
+.TP
+cipher_privs <privlist>
+.br
+
+Correlates cipher suite numbers with the maximum privilege
+level that is allowed to use it.  In this way, cipher suites can restricted
+to users with a given privilege level, so that, for example,
+administrators are required to use a stronger cipher suite than
+normal users.
+
+The format of \fIprivlist\fR is as follows.  Each character represents a privilege level
+and the character position identifies the cipher suite number.  For example, the
+first character represents cipher suite 1 (cipher suite 0 is reserved), the second represents
+cipher suite 2, and so on.  \fIprivlist\fR must be 15 characters in length.
+
+Characters used in \fIprivlist\fR and their associated privilege levels are:
+
+X	Cipher Suite Unused
+.br
+c	CALLBACK
+.br
+u	USER
+.br
+o	OPERATOR
+.br
+a	ADMIN
+.br
+O	OEM
+.br
+
+So, to set the maximum privilege for cipher suite 1 to USER and suite 2 to
+ADMIN, issue the following command:
+
+ipmitool -I \fIinterface\fR lan set \fIchannel\fR cipher_privs uaXXXXXXXXXXXXX
+
+.RE
+.TP
+alert print [<channel>] [<destination>]
+.br 
+
+Print alert information for the specified channel and destination.  
+The default will print all alerts for all alert destinations on the 
+first found LAN channel.
+
+.TP
+alert set <channel> <destination> <command> <parameter>
+.br 
+
+Set an alert on the given LAN channel and destination.   Alert Destinations are
+listed via the 'lan alert print' command.  Valid command/parameters are:
+.RS
+.TP 
+ipaddr <x.x.x.x>
+.br 
+
+Set alert IP address.
+.TP 
+macaddr <xx:xx:xx:xx:xx:xx>
+.br 
+
+Set alert MAC address.
+.TP 
+gateway <default | backup>
+.br 
+
+Set the channel gateway to use for alerts.
+.TP 
+ack <on | off>
+.br 
+
+Set Alert Acknowledge on or off.
+.TP 
+type <pet | oem1 | oem2>
+.br 
+
+Set the destination type as PET or OEM.
+.TP 
+time <seconds>
+.br 
+
+Set ack timeout or unack retry interval.
+.TP 
+retry <number>
+.br 
+
+Set the number of alert retries.
+.RE
+.TP
+stats get [<channel>]
+.br 
+
+Retrieve information about the IP connections on the specified channel.
+The default will retrieve statistics on the first found LAN channel.
+.TP
+stats clear [<channel>]
+.br 
+
+Clear all IP/UDP/RMCP Statistics to 0 on the specified channel.
+The default will clear statistics on the first found LAN channel.
+.RE
+.TP
+pef
+.RS
+.TP
+info
+.br
+
+This command will query the BMC and print information about the PEF supported features.
+.TP
+status
+.br
+
+This command prints the current PEF status (the last SEL entry processed by the BMC, etc).
+.TP
+policy
+.br
+
+This command lists the PEF policy table entries.  Each policy 
+entry describes an alert destination.  A policy set is a 
+collection of table entries.  PEF alert actions reference policy sets.
+.TP
+list
+.br
+
+This command lists the PEF table entries.  Each PEF entry 
+relates a sensor event to an action.  When PEF is active, 
+each platform event causes the BMC to scan this table for 
+entries matching the event, and possible actions to be taken.
+Actions are performed in priority order (higher criticality first).
+.RE
+.TP
+picmg <properties> 
+.RS
+
+Run a PICMG/ATA extended command. Get PICMG properties may be used to
+obtain and print Extension major version information, PICMG identifier,
+FRU Device ID and Max FRU Device ID.
+.TP 
+addrinfo
+.br 
+
+Get address information.  This command may return information on the Hardware
+address, IPMB-0 Address, FRU ID, Site/Entity ID, and Site/Entity Type.
+.TP 
+frucontrol <fru id> <options>
+.br 
+
+Set various control options:
+.RS
+.TP 
+0x00      - Cold Reset
+.br 
+.TP 
+0x01      - Warm Reset
+.br 
+.TP 
+0x02      - Graceful Reboot
+.br 
+.TP 
+0x03      - Issue Diagnostic Interrupt
+.br 
+.TP 
+0x04      - Quiesce [AMC only]
+.br 
+.TP 
+0x05-0xFF - Cold Reset
+.br 
+.RE
+.TP 
+activate <fru id>
+.br 
+
+Activate the specified FRU.
+.TP 
+deactivate <fru id>
+.br 
+
+Deactivate the specified FRU.
+.TP 
+policy get <fru id>
+.br 
+
+Get FRU activation policy.
+.TP 
+policy set <fru id> <lockmask> <lock>
+.br 
+
+Set FRU activation policy.  \fIlockmask\fR is 1 or 0 to indicate action
+on the deactivation or activation locked bit respectively.  \fIlock\fR is
+1 or 0 to set/clear locked bit.
+.TP 
+portstate set|getall|getgranted|getdenied <parameters> 
+.br 
+
+Get or set various port states.  See usage for parameter details.
+.RE
+.TP 
+power <chassis power command>
+.br 
+
+Alias for the "chassis power" commands.
+See the "chassis power" commands for usage information.
+.TP 
+raw <netfn> <cmd> [<data>]
+.br
+
+This will allow you to execute raw IPMI commands.   For
+example to query the POH counter with a raw command:
+
+ipmitool \-v \-I bmc raw 0x0 0xf
+.br
+RAW REQ (netfn=0x0 cmd=0xf data_len=0)
+.br
+RAW RSP (5 bytes)
+.br
+3c 72 0c 00 00
+.TP
+sdr
+.RS
+.TP
+info
+.br
+
+This command will query the BMC for Sensor Data Record (SDR) Repository information.
+.TP
+type [list|<sensor type>]
+.br
+
+Displays sensor data records only for the sensor type (e.g. `temperature', `voltage', etc.)
+chosen.  A list of all supported sensor types may be displayed if the `list' keyword is used instead
+of a sensor type.  Note that the sensor type is not case sensitive.  Also note that there may be a large
+delay before any information is displayed, because ipmitool does a full scan of all sensor records and builds
+a list of just those that meet the type criterion given.
+.TP
+list|elist [all|full|compact|event|mcloc|fru|generic]
+.br
+
+This command will read the Sensor Data Records (SDR) and 
+extract sensor information of a given type, then query each sensor and 
+print its name, reading, and status.  The `elist' form of this command
+prints additional information about each data record (e.g. threshold type,
+sensor number, sensor entity).
+.RS
+.TP
+Valid types are:
+.RS
+.TP
+all
+.br
+
+All SDR records (Sensor and Locator) 
+.TP
+full
+.br
+
+Full Sensor Record
+.TP
+compact
+.br
+
+Compact Sensor Record
+.TP
+event
+.br
+
+Event-Only Sensor Record
+.TP
+mcloc
+.br
+
+Management Controller Locator Record
+.TP
+fru
+.br
+
+FRU Locator Record
+.TP
+generic
+.br
+
+Generic SDR records
+.RE
+.RE
+.TP
+entity <id>[.<instance>]
+.br
+
+Displays all sensors associated with an entity.  Get a list of
+valid entity ids on the target system by issuing the `sdr list' command
+with the verbose option (`-v').  A list of all entity ids can be found
+in the IPMI specifications.
+.TP
+dump <file>
+.br
+
+Dumps raw SDR data to a file.  This file may also be used as the sdr cache, supplied to ipmitool
+with the `\-S' option, dramatically speeding up the `sdr' and `sel elist' commands.
+.TP 
+fill sensors
+.br 
+
+Create the SDR Repository for the current configuration.  Will perform
+a 'Clear SDR Repository' command so be careful.
+.TP 
+fill file <filename>
+.br 
+
+Fill the SDR Repository using records stored in a binary data file. Will perform
+a 'Clear SDR Repository' command so be careful.
+.RE
+.TP
+sel
+.br
+
+NOTE: System Event Log (SEL) entry-times are displayed as 
+`Pre-Init Time-stamp' if the SEL clock needs to be set.
+Ensure that the SEL clock is accurate by invoking the
+`sel time get' and
+`sel time set <time string>' commands.
+.RS
+.TP
+info 
+.br
+
+This command will query the BMC for information
+about the System Event Log (SEL) and its contents.
+.TP
+clear
+.br
+
+This command will clear the contents of the SEL.
+It cannot be undone so be careful.
+.TP
+list|elist
+.br
+
+When this command is invoked without arguments, the entire
+contents of the SEL are displayed.  In addition to the information
+displayed by the `list' command, the `elist' command will cross-reference
+SEL records with SDR records to produce descriptive event output.
+
+.RS
+.TP
+<count> | first <count>
+.br
+
+Displays the first \fIcount\fR (least-recent) entries in the SEL.
+If \fIcount\fR is zero, all entries are displayed.
+.TP
+last <count>
+.br
+
+Displays the last \fIcount\fR (most-recent) entries in the SEL.
+If \fIcount\fR is zero, all entries are displayed.
+.RE
+.TP          
+delete <SEL Record ID> ... <SEL Record ID>
+.br 
+
+Delete one or more SEL event records.
+.TP 
+add <file>
+.br 
+
+Read event entries from a file and add them to the SEL.  New SEL
+entries area added onto the SEL after the last record in the SEL.
+Record added is of type 2 and is automatically timestamped.
+.TP 
+get <SEL Record ID>
+.br 
+
+Print information on the specified SEL Record entry.
+.TP 
+save <file>
+
+Save SEL records to a text file that can be fed back into the
+`event file' ipmitool command.  This can be useful for
+testing Event generation by building an appropriate Platform
+Event Message file based on existing events.  Please see the
+available help for the 'event file ...' command for a description of
+the format of this file.
+.TP 
+writeraw <file>
+
+Save SEL records to a file in raw, binary format.  This file can
+be fed back to the `sel readraw' ipmitool command for viewing.
+.TP 
+readraw <file>
+
+Read and display SEL records from a binary file.  Such a file can
+be created using the `sel writeraw' ipmitool command.
+.TP          
+time
+.RS
+.TP
+get
+.br
+
+Displays the SEL clock's current time.
+.TP
+set <time string>
+.br
+
+Sets the SEL clock.  Future SEL entries will use the time
+set by this command.  <time string> is of the
+form "MM/DD/YYYY HH:MM:SS".  Note that hours are in 24-hour
+form.  It is recommended that the SEL be cleared before
+setting the time.
+.RE
+.RE
+.TP
+sensor
+.RS
+.TP
+list
+.br
+
+Lists sensors and thresholds in a wide table format.
+.TP
+get <id> ... [id]
+.br
+
+Prints information for sensors specified by name.
+.TP
+thresh <id> <threshold> <setting>
+.br
+
+This allows you to set a particular sensor threshold 
+value.  The sensor is specified by name.
+.RS
+.TP
+Valid thresholds are:
+.br
+unr   Upper Non\-Recoverable
+.br
+ucr   Upper Critical
+.br
+unc   Upper Non\-Critical
+.br
+lnc   Lower Non\-Critical
+.br
+lcr   Lower Critical
+.br
+lnr   Lower Non\-Recoverable
+.RE
+.RE
+.TP
+session
+.RS
+.TP
+info <active | all | id 0xnnnnnnnn | handle 0xnn>
+.br
+
+Get information about the specified session(s).  You may identify
+sessions by their id, by their handle number, by their active status,
+or by using the keyword `all' to specify all sessions.
+.RE
+.TP
+sol
+.RS
+.TP
+info [<channel number>]
+.br
+
+Retrieve information about the Serial-Over-LAN configuration on 
+the specified channel.  If no channel is given, it will display 
+SOL configuration data for the currently used channel.
+.TP 
+payload <enable | disable> <channel> <userid>
+.br 
+
+Enable or disable SOL payload for the user on the specified channel. 
+.TP
+set <parameter> <value> [channel]
+.br
+
+Configure parameters for Serial Over Lan.  If no channel is given,
+it will display SOL configuration data for the currently used
+channel.  Configuration parameter updates are automatically guarded
+with the updates to the set-in-progress parameter.
+.RS
+.TP
+Valid parameters and values are:
+.br
+.TP
+set-in-progress
+set-complete set-in-progress commit-write
+.TP
+enabled
+true false
+.TP
+force-encryption
+true false
+.TP
+force-authentication
+true false
+.TP
+privilege-level
+user operator admin oem
+.TP
+character-accumulate-level
+Decimal number given in 5-millisecond increments
+.TP
+character-send-threshold
+Decimal number
+.TP
+retry-count
+Decimal number.  0 indicates no retries after packet is transmitted.
+.TP
+retry-interval
+Decimal number in 10 millisend increments.  0 indicates 
+that retries should be sent back to back.
+.TP
+non-volatile-bit-rate
+serial, 19.2, 38.4, 57.6, 115.2.  Setting this value to 
+serial indicates that the BMC should use the setting used 
+by the IPMI over serial channel.
+.TP
+volatile-bit-rate
+serial, 19.2, 38.4, 57.6, 115.2.  Setting this value to 
+serial indiates that the BMC should use the setting used 
+by the IPMI over serial channel.
+.RE
+.TP
+activate [usesolkeepalive | nokeepalive]
+.br
+
+Causes ipmitool to enter Serial Over LAN
+mode, and is only available when using the lanplus
+interface.  An RMCP+ connection is made to the BMC,
+the terminal is set to raw mode, and user input is
+sent to the serial console on the remote server.
+On exit,the the SOL payload mode is deactivated and
+the terminal is reset to its original settings.
+.RS
+
+Special escape sequences are provided to control the SOL session:
+.RS
+.TP
+~.   Terminate connection
+.TP
+~^Z  Suspend ipmitool
+.TP 
+~^X  Suspend ipmitool, but don't restore tty on restart
+.TP
+~B   Send break
+.TP
+~~   Send the escape character by typing it twice
+.TP
+~?   Print the supported escape sequences
+.RE
+
+Note that escapes are only recognized immediately after newline.
+.RE
+.TP
+deactivate
+.br
+
+Deactivates Serial Over LAN mode on the BMC.
+Exiting Serial Over LAN mode should automatically cause
+this command to be sent to the BMC, but in the case of an
+unintentional exit from SOL mode, this command may be
+necessary to reset the state of the BMC.
+.RE
+.TP 
+spd <i2cbus> <i2caddr> [<channel>] [<maxread>]
+.br 
+
+This command may be used to read SPD (Serial Presence Detect) data using the 
+I2C Master Write-Read IPMI command.
+
+.TP
+sunoem
+.br
+
+Sun OEM-specific IPMI commands.  Support for these commands depends heavily on the Sun platform targeted.
+Please consult your Sun Hardware Reference Guide for information on Sun OEM-specific IPMI
+functionality to determine if the following commands are supported on your desired platform.
+.RS
+.TP
+fan speed <0-100>
+.br
+
+Sets the system fan speed (in units of PWM duty cycle)
+.RE
+.RS
+.TP
+sshkey
+.br
+
+Administer SSH keys for service processor users.
+.RS
+.TP
+set <userid> <id_rsa.pub>
+.br
+
+Sets the SSH key for the given userid to the key found in the given file.  (A
+list of users may be obtained with the 'user list' command).
+.RE
+.RS
+.TP
+del <userid>
+.br
+
+Delete the SSH key for the given userid.
+.RE
+.RE
+
+.RS
+.TP
+led
+.br
+
+Manipulate the settings for LEDs found via the `sdr elist generic' command.
+Once the sensor ID of the LED is found (the `elist' command displayed the sensor ID),
+it may be used in the following subcommands.  When an LED type is required, it can
+be one of the following values: `OK2RM' (OK to Remove), `SERVICE' (Service Required),
+`ACT' (Activity), or `LOCATE' (Locate).  When an LED mode is required, it can be one
+of the following values: `OFF' (Off), `ON' (Steady On), `STANDBY' (100ms ON, 2900ms OFF blink rate),
+`SLOW' (1HZ blink rate), or `FAST' (4HZ blink rate).
+
+.RS
+.TP
+get <sensorid> [<ledtype>]
+.br
+
+Read the status of the LED with the given <sensorid>.  If <sensorid> is the special keyword `all', then
+the status of all LEDs will be displayed.  The optional parameter, <ledtype>, further restricts the output
+to LEDs of the given type.
+.RE
+.RS
+.TP
+set <sensorid> <ledmode> [<ledtype>]
+.br
+
+Sets the mode of the LED with the given <sensorid> (and optionally the given type <ledtype>) to the given <ledmode>.
+If <sensorid> is the special keyword `all', then the status of all LEDs will be set (optionally qualified by the
+given type <ledtype>).
+.RE
+.RE
+.TP
+user
+.RS
+.TP
+summary
+.br
+
+Displays a summary of userid information, including maximum number of userids,
+the number of enabled users, and the number of fixed names defined.
+.TP
+list
+.br
+
+Displays a list of user information for all defined userids.
+.TP
+set
+.RS
+.TP
+name <userid> <username>
+.br
+
+Sets the username associated with the given userid.
+.TP
+password <userid> [<password>]
+.br
+
+Sets the password for the given userid.  If no password is given,
+the password is cleared (set to the NULL password).  Be careful when
+removing passwords from administrator-level accounts.
+.RE
+.TP
+disable <userid>
+.br
+
+Disables access to the BMC by the given userid.
+.TP
+enable <userid>
+.br
+
+Enables access to the BMC by the given userid.
+.TP 
+priv <userid> <privilege level> [<channel>]
+.br 
+
+Set user privilege level on the specified channel.  If the channel is not 
+specified, the current channel will be used.
+.TP
+test <userid> <16|20> [<password>]
+.br
+
+Determine whether a password has been stored as 16 or 20 bytes.
+.RE
+
+\fINOTE\fR: Sun systems, such
+as the v20z and v40z, maintain the LAN interface on 
+channel 1.  To determine on which channel the LAN interface
+is located, issue the `channel info \fIchannel\fR' command.
+.SH BMC INTERFACE
+The ipmitool bmc interface utilizes the bmc device driver.
+     
+In order to force ipmitool to make use of the device interface
+you can specify it on the command line:
+
+ipmitool \-I bmc <command>
+
+.SH LAN INTERFACE
+The ipmitool lan interface communicates with a remote BMC over an
+Ethernet LAN connection using UDP over IPv4.  UDP datagrams
+are formatted to contain IPMI request/response messages with
+IPMI session headers and RMCP headers.
+
+IPMI\-over\-LAN uses version 1 of the Remote  Management  Control
+Protocol (RMCP) to support pre\-OS and OS\-absent management.
+RMCP is a request\-response protocol  delivered  using
+UDP datagrams to port 623.
+
+The LAN interface is an authenticated multi\-session connection;
+messages  delivered  to  the  BMC can (and should) be
+authenticate with a challenge/response protocol with either
+straight   password/key  or  MD5  message\-digest.
+ipmitool  will  attempt  to   connect   with   administrator
+privilege level as this is required to perform chassis power
+functions.
+
+You can tell ipmitool to use the lan interface with  the  \-I
+option:
+
+ipmitool \-I lan \-H <hostname> [\-f password_file] <command>
+
+A hostname must be given on the command line in order to use
+the  lan  interface  with 'ipmitool'.   The \fIpassword_file\fR
+is optional but, if present, should contain the password to be
+used for authentication.  If no password is given, ipmitool will
+attempt to connect without authentication.
+
+If \fIpassword_file\fR is present and non\-empty ipmitool will
+attempt to authenticate with an MD5 message-digest if MD5 is 
+supported by the BMC.  If MD5 is not supported by the BMC,
+straight password/key authentication will be attempted.
+
+.SH LANPLUS INTERFACE
+
+.LP
+Like the \fIlan\fP interface, the \fIlanplus\fP interface
+communicates with the BMC over an Ethernet LAN connection
+using UDP over IPv4.  The difference is that the \fIlanplus\fP
+interface uses the RMCP+ protocol as described in the IPMI v2.0
+specification.  RMCP+ allows for improved authentication and data
+integrity checks, as well as encryption and the ability to carry
+multiple types of payloads.  Generic Serial-over-LAN support 
+requires RMCP+, so the ipmitool \fIsol activate\fP command requires
+the use of the \fIlanplus\fP interface.
+.LP
+Establishing a RMCP+ session uses RAKP (Remote
+Authenticated Key-Exchange Protocol), which enables the negotiation of
+many options.  ipmitool does not yet allow the user to specify
+values for all the options, defaulting to the most obvious settings for those
+settings marked as required in the v2.0 specification.  Authentication and integrity 
+HMACs use the SHA-1 algorithm, and encryption is performed with AES, in CBC mode,
+at 128-bits of strength. Role-level logins are not supported.  ipmitool must
+be configured with the appropriate option for the \fIlanplus\fP interface
+to be available, as it is not enabled by default.  This interface currently
+requires the OpenSSL library.
+.LP
+You can tell ipmitool to use the lanplus interface with the \fB\-I\fR option:
+.PP
+ipmitool \-I lanplus \-H <hostname> [\-U username] [\-f password_file] <expression>
+.LP
+The options available for the \fIlanplus\fP interface are identical to those available for
+ the \fIlan\fP interface.
+
+.SH EXIT STATUS
+
+Upon successful completion, ipmitool returns 0.  On failure, 1 is returned.
+
+.SH EXAMPLES
+.TP
+Example 1 : Listing remote sensors:
+
+> ipmitool \-I lan \-H 1.2.3.4 \-f passfile sdr list
+.br
+Baseboard 1.25V  | 1.24 Volts        | ok
+.br
+Baseboard 2.5V   | 2.49 Volts        | ok
+.br
+Baseboard 3.3V   | 3.32 Volts        | ok
+.TP
+Example 2: Displaying status of a remote sensor:
+
+> ipmitool \-I lan \-H 1.2.3.4 \-f passfile sensor get "Baseboard 1.25V"
+.br
+Locating sensor record...
+.br
+Sensor ID              : Baseboard 1.25V (0x10)
+.br
+Sensor Type (Analog)   : Voltage
+.br
+Sensor Reading         : 1.245 (+/\- 0.039) Volts
+.br
+Status                 : ok
+.br
+Lower Non\-Recoverable  : na
+.br
+Lower Critical         : 1.078
+.br
+Lower Non\-Critical     : 1.107
+.br
+Upper Non\-Critical     : 1.382
+.br
+Upper Critical         : 1.431
+.br
+Upper Non\-Recoverable  : na 
+.TP
+Example 3: Displaying the power status of a remote chassis:
+
+> ipmitool \-I lan \-H 1.2.3.4 \-f passfile chassis power status
+.br
+Chassis Power is on
+.TP
+Example 4: Controlling the power on a remote chassis:
+
+> ipmitool \-I lan \-H 1.2.3.4 \-f passfile chassis power on
+.br
+Chassis Power Control: Up/On
+	
+.SH FILES
+
+\fB/platform/i86pc/kernel/drv/bmc\fR
+.in +30n
+.sp
+32-bit \fBELF\fR kernel module for the bmc driver.
+.sp
+.in -30n
+\fB/platform/i86pc/kernel/drv/amd64/bmc\fR
+.in +30n
+.sp
+64-bit \fBELF\fR kernel module for the bmc driver.
+.in -30n
+\fB/dev/bmc\fR
+.in +30n
+.sp
+Character device node used to communicate with the bmc driver.
+.in -30n
+
+.TP
+IPMI Specifications
+http://www.intel.com/design/servers/ipmi/spec.htm
+.SH SEE ALSO
+attributes(5)
+.SH NOTES
+IPMI V1.5 and, at the time of writing, IPMI V2.X only support IPv4. 
+There is no requirement for a BMC to use the same IP address as its 
+host system. In an IPv6 environment the host system can have an IPv6
+address and  'ipmitool' can be used to assign an IPv4 address to the
+BMC.

@@ -1,0 +1,413 @@
+#!/bin/sh
+
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+# ----------------------------------------------------------------------------
+# test_ipmitool		confirm basic ipmitool functionality works
+#
+# exercise a commonly used subset of all ipmitool commands,
+# for each such command:
+#	save its output to a *.out file
+#	confirm ipmitool exit status is 0 (good)
+#	confirm *.out contains some piece of expected data
+# ----------------------------------------------------------------------------
+
+cmd_name="`basename $0`"		# the name of this command
+
+cmd_err="${cmd_name}: error:"		# the (fatal) error header
+cmd_warn="${cmd_name}: warning:"	# the warning header
+cmd_info="${cmd_name}: info:"		# the informational header
+cmd_query="${cmd_name}: query:"		# the interrogative header
+
+bin_path="/usr/sbin"	# path(s) to ipmitool binary executable(s)
+
+# ----------------------------------------------------------------------------
+
+usage()
+{
+    echo "usage: $cmd_name [-p <bin_path>]"
+    echo "       -p  path to ipmitool binary"
+    echo "purpose: confirm basic ipmitool functionality works;"
+    echo "         this is NOT a comprehensive test"
+    echo "examples:"
+    echo "	$cmd_name -p \$CODEMGR_WS/proto/root_\`uname -p\`/usr/sbin"
+} # usage()
+
+# ----------------------------------------------------------------------------
+
+show_env()
+{
+    echo "$cmd_info general environment:"
+    date ; id ; uname -a ; pwd ; echo "$PATH"
+    [ -r /etc/release ] && cat /etc/release
+    [ -r /etc/motd ] && grep bfu /etc/motd
+    ipmitool -V
+} # show_env()
+
+# ----------------------------------------------------------------------------
+
+enforce_i386()
+{
+    proctype=`uname -p`
+    [ "$proctype" != "i386" ] && {
+	echo "$cmd_err processor type $proctype != i386"
+	echo "$cmd_info future versions of this test tool may use"
+	echo "    ipmitool -I lan -H <i386_host>"
+	echo "when run on $proctype but that is a future enhancement (TBD)"
+	exit 1
+    }
+} # enforce_i386()
+
+# ----------------------------------------------------------------------------
+
+test_opt_version()
+{
+    tnm="version option"
+    ipmitool -V > ipmitool_V.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -i -c 'version.*[0-9][0-9]*\.[0-9]' ipmitool_V.out`
+    [ $cnt -le 0 ] && {
+	echo "$cmd_err $tnm output missing version" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_opt_version()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_help()
+{
+    tnm="help command"
+    ipmitool help > ipmitool_help.out 2>&1
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -i -c 'chassis.*status' ipmitool_help.out`
+    [ $cnt -le 0 ] && {
+	echo "$cmd_err $tnm output missing chassis" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_help()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_bmc()
+{
+    tnm="bmc info command"
+    ipmitool bmc info > ipmitool_bmc_info.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -c 'IPMI Version' ipmitool_bmc_info.out`
+    [ $cnt -lt 1 ] && {
+	echo "$cmd_err $tnm output missing IPMI Version" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+    tnm="bmc getenables command"
+    ipmitool bmc getenables > ipmitool_bmc_getenables.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -c 'OEM' ipmitool_bmc_getenables.out`
+    [ $cnt -lt 3 ] && {
+	echo "$cmd_err $tnm output too few OEM" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_bmc()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_sel()
+{
+    tnm="sel info command"
+    ipmitool sel info > ipmitool_sel_info.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`egrep -c 'Version|Entries' ipmitool_sel_info.out`
+    [ $cnt -lt 2 ] && {
+	echo "$cmd_err $tnm output missing Version or Entries" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+    tnm="sel time get command"
+    ipmitool sel time get > ipmitool_sel_time_get.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    nowyr=`date '+%Y'`
+    cnt=`grep -c "$nowyr" ipmitool_sel_time_get.out`
+    [ $cnt -lt 1 ] && {
+	echo "$cmd_err $tnm missing $nowyr" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+    tnm="sel list command"
+    cnt=`grep 'Entries' ipmitool_sel_info.out | awk '{print $NF}'`
+    [ $cnt -eq 0 ] && {
+	echo "$cmd_info $tnm passed" ; return 0
+    }
+    ipmitool sel list $cnt > ipmitool_sel_list.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt2=`wc ipmitool_sel_list.out | awk '{print $1}'`
+    [ $cnt2 -ne $cnt ] && {
+	echo "$cmd_err $tnm output lines $cnt2 != $cnt" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_sel()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_chassis()
+{
+    tnm="chassis status command"
+    ipmitool chassis status > ipmitool_chassis_status.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -c 'System Power' ipmitool_chassis_status.out`
+    [ $cnt -eq 0 ] && {
+	echo "$cmd_err $tnm output missing System Power" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_chassis()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_fru()
+{
+    tnm="fru print command"
+    ipmitool fru print > ipmitool_fru_print.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -i -c 'Manufacturer.*Sun Microsystems' ipmitool_fru_print.out`
+    [ $cnt -lt 1 ] && {
+	echo "$cmd_err $tnm output too few Sun Microsystems" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_fru()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_lan()
+{
+    tnm="lan print command"
+    ipmitool lan print > ipmitool_lan_print.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`egrep -c 'ARP|MAC|IP' ipmitool_lan_print.out`
+    [ $cnt -lt 3 ] && {
+	echo "$cmd_err $tnm output too few ARP|MAC|IP" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+    tnm="lan alert print command"
+    ipmitool lan alert print > ipmitool_lan_alert_print.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -c 'Destination' ipmitool_lan_alert_print.out`
+    [ $cnt -lt 1 ] && {
+	echo "$cmd_err $tnm output missing Destination" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_lan()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_channel()
+{
+    tnm="channel info command"
+    ipmitool channel info > ipmitool_channel_info.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -i -c 'Channel 0x.*info' ipmitool_channel_info.out`
+    [ $cnt -lt 1 ] && {
+	echo "$cmd_err $tnm output missing Channel number" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_channel()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_sensor()
+{
+    tnm="sensor list command"
+    ipmitool sensor list > ipmitool_sensor_list.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`egrep -i -c 'degrees|RPM|volts' ipmitool_sensor_list.out`
+    [ $cnt -lt 10 ] && {
+	echo "$cmd_err $tnm output too few degrees|RPM|volts" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+    tnm="sensor get command"
+    cnt=`expr $cnt % 10`
+    # note: sensor names might have whitespace in them
+    snm=`egrep -i 'degrees|RPM|volts' ipmitool_sensor_list.out | \
+	head -$cnt | tail -1 | cut -d'|' -f1`
+    snm=`echo $snm`	# drop any leading or trailing whitespace
+    ipmitool sensor get "$snm" > ipmitool_sensor_get.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`egrep -i 'degrees|RPM|volts' ipmitool_sensor_get.out | \
+	grep -c 'Sensor Reading'`
+    [ $cnt -ne 1 ] && {
+	echo "$cmd_err $tnm wrong Sensor Reading for $snm" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_sensor()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_sdr()
+{
+    tnm="sdr list command"
+    ipmitool sdr list all > ipmitool_sdr_list_all.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`egrep -i -c 'degrees|RPM|volts' ipmitool_sdr_list_all.out`
+    [ $cnt -lt 10 ] && {
+	echo "$cmd_err $tnm output too few degrees|RPM|volts" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+    tnm="sdr get command"
+    cnt=`expr $cnt / 2`
+    # note: sensor names might have whitespace in them
+    snm=`egrep -i 'degrees|RPM|volts' ipmitool_sdr_list_all.out | \
+	head -$cnt | tail -1 | cut -d'|' -f1`
+    snm=`echo $snm`	# drop any leading or trailing whitespace
+    ipmitool sdr get "$snm" > ipmitool_sdr_get.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`egrep -i 'degrees|RPM|volts' ipmitool_sdr_get.out | \
+	grep -c 'Sensor Reading'`
+    [ $cnt -ne 1 ] && {
+	echo "$cmd_err $tnm wrong Sensor Reading for $snm" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_sdr()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_power()
+{
+    tnm="power status command"
+    ipmitool power status > ipmitool_power_status.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -i -c 'power.*on' ipmitool_power_status.out`
+    [ $cnt -lt 1 ] && {
+	echo "$cmd_err $tnm output missing power on" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_power()
+
+# ----------------------------------------------------------------------------
+
+test_cmd_echo()
+{
+    tnm="echo command"
+    ipmitool echo "hello world from pid $$" > ipmitool_echo.out
+    rc=$?
+    [ $rc -ne 0 ] && {
+	echo "$cmd_err $tnm failed with exit code $rc" ; exit $rc
+    }
+    cnt=`grep -c "pid $$" ipmitool_echo.out`
+    [ $cnt -ne 1 ] && {
+	echo "$cmd_err $tnm output missing my pid" ; exit 1
+    }
+    echo "$cmd_info $tnm passed"
+} # test_cmd_echo()
+
+# ----------------------------------------------------------------------------
+
+# main()
+
+while getopts p: opt; do # {
+    case $opt in
+	p)  bin_path="$OPTARG";;
+	-)  break;;
+	\?) echo "$cmd_err bad option(s)" ; usage ; exit 22;;
+    esac
+done # } while grabbing cmd line args
+
+shift `expr $OPTIND - 1`
+
+too_much="$1"
+[ "$too_much" != "" ] && {
+    echo "$cmd_err too few/many args" ; usage ; exit 7
+}
+
+PATH="${bin_path}:$PATH"
+export PATH
+
+# ----------------------------------------------------------------------------
+
+enforce_i386
+show_env
+
+# version 1.8.8 and later
+
+test_opt_version
+test_cmd_help
+test_cmd_bmc
+test_cmd_sel
+test_cmd_chassis
+test_cmd_fru
+test_cmd_lan
+test_cmd_channel
+test_cmd_sensor
+test_cmd_sdr
+
+# version 1.8.10 and later
+
+test_cmd_power
+test_cmd_echo
+
+echo "$cmd_info all tests passed"	# if reach here then aok
