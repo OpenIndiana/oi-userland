@@ -1,0 +1,31 @@
+*** emacs-23.1/lib-src/etags.c.orig	Wed May 25 16:16:55 2011
+--- emacs-23.1/lib-src/etags.c	Wed May 25 16:18:29 2011
+***************
+*** 6695,6707 ****
+  	      else if (cp[0] != '/')
+  		cp = slashp;
+  #endif
+! 	      strcpy (cp, slashp + 3);
+  	      slashp = cp;
+  	      continue;
+  	    }
+  	  else if (slashp[2] == '/' || slashp[2] == '\0')
+  	    {
+! 	      strcpy (slashp, slashp + 2);
+  	      continue;
+  	    }
+  	}
+--- 6695,6707 ----
+  	      else if (cp[0] != '/')
+  		cp = slashp;
+  #endif
+! 	      memmove (cp, slashp + 3, strlen(slashp + 3)  + 1);
+  	      slashp = cp;
+  	      continue;
+  	    }
+  	  else if (slashp[2] == '/' || slashp[2] == '\0')
+  	    {
+! 	      memmove (slashp, slashp + 2, strlen(slashp + 2) + 1);
+  	      continue;
+  	    }
+  	}
