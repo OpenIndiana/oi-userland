@@ -56,6 +56,12 @@ information needed to understand how this component is put together.
 	    Patch configure script to provide necessary missing
 	    libraries for the GTK version of emacs.
 
+        etags.patch
+            The version of etags in Emacs 23.1 has a bug in the function
+            absolute_filename(). It uses strcpy() to do overlapped string
+            copies, which is undefined. This patch substitutes memmove(),
+            which exists specifically to handle that case.
+
 
 - Emacs can be built as either 32-bit or 64-bit, depending on the target
   machine. The benefit of a 64-bit emacs is that the size of the files it
