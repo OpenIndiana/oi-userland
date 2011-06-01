@@ -24,7 +24,6 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
 COMPONENT_VERSION=	1.7.3.2
-PERL_VERSION=		5.10.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha1:cd8d806752aa6f5716cf193585024a002e098bf4
@@ -43,12 +42,12 @@ include ../../make-rules/ips.mk
 CONFIGURE_PREFIX    =	/usr
 CONFIGURE_OPTIONS  +=	--without-openssl
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
-CONFIGURE_OPTIONS  +=	--with-perl=/usr/perl5/$(PERL_VERSION)/bin/perl
+CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
 CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON.32)
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
-COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell /usr/perl5/$(PERL_VERSION)/bin/perl -MConfig -e 'print "$$Config{installvendorarch}"')
+COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')
 
 COMPONENT_TEST_TARGETS = test
 
@@ -65,9 +64,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # Processed man pages go here.
 #
 DOC=$(BUILD_DIR)/Documentation
-
-PKG_MACROS	+=	PERL_ARCH=$(shell arch)
-PKG_MACROS	+=	PERL_VERSION=$(PERL_VERSION)
 
 build:		$(BUILD_32) $(DOC)/.manpages
 

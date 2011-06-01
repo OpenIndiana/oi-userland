@@ -42,8 +42,6 @@ PATCH_LEVEL = 0
 
 PYMODS = client core delta fs ra repos wc
 
-PERL = /usr/perl5/bin/perl
-PERLARCH=$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 PLMODS= Fs Core Wc Client Repos Ra Delta
 
 JAVA_ROOT = $(JAVA_HOME)
@@ -62,8 +60,6 @@ CXXFLAGS += $(CC_PIC)
 CXXFLAGS += -mt -D_REENTRANT -DNDEBUG -DSOLARIS
 CFLAGS += `pkg-config --cflags neon`
 CFLAGS += $(CPP_LARGEFILES)
-
-PKG_MACROS += PERLARCH=$(PERLARCH)
 
 # Let's write some post-configure hacks
 COMPONENT_POST_CONFIGURE_ACTION = \
