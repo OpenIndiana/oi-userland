@@ -22,6 +22,10 @@
 #
 include ../../make-rules/shared-macros.mk
 
+# I want to override PERL_VERSION and PERL_ARCH because when building
+# a new version of perl it probably isn't installed so shared-macros.mk
+# can't call it.
+
 COMPONENT_NAME=		perl
 COMPONENT_VERSION=	5.12.3
 PERL_VERSION=		5.12
