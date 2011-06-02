@@ -1,0 +1,262 @@
+#!/sbin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+. /lib/svc/share/net_include.sh
+
+SVCPROP=/usr/bin/svcprop
+CHMOD=/usr/bin/chmod
+TOUCH=/usr/bin/touch
+
+DHCPD_IPV4="svc:/network/dhcp/server:ipv4"
+DHCPD_IPV6="svc:/network/dhcp/server:ipv6"
+DHCPRELAY_IPV4="svc:/network/dhcp/relay:ipv4"
+DHCRELAY_IPV6="svc:/network/dhcp/relay:ipv6"
+
+DHCPD_BIN="/usr/lib/inet/dhcpd"
+DHCPRELAY_BIN="/usr/lib/inet/dhcrelay"
+
+#
+# dhcpd/dhcprelay can run in a global or exclusive-stack zone only
+#
+smf_configure_ip || exit $SMF_EXIT_OK
+
+if [ -z $SMF_FMRI ]; then
+	echo "SMF framework variables are not initialized."
+	exit $SMF_EXIT_ERR
+fi
+
+#
+# get_prop fmri propname
+#
+get_prop () {
+	VALUE="`$SVCPROP -p config/$1 $SMF_FMRI 2>/dev/null`"
+	# Empty astring_list values show up as "" - do not return this.
+	if [ "$VALUE" != "\"\"" ]; then
+		echo $VALUE
+	fi
+}
+
+errlog () {
+	echo $1 >&2
+}
+
+get_common_options() {
+	#
+	# get debug property value 
+	#
+	if [ "`get_prop debug`" = "true" ]; then
+		DEBUG="-d"
+	else
+		DEBUG="-q"
+	fi
+
+	export OPTIONS="$OPTIONS $DEBUG"
+	return 0
+}
+
+get_dhcpd_options() {
+	# get listen_ifname property value.
+	LISTENIFNAMES="`get_prop listen_ifnames`"
+
+	#
+	# get common config file properties
+	#
+	CONFIGFILE=`get_prop config_file`
+	if [ -z "$CONFIGFILE" ]; then
+		errlog "No config_file specified, exiting"
+		return 1
+	fi
+	if [ ! -f "$CONFIGFILE" ]; then
+		errlog "Required config_file $CONFIGFILE not found, exiting"
+		return 1
+	fi
+
+	#
+	# If a leasefile does not exist, create an empty file.
+	#
+	LEASEFILE=`get_prop lease_file`
+	if [ -z "$LEASEFILE" ]; then
+		errlog "No lease_file specified, exiting"
+		return 1
+	fi
+	if [ ! -f "$LEASEFILE" ]; then
+		$TOUCH $LEASEFILE
+		$CHMOD u=rw,go=r $LEASEFILE
+	fi
+
+	export OPTIONS="$OPTIONS -cf $CONFIGFILE -lf $LEASEFILE $LISTENIFNAMES"
+	return 0
+}
+
+get_dhcprelay_options_v4() {
+	#
+	# Get append_agent_option V4 property value 
+	#
+	if [ "`get_prop append_agent_option`" = "true" ]; then
+		APPEND="-m"
+	else
+		APPEND=""
+	fi
+
+	#
+	# get listen_ifname property value and modify it.  
+	# If listen_ifnames property value is "e1000g01 iprb0" then the
+	# command line option will look like  "- i e1000g0 -i iprb0"
+	#
+	LISTENIFNAMES="`get_prop listen_ifnames`"
+	IIFLIST=""
+	if [ ! -z "$LISTENIFNAMES" ]; then
+		IIFLIST="`echo $LISTENIFNAMES | sed -e 's/[ \t]/ -i /g'`"
+	fi
+
+	#
+	# Get servers  V4 property value - command line option will look
+	# like  "1.2.3.5 4.5.6.7".
+	#
+	# NOTE: By default server property value is empty. User must
+	# first specify a server using svccfg/setprop command
+	# before enabling service.
+	#
+	DHCPSERVERS=`get_prop servers`
+	if [  -z "$DHCPSERVERS" ]; then
+		errlog "Must specify at least one servers prop value, exiting"
+		return 1
+	fi
+
+	export OPTIONS="$OPTIONS -4 $APPEND $IIFLIST $DHCPSERVERS"
+	return 0
+}
+
+get_dhcprelay_options_v6() {
+	#
+	# Get receivelinks  V6 property value and modify it:
+	# Given property values of "1.2.3.4%bge0#1 bge2,1.2.3.4%iprb",
+	# the command line option will look like  "-l 1.2.3.4%bge0#1 -l
+	# bge2 -l 1.2.3.4%iprb".
+	#
+	# NOTE: By default receivelinks value is empty. User must
+	# first specify a server using svccfg/setprop command
+	# before enabling service.
+	#
+	RECVLINKS=`get_prop receive_query_links`
+	if [  -z "$RECVLINKS" ]; then
+        	errlog "Must specify at least one receive_query_links propvalue"
+		errlog "Exiting."
+		return 1
+	fi
+	IRECVLINKS=""
+	if [ ! -z "$RECVLINKS" ]; then
+		IRECVLINKS="-l `echo $RECVLINKS | sed -e 's/[ \t]/ -l /g'`"
+	fi
+	#
+	# Get forwardlinks V6 property value and modify it:
+	# Given forwardquery_links property value is "1.2.3.4%bge0 bge2,"
+	# then the command line option will look like  "-u 1.2.3.4%bge0 -u
+	# bge2"
+	#
+	# NOTE: By default forwardlinks value is empty. User must
+	# first specify a server using svccfg/setprop command
+	# before enabling service.
+	#
+	FWDLINKS=`get_prop forwardquery_links`
+	if [ -z "$FWDLINKS" ]; then
+        	errlog "Must specify at least one forwardquery_links propvalue"
+		errlog "Exiting"
+		return 1
+	fi
+	IFWDLINKS=""
+	if [ ! -z "$FWDLINKS" ]; then
+		IFWDLINKS="-u `echo $FWDLINKS sed -e 's/,/ -u /g'`"
+	fi
+
+	export OPTIONS="$OPTIONS -6 $IRECVLINKS $IFWDLINKS"
+}
+
+export EXECFILE=$DHCPD_BIN
+export OPTIONS="--no-pid"
+
+case "$SMF_FMRI" in
+"$DHCPD_IPV4"|"$DHCPD_IPV6")
+	get_common_options
+	if [ "$?" != "0" ]; then
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+	get_dhcpd_options
+	if [ "$?" != "0" ]; then
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+	if [ "$SMF_FMRI" = "$DHCPD_IPV4" ]; then
+		OPTIONS="-4 $OPTIONS"
+	else
+		OPTIONS="-6 $OPTIONS"
+	fi
+	export EXECFILE=$DHCPD_BIN
+	;;
+
+$DHCPRELAY_IPV4)
+	get_common_options
+	if [ $? != "0" ]; then
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+	get_dhcprelay_options_v4
+	if [ $? != "0" ]; then
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+	export EXECFILE=$DHCPRELAY_BIN
+	;;
+
+$DHCPRELAY_IPV6)
+	get_common_options
+	if [ $? != "0" ]; then
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+	get_dhcprelay_options_v6
+	if [ $? != "0" ]; then
+		exit $SMF_EXIT_ERR_CONFIG
+	fi
+	export EXECFILE=$DHCPRELAY_BIN
+	;;
+
+*)
+        echo "isc-dhcp must be invoked from within SMF"
+        exit $SMF_EXIT_ERR_FATAL
+	;;
+
+esac
+
+# Now start the daemon
+if [ "$DEBUG" = "-d" ]; then
+	$EXECFILE $OPTIONS &
+else
+	$EXECFILE $OPTIONS
+fi
+
+if [ "$?" != "0" ]; then
+	exit $SMF_EXIT_ERR_FATAL
+fi
+
+exit $SMF_EXIT_OK
