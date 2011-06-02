@@ -1,0 +1,95 @@
+--- sudo-1.7.4p4/Makefile.in.orig	Fri Sep  3 14:43:57 2010
++++ sudo-1.7.4p4/Makefile.in	Wed May 25 14:19:46 2011
+@@ -86,6 +86,9 @@
+ mandirsu = $(mandir)/$(mantype)$(mansectsu)
+ mandirform = $(mandir)/$(mantype)$(mansectform)
+ 
++datadir = @datadir@
++ldifdir = $(datadir)/lib/ldif
++
+ # User and group ids the installed files should be "owned" by
+ install_uid = 0
+ install_gid = 0
+@@ -205,8 +208,10 @@
+ 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(DEFS) $(OPTIONS) $(srcdir)/sudo_noexec.c
+ 
+ libsudo_noexec.la: sudo_noexec.lo
+-	$(LIBTOOL) --mode=link $(CC) $(LDFLAGS) -o $@ sudo_noexec.lo -avoid-version -rpath $(noexecdir)
++	$(LIBTOOL) --mode=link $(CC) $(CFLAGS) $(LDFLAGS) -o $@ sudo_noexec.lo -avoid-version -rpath $(noexecdir)
+ 
++libsudo_noexec: libsudo_noexec.la
++
+ # Uncomment the following if you want "make distclean" to clean the parser
+ @DEV@GENERATED = gram.h gram.c toke.c def_data.c def_data.h getdate
+ 
+@@ -475,45 +480,52 @@
+ 	    hg log --style=changelog -b default --date '<2010-01-18 00:00:00' >> $@; \
+ 	fi
+ 
+-install: install-dirs install-binaries @INSTALL_NOEXEC@ install-sudoers install-doc
++install: install-dirs install-binaries @INSTALL_NOEXEC@ install-sudoers install-doc install-ldif
+ 
++# only create $(MACH64) directory if $(MACH64) is set to a non-empty string
+ install-dirs:
+ 	$(SHELL) $(srcdir)/mkinstalldirs $(DESTDIR)$(sudodir) \
+-	    $(DESTDIR)$(visudodir) $(DESTDIR)$(noexecdir) \
++	    $(DESTDIR)$(visudodir) $(DESTDIR)$(noexecdir)/$(MACH64) \
+ 	    $(DESTDIR)$(sudoersdir) $(DESTDIR)$(docdir) \
+-	    $(DESTDIR)$(mandirsu) $(DESTDIR)$(mandirform)
+-	$(SHELL) $(srcdir)/mkinstalldirs -m 0700 $(DESTDIR)$(timedir)
++	    $(DESTDIR)$(mandirsu) $(DESTDIR)$(mandirform) \
++	    $(DESTDIR)$(ldifdir)
+ 
+ install-binaries: install-dirs $(PROGS)
+-	$(INSTALL) -b~ -O $(install_uid) -G $(install_gid) -M 04111 sudo $(DESTDIR)$(sudodir)/sudo
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 04511 sudo $(DESTDIR)$(sudodir)/sudo
+ 	rm -f $(DESTDIR)$(sudodir)/sudoedit
+ 	ln $(DESTDIR)$(sudodir)/sudo $(DESTDIR)$(sudodir)/sudoedit
+-	if [ -f sudoreplay ]; then $(INSTALL) -b~ -O $(install_uid) -G $(install_gid) -M 0111 sudoreplay $(DESTDIR)$(sudodir)/sudoreplay; fi
+-	$(INSTALL) -b~ -O $(install_uid) -G $(install_gid) -M 0111 visudo $(DESTDIR)$(visudodir)/visudo
+-	if [ -f sesh ]; then $(INSTALL) -b~ -O $(install_uid) -G $(install_gid) -M 0111 sesh $(DESTDIR)$(libexecdir)/sesh; fi
++	if [ -f sudoreplay ]; then $(INSTALL) -O $(install_uid) -G $(install_gid) -m 0111 sudoreplay $(DESTDIR)$(sudodir)/sudoreplay; fi
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0511 visudo $(DESTDIR)$(visudodir)/visudo
++	if [ -f sesh ]; then $(INSTALL) -O $(install_uid) -G $(install_gid) -m 0511 sesh $(DESTDIR)$(libexecdir)/sesh; fi
+ 
++	# XXX only installs into $(MACH64) directory if $(MACH64) is non-empty
+ install-noexec: install-dirs libsudo_noexec.la
+-	if [ -f .libs/lib$(noexecfile) ]; then $(INSTALL) -b~ -O $(install_uid) -G $(install_gid) -M 0755 .libs/lib$(noexecfile) $(DESTDIR)$(noexecdir)/$(noexecfile); fi
++	if [ -f .libs/lib$(noexecfile) ]; then $(INSTALL) -O $(install_uid) -G $(install_gid) -m 0755 .libs/lib$(noexecfile) $(DESTDIR)$(noexecdir)/$(MACH64)/$(noexecfile); fi
+ 
+ install-sudoers: install-dirs
+-	$(INSTALL) -d -O $(sudoers_uid) -G $(sudoers_gid) -M 0750 \
++	$(INSTALL) -d -O $(sudoers_uid) -G $(sudoers_gid) -m 0750 \
+ 	    $(DESTDIR)$(sudoersdir)/sudoers.d
+ 	test -f $(DESTDIR)$(sudoersdir)/sudoers || \
+-	    $(INSTALL) -O $(sudoers_uid) -G $(sudoers_gid) -M $(sudoers_mode) \
++	    $(INSTALL) -O $(sudoers_uid) -G $(sudoers_gid) -m $(sudoers_mode) \
+ 		sudoers $(DESTDIR)$(sudoersdir)/sudoers
+ 
+ install-doc: install-dirs ChangeLog
+-	(cd $(srcdir) && for f in ChangeLog HISTORY LICENSE NEWS README TROUBLESHOOTING UPGRADE sample.*; do $(INSTALL) -O $(install_uid) -G $(install_gid) -M 0444 $$f $(DESTDIR)$(docdir); done)
+-	@LDAP@(cd $(srcdir) && for f in README.LDAP schema.* sudoers2ldif; do $(INSTALL) -O $(install_uid) -G $(install_gid) -M 0444 $$f $(DESTDIR)$(docdir); done)
+-	$(INSTALL) -O $(install_uid) -G $(install_gid) -M 0444 @mansrcdir@/sudo.$(mantype) $(DESTDIR)$(mandirsu)/sudo.$(mansectsu)
++	(cd $(srcdir) && for f in ChangeLog HISTORY LICENSE NEWS README TROUBLESHOOTING UPGRADE sample.*; do $(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 $$f $(DESTDIR)$(docdir); done)
++	@LDAP@(cd $(srcdir) && for f in README.LDAP schema.* sudoers2ldif; do $(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 $$f $(DESTDIR)$(docdir); done)
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 @mansrcdir@/sudo.$(mantype) $(DESTDIR)$(mandirsu)/sudo.$(mansectsu)
+ 	@rm -f $(DESTDIR)$(mandirsu)/sudoedit.$(mansectsu)
+ 	ln $(DESTDIR)$(mandirsu)/sudo.$(mansectsu) $(DESTDIR)$(mandirsu)/sudoedit.$(mansectsu)
+-	@REPLAY@$(INSTALL) -O $(install_uid) -G $(install_gid) -M 0444 @mansrcdir@/sudoreplay.$(mantype) $(DESTDIR)$(mandirsu)/sudoreplay.$(mansectsu)
+-	$(INSTALL) -O $(install_uid) -G $(install_gid) -M 0444 @mansrcdir@/visudo.$(mantype) $(DESTDIR)$(mandirsu)/visudo.$(mansectsu)
+-	$(INSTALL) -O $(install_uid) -G $(install_gid) -M 0444 @mansrcdir@/sudoers.$(mantype) $(DESTDIR)$(mandirform)/sudoers.$(mansectform)
+-	@LDAP@$(INSTALL) -O $(install_uid) -G $(install_gid) -M 0444 @mansrcdir@/sudoers.ldap.$(mantype) $(DESTDIR)$(mandirform)/sudoers.ldap.$(mansectform)
++	@REPLAY@$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 @mansrcdir@/sudoreplay.$(mantype) $(DESTDIR)$(mandirsu)/sudoreplay.$(mansectsu)
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 @mansrcdir@/visudo.$(mantype) $(DESTDIR)$(mandirsu)/visudo.$(mansectsu)
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 @mansrcdir@/sudoers.$(mantype) $(DESTDIR)$(mandirform)/sudoers.$(mansectform)
++	@LDAP@$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 @mansrcdir@/sudoers.ldap.$(mantype) $(DESTDIR)$(mandirform)/sudoers.ldap.$(mansectform)
+ @MAN_POSTINSTALL@
+ 
++install-ldif:
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 $(srcdir)/schema.OpenLDAP $(DESTDIR)$(ldifdir)/sudo-schema.OpenLDAP
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 $(srcdir)/schema.iPlanet $(DESTDIR)$(ldifdir)/sudo-schema.iPlanet
++	$(INSTALL) -O $(install_uid) -G $(install_gid) -m 0444 $(srcdir)/sudoers2ldif $(DESTDIR)$(ldifdir)/sudoers2ldif
++
+ check:
+ 	@echo nothing to check
+ 

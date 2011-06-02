@@ -1,0 +1,56 @@
+diff -c -r sudo-1.7.4p4/configure sudo-1.7.4p4.sun/configure
+*** sudo-1.7.4p4/configure	Mon Sep  6 14:03:39 2010
+--- sudo-1.7.4p4.sun/configure	Fri Sep 17 14:22:18 2010
+***************
+*** 18438,18444 ****
+  	fi
+      fi
+      if test X"$with_noexec" != X"no"; then
+! 	PROGS="${PROGS} libsudo_noexec.la"
+  	INSTALL_NOEXEC="install-noexec"
+  
+  	eval noexec_file="$with_noexec"
+--- 18438,18444 ----
+  	fi
+      fi
+      if test X"$with_noexec" != X"no"; then
+! 	PROGS="${PROGS} libsudo_noexec"
+  	INSTALL_NOEXEC="install-noexec"
+  
+  	eval noexec_file="$with_noexec"
+Common subdirectories: sudo-1.7.4p4/emul and sudo-1.7.4p4.sun/emul
+diff -c -r sudo-1.7.4p4/env.c sudo-1.7.4p4.sun/env.c
+*** sudo-1.7.4p4/env.c	Wed Aug 18 21:27:03 2010
+--- sudo-1.7.4p4.sun/env.c	Fri Sep 17 14:32:17 2010
+***************
+*** 792,798 ****
+--- 792,819 ----
+  #  ifdef _AIX
+  	sudo_setenv("LDR_PRELOAD", def_noexec_file, TRUE);
+  #  else
++ #    ifdef __sun
++ 	{
++ 	    char *p = NULL;
++ 	    char path[MAXPATHLEN], path64[MAXPATHLEN];
++ 
++ 	    if (strlcpy(path, def_noexec_file, sizeof (path)) < sizeof (path))
++ 	        p = strrchr(path, '/');
++ 	    if (p != NULL) {
++ 	        /* full pathname specified; set both 32/64 LD_PRELOAD vars */
++ 		*p = '\0';
++ 		if (snprintf(path64, sizeof (path64), "%s/64/%s",
++ 			path, p+1) < sizeof (path64))
++ 		    sudo_setenv("LD_PRELOAD_64", path64, TRUE);
++ 		sudo_setenv("LD_PRELOAD_32", def_noexec_file, TRUE);
++ 	    } else {
++ 	        /* relative pathname specified, ld.so.1 will search */
++ 		sudo_setenv("LD_PRELOAD", def_noexec_file,  TRUE);
++ 	    }
++ 	}
++ #    else
+  	sudo_setenv("LD_PRELOAD", def_noexec_file, TRUE);
++ #    endif /* __sun */
+  #  endif /* _AIX */
+  # endif /* __osf__ || __sgi */
+  #endif /* __darwin__ || __APPLE__ */
+Common subdirectories: sudo-1.7.4p4/m4 and sudo-1.7.4p4.sun/m4
