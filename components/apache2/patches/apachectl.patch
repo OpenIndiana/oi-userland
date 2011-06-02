@@ -1,0 +1,15 @@
+--- support/apachectl.in.orig	Tue Jul 11 20:38:44 2006
++++ support/apachectl.in	Tue Feb 12 02:24:17 2008
+@@ -75,6 +75,12 @@
+     ARGV="-h"
+ fi
+ 
++if [ ! -d "@exp_runtimedir@" ]; then
++    mkdir -p @exp_runtimedir@
++    chown -R webservd @exp_runtimedir@
++    chgrp -R webservd @exp_runtimedir@
++fi
++
+ case $ARGV in
+ start|stop|restart|graceful|graceful-stop)
+     $HTTPD -k $ARGV

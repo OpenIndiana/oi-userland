@@ -1,0 +1,38 @@
+--- docs/conf/extra/httpd-ssl.conf.in.orig	Thu May 12 11:44:53 2011
++++ docs/conf/extra/httpd-ssl.conf.in	Thu May 12 11:46:45 2011
+@@ -22,9 +22,10 @@
+ # Manual for more details.
+ #
+ #SSLRandomSeed startup file:/dev/random  512
+-#SSLRandomSeed startup file:/dev/urandom 512
++SSLRandomSeed startup file:/dev/urandom 512
+ #SSLRandomSeed connect file:/dev/random  512
+-#SSLRandomSeed connect file:/dev/urandom 512
++SSLRandomSeed connect file:/dev/urandom 512
++SSLCryptoDevice pkcs11
+ 
+ 
+ #
+@@ -75,7 +76,7 @@
+ 
+ #   General setup for the virtual host
+ DocumentRoot "@exp_htdocsdir@"
+-ServerName www.example.com:@@SSLPort@@
++ServerName 127.0.0.1:@@SSLPort@@
+ ServerAdmin you@example.com
+ ErrorLog "@exp_logfiledir@/error_log"
+ TransferLog "@exp_logfiledir@/access_log"
+@@ -87,8 +88,12 @@
+ #   SSL Cipher Suite:
+ #   List the ciphers that the client is permitted to negotiate.
+ #   See the mod_ssl documentation for a complete list.
+-SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
++#   AES with keylengths > 128 bit is not supported by default on Solaris.
++#   To operate with AES256 you must install the SUNWcry and SUNWcryr
++#   packages from the Solaris 10 Data Encryption Kit.
++SSLCipherSuite ALL:!ADH:!EXPORT56:-AES256-SHA:-DHE-RSA-AES256-SHA:-DHE-DSS-AES256-SHA:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+ 
++
+ #   Server Certificate:
+ #   Point SSLCertificateFile at a PEM encoded certificate.  If
+ #   the certificate is encrypted, then you will be prompted for a

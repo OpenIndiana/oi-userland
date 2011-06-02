@@ -1,0 +1,42 @@
+--- docs/conf/extra/httpd-info.conf.in.orig	Fri Nov 28 13:44:23 2008
++++ docs/conf/extra/httpd-info.conf.in	Fri Nov 28 13:47:18 2008
+@@ -10,11 +10,15 @@
+ # with the URL of http://servername/server-status
+ # Change the ".example.com" to match your domain to enable.
+ 
++<IfModule mod_status.c>
+ <Location /server-status>
+     SetHandler server-status
+     Order deny,allow
+     Deny from all
+-    Allow from .example.com
++    #Allow from .example.com
++
++    # Allow access from localhost
++    Allow from 127.0.0.1
+ </Location>
+ 
+ #
+@@ -24,14 +28,21 @@
+ #
+ #ExtendedStatus On
+ 
++</IfModule>
++
+ #
+ # Allow remote server configuration reports, with the URL of
+ #  http://servername/server-info (requires that mod_info.c be loaded).
+ # Change the ".example.com" to match your domain to enable.
+ #
++<IfModule mod_info.c>
+ <Location /server-info>
+     SetHandler server-info
+     Order deny,allow
+     Deny from all
+-    Allow from .example.com
++    #Allow from .example.com
++
++    # Allow access from localhost
++    Allow from 127.0.0.1
+ </Location>
++</IfModule>
