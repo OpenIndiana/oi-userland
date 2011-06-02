@@ -1,0 +1,28 @@
+--- modsecurity-apache_2.5.9/apache2/configure.in.orig	Fri May  6 03:57:25 2011
++++ modsecurity-apache_2.5.9/apache2/configure.in	Fri May  6 03:59:43 2011
+@@ -302,9 +302,9 @@
+ ### Build *EXTRA_CFLAGS vars
+ 
+ if test -n "$debug_mem"; then
+-  EXTRA_CFLAGS="-O0 -g -Wall"
++  EXTRA_CFLAGS="-O0 -g"
+ else
+-  EXTRA_CFLAGS="-O2 -g -Wall $strict_compile"
++  EXTRA_CFLAGS="-O2 -g $strict_compile"
+ fi
+ MODSEC_EXTRA_CFLAGS="$debug_conf $debug_cache $debug_acmp $debug_mem $perf_meas $modsec_api"
+ 
+@@ -311,11 +311,11 @@
+ APXS_WRAPPER=build/apxs-wrapper
+ APXS_EXTRA_CFLAGS=""
+ for f in $EXTRA_CFLAGS; do
+-    APXS_EXTRA_CFLAGS="$APXS_EXTRA_CFLAGS -Wc,$f"
++    APXS_EXTRA_CFLAGS="$APXS_EXTRA_CFLAGS"
+ done;
+ MODSEC_APXS_EXTRA_CFLAGS=""
+ for f in $MODSEC_EXTRA_CFLAGS; do
+-    MODSEC_APXS_EXTRA_CFLAGS="$MODSEC_APXS_EXTRA_CFLAGS -Wc,$f"
++    MODSEC_APXS_EXTRA_CFLAGS="$MODSEC_APXS_EXTRA_CFLAGS"
+ done;
+ 
+ ### Substitute the vars

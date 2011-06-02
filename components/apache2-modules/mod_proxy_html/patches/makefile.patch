@@ -1,0 +1,18 @@
+--- /dev/null	2011-05-10 16:41:00.000000000 -0700
++++ mod_proxy_html/Makefile	2011-05-10 16:39:23.932152964 -0700
+@@ -0,0 +1,15 @@
++APXS=apxs
++
++INCLUDES="-I/usr/include/libxml2 -I."
++
++all: .libs/mod_proxy_html.so .libs/mod_xml2enc.so
++
++.libs/mod_proxy_html.so: mod_proxy_html.c
++	$(APXS) -c -o mod_proxy_html.so $(INCLUDES) mod_proxy_html.c
++
++.libs/mod_xml2enc.so: mod_xml2enc.c
++	$(APXS) -c -o mod_xml2enc.so $(INCLUDES) mod_xml2enc.c
++
++clean:
++	-rm -f *.o *.so *.lo *.la *.slo
++	-rm -rf .libs

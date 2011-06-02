@@ -1,0 +1,51 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+set name=pkg.fmri \
+    value=pkg:/web/server/apache-22/module/apache-xml2enc@1.0.1,$(BUILD_VERSION)
+set name=pkg.summary \
+    value="xml2nec plugin for Apache Web Server V2.2"
+set name=pkg.description \
+    value="xml2enc plugin for Apache Web Server Version 2.2"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.upstream_url value="http://apache.webthing.com/mod_xml2enc/"
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/LSARC/2009/553
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+
+license apache-xml2enc.license license="Apache v2.0"
+
+dir path=usr
+dir path=usr/apache2
+dir path=usr/apache2/2.2
+dir path=usr/apache2/2.2/include
+dir path=usr/apache2/2.2/libexec
+dir path=usr/apache2/2.2/libexec/$(MACH64)
+file mod_xml2enc.h path=usr/apache2/2.2/include/mod_xml2enc.h
+file build/$(MACH32)/.libs/mod_xml2enc.so path=usr/apache2/2.2/libexec/mod_xml2enc.so
+file build/$(MACH64)/.libs/mod_xml2enc.so path=usr/apache2/2.2/libexec/$(MACH64)/mod_xml2enc.so
+
+legacy	pkg=SUNWapch22m-xml2enc \
+	name="xml2nec plugin for Apache Web Server V2.2" \
+	desc="xml2enc plugin for Apache Web Server Version 2.2 (1.0)"

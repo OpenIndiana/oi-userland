@@ -1,0 +1,56 @@
+--- mod_proxy_html/proxy_html.conf	Mon Oct  5 15:50:28 2009
++++ mod_proxy_html/proxy_html.conf	Tue Mar 30 11:49:53 2010
+@@ -1,21 +1,21 @@
+-# Configuration example.
+-#
+-# First, to load the module with its prerequisites.  Note: mod_xml2enc
+-# is not always necessary, but without it mod_proxy_html is likely to
+-# mangle pages in encodings other than ASCII or Unicode (utf-8).
+-#
+-# For Unix-family systems:
+-# LoadFile	/usr/lib/libxml2.so
+-# LoadModule	proxy_html_module	modules/mod_proxy_html.so
+-# LoadModule	xml2enc_module		modules/mod_xml2enc.so
+-#
+-# For Windows (I don't know if there's a standard path for the libraries)
+-# LoadFile	C:/path/zlib.dll
+-# LoadFile	C:/path/iconv.dll
+-# LoadFile	C:/path/libxml2.dll
+-# LoadModule	proxy_html_module	modules/mod_proxy_html.so
+-# LoadModule	xml2enc_module		modules/mod_xml2enc.so
+-# 
++
++<IfDefine 64bit>
++LoadFile	/usr/lib/64/libxml2.so.2
++
++LoadModule xml2enc_module libexec/64/mod_xml2enc.so
++LoadModule proxy_html_module libexec/64/mod_proxy_html.so
++
++</IfDefine>
++<IfDefine !64bit>
++LoadFile	/usr/lib/libxml2.so.2
++
++LoadModule xml2enc_module libexec/mod_xml2enc.so
++LoadModule proxy_html_module libexec/mod_proxy_html.so
++</IfDefine>
++
++<IfModule mod_proxy_html.c>
++
++
+ # All knowledge of HTML links has been removed from the mod_proxy_html
+ # code itself, and is instead read from httpd.conf (or included file)
+ # at server startup.  So you MUST declare it.  This will normally be
+@@ -60,7 +60,10 @@
+ #
+ # ProxyHTMLLinks	myelement	myattr otherattr
+ #
+-# See the documentation at
++# Also at top level in httpd.conf, you can declare charset aliases.
++# This is the most efficient way to support encodings that libxml2
++# doesn't natively support.  See the documentation at
+ # http://apache.webthing.com/mod_proxy_html/
+-# and the tutorial at
+-# http://www.apachetutor.org/admin/reverseproxies
++
++</IfModule>
++
