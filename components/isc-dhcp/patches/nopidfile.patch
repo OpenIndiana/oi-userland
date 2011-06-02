@@ -1,0 +1,657 @@
+Index: DHCP/configure
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/configure,v
+retrieving revision 1.119
+retrieving revision 1.119.6.1
+diff -u -c -r1.119 -r1.119.6.1
+*** DHCP/configure	18 Feb 2011 18:48:44 -0000	1.119
+--- DHCP/configure	11 Apr 2011 21:12:20 -0000	1.119.6.1
+***************
+*** 1328,1333 ****
+--- 1328,1336 ----
+    --with-relay-pid-file=PATH
+                            File for dhcrelay process information (default is
+                            LOCALSTATEDIR/run/dhcrelay.pid)
++   --with-relay6-pid-file=PATH
++                           File for dhcrelay6 process information (default is
++                           LOCALSTATEDIR/run/dhcrelay6.pid)
+
+ Some influential environment variables:
+   CC          C compiler command
+***************
+*** 5062,5067 ****
+--- 5065,5080 ----
+  fi
+  
+  
++ # Check whether --with-relay6-pid-file was given.
++ if test "${with_relay6_pid_file+set}" = set; then
++   withval=$with_relay6_pid_file;
++ cat >>confdefs.h <<_ACEOF
++ #define _PATH_DHCRELAY6_PID "$withval"
++ _ACEOF
++ 
++ fi
++ 
++ 
+  # Check basic types.
+  
+    { echo "$as_me:$LINENO: checking for int8_t" >&5
+Index: DHCP/configure.ac
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/configure.ac,v
+retrieving revision 1.47
+retrieving revision 1.47.6.1
+diff -u -c -r1.47 -r1.47.6.1
+*** DHCP/configure.ac	18 Feb 2011 18:41:25 -0000	1.47
+--- DHCP/configure.ac	9 Apr 2011 00:03:51 -0000	1.47.6.1
+***************
+*** 317,322 ****
+--- 317,328 ----
+  		        (default is LOCALSTATEDIR/run/dhcrelay.pid)]),
+  	AC_DEFINE_UNQUOTED([_PATH_DHCRELAY_PID], ["$withval"],
+  			   [File for dhcrelay process information.]))
++ AC_ARG_WITH(relay6-pid-file,
++ 	AC_HELP_STRING([--with-relay6-pid-file=PATH],
++ 		       [File for dhcrelay6 process information
++ 		        (default is LOCALSTATEDIR/run/dhcrelay6.pid)]),
++ 	AC_DEFINE_UNQUOTED([_PATH_DHCRELAY6_PID], ["$withval"],
++ 			   [File for dhcrelay6 process information.]))
+  
+  # Check basic types.
+  AC_TYPE_INT8_T
+Index: DHCP/client/dhclient.8
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/client/dhclient.8,v
+retrieving revision 1.35
+retrieving revision 1.35.56.2
+diff -u -c -r1.35 -r1.35.56.2
+*** DHCP/client/dhclient.8	14 Jul 2010 20:01:14 -0000	1.35
+--- DHCP/client/dhclient.8	12 Apr 2011 20:47:25 -0000	1.35.56.2
+***************
+*** 90,95 ****
+--- 90,98 ----
+  .I pid-file
+  ]
+  [
++ .B --no-pid
++ ]
++ [
+  .B -cf
+  .I config-file
+  ]
+***************
+*** 99,105 ****
+  ]
+  [
+  .B -s
+! .I server
+  ]
+  [
+  .B -g
+--- 102,108 ----
+  ]
+  [
+  .B -s
+! .I server-addr
+  ]
+  [
+  .B -g
+***************
+*** 305,311 ****
+  transmit, the client will also use a different destination port -
+  one less than the specified port.
+  .TP
+! .BI \-s \ server
+  Specify the server IP address or fully qualified domain name to use as
+  a destination for DHCP protocol messages before 
+  .B dhclient
+--- 308,314 ----
+  transmit, the client will also use a different destination port -
+  one less than the specified port.
+  .TP
+! .BI \-s \ server-addr
+  Specify the server IP address or fully qualified domain name to use as
+  a destination for DHCP protocol messages before 
+  .B dhclient
+***************
+*** 381,386 ****
+--- 384,395 ----
+  .B RUNDIR/dhclient.pid
+  is used.
+  .TP
++ .BI \--no-pid
++ Option to disable writing pid files.  By default the program
++ will write a pid file.  If the program is invoked with this
++ option it will not attempt to kill any existing client processes
++ even if invoked with \fB-r\fR or \fB-x\fR.
++ .TP
+  .BI \-sf \ script-file
+  Path to the network configuration script invoked by
+  .B dhclient
+Index: DHCP/client/dhclient.c
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/client/dhclient.c,v
+retrieving revision 1.178
+retrieving revision 1.178.2.2
+diff -u -c -r1.178 -r1.178.2.2
+*** DHCP/client/dhclient.c	24 Mar 2011 21:11:00 -0000	1.178
+--- DHCP/client/dhclient.c	12 Apr 2011 20:47:25 -0000	1.178.2.2
+***************
+*** 48,53 ****
+--- 48,56 ----
+  static char path_dhclient_script_array[] = _PATH_DHCLIENT_SCRIPT;
+  char *path_dhclient_script = path_dhclient_script_array;
+  
++ /* False (default) => we write and use a pid file */
++ isc_boolean_t no_pid_file = ISC_FALSE;
++ 
+  int dhcp_max_agent_option_packet_length = 0;
+  
+  int interfaces_requested = 0;
+***************
+*** 196,201 ****
+--- 199,206 ----
+  				usage();
+  			path_dhclient_pid = argv[i];
+  			no_dhclient_pid = 1;
++ 		} else if (!strcmp(argv[i], "--no-pid")) {
++ 			no_pid_file = ISC_TRUE;
+  		} else if (!strcmp(argv[i], "-cf")) {
+  			if (++i == argc)
+  				usage();
+***************
+*** 385,392 ****
+  			log_fatal("%s: %s", path, strerror(errno));
+  	}
+  
+! 	/* first kill off any currently running client */
+! 	if (release_mode || exit_mode) {
+  		FILE *pidfd;
+  		pid_t oldpid;
+  		long temp;
+--- 390,402 ----
+  			log_fatal("%s: %s", path, strerror(errno));
+  	}
+  
+! 	/*
+! 	 * See if we should  kill off any currently running client
+! 	 * we don't try to kill it off if the user told us not
+! 	 * to write a pid file - we assume they are controlling
+! 	 * the process in some other fashion.
+! 	 */
+! 	if ((release_mode || exit_mode) && (no_pid_file == ISC_FALSE)) {
+  		FILE *pidfd;
+  		pid_t oldpid;
+  		long temp;
+***************
+*** 677,692 ****
+  	log_info(arr);
+  	log_info(url);
+  
+! 	log_error("Usage: dhclient %s %s",
+  #ifdef DHCPv6
+! 		  "[-4|-6] [-SNTP1dvrx] [-nw] [-p <port>]",
+  #else /* DHCPv6 */
+! 		  "[-1dvrx] [-nw] [-p <port>]",
+  #endif /* DHCPv6 */
+! 		  "[-s server]");
+! 	log_error("                [-cf config-file] [-lf lease-file]%s",
+! 		  "[-pf pid-file] [-e VAR=val]");
+! 	log_fatal("                [-sf script-file] [interface]");
+  }
+  
+  void run_stateless(int exit_mode)
+--- 687,703 ----
+  	log_info(arr);
+  	log_info(url);
+  
+! 
+! 	log_fatal("Usage: dhclient "
+  #ifdef DHCPv6
+! 		  "[-4|-6] [-SNTP1dvrx] [-nw] [-p <port>]\n"
+  #else /* DHCPv6 */
+! 		  "[-1dvrx] [-nw] [-p <port>]\n"
+  #endif /* DHCPv6 */
+! 		  "                [-s server-addr] [-cf config-file] "
+! 		  "[-lf lease-file]\n"
+! 		  "                [-pf pid-file] [--no-pid] [-e VAR=val]\n"
+! 		  "                [-sf script-file] [interface]");
+  }
+  
+  void run_stateless(int exit_mode)
+***************
+*** 3369,3374 ****
+--- 3380,3390 ----
+  	FILE *pf;
+  	int pfdesc;
+  
++ 	/* nothing to do if the user doesn't want a pid file */
++ 	if (no_pid_file == ISC_TRUE) {
++ 		return;
++ 	}
++ 
+  	pfdesc = open (path_dhclient_pid, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+  
+  	if (pfdesc < 0) {
+Index: DHCP/includes/config.h.in
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/includes/config.h.in,v
+retrieving revision 1.60
+retrieving revision 1.60.6.1
+diff -u -c -r1.60 -r1.60.6.1
+*** DHCP/includes/config.h.in	18 Feb 2011 18:48:15 -0000	1.60
+--- DHCP/includes/config.h.in	11 Apr 2011 21:12:03 -0000	1.60.6.1
+***************
+*** 175,180 ****
+--- 175,183 ----
+  /* File for dhcpd process information. */
+  #undef _PATH_DHCPD_PID
+  
++ /* File for dhcrelay6 process information. */
++ #undef _PATH_DHCRELAY6_PID
++ 
+  /* File for dhcrelay process information. */
+  #undef _PATH_DHCRELAY_PID
+  
+Index: DHCP/relay/dhcrelay.8
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/relay/dhcrelay.8,v
+retrieving revision 1.18
+retrieving revision 1.18.58.2
+diff -u -c -r1.18 -r1.18.58.2
+*** DHCP/relay/dhcrelay.8	2 Jul 2010 23:09:14 -0000	1.18
+--- DHCP/relay/dhcrelay.8	12 Apr 2011 20:47:26 -0000	1.18.58.2
+***************
+*** 54,59 ****
+--- 54,66 ----
+  .I length
+  ]
+  [
++ .B -pf
++ .I pid-file
++ ]
++ [
++ .B --no-pid
++ ]
++ [
+  .B -m
+  .I append
+  |
+***************
+*** 89,94 ****
+--- 96,108 ----
+  .B -c
+  .I count
+  ]
++ [
++ .B -pf
++ .I pid-file
++ ]
++ [
++ .B --no-pid
++ ]
+  .B -l
+  .I lower0
+  [
+***************
+*** 150,155 ****
+--- 164,176 ----
+  -q
+  Quiet mode.  Prevents dhcrelay6 from printing its network configuration
+  on startup.
++ .TP
++ -pf pid-file
++ Path to alternate pid file.
++ .TP
++ --no-pid
++ Option to disable writing pid files.  By default the program
++ will write a pid file.
+  .PP
+  \fIOptions available in DHCPv4 mode only:\fR
+  .TP
+Index: DHCP/relay/dhcrelay.c
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/relay/dhcrelay.c,v
+retrieving revision 1.79
+retrieving revision 1.79.106.2
+diff -u -c -r1.79 -r1.79.106.2
+*** DHCP/relay/dhcrelay.c	2 Feb 2010 19:58:18 -0000	1.79
+--- DHCP/relay/dhcrelay.c	12 Apr 2011 20:47:26 -0000	1.79.106.2
+***************
+*** 49,54 ****
+--- 49,57 ----
+  char *tlname;
+  
+  const char *path_dhcrelay_pid = _PATH_DHCRELAY_PID;
++ isc_boolean_t no_dhcrelay_pid = ISC_FALSE;
++ /* False (default) => we write and use a pid file */
++ isc_boolean_t no_pid_file = ISC_FALSE;
+  
+  int bogus_agent_drops = 0;	/* Packets dropped because agent option
+  				   field was specified and we're not relaying
+***************
+*** 138,147 ****
+--- 141,152 ----
+  #define DHCRELAY_USAGE \
+  "Usage: dhcrelay [-4] [-d] [-q] [-a] [-D]\n"\
+  "                     [-A <length>] [-c <hops>] [-p <port>]\n" \
++ "                     [-pf <pid-file>] [--no-pid]\n"\
+  "                     [-m append|replace|forward|discard]\n" \
+  "                     [-i interface0 [ ... -i interfaceN]\n" \
+  "                     server0 [ ... serverN]\n\n" \
+  "       dhcrelay -6   [-d] [-q] [-I] [-c <hops>] [-p <port>]\n" \
++ "                     [-pf <pid-file>] [--no-pid]\n"\
+  "                     -l lower0 [ ... -l lowerN]\n" \
+  "                     -u upper0 [ ... -u upperN]\n" \
+  "       lower (client link): [address%%]interface[#index]\n" \
+***************
+*** 149,154 ****
+--- 154,160 ----
+  #else
+  #define DHCRELAY_USAGE \
+  "Usage: dhcrelay [-d] [-q] [-a] [-D] [-A <length>] [-c <hops>] [-p <port>]\n" \
++ "                [-pf <pid-file>] [--no-pid]\n"\
+  "                [-m append|replace|forward|discard]\n" \
+  "                [-i interface0 [ ... -i interfaceN]\n" \
+  "                server0 [ ... serverN]\n\n"
+***************
+*** 350,355 ****
+--- 356,368 ----
+  			sl->next = upstreams;
+  			upstreams = sl;
+  #endif
++ 		} else if (!strcmp(argv[i], "-pf")) {
++ 			if (++i == argc)
++ 				usage();
++ 			path_dhcrelay_pid = argv[i];
++ 			no_dhcrelay_pid = ISC_TRUE;
++ 		} else if (!strcmp(argv[i], "--no-pid")) {
++ 			no_pid_file = ISC_TRUE;
+  		} else if (!strcmp(argv[i], "--version")) {
+  			log_info("isc-dhcrelay-%s", PACKAGE_VERSION);
+  			exit(0);
+***************
+*** 394,411 ****
+   		}
+  	}
+  
+! 	if (local_family == AF_INET) {
+! 		path_dhcrelay_pid = getenv("PATH_DHCRELAY_PID");
+! 		if (path_dhcrelay_pid == NULL)
+! 			path_dhcrelay_pid = _PATH_DHCRELAY_PID;
+! 	}
+  #ifdef DHCPv6
+! 	else {
+! 		path_dhcrelay_pid = getenv("PATH_DHCRELAY6_PID");
+! 		if (path_dhcrelay_pid == NULL)
+! 			path_dhcrelay_pid = _PATH_DHCRELAY6_PID;
+! 	}
+  #endif
+  
+  	if (!quiet) {
+  		log_info("%s %s", message, PACKAGE_VERSION);
+--- 407,430 ----
+   		}
+  	}
+  
+! 	/*
+! 	 * If the user didn't specify a pid file directly
+! 	 * find one from environment variables or defaults
+! 	 */
+! 	if (no_dhcrelay_pid == ISC_FALSE) {
+! 		if (local_family == AF_INET) {
+! 			path_dhcrelay_pid = getenv("PATH_DHCRELAY_PID");
+! 			if (path_dhcrelay_pid == NULL)
+! 				path_dhcrelay_pid = _PATH_DHCRELAY_PID;
+! 		}
+  #ifdef DHCPv6
+! 		else {
+! 			path_dhcrelay_pid = getenv("PATH_DHCRELAY6_PID");
+! 			if (path_dhcrelay_pid == NULL)
+! 				path_dhcrelay_pid = _PATH_DHCRELAY6_PID;
+! 		}
+  #endif
++ 	}
+  
+  	if (!quiet) {
+  		log_info("%s %s", message, PACKAGE_VERSION);
+***************
+*** 519,538 ****
+  		else if (pid)
+  			exit(0);
+  
+! 		pfdesc = open(path_dhcrelay_pid,
+! 			       O_CREAT | O_TRUNC | O_WRONLY, 0644);
+! 
+! 		if (pfdesc < 0) {
+! 			log_error("Can't create %s: %m", path_dhcrelay_pid);
+! 		} else {
+! 			pf = fdopen(pfdesc, "w");
+! 			if (!pf)
+! 				log_error("Can't fdopen %s: %m",
+! 				      path_dhcrelay_pid);
+! 			else {
+! 				fprintf(pf, "%ld\n",(long)getpid());
+! 				fclose(pf);
+! 			}	
+  		}
+  
+  		close(0);
+--- 538,560 ----
+  		else if (pid)
+  			exit(0);
+  
+! 		if (no_pid_file == ISC_FALSE) {
+! 			pfdesc = open(path_dhcrelay_pid,
+! 				      O_CREAT | O_TRUNC | O_WRONLY, 0644);
+! 
+! 			if (pfdesc < 0) {
+! 				log_error("Can't create %s: %m",
+! 					  path_dhcrelay_pid);
+! 			} else {
+! 				pf = fdopen(pfdesc, "w");
+! 				if (!pf)
+! 					log_error("Can't fdopen %s: %m",
+! 						  path_dhcrelay_pid);
+! 				else {
+! 					fprintf(pf, "%ld\n",(long)getpid());
+! 					fclose(pf);
+! 				}	
+! 			}
+  		}
+  
+  		close(0);
+Index: DHCP/server/dhcpd.8
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/server/dhcpd.8,v
+retrieving revision 1.33
+retrieving revision 1.33.56.2
+diff -u -c -r1.33 -r1.33.56.2
+*** DHCP/server/dhcpd.8	14 Jul 2010 20:01:14 -0000	1.33
+--- DHCP/server/dhcpd.8	12 Apr 2011 20:47:26 -0000	1.33.56.2
+***************
+*** 75,80 ****
+--- 75,83 ----
+  .I pid-file
+  ]
+  [
++ .B --no-pid
++ ]
++ [
+  .B -tf
+  .I trace-output-file
+  ]
+***************
+*** 283,288 ****
+--- 286,296 ----
+  .TP
+  .BI \-pf \ pid-file
+  Path to alternate pid file.
++ .TP
++ .BI \--no-pid
++ Option to disable writing pid files.  By default the program
++ will write a pid file.  If the program is invoked with this
++ option it will not check for an existing server process.
+  .PP
+  .SH CONFIGURATION
+  The syntax of the dhcpd.conf(5) file is discussed separately.   This
+Index: DHCP/server/dhcpd.c
+===================================================================
+RCS file: /proj/cvs/prod/DHCP/server/dhcpd.c,v
+retrieving revision 1.156
+retrieving revision 1.156.42.2
+diff -u -c -r1.156 -r1.156.42.2
+*** DHCP/server/dhcpd.c	8 Sep 2010 22:13:05 -0000	1.156
+--- DHCP/server/dhcpd.c	12 Apr 2011 20:47:26 -0000	1.156.42.2
+***************
+*** 160,165 ****
+--- 160,167 ----
+  const char *path_dhcpd_conf = _PATH_DHCPD_CONF;
+  const char *path_dhcpd_db = _PATH_DHCPD_DB;
+  const char *path_dhcpd_pid = _PATH_DHCPD_PID;
++ /* False (default) => we write and use a pid file */
++ isc_boolean_t no_pid_file = ISC_FALSE;
+  
+  int dhcp_max_agent_option_packet_length = DHCP_MTU_MAX;
+  
+***************
+*** 351,356 ****
+--- 353,360 ----
+  				usage ();
+  			path_dhcpd_pid = argv [i];
+  			no_dhcpd_pid = 1;
++ 		} else if (!strcmp(argv[i], "--no-pid")) {
++ 			no_pid_file = ISC_TRUE;
+                  } else if (!strcmp (argv [i], "-t")) {
+  			/* test configurations only */
+  #ifndef DEBUG
+***************
+*** 783,815 ****
+  	}
+  #endif /* PARANOIA */
+  
+! 	/* Read previous pid file. */
+! 	if ((i = open (path_dhcpd_pid, O_RDONLY)) >= 0) {
+! 		status = read(i, pbuf, (sizeof pbuf) - 1);
+! 		close (i);
+! 		if (status > 0) {
+! 			pbuf[status] = 0;
+! 			pid = atoi(pbuf);
+! 
+! 			/*
+!                          * If there was a previous server process and it's
+!                          * is still running, abort
+!                          */
+! 			if (!pid || (pid != getpid() && kill(pid, 0) == 0))
+! 				log_fatal("There's already a "
+!                                           "DHCP server running.");
+  		}
+- 	}
+- 
+-         /* Write new pid file. */
+-         if ((i = open(path_dhcpd_pid, O_WRONLY|O_CREAT|O_TRUNC, 0644)) >= 0) {
+-                 sprintf(pbuf, "%d\n", (int) getpid());
+-                 IGNORE_RET (write(i, pbuf, strlen(pbuf)));
+-                 close(i);
+-         } else {
+-                 log_error("Can't create PID file %s: %m.", path_dhcpd_pid);
+-         }
+  
+  
+  	/* If we were requested to log to stdout on the command line,
+  	   keep doing so; otherwise, stop. */
+--- 787,827 ----
+  	}
+  #endif /* PARANOIA */
+  
+! 	/*
+! 	 * Deal with pid files.  If the user told us
+! 	 * not to write a file we don't read one either
+! 	 */
+! 	if (no_pid_file == ISC_FALSE) {
+! 		/*Read previous pid file. */
+! 		if ((i = open (path_dhcpd_pid, O_RDONLY)) >= 0) {
+! 			status = read(i, pbuf, (sizeof pbuf) - 1);
+! 			close (i);
+! 			if (status > 0) {
+! 				pbuf[status] = 0;
+! 				pid = atoi(pbuf);
+! 
+! 				/*
+! 				 * If there was a previous server process and
+! 				 * it is still running, abort
+! 				 */
+! 				if (!pid ||
+! 				    (pid != getpid() && kill(pid, 0) == 0))
+! 					log_fatal("There's already a "
+! 						  "DHCP server running.");
+! 			}
+  		}
+  
++ 		/* Write new pid file. */
++ 		i = open(path_dhcpd_pid, O_WRONLY|O_CREAT|O_TRUNC, 0644);
++ 		if (i >= 0) {
++ 			sprintf(pbuf, "%d\n", (int) getpid());
++ 			IGNORE_RET (write(i, pbuf, strlen(pbuf)));
++ 			close(i);
++ 		} else {
++ 			log_error("Can't create PID file %s: %m.",
++ 				  path_dhcpd_pid);
++ 		}
++ 	}
+  
+  	/* If we were requested to log to stdout on the command line,
+  	   keep doing so; otherwise, stop. */
+***************
+*** 902,908 ****
+  				   &global_scope, oc, MDL)) {
+  		s = dmalloc (db.len + 1, MDL);
+  		if (!s)
+! 			log_fatal ("no memory for lease db filename.");
+  		memcpy (s, db.data, db.len);
+  		s [db.len] = 0;
+  		data_string_forget (&db, MDL);
+--- 914,920 ----
+  				   &global_scope, oc, MDL)) {
+  		s = dmalloc (db.len + 1, MDL);
+  		if (!s)
+! 			log_fatal ("no memory for pid filename.");
+  		memcpy (s, db.data, db.len);
+  		s [db.len] = 0;
+  		data_string_forget (&db, MDL);
+***************
+*** 938,944 ****
+                                            oc, MDL)) {
+                          s = dmalloc (db.len + 1, MDL);
+                          if (!s)
+!                                 log_fatal ("no memory for lease db filename.");
+                          memcpy (s, db.data, db.len);
+                          s [db.len] = 0;
+                          data_string_forget (&db, MDL);
+--- 950,956 ----
+                                            oc, MDL)) {
+                          s = dmalloc (db.len + 1, MDL);
+                          if (!s)
+!                                 log_fatal ("no memory for pid filename.");
+                          memcpy (s, db.data, db.len);
+                          s [db.len] = 0;
+                          data_string_forget (&db, MDL);
+***************
+*** 1210,1216 ****
+  		  "             [-tf trace-output-file]\n"
+  		  "             [-play trace-input-file]\n"
+  #endif /* TRACING */
+! 		  "             [-pf pid-file] [-s server] [if0 [...ifN]]");
+  }
+  
+  void lease_pinged (from, packet, length)
+--- 1222,1229 ----
+  		  "             [-tf trace-output-file]\n"
+  		  "             [-play trace-input-file]\n"
+  #endif /* TRACING */
+! 		  "             [-pf pid-file] [--no-pid] [-s server]\n"
+! 		  "             [if0 [...ifN]]");
+  }
+  
+  void lease_pinged (from, packet, length)
