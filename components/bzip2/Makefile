@@ -52,12 +52,16 @@ COMPONENT_PRE_BUILD_ACTION= \
 	    cp ../../oldapi.c . )
 
 # common targets
-build:		$(BUILD_32) $(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	build $(INSTALL_32)
+# override the 64 bit install and have it make a directory for the lint lib
+$(INSTALL_64):
+	$(MKDIR) $(PROTOUSRLIBDIR64)
+	touch $@
+
+install:	build $(INSTALL_32_and_64)
 	$(INSTALL) $(BUILD_DIR_32)/libbz2.so.1 $(PROTOUSRLIBDIR)
 	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
-	$(MKDIR) $(PROTOUSRLIBDIR64)
 	$(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64)
 	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
 	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
