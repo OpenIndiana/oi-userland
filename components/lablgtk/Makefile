@@ -25,6 +25,8 @@
 
 include ../../make-rules/shared-macros.mk
 
+PATH=$(SPRO_VROOT)/bin:/usr/gnu/bin:/usr/bin
+
 COMPONENT_NAME=		lablgtk
 COMPONENT_VERSION=	2.10.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
