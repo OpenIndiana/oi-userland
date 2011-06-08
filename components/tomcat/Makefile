@@ -26,55 +26,42 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache-tomcat
-COMPONENT_VERSION=	6.0.28
+COMPONENT_VERSION=	6.0.32
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:0df5e58518607ff738bbf440d829747df6acb9ce
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-6/v6.0.28/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:ec94c511e54da2b02dd2ba45b9fd1703d5771a45
+COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 # Tomcat subcomponents
 COMPONENT_ARCHIVE_1= commons-dbcp-1.4-src.tar.gz
 COMPONENT_ARCHIVE_HASH_1= sha1:48702486eaba6ec40fb65e912c8f597d80654f54
 COMPONENT_ARCHIVE_URL_1= http://archive.apache.org/dist/commons/dbcp/source/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_2= commons-pool-1.5.4-src.tar.gz
-COMPONENT_ARCHIVE_HASH_2= sha1:18279249c27fee5bdedeaff169b9d1b70d135839
+COMPONENT_ARCHIVE_2= commons-pool-1.5.5-src.tar.gz
+COMPONENT_ARCHIVE_HASH_2= sha1:375408d445be1b87e935bb8e68cc9f746a3b59fb
 COMPONENT_ARCHIVE_URL_2= http://archive.apache.org/dist/commons/pool/source/$(COMPONENT_ARCHIVE_2)
-COMPONENT_ARCHIVE_3= eclipse-JDT-3.3.1.zip
-COMPONENT_ARCHIVE_HASH_3= sha1:9628f715ef2e53dd295164eafd70a95f64292d27
+COMPONENT_ARCHIVE_3= ecj.jar
+COMPONENT_ARCHIVE_HASH_3= sha1:f4ddfbb80cb97b0bdfa8730102db9fec1630a983
 COMPONENT_ARCHIVE_URL_3= http://archive.eclipse.org/eclipse/downloads/drops/R-3.3.1-200709211145/$(COMPONENT_ARCHIVE_3)
 
 include ../../make-rules/prep.mk
-include ../../make-rules/justmake.mk
+include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
-TC_ENV=JAVA_HOME=$(JAVA_HOME)
-
-# We have no proto area with Tomcat. Instead several transformation rules
-# are used over mainly Tomcat output directory.
-PKG_PROTO_DIRS =  $(COMPONENT_DIR)
-PKG_PROTO_DIRS += $(BUILD_DIR_32)/output/build
-PKG_PROTO_DIRS += $(BUILD_DIR_32)/output/build/webapps
-PKG_PROTO_DIRS += $(COMPONENT_DIR)/Solaris
-PUBLISH_TRANSFORMS += solaris-transform
-
-GMAKE=ant
-COMPONENT_BUILD_TARGETS=-Dbase.path=$(BUILD_DIR_32) download deploy
-COMPONENT_BUILD_ENV+=$(TC_ENV)
+COMPONENT_BUILD_ARGS=-Dbase.path=$(BUILD_DIR_32) -Dtomcat.build=$(PROTO_DIR)
+COMPONENT_BUILD_TARGETS=download deploy
 
 # Create configuration backup archive for custom user's deployments.
-# Move default web application to different location so we can package
-# it in separate package and instead provide basic one.
 COMPONENT_POST_BUILD_ACTION= \
-	(cd $(@D)/output/build ; \
-	    gtar cfz conf/CONF.tar.gz conf/* ; \
-	    $(MV) webapps/ROOT webapps/ROOT.example )
+	(cd $(PROTO_DIR) ; $(RM) conf/CONF.tar.gz ; \
+	    gtar cfz conf/CONF.tar.gz conf/* )
 
 build:	$(BUILD_32)
 
 install: build
 
 test:  build
-	@cd $(BUILD_DIR_32)/test; $(ENV) $(TC_ENV) ant -Djunit.home=/usr/share/lib/java
+	@cd $(BUILD_DIR_32)/test; $(ENV) $(COMPONENT_BUILD_ENV) \
+	    $(ANT) $(COMPONENT_BUILD_ARGS) -Djunit.home=/usr/share/lib/java
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
