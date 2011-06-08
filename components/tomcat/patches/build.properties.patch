@@ -1,38 +1,30 @@
---- apache-tomcat-6.0.28-src/build.properties.default.orig	Thu Mar 17 22:16:15 2011
-+++ apache-tomcat-6.0.28-src/build.properties.default	Thu Mar 17 22:27:32 2011
-@@ -44,13 +44,13 @@
- compile.target=1.5
- compile.debug=true
+--- apache-tomcat-6.0.32-src/build.properties.default	Wed Feb  2 11:07:31 2011
++++ apache-tomcat-6.0.32-src/build.properties.default	Thu Jun  2 05:02:15 2011
+@@ -49,6 +49,12 @@
+ base-sf.loc=http://downloads.sourceforge.net
+ base-maven1.loc=http://repo1.maven.org/maven
  
--base-commons.loc=http://archive.apache.org/dist/commons
--base-tomcat.loc=http://archive.apache.org/dist/tomcat
--base-sf.loc=http://downloads.sourceforge.net
-+base-commons.loc=file://${base.path}/../../
-+base-tomcat.loc=file://${base.path}/../../
-+base-sf.loc=file://${base.path}/../../
- 
++# In Userland we really don't want Tomcat to download its build
++# dependencies itself but instead we will do it ourself in advance.
++# Therefore those dependencies which are really required need to be
++# redirected to local file system.
++userland-files.loc=file://${base.path}/../../
++
  # ----- Commons Logging, version 1.1 or later -----
- commons-logging-version=1.1.1
--commons-logging-src.loc=${base-commons.loc}/logging/source/commons-logging-${commons-logging-version}-src.tar.gz
-+commons-logging-src.loc=${base-commons.loc}/commons-logging-${commons-logging-version}-src.tar.gz
- 
- # ----- Webservices -----
- jaxrpc-src.loc=http://repo1.maven.org/maven2/geronimo-spec/geronimo-spec-jaxrpc/1.1-rc4/geronimo-spec-jaxrpc-1.1-rc4.jar
-@@ -60,24 +60,24 @@
- jdt.home=${base.path}/eclipse/plugins
- jdt.lib=${jdt.home}
- jdt.jar=${jdt.lib}/org.eclipse.jdt.core_3.3.1.v_780_R33x.jar
--jdt.loc=http://archive.eclipse.org/eclipse/downloads/drops/R-3.3.1-200709211145/eclipse-JDT-3.3.1.zip
-+jdt.loc=${base-tomcat.loc}/eclipse-JDT-3.3.1.zip
+ # If this version is updated, check the versions required for the deps
+ # - avalon-framework
+@@ -108,7 +114,7 @@
+ jdt.jar=${jdt.home}/ecj-${jdt.version}.jar
+ # The download will be moved to the archive area eventually. We are taking care of that in advance.
+ # Note older JARs were called ecj.jar. Newer JARs are called ecj-${jdt.version}.jar
+-jdt.loc.1=http://archive.eclipse.org/eclipse/downloads/drops/${jdt.release}/ecj.jar
++jdt.loc.1=${userland-files.loc}/ecj.jar
+ jdt.loc.2=http://download.eclipse.org/eclipse/downloads/drops/${jdt.release}/ecj.jar
  
  # ----- Tomcat native library -----
- tomcat-native.version=1.1.20
- tomcat-native.home=${base.path}/tomcat-native-${tomcat-native.version}
- tomcat-native.tar.gz=${tomcat-native.home}/tomcat-native.tar.gz
--tomcat-native.loc=${base-tomcat.loc}/tomcat-connectors/native/${tomcat-native.version}/source/tomcat-native-${tomcat-native.version}-src.tar.gz
--tomcat-native.dll=${base-tomcat.loc}/tomcat-connectors/native/${tomcat-native.version}/binaries
-+tomcat-native.loc=${base-tomcat.loc}/tomcat-native-${tomcat-native.version}-src.tar.gz
-+tomcat-native.dll=${base-tomcat.loc}/binaries
+@@ -118,15 +124,15 @@
+ tomcat-native.loc=${base-tomcat.loc}/tomcat-connectors/native/${tomcat-native.version}/source/tomcat-native-${tomcat-native.version}-src.tar.gz
+ tomcat-native.dll=${base-tomcat.loc}/tomcat-connectors/native/${tomcat-native.version}/binaries
  
 -# ----- Commons DBCP, version 1.1 or later -----
 -commons-dbcp.version=1.3
@@ -40,32 +32,13 @@
 +commons-dbcp.version=1.4
  commons-dbcp.home=${base.path}/commons-dbcp-${commons-dbcp.version}-src
 -commons-dbcp-src.loc=${base-commons.loc}/dbcp/source/commons-dbcp-${commons-dbcp.version}-src.tar.gz
-+commons-dbcp-src.loc=${base-commons.loc}/commons-dbcp-${commons-dbcp.version}-src.tar.gz
++commons-dbcp-src.loc=${userland-files.loc}/commons-dbcp-${commons-dbcp.version}-src.tar.gz
  
  # ----- Commons Pool, version 1.1 or later -----
- commons-pool.version=1.5.4
+ commons-pool.version=1.5.5
  commons-pool.home=${base.path}/commons-pool-${commons-pool.version}-src
 -commons-pool-src.loc=${base-commons.loc}/pool/source/commons-pool-${commons-pool.version}-src.tar.gz
-+commons-pool-src.loc=${base-commons.loc}/commons-pool-${commons-pool.version}-src.tar.gz
++commons-pool-src.loc=${userland-files.loc}/commons-pool-${commons-pool.version}-src.tar.gz
  
  # ----- NSIS, version 2.0 or later -----
  nsis.home=${base.path}/nsis-2.46
-@@ -85,7 +85,7 @@
- nsis.installoptions.dll=${nsis.home}/Plugins/InstallOptions.dll
- nsis.nsexec.dll=${nsis.home}/Plugins/nsExec.dll
- nsis.nsisdl.dll=${nsis.home}/Plugins/NSISdl.dll
--nsis.loc=${base-sf.loc}/nsis/nsis-2.46.zip
-+nsis.loc=${base-sf.loc}/nsis-2.46.zip
- 
- # ----- Commons Daemon, version 1.0-Alpha or later -----
- commons-daemon.version=1.0.2
-@@ -95,6 +95,6 @@
- commons-daemon.native.win.mgr.exe=${commons-daemon.native.win.home}/prunmgr.exe
- commons-daemon.native.src.tgz=${commons-daemon.home}/commons-daemon-${commons-daemon.version}-native-src.tar.gz
- commons-daemon.native.win.zip=${commons-daemon.home}/commons-daemon-${commons-daemon.version}-bin-windows.zip
--commons-daemon.bin.loc=${base-commons.loc}/daemon/binaries/${commons-daemon.version}/commons-daemon-${commons-daemon.version}-bin.tar.gz
--commons-daemon.native.src.loc=${base-commons.loc}/daemon/source/commons-daemon-${commons-daemon.version}-native-src.tar.gz
--commons-daemon.native.win.loc=${base-commons.loc}/daemon/binaries/${commons-daemon.version}/windows/commons-daemon-${commons-daemon.version}-bin-windows.zip
-+commons-daemon.bin.loc=${base-commons.loc}/commons-daemon-${commons-daemon.version}-bin.tar.gz
-+commons-daemon.native.src.loc=${base-commons.loc}/commons-daemon-${commons-daemon.version}-native-src.tar.gz
-+commons-daemon.native.win.loc=${base-commons.loc}/commons-daemon-${commons-daemon.version}-bin-windows.zip

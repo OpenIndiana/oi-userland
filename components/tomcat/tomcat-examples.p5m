@@ -22,6 +22,14 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
+
+<transform file path=var/tomcat6/(.+)$ -> \
+    set action.hash %<\1> >
+<transform file path=var/tomcat6/webapps/ROOT.example/(.+)$ -> \
+    set action.hash webapps/ROOT/%<\1> >
+<transform file path=var/tomcat6/webapps/ROOT/index.htm -> \
+    set action.hash Solaris/index.htm >
+
 set name=pkg.fmri \
     value=pkg:/web/java-servlet/tomcat/tomcat-examples@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
