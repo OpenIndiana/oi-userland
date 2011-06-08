@@ -1,0 +1,110 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri value=pkg:/library/libsndfile@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="libsndfile - a library for reading/writing sound files"
+set name=pkg.description \
+	value="Libsndfile is a C library for reading and writing files containing sampled sound (such as MS Windows WAV and the Apple/SGI AIFF format) through one standard library interface."
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=opensolaris.arc_url \
+	value=http://arc.opensolaris.org/caselog/PSARC/2008/767/
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license libsndfile.license license="LGPLv2.1"
+
+dir path=usr
+dir path=usr/bin
+dir path=usr/include
+dir path=usr/lib
+dir path=usr/lib/$(MACH64)
+dir path=usr/lib/$(MACH64)/pkgconfig
+dir path=usr/lib/pkgconfig
+dir path=usr/share
+dir path=usr/share/doc
+dir path=usr/share/doc/libsndfile
+dir path=usr/share/doc/libsndfile/html
+dir path=usr/share/man
+dir path=usr/share/man/man1
+dir path=usr/share/octave
+dir path=usr/share/octave/site
+dir path=usr/share/octave/site/m
+file path=usr/bin/sndfile-convert
+file path=usr/bin/sndfile-info
+file path=usr/bin/sndfile-play
+file path=usr/bin/sndfile-regtest
+file path=usr/include/sndfile.h
+file path=usr/include/sndfile.hh
+file path=usr/lib/$(MACH64)/libsndfile.so.$(COMPONENT_VERSION)
+file path=usr/lib/libsndfile.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/pkgconfig/sndfile.pc
+file path=usr/lib/pkgconfig/sndfile.pc
+file usr/share/doc/libsndfile1-dev/html/FAQ.html \
+	path=usr/share/doc/libsndfile/html/FAQ.html
+file usr/share/doc/libsndfile1-dev/html/api.html \
+	path=usr/share/doc/libsndfile/html/api.html
+file usr/share/doc/libsndfile1-dev/html/bugs.html \
+	path=usr/share/doc/libsndfile/html/bugs.html
+file usr/share/doc/libsndfile1-dev/html/command.html \
+	path=usr/share/doc/libsndfile/html/command.html
+file usr/share/doc/libsndfile1-dev/html/dither.html \
+	path=usr/share/doc/libsndfile/html/dither.html
+file usr/share/doc/libsndfile1-dev/html/embedded_files.html \
+	path=usr/share/doc/libsndfile/html/embedded_files.html
+file usr/share/doc/libsndfile1-dev/html/index.html \
+	path=usr/share/doc/libsndfile/html/index.html
+file usr/share/doc/libsndfile1-dev/html/libsndfile.css \
+	path=usr/share/doc/libsndfile/html/libsndfile.css
+file usr/share/doc/libsndfile1-dev/html/libsndfile.jpg \
+	path=usr/share/doc/libsndfile/html/libsndfile.jpg
+file usr/share/doc/libsndfile1-dev/html/lists.html \
+	path=usr/share/doc/libsndfile/html/lists.html
+file usr/share/doc/libsndfile1-dev/html/new_file_type.HOWTO \
+	path=usr/share/doc/libsndfile/html/new_file_type.HOWTO
+file usr/share/doc/libsndfile1-dev/html/octave.html \
+	path=usr/share/doc/libsndfile/html/octave.html
+file usr/share/doc/libsndfile1-dev/html/pkgconfig.html \
+	path=usr/share/doc/libsndfile/html/pkgconfig.html
+file usr/share/doc/libsndfile1-dev/html/sndfile_info.html \
+	path=usr/share/doc/libsndfile/html/sndfile_info.html
+file usr/share/doc/libsndfile1-dev/html/tutorial.html \
+	path=usr/share/doc/libsndfile/html/tutorial.html
+file usr/share/doc/libsndfile1-dev/html/win32.html \
+	path=usr/share/doc/libsndfile/html/win32.html
+file path=usr/share/man/man1/sndfile-convert.1
+file path=usr/share/man/man1/sndfile-info.1
+file path=usr/share/man/man1/sndfile-play.1
+file Octave/sndfile_load.m path=usr/share/octave/site/m/sndfile_load.m
+file Octave/sndfile_play.m path=usr/share/octave/site/m/sndfile_play.m
+file Octave/sndfile_save.m path=usr/share/octave/site/m/sndfile_save.m
+link path=usr/lib/$(MACH64)/libsndfile.so \
+    target=libsndfile.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libsndfile.so.1 \
+    target=libsndfile.so.$(COMPONENT_VERSION)
+link path=usr/lib/libsndfile.so target=libsndfile.so.$(COMPONENT_VERSION)
+link path=usr/lib/libsndfile.so.1 target=libsndfile.so.$(COMPONENT_VERSION)
+
+legacy pkg=SUNWlibsndfile \
+	name="libsndfile" \
+	desc="libsndfile - a library for reading/writing sound files (1.0.23)"
