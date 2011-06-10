@@ -1,0 +1,334 @@
+'\" t
+.\" =========================================================================
+.\" define .EX/.EE (for multiline user-command examples; normal Courier font)
+.de EX
+.in +4n
+.nf
+.ft CW
+..
+.de EE
+.ft R
+.fi
+.in -4n
+..
+.\" =========================================================================
+.TH UNRAR 1 "18 Feb 2009" unrar
+.SH NAME
+unrar \- list, test and extract compressed files from RAR archive
+.PD
+.SH SYNOPSIS
+\fBunrar\fR command [switches] archive {files | @listfiles} [path_to_extract]
+.PD
+.\" =========================================================================
+.SH DESCRIPTION
+\fIunrar\fP is commandline utility to list, test, or extract files from RAR archive.
+.PD
+.\" =========================================================================
+.SH COMMANDS
+.TP
+.B e
+Extract files to current directory
+.TP
+.B l[t|b]
+List archive [technical format, bare format]
+.TP
+.B p
+Print file to stdout
+.TP
+.B t
+Test archive files
+.TP
+.B v[t|b]
+Verbosely list archive [technical format, bare format]
+.TP
+.B x
+Extract files with full path
+.\" =========================================================================
+.SH SWITCHES
+.PD
+.TP
+.B \-
+Stop switches scanning
+.\".TP
+.\".B \-ac
+.\"Clear Archive attribute after compression or extraction
+.TP
+.B \-ad
+Append archive name to destination path
+.TP
+.B \-ap<path>
+Set path inside archive
+.TP
+.B \-c\-
+Disable comments show
+.TP
+.B \-cfg\-
+Disable read configuration
+.TP
+.B \-cl
+Convert names to lower case
+.TP
+.B \-cu
+Convert names to upper case
+.TP
+.B \-dh
+Open shared files
+.TP
+.B \-ep
+Exclude paths from names
+.TP
+.B \-ep3
+Expand paths to full including the drive letter
+.TP
+.B \-f
+Freshen files
+.TP
+.B \-id[c,d,p,q]
+Disable messages. c-copyright, d-'done' message, p-percentage, q-be completely quiet
+.TP
+.B \-ierr
+Send all messages to stderr
+.TP
+.B \-inul
+Disable all messages
+'\".TP
+'\".B \-isnd
+'\"Enable terminal bell
+.\" .TP
+.\" .B \-ioff
+.\" Turn PC off after completing an operation
+.TP
+.B \-kb
+Keep broken extracted files
+.TP
+.B \-n<file>
+Include only specified file
+.TP
+.B \-n@
+Read file names to include from stdin
+.TP
+.B \-n@<list>
+Include files in specified list file
+.TP
+.B \-o+
+Overwrite existing files
+.TP
+.B \-o\-
+Do not overwrite existing files
+.\".TP
+.\".B \-oc
+.\"Set NTFS Compressed attribute
+.TP
+.B \-or
+Rename files automatically
+.TP
+.B \-ow
+Save or restore file owner and group
+.TP
+.B \-p[password]
+Set password
+.TP
+.B \-p\-
+Do not query password
+.TP
+.B \-r
+Recurse subdirectories
+.\".TP
+.\".B \-ri<P>[:<S>]
+.\"Set priority (0\-default,1\-min..15\-max) and sleep time in ms
+.TP
+.B \-sl<size>
+Process files with size less than specified
+.TP
+.B \-sm<size>
+Process files with size more than specified
+.TP
+.B \-ta<date>
+Process files modified after <date> in YYYYMMDDHHMMSS format
+.TP
+.B \-tb<date>
+Process files modified before <date> in YYYYMMDDHHMMSS format
+.TP
+.B \-tn<time>
+Process files newer than <time>
+.TP
+.B \-to<time>
+Process files older than <time>
+.TP
+.B \-ts<m,c,a>[N]
+Save or restore file time (modification, creation, access)
+.TP
+.B \-u
+Update files
+.TP
+.B \-v
+List all volumes
+.TP
+.B \-ver[n]
+File version control
+.TP
+.B \-vp
+Pause before each volume
+.TP
+.B \-x<file>
+Exclude specified file
+.TP
+.B \-x@
+Read file names to exclude from stdin
+.TP
+.B \-x@<list>
+Exclude files in specified list file
+.TP
+.B \-y
+Assume Yes on all queries
+.\" =========================================================================
+.SH EXAMPLES
+To use \fIunrar\fP to extract all members of the archive \fIletters.rar\fP
+into the current directory and subdirectories below it, creating any
+subdirectories as necessary:
+.PP
+.EX
+unrar x letters
+.EE
+.PP
+To extract all members of \fIletters.rar\fP into the current directory only:
+.PP
+.EX
+unrar e letters
+.EE
+.PP
+To test \fIletters.rar\fP:
+.PP
+.EX
+unrar t letters
+.EE
+.PP
+To extract to standard output all members of \fIletters.rar\fP whose names end
+in \fI.tex\fP piping the output into \fImore\fP(1):
+.PP
+.EX
+unrar p \-inul letters '*.tex' | more
+.EE
+.PP
+To extract the binary file \fIpaper1.dvi\fP from archive \fIarticles.rar\fP to
+standard output and pipe it to a printing program:
+.PP
+.EX
+unrar \-p \-inul articles paper1.dvi | dvips
+.EE
+.PP
+To extract all FORTRAN and C source files--*.f, *.c, *.h, and Makefile--into
+the /tmp directory:
+.PP
+.EX
+unrar source.rar "*.[fch]" Makefile /tmp
+.EE
+.PP
+To extract any such files but convert any uppercase MS-DOS or VMS names to
+lowercase:
+.PP
+.EX
+unrar \-cl source.rar "*.[fch]" Makefile /tmp
+.EE
+.PP
+To extract newer versions of the files already in the current directory and
+to create any files not already there:
+.PP
+.EX
+unrar x -u -o+ sources.rar
+.EE
+.PP
+.\" =========================================================================
+.SH ENVIRONMENT VARIABLES
+.TP
+.B RAR
+Unrar reads the switches from \fBRAR\fP, unless the commandline option
+\fI\-cfg\-\fP is given. Theese two examples do the same thing:
+.PP
+.EX
+unrar x -u -o+ sources.rar
+RAR='-u -o+' unrar x sources.rar
+.EE
+.PP
+.\" =========================================================================
+.SH FILES
+.TP
+.B .rarrc
+Unrar reads the switches from .rarrc unless commandline option \fI\-cfg\-\fP is
+given. Unrar goes sequentially through theese directories and reads first (and
+only first) .rarrc found.
+.EX
+\fB$HOME/.rarrc\fR (if $HOME is defined)
+\fB/etc/.rarrc\fR
+\fB/etc/rar/.rarrc\fR
+\fB/usr/lib/.rarrc\fR
+\fB/usr/local/lib/.rarrc\fR
+\fB/usr/local/etc/.rarrc\fR
+.EE
+.PP
+rarrc should consist of lines in the form \fBswitches=<switches>\fR. For example:
+.EX
+switches=-y
+.EE
+.PP
+.\" =========================================================================
+.SH DIAGNOSTICS
+The exit status (or error level) has the following meanings:
+.RS
+.IP 0
+normal; no errors or warnings detected.
+.IP 1
+one or more warning errors were encountered, but processing completed anyway.
+.IP 2
+fatal error encountered during rar archive processing.
+.IP 3
+CRC error. Internal archive checksum does not match the data.
+.IP 4
+Locking issue. Not used in unrar.
+.IP 5
+unrar was unable to write data to disk.
+.IP 6
+unrar was unable to open a file
+.IP 7
+User error (like wrong switch, etc.)
+.IP 8
+unrar was unable to allocate memory
+.IP 9
+unrar was unable to create file
+.IP 255
+User terminated the process by using Ctrl+C
+.\" =========================================================================
+.SH URL
+Unrar sources can be obtained at
+.EX
+\fChttp://www.rarlab.com/rar_add.htm\fR
+.EE
+.PD
+.\" =========================================================================
+.SH COPYRIGHT
+The source code of UnRAR utility is freeware. This means:
+.PP
+.IP 1
+All copyrights to RAR and the utility UnRAR are exclusively owned by the author
+- Alexander Roshal.
+.IP 2
+The UnRAR sources may be used in any software to handle RAR archives without
+limitations free of charge, but cannot be used to re-create the RAR compression
+algorithm, which is proprietary. Distribution of modified UnRAR sources in
+separate form or as a part of other software is permitted, provided that it is
+clearly stated in the documentation and source comments that the code may not
+be used to develop a RAR (WinRAR) compatible archiver.
+.IP 3
+The UnRAR utility may be freely distributed. It is allowed to distribute UnRAR
+inside of other software packages.
+.IP 4
+THE RAR ARCHIVER AND THE UnRAR UTILITY ARE DISTRIBUTED "AS IS". NO WARRANTY OF
+ANY KIND IS EXPRESSED OR IMPLIED.  YOU USE AT YOUR OWN RISK. THE AUTHOR WILL
+NOT BE LIABLE FOR DATA LOSS, DAMAGES, LOSS OF PROFITS OR ANY OTHER KIND OF LOSS
+WHILE USING OR MISUSING THIS SOFTWARE.
+.IP 5
+Installing and using the UnRAR utility signifies acceptance of these terms and
+conditions of the license.
+.IP 6
+If you don't agree with terms of the license you must remove UnRAR files from
+your storage devices and cease to use the utility.
