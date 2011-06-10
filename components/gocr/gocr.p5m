@@ -1,0 +1,56 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+set name=pkg.fmri value=pkg:/image/gocr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="GOCR is an open source Optical Character Recognition program"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Graphics and Imaging"
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/LSARC/2008/746
+
+license gocr.license license='GPLv2'
+
+dir path=usr
+dir path=usr/bin
+dir path=usr/share
+dir path=usr/share/gocr
+dir path=usr/share/gocr/doc
+dir path=usr/share/gocr/examples
+dir path=usr/share/man
+dir path=usr/share/man/man1
+file path=usr/bin/gocr
+file usr/bin/gocr.tcl path=usr/share/gocr/gocr.tcl mode=0555
+file README path=usr/share/gocr/doc/README
+file doc/examples.txt path=usr/share/gocr/doc/examples.txt
+file doc/gocr.html path=usr/share/gocr/doc/gocr.html
+file examples/handwrt1.jpg path=usr/share/gocr/examples/handwrt1.jpg
+file examples/handwrt1.txt path=usr/share/gocr/examples/handwrt1.txt
+file path=usr/share/man/man1/gocr.1
+
+legacy pkg=SUNWgocr \
+    desc="GOCR converts scanned images of text back to text files. (version 0.48)" \
+    name="GOCR is an open source Optical Character Recognition program"
