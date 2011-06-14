@@ -1,0 +1,1 @@
+gnupg:	libksba libassuan gpgme
