@@ -56,6 +56,7 @@ CXX+=   $(studio_NORUNPATH)
 # this is needed or we can't compile the rak headers
 CC=$(CXX)
 
+CXXFLAGS +=	$(studio_OPT)
 CXXFLAGS +=	-i
 CXXFLAGS +=	-xspace
 CXXFLAGS +=	-mr
