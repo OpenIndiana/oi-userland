@@ -1,0 +1,50 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/system/data/hardware-registry@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="ASCII databases describing various PCI and USB devices and other hardware"
+set name=pkg.summary value="Hardware data files"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Hardware
+set name=info.source_url $(COMPONENT_ARCHIVE_URLS)
+set name=info.upstream_url value=http://pciids.sf.net/ \
+    value=http://www.linux-usb.org/usb-ids.html
+# PSARC/2005/399 Tamarack: Removable Media Enhancements in Solaris
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2005/399
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir path=usr
+dir path=usr/share
+dir path=usr/share/hwdata group=sys
+file pci.ids path=usr/share/hwdata/pci.ids
+file usb.ids path=usr/share/hwdata/usb.ids
+legacy pkg=SUNWhwdata \
+    desc="ASCII databases describing various PCI, USB and other hardware" \
+    name="Hardware data files"
+license pci.ids.license license=pci.ids.license
+license usb.ids.license license=usb.ids.license
+
