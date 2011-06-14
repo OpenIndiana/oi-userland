@@ -263,6 +263,7 @@ GPATCH =	/usr/gnu/bin/patch
 PATCH_LEVEL =	1
 GPATCH_BACKUP =	--backup --version-control=numbered
 GPATCH_FLAGS =	-p$(PATCH_LEVEL) $(GPATCH_BACKUP)
+GSED =		/usr/gnu/bin/sed
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
