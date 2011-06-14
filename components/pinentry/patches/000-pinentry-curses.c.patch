@@ -1,0 +1,34 @@
+--- pinentry/pinentry-curses.c	Thu Apr 16 08:06:53 2009
++++ pinentry/pinentry-curses.c	Mon Nov  9 08:23:40 2009
+@@ -665,7 +665,7 @@
+   if (has_colors ())
+     {
+       start_color ();
+-      use_default_colors ();
++      /* use_default_colors (); */
+ 
+       if (pinentry->color_so == PINENTRY_COLOR_DEFAULT)
+ 	{
+@@ -741,7 +741,7 @@
+ 	    }
+ 	  break;
+ 
+-	case '\t':
++	case '\011': /* HARD TAB */
+ 	  switch (diag.pos)
+ 	    {
+ 	    case DIALOG_POS_PIN:
+@@ -767,11 +767,11 @@
+ 	    }
+ 	  break;
+   
+-	case '\e':
++	case '\005': /* ENQ */
+ 	  done = -2;
+ 	  break;
+ 
+-	case '\r':
++	case '\015': /* CR */
+ 	  switch (diag.pos)
+ 	    {
+ 	    case DIALOG_POS_PIN:
