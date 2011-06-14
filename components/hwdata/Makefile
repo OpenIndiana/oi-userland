@@ -37,6 +37,9 @@ include ../../make-rules/ips.mk
 # that the header with version/date and license info is still being 
 # correctly extracted and copied into the generated license files.
 
+download::
+	@echo 'No downloads for this component'
+
 ID_FILES = pci.ids usb.ids
 
 COMPONENT_ARCHIVE_URL_pci.ids =	http://pciids.sourceforge.net/v2.2/pci.ids
