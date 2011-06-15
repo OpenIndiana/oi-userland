@@ -1,0 +1,138 @@
+--- addrs_dlpi.c.orig	Tue Feb 10 13:55:04 2009
++++ addrs_dlpi.c	Fri Jan 16 12:42:53 2009
+@@ -24,11 +24,8 @@
+ #include <sys/sockio.h>
+ #include <sys/ioctl.h>
+ #include <sys/socket.h>
+-#include <sys/dlpi.h>
+ #include <net/if.h>
+ 
+-#include "dlcommon.h"
+-
+ extern char *split_dname(char *device, int *unitp);
+ extern char *strncpy2(char *dest, char *src, int n);
+ extern char *strncat2(char *dest, char *src, int n);
+@@ -56,123 +53,8 @@
+   int got_ip_addr = 0;
+ 
+   int fd;
+-  long buf[MAXDLBUF];		/* long aligned */
+-  union DL_primitives *dlp;
+-
+-  char *cp;
+-  int unit_num = 0;
+-  int sap = 0;
+-
+-  char *devname = NULL;
+-  char *devname2 = NULL;
+-  char fulldevpath[256];
+-
+   struct ifreq ifr = {};
+ 
+-  /* -- */
+-
+-  memset(if_hw_addr, 0, 6);
+-
+-  // we want to be able to process either a fully qualified /dev/ge0
+-  // type interface definition, or just ge0.
+-
+-  if (strncmp(interface, "/dev/", strlen("/dev/")) == 0) {
+-    devname = interface + strlen("/dev/");
+-  } else {
+-    devname = interface;
+-  }
+-
+-  strncpy2(fulldevpath, "/dev/", sizeof(fulldevpath)-1);
+-  cp = strncat2(fulldevpath, interface, sizeof(fulldevpath));
+-
+-  if (strlen(cp) != 0) {
+-    fprintf(stderr, "device name buffer overflow %s\n", fulldevpath);
+-    return -1;
+-  }
+-
+-  fprintf(stderr,"interface: %s\n", devname);
+-
+-  // on Solaris, even though we are wanting to talk to ethernet device
+-  // ge0, we have to open /dev/ge, then bind to unit 0.  Dupe our
+-  // full path, then identify and cut off the unit number
+-
+-  devname2 = strdup(fulldevpath);
+-
+-  cp = split_dname(devname2, &unit_num);
+-
+-  if (cp == NULL) {
+-    free(devname2);
+-    goto get_ip_address;
+-  } else {
+-    *cp = '\0';			/* null terminate devname2 right before numeric extension */
+-  }
+-
+-  // devname2 should now be something akin to /dev/ge.  Try to open
+-  // it, and if it fails, fall back to the full /dev/ge0.
+-
+-  if ((fd = open(devname2, O_RDWR)) < 0) {
+-    if (errno != ENOENT) {
+-      fprintf(stderr, "Couldn't open %s\n", devname2);
+-      free(devname2);
+-      goto get_ip_address;
+-    } else {
+-      if ((fd = open(fulldevpath, O_RDWR)) < 0) {
+-	fprintf(stderr, "Couldn't open %s\n", fulldevpath);
+-	free(devname2);
+-	goto get_ip_address;
+-      }
+-    }
+-  }
+-
+-  free(devname2);
+-  devname2 = NULL;
+-
+-  /* Use the dlcommon functions to get access to the DLPI information for this
+-   * interface.  All of these functions exit() out on failure
+-   */
+-
+-  dlp = (union DL_primitives*) buf;
+-
+-  /*
+-   * DLPI attach to our low-level device
+-   */
+-
+-  dlattachreq(fd, unit_num);
+-  dlokack(fd, buf);
+-
+-  /*
+-   * DLPI bind
+-   */
+-
+-  dlbindreq(fd, sap, 0, DL_CLDLS, 0, 0);
+-  dlbindack(fd, buf);
+-
+-  /*
+-   * DLPI DL_INFO_REQ
+-   */
+-
+-  dlinforeq(fd);
+-  dlinfoack(fd, buf);
+-
+-  /* 
+-     printdlprim(dlp);  // uncomment this to dump out info from DLPI
+-  */
+-
+-  if (dlp->info_ack.dl_addr_length + dlp->info_ack.dl_sap_length == 6) {
+-    memcpy(if_hw_addr, 
+-	   OFFADDR(dlp, dlp->info_ack.dl_addr_offset),
+-	   dlp->info_ack.dl_addr_length);
+-    got_hw_addr = 1;
+-  } else {
+-    fprintf(stderr, "Error, bad length for hardware interface %s -- %d\n", 
+-	    interface,
+-	    dlp->info_ack.dl_addr_length);
+-  }
+-
+-  close(fd);
+-
+- get_ip_address:
+-
+   /* Get the IP address of the interface */
+ 
+ #ifdef SIOCGIFADDR

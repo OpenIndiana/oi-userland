@@ -1,0 +1,32 @@
+--- iftop.8.orig	Tue Feb 10 14:00:54 2009
++++ iftop.8	Tue Mar  3 14:18:22 2009
+@@ -21,6 +21,15 @@
+ traffic on the \fIinterface\fP; see \fBpcap\fP(3) for more information, but on
+ most systems this means that it must be run as root.
+ 
++Solaris version of \fBiftop\fP support Solaris features like zone and vanity
++naming. For example, you can specify the name of a renamed interface generated
++by \fBdladm\fP(1M) for \fBiftop\fP.  Additionally \fBiftop\fP can also be
++executed in exclusive IP stack zones, for it only use IP interfaces, the
++function and usage of \fBiftop\fP in exclusive IP stack zones are the same as
++it in global zone. As the isolation feature of Solaris zones, you can not see
++the network traffic of a non-global zone from global zone or other non-global
++zones by \fBiftop\fP.
++
+ By default, \fBiftop\fP will look up the hostnames associated with addresses it
+ finds in packets. This can cause substantial traffic of itself, and may result
+ in a confusing display. You may wish to suppress display of DNS traffic by
+@@ -286,6 +295,13 @@
+ \fB~/.iftoprc\fP
+ Configuration file for iftop.
+ 
++.SH BUGS
++This program does not have IPv6 support yet, this is an architectural bug that
++will be fixed.
++
++For Solaris version of iftop, it can not be executed properly in shared IP
++stack zones, this is a limitation bug of this program.
++
+ .SH SEE ALSO
+ .BR tcpdump (8),
+ .BR pcap (3),
