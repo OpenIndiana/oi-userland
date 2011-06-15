@@ -1,0 +1,215 @@
+                 Migration from Solaris WU-FTPD to ProFTPD
+
+
+Introduction
+------------
+
+This document provides an overview of migrating the Solaris WU-FTPD
+configuration to Solaris ProFTPD. ProFTPD replaces WU-FTPD in this
+Oracle Solaris release and has a different configuration system.
+
+Migration from the previous Solaris FTP server setup must be done
+manually.
+
+This document contains the following sections:
+
+    * Section 1 - basic overview of configuration
+    * Section 2 - managing access
+    * Section 3 - virtual host configuration
+    * Section 4 - other options
+
+1. Basic overview of configuration
+
+WU-FTPD uses several configuration files to manage the FTP server:
+
+  /etc/ftpd/ftpaccess
+  /etc/ftpd/ftpservers
+  /etc/ftpd/ftphosts
+  /etc/ftpd/ftpconversions
+  /etc/ftpd/ftpgroups
+
+These configuration files manage all aspects from general options to
+account management and virtual servers.
+
+Configuration of ProFTPD is contained in /etc/proftpd.conf. It is also
+possible to manage some options on per-directory basis with .ftpaccess
+files.
+
+ProFTPD consists of a core server and a series of "modules".
+Configuration of ProFTPD is separated into "contexts" containing
+"directives".
+
+2. Managing access
+
+WU-FTPD uses several files to manage access to system:
+
+  /etc/ftpd/ftpaccess
+  /etc/ftpd/ftphosts
+  /etc/ftpd/ftpgroups
+
+ProFTPD uses the "Limit" context to configure access.
+
+For backward compatibility /etc/ftpd/ftpusers is provided and
+/etc/ftpusers is symlink to /etc/ftpd/ftpusers. It is used if
+UseFtpUsers is set to "on" which is the default setting.
+
+2.1. Anonymous access
+
+In WU-FTPD anonymous access is enabled by the ftpconfig(1M) command
+which also created the necessary chroot(1M) environment. ProFTPD does
+not need chroot(1M) as all access management is handled as part of the
+"Anonymous" context.
+
+2.2. Allow/deny retrieve of files
+
+In ProFTPD it is possible to manage access to files on a per-directory
+basis with .ftpaccess files.
+
+2.3. Control of download/upload size
+
+Directives are provided for control of download and upload size:
+
+  MaxRetrieveFileSize - size of downloaded files
+  MaxStoreFileSize - size of uploaded files
+
+2.4. Maximum login failures before terminating the FTP connection
+
+MaxLoginAttempts controls the maximum number of login failures. The
+default is 3.
+
+3. Virtual host configuration
+
+ProFTPD provides a comprehensive set of directives to manage virtual
+FTP servers. Refer to the VirtualHost documentation for details.
+
+4. Other options
+
+Other common WU-FTPD /etc/ftpd/ftpaccess options are configured in
+ProFTPD as follows:
+
+4.1. Connection management
+
+4.1.1. Limit IP address on which FTP server listens
+
+For a standalone FTP server DefaultAddress configures the listener
+address. For virtual servers the IP addresses are part of the
+VirtualHost context.
+
+4.1.2. IP Class of Service setup
+
+ProFTPD does not support manipulation of IP Class of Service within FTP
+server implementation.
+
+4.1.3. Keepalive
+
+ProFTPD always sets the SO_KEEPALIVE socket option.
+
+4.1.4. TCP window size
+
+Directives are provided for control of socket options:
+
+  SocketOptions - tune socket-level options, including
+                  TCP send/receive window sizes.
+
+4.1.5. Enable/disable reverse remote host lookup
+
+Reverse DNS lookup is configured using UseReverseDNS, the default is
+"on".
+
+4.2. Session management
+
+4.2.1. Timeouts management
+
+ProFTPD provides the following set of timeouts:
+
+  TimeoutIdle - the idle connection timeout
+  TimeoutLinger - the timeout used for lingering closes
+  TimeoutLogin - the login timeout
+  TimeoutNoTransfer - the connection without data transfer timeout
+  TimeoutSession - the timeout for the whole session
+  TimeoutStalled - the timeout on stalled downloads
+
+4.2.2. banner option
+
+The DisplayConnect directive configures an ASCII text filename which
+will be displayed to the user when they initially connect but before
+they login.
+
+4.2.3. message option
+
+Two directives are provided:
+
+  DisplayLogin - for message file after login
+  DisplayChdir - for message file after every chdir
+
+4.2.4. Control of list options
+
+ProFTPD does not allow the use of an external command to generate
+directory listings. Listing output is controlled by ListOptions.
+
+4.3. Process management
+
+4.3.1. Setting nice(1)
+
+ProFTPD does not provide an interface for changing the nice value.  The
+nice value needs to managed outside of ProFTPD for example using the
+nice(1) command.
+
+4.3.2. Setting umask
+
+Use the Umask directive.
+
+4.3.3. E-mail notification for uploads
+
+ProFTPD provides /usr/sbin/ftpmail script which reads TranferLog
+entries and sends e-mail notifications when uploads occur.
+
+4.3.4. Shutdown management
+
+ftpshut(1M) and ftprestart(1M) commands are provided. The file
+monitored by FTP server is set to /etc/shutmsg and it is not possible
+to configure the path.
+
+4.4. Log options
+
+The ProFTPD mod_log module handles logging. By default it uses
+syslogd(1M). Control of the log format is provided by the LogFormat
+directive.
+
+4.5. Kerberos support
+
+ProFTPD supports Kerberos authentication through the mod_gss module.
+
+4.6. Miscellaneous options
+
+4.6.1. cdpath
+
+Provided by the CDPath directive.
+
+4.7. Removed options
+
+4.7.1 alias
+
+Aliasing of directory paths is not provided by ProFTPD.
+
+4.7.2 ftpconversion and compress
+
+ftpconversion is not supported by ProFTPD. For compression external
+modules mod_deflate and mod_gzipfs can be used but they are not
+provided in the Solaris default installation.
+
+4.7.3. SITE EXEC
+
+SITE EXEC is not provided by ProFTPD. Consider using other more secure
+methods for command execution.
+
+4.7.4. quota-info
+
+quota-info option replacement is not provided by ProFTPD.
+
+4.7.5. passive address
+
+passive address option replacement is not provided by ProFTPD.
+
+-- end --
+
