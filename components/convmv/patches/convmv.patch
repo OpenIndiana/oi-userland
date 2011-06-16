@@ -1,0 +1,46 @@
+*** Makefile.orig	Tue Jun 14 19:50:06 2011
+--- Makefile	Thu Jun 16 05:23:16 2011
+***************
+*** 1,5 ****
+  DESTDIR=
+! PREFIX=/usr/local
+  MANDIR=$(PREFIX)/share/man
+  TAR=tar
+  FIND=find
+--- 1,5 ----
+  DESTDIR=
+! PREFIX=/usr
+  MANDIR=$(PREFIX)/share/man
+  TAR=tar
+  FIND=find
+***************
+*** 10,23 ****
+  install: all
+  	mkdir -p $(DESTDIR)$(MANDIR)/man1/
+  	mkdir -p $(DESTDIR)$(PREFIX)/bin/
+! 	cp convmv.1.gz $(DESTDIR)$(MANDIR)/man1/
+! 	install -m 755 convmv $(DESTDIR)$(PREFIX)/bin/
+  
+  manpage:
+! 	pod2man --section 1 --center=" " convmv | gzip > convmv.1.gz
+  
+  clean:
+! 	rm -f convmv.1.gz convmv-*.tar.gz MD5sums SHA256sums .files .name
+  	rm -rf suite
+  
+  test:
+--- 10,23 ----
+  install: all
+  	mkdir -p $(DESTDIR)$(MANDIR)/man1/
+  	mkdir -p $(DESTDIR)$(PREFIX)/bin/
+! 	cp convmv.1 $(DESTDIR)$(MANDIR)/man1/
+! 	/usr/bin/ginstall -m 755 convmv $(DESTDIR)$(PREFIX)/bin/
+  
+  manpage:
+! 	/usr/perl5/bin/pod2man --section 1 --center=" " convmv > convmv.1
+  
+  clean:
+! 	rm -f convmv.1 convmv-*.tar.gz MD5sums SHA256sums .files .name
+  	rm -rf suite
+  
+  test:
