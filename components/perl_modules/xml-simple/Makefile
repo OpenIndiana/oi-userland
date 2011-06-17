@@ -55,8 +55,8 @@ test:		$(TEST_32)
 ../xml-parser/build/5.8.4/.installed ../xml-parser/build/5.12/.installed:
 	(cd ../xml-parser ; $(GMAKE) install)
 
-$(SOURCE_DIR)/.prep:	../xml-parser/build/5.8.4/.installed \
-			../xml-parser/build/5.12/.installed
+$(BUILD_32):	../xml-parser/build/5.8.4/.installed \
+		../xml-parser/build/5.12/.installed
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
