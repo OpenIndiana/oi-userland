@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE_HASH=	sha1:e5e956875fa4627d40eb06f3cce52fbf85798f1e
 # component is upgraded the download location should revert back to
 # beanshell.org if possible.  Note also a fork of beanshell is receiving
 # more attention at the google code repository of late.
-COMPONENT_ARCHIVE_URL=	http://static.opensolaris.org/tarball/userland/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
 
 IPS_COMPONENT_VERSION=	2.0
 

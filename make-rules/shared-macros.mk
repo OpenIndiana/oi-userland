@@ -23,9 +23,22 @@
 
 PATH=/usr/bin:/usr/gnu/bin
 
-# Default to looking for source archives on the internal mirror before we
-# hammer on the external repositories.
-export DOWNLOAD_SEARCH_PATH +=	http://userland.us.oracle.com/source-archives/
+# The location of an internal mirror of community source archives that we build
+# in this gate.  This mirror has been seeded to include "custom" source archives
+# for a few components where the communities either no longer provide matching
+# source archives or we have changes that aren't reflected in their archives or
+# anywhere else.
+INTERNAL_ARCHIVE_MIRROR =	http://userland.us.oracle.com/source-archives
+
+# The location of an external mirror of community source archives that we build
+# in this gate.  The external mirror is a replica of the internal mirror.
+EXTERNAL_ARCHIVE_MIRROR = \
+	http://static.opensolaris.org/action/browse/userland/tarball/userland
+
+# Default to looking for source archives on the internal mirror and the external
+# mirror before we hammer on the community source archive repositories.
+export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
+export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 
 # The workspace starts at the mercurial root
 export WS_TOP ?=		$(shell hg root)

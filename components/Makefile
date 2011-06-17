@@ -54,8 +54,6 @@ prep:			TARGET = prep
 build:			TARGET = build
 install:		TARGET = install
 publish:		TARGET = publish
-install-packages:	TARGET = install-packages
-validate:		TARGET = validate
 clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
@@ -67,15 +65,16 @@ publish:		MAKEFLAGS += PKGLINT=/bin/true
 
 .DEFAULT:	publish
 
-download prep build install publish install-packages validate \
-test: $(COMPONENT_DIRS)
+build install publish test: $(COMPONENT_DIRS)
 
 COMPONENT_DIRS.nosetup =	$(COMPONENT_DIRS:%=%.nosetup)
 
-clean:	$(COMPONENT_DIRS:%=%.nosetup)
+download prep:	$(COMPONENT_DIRS.nosetup)
+
+clean:		$(COMPONENT_DIRS.nosetup)
 	$(RM) components.mk depends.mk .profile
 
-clobber:	$(COMPONENT_DIRS:%=%.nosetup) clean
+clobber:	$(COMPONENT_DIRS.nosetup) clean
 	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE)
 
 setup:	$(WS_LOGS) $(WS_REPO) tools $(WS_LINT_CACHE)
@@ -107,7 +106,7 @@ tools:
 	echo "WS_TOP=$(WS_TOP)" >>$@
 	echo "export PATH WS_TOP" >>$@
 
-$(COMPONENT_DIRS):	setup FORCE
+$(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 	@cd $@ && echo "$(TARGET) $@" && \
 	 $(BASS_O_MATIC) $(TEMPLATE_ZONE:%=--template-zone %) \
 			 $(@:%=--component %) --make $(TARGET) $(LOG)
@@ -122,7 +121,7 @@ ifdef CANONICAL_REPO
 			$(shell find . -name 'manifest-*.published')
 endif
 
-$(COMPONENT_DIRS.nosetup):	FORCE
+$(COMPONENT_DIRS.nosetup):	$(WS_LOGS) FORCE
 	@cd $(@:%.nosetup=%) && echo "$(TARGET) $(@:%.nosetup=%)" && \
 	 $(BASS_O_MATIC) $(TEMPLATE_ZONE:%=--template-zone %) \
 			 $(@:%.nosetup=--component %) --make $(TARGET) $(LOG)
