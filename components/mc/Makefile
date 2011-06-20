@@ -26,10 +26,10 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.7.3
+COMPONENT_VERSION=	4.7.5.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:6e01af3dc886a491a5e7a78227d08f80ca2bc5c8
+COMPONENT_ARCHIVE_HASH=	sha1:b7034e2b7bfed63e6a37d6be9f03d10f59f62dec
 COMPONENT_ARCHIVE_URL=	http://www.midnight-commander.org/downloads/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
