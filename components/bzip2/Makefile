@@ -40,7 +40,7 @@ include ../../make-rules/lint-libraries.mk
 LINT_FLAGS +=	-I.
 
 # we need to enable large file support and build PIC for our shared libraries
-CFLAGS += $(CPP_LARGEFILE) $(CC_PIC)
+CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
 
 COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CC="$(CC)"
