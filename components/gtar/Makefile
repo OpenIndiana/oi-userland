@@ -38,7 +38,6 @@ sparc_COPTFLAG = -xO2
 
 CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
-CONFIGURE_OPTIONS +=	--program-prefix=g
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
 COMPONENT_BUILD_TARGETS = all
