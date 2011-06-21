@@ -1,0 +1,36 @@
+From:    Dean Roehrich <Dean.Roehrich@sun.com>
+Subject: [Quilt-dev] [patch] Use GNU tar, even on Solaris
+Date:    Wed, 05 Nov 2008 16:13:24 CST
+To:      quilt-dev@nongnu.org
+
+This ensures that, no matter what the user's PATH may be, we always
+use the GNU tar on Solaris.
+
+Dean
+
+
+Index: configure.ac
+===================================================================
+--- configure.ac.orig	2008-11-05 20:32:35.587999000 -0600
++++ configure.ac	2008-11-05 20:32:37.206676000 -0600
+@@ -379,6 +379,8 @@ else
+   HAVE_NLS=no
+ fi
+ 
++QUILT_COMPAT_PROG_PATH(TAR, tar, [gtar tar])
++
+ USE_NLS=no
+ AC_ARG_ENABLE(nls, AC_HELP_STRING(
+     [--disable-nls], [exclude natural language support]),
+Index: Makefile.in
+===================================================================
+--- Makefile.in.orig	2008-11-05 20:32:35.594219000 -0600
++++ Makefile.in	2008-11-05 20:32:37.207914000 -0600
+@@ -26,6 +26,7 @@ BASH :=		@BASH@
+ GREP :=		@GREP@
+ TAIL :=		@TAIL@
+ TR :=		@TR@
++TAR :=		@TAR@
+ SED :=		@SED@
+ AWK :=		@AWK@
+ FIND :=		@FIND@
