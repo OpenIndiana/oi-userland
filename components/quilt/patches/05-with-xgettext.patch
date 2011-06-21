@@ -1,0 +1,54 @@
+From:    Dean Roehrich <Dean.Roehrich@sun.com>
+Subject: [Quilt-dev] [patch] allow --with-xgettext and --with-msgfmt
+Date:    Wed, 05 Nov 2008 20:47:31 CST
+To:      quilt-dev@nongnu.org
+
+I needed to specify the GNU versions of xgettext and msgfmt on solaris,
+and this was all I could think of to get me there.  Anyone have a better
+way to do this?
+
+Dean
+
+
+Index: configure.ac
+===================================================================
+--- configure.ac.orig	2008-11-05 20:57:14.054642000 -0600
++++ configure.ac	2008-11-05 20:57:38.805910000 -0600
+@@ -342,9 +342,35 @@ fi
+ 
+ QUILT_COMPAT_PROG_PATH(SENDMAIL, sendmail, [], [/usr/sbin])
+ 
++XGETTEXT=xgettext
++AC_MSG_CHECKING(for xgettext)
++AC_ARG_WITH(xgettext, AC_HELP_STRING(
++  [--with-xgettext],
++  [name of the xgettext executable to use]),
++  [
++    XGETTEXT=$withval
++    ],[
++    AC_PATH_PROG(XGETTEXT, xgettext)
++  ]
++  )
++AC_MSG_RESULT($XGETTEXT)
++AC_SUBST(XGETTEXT)
++
++MSGFMT=msgfmt
++AC_MSG_CHECKING(for msgfmt)
++AC_ARG_WITH(msgfmt, AC_HELP_STRING(
++  [--with-msgfmt],
++  [name of the msgfmt executable to use]),
++  [
++    MSGFMT=$withval
++    ],[
++    AC_PATH_PROG(MSGFMT, msgfmt)
++  ]
++  )
++AC_MSG_RESULT($MSGFMT)
++AC_SUBST(MSGFMT)
++
+ AC_PATH_PROG(MSGMERGE, [msgmerge])
+-AC_PATH_PROG(MSGFMT, [msgfmt])
+-AC_PATH_PROG(XGETTEXT, [xgettext])
+ AC_PATH_PROG(MSGUNIQ, [msguniq])
+ AC_PATH_PROG(MSGCAT, [msgcat])
+ if test -n "$MSGFMT" -a -n "$MSGMERGE" -a -n "$XGETTEXT" -a -n "$MSGUNIQ" -a -n "$MSGCAT" ; then

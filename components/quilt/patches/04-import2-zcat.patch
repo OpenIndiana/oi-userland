@@ -1,0 +1,34 @@
+From:    Dean Roehrich <Dean.Roehrich@sun.com>
+Subject: [Quilt-dev] [patch] use gzip rather than zcat in test/import2.test
+Date:    Wed, 05 Nov 2008 19:34:14 CST
+To:      quilt-dev@nongnu.org
+
+The tests expect zcat to understand the .gz suffix, but in the Solaris
+environment the zcat is not GNU and it expects a .Z suffix.  This modifies
+the test to use gzip -dc, instead.
+
+Dean
+
+
+Index: test/import2.test
+===================================================================
+--- test/import2.test.orig	2008-11-05 20:00:39.305395000 -0600
++++ test/import2.test	2008-11-05 20:01:03.827736000 -0600
+@@ -90,7 +90,7 @@
+ 	> Replacing patch %{P}patch1.diff.gz with new version
+ 
+ 	# an import requiring a description merge
+-	$ zcat patches/patch1.diff.gz | sed -e 's/original/new/' | gzip > t/patch1.diff.gz
++	$ gzip -dc patches/patch1.diff.gz | sed -e 's/original/new/' | gzip > t/patch1.diff.gz
+ 	$ quilt import t/patch1.diff.gz
+ 	> Patch %{P}patch1.diff.gz exists. Replace with -f.
+ 
+@@ -105,7 +105,7 @@
+ 	> Replacing patch %{P}patch1.diff.gz with new version
+ 
+ 	# quilt header does not work in this case because it stops at '---'
+-	$ zcat patches/patch1.diff.gz | head -n 3
++	$ gzip -dc patches/patch1.diff.gz | head -n 3
+ 	> original description
+ 	> ---
+ 	> new description

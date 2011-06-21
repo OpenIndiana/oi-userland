@@ -43,7 +43,18 @@ export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 # The workspace starts at the mercurial root
 export WS_TOP ?=		$(shell hg root)
 
-export SHELLOPTS = pipefail
+# we want our pkg piplines to fail if there is an error
+# (like if pkgdepend fails in the middle of a pipe), but
+# we don't want the builds or ./configure's failing as well.
+# so we only set pipefail for the publish target and have
+# to reset it for the others since they might be invoked
+# as dependencies of publish.
+export SHELLOPTS
+build:		SHELLOPTS=
+test:		SHELLOPTS=
+install:	SHELLOPTS=
+publish:	SHELLOPTS=pipefail
+
 SHELL=	/bin/bash
 
 CONSOLIDATION =	userland
