@@ -1,0 +1,56 @@
+--- gdbm-1.8.3/Makefile.in	Tue Oct  8 09:09:12 2002
++++ gdbm-1.8.3/Makefile.in.new	Mon Jun 20 14:13:54 2011
+@@ -131,11 +131,11 @@
+ 		$(INSTALL_ROOT)$(includedir) $(INSTALL_ROOT)$(man3dir) \
+ 		$(INSTALL_ROOT)$(infodir)
+ 	$(LIBTOOL) $(INSTALL) -c libgdbm.la $(INSTALL_ROOT)$(libdir)/libgdbm.la
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) gdbm.h \
++	$(INSTALL_DATA) gdbm.h \
+ 		$(INSTALL_ROOT)$(includedir)/gdbm.h
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) $(srcdir)/gdbm.3 \
++	$(INSTALL_DATA) $(srcdir)/gdbm.3 \
+ 		$(INSTALL_ROOT)$(man3dir)/gdbm.3
+-	$(INSTALL_DATA) -o $(BINOWN) -g $(BINGRP) $(srcdir)/gdbm.info \
++	$(INSTALL_DATA) $(srcdir)/gdbm.info \
+ 		$(INSTALL_ROOT)$(infodir)/gdbm.info
+ 
+ install-compat:
+@@ -172,19 +172,19 @@
+ 	chmod -w gdbm.h
+ 
+ testgdbm: testgdbm.o libgdbm.la @LIBOBJS@
+-	$(LIBTOOL) $(CC) $(LDFLAGS) -o testgdbm testgdbm.o libgdbm.la @LIBOBJS@
++	$(LIBTOOL) $(CC) $(LDFLAGS) $(CFLAGS) -o testgdbm testgdbm.o libgdbm.la @LIBOBJS@
+ 
+ testdbm: testdbm.o libgdbm.la libgdbm_compat.la
+-	$(LIBTOOL) $(CC) $(LDFLAGS) -o testdbm testdbm.o libgdbm.la libgdbm_compat.la
++	$(LIBTOOL) $(CC) $(LDFLAGS) $(CFLAGS) -o testdbm testdbm.o libgdbm.la libgdbm_compat.la
+ 
+-tdbm: testdbm.o
+-	$(CC) $(LDFLAGS) -o tdbm testdbm.o $(LIBS)
++tdbm: testdbm.o libgdbm.la libgdbm_compat.la
++	$(LIBTOOL) $(CC) $(LDFLAGS) $(CFLAGS) -o tdbm testdbm.o libgdbm.la libgdbm_compat.la $(LIBS)
+ 
+ testndbm.o: testndbm.c
+ 	$(CC) -c -I. -I$(srcdir) $(CFLAGS) $(DEFS) -DGNU $(srcdir)/testndbm.c
+ 
+ testndbm: testndbm.o libgdbm.la libgdbm_compat.la
+-	$(LIBTOOL) $(CC) $(LDFLAGS) -o testndbm testndbm.o libgdbm.la libgdbm_compat.la
++	$(LIBTOOL) $(CC) $(LDFLAGS) $(CFLAGS) -o testndbm testndbm.o libgdbm.la libgdbm_compat.la
+ 
+ tndbm.o: testndbm.c
+ 	cp $(srcdir)/testndbm.c ./tndbm.c
+@@ -192,10 +192,10 @@
+ 	rm -f ./tndbm.c
+ 
+ tndbm: tndbm.o
+-	$(CC) $(LDFLAGS) -o tndbm tndbm.o $(LIBS)
++	$(CC) $(LDFLAGS) $(CFLAGS) -o tndbm tndbm.o $(LIBS)
+ 
+-conv2gdbm: conv2gdbm.o libgdbm.la @LIBOBJS@
+-	$(LIBTOOL) $(CC) $(LDFLAGS) -o conv2gdbm conv2gdbm.o $(LIBS) libgdbm.la @LIBOBJS@
++conv2gdbm: conv2gdbm.o libgdbm.la libgdbm_compat.la @LIBOBJS@
++	$(LIBTOOL) $(CC) $(LDFLAGS) $(CFLAGS) -o conv2gdbm conv2gdbm.o $(LIBS) libgdbm.la libgdbm_compat.la @LIBOBJS@
+ 
+ lintgdbm: 
+ 	lint $(DEFS) $(LFLAGS) $(DBM_CF) $(NDBM_CF) $(GDBM_CF) testgdbm.c
