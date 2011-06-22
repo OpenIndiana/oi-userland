@@ -1,0 +1,459 @@
+--- src.orig/arisparc64.d	Thu Dec  6 00:06:32 2007
++++ src/arisparc64.d	Mon Feb  2 15:35:22 2009
+@@ -75,9 +75,9 @@
+ 
+ # extern struct { uint32 lo; uint32 hi; } mulu32_ (uint32 arg1, uint32 arg2);
+ # 2^32*hi+lo := arg1*arg2.
+-C(mulu32_:) # Input in %o0,%o1, Output in %o0,%g1
++C(mulu32_:) # Input in %o0,%o1, Output in %o0,%g3
+         umul %o0,%o1,%o2
+-        rd %y,%g1
++        rd %y,%g3
+         retl
+        _ srl %o2,0,%o0
+ 
+@@ -90,11 +90,11 @@
+ 
+ # extern struct { uint32 q; uint32 r; } divu_6432_3232_ (uint32 xhi, uint32 xlo, uint32 y);
+ # x = 2^32*xhi+xlo = q*y+r schreiben. Sei bekannt, dass 0 <= x < 2^32*y .
+-C(divu_6432_3232_:) # Input in %o0,%o1,%o2, Output in %o0,%g1
++C(divu_6432_3232_:) # Input in %o0,%o1,%o2, Output in %o0,%g3
+         wr %o0,%g0,%y
+         udiv %o1,%o2,%o0        # x durch y dividieren, %o0 := q
+-        umul %o0,%o2,%g1        # %g1 := (q*y) mod 2^32
+-        sub %o1,%g1,%g1         # %g1 := (xlo-q*y) mod 2^32 = r
++        umul %o0,%o2,%g3        # %g3 := (q*y) mod 2^32
++        sub %o1,%g3,%g3         # %g3 := (xlo-q*y) mod 2^32 = r
+         retl
+        _ srl %o0,0,%o0
+ 
+@@ -104,13 +104,13 @@
+         wr %g0,%g0,%y
+         udiv %o0,%o1,%o2        # dividieren, Quotient nach %o2
+ #if 0 # Who says that %y has some meaningful contents after `udiv' ??
+-        rd %y,%g1               # Rest aus %y
++        rd %y,%g3               # Rest aus %y
+ #else
+-        umul %o2,%o1,%g1        # %g1 := (q*y) mod 2^32
+-        sub %o0,%g1,%g1         # %g1 := (x-q*y) mod 2^32 = r
++        umul %o2,%o1,%g3        # %g3 := (q*y) mod 2^32
++        sub %o0,%g3,%g3         # %g3 := (x-q*y) mod 2^32 = r
+ #endif
+-        sll %g1,16,%g1          # in die oberen 16 Bit schieben
+-        or %o2,%g1,%o0
++        sll %g3,16,%g3          # in die oberen 16 Bit schieben
++        or %o2,%g3,%o0
+         retl
+        _ srl %o0,0,%o0
+ 
+@@ -713,28 +713,28 @@
+ #endif
+ 
+ # extern uintD add_loop_down (uintD* sourceptr1, uintD* sourceptr2, uintD* destptr, uintC count);
+-C(add_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g1, Output in %o0
++C(add_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g3, Output in %o0
+ #if STANDARD_LOOPS
+ #       srl %o3,0,%o3           # zero-extend %o3 = count
+         brz,pn %o3,2f
+-       _ mov %g0,%g1            # Carry := 0
++       _ mov %g0,%g3            # Carry := 0
+ 1:        sub %o0,4,%o0
+           lduw [%o0],%o4        # source1-digit, zero-extend
+           sub %o1,4,%o1
+           lduw [%o1],%o5        # source2-digit, zero-extend
+-          add %g1,%o4,%g1       # zum Carry addieren
+-          add %g1,%o5,%g1       # zum Carry addieren
+-          st %g1,[%o2]          # Digit ablegen
++          add %g3,%o4,%g3       # zum Carry addieren
++          add %g3,%o5,%g3       # zum Carry addieren
++          st %g3,[%o2]          # Digit ablegen
+           subcc %o3,1,%o3
+           bne,pt %xcc,1b
+-         _ srlx %g1,32,%g1      # neuer Carry
++         _ srlx %g3,32,%g3      # neuer Carry
+ 2:      retl
+-       _ mov %g1,%o0
++       _ mov %g3,%o0
+ #endif
+ #if COUNTER_LOOPS
+ #       srl %o3,0,%o3           # zero-extend %o3 = count
+         brz,pn %o3,2f
+-       _ mov %g0,%g1            # Carry := 0
++       _ mov %g0,%g3            # Carry := 0
+         sub %o0,4,%o0
+         sub %o1,4,%o1
+         sllx %o3,2,%o3          # %o3 = 4*count
+@@ -743,14 +743,14 @@
+         sub %o2,%o3,%o2         # %o2 = &destptr[-count]
+ 1:        lduw [%o0+%o3],%o4    # source1-digit, zero-extend
+           lduw [%o1+%o3],%o5    # source2-digit, zero-extend
+-          add %g1,%o4,%g1       # zum Carry addieren
+-          add %g1,%o5,%g1       # zum Carry addieren
+-          st %g1,[%o2+%o3]      # Digit ablegen
++          add %g3,%o4,%g3       # zum Carry addieren
++          add %g3,%o5,%g3       # zum Carry addieren
++          st %g3,[%o2+%o3]      # Digit ablegen
+           subcc %o3,4,%o3
+           bne,pt %xcc,1b
+-         _ srlx %g1,32,%g1      # neuer Carry
++         _ srlx %g3,32,%g3      # neuer Carry
+ 2:      retl
+-       _ mov %g1,%o0
++       _ mov %g3,%o0
+ #endif
+ 
+ # extern uintD addto_loop_down (uintD* sourceptr, uintD* destptr, uintC count);
+@@ -831,28 +831,28 @@
+ #endif
+ 
+ # extern uintD sub_loop_down (uintD* sourceptr1, uintD* sourceptr2, uintD* destptr, uintC count);
+-C(sub_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g1, Output in %o0
++C(sub_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g3, Output in %o0
+ #if STANDARD_LOOPS
+ #       srl %o3,0,%o3           # zero-extend %o3 = count
+         brz,pn %o3,2f
+-       _ mov %g0,%g1            # Carry := 0
++       _ mov %g0,%g3            # Carry := 0
+ 1:        sub %o0,4,%o0
+           lduw [%o0],%o4        # source1-digit, zero-extend
+           sub %o1,4,%o1
+           lduw [%o1],%o5        # source2-digit, zero-extend
+-          add %g1,%o4,%g1       # zum Carry addieren
+-          sub %g1,%o5,%g1       # vom Carry subtrahieren
+-          st %g1,[%o2]          # Digit ablegen
++          add %g3,%o4,%g3       # zum Carry addieren
++          sub %g3,%o5,%g3       # vom Carry subtrahieren
++          st %g3,[%o2]          # Digit ablegen
+           subcc %o3,1,%o3
+           bne,pt %xcc,1b
+-         _ srax %g1,32,%g1      # neuer Carry
++         _ srax %g3,32,%g3      # neuer Carry
+ 2:      retl
+-       _ srl %g1,0,%o0
++       _ srl %g3,0,%o0
+ #endif
+ #if COUNTER_LOOPS
+ #       srl %o3,0,%o3           # zero-extend %o3 = count
+         brz,pn %o3,2f
+-       _ mov %g0,%g1            # Carry := 0
++       _ mov %g0,%g3            # Carry := 0
+         sub %o0,4,%o0
+         sub %o1,4,%o1
+         sllx %o3,2,%o3          # %o3 = 4*count
+@@ -861,39 +861,39 @@
+         sub %o2,%o3,%o2         # %o2 = &destptr[-count]
+ 1:        lduw [%o0+%o3],%o4    # source1-digit, zero-extend
+           lduw [%o1+%o3],%o5    # source2-digit, zero-extend
+-          add %g1,%o4,%g1       # zum Carry addieren
+-          sub %g1,%o5,%g1       # vom Carry subtrahieren
+-          st %g1,[%o2+%o3]      # Digit ablegen
++          add %g3,%o4,%g3       # zum Carry addieren
++          sub %g3,%o5,%g3       # vom Carry subtrahieren
++          st %g3,[%o2+%o3]      # Digit ablegen
+           subcc %o3,4,%o3
+           bne,pt %xcc,1b
+-         _ srax %g1,32,%g1      # neuer Carry
++         _ srax %g3,32,%g3      # neuer Carry
+ 2:      retl
+-       _ srl %g1,0,%o0
++       _ srl %g3,0,%o0
+ #endif
+ 
+ # extern uintD subx_loop_down (uintD* sourceptr1, uintD* sourceptr2, uintD* destptr, uintC count, uintD carry);
+-C(subx_loop_down:) # Input in %o0,%o1,%o2,%o3,%o4, verändert %g1, Output in %o0
++C(subx_loop_down:) # Input in %o0,%o1,%o2,%o3,%o4, verändert %g3, Output in %o0
+ #if STANDARD_LOOPS
+ #       srl %o3,0,%o3           # zero-extend %o3 = count
+         brz,pn %o3,2f
+-       _ sra %o4,0,%g1          # Carry, sign-extend
++       _ sra %o4,0,%g3          # Carry, sign-extend
+ 1:        sub %o0,4,%o0
+           lduw [%o0],%o4        # source1-digit, zero-extend
+           sub %o1,4,%o1
+           lduw [%o1],%o5        # source2-digit, zero-extend
+-          add %g1,%o4,%g1       # zum Carry addieren
+-          sub %g1,%o5,%g1       # vom Carry subtrahieren
+-          st %g1,[%o2]          # Digit ablegen
++          add %g3,%o4,%g3       # zum Carry addieren
++          sub %g3,%o5,%g3       # vom Carry subtrahieren
++          st %g3,[%o2]          # Digit ablegen
+           subcc %o3,1,%o3
+           bne,pt %xcc,1b
+-         _ srax %g1,32,%g1      # neuer Carry
++         _ srax %g3,32,%g3      # neuer Carry
+ 2:      retl
+-       _ srl %g1,0,%o0
++       _ srl %g3,0,%o0
+ #endif
+ #if COUNTER_LOOPS
+ #       srl %o3,0,%o3           # zero-extend %o3 = count
+         brz,pn %o3,2f
+-       _ sra %o4,0,%g1          # Carry, sign-extend
++       _ sra %o4,0,%g3          # Carry, sign-extend
+         sub %o0,4,%o0
+         sub %o1,4,%o1
+         sllx %o3,2,%o3          # %o3 = 4*count
+@@ -902,14 +902,14 @@
+         sub %o2,%o3,%o2         # %o2 = &destptr[-count]
+ 1:        lduw [%o0+%o3],%o4    # source1-digit, zero-extend
+           lduw [%o1+%o3],%o5    # source2-digit, zero-extend
+-          add %g1,%o4,%g1       # zum Carry addieren
+-          sub %g1,%o5,%g1       # vom Carry subtrahieren
+-          st %g1,[%o2+%o3]      # Digit ablegen
++          add %g3,%o4,%g3       # zum Carry addieren
++          sub %g3,%o5,%g3       # vom Carry subtrahieren
++          st %g3,[%o2+%o3]      # Digit ablegen
+           subcc %o3,4,%o3
+           bne,pt %xcc,1b
+-         _ srax %g1,32,%g1      # neuer Carry
++         _ srax %g3,32,%g3      # neuer Carry
+ 2:      retl
+-       _ srl %g1,0,%o0
++       _ srl %g3,0,%o0
+ #endif
+ 
+ # extern uintD subfrom_loop_down (uintD* sourceptr, uintD* destptr, uintC count);
+@@ -1135,16 +1135,16 @@
+ #endif
+ 
+ # extern uintD shiftright_loop_up (uintD* ptr, uintC count, uintC i);
+-C(shiftright_loop_up:) # Input in %o0,%o1,%o2, verändert %g1, Output in %o0
++C(shiftright_loop_up:) # Input in %o0,%o1,%o2, verändert %g3, Output in %o0
+ #ifdef SLOWER
+ #       srl %o1,0,%o1           # zero-extend %o1 = count
+         brz,pn %o1,2f
+        _ or %g0,%g0,%o3         # Carry := 0
+-        mov 32,%g1
+-        sub %g1,%o2,%g1         # 32-i
++        mov 32,%g3
++        sub %g3,%o2,%g3         # 32-i
+ 1:        lduw [%o0],%o4        # Digit, zero-extend
+           subcc %o1,1,%o1
+-          sllx %o4,%g1,%o4      # shiften
++          sllx %o4,%g3,%o4      # shiften
+           or %o3,%o4,%o3        # und mit altem Carry kombinieren
+           srlx %o3,32,%o4
+           st %o4,[%o0]          # und ablegen
+@@ -1157,13 +1157,13 @@
+ #       srl %o1,0,%o1           # zero-extend %o1 = count
+         brz,pn %o1,2f
+        _ or %g0,%g0,%o3         # Carry := 0
+-        sub %g0,%o2,%g1         # 32-i (mod 32)
++        sub %g0,%o2,%g3         # 32-i (mod 32)
+ 1:        ld [%o0],%o4          # Digit
+           subcc %o1,1,%o1
+           srl %o4,%o2,%o5       # shiften
+           or %o3,%o5,%o5        # und mit altem Carry kombinieren
+           st %o5,[%o0]          # und ablegen
+-          sll %o4,%g1,%o3       # neuer Carry
++          sll %o4,%g3,%o3       # neuer Carry
+           bne,pt %xcc,1b
+          _ add %o0,4,%o0
+ 2:      retl
+@@ -1171,14 +1171,14 @@
+ #endif
+ 
+ # extern uintD shiftrightsigned_loop_up (uintD* ptr, uintC count, uintC i);
+-C(shiftrightsigned_loop_up:) # Input in %o0,%o1,%o2, verändert %g1, Output in %o0
++C(shiftrightsigned_loop_up:) # Input in %o0,%o1,%o2, verändert %g3, Output in %o0
+ #ifdef SLOWER
+ #       srl %o1,0,%o1           # zero-extend %o1 = count
+-        mov 32,%g1
+-        sub %g1,%o2,%g1         # 32-i
++        mov 32,%g3
++        sub %g3,%o2,%g3         # 32-i
+         ldsw [%o0],%o3          # erstes Digit, sign-extend
+         subcc %o1,1,%o1
+-        sllx %o3,%g1,%o3        # shiften
++        sllx %o3,%g3,%o3        # shiften
+         srlx %o3,32,%o4
+         st %o4,[%o0]            # und ablegen
+         sllx %o3,32,%o3         # neuer Carry
+@@ -1186,7 +1186,7 @@
+        _ add %o0,4,%o0
+ 1:        lduw [%o0],%o4        # Digit, zero-extend
+           subcc %o1,1,%o1
+-          sllx %o4,%g1,%o4      # shiften
++          sllx %o4,%g3,%o4      # shiften
+           or %o3,%o4,%o3        # und mit altem Carry kombinieren
+           srlx %o3,32,%o4
+           st %o4,[%o0]          # und ablegen
+@@ -1198,10 +1198,10 @@
+ #else
+ #       srl %o1,0,%o1           # zero-extend %o1 = count
+         ld [%o0],%o4            # erstes Digit
+-        sub %g0,%o2,%g1         # 32-i (mod 32)
++        sub %g0,%o2,%g3         # 32-i (mod 32)
+         sra %o4,%o2,%o5         # shiften
+         st %o5,[%o0]            # und ablegen
+-        sll %o4,%g1,%o3         # neuer Carry
++        sll %o4,%g3,%o3         # neuer Carry
+         subcc %o1,1,%o1
+         be,pn %xcc,2f
+        _ add %o0,4,%o0
+@@ -1210,7 +1210,7 @@
+           srl %o4,%o2,%o5       # shiften
+           or %o3,%o5,%o5        # und mit altem Carry kombinieren
+           st %o5,[%o0]          # und ablegen
+-          sll %o4,%g1,%o3       # neuer Carry
++          sll %o4,%g3,%o3       # neuer Carry
+           bne,pt %xcc,1b
+          _ add %o0,4,%o0
+ 2:      retl
+@@ -1218,16 +1218,16 @@
+ #endif
+ 
+ # extern uintD shiftrightcopy_loop_up (uintD* sourceptr, uintD* destptr, uintC count, uintC i, uintD carry);
+-C(shiftrightcopy_loop_up:) # Input in %o0,%o1,%o2,%o3,%o4, verändert %g1,%g2, Output in %o0
++C(shiftrightcopy_loop_up:) # Input in %o0,%o1,%o2,%o3,%o4, verändert %g3,%g2, Output in %o0
+ #ifdef SLOWER
+ #       srl %o2,0,%o2           # zero-extend %o2 = count
+-        sub %g0,%o3,%g1         # 64-i (mod 64)
++        sub %g0,%o3,%g3         # 64-i (mod 64)
+         brz,pn %o2,2f
+-       _ sllx %o4,%g1,%o4       # erster Carry
+-        add %g1,32,%g1          # 32-i
++       _ sllx %o4,%g3,%o4       # erster Carry
++        add %g3,32,%g3          # 32-i
+ 1:        lduw [%o0],%o5        # Digit, zero-extend
+           add %o0,4,%o0
+-          sllx %o5,%g1,%o5      # shiften
++          sllx %o5,%g3,%o5      # shiften
+           or %o4,%o5,%o4        # und mit altem Carry kombinieren
+           srlx %o4,32,%o5
+           st %o5,[%o1]          # und ablegen
+@@ -1239,15 +1239,15 @@
+        _ srlx %o4,32,%o0
+ #else
+ #       srl %o2,0,%o2           # zero-extend %o2 = count
+-        sub %g0,%o3,%g1         # 32-i (mod 32)
++        sub %g0,%o3,%g3         # 32-i (mod 32)
+         brz,pn %o2,2f
+-       _ sll %o4,%g1,%g2        # erster Carry
++       _ sll %o4,%g3,%g2        # erster Carry
+ 1:        ld [%o0],%o4          # Digit
+           add %o0,4,%o0
+           srl %o4,%o3,%o5       # shiften
+           or %g2,%o5,%o5        # und mit altem Carry kombinieren
+           st %o5,[%o1]          # und ablegen
+-          sll %o4,%g1,%g2       # neuer Carry
++          sll %o4,%g3,%g2       # neuer Carry
+           subcc %o2,1,%o2
+           bne,pt %xcc,1b
+          _ add %o1,4,%o1
+@@ -1290,58 +1290,58 @@
+        _ srl %o3,0,%o0
+ 
+ # extern void mulu_loop_down (uintD digit, uintD* sourceptr, uintD* destptr, uintC len);
+-C(mulu_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g1
++C(mulu_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g3
+ #       srl %o3,0,%o3           # zero-extend %o3 = len
+         mov 0,%o4               # Carry
+ 1:        sub %o1,4,%o1
+-          ld [%o1],%g1          # nächstes Digit
++          ld [%o1],%g3          # nächstes Digit
+           sub %o2,4,%o2
+-          # mit digit multiplizieren: %o0 * %g1 -> %o5|%g1
+-          umul %g1,%o0,%g1
++          # mit digit multiplizieren: %o0 * %g3 -> %o5|%g3
++          umul %g3,%o0,%g3
+           rd %y,%o5
+-          addcc %o4,%g1,%g1     # und bisherigen Carry addieren
++          addcc %o4,%g3,%g3     # und bisherigen Carry addieren
+           addx %g0,%o5,%o4      # High-Digit gibt neuen Carry
+           subcc %o3,1,%o3
+           bne,pt %xcc,1b
+-         _ st %g1,[%o2]         # Low-Digit ablegen
++         _ st %g3,[%o2]         # Low-Digit ablegen
+         retl
+        _ st %o4,[%o2-4]         # letzten Carry ablegen
+ 
+ # extern uintD muluadd_loop_down (uintD digit, uintD* sourceptr, uintD* destptr, uintC len);
+-C(muluadd_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g1,%g2, Output in %o0
++C(muluadd_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g3,%g2, Output in %o0
+ #       srl %o3,0,%o3           # zero-extend %o3 = len
+         mov 0,%o4               # Carry
+ 1:        sub %o1,4,%o1
+           ld [%o1],%o5          # nächstes source-Digit
+           sub %o2,4,%o2
+-          # mit digit multiplizieren: %o0 * %o5 -> %g2|%g1
+-          umul %o0,%o5,%g1
++          # mit digit multiplizieren: %o0 * %o5 -> %g2|%g3
++          umul %o0,%o5,%g3
+           rd %y,%g2
+           ld [%o2],%o5          # nächstes dest-digit
+-          addcc %o4,%g1,%g1     # und bisherigen Carry addieren
++          addcc %o4,%g3,%g3     # und bisherigen Carry addieren
+           addx %g0,%g2,%o4      # High-Digit gibt neuen Carry
+-          addcc %o5,%g1,%g1     # addieren
++          addcc %o5,%g3,%g3     # addieren
+           addx %g0,%o4,%o4
+           subcc %o3,1,%o3
+           bne,pt %xcc,1b
+-         _ st %g1,[%o2]         # Low-Digit ablegen
++         _ st %g3,[%o2]         # Low-Digit ablegen
+         retl
+        _ srl %o4,0,%o0          # letzter Carry
+ 
+ # extern uintD mulusub_loop_down (uintD digit, uintD* sourceptr, uintD* destptr, uintC len);
+-C(mulusub_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g1,%g2, Output in %o0
++C(mulusub_loop_down:) # Input in %o0,%o1,%o2,%o3, verändert %g3,%g2, Output in %o0
+ #       srl %o3,0,%o3           # zero-extend %o3 = len
+         mov 0,%o4               # Carry
+ 1:        sub %o1,4,%o1
+           ld [%o1],%o5          # nächstes source-Digit
+           sub %o2,4,%o2
+-          # mit digit multiplizieren: %o0 * %o5 -> %g2|%g1
+-          umul %o0,%o5,%g1
++          # mit digit multiplizieren: %o0 * %o5 -> %g2|%g3
++          umul %o0,%o5,%g3
+           rd %y,%g2
+           ld [%o2],%o5          # nächstes dest-digit
+-          addcc %o4,%g1,%g1     # und bisherigen Carry addieren
++          addcc %o4,%g3,%g3     # und bisherigen Carry addieren
+           addx %g0,%g2,%o4      # High-Digit gibt neuen Carry
+-          subcc %o5,%g1,%o5     # davon das Low-Digit subtrahieren
++          subcc %o5,%g3,%o5     # davon das Low-Digit subtrahieren
+           addx %g0,%o4,%o4
+           subcc %o3,1,%o3
+           bne,pt %xcc,1b
+@@ -1350,7 +1350,7 @@
+        _ srl %o4,0,%o0          # letzter Carry
+ 
+ # extern uintD divu_loop_up (uintD digit, uintD* ptr, uintC len);
+-C(divu_loop_up:) # Input in %o0,%o1,%o2, verändert %g1, Output in %o0
++C(divu_loop_up:) # Input in %o0,%o1,%o2, verändert %g3, Output in %o0
+ #       srl %o2,0,%o2           # zero-extend %o2 = len
+         brz,pn %o2,2f
+        _ mov 0,%o3              # Rest
+@@ -1360,8 +1360,8 @@
+           or %o3,%o4,%o3        # zusammen
+           udivx %o3,%o0,%o4     # durch digit dividieren
+           st %o4,[%o1]          # Quotient ablegen
+-          umul %o0,%o4,%g1
+-          sub %o3,%g1,%o3       # Rest in den unteren 32 Bit von %o3
++          umul %o0,%o4,%g3
++          sub %o3,%g3,%o3       # Rest in den unteren 32 Bit von %o3
+           subcc %o2,1,%o2
+           bne,pt %xcc,1b
+          _ add %o1,4,%o1
+@@ -1369,7 +1369,7 @@
+        _ srl %o3,0,%o0          # Rest als Ergebnis
+ 
+ # extern uintD divucopy_loop_up (uintD digit, uintD* sourceptr, uintD* destptr, uintC len);
+-C(divucopy_loop_up:) # Input in %o0,%o1,%o2,%o3, verändert %g1, Output in %o0
++C(divucopy_loop_up:) # Input in %o0,%o1,%o2,%o3, verändert %g3, Output in %o0
+ #       srl %o3,0,%o3           # zero-extend %o3 = len
+         brz,pn %o3,2f
+        _ mov 0,%o4              # Rest
+@@ -1380,8 +1380,8 @@
+           or %o4,%o5,%o4        # zusammen
+           udivx %o4,%o0,%o5     # durch digit dividieren
+           st %o5,[%o2]          # Quotient ablegen
+-          umul %o0,%o5,%g1
+-          sub %o4,%g1,%o4       # Rest in den unteren 32 Bit von %o4
++          umul %o0,%o5,%g3
++          sub %o4,%g3,%o4       # Rest in den unteren 32 Bit von %o4
+           subcc %o3,1,%o3
+           bne,pt %xcc,1b
+          _ add %o2,4,%o2

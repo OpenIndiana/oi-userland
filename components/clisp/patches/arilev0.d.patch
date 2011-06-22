@@ -1,0 +1,47 @@
+--- src.orig/arilev0.d	Fri Dec 14 06:27:48 2007
++++ src/arilev0.d	Mon Feb  2 15:35:22 2009
+@@ -340,7 +340,7 @@
+     #elif defined(SPARC)
+       #define mulu32(x,y,hi_assignment,lo_assignment)  \
+         ({ lo_assignment mulu32_(x,y); # extern in Assembler \
+-          {var register uint32 _hi __asm__("%g1");          \
++          {var register uint32 _hi __asm__("%g3");          \
+            hi_assignment _hi;                                \
+          }})
+     #elif defined(HAVE_LONG_LONG_INT) && !defined(ARM)
+@@ -357,7 +357,7 @@
+     #if defined(MC680X0) || defined(SPARC) || defined(SPARC64) || defined(ARM) || (defined(I80386) && !defined(BORLAND)) || defined(MIPS) || defined(HPPA) || defined(VAX)
+       # mulu32_ extern in Assembler
+       #if defined(SPARC) || defined(SPARC64)
+-        #define mulu32_high  (uint32)(_get_g1()) # Rückgabe im Register %g1
++        #define mulu32_high  (uint32)(_get_g1()) # Rückgabe im Register %g3
+       #elif defined(LISPARIT) && !defined(HPPA) # In arihppa.d ist mulu32_high bereits definiert.
+         global uint32 mulu32_high;
+       #endif
+@@ -471,7 +471,7 @@
+     #elif defined(SPARC)
+       #define mulu32_64(x,y)  \
+         ({ var register uint32 _lo = mulu32_(x,y); # extern in Assembler \
+-           var register uint32 _hi __asm__("%g1");                       \
++           var register uint32 _hi __asm__("%g3");                       \
+            highlow64(_hi,_lo);                                           \
+          })
+     #endif
+@@ -890,7 +890,7 @@
+     #elif defined(SPARC) || defined(SPARC64)
+       #define divu_6432_3232(xhi,xlo,y,q_assignment,r_assignment)  \
+         ({ var uint32 _q = divu_6432_3232_(xhi,xlo,y); # extern in Assembler \
+-           var register uint32 _r __asm__("%g1");                            \
++           var register uint32 _r __asm__("%g3");                            \
+            q_assignment _q; r_assignment _r;                                   \
+          })
+     #elif defined(ARM) && 0 # see comment ariarm.d
+@@ -935,7 +935,7 @@
+     #if defined(MC680Y0) || defined(SPARC) || defined(SPARC64) || defined(ARM) || (defined(I80386) && !defined(BORLAND)) || defined(HPPA)
+       # divu_6432_3232_ extern in Assembler
+       #if defined(SPARC) || defined(SPARC64)
+-        #define divu_32_rest  (uint32)(_get_g1()) # Rückgabe im Register %g1
++        #define divu_32_rest  (uint32)(_get_g1()) # Rückgabe im Register %g3
+       #elif defined(LISPARIT)
+         global uint32 divu_32_rest;
+       #endif
