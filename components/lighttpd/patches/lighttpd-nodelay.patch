@@ -1,0 +1,13 @@
+--- src/network.c-orig	Mon Sep  7 05:46:50 2009
++++ src/network.c	Mon Sep  7 05:59:17 2009
+@@ -175,6 +175,10 @@
+ 		log_error_write(srv, __FILE__, __LINE__, "ss", "socketsockopt failed:", strerror(errno));
+ 		return -1;
+ 	}
++        if (setsockopt(srv_socket->fd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val)) < 0) {
++                log_error_write(srv, __FILE__, __LINE__, "ss", "socketsockopt failed:", strerror(errno));
++                return -1;
++        }
+ 
+ 	switch(srv_socket->addr.plain.sa_family) {
+ #ifdef HAVE_IPV6
