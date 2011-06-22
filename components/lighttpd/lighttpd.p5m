@@ -1,0 +1,132 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/web/server/lighttpd-14@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="The Lighttpd Web Server"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.upstream_url \
+    value=http://www.lighttpd.net/
+set name=info.source_url \
+    value=$(COMPONENT_ARCHIVE_URL)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/LSARC/2008/191
+set name=org.opensolaris.consolidation \
+    value=$(CONSOLIDATION)
+
+license COPYING license='Lighttpd license'
+
+dir path=etc
+dir path=etc/lighttpd
+dir path=etc/lighttpd/1.4
+dir path=etc/lighttpd/1.4/conf.d
+dir path=etc/security
+dir path=etc/security/auth_attr.d
+dir path=etc/security/prof_attr.d
+dir path=lib
+dir path=lib/svc
+dir path=lib/svc/manifest
+dir path=lib/svc/manifest/network
+dir path=lib/svc/method
+dir path=usr
+dir path=usr/lighttpd
+dir path=usr/lighttpd/1.4
+dir path=usr/lighttpd/1.4/bin
+dir path=usr/lighttpd/1.4/lib
+dir path=usr/lighttpd/1.4/man
+dir path=usr/lighttpd/1.4/man/man1
+dir path=usr/lighttpd/1.4/man/man8
+dir path=usr/lighttpd/1.4/sbin
+dir path=usr/share
+dir path=usr/share/man
+dir path=usr/share/man/man1m
+dir path=var
+dir path=var/lighttpd
+dir path=var/lighttpd/1.4
+dir path=var/lighttpd/1.4/docroot
+dir path=var/lighttpd/1.4/errors
+dir path=var/lighttpd/1.4/logs group=webservd owner=webservd
+dir path=var/lighttpd/1.4/vhosts
+file Solaris/fcgi-php.conf path=etc/lighttpd/1.4/conf.d/fcgi-php.conf \
+    mode=0644 preserve=renamenew \
+    original_name=SUNWlighttpd14:etc/lighttpd/1.4/conf.d/fcgi-php.conf
+file Solaris/ssl.conf path=etc/lighttpd/1.4/conf.d/ssl.conf  \
+    mode=0644 preserve=renamenew \
+    original_name=SUNWlighttpd14:etc/lighttpd/1.4/conf.d/ssl.conf
+file doc/lighttpd.conf path=etc/lighttpd/1.4/lighttpd.conf \
+    mode=0644 preserve=renamenew \
+    original_name=SUNWlighttpd14:etc/lighttpd/1.4/lighttpd.conf
+file Solaris/auth_attr path=etc/security/auth_attr.d/lighttpd
+file Solaris/prof_attr path=etc/security/prof_attr.d/lighttpd
+file Solaris/http-lighttpd14.xml path=lib/svc/manifest/network/http-lighttpd14.xml
+file Solaris/http-lighttpd14 path=lib/svc/method/http-lighttpd14
+file path=usr/lighttpd/1.4/lib/mod_access.so
+file path=usr/lighttpd/1.4/lib/mod_accesslog.so
+file path=usr/lighttpd/1.4/lib/mod_alias.so
+file path=usr/lighttpd/1.4/lib/mod_auth.so
+file path=usr/lighttpd/1.4/lib/mod_cgi.so
+file path=usr/lighttpd/1.4/lib/mod_cml.so
+file path=usr/lighttpd/1.4/lib/mod_compress.so
+file path=usr/lighttpd/1.4/lib/mod_dirlisting.so
+file path=usr/lighttpd/1.4/lib/mod_evasive.so
+file path=usr/lighttpd/1.4/lib/mod_evhost.so
+file path=usr/lighttpd/1.4/lib/mod_expire.so
+file path=usr/lighttpd/1.4/lib/mod_extforward.so
+file path=usr/lighttpd/1.4/lib/mod_fastcgi.so
+file path=usr/lighttpd/1.4/lib/mod_flv_streaming.so
+file path=usr/lighttpd/1.4/lib/mod_indexfile.so
+file path=usr/lighttpd/1.4/lib/mod_magnet.so
+file path=usr/lighttpd/1.4/lib/mod_mysql_vhost.so
+file path=usr/lighttpd/1.4/lib/mod_proxy.so
+file path=usr/lighttpd/1.4/lib/mod_redirect.so
+file path=usr/lighttpd/1.4/lib/mod_rewrite.so
+file path=usr/lighttpd/1.4/lib/mod_rrdtool.so
+file path=usr/lighttpd/1.4/lib/mod_scgi.so
+file path=usr/lighttpd/1.4/lib/mod_secdownload.so
+file path=usr/lighttpd/1.4/lib/mod_setenv.so
+file path=usr/lighttpd/1.4/lib/mod_simple_vhost.so
+file path=usr/lighttpd/1.4/lib/mod_ssi.so
+file path=usr/lighttpd/1.4/lib/mod_staticfile.so
+file path=usr/lighttpd/1.4/lib/mod_status.so
+file path=usr/lighttpd/1.4/lib/mod_trigger_b4_dl.so
+file path=usr/lighttpd/1.4/lib/mod_userdir.so
+file path=usr/lighttpd/1.4/lib/mod_usertrack.so
+file path=usr/lighttpd/1.4/lib/mod_webdav.so
+file path=usr/lighttpd/1.4/man/man8/lighttpd.8
+file path=usr/lighttpd/1.4/sbin/lighttpd
+file path=usr/lighttpd/1.4/sbin/lighttpd-angel
+file Solaris/lighttpd.1m.sunman path=usr/share/man/man1m/lighttpd.1m
+link path=usr/lighttpd/1.4/man/man1/spawn-fcgi.1 target=../../../../share/man/man1/spawn-fcgi.1
+link path=usr/lighttpd/1.4/bin/spawn-fcgi target=../../../bin/spawn-fcgi
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/spawn-fcgi type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/share/man/man1/spawn-fcgi.1 type=require
+
+legacy pkg=SUNWlighttpd14u desc="The Lighttpd Web Server (1.4.23) (Usr)" \
+    name="Lighttpd Web Server (Usr)"
+
+legacy pkg=SUNWlighttpd14r desc="The Lighttpd Web Server (1.4.23) (Root)" \
+    name="Lighttpd Web Server (Root)"
+

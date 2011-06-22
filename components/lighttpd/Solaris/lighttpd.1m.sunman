@@ -1,0 +1,269 @@
+'\" t
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.TH lighttpd 1M "October 2009" "SunOS 5.11" "System Administration Commands"
+.SH NAME
+lighttpd \- a fast, secure and flexible webserver
+.SH SYNOPSIS
+.LP
+.nf
+\fBlighttpd\fR
+.fi
+
+.SH DESCRIPTION
+.sp
+.LP
+The Lighttpd Web Server consists of a server daemon,  a watchdog process, loadable server modules, configuration files and documentation. 
+.sp
+.LP
+.SH FILES
+.sp
+.LP
+The following paths specify the installation locations for Lighttpd:
+.LP
+Note : 
+.RS +4
+.TP
+.ie t \(bu
+.el o
+The string \fB[version]\fR should be expanded
+to \fB"MAJOR.MINOR"\fR. For example, \fB/usr/lighttpd/1.4/*\fR.
+.RE
+.RE
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/lighttpd/[version]\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains lighttpd configuration files. A new install contains a single, default configuration file \fBlighttpd.conf\fR.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/etc/lighttpd/[version]/conf.d\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains additional server configuration files. These files generally require some customisation and are therefore not automatically loaded by the main configuration file.
+.sp
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/lighttpd/[version]/sbin\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the lighttpd executable and the lighttpd-angel watchdog process.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/lighttpd/[version]/man\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains man pages for the server and utility programs.
+.sp
+Add this directory to your MANPATH to read the Lighttpd man pages. See
+Notes.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/lighttpd/[version]/lib\fR\fR
+.ad
+.sp .6
+.RS 4n
+Contains the Lighttpd loadable modules. These can be loaded by using directives in the configuration file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/lighttpd/[version]/docroot\fR\fR
+.ad
+.sp .6
+.RS 4n
+The default location for content as specified by the server.document-root directive in the Lightpd configuration file.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/var/lighttpd/[version]/logs\fR\fR
+.ad
+.sp .6
+.RS 4n
+This is the default location for the Lighttpd log files.
+.sp
+The formats, names, and locations of the files in this directory can
+be altered by various configuration directives in the \fBlighttpd.conf\fR file.
+.RE
+
+.SH SERVICE MANAGEMENT FACILITY
+.sp
+.LP
+The \fBlighttpd14\fR package for Solaris (\fBweb/server/lighttpd-14\fR) includes all of the files necessary to register Lighttpd with the Service Management Facility described in \fISMF(5)\fR. The following procedure describes the steps to automate service management for lighttpd.
+
+Note :
+.RS +4
+.TP
+.ie t \(bu
+.el o
+The the full name of the lighttpd service is svc:/network/http:lighttpd14
+This can be abbreviated to lighttpd14 which is the \fBinstance name\fR of the service.
+.RE
+
+.RS +4
+.TP
+1.
+To enable the lighttpd14 service.
+.sp
+.in +2
+.nf
+example% svcadm enable lighttpd14
+.fi
+.in -2
+
+The state of the service instance changes to \fBonline\fR,
+and the lighttpd14 service instance is now available:
+.sp
+.in +2
+.nf
+example% svcs lighttpd14
+STATE          STIME    FMRI
+online         11:22:17 svc:/network/http:lighttpd14
+.fi
+.in -2
+.sp
+
+.RE
+.RS +4
+.TP
+2.
+To disable the lighttpd14 service instance,
+.sp
+.in +2
+.nf
+example% svcadm disable lighttpd14
+.fi
+.in -2
+
+The state of the service instance changes to \fBdisabled\fR,
+and the lighttpd service instance is no longer available:
+.sp
+.in +2
+.nf
+example% svcs lighttpd14
+STATE          STIME    FMRI
+disabled       11:35:15 svc:/network/http:lighttpd14
+.fi 
+.in -2
+.sp
+.RE
+
+.SH USER AUTHORIZATIONS
+.sp
+.LP
+You can use \fBRBAC(5)\fR to authorize otherwise non-privileged users to manage
+the \fBlighttpd14\fR service.
+To allow a user to manage the \fBlighttpd14\fR service states, add a line to
+\fB/etc/user_attr\fR of the form:
+.sp
+.in +2
+.nf
+<username>::::type=role;profiles=Lighttpd 14 Administration,All
+.fi
+.in -2
+.sp
+.LP
+Where <username> is the name of the user being granted the authorisation. If the user already has an entry in \fB/etc/user_attr\fR, add the "Lighttpd 14 Administration" profile to his or her entry.
+.sp
+.RE
+
+.SH SPAWN-FCGI CHANGES
+.LP
+Version 1.4.23 of the Lighttpd web server sees the refactoring of the spawn-fcgi utility into a separate source distribution and as a result, spawn-fcgi has been spun out into a separate package named web/fastcgi/spawn-fcgi. The Lighttpd packages install web/fastcgi/spawn-fcgi as a dependency and provide symbolic links from the original locations of the spawn-fcgi executable and manpage to the locations delivered by the spawn-fcgi package, i.e.:
+.sp
+.in +2
+.nf
+/usr/lighttpd/1.4/bin/spawn-fcgi -> /usr/bin/spawn-fcgi
+
+/usr/lighttpd/1.4/share/man/man1/spawn-fcgi.1
+                    -> /usr/share/man/man1/spawn-fcgi.1
+.fi
+.in -2
+.sp
+.LP
+These symbolic links may be removed in a future update of the Lighttpd packages
+.sp
+.RE
+
+.SH CONFIGURATION OPTIONS
+.sp
+.LP
+At this time, use of multiple Lighttpd worker processes is discouraged and is not supported by the Lighttpd community. From version 1.4.23 the supplied configuration file has the following line removed:
+.sp
+.in +2
+.nf
+server.max-worker = 4
+.fi
+.in -2
+.sp
+.LP
+The result of this change is that by default, Lighttpd will be run with a single worker process
+.sp
+.RE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBattributes(5)\fR, \fBlighttpd(8)\fR, \fBspawn-fcgi(8)\fR, \fBlighttpd-angel(8)\fR
+.sp
+.LP
+http://www.lighttpd.net
+.SH NOTES
+.sp
+.LP
+In addition to the documentation and man pages included with Solaris,
+more information is available at http://www.lighttpd.net\&.
+.sp
+.LP
+The Lighttpd man pages are provided with the programming modules. To
+view the manual pages for the Lighttpd modules with the man command, add \fB/usr/lighttpd/[version]/man\fR to the MANPATH environment variable.
+See \fBman(1)\fR for more information. Running \fBcatman(1M)\fR on
+the Lighttpd manual pages is not supported.
