@@ -1,0 +1,19 @@
+*** a/foomatic-kitload.in.orig	Mon Oct 27 15:58:18 2008
+--- b/foomatic-kitload.in		Mon Oct 27 15:59:18 2008
+***************
+*** 54,60 ****
+  $ENV{'LANG'} = "C";
+  
+  # Copy the files
+! my $retval = system("( cd $dir ; tar cf - --exclude CVS . ) | tar xv${dontoverwrite}Cf $destdir$libdir/db/source - 2> $destdir$libdir/kitload2.log | tee $destdir$libdir/kitload.log");
+  #$retval = $retval / 256;
+  #if ($retval) {
+  #    die "Error copying files to $destdir$libdir/db/source: $?";
+--- 54,60 ----
+  $ENV{'LANG'} = "C";
+  
+  # Copy the files
+! my $retval = system("( cd $dir ; /usr/bin/gtar cf - --exclude CVS . ) | /usr/bin/gtar xv${dontoverwrite}Cf $destdir$libdir/db/source - 2> $destdir$libdir/kitload2.log | tee $destdir$libdir/kitload.log");
+  #$retval = $retval / 256;
+  #if ($retval) {
+  #    die "Error copying files to $destdir$libdir/db/source: $?";
