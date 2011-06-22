@@ -83,7 +83,7 @@ dir path=usr/share/locale/vi
 dir path=usr/share/locale/vi/LC_MESSAGES
 dir path=usr/share/man
 dir path=usr/share/man/man1
-file path=usr/bin/gawk
+file usr/bin/gawk path=usr/gnu/bin/awk
 file path=usr/bin/igawk
 file path=usr/bin/pgawk
 file path=usr/lib/awk/grcat mode=0555
@@ -126,12 +126,13 @@ file path=usr/share/locale/rw/LC_MESSAGES/gawk.mo
 file path=usr/share/locale/sv/LC_MESSAGES/gawk.mo
 file path=usr/share/locale/tr/LC_MESSAGES/gawk.mo
 file path=usr/share/locale/vi/LC_MESSAGES/gawk.mo
-file path=usr/share/man/man1/gawk.1
+file usr/share/man/man1/gawk.1 path=usr/gnu/share/man/man1/awk.1
 file path=usr/share/man/man1/igawk.1
 legacy pkg=SUNWgawk desc="gawk - GNU awk 3.1.5" \
     name="gawk - GNU implementation of awk"
 license gawk.license license=GPLv2
-link path=usr/gnu/bin/awk target=../../bin/gawk
-link path=usr/gnu/share/man/man1/awk.1 \
-    target=../../../../share/man/man1/gawk.1
-link path=usr/share/man/man1/pgawk.1 target=gawk.1
+link path=usr/bin/gawk target=../gnu/bin/awk facet.compat.gnulinks=true
+link path=usr/share/man/man1/gawk.1 \
+    target=../../../gnu/share/man/man1/awk.1 facet.compat.gnulinks=true
+link path=usr/share/man/man1/pgawk.1 \
+    target=../../../gnu/share/man/man1/awk.1
