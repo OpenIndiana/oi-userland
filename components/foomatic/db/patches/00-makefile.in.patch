@@ -1,0 +1,44 @@
+--- a/Makefile.in-bkp	2011-05-28 00:56:06.178936359 +0200
++++ b/Makefile.in	2011-05-28 01:01:05.832899219 +0200
+@@ -60,26 +60,27 @@
+ install: install-db
+ 
+ install-db:
+-	install -d $(DESTDIR)$(LIBDIR)
+-	install -d $(DESTDIR)$(LIBDIR)/db/source/printer
+-	install -d $(DESTDIR)$(LIBDIR)/db/source/driver
+-	install -d $(DESTDIR)$(LIBDIR)/db/source/opt
+-	install -d $(DESTDIR)$(LIBDIR)/db/source/PPD
+-	cp db/oldprinterids $(DESTDIR)$(LIBDIR)/db
+-	cp db/source/printer/*.xml $(DESTDIR)$(LIBDIR)/db/source/printer
++	ginstall -d $(DESTDIR)$(LIBDIR)
++	ginstall -d $(DESTDIR)$(LIBDIR)/db/source/printer
++	ginstall -d $(DESTDIR)$(LIBDIR)/db/source/driver
++	ginstall -d $(DESTDIR)$(LIBDIR)/db/source/opt
++	ginstall -d $(DESTDIR)$(LIBDIR)/db/source/PPD
++	cp -f db/oldprinterids $(DESTDIR)$(LIBDIR)/db
++	cp -f db/source/printer/*.xml $(DESTDIR)$(LIBDIR)/db/source/printer
+ 	( cd db/source/driver/; \
+ 	  for d in $(DRIVERXMLS); do \
+-	    cp $$d $(DESTDIR)$(LIBDIR)/db/source/driver; \
++	    cp -f $$d $(DESTDIR)$(LIBDIR)/db/source/driver; \
+ 	  done )
+-	cp db/source/opt/*.xml $(DESTDIR)$(LIBDIR)/db/source/opt
+-	( cd db/source && tar cf - --exclude=.svn PPD ) | \
+-	  ( cd $(DESTDIR)$(LIBDIR)/db/source && tar xf -)
++	cp -f db/source/opt/*.xml $(DESTDIR)$(LIBDIR)/db/source/opt
++	( cd db/source && /usr/bin/gtar cf - --exclude=.svn PPD ) | \
++	  ( cd $(DESTDIR)$(LIBDIR)/db/source && /usr/bin/gtar xf -)
+ 	if test $(GZIP) != GZIP_NOT_FOUND -a $(GZIP_PPDS) != no ; then \
+-	  GZIP='' find $(DESTDIR)$(LIBDIR)/db/source/PPD -name "*.ppd" -exec $(GZIP) "{}" \; ; \
++	  GZIP='' find $(DESTDIR)$(LIBDIR)/db/source/PPD -name "*.ppd" -exec $(GZIP) -f "{}" \; ; \
+ 	fi
+ 	if test $(CUPS_PPDS) != CUPS_PPDS_NOT_FOUND -a $(PPDS_TO_CUPS) != no ; then \
+-	  install -d $(DESTDIR)$(CUPS_PPDS); \
+-	  ln -sf $(LIBDIR)/db/source/PPD $(DESTDIR)$(CUPS_PPDS)/foomatic-db-ppds; \
++	  mkdir -p $(DESTDIR)$(CUPS_PPDS); \
++	  rm -f $(DESTDIR)$(CUPS_PPDS)/foomatic-db-ppds; \
++	  ln -sf ../../../..$(LIBDIR)/db/source/PPD $(DESTDIR)$(CUPS_PPDS)/foomatic-db-ppds; \
+ 	fi
+ 
+ build:
