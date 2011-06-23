@@ -71,7 +71,7 @@ $(BUILD_DIR)/%.license: $(BUILD_DIR)/%.header
 $(BUILD_DIR):
 	$(MKDIR) $@
 
-build:	$(BUILD_DIR) $(BUILT_LICENSES)
+install build:	$(BUILD_DIR) $(BUILT_LICENSES)
 
 test:	$(NO_TESTS)
 
