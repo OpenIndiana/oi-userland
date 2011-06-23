@@ -75,7 +75,7 @@ install build:	$(BUILD_DIR) $(BUILT_LICENSES)
 
 test:	$(NO_TESTS)
 
-clean::
+clobber clean::
 	$(RM) -r $(BUILD_DIR)
 
 include ../../make-rules/depend.mk
