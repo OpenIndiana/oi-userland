@@ -38,7 +38,6 @@ CFLAGS	+=			$(studio_FEATURES_EXTENSIONS)
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--prefix=/usr
-CONFIGURE_OPTIONS  +=		--program-prefix=g
 
 # common targets
 build:		$(BUILD_32)
