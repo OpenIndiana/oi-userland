@@ -24,10 +24,10 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
-COMPONENT_VERSION=      8.64
+COMPONENT_VERSION=      9.00
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:2e56a2fdd7912c0d04ad52c05d0e93e3e473b131
+COMPONENT_ARCHIVE_HASH= sha1:96e75675efa0f00813f1608ba2c3833f4103ba19
 COMPONENT_ARCHIVE_URL=  http://ghostscript.com/releases/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -56,9 +56,6 @@ VARIANTS = $(GS_VARIANT) $(IJS_VARIANT)
 
 # autoconf - Generate configuration scripts
 COMPONENT_PREP_ACTION = \
-	 (cd $(@D)/jasper/src/libjasper/jpc ; \
-	 $(MV) jpc_qmfb.c jpc_qmfb.c.orig ; \
-	 dos2unix jpc_qmfb.c.orig >jpc_qmfb.c) ; \
 	 (cd $(@D); autoconf)
 
 $(GS_VARIANT)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
