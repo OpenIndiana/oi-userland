@@ -31,7 +31,7 @@ set name=opensolaris.arc_url \
     value=http://arc.opensolaris.org/caselog/PSARC/2010/010
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license ghostscript.license license="GPLv2"
+license ghostscript.license license="GPLv3"
 
 dir path=etc
 dir path=etc/cups group=lp
@@ -59,6 +59,7 @@ dir path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Init
 dir path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/SubstCID
 dir path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc
 dir path=usr/share/ghostscript/$(COMPONENT_VERSION)/examples
+dir path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles
 dir path=usr/share/ghostscript/$(COMPONENT_VERSION)/lib
 dir path=usr/share/ghostscript/interfaces
 dir path=usr/share/man
@@ -154,6 +155,8 @@ file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/CMap/Adobe-CNS1-4
 file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/CMap/Adobe-CNS1-5
+file \
+    path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/CMap/Adobe-CNS1-6
 file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/CMap/Adobe-CNS1-B5pc
 file \
@@ -493,6 +496,8 @@ file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/ColorSpace/DefaultRGB
 file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/ColorSpace/TrivialCMYK
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/ColorSpace/sGray
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/ColorSpace/sRGB
 file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Decoding/FCO_Dingbats
 file \
@@ -576,6 +581,9 @@ file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Font/URWPalladioL-Ital
 file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Font/URWPalladioL-Roma
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Init/FAPIcidfmap
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Init/FAPIconfig
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Init/FAPIfontmap
 file \
     path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Init/FCOfontmap-PCLPS2
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Init/Fontmap
@@ -684,7 +692,6 @@ file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/Ps-style.htm
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/Ps2epsi.htm
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/Ps2pdf.htm
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/Psfiles.htm
-file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/README
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/Readme.htm
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/Release.htm
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/doc/Source.htm
@@ -708,6 +715,18 @@ file path=usr/share/ghostscript/$(COMPONENT_VERSION)/examples/snowflak.ps
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/examples/tiger.eps
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/examples/vasarely.ps
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/examples/waterfal.ps
+file \
+    path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/default_cmyk.icc
+file \
+    path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/default_gray.icc
+file \
+    path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/default_rgb.icc
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/lab.icc
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/ps_cmyk.icc
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/ps_gray.icc
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/ps_rgb.icc
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/sgray.icc
+file path=usr/share/ghostscript/$(COMPONENT_VERSION)/iccprofiles/srgb.icc
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/lib/PDFA_def.ps
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/lib/PDFX_def.ps
 file path=usr/share/ghostscript/$(COMPONENT_VERSION)/lib/PM760p.upp
@@ -917,7 +936,8 @@ file Solaris/ps2ps2.1 path=usr/share/man/man1/ps2ps2.1
 file Solaris/pv.sh.1 path=usr/share/man/man1/pv.sh.1
 file path=usr/share/man/man1/wftopfa.1
 link path=usr/lib/libgs.so target=libgs.so.$(COMPONENT_VERSION)
-link path=usr/lib/libgs.so.8 target=libgs.so.$(COMPONENT_VERSION)
+link path=usr/lib/libgs.so.9 target=libgs.so.$(COMPONENT_VERSION)
+link path=usr/lib/libgs.so.8 target=libgs.so.9
 link path=usr/sfw/bin/bdftops target=../../bin/bdftops
 link path=usr/sfw/bin/dumphint target=../../bin/dumphint
 link path=usr/sfw/bin/dvipdf target=../../bin/dvipdf
