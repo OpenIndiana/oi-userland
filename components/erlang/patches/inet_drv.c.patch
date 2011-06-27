@@ -1,0 +1,18 @@
+--- otp_src_R12B-5/erts/emulator/drivers/common/inet_drv.c	Tue Nov  4 11:51:25 2008
++++ otp_src_R12B-5-patch/erts/emulator/drivers/common/inet_drv.c	Mon Jun 20 11:02:49 2011
+@@ -4128,6 +4128,7 @@
+ 	    break;
+ 
+ 	case INET_IFOPT_HWADDR: {
++#ifdef IFHWADDRLEN
+ #ifdef SIOCGIFHWADDR
+ 	    if (ioctl(desc->s, SIOCGIFHWADDR, (char *)&ifreq) < 0)
+ 		break;
+@@ -4137,6 +4138,7 @@
+ 	    sys_memcpy(sptr, (char*)(&ifreq.ifr_hwaddr.sa_data), IFHWADDRLEN);
+ 	    sptr += IFHWADDRLEN;
+ #endif
++#endif
+ 	    break;
+ 	}
+ 

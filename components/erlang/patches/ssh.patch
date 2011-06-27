@@ -1,0 +1,197 @@
+--- otp_src_R12B-5/lib/ssh/src/ssh_connection_handler.erl	Mon Sep  1 14:51:52 2008
++++ otp_src_R12B-5-patch/lib/ssh/src/ssh_connection_handler.erl	Thu Jun 23 10:56:21 2011
+@@ -94,8 +94,6 @@
+ %% initialize. 
+ %%--------------------------------------------------------------------
+ init([Role, Manager, Socket, SshOpts]) ->
+-    {A,B,C} = erlang:now(),
+-    random:seed(A, B, C),
+     {NumVsn, StrVsn} = ssh_transport:versions(Role, SshOpts),
+     ssh_bits:install_messages(ssh_transport:transport_messages(NumVsn)),
+     {Protocol, Callback, CloseTag} = 
+--- otp_src_R12B-5/lib/crypto/c_src/crypto_drv.c	Tue Nov  4 11:52:34 2008
++++ otp_src_R12B-5-patch/lib/crypto/c_src/crypto_drv.c	Thu Jun 23 11:33:31 2011
+@@ -208,6 +208,9 @@
+ #define DRV_SHA512_FINAL        58
+ #endif
+ 
++#define DRV_STRONG_RAND_BYTES   59
++#define DRV_STRONG_RAND_MPINT   60
++
+ /* #define DRV_CBC_IDEA_ENCRYPT    34 */
+ /* #define DRV_CBC_IDEA_DECRYPT    35 */
+ 
+@@ -604,7 +607,39 @@
+         bin->orig_bytes[0] |= or_mask; /* bottommask */
+         return rlen;
+         break;
+-      
++
++    case DRV_STRONG_RAND_BYTES:
++	/* buf = <<rlen:32/integer>> */
++        if (len != 4)
++            return -1;
++	rlen = get_int32(buf);
++        *rbuf = (char *)(bin = driver_alloc_binary(rlen));
++	if (bin==NULL)
++            return -1;
++        if (RAND_bytes(bin->orig_bytes,rlen) != 1)
++            return -1;
++	return rlen;
++
++    case DRV_STRONG_RAND_MPINT:
++        /* buf = <<rlen:32/integer,topmask:8/integer,bottommask:8/integer>> */
++        if (len != 6)
++            return -1;
++        bn_rand = BN_new();
++        if (! bn_rand )
++            return -1;
++
++        if (!BN_rand(bn_rand, get_int32(buf), buf[4], buf[5])) {
++            BN_free(bn_rand);
++            return -1;
++        }
++
++        dlen = BN_num_bytes(bn_rand);
++        *rbuf = (char *)(bin = driver_alloc_binary(dlen));
++        put_int32(bin->orig_bytes, dlen);
++        BN_bn2bin(bn_rand, bin->orig_bytes+4);
++        BN_free(bn_rand);
++        return 1;
++
+     case DRV_RAND_UNIFORM:
+       /* buf = <<from_len:32/integer,bn_from:from_len/binary,   *
+        *         to_len:32/integer,bn_to:to_len/binary>>        */
+--- otp_src_R12B-5/lib/crypto/src/crypto.erl	Tue Nov  4 11:52:34 2008
++++ otp_src_R12B-5-patch/lib/crypto/src/crypto.erl	Thu Jun 23 11:35:29 2011
+@@ -40,6 +40,7 @@
+ -export([rsa_private_encrypt/3, rsa_public_decrypt/3]).
+ -export([dh_generate_key/1, dh_generate_key/2, dh_compute_key/3]).
+ -export([rand_bytes/1, rand_bytes/3, rand_uniform/2]).
++-export([strong_rand_bytes/1, strong_rand_mpint/3]).
+ -export([mod_exp/3, mpint/1, erlint/1]).
+ %% -export([idea_cbc_encrypt/3, idea_cbc_decrypt/3]).
+ -export([aes_cbc_128_encrypt/3, aes_cbc_128_decrypt/3]).
+@@ -110,6 +111,8 @@
+ %% -define(SHA512_UPDATE,	 57).
+ %% -define(SHA512_FINAL,	 58).
+ 
++-define(STRONG_RAND_BYTES,	 59).
++-define(STRONG_RAND_MPINT,	 60).
+ 
+ %% -define(IDEA_CBC_ENCRYPT, 34).
+ %% -define(IDEA_CBC_DECRYPT, 35).
+@@ -125,6 +128,8 @@
+ 		    des_ede3_cbc_encrypt, des_ede3_cbc_decrypt,
+ 		    aes_cfb_128_encrypt, aes_cfb_128_decrypt,
+ 		    rand_bytes,
++		    strong_rand_bytes,
++		    strong_rand_mpint,
+ 		    rand_uniform,
+ 		    mod_exp,
+ 		    dss_verify,dss_sign,
+@@ -321,10 +326,19 @@
+ 
+ rand_bytes(Bytes) ->
+     rand_bytes(Bytes, 0, 0).
++
++strong_rand_bytes(Bytes) ->
++    control(?STRONG_RAND_BYTES,[<<Bytes:32/integer>>]).
++
+ rand_bytes(Bytes, Topmask, Bottommask) ->
+     control(?RAND_BYTES,[<<Bytes:32/integer,
+ 			  Topmask:8/integer,
+ 			  Bottommask:8/integer>>]).
++
++strong_rand_mpint(Bits, Top, Bottom) ->
++    control(?STRONG_RAND_MPINT,[<<Bits:32/integer,
++			  Top:8/integer,
++			  Bottom:8/integer>>]).
+ 
+ rand_uniform(From,To) when is_binary(From), is_binary(To) ->
+     case control(?RAND_UNIFORM,[From,To]) of
+--- otp_src_R12B-5/lib/ssh/src/ssh_bits.erl	Mon Sep  1 14:51:49 2008
++++ otp_src_R12B-5-patch/lib/ssh/src/ssh_bits.erl	Thu Jun 23 10:56:25 2011
+@@ -33,7 +33,7 @@
+ %% integer utils
+ -export([isize/1]).
+ -export([irandom/1, irandom/3]).
+--export([random/1, random/3]).
++-export([random/1]).
+ -export([xor_bits/2, fill_bits/2]).
+ -export([i2bin/2, bin2i/1]).
+ 
+@@ -400,9 +400,6 @@
+ irandom(Bits) ->
+     irandom(Bits, 1, 0).
+ 
+-%% irandom_odd(Bits) ->
+-%%     irandom(Bits, 1, 1).
+-
+ %%
+ %% irandom(N, Top, Bottom)
+ %%
+@@ -413,22 +410,8 @@
+ %%       Bot = 0 - do not set the least signifcant bit
+ %%       Bot = 1 - set the least signifcant bit (i.e always odd)
+ %%
+-irandom(0, _Top, _Bottom) -> 
+-    0;
+-irandom(Bits, Top, Bottom) ->
+-    Bytes = (Bits+7) div 8,
+-    Skip  = (8-(Bits rem 8)) rem 8,
+-    TMask = case Top of
+-		  0 -> 0;
+-		  1 -> 16#80;
+-		  2 -> 16#c0
+-	      end,
+-    BMask = case Bottom of
+-		0 -> 0;
+-		1 -> (1 bsl Skip)
+-	    end,
+-    <<X:Bits/big-unsigned-integer, _:Skip>> = random(Bytes, TMask, BMask),
+-    X.
++irandom(Bits, Top, Bottom) -> 
++    crypto:erlint(crypto:strong_rand_mpint(Bits, Top - 1, Bottom)).
+ 
+ %%
+ %% random/1
+@@ -435,37 +419,9 @@
+ %%   Generate N random bytes
+ %%
+ random(N) ->
+-    random(N, 0, 0).
++    crypto:strong_rand_bytes(N).
+ 
+-random(N, TMask, BMask) ->
+-    list_to_binary(rnd(N, TMask, BMask)).
+-
+-%% random/3
+-%%   random(Bytes, TopMask, BotMask)
+-%% where 
+-%% Bytes is the number of bytes to generate
+-%% TopMask is bitwised or'ed to the first byte
+-%% BotMask is bitwised or'ed to the last byte
+ %%
+-rnd(0, _TMask, _BMask) ->
+-    [];
+-rnd(1, TMask, BMask) ->
+-    [(rand8() bor TMask) bor BMask];
+-rnd(N, TMask, BMask) ->
+-    [(rand8() bor TMask) | rnd_n(N-1, BMask)].
+-
+-rnd_n(1, BMask) ->
+-    [rand8() bor BMask];
+-rnd_n(I, BMask) ->
+-    [rand8() | rnd_n(I-1, BMask)].
+-
+-rand8() ->
+-    (rand32() bsr 8) band 16#ff.
+-
+-rand32() ->
+-    random:uniform(16#100000000) -1.
+-
+-%%
+ %% Base 64 encode/decode
+ %%
+ 
