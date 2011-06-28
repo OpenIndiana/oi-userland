@@ -75,8 +75,13 @@ CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS.64 += LIBS="-m64"
 
+# Use cp(1) instead of cloney because erlang's 'install' target uses 'tar'
+# to copy files and our tar doesn't handle long links by default.  Between
+# the use of 'tar' and 'ld', a path adjustment wasn't an option due to the
+# need for /usr/bin/ld and /usr/gnu/bin/tar.  Perhaps this can be looked
+# at when we upgrade to a more current version.
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CP) -rp $(SOURCE_DIR)/. $(@D))
 CONFIGURE_SCRIPT =	$(@D)/configure
 
 COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
