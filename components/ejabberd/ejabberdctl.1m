@@ -1,0 +1,198 @@
+.TH ejabberdctl 1M "18 March 2008" "Version 2.0.5" "ejabberdctl"
+
+.SH NAME
+ejabberdctl \(em ejabberd Jabber/XMPP server control interface
+
+.SH SYNOPSIS
+.PP 
+\fBejabberdctl\fR \fI[--node node] [vhost server] command [options]\fP
+
+.SH DESCRIPTION
+.PP 
+\fBejabberd\fR is packaged as a SMF service on OpenSolaris, and should
+be started and stopped using SMF. Its service name is:
+
+    svc:/network/xmpp:ejabberd
+
+\fBejabberdctl\fR can be used to debug \fBejabberd\fR server, and
+perform many other administrative tasks.
+
+User should have Ejabberd Management profile to manage \fBejabberd\fR
+service and to run \fBejabberdctl\fR command, otherwise there would be
+cookie file access permission issue.
+
+.SH OPTIONS
+.TP
+.BI \-\-node " node"
+Specifies the erlang node on which command will be performed. Default
+value is ejabberd@localhost. Node name has the following syntax:
+
+    name\fI@\fPhost
+
+host can either be a short hostname (usually it coincides with 
+\fI\(gahostname\(ga\fP) or a FQDN (see \fBerl\fR(1) manual page
+and look for options \fI-name\fP and \fI-sname\fP for details).
+
+If the node name does not contain symbol \fI@\fP, then a short hostname
+(that is, \fI\(gahostname\(ga\fP) is appended by \fBerlang\fR
+runtime system automatically.
+
+.TP
+.BI vhost " server"
+Specifies the virtual host \fIserver\fP for which command will be
+executed. There are only few commands that needs \fIvhost\fP argument.
+
+.SH COMMANDS
+.TP
+.BI start
+Start an ejabberd node in background mode. This is the default method.
+
+.TP
+.BI live
+Start an ejabberd node in live(interactive) mode. An erlang shell is
+attached to the started server, showing log messages and allowing to
+execute interactive commands.
+
+.TP
+.BI debug
+Attach an interactive Erlang shell to a running ejabberd node. This allows
+to execute commands interactively on a running ejabberd server. To detach
+it, press Ctrl+G, q, <Return>.
+
+.TP
+.BI stop
+Stop ejabberd server and shut down the node.
+
+.TP
+.BI restart
+Restart ejabberd server.
+
+.TP
+.BI status
+Get ejabberd server status.
+
+.TP
+.BI reopen-log
+Request ejabberd server to reopen its log file.
+
+.TP
+.BI register " user server password"
+Register a \fIuser\fP with \fIpassword\fP for a virtual \fIserver\fP.
+
+.TP
+.BI unregister " user server"
+Unregister \fIuser\fP from virtual \fIserver\fP.
+
+.TP
+.BI backup " file"
+Backup ejabberd user database to a \fIfile\fP.
+
+.TP
+.BI restore " file"
+Restore ejabberd user database from backup \fIfile\fP.
+
+.TP
+.BI install-fallback " file"
+Install a database fallback from \fIfile\fP.
+
+.TP
+.BI dump " file"
+Dump ejabberd user database to a text \fIfile\fP.
+
+.TP
+.BI load " file"
+Restore ejabberd user database from a text \fIfile\fP.
+
+.TP
+.BI import-file " file"
+Import user data from jabberd 1.4 spool \fIfile\fP. For example, if
+\fIfile\fP is \fI.../example.org/user.xml\fP then imported username
+will be \fIuser\fP and it will be imported to virtual server
+\fIexample.org\fP.
+
+.TP
+.BI import-dir " dir"
+Import user data from jabberd 1.4 spool \fIdir\fP. Directory
+name should be the name of virtual server to import users.
+
+.TP
+.BI delete-expired-messages
+Delete expired offline messages from database.
+
+.TP
+.BI delete-old-messages n
+Delete offline messages older than \fIn\fP days from database.
+
+.TP
+.BI mnesia [info]
+Show informatoin of Mnesia system.
+
+.TP
+.BI incoming-s2s-number
+Print number of incoming s2s connections on the node
+
+.TP
+.BI outgoing-s2s-number
+Print number of outgoing s2s connections on the node
+
+.TP
+.BI user-resources " user server"
+List all connected resources of user \fIuser@server\fP.
+
+.TP
+.BI connected-users-number
+Report number of established users' sessions.
+
+.TP
+.BI connected-users
+List all established users' sessions.
+
+.PP
+The following commands are vhost specific:
+
+.TP
+.BI registered-users
+List all registered users for specified virtual \fIserver\fP.
+
+.SH OPTION FILES
+.PP 
+
+.TP
+.BI --config file
+Config file for ejabberd. Default is /etc/ejabberd/ejabberd.cfg.
+
+.TP
+.BI --ctl-config file
+Config file for ejabberdctl. Default is /etc/ejabberd/ejabberdctl.cfg.
+
+.TP
+.BI --logs dir
+Directory for log files. Default is /var/ejabberd/log.
+
+.TP
+.BI --spool dir
+Database spool dir. Default is /var/ejabberd/db/ejabberd.
+
+.SH SEE ALSO 
+.PP 
+\fBerl\fR(1), \fBmnesia\fR(3).
+
+.PP 
+Ejabberd documentation is available at
+\fIhttp://www.process-one.net/en/projects/ejabberd/\fP. 
+ 
+.SH AUTHORS
+.PP 
+This manual page was adapted by Sergei Golovan <sgolovan@nes.ru> for 
+the \fBDebian\fP system (but may be used by others) from the
+\fBejabberd\fP documentation written by Alexey Shchepin <alexey@sevcom.net>.
+
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License, Version 2 any  
+later version published by the Free Software Foundation. 
+
+The complete text of the GNU General Public License can be found 
+at http://www.gnu.org/licenses/old-licenses/gpl-2.0.html.
+
+The manual page was modified for ejabberd-2.0.5 on OpenSolaris.
+
