@@ -1,0 +1,100 @@
+--- ejabberd-2.1.8/src/Makefile.in	Mon Jun  6 12:24:32 2011
++++ ejabberd-2.1.8-patch/src/Makefile.in	Thu Jun 16 14:54:13 2011
+@@ -74,1 +74,1 @@
+-  INSTALL_EPAM=install -m 750 $(O_USER) epam $(PBINDIR)
++  INSTALL_EPAM=ginstall -m 750 $(O_USER) epam $(PBINDIR)
+@@ -186,1 +186,1 @@
+-	install -d -m 750 $(G_USER) $(ETCDIR)
++	ginstall -d -m 750 $(G_USER) $(ETCDIR)
+@@ -188,2 +188,2 @@
+-		&& install -b -m 640 $(G_USER) ejabberd.cfg.example $(ETCDIR)/ejabberd.cfg-new \
+-		|| install -b -m 640 $(G_USER) ejabberd.cfg.example $(ETCDIR)/ejabberd.cfg
++		&& ginstall -b -m 640 $(G_USER) ejabberd.cfg.example $(ETCDIR)/ejabberd.cfg-new \
++		|| ginstall -b -m 640 $(G_USER) ejabberd.cfg.example $(ETCDIR)/ejabberd.cfg
+@@ -198,4 +198,4 @@
+-	[ -f $(ETCDIR)/ejabberdctl.cfg ] \
+-		&& install -b -m 640 $(G_USER) ejabberdctl.cfg.example $(ETCDIR)/ejabberdctl.cfg-new \
+-		|| install -b -m 640 $(G_USER) ejabberdctl.cfg.example $(ETCDIR)/ejabberdctl.cfg
+-	install -b -m 644 $(G_USER) inetrc $(ETCDIR)/inetrc
++	[ -f $(ETCDIR)/ejabberd/ejabberdctl.cfg ] \
++		&& ginstall -b -m 640 $(G_USER) ejabberdctl.cfg.example $(ETCDIR)/ejabberdctl.cfg-new \
++		|| ginstall -b -m 640 $(G_USER) ejabberdctl.cfg.example $(ETCDIR)/ejabberdctl.cfg
++	ginstall -b -m 644 $(G_USER) inetrc $(ETCDIR)/inetrc
+@@ -204,2 +204,2 @@
+-	[ -d $(SBINDIR) ] || install -d -m 755 $(SBINDIR)
+-	install -m 550 $(G_USER) ejabberdctl.example $(SBINDIR)/ejabberdctl
++	[ -d $(SBINDIR) ] || ginstall -d -m 755 $(SBINDIR)
++	ginstall -m 550 $(G_USER) ejabberdctl.example $(SBINDIR)/ejabberdctl
+@@ -214,3 +214,3 @@
+-	install -d $(BEAMDIR)
+-	install -m 644 *.app $(BEAMDIR)
+-	install -m 644 *.beam $(BEAMDIR)
++	ginstall -d $(BEAMDIR)
++	ginstall -m 644 *.app $(BEAMDIR)
++	ginstall -m 644 *.beam $(BEAMDIR)
+@@ -220,12 +220,12 @@
+-	install -d $(INCLUDEDIR)
+-	install -m 644 *.hrl $(INCLUDEDIR)
+-	install -d $(INCLUDEDIR)/eldap/
+-	install -m 644 eldap/*.hrl $(INCLUDEDIR)/eldap/
+-	install -d $(INCLUDEDIR)/mod_muc/
+-	install -m 644 mod_muc/*.hrl $(INCLUDEDIR)/mod_muc/
+-	install -d $(INCLUDEDIR)/mod_proxy65/
+-	install -m 644 mod_proxy65/*.hrl $(INCLUDEDIR)/mod_proxy65/
+-	install -d $(INCLUDEDIR)/mod_pubsub/
+-	install -m 644 mod_pubsub/*.hrl $(INCLUDEDIR)/mod_pubsub/
+-	install -d $(INCLUDEDIR)/web/
+-	install -m 644 web/*.hrl $(INCLUDEDIR)/web/
++	ginstall -d $(INCLUDEDIR)
++	ginstall -m 644 *.hrl $(INCLUDEDIR)
++	ginstall -d $(INCLUDEDIR)/eldap/
++	ginstall -m 644 eldap/*.hrl $(INCLUDEDIR)/eldap/
++	ginstall -d $(INCLUDEDIR)/mod_muc/
++	ginstall -m 644 mod_muc/*.hrl $(INCLUDEDIR)/mod_muc/
++	ginstall -d $(INCLUDEDIR)/mod_proxy65/
++	ginstall -m 644 mod_proxy65/*.hrl $(INCLUDEDIR)/mod_proxy65/
++	ginstall -d $(INCLUDEDIR)/mod_pubsub/
++	ginstall -m 644 mod_pubsub/*.hrl $(INCLUDEDIR)/mod_pubsub/
++	ginstall -d $(INCLUDEDIR)/web/
++	ginstall -m 644 web/*.hrl $(INCLUDEDIR)/web/
+@@ -234,2 +234,2 @@
+-	install -d $(PBINDIR)
+-	install -m 750 $(O_USER) ../tools/captcha.sh $(PBINDIR)
++	ginstall -d $(PBINDIR)
++	ginstall -m 750 $(O_USER) ../tools/captcha.sh $(PBINDIR)
+@@ -239,2 +239,2 @@
+-	install -d $(SODIR)
+-	install -m 644 *.so $(SODIR)
++	ginstall -d $(SODIR)
++	ginstall -m 644 *.so $(SODIR)
+@@ -243,2 +243,2 @@
+-	install -d $(MSGSDIR)
+-	install -m 644 msgs/*.msg $(MSGSDIR)
++	ginstall -d $(MSGSDIR)
++	ginstall -m 644 msgs/*.msg $(MSGSDIR)
+@@ -247,1 +247,1 @@
+-	install -d -m 750 $(O_USER) $(SPOOLDIR)
++	ginstall -d -m 750 $(O_USER) $(SPOOLDIR)
+@@ -253,1 +253,1 @@
+-	install -d -m 750 $(O_USER) $(CTLLOCKDIR)
++	ginstall -d -m 750 $(O_USER) $(CTLLOCKDIR)
+@@ -258,1 +258,1 @@
+-	install -d -m 750 $(O_USER) $(LOGDIR)
++	ginstall -d -m 750 $(O_USER) $(LOGDIR)
+@@ -263,5 +263,5 @@
+-	install -d $(DOCDIR)
+-	install -m 644 ../doc/dev.html $(DOCDIR)
+-	install -m 644 ../doc/guide.html $(DOCDIR)
+-	install -m 644 ../doc/*.png $(DOCDIR)
+-	install -m 644 ../doc/*.txt $(DOCDIR)
++	ginstall -d $(DOCDIR)
++	ginstall -m 644 ../doc/dev.html $(DOCDIR)
++	ginstall -m 644 ../doc/guide.html $(DOCDIR)
++	ginstall -m 644 ../doc/*.png $(DOCDIR)
++	ginstall -m 644 ../doc/*.txt $(DOCDIR)
+@@ -269,1 +269,1 @@
+-		&& install -m 644 ../doc/guide.pdf $(DOCDIR) \
++		&& ginstall -m 644 ../doc/guide.pdf $(DOCDIR) \
+@@ -271,1 +271,1 @@
+-	install -m 644 ../COPYING $(DOCDIR)
++	ginstall -m 644 ../COPYING $(DOCDIR)
