@@ -1,0 +1,63 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri value=pkg:/media/cdrtools@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="CD/DVD/BluRay command line recording software"
+set name=info.classification value="org.opensolaris.category.2008:System/Media"
+set name=info.upstream_url value="http://cdrecord.berlios.de/private/cdrecord.html"
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2006/089
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license cdrtools.license license="CDDLv1.0, GPLv2, LGPLv2.1, BSD 2 clause"
+
+dir path=etc
+dir path=etc/security
+dir path=etc/security/exec_attr.d
+dir path=usr
+dir path=usr/bin
+dir path=usr/share
+dir path=usr/share/man
+dir path=usr/share/man/man1
+dir path=usr/share/man/man8
+file Solaris/cdrtools path=etc/security/exec_attr.d/cdrtools
+file Solaris/cdda2wav path=usr/bin/cdda2wav
+file usr/bin/cdda2wav path=usr/bin/cdda2wav.bin
+file Solaris/cdrecord path=usr/bin/cdrecord
+file usr/bin/cdrecord path=usr/bin/cdrecord.bin
+file path=usr/bin/mkisofs
+file Solaris/readcd path=usr/bin/readcd
+file usr/bin/readcd path=usr/bin/readcd.bin
+file path=usr/share/man/man1/cdda2wav.1
+file path=usr/share/man/man1/cdrecord.1
+file path=usr/share/man/man1/readcd.1
+file path=usr/share/man/man8/mkisofs.8
+
+legacy pkg=SUNWmkcd \
+    name="CD creation utilities" \
+    desc="CD creation utilities 3.00"
+legacy pkg=SUNWmkcdr \
+    name="CD creation utilities (Root)" \
+    desc="CD creation utilities 3.00 (Root)"
