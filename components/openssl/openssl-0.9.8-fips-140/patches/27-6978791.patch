@@ -1,0 +1,13 @@
+diff -ruN ../openssl-0.9.8o/Makefile.shared ./Makefile.shared
+--- ../openssl-0.9.8o/Makefile.shared	2010-08-23 12:35:50.222830608 +0200
++++ ./Makefile.shared	2010-08-23 12:36:35.672746275 +0200
+@@ -345,6 +345,9 @@
+ 		ALLSYMSFLAGS="$${MINUSZ}allextract"; \
+ 		NOALLSYMSFLAGS="$${MINUSZ}defaultextract"; \
+ 		SHAREDFLAGS="$(CFLAGS) $(SHARED_LDFLAGS) -h $$SHLIB$$SHLIB_SOVER$$SHLIB_SUFFIX -Wl,-Bsymbolic"; \
++		if [ $(LIBNAME) = "ssl" ]; then \
++			SHAREDFLAGS="$$SHAREDFLAGS $${MINUSZ}nodelete"; \
++		fi; \
+ 	fi; \
+ 	$(LINK_SO_A)
+ # Make sure the apps have non-executable stacks and data (x86/x64 only).

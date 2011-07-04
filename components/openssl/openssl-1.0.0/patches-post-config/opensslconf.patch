@@ -1,0 +1,54 @@
+--- /tmp/opensslconf.h	Fri Feb 11 15:36:12 2011
++++ openssl-1.0.0d/crypto/opensslconf.h	Fri Feb 11 16:58:36 2011
+@@ -181,7 +181,11 @@
+ 
+ #if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
+ #if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
++#if defined(__sparcv9) || defined(__x86_64)
++#define ENGINESDIR "/lib/openssl/engines/64"
++#else
+ #define ENGINESDIR "/lib/openssl/engines"
++#endif
+ #define OPENSSLDIR "/etc/openssl"
+ #endif
+ #endif
+@@ -228,21 +232,39 @@
+ /* If this is set to 'unsigned int' on a DEC Alpha, this gives about a
+  * %20 speed up (longs are 8 bytes, int's are 4). */
+ #ifndef DES_LONG
++#if defined(__sparcv9) || defined(__x86_64)
++#define DES_LONG unsigned int
++#else
+ #define DES_LONG unsigned long
+ #endif
+ #endif
++#endif
+ 
+ #if defined(HEADER_BN_H) && !defined(CONFIG_HEADER_BN_H)
+ #define CONFIG_HEADER_BN_H
++/*
++ * OpenSSL revision 1.521 from 2005-12-15 in OpenSSL_1_0_0-stable branch changed
++ * 64 bit sparcv9 configuration from SIXTY_FOUR_BIT_LONG to BN_LLONG.
++ */
++#if defined(__x86_64)
++#undef BN_LLONG
++#else
+ #define BN_LLONG
++#endif
+ 
+ /* Should we define BN_DIV2W here? */
+ 
+ /* Only one for the following should be defined */
++#if defined(__x86_64)
++#define SIXTY_FOUR_BIT_LONG
++#undef THIRTY_TWO_BIT
++#else
+ #undef SIXTY_FOUR_BIT_LONG
+ #undef SIXTY_FOUR_BIT
+ #define THIRTY_TWO_BIT
+ #endif
++#undef SIXTY_FOUR_BIT
++#endif
+ 
+ #if defined(HEADER_RC4_LOCL_H) && !defined(CONFIG_HEADER_RC4_LOCL_H)
+ #define CONFIG_HEADER_RC4_LOCL_H
