@@ -1,0 +1,126 @@
+--- /tmp/Configure	Fri Feb 11 14:40:39 2011
++++ openssl-1.0.0d/Configure	Fri Feb 11 14:41:36 2011
+@@ -10,7 +10,7 @@
+ 
+ # see INSTALL for instructions.
+ 
+-my $usage="Usage: Configure [no-<cipher> ...] [enable-<cipher> ...] [experimental-<cipher> ...] [-Dxxx] [-lxxx] [-Lxxx] [-fxxx] [-Kxxx] [no-hw-xxx|no-hw] [[no-]threads] [[no-]shared] [[no-]zlib|zlib-dynamic] [no-asm] [no-dso] [no-krb5] [386] [--prefix=DIR] [--openssldir=OPENSSLDIR] [--with-xxx[=vvv]] [--test-sanity] os/compiler[:flags]\n";
++my $usage="Usage: Configure --pk11-libname=PK11_LIB_LOCATION [no-<cipher> ...] [enable-<cipher> ...] [experimental-<cipher> ...] [-Dxxx] [-lxxx] [-Lxxx] [-fxxx] [-Kxxx] [no-hw-xxx|no-hw] [[no-]threads] [[no-]shared] [[no-]zlib|zlib-dynamic] [no-asm] [no-dso] [no-krb5] [386] [--prefix=DIR] [--openssldir=OPENSSLDIR] [--with-xxx[=vvv]] [--test-sanity] os/compiler[:flags]\n";
+ 
+ # Options:
+ #
+@@ -19,6 +19,9 @@
+ # --prefix      prefix for the OpenSSL include, lib and bin directories
+ #               (Default: the OPENSSLDIR directory)
+ #
++# --pk11-libname  PKCS#11 library name.
++#               (Default: none)
++#
+ # --install_prefix  Additional prefix for package builders (empty by
+ #               default).  This needn't be set in advance, you can
+ #               just as well use "make INSTALL_PREFIX=/whatever install".
+@@ -622,6 +625,9 @@
+ my $idx_arflags = $idx++;
+ my $idx_multilib = $idx++;
+ 
++# PKCS#11 engine patch
++my $pk11_libname="";
++
+ my $prefix="";
+ my $libdir="";
+ my $openssldir="";
+@@ -824,6 +830,10 @@
+ 				{
+ 				$flags.=$_." ";
+ 				}
++                        elsif (/^--pk11-libname=(.*)$/)
++                                {
++                                $pk11_libname=$1;
++                                }
+ 			elsif (/^--prefix=(.*)$/)
+ 				{
+ 				$prefix=$1;
+@@ -961,6 +971,13 @@
+ 	exit 0;
+ }
+ 
++if (! $pk11_libname)
++        {
++        print STDERR "You must set --pk11-libname for PKCS#11 library.\n";
++        print STDERR "See README.pkcs11 for more information.\n";
++        exit 1;
++        }
++
+ if ($target =~ m/^CygWin32(-.*)$/) {
+ 	$target = "Cygwin".$1;
+ }
+@@ -1123,6 +1140,8 @@
+ if ($flags ne "")	{ $cflags="$flags$cflags"; }
+ else			{ $no_user_cflags=1;       }
+ 
++$cflags="-DPK11_LIB_LOCATION=\"$pk11_libname\" $cflags";
++
+ # Kerberos settings.  The flavor must be provided from outside, either through
+ # the script "config" or manually.
+ if (!$no_krb5)
+@@ -1492,6 +1511,7 @@
+ 	s/^VERSION=.*/VERSION=$version/;
+ 	s/^MAJOR=.*/MAJOR=$major/;
+ 	s/^MINOR=.*/MINOR=$minor/;
++	s/^PK11_LIB_LOCATION=.*/PK11_LIB_LOCATION=$pk11_libname/;
+ 	s/^SHLIB_VERSION_NUMBER=.*/SHLIB_VERSION_NUMBER=$shlib_version_number/;
+ 	s/^SHLIB_VERSION_HISTORY=.*/SHLIB_VERSION_HISTORY=$shlib_version_history/;
+ 	s/^SHLIB_MAJOR=.*/SHLIB_MAJOR=$shlib_major/;
+--- /tmp/Makefile.org	Fri Feb 11 14:41:54 2011
++++ openssl-1.0.0d/Makefile.org	Fri Feb 11 14:38:01 2011
+@@ -26,6 +26,9 @@
+ INSTALL_PREFIX=
+ INSTALLTOP=/usr/local/ssl
+ 
++# You must set this through --pk11-libname configure option.
++PK11_LIB_LOCATION=
++
+ # Do not edit this manually. Use Configure --openssldir=DIR do change this!
+ OPENSSLDIR=/usr/local/ssl
+ 
+--- /tmp/Makefile	Fri Feb 11 14:42:03 2011
++++ openssl-1.0.0d/crypto/engine/Makefile	Fri Feb 11 14:45:43 2011
+@@ -21,12 +21,14 @@
+ 	eng_table.c eng_pkey.c eng_fat.c eng_all.c \
+ 	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
+ 	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
+-	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c
++	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
++	hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
+ LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
+ 	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
+ 	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
+ 	tb_cipher.o tb_digest.o tb_pkmeth.o tb_asnmth.o \
+-	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o
++	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
++	hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
+ 
+ SRC= $(LIBSRC)
+ 
+--- /tmp/eng_all.c	Fri Feb 11 14:46:11 2011
++++ openssl-1.0.0d/crypto/engine/eng_all.c	Fri Feb 11 14:38:01 2011
+@@ -72,6 +72,9 @@
+ 	ENGINE_load_cryptodev();
+ #endif
+ 	ENGINE_load_dynamic();
++#ifndef OPENSSL_NO_HW_PKCS11
++	ENGINE_load_pk11();
++#endif
+ #ifndef OPENSSL_NO_STATIC_ENGINE
+ #ifndef OPENSSL_NO_HW
+ #ifndef OPENSSL_NO_HW_4758_CCA
+--- /tmp/engine.h	Fri Feb 11 14:46:24 2011
++++ openssl-1.0.0d/crypto/engine/engine.h	Fri Feb 11 14:47:32 2011
+@@ -344,6 +344,7 @@
+ #endif
+ #endif
+ void ENGINE_load_cryptodev(void);
++void ENGINE_load_pk11(void);
+ void ENGINE_load_builtin_engines(void);
+ 
+ /* Get and set global flags (ENGINE_TABLE_FLAG_***) for the implementation

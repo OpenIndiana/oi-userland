@@ -1,0 +1,12 @@
+--- /tmp/Makefile.shared	Mon Feb 14 14:39:29 2011
++++ openssl-1.0.0d/Makefile.shared	Mon Feb 14 14:50:52 2011
+@@ -387,6 +387,9 @@
+ 		ALLSYMSFLAGS="$${MINUSZ}allextract"; \
+ 		NOALLSYMSFLAGS="$${MINUSZ}defaultextract"; \
+ 		SHAREDFLAGS="$(CFLAGS) $(SHARED_LDFLAGS) -h $$SHLIB$$SHLIB_SOVER$$SHLIB_SUFFIX -Wl,-Bsymbolic"; \
++		if [ $(LIBNAME) = "ssl" ]; then \
++			SHAREDFLAGS="$$SHAREDFLAGS $${MINUSZ}nodelete"; \
++		fi; \
+ 	fi; \
+ 	$(LINK_SO_A)
+ # Make sure the apps have non-executable stacks and data (x86/x64 only).
