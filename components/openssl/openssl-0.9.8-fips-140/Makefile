@@ -20,7 +20,9 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-include $(WS_TOP)/make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
+
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
 COMPONENT_NAME =	openssl
 # Note that this is the OpenSSL version that is used to build FIPS-140 certified
