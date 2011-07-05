@@ -26,7 +26,7 @@
 # to build FIPS-140 certified OpenSSL libraries.
 #
 
-include $(WS_TOP)/make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl-fips
 COMPONENT_VERSION =	1.2

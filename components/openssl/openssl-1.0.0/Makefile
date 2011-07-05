@@ -20,7 +20,7 @@
 #
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
-include $(WS_TOP)/make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl
 # When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
@@ -38,6 +38,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/lint-libraries.mk
+
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
@@ -140,7 +142,7 @@ COMPONENT_PRE_INSTALL_ACTION = ( $(MKDIR) $(MANDIR_SECTIONS); \
 # also add /usr/perl5/bin to PATH so that OpenSSL install code can locate the
 # system pod2man. If not set, OpenSSL make would use an internal implementation
 # from the tarball which would corrupt some man pages.
-COMPONENT_INSTALL_ENV += PATH=$(PATH):/usr/perl5/bin MANDIR=/usr/share/man
+COMPONENT_INSTALL_ARGS += PATH=$(PATH) MANDIR=/usr/share/man
 
 # We could run OpenSSL install code for 32 bits only to process header files and
 # manual pages. However, link libraries depend on install stamps so we run
