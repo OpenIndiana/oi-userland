@@ -130,6 +130,10 @@ $(COMPONENT_DIR)/../openssl-fips/build/$(MACH64)/.installed:
 	( unset BITS; \
 	$(MAKE) -C $(COMPONENT_DIR)/../openssl-fips install; )
 
+# download, clean, and clobber should all propogate to the fips bits
+download clobber clean::
+	(cd ../openssl-fips ; $(GMAKE) $@)
+
 # We do not ship our engines as patches since it would be more difficult to
 # update the files which have been under continuous development. We rather copy
 # the files to the right directories and let OpenSSL makefiles build it.
