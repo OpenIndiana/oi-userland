@@ -64,6 +64,7 @@ CONFIGURE_OPTIONS += --with-system-readline
 CONFIGURE_OPTIONS += --with-x=no
 CONFIGURE_OPTIONS += --with-curses
 CONFIGURE_OPTIONS += --with-libexpat-prefix=/usr/lib
+CONFIGURE_OPTIONS += --infodir=$(CONFIGURE_INFODIR)
 
 # common targets
 build:		$(BUILD_64)
