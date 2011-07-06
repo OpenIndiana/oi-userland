@@ -1,0 +1,96 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+set name=pkg.fmri \
+    value=pkg:/library/librsync@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="A library that implements the rolling-checksum algorithm of remote file synchronization that was popularized by the rsync utility and is used in rproxy"
+set name=pkg.summary value="A library that implements the rsync remote-delta algorithm"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2008/245
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+dir path=usr
+dir path=usr/bin
+dir path=usr/bin/$(MACH64)
+dir path=usr/include
+dir path=usr/lib
+dir path=usr/lib/$(MACH64)
+dir path=usr/share
+dir path=usr/share/doc
+dir path=usr/share/doc/librsync-0.9.7
+dir path=usr/share/doc/librsync-0.9.7/html
+dir path=usr/share/man
+dir path=usr/share/man/man1
+dir path=usr/share/man/man3
+
+file path=usr/bin/$(MACH64)/rdiff
+file path=usr/bin/rdiff
+file path=usr/include/librsync-config.h
+file path=usr/include/librsync.h
+file path=usr/lib/$(MACH64)/librsync.so.1.0.2
+file path=usr/lib/librsync.so.1.0.2
+file path=usr/share/doc/librsync-0.9.7/html/annotated.html
+file path=usr/share/doc/librsync-0.9.7/html/doxygen.css
+file path=usr/share/doc/librsync-0.9.7/html/doxygen.png
+file path=usr/share/doc/librsync-0.9.7/html/files.html
+file path=usr/share/doc/librsync-0.9.7/html/functions_vars.html
+file path=usr/share/doc/librsync-0.9.7/html/functions.html
+file path=usr/share/doc/librsync-0.9.7/html/globals_defs.html
+file path=usr/share/doc/librsync-0.9.7/html/globals_enum.html
+file path=usr/share/doc/librsync-0.9.7/html/globals_eval.html
+file path=usr/share/doc/librsync-0.9.7/html/globals_func.html
+file path=usr/share/doc/librsync-0.9.7/html/globals_type.html
+file path=usr/share/doc/librsync-0.9.7/html/globals_vars.html
+file path=usr/share/doc/librsync-0.9.7/html/globals.html
+file path=usr/share/doc/librsync-0.9.7/html/index.html
+file path=usr/share/doc/librsync-0.9.7/html/librsync_8h.html
+file path=usr/share/doc/librsync-0.9.7/html/librsync-config_8h.html
+file path=usr/share/doc/librsync-0.9.7/html/pages.html
+file path=usr/share/doc/librsync-0.9.7/html/structrs__buffers__s.html
+file path=usr/share/doc/librsync-0.9.7/html/structrs__stats.html
+file path=usr/share/doc/librsync-0.9.7/html/structrs__target.html
+file path=usr/share/doc/librsync-0.9.7/html/tab_b.gif
+file path=usr/share/doc/librsync-0.9.7/html/tab_l.gif
+file path=usr/share/doc/librsync-0.9.7/html/tab_r.gif
+file path=usr/share/doc/librsync-0.9.7/html/tabs.css
+file path=usr/share/doc/librsync-0.9.7/html/todo.html
+file path=usr/share/doc/librsync-0.9.7/librsync.pdf
+file path=usr/share/man/man1/rdiff.1
+file path=usr/share/man/man3/librsync.3
+
+link path=usr/lib/librsync.so.1 target=librsync.so.1.0.2
+link path=usr/lib/librsync.so target=librsync.so.1.0.2
+link path=usr/lib/$(MACH64)/librsync.so.1 target=librsync.so.1.0.2
+link path=usr/lib/$(MACH64)/librsync.so target=librsync.so.1.0.2
+
+license librsync.copyright license="LGPLv2.1"
+
+legacy pkg=SUNWlibrsync \
+    desc="librsync - software library that implements the rsync remote-delta algorithm (0.9.7)" \
+    name="librsync - software library that implements the rsync remote-delta algorithm"
