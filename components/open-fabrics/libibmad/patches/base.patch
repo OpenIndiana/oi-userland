@@ -1,0 +1,275 @@
+diff -r -u /tmp/libibmad-1.3.7/Makefile.in libibmad-1.3.7/Makefile.in
+--- /tmp/libibmad-1.3.7/Makefile.in	Wed Feb 16 02:25:43 2011
++++ libibmad-1.3.7/Makefile.in	Fri Feb 25 03:14:42 2011
+@@ -357,8 +357,8 @@
+ 	  else :; fi; \
+ 	done; \
+ 	test -z "$$list2" || { \
+-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
++	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
++	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+ 	}
+ 
+ uninstall-libLTLIBRARIES:
+diff -r -u /tmp/libibmad-1.3.7/include/infiniband/mad.h libibmad-1.3.7/include/infiniband/mad.h
+--- /tmp/libibmad-1.3.7/include/infiniband/mad.h	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/include/infiniband/mad.h	Thu Feb 24 11:27:11 2011
+@@ -1036,6 +1036,10 @@
+ 
+ extern MAD_EXPORT int ibdebug;
+ 
++#if !(defined(__SVR4) && defined(__sun))
++#include <endian.h>
++#include <byteswap.h>
++
+ #if __BYTE_ORDER == __LITTLE_ENDIAN
+ #ifndef ntohll
+ static inline uint64_t ntohll(uint64_t x)
+@@ -1063,6 +1067,9 @@
+ }
+ #endif
+ #endif				/* __BYTE_ORDER == __BIG_ENDIAN */
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ /* Misc. macros: */
+ /** align value \a l to \a size (ceil) */
+@@ -1069,14 +1076,14 @@
+ #define ALIGN(l, size) (((l) + ((size) - 1)) / (size) * (size))
+ 
+ /** printf style warning MACRO, includes name of function and pid */
+-#define IBWARN(fmt, ...) fprintf(stderr, "ibwarn: [%d] %s: " fmt "\n", getpid(), __func__, ## __VA_ARGS__)
++#define IBWARN(fmt, ...) fprintf(stderr, "ibwarn: [%d] %s: " fmt "\n", (int)getpid(), __func__, ## __VA_ARGS__)
+ 
+-#define IBDEBUG(fmt, ...) fprintf(stdout, "ibdebug: [%d] %s: " fmt "\n", getpid(), __func__, ## __VA_ARGS__)
++#define IBDEBUG(fmt, ...) fprintf(stdout, "ibdebug: [%d] %s: " fmt "\n", (int)getpid(), __func__, ## __VA_ARGS__)
+ 
+-#define IBVERBOSE(fmt, ...) fprintf(stdout, "[%d] %s: " fmt "\n", getpid(), __func__, ## __VA_ARGS__)
++#define IBVERBOSE(fmt, ...) fprintf(stdout, "[%d] %s: " fmt "\n", (int)getpid(), __func__, ## __VA_ARGS__)
+ 
+ #define IBPANIC(fmt, ...) do { \
+-	fprintf(stderr, "ibpanic: [%d] %s: " fmt ": %m\n", getpid(), __func__, ## __VA_ARGS__); \
++	fprintf(stderr, "ibpanic: [%d] %s: " fmt ": %m\n", (int)getpid(), __func__, ## __VA_ARGS__); \
+ 	exit(-1); \
+ } while(0)
+ 
+diff -r -u /tmp/libibmad-1.3.7/include/infiniband/mad_osd.h libibmad-1.3.7/include/infiniband/mad_osd.h
+--- /tmp/libibmad-1.3.7/include/infiniband/mad_osd.h	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/include/infiniband/mad_osd.h	Thu Feb 24 11:27:11 2011
+@@ -39,7 +39,9 @@
+ #include <stdio.h>
+ #include <sys/types.h>
+ #include <unistd.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <byteswap.h>
++#endif
+ #include <inttypes.h>
+ #include <arpa/inet.h>
+ 
+diff -r -u /tmp/libibmad-1.3.7/src/fields.c libibmad-1.3.7/src/fields.c
+--- /tmp/libibmad-1.3.7/src/fields.c	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/src/fields.c	Thu Feb 24 13:27:00 2011
+@@ -514,7 +514,7 @@
+ 	uint64_t nval;
+ 
+ 	nval = htonll(val);
+-	memcpy((char *)buf + base_offs + f->bitoffs / 8, &nval,
++	memcpy( (void*)((char *)buf + base_offs + f->bitoffs / 8), (void *)&nval,
+ 	       sizeof(uint64_t));
+ }
+ 
+@@ -521,7 +521,7 @@
+ static uint64_t _get_field64(void *buf, int base_offs, const ib_field_t * f)
+ {
+ 	uint64_t val;
+-	memcpy(&val, ((char *)buf + base_offs + f->bitoffs / 8),
++	memcpy( (void *)&val, (void *)((char *)buf + base_offs + f->bitoffs / 8),
+ 	       sizeof(uint64_t));
+ 	return ntohll(val);
+ }
+diff -r -u /tmp/libibmad-1.3.7/src/dump.c libibmad-1.3.7/src/dump.c
+--- /tmp/libibmad-1.3.7/src/dump.c	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/src/dump.c	Thu Feb 24 11:27:11 2011
+@@ -46,12 +46,24 @@
+ 
+ void mad_dump_int(char *buf, int bufsz, void *val, int valsz)
+ {
++	/*
++	 * the val pointer passed to the dump routines are always 32 bit
++	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
++	 * uint8_t or uint16_t. This is because mad_decode_field always returns
++	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
++	 */
+ 	switch (valsz) {
+ 	case 1:
+-		snprintf(buf, bufsz, "%d", *(uint32_t *) val & 0xff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint8_t *)val) + 3;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "%d", *(uint8_t *) val & 0xff);
+ 		break;
+ 	case 2:
+-		snprintf(buf, bufsz, "%d", *(uint32_t *) val & 0xffff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint16_t *)val) + 1;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "%d", *(uint16_t *) val & 0xffff);
+ 		break;
+ 	case 3:
+ 	case 4:
+@@ -71,12 +83,24 @@
+ 
+ void mad_dump_uint(char *buf, int bufsz, void *val, int valsz)
+ {
++	/*
++	 * the val pointer passed to the dump routines are always 32 bit
++	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
++	 * uint8_t or uint16_t. This is because mad_decode_field always returns
++	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
++	 */
+ 	switch (valsz) {
+ 	case 1:
+-		snprintf(buf, bufsz, "%u", *(uint32_t *) val & 0xff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint8_t *)val) + 3;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "%u", *(uint8_t *) val & 0xff);
+ 		break;
+ 	case 2:
+-		snprintf(buf, bufsz, "%u", *(uint32_t *) val & 0xffff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint16_t *)val) + 1;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "%u", *(uint16_t *) val & 0xffff);
+ 		break;
+ 	case 3:
+ 	case 4:
+@@ -96,15 +120,28 @@
+ 
+ void mad_dump_hex(char *buf, int bufsz, void *val, int valsz)
+ {
++	/*
++	 * the val pointer passed to the dump routines are always 32 bit
++	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
++	 * uint8_t or uint16_t. This is because mad_decode_field always returns
++	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
++	 */
+ 	switch (valsz) {
+ 	case 1:
+-		snprintf(buf, bufsz, "0x%02x", *(uint32_t *) val & 0xff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint8_t *)val) + 3;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "0x%02x", *(uint8_t *) val & 0xff);
+ 		break;
+ 	case 2:
+-		snprintf(buf, bufsz, "0x%04x", *(uint32_t *) val & 0xffff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint16_t *)val) + 1;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "0x%04x", *(uint16_t *) val & 0xffff);
+ 		break;
+ 	case 3:
+-		snprintf(buf, bufsz, "0x%06x", *(uint32_t *) val & 0xffffff);
++		//snprintf(buf, bufsz, "0x%06x", *(uint32_t *) val & 0xffffff);
++		snprintf(buf, bufsz, "0x%x", *(uint32_t *)val & 0xffffff);
+ 		break;
+ 	case 4:
+ 		snprintf(buf, bufsz, "0x%08x", *(uint32_t *) val);
+@@ -132,12 +169,24 @@
+ 
+ void mad_dump_rhex(char *buf, int bufsz, void *val, int valsz)
+ {
++	/*
++	 * the val pointer passed to the dump routines are always 32 bit
++	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
++	 * uint8_t or uint16_t. This is because mad_decode_field always returns
++	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
++	 */
+ 	switch (valsz) {
+ 	case 1:
+-		snprintf(buf, bufsz, "%02x", *(uint32_t *) val & 0xff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint8_t *)val) + 3;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "%02x", *(uint8_t *) val & 0xff);
+ 		break;
+ 	case 2:
+-		snprintf(buf, bufsz, "%04x", *(uint32_t *) val & 0xffff);
++#if defined(_BIG_ENDIAN)
++		val = ((uint16_t *)val) + 1;
++#endif /* _BIG_ENDIAN */
++		snprintf(buf, bufsz, "%04x", *(uint16_t *) val & 0xffff);
+ 		break;
+ 	case 3:
+ 		snprintf(buf, bufsz, "%06x", *(uint32_t *) val & 0xffffff);
+diff -r -u /tmp/libibmad-1.3.7/src/rpc.c libibmad-1.3.7/src/rpc.c
+--- /tmp/libibmad-1.3.7/src/rpc.c	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/src/rpc.c	Thu Feb 24 11:27:14 2011
+@@ -152,7 +152,7 @@
+ 
+ 		length = len;
+ 		if (umad_send(port_id, agentid, sndbuf, length, timeout, 0) < 0) {
+-			IBWARN("send failed; %m");
++			IBWARN("send failed; %s", strerror(errno));
+ 			return -1;
+ 		}
+ 
+@@ -161,7 +161,7 @@
+ 		do {
+ 			length = len;
+ 			if (umad_recv(port_id, rcvbuf, &length, timeout) < 0) {
+-				IBWARN("recv failed: %m");
++				IBWARN("recv failed: %s", strerror(errno));
+ 				return -1;
+ 			}
+ 
+@@ -337,7 +337,7 @@
+ 		IBPANIC("can't init UMAD library");
+ 
+ 	if ((fd = umad_open_port(dev_name, dev_port)) < 0)
+-		IBPANIC("can't open UMAD port (%s:%d)", dev_name, dev_port);
++		IBPANIC("can't open UMAD port (%s:%d)", dev_name?dev_name:"(nil)", dev_port);
+ 
+ 	if (num_classes >= MAX_CLASS)
+ 		IBPANIC("too many classes %d requested", num_classes);
+diff -r -u /tmp/libibmad-1.3.7/src/serv.c libibmad-1.3.7/src/serv.c
+--- /tmp/libibmad-1.3.7/src/serv.c	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/src/serv.c	Thu Feb 24 11:27:14 2011
+@@ -38,6 +38,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <errno.h>
+ 
+ #include <infiniband/umad.h>
+ #include <infiniband/mad.h>
+@@ -75,7 +76,7 @@
+ 	if (umad_send(srcport->port_id, srcport->class_agents[rpc->mgtclass],
+ 		      umad, IB_MAD_SIZE, mad_get_timeout(srcport, rpc->timeout),
+ 		      0) < 0) {
+-		IBWARN("send failed; %m");
++		IBWARN("send failed; %s", strerror(errno));
+ 		return -1;
+ 	}
+ 
+@@ -157,7 +158,7 @@
+ 	if (umad_send
+ 	    (srcport->port_id, srcport->class_agents[rpc.mgtclass], umad,
+ 	     IB_MAD_SIZE, mad_get_timeout(srcport, rpc.timeout), 0) < 0) {
+-		DEBUG("send failed; %m");
++		DEBUG("send failed; %s", strerror(errno));
+ 		return -1;
+ 	}
+ 
+@@ -179,7 +180,7 @@
+ 			       mad_get_timeout(srcport, timeout))) < 0) {
+ 		if (!umad)
+ 			umad_free(mad);
+-		DEBUG("recv failed: %m");
++		DEBUG("recv failed: %s", strerror(errno));
+ 		return 0;
+ 	}
+ 

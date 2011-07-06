@@ -1,0 +1,1434 @@
+diff -r -u /tmp/846623/libibverbs-1.1.4/Makefile.am libibverbs-1.1.4/Makefile.am
+--- /tmp/846623/libibverbs-1.1.4/Makefile.am	Thu Feb  3 01:53:17 2011
++++ libibverbs-1.1.4/Makefile.am	Fri Feb 11 04:02:12 2011
+@@ -4,13 +4,13 @@
+ 
+ AM_CFLAGS = -g -Wall -D_GNU_SOURCE
+ 
+-src_libibverbs_la_CFLAGS = $(AM_CFLAGS) -DIBV_CONFIG_DIR=\"$(sysconfdir)/libibverbs.d\"
++src_libibverbs_la_CFLAGS = $(AM_CFLAGS) -DIBV_CONFIG_DIR=\"$(datadir)/libibverbs.d\"
+ 
+ libibverbs_version_script = @LIBIBVERBS_VERSION_SCRIPT@
+ 
+ src_libibverbs_la_SOURCES = src/cmd.c src/compat-1_0.c src/device.c src/init.c \
+ 			    src/marshall.c src/memory.c src/sysfs.c src/verbs.c \
+-			    src/enum_strs.c
++			    src/enum_strs.c src/solaris_compatibility.c
+ src_libibverbs_la_LDFLAGS = -version-info 1 -export-dynamic \
+     $(libibverbs_version_script)
+ src_libibverbs_la_DEPENDENCIES = $(srcdir)/src/libibverbs.map
+@@ -37,7 +37,7 @@
+ 
+ libibverbsinclude_HEADERS = include/infiniband/arch.h include/infiniband/driver.h \
+     include/infiniband/kern-abi.h include/infiniband/opcode.h include/infiniband/verbs.h \
+-    include/infiniband/sa-kern-abi.h include/infiniband/sa.h include/infiniband/marshall.h
++    include/infiniband/sa-kern-abi.h include/infiniband/sa.h include/infiniband/marshall.h include/infiniband/ofa_solaris.h
+ 
+ man_MANS = man/ibv_asyncwatch.1 man/ibv_devices.1 man/ibv_devinfo.1	\
+     man/ibv_rc_pingpong.1 man/ibv_uc_pingpong.1 man/ibv_ud_pingpong.1	\
+@@ -65,6 +65,7 @@
+ 
+ EXTRA_DIST = include/infiniband/driver.h include/infiniband/kern-abi.h \
+     include/infiniband/opcode.h include/infiniband/verbs.h include/infiniband/marshall.h \
++	 include/infiniband/ofa_solaris.h \
+     include/infiniband/sa-kern-abi.h include/infiniband/sa.h \
+     src/ibverbs.h examples/pingpong.h \
+     src/libibverbs.map libibverbs.spec.in $(man_MANS)
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_name.3 libibverbs-1.1.4/man/ibv_get_device_name.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_name.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_get_device_name.3	Mon Mar 28 03:11:46 2011
+@@ -2,7 +2,7 @@
+ .\"
+ .TH IBV_GET_DEVICE_NAME 3  2006-10-31 libibverbs "Libibverbs Programmer's Manual"
+ .SH "NAME"
+-ibv_get_device_name \- get an RDMA device's name
++ibv_get_device_name \- get an InfiniBand device's name
+ .SH "SYNOPSIS"
+ .nf
+ .B #include <infiniband/verbs.h>
+@@ -11,7 +11,7 @@
+ .fi
+ .SH "DESCRIPTION"
+ .B ibv_get_device_name()
+-returns a human-readable name associated with the RDMA device
++returns a human-readable name associated with the InfiniBand device
+ .I device\fR.
+ .SH "RETURN VALUE"
+ .B ibv_get_device_name()
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_attach_mcast.3 libibverbs-1.1.4/man/ibv_attach_mcast.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_attach_mcast.3	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/man/ibv_attach_mcast.3	Tue May  3 13:50:06 2011
+@@ -38,9 +38,6 @@
+ .SH "NOTES"
+ Only QPs of Transport Service Type
+ .BR IBV_QPT_UD
+-or
+-.BR IBV_QPT_RAW_PACKET
+-may be attached to multicast groups.
+ .PP
+ If a QP is attached to the same multicast group multiple times, the QP will still receive a single copy of a multicast message.
+ .PP
+@@ -48,22 +45,6 @@
+ multicast group must be sent to the subnet administrator (SA), so that
+ the fabric's multicast routing is configured to deliver messages to
+ the local port.
+-.SH EXAMPLE
+-	An example of the use of ibv_attach_mcast with RAW ETH QP:
+-.nf
+-
+-	union ibv_gid mgid;
+-
+-	memset(&mgid, 0, sizeof(union ibv_gid));
+-
+-	memcpy(&mgid.raw[10], mmac, 6);
+-
+-	if (ibv_attach_mcast(qp, &mgid, 0)) {
+-		printf ("Failed to attach qp to mcast. Errno: %d\\n",errno);
+-		return 1;
+-	}
+-.fi
+-
+ .SH "SEE ALSO"
+ .BR ibv_create_qp (3)
+ .SH "AUTHORS"
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_modify_qp.3 libibverbs-1.1.4/man/ibv_modify_qp.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_modify_qp.3	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/man/ibv_modify_qp.3	Tue May  3 13:50:06 2011
+@@ -161,7 +161,7 @@
+ .fi
+ .PP
+ .nf
+-For QP Transport Service Type \fB IBV_QPT_RAW_PACKET\fR:
++For QP Transport Service Type:
+ .sp
+ Next state     Required attributes
+ \-\-\-\-\-\-\-\-\-\-     \-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-\-
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_devinfo.1 libibverbs-1.1.4/man/ibv_devinfo.1
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_devinfo.1	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_devinfo.1	Mon Mar 28 03:11:46 2011
+@@ -1,7 +1,7 @@
+ .TH IBV_DEVINFO 1 "August 30, 2005" "libibverbs" "USER COMMANDS"
+ 
+ .SH NAME
+-ibv_devinfo \- query RDMA devices
++ibv_devinfo \- query InfiniBand devices
+ 
+ .SH SYNOPSIS
+ .B ibv_devinfo
+@@ -9,7 +9,7 @@
+ 
+ .SH DESCRIPTION
+ .PP
+-Print information about RDMA devices available for use from userspace.
++Print information about InfiniBand devices available for use from userspace.
+ 
+ .SH OPTIONS
+ 
+@@ -22,10 +22,10 @@
+ query port \fIPORT\fR (default all ports)
+ 
+ \fB\-l\fR, \fB\-\-list\fR
+-only list names of RDMA devices
++only list names of InfiniBand devices
+ 
+ \fB\-v\fR, \fB\-\-verbose\fR
+-print all available information about RDMA devices
++print all available information about InfiniBand devices
+ 
+ .SH SEE ALSO
+ .BR ibv_devices (1)
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_query_qp.3 libibverbs-1.1.4/man/ibv_query_qp.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_query_qp.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_query_qp.3	Mon Mar 28 03:11:47 2011
+@@ -68,7 +68,7 @@
+ The argument
+ .I attr_mask
+ is a hint that specifies the minimum list of attributes to retrieve.
+-Some RDMA devices may return extra attributes not requested, for
++Some InfiniBand devices may return extra attributes not requested, for
+ example if the value can be returned cheaply. This has the same
+ form as in
+ .B ibv_modify_qp()\fR.
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_guid.3 libibverbs-1.1.4/man/ibv_get_device_guid.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_guid.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_get_device_guid.3	Mon Mar 28 03:11:46 2011
+@@ -2,7 +2,7 @@
+ .\"
+ .TH IBV_GET_DEVICE_GUID 3 2006-10-31 libibverbs "Libibverbs Programmer's Manual"
+ .SH "NAME"
+-ibv_get_device_guid \- get an RDMA device's GUID
++ibv_get_device_guid \- get an InfiniBand device's GUID
+ .SH "SYNOPSIS"
+ .nf
+ .B #include <infiniband/verbs.h>
+@@ -11,7 +11,7 @@
+ .fi
+ .SH "DESCRIPTION"
+ .B ibv_get_device_name()
+-returns the Global Unique IDentifier (GUID) of the RDMA device
++returns the Global Unique IDentifier (GUID) of the InfiniBand device
+ .I device\fR.
+ .SH "RETURN VALUE"
+ .B ibv_get_device_guid()
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_alloc_pd.3 libibverbs-1.1.4/man/ibv_alloc_pd.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_alloc_pd.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_alloc_pd.3	Mon Mar 28 03:11:45 2011
+@@ -13,7 +13,7 @@
+ .fi
+ .SH "DESCRIPTION"
+ .B ibv_alloc_pd()
+-allocates a PD for the RDMA device context 
++allocates a PD for the InfiniBand device context 
+ .I context\fR.
+ .PP
+ .B ibv_dealloc_pd()
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_async_event.3 libibverbs-1.1.4/man/ibv_get_async_event.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_get_async_event.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_get_async_event.3	Mon Mar 28 03:11:46 2011
+@@ -14,7 +14,7 @@
+ .fi
+ .SH "DESCRIPTION"
+ .B ibv_get_async_event()
+-waits for the next async event of the RDMA device context
++waits for the next async event of the InfiniBand device context
+ .I context
+ and returns it through the pointer
+ .I event\fR,
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_list.3 libibverbs-1.1.4/man/ibv_get_device_list.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_list.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_get_device_list.3	Mon Mar 28 03:11:46 2011
+@@ -2,7 +2,7 @@
+ .\"
+ .TH IBV_GET_DEVICE_LIST 3 2006-10-31 libibverbs "Libibverbs Programmer's Manual"
+ .SH "NAME"
+-ibv_get_device_list, ibv_free_device_list \- get and release list of available RDMA devices
++ibv_get_device_list, ibv_free_device_list \- get and release list of available InfiniBand devices
+ .SH "SYNOPSIS"
+ .nf
+ .B #include <infiniband/verbs.h>
+@@ -13,7 +13,7 @@
+ .fi
+ .SH "DESCRIPTION"
+ .B ibv_get_device_list()
+-returns a NULL-terminated array of RDMA devices currently available.
++returns a NULL-terminated array of InfiniBand devices currently available.
+ The argument
+ .I num_devices
+ is optional; if not NULL, it is set to the number of devices returned in the array.
+@@ -25,7 +25,7 @@
+ .B ibv_get_device_list()\fR.
+ .SH "RETURN VALUE"
+ .B ibv_get_device_list()
+-returns the array of available RDMA devices, or sets
++returns the array of available InfiniBand devices, or sets
+ .I errno
+ and returns NULL if the request fails. If no devices are found then
+ .I num_devices
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_query_device.3 libibverbs-1.1.4/man/ibv_query_device.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_query_device.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_query_device.3	Mon Mar 28 03:11:47 2011
+@@ -2,7 +2,7 @@
+ .\"
+ .TH IBV_QUERY_DEVICE 3 2006-10-31 libibverbs "Libibverbs Programmer's Manual"
+ .SH "NAME"
+-ibv_query_device \- query an RDMA device's attributes
++ibv_query_device \- query an InfiniBand device's attributes
+ .SH "SYNOPSIS"
+ .nf
+ .B #include <infiniband/verbs.h>
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_query_port.3 libibverbs-1.1.4/man/ibv_query_port.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_query_port.3	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/man/ibv_query_port.3	Mon Mar 28 03:11:47 2011
+@@ -2,7 +2,7 @@
+ .\"
+ .TH IBV_QUERY_PORT 3 2006-10-31 libibverbs "Libibverbs Programmer's Manual"
+ .SH "NAME"
+-ibv_query_port \- query an RDMA port's attributes
++ibv_query_port \- query an InfiniBand port's attributes
+ .SH "SYNOPSIS"
+ .nf
+ .B #include <infiniband/verbs.h>
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_asyncwatch.1 libibverbs-1.1.4/man/ibv_asyncwatch.1
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_asyncwatch.1	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_asyncwatch.1	Mon Mar 28 03:11:45 2011
+@@ -8,7 +8,7 @@
+ 
+ .SH DESCRIPTION
+ .PP
+-Display asynchronous events forwarded to userspace for an RDMA device.
++Display asynchronous events forwarded to userspace for an InfiniBand device.
+ 
+ .SH AUTHORS
+ .TP
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_open_device.3 libibverbs-1.1.4/man/ibv_open_device.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_open_device.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_open_device.3	Mon Mar 28 03:11:46 2011
+@@ -2,7 +2,7 @@
+ .\"
+ .TH IBV_OPEN_DEVICE 3 2006-10-31 libibverbs "Libibverbs Programmer's Manual"
+ .SH "NAME"
+-ibv_open_device, ibv_close_device \- open and close an RDMA device context
++ibv_open_device, ibv_close_device \- open and close an InfiniBand device context
+ .SH "SYNOPSIS"
+ .nf
+ .B #include <infiniband/verbs.h>
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_create_comp_channel.3 libibverbs-1.1.4/man/ibv_create_comp_channel.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_create_comp_channel.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_create_comp_channel.3	Mon Mar 28 03:11:45 2011
+@@ -15,7 +15,7 @@
+ .fi
+ .SH "DESCRIPTION"
+ .B ibv_create_comp_channel()
+-creates a completion event channel for the RDMA device context
++creates a completion event channel for the InfiniBand device context
+ .I context\fR.
+ .PP
+ .B ibv_destroy_comp_channel()
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_create_cq.3 libibverbs-1.1.4/man/ibv_create_cq.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_create_cq.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_create_cq.3	Mon Mar 28 03:11:45 2011
+@@ -18,7 +18,7 @@
+ .B ibv_create_cq()
+ creates a completion queue (CQ) with at least
+ .I cqe
+-entries for the RDMA device context
++entries for the InfiniBand device context
+ .I context\fR.
+ The pointer
+ .I cq_context
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_devices.1 libibverbs-1.1.4/man/ibv_devices.1
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_devices.1	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_devices.1	Mon Mar 28 03:11:45 2011
+@@ -1,7 +1,7 @@
+ .TH IBV_DEVICES 1 "August 30, 2005" "libibverbs" "USER COMMANDS"
+ 
+ .SH NAME
+-ibv_devices \- list RDMA devices
++ibv_devices \- list InfiniBand devices
+ 
+ .SH SYNOPSIS
+ .B ibv_devices
+@@ -8,7 +8,7 @@
+ 
+ .SH DESCRIPTION
+ .PP
+-List RDMA devices available for use from userspace.
++List InfiniBand devices available for use from userspace.
+ 
+ .SH SEE ALSO
+ .BR ibv_devinfo (1)
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_create_qp.3 libibverbs-1.1.4/man/ibv_create_qp.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_create_qp.3	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/man/ibv_create_qp.3	Tue May  3 13:50:06 2011
+@@ -28,7 +28,7 @@
+ struct ibv_cq          *recv_cq;        /* CQ to be associated with the Receive Queue (RQ) */
+ struct ibv_srq         *srq;            /* SRQ handle if QP is to be associated with an SRQ, otherwise NULL */
+ struct ibv_qp_cap       cap;            /* QP capabilities */
+-enum ibv_qp_type        qp_type;        /* QP Transport Service Type: IBV_QPT_RC, IBV_QPT_UC, IBV_QPT_UD, IBV_QPT_XRC or IBV_QPT_RAW_PACKET */
++enum ibv_qp_type        qp_type;        /* QP Transport Service Type: IBV_QPT_RC, IBV_QPT_UC, IBV_QPT_UD, IBV_QPT_XRC */
+ int                     sq_sig_all;     /* If set, each Work Request (WR) submitted to the SQ generates a completion entry */
+ struct ibv_xrc_domain  *xrc_domain;     /* XRC domain the QP will be associated with (valid only for IBV_QPT_XRC QP), otherwise NULL */
+ .in -8
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_create_ah_from_wc.3 libibverbs-1.1.4/man/ibv_create_ah_from_wc.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_create_ah_from_wc.3	Thu Mar 10 04:51:46 2011
++++ libibverbs-1.1.4/man/ibv_create_ah_from_wc.3	Mon Mar 28 03:11:45 2011
+@@ -21,7 +21,7 @@
+ .B ibv_init_ah_from_wc()
+ initializes the address handle (AH) attribute structure
+ .I ah_attr
+-for the RDMA device context
++for the InfiniBand device context
+ .I context
+ using the port number
+ .I port_num\fR,
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/kern_abi.h libibverbs-1.1.4/src/kern_abi.h
+--- /tmp/846623/libibverbs-1.1.4/src/kern_abi.h	Wed Sep 16 04:27:22 2009
++++ libibverbs-1.1.4/src/kern_abi.h	Fri Feb 11 04:02:32 2011
+@@ -33,7 +33,11 @@
+ #ifndef KERN_ABI_H
+ #define KERN_ABI_H
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ #include <linux/types.h>
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ /*
+  * Increment this value if any changes that break userspace ABI
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
+--- /tmp/846623/libibverbs-1.1.4/src/verbs.c	Thu Feb  3 01:53:17 2011
++++ libibverbs-1.1.4/src/verbs.c	Fri Feb 11 04:02:33 2011
+@@ -41,6 +41,11 @@
+ #include <stdlib.h>
+ #include <errno.h>
+ #include <string.h>
++#if defined(__SVR4) && defined(__sun)
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <sys/sysmacros.h>
++#endif
+ 
+ #include "ibverbs.h"
+ 
+@@ -93,6 +98,44 @@
+ int __ibv_query_gid(struct ibv_context *context, uint8_t port_num,
+ 		    int index, union ibv_gid *gid)
+ {
++#if defined(__SVR4) && defined(__sun)
++	struct ibv_query_gid          cmd;
++	struct ibv_query_gid_resp     resp;
++
++	/*
++	 * Not exported via sysfs, use uverbs command.
++	 */
++	if (!context || !gid || (index < 0)) 
++		return -1;
++
++	if (port_num & 0x80) {
++		if (!index) 
++			return -1;
++
++		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_GID, gid,
++		    sizeof (union ibv_gid) * index);
++
++		cmd.gid_index = index;
++		cmd.port_num  = port_num;
++
++		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
++			return -1;
++		else
++			return 0;
++	} else {
++		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_GID, &resp,
++		    sizeof resp);
++
++		cmd.gid_index = index;
++		cmd.port_num  = port_num;
++
++		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
++			return -1;
++
++		memcpy(gid, resp.gid, sizeof resp.gid);	
++		return 0;
++	}
++#else
+ 	char name[24];
+ 	char attr[41];
+ 	uint16_t val;
+@@ -112,6 +155,7 @@
+ 	}
+ 
+ 	return 0;
++#endif
+ }
+ default_symver(__ibv_query_gid, ibv_query_gid);
+ 
+@@ -118,6 +162,44 @@
+ int __ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
+ 		     int index, uint16_t *pkey)
+ {
++#if defined(__SVR4) && defined(__sun)
++	struct ibv_query_pkey         cmd;
++	struct ibv_query_pkey_resp    resp;
++
++	/*
++	 * Not exported via sysfs, use uverbs command.
++	 */
++	if (!context || !pkey || (index < 0)) 
++		return -1;
++
++	if (port_num & 0x80) {
++		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_PKEY, pkey,
++		    sizeof (uint16_t) * index);
++
++		if (!index)
++			 return -1;
++		cmd.pkey_index = index;
++		cmd.port_num   = port_num;
++
++		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
++			return -1;
++		else
++			return 0;
++	} else {
++
++		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_PKEY, &resp,
++		    sizeof resp);
++
++		cmd.pkey_index = index;
++		cmd.port_num   = port_num;
++
++		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
++			return -1;
++
++		*pkey = resp.pkey;
++		return 0;
++	}
++#else
+ 	char name[24];
+ 	char attr[8];
+ 	uint16_t val;
+@@ -133,6 +215,7 @@
+ 
+ 	*pkey = htons(val);
+ 	return 0;
++#endif
+ }
+ default_symver(__ibv_query_pkey, ibv_query_pkey);
+ 
+@@ -212,6 +295,10 @@
+ 	struct ibv_comp_channel            *channel;
+ 	struct ibv_create_comp_channel      cmd;
+ 	struct ibv_create_comp_channel_resp resp;
++#if defined(__SVR4) && defined(__sun)
++	int		event_fd;
++	struct stat	fstat_buf;
++#endif
+ 
+ 	if (abi_ver <= 2)
+ 		return ibv_create_comp_channel_v2(context);
+@@ -221,7 +308,23 @@
+ 		return NULL;
+ 
+ 	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, CREATE_COMP_CHANNEL, &resp, sizeof resp);
++#if defined(__SVR4) && defined(__sun)
++	event_fd = open("/dev/infiniband/ofs/uverbs:event", O_RDWR);
++	if (event_fd < 0) {
++		free(channel);
++		return NULL;
++	}
++
++	if (fstat(event_fd, &fstat_buf)) {
++		free(channel);
++		return NULL;
++	}
++	resp.fd = minor(fstat_buf.st_rdev);
++#endif
+ 	if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd) {
++#if defined(__SVR4) && defined(__sun)
++		close(event_fd);
++#endif
+ 		free(channel);
+ 		return NULL;
+ 	}
+@@ -228,6 +331,9 @@
+ 
+ 	VALGRIND_MAKE_MEM_DEFINED(&resp, sizeof resp);
+ 
++#if defined(__SVR4) && defined(__sun)
++	resp.fd = event_fd;
++#endif
+ 	channel->context = context;
+ 	channel->fd      = resp.fd;
+ 	channel->refcnt  = 0;
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device.c
+--- /tmp/846623/libibverbs-1.1.4/src/device.c	Thu Feb  3 01:53:17 2011
++++ libibverbs-1.1.4/src/device.c	Fri Feb 11 04:02:31 2011
+@@ -128,8 +128,13 @@
+ 	int cmd_fd;
+ 	struct ibv_context *context;
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	if (asprintf(&devpath, "/dev/infiniband/%s", device->dev_name) < 0)
+ 		return NULL;
++#else
++	if (asprintf(&devpath, "/dev/infiniband/ofs/%s", device->dev_name) < 0)
++		return NULL;
++#endif		
+ 
+ 	/*
+ 	 * We'll only be doing writes, but we need O_RDWR in case the
+@@ -163,6 +168,9 @@
+ 	int async_fd = context->async_fd;
+ 	int cmd_fd   = context->cmd_fd;
+ 	int cq_fd    = -1;
++#if defined(__SVR4) && defined(__sun)
++	int mmap_fd   = context->mmap_fd;
++#endif
+ 
+ 	if (abi_ver <= 2) {
+ 		struct ibv_abi_compat_v2 *t = context->abi_compat;
+@@ -172,6 +180,11 @@
+ 
+ 	context->device->ops.free_context(context);
+ 
++#if defined(__SVR4) && defined(__sun)
++	if (mmap_fd > 0) {
++		close(mmap_fd);
++	}
++#endif
+ 	close(async_fd);
+ 	close(cmd_fd);
+ 	if (abi_ver <= 2)
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/ibverbs.h libibverbs-1.1.4/src/ibverbs.h
+--- /tmp/846623/libibverbs-1.1.4/src/ibverbs.h	Wed Sep 16 04:27:22 2009
++++ libibverbs-1.1.4/src/ibverbs.h	Fri Feb 11 04:02:31 2011
+@@ -52,7 +52,12 @@
+ #  define VALGRIND_MAKE_MEM_DEFINED(addr, len)
+ #endif
+ 
+-#define HIDDEN		__attribute__((visibility ("hidden")))
++#if defined(__SVR4) && defined(__sun)
++#define	HIDDEN
++#undef HAVE_SYMVER_SUPPORT
++#else
++#define	HIDDEN		__attribute__((visibility ("hidden")))
++#endif
+ 
+ #define INIT		__attribute__((constructor))
+ #define FINI		__attribute__((destructor))
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/libibverbs.map libibverbs-1.1.4/src/libibverbs.map
+--- /tmp/846623/libibverbs-1.1.4/src/libibverbs.map	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/src/libibverbs.map	Mon Mar 28 13:44:44 2011
+@@ -71,6 +71,7 @@
+ 		mult_to_ibv_rate;
+ 		ibv_get_sysfs_path;
+ 		ibv_read_sysfs_file;
++		sol_get_cpu_info;
+ 
+ 	local: *;
+ };
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
+--- /tmp/846623/libibverbs-1.1.4/src/cmd.c	Thu Feb  3 01:53:17 2011
++++ libibverbs-1.1.4/src/cmd.c	Fri Feb 11 04:02:31 2011
+@@ -42,9 +42,34 @@
+ #include <errno.h>
+ #include <alloca.h>
+ #include <string.h>
++#if defined(__SVR4) && defined(__sun)
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <sys/sysmacros.h>
++#endif
+ 
+ #include "ibverbs.h"
+ 
++#if defined(__SVR4) && defined(__sun)
++extern int ibv_open_mmap_driver(char *dev_name);
++
++/*
++ * Event file creation for GET_CONTEXT & CREATE_COMP_CHANNEL :
++ * 	Solaris Uverbs driver supports creation of event file
++ * 	from the open(2) system call only. Event file will not
++ * 	be created by the write(2) syscall, for the above commands
++ *	as in Linux OFED.
++ *
++ * Sequence of operations for GET_CONTEXT &  CREATE_COMP_CHANNEL :
++ *	event_fd = open(UVERBS_EVENT_FILE, O_RDWR);
++ *	fstat(event_fd, &fstat_buf);
++ *	NOTE : Minor number of event file passed to driver 
++ *	cmd.resp.fd = minor(fstat_buf.st_rdev);
++ *	write(verbs_fd);
++ *	NOTE : Initialize the fd to one got by opening event file
++ *	cmd.resp.fd = event_fd;
++ */
++#endif
+ static int ibv_cmd_get_context_v2(struct ibv_context *context,
+ 				  struct ibv_get_context *new_cmd,
+ 				  size_t new_cmd_size,
+@@ -55,6 +80,10 @@
+ 	struct ibv_get_context_v2 *cmd;
+ 	size_t cmd_size;
+ 	uint32_t cq_fd;
++#if defined(__SVR4) && defined(__sun)
++	int			event_fd;
++	struct stat		fstat_buf;
++#endif
+ 
+ 	t = malloc(sizeof *t);
+ 	if (!t)
+@@ -67,9 +96,20 @@
+ 
+ 	IBV_INIT_CMD_RESP(cmd, cmd_size, GET_CONTEXT, resp, resp_size);
+ 	cmd->cq_fd_tab = (uintptr_t) &cq_fd;
++#if defined(__SVR4) && defined(__sun)
++	event_fd = open("/dev/infiniband/ofs/uverbs:event", O_RDWR);
++	if (event_fd < 0)
++		return (errno);	
++	if (fstat(event_fd, &fstat_buf))
++		return (errno);
++	resp->async_fd = minor(fstat_buf.st_rdev);
++#endif
+ 
+ 	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
+ 		return errno;
++#if defined(__SVR4) && defined(__sun)
++	resp->async_fd = event_fd;
++#endif
+ 
+ 	VALGRIND_MAKE_MEM_DEFINED(resp, resp_size);
+ 
+@@ -87,13 +127,28 @@
+ 			size_t cmd_size, struct ibv_get_context_resp *resp,
+ 			size_t resp_size)
+ {
++#if defined(__SVR4) && defined(__sun)
++	int			event_fd;
++	struct stat		fstat_buf;
++#endif
+ 	if (abi_ver <= 2)
+ 		return ibv_cmd_get_context_v2(context, cmd, cmd_size, resp, resp_size);
+ 
+ 	IBV_INIT_CMD_RESP(cmd, cmd_size, GET_CONTEXT, resp, resp_size);
++#if defined(__SVR4) && defined(__sun)
++	event_fd = open("/dev/infiniband/ofs/uverbs:event", O_RDWR);
++	if (event_fd < 0)
++		return (errno);	
++	if (fstat(event_fd, &fstat_buf))
++		return (errno);
++	resp->async_fd = minor(fstat_buf.st_rdev);
++#endif
+ 
+ 	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
+ 		return errno;
++#if defined(__SVR4) && defined(__sun)
++	resp->async_fd = event_fd;
++#endif
+ 
+ 	VALGRIND_MAKE_MEM_DEFINED(resp, resp_size);
+ 
+@@ -100,6 +155,16 @@
+ 	context->async_fd         = resp->async_fd;
+ 	context->num_comp_vectors = resp->num_comp_vectors;
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Open the underlying kernel hardware driver that will
++	 * provide the mmap function for this context.
++	 */
++	context->mmap_fd = ibv_open_mmap_driver(context->device->dev_name);
++	if (context->mmap_fd < 0) {
++		fprintf(stderr, PFX "ibv_cmd_get_context: Mmap open failed\n");
++	}
++#endif
+ 	return 0;
+ }
+ 
+@@ -315,7 +380,19 @@
+ 	cmd->user_handle   = (uintptr_t) cq;
+ 	cmd->cqe           = cqe;
+ 	cmd->comp_vector   = comp_vector;
++#if defined(__SVR4) && defined(__sun)
++	if (channel) {
++		struct stat	fstat_buf;
++
++		if (fstat(channel->fd, &fstat_buf))
++			return (errno);
++		else
++			cmd->comp_channel = minor(fstat_buf.st_rdev);
++	} else 
++		cmd->comp_channel = 0;
++#else
+ 	cmd->comp_channel  = channel ? channel->fd : -1;
++#endif
+ 	cmd->reserved      = 0;
+ 
+ 	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
+@@ -637,7 +714,19 @@
+ 	cmd->max_send_sge    = attr->cap.max_send_sge;
+ 	cmd->max_recv_sge    = attr->cap.max_recv_sge;
+ 	cmd->max_inline_data = attr->cap.max_inline_data;
++
++#if defined(__SVR4) && defined(__sun)
++	if (attr->sq_sig_all & LIB_RDMACM_QP_BIT) {
++		cmd->sq_sig_all =
++		    (uint8_t)(attr->sq_sig_all & ~LIB_RDMACM_QP_BIT);
++		cmd->sq_sig_all |= 0x80;
++	} else {
++		cmd->sq_sig_all = (uint8_t)attr->sq_sig_all;
++	}
++#else
+ 	cmd->sq_sig_all	     = attr->sq_sig_all;
++#endif
++
+ 	cmd->qp_type 	     = attr->qp_type;
+ 	cmd->is_srq 	     = !!attr->srq;
+ 	cmd->srq_handle      = attr->qp_type == IBV_QPT_XRC ?
+@@ -1406,4 +1495,3 @@
+ 		return errno;
+ 	return 0;
+ }
+-
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/init.c libibverbs-1.1.4/src/init.c
+--- /tmp/846623/libibverbs-1.1.4/src/init.c	Sun Nov  1 06:47:19 2009
++++ libibverbs-1.1.4/src/init.c	Fri Feb 11 04:02:32 2011
+@@ -79,6 +79,9 @@
+ 
+ static int find_sysfs_devs(void)
+ {
++#if defined(__SVR4) && defined(__sun)
++	char device_path[IBV_SYSFS_PATH_MAX];
++#endif
+ 	char class_path[IBV_SYSFS_PATH_MAX];
+ 	DIR *class_dir;
+ 	struct dirent *dent;
+@@ -86,19 +89,35 @@
+ 	char value[8];
+ 	int ret = 0;
+ 
++#if defined(__SVR4) && defined(__sun)
++	snprintf(device_path, sizeof device_path, "/dev/infiniband/ofs");
++#endif
+ 	snprintf(class_path, sizeof class_path, "%s/class/infiniband_verbs",
+ 		 ibv_get_sysfs_path());
+ 
++#if defined(__SVR4) && defined(__sun)
++	class_dir = opendir(device_path);
++#else
+ 	class_dir = opendir(class_path);
++#endif
+ 	if (!class_dir)
+ 		return ENOSYS;
+ 
+ 	while ((dent = readdir(class_dir))) {
++#if defined(__SVR4) && defined(__sun)
++		int adapter_num;
++#else
+ 		struct stat buf;
++#endif
+ 
+ 		if (dent->d_name[0] == '.')
+ 			continue;
+ 
++#if defined(__SVR4) && defined(__sun)
++		if (sscanf(dent->d_name, "uverbs%d",
++		    &adapter_num) != 1)
++			continue;
++#endif
+ 		if (!sysfs_dev)
+ 			sysfs_dev = malloc(sizeof *sysfs_dev);
+ 		if (!sysfs_dev) {
+@@ -109,6 +128,7 @@
+ 		snprintf(sysfs_dev->sysfs_path, sizeof sysfs_dev->sysfs_path,
+ 			 "%s/%s", class_path, dent->d_name);
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 		if (stat(sysfs_dev->sysfs_path, &buf)) {
+ 			fprintf(stderr, PFX "Warning: couldn't stat '%s'.\n",
+ 				sysfs_dev->sysfs_path);
+@@ -117,6 +137,7 @@
+ 
+ 		if (!S_ISDIR(buf.st_mode))
+ 			continue;
++#endif
+ 
+ 		snprintf(sysfs_dev->sysfs_name, sizeof sysfs_dev->sysfs_name,
+ 			"%s", dent->d_name);
+@@ -409,6 +430,7 @@
+ 
+ static void check_memlock_limit(void)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+ 	struct rlimit rlim;
+ 
+ 	if (!geteuid())
+@@ -423,6 +445,7 @@
+ 		fprintf(stderr, PFX "Warning: RLIMIT_MEMLOCK is %lu bytes.\n"
+ 			"    This will severely limit memory registrations.\n",
+ 			rlim.rlim_cur);
++#endif
+ }
+ 
+ static void add_device(struct ibv_device *dev,
+diff -r -u /tmp/846623/libibverbs-1.1.4/src/sysfs.c libibverbs-1.1.4/src/sysfs.c
+--- /tmp/846623/libibverbs-1.1.4/src/sysfs.c	Wed Sep 16 04:27:22 2009
++++ libibverbs-1.1.4/src/sysfs.c	Fri Feb 11 04:02:33 2011
+@@ -44,6 +44,10 @@
+ 
+ #include "ibverbs.h"
+ 
++#if defined(__SVR4) && defined(__sun)
++int sol_read_sysfs_file(char *path, char *buf, size_t size);
++#endif
++
+ static char *sysfs_path;
+ 
+ const char *ibv_get_sysfs_path(void)
+@@ -79,12 +83,20 @@
+ 			char *buf, size_t size)
+ {
+ 	char *path;
++#if !(defined(__SVR4) && defined(__sun))
+ 	int fd;
++#endif
+ 	int len;
+ 
+ 	if (asprintf(&path, "%s/%s", dir, file) < 0)
+ 		return -1;
+ 
++#if defined(__SVR4) && defined(__sun)
++	len = sol_read_sysfs_file(path, buf, size);
++
++	if (len < 0)
++		free(path);
++#else
+ 	fd = open(path, O_RDONLY);
+ 	if (fd < 0) {
+ 		free(path);
+@@ -98,6 +110,7 @@
+ 
+ 	if (len > 0 && buf[len - 1] == '\n')
+ 		buf[--len] = '\0';
++#endif
+ 
+ 	return len;
+ }
+diff -r -u /tmp/846623/libibverbs-1.1.4/configure libibverbs-1.1.4/configure
+--- /tmp/846623/libibverbs-1.1.4/configure	Thu Feb  3 01:53:23 2011
++++ libibverbs-1.1.4/configure	Fri Feb 11 04:02:14 2011
+@@ -3173,6 +3173,7 @@
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking whether the C compiler works" >&5
+ $as_echo_n "checking whether the C compiler works... " >&6; }
+ ac_link_default=`$as_echo "$ac_link" | sed 's/ -o *conftest[^ ]*//'`
++ac_link_default=`$as_echo "$ac_link" | sed 's/ \$LIBS//'`
+ 
+ # The possible output files:
+ ac_files="a.out conftest.exe conftest a.exe a_out.exe b.out conftest.*"
+@@ -3258,6 +3259,7 @@
+ ac_clean_files=$ac_clean_files_save
+ { $as_echo "$as_me:${as_lineno-$LINENO}: checking for suffix of executables" >&5
+ $as_echo_n "checking for suffix of executables... " >&6; }
++ac_link_nolibs=`$as_echo "$ac_link" | sed 's/ \$LIBS//'`
+ if { { ac_try="$ac_link"
+ case "(($ac_try" in
+   *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+@@ -3265,7 +3267,7 @@
+ esac
+ eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+ $as_echo "$ac_try_echo"; } >&5
+-  (eval "$ac_link") 2>&5
++  (eval "$ac_link_nolibs") 2>&5
+   ac_status=$?
+   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+   test $ac_status = 0; }; then :
+@@ -3321,7 +3323,7 @@
+ esac
+ eval ac_try_echo="\"\$as_me:${as_lineno-$LINENO}: $ac_try_echo\""
+ $as_echo "$ac_try_echo"; } >&5
+-  (eval "$ac_link") 2>&5
++  (eval "$ac_link_nolibs") 2>&5
+   ac_status=$?
+   $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
+   test $ac_status = 0; }
+@@ -8721,6 +8723,7 @@
+ 	;;
+       esac
+       link_all_deplibs=yes
++	 hardcode_libdir_flag_spec=
+       ;;
+ 
+     sunos4*)
+@@ -11198,7 +11201,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-ldl  $LIBS"
++LIBS="-ldl"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+@@ -11245,7 +11248,7 @@
+   $as_echo_n "(cached) " >&6
+ else
+   ac_check_lib_save_LIBS=$LIBS
+-LIBS="-lpthread  $LIBS"
++LIBS="-lpthread"
+ cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+ /* end confdefs.h.  */
+ 
+diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/sa-kern-abi.h libibverbs-1.1.4/include/infiniband/sa-kern-abi.h
+--- /tmp/846623/libibverbs-1.1.4/include/infiniband/sa-kern-abi.h	Wed Sep 16 04:27:22 2009
++++ libibverbs-1.1.4/include/infiniband/sa-kern-abi.h	Fri Feb 11 04:02:21 2011
+@@ -33,7 +33,11 @@
+ #ifndef INFINIBAND_SA_KERN_ABI_H
+ #define INFINIBAND_SA_KERN_ABI_H
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ #include <linux/types.h>
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ /*
+  * Obsolete, deprecated names.  Will be removed in libibverbs 1.1.
+diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs-1.1.4/include/infiniband/kern-abi.h
+--- /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h	Thu Feb  3 01:53:17 2011
++++ libibverbs-1.1.4/include/infiniband/kern-abi.h	Fri Feb 11 04:02:20 2011
+@@ -35,7 +35,11 @@
+ #ifndef KERN_ABI_H
+ #define KERN_ABI_H
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ #include <linux/types.h>
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ /*
+  * This file must be kept in sync with the kernel's version of
+@@ -94,6 +98,10 @@
+ 	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP,
+ 	IB_USER_VERBS_CMD_REG_XRC_RCV_QP,
+ 	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP,
++#if defined(__SVR4) && defined(__sun)
++	IB_USER_VERBS_CMD_QUERY_GID,
++	IB_USER_VERBS_CMD_QUERY_PKEY
++#endif
+ };
+ 
+ /*
+@@ -235,6 +243,38 @@
+ 	__u8  reserved[2];
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++struct ibv_query_gid {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u64 response;
++	__u32 gid_index;
++	__u8  port_num;
++	__u8  reserved[3];
++	__u64 driver_data;
++};
++
++struct ibv_query_gid_resp {
++	__u8  gid[16];
++};
++
++struct ibv_query_pkey {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u64 response;
++	__u32 pkey_index;
++	__u8  port_num;
++	__u8  reserved[3];
++	__u64 driver_data;
++};
++
++struct ibv_query_pkey_resp {
++	__u16 pkey;
++	__u16 reserved;
++};
++#endif
+ struct ibv_alloc_pd {
+ 	__u32 command;
+ 	__u16 in_words;
+@@ -243,9 +283,24 @@
+ 	__u64 driver_data[0];
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++/*
++ * PD responses may pass opaque data to userspace drivers, we choose a value
++ * larger than what any HCA requires.
++ */
++#define SOL_UVERBS_PD_DATA_OUT_SIZE          24
++typedef __u64 ofuv_pd_drv_data_out_t[SOL_UVERBS_PD_DATA_OUT_SIZE];
++
+ struct ibv_alloc_pd_resp {
++        __u32 pd_handle;
++        __u32 reserved;
++        ofuv_pd_drv_data_out_t drv_out;
++};
++#else
++struct ibv_alloc_pd_resp {
+ 	__u32 pd_handle;
+ };
++#endif
+ 
+ struct ibv_dealloc_pd {
+ 	__u32 command;
+@@ -304,10 +359,25 @@
+ 	__u64 driver_data[0];
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++/*
++ * CQ responses pass opaque data to userspace drivers, we choose a value
++ * larger than what any HCA requires.
++ */
++#define SOL_UVERBS_CQ_DATA_OUT_SIZE          24
++typedef __u64 ofuv_cq_drv_data_out_t[SOL_UVERBS_CQ_DATA_OUT_SIZE];
++
+ struct ibv_create_cq_resp {
+ 	__u32 cq_handle;
+ 	__u32 cqe;
++	ofuv_cq_drv_data_out_t   drv_out;
+ };
++#else
++struct ibv_create_cq_resp {
++	__u32 cq_handle;
++	__u32 cqe;
++};
++#endif
+ 
+ struct ibv_kern_wc {
+ 	__u64  wr_id;
+@@ -363,7 +433,11 @@
+ struct ibv_resize_cq_resp {
+ 	__u32 cqe;
+ 	__u32 reserved;
++#if defined(__SVR4) && defined(__sun)
++        ofuv_cq_drv_data_out_t   drv_out;
++#else
+ 	__u64 driver_data[0];
++#endif
+ };
+ 
+ struct ibv_destroy_cq {
+@@ -460,6 +534,14 @@
+ 	__u64 driver_data[0];
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++/*
++ * QP responses pass opaque data to userspace drivers, we choose a value
++ * larger than what any HCA requires.
++ */
++#define SOL_UVERBS_QP_DATA_OUT_SIZE          24
++typedef __u64 ofuv_qp_drv_data_out_t[SOL_UVERBS_QP_DATA_OUT_SIZE];
++
+ struct ibv_create_qp_resp {
+ 	__u32 qp_handle;
+ 	__u32 qpn;
+@@ -469,7 +551,20 @@
+ 	__u32 max_recv_sge;
+ 	__u32 max_inline_data;
+ 	__u32 reserved;
++	ofuv_qp_drv_data_out_t drv_out;
+ };
++#else
++struct ibv_create_qp_resp {
++	__u32 qp_handle;
++	__u32 qpn;
++	__u32 max_send_wr;
++	__u32 max_recv_wr;
++	__u32 max_send_sge;
++	__u32 max_recv_sge;
++	__u32 max_inline_data;
++	__u32 reserved;
++};
++#endif
+ 
+ struct ibv_qp_dest {
+ 	__u8  dgid[16];
+@@ -817,12 +912,29 @@
+ 	__u64 driver_data[0];
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++/*
++ * QP responses pass opaque data to userspace drivers, we choose a value
++ * larger than what any HCA requires.
++ */
++#define SOL_UVERBS_SRQ_DATA_OUT_SIZE          24
++typedef __u64 ofuv_srq_drv_data_out_t[SOL_UVERBS_SRQ_DATA_OUT_SIZE];
++
+ struct ibv_create_srq_resp {
+ 	__u32 srq_handle;
+ 	__u32 max_wr;
+ 	__u32 max_sge;
+ 	__u32 reserved;
++	ofuv_srq_drv_data_out_t drv_out;
+ };
++#else
++struct ibv_create_srq_resp {
++	__u32 srq_handle;
++	__u32 max_wr;
++	__u32 max_sge;
++	__u32 reserved;
++};
++#endif
+ 
+ struct ibv_modify_srq {
+ 	__u32 command;
+diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/driver.h libibverbs-1.1.4/include/infiniband/driver.h
+--- /tmp/846623/libibverbs-1.1.4/include/infiniband/driver.h	Thu Feb  3 01:53:17 2011
++++ libibverbs-1.1.4/include/infiniband/driver.h	Fri Feb 11 04:02:20 2011
+@@ -164,8 +164,8 @@
+ int ibv_read_sysfs_file(const char *dir, const char *file,
+ 			char *buf, size_t size);
+ 
+-int ibv_resolve_eth_gid(const struct ibv_pd *pd, uint8_t port_num,
+-			union ibv_gid *dgid, uint8_t sgid_index,
++int ibv_resolve_eth_gid(struct ibv_pd *pd, uint8_t port_num,
++			const union ibv_gid *dgid, uint8_t sgid_index,
+ 			uint8_t mac[], uint16_t *vlan, uint8_t *tagged,
+ 			uint8_t *is_mcast);
+ 
+diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.1.4/include/infiniband/verbs.h
+--- /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h	Thu Feb  3 01:53:17 2011
++++ libibverbs-1.1.4/include/infiniband/verbs.h	Fri Feb 11 04:02:21 2011
+@@ -38,6 +38,9 @@
+ 
+ #include <stdint.h>
+ #include <pthread.h>
++#if defined(__SVR4) && defined(__sun)
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ #ifdef __cplusplus
+ #  define BEGIN_C_DECLS extern "C" {
+@@ -297,7 +300,8 @@
+ 	IBV_ACCESS_REMOTE_WRITE		= (1<<1),
+ 	IBV_ACCESS_REMOTE_READ		= (1<<2),
+ 	IBV_ACCESS_REMOTE_ATOMIC	= (1<<3),
+-	IBV_ACCESS_MW_BIND		= (1<<4)
++	IBV_ACCESS_MW_BIND		= (1<<4),
++	IBV_ACCESS_SO			= (1<<5)	/* Strong Order */
+ };
+ 
+ struct ibv_pd {
+@@ -425,6 +429,14 @@
+ 	uint32_t		max_inline_data;
+ };
+ 
++#if defined(__SVR4) && defined(__sun)
++/*
++ * The 31st bit of sq_sig_all is set for QPs allocated
++ * using librdmacm. Consumers use sq_sig_all 0 /1.
++ */
++#define LIB_RDMACM_QP_BIT	0x8000
++#endif
++
+ struct ibv_qp_init_attr {
+ 	void		       *qp_context;
+ 	struct ibv_cq	       *send_cq;
+@@ -749,6 +761,13 @@
+ 	struct ibv_device      *device;
+ 	struct ibv_context_ops	ops;
+ 	int			cmd_fd;
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Solaris user libraries use this FD for mmap operations. It is an
++	 * open to the underlying kernel hardware specific driver.
++	 */
++	int			mmap_fd;
++#endif
+ 	int			async_fd;
+ 	int			num_comp_vectors;
+ 	pthread_mutex_t		mutex;
+diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/arch.h libibverbs-1.1.4/include/infiniband/arch.h
+--- /tmp/846623/libibverbs-1.1.4/include/infiniband/arch.h	Wed Sep 16 04:27:22 2009
++++ libibverbs-1.1.4/include/infiniband/arch.h	Fri Feb 11 04:02:20 2011
+@@ -34,6 +34,7 @@
+ #define INFINIBAND_ARCH_H
+ 
+ #include <stdint.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <endian.h>
+ #include <byteswap.h>
+ 
+@@ -46,6 +47,9 @@
+ #else
+ #error __BYTE_ORDER is neither __LITTLE_ENDIAN nor __BIG_ENDIAN
+ #endif
++#else
++#include <infiniband/ofa_solaris.h>
++#endif
+ 
+ /*
+  * Architecture-specific defines.  Currently, an architecture is
+diff -r -u /tmp/846623/libibverbs-1.1.4/Makefile.in libibverbs-1.1.4/Makefile.in
+--- /tmp/846623/libibverbs-1.1.4/Makefile.in	Thu Feb  3 01:53:23 2011
++++ libibverbs-1.1.4/Makefile.in	Fri Feb 11 05:27:45 2011
+@@ -90,7 +90,8 @@
+ 	src_libibverbs_la-compat-1_0.lo src_libibverbs_la-device.lo \
+ 	src_libibverbs_la-init.lo src_libibverbs_la-marshall.lo \
+ 	src_libibverbs_la-memory.lo src_libibverbs_la-sysfs.lo \
+-	src_libibverbs_la-verbs.lo src_libibverbs_la-enum_strs.lo
++	src_libibverbs_la-verbs.lo src_libibverbs_la-enum_strs.lo \
++	src_libibverbs_la-solaris.lo
+ src_libibverbs_la_OBJECTS = $(am_src_libibverbs_la_OBJECTS)
+ AM_V_lt = $(am__v_lt_$(V))
+ am__v_lt_ = $(am__v_lt_$(AM_DEFAULT_VERBOSITY))
+@@ -313,11 +314,11 @@
+ INCLUDES = -I$(srcdir)/include
+ lib_LTLIBRARIES = src/libibverbs.la
+ AM_CFLAGS = -g -Wall -D_GNU_SOURCE
+-src_libibverbs_la_CFLAGS = $(AM_CFLAGS) -DIBV_CONFIG_DIR=\"$(sysconfdir)/libibverbs.d\"
++src_libibverbs_la_CFLAGS = $(AM_CFLAGS) -DIBV_CONFIG_DIR=\"$(datadir)/libibverbs.d\"
+ libibverbs_version_script = @LIBIBVERBS_VERSION_SCRIPT@
+ src_libibverbs_la_SOURCES = src/cmd.c src/compat-1_0.c src/device.c src/init.c \
+ 			    src/marshall.c src/memory.c src/sysfs.c src/verbs.c \
+-			    src/enum_strs.c
++			    src/enum_strs.c src/solaris_compatability src/verbs.c
+ 
+ src_libibverbs_la_LDFLAGS = -version-info 1 -export-dynamic \
+     $(libibverbs_version_script)
+@@ -340,6 +341,7 @@
+ libibverbsincludedir = $(includedir)/infiniband
+ libibverbsinclude_HEADERS = include/infiniband/arch.h include/infiniband/driver.h \
+     include/infiniband/kern-abi.h include/infiniband/opcode.h include/infiniband/verbs.h \
++	include/infiniband/ofa_solaris.h \
+     include/infiniband/sa-kern-abi.h include/infiniband/sa.h include/infiniband/marshall.h
+ 
+ man_MANS = man/ibv_asyncwatch.1 man/ibv_devices.1 man/ibv_devinfo.1	\
+@@ -368,6 +370,7 @@
+ 
+ EXTRA_DIST = include/infiniband/driver.h include/infiniband/kern-abi.h \
+     include/infiniband/opcode.h include/infiniband/verbs.h include/infiniband/marshall.h \
++	 include/infiniband/ofa_solaris.h \
+     include/infiniband/sa-kern-abi.h include/infiniband/sa.h \
+     src/ibverbs.h examples/pingpong.h \
+     src/libibverbs.map libibverbs.spec.in $(man_MANS)
+@@ -440,8 +443,8 @@
+ 	  else :; fi; \
+ 	done; \
+ 	test -z "$$list2" || { \
+-	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
+-	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
++	  echo " $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 '$(DESTDIR)$(libdir)'"; \
++	  $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL) -m 755 $(INSTALL_STRIP_FLAG) $$list2 "$(DESTDIR)$(libdir)"; \
+ 	}
+ 
+ uninstall-libLTLIBRARIES:
+@@ -486,8 +489,8 @@
+ 	while read type dir files; do \
+ 	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
+ 	    test -z "$$files" || { \
+-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
+-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
++	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) -m 755 $$files '$(DESTDIR)$(bindir)$$dir'"; \
++	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) -m 755 $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
+ 	    } \
+ 	; done
+ 
+@@ -554,6 +557,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/src_libibverbs_la-memory.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/src_libibverbs_la-sysfs.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/src_libibverbs_la-verbs.Plo@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/src_libibverbs_la-solaris.Plo@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/srq_pingpong.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/uc_pingpong.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ud_pingpong.Po@am__quote@
+@@ -654,6 +658,14 @@
+ @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+ @am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(src_libibverbs_la_CFLAGS) $(CFLAGS) -c -o src_libibverbs_la-enum_strs.lo `test -f 'src/enum_strs.c' || echo '$(srcdir)/'`src/enum_strs.c
+ 
++src_libibverbs_la-solaris.lo: src/solaris_compatibility.c
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(src_libibverbs_la_CFLAGS) $(CFLAGS) -MT src_libibverbs_la-solaris.lo -MD -MP -MF $(DEPDIR)/src_libibverbs_la-solaris.Tpo -c -o src_libibverbs_la-solaris.lo `test -f 'src/solaris_compatibility.c' || echo '$(srcdir)/'`src/solaris_compatibility.c
++@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/src_libibverbs_la-solaris.Tpo $(DEPDIR)/src_libibverbs_la-solaris.Plo
++@am__fastdepCC_FALSE@	$(AM_V_CC) @AM_BACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/solaris_compatibility.c' object='src_libibverbs_la-solaris.lo' libtool=yes @AMDEPBACKSLASH@
++@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
++@am__fastdepCC_FALSE@	$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(src_libibverbs_la_CFLAGS) $(CFLAGS) -c -o src_libibverbs_la-solaris.lo `test -f 'src/solaris_compatibility.c' || echo '$(srcdir)/'`src/solaris_compatibility.c
++
+ asyncwatch.o: examples/asyncwatch.c
+ @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT asyncwatch.o -MD -MP -MF $(DEPDIR)/asyncwatch.Tpo -c -o asyncwatch.o `test -f 'examples/asyncwatch.c' || echo '$(srcdir)/'`examples/asyncwatch.c
+ @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/asyncwatch.Tpo $(DEPDIR)/asyncwatch.Po
+@@ -669,7 +681,6 @@
+ @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='examples/asyncwatch.c' object='asyncwatch.obj' libtool=no @AMDEPBACKSLASH@
+ @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+ @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -c -o asyncwatch.obj `if test -f 'examples/asyncwatch.c'; then $(CYGPATH_W) 'examples/asyncwatch.c'; else $(CYGPATH_W) '$(srcdir)/examples/asyncwatch.c'; fi`
+-
+ device_list.o: examples/device_list.c
+ @am__fastdepCC_TRUE@	$(AM_V_CC)$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS) -MT device_list.o -MD -MP -MF $(DEPDIR)/device_list.Tpo -c -o device_list.o `test -f 'examples/device_list.c' || echo '$(srcdir)/'`examples/device_list.c
+ @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/device_list.Tpo $(DEPDIR)/device_list.Po
+diff -r -u /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c libibverbs-1.1.4/examples/asyncwatch.c
+--- /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/examples/asyncwatch.c	Fri Feb 11 04:02:18 2011
+@@ -35,8 +35,10 @@
+ #endif /* HAVE_CONFIG_H */
+ 
+ #include <stdio.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <endian.h>
+ #include <byteswap.h>
++#endif
+ 
+ #include <infiniband/verbs.h>
+ 
+diff -r -u /tmp/846623/libibverbs-1.1.4/examples/srq_pingpong.c libibverbs-1.1.4/examples/srq_pingpong.c
+--- /tmp/846623/libibverbs-1.1.4/examples/srq_pingpong.c	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/examples/srq_pingpong.c	Wed Jun  8 09:46:34 2011
+@@ -171,6 +171,12 @@
+ 		return NULL;
+ 	}
+ 
++	if (n == EAI_NONAME) {
++		fprintf(stderr, "Name or service not known for %s:%d\n", servername, port);
++		free(service);
++		return NULL;
++	}
++
+ 	for (t = res; t; t = t->ai_next) {
+ 		sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+ 		if (sockfd >= 0) {
+diff -r -u /tmp/846623/libibverbs-1.1.4/examples/ud_pingpong.c libibverbs-1.1.4/examples/ud_pingpong.c
+--- /tmp/846623/libibverbs-1.1.4/examples/ud_pingpong.c	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/examples/ud_pingpong.c	Wed Jun  8 09:46:34 2011
+@@ -149,6 +149,12 @@
+ 		return NULL;
+ 	}
+ 
++	if (n == EAI_NONAME) {
++		fprintf(stderr, "Name or service not known for %s:%d\n", servername, port);
++		free(service);
++		return NULL;
++	}
++
+ 	for (t = res; t; t = t->ai_next) {
+ 		sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+ 		if (sockfd >= 0) {
+diff -r -u /tmp/846623/libibverbs-1.1.4/examples/rc_pingpong.c libibverbs-1.1.4/examples/rc_pingpong.c
+--- /tmp/846623/libibverbs-1.1.4/examples/rc_pingpong.c	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/examples/rc_pingpong.c	Wed Jun  8 09:46:34 2011
+@@ -161,6 +161,12 @@
+ 		return NULL;
+ 	}
+ 
++	if (n == EAI_NONAME) {
++		fprintf(stderr, "Name or service not known for %s:%d\n", servername, port);
++		free(service);
++		return NULL;
++	}
++
+ 	for (t = res; t; t = t->ai_next) {
+ 		sockfd = socket(t->ai_family, t->ai_socktype, t->ai_protocol);
+ 		if (sockfd >= 0) {
+diff -r -u /tmp/846623/libibverbs-1.1.4/examples/device_list.c libibverbs-1.1.4/examples/device_list.c
+--- /tmp/846623/libibverbs-1.1.4/examples/device_list.c	Sun Nov  1 06:47:19 2009
++++ libibverbs-1.1.4/examples/device_list.c	Fri Feb 11 04:02:18 2011
+@@ -36,8 +36,10 @@
+ 
+ #include <stdio.h>
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ #include <endian.h>
+ #include <byteswap.h>
++#endif
+ 
+ #include <infiniband/verbs.h>
+ #include <infiniband/arch.h>
+diff -r -u /tmp/846623/libibverbs-1.1.4/examples/devinfo.c libibverbs-1.1.4/examples/devinfo.c
+--- /tmp/846623/libibverbs-1.1.4/examples/devinfo.c	Thu Mar 10 06:58:21 2011
++++ libibverbs-1.1.4/examples/devinfo.c	Fri Feb 11 04:02:19 2011
+@@ -41,8 +41,10 @@
+ #include <string.h>
+ #include <getopt.h>
+ #include <netinet/in.h>
++#if !(defined(__SVR4) && defined(__sun))
+ #include <endian.h>
+ #include <byteswap.h>
++#endif
+ 
+ #include <infiniband/verbs.h>
+ #include <infiniband/driver.h>
+@@ -292,8 +294,12 @@
+ 		       port_state_str(port_attr.state), port_attr.state);
+ 		printf("\t\t\tmax_mtu:\t\t%s (%d)\n",
+ 		       mtu_str(port_attr.max_mtu), port_attr.max_mtu);
++#if !(defined(__SVR4) && defined(__sun))
+ 		printf("\t\t\tactive_mtu:\t\t%s (%d)\n",
+ 		       mtu_str(port_attr.active_mtu), port_attr.active_mtu);
++#else
++		 printf("\t\t\tactive_mtu:\t\t%s\n", "Unknown");
++#endif
+ 		printf("\t\t\tsm_lid:\t\t\t%d\n", port_attr.sm_lid);
+ 		printf("\t\t\tport_lid:\t\t%d\n", port_attr.lid);
+ 		printf("\t\t\tport_lmc:\t\t0x%02x\n", port_attr.lmc);

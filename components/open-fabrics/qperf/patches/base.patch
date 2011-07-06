@@ -1,0 +1,511 @@
+diff -r -u /tmp/730054/qperf-0.4.6/src/socket.c qperf-0.4.6/src/socket.c
+--- /tmp/730054/qperf-0.4.6/src/socket.c	Mon Aug 31 00:00:40 2009
++++ qperf-0.4.6/src/socket.c	Mon Nov  8 11:10:20 2010
+@@ -44,7 +44,9 @@
+ /*
+  * Parameters.
+  */
++#if !(defined(__SVR4) && defined(__sun))
+ #define AF_INET_SDP 27                  /* Family for SDP */
++#endif
+ 
+ 
+ /*
+@@ -707,10 +709,16 @@
+     ailist = getaddrinfo_port(serverflag ? 0 : ServerName, port, &hints);
+     for (aip = ailist; aip; aip = aip->ai_next) {
+         if (kind == K_SDP) {
++#if (defined(__SVR4) && defined(__sun))
++		aip->ai_family = AF_INET;
++		aip->ai_socktype = SOCK_STREAM;
++		aip->ai_protocol = PROTO_SDP;
++#else
+             if (aip->ai_family == AF_INET || aip->ai_family == AF_INET6)
+                 aip->ai_family = AF_INET_SDP;
+             else
+                 aip->ai_family = 0;
++#endif
+         } else if (kind == K_SCTP) {
+             if (aip->ai_protocol == IPPROTO_TCP)
+                 aip->ai_protocol = IPPROTO_SCTP;
+diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
+--- /tmp/730054/qperf-0.4.6/src/qperf.c	Mon Aug 31 00:00:40 2009
++++ qperf-0.4.6/src/qperf.c	Mon Nov  8 11:10:17 2010
+@@ -53,7 +53,19 @@
+ #include <sys/utsname.h>
+ #include "qperf.h"
+ 
++#if (defined(__SVR4) && defined(__sun))
++#include <sys/filio.h>
++#include <limits.h>	/* times() */
++#include <kstat.h>	/* libkstat */
++#include <sys/types.h>
++#include <sys/processor.h>
++#include <sys/procset.h>
++#include <strings.h>
++#include <infiniband/ofa_solaris.h>
+ 
++static kstat_ctl_t	*kc = NULL;	/* libkstat cookie */
++#endif
++
+ /*
+  * Configurable parameters.  If your change makes this version of qperf
+  * incompatible with previous versions (usually a change to the Req structure),
+@@ -224,7 +236,9 @@
+ static void      sig_alrm(int signo, siginfo_t *siginfo, void *ucontext);
+ static void      sig_quit(int signo, siginfo_t *siginfo, void *ucontext);
+ static void      sig_urg(int signo, siginfo_t *siginfo, void *ucontext);
+-static char     *skip_colon(char *s);
++#if !(defined(__SVR4) && defined(__sun))
++static char    *skip_colon(char *s);
++#endif
+ static void      start_test_timer(int seconds);
+ static long      str_size(char *arg, char *str);
+ static void      strncopy(char *d, char *s, int n);
+@@ -257,7 +271,9 @@
+ static STAT     IStat;
+ static int      ListenFD;
+ static LOOP    *Loops;
++#if !(defined(__SVR4) && defined(__sun))
+ static int      ProcStatFD;
++#endif
+ static STAT     RStat;
+ static int      ShowIndex;
+ static SHOW     ShowTable[256];
+@@ -601,6 +617,9 @@
+     initialize();
+     set_signals();
+     do_args(&argv[1]);
++#if (defined(__SVR4) && defined(__sun))
++    (void) kstat_close(kc);
++#endif
+     return 0;
+ }
+ 
+@@ -617,14 +636,24 @@
+     for (i = 0; i < P_N; ++i)
+         if (ParInfo[i].index != i)
+             error(BUG, "initialize: ParInfo: out of order: %d", i);
++#if (defined(__SVR4) && defined(__sun))
++    while ((kc = kstat_open()) == NULL) {
++	if (errno == EAGAIN)
++	    (void) poll(NULL, 0, 200);
++	else
++	    error(SYS, "cannot open /dev/kstat");
++    }
++#else
+     ProcStatFD = open("/proc/stat", 0);
+     if (ProcStatFD < 0)
+         error(SYS, "cannot open /proc/stat");
++#endif
+     IStat.no_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+     IStat.no_ticks = sysconf(_SC_CLK_TCK);
+ }
+ 
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ /*
+  * Look for a colon and skip past it and any spaces.
+  */
+@@ -643,6 +672,7 @@
+         s++;
+     return s;
+ }
++#endif
+ 
+ 
+ /*
+@@ -1667,13 +1697,18 @@
+ {
+     char count[STRSIZE];
+     char speed[STRSIZE];
+-    char buf[BUFSIZE];
+     char cpu[BUFSIZE];
+-    char mhz[BUFSIZE];
+     int cpus = 0;
++#if !(defined(__SVR4) && defined(__sun))
++    char buf[BUFSIZE];
++    char mhz[BUFSIZE];
+     int mixed = 0;
+     FILE *fp = fopen("/proc/cpuinfo", "r");
++#else
++   sol_cpu_info_t	info;
++#endif
+ 
++#if !(defined(__SVR4) && defined(__sun))
+     if (!fp)
+         error(0, "cannot open /proc/cpuinfo");
+     cpu[0] = '\0';
+@@ -1732,6 +1767,7 @@
+ 
+     /* CPU speed */
+     speed[0] = '\0';
++
+     if (!mixed) {
+         int n = strlen(cpu);
+         if (n < 3 || cpu[n-2] != 'H' || cpu[n-1] != 'z') {
+@@ -1745,7 +1781,23 @@
+             }
+         }
+     }
++#else
++    cpu[0] = '\0';
++    speed[0] = '\0';
+ 
++    if (!sol_get_cpu_info(&info)) {
++	(void) strcpy(cpu, info.cpu_name);
++	cpus = info.cpu_num;
++
++	if (info.cpu_mhz < 1000)
++		snprintf(speed, sizeof(speed), " %dMHz", info.cpu_mhz);
++	else
++		snprintf(speed, sizeof(speed), " %.1fGHz", info.cpu_mhz/1000.0);
++    } else {
++	return;
++    }
++#endif
++
+     /* Number of CPUs */
+     if (cpus == 1)
+         count[0] = '\0';
+@@ -2615,14 +2667,22 @@
+ static void
+ set_affinity(void)
+ {
++#if !(defined(__SVR4) && defined(__sun))
+     cpu_set_t set;
++#endif
+     int a = Req.affinity;
+ 
+     if (!a)
+         return;
++
++#if defined(__SVR4) && defined(__sun)
++    if (processor_bind(P_LWPID, P_MYID, a-1, NULL) != 0)
++#else
++
+     CPU_ZERO(&set);
+     CPU_SET(a-1, &set);
+     if (sched_setaffinity(0, sizeof(set), &set) < 0)
++#endif
+         error(SYS, "cannot set processor affinity (cpu %d)", a-1);
+ }
+ 
+@@ -2771,9 +2831,74 @@
+ /*
+  * Get various temporal parameters.
+  */
++#if (defined(__SVR4) && defined(__sun))
++
++#define	NSEC_TO_TICK(v)		(v * sysconf(_SC_CLK_TCK)/1000000000)
++
+ static void
+ get_times(CLOCK timex[T_N])
+ {
++	struct tms tms;
++	size_t	i, nr_cpus;
++	kstat_t	*ksp;
++	kstat_named_t	*knp;
++	uint64_t	t_user = 0, t_kernel = 0, t_idle = 0;
++	uint64_t	t_irq = 0, t_iowait = 0;
++
++	timex[T_REAL] = times(&tms);
++
++	nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
++
++	/* Aggregate the value of all CPUs */
++	for (i = 0; i < nr_cpus; i++) {
++		ksp = kstat_lookup(kc, "cpu", i, "sys");
++		if (ksp == NULL)
++	        	return;
++
++		if (kstat_read(kc, ksp, NULL) == -1)
++	        	return;
++
++		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_ticks_user");
++		if (knp == NULL)
++			return;
++		t_user += knp->value.ui64;
++
++		knp = (kstat_named_t *)kstat_data_lookup(ksp,
++		    "cpu_ticks_kernel");
++		if (knp == NULL)
++			return;
++		t_kernel += knp->value.ui64;
++
++		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_ticks_idle");
++		if (knp == NULL)
++			return;
++		t_idle += knp->value.ui64;
++
++		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_ticks_wait");
++		if (knp == NULL)
++			return;
++		t_iowait += knp->value.ui64;
++
++		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_nsec_intr");
++		if (knp == NULL)
++			return;
++		t_irq += knp->value.ui64;	/* This is in NSEC */
++	}
++	timex[T_USER] = t_user;
++	timex[T_NICE] = 0;
++	timex[T_KERNEL] = t_kernel;
++	timex[T_IDLE] = t_idle;
++	timex[T_IOWAIT] = t_iowait;
++	timex[T_IRQ] = NSEC_TO_TICK(t_irq);	 /* NSEC_TO_TICK */
++	timex[T_SOFTIRQ] = 0;
++	timex[T_STEAL] = 0;
++}
++
++#else
++
++static void
++get_times(CLOCK timex[T_N])
++{
+     int n;
+     char *p;
+     char buf[BUFSIZE];
+@@ -2802,6 +2927,7 @@
+     while (n < T_N)
+         timex[n++] = 0;
+ }
++#endif
+ 
+ 
+ /*
+diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
+--- /tmp/730054/qperf-0.4.6/src/rdma.c	Mon Aug 31 00:00:40 2009
++++ qperf-0.4.6/src/rdma.c	Mon Nov  8 11:10:19 2010
+@@ -37,7 +37,11 @@
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#if (defined(__SVR4) && defined(__sun))
++#include <strings.h>
++#else
+ #include <string.h>
++#endif
+ #include <unistd.h>
+ #include <netinet/in.h>
+ #include <rdma/rdma_cma.h>
+@@ -566,11 +570,15 @@
+ void
+ run_client_uc_bi_bw(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     par_use(L_ACCESS_RECV);
+     par_use(R_ACCESS_RECV);
+     rd_params(IBV_QPT_UC, K64, 1, 0);
+     rd_bi_bw(IBV_QPT_UC);
+     show_results(BANDWIDTH_SR);
++#endif
+ }
+ 
+ 
+@@ -580,7 +588,11 @@
+ void
+ run_server_uc_bi_bw(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_bi_bw(IBV_QPT_UC);
++#endif
+ }
+ 
+ 
+@@ -590,6 +602,9 @@
+ void
+ run_client_uc_bw(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     par_use(L_ACCESS_RECV);
+     par_use(R_ACCESS_RECV);
+     par_use(L_NO_MSGS);
+@@ -597,6 +612,7 @@
+     rd_params(IBV_QPT_UC, K64, 1, 0);
+     rd_client_bw(IBV_QPT_UC);
+     show_results(BANDWIDTH_SR);
++#endif
+ }
+ 
+ 
+@@ -606,7 +622,11 @@
+ void
+ run_server_uc_bw(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_server_def(IBV_QPT_UC);
++#endif
+ }
+ 
+ 
+@@ -616,8 +636,12 @@
+ void
+ run_client_uc_lat(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_params(IBV_QPT_UC, 1, 1, 0);
+     rd_pp_lat(IBV_QPT_UC, IO_SR);
++#endif
+ }
+ 
+ 
+@@ -627,7 +651,11 @@
+ void
+ run_server_uc_lat(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_pp_lat(IBV_QPT_UC, IO_SR);
++#endif
+ }
+ 
+ 
+@@ -637,9 +665,13 @@
+ void
+ run_client_uc_rdma_write_bw(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_params(IBV_QPT_UC, K64, 1, 0);
+     rd_client_rdma_bw(IBV_QPT_UC, IBV_WR_RDMA_WRITE_WITH_IMM);
+     show_results(BANDWIDTH_SR);
++#endif
+ }
+ 
+ 
+@@ -649,7 +681,11 @@
+ void
+ run_server_uc_rdma_write_bw(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_server_def(IBV_QPT_UC);
++#endif
+ }
+ 
+ 
+@@ -659,8 +695,12 @@
+ void
+ run_client_uc_rdma_write_lat(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_params(IBV_QPT_UC, 1, 1, 0);
+     rd_pp_lat(IBV_QPT_UC, IO_RDMA);
++#endif
+ }
+ 
+ 
+@@ -670,7 +710,11 @@
+ void
+ run_server_uc_rdma_write_lat(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_pp_lat(IBV_QPT_UC, IO_RDMA);
++#endif
+ }
+ 
+ 
+@@ -680,9 +724,13 @@
+ void
+ run_client_uc_rdma_write_poll_lat(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_params(IBV_QPT_UC, 1, 1, 0);
+     rd_rdma_write_poll_lat(IBV_QPT_UC);
+     show_results(LATENCY);
++#endif
+ }
+ 
+ 
+@@ -692,7 +740,11 @@
+ void
+ run_server_uc_rdma_write_poll_lat(void)
+ {
++#if (defined(__SVR4) && defined(__sun))
++    error(RET, "UC Not Supported");
++#else
+     rd_rdma_write_poll_lat(IBV_QPT_UC);
++#endif
+ }
+ 
+ 
+diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
+--- /tmp/730054/qperf-0.4.6/src/rds.c	Mon Aug 31 00:00:40 2009
++++ qperf-0.4.6/src/rds.c	Mon Nov  8 11:10:19 2010
+@@ -44,6 +44,9 @@
+ #include <netinet/in.h>
+ #include "qperf.h"
+ 
++#if (defined(__SVR4) && defined(__sun))
++#include <sys/rds.h>
++#else
+ 
+ /*
+  * Parameters.
+@@ -50,6 +53,7 @@
+  */
+ #define AF_INET_RDS 28                  /* Family for RDS */
+ 
++#endif
+ 
+ /*
+  * Function prototypes.
+@@ -352,7 +356,11 @@
+     SS sockaddr;
+     socklen_t socklen;
+ 
++#if (defined(__SVR4) && defined(__sun))
++    sockfd = socket(PF_RDS, SOCK_SEQPACKET, 0);
++#else
+     sockfd = socket(AF_INET_RDS, SOCK_SEQPACKET, 0);
++#endif
+     if (sockfd < 0)
+         error(SYS, "socket failed");
+     setsockopt_one(sockfd, SO_REUSEADDR);
+@@ -373,7 +381,11 @@
+     struct sockaddr_in *sap = (struct sockaddr_in *)addr;
+ 
+     memset(sap, 0, sizeof(*sap));
++#if (defined(__SVR4) && defined(__sun))
++    sap->sin_family = AF_INET_OFFLOAD;
++#else
+     sap->sin_family = AF_INET;
++#endif
+     inet_pton(AF_INET, host, &sap->sin_addr.s_addr);
+     sap->sin_port = htons(port);
+     *len = sizeof(struct sockaddr_in);
+@@ -431,6 +443,14 @@
+ 
+     if (getsockname(fd, (SA *)&sa, &salen) < 0)
+         error(SYS, "getsockname failed");
++#if (defined(__SVR4) && defined(__sun))
++    /*
++     * getnameinfo() does not support AF_INET_OFFLOAD, so 
++     * use ss_family as AF_INET to get port info.
++     */ 
++    if (sa.ss_family == AF_INET_OFFLOAD)
++	sa.ss_family = AF_INET;
++#endif
+     qgetnameinfo((SA *)&sa, salen, 0, 0, p, sizeof(p), NI_NUMERICSERV);
+     port = atoi(p);
+     if (!port)
