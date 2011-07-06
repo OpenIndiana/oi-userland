@@ -120,13 +120,13 @@ $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
 	cat $(METADATA_TEMPLATE) $< >$@
 
 # mogrify the manifest
-$(MANIFEST_BASE)-%.mogrified:	%.p5m canonical-manifests
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) canonical-manifests
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mangle the file contents
-$(MANGLED_DIR):
+$(BUILD_DIR) $(MANGLED_DIR):
 	$(MKDIR) $@
 
 PKGMANGLE_OPTIONS = -D $(MANGLED_DIR) $(PKG_PROTO_DIRS:%=-d %)

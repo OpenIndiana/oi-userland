@@ -184,6 +184,9 @@ MACH32 =	$(MACH32_1:i386=i86)
 MACH64_1 =	$(MACH:sparc=sparcv9)
 MACH64 =	$(MACH64_1:i386=amd64)
 
+CONFIGURE_32 =		$(BUILD_DIR_32)/.configured
+CONFIGURE_64 =		$(BUILD_DIR_64)/.configured
+
 BUILD_DIR_32 =		$(BUILD_DIR)/$(MACH32)
 BUILD_DIR_64 =		$(BUILD_DIR)/$(MACH64)
 

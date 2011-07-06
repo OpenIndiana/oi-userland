@@ -1,0 +1,1247 @@
+diff -r -u /tmp/909901/libmthca-1.0.5/configure libmthca-1.0.5/configure
+--- /tmp/909901/libmthca-1.0.5/configure	Sun Aug 30 06:43:33 2009
++++ libmthca-1.0.5/configure	Fri Feb 11 04:07:25 2011
+@@ -8698,6 +8698,7 @@
+ 	;;
+       esac
+       link_all_deplibs=yes
++      hardcode_libdir_flag_spec=
+       ;;
+ 
+     sunos4*)
+@@ -21267,6 +21268,14 @@
+ # This bug is HP SR number 8606223364.
+ { echo "$as_me:$LINENO: checking size of long" >&5
+ echo $ECHO_N "checking size of long... $ECHO_C" >&6; }
++
++echo $CFLAGS | grep 64 > /dev/null
++if [ $? -eq 0 ]; then
++	ac_cv_sizeof_long=8
++else
++	ac_cv_sizeof_long=4
++fi
++
+ if test "${ac_cv_sizeof_long+set}" = set; then
+   echo $ECHO_N "(cached) $ECHO_C" >&6
+ else
+diff -r -u /tmp/909901/libmthca-1.0.5/src/srq.c libmthca-1.0.5/src/srq.c
+--- /tmp/909901/libmthca-1.0.5/src/srq.c	Sun Aug 30 06:43:15 2009
++++ libmthca-1.0.5/src/srq.c	Fri Feb 11 04:07:30 2011
+@@ -250,6 +250,62 @@
+ 	return err;
+ }
+ 
++#if defined(__SVR4) && defined(__sun)
++int mthca_set_srq_buf(struct ibv_pd *pd, struct ibv_srq_attr *attr,
++		      struct mthca_srq *srq, void *srqbuf, 
++                      uint64_t buflen, uint32_t srq_wqesz,
++                      uint32_t srq_numwqe)
++{
++	struct mthca_data_seg *scatter;
++	void *wqe;
++	int i;
++
++	srq->buf.buf    = srqbuf;
++	srq->buf.length = buflen;
++	srq->max        = srq_numwqe;
++
++	srq->wrid = malloc(srq->max * sizeof (uint64_t));
++	if (!srq->wrid)
++		return -1;
++
++	for (srq->wqe_shift = 6; 1 << srq->wqe_shift < srq_wqesz; ++srq->wqe_shift)
++		; /* nothing */
++
++	srq->buf_size = srq->buf.length;
++	memset(srq->buf.buf, 0, srq->buf.length);
++
++	/*
++	 * Now initialize the SRQ buffer so that all of the WQEs are
++	 * linked into the list of free WQEs.  In addition, set the
++	 * scatter list L_Keys to the sentry value of 0x100.
++	 */
++
++	for (i = 0; i < srq->max; ++i) {
++		struct mthca_next_seg *next;
++
++		next = wqe = get_wqe(srq, i);
++
++		if (i < srq->max - 1) {
++			*wqe_to_link(wqe) = i + 1;
++			next->nda_op = htonl(((i + 1) << srq->wqe_shift) | 1);
++		} else {
++			*wqe_to_link(wqe) = -1;
++			next->nda_op = 0;
++		}
++
++		for (scatter = wqe + sizeof (struct mthca_next_seg);
++		     (void *) scatter < wqe + (1 << srq->wqe_shift);
++		     ++scatter)
++			scatter->lkey = htonl(MTHCA_INVAL_LKEY);
++	}
++
++	srq->first_free = 0;
++	srq->last_free  = srq->max - 1;
++	srq->last       = get_wqe(srq, srq->max - 1);
++
++	return 0;
++}
++#else
+ int mthca_alloc_srq_buf(struct ibv_pd *pd, struct ibv_srq_attr *attr,
+ 		       struct mthca_srq *srq)
+ {
+@@ -310,3 +366,4 @@
+ 
+ 	return 0;
+ }
++#endif
+diff -r -u /tmp/909901/libmthca-1.0.5/src/verbs.c libmthca-1.0.5/src/verbs.c
+--- /tmp/909901/libmthca-1.0.5/src/verbs.c	Tue May 27 13:32:43 2008
++++ libmthca-1.0.5/src/verbs.c	Tue May  3 13:50:07 2011
+@@ -44,6 +44,9 @@
+ 
+ #include "mthca.h"
+ #include "mthca-abi.h"
++#if defined(__SVR4) && defined(__sun)
++#include "wqe.h"
++#endif
+ 
+ int mthca_query_device(struct ibv_context *context, struct ibv_device_attr *attr)
+ {
+@@ -56,6 +59,13 @@
+ 	if (ret)
+ 		return ret;
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * So that the queue operations in srq.c work we need to report
++	 * the max as actual max  less 1.
++	 */
++	attr->max_srq_wr -=1;
++#endif
+ 	major     = (raw_fw_ver >> 32) & 0xffff;
+ 	minor     = (raw_fw_ver >> 16) & 0xffff;
+ 	sub_minor = raw_fw_ver & 0xffff;
+@@ -79,6 +89,9 @@
+ 	struct ibv_alloc_pd        cmd;
+ 	struct mthca_alloc_pd_resp resp;
+ 	struct mthca_pd           *pd;
++#if defined(__SVR4) && defined(__sun)
++	mlnx_umap_pd_data_out_t   *mdd;
++#endif
+ 
+ 	pd = malloc(sizeof *pd);
+ 	if (!pd)
+@@ -98,7 +111,16 @@
+ 		return NULL;
+ 	}
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * The kernel driver passes back the PD table index as opaque data.  This
++	 * index is required for specifying the PD in user space address vectors.
++	 */
++	mdd     = (mlnx_umap_pd_data_out_t *) &resp.ibv_resp.drv_out;
++	pd->pdn = mdd->mpd_pdnum;
++#else
+ 	pd->pdn = resp.pdn;
++#endif
+ 
+ 	return &pd->ibv_pd;
+ }
+@@ -117,7 +139,7 @@
+ 
+ static struct ibv_mr *__mthca_reg_mr(struct ibv_pd *pd, void *addr,
+ 				     size_t length, uint64_t hca_va,
+-				     enum ibv_access_flags access,
++				     int access,
+ 				     int dma_sync)
+ {
+ 	struct ibv_mr *mr;
+@@ -157,7 +179,7 @@
+ }
+ 
+ struct ibv_mr *mthca_reg_mr(struct ibv_pd *pd, void *addr,
+-			    size_t length, enum ibv_access_flags access)
++			    size_t length, int access)
+ {
+ 	return __mthca_reg_mr(pd, addr, length, (uintptr_t) addr, access, 0);
+ }
+@@ -190,8 +212,12 @@
+ {
+ 	struct mthca_create_cq      cmd;
+ 	struct mthca_create_cq_resp resp;
+-	struct mthca_cq      	   *cq;
+-	int                  	    ret;
++	struct mthca_cq            *cq;
++	int                         ret;
++#if defined(__SVR4) && defined(__sun)
++	mlnx_umap_cq_data_out_t       *mdd;
++	void                          *cqbuf;
++#endif
+ 
+ 	/* Sanity check CQ size before proceeding */
+ 	if (cqe > 131072)
+@@ -207,6 +233,16 @@
+ 		goto err;
+ 
+ 	cqe = align_cq_size(cqe);
++
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Solaris CQ buffer is supplied by kernel, so we don't allocate
++	 * memory here.
++	 */
++	cq->buf.buf    = NULL;
++	cq->buf.length = 0;
++	cq->mr         = NULL;
++#else
+ 	if (mthca_alloc_cq_buf(to_mdev(context->device), &cq->buf, cqe))
+ 		goto err;
+ 
+@@ -217,6 +253,7 @@
+ 		goto err_buf;
+ 
+ 	cq->mr->context = context;
++#endif
+ 
+ 	if (mthca_is_memfree(context)) {
+ 		cq->arm_sn          = 1;
+@@ -241,7 +278,11 @@
+ 		cmd.arm_db_index = cmd.set_db_index = 0;
+ 	}
+ 
++#if defined(__SVR4) && defined(__sun)
++	cmd.lkey   = 0;
++#else
+ 	cmd.lkey   = cq->mr->lkey;
++#endif
+ 	cmd.pdn    = to_mpd(to_mctx(context)->pd)->pdn;
+ 	ret = ibv_cmd_create_cq(context, cqe - 1, channel, comp_vector,
+ 				&cq->ibv_cq, &cmd.ibv_cmd, sizeof cmd,
+@@ -249,7 +290,9 @@
+ 	if (ret)
+ 		goto err_arm_db;
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	cq->cqn = resp.cqn;
++#endif
+ 
+ 	if (mthca_is_memfree(context)) {
+ 		mthca_set_db_qn(cq->set_ci_db, MTHCA_DB_TYPE_CQ_SET_CI, cq->cqn);
+@@ -256,8 +299,58 @@
+ 		mthca_set_db_qn(cq->arm_db,    MTHCA_DB_TYPE_CQ_ARM,    cq->cqn);
+ 	}
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * The kernel driver passes back mmap information for mapping the
++	 * CQ memory it allocated into user space.  This is part of the
++	 * HCA generic opaque data.
++	 */
++	mdd = (mlnx_umap_cq_data_out_t *) &resp.ibv_resp.drv_out;
++	cqbuf = mmap64((void *)0, mdd->mcq_maplen, (PROT_READ | PROT_WRITE),
++		    MAP_SHARED, context->mmap_fd, mdd->mcq_mapoffset);
++
++	if (cqbuf == MAP_FAILED) {
++		goto err_destroy;
++	}
++
++	/*
++	 * Extract hardware driver settins for number of CQE and the hardware
++	 * CQ number to use (needed for user space doorbells).
++	 */
++	cqe            = mdd->mcq_numcqe;
++	cq->cqn        = mdd->mcq_cqnum;
++	cq->buf.buf    = cqbuf;
++	cq->buf.length = mdd->mcq_maplen;
++
++	/*
++	 * NOTE: The following call will not allocate memory for solaris, it
++	 * only performs required initialization.
++	 */
++	if (mthca_alloc_cq_buf(to_mdev(context->device), &cq->buf, cqe)) {
++		goto err_unmap;
++	}
++#endif
++
+ 	return &cq->ibv_cq;
+ 
++#if defined(__SVR4) && defined(__sun)
++err_unmap:
++	munmap(cq->buf.buf, cq->buf.length);
++
++err_destroy:
++	/*
++	 * Calling ibv_cmd_destroy_cq() will try and take the ibv_cq
++	 * mutext that is initialised by the ibv_create_cq() entry point
++	 * that called us AFETR we return, so its not initialised yet.
++	 * So initialised it here so the destroy call doesn't hang.
++	 */
++	pthread_mutex_init(&(cq->ibv_cq.mutex), NULL);
++	pthread_cond_init(&(cq->ibv_cq.cond), NULL);
++	cq->ibv_cq.comp_events_completed = 0;
++	cq->ibv_cq.async_events_completed = 0;
++
++	ibv_cmd_destroy_cq(&cq->ibv_cq);
++#endif
+ err_arm_db:
+ 	if (mthca_is_memfree(context))
+ 		mthca_free_db(to_mctx(context)->db_tab, MTHCA_DB_TYPE_CQ_ARM,
+@@ -269,10 +362,12 @@
+ 			      cq->set_ci_db_index);
+ 
+ err_unreg:
++#if !(defined(__SVR4) && defined(__sun))
+ 	mthca_dereg_mr(cq->mr);
+ 
+ err_buf:
+ 	mthca_free_buf(&cq->buf);
++#endif
+ 
+ err:
+ 	free(cq);
+@@ -284,8 +379,14 @@
+ {
+ 	struct mthca_cq *cq = to_mcq(ibcq);
+ 	struct mthca_resize_cq cmd;
++	struct ibv_resize_cq_resp resp;;
++#if defined(__SVR4) && defined(__sun)
++	mlnx_umap_cq_data_out_t      *mdd;
++	void                         *cqbuf;
++#else
+ 	struct ibv_mr *mr;
+ 	struct mthca_buf buf;
++#endif
+ 	int old_cqe;
+ 	int ret;
+ 
+@@ -301,6 +402,18 @@
+ 		goto out;
+ 	}
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Solaris CQ buffer is supplied by the kernel, so we don't allocate
++	 * memory here.
++	 */
++	if (cq->buf.buf != NULL) {
++		ret = munmap((char *)cq->buf.buf, cq->buf.length);
++		if (ret) {
++			goto out;
++		}
++	}
++#else
+ 	ret = mthca_alloc_cq_buf(to_mdev(ibcq->context->device), &buf, cqe);
+ 	if (ret)
+ 		goto out;
+@@ -315,10 +428,16 @@
+ 	}
+ 
+ 	mr->context = ibcq->context;
++#endif
+ 
+ 	old_cqe = ibcq->cqe;
+ 
++#if defined(__SVR4) && defined(__sun)
++	cmd.lkey = 0;
++#else
+ 	cmd.lkey = mr->lkey;
++#endif
++
+ #ifdef IBV_CMD_RESIZE_CQ_HAS_RESP_PARAMS
+ 	{
+ 		struct ibv_resize_cq_resp resp;
+@@ -329,11 +448,31 @@
+ 	ret = ibv_cmd_resize_cq(ibcq, cqe - 1, &cmd.ibv_cmd, sizeof cmd);
+ #endif
+ 	if (ret) {
++#if !(defined(__SVR4) && defined(__sun))
+ 		mthca_dereg_mr(mr);
+ 		mthca_free_buf(&buf);
++#endif
+ 		goto out;
+ 	}
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*	
++	 * The kernel driver passes back mmap information for mapping the
++	 * CQ memory it allocated to use space.
++	 */
++	mdd = (mlnx_umap_cq_data_out_t *) &resp.drv_out;
++        cqbuf = mmap64((void *)0, mdd->mcq_maplen, (PROT_READ | PROT_WRITE), MAP_SHARED,
++                        ibcq->context->mmap_fd, mdd->mcq_mapoffset);
++        if (cqbuf == MAP_FAILED) {
++		ret = -1;  /* XXXX SFW need something better than this */
++                goto out;
++        }
++
++	cq->mr         = NULL;
++        cq->buf.buf    = cqbuf;
++	cq->buf.length = mdd->mcq_maplen;
++/*	mthca_cq_resize_copy_cqes(cq, buf.buf, old_cqe); ??? */
++#else
+ 	mthca_cq_resize_copy_cqes(cq, buf.buf, old_cqe);
+ 
+ 	mthca_dereg_mr(cq->mr);
+@@ -341,6 +480,7 @@
+ 
+ 	cq->buf = buf;
+ 	cq->mr  = mr;
++#endif
+ 
+ out:
+ 	pthread_spin_unlock(&cq->lock);
+@@ -355,6 +495,13 @@
+ 	if (ret)
+ 		return ret;
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Unmap memory allocated by the kernel for the CQ from our process.
++	 */
++	munmap(to_mcq(cq)->buf.buf, to_mcq(cq)->buf.length);
++#endif
++
+ 	if (mthca_is_memfree(cq->context)) {
+ 		mthca_free_db(to_mctx(cq->context)->db_tab, MTHCA_DB_TYPE_CQ_SET_CI,
+ 			      to_mcq(cq)->set_ci_db_index);
+@@ -362,8 +509,10 @@
+ 			      to_mcq(cq)->arm_db_index);
+ 	}
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	mthca_dereg_mr(to_mcq(cq)->mr);
+ 	mthca_free_buf(&to_mcq(cq)->buf);
++#endif
+ 	free(to_mcq(cq));
+ 
+ 	return 0;
+@@ -396,6 +545,10 @@
+ 	struct mthca_create_srq_resp resp;
+ 	struct mthca_srq            *srq;
+ 	int                          ret;
++#if defined(__SVR4) && defined(__sun)
++	mlnx_umap_srq_data_out_t     *mdd;
++	void                         *srqbuf;
++#endif
+ 
+ 	/* Sanity check SRQ size before proceeding */
+ 	if (attr->attr.max_wr > 1 << 16 || attr->attr.max_sge > 64)
+@@ -407,7 +560,26 @@
+ 
+ 	if (pthread_spin_init(&srq->lock, PTHREAD_PROCESS_PRIVATE))
+ 		goto err;
++ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Solaris SRQ WQE memory is supplied by the kernel, so we
++	 * don't allocate memory here.
++	 */
++	srq->buf.buf	= NULL;
++	srq->buf.length	= 0;
++	srq->mr		= NULL;	
++	srq->wrid	= NULL;
+ 
++	/*
++	 * Need solaris to allocate space for the spare WR in
++	 * the list that makes the queue work. The Solaris driver
++	 * will round up to the nearest power of 2 as align_queue_size()
++	 * does for OFED.
++	 */
++	attr->attr.max_wr += 1;
++
++#else
+ 	srq->max     = align_queue_size(pd->context, attr->attr.max_wr, 1);
+ 	srq->max_gs  = attr->attr.max_sge;
+ 	srq->counter = 0;
+@@ -420,6 +592,7 @@
+ 		goto err_free;
+ 
+ 	srq->mr->context = pd->context;
++#endif
+ 
+ 	if (mthca_is_memfree(pd->context)) {
+ 		srq->db_index = mthca_alloc_db(to_mctx(pd->context)->db_tab,
+@@ -433,7 +606,11 @@
+ 		cmd.db_page  = cmd.db_index = 0;
+ 	}
+ 
++#if defined(__SVR4) && defined(__sun)
++	cmd.lkey = 0;
++#else
+ 	cmd.lkey = srq->mr->lkey;
++#endif
+ 
+ 	ret = ibv_cmd_create_srq(pd, &srq->ibv_srq, attr,
+ 				 &cmd.ibv_cmd, sizeof cmd,
+@@ -446,8 +623,64 @@
+ 	if (mthca_is_memfree(pd->context))
+ 		mthca_set_db_qn(srq->db, MTHCA_DB_TYPE_SRQ, srq->srqn);
+ 
++#if defined(__SVR4) && defined(__sun)
++        /*
++         * The kernel driver passes back mmap information for mapping the
++         * SRQ WQE memory it allocated back into user space.  This is part
++         * of the HCA generic data.
++         */    
++        mdd = (mlnx_umap_srq_data_out_t *) &resp.ibv_resp.drv_out;
++        srqbuf = mmap64((void *)0, mdd->msrq_maplen,
++                        PROT_READ|PROT_WRITE, MAP_SHARED,
++                        pd->context->mmap_fd,
++                        mdd->msrq_mapoffset);
++
++        if (srqbuf == MAP_FAILED) {
++                goto err_destroy;
++        }
++	srq->max        = resp.ibv_resp.max_wr;
++	srq->max_gs     = resp.ibv_resp.max_sge;
++	srq->counter    = 0;
++	srq->srqn       = mdd->msrq_srqnum;
++
++	/*
++	 * The following call only initializes memory and ccontrol structures,
++	 * it utilizes the memory allocated by the kernel in Solaris.
++	 */
++	if (mthca_set_srq_buf(pd, &attr->attr, srq, srqbuf, mdd->msrq_maplen,
++	                      mdd->msrq_wqesz, mdd->msrq_numwqe)) {
++		goto err_unmap;
++	}
++
++	/*
++	 * The rturned max wr will have been rounded up to the nearest
++	 * power of 2, subtracting  1 from that and rporting that value
++	 * as the max will give us the required free WR in the queue, as
++	 * in OFED.
++	 */
++	attr->attr.max_wr -= 1;
++
++#endif
+ 	return &srq->ibv_srq;
+ 
++#if defined(__SVR4) && defined(__sun)
++err_unmap:
++	munmap(srq->buf.buf, srq->buf.length);
++
++err_destroy:
++	/*
++	 * Calling ibv_cmd_destroy_srq() will try and take the ibv_srq
++	 * mutext that is initialised by the ibv_create_srq() entry point
++	 * that called us AFETR we return, so its not initialised yet.
++	 * So initialised it here so the destroy call doesn't hang.
++	 */
++	pthread_mutex_init(&(srq->ibv_srq.mutex), NULL);
++	pthread_cond_init(&(srq->ibv_srq.cond), NULL);
++	srq->ibv_srq.events_completed = 0;
++
++	ibv_cmd_destroy_srq(&srq->ibv_srq);
++#endif
++
+ err_db:
+ 	if (mthca_is_memfree(pd->context))
+ 		mthca_free_db(to_mctx(pd->context)->db_tab, MTHCA_DB_TYPE_SRQ,
+@@ -454,11 +687,19 @@
+ 			      srq->db_index);
+ 
+ err_unreg:
++#if !(defined(__SVR4) && defined(__sun))
+ 	mthca_dereg_mr(srq->mr);
+ 
+ err_free:
+ 	free(srq->wrid);
++#else
++	if (srq->wrid)
++		free(srq->wrid);
++#endif
++
++#if !(defined(__SVR4) && defined(__sun))
+ 	mthca_free_buf(&srq->buf);
++#endif
+ 
+ err:
+ 	free(srq);
+@@ -467,12 +708,21 @@
+ }
+ 
+ int mthca_modify_srq(struct ibv_srq *srq,
+-		     struct ibv_srq_attr *attr,
+-		     enum ibv_srq_attr_mask attr_mask)
++                     struct ibv_srq_attr *attr,
++		     int attr_mask)
+ {
+ 	struct ibv_modify_srq cmd;
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ibv_cmd_modify_srq(srq, attr, attr_mask, &cmd, sizeof cmd);
++#else
++	int	ret;
++
++	attr->max_wr += 1;	/* See create_srq */
++	ret  = ibv_cmd_modify_srq(srq, attr, attr_mask, &cmd, sizeof cmd);
++	attr->max_wr -= 1;
++	return (ret);
++#endif
+ }
+ 
+ int mthca_query_srq(struct ibv_srq *srq,
+@@ -480,7 +730,16 @@
+ {
+ 	struct ibv_query_srq cmd;
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	return ibv_cmd_query_srq(srq, attr, &cmd, sizeof cmd);
++#else
++	int	ret;
++
++	ret = ibv_cmd_query_srq(srq, attr, &cmd, sizeof cmd);
++	attr->max_wr -= 1;	/* See create_srq */
++
++	return (ret);
++#endif
+ }
+ 
+ int mthca_destroy_srq(struct ibv_srq *srq)
+@@ -495,9 +754,16 @@
+ 		mthca_free_db(to_mctx(srq->context)->db_tab, MTHCA_DB_TYPE_SRQ,
+ 			      to_msrq(srq)->db_index);
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Unmap kernel allocated SRQ WQE memory.
++	 */
++	munmap(to_msrq(srq)->buf.buf, to_msrq(srq)->buf.length);
++#else
+ 	mthca_dereg_mr(to_msrq(srq)->mr);
+ 
+ 	mthca_free_buf(&to_msrq(srq)->buf);
++#endif
+ 	free(to_msrq(srq)->wrid);
+ 	free(to_msrq(srq));
+ 
+@@ -508,8 +774,14 @@
+ {
+ 	struct mthca_create_qp    cmd;
+ 	struct ibv_create_qp_resp resp;
+-	struct mthca_qp          *qp;
++	struct mthca_qp           *qp;
+ 	int                       ret;
++#if defined(__SVR4) && defined(__sun)
++	mlnx_umap_qp_data_out_t     *mdd;
++	void                        *qpbuf;
++	int                         max_send_sge;
++	int                         max_inline_data;
++#endif
+ 
+ 	/* Sanity check QP size before proceeding */
+ 	if (attr->cap.max_send_wr     > 65536 ||
+@@ -526,6 +798,35 @@
+ 	qp->sq.max = align_queue_size(pd->context, attr->cap.max_send_wr, 0);
+ 	qp->rq.max = align_queue_size(pd->context, attr->cap.max_recv_wr, 0);
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Solaris QP work queue memory is supplied by the kernel, so we
++	 * don't allocate memory here.
++	 */
++	qp->buf.buf	= NULL;
++	qp->buf.length	= 0;
++	qp->mr		= NULL;
++	qp->wrid	= NULL;
++	cmd.lkey	= 0;
++	cmd.reserved	= 0;
++
++	/*
++	 * We adjust the number of send SGL entries to force the kernel to
++	 * allocate a larger WQE that will fit the inline data requested.
++	 * The Solaris Tavor driver does not look at inline data size when
++	 * calculating the send WQE size, so this allows us to get closer
++	 * to what the user has requested.
++	 */
++	max_send_sge = align(attr->cap.max_inline_data +
++				sizeof(struct mthca_inline_seg),
++				sizeof( struct mthca_data_seg)) /
++					sizeof(struct mthca_data_seg);
++
++	if (max_send_sge > attr->cap.max_send_sge) {
++		attr->cap.max_send_sge = max_send_sge;
++	}
++	
++#else
+ 	if (mthca_alloc_qp_buf(pd, &attr->cap, attr->qp_type, qp))
+ 		goto err;
+ 
+@@ -543,6 +844,7 @@
+ 
+ 	cmd.lkey     = qp->mr->lkey;
+ 	cmd.reserved = 0;
++#endif
+ 
+ 	if (mthca_is_memfree(pd->context)) {
+ 		qp->sq.db_index = mthca_alloc_db(to_mctx(pd->context)->db_tab,
+@@ -577,6 +879,73 @@
+ 		mthca_set_db_qn(qp->rq.db, MTHCA_DB_TYPE_RQ, qp->ibv_qp.qp_num);
+ 	}
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * The kernel driver passes back mmap information for mapping the
++	 * QP work queue memory it allocated back into user space.  This is part
++	 * of the HCA generic data.
++	 */
++	mdd = (mlnx_umap_qp_data_out_t *) &resp.drv_out;
++	qpbuf = mmap64((void *)0, mdd->mqp_maplen,
++			PROT_READ|PROT_WRITE, MAP_SHARED,
++			pd->context->mmap_fd,
++			mdd->mqp_mapoffset);
++
++	if (qpbuf == MAP_FAILED) {
++		goto err_destroy;
++	}
++
++	/*
++	 * Calculate the official maximum inline data size, this is not done
++	 * by the kernel driver, so we do it here and update the qp struct.
++	 */
++	max_inline_data = mdd->mqp_sq_wqesz - sizeof(struct mthca_inline_seg);
++	max_inline_data -= sizeof(struct mthca_next_seg);
++
++	if (attr->qp_type == IBV_QPT_UD) {
++		if (mthca_is_memfree(pd->context)) {
++			max_inline_data -= sizeof(struct mthca_arbel_ud_seg);
++		} else {
++			max_inline_data -= sizeof(struct mthca_tavor_ud_seg);
++		}
++	} else {
++		max_inline_data -= sizeof(struct mthca_raddr_seg);
++	}
++	attr->cap.max_inline_data = max_inline_data;
++
++	qp->sq.max      = resp.max_send_wr;
++	qp->sq.max_gs   = resp.max_send_sge;
++	if (attr->srq) {
++		qp->rq.max      = 0;
++		qp->rq.max_gs   = 0;
++	} else {
++		qp->rq.max      = resp.max_recv_wr;
++		qp->rq.max_gs   = resp.max_recv_sge;
++	}
++
++	if (mthca_set_qp_buf(pd, qp, qpbuf, mdd->mqp_maplen,
++				mdd->mqp_rq_wqesz, mdd->mqp_rq_off,
++				mdd->mqp_sq_wqesz, mdd->mqp_sq_off)) {
++		goto err_destroy;
++	}
++
++	/*
++	 * Solaris clears the receive queue max work requests and max
++	 * scatter/gather entries when a SRQ is used since they are
++	 * ignored in that case.  To maintain consistency with what OFED
++	 * will return, we set them back to their requested values here.
++	 * Note that the SRQ values will be used by OFED as expected.
++	 */
++	if (attr->srq) {
++		resp.max_recv_wr   = attr->cap.max_recv_wr;
++		resp.max_recv_sge  = attr->cap.max_recv_sge;
++	}
++	mthca_init_qp_indices(qp);
++
++	if (pthread_spin_init(&qp->sq.lock, PTHREAD_PROCESS_PRIVATE) ||
++	    pthread_spin_init(&qp->rq.lock, PTHREAD_PROCESS_PRIVATE))
++		goto err_unmap;
++#endif
+ 	ret = mthca_store_qp(to_mctx(pd->context), qp->ibv_qp.qp_num, qp);
+ 	if (ret)
+ 		goto err_destroy;
+@@ -590,7 +959,23 @@
+ 
+ 	return &qp->ibv_qp;
+ 
++
++#if defined(__SVR4) && defined(__sun)
++err_unmap:
++	munmap(qp->buf.buf, qp->buf.length);
++	/*
++	 * Calling ibv_cmd_destroy_qp() will try and take the ibv_qp
++	 * mutext that is initialised by the ibv_create_qp() entry point
++	 * that called us AFETR we retrun, so its not initialised yet.
++	 * So initialised it here so the destroy call doesn't hang.
++	 */
+ err_destroy:
++	pthread_mutex_init(&(qp->ibv_qp.mutex), NULL);
++	pthread_cond_init(&(qp->ibv_qp.cond), NULL);
++	qp->ibv_qp.events_completed = 0;
++#else
++err_destroy:
++#endif
+ 	ibv_cmd_destroy_qp(&qp->ibv_qp);
+ 
+ err_rq_db:
+@@ -605,13 +990,18 @@
+ 			      qp->sq.db_index);
+ 
+ err_unreg:
++#if !(defined(__SVR4) && defined(__sun))
+ 	mthca_dereg_mr(qp->mr);
+ 
+ err_free:
+ 	free(qp->wrid);
+ 	mthca_free_buf(&qp->buf);
+-
+ err:
++
++#else
++	if (qp->wrid)
++		free(qp->wrid);
++#endif
+ 	free(qp);
+ 
+ 	return NULL;
+@@ -618,16 +1008,31 @@
+ }
+ 
+ int mthca_query_qp(struct ibv_qp *qp, struct ibv_qp_attr *attr,
+-		   enum ibv_qp_attr_mask attr_mask,
++		   int attr_mask,
+ 		   struct ibv_qp_init_attr *init_attr)
+ {
+ 	struct ibv_query_qp cmd;
++#if defined(__SVR4) && defined(__sun)
++	int ret;
+ 
++	ret = ibv_cmd_query_qp(qp, attr, attr_mask, init_attr, &cmd,
++								sizeof cmd);
++	if (ret)
++		return (ret);
++	/*
++	 * Need to do this until solaris HCAs report max inline data on
++	 * QP creation.
++	 */
++	init_attr->cap.max_inline_data = to_mqp(qp)->max_inline_data;
++	attr->cap.max_inline_data = to_mqp(qp)->max_inline_data;
++	return (0);
++#else
+ 	return ibv_cmd_query_qp(qp, attr, attr_mask, init_attr, &cmd, sizeof cmd);
++#endif
+ }
+ 
+ int mthca_modify_qp(struct ibv_qp *qp, struct ibv_qp_attr *attr,
+-		    enum ibv_qp_attr_mask attr_mask)
++		    int attr_mask)
+ {
+ 	struct ibv_modify_qp cmd;
+ 	int ret;
+@@ -715,10 +1120,17 @@
+ 			      to_mqp(qp)->sq.db_index);
+ 	}
+ 
+-	mthca_dereg_mr(to_mqp(qp)->mr);
+-	mthca_free_buf(&to_mqp(qp)->buf);
+-	free(to_mqp(qp)->wrid);
+-	free(to_mqp(qp));
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Unmap kernel allocated QP work queue memeory.
++	 */
++	munmap(to_mqp(qp)->buf.buf, to_mqp(qp)->buf.length);
++#else
++        mthca_dereg_mr(to_mqp(qp)->mr);
++        mthca_free_buf(&to_mqp(qp)->buf);
++#endif
++        free(to_mqp(qp)->wrid);
++        free(to_mqp(qp));
+ 
+ 	return 0;
+ }
+@@ -747,12 +1159,12 @@
+ 	return 0;
+ }
+ 
+-int mthca_attach_mcast(struct ibv_qp *qp, union ibv_gid *gid, uint16_t lid)
++int mthca_attach_mcast(struct ibv_qp *qp, const union ibv_gid *gid, uint16_t lid)
+ {
+ 	return ibv_cmd_attach_mcast(qp, gid, lid);
+ }
+ 
+-int mthca_detach_mcast(struct ibv_qp *qp, union ibv_gid *gid, uint16_t lid)
++int mthca_detach_mcast(struct ibv_qp *qp, const union ibv_gid *gid, uint16_t lid)
+ {
+ 	return ibv_cmd_detach_mcast(qp, gid, lid);
+ }
+diff -r -u /tmp/909901/libmthca-1.0.5/src/mthca.c libmthca-1.0.5/src/mthca.c
+--- /tmp/909901/libmthca-1.0.5/src/mthca.c	Sun Aug 30 06:43:15 2009
++++ libmthca-1.0.5/src/mthca.c	Fri Feb 11 04:07:29 2011
+@@ -35,6 +35,12 @@
+ #  include <config.h>
+ #endif /* HAVE_CONFIG_H */
+ 
++#if defined(__SVR4) && defined(__sun)
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <inttypes.h>
++#endif
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <unistd.h>
+@@ -137,6 +143,11 @@
+ 	struct ibv_get_context           cmd;
+ 	struct mthca_alloc_ucontext_resp resp;
+ 	int                              i;
++#if defined(__SVR4) && defined(__sun)
++	pid_t                            cur_pid;
++	off64_t                          uarpg_offset;
++	int                              temp_qp_num;
++#endif
+ 
+ 	context = calloc(1, sizeof *context);
+ 	if (!context)
+@@ -144,10 +155,23 @@
+ 
+ 	context->ibv_ctx.cmd_fd = cmd_fd;
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Need to set ibv_ctx.device because mthca_is_memfree() will
++	 * look at it to figure out the HCA type.
++	 */
++	context->ibv_ctx.device = ibdev;
++#endif
+ 	if (ibv_cmd_get_context(&context->ibv_ctx, &cmd, sizeof cmd,
+ 				&resp.ibv_resp, sizeof resp))
+ 		goto err_free;
+ 
++#if defined(__SVR4) && defined(__sun)
++	/* Expects power of two, round up */
++	for (temp_qp_num = 1; temp_qp_num< resp.qp_tab_size; temp_qp_num <<= 1)
++		;
++	resp.qp_tab_size = temp_qp_num;
++#endif
+ 	context->num_qps        = resp.qp_tab_size;
+ 	context->qp_table_shift = ffs(context->num_qps) - 1 - MTHCA_QP_TABLE_BITS;
+ 	context->qp_table_mask  = (1 << context->qp_table_shift) - 1;
+@@ -169,8 +193,22 @@
+ 	for (i = 0; i < MTHCA_QP_TABLE_SIZE; ++i)
+ 		context->qp_table[i].refcnt = 0;
+ 
++#if defined(__SVR4) && defined(__sun)
++	/*
++	 * Map the user access region page into process memory.
++	 */
++	cur_pid = getpid();
++	uarpg_offset = (((off64_t)cur_pid << MLNX_UMAP_RSRC_TYPE_SHIFT) |
++			MLNX_UMAP_UARPG_RSRC) * to_mdev(ibdev)->page_size;
++
++	context->uar = mmap64((void *)0, to_mdev(ibdev)->page_size,
++				PROT_WRITE | PROT_READ, MAP_SHARED,
++				context->ibv_ctx.mmap_fd, uarpg_offset);
++
++#else
+ 	context->uar = mmap(NULL, to_mdev(ibdev)->page_size, PROT_WRITE,
+ 			    MAP_SHARED, cmd_fd, 0);
++#endif
+ 	if (context->uar == MAP_FAILED)
+ 		goto err_db_tab;
+ 
+diff -r -u /tmp/909901/libmthca-1.0.5/src/mthca.h libmthca-1.0.5/src/mthca.h
+--- /tmp/909901/libmthca-1.0.5/src/mthca.h	Tue May 27 13:32:43 2008
++++ libmthca-1.0.5/src/mthca.h	Tue May  3 13:50:07 2011
+@@ -208,6 +208,9 @@
+ 	struct mthca_buf buf;
+ 	uint64_t        *wrid;
+ 	int              send_wqe_offset;
++#if defined(__SVR4) && defined(__sun)
++	int              recv_wqe_offset;
++#endif
+ 	int              max_inline_data;
+ 	int              buf_size;
+ 	struct mthca_wq  sq;
+@@ -309,7 +312,7 @@
+ int mthca_free_pd(struct ibv_pd *pd);
+ 
+ struct ibv_mr *mthca_reg_mr(struct ibv_pd *pd, void *addr,
+-			    size_t length, enum ibv_access_flags access);
++			    size_t length, int access);
+ int mthca_dereg_mr(struct ibv_mr *mr);
+ 
+ struct ibv_cq *mthca_create_cq(struct ibv_context *context, int cqe,
+@@ -330,12 +333,18 @@
+ 				 struct ibv_srq_init_attr *attr);
+ int mthca_modify_srq(struct ibv_srq *srq,
+ 		     struct ibv_srq_attr *attr,
+-		     enum ibv_srq_attr_mask mask);
++		     int mask);
+ int mthca_query_srq(struct ibv_srq *srq,
+ 			   struct ibv_srq_attr *attr);
+ int mthca_destroy_srq(struct ibv_srq *srq);
++#if defined(__SVR4) && defined(__sun)
++int mthca_set_srq_buf(struct ibv_pd *pd, struct ibv_srq_attr *attr,
++                      struct mthca_srq *srq, void *srqbuf, uint64_t buflen,
++                      uint32_t srq_wqesz, uint32_t srq_numwqe);
++#else
+ int mthca_alloc_srq_buf(struct ibv_pd *pd, struct ibv_srq_attr *attr,
+ 			struct mthca_srq *srq);
++#endif
+ void mthca_free_srq_wqe(struct mthca_srq *srq, int ind);
+ int mthca_tavor_post_srq_recv(struct ibv_srq *ibsrq,
+ 			      struct ibv_recv_wr *wr,
+@@ -346,10 +355,10 @@
+ 
+ struct ibv_qp *mthca_create_qp(struct ibv_pd *pd, struct ibv_qp_init_attr *attr);
+ int mthca_query_qp(struct ibv_qp *qp, struct ibv_qp_attr *attr,
+-		   enum ibv_qp_attr_mask attr_mask,
++		   int attr_mask,
+ 		   struct ibv_qp_init_attr *init_attr);
+ int mthca_modify_qp(struct ibv_qp *qp, struct ibv_qp_attr *attr,
+-		    enum ibv_qp_attr_mask attr_mask);
++		    int attr_mask);
+ int mthca_destroy_qp(struct ibv_qp *qp);
+ void mthca_init_qp_indices(struct mthca_qp *qp);
+ int mthca_tavor_post_send(struct ibv_qp *ibqp, struct ibv_send_wr *wr,
+@@ -360,8 +369,14 @@
+ 			  struct ibv_send_wr **bad_wr);
+ int mthca_arbel_post_recv(struct ibv_qp *ibqp, struct ibv_recv_wr *wr,
+ 			  struct ibv_recv_wr **bad_wr);
++#if defined(__SVR4) && defined(__sun)
++int mthca_set_qp_buf(struct ibv_pd *pd, struct mthca_qp *qp, void *qpbuf,
++                     uint64_t buflen, uint32_t rq_wqesz, uint32_t rq_off,
++                     uint32_t sq_wqesz, uint32_t sq_off);
++#else
+ int mthca_alloc_qp_buf(struct ibv_pd *pd, struct ibv_qp_cap *cap,
+ 		       enum ibv_qp_type type, struct mthca_qp *qp);
++#endif
+ struct mthca_qp *mthca_find_qp(struct mthca_context *ctx, uint32_t qpn);
+ int mthca_store_qp(struct mthca_context *ctx, uint32_t qpn, struct mthca_qp *qp);
+ void mthca_clear_qp(struct mthca_context *ctx, uint32_t qpn);
+@@ -372,7 +387,7 @@
+ int mthca_alloc_av(struct mthca_pd *pd, struct ibv_ah_attr *attr,
+ 		   struct mthca_ah *ah);
+ void mthca_free_av(struct mthca_ah *ah);
+-int mthca_attach_mcast(struct ibv_qp *qp, union ibv_gid *gid, uint16_t lid);
+-int mthca_detach_mcast(struct ibv_qp *qp, union ibv_gid *gid, uint16_t lid);
++int mthca_attach_mcast(struct ibv_qp *qp, const union ibv_gid *gid, uint16_t lid);
++int mthca_detach_mcast(struct ibv_qp *qp, const union ibv_gid *gid, uint16_t lid);
+ 
+ #endif /* MTHCA_H */
+diff -r -u /tmp/909901/libmthca-1.0.5/src/qp.c libmthca-1.0.5/src/qp.c
+--- /tmp/909901/libmthca-1.0.5/src/qp.c	Sun Aug 30 06:43:15 2009
++++ libmthca-1.0.5/src/qp.c	Fri Feb 11 04:07:30 2011
+@@ -60,7 +60,11 @@
+ 
+ static void *get_recv_wqe(struct mthca_qp *qp, int n)
+ {
++#if defined(__SVR4) && defined(__sun)
++	return qp->buf.buf + qp->recv_wqe_offset + (n << qp->rq.wqe_shift);
++#else
+ 	return qp->buf.buf + (n << qp->rq.wqe_shift);
++#endif
+ }
+ 
+ static void *get_send_wqe(struct mthca_qp *qp, int n)
+@@ -387,6 +391,14 @@
+ 
+ 		qp->wrid[ind] = wr->wr_id;
+ 
++#if defined(__SVR4) && defined(__sun)
++		((struct mthca_next_seg *) prev_wqe)->nda_op =
++			htonl(((ind << qp->rq.wqe_shift) +
++			qp->recv_wqe_offset) | 1);
++#else
++		((struct mthca_next_seg *) prev_wqe)->nda_op =
++			htonl((ind << qp->rq.wqe_shift) | 1);
++#endif
+ 		((struct mthca_next_seg *) prev_wqe)->ee_nds =
+ 			htonl(MTHCA_NEXT_DBD | size);
+ 
+@@ -401,7 +413,12 @@
+ 		if (nreq == MTHCA_TAVOR_MAX_WQES_PER_RECV_DB) {
+ 			nreq = 0;
+ 
++#if defined(__SVR4) && defined(__sun)
++			doorbell[0] = htonl(((qp->rq.next_ind << qp->rq.wqe_shift) +
++			                    qp->recv_wqe_offset) | size0);
++#else
+ 			doorbell[0] = htonl((qp->rq.next_ind << qp->rq.wqe_shift) | size0);
++#endif
+ 			doorbell[1] = htonl(ibqp->qp_num << 8);
+ 
+ 			/*
+@@ -420,7 +437,12 @@
+ 
+ out:
+ 	if (nreq) {
++#if defined(__SVR4) && defined(__sun)
++		doorbell[0] = htonl(((qp->rq.next_ind << qp->rq.wqe_shift) +
++		                    qp->recv_wqe_offset) | size0);
++#else
+ 		doorbell[0] = htonl((qp->rq.next_ind << qp->rq.wqe_shift) | size0);
++#endif
+ 		doorbell[1] = htonl((ibqp->qp_num << 8) | nreq);
+ 
+ 		/*
+@@ -777,6 +799,81 @@
+ 	return ret;
+ }
+ 
++#if defined(__SVR4) && defined(__sun)
++
++int mthca_set_qp_buf(struct ibv_pd *pd, struct mthca_qp *qp, void *qpbuf,
++                     uint64_t buflen, uint32_t rq_wqesz, uint32_t rq_off,
++                     uint32_t sq_wqesz, uint32_t sq_off)
++{
++
++        qp->buf.buf    = qpbuf;
++        qp->buf.length = buflen;
++
++        qp->wrid = malloc((qp->rq.max + qp->sq.max) * sizeof(uint64_t));
++        if (!qp->wrid) {
++                return -1;
++        }
++
++        for (qp->rq.wqe_shift = 6; 1 << qp->rq.wqe_shift < rq_wqesz;
++             qp->rq.wqe_shift++)
++                ; /* nothing */
++
++        for (qp->sq.wqe_shift = 6; 1 << qp->sq.wqe_shift < sq_wqesz;
++             qp->sq.wqe_shift++)
++                ; /* nothing */
++
++        qp->send_wqe_offset = sq_off;
++        qp->recv_wqe_offset = rq_off;
++
++        if (qp->recv_wqe_offset < qp->send_wqe_offset) {
++                qp->buf_size =
++		    qp->send_wqe_offset + (qp->sq.max << qp->sq.wqe_shift);
++        } else {
++                qp->buf_size =
++		    qp->recv_wqe_offset + (qp->rq.max << qp->rq.wqe_shift);
++        }
++
++        if ((long int)qp->buf.length < (long int)qp->buf_size) {
++                fprintf(stderr, "warning kernel buf size %d < user buf size "
++		    "%d\n", (int)qp->buf.length, qp->buf_size);
++        }
++
++        memset(qp->buf.buf, 0, qp->buf_size);
++
++	if (mthca_is_memfree(pd->context)) {
++		struct mthca_next_seg *next;
++		struct mthca_data_seg *scatter;
++		int i;
++		uint32_t sz;
++
++		sz = htonl((sizeof (struct mthca_next_seg) +
++		    qp->rq.max_gs * sizeof (struct mthca_data_seg)) / 16);
++
++		for (i = 0; i < qp->rq.max; ++i) {
++			next = get_recv_wqe(qp, i);
++			next->nda_op = htonl(((i + 1) & (qp->rq.max - 1)) <<
++					     qp->rq.wqe_shift);
++			next->ee_nds = sz;
++
++			for (scatter = (void *) (next + 1);
++			    (void *) scatter < (void *) next +
++			    (1 << qp->rq.wqe_shift); ++scatter)
++				scatter->lkey = htonl(MTHCA_INVAL_LKEY);
++		}
++
++		for (i = 0; i < qp->sq.max; ++i) {
++			next = get_send_wqe(qp, i);
++			next->nda_op = htonl((((i + 1) & (qp->sq.max - 1)) <<
++					      qp->sq.wqe_shift) +
++					     qp->send_wqe_offset);
++		}
++	}
++
++	qp->sq.last = get_send_wqe(qp, qp->sq.max - 1);
++	qp->rq.last = get_recv_wqe(qp, qp->rq.max - 1);
++	return 0;
++}
++#else
+ int mthca_alloc_qp_buf(struct ibv_pd *pd, struct ibv_qp_cap *cap,
+ 		       enum ibv_qp_type type, struct mthca_qp *qp)
+ {
+@@ -895,6 +992,7 @@
+ 
+ 	return 0;
+ }
++#endif
+ 
+ struct mthca_qp *mthca_find_qp(struct mthca_context *ctx, uint32_t qpn)
+ {
+diff -r -u /tmp/909901/libmthca-1.0.5/src/cq.c libmthca-1.0.5/src/cq.c
+--- /tmp/909901/libmthca-1.0.5/src/cq.c	Sun Aug 30 06:43:15 2009
++++ libmthca-1.0.5/src/cq.c	Fri Feb 11 04:07:29 2011
+@@ -351,7 +351,11 @@
+ 		int32_t wqe;
+ 		wq = &(*cur_qp)->rq;
+ 		wqe = ntohl(cqe->wqe);
++#if defined(__SVR4) && defined(__sun)
++		wqe_index = ((ntohl(cqe->wqe) - (*cur_qp)->recv_wqe_offset) >> wq->wqe_shift);
++#else
+ 		wqe_index = wqe >> wq->wqe_shift;
++#endif
+ 		/*
+ 		 * WQE addr == base - 1 might be reported by Sinai FW
+ 		 * 1.0.800 and Arbel FW 5.1.400 in receive completion
+@@ -622,10 +626,15 @@
+ {
+ 	int i;
+ 
++#if !(defined(__SVR4) && defined(__sun))
++	/*
++	 * Memory allocated by kernel for Solaris
++	 */
+ 	if (mthca_alloc_buf(buf, align(nent * MTHCA_CQ_ENTRY_SIZE, dev->page_size),
+ 		    dev->page_size))
+ 		return -1;
+ 
++#endif
+ 	for (i = 0; i < nent; ++i)
+ 		((struct mthca_cqe *) buf->buf)[i].owner = MTHCA_CQ_ENTRY_OWNER_HW;
+ 
+diff -r -u /tmp/909901/libmthca-1.0.5/src/mthca-abi.h libmthca-1.0.5/src/mthca-abi.h
+--- /tmp/909901/libmthca-1.0.5/src/mthca-abi.h	Tue May 27 13:32:43 2008
++++ libmthca-1.0.5/src/mthca-abi.h	Tue May  3 13:50:07 2011
+@@ -35,6 +35,9 @@
+ #define MTHCA_ABI_H
+ 
+ #include <infiniband/kern-abi.h>
++#if defined(__SVR4) && defined(__sun)
++#include <sys/ib/adapters/mlnx_umap.h>
++#endif
+ 
+ #define MTHCA_UVERBS_ABI_VERSION	1
+ 
+diff -r -u /tmp/909901/libmthca-1.0.5/Makefile.am libmthca-1.0.5/Makefile.am
+--- /tmp/909901/libmthca-1.0.5/Makefile.am	Sun Aug 30 06:43:15 2009
++++ libmthca-1.0.5/Makefile.am	Fri Feb 11 04:07:23 2011
+@@ -10,7 +10,7 @@
+     src_libmthca_la_SOURCES = $(MTHCA_SOURCES)
+     src_libmthca_la_LDFLAGS = -avoid-version -release @IBV_DEVICE_LIBRARY_EXTENSION@ \
+         $(mthca_version_script)
+-    mthcaconfdir = $(sysconfdir)/libibverbs.d
++    mthcaconfdir = $(datadir)/libibverbs.d
+     mthcaconf_DATA = mthca.driver
+ else
+     mthcalibdir = $(libdir)/infiniband
+diff -r -u /tmp/909901/libmthca-1.0.5/Makefile.in libmthca-1.0.5/Makefile.in
+--- /tmp/909901/libmthca-1.0.5/Makefile.in	Sun Aug 30 06:43:33 2009
++++ libmthca-1.0.5/Makefile.in	Fri Feb 11 04:07:24 2011
+@@ -57,7 +57,7 @@
+ am__strip_dir = `echo $$p | sed -e 's|^.*/||'`;
+ am__installdirs = "$(DESTDIR)$(libdir)" "$(DESTDIR)$(mthcalibdir)" \
+ 	"$(DESTDIR)$(mthcaconfdir)"
+-libLTLIBRARIES_INSTALL = $(INSTALL)
++libLTLIBRARIES_INSTALL = $(INSTALL) -m 755
+ mthcalibLTLIBRARIES_INSTALL = $(INSTALL)
+ LTLIBRARIES = $(lib_LTLIBRARIES) $(mthcalib_LTLIBRARIES)
+ src_libmthca_la_LIBADD =
+@@ -235,7 +235,7 @@
+ @HAVE_IBV_DEVICE_LIBRARY_EXTENSION_TRUE@src_libmthca_la_LDFLAGS = -avoid-version -release @IBV_DEVICE_LIBRARY_EXTENSION@ \
+ @HAVE_IBV_DEVICE_LIBRARY_EXTENSION_TRUE@        $(mthca_version_script)
+ 
+-@HAVE_IBV_DEVICE_LIBRARY_EXTENSION_TRUE@mthcaconfdir = $(sysconfdir)/libibverbs.d
++@HAVE_IBV_DEVICE_LIBRARY_EXTENSION_TRUE@mthcaconfdir = $(datadir)/libibverbs.d
+ @HAVE_IBV_DEVICE_LIBRARY_EXTENSION_TRUE@mthcaconf_DATA = mthca.driver
+ @HAVE_IBV_DEVICE_LIBRARY_EXTENSION_FALSE@mthcalibdir = $(libdir)/infiniband
+ @HAVE_IBV_DEVICE_LIBRARY_EXTENSION_FALSE@mthcalib_LTLIBRARIES = src/mthca.la
