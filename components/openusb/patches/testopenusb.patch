@@ -1,0 +1,226 @@
+Index: libopenusb-1.0.1/tests/testopenusb.c
+===================================================================
+--- libopenusb-1.0.1/tests/testopenusb.c	(revision 122)
++++ libopenusb-1.0.1/tests/testopenusb.c	(working copy)
+@@ -183,7 +183,7 @@
+ 		break;
+ 	}
+ 	printf("CALLBACK: lib(%llu) device(%llu) get a event(%s) with arg=%p\n",
+-		handle, devid, evstring, arg);
++		(unsigned long long)handle, (unsigned long long)devid, evstring, arg);
+ }
+ 
+ int convert_string(char *buf, usb_string_desc_t *st, int buflen)
+@@ -350,14 +350,16 @@
+ 
+ 	ret = openusb_claim_interface(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) claim interface error:%s\n",devids[0],
++		printf("Device(%llu) claim interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+ 
+ 	ret = openusb_set_altsetting(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) set alt:%s\n",devids[0],
++		printf("Device(%llu) interface(0) set alt:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+@@ -424,14 +426,16 @@
+ 
+ 	ret = openusb_claim_interface(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) claim interface error:%s\n",devids[0],
++		printf("Device(%llu) claim interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+ 
+ 	ret = openusb_set_altsetting(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) set alt:%s\n",devids[0],
++		printf("Device(%llu) interface(0) set alt:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+@@ -498,14 +502,16 @@
+ 
+ 	ret = openusb_claim_interface(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) claim interface error:%s\n",devids[0],
++		printf("Device(%llu) claim interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+ 
+ 	ret = openusb_set_altsetting(devh,0,3);/* alt 3, depends on the fw */
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) set alt:%s\n",devids[0],
++		printf("Device(%llu) interface(0) set alt:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+@@ -593,14 +599,16 @@
+ 
+ 	ret = openusb_claim_interface(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) claim interface error:%s\n",devids[0],
++		printf("Device(%llu) claim interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+ 
+ 	ret = openusb_set_altsetting(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) set alt:%s\n",devids[0],
++		printf("Device(%llu) interface(0) set alt:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+@@ -735,7 +743,8 @@
+ 
+ 	ret = openusb_claim_interface(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) claim interface error:%s\n", devids[0],
++		printf("Device(%llu) claim interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+@@ -747,7 +756,8 @@
+ 	}
+ 
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) set alt:%s\n", devids[0],
++		printf("Device(%llu) interface(0) set alt:%s\n",
++			       (unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+@@ -1027,14 +1037,16 @@
+ 
+ 	ret = openusb_claim_interface(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) claim interface error:%s\n", devids[0],
++		printf("Device(%llu) claim interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+ 
+ 	ret = openusb_set_altsetting(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) set alt:%s\n", devids[0],
++		printf("Device(%llu) interface(0) set alt:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		return -1;
+ 	}
+@@ -1195,7 +1207,8 @@
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+-	printf("Device(%llu) opened: %llu\n",devids[0],devh);
++	printf("Device(%llu) opened: %llu\n", (unsigned long long)devids[0],
++			(unsigned long long)devh);
+ 
+ 	ret = openusb_get_devid(devh, &devid);
+ 	if(ret < 0) {
+@@ -1206,11 +1219,12 @@
+ 
+ 	ret = openusb_get_lib_handle(devh,&libh);
+ 	if (ret != 0) {
+-		printf("Get device(%llu) lib handle error:%s\n",devids[0],
++		printf("Get device(%llu) lib handle error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+-	printf("Lib handle = %llu\n",libh);
++	printf("Lib handle = %llu\n", (unsigned long long)libh);
+ 
+ #if 1  /* multi xfer test */
+ 	ret = multi_xfer_test(devh);
+@@ -1241,14 +1255,16 @@
+ #if 1	/* configuration test */
+ 	ret = openusb_set_configuration(devh,1);
+ 	if (ret != 0) {
+-		printf("Set device(%llu) config error:%s\n",devids[0],
++		printf("Set device(%llu) config error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+ 
+ 	ret = openusb_get_configuration(devh,&cfg);
+ 	if (ret != 0) {
+-		printf("Get device(%llu) config error:%s\n",devids[0],
++		printf("Get device(%llu) config error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+@@ -1259,18 +1275,21 @@
+ #if 1	/* claim interface test */
+ 	ret = openusb_claim_interface(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) claim interface error:%s\n",devids[0],
++		printf("Device(%llu) claim interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+ 
+ 	ret = openusb_is_interface_claimed(devh,0);
+-	printf("Device(%llu) interface(0) claimed return %d\n", devids[0],
++	printf("Device(%llu) interface(0) claimed return %d\n",
++			(unsigned long long)devids[0],
+ 			ret);
+ 
+ 	ret = openusb_set_altsetting(devh,0,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) set alt:%s\n",devids[0],
++		printf("Device(%llu) interface(0) set alt:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+@@ -1278,7 +1297,8 @@
+ 
+ 	ret = openusb_get_altsetting(devh,0,&alt);
+ 	if (ret != 0) {
+-		printf("Device(%llu) interface(0) get alt:%s\n",devids[0],
++		printf("Device(%llu) interface(0) get alt:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+@@ -1286,7 +1306,8 @@
+ 
+ 	ret = openusb_release_interface(devh,0);
+ 	if (ret != 0) {
+-		printf("Device(%llu) release interface error:%s\n",devids[0],
++		printf("Device(%llu) release interface error:%s\n",
++				(unsigned long long)devids[0],
+ 				openusb_strerror(ret));
+ 		goto err;
+ 	}
+@@ -1396,7 +1417,7 @@
+ 		printf("error init\n");
+ 		exit(1);
+ 	}
+-	printf("lib handle=%llu \n",libhandle);
++	printf("lib handle=%llu \n", (unsigned long long)libhandle);
+ 	printf("openusb_init PASS\n");
+ 
+ 	ret = openusb_set_event_callback(libhandle, USB_ATTACH, event_cb, NULL);
