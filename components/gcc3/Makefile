@@ -71,7 +71,16 @@ COMPONENT_BUILD_TARGETS = bootstrap
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32)
+$(PROTO_DIR)/.sedded:	$(INSTALL_32)
+	(cd $(@D) ; for file in libstdc++.la libsupc++.la ; do \
+		$(MV) usr/sfw/lib/$$file usr/sfw/lib/$$file.orig ; \
+		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/sfw/lib -lgcc_s -lm';" usr/sfw/lib/$$file.orig >usr/sfw/lib/$$file ; \
+		$(MV) usr/sfw/lib/$(MACH64)/$$file usr/sfw/lib/$(MACH64)/$$file.orig ; \
+		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/sfw/lib/$(MACH64) -lgcc_s -lm';" usr/sfw/lib/$(MACH64)/$$file.orig >usr/sfw/lib/$(MACH64)/$$file ; \
+	 done)
+	$(TOUCH) $@
+
+install:	$(PROTO_DIR)/.sedded
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
