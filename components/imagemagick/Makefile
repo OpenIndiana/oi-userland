@@ -68,6 +68,7 @@ CONFIGURE_OPTIONS+= --enable-shared=yes
 CONFIGURE_OPTIONS+= --enable-static=no
 CONFIGURE_OPTIONS+= --without-gvc
 CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
+CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS.64+= --without-perl
 
 # common targets
