@@ -45,6 +45,9 @@ COMPILER =	gcc
 # CC_BITS may get in the way
 CC_BITS=
 
+# enabling this causes libstdc++ to break
+LD_B_DIRECT=
+
 CONFIGURE_PREFIX =	/usr/sfw
 
 # we need to override CONFIGURE_OPTIONS because GCC uses a configure that
