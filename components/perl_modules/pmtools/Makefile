@@ -23,7 +23,7 @@
 # Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
-include $(WS_TOP)/make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pmtools
 COMPONENT_VERSION=	1.10
