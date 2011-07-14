@@ -67,7 +67,7 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-nls
 CONFIGURE_OPTIONS  +=		--enable-largefile
 CONFIGURE_OPTIONS  +=		--disable-selinux-support
-CONFIGURE_OPTIONS  +=		--with-pinentry-pgm=$(CONFIGURE_LIBDIR)/pinentry
+CONFIGURE_OPTIONS  +=		--with-pinentry-pgm=$(CONFIGURE_PREFIX)/lib/pinentry
 CONFIGURE_OPTIONS  +=		--with-gpg-error-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-libassuan-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-ksba-prefix=$(CONFIGURE_PREFIX)
