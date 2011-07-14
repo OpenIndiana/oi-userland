@@ -1,5 +1,5 @@
-*** src/tddl/tddl.c.old	Fri Dec  5 08:13:11 2008
---- src/tddl/tddl.c	Fri Dec  5 08:16:20 2008
+--- src/tddl/tddl.c.old	2010-04-12 22:24:21.000000000 -0700
++++ src/tddl/tddl.c 2011-07-12 13:14:57.362305220 -0700
 @@ -18,13 +18,17 @@
  
  #include "trousers/tss.h"
@@ -18,20 +18,36 @@
  	{"/dev/tpm", TDDL_UNDEF, TDDL_UNDEF},
  	{NULL, 0, 0}
  };
-@@ -105,8 +109,11 @@
+@@ -63,7 +67,7 @@
+ 	 
+ 		
+ 		fd = socket(AF_INET, SOCK_STREAM, 0);
+-		if (fd > 0) {
++		if (fd >= 0) {
+ 			struct hostent *host = gethostbyname(tcp_device_hostname);
+ 			if (host != NULL) {   
+ 				struct sockaddr_in addr;
+@@ -105,12 +109,16 @@
  		/* tpm_device_paths is filled out in tddl.h */
  		for (i = 0; tpm_device_nodes[i].path != NULL; i++) {
  			errno = 0;
 -			if ((fd = open(tpm_device_nodes[i].path, O_RDWR)) >= 0)
 +			if ((fd = open(tpm_device_nodes[i].path, O_RDWR)) >= 0) {
+ 				break;
++			} else {
 +				fprintf(stderr, "Error opening %s: %s\n",
 +				    tpm_device_nodes[i].path, strerror(errno));
- 				break;
 +			}
  		}
  	}
- 	
-@@ -181,11 +188,13 @@
+-	
+-	if (fd > 0) {
++
++	if (fd >= 0) {
+ 		opened_device = &(tpm_device_nodes[i]);
+ 		tpm_device_nodes[i].fd = fd;
+ 	}
+@@ -181,11 +189,13 @@
  			/* fall through */
  		case TDDL_TRANSMIT_IOCTL:
  			errno = 0;
@@ -45,7 +61,7 @@
  			LogInfo("Falling back to Read/Write device support.");
  			/* fall through */
  		case TDDL_TRANSMIT_RW:
-@@ -255,6 +264,7 @@
+@@ -255,6 +265,7 @@
  
  TSS_RESULT Tddli_Cancel(void)
  {
@@ -53,7 +69,7 @@
  	int rc;
  
  	if (opened_device->transmit == TDDL_TRANSMIT_IOCTL) {
-@@ -270,4 +280,7 @@
+@@ -270,4 +281,7 @@
  	} else {
  		return TDDLERR(TSS_E_NOTIMPL);
  	}

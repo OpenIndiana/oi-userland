@@ -1,0 +1,21 @@
+--- src/tcs/tcs_caps.c.old	Wed Jun  9 13:20:44 2010
++++ src/tcs/tcs_caps.c	Fri Jul  1 16:26:51 2011
+@@ -149,6 +149,7 @@
+ {
+ 	TSS_RESULT result;
+ 	UINT32 subCap, rv = 0;
++	UINT32 manuf;
+ 
+ 	if ((result = get_current_version(&p->version)))
+ 		goto err;
+@@ -181,8 +182,9 @@
+ 
+ 	UINT32ToArray(TPM_CAP_PROP_MANUFACTURER, (BYTE *)&subCap);
+ 	if ((result = get_cap_uint32(TCPA_CAP_PROPERTY, (BYTE *)&subCap, sizeof(UINT32),
+-					(UINT32 *)&p->manufacturer)))
++					(UINT32 *)&manuf)))
+ 		goto err;
++	(void) memcpy(p->manufacturer, &manuf, sizeof (UINT32));
+ 
+ 	result = get_max_auths(&(p->num_auths));
+ 
