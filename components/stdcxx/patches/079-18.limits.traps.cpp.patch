@@ -1,0 +1,155 @@
+--- stdcxx-4.2.1/tests/support/18.limits.traps.cpp	2008-04-24 17:23:28.000000000 -0700
++++ stdcxx-4.2.1/tests/support/18.limits.traps.cpp	2011-02-28 12:21:51.029812080 -0800
+@@ -28,7 +28,10 @@
+ 
+ #include <limits>
+ 
++#include <cstring>    // for memset
+ #include <csignal>    // for SIGFPE, signal
++#include <csetjmp>    // for siglongjmp, sigsetjmp
++#include <cassert>    // for assert
+ 
+ #include <any.h>      // for rw_any_t
+ #include <cmdopt.h>   // for rw_enabled()
+@@ -36,34 +39,49 @@
+ 
+ /**************************************************************************/
+ 
+-#ifdef _RWSTD_OS_LINUX
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
+ 
+-   // use siglongjmp() and sigsetjmp() on Linux to avoid
+-   // http://sourceware.org/bugzilla/show_bug.cgi?id=2351
+-#  include <setjmp.h>    // for siglongjmp, sigsetjmp
++// For SunProCC you must compile with -ftrap=common to enable
++// traps on floating-point types.
+ 
+-jmp_buf jmp_env;
++#  include <ucontext.h>  // for ucontext_t
++
++static sigjmp_buf jmp_env;
+ 
+ extern "C" {
+ 
+-void handle_fpe (int)
++static int trapped = 0;
++
++void handle_fpe(int sig, siginfo_t* sinfo, void* arg)
+ {
++    ucontext_t* uc = (ucontext_t *) arg;
++    assert(arg != NULL);
++
++    rw_info (0, 0, 0, "%s: %s", __func__, strsignal(sig));
++
++    if (sig == SIGFPE)
++	trapped = 1;
++
+     siglongjmp (jmp_env, 1);
+ }
+ 
++static struct sigaction act;
++
+ }   // extern "C"
+ 
+ #  define RW_SIGSETJMP(env, signo)   sigsetjmp (env, signo)
+-#else   // if !defined (_RWSTD_OS_LINUX)
+ 
+-#  include <csetjmp>    // for longjmp, setjmp
++#else   // !Linux && !Solaris
+ 
+ std::jmp_buf jmp_env;
+ 
+ extern "C" {
+ 
+-void handle_fpe (int)
++static bool trapped = false;
++
++void handle_fpe (int sig)
+ {
++    trapped = true;
+     std::longjmp (jmp_env, 1);
+ }
+ 
+@@ -92,8 +110,11 @@
+ template <class numT>
+ inline void
+ try_trap (const volatile numT &one, const volatile numT &zero,
+-           numT &result, bool &trapped)
++           numT &result, bool &trapped_)
+ {
++#if defined(__SUNPRO_CC)
++     result = one / zero;
++#else
+     TRY {
+         result = one / zero;
+     }
+@@ -101,6 +122,7 @@
+         // Windows SEH hackery
+         trapped = true;
+     }
++#endif
+ }
+ 
+ 
+@@ -118,8 +140,24 @@
+ 
+     rw_info (0, 0, 0, "std::numeric_limits<%s>::traps = %b", tname, traps);
+ 
+-#ifdef SIGFPE
++#if defined(SIGFPE)
++
++#  if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++
++    trapped = 0;
++    (void) memset(&act, '\0', sizeof(act));
++
++    act.sa_sigaction = &handle_fpe;
++    act.sa_flags |= SA_SIGINFO;
++    sigemptyset (&act.sa_mask);
++
++    sigaction(SIGFPE, &act, NULL);
++
++#  else
++    trapped = false;
+     std::signal (SIGFPE, handle_fpe);
++#  endif
++
+ #else   // if !defined (SIGFPE)
+     if (!rw_warn (!traps, 0, lineno,
+                   "SIGFPE not #defined and numeric_limits<%s>::traps == %b, "
+@@ -128,21 +166,22 @@
+     }
+ #endif   // SIGFPE
+ 
+-    numT result = numT ();
+-
+     // set the environment
+-    const int jumped = RW_SIGSETJMP (jmp_env, SIGFPE);
++    volatile int jumped = RW_SIGSETJMP (jmp_env, SIGFPE);
++
++    numT result = numT ();
+ 
+     volatile numT zero = numT (jumped);
+     volatile numT one  = numT (1);
+ 
+-    bool trapped = false;
++    result = one / zero;
+ 
++#if !defined(_RWSTD_OS_LINUX) && !defined(_RWSTD_OS_SUNOS)
+     if (jumped) {
+         // setjmp() call above returned from the SIGFPE handler
+         // as a result of a floating point exception triggered
+         // by the division by zero in the else block below
+-        result = zero / one;
++        // result = zero / one;
+ 
+         trapped = true;
+     }
+@@ -155,6 +194,7 @@
+         // with a non-zero value
+         try_trap (one, zero, result, trapped);
+     }
++#endif
+ 
+     rw_assert (trapped == traps, 0, lineno,
+                "numeric_limits<%s>::traps == %b, got %b",

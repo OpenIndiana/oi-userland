@@ -1,0 +1,41 @@
+--- stdcxx-4.2.1/tests/localization/22.locale.messages.cpp	2008-04-24 20:23:10.000000000 -0400
++++ stdcxx-4.2.1/tests/localization/22.locale.messages.cpp	2009-03-28 01:09:14.686728000 -0400
+@@ -51,6 +51,11 @@
+ #    include <unistd.h>      // for getcwd()
+ #  endif
+ #  include <fcntl.h>         // for mode flags for _open
++#else
++#  include <sys/types.h>
++#  include <sys/stat.h>
++#  include <unistd.h>      // for getcwd()
++#  include <fcntl.h>         // for mode flags for _open
+ #endif   // _RWSTD_NO_NEW_HEADER
+ 
+ #undef open
+@@ -695,7 +700,7 @@
+     std::messages_base::catalog cats [NCATS];
+ 
+     // detect descriptor leaks
+-    const int fd1 = open (__FILE__, O_RDONLY);
++    const int fd1 = open (__FILE__, _RWSTD_O_RDONLY);
+ 
+     const std::locale loc = std::locale::classic ();
+ 
+@@ -731,7 +736,7 @@
+             close_catalog (msgs, cats [i], false, cname, __LINE__);
+     }
+ 
+-    int fd2 = open (__FILE__, O_RDONLY);
++    int fd2 = open (__FILE__, _RWSTD_O_RDONLY);
+     rw_assert (fd2 - fd1 == 1, 0, __LINE__,
+                "messages<%s>::close() leaked %d file descriptors",
+                cname, fd2 - fd1 - 1);
+@@ -750,7 +755,7 @@
+     // close again fd2
+     close (fd2);
+ 
+-    fd2 = open (__FILE__, O_RDONLY);
++    fd2 = open (__FILE__, _RWSTD_O_RDONLY);
+     rw_assert (fd2 - fd1 == 1, 0, __LINE__,
+                "messages<%s>::close() leaked %d file descriptors",
+                cname, fd2 - fd1 - 1);

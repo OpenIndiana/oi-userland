@@ -1,0 +1,36 @@
+--- stdcxx-4.2.1/tests/algorithms/25.libc.cpp	2008-04-24 20:23:21.000000000 -0400
++++ stdcxx-4.2.1/tests/algorithms/25.libc.cpp	2011-01-26 04:59:35.154999393 -0500
+@@ -34,6 +34,12 @@
+ #include <rw_value.h>   // for UserClass
+ #include <driver.h>     // for rw_test()
+ 
++// If we do not define _RWSTD_NO_EXCEPTIONS, this test
++// just throws.
++#ifndef _RWSTD_NO_EXCEPTIONS
++#define _RWSTD_NO_EXCEPTIONS
++#endif
++
+ /**************************************************************************/
+ 
+ // used as a special value in comp below
+@@ -67,8 +73,11 @@
+     }
+ }
+ 
++#if defined(__SUNPRO_CC)
++extern "C" {
++#else
+ extern "C++" {
+-
++#endif
+     static int cxx_comp (const void *x, const void *y)
+     {
+ #ifndef _RWSTD_NO_EXCEPTIONS
+@@ -157,7 +166,6 @@
+     _RWSTD_UNUSED (line);
+     _RWSTD_UNUSED (src);
+     _RWSTD_UNUSED (nsrc);
+-    _RWSTD_UNUSED (key);
+     _RWSTD_UNUSED (cxx);
+ 
+ #endif   // _RWSTD_NO_EXCEPTIONS

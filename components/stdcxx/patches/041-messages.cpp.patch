@@ -1,0 +1,51 @@
+--- stdcxx-4.2.1/src/messages.cpp	2008-04-24 17:25:19.000000000 -0700
++++ stdcxx-4.2.1/src/messages.cpp	2009-08-17 09:22:12.657383990 -0700
+@@ -51,6 +51,10 @@
+ 
+ _RWSTD_NAMESPACE (__rw) { 
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(8)
++#  pragma align 8(__rw_open_cat_data)
++#endif
+ 
+ // Implementation structure private to this module -- __rw_open_cat_data.
+ // Keeps track of the association between an open message catalog (as
+@@ -65,11 +69,19 @@
+ {
+     nl_catd catd;
+     union {
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++	unsigned long long _C_align;    // force alignment
++	unsigned char _C_data [sizeof (_STD::locale)];
++#else
+         void *_C_align;
+         char _C_data [sizeof (_STD::locale)];
++#endif
+     } loc;
+ };
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(0)
++#endif
+ 
+ // manages a global, per-process repository of open catalogs according
+ // to the following table:
+@@ -288,7 +300,7 @@
+         // 22.2.7.1.2, p5: `catalog' must be valid
+         if (pcat_data && pcat_data->catd != _RWSTD_BAD_CATD) {
+ 
+-            catclose (pcat_data->catd);
++            int ret = catclose (pcat_data->catd);
+ 
+             _STD::locale* const ploc =
+                 _RWSTD_REINTERPRET_CAST (_STD::locale*, &pcat_data->loc);
+@@ -297,7 +309,7 @@
+ 
+             __rw_manage_cat_data (cat, pcat_data);
+ 
+-            cat_closed = true;
++            cat_closed = ret == 0;
+         }
+         else {
+             cat_closed = false;

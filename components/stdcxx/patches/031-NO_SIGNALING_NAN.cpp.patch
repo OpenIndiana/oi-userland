@@ -1,0 +1,44 @@
+--- stdcxx-4.2.1/etc/config/src/NO_SIGNALING_NAN.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/NO_SIGNALING_NAN.cpp	2009-03-28 17:29:13.671941000 -0400
+@@ -37,21 +37,9 @@
+ 
+ #ifndef _RWSTD_NO_INFINITY
+ 
+-#  if defined _RWSTD_DBL_SNAN_BITS
+-
+-union {
+-    char bits[sizeof (double)];
+-    double val;
+-} snan = { _RWSTD_DBL_SNAN_BITS };
+-
+-// assignment or initialization should not trap
+-static double d = snan.val;
+-
+-#  else   // if !defined (_RWSTD_DBL_SNAN_BITS)
+-
+ double foo ()
+ {
+-    const int endian = 1;
++    const unsigned int endian = 1;
+ 
+     // compute infinity (division may trap)
+     double x = 0.0;
+@@ -65,9 +53,6 @@
+ 
+ static double d = foo ();
+ 
+-#  endif   // _RWSTD_DBL_SNAN_BITS
+-
+-
+ #endif   // _RWSTD_NO_INFINITY
+ 
+ 
+@@ -85,7 +70,7 @@
+ 
+ #  pragma STDC FENV_ACCESS ON
+ 
+-    const int all = 0
++    const unsigned int all = 0
+ 
+ #  ifdef FE_ALL_EXCEPT
+         | FE_ALL_EXCEPT |

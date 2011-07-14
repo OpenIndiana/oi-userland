@@ -1,0 +1,75 @@
+--- stdcxx-4.2.1/etc/config/GNUmakefile.cfg	2008-04-24 17:25:50.000000000 -0700
++++ stdcxx-4.2.1/etc/config/GNUmakefile.cfg	2009-07-25 14:57:02.019814635 -0700
+@@ -54,13 +54,22 @@
+ #
+ ########################################################################
+ 
++arch := $(shell mach)
++
++ifeq ($(arch),sparc)
++      XREGS := -xregs=appl
++      XMEMALIGN := -xmemalign=8i
++else
++      XREGS := -xregs=no%frameptr
++      XMEMALIGN :=
++endif
++
+ include ../makefile.in
+ 
+ SRCDIR       = $(TOPDIR)/etc/config/src
+ VPATH        = $(SRCDIR)
+ 
+ CPPFLAGS    += -I.
+-CPPFLAGS    := $(filter-out -I$(TOPDIR)/include/ansi,$(CPPFLAGS))
+ 
+ CXXFLAGS    += $(WARNFLAGS)
+ 
+@@ -74,12 +83,13 @@
+ DASH_H       = -H
+ 
+ CCNAME       = $(CXX)-$(CCVER)
+-LOGFILE      = config.log
++LOGFILE      = $(TOPDIR)/config.log
+ 
+ # can't use LDOPTS when working with HP aCC, it's used by the linker
+ ifneq ($(CXX),aCC)
+     LOPT     = LDOPTS
+     LDFLAGS += $(LDOPTS)
++    LDFLAGS += -R$(TOPDIR)/build/include
+ else
+     LOPT     = _LDOPTS
+     LDFLAGS += $(_LDOPTS)
+@@ -113,9 +123,9 @@
+ #   $(2): executable file name
+ #   $(3): additional linker flags (optional)
+ define link
+-    command="$(LD) $(1) $(LDFLAGS) $(3) -o $(2)";                     \
++    command="$(CXX) $(CXXFLAGS) $(1) $(LDFLAGS) $(LDOPTS) $(3) -o $(2)"; \
+     echo "$$command" >>$(LOGFILE);                                    \
+-    $(LD) $(1) $(LDFLAGS) $(3) -o $(2) >>$(LOGFILE) 2>&1
++    $(CXX) $(CXXFLAGS) $(1) $(LDFLAGS) $(LDOPTS) $(3) -o $(2) >>$(LOGFILE) 2>&1
+ endef
+ 
+ # helper function to compile and link a file and log results
+@@ -127,10 +137,10 @@
+ #   $(5): additional linker flags (optional)
+ define compile_then_link
+     command="$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(4) -c $(1) -o $(2)"             \
+-            "&& $(LD) $(2) $(LDFLAGS) $(5) -o $(3)";                          \
++            "&& $(CXX) $(CXXFLAGS) $(2) $(LDFLAGS) $(LDOPTS) $(5) -o $(3)";   \
+     echo "$$command" >>$(LOGFILE);                                            \
+        $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(4) -c $(1) -o $(2) >>$(LOGFILE) 2>&1  \
+-    && $(LD) $(2) $(LDFLAGS) $(5) -o $(3) >>$(LOGFILE) 2>&1
++    && $(CXX) $(CXXFLAGS) $(2) $(LDFLAGS) $(LDOPTS) $(5) -o $(3) >>$(LOGFILE) 2>&1
+ endef
+ 
+ # helper function to prelink a file and log results
+@@ -181,7 +191,7 @@
+               if [ $$? -eq 0 ] ; then                                       \
+                   opts=`sed -n "s/^[^A-Z_a-z0-9]*LDOPTS *= *\(.*\)/\1/p"    \
+                         $$src`;                                             \
+-                  targets="$$file.o $$file run RUN=$$file $(LOPT)=$$opts";  \
++                  targets="$$file.o $$file run RUN=$$file LDOPTS=$$opts $(LOPT)=$$opts";  \
+               elif [ `echo $$file | grep "\.lib"` ] ; then                  \
+                   targets="$$file$(LIBSUFFIX)" ;                            \
+               elif [ `echo $$file | grep "\.sh"` ] ; then                   \

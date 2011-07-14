@@ -1,0 +1,13 @@
+--- stdcxx-4.2.1/etc/config/src/FUNC.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/FUNC.cpp	2009-03-27 22:36:07.136083000 -0400
+@@ -25,6 +25,10 @@
+ // 6.4.2.2, p1 of C99
+ const char* func_test ()
+ {
++#if defined(__SUNPRO_CC)
++#error "__func__ is broken in __SUNPRO_CC"
++#else
+     return __func__;
++#endif
+ }
+ 

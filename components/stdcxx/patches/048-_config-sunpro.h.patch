@@ -1,0 +1,18 @@
+--- stdcxx-4.2.1/include/rw/_config-sunpro.h	2008-04-24 20:23:43.000000000 -0400
++++ stdcxx-4.2.1/include/rw/_config-sunpro.h	2009-08-04 23:43:43.589286000 -0400
+@@ -51,3 +51,15 @@
+ // source for (intentionally undefined) member functions
+ // of class templates
+ #define _RWSTD_NO_UNDEFINED_TEMPLATES
++
++#if defined(__sparc)
++// Solaris >= S10U6 on SPARC V8:
++// KU 137111-01 && CR 6296770
++// POSIX: pthread_mutex_t and pthread_condvar_t
++// Solaris: mutex_t and condvar_t MUST be aligned on
++// 8-byte boundary. 
++// This is relevant on 32-bit SPARCV8 only.
++// 64-bit SPARCV9 already aligns on 8-byte boundary by default.
++#  define _RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT 1
++#endif
++

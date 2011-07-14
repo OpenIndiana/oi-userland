@@ -1,0 +1,27 @@
+--- stdcxx-4.2.1/etc/config/GNUmakefile.tst	2008-04-24 20:25:50.000000000 -0400
++++ stdcxx-4.2.1/etc/config/GNUmakefile.tst	2009-03-30 11:15:57.061730000 -0400
+@@ -48,6 +48,16 @@
+ #
+ ########################################################################
+ 
++arch := $(shell mach)
++
++ifeq ($(arch),sparc)
++      XREGS := -xregs=appl
++      XMEMALIGN := -xmemalign=16i
++else
++      XREGS := -xregs=no%frameptr
++      XMEMALIGN :=
++endif
++
+ include ../makefile.in
+ 
+ # tests & rwtest library directories
+@@ -67,6 +77,7 @@
+ 
+ # do not compile these sources
+ OMIT_SRCS += $(notdir $(wildcard $(TESTDIR)/src/*.cpp)) 22_locale.cpp
++OMIT_SRCS += $(notdir $(wildcard $(TESTDIR)/regress/*.cpp)) 26.valarray.binary.stdcxx-237.cpp
+ 
+ # override setting from makefile.in (tests only)
+ CATFILE = rwstdmessages.cat

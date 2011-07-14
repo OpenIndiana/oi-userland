@@ -1,0 +1,228 @@
+--- stdcxx-4.2.1/include/valarray	2008-04-24 20:23:57.000000000 -0400
++++ stdcxx-4.2.1/include/valarray	2011-01-04 19:13:15.512297269 -0500
+@@ -3,7 +3,7 @@
+  *
+  * valaray - Declarations for the Standard Library valarray
+  *
+- * $Id: valarray 604045 2007-12-13 21:56:09Z sebor $
++ * $Id$
+  *
+  ***************************************************************************
+  *
+@@ -39,13 +39,13 @@
+ #include _RWSTD_CMATH
+ 
+ 
+-#ifdef _MSC_VER
++#ifdef _RWSTD_MSVC
+ #  pragma warning (push)
+    // disable conversion from 'double' to 'float', possible loss of data
+    // until a conforming <cmath> header with float and long double overloads
+    // for the C functions is provided
+ #  pragma warning (disable: 4244)
+-#endif   // _MSC_VER
++#endif   // _RWSTD_MSVC
+ 
+ 
+ _RWSTD_NAMESPACE (std) { 
+@@ -1856,8 +1856,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] = __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1869,11 +1869,12 @@
+   { 
+     gslice *gsl = _RWSTD_CONST_CAST (gslice*, &_C_slice);
+     _RWSTD_SIZE_T __i = gsl->next_ind();
++    _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( !gsl->is_reseted() )
+-    {
++    while (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ())) {
+       (*_C_array)[__i] = value;
+       __i= gsl->next_ind();
++      __cpt++;
+     }
+   }
+ 
+@@ -1887,8 +1888,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] *= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1902,8 +1903,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] /= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1917,8 +1918,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (  (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] += __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1932,8 +1933,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted() || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] -= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1948,8 +1949,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] %= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1963,8 +1964,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] ^= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1978,8 +1979,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted() || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] &= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -1993,8 +1994,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted() || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] |= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -2008,8 +2009,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] <<= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -2023,8 +2024,8 @@
+     _RWSTD_SIZE_T __i = gsl->next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( (!gsl->is_reseted()) && (__cpt < __rhs.size()) )
+-    {
++    while (   (!gsl->is_reseted () || (!__cpt && gsl->ind_numb ()))
++           && __cpt < __rhs.size ()) {
+       (*_C_array)[__i] >>= __rhs[__cpt];
+       __i= gsl->next_ind();
+       __cpt++;
+@@ -2037,10 +2038,12 @@
+     if (_C_length.size () == 0)
+         return 0;
+ 
+-    _RWSTD_SIZE_T __inx = 1;
++    _RWSTD_SIZE_T __inx = _C_length [0] != 0;
+ 
+-    for(_RWSTD_SIZE_T __i = 0; __i < _C_length.size (); ++__i)
++    for(_RWSTD_SIZE_T __i = 0; __i < _C_length.size (); ++__i) {
++        if (_C_length [__i])
+         __inx *= _C_length [__i];
++    }
+ 
+     return __inx;
+ }
+@@ -2146,14 +2149,15 @@
+ {
+     gslice __sl(sl_ar._C_get_slice());
+ 
++    const _RWSTD_SIZE_T __maxinx = __sl.ind_numb ();
++
+     _RW::__rw_array <_TypeT> __tmp =
+-        _RW::__rw_array <_TypeT>(_TypeT (), __sl.ind_numb());
++        _RW::__rw_array <_TypeT>(_TypeT (), __maxinx);
+ 
+     _RWSTD_SIZE_T __i = __sl.next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( !__sl.is_reseted() )
+-    {
++    while (!__sl.is_reseted () || (!__cpt && __maxinx)) {
+       __tmp[__cpt] = (*(sl_ar.get_ref_mem_array()))[__i];
+       __i= __sl.next_ind();
+       __cpt++;
+@@ -2169,13 +2173,15 @@
+ { 
+     gslice __sl(sl_ar._C_get_slice());
+ 
++    const _RWSTD_SIZE_T __maxinx = __sl.ind_numb ();
++
+     _RW::__rw_array <_TypeT> __tmp =
+-        _RW::__rw_array <_TypeT>(_TypeT (), __sl.ind_numb());
++        _RW::__rw_array <_TypeT>(_TypeT (), __maxinx);
+ 
+     _RWSTD_SIZE_T __i = __sl.next_ind();
+     _RWSTD_SIZE_T __cpt = 0;
+ 
+-    while( !__sl.is_reseted() )
++    while( !__sl.is_reseted() || !__cpt && __maxinx )
+     {
+       __tmp[__cpt] = (*(sl_ar.get_ref_mem_array()))[__i];
+       __i= __sl.next_ind();
+@@ -2374,9 +2380,10 @@
+ #endif
+ 
+ 
+-#ifdef _MSC_VER
++#ifdef _RWSTD_MSVC
+ #  pragma warning (pop)
+-#endif   // _MSC_VER
++#endif   // _RWSTD_MSVC
+ 
+ 
+ #endif   // _RWSTD_VALARRAY_INCLUDED
++

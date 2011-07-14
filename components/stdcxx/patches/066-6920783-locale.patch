@@ -1,0 +1,1399 @@
+--- stdcxx-4.2.1/include/loc/_codecvt.h	2008-04-24 17:23:39.000000000 -0700
++++ stdcxx-4.2.1/include/loc/_codecvt.h	2011-06-23 11:56:07.510860582 -0700
+@@ -48,9 +48,12 @@
+ 
+ // 22.2.1.5 - Template class codecvt
+ 
+-struct codecvt_base
++class codecvt_base
+ {
++public:
+     enum result { ok, partial, error, noconv };
++
++    virtual ~codecvt_base () { }
+ };
+ 
+ 
+@@ -73,6 +76,8 @@
+ 
+ protected:
+ 
++    virtual ~codecvt ();
++
+     // extension: where reasonable, the default behavior of the primary
+     // template is the same as that of codecvt<char, char, mbstate_t> if
+     // sizeof (intern_type) == sizeof (extern_type) to allow iostream
+@@ -188,8 +193,6 @@
+ 
+     _EXPLICIT codecvt (_RWSTD_SIZE_T = 0);
+ 
+-    virtual ~codecvt ();
+-
+     result out (state_type &__state,
+                 const intern_type *__from, const intern_type* __from_end,
+                 const intern_type *&__from_next,
+@@ -234,6 +237,8 @@
+ 
+ protected:
+ 
++    virtual ~codecvt ();
++
+     virtual result
+     do_out (state_type&,
+             const intern_type*, const intern_type*, const intern_type*&,
+@@ -303,6 +308,8 @@
+ 
+ protected:
+ 
++    virtual ~codecvt ();
++
+     virtual result
+     do_out (state_type&, const intern_type*, const intern_type*,
+             const intern_type*&,
+@@ -398,6 +405,11 @@
+         : codecvt <_InternT, _ExternT, _StateT> (__ref) {
+         this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+     }
++
++protected:
++
++    virtual ~codecvt_byname () { }
++
+ };
+ 
+ 
+@@ -417,6 +429,8 @@
+ 
+ protected:
+ 
++    virtual ~codecvt_byname () { }
++
+     virtual codecvt_base::result
+     do_out (state_type&,
+             const intern_type*, const intern_type*, const intern_type*&,
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_collate.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_collate.h	2011-01-07 18:26:19.591751655 -0500
+@@ -86,6 +86,8 @@
+ 
+ protected:
+ 
++    virtual ~collate () { }
++
+     // protected virtual members are not defined
+     virtual int
+     do_compare (const char_type*, const char_type*,
+@@ -133,6 +135,8 @@
+ 
+ protected:
+ 
++    virtual ~collate () { }
++
+     virtual int
+     do_compare (const char_type*, const char_type*,
+                 const char_type*, const char_type*) const;
+@@ -179,6 +183,7 @@
+ 
+ protected:
+ 
++    virtual ~collate () { }
+     virtual int
+     do_compare (const char_type*, const char_type*,
+                 const char_type*, const char_type*) const;
+@@ -204,6 +209,10 @@
+         : collate<_CharT>(__ref) {
+         this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+     }
++
++protected:
++
++    virtual collate_byname () { }
+ };
+ 
+ 
+@@ -220,6 +229,8 @@
+ 
+ protected:
+ 
++    virtual ~collate_byname() { }
++
+     virtual int
+     do_compare (const char_type*, const char_type*,
+                 const char_type*, const char_type*) const;
+@@ -244,6 +255,8 @@
+ 
+ protected:
+ 
++    virtual ~collate_byname () { }
++
+     virtual int
+     do_compare (const char_type*, const char_type*,
+                 const char_type*, const char_type*) const;
+@@ -263,3 +276,4 @@
+ 
+ 
+ #endif   // _RWSTD_LOC_COLLATE_H_INCLUDED
++
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_ctype.h	2008-04-24 17:23:39.000000000 -0700
++++ stdcxx-4.2.1/include/loc/_ctype.h	2011-06-23 12:55:19.000540849 -0700
+@@ -64,11 +64,12 @@
+ 
+ _RWSTD_NAMESPACE (std) { 
+ 
+-struct _RWSTD_CLASS_EXPORT locale;
++class _RWSTD_CLASS_EXPORT locale;
+ 
+ // 22.2.1
+-struct _RWSTD_EXPORT ctype_base
++class _RWSTD_EXPORT ctype_base
+ {
++public:
+     // 22.2.1, p1 - mask is a bitmask type (see 17.3.3.1.2)
+     typedef _RWSTD_BITMASK_ENUM (_RW::__rw_ctype_mask) mask;
+ 
+@@ -83,6 +84,8 @@
+     _RWSTD_STATIC_CONST (mask, xdigit = _RW::__rw_xdigit);
+     _RWSTD_STATIC_CONST (mask, alnum  = _RW::__rw_alnum);
+     _RWSTD_STATIC_CONST (mask, graph  = _RW::__rw_graph);
++
++    virtual ~ctype_base () { }
+ };
+ 
+ 
+@@ -103,7 +106,8 @@
+     typedef _CharT char_type;
+ 
+     _EXPLICIT ctype (_RWSTD_SIZE_T __ref = 0)
+-        : _RW::__rw_facet (__ref) { }
++        : _RW::__rw_facet (__ref),
++   		ctype_base () 	{ }
+ 
+ 
+     // 22.2.1.1.1, p1
+@@ -171,6 +175,8 @@
+ 
+ protected:
+ 
++    virtual ~ctype() { }
++
+     // 22.2.1.1.2, p1
+     virtual bool do_is (mask, char_type) const {
+         return false;
+@@ -286,14 +292,14 @@
+ 
+ protected:
+ 
++    virtual ~ctype ();
++
+     const mask* table () const _THROWS (()) {
+         return _C_mask_tab;
+     }
+ 
+     static const mask* classic_table () _THROWS (());
+ 
+-    virtual ~ctype ();
+-
+     virtual const char_type*
+     do_toupper (char_type*, const char_type*) const;
+ 
+@@ -394,6 +400,10 @@
+         : ctype<_CharT>(__ref) {
+         this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+     }
++
++protected:
++
++    virtual ~ctype_byname () { }
+ };
+ 
+ 
+@@ -405,6 +415,10 @@
+ public:
+ 
+     _EXPLICIT ctype_byname (const char*, _RWSTD_SIZE_T = 0);
++
++protected:
++
++    virtual ~ctype_byname () { }
+ };
+ 
+ 
+@@ -653,3 +667,4 @@
+ 
+ 
+ #endif   // _RWSTD_LOC_CTYPE_H_INCLUDED
++
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_facet.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_facet.h	2011-01-07 14:25:25.827689177 -0500
+@@ -39,19 +39,20 @@
+ 
+ _RWSTD_NAMESPACE (std) { 
+ 
+-struct _RWSTD_CLASS_EXPORT locale;
++class _RWSTD_CLASS_EXPORT locale;
+ 
+ }   // namespace std
+ 
+ 
+ _RWSTD_NAMESPACE (__rw) { 
+ 
+-class _RWSTD_EXPORT __rw_locale;
++class _RWSTD_CLASS_EXPORT __rw_locale;
+ 
+ struct __rw_access;
+ 
+-struct _RWSTD_EXPORT __rw_facet: __rw_synchronized
++class _RWSTD_CLASS_EXPORT __rw_facet : public __rw_synchronized
+ {
++public:
+     // the type of a "constructor" function used to create facet objects
+     // of standard types by the library
+     typedef __rw_facet* (_C_ctor_t)(_RWSTD_SIZE_T, const char*);
+@@ -225,15 +226,16 @@
+     static __rw_facet*
+     _C_manage (__rw_facet*, _C_facet_type, const char*, _C_ctor_t*);
+ 
+-    friend struct _STD::locale;
++    friend class _STD::locale;
+     friend class __rw_locale;
+     friend struct __rw_facet_id;
+     friend struct __rw_access;
+ };
+ 
+ 
+-struct _RWSTD_EXPORT __rw_facet_id
++class _RWSTD_EXPORT __rw_facet_id
+ {
++public:
+ #ifdef _RWSTD_NO_SPECIALIZED_FACET_ID
+ 
+     __rw_facet_id () {
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_locale.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_locale.h	2011-01-07 14:37:52.736687266 -0500
+@@ -119,36 +119,37 @@
+ class ctype;
+ 
+ _EXPORT template <class _CharT, class _Iter>
+-struct money_get;
++class money_get;
+ 
+ _EXPORT template <class _CharT, class _Iter>
+-struct money_put;
++class money_put;
+ 
+ _EXPORT template <class _CharT, bool _Intl>
+-struct moneypunct;
++class moneypunct;
+ 
+ _EXPORT template <class _CharT, class _Iter>
+-struct num_get;
++class num_get;
+ 
+ _EXPORT template <class _CharT, class _Iter>
+-struct num_put;
++class num_put;
+ 
+ _EXPORT template <class _CharT>
+-struct numpunct;
++class numpunct;
+ 
+ _EXPORT template <class _CharT, class _Iter>
+ class time_get;
+ 
+ _EXPORT template <class _CharT, class _Iter>
+-struct time_put;
++class time_put;
+ 
+ _EXPORT template <class _CharT>
+ class messages;
+ 
+  
+ // 22.1.1
+-struct _RWSTD_CLASS_EXPORT locale
++class _RWSTD_CLASS_EXPORT locale
+ {
++public:
+     // 22.1.1.1.1, p1
+     typedef int category;
+ 
+@@ -251,12 +252,11 @@
+ 
+ #endif   // _RWSTD_NO_MEMBER_TEMPLATES
+ 
+-
+     // 22.1.1.2, p14
+     _RWSTD_MEMBER_EXPORT locale (const locale&, const locale&, category);
+ 
+     // 22.1.1.2, p16
+-    _RWSTD_MEMBER_EXPORT ~locale() _THROWS (());
++    _RWSTD_MEMBER_EXPORT virtual ~locale() _THROWS (());
+ 
+     // 22.1.1.2, p4
+     _RWSTD_MEMBER_EXPORT const locale& operator= (const locale&) _THROWS (());
+
+#===========================================================================#
+--- stdcxx-4.2.1/include/loc/_messages.h	2008-04-24 17:23:39.000000000 -0700
++++ stdcxx-4.2.1/include/loc/_messages.h	2011-06-16 10:59:37.994304507 -0700
+@@ -63,9 +63,12 @@
+ _RWSTD_NAMESPACE (std) { 
+ 
+ 
+-struct _RWSTD_EXPORT messages_base
++class _RWSTD_EXPORT messages_base
+ {
++public:
+     typedef int catalog;
++
++    virtual ~messages_base () { }
+ };
+ 
+ 
+@@ -102,6 +105,8 @@
+ 
+ protected:
+ 
++    virtual ~messages () { }
++
+     virtual catalog do_open (const string&, const locale&) const;
+ 
+     virtual string_type do_get (catalog, int, int, const string_type&) const;
+@@ -128,6 +133,7 @@
+ template <class _CharT>
+ class messages_byname: public messages<_CharT>
+ {
++public:
+     char _C_namebuf [32];
+ 
+ public:
+@@ -136,6 +142,10 @@
+         : messages<_CharT>(__refs) {
+         this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+     }
++
++protected:
++
++    virtual ~messages_byname () { }
+ };
+ 
+ }   // namespace std
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_money_get.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_money_get.h	2011-01-07 18:30:40.252939791 -0500
+@@ -50,8 +50,9 @@
+ 
+ _EXPORT
+ template <class _CharT, class _InputIter = istreambuf_iterator<_CharT> >
+-struct money_get: _RW::__rw_facet
++class money_get : public _RW::__rw_facet
+ {
++public:
+     typedef _CharT     char_type;
+     typedef _InputIter iter_type;
+     typedef
+@@ -95,6 +96,8 @@
+ 
+ #endif   // _RWSTD_NO_LONG_DOUBLE
+ 
++	virtual ~money_get () { }
++
+     virtual iter_type
+     do_get (iter_type __it, iter_type __end, bool __intl, ios_base &__fl,
+             _RWSTD_IOSTATE &__err, string_type &__str) const {
+@@ -134,13 +137,13 @@
+ 
+ #if _RWSTD_INSTANTIATE (_MONEY_GET, _CHAR)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT money_get<char>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT money_get<char>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_MONEY_GET, _CHAR)
+ 
+ #if _RWSTD_INSTANTIATE (_MONEY_GET, _WCHAR_T)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT money_get<wchar_t>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT money_get<wchar_t>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_MONEY_GET, _WCHAR_T)
+ 
+@@ -153,3 +156,4 @@
+ 
+ 
+ #endif   // _RWSTD_LOC_MONEY_GET_H_INCLUDED
++
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_moneypunct.h	2008-04-24 17:23:39.000000000 -0700
++++ stdcxx-4.2.1/include/loc/_moneypunct.h	2011-06-16 11:01:58.479524965 -0700
+@@ -46,27 +46,31 @@
+ 
+ _RWSTD_NAMESPACE (std) { 
+ 
+-
+ // 22.2.6.3
+-struct money_base
++class money_base
+ {
++public:
+     enum part { none, space, symbol, sign, value };
+     struct pattern { char field [4]; };
++
++    virtual ~money_base () { }
+ };
+ 
+ 
+ // 22.2.6.3
+ _EXPORT
+ template <class _CharT, bool _Intl = false>
+-struct moneypunct: _RW::__rw_facet, public money_base
++class moneypunct : public _RW::__rw_facet, public money_base
+ {
++public:
+     typedef _CharT char_type;
+     typedef
+     basic_string<char_type, char_traits<char_type>, allocator<char_type> >
+     string_type;
+ 
+     _EXPLICIT moneypunct (_RWSTD_SIZE_T __refs = 0)
+-        : _RW::__rw_facet (__refs) { }
++        : _RW::__rw_facet (__refs),
++		money_base () { }
+ 
+     char_type decimal_point () const {
+         return do_decimal_point ();
+@@ -110,6 +114,8 @@
+ 
+ protected:
+ 
++    virtual ~moneypunct () { }
++
+     // 22.2.6.3.1, p1
+     virtual char_type do_decimal_point () const {
+         return *_C_get (this, _RW::__rw_dp);
+@@ -211,6 +217,10 @@
+         : moneypunct<_CharT, _Intl>(__ref) {
+             this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+         }
++
++protected:
++
++    virtual ~moneypunct_byname () { }
+ };
+ 
+ 
+@@ -226,15 +236,15 @@
+ 
+ #if _RWSTD_INSTANTIATE (_MONEYPUNCT, _CHAR)
+ 
+-_RWSTD_INSTANTIATE_2 (struct _RWSTD_TI_EXPORT moneypunct<char, true>);
+-_RWSTD_INSTANTIATE_2 (struct _RWSTD_TI_EXPORT moneypunct<char, false>);
++_RWSTD_INSTANTIATE_2 (class _RWSTD_TI_EXPORT moneypunct<char, true>);
++_RWSTD_INSTANTIATE_2 (class _RWSTD_TI_EXPORT moneypunct<char, false>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_MONEYPUNCT, _CHAR)
+ 
+ #if _RWSTD_INSTANTIATE (_MONEYPUNCT, _WCHAR_T)
+ 
+-_RWSTD_INSTANTIATE_2 (struct _RWSTD_TI_EXPORT moneypunct<wchar_t, true>);
+-_RWSTD_INSTANTIATE_2 (struct _RWSTD_TI_EXPORT moneypunct<wchar_t, false>);
++_RWSTD_INSTANTIATE_2 (class _RWSTD_TI_EXPORT moneypunct<wchar_t, true>);
++_RWSTD_INSTANTIATE_2 (class _RWSTD_TI_EXPORT moneypunct<wchar_t, false>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_MONEYPUNCT, _WCHAR_T)
+ 
+@@ -247,3 +257,4 @@
+ 
+ 
+ #endif   // _RWSTD_LOC_MONEYPUNCT_H_INCLUDED
++
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_money_put.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_money_put.h	2011-01-07 18:31:43.278708402 -0500
+@@ -51,8 +51,10 @@
+ // 22.2.6.2
+ _EXPORT
+ template <class _CharT, class _OutputIter = ostreambuf_iterator<_CharT> >
+-struct money_put: _RW::__rw_facet
++class money_put : public _RW::__rw_facet
+ {
++public:
++
+     typedef _CharT      char_type;
+     typedef _OutputIter iter_type;
+ 
+@@ -78,6 +80,8 @@
+ 
+ protected:
+ 
++    virtual ~money_put () { }
++
+     // 22.2.6.2.2, p1
+     virtual iter_type
+     do_put (iter_type, bool, ios_base&, char_type, long double) const;
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_num_get.h	2008-04-24 17:23:39.000000000 -0700
++++ stdcxx-4.2.1/include/loc/_num_get.h	2011-06-23 11:45:25.850740566 -0700
+@@ -51,8 +51,9 @@
+ // 22.2.2.1
+ _EXPORT
+ template <class _CharT, class _InputIter = istreambuf_iterator<_CharT> >
+-struct num_get: _RW::__rw_facet
++class num_get : public _RW::__rw_facet
+ {
++public:
+     typedef _CharT     char_type;
+     typedef _InputIter iter_type;
+ 
+@@ -157,6 +158,8 @@
+ 
+ protected:
+ 
++    virtual ~num_get() { }
++
+ #ifndef _RWSTD_NO_NATIVE_BOOL
+ 
+     virtual iter_type
+@@ -357,13 +360,13 @@
+ 
+ #if _RWSTD_INSTANTIATE (_NUM_GET, _CHAR)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT num_get<char>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT num_get<char>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_NUM_GET, _CHAR)
+ 
+ #if _RWSTD_INSTANTIATE (_NUM_GET, _WCHAR_T)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT num_get<wchar_t>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT num_get<wchar_t>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_NUM_GET, _WCHAR_T)
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_numpunct.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_numpunct.h	2011-01-07 18:35:01.795823207 -0500
+@@ -53,8 +53,9 @@
+ // 22.2.3.1
+ _EXPORT
+ template <class _CharT>
+-struct numpunct: _RW::__rw_facet
++class numpunct : public _RW::__rw_facet
+ {
++public:
+     typedef _CharT char_type;
+     typedef
+     basic_string<char_type, char_traits<char_type>, allocator<char_type> >
+@@ -63,8 +64,6 @@
+     _EXPLICIT numpunct (_RWSTD_SIZE_T __ref = 0)
+         : _RW::__rw_facet (__ref), _C_flags (0) { }
+ 
+-    virtual ~numpunct ();
+-
+     // 22.2.3.1.1, p1
+     char_type decimal_point () const;
+ 
+@@ -84,6 +83,8 @@
+ 
+ protected:
+ 
++    virtual ~numpunct () { }
++
+     // 22.2.3.1.2, p1
+     virtual char_type do_decimal_point () const {
+         return *_RW::__rw_get_punct (this, _RW::__rw_dp, char_type ());
+@@ -238,6 +239,10 @@
+         : numpunct<_CharT>(__refs) {
+         this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+     }
++
++protected:
++
++    virtual ~numpunct_byname () { }
+ };
+ 
+ }   // namespace std
+@@ -252,13 +257,13 @@
+ 
+ #if _RWSTD_INSTANTIATE (_NUMPUNCT, _CHAR)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT numpunct<char>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT numpunct<char>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_NUMPUNCT, _CHAR)
+ 
+ #if _RWSTD_INSTANTIATE (_NUMPUNCT, _WCHAR_T)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT numpunct<wchar_t>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT numpunct<wchar_t>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_NUMPUNCT, _WCHAR_T)
+ 
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_num_put.cc	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_num_put.cc	2011-01-07 18:34:22.399689475 -0500
+@@ -63,7 +63,7 @@
+ 
+ 
+ template <class _CharT, class _OutputIter /* = ostreambuf_iterator<_CharT> */>
+-/* virtual */ num_put<_CharT, _OutputIter>::~num_put ()
++/* virtual */ num_put<_CharT, _OutputIter>::~num_put ()
+ {
+     // no-op
+ }
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_num_put.h	2008-04-24 17:23:39.000000000 -0700
++++ stdcxx-4.2.1/include/loc/_num_put.h	2011-06-23 11:45:54.213483922 -0700
+@@ -51,16 +51,15 @@
+ // 22.2.2.2
+ _EXPORT
+ template <class _CharT, class _OutputIter = ostreambuf_iterator<_CharT> >
+-struct num_put: _RW::__rw_facet
++class num_put : public _RW::__rw_facet
+ {
++public:
+     typedef _CharT      char_type;
+     typedef _OutputIter iter_type;
+ 
+     _EXPLICIT num_put (_RWSTD_SIZE_T __refs = 0)
+         : _RW::__rw_facet (__refs) { }
+ 
+-    virtual ~num_put ();
+-
+ #ifndef _RWSTD_NO_BOOL
+ 
+     iter_type put (iter_type __it, ios_base& __flags, char_type __fill,
+@@ -122,6 +121,8 @@
+ 
+ protected:
+ 
++    virtual ~num_put ();
++
+ #ifndef _RWSTD_NO_BOOL
+ 
+     virtual iter_type
+@@ -218,13 +219,13 @@
+ 
+ #if _RWSTD_INSTANTIATE (_NUM_PUT, _CHAR)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT num_put<char>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT num_put<char>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_NUM_PUT, _CHAR)
+ 
+ #if _RWSTD_INSTANTIATE (_NUM_PUT, _WCHAR_T)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT num_put<wchar_t>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT num_put<wchar_t>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_NUM_PUT, _WCHAR_T)
+ 
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_time_get.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_time_get.h	2011-01-07 17:52:39.964752529 -0500
+@@ -57,23 +57,29 @@
+ 
+ 
+ // 22.2.5.1
+-struct _RWSTD_EXPORT time_base
++class _RWSTD_EXPORT time_base
+ {
++public:
+    enum dateorder { no_order, dmy, mdy, ymd, ydm };
++
++   time_base() { }
++   virtual ~time_base() { }
+ };
+ 
+ 
+ // 22.2.5.1
+ _EXPORT
+ template <class _CharT, class _InputIter = istreambuf_iterator<_CharT> >
+-class time_get: public _RW::__rw_facet, public time_base
++class time_get : public _RW::__rw_facet,
++				 public time_base
+ {
+ public:
+     typedef _CharT                         char_type;
+     typedef _InputIter                     iter_type;
+ 
+     _EXPLICIT time_get (_RWSTD_SIZE_T __ref = 0)
+-        : _RW::__rw_facet (__ref) { }
++        : _RW::__rw_facet (__ref),
++   		time_base () { }
+ 
+     dateorder date_order() const { 
+         return do_date_order(); 
+@@ -134,6 +140,8 @@
+ 
+ protected:
+ 
++    virtual ~time_get () { }
++
+     virtual dateorder do_date_order()  const {
+         return dateorder ();
+     }
+@@ -207,6 +215,9 @@
+         : time_get<_CharT, _InputIter>(__ref) {
+         this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+     }
++
++protected:
++    virtual ~time_get_byname () { }
+ };
+ 
+ }   // namespace std
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_time_put.h	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_time_put.h	2011-01-07 18:36:06.500939415 -0500
+@@ -53,8 +53,9 @@
+ // 22.2.5.3
+ _EXPORT
+ template <class _CharT, class _OutputIter = ostreambuf_iterator<_CharT> >
+-struct time_put: _RW::__rw_facet
++class time_put : public _RW::__rw_facet
+ {
++public:
+     typedef _CharT      char_type;
+     typedef _OutputIter iter_type;
+ 
+@@ -74,6 +75,9 @@
+ 
+ protected:
+ 
++    // 22.2.5.3
++    virtual ~time_put() { }
++
+     // 22.2.5.3.2, p1
+     virtual iter_type
+     do_put (iter_type, ios_base&, char_type, const tm*, char, char) const;
+@@ -101,11 +105,14 @@
+     char _C_namebuf [32];
+ 
+ public:
+-
++    //22.2.5.4
+     _EXPLICIT time_put_byname (const char *__name, _RWSTD_SIZE_T __ref = 0)
+         : time_put<_CharT, _OutputIter>(__ref) {
+         this->_C_set_name (__name, _C_namebuf, sizeof _C_namebuf);
+     }
++
++protected:
++    virtual ~time_put_byname() { }
+ };
+ 
+ }   // namespace std
+@@ -120,13 +127,13 @@
+ 
+ #if _RWSTD_INSTANTIATE (_TIME_PUT, _CHAR)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT time_put<char>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT time_put<char>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_TIME_PUT, _CHAR)
+ 
+ #if _RWSTD_INSTANTIATE (_TIME_PUT, _WCHAR_T)
+ 
+-_RWSTD_INSTANTIATE_1 (struct _RWSTD_TI_EXPORT time_put<wchar_t>);
++_RWSTD_INSTANTIATE_1 (class _RWSTD_TI_EXPORT time_put<wchar_t>);
+ 
+ #endif   // _RWSTD_INSTANTIATE (_TIME_PUT, _WCHAR_T)
+ 
+@@ -139,3 +146,4 @@
+ 
+ 
+ #endif   // _RWSTD_LOC_TIME_PUT_H_INCLUDED
++
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/src/codecvt.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/codecvt.cpp	2011-01-07 18:25:48.692939914 -0500
+@@ -105,7 +105,8 @@
+ }
+ 
+ 
+-/* virtual */ codecvt<char, char, _RWSTD_MBSTATE_T>::~codecvt ()
++/* virtual */
++codecvt<char, char, _RWSTD_MBSTATE_T>::~codecvt ()
+ {
+     // no-op
+ }
+@@ -264,6 +265,12 @@
+     return 1;   // 22.2.1.5.2, p11
+ }
+ 
++/* virtual */
++codecvt<wchar_t, char, _RWSTD_MBSTATE_T>::~codecvt ()
++{
++	// no-op
++}
++
+ 
+ }   // namespace std
+ 
+@@ -272,3 +279,4 @@
+ _RWSTD_DEFINE_FACET_FACTORY (static, codecvt, TARGS_C, codecvt);
+ _RWSTD_SPECIALIZE_USE_FACET (codecvt);
+ 
++
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/src/ctype.cpp	2011-01-04 06:08:35.707605814 -0500
++++ stdcxx-4.2.1/src/ctype.cpp	2011-01-07 18:27:32.253787318 -0500
+@@ -693,7 +693,7 @@
+ }
+ 
+ 
+-ctype<char>::~ctype ()
++ctype<char>::~ctype ()
+ {
+     if (_C_delete_it) {
+         delete[] _RWSTD_CONST_CAST (mask*, _C_mask_tab);
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/src/wctype.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/wctype.cpp	2011-01-07 18:38:16.685689748 -0500
+@@ -442,7 +442,7 @@
+ }
+ 
+ 
+-ctype<wchar_t>::~ctype ()
++ctype<wchar_t>::~ctype ()
+ {
+     if (_C_delete_it) {
+         delete[] _RWSTD_CONST_CAST (mask*, _C_mask_tab);
+@@ -759,8 +759,7 @@
+ }
+ 
+ 
+-ctype_byname<wchar_t>::
+-~ctype_byname ()
++ctype_byname<wchar_t>::~ctype_byname ()
+ {
+     // Release the codecvt database at this level
+     if (_C_cvtimpl != 0 && _C_cvtsize != 0)
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/tests/localization/22.locale.numpunct.cpp	2011-01-04 06:08:35.659216745 -0500
++++ stdcxx-4.2.1/tests/localization/22.locale.numpunct.cpp	2011-01-07 21:12:45.448937997 -0500
+@@ -252,6 +252,19 @@
+     return true;
+ }
+ 
++template <class charT>
++class test_numpunct : public std::numpunct<charT>
++{
++public:
++
++	typedef std::basic_string<charT> string_type;
++
++	explicit test_numpunct(size_t refs = 0)
++	: std::numpunct<charT> (refs) { }
++
++	virtual ~test_numpunct () { }
++};
++
+ /**************************************************************************/
+ 
+ template <class charT>
+@@ -259,11 +272,11 @@
+                           const char        *tname,
+                           const std::locale *loc)
+ {
+-    typedef std::numpunct<charT>    Punct;
++    typedef test_numpunct<charT>    Punct;
+     typedef std::char_traits<charT> Traits;
+ 
+     const charT c = loc ?
+-          _STD_USE_FACET (Punct, *loc).decimal_point ()
++          _STD_USE_FACET (std::numpunct<charT>, *loc).decimal_point ()
+         : Punct ().decimal_point ();
+ 
+ 
+@@ -279,11 +292,11 @@
+                           const char        *tname,
+                           const std::locale *loc)
+ {
+-    typedef std::numpunct<charT>    Punct;
++    typedef test_numpunct<charT>    Punct;
+     typedef std::char_traits<charT> Traits;
+ 
+     const charT c = loc ?
+-          _STD_USE_FACET (Punct, *loc).thousands_sep ()
++          _STD_USE_FACET (std::numpunct<charT>, *loc).thousands_sep ()
+         : Punct ().thousands_sep ();
+ 
+     rw_assert (Traits::eq (c, expect), 0, __LINE__,
+@@ -299,10 +312,10 @@
+                      const std::string &expect,
+                      const std::locale *loc)
+ {
+-    typedef std::numpunct<charT> Punct;
++    typedef test_numpunct<charT> Punct;
+ 
+     const std::string s = loc ?
+-          _STD_USE_FACET (Punct, *loc).grouping ()
++          _STD_USE_FACET (std::numpunct<charT>, *loc).grouping ()
+         : Punct ().grouping ();
+ 
+     if (   s != expect
+@@ -338,10 +351,10 @@
+                       const char                     *tname,
+                       const std::locale              *loc)
+ {
+-    typedef std::numpunct<charT> Punct;
++    typedef test_numpunct<charT> Punct;
+ 
+     const std::basic_string<charT> s = loc ?
+-          _STD_USE_FACET (Punct, *loc).falsename ()
++          _STD_USE_FACET (std::numpunct<charT>, *loc).falsename ()
+         : Punct ().falsename ();
+ 
+     const int char_size = int (sizeof (charT));
+@@ -358,10 +371,10 @@
+                      const char                     *tname,
+                      const std::locale              *loc)
+ {
+-    typedef std::numpunct<charT> Punct;
++    typedef test_numpunct<charT> Punct;
+ 
+     const std::basic_string<charT> s = loc ?
+-          _STD_USE_FACET (Punct, *loc).truename ()
++          _STD_USE_FACET (std::numpunct<charT>, *loc).truename ()
+         : Punct ().truename ();
+ 
+     const int char_size = int (sizeof (charT));
+
+--- stdcxx-4.2.1/src/locale_body.cpp	2011-01-12 23:02:08.654127020 -0500
++++ stdcxx-4.2.1/src/locale_body.cpp	2011-01-13 10:07:31.079752886 -0500
+@@ -859,6 +859,22 @@
+         return tmp;
+     }
+ 
++	if (plocale && (plocale == classic)) {
++		// optimize the "destruction" of the classic C locale
++		// the object is never destroyed and its reference count
++		// never drops to 0
++		_RWSTD_ASSERT (__rw_is_C (locname));
++		_RWSTD_ASSERT (__rw_is_C (plocale->_C_name));
++
++		const size_t ref =
++			_RWSTD_ATOMIC_PREDECREMENT (plocale->_C_ref, false);
++
++		_RWSTD_ASSERT (ref + 1U != 0);
++		_RWSTD_UNUSED (ref);
++
++		return 0;
++	}
++
+ 
+     // re-entrant to protect static local data structures
+     // (not the locales themselves)
+@@ -1079,24 +1095,33 @@
+             return false;
+         }
+ 
++		_RWSTD_ASSERT (0 == _C_usr_facets);
++
++		if ((_C_all == _C_std_facet_bits) && (0 == _C_byname_facet_bits)) {
++			// optimized for the C locale
++			_RWSTD_ASSERT (__rw_is_C (_C_name));
++
++			return true;
++		}
++
+         // unless all facets in the same category come either from
+         // the C locale or from some named locale the locale object
+         // containing the facets is not managed (this test doesn't
+         // detect categores of all byname facets not all of which
+         // belong to the same named locale)
+         if (   (_C_std_facet_bits & _C_all) != _C_all
+-            || (_C_byname_facet_bits & _C_collate)
+-            && (_C_byname_facet_bits & _C_collate)  != _C_collate
+-            || (_C_byname_facet_bits & _C_ctype)
+-            && (_C_byname_facet_bits & _C_ctype)    != _C_ctype
+-            || (_C_byname_facet_bits & _C_monetary)
+-            && (_C_byname_facet_bits & _C_monetary) != _C_monetary
+-            || (_C_byname_facet_bits & _C_numeric)
+-            && (_C_byname_facet_bits & _C_numeric)  != _C_numeric
+-            || (_C_byname_facet_bits & _C_time)
+-            && (_C_byname_facet_bits & _C_time)     != _C_time
+-            || (_C_byname_facet_bits & _C_messages)
+-            && (_C_byname_facet_bits & _C_messages) != _C_messages)
++            || ((_C_byname_facet_bits & _C_collate)
++            && (_C_byname_facet_bits & _C_collate)  != _C_collate)
++            || ((_C_byname_facet_bits & _C_ctype)
++            && (_C_byname_facet_bits & _C_ctype)    != _C_ctype)
++            || ((_C_byname_facet_bits & _C_monetary)
++            && (_C_byname_facet_bits & _C_monetary) != _C_monetary)
++            || ((_C_byname_facet_bits & _C_numeric)
++            && (_C_byname_facet_bits & _C_numeric)  != _C_numeric)
++            || ((_C_byname_facet_bits & _C_time)
++            && (_C_byname_facet_bits & _C_time)     != _C_time)
++            || ((_C_byname_facet_bits & _C_messages)
++            && (_C_byname_facet_bits & _C_messages) != _C_messages))
+             return false;
+ 
+         // check whether all _byname facets in each category belong
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/src/locale_combine.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/locale_combine.cpp	2011-01-13 11:28:33.684689143 -0500
+@@ -235,11 +235,11 @@
+     // compute and assign facet bitmaps
+     const int bits = _C_LC2facet_bits (cat);
+ 
+-    _C_std_facet_bits    =   one._C_std_facet_bits & ~bits
+-                           | other._C_std_facet_bits & bits;
++    _C_std_facet_bits    =   (one._C_std_facet_bits & ~bits)
++                           | (other._C_std_facet_bits & bits);
+ 
+-    _C_byname_facet_bits =   one._C_byname_facet_bits & ~bits
+-                           | other._C_byname_facet_bits & bits;
++    _C_byname_facet_bits =   (one._C_byname_facet_bits & ~bits)
++                           | (other._C_byname_facet_bits & bits);
+ 
+     for (_RWSTD_SIZE_T i = 0; i != _C_n_std_facets; ++i) {
+ 
+@@ -502,15 +502,12 @@
+         const char *pcatnames [__rw_n_cats] = { 0 };
+ 
+         // try the libc "native" separator first, semicolon next
+-        const char *sep = strchr (locname, *_RWSTD_CAT_SEP);
+-        if (!sep)
+-            sep = ";";
+-
+-        for (const char *s = locname; *s; ) {
+-
+-            const char *next = strchr (s, *sep);
+-            if (!next)
+-                next = s + strlen (s);
++	const char* const psep = strchr (locname, *_RWSTD_CAT_SEP);
++        const char sep = psep ? *psep : ';';
++
++		// redundant check for s being non-null shuts up a bogus
++		// cadvise null pointer derefence warning
++        for (const char *s = locname; s && *s; ) {
+ 
+             const char* const endcat = strchr (s, '=');
+             if (!endcat)
+@@ -530,7 +527,9 @@
+                 }
+             }
+ 
+-            s = *next ? next + 1 : next;
++			// advance just past the next separator if one exists
++			const char* const next = strchr (s, sep);
++			s = next ? next + 1 : s + strlen (s);
+         }
+ 
+         // compose a normalized locale name out of category names
+@@ -542,7 +541,7 @@
+                 pcatnames [i] = "C";
+             }
+ 
+-            const char *endcat = strchr (pcatnames [i], *sep);
++            const char *endcat = strchr (pcatnames [i], sep);
+ 
+             if (!endcat)
+                 endcat = pcatnames [i] + strlen (pcatnames [i]);
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_num_get.cc	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_num_get.cc	2011-02-18 10:59:44.609114465 -0500
+@@ -190,15 +190,26 @@
+         _RWSTD_USE_FACET (numpunct<char_type>, __loc);
+ 
+     // 22.2.2.1.2, p8: Stage 2
++#if defined(_STDCXX_SIZEOF_NUM_GET_BUFFER)
++    // size of allocated buffer
++    _RWSTD_SIZE_T __bufsize =
++        static_cast<_RWSTD_SIZE_T>(_STDCXX_SIZEOF_NUM_GET_BUFFER);
++    // dynamically allocated buffer
++    char* __buf = new (nothrow) char[__bufsize];
++	 if (!__buf) {
++        __err |= _RW::__rw_failbit;
++		 return __begin;
++	 }
++#else
++    // default statically-alocated buffer (1024 bits + 2)
++    char __buf [1024 + 2];                    // default buffer (1024 bits + 2)
++    _RWSTD_SIZE_T __bufsize = sizeof __buf;   // size of allocated buffer
++#endif
+ 
+-    char __buf [128 + 2];                     // default buffer (128 bits + 2)
+     char *__pbuf            = __buf;          // pointer to allocated buffer
+     char *__pcur            = __buf;          // currently processed digit
+-    _RWSTD_SIZE_T __bufsize = sizeof __buf;   // size of allocated buffer
+ 
+-    _RWSTD_UNUSED (__bufsize);
+-
+-    const ctype<char_type> &__ctp = _RWSTD_USE_FACET (ctype<char_type>, __loc);
++    const ctype<char_type> &__ctp = _RWSTD_USE_FACET (std::ctype<char_type>, __loc);
+ 
+     const _CharT __decimal_point = __pun.decimal_point ();
+     const _CharT __thousands_sep = __pun.thousands_sep ();
+@@ -210,7 +221,15 @@
+ 
+     // buffer containing the sizes of thousands_sep-separated
+     // groups of digits and a pointer to the next grouping
++#if defined(_STDCXX_SIZEOF_NUM_GET_BUFFER)
++    char* __grpbuf = new (nothrow) char[__bufsize];
++	 if (!__grpbuf) { 
++        __err |= _RW::__rw_failbit;
++		return __begin;
++	 }
++#else
+     char __grpbuf [sizeof __buf];
++#endif
+     char *__pgrp = __grpbuf;
+ 
+     const char *__grpbeg = 0;   // the beginning of the last group
+@@ -252,7 +271,7 @@
+             break;
+         }
+ 
+-        if (__pcur == __buf + sizeof __buf - 1) {
++        if (__pcur == (__buf + __bufsize - 1)) {
+             // FIXME: handle long strings of digits
+             __err |= _RW::__rw_failbit;
+             break;
+@@ -293,6 +312,10 @@
+                 // fatal error: thousands_sep characters must be separated
+                 // by groups of one or more digits
+                 __err |= _RW::__rw_failbit;                
++#if defined(_STDCXX_SIZEOF_NUM_GET_BUFFER)
++                delete[] __buf;
++                delete[] __grpbuf;
++#endif
+                 return __begin;
+             }
+ 
+@@ -456,6 +479,10 @@
+             if (   'e' == __pcur [-1]
+                 || '-' == __pcur [-1] || '+' == __pcur [-1]) {
+                 __err |= _RW::__rw_failbit;
++#if defined(_STDCXX_SIZEOF_NUM_GET_BUFFER)
++                delete[] __buf;
++                delete[] __grpbuf;
++#endif
+                 return __begin;
+             }
+ 
+@@ -474,6 +501,10 @@
+             // or more digits (i.e., valid input cannot start or end with
+             // a thousands_sep); this needs to be clarified in the text
+             __err |= _RW::__rw_failbit;
++#if defined(_STDCXX_SIZEOF_NUM_GET_BUFFER)
++            delete[] __buf;
++            delete[] __grpbuf;
++#endif
+             return __begin;
+         }
+ 
+@@ -484,15 +515,15 @@
+     *__pcur = '\0';
+ 
+     // verify that the buffers haven't overflowed
+-    _RWSTD_ASSERT (__pgrp < __grpbuf + sizeof __grpbuf);
++    _RWSTD_ASSERT (__pgrp < __grpbuf + __bufsize);
+     _RWSTD_ASSERT (__pcur < __pbuf + __bufsize);
+ 
+     // set the base determined above
+-    const unsigned __fl2 =
+-          __fl & ~_RWSTD_IOS_BASEFIELD
+-        & ~(   _RWSTD_STATIC_CAST (unsigned, _RWSTD_IOS_BASEMASK)
+-            << _RWSTD_IOS_BASEOFF)
+-        | __base << _RWSTD_IOS_BASEOFF;
++    const unsigned int __fl2 =
++          (__fl & ~_RWSTD_IOS_BASEFIELD)
++        & ~((   _RWSTD_STATIC_CAST (unsigned int, _RWSTD_IOS_BASEMASK)
++            << _RWSTD_IOS_BASEOFF))
++        | (__base << _RWSTD_IOS_BASEOFF);
+ 
+     // 22.2.2.1.2, p11: Stage 3
+     const int __errtmp =
+@@ -502,6 +533,11 @@
+ 
+     __err |= _RWSTD_IOSTATE (__errtmp);
+ 
++#if defined(_STDCXX_SIZEOF_NUM_GET_BUFFER)
++    delete[] __buf;
++    delete[] __grpbuf;
++#endif
++
+     return __begin;
+ }
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_time_get.cc	2008-04-24 17:23:39.000000000 -0700
++++ stdcxx-4.2.1/include/loc/_time_get.cc	2011-03-22 15:24:06.922851958 -0700
+@@ -127,10 +127,13 @@
+         _RWSTD_IOSTATE &__err, tm *__tmb,
+         char __fmt, char __modifier /* = '\0' */) const
+ {
+-    // enough pointers for 100 alternative numeric symbols and their sizes
+-    const char_type* __names [100];
++    // enough pointers for 128 alternative numeric symbols and their sizes
++    const char_type* __names [128];
+     _RWSTD_SIZE_T    __sizes [sizeof __names / sizeof *__names];
+ 
++    (void) memset(__names, '\0', sizeof(__names));
++    (void) memset(__sizes, '\0', sizeof(__sizes));
++
+     const void** __pv =
+         _RWSTD_REINTERPRET_CAST (const void**, __names);
+ 
+@@ -138,7 +141,9 @@
+ 
+     int *__pmem = 0;   // pointer to std::tm member
+ 
+-    _RWSTD_SIZE_T __dup;   // number of allowed duplicates
++    _RWSTD_SIZE_T __dup = 0;   // number of allowed duplicates
++
++    _RWSTD_SIZE_T __nread = 0; // parse numeric input
+ 
+     const ctype<char_type> &__ctp =
+         _RWSTD_USE_FACET (ctype<char_type>, __fl.getloc ());
+@@ -151,6 +156,21 @@
+         __dup = 2;
+         break;
+ 
++    case 'e': {
++        while (__ctp.is (ctype_base::space, *__it)) {
++	    ++__it;
++	    ++__nread;
++	}
++
++	if (__it == __end) {
++	    __err |= _RW::__rw_eofbit;
++	    break;
++	}
++
++	__dup = 1;
++	break;
++    }
++
+     case 'n': case 't': {   // any whitespace
+         
+         for ( ; ; ++__it) {
+@@ -279,10 +299,6 @@
+     }
+     else if (__pmem) {
+ 
+-        // parse numeric input
+-
+-        _RWSTD_SIZE_T __nread = 0;
+-
+         int __mem = 0;
+ 
+         for ( ; ; ++__it, ++__nread) {
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/loc/_money_get.cc	2008-04-24 20:23:39.000000000 -0400
++++ stdcxx-4.2.1/include/loc/_money_get.cc	2011-01-13 15:21:44.879687845 -0500
+@@ -83,7 +83,7 @@
+     const ctype<_CharT> &__ctp = 
+         _RWSTD_USE_FACET (ctype<_CharT>, __flags.getloc ());
+ 
+-    char __buf [304];
++    char __buf [1024];
+     char *__pcur = __buf;
+ 
+     typedef _TYPENAME string_type::traits_type _Traits;
+@@ -93,6 +93,8 @@
+     const char *__grpstart = 0;      // the start of the last group
+     const char *__grpend   = 0;      // the end of the last group
+ 
++	(void) memset(__buf, '\0', sizeof(__buf));
++	(void) memset(__grpbuf, '\0', sizeof(__grpbuf));
+ 
+     int __sign = 0;    // the sign of the result if detected (-1, 0, or +1)
+ 
+@@ -100,7 +102,7 @@
+     // use a '+' and overwrite it with a '-' if necessary
+     *__pcur++ = '+';
+ 
+-    const int __fl = __flags.flags ();
++    const unsigned int __fl = __flags.flags ();
+ 
+     typedef _RWSTD_SIZE_T _SizeT;
+ 
+@@ -144,11 +146,11 @@
+             // it is consumed only if it is followed by characters
+             // required to complete the pattern (see example in
+             // 22.2.6.1.2, p3)
+-            if (   __fl & _RW::__rw_showbase
+-                || __i < 2
+-                || 2 == __i && (money_base::none != __pat.field [3])
+-                || __sign < 0 && __ns.size () > 1
+-                || __sign > 0 && __ps.size () > 1) {
++            if (   (__fl & _RW::__rw_showbase)
++                || (__i < 2)
++                || ((2 == __i) && (money_base::none != __pat.field [3]))
++                || ((__sign < 0) && (__ns.size () > 1))
++                || ((__sign > 0) && (__ps.size () > 1)) ) {
+ 
+                 for (_SizeT __nc = 0; __nc != __cs.size ();
+                      ++__nc, ++__it) {
+@@ -156,7 +158,7 @@
+ 
+                         // 22.2.6.1.2, p2: unless showbase is set,
+                         //                 curr_symbol is optional
+-                        if (__nc || __fl & _RW::__rw_showbase)
++                        if (__nc || (__fl & _RW::__rw_showbase))
+                             __ebits |= _RW::__rw_failbit;
+                         break;
+                     }
+
+#===========================================================================#
+
+--- stdcxx-4.2.1/include/rw/_rawiter.h	2008-04-24 17:23:43.000000000 -0700
++++ stdcxx-4.2.1/include/rw/_rawiter.h	2011-03-17 18:50:56.176110516 -0700
+@@ -133,7 +133,7 @@
+ inline pair<_TypeT*, _Distance>
+ get_temporary_buffer (_Distance __nelems, _TypeT*)
+ {
+-    pair<_TypeT*, _Distance> __res (0, 0);
++    pair<_TypeT*, _Distance> __res (0UL, 0);
+ 
+ #if __GNUG__ >= 4
+ 
+@@ -148,7 +148,7 @@
+ 
+     __res.second =
+         _RW::__rw_tmpbuf (_RWSTD_REINTERPRET_CAST (_VoidPtrT*, &__res.first),
+-                          __nelems < 0 ? 0 : __nelems, sizeof (_TypeT));
++		((__nelems < 0) ? 0 : __nelems), sizeof (_TypeT));
+ 
+     return __res;
+ }
+

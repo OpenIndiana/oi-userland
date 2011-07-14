@@ -1,0 +1,62 @@
+--- stdcxx-4.2.1/etc/config/src/NO_DBL_TRAPS.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/NO_DBL_TRAPS.cpp	2011-01-12 22:13:06.534845500 -0500
+@@ -39,6 +39,11 @@
+ 
+ #include "nodbg.h"
+ 
++#if defined(__SUNPRO_CC)
++#include <sys/types.h>
++#include <signal.h>
++#endif
++
+ double dbl_get_zero ();
+ double dbl_get_one ();
+ 
+@@ -56,33 +61,39 @@
+     dbl_inf = dbl_one / dbl_zero;
+ 
+     // computation involving infinities that might trap
+-    dbl_nan = dbl_zero * dbl_inf;    // #3
+     dbl_nan = dbl_zero / dbl_zero;   // #4a
+-    dbl_nan = dbl_inf / dbl_inf;     // #4b
+-    dbl_nan = dbl_inf - dbl_inf;     // #5
+ 
+     if (argc > 2)
+-        return dbl_nan;
++        return -dbl_nan;
+ 
+     if (argc > 1)
+         return dbl_inf;
+ 
++#if defined(__SUNPRO_CC)
++#if defined((sun) || defined(__sun) || defined(__sun__)
++    kill(getpid(), SIGFPE);
++#elif defined(linux) || defined(__linux) || defined(__linux__)
++	return 136;
++#endif
++#else
+     // NEGATIVE test: successful exit status indicates a failure
+     return 0;
++#endif
+ }
+ 
+ // foil optimizers
+ double dbl_get_zero ()
+ {
+-    static double value = 0.0;
++    static double zero = 0.0;
+ 
+-    return value;
++    return zero;
+ }
+ 
+ 
+ double dbl_get_one ()
+ {
+-    static double value = 1.0;
++    static double one = 1.0;
+ 
+-    return value;
++    return one;
+ }
++

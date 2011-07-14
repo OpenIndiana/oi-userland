@@ -1,0 +1,258 @@
+--- stdcxx-4.2.1/tests/include/rw_char.h	2008-04-24 20:22:55.000000000 -0400
++++ stdcxx-4.2.1/tests/include/rw_char.h	2011-03-04 00:40:34.422115861 -0500
+@@ -38,22 +38,15 @@
+ 
+ struct UserChar   // user-defined character type (must be POD)
+ {
+-#if    !defined (_RWSTD_NO_LONG_DOUBLE) \
+-    && !defined (__SUNPRO_CC) || __SUNPRO_CC > 0x540
+-    long double f;    // exercise correct alignment
+-#else
+-    // cannot use long double with SunPro due to a compiler
+-    // bug that prevents assignments of UserChar() (PR #28328)
+-    double f;
+-#endif   // _RWSTD_NO_LONG_DOUBLE
++    unsigned int f;
+ 
+-    unsigned char c;   // underlying character representation
++    char c;   // underlying character representation
+ 
+     static UserChar eos () {
+         // use UserChar::eos() instead of UserChar() to work around broken
+         // compilers (e.g., MSVC 6) that do not zero out POD structs
+         // on default construction
+-        const UserChar tmp = { 0, 0 };
++        const UserChar tmp = { 0, '\0' };
+         return tmp;
+     }
+ 
+@@ -73,7 +66,7 @@
+ 
+ inline UserChar make_char (char c, UserChar*)
+ {
+-    const UserChar ch = { 0.0, c };
++    const UserChar ch = { 0, c };
+     return ch;
+ }
+ 
+@@ -82,6 +75,18 @@
+     return c;
+ }
+ 
++inline char make_char (const char c, const char*)
++{
++    return c;
++}
++
++inline char make_char (struct UserChar& ucr, struct UserChar* uc)
++{
++   char c = uc ? uc->c : char('\0');
++   return c;
++}
++
++
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
+ inline wchar_t make_char (char c, wchar_t*)
+--- stdcxx-4.2.1/tests/src/char.cpp	2008-04-24 20:23:00.000000000 -0400
++++ stdcxx-4.2.1/tests/src/char.cpp	2011-03-04 00:41:58.607053360 -0500
+@@ -446,7 +446,7 @@
+     ++n_calls_ [MemFun::not_eof];
+ 
+     if (i.equal (int_type::eof ())) {
+-        const char_type c = { 0, 0 };
++        const char_type c = { 0, '\0' };
+ 
+         return int_type::from_char (c);
+     }
+@@ -805,7 +805,10 @@
+     size_t n1 = 0;
+     size_t n2 = 0;
+ 
+-    for (unsigned long ch1, ch2; count < len; ) {
++    unsigned long ch1 = 0UL;
++    unsigned long ch2 = 0UL;
++
++    while (count < len) {
+ 
+         while (0 == n1) {
+             n1  = _RWSTD_SIZE_MAX == len ? len : len - count;
+@@ -843,7 +846,6 @@
+     return len < count ? len : count;
+ }
+ 
+-
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
+ _TEST_EXPORT
+@@ -1105,14 +1107,18 @@
+     size_t n2 = 0;
+ 
+     unsigned long ch1;
++     UserChar ch2;
+ 
+-    for (UserChar ch2; count < len; ) {
++    while (count < len) {
+ 
+         while (0 == n1) {
+             n1  = _RWSTD_SIZE_MAX == len ? len : len - count;
+             ch1 = _rw_get_char (p1, &p1, &n1);
+         }
+ 
++	if (!p2)
++          break;
++
+         ch2 = *p2++;
+         n2  = 1;
+ 
+--- stdcxx-4.2.1/tests/src/printf.cpp	2008-04-24 20:23:00.000000000 -0400
++++ stdcxx-4.2.1/tests/src/printf.cpp	2011-03-04 01:59:51.512363244 -0500
+@@ -475,6 +475,7 @@
+         if (0 == newbuf)
+             return 0;
+ 
++	 memset (newbuf, '\0', size_t (newbufsize + guardsize));
+         memcpy (newbuf, *buf.pbuf, buflen);
+ 
+         // append a guard block to the end of the buffer
+@@ -708,6 +709,9 @@
+     size_t spec_bufsize = sizeof specbuf / sizeof *specbuf;
+     size_t paramno = 0;
+ 
++    for (size_t i = 0; i < 32; ++i)
++        specbuf[i].strarg = 0;
++
+     if (0 == fmt || 0 > _RW::__rw_memattr (fmt, _RWSTD_SIZE_MAX, -1))
+         return _rw_fmtbadaddr (pspec [0], buf, fmt);
+ 
+@@ -743,6 +747,10 @@
+ 
+             FmtSpec* const tmp = (FmtSpec*)malloc (bytesize * 2);
+             if (tmp) {
++                size_t j = ((bytesize * 2) / sizeof (FmtSpec));
++                for (size_t i = 0; i < j; ++i)
++                     tmp[i].strarg = 0;
++
+                 memcpy (tmp, pspec, bytesize);
+                 if (pspec != specbuf)
+                     free (pspec);
+ 
+--- stdcxx-4.2.1/tests/src/thread.cpp	2008-04-24 20:23:00.000000000 -0400
++++ stdcxx-4.2.1/tests/src/thread.cpp	2011-04-04 23:27:04.416978567 -0400
+@@ -30,6 +30,8 @@
+ #define _RWSTD_TEST_SRC
+ 
+ #include <rw_thread.h>
++#include <driver.h>
++
+ #include <stddef.h>     // for size_t
+ #include <string.h>     // for memset()
+ 
+@@ -50,7 +52,8 @@
+ 
+ /**************************************************************************/
+ 
+-static long maxthreads;
++static long maxthreads = 0L;
++static int nthreads = 0;
+ 
+ 
+ #if defined (_RWSTD_POSIX_THREADS)
+@@ -64,16 +67,19 @@
+                   void* (*thr_proc)(void*),
+                   void *thr_arg)
+ {
+-#ifdef _RWSTD_OS_SUNOS
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
+ 
+-    static int concurrency_set;
++    static int concurrency_set = 0;
++    static pthread_attr_t attr;
+ 
+     if (0 == concurrency_set) {
+-        pthread_setconcurrency (4);
+         concurrency_set = 1;
++        pthread_attr_init (&attr);
++        pthread_attr_setstacksize (&attr, (4 * 1024 * 1024));
++        pthread_setconcurrency (nthreads ? nthreads : 4);
+     }
+ 
+-#endif   // _RWSTD_OS_SUNOS
++#endif   // _RWSTD_OS_SUNOS || _RWSTD_OS_LINUX
+ 
+ 
+     rw_thread_t tmpid;
+@@ -89,8 +95,16 @@
+     // run even before pthread_create returns
+     thr_id->threadno = maxthreads;
+ 
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++
++    const int result = pthread_create (&tid, &attr, thr_proc, thr_arg);
++
++#else
++
+     const int result = pthread_create (&tid, 0, thr_proc, thr_arg);
+ 
++#endif
++
+     if (0 == result) {
+         thr_id->id     = (long)tid;
+         thr_id->handle = 0;
+@@ -440,7 +454,7 @@
+ 
+ #  endif   // _SC_NPROCESSORS_CONF
+ 
+-    if (ncpus < 1 && cmd) {
++    if ((ncpus < 1) && cmd) {
+         // if the number of processors couldn't be determined using
+         // sysconf() above,  open and read the output of the command
+         // from a pipe
+@@ -486,6 +500,10 @@
+ 
+     const bool join = 0 == thr_id;
+ 
++	rw_info (0, 0, __LINE__,
++             "requesting a thread pool with %u threads", nthrs);
++             
++
+ #ifdef _RWSTD_REENTRANT
+ 
+     if (_RWSTD_SIZE_MAX == nthrs) {
+@@ -496,7 +514,7 @@
+         const int ncpus = rw_get_cpus ();
+ 
+         if (0 < ncpus)
+-            nthrs = size_t (ncpus) + 1;
++            nthrs = size_t (ncpus) * 2;
+         else
+             nthrs = 2;
+     }
+@@ -507,7 +525,7 @@
+     // of a single thread and then waiting for it to finish
+     // by simply calling the thread procedure
+ 
+-    if (1 == nthrs && join) {
++    if ((1 == nthrs) && join) {
+ 
+         if (0 == thr_id) {
+             thr_id = id_buf;
+@@ -527,12 +545,17 @@
+     }
+ #endif   // !_RWSTD_REENTRANT
+ 
++	rw_info (0, 0, __LINE__,
++             "creating a thread pool with %u threads", nthrs);
++
++	nthreads = static_cast<int> (nthrs);
++
+     bool delete_ids = false;
+ 
+     if (0 == thr_id) {
+         // save thread idsso that they (and no other threads)
+         // can be joined later
+-        if (sizeof id_buf / sizeof *id_buf < nthrs) {
++        if ((sizeof id_buf / sizeof *id_buf) < nthrs) {
+             delete_ids = true;
+             thr_id     = new rw_thread_t [nthrs];
+         }

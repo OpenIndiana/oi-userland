@@ -1,0 +1,150 @@
+--- stdcxx-4.2.1/include/ansi/climits	2008-04-24 20:23:56.000000000 -0400
++++ stdcxx-4.2.1/include/ansi/climits	2009-03-12 16:35:36.000000000 -0400
+@@ -1,124 +1,35 @@
+ // -*- C++ -*-
+-/***************************************************************************
++/**
++ * CDDL HEADER START
+  *
+- * climits - C++ Standard library interface to the ANSI C header limits.h
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
+  *
+- * $Id: climits 648752 2008-04-16 17:01:56Z faridz $
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
+  *
+- ***************************************************************************
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
+  *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
++ * CDDL HEADER END
+  *
+- * http://www.apache.org/licenses/LICENSE-2.0
+  *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
+  *
+- * Copyright 1994-2008 Rogue Wave Software, Inc.
+- * 
+- **************************************************************************/
+-
+-#ifndef _RWSTD_CLIMITS_INCLUDED
+-#define _RWSTD_CLIMITS_INCLUDED
+-
+-#include <rw/_defs.h>
+-
+-
+-#if !defined (_RWSTD_NO_PURE_C_HEADERS) || defined (_RWSTD_NO_LIMITS_H)
+-
+-// 18.2.2, p1
+-#ifndef CHAR_BIT
+-#  define CHAR_BIT   _RWSTD_CHAR_BIT
+-#endif   // CHAR_BIT
+-
+-#ifndef CHAR_MAX
+-#  define CHAR_MAX   _RWSTD_CHAR_MAX
+-#endif   // CHAR_MAX
+-
+-#ifndef CHAR_MIN
+-#  define CHAR_MIN   _RWSTD_CHAR_MIN
+-#endif   // CHAR_MIN
+-
+-#ifndef SCHAR_MAX
+-#  define SCHAR_MAX  _RWSTD_SCHAR_MAX
+-#endif   // SCHAR_MAX
+-
+-#ifndef SCHAR_MIN
+-#  define SCHAR_MIN  _RWSTD_SCHAR_MIN
+-#endif   // SCHAR_MIN
+-
+-#ifndef UCHAR_MAX
+-#  define UCHAR_MAX  _RWSTD_UCHAR_MAX
+-#endif   // UCHAR_MAX
+-
+-#ifndef SHRT_MAX
+-#  define SHRT_MAX   _RWSTD_SHRT_MAX
+-#endif   // SHRT_MAX
+-
+-#ifndef SHRT_MIN
+-#  define SHRT_MIN   _RWSTD_SHRT_MIN
+-#endif   // SHRT_MIN
+-
+-#ifndef USHRT_MAX
+-#  define USHRT_MAX  _RWSTD_USHRT_MAX
+-#endif   // USHRT_MAX
+-
+-#ifndef INT_MAX
+-#  define INT_MAX    _RWSTD_INT_MAX
+-#endif   // INT_MAX
+-
+-#ifndef INT_MIN
+-#  define INT_MIN    _RWSTD_INT_MIN
+-#endif   // INT_MIN
+-
+-#ifndef UINT_MAX
+-#  define UINT_MAX   _RWSTD_UINT_MAX
+-#endif   // UINT_MAX
+-
+-#ifndef LONG_MAX
+-#  define LONG_MAX   _RWSTD_LONG_MAX
+-#endif   // LONG_MAX
+-
+-#ifndef LONG_MIN
+-#  define LONG_MIN   _RWSTD_LONG_MIN
+-#endif   // LONG_MIN
+-
+-#ifndef ULONG_MAX
+-#  define ULONG_MAX  _RWSTD_ULONG_MAX
+-#endif   // ULONG_MAX
+-
+-#ifndef MB_LEN_MAX
+-#  define MB_LEN_MAX _RWSTD_MB_LEN_MAX
+-#endif   // MB_LEN_MAX
+-
+-#else   // if defined (_RWSTD_NO_PURE_C_HEADERS)
+-
+-#  ifdef __GNUC__
+-#    if __GNUC__ >= 3
+-       // silence gcc warnings about #include_next below
+-#      pragma GCC system_header
+-#    endif   // gcc >= 3
++ * ident "@(#)climits.9.diff 1.1     09/08/21 SMI"
++ */
+ 
+-     // use the gcc extension to #include the compiler's limits.h
+-#    include_next <limits.h>
+-#  else
+-#    include _RWSTD_ANSI_C_LIMITS_H
+-#  endif   // gcc
++#ifndef _LIMITS_H
+ 
+-#endif  // _RWSTD_NO_PURE_C_HEADERS
++#include <sys/feature_tests.h>
++#include <limits.h>
+ 
+-#if (MB_LEN_MAX != _RWSTD_MB_LEN_MAX)
+-#  undef MB_LEN_MAX
+-#  define MB_LEN_MAX _RWSTD_MB_LEN_MAX
+-#endif   // MB_LEN_MAX
++#endif /* _LIMITS_H */
+ 
+-#endif   // _RWSTD_CLIMITS_INCLUDED

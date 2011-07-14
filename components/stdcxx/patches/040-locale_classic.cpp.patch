@@ -1,0 +1,58 @@
+--- stdcxx-4.2.1/src/locale_classic.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/locale_classic.cpp	2009-08-04 23:50:09.091873000 -0400
+@@ -37,12 +37,28 @@
+ 
+ _RWSTD_NAMESPACE (__rw) { 
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8 (__rw_classic)
++#  pragma pack(8)
++#endif
++
+ // static buffer for the classic "C" locale object
+ static union {
+-    void* _C_align;
++
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++    unsigned long long _C_align; // force alignment
++    unsigned char  _C_buf [sizeof (_STD::locale)];
++#else
++    void* _C_align;              // force alignment
+     char  _C_buf [sizeof (_STD::locale)];
++#endif
++
+ } __rw_classic;
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(0)
++#  pragma align 8 (__rw_classic_once_init)
++#endif
+ 
+ // init-once flag for the classic "C" locale object
+ static __rw_once_t
+@@ -57,7 +73,7 @@
+ {
+ #ifdef _RWSTDDEBUG
+ 
+-    static int init;
++    static int init = 0;
+ 
+     // paranoid check: verify that one-time initialization works
+     _RWSTD_ASSERT (0 == init);
+@@ -66,8 +82,16 @@
+ 
+ #endif   // _RWSTDDEBUG
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(8)
++#endif
++
+     // construct the classic "C" locale in the provided buffer
+     new (&__rw_classic) _STD::locale ("C");
++
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(0)
++#endif
+ }
+ 
+ }   // extern "C"

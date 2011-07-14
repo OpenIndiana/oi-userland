@@ -1,0 +1,381 @@
+--- stdcxx-4.2.1/etc/config/src/INFINITY.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/INFINITY.cpp	2011-01-14 11:17:58.611690181 -0500
+@@ -24,6 +24,7 @@
+ 
+ #include <stdio.h>    // for printf()
+ #include <string.h>   // for memset()
++#include <sys/types.h> // for size_t
+ 
+ #include "config.h"
+ #include "float_defs.h"  // for FLT_MIN, DBL_MIN, LDBL_MIN
+@@ -83,17 +84,17 @@
+ /**************************************************************************/
+ 
+ // print out `size' bytes starting at data prefixed by `text'
+-static void print (const char *text, const void *data, unsigned size)
++static void print (const char *text, const void *data, size_t size)
+ {
+     printf ("%s { ", text);
+ 
+     const unsigned char *p = (const unsigned char*)data;
+ 
+-    for (unsigned i = 0; i != size; ++i) {
++    for (size_t i = 0; i != size; ++i) {
+         if (p[i])
+             printf ("'\\x%x'", p[i]);
+         else
+-            printf ("%d", p[i]);
++            printf ("'\\%d'", p[i]);
+         if (i < size - 1)
+             printf (", ");
+     }
+@@ -105,10 +106,10 @@
+ 
+ union flt_bits
+ {
+-    char bits [sizeof (float)];
+     float val;
++    unsigned char bits [sizeof (float)];
+     
+-    flt_bits () { memset (bits, 0, sizeof (bits)); }
++    flt_bits () { memset (bits, '\0', sizeof (bits)); }
+ };
+ 
+ static float flt_zero ()
+@@ -287,10 +288,10 @@
+ 
+ union dbl_bits
+ {
+-    char bits [sizeof (double)];
+     double val;
++    unsigned char bits [sizeof (double)];
+     
+-    dbl_bits () { memset (bits, 0, sizeof (bits)); }
++    dbl_bits () { memset (bits, '\0', sizeof (bits)); }
+ };
+ 
+ static float dbl_zero ()
+@@ -503,10 +504,10 @@
+ 
+ union ldbl_bits
+ {
+-    char bits [sizeof (long double)];
+     long double val;
++    unsigned char bits [sizeof (long double)];
+     
+-    ldbl_bits () { memset (bits, 0, sizeof (bits)); }
++    ldbl_bits () { memset (bits, '\0', sizeof (bits)); }
+ };
+ 
+ static long double ldbl_zero ()
+@@ -554,6 +555,43 @@
+         val.bits [15] = '\0';
+     }
+     else {
++#if defined(__SUNPRO_CC)
++#if defined(i386) || defined(__i386) || defined(__i386__) && !defined(__amd64) && !defined(__x86_64__)
++		val.bits [ 0] = '\0';
++		val.bits [ 1] = '\0';
++		val.bits [ 2] = '\0';
++		val.bits [ 3] = '\0';
++		val.bits [ 4] = '\0';
++		val.bits [ 5] = '\0';
++		val.bits [ 6] = '\0';
++		val.bits [ 7] = '\x80';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\xfa';
++		val.bits [11] = '\xfe'; // long double is 12 bytes on 32-bit Intel
++		val.bits [12] = '\0';	// last 4 bytes will be ignored
++		val.bits [13] = '\0';
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#elif defined(__amd64) || defined(__x86__64__)
++		val.bits [ 0] = '\0';
++		val.bits [ 1] = '\0';
++		val.bits [ 2] = '\0';
++		val.bits [ 3] = '\0';
++		val.bits [ 4] = '\0';
++		val.bits [ 5] = '\0';
++		val.bits [ 6] = '\0';
++		val.bits [ 7] = '\x80';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\0';
++		val.bits [11] = '\0';
++		val.bits [12] = '\0';
++		val.bits [13] = '\0';
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#endif
++#else // not __SUNPRO_CC
+         val.bits [ 0] = '\0';
+         val.bits [ 1] = '\0';
+         val.bits [ 2] = '\0';
+@@ -570,6 +608,7 @@
+         val.bits [13] = '\0';
+         val.bits [14] = '\xff';
+         val.bits [15] = '\x7f';
++#endif
+     }
+ 
+ #endif   // _RWSTD_NO_DBL_TRAPS
+@@ -594,6 +633,24 @@
+     // assume IEEE 754 floating point format
+ 
+     if (e == big_endian) {
++#if defined(__SUNPRO_CC) && defined(sun) || defined(__sun) || defined(__sun__)
++		val.bits [ 0] = '\x7f';
++		val.bits [ 1] = '\xff';
++		val.bits [ 2] = '\xff';
++		val.bits [ 3] = '\xff';
++		val.bits [ 4] = '\xff';
++		val.bits [ 5] = '\xff';
++		val.bits [ 6] = '\xff';
++		val.bits [ 7] = '\xff';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\xff';
++		val.bits [10] = '\xff';
++		val.bits [11] = '\xff';
++		val.bits [12] = '\xff';
++		val.bits [13] = '\xff';
++		val.bits [14] = '\xff';
++		val.bits [15] = '\xff';
++#else // not __SUNPRO_CC
+         val.bits [ 0] = '\xff';
+         val.bits [ 1] = '\xff';
+         val.bits [ 2] = '\x80';
+@@ -610,8 +667,84 @@
+         val.bits [13] = '\0';
+         val.bits [14] = '\0';
+         val.bits [15] = '\0';
++#endif // __SUNPRO_CC
+     }
+     else {
++#if defined(__SUNPRO_CC)
++#if defined(i386) || defined(__i386) || defined(__i386) && (!defined(__amd64) && !defined(__x86_64__))
++#if defined(sun) || defined(__sun) || defined(__sun__)
++		val.bits [ 0] = '\xff';
++		val.bits [ 1] = '\xff';
++		val.bits [ 2] = '\xff';
++		val.bits [ 3] = '\xff';
++		val.bits [ 4] = '\xff';
++		val.bits [ 5] = '\xff';
++		val.bits [ 6] = '\xff';
++		val.bits [ 7] = '\xff';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\x4';
++		val.bits [11] = '\x8';
++		val.bits [12] = '\0'; // long double is 12 bytes on 32-bit Intel
++		val.bits [13] = '\0'; // last 4 bytes will be ignored
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#elif defined(linux) || defined(__linux) || defined(__linux__)
++		val.bits [ 0] = '\x7f';
++		val.bits [ 1] = '\xff'; 
++		val.bits [ 2] = '\xff';
++		val.bits [ 3] = '\xff';
++		val.bits [ 4] = '\xff';
++		val.bits [ 5] = '\xff';
++		val.bits [ 6] = '\xff';
++		val.bits [ 7] = '\xff';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\xfa';
++		val.bits [11] = '\xfe';
++		val.bits [12] = '\0'; // long double is 12 bytes on 32-bit Intel
++		val.bits [13] = '\0'; // last 4 bytes will be ignored
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#endif // __sun || __linux__
++#elif defined(__amd64) || defined(__x86_64__)
++#if defined(sun) || defined(__sun) || defined(__sun__)
++		val.bits [ 0] = '\xff';
++		val.bits [ 1] = '\xff';
++		val.bits [ 2] = '\xff';
++		val.bits [ 3] = '\xff';
++		val.bits [ 4] = '\xff';
++		val.bits [ 5] = '\xff';
++		val.bits [ 6] = '\xff';
++		val.bits [ 7] = '\xff';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\0';
++		val.bits [11] = '\0';
++		val.bits [12] = '\0';
++		val.bits [13] = '\0';
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#elif defined(linux) || defined(__linux) || defined(__linux__)
++		val.bits [ 0] = '\x7f';
++		val.bits [ 1] = '\xff'; 
++		val.bits [ 2] = '\xff';
++		val.bits [ 3] = '\xff';
++		val.bits [ 4] = '\xff';
++		val.bits [ 5] = '\xff';
++		val.bits [ 6] = '\xff';
++		val.bits [ 7] = '\xff';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\0';
++		val.bits [11] = '\0';
++		val.bits [12] = '\0';
++		val.bits [13] = '\0';
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#endif // __sun || __linux__
++#endif
++#else // not __SUNPRO_CC
+         val.bits [ 0] = '\0';
+         val.bits [ 1] = '\0';
+         val.bits [ 2] = '\0';
+@@ -628,6 +761,7 @@
+         val.bits [13] = '\x80';
+         val.bits [14] = '\xff';
+         val.bits [15] = '\xff';
++#endif // __SUNPRO_CC
+     }
+ 
+ #endif   // _RWSTD_NO_DBL_TRAPS
+@@ -694,6 +828,81 @@
+         val.bits [15] = '\x01';
+     }
+     else {
++#if defined(__SUNPRO_CC)
++#if defined(i386) || defined(__i386) || defined(__i386__) && (!defined(__amd64) && !defined(__x86_64__))
++#if defined(sun) || defined(__sun) || defined(__sun__)
++		val.bits [ 0] = '\x1';
++		val.bits [ 1] = '\0';
++		val.bits [ 2] = '\0';
++		val.bits [ 3] = '\0';
++		val.bits [ 4] = '\0';
++		val.bits [ 5] = '\0';
++		val.bits [ 6] = '\0';
++		val.bits [ 7] = '\x80';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\xfa';
++		val.bits [11] = '\xfe';
++		val.bits [12] = '\0'; // long double is 12 bytes on 32-bit Intel
++		val.bits [13] = '\0'; // last 4 bytes will be ignored
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#elif defined(linux) || defined(__linux) || defined(__linux__)
++		val.bits [ 0] = '\xff';
++		val.bits [ 1] = '\xff';
++		val.bits [ 2] = '\xff';
++		val.bits [ 3] = '\xff';
++		val.bits [ 4] = '\xff';
++		val.bits [ 5] = '\xff';
++		val.bits [ 6] = '\xff';
++		val.bits [ 7] = '\xff';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\xfa';
++		val.bits [11] = '\xfe';
++		val.bits [12] = '\0'; // long double is 12 bytes on 32-bit Intel
++		val.bits [13] = '\0'; // last 4 bytes will be ignored
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#endif
++#elif defined(__amd64) || defined(__x86_64__)
++#if defined(sun) || defined(__sun) || defined(__sun__)
++		val.bits [ 0] = '\x1';
++		val.bits [ 1] = '\0';
++		val.bits [ 2] = '\0';
++		val.bits [ 3] = '\0';
++		val.bits [ 4] = '\0';
++		val.bits [ 5] = '\0';
++		val.bits [ 6] = '\0';
++		val.bits [ 7] = '\x80';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\0';
++		val.bits [11] = '\0';
++		val.bits [12] = '\0';
++		val.bits [13] = '\0';
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#elif defined(linux) || defined(__linux) || defined(__linux__)
++		val.bits [ 0] = '\xff';
++		val.bits [ 1] = '\xff';
++		val.bits [ 2] = '\xff';
++		val.bits [ 3] = '\xff';
++		val.bits [ 4] = '\xff';
++		val.bits [ 5] = '\xff';
++		val.bits [ 6] = '\xff';
++		val.bits [ 7] = '\xff';
++		val.bits [ 8] = '\xff';
++		val.bits [ 9] = '\x7f';
++		val.bits [10] = '\0';
++		val.bits [11] = '\0'; 
++		val.bits [12] = '\0';
++		val.bits [13] = '\0';
++		val.bits [14] = '\0';
++		val.bits [15] = '\0';
++#endif
++#endif
++#else // not __SUNPRO_CC
+         val.bits [ 0] = '\x01';
+         val.bits [ 1] = '\0';
+         val.bits [ 2] = '\0';
+@@ -710,6 +919,7 @@
+         val.bits [13] = '\0';
+         val.bits [14] = '\xff';
+         val.bits [15] = '\x7f';
++#endif // __SUNPRO_CC
+     }
+ 
+ #endif   // _RWSTD_NO_DBL_TRAPS
+@@ -822,32 +1032,38 @@
+             "// (values not computed due to floating exception trapping)\n",
+             e == big_endian ? "big" : "little");
+ 
++#if defined(__SUNPRO_CC)
++    const int flt_has_denorm  = 1;
++    const int dbl_has_denorm  = 1;
++    const int ldbl_has_denorm = 1;
++#else
+     const int flt_has_denorm  = 1;
+     const int dbl_has_denorm  = 1;
+     const int ldbl_has_denorm = 1;
++#endif
+ 
+ #endif   // _RWSTD_NO_DBL_TRAPS
+ 
+-    print ("#define _RWSTD_FLT_INF_BITS ", &f_inf, sizeof f_inf);
+-    print ("#define _RWSTD_FLT_QNAN_BITS ", &f_qnan, sizeof f_qnan);
+-    print ("#define _RWSTD_FLT_SNAN_BITS ", &f_snan, sizeof f_snan);
+-    print ("#define _RWSTD_FLT_DENORM_MIN_BITS ", &f_den, sizeof f_den);
++    print ("#define _RWSTD_FLT_INF_BITS ", &f_inf, sizeof(float));
++    print ("#define _RWSTD_FLT_QNAN_BITS ", &f_qnan, sizeof(float));
++    print ("#define _RWSTD_FLT_SNAN_BITS ", &f_snan, sizeof(float));
++    print ("#define _RWSTD_FLT_DENORM_MIN_BITS ", &f_den, sizeof(float));
+ 
+     printf ("#define _RWSTD_FLT_HAS_DENORM  %d\n", flt_has_denorm);
+ 
+-    print ("#define _RWSTD_DBL_INF_BITS ", &d_inf, sizeof d_inf);
+-    print ("#define _RWSTD_DBL_QNAN_BITS ", &d_qnan, sizeof d_qnan);
+-    print ("#define _RWSTD_DBL_SNAN_BITS ", &d_snan, sizeof d_snan);
+-    print ("#define _RWSTD_DBL_DENORM_MIN_BITS ", &d_den, sizeof d_den);
++    print ("#define _RWSTD_DBL_INF_BITS ", &d_inf, sizeof(double));
++    print ("#define _RWSTD_DBL_QNAN_BITS ", &d_qnan, sizeof(double));
++    print ("#define _RWSTD_DBL_SNAN_BITS ", &d_snan, sizeof(double));
++    print ("#define _RWSTD_DBL_DENORM_MIN_BITS ", &d_den, sizeof(double));
+ 
+     printf ("#define _RWSTD_DBL_HAS_DENORM  %d\n", dbl_has_denorm);
+ 
+ #ifndef _RWSTD_NO_LONG_DOUBLE
+ 
+-    print ("#define _RWSTD_LDBL_INF_BITS ", &l_inf, sizeof l_inf);
+-    print ("#define _RWSTD_LDBL_QNAN_BITS ", &l_qnan, sizeof l_qnan);
+-    print ("#define _RWSTD_LDBL_SNAN_BITS ", &l_snan, sizeof l_snan);
+-    print ("#define _RWSTD_LDBL_DENORM_MIN_BITS ", &l_den, sizeof l_den);
++    print ("#define _RWSTD_LDBL_INF_BITS ", &l_inf, sizeof(long double));
++    print ("#define _RWSTD_LDBL_QNAN_BITS ", &l_qnan, sizeof(long double));
++    print ("#define _RWSTD_LDBL_SNAN_BITS ", &l_snan, sizeof(long double));
++    print ("#define _RWSTD_LDBL_DENORM_MIN_BITS ", &l_den, sizeof(long double));
+ 
+     printf ("#define _RWSTD_LDBL_HAS_DENORM  %d\n", ldbl_has_denorm);
+ 

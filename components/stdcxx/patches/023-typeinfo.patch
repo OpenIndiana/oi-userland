@@ -1,0 +1,284 @@
+--- stdcxx-4.2.1/include/typeinfo	2008-04-24 20:23:57.000000000 -0400
++++ stdcxx-4.2.1/include/typeinfo	2007-05-03 05:51:01.000000000 -0400
+@@ -1,241 +1,61 @@
+-// -*- C++ -*-
+-/***************************************************************************
+- *
+- * typeinfo - declarations for the C++ Standard Library RTTI support
+- *
+- * $Id: typeinfo 550991 2007-06-26 23:58:07Z sebor $
+- *
+- ***************************************************************************
+- *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
+- *
+- * http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
+- *
+- * Copyright 1994-2006 Rogue Wave Software.
+- * 
+- **************************************************************************/
++/*
++        Copyright 09/04/01 Sun Microsystems, Inc. All Rights Reserved
++*/
++/* typeinfo
+ 
+-#ifndef _RWSTD_TYPEINFO_INCLUDED
+-#define _RWSTD_TYPEINFO_INCLUDED
++   @(#)typeinfo	1.6  09/04/01 10:08:18
+ 
+-#include <exception>
+-#include <rw/_defs.h>
+-
+-
+-#ifndef _RWSTD_NO_STD_TYPE_INFO
++   Declaration for ISO standard type_info.
++*/
+ 
+-// define type_info et al in namespace std iff they are found to be
+-// defined in namespace std in the compiler's language support library
+-// or if they are not found to be defined in either namespace std or
+-// in the global namespace
+-
+-_RWSTD_NAMESPACE (std) {
+-
+-#endif   // _RWSTD_NO_STD_TYPE_INFO
++#ifndef _TYPEINFO_HDR
++#define _TYPEINFO_HDR
+ 
++#include <exception>
+ 
+-#ifndef _RWSTD_NO_NAMESPACE
+-#  if    defined (_RWSTD_EDG_ECCP) || defined (_RWSTD_SGI_MIPSPRO) \
+-      || defined (__DECCXX)
+-      // let EDG (and its derivatives) know about class type_info
+-      // do not use with Intel C++ on Linux or Windows
+-#    pragma define_type_info
+-#  endif   // EDG eccp || Compaq C++ || SGI MIPSpro
+-#endif   // _RWSTD_NO_NAMESPACE
++namespace __Cimpl {
++    class __type_info_friend;
++}
+ 
++namespace std {
+ 
+-// 18.5.1
+-class type_info
+-{
++    class type_info {
+ public:
+-    // individual members rather than the entire class exported
+-    // to prevent compiler errors (see PR #25603); this prevents
+-    // type_info virtuals from being overriden
+-
+-    _RWSTD_EXPORT virtual ~type_info ();
+-    
+-    _RWSTD_EXPORT bool before (const type_info&) const;
+-
+-    _RWSTD_EXPORT const char* name () const;
+-
+-    _RWSTD_EXPORT bool operator== (const type_info&) const;
+-
+-    _RWSTD_EXPORT bool operator!= (const type_info&) const;
+-
+-protected:
+-
+-    // prevent g++ warnings about private ctor and no friends
+-    explicit type_info (const char*);
++	virtual ~type_info();
++	virtual bool operator==(const type_info&) const;
++	virtual bool operator!=(const type_info&) const;
++	virtual bool before(const type_info&) const;
++	const char *name() const;
+ 
+ private:
++	type_info(const type_info&);
++	type_info& operator=(const type_info&);
+ 
+-#ifdef __HP_aCC
+-
+-    const char *_C_name;
+-
+-#  ifndef _HP_IA64ABI
+-
+-    void       *_C_baseClassTable;
+-    unsigned    _C_hashValue;
+-
+-#  endif   // _HP_IA64ABI
+-
+-#elif defined (__INTEL_COMPILER) && !defined (_MSC_VER)
+-
+-    const char *_C_name;
+-
+-#elif defined (__GNUG__)
+-
+-    const char *_C_name;   // mangled name
+-
+-#elif defined (_MSC_VER)
+-
+-    void *_C_data;
+-    char  _C_name [1];
+-
+-#elif defined (__SUNPRO_CC)
+-
+-    const void *_C_data;
+-
+-#elif defined (__IBMCPP__)
+-
+-#  ifdef _RWSTD_OS_LINUX
+-
+-    char *_C_name;   // mangled name (same as gcc libsupc++)
+-
+-#  else   // not Linux
+-
+-    char *_C_type_name;   // human readable name
+-    char *_C_name;        // mangled name
+-
+-#  endif   // 
+-
+-#else   // DEC cxx, SGI MIPSpro, SNI CDS++, and other EDG derivatives
+-
+-    // no data
+-
+-#endif
+-
+-    type_info& operator= (const type_info&);   // undefined
+-    type_info (const type_info&);              // undefined
++	// Implementation
++	const void* __data;
++	type_info(const void*) throw();
++	friend __Cimpl::__type_info_friend;
+ };
+ 
+-
+-#ifndef _RWSTD_NO_STD_TYPE_INFO
+-
+-}   // namespace std
+-
+-#else   // if defined (_RWSTD_NO_STD_TYPE_INFO)
+-#  ifndef _RWSTD_NO_NAMESPACE
+-
+-namespace std {
+-
+-using ::type_info;
+-
+-}   // namespace std
+-
+-#  endif   // _RWSTD_NO_NAMESPACE
+-#endif   // _RWSTD_NO_STD_TYPE_INFO
+-
+-
+-#ifndef _RWSTD_NO_STD_BAD_CAST
+-
+-_RWSTD_NAMESPACE (std) { 
+-
+-#endif   // _RWSTD_NO_STD_BAD_CAST
+-
+-
+-// 18.5.2
+-class _RWSTD_EXPORT bad_cast: public _STD::exception
+-{
++    class bad_typeid: public exception {
+ public:
+-    // 18.5.2, p2
+-    bad_cast () _THROWS (());
+-
+-    // 18.5.2, p4
+-    bad_cast (const bad_cast&) _THROWS (());
+-
+-    // 18.5.2, p4
+-    bad_cast& operator= (const bad_cast&) _THROWS (());
+-
+-    virtual ~bad_cast() _THROWS (());
+-
+-    // 18.5.2, p5
+-    virtual const char* what () const _THROWS (());
++	bad_typeid() throw() {}
++	bad_typeid(const bad_typeid&) throw() {}
++	bad_typeid& operator=(const bad_typeid&) throw() {return *this;}
++	~bad_typeid() throw() {}
++	const char* what() const throw();
+ };
+ 
+-#ifndef _RWSTD_NO_STD_BAD_CAST
+-
+-}   // namespace std
+-
+-#else   // if defined (_RWSTD_NO_STD_BAD_CAST)
+-#  ifndef _RWSTD_NO_NAMESPACE
+-
+-namespace std {
+-
+-using ::bad_cast;
+-
+-}   // namespace std
+-
+-#  endif   // _RWSTD_NO_NAMESPACE
+-#endif   // _RWSTD_NO_STD_BAD_CAST
+-
+-
+-#ifndef _RWSTD_NO_STD_BAD_TYPEID
+-
+-_RWSTD_NAMESPACE (std) {
+-
+-#endif   // _RWSTD_NO_BAD_NO_TYPEID
+-
+-
+-// 18.5.3
+-class _RWSTD_EXPORT bad_typeid: public _STD::exception
+-{
++    class bad_cast: public exception {
+ public:
+-    // 18.5.3, p2
+-    bad_typeid () _THROWS (());
+-
+-    // 18.5.3, p4
+-    bad_typeid (const bad_typeid &__rhs) _THROWS (());
+-
+-    virtual ~bad_typeid () _THROWS (());
+-
+-    // 18.5.3, p4
+-    bad_typeid& operator= (const bad_typeid &__rhs) _THROWS (());
+-
+-    // 18.5.3, p5
+-    virtual const char* what () const _THROWS (());
++	bad_cast() throw() {}
++	bad_cast(const bad_cast&) throw() {}
++	bad_cast& operator=(const bad_cast&) throw() {return *this;}
++	~bad_cast() throw() {}
++	const char* what() const throw();
+ };
+ 
+ 
+-#ifndef _RWSTD_NO_STD_BAD_TYPEID
++} 
+ 
+-}   // namespace std
+-
+-#else   // if defined (_RWSTD_NO_STD_BAD_TYPEID)
+-#  ifndef _RWSTD_NO_NAMESPACE
+-
+-namespace std {
+-
+-using ::bad_typeid;
+-
+-}   // namespace std
+-
+-#  endif   // _RWSTD_NO_NAMESPACE
+-#endif   // _RWSTD_NO_STD_BAD_TYPEID
+-
+-
+-
+-#endif   // _RWSTD_TYPEINFO_INCLUDED
++#endif

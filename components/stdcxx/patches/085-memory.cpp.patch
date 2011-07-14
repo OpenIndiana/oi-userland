@@ -1,0 +1,47 @@
+--- stdcxx-4.2.1/src/memory.cpp	2008-04-24 17:25:19.000000000 -0700
++++ stdcxx-4.2.1/src/memory.cpp	2011-03-19 14:22:20.379428656 -0700
+@@ -29,22 +29,23 @@
+ 
+ #define _RWSTD_LIB_SRC
+ 
++#include <rw/_defs.h>
+ #include <rw/_error.h>
+ #include <rw/_mutex.h>
+ 
+ #include <new>
+ #include <stdlib.h>
+-
+-#include <rw/_defs.h>
+-
++#include <string.h>
+ 
+ _RWSTD_NAMESPACE (__rw) {
+ 
+-
+ _RWSTD_EXPORT void*
+ __rw_allocate (_RWSTD_SIZE_T nbytes, int /* = 0 */)
+ {
+-    void *ptr = 0;
++    void *ptr = 0UL;
++
++    if (0 == nbytes)
++	return ptr;
+ 
+     _TRY {
+ 
+@@ -65,12 +66,14 @@
+     }
+     _CATCH (...) {
+         // prevent bad_alloc raised by the compiler
++	ptr = 0UL;
+     }
+ 
+     // fix broken ::operator new ()
+-    if (0 == ptr)
++    if (0UL == ptr)
+         _RW::__rw_throw (_RWSTD_ERROR_FIRST + 3 /* == bad_alloc */);
+ 
++    (void) memset (ptr, '\0', nbytes);
+     return ptr;
+ }
+ 

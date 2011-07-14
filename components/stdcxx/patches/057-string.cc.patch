@@ -1,0 +1,187 @@
+--- stdcxx-4.2.1/include/string.cc	2008-04-24 20:23:57.000000000 -0400
++++ stdcxx-4.2.1/include/string.cc	2011-02-10 15:40:53.807995775 -0500
+@@ -34,6 +34,7 @@
+ #  pragma warning (disable: 4345)
+ #endif   // _MSC_VER
+ 
++#include <rw/_typetraits.h>
+ 
+ _RWSTD_NAMESPACE (std) {
+ 
+@@ -256,6 +257,12 @@
+ 
+     const size_type __rlen = _C_min (__str.size () - __pos, __n);
+ 
++	_RWSTD_REQUIRES (size () < max_size () - __rlen,
++			(_RWSTD_ERROR_LENGTH_ERROR,
++			 _RWSTD_FUNC ("basic_string::assign (const "
++			 	"basic_string&, size_type, size_type)"),
++				 size (), max_size () - __rlen));
++
+     return replace (size_type (), size (), __str, __pos, __rlen);
+ }
+ 
+@@ -274,7 +281,7 @@
+     
+     const size_type __rlen = _C_min (__str.size () - __pos2, __n);
+ 
+-    _RWSTD_REQUIRES (size () <= max_size () - __rlen,
++    _RWSTD_REQUIRES (size () < max_size () - __rlen,
+                      (_RWSTD_ERROR_LENGTH_ERROR,
+                       _RWSTD_FUNC ("basic_string::insert (size_type, const "
+                                    "basic_string&, size_type, size_type)"), 
+@@ -295,7 +302,7 @@
+                                    "basic_string&)"),
+                       __pos1, size ()));
+     
+-    _RWSTD_REQUIRES (size () <= max_size () - __str.size (),
++    _RWSTD_REQUIRES (size () < max_size () - __str.size (),
+                      (_RWSTD_ERROR_LENGTH_ERROR,
+                       _RWSTD_FUNC ("basic_string::insert (size_type, "
+                                    "const basic_string&)"),
+@@ -312,9 +319,6 @@
+ {
+     const size_type __size0 = size ();
+ 
+-    if (npos == __n2)
+-        __n2 = traits_type::length (__s);
+-
+     _RWSTD_REQUIRES (__pos1 <= __size0,
+                      (_RWSTD_ERROR_OUT_OF_RANGE, 
+                      _RWSTD_FUNC ("basic_string::replace (size_type, size_type"
+@@ -324,13 +328,13 @@
+     // number of characters to delete
+     const size_type __xlen = _C_min (__n1, __size0 - __pos1);
+ 
+-    _RWSTD_REQUIRES (__n2 <= max_size (),
++    _RWSTD_REQUIRES (__n2 < max_size (),
+                      (_RWSTD_ERROR_LENGTH_ERROR,
+                      _RWSTD_FUNC ("basic_string::replace (size_type, size_type"
+                                   ", const_pointer, size_type)"), 
+                      __n2, max_size ()));
+ 
+-    _RWSTD_REQUIRES (__size0 - __xlen <= max_size () - __n2,
++    _RWSTD_REQUIRES (__size0 - __xlen < max_size () - __n2,
+                      (_RWSTD_ERROR_LENGTH_ERROR,
+                      _RWSTD_FUNC ("basic_string::replace (size_type, size_type"
+                                   ", const_pointer, size_type)"), 
+@@ -405,7 +409,7 @@
+ 
+     const size_type __xlen = _C_min (__size0 - __pos, __len);
+ 
+-    _RWSTD_REQUIRES (__size0 - __xlen <= max_size () - __count,
++    _RWSTD_REQUIRES (__size0 - __xlen < max_size () - __count,
+                      (_RWSTD_ERROR_LENGTH_ERROR,
+                       _RWSTD_FUNC ("basic_string::replace (size_type, "
+                                    "size_type, size_type, value_type)"), 
+@@ -477,6 +481,8 @@
+     typedef _TYPENAME traits_type::char_type      value_type;
+     typedef _Alloc                                allocator_type;
+     typedef _TYPENAME allocator_type::size_type   size_type;
++    typedef _TYPENAME allocator_type::pointer     pointer;
++    typedef _TYPENAME allocator_type::const_pointer     const_pointer;
+ 
+     typedef _STD::basic_string<_CharT, _Traits, _Alloc> _C_string_type;
+ 
+@@ -513,10 +519,33 @@
+         return __s.replace (__pos, __n, size_type (), value_type ());
+     }
+ 
++    if (_RW::__rw_is_pointer<_InputIter>::_C_val) {
++        const const_pointer __beg1 = __s.data ();
++        const const_pointer __end1 = __s.data () + __s.size ();
++
++	const const_pointer __beg2 =
++		_RWSTD_REINTERPRET_CAST (const_pointer,
++			__s.get_allocator().address (*__first2));
++
++	const const_pointer __end2 =
++		_RWSTD_REINTERPRET_CAST (const_pointer,
++			__s.get_allocator().address (*__last2));
++
++        // ranges don't overlap, do simple replace
++        if (__end1 < __beg2 || __end2 < __beg1)
++            return __s.__replace_aux (__first1, __last1, __first2, __last2);
++
++        // otherwise fall through and make a copy first
++    }
++
+      // use a (probably) faster algorithm if possible
+     if (_STD::__is_bidirectional_iterator (_RWSTD_ITERATOR_CATEGORY(_InputIter,
+-                                                                    __last2)))
+-        return __s.__replace_aux (__first1, __last1, __first2, __last2);
++                                                                    __last2))) {
++        _C_string_type __s3;
++        __s3.__replace_aux (__s3.begin (), __s3.begin (), __first2, __last2);
++
++        return __s.__replace_aux (__first1, __last1, __s3.begin (), __s3.end ());
++    }
+ 
+     _C_string_type __s3;
+     _TYPENAME _C_string_type::iterator __first3 = __s3.begin ();
+@@ -583,6 +612,9 @@
+     typedef _RW::__string_ref<value_type, traits_type, allocator_type>
+     _C_string_ref_type;
+ 
++	typedef _RWSTD_ALLOC_TYPE (allocator_type, value_type)
++	_C_value_alloc_type;
++
+ #  else   // if !defined (_RWSTD_NO_STRING_OUTLINED_MEMBER_TEMPLATES)
+ 
+ template<class _CharT, class _Traits, class _Allocator>
+@@ -596,6 +628,8 @@
+ 
+ #  endif  // _RWSTD_NO_STRING_OUTLINED_MEMBER_TEMPLATES
+ 
++    // assumes that the two ranges do not overlap
++
+     _RWSTD_ASSERT_RANGE (__first1, __s._C_make_iter (__s._C_data 
+                                                      + __s.size ()));
+     _RWSTD_ASSERT_RANGE (__first1, __last1);
+@@ -615,7 +649,7 @@
+     size_type __slen = __ssize - __pos;
+     size_type __xlen = __n < __slen ? __n : __slen; 
+ 
+-    _RWSTD_REQUIRES (__ssize - __xlen <= __s.max_size () - __n2,
++    _RWSTD_REQUIRES (__ssize - __xlen < __s.max_size () - __n2,
+                      (_RWSTD_ERROR_LENGTH_ERROR, 
+                       _RWSTD_FUNC ("basic_string::__replace_aux (iterator, "
+                                    "iterator, InputIterator, InputIterator)"),
+@@ -650,15 +684,37 @@
+             __s._C_unlink (__temp->data ());
+         }
+         else {
++	    pointer __tmp = 0;
++
++	    if (__n2) {
++		const_reference __ref =
++			_RWSTD_REINTERPRET_CAST (const_reference, *__first2);
++
++		const const_pointer __ptr = __s.get_allocator().address (__ref);
++
++		if (__s.data () <= __ptr && __s.data () + __ssize > __ptr) {
++			__tmp = __s.get_allocator().allocate (__n2);
++
++			for (__d = 0; __d < __n2; __d++)
++			    traits_type::assign (*(__tmp + __d), *__first2++);
++		}
++	 }
++
+             // Current reference has enough room.
+             if (__rem)
+                 traits_type::move (__s._C_data + __pos + __n2,
+                                    __s._C_data + __pos + __n, 
+                                    __rem);
+ 
++	     if (__tmp) {
++		traits_type::copy (__s._C_data + __pos, __tmp, __n2);
++		__s.get_allocator().deallocate (__tmp, __n2);
++	     }
++	     else {
+             for (__d = 0; __d < __n2; __d++)
+                 traits_type::assign (*(__s._C_data + __pos + __d),
+                                      *__first2++);
++	     }
+ 
+             __s._C_pref ()->_C_size._C_size = __len;
+             traits_type::assign (__s._C_data [__len], value_type ());

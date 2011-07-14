@@ -1,0 +1,84 @@
+--- stdcxx-4.2.1/src/iostore.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/iostore.cpp	2011-01-14 04:31:53.349689886 -0500
+@@ -182,16 +182,16 @@
+     typedef _C_usr_data::_C_event_cb EventCB;
+ 
+     // allocate sufficient storage
+-    long    *ia  = 0;
+-    void*   *pa  = 0;
+-    EventCB *cba = 0;
++    long    *ia  = 0UL;
++    void*   *pa  = 0UL;
++    EventCB *cba = 0UL;
+ 
+     _RWSTD_SIZE_T a_size [3];    // sizes of arrays above
+ 
+-    unsigned   fmtfl;    // formatting flags
++    unsigned int	fmtfl;    // formatting flags
+     streamsize prec;     // new precision
+     streamsize wide;     // new width
+-    unsigned   except;   // new exceptions
++    unsigned int	except;   // new exceptions
+     void*      ptie;     // tied ostream
+     locale     loc;      // new locale
+ 
+@@ -202,7 +202,7 @@
+ 
+     _TRY {
+         // lock `rhs', *this not locked yet
+-        _RWSTD_MT_GUARD (rhs.flags () & _RW::__rw_nolock
++        _RWSTD_MT_GUARD ((rhs.flags () & _RW::__rw_nolock)
+                          ? 0 : &_RWSTD_CONST_CAST (ios_base&, rhs)._C_mutex);
+ 
+         if (rhs._C_usr) {
+@@ -260,8 +260,11 @@
+     _CATCH (...) {
+         // *this is unmodified
+         operator delete (ia);
++		ia = 0UL;
+         operator delete (pa);
++		pa = 0UL;
+         operator delete (cba);
++		cba = 0UL;
+ 
+         _RETHROW;
+     }
+@@ -278,8 +281,11 @@
+             // delete existing arrays, if any; _C_usr will only be deleted
+             // if `rhs' contains no user data (see below)
+             operator delete (_C_usr->_C_iarray);
++			_C_usr->_C_iarray = 0UL;
+             operator delete (_C_usr->_C_parray);
++			_C_usr->_C_parray = 0UL;
+             operator delete (_C_usr->_C_cbarray);
++			_C_usr->_C_cbarray = 0UL;
+         }
+         else if (ia || pa || cba || ptie) {
+             // allocation may throw
+@@ -304,8 +310,11 @@
+     _CATCH (...) {
+         // *this is unmodified
+         operator delete (ia);
++		ia = 0UL;
+         operator delete (pa);
++		pa = 0UL;
+         operator delete (cba);
++		cba = 0UL;
+ 
+         _RETHROW;
+     }
+@@ -328,11 +337,11 @@
+     else {
+         // `rhs' contains no user data, delete _C_usr
+         _C_usr_data::_C_dealloc (_C_usr);
+-        _C_usr = 0;
++        _C_usr = 0UL;
+     }
+ 
+-    // copy all but masked flags(), leave masked flags alone
+-    _C_fmtfl = fmtfl & flagmask | _C_fmtfl & ~flagmask;
++	// 27.4.4.2, p15
++	_C_fmtfl  = fmtfl;
+     _C_prec  = prec;
+     _C_wide  = wide;
+     _C_loc   = loc;

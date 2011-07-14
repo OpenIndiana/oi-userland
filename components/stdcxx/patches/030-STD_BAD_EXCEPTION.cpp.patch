@@ -1,0 +1,39 @@
+--- stdcxx-4.2.1/etc/config/src/STD_BAD_EXCEPTION.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/STD_BAD_EXCEPTION.cpp	2009-03-28 15:40:16.177426000 -0400
+@@ -38,29 +38,25 @@
+ #endif   // _RWSTD_NO_EXCEPTION_SPECIFICATION
+ 
+ 
+-#ifndef _RWSTD_NO_STD_SET_UNEXPECTED
+-
+ namespace std {
+ 
+-#endif   // _RWSTD_NO_STD_SET_UNEXPECTED
++#if defined(__SUNPRO_CC)
+ 
++typedef void (*unexpected_handler)();
++unexpected_handler set_unexpected(unexpected_handler) throws (());
++void unexpected();
++
++#else
+ 
+ typedef void (*unexpected_handler)();
+ unexpected_handler set_unexpected (void (*)()) throws (());
+ 
+-
+-#ifndef _RWSTD_NO_STD_SET_UNEXPECTED
++#endif
+ 
+ }   // std
+ 
+ #  define SET_UNEXPECTED(handler)   std::set_unexpected (handler)
+ 
+-#else
+-
+-#  define SET_UNEXPECTED(handler)   set_unexpected (handler)
+-
+-#endif   // _RWSTD_NO_STD_SET_UNEXPECTED
+-
+ namespace std {
+ 
+ class bad_exception { };

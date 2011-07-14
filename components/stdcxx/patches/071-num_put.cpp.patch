@@ -1,0 +1,46 @@
+--- stdcxx-4.2.1/src/num_put.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/num_put.cpp	2011-01-24 12:41:00.473936162 -0500
+@@ -369,12 +369,32 @@
+     const char* const pdigs = flags & _RWSTD_IOS_UPPERCASE ?
+         __rw_digits + 36 : __rw_digits;
+ 
+-    const _LLong base = (flags >> _RWSTD_IOS_BASEOFF) - _LLong (1);
++    _LLong base = (flags >> _RWSTD_IOS_BASEOFF) - _LLong (1);
+ 
+     int bits;
+ 
+     char *end = buf;
+ 
++	if (base == static_cast<_LLong> (-1)) {
++		switch (static_cast<unsigned int> (flags & _RWSTD_IOS_BASEFIELD)) {
++			case static_cast<unsigned int> (_RWSTD_IOS_OCT):
++				base = 7;
++			break;
++			case static_cast<unsigned int> (_RWSTD_IOS_DEC):
++				base = 9;
++			break;
++			case static_cast<unsigned int> (_RWSTD_IOS_HEX):
++				base = 15;
++			break;
++			case static_cast<unsigned int> (_RWSTD_IOS_BIN):
++				base = 1;
++			break;
++			default:
++				base = 9;
++			break;
++		}
++	}
++
+     switch (base) {
+ 
+     case  1: bits = 1; break;
+@@ -622,7 +642,8 @@
+         j = 0;
+ 
+     do {
+-        const unsigned dig = (i >> (j * bits)) & basemask;
++        const unsigned long dig =
++			static_cast<unsigned long> ((i >> (j * bits)) & basemask);
+ 
+         _RWSTD_ASSERT (dig <= basemask);
+ 

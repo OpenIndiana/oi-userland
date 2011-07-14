@@ -1,0 +1,38 @@
+--- stdcxx-4.2.1/src/podarray.h	2008-04-24 17:25:19.000000000 -0700
++++ stdcxx-4.2.1/src/podarray.h	2011-03-22 15:11:44.663375428 -0700
+@@ -46,6 +46,13 @@
+ _RWSTD_NAMESPACE (__rw) { 
+ 
+ 
++#if defined(_RWSTD_OS_SUNOS)
++#if defined(__amd64) || defined(__x86_64__) || defined(__sparcv9)
++#pragma align 16(__rw_aligned_buffer)
++#else
++#pragma align 8(__rw_aligned_buffer)
++#endif
++#endif
+ // __rw_aligned_buffer specializations should be objects with static
+ // storage duration that must "survive" all other static objects and
+ // that do not need to be destroyed; this is a POD
+@@ -53,11 +60,21 @@
+ struct __rw_aligned_buffer
+ {
+     union {
++#if defined(_RWSTD_OS_SUNOS)
++	unsigned long long _C_pad0;
++#if defined(__amd64) || defined(__x86_64__) || defined(__sparcv9)
++	unsigned long long _C_pad1;
++#pragma align 16(_C_data)
++#else
++#pragma align 8(_C_data)
++#endif
++#else
+ #ifndef _RWSTD_NO_LONG_DOUBLE
+         long double _C_pad;                     // guarantee suitable alignment
+ #else
+         double      _C_pad;
+ #endif   // _RWSTD_NO_LONG_DOUBLE
++#endif   // defined(_RWSTD_OS_SUNOS)
+         void       *_C_void_pad;
+         void      (*_C_pfn_pad)();
+         char        _C_data [sizeof (_TypeT)];  // data to back _TypeT up with 

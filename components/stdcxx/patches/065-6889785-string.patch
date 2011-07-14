@@ -1,0 +1,46 @@
+--- stdcxx-4.2.1/include/string	2011-01-07 11:48:23.120751627 -0500
++++ stdcxx-4.2.1/include/string	2011-01-07 11:34:30.231689924 -0500
+@@ -874,7 +874,6 @@
+     pointer _C_data;
+ };
+ 
+-
+ typedef basic_string<char, char_traits<char>, allocator<char> > string;
+ 
+ #ifndef _RWSTD_NO_WCHAR_T
+@@ -884,7 +883,6 @@
+ 
+ #endif   // _RWSTD_NO_WCHAR_T
+ 
+-
+ template <class _CharT, class _Traits , class _Allocator>
+ 
+ #if    !defined (__GNUG__)                  \
+@@ -1228,6 +1226,13 @@
+ append (const_pointer __s, size_type __n)
+ {
+     const size_type __size0 = size ();
++
++	_RWSTD_REQUIRES (__n < (max_size() - __size0),
++					(_RWSTD_ERROR_LENGTH_ERROR,
++					_RWSTD_FUNC ("basic_string::append(const_pointer,"
++							" size_type)"),
++					 __n, max_size() - __size0));
++
+     const _RWSTD_SIZE_T __size1 = __size0 + __n;
+ 
+     if (   capacity () <= __size1
+@@ -1248,6 +1253,13 @@
+ append (size_type __n, value_type __c)
+ {
+     const size_type __size0 = size ();
++
++	_RWSTD_REQUIRES (__n < (max_size() - __size0),
++					(_RWSTD_ERROR_LENGTH_ERROR,
++					_RWSTD_FUNC ("basic_string::append(size_type,"
++							" value_type)"),
++					__n, max_size() - __size0));
++
+     const _RWSTD_SIZE_T __size1 = __size0 + __n;
+ 
+     if (   capacity () < __size1

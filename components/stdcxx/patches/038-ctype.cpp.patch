@@ -1,0 +1,29 @@
+--- stdcxx-4.2.1/src/ctype.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/ctype.cpp	2009-07-29 15:03:16.000000000 -0400
+@@ -626,13 +626,26 @@
+         pfacet = new _STD::ctype_byname<char>(name, ref);
+     }
+     else {
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(8)
++#  pragma align 8(f)
++#  pragma align 8(pf)
++#endif
+         static union {
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++            unsigned long long align_;
++            unsigned char data_ [sizeof (_STD::ctype<char>)];
++#else
+             void *align_;
+             char  data_ [sizeof (_STD::ctype<char>)];
++#endif
+         } f;
+         static __rw_facet* const pf =
+             new (&f) _STD::ctype<char>(__rw_classic_tab, false, ref);
+         pfacet = pf;
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(0)
++#endif
+     }
+ 
+     // set the pointer to the facet id

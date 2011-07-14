@@ -1,0 +1,472 @@
+--- stdcxx-4.2.1/include/ansi/cstring	2008-04-24 20:23:56.000000000 -0400
++++ stdcxx-4.2.1/include/ansi/cstring	2009-03-12 16:35:36.000000000 -0400
+@@ -1,447 +1,34 @@
+ // -*- C++ -*-
+-/***************************************************************************
++/**
++ * CDDL HEADER START
+  *
+- * cstring - C++ Standard library interface to the ANSI C header string.h
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
+  *
+- * $Id: cstring 550991 2007-06-26 23:58:07Z sebor $
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
+  *
+- ***************************************************************************
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
+  *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
++ * CDDL HEADER END
+  *
+- * http://www.apache.org/licenses/LICENSE-2.0
+  *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
+  *
+- * Copyright 1994-2006 Rogue Wave Software.
+- * 
+- **************************************************************************/
+-
+-#include <rw/_defs.h>
+-
+-#ifndef _RWSTD_NO_PURE_C_HEADERS
+-#  include <ansi/_cstring.h>
+-#else
+-
+-#ifndef _RWSTD_NO_DEPRECATED_C_HEADERS
+-
+-#ifndef _RWSTD_NO_NAMESPACE
+-
+-#ifndef _RWSTD_NAMESPACE_STD_OPEN
+-#define _RWSTD_NAMESPACE_STD_OPEN 15
+-
+-_RWSTD_NAMESPACE (std) { 
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN
+-
+-
+-#include _RWSTD_ANSI_C_STRING_H
+-
+-
+-#if _RWSTD_NAMESPACE_STD_OPEN == 15
+-#undef _RWSTD_NAMESPACE_STD_OPEN
+-
+-}   // namespace std
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN == 15
+-
+-
+-_RWSTD_NAMESPACE (std) { 
+-
+-#if 0
+-
+-const char* strchr (const char *__s, int __c);
+-const char* strpbrk (const char *__s1, const char *__s2);
+-const char* strrchr (const char *__s, int __c);
+-const char* strstr (const char *__s1, const char *__s2);
+-const void* memchr (const void *__p, int __c, size_t __n);
+-
+-#endif   // 0/1
+-
+-
+-#ifndef _RWSTD_CSTRING_INCLUDED
+-#define _RWSTD_CSTRING_INCLUDED
+-
+-inline char* strchr (char *__s, int __c)
+-{
+-    return strchr ((const char*)__s, __c);
+-}
+-
+-inline char* strpbrk (char *__s1, const char *__s2)
+-{
+-    return strpbrk ((const char*)__s1, __s2);
+-}
+-
+-inline char* strrchr (char *__s, int __c)
+-{
+-    return strrchr ((const char*)__s, __c);
+-}
+-
+-inline char* strstr (char *__s1, const char *__s2)
+-{
+-    return strstr ((const char*)__s1, __s2);
+-}
+-
+-inline void* memchr (void *__p, int __c, size_t __n)
+-{
+-    return memchr ((const void*)__p, __c, __n);
+-}
+-
+-#endif   // _RWSTD_CSTRING_INCLUDED
+-
+-}   // namespace std
+-
+-#else   // if defined (_RWSTD_NO_NAMESPACE)
+-
+-
+-#include _RWSTD_ANSI_C_STRING_H
+-
+-
+-#endif   // _RWSTD_NO_NAMESPACE
+-
+-#else   // if defined (_RWSTD_NO_DEPRECATED_C_HEADERS)
+-
+-#ifndef _RWSTD_CSTRING_INCLUDED
+-#define _RWSTD_CSTRING_INCLUDED
+-
+-#include _RWSTD_ANSI_C_STRING_H
+-
+-#    undef index
+-#    undef rindex
+-
+-#    undef strcpy
+-#    undef strcmp
+-
+-#    undef strlen
+-#    undef strchr
+-#    undef strrchr
+-#    undef strcat
+-#    undef memchr
+-#    undef memcpy
+-#    undef memmove
+-#    undef memcmp
+-#    undef memset
+-
+-#    undef memccpy
+-#    undef strncat
+-#    undef strncmp
+-#    undef strncpy
+-
+-#ifndef NULL
+-#  define NULL 0
+-#endif   // NULL
+-
+-
+-#if !defined (_RWSTD_NO_NAMESPACE) && !defined (_RWSTD_NO_HONOR_STD) && \
+-    !defined (_RWSTD_NO_USING_LIBC_IN_STD)
+-
+-namespace std {
+-
+-    using ::size_t;
+-
+-#ifndef _RWSTD_NO_MEMCHR
+-    using ::memchr;
+-#elif !defined (_RWSTD_NO_MEMCHR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" void* memchr (void*, int, size_t);
+-
+-inline const void* memchr (const void *__p, int __c, size_t __n)
+-{
+-    return memchr (_RWSTD_CONST_CAST (void*, __p), __c, __n);
+-}
+-
+-namespace std {
+-
+-using ::memchr;
+-
+-#  undef _RWSTD_NO_MEMCHR
+-
+-#else   // if defined (_RWSTD_NO_MEMCHR)
+-#endif   // _RWSTD_NO_MEMCHR
+-
+-#ifndef _RWSTD_NO_MEMCMP
+-    using ::memcmp;
+-#elif !defined (_RWSTD_NO_MEMCMP_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int memcmp (const void*, const void*, size_t);
+-
+-namespace std {
+-
+-using ::memcmp;
+-
+-#  undef _RWSTD_NO_MEMCMP
+-
+-#else   // if defined (_RWSTD_NO_MEMCMP)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline int memcmp (const void *__s1, const void *__s2, size_t __n)
+-{
+-    const char *__ss1 = _RWSTD_REINTERPRET_CAST (const char*, __s1);
+-    const char *__ss2 = _RWSTD_REINTERPRET_CAST (const char*, __s2);
+-
+-    for (; __n; --__n, ++__ss1, ++__ss2)
+-        if (*__ss1 != *__ss2)
+-            return *__ss1 - *__ss2;
+-    return 0;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::memcmp;
+-
+-#  undef _RWSTD_NO_MEMCMP
+-
+-#endif   // _RWSTD_NO_MEMCMP
+-
+-#ifndef _RWSTD_NO_MEMCPY
+-    using ::memcpy;
+-#elif !defined (_RWSTD_NO_MEMCPY_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" void* memcpy (void*, const void*, size_t);
+-
+-namespace std {
+-
+-using ::memcpy;
+-
+-#  undef _RWSTD_NO_MEMCPY
+-
+-#else
+-#endif   // _RWSTD_NO_MEMCPY
+-
+-#ifndef _RWSTD_NO_MEMMOVE
+-    using ::memmove;
+-#elif !defined (_RWSTD_NO_MEMMOVE_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" void* memmove (void*, const void*, size_t);
+-
+-namespace std {
+-
+-using ::memmove;
+-
+-#  undef _RWSTD_NO_MEMMOVE
+-
+-#else   // if defined (_RWSTD_NO_MEMMOVE)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline void* memmove (void *__dest, const void *__src, size_t __n)
+-{
+-    char       *__d = _RWSTD_REINTERPRET_CAST (char*, __dest);
+-    const char *__s = _RWSTD_REINTERPRET_CAST (const char*, __src);
+-
+-    if (__d < __s || __d >= __s + __n)
+-        memcpy (__d, __s, __n);
+-    else {
+-        // regions overlap
+-        __d += __n;
+-        __s += __n;
+-        while (__n--)
+-            *--__d = *--__s;
+-    }
+-    return __dest;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::memmove;
+-
+-#  undef _RWSTD_NO_MEMMOVE
+-
+-#endif   // _RWSTD_NO_MEMMOVE
+-
+-#ifndef _RWSTD_NO_MEMSET
+-    using ::memset;
+-#else   // if defined (_RWSTD_NO_MEMSET)
+-#endif   // _RWSTD_NO_MEMSET
+-
+-#ifndef _RWSTD_NO_STRCAT
+-    using ::strcat;
+-#else   // if defined (_RWSTD_NO_STRCAT)
+-#endif   // _RWSTD_NO_STRCAT
+-
+-#ifndef _RWSTD_NO_STRCHR
+-    using ::strchr;
+-#elif !defined (_RWSTD_NO_STRCHR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" char* strchr (char*, int);
+-
+-inline const char* strchr (const char *__s, int __c)
+-{
+-    return strchr (_RWSTD_CONST_CAST (char*, __s), __c);
+-}
+-
+-namespace std {
+-
+-using ::strchr;
+-
+-#  undef _RWSTD_NO_STRCHR
+-
+-#else   // if defined (_RWSTD_NO_STRCHR)
+-#endif   // _RWSTD_NO_STRCHR
+-
+-#ifndef _RWSTD_NO_STRCMP
+-    using ::strcmp;
+-#elif !defined (_RWSTD_NO_STRCMP_IN_LIBC)
+-#else   // if defined (_RWSTD_NO_STRCMP)
+-#endif   // _RWSTD_NO_STRCMP
+-
+-#ifndef _RWSTD_NO_STRCOLL
+-    using ::strcoll;
+-#else   // if defined (_RWSTD_NO_STRCOLL)
+-#endif   // _RWSTD_NO_STRCOLL
+-
+-#ifndef _RWSTD_NO_STRCPY
+-    using ::strcpy;
+-#else   // if defined (_RWSTD_NO_STRCPY)
+-#endif   // _RWSTD_NO_STRCPY
+-
+-#ifndef _RWSTD_NO_STRCSPN
+-    using ::strcspn;
+-#else   // if defined (_RWSTD_NO_STRCSPN)
+-#endif   // _RWSTD_NO_STRCSPN
+-
+-#ifndef _RWSTD_NO_STRERROR
+-    using ::strerror;
+-#else   // if defined (_RWSTD_NO_STRERROR)
+-#endif   // _RWSTD_NO_STRERROR
+-
+-#ifndef _RWSTD_NO_STRLEN
+-    using ::strlen;
+-#else   // if defined (_RWSTD_NO_STRLEN)
+-#endif   // _RWSTD_NO_STRLEN
+-
+-#ifndef _RWSTD_NO_STRNCAT
+-    using ::strncat;
+-#else   // if defined (_RWSTD_NO_STRNCAT)
+-#endif   // _RWSTD_NO_STRNCAT
+-
+-#ifndef _RWSTD_NO_STRNCMP
+-    using ::strncmp;
+-#else   // if defined (_RWSTD_NO_STRNCMP)
+-#endif   // _RWSTD_NO_STRNCMP
+-
+-#ifndef _RWSTD_NO_STRNCPY
+-    using ::strncpy;
+-#else   // if defined (_RWSTD_NO_STRNCPY)
+-#endif   // _RWSTD_NO_STRNCPY
+-
+-#ifndef _RWSTD_NO_STRPBRK
+-    using ::strpbrk;
+-#elif !defined (_RWSTD_NO_STRPBRK_IN_LIBC)
+-
+-}   // namespace std
+-
+-    extern "C" char* strpbrk (char*, const char*);
+-
+-    inline const char* strpbrk (const char *__s, const char *__pat)
+-    {
+-        return strpbrk (_RWSTD_CONST_CAST (char*, __s), __pat);
+-    }
+-
+-namespace std {
+-
+-using ::strpbrk;
+-
+-#  undef _RWSTD_NO_STRPBRK
+-
+-#else
+-#endif   // _RWSTD_NO_STRPBRK
+-
+-#ifndef _RWSTD_NO_STRRCHR
+-    using ::strrchr;
+-#elif !defined (_RWSTD_NO_STRRCHR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" char* strrchr (char*, int);
+-
+-inline const char* strrchr (const char *__s, int __c)
+-{
+-    return strrchr (_RWSTD_CONST_CAST (char*, __s), __c);
+-}
+-
+-namespace std {
+-
+-using ::strrchr;
+-
+-#  undef _RWSTD_NO_STRRCHR
+-
+-#else   // if defined (_RWSTD_NO_STRRCHR)
+-
+-#endif   // _RWSTD_NO_STRRCHR
+-
+-#ifndef _RWSTD_NO_STRSPN
+-    using ::strspn;
+-#else   // if defined (_RWSTD_NO_STRSPN)
+-#endif   // _RWSTD_NO_STRSPN
+-
+-#ifndef _RWSTD_NO_STRSTR
+-    using ::strstr;
+-#elif !defined (_RWSTD_NO_STRSTR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" char* strstr (char*, const char*);
+-
+-inline const char* strstr (const char *__s1, const char *__s2)
+-{
+-    return strstr (_RWSTD_CONST_CAST (char*, __s1), __s2);
+-}
+-
+-namespace std {
+-
+-using ::strstr;
+-
+-#  undef _RWSTD_NO_STRSTR
+-
+-#else   // if defined (_RWSTD_NO_STRSTR)
+-#endif   // _RWSTD_NO_STRSTR
+-
+-#ifndef _RWSTD_NO_STRTOK
+-    using ::strtok;
+-#else   // if defined (_RWSTD_NO_STRTOK)
+-#endif   // _RWSTD_NO_STRTOK
+-
+-#ifndef _RWSTD_NO_STRXFRM
+-    using ::strxfrm;
+-#else   // if defined (_RWSTD_NO_STRXFRM)
+-#endif   // _RWSTD_NO_STRXFRM
+-
+-}   // std
++ * ident "@(#)cstring.18.diff 1.1     09/08/21 SMI"
++ */
+ 
+-#endif   // !NO_NAMESPACE && !NO_HONOR_STD && !NO_USING_LIBC_IN_STD
++#ifndef _STRING_H
+ 
+-#endif   // _RWSTD_CSTRING_INCLUDED
++#include <string.h>
+ 
+-#endif   // _RWSTD_NO_DEPRECATED_C_HEADERS
++#endif /* _STRING_H */
+ 
+-#endif   // _RWSTD_NO_PURE_C_HEADERS

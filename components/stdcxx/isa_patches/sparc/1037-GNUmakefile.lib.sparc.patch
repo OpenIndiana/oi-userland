@@ -1,0 +1,36 @@
+--- stdcxx-4.2.1/etc/config/GNUmakefile.lib	2008-04-24 20:25:50.000000000 -0400
++++ stdcxx-4.2.1/etc/config/GNUmakefile.lib	2009-03-30 11:15:47.741351000 -0400
+@@ -26,6 +26,16 @@
+ #
+ ########################################################################
+ 
++arch := $(shell mach)
++
++ifeq ($(arch),sparc)
++      XREGS := -xregs=no%appl
++      XMEMALIGN := -xmemalign=8s -misalign
++else
++      XREGS := -xregs=no%frameptr
++      XMEMALIGN :=
++endif
++
+ include ../makefile.in
+ 
+ 
+@@ -112,6 +122,8 @@
+ $(LIBLINK): $(LIB)
+ 	@echo "ln -sf $< $@" >> $(LOGFILE)
+ 	ln -sf $< $@
++	@echo "ln -sf $< $(LIBSONAME)" >> $(LOGFILE)
++	ln -sf $< $(LIBSONAME)
+ 
+ else
+ 
+@@ -138,6 +150,7 @@
+ 	if [ $(LIBLINK) != $(LIB) ]; then          \
+             rm $(PREFIX)/lib/$(LIBLINK);           \
+             ln -s $(LIB) $(PREFIX)/lib/$(LIBLINK); \
++            ln -s $(LIB) $(PREFIX)/lib/$(LIBSONAME); \
+         fi
+ 	mkdir -p $(PREFIX)/etc
+ 	cp $(CATFILE) $(PREFIX)/etc

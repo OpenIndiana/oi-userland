@@ -1,0 +1,155 @@
+--- stdcxx-4.2.1/tests/support/18.numeric.special.int.cpp	2008-04-24 20:23:28.000000000 -0400
++++ stdcxx-4.2.1/tests/support/18.numeric.special.int.cpp	2011-02-18 01:55:12.861052484 -0500
+@@ -49,6 +49,7 @@
+     enum { is_exact };
+     enum { radix };
+     enum { is_bounded = false };
++    enum { traps = std::numeric_limits<T>::traps };
+ 
+     static bool is_modulo () { return false; }
+ 
+@@ -91,6 +92,7 @@
+     enum { is_exact = true };
+     enum { radix = 2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<int>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -116,6 +118,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<bool>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -144,6 +147,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<char>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+         
+@@ -169,6 +173,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<signed char>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -194,6 +199,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<unsigned char>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -241,6 +247,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<wchar_t>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+         
+@@ -267,6 +274,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<short>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -292,6 +300,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 }; 
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<long>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -316,6 +325,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<unsigned short>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -340,6 +350,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<unsigned int>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -365,6 +376,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<unsigned long>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -402,6 +414,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<_RWSTD_LONG_LONG>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -430,6 +443,7 @@
+     enum { is_exact = true };
+     enum { radix =  2 };
+     enum { is_bounded = true };
++    enum { traps = std::numeric_limits<unsigned _RWSTD_LONG_LONG>::traps };
+ 
+     static bool is_modulo () { return ::is_modulo ((max)()); }
+ 
+@@ -584,7 +598,7 @@
+                tname, Traits::is_modulo ());
+ 
+     // 18.2.1.2, p59
+-    ASSERT_0 (traps, "%b");
++	ASSERT (traps, "%b");
+ 
+     // 18.2.1.2, p61
+     ASSERT_0 (tinyness_before, "%b");
+--- stdcxx-4.2.1/tests/support/18.numeric.special.float.cpp	2008-04-24 20:23:28.000000000 -0400
++++ stdcxx-4.2.1/tests/support/18.numeric.special.float.cpp	2011-02-18 01:18:03.834115355 -0500
+@@ -453,7 +453,8 @@
+ 
+ #if defined (_AIX) \
+     || defined (__hpux) \
+-    || defined (__osf__)
++    || defined (__osf__) \
++    || defined (__SUNPRO_CC)
+         return std::denorm_present;
+ #else
+         return std::denorm_indeterminate;
+@@ -720,7 +721,8 @@
+     static std::float_denorm_style has_denorm () {
+ #if defined (_AIX) \
+     || defined (__hpux) \
+-    || defined (__osf__)
++    || defined (__osf__) \
++    || defined (__SUNPRO_CC)
+         return std::denorm_present;
+ #else
+         return std::denorm_indeterminate;
+@@ -980,7 +982,8 @@
+     static std::float_denorm_style has_denorm () {
+ #if defined (_AIX) \
+     || defined (__hpux) \
+-    || defined (__osf__)
++    || defined (__osf__) \
++    || defined (__SUNPRO_CC) 
+         return std::denorm_present;
+ #else
+         return std::denorm_indeterminate;

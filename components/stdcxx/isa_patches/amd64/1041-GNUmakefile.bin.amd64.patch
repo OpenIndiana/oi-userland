@@ -1,0 +1,19 @@
+--- stdcxx-4.2.1/etc/config/GNUmakefile.bin	2008-04-24 20:25:50.000000000 -0400
++++ stdcxx-4.2.1/etc/config/GNUmakefile.bin	2009-03-30 11:15:41.612721000 -0400
+@@ -26,6 +26,16 @@
+ #
+ ########################################################################
+ 
++arch := $(shell mach)
++
++ifeq ($(arch),sparc)
++      XREGS := -xregs=appl
++      XMEMALIGN := -xmemalign=8i
++else
++      XREGS := -xregs=no%frameptr
++      XMEMALIGN :=
++endif
++
+ include ../makefile.in
+ 
+ SRCDIRS = $(TOPDIR)/util

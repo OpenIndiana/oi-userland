@@ -1,0 +1,104 @@
+# https://issues.apache.org/jira/browse/STDCXX-1010
+--- stdcxx-4.2.1/src/collate.cpp	2008-04-24 20:25:19.000000000 -0400
++++ stdcxx-4.2.1/src/collate.cpp	2011-02-12 21:01:14.234054674 -0500
+@@ -522,10 +522,17 @@
+             src    += (last - src) + 1;
+         }
+ 
++#ifdef _RWSTD_OS_SUNOS
++	// Solaris 10u5 on AMD64 overwrites memory past the end of
++	// just_in_case_buf[8], to avoid this, pass a null pointer
++        char* const just_in_case_buf  = 0;
++#else
+         // provide a destination buffer to strxfrm() in case
+         // it's buggy (such as MSVC's) and tries to write to
+         // the buffer even if it's 0
+         char just_in_case_buf [8];
++#endif
++
+         const _RWSTD_SIZE_T dst_size = strxfrm (just_in_case_buf, psrc, 0);
+ 
+         // check for strxfrm() errors
+@@ -541,8 +548,10 @@
+             res.resize (res_size + dst_size + 1);
+         }
+         _CATCH (...) {
+-            if (pbuf != buf)
++            if (pbuf != buf) {
+                 delete[] pbuf;
++                pbuf = 0;
++            }
+             _RETHROW;
+         }
+ 
+@@ -567,14 +576,18 @@
+             res.resize (res_size);
+         }
+         _CATCH (...) {
+-            if (pbuf != buf)
++            if (pbuf != buf) {
+                 delete[] pbuf;
++                pbuf = 0;
++            }
+             _RETHROW;
+         }
+     }
+ 
+-    if (pbuf != buf)
++    if (pbuf != buf) {
+         delete[] pbuf;
++        pbuf = 0;
++    }
+ 
+     return res;
+ }
+@@ -724,10 +737,16 @@
+             src    += (last - src) + 1;
+         }
+ 
++#ifdef _RWSTD_OS_SUNOS
++	// just in case Solaris wcsxfrm() has the same bug
++	// as its strxfrm() (see above)
++	wchar_t* const just_in_case_buf = 0;
++#else
+         // provide a destination buffer to strxfrm() in case
+         // it's buggy (such as MSVC's) and tries to write to
+         // the buffer even if it's 0
+         wchar_t just_in_case_buf [8];
++#endif
+ 
+         const _RWSTD_SIZE_T dst_size =
+             _RWSTD_WCSXFRM (just_in_case_buf, psrc, 0);
+@@ -745,8 +764,10 @@
+             res.resize (res_size + dst_size + 1);
+         }
+         _CATCH (...) {
+-            if (pbuf != buf)
++            if (pbuf != buf) {
+                 delete[] pbuf;
++                pbuf = 0;
++			}
+             _RETHROW;
+         }
+ 
+@@ -771,14 +792,18 @@
+             res.resize (res_size);
+         }
+         _CATCH (...) {
+-            if (pbuf != buf)
++            if (pbuf != buf) {
+                 delete[] pbuf;
++                pbuf = 0;
++			}
+             _RETHROW;
+         }
+     }
+ 
+-    if (pbuf != buf)
++    if (pbuf != buf) {
+         delete[] pbuf;
++        pbuf = 0;
++	}
+ 
+     return res;
+ }

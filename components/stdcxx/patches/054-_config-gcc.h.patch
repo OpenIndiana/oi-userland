@@ -1,0 +1,21 @@
+--- stdcxx-4.2.1/include/rw/_config-gcc.h	2008-04-24 20:23:43.000000000 -0400
++++ stdcxx-4.2.1/include/rw/_config-gcc.h	2009-07-29 17:11:54.000000000 -0400
+@@ -154,6 +154,18 @@
+ 
+ #ifdef _RWSTD_OS_SUNOS
+ 
++// Solaris >= S10U6 on SPARC V8:
++// KU 137111-01 && CR 6296770
++// POSIX: pthread_mutex_t and pthread_condvar_t
++// Solaris: mutex_t and condvar_t MUST be aligned on
++// 8-byte boundary. 
++// This is relevant on 32-bit SPARCV8 only.
++// 64-bit SPARCV9 already aligns on 8-byte boundary by default.
++
++#  if defined(sparc) || defined(__sparc) || defined(__sparc__)
++#    define _RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT 1
++#  endif // sparc || __sparc|| __sparc__
++
+      // _SOLARIS_THREADS #defined when the -threads option is used on SunOS
+ #  if defined (_SOLARIS_THREADS) && !defined (_RWSTD_SOLARIS_THREADS)
+ #    define _RWSTD_SOLARIS_THREADS
