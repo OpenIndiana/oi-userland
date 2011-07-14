@@ -25,10 +25,10 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	1.8.2
+COMPONENT_VERSION=	1.8.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:394e95b3ddfb9b725368b81ad60dc39382fb9e12
+COMPONENT_ARCHIVE_HASH=	sha1:25c4f9b1ad1c5c8ef94ca5b120c9af6bdfd23bdc
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
