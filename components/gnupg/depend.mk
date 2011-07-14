@@ -1,1 +1,1 @@
-gnupg:	libksba libassuan gpgme
+gnupg:	libksba libassuan gpgme pinentry
