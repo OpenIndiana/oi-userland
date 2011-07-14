@@ -1,0 +1,340 @@
+--- stdcxx-4.2.1/include/ansi/cstdio	2008-04-24 20:23:56.000000000 -0400
++++ stdcxx-4.2.1/include/ansi/cstdio	2009-03-12 16:35:36.000000000 -0400
+@@ -1,313 +1,38 @@
+ // -*- C++ -*-
+-/***************************************************************************
++/**
++ * CDDL HEADER START
+  *
+- * cstdio - C++ Standard library interface to the ANSI C header stdio.h
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
+  *
+- * $Id: cstdio 609466 2008-01-06 23:18:56Z sebor $
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
+  *
+- ***************************************************************************
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
+  *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
++ * CDDL HEADER END
+  *
+- * http://www.apache.org/licenses/LICENSE-2.0
+  *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
+  *
+- * Copyright 1994-2007 Rogue Wave Software, Inc.
+- * 
+- **************************************************************************/
+-
+-#include <rw/_defs.h>
+-
+-#ifndef _RWSTD_NO_PURE_C_HEADERS
+-#  include <ansi/_cstdio.h>
+-#else
+-
+-#ifndef _RWSTD_NO_DEPRECATED_C_HEADERS
+-
+-#ifndef _RWSTD_NAMESPACE_STD_OPEN
+-#define _RWSTD_NAMESPACE_STD_OPEN 14
+-
+-_RWSTD_NAMESPACE (std) { 
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN
+-
+-
+-#include _RWSTD_ANSI_C_STDIO_H
+-
+-
+-#if _RWSTD_NAMESPACE_STD_OPEN == 14
+-#  undef _RWSTD_NAMESPACE_STD_OPEN
+-
+-}   // namespace std
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN == 14
+-
+-#else   // if defined (_RWSTD_NO_DEPRECATED_C_HEADERS)
+-
+-#ifndef _RWSTD_CSTDIO_INCLUDED
+-#define _RWSTD_CSTDIO_INCLUDED
+-
+-#include _RWSTD_ANSI_C_STDIO_H
+-
++ * ident "@(#)cstdio.16.diff 1.1     09/08/21 SMI"
++ */
+ 
+-// 27.8.2, p1, Table 94
+-#ifndef stdin
+-#  define stdin stdin
+-#endif
++#ifndef _STDIO_H
+ 
+-#ifndef stdout
+-#  define stdout stdout
+-#endif
+-
+-#ifndef stderr
+-#  define stderr stderr
+-#endif
+-
+-#if !defined (_RWSTD_NO_NAMESPACE) && !defined (_RWSTD_NO_HONOR_STD) && \
+-    !defined (_RWSTD_NO_USING_LIBC_IN_STD)
++#include <stdio.h>
+ 
+ namespace std {
++    extern "C" int fileno(FILE *);
++}
+ 
+-    using ::size_t;
+-    using ::FILE;
+-
+-#ifndef _RWSTD_NO_FPOS_T
+-    using ::fpos_t;
+-#endif   // _RWSTD_NO_FPOS_T
+-
+-#ifndef _RWSTD_NO_CLEARERR
+-    using ::clearerr;
+-#endif   // _RWSTD_NO_CLEARERR
+-
+-#ifndef _RWSTD_NO_FCLOSE
+-    using ::fclose;
+-#endif   // _RWSTD_NO_FCLOSE
+-
+-#ifndef _RWSTD_NO_FEOF
+-    using ::feof;
+-#endif   // _RWSTD_NO_FEOF
+-
+-#ifndef _RWSTD_NO_FERROR
+-    using ::ferror;
+-#endif   // _RWSTD_NO_FERROR
+-
+-#ifndef _RWSTD_NO_FFLUSH
+-    using ::fflush;
+-#endif   // _RWSTD_NO_FFLUSH
+-
+-#ifndef _RWSTD_NO_FGETC
+-    using ::fgetc;
+-#endif   // _RWSTD_NO_FGETC
+-
+-#ifndef _RWSTD_NO_FGETPOS
+-    using ::fgetpos;
+-#endif   // _RWSTD_NO_FGETPOS
+-
+-#ifndef _RWSTD_NO_FGETS
+-    using ::fgets;
+-#endif   // _RWSTD_NO_FGETS
+-
+-#ifndef _RWSTD_NO_FOPEN
+-    using ::fopen;
+-#endif   // _RWSTD_NO_FOPEN
+-
+-#ifndef _RWSTD_NO_FPRINTF
+-    using ::fprintf;
+-#endif   // _RWSTD_NO_FPRINTF
+-
+-#ifndef _RWSTD_NO_FPUTC
+-    using ::fputc;
+-#endif   // _RWSTD_NO_FPUTC
+-
+-#ifndef _RWSTD_NO_FPUTS
+-    using ::fputs;
+-#endif   // _RWSTD_NO_FPUTS
+-
+-#ifndef _RWSTD_NO_FREAD
+-    using ::fread;
+-#endif   // _RWSTD_NO_FREAD
+-
+-#ifndef _RWSTD_NO_FREOPEN
+-    using ::freopen;
+-#endif   // _RWSTD_NO_FREOPEN
+-
+-#ifndef _RWSTD_NO_FSCANF
+-    using ::fscanf;
+-#endif   // _RWSTD_NO_FSCANF
+-
+-#ifndef _RWSTD_NO_FSEEK
+-    using ::fseek;
+-#endif   // _RWSTD_NO_FSEEK
+-
+-#ifndef _RWSTD_NO_FSETPOS
+-    using ::fsetpos;
+-#endif   // _RWSTD_NO_FSETPOS
+-
+-#ifndef _RWSTD_NO_FTELL
+-    using ::ftell;
+-#endif   // _RWSTD_NO_FTELL
+-
+-#ifndef _RWSTD_NO_FWRITE
+-    using ::fwrite;
+-#endif   // _RWSTD_NO_FWRITE
+-
+-#ifndef _RWSTD_NO_GETC
+-    using ::getc;
+-#endif   // _RWSTD_NO_GETC
+-
+-#ifndef _RWSTD_NO_GETCHAR
+-    using ::getchar;
+-#endif   // _RWSTD_NO_GETCHAR
+-
+-#ifndef _RWSTD_NO_GETS
+-    using ::gets;
+-#endif   // _RWSTD_NO_GETS
+-
+-#ifndef _RWSTD_NO_PERROR
+-    using ::perror;
+-#endif   // _RWSTD_NO_PERROR
+-
+-#ifndef _RWSTD_NO_PRINTF
+-    using ::printf;
+-#endif   // _RWSTD_NO_PRINTF
+-
+-#ifndef _RWSTD_NO_PUTC
+-    using ::putc;
+-#endif   // _RWSTD_NO_PUTC
+-
+-#ifndef _RWSTD_NO_PUTCHAR
+-    using ::putchar;
+-#endif   // _RWSTD_NO_PUTCHAR
+-
+-#ifndef _RWSTD_NO_PUTS
+-    using ::puts;
+-#endif   // _RWSTD_NO_PUTS
+-
+-#ifndef _RWSTD_NO_REMOVE
+-    using ::remove;
+-#endif   // _RWSTD_NO_REMOVE
+-
+-#ifndef _RWSTD_NO_RENAME
+-    using ::rename;
+-#endif   // _RWSTD_NO_RENAME
+-
+-#ifndef _RWSTD_NO_REWIND
+-    using ::rewind;
+-#endif   // _RWSTD_NO_REWIND
+-
+-#ifndef _RWSTD_NO_SCANF
+-    using ::scanf;
+-#endif   // _RWSTD_NO_SCANF
+-
+-#ifndef _RWSTD_NO_SETBUF
+-    using ::setbuf;
+-#endif   // _RWSTD_NO_SETBUF
+-
+-#ifndef _RWSTD_NO_SETVBUF
+-    using ::setvbuf;
+-#endif   // _RWSTD_NO_SETVBUF
+-
+-#ifndef _RWSTD_NO_SPRINTF
+-    using ::sprintf;
+-#endif   // _RWSTD_NO_SPRINTF
+-
+-#ifndef _RWSTD_NO_SSCANF
+-    using ::sscanf;
+-#endif   // _RWSTD_NO_SSCANF
+-
+-#ifndef _RWSTD_NO_TMPFILE
+-    using ::tmpfile;
+-#endif   // _RWSTD_NO_TMPFILE
+-
+-#ifndef _RWSTD_NO_TMPNAM
+-    using ::tmpnam;
+-#else
+-#  ifndef _RWSTD_NO_TMPNAM_IN_LIBC
+-    extern "C" char *tmpnam (char *);
+-#  endif // _RWSTD_NO_TMPNAM_IN_LIBC
+-#endif   // _RWSTD_NO_TMPNAM
+-
+-#ifndef _RWSTD_NO_UNGETC
+-    using ::ungetc;
+-#endif   // _RWSTD_NO_UNGETC
+-
+-#ifndef _RWSTD_NO_VFPRINTF
+-    using ::vfprintf;
+-#endif   // _RWSTD_NO_VFPRINTF
+-
+-#ifndef _RWSTD_NO_VPRINTF
+-    using ::vprintf;
+-#endif   // _RWSTD_NO_VPRINTF
+-
+-#ifndef _RWSTD_NO_VSPRINTF
+-    using ::vsprintf;
+-#endif   // _RWSTD_NO_VSPRINTF
+-
+-}   // std
+-
+-
+-#ifdef _RWSTD_STRICT_ANSI
+-// undefine shadow macros in strict mode
+-#  undef fpos_t
+-#  undef remove
+-#  undef rename
+-#  undef tmpfile
+-#  undef tmpnam
+-#  undef fclose
+-#  undef fflush
+-#  undef fopen
+-#  undef freopen
+-#  undef setbuf
+-#  undef setvbuf
+-#  undef fprintf
+-#  undef fscanf
+-#  undef printf
+-#  undef scanf
+-#  undef sprintf
+-#  undef sscanf
+-#  undef vfprintf
+-#  undef vprintf
+-#  undef vsprintf
+-#  undef fgetc
+-#  undef fgets
+-#  undef fputc
+-#  undef fputs
+-#  undef getc
+-#  undef getchar
+-#  undef gets
+-#  undef putc
+-#  undef putchar
+-#  undef puts
+-#  undef ungetc
+-#  undef fread
+-#  undef fwrite
+-#  undef fgetpos
+-#  undef fseek
+-#  undef fsetpos
+-#  undef ftell
+-#  undef rewind
+-#  undef clearerr
+-#  undef feof
+-#  undef ferror
+-#  undef perror
+-#endif
+-
+-
+-#endif   // !_NO_NAMESPACE && !__NO_HONOR_STD && !_NO_USING_LIBC_IN_STD
+-
+-#endif   // _RWSTD_CSTDIO_INCLUDED
+-
+-#endif   // _RWSTD_NO_DEPRECATED_C_HEADERS
++#endif /* _STDIO_H */
+ 
+-#endif   // _RWSTD_NO_PURE_C_HEADERS

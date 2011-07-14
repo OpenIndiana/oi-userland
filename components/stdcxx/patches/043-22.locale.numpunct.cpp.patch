@@ -1,0 +1,11 @@
+--- stdcxx-4.2.1/tests/localization/22.locale.numpunct.cpp	2008-04-24 17:23:10.000000000 -0700
++++ stdcxx-4.2.1/tests/localization/22.locale.numpunct.cpp	2009-07-27 14:41:33.627970295 -0700
+@@ -137,7 +137,7 @@
+     // verify that numpunct behaves correctly when LC_ALL is set
+     // to the name of the (non-C, non-POSIX) locale
+     char envvar [80];
+-    std::sprintf (envvar, "LC_ALL=%s", first_non_c);
++    std::sprintf (envvar, "LC_ALL=%s", first_non_c ? first_non_c : "");
+     rw_putenv (envvar);
+     check_numpunct (charT (), tname, "", loc);
+ }

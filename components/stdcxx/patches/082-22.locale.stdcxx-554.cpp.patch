@@ -1,0 +1,66 @@
+--- stdcxx-4.2.1/tests/regress/22.locale.stdcxx-554.cpp	2008-04-24 20:23:26.000000000 -0400
++++ stdcxx-4.2.1/tests/regress/22.locale.stdcxx-554.cpp	2011-02-20 02:06:59.971275876 -0500
+@@ -29,26 +29,27 @@
+ 
+ #include <locale>    // for std::moneypunct, std::messages
+ 
+-enum { fill = '\xdc' };
++unsigned char filler = '\xdc';
+ 
+ template <class charT>
+ void test_moneypunct (charT)
+ {
+     typedef std::moneypunct <charT> PunctT;
+ 
+-    // Use a pointer to properly align buffer for placment new.
++	// Align on 8 because that covers all the cases we care about.
+     union {
+-        void* ptr;
+-        char buf [sizeof (PunctT) + 1];
++        unsigned long long pad;
++        unsigned char buf [sizeof (PunctT) + 1];
+     } u;
+ 
+-    std::memset (u.buf, fill, sizeof (u.buf));
++    std::memset (u.buf, filler, sizeof (u.buf));
+ 
+     PunctT* p = new (u.buf) PunctT ();
+ 
+-    assert (fill == u.buf [sizeof (PunctT)]);
++    assert (filler == u.buf [sizeof (PunctT)]);
+ 
+-    p->~PunctT ();
++	// we can't explicitly call the destructor any longer
++	// because it is protected.
+ }
+ 
+ template <class charT>
+@@ -57,17 +58,18 @@
+     typedef std::messages <charT> MessagesT;
+ 
+     union {
+-        void* ptr;
+-        char buf [sizeof (MessagesT) + 1];
++        unsigned long long pad;
++        unsigned char buf [sizeof (MessagesT) + 1];
+     } u;
+ 
+-    std::memset (u.buf, fill, sizeof (u.buf));
++    std::memset (u.buf, filler, sizeof (u.buf));
+ 
+     MessagesT* p = new (u.buf) MessagesT ();
+ 
+-    assert (fill == u.buf [sizeof (MessagesT)]);
++    assert (filler == u.buf [sizeof (MessagesT)]);
+ 
+-    p->~MessagesT ();
++	// we can't explicitly call the destructor any longer
++	// because it is protected.
+ }
+ 
+ int main (int, char* [])
+@@ -82,3 +84,4 @@
+ 
+     return 0;
+ }
++

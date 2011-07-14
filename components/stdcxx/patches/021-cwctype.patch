@@ -1,0 +1,288 @@
+--- stdcxx-4.2.1/include/ansi/cwctype	2008-04-24 20:23:56.000000000 -0400
++++ stdcxx-4.2.1/include/ansi/cwctype	2009-03-12 16:35:36.000000000 -0400
+@@ -1,263 +1,35 @@
+ // -*- C++ -*-
+-/***************************************************************************
++/**
++ * CDDL HEADER START
+  *
+- * cwctype - C++ Standard library interface to the ANSI C header wctype.h
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
+  *
+- * $Id: cwctype 550991 2007-06-26 23:58:07Z sebor $
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
+  *
+- ***************************************************************************
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
+  *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
++ * CDDL HEADER END
+  *
+- * http://www.apache.org/licenses/LICENSE-2.0
+  *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
+  *
+- * Copyright 1994-2006 Rogue Wave Software.
+- * 
+- **************************************************************************/
+-
+-#include <rw/_defs.h>
+-
+-#ifndef _RWSTD_NO_PURE_C_HEADERS
+-#  include <ansi/_cwctype.h>
+-#else
+-
+-#ifndef _RWSTD_NO_DEPRECATED_C_HEADERS
+-
+-#ifndef _RWSTD_NAMESPACE_STD_OPEN
+-#define _RWSTD_NAMESPACE_STD_OPEN 18
+-
+-_RWSTD_NAMESPACE (std) { 
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN
+-
+-
+-#include _RWSTD_ANSI_C_WCTYPE_H
+-
+-
+-#if _RWSTD_NAMESPACE_STD_OPEN == 18
+-#undef _RWSTD_NAMESPACE_STD_OPEN
+-
+-}   // namespace std
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN == 18
+-
+-#else   // if defined (_RWSTD_NO_DEPRECATED_C_HEADERS)
+-
+-#ifndef _RWSTD_CWCTYPE_INCLUDED
+-#define _RWSTD_CWCTYPE_INCLUDED
+-
+-#include _RWSTD_ANSI_C_WCTYPE_H
+-
+-#ifdef __hpux
+-#  include _RWSTD_ANSI_C_WCHAR_H
+-#endif   // __hpux
+-
+-// #define WEOF when not #defined (see also <cwchar>)
+-#if !defined WEOF
+-#  ifndef _RWSTD_NO_WINT_T
+-#    define WEOF _RWSTD_STATIC_CAST (_RWSTD_WINT_T, -1)
+-#  else
+-#    define WEOF (-1)
+-#  endif
+-#endif   // WEOF
+-
+-#if !defined (_RWSTD_NO_NAMESPACE) && !defined (_RWSTD_NO_HONOR_STD) && \
+-      !defined (_RWSTD_NO_USING_LIBC_IN_STD)
+-
+-#  ifndef _RWSTD_NO_WCTYPE_H
+-
+-namespace std {
+-
+-#ifndef _RWSTD_NO_WCTRANS_T
+-    using ::wctrans_t;
+-#else
+-    typedef int wctrans_t;
+-#endif   // _RWSTD_NO_WCTRANS_T
+-
+-#ifndef _RWSTD_NO_WCTYPE_T
+-    using ::wctype_t;
+-#else
+-    typedef unsigned wctype_t;
+-#endif   // _RWSTD_NO_WCTYPE_T
+-
+-#ifndef _RWSTD_NO_WINT_T
+-    using ::wint_t;
+-#else
+-    typedef unsigned wint_t;
+-#endif   // _RWSTD_NO_WINT_T
+-
+-#ifndef _RWSTD_NO_ISWALNUM
+-    using ::iswalnum;
+-#elif !defined (_RWSTD_NO_ISWALNUM_IN_LIBC)
+-
+-    extern "C" int iswalnum (wint_t);
+-#else
+-#endif   // _RWSTD_NO_ISWALNUM
+-
+-#ifndef _RWSTD_NO_ISWALPHA
+-    using ::iswalpha;
+-#elif !defined (_RWSTD_NO_ISWALPHA_IN_LIBC)
+-
+-    extern "C" int iswalpha (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWALPHA
+-
+-#ifndef _RWSTD_NO_ISWCNTRL
+-    using ::iswcntrl;
+-#elif !defined (_RWSTD_NO_ISWCNTRL_IN_LIBC)
+-
+-    extern "C" int iswcntrl (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWCNTRL
+-
+-#ifndef _RWSTD_NO_ISWCTYPE
+-    using ::iswctype;
+-#elif !defined (_RWSTD_NO_ISWCTYPE_IN_LIBC)
+-
+-    extern "C" int iswctype (wint_t, wctype_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWCTYPE
+-
+-#ifndef _RWSTD_NO_ISWDIGIT
+-    using ::iswdigit;
+-#elif !defined (_RWSTD_NO_ISWDIGIT_IN_LIBC)
+-
+-    extern "C" int iswdigit (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWDIGIT
+-
+-#ifndef _RWSTD_NO_ISWGRAPH
+-    using ::iswgraph;
+-#elif !defined (_RWSTD_NO_ISWGRAPH_IN_LIBC)
+-
+-    extern "C" int iswgraph (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWGRAPH
+-
+-#ifndef _RWSTD_NO_ISWLOWER
+-    using ::iswlower;
+-#elif !defined (_RWSTD_NO_ISWLOWER_IN_LIBC)
+-
+-    extern "C" int iswlower (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWLOWER
+-
+-#ifndef _RWSTD_NO_ISWPRINT
+-    using ::iswprint;
+-#elif !defined (_RWSTD_NO_ISWPRINT_IN_LIBC)
+-
+-    extern "C" int iswprint (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWPRINT
+-
+-#ifndef _RWSTD_NO_ISWPUNCT
+-    using ::iswpunct;
+-#elif !defined (_RWSTD_NO_ISWPUNCT_IN_LIBC)
+-
+-    extern "C" int iswpunct (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWPUNCT
+-
+-#ifndef _RWSTD_NO_ISWSPACE
+-    using ::iswspace;
+-#elif !defined (_RWSTD_NO_ISWSPACE_IN_LIBC)
+-
+-    extern "C" int iswspace (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWSPACE
+-
+-#ifndef _RWSTD_NO_ISWUPPER
+-    using ::iswupper;
+-#elif !defined (_RWSTD_NO_ISWUPPER_IN_LIBC)
+-
+-    extern "C" int iswupper (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWUPPER
+-
+-#ifndef _RWSTD_NO_ISWXDIGIT
+-    using ::iswxdigit;
+-#elif !defined (_RWSTD_NO_ISWXDIGIT_IN_LIBC)
+-
+-    extern "C" int iswxdigit (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_ISWXDIGIT
+-
+-#ifndef _RWSTD_NO_TOWCTRANS
+-    using ::towctrans;
+-#elif !defined (_RWSTD_NO_TOWCTRANS_IN_LIBC)
+-
+-    extern "C" wint_t towctrans (wint_t, wctrans_t);
+-
+-#else
+-#endif   // _RWSTD_NO_TOWCTRANS
+-
+-#ifndef _RWSTD_NO_TOWLOWER
+-    using ::towlower;
+-#elif !defined (_RWSTD_NO_TOWLOWER_IN_LIBC)
+-
+-    extern "C" wint_t towlower (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_TOWLOWER
+-
+-#ifndef _RWSTD_NO_TOWUPPER
+-    using ::towupper;
+-#elif !defined (_RWSTD_NO_TOWUPPER_IN_LIBC)
+-
+-    extern "C" wint_t towupper (wint_t);
+-
+-#else
+-#endif   // _RWSTD_NO_TOWUPPER
+-
+-#ifndef _RWSTD_NO_WCTRANS
+-    using ::wctrans;
+-#elif !defined (_RWSTD_NO_WCTRANS_IN_LIBC)
+-
+-    extern "C" wctrans_t wctrans (const char*);
+-
+-#else
+-#endif   // _RWSTD_NO_WCTRANS
+-
+-#ifndef _RWSTD_NO_WCTYPE
+-    using ::wctype;
+-#elif !defined (_RWSTD_NO_WCTYPE_IN_LIBC)
+-
+-    extern "C" wctype_t wctype (const char*);
+-
+-#else
+-#endif   // _RWSTD_NO_WCTYPE
+-
+-}   // std
++ * ident "@(#)cwctype.21.diff 1.1     09/08/21 SMI"
++ */
+ 
+-#  endif   // _RWSTD_NO_WCTYPE_H
+ 
+-#endif   // !_RWSTD_NO_NAMESPACE && !_RWSTD_NO_HONOR_STD && !_RWSTD_NO_USING_LIBC_IN_STD
++#ifndef _WCTYPE_H
+ 
+-#endif   // _RWSTD_CWCTYPE_INCLUDED
++#include <wctype.h>
+ 
+-#endif   // _RWSTD_NO_DEPRECATED_C_HEADERS
++#endif /* _WCTYPE_H */
+ 
+-#endif   // _RWSTD_NO_PURE_C_HEADERS

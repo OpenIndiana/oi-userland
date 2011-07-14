@@ -1,0 +1,1397 @@
+--- stdcxx-4.2.1/include/ansi/cwchar	2008-04-24 20:23:56.000000000 -0400
++++ stdcxx-4.2.1/include/ansi/cwchar	2009-03-12 16:35:36.000000000 -0400
+@@ -1,1372 +1,34 @@
+ // -*- C++ -*-
+-/***************************************************************************
++/**
++ * CDDL HEADER START
+  *
+- * cwchar - C++ Standard library interface to the ANSI C header wchar.h
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
+  *
+- * $Id: cwchar 597425 2007-11-22 15:20:29Z faridz $
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
+  *
+- ***************************************************************************
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
+  *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
++ * CDDL HEADER END
+  *
+- * http://www.apache.org/licenses/LICENSE-2.0
+  *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
+  *
+- * Copyright 1998-2006 Rogue Wave Software.
+- * 
+- **************************************************************************/
+-
+-#include <rw/_defs.h>
+-
+-#ifndef _RWSTD_NO_PURE_C_HEADERS
+-#  include <ansi/_cwchar.h>
+-#else
+-
+-#ifndef _RWSTD_NO_DEPRECATED_C_HEADERS
+-
+-#ifndef _RWSTD_NAMESPACE_STD_OPEN
+-#define _RWSTD_NAMESPACE_STD_OPEN 17
+-
+-_RWSTD_NAMESPACE (std) { 
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN
+-
+-
+-#include _RWSTD_ANSI_C_WCHAR_H
+-
+-
+-#ifdef _RWSTD_STRICT_ANSI
+-// 17.4.1.2, p6 - masking macros are not allowed
+-#  undef getwc
+-#  undef putwc
+-#endif   // _RWSTD_STRICT_ANSI
+-
+-
+-#if _RWSTD_NAMESPACE_STD_OPEN == 17
+-#undef _RWSTD_NAMESPACE_STD_OPEN
+-
+-}   // namespace std
+-
+-#endif   // _RWSTD_NAMESPACE_STD_OPEN == 17
+-
+-#else   // if defined (_RWSTD_NO_DEPRECATED_C_HEADERS)
+-
+-#ifndef _RWSTD_CWCHAR_INCLUDED
+-#define _RWSTD_CWCHAR_INCLUDED
+-
+-#include _RWSTD_ANSI_C_WCHAR_H
+-#include <rw/_mbstate.h>
+-
+-
+-// #define WEOF when not #defined (see also <cwctype>)
+-#if !defined WEOF
+-#  ifndef _RWSTD_NO_WINT_T
+-#    define WEOF _RWSTD_STATIC_CAST (_RWSTD_WINT_T, -1)
+-#  else
+-#    define WEOF (-1)
+-#  endif
+-#endif   // WEOF
+-
+-
+-#ifndef NULL
+-#  define NULL 0
+-#endif   // NULL
+-
+-
+-#if !defined (_RWSTD_NO_NAMESPACE) && !defined (_RWSTD_NO_HONOR_STD)
+-
+-
+-#ifndef WCHAR_MIN
+-#  define WCHAR_MIN   _RWSTD_WCHAR_MIN
+-#endif   // WCHAR_MIN
+-
+-#ifndef WCHAR_MAX
+-#  define WCHAR_MAX   _RWSTD_WCHAR_MAX
+-#endif   // WCHAR_MAX
+-
+-
+-#if !defined (_RWSTD_NO_USING_LIBC_IN_STD)
+-
+-namespace std {
+-
+-#ifndef _RWSTD_NO_SIZE_T
+-using ::size_t;
+-#elif defined (_RWSTD_SIZE_T)
+-    typedef _RWSTD_SIZE_T size_t;
+-#endif   // _RWSTD_NO_SIZE_T
+-
+-#ifdef _RWSTD_NO_STD_MBSTATE_T
+-
+-using ::mbstate_t;
+-
+-#endif   // _RWSTD_NO_STD_MBSTATE_T
+-
+-#ifndef _RWSTD_NO_WINT_T
+-using ::wint_t;
+-#elif defined (_RWSTD_WINT_T)
+-    typedef _RWSTD_WINT_T wint_t;
+-#endif   // _RWSTD_NO_WINT_T
+-
+-#ifndef _RWSTD_NO_STRUCT_TM_IN_WCHAR_H
+-using ::tm;
+-#elif !defined (_RWSTD_NO_STRUCT_TM)
+-
+-}   // namespace std
+-
+-#include _RWSTD_ANSI_C_TIME_H
+-
+-namespace std {
+-
+-using ::tm;
+-
+-#endif   // NO_STRUCT_TM
+-
+-#ifndef _RWSTD_NO_BTOWC
+-using ::btowc;
+-#elif !defined (_RWSTD_NO_BTOWC_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t btowc (int);
+-
+-namespace std {
+-
+-using ::btowc;
+-
+-#  undef _RWSTD_NO_BTOWC
+-#endif   // _RWSTD_NO_BTOWC
+-
+-#ifndef _RWSTD_NO_FGETWC
+-using ::fgetwc;
+-#elif !defined (_RWSTD_NO_FGETWC_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t fgetwc (FILE*);
+-
+-namespace std {
+-
+-using ::fgetwc;
+-
+-#  undef _RWSTD_NO_FGETWC
+-#endif   // _RWSTD_NO_FGETWC[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_FGETWS
+-using ::fgetws;
+-#elif !defined (_RWSTD_NO_FGETWS_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t fgetws (wchar_t*, int, FILE*);
+-
+-namespace std {
+-
+-using ::fgetws;
+-
+-#  undef _RWSTD_NO_FGETWS
+-#endif   // _RWSTD_NO_FGETWS[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_FPUTWC
+-using ::fputwc;
+-#elif !defined (_RWSTD_NO_FPUTWC_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t fputwc (wint_t, FILE*);
+-
+-namespace std {
+-
+-using ::fputwc;
+-
+-#  undef _RWSTD_NO_FPUTWC
+-#endif   // _RWSTD_NO_FPUTWC[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_FPUTWS
+-using ::fputws;
+-#elif !defined (_RWSTD_NO_FPUTWS_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int fputws (const wchar_t*, FILE*);
+-
+-namespace std {
+-
+-using ::fputws;
+-
+-#  undef _RWSTD_NO_FPUTWS
+-#endif   // _RWSTD_NO_FPUTWS[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_FWIDE
+-using ::fwide;
+-#elif !defined (_RWSTD_NO_FWIDE_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int fwide (FILE*, int);
+-
+-namespace std {
+-
+-using ::fwide;
+-
+-#  undef _RWSTD_NO_FWIDE
+-#endif   // _RWSTD_NO_FWIDE[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_FWPRINTF
+-using ::fwprintf;
+-#elif !defined (_RWSTD_NO_FWPRINTF_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int fwprintf (FILE*, const wchar_t*, ...);
+-
+-namespace std {
+-
+-using ::fwprintf;
+-
+-#  undef _RWSTD_NO_FWPRINTF
+-#endif   // _RWSTD_NO_FWPRINTF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_FWSCANF
+-using ::fwscanf;
+-#elif !defined (_RWSTD_NO_FWSCANF_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int fwscanf (FILE*, const wchar_t*, ...);
+-
+-namespace std {
+-
+-using ::fwscanf;
+-
+-#  undef _RWSTD_NO_FWSCANF
+-#endif   // _RWSTD_NO_FWSCANF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_GETWC
+-using ::getwc;
+-#elif !defined (_RWSTD_NO_GETWC_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t getwc (FILE*);
+-
+-namespace std {
+-
+-using ::getwc;
+-
+-#  undef _RWSTD_NO_GETWC
+-#endif   // _RWSTD_NO_GETWC[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_PUTWC
+-using ::putwc;
+-#elif !defined (_RWSTD_NO_PUTWC_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t putwc (wint_t, FILE*);
+-
+-namespace std {
+-
+-using ::putwc;
+-
+-#  undef _RWSTD_NO_PUTWC
+-#endif   // _RWSTD_NO_PUTWC[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_GETWCHAR
+-using ::getwchar;
+-#elif !defined (_RWSTD_NO_GETWCHAR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t getwchar ();
+-
+-namespace std {
+-
+-using ::getwchar;
+-
+-#  undef _RWSTD_NO_GETWCHAR
+-#endif   // _RWSTD_NO_GETWCHAR[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_PUTWCHAR
+-using ::putwchar;
+-#elif !defined (_RWSTD_NO_PUTWCHAR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t putwchar (wint_t);
+-
+-namespace std {
+-
+-using ::putwchar;
+-
+-#  undef _RWSTD_NO_PUTWCHAR
+-#endif   // _RWSTD_NO_PUTWCHAR[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_SWPRINTF
+-using ::swprintf;
+-#elif !defined (_RWSTD_NO_SWPRINTF_IN_LIBC)
+-
+-}   // namespace std
+-
+-#if _MSC_VER < 1310   // MSVC < 7.1 or (better yet) not MSVC
+-
+-extern "C" {
+-
+-_RWSTD_DLLIMPORT int
+-swprintf (wchar_t*, size_t, const wchar_t*, ...);
+-
+-}   // extern "C"
+-
+-#elif _MSC_VER == 1310   // MSVC 7.1
+-
+-// MSVC 8.0 defines the C++ overload of swprintf() inline
+-/* extern "C++" */ _RWSTD_DLLIMPORT int
+-swprintf (wchar_t*, size_t, const wchar_t*, ...);
+-
+-#else   // MSVC 8.0 and above
+-
+-// MSVC 7.1 declares two overloads of swprintf()
+-/* extern "C++" */ int
+-swprintf (wchar_t*, size_t, const wchar_t*, ...);
+-
+-#endif   // MSVC
+-
+-namespace std {
+-
+-using ::swprintf;
+-
+-#  undef _RWSTD_NO_SWPRINTF
+-#endif   // _RWSTD_NO_SWPRINTF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_SWSCANF
+-using ::swscanf;
+-#elif !defined (_RWSTD_NO_SWSCANF_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int swscanf (const wchar_t*, const wchar_t*, ...);
+-
+-namespace std {
+-
+-using ::swscanf;
+-
+-#  undef _RWSTD_NO_SWSCANF
+-#endif   // _RWSTD_NO_SWSCANF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_UNGETWC
+-using ::ungetwc;
+-#elif !defined (_RWSTD_NO_UNGETWC_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wint_t ungetwc (wint_t, FILE*);
+-
+-namespace std {
+-
+-using ::ungetwc;
+-
+-#  undef _RWSTD_NO_UNGETWC
+-#endif   // _RWSTD_NO_UNGETWC[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_VFWPRINTF
+-using ::vfwprintf;
+-#elif !defined (_RWSTD_NO_VFWPRINTF_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int vfwprintf (FILE*, const wchar_t *format, _RWSTD_VA_LIST);
+-
+-namespace std {
+-
+-using ::vfwprintf;
+-
+-#  undef _RWSTD_NO_VFWPRINTF
+-#endif   // _RWSTD_NO_VFWPRINTF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_VSWPRINTF
+-using ::vswprintf;
+-#elif !defined (_RWSTD_NO_VSWPRINTF_IN_LIBC)
+-
+-}   // namespace std
+-
+-#if _MSC_VER < 1310   // MSVC < 7.1 or (better yet) not MSVC
+-
+-extern "C" {
+-
+-_RWSTD_DLLIMPORT int
+-vswprintf (wchar_t*, size_t, const wchar_t*, _RWSTD_VA_LIST);
+-
+-}   // extern "C"
+-
+-#elif _MSC_VER == 1310   // MSVC 7.1
+-
+-// MSVC 7.1 declares two overloads of swprintf()
+-/* extern "C++" */ _RWSTD_DLLIMPORT int
+-swprintf (wchar_t*, size_t, const wchar_t*, ...);
+-
+-#else   // MSVC 8.0 and above
+-
+-// MSVC 8.0 defines the C++ overload of vswprintf() inline
+-/* extern "C++" */ int
+-vswprintf (wchar_t*, size_t, const wchar_t*, _RWSTD_VA_LIST);
+-
+-#endif   // MSVC
+-
+-namespace std {
+-
+-using ::vswprintf;
+-
+-#  undef _RWSTD_NO_VSWPRINTF
+-#endif   // _RWSTD_NO_VSWPRINTF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_VWPRINTF
+-using ::vwprintf;
+-#elif !defined (_RWSTD_NO_VWPRINTF_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int vwprintf (const wchar_t*, _RWSTD_VA_LIST);
+-
+-namespace std {
+-
+-using ::vwprintf;
+-
+-#  undef _RWSTD_NO_VWPRINTF
+-#endif   // _RWSTD_NO_VWPRINTF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_WPRINTF
+-using ::wprintf;
+-#elif !defined (_RWSTD_NO_WPRINTF_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int wprintf (const wchar_t*, ...);
+-
+-namespace std {
+-
+-using ::wprintf;
+-
+-#  undef _RWSTD_NO_WPRINTF
+-#endif   // _RWSTD_NO_WPRINTF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_WSCANF
+-using ::wscanf;
+-#elif !defined (_RWSTD_NO_WSCANF_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int wscanf (const wchar_t*, ...);
+-
+-namespace std {
+-
+-using ::wscanf;
+-
+-#  undef _RWSTD_NO_WSCANF
+-#endif   // _RWSTD_NO_WSCANF[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_MBRLEN
+-using ::mbrlen;
+-#elif !defined (_RWSTD_NO_MBRLEN_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t mbrlen (const char*, size_t, _RWSTD_MBSTATE_T*);
+-
+-namespace std {
+-
+-using ::mbrlen;
+-
+-#  undef _RWSTD_NO_MBRLEN
+-#endif   // _RWSTD_NO_MBRLEN
+-
+-#ifndef _RWSTD_NO_MBRTOWC
+-using ::mbrtowc;
+-#elif !defined (_RWSTD_NO_MBRTOWC_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t mbrtowc (wchar_t*, const char*, size_t, _RWSTD_MBSTATE_T*);
+-
+-namespace std {
+-
+-using ::mbrtowc;
+-
+-#  undef _RWSTD_MBRTOWC
+-#endif   // _RWSTD_MBRTOWC[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_MBSINIT
+-using ::mbsinit;
+-#elif !defined (_RWSTD_NO_MBSINIT_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int mbsinit (const _RWSTD_MBSTATE_T*);
+-
+-namespace std {
+-
+-using ::mbsinit;
+-
+-#  undef _RWSTD_NO_MBSINIT
+-#endif   // !_RWSTD_NO_MBSINIT_IN_LIBC
+-
+-#ifndef _RWSTD_NO_MBSRTOWCS
+-using ::mbsrtowcs;
+-#elif !defined (_RWSTD_NO_MBSRTOWCS_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t mbsrtowcs (wchar_t*, const char**, size_t, _RWSTD_MBSTATE_T*);
+-
+-namespace std {
+-
+-using ::mbsrtowcs;
+-
+-#  undef _RWSTD_NO_MBSRTOWCS
+-#endif    // _RWSTD_NO_MBSRTOWCS
+-
+-#ifndef _RWSTD_NO_WCRTOMB
+-using ::wcrtomb;
+-#elif !defined (_RWSTD_NO_WCRTOMB_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t wcrtomb (char*, wchar_t, _RWSTD_MBSTATE_T*);
+-
+-namespace std {
+-
+-using ::wcrtomb;
+-
+-#  undef _RWSTD_NO_WCRTOMB
+-#endif   // _RWSTD_NO_WCRTOMB
+-
+-#ifndef _RWSTD_NO_WCSCAT
+-using ::wcscat;
+-#elif !defined (_RWSTD_NO_WCSCAT_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wcscat (wchar_t*, const wchar_t*);
+-
+-namespace std {
+-
+-using ::wcscat;
+-
+-#else   // if defined (_RWSTD_NO_WCSCAT)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wcscat (wchar_t *__dst, const wchar_t *__src)
+-{
+-    wchar_t *__s = __dst;
+-    for (; *__s; ++__s);
+-    while ((*__s++ = *__src++));
+-    return __dst;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcscat;
+-
+-#endif   // _RWSTD_NO_WCSCAT
+-
+-#undef _RWSTD_NO_WCSCAT
+-
+-
+-#ifndef _RWSTD_NO_WCSCHR
+-using ::wcschr;
+-#elif !defined (_RWSTD_NO_WCSCHR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wcschr (wchar_t*, wchar_t);
+-
+-inline const wchar_t* wcschr (const wchar_t *__s, wchar_t __c)
+-{
+-    return wcschr (_RWSTD_CONST_CAST (wchar_t*, __s), __c);
+-}
+-
+-namespace std {
+-
+-using ::wcschr;
+-
+-#else   // if defined (_RWSTD_NO_WCSCHR)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wcschr (wchar_t *__s, wchar_t __c)
+-{
+-    do {
+-        if (*__s == __c)
+-            return __s;
+-    } while (*__s);
+-    return 0;
+-}
+-
+-}   // extern "C"
+-
+-inline const wchar_t* wcschr (const wchar_t *__s, wchar_t __c)
+-{
+-    return wcschr (_RWSTD_CONST_CAST (wchar_t*, __s), __c);
+-}
+-
+-namespace std {
+-
+-using ::wcschr;
+-
+-#endif   // _RWSTD_NO_WCSCHR
+-
+-#undef _RWSTD_NO_WCSCHR
+-
+-
+-#ifndef _RWSTD_NO_WCSCMP
+-using ::wcscmp;
+-#elif !defined (_RWSTD_NO_WCSCMP_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int wcscmp (const wchar_t*, const wchar_t*);
+-
+-namespace std {
+-
+-using ::wcscmp;
+-
+-#  undef _RWSTD_NO_WCSCMP
+-#endif   // _RWSTD_NO_WCSCMP
+-
+-#ifndef _RWSTD_NO_WCSCOLL
+-using ::wcscoll;
+-#elif !defined (_RWSTD_NO_WCSCOLL_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int wcscoll (const wchar_t*, const wchar_t*);
+-
+-namespace std {
+-
+-using ::wcscoll;
+-
+-#  undef _RWSTD_NO_WCSCOLL
+-#endif   // _RWSTD_NO_WCSCOLL
+-
+-#ifndef _RWSTD_NO_WCSCPY
+-using ::wcscpy;
+-#else   // if defined (_RWSTD_NO_WCSCPY)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wcscpy (wchar_t *__dst, const wchar_t *__src)
+-{
+-    for (wchar_t *__s = __dst; (*__s++ = *__src++); );
+-    return __dst;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcscpy;
+-
+-#  undef _RWSTD_NO_WCSCPY
+-#endif   // _RWSTD_NO_WCSCPY
+-
+-
+-#ifndef _RWSTD_NO_WCSCSPN
+-using ::wcscspn;
+-#elif !defined (_RWSTD_NO_WCSCSPN_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t wcscspn (const wchar_t*, const wchar_t*);
+-
+-namespace std {
+-
+-using ::wcscspn;
+-
+-#  undef _RWSTD_NO_WCSCSPN
+-#else
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline size_t wcscspn (const wchar_t *__s1, const wchar_t *__s2)
+-{
+-    const wchar_t *__s = __s1;
+-    for (; *__s; ++__s) {
+-        for (const wchar_t *__ss = __s2; *__ss; ++__ss)
+-            if (*__ss == *__s)
+-                return __s - __s1;
+-    }
+-    return __s - __s1;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using wcscspn;
+-
+-#  undef _RWSTD_NO_WCSCSPN
+-#endif   // _RWSTD_NO_WCSCSPN
+-
+-#ifndef _RWSTD_NO_WCSFTIME
+-using ::wcsftime;
+-#elif !defined (_RWSTD_NO_WCSFTIME_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t wcsftime (wchar_t*, size_t, const wchar_t*, const struct tm*);
+-
+-namespace std {
+-
+-using ::wcsftime;
+-
+-#endif   // _RWSTD_NO_WCSFTIME
+-
+-
+-#ifndef _RWSTD_NO_WCSLEN
+-using ::wcslen;
+-#elif !defined (_RWSTD_NO_WCSLEN_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t wcslen (const wchar_t*);
+-
+-namespace std {
+-
+-using ::wcslen;
+-
+-#  undef _RWSTD_NO_WCSLEN
+-#else   // defined (_RWSTD_NO_WCSLEN)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline size_t wcslen (const wchar_t* __s)
+-{
+-    const wchar_t *__begin = __s;
+-    while (*__s)
+-        ++__s;
+-    return __s - __begin;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcslen;
+-
+-#  undef _RWSTD_NO_WCSLEN
+-#endif   // _RWSTD_NO_WCSLEN
+-
+-
+-#ifndef _RWSTD_NO_WCSNCAT
+-using ::wcsncat;
+-#elif !defined (_RWSTD_NO_WCSNCAT_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wcsncat (wchar_t*, const wchar_t*, size_t);
+-
+-namespace std {
+-
+-using ::wcsncat;
+-
+-#  undef _RWSTD_NO_WCSNCAT
+-#else
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wcsncat (wchar_t *__dst, const wchar_t *__src, size_t __n)
+-{
+-    wchar_t *__s = __dst;
+-    for (; *__s; ++__s);
+-    while (__n--)
+-        if (!(*__s++ = *__src++))
+-            return __dst;
+-    *__s = 0;
+-    return __dst;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcsncat;
+-
+-#  undef _RWSTD_NO_WCSNCAT
+-#endif   // _RWSTD_NO_WCSNCAT
+-
+-#ifndef _RWSTD_NO_WCSNCMP
+-using ::wcsncmp;
+-#elif !defined (_RWSTD_NO_WCSNCMP_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int wcsncmp (const wchar_t*, const wchar_t*, size_t);
+-
+-namespace std {
+-
+-using ::wcsncmp;
+-
+-#  undef _RWSTD_NO_WCSNCMP
+-#else
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline int wcsncmp (const wchar_t *__s1, const wchar_t *__s2, size_t __n)
+-{
+-    if (!__n)
+-        return 0;
+-    for (; --__n && *__s1 && *__s1 == *__s2; ++__s1, ++__s2);
+-    return int (*__s1 - *__s2);
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcsncmp;
+-
+-#  undef _RWSTD_NO_WCSNCMP
+-#endif   // _RWSTD_NO_WCSNCMP
+-
+-
+-#ifndef _RWSTD_NO_WCSNCPY
+-using ::wcsncpy;
+-#elif !defined (_RWSTD_NO_WCSNCPY_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wcsncpy (wchar_t*, const wchar_t*, size_t);
+-
+-namespace std {
+-
+-using ::wcsncpy;
+-
+-#  undef _RWSTD_NO_WCSNCPY
+-#else   // if defined (_RWSTD_NO_WCSNCPY)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wcsncpy (wchar_t *__dst, const wchar_t *__src, size_t __n)
+-{
+-    wchar_t *__s = __dst;
+-    for (; __n && (*__s++ = *__src++); --__n);
+-    while (__n--)
+-        *__s = 0;
+-    return __dst;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcsncpy;
+-
+-#  undef _RWSTD_NO_WCSNCPY
+-#endif   // _RWSTD_NO_WCSNCPY
+-
+-
+-#ifndef _RWSTD_NO_WCSPBRK
+-using ::wcspbrk;
+-#elif !defined (_RWSTD_NO_WCSPBRK_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wcspbrk (wchar_t*, const wchar_t*);
+-
+-inline const wchar_t* wcspbrk (const wchar_t *__s1, const wchar_t *__s2)
+-{
+-    return wcspbrk (_RWSTD_CONST_CAST (wchar_t*, __s1), __s2);
+-}
+-
+-namespace std {
+-
+-using ::wcspbrk;
+-
+-#  undef _RWSTD_NO_WCSPBRK
+-#endif   // _RWSTD_NO_WCSPBRK
+-
+-
+-#ifndef _RWSTD_NO_WCSRCHR
+-using ::wcsrchr;
+-#elif !defined (_RWSTD_NO_WCSRCHR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" const wchar_t* wcsrchr (const wchar_t*, wchar_t);
+-
+-wchar_t* wcsrchr (wchar_t *__s, wchar_t __c)
+-{
+-    return wcsrchr (_RWSTD_CONST_CAST (wchar_t*, __s), __c);
+-}
+-
+-namespace std {
+-
+-using ::wcsrchr;
+-
+-#  undef _RWSTD_NO_WCSRCHR
+-#else   // if defined (_RWSTD_NO_WCSRCHR)
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wcsrchr (wchar_t *__s, wchar_t __c)
+-{
+-    const wchar_t *__ss = __s;
+-    while (*__ss++);
+-    while (--__ss != __s && *__ss != __c);
+-    return *__ss == __c ? __ss : 0;
+-}
+-
+-}   // extern "C"
+-
+-inline const wchar_t* wcsrchr (const wchar_t *__s, wchar_t __c)
+-{
+-    return wcsrchr (_RWSTD_CONST_CAST (wchar_t*, __s), __c);
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcsrchr;
+-
+-#  undef _RWSTD_NO_WCSRCHR
+-#endif   // _RWSTD_NO_WCSRCHR
+-
+-
+-#ifndef _RWSTD_NO_WCSRTOMBS
+-using ::wcsrtombs;
+-#elif !defined (_RWSTD_NO_WCSRTOMBS_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t wcsrtombs (char*, const wchar_t**, size_t, _RWSTD_MBSTATE_T*);
+-
+-namespace std {
+-
+-using ::wcsrtombs;
+-
+-#  undef _RWSTD_NO_WCSRTOMBS
+-#endif   // _RWSTD_NO_WCSRTOMBS
+-
+-#ifndef _RWSTD_NO_WCSSPN
+-using ::wcsspn;
+-#else
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline size_t wcsspn (const wchar_t *__s1, const wchar_t *__s2)
+-{
+-    const wchar_t *__s = __s1;
+-    for (; *__s; ++__s) {
+-        for (const wchar_t *__ss = __s2; *__ss != *__s; ++__ss)
+-            if (!*__ss)
+-                return __s - __s1;
+-    }
+-    return __s - __s1;
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wcsspn;
+-
+-#  undef _RWSTD_NO_WCSSPN
+-#endif   // _RWSTD_NO_WCSSPN
+-
+-#ifndef _RWSTD_NO_WCSSTR
+-using ::wcsstr;
+-#elif !defined (_RWSTD_NO_WCSSTR_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wcsstr (wchar_t*, const wchar_t*);
+-
+-inline const wchar_t* wcsstr (const wchar_t *__s1, const wchar_t *__s2)
+-{
+-    return wcsstr (_RWSTD_CONST_CAST (wchar_t*, __s1), __s2);
+-}
+-
+-namespace std {
+-
+-using ::wcsstr;
+-
+-#  undef _RWSTD_NO_WCSSTR
+-#else
+-
+-#  ifdef _RWSTD_OS_HPUX
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wcsstr (wchar_t *__s1, const wchar_t *__s2)
+-{
+-    return wcswcs (__s1, __s2);
+-}
+-
+-}   // extern "C"
+-
+-inline wchar_t* wcsstr (wchar_t *__s1, const wchar_t *__s2)
+-{
+-    return wcswcs (__s1, __s2);
+-}
+-
+-namespace std {
+-
+-using ::wcsstr;
+-
+-#    undef _RWSTD_NO_WCSSTR
+-#  endif   // _RWSTD_OS_HPUX
+-
+-#endif   // _RWSTD_NO_WCSSTR
+-
+-#ifndef _RWSTD_NO_WCSTOD
+-using ::wcstod;
+-#elif !defined (_RWSTD_NO_WCSTOD_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" double wcstod (const wchar_t*, wchar_t**);
+-
+-namespace std {
+-
+-using ::wcstod;
+-
+-#  undef _RWSTD_NO_WCSTOD
+-#endif   // _RWSTD_NO_WCSTOD[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_WCSTOK
+-using ::wcstok;
+-#elif !defined (_RWSTD_NO_WCSTOK_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wcstok (wchar_t*, const wchar_t*, wchar_t**);
+-
+-namespace std {
+-
+-using ::wcstok;
+-
+-#  undef _RWSTD_NO_WCSTOK
+-#elif defined (_MSC_VER) && 1400 <= _MSC_VER
+-
+-}   // namespace std
+-
+-/* extern "C++" */ inline wchar_t*
+-wcstok (wchar_t* __s1, const wchar_t* __s2, wchar_t** __ptr)
+-{
+-    return wcstok_s (__s1, __s2, __ptr);
+-}
+-
+-namespace std {
+-
+-using ::wcstok;
+-
+-#  undef _RWSTD_NO_WCSTOK
+-#  undef _RWSTD_NO_WCSTOK_IN_LIBC
+-#endif   // _RWSTD_NO_WCSTOK[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_WCSTOL
+-using ::wcstol;
+-#elif !defined (_RWSTD_NO_WCSTOL_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" long wcstol (const wchar_t*, wchar_t**, int);
+-
+-namespace std {
+-
+-using ::wcstol;
+-
+-#  undef _RWSTD_NO_WCSTOL
+-#endif   // _RWSTD_NO_WCSTOL[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_WCSTOUL
+-using ::wcstoul;
+-#elif !defined (_RWSTD_NO_WCSTOUL_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" unsigned long wcstoul (const wchar_t*, wchar_t**, int);
+-
+-namespace std {
+-
+-using ::wcstoul;
+-
+-#  undef _RWSTD_NO_WCSTOUL
+-#endif   // _RWSTD_NO_WCSTOUL[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_WCSXFRM
+-using ::wcsxfrm;
+-#elif !defined (_RWSTD_NO_WCSXFRM_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" size_t wcsxfrm (wchar_t*, const wchar_t*, size_t);
+-
+-namespace std {
+-
+-using ::wcsxfrm;
+-
+-#  undef _RWSTD_NO_WCSXFRM
+-#endif   // _RWSTD_NO_WCSXFRM[_IN_LIBC]
+-
+-#ifndef _RWSTD_NO_WCTOB
+-using ::wctob;
+-#elif !defined (_RWSTD_NO_WCTOB_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int wctob (wint_t);
+-
+-namespace std {
+-
+-using ::wctob;
+-
+-#  undef _RWSTD_NO_WCTOB
+-#endif   // _RWSTD_NO_WCTOB
+-
+-
+-#ifndef _RWSTD_NO_WMEMCHR
+-using ::wmemchr;
+-#else
+-
+-}   // namespace std
+-
+-extern "C" {
+-
+-inline wchar_t* wmemchr (wchar_t* __s, wchar_t __c, size_t __n)
+-{
+-    for (; __n ; --__n, ++__s)
+-        if (*__s == __c)
+-            return __s;
+-    return 0;
+-}
+-
+-}   // extern "C"
+-
+-inline const wchar_t* wmemchr (const wchar_t* __s, wchar_t __c, size_t __n)
+-{
+-    return wmemchr (_RWSTD_CONST_CAST (wchar_t*, __s), __c, __n);
+-}
+-
+-namespace std {
+-
+-using ::wmemchr;
+-
+-#  undef _RWSTD_NO_WMEMCHR
+-#endif   // _RWSTD_NO_WMEMCHR
+-
+-
+-#ifndef _RWSTD_NO_WMEMCMP
+-using ::wmemcmp;
+-#elif !defined (_RWSTD_NO_WMEMCMP_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" int wmemcmp (const wchar_t*, const wchar_t*, size_t);
+-
+-namespace std {
+-
+-using ::wmemcmp;
+-
+-#else   // if _RWSTD_NO_WMEMCMP && _RWSTD_NO_WMEMCMP_IN_LIBC
+-
+-}   // namespace std
+-
+-namespace __rw {
+-
+-_RWSTD_EXPORT int
+-__rw_wmemcmp (const wchar_t*, const wchar_t*, size_t);
+-
+-}   // namespace __rw
+-
+-extern "C" {
+-
+-inline int
+-wmemcmp (const wchar_t *__s1, const wchar_t *__s2, size_t __n)
+-{
+-    return _RW::__rw_wmemcmp (__s1, __s2, __n);
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wmemcmp;
+-
+-#endif   // _RWSTD_NO_WMEMCMP
+-
+-#undef _RWSTD_NO_WMEMCMP
+-
+-
+-#ifndef _RWSTD_NO_WMEMCPY
+-using ::wmemcpy;
+-#elif !defined (_RWSTD_NO_WMEMCPY_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wmemcpy (wchar_t*, const wchar_t*, size_t);
+-
+-namespace std {
+-
+-using ::wmemcpy;
+-
+-#else   // if _RWSTD_NO_WMEMCPY && _RWSTD_NO_WMEMCPY_IN_LIBC
+-
+-}   // namespace std
+-
+-namespace __rw {
+-
+-_RWSTD_EXPORT wchar_t*
+-__rw_wmemcpy (wchar_t*, const wchar_t*, size_t);
+-
+-}   // namespace __rw
+-
+-
+-extern "C" {
+-
+-inline wchar_t*
+-wmemcpy (wchar_t *__dst, const wchar_t *__src, size_t __n)
+-{
+-    return _RW::__rw_wmemcpy (__dst, __src, __n);
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wmemcpy;
+-
+-#endif   // _RWSTD_NO_WMEMCPY
+-
+-#undef _RWSTD_NO_WMEMCPY
+-
+-
+-#ifndef _RWSTD_NO_WMEMMOVE
+-using ::wmemmove;
+-#elif !defined (_RWSTD_NO_WMEMMOVE_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wmemmove (wchar_t*, const wchar_t*, size_t);
+-
+-namespace std {
+-
+-using ::wmemmove;
+-
+-#else   // if _RWSTD_NO_WMEMMOVE && _RWSTD_NO_WMEMMOVE_IN_LIBC
+-
+-}   // namespace std
+-
+-namespace __rw {
+-
+-_RWSTD_EXPORT wchar_t*
+-__rw_wmemmove (wchar_t*, const wchar_t*, size_t);
+-
+-}   // namespace __rw
+-
+-extern "C" {
+-
+-inline wchar_t*
+-wmemmove (wchar_t *__dst, const wchar_t *__src, size_t __n)
+-{
+-    return _RW::__rw_wmemmove (__dst, __src, __n);
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wmemmove;
+-
+-#endif   // _RWSTD_NO_WMEMMOVE
+-
+-#undef _RWSTD_NO_WMEMMOVE
+-
+-
+-#ifndef _RWSTD_NO_WMEMSET
+-using ::wmemset;
+-#elif !defined (_RWSTD_NO_WMEMSET_IN_LIBC)
+-
+-}   // namespace std
+-
+-extern "C" wchar_t* wmemset (wchar_t*, wchar_t, size_t);
+-
+-namespace std {
+-
+-using ::wmemset;
+-
+-#else   // if _RWSTD_NO_WMEMSET && _RWSTD_NO_WMEMSET_IN_LIBC
+-
+-}   // namespace std
+-
+-namespace __rw {
+-
+-_RWSTD_EXPORT wchar_t*
+-__rw_wmemset (wchar_t*, wchar_t, size_t);
+-
+-}   // namespace __rw
+-
+-extern "C" {
+-
+-inline wchar_t*
+-wmemset (wchar_t* __s, wchar_t __c, size_t __n)
+-{
+-    return _RW::__rw_wmemset (__s, __c, __n);
+-}
+-
+-}   // extern "C"
+-
+-namespace std {
+-
+-using ::wmemset;
+-
+-#endif   // _RWSTD_NO_WMEMSET
+-
+-#undef _RWSTD_NO_WMEMSET
+-
+-}   // std
+-
+-#endif   // !_RWSTD_NO_USING_LIBC_IN_STD
++ * ident "@(#)cwchar.20.diff 1.1     09/08/21 SMI"
++ */
+ 
+-#endif   // !_RWSTD_NO_NAMESPACE && !_RWSTD_NO_HONOR_STD
++#ifndef _WCHAR_H
+ 
+-#endif   // _RWSTD_CWCHAR_INCLUDED
++#include <wchar.h>
+ 
+-#endif   // _RWSTD_NO_DEPRECATED_C_HEADERS
++#endif /* _WCHAR_H */
+ 
+-#endif   // _RWSTD_NO_PURE_C_HEADERS

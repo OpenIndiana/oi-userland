@@ -1,0 +1,42 @@
+--- stdcxx-4.2.1/src/tmpbuf.cpp	2008-04-24 17:25:19.000000000 -0700
++++ stdcxx-4.2.1/src/tmpbuf.cpp	2011-03-22 15:16:51.692183430 -0700
+@@ -40,31 +40,28 @@
+ typedef char _CharBuf [_RWSTD_TMPBUF_SIZE + !_RWSTD_TMPBUF_SIZE];
+ 
+ // use `aligned_buffer' to guarantee proper buffer alignment
+-static _RWSTD_THREAD __rw_aligned_buffer<_CharBuf>
+-__rw_buffer;
+-
+-static _RWSTD_THREAD unsigned long
+-__rw_buffer_busy /* = 0 */;   // > 0 when buffer in use
++static _RWSTD_THREAD __rw_aligned_buffer<_CharBuf> __rw_buffer;
+ 
++// > 0 when buffer in use
++static _RWSTD_THREAD unsigned long __rw_buffer_busy = 0UL;
+ 
+ // extern "C" to avoid binary incompatibility due to changes
+ // in function arguments (e.g., their sign)
+ extern "C" {
+ 
+-
+ // used by std::get_temporary_buffer<>()
+ _RWSTD_EXPORT _RWSTD_SIZE_T
+ __rw_tmpbuf (void **pptr, _RWSTD_PTRDIFF_T nelems, _RWSTD_SIZE_T size)
+ {
+-    _RWSTD_ASSERT (0 != pptr);
+-    _RWSTD_ASSERT (0 != size);
++    if ((0UL == pptr) || (0 == size))
++	return 0;
+ 
+     // detect overflow and fail
+     _RWSTD_SIZE_T nbytes = nelems * size;
+ 
+-    if (   nelems < 0
+-        || nbytes / size != _RWSTD_STATIC_CAST (_RWSTD_SIZE_T, nelems)
+-        || nelems && nbytes / nelems != size) {
++    if (   (nelems < 0)
++        || ((nbytes / size) != _RWSTD_STATIC_CAST (_RWSTD_SIZE_T, nelems))
++        || ((nelems > 0) && ((nbytes / nelems) != size))) {
+         *pptr = 0;
+         return 0;
+     }

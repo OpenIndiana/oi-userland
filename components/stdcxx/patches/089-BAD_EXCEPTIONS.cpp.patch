@@ -1,0 +1,965 @@
+--- stdcxx-4.2.1/etc/config/src/BAD_ALLOC_COPY_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_ALLOC_COPY_CTOR.cpp	2011-04-26 11:24:02.404959583 -0700
+@@ -28,6 +28,17 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++#include <new>
++
++int main (int argc, char *argv[])
++{
++    std::bad_alloc ba0;
++    std::bad_alloc ba1 (ba0);
++    return 0;
++}
++
++#else
+ #define TEST_COPY_CTOR
+ #define main      test_bad_alloc_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+@@ -37,3 +48,5 @@
+ {
+     return test_bad_alloc_copy_ctor (argc, argv);
+ }
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_ALLOC_DTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_ALLOC_DTOR.cpp	2011-04-26 13:53:46.818422773 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_alloc dtor
++// checking for bad_alloc default ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,12 +28,29 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_DTOR
+-#define main test_bad_alloc_dtor
++#if defined(__SUNPRO_CC)
++
++#include <new>
++
++int main (int argc, char *argv[])
++{
++    std::bad_alloc* ba = new std::bad_alloc();
++    ba->~bad_alloc();
++
++    return 0;
++}
++
++#else
++
++#define TEST_DEFAULT_CTOR
++#define main test_bad_alloc_default_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_alloc_dtor (argc, argv);
++    return test_bad_alloc_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_ALLOC_DEFAULT_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_ALLOC_DEFAULT_CTOR.cpp	2011-04-26 11:24:02.405491280 -0700
+@@ -28,6 +28,19 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++
++int main (int argc, char *argv[])
++{
++    std::bad_alloc ba;
++
++    return 0;
++}
++
++#else
++
+ #define TEST_DEFAULT_CTOR
+ #define main test_bad_alloc_default_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+@@ -37,3 +50,6 @@
+ {
+     return test_bad_alloc_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_ALLOC_WHAT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_ALLOC_WHAT.cpp	2011-04-26 11:24:02.405744059 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_alloc::what()
++// checking for bad_alloc default ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,12 +28,28 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_WHAT
+-#define main test_bad_alloc_what
++#if defined(__SUNPRO_CC)
++
++#include <new>
++
++int main (int argc, char *argv[])
++{
++    std::bad_alloc ba;
++    const char* s = ba.what();
++    return 0;
++}
++
++#else
++
++#define TEST_DEFAULT_CTOR
++#define main test_bad_alloc_default_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_alloc_what (argc, argv);
++    return test_bad_alloc_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_ALLOC_ASSIGNMENT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_ALLOC_ASSIGNMENT.cpp	2011-04-26 11:24:02.406173871 -0700
+@@ -51,6 +51,22 @@
+ //   EXCEPTION_DEFAULT_CTOR.cpp
+ //   EXCEPTION_DTOR.cpp
+ 
++#if defined(__SUNPRO_CC)
++#include <new>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_alloc ba0;
++    std::bad_alloc ba1;
++
++    ba1 = ba0;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #include "config.h"
+ 
+ 
+@@ -129,7 +145,6 @@
+ 
+ }   // namespace std
+ 
+-
+ // use virtual inheritance here to prevent aggressive optimizers
+ // (like VisualAge C++) from optimizing the base class dtor away
+ struct Base0: virtual std::bad_alloc
+@@ -498,3 +513,6 @@
+ 
+     return Base0::what ();
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_CAST_ASSIGNMENT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_CAST_ASSIGNMENT.cpp	2011-04-26 13:35:36.243256145 -0700
+@@ -28,6 +28,24 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_cast bc0;
++    std::bad_cast bc1;
++
++    bc1 = bc0;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_ASSIGNMENT
+ #define bad_alloc bad_cast
+ #define main      test_bad_cast_assignment
+@@ -38,3 +56,6 @@
+ {
+     return test_bad_cast_assignment (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_CAST_COPY_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_CAST_COPY_CTOR.cpp	2011-04-26 13:37:16.280528382 -0700
+@@ -28,6 +28,22 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_cast bc0;
++    std::bad_cast bc1 (bc0);
++
++    return 0;
++}
++
++#else // ! __SUNPRO_CC
++
+ #define TEST_COPY_CTOR
+ #define bad_alloc bad_cast
+ #define main      test_bad_cast_copy_ctor
+@@ -38,3 +54,6 @@
+ {
+     return test_bad_cast_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_CAST_DEFAULT_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_CAST_DEFAULT_CTOR.cpp	2011-04-26 13:38:33.701096561 -0700
+@@ -28,6 +28,21 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_cast bc0;
++
++    return 0;
++}
++
++#else
++
+ #define TEST_DEFAULT_CTOR
+ #define bad_alloc bad_cast
+ #define main      test_bad_cast_default_ctor
+@@ -38,3 +53,6 @@
+ {
+     return test_bad_cast_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_CAST_DTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_CAST_DTOR.cpp	2011-04-26 13:52:55.955239832 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_cast dtor
++// checking for bad_cast default ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,32 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_DTOR
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_cast* bc0 = new std::bad_cast();
++    bc0->~bad_cast();
++
++    return 0;
++}
++
++#else
++
++#define TEST_DEFAULT_CTOR
+ #define bad_alloc bad_cast
+-#define main      test_bad_cast_dtor
++#define main      test_bad_cast_default_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_cast_dtor (argc, argv);
++    return test_bad_cast_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_CAST_WHAT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_CAST_WHAT.cpp	2011-04-26 13:55:15.949597605 -0700
+@@ -28,6 +28,22 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_cast bc;
++    const char* c = bc.what();
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_WHAT
+ #define bad_alloc bad_cast
+ #define main      test_bad_cast_what
+@@ -38,3 +54,6 @@
+ {
+     return test_bad_cast_what (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_ASSIGNMENT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_ASSIGNMENT.cpp	2011-04-26 14:03:47.469339894 -0700
+@@ -28,6 +28,25 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_exception be0;
++    std::bad_exception be1;
++
++    be1 = be0;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_ASSIGNMENT
+ #define bad_alloc bad_exception
+ #define main      test_bad_exception_assignment
+@@ -38,3 +57,6 @@
+ {
+     return test_bad_exception_assignment (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_COPY_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_COPY_CTOR.cpp	2011-04-26 14:05:23.218099844 -0700
+@@ -28,6 +28,23 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_exception be0;
++    std::bad_exception be1 (be0);
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_COPY_CTOR
+ #define bad_alloc bad_exception
+ #define main      test_bad_exception_copy_ctor
+@@ -38,3 +55,6 @@
+ {
+     return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_DEFAULT_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_DEFAULT_CTOR.cpp	2011-04-26 14:08:34.147321554 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_exception default ctor
++// checking for bad_exception copy ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,32 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_DEFAULT_CTOR
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_exception be;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_COPY_CTOR
+ #define bad_alloc bad_exception
+-#define main      test_bad_exception_default_ctor
++#define main      test_bad_exception_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_exception_default_ctor (argc, argv);
++    return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_DTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_DTOR.cpp	2011-04-26 14:07:02.939331771 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_exception dtor
++// checking for bad_exception copy ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,33 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_DTOR
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_exception* be = new std::bad_exception();
++    be->~bad_exception();
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_COPY_CTOR
+ #define bad_alloc bad_exception
+-#define main      test_bad_exception_dtor
++#define main      test_bad_exception_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_exception_dtor (argc, argv);
++    return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_WHAT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_EXCEPTION_WHAT.cpp	2011-04-26 14:08:24.468194595 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_exception::what()
++// checking for bad_exception copy ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,33 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_WHAT
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_exception be;
++    const char* c = be.what();
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_COPY_CTOR
+ #define bad_alloc bad_exception
+-#define main      test_bad_exception_what
++#define main      test_bad_exception_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_exception_what (argc, argv);
++    return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_TYPEID_ASSIGNMENT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_TYPEID_ASSIGNMENT.cpp	2011-04-26 13:56:48.373631557 -0700
+@@ -28,6 +28,24 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_typeid bti0;
++    std::bad_typeid bti1;
++
++    bti1 = bti0;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_ASSIGNMENT
+ #define bad_alloc bad_typeid
+ #define main      test_bad_typeid_assignment
+@@ -38,3 +56,6 @@
+ {
+     return test_bad_typeid_assignment (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_TYPEID_COPY_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_TYPEID_COPY_CTOR.cpp	2011-04-26 13:58:09.815296500 -0700
+@@ -28,6 +28,22 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_typeid bti0;
++    std::bad_typeid bti1 (bti0);
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_COPY_CTOR
+ #define bad_alloc bad_typeid
+ #define main      test_bad_typeid_copy_ctor
+@@ -38,3 +54,6 @@
+ {
+     return test_bad_typeid_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_TYPEID_DEFAULT_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_TYPEID_DEFAULT_CTOR.cpp	2011-04-26 13:59:30.736288536 -0700
+@@ -28,6 +28,21 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_typeid bti0;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_DEFAULT_CTOR
+ #define bad_alloc bad_typeid
+ #define main      test_bad_typeid_default_ctor
+@@ -38,3 +53,6 @@
+ {
+     return test_bad_typeid_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_TYPEID_DTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_TYPEID_DTOR.cpp	2011-04-26 14:00:32.735809384 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_typeid dtor
++// checking for bad_typeid default ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,32 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_DTOR
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_typeid* bti0 = new std::bad_typeid();
++    bti0->~bad_typeid();
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_DEFAULT_CTOR
+ #define bad_alloc bad_typeid
+-#define main      test_bad_typeid_dtor
++#define main      test_bad_typeid_default_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_typeid_dtor (argc, argv);
++    return test_bad_typeid_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/BAD_TYPEID_WHAT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/BAD_TYPEID_WHAT.cpp	2011-04-26 14:01:21.301137727 -0700
+@@ -1,4 +1,4 @@
+-// checking for bad_typeid::what()
++// checking for bad_typeid default ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,32 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_WHAT
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++
++int
++main(int argc, char* argv[])
++{
++    std::bad_typeid bti0;
++    const char* c = bti0.what();
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_DEFAULT_CTOR
+ #define bad_alloc bad_typeid
+-#define main      test_bad_typeid_what
++#define main      test_bad_typeid_default_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_bad_typeid_what (argc, argv);
++    return test_bad_typeid_default_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/EXCEPTION_ASSIGNMENT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/EXCEPTION_ASSIGNMENT.cpp	2011-04-26 14:18:44.217140388 -0700
+@@ -1,4 +1,4 @@
+-// checking for exception assignment operator
++// checking for bad_exception assignment operator
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,35 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined(__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::exception e0;
++    std::exception e1;
++
++    e1 = e0;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_ASSIGNMENT
+-#define bad_alloc exception
+-#define main      test_exception_assignment
++#define bad_alloc bad_exception
++#define main      test_bad_exception_assignment
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_exception_assignment (argc, argv);
++    return test_bad_exception_assignment (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/EXCEPTION_COPY_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/EXCEPTION_COPY_CTOR.cpp	2011-04-26 14:19:21.672904649 -0700
+@@ -1,4 +1,4 @@
+-// checking for exception copy ctor
++// checking for bad_exception copy ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,33 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::exception e0;
++    std::exception e1 (e0);
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
+ #define TEST_COPY_CTOR
+-#define bad_alloc exception
+-#define main      test_exception_copy_ctor
++#define bad_alloc bad_exception
++#define main      test_bad_exception_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_exception_copy_ctor (argc, argv);
++    return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/EXCEPTION_DEFAULT_CTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/EXCEPTION_DEFAULT_CTOR.cpp	2011-04-26 14:20:19.404241323 -0700
+@@ -1,4 +1,4 @@
+-// checking for exception default ctor
++// checking for bad_exception copy ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,32 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_DEFAULT_CTOR
+-#define bad_alloc exception
+-#define main      test_exception_default_ctor
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::exception e;
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_COPY_CTOR
++#define bad_alloc bad_exception
++#define main      test_bad_exception_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_exception_default_ctor (argc, argv);
++    return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/EXCEPTION_DTOR.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/EXCEPTION_DTOR.cpp	2011-04-26 14:21:04.960910465 -0700
+@@ -1,4 +1,4 @@
+-// checking for exception dtor
++// checking for bad_exception copy ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,33 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_DTOR
+-#define bad_alloc exception
+-#define main      test_exception_dtor
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::exception* e = new std::exception();
++    e->~exception();
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_COPY_CTOR
++#define bad_alloc bad_exception
++#define main      test_bad_exception_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_exception_dtor (argc, argv);
++    return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++
+--- stdcxx-4.2.1/etc/config/src/EXCEPTION_WHAT.cpp	2008-04-24 17:25:44.000000000 -0700
++++ stdcxx-4.2.1/etc/config/src/EXCEPTION_WHAT.cpp	2011-04-26 14:21:45.873861528 -0700
+@@ -1,4 +1,4 @@
+-// checking for exception::what()
++// checking for bad_exception copy ctor
+ 
+ /***************************************************************************
+  *
+@@ -28,13 +28,33 @@
+ #  endif   // _RWSTD_NO_RUNTIME_IN_STD
+ #endif   // 0
+ 
+-#define TEST_WHAT
+-#define bad_alloc exception
+-#define main      test_exception_what
++#if defined (__SUNPRO_CC)
++
++#include <new>
++#include <typeinfo>
++#include <exception>
++
++int
++main(int argc, char* argv[])
++{
++    std::exception e;
++    const char* c = e.what();
++
++    return 0;
++}
++
++#else // !__SUNPRO_CC
++
++#define TEST_COPY_CTOR
++#define bad_alloc bad_exception
++#define main      test_bad_exception_copy_ctor
+ #include "BAD_ALLOC_ASSIGNMENT.cpp"
+ #undef main
+ 
+ int main (int argc, char *argv[])
+ {
+-    return test_exception_what (argc, argv);
++    return test_bad_exception_copy_ctor (argc, argv);
+ }
++
++#endif // __SUNPRO_CC
++

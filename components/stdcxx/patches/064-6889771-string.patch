@@ -1,0 +1,20 @@
+--- stdcxx-4.2.1/include/string	2008-04-24 20:23:57.000000000 -0400
++++ stdcxx-4.2.1/include/string	2011-01-07 07:47:19.609688831 -0500
+@@ -980,10 +980,16 @@
+ basic_string<_CharT, _Traits, _Allocator>::
+ max_size () const
+ {
+-    const size_type __max_chars = allocator_type::max_size ();
+     const size_type __ref_size  =
+         1U + sizeof (_C_string_ref_type) / sizeof (_CharT);
+ 
++	// - 20.1.5, t32 "the largest value that can meaningfully
++	// be passed to X::allocate()"
++	// - 23.1, t65 "size() of the largest possible container"
++	// - 21.3.3., p3 "The maximum size of the string -- see 23.1, t65"
++	// - see also LWG Core Issue 197
++	// - resolved to compatibility with libCstd
++    const size_type __max_chars = _RWSTD_SIZE_MAX;
+     return __max_chars < __ref_size ? 0 : __max_chars - __ref_size;
+ }
+ 

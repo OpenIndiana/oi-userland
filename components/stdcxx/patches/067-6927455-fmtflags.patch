@@ -1,0 +1,254 @@
+--- stdcxx-4.2.1/include/rw/_bitmask.h	2008-04-24 20:23:43.000000000 -0400
++++ stdcxx-4.2.1/include/rw/_bitmask.h	2011-01-10 13:03:01.577695057 -0500
+@@ -43,36 +43,55 @@
+ #  define _RWSTD_DEFINE_BITMASK_OPERATORS(Bitmask)                 \
+                                                                    \
+     inline Bitmask& operator&= (Bitmask &__lhs, Bitmask __rhs) {   \
+-        return __lhs = Bitmask (long (__lhs) & __rhs);             \
++        __lhs =                                                    \
++		static_cast<Bitmask> (                              \
++			(static_cast<unsigned int> (__lhs) &        \
++			static_cast<unsigned int> (__rhs)));        \
++	return __lhs;                                               \
+     }                                                              \
+                                                                    \
+     inline Bitmask& operator|= (Bitmask &__lhs, Bitmask __rhs) {   \
+-        return __lhs = Bitmask (long (__lhs) | __rhs);             \
++        __lhs =                                                    \
++		static_cast<Bitmask> (                              \
++			(static_cast<unsigned int> (__lhs) |        \
++			static_cast<unsigned int> (__rhs)));        \
++	return __lhs;                                               \
+     }                                                              \
+                                                                    \
+     inline Bitmask& operator^= (Bitmask &__lhs, Bitmask __rhs) {   \
+-        return __lhs = Bitmask (long (__lhs) ^ __rhs);             \
++        __lhs =                                                    \
++		static_cast<Bitmask> (                              \
++			(static_cast<unsigned int> (__lhs) ^        \
++			static_cast<unsigned int> (__rhs)));        \
++	return __lhs;                                               \
+     }                                                              \
+                                                                    \
+     inline Bitmask operator& (Bitmask __lhs, Bitmask __rhs) {      \
+-        return __lhs &= __rhs;                                     \
++	unsigned int __ret = static_cast<unsigned int> (__lhs);     \
++	__ret &= static_cast<unsigned int> (__rhs);                 \
++	return static_cast<Bitmask> (__ret);                        \
+     }                                                              \
+                                                                    \
+     inline Bitmask operator| (Bitmask __lhs, Bitmask __rhs) {      \
+-        return __lhs |= __rhs;                                     \
++	unsigned int __ret = static_cast<unsigned int> (__lhs);     \
++	__ret |= static_cast<unsigned int> (__rhs);                 \
++	return static_cast<Bitmask> (__ret);                        \
+     }                                                              \
+                                                                    \
+     inline Bitmask operator^ (Bitmask __lhs, Bitmask __rhs) {      \
+-        return __lhs ^= __rhs;                                     \
++	unsigned int __ret = static_cast<unsigned int> (__lhs);     \
++	__ret ^= static_cast<unsigned int> (__rhs);                 \
++	return static_cast<Bitmask> (__ret);                        \
+     }                                                              \
+                                                                    \
+     inline Bitmask operator~ (Bitmask __rhs) {                     \
+-        return Bitmask (~long (__rhs));                            \
++        return static_cast<Bitmask> (                              \
++			(~static_cast<unsigned int> (__rhs)));      \
+     }                                                              \
+     typedef void __rw_unused_typedef
+ 
+ #else   // if defined (_RWSTD_NO_STATIC_CONST_MEMBER_INIT)
+-#  define _RWSTD_BITMASK_ENUM(ignore)   int
++#  define _RWSTD_BITMASK_ENUM(ignore)   unsigned int
+ 
+ #  define _RWSTD_DEFINE_BITMASK_OPERATORS(ignore)   \
+    typedef void __rw_unused_typedef
+#===========================================================================#
+--- stdcxx-4.2.1/include/rw/_iosbase.h	2008-04-24 20:23:43.000000000 -0400
++++ stdcxx-4.2.1/include/rw/_iosbase.h	2011-02-02 11:02:12.120827674 -0500
+@@ -51,8 +51,9 @@
+ _RWSTD_NAMESPACE (std) {
+ 
+ 
+-struct _RWSTD_EXPORT ios_base: _RW::__rw_synchronized
++class _RWSTD_EXPORT ios_base : public _RW::__rw_synchronized
+ {
++public:
+     // 27.4.2.1.1
+     typedef _RW::__rw_failure failure;
+ 
+@@ -218,7 +219,8 @@
+ #endif // _RWSTD_NO_DEPRECATED    
+     
+     // 27.4.2.1.6
+-    struct _RWSTD_EXPORT Init {
++    class _RWSTD_EXPORT Init {
++	 public:
+         Init ();
+ 
+         ~Init ();
+@@ -226,7 +228,7 @@
+ 
+     // 27.4.2.2, p1
+     fmtflags flags () const {
+-        return fmtflags (_C_fmtfl);
++        return static_cast<fmtflags> (_C_fmtfl);
+     }
+ 
+     // 27.4.2.2, p2
+@@ -239,12 +241,14 @@
+ 
+     // 27.4.2.2, p6
+     fmtflags setf (fmtflags __f, fmtflags __mask) {
+-        return flags (flags () & ~__mask | __f & __mask);
++	fmtflags __ret = flags();
++       (void) flags (flags () & ~__mask | __f & __mask);
++	return __ret;
+     }
+ 
+     // 27.4.2.2, p8
+     void unsetf (fmtflags __f) {
+-        flags (flags () & ~__f);
++	_C_fmtfl &= ~(static_cast<unsigned int> (__f));
+     }
+ 
+     // 27.4.2.2, p9
+@@ -335,7 +339,7 @@
+     void              *_C_rdbuf;    // pointer to the associated stream buffer
+     _RWSTD_STREAMSIZE  _C_prec;     // current precision
+     _RWSTD_STREAMSIZE  _C_wide;     // current width
+-    unsigned           _C_fmtfl;    // formatting flags
++    unsigned int       _C_fmtfl;    // formatting flags
+     unsigned char      _C_state;    // stream state
+     unsigned char      _C_except;   // active exceptions
+     
+@@ -364,7 +368,7 @@
+     _C_usr_data *_C_usr;      // user data (iword, pword, callbacks)
+     locale       _C_loc;      // locale associated with stream
+ 
+-    friend struct _RWSTD_EXPORT Init;
++    friend class _RWSTD_EXPORT Init;
+ 
+     // working around an EDG eccp 3.2 and prior bug (see PR #29526)
+     friend struct _C_usr_data;
+#===========================================================================#
+--- stdcxx-4.2.1/include/fstream	2008-04-24 20:23:57.000000000 -0400
++++ stdcxx-4.2.1/include/fstream	2011-01-10 12:06:08.239752260 -0500
+@@ -121,7 +121,7 @@
+ private:
+ 
+     // g++ 2.95 error: `std::ios_base::Init' does not declare a template type
+-    friend struct ios_base::Init;
++    friend class ios_base::Init;
+ 
+ #endif   // _RWSTD_NO_EXT_FILEBUF && !_RWSTD_NO_STATIC_IOSTREAM_INIT
+ 
+#===========================================================================#
+--- stdcxx-4.2.1/include/iomanip	2008-04-24 20:23:57.000000000 -0400
++++ stdcxx-4.2.1/include/iomanip	2011-01-10 19:42:44.215940171 -0500
+@@ -85,11 +85,12 @@
+ 
+ #endif   // _RWSTD_NO_EXT_SETBASE
+ 
+-        const unsigned __ifl =
+-              __strm.flags () & ~_STD::ios_base::basefield
+-            & ~(   _RWSTD_STATIC_CAST (unsigned, _RWSTD_IOS_BASEMASK)
+-                << _RWSTD_IOS_BASEOFF)
+-            | __base << _RWSTD_IOS_BASEOFF;
++        unsigned int __ifl = __strm.flags ();
++	__ifl &= ~_STD::ios_base::basefield;
++	__ifl &= ~(_RWSTD_STATIC_CAST (unsigned int,
++		_RWSTD_IOS_BASEMASK << _RWSTD_IOS_BASEOFF));
++	__ifl |= _RWSTD_STATIC_CAST (unsigned int,
++		__base << _RWSTD_IOS_BASEOFF);
+ 
+         __strm.flags (_STD::ios_base::fmtflags (__ifl));
+     }
+#===========================================================================#
+--- stdcxx-4.2.1/src/ios.cpp	2011-01-09 21:37:11.214689576 -0500
++++ stdcxx-4.2.1/src/ios.cpp	2011-01-10 15:21:29.777939998 -0500
+@@ -61,7 +61,14 @@
+ 
+ 
+ ios_base::ios_base ()
+-    : _C_usr (0)
++    : _C_rdbuf(0UL),
++	_C_prec(0U),
++	_C_wide(0U),
++	_C_fmtfl(0U),
++	_C_state('\0'),
++	_C_except('\0'),
++	_C_usr(0UL),
++	_C_loc(std::locale())
+ {
+     // outlined to hide implementation details
+     // no-op
+@@ -112,28 +119,28 @@
+ 
+ ios_base::fmtflags ios_base::flags (fmtflags fl)
+ {
+-    const unsigned mask =
+-        ~(unsigned (_RWSTD_IOS_BASEMASK) << _RWSTD_IOS_BASEOFF);
++    unsigned int mask =
++	~(static_cast<unsigned int> ((_RWSTD_IOS_BASEMASK << _RWSTD_IOS_BASEOFF)));
+ 
+-    unsigned ifl = unsigned (fl);
++    unsigned int ifl = static_cast<unsigned int> (fl);
+ 
+-    switch (fl & basefield) {
++    switch (static_cast<unsigned int> (fl & static_cast<unsigned int> (basefield))) {
+         // if basefield is set, clear the base mask and set
+         // the numeric base bits according to the basefield
+-    case oct:
+-        ifl = ifl &  mask | 8U << _RWSTD_IOS_BASEOFF;
++	case static_cast<unsigned int> (ios_base::oct):
++        ifl = static_cast<unsigned int> ((ifl & mask) | (8U << _RWSTD_IOS_BASEOFF));
+         break;
+ 
+-    case dec:
+-        ifl = ifl & mask | 10U << _RWSTD_IOS_BASEOFF;
++	case static_cast<unsigned int> (ios_base::dec):
++        ifl = static_cast<unsigned int> ((ifl & mask) | (10U << _RWSTD_IOS_BASEOFF));
+         break;
+ 
+-    case hex:
+-        ifl = ifl & mask | 16U << _RWSTD_IOS_BASEOFF;
++	case static_cast<unsigned int> (ios_base::hex):
++        ifl = static_cast<unsigned int> ((ifl & mask) | (16U << _RWSTD_IOS_BASEOFF));
+         break;
+ 
+     case _RWSTD_IOS_BIN:
+-        ifl = ifl & mask | 2U << _RWSTD_IOS_BASEOFF;
++        ifl = static_cast<unsigned int> ((ifl & mask) | (2U << _RWSTD_IOS_BASEOFF));
+         break;
+ 
+     case 0:
+@@ -141,20 +148,21 @@
+         // set the basefield accordingly, making sure that when
+         // numeric base bits are set to 10, dec is left alone
+         // (necessary for autodected parsing to work correctly)
+-        switch (ifl >> _RWSTD_IOS_BASEOFF) {
+-        case  0: ifl |= 10U << _RWSTD_IOS_BASEOFF; break;
+-        case  2: ifl |= _RWSTD_IOS_BIN; break;
+-        case  8: ifl |= oct; break;
++        switch (static_cast<unsigned int> (ifl >> _RWSTD_IOS_BASEOFF)) {
++        case  0: ifl |= static_cast<unsigned int>  (10U << _RWSTD_IOS_BASEOFF); break;
++        case  2: ifl |= static_cast<unsigned int> (_RWSTD_IOS_BIN); break;
++        case  8: ifl |= static_cast<unsigned int> (oct); break;
+         case 10: /* no-op */ break;
+-        case 16: ifl |= hex; break;
++        case 16: ifl |= static_cast<unsigned int> (hex); break;
+         }
+         break;
+ 
+     default:
+-        ifl |= 10U << _RWSTD_IOS_BASEOFF;
++        ifl |= static_cast<unsigned int> (10U << _RWSTD_IOS_BASEOFF);
+     }
+ 
+-    return fmtflags (_RWSTD_ATOMIC_IO_SWAP (_C_fmtfl, ifl, _C_mutex));
++    return static_cast<fmtflags>
++		(_RWSTD_ATOMIC_IO_SWAP (_C_fmtfl, ifl, _C_mutex));
+ }
+ 

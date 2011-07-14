@@ -1,0 +1,26 @@
+--- stdcxx-4.2.1/include/rw/_stringio.cc	2008-04-24 20:23:43.000000000 -0400
++++ stdcxx-4.2.1/include/rw/_stringio.cc	2011-01-02 22:23:53.932233352 -0500
+@@ -80,6 +80,23 @@
+                     // find the delimeter in the squence if it exists, or
+                     // get pointer to end of sequence
+                     const _CharT* __pdel = __gptr;
++
++                   // if the first _CharT* is actually a delimiter or eof
++					// bail out of the outer loop and set ios::failbit or
++					// ios::eofbit
++					const _TYPENAME _Traits::int_type
++                        __c = _Traits::to_int_type(*__pdel);
++
++					if (_Traits::eq_int_type (__c, _Traits::eof ())) {
++                        __err = ios_base::eofbit;
++                        break;
++					}
++                    
++					if (__ctp.is (__ctp.space, *__pdel))
++                        break;
++                    
++					++__pdel;
++
+                     for (/**/; __pdel != __egptr; ++__pdel) {
+ 
+                         const _TYPENAME _Traits::int_type

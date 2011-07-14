@@ -1,0 +1,130 @@
+--- stdcxx-4.2.1/include/rw/_mutex.h	2008-04-24 20:23:43.000000000 -0400
++++ stdcxx-4.2.1/include/rw/_mutex.h	2009-07-29 17:08:47.000000000 -0400
+@@ -316,6 +316,10 @@
+     }
+ };                            
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(8)
++#  pragma align 8(__rw_mutex_base)
++#endif
+ 
+ // POD type with no user-defined ctor or dtor facilitates static
+ // initialization of mutex objects with static storage duration
+@@ -354,6 +358,9 @@
+ 
+ #endif   // _RWSTD_NO_STATIC_MUTEX_INIT
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(_C_mutex)
++#endif
+     _RWSTD_MUTEX_T _C_mutex;   // the real thing
+ };
+ 
+@@ -367,6 +374,10 @@
+ }
+ 
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(__rw_mutex)
++#endif
++
+ // non-POD type, always initializes mutex data member via a function call
+ class _RWSTD_EXPORT __rw_mutex: public __rw_mutex_base
+ {
+@@ -391,6 +402,10 @@
+ 
+ #ifndef _RWSTD_NO_STATIC_MUTEX_INIT
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(__rw_static_mutex)
++#endif
++
+ // helper factory class - static member is guranteed to be constructed
+ // during static initialization; objects of this POD class are not
+ // destroyed during program termination (important to allow them
+@@ -398,6 +413,9 @@
+ template <class _TypeT>
+ struct __rw_static_mutex
+ {
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(_C_mutex)
++#endif
+     static __rw_mutex_base _C_mutex;
+ };
+ 
+@@ -485,17 +503,34 @@
+ #endif   // _INLINE_WITH_STATICS
+ 
+ {
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(__mutex_buf_t)
++#endif
++
+     // allocate properly aligned memory for static mutex (necessary
+     // to prevent static local mutex from being destroyed during
+     // program termination)
+     union __mutex_buf_t {
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++        unsigned long long __pad;   // force alignment (must be first)
++        unsigned char   __buf [sizeof (__rw_mutex_base)];
++#else
+         long double __pad;   // force alignment (must be first)
+         char        __buf [sizeof (__rw_mutex_base)];
++#endif
+     };
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(__mutex_buf)
++#endif
++
+     // using a named union to work around a bug in HP aCC 3.14.10 (JAGad03246)
+     static __mutex_buf_t __mutex_buf;
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(__mutex)
++#endif
++
+     // initialize mutex reference to refer to the static buffer space
+     __rw_mutex_base &__mutex =
+         _RWSTD_REINTERPRET_CAST (__rw_mutex_base&, __mutex_buf);
+@@ -541,6 +576,10 @@
+ #undef _RWSTD_MUTEX_T
+ 
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(__rw_guard)
++#endif
++
+ // allows safe use of a mutex in the presence of exceptions
+ class __rw_guard
+ {
+@@ -576,6 +615,9 @@
+     }
+ };
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma align 8(__rw_synchronized)
++#endif
+ 
+ // base class for obects required to guarantee some degree of MT safety
+ struct _RWSTD_EXPORT __rw_synchronized
+@@ -596,7 +638,6 @@
+     }
+ };
+ 
+-
+ // helper functions for atomic value [in|de]crement and exchange
+ // the functions are atomic with respect to each other as long as
+ // they are passed the same mutex by the callers
+@@ -670,6 +711,10 @@
+                                  __rw_get_static_mutex ((_TypeT*)0));
+ }
+ 
++#if defined(_RWSTD_STRICT_SPARCV8_MUTEX_ALIGNMENT)
++#  pragma pack(0)
++#endif
++
+ /********************** no atomic ops ********************************/
+ 
+ #if defined (_RWSTD_NO_ATOMIC_OPS)

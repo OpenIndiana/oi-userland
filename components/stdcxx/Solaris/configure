@@ -1,0 +1,361 @@
+#!/bin/bash
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+#
+unset MAKEFLAGS
+unset MAKELEVEL
+
+export BUILDTYPE=""
+export BUILDMODE=""
+export CONFIG="sunpro.config"
+export TOPLEVELDIR=""
+export BUILDDIR=""
+export LDSOFLAGS="${LDFLAGS}"
+export CXXOPTS="${CXXFLAGS}"
+export LDOPTS="${LDFLAGS}"
+export LD="${CXX} ${CXXFLAGS} ${LDFLAGS}"
+
+UNKNOWN_ARG=yes
+PRINT_HELP=no
+
+check_args() {
+    while [ "$#" -gt 0 ] ; do
+        UNKNOWN_ARG=no
+        case "$1" in
+            -m32)
+            BUILDTYPE="8d"
+	    BUILDMODE="shared,pthreads"
+            ;;
+            -m64)
+            BUILDTYPE="8D"
+	    BUILDMODE="shared,pthreads"
+            ;;
+            -topdir=*)
+            TOPLEVELDIR=`echo $1 | sed "s,^-topdir=\(.*\),\1,"`
+            ;;
+            -builddir=*)
+            BUILDDIR=`echo $1 | sed "s,^-builddir=\(.*\),\1,"`
+            ;;
+            *)
+            UNKNOWN_ARG=yes
+            ;;
+        esac
+
+        if [ "$UNKNOWN_ARG" = "yes" ] ; then
+            echo "$1: Invalid argument"
+            PRINT_HELP=yes
+            shift
+            continue
+        fi
+        shift
+    done
+
+    export BUILDTYPE BUILDMODE TOPLEVELDIR
+    export BUILDDIR="${TOPLEVELDIR}/build"
+    export LD_LIBRARY_PATH="${BUILDDIR}/lib:${LD_LIBRARY_PATH}"
+
+    echo "BUILDTYPE: ${BUILDTYPE}"
+    echo "TOPLEVELDIR: ${TOPLEVELDIR}"
+    echo "BUILDDIR: ${BUILDDIR}"
+
+    cd ${TOPLEVELDIR}
+    if [ -f config.done ] ; then
+	rm -f config.done
+    fi
+
+    if [ "x${BUILDTYPE}" = "x" ] || [ "x${TOPLEVELDIR}" = "x" ] ; then
+        PRINT_HELP=yes
+    fi
+
+    if [ "$PRINT_HELP" = "yes" ] || [ "$UNKNOWN_ARG" = "yes" ] ; then
+        echo "Usage: `basename $0` [ -m32 | -m64 ] --topdir=[ \$(top_srcdir) ]"
+        exit 1
+    fi
+}
+
+check_directories() {
+    if [ ! -d Solaris ] ; then
+	echo "Expected directory Solaris not found."
+	echo "Make sure this directory exists in the stdcxx toplevel."
+	echo ""
+	exit 1
+    fi
+}
+
+check_buildtype() {
+    if [ "x${BUILDTYPE}" = "x" ] ; then
+        echo "\$BUILDTYPE [ 8d | 8D ] is not set."
+        echo ""
+        exit 1
+    fi
+    echo "BUILDTYPE: ${BUILDTYPE}."
+    echo "BUILDMODE: ${BUILDMODE}."
+}
+
+check_compiler_flags() {
+    if [ "x${CC}" = "x" ] ; then
+	echo "\$CC is not set."
+	echo ""
+	exit 1
+    fi
+    echo "CC: ${CC}."
+    export CC=`echo ${CC}`
+
+    if [ "x${CXX}" = "x" ] ; then
+	echo "\$CXX is not set."
+	echo ""
+	exit 1
+    fi
+    echo "CXX: ${CXX}."
+    export CXX=`echo ${CXX}`
+
+    if [ "x${CFLAGS}" = "x" ] ; then
+        echo "\$CFLAGS is not set."
+        echo ""
+        exit 1
+    fi
+    echo "CFLAGS: ${CFLAGS}."
+
+    if [ "x${CPPFLAGS}" = "x" ] ; then
+        echo "\$CPPFLAGS is not set."
+        echo ""
+        exit 1
+    fi
+    echo "CPPFLAGS: ${CPPFLAGS}."
+
+    if [ "x${CXXFLAGS}" = "x" ] ; then
+        echo "\$CXXFLAGS is not set. Make sure you have set -library=no%Cstd."
+        echo ""
+        exit 1
+    fi
+    echo "CXXFLAGS: ${CXXFLAGS}."
+
+    if [ "x${LDFLAGS}" = "x" ] ; then
+        echo "\$LDFLAGS is not set."
+        echo ""
+        exit 1
+    fi
+    echo "LDFLAGS: ${LDFLAGS}."
+}
+
+check_gnu_make() {
+    if [ "x${MAKE}" = "x" ] ; then
+        echo "\$MAKE is not set. Please use GNU make to build stdcxx."
+        echo ""
+        exit 1
+    fi
+    gnumake=`${MAKE} --version | grep -- "GNU"`
+    if [ "x${gnumake}" = "x" ] ; then
+        echo "\$MAKE is not GNU make. stdcxx requires GNU make."
+        exit 1
+    fi
+    echo "MAKE: ${MAKE}."
+}
+
+fix_ansi_dir() {
+    cd ${TOPLEVELDIR}
+
+    for file in \
+	wctype.h \
+	wchar.h \
+	time.h \
+	string.h \
+	stdlib.h \
+	stdio.h \
+	stddef.h \
+	stdarg.h \
+	signal.h \
+	setjmp.h \
+	math.h \
+	locale.h \
+	limits.h \
+	float.h \
+	errno.h \
+	ctype.h \
+	assert.h \
+	_cwctype.h \
+	_cwchar.h \
+	_ctime.h \
+	_cstring.h \
+	_cstdlib.h \
+	_cstdio.h \
+	_cstddef.h \
+	_cstdarg.h \
+	_csignal.h \
+	_csetjmp.h \
+	_cmath.h \
+	_clocale.h \
+	_cfloat.h \
+	_cerrno.h \
+	_cctype.h \
+	_cassert.h
+do
+    if [ -f ./include/ansi/$file ] ; then
+	rm -f ./include/ansi/$file
+    fi
+done
+
+for file in \
+    stdint.h
+do
+    if [ -f ./include/tr1/$file ] ; then
+	rm -f ./include/tr1/$file
+    fi
+done
+
+for file in \
+    cstdint
+do
+    if [ -f ./include/tr1/${file} ] ; then
+	cp -fp ./include/tr1/${file} ./include/ansi/
+    fi
+done
+}
+
+make_config() {
+    echo "Configuring ..." `pwd`
+    rm -rf ${BUILDDIR}
+    echo 
+    echo "MAKEFLAGS: ${MAKEFLAGS}"
+    echo "MAKELEVEL: ${MAKELEVEL}"
+    unset MAKEFLAGS
+    unset MAKELEVEL
+    export LIBDIR="${TOPLEVELDIR}/lib"
+    rm -rf ${LIBDIR}
+    mkdir -p ${LIBDIR}
+
+    for file in \
+	"collapse_static_locals.lib" \
+	"collapse_template_statics.lib" \
+	"collapse_template_locals.lib" \
+	"extern_inline.lib" \
+	"lib_exceptions.lib"
+    do
+	echo "${CXX} ${CPPFLAGS} ${CXXFLAGS} -c ${TOPLEVELDIR}/etc/config/src/${file}.cpp -o ${LIBDIR}/${file}.o"
+	${CXX} ${CPPFLAGS} ${CXXFLAGS} -c ${TOPLEVELDIR}/etc/config/src/${file}.cpp -o ${LIBDIR}/${file}.o
+	echo "${CXX} ${CXXFLAGS} ${LDFLAGS} -G -hlib${file}.so ${LIBDIR}/${file}.o -o ${LIBDIR}/lib${file}.so"
+	${CXX} ${CXXFLAGS} ${LDFLAGS} -G -h${file}.so ${LIBDIR}/${file}.o -o ${LIBDIR}/lib${file}.so
+    done
+
+    unset LIBDIR
+    export LD_OPTIONS="-L${TOPLEVELDIR}/lib -R${TOPLEVELDIR}/lib"
+    export LD_OPTIONS="${LD_OPTIONS} -L${BUILDDIR}/include -R${BUILDDIR}/include"
+
+    echo $MAKE SHELL=/bin/bash CC=${CC} CXX=${CXX} LD_OPTIONS="${LD_OPTIONS}" LDFLAGS="${LDFLAGS} ${LD_OPTIONS}" TOPDIR=${TOPLEVELDIR} BUILDTYPE=${BUILDTYPE} BUILDMODE=${BUILDMODE} CONFIG=${CONFIG} config
+    ${MAKE} SHELL=/bin/bash CC="${CC}" CXX="${CXX}" LD_OPTIONS="${LD_OPTIONS}" LDFLAGS="${LDFLAGS} ${LD_OPTIONS}" TOPDIR="${TOPLEVELDIR}" BUILDTYPE="${BUILDTYPE}" BUILDMODE="${BUILDMODE}" CONFIG="${CONFIG}" config
+    unset LD_OPTIONS
+    echo "Configuration finished."
+}
+
+post_config() {
+    echo "Performing post-configuration updates ... "
+    if [ ! -f ../Solaris/atomic-cxx.d ] ; then
+	echo "atomic-cxx.d not found!"
+        echo "Post-configuration FAILED!!!"
+	exit 1
+    fi
+    mkdir -p build/lib/.depend
+    cp -fp ../Solaris/atomic-cxx.d build/lib/.depend/
+    touch -acm build/lib/.depend/atomic-cxx.d
+    cd ${BUILDDIR}/include
+    if [ -f config.h ] ; then
+        mv config.h config.h.orig
+        touch config.h
+        unamep=`uname -p`
+        is64bit=`echo ${CXXFLAGS} | grep -- "-m64"`
+        export HEADER_GUARD="__STDCXX"
+        export HEADER_FILE="stdcxx"
+        if [ "x${unamep}" = "xsparc" ] ; then
+            if [ "x${is64bit}" = "x" ] ; then
+                export HEADER_GUARD="${HEADER_GUARD}_SPARC_H"
+                export HEADER_FILE="${HEADER_FILE}_sparc.h"
+            else
+                export HEADER_GUARD="${HEADER_GUARD}_SPARCV9_H"
+                export HEADER_FILE="${HEADER_FILE}_sparcv9.h"
+            fi
+        else
+            if [ "x${is64bit}" = "x" ] ; then
+                export HEADER_GUARD="${HEADER_GUARD}_I386_H"
+                export HEADER_FILE="${HEADER_FILE}_i386.h"
+            else
+                export HEADER_GUARD="${HEADER_GUARD}_AMD64_H"
+                export HEADER_FILE="${HEADER_FILE}_amd64.h"
+            fi
+        fi
+
+        echo "#ifndef ${HEADER_GUARD}" >> config.h
+        echo "#define ${HEADER_GUARD}" >> config.h
+        echo "" >> config.h
+        echo "#include <sys/types.h>" >> config.h
+        echo "#include <inttypes.h>" >> config.h
+        echo "#include <limits.h>" >> config.h
+	echo "" >> config.h
+        echo "#ifndef _RWSTD_REENTRANT" >> config.h
+        echo "#define _RWSTD_REENTRANT" >> config.h
+        echo "#endif" >> config.h
+	echo "" >> config.h
+        cat config.h.orig >> config.h
+        echo "" >> config.h
+        echo "#endif /* ${HEADER_GUARD} */" >> config.h
+        echo "" >> config.h
+
+        mv config.h "${HEADER_FILE}"
+        if [ -f "${TOPLEVELDIR}/../Solaris/rwconfig_std.h" ] ; then
+            cp -fp "${TOPLEVELDIR}/../Solaris/rwconfig_std.h" .
+            chmod 0644 rwconfig_std.h
+            touch -acm rwconfig_std.h
+            ln -sf rwconfig_std.h config.h
+	    cd ${TOPLEVELDIR}
+	    echo "Removing configuration phase core files [expected]."
+	    find . -type f -name "core" -exec rm -f {} \; -print
+            echo "Post-configuration succeeded."
+        else
+            echo "Standard configuration file ${TOPLEVELDIR}/../Solaris/rwconfig_std.h not found!"
+            echo "Post-configuration FAILED!!!"
+            exit 1
+        fi
+    else
+        echo "Initial configuration file 'config.h' has not been created."
+        echo "Post-configuration FAILED!!!"
+        exit 1
+    fi
+}
+
+finish() {
+    echo "stdcxx has been configured. You can now type '$MAKE' to build."
+    echo ""
+    cd ${TOPLEVELDIR}
+    touch config.done
+    exit 0
+}
+
+check_args $@
+check_directories
+check_buildtype
+check_compiler_flags
+check_gnu_make
+fix_ansi_dir
+make_config
+post_config
+finish
+

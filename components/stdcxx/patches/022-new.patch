@@ -1,0 +1,373 @@
+--- stdcxx-4.2.1/include/new	2008-04-24 17:23:57.000000000 -0700
++++ stdcxx-4.2.1/include/new	2011-04-26 09:44:49.326296102 -0700
+@@ -1,305 +1,79 @@
+ // -*- C++ -*-
+-/***************************************************************************
+- *
+- * new - declarations for the Standard Library new header
+- *
+- * $Id: new 584965 2007-10-15 23:09:19Z sebor $
+- *
+- ***************************************************************************
+- *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
+- *
+- * http://www.apache.org/licenses/LICENSE-2.0
+- *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
+- *
+- * Copyright 1994-2006 Rogue Wave Software.
+- * 
+- **************************************************************************/
+-
+-#ifndef _RWSTD_NEW_INCLUDED
+-#define _RWSTD_NEW_INCLUDED
+-
+-
+-#include <rw/_exception.h>
+-#include <rw/_new.h>
+-#include <rw/_defs.h>
+-
+-
+-// for compilers that define ::nothrow_t, as opposed to std::nothow_t,
+-// in their support library, struct nothrow_t is defined in the global
+-// namespace, otherwise in std
+-//
+-// +-------------------+-------------------+---------------------+
+-// | declaration/macro | _NO_STD_NOTHROW_T |  _NO_GLOBAL_NOTHROW |
+-// +-------------------+-------------------+---------------------+
+-// | std::nothrow_t    |       !defined    |         defined     |
+-// +-------------------+-------------------+---------------------+
+-// | std::nothrow_t    |       !defined    |        !defined     |
+-// +-------------------+-------------------+---------------------+
+-// | std::nothrow_t    |        defined    |         defined     |
+-// +-------------------+-------------------+---------------------+
+-// | using ::nothrow_t |        defined    |        !defined     |
+-// +-------------------+-------------------+---------------------+
+-
+-
+-#if !defined (_RWSTD_NO_STD_NOTHROW_T) || defined (_RWSTD_NO_GLOBAL_NOTHROW_T)
+-
+-_RWSTD_NAMESPACE (std) {
+-
+-#endif   // !_RWSTD_NO_STD_NOTHROW_T || _RWSTD_NO_GLOBAL_NOTHROW_T
+-
+-
+-#if !defined (_MSC_VER) || !defined (__NOTHROW_T_DEFINED)
+-
+-   // disable definitions of nothrow_t in MSVC's <new.h>
+-#  define __NOTHROW_T_DEFINED
+-
+-struct nothrow_t { };
+-
+-#endif   // !_MSC_VER || !__NOTHROW_T_DEFINED
+-
+-
+-#if !defined (_RWSTD_NO_STD_NOTHROW_T) || defined (_RWSTD_NO_GLOBAL_NOTHROW_T)
+-
+-}   // namespace std
+-
+-#endif   // !_RWSTD_NO_STD_NOTHROW_T || _RWSTD_NO_GLOBAL_NOTHROW_T
+-
+-
+-#if    defined (_RWSTD_NO_STD_NOTHROW)           \
+-    && (    defined (_RWSTD_NO_GLOBAL_NOTHROW)   \
+-        || !defined (_RWSTD_NO_HONOR_STD))
+-#  define _RWSTD_EXPORT_NOTHROW   _RWSTD_EXPORT
++/*
++        Copyright 03/03/10 Sun Microsystems, Inc. All Rights Reserved
++*/
++/* new
++
++   @(#)new	1.11  03/03/10 10:41:13
++
++   Declaration for ISO standard new and delete interface
++*/
++#if __SUNPRO_CC_COMPAT == 'G'
++#include_next <new>
+ #else
+-#  define _RWSTD_EXPORT_NOTHROW   /* empty */
+-#endif
+-
+-// declare global nothrow if we need to bring it into std namespace
+-#if !defined (_RWSTD_NO_GLOBAL_NOTHROW) && defined (_RWSTD_NO_STD_NOTHROW)
+-
+-// export the nothrow object iff it is also defined in the library
+-_RWSTD_EXPORT_NOTHROW extern const nothrow_t nothrow;
+-
+-#endif   // !_RWSTD_NO_GLOBAL_NOTHROW_T && _RWSTD_NO_STD_NOTHROW
+ 
++#if !defined(_NEW_HDR) && !defined(_RWSTD_NEW_INCLUDED)
++#define _NEW_HDR
++#define _RWSTD_NEW_INCLUDED
+ 
+-_RWSTD_NAMESPACE (std) {
+-
+-#if defined (_RWSTD_NO_STD_NOTHROW_T) && !defined (_RWSTD_NO_GLOBAL_NOTHROW_T)
+-
+-// bring the global nothrow_t into the std namespace
+-using ::nothrow_t;
+-
+-#endif   // _RWSTD_NO_STD_NOTHROW_T || !_RWSTD_NO_GLOBAL_NOTHROW_T
+-
+-
+-#if __HP_aCC != 33000 && __HP_aCC != 33100
+-
+-// 18.4.1
+-_RWSTD_EXPORT_NOTHROW extern const nothrow_t nothrow;
+-
+-#else   // if (__HP_aCC == 33000) || (__HP_aCC == 33100)
+-
+-// working around an HP aCC 3.30 bug (see PR #25382)
+-const nothrow_t nothrow = nothrow_t ();
+-
+-#endif   // __HP_aCC == 33000 || __HP_aCC == 33100
+-
+-}   // namespace std
+-
+-
+-#if    !defined (_RWSTD_NO_STD_BAD_ALLOC) \
+-    || !defined (_RWSTD_NO_RUNTIME_IN_STD)
+-
+-_RWSTD_NAMESPACE (std) {
+-
+-#endif   // _RWSTD_NO_STD_BAD_ALLOC || !_RWSTD_NO_RUNTIME_IN_STD
++#include <stddef.h>
++#include <exception>
+ 
++namespace std {
+ 
+-// 18.4.2.1
+-class _RWSTD_EXPORT bad_alloc: public _STD::exception
+-{
++    class bad_alloc : public exception { 
+ public:
+-    // 18.4.2.1, p2
+-    bad_alloc () _THROWS (());
+-
+-    // 18.4.2.1, p4
+-    bad_alloc (const bad_alloc&) _THROWS (());
+-
+-    // 18.4.2.1, p4
+-    bad_alloc& operator= (const bad_alloc&) _THROWS (());
+-
+-#if !__INTEL_COMPILER || __INTEL_COMPILER > 800
+-
+-    // prevent ld error when replacing operator new:
+-    // multiple definition of `operator new(unsigned long)'
+-
+-    ~bad_alloc () _THROWS (());
+-
+-    // 18.4.2.1, p5
+-    virtual const char* what () const  _THROWS (());
+-
+-#endif   // Intel C++ > 8.0
+-
++	bad_alloc () throw() { }
++	bad_alloc(const bad_alloc&) throw() { }
++	bad_alloc& operator=(const bad_alloc&) throw() {return *this;}
++	~bad_alloc () throw() { }
++	const char* what() const throw();
+ };
+-
+-
+-#if    !defined (_RWSTD_NO_STD_BAD_ALLOC) \
+-    || !defined (_RWSTD_NO_RUNTIME_IN_STD)
+-
+-#  define _RWSTD_BAD_ALLOC _STD::bad_alloc
+-
+-}   // namespace std
+-
+-#else   // if _RWSTD_NO_STD_BAD_ALLOC && _RWSTD_NO_RUNTIME_IN_STD
+-
+-   // working around a gcc 2.x bug (PR #24400)
+-#  if !defined (__GNUG__) || __GNUG__ > 2
+-
+-_RWSTD_NAMESPACE (std) {
+-
+-_USING (::bad_alloc);
+-
+-#    define _RWSTD_BAD_ALLOC _STD::bad_alloc
+-
+-}   // namespace std
+-
+-#  else
+-#    define _RWSTD_BAD_ALLOC ::bad_alloc
+-#  endif   // gcc > 2.x
+-#endif   // _RWSTD_NO_STD_BAD_ALLOC || !_RWSTD_NO_RUNTIME_IN_STD
+-
+-
+-#if !defined (_RWSTD_NO_STD_SET_NEW_HANDLER) || defined (_MSC_VER)
+-
+-  // when using MSVC, declare set_new_handler() in namespace std
+-  // even though the runtime library doesn't define it there, so
+-  // that the declaration matches the one in the compiler's <new.h>
+-  // (the function is defined in our library)
+-
+-_RWSTD_NAMESPACE (std) {
+-
+-#endif   // !_RWSTD_NO_STD_SET_NEW_HANDLER || MSVC
+-
+-// 18.4.2.3
++    struct nothrow_t {};
++    extern const nothrow_t nothrow;
+ typedef void (*new_handler) ();
+-_RWSTD_EXPORT new_handler set_new_handler (new_handler) _THROWS (());
+-
+-#if !defined (_RWSTD_NO_STD_SET_NEW_HANDLER) || defined (_MSC_VER)
+-
+-}   // namespace std
+-
+-#else   // if !(!defined (_RWSTD_NO_STD_SET_NEW_HANDLER) || defined (_MSC_VER))
+-
+-_RWSTD_NAMESPACE (std) {
+-
+-_USING (::new_handler);
+-_USING (::set_new_handler);
+-
+-}   // namespace std
+-
+-#endif   // !_RWSTD_NO_STD_SET_NEW_HANDLER || MSVC
+-
+-
+-// 18.4.1.1 - replaceable
+-void* operator new (_RWSTD_SIZE_T) _NEW_THROWS ((_RWSTD_BAD_ALLOC));
+-
+-#ifdef _RWSTD_NO_OPERATOR_NEW_NOTHROW
+-_RWSTD_EXPORT
+-#endif   // _RWSTD_NO_OPERATOR_NEW_NOTHROW
+-void* operator new (_RWSTD_SIZE_T, const _STD::nothrow_t&) _NEW_THROWS (());
+-
+-void operator delete (void*) _NEW_THROWS (());
+-
+-// guarded in case a compiler has trouble with these
+-// (e.g. gcc 2.95.2 in conjunction with placement new)
+-#ifndef _RWSTD_NO_PLACEMENT_DELETE
+-
+-#  ifdef _RWSTD_NO_OPERATOR_DELETE_NOTHROW
+-_RWSTD_EXPORT
+-#  endif   // _RWSTD_NO_OPERATOR_DELETE_NOTHROW
+-void operator delete (void*, const _STD::nothrow_t&) _NEW_THROWS (());
+-
+-#endif   // _RWSTD_NO_PLACEMENT_DELETE
+-
+-// 18.4.1.2 - replaceable
+-#ifdef _RWSTD_NO_OPERATOR_NEW_ARRAY
+-_RWSTD_EXPORT
+-#endif   // _RWSTD_NO_OPERATOR_NEW_ARRAY
+-void* operator new[] (_RWSTD_SIZE_T) _NEW_THROWS ((_RWSTD_BAD_ALLOC));
+-
+-#ifdef _RWSTD_NO_OPERATOR_NEW_ARRAY_NOTHROW
+-_RWSTD_EXPORT
+-#endif   // _RWSTD_NO_OPERATOR_NEW_ARRAY_NOTHROW
+-void* operator new[] (_RWSTD_SIZE_T, const _STD::nothrow_t&) _NEW_THROWS (());
+-
+-#ifdef _RWSTD_NO_OPERATOR_DELETE_ARRAY
+-_RWSTD_EXPORT
+-#endif   // _RWSTD_NO_OPERATOR_DELETE_ARRAY
+-void operator delete[] (void*) _NEW_THROWS (());
+-
+-#ifndef _RWSTD_NO_PLACEMENT_DELETE
+-
+-#  ifdef _RWSTD_NO_OPERATOR_DELETE_ARRAY_NOTHROW
+-_RWSTD_EXPORT
+-#  endif   // _RWSTD_NO_OPERATOR_DELETE_ARRAY_NOTHROW
+-void operator delete[] (void*, const _STD::nothrow_t&) _NEW_THROWS (());
+-
+-#endif   // _RWSTD_NO_PLACEMENT_DELETE
+-
+-// 18.4.1.3, p2 - not replaceable (see <rw/_new.h>)
+-// void* operator new (_RWSTD_SIZE_T, void*) _NEW_THROWS (());
+-
+-// 18.4.1.3, p5 - not replaceable
+-#ifdef _RWSTD_NO_OPERATOR_NEW_ARRAY_PLACEMENT
+-_RWSTD_EXPORT
+-#endif   // _RWSTD_NO_OPERATOR_NEW_ARRAY_PLACEMENT
+-void* operator new[] (_RWSTD_SIZE_T, void*) _NEW_THROWS (());
+-
+-#ifdef _RWSTD_NO_OPERATOR_NEW_ARRAY_PLACEMENT
+-
+-// not replaceable
+-inline void* operator new[] (_RWSTD_SIZE_T, void *__ptr) _NEW_THROWS (())
+-{
+-    return __ptr;   // inline for efficiency
+-}
+-
+-#endif   // _RWSTD_NO_OPERATOR_NEW_ARRAY_PLACEMENT
+-
+-
+-#ifndef _RWSTD_NO_PLACEMENT_DELETE
+-
+-// 18.4.1.3, p7 - not replaceable (see <rw/_new.h>)
+-// void operator delete (void*, void*) _NEW_THROWS (());
+-
+-// 18.4.1.3, p9 - not replaceable
+-#  ifdef _RWSTD_NO_OPERATOR_DELETE_ARRAY_PLACEMENT
+-_RWSTD_EXPORT
+-#  endif   // _RWSTD_NO_OPERATOR_DELETE_ARRAY_PLACEMENT
+-void operator delete[] (void*, void*) _NEW_THROWS (());
+-
+-#  if defined (_RWSTD_NO_OPERATOR_DELETE_ARRAY_PLACEMENT)
+-
+-// not replaceable
+-inline void operator delete[] (void*, void*) _NEW_THROWS (())
+-{
+-    // no-op, inline for efficiency
++    extern new_handler set_new_handler(new_handler new_p) throw();
+ }
+ 
+-#  endif   // _RWSTD_NO_OPERATOR_DELETE_ARRAY_PLACEMENT
++#ifndef   __SKYSTM_VERSION
+ 
+-#endif   // _RWSTD_NO_PLACEMENT_DELETE
++void* operator new(size_t) throw(std::bad_alloc);
++void* operator new(size_t, const std::nothrow_t&) throw();
++#pragma returns_new_memory (operator new)
++void  operator delete(void*) throw();
++void  operator delete(void*, const std::nothrow_t&) throw();
++void* operator new[](size_t) throw(std::bad_alloc);
++void* operator new[](size_t, const std::nothrow_t&) throw();
++#pragma returns_new_memory (operator new[])
++void  operator delete[](void*) throw();
++void  operator delete[](void*, const std::nothrow_t&) throw();
++
++__hidden inline void* operator new[] ( size_t, void* __ptr) throw()
++{ return __ptr; }
++__hidden inline void *operator new(size_t, void* __ptr) throw()
++{ return __ptr; }
++__hidden inline void operator delete  (void*, void*) throw() { }
++__hidden inline void operator delete[](void*, void*) throw() { }
++
++#else  // __SKYSTM_VERSION
++
++void* operator new(size_t) [[transaction_safe]] throw();
++void* operator new(size_t, const std::nothrow_t&) [[transaction_safe]] throw();
++#pragma returns_new_memory (operator new)
++void  operator delete(void*) [[transaction_safe]] throw();
++void  operator delete(void*, const std::nothrow_t&) [[transaction_safe]] throw();
++void* operator new[](size_t) [[transaction_safe]] throw();
++void* operator new[](size_t, const std::nothrow_t&) [[transaction_safe]] throw();
++#pragma returns_new_memory (operator new[])
++void  operator delete[](void*) [[transaction_safe]] throw();
++void  operator delete[](void*, const std::nothrow_t&) [[transaction_safe]] throw();
++
++__hidden inline void* operator new[] ( size_t, void* __ptr) [[transaction_safe]] throw() { return __ptr; }
++__hidden inline void *operator new(size_t, void* __ptr) [[transaction_safe]] throw() { return __ptr; }
++__hidden inline void operator delete  (void*, void*) [[transaction_safe]] throw() { }
++__hidden inline void operator delete[](void*, void*) [[transaction_safe]] throw() { }
+ 
++#endif // __SKYSTM_VERSION
+ 
+-#endif   // _RWSTD_NEW_INCLUDED
++#endif	// _NEW_HDR && _RWSTD_NEW_INCLUDED
++#endif	// _SUNPRO_CC_COMPAT

@@ -1,0 +1,122 @@
+--- stdcxx-4.2.1/GNUmakefile	2008-04-24 20:29:32.000000000 -0400
++++ stdcxx-4.2.1/GNUmakefile	2009-03-30 11:20:09.160317000 -0400
+@@ -60,7 +60,7 @@
+ #   The variable MAKE can be set to contain any additional make arguments
+ #   to be passed to recursive invokations of make (e.g., make -j).
+ #
+-#   The variable SHELL can be defined to override the default shell, /bin/sh.
++#   The variable SHELL can be defined to override the default shell, /bin/bash.
+ #
+ ########################################################################
+ #
+@@ -159,7 +159,7 @@
+ #
+ ########################################################################
+ 
+-SHELL = /bin/sh
++SHELL = /bin/bash
+ 
+ # define the value of OSNAME first so that it can be used in *.config files
+ OSNAME := $(shell uname)
+@@ -516,12 +516,36 @@
+     LDSOFLAGS += $(LDSOFLAGS.wide)
+     ARFLAGS   += $(ARFLAGS.wide)
+   endif
++  ifeq ($(findstring 8D,$(BUILDTYPE)),8D)
++    CXXFLAGS  += $(CXXFLAGS.wide)
++    LDFLAGS   += $(LDFLAGS.wide)
++    LDSOFLAGS += $(LDSOFLAGS.wide)
++    ARFLAGS   += $(ARFLAGS.wide)
++  endif
+   ifeq ($(findstring narrow,$(BUILDMODE)),narrow)
+     CXXFLAGS  += $(CXXFLAGS.narrow)
+     LDFLAGS   += $(LDFLAGS.narrow)
+     LDSOFLAGS += $(LDSOFLAGS.narrow)
+     ARFLAGS   += $(ARFLAGS.narrow)
+   endif
++  ifeq ($(findstring 8d,$(BUILDTYPE)),8d)
++    CXXFLAGS  += $(CXXFLAGS.narrow)
++    LDFLAGS   += $(LDFLAGS.narrow)
++    LDSOFLAGS += $(LDSOFLAGS.narrow)
++    ARFLAGS   += $(ARFLAGS.narrow)
++  endif
++  ifeq ($(findstring -m32,$(CXXFLAGS)),-m32)
++    CXXFLAGS  += $(CXXFLAGS.narrow)
++    LDFLAGS   := $(LDFLAGS.narrow) $(LDFLAGS)
++    LDSOFLAGS := $(LDSOFLAGS.narrow) $(LDFLAGS) $(LDSOFLAGS)
++    ARFLAGS   := $(ARFLAGS.narrow) $(ARFLAGS)
++  endif
++  ifeq ($(findstring -m64,$(CXXFLAGS)),-m64)
++    CXXFLAGS  += $(CXXFLAGS.wide)
++    LDFLAGS   := $(LDFLAGS.wide) $(LDFLAGS)
++    LDSOFLAGS := $(LDSOFLAGS.wide) $(LDFLAGS) $(LDSOFLAGS)
++    ARFLAGS   := $(ARFLAGS.wide) $(ARFLAGS)
++  endif
+ 
+   # platform is determined as {OS-name}-{OS-version}-{hardware}
+   PLATFORM := $(shell uname -srm | sed "s/[ \/]/-/g")
+@@ -549,15 +573,27 @@
+ 
+   # name of the library w/o the prefix and suffix
+   # suitable for use by the linker after the -l option
+-  LIBBASE = std$(BUILDTYPE)
++  LIBBASE = stdcxx4
+ 
+   # full library filename (including suffix)
+   LIBNAME = lib$(LIBBASE)$(LIBSUFFIX)
+ 
++  # library version
++  LIBSOVERSION = 4
++
++  # SONAME
++  LIBSONAME = $(LIBNAME).$(LIBSOVERSION)
++
+   ifeq ($(DEPENDDIR),)
+     DEPENDDIR=.depend
+   endif
+ 
++  # set the SONAME in the shared library
++  ifeq ($(OSNAME),SunOS)
++    LDSOFLAGS += -h$(LIBSONAME)
++  endif
++
++
+   # obtain library version number from the macro _RWSTD_VER
+   # #defined in the rw/_config.h library header
+   LIBVER := $(shell awk '/^.define _RWSTD_VER / { major = substr ($$3, 3, 2); minor = substr ($$3, 5, 2); micro = substr ($$3, 7, 2); print (major + 0) "." (minor + 0) "." (micro + 0) }' $(TOPDIR)/include/rw/_config.h)
+@@ -611,7 +647,7 @@
+           && echo "BUILDTYPE  = $(BUILDTYPE)"            >> $(MAKEFILE_IN)  \
+           && echo "BUILDMODE  = $(BUILDMODE)"            >> $(MAKEFILE_IN)  \
+           && echo "CXX        = $(CXX)"                  >> $(MAKEFILE_IN)  \
+-          && echo "CXXFLAGS   = $(CXXFLAGS)"             >> $(MAKEFILE_IN)  \
++          && echo "CXXFLAGS   = $(CXXFLAGS) $$""(XMEMALIGN) $$""(XREGS)" >> $(MAKEFILE_IN)  \
+           && echo "PRELINKFLAGS = $(PRELINKFLAGS)"       >> $(MAKEFILE_IN)  \
+           && echo "PICFLAGS   = $(PICFLAGS)"             >> $(MAKEFILE_IN)  \
+           && echo "CPPFLAGS   = $(CPPFLAGS)"             >> $(MAKEFILE_IN)  \
+@@ -621,7 +657,7 @@
+           && echo "DEPENDFLAGS$(AS_EXT) = $(value DEPENDFLAGS$(AS_EXT))"    \
+                                                          >> $(MAKEFILE_IN)  \
+           && echo "AS_EXT     = $(AS_EXT)"               >> $(MAKEFILE_IN)  \
+-          && echo "LD         = $(LD)"                   >> $(MAKEFILE_IN)  \
++          && echo "LD         = $(CXX) $(CXXFLAGS) $$""(XMEMALIGN) $$""(XREGS) $(LDFLAGS)" >> $(MAKEFILE_IN)  \
+           && echo "LDFLAGS    = $(LDFLAGS)"              >> $(MAKEFILE_IN)  \
+           && echo "LDLIBS     = $(LDLIBS)"               >> $(MAKEFILE_IN)  \
+           && echo "LDSOFLAGS  = $(LDSOFLAGS)"            >> $(MAKEFILE_IN)  \
+@@ -634,12 +670,13 @@
+           && echo "PHDIR      = $(PHDIR)"                >> $(MAKEFILE_IN)  \
+           && echo "PHWARNFLAGS = $(PHWARNFLAGS)"         >> $(MAKEFILE_IN)  \
+           && echo "LIBSUFFIX  = $(LIBSUFFIX)"            >> $(MAKEFILE_IN)  \
+-          && echo "LIBBASE    = std$$""(BUILDTYPE)"      >> $(MAKEFILE_IN)  \
++          && echo "LIBBASE    = stdcxx4"                 >> $(MAKEFILE_IN)  \
+           && echo "LIBVER     = $(LIBVER)"               >> $(MAKEFILE_IN)  \
+-          && echo "LIBNAME    = lib$$""(LIBBASE)$$""(LIBSUFFIX)"            \
++          && echo "LIBNAME    = lib$$""(LIBBASE)$$""(LIBSUFFIX)" >> $(MAKEFILE_IN) \
++          && echo "LIBSONAME  = $(LIBSONAME)"            >> $(MAKEFILE_IN)  \
+                                                          >> $(MAKEFILE_IN)  \
+-          && echo "AR         = $(AR)"                   >> $(MAKEFILE_IN)  \
+-          && echo "ARFLAGS    = $(ARFLAGS)"              >> $(MAKEFILE_IN)  \
++          && echo "AR         = $(CXX)"                  >> $(MAKEFILE_IN)  \
++          && echo "ARFLAGS    = $(CXXFLAGS) -xar -o "    >> $(MAKEFILE_IN)  \
+           && echo "CCVER      = $(CCVER)"                >> $(MAKEFILE_IN)  \
+           && echo "SHARED     = $(SHARED)"               >> $(MAKEFILE_IN)  \
+           && echo "CATFILE    = $(CATFILE)"              >> $(MAKEFILE_IN)  \

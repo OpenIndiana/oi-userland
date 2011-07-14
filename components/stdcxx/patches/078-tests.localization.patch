@@ -1,0 +1,584 @@
+--- stdcxx-4.2.1/tests/src/locale.cpp	2008-04-24 17:23:00.000000000 -0700
++++ stdcxx-4.2.1/tests/src/locale.cpp	2011-02-23 15:23:26.419730197 -0800
+@@ -411,8 +411,13 @@
+     // execute a shell command and redirect its output into the file
+     const int exit_status =
+         grep_exp && *grep_exp
++#if defined(__SUNPRO_CC)
++      ? rw_system ("/usr/bin/locale -a | grep \"%s\" > %s", grep_exp, fname)
++      : rw_system ("/usr/bin/locale -a > %s", fname);
++#else
+       ? rw_system ("locale -a | grep \"%s\" > %s", grep_exp, fname)
+       : rw_system ("locale -a > %s", fname);
++#endif
+ 
+     if (exit_status) {
+         return deflocname;   // error
+
+--- stdcxx-4.2.1/tests/localization/22.locale.money.put.mt.cpp	2008-04-24 20:23:10.000000000 -0400
++++ stdcxx-4.2.1/tests/localization/22.locale.money.put.mt.cpp	2011-04-06 12:34:13.954979492 -0400
+@@ -65,17 +65,18 @@
+ 
+ // should all threads share the same set of locale objects instead
+ // of creating their own?
+-int opt_shared_locale;
++static int opt_shared_locale = 0;
++
++// print verbose info messages
++static int opt_verbose = 0;
+ 
+ /**************************************************************************/
+ 
+ // array of locale names to use for testing
+-static const char*
+-locales [MAX_THREADS];
++static const char* locales [MAX_THREADS];
+ 
+ // number of locale names in the array
+-static std::size_t
+-nlocales;
++static std::size_t nlocales;
+ 
+ /**************************************************************************/
+ 
+@@ -107,7 +108,7 @@
+     };
+ 
+     // name of the locale the data corresponds to
+-    const char* locale_name_;
++    std::string locale_name_;
+ 
+     // optionally set to the named locale for threads to share
+     std::locale locale_;
+@@ -191,11 +192,16 @@
+         // facet from it and use it to format a random money value
+         const std::locale loc =
+             opt_shared_locale ? data.locale_
+-                                 : std::locale (data.locale_name_);
++                              : std::locale (data.locale_name_.c_str());
+ 
+         if (test_char) {
+             // exercise the narrow char specialization of the facet
+ 
++            if (opt_verbose)
++                rw_info (0, 0, __LINE__,
++                         "exercising std::money_put<char> in locale '%s'",
++                          data.locale_name_.c_str());
++
+             const std::money_put<char> &np =
+                 std::use_facet<std::money_put<char> >(loc);
+ 
+@@ -219,7 +225,11 @@
+             }
+ 
+             RW_ASSERT (!nio.fail ());
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++            RW_ASSERT (0 == std::strncmp (ncs, data.ncs_, sizeof (ncs)));
++#else
+             RW_ASSERT (!rw_strncmp (ncs, data.ncs_));
++#endif
+ 
+         }
+ 
+@@ -230,6 +240,11 @@
+ 
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
++            if (opt_verbose)
++                rw_info (0, 0, __LINE__,
++                         "exercising std::money_put<wchar_t> in locale '%s'",
++                          data.locale_name_.c_str());
++
+             const std::money_put<wchar_t> &wp =
+                 std::use_facet<std::money_put<wchar_t> >(loc);
+ 
+@@ -253,7 +268,11 @@
+             }
+ 
+             RW_ASSERT (!wio.fail ());
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++            RW_ASSERT (0 == std::wcsncmp (wcs, data.wcs_, sizeof (wcs)));
++#else
+             RW_ASSERT (!rw_strncmp (wcs, data.wcs_));
++#endif
+ 
+ #endif   // _RWSTD_NO_WCHAR_T
+ 
+@@ -280,6 +299,12 @@
+     wio.rdbuf (&wsb);
+ #endif // _RWSTD_NO_WCHAR_T
+ 
++    for (size_t i = 0; i < MAX_THREADS; ++i) {
++        locales[i] = 0UL;
++        my_money_data[i].locale_name_ = "";
++        my_money_data[i].locale_ = std::locale();
++    }
++
+     // find all installed locales for which setlocale (LC_ALL) succeeds
+     const char* const locale_list =
+         rw_opt_locales ? rw_opt_locales : rw_locales (_RWSTD_LC_ALL);
+@@ -298,7 +323,7 @@
+         data.locale_name_ = name;
+ 
+         try {
+-            const std::locale loc (data.locale_name_);
++            const std::locale loc (data.locale_name_.c_str());
+ 
+             // initialize with random but valid values
+ 
+@@ -343,7 +368,7 @@
+             rw_assert (!nio.fail (), __FILE__, __LINE__,
+                        "money_put<char>::put(...) "
+                        "failed for locale(%#s)",
+-                       data.locale_name_);
++                       data.locale_name_.c_str());
+ 
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
+@@ -372,7 +397,7 @@
+             rw_assert (!nio.fail (), __FILE__, __LINE__,
+                        "money_put<wchar_t>::put(...) "
+                        "failed for locale(%#s)",
+-                       data.locale_name_);
++                       data.locale_name_.c_str());
+ 
+ #endif // _RWSTD_NO_WCHAR_T
+ 
+--- stdcxx-4.2.1/tests/localization/22.locale.num.put.mt.cpp	2008-04-24 20:23:10.000000000 -0400
++++ stdcxx-4.2.1/tests/localization/22.locale.num.put.mt.cpp	2011-04-06 12:01:45.334923153 -0400
+@@ -38,7 +38,7 @@
+ #include <valcmp.h>
+ 
+ #define MAX_THREADS      32
+-#define MAX_LOOPS    100000
++#define MAX_LOOPS 10000
+ 
+ // default number of threads (will be adjusted to the number
+ // of processors/cores later)
+@@ -62,17 +62,18 @@
+ 
+ // should all threads share the same set of locale objects instead
+ // of creating their own?
+-int opt_shared_locale;
++static int opt_shared_locale = 0;
++
++// print verbose information messages
++static int opt_verbose = 0;
+ 
+ /**************************************************************************/
+ 
+ // array of locale names to use for testing
+-static const char*
+-locales [MAX_THREADS];
++static const char* locales [MAX_THREADS];
+ 
+ // number of locale names in the array
+-static std::size_t
+-nlocales;
++static std::size_t nlocales;
+ 
+ 
+ struct MyNumData {
+@@ -104,7 +105,7 @@
+     };
+ 
+     // name of the locale the data corresponds to
+-    const char* locale_name_;
++    std::string locale_name_;
+ 
+     // optionally set to the named locale for threads to share
+     std::locale locale_;
+@@ -245,11 +246,16 @@
+         // so that the locale is used not only by the num_put facet
+         const std::locale loc =
+             opt_shared_locale ? data.locale_
+-                                 : std::locale (data.locale_name_);
++                                 : std::locale (data.locale_name_.c_str());
+ 
+         if (test_char) {
+             // exercise the narrow char specialization of the facet
+ 
++            if (opt_verbose)
++                rw_info (0, 0, __LINE__,
++                         "exercising std::num_put<char> in locale '%s'",
++                         data.locale_name_.c_str());
++
+             const std::num_put<char> &np =
+                 std::use_facet<std::num_put<char> >(loc);
+ 
+@@ -260,7 +266,11 @@
+                       nio, ' ', '\0');
+ 
+             RW_ASSERT (!nio.fail ()); 
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++            RW_ASSERT (0 == std::strncmp (ncs, data.ncs_, sizeof (ncs)));
++#else
+             RW_ASSERT (!rw_strncmp (ncs, data.ncs_));
++#endif
+         }
+ 
+         // both specializations may be tested at the same time
+@@ -270,6 +280,11 @@
+ 
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
++            if (opt_verbose)
++                rw_info (0, 0, __LINE__,
++                         "exercising std::num_put<wchar_t> in locale '%s'",
++                         data.locale_name_.c_str());
++
+             const std::num_put<wchar_t> &wp =
+                 std::use_facet<std::num_put<wchar_t> >(loc);
+ 
+@@ -280,7 +295,11 @@
+                       wio, L' ', L'\0');
+ 
+             RW_ASSERT (!wio.fail ()); 
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++            RW_ASSERT (0 == std::wcsncmp (wcs, data.wcs_, sizeof (wcs)));
++#else
+             RW_ASSERT (!rw_strncmp (wcs, data.wcs_));
++#endif // _RWSTD_OS_SUNOS || _RWSTD_OS_LINUX
+ 
+ #endif   // _RWSTD_NO_WCHAR_T
+ 
+@@ -308,6 +327,12 @@
+     wio.rdbuf (&wsb);
+ #endif // _RWSTD_NO_WCHAR_T
+ 
++    for (size_t i = 0; i < MAX_THREADS; ++i) {
++         locales[i] = 0UL;
++         my_num_data[i].locale_name_ = "";
++         my_num_data[i].locale_ = std::locale();
++    }
++
+     // find all installed locales for which setlocale(LC_ALL) succeeds
+     const char* const locale_list =
+         rw_opt_locales ? rw_opt_locales : rw_locales (_RWSTD_LC_ALL);
+@@ -319,14 +344,14 @@
+          name += std::strlen (name) + 1) {
+ 
+         const std::size_t inx = nlocales;
+-        locales [inx] = name;
++        locales [inx] = strdup (name);
+ 
+         // fill in the value and results for this locale
+         MyNumData& data = my_num_data [nlocales];
+-        data.locale_name_ = name;
++        data.locale_name_ = std::string (name);
+ 
+         try {
+-            const std::locale loc (data.locale_name_);
++            const std::locale loc (data.locale_name_.c_str());
+ 
+             data.value_ = nlocales & 1 ? -1 * nlocales : nlocales;
+             data.type_ = MyNumData::PutId (nlocales % MyNumData::put_max);
+@@ -343,7 +368,7 @@
+ 
+             rw_fatal (!nio.fail (), __FILE__, __LINE__,
+                       "num_put<char>::put(...) failed for locale(%#s)",
+-                      data.locale_name_);
++                      data.locale_name_.c_str());
+ 
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
+@@ -358,7 +383,7 @@
+ 
+             rw_fatal (!wio.fail (), __FILE__, __LINE__,
+                       "num_put<wchar_t>::put(...) failed for locale(%#s)",
+-                      data.locale_name_);
++                      data.locale_name_.c_str());
+ 
+ #endif // _RWSTD_NO_WCHAR_T
+ 
+@@ -466,3 +491,4 @@
+                     &rw_opt_setlocales,
+                     &opt_shared_locale);
+ }
++
+--- stdcxx-4.2.1/tests/localization/22.locale.time.put.mt.cpp	2008-04-24 20:23:10.000000000 -0400
++++ stdcxx-4.2.1/tests/localization/22.locale.time.put.mt.cpp	2011-04-06 12:41:28.710792084 -0400
+@@ -34,6 +34,7 @@
+ 
+ #include <cstring>    // for strlen ()
+ #include <ctime>      // for tm
++#include <cstdio>     // for sprintf
+ 
+ #include <rw_locale.h>
+ #include <rw_thread.h>
+@@ -65,17 +66,18 @@
+ 
+ // should all threads share the same set of locale objects instead
+ // of creating their own?
+-int opt_shared_locale;
++static int opt_shared_locale = 0;
++
++// print verbose info messages
++static int opt_verbose = 0;
+ 
+ /**************************************************************************/
+ 
+ // array of locale names to use for testing
+-static const char*
+-locales [MAX_THREADS];
++static const char* locales [MAX_THREADS];
+ 
+ // number of locale names in the array
+-static std::size_t
+-nlocales;
++static std::size_t nlocales;
+ 
+ /**************************************************************************/
+ 
+@@ -85,7 +87,7 @@
+     enum { BufferSize = 64 };
+ 
+     // name of the locale the data corresponds to
+-    const char* locale_name_;
++    std::string locale_name_;
+ 
+     // optionally set to the named locale for threads to share
+     std::locale locale_;
+@@ -148,13 +150,19 @@
+     MyStreambuf<char, std::char_traits<char> > nsb;
+     nio.rdbuf (&nsb);
+ 
++    (void) ::memset(ncs, '\0', std::size_t (MyTimeData::BufferSize));
++
+ #ifndef _RWSTD_NO_WCHAR_T
+     wchar_t                 wcs [MyTimeData::BufferSize];
+     MyIos<wchar_t, std::char_traits<wchar_t> >       wio;
+     MyStreambuf<wchar_t, std::char_traits<wchar_t> > wsb;
+     wio.rdbuf (&wsb);
++
++    (void) ::memset(wcs, '\0',
++                    std::size_t (MyTimeData::BufferSize) * sizeof(wchar_t));
+ #endif // _RWSTD_NO_WCHAR_T
+ 
++
+     for (int i = 0; i != opt_nloops; ++i) {
+ 
+         // save the name of the locale
+@@ -165,11 +173,16 @@
+         // using a random conversion specifier
+         const std::locale loc =
+             opt_shared_locale ? data.locale_
+-                                 : std::locale (data.locale_name_);
++                              : std::locale (data.locale_name_.c_str());
+ 
+         if (test_char) {
+             // exercise the narrow char specialization of the facet
+ 
++            if (opt_verbose)
++                rw_info (0, 0, __LINE__,
++                         "exercising std::time_put<char> in locale '%s'",
++                          data.locale_name_.c_str());
++
+             const std::time_put<char> &tp =
+                 std::use_facet<std::time_put<char> >(loc);
+ 
+@@ -181,7 +194,11 @@
+                      nio, ' ', &data.time_, data.format_) = '\0';
+ 
+             RW_ASSERT (!nio.fail ());
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++            RW_ASSERT (0 == std::strncmp(ncs, data.ncs_, sizeof(ncs)));
++#else
+             RW_ASSERT (!rw_strncmp(ncs, data.ncs_));
++#endif
+ 
+         }
+ 
+@@ -192,6 +209,11 @@
+ 
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
++            if (opt_verbose)
++                rw_info (0, 0, __LINE__,
++                         "exercising std::time_put<wchar_t> in locale '%s'",
++                         data.locale_name_.c_str());
++
+             const std::time_put<wchar_t> &wp =
+                 std::use_facet<std::time_put<wchar_t> >(loc);
+ 
+@@ -202,7 +224,11 @@
+                      wio, L' ', &data.time_, data.format_) = L'\0';
+ 
+             RW_ASSERT (!wio.fail ());
++#if defined(_RWSTD_OS_SUNOS) || defined(_RWSTD_OS_LINUX)
++            RW_ASSERT (0 == std::wcsncmp(wcs, data.wcs_, sizeof(wcs)));
++#else
+             RW_ASSERT (!rw_strncmp(wcs, data.wcs_));
++#endif
+ 
+ #endif // _RWSTD_NO_WCHAR_T
+ 
+@@ -229,6 +255,12 @@
+     wio.rdbuf (&wsb);
+ #endif // _RWSTD_NO_WCHAR_T
+ 
++    for (size_t i = 0; i < MAX_THREADS; ++i) {
++        locales[i] = 0UL;
++         my_time_data[i].locale_name_ = "";
++         my_time_data[i].locale_ = std::locale();
++    }
++
+     // find all installed locales for which setlocale (LC_ALL) succeeds
+     const char* const locale_list =
+         rw_opt_locales ? rw_opt_locales : rw_locales (_RWSTD_LC_ALL);
+@@ -264,7 +296,7 @@
+         data.format_ = cvtspecs [nlocales % (sizeof cvtspecs - 1)];
+ 
+         try {
+-            const std::locale loc (data.locale_name_);
++            const std::locale loc (data.locale_name_.c_str());
+ 
+             const std::time_put<char> &np =
+                 std::use_facet<std::time_put<char> >(loc);
+@@ -278,7 +310,7 @@
+             rw_fatal (!nio.fail (), __FILE__, __LINE__,
+                       "time_put<char>::put(..., %c) "
+                       "failed for locale(%#s)",
+-                      data.format_, data.locale_name_);
++                      data.format_, data.locale_name_.c_str());
+             
+ #ifndef _RWSTD_NO_WCHAR_T
+ 
+@@ -294,7 +326,7 @@
+             rw_fatal (!wio.fail (), __FILE__, __LINE__,
+                       "time_put<wchar_t>::put(..., %c) "
+                       "failed for locale(%#s)",
+-                      data.format_, data.locale_name_);
++                      data.format_, data.locale_name_.c_str());
+ 
+ #endif // _RWSTD_NO_WCHAR_T
+ 
+--- stdcxx-4.2.1/tests/localization/22.locale.money.get.cpp	2008-04-24 17:23:10.000000000 -0700
++++ stdcxx-4.2.1/tests/localization/22.locale.money.get.cpp	2011-03-22 15:37:13.547889349 -0700
+@@ -340,7 +340,7 @@
+         io.imbue (std::locale (io.getloc (), pf));
+     }
+ 
+-    io.flags (std::ios_base::fmtflags (flags));
++    io.setf (std::ios_base::fmtflags (flags));
+ 
+     // expand (widen) input sequence
+     const charT* const next = rw_expand ((charT*)0, str);
+@@ -772,7 +772,8 @@
+     // all spaces extracted since currency symbol (last) is mandatory
+     // verify that the facet doesn't extract too many optional spaces
+     // leaving none for the final required currency symbol
+-    TEST (T,  103.0, "103 ", 4, showbase, eofbit, 0, "-1@$", " ");
++    // 22.2.6.1.2, p3: if showbase is set, currency symbol is mandatory
++    TEST (T,  103.0, "103 ", 4, showbase, eofbit|failbit, 0, "-1@$", " ");
+ 
+     // 22.2.6.1.2, p3: [Example: If showbase is off, then for
+     // a negative sign value of "()" and a currency symbol of "L",
+@@ -818,7 +819,7 @@
+     // specifier that's last in the pattern doesn't confuse the facet into
+     // extracting all the optional whitespace, leaving none to complete
+     // the negative_sign
+-    TEST (T, -109.1, "-109  ", 6, 0, eofbit, 0, "-1@$", "");
++    TEST (T, -109.1, "-109  ", 6, 0, eofbit|failbit, 0, "-1@$", "");
+ 
+     // verify that optional space after value and before currency
+     // symbol is treated correctly
+
+--- stdcxx-4.2.1/tests/localization/22.locale.codecvt.length.cpp	2008-04-24 20:23:10.000000000 -0400
++++ stdcxx-4.2.1/tests/localization/22.locale.codecvt.length.cpp	2011-06-23 13:59:09.859216905 -0400
+@@ -202,10 +202,11 @@
+              "(state_type&, const extern_type*, const extern_type*, "
+              "size_t)");
+ 
+-    const CodecvtByname cvt ("");
++    const std::locale loc (std::locale::classic(), new CodecvtByname(""));
+ 
+-    test_codecvt (&cvt);
++    const CodecvtByname& cvt = std::use_facet<CodecvtByname>(loc);
+ 
++    test_codecvt (&cvt);
+ }
+ 
+ /****************************************************************************/
+@@ -266,10 +267,16 @@
+ 
+     // lowercase utf ==> relaxed checking (i.e., some, but not all,
+     // invalid UTF-8 sequence are accepted)
+-    const WCodecvtByname cvt_relaxd ("utf-8@UCS");
++	std::locale loc_relaxd (std::locale(), new WCodecvtByname ("utf-8@UCS"));
+ 
+     // capital UTF ==> strict checking
+-    const WCodecvtByname cvt_strict ("UTF-8@UCS");
++    std::locale loc_strict (std::locale(), new WCodecvtByname ("UTF-8@UCS"));
++
++    const WCodecvtByname& cvt_relaxd =
++        std::use_facet<WCodecvtByname> (loc_relaxd);
++
++    const WCodecvtByname& cvt_strict =
++        std::use_facet<WCodecvtByname> (loc_strict);
+ 
+ #undef STRICT
+ #define STRICT(from, nc, maxi, res) \
+
+--- stdcxx-4.2.1/tests/localization/22.locale.codecvt.out.cpp	2008-04-24 20:23:10.000000000 -0400
++++ stdcxx-4.2.1/tests/localization/22.locale.codecvt.out.cpp	2011-06-23 14:04:06.286408279 -0400
+@@ -482,7 +482,9 @@
+              "const intern_type*, "
+              "extern_type*, extern_type*, exterm_type*&)");
+ 
+-    const CodecvtByname cvt ("");
++    const std::locale loc (std::locale::classic(), new CodecvtByname(""));
++
++    const CodecvtByname& cvt = std::use_facet<CodecvtByname>(loc);
+ 
+     test_codecvt (&cvt);
+ }
+@@ -555,10 +557,16 @@
+ 
+     // lowercase utf ==> relaxed checking (i.e., some, but not all,
+     // invalid UTF-8 sequence are accepted)
+-    const WCodecvtByname cvt_relaxd ("utf-8@UCS");
++    std::locale loc_relaxd (std::locale(), new WCodecvtByname ("utf-8@UCS"));
+ 
+     // capital UTF ==> strict checking
+-    const WCodecvtByname cvt_strict ("UTF-8@UCS");
++    std::locale loc_strict (std::locale(), new WCodecvtByname ("UTF-8@UCS"));
++
++    const WCodecvtByname& cvt_relaxd =
++        std::use_facet<WCodecvtByname> (loc_relaxd);
++
++    const WCodecvtByname& cvt_strict =
++        std::use_facet<WCodecvtByname> (loc_strict);
+ 
+ #undef STRICT
+ #define STRICT(from, from_end_off, from_next_off,    \
+
+
+--- stdcxx-4.2.1/tests/localization/22.locale.num.put.cpp	2008-04-24 20:23:10.000000000 -0400
++++ stdcxx-4.2.1/tests/localization/22.locale.num.put.cpp	2011-06-23 14:19:35.515277321 -0400
+@@ -505,12 +505,10 @@
+ 
+     Ios<charT> ios;
+ 
+-    const std::num_put<charT> np;
+-
+     Streambuf<charT> sb;
+ 
+ #define DIRECT_USE_TEST(T) \
+-    np.put (std::ostreambuf_iterator<charT>(&sb), ios, charT (), (T)0)
++    std::use_facet<std::num_put<charT> >(sb.getloc()).put (std::ostreambuf_iterator<charT>(&sb), ios, charT (), (T)0)
+ 
+ #ifndef _RWSTD_NO_BOOL
+ 
+--- stdcxx-4.2.1/util/charmap.cpp	2008-04-24 20:28:51.000000000 -0400
++++ stdcxx-4.2.1/util/charmap.cpp	2011-06-27 14:00:58.064216427 -0400
+@@ -221,7 +221,7 @@
+     
+     if (ch_end < ch + num_bytes - 1) {
+         // the input doesn't have enough characters
+-        issue_diag (E_MBCHAR, true, 0, 
++        issue_diag (W_CHAR, true, 0, 
+                     "incomplete multibyte character in character "
+                     "map file: expecting %u bytes, found %u\n",
+                     num_bytes, ch_end - ch);
+

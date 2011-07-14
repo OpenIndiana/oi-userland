@@ -1,0 +1,123 @@
+--- stdcxx-4.2.1/etc/config/src/SIZE_T.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/SIZE_T.cpp	2011-01-13 16:03:35.112939953 -0500
+@@ -28,6 +28,9 @@
+ #include <stdio.h>
+ #include <stdlib.h>   // for RAND_MAX
+ #include <time.h>     // for CLOCKS_PER_SEC
++#include <stdint.h>
++#include <sys/types.h>
++#include <limits.h>
+ 
+ #ifndef _RWSTD_NO_WCTYPE_H
+ #  include <wctype.h>   // for WEOF
+@@ -54,6 +57,17 @@
+     size_t    size = 0;           // unsigned integral type
+     time_t    tim  = 0;           // arithmetic type
+ 
++#if defined(__SUNPRO_CC)
++	printf ("#define _RWSTD_CLOCK_T        %s\n", "clock_t");
++	printf ("#define _RWSTD_PTRDIFF_T      %s\n", "ptrdiff_t");
++	printf ("#define _RWSTD_SIZE_T         %s\n", "size_t");
++	printf ("#define _RWSTD_SSIZE_T        %s\n", "ssize_t");
++
++	printf ("#define _RWSTD_SIZE_MAX       SIZE_MAX\n");
++	printf ("#define _RWSTD_PTRDIFF_MIN    PTRDIFF_MIN\n");
++	printf ("#define _RWSTD_PTRDIFF_MAX    PTRDIFF_MAX\n");
++   printf ("#define _RWSTD_TIME_T         %s\n", "time_t");
++#else
+     printf ("#define _RWSTD_CLOCK_T        %s\n", type_name (clk));
+     printf ("#define _RWSTD_PTRDIFF_T      %s\n", type_name (diff));
+     printf ("#define _RWSTD_SIZE_T         %s\n", type_name (size));
+@@ -69,6 +83,7 @@
+ 
+ 
+     printf ("#define _RWSTD_TIME_T         %s\n", type_name (tim));
++#endif // __SUNPRO_CC
+ 
+ #if defined (CLOCKS_PER_SEC)
+     printf ("#define _RWSTD_CLOCKS_PER_SEC %d\n", CLOCKS_PER_SEC);
+
+#========================================================#
+
+--- stdcxx-4.2.1/etc/config/src/SIG_ATOMIC_T.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/SIG_ATOMIC_T.cpp	2011-01-13 16:41:25.550940101 -0500
+@@ -24,6 +24,7 @@
+ 
+ #include <signal.h>
+ #include <stdio.h>
++#include <stdint.h>
+ 
+ #include "config.h"
+ 
+@@ -83,6 +84,11 @@
+ 
+     sig_atomic_t atomic = 0;
+     const char* const tname = type_name (atomic);
++#if defined(__SUNPRO_CC)
++   printf ("#define _RWSTD_SIG_ATOMIC_T   %s\n", "sig_atomic_t");
++	printf ("#define _RWSTD_SIG_ATOMIC_MIN SIG_ATOMIC_MIN\n");
++	printf ("#define _RWSTD_SIG_ATOMIC_MAX SIG_ATOMIC_MAX\n");
++#else
+     printf ("#define _RWSTD_SIG_ATOMIC_T   %s\n", tname);
+ 
+     // compute the type's minimum and maximum
+@@ -91,6 +97,8 @@
+     printf ("#define _RWSTD_SIG_ATOMIC_MIN _RWSTD_%s_MIN\n"
+             "#define _RWSTD_SIG_ATOMIC_MAX _RWSTD_%s_MAX\n",
+             symbol, symbol);
++#endif
+ 
+     return 0;
+ }
++
+
+#========================================================#
+
+--- stdcxx-4.2.1/etc/config/src/UNISTD_DECL.cpp	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/UNISTD_DECL.cpp	2011-01-13 16:09:17.619688853 -0500
+@@ -34,6 +34,8 @@
+ #  include <unistd.h>
+ #endif   // _WIN32 || _WIN64
+ 
++#include <stdint.h>
++
+ // Windows defines the equivalent SSIZE_T in the platform SDK
+ // as the signed equivalent of size_t which is defined as long
+ // on WIN32 and long long/__int64 on WIN64
+@@ -140,11 +142,16 @@
+ {
+     print_macros ();
+ 
++#if defined(__SUNPRO_CC)
++    printf ("#define _RWSTD_OFF_T off_t\n");
++    printf ("#define _RWSTD_SSIZE_T ssize_t\n");
++#else
+     off_t off = 0;
+     printf ("#define _RWSTD_OFF_T %s   // off_t\n", off_t_name (off));
+ 
+     ssize_t s = 0;
+     printf ("#define _RWSTD_SSIZE_T %s   // ssize_t\n", ssize_t_name (s));
++#endif
+ 
+     return 0;
+ }
+
+#========================================================#
+
+--- stdcxx-4.2.1/etc/config/src/types.h	2008-04-24 20:25:44.000000000 -0400
++++ stdcxx-4.2.1/etc/config/src/types.h	2011-01-13 16:21:37.514713711 -0500
+@@ -38,7 +38,11 @@
+ DEFINE_TYPE_HELPER (unsigned short, "USHRT");
+ 
+ DEFINE_TYPE_HELPER (int, "INT");
++#if defined(__SUNPRO_CC)
++DEFINE_TYPE_HELPER (unsigned int, "UINT");
++#else
+ DEFINE_TYPE_HELPER (unsigned, "UINT");
++#endif
+ 
+ DEFINE_TYPE_HELPER (long, "LONG");
+ DEFINE_TYPE_HELPER (unsigned long, "ULONG");
+
+#========================================================#
+

@@ -1,0 +1,135 @@
+Explanation of some unusual compiler flags used when building the
+Apache Standard C++ Library:
+
+1. CFLAGS
+
+All the -D_STRICT_STDC -D_STRICT_STDC__ -D_STDC_C99 -D_ISOC99_SOURCE:
+
+Since we are building a Standard conforming library, compliance with
+Strict Standard C is assumed and expected.
+
+However, the Apache Standard C++ Library provides some extensions to
+the C++ Standard, by allowing some C99 functions. Visibility of C99
+is enabled by passing -D_XPG6 -D_XOPEN_SOURCE=600 in CFLAGS. However,
+Standard C++ disallows _XPG6 and _XOPEN_SOURCE=600, and only allows
+_XPG5 and _XOPEN_SOURCE=500, so for CXXFLAGS we raise _XPG5 and
+_XOPEN_SOURCE=500.
+
+2. CXXFLAGS
+
+-library=no%Cstd :
+
+do *NOT*, under any circumstances, use the Solaris libCstd.so.1.
+
+-library=Crun :
+
+Use the Solaris libCrun.so.1. This library is very important: it provides
+the symbols for the Standard C++ exception classes, and it also provides
+the Solaris C++ run-time support.
+
+-Qoption ccfe ++boolflag:sunwcch=false :
+
+do *NOT*, under any circumstances, use the default Studio 12 header
+files for the libCstd.so.1 Solaris C++ Library. This flag is very
+important. We must build the Apache C++ Library using its own header
+files, and we must ignore any other C++ header files.
+
+-Qoption ccfe +d2,-xgeninl=system :
+
+The +d2,-xgeninl=system options causes functions that are generated
+inline also to be generated also as closed functions in the object file.
+By default, a function that is always inlined is not actually generated
+unless its address is needed. 
+
+-Qoption ccfe -expand=10000 :
+
+The C++ front end decides whether to inline a function in part depending
+on a complexity measure. The -expand=N option, where N is a decimal number,
+sets the complexity limit. Functions of greater complexity are not inlined
+by the front end. The default limit is in the range 100-500 depending on
+the optimization level. Setting the limit to 10,000 effectively allows
+inlining of all but the largest functions. 
+
+We use these options when building our system libraries for two reasons:
+
+2.1. We want to allow maximum inlining of functions to improve runtime
+performance. The size of a library (especially a shared library) is not
+usually important, so we trade size for speed.
+
+2.2. A library function defined as inline in a standard header will be
+inlined in user code, unless inlining is disabled or the function address
+is taken. If library functions get defined in user code, the program can
+wind up with circular dependencies among the various program parts.
+
+Explanation:
+
+Suppose library function F is defined as inline, but the library uses the
+address of F. Function F will be generated as a closed function in the
+library. If user code also needs the address of F, it will be generated in
+user code. The linker picks the first definition of F it sees, which will
+be in user code in this case, and discards any others. The library then
+calls F in user code instead of the one inside the library. If F is used
+as part of initializing the library, then the library has an initialization
+dependency on the main program. The main program always has an
+initialization dependency on the library. You can wind up with strange
+program failures, since you cannot satisfy the circular dependency.
+
+To prevent this possibility, we generate F unconditionally as a closed
+function in the library. When a user function needs the address of F,
+the compiler first checks to see whether F is defined in the library.
+If so, it just generates a reference to F instead of generating a definition
+of F. There is then only one copy of F in the entire program, and it is in
+the library. 
+
+-features=except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic :
+
+We want to enable specific and Standard-mandated C++ Compiler features,
+and we want to be explicit about them, just in case the default C++
+Compiler default features change in the future. This way, we are guaranteed
+that the Library builds in a consistent way, independent of any future
+updates to the C++ Compiler.
+
+-template=geninlinefuncs :
+
+Instantiate inline member functions for the explicitly instantiated
+class template which were not generated previously.
+
+-verbose=template :
+
+Be verbose about template instantiations. This is useful for tracking
+what the compiler is doing when instantiating templates, and for debugging,
+in case we end up with undefined class template symbols.
+
+-xlang=c99 :
+
+Assume non-standard compatibility with C99. Allows C programming language
+behavior for objects which were compiled either with the c99 driver, or
+with the cc -xc99=%all driver, and are being linked with the Library.
+
+-xbuiltin=%none : 
+
+No builtins whatsoever.
+
+-xinline= :
+
+(nothing after the '=').
+
+We've already told the compiler frontend (with the -Qoption ccfe flags)
+how to inline, and what the inlining limits are. Therefore, do not make any
+other heuristic decisions about inlining (i.e. assume nothing is inlined).
+
+-xlibmieee :
+
+Cause strict conformance to the IEEE 754 Standard for math routines in
+exceptional cases. The C++ Standard implicitly mandates IEEE 754
+(cf. see libstdcxx4.3lib man page).
+
+3. LDFLAGS
+
+-lumem :
+
+The PAE Group and myself have tested the performance of the Apache Standard
+C++ Library, and determined that linking with libumem provides the best
+malloc(3C) performance. libmtmalloc.so.1 was spending a lot of time chasing
+pointers.
+

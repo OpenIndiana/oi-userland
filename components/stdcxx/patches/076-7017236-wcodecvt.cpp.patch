@@ -1,0 +1,61 @@
+--- stdcxx-4.2.1/src/wcodecvt.cpp	2008-04-24 17:25:19.000000000 -0700
++++ stdcxx-4.2.1/src/wcodecvt.cpp	2011-02-04 07:26:31.881614906 -0800
+@@ -351,6 +351,8 @@
+                  wchar_t          *to_limit,
+                  wchar_t*         &to_next)
+ {
++    int save_errno;
++
+     _RWSTD_ASSERT (from <= from_end);
+     _RWSTD_ASSERT (to <= to_limit);
+ 
+@@ -371,7 +373,9 @@
+         _RWSTD_SIZE_T nbytes;
+ 
+ #ifndef _RWSTD_NO_MBRTOWC
++	errno = 0;
+         nbytes = mbrtowc (pdst, psrc, src_len, &state);
++	save_errno = errno;
+ #elif !defined (_RWSTD_NO_MBTOWC)
+         nbytes = mbtowc (pdst, psrc, src_len);
+ #else
+@@ -379,7 +383,7 @@
+ #endif
+ 
+         // -1 indicates an invalid sequence (i.e., error)
+-        if (nbytes == (_RWSTD_SIZE_T)(-1)) {
++        if ((nbytes == (_RWSTD_SIZE_T)(-1)) || (EILSEQ == save_errno)) {
+         res = _STD::codecvt_base::error;
+             break;
+         }
+@@ -428,6 +432,8 @@
+                   char             *to_limit,
+                   char*            &to_next)
+ {
++    int save_errno;
++
+     _RWSTD_ASSERT (from <= from_end);
+     _RWSTD_ASSERT (to <= to_limit);
+ 
+@@ -476,10 +482,12 @@
+ 
+ #ifndef _RWSTD_NO_WCRTOMB
+ 
++	errno = 0;
+         // convert the next source character (note that it would be
+         // unsafe to use wcsrtombs() since the source sequence may
+         // not be NUL terminated)
+         dst_len = wcrtomb (tmpdst, *from_next, &state);
++	save_errno = errno;
+ 
+ #elif !defined (_RWSTD_NO_WCTOMB)
+ 
+@@ -494,7 +502,7 @@
+ #endif   // _RWSTD_NO_WCRTOMB, _RWSTD_NO_WCTOMB
+ 
+         // -1 is returned as an indication of an illegal sequence
+-        if (_RWSTD_SIZE_MAX == dst_len) {
++        if (((_RWSTD_SIZE_T) (-1) == dst_len) || (EILSEQ == save_errno)) {
+             res = _STD::codecvt_base::error;
+             break;
+         }

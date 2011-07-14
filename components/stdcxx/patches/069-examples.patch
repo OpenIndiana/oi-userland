@@ -1,0 +1,71 @@
+--- stdcxx-4.2.1/examples/include/stocks.h	2008-04-24 17:29:00.000000000 -0700
++++ stdcxx-4.2.1/examples/include/stocks.h	2011-02-22 06:45:25.141319167 -0800
+@@ -62,6 +62,11 @@
+ #  define GERMAN_LOCALE         "de_DE"
+ #  define FRENCH_LOCALE         "fr_FR"
+ #  define JAPANESE_LOCALE       "ja_JP"
++#elif defined (sun) || defined(__sun) || defined(__sun__)
++#  define US_LOCALE             "en_US.UTF-8"
++#  define GERMAN_LOCALE         "de_DE.UTF-8"
++#  define FRENCH_LOCALE         "fr_FR.UTF-8"
++#  define JAPANESE_LOCALE       "ja_JP.UTF-8"
+ #elif defined (__osf__)
+ #  define US_LOCALE             "en_US.ISO8859-1"
+ #  define GERMAN_LOCALE         "de_DE.ISO8859-1"
+--- stdcxx-4.2.1/examples/manual/money_get.cpp	2008-04-24 17:29:32.000000000 -0700
++++ stdcxx-4.2.1/examples/manual/money_get.cpp	2010-12-16 14:32:02.890774293 -0800
+@@ -44,6 +44,8 @@
+ // Windows
+ #elif defined (_WIN32)
+ const char en_US[] = "English";
++#elif defined(sun) || defined(__sun) || defined(__sun__)
++const char en_US[] = "en_US.UTF-8";
+ #else
+ // AIX, IRIX, Linux, Solaris
+ const char en_US[] = "en_US";
+--- stdcxx-4.2.1/examples/manual/codecvt1.cpp	2008-04-24 17:29:32.000000000 -0700
++++ stdcxx-4.2.1/examples/manual/codecvt1.cpp	2011-01-04 08:11:55.429355503 -0800
+@@ -73,8 +73,7 @@
+     const char* buffer;
+ } locales [] = {
+     { "ja_JP.UTF-8"    , wd_utf8  },
+-    { "ja_JP.Shift_JIS", wd_sjis  },
+-    { "ja_JP.EUC-JP"   , wd_eucjp }
++    { "ja_JP.eucJP"   , wd_eucjp }
+ };
+ 
+ std::mbstate_t init = std::mbstate_t ();
+@@ -153,7 +152,7 @@
+     //    representation that uses UTF-8 encoding;
+     // 3. Compare the size and content of the final result with size and 
+     //    content of the wd_utf8 buffer.
+-    const std::locale loc1 ("ja_JP.EUC-JP");
++    const std::locale loc1 ("ja_JP.eucJP");
+     const std::locale loc2 ("ja_JP.UTF-8");
+ 
+     const wcodecvt_byname_t& cc1 = std::use_facet<wcodecvt_byname_t> (loc1);
+
+--- stdcxx-4.2.1/examples/manual/numpunct.cpp	2008-04-24 17:29:32.000000000 -0700
++++ stdcxx-4.2.1/examples/manual/numpunct.cpp	2011-04-04 10:14:02.912617779 -0700
+@@ -38,16 +38,20 @@
+ {
+     static const char* const
+     locale_names [] = {
++#if defined(_RWSTD_OS_SUNOS)
++        "de_DE.UTF-8",
++#else
+         "de_DE.ISO8859-1",       // AIX, Solaris, Tru64
+         "de_DE.iso88591",        // HP-UX, Linux
+         "de_DE.88591",
+         "De_DE.88591",           // Reliant
+         "de_DE",
+-        "de",                    // Linux, Solaris
++        "de",                    // Linux
+         "German",
+         "german",                // Linux
+         "deutsch",               // Linux
+         "german_germany.1252",   // Windows
++#endif
+         0                        // (sentinel)
+     };
+ 

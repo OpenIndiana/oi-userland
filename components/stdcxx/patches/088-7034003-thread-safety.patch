@@ -1,0 +1,174 @@
+--- stdcxx-4.2.1/include/loc/_numpunct.h	2011-02-02 12:41:01.086059633 -0500
++++ stdcxx-4.2.1/include/loc/_numpunct.h	2011-04-07 17:38:11.594730348 -0400
+@@ -60,6 +60,7 @@
+     typedef
+     basic_string<char_type, char_traits<char_type>, allocator<char_type> >
+     string_type;
++    typedef numpunct<_CharT> _Type;
+ 
+     _EXPLICIT numpunct (_RWSTD_SIZE_T __ref = 0)
+         : _RW::__rw_facet (__ref), _C_flags (0) { }
+@@ -140,6 +141,8 @@
+ inline _TYPENAME numpunct<_CharT>::char_type
+ numpunct<_CharT>::decimal_point () const
+ {
++    _RWSTD_MT_CLASS_GUARD (_Type);
++
+     if (!(_C_flags & _RW::__rw_dp)) {
+ 
+         numpunct* const __self = _RWSTD_CONST_CAST (numpunct*, this);
+@@ -158,6 +161,8 @@
+ inline _TYPENAME numpunct<_CharT>::char_type
+ numpunct<_CharT>::thousands_sep () const
+ {
++    _RWSTD_MT_CLASS_GUARD (_Type);
++
+     if (!(_C_flags & _RW::__rw_ts)) {
+ 
+         numpunct* const __self = _RWSTD_CONST_CAST (numpunct*, this);
+@@ -175,6 +180,8 @@
+ template <class _CharT>
+ inline string numpunct<_CharT>::grouping () const
+ {
++    _RWSTD_MT_CLASS_GUARD (_Type);
++
+     if (!(_C_flags & _RW::__rw_gr)) {
+ 
+         numpunct* const __self = _RWSTD_CONST_CAST (numpunct*, this);
+@@ -185,7 +192,7 @@
+         __self->_C_flags    |= _RW::__rw_gr;
+     }
+ 
+-    return _C_grouping;
++    return _C_grouping.c_str ();
+ }
+ 
+ 
+@@ -193,6 +200,8 @@
+ inline _TYPENAME numpunct<_CharT>::string_type
+ numpunct<_CharT>::truename () const
+ {
++    _RWSTD_MT_CLASS_GUARD (_Type);
++
+     if (!(_C_flags & _RW::__rw_tn)) {
+ 
+         numpunct* const __self = _RWSTD_CONST_CAST (numpunct*, this);
+@@ -203,7 +212,7 @@
+         __self->_C_flags    |= _RW::__rw_tn;
+     }
+ 
+-    return _C_truename;
++    return _C_truename.data ();
+ }
+ 
+ 
+@@ -211,6 +220,8 @@
+ inline _TYPENAME numpunct<_CharT>::string_type
+ numpunct<_CharT>::falsename () const
+ {
++    _RWSTD_MT_CLASS_GUARD (_Type);
++
+     if (!(_C_flags & _RW::__rw_fn)) {
+ 
+         numpunct* const __self = _RWSTD_CONST_CAST (numpunct*, this);
+@@ -221,7 +232,7 @@
+         __self->_C_flags     |= _RW::__rw_fn;
+     }
+ 
+-    return _C_falsename;
++    return _C_falsename.data ();
+ }
+ 
+ // #endif _RWSTD_NO_EXT_NUMPUNCT_PRIMARY
+@@ -276,3 +287,4 @@
+ 
+ 
+ #endif   // _RWSTD_LOC_NUMPUNCT_H_INCLUDED
++
+--- stdcxx-4.2.1/include/loc/_moneypunct.h	2011-02-02 12:41:01.084951217 -0500
++++ stdcxx-4.2.1/include/loc/_moneypunct.h	2011-04-07 17:40:45.482729647 -0400
+@@ -71,6 +71,7 @@
+     typedef
+     basic_string<char_type, char_traits<char_type>, allocator<char_type> >
+     string_type;
++    typedef moneypunct<_CharT, bool> _Type;
+ 
+     _EXPLICIT moneypunct (_RWSTD_SIZE_T __refs = 0)
+         : _RW::__rw_facet (__refs),
+@@ -122,49 +123,76 @@
+ 
+     // 22.2.6.3.1, p1
+     virtual char_type do_decimal_point () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return *_C_get (this, _RW::__rw_dp);
+     }
+ 
+     // 22.2.6.3.1, p2
+     virtual char_type do_thousands_sep () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return *_C_get (this, _RW::__rw_ts);
+     }
+ 
+     // 22.2.6.3.1, p3
+     virtual string do_grouping () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return
+             _RWSTD_REINTERPRET_CAST (const char*, _C_get (this, _RW::__rw_gr));
+     }
+ 
+     // 22.2.6.3.1, p4
+     virtual string_type do_curr_symbol () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return _C_get (this, _RW::__rw_cs);
+     }
+ 
+     // 22.2.6.3.1, p5
+     virtual string_type do_positive_sign () const {
++
++       _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return _C_get (this, _RW::__rw_ps);
+     }
+ 
+     // 22.2.6.3.1, p5
+     virtual string_type do_negative_sign () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return _C_get (this, _RW::__rw_ns);
+     }
+ 
+     // 22.2.6.3.1, p6
+     virtual int do_frac_digits () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return _RWSTD_STATIC_CAST(int, _RWSTD_REINTERPRET_CAST (_RWSTD_SIZE_T, 
+                                            _C_get (this, _RW::__rw_fd)));
+     }
+ 
+     // 22.2.6.3.1, p7
+     virtual pattern do_pos_format () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return *_RWSTD_REINTERPRET_CAST (const pattern*,
+                                          _C_get (this, _RW::__rw_pf));
+     }
+ 
+     // 22.2.6.3.1, p5
+     virtual pattern do_neg_format () const {
++
++        _RWSTD_MT_CLASS_GUARD (_Type);
++
+         return *_RWSTD_REINTERPRET_CAST (const pattern*,
+                                          _C_get (this, _RW::__rw_nf));
+     }

@@ -1,0 +1,588 @@
+--- stdcxx-4.2.1/tests/numerics/26.gslice.array.cassign.cpp	2011-01-05 09:49:03.984545142 -0500
++++ stdcxx-4.2.1/tests/numerics/26.gslice.array.cassign.cpp	2011-01-04 19:01:52.275234131 -0500
+@@ -0,0 +1,585 @@
++/***************************************************************************
++ *
++ * 26.gslice.array.cassign.cpp - tests exercising valarray computed assignment
++ *
++ * $Id$
++ *
++ ***************************************************************************
++ *
++ * Licensed to the Apache Software  Foundation (ASF) under one or more
++ * contributor  license agreements.  See  the NOTICE  file distributed
++ * with  this  work  for  additional information  regarding  copyright
++ * ownership.   The ASF  licenses this  file to  you under  the Apache
++ * License, Version  2.0 (the  "License"); you may  not use  this file
++ * except in  compliance with the License.   You may obtain  a copy of
++ * the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the  License is distributed on an  "AS IS" BASIS,
++ * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
++ * implied.   See  the License  for  the  specific language  governing
++ * permissions and limitations under the License.
++ *
++ * Copyright (C) 2007-2008 Rogue Wave Software, Inc.
++ *
++ ***************************************************************************
++ * http://svn.apache.org/viewvc/stdcxx/branches/4.2.x/tests/numerics/26.gslice.array.cassign.cpp?view=markup&pathrev=663373
++ *
++ ***************************************************************************
++ * 2008-06-04  Travis Vitek  <vitek@roguewave.com>
++ *
++ *  STDCXX-901
++ *  * include/valarray (gslice_array<>::operator=): Don't skip
++ *  loop body if the slice is reset but has one element.
++ *  (gslice_array<>::operator*=): Ditto.
++ *  (gslice_array<>::operator/=): Ditto.
++ *  (gslice_array<>::operator+=): Ditto.
++ *  (gslice_array<>::operator-=): Ditto.
++ *  (gslice_array<>::operator%=): Ditto.
++ *  (gslice_array<>::operator^=): Ditto.
++ *  (gslice_array<>::operator&=): Ditto.
++ *  (gslice_array<>::operator|=): Ditto.
++ *  (gslice_array<>::operator<<=): Ditto.
++ *  (gslice_array<>::operator>>=): Ditto.
++ *  (valarray<>::ctor): Ditto.
++ *  (valarray<>::operator=): Ditto.
++ *  * tests/numerics/26.gslice.array.cassign.cpp: New test
++ *  for slice computed assignment operators.
++ *
++ ***************************************************************************
++ *
++ **************************************************************************/
++
++#include <cstdlib>       // for free(), strtod(), size_t
++#include <valarray>      // for indirect_array, valarray
++
++#include <rw_value.h>    // for UserClass
++#include <driver.h>      // for rw_test()
++#include <rw_printf.h>   // for rw_asnprintf()
++
++/**************************************************************************/
++
++// returns an array of size elements of type T constructed from a string
++// of comma-separated values
++static std::valarray<std::size_t>
++make_array (const char *s)
++{
++    std::size_t buf [256];
++    bool repeat = false;
++
++    std::size_t i = 0;
++    while (s && *s) {
++
++        char *end;
++        unsigned long val = std::strtoul (s, &end, 10);
++
++        RW_ASSERT ('\0' == *end || ',' == *end || '@' == *end);
++
++        if (!repeat)
++        {
++            buf [i++] = std::size_t (val);
++        }
++        else
++        {
++            const std::size_t n = buf [i-1];
++
++            for (std::size_t j = 0; j < (val - 1); ++j)
++                buf [i+j] = n;
++            i += (val - 1);
++        }
++
++        if ('\0' == *end)
++            break;
++
++        s = end + 1;
++        repeat = '@' == *end;
++    }
++
++    return std::valarray<std::size_t>(buf, i);
++}
++
++/**************************************************************************/
++
++void
++test_op_assign (void*,
++                void  (std::gslice_array<std::size_t>::*op_assign)(const std::valarray<std::size_t>&) const,
++                const char *tname,     // T's type name
++                const char *opname,    // which assignment operator
++                int         line,      // test case line number
++                std::size_t start,     // start index of slice
++                const char *length_str,// number of strides
++                const char *stride_str,// length of stride
++                const char *lhs_str,   // original array
++                const char *rhs_str,   // right hand side of assignment
++                const char *res_str)   // result of assignment
++{
++    // create an array of values from the string length_str
++    // representing the length array of the slice
++    const std::valarray<std::size_t> lengths (make_array (length_str));
++
++    // create an array of values from the string stride_str
++    // representing the stride array of the slice
++    const std::valarray<std::size_t> strides (make_array (stride_str));
++
++    // valarray(s)[gslice(start, length, stride)] op= rhs
++
++    const std::gslice gsl (start, lengths, strides);
++
++    // create an array of values from the string lhs_str
++    // representing the left-hand side array before slicing
++    /* const */ std::valarray<std::size_t> lhs_va (make_array (lhs_str));
++
++    // create an array of values from the string rhs_str
++    // representing the right-hand side argument of the assignment
++    const std::valarray<std::size_t> rhs_va (make_array (rhs_str));
++
++    // create an array of values from the string res_str
++    // representing the result of the assignment
++    const std::valarray<std::size_t> res_va (make_array (res_str));
++
++    // verify sizes match
++    RW_ASSERT (lhs_va.size () == res_va.size ());
++
++    // take a gslice of lhs_va, this is the lhs of the assignment
++    const std::gslice_array<std::size_t>& lhs_ga = lhs_va [gsl];
++
++    char*       fname = 0;
++    std::size_t size  = 0;
++
++    // format the name of the function call to be used in diagnostic
++    // messages below
++    rw_asnprintf (&fname, &size,
++                  "gslice_array<%s>(%s) %s std::valarray<%1$s>(%s)",
++                  tname, lhs_str, opname, rhs_str);
++
++    // invoke the assignment operator through the member pointer
++    (lhs_ga.*op_assign)(rhs_va);
++
++    // verify the element values
++    for (std::size_t i = 0; i != lhs_va.size (); ++i) {
++        if (!rw_assert (lhs_va [i] == res_va [i], 0, line,
++                        "line %d. %s: element at index %zu == %zu, got %zu",
++                        __LINE__, fname, i, res_va [i], lhs_va [i]))
++            break;
++
++    }
++
++    std::free (fname);
++}
++
++
++/**************************************************************************/
++
++#define OP(start, lengths, strides, lhs, rhs, res) \
++    test_op_assign ((T*)0, op, tname, opname, __LINE__, start, lengths, strides, lhs, rhs, res)
++
++
++template <class T>
++void test_mul_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator*=;
++
++    //  +- start
++    //  |  +- lengths
++    //  |  |    +- strides      +- rhs
++    //  |  |    |    +- lhs     |    +- expect
++    //  v  v    v    v          v    v
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "1@4",     "5",   "5,1@3");
++    OP (2, "1", "1", "1@4",     "5", "1,1,5,1");
++
++    OP (1, "2", "1", "1@4",     "3,4", "1,3,4,1");
++    OP (1, "1", "2", "2@4",       "2", "2,4,2,2");
++
++    OP (0, "2,1", "2,3", "2@4", "3,7", "6,2,14,2");
++    OP (1, "1,0", "2,3", "3@4",   "3",  "3,9,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_div_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator/=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "10@4",    "5",     "2,10@3");
++    OP (2, "1", "1", "12@4",    "5", "12,12,2,12");
++
++    OP (1, "2", "1", "12@4",    "3,4", "12,4,3,12");
++    OP (1, "1", "2", "6@4",       "2",   "6,3,6,6");
++
++    OP (0, "2,1", "2,3", "42@4", "3,7", "14,42,6,42");
++    OP (1, "1,0", "2,3",  "3@4",   "3",    "3,1,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_mod_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator%=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "10@4",    "5",     "0,10@3");
++    OP (2, "1", "1", "12@4",    "5", "12,12,2,12");
++
++    OP (1, "2", "1", "12@4",    "3,4", "12,0,0,12");
++    OP (1, "1", "2", "7@4",       "2",   "7,1,7,7");
++
++    OP (0, "2,1", "2,3", "14@4", "3,7", "2,14,0,14");
++    OP (1, "1,0", "2,3",  "3@4",   "3",   "3,0,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_add_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::valarray<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator+=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "1@4",    "5",   "6,1@3");
++    OP (2, "1", "1", "2@4",    "5", "2,2,7,2");
++
++    OP (1, "2", "1", "3@4",    "3,4", "3,6,7,3");
++    OP (1, "1", "2", "7@4",      "2", "7,9,7,7");
++
++    OP (0, "2,1", "2,3", "1@4", "3,7", "4,1,8,1");
++    OP (1, "1,0", "2,3", "3@4",   "3", "3,6,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_sub_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator-=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "9@4",    "5",   "4,9@3");
++    OP (2, "1", "1", "7@4",    "5", "7,7,2,7");
++
++    OP (1, "2", "1", "3@4",    "3,2", "3,0,1,3");
++    OP (1, "1", "2", "7@4",      "2", "7,5,7,7");
++
++    OP (0, "2,1", "2,3", "7@4", "3,7", "4,7,0,7");
++    OP (1, "1,0", "2,3", "3@4",   "3", "3,0,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_xor_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++   void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator^=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "9@4",    "5",   "12,9@3");
++    OP (2, "1", "1", "7@4",    "5", "7,7,2,7");
++
++    OP (1, "2", "1", "3@4",    "3,4", "3,0,7,3");
++    OP (1, "1", "2", "7@4",      "2", "7,5,7,7");
++
++    OP (0, "2,1", "2,3", "7@4", "3,7", "4,7,0,7");
++    OP (1, "1,0", "2,3", "3@4",   "3", "3,0,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_and_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::valarray<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator&=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "9@4",    "5",   "1,9@3");
++    OP (2, "1", "1", "7@4",    "5", "7,7,5,7");
++
++    OP (1, "2", "1", "3@4",    "3,4", "3,3,0,3");
++    OP (1, "1", "2", "7@4",      "2", "7,2,7,7");
++
++    OP (0, "2,1", "2,3", "7@4", "3,2", "3,7,2,7");
++    OP (1, "1,0", "2,3", "3@4",   "1", "3,1,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_or_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator|=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "9@4",    "5",   "13,9@3");
++    OP (2, "1", "1", "7@4",    "5", "7,7,7,7");
++
++    OP (1, "2", "1", "3@4",    "3,4", "3,3,7,3");
++    OP (1, "1", "2", "7@4",      "2", "7,7,7,7");
++
++    OP (0, "2,1", "2,3", "4@4", "3,7", "7,4,7,4");
++    OP (1, "1,0", "2,3", "3@4",   "4", "3,7,3,3");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_shl_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) =
++        &std::gslice_array<T>::operator<<=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "1@4",    "1",   "2,1@3");
++    OP (2, "1", "1", "2@4",    "1", "2,2,4,2");
++
++    OP (1, "2", "1", "1@4",    "3,4",  "1,4,8,1");
++    OP (1, "1", "2", "3@4",      "2", "3,12,3,3");
++
++    OP (0, "2,1", "2,3", "1@4", "3,2",  "8,1,4,1");
++    OP (1, "1,0", "2,3", "5@4",   "3", "5,20,5,5");
++}
++
++/**************************************************************************/
++
++template <class T>
++void test_shr_assign (const T*, const char *tname, const char *opname)
++{
++    rw_info (0, 0, __LINE__,
++             "std::gslice_array<%s>::operator%s (const std::valarray<%1$s>&)",
++             tname, opname);
++
++    void (std::gslice_array<T>::*op)(const std::valarray<T>&) const =
++        &std::gslice_array<T>::operator>>=;
++
++    OP (0, "",  "",  "1@4",     "2", "1@4");
++    OP (0, "0", "1", "1@4",     "2", "1@4");
++    OP (2, "0", "9", "1@4",     "2", "1@4");
++    OP (3, "0", "2", "1@4",     "7", "1@4");
++
++    OP (0, "1", "1", "1@4",    "1",   "0,1@3");
++    OP (2, "1", "1", "2@4",    "1", "2,2,1,2");
++
++    OP (1, "2", "1", "9@4",    "3,4", "9,1,0,9");
++    OP (1, "1", "2", "9@4",      "2", "9,2,9,9");
++
++    OP (0, "2,1", "2,3", "14@4", "3,2", "1,14,3,14");
++    OP (1, "1,0", "2,3", "5@4",    "3",   "5,0,5,5");
++}
++
++/**************************************************************************/
++
++enum {
++    inx_mul_assign,
++    inx_div_assign,
++    inx_mod_assign,
++    inx_add_assign,
++    inx_sub_assign,
++    inx_xor_assign,
++    inx_and_assign,
++    inx_or_assign,
++    inx_shl_assign,
++    inx_shr_assign,
++    n_assign_ops
++};
++
++static int opt_assign [n_assign_ops];
++
++
++template <class T>
++void test_op_assign (const T*, const char *tname)
++{
++    const std::size_t nassigns = sizeof opt_assign / sizeof *opt_assign;
++    for (std::size_t i = 0; i != nassigns; ++i) {
++        if (0 < opt_assign [i]) {
++            for (std::size_t j = 0; j != nassigns; ++j) {
++                if (0 == opt_assign [j])
++                    opt_assign [j] = -1;
++            }
++            break;
++        }
++    }
++
++    if (rw_note (0 <= opt_assign [inx_mul_assign], 0, __LINE__,
++                 "tests of operator*= disabled"))
++        test_mul_assign ((const T*)0, tname, "*=");
++
++    if (rw_note (0 <= opt_assign [inx_div_assign], 0, __LINE__,
++                 "tests of operator/= disabled"))
++        test_div_assign ((const T*)0, tname, "/=");
++
++    if (rw_note (0 <= opt_assign [inx_mod_assign], 0, __LINE__,
++                 "tests of operator%= disabled"))
++        test_mod_assign ((const T*)0, tname, "%=");
++
++    if (rw_note (0 <= opt_assign [inx_add_assign], 0, __LINE__,
++                 "tests of operator+= disabled"))
++        test_add_assign ((const T*)0, tname, "+=");
++
++    if (rw_note (0 <= opt_assign [inx_sub_assign], 0, __LINE__,
++                 "tests of operator-= disabled"))
++        test_sub_assign ((const T*)0, tname, "-=");
++
++    if (rw_note (0 <= opt_assign [inx_xor_assign], 0, __LINE__,
++                 "tests of operator^= disabled"))
++        test_xor_assign ((const T*)0, tname, "^=");
++
++    if (rw_note (0 <= opt_assign [inx_and_assign], 0, __LINE__,
++                 "tests of operator&= disabled"))
++        test_and_assign ((const T*)0, tname, "&=");
++
++    if (rw_note (0 <= opt_assign [inx_or_assign], 0, __LINE__,
++                 "tests of operator|= disabled"))
++        test_or_assign ((const T*)0, tname, "|=");
++
++    if (rw_note (0 <= opt_assign [inx_shl_assign], 0, __LINE__,
++                 "tests of operator<<= disabled"))
++        test_shr_assign ((const T*)0, tname, "<<=");
++
++    if (rw_note (0 <= opt_assign [inx_shr_assign], 0, __LINE__,
++                 "tests of operator>>= disabled"))
++        test_shr_assign ((const T*)0, tname, ">>=");
++}
++
++/**************************************************************************/
++
++static int
++run_test (int, char**)
++{
++#undef TEST
++#define TEST(T)   test_op_assign ((const T*)0, #T)
++
++    TEST (std::size_t);
++//    TEST (double);
++//
++//#if 0x04020100 >= _RWSTD_VER
++//
++//    // test fails to compile with stdcxx 4.2.1 and prior due to
++//    // STDCXX-512: http://issues.apache.org/jira/browse/STDCXX-512
++//    rw_warn (0, 0, __LINE__,
++//             "test of UserClass disabled in stdcxx 4.2.0 and prior "
++//             "due to STDCXX-512");
++//
++//#else   // stdcxx >= 4.2.1
++//
++//    //TEST (UserClass);
++//
++//#endif   // stdcxx version
++
++    return 0;
++}
++
++/**************************************************************************/
++
++int main (int argc, char *argv[])
++{
++    // FIXME: add command line options to enable/disable each operator
++    return rw_test (argc, argv, __FILE__,
++                    "gslice.array.comp.assign",
++                    0 /* no comment */,
++                    run_test,
++                    "|-times~ "
++                    "|-divide~ "
++                    "|-modulo~ "
++                    "|-plus~ "
++                    "|-minus~ "
++                    "|-xor~ "
++                    "|-and~ "
++                    "|-or~ "
++                    "|-shift_left~ "
++                    "|-shift_right~",
++                    opt_assign + inx_mul_assign,
++                    opt_assign + inx_div_assign,
++                    opt_assign + inx_mod_assign,
++                    opt_assign + inx_add_assign,
++                    opt_assign + inx_sub_assign,
++                    opt_assign + inx_xor_assign,
++                    opt_assign + inx_and_assign,
++                    opt_assign + inx_or_assign,
++                    opt_assign + inx_shl_assign,
++                    opt_assign + inx_shr_assign,
++                    (void*)0   /* sentinel */);
++}
++

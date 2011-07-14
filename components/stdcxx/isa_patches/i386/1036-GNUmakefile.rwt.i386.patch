@@ -1,0 +1,19 @@
+--- stdcxx-4.2.1/etc/config/GNUmakefile.rwt	2008-04-24 20:25:50.000000000 -0400
++++ stdcxx-4.2.1/etc/config/GNUmakefile.rwt	2009-03-30 11:15:53.971233000 -0400
+@@ -33,6 +33,16 @@
+ #
+ ########################################################################
+ 
++arch := $(shell mach)
++
++ifeq ($(arch),sparc)
++      XREGS := -xregs=appl
++      XMEMALIGN := -xmemalign=8i
++else
++      XREGS := -xregs=no%frameptr
++      XMEMALIGN :=
++endif
++
+ # Generated when make is run in TOPDIR
+ include ../makefile.in
+ 

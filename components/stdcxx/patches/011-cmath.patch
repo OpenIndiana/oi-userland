@@ -1,0 +1,1084 @@
+--- stdcxx-4.2.1/include/ansi/cmath	2008-04-24 20:23:56.000000000 -0400
++++ stdcxx-4.2.1/include/ansi/cmath	2009-03-12 16:35:36.000000000 -0400
+@@ -1,1053 +1,44 @@
+ // -*- C++ -*-
+-/***************************************************************************
++/**
++ * CDDL HEADER START
+  *
+- * cmath - C++ Standard library interface to the ANSI C header math.h
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
+  *
+- * $Id: cmath 550991 2007-06-26 23:58:07Z sebor $
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
+  *
+- ***************************************************************************
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
+  *
+- * Licensed to the Apache Software  Foundation (ASF) under one or more
+- * contributor  license agreements.  See  the NOTICE  file distributed
+- * with  this  work  for  additional information  regarding  copyright
+- * ownership.   The ASF  licenses this  file to  you under  the Apache
+- * License, Version  2.0 (the  "License"); you may  not use  this file
+- * except in  compliance with the License.   You may obtain  a copy of
+- * the License at
++ * CDDL HEADER END
+  *
+- * http://www.apache.org/licenses/LICENSE-2.0
+  *
+- * Unless required by applicable law or agreed to in writing, software
+- * distributed under the  License is distributed on an  "AS IS" BASIS,
+- * WITHOUT  WARRANTIES OR CONDITIONS  OF ANY  KIND, either  express or
+- * implied.   See  the License  for  the  specific language  governing
+- * permissions and limitations under the License.
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
+  *
+- * Copyright 1994-2006 Rogue Wave Software.
+- * 
+- **************************************************************************/
+-
+-#ifndef _RWSTD_CMATH_INCLUDED
+-#define _RWSTD_CMATH_INCLUDED
+-
+-#include <rw/_defs.h>
+-
+-#ifndef _RWSTD_NO_PURE_C_HEADERS
+-#  include <ansi/_cmath.h>
+-#else
+-
+-#ifndef _RWSTD_NO_DEPRECATED_C_HEADERS
+-
+-_RWSTD_NAMESPACE (std) { 
+-
+-// avoid a conflicting exception structure on platforms where
+-// struct exception is defined unguarded in <math.h>
+-#ifndef _RWSTD_NO_MATH_EXCEPTION
+-#  undef exception
+-#  define exception _Math_exception
+-#endif   // _RWSTD_NO_MATH_EXCEPTION
+-
+-#include _RWSTD_ANSI_C_MATH_H
+-
+-#undef exception
+-
+-}   // namespace std
+-
+-
+-#else   // if defined (_RWSTD_NO_DEPRECATED_C_HEADERS)
+-
+-// avoid a conflicting exception structure on platforms where
+-// struct exception is defined unguarded in <math.h>
+-#ifndef _RWSTD_NO_MATH_EXCEPTION
+-#  undef exception
+-#  define exception math_exception
+-#endif   // _RWSTD_NO_MATH_EXCEPTION
+-
+-#include _RWSTD_ANSI_C_MATH_H
+-
+-#undef exception
+-#undef abs
+-#undef acos
+-#undef asin
+-#undef atan
+-#undef atan2
+-#undef cos
+-#undef exp
+-#undef fabs
+-#undef log
+-#undef log10
+-#undef sin
+-#undef sqrt
+-#undef tan
+-
+-
+-#ifndef _RWSTD_NO_ACOSF
+-#  define _ACOSF(x)    ::acosf (x)
+-#elif !defined (_RWSTD_NO_ACOSF_IN_LIBM)
+-#  undef acosf
+-extern "C" float acosf (float);
+-#  define _ACOSF(x)    ::acosf (x)
+-#else
+-#  define _ACOSF(x)    ::acos (double (x))
+-#endif   // _RWSTD_NO_ACOSF
+-
+-#ifndef _RWSTD_NO_ASINF
+-#  define _ASINF(x)    ::asinf (x)
+-#elif !defined (_RWSTD_NO_ASINF_IN_LIBM)
+-#  undef asinf
+-extern "C" float asinf (float);
+-#  define _ASINF(x)    ::asinf (x)
+-#else
+-#  define _ASINF(x)    ::asin (double (x))
+-#endif   // _RWSTD_NO_ASINF
+-
+-#ifndef _RWSTD_NO_ATANF
+-#  define _ATANF(x)    ::atanf (x)
+-#elif !defined (_RWSTD_NO_ATANF_IN_LIBM)
+-#  undef atanf
+-extern "C" float atanf (float);
+-#  define _ATANF(x)    ::atanf (x)
+-#else
+-#  define _ATANF(x)    ::atan (double (x))
+-#endif   // _RWSTD_NO_ATANF
+-
+-#ifndef _RWSTD_NO_ATAN2F
+-#  define _ATAN2F(x, y)    ::atan2f (x, y)
+-#elif !defined (_RWSTD_NO_ATAN2F_IN_LIBM)
+-#  undef atan2f
+-extern "C" float atan2f (float, float);
+-#  define _ATAN2F(x, y)    ::atan2f (x, y)
+-#else
+-#  define _ATAN2F(x, y)    ::atan2 (double (x), double (y))
+-#endif   // _RWSTD_NO_ATAN2F
+-
+-#ifndef _RWSTD_NO_CEILF
+-#  define _CEILF(x)    ::ceilf (x)
+-#elif !defined (_RWSTD_NO_CEILF_IN_LIBM)
+-#  undef ceilf
+-extern "C" float ceilf (float);
+-#  define _CEILF(x)    ::ceilf (x)
+-#else
+-#  define _CEILF(x)    ::ceil (double (x))
+-#endif   // _RWSTD_NO_CEILF
+-
+-#ifndef _RWSTD_NO_COSF
+-#  define _COSF(x)    ::cosf (x)
+-#elif !defined (_RWSTD_NO_COSF_IN_LIBM)
+-#  undef cosf
+-extern "C" float cosf (float);
+-#  define _COSF(x)    ::cosf (x)
+-#else
+-#  define _COSF(x)    ::cos (double (x))
+-#endif   // _RWSTD_NO_COSF
+-
+-#ifndef _RWSTD_NO_COSHF
+-#  define _COSHF(x)    ::coshf (x)
+-#elif !defined (_RWSTD_NO_COSHF_IN_LIBM)
+-#  undef coshf
+-extern "C" float coshf (float);
+-#  define _COSHF(x)    ::coshf (x)
+-#else
+-#  define _COSHF(x)    ::cosh (double (x))
+-#endif   // _RWSTD_NO_COSHF
+-
+-#ifndef _RWSTD_NO_EXPF
+-#  define _EXPF(x)    ::expf (x)
+-#elif !defined (_RWSTD_NO_EXPF_IN_LIBM)
+-#  undef expf
+-extern "C" float expf (float);
+-#  define _EXPF(x)    ::expf (x)
+-#else
+-#  define _EXPF(x)    ::exp (double (x))
+-#endif   // _RWSTD_NO_EXPF
+-
+-#ifndef _RWSTD_NO_FABSF
+-#  define _FABSF(x)    fabsf (x)
+-#elif !defined (_RWSTD_NO_FABSF_IN_LIBM)
+-#  undef fabsf
+-extern "C" float fabsf (float);
+-#  define _FABSF(x)    ::fabsf (x)
+-#else
+-#  define _FABSF(x)    ::fabs (double (x))
+-#endif   // _RWSTD_NO_FABSF
+-
+-#ifndef _RWSTD_NO_FLOORF
+-#  define _FLOORF(x)    ::floorf (x)
+-#elif !defined (_RWSTD_NO_FLOORF_IN_LIBM)
+-#  undef floorf
+-extern "C" float floorf (float);
+-#  define _FLOORF(x)    ::floorf (x)
+-#else
+-#  define _FLOORF(x)    ::floor (double (x))
+-#endif   // _RWSTD_NO_FLOORF
+-
+-#ifndef _RWSTD_NO_FMODF
+-#  define _FMODF(x, y)    ::fmodf (x, y)
+-#elif !defined (_RWSTD_NO_FMODF_IN_LIBM)
+-#  undef fmodf
+-extern "C" float fmodf (float, float);
+-#  define _FMODF(x, y)    ::fmodf (x, y)
+-#else
+-#  define _FMODF(x, y)    ::fmod (double (x), double (y))
+-#endif   // _RWSTD_NO_FMODF
+-
+-#ifndef _RWSTD_NO_FREXPF
+-#  define _FREXPF(x, y)    ::frexpf (x, y)
+-#elif !defined (_RWSTD_NO_FREXPF_IN_LIBM)
+-#  undef frexpf
+-extern "C" float frexpf (float, int*);
+-#  define _FREXPF(x, y)    ::frexpf (x, y)
+-#else
+-#  define _FREXPF(x, y)    ::frexp (double (x), y)
+-#endif   // _RWSTD_NO_FREXPF
+-
+-#ifndef _RWSTD_NO_LDEXPF
+-#  define _LDEXPF(x, y)    ::ldexpf (x, y)
+-#elif !defined (_RWSTD_NO_LDEXPF_IN_LIBM)
+-#  undef ldexpf
+-extern "C" float ldexpf (float, int);
+-#  define _LDEXPF(x, y)    ::ldexpf (x, y)
+-#else
+-#  define _LDEXPF(x, y)    ::ldexp (double (x), y)
+-#endif   // _RWSTD_NO_LDEXPF
+-
+-#ifndef _RWSTD_NO_LOGF
+-#  define _LOGF(x)    ::logf (x)
+-#elif !defined (_RWSTD_NO_LOGF_IN_LIBM)
+-#  undef logf
+-extern "C" float logf (float);
+-#  define _LOGF(x)    ::logf (x)
+-#else
+-#  define _LOGF(x)    ::log (double (x))
+-#endif   // _RWSTD_NO_LOGF
+-
+-#ifndef _RWSTD_NO_LOG10F
+-#  define _LOG10F(x)    ::log10f (x)
+-#elif !defined (_RWSTD_NO_LOG10F_IN_LIBM)
+-#  undef log10f
+-extern "C" float log10f (float);
+-#  define _LOG10F(x)    ::log10f (x)
+-#else
+-#  define _LOG10F(x)    ::log10 (double (x))
+-#endif   // _RWSTD_NO_LOG10F
+-
+-#ifndef _RWSTD_NO_MODFF
+-#  define _MODFF(x, y)    ::modff (x, y)
+-#elif !defined (_RWSTD_NO_MODFF_IN_LIBM)
+-#  undef modff
+-extern "C" float modff (float, float*);
+-#  define _MODFF(x, y)    ::modff (x, y)
+-#else
+-
+-inline float __rw_modff (float __x, float *__y)
+-{
+-    double __tmp = *__y;
+-
+-    __x = ::modf (__x, &__tmp);
+-
+-    *__y = __tmp;
+-
+-    return __x;
+-}
+-
+-#  define _MODFF(x, y)    __rw_modff (x, y)
+-#endif   // _RWSTD_NO_MODFF
+-
+-#ifndef _RWSTD_NO_POWF
+-#  define _POWF(x, y)    ::powf (x, y)
+-#elif !defined (_RWSTD_NO_POWF_IN_LIBM)
+-#  undef powf
+-extern "C" float powf (float, float);
+-#  define _POWF(x, y)    ::powf (x, y)
+-#else
+-#  define _POWF(x, y)    ::pow (double (x), double (y))
+-#endif   // _RWSTD_NO_POWF
+-
+-#ifndef _RWSTD_NO_SINF
+-#  define _SINF(x)    ::sinf (x)
+-#elif !defined (_RWSTD_NO_SINF_IN_LIBM)
+-#  undef sinf
+-extern "C" float sinf (float);
+-#  define _SINF(x)    ::sinf (x)
+-#else
+-#  define _SINF(x)    ::sin (double (x))
+-#endif   // _RWSTD_NO_SINF
+-
+-#ifndef _RWSTD_NO_SINHF
+-#  define _SINHF(x)    ::sinhf (x)
+-#elif !defined (_RWSTD_NO_SINHF_IN_LIBM)
+-#  undef sinhf
+-extern "C" float sinhf (float);
+-#  define _SINHF(x)    ::sinhf (x)
+-#else
+-#  define _SINHF(x)    ::sinh (double (x))
+-#endif   // _RWSTD_NO_SINHF
+-
+-#ifndef _RWSTD_NO_SQRTF
+-#  define _SQRTF(x)    ::sqrtf (x)
+-#elif !defined (_RWSTD_NO_SQRTF_IN_LIBM)
+-#  undef sqrtf
+-extern "C" float sqrtf (float);
+-#  define _SQRTF(x)    ::sqrtf (x)
+-#else
+-#  define _SQRTF(x)    ::sqrt (double (x))
+-#endif   // _RWSTD_NO_SQRTF
+-
+-#ifndef _RWSTD_NO_TANF
+-#  define _TANF(x)    ::tanf (x)
+-#elif !defined (_RWSTD_NO_TANF_IN_LIBM)
+-#  undef tanf
+-extern "C" float tanf (float);
+-#  define _TANF(x)    ::tanf (x)
+-#else
+-#  define _TANF(x)    ::tan (double (x))
+-#endif   // _RWSTD_NO_TANF
+-
+-#ifndef _RWSTD_NO_TANHF
+-#  define _TANHF(x)    ::tanhf (x)
+-#elif !defined (_RWSTD_NO_TANHF_IN_LIBM)
+-#  undef tanhf
+-extern "C" float tanhf (float);
+-#  define _TANHF(x)    ::tanhf (x)
+-#else
+-#  define _TANHF(x)    ::tanh (double (x))
+-#endif   // _RWSTD_NO_TANHF
+-
+-
+-#ifndef _RWSTD_NO_ACOSL
+-#  define _ACOSL(x)    ::acosl (x)
+-#elif !defined (_RWSTD_NO_ACOSL_IN_LIBM)
+-#  undef acosl
+-extern "C" long double acosl (long double);
+-#  define _ACOSL(x)    ::acosl (x)
+-#else
+-#  define _ACOSL(x)    ::acos (double (x))
+-#endif   // _RWSTD_NO_ACOSL
+-
+-#ifndef _RWSTD_NO_ASINL
+-#  define _ASINL(x)    ::asinl (x)
+-#elif !defined (_RWSTD_NO_ASINL_IN_LIBM)
+-#  undef asinl
+-extern "C" long double asinl (long double);
+-#  define _ASINL(x)    ::asinl (x)
+-#else
+-#  define _ASINL(x)    ::asin (double (x))
+-#endif   // _RWSTD_NO_ASINL
+-
+-#ifndef _RWSTD_NO_ATANL
+-#  define _ATANL(x)    ::atanl (x)
+-#elif !defined (_RWSTD_NO_ATANL_IN_LIBM)
+-#  undef atanl
+-extern "C" long double atanl (long double);
+-#  define _ATANL(x)    ::atanl (x)
+-#else
+-#  define _ATANL(x)    ::atan (double (x))
+-#endif   // _RWSTD_NO_ATANL
+-
+-#ifndef _RWSTD_NO_ATAN2L
+-#  define _ATAN2L(x, y)    ::atan2l (x, y)
+-#elif !defined (_RWSTD_NO_ATAN2L_IN_LIBM)
+-#  undef atan2l
+-extern "C" long double atan2l (long double, long double);
+-#  define _ATAN2L(x, y)    ::atan2l (x, y)
+-#else
+-#  define _ATAN2L(x, y)    ::atan2 (double (x), double (y))
+-#endif   // _RWSTD_NO_ATAN2L
+-
+-#ifndef _RWSTD_NO_CEILL
+-#  define _CEILL(x)    ::ceill (x)
+-#elif !defined (_RWSTD_NO_CEILL_IN_LIBM)
+-#  undef ceill
+-extern "C" double ceill (double);
+-#  define _CEILL(x)    ::ceill (x)
+-#else
+-#  define _CEILL(x)    ::ceil (double (x))
+-#endif   // _RWSTD_NO_CEILL
+-
+-#ifndef _RWSTD_NO_COSL
+-#  define _COSL(x)    ::cosl (x)
+-#elif !defined (_RWSTD_NO_COSL_IN_LIBM)
+-#  undef cosl
+-extern "C" long double cosl (long double);
+-#  define _COSL(x)    ::cosl (x)
+-#else
+-#  define _COSL(x)    ::cos (double (x))
+-#endif   // _RWSTD_NO_COSL
+-
+-#ifndef _RWSTD_NO_COSHL
+-#  define _COSHL(x)    ::coshl (x)
+-#elif !defined (_RWSTD_NO_COSHL_IN_LIBM)
+-#  undef coshl
+-extern "C" long double coshl (long double);
+-#  define _COSHL(x)    ::coshl (x)
+-#else
+-#  define _COSHL(x)    ::cosh (double (x))
+-#endif   // _RWSTD_NO_COSHL
+-
+-#ifndef _RWSTD_NO_EXPL
+-#  define _EXPL(x)    ::expl (x)
+-#elif !defined (_RWSTD_NO_EXPL_IN_LIBM)
+-#  undef expl
+-extern "C" long double expl (long double);
+-#  define _EXPL(x)    ::expl (x)
+-#else
+-#  define _EXPL(x)    ::exp (double (x))
+-#endif   // _RWSTD_NO_EXPL
+-
+-#ifndef _RWSTD_NO_FABSL
+-#  define _FABSL(x)    ::fabsl (x)
+-#elif !defined (_RWSTD_NO_FABSL_IN_LIBM)
+-#  undef fabsl
+-extern "C" long double fabsl (long double);
+-#  define _FABSL(x)    ::fabsl (x)
+-#else
+-#  define _FABSL(x)    ::fabs (double (x))
+-#endif   // _RWSTD_NO_FABSL
+-
+-#ifndef _RWSTD_NO_FLOORL
+-#  define _FLOORL(x)    ::floorl (x)
+-#elif !defined (_RWSTD_NO_FLOORL_IN_LIBM)
+-#  undef floorl
+-extern "C" long double floorl (long double);
+-#  define _FLOORL(x)    ::floorl (x)
+-#else
+-#  define _FLOORL(x)    ::floor (double (x))
+-#endif   // _RWSTD_NO_FLOORL
+-
+-#ifndef _RWSTD_NO_FMODL
+-#  define _FMODL(x, y)    ::fmodl (x, y)
+-#elif !defined (_RWSTD_NO_FMODL_IN_LIBM)
+-#  undef fmodl
+-extern "C" long double fmodl (long double, long double);
+-#  define _FMODL(x, y)    ::fmodl (x, y)
+-#else
+-#  define _FMODL(x, y)    ::fmod (double (x), double (y))
+-#endif   // _RWSTD_NO_FMODL
+-
+-#ifndef _RWSTD_NO_FREXPL
+-#  define _FREXPL(x, y)    ::frexpl (x, y)
+-#elif !defined (_RWSTD_NO_FREXPL_IN_LIBM)
+-#  undef frexpl
+-extern "C" long double frexpl (long double, int*);
+-#  define _FREXPL(x, y)    ::frexpl (x, y)
+-#else
+-#  define _FREXPL(x, y)    ::frexp (double (x), y)
+-#endif   // _RWSTD_NO_FREXPL
+-
+-#ifndef _RWSTD_NO_LDEXPL
+-#  define _LDEXPL(x, y)    ::ldexpl (x, y)
+-#elif !defined (_RWSTD_NO_LDEXPL_IN_LIBM)
+-#  undef ldexpl
+-extern "C" long double ldexpl (long double, int);
+-#  define _LDEXPL(x, y)    ::ldexpl (x, y)
+-#else
+-#  define _LDEXPL(x, y)    ::ldexp (double (x), y)
+-#endif   // _RWSTD_NO_LDEXPL
+-
+-#ifndef _RWSTD_NO_LOGL
+-#  define _LOGL(x)    ::logl (x)
+-#elif !defined (_RWSTD_NO_LOGL_IN_LIBM)
+-#  undef logl
+-extern "C" long double logl (long double);
+-#  define _LOGL(x)    ::logl (x)
+-#else
+-#  define _LOGL(x)    ::log (double (x))
+-#endif   // _RWSTD_NO_LOGL
+-
+-#ifndef _RWSTD_NO_LOG10L
+-#  define _LOG10L(x)    ::log10l (x)
+-#elif !defined (_RWSTD_NO_LOG10L_IN_LIBM)
+-#  undef log10l
+-extern "C" long double log10l (long double);
+-#  define _LOG10L(x)    ::log10l (x)
+-#else
+-#  define _LOG10L(x)    ::log10 (double (x))
+-#endif   // _RWSTD_NO_LOG10L
+-
+-#ifndef _RWSTD_NO_MODFL
+-#  define _MODFL(x, y)    ::modfl (x, y)
+-#elif !defined (_RWSTD_NO_MODFL_IN_LIBM)
+-#  undef modfl
+-extern "C" long double modfl (long double, long double*);
+-#  define _MODFL(x, y)    ::modfl (x, y)
+-#else
+-
+-inline long double __rw_modfl (long double __x, long double *__y)
+-{
+-    double __tmp = *__y;
+-
+-    __x = ::modf (__x, &__tmp);
+-
+-    *__y = __tmp;
+-
+-    return __x;
+-}
+-
+-#  define _MODFL(x, y)    __rw_modfl (x, y)
+-#endif   // _RWSTD_NO_MODFL
+-
+-#ifndef _RWSTD_NO_POWL
+-#  define _POWL(x, y)    ::powl (x, y)
+-#elif !defined (_RWSTD_NO_POWL_IN_LIBM)
+-#  undef powl
+-extern "C" long double powl (long double, long double);
+-#  define _POWL(x, y)    ::powl (x, y)
+-#else
+-#  define _POWL(x, y)    ::pow (double (x), double (y))
+-#endif   // _RWSTD_NO_POWL
+-
+-#ifndef _RWSTD_NO_SINL
+-#  define _SINL(x)    ::sinl (x)
+-#elif !defined (_RWSTD_NO_SINL_IN_LIBM)
+-#  undef sinl
+-extern "C" long double sinl (long double);
+-#  define _SINL(x)    ::sinl (x)
+-#else
+-#  define _SINL(x)    ::sin (double (x))
+-#endif   // _RWSTD_NO_SINL
+-
+-#ifndef _RWSTD_NO_SINHL
+-#  define _SINHL(x)    ::sinhl (x)
+-#elif !defined (_RWSTD_NO_SINHL_IN_LIBM)
+-#  undef sinhl
+-extern "C" long double sinhl (long double);
+-#  define _SINHL(x)    ::sinhl (x)
+-#else
+-#  define _SINHL(x)    ::sinh (double (x))
+-#endif   // _RWSTD_NO_SINHL
+-
+-#ifndef _RWSTD_NO_SQRTL
+-#  define _SQRTL(x)    ::sqrtl (x)
+-#elif !defined (_RWSTD_NO_SQRTL_IN_LIBM)
+-#  undef sqrtl
+-extern "C" long double sqrtl (long double);
+-#  define _SQRTL(x)    ::sqrtl (x)
+-#else
+-#  define _SQRTL(x)    ::sqrt (double (x))
+-#endif   // _RWSTD_NO_SQRTL
+-
+-#ifndef _RWSTD_NO_TANL
+-#  define _TANL(x)    ::tanl (x)
+-#elif !defined (_RWSTD_NO_TANL_IN_LIBM)
+-#  undef tanl
+-extern "C" long double tanl (long double);
+-#  define _TANL(x)    ::tanl (x)
+-#else
+-#  define _TANL(x)    ::tan (double (x))
+-#endif   // _RWSTD_NO_TANL
+-
+-#ifndef _RWSTD_NO_TANHL
+-#  define _TANHL(x)    ::tanhl (x)
+-#elif !defined (_RWSTD_NO_TANHL_IN_LIBM)
+-#  undef tanhl
+-extern "C" long double tanhl (long double);
+-#  define _TANHL(x)    ::tanhl (x)
+-#else
+-#  define _TANHL(x)    ::tanh (double (x))
+-#endif   // _RWSTD_NO_TANHL
+-
+-
+-#if !defined (_RWSTD_NO_USING_LIBC_IN_STD)
+-_RWSTD_NAMESPACE (std) { 
+-#endif  // !_RWSTD_NO_USING_LIBC_IN_STD
+-
+-// float overloads
+-#if defined (_RWSTD_NO_ABS_FLT)
+-inline float abs (float __x)
+-{
+-    return _FABSF (__x);
+-}
+-#  undef _RWSTD_NO_ABS_FLT
+-#  else
+-_USING (::abs);
+-#endif   // _RWSTD_NO_ABS_FLT
+-
+-#if defined (_RWSTD_NO_ACOS_FLT)
+-inline float acos (float __x)
+-{
+-    return _ACOSF (__x);
+-}
+-#endif   // _RWSTD_NO_ACOS_FLT
+-
+-#if defined (_RWSTD_NO_ASIN_FLT)
+-inline float asin (float __x)
+-{
+-    return _ASINF (__x);
+-}
+-#endif   // _RWSTD_NO_ASIN_FLT
+-
+-#if defined (_RWSTD_NO_ATAN_FLT)
+-inline float atan (float __x)
+-{
+-    return _ATANF (__x);
+-}
+-#endif   // _RWSTD_NO_ATAN_FLT
+-
+-
+-#if defined (_RWSTD_NO_ATAN2_FLT)
+-inline float atan2 (float __x, float __y)
+-{
+-    return _ATAN2F (__x, __y);
+-}
+-#endif   // _RWSTD_NO_ATAN2_FLT
+-
+-
+-#if defined (_RWSTD_NO_CEIL_FLT)
+-inline float ceil (float __x)
+-{
+-    return _CEILF (__x);
+-}
+-#endif   // _RWSTD_NO_CEIL_FLT
+-
+-
+-#if defined (_RWSTD_NO_COS_FLT)
+-inline float cos (float __x)
+-{
+-    return _COSF (__x);
+-}
+-#endif   // _RWSTD_NO_COS_FLT
+-
+-
+-#if defined (_RWSTD_NO_COSH_FLT)
+-inline float cosh (float __x)
+-{
+-    return _COSHF (__x);
+-}
+-#endif   // _RWSTD_NO_COSH_FLT
+-
+-
+-#if defined (_RWSTD_NO_EXP_FLT)
+-inline float exp (float __x)
+-{
+-    return _EXPF (__x);
+-}
+-#endif   // _RWSTD_NO_EXP_FLT
+-
+-
+-#if defined (_RWSTD_NO_FABS_FLT)
+-inline float fabs (float __x)
+-{
+-    return _FABSF (__x);
+-}
+-#  undef _RWSTD_NO_FABS_FLT
+-#endif   // _RWSTD_NO_FABS_FLT
+-
+-
+-#if defined (_RWSTD_NO_FLOOR_FLT)
+-inline float floor (float __x)
+-{
+-    return _FLOORF (__x);
+-}
+-#endif   // _RWSTD_NO_FLOOR_FLT
+-
+-
+-#if defined (_RWSTD_NO_FMOD_FLT)
+-inline float fmod (float __x, float __y)
+-{
+-    return _FMODF (__x, __y);
+-}
+-#endif   // _RWSTD_NO_FMOD_FLT
+-
+-
+-#if defined (_RWSTD_NO_FREXP_FLT)
+-inline float frexp (float __x, int *__e)
+-{
+-    return _FREXPF (__x, __e);
+-}
+-#endif   // _RWSTD_NO_FREXP_FLT
+-
+-
+-#if defined (_RWSTD_NO_LDEXP_FLT_INT)
+-inline float ldexp (float __x, int __e)
+-{
+-    return _LDEXPF (__x, __e);
+-}
+-#endif   // _RWSTD_NO_LDEXP_FLT_INT
++ * ident "@(#)cmath.11.diff 1.1     09/08/21 SMI"
++ */
+ 
++#ifndef _MATH_H
+ 
+-#if defined (_RWSTD_NO_LOG_FLT)
+-inline float log (float __x)
+-{
+-    return _LOGF (__x);
+-}
+-#endif   // _RWSTD_NO_LOG_FLT
++#include <sys/feature_tests.h>
+ 
++#if defined(__cplusplus) && defined(__SUNPRO_CC)
++#    define __MATHERR_RENAME_EXCEPTION
++#endif
+ 
+-#if defined (_RWSTD_NO_LOG10_FLT)
+-inline float log10 (float __x)
+-{
+-    return _LOG10F (__x);
+-}
+-#endif   // _RWSTD_NO_LOG10_FLT
+-
+-
+-#if defined (_RWSTD_NO_MODF_FLT)
+-inline float modf (float __x, float *__y)
+-{
+-    return _MODFF (__x, __y);
+-}
+-#endif   // _RWSTD_NO_MODF_FLT
+-
+-
+-#ifdef _RWSTD_NO_POW_FLT
+-inline float pow (float __x, float __y)
+-{
+-    return _POWF (__x, __y);
+-}
+-#endif   // _RWSTD_NO_POW_FLT
+-
+-#ifdef _RWSTD_NO_POW_FLT_INT
+-inline float pow (float __x, int __y)
+-{
+-    float __res = __y % 2 ? __x : 1;
+-
+-    for (int __i = __y < 0 ? -__y : __y; __i >>= 1; ) {
+-        __x *= __x;
+-        if (__i % 2)
+-            __res *= __x;
+-    }
+-
+-    return __y < 0 ? __res ? 1 / __res : -1 / __res : __y ? __res : 1;
+-}
+-#endif   // _RWSTD_NO_POW_FLT_INT
+-
+-
+-#if defined (_RWSTD_NO_SIN_FLT)
+-inline float sin (float __x)
+-{
+-    return _SINF (__x);
+-}
+-#endif   // _RWSTD_NO_SIN_FLT
+-
+-
+-#if defined (_RWSTD_NO_SINH_FLT)
+-inline float sinh (float __x)
+-{
+-    return _SINHF (__x);
+-}
+-#endif   // _RWSTD_NO_SINH_FLT
+-
+-
+-#if defined (_RWSTD_NO_SQRT_FLT)
+-inline float sqrt (float __x)
+-{
+-    return _SQRTF (__x);
+-}
+-#endif   // _RWSTD_NO_SQRT_FLT
+-
+-
+-#if defined (_RWSTD_NO_TAN_FLT)
+-inline float tan (float __x)
+-{
+-    return _TANF (__x);
+-}
+-#endif   // _RWSTD_NO_TAN_FLT
+-
+-
+-#if defined (_RWSTD_NO_TANH_FLT)
+-inline float tanh (float __x)
+-{
+-    return _TANHF (__x);
+-}
+-#endif   // _RWSTD_NO_TANH_FLT
+-
+-
+-// double overloads
+-
+-
+-#if defined (_RWSTD_NO_ABS_DBL)
+-inline double abs (double __x)
+-{
+-    return ::fabs (__x);
+-}
+-#  undef _RWSTD_NO_ABS_DBL
+-#  else
+-_USING (::abs);
+-#endif   // _RWSTD_NO_ABS_DBL
+-
+-
+-#if defined (_RWSTD_NO_POW_DBL) && !defined (_RWSTD_NO_POW_IN_LIBM)
+-
+-extern "C" double pow (double, double);
+-
+-#endif   // _RWSTD_NO_POW_DBL && !_RWSTD_NO_POW_IN_LIBM
+-
+-
+-#ifdef _RWSTD_NO_POW_DBL_INT
+-
+-inline double pow (double __x, int __y)
+-{
+-    double __res = __y % 2 ? __x : 1;
+-
+-    for (int __i = __y < 0 ? -__y : __y; __i >>= 1; ) {
+-        __x *= __x;
+-        if (__i % 2)
+-            __res *= __x;
+-    }
+-
+-    return __y < 0 ? __res ? 1 / __res : -1 / __res : __y ? __res : 1;
+-}
+-
+-#endif   // _RWSTD_NO_POW_DBL_INT
+-
+-
+-#ifndef _RWSTD_NO_LONG_DOUBLE
+-
+-// long double overloads
+-
+-
+-#if defined (_RWSTD_NO_ABS_LDBL)
+-inline long double abs (long double __x)
+-{
+-    return _FABSL (__x);
+-}
+-#  undef _RWSTD_NO_ABS_LDBL
+-#  else
+-_USING (::abs);
+-#endif   // _RWSTD_NO_ABS_LDBL
+-
+-
+-#if defined (_RWSTD_NO_ACOS_LDBL)
+-inline long double acos (long double __x)
+-{
+-    return _ACOSL (__x);
+-}
+-#endif   // _RWSTD_NO_ACOS_LDBL
+-
+-
+-#if defined (_RWSTD_NO_ASIN_LDBL)
+-inline long double asin (long double __x)
+-{
+-    return _ASINL (__x);
+-}
+-#endif   // _RWSTD_NO_ASIN_LDBL
+-
+-
+-#if defined (_RWSTD_NO_ATAN_LDBL)
+-inline long double atan (long double __x)
+-{
+-    return _ATANL (__x);
+-}
+-#endif   // _RWSTD_NO_ATAN_LDBL
+-
+-
+-#if defined (_RWSTD_NO_ATAN2_LDBL)
+-inline long double atan2 (long double __x, long double __y)
+-{
+-    return _ATAN2L (__x, __y);
+-}
+-#endif   // _RWSTD_NO_ATAN2_LDBL
+-
+-
+-#if defined (_RWSTD_NO_CEIL_LDBL)
+-inline long double ceil (long double __x)
+-{
+-    return _CEILL (__x);
+-}
+-#endif   // _RWSTD_NO_CEIL_LDBL
+-
+-
+-#if defined (_RWSTD_NO_COS_LDBL)
+-inline long double cos (long double __x)
+-{
+-    return _COSL (__x);
+-}
+-#endif   // _RWSTD_NO_COS_LDBL
+-
+-
+-#if defined (_RWSTD_NO_COSH_LDBL)
+-inline long double cosh (long double __x)
+-{
+-    return _COSHL (__x);
+-}
+-#endif   // _RWSTD_NO_COSH_LDBL
+-
+-
+-#if defined (_RWSTD_NO_EXP_LDBL)
+-inline long double exp (long double __x)
+-{
+-    return _EXPL (__x);
+-}
+-#endif   // _RWSTD_NO_EXP_LDBL
+-
+-
+-#if defined (_RWSTD_NO_FABS_LDBL)
+-inline long double fabs (long double __x)
+-{
+-    return _FABSL (__x);
+-}
+-#  undef _RWSTD_NO_FABS_LDBL
+-#endif   // _RWSTD_NO_FABS_LDBL
+-
+-
+-#if defined (_RWSTD_NO_FLOOR_LDBL)
+-inline long double floor (long double __x)
+-{
+-    return _FLOORL (__x);
+-}
+-#endif   // _RWSTD_NO_FLOOR_LDBL
+-
+-
+-#if defined (_RWSTD_NO_FMOD_LDBL)
+-inline long double fmod (long double __x, long double __y)
+-{
+-    return _FMODL (__x, __y);
+-}
+-#endif   // _RWSTD_NO_FMOD_LDBL
+-
+-
+-#if defined (_RWSTD_NO_FREXP_LDBL)
+-inline long double frexp (long double __x, int *__e)
+-{
+-    return _FREXPL (__x, __e);
+-}
+-#endif   // _RWSTD_NO_FREXP_LDBL
+-
+-
+-#if defined (_RWSTD_NO_LDEXP_LDBL_INT)
+-inline long double ldexp (long double __x, int __e)
+-{
+-    return _LDEXPL (__x, __e);
+-}
+-#endif   // _RWSTD_NO_LDEXP_LDBL_INT
+-
+-
+-#if defined (_RWSTD_NO_LOG_LDBL)
+-inline long double log (long double __x)
+-{
+-    return _LOGL (__x);
+-}
+-#endif   // _RWSTD_NO_LOG_LDBL
+-
+-
+-#if defined (_RWSTD_NO_LOG10_LDBL)
+-inline long double log10 (long double __x)
+-{
+-    return _LOG10L (__x);
+-}
+-#endif   // _RWSTD_NO_LOG10_LDBL
+-
+-
+-#if defined (_RWSTD_NO_MODF_LDBL)
+-inline long double modf (long double __x, long double *__y)
+-{
+-    return _MODFL (__x, __y);
+-}
+-#endif   // _RWSTD_NO_MODF_LDBL
+-
+-
+-#ifdef _RWSTD_NO_POW_LDBL
+-inline long double pow (long double __x, long double __y)
+-{
+-    return _POWL (__x, __y);
+-}
+-#endif   // _RWSTD_NO_POW_LDBL
+-
+-
+-#ifdef _RWSTD_NO_POW_LDBL_INT
+-inline long double pow (long double __x, int __y)
+-{
+-    long double __res = __y % 2 ? __x : 1;
+-
+-    for (int __i = __y < 0 ? -__y : __y; __i >>= 1; ) {
+-        __x *= __x;
+-        if (__i % 2)
+-            __res *= __x;
+-    }
+-
+-    return __y < 0 ? __res ? 1 / __res : -1 / __res : __y ? __res : 1;
+-}
+-#endif   // _RWSTD_NO_POW_LDBL_INT
+-
+-
+-#if defined (_RWSTD_NO_SIN_LDBL)
+-inline long double sin (long double __x)
+-{
+-    return _SINL (__x);
+-}
+-#endif   // _RWSTD_NO_SIN_LDBL
+-
+-
+-#if defined (_RWSTD_NO_SINH_LDBL)
+-inline long double sinh (long double __x)
+-{
+-    return _SINHL (__x);
+-}
+-#endif   // _RWSTD_NO_SINH_LDBL
+-
+-
+-#if defined (_RWSTD_NO_SQRT_LDBL)
+-inline long double sqrt (long double __x)
+-{
+-    return _SQRTL (__x);
+-}
+-#endif   // _RWSTD_NO_SQRT_LDBL
+-
+-
+-#if defined (_RWSTD_NO_TAN_LDBL)
+-inline long double tan (long double __x)
+-{
+-    return _TANL (__x);
+-}
+-#endif   // _RWSTD_NO_TAN_LDBL
+-
+-
+-#if defined (_RWSTD_NO_TANH_LDBL)
+-inline long double tanh (long double __x)
+-{
+-    return _TANHL (__x);
+-}
+-#endif   // _RWSTD_NO_TANH_LDBL
+-
+-
+-#endif   // _RWSTD_NO_LONG_DOUBLE
+-
+-
+-// using statements must come after the overloads.
+-// working around MSVC6 PR# 27677
+-#if !defined (_RWSTD_NO_HONOR_STD) && !defined (_RWSTD_NO_USING_LIBC_IN_STD)
+-
+-_USING (::acos);
+-_USING (::asin);
+-_USING (::atan);
+-_USING (::atan2);
+-_USING (::ceil);
+-_USING (::cos);
+-_USING (::cosh);
+-_USING (::exp);
+-_USING (::fabs);
+-_USING (::floor);
+-_USING (::fmod);
+-_USING (::frexp);
+-_USING (::ldexp);
+-_USING (::log);
+-_USING (::log10);
+-_USING (::modf);
+-_USING (::pow);
+-_USING (::sin);
+-_USING (::sinh);
+-_USING (::sqrt);
+-_USING (::tan);
+-_USING (::tanh);
+-
+-#endif   // !_RWSTD_NO_HONOR_STD && !_RWSTD_NO_USING_LIBC_IN_STD
+-
+-#if !defined (_RWSTD_NO_USING_LIBC_IN_STD)
+-}   // namespace std
+-#endif   // !_RWSTD_NO_USING_LIBC_IN_STD
+-
+-
+-#endif   // _RWSTD_NO_DEPRECATED_C_HEADERS
+-
++#include <math.h>
+ 
+-// MSVC provides its own complex macro
+-#ifdef _MSC_VER
+-#  ifdef complex
+-#    undef complex
+-#  endif
++#if defined(__cplusplus) && defined(__SUNPRO_CC)
++#    undef __MATHERR_RENAME_EXCEPTION
+ #endif
+ 
++#endif /* _MATH_H */
+ 
+-#endif   // _RWSTD_NO_PURE_C_HEADERS
+-
+-#endif   // _RWSTD_CMATH_INCLUDED

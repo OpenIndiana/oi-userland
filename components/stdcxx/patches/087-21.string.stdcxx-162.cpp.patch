@@ -1,0 +1,50 @@
+--- stdcxx-4.2.1/tests/regress/21.string.stdcxx-162.cpp	2008-04-24 17:23:26.000000000 -0700
++++ stdcxx-4.2.1/tests/regress/21.string.stdcxx-162.cpp	2011-03-23 11:45:44.381532276 -0700
+@@ -28,6 +28,7 @@
+ 
+ #include <cassert>
+ #include <string>
++#include <iostream>
+ 
+ #ifdef _RWSTD_POSIX_THREADS
+ #  include <pthread.h>
+@@ -47,6 +48,14 @@
+         int ref_count;
+         std::string::size_type capacity;
+         std::string::size_type size;
++#ifndef _RWSTD_NO_STRING_REF_COUNT
++#  if defined (_RWSTD_REENTRANT)            \
++	&& !defined (_RWSTD_ONE_STRING_MUTEX)   \
++	&& !defined (_RWSTD_NO_STRING_MUTEX)
++
++	__rw::__rw_mutex_base mutex;
++#  endif   // _REENTRANT && !_ONE_STRING_MUTEX && !_NO_STRING_MUTEX
++#endif // _RWSTD_NO_STRING_REF_COUNT
+     };
+ 
+     // verify that the reference-counted string body isn't bigger
+@@ -56,15 +65,22 @@
+ #ifdef MUTEX
+ 
+     struct LargeRef {
+-        MUTEX                  mutex;
+         int                    ref_count;
+         std::string::size_type capacity;
+         std::string::size_type size;
++#ifndef _RWSTD_NO_STRING_REF_COUNT
++#  if defined (_RWSTD_REENTRANT)            \
++	&& !defined (_RWSTD_ONE_STRING_MUTEX)   \
++	&& !defined (_RWSTD_NO_STRING_MUTEX)
++
++	__rw::__rw_mutex_base mutex;
++#  endif   // _REENTRANT && !_ONE_STRING_MUTEX && !_NO_STRING_MUTEX
++#endif // _RWSTD_NO_STRING_REF_COUNT
+     };
+ 
+     // verify that the reference-counted string body is smaller
+     // than the struct containing a full-blown mutex object above
+-    assert (sizeof (strref) < sizeof (LargeRef));
++    assert (sizeof (strref) <= sizeof (LargeRef));
+ 
+ #endif   // MUTEX
+ 
