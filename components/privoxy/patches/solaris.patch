@@ -1,0 +1,42 @@
+diff -ru privoxy-3.0.8-stable-orig/GNUmakefile.in privoxy-3.0.8-stable/GNUmakefile.in
+--- privoxy-3.0.8-stable-orig/GNUmakefile.in	Fri Aug  1 14:32:02 2008
++++ privoxy-3.0.8-stable/GNUmakefile.in	Fri Aug  1 14:33:36 2008
+@@ -243,7 +243,7 @@
+ # Add your flags here 
+ OTHER_CFLAGS =   
+ 
+-CFLAGS = @CFLAGS@ @CPPFLAGS@ $(OTHER_CFLAGS) $(SPECIAL_CFLAGS) -Wall \
++CFLAGS = @CFLAGS@ @CPPFLAGS@ $(OTHER_CFLAGS) $(SPECIAL_CFLAGS) \
+          @STATIC_PCRE_ONLY@ -Ipcre 
+ 
+ LDFLAGS = @LDFLAGS@ $(DEBUG_CFLAGS) $(SPECIAL_CFLAGS)
+diff -ru privoxy-3.0.8-stable-orig/config privoxy-3.0.8-stable/config
+--- privoxy-3.0.8-stable-orig/config	Fri Aug  1 14:32:01 2008
++++ privoxy-3.0.8-stable/config	Fri Aug  1 14:37:51 2008
+@@ -260,7 +260,7 @@
+ #
+ #      No trailing "/", please.
+ #
+-confdir .
++confdir /etc/privoxy
+ #
+ #
+ #  2.2. templdir
+@@ -315,7 +315,7 @@
+ #
+ #      No trailing "/", please.
+ #
+-logdir .
++logdir /var/log/privoxy
+ #
+ #
+ #  2.4. actionsfile
+@@ -452,7 +452,7 @@
+ #      Any log files must be writable by whatever user Privoxy is
+ #      being run as (on Unix, default user id is "privoxy").
+ #
+-logfile logfile
++logfile privoxy.log
+ #
+ #
+ #  2.7. jarfile
