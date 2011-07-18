@@ -67,6 +67,10 @@
 #ifndef	HW_PK11_ERR_H
 #define	HW_PK11_ERR_H
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 void ERR_pk11_error(int function, int reason, char *file, int line);
 void PK11err_add_data(int function, int reason, CK_RV rv);
 #define	PK11err(f, r)	ERR_pk11_error((f), (r), __FILE__, __LINE__)
@@ -232,4 +236,7 @@ void PK11err_add_data(int function, int reason, CK_RV rv);
 #define	PK11_R_MLOCK_FAILED			185
 #define	PK11_R_FORK_FAILED			186
 
+#ifdef	__cplusplus
+}
+#endif
 #endif /* HW_PK11_ERR_H */

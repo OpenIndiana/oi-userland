@@ -34,6 +34,10 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:32ca934f380a547061ddab7221b1a34e4e07e8d5
 COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 
+# Architecture-specific patches
+EXTRA_PATCHES.i386 = $(PATCH_DIR)/openssl-1.0.0d-aesni-v4.i386-patch
+EXTRA_PATCHES = $(EXTRA_PATCHES.$(MACH))
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
@@ -118,8 +122,11 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # update the files which have been under continuous development. We rather copy
 # the files to the right directories.
 COMPONENT_PRE_BUILD_ACTION = \
-    ( $(CP) -fp engines/devcrypto/* $(@D)/engines; \
-      $(CP) -fp engines/pkcs11/* $(@D)/crypto/engine; ) 
+    ( $(CP) -fp engines/aesni/eng_aesni.c	$(@D)/crypto/engine; \
+      $(CP) -fp engines/aesni/aesni-x86*.pl	$(@D)/crypto/aes/asm; \
+      $(CP) -fp engines/devcrypto/*.[ch]	$(@D)/engines; \
+      $(CP) -fp engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
+      )
 
 build:		$(BUILD_32_and_64)
 

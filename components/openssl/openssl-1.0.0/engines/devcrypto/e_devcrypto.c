@@ -139,11 +139,11 @@ static devcrypto_cipher_t cipher_table[] = {
 
 
 /* Formal declaration for functions in EVP_CIPHER structure */
-static int devcrypto_cipher_init(EVP_CIPHER_CTX *, const unsigned char *,
-    const unsigned char *, int);
-static int devcrypto_cipher_do_cipher(EVP_CIPHER_CTX *, unsigned char *,
-    const unsigned char *, unsigned int);
-static int devcrypto_cipher_cleanup(EVP_CIPHER_CTX *);
+static int devcrypto_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+    const unsigned char *iv, int enc);
+static int devcrypto_cipher_do_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+    const unsigned char *in, size_t inl);
+static int devcrypto_cipher_cleanup(EVP_CIPHER_CTX *ctx);
 
 /* OpenSSL's libcrypto EVP stuff. This is how this engine gets wired to EVP. */
 static const EVP_CIPHER dev_des_cbc = {
@@ -440,7 +440,7 @@ devcrypto_free_aes_ctr_NIDs(void)
  * Open the /dev/crypto device
  */
 static int
-devcrypto_open()
+devcrypto_open(void)
 {
 	int fd = -1;
 
@@ -485,7 +485,7 @@ devcrypto_open()
  * the kernel provider id for each hardware slot also.
  */
 static int
-devcrypto_get_slot_info()
+devcrypto_get_slot_info(void)
 {
 	crypto_get_provider_list_t *pl = NULL;
 	int ret = 1;
@@ -1000,7 +1000,7 @@ failed:
  */
 static int
 devcrypto_cipher_do_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, unsigned int inl)
+    const unsigned char *in, size_t inl)
 {
 	crypto_encrypt_update_t encrypt_update;
 	crypto_decrypt_update_t decrypt_update;
@@ -1134,7 +1134,7 @@ devcrypto_cipher_cleanup(EVP_CIPHER_CTX *ctx)
 }
 
 static void
-devcrypto_cleanup()
+devcrypto_cleanup(void)
 {
 	if (kernel_fd == -1)
 		return;

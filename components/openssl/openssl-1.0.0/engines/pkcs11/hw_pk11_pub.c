@@ -127,7 +127,7 @@ static int pk11_RSA_finish(RSA *rsa);
 static int pk11_RSA_sign(int type, const unsigned char *m, unsigned int m_len,
 	unsigned char *sigret, unsigned int *siglen, const RSA *rsa);
 static int pk11_RSA_verify(int dtype, const unsigned char *m,
-	unsigned int m_len, unsigned char *sigbuf, unsigned int siglen,
+	unsigned int m_len, const unsigned char *sigbuf, unsigned int siglen,
 	const RSA *rsa);
 EVP_PKEY *pk11_load_privkey(ENGINE*, const char *privkey_id,
 	UI_METHOD *ui_method, void *callback_data);
@@ -468,7 +468,7 @@ static CK_BBOOL pk11_false = CK_FALSE;
 
 #ifndef OPENSSL_NO_RSA
 /*
- * Similiar to OpenSSL to take advantage of the paddings. The goal is to
+ * Similar to OpenSSL to take advantage of the paddings. The goal is to
  * support all paddings in this engine although PK11 library does not
  * support all the paddings used in OpenSSL.
  * The input errors should have been checked in the padding functions.
@@ -522,7 +522,7 @@ err:
 
 /*
  * Similar to Openssl to take advantage of the paddings. The input errors
- * should be catched in the padding functions
+ * should be caught in the padding functions
  */
 static int pk11_RSA_private_encrypt(int flen, const unsigned char *from,
 	unsigned char *to, RSA *rsa, int padding)
@@ -1110,7 +1110,7 @@ err:
 	}
 
 static int pk11_RSA_verify(int type, const unsigned char *m,
-	unsigned int m_len, unsigned char *sigbuf, unsigned int siglen,
+	unsigned int m_len, const unsigned char *sigbuf, unsigned int siglen,
 	const RSA *rsa)
 	{
 	X509_SIG sig;
@@ -1204,8 +1204,8 @@ static int pk11_RSA_verify(int type, const unsigned char *m,
 			    rv);
 			goto err;
 			}
-		rv = pFuncList->C_Verify(sp->session, s, i, sigbuf,
-			(CK_ULONG)siglen);
+		rv = pFuncList->C_Verify(sp->session, s, i,
+			(CK_BYTE_PTR)sigbuf, (CK_ULONG)siglen);
 
 		if (rv != CKR_OK)
 			{

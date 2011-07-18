@@ -261,7 +261,7 @@ static int pk11_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	const unsigned char *iv, int enc);
 static int pk11_cipher_final(PK11_SESSION *sp);
 static int pk11_cipher_do_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
-	const unsigned char *in, unsigned int inl);
+	const unsigned char *in, size_t inl);
 static int pk11_cipher_cleanup(EVP_CIPHER_CTX *ctx);
 static int pk11_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 	const int **nids, int nid);
@@ -1609,7 +1609,7 @@ pk11_get_session(PK11_OPTYPE optype)
 	sp = freelist;
 
 	/*
-	 * If the free list is empty, allocate new unitialized (filled
+	 * If the free list is empty, allocate new uninitialized (filled
 	 * with zeroes) PK11_SESSION structure otherwise return first
 	 * structure from the freelist.
 	 */
@@ -2314,7 +2314,7 @@ static int pk11_init_symmetric(EVP_CIPHER_CTX *ctx, PK11_CIPHER *pcipher,
 	/*
 	 * We expect pmech->mechanism to be already set and
 	 * pParameter/ulParameterLen initialized to NULL/0 before
-	 * pk11_init_symetric() is called.
+	 * pk11_init_symmetric() is called.
 	 */
 	OPENSSL_assert(pmech->mechanism != NULL);
 	OPENSSL_assert(pmech->pParameter == NULL);
@@ -2513,7 +2513,7 @@ pk11_cipher_final(PK11_SESSION *sp)
  */
 static int
 pk11_cipher_do_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
-	const unsigned char *in, unsigned int inl)
+	const unsigned char *in, size_t inl)
 	{
 	PK11_CIPHER_STATE *state = (PK11_CIPHER_STATE *) ctx->cipher_data;
 	PK11_SESSION *sp;
@@ -3629,7 +3629,7 @@ static void pk11_find_digests(CK_FUNCTION_LIST_PTR pflist,
  * ciphers and digests, we check that any found mechanism is in the table
  * created using the pkcs11_kernel library. So, as a result we have two arrays
  * of mechanisms that were advertised as supported in hardware which was the
- * goal of that whole excercise. Thus, we can use libpkcs11 but avoid soft token
+ * goal of that whole exercise. Thus, we can use libpkcs11 but avoid soft token
  * code for symmetric ciphers and digests. See pk11_choose_slots() for more
  * information.
  *
@@ -3739,7 +3739,7 @@ static int check_hw_mechanisms(void)
 		}
 
 	/*
-	 * We don't care about duplicit mechanisms in multiple slots and also
+	 * We don't care about duplicate mechanisms in multiple slots and also
 	 * reserve one slot for the terminal NID_undef which we use to stop the
 	 * search.
 	 */

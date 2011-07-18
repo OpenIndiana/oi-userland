@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -53,6 +53,10 @@
 
 #include <security/pkcs11t.h>
 
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
 /* PKCS#11 URI related prefixes and attributes. */
 #define	PK11_URI_PREFIX		"pkcs11:"
 #define	FILE_URI_PREFIX		"file://"
@@ -103,4 +107,7 @@ int pk11_token_login(CK_SESSION_HANDLE session, CK_BBOOL *login_done,
 	pkcs11_uri *uri_struct, CK_BBOOL is_private);
 int pk11_token_relogin(CK_SESSION_HANDLE session);
 
+#ifdef	__cplusplus
+}
+#endif
 #endif /* HW_PK11_URI_H */

@@ -70,7 +70,11 @@
 
 #include "hw_pk11_err.h"
 
-/* max byte length of a symetric key we support */
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
+/* max byte length of a symmetric key we support */
 #define	PK11_KEY_LEN_MAX			32
 
 /*
@@ -171,7 +175,7 @@ typedef struct PK11_st_SESSION
  * different groups may be initialized in different slots.
  *
  * To provide locking granularity in multithreaded environment, the groups are
- * further splitted into types with each type having a separate session cache.
+ * further split into types with each type having a separate session cache.
  */
 typedef enum PK11_OPTYPE_ENUM
 	{
@@ -247,4 +251,7 @@ extern int pk11_engine_pkey_methods(ENGINE *e, EVP_PKEY_METHOD **pmeth,
 
 extern CK_FUNCTION_LIST_PTR pFuncList;
 
+#ifdef	__cplusplus
+}
+#endif
 #endif /* HW_PK11_H */
