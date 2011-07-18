@@ -1,18 +1,11 @@
---- httping-1.3.0/Makefile	Wed Feb 18 07:32:43 2009
-+++ httping-1.3.0/Makefile.new	Wed Jun 29 12:48:41 2011
-@@ -23,12 +23,14 @@
- all: httping
+--- httping-1.4.4/Makefile	Sat Jul 24 03:32:07 2010
++++ httping-1.4.4/Makefile.new	Fri Jul 15 09:54:53 2011
+@@ -16,7 +16,7 @@
  
- httping: $(OBJS)
--	$(CC) -Wall -W $(OBJS) $(LDFLAGS) -o httping
-+	$(CC) $(LDFLAGS) $(OBJS) -o httping
- 	#
- 	# Oh, blatant plug: http://keetweej.vanheusden.com/wishlist.html
+ TARGET=httping
  
- install: httping
-+	mkdir -p $(DESTDIR)/usr/bin
- 	cp httping $(DESTDIR)/usr/bin
-+	mkdir -p $(DESTDIR)/usr/share/man/man1
- 	cp httping.1 $(DESTDIR)/usr/share/man/man1/
+-WFLAGS=-Wall -W
++WFLAGS=
+ OFLAGS=-O2
+ CFLAGS+=$(WFLAGS) $(OFLAGS) -DVERSION=\"$(VERSION)\"
  
- clean:

@@ -23,11 +23,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		httping
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.4.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.vanheusden.com/httping/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha1:be259962d2be9eac70cd62f86e0345e21f85076b
+COMPONENT_ARCHIVE_HASH=	sha1:f74604d3ad5a1f1a68a483ccb40bd5bb0b280262
 COMPONENT_ARCHIVE_URL=	http://www.vanheusden.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -43,7 +43,7 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:	$(TEST_32)
+test:	$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
