@@ -1,0 +1,27 @@
+diff --git a/ospfd/ChangeLog b/ospfd/ChangeLog
+index 24c3d29..bb0e908 100644
+--- ospfd/ChangeLog
++++ ospfd/ChangeLog
+@@ -1,3 +1,8 @@
++2007-08-06 Paul Jakma <paul.jakma@sun.com>
++
++	* ospf_lsa.c: (router_lsa_flags) Bug #331, NSSA regression caused
++	  caused ASBRs to not advertise E-bit into NSSA areas.
++
+ 2007-05-09 Milan Kocian <milon@wq.cz>
+ 
+ 	* ospf_vty.c: Fix commands: 'ip ospf authentication A.B.C.D',
+diff --git a/ospfd/ospf_lsa.c b/ospfd/ospf_lsa.c
+index b9a70a6..243928f 100644
+--- ospfd/ospf_lsa.c
++++ ospfd/ospf_lsa.c
+@@ -437,8 +437,7 @@ router_lsa_flags (struct ospf_area *area)
+ 	SET_FLAG (flags, ROUTER_LSA_SHORTCUT);
+ 
+   /* ASBR can't exit in stub area. */
+-  if (area->external_routing == OSPF_AREA_STUB
+-      || area->external_routing == OSPF_AREA_NSSA)
++  if (area->external_routing == OSPF_AREA_STUB)
+     UNSET_FLAG (flags, ROUTER_LSA_EXTERNAL);
+   /* If ASBR set External flag */
+   else if (IS_OSPF_ASBR (area->ospf))

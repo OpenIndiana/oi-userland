@@ -1,0 +1,676 @@
+diff -ur quagga-0.99.8/ChangeLog quagga-unified-checksum/ChangeLog
+--- ChangeLog
++++ ChangeLog
+@@ -1,3 +1,18 @@
++2008-06-25 Jingjing Duan <jingjing.duan@sun.com>
++	* lib/checksum.[ch]: Add a consolidated checksum function to be
++	  used by both OSPF and IS-IS. The consolidated version also fixes
++	  the checksum byte-order checksum on big-endian architectures.
++	* isisd/iso_checksum.[ch]: Remove the old checksum implementation
++	  and use the consolidated version.
++	* isisd/isis_dlpi.c: Change ioctl from PFIOCSETF (transparent mode)
++	  to I_STR (non-transparent mode). The old code resulted in no
++	  filtering at all. 
++	* isisd/isis_dlpi.c: (open_dlpi_dev) Clearview-UV device nodes are
++	  under /dev/net, try opening there before attempting style 1 or 2
++	  names.
++	* ospfd/ospf_lsa.c: Remove the old checksum implementation and
++	  use the consolidated version.
++
+ 2007-08-07 James Carlson <james.d.carlson@sun.com>
+ 
+ 	* configure.ac: Added support for separate link-layer access
+diff -ur quagga-0.99.8/isisd/isis_dlpi.c quagga-unified-checksum/isisd/isis_dlpi.c
+--- isisd/isis_dlpi.c
++++ isisd/isis_dlpi.c
+@@ -42,8 +42,6 @@
+ #include "isisd/isis_circuit.h"
+ #include "isisd/isis_flags.h"
+ #include "isisd/isisd.h"
+-#include "isisd/isis_constants.h"
+-#include "isisd/isis_circuit.h"
+ #include "isisd/isis_network.h"
+ 
+ #include "privs.h"
+@@ -315,13 +313,24 @@
+ 	circuit->interface->name);
+       return ISIS_WARNING;
+     }
++  
++  /* Try the vanity node first, if permitted */
++  if (getenv("DLPI_DEVONLY") == NULL)
++    {
++      (void) snprintf (devpath, sizeof(devpath), "/dev/net/%s",
++                      circuit->interface->name);
++      fd = dlpiopen (devpath, &acklen);
++    }
++  
++  /* Now try as an ordinary Style 1 node */
++  if (fd == -1)
++    {
++      (void) snprintf (devpath, sizeof (devpath), "/dev/%s",
++                      circuit->interface->name);
++      unit = -1;
++      fd = dlpiopen (devpath, &acklen);
++    }
+ 
+-  /* Try first as Style 1 */
+-  (void) snprintf(devpath, sizeof (devpath), "/dev/%s",
+-    circuit->interface->name);
+-  unit = -1;
+-  fd = dlpiopen (devpath, &acklen);
+-
+   /* If that fails, try again as Style 2 */
+   if (fd == -1)
+     {
+@@ -452,11 +461,19 @@
+   if (ioctl (fd, I_PUSH, "pfmod") == 0)
+     {
+       struct packetfilt pfil;
++      struct strioctl sioc;
+ 
+       pfil.Pf_Priority = 0;
+       pfil.Pf_FilterLen = sizeof (pf_filter) / sizeof (u_short);
+       memcpy (pfil.Pf_Filter, pf_filter, sizeof (pf_filter));
+-      ioctl (fd, PFIOCSETF, &pfil);
++      /* pfmod does not support transparent ioctls */
++      sioc.ic_cmd = PFIOCSETF;
++      sioc.ic_timout = 5;
++      sioc.ic_len = sizeof (struct packetfilt);
++      sioc.ic_dp = (char *)&pfil;
++      if (ioctl (fd, I_STR, &sioc) == -1)
++         zlog_warn("%s: could not perform PF_IOCSETF on %s",
++           __func__, circuit->interface->name);
+     }
+ 
+   circuit->fd = fd;
+diff -ur quagga-0.99.8/isisd/isis_lsp.c quagga-unified-checksum/isisd/isis_lsp.c
+--- isisd/isis_lsp.c
++++ isisd/isis_lsp.c
+@@ -33,6 +33,7 @@
+ #include "command.h"
+ #include "hash.h"
+ #include "if.h"
++#include "checksum.h"
+ 
+ #include "isisd/dict.h"
+ #include "isisd/isis_constants.h"
+@@ -45,7 +46,6 @@
+ #include "isisd/isis_dynhn.h"
+ #include "isisd/isis_misc.h"
+ #include "isisd/isis_flags.h"
+-#include "isisd/iso_checksum.h"
+ #include "isisd/isis_csm.h"
+ #include "isisd/isis_adjacency.h"
+ #include "isisd/isis_spf.h"
+@@ -314,7 +314,7 @@
+     newseq = seq_num++;
+ 
+   lsp->lsp_header->seq_num = htonl (newseq);
+-  iso_csum_create (STREAM_DATA (lsp->pdu) + 12,
++  fletcher_checksum (STREAM_DATA (lsp->pdu) + 12,
+ 		   ntohs (lsp->lsp_header->pdu_len) - 12, 12);
+ 
+   return;
+@@ -1803,7 +1803,7 @@
+     tlv_add_is_neighs (lsp->tlv_data.es_neighs, lsp->pdu);
+ 
+   lsp->lsp_header->pdu_len = htons (stream_get_endp (lsp->pdu));
+-  iso_csum_create (STREAM_DATA (lsp->pdu) + 12,
++  fletcher_checksum (STREAM_DATA (lsp->pdu) + 12,
+ 		   ntohs (lsp->lsp_header->pdu_len) - 12, 12);
+ 
+   list_delete (adj_list);
+@@ -2071,7 +2071,7 @@
+       lsp->lsp_header->pdu_len =
+ 	htons (ISIS_FIXED_HDR_LEN + ISIS_LSP_HDR_LEN);
+       lsp->purged = 0;
+-      iso_csum_create (STREAM_DATA (lsp->pdu) + 12,
++      fletcher_checksum (STREAM_DATA (lsp->pdu) + 12,
+ 		       ntohs (lsp->lsp_header->pdu_len) - 12, 12);
+       ISIS_FLAGS_SET_ALL (lsp->SRMflags);
+     }
+diff -ur quagga-0.99.8/isisd/isis_pdu.c quagga-unified-checksum/isisd/isis_pdu.c
+--- isisd/isis_pdu.c
++++ isisd/isis_pdu.c
+@@ -32,6 +32,7 @@
+ #include "hash.c"
+ #include "prefix.h"
+ #include "if.h"
++#include "checksum.h"
+ 
+ #include "isisd/dict.h"
+ #include "isisd/include-netbsd/iso.h"
+@@ -1121,7 +1122,7 @@
+ 		  if (isis->debugs & DEBUG_UPDATE_PACKETS)
+ 		    zlog_debug ("LSP LEN: %d",
+ 				ntohs (lsp->lsp_header->pdu_len));
+-		  iso_csum_create (STREAM_DATA (lsp->pdu) + 12,
++		  fletcher_checksum (STREAM_DATA (lsp->pdu) + 12,
+ 				   ntohs (lsp->lsp_header->pdu_len) - 12, 12);
+ 		  ISIS_FLAGS_SET_ALL (lsp->SRMflags);
+ 		  if (isis->debugs & DEBUG_UPDATE_PACKETS)
+@@ -1164,7 +1165,7 @@
+ 	  /* 7.3.16.1  */
+ 	  lsp->lsp_header->seq_num = htonl (ntohl (hdr->seq_num) + 1);
+ 
+-	  iso_csum_create (STREAM_DATA (lsp->pdu) + 12,
++	  fletcher_checksum (STREAM_DATA (lsp->pdu) + 12,
+ 			   ntohs (lsp->lsp_header->pdu_len) - 12, 12);
+ 
+ 	  ISIS_FLAGS_SET_ALL (lsp->SRMflags);
+diff -ur quagga-0.99.8/isisd/iso_checksum.c quagga-unified-checksum/isisd/iso_checksum.c
+--- isisd/iso_checksum.c
++++ isisd/iso_checksum.c
+@@ -23,6 +23,7 @@
+ 
+ #include <zebra.h>
+ #include "iso_checksum.h"
++#include "checksum.h"
+ 
+ /*
+  * Calculations of the OSI checksum.
+@@ -47,14 +48,10 @@
+ int
+ iso_csum_verify (u_char * buffer, int len, uint16_t * csum)
+ {
+-  u_int8_t *p;
++  u_int16_t checksum;
+   u_int32_t c0;
+   u_int32_t c1;
+-  u_int16_t checksum;
+-  int i, partial_len;
+ 
+-  p = buffer;
+-  checksum = 0;
+   c0 = *csum & 0xff00;
+   c1 = *csum & 0x00ff;
+ 
+@@ -70,124 +69,8 @@
+   if (c0 == 0 || c1 == 0)
+     return 1;
+ 
+-  /*
+-   * Otherwise initialize to zero and calculate...
+-   */
+-  c0 = 0;
+-  c1 = 0;
+-
+-  while (len)
+-    {
+-      partial_len = MIN(len, 5803);
+-
+-      for (i = 0; i < partial_len; i++)
+-	{
+-	  c0 = c0 + *(p++);
+-	  c1 += c0;
+-	}
+-
+-      c0 = c0 % 255;
+-      c1 = c1 % 255;
+-
+-      len -= partial_len;
+-    }
+-
+-  if (c0 == 0 && c1 == 0)
+-    return 0;
+-
++  checksum = fletcher_checksum(buffer, len, (u_char *)csum - buffer);
++  if (checksum == *csum)
++      return 0;
+   return 1;
+ }
+-
+-/*
+- * Creates the checksum. *csum points to the position of the checksum in the 
+- * PDU. 
+- * Based on Annex C.4 of ISO/IEC 8473
+- */
+-#define FIXED_CODE
+-u_int16_t
+-iso_csum_create (u_char * buffer, int len, u_int16_t n)
+-{
+-
+-  u_int8_t *p;
+-  int x;
+-  int y;
+-  u_int32_t mul;
+-  u_int32_t c0;
+-  u_int32_t c1;
+-  u_int16_t checksum;
+-  u_int16_t *csum;
+-  int i, init_len, partial_len;
+-
+-  checksum = 0;
+-
+-  /*
+-   * Zero the csum in the packet.
+-   */
+-  csum = (u_int16_t *) (buffer + n);
+-  *(csum) = checksum;
+-
+-  p = buffer;
+-  c0 = 0;
+-  c1 = 0;
+-  init_len = len;
+-
+-  while (len != 0)
+-    {
+-      partial_len = MIN(len, 5803);
+-
+-      for (i = 0; i < partial_len; i++)
+-	{
+-	  c0 = c0 + *(p++);
+-	  c1 += c0;
+-	}
+-
+-      c0 = c0 % 255;
+-      c1 = c1 % 255;
+-
+-      len -= partial_len;
+-    }
+-
+-  mul = (init_len - n)*(c0);
+-
+-#ifdef FIXED_CODE
+-  x = mul - c0 - c1;
+-  y = c1 - mul - 1;
+-
+-  if (y > 0)
+-    y++;
+-  if (x < 0)
+-    x--;
+-
+-  x %= 255;
+-  y %= 255;
+-
+-  if (x == 0)
+-    x = 255;
+-  if (y == 0)
+-    y = 1;
+-
+-  checksum = (y << 8) | (x & 0xFF);
+-
+-#else
+-  x = mul - c0 - c1;
+-  x %= 255;
+-
+-  y = c1 - mul - 1;
+-  y %= 255;
+-
+-  if (x == 0)
+-    x = 255;
+-  if (y == 0)
+-    y = 255;
+-
+-  checksum = ((y << 8) | x);
+-#endif
+-
+-  /*
+-   * Now we write this to the packet
+-   */
+-  *(csum) = checksum;
+-
+-  /* return the checksum for user usage */
+-  return checksum;
+-}
+diff -ur quagga-0.99.8/isisd/iso_checksum.h quagga-unified-checksum/isisd/iso_checksum.h
+--- isisd/iso_checksum.h
++++ isisd/iso_checksum.h
+@@ -24,6 +24,5 @@
+ #define _ZEBRA_ISO_CSUM_H
+ 
+ int iso_csum_verify (u_char * buffer, int len, uint16_t * csum);
+-u_int16_t iso_csum_create (u_char * buffer, int len, u_int16_t n);
+ 
+ #endif /* _ZEBRA_ISO_CSUM_H */
+diff -ur quagga-0.99.8/lib/checksum.c quagga-unified-checksum/lib/checksum.c
+--- lib/checksum.c
++++ lib/checksum.c
+@@ -45,3 +45,82 @@
+ 	answer = ~sum;		/* ones-complement, then truncate to 16 bits */
+ 	return(answer);
+ }
++
++/* Fletcher Checksum -- Refer to RFC1008. */
++#define MODX                 4102   /* 5802 should be fine */
++
++/* To be consistent, offset is 0-based index, rather than the 1-based 
++   index required in the specification ISO 8473, Annex C.1 */
++u_int16_t
++fletcher_checksum(u_char * buffer, int len, u_int16_t offset)
++{
++  u_int8_t *p;
++  int x;
++  int y;
++  u_int32_t mul;
++  u_int32_t c0;
++  u_int32_t c1;
++  u_int16_t checksum;
++  u_int16_t *csum;
++  int i, init_len, partial_len;
++
++  checksum = 0;
++
++  /*
++   * Zero the csum in the packet.
++   */
++  csum = (u_int16_t *) (buffer + offset);
++  *(csum) = checksum;
++
++  p = buffer;
++  c0 = 0;
++  c1 = 0;
++  init_len = len;
++
++  while (len != 0)
++    {
++      partial_len = MIN(len, MODX);
++
++      for (i = 0; i < partial_len; i++)
++	{
++	  c0 = c0 + *(p++);
++	  c1 += c0;
++	}
++
++      c0 = c0 % 255;
++      c1 = c1 % 255;
++
++      len -= partial_len;
++    }
++
++  mul = (init_len - offset)*(c0);
++
++  x = mul - c0 - c1;
++  y = c1 - mul - 1;
++
++  if (y > 0)
++    y++;
++  if (x < 0)
++    x--;
++
++  x %= 255;
++  y %= 255;
++
++  if (x == 0)
++    x = 255;
++  if (y == 0)
++    y = 1;
++
++  /*
++   * Now we write this to the packet.
++   * We could skip this step too, since the checksum returned would
++   * be stored into the checksum field by the caller.
++   */
++  buffer[offset] = x;
++  buffer[offset + 1] = y;
++
++  /* Take care of the endian issue */
++  checksum = htons((x << 8) | (y & 0xFF));
++
++  return checksum;
++}
+diff -ur quagga-0.99.8/lib/checksum.h quagga-unified-checksum/lib/checksum.h
+--- lib/checksum.h
++++ lib/checksum.h
+@@ -1 +1,2 @@
+ extern int in_cksum(void *, int);
++extern u_int16_t fletcher_checksum(u_char * buffer, int len, u_int16_t offset);
+diff -ur quagga-0.99.8/ospfd/ospf_lsa.c quagga-unified-checksum/ospfd/ospf_lsa.c
+--- ospfd/ospf_lsa.c
++++ ospfd/ospf_lsa.c
+@@ -32,6 +32,7 @@
+ #include "thread.h"
+ #include "hash.h"
+ #include "sockunion.h"		/* for inet_aton() */
++#include "checksum.h"
+ 
+ #include "ospfd/ospfd.h"
+ #include "ospfd/ospf_interface.h"
+@@ -172,46 +173,22 @@
+ 
+ 
+ /* Fletcher Checksum -- Refer to RFC1008. */
+-#define MODX                 4102
+-#define LSA_CHECKSUM_OFFSET    15
+ 
++/* All the offsets are zero-based. The offsets in the RFC1008 are 
++   one-based. */
+ u_int16_t
+ ospf_lsa_checksum (struct lsa_header *lsa)
+ {
+-  u_char *sp, *ep, *p, *q;
+-  int c0 = 0, c1 = 0;
+-  int x, y;
+-  u_int16_t length;
+-
+-  lsa->checksum = 0;
+-  length = ntohs (lsa->length) - 2;
+-  sp = (u_char *) &lsa->options;
+-
+-  for (ep = sp + length; sp < ep; sp = q)
+-    {
+-      q = sp + MODX;
+-      if (q > ep)
+-        q = ep;
+-      for (p = sp; p < q; p++)
+-        {
+-          c0 += *p;
+-          c1 += c0;
+-        }
+-      c0 %= 255;
+-      c1 %= 255;
+-    }
++  u_char *buffer = (u_char *) &lsa->options;
++  int options_offset = buffer - (u_char *) &lsa->ls_age; /* should be 2 */
+ 
+-  x = (((int)length - LSA_CHECKSUM_OFFSET) * c0 - c1) % 255;
+-  if (x <= 0)
+-    x += 255;
+-  y = 510 - c0 - x;
+-  if (y > 255)
+-    y -= 255;
++  /* Skip the AGE field */
++  u_int16_t len = ntohs(lsa->length) - options_offset; 
+ 
+-  /* take care endian issue. */
+-  lsa->checksum = htons ((x << 8) + y);
++  /* Checksum offset starts from "options" field, not the beginning of the
++     lsa_header struct. The offset is 14, rather than 16. */
+ 
+-  return (lsa->checksum);
++  return fletcher_checksum(buffer, len, (u_char *) &lsa->checksum - buffer);
+ }
+ 
+ 
+diff -ur quagga-0.99.8/solaris/quagga.init.in quagga-unified-checksum/solaris/quagga.init.in
+--- solaris/quagga.init.in
++++ solaris/quagga.init.in
+@@ -134,7 +134,7 @@
+ case "${DAEMON}" in
+ 	bgpd)
+ 	;;
+-	zebra | ospfd | ospf6d | ripd | ripngd )
++	zebra | ospfd | ospf6d | ripd | ripngd | isisd)
+ 		quagga_is_globalzone || exit $SMF_EXIT_OK
+ 	;;
+ 	*)
+@@ -168,7 +168,7 @@
+ 	eval exec $DAEMON_PATH/$DAEMON $DAEMON_ARGS --pid_file ${PIDFILE} &
+ }
+ 
+-stop () {
++daemonstop () {
+ 	if [ -f "${PIDFILE}" ]; then
+ 		/usr/bin/kill -TERM `/usr/bin/cat "${PIDFILE}"`
+ 	fi
+@@ -179,7 +179,7 @@
+ 	start
+ 	;;
+ 'stop')
+-	stop
++	daemonstop
+ 	;;
+ 
+ *)
+diff -ur quagga-0.99.8/solaris/quagga.xml.in quagga-unified-checksum/solaris/quagga.xml.in
+--- solaris/quagga.xml.in
++++ solaris/quagga.xml.in
+@@ -187,7 +187,7 @@
+ 		<service_fmri value='svc:/network/routing-setup' />
+ 	</dependency>
+ 	
+-	<!-- ensure that restart of zebra is propogated to daemon -->
++	<!-- ensure that restart of zebra is propagated to daemon -->
+ 	<dependency
+ 		name='zebra'
+ 		grouping='optional_all'
+@@ -818,6 +818,148 @@
+ 			<manpage title='bgpd' section='1M'
+ 				manpath='@mandir@' />
+ 			<doc_link name='quagga.net' 
++				uri='http://www.quagga.net/' />
++		</documentation>
++	</template>
++	</instance>
++	<stability value='Unstable' />
++</service>
++
++<service
++	name='network/routing/isis'
++	type='service'
++	version='1'>
++
++	<instance name='quagga' enabled='false'>
++
++	<dependency name='fs'
++		grouping='require_all'
++		restart_on='none'
++		type='service'>
++		<service_fmri
++			value='svc:/system/filesystem/usr:default' />
++	</dependency>
++
++	<dependency
++		name='ipv6-forwarding'
++		grouping='optional_all'
++		restart_on='refresh'
++		type='service'>
++		<service_fmri value='svc:/network/ipv6-forwarding' />
++	</dependency>
++	
++	<dependency
++		name='ipv4-forwarding'
++		grouping='optional_all'
++		restart_on='refresh'
++		type='service'>
++		<service_fmri value='svc:/network/ipv4-forwarding' />
++	</dependency>
++
++	<!-- do not not run unless routing-setup has run -->
++	<dependency
++		name='network_routing_setup'
++		grouping='require_all'
++		restart_on='refresh'
++		type='service'>
++		<service_fmri value='svc:/network/routing-setup' />
++	</dependency>
++
++	<!-- ensure that restart of zebra is propogated to daemon -->
++	<dependency
++		name='zebra'
++		grouping='optional_all'
++		restart_on='restart'
++		type='service'>
++		<service_fmri value='svc:/network/routing/zebra:quagga' />
++	</dependency>
++
++	<exec_method
++		type='method'
++		name='start'
++		exec='/lib/svc/method/quagga isisd'
++		timeout_seconds='60'>
++		<method_context>
++		  <method_credential
++		   user='root' group='root'/>
++ 		</method_context>
++	</exec_method>
++
++	<!-- isisd can take a long time to shutdown, due to graceful 
++	     shutdown 
++	 -->
++	<exec_method
++		type='method'
++		name='stop'
++		exec=':kill'
++		timeout_seconds='60'>
++	</exec_method>
++
++	<property_group name='startd'
++		type='framework'>
++		<!-- sub-process core dumps shouldn't restart session -->
++		<propval name='ignore_error'
++		    type='astring' value='core,signal' />
++	</property_group>
++
++	<!-- Properties in this group are used by routeadm (1M) -->
++	<property_group name='routeadm' type='application'>
++		<stability value='Unstable' />
++		<!-- Identifies service as a routing service -->
++		<propval name='daemon' type='astring'
++			value='@sbindir@/isisd' />
++		<propval name='value_authorization' type='astring'
++			value='solaris.smf.value.routing' />
++		<property name='protocol' type='astring'>
++			<astring_list>
++				<value_node value='ipv4'/>
++				<value_node value='ipv6'/>
++			</astring_list>
++		</property>
++	</property_group>
++	
++	<!-- Properties in this group are modifiable via routeadm (1M) -->
++	<property_group name='routing' type='application'>
++		<propval name='value_authorization' type='astring' 
++		         value='solaris.smf.value.routing' />
++
++		<!-- Options common to Quagga daemons -->
++		<!-- The config file to use, if not the default -->
++		<propval name='config_file' type='astring' value=''/>
++		<!-- The vty_port to listen on if not the default.
++		     0 to disable --> 
++		<propval name='vty_port' type='integer' value='0' />
++		<!-- The address to bind the VTY interface to, if not any. -->
++		<propval name='vty_address' type='astring' value='' />
++		<!-- The user to switch to after startup, if not the default -->
++		<propval name='user' type='astring' value='' />
++		<!-- The group to switch to, if not the default.
++		     If user is specified, this defaults to a group with
++		     same name as user -->
++		<propval name='group' type='astring' value='' />
++		<!-- The pidfile to use, if not the default of
++		     @quagga_statedir@ -->
++		<propval name='pid_file' type='astring' value='' />
++	</property_group>
++
++	<property_group name='general' type='framework'>
++		<!-- to start stop routing services -->
++		<propval name='action_authorization' type='astring'
++			 value='solaris.smf.manage.routing' />
++		<propval name='value_authorization' type='astring'
++			 value='solaris.smf.manage.routing' />
++	</property_group>
++
++	<template>
++		<common_name>
++			<loctext xml:lang='C'>
++			Quagga: isisd, IS-IS routing protocol daemon.
++			</loctext>
++		</common_name>
++		<documentation>
++			<manpage title='isisd' section='1M'
++				manpath='@mandir@' />
++			<doc_link name='quagga.net' 
+ 				uri='http://www.quagga.net/' />
+ 		</documentation>
+ 	</template>

@@ -1,0 +1,2333 @@
+diff --git a/ChangeLog b/ChangeLog
+index 38ea66d..ad1c40c 100644
+--- ChangeLog
++++ ChangeLog
+@@ -1,3 +1,8 @@
++2007-08-07 James Carlson <james.d.carlson@sun.com>
++
++	* configure.ac: Added support for separate link-layer access
++	  mechanisms in isisd.
++
+ 2007-07-27 Paul Jakma <paul.jakma@sun.com>
+ 
+ 	* configure.ac: Bump version to 0.99.8
+diff --git a/configure.ac b/configure.ac
+index 857f415..437767e 100755
+--- configure.ac
++++ configure.ac
+@@ -750,6 +750,35 @@
+ AC_SUBST(KERNEL_METHOD)
+ AC_SUBST(OTHER_METHOD)
+ 
++dnl --------------------------
++dnl Determine IS-IS I/O method
++dnl --------------------------
++AC_CHECK_HEADER(net/bpf.h)
++AC_CHECK_HEADER(sys/dlpi.h)
++AC_MSG_CHECKING(zebra IS-IS I/O method)
++if test x"$opsys" = x"gnu-linux"; then
++  AC_MSG_RESULT(pfpacket)
++  ISIS_METHOD=isis_pfpacket.o
++elif test x"$opsys" = x"sol2-6" -o x"$opsys" = x"sol8"; then
++  AC_MSG_RESULT(DLPI)
++  ISIS_METHOD="isis_dlpi.o"
++else
++  if test $ac_cv_header_net_bpf_h = no; then
++    if test $ac_cv_header_sys_dlpi_h = no; then
++      AC_MSG_RESULT(none)
++      AC_MSG_WARN([*** IS-IS support will not be built ***])
++      ISISD=""
++    else
++      AC_MSG_RESULT(DLPI)
++    fi
++    ISIS_METHOD="isis_dlpi.o"
++  else
++    AC_MSG_RESULT(BPF)
++    ISIS_METHOD="isis_bpf.o"
++  fi
++fi
++AC_SUBST(ISIS_METHOD)
++
+ dnl ------------------------------------
+ dnl check for broken CMSG_FIRSTHDR macro
+ dnl ------------------------------------
+diff --git a/isisd/ChangeLog b/isisd/ChangeLog
+index 8797af1..c2482f0 100644
+--- isisd/ChangeLog
++++ isisd/ChangeLog
+@@ -1,3 +1,20 @@
++2008-01-29 James Carlson <james.d.carlson@sun.com>
++
++	* Fix bug #437, assert due to bogus index management 
++	* isis_flags.c: (flags_initialize) new
++	* (flags_get_index) fix off by one, leading to list assert
++	  on null node data.
++	  (flags_free_index) ditto.
++	* isisd.c: (isis_area_create) use flags_initialize
++	  (isis_area_destroy) deconfigure circuits when
++	  taking down area.
++
++2007-07-18 James Carlson <james.d.carlson@sun.com>
++
++	* isis_network.c: split up into isis_bpf.c, isis_dlpi.c, and
++	  isis_pfpacket.c, selected by autoconf, and added DLPI support.
++	* (general) Fixed to allow compilation and use on Solaris.
++
+ 2006-12-08 Hannes Gredler <hannes@gredler.at>
+ 
+ 	* isis_adjacency.c: (isis_new_adj) Allow NULL snpa argument.
+diff --git a/isisd/Makefile.am b/isisd/Makefile.am
+index 1dd5493..859facd 100644
+--- isisd/Makefile.am
++++ isisd/Makefile.am
+@@ -9,9 +9,11 @@ noinst_LIBRARIES = libisis.a
+ sbin_PROGRAMS = isisd 
+ SUBDIRS = topology
+ 
++isis_method = @ISIS_METHOD@
++
+ libisis_a_SOURCES = \
+ 	isis_adjacency.c isis_lsp.c dict.c isis_circuit.c isis_pdu.c \
+-	isis_tlv.c isisd.c isis_misc.c isis_network.c isis_zebra.c isis_dr.c \
++	isis_tlv.c isisd.c isis_misc.c isis_zebra.c isis_dr.c \
+ 	isis_flags.c isis_dynhn.c iso_checksum.c isis_csm.c isis_events.c \
+ 	isis_spf.c isis_route.c isis_routemap.c
+ 
+@@ -26,7 +28,11 @@ noinst_HEADERS = \
+ isisd_SOURCES = \
+ 	isis_main.c $(libisis_a_SOURCES)
+ 
+-isisd_LDADD = @ISIS_TOPOLOGY_LIB@ ../lib/libzebra.la @LIBCAP@
++isisd_LDADD = $(isis_method) @ISIS_TOPOLOGY_LIB@ ../lib/libzebra.la @LIBCAP@
++
++isisd_DEPENDENCIES = $(isis_method)
++
++EXTRA_DIST = isis_bpf.c isis_dlpi.c isis_pfpacket.c
+ 
+ examplesdir = $(exampledir)
+ dist_examples_DATA = isisd.conf.sample
+diff --git a/isisd/dict.c b/isisd/dict.c
+index a333d3e..6c3e1e7 100644
+--- isisd/dict.c
++++ isisd/dict.c
+@@ -14,12 +14,13 @@
+  * into proprietary software; there is no requirement for such software to
+  * contain a copyright notice related to this source.
+  *
+- * $Id: dict.c,v 1.4 2005/09/25 12:04:25 hasso Exp $
+- * $Name:  $
++ * $Id$
++ * $Name$
+  */
+ 
+ #include <stdlib.h>
+ #include <stddef.h>
++#include "zebra.h"
+ #include "zassert.h"
+ #define DICT_IMPLEMENTATION
+ #include "dict.h"
+diff --git a/isisd/include-netbsd/iso.h b/isisd/include-netbsd/iso.h
+index 714b42d..1a80aec 100644
+--- isisd/include-netbsd/iso.h
++++ isisd/include-netbsd/iso.h
+@@ -192,7 +192,13 @@ extern struct protosw isosw[];
+ #else
+ /* user utilities definitions from the iso library */
+ 
++#ifdef SUNOS_5
++#define	__P(x)	x
++#define	__BEGIN_DECLS
++#define	__END_DECLS
++#else
+ #include <sys/cdefs.h>
++#endif
+ 
+ __BEGIN_DECLS
+ struct iso_addr *iso_addr __P((const char *));
+diff --git a/isisd/isisd.c b/isisd/isisd.c
+index 714b42d..1a80aec 100644
+--- isisd/isisd.c
++++ isisd/isisd.c
+@@ -130,7 +130,7 @@
+   area->circuit_list = list_new ();
+   area->area_addrs = list_new ();
+   THREAD_TIMER_ON (master, area->t_tick, lsp_tick, area, 1);
+-  area->flags.maxindex = -1;
++  flags_initialize (&area->flags);
+   /*
+    * Default values
+    */
+@@ -215,7 +215,11 @@
+   if (area->circuit_list)
+     {
+       for (ALL_LIST_ELEMENTS (area->circuit_list, node, nnode, circuit))
+-        isis_circuit_del (circuit);
++	{
++	  /* The fact that it's in circuit_list means that it was configured */
++	  isis_circuit_deconfigure (circuit, area);
++	  isis_circuit_del (circuit);
++	}
+       
+       list_delete (area->circuit_list);
+     }
+diff --git a/isisd/isis_bpf.c b/isisd/isis_bpf.c
+new file mode 100644
+index 0000000..e66ac98
+--- /dev/null
++++ isisd/isis_bpf.c
+@@ -0,0 +1,340 @@
++/*
++ * IS-IS Rout(e)ing protocol - isis_bpf.c
++ *
++ * Copyright (C) 2001,2002    Sampo Saaristo
++ *                            Tampere University of Technology      
++ *                            Institute of Communications Engineering
++ *
++ * This program is free software; you can redistribute it and/or modify it 
++ * under the terms of the GNU General Public Licenseas published by the Free 
++ * Software Foundation; either version 2 of the License, or (at your option) 
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,but WITHOUT 
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
++ * more details.
++
++ * You should have received a copy of the GNU General Public License along 
++ * with this program; if not, write to the Free Software Foundation, Inc., 
++ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
++ */
++
++#include <zebra.h>
++#include <net/if.h>
++#include <netinet/if_ether.h>
++#include <sys/time.h>
++#include <sys/ioctl.h>
++#include <net/bpf.h>
++
++#include "log.h"
++#include "stream.h"
++#include "if.h"
++
++#include "isisd/dict.h"
++#include "isisd/include-netbsd/iso.h"
++#include "isisd/isis_constants.h"
++#include "isisd/isis_common.h"
++#include "isisd/isis_circuit.h"
++#include "isisd/isis_flags.h"
++#include "isisd/isisd.h"
++#include "isisd/isis_constants.h"
++#include "isisd/isis_circuit.h"
++#include "isisd/isis_network.h"
++
++#include "privs.h"
++
++extern struct zebra_privs_t isisd_privs;
++
++struct bpf_insn llcfilter[] = {
++  BPF_STMT (BPF_LD + BPF_B + BPF_ABS, ETHER_HDR_LEN),	/* check first byte */
++  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, ISO_SAP, 0, 5),
++  BPF_STMT (BPF_LD + BPF_B + BPF_ABS, ETHER_HDR_LEN + 1),
++  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, ISO_SAP, 0, 3),	/* check second byte */
++  BPF_STMT (BPF_LD + BPF_B + BPF_ABS, ETHER_HDR_LEN + 2),
++  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, 0x03, 0, 1),	/* check third byte */
++  BPF_STMT (BPF_RET + BPF_K, (u_int) - 1),
++  BPF_STMT (BPF_RET + BPF_K, 0)
++};
++int readblen = 0;
++u_char *readbuff = NULL;
++
++/*
++ * Table 9 - Architectural constants for use with ISO 8802 subnetworks
++ * ISO 10589 - 8.4.8
++ */
++
++u_char ALL_L1_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x14 };
++u_char ALL_L2_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x15 };
++u_char ALL_ISS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x05 };
++u_char ALL_ESS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x04 };
++
++static char sock_buff[8192];
++
++static int
++open_bpf_dev (struct isis_circuit *circuit)
++{
++  int i = 0, fd;
++  char bpfdev[128];
++  struct ifreq ifr;
++  u_int16_t blen;
++  int true = 1, false = 0;
++  struct timeval timeout;
++  struct bpf_program bpf_prog;
++
++  do
++    {
++      (void) snprintf (bpfdev, sizeof (bpfdev), "/dev/bpf%d", i++);
++      fd = open (bpfdev, O_RDWR);
++    }
++  while (fd < 0 && errno == EBUSY);
++
++  if (fd < 0)
++    {
++      zlog_warn ("open_bpf_dev(): failed to create bpf socket: %s",
++		 safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  zlog_debug ("Opened BPF device %s", bpfdev);
++
++  memcpy (ifr.ifr_name, circuit->interface->name, sizeof (ifr.ifr_name));
++  if (ioctl (fd, BIOCSETIF, (caddr_t) & ifr) < 0)
++    {
++      zlog_warn ("open_bpf_dev(): failed to bind to interface: %s",
++		 safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  if (ioctl (fd, BIOCGBLEN, (caddr_t) & blen) < 0)
++    {
++      zlog_warn ("failed to get BPF buffer len");
++      blen = circuit->interface->mtu;
++    }
++
++  readblen = blen;
++
++  if (readbuff == NULL)
++    readbuff = malloc (blen);
++
++  zlog_debug ("BPF buffer len = %u", blen);
++
++  /*  BPF(4): reads return immediately upon packet reception.
++   *  Otherwise, a read will block until either the kernel
++   *  buffer becomes full or a timeout occurs. 
++   */
++  if (ioctl (fd, BIOCIMMEDIATE, (caddr_t) & true) < 0)
++    {
++      zlog_warn ("failed to set BPF dev to immediate mode");
++    }
++
++#ifdef BIOCSSEESENT
++  /*
++   * We want to see only incoming packets
++   */
++  if (ioctl (fd, BIOCSSEESENT, (caddr_t) & false) < 0)
++    {
++      zlog_warn ("failed to set BPF dev to incoming only mode");
++    }
++#endif
++
++  /*
++   * ...but all of them
++   */
++  if (ioctl (fd, BIOCPROMISC, (caddr_t) & true) < 0)
++    {
++      zlog_warn ("failed to set BPF dev to promiscuous mode");
++    }
++
++  /*
++   * If the buffer length is smaller than our mtu, lets try to increase it
++   */
++  if (blen < circuit->interface->mtu)
++    {
++      if (ioctl (fd, BIOCSBLEN, &circuit->interface->mtu) < 0)
++	{
++	  zlog_warn ("failed to set BPF buffer len (%u to %u)", blen,
++		     circuit->interface->mtu);
++	}
++    }
++
++  /*
++   * Set a timeout parameter - hope this helps select()
++   */
++  timeout.tv_sec = 600;
++  timeout.tv_usec = 0;
++  if (ioctl (fd, BIOCSRTIMEOUT, (caddr_t) & timeout) < 0)
++    {
++      zlog_warn ("failed to set BPF device timeout");
++    }
++
++  /*
++   * And set the filter
++   */
++  memset (&bpf_prog, 0, sizeof (struct bpf_program));
++  bpf_prog.bf_len = 8;
++  bpf_prog.bf_insns = &(llcfilter[0]);
++  if (ioctl (fd, BIOCSETF, (caddr_t) & bpf_prog) < 0)
++    {
++      zlog_warn ("open_bpf_dev(): failed to install filter: %s",
++		 safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  assert (fd > 0);
++
++  circuit->fd = fd;
++
++  return ISIS_OK;
++}
++
++/*
++ * Create the socket and set the tx/rx funcs
++ */
++int
++isis_sock_init (struct isis_circuit *circuit)
++{
++  int retval = ISIS_OK;
++
++  if (isisd_privs.change (ZPRIVS_RAISE))
++    zlog_err ("%s: could not raise privs, %s", __func__, safe_strerror (errno));
++
++  retval = open_bpf_dev (circuit);
++
++  if (retval != ISIS_OK)
++    {
++      zlog_warn ("%s: could not initialize the socket", __func__);
++      goto end;
++    }
++
++  if (circuit->circ_type == CIRCUIT_T_BROADCAST)
++    {
++      circuit->tx = isis_send_pdu_bcast;
++      circuit->rx = isis_recv_pdu_bcast;
++    }
++  else if (circuit->circ_type == CIRCUIT_T_P2P)
++    {
++      circuit->tx = isis_send_pdu_p2p;
++      circuit->rx = isis_recv_pdu_p2p;
++    }
++  else
++    {
++      zlog_warn ("isis_sock_init(): unknown circuit type");
++      retval = ISIS_WARNING;
++      goto end;
++    }
++
++end:
++  if (isisd_privs.change (ZPRIVS_LOWER))
++    zlog_err ("%s: could not lower privs, %s", __func__, safe_strerror (errno));
++
++  return retval;
++}
++
++int
++isis_recv_pdu_bcast (struct isis_circuit *circuit, u_char * ssnpa)
++{
++  int bytesread = 0, bytestoread, offset, one = 1;
++  struct bpf_hdr *bpf_hdr;
++
++  assert (circuit->fd > 0);
++
++  if (ioctl (circuit->fd, FIONREAD, (caddr_t) & bytestoread) < 0)
++    {
++      zlog_warn ("ioctl() FIONREAD failed: %s", safe_strerror (errno));
++    }
++
++  if (bytestoread)
++    {
++      bytesread = read (circuit->fd, readbuff, readblen);
++    }
++  if (bytesread < 0)
++    {
++      zlog_warn ("isis_recv_pdu_bcast(): read() failed: %s",
++		 safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  if (bytesread == 0)
++    return ISIS_WARNING;
++
++  bpf_hdr = (struct bpf_hdr *) readbuff;
++
++  assert (bpf_hdr->bh_caplen == bpf_hdr->bh_datalen);
++
++  offset = bpf_hdr->bh_hdrlen + LLC_LEN + ETHER_HDR_LEN;
++
++  /* then we lose the BPF, LLC and ethernet headers */
++  stream_write (circuit->rcv_stream, readbuff + offset, 
++                bpf_hdr->bh_caplen - LLC_LEN - ETHER_HDR_LEN);
++  stream_set_getp (circuit->rcv_stream, 0);
++
++  memcpy (ssnpa, readbuff + bpf_hdr->bh_hdrlen + ETHER_ADDR_LEN,
++	  ETHER_ADDR_LEN);
++
++  if (ioctl (circuit->fd, BIOCFLUSH, &one) < 0)
++    zlog_warn ("Flushing failed: %s", safe_strerror (errno));
++
++  return ISIS_OK;
++}
++
++int
++isis_recv_pdu_p2p (struct isis_circuit *circuit, u_char * ssnpa)
++{
++  int bytesread;
++
++  bytesread = stream_read (circuit->rcv_stream, circuit->fd, 
++                           circuit->interface->mtu);
++
++  if (bytesread < 0)
++    {
++      zlog_warn ("isis_recv_pdu_p2p(): read () failed: %s", safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  return ISIS_OK;
++}
++
++int
++isis_send_pdu_bcast (struct isis_circuit *circuit, int level)
++{
++  struct ether_header *eth;
++  int written;
++
++  stream_set_getp (circuit->snd_stream, 0);
++
++  /*
++   * First the eth header
++   */
++  eth = (struct ether_header *) sock_buff;
++  if (level == 1)
++    memcpy (eth->ether_dhost, ALL_L1_ISS, ETHER_ADDR_LEN);
++  else
++    memcpy (eth->ether_dhost, ALL_L2_ISS, ETHER_ADDR_LEN);
++  memcpy (eth->ether_shost, circuit->u.bc.snpa, ETHER_ADDR_LEN);
++  eth->ether_type = htons (stream_get_endp (circuit->snd_stream) + LLC_LEN);
++
++  /*
++   * Then the LLC
++   */
++  sock_buff[ETHER_HDR_LEN] = ISO_SAP;
++  sock_buff[ETHER_HDR_LEN + 1] = ISO_SAP;
++  sock_buff[ETHER_HDR_LEN + 2] = 0x03;
++
++  /* then we copy the data */
++  memcpy (sock_buff + (LLC_LEN + ETHER_HDR_LEN), circuit->snd_stream->data,
++	  stream_get_endp (circuit->snd_stream));
++
++  /* now we can send this */
++  written = write (circuit->fd, sock_buff,
++		   stream_get_endp (circuit->snd_stream) 
++		    + LLC_LEN + ETHER_HDR_LEN);
++
++  return ISIS_OK;
++}
++
++int
++isis_send_pdu_p2p (struct isis_circuit *circuit, int level)
++{
++  return ISIS_OK;
++}
+diff --git a/isisd/isis_circuit.c b/isisd/isis_circuit.c
+index fe3eb82..af24988 100644
+--- isisd/isis_circuit.c
++++ isisd/isis_circuit.c
+@@ -26,6 +26,10 @@
+ #include <netinet/if_ether.h>
+ #endif
+ 
++#ifndef ETHER_ADDR_LEN
++#define	ETHER_ADDR_LEN	ETHERADDRL
++#endif
++
+ #include "log.h"
+ #include "memory.h"
+ #include "if.h"
+@@ -381,11 +385,13 @@ isis_circuit_if_add (struct isis_circuit *circuit, struct interface *ifp)
+        * Get the Hardware Address
+        */
+ #ifdef HAVE_STRUCT_SOCKADDR_DL
++#ifndef SUNOS_5
+       if (circuit->interface->sdl.sdl_alen != ETHER_ADDR_LEN)
+ 	zlog_warn ("unsupported link layer");
+       else
+ 	memcpy (circuit->u.bc.snpa, LLADDR (&circuit->interface->sdl),
+ 		ETH_ALEN);
++#endif
+ #else
+       if (circuit->interface->hw_addr_len != ETH_ALEN)
+ 	{
+@@ -447,10 +453,12 @@ isis_circuit_update_params (struct isis_circuit *circuit,
+    * Get the Hardware Address
+    */
+ #ifdef HAVE_STRUCT_SOCKADDR_DL
++#ifndef SUNOS_5
+   if (circuit->interface->sdl.sdl_alen != ETHER_ADDR_LEN)
+     zlog_warn ("unsupported link layer");
+   else
+     memcpy (circuit->u.bc.snpa, LLADDR (&circuit->interface->sdl), ETH_ALEN);
++#endif
+ #else
+   if (circuit->interface->hw_addr_len != ETH_ALEN)
+     {
+diff --git a/isisd/isis_circuit.h b/isisd/isis_circuit.h
+index b5ef269..a7e719f 100644
+--- isisd/isis_circuit.h
++++ isisd/isis_circuit.h
+@@ -69,6 +69,7 @@ struct isis_circuit
+   struct isis_area *area;	/* back pointer to the area */
+   struct interface *interface;	/* interface info from z */
+   int fd;			/* IS-IS l1/2 socket */
++  int sap_length;		/* SAP length for DLPI */
+   struct nlpids nlpids;
+   /*
+    * Threads
+diff --git a/isisd/isis_dlpi.c b/isisd/isis_dlpi.c
+new file mode 100644
+index 0000000..db4383b
+--- /dev/null
++++ isisd/isis_dlpi.c
+@@ -0,0 +1,607 @@
++/*
++ * IS-IS Rout(e)ing protocol - isis_dlpi.c
++ *
++ * Copyright (C) 2001,2002    Sampo Saaristo
++ *                            Tampere University of Technology      
++ *                            Institute of Communications Engineering
++ *
++ * This program is free software; you can redistribute it and/or modify it 
++ * under the terms of the GNU General Public Licenseas published by the Free 
++ * Software Foundation; either version 2 of the License, or (at your option) 
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,but WITHOUT 
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
++ * more details.
++
++ * You should have received a copy of the GNU General Public License along 
++ * with this program; if not, write to the Free Software Foundation, Inc., 
++ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
++ */
++
++#include <zebra.h>
++#include <net/if.h>
++#include <netinet/if_ether.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <stropts.h>
++#include <poll.h>
++#include <sys/dlpi.h>
++#include <sys/pfmod.h>
++
++#include "log.h"
++#include "stream.h"
++#include "if.h"
++
++#include "isisd/dict.h"
++#include "isisd/include-netbsd/iso.h"
++#include "isisd/isis_constants.h"
++#include "isisd/isis_common.h"
++#include "isisd/isis_circuit.h"
++#include "isisd/isis_flags.h"
++#include "isisd/isisd.h"
++#include "isisd/isis_constants.h"
++#include "isisd/isis_circuit.h"
++#include "isisd/isis_network.h"
++
++#include "privs.h"
++
++extern struct zebra_privs_t isisd_privs;
++
++static t_uscalar_t dlpi_ctl[1024];	/* DLPI control messages */
++
++/*
++ * Table 9 - Architectural constants for use with ISO 8802 subnetworks
++ * ISO 10589 - 8.4.8
++ */
++
++u_char ALL_L1_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x14 };
++u_char ALL_L2_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x15 };
++u_char ALL_ISS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x05 };
++u_char ALL_ESS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x04 };
++
++static u_char sock_buff[8192];
++
++static u_short pf_filter[] =
++{
++  ENF_PUSHWORD + 0,		/* Get the SSAP/DSAP values */
++  ENF_PUSHLIT | ENF_CAND,	/* Check them */
++  ISO_SAP | (ISO_SAP << 8),
++  ENF_PUSHWORD + 1,		/* Get the control value */
++  ENF_PUSHLIT | ENF_AND,	/* Isolate it */
++#ifdef _BIG_ENDIAN
++  0xFF00,
++#else
++  0x00FF,
++#endif
++  ENF_PUSHLIT | ENF_CAND,	/* Test for expected value */
++#ifdef _BIG_ENDIAN
++  0x0300
++#else
++  0x0003
++#endif
++};
++
++/*
++ * We would like to use something like libdlpi here, but that's not present on
++ * all versions of Solaris or on any non-Solaris system, so it's nowhere near
++ * as portable as we'd like.  Thus, we use the standards-conformant DLPI
++ * interfaces plus the (optional; not needed) Solaris packet filter module.
++ */
++
++static void
++dlpisend (int fd, const void *cbuf, size_t cbuflen,
++  const void *dbuf, size_t dbuflen, int flags)
++{
++  const struct strbuf *ctlptr = NULL;
++  const struct strbuf *dataptr = NULL;
++  struct strbuf ctlbuf, databuf;
++
++  if (cbuf != NULL)
++    {
++      memset (&ctlbuf, 0, sizeof (ctlbuf));
++      ctlbuf.len = cbuflen;
++      ctlbuf.buf = (void *)cbuf;
++      ctlptr = &ctlbuf;
++    }
++
++  if (dbuf != NULL)
++    {
++      memset (&databuf, 0, sizeof (databuf));
++      databuf.len = dbuflen;
++      databuf.buf = (void *)dbuf;
++      dataptr = &databuf;
++    }
++
++  /* We assume this doesn't happen often and isn't operationally significant */
++  if (putmsg (fd, ctlptr, dataptr, flags) == -1)
++    zlog_debug ("%s: putmsg: %s", __func__, safe_strerror (errno));
++}
++
++static ssize_t
++dlpirctl (int fd)
++{
++  struct pollfd fds[1];
++  struct strbuf ctlbuf, databuf;
++  int flags, retv;
++
++  do
++    {
++      /* Poll is used here in case the device doesn't speak DLPI correctly */
++      memset (fds, 0, sizeof (fds));
++      fds[0].fd = fd;
++      fds[0].events = POLLIN | POLLPRI;
++      if (poll (fds, 1, 1000) <= 0)
++	return -1;
++
++      memset (&ctlbuf, 0, sizeof (ctlbuf));
++      memset (&databuf, 0, sizeof (databuf));
++      ctlbuf.maxlen = sizeof (dlpi_ctl);
++      ctlbuf.buf = (void *)dlpi_ctl;
++      databuf.maxlen = sizeof (sock_buff);
++      databuf.buf = (void *)sock_buff;
++      flags = 0;
++      retv = getmsg (fd, &ctlbuf, &databuf, &flags);
++
++      if (retv < 0)
++	return -1;
++    }
++  while (ctlbuf.len == 0);
++
++  if (!(retv & MORECTL))
++    {
++      while (retv & MOREDATA)
++	{
++	  flags = 0;
++	  retv = getmsg (fd, NULL, &databuf, &flags);
++	}
++      return ctlbuf.len;
++    }
++
++  while (retv & MORECTL)
++    {
++      flags = 0;
++      retv = getmsg (fd, &ctlbuf, &databuf, &flags);
++    }
++  return -1;
++}
++
++static int
++dlpiok (int fd, t_uscalar_t oprim)
++{
++  int retv;
++  dl_ok_ack_t *doa = (dl_ok_ack_t *)dlpi_ctl;
++
++  retv = dlpirctl (fd);
++  if (retv < DL_OK_ACK_SIZE || doa->dl_primitive != DL_OK_ACK ||
++    doa->dl_correct_primitive != oprim)
++    {
++      return -1;
++    }
++  else
++    {
++      return 0;
++    }
++}
++
++static int
++dlpiinfo (int fd)
++{
++  dl_info_req_t dir;
++  ssize_t retv;
++
++  memset (&dir, 0, sizeof (dir));
++  dir.dl_primitive = DL_INFO_REQ;
++  /* Info_req uses M_PCPROTO. */
++  dlpisend (fd, &dir, sizeof (dir), NULL, 0, RS_HIPRI);
++  retv = dlpirctl (fd);
++  if (retv < DL_INFO_ACK_SIZE || dlpi_ctl[0] != DL_INFO_ACK)
++    return -1;
++  else
++    return retv;
++}
++
++static int
++dlpiopen (const char *devpath, ssize_t *acklen)
++{
++  int fd, flags;
++
++  fd = open (devpath, O_RDWR | O_NONBLOCK | O_NOCTTY);
++  if (fd == -1)
++    return -1;
++
++  /* All that we want is for the open itself to be non-blocking, not I/O. */
++  flags = fcntl (fd, F_GETFL, 0);
++  if (flags != -1)
++    fcntl (fd, F_SETFL, flags & ~O_NONBLOCK);
++
++  /* After opening, ask for information */
++  if ((*acklen = dlpiinfo (fd)) == -1)
++    {
++      close (fd);
++      return -1;
++    }
++
++  return fd;
++}
++
++static int
++dlpiattach (int fd, int unit)
++{
++  dl_attach_req_t dar;
++
++  memset (&dar, 0, sizeof (dar));
++  dar.dl_primitive = DL_ATTACH_REQ;
++  dar.dl_ppa = unit;
++  dlpisend (fd, &dar, sizeof (dar), NULL, 0, 0);
++  return dlpiok (fd, dar.dl_primitive);
++}
++
++static int
++dlpibind (int fd)
++{
++  dl_bind_req_t dbr;
++  int retv;
++  dl_bind_ack_t *dba = (dl_bind_ack_t *)dlpi_ctl;
++
++  memset (&dbr, 0, sizeof (dbr));
++  dbr.dl_primitive = DL_BIND_REQ;
++  dbr.dl_service_mode = DL_CLDLS;
++  dlpisend (fd, &dbr, sizeof (dbr), NULL, 0, 0);
++
++  retv = dlpirctl (fd);
++  if (retv < DL_BIND_ACK_SIZE || dba->dl_primitive != DL_BIND_ACK)
++    return -1;
++  else
++    return 0;
++}
++
++static int
++dlpimcast (int fd, const u_char *mcaddr)
++{
++  struct {
++    dl_enabmulti_req_t der;
++    u_char addr[ETHERADDRL];
++  } dler;
++
++  memset (&dler, 0, sizeof (dler));
++  dler.der.dl_primitive = DL_ENABMULTI_REQ;
++  dler.der.dl_addr_length = sizeof (dler.addr);
++  dler.der.dl_addr_offset = dler.addr - (u_char *)&dler;
++  memcpy (dler.addr, mcaddr, sizeof (dler.addr));
++  dlpisend (fd, &dler, sizeof (dler), NULL, 0, 0);
++  return dlpiok (fd, dler.der.dl_primitive);
++}
++
++static int
++dlpiaddr (int fd, u_char *addr)
++{
++  dl_phys_addr_req_t dpar;
++  dl_phys_addr_ack_t *dpaa = (dl_phys_addr_ack_t *)dlpi_ctl;
++  int retv;
++
++  memset (&dpar, 0, sizeof (dpar));
++  dpar.dl_primitive = DL_PHYS_ADDR_REQ;
++  dpar.dl_addr_type = DL_CURR_PHYS_ADDR;
++  dlpisend (fd, &dpar, sizeof (dpar), NULL, 0, 0);
++
++  retv = dlpirctl (fd);
++  if (retv < DL_PHYS_ADDR_ACK_SIZE || dpaa->dl_primitive != DL_PHYS_ADDR_ACK)
++    return -1;
++
++  if (dpaa->dl_addr_offset < DL_PHYS_ADDR_ACK_SIZE ||
++    dpaa->dl_addr_length != ETHERADDRL ||
++    dpaa->dl_addr_offset + dpaa->dl_addr_length > retv)
++    return -1;
++
++  bcopy((char *)dpaa + dpaa->dl_addr_offset, addr, ETHERADDRL);
++  return 0;
++}
++
++static int
++open_dlpi_dev (struct isis_circuit *circuit)
++{
++  int fd, unit, retval;
++  char devpath[MAXPATHLEN];
++  dl_info_ack_t *dia = (dl_info_ack_t *)dlpi_ctl;
++  ssize_t acklen;
++
++  /* Only broadcast-type are supported at the moment */
++  if (circuit->circ_type != CIRCUIT_T_BROADCAST)
++    {
++      zlog_warn ("%s: non-broadcast interface %s", __func__,
++	circuit->interface->name);
++      return ISIS_WARNING;
++    }
++
++  /* Try first as Style 1 */
++  (void) snprintf(devpath, sizeof (devpath), "/dev/%s",
++    circuit->interface->name);
++  unit = -1;
++  fd = dlpiopen (devpath, &acklen);
++
++  /* If that fails, try again as Style 2 */
++  if (fd == -1)
++    {
++      char *cp;
++
++      cp = devpath + strlen (devpath);
++      while (--cp >= devpath && isdigit(*cp))
++	;
++      unit = strtol(cp, NULL, 0);
++      *cp = '\0';
++      fd = dlpiopen (devpath, &acklen);
++
++      /* If that too fails, then the device really doesn't exist */
++      if (fd == -1)
++	{
++	  zlog_warn ("%s: unknown interface %s", __func__,
++	    circuit->interface->name);
++	  return ISIS_WARNING;
++	}
++
++      /* Double check the DLPI style */
++      if (dia->dl_provider_style != DL_STYLE2)
++	{
++	  zlog_warn ("open_dlpi_dev(): interface %s: %s is not style 2",
++	    circuit->interface->name, devpath);
++	  close (fd);
++	  return ISIS_WARNING;
++	}
++
++      /* If it succeeds, then we need to attach to the unit specified */
++      dlpiattach (fd, unit);
++
++      /* Reget the information, as it may be different per node */
++      if ((acklen = dlpiinfo (fd)) == -1)
++	{
++	  close (fd);
++	  return ISIS_WARNING;
++	}
++    }
++  else
++    {
++      /* Double check the DLPI style */
++      if (dia->dl_provider_style != DL_STYLE1)
++	{
++	  zlog_warn ("open_dlpi_dev(): interface %s: %s is not style 1",
++	    circuit->interface->name, devpath);
++	  close (fd);
++	  return ISIS_WARNING;
++	}
++    }
++
++  /* Check that the interface we've got is the kind we expect */
++  if ((dia->dl_sap_length != 2 && dia->dl_sap_length != -2) ||
++    dia->dl_service_mode != DL_CLDLS || dia->dl_addr_length != ETHERADDRL + 2 ||
++    dia->dl_brdcst_addr_length != ETHERADDRL)
++    {
++      zlog_warn ("%s: unsupported interface type for %s", __func__,
++	circuit->interface->name);
++      close (fd);
++      return ISIS_WARNING;
++    }
++  switch (dia->dl_mac_type)
++    {
++    case DL_CSMACD:
++    case DL_ETHER:
++    case DL_100VG:
++    case DL_100VGTPR:
++    case DL_ETH_CSMA:
++    case DL_100BT:
++      break;
++    default:
++      zlog_warn ("%s: unexpected mac type on %s: %d", __func__,
++	circuit->interface->name, dia->dl_mac_type);
++      close (fd);
++      return ISIS_WARNING;
++    }
++
++  circuit->sap_length = dia->dl_sap_length;
++
++  /*
++   * The local hardware address is something that should be provided by way of
++   * sockaddr_dl for the interface, but isn't on Solaris.  We set it here based
++   * on DLPI's reported address to avoid roto-tilling the world.
++   * (Note that isis_circuit_if_add on Solaris doesn't set the snpa.)
++   *
++   * Unfortunately, GLD is broken and doesn't provide the address after attach,
++   * so we need to be careful and use DL_PHYS_ADDR_REQ instead.
++   */
++  if (dlpiaddr (fd, circuit->u.bc.snpa) == -1)
++    {
++      zlog_warn ("open_dlpi_dev(): interface %s: unable to get MAC address",
++	circuit->interface->name);
++      close (fd);
++      return ISIS_WARNING;
++    }
++
++  /* Now bind to SAP 0.  This gives us 802-type traffic. */
++  if (dlpibind (fd) == -1)
++    {
++      zlog_warn ("%s: cannot bind SAP 0 on %s", __func__,
++	circuit->interface->name);
++      close (fd);
++      return ISIS_WARNING;
++    }
++
++  /*
++   * Join to multicast groups according to
++   * 8.4.2 - Broadcast subnetwork IIH PDUs
++   */
++  retval = 0;
++  if (circuit->circuit_is_type & IS_LEVEL_1)
++    {
++      retval |= dlpimcast (fd, ALL_L1_ISS);
++      retval |= dlpimcast (fd, ALL_ISS);
++    }
++  if (circuit->circuit_is_type & IS_LEVEL_2)
++    retval |= dlpimcast (fd, ALL_L2_ISS);
++
++  if (retval != 0)
++    {
++      zlog_warn ("%s: unable to join multicast on %s", __func__,
++	circuit->interface->name);
++      close (fd);
++      return ISIS_WARNING;
++    }
++
++  /* Push on the packet filter to avoid stray 802 packets */
++  if (ioctl (fd, I_PUSH, "pfmod") == 0)
++    {
++      struct packetfilt pfil;
++
++      pfil.Pf_Priority = 0;
++      pfil.Pf_FilterLen = sizeof (pf_filter) / sizeof (u_short);
++      memcpy (pfil.Pf_Filter, pf_filter, sizeof (pf_filter));
++      ioctl (fd, PFIOCSETF, &pfil);
++    }
++
++  circuit->fd = fd;
++
++  return ISIS_OK;
++}
++
++/*
++ * Create the socket and set the tx/rx funcs
++ */
++int
++isis_sock_init (struct isis_circuit *circuit)
++{
++  int retval = ISIS_OK;
++
++  if (isisd_privs.change (ZPRIVS_RAISE))
++    zlog_err ("%s: could not raise privs, %s", __func__, safe_strerror (errno));
++
++  retval = open_dlpi_dev (circuit);
++
++  if (retval != ISIS_OK)
++    {
++      zlog_warn ("%s: could not initialize the socket", __func__);
++      goto end;
++    }
++
++  if (circuit->circ_type == CIRCUIT_T_BROADCAST)
++    {
++      circuit->tx = isis_send_pdu_bcast;
++      circuit->rx = isis_recv_pdu_bcast;
++    }
++  else
++    {
++      zlog_warn ("isis_sock_init(): unknown circuit type");
++      retval = ISIS_WARNING;
++      goto end;
++    }
++
++end:
++  if (isisd_privs.change (ZPRIVS_LOWER))
++    zlog_err ("%s: could not lower privs, %s", __func__, safe_strerror (errno));
++
++  return retval;
++}
++
++int
++isis_recv_pdu_bcast (struct isis_circuit *circuit, u_char * ssnpa)
++{
++  struct pollfd fds[1];
++  struct strbuf ctlbuf, databuf;
++  int flags, retv;
++  dl_unitdata_ind_t *dui = (dl_unitdata_ind_t *)dlpi_ctl;
++
++  memset (fds, 0, sizeof (fds));
++  fds[0].fd = circuit->fd;
++  fds[0].events = POLLIN | POLLPRI;
++  if (poll (fds, 1, 0) <= 0)
++    return ISIS_WARNING;
++
++  memset (&ctlbuf, 0, sizeof (ctlbuf));
++  memset (&databuf, 0, sizeof (databuf));
++  ctlbuf.maxlen = sizeof (dlpi_ctl);
++  ctlbuf.buf = (void *)dlpi_ctl;
++  databuf.maxlen = sizeof (sock_buff);
++  databuf.buf = (void *)sock_buff;
++  flags = 0;
++  retv = getmsg (circuit->fd, &ctlbuf, &databuf, &flags);
++
++  if (retv < 0)
++    {
++      zlog_warn ("isis_recv_pdu_bcast: getmsg failed: %s",
++		 safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  if (retv & (MORECTL | MOREDATA))
++    {
++      while (retv & (MORECTL | MOREDATA))
++	{
++	  flags = 0;
++	  retv = getmsg (circuit->fd, &ctlbuf, &databuf, &flags);
++	}
++      return ISIS_WARNING;
++    }
++
++  if (ctlbuf.len < DL_UNITDATA_IND_SIZE ||
++    dui->dl_primitive != DL_UNITDATA_IND)
++    return ISIS_WARNING;
++
++  if (dui->dl_src_addr_length != ETHERADDRL + 2 ||
++    dui->dl_src_addr_offset < DL_UNITDATA_IND_SIZE ||
++    dui->dl_src_addr_offset + dui->dl_src_addr_length > ctlbuf.len)
++    return ISIS_WARNING;
++
++  memcpy (ssnpa, (char *)dui + dui->dl_src_addr_offset +
++    (circuit->sap_length > 0 ? circuit->sap_length : 0), ETHERADDRL);
++
++  if (databuf.len < LLC_LEN || sock_buff[0] != ISO_SAP ||
++    sock_buff[1] != ISO_SAP || sock_buff[2] != 3)
++    return ISIS_WARNING;
++
++  stream_write (circuit->rcv_stream, sock_buff + LLC_LEN,
++                databuf.len - LLC_LEN);
++  stream_set_getp (circuit->rcv_stream, 0);
++
++  return ISIS_OK;
++}
++
++int
++isis_send_pdu_bcast (struct isis_circuit *circuit, int level)
++{
++  dl_unitdata_req_t *dur = (dl_unitdata_req_t *)dlpi_ctl;
++  char *dstaddr;
++  u_short *dstsap;
++
++  stream_set_getp (circuit->snd_stream, 0);
++
++  memset (dur, 0, sizeof (*dur));
++  dur->dl_primitive = DL_UNITDATA_REQ;
++  dur->dl_dest_addr_length = ETHERADDRL + 2;
++  dur->dl_dest_addr_offset = sizeof (*dur);
++
++  dstaddr = (char *)(dur + 1);
++  if (circuit->sap_length < 0)
++    {
++      dstsap = (u_short *)(dstaddr + ETHERADDRL);
++    }
++  else
++    {
++      dstsap = (u_short *)dstaddr;
++      dstaddr += circuit->sap_length;
++    }
++  if (level == 1)
++    memcpy (dstaddr, ALL_L1_ISS, ETHERADDRL);
++  else
++    memcpy (dstaddr, ALL_L2_ISS, ETHERADDRL);
++  /* Note: DLPI SAP values are in host byte order */
++  *dstsap = stream_get_endp (circuit->snd_stream) + LLC_LEN;
++
++  sock_buff[0] = ISO_SAP;
++  sock_buff[1] = ISO_SAP;
++  sock_buff[2] = 0x03;
++  memcpy (sock_buff + LLC_LEN, circuit->snd_stream->data,
++	  stream_get_endp (circuit->snd_stream));
++  dlpisend (circuit->fd, dur, sizeof (*dur) + dur->dl_dest_addr_length,
++    sock_buff, stream_get_endp (circuit->snd_stream) + LLC_LEN, 0);
++  return ISIS_OK;
++}
+diff --git a/isisd/isis_flags.c b/isisd/isis_flags.c
+index 1dd5493..859facd 100644
+--- isisd/isis_flags.c
++++ isisd/isis_flags.c
+@@ -29,6 +29,13 @@
+ #include "isisd/isis_common.h"
+ #include "isisd/isis_flags.h"
+ 
++void
++flags_initialize (struct flags *flags)
++{
++  flags->maxindex = 0;
++  flags->free_idcs = NULL;
++}
++
+ int
+ flags_get_index (struct flags *flags)
+ {
+@@ -37,8 +44,7 @@
+ 
+   if (flags->free_idcs == NULL || flags->free_idcs->count == 0)
+     {
+-      flags->maxindex++;
+-      index = flags->maxindex;
++      index = flags->maxindex++;
+     }
+   else
+     {
+@@ -45,6 +51,7 @@
+       node = listhead (flags->free_idcs);
+       index = (int) listgetdata (node);
+       listnode_delete (flags->free_idcs, (void *) index);
++      index--;
+     }
+ 
+   return index;
+@@ -53,12 +60,18 @@
+ void
+ flags_free_index (struct flags *flags, int index)
+ {
++  if (index + 1 == flags->maxindex)
++    {
++      flags->maxindex--;
++      return;
++    }
++
+   if (flags->free_idcs == NULL)
+     {
+       flags->free_idcs = list_new ();
+     }
+ 
+-  listnode_add (flags->free_idcs, (void *) index);
++  listnode_add (flags->free_idcs, (void *) (index + 1));
+ 
+   return;
+ }
+diff --git a/isisd/isis_flags.h b/isisd/isis_flags.h
+--- isisd/isis_flags.h
++++ isisd/isis_flags.h
+index 1dd5493..859facd 100644
+@@ -28,6 +28,7 @@
+  * the support will be achived using the newest drafts */
+ #define ISIS_MAX_CIRCUITS 32 /* = 1024 */	/*FIXME:defined in lsp.h as well */
+ 
++void flags_initialize (struct flags *flags);
+ struct flags *new_flags (int size);
+ int flags_get_index (struct flags *flags);
+ void flags_free_index (struct flags *flags, int index);
+diff --git a/isisd/isis_network.c b/isisd/isis_network.c
+deleted file mode 100644
+index 56459ec..0000000
+--- isisd/isis_network.c
++++ /dev/null
+@@ -1,643 +0,0 @@
+-/*
+- * IS-IS Rout(e)ing protocol - isis_network.c   
+- *
+- * Copyright (C) 2001,2002    Sampo Saaristo
+- *                            Tampere University of Technology      
+- *                            Institute of Communications Engineering
+- *
+- * This program is free software; you can redistribute it and/or modify it 
+- * under the terms of the GNU General Public Licenseas published by the Free 
+- * Software Foundation; either version 2 of the License, or (at your option) 
+- * any later version.
+- *
+- * This program is distributed in the hope that it will be useful,but WITHOUT 
+- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
+- * more details.
+-
+- * You should have received a copy of the GNU General Public License along 
+- * with this program; if not, write to the Free Software Foundation, Inc., 
+- * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+- */
+-
+-#include <zebra.h>
+-#ifdef GNU_LINUX
+-#include <net/ethernet.h>	/* the L2 protocols */
+-#else
+-#include <net/if.h>
+-#include <netinet/if_ether.h>
+-#endif
+-
+-#include "log.h"
+-#include "stream.h"
+-#include "if.h"
+-
+-#include "isisd/dict.h"
+-#include "isisd/include-netbsd/iso.h"
+-#include "isisd/isis_constants.h"
+-#include "isisd/isis_common.h"
+-#include "isisd/isis_circuit.h"
+-#include "isisd/isis_flags.h"
+-#include "isisd/isisd.h"
+-#include "isisd/isis_constants.h"
+-#include "isisd/isis_circuit.h"
+-#include "isisd/isis_network.h"
+-
+-#include "privs.h"
+-
+-extern struct zebra_privs_t isisd_privs;
+-
+-/*
+- * On linux we can use the packet(7) sockets, in other OSs we have to do with
+- * Berkley Packet Filter (BPF). Please tell me if you can think of a better 
+- * way...
+- */
+-#ifdef GNU_LINUX
+-#include <netpacket/packet.h>
+-#else
+-#include <sys/time.h>
+-#include <sys/ioctl.h>
+-#include <net/bpf.h>
+-struct bpf_insn llcfilter[] = {
+-  BPF_STMT (BPF_LD + BPF_B + BPF_ABS, ETHER_HDR_LEN),	/* check first byte */
+-  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, ISO_SAP, 0, 5),
+-  BPF_STMT (BPF_LD + BPF_B + BPF_ABS, ETHER_HDR_LEN + 1),
+-  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, ISO_SAP, 0, 3),	/* check second byte */
+-  BPF_STMT (BPF_LD + BPF_B + BPF_ABS, ETHER_HDR_LEN + 2),
+-  BPF_JUMP (BPF_JMP + BPF_JEQ + BPF_K, 0x03, 0, 1),	/* check third byte */
+-  BPF_STMT (BPF_RET + BPF_K, (u_int) - 1),
+-  BPF_STMT (BPF_RET + BPF_K, 0)
+-};
+-int readblen = 0;
+-u_char *readbuff = NULL;
+-#endif /* GNU_LINUX */
+-
+-/*
+- * Table 9 - Architectural constans for use with ISO 8802 subnetworks
+- * ISO 10589 - 8.4.8
+- */
+-
+-u_char ALL_L1_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x14 };
+-u_char ALL_L2_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x15 };
+-u_char ALL_ISS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x05 };
+-u_char ALL_ESS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x04 };
+-
+-#ifdef GNU_LINUX
+-static char discard_buff[8192];
+-#endif
+-static char sock_buff[8192];
+-
+-/*
+- * if level is 0 we are joining p2p multicast
+- * FIXME: and the p2p multicast being ???
+- */
+-#ifdef GNU_LINUX
+-static int
+-isis_multicast_join (int fd, int registerto, int if_num)
+-{
+-  struct packet_mreq mreq;
+-
+-  memset (&mreq, 0, sizeof (mreq));
+-  mreq.mr_ifindex = if_num;
+-  if (registerto)
+-    {
+-      mreq.mr_type = PACKET_MR_MULTICAST;
+-      mreq.mr_alen = ETH_ALEN;
+-      if (registerto == 1)
+-	memcpy (&mreq.mr_address, ALL_L1_ISS, ETH_ALEN);
+-      else if (registerto == 2)
+-	memcpy (&mreq.mr_address, ALL_L2_ISS, ETH_ALEN);
+-      else if (registerto == 3)
+-	memcpy (&mreq.mr_address, ALL_ISS, ETH_ALEN);
+-      else
+-	memcpy (&mreq.mr_address, ALL_ESS, ETH_ALEN);
+-
+-    }
+-  else
+-    {
+-      mreq.mr_type = PACKET_MR_ALLMULTI;
+-    }
+-#ifdef EXTREME_DEBUG
+-  zlog_debug ("isis_multicast_join(): fd=%d, reg_to=%d, if_num=%d, "
+-	      "address = %02x:%02x:%02x:%02x:%02x:%02x",
+-	      fd, registerto, if_num, mreq.mr_address[0], mreq.mr_address[1],
+-	      mreq.mr_address[2], mreq.mr_address[3], mreq.mr_address[4],
+-	      mreq.mr_address[5]);
+-#endif /* EXTREME_DEBUG */
+-  if (setsockopt (fd, SOL_PACKET, PACKET_ADD_MEMBERSHIP, &mreq,
+-		  sizeof (struct packet_mreq)))
+-    {
+-      zlog_warn ("isis_multicast_join(): setsockopt(): %s", safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  return ISIS_OK;
+-}
+-
+-static int
+-open_packet_socket (struct isis_circuit *circuit)
+-{
+-  struct sockaddr_ll s_addr;
+-  int fd, retval = ISIS_OK;
+-
+-  fd = socket (PF_PACKET, SOCK_DGRAM, htons (ETH_P_ALL));
+-  if (fd < 0)
+-    {
+-      zlog_warn ("open_packet_socket(): socket() failed %s",
+-		 safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  /*
+-   * Bind to the physical interface
+-   */
+-  memset (&s_addr, 0, sizeof (struct sockaddr_ll));
+-  s_addr.sll_family = AF_PACKET;
+-  s_addr.sll_protocol = htons (ETH_P_ALL);
+-  s_addr.sll_ifindex = circuit->interface->ifindex;
+-
+-  if (bind (fd, (struct sockaddr *) (&s_addr),
+-	    sizeof (struct sockaddr_ll)) < 0)
+-    {
+-      zlog_warn ("open_packet_socket(): bind() failed: %s", safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  circuit->fd = fd;
+-
+-  if (circuit->circ_type == CIRCUIT_T_BROADCAST)
+-    {
+-      /*
+-       * Join to multicast groups
+-       * according to
+-       * 8.4.2 - Broadcast subnetwork IIH PDUs
+-       * FIXME: is there a case only one will fail??
+-       */
+-      if (circuit->circuit_is_type & IS_LEVEL_1)
+-	{
+-	  /* joining ALL_L1_ISS */
+-	  retval = isis_multicast_join (circuit->fd, 1,
+-					circuit->interface->ifindex);
+-	  /* joining ALL_ISS */
+-	  retval = isis_multicast_join (circuit->fd, 3,
+-					circuit->interface->ifindex);
+-	}
+-      if (circuit->circuit_is_type & IS_LEVEL_2)
+-	/* joining ALL_L2_ISS */
+-	retval = isis_multicast_join (circuit->fd, 2,
+-				      circuit->interface->ifindex);
+-    }
+-  else
+-    {
+-      retval =
+-	isis_multicast_join (circuit->fd, 0, circuit->interface->ifindex);
+-    }
+-
+-  return retval;
+-}
+-
+-#else
+-
+-static int
+-open_bpf_dev (struct isis_circuit *circuit)
+-{
+-  int i = 0, fd;
+-  char bpfdev[128];
+-  struct ifreq ifr;
+-  u_int16_t blen;
+-  int true = 1, false = 0;
+-  struct timeval timeout;
+-  struct bpf_program bpf_prog;
+-
+-  do
+-    {
+-      (void) snprintf (bpfdev, sizeof (bpfdev), "/dev/bpf%d", i++);
+-      fd = open (bpfdev, O_RDWR);
+-    }
+-  while (fd < 0 && errno == EBUSY);
+-
+-  if (fd < 0)
+-    {
+-      zlog_warn ("open_bpf_dev(): failed to create bpf socket: %s",
+-		 safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  zlog_debug ("Opened BPF device %s", bpfdev);
+-
+-  memcpy (ifr.ifr_name, circuit->interface->name, sizeof (ifr.ifr_name));
+-  if (ioctl (fd, BIOCSETIF, (caddr_t) & ifr) < 0)
+-    {
+-      zlog_warn ("open_bpf_dev(): failed to bind to interface: %s",
+-		 safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  if (ioctl (fd, BIOCGBLEN, (caddr_t) & blen) < 0)
+-    {
+-      zlog_warn ("failed to get BPF buffer len");
+-      blen = circuit->interface->mtu;
+-    }
+-
+-  readblen = blen;
+-
+-  if (readbuff == NULL)
+-    readbuff = malloc (blen);
+-
+-  zlog_debug ("BPF buffer len = %u", blen);
+-
+-  /*  BPF(4): reads return immediately upon packet reception.
+-   *  Otherwise, a read will block until either the kernel
+-   *  buffer becomes full or a timeout occurs. 
+-   */
+-  if (ioctl (fd, BIOCIMMEDIATE, (caddr_t) & true) < 0)
+-    {
+-      zlog_warn ("failed to set BPF dev to immediate mode");
+-    }
+-
+-#ifdef BIOCSSEESENT
+-  /*
+-   * We want to see only incoming packets
+-   */
+-  if (ioctl (fd, BIOCSSEESENT, (caddr_t) & false) < 0)
+-    {
+-      zlog_warn ("failed to set BPF dev to incoming only mode");
+-    }
+-#endif
+-
+-  /*
+-   * ...but all of them
+-   */
+-  if (ioctl (fd, BIOCPROMISC, (caddr_t) & true) < 0)
+-    {
+-      zlog_warn ("failed to set BPF dev to promiscuous mode");
+-    }
+-
+-  /*
+-   * If the buffer length is smaller than our mtu, lets try to increase it
+-   */
+-  if (blen < circuit->interface->mtu)
+-    {
+-      if (ioctl (fd, BIOCSBLEN, &circuit->interface->mtu) < 0)
+-	{
+-	  zlog_warn ("failed to set BPF buffer len (%u to %u)", blen,
+-		     circuit->interface->mtu);
+-	}
+-    }
+-
+-  /*
+-   * Set a timeout parameter - hope this helps select()
+-   */
+-  timeout.tv_sec = 600;
+-  timeout.tv_usec = 0;
+-  if (ioctl (fd, BIOCSRTIMEOUT, (caddr_t) & timeout) < 0)
+-    {
+-      zlog_warn ("failed to set BPF device timeout");
+-    }
+-
+-  /*
+-   * And set the filter
+-   */
+-  memset (&bpf_prog, 0, sizeof (struct bpf_program));
+-  bpf_prog.bf_len = 8;
+-  bpf_prog.bf_insns = &(llcfilter[0]);
+-  if (ioctl (fd, BIOCSETF, (caddr_t) & bpf_prog) < 0)
+-    {
+-      zlog_warn ("open_bpf_dev(): failed to install filter: %s",
+-		 safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  assert (fd > 0);
+-
+-  circuit->fd = fd;
+-
+-  return ISIS_OK;
+-}
+-
+-#endif /* GNU_LINUX */
+-
+-/*
+- * Create the socket and set the tx/rx funcs
+- */
+-int
+-isis_sock_init (struct isis_circuit *circuit)
+-{
+-  int retval = ISIS_OK;
+-
+-  if (isisd_privs.change (ZPRIVS_RAISE))
+-    zlog_err ("%s: could not raise privs, %s", __func__, safe_strerror (errno));
+-
+-#ifdef GNU_LINUX
+-  retval = open_packet_socket (circuit);
+-#else
+-  retval = open_bpf_dev (circuit);
+-#endif
+-
+-  if (retval != ISIS_OK)
+-    {
+-      zlog_warn ("%s: could not initialize the socket", __func__);
+-      goto end;
+-    }
+-
+-  if (circuit->circ_type == CIRCUIT_T_BROADCAST)
+-    {
+-      circuit->tx = isis_send_pdu_bcast;
+-      circuit->rx = isis_recv_pdu_bcast;
+-    }
+-  else if (circuit->circ_type == CIRCUIT_T_P2P)
+-    {
+-      circuit->tx = isis_send_pdu_p2p;
+-      circuit->rx = isis_recv_pdu_p2p;
+-    }
+-  else
+-    {
+-      zlog_warn ("isis_sock_init(): unknown circuit type");
+-      retval = ISIS_WARNING;
+-      goto end;
+-    }
+-
+-end:
+-  if (isisd_privs.change (ZPRIVS_LOWER))
+-    zlog_err ("%s: could not lower privs, %s", __func__, safe_strerror (errno));
+-
+-  return retval;
+-}
+-
+-static inline int
+-llc_check (u_char * llc)
+-{
+-  if (*llc != ISO_SAP || *(llc + 1) != ISO_SAP || *(llc + 2) != 3)
+-    return 0;
+-
+-  return 1;
+-}
+-
+-#ifdef GNU_LINUX
+-int
+-isis_recv_pdu_bcast (struct isis_circuit *circuit, u_char * ssnpa)
+-{
+-  int bytesread, addr_len;
+-  struct sockaddr_ll s_addr;
+-  u_char llc[LLC_LEN];
+-
+-  addr_len = sizeof (s_addr);
+-
+-  memset (&s_addr, 0, sizeof (struct sockaddr_ll));
+-
+-  bytesread = recvfrom (circuit->fd, (void *) &llc,
+-			LLC_LEN, MSG_PEEK,
+-			(struct sockaddr *) &s_addr, (socklen_t *) &addr_len);
+-
+-  if (bytesread < 0)
+-    {
+-      zlog_warn ("isis_recv_packet_bcast(): fd %d, recvfrom (): %s",
+-		 circuit->fd, safe_strerror (errno));
+-      zlog_warn ("circuit is %s", circuit->interface->name);
+-      zlog_warn ("circuit fd %d", circuit->fd);
+-      zlog_warn ("bytesread %d", bytesread);
+-      /* get rid of the packet */
+-      bytesread = read (circuit->fd, discard_buff, sizeof (discard_buff));
+-      return ISIS_WARNING;
+-    }
+-  /*
+-   * Filtering by llc field, discard packets sent by this host (other circuit)
+-   */
+-  if (!llc_check (llc) || s_addr.sll_pkttype == PACKET_OUTGOING)
+-    {
+-      /*  Read the packet into discard buff */
+-      bytesread = read (circuit->fd, discard_buff, sizeof (discard_buff));
+-      if (bytesread < 0)
+-	zlog_warn ("isis_recv_pdu_bcast(): read() failed");
+-      return ISIS_WARNING;
+-    }
+-
+-  /* on lan we have to read to the static buff first */
+-  bytesread = recvfrom (circuit->fd, sock_buff, circuit->interface->mtu, 0,
+-			(struct sockaddr *) &s_addr, (socklen_t *) &addr_len);
+-
+-  /* then we lose the LLC */
+-  stream_write (circuit->rcv_stream, sock_buff + LLC_LEN, bytesread - LLC_LEN);
+-
+-  memcpy (ssnpa, &s_addr.sll_addr, s_addr.sll_halen);
+-
+-  return ISIS_OK;
+-}
+-
+-int
+-isis_recv_pdu_p2p (struct isis_circuit *circuit, u_char * ssnpa)
+-{
+-  int bytesread, addr_len;
+-  struct sockaddr_ll s_addr;
+-
+-  memset (&s_addr, 0, sizeof (struct sockaddr_ll));
+-  addr_len = sizeof (s_addr);
+-
+-  /* we can read directly to the stream */
+-  bytesread = stream_recvfrom (circuit->rcv_stream, circuit->fd,
+-                               circuit->interface->mtu, 0,
+-                               (struct sockaddr *) &s_addr, 
+-                               (socklen_t *) &addr_len);
+-
+-  if (s_addr.sll_pkttype == PACKET_OUTGOING)
+-    {
+-      /*  Read the packet into discard buff */
+-      bytesread = read (circuit->fd, discard_buff, sizeof (discard_buff));
+-      if (bytesread < 0)
+-	zlog_warn ("isis_recv_pdu_p2p(): read() failed");
+-      return ISIS_WARNING;
+-    }
+-
+-  /* If we don't have protocol type 0x00FE which is
+-   * ISO over GRE we exit with pain :)
+-   */
+-  if (ntohs (s_addr.sll_protocol) != 0x00FE)
+-    {
+-      zlog_warn ("isis_recv_pdu_p2p(): protocol mismatch(): %X",
+-		 ntohs (s_addr.sll_protocol));
+-      return ISIS_WARNING;
+-    }
+-
+-  memcpy (ssnpa, &s_addr.sll_addr, s_addr.sll_halen);
+-
+-  return ISIS_OK;
+-}
+-
+-int
+-isis_send_pdu_bcast (struct isis_circuit *circuit, int level)
+-{
+-  /* we need to do the LLC in here because of P2P circuits, which will
+-   * not need it
+-   */
+-  int written = 1;
+-  struct sockaddr_ll sa;
+-
+-  stream_set_getp (circuit->snd_stream, 0);
+-  memset (&sa, 0, sizeof (struct sockaddr_ll));
+-  sa.sll_family = AF_PACKET;
+-  sa.sll_protocol = htons (stream_get_endp (circuit->snd_stream) + LLC_LEN);
+-  sa.sll_ifindex = circuit->interface->ifindex;
+-  sa.sll_halen = ETH_ALEN;
+-  if (level == 1)
+-    memcpy (&sa.sll_addr, ALL_L1_ISS, ETH_ALEN);
+-  else
+-    memcpy (&sa.sll_addr, ALL_L2_ISS, ETH_ALEN);
+-
+-  /* on a broadcast circuit */
+-  /* first we put the LLC in */
+-  sock_buff[0] = 0xFE;
+-  sock_buff[1] = 0xFE;
+-  sock_buff[2] = 0x03;
+-
+-  /* then we copy the data */
+-  memcpy (sock_buff + LLC_LEN, circuit->snd_stream->data,
+-	  stream_get_endp (circuit->snd_stream));
+-
+-  /* now we can send this */
+-  written = sendto (circuit->fd, sock_buff,
+-		    stream_get_endp(circuit->snd_stream) + LLC_LEN, 0,
+-		    (struct sockaddr *) &sa, sizeof (struct sockaddr_ll));
+-
+-  return ISIS_OK;
+-}
+-
+-int
+-isis_send_pdu_p2p (struct isis_circuit *circuit, int level)
+-{
+-
+-  int written = 1;
+-  struct sockaddr_ll sa;
+-
+-  stream_set_getp (circuit->snd_stream, 0);
+-  memset (&sa, 0, sizeof (struct sockaddr_ll));
+-  sa.sll_family = AF_PACKET;
+-  sa.sll_protocol = htons (stream_get_endp (circuit->snd_stream) + LLC_LEN);
+-  sa.sll_ifindex = circuit->interface->ifindex;
+-  sa.sll_halen = ETH_ALEN;
+-  if (level == 1)
+-    memcpy (&sa.sll_addr, ALL_L1_ISS, ETH_ALEN);
+-  else
+-    memcpy (&sa.sll_addr, ALL_L2_ISS, ETH_ALEN);
+-
+-
+-  /* lets try correcting the protocol */
+-  sa.sll_protocol = htons (0x00FE);
+-  written = sendto (circuit->fd, circuit->snd_stream->data,
+-		    stream_get_endp (circuit->snd_stream), 0, 
+-		    (struct sockaddr *) &sa,
+-		    sizeof (struct sockaddr_ll));
+-
+-  return ISIS_OK;
+-}
+-
+-#else
+-
+-int
+-isis_recv_pdu_bcast (struct isis_circuit *circuit, u_char * ssnpa)
+-{
+-  int bytesread = 0, bytestoread, offset, one = 1;
+-  struct bpf_hdr *bpf_hdr;
+-
+-  assert (circuit->fd > 0);
+-
+-  if (ioctl (circuit->fd, FIONREAD, (caddr_t) & bytestoread) < 0)
+-    {
+-      zlog_warn ("ioctl() FIONREAD failed: %s", safe_strerror (errno));
+-    }
+-
+-  if (bytestoread)
+-    {
+-      bytesread = read (circuit->fd, readbuff, readblen);
+-    }
+-  if (bytesread < 0)
+-    {
+-      zlog_warn ("isis_recv_pdu_bcast(): read() failed: %s",
+-		 safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  if (bytesread == 0)
+-    return ISIS_WARNING;
+-
+-  bpf_hdr = (struct bpf_hdr *) readbuff;
+-
+-  assert (bpf_hdr->bh_caplen == bpf_hdr->bh_datalen);
+-
+-  offset = bpf_hdr->bh_hdrlen + LLC_LEN + ETHER_HDR_LEN;
+-
+-  /* then we lose the BPF, LLC and ethernet headers */
+-  stream_write (circuit->rcv_stream, readbuff + offset, 
+-                bpf_hdr->bh_caplen - LLC_LEN - ETHER_HDR_LEN);
+-  stream_set_getp (circuit->rcv_stream, 0);
+-
+-  memcpy (ssnpa, readbuff + bpf_hdr->bh_hdrlen + ETHER_ADDR_LEN,
+-	  ETHER_ADDR_LEN);
+-
+-  if (ioctl (circuit->fd, BIOCFLUSH, &one) < 0)
+-    zlog_warn ("Flushing failed: %s", safe_strerror (errno));
+-
+-  return ISIS_OK;
+-}
+-
+-int
+-isis_recv_pdu_p2p (struct isis_circuit *circuit, u_char * ssnpa)
+-{
+-  int bytesread;
+-
+-  bytesread = stream_read (circuit->rcv_stream, circuit->fd, 
+-                           circuit->interface->mtu);
+-
+-  if (bytesread < 0)
+-    {
+-      zlog_warn ("isis_recv_pdu_p2p(): read () failed: %s", safe_strerror (errno));
+-      return ISIS_WARNING;
+-    }
+-
+-  return ISIS_OK;
+-}
+-
+-int
+-isis_send_pdu_bcast (struct isis_circuit *circuit, int level)
+-{
+-  struct ether_header *eth;
+-  int written;
+-
+-  stream_set_getp (circuit->snd_stream, 0);
+-
+-  /*
+-   * First the eth header
+-   */
+-  eth = (struct ether_header *) sock_buff;
+-  if (level == 1)
+-    memcpy (eth->ether_dhost, ALL_L1_ISS, ETHER_ADDR_LEN);
+-  else
+-    memcpy (eth->ether_dhost, ALL_L2_ISS, ETHER_ADDR_LEN);
+-  memcpy (eth->ether_shost, circuit->u.bc.snpa, ETHER_ADDR_LEN);
+-  eth->ether_type = htons (stream_get_endp (circuit->snd_stream) + LLC_LEN);
+-
+-  /*
+-   * Then the LLC
+-   */
+-  sock_buff[ETHER_HDR_LEN] = ISO_SAP;
+-  sock_buff[ETHER_HDR_LEN + 1] = ISO_SAP;
+-  sock_buff[ETHER_HDR_LEN + 2] = 0x03;
+-
+-  /* then we copy the data */
+-  memcpy (sock_buff + (LLC_LEN + ETHER_HDR_LEN), circuit->snd_stream->data,
+-	  stream_get_endp (circuit->snd_stream));
+-
+-  /* now we can send this */
+-  written = write (circuit->fd, sock_buff,
+-		   stream_get_endp (circuit->snd_stream) 
+-		    + LLC_LEN + ETHER_HDR_LEN);
+-
+-  return ISIS_OK;
+-}
+-
+-int
+-isis_send_pdu_p2p (struct isis_circuit *circuit, int level)
+-{
+-  return ISIS_OK;
+-}
+-
+-#endif /* GNU_LINUX */
+diff --git a/isisd/isis_pdu.h b/isisd/isis_pdu.h
+index 29c7621..95c1ee4 100644
+--- isisd/isis_pdu.h
++++ isisd/isis_pdu.h
+@@ -24,6 +24,10 @@
+ #ifndef _ZEBRA_ISIS_PDU_H
+ #define _ZEBRA_ISIS_PDU_H
+ 
++#ifdef __SUNPRO_C
++#pragma pack(1)
++#endif
++
+ /*
+  *                    ISO 9542 - 7.5,7.6
+  *
+@@ -222,6 +226,10 @@ struct isis_partial_seqnum_hdr
+ };
+ #define ISIS_PSNP_HDRLEN 9
+ 
++#ifdef __SUNPRO_C
++#pragma pack()
++#endif
++
+ /*
+  * Function for receiving IS-IS PDUs
+  */
+diff --git a/isisd/isis_pfpacket.c b/isisd/isis_pfpacket.c
+new file mode 100644
+index 0000000..8752dba
+--- /dev/null
++++ isisd/isis_pfpacket.c
+@@ -0,0 +1,373 @@
++/*
++ * IS-IS Rout(e)ing protocol - isis_pfpacket.c
++ *
++ * Copyright (C) 2001,2002    Sampo Saaristo
++ *                            Tampere University of Technology      
++ *                            Institute of Communications Engineering
++ *
++ * This program is free software; you can redistribute it and/or modify it 
++ * under the terms of the GNU General Public Licenseas published by the Free 
++ * Software Foundation; either version 2 of the License, or (at your option) 
++ * any later version.
++ *
++ * This program is distributed in the hope that it will be useful,but WITHOUT 
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
++ * more details.
++
++ * You should have received a copy of the GNU General Public License along 
++ * with this program; if not, write to the Free Software Foundation, Inc., 
++ * 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
++ */
++
++#include <zebra.h>
++#include <net/ethernet.h>	/* the L2 protocols */
++#include <netpacket/packet.h>
++
++#include "log.h"
++#include "stream.h"
++#include "if.h"
++
++#include "isisd/dict.h"
++#include "isisd/include-netbsd/iso.h"
++#include "isisd/isis_constants.h"
++#include "isisd/isis_common.h"
++#include "isisd/isis_circuit.h"
++#include "isisd/isis_flags.h"
++#include "isisd/isisd.h"
++#include "isisd/isis_constants.h"
++#include "isisd/isis_circuit.h"
++#include "isisd/isis_network.h"
++
++#include "privs.h"
++
++extern struct zebra_privs_t isisd_privs;
++
++/*
++ * Table 9 - Architectural constants for use with ISO 8802 subnetworks
++ * ISO 10589 - 8.4.8
++ */
++
++u_char ALL_L1_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x14 };
++u_char ALL_L2_ISS[6] = { 0x01, 0x80, 0xC2, 0x00, 0x00, 0x15 };
++u_char ALL_ISS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x05 };
++u_char ALL_ESS[6] = { 0x09, 0x00, 0x2B, 0x00, 0x00, 0x04 };
++
++static char discard_buff[8192];
++static char sock_buff[8192];
++
++/*
++ * if level is 0 we are joining p2p multicast
++ * FIXME: and the p2p multicast being ???
++ */
++static int
++isis_multicast_join (int fd, int registerto, int if_num)
++{
++  struct packet_mreq mreq;
++
++  memset (&mreq, 0, sizeof (mreq));
++  mreq.mr_ifindex = if_num;
++  if (registerto)
++    {
++      mreq.mr_type = PACKET_MR_MULTICAST;
++      mreq.mr_alen = ETH_ALEN;
++      if (registerto == 1)
++	memcpy (&mreq.mr_address, ALL_L1_ISS, ETH_ALEN);
++      else if (registerto == 2)
++	memcpy (&mreq.mr_address, ALL_L2_ISS, ETH_ALEN);
++      else if (registerto == 3)
++	memcpy (&mreq.mr_address, ALL_ISS, ETH_ALEN);
++      else
++	memcpy (&mreq.mr_address, ALL_ESS, ETH_ALEN);
++
++    }
++  else
++    {
++      mreq.mr_type = PACKET_MR_ALLMULTI;
++    }
++#ifdef EXTREME_DEBUG
++  zlog_debug ("isis_multicast_join(): fd=%d, reg_to=%d, if_num=%d, "
++	      "address = %02x:%02x:%02x:%02x:%02x:%02x",
++	      fd, registerto, if_num, mreq.mr_address[0], mreq.mr_address[1],
++	      mreq.mr_address[2], mreq.mr_address[3], mreq.mr_address[4],
++	      mreq.mr_address[5]);
++#endif /* EXTREME_DEBUG */
++  if (setsockopt (fd, SOL_PACKET, PACKET_ADD_MEMBERSHIP, &mreq,
++		  sizeof (struct packet_mreq)))
++    {
++      zlog_warn ("isis_multicast_join(): setsockopt(): %s", safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  return ISIS_OK;
++}
++
++static int
++open_packet_socket (struct isis_circuit *circuit)
++{
++  struct sockaddr_ll s_addr;
++  int fd, retval = ISIS_OK;
++
++  fd = socket (PF_PACKET, SOCK_DGRAM, htons (ETH_P_ALL));
++  if (fd < 0)
++    {
++      zlog_warn ("open_packet_socket(): socket() failed %s",
++		 safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  /*
++   * Bind to the physical interface
++   */
++  memset (&s_addr, 0, sizeof (struct sockaddr_ll));
++  s_addr.sll_family = AF_PACKET;
++  s_addr.sll_protocol = htons (ETH_P_ALL);
++  s_addr.sll_ifindex = circuit->interface->ifindex;
++
++  if (bind (fd, (struct sockaddr *) (&s_addr),
++	    sizeof (struct sockaddr_ll)) < 0)
++    {
++      zlog_warn ("open_packet_socket(): bind() failed: %s", safe_strerror (errno));
++      return ISIS_WARNING;
++    }
++
++  circuit->fd = fd;
++
++  if (circuit->circ_type == CIRCUIT_T_BROADCAST)
++    {
++      /*
++       * Join to multicast groups
++       * according to
++       * 8.4.2 - Broadcast subnetwork IIH PDUs
++       * FIXME: is there a case only one will fail??
++       */
++      if (circuit->circuit_is_type & IS_LEVEL_1)
++	{
++	  /* joining ALL_L1_ISS */
++	  retval = isis_multicast_join (circuit->fd, 1,
++					circuit->interface->ifindex);
++	  /* joining ALL_ISS */
++	  retval = isis_multicast_join (circuit->fd, 3,
++					circuit->interface->ifindex);
++	}
++      if (circuit->circuit_is_type & IS_LEVEL_2)
++	/* joining ALL_L2_ISS */
++	retval = isis_multicast_join (circuit->fd, 2,
++				      circuit->interface->ifindex);
++    }
++  else
++    {
++      retval =
++	isis_multicast_join (circuit->fd, 0, circuit->interface->ifindex);
++    }
++
++  return retval;
++}
++
++/*
++ * Create the socket and set the tx/rx funcs
++ */
++int
++isis_sock_init (struct isis_circuit *circuit)
++{
++  int retval = ISIS_OK;
++
++  if (isisd_privs.change (ZPRIVS_RAISE))
++    zlog_err ("%s: could not raise privs, %s", __func__, safe_strerror (errno));
++
++  retval = open_packet_socket (circuit);
++
++  if (retval != ISIS_OK)
++    {
++      zlog_warn ("%s: could not initialize the socket", __func__);
++      goto end;
++    }
++
++  if (circuit->circ_type == CIRCUIT_T_BROADCAST)
++    {
++      circuit->tx = isis_send_pdu_bcast;
++      circuit->rx = isis_recv_pdu_bcast;
++    }
++  else if (circuit->circ_type == CIRCUIT_T_P2P)
++    {
++      circuit->tx = isis_send_pdu_p2p;
++      circuit->rx = isis_recv_pdu_p2p;
++    }
++  else
++    {
++      zlog_warn ("isis_sock_init(): unknown circuit type");
++      retval = ISIS_WARNING;
++      goto end;
++    }
++
++end:
++  if (isisd_privs.change (ZPRIVS_LOWER))
++    zlog_err ("%s: could not lower privs, %s", __func__, safe_strerror (errno));
++
++  return retval;
++}
++
++static inline int
++llc_check (u_char * llc)
++{
++  if (*llc != ISO_SAP || *(llc + 1) != ISO_SAP || *(llc + 2) != 3)
++    return 0;
++
++  return 1;
++}
++
++int
++isis_recv_pdu_bcast (struct isis_circuit *circuit, u_char * ssnpa)
++{
++  int bytesread, addr_len;
++  struct sockaddr_ll s_addr;
++  u_char llc[LLC_LEN];
++
++  addr_len = sizeof (s_addr);
++
++  memset (&s_addr, 0, sizeof (struct sockaddr_ll));
++
++  bytesread = recvfrom (circuit->fd, (void *) &llc,
++			LLC_LEN, MSG_PEEK,
++			(struct sockaddr *) &s_addr, (socklen_t *) &addr_len);
++
++  if (bytesread < 0)
++    {
++      zlog_warn ("isis_recv_packet_bcast(): fd %d, recvfrom (): %s",
++		 circuit->fd, safe_strerror (errno));
++      zlog_warn ("circuit is %s", circuit->interface->name);
++      zlog_warn ("circuit fd %d", circuit->fd);
++      zlog_warn ("bytesread %d", bytesread);
++      /* get rid of the packet */
++      bytesread = read (circuit->fd, discard_buff, sizeof (discard_buff));
++      return ISIS_WARNING;
++    }
++  /*
++   * Filtering by llc field, discard packets sent by this host (other circuit)
++   */
++  if (!llc_check (llc) || s_addr.sll_pkttype == PACKET_OUTGOING)
++    {
++      /*  Read the packet into discard buff */
++      bytesread = read (circuit->fd, discard_buff, sizeof (discard_buff));
++      if (bytesread < 0)
++	zlog_warn ("isis_recv_pdu_bcast(): read() failed");
++      return ISIS_WARNING;
++    }
++
++  /* on lan we have to read to the static buff first */
++  bytesread = recvfrom (circuit->fd, sock_buff, circuit->interface->mtu, 0,
++			(struct sockaddr *) &s_addr, (socklen_t *) &addr_len);
++
++  /* then we lose the LLC */
++  stream_write (circuit->rcv_stream, sock_buff + LLC_LEN, bytesread - LLC_LEN);
++
++  memcpy (ssnpa, &s_addr.sll_addr, s_addr.sll_halen);
++
++  return ISIS_OK;
++}
++
++int
++isis_recv_pdu_p2p (struct isis_circuit *circuit, u_char * ssnpa)
++{
++  int bytesread, addr_len;
++  struct sockaddr_ll s_addr;
++
++  memset (&s_addr, 0, sizeof (struct sockaddr_ll));
++  addr_len = sizeof (s_addr);
++
++  /* we can read directly to the stream */
++  bytesread = stream_recvfrom (circuit->rcv_stream, circuit->fd,
++                               circuit->interface->mtu, 0,
++                               (struct sockaddr *) &s_addr, 
++                               (socklen_t *) &addr_len);
++
++  if (s_addr.sll_pkttype == PACKET_OUTGOING)
++    {
++      /*  Read the packet into discard buff */
++      bytesread = read (circuit->fd, discard_buff, sizeof (discard_buff));
++      if (bytesread < 0)
++	zlog_warn ("isis_recv_pdu_p2p(): read() failed");
++      return ISIS_WARNING;
++    }
++
++  /* If we don't have protocol type 0x00FE which is
++   * ISO over GRE we exit with pain :)
++   */
++  if (ntohs (s_addr.sll_protocol) != 0x00FE)
++    {
++      zlog_warn ("isis_recv_pdu_p2p(): protocol mismatch(): %X",
++		 ntohs (s_addr.sll_protocol));
++      return ISIS_WARNING;
++    }
++
++  memcpy (ssnpa, &s_addr.sll_addr, s_addr.sll_halen);
++
++  return ISIS_OK;
++}
++
++int
++isis_send_pdu_bcast (struct isis_circuit *circuit, int level)
++{
++  /* we need to do the LLC in here because of P2P circuits, which will
++   * not need it
++   */
++  int written = 1;
++  struct sockaddr_ll sa;
++
++  stream_set_getp (circuit->snd_stream, 0);
++  memset (&sa, 0, sizeof (struct sockaddr_ll));
++  sa.sll_family = AF_PACKET;
++  sa.sll_protocol = htons (stream_get_endp (circuit->snd_stream) + LLC_LEN);
++  sa.sll_ifindex = circuit->interface->ifindex;
++  sa.sll_halen = ETH_ALEN;
++  if (level == 1)
++    memcpy (&sa.sll_addr, ALL_L1_ISS, ETH_ALEN);
++  else
++    memcpy (&sa.sll_addr, ALL_L2_ISS, ETH_ALEN);
++
++  /* on a broadcast circuit */
++  /* first we put the LLC in */
++  sock_buff[0] = 0xFE;
++  sock_buff[1] = 0xFE;
++  sock_buff[2] = 0x03;
++
++  /* then we copy the data */
++  memcpy (sock_buff + LLC_LEN, circuit->snd_stream->data,
++	  stream_get_endp (circuit->snd_stream));
++
++  /* now we can send this */
++  written = sendto (circuit->fd, sock_buff,
++		    stream_get_endp(circuit->snd_stream) + LLC_LEN, 0,
++		    (struct sockaddr *) &sa, sizeof (struct sockaddr_ll));
++
++  return ISIS_OK;
++}
++
++int
++isis_send_pdu_p2p (struct isis_circuit *circuit, int level)
++{
++
++  int written = 1;
++  struct sockaddr_ll sa;
++
++  stream_set_getp (circuit->snd_stream, 0);
++  memset (&sa, 0, sizeof (struct sockaddr_ll));
++  sa.sll_family = AF_PACKET;
++  sa.sll_protocol = htons (stream_get_endp (circuit->snd_stream) + LLC_LEN);
++  sa.sll_ifindex = circuit->interface->ifindex;
++  sa.sll_halen = ETH_ALEN;
++  if (level == 1)
++    memcpy (&sa.sll_addr, ALL_L1_ISS, ETH_ALEN);
++  else
++    memcpy (&sa.sll_addr, ALL_L2_ISS, ETH_ALEN);
++
++
++  /* lets try correcting the protocol */
++  sa.sll_protocol = htons (0x00FE);
++  written = sendto (circuit->fd, circuit->snd_stream->data,
++		    stream_get_endp (circuit->snd_stream), 0, 
++		    (struct sockaddr *) &sa,
++		    sizeof (struct sockaddr_ll));
++
++  return ISIS_OK;
++}
+diff --git a/isisd/isis_tlv.h b/isisd/isis_tlv.h
+index 951a254..fc9f35f 100644
+--- isisd/isis_tlv.h
++++ isisd/isis_tlv.h
+@@ -152,6 +152,10 @@ struct lan_neigh
+   u_char LAN_addr[6];
+ };
+ 
++#ifdef __SUNPRO_C
++#pragma pack(1)
++#endif
++
+ /* struct for LSP entry */
+ struct lsp_entry
+ {
+@@ -161,6 +165,10 @@ struct lsp_entry
+   u_int16_t checksum;
+ } __attribute__ ((packed));
+ 
++#ifdef __SUNPRO_C
++#pragma pack()
++#endif
++
+ /* struct for checksum */
+ struct checksum
+ {
