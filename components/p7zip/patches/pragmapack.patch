@@ -1,0 +1,24 @@
+The Studio compilers don't have support for a stack of structure packing,
+but we don't need full stack support here; just the original switch and
+back again.
+
+--- p7zip_9.20.1/C/Ppmd.h.orig	Sat Jan 22 11:32:30 2011
++++ p7zip_9.20.1/C/Ppmd.h	Mon Jul 18 11:38:47 2011
+@@ -29,7 +29,7 @@
+ #define PPMD_N4 ((128 + 3 - 1 * PPMD_N1 - 2 * PPMD_N2 - 3 * PPMD_N3) / 4)
+ #define PPMD_NUM_INDEXES (PPMD_N1 + PPMD_N2 + PPMD_N3 + PPMD_N4)
+ 
+-#pragma pack(push,1)
++#pragma pack(1)
+ 
+ /* SEE-contexts for PPM-contexts with masked symbols */
+ typedef struct
+@@ -50,7 +50,7 @@
+   UInt16 SuccessorHigh;
+ } CPpmd_State;
+ 
+-#pragma pack(pop)
++#pragma pack()
+ 
+ typedef
+   #ifdef PPMD_32BIT
