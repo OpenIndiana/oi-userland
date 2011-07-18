@@ -1,0 +1,73 @@
+*** pconsole-1.0/pconsole.sh.in.orig	Fri Jul 15 07:04:26 2011
+--- pconsole-1.0/pconsole.sh.in	Fri Jul 15 12:17:18 2011
+***************
+*** 1,4 ****
+! #! /bin/sh
+  #
+  #   pconsole WJ101
+  #   Copyright (C) 2001  Walter de Jong <walter@heiho.net>
+--- 1,4 ----
+! #! /bin/bash
+  #
+  #   pconsole WJ101
+  #   Copyright (C) 2001  Walter de Jong <walter@heiho.net>
+***************
+*** 31,41 ****
+  	set -x
+  fi
+  
+! PATH=/bin:/usr/bin:/usr/bin/X11:/usr/openwin/bin:/usr/local/bin:/usr/bsd:/usr/share/bin:/opt/bin:/etc:/usr/etc
+  
+  prefix=@prefix@
+  exec_prefix=@exec_prefix@
+  bindir=@bindir@
+  
+  #
+  #	options: you can overrule these by setting them in your environment
+--- 31,42 ----
+  	set -x
+  fi
+  
+! PATH=/usr/sbin:/usr/bin:/etc
+  
+  prefix=@prefix@
+  exec_prefix=@exec_prefix@
+  bindir=@bindir@
++ sbindir=@sbindir@
+  
+  #
+  #	options: you can overrule these by setting them in your environment
+***************
+*** 50,56 ****
+  fi
+  if [ -z "${P_CONNECT_CMD}" ]
+  then
+! 	P_CONNECT_CMD="${bindir}/ssh.sh"
+  fi
+  if [ -z "${P_CONSOLE_OPTIONS}" ]
+  then
+--- 51,57 ----
+  fi
+  if [ -z "${P_CONNECT_CMD}" ]
+  then
+! 	P_CONNECT_CMD="/usr/share/doc/pconsole/ssh.sh"
+  fi
+  if [ -z "${P_CONSOLE_OPTIONS}" ]
+  then
+***************
+*** 145,151 ****
+  	done
+  
+  # start pconsole
+! 	${P_TERM} ${P_CONSOLE_OPTIONS} -title pconsole -name pconsole -e "${bindir}/pconsole" ${TTYS}
+  
+  # terminate all open windows
+  	if [ ! -z "${PIDLIST}" ]
+--- 146,152 ----
+  	done
+  
+  # start pconsole
+! 	${P_TERM} ${P_CONSOLE_OPTIONS} -title pconsole -name pconsole -e ${bindir}/pfexec "${sbindir}/pconsole-bin" ${TTYS}
+  
+  # terminate all open windows
+  	if [ ! -z "${PIDLIST}" ]

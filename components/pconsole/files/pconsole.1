@@ -1,0 +1,156 @@
+'\" te
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").  
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\" Copyright (c) 2004, Sun Microsystems, Inc.  All Rights Reserved
+.TH pconsole 1 "24 Sep 2008" "SunOS 5.11" "User Commands"
+.SH NAME
+pconsole \- parallel console
+.SH SYNOPSIS
+.LP
+.nf
+\fBpconsole\fR \fIhost[:port] [...]\fR
+
+.fi
+
+.SH DESCRIPTION
+.sp
+.LP
+The \fppconsole\fR utility creates a host terminal window for each remote
+host that you specify on the command line. The utility also opens a central, 
+or master, console window that propagates what you input there to each of the 
+connections that you open. 
+
+The \fppconsole\fR utility is best run from within X Windows, although it is 
+possible to employ it without X (in console mode) as well.
+
+You only need to install pconsole on one machine in the cluster. This machine
+would usually be your central administrative node.
+
+If you have a serial-port multiplexer that allows you to connect to
+specific port numbers on the IP address of the multiplexer,
+you can specify the port number in addition to the hostname or IP
+address as \fImuxIP\fR:\fIportnumber\fR.
+
+.TP
+NOTE:
+This program must be either run as root or by a user granted
+the "Parallel Console Access" rights profile:
+.PP
+.RS
+.nf
+\fB# usermod -P "Parallel Console Access" login-name\fR
+.fi
+
+.SH COMMANDS
+\fppconsole\fR supports the following commands in the central console
+window:
+.IP "? or help"
+Prints a list of available commands.
+.IP "Ctrl-A"
+Enters command mode.
+.IP "attach"
+Attaches to a tty device.
+.IP "connect"
+Leaves command mode.
+.IP "detach"
+Detaches from a tty device.
+.IP "echo"
+Turns echo on or off.
+.IP "exit"
+Exits \fppconsole\fR. This is the same as quit.
+.IP "list"
+Shows devices currently attached to.
+.IP "quit"
+Exits \fppconsole\fR. This is the same as exit.
+.IP "version"
+Displays version information.
+
+.SH EXIT STATUS
+.sp
+.LP
+The following exit values are returned:
+.sp
+.ne 2
+.mk
+.na
+\fB\fB0\fR\fR
+.ad
+.RS 6n
+.rt  
+Successful completion.
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB1\fR\fR
+.ad
+.RS 6n
+.rt  
+An error occurred.
+.RE
+
+.SH ENVIRONMENT VARIABLES
+.sp
+.ne 2
+.mk
+.na
+\fB\fBP_TERM\fR\fR
+.ad
+.RS 16n
+.rt  
+By default, \fBpconsole\fR uses \fBxterm\fR(1) to create a window to the
+remote system.
+You can specify another command by setting the environment
+variable \fBP_TERM\fR to the chosen command. 
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBP_TERM_OPTIONS\fR\fR
+.ad
+.RS 16n
+.rt  
+By default, \fBpconsole\fR uses the options "-geometry 80x24 -fn 10x20"
+to pass to the command that is specified by \fBP_TERM\fR, or to \fBxterm\fR(1) 
+if \fBP_TERM\fR is unspecified.
+You can specify different options by setting the environment
+variable \fBP_TERM_OPTIONS\fR to the chosen options. 
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBP_CONNECT_CMD\fR\fR
+.ad
+.RS 16n
+.rt  
+By default, \fBpconsole\fR uses \fBssh\fR(1) to make connections. 
+You can use a different command, such as \fBrlogin\fR(1), by setting the environment
+variable \fBP_CONNECT_CMD\fR to the chosen command. 
+.RE
+
+.SH SEE ALSO
+.sp
+.LP
+\fBrlogin\fR(1), \fBssh\fR(1), \fBxterm\fR(1)
