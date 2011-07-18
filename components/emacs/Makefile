@@ -95,62 +95,67 @@ PSHAREMAN1=	$(PROTO_DIR)/usr/share/man/man1
 PVAR=		$(PROTO_DIR)/var
 
 # Remove emacs existing emacs executables/script from usr/bin
-COMPONENT_POST_INSTALL_ACTION += rm -f $(PBIN)/emacs $(PBIN)/emacs-* ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PBIN)/emacs $(PBIN)/emacs-* ;
 
 # GTK binaries
-COMPONENT_POST_INSTALL_ACTION += cp $(BUILD_DIR)/$(MACH64)-gtk/src/emacs \
-					$(PBIN)/emacs-gtk ;
-COMPONENT_POST_INSTALL_ACTION += ln $(PBIN)/emacs-gtk \
-					$(PBIN)/emacs-gtk-$(COMPONENT_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(BUILD_DIR)/$(MACH64)-gtk/src/emacs-$(COMPONENT_VERSION).1 \
+		$(PBIN)/emacs-gtk ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(LN) $(PBIN)/emacs-gtk $(PBIN)/emacs-gtk-$(COMPONENT_VERSION) ;
 
 # Non-X11 binaries
-COMPONENT_POST_INSTALL_ACTION += cp $(BUILD_DIR)/$(MACH64)-nox/src/emacs \
-					$(PBIN)/emacs-nox ;
-COMPONENT_POST_INSTALL_ACTION += ln $(PBIN)/emacs-nox \
-					$(PBIN)/emacs-nox-$(COMPONENT_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(BUILD_DIR)/$(MACH64)-nox/src/emacs-$(COMPONENT_VERSION).1 \
+		$(PBIN)/emacs-nox ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(LN) $(PBIN)/emacs-nox $(PBIN)/emacs-nox-$(COMPONENT_VERSION) ;
 
 # X11 (Athena) binaries
-COMPONENT_POST_INSTALL_ACTION += cp $(BUILD_DIR)/$(MACH64)-x/src/emacs \
-					$(PBIN)/emacs-x ;
-COMPONENT_POST_INSTALL_ACTION += ln $(PBIN)/emacs-x \
-					$(PBIN)/emacs-x-$(COMPONENT_VERSION) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(BUILD_DIR)/$(MACH64)-x/src/emacs-$(COMPONENT_VERSION).1 \
+		$(PBIN)/emacs-x ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(LN) $(PBIN)/emacs-x $(PBIN)/emacs-x-$(COMPONENT_VERSION) ;
 
 # Emacs shell script that picks the right variant at runtime
-COMPONENT_POST_INSTALL_ACTION += cp augment/emacs $(PBIN) ;
-COMPONENT_POST_INSTALL_ACTION += chmod +x $(PBIN)/emacs ;
+COMPONENT_POST_INSTALL_ACTION += $(CP) augment/emacs $(PBIN) ;
+COMPONENT_POST_INSTALL_ACTION += $(CHMOD) +x $(PBIN)/emacs ;
 
 # ctags and etags go in /usr/gnu/bin instead of /usr/bin
-COMPONENT_POST_INSTALL_ACTION += mkdir -p $(PGBIN) ;
-COMPONENT_POST_INSTALL_ACTION += mv $(PBIN)/ctags $(PBIN)/etags $(PGBIN) ;
+COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PGBIN) ;
+COMPONENT_POST_INSTALL_ACTION += $(MV) $(PBIN)/ctags $(PBIN)/etags $(PGBIN) ;
 
 # We do not install the files under /var/games/emacs. The reason for
 # this is that we do not install update-game-score as setuid, and
 # therefore the game files are not usable. This the same decision made
 # by Debian, among others.
-COMPONENT_POST_INSTALL_ACTION += rm -rf $(PVAR) ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PVAR) ;
 
-# Odd thing: The file usr/share/emacs/23.1/etc/DOC-23.1.1 needed by
-# emacs gets installed as usr/share/emacs/23.1/etc/DOC-23.1.2. Correct it.
-COMPONENT_POST_INSTALL_ACTION += mv $(PETC)/DOC-$(COMPONENT_VERSION).2 \
-					$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
+# The file usr/share/emacs/23.1/etc/DOC-23.1.2 gets installed instead of
+# DOC-23.1.1. Remove and replace.
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PETC)/DOC-$(COMPONENT_VERSION).2 ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(BUILD_DIR)/$(MACH64)-x/etc/DOC-$(COMPONENT_VERSION).1 \
+		$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
 
-COMPONENT_POST_INSTALL_ACTION += cp augment/man/man1/emacs-gtk.1 \
-			$(PSHAREMAN1)/emacs-gtk.1 ;
-COMPONENT_POST_INSTALL_ACTION += cp augment/man/man1/emacs-nox.1 \
-			$(PSHAREMAN1)/emacs-nox.1 ;
-COMPONENT_POST_INSTALL_ACTION += cp augment/man/man1/emacs-x.1 \
-			$(PSHAREMAN1)/emacs-x.1 ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) augment/man/man1/emacs-gtk.1 $(PSHAREMAN1)/emacs-gtk.1 ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) augment/man/man1/emacs-nox.1 $(PSHAREMAN1)/emacs-nox.1 ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) augment/man/man1/emacs-x.1 $(PSHAREMAN1)/emacs-x.1 ;
 
-COMPONENT_POST_INSTALL_ACTION += mkdir -p $(PGSHAREMAN1) ;
-COMPONENT_POST_INSTALL_ACTION += cp $(COMPONENT_SRC)/doc/man/ctags.1 \
-					$(PGSHAREMAN1)/ctags.1 ;
-COMPONENT_POST_INSTALL_ACTION += cp $(COMPONENT_SRC)/doc/man/etags.1 \
-					$(PGSHAREMAN1)/etags.1 ;
+COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PGSHAREMAN1) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/doc/man/ctags.1 $(PGSHAREMAN1)/ctags.1 ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/doc/man/etags.1 $(PGSHAREMAN1)/etags.1 ;
 
 # Throw away usr/share/info/dir. This file is the topmost node of the Info
 # hierarchy. Emacs builds it, as presumably do all GNU packages, but on
 # Solaris, it is delivered by system/prerequisite/gnu.
-COMPONENT_POST_INSTALL_ACTION += rm $(PROTO_DIR)/usr/share/info/dir ;
+COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
 
 # common targets
