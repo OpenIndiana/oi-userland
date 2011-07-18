@@ -1,0 +1,27 @@
+commit 7b87b33fa53254f14b79e95bb8a0b24f8ef9e1c1
+Author: Paul Jakma <paul.jakma@sun.com>
+Date:   Mon Sep 17 13:51:28 2007 +0100
+
+    [bgpd] Fix typo, which prevented advertisement of MP (non-IPv4) prefixes
+    
+    2007-09-17 Paul Jakma <paul.jakma@sun.com>
+    
+    	* bgp_open.c: (bgp_capability_mp) We were setting
+    	  afc_nego[safi][safi] rather than afc_nego[afi][safi], thus
+    	  failling to announce any non-IPv4 prefixes. Remove the extra,
+    	  typo-ed character.
+    	* tests/bgp_capability_test.c: Test that peer's adv_recv and
+    	  adv_nego get set correctly for MP capability and given AFI/SAFI.
+    	  Colour OK/failed result so it's easier to find them.
+
+--- bgpd/bgp_open.c
++++ bgpd/bgp_open.c
+@@ -177,7 +177,7 @@ bgp_capability_mp (struct peer *peer, struct capability_header *hdr)
+   peer->afc_recv[mpc.afi][mpc.safi] = 1;
+   
+   if (peer->afc[mpc.afi][mpc.safi])
+-    peer->afc_nego[mpc.safi][mpc.safi] = 1;
++    peer->afc_nego[mpc.afi][mpc.safi] = 1;
+   else 
+     return -1;
+ 

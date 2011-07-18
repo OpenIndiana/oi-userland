@@ -1,0 +1,71 @@
+commit 7591d8b862439dfae8b4b16d148ce567b6ff8cb7
+Author: Paul Jakma <paul.jakma@sun.com>
+Date:   Mon Aug 6 18:52:45 2007 +0000
+
+    [ospfd] Fix bad SPF calculation on some topologies - incorrect sorting
+    
+    2007-08-07 Atis Elsts <atis@mikrotik.com>
+    
+    	* ospf_spf.c: (ospf_spf_next) Sort heap in correct direction
+    	  after vertex cost is changed, thus fixing incorrect SPF
+    	  calculation on certain topologies.
+    	* lib/pqueue.{c,h}: Export trickle_up
+
+diff --git a/lib/pqueue.c b/lib/pqueue.c
+index a974a49..12a779f 100644
+--- lib/pqueue.c
++++ lib/pqueue.c
+@@ -42,7 +42,7 @@ Boston, MA 02111-1307, USA.  */
+ #define RIGHT_OF(x) (2 * x + 2)
+ #define HAVE_CHILD(x,q) (x < (q)->size / 2)
+ 
+-static void
++void
+ trickle_up (int index, struct pqueue *queue)
+ {
+   void *tmp;
+diff --git a/lib/pqueue.h b/lib/pqueue.h
+index 1f3201b..be37f98 100644
+--- lib/pqueue.h
++++ lib/pqueue.h
+@@ -40,5 +40,6 @@ extern void pqueue_enqueue (void *data, struct pqueue *queue);
+ extern void *pqueue_dequeue (struct pqueue *queue);
+ 
+ extern void trickle_down (int index, struct pqueue *queue);
++extern void trickle_up (int index, struct pqueue *queue);
+ 
+ #endif /* _ZEBRA_PQUEUE_H */
+diff --git a/ospfd/ChangeLog b/ospfd/ChangeLog
+index bb0e908..422208e 100644
+--- ospfd/ChangeLog
++++ ospfd/ChangeLog
+@@ -1,3 +1,9 @@
++2007-08-07 Atis Elsts <atis@mikrotik.com>
++
++	* ospf_spf.c: (ospf_spf_next) Sort heap in correct direction
++	  after vertex cost is changed, thus fixing incorrect SPF
++	  calculation on certain topologies.
++
+ 2007-08-06 Paul Jakma <paul.jakma@sun.com>
+ 
+ 	* ospf_lsa.c: (router_lsa_flags) Bug #331, NSSA regression caused
+diff --git a/ospfd/ospf_spf.c b/ospfd/ospf_spf.c
+index 51e3383..41288f1 100644
+--- ospfd/ospf_spf.c
++++ ospfd/ospf_spf.c
+@@ -896,9 +896,12 @@ ospf_spf_next (struct vertex *v, struct ospf_area *area,
+                * will flush the old parents
+                */
+               if (ospf_nexthop_calculation (area, v, w, l, distance))
+-                /* Decrease the key of the node in the heap,
+-                 * re-sort the heap. */
+-                trickle_down (w_lsa->stat, candidate);
++                /* Decrease the key of the node in the heap.
++                 * trickle-sort it up towards root, just in case this
++                 * node should now be the new root due the cost change. 
++                 * (pqueu_{de,en}queue 
++                 */
++                trickle_up (w_lsa->stat, candidate);
+             }
+         } /* end W is already on the candidate list */
+     } /* end loop over the links in V's LSA */

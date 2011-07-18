@@ -1,0 +1,53 @@
+Author: Paul Jakma <paul.jakma@sun.com>
+Date:   Fri Sep 7 14:24:55 2007 +0000
+
+    [bgpd] low-impact DoS: crash on malformed community with debug set
+    
+    2007-09-07 Paul Jakma <paul.jakma@sun.com>
+    
+    	* (general) bgpd can be made crash by remote peers if debug
+    	  bgp updates is set, due to NULL pointer dereference.
+    	  Reported by "Mu Security Research Team",
+    	  <security@musecurity.com>.
+    	* bgp_attr.c: (bgp_attr_community) If community length is 0,
+    	  don't set the community-present attribute bit, just return
+    	  early.
+    	* bgp_debug.c: (community_str,community_com2str) Check com
+    	  pointer before dereferencing.
+
+--- bgpd/bgp_attr.c
++++ bgpd/bgp_attr.c
+@@ -962,7 +962,10 @@
+ 		    struct attr *attr, u_char flag)
+ {
+   if (length == 0)
+-    attr->community = NULL;
++    {
++      attr->community = NULL;
++      return 0;
++    }
+   else
+     {
+       attr->community = 
+--- bgpd/bgp_community.c
++++ bgpd/bgp_community.c
+@@ -206,6 +206,9 @@ community_com2str  (struct community *com)
+   u_int16_t as;
+   u_int16_t val;
+ 
++  if (!com)
++    return NULL;
++  
+   /* When communities attribute is empty.  */
+   if (com->size == 0)
+     {
+@@ -377,6 +380,9 @@ community_dup (struct community *com)
+ char *
+ community_str (struct community *com)
+ {
++  if (!com)
++    return NULL;
++  
+   if (! com->str)
+     com->str = community_com2str (com);
+   return com->str;
