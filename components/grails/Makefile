@@ -43,13 +43,16 @@ build:		$(BUILD_32)
 # fix names with spaces
 # workaround for bug 6734267 (pkgmk does not allow spaces in file names)
 # the following files are not used directly by Grails framework...
-install:	build
+$(INSTALL_32):	$(BUILD_32)
 	(cd $(COMPONENT_SRC)/media/icons ; \
 		mv 'grails - 16x16 icon.png' grails-16x16icon.png ; \
 		mv 'grails - 32x32 icon.png' grails-32x32icon.png ; \
 		mv 'grails - 48x48 icon.png' grails-48x48icon.png ; \
 		mv 'grails - 64x64 icon.png' grails-64x64icon.png ; \
 		mv 'grails - 128x128 icon.png' grails-128x128icon.png)
+	$(TOUCH) $@
+
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
