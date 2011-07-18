@@ -1,0 +1,14 @@
+The "const" changes the function signature, preventing 7z.so from loading
+because of a missing symbol.
+
+--- p7zip_9.20.1/CPP/7zip/Archive/Wim/WimIn.cpp.orig	Mon Jul 18 14:37:02 2011
++++ p7zip_9.20.1/CPP/7zip/Archive/Wim/WimIn.cpp	Mon Jul 18 14:37:20 2011
+@@ -278,7 +278,7 @@
+ 
+ static const wchar_t *kLongPath = L"[LongPath]";
+ 
+-UString CDatabase::GetItemPath(const int index1) const
++UString CDatabase::GetItemPath(int index1) const
+ {
+   int size = 0;
+   int index = index1;

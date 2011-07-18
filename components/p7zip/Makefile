@@ -28,10 +28,10 @@ include ../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		p7zip
-COMPONENT_VERSION=	4.55
+COMPONENT_VERSION=	9.20.1
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:7dd6f75c031f15f3d379af3e208e2e4d65f55bb7
+COMPONENT_ARCHIVE_HASH=	sha1:1cd567e043ee054bf08244ce15f32cb3258306b7
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
