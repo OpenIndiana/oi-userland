@@ -1,0 +1,161 @@
+#
+# Engine aesni patch openssl-1.0.0d-aesni-v4.i386-patch.
+# openssl-1.0.0-aesni-v4.patch updated for openssl-1.0.0d.
+# This engine is X86-only.
+#
+Index: Configure
+===================================================================
+diff -ru openssl-1.0.0d/Configure openssl-1.0.0d/Configure
+--- openssl-1.0.0d/Configure	2010-11-30 14:19:26.000000000 -0800
++++ openssl-1.0.0d/Configure	2011-05-20 10:32:38.598770000 -0700
+@@ -123,11 +123,11 @@
+ my $bits1="THIRTY_TWO_BIT ";
+ my $bits2="SIXTY_FOUR_BIT ";
+ 
+-my $x86_asm="x86cpuid.o:bn-586.o co-586.o x86-mont.o:des-586.o crypt586.o:aes-586.o:bf-586.o:md5-586.o:sha1-586.o sha256-586.o sha512-586.o:cast-586.o:rc4-586.o:rmd-586.o:rc5-586.o:wp_block.o wp-mmx.o:cmll-x86.o";
++my $x86_asm="x86cpuid.o:bn-586.o co-586.o x86-mont.o:des-586.o crypt586.o:aes-586.o aesni-x86.o:bf-586.o:md5-586.o:sha1-586.o sha256-586.o sha512-586.o:cast-586.o:rc4-586.o:rmd-586.o:rc5-586.o:wp_block.o wp-mmx.o:cmll-x86.o";
+ 
+ my $x86_elf_asm="$x86_asm:elf";
+ 
+-my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o::aes-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o";
++my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o::aes-x86_64.o aesni-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o";
+ my $ia64_asm="ia64cpuid.o:bn-ia64.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::void";
+ my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::void";
+ my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::void";
+@@ -491,7 +491,7 @@
+ #
+ # Win64 targets, WIN64I denotes IA-64 and WIN64A - AMD64
+ "VC-WIN64I","cl:-W3 -Gs0 -Gy -nologo -DOPENSSL_SYSNAME_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DUNICODE -D_UNICODE -D_CRT_SECURE_NO_DEPRECATE:::WIN64I::SIXTY_FOUR_BIT RC4_CHUNK_LL DES_INT EXPORT_VAR_AS_FN:ia64cpuid.o:ia64.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o:::::::ias:win32",
+-"VC-WIN64A","cl:-W3 -Gs0 -Gy -nologo -DOPENSSL_SYSNAME_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DUNICODE -D_UNICODE -D_CRT_SECURE_NO_DEPRECATE:::WIN64A::SIXTY_FOUR_BIT RC4_CHUNK_LL DES_INT EXPORT_VAR_AS_FN:x86_64cpuid.o:bn_asm.o x86_64-mont.o::aes-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:auto:win32",
++"VC-WIN64A","cl:-W3 -Gs0 -Gy -nologo -DOPENSSL_SYSNAME_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DUNICODE -D_UNICODE -D_CRT_SECURE_NO_DEPRECATE:::WIN64A::SIXTY_FOUR_BIT RC4_CHUNK_LL DES_INT EXPORT_VAR_AS_FN:x86_64cpuid.o:bn_asm.o x86_64-mont.o::aes-x86_64.o aesni-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:auto:win32",
+ "debug-VC-WIN64I","cl:-W3 -Gs0 -Gy -Zi -nologo -DOPENSSL_SYSNAME_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DUNICODE -D_UNICODE -D_CRT_SECURE_NO_DEPRECATE:::WIN64I::SIXTY_FOUR_BIT RC4_CHUNK_LL DES_INT EXPORT_VAR_AS_FN:ia64cpuid.o:ia64.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o:::::::ias:win32",
+ "debug-VC-WIN64A","cl:-W3 -Gs0 -Gy -Zi -nologo -DOPENSSL_SYSNAME_WIN32 -DWIN32_LEAN_AND_MEAN -DL_ENDIAN -DUNICODE -D_UNICODE -D_CRT_SECURE_NO_DEPRECATE:::WIN64A::SIXTY_FOUR_BIT RC4_CHUNK_LL DES_INT EXPORT_VAR_AS_FN:x86_64cpuid.o:bn_asm.o x86_64-mont.o::aes-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:auto:win32",
+ # x86 Win32 target defaults to ANSI API, if you want UNICODE, complement
+@@ -1410,6 +1410,7 @@
+ if ($aes_obj =~ /\.o$/)
+ 	{
+ 	$cflags.=" -DAES_ASM";
++	$aes_obj =~ s/\s*aesni\-x86\.o// if ($no_sse2);
+ 	}
+ else	{
+ 	$aes_obj=$aes_enc;
+Index: crypto/aes/Makefile
+===================================================================
+diff -ru openssl-1.0.0d/crypto/aes/Makefile openssl-1.0.0d/crypto/aes/Makefile
+--- openssl-1.0.0d/crypto/aes/Makefile	2008-12-23 03:33:00.000000000 -0800
++++ openssl-1.0.0d/crypto/aes/Makefile	2011-06-30 16:52:09.000000000 -0700
+@@ -50,9 +50,16 @@
+ 
+ aes-586.s:	asm/aes-586.pl ../perlasm/x86asm.pl
+ 	$(PERL) asm/aes-586.pl $(PERLASM_SCHEME) $(CFLAGS) $(PROCESSOR) > $@
++aesni-x86.s:	asm/aesni-x86.pl ../perlasm/x86asm.pl
++	$(PERL) asm/aesni-x86.pl $(PERLASM_SCHEME) $(CFLAGS) $(PROCESSOR) > $@
++aesni-x86.o:	aesni-x86.s
++	$(CC) $(CFLAGS) -o $@ -c $<
++	elfedit -e 'cap:hw1 -and -cmp aes' $@
+ 
+ aes-x86_64.s: asm/aes-x86_64.pl
+ 	$(PERL) asm/aes-x86_64.pl $(PERLASM_SCHEME) > $@
++aesni-x86_64.s: asm/aesni-x86_64.pl
++	$(PERL) asm/aesni-x86_64.pl $(PERLASM_SCHEME) > $@
+ 
+ aes-sparcv9.s: asm/aes-sparcv9.pl
+ 	$(PERL) asm/aes-sparcv9.pl $(CFLAGS) > $@
+Index: crypto/engine/Makefile
+===================================================================
+diff -ru openssl-1.0.0d/crypto/engine/Makefile openssl-1.0.0d/crypto/engine/Makefile
+--- openssl-1.0.0d/crypto/engine/Makefile	2010-12-02 10:26:11.000000000 -0800
++++ openssl-1.0.0d/crypto/engine/Makefile	2011-05-20 10:37:14.716792000 -0700
+@@ -22,6 +22,7 @@
+ 	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
+ 	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
+ 	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
++	eng_aesni.c \
+ 	hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
+ LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
+ 	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
+@@ -28,6 +29,7 @@
+ 	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
+ 	tb_cipher.o tb_digest.o tb_pkmeth.o tb_asnmth.o \
+ 	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
++	eng_aesni.o \
+ 	hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
+ 
+ SRC= $(LIBSRC)
+Index: crypto/engine/eng_all.c
+===================================================================
+diff -ru openssl-1.0.0d/crypto/engine/eng_all.c openssl-1.0.0d/crypto/engine/eng_all.c
+--- openssl-1.0.0d/crypto/engine/eng_all.c	2009-07-01 07:55:58.000000000 -0700
++++ openssl-1.0.0d/crypto/engine/eng_all.c	2011-06-22 17:34:25.145829355 -0700
+@@ -61,6 +61,8 @@
+ 
+ void ENGINE_load_builtin_engines(void)
+ 	{
++	/* Engines may depend on CPU capabilities */
++	OPENSSL_cpuid_setup();
+ #if 0
+ 	/* There's no longer any need for an "openssl" ENGINE unless, one day,
+ 	 * it is the *only* way for standard builtin implementations to be be
+@@ -71,6 +73,10 @@
+ #if !defined(OPENSSL_NO_HW) && (defined(__OpenBSD__) || defined(__FreeBSD__) || defined(HAVE_CRYPTODEV))
+ 	ENGINE_load_cryptodev();
+ #endif
++#if !defined(OPENSSL_NO_HW) && !defined(OPENSSL_NO_HW_AESNI)
++	ENGINE_load_aesni();
++	ENGINE_register_all_complete();
++#endif
+ 	ENGINE_load_dynamic();
+ #ifndef OPENSSL_NO_HW_PKCS11
+ 	ENGINE_load_pk11();
+Index: crypto/engine/engine.h
+===================================================================
+diff -ru openssl-1.0.0d/crypto/engine/engine.h openssl-1.0.0d/crypto/engine/engine.h
+--- openssl-1.0.0d/crypto/engine/engine.h	2011-01-29 17:05:37.000000000 -0800
++++ openssl-1.0.0d/crypto/engine/engine.h	2011-05-20 10:55:13.878159000 -0700
+@@ -344,6 +344,7 @@
+ #endif
+ #endif
+ void ENGINE_load_cryptodev(void);
++void ENGINE_load_aesni(void);
+ void ENGINE_load_pk11(void);
+ void ENGINE_load_builtin_engines(void);
+ 
+Index: crypto/evp/evp.h
+===================================================================
+diff -ru openssl-1.0.0d/crypto/evp/evp.h openssl-1.0.0d/crypto/evp/evp.h
+--- openssl-1.0.0d/crypto/evp/evp.h	2010-03-27 12:27:50.000000000 -0700
++++ openssl-1.0.0d/crypto/evp/evp.h	2011-05-20 10:55:56.075662000 -0700
+@@ -1190,6 +1190,7 @@
+ /* Error codes for the EVP functions. */
+ 
+ /* Function codes. */
++#define EVP_F_AESNI_INIT_KEY				 165
+ #define EVP_F_AES_INIT_KEY				 133
+ #define EVP_F_CAMELLIA_INIT_KEY				 159
+ #define EVP_F_D2I_PKEY					 100
+Index: crypto/evp/evp_err.c
+===================================================================
+diff -ru openssl-1.0.0d/crypto/evp/evp_err.c openssl-1.0.0d/crypto/evp/evp_err.c
+--- openssl-1.0.0d/crypto/evp/evp_err.c	2010-02-07 05:41:23.000000000 -0800
++++ openssl-1.0.0d/crypto/evp/evp_err.c	2011-05-20 10:56:21.674385000 -0700
+@@ -70,6 +70,7 @@
+ 
+ static ERR_STRING_DATA EVP_str_functs[]=
+ 	{
++{ERR_FUNC(EVP_F_AESNI_INIT_KEY),	"AESNI_INIT_KEY"},
+ {ERR_FUNC(EVP_F_AES_INIT_KEY),	"AES_INIT_KEY"},
+ {ERR_FUNC(EVP_F_CAMELLIA_INIT_KEY),	"CAMELLIA_INIT_KEY"},
+ {ERR_FUNC(EVP_F_D2I_PKEY),	"D2I_PKEY"},
+Index: util/libeay.num
+===================================================================
+diff -ru openssl-1.0.0d/util/libeay.num openssl-1.0.0d/util/libeay.num
+--- openssl-1.0.0d/util/libeay.num	2010-07-25 09:56:06.000000000 -0700
++++ openssl-1.0.0d/util/libeay.num	2011-05-20 11:01:11.198890000 -0700
+@@ -4178,6 +4178,7 @@
+ UI_method_set_prompt_constructor        4551	EXIST:!VMS:FUNCTION:
+ UI_method_set_prompt_constructr         4551	EXIST:VMS:FUNCTION:
+ EVP_read_pw_string_min                  4552	EXIST::FUNCTION:
++ENGINE_load_aesni                       4553	EXIST::FUNCTION:ENGINE
+ CRYPTO_cts128_encrypt                   4553	EXIST::FUNCTION:
+ CRYPTO_cts128_decrypt_block             4554	EXIST::FUNCTION:
+ CRYPTO_cfb128_1_encrypt                 4555	EXIST::FUNCTION:

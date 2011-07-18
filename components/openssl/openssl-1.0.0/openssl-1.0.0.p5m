@@ -53,15 +53,17 @@ dir path=usr/lib/$(MACH64)
 # Commands.
 dir path=usr
 dir path=usr/bin
-file $(MACH32)/apps/openssl path=usr/bin/openssl
+file $(MACH64)/apps/openssl path=usr/bin/openssl
 file etc/openssl/misc/CA.pl path=usr/bin/CA.pl
 dir path=usr/sfw
 dir path=usr/sfw/bin
 link path=usr/sfw/bin/openssl target=../../bin/openssl
+dir path=usr/bin/$(MACH32)
+file $(MACH32)/apps/openssl path=usr/bin/$(MACH32)/openssl
 dir path=usr/bin/$(MACH64)
 dir path=usr/sfw/bin/$(MACH64)
-file $(MACH64)/apps/openssl path=usr/bin/$(MACH64)/openssl
-link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/$(MACH64)/openssl
+link path=usr/bin/$(MACH64)/openssl target=../openssl
+link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/openssl
 # 32 bit libraries, lint libraries, and engines.
 file $(MACH32)/libcrypto.so.1.0.0 path=lib/libcrypto.so.1.0.0
 link path=lib/libcrypto.so target=libcrypto.so.1.0.0
