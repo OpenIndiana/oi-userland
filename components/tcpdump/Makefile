@@ -33,6 +33,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# the default setting of 8s makes us core dump
+studio_ALIGN.sparc.32=
+
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-user=nobody
