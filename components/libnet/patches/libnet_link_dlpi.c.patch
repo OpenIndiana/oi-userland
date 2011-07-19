@@ -1,0 +1,115 @@
+--- libnet-1.1.2.1/src/libnet_link_dlpi.c.orig	Thu Jul 14 14:55:07 2011
++++ libnet-1.1.2.1/src/libnet_link_dlpi.c	Thu Jul 14 14:55:27 2011
+@@ -123,6 +123,9 @@
+     int8_t dname2[100];
+ #endif
+ 
++    int8_t dev_net_dname[200];
++    uint32_t dev_str_len;
++
+     if (l == NULL)
+     { 
+         return (-1);
+@@ -130,21 +133,23 @@
+ 
+     /*
+      *  Determine device and ppa
++     *  ppa is the last numeric token in the datalink name
+      */
+-    cp = strpbrk(l->device, "0123456789");
+-    if (cp == NULL)
+-    {
++
++    eos = l->device;
++    ppa = -1;
++    do {
++        cp = strpbrk(eos, "0123456789");
++        if (cp != NULL) {
++            ppa = strtol(cp, &eos, 10);
++        } 
++    } while (*eos != '\0' && cp != NULL);
++    
++    if (ppa == -1) {
+         snprintf(l->err_buf, LIBNET_ERRBUF_SIZE,
+-                "%s(): %s is missing unit number\n", __func__, l->device);
+-        goto bad;
++                 "%s(): %s is missing unit number\n", __func__, l->device);
++        goto bad;                
+     }
+-    ppa = strtol(cp, &eos, 10);
+-    if (*eos != '\0')
+-    {
+-        snprintf(l->err_buf, LIBNET_ERRBUF_SIZE,
+-                "%s(): %s bad unit number\n", __func__, l->device);
+-        goto bad;
+-    }
+ 
+     if (*(l->device) == '/')
+     {
+@@ -157,6 +162,7 @@
+         sprintf(dname, "%s/%s", DLPI_DEV_PREFIX, l->device);
+     }
+ #ifdef HAVE_DEV_DLPI
++
+     /*
+      *  Map network device to /dev/dlpi unit
+      */
+@@ -179,6 +185,7 @@
+         goto bad;
+     }
+ #else
++
+     /*
+      *  Try device without unit number
+      */
+@@ -186,6 +193,40 @@
+     cp = strchr(dname, *cp);
+     *cp = '\0';
+ 
++    /* 
++     * First try the /dev/net vanity device name:
++     * /dev/net/<original_with_num> (DLPI style 1), 
++     * and then fallback to the original device name. 
++     */
++    dev_str_len = strlen("/dev/");
++    memset(dev_net_dname, 0, sizeof(dev_net_dname));
++
++    if(strlen(dname2) > dev_str_len) {
++        snprintf(dev_net_dname, sizeof(dev_net_dname),
++                 "/dev/net/%s", dname2+dev_str_len);
++    }
++
++    l->fd = open(dev_net_dname, O_RDWR);
++
++    if(l->fd == -1) {
++        goto old_style_open;
++    }
++
++    cp = dev_net_dname;
++    while(*cp && !isdigit((int)*cp)) {
++        cp++;
++    }
++    if(*cp) {
++        ppa = atoi(cp);
++    } else {
++        ppa = 0;
++    }
++
++    goto opened_device;
++    
++    /* If opening device via /dev/net fails */
++ old_style_open:
++
+     l->fd = open(dname, O_RDWR);
+     if (l->fd == -1)
+     {
+@@ -223,6 +264,9 @@
+         ppa = 0;
+     }
+ #endif
++
++ opened_device:
++
+     /*
+      *  Attach if "style 2" provider
+      */
