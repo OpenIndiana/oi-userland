@@ -1,0 +1,66 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/system/library/libnet@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="libnet - a library for portable network packet construction"
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2008/409
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license libnet.license license='BSD'
+
+dir path=usr
+dir path=usr/include
+dir path=usr/include/libnet
+dir path=usr/lib
+dir path=usr/lib/$(MACH64)
+dir path=usr/share
+dir path=usr/share/man
+dir path=usr/share/man/man3
+file path=usr/include/libnet.h
+file path=usr/include/libnet/libnet-asn1.h
+file path=usr/include/libnet/libnet-functions.h
+file path=usr/include/libnet/libnet-headers.h
+file path=usr/include/libnet/libnet-macros.h
+file path=usr/include/libnet/libnet-structures.h
+file path=usr/include/libnet/libnet-types.h
+file usr/lib/$(MACH64)/libnet.so path=usr/lib/$(MACH64)/libnet.so.1.1.2.1
+file usr/lib/libnet.so path=usr/lib/libnet.so.1.1.2.1
+file libnet-functions.h.3 path=usr/share/man/man3/libnet-functions.h.3
+file libnet-headers.h.3 path=usr/share/man/man3/libnet-headers.h.3
+file libnet-macros.h.3 path=usr/share/man/man3/libnet-macros.h.3
+file libnet.h.3 path=usr/share/man/man3/libnet.h.3
+file libnet_802_1q_hdr.3 path=usr/share/man/man3/libnet_802_1q_hdr.3
+file libnet_802_1x_hdr.3 path=usr/share/man/man3/libnet_802_1x_hdr.3
+link path=usr/lib/$(MACH64)/libnet.so target=libnet.so.1.1.2.1 
+link path=usr/lib/libnet.so target=libnet.so.1.1.2.1
+
+legacy pkg=SUNWlibnet \
+    desc="libnet - a library for portable network packet construction (1.1.2.1)" \
+    name=libnet
+
