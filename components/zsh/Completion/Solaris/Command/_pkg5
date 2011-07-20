@@ -46,6 +46,10 @@ _pkg5_pkgs_a() {
 	compadd "$@" - ${_pkg5_known_pkgs}
 }
 
+_pkg5_avoided_pkgs() {
+	compadd "$@" - $(pkg -R $pkg5_root unavoid)
+}
+
 _pkg5_pubs() {
 	compadd "$@" - $(pkg -R $pkg5_root publisher -H | awk '{print $1}')
 }
@@ -76,11 +80,12 @@ _pkg5() {
 	local -a subcmds pkg5_actions pkg5_cattr pkg5_sattr
 
 	subcmds=(
-		install uninstall list image-update refresh version
-		info search verify fix contents image-create history
-		{change-,}{variant,facet}
-		{{un,}set-,}property {{un,}set-,}publisher
-		purge-history rebuild-index
+		install uninstall list update refresh version help
+		info search verify fix revert contents image-create
+		{change-,}{variant,facet} avoid unavoid history
+		{{un,}set-,}property {add,remove}-property-value
+		{{un,}set-,}publisher purge-history rebuild-index
+		update-format
 	)
 
 	pkg5_actions=(
@@ -121,6 +126,13 @@ _pkg5() {
 			'-n[Dry run]' \
 			'-q[Quiet]' \
 			'-v[Verbose]' \
+			'-g[Specify additional source of packages]:source:_path_files -/' \
+			"--accept[Accept all licenses]" \
+			"--licenses[Display all licenses]" \
+			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
+			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
+			"--be-name[Specify a BE name]:BE name: " \
+			"--reject[Specify an FMRI to exclude from the result]:fmri:_pkg5_pkgs" \
 			"--no-refresh[Don't refresh catalogs]" \
 			"--no-index[Don't reindex search database]" \
 			'*:package:_pkg5_pkgs_a'
@@ -132,6 +144,27 @@ _pkg5() {
 			'-q[Quiet]' \
 			'-r[Recursively uninstall dependencies]' \
 			'-v[Verbose]' \
+			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
+			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
+			"--be-name[Specify a BE name]:BE name: " \
+			"--no-index[Don't reindex search database]" \
+			'*:package:_pkg5_pkgs'
+		;;
+
+	("update")
+		_arguments -A "-*" \
+			"-f[Don't check for pkg(5) updates]" \
+			'-n[Dry run]' \
+			'-q[Quiet]' \
+			'-v[Verbose]' \
+			'-g[Specify additional source of packages]:source:_path_files -/' \
+			"--accept[Accept all licenses]" \
+			"--licenses[Display all licenses]" \
+			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
+			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
+			'--be-name[Specify a BE name]:name:' \
+			"--reject[Specify an FMRI to exclude from the result]:fmri:_pkg5_pkgs" \
+			"--no-refresh[Don't refresh catalogs]" \
 			"--no-index[Don't reindex search database]" \
 			'*:package:_pkg5_pkgs'
 		;;
@@ -141,23 +174,13 @@ _pkg5() {
 			'-H[Omit headers]' \
 			'-a[Show not-installed packages]' \
 			'-f[Show all versions]' \
+			'-g[Specify additional source of packages]:source:_path_files -/' \
 			'-n[Show newest versions]' \
 			'-s[Show summaries]' \
 			'-u[Show upgradable versions]' \
 			'-v[Show verbose pkg: FMRIs]' \
 			"--no-refresh[Don't refresh catalogs]" \
 			'*:package:_pkg5_pkgs_a'
-		;;
-
-	("image-update")
-		_arguments -A "-*" \
-			"-f[Don't check for pkg(5) updates]" \
-			'-n[Dry run]' \
-			'-q[Quiet]' \
-			'-v[Verbose]' \
-			'--be-name[Set new boot environment name]:name:' \
-			"--no-refresh[Don't refresh catalogs]" \
-			"--no-index[Don't reindex search database]"
 		;;
 
 	("refresh")
@@ -197,9 +220,22 @@ _pkg5() {
 
 	("fix")
 		_arguments -A "-*" \
-			'--accept[Force acceptance of license(s)]' \
-			'--licenses[Display license text(s)]' \
+			'--accept[Accept all licenses]' \
+			'--licenses[Display all licenses]' \
 			'*:package:_pkg5_pkgs'
+		;;
+
+	("revert")
+		_arguments -A "-*" \
+			'-n[Dry run]' \
+			'-v[Verbose]' \
+			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
+			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
+			'--tagged[Revert all tagged files]:tag:' \
+			'--be-name[Specify a BE name]:name:' \
+			"--no-refresh[Don't refresh catalogs]" \
+			"--no-index[Don't reindex search database]" \
+			'*:file:_path_files'
 		;;
 
 	("contents")
@@ -235,7 +271,12 @@ _pkg5() {
 			'-n[Dry run]' \
 			'-q[Quiet'] \
 			'-v[Verbose'] \
-			'--be-name[Set new boot environment name]:name:' \
+			'-g[Specify additional source of packages]:source:_path_files -/' \
+			'--accept[Accept all licenses]' \
+			'--licenses[Display all licenses]' \
+			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
+			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
+			'--be-name[Specify a BE name]:name:' \
 			"*:variant:_values -s , 'variant' $(pkg -R $pkg5_root variant -H | awk '{print $1}')" \
 		;;
 
@@ -244,7 +285,12 @@ _pkg5() {
 			'-n[Dry run]' \
 			'-q[Quiet'] \
 			'-v[Verbose'] \
-			'--be-name[Set new boot environment name]:name:' \
+			'-g[Specify additional source of packages]:source:_path_files -/' \
+			'--accept[Accept all licenses]' \
+			'--licenses[Display all licenses]' \
+			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
+			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
+			'--be-name[Specify a BE name]:name:' \
 			"*:facet:_values -s , 'facet' $(pkg -R $pkg5_root facet -H | awk '{print $1}')" \
 		;;
 
@@ -260,7 +306,29 @@ _pkg5() {
 			'*:facet:_pkg5_facets'
 		;;
 
+	("avoid")
+		_arguments -A "-*" \
+			'*:package:_pkg5_pkgs_a'
+		;;
+
+	("unavoid")
+		_arguments -A "-*" \
+			'*:package:_pkg5_avoided_pkgs'
+		;;
+
 	("set-property")
+		_arguments -A "-*" \
+			':property:_pkg5_properties' \
+			':value:'
+		;;
+
+	("add-property-value")
+		_arguments -A "-*" \
+			':property:_pkg5_properties' \
+			':value:'
+		;;
+
+	("remove-property-value")
 		_arguments -A "-*" \
 			':property:_pkg5_properties' \
 			':value:'
@@ -310,9 +378,18 @@ _pkg5() {
 		;;
 
 	("history")
+		local -a hist_columns
+		hist_columns=(
+			"be" "be_uuid" "client" "client_ver" "command" "finish"
+			"id" "new_be" "new_be_uuid" "operation" "outcome"
+			"reason" "snapshot" "start" "time" "user"
+		)
 		_arguments -A "-*" \
 			'-H[Omit headers]' \
-			'-l[Long history]'
+			'-l[Long history]' \
+			'-n[Last n records]:number:' \
+			'-o[Column]:number:_values -s , "column" $hist_columns' \
+			'-t[Time range]'
 		;;
 
 	(*)
