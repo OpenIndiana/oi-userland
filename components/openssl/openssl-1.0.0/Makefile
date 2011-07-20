@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 
 # Architecture-specific patches
 EXTRA_PATCHES.i386 = $(PATCH_DIR)/openssl-1.0.0d-aesni-v4.i386-patch
+EXTRA_PATCHES.sparc = $(PATCH_DIR)/openssl-1.0.0d-t4-engine.sparc-patch
 EXTRA_PATCHES = $(EXTRA_PATCHES.$(MACH))
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -126,7 +127,10 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(CP) -fp engines/aesni/aesni-x86*.pl	$(@D)/crypto/aes/asm; \
       $(CP) -fp engines/devcrypto/*.[ch]	$(@D)/engines; \
       $(CP) -fp engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
-      )
+      $(CP) -fp engines/t4/eng_t4*.[ch]		$(@D)/crypto/engine; \
+      $(CP) -fp engines/t4/t4_aes.S		$(@D)/crypto/aes/asm; \
+      $(CP) -fp engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
+      $(CP) -fp engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; )
 
 build:		$(BUILD_32_and_64)
 
