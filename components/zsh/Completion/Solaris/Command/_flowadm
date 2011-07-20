@@ -1,4 +1,5 @@
 #compdef flowadm
+# Synced with the Nevada build 171 man page
 
 _flowadm() {
 
@@ -21,7 +22,6 @@ subcmds=(
 	"set-flowprop"
 	"reset-flowprop"
 	"show-flowprop"
-	"show-usage"
 )
 	
 tr=(
@@ -33,7 +33,6 @@ tr=(
 )
 
 props=(
-	"priority"
 	"maxbw"
 )
 
@@ -49,27 +48,27 @@ if [[ $service == "flowadm" ]]; then
 	curcontext="${curcontext%:*}=$service:"
 fi
 case $service in
+
 	("show-flow")
 	_arguments -A "-*" \
 		'-o[specify field to display]:field:(flow link ipaddr proto port dsfield)' \
 		'-p[parsable output]' \
 		'-P[persistent flow property information]' \
-		'-S[continuously display network utilization by flow]' \
-		'-s[display flow statistics]' \
-		'-i[specify interval (used with -s)]:interval' \
 		- set1 \
 		'-l[display information for link]:link or flow:_net_interfaces' \
 		- set2 \
 		':flow:_flowadm_flow' \
 	;;
+
 	("add-flow")
 	_arguments -A "-*" \
 		'-t[temporary changes - do not persist across reboots]' \
 		'-R[alternate root dir]:alternate root:_files' \
 		'-l[specify link to which flow will be added]:link:_net_interfaces' \
 		'-a[specify attribute]:attribute:(local_ip= remote_ip= transport=$tr local_port= dsfield=)' \
-		'-p[set property value]:property:(maxbw= priority=)' \
+		'-p[set property value]:property:(maxbw=)' \
 	;;
+
 	("remove-flow")
 	_arguments -A "-*" \
 		'-t[temporary changes - do not persist across reboots]' \
@@ -79,40 +78,31 @@ case $service in
 		- set2 \
 		':flow:_flowadm_flow' \
 	;;
+
 	("set-flowprop")
 	_arguments -A "-*" \
 		'-t[temporary changes - do not persist across reboots]' \
 		'-R[alternate root dir]:alternate root:_files' \
-		'-p[set property value]:property:(maxbw= priority=)' \
+		'-p[set property value]:property:(maxbw=)' \
 		':flow:_flowadm_flow' \
 	;;
+
 	("reset-flowprop")
 	_arguments -A "-*" \
 		'-t[temporary changes - do not persist across reboots]' \
 		'-R[alternate root dir]:alternate root:_files' \
-		'-p[set property value]:property:(maxbw= priority=)' \
+		'-p[set property value]:property:(maxbw=)' \
 		':flow:_flowadm_flow' \
 	;;
+
 	("show-flowprop")
 	_arguments -A "-*" \
 		'-c[parsable output (requires -o)]' \
+		'-l[specify link whose properties will be shown]:link:_net_interfaces' \
 		'-P[persistent flow property information]' \
 		'-p[property to show]:property:_values -s , "property" $props' \
 		':flow:_flowadm_flow' \
 	;;
-	("show-usage")
-	_arguments -A "-*" \
-		'-a[display all historical network usage]' \
-		'-s[start time for data display (YYYY.MM.DD,hh:mm:ss)]' \
-		'-e[end time for data display (YYYY.MM.DD,hh:mm:ss)]' \
-		'-f[Read extended accounting records of network flow usage from file]:file:_files' \
-		':flow:_flowadm_flow' \
-		- set1 \
-		'-F[specifies the format of plotfile (gnuplot is only supported format)]' \
-		'-p[outputs flow usage data to a file of the format specified by the -F option]:plotfile:_files' \
-		- set2 \
-		'-d[display date in the format DD/MM/YYYY]' \
- 	;;
 
 esac
 }

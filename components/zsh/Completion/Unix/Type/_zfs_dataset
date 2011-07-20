@@ -1,0 +1,32 @@
+#autoload
+
+local -a type paths_allowed typearg datasetlist expl
+local expl_type
+
+zparseopts -D -E t+:=type p=paths_allowed
+
+[[ -n $type[(r)fs] ]]   && typearg=( filesystem )
+[[ -n $type[(r)vol] ]]  && typearg=( $typearg volume )
+[[ -n $type[(r)snap] ]] && typearg=( $typearg snapshot )
+if [[ -n $typearg ]]; then
+	typearg=( -t ${(j:,:)typearg} )
+# We know we're in zfs list if paths_allowed is non-empty.
+elif [[ -n $opt_args[-t] && ${#paths_allowed} -gt 0 ]]; then
+	typearg=( -t $opt_args[-t] )
+fi
+
+if [[ ${#paths_allowed} -gt 0 && $PREFIX == /* ]]; then
+	_path_files
+	return
+fi
+
+datasetlist=( ${="$(zfs list -H -o name $typearg)":#no datasets available} )
+
+expl_type=${typearg[2,-1]//,/\/}
+if [[ -n $type[(r)mtpt] ]]; then
+	mlist=( ${="$(zfs list -H -o mountpoint $typearg)":#no mountpoints available} )
+	datasetlist=( $datasetlist $mlist )
+	expl_type="$expl_type/mountpoint"
+fi
+
+_wanted dataset expl "$expl_type" _multi_parts "$@" -q / datasetlist
