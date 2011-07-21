@@ -1,0 +1,112 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+# The libpcap man pages should go in section 3pcap instead of
+# section 3, where "make install" puts them.
+<transform file path=usr/share/man/man3pcap/(.*) -> set action.hash usr/share/man/man3/%<1>>
+set name=pkg.fmri \
+    value=pkg:/system/library/libpcap@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Packet capture library"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.tcpdump.org
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2008/288
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+dir path=usr
+dir path=usr/include
+dir path=usr/lib
+dir path=usr/lib/$(MACH64)
+dir path=usr/share
+dir path=usr/share/man
+dir path=usr/share/man/man3pcap
+#
+file path=usr/include/pcap-bpf.h
+file path=usr/include/pcap-namedb.h
+file path=usr/include/pcap.h
+file path=usr/include/pcap/bpf.h
+file path=usr/include/pcap/namedb.h
+file path=usr/include/pcap/pcap.h
+file path=usr/include/pcap/sll.h
+file path=usr/include/pcap/usb.h
+file path=usr/lib/$(MACH64)/libpcap.so.1.1.1
+file path=usr/lib/libpcap.so.1.1.1
+file path=usr/share/man/man3pcap/pcap.3pcap
+file path=usr/share/man/man3pcap/pcap_activate.3pcap
+file path=usr/share/man/man3pcap/pcap_breakloop.3pcap
+file path=usr/share/man/man3pcap/pcap_can_set_rfmon.3pcap
+file path=usr/share/man/man3pcap/pcap_close.3pcap
+file path=usr/share/man/man3pcap/pcap_compile.3pcap
+file path=usr/share/man/man3pcap/pcap_create.3pcap
+file path=usr/share/man/man3pcap/pcap_datalink.3pcap
+file path=usr/share/man/man3pcap/pcap_datalink_name_to_val.3pcap
+file path=usr/share/man/man3pcap/pcap_datalink_val_to_name.3pcap
+file path=usr/share/man/man3pcap/pcap_dump.3pcap
+file path=usr/share/man/man3pcap/pcap_dump_close.3pcap
+file path=usr/share/man/man3pcap/pcap_dump_file.3pcap
+file path=usr/share/man/man3pcap/pcap_dump_flush.3pcap
+file path=usr/share/man/man3pcap/pcap_dump_ftell.3pcap
+file path=usr/share/man/man3pcap/pcap_dump_open.3pcap
+file path=usr/share/man/man3pcap/pcap_file.3pcap
+file path=usr/share/man/man3pcap/pcap_fileno.3pcap
+file path=usr/share/man/man3pcap/pcap_findalldevs.3pcap
+file path=usr/share/man/man3pcap/pcap_free_datalinks.3pcap
+file path=usr/share/man/man3pcap/pcap_freealldevs.3pcap
+file path=usr/share/man/man3pcap/pcap_freecode.3pcap
+file path=usr/share/man/man3pcap/pcap_get_selectable_fd.3pcap
+file path=usr/share/man/man3pcap/pcap_geterr.3pcap
+file path=usr/share/man/man3pcap/pcap_inject.3pcap
+file path=usr/share/man/man3pcap/pcap_is_swapped.3pcap
+file path=usr/share/man/man3pcap/pcap_lib_version.3pcap
+file path=usr/share/man/man3pcap/pcap_list_datalinks.3pcap
+file path=usr/share/man/man3pcap/pcap_lookupdev.3pcap
+file path=usr/share/man/man3pcap/pcap_lookupnet.3pcap
+file path=usr/share/man/man3pcap/pcap_loop.3pcap
+file path=usr/share/man/man3pcap/pcap_major_version.3pcap
+file path=usr/share/man/man3pcap/pcap_next_ex.3pcap
+file path=usr/share/man/man3pcap/pcap_offline_filter.3pcap
+file path=usr/share/man/man3pcap/pcap_open_dead.3pcap
+file path=usr/share/man/man3pcap/pcap_open_live.3pcap
+file path=usr/share/man/man3pcap/pcap_open_offline.3pcap
+file path=usr/share/man/man3pcap/pcap_set_buffer_size.3pcap
+file path=usr/share/man/man3pcap/pcap_set_datalink.3pcap
+file path=usr/share/man/man3pcap/pcap_set_promisc.3pcap
+file path=usr/share/man/man3pcap/pcap_set_rfmon.3pcap
+file path=usr/share/man/man3pcap/pcap_set_snaplen.3pcap
+file path=usr/share/man/man3pcap/pcap_set_timeout.3pcap
+file path=usr/share/man/man3pcap/pcap_setdirection.3pcap
+file path=usr/share/man/man3pcap/pcap_setfilter.3pcap
+file path=usr/share/man/man3pcap/pcap_setnonblock.3pcap
+file path=usr/share/man/man3pcap/pcap_snapshot.3pcap
+file path=usr/share/man/man3pcap/pcap_stats.3pcap
+file path=usr/share/man/man3pcap/pcap_statustostr.3pcap
+file path=usr/share/man/man3pcap/pcap_strerror.3pcap
+legacy pkg=SUNWlibpcap desc="libpcap - 1.1.1" \
+    name="libpcap - a packet capture library"
+license license.pcap license=BSD
+link path=usr/lib/$(MACH64)/libpcap.so target=./libpcap.so.1.1.1
+link path=usr/lib/$(MACH64)/libpcap.so.1 target=./libpcap.so.1.1.1
+link path=usr/lib/libpcap.so target=./libpcap.so.1.1.1
+link path=usr/lib/libpcap.so.1 target=./libpcap.so.1.1.1

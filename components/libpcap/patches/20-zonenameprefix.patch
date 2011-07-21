@@ -1,0 +1,51 @@
+--- libpcap-1.1.1/pcap-bpf-patch1.c	Mon Jul 18 16:40:47 2011
++++ patched-libpcap-1.1.1/pcap-bpf.c	Mon Jul 18 16:38:14 2011
+@@ -155,6 +155,10 @@
+ 
+ #endif /* BIOCGDLTLIST */
+ 
++#if defined(sun) && defined(LIFNAMSIZ) && defined(lifr_zoneid)
++#include <zone.h>
++#endif
++
+ /*
+  * We include the OS's <net/bpf.h>, not our "pcap/bpf.h", so we probably
+  * don't get DLT_DOCSIS defined.
+@@ -1393,6 +1397,7 @@
+ 	int status = 0;
+ 	int fd;
+ #ifdef LIFNAMSIZ
++	char *zonesep;
+ 	struct lifreq ifr;
+ 	char *ifrname = ifr.lifr_name;
+ 	const size_t ifnamsiz = sizeof(ifr.lifr_name);
+@@ -1447,6 +1452,29 @@
+ 		goto bad;
+ 	}
+ 
++#if defined(LIFNAMSIZ) && defined(ZONENAME_MAX) && defined(lifr_zoneid)
++	/*
++	 * Check if the given source network device has a '/' separated
++	 * zonename prefix string. The zonename prefixed source device
++	 * can be used by libpcap consumers to capture network traffic
++	 * in non-global zones from the global zone on Solaris 11 and
++	 * above. If the zonename prefix is present then we strip the
++	 * prefix and pass the zone ID as part of lifr_zoneid.
++	 */
++	if ((zonesep = strchr(p->opt.source, '/')) != NULL) {
++		char zonename[ZONENAME_MAX];
++		int  znamelen;
++		char *lnamep;
++
++		znamelen = zonesep - p->opt.source;
++		(void) strlcpy(zonename, p->opt.source, znamelen + 1);
++		lnamep = strdup(zonesep + 1);
++		ifr.lifr_zoneid = getzoneidbyname(zonename);
++		free(p->opt.source);
++		p->opt.source = lnamep;
++	}
++#endif
++
+ 	p->md.device = strdup(p->opt.source);
+ 	if (p->md.device == NULL) {
+ 		snprintf(p->errbuf, PCAP_ERRBUF_SIZE, "strdup: %s",
