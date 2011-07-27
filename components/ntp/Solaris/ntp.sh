@@ -28,8 +28,6 @@
 #
 . /lib/svc/share/smf_include.sh
 
-smf_is_globalzone || exit $SMF_EXIT_OK
-
 if [ -z $SMF_FMRI ]; then
         echo "SMF framework variables are not initialized."
         exit $SMF_EXIT_ERR
@@ -53,7 +51,7 @@ set -f
 #
 shift $#
 set -- -p /var/run/ntp.pid
-# We allow a step large than the panic value of 17 minutes only 
+# We allow a step larger than the panic value of 17 minutes only 
 # once when ntpd starts up. If always_all_large_step is true, 
 # then we allow this each time ntpd starts. Otherwise, we allow
 # it only the very first time ntpd starts after a boot. We 
@@ -66,7 +64,7 @@ if [ "$val" = "true" ] || \
 fi
 
 # Auth was off by default in xntpd now the default is on. Better have a way
-# to turn it off again. Also check for the obsolete "authenitcation" keyword.
+# to turn it off again. Also check for the obsolete "authentication" keyword.
 val=`svcprop -c -p config/no_auth_required $SMF_FMRI`
 if [ ! "$val" = "true" ]; then
         val=`/usr/bin/nawk '/^[ \t]*#/{next}

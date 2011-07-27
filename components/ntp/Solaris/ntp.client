@@ -20,11 +20,11 @@
 #
 # Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
 
-# If you want to configure your client to listen for multicast, uncommnet
-# this line. This should only be used for casual time keeping, like keeping
+# If you do not want to configure your client to listen for multicast, comment
+# this line out. This should only be used for casual time keeping, like keeping
 # a desktop system in sync. 
 
-#multicastclient 224.0.1.1
+multicastclient 224.0.1.1
 
 # To configure NTP servers, replace the server_name with either the IP address
 # or hostname of the server you wish to use. If you just want to keep the time
@@ -32,7 +32,9 @@
 # to a more accurate level, 3 or more is recommended. Do not choose 2, because
 # 2 servers is an unstable configuration. By the same token 3 is only acceptable
 # if all are always available, since when a single one reboots or otherwise 
-# becomes unavailable, you have just 2.
+# becomes unavailable, you have just 2. The iburst keyword specifies that 
+# multiple packets be sent at start-up to allow the system to more quickly
+# get the correct time at boot.
 #
 # For a list of Internet NTP servers see 
 # http://support.ntp.org/bin/view/Servers/WebHome
@@ -45,7 +47,9 @@
 #
 # Many ISP's also provide NTP servers for use by their customers. 
 
-server server_name iburst
+# server server_name1 iburst
+# server server_name2 iburst
+# server server_name3 iburst
 
 # Always configure the drift file. It can take days for ntpd to completely 
 # stabilize and without the drift file, it has to start over on a reboot
@@ -63,24 +67,25 @@ filegen loopstats file loopstats type day enable
 
 # To track the events regarding the system clock, the protostats file can be useful
 # as well. 
+
 #filegen protostats file protostats type day enable
 
 # To see the current state of the crypto authentication protocols, enable the
 # cryptostats file.
+
 #filegen cryptostats file cryptostats type day enable
 
 # The clockstats files are only useful if a hardware reference clock is 
 # configured. See the /etc/inet/ntp.server file for more information about 
 # that.
+
 #filegen clockstats file clockstats type day enable
 
-# The sysstats and rawstats output might be useful in debugging.
+# The sysstats and rawstats output might be useful in debugging, but are 
+# not important otherwise.
+
 #filegen sysstats file sysstats type day enable
 #filegen rawstats file rawstats type day enable
-
-# The timingstats file is probably not useful at all. It is designed for
-# perfomance debugging by the developers of NTP.
-#filegen timingstats file timingstats type day enable
 
 # There are several types on authentication supported by NTP. The easiest
 # to use is a set of passwords, called "keys". They should be stored
@@ -102,6 +107,3 @@ filegen loopstats file loopstats type day enable
 # The latest leap seconds file is always available at ftp://time.nist.gov/pub
 
 #leapfile /etc/inet/ntp.leap
-
-
-
