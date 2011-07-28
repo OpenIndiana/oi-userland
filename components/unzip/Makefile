@@ -44,7 +44,7 @@ COMPONENT_BUILD_ENV += \
 
 # The Makefile we want is under unix/Makefile
 COMPONENT_BUILD_ARGS += -f unix/Makefile
-COMPONENT_BUILD_TARGETS += generic
+COMPONENT_BUILD_TARGETS += generic CC="$(CC)"
 COMPONENT_INSTALL_ARGS += -f unix/Makefile
 
 # This doesn't respect DESTDIR, so overload BINDIR and MANDIR when we install.
