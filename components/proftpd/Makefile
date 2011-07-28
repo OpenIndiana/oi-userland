@@ -67,6 +67,7 @@ CONFIGURE_OPTIONS +=	--enable-openssl
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--with-modules=mod_solaris_audit:mod_solaris_priv
 CONFIGURE_OPTIONS +=	--with-shared=mod_facl:mod_wrap:mod_tls:mod_auth_gss:mod_gss
+CONFIGURE_OPTIONS +=	--enable-buffer-size=16384
 
 # Copy Solaris modules and GSSAPI modules to proftpd source tree
 COMPONENT_PRE_CONFIGURE_ACTION = \
