@@ -1,0 +1,91 @@
+diff -u libpcap-1.1.1/gencode.c libpcap-1.1.1.new/gencode.c
+--- libpcap-1.1.1/gencode.c	Thu Mar 11 17:56:54 2010
++++ libpcap-1.1.1.new/gencode.c	Thu Jul 14 08:29:39 2011
+@@ -1588,6 +1588,13 @@
+ 		off_nl = 0;
+ 		off_nl_nosnap = -1;
+ 		return;
++
++	case DLT_IPOIB:
++		off_linktype = 40;
++		off_macpl = 44;		/* IPoIB mac_ib prefix length */
++		off_nl = 0;
++		off_nl_nosnap = -1;
++		return;
+ 	}
+ 	bpf_error("unknown data link type %d", linktype);
+ 	/* NOTREACHED */
+@@ -2048,6 +2055,16 @@
+ 	return gen_false();
+ }
+ 
++static struct block *
++gen_ipoib_linktype(proto)
++	register int proto;
++{
++	/*
++	 * This is an Ethernet type, so compare the length field with it.
++	 */
++	return gen_cmp(OR_LINK, off_linktype, BPF_H, (bpf_int32)proto);
++}
++
+ /*
+  * Generate code to match a particular packet type.
+  *
+@@ -3474,6 +3491,9 @@
+ 	case DLT_IPNET:
+ 		return gen_ipnet_linktype(proto);
+ 
++	case DLT_IPOIB:
++		return gen_ipoib_linktype(proto);
++
+ 	case DLT_LINUX_IRDA:
+ 		bpf_error("IrDA link-layer type filtering not implemented");
+ 
+diff -u libpcap-1.1.1/pcap-common.c libpcap-1.1.1.new/pcap-common.c
+--- libpcap-1.1.1/pcap-common.c	Thu Mar 11 17:56:54 2010
++++ libpcap-1.1.1.new/pcap-common.c	Thu Jul 14 08:25:56 2011
+@@ -278,6 +278,11 @@
+ #define LINKTYPE_USER15		162
+ 
+ /*
++ * IPoIB for Solaris.
++ */
++#define	LINKTYPE_IPOIB		DLT_IPOIB
++
++/*
+  * For future use with 802.11 captures - defined by AbsoluteValue
+  * Systems to store a number of bits of link-layer information
+  * including radio information:
+@@ -1067,6 +1072,9 @@
+ 	/* Solaris IPNET */
+ 	{ DLT_IPNET,		LINKTYPE_IPNET },
+ 
++	/* Solaris IPoIB */
++	{ DLT_IPOIB,		LINKTYPE_IPOIB },
++
+ 	/* CAN frames with SocketCAN headers */
+ 	{ DLT_CAN_SOCKETCAN,	LINKTYPE_CAN_SOCKETCAN },
+ 
+diff -u libpcap-1.1.1/pcap.c libpcap-1.1.1.new/pcap.c
+--- libpcap-1.1.1/pcap.c	Thu Mar 11 17:56:54 2010
++++ libpcap-1.1.1.new/pcap.c	Thu Jul 14 08:29:55 2011
+@@ -670,6 +670,7 @@
+ 	DLT_CHOICE(DLT_FC_2, "Fibre Channel FC-2"),
+ 	DLT_CHOICE(DLT_FC_2_WITH_FRAME_DELIMS, "Fibre Channel FC-2 with frame delimiters"),
+ 	DLT_CHOICE(DLT_IPNET, "Solaris ipnet"),
++	DLT_CHOICE(DLT_IPOIB, "Solaris IPoIB"),
+ 	DLT_CHOICE(DLT_CAN_SOCKETCAN, "CAN-bus with SocketCAN headers"),
+ 	DLT_CHOICE(DLT_IPV4, "Raw IPv4"),
+ 	DLT_CHOICE(DLT_IPV6, "Raw IPv6"),
+--- libpcap-1.1.1/pcap/bpf.h.dist	2010-03-11 17:56:54.000000000 -0800
++++ libpcap-1.1.1/pcap/bpf.h	2011-07-27 03:06:09.410830949 -0700
+@@ -502,6 +502,8 @@
+ #define DLT_USER14		161
+ #define DLT_USER15		162
+ 
++#define	DLT_IPOIB		DLT_USER15
++
+ /*
+  * For future use with 802.11 captures - defined by AbsoluteValue
+  * Systems to store a number of bits of link-layer information
