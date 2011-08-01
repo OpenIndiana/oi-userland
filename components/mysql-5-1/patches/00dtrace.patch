@@ -1,0 +1,5072 @@
+diff -Nru config/ac-macros/dtrace.m4 config/ac-macros/dtrace.m4
+--- config/ac-macros/dtrace.m4	1970-01-01 01:00:00.000000000 +0100
++++ config/ac-macros/dtrace.m4	2011-05-27 10:50:57.000000000 +0200
+@@ -0,0 +1,43 @@
++dnl ---------------------------------------------------------------------------
++dnl Macro: DTRACE_TEST
++dnl ---------------------------------------------------------------------------
++AC_ARG_ENABLE(dtrace,
++    AC_HELP_STRING([--enable-dtrace],[Build with support for DTrace.]),
++    [
++      ENABLE_DTRACE="$enable_dtrace"
++    ],
++    [
++      ENABLE_DTRACE="yes" 
++    ]
++)
++DTRACEFLAGS=""
++HAVE_DTRACE=""
++HAVE_DTRACE_DASH_G=""
++if test "$ENABLE_DTRACE" = "yes"; then
++  AC_PATH_PROG(DTRACE, dtrace, [not found], [$PATH:/usr/sbin])
++  if test "$DTRACE" = "not found"; then
++    ENABLE_DTRACE="no"
++  else
++    AC_DEFINE([HAVE_DTRACE], [1], [Defined to 1 if DTrace support is enabled])
++    case "$target_os" in
++      *solaris*)
++        HAVE_DTRACE_DASH_G="yes"
++        case "$CFLAGS" in
++          *-m64*)
++            DTRACEFLAGS="$DTRACEFLAGS -64"
++            ;;
++        esac
++        ;;
++      *)
++        HAVE_DTRACE_DASH_G="no"
++        ;;
++    esac
++  fi
++fi
++AC_SUBST(DTRACEFLAGS)
++AC_SUBST(HAVE_DTRACE)
++AM_CONDITIONAL([HAVE_DTRACE], [ test "$ENABLE_DTRACE" = "yes" ])
++AM_CONDITIONAL([HAVE_DTRACE_DASH_G], [ test "$HAVE_DTRACE_DASH_G" = "yes" ])
++dnl ---------------------------------------------------------------------------
++dnl End Macro: DTRACE_TEST
++dnl ---------------------------------------------------------------------------
+diff -Nru config.h.in config.h.in
+--- config.h.in	2011-05-27 11:03:51.000000000 +0200
++++ config.h.in	2011-05-27 10:51:57.000000000 +0200
+@@ -268,6 +268,9 @@
+ /* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
+ #undef HAVE_DOPRNT
+ 
++/* Defined to 1 if DTrace support is enabled */
++#undef HAVE_DTRACE
++
+ /* Access checks in embedded library */
+ #undef HAVE_EMBEDDED_PRIVILEGE_CONTROL
+ 
+diff -Nru configure configure
+--- configure	2011-05-27 11:04:09.000000000 +0200
++++ configure	2011-05-27 10:52:16.000000000 +0200
+@@ -1047,6 +1047,13 @@
+ MAKEINDEX
+ PDFLATEX
+ DOXYGEN
++HAVE_DTRACE_DASH_G_FALSE
++HAVE_DTRACE_DASH_G_TRUE
++HAVE_DTRACE_FALSE
++HAVE_DTRACE_TRUE
++HAVE_DTRACE
++DTRACEFLAGS
++DTRACE
+ am__untar
+ am__tar
+ AMTAR
+@@ -1127,6 +1134,7 @@
+ with_extra_charsets
+ with_uca
+ with_experimental_collations
++enable_dtrace
+ with_system_type
+ with_machine_type
+ with_darwin_mwcc
+@@ -1832,6 +1840,7 @@
+   --disable-option-checking  ignore unrecognized --enable/--with options
+   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
+   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
++  --enable-dtrace         Build with support for DTrace.
+   --disable-dependency-tracking  speeds up one-time build
+   --enable-dependency-tracking   do not reject slow dependency extractors
+   --enable-shared[=PKGS]  build shared libraries [default=yes]
+@@ -3870,6 +3879,106 @@
+ 
+ 
+ 
++# Check whether --enable-dtrace was given.
++if test "${enable_dtrace+set}" = set; then
++  enableval=$enable_dtrace;
++      ENABLE_DTRACE="$enable_dtrace"
++
++else
++
++      ENABLE_DTRACE="yes"
++
++
++fi
++
++DTRACEFLAGS=""
++HAVE_DTRACE=""
++HAVE_DTRACE_DASH_G=""
++if test "$ENABLE_DTRACE" = "yes"; then
++  # Extract the first word of "dtrace", so it can be a program name with args.
++set dummy dtrace; ac_word=$2
++{ $as_echo "$as_me:$LINENO: checking for $ac_word" >&5
++$as_echo_n "checking for $ac_word... " >&6; }
++if test "${ac_cv_path_DTRACE+set}" = set; then
++  $as_echo_n "(cached) " >&6
++else
++  case $DTRACE in
++  [\\/]* | ?:[\\/]*)
++  ac_cv_path_DTRACE="$DTRACE" # Let the user override the test with a path.
++  ;;
++  *)
++  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
++as_dummy="$PATH:/usr/sbin"
++for as_dir in $as_dummy
++do
++  IFS=$as_save_IFS
++  test -z "$as_dir" && as_dir=.
++  for ac_exec_ext in '' $ac_executable_extensions; do
++  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
++    ac_cv_path_DTRACE="$as_dir/$ac_word$ac_exec_ext"
++    $as_echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
++    break 2
++  fi
++done
++done
++IFS=$as_save_IFS
++
++  test -z "$ac_cv_path_DTRACE" && ac_cv_path_DTRACE="not found"
++  ;;
++esac
++fi
++DTRACE=$ac_cv_path_DTRACE
++if test -n "$DTRACE"; then
++  { $as_echo "$as_me:$LINENO: result: $DTRACE" >&5
++$as_echo "$DTRACE" >&6; }
++else
++  { $as_echo "$as_me:$LINENO: result: no" >&5
++$as_echo "no" >&6; }
++fi
++
++
++  if test "$DTRACE" = "not found"; then
++    ENABLE_DTRACE="no"
++  else
++
++cat >>confdefs.h <<\_ACEOF
++#define HAVE_DTRACE 1
++_ACEOF
++
++    case "$target_os" in
++      *solaris*)
++        HAVE_DTRACE_DASH_G="yes"
++        case "$CFLAGS" in
++          *-m64*)
++            DTRACEFLAGS="$DTRACEFLAGS -64"
++            ;;
++        esac
++        ;;
++      *)
++        HAVE_DTRACE_DASH_G="no"
++        ;;
++    esac
++  fi
++fi
++
++
++ if  test "$ENABLE_DTRACE" = "yes" ; then
++  HAVE_DTRACE_TRUE=
++  HAVE_DTRACE_FALSE='#'
++else
++  HAVE_DTRACE_TRUE='#'
++  HAVE_DTRACE_FALSE=
++fi
++
++ if  test "$HAVE_DTRACE_DASH_G" = "yes" ; then
++  HAVE_DTRACE_DASH_G_TRUE=
++  HAVE_DTRACE_DASH_G_FALSE='#'
++else
++  HAVE_DTRACE_DASH_G_TRUE='#'
++  HAVE_DTRACE_DASH_G_FALSE=
++fi
++
++
+ 
+ 
+ 
+@@ -45566,6 +45675,20 @@
+ LTLIBOBJS=$ac_ltlibobjs
+ 
+ 
++if test -z "${HAVE_DTRACE_TRUE}" && test -z "${HAVE_DTRACE_FALSE}"; then
++  { { $as_echo "$as_me:$LINENO: error: conditional \"HAVE_DTRACE\" was never defined.
++Usually this means the macro was only invoked conditionally." >&5
++$as_echo "$as_me: error: conditional \"HAVE_DTRACE\" was never defined.
++Usually this means the macro was only invoked conditionally." >&2;}
++   { (exit 1); exit 1; }; }
++fi
++if test -z "${HAVE_DTRACE_DASH_G_TRUE}" && test -z "${HAVE_DTRACE_DASH_G_FALSE}"; then
++  { { $as_echo "$as_me:$LINENO: error: conditional \"HAVE_DTRACE_DASH_G\" was never defined.
++Usually this means the macro was only invoked conditionally." >&5
++$as_echo "$as_me: error: conditional \"HAVE_DTRACE_DASH_G\" was never defined.
++Usually this means the macro was only invoked conditionally." >&2;}
++   { (exit 1); exit 1; }; }
++fi
+ if test -z "${DARWIN_MWCC_TRUE}" && test -z "${DARWIN_MWCC_FALSE}"; then
+   { { $as_echo "$as_me:$LINENO: error: conditional \"DARWIN_MWCC\" was never defined.
+ Usually this means the macro was only invoked conditionally." >&5
+diff -Nru configure.in configure.in
+--- configure.in	2011-05-27 11:02:46.000000000 +0200
++++ configure.in	2011-05-27 10:50:57.000000000 +0200
+@@ -50,6 +50,7 @@
+ sinclude(config/ac-macros/check_cpu.m4)
+ sinclude(config/ac-macros/character_sets.m4)
+ sinclude(config/ac-macros/compiler_flag.m4)
++sinclude(config/ac-macros/dtrace.m4)
+ sinclude(config/ac-macros/plugins.m4)
+ sinclude(config/ac-macros/ha_ndbcluster.m4)
+ sinclude(config/ac-macros/large_file.m4)
+diff -Nru include/Makefile.am include/Makefile.am
+--- include/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ include/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -67,5 +67,18 @@
+ dist-hook:
+ 	$(RM) -f $(distdir)/mysql_version.h $(distdir)/my_config.h
+ 
++
++if HAVE_DTRACE
++BUILT_SOURCES += probes_mysql_dtrace.h
++CLEANFILES += probes_mysql_dtrace.h
++DTRACEPROVIDER = $(top_srcdir)/sql/probes_mysql.d
++
++probes_mysql_dtrace.h: $(DTRACEPROVIDER)
++	$(DTRACE) $(DTRACEFLAGS) -h -s $^ -o $@
++endif
++
++probes_mysql_nodtrace.h: $(DTRACEPROVIDER)
++	$(top_srcdir)/scripts/dheadgen.pl -f $^ > $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru include/Makefile.in include/Makefile.in
+--- include/Makefile.in	2011-05-27 11:03:55.000000000 +0200
++++ include/Makefile.in	2011-05-27 10:52:01.000000000 +0200
+@@ -50,6 +50,8 @@
+ build_triplet = @build@
+ host_triplet = @host@
+ target_triplet = @target@
++@HAVE_DTRACE_TRUE@am__append_1 = probes_mysql_dtrace.h
++@HAVE_DTRACE_TRUE@am__append_2 = probes_mysql_dtrace.h
+ subdir = include
+ DIST_COMMON = $(noinst_HEADERS) $(pkginclude_HEADERS) \
+ 	$(srcdir)/Makefile.am $(srcdir)/Makefile.in \
+@@ -59,6 +61,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -130,6 +133,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -142,6 +147,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -386,7 +392,7 @@
+ yassl_libs = @yassl_libs@
+ yassl_taocrypt_extra_cxxflags = @yassl_taocrypt_extra_cxxflags@
+ zlib_dir = @zlib_dir@
+-BUILT_SOURCES = $(HEADERS_GEN_MAKE) link_sources
++BUILT_SOURCES = $(HEADERS_GEN_MAKE) link_sources $(am__append_1)
+ HEADERS_GEN_CONFIGURE = mysql_version.h
+ HEADERS_GEN_MAKE = my_config.h
+ HEADERS_ABI = mysql.h mysql_com.h mysql_time.h \
+@@ -416,10 +422,11 @@
+ EXTRA_DIST = mysql.h.pp mysql/plugin.h.pp
+ 
+ # Remove built files and the symlinked directories
+-CLEANFILES = $(BUILT_SOURCES) readline openssl
++CLEANFILES = $(BUILT_SOURCES) readline openssl $(am__append_2)
+ 
+ # Some include files that may be moved and patched by configure
+ DISTCLEANFILES = sched.h $(CLEANFILES) $(HEADERS_GEN_CONFIGURE)
++@HAVE_DTRACE_TRUE@DTRACEPROVIDER = $(top_srcdir)/sql/probes_mysql.d
+ all: $(BUILT_SOURCES) config.h
+ 	$(MAKE) $(AM_MAKEFLAGS) all-am
+ 
+@@ -696,6 +703,12 @@
+ dist-hook:
+ 	$(RM) -f $(distdir)/mysql_version.h $(distdir)/my_config.h
+ 
++@HAVE_DTRACE_TRUE@probes_mysql_dtrace.h: $(DTRACEPROVIDER)
++@HAVE_DTRACE_TRUE@	$(DTRACE) $(DTRACEFLAGS) -h -s $^ -o $@
++
++probes_mysql_nodtrace.h: $(DTRACEPROVIDER)
++	$(top_srcdir)/scripts/dheadgen.pl -f $^ > $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru libmysql/Makefile.in libmysql/Makefile.in
+--- libmysql/Makefile.in	2011-05-27 11:03:55.000000000 +0200
++++ libmysql/Makefile.in	2011-05-27 10:52:01.000000000 +0200
+@@ -89,6 +89,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -187,13 +188,16 @@
+ 			-DDEFAULT_HOME_ENV=MYSQL_HOME \
+ 			-DDEFAULT_GROUP_SUFFIX_ENV=MYSQL_GROUP_SUFFIX \
+ 			-DDEFAULT_SYSCONFDIR="\"$(sysconfdir)\"" \
+-			-DSHAREDIR="\"$(MYSQLSHAREdir)\"" $(target_defs)
++			-DSHAREDIR="\"$(MYSQLSHAREdir)\"" -DDISABLE_DTRACE \
++			$(target_defs)
+ 
+ DEPDIR = @DEPDIR@
+ DIFF = @DIFF@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -206,6 +210,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+diff -Nru libmysql/Makefile.shared libmysql/Makefile.shared
+--- libmysql/Makefile.shared	2011-05-27 11:02:47.000000000 +0200
++++ libmysql/Makefile.shared	2011-05-27 10:50:57.000000000 +0200
+@@ -89,7 +89,8 @@
+ 			-DDEFAULT_HOME_ENV=MYSQL_HOME \
+ 			-DDEFAULT_GROUP_SUFFIX_ENV=MYSQL_GROUP_SUFFIX \
+ 			-DDEFAULT_SYSCONFDIR="\"$(sysconfdir)\"" \
+-			-DSHAREDIR="\"$(MYSQLSHAREdir)\"" $(target_defs)
++			-DSHAREDIR="\"$(MYSQLSHAREdir)\"" -DDISABLE_DTRACE \
++			$(target_defs)
+ 
+ if HAVE_YASSL
+ yassl_las = $(top_builddir)/extra/yassl/src/libyassl.la \
+diff -Nru libmysql_r/Makefile.in libmysql_r/Makefile.in
+--- libmysql_r/Makefile.in	2011-05-27 11:03:55.000000000 +0200
++++ libmysql_r/Makefile.in	2011-05-27 10:52:01.000000000 +0200
+@@ -87,6 +87,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -184,13 +185,16 @@
+ 			-DDEFAULT_HOME_ENV=MYSQL_HOME \
+ 			-DDEFAULT_GROUP_SUFFIX_ENV=MYSQL_GROUP_SUFFIX \
+ 			-DDEFAULT_SYSCONFDIR="\"$(sysconfdir)\"" \
+-			-DSHAREDIR="\"$(MYSQLSHAREdir)\"" $(target_defs)
++			-DSHAREDIR="\"$(MYSQLSHAREdir)\"" -DDISABLE_DTRACE \
++			$(target_defs)
+ 
+ DEPDIR = @DEPDIR@
+ DIFF = @DIFF@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -203,6 +207,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+diff -Nru mysys/Makefile.am mysys/Makefile.am
+--- mysys/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ mysys/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -126,5 +126,21 @@
+ 	$(LINK) $(FLAGS) -DMAIN  ./test_base64.c $(LDADD) $(LIBS)
+ 	$(RM) -f ./test_base64.c
+ 
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libmysys_a_LIBADD += probes_mysql.o
++libmysys_a_DEPENDENCIES += probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = mf_keycache.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru mysys/Makefile.in mysys/Makefile.in
+--- mysys/Makefile.in	2011-05-27 11:03:56.000000000 +0200
++++ mysys/Makefile.in	2011-05-27 10:52:02.000000000 +0200
+@@ -49,6 +49,8 @@
+ build_triplet = @build@
+ host_triplet = @host@
+ target_triplet = @target@
++@HAVE_DTRACE_DASH_G_TRUE@am__append_1 = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@am__append_2 = probes_mysql.o dtrace_files dtrace_providers
+ subdir = mysys
+ DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in ChangeLog
+@@ -57,6 +59,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -201,6 +204,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -213,6 +218,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -324,6 +330,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -504,11 +511,14 @@
+ 			CMakeLists.txt mf_soundex.c \
+ 			my_conio.c my_wincond.c my_winthread.c
+ 
+-libmysys_a_LIBADD = @THREAD_LOBJECTS@
+-libmysys_a_DEPENDENCIES = @THREAD_LOBJECTS@
++libmysys_a_LIBADD = @THREAD_LOBJECTS@ $(am__append_1)
++libmysys_a_DEPENDENCIES = @THREAD_LOBJECTS@ $(am__append_2)
+ 
+ # I hope this always does the right thing. Otherwise this is only test programs
+ FLAGS = $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) @NOINST_LDFLAGS@
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = mf_keycache.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -836,6 +846,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -969,6 +980,13 @@
+ 	$(LINK) $(FLAGS) -DMAIN  ./test_base64.c $(LDADD) $(LIBS)
+ 	$(RM) -f ./test_base64.c
+ 
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru mysys/mf_keycache.c mysys/mf_keycache.c
+--- mysys/mf_keycache.c	2011-05-27 11:02:47.000000000 +0200
++++ mysys/mf_keycache.c	2011-05-27 10:50:57.000000000 +0200
+@@ -109,6 +109,7 @@
+ #include <my_bit.h>
+ #include <errno.h>
+ #include <stdarg.h>
++#include "probes_mysql.h"
+ 
+ /*
+   Some compilation flags have been added specifically for this module
+@@ -2539,6 +2540,15 @@
+     uint status;
+     int page_st;
+ 
++    if (MYSQL_KEYCACHE_READ_START_ENABLED())
++      {
++	MYSQL_KEYCACHE_READ_START(my_filename(file), length,
++				  (ulong) (keycache->blocks_used *
++					   keycache->key_cache_block_size),
++				  (ulong) (keycache->blocks_unused *
++					   keycache->key_cache_block_size));
++      }
++
+     /*
+       When the key cache is once initialized, we use the cache_lock to
+       reliably distinguish the cases of normal operation, resizing, and
+@@ -2588,6 +2598,9 @@
+ 
+       /* Request the cache block that matches file/pos. */
+       keycache->global_cache_r_requests++;
++
++      MYSQL_KEYCACHE_READ_BLOCK(keycache->key_cache_block_size);
++
+       block=find_key_block(keycache, file, filepos, level, 0, &page_st);
+       if (!block)
+       {
+@@ -2607,6 +2620,7 @@
+       {
+         if (page_st != PAGE_READ)
+         {
++	  MYSQL_KEYCACHE_READ_MISS();
+           /* The requested page is to be read into the block buffer */
+           read_block(keycache, block,
+                      keycache->key_cache_block_size, read_length+offset,
+@@ -2631,6 +2645,10 @@
+           my_errno= -1;
+           block->status|= BLOCK_ERROR;
+         }
++	else
++	  {
++	    MYSQL_KEYCACHE_READ_HIT();
++	  }
+       }
+ 
+       /* block status may have added BLOCK_ERROR in the above 'if'. */
+@@ -2675,14 +2693,31 @@
+ #ifndef THREAD
+       /* This is only true if we where able to read everything in one block */
+       if (return_buffer)
+-	DBUG_RETURN(block->buffer);
++	{
++	  if (MYSQL_KEYCACHE_READ_DONE_ENABLED())
++	    {
++	      MYSQL_KEYCACHE_READ_DONE((ulong) (keycache->blocks_used *
++						keycache->key_cache_block_size),
++				       (ulong) (keycache->blocks_unused *
++						keycache->key_cache_block_size));
++	    }
++	  DBUG_RETURN(block->buffer);
++	}
++    }
+ #endif
+   next_block:
+       buff+= read_length;
+       filepos+= read_length+offset;
+       offset= 0;
+ 
+-    } while ((length-= read_length));
++  } while ((length-= read_length));
++  if (MYSQL_KEYCACHE_READ_DONE_ENABLED())
++  {
++    MYSQL_KEYCACHE_READ_DONE((ulong) (keycache->blocks_used *
++				      keycache->key_cache_block_size),
++			     (ulong) (keycache->blocks_unused *
++				      keycache->key_cache_block_size));
++  }
+     goto end;
+   }
+ 
+@@ -3011,6 +3046,15 @@
+     uint offset;
+     int page_st;
+ 
++    if (MYSQL_KEYCACHE_WRITE_START_ENABLED())
++      {
++	MYSQL_KEYCACHE_WRITE_START(my_filename(file), length,
++				   (ulong) (keycache->blocks_used *
++					    keycache->key_cache_block_size),
++				   (ulong) (keycache->blocks_unused *
++					    keycache->key_cache_block_size));
++      }
++
+     /*
+       When the key cache is once initialized, we use the cache_lock to
+       reliably distinguish the cases of normal operation, resizing, and
+@@ -3046,6 +3090,9 @@
+       /* Cache could be disabled in a later iteration. */
+       if (!keycache->can_be_used)
+ 	goto no_key_cache;
++
++      MYSQL_KEYCACHE_WRITE_BLOCK(keycache->key_cache_block_size);
++
+       /* Start writing at the beginning of the cache block. */
+       filepos-= offset;
+       /* Do not write beyond the end of the cache block. */
+@@ -3249,6 +3296,15 @@
+     dec_counter_for_resize_op(keycache);
+     keycache_pthread_mutex_unlock(&keycache->cache_lock);
+   }
++
++  if (MYSQL_KEYCACHE_WRITE_DONE_ENABLED())
++    {
++      MYSQL_KEYCACHE_WRITE_DONE((ulong) (keycache->blocks_used *
++					 keycache->key_cache_block_size),
++				(ulong) (keycache->blocks_unused *
++					 keycache->key_cache_block_size));
++    }
++
+ #if !defined(DBUG_OFF) && defined(EXTRA_DEBUG)
+   DBUG_EXECUTE("exec",
+                test_key_cache(keycache, "end of key_cache_write", 1););
+diff -Nru server-tools/instance-manager/Makefile.am server-tools/instance-manager/Makefile.am
+--- server-tools/instance-manager/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ server-tools/instance-manager/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -49,6 +49,7 @@
+ 	$(top_builddir)/sql/client.$(OBJEXT)
+ 
+ CLEANFILES= net_serv.cc client_settings.h
++DEFS = -DMYSQL_INSTANCE_MANAGER -DMYSQL_SERVER -DDISABLE_DTRACE
+ 
+ net_serv.cc:
+ 	rm -f net_serv.cc
+diff -Nru server-tools/instance-manager/Makefile.in server-tools/instance-manager/Makefile.in
+--- server-tools/instance-manager/Makefile.in	2011-05-27 11:03:57.000000000 +0200
++++ server-tools/instance-manager/Makefile.in	2011-05-27 10:52:04.000000000 +0200
+@@ -58,6 +58,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -182,12 +183,14 @@
+ CXXLDFLAGS = @CXXLDFLAGS@
+ CXX_VERSION = @CXX_VERSION@
+ CYGPATH_W = @CYGPATH_W@
+-DEFS = -DMYSQL_INSTANCE_MANAGER -DMYSQL_SERVER
++DEFS = -DMYSQL_INSTANCE_MANAGER -DMYSQL_SERVER -DDISABLE_DTRACE
+ DEPDIR = @DEPDIR@
+ DIFF = @DIFF@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -200,6 +203,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+diff -Nru sql/Makefile.am sql/Makefile.am
+--- sql/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ sql/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -28,6 +28,22 @@
+ libexec_PROGRAMS =	mysqld
+ EXTRA_PROGRAMS =	gen_lex_hash
+ bin_PROGRAMS =		mysql_tzinfo_to_sql
++DTRACEFILES =           filesort.o \
++                        .libs/libndb_la-ha_ndbcluster.o \
++                        handler.o \
++                        mysqld.o \
++                        net_serv.o \
++                        scheduler.o \
++                        sp_head.o \
++                        sql_cache.o \
++                        sql_connect.o \
++                        sql_cursor.o \
++                        sql_delete.o \
++                        sql_insert.o \
++                        sql_parse.o \
++                        sql_prepare.o \
++                        sql_select.o \
++                        sql_update.o
+ 
+ noinst_LTLIBRARIES=	libndb.la \
+ 			udf_example.la
+@@ -122,7 +138,7 @@
+ 			sql_builtin.cc sql_tablespace.cc partition_info.cc \
+ 			sql_servers.cc event_parse_data.cc
+ 
+-nodist_mysqld_SOURCES =	mini_client_errors.c pack.c client.c my_time.c my_user.c 
++nodist_mysqld_SOURCES =	mini_client_errors.c pack.c client.c my_time.c my_user.c
+ 
+ libndb_la_CPPFLAGS=	@ndbcluster_includes@
+ libndb_la_SOURCES=	ha_ndbcluster.cc \
+@@ -188,5 +204,32 @@
+ 	test ! -f mysqld-debug.sym.gz   || $(INSTALL_DATA)    mysqld-debug.sym.gz   $(DESTDIR)$(pkglibdir)
+ 	test ! -f mysqld.sym.gz         || $(INSTALL_DATA)    mysqld.sym.gz         $(DESTDIR)$(pkglibdir)
+ 
++if HAVE_DTRACE_DASH_G
++libndb_la_LIBADD = probes_libndb.o
++libndb_la_DEPENDENCIES = dtrace_files dtrace_providers probes_libndb.o
++abs_top_srcdir = @abs_top_srcdir@
++mysqld_LDADD += probes_all.o
++mysqld_DEPENDENCIES += dtrace_files dtrace_providers probes_all.o
++CLEANFILES += dtrace_files dtrace_providers probes_all.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++
++DTRACEDIRS = . ../mysys $(patsubst %,$(top_builddir)/storage/%,@mysql_se_dirs@) backup
++
++.libs/libndb_la-ha_ndbcluster.o : libndb_la-ha_ndbcluster.lo
++
++probes_all.o: probes_mysql.d $(DTRACEFILES)
++	providers=`(for i in $(DTRACEDIRS); do cat $$i/dtrace_providers 2>/dev/null; done) | tr " " "\n" | sort | uniq | sed -e '/^$$/d' -e 's/^/-s /'`; \
++	objects=`for i in $(DTRACEDIRS); do f=\`cat $$i/dtrace_files 2>/dev/null\`; for j in $$f; do test -f $$i/$$j && echo "$$i/$$j "; done; done`; \
++	$(DTRACE) $(DTRACEFLAGS) -G $$providers $$objects -o $@
++
++probes_libndb.o: probes_mysql.d .libs/libndb_la-ha_ndbcluster.o
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< .libs/libndb_la-ha_ndbcluster.o -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru sql/Makefile.in sql/Makefile.in
+--- sql/Makefile.in	2011-05-27 11:03:58.000000000 +0200
++++ sql/Makefile.in	2011-05-27 10:52:04.000000000 +0200
+@@ -55,6 +55,9 @@
+ libexec_PROGRAMS = mysqld$(EXEEXT)
+ EXTRA_PROGRAMS = gen_lex_hash$(EXEEXT)
+ bin_PROGRAMS = mysql_tzinfo_to_sql$(EXEEXT)
++@HAVE_DTRACE_DASH_G_TRUE@am__append_1 = probes_all.o
++@HAVE_DTRACE_DASH_G_TRUE@am__append_2 = dtrace_files dtrace_providers probes_all.o
++@HAVE_DTRACE_DASH_G_TRUE@am__append_3 = dtrace_files dtrace_providers probes_all.o
+ subdir = sql
+ DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in $(srcdir)/sql_builtin.cc.in sql_yacc.cc \
+@@ -64,6 +67,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -78,7 +82,6 @@
+ CONFIG_HEADER = $(top_builddir)/include/config.h
+ CONFIG_CLEAN_FILES = sql_builtin.cc
+ LTLIBRARIES = $(noinst_LTLIBRARIES)
+-libndb_la_LIBADD =
+ am_libndb_la_OBJECTS = libndb_la-ha_ndbcluster.lo \
+ 	libndb_la-ha_ndbcluster_binlog.lo \
+ 	libndb_la-ha_ndbcluster_cond.lo
+@@ -255,6 +258,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -267,6 +272,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -378,6 +384,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -521,6 +528,23 @@
+ 			-I$(top_srcdir)/regex -I$(srcdir) $(openssl_includes)
+ 
+ SUBDIRS = share
++DTRACEFILES = filesort.o \
++                        .libs/libndb_la-ha_ndbcluster.o \
++                        handler.o \
++                        mysqld.o \
++                        net_serv.o \
++                        scheduler.o \
++                        sp_head.o \
++                        sql_cache.o \
++                        sql_connect.o \
++                        sql_cursor.o \
++                        sql_delete.o \
++                        sql_insert.o \
++                        sql_parse.o \
++                        sql_prepare.o \
++                        sql_select.o \
++                        sql_update.o
++
+ noinst_LTLIBRARIES = libndb.la \
+ 			udf_example.la
+ 
+@@ -530,15 +554,13 @@
+ 			$(top_builddir)/regex/libregex.a \
+ 			$(top_builddir)/strings/libmystrings.a
+ 
+-mysqld_DEPENDENCIES = @mysql_plugin_libs@ $(SUPPORTING_LIBS) libndb.la
++mysqld_DEPENDENCIES = @mysql_plugin_libs@ $(SUPPORTING_LIBS) libndb.la \
++	$(am__append_2)
+ LDADD = $(SUPPORTING_LIBS) @ZLIB_LIBS@ @NDB_SCI_LIBS@
+-mysqld_LDADD = libndb.la \
+-			@MYSQLD_EXTRA_LDFLAGS@ \
+-			@pstack_libs@ \
+-			@mysql_plugin_libs@ \
+-			$(LDADD)  $(CXXLDFLAGS) $(WRAPLIBS) @LIBDL@ \
+-			$(yassl_libs) $(openssl_libs) @MYSQLD_EXTRA_LIBS@
+-
++mysqld_LDADD = libndb.la @MYSQLD_EXTRA_LDFLAGS@ @pstack_libs@ \
++	@mysql_plugin_libs@ $(LDADD) $(CXXLDFLAGS) $(WRAPLIBS) @LIBDL@ \
++	$(yassl_libs) $(openssl_libs) @MYSQLD_EXTRA_LIBS@ \
++	$(am__append_1)
+ noinst_HEADERS = item.h item_func.h item_sum.h item_cmpfunc.h \
+ 			item_strfunc.h item_timefunc.h \
+ 			item_xmlfunc.h \
+@@ -615,7 +637,7 @@
+ 			sql_builtin.cc sql_tablespace.cc partition_info.cc \
+ 			sql_servers.cc event_parse_data.cc
+ 
+-nodist_mysqld_SOURCES = mini_client_errors.c pack.c client.c my_time.c my_user.c 
++nodist_mysqld_SOURCES = mini_client_errors.c pack.c client.c my_time.c my_user.c
+ libndb_la_CPPFLAGS = @ndbcluster_includes@
+ libndb_la_SOURCES = ha_ndbcluster.cc \
+ 			ha_ndbcluster_binlog.cc \
+@@ -632,7 +654,7 @@
+ 			message.mc  message.h message.rc MSG00001.bin \
+ 			CMakeLists.txt
+ 
+-CLEANFILES = lex_hash.h sql_yacc.output link_sources
++CLEANFILES = lex_hash.h sql_yacc.output link_sources $(am__append_3)
+ DISTCLEANFILES = $(EXTRA_PROGRAMS)
+ MAINTAINERCLEANFILES = $(BUILT_MAINT_SRC)
+ AM_YFLAGS = -d --verbose
+@@ -640,6 +662,10 @@
+ # For testing of udf_example.so
+ udf_example_la_SOURCES = udf_example.c
+ udf_example_la_LDFLAGS = -module -rpath $(pkglibdir)
++@HAVE_DTRACE_DASH_G_TRUE@libndb_la_LIBADD = probes_libndb.o
++@HAVE_DTRACE_DASH_G_TRUE@libndb_la_DEPENDENCIES = dtrace_files dtrace_providers probes_libndb.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEDIRS = . ../mysys $(patsubst %,$(top_builddir)/storage/%,@mysql_se_dirs@) backup
+ all: $(BUILT_SOURCES)
+ 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
+ 
+@@ -1310,6 +1336,21 @@
+ 	test ! -f mysqld-debug.sym.gz   || $(INSTALL_DATA)    mysqld-debug.sym.gz   $(DESTDIR)$(pkglibdir)
+ 	test ! -f mysqld.sym.gz         || $(INSTALL_DATA)    mysqld.sym.gz         $(DESTDIR)$(pkglibdir)
+ 
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++
++@HAVE_DTRACE_DASH_G_TRUE@.libs/libndb_la-ha_ndbcluster.o : libndb_la-ha_ndbcluster.lo
++
++@HAVE_DTRACE_DASH_G_TRUE@probes_all.o: probes_mysql.d $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	providers=`(for i in $(DTRACEDIRS); do cat $$i/dtrace_providers 2>/dev/null; done) | tr " " "\n" | sort | uniq | sed -e '/^$$/d' -e 's/^/-s /'`; \
++@HAVE_DTRACE_DASH_G_TRUE@	objects=`for i in $(DTRACEDIRS); do f=\`cat $$i/dtrace_files 2>/dev/null\`; for j in $$f; do test -f $$i/$$j && echo "$$i/$$j "; done; done`; \
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G $$providers $$objects -o $@
++
++@HAVE_DTRACE_DASH_G_TRUE@probes_libndb.o: probes_mysql.d .libs/libndb_la-ha_ndbcluster.o
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< .libs/libndb_la-ha_ndbcluster.o -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru sql/filesort.cc sql/filesort.cc
+--- sql/filesort.cc	2011-05-27 11:02:46.000000000 +0200
++++ sql/filesort.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -27,6 +27,7 @@
+ #endif
+ #include <m_ctype.h>
+ #include "sql_sort.h"
++#include "probes_mysql.h"
+ 
+ #ifndef THREAD
+ #define SKIP_DBUG_IN_FILESORT
+@@ -121,6 +122,7 @@
+   TABLE_LIST *tab= table->pos_in_table_list;
+   Item_subselect *subselect= tab ? tab->containing_subselect() : 0;
+ 
++  MYSQL_FILESORT_START(table->s->db.str, table->s->table_name.str);
+   /*
+    Release InnoDB's adaptive hash index latch (if holding) before
+    running a sort.
+@@ -331,7 +333,10 @@
+ #endif
+   memcpy(&table->sort, &table_sort, sizeof(FILESORT_INFO));
+   DBUG_PRINT("exit",("records: %ld", (long) records));
+-  DBUG_RETURN(error ? HA_POS_ERROR : records);
++  if (error)
++    records= HA_POS_ERROR;
++  MYSQL_FILESORT_DONE(error, records);
++  DBUG_RETURN(records);
+ } /* filesort */
+ 
+ 
+diff -Nru sql/ha_ndbcluster.cc sql/ha_ndbcluster.cc
+--- sql/ha_ndbcluster.cc	2011-05-27 11:02:46.000000000 +0200
++++ sql/ha_ndbcluster.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -41,6 +41,7 @@
+ #include "ha_ndbcluster_tables.h"
+ 
+ #include <mysql/plugin.h>
++#include "probes_mysql.h"
+ 
+ #ifdef ndb_dynamite
+ #undef assert
+@@ -3601,7 +3602,9 @@
+ {
+   key_range start_key;
+   bool descending= FALSE;
++  int rc;
+   DBUG_ENTER("ha_ndbcluster::index_read");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_PRINT("enter", ("active_index: %u, key_len: %u, find_flag: %d", 
+                        active_index, key_len, find_flag));
+ 
+@@ -3619,43 +3622,61 @@
+   default:
+     break;
+   }
+-  DBUG_RETURN(read_range_first_to_buf(&start_key, 0, descending,
+-                                      m_sorted, buf));
++  rc= read_range_first_to_buf(&start_key, 0, descending,
++			      m_sorted, buf);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+ int ha_ndbcluster::index_next(uchar *buf)
+ {
++  int rc;
+   DBUG_ENTER("ha_ndbcluster::index_next");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   ha_statistic_increment(&SSV::ha_read_next_count);
+-  DBUG_RETURN(next_result(buf));
++  rc= next_result(buf);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+ int ha_ndbcluster::index_prev(uchar *buf)
+ {
++  int rc;
+   DBUG_ENTER("ha_ndbcluster::index_prev");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   ha_statistic_increment(&SSV::ha_read_prev_count);
+-  DBUG_RETURN(next_result(buf));
++  rc= next_result(buf);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+ int ha_ndbcluster::index_first(uchar *buf)
+ {
++  int rc;
+   DBUG_ENTER("ha_ndbcluster::index_first");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   ha_statistic_increment(&SSV::ha_read_first_count);
+   // Start the ordered index scan and fetch the first row
+ 
+   // Only HA_READ_ORDER indexes get called by index_first
+-  DBUG_RETURN(ordered_index_scan(0, 0, TRUE, FALSE, buf, NULL));
++  rc= ordered_index_scan(0, 0, TRUE, FALSE, buf, NULL);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+ int ha_ndbcluster::index_last(uchar *buf)
+ {
++  int rc;
+   DBUG_ENTER("ha_ndbcluster::index_last");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   ha_statistic_increment(&SSV::ha_read_last_count);
+-  DBUG_RETURN(ordered_index_scan(0, 0, TRUE, TRUE, buf, NULL));
++  rc= ordered_index_scan(0, 0, TRUE, TRUE, buf, NULL);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ int ha_ndbcluster::index_read_last(uchar * buf, const uchar * key, uint key_len)
+@@ -3748,15 +3769,23 @@
+                                     bool eq_r, bool sorted)
+ {
+   uchar* buf= table->record[0];
++  int rc;
+   DBUG_ENTER("ha_ndbcluster::read_range_first");
+-  DBUG_RETURN(read_range_first_to_buf(start_key, end_key, FALSE,
+-                                      sorted, buf));
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  rc= read_range_first_to_buf(start_key, end_key, FALSE,
++                              sorted, buf);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ int ha_ndbcluster::read_range_next()
+ {
++  int rc;
+   DBUG_ENTER("ha_ndbcluster::read_range_next");
+-  DBUG_RETURN(next_result(table->record[0]));
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  rc= next_result(table->record[0]);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+@@ -3839,12 +3868,18 @@
+ 
+ int ha_ndbcluster::rnd_next(uchar *buf)
+ {
++  int rc;
+   DBUG_ENTER("rnd_next");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
++
+   ha_statistic_increment(&SSV::ha_read_rnd_next_count);
+ 
+   if (!m_active_cursor)
+-    DBUG_RETURN(full_table_scan(buf));
+-  DBUG_RETURN(next_result(buf));
++    rc= full_table_scan(buf);
++  else
++    rc= next_result(buf);
++  MYSQL_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+@@ -3857,12 +3892,14 @@
+ int ha_ndbcluster::rnd_pos(uchar *buf, uchar *pos)
+ {
+   DBUG_ENTER("rnd_pos");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   ha_statistic_increment(&SSV::ha_read_rnd_count);
+   // The primary key for the record is stored in pos
+   // Perform a pk_read using primary key "index"
+   {
+     part_id_range part_spec;
+     uint key_length= ref_length;
++    int rc;
+     if (m_use_partition_function)
+     {
+       if (table_share->primary_key == MAX_KEY)
+@@ -3889,7 +3926,9 @@
+       DBUG_PRINT("info", ("partition id %u", part_spec.start_part));
+     }
+     DBUG_DUMP("key", pos, key_length);
+-    DBUG_RETURN(pk_read(pos, key_length, buf, part_spec.start_part));
++    rc= pk_read(pos, key_length, buf, part_spec.start_part);
++    MYSQL_READ_ROW_DONE(rc);
++    DBUG_RETURN(rc);
+   }
+ }
+ 
+diff -Nru sql/handler.cc sql/handler.cc
+--- sql/handler.cc	2011-05-27 11:02:46.000000000 +0200
++++ sql/handler.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -27,6 +27,7 @@
+ #include "rpl_filter.h"
+ #include <myisampack.h>
+ #include <errno.h>
++#include <probes_mysql.h>
+ 
+ #ifdef WITH_PARTITION_STORAGE_ENGINE
+ #include "ha_partition.h"
+@@ -4556,6 +4557,27 @@
+   */
+   DBUG_ASSERT(next_insert_id == 0);
+ 
++  if (MYSQL_HANDLER_RDLOCK_START_ENABLED() ||
++      MYSQL_HANDLER_WRLOCK_START_ENABLED() ||
++      MYSQL_HANDLER_UNLOCK_START_ENABLED())
++    {
++      if (lock_type == F_RDLCK)
++	{
++	  MYSQL_HANDLER_RDLOCK_START(table_share->db.str,
++				     table_share->table_name.str);
++	}
++      else if (lock_type == F_WRLCK)
++	{
++	  MYSQL_HANDLER_WRLOCK_START(table_share->db.str,
++				     table_share->table_name.str);
++	}
++      else if (lock_type == F_UNLCK)
++	{
++	  MYSQL_HANDLER_UNLOCK_START(table_share->db.str,
++				     table_share->table_name.str);
++	}
++    }
++
+   /*
+     We cache the table flags if the locking succeeded. Otherwise, we
+     keep them as they were when they were fetched in ha_open().
+@@ -4563,6 +4585,25 @@
+   int error= external_lock(thd, lock_type);
+   if (error == 0)
+     cached_table_flags= table_flags();
++
++  if (MYSQL_HANDLER_RDLOCK_DONE_ENABLED() ||
++      MYSQL_HANDLER_WRLOCK_DONE_ENABLED() ||
++      MYSQL_HANDLER_UNLOCK_DONE_ENABLED())
++    {
++      if (lock_type == F_RDLCK)
++	{
++	  MYSQL_HANDLER_RDLOCK_DONE(error);
++	}
++      else if (lock_type == F_WRLCK)
++	{
++	  MYSQL_HANDLER_WRLOCK_DONE(error);
++	}
++      else if (lock_type == F_UNLCK)
++	{
++	  MYSQL_HANDLER_UNLOCK_DONE(error);
++	}
++    }
++
+   DBUG_RETURN(error);
+ }
+ 
+@@ -4595,9 +4636,13 @@
+   Log_func *log_func= Write_rows_log_event::binlog_row_logging_function;
+   DBUG_ENTER("handler::ha_write_row");
+ 
++  MYSQL_INSERT_ROW_START(table_share->db.str, table_share->table_name.str);
+   mark_trx_read_write();
+ 
+-  if (unlikely(error= write_row(buf)))
++  error= write_row(buf);
++  MYSQL_INSERT_ROW_DONE(error);
++
++  if (unlikely(error != 0))
+     DBUG_RETURN(error);
+   if (unlikely(error= binlog_log_row(table, 0, buf, log_func)))
+     DBUG_RETURN(error); /* purecov: inspected */
+@@ -4614,14 +4659,18 @@
+     Some storage engines require that the new record is in record[0]
+     (and the old record is in record[1]).
+    */
++  DBUG_ENTER("handler::ha_update_row");
+   DBUG_ASSERT(new_data == table->record[0]);
++  MYSQL_UPDATE_ROW_START(table_share->db.str, table_share->table_name.str);
+ 
+   mark_trx_read_write();
++  error= update_row(old_data, new_data);
++  MYSQL_UPDATE_ROW_DONE(error);
+ 
+-  if (unlikely(error= update_row(old_data, new_data)))
++  if (unlikely(error != 0))
+     return error;
+   if (unlikely(error= binlog_log_row(table, old_data, new_data, log_func)))
+-    return error;
++    return(error);
+   return 0;
+ }
+ 
+@@ -4630,9 +4679,12 @@
+   int error;
+   Log_func *log_func= Delete_rows_log_event::binlog_row_logging_function;
+ 
++  MYSQL_DELETE_ROW_START(table_share->db.str, table_share->table_name.str);
+   mark_trx_read_write();
++  error= delete_row(buf);
++  MYSQL_DELETE_ROW_DONE(error);
+ 
+-  if (unlikely(error= delete_row(buf)))
++  if (unlikely(error != 0))
+     return error;
+   if (unlikely(error= binlog_log_row(table, buf, 0, log_func)))
+     return error;
+@@ -4640,7 +4692,6 @@
+ }
+ 
+ 
+-
+ /** @brief
+   use_hidden_primary_key() is called in case of an update/delete when
+   (table_flags() and HA_PRIMARY_KEY_REQUIRED_FOR_DELETE) is defined
+diff -Nru sql/mysqld.cc sql/mysqld.cc
+--- sql/mysqld.cc	2011-05-27 11:02:47.000000000 +0200
++++ sql/mysqld.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -31,6 +31,8 @@
+ 
+ #include "rpl_injector.h"
+ 
++#include "probes_mysql.h"
++
+ #ifdef HAVE_SYS_PRCTL_H
+ #include <sys/prctl.h>
+ #endif
+@@ -1786,6 +1788,12 @@
+   }
+   if (lock)
+     (void) pthread_mutex_unlock(&LOCK_thread_count);
++  /* Workaround for problem with DTrace probes and tail call optimization */
++  if (MYSQL_CONNECTION_DONE_ENABLED())
++    {
++      MYSQL_CONNECTION_DONE((int) errcode, thd->thread_id);
++      sleep(0);
++    }
+   DBUG_VOID_RETURN;
+ }
+ #endif /* EMBEDDED_LIBRARY */
+diff -Nru sql/net_serv.cc sql/net_serv.cc
+--- sql/net_serv.cc	2011-05-27 11:02:48.000000000 +0200
++++ sql/net_serv.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -58,6 +58,7 @@
+ #define MYSQL_CLIENT
+ #endif /*EMBEDDED_LIBRARY */
+ 
++#include <probes_mysql.h>
+ 
+ /*
+   The following handles the differences when this is linked between the
+@@ -368,6 +369,10 @@
+ my_net_write(NET *net,const uchar *packet,size_t len)
+ {
+   uchar buff[NET_HEADER_SIZE];
++  my_bool rc;
++
++  MYSQL_NET_WRITE_START(len);
++
+   if (unlikely(!net->vio)) /* nowhere to write */
+     return 0;
+   /*
+@@ -382,7 +387,10 @@
+     buff[3]= (uchar) net->pkt_nr++;
+     if (net_write_buff(net, buff, NET_HEADER_SIZE) ||
+ 	net_write_buff(net, packet, z_size))
+-      return 1;
++      {
++	MYSQL_NET_WRITE_DONE(1);
++	return 1;
++      }
+     packet += z_size;
+     len-=     z_size;
+   }
+@@ -390,11 +398,16 @@
+   int3store(buff,len);
+   buff[3]= (uchar) net->pkt_nr++;
+   if (net_write_buff(net, buff, NET_HEADER_SIZE))
+-    return 1;
++    {
++      MYSQL_NET_WRITE_DONE(1);
++      return 1;
++    }
+ #ifndef DEBUG_DATA_PACKETS
+   DBUG_DUMP("packet_header", buff, NET_HEADER_SIZE);
+ #endif
+-  return test(net_write_buff(net,packet,len));
++  rc= test(net_write_buff(net,packet,len));
++  MYSQL_NET_WRITE_DONE(rc);
++  return rc;
+ }
+ 
+ /**
+@@ -432,9 +445,12 @@
+   size_t length=len+1+head_len;			/* 1 extra byte for command */
+   uchar buff[NET_HEADER_SIZE+1];
+   uint header_size=NET_HEADER_SIZE+1;
++  my_bool rc;
+   DBUG_ENTER("net_write_command");
+   DBUG_PRINT("enter",("length: %lu", (ulong) len));
+ 
++  MYSQL_NET_WRITE_START(length);
++
+   buff[4]=command;				/* For first packet */
+ 
+   if (length >= MAX_PACKET_LENGTH)
+@@ -448,7 +464,10 @@
+       if (net_write_buff(net, buff, header_size) ||
+ 	  net_write_buff(net, header, head_len) ||
+ 	  net_write_buff(net, packet, len))
+-	DBUG_RETURN(1);
++	{
++	  MYSQL_NET_WRITE_DONE(1);
++	  DBUG_RETURN(1);
++	}
+       packet+= len;
+       length-= MAX_PACKET_LENGTH;
+       len= MAX_PACKET_LENGTH;
+@@ -459,9 +478,11 @@
+   }
+   int3store(buff,length);
+   buff[3]= (uchar) net->pkt_nr++;
+-  DBUG_RETURN(test(net_write_buff(net, buff, header_size) ||
+-                   (head_len && net_write_buff(net, header, head_len)) ||
+-                   net_write_buff(net, packet, len) || net_flush(net)));
++  rc = test(net_write_buff(net, buff, header_size) ||
++	    (head_len && net_write_buff(net, header, head_len)) ||
++	    net_write_buff(net, packet, len) || net_flush(net));
++  MYSQL_NET_WRITE_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ /**
+@@ -989,6 +1010,8 @@
+ {
+   size_t len, complen;
+ 
++  MYSQL_NET_READ_START();
++
+ #ifdef HAVE_COMPRESS
+   if (!net->compress)
+   {
+@@ -1012,6 +1035,7 @@
+     net->read_pos = net->buff + net->where_b;
+     if (len != packet_error)
+       net->read_pos[len]=0;		/* Safeguard for mysql_use_result */
++    MYSQL_NET_READ_DONE(0,len);
+     return len;
+ #ifdef HAVE_COMPRESS
+   }
+@@ -1095,7 +1119,10 @@
+ 
+       net->where_b=buf_length;
+       if ((packet_len = my_real_read(net,&complen)) == packet_error)
++      {
++	MYSQL_NET_READ_DONE(1,0);
+ 	return packet_error;
++      }
+       if (my_uncompress(net->buff + net->where_b, packet_len,
+ 			&complen))
+       {
+@@ -1104,6 +1131,7 @@
+ #ifdef MYSQL_SERVER
+ 	my_error(ER_NET_UNCOMPRESS_ERROR, MYF(0));
+ #endif
++	MYSQL_NET_READ_DONE(1,0);
+ 	return packet_error;
+       }
+       buf_length+= complen;
+@@ -1118,6 +1146,7 @@
+     net->read_pos[len]=0;		/* Safeguard for mysql_use_result */
+   }
+ #endif /* HAVE_COMPRESS */
++  MYSQL_NET_READ_DONE(0,len);
+   return len;
+ }
+ 
+diff -Nru sql/sp_head.cc sql/sp_head.cc
+--- sql/sp_head.cc	2011-05-27 11:02:48.000000000 +0200
++++ sql/sp_head.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -22,6 +22,7 @@
+ #include "sp_pcontext.h"
+ #include "sp_rcontext.h"
+ #include "sp_cache.h"
++#include "probes_mysql.h"
+ 
+ /*
+   Sufficient max length of printed destinations and frame offsets (all uints).
+@@ -2904,7 +2905,14 @@
+ int
+ sp_instr_stmt::exec_core(THD *thd, uint *nextp)
+ {
++  MYSQL_QUERY_EXEC_START(thd->query,
++                         thd->thread_id,
++                         (char *) (thd->db ? thd->db: ""),
++                         thd->security_ctx->priv_user,
++                         (char *) thd->security_ctx->host_or_ip,
++                         3);
+   int res= mysql_execute_command(thd);
++  MYSQL_QUERY_EXEC_DONE(res);
+   *nextp= m_ip+1;
+   return res;
+ }
+diff -Nru sql/sql_cache.cc sql/sql_cache.cc
+--- sql/sql_cache.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_cache.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -327,6 +327,7 @@
+ */
+ 
+ #include "mysql_priv.h"
++#include "probes_mysql.h"
+ #ifdef HAVE_QUERY_CACHE
+ #include <m_ctype.h>
+ #include <my_dir.h>
+@@ -1624,11 +1625,13 @@
+   thd->main_da.disable_status();
+ 
+   BLOCK_UNLOCK_RD(query_block);
++  MYSQL_QUERY_CACHE_HIT(thd->query, (ulong) thd->limit_found_rows);
+   DBUG_RETURN(1);				// Result sent to client
+ 
+ err_unlock:
+   unlock();
+ err:
++  MYSQL_QUERY_CACHE_MISS(thd->query);
+   DBUG_RETURN(0);				// Query was not cached
+ }
+ 
+diff -Nru sql/sql_connect.cc sql/sql_connect.cc
+--- sql/sql_connect.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_connect.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -38,6 +38,8 @@
+ #define MIN_HANDSHAKE_SIZE      6
+ #endif /* HAVE_OPENSSL */
+ 
++#include "probes.h"
++
+ #ifdef __WIN__
+ extern void win_install_sigabrt_handler();
+ #endif
+@@ -1119,6 +1121,9 @@
+     if (login_connection(thd))
+       goto end_thread;
+ 
++    MYSQL_CONNECTION_START(thd->thread_id, thd->security_ctx->priv_user,
++                           (char *) thd->security_ctx->host_or_ip);
++
+     prepare_new_connection_state(thd);
+ 
+     while (!net->error && net->vio != 0 &&
+diff -Nru sql/sql_cursor.cc sql/sql_cursor.cc
+--- sql/sql_cursor.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_cursor.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -19,6 +19,7 @@
+ #include "mysql_priv.h"
+ #include "sql_cursor.h"
+ #include "sql_select.h"
++#include "probes_mysql.h"
+ 
+ /****************************************************************************
+   Declarations.
+@@ -168,8 +169,14 @@
+     thd->lock_id= sensitive_cursor->get_lock_id();
+     thd->cursor= sensitive_cursor;
+   }
+-
++  MYSQL_QUERY_EXEC_START(thd->query,
++                         thd->thread_id,
++                         (char *) (thd->db ? thd->db : ""),
++                         thd->security_ctx->priv_user,
++                         (char *) thd->security_ctx->host_or_ip,
++                         2);
+   rc= mysql_execute_command(thd);
++  MYSQL_QUERY_EXEC_DONE(rc);
+ 
+   lex->result= save_result;
+   thd->lock_id= &thd->main_lock_id;
+diff -Nru sql/sql_delete.cc sql/sql_delete.cc
+--- sql/sql_delete.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_delete.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -23,6 +23,7 @@
+ #include "sql_select.h"
+ #include "sp_head.h"
+ #include "sql_trigger.h"
++#include "probes_mysql.h"
+ 
+ /**
+   Implement DELETE SQL word.
+@@ -753,7 +754,10 @@
+       if (table->triggers &&
+           table->triggers->process_triggers(thd, TRG_EVENT_DELETE,
+                                             TRG_ACTION_BEFORE, FALSE))
+-        DBUG_RETURN(1);
++	{
++	  MYSQL_MULTI_DELETE_DONE(1, 0);
++	  DBUG_RETURN(1);
++	}
+       table->status|= STATUS_DELETED;
+       if (!(error=table->file->ha_delete_row(table->record[0])))
+       {
+@@ -781,10 +785,12 @@
+       if (error)
+       {
+ 	error= 1;                               // Fatal error
++	MYSQL_MULTI_DELETE_DONE(1, 0);
+ 	DBUG_RETURN(1);
+       }
+     }
+   }
++  MYSQL_MULTI_DELETE_DONE(0, (ulong) deleted);
+   DBUG_RETURN(0);
+ }
+ 
+@@ -1028,7 +1034,9 @@
+   table_list->lock_type= TL_WRITE;
+   mysql_init_select(thd->lex);
+   thd->clear_current_stmt_binlog_row_based();
++  MYSQL_DELETE_START(thd->query);
+   error= mysql_delete(thd, table_list, NULL, NULL, HA_POS_ERROR, LL(0), TRUE);
++  MYSQL_DELETE_DONE(error, (ulong) thd->row_count_func);
+   ha_autocommit_or_rollback(thd, error);
+   end_trans(thd, error ? ROLLBACK : COMMIT);
+   thd->current_stmt_binlog_row_based= save_binlog_row_based;
+diff -Nru sql/sql_insert.cc sql/sql_insert.cc
+--- sql/sql_insert.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_insert.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -61,6 +61,7 @@
+ #include "sql_show.h"
+ #include "slave.h"
+ #include "rpl_mi.h"
++#include "probes_mysql.h"
+ 
+ #ifndef EMBEDDED_LIBRARY
+ static bool delayed_get_table(THD *thd, TABLE_LIST *table_list);
+@@ -598,18 +599,25 @@
+   {
+     my_error(ER_DELAYED_INSERT_TABLE_LOCKED, MYF(0),
+              table_list->table_name);
++    MYSQL_INSERT_DONE(1, 0);
+     DBUG_RETURN(TRUE);
+   }
+ 
+   if (table_list->lock_type == TL_WRITE_DELAYED)
+   {
+     if (open_and_lock_for_insert_delayed(thd, table_list))
+-      DBUG_RETURN(TRUE);
++      {
++	MYSQL_INSERT_DONE(1, 0);
++	DBUG_RETURN(TRUE);
++      }
+   }
+   else
+   {
+     if (open_and_lock_tables(thd, table_list))
+-      DBUG_RETURN(TRUE);
++      {
++	MYSQL_INSERT_DONE(1, 0);
++	DBUG_RETURN(TRUE);
++      }
+   }
+   lock_type= table_list->lock_type;
+ 
+@@ -957,6 +965,7 @@
+     ::my_ok(thd, (ulong) thd->row_count_func, id, buff);
+   }
+   thd->abort_on_warning= 0;
++  MYSQL_INSERT_DONE(1, (ulong) thd->row_count_func);
+   DBUG_RETURN(FALSE);
+ 
+ abort:
+@@ -969,6 +978,7 @@
+   if (!joins_freed)
+     free_underlaid_joins(thd, &thd->lex->select_lex);
+   thd->abort_on_warning= 0;
++  MYSQL_INSERT_DONE(1, 0);
+   DBUG_RETURN(TRUE);
+ }
+ 
+@@ -3249,6 +3259,7 @@
+   if (error)
+   {
+     table->file->print_error(error,MYF(0));
++    MYSQL_INSERT_SELECT_DONE(error, 0);
+     DBUG_RETURN(1);
+   }
+   char buff[160];
+@@ -3268,6 +3279,7 @@
+      thd->first_successful_insert_id_in_prev_stmt :
+      (info.copied ? autoinc_value_of_last_inserted_row : 0));
+   ::my_ok(thd, (ulong) thd->row_count_func, id, buff);
++  MYSQL_INSERT_DONE(0, (ulong) thd->row_count_func);
+   DBUG_RETURN(0);
+ }
+ 
+@@ -3324,6 +3336,12 @@
+     table->file->ha_release_auto_increment();
+   }
+ 
++  if (MYSQL_INSERT_SELECT_DONE_ENABLED())
++    {
++      MYSQL_INSERT_SELECT_DONE(1, (ulong) (info.copied + info.deleted +
++					   info.updated));
++    }
++
+   DBUG_VOID_RETURN;
+ }
+ 
+diff -Nru sql/sql_parse.cc sql/sql_parse.cc
+--- sql/sql_parse.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_parse.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -27,7 +27,7 @@
+ #include "sp_cache.h"
+ #include "events.h"
+ #include "sql_trigger.h"
+-
++#include "probes_mysql.h"
+ /**
+   @defgroup Runtime_Environment Runtime Environment
+   @{
+@@ -794,6 +794,7 @@
+   net_new_transaction(net);
+ 
+   packet_length= my_net_read(net);
++
+ #if defined(ENABLED_PROFILING) && defined(COMMUNITY_SERVER)
+   thd->profiling.start_new_query();
+ #endif
+@@ -958,6 +959,10 @@
+   DBUG_ENTER("dispatch_command");
+   DBUG_PRINT("info",("packet: '%*.s'; command: %d", packet_length, packet, command));
+ 
++  MYSQL_COMMAND_START(thd->thread_id, command,
++                      thd->security_ctx->priv_user,
++                      (char *) thd->security_ctx->host_or_ip);
++
+   thd->command=command;
+   /*
+     Commands which always take a long time are logged into
+@@ -1197,6 +1202,11 @@
+   {
+     if (alloc_query(thd, packet, packet_length))
+       break;					// fatal error is set
++    MYSQL_QUERY_START(thd->query, thd->thread_id,
++                      (char *) (thd->db ? thd->db : ""),
++                      thd->security_ctx->priv_user,
++                      (char *) thd->security_ctx->host_or_ip);
++
+     char *packet_end= thd->query + thd->query_length;
+     /* 'b' stands for 'buffer' parameter', special for 'my_snprintf' */
+     const char* end_of_stmt= NULL;
+@@ -1233,12 +1243,22 @@
+         length--;
+       }
+ 
++      if (MYSQL_QUERY_DONE_ENABLED())
++	{
++	  MYSQL_QUERY_DONE(thd->is_error());
++	}
++
+ #if defined(ENABLED_PROFILING) && defined(COMMUNITY_SERVER)
+       thd->profiling.finish_current_query();
+       thd->profiling.start_new_query("continuing");
+       thd->profiling.set_query_source(beginning_of_next_stmt, length);
+ #endif
+ 
++      MYSQL_QUERY_START(beginning_of_next_stmt, thd->thread_id,
++                        (char *) (thd->db ? thd->db : ""),
++                        thd->security_ctx->priv_user,
++                        (char *) thd->security_ctx->host_or_ip);
++
+       VOID(pthread_mutex_lock(&LOCK_thread_count));
+       thd->query_length= length;
+       thd->query= beginning_of_next_stmt;
+@@ -1598,6 +1618,16 @@
+   VOID(pthread_mutex_unlock(&LOCK_thread_count));
+   thd->packet.shrink(thd->variables.net_buffer_length);	// Reclaim some memory
+   free_root(thd->mem_root,MYF(MY_KEEP_PREALLOC));
++  if (MYSQL_QUERY_DONE_ENABLED() || MYSQL_COMMAND_DONE_ENABLED())
++    {
++      int res;
++      res= (int) thd->is_error();
++      if (command == COM_QUERY)
++	{
++	  MYSQL_QUERY_DONE(res);
++	}
++      MYSQL_COMMAND_DONE(res);
++    }
+   DBUG_RETURN(error);
+ }
+ 
+@@ -3014,6 +3044,7 @@
+       goto error;
+     DBUG_ASSERT(select_lex->offset_limit == 0);
+     unit->set_limit(select_lex);
++    MYSQL_UPDATE_START(thd->query);
+     res= (up_result= mysql_update(thd, all_tables,
+                                   select_lex->item_list,
+                                   lex->value_list,
+@@ -3082,7 +3113,7 @@
+ #ifdef HAVE_REPLICATION
+     }  /* unlikely */
+ #endif
+-
++    MYSQL_MULTI_UPDATE_START(thd->query);
+     res= mysql_multi_update(thd, all_tables,
+                             &select_lex->item_list,
+                             &lex->value_list,
+@@ -3134,7 +3165,7 @@
+       res= 1;
+       break;
+     }
+-
++    MYSQL_INSERT_START(thd->query);
+     res= mysql_insert(thd, all_tables, lex->field_list, lex->many_values,
+ 		      lex->update_list, lex->value_list,
+                       lex->duplicates, lex->ignore);
+@@ -3177,6 +3208,7 @@
+ 
+     if (!(res= open_and_lock_tables(thd, all_tables)))
+     {
++      MYSQL_INSERT_SELECT_START(thd->query);
+       /* Skip first table, which is the table we are inserting in */
+       TABLE_LIST *second_table= first_table->next_local;
+       select_lex->table_list.first= (uchar*) second_table;
+@@ -3262,11 +3294,12 @@
+       res= 1;
+       break;
+     }
+-
++    MYSQL_DELETE_START(thd->query);
+     res = mysql_delete(thd, all_tables, select_lex->where,
+                        &select_lex->order_list,
+                        unit->select_limit_cnt, select_lex->options,
+                        FALSE);
++    MYSQL_DELETE_DONE(res, (ulong) thd->row_count_func);
+     break;
+   }
+   case SQLCOM_DELETE_MULTI:
+@@ -3293,6 +3326,7 @@
+       goto error;
+ 
+     thd_proc_info(thd, "init");
++    MYSQL_MULTI_DELETE_START(thd->query);
+     if ((res= open_and_lock_tables(thd, all_tables)))
+       break;
+ 
+@@ -5008,6 +5042,7 @@
+     {
+       if (!result && !(result= new select_send()))
+         return 1;                               /* purecov: inspected */
++      MYSQL_SELECT_START(thd->query);
+       query_cache_store_query(thd, all_tables);
+       res= handle_select(thd, lex, result, 0);
+       if (result != lex->result)
+@@ -5861,6 +5896,7 @@
+ void mysql_parse(THD *thd, const char *inBuf, uint length,
+                  const char ** found_semicolon)
+ {
++  int error;
+   DBUG_ENTER("mysql_parse");
+ 
+   DBUG_EXECUTE_IF("parser_debug", turn_parser_debug_on(););
+@@ -5929,7 +5965,16 @@
+             thd->server_status|= SERVER_MORE_RESULTS_EXISTS;
+           }
+           lex->set_trg_event_type_for_tables();
+-          mysql_execute_command(thd);
++          MYSQL_QUERY_EXEC_START(thd->query,
++                                 thd->thread_id,
++                                 (char *) (thd->db ? thd->db : ""),
++                                 thd->security_ctx->priv_user,
++                                 (char *) thd->security_ctx->host_or_ip,
++                                 0);
++
++          error= mysql_execute_command(thd);
++          MYSQL_QUERY_EXEC_DONE(error);
++
+ 	}
+       }
+     }
+@@ -7784,6 +7829,8 @@
+ {
+   DBUG_ASSERT(thd->m_parser_state == NULL);
+ 
++  MYSQL_QUERY_PARSE_START(thd->query);
++
+   /* Backup creation context. */
+ 
+   Object_creation_ctx *backup_ctx= NULL;
+@@ -7815,6 +7862,8 @@
+ 
+   /* That's it. */
+ 
++  MYSQL_QUERY_PARSE_DONE(mysql_parse_status || thd->is_fatal_error);
++
+   return mysql_parse_status || thd->is_fatal_error;
+ }
+ 
+diff -Nru sql/sql_prepare.cc sql/sql_prepare.cc
+--- sql/sql_prepare.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_prepare.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -85,6 +85,7 @@
+ 
+ #include "mysql_priv.h"
+ #include "sql_select.h" // for JOIN
++#include "probes_mysql.h"
+ #include "sql_cursor.h"
+ #include "sp_head.h"
+ #include "sp.h"
+@@ -3567,7 +3568,14 @@
+     if (query_cache_send_result_to_client(thd, thd->query,
+                                           thd->query_length) <= 0)
+     {
++      MYSQL_QUERY_EXEC_START(thd->query,
++                             thd->thread_id,
++                             (char *) (thd->db ? thd->db : ""),
++                             thd->security_ctx->priv_user,
++                             (char *) thd->security_ctx->host_or_ip,
++                             1);
+       error= mysql_execute_command(thd);
++      MYSQL_QUERY_EXEC_DONE(error);
+     }
+   }
+ 
+diff -Nru sql/sql_select.cc sql/sql_select.cc
+--- sql/sql_select.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_select.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -31,6 +31,7 @@
+ #include "mysql_priv.h"
+ #include "sql_select.h"
+ #include "sql_cursor.h"
++#include "probes_mysql.h"
+ 
+ #include <m_ctype.h>
+ #include <my_bit.h>
+@@ -240,6 +241,7 @@
+   bool res;
+   register SELECT_LEX *select_lex = &lex->select_lex;
+   DBUG_ENTER("handle_select");
++  MYSQL_SELECT_START(thd->query);
+ 
+   if (select_lex->master_unit()->is_union() || 
+       select_lex->master_unit()->fake_select_lex)
+@@ -273,6 +275,8 @@
+   if (unlikely(res))
+     result->abort();
+ 
++  MYSQL_SELECT_DONE((int) res, (ulong) thd->limit_found_rows);
++
+   DBUG_RETURN(res);
+ }
+ 
+diff -Nru sql/sql_update.cc sql/sql_update.cc
+--- sql/sql_update.cc	2011-05-27 11:02:49.000000000 +0200
++++ sql/sql_update.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -24,6 +24,8 @@
+ #include "sp_head.h"
+ #include "sql_trigger.h"
+ 
++#include "probes_mysql.h"
++
+ /* Return 0 if row hasn't changed */
+ 
+ bool compare_record(TABLE *table)
+@@ -209,7 +211,10 @@
+   for ( ; ; )
+   {
+     if (open_tables(thd, &table_list, &table_count, 0))
+-      DBUG_RETURN(1);
++      {
++	MYSQL_UPDATE_DONE(1, 0, 0);
++	DBUG_RETURN(1);
++      }
+ 
+     if (table_list->multitable_view)
+     {
+@@ -218,19 +223,26 @@
+       /* pass counter value */
+       thd->lex->table_count= table_count;
+       /* convert to multiupdate */
++      MYSQL_UPDATE_DONE(2, 0, 0);
+       DBUG_RETURN(2);
+     }
+     if (!lock_tables(thd, table_list, table_count, &need_reopen))
+       break;
+     if (!need_reopen)
+-      DBUG_RETURN(1);
++      {
++	MYSQL_UPDATE_DONE(1, 0, 0);
++	DBUG_RETURN(1);
++      }
+     close_tables_for_reopen(thd, &table_list);
+   }
+ 
+   if (mysql_handle_derived(thd->lex, &mysql_derived_prepare) ||
+       (thd->fill_derived_tables() &&
+        mysql_handle_derived(thd->lex, &mysql_derived_filling)))
+-    DBUG_RETURN(1);
++    {
++	MYSQL_UPDATE_DONE(1, 0, 0);
++	DBUG_RETURN(1);
++    }
+ 
+   thd_proc_info(thd, "init");
+   table= table_list->table;
+@@ -292,7 +304,10 @@
+ 
+   if (select_lex->inner_refs_list.elements &&
+     fix_inner_refs(thd, all_fields, select_lex, select_lex->ref_pointer_array))
+-    DBUG_RETURN(-1);
++    {
++	MYSQL_UPDATE_DONE(1, 0, 0);
++	DBUG_RETURN(-1);
++    }
+ 
+   if (conds)
+   {
+@@ -320,6 +335,7 @@
+   {
+     free_underlaid_joins(thd, select_lex);
+     my_ok(thd);				// No matching records
++    MYSQL_UPDATE_DONE(1, 0, 0);
+     DBUG_RETURN(0);
+   }
+ #endif
+@@ -333,10 +349,9 @@
+     delete select;
+     free_underlaid_joins(thd, select_lex);
+     if (error)
+-    {
+-      DBUG_RETURN(1);				// Error in where
+-    }
++      goto abort;
+     my_ok(thd);				// No matching records
++    MYSQL_UPDATE_DONE(1, 0, 0);
+     DBUG_RETURN(0);
+   }
+   if (!select && limit != HA_POS_ERROR)
+@@ -830,7 +845,9 @@
+   }
+   thd->count_cuted_fields= CHECK_FIELD_IGNORE;		/* calc cuted fields */
+   thd->abort_on_warning= 0;
+-  DBUG_RETURN((error >= 0 || thd->is_error()) ? 1 : 0);
++  res= (error >= 0 || thd->is_error()) ? 1 : 0;
++  MYSQL_UPDATE_DONE(res, (ulong) found, (ulong) updated);
++  DBUG_RETURN(res);
+ 
+ err:
+   delete select;
+@@ -841,6 +858,9 @@
+     table->file->extra(HA_EXTRA_NO_KEYREAD);
+   }
+   thd->abort_on_warning= 0;
++
++abort:
++  MYSQL_UPDATE_DONE(1, 0, 0);
+   DBUG_RETURN(1);
+ }
+ 
+@@ -1686,7 +1706,10 @@
+                                                *values_for_table[offset], 0,
+                                                table->triggers,
+                                                TRG_EVENT_UPDATE))
+-	DBUG_RETURN(1);
++	{
++	  MYSQL_MULTI_UPDATE_DONE(1, 0, 0);
++	  DBUG_RETURN(1);
++	}
+ 
+       found++;
+       if (!can_compare_record || compare_record(table))
+@@ -1699,7 +1722,10 @@
+           if (error == VIEW_CHECK_SKIP)
+             continue;
+           else if (error == VIEW_CHECK_ERROR)
+-            DBUG_RETURN(1);
++	    {
++	      MYSQL_MULTI_UPDATE_DONE(1, 0, 0);
++	      DBUG_RETURN(1);
++	    }
+         }
+         if (!updated++)
+         {
+@@ -1727,6 +1753,7 @@
+ 
+             prepare_record_for_error_message(error, table);
+             table->file->print_error(error,MYF(0));
++	    MYSQL_MULTI_UPDATE_DONE(1, 0, 0);
+             DBUG_RETURN(1);
+           }
+         }
+@@ -1751,7 +1778,10 @@
+       if (table->triggers &&
+           table->triggers->process_triggers(thd, TRG_EVENT_UPDATE,
+                                             TRG_ACTION_AFTER, TRUE))
+-        DBUG_RETURN(1);
++	{
++	  MYSQL_MULTI_UPDATE_DONE(1, 0, 0);
++	  DBUG_RETURN(1);
++	}
+     }
+     else
+     {
+@@ -1792,12 +1822,14 @@
+                                     tmp_table_param + offset, error, 1))
+         {
+           do_update= 0;
++	  MYSQL_MULTI_UPDATE_DONE(1, 0, 0);
+           DBUG_RETURN(1);			// Not a table_is_full error
+         }
+         found++;
+       }
+     }
+   }
++  MYSQL_MULTI_UPDATE_DONE(0, (ulong) found, (ulong) updated);
+   DBUG_RETURN(0);
+ }
+ 
+diff -Nru storage/archive/Makefile.am storage/archive/Makefile.am
+--- storage/archive/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/archive/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -66,5 +66,22 @@
+ 
+ 
+ EXTRA_DIST =		CMakeLists.txt plug.in
++
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libarchive_a_LIBADD = probes_mysql.o
++libarchive_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = libarchive_a-ha_archive.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/archive/Makefile.in storage/archive/Makefile.in
+--- storage/archive/Makefile.in	2011-05-27 11:03:58.000000000 +0200
++++ storage/archive/Makefile.in	2011-05-27 10:52:05.000000000 +0200
+@@ -62,6 +62,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -77,7 +78,6 @@
+ CONFIG_CLEAN_FILES =
+ LIBRARIES = $(noinst_LIBRARIES)
+ libarchive_a_AR = $(AR) $(ARFLAGS)
+-libarchive_a_LIBADD =
+ am_libarchive_a_OBJECTS = libarchive_a-ha_archive.$(OBJEXT) \
+ 	libarchive_a-azio.$(OBJEXT)
+ libarchive_a_OBJECTS = $(am_libarchive_a_OBJECTS)
+@@ -189,6 +189,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -201,6 +203,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -312,6 +315,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -485,6 +489,11 @@
+ 
+ archive_reader_LDFLAGS = @NOINST_LDFLAGS@
+ EXTRA_DIST = CMakeLists.txt plug.in
++@HAVE_DTRACE_DASH_G_TRUE@libarchive_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libarchive_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = libarchive_a-ha_archive.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -826,6 +835,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -909,6 +919,14 @@
+ 	mostlyclean-libtool pdf pdf-am ps ps-am tags uninstall \
+ 	uninstall-am uninstall-pkgpluginLTLIBRARIES
+ 
++
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/archive/ha_archive.cc storage/archive/ha_archive.cc
+--- storage/archive/ha_archive.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/archive/ha_archive.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -25,6 +25,8 @@
+ 
+ #include <mysql/plugin.h>
+ 
++#include "probes_mysql.h"
++
+ /*
+   First, if you want to understand storage engines you should look at 
+   ha_example.cc and ha_example.h. 
+@@ -917,7 +919,9 @@
+ {
+   int rc;
+   DBUG_ENTER("ha_archive::index_read");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   rc= index_read_idx(buf, active_index, key, key_len, find_flag);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
+   DBUG_RETURN(rc);
+ }
+ 
+@@ -960,8 +964,10 @@
+ int ha_archive::index_next(uchar * buf) 
+ { 
+   bool found= 0;
++  int rc;
+ 
+   DBUG_ENTER("ha_archive::index_next");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+ 
+   while (!(get_row(&archive, buf)))
+   {
+@@ -972,7 +978,9 @@
+     }
+   }
+ 
+-  DBUG_RETURN(found ? 0 : HA_ERR_END_OF_FILE); 
++  rc= found ? 0 : HA_ERR_END_OF_FILE;
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ /*
+@@ -1198,12 +1206,19 @@
+ {
+   int rc;
+   DBUG_ENTER("ha_archive::rnd_next");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+ 
+   if (share->crashed)
++    {
++      MYSQL_READ_ROW_DONE(HA_ERR_CRASHED_ON_USAGE);
+       DBUG_RETURN(HA_ERR_CRASHED_ON_USAGE);
++    }
+ 
+   if (!scan_rows)
+-    DBUG_RETURN(HA_ERR_END_OF_FILE);
++    {
++      MYSQL_READ_ROW_DONE(HA_ERR_END_OF_FILE);
++      DBUG_RETURN(HA_ERR_END_OF_FILE);
++    }
+   scan_rows--;
+ 
+   ha_statistic_increment(&SSV::ha_read_rnd_next_count);
+@@ -1212,6 +1227,7 @@
+ 
+   table->status=rc ? STATUS_NOT_FOUND: 0;
+ 
++  MYSQL_READ_ROW_DONE(rc);
+   DBUG_RETURN(rc);
+ }
+ 
+@@ -1239,12 +1255,17 @@
+ 
+ int ha_archive::rnd_pos(uchar * buf, uchar *pos)
+ {
++  int rc;
+   DBUG_ENTER("ha_archive::rnd_pos");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 1);
+   ha_statistic_increment(&SSV::ha_read_rnd_next_count);
+   current_position= (my_off_t)my_get_ptr(pos, ref_length);
+   if (azseek(&archive, current_position, SEEK_SET) == (my_off_t)(-1L))
+     DBUG_RETURN(HA_ERR_CRASHED_ON_USAGE);
+-  DBUG_RETURN(get_row(&archive, buf));
++  else
++    rc= get_row(&archive, buf);
++  MYSQL_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ /*
+diff -Nru storage/blackhole/Makefile.am storage/blackhole/Makefile.am
+--- storage/blackhole/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/blackhole/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -48,5 +48,22 @@
+ 
+ 
+ EXTRA_DIST =		CMakeLists.txt plug.in
++
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libblackhole_a_LIBADD = probes_mysql.o
++libblackhole_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = libblackhole_a-ha_blackhole.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/blackhole/Makefile.in storage/blackhole/Makefile.in
+--- storage/blackhole/Makefile.in	2011-05-27 11:03:58.000000000 +0200
++++ storage/blackhole/Makefile.in	2011-05-27 10:52:05.000000000 +0200
+@@ -60,6 +60,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -75,7 +76,6 @@
+ CONFIG_CLEAN_FILES =
+ LIBRARIES = $(noinst_LIBRARIES)
+ libblackhole_a_AR = $(AR) $(ARFLAGS)
+-libblackhole_a_LIBADD =
+ am_libblackhole_a_OBJECTS = libblackhole_a-ha_blackhole.$(OBJEXT)
+ libblackhole_a_OBJECTS = $(am_libblackhole_a_OBJECTS)
+ am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+@@ -156,6 +156,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -168,6 +170,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -279,6 +282,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -436,6 +440,11 @@
+ libblackhole_a_CFLAGS = $(AM_CFLAGS)
+ libblackhole_a_SOURCES = ha_blackhole.cc
+ EXTRA_DIST = CMakeLists.txt plug.in
++@HAVE_DTRACE_DASH_G_TRUE@libblackhole_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libblackhole_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = libblackhole_a-ha_blackhole.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -660,6 +669,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -743,6 +753,14 @@
+ 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+ 	uninstall-pkgpluginLTLIBRARIES
+ 
++
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/blackhole/ha_blackhole.cc storage/blackhole/ha_blackhole.cc
+--- storage/blackhole/ha_blackhole.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/blackhole/ha_blackhole.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -21,6 +21,7 @@
+ #define MYSQL_SERVER 1
+ #include "mysql_priv.h"
+ #include "ha_blackhole.h"
++#include "probes_mysql.h"
+ 
+ /* Static declarations for handlerton */
+ 
+@@ -128,18 +129,25 @@
+ 
+ int ha_blackhole::rnd_next(uchar *buf)
+ {
++  int rc;
+   DBUG_ENTER("ha_blackhole::rnd_next");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   THD *thd= ha_thd();
+   if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query == NULL)
+-    DBUG_RETURN(0);
+-  DBUG_RETURN(HA_ERR_END_OF_FILE);
++    rc= 0;
++  else
++    rc= HA_ERR_END_OF_FILE;
++  MYSQL_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+ int ha_blackhole::rnd_pos(uchar * buf, uchar *pos)
+ {
+   DBUG_ENTER("ha_blackhole::rnd_pos");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 1);
+   DBUG_ASSERT(0);
++  MYSQL_READ_ROW_DONE(0);
+   DBUG_RETURN(0);
+ }
+ 
+@@ -210,11 +218,14 @@
+                                  key_part_map keypart_map,
+                              enum ha_rkey_function find_flag)
+ {
++  int rc;
+   DBUG_ENTER("ha_blackhole::index_read");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   THD *thd= ha_thd();
+-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query == NULL)
+-    DBUG_RETURN(0);
+-  DBUG_RETURN(HA_ERR_END_OF_FILE);
++  rc= (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query == NULL) ?
++    0 : HA_ERR_END_OF_FILE;
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+@@ -222,28 +233,36 @@
+                                  key_part_map keypart_map,
+                                  enum ha_rkey_function find_flag)
+ {
++  int rc;
+   DBUG_ENTER("ha_blackhole::index_read_idx");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   THD *thd= ha_thd();
+-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query == NULL)
+-    DBUG_RETURN(0);
+-  DBUG_RETURN(HA_ERR_END_OF_FILE);
++  rc= (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query == NULL) ?
++    0 : HA_ERR_END_OF_FILE;
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+ int ha_blackhole::index_read_last_map(uchar * buf, const uchar * key,
+                                       key_part_map keypart_map)
+ {
++  int rc;
+   DBUG_ENTER("ha_blackhole::index_read_last");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   THD *thd= ha_thd();
+-  if (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query == NULL)
+-    DBUG_RETURN(0);
+-  DBUG_RETURN(HA_ERR_END_OF_FILE);
++  rc= (thd->system_thread == SYSTEM_THREAD_SLAVE_SQL && thd->query == NULL) ?
++    0 : HA_ERR_END_OF_FILE;
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+ int ha_blackhole::index_next(uchar * buf)
+ {
+   DBUG_ENTER("ha_blackhole::index_next");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_END_OF_FILE);
+   DBUG_RETURN(HA_ERR_END_OF_FILE);
+ }
+ 
+@@ -251,6 +270,8 @@
+ int ha_blackhole::index_prev(uchar * buf)
+ {
+   DBUG_ENTER("ha_blackhole::index_prev");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_END_OF_FILE);
+   DBUG_RETURN(HA_ERR_END_OF_FILE);
+ }
+ 
+@@ -258,6 +279,8 @@
+ int ha_blackhole::index_first(uchar * buf)
+ {
+   DBUG_ENTER("ha_blackhole::index_first");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_END_OF_FILE);
+   DBUG_RETURN(HA_ERR_END_OF_FILE);
+ }
+ 
+@@ -265,6 +288,8 @@
+ int ha_blackhole::index_last(uchar * buf)
+ {
+   DBUG_ENTER("ha_blackhole::index_last");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_END_OF_FILE);
+   DBUG_RETURN(HA_ERR_END_OF_FILE);
+ }
+ 
+diff -Nru storage/csv/Makefile.am storage/csv/Makefile.am
+--- storage/csv/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/csv/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -41,5 +41,22 @@
+ libcsv_a_SOURCES =	transparent_file.cc ha_tina.cc
+ 
+ EXTRA_DIST =		CMakeLists.txt plug.in
++	
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libcsv_a_LIBADD = probes_mysql.o
++libcsv_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = libcsv_a-ha_tina.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/csv/Makefile.in storage/csv/Makefile.in
+--- storage/csv/Makefile.in	2011-05-27 11:03:58.000000000 +0200
++++ storage/csv/Makefile.in	2011-05-27 10:52:05.000000000 +0200
+@@ -60,6 +60,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -75,7 +76,6 @@
+ CONFIG_CLEAN_FILES =
+ LIBRARIES = $(noinst_LIBRARIES)
+ libcsv_a_AR = $(AR) $(ARFLAGS)
+-libcsv_a_LIBADD =
+ am_libcsv_a_OBJECTS = libcsv_a-transparent_file.$(OBJEXT) \
+ 	libcsv_a-ha_tina.$(OBJEXT)
+ libcsv_a_OBJECTS = $(am_libcsv_a_OBJECTS)
+@@ -157,6 +157,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -169,6 +171,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -280,6 +283,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -435,6 +439,11 @@
+ libcsv_a_CXXFLAGS = $(AM_CFLAGS)
+ libcsv_a_SOURCES = transparent_file.cc ha_tina.cc
+ EXTRA_DIST = CMakeLists.txt plug.in
++@HAVE_DTRACE_DASH_G_TRUE@libcsv_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libcsv_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = libcsv_a-ha_tina.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -682,6 +691,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -765,6 +775,14 @@
+ 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+ 	uninstall-pkglibLTLIBRARIES
+ 
++
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/csv/ha_tina.cc storage/csv/ha_tina.cc
+--- storage/csv/ha_tina.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/csv/ha_tina.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -48,6 +48,7 @@
+ #include "mysql_priv.h"
+ #include <mysql/plugin.h>
+ #include "ha_tina.h"
++#include "probes_mysql.h"
+ 
+ 
+ /*
+@@ -1095,6 +1096,7 @@
+ {
+   int rc;
+   DBUG_ENTER("ha_tina::rnd_next");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+ 
+   if (share->crashed)
+       DBUG_RETURN(HA_ERR_CRASHED_ON_USAGE);
+@@ -1105,13 +1107,19 @@
+ 
+   /* don't scan an empty file */
+   if (!local_saved_data_file_length)
+-    DBUG_RETURN(HA_ERR_END_OF_FILE);
++    {
++      rc= HA_ERR_END_OF_FILE;
++      goto end;
++    }
+ 
+   if ((rc= find_current_row(buf)))
+-    DBUG_RETURN(rc);
++    goto end;
+ 
+   stats.records++;
+-  DBUG_RETURN(0);
++
++ end:
++  MYSQL_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ /*
+diff -Nru storage/example/Makefile.am storage/example/Makefile.am
+--- storage/example/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/example/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -48,5 +48,23 @@
+ 
+ 
+ EXTRA_DIST =		CMakeLists.txt plug.in
++
++if HAVE_DTRACE_DASH_G
++libexample_a_LIBADD = probes_mysql.o
++libexample_a_DEPENDENCIES = probes_mysql.o
++CLEANFILES =
++BUILT_SOURCES =
++DTRACEFILES = libexample_a-ha_example.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/example/Makefile.in storage/example/Makefile.in
+--- storage/example/Makefile.in	2011-05-27 11:03:59.000000000 +0200
++++ storage/example/Makefile.in	2011-05-27 10:52:05.000000000 +0200
+@@ -60,6 +60,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -75,7 +76,6 @@
+ CONFIG_CLEAN_FILES =
+ LIBRARIES = $(noinst_LIBRARIES)
+ libexample_a_AR = $(AR) $(ARFLAGS)
+-libexample_a_LIBADD =
+ am_libexample_a_OBJECTS = libexample_a-ha_example.$(OBJEXT)
+ libexample_a_OBJECTS = $(am_libexample_a_OBJECTS)
+ am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+@@ -155,6 +155,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -167,6 +169,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -435,7 +438,14 @@
+ libexample_a_CFLAGS = $(AM_CFLAGS)
+ libexample_a_SOURCES = ha_example.cc
+ EXTRA_DIST = CMakeLists.txt plug.in
+-all: all-am
++@HAVE_DTRACE_DASH_G_TRUE@libexample_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libexample_a_DEPENDENCIES = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = 
++@HAVE_DTRACE_DASH_G_TRUE@BUILT_SOURCES = 
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = libexample_a-ha_example.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++all: $(BUILT_SOURCES)
++	$(MAKE) $(AM_MAKEFLAGS) all-am
+ 
+ .SUFFIXES:
+ .SUFFIXES: .cc .lo .o .obj
+@@ -636,13 +646,15 @@
+ 	  fi; \
+ 	done
+ check-am: all-am
+-check: check-am
++check: $(BUILT_SOURCES)
++	$(MAKE) $(AM_MAKEFLAGS) check-am
+ all-am: Makefile $(LIBRARIES) $(LTLIBRARIES) $(HEADERS)
+ installdirs:
+ 	for dir in "$(DESTDIR)$(pkgplugindir)"; do \
+ 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
+ 	done
+-install: install-am
++install: $(BUILT_SOURCES)
++	$(MAKE) $(AM_MAKEFLAGS) install-am
+ install-exec: install-exec-am
+ install-data: install-data-am
+ uninstall: uninstall-am
+@@ -659,6 +671,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -666,6 +679,7 @@
+ maintainer-clean-generic:
+ 	@echo "This command is intended for maintainers to use"
+ 	@echo "it deletes files that may require special tools to rebuild."
++	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
+ clean: clean-am
+ 
+ clean-am: clean-generic clean-libtool clean-noinstLIBRARIES \
+@@ -742,6 +756,14 @@
+ 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+ 	uninstall-pkgpluginLTLIBRARIES
+ 
++
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/example/ha_example.cc storage/example/ha_example.cc
+--- storage/example/ha_example.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/example/ha_example.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -95,6 +95,7 @@
+ #include "mysql_priv.h"
+ #include "ha_example.h"
+ #include <mysql/plugin.h>
++#include "probes_mysql.h"
+ 
+ static handler *example_create_handler(handlerton *hton,
+                                        TABLE_SHARE *table, 
+@@ -429,6 +430,8 @@
+                                __attribute__((unused)))
+ {
+   DBUG_ENTER("ha_example::index_read");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_WRONG_COMMAND);
+   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
+ }
+ 
+@@ -441,6 +444,8 @@
+ int ha_example::index_next(uchar *buf)
+ {
+   DBUG_ENTER("ha_example::index_next");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_WRONG_COMMAND);
+   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
+ }
+ 
+@@ -453,6 +458,8 @@
+ int ha_example::index_prev(uchar *buf)
+ {
+   DBUG_ENTER("ha_example::index_prev");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_WRONG_COMMAND);
+   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
+ }
+ 
+@@ -470,6 +477,8 @@
+ int ha_example::index_first(uchar *buf)
+ {
+   DBUG_ENTER("ha_example::index_first");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_WRONG_COMMAND);
+   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
+ }
+ 
+@@ -487,6 +496,8 @@
+ int ha_example::index_last(uchar *buf)
+ {
+   DBUG_ENTER("ha_example::index_last");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_WRONG_COMMAND);
+   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
+ }
+ 
+@@ -534,6 +545,8 @@
+ int ha_example::rnd_next(uchar *buf)
+ {
+   DBUG_ENTER("ha_example::rnd_next");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_WRONG_COMMAND);
+   DBUG_RETURN(HA_ERR_END_OF_FILE);
+ }
+ 
+@@ -582,6 +595,8 @@
+ int ha_example::rnd_pos(uchar *buf, uchar *pos)
+ {
+   DBUG_ENTER("ha_example::rnd_pos");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
++  MYSQL_INDEX_READ_ROW_DONE(HA_ERR_WRONG_COMMAND);
+   DBUG_RETURN(HA_ERR_WRONG_COMMAND);
+ }
+ 
+diff -Nru storage/federated/Makefile.am storage/federated/Makefile.am
+--- storage/federated/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/federated/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -48,5 +48,22 @@
+ 
+ 
+ EXTRA_DIST =		CMakeLists.txt plug.in
++
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libfederated_a_LIBADD = probes_mysql.o
++libfederated_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = libfederated_a-ha_federated.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/federated/Makefile.in storage/federated/Makefile.in
+--- storage/federated/Makefile.in	2011-05-27 11:03:59.000000000 +0200
++++ storage/federated/Makefile.in	2011-05-27 10:52:05.000000000 +0200
+@@ -60,6 +60,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -75,7 +76,6 @@
+ CONFIG_CLEAN_FILES =
+ LIBRARIES = $(noinst_LIBRARIES)
+ libfederated_a_AR = $(AR) $(ARFLAGS)
+-libfederated_a_LIBADD =
+ am_libfederated_a_OBJECTS = libfederated_a-ha_federated.$(OBJEXT)
+ libfederated_a_OBJECTS = $(am_libfederated_a_OBJECTS)
+ am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
+@@ -156,6 +156,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -168,6 +170,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -279,6 +282,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -436,6 +440,11 @@
+ libfederated_a_CFLAGS = $(AM_CFLAGS)
+ libfederated_a_SOURCES = ha_federated.cc
+ EXTRA_DIST = CMakeLists.txt plug.in
++@HAVE_DTRACE_DASH_G_TRUE@libfederated_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libfederated_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = libfederated_a-ha_federated.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -660,6 +669,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -743,6 +753,14 @@
+ 	pdf pdf-am ps ps-am tags uninstall uninstall-am \
+ 	uninstall-pkgpluginLTLIBRARIES
+ 
++
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/federated/ha_federated.cc storage/federated/ha_federated.cc
+--- storage/federated/ha_federated.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/federated/ha_federated.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -385,6 +385,8 @@
+ 
+ #include <mysql/plugin.h>
+ 
++#include "probes_mysql.h"
++
+ /* Variables for federated share methods */
+ static HASH federated_open_tables;              // To track open tables
+ pthread_mutex_t federated_mutex;                // To init the hash
+@@ -2324,13 +2326,17 @@
+ int ha_federated::index_read(uchar *buf, const uchar *key,
+                              uint key_len, ha_rkey_function find_flag)
+ {
++  int rc;
+   DBUG_ENTER("ha_federated::index_read");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+ 
+   if (stored_result)
+     mysql_free_result(stored_result);
+-  DBUG_RETURN(index_read_idx_with_result_set(buf, active_index, key,
+-                                             key_len, find_flag,
+-                                             &stored_result));
++  rc= index_read_idx_with_result_set(buf, active_index, key,
++				     key_len, find_flag,
++				     &stored_result);
++  MYSQL_INDEX_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+@@ -2353,12 +2359,17 @@
+   int retval;
+   MYSQL_RES *mysql_result;
+   DBUG_ENTER("ha_federated::index_read_idx");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+ 
+   if ((retval= index_read_idx_with_result_set(buf, index, key,
+                                               key_len, find_flag,
+                                               &mysql_result)))
+-    DBUG_RETURN(retval);
++    {
++      MYSQL_INDEX_READ_ROW_DONE(retval);
++      DBUG_RETURN(retval);
++    }
+   mysql_free_result(mysql_result);
++  MYSQL_INDEX_READ_ROW_DONE(0);
+   DBUG_RETURN(retval);
+ }
+ 
+@@ -2478,6 +2489,7 @@
+                    sizeof(sql_query_buffer),
+                    &my_charset_bin);
+   DBUG_ENTER("ha_federated::read_range_first");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+ 
+   DBUG_ASSERT(!(start_key == NULL && end_key == NULL));
+ 
+@@ -2506,10 +2518,12 @@
+   }
+ 
+   retval= read_next(table->record[0], stored_result);
++  MYSQL_INDEX_READ_ROW_DONE(retval);
+   DBUG_RETURN(retval);
+ 
+ error:
+   table->status= STATUS_NOT_FOUND;
++  MYSQL_INDEX_READ_ROW_DONE(retval);
+   DBUG_RETURN(retval);
+ }
+ 
+@@ -2518,7 +2532,9 @@
+ {
+   int retval;
+   DBUG_ENTER("ha_federated::read_range_next");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   retval= rnd_next(table->record[0]);
++  MYSQL_INDEX_READ_ROW_DONE(retval);
+   DBUG_RETURN(retval);
+ }
+ 
+@@ -2637,7 +2653,9 @@
+ 
+ int ha_federated::rnd_next(uchar *buf)
+ {
++  int rc;
+   DBUG_ENTER("ha_federated::rnd_next");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+ 
+   if (stored_result == 0)
+   {
+@@ -2646,9 +2664,12 @@
+       so we can get here _even_ if there is _no_ pre-fetched result-set!
+       TODO: fix it. We can delete this in 5.1 when rnd_init() is checked.
+     */
++    MYSQL_READ_ROW_DONE(1);
+     DBUG_RETURN(1);
+   }
+-  DBUG_RETURN(read_next(buf, stored_result));
++  rc= read_next(buf, stored_result);
++  MYSQL_READ_ROW_DONE(rc);
++  DBUG_RETURN(rc);
+ }
+ 
+ 
+@@ -2726,6 +2747,8 @@
+ {
+   int result;
+   DBUG_ENTER("ha_federated::rnd_pos");
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 1);
++
+   ha_statistic_increment(&SSV::ha_read_rnd_count);
+   if (table->s->primary_key != MAX_KEY)
+   {
+@@ -2740,6 +2763,7 @@
+     result= 0;
+   }
+   table->status= result ? STATUS_NOT_FOUND : 0;
++  MYSQL_READ_ROW_DONE(result);
+   DBUG_RETURN(result);
+ }
+ 
+diff -Nru storage/heap/Makefile.am storage/heap/Makefile.am
+--- storage/heap/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/heap/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -51,5 +51,21 @@
+ 
+ EXTRA_DIST =		CMakeLists.txt plug.in
+ 
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libheap_a_LIBADD = probes_mysql.o
++libheap_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = ha_heap.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/heap/Makefile.in storage/heap/Makefile.in
+--- storage/heap/Makefile.in	2011-05-27 11:03:59.000000000 +0200
++++ storage/heap/Makefile.in	2011-05-27 10:52:06.000000000 +0200
+@@ -59,6 +59,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -82,7 +83,6 @@
+ pkglibLIBRARIES_INSTALL = $(INSTALL_DATA)
+ LIBRARIES = $(noinst_LIBRARIES) $(pkglib_LIBRARIES)
+ libheap_a_AR = $(AR) $(ARFLAGS)
+-libheap_a_LIBADD =
+ am_libheap_a_OBJECTS = hp_open.$(OBJEXT) hp_extra.$(OBJEXT) \
+ 	hp_close.$(OBJEXT) hp_panic.$(OBJEXT) hp_info.$(OBJEXT) \
+ 	hp_rrnd.$(OBJEXT) hp_scan.$(OBJEXT) hp_update.$(OBJEXT) \
+@@ -181,6 +181,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -193,6 +195,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -304,6 +307,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -471,6 +475,11 @@
+ 			hp_hash.c _check.c _rectest.c hp_static.c
+ 
+ EXTRA_DIST = CMakeLists.txt plug.in
++@HAVE_DTRACE_DASH_G_TRUE@libheap_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libheap_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = ha_heap.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -733,6 +742,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -817,6 +827,13 @@
+ 	uninstall-am uninstall-pkglibLIBRARIES
+ 
+ 
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/heap/ha_heap.cc storage/heap/ha_heap.cc
+--- storage/heap/ha_heap.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/heap/ha_heap.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -23,6 +23,7 @@
+ #include <mysql/plugin.h>
+ #include "ha_heap.h"
+ #include "heapdef.h"
++#include "probes_mysql.h"
+ 
+ static handler *heap_create_handler(handlerton *hton,
+                                     TABLE_SHARE *table, 
+@@ -274,21 +275,25 @@
+                             key_part_map keypart_map,
+                             enum ha_rkey_function find_flag)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error = heap_rkey(file,buf,active_index, key, keypart_map, find_flag);
+   table->status = error ? STATUS_NOT_FOUND : 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_heap::index_read_last_map(uchar *buf, const uchar *key,
+                                  key_part_map keypart_map)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error= heap_rkey(file, buf, active_index, key, keypart_map,
+ 		       HA_READ_PREFIX_LAST);
+   table->status= error ? STATUS_NOT_FOUND : 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -296,45 +301,55 @@
+                                 key_part_map keypart_map,
+                                 enum ha_rkey_function find_flag)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error = heap_rkey(file, buf, index, key, keypart_map, find_flag);
+   table->status = error ? STATUS_NOT_FOUND : 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_heap::index_next(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_next_count);
+   int error=heap_rnext(file,buf);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_heap::index_prev(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_prev_count);
+   int error=heap_rprev(file,buf);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_heap::index_first(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_first_count);
+   int error=heap_rfirst(file, buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_heap::index_last(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_last_count);
+   int error=heap_rlast(file, buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -345,9 +360,11 @@
+ 
+ int ha_heap::rnd_next(uchar *buf)
+ {
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   ha_statistic_increment(&SSV::ha_read_rnd_next_count);
+   int error=heap_scan(file, buf);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -355,10 +372,12 @@
+ {
+   int error;
+   HEAP_PTR heap_position;
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   ha_statistic_increment(&SSV::ha_read_rnd_count);
+   memcpy_fixed((char*) &heap_position, pos, sizeof(HEAP_PTR));
+   error=heap_rrnd(file, buf, heap_position);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+diff -Nru storage/myisam/Makefile.am storage/myisam/Makefile.am
+--- storage/myisam/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/myisam/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -150,5 +150,21 @@
+ 	@CHMOD@ +x $@-t
+ 	@MV@ $@-t $@
+ 
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libmyisam_a_LIBADD = probes_mysql.o
++libmyisam_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES += probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = ha_myisam.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/myisam/Makefile.in storage/myisam/Makefile.in
+--- storage/myisam/Makefile.in	2011-05-27 11:04:00.000000000 +0200
++++ storage/myisam/Makefile.in	2011-05-27 10:52:07.000000000 +0200
+@@ -55,6 +55,7 @@
+ 	myisampack$(EXEEXT) myisam_ftdump$(EXEEXT)
+ noinst_PROGRAMS = mi_test1$(EXEEXT) mi_test2$(EXEEXT) \
+ 	mi_test3$(EXEEXT) rt_test$(EXEEXT) sp_test$(EXEEXT)
++@HAVE_DTRACE_DASH_G_TRUE@am__append_1 = probes_mysql.o dtrace_files dtrace_providers
+ subdir = storage/myisam
+ DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
+ 	$(srcdir)/Makefile.in ChangeLog NEWS TODO
+@@ -63,6 +64,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -87,7 +89,6 @@
+ pkglibLIBRARIES_INSTALL = $(INSTALL_DATA)
+ LIBRARIES = $(pkglib_LIBRARIES)
+ libmyisam_a_AR = $(AR) $(ARFLAGS)
+-libmyisam_a_LIBADD =
+ am_libmyisam_a_OBJECTS = mi_open.$(OBJEXT) mi_extra.$(OBJEXT) \
+ 	mi_info.$(OBJEXT) mi_rkey.$(OBJEXT) mi_rnext.$(OBJEXT) \
+ 	mi_rnext_same.$(OBJEXT) mi_search.$(OBJEXT) mi_page.$(OBJEXT) \
+@@ -206,6 +207,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -218,6 +221,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -329,6 +333,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -553,8 +558,13 @@
+ 			ha_myisam.cc \
+ 			rt_index.c rt_key.c rt_mbr.c rt_split.c sp_key.c
+ 
+-CLEANFILES = test?.MY? FT?.MY? isam.log mi_test_all rt_test.MY? sp_test.MY?
++CLEANFILES = test?.MY? FT?.MY? isam.log mi_test_all rt_test.MY? \
++	sp_test.MY? $(am__append_1)
+ SUFFIXES = .sh
++@HAVE_DTRACE_DASH_G_TRUE@libmyisam_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libmyisam_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = ha_myisam.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -1048,6 +1058,13 @@
+ 	@CHMOD@ +x $@-t
+ 	@MV@ $@-t $@
+ 
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/myisam/ha_myisam.cc storage/myisam/ha_myisam.cc
+--- storage/myisam/ha_myisam.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/myisam/ha_myisam.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -28,6 +28,7 @@
+ #include <stdarg.h>
+ #include "myisamdef.h"
+ #include "rt_index.h"
++#include "probes_mysql.h"
+ 
+ ulong myisam_recover_options= HA_RECOVER_NONE;
+ 
+@@ -1659,10 +1660,12 @@
+                               key_part_map keypart_map,
+                               enum ha_rkey_function find_flag)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error=mi_rkey(file, buf, active_index, key, keypart_map, find_flag);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -1670,9 +1673,11 @@
+                                   key_part_map keypart_map,
+                                   enum ha_rkey_function find_flag)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error=mi_rkey(file, buf, index, key, keypart_map, find_flag);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -1680,47 +1685,57 @@
+                                    key_part_map keypart_map)
+ {
+   DBUG_ENTER("ha_myisam::index_read_last");
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error=mi_rkey(file, buf, active_index, key, keypart_map,
+                     HA_READ_PREFIX_LAST);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   DBUG_RETURN(error);
+ }
+ 
+ int ha_myisam::index_next(uchar *buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_next_count);
+   int error=mi_rnext(file,buf,active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisam::index_prev(uchar *buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_prev_count);
+   int error=mi_rprev(file,buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisam::index_first(uchar *buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_first_count);
+   int error=mi_rfirst(file, buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisam::index_last(uchar *buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_last_count);
+   int error=mi_rlast(file, buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -1729,6 +1744,7 @@
+ 			       uint length __attribute__((unused)))
+ {
+   int error;
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(inited==INDEX);
+   ha_statistic_increment(&SSV::ha_read_next_count);
+   do
+@@ -1736,6 +1752,7 @@
+     error= mi_rnext_same(file,buf);
+   } while (error == HA_ERR_RECORD_DELETED);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -1749,9 +1766,11 @@
+ 
+ int ha_myisam::rnd_next(uchar *buf)
+ {
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   ha_statistic_increment(&SSV::ha_read_rnd_next_count);
+   int error=mi_scan(file, buf);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_READ_ROW_DONE(0);
+   return error;
+ }
+ 
+@@ -1762,9 +1781,11 @@
+ 
+ int ha_myisam::rnd_pos(uchar *buf, uchar *pos)
+ {
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   ha_statistic_increment(&SSV::ha_read_rnd_count);
+   int error=mi_rrnd(file, buf, my_get_ptr(pos,ref_length));
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_READ_ROW_DONE(0);
+   return error;
+ }
+ 
+diff -Nru storage/myisammrg/Makefile.am storage/myisammrg/Makefile.am
+--- storage/myisammrg/Makefile.am	2011-05-27 11:02:47.000000000 +0200
++++ storage/myisammrg/Makefile.am	2011-05-27 10:50:57.000000000 +0200
+@@ -40,5 +40,22 @@
+ 
+ EXTRA_DIST =		CMakeLists.txt plug.in
+ 
++if HAVE_DTRACE_DASH_G
++abs_top_srcdir = @abs_top_srcdir@
++libmyisammrg_a_LIBADD = probes_mysql.o
++libmyisammrg_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++DTRACEFILES = ha_myisammrg.o
++DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
++
++dtrace_files:
++	echo $(DTRACEFILES) > $@
++dtrace_providers:
++	echo $(DTRACEPROVIDER) > $@
++probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++endif
++
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+diff -Nru storage/myisammrg/Makefile.in storage/myisammrg/Makefile.in
+--- storage/myisammrg/Makefile.in	2011-05-27 11:04:00.000000000 +0200
++++ storage/myisammrg/Makefile.in	2011-05-27 10:52:07.000000000 +0200
+@@ -57,6 +57,7 @@
+ 	$(top_srcdir)/config/ac-macros/check_cpu.m4 \
+ 	$(top_srcdir)/config/ac-macros/character_sets.m4 \
+ 	$(top_srcdir)/config/ac-macros/compiler_flag.m4 \
++	$(top_srcdir)/config/ac-macros/dtrace.m4 \
+ 	$(top_srcdir)/config/ac-macros/plugins.m4 \
+ 	$(top_srcdir)/config/ac-macros/ha_ndbcluster.m4 \
+ 	$(top_srcdir)/config/ac-macros/large_file.m4 \
+@@ -80,7 +81,6 @@
+ pkglibLIBRARIES_INSTALL = $(INSTALL_DATA)
+ LIBRARIES = $(noinst_LIBRARIES) $(pkglib_LIBRARIES)
+ libmyisammrg_a_AR = $(AR) $(ARFLAGS)
+-libmyisammrg_a_LIBADD =
+ am_libmyisammrg_a_OBJECTS = myrg_open.$(OBJEXT) myrg_extra.$(OBJEXT) \
+ 	myrg_info.$(OBJEXT) myrg_locking.$(OBJEXT) myrg_rrnd.$(OBJEXT) \
+ 	myrg_update.$(OBJEXT) myrg_delete.$(OBJEXT) \
+@@ -163,6 +163,8 @@
+ DOT_FRM_VERSION = @DOT_FRM_VERSION@
+ DOXYGEN = @DOXYGEN@
+ DSYMUTIL = @DSYMUTIL@
++DTRACE = @DTRACE@
++DTRACEFLAGS = @DTRACEFLAGS@
+ DUMPBIN = @DUMPBIN@
+ DVIS = @DVIS@
+ ECHO_C = @ECHO_C@
+@@ -175,6 +177,7 @@
+ GETCONF = @GETCONF@
+ GREP = @GREP@
+ GXX = @GXX@
++HAVE_DTRACE = @HAVE_DTRACE@
+ HOSTNAME = @HOSTNAME@
+ INNODB_DYNAMIC_CFLAGS = @INNODB_DYNAMIC_CFLAGS@
+ INSTALL = @INSTALL@
+@@ -286,6 +289,7 @@
+ abs_builddir = @abs_builddir@
+ abs_srcdir = @abs_srcdir@
+ abs_top_builddir = @abs_top_builddir@
++@HAVE_DTRACE_DASH_G_TRUE@abs_top_srcdir = @abs_top_srcdir@
+ abs_top_srcdir = @abs_top_srcdir@
+ ac_ct_CC = @ac_ct_CC@
+ ac_ct_CXX = @ac_ct_CXX@
+@@ -441,6 +445,11 @@
+ 			myrg_rnext_same.c myrg_records.c
+ 
+ EXTRA_DIST = CMakeLists.txt plug.in
++@HAVE_DTRACE_DASH_G_TRUE@libmyisammrg_a_LIBADD = probes_mysql.o
++@HAVE_DTRACE_DASH_G_TRUE@libmyisammrg_a_DEPENDENCIES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@CLEANFILES = probes_mysql.o dtrace_files dtrace_providers
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEFILES = ha_myisammrg.o
++@HAVE_DTRACE_DASH_G_TRUE@DTRACEPROVIDER = $(abs_top_srcdir)/sql/probes_mysql.d
+ all: all-am
+ 
+ .SUFFIXES:
+@@ -686,6 +695,7 @@
+ mostlyclean-generic:
+ 
+ clean-generic:
++	-test -z "$(CLEANFILES)" || rm -f $(CLEANFILES)
+ 
+ distclean-generic:
+ 	-test -z "$(CONFIG_CLEAN_FILES)" || rm -f $(CONFIG_CLEAN_FILES)
+@@ -769,6 +779,13 @@
+ 	tags uninstall uninstall-am uninstall-pkglibLIBRARIES
+ 
+ 
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_files:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEFILES) > $@
++@HAVE_DTRACE_DASH_G_TRUE@dtrace_providers:
++@HAVE_DTRACE_DASH_G_TRUE@	echo $(DTRACEPROVIDER) > $@
++@HAVE_DTRACE_DASH_G_TRUE@probes_mysql.o: $(DTRACEPROVIDER) $(DTRACEFILES)
++@HAVE_DTRACE_DASH_G_TRUE@	$(DTRACE) $(DTRACEFLAGS) -G -s $< $(DTRACEFILES) -o $@
++
+ # Don't update the files from bitkeeper
+ %::SCCS/s.%
+ # Tell versions [3.59,3.63) of GNU make to not export all variables.
+diff -Nru storage/myisammrg/ha_myisammrg.cc storage/myisammrg/ha_myisammrg.cc
+--- storage/myisammrg/ha_myisammrg.cc	2011-05-27 11:02:46.000000000 +0200
++++ storage/myisammrg/ha_myisammrg.cc	2011-05-27 10:50:57.000000000 +0200
+@@ -101,7 +101,7 @@
+ #include "../myisam/ha_myisam.h"
+ #include "ha_myisammrg.h"
+ #include "myrg_def.h"
+-
++#include "probes_mysql.h"
+ 
+ static handler *myisammrg_create_handler(handlerton *hton,
+                                          TABLE_SHARE *table,
+@@ -734,10 +734,12 @@
+                                  key_part_map keypart_map,
+                                  enum ha_rkey_function find_flag)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error=myrg_rkey(file,buf,active_index, key, keypart_map, find_flag);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -745,57 +747,69 @@
+                                      key_part_map keypart_map,
+                                      enum ha_rkey_function find_flag)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error=myrg_rkey(file,buf,index, key, keypart_map, find_flag);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisammrg::index_read_last_map(uchar *buf, const uchar *key,
+                                       key_part_map keypart_map)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_key_count);
+   int error=myrg_rkey(file,buf,active_index, key, keypart_map,
+ 		      HA_READ_PREFIX_LAST);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisammrg::index_next(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_next_count);
+   int error=myrg_rnext(file,buf,active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisammrg::index_prev(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_prev_count);
+   int error=myrg_rprev(file,buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisammrg::index_first(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_first_count);
+   int error=myrg_rfirst(file, buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ int ha_myisammrg::index_last(uchar * buf)
+ {
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_last_count);
+   int error=myrg_rlast(file, buf, active_index);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -804,6 +818,7 @@
+                                   uint length __attribute__((unused)))
+ {
+   int error;
++  MYSQL_INDEX_READ_ROW_START(table_share->db.str, table_share->table_name.str);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_next_count);
+   do
+@@ -811,6 +826,7 @@
+     error= myrg_rnext_same(file,buf);
+   } while (error == HA_ERR_RECORD_DELETED);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_INDEX_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+@@ -824,20 +840,24 @@
+ 
+ int ha_myisammrg::rnd_next(uchar *buf)
+ {
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_rnd_next_count);
+   int error=myrg_rrnd(file, buf, HA_OFFSET_ERROR);
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+ 
+ int ha_myisammrg::rnd_pos(uchar * buf, uchar *pos)
+ {
++  MYSQL_READ_ROW_START(table_share->db.str, table_share->table_name.str, 0);
+   DBUG_ASSERT(this->file->children_attached);
+   ha_statistic_increment(&SSV::ha_read_rnd_count);
+   int error=myrg_rrnd(file, buf, my_get_ptr(pos,ref_length));
+   table->status=error ? STATUS_NOT_FOUND: 0;
++  MYSQL_READ_ROW_DONE(error);
+   return error;
+ }
+ 
+=== added file 'include/probes.h'
+--- include/probes.h	1970-01-01 00:00:00 +0000
++++ include/probes.h	2011-05-26 16:14:02 +0000
+@@ -0,0 +1,981 @@
++/*
++ * Generated by dtrace(1M).
++ */
++
++#ifndef	_PROBES_H
++#define	_PROBES_H
++
++
++
++#ifdef	__cplusplus
++extern "C" {
++#endif
++
++#if _DTRACE_VERSION
++
++#define	MYSQL_COMMAND_DONE(arg0) \
++	__dtrace_mysql___command__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_COMMAND_DONE_ENABLED() \
++	__dtraceenabled_mysql___command__done()
++#else
++#define	MYSQL_COMMAND_DONE_ENABLED() \
++	__dtraceenabled_mysql___command__done(0)
++#endif
++#define	MYSQL_COMMAND_START(arg0, arg1, arg2, arg3) \
++	__dtrace_mysql___command__start(arg0, arg1, arg2, arg3)
++#ifndef	__sparc
++#define	MYSQL_COMMAND_START_ENABLED() \
++	__dtraceenabled_mysql___command__start()
++#else
++#define	MYSQL_COMMAND_START_ENABLED() \
++	__dtraceenabled_mysql___command__start(0)
++#endif
++#define	MYSQL_CONNECTION_DONE(arg0, arg1) \
++	__dtrace_mysql___connection__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_CONNECTION_DONE_ENABLED() \
++	__dtraceenabled_mysql___connection__done()
++#else
++#define	MYSQL_CONNECTION_DONE_ENABLED() \
++	__dtraceenabled_mysql___connection__done(0)
++#endif
++#define	MYSQL_CONNECTION_START(arg0, arg1, arg2) \
++	__dtrace_mysql___connection__start(arg0, arg1, arg2)
++#ifndef	__sparc
++#define	MYSQL_CONNECTION_START_ENABLED() \
++	__dtraceenabled_mysql___connection__start()
++#else
++#define	MYSQL_CONNECTION_START_ENABLED() \
++	__dtraceenabled_mysql___connection__start(0)
++#endif
++#define	MYSQL_DELETE_DONE(arg0, arg1) \
++	__dtrace_mysql___delete__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_DELETE_DONE_ENABLED() \
++	__dtraceenabled_mysql___delete__done()
++#else
++#define	MYSQL_DELETE_DONE_ENABLED() \
++	__dtraceenabled_mysql___delete__done(0)
++#endif
++#define	MYSQL_DELETE_ROW_DONE(arg0) \
++	__dtrace_mysql___delete__row__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_DELETE_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___delete__row__done()
++#else
++#define	MYSQL_DELETE_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___delete__row__done(0)
++#endif
++#define	MYSQL_DELETE_ROW_START(arg0, arg1) \
++	__dtrace_mysql___delete__row__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_DELETE_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___delete__row__start()
++#else
++#define	MYSQL_DELETE_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___delete__row__start(0)
++#endif
++#define	MYSQL_DELETE_START(arg0) \
++	__dtrace_mysql___delete__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_DELETE_START_ENABLED() \
++	__dtraceenabled_mysql___delete__start()
++#else
++#define	MYSQL_DELETE_START_ENABLED() \
++	__dtraceenabled_mysql___delete__start(0)
++#endif
++#define	MYSQL_FILESORT_DONE(arg0, arg1) \
++	__dtrace_mysql___filesort__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_FILESORT_DONE_ENABLED() \
++	__dtraceenabled_mysql___filesort__done()
++#else
++#define	MYSQL_FILESORT_DONE_ENABLED() \
++	__dtraceenabled_mysql___filesort__done(0)
++#endif
++#define	MYSQL_FILESORT_START(arg0, arg1) \
++	__dtrace_mysql___filesort__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_FILESORT_START_ENABLED() \
++	__dtraceenabled_mysql___filesort__start()
++#else
++#define	MYSQL_FILESORT_START_ENABLED() \
++	__dtraceenabled_mysql___filesort__start(0)
++#endif
++#define	MYSQL_HANDLER_RDLOCK_DONE(arg0) \
++	__dtrace_mysql___handler__rdlock__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_HANDLER_RDLOCK_DONE_ENABLED() \
++	__dtraceenabled_mysql___handler__rdlock__done()
++#else
++#define	MYSQL_HANDLER_RDLOCK_DONE_ENABLED() \
++	__dtraceenabled_mysql___handler__rdlock__done(0)
++#endif
++#define	MYSQL_HANDLER_RDLOCK_START(arg0, arg1) \
++	__dtrace_mysql___handler__rdlock__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_HANDLER_RDLOCK_START_ENABLED() \
++	__dtraceenabled_mysql___handler__rdlock__start()
++#else
++#define	MYSQL_HANDLER_RDLOCK_START_ENABLED() \
++	__dtraceenabled_mysql___handler__rdlock__start(0)
++#endif
++#define	MYSQL_HANDLER_UNLOCK_DONE(arg0) \
++	__dtrace_mysql___handler__unlock__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_HANDLER_UNLOCK_DONE_ENABLED() \
++	__dtraceenabled_mysql___handler__unlock__done()
++#else
++#define	MYSQL_HANDLER_UNLOCK_DONE_ENABLED() \
++	__dtraceenabled_mysql___handler__unlock__done(0)
++#endif
++#define	MYSQL_HANDLER_UNLOCK_START(arg0, arg1) \
++	__dtrace_mysql___handler__unlock__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_HANDLER_UNLOCK_START_ENABLED() \
++	__dtraceenabled_mysql___handler__unlock__start()
++#else
++#define	MYSQL_HANDLER_UNLOCK_START_ENABLED() \
++	__dtraceenabled_mysql___handler__unlock__start(0)
++#endif
++#define	MYSQL_HANDLER_WRLOCK_DONE(arg0) \
++	__dtrace_mysql___handler__wrlock__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_HANDLER_WRLOCK_DONE_ENABLED() \
++	__dtraceenabled_mysql___handler__wrlock__done()
++#else
++#define	MYSQL_HANDLER_WRLOCK_DONE_ENABLED() \
++	__dtraceenabled_mysql___handler__wrlock__done(0)
++#endif
++#define	MYSQL_HANDLER_WRLOCK_START(arg0, arg1) \
++	__dtrace_mysql___handler__wrlock__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_HANDLER_WRLOCK_START_ENABLED() \
++	__dtraceenabled_mysql___handler__wrlock__start()
++#else
++#define	MYSQL_HANDLER_WRLOCK_START_ENABLED() \
++	__dtraceenabled_mysql___handler__wrlock__start(0)
++#endif
++#define	MYSQL_INDEX_READ_ROW_DONE(arg0) \
++	__dtrace_mysql___index__read__row__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_INDEX_READ_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___index__read__row__done()
++#else
++#define	MYSQL_INDEX_READ_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___index__read__row__done(0)
++#endif
++#define	MYSQL_INDEX_READ_ROW_START(arg0, arg1) \
++	__dtrace_mysql___index__read__row__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_INDEX_READ_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___index__read__row__start()
++#else
++#define	MYSQL_INDEX_READ_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___index__read__row__start(0)
++#endif
++#define	MYSQL_INSERT_DONE(arg0, arg1) \
++	__dtrace_mysql___insert__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_INSERT_DONE_ENABLED() \
++	__dtraceenabled_mysql___insert__done()
++#else
++#define	MYSQL_INSERT_DONE_ENABLED() \
++	__dtraceenabled_mysql___insert__done(0)
++#endif
++#define	MYSQL_INSERT_ROW_DONE(arg0) \
++	__dtrace_mysql___insert__row__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_INSERT_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___insert__row__done()
++#else
++#define	MYSQL_INSERT_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___insert__row__done(0)
++#endif
++#define	MYSQL_INSERT_ROW_START(arg0, arg1) \
++	__dtrace_mysql___insert__row__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_INSERT_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___insert__row__start()
++#else
++#define	MYSQL_INSERT_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___insert__row__start(0)
++#endif
++#define	MYSQL_INSERT_SELECT_DONE(arg0, arg1) \
++	__dtrace_mysql___insert__select__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_INSERT_SELECT_DONE_ENABLED() \
++	__dtraceenabled_mysql___insert__select__done()
++#else
++#define	MYSQL_INSERT_SELECT_DONE_ENABLED() \
++	__dtraceenabled_mysql___insert__select__done(0)
++#endif
++#define	MYSQL_INSERT_SELECT_START(arg0) \
++	__dtrace_mysql___insert__select__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_INSERT_SELECT_START_ENABLED() \
++	__dtraceenabled_mysql___insert__select__start()
++#else
++#define	MYSQL_INSERT_SELECT_START_ENABLED() \
++	__dtraceenabled_mysql___insert__select__start(0)
++#endif
++#define	MYSQL_INSERT_START(arg0) \
++	__dtrace_mysql___insert__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_INSERT_START_ENABLED() \
++	__dtraceenabled_mysql___insert__start()
++#else
++#define	MYSQL_INSERT_START_ENABLED() \
++	__dtraceenabled_mysql___insert__start(0)
++#endif
++#define	MYSQL_KEYCACHE_READ_BLOCK(arg0) \
++	__dtrace_mysql___keycache__read__block(arg0)
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_READ_BLOCK_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__block()
++#else
++#define	MYSQL_KEYCACHE_READ_BLOCK_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__block(0)
++#endif
++#define	MYSQL_KEYCACHE_READ_DONE(arg0, arg1) \
++	__dtrace_mysql___keycache__read__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_READ_DONE_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__done()
++#else
++#define	MYSQL_KEYCACHE_READ_DONE_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__done(0)
++#endif
++#define	MYSQL_KEYCACHE_READ_HIT() \
++	__dtrace_mysql___keycache__read__hit()
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_READ_HIT_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__hit()
++#else
++#define	MYSQL_KEYCACHE_READ_HIT_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__hit(0)
++#endif
++#define	MYSQL_KEYCACHE_READ_MISS() \
++	__dtrace_mysql___keycache__read__miss()
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_READ_MISS_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__miss()
++#else
++#define	MYSQL_KEYCACHE_READ_MISS_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__miss(0)
++#endif
++#define	MYSQL_KEYCACHE_READ_START(arg0, arg1, arg2, arg3) \
++	__dtrace_mysql___keycache__read__start(arg0, arg1, arg2, arg3)
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_READ_START_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__start()
++#else
++#define	MYSQL_KEYCACHE_READ_START_ENABLED() \
++	__dtraceenabled_mysql___keycache__read__start(0)
++#endif
++#define	MYSQL_KEYCACHE_WRITE_BLOCK(arg0) \
++	__dtrace_mysql___keycache__write__block(arg0)
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_WRITE_BLOCK_ENABLED() \
++	__dtraceenabled_mysql___keycache__write__block()
++#else
++#define	MYSQL_KEYCACHE_WRITE_BLOCK_ENABLED() \
++	__dtraceenabled_mysql___keycache__write__block(0)
++#endif
++#define	MYSQL_KEYCACHE_WRITE_DONE(arg0, arg1) \
++	__dtrace_mysql___keycache__write__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_WRITE_DONE_ENABLED() \
++	__dtraceenabled_mysql___keycache__write__done()
++#else
++#define	MYSQL_KEYCACHE_WRITE_DONE_ENABLED() \
++	__dtraceenabled_mysql___keycache__write__done(0)
++#endif
++#define	MYSQL_KEYCACHE_WRITE_START(arg0, arg1, arg2, arg3) \
++	__dtrace_mysql___keycache__write__start(arg0, arg1, arg2, arg3)
++#ifndef	__sparc
++#define	MYSQL_KEYCACHE_WRITE_START_ENABLED() \
++	__dtraceenabled_mysql___keycache__write__start()
++#else
++#define	MYSQL_KEYCACHE_WRITE_START_ENABLED() \
++	__dtraceenabled_mysql___keycache__write__start(0)
++#endif
++#define	MYSQL_MULTI_DELETE_DONE(arg0, arg1) \
++	__dtrace_mysql___multi__delete__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_MULTI_DELETE_DONE_ENABLED() \
++	__dtraceenabled_mysql___multi__delete__done()
++#else
++#define	MYSQL_MULTI_DELETE_DONE_ENABLED() \
++	__dtraceenabled_mysql___multi__delete__done(0)
++#endif
++#define	MYSQL_MULTI_DELETE_START(arg0) \
++	__dtrace_mysql___multi__delete__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_MULTI_DELETE_START_ENABLED() \
++	__dtraceenabled_mysql___multi__delete__start()
++#else
++#define	MYSQL_MULTI_DELETE_START_ENABLED() \
++	__dtraceenabled_mysql___multi__delete__start(0)
++#endif
++#define	MYSQL_MULTI_UPDATE_DONE(arg0, arg1, arg2) \
++	__dtrace_mysql___multi__update__done(arg0, arg1, arg2)
++#ifndef	__sparc
++#define	MYSQL_MULTI_UPDATE_DONE_ENABLED() \
++	__dtraceenabled_mysql___multi__update__done()
++#else
++#define	MYSQL_MULTI_UPDATE_DONE_ENABLED() \
++	__dtraceenabled_mysql___multi__update__done(0)
++#endif
++#define	MYSQL_MULTI_UPDATE_START(arg0) \
++	__dtrace_mysql___multi__update__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_MULTI_UPDATE_START_ENABLED() \
++	__dtraceenabled_mysql___multi__update__start()
++#else
++#define	MYSQL_MULTI_UPDATE_START_ENABLED() \
++	__dtraceenabled_mysql___multi__update__start(0)
++#endif
++#define	MYSQL_NET_READ_DONE(arg0, arg1) \
++	__dtrace_mysql___net__read__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_NET_READ_DONE_ENABLED() \
++	__dtraceenabled_mysql___net__read__done()
++#else
++#define	MYSQL_NET_READ_DONE_ENABLED() \
++	__dtraceenabled_mysql___net__read__done(0)
++#endif
++#define	MYSQL_NET_READ_START() \
++	__dtrace_mysql___net__read__start()
++#ifndef	__sparc
++#define	MYSQL_NET_READ_START_ENABLED() \
++	__dtraceenabled_mysql___net__read__start()
++#else
++#define	MYSQL_NET_READ_START_ENABLED() \
++	__dtraceenabled_mysql___net__read__start(0)
++#endif
++#define	MYSQL_NET_WRITE_DONE(arg0) \
++	__dtrace_mysql___net__write__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_NET_WRITE_DONE_ENABLED() \
++	__dtraceenabled_mysql___net__write__done()
++#else
++#define	MYSQL_NET_WRITE_DONE_ENABLED() \
++	__dtraceenabled_mysql___net__write__done(0)
++#endif
++#define	MYSQL_NET_WRITE_START(arg0) \
++	__dtrace_mysql___net__write__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_NET_WRITE_START_ENABLED() \
++	__dtraceenabled_mysql___net__write__start()
++#else
++#define	MYSQL_NET_WRITE_START_ENABLED() \
++	__dtraceenabled_mysql___net__write__start(0)
++#endif
++#define	MYSQL_QUERY_CACHE_HIT(arg0, arg1) \
++	__dtrace_mysql___query__cache__hit(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_QUERY_CACHE_HIT_ENABLED() \
++	__dtraceenabled_mysql___query__cache__hit()
++#else
++#define	MYSQL_QUERY_CACHE_HIT_ENABLED() \
++	__dtraceenabled_mysql___query__cache__hit(0)
++#endif
++#define	MYSQL_QUERY_CACHE_MISS(arg0) \
++	__dtrace_mysql___query__cache__miss(arg0)
++#ifndef	__sparc
++#define	MYSQL_QUERY_CACHE_MISS_ENABLED() \
++	__dtraceenabled_mysql___query__cache__miss()
++#else
++#define	MYSQL_QUERY_CACHE_MISS_ENABLED() \
++	__dtraceenabled_mysql___query__cache__miss(0)
++#endif
++#define	MYSQL_QUERY_DONE(arg0) \
++	__dtrace_mysql___query__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_QUERY_DONE_ENABLED() \
++	__dtraceenabled_mysql___query__done()
++#else
++#define	MYSQL_QUERY_DONE_ENABLED() \
++	__dtraceenabled_mysql___query__done(0)
++#endif
++#define	MYSQL_QUERY_EXEC_DONE(arg0) \
++	__dtrace_mysql___query__exec__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_QUERY_EXEC_DONE_ENABLED() \
++	__dtraceenabled_mysql___query__exec__done()
++#else
++#define	MYSQL_QUERY_EXEC_DONE_ENABLED() \
++	__dtraceenabled_mysql___query__exec__done(0)
++#endif
++#define	MYSQL_QUERY_EXEC_START(arg0, arg1, arg2, arg3, arg4, arg5) \
++	__dtrace_mysql___query__exec__start(arg0, arg1, arg2, arg3, arg4, arg5)
++#ifndef	__sparc
++#define	MYSQL_QUERY_EXEC_START_ENABLED() \
++	__dtraceenabled_mysql___query__exec__start()
++#else
++#define	MYSQL_QUERY_EXEC_START_ENABLED() \
++	__dtraceenabled_mysql___query__exec__start(0)
++#endif
++#define	MYSQL_QUERY_PARSE_DONE(arg0) \
++	__dtrace_mysql___query__parse__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_QUERY_PARSE_DONE_ENABLED() \
++	__dtraceenabled_mysql___query__parse__done()
++#else
++#define	MYSQL_QUERY_PARSE_DONE_ENABLED() \
++	__dtraceenabled_mysql___query__parse__done(0)
++#endif
++#define	MYSQL_QUERY_PARSE_START(arg0) \
++	__dtrace_mysql___query__parse__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_QUERY_PARSE_START_ENABLED() \
++	__dtraceenabled_mysql___query__parse__start()
++#else
++#define	MYSQL_QUERY_PARSE_START_ENABLED() \
++	__dtraceenabled_mysql___query__parse__start(0)
++#endif
++#define	MYSQL_QUERY_START(arg0, arg1, arg2, arg3, arg4) \
++	__dtrace_mysql___query__start(arg0, arg1, arg2, arg3, arg4)
++#ifndef	__sparc
++#define	MYSQL_QUERY_START_ENABLED() \
++	__dtraceenabled_mysql___query__start()
++#else
++#define	MYSQL_QUERY_START_ENABLED() \
++	__dtraceenabled_mysql___query__start(0)
++#endif
++#define	MYSQL_READ_ROW_DONE(arg0) \
++	__dtrace_mysql___read__row__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_READ_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___read__row__done()
++#else
++#define	MYSQL_READ_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___read__row__done(0)
++#endif
++#define	MYSQL_READ_ROW_START(arg0, arg1, arg2) \
++	__dtrace_mysql___read__row__start(arg0, arg1, arg2)
++#ifndef	__sparc
++#define	MYSQL_READ_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___read__row__start()
++#else
++#define	MYSQL_READ_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___read__row__start(0)
++#endif
++#define	MYSQL_SELECT_DONE(arg0, arg1) \
++	__dtrace_mysql___select__done(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_SELECT_DONE_ENABLED() \
++	__dtraceenabled_mysql___select__done()
++#else
++#define	MYSQL_SELECT_DONE_ENABLED() \
++	__dtraceenabled_mysql___select__done(0)
++#endif
++#define	MYSQL_SELECT_START(arg0) \
++	__dtrace_mysql___select__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_SELECT_START_ENABLED() \
++	__dtraceenabled_mysql___select__start()
++#else
++#define	MYSQL_SELECT_START_ENABLED() \
++	__dtraceenabled_mysql___select__start(0)
++#endif
++#define	MYSQL_UPDATE_DONE(arg0, arg1, arg2) \
++	__dtrace_mysql___update__done(arg0, arg1, arg2)
++#ifndef	__sparc
++#define	MYSQL_UPDATE_DONE_ENABLED() \
++	__dtraceenabled_mysql___update__done()
++#else
++#define	MYSQL_UPDATE_DONE_ENABLED() \
++	__dtraceenabled_mysql___update__done(0)
++#endif
++#define	MYSQL_UPDATE_ROW_DONE(arg0) \
++	__dtrace_mysql___update__row__done(arg0)
++#ifndef	__sparc
++#define	MYSQL_UPDATE_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___update__row__done()
++#else
++#define	MYSQL_UPDATE_ROW_DONE_ENABLED() \
++	__dtraceenabled_mysql___update__row__done(0)
++#endif
++#define	MYSQL_UPDATE_ROW_START(arg0, arg1) \
++	__dtrace_mysql___update__row__start(arg0, arg1)
++#ifndef	__sparc
++#define	MYSQL_UPDATE_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___update__row__start()
++#else
++#define	MYSQL_UPDATE_ROW_START_ENABLED() \
++	__dtraceenabled_mysql___update__row__start(0)
++#endif
++#define	MYSQL_UPDATE_START(arg0) \
++	__dtrace_mysql___update__start(arg0)
++#ifndef	__sparc
++#define	MYSQL_UPDATE_START_ENABLED() \
++	__dtraceenabled_mysql___update__start()
++#else
++#define	MYSQL_UPDATE_START_ENABLED() \
++	__dtraceenabled_mysql___update__start(0)
++#endif
++
++
++extern void __dtrace_mysql___command__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___command__done(void);
++#else
++extern int __dtraceenabled_mysql___command__done(long);
++#endif
++extern void __dtrace_mysql___command__start(unsigned long, int, char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___command__start(void);
++#else
++extern int __dtraceenabled_mysql___command__start(long);
++#endif
++extern void __dtrace_mysql___connection__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___connection__done(void);
++#else
++extern int __dtraceenabled_mysql___connection__done(long);
++#endif
++extern void __dtrace_mysql___connection__start(unsigned long, char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___connection__start(void);
++#else
++extern int __dtraceenabled_mysql___connection__start(long);
++#endif
++extern void __dtrace_mysql___delete__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___delete__done(void);
++#else
++extern int __dtraceenabled_mysql___delete__done(long);
++#endif
++extern void __dtrace_mysql___delete__row__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___delete__row__done(void);
++#else
++extern int __dtraceenabled_mysql___delete__row__done(long);
++#endif
++extern void __dtrace_mysql___delete__row__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___delete__row__start(void);
++#else
++extern int __dtraceenabled_mysql___delete__row__start(long);
++#endif
++extern void __dtrace_mysql___delete__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___delete__start(void);
++#else
++extern int __dtraceenabled_mysql___delete__start(long);
++#endif
++extern void __dtrace_mysql___filesort__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___filesort__done(void);
++#else
++extern int __dtraceenabled_mysql___filesort__done(long);
++#endif
++extern void __dtrace_mysql___filesort__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___filesort__start(void);
++#else
++extern int __dtraceenabled_mysql___filesort__start(long);
++#endif
++extern void __dtrace_mysql___handler__rdlock__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___handler__rdlock__done(void);
++#else
++extern int __dtraceenabled_mysql___handler__rdlock__done(long);
++#endif
++extern void __dtrace_mysql___handler__rdlock__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___handler__rdlock__start(void);
++#else
++extern int __dtraceenabled_mysql___handler__rdlock__start(long);
++#endif
++extern void __dtrace_mysql___handler__unlock__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___handler__unlock__done(void);
++#else
++extern int __dtraceenabled_mysql___handler__unlock__done(long);
++#endif
++extern void __dtrace_mysql___handler__unlock__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___handler__unlock__start(void);
++#else
++extern int __dtraceenabled_mysql___handler__unlock__start(long);
++#endif
++extern void __dtrace_mysql___handler__wrlock__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___handler__wrlock__done(void);
++#else
++extern int __dtraceenabled_mysql___handler__wrlock__done(long);
++#endif
++extern void __dtrace_mysql___handler__wrlock__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___handler__wrlock__start(void);
++#else
++extern int __dtraceenabled_mysql___handler__wrlock__start(long);
++#endif
++extern void __dtrace_mysql___index__read__row__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___index__read__row__done(void);
++#else
++extern int __dtraceenabled_mysql___index__read__row__done(long);
++#endif
++extern void __dtrace_mysql___index__read__row__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___index__read__row__start(void);
++#else
++extern int __dtraceenabled_mysql___index__read__row__start(long);
++#endif
++extern void __dtrace_mysql___insert__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___insert__done(void);
++#else
++extern int __dtraceenabled_mysql___insert__done(long);
++#endif
++extern void __dtrace_mysql___insert__row__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___insert__row__done(void);
++#else
++extern int __dtraceenabled_mysql___insert__row__done(long);
++#endif
++extern void __dtrace_mysql___insert__row__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___insert__row__start(void);
++#else
++extern int __dtraceenabled_mysql___insert__row__start(long);
++#endif
++extern void __dtrace_mysql___insert__select__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___insert__select__done(void);
++#else
++extern int __dtraceenabled_mysql___insert__select__done(long);
++#endif
++extern void __dtrace_mysql___insert__select__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___insert__select__start(void);
++#else
++extern int __dtraceenabled_mysql___insert__select__start(long);
++#endif
++extern void __dtrace_mysql___insert__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___insert__start(void);
++#else
++extern int __dtraceenabled_mysql___insert__start(long);
++#endif
++extern void __dtrace_mysql___keycache__read__block(unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__read__block(void);
++#else
++extern int __dtraceenabled_mysql___keycache__read__block(long);
++#endif
++extern void __dtrace_mysql___keycache__read__done(unsigned long, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__read__done(void);
++#else
++extern int __dtraceenabled_mysql___keycache__read__done(long);
++#endif
++extern void __dtrace_mysql___keycache__read__hit(void);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__read__hit(void);
++#else
++extern int __dtraceenabled_mysql___keycache__read__hit(long);
++#endif
++extern void __dtrace_mysql___keycache__read__miss(void);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__read__miss(void);
++#else
++extern int __dtraceenabled_mysql___keycache__read__miss(long);
++#endif
++extern void __dtrace_mysql___keycache__read__start(char *, unsigned long, unsigned long, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__read__start(void);
++#else
++extern int __dtraceenabled_mysql___keycache__read__start(long);
++#endif
++extern void __dtrace_mysql___keycache__write__block(unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__write__block(void);
++#else
++extern int __dtraceenabled_mysql___keycache__write__block(long);
++#endif
++extern void __dtrace_mysql___keycache__write__done(unsigned long, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__write__done(void);
++#else
++extern int __dtraceenabled_mysql___keycache__write__done(long);
++#endif
++extern void __dtrace_mysql___keycache__write__start(char *, unsigned long, unsigned long, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___keycache__write__start(void);
++#else
++extern int __dtraceenabled_mysql___keycache__write__start(long);
++#endif
++extern void __dtrace_mysql___multi__delete__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___multi__delete__done(void);
++#else
++extern int __dtraceenabled_mysql___multi__delete__done(long);
++#endif
++extern void __dtrace_mysql___multi__delete__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___multi__delete__start(void);
++#else
++extern int __dtraceenabled_mysql___multi__delete__start(long);
++#endif
++extern void __dtrace_mysql___multi__update__done(int, unsigned long, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___multi__update__done(void);
++#else
++extern int __dtraceenabled_mysql___multi__update__done(long);
++#endif
++extern void __dtrace_mysql___multi__update__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___multi__update__start(void);
++#else
++extern int __dtraceenabled_mysql___multi__update__start(long);
++#endif
++extern void __dtrace_mysql___net__read__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___net__read__done(void);
++#else
++extern int __dtraceenabled_mysql___net__read__done(long);
++#endif
++extern void __dtrace_mysql___net__read__start(void);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___net__read__start(void);
++#else
++extern int __dtraceenabled_mysql___net__read__start(long);
++#endif
++extern void __dtrace_mysql___net__write__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___net__write__done(void);
++#else
++extern int __dtraceenabled_mysql___net__write__done(long);
++#endif
++extern void __dtrace_mysql___net__write__start(unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___net__write__start(void);
++#else
++extern int __dtraceenabled_mysql___net__write__start(long);
++#endif
++extern void __dtrace_mysql___query__cache__hit(char *, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__cache__hit(void);
++#else
++extern int __dtraceenabled_mysql___query__cache__hit(long);
++#endif
++extern void __dtrace_mysql___query__cache__miss(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__cache__miss(void);
++#else
++extern int __dtraceenabled_mysql___query__cache__miss(long);
++#endif
++extern void __dtrace_mysql___query__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__done(void);
++#else
++extern int __dtraceenabled_mysql___query__done(long);
++#endif
++extern void __dtrace_mysql___query__exec__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__exec__done(void);
++#else
++extern int __dtraceenabled_mysql___query__exec__done(long);
++#endif
++extern void __dtrace_mysql___query__exec__start(char *, unsigned long, char *, char *, char *, int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__exec__start(void);
++#else
++extern int __dtraceenabled_mysql___query__exec__start(long);
++#endif
++extern void __dtrace_mysql___query__parse__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__parse__done(void);
++#else
++extern int __dtraceenabled_mysql___query__parse__done(long);
++#endif
++extern void __dtrace_mysql___query__parse__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__parse__start(void);
++#else
++extern int __dtraceenabled_mysql___query__parse__start(long);
++#endif
++extern void __dtrace_mysql___query__start(char *, unsigned long, char *, char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___query__start(void);
++#else
++extern int __dtraceenabled_mysql___query__start(long);
++#endif
++extern void __dtrace_mysql___read__row__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___read__row__done(void);
++#else
++extern int __dtraceenabled_mysql___read__row__done(long);
++#endif
++extern void __dtrace_mysql___read__row__start(char *, char *, int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___read__row__start(void);
++#else
++extern int __dtraceenabled_mysql___read__row__start(long);
++#endif
++extern void __dtrace_mysql___select__done(int, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___select__done(void);
++#else
++extern int __dtraceenabled_mysql___select__done(long);
++#endif
++extern void __dtrace_mysql___select__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___select__start(void);
++#else
++extern int __dtraceenabled_mysql___select__start(long);
++#endif
++extern void __dtrace_mysql___update__done(int, unsigned long, unsigned long);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___update__done(void);
++#else
++extern int __dtraceenabled_mysql___update__done(long);
++#endif
++extern void __dtrace_mysql___update__row__done(int);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___update__row__done(void);
++#else
++extern int __dtraceenabled_mysql___update__row__done(long);
++#endif
++extern void __dtrace_mysql___update__row__start(char *, char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___update__row__start(void);
++#else
++extern int __dtraceenabled_mysql___update__row__start(long);
++#endif
++extern void __dtrace_mysql___update__start(char *);
++#ifndef	__sparc
++extern int __dtraceenabled_mysql___update__start(void);
++#else
++extern int __dtraceenabled_mysql___update__start(long);
++#endif
++
++#else
++
++#define	MYSQL_COMMAND_DONE(arg0)
++#define	MYSQL_COMMAND_DONE_ENABLED() (0)
++#define	MYSQL_COMMAND_START(arg0, arg1, arg2, arg3)
++#define	MYSQL_COMMAND_START_ENABLED() (0)
++#define	MYSQL_CONNECTION_DONE(arg0, arg1)
++#define	MYSQL_CONNECTION_DONE_ENABLED() (0)
++#define	MYSQL_CONNECTION_START(arg0, arg1, arg2)
++#define	MYSQL_CONNECTION_START_ENABLED() (0)
++#define	MYSQL_DELETE_DONE(arg0, arg1)
++#define	MYSQL_DELETE_DONE_ENABLED() (0)
++#define	MYSQL_DELETE_ROW_DONE(arg0)
++#define	MYSQL_DELETE_ROW_DONE_ENABLED() (0)
++#define	MYSQL_DELETE_ROW_START(arg0, arg1)
++#define	MYSQL_DELETE_ROW_START_ENABLED() (0)
++#define	MYSQL_DELETE_START(arg0)
++#define	MYSQL_DELETE_START_ENABLED() (0)
++#define	MYSQL_FILESORT_DONE(arg0, arg1)
++#define	MYSQL_FILESORT_DONE_ENABLED() (0)
++#define	MYSQL_FILESORT_START(arg0, arg1)
++#define	MYSQL_FILESORT_START_ENABLED() (0)
++#define	MYSQL_HANDLER_RDLOCK_DONE(arg0)
++#define	MYSQL_HANDLER_RDLOCK_DONE_ENABLED() (0)
++#define	MYSQL_HANDLER_RDLOCK_START(arg0, arg1)
++#define	MYSQL_HANDLER_RDLOCK_START_ENABLED() (0)
++#define	MYSQL_HANDLER_UNLOCK_DONE(arg0)
++#define	MYSQL_HANDLER_UNLOCK_DONE_ENABLED() (0)
++#define	MYSQL_HANDLER_UNLOCK_START(arg0, arg1)
++#define	MYSQL_HANDLER_UNLOCK_START_ENABLED() (0)
++#define	MYSQL_HANDLER_WRLOCK_DONE(arg0)
++#define	MYSQL_HANDLER_WRLOCK_DONE_ENABLED() (0)
++#define	MYSQL_HANDLER_WRLOCK_START(arg0, arg1)
++#define	MYSQL_HANDLER_WRLOCK_START_ENABLED() (0)
++#define	MYSQL_INDEX_READ_ROW_DONE(arg0)
++#define	MYSQL_INDEX_READ_ROW_DONE_ENABLED() (0)
++#define	MYSQL_INDEX_READ_ROW_START(arg0, arg1)
++#define	MYSQL_INDEX_READ_ROW_START_ENABLED() (0)
++#define	MYSQL_INSERT_DONE(arg0, arg1)
++#define	MYSQL_INSERT_DONE_ENABLED() (0)
++#define	MYSQL_INSERT_ROW_DONE(arg0)
++#define	MYSQL_INSERT_ROW_DONE_ENABLED() (0)
++#define	MYSQL_INSERT_ROW_START(arg0, arg1)
++#define	MYSQL_INSERT_ROW_START_ENABLED() (0)
++#define	MYSQL_INSERT_SELECT_DONE(arg0, arg1)
++#define	MYSQL_INSERT_SELECT_DONE_ENABLED() (0)
++#define	MYSQL_INSERT_SELECT_START(arg0)
++#define	MYSQL_INSERT_SELECT_START_ENABLED() (0)
++#define	MYSQL_INSERT_START(arg0)
++#define	MYSQL_INSERT_START_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_BLOCK(arg0)
++#define	MYSQL_KEYCACHE_READ_BLOCK_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_DONE(arg0, arg1)
++#define	MYSQL_KEYCACHE_READ_DONE_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_HIT()
++#define	MYSQL_KEYCACHE_READ_HIT_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_MISS()
++#define	MYSQL_KEYCACHE_READ_MISS_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_START(arg0, arg1, arg2, arg3)
++#define	MYSQL_KEYCACHE_READ_START_ENABLED() (0)
++#define	MYSQL_KEYCACHE_WRITE_BLOCK(arg0)
++#define	MYSQL_KEYCACHE_WRITE_BLOCK_ENABLED() (0)
++#define	MYSQL_KEYCACHE_WRITE_DONE(arg0, arg1)
++#define	MYSQL_KEYCACHE_WRITE_DONE_ENABLED() (0)
++#define	MYSQL_KEYCACHE_WRITE_START(arg0, arg1, arg2, arg3)
++#define	MYSQL_KEYCACHE_WRITE_START_ENABLED() (0)
++#define	MYSQL_MULTI_DELETE_DONE(arg0, arg1)
++#define	MYSQL_MULTI_DELETE_DONE_ENABLED() (0)
++#define	MYSQL_MULTI_DELETE_START(arg0)
++#define	MYSQL_MULTI_DELETE_START_ENABLED() (0)
++#define	MYSQL_MULTI_UPDATE_DONE(arg0, arg1, arg2)
++#define	MYSQL_MULTI_UPDATE_DONE_ENABLED() (0)
++#define	MYSQL_MULTI_UPDATE_START(arg0)
++#define	MYSQL_MULTI_UPDATE_START_ENABLED() (0)
++#define	MYSQL_NET_READ_DONE(arg0, arg1)
++#define	MYSQL_NET_READ_DONE_ENABLED() (0)
++#define	MYSQL_NET_READ_START()
++#define	MYSQL_NET_READ_START_ENABLED() (0)
++#define	MYSQL_NET_WRITE_DONE(arg0)
++#define	MYSQL_NET_WRITE_DONE_ENABLED() (0)
++#define	MYSQL_NET_WRITE_START(arg0)
++#define	MYSQL_NET_WRITE_START_ENABLED() (0)
++#define	MYSQL_QUERY_CACHE_HIT(arg0, arg1)
++#define	MYSQL_QUERY_CACHE_HIT_ENABLED() (0)
++#define	MYSQL_QUERY_CACHE_MISS(arg0)
++#define	MYSQL_QUERY_CACHE_MISS_ENABLED() (0)
++#define	MYSQL_QUERY_DONE(arg0)
++#define	MYSQL_QUERY_DONE_ENABLED() (0)
++#define	MYSQL_QUERY_EXEC_DONE(arg0)
++#define	MYSQL_QUERY_EXEC_DONE_ENABLED() (0)
++#define	MYSQL_QUERY_EXEC_START(arg0, arg1, arg2, arg3, arg4, arg5)
++#define	MYSQL_QUERY_EXEC_START_ENABLED() (0)
++#define	MYSQL_QUERY_PARSE_DONE(arg0)
++#define	MYSQL_QUERY_PARSE_DONE_ENABLED() (0)
++#define	MYSQL_QUERY_PARSE_START(arg0)
++#define	MYSQL_QUERY_PARSE_START_ENABLED() (0)
++#define	MYSQL_QUERY_START(arg0, arg1, arg2, arg3, arg4)
++#define	MYSQL_QUERY_START_ENABLED() (0)
++#define	MYSQL_READ_ROW_DONE(arg0)
++#define	MYSQL_READ_ROW_DONE_ENABLED() (0)
++#define	MYSQL_READ_ROW_START(arg0, arg1, arg2)
++#define	MYSQL_READ_ROW_START_ENABLED() (0)
++#define	MYSQL_SELECT_DONE(arg0, arg1)
++#define	MYSQL_SELECT_DONE_ENABLED() (0)
++#define	MYSQL_SELECT_START(arg0)
++#define	MYSQL_SELECT_START_ENABLED() (0)
++#define	MYSQL_UPDATE_DONE(arg0, arg1, arg2)
++#define	MYSQL_UPDATE_DONE_ENABLED() (0)
++#define	MYSQL_UPDATE_ROW_DONE(arg0)
++#define	MYSQL_UPDATE_ROW_DONE_ENABLED() (0)
++#define	MYSQL_UPDATE_ROW_START(arg0, arg1)
++#define	MYSQL_UPDATE_ROW_START_ENABLED() (0)
++#define	MYSQL_UPDATE_START(arg0)
++#define	MYSQL_UPDATE_START_ENABLED() (0)
++
++#endif
++
++
++#ifdef	__cplusplus
++}
++#endif
++
++#endif	/* _PROBES_H */
+
+=== added file 'include/probes_mysql.h'
+--- include/probes_mysql.h	1970-01-01 00:00:00 +0000
++++ include/probes_mysql.h	2011-05-26 16:14:02 +0000
+@@ -0,0 +1,14 @@
++#ifndef PROBES_MYSQL_H
++
++#define PROBES_MYSQL_H
++
++#include <my_global.h>
++
++#if defined(HAVE_DTRACE) && !defined(DISABLE_DTRACE)
++#include "probes_mysql_dtrace.h"
++#else
++#include "probes_mysql_nodtrace.h"
++#endif
++
++#endif /* PROBES_MYSQL_H */
++
+
+=== added file 'include/probes_mysql_nodtrace.h'
+--- include/probes_mysql_nodtrace.h	1970-01-01 00:00:00 +0000
++++ include/probes_mysql_nodtrace.h	2011-05-26 16:14:02 +0000
+@@ -0,0 +1,129 @@
++/*
++ * Generated by dheadgen(1).
++ */
++
++#ifndef	_PROBES_MYSQL_D
++#define	_PROBES_MYSQL_D
++
++#ifdef	__cplusplus
++extern "C" {
++#endif
++
++#define	MYSQL_CONNECTION_START(arg0, arg1, arg2)
++#define	MYSQL_CONNECTION_START_ENABLED() (0)
++#define	MYSQL_CONNECTION_DONE(arg0, arg1)
++#define	MYSQL_CONNECTION_DONE_ENABLED() (0)
++#define	MYSQL_COMMAND_START(arg0, arg1, arg2, arg3)
++#define	MYSQL_COMMAND_START_ENABLED() (0)
++#define	MYSQL_COMMAND_DONE(arg0)
++#define	MYSQL_COMMAND_DONE_ENABLED() (0)
++#define	MYSQL_QUERY_START(arg0, arg1, arg2, arg3, arg4)
++#define	MYSQL_QUERY_START_ENABLED() (0)
++#define	MYSQL_QUERY_DONE(arg0)
++#define	MYSQL_QUERY_DONE_ENABLED() (0)
++#define	MYSQL_QUERY_PARSE_START(arg0)
++#define	MYSQL_QUERY_PARSE_START_ENABLED() (0)
++#define	MYSQL_QUERY_PARSE_DONE(arg0)
++#define	MYSQL_QUERY_PARSE_DONE_ENABLED() (0)
++#define	MYSQL_QUERY_CACHE_HIT(arg0, arg1)
++#define	MYSQL_QUERY_CACHE_HIT_ENABLED() (0)
++#define	MYSQL_QUERY_CACHE_MISS(arg0)
++#define	MYSQL_QUERY_CACHE_MISS_ENABLED() (0)
++#define	MYSQL_QUERY_EXEC_START(arg0, arg1, arg2, arg3, arg4, arg5)
++#define	MYSQL_QUERY_EXEC_START_ENABLED() (0)
++#define	MYSQL_QUERY_EXEC_DONE(arg0)
++#define	MYSQL_QUERY_EXEC_DONE_ENABLED() (0)
++#define	MYSQL_INSERT_ROW_START(arg0, arg1)
++#define	MYSQL_INSERT_ROW_START_ENABLED() (0)
++#define	MYSQL_INSERT_ROW_DONE(arg0)
++#define	MYSQL_INSERT_ROW_DONE_ENABLED() (0)
++#define	MYSQL_UPDATE_ROW_START(arg0, arg1)
++#define	MYSQL_UPDATE_ROW_START_ENABLED() (0)
++#define	MYSQL_UPDATE_ROW_DONE(arg0)
++#define	MYSQL_UPDATE_ROW_DONE_ENABLED() (0)
++#define	MYSQL_DELETE_ROW_START(arg0, arg1)
++#define	MYSQL_DELETE_ROW_START_ENABLED() (0)
++#define	MYSQL_DELETE_ROW_DONE(arg0)
++#define	MYSQL_DELETE_ROW_DONE_ENABLED() (0)
++#define	MYSQL_READ_ROW_START(arg0, arg1, arg2)
++#define	MYSQL_READ_ROW_START_ENABLED() (0)
++#define	MYSQL_READ_ROW_DONE(arg0)
++#define	MYSQL_READ_ROW_DONE_ENABLED() (0)
++#define	MYSQL_INDEX_READ_ROW_START(arg0, arg1)
++#define	MYSQL_INDEX_READ_ROW_START_ENABLED() (0)
++#define	MYSQL_INDEX_READ_ROW_DONE(arg0)
++#define	MYSQL_INDEX_READ_ROW_DONE_ENABLED() (0)
++#define	MYSQL_HANDLER_RDLOCK_START(arg0, arg1)
++#define	MYSQL_HANDLER_RDLOCK_START_ENABLED() (0)
++#define	MYSQL_HANDLER_WRLOCK_START(arg0, arg1)
++#define	MYSQL_HANDLER_WRLOCK_START_ENABLED() (0)
++#define	MYSQL_HANDLER_UNLOCK_START(arg0, arg1)
++#define	MYSQL_HANDLER_UNLOCK_START_ENABLED() (0)
++#define	MYSQL_HANDLER_RDLOCK_DONE(arg0)
++#define	MYSQL_HANDLER_RDLOCK_DONE_ENABLED() (0)
++#define	MYSQL_HANDLER_WRLOCK_DONE(arg0)
++#define	MYSQL_HANDLER_WRLOCK_DONE_ENABLED() (0)
++#define	MYSQL_HANDLER_UNLOCK_DONE(arg0)
++#define	MYSQL_HANDLER_UNLOCK_DONE_ENABLED() (0)
++#define	MYSQL_FILESORT_START(arg0, arg1)
++#define	MYSQL_FILESORT_START_ENABLED() (0)
++#define	MYSQL_FILESORT_DONE(arg0, arg1)
++#define	MYSQL_FILESORT_DONE_ENABLED() (0)
++#define	MYSQL_SELECT_START(arg0)
++#define	MYSQL_SELECT_START_ENABLED() (0)
++#define	MYSQL_SELECT_DONE(arg0, arg1)
++#define	MYSQL_SELECT_DONE_ENABLED() (0)
++#define	MYSQL_INSERT_START(arg0)
++#define	MYSQL_INSERT_START_ENABLED() (0)
++#define	MYSQL_INSERT_DONE(arg0, arg1)
++#define	MYSQL_INSERT_DONE_ENABLED() (0)
++#define	MYSQL_INSERT_SELECT_START(arg0)
++#define	MYSQL_INSERT_SELECT_START_ENABLED() (0)
++#define	MYSQL_INSERT_SELECT_DONE(arg0, arg1)
++#define	MYSQL_INSERT_SELECT_DONE_ENABLED() (0)
++#define	MYSQL_UPDATE_START(arg0)
++#define	MYSQL_UPDATE_START_ENABLED() (0)
++#define	MYSQL_UPDATE_DONE(arg0, arg1, arg2)
++#define	MYSQL_UPDATE_DONE_ENABLED() (0)
++#define	MYSQL_MULTI_UPDATE_START(arg0)
++#define	MYSQL_MULTI_UPDATE_START_ENABLED() (0)
++#define	MYSQL_MULTI_UPDATE_DONE(arg0, arg1, arg2)
++#define	MYSQL_MULTI_UPDATE_DONE_ENABLED() (0)
++#define	MYSQL_DELETE_START(arg0)
++#define	MYSQL_DELETE_START_ENABLED() (0)
++#define	MYSQL_DELETE_DONE(arg0, arg1)
++#define	MYSQL_DELETE_DONE_ENABLED() (0)
++#define	MYSQL_MULTI_DELETE_START(arg0)
++#define	MYSQL_MULTI_DELETE_START_ENABLED() (0)
++#define	MYSQL_MULTI_DELETE_DONE(arg0, arg1)
++#define	MYSQL_MULTI_DELETE_DONE_ENABLED() (0)
++#define	MYSQL_NET_READ_START()
++#define	MYSQL_NET_READ_START_ENABLED() (0)
++#define	MYSQL_NET_READ_DONE(arg0, arg1)
++#define	MYSQL_NET_READ_DONE_ENABLED() (0)
++#define	MYSQL_NET_WRITE_START(arg0)
++#define	MYSQL_NET_WRITE_START_ENABLED() (0)
++#define	MYSQL_NET_WRITE_DONE(arg0)
++#define	MYSQL_NET_WRITE_DONE_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_START(arg0, arg1, arg2, arg3)
++#define	MYSQL_KEYCACHE_READ_START_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_BLOCK(arg0)
++#define	MYSQL_KEYCACHE_READ_BLOCK_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_HIT()
++#define	MYSQL_KEYCACHE_READ_HIT_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_MISS()
++#define	MYSQL_KEYCACHE_READ_MISS_ENABLED() (0)
++#define	MYSQL_KEYCACHE_READ_DONE(arg0, arg1)
++#define	MYSQL_KEYCACHE_READ_DONE_ENABLED() (0)
++#define	MYSQL_KEYCACHE_WRITE_START(arg0, arg1, arg2, arg3)
++#define	MYSQL_KEYCACHE_WRITE_START_ENABLED() (0)
++#define	MYSQL_KEYCACHE_WRITE_BLOCK(arg0)
++#define	MYSQL_KEYCACHE_WRITE_BLOCK_ENABLED() (0)
++#define	MYSQL_KEYCACHE_WRITE_DONE(arg0, arg1)
++#define	MYSQL_KEYCACHE_WRITE_DONE_ENABLED() (0)
++
++#ifdef  __cplusplus
++}
++#endif
++
++#endif  /* _PROBES_MYSQL_D */
+
+=== added file 'sql/probes_mysql.d'
+--- sql/probes_mysql.d	1970-01-01 00:00:00 +0000
++++ sql/probes_mysql.d	2011-05-26 19:11:05 +0000
+@@ -0,0 +1,181 @@
++/* Copyright (C) 2008 MySQL AB
++
++   This program is free software; you can redistribute it and/or modify
++   it under the terms of the GNU General Public License as published by
++   the Free Software Foundation; version 2 of the License.
++
++   This program is distributed in the hope that it will be useful,
++   but WITHOUT ANY WARRANTY; without even the implied warranty of
++   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++   GNU General Public License for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with this program; if not, write to the Free Software
++   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA */
++
++/*
++  The actual probe names in DTrace scripts will replace '__' by '-'. Thus
++  insert__row__start will be insert-row-start.
++
++  Recommendations for adding new probes:
++
++  - each probe should have the minimal set of arguments required to
++  unambiguously identify the context in which the probe fires. Redundant
++  arguments (i.e. the ones that can be obtained in user scripts from previous
++  probes' arguments or otherwise) may be added for convenience.
++
++  - try to avoid computationally expensive probe arguments. If impossible,
++  use *_ENABLED() macros to check if the probe is activated before
++  performing expensive calculations for a probe argument.
++
++  - all *-done probes should have a status argument wherever applicable to make
++  it possible for user scripts to figure out whether the completed operation
++  was successful or not.
++  
++  - for all status arguments, a non-zero value should be returned on error or
++  failure, 0 should be returned on success.
++*/
++
++provider mysql {
++  
++  /* The following ones fire when creating or closing a client connection */
++  probe connection__start(unsigned long conn_id, char *user, char *host);
++  probe connection__done(int status, unsigned long conn_id);
++
++  /*
++    Fire at the start/end of any client command processing (including SQL
++    queries).
++  */
++  probe command__start(unsigned long conn_id, int command,
++                       char *user, char *host);
++  probe command__done(int status);
++  
++  /*
++    The following probes fire at the start/end of any SQL query processing,
++    respectively.
++
++    query_start() has a lot of parameters that can be used to pick up
++    parameters for a lot of other probes here.  For simplicity reasons we also
++    add the query string to most other DTrace probes as well. Hostname is
++    either the hostname or the IP address of the MySQL Client.
++  */
++  probe query__start(char *query,
++                     unsigned long conn_id,
++                     char *db_name,
++                     char *user,
++                     char *host);
++  probe query__done(int status); 
++
++  /* Fire at the start/end of SQL query parsing */
++  probe query__parse__start(char *query);
++  probe query__parse__done(int status);
++
++  /* Track whether the query hits the query cache or not */
++  probe query__cache__hit(char *query, unsigned long rows);
++  probe query__cache__miss(char *query);
++
++  /*
++    This probe fires when the actual query execution starts, i.e. after
++    parsing and checking the query cache, but before privilege checks,
++    optimizing, etc.
++
++    Query means also all independent queries of a stored procedure and prepared
++    statements. Also the stored procedure itself is a query.
++
++    exec_type is:
++    0:           Executed query from sql_parse, top-level query (sql_parse.cc)
++    1:           Executed prepared statement (sql_prepare.cc)
++    2:           Executed cursor statement (sql_cursor.cc)
++    3:           Executed query in stored procedure (sp_head.cc)
++  */
++  probe query__exec__start(char *query,
++                           unsigned long connid,
++                           char *db_name,
++                           char *user,
++                           char *host,
++                           int exec_type);
++  probe query__exec__done(int status);
++
++  /* These probes fire when performing row operations towards any handler */
++  probe insert__row__start(char *db, char *table);
++  probe insert__row__done(int status);
++  probe update__row__start(char *db, char *table);
++  probe update__row__done(int status);
++  probe delete__row__start(char *db, char *table);
++  probe delete__row__done(int status);
++  /*
++    The 'type' argument for read-row-start is 0 for table scans
++    and 1 if the record is being retrieved with rnd_pos().
++  */
++  probe read__row__start(char *db, char *table, int type);
++  probe read__row__done(int status);
++  probe index__read__row__start(char *db, char *table);
++  probe index__read__row__done(int status);
++  
++  /*
++    These probes fire when calling external_lock for any handler
++    depending on the lock type being acquired or released.
++  */
++  probe handler__rdlock__start(char *db, char *table);
++  probe handler__wrlock__start(char *db, char *table);
++  probe handler__unlock__start(char *db, char *table);
++  probe handler__rdlock__done(int status);
++  probe handler__wrlock__done(int status);
++  probe handler__unlock__done(int status);
++  
++  /*
++    These probes fire when a filesort activity happens in a query.
++  */
++  probe filesort__start(char *db, char *table);
++  probe filesort__done(int status, unsigned long rows);
++  /*
++    The query types SELECT, INSERT, INSERT AS SELECT, UPDATE, UPDATE with
++    multiple tables, DELETE, DELETE with multiple tables are all probed.
++    The start probe always contains the query text.
++  */
++  probe select__start(char *query);
++  probe select__done(int status, unsigned long rows);
++  probe insert__start(char *query);
++  probe insert__done(int status, unsigned long rows);
++  probe insert__select__start(char *query);
++  probe insert__select__done(int status, unsigned long rows);
++  probe update__start(char *query);
++  probe update__done(int status,
++                     unsigned long rowsmatches, unsigned long rowschanged);
++  probe multi__update__start(char *query);
++  probe multi__update__done(int status,
++                            unsigned long rowsmatches, 
++                            unsigned long rowschanged);
++  probe delete__start(char *query);
++  probe delete__done(int status, unsigned long rows);
++  probe multi__delete__start(char *query);
++  probe multi__delete__done(int status, unsigned long rows);
++
++  /*
++    These probes can be used to measure the time waiting for network traffic
++    or identify network-related problems.
++  */
++  probe net__read__start();
++  probe net__read__done(int status, unsigned long bytes);
++  probe net__write__start(unsigned long bytes);
++  probe net__write__done(int status);
++
++  /* MyISAM Key cache probes */
++  probe keycache__read__start(char *filepath, unsigned long  bytes,
++                              unsigned long mem_used, unsigned long mem_free);
++  probe keycache__read__block(unsigned long bytes);
++  probe keycache__read__hit();
++  probe keycache__read__miss();
++  probe keycache__read__done(unsigned long mem_used, unsigned long mem_free);
++  probe keycache__write__start(char *filepath, unsigned long bytes,
++                               unsigned long mem_used, unsigned long mem_free);
++  probe keycache__write__block(unsigned long bytes);
++  probe keycache__write__done(unsigned long mem_used, unsigned long mem_free);
++
++};
++
++#pragma D attributes Evolving/Evolving/Common provider mysql provider
++#pragma D attributes Evolving/Evolving/Common provider mysql module
++#pragma D attributes Evolving/Evolving/Common provider mysql function
++#pragma D attributes Evolving/Evolving/Common provider mysql name
++#pragma D attributes Evolving/Evolving/Common provider mysql args
+

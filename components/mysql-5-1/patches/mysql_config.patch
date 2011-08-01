@@ -1,0 +1,24 @@
+--- scripts/mysql_config.sh	2009-07-13 16:10:59.000000000 -0700
++++ scripts/mysql_config.sh.org	2010-01-11 21:48:38.243564639 -0800
+@@ -85,7 +85,6 @@
+ # If installed, search for the compiled in directory first (might be "lib64")
+ pkglibdir='@pkglibdir@'
+ pkglibdir_rel=`echo $pkglibdir | sed -e "s;^$basedir/;;"`
+-fix_path pkglibdir $pkglibdir_rel lib/mysql lib
+ 
+ plugindir='@pkgplugindir@'
+ 
+@@ -104,10 +103,10 @@
+ 
+ # Create options 
+ # We intentionally add a space to the beginning and end of lib strings, simplifies replace later
+-libs=" $ldflags -L$pkglibdir -lmysqlclient @ZLIB_DEPS@ @NON_THREADED_LIBS@"
++libs=" $ldflags -L$pkglibdir -R$pkglibdir -lmysqlclient @ZLIB_DEPS@ @NON_THREADED_LIBS@"
+ libs="$libs @openssl_libs@ @STATIC_NSS_FLAGS@ "
+-libs_r=" $ldflags -L$pkglibdir -lmysqlclient_r @ZLIB_DEPS@ @LIBS@ @openssl_libs@ "
+-embedded_libs=" $ldflags -L$pkglibdir -lmysqld @LIBDL@ @ZLIB_DEPS@ @LIBS@ @WRAPLIBS@ @innodb_system_libs@ @openssl_libs@ "
++libs_r=" $ldflags -L$pkglibdir -R$pkglibdir -lmysqlclient_r @ZLIB_DEPS@ @LIBS@ @openssl_libs@ "
++embedded_libs=" $ldflags -L$pkglibdir -R$pkglibdir -lmysqld @LIBDL@ @ZLIB_DEPS@ @LIBS@ @WRAPLIBS@ @innodb_system_libs@ @openssl_libs@ "
+ 
+ if [ -r "$pkglibdir/libmygcc.a" ]; then
+   # When linking against the static library with a different version of GCC

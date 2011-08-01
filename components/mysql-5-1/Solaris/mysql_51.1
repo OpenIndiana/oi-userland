@@ -1,0 +1,411 @@
+'\" t
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+.\"
+.TH "mysql_51" "1" "" "" "User Commands"
+.SH NAME
+MySQL 5.1 \- MySQL RDBMS version 5.1 for Solaris 
+.SH DESCRIPTION
+
+MySQL version 5.1 for Solaris is delivered in the following
+3 packages:
+
+.TS
+box;
+cbp-1 | cbp-1
+| | | .
+Package	Contents
+=
+database/mysql-51	MySQL 5.1 Server package
+=
+database/mysql-51/library	MySQL 5.1 lib package (lib component)
+=
+database/mysql-51/tests	MySQL 5.1 test package
+.TE
+.PP
+
+The MySQL 5.1 software for Solaris is installed into a number of
+sub-directories of /usr/mysql/5.1.  
+
+The database/mysql-51 package installs the following directories:
+
+.TS
+box;
+cbp-1 | cbp-1
+| | | .
+Directory	Contents
+=
+/usr/mysql/5.1/bin	Binaries and Scripts
+=
+/usr/mysql/5.1/include	Development header files
+=
+/usr/mysql/5.1/man/man1	Manual pages for client programs
+=
+/usr/mysql/5.1/man/man8	Manual pages for server programs
+=
+/usr/mysql/5.1/share	Shared data:locale,timezone 	
+=
+/usr/mysql/5.1/docs	HTML documentation 
+
+.TE
+.PP
+
+The database/mysql-51 package also installs the following 64-bit directories
+.TP
+.ie t \(bu
+.el o
+\fB/usr/mysql/5.1/bin/64\fR - 64-bit
+Binaries and scripts
+.TP
+.ie t \(bu
+.el o
+.RE
+.sp
+.LP
+
+
+
+The following directories are additionally created by database/mysql-51 package
+
+.TS
+box;
+cbp-1 | cbp-1
+| | | .
+Directory	Contents
+=
+/var/mysql/5.1/data	Default database data directory
+=
+/etc/mysql/5.1	Configuration file location
+
+.TE
+.PP
+
+The database/mysql-51 package also installs the following SMF files to facilitate automatic service management
+(refer to smf(5) and the SMF section below):
+.RS
+.PP
+.br
+/lib/svc/manifest/application/database/mysql_51.xml
+./br
+/lib/svc/method/mysql_51
+.RE
+.PP
+
+The database/mysql-51/tests package creates the following directories:
+.TS
+box;
+cbp-1 | cbp-1
+| | | .
+Directory	Contents
+=
+/usr/mysql/5.1/mysql-test	MySQL test programs
+=
+/usr/mysql/5.1/sql-bench	SQL Benchmark test
+
+.TE
+.PP
+
+The database/mysql-51/library package  contains the libraries for client API:
+.TS
+box;
+cbp-1 | cbp-1
+| | | .
+Directory	Contents
+=
+/usr/mysql/5.1/lib	Libraries for client API
+=
+/usr/mysql/5.1/lib/64	64-bit Libraries for client API 
+
+.TE
+.PP
+.SH DTrace SUPPORT for MySQL SERVER
+MySQL 5.1 provides for the DTrace support at the time of the mysql server startup.
+MySQL server registers the probes for the provider mysql. 
+
+.br  
+Probes that are used at the time of creating and closing of client connection are
+.sp
+.LP
+probe connection-start();
+.br
+probe connection-done();
+.sp
+.LP
+.br
+
+Probes that fire at the start/end of any client command processing (including SQL queries)
+.sp
+.LP
+probe command-start();
+.br
+probe command-done();
+.sp
+.LP
+.br
+
+Probes that fire at the start/end of any SQL query processing.
+.sp
+.LP
+probe query-start();
+.br
+probe query-done();
+.sp
+.LP
+.br
+Probes that fire at the start/end of SQL query parsing
+.sp
+.LP
+probe query-parse-start();
+.br
+probe query-parse-done();
+.sp
+.LP
+.br
+Probes that track whether the query hits the query cache or not
+.sp
+.LP
+probe query-cache-hit();
+.br
+probe query-cache-miss();
+.sp
+.LP
+.br
+Probes that fire when the actual query exectuion start,ie after parsing 
+and checking the query cache, but before privilege checks,optimizing etc. 
+.sp
+.LP
+probe query-exec-start();
+.br
+probe query-exec-done();
+.sp
+.LP
+.br
+Probes that are used to perform to write operations towards any handler are as listed below
+.sp
+.LP
+probe insert-row-start();
+.br
+probe insert-row-done();
+.br
+probe update-row-start();
+.br
+probe update-row-done();
+.br
+probe delete-row-start();
+.br
+probe delete-row-done();
+.sp
+.LP
+.br
+
+probe is activated when calling external_lock for any handler depending on the lock type being acquired
+or released
+.sp
+.LP
+.br
+probe handler-rdlock-start();
+.br
+probe handler-rdlock-done();
+.br
+probe handler-wlock-start();
+.br
+probe handler-wrlock-done();
+.br
+probe handler-unlock-start();
+.br
+probe handler-unlock-done();
+.sp
+.LP
+.br
+probes are activated when a filesort activity happens in a query
+.sp
+.LP
+probe filesort-start();
+.br
+probe filesort-end();
+.sp
+.LP
+.br
+The query types SELECT, INSERT, INSERT AS SELECT, UPDATE, UPDATE with
+multiple tables, DELETE, DELETE with multiple tables are all probed.
+The start probe always contains the query text
+.sp
+.LP
+probe select-start(char *query);
+.br
+probe select-done();
+.br
+probe insert-start(char *query);
+.br
+probe insert-end();
+.br
+probe insert-select-start(char *query);
+.br
+probe insert-select-done();
+.br
+probe update-start(char *query);
+.br
+probe update-done();
+.br
+probe multi-update-start(char *query);
+.br
+probe multi-update-done();
+.br
+probe delete-start(char *query);
+.br
+probe delete-done();
+.br
+probe multi-delete-start(char *query);
+.br
+probe multi-delete-done();
+.sp
+.LP
+.br
+These probes are used to measure the time waiting for network traffic
+or identify network-related problems
+.sp
+.LP
+probe net-read-start();
+.br
+probe net-read-done();
+.br
+probe net-write-start();
+.br
+probe net-write-done();
+.br
+
+.SH AUTOMATIC SERVICE MANAGEMENT (SMF)
+MySQL 5.1  for Solaris includes files necessary to register with the
+service management facility described in smf(5). 
+
+After installation of the database/mysql-51 package, register the MySQL service as under:
+
+.br
+example%svccfg import
+        /lib/svc/manifest/application/database/mysql_51.xml
+
+The mysql:version_51 service is disabled by default. You can check the status of the service by issuing the following command :
+
+.br
+example% svcs mysql
+.br
+STATE          STIME    FMRI
+.br
+disabled 14:27:09 svc:/application/database/mysql:version_51
+
+
+Enable the mysql:version_51 service by issuing the following command :
+
+.br
+example%svcadm  enable mysql:version_51
+
+The state of the service instance should change to "online", and the database server should be started :
+
+.br
+example% svcs mysql
+.br
+STATE          STIME    FMRI
+.br
+online 14:30:08 svc:/application/database/mysql:version_51
+
+.br
+
+The 32-bit MySQL daemon runs by default. To start the 64-bit
+server, execute the following commands:
+.sp
+.LP
+\fB%svccfg\fR
+.sp
+.LP
+\fBsvc>select mysql:version_51\fR
+.sp
+.LP
+\fBsvc:/application/database/mysql:version_51>listprop mysql/enable_64bit\fR
+.sp
+.LP
+\fBmysql/enable_64bit boolean false\fR
+.sp
+.LP
+\fBsvc:/application/database/mysql:version_51>setprop mysql/enable_64bit=true\fR
+.sp
+.LP
+\fBsvc:/application/database/mysql:version_51>listprop mysql/enable_64bit\fR
+.sp
+.LP
+\fBmysql/enable_64bit boolean true\fR
+.sp
+.LP
+\fBsvc:/application/database/mysql:version_51>quit\fR
+.sp
+.LP
+\fB%svcadm refresh mysql:version_51\fR
+.sp
+.LP
+\fB%svcadm enable mysql:version_51\fR
+.sp
+.LP
+The 64-bit server is initiated.
+.sp
+
+.sp
+.TS
+tab(^G);
+lw(.95i) lw(.79i) lw(3.76i)
+lw(.95i) lw(.79i) lw(3.76i)
+.
+STATE          STIME    FMRI
+.br
+online 15.10:08 svc:/application/database/mysql:version_51
+
+.br
+
+
+.TE
+
+.LP
+Note -
+.sp
+.RS 2
+By default, the \fBmysql/enable_64bit\fR property
+is set to \fBFalse\fR. Set it \fBTrue\fR to start
+the 64-bit server.
+.RE
+.sp
+.LP
+To shutdown the database instance and prevent automatic restart (for example
+during scheduled downtime for maintenance), disable the SMF service by running:
+
+example% svcadm disable mysql:version_51
+.br
+example% svcs mysql
+.br
+STATE          STIME    FMRI
+.br
+disabled 14:30:08 svc:/application/database/mysql:version_51
+
+.br
+
+.RE
+
+.SH REFERENCES
+.PP
+http://www.mysql.com
