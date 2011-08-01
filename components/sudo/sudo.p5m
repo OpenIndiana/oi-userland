@@ -27,8 +27,8 @@ set name=pkg.fmri value=pkg:/security/sudo@$(IPS_COMPONENT_VERSION),$(BUILD_VERS
 set name=pkg.summary value="sudo - tool to allow certain tasks to be run as root by ordinary users"
 set name=info.classification \
 	value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.upstream_url value=$(COMPONENT_PROJECT_URL)
-set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=opensolaris.arc_url \
     value=http://arc.opensolaris.org/caselog/PSARC/2009/205
@@ -37,10 +37,13 @@ dir path=etc
 dir path=etc/sudoers.d mode=0750 group=root
 dir path=usr
 dir path=usr/bin
+dir path=usr/include
 dir path=usr/lib
-dir path=usr/lib/$(MACH64)
+dir path=usr/lib/sudo
 dir path=usr/sbin
 dir path=usr/share
+dir path=usr/share/doc
+dir path=usr/share/doc/sudo
 dir path=usr/share/lib
 dir path=usr/share/lib/ldif group=sys
 dir path=usr/share/man
@@ -50,13 +53,31 @@ dir path=usr/share/man/man4
 file path=etc/sudoers original_name=SUNWsudo:etc/sudoers preserve=true \
 	mode=0440 group=root
 file path=usr/bin/sudo mode=4511
-file path=usr/lib/sudo_noexec.so
-file path=usr/lib/$(MACH64)/sudo_noexec.so
+file path=usr/bin/sudoreplay mode=0511
 file path=usr/sbin/visudo mode=0511
-file path=usr/share/lib/ldif/sudo-schema.OpenLDAP
-file path=usr/share/lib/ldif/sudo-schema.iPlanet
-file path=usr/share/lib/ldif/sudoers2ldif
+file path=usr/lib/sudo/sudoers.so
+
+file path=usr/include/sudo_plugin.h
+
+file path=usr/share/doc/sudo/ChangeLog
+file path=usr/share/doc/sudo/HISTORY
+file path=usr/share/doc/sudo/LICENSE
+file path=usr/share/doc/sudo/NEWS
+file path=usr/share/doc/sudo/README
+file path=usr/share/doc/sudo/README.LDAP
+file path=usr/share/doc/sudo/TROUBLESHOOTING
+file path=usr/share/doc/sudo/UPGRADE
+file path=usr/share/doc/sudo/sample.sudo.conf
+file path=usr/share/doc/sudo/sample.sudoers
+file path=usr/share/doc/sudo/sample.syslog.conf
+file path=usr/share/doc/sudo/schema.ActiveDirectory
+file path=usr/share/doc/sudo/schema.OpenLDAP
+file path=usr/share/doc/sudo/schema.iPlanet
+file path=usr/share/doc/sudo/sudoers2ldif
+
 file path=usr/share/man/man1m/sudo.1m
+file path=usr/share/man/man1m/sudoreplay.1m
+file path=usr/share/man/man1m/sudo_plugin.1m
 file path=usr/share/man/man1m/visudo.1m
 file path=usr/share/man/man4/sudoers.4
 
@@ -66,13 +87,5 @@ hardlink path=usr/bin/sudoedit target=sudo
 license sudo.license license="ISC-like, BSD"
 
 legacy pkg=SUNWsudo \
-    desc="sudo - Tool to allow certain tasks to be run as root by ordinary users. 1.7.4p4" \
+    desc="sudo - Tool to allow certain tasks to be run as root by ordinary users." \
     name="sudo - Tool to allow certain tasks to be run as root by ordinary users."
-
-# pkgdepend should have picked up the dependency on perl;
-# this explicit depend action can be removed if pkgdepend is fixed later
-depend fmri=__TBD \
-    pkg.debug.depend.file=usr/perl5/$(PERL_VERSION)/bin/perl \
-    pkg.debug.reason=usr/share/lib/ldif/sudoers2ldif \
-    type=require
-

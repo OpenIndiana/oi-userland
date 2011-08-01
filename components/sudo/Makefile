@@ -25,12 +25,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=	1.7.4
-SRC_PATCH_VERSION=	4
+SRC_VERSION=	1.8.1
+SRC_PATCH_VERSION=	2
 COMPONENT_VERSION=	$(SRC_VERSION).$(SRC_PATCH_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)p$(SRC_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:c873f509f80d5722989a912a42a61ad27b71453f
+COMPONENT_ARCHIVE_HASH=	sha1:b743b3d7bdb06de68ea24eedfe13530e8fbcae09
 COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
 
@@ -43,34 +43,28 @@ CONFIGURE_ENV +=	"CFLAGS=$(CFLAGS)"
 CONFIGURE_ENV +=	"CXX=$(CXX)"
 CONFIGURE_ENV +=	"MAKE=$(GMAKE)"
 
-CONFIGURE_OPTIONS +=	--with-noexec=/usr/lib/sudo_noexec.so
 CONFIGURE_OPTIONS +=	--with-CC=$(CC)
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
 CONFIGURE_OPTIONS +=	--with-timedir=/var/run/sudo
+CONFIGURE_OPTIONS +=	--with-pam --with-pam-login
+CONFIGURE_OPTIONS +=	--with-tty-tickets
+CONFIGURE_OPTIONS +=	--without-insults
+CONFIGURE_OPTIONS +=	--without-lecture
+CONFIGURE_OPTIONS +=	--with-ignore-dot
+CONFIGURE_OPTIONS +=	--with-bsm-audit
+CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/sudo
 
 COMPONENT_BUILD_ENV +=	CC=$(CC) CXX=$(CXX)
 COMPONENT_BUILD_ENV +=	"CFLAGS=$(CFLAGS)"
 
-# For the 64-bit build, only need the 64-bit shared libraries 
-COMPONENT_BUILD_TARGETS.64 = libsudo_noexec
-COMPONENT_BUILD_TARGETS += $(COMPONENT_BUILD_TARGETS.$(BITS))
-
-# This value is used in the configured Makefile for sudo,
-# via the patch to Makefile.in, to install into the $(MACH64) directory
-COMPONENT_INSTALL_ENV.64 +=	MACH64=$(MACH64)
-
-# 32-bit install uses the usual target
-COMPONENT_INSTALL_TARGETS.32 = install
-# For 64-bit install, only install the 64-bit shared library
-COMPONENT_INSTALL_TARGETS.64 = install-noexec
-COMPONENT_INSTALL_TARGETS = $(COMPONENT_INSTALL_TARGETS.$(BITS))
+COMPONENT_INSTALL_TARGETS = install
 
 # common targets
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
