@@ -25,13 +25,11 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		coverage
-COMPONENT_VERSION=	3.2b2
+COMPONENT_VERSION=	3.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:4710d033b8c6de1efaa562243e5b29e0a31fb8b9
+COMPONENT_ARCHIVE_HASH=	sha1:aa0f40e7e79bc81ea4a33ee7fc5ba66db7633321
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/c/coverage/$(COMPONENT_ARCHIVE)
-
-IPS_COMPONENT_VERSION=  3.2
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
