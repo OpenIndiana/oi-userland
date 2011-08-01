@@ -61,19 +61,20 @@ attribute_table_footer = """
 .TE 
 .PP
 """
-def write_attributes_section(ofp, availability, stability):
+def attributes_section_text(availability, stability):
+	result = ''
+
 	# is there anything to do?
-	if availability is None and stability is None:
-		return
+	if availability is not None or stability is not None:
+		result = attribute_table_header
 
-	# append the ATTRIBUTES section
-	ofp.write(attribute_table_header)
-	if availability is not None:
-		ofp.write(attribute_table_availability % availability)
-	if stability is not None:
-		ofp.write(attribute_table_stability % stability.capitalize())
-	ofp.write(attribute_table_footer)
+		if availability is not None:
+			result += (attribute_table_availability % availability)
+		if stability is not None:
+			result += (attribute_table_stability % stability.capitalize())
+		result += attribute_table_footer
 
+	return result
 
 notes_header = """
 .SH NOTES
@@ -86,20 +87,21 @@ notes_source = """
 This software was built from source available at http://opensolaris.org/.  The original community source was downloaded from  %s
 """
 
-def write_notes_section(ofp, header_seen, community, source):
+def notes_section_text(header_seen, community, source):
+	result = ''
+
 	# is there anything to do?
-	if community is None and source is None:
-		return
+	if community is not None or source is not None:
+		if header_seen == False:
+			result += notes_header
+		if source is not None:
+			result += (notes_source % source)
+		if community is not None:
+			result += (notes_community % community)
 
-	# append the NOTES section
-	if header_seen == False:
-		ofp.write(notes_header)
-	if source is not None:
-		ofp.write(notes_source % source)
-	if community is not None:
-		ofp.write(notes_community % community)
+	return result
 
-
+so_re = re.compile('^\.so.+$', re.MULTILINE)
 section_re = re.compile('\.SH "?([^"]+).*$', re.IGNORECASE)
 #
 # mangler.man.stability = (mangler.man.stability)
@@ -107,7 +109,7 @@ section_re = re.compile('\.SH "?([^"]+).*$', re.IGNORECASE)
 # mangler.man.source_url = (pkg.source_url)
 # mangler.man.upstream_url = (pkg.upstream_url)
 #
-def mangle_manpage(manifest, action, src, dest):
+def mangle_manpage(manifest, action, text):
 	# manpages must have a taxonomy defined
 	stability = action.attrs.pop('mangler.man.stability', None)
 	if stability is None:
@@ -131,47 +133,34 @@ def mangle_manpage(manifest, action, src, dest):
 	elif 'info.repository_url' in manifest.attributes:
 		source = manifest.attributes['info.repository_url']
 
-	# create a directory to write to
-	destdir = os.path.dirname(dest)
-	if not os.path.exists(destdir):
-		os.makedirs(destdir)
-
-	# read the source document
-	ifp = open(src, "r")
-	lines = ifp.readlines()
-	ifp.close()
-
 	# skip reference only pages
-	if lines[0].startswith(".so "):
-		return
-
-	# open a destination
-	ofp = open(dest, "w+")
+	if so_re.match(text) is not None:
+		return text
 
 	# tell man that we want tables (and eqn)
-	ofp.write("'\\\" te\n")
+	result = "'\\\" te\n"
 
 	# write the orginal data
-	for line in lines:
+	for line in text.split('\n'):
 		match = section_re.match(line)
 		if match is not None:
 			section = match.group(1)
 			if section in ['SEE ALSO', 'NOTES']:
 				if attributes_written == False:
-					write_attributes_section(ofp,
+					result += attributes_section_text(
 								 availability,
 								 stability)
 					attributes_written = True
 				if section == 'NOTES':
 					notes_seen = True
-		ofp.write(line)
+		result += ("%s\n" % line)
 
 	if attributes_written == False:
-		write_attributes_section(ofp, availability, stability)
+		result += attributes_section_text(availability, stability)
 
-	write_notes_section(ofp, notes_seen, community, source)
+	result += notes_section_text(notes_seen, community, source)
 
-	ofp.close()
+	return result
 
 
 #
@@ -183,17 +172,43 @@ def mangle_elf(manifest, action, src, dest):
 #
 # mangler.script.file-magic =
 #
-def mangle_script(manifest, action, src, dest):
-	pass
+def mangle_script(manifest, action, text):
+	return text
+
+#
+# mangler.strip_cddl = false
+#
+def mangle_cddl(manifest, action, text):
+	strip_cddl = action.attrs.pop('mangler.strip_cddl', 'true')
+	if strip_cddl is 'false':
+		return text
+	cddl_re = re.compile('^[^\n]*CDDL HEADER START.+CDDL HEADER END[^\n]*$',
+			     re.MULTILINE|re.DOTALL)
+	return cddl_re.sub('', text)
 
 def mangle_path(manifest, action, src, dest):
-	if 'facet.doc.man' in action.attrs:
-		 mangle_manpage(manifest, action, src, dest)
-	elif 'mode' in action.attrs and int(action.attrs['mode'], 8) & 0111 != 0:
-		if elf.is_elf_object(src):
-			 mangle_elf(manifest, action, src, dest)
-		else:
-			 mangle_script(manifest, action, src, dest)
+	if elf.is_elf_object(src):
+		mangle_elf(manifest, action, src, dest)
+	else:
+		# a 'text' document (script, man page, config file, ...
+		ifp = open(src, 'r')
+		text = ifp.read()
+		ifp.close()
+
+		# remove the CDDL from files
+		result = mangle_cddl(manifest, action, text)
+
+		if 'facet.doc.man' in action.attrs:
+		 	result = mangle_manpage(manifest, action, result)
+		elif 'mode' in action.attrs and int(action.attrs['mode'], 8) & 0111 != 0:
+			result = mangle_script(manifest, action, result)
+
+		if text != result:
+			destdir = os.path.dirname(dest)
+			if not os.path.exists(destdir):
+				os.makedirs(destdir)
+			with open(dest, 'w') as ofp:
+			    ofp.write(result)
 
 #
 # mangler.bypass = (true|false)
@@ -211,6 +226,9 @@ def mangle_paths(manifest, search_paths, destination):
 			path = action.hash
 		if not path:
 			continue
+
+		if not os.path.exists(destination):
+			os.makedirs(destination)
 
 		dest = os.path.join(destination, path)
 		for directory in search_paths:
