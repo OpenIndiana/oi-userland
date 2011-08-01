@@ -25,12 +25,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.5.8
+COMPONENT_VERSION=	3.5.10
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:ffb71de38442eee14aafb44f819671354dc5cce9
-COMPONENT_ARCHIVE_URL=	http://www.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:de63b1a7e2fa6bcae91dbf7d2cbdfb38d0f97c00
+COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 
 COMPONENT_NAME_1=		docbook-xsl
 COMPONENT_VERSION_1=		1.76.1
@@ -42,6 +42,14 @@ COMPONENT_ARCHIVE_URL_1=	http://sourceforge.net/projects/docbook/files/$(COMPONE
 COMPONENT_ARCHIVE_2=		libsam-LGPL.tar
 COMPONENT_ARCHIVE_HASH_2=	sha1:58871eebb9ebfe57a3db0490616786972cb858fe
 COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/files/libsam%2DLGPL.tar
+
+# Samba does not work properly on i86 when built by studio.
+# Samba on SPARC has serious performance drop when built by gcc.
+ifeq ($(MACH), sparc)
+COMPILER = studio
+else
+COMPILER = gcc
+endif
 
 include ../../../make-rules/prep.mk
 
@@ -106,11 +114,12 @@ $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
 		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
 
-CFLAGS +=	$(CC_BITS)
-CFLAGS +=	$(studio_C99_ENABLE)
-CFLAGS +=	$(CFLAGS.studio)
+CFLAGS.studio	+=	$(studio_C99_ENABLE)
+CFLAGS.gcc	+=	-std=c99
 
-CPPFLAGS +=	-I$(PROTOINCDIR)/samba -I$(PROTOINCDIR)/samba/ldap6
+CPPFLAGS +=	$(CPP_LARGEFILES)
+CPPFLAGS +=	$(CPP_XPG6MODE)
+CPPFLAGS +=	-I$(PROTOUSRINCDIR)/samba -I$(PROTOUSRINCDIR)/samba/ldap6 -I$(BUILD_DIR_$(BITS))/include
 
 LIBS +=		-lrt -lsocket -lnsl
 # libavahi is not for 64bits but we do not need it
@@ -125,7 +134,11 @@ LDFLAGS.64 +=	-L $(PROTOUSRLIBDIR)/$(MACH64)
 LDFLAGS.64 +=	-L $(PROTOUSRLIBDIR)/samba/$(MACH64) -R/usr/lib/samba/$(MACH64)
 LDFLAGS.64 +=	$(LIBS)
 
+ifeq ($(COMPILER), studio)
 LDFLAGS +=	$(LDFLAGS.$(BITS)) $(LD_OPTIONS)
+else
+LDFLAGS +=      $(LDFLAGS.$(BITS)) $(LD_OPTIONS:%=-Xlinker %)
+endif
 
 CONFIGURE_LIBDIR.32 = /usr/lib/samba
 CONFIGURE_LIBDIR.64 = /usr/lib/samba/$(MACH64)
@@ -144,6 +157,7 @@ CONFIGURE_OPTIONS += --with-static-modules=
 CONFIGURE_OPTIONS.32 += --with-shared-modules=vfs_zfsacl,vfs_samfs,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS.64 += --with-shared-modules=
 CONFIGURE_OPTIONS += --with-readline
+CONFIGURE_OPTIONS += --enable-cups
 CONFIGURE_OPTIONS += --with-aio-support
 CONFIGURE_OPTIONS += --with-acl-support
 CONFIGURE_OPTIONS += --with-ads
