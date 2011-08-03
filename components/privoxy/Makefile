@@ -26,11 +26,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		privoxy
-COMPONENT_VERSION=	3.0.8
+COMPONENT_VERSION=	3.0.17
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_PROJECT_URL=	http://www.privoxy.org/
-COMPONENT_ARCHIVE_HASH=	sha1:7fe2b7afde4066ef1f170f5f11850cf9da428a42
+COMPONENT_ARCHIVE_HASH=	sha1:cadef2eb8ec182278e092322d3d56f225cb69c93
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -49,20 +49,11 @@ COMPONENT_PREP_ACTION = \
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 
-# DESTDIR doesn't work correctly, so we specify some of the paths directly.
-COMPONENT_INSTALL_ARGS +=	prefix=$(PROTOUSRDIR)
-COMPONENT_INSTALL_ARGS +=	CONF_BASE=$(PROTOETCDIR)
-COMPONENT_INSTALL_ARGS +=	SBIN_DEST=$(PROTOUSRSBINDIR)
-COMPONENT_INSTALL_ARGS +=	MAN_DIR=$(PROTOUSRSHAREMANDIR)
-COMPONENT_INSTALL_ARGS +=	VAR_DEST=$(PROTO_DIR)/var
-
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 	$(CP) $(BUILD_DIR_32)/templates/* $(PROTOETCDIR)/templates
-	$(MKDIR) $(PROTOUSRSHAREDOCDIR)/privoxy
-	$(CP) $(BUILD_DIR_32)/doc/text/faq.txt $(PROTOUSRSHAREDOCDIR)/privoxy
 
 test:		$(NO_TESTS)
 
