@@ -1,4 +1,5 @@
 #
+#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -18,18 +19,41 @@
 #
 # CDDL HEADER END
 #
-
+# Copyright (c) 2005, 2011, Oracle and/or its affiliates. All rights reserved.
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
-#
+include ../../make-rules/shared-macros.mk
 
-# general locale
-<transform dir link hardlink path=.*/locale$ -> default facet.locale true>
+COMPONENT_NAME= 	timezone
 
-<transform dir file link hardlink \
-    path=.*/locale/([^/]+)(\..+){0,1}(/.+){0,1}$ -> \
-    default facet.locale.%<\1> true>
+# "etcetera" must be listed before "backward" because it sets up links that
+# "backward" needs.
+TZFILES= africa antarctica asia australasia etcetera europe \
+	 factory northamerica pacificnew solar87 solar88 solar89 \
+	 southamerica backward
 
-# unfacet the C locale
-<transform dir file link hardlink \
-    facet.locale.C=.+ -> delete facet.locale.C .+ >
+include ../../make-rules/ips.mk
+
+POFILE=zoneinfo.po
+
+download:
+	@echo "Nothing to download."
+
+prep:
+	@echo "Nothing to prep."
+
+build:
+	@/bin/sh ./do_pofile.sh > $(POFILE)
+
+install: build
+	/usr/sbin/zic -d $(PROTOUSRSHARELIBDIR)/zoneinfo $(TZFILES)
+
+# empty test target
+test:	$(NO_TESTS)
+
+clean:
+	$(RM) -r $(BUILD_DIR) $(POFILE)
+
+clobber: clean
+
+include ../../make-rules/depend.mk
+
