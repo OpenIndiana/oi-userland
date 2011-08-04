@@ -52,7 +52,8 @@ include ../../make-rules/ips.mk
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION).0.5
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP="
-CONFIGURE_OPTIONS +=	LDFLAGS="-lbsm"
+# Force immediate binding because of chroot().
+CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=$(LOGNAME)
 CONFIGURE_OPTIONS +=	install_group=`groups | cut -f 1 -d ' '`
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
