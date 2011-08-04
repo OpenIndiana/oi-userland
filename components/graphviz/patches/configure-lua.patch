@@ -1,0 +1,15 @@
+We would normally patch configure.ac instead, but when running autoreconf or
+autogen.sh, it blows up in various places, depending on how hard we try.  Simply
+patching configure is far simpler.
+
+--- graphviz-2.28.0/configure	Fri May  6 20:27:36 2011
++++ graphviz-2.28.0/configure	Fri May 27 15:30:42 2011
+@@ -20679,7 +20679,7 @@
+ 
+         { $as_echo "$as_me:${as_lineno-$LINENO}: checking for Lua compiling and linking" >&5
+ $as_echo_n "checking for Lua compiling and linking... " >&6; }
+-        LUA_TEST=`LT=luatest.c ; echo "#include <lua.h>" > $LT;  echo "#include <lualib.h>" >> $LT; echo "int main() { luaopen_base((lua_State *)lua_open()); return 0; }" >> $LT ; $CC -Wall $LT -o $LT.out $LUA_INCLUDES $LUA_LIBS $CFLAGS $LDFLAGS 1>/dev/null 2>&1 ; echo $?; rm -f $LT $LT.out 1>/dev/null 2>&1`
++        LUA_TEST=`LT=luatest.c ; echo "#include <lua.h>" > $LT;  echo "#include <lualib.h>" >> $LT; echo "int main() { luaopen_base((lua_State *)lua_open()); return 0; }" >> $LT ; $CC $LT -o $LT.out $LUA_INCLUDES $LUA_LIBS $CFLAGS $LDFLAGS 1>/dev/null 2>&1 ; echo $?; rm -f $LT $LT.out 1>/dev/null 2>&1`
+         if test "x$LUA_TEST" != "x0" ; then
+           { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
+ $as_echo "no" >&6; }

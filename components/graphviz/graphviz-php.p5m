@@ -1,0 +1,55 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+set name=pkg.fmri \
+    value=pkg:/image/graphviz/graphviz-php@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="PHP bindings for Graphviz"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.source_url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream_url value=http://www.graphviz.org/
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/PSARC/2011/269
+
+dir path=usr/lib/graphviz/php
+dir path=usr/share/graphviz/demo
+file gv.ini path=etc/php/5.2/conf.d/gv.ini
+file path=usr/lib/graphviz/php/gv.php
+file path=usr/lib/graphviz/php/libgv_php.so
+file path=usr/share/graphviz/demo/modgraph.php
+file usr/share/man/man3/gv.3php path=usr/share/man/man3/gv-php.3
+link path=usr/lib/graphviz/php/gv.so target=libgv_php.so
+# These should go in /var/php, but PHP doesn't seem to be able to pick up
+# a second directory configured in extension_dir.
+link path=usr/php/5.2/include/php/include/gv.php \
+    target=../../../../../lib/graphviz/php/gv.php
+link path=usr/php/5.2/modules/gv.so \
+    target=../../../lib/graphviz/php/libgv_php.so
+
+license COPYING license=EPL1.0
+license graphviz.license.extra license="Other Notices"
+
+depend fmri=web/php-52 type=require
