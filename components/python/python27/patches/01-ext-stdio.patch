@@ -1,0 +1,35 @@
+--- Python-2.7.1/Modules/python.c.orig	Tue Jun 21 21:35:45 2011
++++ Python-2.7.1/Modules/python.c	Tue Jun 21 21:39:29 2011
+@@ -6,6 +6,13 @@
+ #include <floatingpoint.h>
+ #endif
+ 
++#if defined(sun) && defined(__SVR4) && !defined(_LP64)
++#define USE_EXTENDED_FILE_STDIO 1
++#include <stdio.h>
++#include <stdio_ext.h>
++#include <signal.h>
++#endif
++
+ int
+ main(int argc, char **argv)
+ {
+@@ -20,5 +27,18 @@
+ 	m = fpgetmask();
+ 	fpsetmask(m & ~FP_X_OFL);
+ #endif
++#ifdef USE_EXTENDED_FILE_STDIO
++	/*
++	 * enable extended FILE facility on Solaris so that Python
++	 * apps can keep more than 256 file descriptors open
++	 */
++	struct rlimit rlp;
++	(void) getrlimit(RLIMIT_NOFILE, &rlp);
++	rlp.rlim_cur = rlp.rlim_max;
++	if (setrlimit(RLIMIT_NOFILE, &rlp) != -1) {
++		enable_extended_FILE_stdio(-1, 0);
++	}
++#endif
++
+ 	return Py_Main(argc, argv);
+ }
