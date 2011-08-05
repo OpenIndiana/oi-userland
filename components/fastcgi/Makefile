@@ -41,7 +41,7 @@ CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS) $(studio_XREGS)"
 
 # common targets
 build:     $(BUILD_32_and_64)

@@ -423,9 +423,19 @@ studio_IROPTS =		$(studio_IROPTS.$(MACH))
 # Control register usage for generated code.  SPARC ABI requires system
 # libraries not to use application registers.  x86 requires 'no%frameptr' at
 # x04 or higher.
-studio_XREGS.sparc =	-xregs=no%appl,float
+
+# We should just use -xregs but we need to workaround 7030022. Note
+# that we can't use the (documented) -Wc,-xregs workaround because
+# libtool really hates -Wc and thinks it should be -Wl. Instead
+# we use an (undocumented) option which actually happens to be what
+# CC would use.
+studio_XREGS.sparc =	-Qoption cg -xregs=no%appl
 studio_XREGS.i386 =	-xregs=no%frameptr
 studio_XREGS =		$(studio_XREGS.$(MACH))
+
+gcc_XREGS.sparc =	-mno-app-regs
+gcc_XREGS.i386 =
+gcc_XREGS =		$(gcc_XREGS.$(MACH))
 
 # Set data alignment on sparc to reasonable values, 8 byte alignment for 32 bit
 # objects and 16 byte alignment for 64 bit objects.  This is added to CFLAGS by
@@ -479,6 +489,7 @@ CC_PIC =	$($(COMPILER)_PIC)
 # should not be necessary to add CFLAGS to any environment other than the
 # configure environment.
 CFLAGS.gcc +=	$(gcc_OPT)
+CFLAGS.gcc +=	$(gcc_XREGS)
 
 
 # Build 32 or 64 bit objects.

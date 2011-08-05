@@ -45,6 +45,8 @@ $(BUILD_64): CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 LDFLAGS += $(studio_NORUNPATH)
 LDFLAGS += $(CC_BITS)
 
+CXXFLAGS += $(studio_XREGS)
+
 CONFIGURE_OPTIONS += --with-gtk
 CONFIGURE_OPTIONS += --enable-gtk2
 CONFIGURE_OPTIONS += --enable-unicode
