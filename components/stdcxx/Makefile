@@ -78,7 +78,7 @@ FLAGS_sparcv9 = -m64 -xarch=sparcvis -xmemalign=16i
 FLAGS_i386 = -m32 -xarch=386
 FLAGS_amd64 = -m64 -xarch=generic
 CFLAGS_sparc = -Xc -features=extinl  -xvis=yes
-CFLAGS_sparc += -xregs=no%appl -xbuiltin=%none -xO4 $(PICFLAG)
+CFLAGS_sparc += -Qoption cg -xregs=no%appl -xbuiltin=%none -xO4 $(PICFLAG)
 CFLAGS_i386 = -Xc -features=extinl -xregs=no%frameptr
 CFLAGS_i386 += -xO3 -xbuiltin=%none $(PICFLAG)
 
