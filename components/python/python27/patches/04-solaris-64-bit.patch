@@ -1,0 +1,163 @@
+--- Python-2.7.1/Lib/distutils/command/build_ext.py.orig	Fri Jul 15 15:32:28 2011
++++ Python-2.7.1/Lib/distutils/command/build_ext.py	Fri Jul 15 15:37:00 2011
+@@ -637,6 +637,10 @@
+         filename = self.get_ext_filename(ext_name)
+         filename = os.path.split(filename)[-1]
+ 
++        # on Solaris we put 64-bit python objects under .../64
++        if sys.maxint != 2147483647L:
++            filename = os.path.join("64", filename)
++
+         if not self.inplace:
+             # no further work needed
+             # returning :
+@@ -677,7 +681,14 @@
+         so_ext = get_config_var('SO')
+         if os.name == 'nt' and self.debug:
+             return os.path.join(*ext_path) + '_d' + so_ext
+-        return os.path.join(*ext_path) + so_ext
++        #return os.path.join(*ext_path) + so_ext
++	# .so extensions are word-size specific
++        path = apply(os.path.join, ext_path)
++        if sys.maxint == 2147483647L:
++            return path + so_ext
++        dirname = os.path.dirname(path);
++        basename = os.path.basename(path);
++        return os.path.join(dirname, "64", basename + so_ext)
+ 
+     def get_export_symbols (self, ext):
+         """Return the list of symbols that a shared extension has to
+--- Python-2.7.1/Python/import.c.orig	Fri Jul 15 15:41:33 2011
++++ Python-2.7.1/Python/import.c	Fri Jul 15 15:46:55 2011
+@@ -1197,6 +1197,57 @@
+ static int find_init_module(char *); /* Forward */
+ static struct filedescr importhookdescr = {"", "", IMP_HOOK};
+ 
++#ifdef HAVE_STAT
++static char *
++insert_64dir(char *buf, size_t buflen)
++{
++       char *base;
++       char *cp;
++       size_t blen;
++
++       if ((blen = strlen(buf)) == 0)
++               return (NULL);
++
++       cp = &buf[blen - 1];
++       while (cp != buf && *cp != SEP)
++               cp--;
++
++       if (cp != buf)
++               cp++;
++
++       if (blen + strlen("64/") + 1 >= buflen)
++               return NULL;
++
++       base = strdup(cp);
++       sprintf(cp, "64%c%s", SEP, base);
++       free(base);
++
++       return buf;
++}
++
++/*
++ * If we're on a 64-bit platform, modify lookups for shared object files.
++ */
++static size_t modify_path(struct filedescr *fdp, char *buf, size_t buflen)
++{
++       struct stat statbuf;
++
++       if (sizeof(void *) != 8)
++               return 0;
++
++       if (stat(buf, &statbuf) == 0 && S_ISDIR(statbuf.st_mode))
++               return 0;
++
++       if (fdp->type != C_EXTENSION)
++               return 0;
++
++       if (insert_64dir(buf, buflen) == NULL)
++               return 0;
++
++       return strlen("64/");
++}
++#endif
++
+ static struct filedescr *
+ find_module(char *fullname, char *subname, PyObject *path, char *buf,
+             size_t buflen, FILE **p_fp, PyObject **p_loader)
+@@ -1214,11 +1265,10 @@
+     static struct filedescr fd_builtin = {"", "", C_BUILTIN};
+     static struct filedescr fd_package = {"", "", PKG_DIRECTORY};
+     char name[MAXPATHLEN+1];
+-#if defined(PYOS_OS2)
+     size_t saved_len;
+     size_t saved_namelen;
+     char *saved_buf = NULL;
+-#endif
++
+     if (p_loader != NULL)
+         *p_loader = NULL;
+ 
+@@ -1437,7 +1487,6 @@
+         }
+ #endif
+ #endif
+-#if defined(PYOS_OS2)
+         /* take a snapshot of the module spec for restoration
+          * after the 8 character DLL hackery
+          */
+@@ -1444,8 +1493,11 @@
+         saved_buf = strdup(buf);
+         saved_len = len;
+         saved_namelen = namelen;
+-#endif /* PYOS_OS2 */
++
+         for (fdp = _PyImport_Filetab; fdp->suffix != NULL; fdp++) {
++#ifdef HAVE_STAT
++            len += modify_path(fdp, buf, buflen);
++#endif
+ #if defined(PYOS_OS2) && defined(HAVE_DYNAMIC_LOADING)
+             /* OS/2 limits DLLs to 8 character names (w/o
+                extension)
+@@ -1486,14 +1538,13 @@
+                     fp = NULL;
+                 }
+             }
+-#if defined(PYOS_OS2)
++
+             /* restore the saved snapshot */
+             strcpy(buf, saved_buf);
+             len = saved_len;
+             namelen = saved_namelen;
+-#endif
+         }
+-#if defined(PYOS_OS2)
++
+         /* don't need/want the module name snapshot anymore */
+         if (saved_buf)
+         {
+@@ -1500,7 +1551,7 @@
+             free(saved_buf);
+             saved_buf = NULL;
+         }
+-#endif
++
+         Py_XDECREF(copy);
+         if (fp != NULL)
+             break;
+--- Python-2.7.1/Python/importdl.h.orig	Fri Jul 15 15:48:16 2011
++++ Python-2.7.1/Python/importdl.h	Fri Jul 15 15:49:10 2011
+@@ -31,8 +31,9 @@
+ extern PyObject *_PyImport_LoadDynamicModule(char *name, char *pathname,
+                                              FILE *);
+ 
+-/* Max length of module suffix searched for -- accommodates "module.slb" */
+-#define MAXSUFFIXSIZE 12
++/* Max length of module suffix searched for -- accommodates "module.slb"
++   and '64/' */
++#define MAXSUFFIXSIZE 15
+ 
+ #ifdef MS_WINDOWS
+ #include <windows.h>
