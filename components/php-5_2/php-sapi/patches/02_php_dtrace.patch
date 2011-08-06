@@ -1,0 +1,602 @@
+Index: php-5.2.12/Zend/zend_dtrace.d
+===================================================================
+--- php-5.2.12.orig/Zend/zend_dtrace.d		Thu Dec 17 18:45:36 2009
++++ php-5.2.12/Zend/zend_dtrace.d	Thu Dec 17 18:48:23 2009
+@@ -0,0 +1,39 @@
++/*
++   +----------------------------------------------------------------------+
++   | Zend Engine                                                          |
++   +----------------------------------------------------------------------+
++   | Copyright (c) 1998-2009 Zend Technologies Ltd. (http://www.zend.com) |
++   +----------------------------------------------------------------------+
++   | This source file is subject to version 2.00 of the Zend license,     |
++   | that is bundled with this package in the file LICENSE, and is        |
++   | available through the world-wide-web at the following url:           |
++   | http://www.zend.com/license/2_00.txt.                                |
++   | If you did not receive a copy of the Zend license and are unable to  |
++   | obtain it through the world-wide-web, please send a note to          |
++   | license@zend.com so we can mail you a copy immediately.              |
++   +----------------------------------------------------------------------+
++   | Authors: David Soria Parra <david.soriaparra@sun.com>                |
++   +----------------------------------------------------------------------+
++*/
++
++/* $Id: $ */
++
++provider php {
++	probe exception__caught(char *classname);
++	probe exception__thrown(char* classname);
++	probe request__startup(char* request_file, char* request_uri, char* request_method);
++	probe request__shutdown(char* request_file, char* request_uri, char* request_method);
++	probe compile__file__entry(char * compile_file, char *compile_file_translated);
++	probe compile__file__return(char *compile_file, char *compile_file_translated);
++	probe error(char *errormsg, char *request_file, int lineno);
++	probe execute__entry(char* request_file, int lineno);
++	probe execute__return(char* request_file, int lineno);
++	probe function__entry(char* function_name, char* request_file, int lineno, char* classname, char* scope);
++	probe function__return(char* function_name, char* request_file, int lineno, char* classname, char* scope);
++ 	probe object__create(char *classname, char* request_file, int lineno);
++ 	probe object__destroy(char *classname, char* request_file, int lineno);
++};
++
++/*#pragma D attributes Private/Private/Unknown provider php module
++#pragma D attributes Private/Private/Unknown provider php function
++#pragma D attributes Evolving/Evolving/Common provider php provider */
+Index: php-5.2.12/Zend/zend_dtrace.h
+===================================================================
+--- php-5.2.12.orig/Zend/zend_dtrace.h		Thu Dec 17 18:45:36 2009
++++ php-5.2.12/Zend/zend_dtrace.h	Thu Dec 17 18:48:23 2009
+@@ -0,0 +1,49 @@
++/*
++   +----------------------------------------------------------------------+
++   | Zend Engine                                                          |
++   +----------------------------------------------------------------------+
++   | Copyright (c) 1998-2009 Zend Technologies Ltd. (http://www.zend.com) |
++   +----------------------------------------------------------------------+
++   | This source file is subject to version 2.00 of the Zend license,     |
++   | that is bundled with this package in the file LICENSE, and is        |
++   | available through the world-wide-web at the following url:           |
++   | http://www.zend.com/license/2_00.txt.                                |
++   | If you did not receive a copy of the Zend license and are unable to  |
++   | obtain it through the world-wide-web, please send a note to          |
++   | license@zend.com so we can mail you a copy immediately.              |
++   +----------------------------------------------------------------------+
++   | Authors: David Soria Parra <david.soriaparra@sun.com>                |
++   +----------------------------------------------------------------------+
++*/
++
++/* $Id: $ */
++
++#ifndef	_ZEND_DTRACE_H
++#define	_ZEND_DTRACE_H
++
++#ifndef ZEND_WIN32
++# include <unistd.h>
++#endif
++
++#ifdef	__cplusplus
++extern "C" {
++#endif
++
++#ifdef HAVE_DTRACE
++ZEND_API zend_op_array *(*zend_dtrace_compile_file)(zend_file_handle *file_handle, int type TSRMLS_DC);
++ZEND_API void (*zend_dtrace_execute)(zend_op_array *op_array TSRMLS_DC);
++ZEND_API void (*zend_dtrace_execute_internal)(zend_execute_data *execute_data_ptr, int return_value_used TSRMLS_DC);
++
++ZEND_API zend_op_array *dtrace_compile_file(zend_file_handle *file_handle, int type TSRMLS_DC);
++ZEND_API void dtrace_execute(zend_op_array *op_array TSRMLS_DC);
++ZEND_API void dtrace_execute_internal(zend_execute_data *execute_data_ptr, int return_value_used TSRMLS_DC);
++ZEND_API char *dtrace_get_executed_filename(TSRMLS_D);
++#include <zend_dtrace_gen.h>
++
++#endif /* HAVE_DTRACE */
++
++#ifdef	__cplusplus
++}
++#endif
++
++#endif	/* _ZEND_DTRACE_H */
+Index: php-5.2.12/Zend/zend_dtrace.c
+===================================================================
+--- php-5.2.12.orig/Zend/zend_dtrace.c		Thu Dec 17 18:45:36 2009
++++ php-5.2.12/Zend/zend_dtrace.c	Thu Dec 17 18:48:23 2009
+@@ -0,0 +1,107 @@
++/*
++   +----------------------------------------------------------------------+
++   | Zend Engine                                                          |
++   +----------------------------------------------------------------------+
++   | Copyright (c) 1998-2009 Zend Technologies Ltd. (http://www.zend.com) |
++   +----------------------------------------------------------------------+
++   | This source file is subject to version 2.00 of the Zend license,     |
++   | that is bundled with this package in the file LICENSE, and is        |
++   | available through the world-wide-web at the following url:           |
++   | http://www.zend.com/license/2_00.txt.                                |
++   | If you did not receive a copy of the Zend license and are unable to  |
++   | obtain it through the world-wide-web, please send a note to          |
++   | license@zend.com so we can mail you a copy immediately.              |
++   +----------------------------------------------------------------------+
++   | Authors: David Soria Parra <david.soriaparra@sun.com>                |
++   +----------------------------------------------------------------------+
++*/
++
++/* $Id: $ */
++
++#include "zend.h"
++#include "zend_API.h"
++#include "zend_dtrace.h"
++
++#ifdef HAVE_DTRACE
++/* PHP DTrace probes {{{ */
++ZEND_API char *dtrace_get_executed_filename(TSRMLS_D)
++{
++	if (EG(current_execute_data) && EG(current_execute_data)->op_array) {
++		return EG(current_execute_data)->op_array->filename;
++	} else {
++		return zend_get_executed_filename(TSRMLS_C);
++	}
++}
++
++ZEND_API zend_op_array *dtrace_compile_file(zend_file_handle *file_handle, int type TSRMLS_DC)
++{
++	zend_op_array *res;
++	DTRACE_COMPILE_FILE_ENTRY(file_handle->opened_path, file_handle->filename);
++	res = compile_file(file_handle, type TSRMLS_CC);
++	DTRACE_COMPILE_FILE_RETURN(file_handle->opened_path, file_handle->filename);
++
++	return res;
++}
++
++/* We wrap the execute function to have fire the execute-entry/return and function-entry/return probes */
++ZEND_API void dtrace_execute(zend_op_array *op_array TSRMLS_DC)
++{
++	int lineno;
++	char *scope, *filename, *funcname, *classname;
++	scope = filename = funcname = classname = NULL;
++
++	/* we need filename and lineno for both execute and function probes */
++	if (DTRACE_EXECUTE_ENTRY_ENABLED() || DTRACE_EXECUTE_RETURN_ENABLED()) {
++		filename = dtrace_get_executed_filename(TSRMLS_C);
++		lineno = zend_get_executed_lineno(TSRMLS_C);
++	}
++
++	if (DTRACE_FUNCTION_ENTRY_ENABLED() || DTRACE_FUNCTION_RETURN_ENABLED()) {
++		filename = dtrace_get_executed_filename(TSRMLS_C);
++		classname = get_active_class_name(&scope TSRMLS_CC);
++		funcname = get_active_function_name(TSRMLS_C);
++		lineno = zend_get_executed_lineno(TSRMLS_C);
++	}
++
++	if (DTRACE_EXECUTE_ENTRY_ENABLED()) {
++		DTRACE_EXECUTE_ENTRY(filename, lineno);
++	}
++
++	if (DTRACE_FUNCTION_ENTRY_ENABLED() && funcname != NULL) {
++		DTRACE_FUNCTION_ENTRY(funcname, filename, lineno, classname, scope);
++	}
++
++	execute(op_array TSRMLS_CC);
++
++	if (DTRACE_FUNCTION_RETURN_ENABLED() && funcname != NULL) {
++		DTRACE_FUNCTION_RETURN(funcname, filename, lineno, classname, scope);
++	}
++
++	if (DTRACE_EXECUTE_RETURN_ENABLED()) {
++		DTRACE_EXECUTE_RETURN(filename, lineno);
++	}
++}
++
++ZEND_API void dtrace_execute_internal(zend_execute_data *execute_data_ptr, int return_value_used TSRMLS_DC)
++{
++	int lineno;
++	char *filename;
++	if (DTRACE_EXECUTE_ENTRY_ENABLED() || DTRACE_EXECUTE_RETURN_ENABLED()) {
++		filename = dtrace_get_executed_filename(TSRMLS_C);
++		lineno = zend_get_executed_lineno(TSRMLS_C);
++	}
++
++	if (DTRACE_EXECUTE_ENTRY_ENABLED()) {
++		DTRACE_EXECUTE_ENTRY(filename, lineno);
++	}
++
++	execute_internal(execute_data_ptr, return_value_used TSRMLS_CC);
++
++	if (DTRACE_EXECUTE_RETURN_ENABLED()) {
++		DTRACE_EXECUTE_RETURN(filename, lineno);
++	}
++}
++
++/* }}} */
++#endif /* HAVE_DTRACE */
++
+Index: php-5.2.9/Zend/zend_dtrace_gen.php
+===================================================================
+--- php-5.2.9.orig/Zend/zend_dtrace_gen.php  Thu Apr 02 22:18:32 2009 +0200
++++ php-5.2.9/Zend/zend_dtrace_gen.php  Thu Apr 02 22:18:32 2009 +0200
+@@ -0,0 +1,32 @@
++<?php
++/*
++   +----------------------------------------------------------------------+
++   | Zend Engine                                                          |
++   +----------------------------------------------------------------------+
++   | Copyright (c) 1998-2009 Zend Technologies Ltd. (http://www.zend.com) |
++   +----------------------------------------------------------------------+
++   | This source file is subject to version 2.00 of the Zend license,     |
++   | that is bundled with this package in the file LICENSE, and is        |
++   | available through the world-wide-web at the following url:           |
++   | http://www.zend.com/license/2_00.txt.                                |
++   | If you did not receive a copy of the Zend license and are unable to  |
++   | obtain it through the world-wide-web, please send a note to          |
++   | license@zend.com so we can mail you a copy immediately.              |
++   +----------------------------------------------------------------------+
++   | Authors: David Soria Parra <david.soriaparra@sun.com>                |
++   +----------------------------------------------------------------------+
++
++   $Id:$
++*/
++
++echo "regenerating zend_dtrace.h\n";
++system('dtrace -h -s zend_dtrace.d');
++
++echo "renaming probe definitions\n";
++$content = file_get_contents('zend_dtrace.h');
++$content = str_replace('#define        PHP_', '#define DTRACE_', $content);
++$content = str_replace('PHP_STABILITY', 'DTRACE_STABILITY', $content);
++$content = str_replace('PHP_TYPEDEFS', 'DTRACE_TYPEDEFS', $content);
++$content = str_replace('#if _DTRACE_VERSION', '#if _DTRACE_VERSION && HAVE_SYS_SDT_H', $content);
++file_put_contents('zend_dtrace.h', $content);
++
+Index: php-5.2.11/Zend/zend.c
+===================================================================
+--- php-5.2.11.orig/Zend/zend.c	2009-11-02 02:59:10.971196190 +0100
++++ php-5.2.11/Zend/zend.c	2009-11-02 02:59:56.087087949 +0100
+@@ -28,6 +28,7 @@
+ #include "zend_exceptions.h"
+ #include "zend_builtin_functions.h"
+ #include "zend_ini.h"
++#include "zend_dtrace.h"
+ 
+ #ifdef ZTS
+ #   define GLOBAL_FUNCTION_TABLE    global_function_table
+@@ -603,10 +604,17 @@
+ 	zend_vspprintf = utility_functions->vspprintf_function;
+ 	zend_getenv = utility_functions->getenv_function;
+ 
++#if HAVE_DTRACE
++/* build with dtrace support */
++	zend_compile_file = dtrace_compile_file;
++	zend_execute = dtrace_execute;
++	zend_execute_internal = dtrace_execute_internal;
++#else
+ 	zend_compile_file = compile_file;
+-	zend_compile_string = compile_string;
+ 	zend_execute = execute;
+ 	zend_execute_internal = NULL;
++#endif /* HAVE_SYS_SDT_H */
++	zend_compile_string = compile_string;
+ 	zend_throw_exception_hook = NULL;
+ 
+ 	zend_init_opcodes_handlers();
+@@ -961,6 +970,15 @@
+ 
+ 	va_start(args, format);
+ 
++#ifdef HAVE_DTRACE
++	if(DTRACE_ERROR_ENABLED()) {
++		char *dtrace_error_buffer;
++		zend_vspprintf(&dtrace_error_buffer, 0, format, args);
++		DTRACE_ERROR(dtrace_error_buffer, error_filename, error_lineno);
++		efree(dtrace_error_buffer);
++	}
++#endif /* HAVE_DTRACE */
++
+ 	/* if we don't have a user defined error handler */
+ 	if (!EG(user_error_handler)
+ 		|| !(EG(user_error_handler_error_reporting) & type)) {
+Index: php-5.2.12/Zend/zend_API.c
+===================================================================
+--- php-5.2.12.orig/Zend/zend_API.c.NEW2	Sat Sep  5 12:01:06 2009
++++ php-5.2.12/Zend/zend_API.c	Thu Dec 17 18:48:23 2009
+@@ -25,11 +25,16 @@
+ #include "zend_API.h"
+ #include "zend_modules.h"
+ #include "zend_constants.h"
++#include "zend_dtrace.h"
+ 
+ #ifdef HAVE_STDARG_H
+ #include <stdarg.h>
+ #endif
+ 
++#ifdef HAVE_DTRACE
++extern char* dtrace_get_executed_filename(TSRMLS_D);
++#endif
++
+ /* these variables are true statics/globals, and have to be mutex'ed on every access */
+ static int module_count=0;
+ ZEND_API HashTable module_registry;
+@@ -942,6 +947,17 @@
+ 		zend_error(E_ERROR, "Cannot instantiate %s %s", what, class_type->name);
+ 	}
+ 
++#ifdef HAVE_DTRACE
++	if (DTRACE_OBJECT_CREATE_ENABLED()) {
++		char *filename;
++		int lineno;
++
++		filename = dtrace_get_executed_filename(TSRMLS_C);
++		lineno = zend_get_executed_lineno(TSRMLS_C);
++		DTRACE_OBJECT_CREATE(class_type->name, filename, lineno);
++	}
++#endif /* HAVE_DTRACE */
++
+ 	zend_update_class_constants(class_type TSRMLS_CC);
+ 
+ 	Z_TYPE_P(arg) = IS_OBJECT;
+Index: php-5.2.12/Zend/zend_objects.c
+===================================================================
+--- php-5.2.12.orig/Zend/zend_objects.c	Mon Oct 12 10:09:11 2009
++++ php-5.2.12/Zend/zend_objects.c	Thu Dec 17 18:48:23 2009
+@@ -25,6 +25,7 @@
+ #include "zend_API.h"
+ #include "zend_interfaces.h"
+ #include "zend_exceptions.h"
++#include "zend_dtrace.h"
+ 
+ ZEND_API void zend_object_std_init(zend_object *object, zend_class_entry *ce TSRMLS_DC)
+ {
+@@ -51,6 +52,16 @@
+ {
+ 	zend_function *destructor = object ? object->ce->destructor : NULL;
+ 
++#ifdef HAVE_DTRACE
++	if (DTRACE_OBJECT_DESTROY_ENABLED()) {
++		char *filename;
++		int lineno;
++
++		filename = dtrace_get_executed_filename(TSRMLS_C);
++		lineno = zend_get_executed_lineno(TSRMLS_C);
++		DTRACE_OBJECT_DESTROY(object->ce->name, filename, lineno);
++	}
++#endif /* HAVE_DTRACE */
+ 	if (destructor) {
+ 		zval *obj;
+ 		zval *old_exception;
+Index: php-5.2.11/Zend/zend_exceptions.c
+===================================================================
+--- php-5.2.11.orig/Zend/zend_exceptions.c	2009-11-02 02:59:10.970676604 +0100
++++ php-5.2.11/Zend/zend_exceptions.c	2009-11-02 02:59:56.084156777 +0100
+@@ -26,6 +26,7 @@
+ #include "zend_builtin_functions.h"
+ #include "zend_interfaces.h"
+ #include "zend_exceptions.h"
++#include "zend_dtrace.h"
+ 
+ zend_class_entry *default_exception_ce;
+ zend_class_entry *error_exception_ce;
+@@ -34,6 +35,15 @@
+ 
+ void zend_throw_exception_internal(zval *exception TSRMLS_DC) /* {{{ */
+ {
++#ifdef HAVE_DTRACE
++	if (DTRACE_EXCEPTION_THROWN_ENABLED()) {
++		char *classname;
++		int name_len;
++		zend_get_object_classname(exception, &classname, &name_len TSRMLS_CC);
++		DTRACE_EXCEPTION_THROWN(classname);
++	}
++#endif /* HAVE_DTRACE */
++
+ 	if (exception != NULL) {
+ 		if (EG(exception)) {
+ 			/* FIXME:  bail out? */
+Index: php-5.2.11/Zend/zend_execute.c
+===================================================================
+--- php-5.2.11.orig/Zend/zend_execute.c	2009-11-02 02:59:10.971029046 +0100
++++ php-5.2.11/Zend/zend_execute.c	2009-11-02 02:59:56.084688879 +0100
+@@ -35,6 +35,7 @@
+ #include "zend_exceptions.h"
+ #include "zend_interfaces.h"
+ #include "zend_vm.h"
++#include "zend_dtrace.h"
+ 
+ /* Virtual current working directory support */
+ #include "tsrm_virtual_cwd.h"
+Index: php-5.2.11/Zend/zend_vm_def.h
+===================================================================
+--- php-5.2.17/Zend/zend_vm_def.h.ORIG	Mon Jul  5 02:08:35 2010
++++ php-5.2.17/Zend/zend_vm_def.h	Mon Jan 31 13:46:32 2011
+@@ -2249,6 +2249,11 @@
+ 		ZEND_VM_CONTINUE(); /* CHECK_ME */
+ 	}
+ 	ce = Z_OBJCE_P(EG(exception));
++
++#ifdef HAVE_DTRACE
++	DTRACE_EXCEPTION_CAUGHT(ce->name);
++#endif /* HAVE_DTRACE */
++
+ 	if (ce != EX_T(opline->op1.u.var).class_entry) {
+ 		if (!instanceof_function(ce, EX_T(opline->op1.u.var).class_entry TSRMLS_CC)) {
+ 			if (opline->op1.u.EA.type) {
+Index: php-5.2.11/Zend/zend_vm_execute.h
+===================================================================
+--- php-5.2.11.orig/Zend/zend_vm_execute.h	2009-11-02 02:59:10.970794327 +0100
++++ php-5.2.11/Zend/zend_vm_execute.h	2009-11-02 02:59:56.095206861 +0100
+@@ -333,6 +333,11 @@
+ 		ZEND_VM_CONTINUE(); /* CHECK_ME */
+ 	}
+ 	ce = Z_OBJCE_P(EG(exception));
++
++#ifdef HAVE_DTRACE
++	DTRACE_EXCEPTION_CAUGHT(ce->name);
++#endif /* HAVE_DTRACE */
++
+ 	if (ce != EX_T(opline->op1.u.var).class_entry) {
+ 		if (!instanceof_function(ce, EX_T(opline->op1.u.var).class_entry TSRMLS_CC)) {
+ 			if (opline->op1.u.EA.type) {
+Index: php-5.2.11/main/main.c
+===================================================================
+--- php-5.2.11.orig/main/main.c	2009-11-02 02:59:10.970427110 +0100
++++ php-5.2.11/main/main.c	2009-11-02 02:59:56.083717631 +0100
+@@ -81,6 +81,7 @@
+ #include "zend_indent.h"
+ #include "zend_extensions.h"
+ #include "zend_ini.h"
++#include "zend_dtrace.h"
+ 
+ #include "php_content_types.h"
+ #include "php_ticks.h"
+@@ -1260,6 +1261,10 @@
+ {
+ 	int retval = SUCCESS;
+ 
++#ifdef HAVE_DTRACE
++	DTRACE_REQUEST_STARTUP(SAFE_FILENAME(SG(request_info).path_translated), SAFE_FILENAME(SG(request_info).request_uri), SAFE_FILENAME(SG(request_info).request_method));
++#endif /* HAVE_DTRACE */
++
+ #ifdef PHP_WIN32
+ 	PG(com_initialized) = 0;
+ #endif
+@@ -1534,6 +1539,10 @@
+ 		PG(com_initialized) = 0;
+ 	}
+ #endif
++
++#ifdef HAVE_DTRACE
++	DTRACE_REQUEST_SHUTDOWN(SAFE_FILENAME(SG(request_info).path_translated), SAFE_FILENAME(SG(request_info).request_uri), SAFE_FILENAME(SG(request_info).request_method));
++#endif /* HAVE_DTRACE */
+ }
+ /* }}} */
+ 
+Index: php-5.2.11/main/php_config.h.in
+===================================================================
+--- php-5.2.17/main/php_config.h.in.ORIG	Thu Jan  6 15:04:47 2011
++++ php-5.2.17/main/php_config.h.in	Mon Jan 31 13:46:34 2011
+@@ -725,6 +725,9 @@
+ /* Define if you have the <sys/resource.h> header file.  */
+ #undef HAVE_SYS_RESOURCE_H
+ 
++/* Define to 1 if you have the <sys/sdt.h> header file. */
++#undef HAVE_SYS_SDT_H
++
+ /* Define if you have the <sys/select.h> header file.  */
+ #undef HAVE_SYS_SELECT_H
+ 
+Index: php-5.2.12/acinclude.m4
+===================================================================
+--- php-5.2.17/acinclude.m4.ORIG	Wed May  5 14:55:44 2010
++++ php-5.2.17/acinclude.m4	Mon Jan 31 13:46:34 2011
+@@ -2877,3 +2877,56 @@
+   fi
+ ])
+ 
++dnl
++dnl Generate dtrace targets
++dnl
++AC_DEFUN([PHP_GENERATE_DTRACE],[
++  old_IFS=[$]IFS
++  IFS=.
++  set $ac_src
++  IFS=$old_IFS
++  build_target=$2
++  PHP_GLOBAL_OBJS="[$]PHP_GLOBAL_OBJS $1.o"
++  for src in $PHP_DTRACE_OBJS; do
++    case [$]build_target in
++      *)
++        obj="$obj `dirname $src`/.libs/`basename $src | sed 's,\.lo$,.o,'` " ;;
++    esac
++  done
++
++  cat >>Makefile.objects<<EOF
++$1.o: \$(PHP_DTRACE_OBJS)
++	dtrace -G -o $1.o -s $1 $obj
++EOF
++
++])
++
++dnl
++dnl Link given source files with dtrace
++dnl PHP_ADD_DTRACE(providerdesc, sources, module)
++dnl
++AC_DEFUN([PHP_ADD_DTRACE],[
++   case "$3" in
++    ""[)] unset ac_bdir;;
++    /*[)] ac_bdir=$ac_srcdir;;
++    *[)] extdir=PHP_EXT_DIR($3); ac_bdir="$extdir/";;
++    esac
++  old_IFS=[$]IFS
++  for ac_src in $2; do
++    IFS=.
++    set $ac_src
++    ac_obj=[$]1
++    IFS=$old_IFS
++
++    PHP_DTRACE_OBJS="[$]PHP_DTRACE_OBJS [$]ac_bdir[$]ac_obj.lo"
++  done;
++])
++
++dnl
++dnl Generate platform specific dtrace header
++dnl
++AC_DEFUN([PHP_INIT_DTRACE], [
++  dtrace -h -C -s $1 -o $2
++  $SED -ibak 's,PHP_,DTRACE_,g' $2
++])
++
+ 
+Index: php-5.2.12/configure.in
+===================================================================
+--- php-5.2.17/configure.in.ORIG	Thu Jan  6 15:01:19 2011
++++ php-5.2.17/configure.in	Mon Jan 31 13:46:34 2011
+@@ -881,6 +881,23 @@
+   AC_DEFINE(HAVE_IPV6, 1, [Whether to enable IPv6 support])
+ fi
+ 
++dnl ## DTRACE CHECHKS
++dnl ## this needs to be done before SAPI configureation
++PHP_ARG_ENABLE(dtrace, whether to enable DTrace support,
++[  --enable-dtrace         Enable DTrace support], no, no)
++
++dnl ## DTRACE CHECHKS
++dnl ## this needs to be done before SAPI configureation
++if test "$PHP_DTRACE" = "yes"; then
++  AC_CHECK_HEADERS([sys/sdt.h],
++    [PHP_ADD_DTRACE([Zend/zend_dtrace.d], [main/main.c, Zend/zend_API.c \
++       Zend/zend_execute.c Zend/zend_exceptions.c Zend/zend_objects.c \
++       Zend/zend_dtrace.c Zend/zend.c])
++     AC_DEFINE(HAVE_DTRACE, 1, [Whether to enable DTrace support])
++     PHP_INIT_DTRACE([Zend/zend_dtrace.d], [Zend/zend_dtrace_gen.h])],
++    [])
++fi
++
+ AC_MSG_CHECKING([how big to make fd sets])
+ PHP_ARG_ENABLE(fd-setsize,,
+ [  --enable-fd-setsize     Set size of descriptor sets], no, no)
+@@ -1211,6 +1228,7 @@
+ PHP_SUBST(PHP_CLI_TARGET)
+ PHP_SUBST(PHP_SAPI_OBJS)
+ PHP_SUBST(PHP_CLI_OBJS)
++PHP_SUBST(PHP_DTRACE_OBJS)
+ PHP_SUBST(PHP_GLOBAL_OBJS)
+ 
+ PHP_SUBST(PHP_MODULES)
+@@ -1400,7 +1418,7 @@
+ PHP_ADD_SOURCES(Zend, \
+     zend_language_parser.c zend_language_scanner.c \
+     zend_ini_parser.c zend_ini_scanner.c \
+-    zend_alloc.c zend_compile.c zend_constants.c zend_dynamic_array.c \
++    zend_alloc.c zend_compile.c zend_constants.c zend_dynamic_array.c zend_dtrace.c \
+     zend_execute_API.c zend_highlight.c zend_llist.c \
+     zend_opcode.c zend_operators.c zend_ptr_stack.c zend_stack.c \
+     zend_variables.c zend.c zend_API.c zend_extensions.c zend_hash.c \
+@@ -1432,6 +1450,13 @@
+ PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/Makefile.frag,$abs_srcdir/Zend,Zend)
+ PHP_ADD_MAKEFILE_FRAGMENT($abs_srcdir/Zend/Makefile.frag,$abs_srcdir/Zend,Zend)
+ 
++if test "$PHP_DTRACE" = "yes"; then
++  case $host_alias in
++    *solaris*)
++      PHP_GENERATE_DTRACE([Zend/zend_dtrace.d],$php_build_target);;
++  esac
++fi
++
+ PHP_GEN_BUILD_DIRS
+ PHP_GEN_GLOBAL_MAKEFILE

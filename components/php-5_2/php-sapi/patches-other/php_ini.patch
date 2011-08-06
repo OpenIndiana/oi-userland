@@ -1,0 +1,130 @@
+--- php-5.2.17/php.ini-recommended.ORIG	Tue Feb  1 21:23:46 2011
++++ php-5.2.17/php.ini-recommended	Mon Jan 17 08:53:16 2011
+@@ -523,6 +523,7 @@
+ 
+ ; UNIX: "/path1:/path2"
+ ;include_path = ".:/php/includes"
++;include_path = ".:/var/php/<<VERSION>>/pear"
+ ;
+ ; Windows: "\path1;\path2"
+ ;include_path = ".;c:\php\includes"
+@@ -539,7 +540,7 @@
+ user_dir =
+ 
+ ; Directory in which the loadable extensions (modules) reside.
+-extension_dir = "./"
++extension_dir = "/usr/php/<<VERSION>>/modules:/var/php/<<VERSION>>/modules"
+ 
+ ; Whether or not to enable the dl() function.  The dl() function does NOT work
+ ; properly in multithreaded servers, such as IIS or Zeus, and is automatically
+@@ -623,7 +624,7 @@
+ ; user_agent="PHP"
+ 
+ ; Default timeout for socket based streams (seconds)
+-default_socket_timeout = 60
++default_socket_timeout = 1800
+ 
+ ; If your scripts have to deal with files from Macintosh systems,
+ ; or you are running on a Mac and need to deal with files from
+@@ -653,60 +654,12 @@
+ ; Note that it should be the name of the module only; no directory information
+ ; needs to go here.  Specify the location of the extension with the
+ ; extension_dir directive above.
++; 
++; Bundled extensions are configured to load automatically within extension
++; specific ini file. These extension specific ini files are found under
++; /etc/php/<<VERSION>>/conf.d directory
+ 
+ 
+-; Windows Extensions
+-; Note that ODBC support is built in, so no dll is needed for it.
+-; Note that many DLL files are located in the extensions/ (PHP 4) ext/ (PHP 5)
+-; extension folders as well as the separate PECL DLL download (PHP 5).
+-; Be sure to appropriately set the extension_dir directive.
+-
+-;extension=php_bz2.dll
+-;extension=php_curl.dll
+-;extension=php_dba.dll
+-;extension=php_dbase.dll
+-;extension=php_fdf.dll
+-;extension=php_gd2.dll
+-;extension=php_gettext.dll
+-;extension=php_gmp.dll
+-;extension=php_ifx.dll
+-;extension=php_imap.dll
+-;extension=php_interbase.dll
+-;extension=php_ldap.dll
+-;extension=php_mbstring.dll
+-;extension=php_exif.dll
+-;extension=php_mcrypt.dll
+-;extension=php_mhash.dll
+-;extension=php_mime_magic.dll
+-;extension=php_ming.dll
+-;extension=php_msql.dll
+-;extension=php_mssql.dll
+-;extension=php_mysql.dll
+-;extension=php_mysqli.dll
+-;extension=php_oci8.dll
+-;extension=php_openssl.dll
+-;extension=php_pdo.dll
+-;extension=php_pdo_firebird.dll
+-;extension=php_pdo_mssql.dll
+-;extension=php_pdo_mysql.dll
+-;extension=php_pdo_oci.dll
+-;extension=php_pdo_oci8.dll
+-;extension=php_pdo_odbc.dll
+-;extension=php_pdo_pgsql.dll
+-;extension=php_pdo_sqlite.dll
+-;extension=php_pgsql.dll
+-;extension=php_pspell.dll
+-;extension=php_shmop.dll
+-;extension=php_snmp.dll
+-;extension=php_soap.dll
+-;extension=php_sockets.dll
+-;extension=php_sqlite.dll
+-;extension=php_sybase_ct.dll
+-;extension=php_tidy.dll
+-;extension=php_xmlrpc.dll
+-;extension=php_xsl.dll
+-;extension=php_zip.dll
+-
+ ;;;;;;;;;;;;;;;;;;;
+ ; Module Settings ;
+ ;;;;;;;;;;;;;;;;;;;
+@@ -1044,6 +997,7 @@
+ ; where MODE is the octal representation of the mode. Note that this
+ ; does not overwrite the process's umask.
+ ;session.save_path = "/tmp"
++session.save_path = "/var/php/<<VERSION>>/sessions"
+ 
+ ; Whether to use cookies.
+ session.use_cookies = 1
+@@ -1082,11 +1036,11 @@
+ ; on each request.
+ 
+ session.gc_probability = 1
+-session.gc_divisor     = 1000
++session.gc_divisor     = 5000
+ 
+ ; After this number of seconds, stored data will be seen as 'garbage' and
+ ; cleaned up by the garbage collection process.
+-session.gc_maxlifetime = 1440
++session.gc_maxlifetime = 6000
+ 
+ ; NOTE: If you are using the subdirectory option for storing session files
+ ;       (see session.save_path above), then garbage collection does *not*
+@@ -1114,12 +1068,11 @@
+ session.entropy_length = 0
+ 
+ ; Specified here to create the session id.
+-session.entropy_file =
++;session.entropy_file =
++session.entropy_file = /dev/urandom
+ 
+ ;session.entropy_length = 16
+ 
+-;session.entropy_file = /dev/urandom
+-
+ ; Set to {nocache,private,public,} to determine HTTP caching aspects
+ ; or leave this empty to avoid sending anti-caching headers.
+ session.cache_limiter = nocache

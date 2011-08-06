@@ -1,0 +1,20 @@
+--- php-5.2.9/Makefile.global.ORIG	Mon Mar 30 09:32:03 2009
++++ php-5.2.9/Makefile.global	Mon Mar 30 09:31:44 2009
+@@ -2,7 +2,7 @@
+ INSTALL = $(top_srcdir)/build/shtool install -c
+ INSTALL_DATA = $(INSTALL) -m 644
+ 
+-DEFS = -DPHP_ATOM_INC -I$(top_builddir)/include -I$(top_builddir)/main -I$(top_srcdir)
++DEFS = -DPHP_ATOM_INC -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -I$(top_builddir)/include -I$(top_builddir)/main -I$(top_srcdir)
+ COMMON_FLAGS = $(DEFS) $(INCLUDES) $(EXTRA_INCLUDES) $(CPPFLAGS) $(PHP_FRAMEWORKPATH)
+ 
+ all: $(all_targets) 
+@@ -67,7 +67,7 @@
+ 		done; \
+ 	fi
+ 
+-PHP_TEST_SETTINGS = -d 'open_basedir=' -d 'output_buffering=0' -d 'memory_limit=-1'
++PHP_TEST_SETTINGS = -n -d 'open_basedir=' -d 'output_buffering=0' -d 'memory_limit=-1'
+ PHP_TEST_SHARED_EXTENSIONS =  ` \
+ 	if test "x$(PHP_MODULES)" != "x"; then \
+ 		for i in $(PHP_MODULES)""; do \

@@ -1,0 +1,22 @@
+--- idn-0.2.0/config.m4.ORIG	Thu Jan 29 11:40:38 2009
++++ idn-0.2.0/config.m4	Thu Jan 29 11:42:02 2009
+@@ -5,8 +5,8 @@
+ [  --with-idn[=DIR]        Include GNU Libidn support])
+ 
+ if test "$PHP_IDN" != "no"; then
+-  SEARCH_PATH="/usr/local /usr"
+-  SEARCH_FOR="/include/idna.h"
++  SEARCH_PATH="/usr/local /usr" 
++  SEARCH_FOR="include/idn/idna.h"
+ 
+   if test -r $PHP_IDN/$SEARCH_FOR; then # path given as parameter
+     IDN_DIR=$PHP_IDN
+@@ -33,7 +33,7 @@
+     AC_MSG_RESULT([no])
+   fi
+ 
+-  PHP_ADD_INCLUDE($IDN_DIR/include)
++  PHP_ADD_INCLUDE(/usr/include/idn)
+ 
+   dnl # --with-idn -> check for lib and symbol presence
+   LIBNAME=idn

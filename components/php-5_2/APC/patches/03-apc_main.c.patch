@@ -1,0 +1,30 @@
+--- APC-3.0.19/apc_main.c.ORIG	Fri Feb 13 17:16:08 2009
++++ APC-3.0.19/apc_main.c	Fri Feb 13 17:16:18 2009
+@@ -378,21 +378,12 @@
+     if (op_array == NULL) {
+         return NULL;
+     }
+-    /*
+-     * Basically this will cause a file only to be cached on a percentage 
+-     * of the attempts.  This is to avoid cache slams when starting up a
+-     * very busy server or when modifying files on a very busy live server.
+-     * There is no point having many processes all trying to cache the same
+-     * file at the same time.  By introducing a chance of being cached
+-     * we theoretically cut the cache slam problem by the given percentage.
+-     * For example if apc.slam_defense is set to 66 then 2/3 of the attempts
+-     * to cache an uncached file will be ignored.
+-     */
+-    if(APCG(slam_defense)) {
+-        if(APCG(slam_rand)==-1) {
+-            APCG(slam_rand) = (int)(100.0*rand()/(RAND_MAX+1.0));
+-        }
+-        if(APCG(slam_rand) < APCG(slam_defense)) {
++
++    /* check our regular expression filters */
++    if (APCG(filters) && apc_compiled_filters && h->opened_path) {
++        int ret = apc_regex_match_array(apc_compiled_filters, h->opened_path);
++        if(ret == APC_NEGATIVE_MATCH || (ret != APC_POSITIVE_MATCH && !APCG(cache_by_default))) {
++            /* never cache, never find */
+             return op_array;
+         }
+     }

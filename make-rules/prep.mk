@@ -63,6 +63,7 @@ $(foreach suffix,$(NUM_ARCHIVES),$(eval $(call download-rule,_$(suffix))))
 $(SOURCE_DIR)/.unpacked:	download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR)
 	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE)
+	$(COMPONENT_POST_UNPACK_ACTION)
 	$(TOUCH) $@
 
 $(SOURCE_DIR)/.patched:	$(SOURCE_DIR)/.unpacked $(STAMPS)

@@ -1,0 +1,101 @@
+diff -u -r ./apc_compile.c.ORIG ./apc_compile.c
+--- apc_compile.c.ORIG	Wed May 14 23:45:27 2008
++++ ./apc_compile.c	Fri Nov 13 09:39:41 2009
+@@ -1236,10 +1236,10 @@
+     }
+ 
+ #ifdef ZEND_ENGINE_2
+-    if(APCG(reserved_offset) != -1) {
++    if(apc_reserved_offset != -1) {
+         /* Insanity alert: the void* pointer is cast into an apc_opflags_t 
+          * struct. apc_zend_init() checks to ensure that it fits in a void* */
+-        flags = (apc_opflags_t*) & (dst->reserved[APCG(reserved_offset)]);
++        flags = (apc_opflags_t*) & (dst->reserved[apc_reserved_offset]);
+         memset(flags, 0, sizeof(apc_opflags_t));
+         /* assert(sizeof(apc_opflags_t) < sizeof(dst->reserved)); */
+     }
+@@ -2040,8 +2040,8 @@
+     zend_op *zo;
+     zend_op *dzo;
+ #ifdef ZEND_ENGINE_2
+-    apc_opflags_t * flags = APCG(reserved_offset) != -1 ? 
+-                                (apc_opflags_t*) & (src->reserved[APCG(reserved_offset)]) : NULL;
++    apc_opflags_t * flags = apc_reserved_offset != -1 ? 
++                                (apc_opflags_t*) & (src->reserved[apc_reserved_offset]) : NULL;
+     int needcopy = flags ? flags->deep_copy : 1;
+     /* auto_globals_jit was not in php4 */
+     int do_prepare_fetch_global = PG(auto_globals_jit) && (flags == NULL || flags->unknown_global);
+diff -u -r ./apc_globals.h.ORIG ./apc_globals.h
+--- ./apc_globals.h.ORIG	Wed May 14 23:45:27 2008
++++ ./apc_globals.h	Fri Nov 13 09:40:40 2009
+@@ -79,9 +79,6 @@
+     double rfc1867_freq;         /* Update frequency as percentage or bytes */
+ #endif
+     HashTable *copied_zvals;     /* my_copy recursion detection list */
+-#ifdef ZEND_ENGINE_2
+-    int reserved_offset;         /* offset for apc info in op_array->reserved[] */
+-#endif
+     zend_bool force_file_update; /* force files to be updated during apc_compile_file */
+     char canon_path[MAXPATHLEN]; /* canonical path for key data */
+ #if APC_FILEHITS
+@@ -103,6 +100,9 @@
+ extern apc_cache_t* apc_cache;       /* the global compiler cache */
+ extern apc_cache_t* apc_user_cache;  /* the global user content cache */
+ extern void* apc_compiled_filters;   /* compiled filters */
++#ifdef ZEND_ENGINE_2
++int apc_reserved_offset;         /* offset for apc info in op_array->reserved[] */
++#endif
+ 
+ #endif
+ 
+diff -u -r ./apc_zend.c.ORIG ./apc_zend.c
+--- ./apc_zend.c.ORIG	Wed May 14 23:45:27 2008
++++ ./apc_zend.c	Fri Nov 13 09:39:41 2009
+@@ -195,9 +195,9 @@
+ 		zval_dtor(&tmp_inc_filename);
+ 	}
+ 
+-	if(APCG(reserved_offset) != -1) {
++	if(apc_reserved_offset != -1) {
+ 		/* Insanity alert: look into apc_compile.c for why a void** is cast to a apc_opflags_t* */
+-		flags = (apc_opflags_t*) & (execute_data->op_array->reserved[APCG(reserved_offset)]);
++		flags = (apc_opflags_t*) & (execute_data->op_array->reserved[apc_reserved_offset]);
+ 	}
+ 
+ #ifdef ZEND_ENGINE_2
+@@ -223,9 +223,9 @@
+ {
+     zend_extension dummy_ext;
+ #ifdef ZEND_ENGINE_2
+-    APCG(reserved_offset) = zend_get_resource_handle(&dummy_ext); 
+-    assert(APCG(reserved_offset) == dummy_ext.resource_number);
+-    assert(APCG(reserved_offset) != -1);
++    apc_reserved_offset = zend_get_resource_handle(&dummy_ext); 
++    assert(apc_reserved_offset == dummy_ext.resource_number);
++    assert(apc_reserved_offset != -1);
+     assert(sizeof(apc_opflags_t) <= sizeof(void*));
+ #endif
+ 	if (!APCG(include_once)) {
+diff -u -r ./php_apc.c.ORIG ./php_apc.c
+--- ./php_apc.c.ORIG	Wed May 14 23:45:28 2008
++++ ./php_apc.c	Fri Nov 13 09:39:41 2009
+@@ -72,6 +72,9 @@
+ apc_cache_t* apc_cache = NULL;       
+ apc_cache_t* apc_user_cache = NULL;
+ void* apc_compiled_filters = NULL;
++#ifdef ZEND_ENGINE_2
++int apc_reserved_offset = -1;
++#endif
+ 
+ static void php_apc_init_globals(zend_apc_globals* apc_globals TSRMLS_DC)
+ {
+@@ -90,9 +93,6 @@
+     apc_globals->rfc1867 = 0;
+ #endif
+     apc_globals->copied_zvals = NULL;
+-#ifdef ZEND_ENGINE_2
+-    apc_globals->reserved_offset = -1;
+-#endif
+     apc_globals->force_file_update = 0;
+     apc_globals->coredump_unmap = 0;
+ }

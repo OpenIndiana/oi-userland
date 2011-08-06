@@ -1,0 +1,77 @@
+Index: php-5.2.11/ext/pdo/pdo_stmt.c
+===================================================================
+--- php-5.2.17/ext/pdo/pdo_stmt.c.ORIG	Wed Jun 16 16:13:29 2010
++++ php-5.2.17/ext/pdo/pdo_stmt.c	Tue Feb  1 11:42:48 2011
+@@ -2321,6 +2321,54 @@
+ 	return -1;
+ }
+ 
++static void init_stmt_properties(pdo_stmt_t* stmt TSRMLS_DC)
++{
++	HashTable* ht =  &stmt->ce->default_properties;
++	HashTable* target = stmt->properties;
++
++	HashPosition pos;
++	zend_hash_internal_pointer_reset_ex(ht, &pos);
++	while(zend_hash_has_more_elements_ex(ht, &pos)
++			   	== SUCCESS) {
++		ulong index;
++		char* key = NULL;
++		uint keylen = 0;
++		int ret = zend_hash_get_current_key_ex(ht,
++											   &key,
++											   &keylen,
++											   &index, 0,
++											   &pos);
++		if ((keylen == sizeof("queryString"))
++				&& (strncmp(key, "queryString", keylen) == 0)) {
++			zval* qval;
++			/* Since the value for the key queryString in
++			 * stmt->ce->default_properties is shared by multiple threads so
++			 * we can not add the same zval in stmt->properties. we need to
++			 * create a null property object. See Bug 49937 */
++			ALLOC_INIT_ZVAL(qval);
++			zend_hash_add(stmt->properties, "queryString", 
++						  sizeof("queryString"), (void**) &qval, sizeof(zval*), NULL);
++		}
++		else {
++			void* data = NULL;
++			zend_hash_get_current_data_ex(ht,
++										  (void **) &data, &pos);
++			void *new_entry = NULL;
++			if (data) {
++				/* We expect keylen should be > 0. default_properties hash
++				 * should only contain named keys */
++				if (keylen) {
++					zend_hash_quick_update(target, key, keylen, 0, data, sizeof(void*), &new_entry);
++				} 
++				if (new_entry) {
++					zval_add_ref(new_entry);
++				}
++			}
++		}
++		zend_hash_move_forward_ex(ht, &pos);
++	}
++}
++
+ static zend_object_value dbstmt_clone_obj(zval *zobject TSRMLS_DC)
+ {
+ 	zend_object_value retval;
+@@ -2334,7 +2382,7 @@
+ 	stmt->refcount = 1;
+ 	ALLOC_HASHTABLE(stmt->properties);
+ 	zend_hash_init(stmt->properties, 0, NULL, ZVAL_PTR_DTOR, 0);
+-	zend_hash_copy(stmt->properties, &stmt->ce->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
++	init_stmt_properties(stmt TSRMLS_CC);
+ 
+ 	old_stmt = (pdo_stmt_t *)zend_object_store_get_object(zobject TSRMLS_CC);
+ 	
+@@ -2463,7 +2511,7 @@
+ 	stmt->refcount = 1;
+ 	ALLOC_HASHTABLE(stmt->properties);
+ 	zend_hash_init(stmt->properties, 0, NULL, ZVAL_PTR_DTOR, 0);
+-	zend_hash_copy(stmt->properties, &ce->default_properties, (copy_ctor_func_t) zval_add_ref, (void *) &tmp, sizeof(zval *));
++	init_stmt_properties(stmt TSRMLS_CC);
+ 
+ 	retval.handle = zend_objects_store_put(stmt, (zend_objects_store_dtor_t)zend_objects_destroy_object, (zend_objects_free_object_storage_t)pdo_dbstmt_free_storage, (zend_objects_store_clone_t)dbstmt_clone_obj TSRMLS_CC);
+ 	retval.handlers = &pdo_dbstmt_object_handlers;

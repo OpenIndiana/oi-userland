@@ -1,0 +1,22 @@
+--- imap-2007e/src/osdep/unix/flocksim.c.ORIG	Sun Feb  8 18:01:48 2009
++++ imap-2007e/src/osdep/unix/flocksim.c	Sun Feb  8 18:01:59 2009
+@@ -52,7 +52,9 @@
+   char tmp[MAILTMPLEN];
+   int logged = 0;
+   struct stat sbuf;
++#if !defined(NOUSTAT)
+   struct ustat usbuf;
++#endif
+   struct flock fl;
+ 				/* lock zero bytes at byte 0 */
+   fl.l_whence = SEEK_SET; fl.l_start = fl.l_len = 0;
+@@ -129,7 +131,9 @@
+ 	((vsbuf.f_basetype[0] == 'n') || (vsbuf.f_basetype[0] == 'a')))
+       return 0;
+ #endif		/* NOFSTATVFS */
++#if !defined(NOUSTAT)
+     if (!ustat (sbuf.st_dev,&usbuf) && !++usbuf.f_tinode) return 0;
++#endif
+   }
+ 
+ 				/* do the lock */
