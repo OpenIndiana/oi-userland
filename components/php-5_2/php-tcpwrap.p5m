@@ -1,0 +1,62 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/web/php-52/extension/php-tcpwrap@1.1.3,$(BUILD_VERSION)
+set name=pkg.summary value="Tcpwrap extension module for PHP"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/PHP"
+set name=info.source_url value=http://pecl.php.net/get/tcpwrap-1.1.3.tgz
+set name=info.upstream_url value=http://pecl.php.net/package/tcpwrap
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/LSARC/2008/538
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license php-tcpwrap.license license='PHP'
+
+dir path=etc
+dir path=etc/php
+dir path=etc/php/5.2
+dir path=etc/php/5.2/conf.d
+dir path=etc/php/5.2/zts-conf.d
+dir path=usr
+dir path=usr/php
+dir path=usr/php/5.2
+dir path=usr/php/5.2/modules
+dir path=usr/php/5.2/zts-modules
+file path=etc/php/5.2/conf.d/tcpwrap.ini mode=0644 \
+    original_name=SUNWphp52-tcpwrap:etc/php/5.2/conf.d/tcpwrap.ini \
+    preserve=renamenew
+file path=etc/php/5.2/zts-conf.d/tcpwrap.ini mode=0644 \
+    original_name=SUNWphp52-tcpwrap:etc/php/5.2/zts-conf.d/tcpwrap.ini \
+    preserve=renamenew
+file path=usr/php/5.2/modules/tcpwrap.so
+file path=usr/php/5.2/zts-modules/tcpwrap.so
+
+legacy pkg=SUNWphp52r-tcpwrap \
+    desc="PHP-Tcpwrap(1.1.3) extension module for PHP(5.2) (Root)" \
+    name="Tcpwrap extension module for PHP (Root)"
+legacy pkg=SUNWphp52u-tcpwrap \
+    desc="PHP-Tcpwrap(1.1.3) extension module for PHP(5.2)" \
+    name="Tcpwrap extension module for PHP"
+
+depend fmri=web/php-52@5.2.17 type=require

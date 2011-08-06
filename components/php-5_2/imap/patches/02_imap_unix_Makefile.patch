@@ -1,0 +1,23 @@
+--- imap-2007e/src/osdep/unix/Makefile.ORIG	Mon Sep 15 23:37:03 2008
++++ imap-2007e/src/osdep/unix/Makefile	Mon Sep 15 23:37:12 2008
+@@ -54,7 +54,7 @@
+ 
+ # Extended flags needed for SSL.  You may need to modify.
+ 
+-SSLDIR=/usr/local/ssl
++SSLDIR=/usr
+ SSLCERTS=$(SSLDIR)/certs
+ SSLKEYS=$(SSLCERTS)
+ SSLINCLUDE=$(SSLDIR)/include
+@@ -716,9 +716,9 @@
+ 	 SPOOLDIR=/var/spool MAILSPOOL=/var/mail \
+ 	 ACTIVEFILE=/usr/share/news/active \
+ 	 RSHPATH=/usr/bin/rsh \
+-	 BASECFLAGS="-g -O -w" \
++	 BASECFLAGS="$$CFLAGS" \
+ 	 BASELDFLAGS="-lsocket -lnsl -lgen" \
+-	 RANLIB=true CC=/opt/SUNWspro/bin/cc
++	 RANLIB=true CC="$$CC"
+ 
+ 
+ # Note: It is a long and disgusting story about why cc is set to ucbcc.  You

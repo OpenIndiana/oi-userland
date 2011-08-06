@@ -1,0 +1,51 @@
+--- php-5.2.9/ext/standard/dl.c.ORIG	Fri Jul 18 00:05:31 2008
++++ php-5.2.9/ext/standard/dl.c	Fri Jul 18 20:17:19 2008
+@@ -128,7 +128,6 @@
+ 	}
+ 
+ 	if (extension_dir && extension_dir[0]){
+-		int extension_dir_len = strlen(extension_dir);
+ 
+ 		if (type == MODULE_TEMPORARY) {
+ 			if (strchr(Z_STRVAL_P(file), '/') != NULL || strchr(Z_STRVAL_P(file), DEFAULT_SLASH) != NULL) {
+@@ -135,16 +134,35 @@
+ 				php_error_docref(NULL TSRMLS_CC, E_WARNING, "Temporary module name should contain only filename");
+ 				RETURN_FALSE;
+ 			}
+-		}
++		} 
++		/* if extension_dir supports multiple paths, then look for the extension in each of them */ 
++		static const char path_sep[] = { ZEND_PATHS_SEPARATOR, 0 };
++		struct stat filetype;
++		char* extdir = NULL;
++		if ((extdir = strtok_r(extension_dir, path_sep, &extension_dir)) != NULL) {
++			do {
++				int extension_dir_len = strlen(extdir);
++				if (IS_SLASH(extdir[extension_dir_len-1])) {
++					spprintf(&libpath, 0, "%s%s", extdir, Z_STRVAL_P(file));
++				} else {
++					spprintf(&libpath, 0, "%s%c%s", extdir, DEFAULT_SLASH, Z_STRVAL_P(file));
++				}
+ 
+-		if (IS_SLASH(extension_dir[extension_dir_len-1])) {
+-			spprintf(&libpath, 0, "%s%s", extension_dir, Z_STRVAL_P(file));
++				if (stat(libpath, &filetype) == 0) {
++					break;
++				}
++			} while (extension_dir && (extdir = strtok_r(NULL, path_sep, &extension_dir)) != NULL);
+ 		} else {
+-			spprintf(&libpath, 0, "%s%c%s", extension_dir, DEFAULT_SLASH, Z_STRVAL_P(file));
++			int extension_dir_len = strlen(extension_dir);
++			if (IS_SLASH(extension_dir[extension_dir_len-1])) {
++				spprintf(&libpath, 0, "%s%s", extension_dir, Z_STRVAL_P(file));
++			} else {
++				spprintf(&libpath, 0, "%s%c%s", extension_dir, DEFAULT_SLASH, Z_STRVAL_P(file));
++			}
+ 		}
+ 	} else {
+ 		libpath = estrndup(Z_STRVAL_P(file), Z_STRLEN_P(file));
+-	}
++ 	}
+ 
+ 	/* load dynamic symbol */
+ 	handle = DL_LOAD(libpath);

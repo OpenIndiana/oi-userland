@@ -1,0 +1,19 @@
+--- tcpwrap-1.1.3/config.m4.ORIG	Tue Jul 15 10:41:11 2008
++++ tcpwrap-1.1.3/config.m4	Tue Jul 15 10:41:36 2008
+@@ -30,15 +30,7 @@
+   LIBNAME=wrap
+   LIBSYMBOL=request_init
+ 
+-  PHP_CHECK_LIBRARY($LIBNAME,$LIBSYMBOL,
+-  [
+-    PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $TCPWRAP_DIR/lib, TCPWRAP_SHARED_LIBADD)
+-    AC_DEFINE(HAVE_TCPWRAPLIB,1,[ ])
+-  ],[
+-    AC_MSG_ERROR([wrong tcpwrappers lib version or lib not found])
+-  ],[
+-    -L$TCPWRAP_DIR/lib -lm -ldl
+-  ])
++  PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $TCPWRAP_DIR/lib, TCPWRAP_SHARED_LIBADD)
+ 
+   AC_CHECK_FUNC(gethostbyname_r, [have_gethostbyname_r=yes], [have_gethostbyname_r=no])
+   if test "$have_gethostbyname_r" = "no"; then

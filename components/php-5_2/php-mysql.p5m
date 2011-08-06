@@ -1,0 +1,74 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/web/php-52/extension/php-mysql@5.2.17,$(BUILD_VERSION)
+set name=pkg.summary value="MySQL extension module for PHP"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/PHP"
+set name=info.upstream_url value=http://www.php.net/
+set name=info.source_url value=http://us.php.net/get/php-5.2.17.tar.gz/from/this/mirror
+set name=opensolaris.arc_url \
+    value=http://arc.opensolaris.org/caselog/LSARC/2008/538
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license php-mysql.license license='PHP, LGPLv2'
+
+dir path=etc
+dir path=etc/php
+dir path=etc/php/5.2
+dir path=etc/php/5.2/conf.d
+dir path=etc/php/5.2/zts-conf.d
+dir path=usr
+dir path=usr/php
+dir path=usr/php/5.2
+dir path=usr/php/5.2/modules
+dir path=usr/php/5.2/zts-modules
+file path=etc/php/5.2/conf.d/mysql.ini mode=0644 preserve=renamenew \
+    original_name=SUNWphp52-mysql:etc/php/5.2/conf.d/mysql.ini
+file path=etc/php/5.2/conf.d/mysqli.ini mode=0644 preserve=renamenew \
+    original_name=SUNWphp52-mysql:etc/php/5.2/conf.d/mysqli.ini
+file path=etc/php/5.2/conf.d/pdo_mysql.ini mode=0644 preserve=renamenew \
+    original_name=SUNWphp52-mysql:etc/php/5.2/conf.d/pdo_mysql.ini
+file path=etc/php/5.2/zts-conf.d/mysql.ini mode=0644 preserve=renamenew \
+    original_name=SUNWphp52-mysql:etc/php/5.2/zts-conf.d/mysql.ini
+file path=etc/php/5.2/zts-conf.d/mysqli.ini mode=0644 preserve=renamenew \
+    original_name=SUNWphp52-mysql:etc/php/5.2/zts-conf.d/mysqli.ini
+file path=etc/php/5.2/zts-conf.d/pdo_mysql.ini mode=0644 preserve=renamenew \
+    original_name=SUNWphp52-mysql:etc/php/5.2/zts-conf.d/pdo_mysql.ini
+file path=usr/php/5.2/modules/mysql.so
+file path=usr/php/5.2/modules/mysqli.so
+file path=usr/php/5.2/modules/pdo_mysql.so
+file path=usr/php/5.2/zts-modules/mysql.so
+file path=usr/php/5.2/zts-modules/mysqli.so
+file path=usr/php/5.2/zts-modules/pdo_mysql.so
+
+legacy pkg=SUNWphp52u-mysql \
+    name="MySQL extension module for PHP" \
+    desc="PHP-MySQL extension to connect MySQL database from PHP(5.2)"
+legacy pkg=SUNWphp52r-mysql \
+    name="MySQL extension module for PHP (Root)" \
+    desc="PHP-MySQL extension to connect MySQL database from PHP(5.2) (Root)"
+
+depend fmri=system/library/math type=require
+depend fmri=web/php-52@5.2.17 type=require
+depend fmri=library/zlib@1.2.3 type=require

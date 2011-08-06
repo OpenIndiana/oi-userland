@@ -1,0 +1,51 @@
+--- php-5.2.11/ext/zlib/my_zlib.h	Thu Jan 25 04:13:36 2007
++++ php-5.2.11/ext/zlib/my_zlib.h	Tue Oct 20 13:55:01 2009
+@@ -1180,8 +1180,8 @@
+    degrade compression.
+ */
+ 
+-ZEXTERN z_off_t ZEXPORT    gzseek OF((gzFile file,
+-                                      z_off_t offset, int whence));
++ZEXTERN int ZEXPORT      gzseek OF((gzFile file,
++                                      int offset, int whence));
+ /*
+       Sets the starting position for the next gzread or gzwrite on the
+    given compressed file. The offset represents a number of bytes in the
+@@ -1205,7 +1205,7 @@
+    gzrewind(file) is equivalent to (int)gzseek(file, 0L, SEEK_SET)
+ */
+ 
+-ZEXTERN z_off_t ZEXPORT    gztell OF((gzFile file));
++ZEXTERN int ZEXPORT    gztell OF((gzFile file));
+ /*
+      Returns the starting position for the next gzread or gzwrite on the
+    given compressed file. This position represents a number of bytes in the
+@@ -1274,7 +1274,7 @@
+ */
+ 
+ ZEXTERN uLong ZEXPORT adler32_combine OF((uLong adler1, uLong adler2,
+-                                          z_off_t len2));
++                                          int len2));
+ /*
+      Combine two Adler-32 checksums into one.  For two sequences of bytes, seq1
+    and seq2 with lengths len1 and len2, Adler-32 checksums were calculated for
+@@ -1298,7 +1298,7 @@
+      if (crc != original_crc) error();
+ */
+ 
+-ZEXTERN uLong ZEXPORT crc32_combine OF((uLong crc1, uLong crc2, z_off_t len2));
++ZEXTERN uLong ZEXPORT crc32_combine OF((uLong crc1, uLong crc2, int len2));
+ 
+ /*
+      Combine two CRC-32 check values into one.  For two sequences of bytes,
+--- php-5.2.11/ext/zlib/php_zlib.h.ORIG	Tue Oct 20 13:56:27 2009
++++ php-5.2.11/ext/zlib/php_zlib.h	Tue Oct 20 13:56:38 2009
+@@ -22,7 +22,7 @@
+ #ifndef PHP_ZLIB_H
+ #define PHP_ZLIB_H
+ 
+-#include <zlib.h>
++#include "my_zlib.h"
+ 
+ ZEND_BEGIN_MODULE_GLOBALS(zlib)
+ 	/* variables for transparent gzip encoding */

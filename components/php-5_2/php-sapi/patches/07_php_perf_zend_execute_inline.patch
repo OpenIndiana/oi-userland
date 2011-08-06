@@ -1,0 +1,15 @@
+--- php-5.2.11/configure.in.ORIG	Sun Nov  8 12:48:27 2009
++++ php-5.2.11/configure.in	Sun Nov  8 12:47:48 2009
+@@ -1435,7 +1435,11 @@
+ if test -n "$GCC" && test "$ZEND_INLINE_OPTIMIZATION" != "yes"; then
+   flag=-O0
+ else
+-  flag=
++    if test "$SUNCC" = "yes"; then
++      flag=-W2,-Ainline:inc=100
++    else
++      flag=
++    fi
+ fi
+ 
+ PHP_ADD_SOURCES_X(Zend, zend_execute.c,,PHP_GLOBAL_OBJS,,$flag)

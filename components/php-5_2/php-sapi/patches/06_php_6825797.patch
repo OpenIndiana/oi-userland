@@ -1,0 +1,25 @@
+--- php-5.2.11/ext/gettext/gettext.c.ORIG	Fri Oct 30 12:30:53 2009
++++ php-5.2.11/ext/gettext/gettext.c	Fri Oct 30 12:43:56 2009
+@@ -126,6 +126,7 @@
+ /* }}} */
+ 
+ #include <libintl.h>
++#include <locale.h>
+ 
+ zend_module_entry php_gettext_module_entry = {
+ 	STANDARD_MODULE_HEADER,
+@@ -353,7 +354,13 @@
+ 	PHP_GETTEXT_LENGTH_CHECK("msgid1", msgid1_len)
+ 	PHP_GETTEXT_LENGTH_CHECK("msgid2", msgid2_len)
+ 
+-	msgstr = dcngettext(domain, msgid1, msgid2, count, category);
++	if (category > LC_ALL || category < 0) {
++		/* if we pass higher value than LC_ALL glibc uses LC_ALL.
++		If not set, this can lead to segfaults on non-gnu systems */
++		msgstr = dngettext(domain, msgid1, msgid2, count);
++	} else {
++		msgstr = dcngettext(domain, msgid1, msgid2, count, category);
++	}
+ 
+ 	if (msgstr) {
+ 		RETVAL_STRING(msgstr, 1);

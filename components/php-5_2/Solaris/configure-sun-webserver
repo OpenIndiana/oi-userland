@@ -1,0 +1,948 @@
+#!/bin/bash
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+
+# Helper functions
+function usage {
+    echo ""
+    echo "Usage: This script will update a given Web Server 7 instance's configuration"
+    echo "       files to be able to execute PHP scripts."
+    echo ""
+    echo "This script recognizes following arguments:"
+    echo " --installroot  : Top level Sun Web Server 7 installation location. "
+    echo ""
+    echo " --instancename : Name of Web Server instance (https-php) which should"
+    echo "                  be configured to execute PHP scripts. "
+    echo ""
+    echo " --sapi         : How should PHP runtime be loaded within Web Server 7"
+    echo "                  fastcgi (Default) or NSAPI (Optional). "
+    echo ""
+    exit 1
+}
+
+function parse_arguments
+{
+    until [ $# -eq 0 ]
+    do 
+        cur_arg=$1
+        case $cur_arg in 
+            --installroot=*)
+                install_root="`echo $cur_arg | cut -d= -f2-`"
+                ;;
+            --instancename=*)
+                instance_name="`echo $cur_arg | cut -d= -f2-`"
+                ;;
+            --sapi=*)
+                sapi="`echo $cur_arg | cut -d= -f2-`"
+                ;;
+            *)
+                usage
+                ;;
+        esac
+        shift;
+    done
+}
+
+function try_interactive
+{
+    # Get user response on Web Server 7 installation location and instance name.
+    echo -n "Enter your Web Server installation location : "
+    read input
+    if [ -n "$input" ]; then
+        install_root="$input"
+    fi
+
+    echo -n "Enter your Web Server instance name to configure with PHP runtime: "
+    read input
+    if [ -n "$input" ]; then
+        instance_name="$input"
+    fi
+
+	while [ 0 ]; do
+		echo -n "How you would like Sun Web Server 7 to load PHP engine (fastcgi|nsapi) [fastcgi]: "
+		read input
+		if [ -z "$input" ]; then
+			sapi="fastcgi"
+		else
+			sapi=$input
+		fi
+		if [ -n "$sapi" ] && [ $sapi = "fastcgi" -o $sapi = "nsapi" ]; then
+			break
+		fi
+	done
+    return 1;
+}
+
+function validate_arguments
+{
+    if [ ! -d "$install_root" ] || [ ! -x "$install_root/lib/webservd" ]; then
+        echo ""
+        echo "Warning: Unable to find valid Web Server installation under $install_root"
+        echo "Please try again by providing a valid Web Server 7 installation location."
+        usage
+    fi
+
+    if [ ! -d "$install_root" ] || [ ! -x "$install_root/lib/webservd" ]; then
+        echo ""
+        echo "Warning: Unable to find valid Web Server installation under $install_root"
+        echo "Please try again by providing a valid Web Server 7 installation location."
+        usage
+    fi
+
+    if [ -n "$sapi" ] && [ $sapi != "fastcgi" -a $sapi != "nsapi" ]; then
+        echo ""
+        echo "Error: Invalid SAPI option is provided.Valid SAPI argument is either 'fastcgi' or 'nsapi'"
+        echo "Please try again by providing a valid SAPI as argument."
+        usage
+    fi
+
+    return 1;
+}
+
+function generate_tempfile
+{
+    template="tmp.XXXXXXXXXX";
+    if [ -x "/bin/mktemp" ]; then
+        temp_file="`/bin/mktemp`"
+    elif [ -x "/usr/bin/mktemp" ]; then
+        temp_file="`/usr/bin/mktemp`"
+    fi
+    if [ ! -f $temp_file ]; then
+        temp_file="/tmp/ws7_php_configure.$$"
+        touch $temp_file 
+        chmod 600 $temp_file
+    fi
+
+    return 1;
+}
+
+function generate_configure
+{
+	if [ "$OSNAME" = "SunOS" ]; then
+		tail +${perl_start_line} $PROGRAM_NAME > $temp_file
+	elif [ "$OSNAME" = "Linux" ]; then
+        start_line=${perl_start_line}
+        total_line=`wc -l $PROGRAM_NAME | awk '{print $1}' 2>/dev/null`
+        few_lines=$(($total_line - $start_line))
+		tail -${few_lines} $PROGRAM_NAME > $temp_file
+	fi
+    chmod 500 $temp_file
+}
+
+function invoke_configure
+{
+    # Setup environment 
+    if [ -f "$install_root/lib/wsenv" ]; then
+        source  $install_root/lib/wsenv
+        if [ ! -d "${WS_INSTANCEROOT}/${instance_name}" ]; then
+            echo "Warning: Unable to find instance:'$instance_name' under $WS_INSTANCEROOT"
+            echo "         Please try again by providing a valid instance name."
+            exit 1;
+        fi
+    fi
+
+	# Special case, if it is NSAPI
+	if [ "$sapi" = "nsapi" ]; then
+        mkdir -p "$install_root/plugins/webstack-php"
+        ln -sf "<<INSTALL_DIR>>/nsapi/libphp5.so" "$install_root/plugins/webstack-php/libphp5.so"
+	fi
+
+    # Invoke script to configure PHP runtime.
+	if [ "$sapi" = "nsapi" ]; then
+		PHPROOT="<<INSTALL_DIR>>"
+		PHPCONFROOT="<<NSAPI_CONF_DIR>>"
+		PHPCONFROOT_SCANDIR="<<ZTS_MODULES_CONF_DIR>>"
+	else
+		PHPROOT="<<INSTALL_DIR>>"
+		PHPCONFROOT="<<CONF_DIR>>"
+		PHPCONFROOT_SCANDIR="<<MODULES_CONF_DIR>>"
+	fi
+
+    ${WS_PERL}/perl -I ${WS_PERL} -I ${WS_PERL}/lib -I ${WS_PERL}/lib/site_perl $temp_file  \
+	-installroot=${WS_INSTALLROOT} -instanceroot=${WS_INSTANCEROOT} -instancename=$instance_name \
+	-sapi=$sapi -phproot="${PHPROOT}" \
+	-phpconfroot="${PHPCONFROOT}" -phpmodulesconfroot="${PHPCONFROOT_SCANDIR}"
+
+	status=$?
+	if [ $status -eq 0 ]; then
+		if [ -f $temp_file ]; then
+			rm -f $temp_file
+		fi
+    elif [ $status -ne 0 ]; then
+        echo "Unable to successfully setup PHP within Web Server 7"
+        exit 1
+    fi
+}
+
+#-------------------------------------------------------------------------------
+#####
+# Main
+#####
+PATH=/bin:/usr/bin:/usr/gnu/bin:/usr/sfw/bin
+export PATH
+
+# Global variables.
+OSNAME="`uname -s`"
+PHPROOT="<<INSTALL_DIR>>"
+PHPCONFROOT="<<CONF_DIR>>"
+PHPCONFROOT_SCANDIR="<<MODULES_CONF_DIR>>"
+PROGRAM_NAME="$0"
+install_root=""
+instance_name=""
+sapi="fastcgi"
+temp_file=""
+
+# This below line need to point to the start of embedded perl script.
+perl_start_line=245
+
+echo "This script will update a given Web Server 7 instance's configuration"
+echo "files to be able to execute PHP scripts."
+echo ""
+
+# Verify if the program is called with necessary arguments. 
+if [ -n "$1" ]; then
+    parse_arguments $@;
+else
+    # Invoked with no arguments. Try interactive.
+    try_interactive
+fi
+
+validate_arguments
+
+generate_tempfile
+
+generate_configure
+
+invoke_configure
+
+exit 0
+
+#---------------------EOF-------------------------------------------------------
+
+# Helper Script to configure PHP runtime environment within Web Server 7
+
+use XML::Simple;
+use File::Basename;
+use English;
+use strict;
+
+our $INSTANCE_ROOT = undef;
+our $INSTALL_ROOT = undef;
+our $INSTANCE_NAME = undef;
+our $PHP_ROOT = "";
+our $PHP_CONF_ROOT = "";
+our $PHP_MODULES_CONF_ROOT = "";
+our $SAPI = undef;
+our $MIME_TYPES_FILES = [];
+our $OBJ_CONF_FILES = [];
+our $SERVER_64BIT_MODE = undef;
+
+my $phpSoName;
+if (isWindows()) {
+   $phpSoName = "php5nsapi.dll";
+} else {
+   $phpSoName = "libphp5.so";
+}
+
+my $fastCGISoName;
+if (isWindows()) {
+    $fastCGISoName = "fastcgi.dll";
+} else {
+    $fastCGISoName = "libfastcgi.so";
+}
+
+main();
+
+sub main {
+    getCommandOptions();
+    processServerXml();
+    checkFilesWritable();
+    processMagnusConf();
+    processObjConf();
+    processMimeTypes();
+    printResult();
+}
+
+# -----------------------------------------------------------------------------
+# getCommandOptions
+# Process the command line options
+# -----------------------------------------------------------------------------
+
+sub getCommandOptions {
+    for (my $counter=0; $#ARGV >= $counter; $counter++) {
+        my $argument    = $ARGV[$counter];
+        
+        if ($argument =~ /^-installroot=/i) {
+            $INSTALL_ROOT = substr($argument, length("-installroot="));
+        }        
+        if ($argument =~ /^-instanceroot=/i) {
+            $INSTANCE_ROOT = substr($argument, length("-instanceroot="));
+        }
+        if ($argument =~ /^-phproot=/i) {
+            $PHP_ROOT = substr($argument, length("-phproot="));
+        }
+        if ($argument =~ /^-phpconfroot=/i) {
+            $PHP_CONF_ROOT = substr($argument, length("-phpconfroot="));
+        }
+        if ($argument =~ /^-phpmodulesconfroot=/i) {
+            $PHP_MODULES_CONF_ROOT = substr($argument, length("-phpmodulesconfroot="));
+        }
+        if ($argument =~ /^-instancename=/i) {
+            $INSTANCE_NAME = substr($argument, length("-instancename="));
+        }
+        if ($argument =~ /^-sapi=/i) {
+            $SAPI = substr($argument, length("-sapi="));
+        }
+    }
+    if ((!defined $PHP_CONF_ROOT) || ($PHP_CONF_ROOT eq "")) {
+        $PHP_CONF_ROOT = $PHP_ROOT;
+    }
+    
+    if ((not defined $INSTANCE_NAME) or ($INSTANCE_NAME !~ m/\S+/)) {
+        printUsage();
+    }
+    
+    exit 1 unless defined isValidFile("$INSTANCE_ROOT/$INSTANCE_NAME/config");
+}
+
+# -----------------------------------------------------------------------------
+# migrateObjConf
+# Migrate obj.conf file to php 1.1
+# -----------------------------------------------------------------------------
+
+sub migrateObjConf {
+    my $objConfFile = shift;
+    my $pContents = shift;
+    my $tmpObjConfStatus = 1;
+
+    return undef unless ($objConfFile);
+    if ((not -f $objConfFile or ref($pContents) != "ARRAY")) {
+        return undef;
+    }
+
+    my $tmpObjConfFile = "$objConfFile"."tmp";
+    my $update_reqd = undef;
+    local *TMPOBJ;
+
+    my $newLibPath = "$PHP_ROOT/lib";
+    my $newLibPath64 = "$PHP_ROOT/lib/64";
+
+    for (my $i = 0; $i < $#{@{$pContents}}; $i++) {
+        my $pLine = \$pContents->[$i];
+        next if ($$pLine =~ /^\#/); #ignore comments;
+        next if (isWindows());
+        if ($$pLine =~ m@(.*\s+app-path=['"])(\S+)\s*(['"].*)@) {
+            my ($tmp, $tmp1, $tmp2, $tmp3);
+            $tmp1 = $1; $tmp2 = $2; $tmp3 = $3;
+
+            $tmp2 =~ s@$PHP_ROOT/bin/php@$PHP_ROOT/bin/php-cgi@;
+            $tmp = $tmp1.$tmp2.$tmp3."\n";
+            $pContents->[$i] = $tmp;
+            $update_reqd = 1;
+        }
+        elsif ($$pLine =~ m@(.*\s+app-env=['"])(\S+)(=)(\S+)(['"].*)@) {
+            my ($tmp, $tmp1, $tmp2, $tmp3, $tmp4, $tmp5);
+            $tmp1 = $1; $tmp2 = $2; $tmp3 = $3; $tmp4 = $4; $tmp5 = $5;
+
+            if (($tmp2 =~ m@LD_LIBRARY_PATH@) or ($tmp2 =~ m@LD_LIBRARY_PATH_64@)) {
+                if ($tmp4 =~ m@$PHP_ROOT/64@) {
+                    $tmp4 =~ s@$PHP_ROOT/64@$newLibPath64@g;
+                }
+                elsif ($tmp4 =~ m@$PHP_ROOT/64([:].*)@) {
+                    $tmp4 =~ s@$PHP_ROOT/64(:.*)@$newLibPath64$1@g;
+                } 
+                elsif ($tmp4 =~ m@$PHP_ROOT([:].*)@) {
+                    $tmp4 =~ s@$PHP_ROOT(:.*)@$newLibPath$1@g;
+                }
+                elsif ($tmp4 =~ m@$PHP_ROOT@) {
+                    $tmp4 =~ s@$PHP_ROOT@$newLibPath@g;
+                }
+            }
+            elsif ($tmp2 =~ m@PHP_FCGI_MAX_REQUEST@) {
+              $tmp2 =~ s@PHP_FCGI_MAX_REQUEST@PHP_FCGI_MAX_REQUESTS@g;
+              $tmp4 =~ s@200@2000@;
+            }
+            $tmp = $tmp1.$tmp2.$tmp3.$tmp4.$tmp5."\n";
+            $pContents->[$i] = $tmp;
+            $update_reqd = 1;
+        }
+    }
+
+    if ($update_reqd) {
+        open(TMPOBJ,">$tmpObjConfFile") or $tmpObjConfStatus = undef;
+        if (defined $tmpObjConfStatus) {                
+            for (my $i = 0; $i < $#{@{$pContents}}; $i++) {
+                my $line = $pContents->[$i];
+                print TMPOBJ $line;
+            }
+            print "UPDATED: $objConfFile \n";
+            close(TMPOBJ);
+            unlink("$objConfFile");
+            rename("$tmpObjConfFile", "$objConfFile");
+            chmod(0600, "$objConfFile");
+            return 2;
+        }
+    }
+
+    return 1;
+}
+
+# -----------------------------------------------------------------------------
+# processServerXml
+# Parse the server.xml and get all the mime files and object files
+# -----------------------------------------------------------------------------
+
+sub processServerXml {
+    my $file = undef;
+    my $serverXml = "$INSTANCE_ROOT/$INSTANCE_NAME/config/server.xml";
+    
+    my $config = eval{XMLin("$serverXml", forcearray=>1, keyattr=>[])};
+    if ($@) {
+        print("\nERROR: Problem parsing the $serverXml. Not a valid xml file. \n\n");
+        exit 1;
+    }
+    
+    #get the server level mime file
+    $file = $config->{"mime-file"}->[0];
+    if (defined $file) {
+        $file = getValidAbsoluteFilePath($file);
+        if (defined $file) {
+            push (@$MIME_TYPES_FILES, $file); 
+        }
+    }        
+
+    # get the server platform mode
+    my $mode = $config->{"platform"}->[0];
+    if (defined $mode) {
+        if ($mode == "64") {
+            $SERVER_64BIT_MODE = "64";
+        }
+    }
+        
+    for (my $vsCounter = 0; ${config}->{"virtual-server"}->[$vsCounter]; $vsCounter++) {
+        my $virutalServerElement = ${config}->{"virtual-server"}->[$vsCounter];
+        #get the virtual server level mime files
+        for (my $mimeTypescounter = 0; ${virutalServerElement}->{"mime-file"}->[$mimeTypescounter]; $mimeTypescounter++) {
+            $file = ${virutalServerElement}->{"mime-file"}->[$mimeTypescounter];
+            $file = getValidAbsoluteFilePath($file);
+            if (defined $file) {
+                push (@$MIME_TYPES_FILES, $file);
+            }
+        }
+        #get the virtual server level object files       
+        for (my $objectFilecounter = 0; ${virutalServerElement}->{"object-file"}->[$objectFilecounter]; $objectFilecounter++) {
+            $file = ${virutalServerElement}->{"object-file"}->[$objectFilecounter];
+            $file = getValidAbsoluteFilePath($file);
+            if (defined $file) {
+                push (@$OBJ_CONF_FILES, $file);
+            }
+        }        
+    }
+    
+    #Default is mime.types
+    if (@$MIME_TYPES_FILES < 1) {
+        push (@$MIME_TYPES_FILES, "$INSTANCE_ROOT/$INSTANCE_NAME/config/mime.types");
+    }
+    
+    #Default is obj.conf
+    if (@$OBJ_CONF_FILES < 1) {
+        push (@$OBJ_CONF_FILES, "$INSTANCE_ROOT/$INSTANCE_NAME/config/obj.conf");
+    }    
+}
+
+# -----------------------------------------------------------------------------
+# processMagnusConf
+# Append the MAGNUS_CONF_APPEND_STRING value at the end of magnus.conf file.
+# -----------------------------------------------------------------------------
+
+sub processMagnusConf {
+    my $magnusConfFile = "$INSTANCE_ROOT/$INSTANCE_NAME/config/magnus.conf";
+    my $magnusConfStatus = 1;
+
+    if (defined isValidFile($magnusConfFile)) 
+    {
+        # Get the current File Stat.
+        my @statInfo = stat $magnusConfFile;
+
+        # Verify if the changes already exist.
+        if (open(MAGNUS_R,"<$magnusConfFile")) {
+            my @contents = <MAGNUS_R>;
+            foreach (@contents) {
+                next if (/^\#/); #ignore comments;
+                if ((isNSAPI()) and (/shlib(.*)$phpSoName(.*)/g)) {
+                    close(MAGNUS_R);
+                    return 1;
+                } elsif ((not isNSAPI()) and (/shlib(.*)$fastCGISoName(.*)/g)) {
+                    close(MAGNUS_R);
+                    return 1;
+                }
+            }
+            close(MAGNUS_R);
+        }
+        open(MAGNUS,">>$magnusConfFile") or $magnusConfStatus = 0;
+
+        if ($magnusConfStatus == 1) {
+            addToMagnusConf(\*MAGNUS);
+            print "\n\nUPDATED: $magnusConfFile \n";
+        } else {
+            print "\nERROR: Unable to write $magnusConfFile. \n\n";
+            close(MAGNUS);
+            exit 1;
+        }
+        close(MAGNUS);
+        chown $statInfo[4], $statInfo[5], $magnusConfFile;
+    }
+}
+
+# -----------------------------------------------------------------------------
+# processObjConf
+# Append the OBJ_CONF_APPEND_STRING value after the <object name="default" 
+# directive in all object files.
+# -----------------------------------------------------------------------------
+
+sub processObjConf {
+    while(scalar(@$OBJ_CONF_FILES) > 0) {
+        my $objConfFile = pop(@$OBJ_CONF_FILES);
+        my $objConfStatus = 1;
+        my $tmpObjConfStatus = 1;
+
+        if (defined isValidFile($objConfFile)) 
+        {
+            # Get the current File Stat.
+            my @statInfo = stat $objConfFile;
+
+            # Verify if the changes already exist.
+            open(OBJ,"<$objConfFile") or $objConfStatus = undef;
+            if (defined $objConfStatus) {
+                my @lines = <OBJ>;
+                my $escape_path = $PHP_ROOT;
+                $escape_path =~ s/\/(\w)/\\\/$1/g;
+                $escape_path =~ s/\\(\w)/\/$1/g;
+                my $contents = join("",@lines);
+                my $already_configured = undef;
+                if ((isNSAPI()) and ($contents =~ m/
+                        \s*Service\s+type="magnus-internal\/php"\s+fn="php5_execute"
+                        /mx)) {
+                    close(OBJ);
+                    $already_configured = 1;
+                }
+                if ((not isNSAPI()) and (($contents =~ m/
+                        \s*Service\s+type=[\"]magnus-internal\/php[\"]
+                        [\r\n]+
+                        \s*fn=[\"]responder-fastcgi[\"]
+                        [\r\n]+
+                        \s*app-path=[\"](.*)[\"]
+                        [\r\n]+
+                        /mx) and ($1 =~ m@$escape_path@))) {
+                    close(OBJ);
+                    $already_configured = 1;
+                    # migrate existing obj.conf configurations.
+                    &migrateObjConf($objConfFile, \@lines);
+                }
+
+                next if ($already_configured);
+
+                # Create a new obj.conf
+                my $tmpObjConfFile = "$objConfFile"."tmp";
+                open(TMPOBJ,">$tmpObjConfFile") or $tmpObjConfStatus = undef;
+                if (defined $tmpObjConfStatus) {                
+                    if (@lines) {                
+                        foreach my $line (@lines) {
+                            if (($line =~ /^<Object/i) && 
+                                (($line =~ /name=default>/i) || 
+                                ($line =~ /name=default\s/i) || 
+                                ($line =~ /name="default"/i))) {
+                                print TMPOBJ $line;
+                                addToObjConf(\*TMPOBJ);
+                                print "UPDATED: $objConfFile \n";
+                            } elsif ($line =~ /PathCheck\s+fn\s*=\s*(\S+)\s+(\S+)\s*=\s*(\S+)$/) {
+                                my $funcName = $1;
+                                my $valueName = $2;
+                                my $values = $3;
+                                if (($funcName =~ /find-index/) and ($valueName =~ /index-names/)) {
+                                    $values =~ s/[\"](\S+)[\"]/$1/;
+                                    $values = "$1".",index.php";
+                                    my $newLine = <<__UP_TO_THIS_POINT_;
+PathCheck fn=$funcName $valueName=\"$values\"
+__UP_TO_THIS_POINT_
+                                    print TMPOBJ $newLine;
+                                }
+                                else {
+                                    print TMPOBJ $line;
+                                }
+                            } else {
+                                print TMPOBJ $line;
+                            }
+                        }
+                    }
+                } else {
+                    print "\nERROR: Unable to write $objConfFile \n\n";
+                    close(TMPOBJ);
+                    close(OBJ);
+                    unlink("$tmpObjConfFile");
+                    exit 1;
+                }
+                close(TMPOBJ);
+                close(OBJ);
+                unlink("$objConfFile");
+                rename("$tmpObjConfFile", "$objConfFile");
+                chmod(0600, "$objConfFile");
+                chown $statInfo[4], $statInfo[5], $objConfFile;
+            }
+        }
+    }
+}
+
+# -----------------------------------------------------------------------------
+# processMimeTypes
+# Append the MIME_TYPES_APPEND_STRING value at the end of 
+# all the mime types file.
+# -----------------------------------------------------------------------------
+
+sub processMimeTypes {
+    while(scalar(@$MIME_TYPES_FILES) > 0) {
+        my $mimeTypesFile = pop(@$MIME_TYPES_FILES);
+        my $mimeTypesStatus = 1;
+
+        if (defined isValidFile($mimeTypesFile)) {
+
+            # Get the current File Stat.
+            my @statInfo = stat $mimeTypesFile;
+
+            # Verify if the changes already exist.
+            if (open(MIME_R,"<$mimeTypesFile")) {
+                my @contents = <MIME_R>;
+                for (my $i = $#contents; $i > 0; $i--) {
+                    if ($contents[$i] =~ /magnus-internal\/php/g) {
+                        close(MIME_R);
+                        return 1;
+                    }
+                }
+                close(MIME_R);
+            }
+            open(MIME,">>$mimeTypesFile") or $mimeTypesStatus = undef;
+            if (defined $mimeTypesStatus) {
+                addToMimeTypes(\*MIME);
+                print "UPDATED: $mimeTypesFile \n";
+            } else {
+                print "\nERROR: Unable to write $mimeTypesFile. \n\n";
+                close(MIME);
+                exit 1;
+            }
+            close(MIME);
+            chown $statInfo[4], $statInfo[5], $mimeTypesFile;
+        }        
+    }        
+}
+
+# -----------------------------------------------------------------------------
+# addMagnusConfEntry
+# Add the required magnus conf entry
+# -----------------------------------------------------------------------------
+sub addToMagnusConf {
+
+    my $entry;
+    my $FILENAME = shift;
+    my $phpNsapi = $phpSoName; 
+
+    if (isNSAPI()) {
+
+        $entry = <<__UP_TO_THIS_POINT_;
+
+Init fn="load-modules" shlib="$phpNsapi" shlib_flags="global|now"
+    funcs="php5_init,php5_close,php5_execute,php5_auth_trans"
+Init fn="php5_init"
+	php_ini="$PHP_CONF_ROOT"
+	php_ini_scandir="$PHP_MODULES_CONF_ROOT"
+	errorString="PHP failed to initialize."
+
+__UP_TO_THIS_POINT_
+
+    } else {    # fastcgi
+
+        $entry = <<__UP_TO_THIS_POINT_;
+
+Init fn="load-modules" shlib="$fastCGISoName"
+
+__UP_TO_THIS_POINT_
+
+    }
+
+    print $FILENAME $entry;    
+}
+
+# -----------------------------------------------------------------------------
+# addMimeTypesEntry
+# Add the required mime types entry
+# -----------------------------------------------------------------------------
+sub addToMimeTypes {
+    my $FILENAME = shift;
+    my $entry = <<__UP_TO_THIS_POINT_;
+
+type=magnus-internal/php                         exts=php,php3,php4,php5
+__UP_TO_THIS_POINT_
+    print $FILENAME $entry;    
+}
+
+# -----------------------------------------------------------------------------
+# addObjConfEntry
+# Add the required obj conf entry
+# -----------------------------------------------------------------------------
+sub addToObjConf {
+    # setup 
+    my $FILENAME = shift;
+    # On windows, replace \ with / in paths
+    my $l_php_root = $PHP_ROOT;
+    if (isWindows()) {
+        $l_php_root =~ s/\\/\//g;
+    }
+
+    my $newLibPath = "$l_php_root/lib";
+    my $newLibPath64 = "$l_php_root/lib/64";
+    my $childs = &detectDefaultChildren();
+
+    my $unixFastCGIEntry = <<__UNIX_FASTCGI_ENTRY_
+<If -f \$path>
+Service type="magnus-internal/php"
+    fn="responder-fastcgi"
+    app-path="$l_php_root/bin/php-cgi"
+    bind-path="localhost:3101"
+    app-env="PHPRC=$PHP_CONF_ROOT"
+    app-env="PHP_INI_SCANDIR=$PHP_MODULES_CONF_ROOT"
+    app-env="PHP_FCGI_CHILDREN=$childs"
+    app-env="PHP_FCGI_MAX_REQUESTS=2000"
+    app-env="FCGI_WEB_SERVER_ADDRS=127.0.0.1"
+    bucket="php-bucket"
+</If>
+<Else>
+Service type="magnus-internal/php" fn="set-variable" error="404"
+</Else>
+
+__UNIX_FASTCGI_ENTRY_
+;
+
+    my $windowsFastCGIEntry = <<__WINDOWS_FASTCGI_ENTRY_
+
+Service type="magnus-internal/php"
+    fn="responder-fastcgi"
+    app-path="$l_php_root/php-cgi.exe"
+    bind-path="$INSTANCE_NAME--php_cgi"
+    app-env="PHPRC=$l_php_root"
+    app-env="PHP_FCGI_CHILDREN=$childs"
+    app-env="PHP_FCGI_MAX_REQUESTS=2000"
+    bucket="php-bucket"
+
+__WINDOWS_FASTCGI_ENTRY_
+;
+
+    my $nsapiEntry = <<__NSAPI_ENTRY_
+
+Service type="magnus-internal/php" fn="php5_execute"
+
+__NSAPI_ENTRY_
+;
+
+    my $entry;
+
+    if (isNSAPI()) {
+        $entry = $nsapiEntry;
+    } else {
+        if (isWindows()) {
+            $entry = $windowsFastCGIEntry;
+        } else {
+            $entry = $unixFastCGIEntry;
+        }
+    }
+
+    print $FILENAME $entry;
+}
+
+# -----------------------------------------------------------------------------
+# isNSAPI
+# Check if SAPI is nsapi
+# -----------------------------------------------------------------------------
+
+sub isNSAPI() {
+    if ($SAPI =~ m/nsapi/i) {
+        return 1;
+    }
+    return 0;
+}
+
+# -----------------------------------------------------------------------------
+# isWindows
+# Check platform
+# -----------------------------------------------------------------------------
+
+sub isWindows() {
+    if ($OSNAME =~ m/WIN/i) {
+        return 1;
+    }
+    return 0;
+}
+
+# -----------------------------------------------------------------------------
+# checkFilesWritable
+# Check all the necessary files writable before adding the entries
+# -----------------------------------------------------------------------------
+
+sub checkFilesWritable {
+    exit 1 unless defined isValidFile("$INSTANCE_ROOT/$INSTANCE_NAME/config/magnus.conf");
+    my @TMP_OBJ_CONF_FILES = @$OBJ_CONF_FILES;
+    my @TMP_MIME_TYPES_FILES = @$MIME_TYPES_FILES;
+
+    while(scalar(@TMP_OBJ_CONF_FILES) > 0) {
+        my $objConfFile = pop(@TMP_OBJ_CONF_FILES);
+        exit 1 unless defined isValidFile("$objConfFile");
+    }
+    while(scalar(@TMP_MIME_TYPES_FILES) > 0) {
+        my $mimeTypesFile = pop(@TMP_MIME_TYPES_FILES);
+        exit 1 unless defined isValidFile("$mimeTypesFile");
+    }
+}
+
+# -----------------------------------------------------------------------------
+# getValidAbsoluteFilePath
+# To get the valid absolute file path
+# -----------------------------------------------------------------------------
+
+sub getValidAbsoluteFilePath {
+    my ($file) = @_;
+    
+    if (defined $file) {
+        my ($fileName,$filePath,$fileNameSuffix) = fileparse("$file");
+        if ($fileName eq $file) {
+            $file = "$INSTANCE_ROOT/$INSTANCE_NAME/config/$fileName";
+        }
+        
+        $file = undef unless defined isValidFile($file);
+    }
+    
+    return $file;
+}  
+
+# -----------------------------------------------------------------------------
+# getValidAbsoluteFilePath
+# Valid file check
+# -----------------------------------------------------------------------------
+
+sub isValidFile {
+    my ($file) = @_;
+    my $status = undef;
+    
+    if (-e "$file") {
+        if (-w "$file") {
+            $status = 1; 
+        } else {
+            print "\nERROR: $file is not writable. \n\n";
+            exit 1;
+        }
+    } else {
+        print "\nERROR: $file not found, $! \n\n";
+        exit 1;
+    }
+    
+    return $status;
+}
+
+# -----------------------------------------------------------------------------
+# detectDefaultChildren
+# detect current architecture and come up with default values.
+# set default value to a higher value on Niagara based servers.
+# -----------------------------------------------------------------------------
+sub detectDefaultChildren {
+    my $default = 2;
+    if ($OSNAME =~ /SOLARIS/i) {
+        if (-x "/bin/uname") {
+            my $type = qx(/bin/uname -m);
+            chomp($type);
+            $default *= 3 if ($type =~ /sun4u/i);
+            $default *= 6 if ($type =~ /sun4v/);
+        }
+    }
+    return $default;
+}
+
+# -----------------------------------------------------------------------------
+# printUsage
+# print the usage command
+# -----------------------------------------------------------------------------
+
+sub printUsage {
+    print "This script will configure a web server instance to run PHP scripts\n" .
+          "either as FastCGI or NSAPI \n".
+          "usage : \n" .
+          "     setupPHP -instancename=<instance name> [-sapi=fastcgi|nsapi]\n" .
+          "Examples:\n" .
+          "\n".
+          "This below example configures Web Server to run PHP in FastCGI mode (Default)\n".
+          "     setupPHP -instancename=https-php\n" .
+          "\n".
+          "This below example configures Web Server to run PHP in NSAPI mode\n".
+          "     setupPHP -instancename=https-php -sapi=nsapi\n";
+    exit 1;
+}
+
+# -----------------------------------------------------------------------------
+# printResult
+# print the post setup steps
+# -----------------------------------------------------------------------------
+
+sub printResult {
+    #remove "https-" from the instance name and use it as the config name
+    my $configName = undef;
+    $configName = $INSTANCE_NAME;
+    $configName = substr($INSTANCE_NAME, 6) if ($INSTANCE_NAME =~ /^https/);
+    my $result = <<__UP_TO_THIS_POINT_;
+    
+Setup was sucessful.
+--------------------
+
+The following steps are necessary to make the changes to all the nodes.
+
+(1) Start the admin server
+
+    $INSTALL_ROOT/admin-server/bin/startserv
+
+(2) Connect to the admin server using wadm command
+
+    $INSTALL_ROOT/bin/wadm [--user=admin-user] [--password-file=admin-pswd-file] [--host=admin-host] [--port=admin-port]
+
+(3) Pull the modified config from the node to config store 
+    using the following command in wadm console:
+
+    pull-config --config=$configName nodehost
+    
+    For Example: If the host name for the node is xyz.com then enter the command like,
+    
+    pull-config --config=$configName xyz.com
+
+(4) Deploy the new changes to all nodes using 
+    the following command in wadm console:
+
+    deploy-config $configName 
+
+
+__UP_TO_THIS_POINT_
+    print $result;
+}

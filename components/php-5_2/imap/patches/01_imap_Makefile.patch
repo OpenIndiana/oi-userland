@@ -1,0 +1,40 @@
+--- imap-2007e/Makefile.ORIG	Mon Sep 15 23:32:12 2008
++++ imap-2007e/Makefile	Mon Sep 15 23:32:37 2008
+@@ -293,7 +293,7 @@
+ 
+ # Make the IMAP Toolkit
+ 
+-all:	c-client SPECIALS rebuild bundled
++all:	c-client SPECIALS rebuild
+ 
+ c-client:
+ 	@echo Not processed yet.  In a first-time build, you must specify
+@@ -306,7 +306,7 @@
+ 
+ # Note on SCO you may have to set LN to "ln".
+ 
+-a32 a41 aix bs3 bsi d-g d54 do4 drs epx ga4 gas gh9 ghp ghs go5 gsc gsg gso gul h11 hpp hpx lnp lyn mct mnt nec nto nxt nx3 osf os4 ptx qnx sc5 sco sgi sg6 shp sl4 sl5 slx snx soc sol sos uw2: an
++a32 a41 aix bs3 bsi d-g d54 do4 drs epx ga4 gas gh9 ghp ghs go5 gsc gsg gso gul h11 hpp hpx lnp lyn mct mnt nec nto nxt nx3 osf os4 ptx qnx sc5 sco sgi sg6 shp sl4 sl5 slx snx sol sos uw2: an
+ 	$(BUILD) BUILDTYPE=$@
+ 
+ # If you use sv4, you may find that it works to move it to use the an process.
+@@ -350,6 +350,10 @@
+ 	$(BUILD) BUILDTYPE=gso \
+ 	SPECIALS="SSLINCLUDE=/opt/csw/include/openssl SSLLIB=/opt/csw/lib SSLCERTS=/opt/csw/ssl/certs SSLKEYS=/opt/csw/ssl/certs"
+ 
++soc:	an
++	$(BUILD) BUILDTYPE=soc \
++	SPECIALS="CC='$$CC' EXTRACFLAGS='$$CFLAGS' SSLINCLUDE=/usr/include SSLLIB=/usr/lib SSLCERTS=/usr/lib/certs SSLKEYS=/usr/ssl/certs"
++
+ ldb:	an
+ 	$(BUILD) BUILDTYPE=lnp IP=$(IP6) \
+ 	SPECIALS="SSLINCLUDE=/usr/include/openssl SSLLIB=/usr/lib SSLCERTS=/etc/ssl/certs SSLKEYS=/etc/ssl/private GSSINCLUDE=/usr/include GSSLIB=/usr/lib MAILSPOOL=/var/mail"
+@@ -677,7 +681,7 @@
+ 	$(TOOLS)/$@ "$(LN)" src/tmail tmail
+ 	$(LN) $(TOOLS)/$@ .
+ 
+-build:	OSTYPE rebuild rebuildclean bundled
++build:	OSTYPE rebuild rebuildclean
+ 
+ OSTYPE:
+ 	@$(MAKE) ip$(IP)

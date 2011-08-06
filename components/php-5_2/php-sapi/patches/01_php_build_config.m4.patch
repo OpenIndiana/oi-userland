@@ -1,0 +1,193 @@
+--- php-5.2.9/ext/mysql/config.m4.ORIG	Mon Mar 30 11:53:10 2009
++++ php-5.2.9/ext/mysql/config.m4	Mon Mar 30 11:51:28 2009
+@@ -86,7 +86,9 @@
+ Note that the MySQL client library is not bundled anymore!])
+   fi
+ 
+-  if test "$enable_maintainer_zts" = "yes"; then
++  use_reentrant_mysqlclient="yes"
++  if test "$enable_maintainer_zts" = "yes" -o \
++    "$use_reentrant_mysqlclient" = "yes" ; then
+     MYSQL_LIBNAME=mysqlclient_r
+   else
+     MYSQL_LIBNAME=mysqlclient
+@@ -143,6 +145,7 @@
+   MYSQL_LIBS="-L$MYSQL_LIB_DIR -l$MYSQL_LIBNAME $MYSQL_LIBS"
+   MYSQL_INCLUDE=-I$MYSQL_INC_DIR
+  
++  MYSQL_SHARED_LIBADD="$MYSQL_SHARED_LIBADD -R/usr/mysql/5.1/lib/mysql"
+   PHP_SUBST(MYSQL_SHARED_LIBADD)
+   PHP_SUBST_OLD(MYSQL_MODULE_TYPE)
+   PHP_SUBST_OLD(MYSQL_LIBS)
+--- php-5.2.9/ext/pdo_mysql/config.m4.ORIG	Mon Mar 30 11:53:50 2009
++++ php-5.2.9/ext/pdo_mysql/config.m4	Mon Mar 30 11:52:23 2009
+@@ -58,7 +58,9 @@
+     if test "x$SED" = "x"; then
+       AC_PATH_PROG(SED, sed)
+     fi
+-    if test "$enable_maintainer_zts" = "yes"; then
++    use_reentrant_mysqlclient="yes"
++    if test "$enable_maintainer_zts" = "yes" -o \
++      "$use_reentrant_mysqlclient" = "yes" ; then
+       PDO_MYSQL_LIBNAME=mysqlclient_r
+       PDO_MYSQL_LIBS=`$PDO_MYSQL_CONFIG --libs_r | $SED -e "s/'//g"`
+     else
+@@ -156,6 +158,7 @@
+   ])
+   PDO_MYSQL_MODULE_TYPE=external
+ 
++  PDO_MYSQL_SHARED_LIBADD="$PDO_MYSQL_SHARED_LIBADD -R/usr/mysql/5.1/lib/mysql"
+   PHP_SUBST(PDO_MYSQL_SHARED_LIBADD)
+   PHP_SUBST_OLD(PDO_MYSQL_MODULE_TYPE)
+ fi
+--- php-5.2.9/ext/mysqli/config.m4.ORIG	Mon Mar 30 11:53:18 2009
++++ php-5.2.9/ext/mysqli/config.m4	Mon Mar 30 11:52:00 2009
+@@ -22,11 +22,13 @@
+     MYSQL_CONFIG=$PHP_MYSQLI
+   fi
+ 
++  use_reentrant_mysqlclient="yes"
+   MYSQL_LIB_NAME='mysqlclient'
+   if test "$PHP_EMBEDDED_MYSQLI" = "yes"; then
+     AC_DEFINE(HAVE_EMBEDDED_MYSQLI, 1, [embedded MySQL support enabled])
+     MYSQL_LIB_CFG='--libmysqld-libs'
+-  elif test "$enable_maintainer_zts" = "yes"; then
++  elif test "$enable_maintainer_zts" = "yes" -o \
++    "$use_reentrant_mysqlclient" = "yes" ; then
+     MYSQL_LIB_CFG='--libs_r'
+     MYSQL_LIB_NAME='mysqlclient_r'
+   else
+@@ -60,5 +62,6 @@
+   ])
+ 
+   PHP_NEW_EXTENSION(mysqli, mysqli.c mysqli_api.c mysqli_prop.c mysqli_nonapi.c mysqli_fe.c mysqli_report.c mysqli_repl.c mysqli_driver.c mysqli_warning.c mysqli_exception.c mysqli_embedded.c, $ext_shared)
++  MYSQLI_SHARED_LIBADD="$MYSQLI_SHARED_LIBADD -R/usr/mysql/5.1/lib/mysql"
+   PHP_SUBST(MYSQLI_SHARED_LIBADD)
+ fi
+--- php-5.2.9/sapi/apache/config.m4.ORIG	Wed Mar 11 17:32:35 2009
++++ php-5.2.9/sapi/apache/config.m4	Wed Mar 11 17:35:20 2009
+@@ -18,6 +18,23 @@
+ fi
+ ])
+ 
++dnl PHP_AP2_EXTRACT_VERSION(/path/httpd)
++dnl
++dnl This macro is used to get a comparable
++dnl version for apache1/2.
++dnl
++AC_DEFUN([PHP_AP2_EXTRACT_VERSION],[
++  ac_output=`env LD_LIBRARY_PATH=$APXS_LIBDIR $1 -v 2>&1 | grep version`
++  ac_IFS=$IFS
++IFS="- /.
++"
++  set $ac_output
++  IFS=$ac_IFS
++
++  APACHE_VERSION=`expr [$]4 \* 1000000 + [$]5 \* 1000 + [$]6`
++])
++
++dnl
+ dnl Apache 1.x shared module
+ PHP_ARG_WITH(apxs,,
+ [  --with-apxs[=FILE]      Build shared Apache 1.x module. FILE is the optional
+@@ -52,12 +69,13 @@
+ 
+   APXS_LDFLAGS="@SYBASE_LFLAGS@ @SYBASE_LIBS@ @SYBASE_CT_LFLAGS@ @SYBASE_CT_LIBS@"
+   APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
++  APXS_LIBDIR=`$APXS -q LIBDIR`
+   APXS_CFLAGS=`$APXS -q CFLAGS`
+   APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
+   APACHE_INCLUDE=-I$APXS_INCLUDEDIR
+ 
+   # Test that we're trying to configure with apache 1.x
+-  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
++  PHP_AP2_EXTRACT_VERSION($APXS_HTTPD)
+   if test "$APACHE_VERSION" -ge 2000000; then
+     AC_MSG_ERROR([You have enabled Apache 1.3 support while your server is Apache 2.  Please use the appropiate switch --with-apxs2]) 
+   fi
+--- php-5.2.9/sapi/apache2handler/config.m4.ORIG	Wed Mar 11 16:18:06 2009
++++ php-5.2.9/sapi/apache2handler/config.m4	Wed Mar 11 16:17:30 2009
+@@ -6,6 +6,23 @@
+ [  --with-apxs2[=FILE]     Build shared Apache 2.0 Handler module. FILE is the optional
+                           pathname to the Apache apxs tool [apxs]], no, no)
+ 
++dnl PHP_AP2_EXTRACT_VERSION(/path/httpd)
++dnl
++dnl This macro is used to get a comparable
++dnl version for apache/2.
++dnl
++AC_DEFUN([PHP_AP2_EXTRACT_VERSION],[
++  ac_output=`env LD_LIBRARY_PATH=$APXS_LIBDIR $1 -v 2>&1 | grep version`
++  ac_IFS=$IFS
++IFS="- /.
++"
++  set $ac_output
++  IFS=$ac_IFS
++
++  APACHE_VERSION=`expr [$]4 \* 1000000 + [$]5 \* 1000 + [$]6`
++])
++
++dnl
+ AC_MSG_CHECKING([for Apache 2.0 handler-module support via DSO through APXS])
+ 
+ if test "$PHP_APXS2" != "no"; then
+@@ -36,6 +53,7 @@
+ 
+   APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
+   APXS_BINDIR=`$APXS -q BINDIR`
++  APXS_LIBDIR=`$APXS -q LIBDIR`
+   APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
+   APXS_CFLAGS=`$APXS -q CFLAGS`
+   APXS_MPM=`$APXS -q MPM_NAME`
+@@ -60,7 +78,7 @@
+   APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
+ 
+   # Test that we're trying to configure with apache 2.x
+-  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
++  PHP_AP2_EXTRACT_VERSION($APXS_HTTPD)
+   if test "$APACHE_VERSION" -le 2000000; then
+     AC_MSG_ERROR([You have enabled Apache 2 support while your server is Apache 1.3.  Please use the appropiate switch --with-apxs (without the 2)])
+   elif test "$APACHE_VERSION" -lt 2000044; then
+--- php-5.2.9/sapi/apache2filter/config.m4.ORIG	Wed Mar 11 16:30:32 2009
++++ php-5.2.9/sapi/apache2filter/config.m4	Wed Mar 11 16:33:27 2009
+@@ -9,6 +9,23 @@
+ 
+ AC_MSG_CHECKING([for Apache 2.0 filter-module support via DSO through APXS])
+ 
++dnl PHP_AP2_EXTRACT_VERSION(/path/httpd)
++dnl
++dnl This macro is used to get a comparable
++dnl version for apache2.
++dnl
++AC_DEFUN([PHP_AP2_EXTRACT_VERSION],[
++  ac_output=`env LD_LIBRARY_PATH=$APXS_LIBDIR $1 -v 2>&1 | grep version`
++  ac_IFS=$IFS
++IFS="- /.
++"
++  set $ac_output
++  IFS=$ac_IFS
++
++  APACHE_VERSION=`expr [$]4 \* 1000000 + [$]5 \* 1000 + [$]6`
++])
++
++dnl
+ if test "$PHP_APXS2FILTER" != "no"; then
+   if test "$PHP_APXS2FILTER" = "yes"; then
+     APXS=apxs
+@@ -37,6 +54,7 @@
+ 
+   APXS_INCLUDEDIR=`$APXS -q INCLUDEDIR`
+   APXS_BINDIR=`$APXS -q BINDIR`
++  APXS_LIBDIR=`$APXS -q LIBDIR`
+   APXS_HTTPD=`$APXS -q SBINDIR`/`$APXS -q TARGET`
+   APXS_CFLAGS=`$APXS -q CFLAGS`
+   APXS_MPM=`$APXS -q MPM_NAME`
+@@ -61,7 +79,7 @@
+   APACHE_CFLAGS="$APACHE_CPPFLAGS -I$APXS_INCLUDEDIR $APR_CFLAGS $APU_CFLAGS"
+ 
+   # Test that we're trying to configure with apache 2.x
+-  PHP_AP_EXTRACT_VERSION($APXS_HTTPD)
++  PHP_AP2_EXTRACT_VERSION($APXS_HTTPD)
+   if test "$APACHE_VERSION" -le 2000000; then
+     AC_MSG_ERROR([You have enabled Apache 2 support while your server is Apache 1.3.  Please use the appropiate switch --with-apxs (without the 2)])
+   elif test "$APACHE_VERSION" -lt 2000040; then

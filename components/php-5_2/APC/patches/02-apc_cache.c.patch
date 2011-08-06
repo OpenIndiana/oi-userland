@@ -1,0 +1,28 @@
+--- APC-3.0.19/apc_cache.c.ORIG	Mon Feb  9 07:35:10 2009
++++ APC-3.0.19/apc_cache.c	Mon Feb  9 07:35:21 2009
+@@ -62,23 +62,9 @@
+ /* }}} */
+ 
+ /* {{{ string_nhash_8 */
+-static unsigned int string_nhash_8(const char *s, size_t len)
++static inline unsigned long string_nhash_8(const char *s, size_t len)
+ {
+-    register const unsigned int *iv = (const unsigned int *)s;
+-    register unsigned int h = 0;
+-    register const unsigned int *e  = (const unsigned int *)(s + len - (len % sizeof(unsigned int)));
+-
+-    for(;iv<e;iv++) {
+-        h += *iv;
+-        h = (h << 7) | (h >> ((8*sizeof(unsigned int)) - 7));
+-    }
+-    s = (const char *)iv;
+-    for(len %= sizeof(unsigned int);len;len--) {
+-        h += *(s++);
+-    }
+-    h ^= (h >> 13);
+-    h ^= (h >> 7);
+-    return h;
++    return zend_inline_hash_func(s, len);
+ }
+ /* }}} */
+ 
