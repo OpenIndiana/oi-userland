@@ -106,8 +106,8 @@ section_re = re.compile('\.SH "?([^"]+).*$', re.IGNORECASE)
 #
 # mangler.man.stability = (mangler.man.stability)
 # mangler.man.availability = (pkg.fmri)
-# mangler.man.source_url = (pkg.source_url)
-# mangler.man.upstream_url = (pkg.upstream_url)
+# mangler.man.source-url = (pkg.source-url)
+# mangler.man.upstream-url = (pkg.upstream-url)
 #
 def mangle_manpage(manifest, action, text):
 	# manpages must have a taxonomy defined
@@ -124,14 +124,14 @@ def mangle_manpage(manifest, action, text):
 		availability = fmri.pkg_name
 
 	community = None
-	if 'info.upstream_url' in manifest.attributes:
-		community = manifest.attributes['info.upstream_url']
+	if 'info.upstream-url' in manifest.attributes:
+		community = manifest.attributes['info.upstream-url']
 
 	source = None
-	if 'info.source_url' in manifest.attributes:
-		source = manifest.attributes['info.source_url']
-	elif 'info.repository_url' in manifest.attributes:
-		source = manifest.attributes['info.repository_url']
+	if 'info.source-url' in manifest.attributes:
+		source = manifest.attributes['info.source-url']
+	elif 'info.repository-url' in manifest.attributes:
+		source = manifest.attributes['info.repository-url']
 
 	# skip reference only pages
 	if so_re.match(text) is not None:
