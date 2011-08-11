@@ -18,6 +18,7 @@
  *
  * CDDL HEADER END
  */
+
 /*
  * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
  */
@@ -956,7 +957,7 @@ ecbenc256_loop:
 	add	%o2, 32, %o2
 
 	ldd	[%o0 + 0x60], %f20
-	ldd	[%o0 + 0x68], %f22 
+	ldd	[%o0 + 0x68], %f22
 
 ecbenc256_loop_end:
 	retl
@@ -1845,7 +1846,7 @@ ecbdec256_loop:
 	add	%o2, 32, %o2
 
 	ldd	[%o0 + 0x80], %f20
-	ldd	[%o0 + 0x88], %f22 
+	ldd	[%o0 + 0x88], %f22
 
 ecbdec256_loop_end:
 
@@ -1959,10 +1960,10 @@ ecbdec256_loop:
 
 	ldx	[%i1], %o4
 	ldx	[%i1 + 8], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	TEN_DROUNDS
 
@@ -1985,17 +1986,17 @@ ecbdec256_loop:
 cbcdec128_loop:
 	ldx	[%i1], %g4
 	ldx	[%i1 + 8], %g5
-	xor	%o2, %g4, %i5	!initial ARK
-	movxtod	%i5, %f0
-	xor	%o3, %g5, %i5	!initial ARK
-	movxtod	%i5, %f2
+	xor	%o2, %g4, %g1	!initial ARK
+	movxtod	%g1, %f0
+	xor	%o3, %g5, %g1	!initial ARK
+	movxtod	%g1, %f2
 
 	ldx	[%i1 + 16], %o4
 	ldx	[%i1 + 24], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	TEN_DROUNDS_2
 
@@ -2044,10 +2045,10 @@ cbcdec128_loop_end:
 
 	ldx	[%i1], %o4
 	ldx	[%i1 + 8], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	TWELVE_DROUNDS
 
@@ -2070,17 +2071,17 @@ cbcdec128_loop_end:
 cbcdec192_loop:
 	ldx	[%i1], %g4
 	ldx	[%i1 + 8], %g5
-	xor	%o2, %g4, %i5	!initial ARK
-	movxtod	%i5, %f0
-	xor	%o3, %g5, %i5	!initial ARK
-	movxtod	%i5, %f2
+	xor	%o2, %g4, %g1	!initial ARK
+	movxtod	%g1, %f0
+	xor	%o3, %g5, %g1	!initial ARK
+	movxtod	%g1, %f2
 
 	ldx	[%i1 + 16], %o4
 	ldx	[%i1 + 24], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	TWELVE_DROUNDS_2
 
@@ -2119,8 +2120,8 @@ cbcdec192_loop_end:
 	ENTRY(t4_aes256_cbc_decrypt)
 
 	save	%sp, -SA(MINFRAME), %sp
-	mov	%i0, %o0
-	ldx	[%i4], %i0		!IV
+	mov	%i0, %o0		!FOURTEEN_DROUNDS uses %o0
+	ldx	[%i4], %g2		!IV
 	ldx	[%i4 + 8], %o1		!IV
 	ldx	[%o0 + 0xe0], %o2	!ks[last-1]
 	ldx	[%o0 + 0xe8], %o3	!ks[last]
@@ -2130,16 +2131,16 @@ cbcdec192_loop_end:
 
 	ldx	[%i1], %o4
 	ldx	[%i1 + 8], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	FOURTEEN_DROUNDS
 
-	movxtod	%i0, %f56
+	movxtod	%g2, %f56
 	movxtod	%o1, %f58
-	mov	%o4, %i0	!save last block as next IV
+	mov	%o4, %g2	!save last block as next IV
 	mov	%o5, %o1
 	fxor	%f56, %f60, %f60	!add in previous IV
 	fxor	%f58, %f62, %f62
@@ -2156,21 +2157,21 @@ cbcdec192_loop_end:
 cbcdec256_loop:
 	ldx	[%i1], %g4
 	ldx	[%i1 + 8], %g5
-	xor	%o2, %g4, %i5	!initial ARK
-	movxtod	%i5, %f20
-	xor	%o3, %g5, %i5	!initial ARK
-	movxtod	%i5, %f22
+	xor	%o2, %g4, %g1	!initial ARK
+	movxtod	%g1, %f20
+	xor	%o3, %g5, %g1	!initial ARK
+	movxtod	%g1, %f22
 
 	ldx	[%i1 + 16], %o4
 	ldx	[%i1 + 24], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	FOURTEEN_DROUNDS_2
 
-	movxtod	%i0, %f56
+	movxtod	%g2, %f56
 	movxtod	%o1, %f58
 	fxor	%f56, %f20, %f20	!add in previous IV
 	fxor	%f58, %f22, %f22
@@ -2180,7 +2181,7 @@ cbcdec256_loop:
 
 	movxtod	%g4, %f56
 	movxtod	%g5, %f58
-	mov	%o4, %i0	!save last block as next IV
+	mov	%o4, %g2	!save last block as next IV
 	mov	%o5, %o1
 	fxor	%f56, %f60, %f60	!add in previous IV
 	fxor	%f58, %f62, %f62
@@ -2194,10 +2195,10 @@ cbcdec256_loop:
 	add	%i2, 32, %i2
 
 	ldd	[%o0 + 0x80], %f20
-	ldd	[%o0 + 0x88], %f22 
+	ldd	[%o0 + 0x88], %f22
 
 cbcdec256_loop_end:
-	stx	%i0, [%i4]
+	stx	%g2, [%i4]
 	stx	%o1, [%i4 + 8]
 	ret
 	restore
@@ -2217,10 +2218,10 @@ cbcdec256_loop_end:
 cbcdec128_loop:
 	ldx	[%i1], %o4
 	ldx	[%i1 + 8], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	TEN_DROUNDS
 
@@ -2258,10 +2259,10 @@ cbcdec128_loop:
 cbcdec192_loop:
 	ldx	[%i1], %o4
 	ldx	[%i1 + 8], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	TWELVE_DROUNDS
 
@@ -2299,10 +2300,10 @@ cbcdec192_loop:
 cbcdec256_loop:
 	ldx	[%i1], %o4
 	ldx	[%i1 + 8], %o5
-	xor	%o2, %o4, %i5	!initial ARK
-	movxtod	%i5, %f60
-	xor	%o3, %o5, %i5	!initial ARK
-	movxtod	%i5, %f62
+	xor	%o2, %o4, %g1	!initial ARK
+	movxtod	%g1, %f60
+	xor	%o3, %o5, %g1	!initial ARK
+	movxtod	%g1, %f62
 
 	FOURTEEN_DROUNDS
 
@@ -2540,7 +2541,7 @@ cfb128dec_256_loop:
 	add	%o2, 32, %o2
 
 	ldd	[%o0 + 0x60], %f20
-	ldd	[%o0 + 0x68], %f22 
+	ldd	[%o0 + 0x68], %f22
 
 cfb128dec_256_loop_end:
 	std	%f56, [%o4]
