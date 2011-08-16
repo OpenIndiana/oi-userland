@@ -36,6 +36,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=etc
 dir path=etc/mysql
 dir path=etc/mysql/5.1
+dir path=etc/security
+dir path=etc/security/auth_attr.d
+dir path=etc/security/prof_attr.d
 dir path=lib
 dir path=lib/svc
 dir path=lib/svc/manifest
@@ -100,6 +103,8 @@ file usr/mysql/5.1/share/mysql/my-small.cnf path=etc/mysql/5.1/my-small.cnf \
     mode=0644 preserve=true
 file usr/mysql/5.1/share/mysql/my-small.cnf path=etc/mysql/5.1/my.cnf \
     mode=0644 preserve=renamenew
+file Solaris/auth_attr path=etc/security/auth_attr.d/mysql-51
+file Solaris/prof_attr path=etc/security/prof_attr.d/mysql-51
 file Solaris/mysql_51.xml \
     path=lib/svc/manifest/application/database/mysql_51.xml
 file Solaris/mysql_51 path=lib/svc/method/mysql_51 mode=0555
@@ -354,5 +359,6 @@ link path=usr/mysql/docs target=5.1/docs
 link path=usr/mysql/include target=5.1/include
 link path=usr/mysql/man target=5.1/man
 link path=usr/mysql/share target=5.1/share
+link path=usr/share/man/man1/mysql.1 target=mysql_51.1
 link path=var/mysql/data target=5.1/data
 depend fmri=database/mysql-common@0.5.11 type=require
