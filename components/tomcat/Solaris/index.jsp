@@ -1,1 +1,1 @@
-<html><body><h1>Apache Tomcat (SUNWtcat-examples package not installed)</h1></body></html>
+<html><body><h1>Apache Tomcat (tomcat-examples package not installed)</h1></body></html>

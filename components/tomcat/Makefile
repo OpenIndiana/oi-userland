@@ -26,18 +26,18 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache-tomcat
-COMPONENT_VERSION=	6.0.32
+COMPONENT_VERSION=	6.0.33
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:ec94c511e54da2b02dd2ba45b9fd1703d5771a45
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:437db0ba55c6e398fe3af73c4fa5eed3c4666842
+COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 # Tomcat subcomponents
 COMPONENT_ARCHIVE_1= commons-dbcp-1.4-src.tar.gz
 COMPONENT_ARCHIVE_HASH_1= sha1:48702486eaba6ec40fb65e912c8f597d80654f54
 COMPONENT_ARCHIVE_URL_1= http://archive.apache.org/dist/commons/dbcp/source/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_2= commons-pool-1.5.5-src.tar.gz
-COMPONENT_ARCHIVE_HASH_2= sha1:375408d445be1b87e935bb8e68cc9f746a3b59fb
+COMPONENT_ARCHIVE_2= commons-pool-1.5.6-src.tar.gz
+COMPONENT_ARCHIVE_HASH_2= sha1:d97caa6670d7683f97749defb96aee6a7bcdbdf9
 COMPONENT_ARCHIVE_URL_2= http://archive.apache.org/dist/commons/pool/source/$(COMPONENT_ARCHIVE_2)
 COMPONENT_ARCHIVE_3= ecj.jar
 COMPONENT_ARCHIVE_HASH_3= sha1:f4ddfbb80cb97b0bdfa8730102db9fec1630a983
