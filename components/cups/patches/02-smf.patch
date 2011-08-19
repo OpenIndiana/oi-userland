@@ -1,21 +1,35 @@
---- init/cups.xml.in.orig	Fri Oct  2 22:41:34 2009
-+++ init/cups.xml.in	Fri Oct  2 22:42:36 2009
-@@ -60,6 +60,14 @@
-         <service_fmri value='svc:/application/print/server' />
+--- init/cups.xml.in.orig	Thu Jul  8 22:54:14 2010
++++ init/cups.xml.in	Tue Aug 16 14:51:37 2011
+@@ -52,14 +52,6 @@
+         <service_fmri value='svc:/milestone/network' />
      </dependency>
  
-+    <dependency
-+        name='ipp-listener'
-+        grouping='exclude_all'
-+        restart_on='none'
-+        type='service'>
-+        <service_fmri value='svc:/application/print/ipp-listener' />
-+    </dependency>
-+
+-    <dependency
+-        name='lpsched'
+-        grouping='exclude_all'
+-        restart_on='none'
+-        type='service'>
+-        <service_fmri value='svc:/application/print/server' />
+-    </dependency>
+-
      <exec_method
          type='method'
          name='stop'
-@@ -90,7 +98,7 @@
+@@ -66,7 +58,7 @@
+         exec=':kill'
+         timeout_seconds='60' />
+ 
+-    <instance name='default' enabled='false' >
++    <instance name='default' enabled='true' >
+ 
+         <dependency
+             name='config_data'
+@@ -87,10 +79,12 @@
+         </exec_method>
+ 
+         <property_group name='general' type='framework'>
++            <propval name='active' type='boolean'
++                value='true' />
              <propval name='action_authorization' type='astring'
                  value='solaris.smf.manage.cups' />
              <propval name='value_authorization' type='astring'
@@ -24,7 +38,31 @@
          </property_group>
  
          <template>
-@@ -190,7 +198,7 @@
+@@ -144,14 +138,6 @@
+         <service_fmri value='svc:/milestone/network' />
+     </dependency>
+ 
+-    <dependency
+-        name='in-lpd'
+-        grouping='exclude_all'
+-        restart_on='none'
+-        type='service'>
+-        <service_fmri value='svc:/application/print/rfc1179' />
+-    </dependency>
+-
+     <exec_method
+         type='method'
+         name='stop'
+@@ -158,7 +144,7 @@
+         exec=':kill'
+         timeout_seconds='60' />
+ 
+-    <instance name='default' enabled='false' >
++    <instance name='default' enabled='true' >
+         <dependency
+             name='cupsd'
+             grouping='require_all'
+@@ -190,7 +176,7 @@
              <propval name='action_authorization' type='astring'
                  value='solaris.smf.manage.cups' />
              <propval name='value_authorization' type='astring'
