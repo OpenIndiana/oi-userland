@@ -36,8 +36,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_LIBDIR.32 =   $(SFWLIB)
-CONFIGURE_LIBDIR.64 =   $(SFWLIB)/$(MACH64)
+CONFIGURE_LIBDIR.32 =   $(GNULIB)
+CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
