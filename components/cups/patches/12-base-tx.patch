@@ -1,11 +1,12 @@
 Index: Makedefs.in
 ===================================================================
---- Makedefs.in	(revision 8801)
+--- Makedefs.in (revision 8801)
 +++ Makedefs.in	(working copy)
-@@ -125,7 +125,7 @@
+@@ -124,7 +124,7 @@
+ BACKLIBS	=	@BACKLIBS@
  BANNERTOPS	=	@BANNERTOPS@
  CFLAGS		=	@CPPFLAGS@ @CFLAGS@
- COMMONLIBS	=	@LIBS@ -lscf
+ COMMONLIBS	=	@LIBS@
 -CUPSDLIBS	=	@CUPSDLIBS@
 +CUPSDLIBS	=	@CUPSDLIBS@ @LABELING_LIBS@
  CXXFLAGS	=	@CPPFLAGS@ @CXXFLAGS@
@@ -19,7 +20,7 @@ Index: config-scripts/cups-labeling.m4
 +dnl
 +dnl    Security Labeled environment support for the Common UNIX Printing System (CUPS).
 +dnl
-+dnl    Copyright 2009 by Sun Microsystems, Inc.
++dnl    Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
 +dnl
 +dnl   This program is free software; you can redistribute it and/or modify
 +dnl   it under the terms of the GNU General Public License as published by
@@ -90,7 +91,7 @@ Index: configure.in
 Index: config.h.in
 ===================================================================
 --- config.h.in.orig	Thu Aug 12 21:11:46 2010
-+++ config.h.in	Tue Dec  7 01:30:14 2010
++++ config.h.in	Tue Aug 16 18:03:17 2011
 @@ -665,7 +665,17 @@
  #undef HAVE_SYS_STATVFS_H
  #undef HAVE_SYS_VFS_H
@@ -111,8 +112,8 @@ Index: config.h.in
  /*
 Index: scheduler/ipp.c
 ===================================================================
---- scheduler/ipp.c.orig	Wed Oct  6 13:07:44 2010
-+++ scheduler/ipp.c	Tue Dec  7 01:30:14 2010
+--- scheduler/ipp.c.orig	Thu Oct  7 01:37:44 2010
++++ scheduler/ipp.c	Tue Aug 16 18:03:17 2011
 @@ -856,7 +856,52 @@
    return (0);
  }
@@ -431,8 +432,8 @@ Index: scheduler/ipp.c
    */
 Index: scheduler/printers.c
 ===================================================================
---- scheduler/printers.c.orig	Wed Sep 22 11:35:07 2010
-+++ scheduler//printers.c	Tue Dec  7 01:30:14 2010
+--- scheduler/printers.c.orig	Thu Sep 23 00:05:07 2010
++++ scheduler/printers.c	Tue Aug 16 18:03:34 2011
 @@ -1011,7 +1011,93 @@
    p->users     = NULL;
  }
@@ -529,8 +530,9 @@ Index: scheduler/printers.c
   */
 Index: scheduler/job.c
 ===================================================================
---- scheduler/job.c.orig	Sat Oct 16 21:13:56 2010
-+++ scheduler/job.c	Tue Dec  7 01:30:14 2010
+
+--- scheduler/job.c.orig	Sun Oct 17 09:43:56 2010
++++ scheduler/job.c	Tue Aug 16 18:03:43 2011
 @@ -911,8 +911,14 @@
      }
    }
@@ -589,11 +591,11 @@ Index: scheduler/job.c
 +
    cupsdSetJobState(job, IPP_JOB_PROCESSING, CUPSD_JOB_DEFAULT, NULL);
    cupsdSetPrinterState(printer, IPP_PRINTER_PROCESSING, 0);
- 
+
 Index: scheduler/printers.h
 ===================================================================
---- scheduler/printers.h.orig	Tue Mar 30 15:07:33 2010
-+++ scheduler/printers.h	Tue Dec  7 01:30:14 2010
+--- scheduler/printers.h.orig	Wed Mar 31 03:37:33 2010
++++ scheduler/printers.h	Tue Aug 16 18:03:51 2011
 @@ -151,6 +151,8 @@
  			                const char *username);
  extern void		cupsdFreePrinterUsers(cupsd_printer_t *p);
@@ -618,8 +620,8 @@ Index: scheduler/job.h
  typedef struct cupsd_joblog_s		/**** Job log message ****/
 Index: scheduler/client.c
 ===================================================================
---- scheduler/client.c.orig	Sat Oct 16 21:13:56 2010
-+++ scheduler/client.c	Tue Dec  7 01:30:14 2010
+--- scheduler/client.c.orig	Sun Oct 17 09:43:56 2010
++++ scheduler/client.c	Tue Aug 16 18:04:07 2011
 @@ -90,7 +90,12 @@
  #  include <tcpd.h>
  #endif /* HAVE_TCPD_H */

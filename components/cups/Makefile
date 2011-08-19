@@ -65,9 +65,6 @@ CONFIGURE_OPTIONS += 	"ac_cv_search_getifaddrs=no"
 CONFIGURE_OPTIONS += 	"ac_cv_func_statfs=no"
 
 $(BUILD_DIR)/%/.installed:	ENV +=	DSTROOT="$(PROTO_DIR)"
-$(BUILD_DIR)/%/.installed:	ENV +=	MAN1EXT="1cups"
-$(BUILD_DIR)/%/.installed:	ENV +=	MAN8EXT="1cups"
-$(BUILD_DIR)/%/.installed:	ENV +=	MAN8DIR="1cups"
 
 PATCH_LEVEL =	0
 
