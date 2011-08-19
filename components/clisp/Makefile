@@ -44,9 +44,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPILER=	gcc
 PATCH_LEVEL=	0
 
-# The clisp configure script exits with a failure if run with bash,
-# but works fine with ksh.
-CONFIG_SHELL = /bin/ksh
+# SHELLOPTS appears to cause clisp's configure script to fail while
+# checking the compiler.
+unexport SHELLOPTS
 
 # clisp's configure script is not a GNU auto* tools generated configure script
 # and doesn't take --sbindir, so we need to override the default values.
