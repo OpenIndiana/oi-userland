@@ -22,6 +22,8 @@
 #
 include ../../make-rules/shared-macros.mk
 
+PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+
 # I want to override PERL_VERSION and PERL_ARCH because when building
 # a new version of perl it probably isn't installed so shared-macros.mk
 # can't call it.

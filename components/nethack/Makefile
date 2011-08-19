@@ -25,6 +25,8 @@
 
 include ../../make-rules/shared-macros.mk
 
+PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+
 COMPONENT_NAME=		nethack
 COMPONENT_VERSION=	3.4.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
