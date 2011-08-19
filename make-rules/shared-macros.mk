@@ -207,6 +207,8 @@ PROTOSFWSHAREMAN1 =	$(PROTO_DIR)/$(SFWSHAREMAN1)
 PROTOSFWINCLUDE =	$(PROTO_DIR)/$(SFWINCLUDE)
 
 GNUBIN =	/usr/gnu/bin
+GNULIB =	/usr/gnu/lib
+GNULIB64 =	/usr/gnu/lib/$(MACH64)
 GNUSHARE =	/usr/gnu/share
 GNUSHAREMAN =	/usr/gnu/share/man
 GNUSHAREMAN1 =	/usr/gnu/share/man/man1
