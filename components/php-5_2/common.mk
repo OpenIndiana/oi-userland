@@ -144,7 +144,6 @@ studio_C99MODE = $(studio_99_ENABLE)
 studio_cplusplus_C99MODE = $(studio_cplusplus_C99_ENABLE)
 CPPFLAGS += -D_POSIX_PTHREAD_SEMANTICS
 CPPFLAGS += $(CPP_LARGEFILES)
-CPPFLAGS += -I$(IMAP_CLIENT_DIR)
 CPPFLAGS += -I../CPPFLAGSTEST
 LIBS = -lsocket -lnsl -ldl -lposix4
 LD = $(CXX) $(studio_NORUNPATH)
