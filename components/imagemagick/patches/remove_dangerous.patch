@@ -1,0 +1,123 @@
+This removes support for DCM, DIB, XBM, XCF and XWD file formats. It saves us
+from CVE-2007-4985, CVE-2007-4986 and CVE-2007-4988.
+
+diff -urN ImageMagick-6.3.4.orig/Makefile.am ImageMagick-6.3.4/Makefile.am
+--- ImageMagick-6.3.4.orig/Makefile.am	2007-04-02 18:59:34.000000000 -0700
++++ ImageMagick-6.3.4/Makefile.am	2011-08-24 09:07:57.831550701 -0700
+@@ -21,7 +21,7 @@
+ 
+ AM_CPPFLAGS = -I$(top_builddir) -I$(top_srcdir)
+ 
+-ACLOCAL_AMFLAGS = -Iltdl/m4 -I m4
++ACLOCAL_AMFLAGS = -I m4
+ 
+ MODULECOMMONFLAGS = -no-undefined -module -avoid-version
+ 
+diff -urN ImageMagick-6.3.4.orig/coders/Makefile.am ImageMagick-6.3.4/coders/Makefile.am
+--- ImageMagick-6.3.4.orig/coders/Makefile.am	2007-04-27 17:41:46.000000000 -0700
++++ ImageMagick-6.3.4/coders/Makefile.am	2011-08-24 09:11:10.957499184 -0700
+@@ -58,8 +58,8 @@
+ endif
+ 
+ if HasX11
+-MAGICK_X11_MODULES = coders/x.la coders/xwd.la
+-MAGICK_X11_SRCS = coders/x.c coders/xwd.c
++MAGICK_X11_MODULES = coders/x.la
++MAGICK_X11_SRCS = coders/x.c
+ endif
+ 
+ MAGICK_CODER_SRCS = \
+@@ -73,8 +73,6 @@
+ 	coders/clip.c \
+ 	coders/cmyk.c \
+ 	coders/cut.c \
+-	coders/dcm.c \
+-	coders/dib.c \
+ 	coders/dot.c \
+ 	coders/dps.c \
+ 	coders/dpx.c \
+@@ -147,9 +145,7 @@
+ 	coders/wbmp.c \
+ 	coders/wmf.c \
+ 	coders/wpg.c \
+-	coders/xbm.c \
+ 	coders/xc.c \
+-	coders/xcf.c \
+ 	coders/xpm.c \
+ 	coders/ycbcr.c \
+ 	coders/yuv.c \
+@@ -175,8 +171,6 @@
+ 	coders/clip.la \
+ 	coders/cmyk.la \
+ 	coders/cut.la \
+-	coders/dcm.la \
+-	coders/dib.la \
+ 	coders/dot.la \
+ 	coders/dps.la \
+ 	coders/dpx.la \
+@@ -249,9 +243,7 @@
+ 	coders/wbmp.la \
+ 	coders/wmf.la \
+ 	coders/wpg.la \
+-	coders/xbm.la \
+ 	coders/xc.la \
+-	coders/xcf.la \
+ 	coders/xpm.la \
+ 	coders/ycbcr.la \
+ 	coders/yuv.la \
+@@ -334,18 +326,6 @@
+ coders_cut_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+ coders_cut_la_LIBADD       = $(LIBMAGICK)
+ 
+-# DCM coder module
+-coders_dcm_la_SOURCES      = coders/dcm.c
+-coders_dcm_la_CPPFLAGS     = $(MODULE_EXTRA_CPPFLAGS)
+-coders_dcm_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+-coders_dcm_la_LIBADD       = $(LIBMAGICK)
+-
+-# DIB coder module
+-coders_dib_la_SOURCES      = coders/dib.c
+-coders_dib_la_CPPFLAGS     = $(MODULE_EXTRA_CPPFLAGS)
+-coders_dib_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+-coders_dib_la_LIBADD       = $(LIBMAGICK)
+-
+ # DJVU coder module
+ coders_djvu_la_SOURCES     = coders/djvu.c
+ coders_djvu_la_CPPFLAGS    = $(MODULE_EXTRA_CPPFLAGS)
+@@ -839,36 +819,18 @@
+ coders_x_la_LDFLAGS        = $(MODULECOMMONFLAGS)
+ coders_x_la_LIBADD         = $(LIBMAGICK) $(X11_LIBS)
+ 
+-# XBM coder module
+-coders_xbm_la_SOURCES      = coders/xbm.c
+-coders_xbm_la_CPPFLAGS     = $(MODULE_EXTRA_CPPFLAGS)
+-coders_xbm_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+-coders_xbm_la_LIBADD       = $(LIBMAGICK)
+-
+ # XC coder module
+ coders_xc_la_SOURCES       = coders/xc.c
+ coders_xc_la_CPPFLAGS      = $(MODULE_EXTRA_CPPFLAGS)
+ coders_xc_la_LDFLAGS       = $(MODULECOMMONFLAGS)
+ coders_xc_la_LIBADD        = $(LIBMAGICK)
+ 
+-# XCF coder module
+-coders_xcf_la_SOURCES      = coders/xcf.c
+-coders_xcf_la_CPPFLAGS     = $(MODULE_EXTRA_CPPFLAGS)
+-coders_xcf_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+-coders_xcf_la_LIBADD       = $(LIBMAGICK)
+-
+ # XPM coder module
+ coders_xpm_la_SOURCES      = coders/xpm.c
+ coders_xpm_la_CPPFLAGS     = $(MODULE_EXTRA_CPPFLAGS)
+ coders_xpm_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+ coders_xpm_la_LIBADD       = $(LIBMAGICK)
+ 
+-# XWD coder module
+-coders_xwd_la_SOURCES      = coders/xwd.c
+-coders_xwd_la_CPPFLAGS     = $(MODULE_EXTRA_CPPFLAGS)
+-coders_xwd_la_LDFLAGS      = $(MODULECOMMONFLAGS)
+-coders_xwd_la_LIBADD       = $(LIBMAGICK) $(X11_LIBS)
+-
+ # YCBCR coder module
+ coders_ycbcr_la_SOURCES     = coders/ycbcr.c
+ coders_ycbcr_la_CPPFLAGS    = $(MODULE_EXTRA_CPPFLAGS)

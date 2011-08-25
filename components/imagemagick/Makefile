@@ -55,7 +55,7 @@ COMPONENT_PREP_ACTION= (cd $(@D) ; $(RM) magick/magick-config.h)
 # To get the Perl modules built it is necessary to copy the PerlMagick directory
 # to the build directory
 #
-COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
+COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D); cd $(SOURCE_DIR); $(AUTORECONF) -f)
 
 # Show name of "error tag" as part of the warning
 #
