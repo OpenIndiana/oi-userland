@@ -134,36 +134,36 @@ dir path=usr/share/info
 dir path=usr/share/man
 dir path=usr/share/man/man1
 
-file path=usr/bin/b2m					pkg.linted=True
-file path=usr/bin/ebrowse				pkg.linted=True
+file path=usr/bin/b2m
+file path=usr/bin/ebrowse
 file path=usr/bin/emacs
-file path=usr/bin/emacsclient				pkg.linted=True
+file path=usr/bin/emacsclient
 file path=usr/bin/grep-changelog
 file path=usr/bin/rcs-checkin
-file path=usr/gnu/bin/ctags				pkg.linted=True
-file path=usr/gnu/bin/etags				pkg.linted=True
+file path=usr/gnu/bin/ctags
+file path=usr/gnu/bin/etags
 file path=usr/gnu/share/man/man1/ctags.1
 file path=usr/gnu/share/man/man1/etags.1
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/cvtmail \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/digest-doc \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/fakemail \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/hexl \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/movemail \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/profile \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/rcs2log \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/sorted-doc \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/update-game-score \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR)/vcdiff \
-	mode=0555	pkg.linted=True
+	mode=0555
 file path=usr/share/applications/emacs.desktop
 file path=usr/share/emacs/$(COMPONENT_VERSION)/etc/AUTHORS
 file path=usr/share/emacs/$(COMPONENT_VERSION)/etc/BABYL
@@ -2281,20 +2281,12 @@ file path=usr/share/man/man1/emacsclient.1
 file path=usr/share/man/man1/grep-changelog.1
 file path=usr/share/man/man1/rcs-checkin.1
 
-
 # This package provides everything needed to run emacs except for the
 # actual emacs binary. Although the /usr/bin/emacs shell script is prepared
 # for the case where no binary is present, that's not a useful configuration.
 # Therefore, require at least one of the binary supplying packages.
-#
-# The use of pkg.linted=true is a workaround for
-#
-#    Bug 18202 - pkglint AttributeError when using require-any depend action
-#    https://defect.opensolaris.org/bz/show_bug.cgi?id=18202
-#
-# and can be removed when that bug is fixed.
-#
-depend type=require-any pkg.linted=true \
+
+depend type=require-any \
 	fmri=pkg:/editor/gnu-emacs/gnu-emacs-gtk \
 	fmri=pkg:/editor/gnu-emacs/gnu-emacs-x11 \
 	fmri=pkg:/editor/gnu-emacs/gnu-emacs-no-x11

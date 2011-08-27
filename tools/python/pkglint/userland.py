@@ -224,12 +224,23 @@ class UserlandActionChecker(base.ActionChecker):
 
 		ei = elf.get_info(path)
 		bits = ei.get("bits")
+		type = ei.get("type");
                 elems = os.path.dirname(path).split("/")
 
                 if ("amd64" in elems) or ("sparcv9" in elems) or ("64" in elems):
                     path64 = True
                 else:
                     path64 = False
+
+                if ("i86" in elems) or ("sparcv7" in elems) or ("32" in elems):
+                    path32 = True
+                else:
+                    path32 = False
+
+		# ignore 64-bit executables in normal (non-32-bit-specific)
+		# locations, that's ok now.
+		if (type == "exe" and bits == 64 and path32 == False and path64 == False):
+			return result
 
 		if bits == 32 and path64:
 			result = _("32-bit object '%s' in 64-bit path")
