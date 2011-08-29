@@ -61,12 +61,9 @@ CFLAGS += -xstrconst -xprefetch=auto -xprefetch_level=3 -fns=no -fsimple=1 -xbui
 -xlibmil -xlibmopt -xnorunpath 
 
 # C++ common compiler flags
-CXXFLAGS += -DDBUG_OFF -DBIG_TABLES -DHAVE_RWLOCK_T $(CC_PIC) $($(COMPILER)_opt) \
+CXXFLAGS += -DDBUG_OFF -noex -DBIG_TABLES -DHAVE_RWLOCK_T $(CC_PIC) $($(COMPILER)_opt) \
 $($(COMPILER)_MT) -xprefetch=auto -xprefetch_level=3 -fns=no -fsimple=1 -xbuiltin=%none \
 -xlibmil -xlibmopt
-
-# Common linker flags
-LDFLAGS += -lCrun -lrt
 
 #build environment common to both 32 & 64bit builds
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
