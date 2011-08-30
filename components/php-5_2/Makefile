@@ -157,6 +157,7 @@ build:		install
 download prep install test publish: $(SUBDIRS)
 
 clean:		$(SUBDIRS)
+	$(RM) -r $(BUILD_DIR)
 
 clobber:	$(SUBDIRS) clean
 

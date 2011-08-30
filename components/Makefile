@@ -113,6 +113,13 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 
 publish:
 	$(PKGREPO) rebuild -s $(PKG_REPO)
+	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
+	  -p pkg:/consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation@0.$(OS_VERSION),$(BUILD_VERSION) \
+	  -s "$(CONSOLIDATION) consolidation incorporation" \
+	  -d "This incorporation constrains packages from the $(CONSOLIDATION) consolidation" \
+	  -c $(CONSOLIDATION) >$(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
+	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
+	  $(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'
