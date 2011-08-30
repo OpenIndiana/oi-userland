@@ -107,24 +107,25 @@ Index: crypto/md5/Makefile
 ==================================================================
 diff -ru openssl-1.0.0d/crypto/md5/Makefile openssl-1.0.0d/crypto/md5/Makefile
 --- openssl-1.0.0d/crypto/md5/Makefile	2011-05-24 17:03:14.000000000 -0700
-+++ openssl-1.0.0d/crypto/md5/Makefile	2011-06-30 16:53:53.000000000 -0700
++++ openssl-1.0.0d/crypto/md5/Makefile	2011-08-27 16:01:49.000000000 -0700
 @@ -17,6 +17,10 @@
  ASFLAGS= $(INCLUDES) $(ASFLAG)
  AFLAGS= $(ASFLAGS)
  
 +BITS:=	$(shell if grep '^SHARED_LDFLAGS.*=.*-m32' ../../Makefile >/dev/null; \
 +		then echo 32; else echo 64; fi)
-+ASFLAGSYF= -xregsym=no -K pic -P -xarch=v9b -D_sparcv9 -D_ASM -Dsparc -m$(BITS)
++ASFLAGSYF= -xregsym=no -K pic -P -xarch=v9v -D_sparcv9 -D_ASM -Dsparc -m$(BITS)
 +
  GENERAL=Makefile
  TEST=md5test.c
  APPS=
-@@ -52,6 +58,9 @@
+@@ -52,6 +58,10 @@
  	$(CC) $(CFLAGS) -E asm/md5-ia64.S | \
  	$(PERL) -ne 's/;\s+/;\n/g; print;' > $@
  
 +t4_md5.o: asm/t4_md5.S
 +	as $(ASFLAGSYF) -o $@ asm/t4_md5.S
++	elfedit -e 'cap:hw1 -and -cmp vis vis3' $@
 +
  files:
  	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO
@@ -133,27 +134,29 @@ Index: crypto/sha/Makefile
 ==================================================================
 diff -ru openssl-1.0.0d/crypto/sha/Makefile openssl-1.0.0d/crypto/sha/Makefile
 --- openssl-1.0.0d/crypto/sha/Makefile	2011-05-24 17:03:18.000000000 -0700
-+++ openssl-1.0.0d/crypto/sha/Makefile	2011-06-30 16:53:53.000000000 -0700
++++ openssl-1.0.0d/crypto/sha/Makefile	2011-08-27 16:01:49.000000000 -0700
 @@ -17,6 +17,10 @@
  ASFLAGS= $(INCLUDES) $(ASFLAG)
  AFLAGS= $(ASFLAGS)
  
 +BITS:=	$(shell if grep '^SHARED_LDFLAGS.*=.*-m32' ../../Makefile >/dev/null; \
 +		then echo 32; else echo 64; fi)
-+ASFLAGSYF= -xregsym=no -K pic -P -xarch=v9b -D_sparcv9 -D_ASM -Dsparc -m$(BITS)
++ASFLAGSYF= -xregsym=no -K pic -P -xarch=v9v -D_sparcv9 -D_ASM -Dsparc -m$(BITS)
 +
  GENERAL=Makefile
  TEST=shatest.c sha1test.c sha256t.c sha512t.c
  APPS=
-@@ -76,6 +82,12 @@
+@@ -76,6 +82,14 @@
  sha256-%.s:	asm/sha512-%.pl;	$(PERL) $< $@
  sha512-%.s:	asm/sha512-%.pl;	$(PERL) $< $@
  
 +t4_sha1.o: asm/t4_sha1.S
 +	as $(ASFLAGSYF) -o $@ asm/t4_sha1.S
++	elfedit -e 'cap:hw1 -and -cmp vis vis3' $@
 +
 +t4_sha2.o: asm/t4_sha2.S
 +	as $(ASFLAGSYF) -o $@ asm/t4_sha2.S
++	elfedit -e 'cap:hw1 -and -cmp vis vis3' $@
 +
  files:
  	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO
