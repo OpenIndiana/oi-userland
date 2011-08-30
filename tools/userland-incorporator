@@ -1,0 +1,91 @@
+#!/usr/bin/perl
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+#
+#
+# incorporator - an utility to incorporate packages in a repo
+#
+
+use Getopt::Long;
+
+sub enumerate_packages {
+	local ($repository, @fmris) = @_;
+        my @packages = ();
+
+	#printf "/usr/bin/pkg list -ng $repository @fmris\n";
+	open($fp, "-|", "/usr/bin/pkg", "list", "-ng", $repository, @fmris) ||
+                  die "pkg: $!";
+	while (<$fp>) {
+
+		if (/^(\S+)\s\((\S+)\)\s+([\d.]+)-([\d.]+)\s+...$/) {
+			my ($package) = ();
+
+			$package->{name} = $1;
+			$package->{publisher} = $2;
+			$package->{version} = $3;
+			$package->{branch} = $4;
+
+			push(@packages, $package);
+		}
+	}
+
+	#printf "returning %s\n", $_->{name} for (@packages);
+
+	return @packages;
+}
+
+sub print_incorporate {
+	local (%package) = @_;
+	my $facet = "facet.version-lock.$package->{name}";
+
+	printf "depend fmri=%s@%s-%s %s=true type=incorporate\n",
+		$package->{name}, $package->{version}, $package->{branch},
+		$facet;
+}
+
+my ($repository, $fmri, $summary, $description, $consolidation) = ();
+
+$consolidation = 'userland';
+
+GetOptions("R|repository=s" => \$repository, "v|version=s" => \$version,
+	   "s|summary=s" => \$summary, "d|description=s" => \$description,
+	   "p|package=s" => \$fmri, "f|fmri=s" => \@fmris,
+	   "c|consolidation=s" => \$consolidation);
+
+#
+# print the incorporation
+#
+printf "set name=pkg.fmri value=%s\n", $fmri;
+printf "set name=pkg.summary value='%s'\n", $summary;
+printf "set name=pkg.description value='%s'\n", $description;
+printf "set name=org.opensolaris.consolidation value=%s\n",
+		$consolidation;
+printf "set name=pkg.depend.install-hold value=core-os.%s\n",
+		$consolidation;
+printf "set name=info.classification value='org.opensolaris.category.2008:Meta Packages/Incorporations'\n";
+
+@packages = enumerate_packages($repository, @fmris);
+for (@packages) {
+	printf "depend fmri=pkg:/%s@%s-%s %s=true type=incorporate\n",
+		%$_->{name}, %$_->{version}, %$_->{branch},
+		"facet.version-lock.".%$_->{name};
+}
