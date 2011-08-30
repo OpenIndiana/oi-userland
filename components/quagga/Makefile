@@ -34,6 +34,10 @@ COMPONENT_ARCHIVE_HASH=	sha1:9576d0ac266d173d2a90b8c6f72da8c6b43583d7
 COMPONENT_ARCHIVE_URL=	http://www.quagga.net/download/attic/$(COMPONENT_ARCHIVE)
 PATCH_LEVEL = 0
 
+# without this we bus error on sparc. Until the code in all of Quagga
+# does not have any misaligned code we will need the following flag.
+studio_ALIGN.sparc.32=  -xmemalign=8i
+
 # These options are carried over from the SFW consolidation. Using -xO4 was
 # explicitly commented out, but no reason was docuemnted.
 
