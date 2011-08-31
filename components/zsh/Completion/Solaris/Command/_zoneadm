@@ -13,7 +13,8 @@ _zoneadm() {
 	local context state line expl
 	typeset -A opt_args
 	local -a subcmds fields
-	local -a ipkg_attach ipkg_install
+	local -a solaris_attach solaris_install
+	local -a solaris10_attach solaris10_install
 	local brand brand_args
 
 	subcmds=(
@@ -21,11 +22,11 @@ _zoneadm() {
 		ready reboot uninstall verify
 	)
 
-	ipkg_attach=(
+	solaris_attach=(
 		'(-d)-a[Path to archive]:path:_path_files'
 		'(-a)-d[Path to zonepath]:directory:_path_files -/'
 	)
-	ipkg_install=(
+	solaris_install=(
 		- set1
 		'-c[Path to certificate]:path:_path_files'
 		'*-e[Additional package]:package:'
