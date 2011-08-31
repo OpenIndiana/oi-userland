@@ -62,10 +62,6 @@ _pkg5_facets() {
 	compadd "$@" - $(pkg -R $pkg5_root facet -H | awk '{print $1}')
 }
 
-_pkg5_properties() {
-	compadd "$@" - $(pkg -R $pkg5_root property -H | awk '{print $1}')
-}
-
 _pkg5_known_caching_policy() {
 	[[ $pkg5_root/var/pkg/state/known/catalog.attrs -nt "$1" ]]
 }
@@ -75,9 +71,10 @@ _pkg5_installed_caching_policy() {
 }
 
 _pkg5() {
-	local expl context state line pkg5_root
+	local expl context state line pkg5_root prop
 	typeset -A opt_args
-	local -a subcmds pkg5_actions pkg5_cattr pkg5_sattr
+	local -a subcmds pkg5_actions pkg5_cattr pkg5_sattr be_opts
+	local -a publisher_properties image_properties certs
 
 	subcmds=(
 		install uninstall list update refresh version help
@@ -85,7 +82,7 @@ _pkg5() {
 		{change-,}{variant,facet} avoid unavoid history
 		{{un,}set-,}property {add,remove}-property-value
 		{{un,}set-,}publisher purge-history rebuild-index
-		update-format
+		update-format freeze unfreeze {{un,}set-,}mediator
 	)
 
 	pkg5_actions=(
@@ -104,6 +101,24 @@ _pkg5() {
 		$pkg5_cattr search.match search.match_type
 	)
 
+	publisher_properties=(
+		"signature-policy:value:(ignore verify require-signatures require-names)"
+		"signature-required-names:value:"
+	)
+
+	image_properties=(
+	    "be-policy:value:(default always-new create-backup when-required)"
+	    "ca-path:value:_path_files -/"
+	    "check-certificate-revocation:value:(true false)"
+	    "flush-content-cache-on-success:value:(true false)"
+	    "mirror-discovery:value:(true false)"
+	    "send-uuid:value:(true false)"
+	    "signature-policy:value:(ignore verify require-signatures require-names)"
+	    "signature-required-names:value:"
+	    "trust-anchor-directory:value:_path_files -/"
+	    "use-system-repo:value:(true false)"
+	)
+
 	if [[ $service == "pkg" ]]; then
 		_arguments -C -A "-*" \
 			'(-\? --help)'{-\?,--help}'[Help]' \
@@ -120,6 +135,19 @@ _pkg5() {
 
 	pkg5_root=${${${opt_args[-R]}:-$PKG_IMAGE}:-/}
 
+	certs=( $(pkg -R $pkg5_root property -H ca-path | awk '{print $2}')/* )
+
+	# Options common to subcommands which might have to deal with BEs.
+	be_opts=(
+		"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]"
+		"(--deny-new-be)--require-new-be[Force a new BE to be created]"
+		"--be-name[Specify a BE name]:BE name: "
+		"--no-be-activate[Don't activate the new BE]"
+		"(--require-backup-be)--no-backup-be[Don't leave behind a backup BE]"
+		"(--no-backup-be)--require-backup-be[Force leaving behind a backup BE]"
+		"--backup-be-name[Specify the name for the backup BE]:BE name: "
+	)
+
 	case $service in
 	("install")
 		_arguments -A "-*" \
@@ -129,12 +157,10 @@ _pkg5() {
 			'-g[Specify additional source of packages]:source:_path_files -/' \
 			"--accept[Accept all licenses]" \
 			"--licenses[Display all licenses]" \
-			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
-			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
-			"--be-name[Specify a BE name]:BE name: " \
 			"--reject[Specify an FMRI to exclude from the result]:fmri:_pkg5_pkgs" \
 			"--no-refresh[Don't refresh catalogs]" \
 			"--no-index[Don't reindex search database]" \
+			$be_opts \
 			'*:package:_pkg5_pkgs_a'
 		;;
 
@@ -142,11 +168,8 @@ _pkg5() {
 		_arguments -A "-*" \
 			'-n[Dry run]' \
 			'-q[Quiet]' \
-			'-r[Recursively uninstall dependencies]' \
 			'-v[Verbose]' \
-			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
-			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
-			"--be-name[Specify a BE name]:BE name: " \
+			$be_opts \
 			"--no-index[Don't reindex search database]" \
 			'*:package:_pkg5_pkgs'
 		;;
@@ -160,9 +183,7 @@ _pkg5() {
 			'-g[Specify additional source of packages]:source:_path_files -/' \
 			"--accept[Accept all licenses]" \
 			"--licenses[Display all licenses]" \
-			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
-			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
-			'--be-name[Specify a BE name]:name:' \
+			$be_opts \
 			"--reject[Specify an FMRI to exclude from the result]:fmri:_pkg5_pkgs" \
 			"--no-refresh[Don't refresh catalogs]" \
 			"--no-index[Don't reindex search database]" \
@@ -229,10 +250,8 @@ _pkg5() {
 		_arguments -A "-*" \
 			'-n[Dry run]' \
 			'-v[Verbose]' \
-			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
-			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
 			'--tagged[Revert all tagged files]:tag:' \
-			'--be-name[Specify a BE name]:name:' \
+			$be_opts \
 			"--no-refresh[Don't refresh catalogs]" \
 			"--no-index[Don't reindex search database]" \
 			'*:file:_path_files'
@@ -274,9 +293,7 @@ _pkg5() {
 			'-g[Specify additional source of packages]:source:_path_files -/' \
 			'--accept[Accept all licenses]' \
 			'--licenses[Display all licenses]' \
-			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
-			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
-			'--be-name[Specify a BE name]:name:' \
+			$be_opts \
 			"*:variant:_values -s , 'variant' $(pkg -R $pkg5_root variant -H | awk '{print $1}')" \
 		;;
 
@@ -288,9 +305,7 @@ _pkg5() {
 			'-g[Specify additional source of packages]:source:_path_files -/' \
 			'--accept[Accept all licenses]' \
 			'--licenses[Display all licenses]' \
-			"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]" \
-			"(--deny-new-be)--require-new-be[Force a new BE to be created]" \
-			'--be-name[Specify a BE name]:name:' \
+			$be_opts \
 			"*:facet:_values -s , 'facet' $(pkg -R $pkg5_root facet -H | awk '{print $1}')" \
 		;;
 
@@ -318,31 +333,31 @@ _pkg5() {
 
 	("set-property")
 		_arguments -A "-*" \
-			':property:_pkg5_properties' \
+			':property:_values "property" $image_properties' \
 			':value:'
 		;;
 
 	("add-property-value")
 		_arguments -A "-*" \
-			':property:_pkg5_properties' \
+			':property:_values "property" $image_properties' \
 			':value:'
 		;;
 
 	("remove-property-value")
 		_arguments -A "-*" \
-			':property:_pkg5_properties' \
+			':property:(${image_properties%%\:*})' \
 			':value:'
 		;;
 
 	("unset-property")
 		_arguments -A "-*" \
-			'*:property:_pkg5_properties'
+			'*:property:(${image_properties%%\:*})'
 		;;
 
 	("property")
 		_arguments -A "-*" \
 			'-H[Omit headers]' \
-			'*:property:_pkg5_properties'
+			'*:property:(${image_properties%%\:*})'
 		;;
 
 	("set-publisher")
@@ -361,6 +376,13 @@ _pkg5() {
 			'--non-sticky[Make this publisher non-sticky]' \
 			'--search-after[Set publisher search-order]:publisher:_pkg5_pubs' \
 			'--search-before[Set publisher search-order]:publisher:_pkg5_pubs' \
+			'--approve-ca-cert[Add trusted CA certificate]:CA cert path:_path_files' \
+			'--revoke-ca-cert[Revoke CA certificate]:CA cert hash:(${${certs#/etc/openssl/certs/}%.0})' \
+			'--unset-ca-cert[Remove trusted CA certificate]:CA cert hash:' \
+			'--set-property[Set publisher property]:property:_values "property" $publisher_properties' \
+			'--unset-property[Remove publisher property]:property:(${publisher_properties%%\:*})' \
+			'--add-property-value[Add publisher property value]:property:_values "property" $publisher_properties' \
+			'--remove-property-value[Remove publisher property value]:property:(${publisher_properties%%\:*})' \
 			':publisher:_pkg5_pubs'
 		;;
 
@@ -390,6 +412,12 @@ _pkg5() {
 			'-n[Last n records]:number:' \
 			'-o[Column]:number:_values -s , "column" $hist_columns' \
 			'-t[Time range]'
+		;;
+
+	("freeze"|"unfreeze")
+		;;
+
+	("mediator"|"set-mediator"|"unset-mediator")
 		;;
 
 	(*)
