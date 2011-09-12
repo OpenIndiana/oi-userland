@@ -38,6 +38,9 @@ include ../../make-rules/ips.mk
 
 CXX +=	$(studio_NORUNPATH)
 
+# don't use LD_Z_IGNORE: causes linker problems
+LD_Z_IGNORE=
+
 CONFIGURE_OPTIONS +=	--prefix=/usr
 CONFIGURE_OPTIONS +=	--mandir=/usr/share/man
 CONFIGURE_OPTIONS +=	--localedir=$(USRSHARELOCALEDIR)
