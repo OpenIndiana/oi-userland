@@ -48,6 +48,7 @@ CONFIGURE_OPTIONS  +=	--with-logfile=/var/log/snmpd.log
 CONFIGURE_OPTIONS  +=	--with-persistent-directory=/var/net-snmp
 
 CONFIGURE_OPTIONS  +=	--with-mibdirs=/etc/net-snmp/snmp/mibs
+CONFIGURE_OPTIONS  +=	--datadir=/etc/net-snmp
 CONFIGURE_OPTIONS  +=	--enable-agentx-dom-sock-only
 CONFIGURE_OPTIONS  +=	--enable-ucd-snmp-compatibility
 CONFIGURE_OPTIONS  +=	--enable-ipv6
