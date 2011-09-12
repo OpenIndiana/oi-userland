@@ -36,6 +36,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# don't use LD_Z_IGNORE: causes linker problems
+LD_Z_IGNORE=
+
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--sysconfdir=/etc/gnu
