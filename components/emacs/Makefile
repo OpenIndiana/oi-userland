@@ -66,7 +66,7 @@ COMPILER =	gcc
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
 
 # configure options common to all variants of emacs that we want to build.
-CONFIGURE_OPTIONS +=	CC="gcc -m64"
+CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
