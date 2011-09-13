@@ -40,6 +40,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
 #

@@ -34,6 +34,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/configure.mk
 
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+
 # configure(1) options to use
 CONFIGURE_OPTIONS +=	--with-drivers=ALL
 CONFIGURE_OPTIONS +=	--with-ijs

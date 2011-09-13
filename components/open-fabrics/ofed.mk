@@ -29,6 +29,8 @@ PROTO_DIR = $(WS_COMPONENTS)/open-fabrics/prototype/$(MACH)
 # OFED only builds with GCC
 COMPILER=gcc
 
+PATH=/usr/bin:/usr/gnu/bin:/usr/sfw/bin
+
 CPPFLAGS += "-Wformat=2"
 CFLAGS += -D_REENTRANT
 
