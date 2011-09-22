@@ -33,6 +33,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+
 PARCH =         $(MACH:i386=i386-pc)
 GNU_ARCH =      $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 
