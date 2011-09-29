@@ -89,7 +89,7 @@ $(WS_REPO):
 $(WS_LINT_CACHE):	$(WS_LOGS)
 ifdef CANONICAL_REPO
 	@echo "Generating pkglint(1) cache from $(CANONICAL_REPO)..."
-	@(echo "set name=fmri value=pkg:/dummy" | $(PKGLINT) \
+	@(echo "set name=fmri value=pkg:/dummy@0,$(BUILD_VERSION)" | $(PKGLINT) \
 		-c $(WS_LINT_CACHE) -r $(CANONICAL_REPO) /dev/fd/0 \
 		>$(WS_LOGS)/naughty-canonical-repo-actions 2>&1 ; exit 0)
 else

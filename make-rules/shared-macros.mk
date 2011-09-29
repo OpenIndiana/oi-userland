@@ -80,7 +80,7 @@ LAST_BUILD_NUM = $(LAST_HG_TAG:build-%=%)
 
 OS_VERSION =		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
-BUILD_NUM =		0.$(shell expr $(LAST_BUILD_NUM) + 1)
+BUILD_NUM ?=		0.$(shell expr $(LAST_BUILD_NUM) + 1)
 
 #
 # The Solaris Update number. This will be set by the gatekeepers.
@@ -116,7 +116,7 @@ BUILDID ?= 0
 #
 NIGHTLYID ?=	$(shell hg tip --template '{rev}\n')
 
-BUILD_VERSION =	 \
+BUILD_VERSION ?=	 \
     $(OS_VERSION)-$(BUILD_NUM).$(UPDATENUM).$(SRUNUM).$(PLATNUM).$(BUILDID).$(NIGHTLYID)
 
 COMPILER =		studio
