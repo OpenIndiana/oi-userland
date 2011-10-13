@@ -170,7 +170,8 @@ static const EVP_MD t4_md5 = {
 
 #ifndef OPENSSL_NO_SHA
 static const EVP_MD t4_sha1 = {
-	NID_sha1, NID_sha1WithRSAEncryption, SHA_DIGEST_LENGTH, 0,
+	NID_sha1, NID_sha1WithRSAEncryption, SHA_DIGEST_LENGTH,
+	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|EVP_MD_FLAG_DIGALGID_ABSENT,
 	t4_digest_init_sha1, t4_digest_update_sha1, t4_digest_final_sha1,
 	t4_digest_copy_sha1, NULL,
 	EVP_PKEY_RSA_method, SHA_CBLOCK,
@@ -178,16 +179,17 @@ static const EVP_MD t4_sha1 = {
 	};
 
 static const EVP_MD t4_sha256 = {
-	NID_sha256, NID_sha256WithRSAEncryption, SHA256_DIGEST_LENGTH, 0,
+	NID_sha256, NID_sha256WithRSAEncryption, SHA256_DIGEST_LENGTH,
+	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|EVP_MD_FLAG_DIGALGID_ABSENT,
 	t4_digest_init_sha256, t4_digest_update_sha256, t4_digest_final_sha256,
 	t4_digest_copy_sha2, NULL,
 	EVP_PKEY_RSA_method, SHA256_CBLOCK,
 	sizeof (SHA2_CTX), NULL
 	};
 
-static const EVP_MD t4_sha512 =
-	{
-	NID_sha512, NID_sha512WithRSAEncryption, SHA512_DIGEST_LENGTH, 0,
+static const EVP_MD t4_sha512 = {
+	NID_sha512, NID_sha512WithRSAEncryption, SHA512_DIGEST_LENGTH,
+	EVP_MD_FLAG_PKEY_METHOD_SIGNATURE|EVP_MD_FLAG_DIGALGID_ABSENT,
 	t4_digest_init_sha512, t4_digest_update_sha512, t4_digest_final_sha512,
 	t4_digest_copy_sha2, NULL,
 	EVP_PKEY_RSA_method, SHA512_CBLOCK,
