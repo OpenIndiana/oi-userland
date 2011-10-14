@@ -43,7 +43,15 @@ function populate_texinfo_directory() {
 			/usr/bin/install-info --dir-file=${dir_file}.new \
 				--info-file=${info_file}
 		done
+		owner_group='root:bin'	# default owner/group
+		if [[ -f ${dir_file} ]] ; then
+			# get owner/group from original file
+			group_bin=$(/bin/ls -l ${dir_file} | \
+				    awk '{print $3":"$4}')
+		fi
 		/bin/mv -f ${dir_file}.new ${dir_file}
+		/bin/chmod -f 0644 ${dir_file}
+		/bin/chown -f ${owner_group} ${dir_file}
 		/bin/ln -s ${1} ${dir_file}.backlink 2>/dev/null
 		;;
 	esac
