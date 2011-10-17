@@ -909,17 +909,15 @@ t4_destroy(ENGINE *e)
 static int
 t4_bind(ENGINE *e)
 {
-	static int aes_engage = -1, digest_engage = -1;
+	static int aes_engage = -1;
 
 	if (aes_engage == -1) {
 		aes_engage = (t4_aes_instructions_present() != 0);
 	}
-	if (digest_engage == -1) {
-		digest_engage = (t4_digest_instructions_present() != 0);
-	}
+
 #ifdef DEBUG_T4
 	(void) fprintf(stderr,
-	    "t4_bind: engage aes=%d, digest=%d\n", aes_engage, digest_engage);
+	    "t4_bind: engage aes=%d\n", aes_engage);
 #endif
 
 #ifndef  SOLARIS_NO_AES_CTR
@@ -950,7 +948,6 @@ t4_bind(ENGINE *e)
 	    aes_engage ? ENGINE_T4_NAME: ENGINE_NO_T4_NAME) ||
 	    !ENGINE_set_init_function(e, t4_init) ||
 	    (aes_engage && !ENGINE_set_ciphers(e, t4_get_all_ciphers)) ||
-	    (digest_engage && !ENGINE_set_digests(e, t4_get_all_digests)) ||
 	    !ENGINE_set_destroy_function(e, t4_destroy)) {
 		T4_FREE_AES_CTR_NIDS;
 		return (0);
