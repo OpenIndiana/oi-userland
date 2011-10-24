@@ -43,6 +43,14 @@ export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 # The workspace starts at the mercurial root
 export WS_TOP ?=		$(shell hg root)
 
+WS_LOGS =	$(WS_TOP)/$(MACH)/logs
+WS_REPO =	$(WS_TOP)/$(MACH)/repo
+WS_TOOLS =	$(WS_TOP)/tools
+WS_MAKE_RULES =	$(WS_TOP)/make-rules
+WS_COMPONENTS =	$(WS_TOP)/components
+WS_INCORPORATIONS =	$(WS_TOP)/incorporations
+WS_LINT_CACHE =	$(WS_TOP)/$(MACH)/pkglint-cache
+
 # we want our pkg piplines to fail if there is an error
 # (like if pkgdepend fails in the middle of a pipe), but
 # we don't want the builds or ./configure's failing as well.
@@ -62,75 +70,15 @@ PUBLISHER ?=	$(CONSOLIDATION)
 
 ROOT =			/
 
-# The package branch version scheme is:
-#
-#       trunk_id.update.SRU.platform.buildid.nightlyid
-#
-# where
-#       trunk_id : build number for tip development gate, with leading 0
-#       update   : 0 for FCS, 1 for update 1, etc.
-#       SRU      : SRU (support repository update) number for this update
-#       platform : reserved for future use.
-#       buildid  : the build number of the last non-zero element from above
-#       nightlyid: nightly build identifier
-
-# get the most recent build number from the last mercurial tag
-LAST_HG_TAG =	$(shell hg tags -q | grep build- | head -1)
-LAST_BUILD_NUM = $(LAST_HG_TAG:build-%=%)
-
 OS_VERSION =		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
-BUILD_NUM ?=		0.$(shell expr $(LAST_BUILD_NUM) + 1)
 
-#
-# The Solaris Update number. This will be set by the gatekeepers.
-# The value must match the update number of the release.
-#
-UPDATENUM ?= 0
-
-#
-# Support Respository Update number. This is here to reserve space within the
-# version string. Typically it should not be set unless all the packages
-# are being delivered within an SRU.
-#
-SRUNUM ?= 0
-
-#
-# Platform number. This is here to reserve space within the version
-# string. It should not be set unless there is a specific need to
-# release a platform update while the Solaris Update is being built.
-#
-PLATNUM ?= 0
-
-#
-# Build Identifier. Used to indicate which build (or respin for
-# the development build) of the Solaris Update is being built.
-# This is set by the gatekeepers.
-#
-BUILDID ?= 0
-
-# Each (nightly) build of the code that produces packages needs to
-# be uniquely identified so that packages produced by different
-# builds can't be mixed.  Mixing packages from different builds can
-# easily result in broken global and nonglobal zones.
-#
-NIGHTLYID ?=	$(shell hg tip --template '{rev}\n')
-
-BUILD_VERSION ?=	 \
-    $(OS_VERSION)-$(BUILD_NUM).$(UPDATENUM).$(SRUNUM).$(PLATNUM).$(BUILDID).$(NIGHTLYID)
+include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER =		studio
 BITS =			32
 PYTHON_VERSION =	2.6
 PYTHON_VERSIONS =	2.6
-
-WS_LOGS =	$(WS_TOP)/$(MACH)/logs
-WS_REPO =	$(WS_TOP)/$(MACH)/repo
-WS_TOOLS =	$(WS_TOP)/tools
-WS_MAKE_RULES =	$(WS_TOP)/make-rules
-WS_COMPONENTS =	$(WS_TOP)/components
-WS_INCORPORATIONS =	$(WS_TOP)/incorporations
-WS_LINT_CACHE =	$(WS_TOP)/$(MACH)/pkglint-cache
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
