@@ -1,0 +1,16 @@
+# Patch for CR 7088072 and 7088065
+--- stdcxx-4.2.1/include/string.cc	2011-07-10 13:09:53.630466602 -0700
++++ stdcxx-4.2.1/include/string.cc	2011-09-10 13:20:30.199451960 -0700
+@@ -415,6 +415,12 @@
+                                    "size_type, size_type, value_type)"), 
+                       __size0 - __xlen, max_size () - __count));
+ 
++    _RWSTD_REQUIRES (__count < (max_size () - __pos),
++                     (_RWSTD_ERROR_LENGTH_ERROR,
++                      _RWSTD_FUNC ("basic_string::replace (size_type, "
++                                   "size_type, size_type, value_type)"), 
++                      __count, (max_size () - __pos)));
++
+     // compute the resulting string size
+     const size_type __size1 = __size0 - __xlen + __count;
+ 
