@@ -27,7 +27,6 @@ include ofed.mk
 LD_Z_IGNORE =
 
 COMPONENT_VERSION=1.5.3
-COMPONENT_ARCHIVE_URL=http://www.openfabrics/org/downloads/OFED/ofed-1.5.3/OFED-1.5.3.tgz
 
 # for now, everything with a Makefile should be built
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
