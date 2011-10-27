@@ -24,10 +24,14 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
-<transform file path=usr/share/man/man1oldap/(.*) -> set action.hash usr/share/man/man1/%<1> >
-<transform file path=usr/share/man/man3oldap/(.*) -> set action.hash usr/share/man/man3/%<1> >
-<transform file path=usr/share/man/man5oldap/(.*) -> set action.hash usr/share/man/man5/%<1> >
-<transform file path=usr/share/man/man8oldap/(.*) -> set action.hash usr/share/man/man8/%<1> >
+<transform file path=(.+)/man/man1oldap/(.+).1oldap$ -> \
+	set action.hash %<\1>/man/man1/%<\2>.1>
+<transform file path=(.+)/man/man3oldap/(.+).3oldap$ -> \
+	set action.hash %<\1>/man/man3/%<\2>.3>
+<transform file path=(.+)/man/man5oldap/(.+).5oldap$ -> \
+	set action.hash %<\1>/man/man5/%<\2>.5>
+<transform file path=(.+)/man/man8oldap/(.+).8oldap$ -> \
+	set action.hash %<\1>/man/man8/%<\2>.8>
 <transform file path=usr/share/doc/openldap/images/(.+)$ -> \ 
         set action.hash $(MACH32)/doc/guide/admin/%<1> >
 <transform file path=usr/share/doc/openldap/admin24/(.+)$ -> \
@@ -163,106 +167,106 @@ file path=usr/share/doc/openldap/images/refint.png
 file path=usr/share/doc/openldap/images/set-following-references.png
 file path=usr/share/doc/openldap/images/set-memberUid.png
 file path=usr/share/doc/openldap/images/set-recursivegroup.png
-file path=usr/share/man/man1oldap/ldapcompare.1
-file path=usr/share/man/man1oldap/ldapdelete.1
-file path=usr/share/man/man1oldap/ldapexop.1
-file path=usr/share/man/man1oldap/ldapmodify.1
-file path=usr/share/man/man1oldap/ldapmodrdn.1
-file path=usr/share/man/man1oldap/ldappasswd.1
-file path=usr/share/man/man1oldap/ldapsearch.1
-file path=usr/share/man/man1oldap/ldapurl.1
-file path=usr/share/man/man1oldap/ldapwhoami.1
-file path=usr/share/man/man3oldap/lber-decode.3
-file path=usr/share/man/man3oldap/lber-encode.3
-file path=usr/share/man/man3oldap/lber-memory.3
-file path=usr/share/man/man3oldap/lber-sockbuf.3
-file path=usr/share/man/man3oldap/lber-types.3
-file path=usr/share/man/man3oldap/ldap.3
-file path=usr/share/man/man3oldap/ldap_abandon.3
-file path=usr/share/man/man3oldap/ldap_add.3
-file path=usr/share/man/man3oldap/ldap_bind.3
-file path=usr/share/man/man3oldap/ldap_compare.3
-file path=usr/share/man/man3oldap/ldap_controls.3
-file path=usr/share/man/man3oldap/ldap_delete.3
-file path=usr/share/man/man3oldap/ldap_dup.3
-file path=usr/share/man/man3oldap/ldap_error.3
-file path=usr/share/man/man3oldap/ldap_extended_operation.3
-file path=usr/share/man/man3oldap/ldap_first_attribute.3
-file path=usr/share/man/man3oldap/ldap_first_entry.3
-file path=usr/share/man/man3oldap/ldap_first_message.3
-file path=usr/share/man/man3oldap/ldap_first_reference.3
-file path=usr/share/man/man3oldap/ldap_get_dn.3
-file path=usr/share/man/man3oldap/ldap_get_option.3
-file path=usr/share/man/man3oldap/ldap_get_values.3
-file path=usr/share/man/man3oldap/ldap_memory.3
-file path=usr/share/man/man3oldap/ldap_modify.3
-file path=usr/share/man/man3oldap/ldap_modrdn.3
-file path=usr/share/man/man3oldap/ldap_open.3
-file path=usr/share/man/man3oldap/ldap_parse_reference.3
-file path=usr/share/man/man3oldap/ldap_parse_result.3
-file path=usr/share/man/man3oldap/ldap_parse_sort_control.3
-file path=usr/share/man/man3oldap/ldap_parse_vlv_control.3
-file path=usr/share/man/man3oldap/ldap_rename.3
-file path=usr/share/man/man3oldap/ldap_result.3
-file path=usr/share/man/man3oldap/ldap_schema.3
-file path=usr/share/man/man3oldap/ldap_search.3
-file path=usr/share/man/man3oldap/ldap_sort.3
-file path=usr/share/man/man3oldap/ldap_sync.3
-file path=usr/share/man/man3oldap/ldap_tls.3
-file path=usr/share/man/man3oldap/ldap_url.3
-file path=usr/share/man/man5oldap/ldap.conf.5
-file path=usr/share/man/man5oldap/ldif.5
-file path=usr/share/man/man5oldap/slapd-bdb.5
-file path=usr/share/man/man5oldap/slapd-config.5
-file path=usr/share/man/man5oldap/slapd-dnssrv.5
-file path=usr/share/man/man5oldap/slapd-ldap.5
-file path=usr/share/man/man5oldap/slapd-ldbm.5
-file path=usr/share/man/man5oldap/slapd-ldif.5
-file path=usr/share/man/man5oldap/slapd-meta.5
-file path=usr/share/man/man5oldap/slapd-monitor.5
-file path=usr/share/man/man5oldap/slapd-ndb.5
-file path=usr/share/man/man5oldap/slapd-null.5
-file path=usr/share/man/man5oldap/slapd-passwd.5
-file path=usr/share/man/man5oldap/slapd-perl.5
-file path=usr/share/man/man5oldap/slapd-relay.5
-file path=usr/share/man/man5oldap/slapd-shell.5
-file path=usr/share/man/man5oldap/slapd-sock.5
-file path=usr/share/man/man5oldap/slapd-sql.5
-file path=usr/share/man/man5oldap/slapd.access.5
-file path=usr/share/man/man5oldap/slapd.backends.5
-file path=usr/share/man/man5oldap/slapd.conf.5
-file path=usr/share/man/man5oldap/slapd.overlays.5
-file path=usr/share/man/man5oldap/slapd.plugin.5
-file path=usr/share/man/man5oldap/slapo-accesslog.5
-file path=usr/share/man/man5oldap/slapo-auditlog.5
-file path=usr/share/man/man5oldap/slapo-chain.5
-file path=usr/share/man/man5oldap/slapo-collect.5
-file path=usr/share/man/man5oldap/slapo-constraint.5
-file path=usr/share/man/man5oldap/slapo-dds.5
-file path=usr/share/man/man5oldap/slapo-dyngroup.5
-file path=usr/share/man/man5oldap/slapo-dynlist.5
-file path=usr/share/man/man5oldap/slapo-memberof.5
-file path=usr/share/man/man5oldap/slapo-pbind.5
-file path=usr/share/man/man5oldap/slapo-pcache.5
-file path=usr/share/man/man5oldap/slapo-ppolicy.5
-file path=usr/share/man/man5oldap/slapo-refint.5
-file path=usr/share/man/man5oldap/slapo-retcode.5
-file path=usr/share/man/man5oldap/slapo-rwm.5
-file path=usr/share/man/man5oldap/slapo-sssvlv.5
-file path=usr/share/man/man5oldap/slapo-syncprov.5
-file path=usr/share/man/man5oldap/slapo-translucent.5
-file path=usr/share/man/man5oldap/slapo-unique.5
-file path=usr/share/man/man5oldap/slapo-valsort.5
-file path=usr/share/man/man8oldap/slapacl.8
-file path=usr/share/man/man8oldap/slapadd.8
-file path=usr/share/man/man8oldap/slapauth.8
-file path=usr/share/man/man8oldap/slapcat.8
-file path=usr/share/man/man8oldap/slapd.8
-file path=usr/share/man/man8oldap/slapdn.8
-file path=usr/share/man/man8oldap/slapindex.8
-file path=usr/share/man/man8oldap/slappasswd.8
-file path=usr/share/man/man8oldap/slapschema.8
-file path=usr/share/man/man8oldap/slaptest.8
+file path=usr/share/man/man1oldap/ldapcompare.1oldap
+file path=usr/share/man/man1oldap/ldapdelete.1oldap
+file path=usr/share/man/man1oldap/ldapexop.1oldap
+file path=usr/share/man/man1oldap/ldapmodify.1oldap
+file path=usr/share/man/man1oldap/ldapmodrdn.1oldap
+file path=usr/share/man/man1oldap/ldappasswd.1oldap
+file path=usr/share/man/man1oldap/ldapsearch.1oldap
+file path=usr/share/man/man1oldap/ldapurl.1oldap
+file path=usr/share/man/man1oldap/ldapwhoami.1oldap
+file path=usr/share/man/man3oldap/lber-decode.3oldap
+file path=usr/share/man/man3oldap/lber-encode.3oldap
+file path=usr/share/man/man3oldap/lber-memory.3oldap
+file path=usr/share/man/man3oldap/lber-sockbuf.3oldap
+file path=usr/share/man/man3oldap/lber-types.3oldap
+file path=usr/share/man/man3oldap/ldap.3oldap
+file path=usr/share/man/man3oldap/ldap_abandon.3oldap
+file path=usr/share/man/man3oldap/ldap_add.3oldap
+file path=usr/share/man/man3oldap/ldap_bind.3oldap
+file path=usr/share/man/man3oldap/ldap_compare.3oldap
+file path=usr/share/man/man3oldap/ldap_controls.3oldap
+file path=usr/share/man/man3oldap/ldap_delete.3oldap
+file path=usr/share/man/man3oldap/ldap_dup.3oldap
+file path=usr/share/man/man3oldap/ldap_error.3oldap
+file path=usr/share/man/man3oldap/ldap_extended_operation.3oldap
+file path=usr/share/man/man3oldap/ldap_first_attribute.3oldap
+file path=usr/share/man/man3oldap/ldap_first_entry.3oldap
+file path=usr/share/man/man3oldap/ldap_first_message.3oldap
+file path=usr/share/man/man3oldap/ldap_first_reference.3oldap
+file path=usr/share/man/man3oldap/ldap_get_dn.3oldap
+file path=usr/share/man/man3oldap/ldap_get_option.3oldap
+file path=usr/share/man/man3oldap/ldap_get_values.3oldap
+file path=usr/share/man/man3oldap/ldap_memory.3oldap
+file path=usr/share/man/man3oldap/ldap_modify.3oldap
+file path=usr/share/man/man3oldap/ldap_modrdn.3oldap
+file path=usr/share/man/man3oldap/ldap_open.3oldap
+file path=usr/share/man/man3oldap/ldap_parse_reference.3oldap
+file path=usr/share/man/man3oldap/ldap_parse_result.3oldap
+file path=usr/share/man/man3oldap/ldap_parse_sort_control.3oldap
+file path=usr/share/man/man3oldap/ldap_parse_vlv_control.3oldap
+file path=usr/share/man/man3oldap/ldap_rename.3oldap
+file path=usr/share/man/man3oldap/ldap_result.3oldap
+file path=usr/share/man/man3oldap/ldap_schema.3oldap
+file path=usr/share/man/man3oldap/ldap_search.3oldap
+file path=usr/share/man/man3oldap/ldap_sort.3oldap
+file path=usr/share/man/man3oldap/ldap_sync.3oldap
+file path=usr/share/man/man3oldap/ldap_tls.3oldap
+file path=usr/share/man/man3oldap/ldap_url.3oldap
+file path=usr/share/man/man5oldap/ldap.conf.5oldap
+file path=usr/share/man/man5oldap/ldif.5oldap
+file path=usr/share/man/man5oldap/slapd-bdb.5oldap
+file path=usr/share/man/man5oldap/slapd-config.5oldap
+file path=usr/share/man/man5oldap/slapd-dnssrv.5oldap
+file path=usr/share/man/man5oldap/slapd-ldap.5oldap
+file path=usr/share/man/man5oldap/slapd-ldbm.5oldap
+file path=usr/share/man/man5oldap/slapd-ldif.5oldap
+file path=usr/share/man/man5oldap/slapd-meta.5oldap
+file path=usr/share/man/man5oldap/slapd-monitor.5oldap
+file path=usr/share/man/man5oldap/slapd-ndb.5oldap
+file path=usr/share/man/man5oldap/slapd-null.5oldap
+file path=usr/share/man/man5oldap/slapd-passwd.5oldap
+file path=usr/share/man/man5oldap/slapd-perl.5oldap
+file path=usr/share/man/man5oldap/slapd-relay.5oldap
+file path=usr/share/man/man5oldap/slapd-shell.5oldap
+file path=usr/share/man/man5oldap/slapd-sock.5oldap
+file path=usr/share/man/man5oldap/slapd-sql.5oldap
+file path=usr/share/man/man5oldap/slapd.access.5oldap
+file path=usr/share/man/man5oldap/slapd.backends.5oldap
+file path=usr/share/man/man5oldap/slapd.conf.5oldap
+file path=usr/share/man/man5oldap/slapd.overlays.5oldap
+file path=usr/share/man/man5oldap/slapd.plugin.5oldap
+file path=usr/share/man/man5oldap/slapo-accesslog.5oldap
+file path=usr/share/man/man5oldap/slapo-auditlog.5oldap
+file path=usr/share/man/man5oldap/slapo-chain.5oldap
+file path=usr/share/man/man5oldap/slapo-collect.5oldap
+file path=usr/share/man/man5oldap/slapo-constraint.5oldap
+file path=usr/share/man/man5oldap/slapo-dds.5oldap
+file path=usr/share/man/man5oldap/slapo-dyngroup.5oldap
+file path=usr/share/man/man5oldap/slapo-dynlist.5oldap
+file path=usr/share/man/man5oldap/slapo-memberof.5oldap
+file path=usr/share/man/man5oldap/slapo-pbind.5oldap
+file path=usr/share/man/man5oldap/slapo-pcache.5oldap
+file path=usr/share/man/man5oldap/slapo-ppolicy.5oldap
+file path=usr/share/man/man5oldap/slapo-refint.5oldap
+file path=usr/share/man/man5oldap/slapo-retcode.5oldap
+file path=usr/share/man/man5oldap/slapo-rwm.5oldap
+file path=usr/share/man/man5oldap/slapo-sssvlv.5oldap
+file path=usr/share/man/man5oldap/slapo-syncprov.5oldap
+file path=usr/share/man/man5oldap/slapo-translucent.5oldap
+file path=usr/share/man/man5oldap/slapo-unique.5oldap
+file path=usr/share/man/man5oldap/slapo-valsort.5oldap
+file path=usr/share/man/man8oldap/slapacl.8oldap
+file path=usr/share/man/man8oldap/slapadd.8oldap
+file path=usr/share/man/man8oldap/slapauth.8oldap
+file path=usr/share/man/man8oldap/slapcat.8oldap
+file path=usr/share/man/man8oldap/slapd.8oldap
+file path=usr/share/man/man8oldap/slapdn.8oldap
+file path=usr/share/man/man8oldap/slapindex.8oldap
+file path=usr/share/man/man8oldap/slappasswd.8oldap
+file path=usr/share/man/man8oldap/slapschema.8oldap
+file path=usr/share/man/man8oldap/slaptest.8oldap
 file path=var/openldap/openldap-data/DB_CONFIG.example
 group groupname=openldap gid=75
 legacy pkg=SUNWopenldapr desc="OpenLDAP Software (root)" \
@@ -312,168 +316,295 @@ link path=usr/sbin/slapindex target=../lib/slapd
 link path=usr/sbin/slappasswd target=../lib/slapd
 link path=usr/sbin/slapschema target=../lib/slapd
 link path=usr/sbin/slaptest target=../lib/slapd
-link path=usr/share/man/man1oldap/ldapadd.1 target=ldapmodify.1
-link path=usr/share/man/man3oldap/ber_alloc_t.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_bvarray_add.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_bvarray_free.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_bvdup.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_bvecadd.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_bvecfree.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_bvfree.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_bvstr.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_bvstrdup.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_dupbv.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_first_element.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_flush.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_free.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ber_get_bitstring.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_get_boolean.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_get_enum.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_get_int.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_get_next.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_get_null.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_get_stringa.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_get_stringb.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_next_element.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_peek_tag.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_printf.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_put_enum.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_put_int.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_put_null.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_put_ostring.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_put_seq.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_put_set.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_put_string.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_scanf.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_skip_tag.3 target=lber-decode.3
-link path=usr/share/man/man3oldap/ber_start_set.3 target=lber-encode.3
-link path=usr/share/man/man3oldap/ber_str2bv.3 target=lber-types.3
-link path=usr/share/man/man3oldap/ld_errno.3 target=ldap_error.3
-link path=usr/share/man/man3oldap/ldap_abandon_ext.3 target=ldap_abandon.3
-link path=usr/share/man/man3oldap/ldap_add_ext.3 target=ldap_add.3
-link path=usr/share/man/man3oldap/ldap_add_ext_s.3 target=ldap_add.3
-link path=usr/share/man/man3oldap/ldap_add_s.3 target=ldap_add.3
-link path=usr/share/man/man3oldap/ldap_attributetype2name.3 \
-    target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_attributetype2str.3 \
-    target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_attributetype_free.3 \
-    target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_bind_s.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_compare_ext.3 target=ldap_compare.3
-link path=usr/share/man/man3oldap/ldap_compare_ext_s.3 target=ldap_compare.3
-link path=usr/share/man/man3oldap/ldap_compare_s.3 target=ldap_compare.3
-link path=usr/share/man/man3oldap/ldap_control_create.3 target=ldap_controls.3
-link path=usr/share/man/man3oldap/ldap_control_dup.3 target=ldap_controls.3
-link path=usr/share/man/man3oldap/ldap_control_find.3 target=ldap_controls.3
-link path=usr/share/man/man3oldap/ldap_control_free.3 target=ldap_controls.3
-link path=usr/share/man/man3oldap/ldap_controls_dup.3 target=ldap_controls.3
-link path=usr/share/man/man3oldap/ldap_controls_free.3 target=ldap_controls.3
-link path=usr/share/man/man3oldap/ldap_count_entries.3 \
-    target=ldap_first_entry.3
-link path=usr/share/man/man3oldap/ldap_count_messages.3 \
-    target=ldap_first_message.3
-link path=usr/share/man/man3oldap/ldap_count_references.3 \
-    target=ldap_first_reference.3
-link path=usr/share/man/man3oldap/ldap_count_values.3 target=ldap_get_values.3
-link path=usr/share/man/man3oldap/ldap_count_values_len.3 \
-    target=ldap_get_values.3
-link path=usr/share/man/man3oldap/ldap_dcedn2dn.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_delete_ext.3 target=ldap_delete.3
-link path=usr/share/man/man3oldap/ldap_delete_ext_s.3 target=ldap_delete.3
-link path=usr/share/man/man3oldap/ldap_delete_s.3 target=ldap_delete.3
-link path=usr/share/man/man3oldap/ldap_destroy.3 target=ldap_dup.3
-link path=usr/share/man/man3oldap/ldap_dn2ad_canonical.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_dn2dcedn.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_dn2str.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_dn2ufn.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_err2string.3 target=ldap_error.3
-link path=usr/share/man/man3oldap/ldap_errlist.3 target=ldap_error.3
-link path=usr/share/man/man3oldap/ldap_explode_dn.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_explode_rdn.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_extended_operation_s.3 \
-    target=ldap_extended_operation.3
-link path=usr/share/man/man3oldap/ldap_free_urldesc.3 target=ldap_url.3
-link path=usr/share/man/man3oldap/ldap_get_values_len.3 \
-    target=ldap_get_values.3
-link path=usr/share/man/man3oldap/ldap_init.3 target=ldap_open.3
-link path=usr/share/man/man3oldap/ldap_init_fd.3 target=ldap_open.3
-link path=usr/share/man/man3oldap/ldap_initialize.3 target=ldap_open.3
-link path=usr/share/man/man3oldap/ldap_install_tls.3 target=ldap_tls.3
-link path=usr/share/man/man3oldap/ldap_is_ldap_url.3 target=ldap_url.3
-link path=usr/share/man/man3oldap/ldap_matchingrule2name.3 \
-    target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_matchingrule2str.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_matchingrule_free.3 \
-    target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_memalloc.3 target=ldap_memory.3
-link path=usr/share/man/man3oldap/ldap_memcalloc.3 target=ldap_memory.3
-link path=usr/share/man/man3oldap/ldap_memfree.3 target=ldap_memory.3
-link path=usr/share/man/man3oldap/ldap_memrealloc.3 target=ldap_memory.3
-link path=usr/share/man/man3oldap/ldap_memvfree.3 target=ldap_memory.3
-link path=usr/share/man/man3oldap/ldap_modify_ext.3 target=ldap_modify.3
-link path=usr/share/man/man3oldap/ldap_modify_ext_s.3 target=ldap_modify.3
-link path=usr/share/man/man3oldap/ldap_modify_s.3 target=ldap_modify.3
-link path=usr/share/man/man3oldap/ldap_modrdn2.3 target=ldap_modrdn.3
-link path=usr/share/man/man3oldap/ldap_modrdn2_s.3 target=ldap_modrdn.3
-link path=usr/share/man/man3oldap/ldap_modrdn_s.3 target=ldap_modrdn.3
-link path=usr/share/man/man3oldap/ldap_mods_free.3 target=ldap_modify.3
-link path=usr/share/man/man3oldap/ldap_msgfree.3 target=ldap_result.3
-link path=usr/share/man/man3oldap/ldap_msgid.3 target=ldap_result.3
-link path=usr/share/man/man3oldap/ldap_msgtype.3 target=ldap_result.3
-link path=usr/share/man/man3oldap/ldap_next_attribute.3 \
-    target=ldap_first_attribute.3
-link path=usr/share/man/man3oldap/ldap_next_entry.3 target=ldap_first_entry.3
-link path=usr/share/man/man3oldap/ldap_next_message.3 \
-    target=ldap_first_message.3
-link path=usr/share/man/man3oldap/ldap_next_reference.3 \
-    target=ldap_first_reference.3
-link path=usr/share/man/man3oldap/ldap_objectclass2name.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_objectclass2str.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_objectclass_free.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_parse_extended_result.3 \
-    target=ldap_parse_result.3
-link path=usr/share/man/man3oldap/ldap_parse_sasl_bind_result.3 \
-    target=ldap_parse_result.3
-link path=usr/share/man/man3oldap/ldap_perror.3 target=ldap_error.3
-link path=usr/share/man/man3oldap/ldap_rename_s.3 target=ldap_rename.3
-link path=usr/share/man/man3oldap/ldap_result2error.3 target=ldap_error.3
-link path=usr/share/man/man3oldap/ldap_sasl_bind.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_sasl_bind_s.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_scherr2str.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_search_ext.3 target=ldap_search.3
-link path=usr/share/man/man3oldap/ldap_search_ext_s.3 target=ldap_search.3
-link path=usr/share/man/man3oldap/ldap_search_s.3 target=ldap_search.3
-link path=usr/share/man/man3oldap/ldap_search_st.3 target=ldap_search.3
-link path=usr/share/man/man3oldap/ldap_set_option.3 target=ldap_get_option.3
-link path=usr/share/man/man3oldap/ldap_set_rebind_proc.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_set_urllist_proc.3 target=ldap_open.3
-link path=usr/share/man/man3oldap/ldap_simple_bind.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_simple_bind_s.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_sort_entries.3 target=ldap_sort.3
-link path=usr/share/man/man3oldap/ldap_sort_strcasecmp.3 target=ldap_sort.3
-link path=usr/share/man/man3oldap/ldap_sort_values.3 target=ldap_sort.3
-link path=usr/share/man/man3oldap/ldap_start_tls.3 target=ldap_tls.3
-link path=usr/share/man/man3oldap/ldap_start_tls_s.3 target=ldap_tls.3
-link path=usr/share/man/man3oldap/ldap_str2attributetype.3 \
-    target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_str2dn.3 target=ldap_get_dn.3
-link path=usr/share/man/man3oldap/ldap_str2matchingrule.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_str2objectclass.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_str2syntax.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_strdup.3 target=ldap_memory.3
-link path=usr/share/man/man3oldap/ldap_syntax2name.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_syntax2str.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_syntax_free.3 target=ldap_schema.3
-link path=usr/share/man/man3oldap/ldap_tls_inplace.3 target=ldap_tls.3
-link path=usr/share/man/man3oldap/ldap_unbind.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_unbind_ext.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_unbind_ext_s.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_unbind_s.3 target=ldap_bind.3
-link path=usr/share/man/man3oldap/ldap_url_parse.3 target=ldap_url.3
-link path=usr/share/man/man3oldap/ldap_value_free.3 target=ldap_get_values.3
-link path=usr/share/man/man3oldap/ldap_value_free_len.3 \
-    target=ldap_get_values.3
-link path=usr/share/man/man5oldap/slapd-hdb.5 target=slapd-bdb.5
+link path=usr/share/man/man1oldap/ldapadd.1oldap \
+	target=ldapmodify.1oldap
+link path=usr/share/man/man3oldap/ber_alloc_t.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_bvarray_add.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_bvarray_free.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_bvdup.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_bvecadd.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_bvecfree.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_bvfree.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_bvstr.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_bvstrdup.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_dupbv.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_first_element.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_flush.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_free.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ber_get_bitstring.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_get_boolean.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_get_enum.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_get_int.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_get_next.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_get_null.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_get_stringa.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_get_stringb.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_next_element.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_peek_tag.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_printf.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_put_enum.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_put_int.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_put_null.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_put_ostring.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_put_seq.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_put_set.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_put_string.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_scanf.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_skip_tag.3oldap \
+	target=lber-decode.3oldap
+link path=usr/share/man/man3oldap/ber_start_set.3oldap \
+	target=lber-encode.3oldap
+link path=usr/share/man/man3oldap/ber_str2bv.3oldap \
+	target=lber-types.3oldap
+link path=usr/share/man/man3oldap/ld_errno.3oldap \
+	target=ldap_error.3oldap
+link path=usr/share/man/man3oldap/ldap_abandon_ext.3oldap \
+	target=ldap_abandon.3oldap
+link path=usr/share/man/man3oldap/ldap_add_ext.3oldap \
+	target=ldap_add.3oldap
+link path=usr/share/man/man3oldap/ldap_add_ext_s.3oldap \
+	target=ldap_add.3oldap
+link path=usr/share/man/man3oldap/ldap_add_s.3oldap \
+	target=ldap_add.3oldap
+link path=usr/share/man/man3oldap/ldap_attributetype2name.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_attributetype2str.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_attributetype_free.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_bind_s.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_compare_ext.3oldap \
+	target=ldap_compare.3oldap
+link path=usr/share/man/man3oldap/ldap_compare_ext_s.3oldap \
+	target=ldap_compare.3oldap
+link path=usr/share/man/man3oldap/ldap_compare_s.3oldap \
+	target=ldap_compare.3oldap
+link path=usr/share/man/man3oldap/ldap_control_create.3oldap \
+	target=ldap_controls.3oldap
+link path=usr/share/man/man3oldap/ldap_control_dup.3oldap \
+	target=ldap_controls.3oldap
+link path=usr/share/man/man3oldap/ldap_control_find.3oldap \
+	target=ldap_controls.3oldap
+link path=usr/share/man/man3oldap/ldap_control_free.3oldap \
+	target=ldap_controls.3oldap
+link path=usr/share/man/man3oldap/ldap_controls_dup.3oldap \
+	target=ldap_controls.3oldap
+link path=usr/share/man/man3oldap/ldap_controls_free.3oldap \
+	target=ldap_controls.3oldap
+link path=usr/share/man/man3oldap/ldap_count_entries.3oldap \
+	target=ldap_first_entry.3oldap
+link path=usr/share/man/man3oldap/ldap_count_messages.3oldap \
+	target=ldap_first_message.3oldap
+link path=usr/share/man/man3oldap/ldap_count_references.3oldap \
+	target=ldap_first_reference.3oldap
+link path=usr/share/man/man3oldap/ldap_count_values.3oldap \
+	target=ldap_get_values.3oldap
+link path=usr/share/man/man3oldap/ldap_count_values_len.3oldap \
+	target=ldap_get_values.3oldap
+link path=usr/share/man/man3oldap/ldap_dcedn2dn.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_delete_ext.3oldap \
+	target=ldap_delete.3oldap
+link path=usr/share/man/man3oldap/ldap_delete_ext_s.3oldap \
+	target=ldap_delete.3oldap
+link path=usr/share/man/man3oldap/ldap_delete_s.3oldap \
+	target=ldap_delete.3oldap
+link path=usr/share/man/man3oldap/ldap_destroy.3oldap \
+	target=ldap_dup.3oldap
+link path=usr/share/man/man3oldap/ldap_dn2ad_canonical.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_dn2dcedn.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_dn2str.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_dn2ufn.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_err2string.3oldap \
+	target=ldap_error.3oldap
+link path=usr/share/man/man3oldap/ldap_errlist.3oldap \
+	target=ldap_error.3oldap
+link path=usr/share/man/man3oldap/ldap_explode_dn.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_explode_rdn.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_extended_operation_s.3oldap \
+	target=ldap_extended_operation.3oldap
+link path=usr/share/man/man3oldap/ldap_free_urldesc.3oldap \
+	target=ldap_url.3oldap
+link path=usr/share/man/man3oldap/ldap_get_values_len.3oldap \
+	target=ldap_get_values.3oldap
+link path=usr/share/man/man3oldap/ldap_init.3oldap \
+	target=ldap_open.3oldap
+link path=usr/share/man/man3oldap/ldap_init_fd.3oldap \
+	target=ldap_open.3oldap
+link path=usr/share/man/man3oldap/ldap_initialize.3oldap \
+	target=ldap_open.3oldap
+link path=usr/share/man/man3oldap/ldap_install_tls.3oldap \
+	target=ldap_tls.3oldap
+link path=usr/share/man/man3oldap/ldap_is_ldap_url.3oldap \
+	target=ldap_url.3oldap
+link path=usr/share/man/man3oldap/ldap_matchingrule2name.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_matchingrule2str.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_matchingrule_free.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_memalloc.3oldap \
+	target=ldap_memory.3oldap
+link path=usr/share/man/man3oldap/ldap_memcalloc.3oldap \
+	target=ldap_memory.3oldap
+link path=usr/share/man/man3oldap/ldap_memfree.3oldap \
+	target=ldap_memory.3oldap
+link path=usr/share/man/man3oldap/ldap_memrealloc.3oldap \
+	target=ldap_memory.3oldap
+link path=usr/share/man/man3oldap/ldap_memvfree.3oldap \
+	target=ldap_memory.3oldap
+link path=usr/share/man/man3oldap/ldap_modify_ext.3oldap \
+	target=ldap_modify.3oldap
+link path=usr/share/man/man3oldap/ldap_modify_ext_s.3oldap \
+	target=ldap_modify.3oldap
+link path=usr/share/man/man3oldap/ldap_modify_s.3oldap \
+	target=ldap_modify.3oldap
+link path=usr/share/man/man3oldap/ldap_modrdn2.3oldap \
+	target=ldap_modrdn.3oldap
+link path=usr/share/man/man3oldap/ldap_modrdn2_s.3oldap \
+	target=ldap_modrdn.3oldap
+link path=usr/share/man/man3oldap/ldap_modrdn_s.3oldap \
+	target=ldap_modrdn.3oldap
+link path=usr/share/man/man3oldap/ldap_mods_free.3oldap \
+	target=ldap_modify.3oldap
+link path=usr/share/man/man3oldap/ldap_msgfree.3oldap \
+	target=ldap_result.3oldap
+link path=usr/share/man/man3oldap/ldap_msgid.3oldap \
+	target=ldap_result.3oldap
+link path=usr/share/man/man3oldap/ldap_msgtype.3oldap \
+	target=ldap_result.3oldap
+link path=usr/share/man/man3oldap/ldap_next_attribute.3oldap \
+	target=ldap_first_attribute.3oldap
+link path=usr/share/man/man3oldap/ldap_next_entry.3oldap \
+	target=ldap_first_entry.3oldap
+link path=usr/share/man/man3oldap/ldap_next_message.3oldap \
+	target=ldap_first_message.3oldap
+link path=usr/share/man/man3oldap/ldap_next_reference.3oldap \
+	target=ldap_first_reference.3oldap
+link path=usr/share/man/man3oldap/ldap_objectclass2name.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_objectclass2str.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_objectclass_free.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_parse_extended_result.3oldap \
+	target=ldap_parse_result.3oldap
+link path=usr/share/man/man3oldap/ldap_parse_sasl_bind_result.3oldap \
+	target=ldap_parse_result.3oldap
+link path=usr/share/man/man3oldap/ldap_perror.3oldap \
+	target=ldap_error.3oldap
+link path=usr/share/man/man3oldap/ldap_rename_s.3oldap \
+	target=ldap_rename.3oldap
+link path=usr/share/man/man3oldap/ldap_result2error.3oldap \
+	target=ldap_error.3oldap
+link path=usr/share/man/man3oldap/ldap_sasl_bind.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_sasl_bind_s.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_scherr2str.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_search_ext.3oldap \
+	target=ldap_search.3oldap
+link path=usr/share/man/man3oldap/ldap_search_ext_s.3oldap \
+	target=ldap_search.3oldap
+link path=usr/share/man/man3oldap/ldap_search_s.3oldap \
+	target=ldap_search.3oldap
+link path=usr/share/man/man3oldap/ldap_search_st.3oldap \
+	target=ldap_search.3oldap
+link path=usr/share/man/man3oldap/ldap_set_option.3oldap \
+	target=ldap_get_option.3oldap
+link path=usr/share/man/man3oldap/ldap_set_rebind_proc.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_set_urllist_proc.3oldap \
+	target=ldap_open.3oldap
+link path=usr/share/man/man3oldap/ldap_simple_bind.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_simple_bind_s.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_sort_entries.3oldap \
+	target=ldap_sort.3oldap
+link path=usr/share/man/man3oldap/ldap_sort_strcasecmp.3oldap \
+	target=ldap_sort.3oldap
+link path=usr/share/man/man3oldap/ldap_sort_values.3oldap \
+	target=ldap_sort.3oldap
+link path=usr/share/man/man3oldap/ldap_start_tls.3oldap \
+	target=ldap_tls.3oldap
+link path=usr/share/man/man3oldap/ldap_start_tls_s.3oldap \
+	target=ldap_tls.3oldap
+link path=usr/share/man/man3oldap/ldap_str2attributetype.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_str2dn.3oldap \
+	target=ldap_get_dn.3oldap
+link path=usr/share/man/man3oldap/ldap_str2matchingrule.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_str2objectclass.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_str2syntax.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_strdup.3oldap \
+	target=ldap_memory.3oldap
+link path=usr/share/man/man3oldap/ldap_syntax2name.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_syntax2str.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_syntax_free.3oldap \
+	target=ldap_schema.3oldap
+link path=usr/share/man/man3oldap/ldap_tls_inplace.3oldap \
+	target=ldap_tls.3oldap
+link path=usr/share/man/man3oldap/ldap_unbind.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_unbind_ext.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_unbind_ext_s.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_unbind_s.3oldap \
+	target=ldap_bind.3oldap
+link path=usr/share/man/man3oldap/ldap_url_parse.3oldap \
+	target=ldap_url.3oldap
+link path=usr/share/man/man3oldap/ldap_value_free.3oldap \
+	target=ldap_get_values.3oldap
+link path=usr/share/man/man3oldap/ldap_value_free_len.3oldap \
+	target=ldap_get_values.3oldap
+link path=usr/share/man/man5oldap/slapd-hdb.5oldap \
+	target=slapd-bdb.5oldap
 user username=openldap ftpuser=false gcos-field="OpenLDAP User" group=openldap \
     uid=75
