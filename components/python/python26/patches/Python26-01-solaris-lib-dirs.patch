@@ -78,7 +78,7 @@ new file mode 100644
                                     libraries = ['ssl', 'crypto'],
                                     depends = ['socketmodule.h']), )
          else:
-@@ -1079,6 +1095,14 @@
+@@ -1079,6 +1095,16 @@
  
          # Curses support, requiring the System V version of curses, often
          # provided by the ncurses library.
@@ -88,8 +88,10 @@ new file mode 100644
 +            # look for ncurses in /usr/gnu on Solaris
 +            curses_inc_dirs.append('/usr/include/ncurses')
 +            curses_lib_dirs.append('/usr/gnu/lib')
-+            curses_lib_dirs.append('/usr/gnu/lib/amd64')
-+            curses_lib_dirs.append('/usr/gnu/lib/sparcv9')
++            if os.path.exists('/usr/gnu/lib/sparcv9'):
++                curses_lib_dirs.append('/usr/gnu/lib/sparcv9')
++            else:
++                curses_lib_dirs.append('/usr/gnu/lib/amd64')
          panel_library = 'panel'
          if (self.compiler.find_library_file(lib_dirs, 'ncursesw')):
              curses_libs = ['ncursesw']
