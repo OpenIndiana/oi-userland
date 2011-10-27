@@ -64,6 +64,15 @@ diff -rupN ruby-1.8.7-p334.orig/configure.in ruby-1.8.7-p334/configure.in
  AC_STRUCT_TIMEZONE
  AC_CACHE_CHECK(for struct tm.tm_gmtoff, rb_cv_member_struct_tm_tm_gmtoff,
    [AC_TRY_COMPILE([#include <time.h>],
+@@ -1207,7 +1224,7 @@
+ 	 		       LDFLAGS="$LDFLAGS -Wl,-E"
+ 			   fi
+ 			else
+-			   : ${LDSHARED='ld -G'}
++			   : ${LDSHARED='$(CC) -G'}
+ 			fi
+ 			rb_cv_dlopen=yes;;
+ 	sunos*) 	: ${LDSHARED='ld -assert nodefinitions'}
 diff -rupN ruby-1.8.7-p334.orig/dtrace.d ruby-1.8.7-p334/dtrace.d
 --- ruby-1.8.7-p334.orig/dtrace.d	1969-12-31 16:00:00.000000000 -0800
 +++ ruby-1.8.7-p334/dtrace.d	2011-04-12 15:25:22.224285683 -0700
