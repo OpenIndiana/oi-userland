@@ -87,17 +87,17 @@ $(DOC)/.manpages:
 	cd $(BUILD_DIR)/man1 ; for manfile in *.1; \
 	do \
 		name=`basename $$manfile .1`; \
-		cat $$manfile > $(DOC)/$$name.1; \
+		sed -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' $$manfile > $(DOC)/$$name.1; \
 	done
 	cd $(BUILD_DIR)/man5 ; for manfile in *.5; \
 	do \
 		name=`basename $$manfile .5`; \
-		sed 's/"5"/"4"/' $$manfile > $(DOC)/$$name.4; \
+		sed -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' -e 's/"5"/"4"/' $$manfile > $(DOC)/$$name.4; \
 	done
 	cd $(BUILD_DIR)/man7 ; for manfile in *.7; \
         do \
 		name=`basename $$manfile .7`; \
-		sed 's/"7"/"5"/' $$manfile > $(DOC)/$$name.5; \
+		sed -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' -e 's/"7"/"5"/' $$manfile > $(DOC)/$$name.5; \
 	done
 	$(TOUCH) $@
 
