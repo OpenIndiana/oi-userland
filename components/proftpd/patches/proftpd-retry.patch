@@ -1,0 +1,85 @@
+--- proftpd-1.3.3e/src/data.c	Thu Mar  3 09:10:03 2011
++++ proftpd-1.3.3e/src/data.c	Wed Oct  5 08:07:57 2011
+@@ -337,44 +337,55 @@
+ static int data_active_open(char *reason, off_t size) {
+   conn_t *c;
+   int rev;
++  int retries = 0;
+ 
+   if (!reason && session.xfer.filename)
+     reason = session.xfer.filename;
+ 
+-  session.d = pr_inet_create_conn(session.pool, NULL, -1,
+-    session.c->local_addr, session.c->local_port-1, TRUE);
++  for (;;) {
++    session.d = pr_inet_create_conn(session.pool, NULL, -1,
++      session.c->local_addr, session.c->local_port-1, TRUE);
+ 
+-  /* Set the "stalled" timer, if any, to prevent the connection
+-   * open from taking too long
+-   */
+-  if (timeout_stalled)
+-    pr_timer_add(timeout_stalled, PR_TIMER_STALLED, NULL, stalled_timeout_cb,
+-      "TimeoutStalled");
++    /* Set the "stalled" timer, if any, to prevent the connection
++     * open from taking too long
++     */
++    if (timeout_stalled)
++      pr_timer_add(timeout_stalled, PR_TIMER_STALLED, NULL, stalled_timeout_cb,
++        "TimeoutStalled");
+ 
+-  rev = pr_netaddr_set_reverse_dns(ServerUseReverseDNS);
++    rev = pr_netaddr_set_reverse_dns(ServerUseReverseDNS);
+ 
+-  /* Protocol and socket options should be set before handshaking. */
++    /* Protocol and socket options should be set before handshaking. */
+ 
+-  if (session.xfer.direction == PR_NETIO_IO_RD) {
+-    pr_inet_set_socket_opts(session.d->pool, session.d,
+-      (main_server->tcp_rcvbuf_override ? main_server->tcp_rcvbuf_len : 0), 0);
+-    pr_inet_set_proto_opts(session.pool, session.d, main_server->tcp_mss_len, 0,
+-      0, 1, 1);
++    if (session.xfer.direction == PR_NETIO_IO_RD) {
++      pr_inet_set_socket_opts(session.d->pool, session.d,
++        (main_server->tcp_rcvbuf_override ? main_server->tcp_rcvbuf_len : 0), 0);
++      pr_inet_set_proto_opts(session.pool, session.d, main_server->tcp_mss_len, 0,
++        0, 1, 1);
+     
+-  } else {
+-    pr_inet_set_socket_opts(session.d->pool, session.d,
+-      0, (main_server->tcp_sndbuf_override ? main_server->tcp_sndbuf_len : 0));
+-    pr_inet_set_proto_opts(session.pool, session.d, main_server->tcp_mss_len, 0,
+-      0, 1, 1);
+-  }
++    } else {
++      pr_inet_set_socket_opts(session.d->pool, session.d,
++        0, (main_server->tcp_sndbuf_override ? main_server->tcp_sndbuf_len : 0));
++      pr_inet_set_proto_opts(session.pool, session.d, main_server->tcp_mss_len, 0,
++        0, 1, 1);
++    }
+ 
+-  if (pr_inet_connect(session.d->pool, session.d, &session.data_addr,
++    if (pr_inet_connect(session.d->pool, session.d, &session.data_addr,
+       session.data_port) == -1) {
+-    pr_response_add_err(R_425, _("Unable to build data connection: %s"),
+-      strerror(session.d->xerrno));
+-    destroy_pool(session.d->pool);
+-    session.d = NULL;
+-    return -1;
++      if (session.d->xerrno == EADDRINUSE && retries < 16) {
++        destroy_pool(session.d->pool);
++        pr_signals_handle();
++        /* Wait up to MSL to avoid TIME_WAIT. */
++        sleep(retries++);
++        continue;
++      }
++      pr_response_add_err(R_425, _("Unable to build data connection: %s"),
++        strerror(session.d->xerrno));
++      destroy_pool(session.d->pool);
++      session.d = NULL;
++      return -1;
++    } else
++      break;
+   }
+ 
+   c = pr_inet_openrw(session.pool, session.d, NULL, PR_NETIO_STRM_DATA,
