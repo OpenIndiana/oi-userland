@@ -56,6 +56,7 @@ COMPONENT_TEST_TARGETS = tests
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
+	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
 
 test:		$(TEST_32_and_64)
 
