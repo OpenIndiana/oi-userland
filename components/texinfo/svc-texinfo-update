@@ -21,12 +21,29 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or it's affiliates.  All rights reserved.
+# Copyright (c) 2011, Oracle and/or its affiliates.  All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
 
+PATH=/usr/bin
+
 TEXINFO_DATA_DIR="/var/info"
+
+function readlink() {
+	while getopts f name; do
+		case $name in
+			f) follow=1 ;;
+		esac
+	done
+	shift $((OPTIND - 1))
+
+	if (( follow )); then
+		python -ESc "import os; print os.path.realpath('$1')"
+	else    
+		python -ESc "import os; print os.readlink('$1')"
+        fi
+}
 
 function populate_texinfo_directory() {
 	directory=$(dirname $1)
@@ -37,22 +54,22 @@ function populate_texinfo_directory() {
 	case "${dir_file}" in
 	/var/info/*)	# Only process if the link resolves inside /var/info.
 		echo "populating ${dir_file} from ${directory}"
-		/bin/rm -f ${dir_file}.new
+		rm -f ${dir_file}.new
 		for info_file in $(find ${directory} -type f | \
 				   egrep -v -e '-[0-9]+$') ; do
-			/usr/bin/install-info --dir-file=${dir_file}.new \
+			install-info --dir-file=${dir_file}.new \
 				--info-file=${info_file}
 		done
 		owner_group='root:bin'	# default owner/group
 		if [[ -f ${dir_file} ]] ; then
 			# get owner/group from original file
-			group_bin=$(/bin/ls -l ${dir_file} | \
+			group_bin=$(ls -l ${dir_file} | \
 				    awk '{print $3":"$4}')
 		fi
-		/bin/mv -f ${dir_file}.new ${dir_file}
-		/bin/chmod -f 0644 ${dir_file}
-		/bin/chown -f ${owner_group} ${dir_file}
-		/bin/ln -s ${1} ${dir_file}.backlink 2>/dev/null
+		mv -f ${dir_file}.new ${dir_file}
+		chmod -f 0644 ${dir_file}
+		chown -f ${owner_group} ${dir_file}
+		ln -s ${1} ${dir_file}.backlink 2>/dev/null
 		;;
 	esac
 }
@@ -70,10 +87,10 @@ case "$1" in
 	for link in $(find ${TEXINFO_DATA_DIR} -type l -name '*.backlink') ; do
 		path=$(readlink ${link})
 		if [[ ! -L ${path} ]] ; then
-			file=$(expr "${link}" : "\(.*\)\.backlink")
+			file=${link%.backlink}
 			echo -n "removing unreferenced texinfo directory: "
 			echo "${file} ${link}"
-			/bin/rm -f ${file} ${link}
+			rm -f ${file} ${link}
 		fi
 	done
 	;;
