@@ -80,7 +80,7 @@ COMPONENT_PRE_BUILD_ACTION= \
 			    -Duse64bitint \
 			    -Dcc="cc" \
 			    -Doptimize="$(CFLAGS.studio)" \
-			    -Dcf_email="perl-bugs@sun.com" \
+			    -Dcf_email="userland-discuss@opensolaris.org" \
 			    -Dcf_by="perl-bugs" \
 			    -Dmyhostname="localhost" \
 			    -O \
