@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_URL=	http://python.org/ftp/python/$(COMPONENT_VERSION)/$(COMPO
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+include $(WS_TOP)/make-rules/lint-libraries.mk
 
 # We patch auto* files, so regenerate headers and configure
 COMPONENT_PREP_ACTION = \
@@ -61,6 +62,9 @@ CPPFLAGS +=	-I/usr/include/ncurses
 CPPFLAGS +=	-D_LARGEFILE64_SOURCE
 # libffi for _ctypes
 CPPFLAGS +=	$(shell pkg-config --cflags-only-I libffi)
+
+# Python puts its header files in a special place.
+LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
