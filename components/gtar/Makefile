@@ -36,6 +36,9 @@ include ../../make-rules/ips.mk
 # workaround for CR 6998994
 sparc_COPTFLAG = -xO2
 
+# Use ssh (rather than rsh) for remote commands.
+CONFIGURE_ENV += "RSH=/usr/bin/ssh"
+
 CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
