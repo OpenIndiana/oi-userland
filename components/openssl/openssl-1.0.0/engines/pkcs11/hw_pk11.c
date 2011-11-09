@@ -645,7 +645,7 @@ static const EVP_CIPHER pk11_bf_cbc =
 	{
 	NID_bf_cbc,
 	8, 16, 8,
-	EVP_CIPH_VARIABLE_LENGTH,
+	EVP_CIPH_VARIABLE_LENGTH | EVP_CIPH_CBC_MODE,
 	pk11_cipher_init,
 	pk11_cipher_do_cipher,
 	pk11_cipher_cleanup,
