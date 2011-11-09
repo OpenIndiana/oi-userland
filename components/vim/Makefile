@@ -80,6 +80,8 @@ INSTALL_32 = 	$(NOX_VARIANT)/.installed
 
 TEST_32 = 	$(NOX_VARIANT)/.tested
 
+# Override a broken imake that's always providing a 64-bit library directory.
+CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
 CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"
