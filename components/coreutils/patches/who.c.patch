@@ -1,0 +1,13 @@
+--- coreutils-8.5/src/who.c.orig	Thu Nov 10 07:54:27 2011
++++ coreutils-8.5/src/who.c	Thu Nov 10 07:55:13 2011
+@@ -524,8 +524,8 @@
+   unsigned char curr = UT_PID (utmp_ent) % 256;
+ 
+   if (!runlevline)
+-    runlevline = xmalloc (strlen (_("run-level")) + 3);
+-  sprintf (runlevline, "%s %c", _("run-level"), curr);
++    runlevline = xmalloc (sizeof (utmp_ent->ut_line));
++  sprintf (runlevline, "%s", utmp_ent->ut_line);
+ 
+   if (!comment)
+     comment = xmalloc (strlen (_("last=")) + 2);
