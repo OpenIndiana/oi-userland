@@ -25,6 +25,8 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	timezone
 
+HUMAN_VERSION=		2011h
+
 # "etcetera" must be listed before "backward" because it sets up links that
 # "backward" needs.
 TZFILES= africa antarctica asia australasia etcetera europe \
