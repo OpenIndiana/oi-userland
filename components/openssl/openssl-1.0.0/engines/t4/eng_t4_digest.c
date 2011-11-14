@@ -370,6 +370,9 @@ t4_digest_final_md5(EVP_MD_CTX *ctx, unsigned char *md)
 static int
 t4_digest_copy_md5(EVP_MD_CTX *to, const EVP_MD_CTX *from)
 {
+	if ((to->md_data == NULL) || (from->md_data == NULL)) {
+		return (1);
+	}
 	(void) memcpy(to->md_data, from->md_data, sizeof (MD5_CTX));
 	return (1);
 }
@@ -506,6 +509,9 @@ t4_digest_final_sha1(EVP_MD_CTX *ctx, unsigned char *md)
 static int
 t4_digest_copy_sha1(EVP_MD_CTX *to, const EVP_MD_CTX *from)
 {
+	if ((to->md_data == NULL) || (from->md_data == NULL)) {
+		return (1);
+	}
 	(void) memcpy(to->md_data, from->md_data, sizeof (SHA1_CTX));
 	return (1);
 }
@@ -517,6 +523,9 @@ t4_digest_copy_sha1(EVP_MD_CTX *to, const EVP_MD_CTX *from)
 static int
 t4_digest_copy_sha2(EVP_MD_CTX *to, const EVP_MD_CTX *from)
 {
+	if ((to->md_data == NULL) || (from->md_data == NULL)) {
+		return (1);
+	}
 	(void) memcpy(to->md_data, from->md_data, sizeof (SHA2_CTX));
 	return (1);
 }
