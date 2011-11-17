@@ -27,22 +27,15 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mutt
 COMPONENT_VERSION=	1.5.21
-IPS_PKG_NAME=		mail/mutt
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:a8475f2618ce5d5d33bff85c0affdf21ab1d76b9
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/mutt/devel/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
-COPYRIGHT_FILE=		mutt.license
-COPYRIGHTS=		GPLv2
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-PKG_MACROS +=	IPS_PKG_NAME=$(IPS_PKG_NAME)
-PKG_MACROS +=	COPYRIGHT_FILE=$(COPYRIGHT_FILE)
-PKG_MACROS +=	COPYRIGHTS=$(COPYRIGHTS)
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--sysconfdir="$(ETCDIR)/$(COMPONENT_NAME)"

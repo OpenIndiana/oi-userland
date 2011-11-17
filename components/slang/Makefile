@@ -27,22 +27,15 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slang
 COMPONENT_VERSION=	2.2.4
-IPS_PKG_NAME=		library/slang
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha1:34e68a993888d0ae2ebc7bc31b40bc894813a7e2
 COMPONENT_ARCHIVE_URL=	ftp://space.mit.edu/pub/davis/slang/v2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.jedsoft.org/slang/
-COPYRIGHT_FILE=		slang.license
-COPYRIGHTS=		GPLv2
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-PKG_MACROS +=	IPS_PKG_NAME=$(IPS_PKG_NAME)
-PKG_MACROS +=	COPYRIGHT_FILE=$(COPYRIGHT_FILE)
-PKG_MACROS +=	COPYRIGHTS=$(COPYRIGHTS)
 
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
