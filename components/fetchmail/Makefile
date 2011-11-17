@@ -27,22 +27,15 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fetchmail
 COMPONENT_VERSION=	6.3.21
-IPS_PKG_NAME=		mail/fetchmail
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha1:e32a0d40ec133d651782543ecd7bc9bbee52dff7
 COMPONENT_ARCHIVE_URL=	http://download.berlios.de/fetchmail/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://fetchmail.berlios.de/
-COPYRIGHT_FILE=		fetchmail.license
-COPYRIGHTS=		GPLv2
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-PKG_MACROS +=	IPS_PKG_NAME=$(IPS_PKG_NAME)
-PKG_MACROS +=	COPYRIGHT_FILE=$(COPYRIGHT_FILE)
-PKG_MACROS +=	COPYRIGHTS=$(COPYRIGHTS)
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
