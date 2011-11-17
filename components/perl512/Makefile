@@ -117,6 +117,10 @@ test:		$(TEST_32)
 	# 2 expected failures because of the use of cloney in this build.
 	# Without cloney all tests pass.
 	#
+	# Failed 2 tests out of 1697, 99.88% okay.
+	# 	../cpan/Archive-Tar/t/02_methods.t
+	# 	../lib/File/stat.t
+	#
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
