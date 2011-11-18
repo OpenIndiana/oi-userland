@@ -2911,9 +2911,12 @@ pk11_digest_copy(EVP_MD_CTX *to, const EVP_MD_CTX *from)
 	CK_BYTE_PTR pstate = NULL;
 	CK_ULONG ul_state_len;
 
+	if (from->md_data == NULL || to->digest->ctx_size == 0)
+		return (1);
+
 	/* The copy-from state */
 	state = (PK11_CIPHER_STATE *) from->md_data;
-	if (state == NULL || state->sp == NULL)
+	if (state->sp == NULL)
 		goto err;
 
 	/* Initialize the copy-to state */
