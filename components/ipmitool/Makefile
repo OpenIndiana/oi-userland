@@ -26,25 +26,24 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipmitool
-COMPONENT_VERSION=	1.8.10
+COMPONENT_VERSION=	1.8.11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://ipmitool.sourceforge.net
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:61605c1f11b74b0f6ff0ba4d019cd8d2e1bdc2c4
-COMPONENT_ARCHIVE_URL=	http://cdnetworks-us-2.dl.sourceforge.net/sourceforge/ipmitool/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:4cb6ff3736fd3e166abc5303d6373672327a5db1
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/ipmitool/files/ipmitool/1.8.11/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# The version of libtool in the source archive causes the build to fail to
-# link in src/plugins/lan.  The bundled vesion works fine.
-COMPONENT_PREP_ACTION=(cd $(@D) ; libtoolize -f)
+COMPONENT_PREP_ACTION=  (cd $(@D); $(TOUCH) NEWS; $(AUTORECONF) -f -i)
 
 COMPILER=gcc
 
 CONFIGURE_OPTIONS  +=		--prefix=/usr/sfw
 CONFIGURE_OPTIONS  +=		--enable-intf-free=no
+CONFIGURE_OPTIONS  +=		--enable-solaris-opt
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 

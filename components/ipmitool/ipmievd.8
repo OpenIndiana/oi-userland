@@ -24,19 +24,36 @@
 .\"
 .\" ipmievd man page
 .\"
-.TH "ipmievd" "8" "29 November 2006"
+.TH "ipmievd" "8" "07 November 2011"
 .SH "NAME"
 ipmievd \- IPMI event daemon for sending events to syslog
 .SH "SYNOPSIS"
-.B ipmievd
-[\-chvV] \-I lan \-H hostname [ \-p <port>] [\-U <username>] [ \-f <password_file>] [\-S <sdrcache>] sel [<option>]
+ipmievd [\fB\-c\fR|\fB\-h\fR|\fB\-d \fIN\fP\fR|\fB\-v\fR|\fB\-V\fR]
+\fB\-I\fR \fIopen\fP <\fIopen\fR | \fIsel\fR> [<\fIoption\fP>]
 
-.B ipmievd
-[\-chvV] \-I lanplus \-H hostname [\-p <port>] [\-U <username>] [\-f <password_file>] [\-S <sdrcache>] sel [<option>]
+Note: Use -I open on linux, use -I bmc on solaris
 
-.B ipmievd
-[\-chvV] \-I bmc [\-S <sdrcache>] sel [<option>]
+ipmievd [\fB\-c\fR|\fB\-h\fR|\fB\-v\fR|\fB\-V\fR]
+\fB\-I\fR \fIlan\fP \fB\-H\fR <\fIhostname\fP>
+        [\fB\-p\fR <\fIport\fP>]
+        [\fB\-U\fR <\fIusername\fP>]
+        [\fB\-A\fR <\fIauthtype\fP>]
+        [\fB\-L\fR <\fIprivlvl\fP>]
+        [\fB\-a\fR|\fB\-E\fR|\fB\-P\fR|\fB\-f\fR <\fIpassword\fP>]
+        [\fB\-o\fR <\fIoemtype\fP>]
+        [\fB\-O\fR <\fIsel oem\fP>]
+        \fIsel\fP [<\fIoption\fP>]
 
+ipmievd [\fB\-c\fR|\fB\-h\fR|\fB\-v\fR|\fB\-V\fR]
+\fB\-I\fR \fIlanplus\fP \fB\-H\fR <\fIhostname\fP>
+        [\fB\-p\fR <\fIport\fP>]
+        [\fB\-U\fR <\fIusername\fP>]
+        [\fB\-L\fR <\fIprivlvl\fP>]
+        [\fB\-a\fR|\fB\-E\fR|\fB\-P\fR|\fB\-f\fR <\fIpassword\fP>]
+        [\fB\-o\fR <\fIoemtype\fP>]
+        [\fB\-O\fR <\fIsel oem\fP>]
+        [\fB\-C\fR <\fIciphersuite\fP>]
+        \fIsel\fR [<\fIoption\fP>]
 .SH "DESCRIPTION"
 \fBipmievd\fP is a daemon that listens for events from the
 Baseboard Management Controller (BMC) which are being sent to the 
@@ -55,9 +72,26 @@ support and session setup options.  The
 interfaces.
 .SH "OPTIONS"
 .TP 
+\fB\-a\fR
+Prompt for the remote server password.
+.TP
+\fB\-A\fR <\fIauthtype\fP>
+Specify an authentication type to use during IPMIv1.5 \fIlan\fP
+session activation.  Supported types are NONE, PASSWORD, MD2, MD5, or OEM.
+.TP 
 .B \-c
 Present output in comma separated variable (CSV) format.
-.TP 
+.TP
+\fB\-C\fR <\fIciphersuite\fP>
+The remote server authentication, integrity, and encryption algorithms
+to use for IPMIv2 \fIlanplus\fP connections.  See table 22\-19 in the
+IPMIv2 specification.  The default is 3 which specifies RAKP\-HMAC\-SHA1
+authentication, HMAC\-SHA1\-96 integrity, and AES\-CBC\-128 encryption algorightms.
+.TP
+\fB\-E\fR
+The remote server password is specified by the environment
+variable \fIIPMI_PASSWORD\fP.
+.TP
 .BI \-f " password_file"
 Specify a file containing the remote server password. If this
 option is absent, or if password_file is empty, the password
@@ -90,24 +124,57 @@ Selects IPMI interface to use. Possible interfaces are:
 
 .TS
 tab(+);
-l l .
 bmc+IPMI v2.0 BMC interface [default]
 lan+IPMI v1.5 LAN Interface
 lanplus+IPMI v2.0 RMCP+ LAN Interface
 .TE
 .TP 
+\fB\-L\fR <\fIprivlvl\fP>
+Force session privilege level.  Can be CALLBACK, USER,
+OPERATOR, ADMIN. Default is ADMIN.
+.TP
+\fB\-m\fR <\fIlocal_address\fP>
+Set the local IPMB address.  The default is 0x20 and there
+should be no need to change it for normal operation.
+.TP
+\fB\-o\fR <\fIoemtype\fP>
+Select OEM type to support.  This usually involves minor hacks
+in place in the code to work around quirks in various BMCs from
+various manufacturers.  Use \fI\-o list\fP to see a list of
+current supported OEM types.
+.TP
+\fB\-O\fR <\fIsel oem\fP>
+Open selected file and read OEM SEL event descriptions to be used
+during SEL listings.  See examples in contrib dir for file format.
+.TP
 .BI \-p " port"
 Remote server UDP port to connect to (default is 623).
 .TP 
+\fB\-P\fR <\fIpassword\fP>
+Remote server password is specified on the command line.
+If supported it will be obscured in the process list.
+\fBNote!\fR Specifying the password as a command line
+option is not recommended.
+.TP
 .BI \-S " sdrcache"
 Use local file for remote Sensor Data Repository (SDR) cache. 
 Using a local SDR cache can drastically increase performance
 for commands that require knowledge of the entire SDR to perform
 their function.
 .TP 
+\fB\-t\fR <\fItarget_address\fP>
+Bridge IPMI requests to the remote target address.
+.TP
 \.BI \-U " username"
 Remote server username; default is NULL user.
 .TP 
+\fB\-d \fIN\fP\fR
+Use device number N to specify the /dev/ipmiN (or
+/dev/ipmi/N or /dev/ipmidev/N) device to use for in-band
+BMC communication.  Used to target a specific BMC on a
+multi-node, multi-BMC system through the ipmi device
+driver interface.  Default is 0.
+.TP
 .B \-v
 Increase verbose output level.  This option can be specified
 multiple times to increase the level of debug output.  If given
@@ -122,7 +189,7 @@ Display version information.
 This can be used to get command\-line help.  It can also be
 placed at the end of commands to get option usage help.
 
-> ipmievd bmc help
+> ipmievd help
 .br 
 Commands:
     sel      Poll SEL for notification of events
