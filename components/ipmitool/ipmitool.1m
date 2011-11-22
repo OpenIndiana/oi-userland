@@ -21,19 +21,37 @@
 .\"
 .\" Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
 .\"
-.TH ipmitool 1m "10 December 2008"
+.TH ipmitool 1m "07 November 2011"
 .SH NAME
 ipmitool \- utility for controlling IPMI\-enabled devices
-.SH SYNOPSIS 
-.B ipmitool 
-[\-chvV] \-I lan \-H hostname  [\-p <port>] [\-U <username>] [\-f <password_file>] [\-S <sdrcache>] <command>
+.SH "SYNOPSIS"
+ipmitool [\-c|\-h|\-d N|\-v|\-V] \-I bmc [-S <sdrcache>] <command>
 
-.B ipmitool 
-[\-chvV] \-I lanplus \-H hostname  [\-p <port>] [\-U <username>] [\-f <password_file>] [\-S <sdrcache>] <command>
+ipmitool [\-c|\-h|\-v|\-V]
+\-I lan \-H <hostname>
+         [\-p <port>]
+         [\-U <username>]
+         [\-A <authtype>]
+         [\-L <privlvl>]
+         [\-a|\-E|\-P|\-f <password>]
+         [\-o <oemtype>]
+         [\-O <sel oem>]
+         [\-e <esc_char>]
+         <command>
 
-.B ipmitool 
-[\-chvV] \-I bmc [\-S <sdrcache>] <command>
-
+ipmitool [\-c|\-h|\-v|\-V]
+\-I lanplus \-H <hostname>
+         [\-p <port>]
+         [\-U <username>]
+         [\-L <privlvl>]
+         [\-a|\-E|\-P|\-f <password>]
+         [\-o <oemtype>]
+         [\-O <sel oem>]
+         [\-C <ciphersuite>]
+         [\-K|\-k <kg_key>]
+         [\-y <hex_kg_key>]
+         [\-e <esc_char>]
+         <command>
 .SH DESCRIPTION
 This program lets you manage Intelligent Platform Management Interface 
 (IPMI) functions of either the local system, via a kernel device driver,
@@ -63,10 +81,43 @@ password management only be done using a tool, such as 'ipmitool', running
 on the local station.
         	  
 .SH OPTIONS
-.TP
+.TP 
+\-a
+Prompt for the remote server password.
+.TP 
+\-A <authtype>
+Specify an authentication type to use during IPMIv1.5 lan
+session activation.  Supported types are NONE, PASSWORD, MD2, MD5, or OEM.
+.TP 
 \-c
-Present output in CSV (comma separated variable) format.
-.TP    
+Present output in CSV (comma separated variable) format.  
+This is not available with all commands.
+.TP
+\-e <sol_escape_char>
+Use supplied character for SOL session escape character.  The default
+is to use ~ but this can conflict with ssh sessions.
+.TP
+\-k <key>
+Use supplied Kg key for IPMIv2 authentication.  The default is not to
+use any Kg key.
+.TP
+\-y <hex key>
+Use supplied Kg key for IPMIv2 authentication. The key is expected in
+hexadecimal format and can be used to specify keys with non-printable
+characters. E.g. '-k PASSWORD' and '-y 50415353574F5244' are
+equivalent.
+The default is not to use any Kg key.
+.TP 
+\-C <ciphersuite>
+The remote server authentication, integrity, and encryption algorithms
+to use for IPMIv2 lanplus connections.  See table 22\-19 in the
+IPMIv2 specification.  The default is 3 which specifies RAKP\-HMAC\-SHA1 
+authentication, HMAC\-SHA1\-96 integrity, and AES\-CBC\-128 encryption algorightms.
+.TP 
+\-E
+The remote server password is specified by the environment
+variable IPMI_PASSWORD.
+.TP 
 \-f <password_file>
 Specifies a file containing the remote server password. If this
 option is absent, or if password_file is empty, the password
@@ -82,47 +133,86 @@ Passwords longer than 16 characters will be truncated.
 For IPMI v2.0, the maximum password length is 20 characters;
 longer passwords are truncated.
 The longer password length is supported by the lanplus interface.
-.TP
+.TP 
 \-h
 Get basic usage help from the command line.
-.TP
-\-H <hostname>
-Remote server address, can be IP address  or  hostname.
-This  option  is required for the LAN interface connection.
-.TP
+.TP 
+\-H <address>
+Remote server address, can be IP address or hostname.  This 
+option is required for lan and lanplus interfaces.
+.TP 
 \-I <interface>
-Selects IPMI interface to use.  Possible interfaces are
-lan, lanplus or bmc.
-.TP          
+Selects IPMI interface to use.  Supported interfaces that are
+compiled in are visible in the usage help output.
+.TP 
+\-L <privlvl>
+Force session privilege level.  Can be CALLBACK, USER,
+OPERATOR, ADMINISTRATOR. Default is ADMINISTRATOR.
+.TP 
+\-m <local_address>
+Set the local IPMB address.  The default is 0x20 and there
+should be no need to change it for normal operation.
+.TP 
+\-o <oemtype>
+Select OEM type to support.  This usually involves minor hacks
+in place in the code to work around quirks in various BMCs from
+various manufacturers.  Use \-o list to see a list of
+current supported OEM types.
+.TP 
+\-O <sel oem>
+Open selected file and read OEM SEL event descriptions to be used
+during SEL listings.  See examples in contrib dir for file format.
+.TP
 \-p <port>
-Selects remote port (default is 623).
-.TP
-\-S <sdrcache>
-Uses Sensor Data Repository information from the file
-<sdrcache> to dramatically speed up the `sdr' and
-`sel elist' commands.  This file is typically created
-with the `sdr dump <sdrcache>' command.
-.TP
+Remote server UDP port to connect to.  Default is 623.
+.TP 
+\-P <password>
+Remote server password is specified on the command line.
+If supported it will be obscured in the process list. 
+Note! Specifying the password as a command line
+option is not recommended.
+.TP 
+\-S <sdr_cache_file>
+Use Sensor Data Repository information from local file 
+<sdr_cache_file> for remote SDR cache.  Using a local SDR cache
+can drastically increase performance for commands that require
+knowledge of the entire SDR to perform their function.  Local
+SDR cache from a remote system can be created with the
+`sdr dump <sdr_cache_file>` command.
+.TP 
+\-t <target_address>
+Bridge IPMI requests to the remote target address.
+.TP 
 \-U <username>
-Remote username, default is NULL user. 
+Remote server username, default is NULL user.
 .TP
+\-d N
+Use device number N to specify the /dev/ipmiN (or 
+/dev/ipmi/N or /dev/ipmidev/N) device to use for in-band 
+BMC communication.  Used to target a specific BMC on a 
+multi-node, multi-BMC system through the ipmi device 
+driver interface.  Default is 0.
+.TP 
 \-v
-Increase verbose output  level.   This  option  may  be
-specified multiple times to increase the level of debug
-output.  If given three times you will get hexdumps  of
-all incoming and outgoing packets.
-.TP
+Increase verbose output level.  This option may be specified
+multiple times to increase the level of debug output.  If given
+three times you will get hexdumps of all incoming and
+outgoing packets.
+.TP 
 \-V
 Display version information.
 
-
+.LP 
+If no password method is specified then ipmitool will prompt the
+user for a password. If no password is entered at the prompt,
+the remote server password will default to NULL.
 .SH COMMANDS
 .TP
 help This can be used to get command\-line help  on  ipmitool
 commands.  It may also be placed at the end of commands
 to get option usage help.
 
-ipmitool \-I bmc help
+ipmitool help
 .br
 Commands:
         raw          Send a RAW IPMI request and print
@@ -146,8 +236,11 @@ Commands:
         sel          Print System Event Log (SEL)
         pef          Configure Platform Event Filtering
                      (PEF)
-        sol          Configure IPMIv2.0 Serial-over-LAN
-        isol         Configure IPMIv1.5 Serial-over-LAN
+        sol          Configure IPMIv2.0 Serial\-over\-LAN
+        tsol         Configure and connect Tyan
+                     IPMIv1.5 Serial\-over\-LAN
+        isol         Configure and connect Intel
+                     IPMIv1.5 Serial\-over\-LAN
         user         Configure Management Controller
                      users
         channel      Configure Management Controller
@@ -164,11 +257,11 @@ Commands:
         ekanalyzer   Run FRU-Ekeying analyzer using FRU
                      files
 
-ipmitool \-I bmc chassis help
+ipmitool chassis help
 .br
 Chassis Commands:  status, power, identify, policy, restart_cause, poh, bootdev, bootparam, selftest
 
-ipmitool \-I bmc chassis power help
+ipmitool chassis power help
 .br
 chassis power Commands: status, on, off, cycle, reset, diag, soft
 .TP
@@ -1756,10 +1849,11 @@ Retrieve information about the Serial-Over-LAN configuration on
 the specified channel.  If no channel is given, it will display 
 SOL configuration data for the currently used channel.
 .TP 
-payload <enable | disable> <channel> <userid>
+payload <enable | disable | status> <channel> <userid>
 .br 
 
-Enable or disable SOL payload for the user on the specified channel. 
+Enable, disable or show status of SOL payload for the user on the 
+specified channel. 
 .TP
 set <parameter> <value> [channel]
 .br
