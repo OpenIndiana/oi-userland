@@ -386,41 +386,41 @@ adt_event_data_t* __solaris_audit_pre_arg2(
    */
   cmd->error_code = ADT_FAILURE;
 
-  if (cmd->argc != 2) {
+  if (cmd->arg == NULL) {
     pr_log_pri(PR_LOG_ERR, "Auditing of %s failed: %s",
-      description, "bad arguments");
+      description, "bad argument");
     goto err;
   }
 
   if (arg2 != NULL) {
     *arg2 = NULL;
 
-    if ((tmp = pstrdup(cmd->pool, cmd->argv[1])) == NULL) {
+    if ((tmp = pstrdup(cmd->pool, cmd->arg)) == NULL) {
       how = "no memory";
       pr_log_pri(PR_LOG_ERR, "Auditing of %s(%s) failed: %s",
-        description, cmd->argv[1], how);
+        description, cmd->arg, how);
       goto err;
     }
     *arg2 = tmp;
   }
 
-  if (cmd->notes == NULL ) {
+  if (cmd->notes == NULL) {
     pr_log_pri(PR_LOG_ERR, "Auditing of %s(%s) failed: %s",
-      description, cmd->argv[1], "API error, notes is NULL");
+      description, cmd->arg, "API error, notes is NULL");
     goto err;
   }
 
   if ((event = adt_alloc_event(asession, event_type)) == NULL) {
     how = "couldn't allocate adt event";
     pr_log_pri(PR_LOG_ERR, "Auditing of %s(%s) failed: %s(%s)",
-      description, cmd->argv[1], how, strerror(errno));
+      description, cmd->arg, how, strerror(errno));
     goto err;
   }
 
-  if (pr_table_add(cmd->notes, EVENT_KEY, event, sizeof(*event))==-1) {
+  if (pr_table_add(cmd->notes, EVENT_KEY, event, sizeof(*event)) == -1) {
     how = "pr_table_add() failed";
     pr_log_pri(PR_LOG_ERR, "Auditing of %s(%s) failed: %s",
-      description, cmd->argv[1], how);
+      description, cmd->arg, how);
     adt_free_event(event);
     goto err;
   }
@@ -918,7 +918,7 @@ MODRET solaris_audit_pre_rnfr(cmd_rec *cmd) {
   event->adt_ft_rename.src_attr = NULL;
   event->adt_ft_rename.dst_path = "";
 
-  src_path = strdup(cmd->argv[1]);
+  src_path = strdup(cmd->arg);
   if (src_path == NULL) {
     pr_log_pri(PR_LOG_ERR, "Auditing of %s(%s) failed: %s",
       "RNFR", ptr, "no memory");
