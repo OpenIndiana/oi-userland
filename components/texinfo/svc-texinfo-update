@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates.  All rights reserved.
+# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -66,10 +66,16 @@ function populate_texinfo_directory() {
 			group_bin=$(ls -l ${dir_file} | \
 				    awk '{print $3":"$4}')
 		fi
-		mv -f ${dir_file}.new ${dir_file}
-		chmod -f 0644 ${dir_file}
-		chown -f ${owner_group} ${dir_file}
-		ln -s ${1} ${dir_file}.backlink 2>/dev/null
+		if [[ -f ${dir_file}.new ]] ; then
+			# new dir file created, replace the original one
+			mv -f ${dir_file}.new ${dir_file}
+			chmod -f 0644 ${dir_file}
+			chown -f ${owner_group} ${dir_file}
+			ln -s ${1} ${dir_file}.backlink 2>/dev/null
+		else
+			# no dir file created (no input files installed)
+			rm -f ${dir_file} ${dir_file}.backlink
+		fi
 		;;
 	esac
 }
