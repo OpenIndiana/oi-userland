@@ -1566,7 +1566,22 @@ link path=usr/share/man/man7/fsf-funding.7 \
 link path=usr/share/man/man7/gfdl.7 target=../../../gcc/4.5/share/man/man7/gfdl.7
 link path=usr/share/man/man7/gpl.7 target=../../../gcc/4.5/share/man/man7/gpl.7
 
-
+# gcc 4.5 on x86 uses the CRT files in /usr/lib, and gcc 4.5 on SPARC 
+# does not.  Any upgrade to this package should reverify this and adjust 
+# the following CRT related dependencies accordingly.
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/as type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/ld type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/crt1.o type=require \
+    variant.arch=i386
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/crti.o type=require \
+    variant.arch=i386
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/crtn.o type=require \
+    variant.arch=i386
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xa.o type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xc.o type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xs.o type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xt.o type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-xpg4.o type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-xpg6.o type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/libstdc++.so type=require
 depend type=optional fmri=developer/gcc-3@3.4.3-0.175
