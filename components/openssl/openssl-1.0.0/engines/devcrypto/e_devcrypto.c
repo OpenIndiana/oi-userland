@@ -71,6 +71,7 @@ typedef struct devcrypto_cipher {
 	int			max_key_len;
 	CK_KEY_TYPE		key_type;
 	CK_MECHANISM_TYPE	mech_type;
+	unsigned long		flags;
 	crypto_mech_type_t	pn_internal_number;
 } devcrypto_cipher_t;
 
@@ -101,40 +102,45 @@ static int NID_aes_256_ctr = NID_undef;
  * Cipher Table for all supported symmetric ciphers.
  */
 static devcrypto_cipher_t cipher_table[] = {
+	/* id,			nid,		iv_len, min_, max_key_len, */
+		/* key_type,	mech_type, flags, pn_internal_number */
 	{ DEV_DES_CBC,		NID_des_cbc,		8,	 8,   8,
-		CKK_DES,	CKM_DES_CBC, CRYPTO_MECH_INVALID},
+		CKK_DES,	CKM_DES_CBC, 0, CRYPTO_MECH_INVALID},
 	{ DEV_DES3_CBC,		NID_des_ede3_cbc,	8,	24,  24,
-		CKK_DES3,	CKM_DES3_CBC, CRYPTO_MECH_INVALID},
+		CKK_DES3,	CKM_DES3_CBC, 0, CRYPTO_MECH_INVALID},
 	{ DEV_DES_ECB,		NID_des_ecb,		0,	 8,   8,
-		CKK_DES,	CKM_DES_ECB, CRYPTO_MECH_INVALID},
+		CKK_DES,	CKM_DES_ECB, 0, CRYPTO_MECH_INVALID},
 	{ DEV_DES3_ECB,		NID_des_ede3_ecb,	0,	24,  24,
-		CKK_DES3,	CKM_DES3_ECB, CRYPTO_MECH_INVALID},
+		CKK_DES3,	CKM_DES3_ECB, 0, CRYPTO_MECH_INVALID},
 	{ DEV_RC4,		NID_rc4,		0,	16, 256,
-		CKK_RC4,	CKM_RC4, CRYPTO_MECH_INVALID},
+		CKK_RC4,	CKM_RC4, 0, CRYPTO_MECH_INVALID},
 	{ DEV_AES_128_CBC,	NID_aes_128_cbc,	16,	16,  16,
-		CKK_AES,	CKM_AES_CBC, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_CBC, 0, CRYPTO_MECH_INVALID},
 	{ DEV_AES_192_CBC,	NID_aes_192_cbc,	16,	24,  24,
-		CKK_AES,	CKM_AES_CBC, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_CBC, 0, CRYPTO_MECH_INVALID},
 	{ DEV_AES_256_CBC,	NID_aes_256_cbc,	16,	32,  32,
-		CKK_AES,	CKM_AES_CBC, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_CBC, 0, CRYPTO_MECH_INVALID},
 	{ DEV_AES_128_ECB,	NID_aes_128_ecb,	0,	16,  16,
-		CKK_AES,	CKM_AES_ECB, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_ECB, 0, CRYPTO_MECH_INVALID},
 	{ DEV_AES_192_ECB,	NID_aes_192_ecb,	0,	24,  24,
-		CKK_AES,	CKM_AES_ECB, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_ECB, 0, CRYPTO_MECH_INVALID},
 	{ DEV_AES_256_ECB,	NID_aes_256_ecb,	0,	32,  32,
-		CKK_AES,	CKM_AES_ECB, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_ECB, 0, CRYPTO_MECH_INVALID},
 	{ DEV_BLOWFISH_CBC,	NID_bf_cbc,		8,	16,  16,
-		CKK_BLOWFISH,	CKM_BLOWFISH_CBC, CRYPTO_MECH_INVALID},
+		CKK_BLOWFISH,	CKM_BLOWFISH_CBC, 0, CRYPTO_MECH_INVALID},
 	/*
 	 * For the following 3 AES counter mode entries, we don't know the
 	 * NIDs until the engine is initialized
 	 */
 	{ DEV_AES_128_CTR,	NID_undef,		16,	16,  16,
-		CKK_AES,	CKM_AES_CTR, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_CTR, EVP_CIPH_NO_PADDING,
+		CRYPTO_MECH_INVALID},
 	{ DEV_AES_192_CTR,	NID_undef,		16,	24,  24,
-		CKK_AES,	CKM_AES_CTR, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_CTR, EVP_CIPH_NO_PADDING,
+		CRYPTO_MECH_INVALID},
 	{ DEV_AES_256_CTR,	NID_undef,		16,	32,  32,
-		CKK_AES,	CKM_AES_CTR, CRYPTO_MECH_INVALID},
+		CKK_AES,	CKM_AES_CTR, EVP_CIPH_NO_PADDING,
+		CRYPTO_MECH_INVALID},
 	};
 
 
@@ -145,7 +151,20 @@ static int devcrypto_cipher_do_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
     const unsigned char *in, size_t inl);
 static int devcrypto_cipher_cleanup(EVP_CIPHER_CTX *ctx);
 
-/* OpenSSL's libcrypto EVP stuff. This is how this engine gets wired to EVP. */
+/*
+ * Cipher Algorithms
+ *
+ * OpenSSL's libcrypto EVP stuff. This is how this engine gets wired to EVP.
+ * EVP_CIPHER is defined in evp.h.  To maintain binary compatibility the
+ * definition cannot be modified.
+ * Stuff specific to the devcrypto engine is kept in devcrypto_ctx_t, which is
+ * pointed to by cipher_data or md_data.
+ *
+ * Fields: nid, block_size, key_len, iv_len, flags,
+ *	init(), do_cipher(), cleanup(),
+ *	ctx_size,
+ *	set_asn1_parameters(), get_asn1_parameters(), ctrl(), app_data
+ */
 static const EVP_CIPHER dev_des_cbc = {
 	NID_des_cbc,
 	8, 8, 8,
@@ -802,7 +821,6 @@ devcrypto_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	int r;
 	uint_t rv = 0;
 
-
 	if (key == NULL) {
 		DEVCRYPTOerr(DEVC_F_CIPHER_INIT, DEVC_R_CIPHER_KEY);
 		return (0);
@@ -823,6 +841,9 @@ devcrypto_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 		DEVCRYPTOerr(DEVC_F_CIPHER_INIT, DEVC_R_KEY_OR_IV_LEN_PROBLEM);
 		return (0);
 	}
+
+	/* Set cipher flags, if any */
+	ctx->flags |= the_cipher->flags;
 
 	/* get the mechanism string */
 	mech_string = pkcs11_mech2str(the_cipher->mech_type);

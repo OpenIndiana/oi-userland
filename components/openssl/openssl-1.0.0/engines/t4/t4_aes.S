@@ -1,22 +1,51 @@
 /*
- * CDDL HEADER START
+ * ====================================================================
+ * Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
  *
- * The contents of this file are subject to the terms of the
- * Common Development and Distribution License (the "License").
- * You may not use this file except in compliance with the License.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
- * or http://www.opensolaris.org/os/licensing.
- * See the License for the specific language governing permissions
- * and limitations under the License.
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
  *
- * When distributing Covered Code, include this CDDL HEADER in each
- * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
- * If applicable, add the following below this CDDL HEADER, with the
- * fields enclosed by brackets "[]" replaced with your own identifying
- * information: Portions Copyright [yyyy] [name of copyright owner]
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
  *
- * CDDL HEADER END
+ * 3. All advertising materials mentioning features or use of this
+ *    software must display the following acknowledgment:
+ *    "This product includes software developed by the OpenSSL Project
+ *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+ *
+ * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
+ *    endorse or promote products derived from this software without
+ *    prior written permission. For written permission, please contact
+ *    openssl-core@openssl.org.
+ *
+ * 5. Products derived from this software may not be called "OpenSSL"
+ *    nor may "OpenSSL" appear in their names without prior written
+ *    permission of the OpenSSL Project.
+ *
+ * 6. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the OpenSSL Project
+ *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
  */
 
 /*
@@ -183,6 +212,26 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	ld	[%o1 + 0xc], %f3
 
 !expand the key
+	!aes_kexpand1 %f0, %f2, 0x0, %f4
+	!aes_kexpand2 %f2, %f4, %f6
+	!aes_kexpand1 %f4, %f6, 0x1, %f8
+	!aes_kexpand2 %f6, %f8, %f10
+	!aes_kexpand1 %f8, %f10, 0x2, %f12
+	!aes_kexpand2 %f10, %f12, %f14
+	!aes_kexpand1 %f12, %f14, 0x3, %f16
+	!aes_kexpand2 %f14, %f16, %f18
+	!aes_kexpand1 %f16, %f18, 0x4, %f20
+	!aes_kexpand2 %f18, %f20, %f22
+	!aes_kexpand1 %f20, %f22, 0x5, %f24
+	!aes_kexpand2 %f22, %f24, %f26
+	!aes_kexpand1 %f24, %f26, 0x6, %f28
+	!aes_kexpand2 %f26, %f28, %f30
+	!aes_kexpand1 %f28, %f30, 0x7, %f32
+	!aes_kexpand2 %f30, %f32, %f34
+	!aes_kexpand1 %f32, %f34, 0x8, %f36
+	!aes_kexpand2 %f34, %f36, %f38
+	!aes_kexpand1 %f36, %f38, 0x9, %f40
+	!aes_kexpand2 %f38, %f40, %f42
 	.byte	0x88, 0xc8, 0x01, 0x02
 	.byte	0x8d, 0xb0, 0xa6, 0x24
 	.byte	0x90, 0xc9, 0x03, 0x06
@@ -241,6 +290,36 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	ld	[%o1 + 0x14], %f5
 
 !expand the key
+	!aes_kexpand1 %f0, %f4, 0x0, %f6
+	!aes_kexpand2 %f2, %f6, %f8
+	!aes_kexpand2 %f4, %f8, %f10
+
+	!aes_kexpand1 %f6, %f10, 0x1, %f12
+	!aes_kexpand2 %f8, %f12, %f14
+	!aes_kexpand2 %f10, %f14, %f16
+
+	!aes_kexpand1 %f12, %f16, 0x2, %f18
+	!aes_kexpand2 %f14, %f18, %f20
+	!aes_kexpand2 %f16, %f20, %f22
+
+	!aes_kexpand1 %f18, %f22, 0x3, %f24
+	!aes_kexpand2 %f20, %f24, %f26
+	!aes_kexpand2 %f22, %f26, %f28
+
+	!aes_kexpand1 %f24, %f28, 0x4, %f30
+	!aes_kexpand2 %f26, %f30, %f32
+	!aes_kexpand2 %f28, %f32, %f34
+
+	!aes_kexpand1 %f30, %f34, 0x5, %f36
+	!aes_kexpand2 %f32, %f36, %f38
+	!aes_kexpand2 %f34, %f38, %f40
+
+	!aes_kexpand1 %f36, %f40, 0x6, %f42
+	!aes_kexpand2 %f38, %f42, %f44
+	!aes_kexpand2 %f40, %f44, %f46
+
+	!aes_kexpand1 %f42, %f46, 0x7, %f48
+	!aes_kexpand2 %f44, %f48, %f50
 	.byte	0x8c, 0xc8, 0x01, 0x04
 	.byte	0x91, 0xb0, 0xa6, 0x26
 	.byte	0x95, 0xb1, 0x26, 0x28
@@ -307,6 +386,38 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	ld	[%o1 + 0x1c], %f7
 
 !expand the key
+	!aes_kexpand1 %f0, %f6, 0x0, %f8
+	!aes_kexpand2 %f2, %f8, %f10
+	!aes_kexpand0 %f4, %f10, %f12
+	!aes_kexpand2 %f6, %f12, %f14
+
+	!aes_kexpand1 %f8, %f14, 0x1, %f16
+	!aes_kexpand2 %f10, %f16, %f18
+	!aes_kexpand0 %f12, %f18, %f20
+	!aes_kexpand2 %f14, %f20, %f22
+
+	!aes_kexpand1 %f16, %f22, 0x2, %f24
+	!aes_kexpand2 %f18, %f24, %f26
+	!aes_kexpand0 %f20, %f26, %f28
+	!aes_kexpand2 %f22, %f28, %f30
+
+	!aes_kexpand1 %f24, %f30, 0x3, %f32
+	!aes_kexpand2 %f26, %f32, %f34
+	!aes_kexpand0 %f28, %f34, %f36
+	!aes_kexpand2 %f30, %f36, %f38
+
+	!aes_kexpand1 %f32, %f38, 0x4, %f40
+	!aes_kexpand2 %f34, %f40, %f42
+	!aes_kexpand0 %f36, %f42, %f44
+	!aes_kexpand2 %f38, %f44, %f46
+
+	!aes_kexpand1 %f40, %f46, 0x5, %f48
+	!aes_kexpand2 %f42, %f48, %f50
+	!aes_kexpand0 %f44, %f50, %f52
+	!aes_kexpand2 %f46, %f52, %f54
+
+	!aes_kexpand1 %f48, %f54, 0x6, %f56
+	!aes_kexpand2 %f50, %f56, %f58
 	.byte	0x90, 0xc8, 0x01, 0x06
 	.byte	0x95, 0xb0, 0xa6, 0x28
 	.byte	0x99, 0xb1, 0x26, 0x0a
@@ -371,12 +482,20 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0xb6, 0xc8, 0xbe, 0x3d ; \
 	.byte	0xba, 0xc9, 0x36, 0x19 ; \
 	.byte	0xbe, 0xc9, 0xb6, 0x39
+	!aes_eround01	%f0, %f60, %f62, %f56 ; \
+	!aes_eround23	%f2, %f60, %f62, %f58 ; \
+	!aes_eround01	%f4, %f56, %f58, %f60 ; \
+	!aes_eround23	%f6, %f56, %f58, %f62
 
 #define	MID_TWO_EROUNDS \
 	.byte	0xb2, 0xca, 0x3e, 0x1d ; \
 	.byte	0xb6, 0xca, 0xbe, 0x3d ; \
 	.byte	0xba, 0xcb, 0x36, 0x19 ; \
 	.byte	0xbe, 0xcb, 0xb6, 0x39
+	!aes_eround01	%f8, %f60, %f62, %f56 ; \
+	!aes_eround23	%f10, %f60, %f62, %f58 ; \
+	!aes_eround01	%f12, %f56, %f58, %f60 ; \
+	!aes_eround23	%f14, %f56, %f58, %f62
 
 #define	MID_TWO_EROUNDS_2 \
 	.byte	0x8c, 0xca, 0x04, 0x00 ; \
@@ -387,6 +506,14 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0x84, 0xcb, 0x88, 0x26 ; \
 	.byte	0xba, 0xcb, 0x36, 0x19 ; \
 	.byte	0xbe, 0xcb, 0xb6, 0x39
+	!aes_eround01	%f8, %f0, %f2, %f6 ; \
+	!aes_eround23	%f10, %f0, %f2, %f4 ; \
+	!aes_eround01	%f8, %f60, %f62, %f56 ; \
+	!aes_eround23	%f10, %f60, %f62, %f58 ; \
+	!aes_eround01	%f12, %f6, %f4, %f0 ; \
+	!aes_eround23	%f14, %f6, %f4, %f2 ; \
+	!aes_eround01	%f12, %f56, %f58, %f60 ; \
+	!aes_eround23	%f14, %f56, %f58, %f62
 
 #define	TEN_EROUNDS \
 	.byte	0xb2, 0xcc, 0x3e, 0x1d ; \
@@ -409,6 +536,26 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0xb6, 0xcc, 0xfe, 0x3d ; \
 	.byte	0xba, 0xcd, 0x76, 0x99 ; \
 	.byte	0xbe, 0xcd, 0xf6, 0xb9
+	!aes_eround01	%f16, %f60, %f62, %f56 ; \
+	!aes_eround23	%f18, %f60, %f62, %f58 ; \
+	!aes_eround01	%f20, %f56, %f58, %f60 ; \
+	!aes_eround23	%f22, %f56, %f58, %f62 ; \
+	!aes_eround01	%f24, %f60, %f62, %f56 ; \
+	!aes_eround23	%f26, %f60, %f62, %f58 ; \
+	!aes_eround01	%f28, %f56, %f58, %f60 ; \
+	!aes_eround23	%f30, %f56, %f58, %f62 ; \
+	!aes_eround01	%f32, %f60, %f62, %f56 ; \
+	!aes_eround23	%f34, %f60, %f62, %f58 ; \
+	!aes_eround01	%f36, %f56, %f58, %f60 ; \
+	!aes_eround23	%f38, %f56, %f58, %f62 ; \
+	!aes_eround01	%f40, %f60, %f62, %f56 ; \
+	!aes_eround23	%f42, %f60, %f62, %f58 ; \
+	!aes_eround01	%f44, %f56, %f58, %f60 ; \
+	!aes_eround23	%f46, %f56, %f58, %f62 ; \
+	!aes_eround01	%f48, %f60, %f62, %f56 ; \
+	!aes_eround23	%f50, %f60, %f62, %f58 ; \
+	!aes_eround01_l	%f52, %f56, %f58, %f60 ; \
+	!aes_eround23_l	%f54, %f56, %f58, %f62
 
 #define	TEN_EROUNDS_2 \
 	.byte	0x8c, 0xcc, 0x04, 0x00 ; \
@@ -451,6 +598,46 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0x84, 0xcd, 0xc8, 0xa6 ; \
 	.byte	0xba, 0xcd, 0x76, 0x99 ; \
 	.byte	0xbe, 0xcd, 0xf6, 0xb9
+	!aes_eround01	%f16, %f0, %f2, %f6 ; \
+	!aes_eround23	%f18, %f0, %f2, %f4 ; \
+	!aes_eround01	%f16, %f60, %f62, %f56 ; \
+	!aes_eround23	%f18, %f60, %f62, %f58 ; \
+	!aes_eround01	%f20, %f6, %f4, %f0 ; \
+	!aes_eround23	%f22, %f6, %f4, %f2 ; \
+	!aes_eround01	%f20, %f56, %f58, %f60 ; \
+	!aes_eround23	%f22, %f56, %f58, %f62 ; \
+	!aes_eround01	%f24, %f0, %f2, %f6 ; \
+	!aes_eround23	%f26, %f0, %f2, %f4 ; \
+	!aes_eround01	%f24, %f60, %f62, %f56 ; \
+	!aes_eround23	%f26, %f60, %f62, %f58 ; \
+	!aes_eround01	%f28, %f6, %f4, %f0 ; \
+	!aes_eround23	%f30, %f6, %f4, %f2 ; \
+	!aes_eround01	%f28, %f56, %f58, %f60 ; \
+	!aes_eround23	%f30, %f56, %f58, %f62 ; \
+	!aes_eround01	%f32, %f0, %f2, %f6 ; \
+	!aes_eround23	%f34, %f0, %f2, %f4 ; \
+	!aes_eround01	%f32, %f60, %f62, %f56 ; \
+	!aes_eround23	%f34, %f60, %f62, %f58 ; \
+	!aes_eround01	%f36, %f6, %f4, %f0 ; \
+	!aes_eround23	%f38, %f6, %f4, %f2 ; \
+	!aes_eround01	%f36, %f56, %f58, %f60 ; \
+	!aes_eround23	%f38, %f56, %f58, %f62 ; \
+	!aes_eround01	%f40, %f0, %f2, %f6 ; \
+	!aes_eround23	%f42, %f0, %f2, %f4 ; \
+	!aes_eround01	%f40, %f60, %f62, %f56 ; \
+	!aes_eround23	%f42, %f60, %f62, %f58 ; \
+	!aes_eround01	%f44, %f6, %f4, %f0 ; \
+	!aes_eround23	%f46, %f6, %f4, %f2 ; \
+	!aes_eround01	%f44, %f56, %f58, %f60 ; \
+	!aes_eround23	%f46, %f56, %f58, %f62 ; \
+	!aes_eround01	%f48, %f0, %f2, %f6 ; \
+	!aes_eround23	%f50, %f0, %f2, %f4 ; \
+	!aes_eround01	%f48, %f60, %f62, %f56 ; \
+	!aes_eround23	%f50, %f60, %f62, %f58 ; \
+	!aes_eround01_l	%f52, %f6, %f4, %f0 ; \
+	!aes_eround23_l	%f54, %f6, %f4, %f2 ; \
+	!aes_eround01_l	%f52, %f56, %f58, %f60 ; \
+	!aes_eround23_l	%f54, %f56, %f58, %f62
 
 #define	TWELVE_EROUNDS \
 	MID_TWO_EROUNDS	; \
@@ -528,18 +715,89 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0xba, 0xcd, 0x76, 0x99 ; \
 	ldd	[%o0 + 0x28], %f6 ; \
 	.byte	0xbe, 0xcd, 0xf6, 0xb9
+	!aes_eround01	%f0, %f20, %f22, %f24 ; \
+	!aes_eround23	%f2, %f20, %f22, %f22 ; \
+	!ldd	[%o0 + 0x60], %f20 ; \
+	!aes_eround01	%f0, %f60, %f62, %f56 ; \
+	!aes_eround23	%f2, %f60, %f62, %f58 ; \
+	!aes_eround01	%f4, %f24, %f22, %f0 ; \
+	!aes_eround23	%f6, %f24, %f22, %f2 ; \
+	!ldd	[%o0 + 0x68], %f22 ; \
+	!aes_eround01	%f4, %f56, %f58, %f60 ; \
+	!ldd	[%o0 + 0x70], %f24 ; \
+	!aes_eround23	%f6, %f56, %f58, %f62 ; \
+	!aes_eround01	%f8, %f0, %f2, %f6 ; \
+	!aes_eround23	%f10, %f0, %f2, %f4 ; \
+	!aes_eround01	%f8, %f60, %f62, %f56 ; \
+	!aes_eround23	%f10, %f60, %f62, %f58 ; \
+	!aes_eround01	%f12, %f6, %f4, %f0 ; \
+	!aes_eround23	%f14, %f6, %f4, %f2 ; \
+	!aes_eround01	%f12, %f56, %f58, %f60 ; \
+	!aes_eround23	%f14, %f56, %f58, %f62 ; \
+	!aes_eround01	%f16, %f0, %f2, %f6 ; \
+	!aes_eround23	%f18, %f0, %f2, %f4 ; \
+	!aes_eround01	%f16, %f60, %f62, %f56 ; \
+	!aes_eround23	%f18, %f60, %f62, %f58 ; \
+	!aes_eround01	%f20, %f6, %f4, %f0 ; \
+	!aes_eround23	%f22, %f6, %f4, %f2 ; \
+	!aes_eround01	%f20, %f56, %f58, %f60 ; \
+	!aes_eround23	%f22, %f56, %f58, %f62 ; \
+	!aes_eround01	%f24, %f0, %f2, %f6 ; \
+	!aes_eround23	%f26, %f0, %f2, %f4 ; \
+	!aes_eround01	%f24, %f60, %f62, %f56 ; \
+	!aes_eround23	%f26, %f60, %f62, %f58 ; \
+	!aes_eround01	%f28, %f6, %f4, %f0 ; \
+	!aes_eround23	%f30, %f6, %f4, %f2 ; \
+	!aes_eround01	%f28, %f56, %f58, %f60 ; \
+	!aes_eround23	%f30, %f56, %f58, %f62 ; \
+	!aes_eround01	%f32, %f0, %f2, %f6 ; \
+	!aes_eround23	%f34, %f0, %f2, %f4 ; \
+	!aes_eround01	%f32, %f60, %f62, %f56 ; \
+	!aes_eround23	%f34, %f60, %f62, %f58 ; \
+	!aes_eround01	%f36, %f6, %f4, %f0 ; \
+	!aes_eround23	%f38, %f6, %f4, %f2 ; \
+	!aes_eround01	%f36, %f56, %f58, %f60 ; \
+	!aes_eround23	%f38, %f56, %f58, %f62 ; \
+	!aes_eround01	%f40, %f0, %f2, %f6 ; \
+	!aes_eround23	%f42, %f0, %f2, %f4 ; \
+	!aes_eround01	%f40, %f60, %f62, %f56 ; \
+	!aes_eround23	%f42, %f60, %f62, %f58 ; \
+	!aes_eround01	%f44, %f6, %f4, %f0 ; \
+	!aes_eround23	%f46, %f6, %f4, %f2 ; \
+	!aes_eround01	%f44, %f56, %f58, %f60 ; \
+	!aes_eround23	%f46, %f56, %f58, %f62 ; \
+	!aes_eround01	%f48, %f0, %f2, %f6 ; \
+	!aes_eround23	%f50, %f0, %f2, %f4 ; \
+	!ldd	[%o0 + 0x10], %f0 ; \
+	!aes_eround01	%f48, %f60, %f62, %f56 ; \
+	!ldd	[%o0 + 0x18], %f2 ; \
+	!aes_eround23	%f50, %f60, %f62, %f58 ; \
+	!aes_eround01_l	%f52, %f6, %f4, %f20 ; \
+	!aes_eround23_l	%f54, %f6, %f4, %f22 ; \
+	!ldd	[%o0 + 0x20], %f4 ; \
+	!aes_eround01_l	%f52, %f56, %f58, %f60 ; \
+	!ldd	[%o0 + 0x28], %f6 ; \
+	!aes_eround23_l	%f54, %f56, %f58, %f62
 
 #define	FIRST_TWO_DROUNDS \
 	.byte	0xb2, 0xc8, 0x3e, 0x5d ; \
 	.byte	0xb6, 0xc8, 0xbe, 0x7d ; \
 	.byte	0xba, 0xc9, 0x36, 0x59 ; \
 	.byte	0xbe, 0xc9, 0xb6, 0x79
+	!aes_dround01	%f0, %f60, %f62, %f56 ; \
+	!aes_dround23	%f2, %f60, %f62, %f58 ; \
+	!aes_dround01	%f4, %f56, %f58, %f60 ; \
+	!aes_dround23	%f6, %f56, %f58, %f62
 
 #define	MID_TWO_DROUNDS \
 	.byte	0xb2, 0xca, 0x3e, 0x5d ; \
 	.byte	0xb6, 0xca, 0xbe, 0x7d ; \
 	.byte	0xba, 0xcb, 0x36, 0x59 ; \
 	.byte	0xbe, 0xcb, 0xb6, 0x79
+	!aes_dround01	%f8, %f60, %f62, %f56 ; \
+	!aes_dround23	%f10, %f60, %f62, %f58 ; \
+	!aes_dround01	%f12, %f56, %f58, %f60 ; \
+	!aes_dround23	%f14, %f56, %f58, %f62
 
 #define	MID_TWO_DROUNDS_2 \
 	.byte	0x8c, 0xca, 0x04, 0x40 ; \
@@ -550,6 +808,14 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0x84, 0xcb, 0x88, 0x66 ; \
 	.byte	0xba, 0xcb, 0x36, 0x59 ; \
 	.byte	0xbe, 0xcb, 0xb6, 0x79
+	!aes_dround01	%f8, %f0, %f2, %f6 ; \
+	!aes_dround23	%f10, %f0, %f2, %f4 ; \
+	!aes_dround01	%f8, %f60, %f62, %f56 ; \
+	!aes_dround23	%f10, %f60, %f62, %f58 ; \
+	!aes_dround01	%f12, %f6, %f4, %f0 ; \
+	!aes_dround23	%f14, %f6, %f4, %f2 ; \
+	!aes_dround01	%f12, %f56, %f58, %f60 ; \
+	!aes_dround23	%f14, %f56, %f58, %f62
 
 #define	TEN_DROUNDS \
 	.byte	0xb2, 0xcc, 0x3e, 0x5d ; \
@@ -572,6 +838,26 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0xb6, 0xcc, 0xfe, 0x7d ; \
 	.byte	0xba, 0xcd, 0x76, 0xd9 ; \
 	.byte	0xbe, 0xcd, 0xf6, 0xf9
+	!aes_dround01	%f16, %f60, %f62, %f56 ; \
+	!aes_dround23	%f18, %f60, %f62, %f58 ; \
+	!aes_dround01	%f20, %f56, %f58, %f60 ; \
+	!aes_dround23	%f22, %f56, %f58, %f62 ; \
+	!aes_dround01	%f24, %f60, %f62, %f56 ; \
+	!aes_dround23	%f26, %f60, %f62, %f58 ; \
+	!aes_dround01	%f28, %f56, %f58, %f60 ; \
+	!aes_dround23	%f30, %f56, %f58, %f62 ; \
+	!aes_dround01	%f32, %f60, %f62, %f56 ; \
+	!aes_dround23	%f34, %f60, %f62, %f58 ; \
+	!aes_dround01	%f36, %f56, %f58, %f60 ; \
+	!aes_dround23	%f38, %f56, %f58, %f62 ; \
+	!aes_dround01	%f40, %f60, %f62, %f56 ; \
+	!aes_dround23	%f42, %f60, %f62, %f58 ; \
+	!aes_dround01	%f44, %f56, %f58, %f60 ; \
+	!aes_dround23	%f46, %f56, %f58, %f62 ; \
+	!aes_dround01	%f48, %f60, %f62, %f56 ; \
+	!aes_dround23	%f50, %f60, %f62, %f58 ; \
+	!aes_dround01_l	%f52, %f56, %f58, %f60 ; \
+	!aes_dround23_l	%f54, %f56, %f58, %f62
 
 #define	TEN_DROUNDS_2 \
 	.byte	0x8c, 0xcc, 0x04, 0x40 ; \
@@ -614,6 +900,46 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0x84, 0xcd, 0xc8, 0xe6 ; \
 	.byte	0xba, 0xcd, 0x76, 0xd9 ; \
 	.byte	0xbe, 0xcd, 0xf6, 0xf9
+	!aes_dround01	%f16, %f0, %f2, %f6 ; \
+	!aes_dround23	%f18, %f0, %f2, %f4 ; \
+	!aes_dround01	%f16, %f60, %f62, %f56 ; \
+	!aes_dround23	%f18, %f60, %f62, %f58 ; \
+	!aes_dround01	%f20, %f6, %f4, %f0 ; \
+	!aes_dround23	%f22, %f6, %f4, %f2 ; \
+	!aes_dround01	%f20, %f56, %f58, %f60 ; \
+	!aes_dround23	%f22, %f56, %f58, %f62 ; \
+	!aes_dround01	%f24, %f0, %f2, %f6 ; \
+	!aes_dround23	%f26, %f0, %f2, %f4 ; \
+	!aes_dround01	%f24, %f60, %f62, %f56 ; \
+	!aes_dround23	%f26, %f60, %f62, %f58 ; \
+	!aes_dround01	%f28, %f6, %f4, %f0 ; \
+	!aes_dround23	%f30, %f6, %f4, %f2 ; \
+	!aes_dround01	%f28, %f56, %f58, %f60 ; \
+	!aes_dround23	%f30, %f56, %f58, %f62 ; \
+	!aes_dround01	%f32, %f0, %f2, %f6 ; \
+	!aes_dround23	%f34, %f0, %f2, %f4 ; \
+	!aes_dround01	%f32, %f60, %f62, %f56 ; \
+	!aes_dround23	%f34, %f60, %f62, %f58 ; \
+	!aes_dround01	%f36, %f6, %f4, %f0 ; \
+	!aes_dround23	%f38, %f6, %f4, %f2 ; \
+	!aes_dround01	%f36, %f56, %f58, %f60 ; \
+	!aes_dround23	%f38, %f56, %f58, %f62 ; \
+	!aes_dround01	%f40, %f0, %f2, %f6 ; \
+	!aes_dround23	%f42, %f0, %f2, %f4 ; \
+	!aes_dround01	%f40, %f60, %f62, %f56 ; \
+	!aes_dround23	%f42, %f60, %f62, %f58 ; \
+	!aes_dround01	%f44, %f6, %f4, %f0 ; \
+	!aes_dround23	%f46, %f6, %f4, %f2 ; \
+	!aes_dround01	%f44, %f56, %f58, %f60 ; \
+	!aes_dround23	%f46, %f56, %f58, %f62 ; \
+	!aes_dround01	%f48, %f0, %f2, %f6 ; \
+	!aes_dround23	%f50, %f0, %f2, %f4 ; \
+	!aes_dround01	%f48, %f60, %f62, %f56 ; \
+	!aes_dround23	%f50, %f60, %f62, %f58 ; \
+	!aes_dround01_l	%f52, %f6, %f4, %f0 ; \
+	!aes_dround23_l	%f54, %f6, %f4, %f2 ; \
+	!aes_dround01_l	%f52, %f56, %f58, %f60 ; \
+	!aes_dround23_l	%f54, %f56, %f58, %f62
 
 #define	TWELVE_DROUNDS \
 	MID_TWO_DROUNDS	; \
@@ -691,6 +1017,69 @@ void t4_aes256_cfb128_decrypt(uint64_t *ks, uint64_t *asm_in,
 	.byte	0xba, 0xcd, 0x76, 0xd9 ; \
 	ldd	[%o0 + 0xc8], %f6 ; \
 	.byte	0xbe, 0xcd, 0xf6, 0xf9
+	!aes_dround01	%f0, %f20, %f22, %f24 ; \
+	!aes_dround23	%f2, %f20, %f22, %f22 ; \
+	!ldd	[%o0 + 0x80], %f20 ; \
+	!aes_dround01	%f0, %f60, %f62, %f56 ; \
+	!aes_dround23	%f2, %f60, %f62, %f58 ; \
+	!aes_dround01	%f4, %f24, %f22, %f0 ; \
+	!aes_dround23	%f6, %f24, %f22, %f2 ; \
+	!ldd	[%o0 + 0x88], %f22 ; \
+	!aes_dround01	%f4, %f56, %f58, %f60 ; \
+	!ldd	[%o0 + 0x70], %f24 ; \
+	!aes_dround23	%f6, %f56, %f58, %f62 ; \
+	!aes_dround01	%f8, %f0, %f2, %f6 ; \
+	!aes_dround23	%f10, %f0, %f2, %f4 ; \
+	!aes_dround01	%f8, %f60, %f62, %f56 ; \
+	!aes_dround23	%f10, %f60, %f62, %f58 ; \
+	!aes_dround01	%f12, %f6, %f4, %f0 ; \
+	!aes_dround23	%f14, %f6, %f4, %f2 ; \
+	!aes_dround01	%f12, %f56, %f58, %f60 ; \
+	!aes_dround23	%f14, %f56, %f58, %f62 ; \
+	!aes_dround01	%f16, %f0, %f2, %f6 ; \
+	!aes_dround23	%f18, %f0, %f2, %f4 ; \
+	!aes_dround01	%f16, %f60, %f62, %f56 ; \
+	!aes_dround23	%f18, %f60, %f62, %f58 ; \
+	!aes_dround01	%f20, %f6, %f4, %f0 ; \
+	!aes_dround23	%f22, %f6, %f4, %f2 ; \
+	!aes_dround01	%f20, %f56, %f58, %f60 ; \
+	!aes_dround23	%f22, %f56, %f58, %f62 ; \
+	!aes_dround01	%f24, %f0, %f2, %f6 ; \
+	!aes_dround23	%f26, %f0, %f2, %f4 ; \
+	!aes_dround01	%f24, %f60, %f62, %f56 ; \
+	!aes_dround23	%f26, %f60, %f62, %f58 ; \
+	!aes_dround01	%f28, %f6, %f4, %f0 ; \
+	!aes_dround23	%f30, %f6, %f4, %f2 ; \
+	!aes_dround01	%f28, %f56, %f58, %f60 ; \
+	!aes_dround23	%f30, %f56, %f58, %f62 ; \
+	!aes_dround01	%f32, %f0, %f2, %f6 ; \
+	!aes_dround23	%f34, %f0, %f2, %f4 ; \
+	!aes_dround01	%f32, %f60, %f62, %f56 ; \
+	!aes_dround23	%f34, %f60, %f62, %f58 ; \
+	!aes_dround01	%f36, %f6, %f4, %f0 ; \
+	!aes_dround23	%f38, %f6, %f4, %f2 ; \
+	!aes_dround01	%f36, %f56, %f58, %f60 ; \
+	!aes_dround23	%f38, %f56, %f58, %f62 ; \
+	!aes_dround01	%f40, %f0, %f2, %f6 ; \
+	!aes_dround23	%f42, %f0, %f2, %f4 ; \
+	!aes_dround01	%f40, %f60, %f62, %f56 ; \
+	!aes_dround23	%f42, %f60, %f62, %f58 ; \
+	!aes_dround01	%f44, %f6, %f4, %f0 ; \
+	!aes_dround23	%f46, %f6, %f4, %f2 ; \
+	!aes_dround01	%f44, %f56, %f58, %f60 ; \
+	!aes_dround23	%f46, %f56, %f58, %f62 ; \
+	!aes_dround01	%f48, %f0, %f2, %f6 ; \
+	!aes_dround23	%f50, %f0, %f2, %f4 ; \
+	!ldd	[%o0 + 0xd0], %f0 ; \
+	!aes_dround01	%f48, %f60, %f62, %f56 ; \
+	!ldd	[%o0 + 0xd8], %f2 ; \
+	!aes_dround23	%f50, %f60, %f62, %f58 ; \
+	!aes_dround01_l	%f52, %f6, %f4, %f20 ; \
+	!aes_dround23_l	%f54, %f6, %f4, %f22 ; \
+	!ldd	[%o0 + 0xc0], %f4 ; \
+	!aes_dround01_l	%f52, %f56, %f58, %f60 ; \
+	!ldd	[%o0 + 0xc8], %f6 ; \
+	!aes_dround23_l	%f54, %f56, %f58, %f62
 
 
 	ENTRY(t4_aes128_load_keys_for_encrypt)

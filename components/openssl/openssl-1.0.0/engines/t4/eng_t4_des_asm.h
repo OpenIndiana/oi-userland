@@ -57,41 +57,42 @@
  * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
  */
 
-#ifndef	ENG_T4_ERR_H
-#define	ENG_T4_ERR_H
+#ifndef	ENG_T4_DES_ASM_H
+#define	ENG_T4_DES_ASM_H
+
+/* SPARC DES assembly language functions.  */
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-static void ERR_unload_t4_strings(void);
-#pragma inline(ERR_unload_t4_strings)
-static void ERR_t4_error(int function, int reason, char *file, int line);
+#include <sys/types.h>
 
-#define	T4err(f, r)	ERR_t4_error((f), (r), __FILE__, __LINE__)
+#if (defined(sun4v) || defined(__sparcv9) || defined(__sparcv8plus) || \
+	defined(__sparcv8)) && ! defined(OPENSSL_NO_ASM)
 
-/* Function codes */
-#define	T4_F_INIT 				100
-#define	T4_F_DESTROY 				101
-#define	T4_F_FINISH				102
-#define	T4_F_CIPHER_INIT_AES			103
-#define	T4_F_ADD_NID				104
-#define	T4_F_GET_ALL_CIPHERS			105
-#define	T4_F_CIPHER_DO_AES			106
-#define	T4_F_CIPHER_CLEANUP			107
-#define	T4_F_CIPHER_INIT_DES			108
-#define	T4_F_CIPHER_DO_DES			109
+extern void t4_des_expand(uint64_t *rk, const uint32_t *key);
+extern void t4_des_encrypt(const uint64_t *rk, const uint64_t *pt,
+    uint64_t *ct);
+extern void t4_des_load_keys(uint64_t *ks);
+void t4_des_ecb_crypt(uint64_t *ks, uint64_t *asm_in,
+    uint64_t *asm_out, size_t amount_to_crypt, uint64_t *iv);
+extern void t4_des_cbc_encrypt(uint64_t *ks, uint64_t *asm_in,
+    uint64_t *asm_out, size_t amount_to_crypt, uint64_t *iv);
+extern void t4_des_cbc_decrypt(uint64_t *ks, uint64_t *asm_in,
+    uint64_t *asm_out, size_t amount_to_crypt, uint64_t *iv);
+extern void t4_des3_load_keys(uint64_t *ks);
+extern void t4_des3_ecb_crypt(uint64_t *ks, uint64_t *asm_in,
+    uint64_t *asm_out, size_t amount_to_crypt, uint64_t *iv);
+extern void t4_des3_cbc_encrypt(uint64_t *ks, uint64_t *asm_in,
+    uint64_t *asm_out, size_t amount_to_crypt, uint64_t *iv);
+extern void t4_des3_cbc_decrypt(uint64_t *ks, uint64_t *asm_in,
+    uint64_t *asm_out, size_t amount_to_crypt, uint64_t *iv);
 
-/* Reason codes */
-#define	T4_R_CIPHER_KEY				100
-#define	T4_R_CIPHER_NID				101
-#define	T4_R_IV_LEN_INCORRECT			102
-#define	T4_R_KEY_LEN_INCORRECT			103
-#define	T4_R_ASN1_OBJECT_CREATE			104
-#define	T4_R_NOT_BLOCKSIZE_LENGTH		105
+
+#endif	/* (sun4v||__sparv9||__sparcv8plus||__sparvc8) && !OPENSSL_NO_ASM */
 
 #ifdef	__cplusplus
 }
 #endif
-
-#endif	/* ENG_T4_ERR_H */
+#endif	/* ENG_T4_DES_ASM_H */

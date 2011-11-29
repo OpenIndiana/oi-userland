@@ -1,6 +1,8 @@
 /*
  * This product includes cryptographic software developed by the OpenSSL
- * Project for use in the OpenSSL Toolkit (http://www.openssl.org/).
+ * Project for use in the OpenSSL Toolkit (http://www.openssl.org/). This
+ * product includes cryptographic software written by Eric Young
+ * (eay@cryptsoft.com).
  */
 
 /*
@@ -57,41 +59,77 @@
  * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
  */
 
-#ifndef	ENG_T4_ERR_H
-#define	ENG_T4_ERR_H
+#ifndef	ENG_T4_SHA2_ASM_H
+#define	ENG_T4_SHA2_ASM_H
+
+/*
+ * SPARC T4 SHA2 (SHA256/SHA512) assembly language functions and context.
+ * The context must match that used by the Solaris SPARC T4 assembly
+ * (except for OpenSSL-specific fields num and md_len that aren't in Solaris).
+ *
+ * Based on OpenSSL file openssl/sha.h and Solaris file sys/sha2.h.
+ */
+
+#include <stddef.h>
+#include <sys/types.h>
+#include <openssl/sha.h>
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
 
-static void ERR_unload_t4_strings(void);
-#pragma inline(ERR_unload_t4_strings)
-static void ERR_t4_error(int function, int reason, char *file, int line);
+#ifndef OPENSSL_NO_SHA256
+/*
+ * The contents of this structure are a private interface between the
+ * Init/Update/Multiblock/Final functions.
+ * Callers must never attempt to read or write any of the fields
+ * in this structure directly.
+ */
+typedef struct t4_SHA256state_st {
+	uint32_t algotype;		/* Solaris-only field; unused here */
+	uint32_t algotype_pad;		/* Pad to align next field 0 mod 8 */
+	uint32_t h[8];			/* State (ABCDEFGH) */
+	uint32_t h_pad[8];		/* Pad fields to match T4_SHA512_CTX */
+	uint32_t Nl, Nh;		/* Number of bits, module 2^64 */
+	uint32_t Nl_pad, Nh_pad;	/* Pad fields to match T4_SHA512_CTX */
+	uint32_t data[SHA_LBLOCK];	/* Input */
+	unsigned int num, md_len;	/* Fields unused by Solaris assembly */
+} T4_SHA256_CTX;
+#endif	/* !OPENSSL_NO_SHA256 */
 
-#define	T4err(f, r)	ERR_t4_error((f), (r), __FILE__, __LINE__)
 
-/* Function codes */
-#define	T4_F_INIT 				100
-#define	T4_F_DESTROY 				101
-#define	T4_F_FINISH				102
-#define	T4_F_CIPHER_INIT_AES			103
-#define	T4_F_ADD_NID				104
-#define	T4_F_GET_ALL_CIPHERS			105
-#define	T4_F_CIPHER_DO_AES			106
-#define	T4_F_CIPHER_CLEANUP			107
-#define	T4_F_CIPHER_INIT_DES			108
-#define	T4_F_CIPHER_DO_DES			109
+#ifndef OPENSSL_NO_SHA512
+/*
+ * The contents of this structure are a private interface between the
+ * Init/Update/Multiblock/Final functions.
+ * Callers must never attempt to read or write any of the fields
+ * in this structure directly.
+ */
+typedef struct t4_SHA512state_st {
+	uint32_t algotype;		/* Solaris-only field; unused here */
+	uint64_t h[8];			/* State (ABCDEFGH) */
+	uint64_t Nl, Nh;		/* Number of bits, module 2^128 */
+	union {
+		uint64_t	d[SHA_LBLOCK];
+		unsigned char	p[SHA512_CBLOCK];
+	} u;				/* Input */
+	unsigned int num, md_len;	/* Fields unused by Solaris assembly */
+} T4_SHA512_CTX;
+#endif	/* !OPENSSL_NO_SHA512 */
 
-/* Reason codes */
-#define	T4_R_CIPHER_KEY				100
-#define	T4_R_CIPHER_NID				101
-#define	T4_R_IV_LEN_INCORRECT			102
-#define	T4_R_KEY_LEN_INCORRECT			103
-#define	T4_R_ASN1_OBJECT_CREATE			104
-#define	T4_R_NOT_BLOCKSIZE_LENGTH		105
+/*
+ * SPARC T4 assembly language functions
+ */
+#ifndef	OPENSSL_NO_SHA256
+extern void t4_sha256_multiblock(T4_SHA256_CTX *c, const void *input,
+	size_t num);
+#endif
+#ifndef	OPENSSL_NO_SHA512
+extern void t4_sha512_multiblock(T4_SHA512_CTX *c, const void *input,
+	size_t num);
+#endif
 
 #ifdef	__cplusplus
 }
 #endif
-
-#endif	/* ENG_T4_ERR_H */
+#endif	/* ENG_T4_SHA2_ASM_H */
