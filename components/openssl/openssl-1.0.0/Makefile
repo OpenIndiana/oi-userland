@@ -129,6 +129,7 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(CP) -fp engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
       $(CP) -fp engines/t4/eng_t4*.[ch]		$(@D)/crypto/engine; \
       $(CP) -fp engines/t4/t4_aes.S		$(@D)/crypto/aes/asm; \
+      $(CP) -fp engines/t4/t4_des.S		$(@D)/crypto/des/asm; \
       $(CP) -fp engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
       $(CP) -fp engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; )
 

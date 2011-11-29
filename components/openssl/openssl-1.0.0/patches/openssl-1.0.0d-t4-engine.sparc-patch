@@ -6,15 +6,15 @@ Index: Configure
 ===================================================================
 diff -ru openssl-1.0.0d/Configure openssl-1.0.0d/Configure
 --- openssl-1.0.0d/Configure	2011-05-24 17:02:24.000000000 -0700
-+++ openssl-1.0.0d/Configure	2011-06-17 16:53:34.203229852 -0700
++++ openssl-1.0.0d/Configure	2011-07-27 10:48:17.817470000 -0700
 @@ -134,8 +134,8 @@
  
  my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o::aes-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o";
  my $ia64_asm="ia64cpuid.o:bn-ia64.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::void";
 -my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::void";
 -my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::void";
-+my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o t4_aes.o::t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::void";
-+my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:t4_aes.o::t4_md5.o:t4_sha1.o t4_sha2.o:::::::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o t4_aes.o::t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::void";
++my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o t4_des.o:t4_aes.o::t4_md5.o:t4_sha1.o t4_sha2.o:::::::void";
  my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o::::::::::::void";
  my $mips3_asm=":bn-mips3.o::::::::::::void";
  my $s390x_asm="s390xcap.o s390xcpuid.o:bn-s390x.o s390x-mont.o::aes-s390x.o:::sha1-s390x.o sha256-s390x.o sha512-s390x.o::rc4-s390x.o:::::void";
@@ -45,23 +45,52 @@ diff -ru openssl-1.0.0d/crypto/aes/ openssl-1.0.0d/crypto/aes/Makefile
  aes-ppc.s:	asm/aes-ppc.pl
  	$(PERL) asm/aes-ppc.pl $(PERLASM_SCHEME) $@
  
+Index: crypto/des/Makefile
+===================================================================
+diff -ru openssl-1.0.0d/crypto/des/ openssl-1.0.0d/crypto/des/Makefile
+--- openssl-1.0.0d/crypto/des/Makefile	2011-07-26 17:47:28.530315349 -0700
++++ openssl-1.0.0d/crypto/des/Makefile	2011-07-27 10:41:47.362058958 -0700
+@@ -17,6 +17,10 @@
+ ASFLAGS= $(INCLUDES) $(ASFLAG)
+ AFLAGS= $(ASFLAGS)
+ 
++BITS:=	$(shell if grep '^SHARED_LDFLAGS.*=.*-m32' ../../Makefile >/dev/null; \
++		then echo 32; else echo 64; fi)
++ASFLAGSYF= -xregsym=no -K pic -P -xarch=v9v -D_sparcv9 -D_ASM -Dsparc -m$(BITS)
++
+ GENERAL=Makefile
+ TEST=destest.c
+ APPS=
+@@ -61,6 +65,10 @@
+ 
+ des_enc-sparc.S:	asm/des_enc.m4
+ 	m4 -B 8192 asm/des_enc.m4 > des_enc-sparc.S
++ 
++t4_des.o: asm/t4_des.S
++	as $(ASFLAGSYF) -o $@ asm/t4_des.S
++	elfedit -e 'cap:hw1 -and -cmp vis vis3' $@
+ 
+ des-586.s:	asm/des-586.pl ../perlasm/x86asm.pl ../perlasm/cbc.pl
+ 	$(PERL) asm/des-586.pl $(PERLASM_SCHEME) $(CFLAGS) > $@
 Index: crypto/engine/Makefile
 ===================================================================
 diff -ru openssl-1.0.0d/crypto/engine/Makefile openssl-1.0.0d/crypto/engine/Makefile
 --- openssl-1.0.0d/crypto/engine/Makefile	2011-05-24 17:04:12.000000000 -0700
-+++ openssl-1.0.0d/crypto/engine/Makefile	2011-06-17 16:55:13.074884424 -0700
-@@ -22,12 +22,14 @@
++++ openssl-1.0.0d/crypto/engine/Makefile	2011-07-28 10:10:00.000000000 -0700
+@@ -22,12 +22,16 @@
  	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
  	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
  	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
-+	eng_t4.c eng_t4_digest.c \
++	eng_t4.c eng_t4_des.c eng_t4_md5.c \
++	eng_t4_sha1.c eng_t4_sha256.c eng_t4_sha512.c \
  	hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
  LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
  	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
  	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
  	tb_cipher.o tb_digest.o tb_pkmeth.o tb_asnmth.o \
  	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
-+	eng_t4.o eng_t4_digest.o \
++	eng_t4.o eng_t4_des.o eng_t4_md5.o \
++	eng_t4_sha1.o eng_t4_sha256.o eng_t4_sha512.o \
  	hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
  
  SRC= $(LIBSRC)

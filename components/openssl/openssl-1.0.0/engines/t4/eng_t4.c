@@ -1,22 +1,56 @@
 /*
- * CDDL HEADER START
+ * This product includes cryptographic software developed by the OpenSSL
+ * Project for use in the OpenSSL Toolkit (http://www.openssl.org/).
+ */
+
+/*
+ * ====================================================================
+ * Copyright (c) 1998-2011 The OpenSSL Project.  All rights reserved.
  *
- * The contents of this file are subject to the terms of the
- * Common Development and Distribution License (the "License").
- * You may not use this file except in compliance with the License.
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
  *
- * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
- * or http://www.opensolaris.org/os/licensing.
- * See the License for the specific language governing permissions
- * and limitations under the License.
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
  *
- * When distributing Covered Code, include this CDDL HEADER in each
- * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
- * If applicable, add the following below this CDDL HEADER, with the
- * fields enclosed by brackets "[]" replaced with your own identifying
- * information: Portions Copyright [yyyy] [name of copyright owner]
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in
+ *    the documentation and/or other materials provided with the
+ *    distribution.
  *
- * CDDL HEADER END
+ * 3. All advertising materials mentioning features or use of this
+ *    software must display the following acknowledgment:
+ *    "This product includes software developed by the OpenSSL Project
+ *    for use in the OpenSSL Toolkit. (http://www.openssl.org/)"
+ *
+ * 4. The names "OpenSSL Toolkit" and "OpenSSL Project" must not be used to
+ *    endorse or promote products derived from this software without
+ *    prior written permission. For written permission, please contact
+ *    openssl-core@openssl.org.
+ *
+ * 5. Products derived from this software may not be called "OpenSSL"
+ *    nor may "OpenSSL" appear in their names without prior written
+ *    permission of the OpenSSL Project.
+ *
+ * 6. Redistributions of any form whatsoever must retain the following
+ *    acknowledgment:
+ *    "This product includes software developed by the OpenSSL Project
+ *    for use in the OpenSSL Toolkit (http://www.openssl.org/)"
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE OpenSSL PROJECT ``AS IS'' AND ANY
+ * EXPRESSED OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+ * PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE OpenSSL PROJECT OR
+ * ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+ * NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+ * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ * ====================================================================
  */
 
 /*
@@ -35,10 +69,9 @@
 #include <sys/types.h>
 #include <sys/auxv.h>	/* getisax() */
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
 #include <errno.h>
-
-#include <openssl/bio.h>
 #include <openssl/aes.h>
 #include <openssl/engine.h>
 #include "eng_t4_aes_asm.h"
@@ -114,7 +147,7 @@ static int t4_bind_helper(ENGINE *e, const char *id);
 void
 ENGINE_load_t4(void)
 {
-#ifdef COMPILE_HW_T4
+#ifdef	COMPILE_HW_T4
 	ENGINE *toadd = ENGINE_new();
 	if (toadd != NULL) {
 		if (t4_bind_helper(toadd, ENGINE_T4_ID) != 0) {
@@ -131,15 +164,14 @@ ENGINE_load_t4(void)
 
 #ifdef	COMPILE_HW_T4
 static int t4_bind(ENGINE *e);
-#ifndef DYNAMIC_ENGINE
+#ifndef	DYNAMIC_ENGINE
 #pragma inline(t4_bind)
 #endif
 static t4_cipher_id get_cipher_index_by_nid(int nid);
 #pragma inline(get_cipher_index_by_nid)
-static boolean_t t4_aes_instructions_present(void);
-#pragma inline(t4_aes_instructions_present)
-static boolean_t t4_digest_instructions_present(void);
-#pragma inline(t4_digest_instructions_present)
+static void t4_instructions_present(_Bool *aes_present, _Bool *des_present,
+    _Bool *digest_present);
+#pragma inline(t4_instructions_present)
 
 /* Digest registration function. Called by ENGINE_set_ciphers() */
 int t4_get_all_digests(ENGINE *e, const EVP_MD **digest,
@@ -166,26 +198,23 @@ static void t4_free_aes_ctr_NIDs(void);
 /* Static variables */
 /* This can't be const as NID*ctr is inserted when the engine is initialized */
 static int t4_cipher_nids[] = {
-	NID_aes_128_cbc,
-	NID_aes_192_cbc,
-	NID_aes_256_cbc,
+	NID_aes_128_cbc, NID_aes_192_cbc, NID_aes_256_cbc,
 #ifndef	SOLARIS_NO_AES_CFB128
-	NID_aes_128_cfb128,
-	NID_aes_192_cfb128,
-	NID_aes_256_cfb128,
+	NID_aes_128_cfb128, NID_aes_192_cfb128, NID_aes_256_cfb128,
 #endif
 #ifndef	SOLARIS_NO_AES_CTR
-	NID_undef, /* NID_t4_aes_128_ctr */
-	NID_undef, /* NID_t4_aes_192_ctr */
-	NID_undef, /* NID_t4_aes_256_ctr */
+	/* NID_t4_aes_128_ctr, NID_t4_aes_192, NID_t4_aes_256 */
+	NID_undef, NID_undef, NID_undef,
 #endif
-	NID_aes_128_ecb,
-	NID_aes_192_ecb,
-	NID_aes_256_ecb,
+	NID_aes_128_ecb, NID_aes_192_ecb, NID_aes_256_ecb,
+#ifndef	OPENSSL_NO_DES
+	/* Must be at end of list (see t4_des_cipher_count in t4_bind() */
+	NID_des_cbc, NID_des_ede3_cbc, NID_des_ecb, NID_des_ede3_ecb,
+#endif
 };
-static const int t4_cipher_count =
+static const int t4_des_cipher_count = 4;
+static int t4_cipher_count =
 	(sizeof (t4_cipher_nids) / sizeof (t4_cipher_nids[0]));
-
 
 /*
  * Cipher Table for all supported symmetric ciphers.
@@ -260,13 +289,12 @@ static int t4_cipher_do_aes_256_ecb(EVP_CIPHER_CTX *ctx, unsigned char *out,
  * EVP_CIPHER is defined in evp.h.  To maintain binary compatibility the
  * definition cannot be modified.
  * Stuff specific to the t4 engine is kept in t4_cipher_ctx_t, which is
- * pointed to by the last field, app_data.
+ * pointed to by cipher_data or md_data
  *
  * Fields: nid, block_size, key_len, iv_len, flags,
  *	init(), do_cipher(), cleanup(),
  *	ctx_size,
  *	set_asn1_parameters(), get_asn1_parameters(), ctrl(), app_data
- * For the T4 engine, field app_data points to t4_cipher_ctx_t.
  */
 
 static const EVP_CIPHER t4_aes_128_cbc = {
@@ -393,38 +421,173 @@ static const EVP_CIPHER t4_aes_256_ecb = {
 	NULL, NULL, NULL, NULL
 };
 
+#ifndef	OPENSSL_NO_DES
+extern const EVP_CIPHER t4_des_cbc;
+extern const EVP_CIPHER t4_des3_cbc;
+extern const EVP_CIPHER t4_des_ecb;
+extern const EVP_CIPHER t4_des3_ecb;
+#endif	/* OPENSSL_NO_DES */
+
 
 /*
- * Return true if executing on a SPARC processor with AES instruction support,
- * such as a T4; otherwise false.
+ * Message Digest variables
  */
-static boolean_t
-t4_aes_instructions_present(void)
-{
-	uint_t ui;
+static const int t4_digest_nids[] = {
+#ifndef	OPENSSL_NO_MD5
+	NID_md5,
+#endif
+#ifndef	OPENSSL_NO_SHA
+#ifndef	OPENSSL_NO_SHA1
+	NID_sha1,
+#endif
+#ifndef	OPENSSL_NO_SHA256
+	NID_sha224,
+	NID_sha256,
+#endif
+#ifndef	OPENSSL_NO_SHA512
+	NID_sha384,
+	NID_sha512,
+#endif
+#endif	/* !OPENSSL_NO_SHA */
+};
+static const int t4_digest_count =
+	(sizeof (t4_digest_nids) / sizeof (t4_digest_nids[0]));
 
-	(void) getisax(&ui, 1);
-	return ((ui & AV_SPARC_AES) != 0);
+#ifndef	OPENSSL_NO_MD5
+extern const EVP_MD t4_md5;
+#endif
+#ifndef	OPENSSL_NO_SHA
+#ifndef	OPENSSL_NO_SHA1
+extern const EVP_MD t4_sha1;
+#endif
+#ifndef	OPENSSL_NO_SHA256
+extern const EVP_MD t4_sha224;
+extern const EVP_MD t4_sha256;
+#endif
+#ifndef	OPENSSL_NO_SHA512
+extern const EVP_MD t4_sha384;
+extern const EVP_MD t4_sha512;
+#endif
+#endif	/* !OPENSSL_NO_SHA */
+
+/*
+ * Message Digest functions
+ */
+
+/*
+ * Registered by the ENGINE with ENGINE_set_digests().
+ * Finds out how to deal with a particular digest NID in the ENGINE.
+ */
+/* ARGSUSED */
+int
+t4_get_all_digests(ENGINE *e, const EVP_MD **digest,
+    const int **nids, int nid)
+{
+	if (digest == NULL) { /* return a list of all supported digests */
+		*nids = (t4_digest_count > 0) ? t4_digest_nids : NULL;
+		return (t4_digest_count);
+	}
+
+	switch (nid) {
+#ifndef	OPENSSL_NO_MD5
+	case NID_md5:
+		*digest = &t4_md5;
+		break;
+#endif
+#ifndef	OPENSSL_NO_SHA
+#ifndef	OPENSSL_NO_SHA1
+	/*
+	 * A special case. For "openssl dgst -dss1 ...",
+	 * OpenSSL calls EVP_get_digestbyname() on "dss1" which ends up
+	 * calling t4_get_all_digests() for NID_dsa. Internally, if an
+	 * engine is not used, OpenSSL uses SHA1_Init() as expected for
+	 * DSA. So, we must return t4_sha1 for NID_dsa as well. Note
+	 * that this must have changed between 0.9.8 and 1.0.0 since we
+	 * did not have the problem with the 0.9.8 version.
+	 */
+	case NID_dsa:
+	case NID_sha1:
+		*digest = &t4_sha1;
+		break;
+#endif
+#ifndef	OPENSSL_NO_SHA256
+	case NID_sha224:
+		*digest = &t4_sha224;
+		break;
+	case NID_sha256:
+		*digest = &t4_sha256;
+		break;
+#endif
+#ifndef	OPENSSL_NO_SHA512
+	case NID_sha384:
+		*digest = &t4_sha384;
+		break;
+	case NID_sha512:
+		*digest = &t4_sha512;
+		break;
+#endif
+#endif	/* !OPENSSL_NO_SHA */
+	default:
+		/* digest not supported */
+		*digest = NULL;
+		return (0);
+	}
+
+	return (1);
 }
 
 
 /*
- * Return true if executing on a SPARC processor with MD5/SHA1/SHA{1,256,512}
- * instruction support, such as a T4; otherwise false.
+ * Utility Functions
  */
-static boolean_t
-t4_digest_instructions_present(void)
+
+/*
+ * Set aes_present, des_present, and digest_present to 0 or 1 depending on
+ * whether the current SPARC processor supports AES, DES, and
+ * MD5/SHA1/SHA256/SHA512, respectively.
+ */
+static void
+t4_instructions_present(_Bool *aes_present, _Bool *des_present,
+    _Bool *digest_present)
 {
-#ifndef	OPENSSL_NO_SHA
-#define	UI_MASK	(AV_SPARC_MD5 | AV_SPARC_SHA1 | AV_SPARC_SHA256 | \
-	AV_SPARC_SHA512)
-#else
-#define	UI_MASK	(AV_SPARC_MD5)
+#ifdef	OPENSSL_NO_DES
+#undef	AV_SPARC_DES
+#define	AV_SPARC_DES	0
 #endif
+#ifdef	OPENSSL_NO_MD5
+#undef	AV_SPARC_MD5
+#define	AV_SPARC_MD5	0
+#endif
+#ifndef	OPENSSL_NO_SHA
+#ifdef	OPENSSL_NO_SHA1
+#undef	AV_SPARC_SHA1
+#define	AV_SPARC_SHA1	0
+#endif
+#ifdef	OPENSSL_NO_SHA256
+#undef	AV_SPARC_SHA256
+#define	AV_SPARC_SHA256	0
+#endif
+#ifdef	OPENSSL_NO_SHA512
+#undef	AV_SPARC_SHA512
+#define	AV_SPARC_SHA512	0
+#endif
+#else
+#undef	AV_SPARC_SHA1
+#undef	AV_SPARC_SHA256
+#undef	AV_SPARC_SHA512
+#define	AV_SPARC_SHA1	0
+#define	AV_SPARC_SHA256	0
+#define	AV_SPARC_SHA512	0
+#endif	/* !OPENSSL_NO_SHA */
+
+#define	DIGEST_MASK	(AV_SPARC_MD5 | AV_SPARC_SHA1 | AV_SPARC_SHA256 | \
+	AV_SPARC_SHA512)
 	uint_t		ui;
 
 	(void) getisax(&ui, 1);
-	return ((ui & UI_MASK) == UI_MASK);
+	*aes_present = (ui & AV_SPARC_AES) != 0;
+	*des_present = (ui & AV_SPARC_DES) != 0;
+	*digest_present = (ui & DIGEST_MASK) == DIGEST_MASK;
 }
 
 
@@ -595,6 +758,20 @@ t4_get_all_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 		*cipher = &t4_aes_256_cfb128;
 		break;
 #endif	/* !SOLARIS_NO_AES_CFB128 */
+#ifndef	OPENSSL_NO_DES
+	case NID_des_cbc:
+		*cipher = &t4_des_cbc;
+		break;
+	case NID_des_ede3_cbc:
+		*cipher = &t4_des3_cbc;
+		break;
+	case NID_des_ecb:
+		*cipher = &t4_des_ecb;
+		break;
+	case NID_des_ede3_ecb:
+		*cipher = &t4_des3_ecb;
+		break;
+#endif	/* !OPENSSL_NO_DES */
 
 	default:
 #ifndef	SOLARIS_NO_AES_CTR
@@ -678,7 +855,7 @@ t4_cipher_init_aes(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	if (((unsigned long)key & 0x7) == 0) /* already aligned */
 		aligned_key = (uint64_t *)key;
 	else { /* key is not 8-byte aligned */
-#ifdef DEBUG_T4
+#ifdef	DEBUG_T4
 		(void) fprintf(stderr, "T4: key is not 8 byte aligned\n");
 #endif
 		(void) memcpy(aligned_key_buffer, key, key_len);
@@ -721,7 +898,7 @@ t4_cipher_init_aes(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	/* Save index to cipher */
 	tctx->index = index;
 
-	/* Process IV */
+	/* Align IV, if needed */
 	if (t4_cipher->iv_len <= 0) { /* no IV (such as with ECB mode) */
 		tctx->iv = NULL;
 	} else if (((unsigned long)ctx->iv & 0x7) == 0) { /* already aligned */
@@ -731,7 +908,7 @@ t4_cipher_init_aes(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 		(void) memcpy(tctx->aligned_iv_buffer, ctx->iv,
 		    ctx->cipher->iv_len);
 		tctx->iv = tctx->aligned_iv_buffer;
-#ifdef DEBUG_T4
+#ifdef	DEBUG_T4
 		(void) fprintf(stderr,
 		    "t4_cipher_init_aes: IV is not 8 byte aligned\n");
 		(void) fprintf(stderr,
@@ -806,8 +983,7 @@ t4_cipher_do_aes(EVP_CIPHER_CTX *ctx, unsigned char *out,		\
 	} else { /* decrypt */						\
 		t4_aes_load_keys_for_decrypt(t4_ks);			\
 		t4_aes_decrypt(t4_ks, (uint64_t *)bufin,		\
-		    (uint64_t *)bufout,					\
-		    (size_t)inl, iv);					\
+		    (uint64_t *)bufout, (size_t)inl, iv);		\
 	}								\
 									\
 	/* Cleanup */							\
@@ -909,21 +1085,21 @@ t4_destroy(ENGINE *e)
 static int
 t4_bind(ENGINE *e)
 {
-	static int aes_engage = -1, digest_engage = -1;
+	_Bool aes_engage, digest_engage, des_engage;
 
-	if (aes_engage == -1) {
-		aes_engage = (t4_aes_instructions_present() != 0);
-	}
-	if (digest_engage == -1) {
-		digest_engage = (t4_digest_instructions_present() != 0);
-	}
-
-#ifdef DEBUG_T4
+	t4_instructions_present(&aes_engage, &des_engage, &digest_engage);
+#ifdef	DEBUG_T4
 	(void) fprintf(stderr,
-	    "t4_bind: engage aes=%d, digest=%d\n", aes_engage, digest_engage);
+	    "t4_bind: engage aes=%d, des=%d, digest=%d\n",
+	    aes_engage, des_engage, digest_engage);
+#endif
+#ifndef	OPENSSL_NO_DES
+	if (!des_engage) { /* Remove DES ciphers from list */
+		t4_cipher_count -= t4_des_cipher_count;
+	}
 #endif
 
-#ifndef  SOLARIS_NO_AES_CTR
+#ifndef	SOLARIS_NO_AES_CTR
 	/*
 	 * We must do this before we start working with slots since we need all
 	 * NIDs there.
@@ -936,7 +1112,7 @@ t4_bind(ENGINE *e)
 	}
 #endif	/* !SOLARIS_NO_AES_CTR */
 
-#ifdef DEBUG_T4
+#ifdef	DEBUG_T4
 	(void) fprintf(stderr, "t4_cipher_count = %d; t4_cipher_nids[] =\n",
 	    t4_cipher_count);
 	for (int i = 0; i < t4_cipher_count; ++i) {
@@ -982,7 +1158,7 @@ t4_bind_helper(ENGINE *e, const char *id)
 }
 
 
-#ifdef DYNAMIC_ENGINE
+#ifdef	DYNAMIC_ENGINE
 IMPLEMENT_DYNAMIC_CHECK_FN()
 IMPLEMENT_DYNAMIC_BIND_FN(t4_bind_helper)
 #endif	/* DYNAMIC_ENGINE */
