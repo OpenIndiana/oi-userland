@@ -478,11 +478,18 @@ link path=usr/sfw/libexec/gcc/$(GNU_ARCH)/3.4.3/as \
 
 license gcc.license license="GPLv2"
 
+# gcc 3.4.3 on x86 uses the CRT files in /usr/lib plus the GNU assembler,
+# and gcc 3.4.3 on SPARC does not.  Any upgrade to this package should
+# reverify this and adjust the following CRT related dependencies accordingly.
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/ld type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/as type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/lib/crt1.o type=require variant.arch=i386
-depend fmri=__TBD pkg.debug.depend.file=usr/lib/crti.o type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/lib/crtn.o type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/as type=require \
+    variant.arch=i386
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/crt1.o type=require \
+    variant.arch=i386
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/crti.o type=require \
+    variant.arch=i386
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/crtn.o type=require \
+    variant.arch=i386
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xa.o type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xc.o type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xs.o type=require
