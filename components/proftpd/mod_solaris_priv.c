@@ -228,69 +228,6 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   return PR_DECLINED(cmd);
 }
 
-/* The POST_CMD_ERR handler for "PASS" is only called after PASS has
- * failed so we need only limited set of privs to complete cleanup and logging.
- */
-MODRET solaris_priv_post_fail(cmd_rec *cmd) {
-  int res = 0;
-  priv_set_t *p, *i;
-
-  if (!use_privs)
-    return PR_DECLINED(cmd);
-
-  pr_signals_block();
-
-  /* The only privilege we need is PRIV_NET_PRIVADDR (bind
-   * ports < 1024).  Everything else can be discarded.  We set this
-   * in the permitted set only, as when we switch away from root
-   * we lose effective anyhow, and must reset it.
-   *
-   * We also remove the basic Solaris privileges we know we will
-   * never need.
-   */
-
-  i = priv_allocset();
-  priv_basicset(i);
-  priv_delset(i, PRIV_PROC_EXEC);
-  priv_delset(i, PRIV_PROC_FORK);
-  priv_delset(i, PRIV_PROC_INFO);
-  priv_delset(i, PRIV_PROC_SESSION);
-  setppriv(PRIV_SET, PRIV_INHERITABLE, i);
-
-  p = priv_allocset();
-  priv_basicset(p);
-
-  priv_addset(p, PRIV_NET_PRIVADDR);
-  priv_addset(p, PRIV_PROC_AUDIT);
-
-  priv_delset(p, PRIV_PROC_EXEC);
-  priv_delset(p, PRIV_PROC_FORK);
-  priv_delset(p, PRIV_PROC_INFO);
-  priv_delset(p, PRIV_PROC_SESSION);
-
-  res = setppriv(PRIV_SET, PRIV_PERMITTED, p);
-  res = setppriv(PRIV_SET, PRIV_EFFECTIVE, p);
-
-  if (setreuid(session.uid, session.uid) == -1) {
-    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": setreuid: %s",
-	strerror(errno));
-    pr_signals_unblock();
-    end_login(1);
-  }
-  pr_signals_unblock();
-
-  if (res != -1) {
-    /* That's it!  Disable all further id switching */
-    session.disable_id_switching = TRUE;
-
-  } else {
-    pr_log_pri(PR_LOG_NOTICE, MOD_SOLARIS_PRIV_VERSION ": attempt to configure "
-      "capabilities failed, reverting to normal operation");
-  }
-
-  return PR_DECLINED(cmd);
-}
-
 /* Initialization routines
  */
 
@@ -413,7 +350,6 @@ static conftable solaris_priv_conftab[] = {
 
 static cmdtable solaris_priv_cmdtab[] = {
   { POST_CMD, C_PASS, G_NONE, solaris_priv_post_pass, FALSE, FALSE },
-  { POST_CMD_ERR, C_PASS, G_NONE, solaris_priv_post_fail, FALSE, FALSE },
   { 0, NULL }
 };
 
