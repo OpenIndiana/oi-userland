@@ -1,6 +1,6 @@
---- libevent-1.3e/event.3.orig	Wed Apr 27 12:03:35 2011
-+++ libevent-1.3e/event.3	Wed Apr 27 12:03:55 2011
-@@ -26,567 +26,453 @@
+--- libevent-1.4.14b-stable/event.3	po lis 21 06:43:10 2011
++++ libevent-1.4.14b-stable/event.3	po lis 21 09:31:12 2011
+@@ -26,527 +26,528 @@
  .\" OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
  .\" ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  .\"
@@ -12,10 +12,12 @@
 -.Nm event_dispatch ,
 -.Nm event_loop ,
 -.Nm event_loopexit ,
+-.Nm event_loopbreak ,
 -.Nm event_set ,
 -.Nm event_base_dispatch ,
 -.Nm event_base_loop ,
 -.Nm event_base_loopexit ,
+-.Nm event_base_loopbreak ,
 -.Nm event_base_set ,
 -.Nm event_base_free ,
 -.Nm event_add ,
@@ -56,7 +58,8 @@
 -.Nm evbuffer_read ,
 -.Nm evbuffer_find ,
 -.Nm evbuffer_readline ,
--.Nm evhttp_start ,
+-.Nm evhttp_new ,
+-.Nm evhttp_bind_socket ,
 -.Nm evhttp_free
 -.Nd execute a function when a specific event occurs
 -.Sh SYNOPSIS
@@ -70,6 +73,8 @@
 -.Fn "event_loop" "int flags"
 -.Ft int
 -.Fn "event_loopexit" "struct timeval *tv"
+-.Ft int
+-.Fn "event_loopbreak" "void"
 -.Ft void
 -.Fn "event_set" "struct event *ev" "int fd" "short event" "void (*fn)(int, short, void *)" "void *arg"
 -.Ft int
@@ -78,6 +83,8 @@
 -.Fn "event_base_loop" "struct event_base *base" "int flags"
 -.Ft int
 -.Fn "event_base_loopexit" "struct event_base *base" "struct timeval *tv"
+-.Ft int
+-.Fn "event_base_loopbreak" "struct event_base *base"
 -.Ft int
 -.Fn "event_base_set" "struct event_base *base" "struct event *"
 -.Ft void
@@ -159,125 +166,192 @@
 -.Ft "char *"
 -.Fn "evbuffer_readline" "struct evbuffer *buf"
 -.Ft "struct evhttp *"
--.Fn "evhttp_start" "const char *address" "u_short port"
+-.Fn "evhttp_new" "struct event_base *base"
+-.Ft int
+-.Fn "evhttp_bind_socket" "struct evhttp *http" "const char *address" "u_short port"
 -.Ft "void"
--.Fn "evhttp_free" "struct evhttp* http"
+-.Fn "evhttp_free" "struct evhttp *http"
 -.Ft int
 -.Fa (*event_sigcb)(void) ;
 -.Ft volatile sig_atomic_t
 -.Fa event_gotsig ;
 -.Sh DESCRIPTION
-+.TH EVENT 3 "8 August 2000" "libevent 1.3e" "libevent Manual"
++.TH EVENT 3 "21 November 2011" "libevent 1.4.14b" "libevent Manual"
 +.SH NAME
-+event_init, event_dispatch, event_loop, event_loopexit, event_set, event_base_dispatch, event_base_loop, event_base_loopexit, event_base_set, event_base_free, event_add, event_del, event_once, event_base_once, event_pending, event_initialized, event_priority_init, event_priority_set, evtimer_set, evtimer_add, evtimer_del, evtimer_pending, evtimer_initialized, signal_set, signal_add, signal_del, signal_pending, signal_initialized, bufferevent_new, bufferevent_free, bufferevent_write, bufferevent_write_buffer, bufferevent_read, bufferevent_enable, bufferevent_disable, bufferevent_settimeout, bufferevent_base_set, evbuffer_new, evbuffer_free, evbuffer_add, evbuffer_add_buffer, evbuffer_add_printf, evbuffer_add_vprintf, evbuffer_drain, evbuffer_write, evbuffer_read, evbuffer_find, evbuffer_readline
++event_init,
++event_dispatch,
++event_loop,
++event_loopexit,
++event_loopbreak,
++event_set,
++event_base_dispatch,
++event_base_loop,
++event_base_loopexit,
++event_base_loopbreak,
++event_base_set,
++event_base_free,
++event_add,
++event_del,
++event_once,
++event_base_once,
++event_pending,
++event_initialized,
++event_priority_init,
++event_priority_set,
++evtimer_set,
++evtimer_add,
++evtimer_del,
++evtimer_pending,
++evtimer_initialized,
++signal_set,
++signal_add,
++signal_del,
++signal_pending,
++signal_initialized,
++bufferevent_new,
++bufferevent_free,
++bufferevent_write,
++bufferevent_write_buffer,
++bufferevent_read,
++bufferevent_enable,
++bufferevent_disable,
++bufferevent_settimeout,
++bufferevent_base_set,
++evbuffer_new,
++evbuffer_free,
++evbuffer_add,
++evbuffer_add_buffer,
++evbuffer_add_printf,
++evbuffer_add_vprintf,
++evbuffer_drain,
++evbuffer_write,
++evbuffer_read,
++evbuffer_find,
++evbuffer_readline,
++evhttp_new,
++evhttp_bind_socket,
++evhttp_free
++\- execute a function when a specific event occurs
 +.SH LIBRARY
 +The libevent library (libevent, -levent)
 +.br
 +.SH SYNOPSIS
++.LP
++.nf
 +\fB#include <sys/time.h>\fP
-+.br
 +\fB#include <event.h>\fP
-+.sp
++
 +\fBstruct event_base* \fBevent_init\fR\fR(\fBvoid\fP\fR);
-+.br
++
 +\fBint \fBevent_dispatch\fR\fR(\fBvoid\fP\fR);
-+.br
++
 +\fBint \fBevent_loop\fR\fR(\fBint \fIflags\fP\fR);
-+.br
-+.BI "int event_loopexit(struct timeval* " tv ");"
-+.br
-+\fBvoid \fBevent_set\fR\fR(\fBstruct event* \fIev\fP\fR, \fBint \fIfd \fP\fR, \fBshort \fIevent\fP\fR, \fBvoid \fI(*fn)(int, short, void *)\fP\fR, \fBvoid* \fIarg\fP\fR);
-+.br
++
++\fBint \fBevent_loopexit\fR\fR(\fBstruct timeval* \fItv\fP\fR);
++
++\fBint \fBevent_loopbreak\fR\fR(\fBvoid\fP\fR);
++
++\fBvoid \fBevent_set\fR\fR(\fBstruct event* \fIev\fP\fR, \fBint \fIfd \fP\fR, \fBshort \fIevent\fP\fR, \fBvoid \fI(*fn)(\fBint, short, void *\fP\fR), \fBvoid* \fIarg\fP\fR);
++
 +\fBint \fBevent_base_dispatch\fR\fR(\fBstruct event_base* \fIbase\fP\fR);
-+.br
++
 +\fBint \fBevent_base_loop\fR\fR(\fBstruct event_base* \fIbase\fP\fR, \fBint \fIflags\fP\fR);
-+.br
-+\fBint \fBevent_base_loopexit\fR\fR(struct event_base* \fIbase\fP\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBint \fBevent_base_set\fR\fR(struct event_base* \fIbase\fP\fR, \fBstruct event* \fIev\fP\fR);
-+.br
-+\fBvoid \fBevent_base_free\fR\fR(struct event_base* \fIbase\fP\fR);
-+.br
-+\fBint \fBevent_add\fR\fR(struct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
++
++\fBint \fBevent_base_loopexit\fR\fR(\fBstruct event_base* \fIbase\fP\fR, \fBstruct timeval* \fItv\fP\fR);
++
++\fBint \fBevent_base_loopbreak\fR\fR(\fBstruct event_base* \fIbase\fP\fR);
++
++\fBint \fBevent_base_set\fR\fR(\fBstruct event_base* \fIbase\fP\fR, \fBstruct event* \fIev\fP\fR);
++
++\fBvoid \fBevent_base_free\fR\fR(\fBstruct event_base* \fIbase\fP\fR);
++
++\fBint \fBevent_add\fR\fR(\fBstruct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
++
 +.\fBint \fBevent_del\fR\fR(struct event* \fIev\fP\fR);
-+.br
-+\fBint \fBevent_once\fR\fR(int \fIfd\fP\fR, \fBshort \fIevent\fP\fR, \fBvoid \fI(*fn)(int, short, void*)\fB\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBint \fBevent_base_once\fR\fR(struct event_base* \fIbase\fP\fR, \fBint \fIfd\fB\fR, \fBshort \fIevent\fB\fR, \fBvoid \fI(*fn)(int, short, void*)\fB\fR, \fBvoid* \fIarg\fB\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBint \fBevent_pending\fR\fR(struct event* \fIev\fP\fR, \fBshort \fIevent\fB\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBint \fBevent_initialized\fR\fR(struct event* \fIev\fP\fR);
-+.br
-+\fBint \fBevent_priority_init\fR\fR (int \fInpriorities\fP\fR);
-+.br
-+\fBint \fBevent_priority_set\fR\fR (struct event* \fIev\fP\fR, \fBint \fIpriority\fP\fR);
-+.br
-+\fBvoid \fBevtimer_set\fR\fR (struct event* \fIev\fP\fR, \fBvoid \fI(*fn)(int, short, void*)\fB\fR, \fBvoid* \fIarg\fP\fR);
-+.br
-+\fBvoid \fBevtimer_add\fR\fR (struct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBvoid \fBevtimer_del\fR\fR (struct event* \fIev\fP\fR);
-+.br
-+\fBint \fBevtimer_pending\fR\fR (struct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBint \fBevtimer_initialized\fR\fR(struct event* \fIev\fP\fR);
-+.br
-+\fBvoid \fBsignal_set\fR\fR (struct event* \fIev\fP\fR, \fBint \fIsignal\fP\fR, \fBvoid \fI(*fn)(int, short, void*)\fP\fR, \fBvoid* \fIarg\fP\fR);
-+.br
-+\fBvoid \fBsignal_add\fR\fR (struct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBvoid \fBsignal_del\fR\fR (struct event* \fIev\fP\fR);
-+.br
-+\fBint \fBsignal_pending\fR\fR(struct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
-+.br
-+\fBint \fBsignal_initialized\fR\fR(struct event* \fIev\fP\fR);
-+.br
-+\fBstruct bufferevent* \fB"bufferevent_new\fR\fR(int \fIfd\fP\fR, \fBevbuffercb \fIreadcb\fP\fR, \fBevbuffercb \fIwritecb\fP\fR, \fBeverrorcb \fIerrorcb\fP\fR, \fBvoid* \fIcbarg\fP\fR);
-+.br
-+\fBvoid \fBbufferevent_free\fR\fR(struct bufferevent* \fIbufev\fP\fR);
-+.br
-+\fBint \fBbufferevent_write\fR\fR(struct bufferevent* \fIbufev\fP\fR, \fBvoid* \fIdata\fP\fR, \fBsize_t \fIsize\fP\fR);
-+.br
++
++\fBint \fBevent_once\fR\fR(\fBint \fIfd\fP\fR, \fBshort \fIevent\fP\fR, \fBvoid \fI(*fn)(\fBint, short, void*\fB\fR), \fBstruct timeval* \fItv\fP\fR);
++
++\fBint \fBevent_base_once\fR\fR(\fBstruct event_base* \fIbase\fP\fR, \fBint \fIfd\fB\fR, \fBshort \fIevent\fB\fR, \fBvoid \fI(*fn)(\fBint, short, void*\fB\fR), \fBvoid* \fIarg\fB\fR, \fBstruct timeval* \fItv\fP\fR);
++
++\fBint \fBevent_pending\fR\fR(\fBstruct event* \fIev\fP\fR, \fBshort \fIevent\fB\fR, \fBstruct timeval* \fItv\fP\fR);
++
++\fBint \fBevent_initialized\fR\fR(\fBstruct event* \fIev\fP\fR);
++
++\fBint \fBevent_priority_init\fR\fR (\fBint \fInpriorities\fP\fR);
++
++\fBint \fBevent_priority_set\fR\fR (\fBstruct event* \fIev\fP\fR, \fBint \fIpriority\fP\fR);
++
++\fBvoid \fBevtimer_set\fR\fR (\fBstruct event* \fIev\fP\fR, \fBvoid \fI(*fn)(\fBint, short, void*\fB\fR), \fBvoid* \fIarg\fP\fR);
++
++\fBvoid \fBevtimer_add\fR\fR (\fBstruct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
++
++\fBvoid \fBevtimer_del\fR\fR (\fBstruct event* \fIev\fP\fR);
++
++\fBint \fBevtimer_pending\fR\fR (\fBstruct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
++
++\fBint \fBevtimer_initialized\fR\fR(\fBstruct event* \fIev\fP\fR);
++
++\fBvoid \fBsignal_set\fR\fR (\fBstruct event* \fIev\fP\fR, \fBint \fIsignal\fP\fR, \fBvoid \fI(*fn)(\fBint, short, void*\fP\fR), \fBvoid* \fIarg\fP\fR);
++
++\fBvoid \fBsignal_add\fR\fR (\fBstruct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
++
++\fBvoid \fBsignal_del\fR\fR (\fBstruct event* \fIev\fP\fR);
++
++\fBint \fBsignal_pending\fR\fR(\fBstruct event* \fIev\fP\fR, \fBstruct timeval* \fItv\fP\fR);
++
++\fBint \fBsignal_initialized\fR\fR(\fBstruct event* \fIev\fP\fR);
++
++\fBstruct bufferevent* \fBbufferevent_new\fR\fR(\fBint \fIfd\fP\fR, \fBevbuffercb \fIreadcb\fP\fR, \fBevbuffercb \fIwritecb\fP\fR, \fBeverrorcb \fIerrorcb\fP\fR, \fBvoid* \fIcbarg\fP\fR);
++
++\fBvoid \fBbufferevent_free\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR);
++
++\fBint \fBbufferevent_write\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR, \fBvoid* \fIdata\fP\fR, \fBsize_t \fIsize\fP\fR);
++
 +\fBint \fBbufferevent_write_buffer\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR, \fBstruct evbuffer* \fIbuf\fP\fR);
-+.br
++
 +\fBsize_t \fBbufferevent_read\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR, \fBvoid* \fIdata\fP\fR, \fBsize_t \fIsize\fP\fR);
-+.br
++
 +\fBint \fBbufferevent_enable\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR, \fBshort \fIevent\fP\fR);
-+.br
++
 +\fBint \fBbufferevent_disable\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR, \fBshort \fIeven\fP\fR);
-+.br
++
 +\fBvoid \fBbufferevent_settimeout\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR, \fBint \fItimeout_read\fP\fR, \fBint \fItimeout_write\fP\fR);
-+.br
++
 +\fBint \fBbufferevent_base_set\fR\fR(\fBstruct event_base* \fIbase\fP\fR, \fBstruct bufferevent* \fIbufev\fP\fR);
-+.br
++
 +\fBstruct evbuffer* \fBevbuffer_new (\fBvoid\fP\fR);
-+.br
-+\fBvoid \fBvbuffer_free\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR);
-+.br
++
++\fBvoid \fBevbuffer_free\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR);
++
 +\fBint \fBevbuffer_add\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR, \fBconst void* \fIdata\fP\fR, \fBsize_t \fIsize\fP\fR);
-+.br
++
 +\fBint \fBevbuffer_add_buffer\fR\fR(\fBstruct evbuffer* \fIdst\fP\fR, \fBstruct evbuffer* \fIsrc\fP\fR);
-+.br
++
 +\fBint \fBevbuffer_add_printf\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR, \fBconst char* \fIfmt\fP\fR, \fB...\fP\fR);
-+.br
++
 +\fBint \fBevbuffer_add_vprintf\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR, \fBconst char* \fIfmt\fP\fR, \fBva_list \fIap\fP\fR);
-+.br
++
 +\fBvoid \fBevbuffer_drain\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR, \fBsize_t \fIsize\fP\fR);
-+.br
++
 +\fBint \fBevbuffer_write\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR, \fBint \fIfd\fP\fR);
-+.br
++
 +\fBint \fBevbuffer_read\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR, \fBint \fIfd\fP\fR, \fBint \fIsize\fP\fR);
-+.br
++
 +\fBu_char* \fBevbuffer_find\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR, \fBconst u_char* \fIdata\fP\fR, \fBsize_t \fIsize\fP\fR);
-+.br
++
 +\fBchar* \fBevbuffer_readline\fR\fR(\fBstruct evbuffer* \fIbuf\fP\fR);
-+.br
-+\fBint \fI(*event_sigcb)\fP\fR\fI(void)\fP\fR;
-+.br
++
++\fBstruct evhttp * \fBevhttp_new\fR\fR(\fBstruct event_base* \fIbase\fP\fR);
++
++\fBint \fBevhttp_bind_socket\fR\fR(\fBstruct evhttp* \fIhttp\fP\fR, \fBconst char* \fIaddress\fP\fR, \fBu_short \fIport\fP\fR);
++
++\fBvoid \fBevhttp_free\fR\fR(\fBstruct evhttp* \fIhttp\fP\fR);
++
++\fBint \fI(*event_sigcb)\fP\fR\fI(\fBvoid\fP\fR);
++
 +\fBvolatile sig_atomic_t \fR\fRevent_gotsig\fP\fR;
-+.br
++.fi
++
 +.SH DESCRIPTION
  The
 -.Nm event
@@ -297,71 +371,9 @@
 +.PP
  In order to process events, an application needs to call
 -.Fn event_dispatch .
-+\fIevent_dispatch\fP\fR .
++\fBevent_dispatch\fP\fR.
  This function only returns on error, and should replace the event core
  of the application program.
--.Pp
-+.PP
- In order to avoid races in signal handlers, the
--.Nm event
-+\fIevent\fP\fR
- API provides two variables:
--.Va event_sigcb
-+\fIevent_sigcb\fP\fR
- and
--.Va event_gotsig .
-+\fIevent_gotsig\fP\fR.
- A signal handler
- sets
--.Va event_gotsig
-+\fIevent_gotsig\fP\fR
- to indicate that a signal has been received.
- The application sets
--.Va event_sigcb
-+\fIevent_sigcb\fP\fR
- to a callback function.
- After the signal handler sets
--.Va event_gotsig ,
--.Nm event_dispatch
-+\fIevent_gotsig\fP\fR,
-+\fBevent_dispatch()\fP\fR
- will execute the callback function to process received signals.
- The callback returns 1 when no events are registered any more.
- It can return \-1 to indicate an error to the
--.Nm event
-+\fIevent\fP\fR
- library, causing
--.Fn event_dispatch
-+\fBevent_dispatch\fP\fR
- to terminate with
--.Va errno
--set to
--.Er EINTR .
--.Pp
-+\fIerrno\fP\fR
-+set to EINTR.
-+.PO
- The
--.Nm event_loop
-+\fIevent_loop\fP\fR
- function provides an interface for single pass execution of pending
- events.
- The flags
--.Va EVLOOP_ONCE
--and
--.Va EVLOOP_NONBLOCK
--are recognized.
-+EVLOOP_ONCE and EVLOOP_NONBLOCK are recognized.
- The
--.Nm event_loopexit
-+\fIevent_loopexit\fP\fR
- function allows the loop to be terminated after some amount of time
- has passed.
- The parameter indicates the time after which the loop should terminate.
--.Pp
-+.PP
- It is the responsibility of the caller to provide these functions with
- pre-allocated event structures.
 -.Pp
 +.PP
  The function
@@ -392,7 +404,7 @@
 -.Fa arg
 +\fIarg\fP\fR
  argument.
--The
+ The
 -.Fa fd
 +The \fIfd\fP\fR
  indicates the file descriptor that should be monitored for events.
@@ -409,22 +421,31 @@
 -.Fa fn
 +\fIfn\fP\fR
  will be called with the file descriptor that triggered the event and
--the type of event which will be either
+ the type of event which will be either
 -.Va EV_TIMEOUT ,
 -.Va EV_SIGNAL ,
 -.Va EV_READ ,
--or
++EV_TIMEOUT,
++EV_SIGNAL,
++EV_READ,
+ or
 -.Va EV_WRITE .
--The additional flag
++EV_WRITE.
+ Additionally, an event which has registered interest in more than one of the
+ preceeding events, via bitwise-OR to
+-.Fn event_set ,
++\fBevent_set\fP\fR,
+ can provide its callback function with a bitwise-OR of more than one triggered
+ event.
+ The additional flag
 -.Va EV_PERSIST
--makes an
++EV_PERSIST
+ makes an
 -.Fn event_add
--persistent until
++\fBevent_add\fP\fR
+ persistent until
 -.Fn event_del
-+the type of event which will be either EV_TIMEOUT, EV_SIGNAL,
-+EV_READ, or EV_WRITE.  The additional flag EV_PERSIST makes an
-+\fIevent_add\fP\fR persistent until
-+\fIevent_del\fP\fR
++\fBevent_del\fP\fR
  has been called.
 -.Pp
 +.PP
@@ -433,10 +454,10 @@
 +\fIev\fP\fR
  structure can be used repeatedly with
 -.Fn event_add
-+\fIevent_add\fP\fR
++\fBevent_add\fP\fR
  and
 -.Fn event_del
-+\fIevent_del\fP\fR
++\fBevent_del\fP\fR
  and does not need to be reinitialized unless the function called and/or
  the argument to it are to be changed.
  However, when an
@@ -444,26 +465,26 @@
 +\fIev\fP\fR
  structure has been added to libevent using
 -.Fn event_add
-+\fIevent_add\fP\fR
++\fBevent_add\fP\fR
  the structure must persist until the event occurs (assuming
 -.Fa EV_PERSIST
--is not set) or is removed
--using
++EV_PERSIST
+ is not set) or is removed
+ using
 -.Fn event_del .
-+EV_PERSIST is not set) or is removed using
-+\fIevent_del\fP\fR .
++\fBevent_del\fP\fR.
  You may not reuse the same
 -.Fa ev
 +\fIev\fP\fR
  structure for multiple monitored descriptors; each descriptor
--needs its own
+ needs its own
 -.Fa ev .
 -.Pp
-+needs its own \fIev\fP\fR .
++\fIev\fP\fR.
 +.PP
  The function
 -.Fn event_add
-+\fIevent_add\fP\fR
++\fBevent_add\fP\fR
  schedules the execution of the
 -.Fa ev
 +\fIev\fP\fR
@@ -472,27 +493,27 @@
 +\fBevent_set\fP\fR
  occurs or in at least the time specified in the
 -.Fa tv .
-+\fItv\fP\fR .
++\fItv\fP\fR
  If
 -.Fa tv
--is
--.Dv NULL ,
--no timeout occurs and the function will only be called
 +\fItv\fP\fR
-+is NULL, no timeout occurs and the function will only be called
+ is
+-.Dv NULL ,
++\fINULL\fP\fR,
+ no timeout occurs and the function will only be called
  if a matching event occurs on the file descriptor.
  The event in the
 -.Fa ev
 +\fIev\fP\fR
  argument must be already initialized by
 -.Fn event_set
-+\fIevent_set\fP\fR
++\fBevent_set\fP\fR
  and may not be used in calls to
 -.Fn event_set
-+\fIevent_set\fP\fR
++\fBevent_set\fP\fR
  until it has timed out or been removed with
 -.Fn event_del .
-+\fIevent_del\fP\fR .
++\fBevent_del\fP\fR.
  If the event in the
 -.Fa ev
 +\fIev\fP\fR
@@ -502,58 +523,12 @@
 +.PP
  The function
 -.Fn event_del
-+\fIevent_del\fP\fR
++\fBevent_del\fP\fR
  will cancel the event in the argument
 -.Fa ev .
-+\fIev\fP\fR .
++\fIev\fP\fR.
  If the event has already executed or has never been added
  the call will have no effect.
--.Pp
-+.PP
- The function
--.Fn event_once
-+\fIevent_once\fP\fR
- is similar to
--.Fn event_set .
-+\fIevent_set\fP\fR.
- However, it schedules a callback to be called exactly once and does not
- require the caller to prepare an
--.Fa event
-+\fIevent\fP\fR
- structure.
--This function supports
--.Fa EV_TIMEOUT ,
--.Fa EV_READ ,
--and
--.Fa EV_WRITE .
--.Pp
-+This function supports EV_TIMEOUT, EV_READ, and EV_WRITE.
-+.PP
- The
--.Fn event_pending
-+\fIevent_pending\fP\fR
- function can be used to check if the event specified by
--.Fa event
-+\fIevent\fP\fR
- is pending to run.
--If
--.Va EV_TIMEOUT
--was specified and
--.Fa tv
--is not
--.Dv NULL ,
-+If EV_TIMEOUT was specified and
-+\fItv\fP\fR
-+is not NULL ,
- the expiration time of the event will be returned in
--.Fa tv .
--.Pp
-+\fItv\fP\fR .
-+.PP
- The
--.Fn event_initialized
-+\fIevent_initialized\fP\fR
- macro can be used to check if an event has been initialized.
 -.Pp
 +.PP
  The functions
@@ -561,61 +536,175 @@
 -.Fn evtimer_add ,
 -.Fn evtimer_del ,
 -.Fn evtimer_initialized ,
-+\fIevtimer_set()\fP\fR,
-+\fIevtimer_add()\fP\fR,
-+\fIevtimer_del()\fP\fR,
-+\fIevtimer_initialized()\fP\fR,
++\fBevtimer_set\fP\fR,
++\fBevtimer_add\fP\fR,
++\fBevtimer_del\fP\fR,
++\fBevtimer_initialized\fP\fR,
  and
 -.Fn evtimer_pending
-+\fIevtimer_pending()\fP\fR
++\fBevtimer_pending\fP\fR
  are abbreviations for common situations where only a timeout is required.
  The file descriptor passed will be \-1, and the event type will be
 -.Va EV_TIMEOUT .
 -.Pp
-+EV_TIMEOUT .
++EV_TIMEOUT.
 +.PP
  The functions
 -.Fn signal_set ,
 -.Fn signal_add ,
 -.Fn signal_del ,
 -.Fn signal_initialized ,
-+\fIsignal_set()\fP\fR,
-+\fIsignal_add()\fP]\fR,
-+\fIsignal_del()\fP\fR ,
-+\fIsignal_initialized()\fP\fR,
++\fBsignal_set\fP\fR,
++\fBsignal_add\fP\fR,
++\fBsignal_del\fP\fR,
++\fBsignal_initialized\fP\fR,
  and
 -.Fn signal_pending
-+\fIsignal_pending()\fP\fR
++\fBsignal_pending\fP\fR
  are abbreviations.
--The event type will be a persistent
+ The event type will be a persistent
 -.Va EV_SIGNAL .
-+The event type will be a persistent EV_SIGNAL .
++EV_SIGNAL .
  That means
 -.Fn signal_set
--adds
++\fBsignal_set\fP\fR
+ adds
 -.Va EV_PERSIST .
 -.Pp
-+\fIsignal_set\fP\fR adds EV_PERSIST .
++EV_PERSIST.
 +.PP
- It is possible to disable support for
--.Va epoll , kqueue , devpoll , poll
--or
--.Va select
-+epoll, kqueue, devpoll, event ports, poll or select
- by setting the environment variable
--.Va EVENT_NOEPOLL , EVENT_NOKQUEUE , EVENT_NODEVPOLL , EVENT_NOPOLL
--or
--.Va EVENT_NOSELECT ,
--respectively.
-+EVENT_NOEPOLL, EVENT_NOKQUEUE, EVENT_NODEVPOLL, EVENT_NOEVPORT,
-+EVENT_NOPOLL or EVENT_NOSELECT, respectively.
- By setting the environment variable
--.Va EVENT_SHOW_METHOD ,
--.Nm libevent
-+EVENT_SHOW_METHOD,
-+\fIlibevent\fP\fR
- displays the kernel notification method that it uses.
+ In order to avoid races in signal handlers, the
+-.Nm event
++\fIevent\fP\fR
+ API provides two variables:
+-.Va event_sigcb
++\fBevent_sigcb\fP\fR
+ and
+-.Va event_gotsig .
++\fBevent_gotsig\fP\fR.
+ A signal handler
+ sets
+-.Va event_gotsig
++\fBevent_gotsig\fP\fR
+ to indicate that a signal has been received.
+ The application sets
+-.Va event_sigcb
++\fBevent_sigcb\fP\fR
+ to a callback function.
+ After the signal handler sets
+-.Va event_gotsig ,
+-.Nm event_dispatch
++\fBevent_gotsig\fP\fR,
++\fBevent_dispatch()\fP\fR
+ will execute the callback function to process received signals.
+ The callback returns 1 when no events are registered any more.
+ It can return \-1 to indicate an error to the
+-.Nm event
++\fIevent\fP\fR
+ library, causing
+-.Fn event_dispatch
++\fBevent_dispatch\fP\fR
+ to terminate with
+-.Va errno
++\fBerrno\fP\fR
+ set to
+-.Er EINTR .
+-.Pp
++\fBEINTR\fP\fR.
++.PP
+ The function
+-.Fn event_once
++\fBevent_once\fP\fR
+ is similar to
+-.Fn event_set .
++\fBevent_set\fP\fR.
+ However, it schedules a callback to be called exactly once and does not
+ require the caller to prepare an
+-.Fa event
++\fIevent\fP\fR
+ structure.
+ This function supports
+-.Fa EV_TIMEOUT ,
+-.Fa EV_READ ,
++EV_TIMEOUT,
++EV_READ,
+ and
+-.Fa EV_WRITE .
+-.Pp
++EV_WRITE.
++.PP
+ The
+ .Fn event_pending
++\fBevent_pending\fP\fR
+ function can be used to check if the event specified by
+-.Fa event
++\fIevent\fP\fR
+ is pending to run.
+ If
+-.Va EV_TIMEOUT
++EV_TIMEOUT
+ was specified and
+-.Fa tv
++\fItv\fP\fR
+ is not
+-.Dv NULL ,
++\fINULL\fP\fR,
+ the expiration time of the event will be returned in
+-.Fa tv .
+-.Pp
++\fItv\fP\fR.
++.PP
+ The
+-.Fn event_initialized
++\fBevent_initialized\fP\fR
+ macro can be used to check if an event has been initialized.
+-.Pp
++.PP
+ The
+-.Nm event_loop
++\fBevent_loop\fP\fR
+ function provides an interface for single pass execution of pending
+ events.
+ The flags
+-.Va EVLOOP_ONCE
++EVLOOP_ONCE
+ and
+-.Va EVLOOP_NONBLOCK
++EVLOOP_NONBLOCK
+ are recognized.
+ The
+-.Nm event_loopexit
++\fBevent_loopexit\fP\fR
+ function exits from the event loop. The next
+-.Fn event_loop
++\fBevent_loop\fP\fR
+ iteration after the
+ given timer expires will complete normally (handling all queued events) then
+ exit without blocking for events again. Subsequent invocations of
+-.Fn event_loop
++\fBevent_loop\fP\fR
+ will proceed normally.
+ The
+-.Nm event_loopbreak
++\fBevent_loopbreak\fP\fR
+ function exits from the event loop immediately.
+-.Fn event_loop
++\fBevent_loop\fP\fR
+ will abort after the next event is completed;
+-.Fn event_loopbreak
++\fBevent_loopbreak\fP\fR
+ is typically invoked from this event's callback. This behavior is analogous
+ to the "break;" statement. Subsequent invocations of
+-.Fn event_loop
++\fBevent_loop\fP\fR
+ will proceed normally.
+-.Pp
++.PP
+ It is the responsibility of the caller to provide these functions with
+ pre-allocated event structures.
+-.Pp
 -.Sh EVENT PRIORITIES
++.PP
 +.SH EVENT PRIORITIES
  By default
 -.Nm libevent
@@ -633,14 +722,14 @@
 +.PP
  The number of different priorities can be set initially with the
 -.Fn event_priority_init
-+\fIevent_priority_init()\fP\fR
++\fBevent_priority_init\fP\fR
  function.
  This function should be called before the first call to
 -.Fn event_dispatch .
-+\fIevent_dispatch()\fP\fR .
++\fBevent_dispatch\fP\fR.
  The
 -.Fn event_priority_set
-+\fIevent_priority_set()\fP\fR
++\fBevent_priority_set\fP\fR
  function can be used to assign a priority to an event.
  By default,
 -.Nm libevent
@@ -653,8 +742,7 @@
 +\fIlibevent\fP\fR
  has experimental support for thread-safe events.
  When initializing the library via
--.Fn event_init ,
-+\fIevent_init()\fP\fR,
+ .Fn event_init ,
  an event base is returned.
  This event base can be used in conjunction with calls to
 -.Fn event_base_set ,
@@ -662,30 +750,30 @@
 -.Fn event_base_loop ,
 -.Fn event_base_loopexit ,
 -.Fn bufferevent_base_set
-+\fIevent_base_set()\fP\fR,
-+\fIevent_base_dispatch()\fP\fR,
-+\fIevent_base_loop()\fP\fR,
-+\fIevent_base_loopexit()\fP\fR,
-+\fIbufferevent_base_set()\fP\fR
++\fBevent_base_set()\fP\fR,
++\fBevent_base_dispatch()\fP\fR,
++\fBevent_base_loop()\fP\fR,
++\fBevent_base_loopexit()\fP\fR,
++\fBbufferevent_base_set()\fP\fR
  and
 -.Fn event_base_free .
 -.Fn event_base_set
-+\fIevent_base_free()\fP\fR.
-+\fIevent_base_set()\fP\fR 
++\fBevent_base_free()\fP\fR.
++\fBevent_base_set()\fP\fR 
  should be called after preparing an event with
 -.Fn event_set ,
-+\fIevent_set()\fP\fR,
++\fBevent_set()\fP\fR,
  as
 -.Fn event_set
-+\fIevent_set()\fP\fR
++\fBevent_set()\fP\fR,
  assigns the provided event to the most recently created event base.
 -.Fn bufferevent_base_set
-+\fIbufferevent_base_set()\fP\fR
++\fBbufferevent_base_set()\fP\fR
  should be called after preparing a bufferevent with
 -.Fn bufferevent_new .
 -.Fn event_base_free
-+\fIbufferevent_new()\fP\fR.
-+\fIevent_base_free()\fP\fR
++\fBbufferevent_new()\fP\fR.
++\fBevent_base_free()\fP\fR
  should be used to free memory associated with the event base
  when it is no longer needed.
 -.Sh BUFFERED EVENTS
@@ -704,7 +792,7 @@
 +.PP
  A new bufferevent is created by
 -.Fn bufferevent_new .
-+\fIbufferevent_new()\fP\fR.
++\fBbufferevent_new()\fP\fR.
  The parameter
 -.Fa fd
 +\fIfd\fP\fR
@@ -723,82 +811,122 @@
 +\fBvoid \fB(*cb)\fR\fR(\fBstruct bufferevent* \fIbufev\fP\fR, \fBshort \fIwhat\fP\fR, \fBvoid* \fIarg\fP\fR).
  The argument is specified by the fourth parameter
 -.Fa "cbarg" .
-+\fIcbarg\fP\fR.
++\fBcbarg\fP\fR.
  A
 -.Fa bufferevent struct
-+\fIbufferevent\fP\fR struct
- pointer is returned on success, NULL on error.
- Both the read and the write callback may be NULL.
+-pointer is returned on success, NULL on error.
+-Both the read and the write callback may be NULL.
++\fBstruct bufferevent\fP\fR
++pointer is returned on success, \fINULL\fP\fR on error.
++Both the read and the write callback may be \fINULL\fP\fR.
  The error callback has to be always provided.
 -.Pp
 +.PP
  Once initialized, the bufferevent structure can be used repeatedly with
--bufferevent_enable() and bufferevent_disable().
--The flags parameter can be a combination of
+ bufferevent_enable() and bufferevent_disable().
+ The flags parameter can be a combination of
 -.Va EV_READ
--and
++EV_READ
+ and
 -.Va EV_WRITE .
-+\fIbufferevent_enable()\fP\fR and \fIbufferevent_disable()\fP\fR.
-+The \fIflags\fP\fR parameter can be a combination of
-+EV_READ and EV_WRITE .
++EV_WRITE .
  When read enabled the bufferevent will try to read from the file
  descriptor and call the read callback.
  The write callback is executed
  whenever the output buffer is drained below the write low watermark,
--which is
+ which is
 -.Va 0
--by default.
++\fI0\fP\fR
+ by default.
 -.Pp
-+which is 0 by default.
 +.PP
  The
 -.Fn bufferevent_write
-+\fIbufferevent_write()\fP\fR
++\fBbufferevent_write()\fP\fR
  function can be used to write data to the file descriptor.
  The data is appended to the output buffer and written to the descriptor
  automatically as it becomes available for writing.
 -.Fn bufferevent_write
-+\fIbufferevent_write()\fP\fR
++\fBbufferevent_write()\fP\fR
  returns 0 on success or \-1 on failure.
  The
 -.Fn bufferevent_read
-+\fIbufferevent_read()\fP\fR
++\fBbufferevent_read()\fP\fR
  function is used to read data from the input buffer,
  returning the amount of data read.
 -.Pp
 +.PP
  If multiple bases are in use, bufferevent_base_set() must be called before
  enabling the bufferevent for the first time.
+ .Sh NON-BLOCKING HTTP SUPPORT
+@@ -549,74 +550,74 @@
+ .Pp
+ If multiple bases are in use, bufferevent_base_set() must be called before
+ enabling the bufferevent for the first time.
 -.Sh NON-BLOCKING HTTP SUPPORT
 -.Nm libevent
--provides a very thin HTTP layer that can be used both to host an HTTP
--server and also to make HTTP requests.
--An HTTP server can be created by calling
--.Fn evhttp_start .
--When the HTTP server is no longer used, it can be freed via
++.SH NON-BLOCKING HTTP SUPPORT
++\fIlibevent\fP\fR
+ provides a very thin HTTP layer that can be used both to host an HTTP
+ server and also to make HTTP requests.
+ An HTTP server can be created by calling
+-.Fn evhttp_new .
++\fBevhttp_new\fP\fR.
+ It can be bound to any port and address with the
+-.Fn evhttp_bind_socket
++\fBevhttp_bind_socket\fP\fR
+ function.
+ When the HTTP server is no longer used, it can be freed via
 -.Fn evhttp_free .
 -.Pp
--To be notified of HTTP requests, a user needs to register callbacks with the
--HTTP server.
--This can be done by calling
++\fBevhttp_free\fP\fR.
++.PP
+ To be notified of HTTP requests, a user needs to register callbacks with the
+ HTTP server.
+ This can be done by calling
 -.Fn evhttp_set_cb .
--The second argument is the URI for which a callback is being registered.
--The corresponding callback will receive an
++\fBevhttp_set_cb\fP\fR.
+ The second argument is the URI for which a callback is being registered.
+ The corresponding callback will receive an
 -.Va struct evhttp_request
--object that contains all information about the request.
++\fIstruct evhttp_request\fP\fR
+ object that contains all information about the request.
 -.Pp
--This section does not document all the possible function calls; please
--check
++.PP
+ This section does not document all the possible function calls; please
+ check
 -.Va event.h
--for the public interfaces.
++\fBevent.h\fP\fR
+ for the public interfaces.
+-.Sh ADDITIONAL NOTES
++.SH ADDITIONAL NOTES
+ It is possible to disable support for
+-.Va epoll , kqueue , devpoll , poll
++\fBepoll , kqueue , devpoll , poll\fP\fR
+ or
+-.Va select
++\fBselect\fP\fR
+ by setting the environment variable
+-.Va EVENT_NOEPOLL , EVENT_NOKQUEUE , EVENT_NODEVPOLL , EVENT_NOPOLL
++EVENT_NOEPOLL, EVENT_NOKQUEUE, EVENT_NODEVPOLL, EVENT_NOPOLL
+ or
+-.Va EVENT_NOSELECT ,
++EVENT_NOSELECT,
+ respectively.
+ By setting the environment variable
+-.Va EVENT_SHOW_METHOD ,
+-.Nm libevent
++EVENT_SHOW_METHOD,
++\fIlibevent\fP\fR
+ displays the kernel notification method that it uses.
 -.Sh RETURN VALUES
 +.SH RETURN VALUES
  Upon successful completion
 -.Fn event_add
-+\fIevent_add()\fP\fR
++\fBevent_add\fP\fR
  and
 -.Fn event_del
-+\fIevent_del()\fP\fR
++\fBevent_del\fP\fR
  return 0.
  Otherwise, \-1 is returned and the global variable errno is
  set to indicate the error.
@@ -813,11 +941,12 @@
 +\fBpoll(2)\fR,
 +\fBselect(3C)\fR,
 +\fBport_create(3C)\fR,
++\fBevdns(3)\fR,
 +\fBtimeout(9f)\fR.
 +.SH HISTORY
  The
 -.Nm event
-+\fIlibevent\fR
++\fIevent\fP\fR
  API manpage is based on the
 -.Xr timeout 9
 +\fBtimeout(9)\fR
@@ -838,6 +967,3 @@
  This documentation is neither complete nor authoritative.
  If you are in doubt about the usage of this API then
  check the source code to find out how it works, write
- up the missing piece of documentation and send it to
- me for inclusion in this man page.
-+
