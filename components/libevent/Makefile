@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libevent
-COMPONENT_VERSION=	1.3e
-IPS_COMPONENT_VERSION=	1.3.5
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION=	1.4.14b
+IPS_COMPONENT_VERSION=	1.4.14.2
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:67b064a4533c640dfb86e3d81c0cca9247427353
-COMPONENT_ARCHIVE_URL=	http://monkey.org/~provos/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:4a834364c28ad652ddeb00b5f83872506eede7d4
+COMPONENT_ARCHIVE_URL=	http://cloud.github.com/downloads/libevent/libevent/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -41,22 +41,15 @@ include ../../make-rules/lint-libraries.mk
 COMPONENT_PRE_CONFIGURE_ACTION =  \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-#The libevent that is bundled with Solaris is a trimed down version.
-#It does not contain the evhttp*, evdns* functions. The man page 'event.3'
-#is patched to remove descriptions regarding these functions.
-#
 #The original manpage is in a format that the Solaris man command does
 #not understand. Hence it has been manually converted.
 #
 #List of files from the original package that are not being delivered
 #
-#/usr/share/man/man3/evdns.3
-#/usr/include/evhttp.h
-#/usr/include/evdns.h
 #/usr/bin/event_rpcgen.py
 
 CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS	+= --enable-threads
+CONFIGURE_OPTIONS	+= --disable-static
 
 build:		$(BUILD_32_and_64)
 
