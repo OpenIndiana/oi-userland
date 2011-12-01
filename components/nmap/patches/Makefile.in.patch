@@ -1,0 +1,154 @@
+--- nmap-5.21/Makefile.in.~1~	2011-01-12 17:28:52.000000000 -0800
++++ nmap-5.21/Makefile.in	2011-11-03 14:41:18.726644687 -0700
+@@ -1,7 +1,9 @@
++SHELL = /bin/bash
+ # Extract the version string from nmap.h.
+ export NMAP_VERSION := $(shell grep '^\#[ \t]*define[ \t]\+NMAP_VERSION' nmap.h | sed -e 's/.*"\(.*\)".*/\1/' -e 'q')
++export TOPDIR=$(shell pwd)
+ NMAP_NAME= Nmap
+-NMAP_URL= http://nmap.org
++NMAP_URL= http://nmap.org/
+ NMAP_PLATFORM=@host@
+ prefix = @prefix@
+ exec_prefix = @exec_prefix@
+@@ -14,12 +16,12 @@
+ deskdir = $(prefix)/share/applications
+ NMAPDEVDIR=~/nmap-private-dev
+ 
+-export NBASEDIR=@NBASEDIR@
+-export NSOCKDIR=@NSOCKDIR@
+-export LIBLUADIR = @LIBLUADIR@
++export NBASEDIR=$(TOPDIR)/@NBASEDIR@
++export NSOCKDIR=$(TOPDIR)/@NSOCKDIR@
++export LIBLUADIR=$(TOPDIR)/@LIBLUADIR@
+ export NDIR=$(shell pwd)
+-export LIBLUA_LIBS = @LIBLUA_LIBS@
+-export NCATDIR=@NCATDIR@
++export LIBLUA_LIBS=$(TOPDIR)/@LIBLUA_LIBS@
++export NCATDIR=$(TOPDIR)/@NCATDIR@
+ CC = @CC@
+ CXX = @CXX@
+ CCOPT = 
+@@ -27,27 +29,29 @@
+ STRIP = @STRIP@
+ LIBPCAPDIR = @libpcapdir@
+ LIBPCREDIR = @LIBPCREDIR@
+-export LIBDNETDIR = @LIBDNETDIR@
+-ZENMAPDIR = @ZENMAPDIR@
+-NDIFFDIR = @NDIFFDIR@
++export LIBDNETDIR=$(TOPDIR)/@LIBDNETDIR@
++ZENMAPDIR=$(TOPDIR)/zenmap
++NDIFFDIR=$(TOPDIR)/ndiff
+ NPINGDIR = @NPINGDIR@
+ PYTHON = @PYTHON@
++PYTHONDIR = @pythondir@
+ DEFS = @DEFS@ -DNMAP_NAME=\"$(NMAP_NAME)\" -DNMAP_URL=\"$(NMAP_URL)\" -DNMAP_PLATFORM=\"$(NMAP_PLATFORM)\" -DNMAPDATADIR=\"$(nmapdatadir)\"
+ # With GCC, add extra security checks to source code.
+ # http://gcc.gnu.org/ml/gcc-patches/2004-09/msg02055.html
+ # Level 1 only makes changes that don't affect "conforming" programs,
+ # while level 2 enforces additional restrictions.
+ DEFS += -D_FORTIFY_SOURCE=2
++export CXXFLAGS = @CXXFLAGS@ $(DBGFLAGS) $(CCOPT) $(DEFS) $(INCLS)
++export CFLAGS = @CFLAGS@ $(DBGFLAGS) $(CCOPT) $(DEFS) $(INCLS)
++
+ # For mtrace debugging -- see MTRACE define in main.cc for instructions
+ # Should only be enabled during debugging and not in any real release.
+ # DEFS += -DMTRACE=1
+-CXXFLAGS = @CXXFLAGS@ $(DBGFLAGS) $(CCOPT)
+ CPPFLAGS = @CPPFLAGS@ $(DEFS)
+-export CFLAGS = $(CXXFLAGS)
+ # CFLAGS = $(DEFS) $(INCLS)
+ STATIC =
+-LDFLAGS = @LDFLAGS@ $(DBGFLAGS) $(STATIC)
+-LIBS =  @LIBNBASE_LIBS@ @LIBNSOCK_LIBS@ @LIBPCRE_LIBS@ @LIBPCAP_LIBS@ $(OPENSSL_LIBS) libnetutil/libnetutil.a @LIBDNET_LIBS@ @LIBLUA_LIBS@ @LIBS@
++LDFLAGS = @LDFLAGS@ $(DBGFLAGS) $(STATIC) -z ignore
++LIBS =  @LIBNBASE_LIBS@ @LIBNSOCK_LIBS@ @LIBPCRE_LIBS@ @LIBPCAP_LIBS@ @OPENSSL_LIBS@ @LIBDNET_LIBS@ @LIBLUA_LIBS@ @LIBS@ -lsocket -lnsl -lgen
+ OPENSSL_LIBS = @OPENSSL_LIBS@
+ # LIBS =  -lefence @LIBS@
+ # LIBS =  -lrmalloc @LIBS@
+@@ -63,7 +67,7 @@
+ # environment variable or none of them with --disable-nls.
+ ALL_LINGUAS = de es fr hr hu it jp pl pt_BR pt_PT ro ru sk zh
+ # A space-separated list of language codes requested by the user.
+-LINGUAS ?= $(ALL_LINGUAS)
++
+ 
+ 
+ # DESTDIR is used by some package maintainers to install Nmap under
+@@ -93,15 +97,22 @@
+ endif
+ endif
+ 
+-export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc osscan2.cc output.cc payload.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc traceroute.cc portreasons.cc xml.cc $(NSE_SRC) @COMPAT_SRCS@
++NETUTIL_SRC= netutil.cc
++NETUTIL_HDRS= netutil.h
++NETUTIL_OBJS=netutil.o
+ 
+-export HDRS = charpool.h FingerPrintResults.h global_structures.h idle_scan.h MACLookup.h nmap_amigaos.h nmap_dns.h nmap_error.h nmap.h NmapOps.h NmapOutputTable.h nmap_rpc.h nmap_tty.h nmap_winconfig.h osscan.h osscan2.h output.h payload.h portlist.h protocols.h scan_engine.h service_scan.h services.h TargetGroup.h Target.h targets.h tcpip.h timing.h utils.h traceroute.h portreasons.h xml.h $(NSE_HDRS)
++export SRCS = main.cc nmap.cc targets.cc tcpip.cc nmap_error.cc utils.cc idle_scan.cc osscan.cc osscan2.cc output.cc payload.cc scan_engine.cc timing.cc charpool.cc services.cc protocols.cc nmap_rpc.cc portlist.cc NmapOps.cc TargetGroup.cc Target.cc FingerPrintResults.cc service_scan.cc NmapOutputTable.cc MACLookup.cc nmap_tty.cc nmap_dns.cc traceroute.cc portreasons.cc xml.cc $(NSE_SRC) libnetutil/$(NETUTIL_SRC) @COMPAT_SRCS@
+ 
+-OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o osscan2.o output.o payload.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o  traceroute.o portreasons.o xml.o $(NSE_OBJS) @COMPAT_OBJS@
++export HDRS = charpool.h FingerPrintResults.h global_structures.h idle_scan.h MACLookup.h nmap_amigaos.h nmap_dns.h nmap_error.h nmap.h NmapOps.h NmapOutputTable.h nmap_rpc.h nmap_tty.h nmap_winconfig.h osscan.h osscan2.h output.h payload.h portlist.h protocols.h scan_engine.h service_scan.h services.h TargetGroup.h Target.h targets.h tcpip.h timing.h utils.h traceroute.h portreasons.h xml.h $(NSE_HDRS) libnetutil/$(NETUTIL_HDRS)
++
++OBJS = main.o nmap.o targets.o tcpip.o nmap_error.o utils.o idle_scan.o osscan.o osscan2.o output.o payload.o scan_engine.o timing.o charpool.o services.o protocols.o nmap_rpc.o portlist.o NmapOps.o TargetGroup.o Target.o FingerPrintResults.o service_scan.o NmapOutputTable.o MACLookup.o nmap_tty.o nmap_dns.o  traceroute.o portreasons.o xml.o $(NSE_OBJS) libnetutil/$(NETUTIL_OBJS) @COMPAT_OBJS@
+ 
+ # %.o : %.cc -- nope this is a GNU extension
+ .cc.o:
+-	$(CXX) -c $(CPPFLAGS) $(CXXFLAGS) $< -o $@
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
++
++.c.o:
++	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+ 
+ all: @LUA_BUILD@ @PCAP_BUILD@ @PCRE_BUILD@ @DNET_BUILD@ @NBASE_BUILD@ @NSOCK_BUILD@ @NCAT_BUILD@ netutil_build
+ 	$(MAKE) $(TARGET) $(BUILDZENMAP) $(BUILDNDIFF) $(BUILDNPING)
+@@ -109,7 +120,7 @@
+ $(TARGET): @LUA_DEPENDS@ @PCAP_DEPENDS@ @PCRE_DEPENDS@ @DNET_DEPENDS@ $(NBASEDIR)/libnbase.a $(NSOCKDIR)/src/libnsock.a libnetutil/libnetutil.a $(OBJS)
+ 	@echo Compiling nmap
+ 	rm -f $@
+-	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
++	$(CXX) $(CXXFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS)
+ 
+ pcre_build: $(LIBPCREDIR)/Makefile
+ 	@echo Compiling libpcre; cd $(LIBPCREDIR) && $(MAKE)
+@@ -225,7 +236,9 @@
+ 	         config.cache config.log config.status
+ 
+ install-nmap: $(TARGET)
+-	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1 $(DESTDIR)$(nmapdatadir)
++	$(INSTALL) -d $(DESTDIR)$(bindir)
++	$(INSTALL) -d $(DESTDIR)$(mandir)/man1
++	$(INSTALL) -d $(DESTDIR)$(nmapdatadir)
+ 	$(INSTALL) -c -m 755 nmap $(DESTDIR)$(bindir)/nmap
+ # Use strip -x to avoid stripping dynamically loaded NSE functions. See
+ # http://seclists.org/nmap-dev/2007/q4/0272.html.
+@@ -277,8 +290,10 @@
+ 	cd $(ZENMAPDIR) && $(PYTHON) setup.py build $(if $(DESTDIR),--executable "$(DEFAULT_PYTHON_PATH)")
+ 
+ install-zenmap: $(ZENMAPDIR)/setup.py
++	$(INSTALL) -d $(DESTDIR)$(bindir)
++	$(INSTALL) -d $(DESTDIR)$(mandir)/man1
+ 	$(INSTALL) -d $(DESTDIR)$(bindir) $(DESTDIR)$(mandir)/man1
+-	cd $(ZENMAPDIR) && $(PYTHON) setup.py --quiet install --prefix "$(prefix)" --force $(if $(DESTDIR),--root "$(DESTDIR)")
++	cd $(ZENMAPDIR) && $(PYTHON) setup.py --quiet install --prefix "$(prefix)" --force $(if $(DESTDIR),--root "$(DESTDIR)") --install-lib $(PYTHONDIR)
+ 	$(INSTALL) -c -m 644 docs/zenmap.1 $(DESTDIR)$(mandir)/man1/
+ # Create a symlink from nmapfe to zenmap if nmapfe doesn't exist or is
+ # already a link.
+@@ -295,7 +310,7 @@
+ 	@cd $(NPINGDIR) && $(MAKE)
+ 
+ install-ndiff:
+-	cd $(NDIFFDIR) && $(PYTHON) setup.py install --prefix "$(prefix)" $(if $(DESTDIR),--root "$(DESTDIR)")
++	cd $(NDIFFDIR) && $(PYTHON) setup.py install --prefix "$(prefix)" $(if $(DESTDIR),--root "$(DESTDIR)") --install-lib $(PYTHONDIR)
+ 
+ NSE_FILES = scripts/script.db scripts/*.nse
+ NSE_LIB_LUA_FILES = nselib/*.lua
+@@ -371,7 +386,7 @@
+ 	./config.status --recheck
+ 
+ makefile.dep:
+-	$(CXX) -MM $(CPPFLAGS) $(SRCS) > $@
++	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -MM $(CPPFLAGS) $(SRCS) | grep -v '/usr/gnu' | grep -v '/usr/include' | grep -v '/usr/sfw' | nawk 'NR>1 { if ($$0 ~ /^.*\.o:/ && line ~ /\\$$/ ) sub(/ \\$$/, "", line); print line }  { line = $$0 } END { sub(/ \\$$/, "", line); print line }' > $@
+ include makefile.dep
+ 
+ # These the old names of scripts that have been renamed or deleted. Any

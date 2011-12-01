@@ -1,0 +1,31 @@
+--- nmap-5.21/libnetutil/netutil.cc.~1~	2011-01-20 16:04:16.000000000 -0800
++++ nmap-5.21/libnetutil/netutil.cc	2011-11-11 15:53:34.504536073 -0800
+@@ -616,7 +616,8 @@
+ 
+ /* Returns whether the system supports pcap_get_selectable_fd() properly */
+ int pcap_selectable_fd_valid() {
+-#if defined(WIN32) || defined(MACOSX) || (defined(FREEBSD) && (__FreeBSD_version < 500000))
++#if defined(WIN32) || defined(MACOSX) || (defined(FREEBSD) && (__FreeBSD_version < 500000)) \
++    || (defined(sun) || defined(__sun) || defined(__sun__))
+   return 0;
+ #else
+   return 1;
+@@ -630,7 +631,8 @@
+    results.  If you just want to test whether the function is supported,
+    use pcap_selectable_fd_valid() instead. */
+ int my_pcap_get_selectable_fd(pcap_t *p) {
+-#if defined(WIN32) || defined(MACOSX) || (defined(FREEBSD) && (__FreeBSD_version < 500000))
++#if defined(WIN32) || defined(MACOSX) || (defined(FREEBSD) && (__FreeBSD_version < 500000)) \
++    || (defined(sun) || defined(__sun) || defined(__sun__))
+   return -1;
+ #else
+   assert(pcap_selectable_fd_valid());
+@@ -1162,7 +1164,7 @@
+       devs[count].device_type = devt_ethernet;
+ 
+       /* If the device type is ethernet, get the MAC address. */
+-#ifdef SIOCGIFHWADDR
++#if defined(SIOCGIFHWADDR) && (!defined(sun) && !defined(__sun) && !defined(__sun__))
+       memcpy(&tmpifr.ifr_addr, sin, MIN(sizeof(tmpifr.ifr_addr), sizeof(*sin)));
+       rc = ioctl(sd, SIOCGIFHWADDR, &tmpifr);
+       if (rc < 0 && errno != EADDRNOTAVAIL){
