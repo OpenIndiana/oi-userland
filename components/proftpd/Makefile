@@ -27,11 +27,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		proftpd
 COMPONENT_VERSION=	1.3.3
-COMPONENT_SUBVERSION=	e
+COMPONENT_SUBVERSION=	g
 HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_SUBVERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:823e94c24447936ade6ae3948fe638077e0ba933
+COMPONENT_ARCHIVE_HASH=	sha1:11c2951526476d9f52307aa714851463aa76aa61
 COMPONENT_ARCHIVE_URL=	ftp://ftp.proftpd.org/distrib/source/$(COMPONENT_ARCHIVE)
 
 # mod_gss subcomponent
@@ -50,7 +50,7 @@ include ../../make-rules/ips.mk
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
 # Because the IPS_COMPONENT_VERSION cannot contain letters we used '.0.5'
 # instead of 'e'.
-IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION).0.5
+IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION).0.7
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP="
 # Force immediate binding because of chroot().
