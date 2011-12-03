@@ -52,6 +52,11 @@ CFLAGS +=			-I"$(USRINCDIR)/idn"
 CONFIGURE_OPTIONS  +=		--with-wc-funcs
 CONFIGURE_OPTIONS  +=		--with-sasl
 
+# Add in the C compiler information to the muttbug (a.k.a. flea) script.
+COMPONENT_POST_CONFIGURE_ACTION = \
+	$(GSED) -i 's%XXX-CUSAGE-XXX%$(shell $(CC) -V 2>&1 | head -1)%' \
+	$(BUILD_DIR_32)/muttbug.sh 
+
 # common targets
 build:		$(BUILD_32)
 
