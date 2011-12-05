@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         nmap
 COMPONENT_VERSION=      5.51
+COMPONENT_PROJECT_URL=	http://insecure.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= sha1:bad24e4d332b293d08d8ce38583fefa176e9198d

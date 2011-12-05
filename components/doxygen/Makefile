@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
 COMPONENT_VERSION=	1.5.7.1
+COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:aecb0c453f76e900eb2aa8132ad063215005fca3

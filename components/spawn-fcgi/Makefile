@@ -27,10 +27,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		spawn-fcgi
 COMPONENT_VERSION=	1.6.3
+COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:2b97ea57d9d79745fe8d6051d830fa507b421169
-COMPONENT_ARCHIVE_URL=	http://www.lighttpd.net/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

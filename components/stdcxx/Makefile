@@ -26,6 +26,7 @@ PATH=$(dir $(CC)):/usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		stdcxx
 COMPONENT_VERSION=	4.2.1
+COMPONENT_PROJECT_URL=	http://stdcxx.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://stdcxx.apache.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz

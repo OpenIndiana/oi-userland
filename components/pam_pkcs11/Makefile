@@ -24,10 +24,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pam_pkcs11
 COMPONENT_VERSION=	0.6.0
+COMPONENT_PROJECT_URL=	http://www.opensc-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:eef40325afc426e5364f0d9762a8e0aded34a6c2
-COMPONENT_ARCHIVE_URL=	http://www.opensc-project.org/files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

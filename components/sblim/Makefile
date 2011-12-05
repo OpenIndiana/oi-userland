@@ -28,7 +28,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		cim-client
 COMPONENT_VERSION=	1.3.7
 COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_PROJECT_URL=	http://sblim.wiki.sourceforge.net/CimClient
+COMPONENT_PROJECT_URL=	http://sblim.wiki.sourceforge.net/CimClient/
 COMPONENT_ARCHIVE=	sblim-$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src.zip
 COMPONENT_ARCHIVE_HASH=	sha1:6cb6e75b98439e31f32fc5f16f0002f2b1601b50
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/sblim/$(COMPONENT_ARCHIVE)

@@ -24,10 +24,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lxml
 COMPONENT_VERSION=	2.1.2
+COMPONENT_PROJECT_URL=	http://lxml.de/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha1:5354b3dd5f0bd16589da9970e0da7df60aaaa2f5
-COMPONENT_ARCHIVE_URL=	http://lxml.de/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 
 # disable optimization to prevent the Studio compilers from spinning
 studio_OPT.i386.32 =

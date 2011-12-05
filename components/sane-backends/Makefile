@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sane-backends
 COMPONENT_VERSION=	1.0.19
+COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:3ff8eefa8f32e72dcdbaa4bf20fe125df90144d5

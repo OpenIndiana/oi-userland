@@ -28,10 +28,11 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		fping
 COMPONENT_VERSION=	2.4b2_to
 IPS_COMPONENT_VERSION=	2.4.2
+COMPONENT_PROJECT_URL=	http://fping.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:9318f2ec4b389cd74ca32f561fea95f9528f16a3
-COMPONENT_ARCHIVE_URL=	http://fping.sourceforge.net/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

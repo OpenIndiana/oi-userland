@@ -24,10 +24,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lua
 COMPONENT_VERSION=	5.1.4
+COMPONENT_PROJECT_URL=	http://www.lua.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:2b11c8e60306efb7f0734b747588f57995493db7
-COMPONENT_ARCHIVE_URL=	http://www.lua.org/ftp/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

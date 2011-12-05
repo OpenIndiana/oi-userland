@@ -25,6 +25,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         gnu-gs-fonts-std
 COMPONENT_VERSION=      6.0
+COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/gs-fonts/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha1:cdad2f3752c513fe1cfb0eeaf6661753e2cc182c

@@ -25,6 +25,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libusb
 COMPONENT_VERSION=	0.1.8
 IPS_COMPONENT_VERSION=	0.5.11
+COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
 
 include $(WS_TOP)/make-rules/justmake.mk

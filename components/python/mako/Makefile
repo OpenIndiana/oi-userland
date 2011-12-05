@@ -26,10 +26,11 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		Mako
 COMPONENT_VERSION=	0.4.1
+COMPONENT_PROJECT_URL=	http://www.makotemplates.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:a4e30660794aab5224e0c776d03c45f3c8b5fa7e
-COMPONENT_ARCHIVE_URL=	http://www.makotemplates.org/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

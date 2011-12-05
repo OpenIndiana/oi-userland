@@ -27,10 +27,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		fcgi
 COMPONENT_VERSION=	2.4.0
+COMPONENT_PROJECT_URL=	http://www.fastcgi.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:2329404159e8b8315e524b9eaf1de763202c6e6a
-COMPONENT_ARCHIVE_URL=	http://www.fastcgi.com/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

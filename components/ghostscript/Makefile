@@ -25,10 +25,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript
 COMPONENT_VERSION=      9.00
+COMPONENT_PROJECT_URL=	http://ghostscript.com/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= sha1:96e75675efa0f00813f1608ba2c3833f4103ba19
-COMPONENT_ARCHIVE_URL=  http://ghostscript.com/releases/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk

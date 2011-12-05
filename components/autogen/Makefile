@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
 COMPONENT_VERSION=	5.9
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:00510cd07be7a35591bac7bf1f6f78bf607d193d

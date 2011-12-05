@@ -26,6 +26,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hal-cups-utils
 COMPONENT_VERSION=	0.6.19
+COMPONENT_PROJECT_URL=	http://fedorahosted.org/hal-cups-utils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:14f79f1e8614d4f4a96d9a910ed79f554fbbaaa0

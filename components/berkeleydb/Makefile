@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		db
 COMPONENT_VERSION=	5.1.25
+COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:1a216821957ce910a269bf9916bf49aba0f08b4d

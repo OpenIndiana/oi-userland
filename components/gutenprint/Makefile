@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gutenprint
 COMPONENT_VERSION=	5.2.4
+COMPONENT_PROJECT_URL=	http://www.gutenprint.org/software/gutenprint/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha1:ae680314650dd9a52df5fd11cd0282cc6f9662e6

@@ -24,10 +24,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = neon
 COMPONENT_VERSION = 0.29.5
+COMPONENT_PROJECT_URL=	http://www.webdav.org/neon/
 COMPONENT_SRC = $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE = $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH = sha1:46e85922b2dad60f50393e7d8d4075c880c7e03e
-COMPONENT_ARCHIVE_URL = http://webdav.org/neon/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL = $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libsigsegv
 COMPONENT_VERSION=	2.6
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/libsigsegv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:15ca1dd9574012b8c4c4d2bf6ba945546114b0b5

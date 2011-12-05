@@ -24,10 +24,11 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		modsecurity-apache
 COMPONENT_VERSION=	2.5.9
+COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:875919332a918956371fe8e2f7e46d88081857cf
-COMPONENT_ARCHIVE_URL=	http://www.modsecurity.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk

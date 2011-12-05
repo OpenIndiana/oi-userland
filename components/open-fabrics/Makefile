@@ -28,6 +28,8 @@ LD_Z_IGNORE =
 
 COMPONENT_VERSION=1.5.3
 
+COMPONENT_PROJECT_URL=	http://www.openfabrics.org/
+
 # for now, everything with a Makefile should be built
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
 

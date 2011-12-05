@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		readline
 COMPONENT_VERSION=	5.2
+COMPONENT_PROJECT_URL=	http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:18f3412c73068509d5f491b7b4535aeaf9522834

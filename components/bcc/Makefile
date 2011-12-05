@@ -27,10 +27,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bcc
 COMPONENT_VERSION=	0.16.17
+COMPONENT_PROJECT_URL=	http://homepage.ntlworld.com/robert.debath/dev86/
 COMPONENT_SRC=		dev86-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	Dev86src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:0bfe55c7a5e11d72f19f26cb0383178605951c72
-COMPONENT_ARCHIVE_URL=	http://homepage.ntlworld.com/robert.debath/dev86/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

@@ -28,10 +28,11 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		quagga
 COMPONENT_VERSION=	0.99.8
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
+COMPONENT_PROJECT_URL=	http://www.quagga.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:9576d0ac266d173d2a90b8c6f72da8c6b43583d7
-COMPONENT_ARCHIVE_URL=	http://www.quagga.net/download/attic/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/attic/$(COMPONENT_ARCHIVE)
 PATCH_LEVEL = 0
 
 # without this we bus error on sparc. Until the code in all of Quagga

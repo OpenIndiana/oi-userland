@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sed
 COMPONENT_VERSION=	4.2.1
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/sed/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:502f5fa9aff891f0383baaeb1958b66dbc4b05c8

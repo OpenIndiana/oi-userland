@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logilab-astng
 COMPONENT_VERSION=	0.19.0
+COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-astng/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:87fe682ec98599c0088f228ba94cb50a7ed99466

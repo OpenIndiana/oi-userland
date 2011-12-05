@@ -28,7 +28,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ipmitool
 COMPONENT_VERSION=	1.8.11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://ipmitool.sourceforge.net
+COMPONENT_PROJECT_URL=	http://ipmitool.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:4cb6ff3736fd3e166abc5303d6373672327a5db1
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/ipmitool/files/ipmitool/1.8.11/$(COMPONENT_ARCHIVE)

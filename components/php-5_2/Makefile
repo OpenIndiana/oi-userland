@@ -121,6 +121,8 @@ include ../../make-rules/ips.mk
 #			[paths already correct and some things don't exist.]
 #               looks like i DO NEED the pear patches
 
+COMPONENT_PROJECT_URL=	http://www.php.net/
+
 PKG_PROTO_DIRS += APC/build/prototype/$(MACH)
 PKG_PROTO_DIRS += APC-zts/build/prototype/$(MACH)
 PKG_PROTO_DIRS += idn/build/prototype/$(MACH)

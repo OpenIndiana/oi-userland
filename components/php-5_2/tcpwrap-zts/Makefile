@@ -28,7 +28,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha1:23cbfdc8ea9ff1e64814d52a14bbd365b1e16cf7
 COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://pecl.php.net/package/tcpwrap
+COMPONENT_PROJECT_URL=	http://pecl.php.net/package/tcpwrap/
 
 PATCH_DIR = ../tcpwrap/patches
 
