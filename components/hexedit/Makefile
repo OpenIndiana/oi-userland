@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexedit
 COMPONENT_VERSION=	1.2.12
+COMPONENT_PROJECT_URL=	http://merd.sourceforge.net/pixel/hexedit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
 COMPONENT_ARCHIVE_HASH=	sha1:fee89e390945045fe6b74b5f07600a8e664c8b21

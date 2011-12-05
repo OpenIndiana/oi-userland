@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncftp
 COMPONENT_VERSION=	3.2.3
+COMPONENT_PROJECT_URL=	http://www.ncftp.com/ncftp/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha1:7d58ce15662a2aeeb0b564f98c2beea2f6e54a0b

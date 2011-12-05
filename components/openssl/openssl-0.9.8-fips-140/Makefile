@@ -29,10 +29,11 @@ COMPONENT_NAME =	openssl
 # libraries. However, we use the FIPS canister version for the IPS package.
 COMPONENT_VERSION =	0.9.8q
 IPS_COMPONENT_VERSION = 1.2
+COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:12b6859698ca299fa0cba594686c25d5c01e410d
-COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 
 # Apply the patch on SPARC only. Must put this before including prep.mk as
 # mentioned in there.

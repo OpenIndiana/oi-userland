@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pmtools
 COMPONENT_VERSION=	1.10
+COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/pmtools/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:9be28391ea83c47b6a6ffd9d2e6466cf86f33f57

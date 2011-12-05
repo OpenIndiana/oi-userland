@@ -28,7 +28,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		iperf
 COMPONENT_VERSION=	2.0.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/iperf
+COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/iperf/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:78b6b78789eccf42b5deb783bd8a92469d1383e1
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/iperf/$(COMPONENT_ARCHIVE)

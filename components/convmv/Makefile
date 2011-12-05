@@ -27,10 +27,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		convmv
 COMPONENT_VERSION=	1.14
+COMPONENT_PROJECT_URL=	http://www.j3e.de/linux/convmv/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:e6261eed4771014e84ffe68aac8041c02fb1834d
-COMPONENT_ARCHIVE_URL=	http://www.j3e.de/linux/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

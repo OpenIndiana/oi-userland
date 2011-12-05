@@ -31,6 +31,7 @@ include ../../make-rules/shared-macros.mk
 #
 COMPONENT_NAME=		rpm2cpio
 COMPONENT_VERSION=	0.5.11
+COMPONENT_PROJECT_URL=	http://www.iagora.com/~espel/rpm2cpio/
 COMPONENT_SRC=		src
 
 include ../../make-rules/prep.mk

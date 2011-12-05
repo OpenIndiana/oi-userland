@@ -28,7 +28,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha1:39406c22ac86d7f30e47261a08fb93cea5dc3f39
 COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://pecl.php.net/package/idn
+COMPONENT_PROJECT_URL=	http://pecl.php.net/package/idn/
 
 include ../extensions.mk
 

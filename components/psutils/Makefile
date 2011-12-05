@@ -25,6 +25,7 @@ include ../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		psutils
 COMPONENT_VERSION=	p17
+COMPONENT_PROJECT_URL=	http://knackered.knackered.org/angus/psutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:6f1ecb5846cffb644826a02bd9153fe5d6387a9b

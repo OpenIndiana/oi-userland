@@ -27,10 +27,11 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		less
 COMPONENT_VERSION=	436
+COMPONENT_PROJECT_URL=	http://www.greenwoodsoftware.com/less/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:f78998a1a79a7e1962c901dd41bdc3d1c2005471
-COMPONENT_ARCHIVE_URL=	http://www.greenwoodsoftware.com/less/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

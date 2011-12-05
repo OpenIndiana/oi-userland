@@ -28,7 +28,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	sha1:6bc7d8fc9c9b9a247316e35d0cac3fe9dd37b68c
 COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://pecl.php.net/package/memcache
+COMPONENT_PROJECT_URL=	http://pecl.php.net/package/memcache/
 
 include ../extensions.mk
 

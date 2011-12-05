@@ -28,6 +28,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gettext
 COMPONENT_VERSION=	0.16.1
 IPS_PKG_NAME=		text/gnu-gettext
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:8642f4346dfd6a18ecd883329e150bfe9e0886c3

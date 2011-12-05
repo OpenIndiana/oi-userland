@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		guile
 COMPONENT_VERSION=	1.8.4
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/guile/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:1e80fe242acfde2bfa39fd1e8409a8f010e24e2b

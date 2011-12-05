@@ -29,7 +29,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:56cc7f6622dd6f2fecd43fc210dc1c6cb155b37f
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=  http://www.wxwidgets.org
+COMPONENT_PROJECT_URL=  http://www.wxwidgets.org/
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

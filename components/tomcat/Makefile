@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache-tomcat
 COMPONENT_VERSION=	6.0.33
+COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:437db0ba55c6e398fe3af73c4fa5eed3c4666842

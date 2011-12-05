@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		automake
 COMPONENT_VERSION=	1.10
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/automake/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:69dc02b083b9a609b28fc4db129fef6a83ed2339

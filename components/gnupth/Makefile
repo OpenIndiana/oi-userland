@@ -25,7 +25,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		pth
 COMPONENT_VERSION=	2.0.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/pth
+COMPONENT_PROJECT_URL=	http://www.gnu.org/software/pth/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:9a71915c89ff2414de69fe104ae1016d513afeee
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/pth/$(COMPONENT_ARCHIVE)
