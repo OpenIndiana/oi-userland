@@ -1,5 +1,5 @@
---- src/tddl/tddl.c.old	2010-04-12 22:24:21.000000000 -0700
-+++ src/tddl/tddl.c 2011-07-12 13:14:57.362305220 -0700
+--- src/tddl/tddl.c	Mon Apr 12 22:24:21 2010
++++ src/tddl/tddl.c.new	Thu Sep 22 12:28:25 2011
 @@ -18,13 +18,17 @@
  
  #include "trousers/tss.h"
@@ -18,7 +18,21 @@
  	{"/dev/tpm", TDDL_UNDEF, TDDL_UNDEF},
  	{NULL, 0, 0}
  };
-@@ -63,7 +67,7 @@
+@@ -42,6 +46,13 @@
+ #include <netdb.h>
+ #include <fcntl.h>
+ 
++#ifdef SOLARIS
++int
++get_device_fd()
++{
++	return (opened_device->fd);
++}
++#endif
+ 
+ int
+ open_device()
+@@ -63,7 +74,7 @@
  	 
  		
  		fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -27,7 +41,7 @@
  			struct hostent *host = gethostbyname(tcp_device_hostname);
  			if (host != NULL) {   
  				struct sockaddr_in addr;
-@@ -105,12 +109,16 @@
+@@ -105,12 +116,16 @@
  		/* tpm_device_paths is filled out in tddl.h */
  		for (i = 0; tpm_device_nodes[i].path != NULL; i++) {
  			errno = 0;
@@ -47,7 +61,7 @@
  		opened_device = &(tpm_device_nodes[i]);
  		tpm_device_nodes[i].fd = fd;
  	}
-@@ -181,11 +189,13 @@
+@@ -181,11 +196,13 @@
  			/* fall through */
  		case TDDL_TRANSMIT_IOCTL:
  			errno = 0;
@@ -61,7 +75,7 @@
  			LogInfo("Falling back to Read/Write device support.");
  			/* fall through */
  		case TDDL_TRANSMIT_RW:
-@@ -255,6 +265,7 @@
+@@ -255,6 +272,7 @@
  
  TSS_RESULT Tddli_Cancel(void)
  {
@@ -69,7 +83,7 @@
  	int rc;
  
  	if (opened_device->transmit == TDDL_TRANSMIT_IOCTL) {
-@@ -270,4 +281,7 @@
+@@ -270,4 +288,7 @@
  	} else {
  		return TDDLERR(TSS_E_NOTIMPL);
  	}

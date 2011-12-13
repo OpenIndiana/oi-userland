@@ -1,11 +1,12 @@
---- src/tcsd/svrside.c.orig	Thu Jan 21 15:18:55 2010
-+++ src/tcsd/svrside.c	Thu Jan 28 17:37:07 2010
-@@ -27,6 +27,13 @@
+--- src/tcsd/svrside.c	Wed Jun  9 13:19:00 2010
++++ src/tcsd/svrside.c.new	Thu Dec  8 12:58:00 2011
+@@ -27,6 +27,14 @@
  #include <arpa/inet.h>
  #include <errno.h>
  #include <getopt.h>
 +#ifdef SOLARIS
 +#include <priv.h>
++#include <fcntl.h>
 +#endif
 +#ifndef HAVE_DAEMON
 +#include <fcntl.h>
@@ -14,12 +15,103 @@
  #include "trousers/tss.h"
  #include "trousers_types.h"
  #include "tcs_tsp.h"
-@@ -207,6 +214,79 @@
+@@ -44,6 +52,11 @@
+ static volatile int hup = 0, term = 0;
+ extern char *optarg;
+ 
++#ifdef SOLARIS
++static int
++get_event_log_from_kernel();
++#endif
++
+ static void
+ tcsd_shutdown(void)
+ {
+@@ -170,6 +183,10 @@
+ 		(void)req_mgr_final();
+ 		return result;
+ 	}
++#ifdef SOLARIS
++	/* Not fatal if this fails */
++	(void) get_event_log_from_kernel();
++#endif
+ 
+ 	result = owner_evict_init();
+ 	if (result != TSS_SUCCESS) {
+@@ -208,6 +225,147 @@
  }
  
  
 +#ifdef SOLARIS
 +
++extern int get_device_fd();
++
++#define TPM_IOCTL_GETEVTABLE    1
++struct tpm_evtable_ioblk {
++	uint32_t	buflen;
++	caddr_t		buf;
++};
++
++static int
++store_eventlog(char *filename, struct tpm_evtable_ioblk *evlog)
++{
++	int fd;
++	int bytes = 0;
++
++	fd = open(filename, O_WRONLY | O_TRUNC | O_CREAT, 0600);
++	if (fd == -1) {
++		LogError("Error opening logfile %s: %s", filename,
++		    strerror(errno));
++		return (-1);
++	}
++	while (bytes < evlog->buflen) {
++		int n;
++		n = write(fd, evlog->buf, evlog->buflen - bytes);
++		if (n == -1 && errno != EAGAIN) {
++			LogError("Error writing logfile %s: %s",
++			    filename, strerror(errno));
++			close(fd);
++			return (-1);
++		}
++		if (n != -1)
++			bytes += n;
++	}
++	close(fd);
++
++	return (0);
++}
++
++static int
++get_event_log_from_kernel()
++{
++	int fd = get_device_fd();
++	struct tpm_evtable_ioblk ioblk;
++
++	if (fd == -1)
++		return (-1);
++
++	(void) memset(&ioblk, 0, sizeof (ioblk));
++	if (ioctl(fd, TPM_IOCTL_GETEVTABLE, &ioblk)) {
++		LogDebug("Cannot get event log from kernel: %s",
++		    strerror(errno));
++		return (-1);
++	}
++	if (ioblk.buflen == 0)
++		return (0);
++
++	ioblk.buf = calloc(1, ioblk.buflen);
++	if (ioblk.buf == NULL) {
++		return (-1);
++	}
++	if (ioctl(fd, TPM_IOCTL_GETEVTABLE, &ioblk)) {
++		free(ioblk.buf);
++		LogDebug("Cannot get event log from kernel: %s",
++		    strerror(errno));
++		return (-1);
++	}
++
++	return (store_eventlog(tcsd_options.firmware_log_file, &ioblk));
++}
 +/*
 + * For Solaris, make the tcsd privilege aware and drop
 + * risky privileges if they are not needed.
@@ -94,7 +186,7 @@
  int
  main(int argc, char **argv)
  {
-@@ -222,6 +302,9 @@
+@@ -223,6 +381,9 @@
  		{"foreground", 0, NULL, 'f'},
  		{0, 0, 0, 0}
  	};
@@ -102,9 +194,9 @@
 +	int rv;
 +#endif
  
- 	while ((c = getopt_long(argc, argv, "fh", long_options, &option_index)) != -1) {
- 		switch (c) {
-@@ -287,6 +372,11 @@
+ 	unsetenv("TCSD_USE_TCP_DEVICE");
+ 	while ((c = getopt_long(argc, argv, "fhe", long_options, &option_index)) != -1) {
+@@ -294,6 +455,11 @@
  			return -1;
  		}
  	}
