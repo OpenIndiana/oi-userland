@@ -139,6 +139,48 @@ MODRET set_solaris_priv_engine(cmd_rec *cmd) {
 /* Command handlers
  */
 
+/* The pre and post adat command handlers first enable
+ * and then disable file_dac_read. This is done in order
+ * for the mod_gss module to be able to read /etc/krb5/krb5.keytab,
+ * when the proftpd server runs as user/group ftp/ftp.
+ */
+MODRET solaris_priv_pre_adat(cmd_rec *cmd) {
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_DAC_READ, NULL);
+    return PR_DECLINED(cmd);
+}
+
+MODRET solaris_priv_post_adat(cmd_rec *cmd) {
+    priv_set(PRIV_OFF, PRIV_EFFECTIVE, PRIV_FILE_DAC_READ, NULL);
+    return PR_DECLINED(cmd);
+}
+
+static void set_privs(void) {
+    /* This is for PAM code which decides to create an audit session
+     * when the user is logging into ftp as root.
+     */
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_AUDIT, NULL);
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_AUDIT, NULL);
+
+    /* Needed to call seteuid(). */
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_SETID, NULL);
+
+    /* Needed to call settaskid(). */
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_TASKID, NULL);
+
+    /* Needed to access /dev/urandom. */
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_DEVICES, NULL);
+}
+
+/* Setup priviledges before the user responds to the user prompt
+ * from the ftp server so that a secure Kerberos session can be
+ * established and also the user can login as root
+ * when the ftp server is running as user/group ftp/ftp.
+ */
+MODRET solaris_priv_pre_pass(cmd_rec *cmd) {
+    set_privs();
+    return PR_DECLINED(cmd);
+}
+
 /* The POST_CMD handler for "PASS" is only called after PASS has
  * successfully completed, which means authentication is successful,
  * so we can "tweak" our root access down to almost nothing.
@@ -180,8 +222,12 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   priv_delset(p, PRIV_PROC_INFO);
   priv_delset(p, PRIV_PROC_SESSION);
 
-  if (solaris_priv_flags & PRIV_USE_SETID)
-    priv_addset(p, PRIV_PROC_SETID);
+  /* If the proftpd process is not running as root, but as user ftp,
+   * then this is necessary in order to make the setreuid work.
+   * Without this, the setreuid would fail. The PRIV_PROC_SETID privilege 
+   * is removed afterwards.
+   */
+  priv_addset(p, PRIV_PROC_SETID);
 
   /* Add any of the configurable privileges. */
   if (solaris_priv_flags & PRIV_USE_FILE_CHOWN)
@@ -210,10 +256,17 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
 
   if (setreuid(session.uid, session.uid) == -1) {
     pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": setreuid: %s",
-	strerror(errno));
+      strerror(errno));
     pr_signals_unblock();
     end_login(1);
   }
+
+  if (!(solaris_priv_flags & PRIV_USE_SETID)) {
+    priv_delset(p, PRIV_PROC_SETID);
+    res = setppriv(PRIV_SET, PRIV_PERMITTED, p);
+    res = setppriv(PRIV_SET, PRIV_EFFECTIVE, p);
+  }
+
   pr_signals_unblock();
 
   if (res != -1) {
@@ -349,6 +402,9 @@ static conftable solaris_priv_conftab[] = {
 };
 
 static cmdtable solaris_priv_cmdtab[] = {
+  { PRE_CMD, C_ADAT, G_NONE, solaris_priv_pre_adat, FALSE, FALSE },
+  { POST_CMD, C_ADAT, G_NONE, solaris_priv_post_adat, FALSE, FALSE },
+  { PRE_CMD, C_PASS, G_NONE, solaris_priv_pre_pass, FALSE, FALSE },
   { POST_CMD, C_PASS, G_NONE, solaris_priv_post_pass, FALSE, FALSE },
   { 0, NULL }
 };
