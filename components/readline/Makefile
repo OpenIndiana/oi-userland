@@ -36,6 +36,9 @@ COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+include ../../make-rules/lint-libraries.mk
+
+LINT_FLAGS += -I$(PROTO_DIR)/usr/include
 
 # readline likes to use ld directly and this is the easiest
 # way to get it to add -lc
