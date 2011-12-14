@@ -50,6 +50,11 @@ class UserlandActionChecker(base.ActionChecker):
 			re.compile('^/usr/'),
 			re.compile('^\$ORIGIN/')
 		]
+		self.runpath_64_re = [
+			re.compile('^.*/64(/.*)?$'),
+			re.compile('^.*/amd64(/.*)?$'),
+			re.compile('^.*/sparcv9(/.*)?$')
+		]
 		self.initscript_re = re.compile("^etc/(rc.|init)\.d")
 
                 self.lint_paths = {}
@@ -195,11 +200,13 @@ class UserlandActionChecker(base.ActionChecker):
 
 		return result
 
-	def __elf_runpath_check(self, path):
+	def __elf_runpath_check(self, path, engine):
 		result = None
 		list = []
 
 		ed = elf.get_dynamic(path)
+		ei = elf.get_info(path)
+		bits = ei.get("bits")
 		for dir in ed.get("runpath", "").split(":"):
 			if dir == None or dir == '':
 				continue
@@ -213,6 +220,22 @@ class UserlandActionChecker(base.ActionChecker):
 			if match == False:
 				list.append(dir)
 
+			if bits == 32:
+				for expr in self.runpath_64_re:
+					if expr.search(dir):
+						engine.warning(
+							_("64-bit runpath in 32-bit binary, '%s' includes '%s'") % (path, dir),
+							msgid="%s%s.3" % (self.name, "001"))
+			else:
+				match = False
+				for expr in self.runpath_64_re:
+					if expr.search(dir):
+						match = True
+						break
+				if match == False:
+					engine.warning(
+						_("32-bit runpath in 64-bit binary, '%s' includes '%s'") % (path, dir),
+						msgid="%s%s.3" % (self.name, "001"))
 		if len(list) > 0:
 			result = _("bad RUNPATH, '%%s' includes '%s'" %
 				   ":".join(list))
@@ -298,7 +321,7 @@ class UserlandActionChecker(base.ActionChecker):
 				if result != None:
 					engine.error(result % path, 
 						msgid="%s%s.2" % (self.name, pkglint_id))
-				result = self.__elf_runpath_check(fullpath)
+				result = self.__elf_runpath_check(fullpath, engine)
 				if result != None:
 					engine.error(result % path, 
 						msgid="%s%s.3" % (self.name, pkglint_id))

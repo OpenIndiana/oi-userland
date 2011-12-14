@@ -61,7 +61,9 @@ prep build install publish test:	TEMPLATE_ZONE=$(ZONE)
 prep build install publish test:	LOG = >$(WS_LOGS)/$(@F).$(TARGET).log 2>&1
 
 # turn off pkglint for the individual component builds.
+ifeq   ($(strip $(PKGLINT_COMPONENT)),)
 publish:		MAKEFLAGS += PKGLINT=/bin/true
+endif
 
 .DEFAULT:	publish
 
@@ -86,10 +88,15 @@ $(WS_REPO):
 	$(PKGREPO) create $(PKG_REPO)
 	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER)
 
+DUMMYPKG =  "set name=fmri value=pkg:/dummy@0,$(BUILD_VERSION)\n"
+DUMMYPKG += "set pkg.summary=dummy\n"
+DUMMYPKG += "set org.opensolaris.consolidation=userland\n"
+DUMMYPKG += "set info.classification=org.opensolaris.category.2008:System/Core"
+
 $(WS_LINT_CACHE):	$(WS_LOGS)
 ifdef CANONICAL_REPO
 	@echo "Generating pkglint(1) cache from $(CANONICAL_REPO)..."
-	@(echo "set name=fmri value=pkg:/dummy@0,$(BUILD_VERSION)" | $(PKGLINT) \
+	@(echo $(DUMMYPKG) | $(PKGLINT) \
 		-c $(WS_LINT_CACHE) -r $(CANONICAL_REPO) /dev/fd/0 \
 		>$(WS_LOGS)/naughty-canonical-repo-actions 2>&1 ; exit 0)
 else
