@@ -55,6 +55,7 @@ CONFIGURE_ENV +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=yes
+CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
 
