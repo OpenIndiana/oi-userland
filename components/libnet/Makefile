@@ -28,7 +28,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		libnet
 COMPONENT_VERSION=	1.1.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://www.packetfactory.net/libnet/
+COMPONENT_PROJECT_URL=	http://packetfactory.openwall.net/projects/libnet/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:9dca91ee0f19b1b9e5e60baaedb9bc44a30a1fc7
 COMPONENT_ARCHIVE_URL=	http://www.packetfactory.net/libnet/dist/deprecated/$(COMPONENT_ARCHIVE)
