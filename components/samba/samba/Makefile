@@ -25,11 +25,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.5.10
+COMPONENT_VERSION=	3.5.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:de63b1a7e2fa6bcae91dbf7d2cbdfb38d0f97c00
+COMPONENT_ARCHIVE_HASH=	sha1:cce0a391b4468a716dda2315a56271a785990c54
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 
 COMPONENT_NAME_1=		docbook-xsl
@@ -61,7 +61,6 @@ BUILD_DIR_64 = $(BUILD_DIR)/$(MACH64)/$(SRC_OFFSET)
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
-PATCH_LEVEL =	0
 CONFIGURE_SCRIPT = $(BUILD_DIR_$(BITS))/configure
 
 PKG_OPTIONS += -I $(COMPONENT_DIR)
@@ -110,7 +109,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
 		$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
 	$(MKDIR) $(PROTO_DIR)/opt/SUNWsamfs/lib
-	$(CC) -G -Kpic -hlibsam.so Solaris/libsam.c \
+	$(CC.studio.32) -G $(studio_PIC) -hlibsam.so Solaris/libsam.c \
 		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
 

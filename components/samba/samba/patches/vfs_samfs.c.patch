@@ -1,6 +1,47 @@
---- source3/modules/vfs_samfs.c	2010-07-07 10:22:33.756895700 -0700
-+++ source3/modules/vfs_samfs.c	2010-07-07 07:13:55.603441200 -0700
-@@ -0,0 +1,172 @@
+bug #5780
+
+diff --git a/source3/Makefile.in b/source3/Makefile.in
+index 425aa2b..db1d809 100644
+--- a/source3/Makefile.in
++++ b/source3/Makefile.in
+@@ -715,6 +715,7 @@ VFS_AIXACL_OBJ = modules/vfs_aixacl.o modules/vfs_aixacl_util.o
+ VFS_AIXACL2_OBJ = modules/vfs_aixacl2.o modules/vfs_aixacl_util.o modules/nfs4_acls.o
+ VFS_SOLARISACL_OBJ = modules/vfs_solarisacl.o
+ VFS_ZFSACL_OBJ = modules/vfs_zfsacl.o modules/nfs4_acls.o
++VFS_SAMFS_OBJ = modules/vfs_samfs.o
+ VFS_HPUXACL_OBJ = modules/vfs_hpuxacl.o
+ VFS_IRIXACL_OBJ = modules/vfs_irixacl.o
+ VFS_TRU64ACL_OBJ = modules/vfs_tru64acl.o
+@@ -2741,6 +2742,10 @@ bin/zfsacl.@SHLIBEXT@: $(BINARY_PREREQS) $(VFS_ZFSACL_OBJ)
+ 	@echo "Building plugin $@"
+ 	@$(SHLD_MODULE) $(VFS_ZFSACL_OBJ)
+ 
++bin/samfs.@SHLIBEXT@: $(BINARY_PREREQS) $(VFS_SAMFS_OBJ)
++	@echo "Building plugin $@"
++	@$(SHLD_MODULE) $(VFS_SAMFS_OBJ) @SAMFS_LIBS@
++
+ bin/irixacl.@SHLIBEXT@: $(BINARY_PREREQS) $(VFS_IRIXACL_OBJ)
+ 	@echo "Building plugin $@"
+ 	@$(SHLD_MODULE) $(VFS_IRIXACL_OBJ)
+diff --git a/source3/configure.in b/source3/configure.in
+index 2494593..8daa53f 100644
+--- a/source3/configure.in
++++ b/source3/configure.in
+@@ -6653,6 +6653,8 @@ SMB_MODULE(vfs_aio_fork, \$(VFS_AIO_FORK_OBJ), "bin/aio_fork.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_preopen, \$(VFS_PREOPEN_OBJ), "bin/preopen.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_syncops, \$(VFS_SYNCOPS_OBJ), "bin/syncops.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_zfsacl, \$(VFS_ZFSACL_OBJ), "bin/zfsacl.$SHLIBEXT", VFS)
++AC_SUBST(SAMFS_LIBS)
++SMB_MODULE(vfs_samfs, \$(VFS_SAMFS_OBJ), "bin/samfs.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_notify_fam, \$(VFS_NOTIFY_FAM_OBJ), "bin/notify_fam.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_acl_xattr, \$(VFS_ACL_XATTR_OBJ), "bin/acl_xattr.$SHLIBEXT", VFS)
+ SMB_MODULE(vfs_acl_tdb, \$(VFS_ACL_TDB_OBJ), "bin/acl_tdb.$SHLIBEXT", VFS)
+diff --git a/source3/modules/vfs_samfs.c b/source3/modules/vfs_samfs.c
+new file mode 100644
+index 0000000..9370768
+--- /dev/null
++++ b/source3/modules/vfs_samfs.c
+@@ -0,0 +1,166 @@
 +/*
 + * Support for offline files with Sun SAM-QFS
 + *
@@ -76,7 +117,7 @@
 +
 +	if (result != 0) {
 +		DEBUG(10,("samfs_is_offline: cannot sam_stat %s, %s\nAssuming file is offline.\n", \
-+				path, strerror(errno)));
++			path, strerror(errno)));
 +		return true;
 +	}
 +
@@ -93,44 +134,39 @@
 +	 */
 +	if (SS_ISSEGMENT_F(file_info.attr)) {
 +		number_of_segments = NUM_SEGS(&file_info);
-+		seg_info_ptr = (struct sam_stat *)malloc(number_of_segments *
-+						sizeof(struct sam_stat));
++		seg_info_ptr = (struct sam_stat *)TALLOC_ZERO_ARRAY(talloc_tos(),
++						struct sam_stat, number_of_segments);
 +		if (seg_info_ptr != NULL) {
-+			/*
-+			 * Initialize seg_info_ptr to be all zero bits
-+			 */
-+			memset((void *)seg_info_ptr, 0, number_of_segments *
-+					sizeof(struct sam_stat));
-+			/*
-+			 * Stat all segments
-+			 */
-+			result = sam_segment_stat(path, seg_info_ptr,
-+					number_of_segments * sizeof(struct sam_stat));
-+			if (result != 0) {
-+				DEBUG(10,("samfs_is_offline: cannot sam_segment_stat %s, %s\nAssuming file is offline.\n", \
-+						path, strerror(errno)));
-+				offline = true;
++			DEBUG(10,("samfs_is_offline: cannot talloc for "
++				"segment stat info %s\nAssuming file is offline.\n",
++				path));
++			return true;
++		}
++
++		/*
++		 * Stat all segments
++		 */
++		result = sam_segment_stat(path, seg_info_ptr,
++			number_of_segments * sizeof(struct sam_stat));
++		if (result != 0) {
++			DEBUG(10,("samfs_is_offline: cannot sam_segment_stat %s, "
++				"%s\nAssuming file is offline.\n",
++				path, strerror(errno)));
++			TALLOC_FREE(seg_info_ptr);
++			return true;
++		}
++		/*
++		 * Loop over segments until we have checked all segments
++		 * or found one which is offline.
++		 */
++		for (i = 0; i < number_of_segments; i++) {
++			if (SS_ISOFFLINE(seg_info_ptr[i].attr)) {
++				DEBUG(10,("samfs_is_offline: file %s has offline segment %d\n",
++					path, i+1));
++				break;
 +			}
-+			/*
-+			 * Loop over segments until we have checked all segments
-+			 * or found one which is offline.
-+			 */
-+			i = 0;
-+			while (!offline && (i < number_of_segments)) {
-+				if (SS_ISOFFLINE(seg_info_ptr[i].attr)) {
-+					DEBUG(10,("samfs_is_offline: file %s has offline segment %d\n", \
-+							path, i+1));
-+					offline = true;
-+				}
-+				i++;
-+			}
-+			SAFE_FREE(seg_info_ptr);
-+		} else {
-+			DEBUG(10,("samfs_is_offline: cannot malloc for segment stat info %s\nAssuming file is offline.\n", \
-+					path));
-+			offline = true;
-+                }
-+	
++		}
++		TALLOC_FREE(seg_info_ptr);
 +	}
 +	return offline;
 +}
@@ -153,8 +189,8 @@
 +
 +	result = sam_release(path, "i");
 +	if (result != 0) {
-+		DEBUG(10,("samfs_set_offline: sam_release %s returned %s\n", \
-+				path, strerror(errno)));
++		DEBUG(10,("samfs_set_offline: sam_release %s returned %s\n",
++			path, strerror(errno)));
 +		return -1;
 +	}
 +	return 0;
@@ -167,9 +203,8 @@
 +	.set_offline = samfs_set_offline
 +};
 +
-+NTSTATUS vfs_samfs_init(void);
 +NTSTATUS vfs_samfs_init(void)
 +{
 +	return smb_register_vfs(SMB_VFS_INTERFACE_VERSION, SAMFS_MODULE_NAME,
-+				&samfs_fns);
++		&samfs_fns);
 +}
