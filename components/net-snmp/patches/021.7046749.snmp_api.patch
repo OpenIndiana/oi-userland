@@ -1,0 +1,38 @@
+--- net-snmp/snmplib/snmp_api.c	Fri Nov 11 12:36:16 2011
++++ net-snmp/snmplib/snmp_api.c	Fri Nov 11 12:35:36 2011
+@@ -419,7 +419,7 @@
+     if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_16BIT_IDS))
+         return (retVal & 0x7fff);	/* mask to 15 bits */
+     else
+-        return retVal;
++        return (retVal & 0x7fffffff);  /* mask to 31 bits */
+ }
+ 
+ long
+@@ -435,7 +435,7 @@
+     if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_16BIT_IDS))
+         return (retVal & 0x7fff);	/* mask to 15 bits */
+     else
+-        return retVal;
++        return (retVal & 0x7fffffff);  /* mask to 31 bits */
+ }
+ 
+ long
+@@ -451,7 +451,7 @@
+     if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_16BIT_IDS))
+         return (retVal & 0x7fff);	/* mask to 15 bits */
+     else
+-        return retVal;
++        return (retVal & 0x7fffffff);  /* mask to 31 bits */
+ }
+ 
+ long
+@@ -467,7 +467,7 @@
+     if (netsnmp_ds_get_boolean(NETSNMP_DS_LIBRARY_ID, NETSNMP_DS_LIB_16BIT_IDS))
+         return (retVal & 0x7fff);	/* mask to 15 bits */
+     else
+-        return retVal;
++        return (retVal & 0x7fffffff);  /* mask to 31 bits */
+ }
+ 
+ void
