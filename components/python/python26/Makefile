@@ -50,6 +50,18 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	 perl -pi -e 's/^(\#define _XOPEN_SOURCE_EXTENDED.*)/\/* $$1 *\//' \
 			pyconfig.h)
 
+# The python build is profile-guided for studio; to see the benefits of that,
+# Python must be compiled with -xO5 and a different build target must be used.
+# Use of xprofile requires that the same options be used during compilation and
+# linking.  The targets chosen are based on Solaris 11 minimum supported system
+# requirements.
+COMPONENT_BUILD_TARGETS = profile-opt
+XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
+PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
+PYFLAGS.sparc =
+CFLAGS += -xO5 $(PYFLAGS.$(MACH))
+LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
+
 # we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
 # python-config
 CC +=	$(CFLAGS)
@@ -69,7 +81,6 @@ LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--with-system-ffi
 CONFIGURE_OPTIONS  +=		--without-gcc
 CONFIGURE_OPTIONS  +=		ac_cv_opt_olimit_ok=no
@@ -80,7 +91,9 @@ CONFIGURE_OPTIONS  +=		CCSHARED="$(CC_PIC)"
 CONFIGURE_OPTIONS  +=		CXX="$(CXX)"
 CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
+CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
+COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 COMPONENT_TEST_TARGETS =	test
 
