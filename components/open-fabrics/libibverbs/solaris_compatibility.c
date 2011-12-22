@@ -118,13 +118,11 @@ typedef struct sol_umad_ioctl_info_s {
  * duplicate ABI definitions for HCAs as the HCA abi headers are not
  * installed in proto.
  */ 
-#define	MTHCA_UVERBS_ABI_VERSION	1 /* mthca-abi.h */
 #define	MLX4_UVERBS_MAX_ABI_VERSION	3 /* mlx4-abi.h */
 #define	RDMA_USER_CM_MIN_ABI_VERSION	3 /* rdma_cma_abi.h */
 #define	RDMA_USER_CM_MAX_ABI_VERSION	4 /* rdma_cma_abi.h */
 
 #define	MLX4	0
-#define	MTHCA	1
 #define	MAX_HCAS				16
 #define	MAX_HCA_PORTS				16
 #define	HW_DRIVER_MAX_NAME_LEN			20
@@ -133,12 +131,8 @@ typedef struct sol_umad_ioctl_info_s {
 #define	IB_HCA_DEVPATH_PREFIX			"/dev/infiniband/hca"
 #define	IB_OFS_DEVPATH_PREFIX			"/dev/infiniband/ofs"
 #define	CONNECTX_NAME				"mlx4_"
-#define	INFINIHOST_NAME				"mthca"
 
 #define	MELLANOX_VENDOR_ID			0x15b3
-#define	PCI_DEVICE_ID_MELLANOX_TAVOR		0x5a44
-#define	PCI_DEVICE_ID_MELLANOX_ARBEL		0x6282
-#define	PCI_DEVICE_ID_MELLANOX_ARBEL_COMPAT	0x6278
 #define	PCI_DEVICE_ID_MELLANOX_HERMON_SDR	0x6340
 #define	PCI_DEVICE_ID_MELLANOX_HERMON_DDR	0x634a
 #define	PCI_DEVICE_ID_MELLANOX_HERMON_QDR	0x6354
@@ -168,18 +162,17 @@ typedef enum cp_prefix_e {
 	CP_D			= 3,
 	CP_GIDS			= 4,
 	CP_PKEYS		= 5,
-	CP_MTHCA		= 6,
-	CP_MLX4			= 7,
-	CP_PORTS		= 8,
-	CP_UMAD			= 9,
-	CP_SLASH		= 10,
-	CP_SYS			= 11,
-	CP_CLASS		= 12,
-	CP_INFINIBAND_VERBS	= 13,
-	CP_INFINIBAND		= 14,
-	CP_INFINIBAND_MAD	= 15,
-	CP_MISC			= 16,
-	CP_RDMA_CM		= 17
+	CP_MLX4			= 6,
+	CP_PORTS		= 7,
+	CP_UMAD			= 8,
+	CP_SLASH		= 9,
+	CP_SYS			= 10,
+	CP_CLASS		= 11,
+	CP_INFINIBAND_VERBS	= 12,
+	CP_INFINIBAND		= 13,
+	CP_INFINIBAND_MAD	= 14,
+	CP_MISC			= 15,
+	CP_RDMA_CM		= 16
 } cp_prefix_t;
 
 /*
@@ -196,7 +189,7 @@ typedef struct ibdev_cache_info_s {
 	int		ibd_boardid_index;
 } ibdev_cache_info_t;
 
-/* tavor and hermon - hence 2 */
+/* hermon - hence 2 */
 static ibdev_cache_info_t ibdev_cache[2][MAX_HCAS];
 
 typedef struct uverbs_cache_info_s {
@@ -484,9 +477,8 @@ ibdev_cache_add(uint_t dev_num, ibdev_cache_info_t *info_p)
 		    sizeof (ibdev_cache_info_t));
 		ibdev_cache[MLX4][dev_num].ibd_valid = 1;
 	} else {
-		memcpy(&(ibdev_cache[MTHCA][dev_num]), info_p,
-		    sizeof (ibdev_cache_info_t));
-		ibdev_cache[MTHCA][dev_num].ibd_valid = 1;
+		fprintf(stderr, "dev %d: has no proper ibdev name\n", dev_num);
+		return (1);
 	}
 
 	ibdev_cache_cnt++;
@@ -651,8 +643,11 @@ uverbs_cache_init()
 		if (! strncmp(hca_infop->uverbs_hca_ibdev_name, "mlx4_", 5))
 			info.uvc_ibdev_abi_version =
 			    MLX4_UVERBS_MAX_ABI_VERSION;
-		else
-			info.uvc_ibdev_abi_version = MTHCA_UVERBS_ABI_VERSION;
+		else {
+			fprintf(stderr, "libibverbs: sol_uverbs unsupported "
+			    "device: %s\n", hca_infop->uverbs_hca_ibdev_name);
+			goto error_exit2;
+		}
 
 		strcpy(info.uvc_ibdev_name, hca_infop->uverbs_hca_ibdev_name);
 
@@ -831,9 +826,6 @@ check_path(char *path, cp_prefix_t prefix, unsigned int *arg)
 		case CP_PKEYS:
 			ret = sscanf(path, "pkeys%n/", &pos);
 			break;
-		case CP_MTHCA:
-			ret = sscanf(path, "mthca%d%n/", arg, &pos);
-			break;
 		case CP_MLX4:
 			ret = sscanf(path, "mlx4_%d%n/", arg, &pos);
 			break;
@@ -887,7 +879,7 @@ check_path(char *path, cp_prefix_t prefix, unsigned int *arg)
 static ibdev_cache_info_t *
 get_device_info(const char *devname)
 {
-	ibdev_cache_info_t 	*info;
+	ibdev_cache_info_t 	*info = NULL;
 	const char		*p = devname;
 	int			dev_num;
 
@@ -922,10 +914,9 @@ get_device_info(const char *devname)
 		else
 			info = NULL;
 	} else {
-		if (ibdev_cache[MTHCA][dev_num].ibd_valid)
-			info = &(ibdev_cache[MTHCA][dev_num]);
-		else
-			info = NULL;
+		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
+		    "device: %s\n", devname);
+		info = NULL;
 	}
 
 	return (info);
@@ -1367,19 +1358,17 @@ static int
 get_hca_hwpn_str(char *ibd_name, int fd, char *hca_hwpn)
 {
 	hermon_flash_init_ioctl_t	hermon_flash_info;
-	tavor_flash_init_ioctl_t	tavor_flash_info;
 	int				rc;
 
-	if (strncmp(ibd_name, "mthca", 5) == 0) {
-		if ((rc = ioctl(fd, TAVOR_IOCTL_FLASH_INIT,
-		    &tavor_flash_info)) != 0)
-			return (rc);
-		strncpy(hca_hwpn, tavor_flash_info.tf_hwpn, 64);
-	} else {
+	if (strncmp(ibd_name, "mlx4_", 5) == 0) {
 		if ((rc = ioctl(fd, HERMON_IOCTL_FLASH_INIT,
 		    &hermon_flash_info)) != 0)
 			return (rc);
 		strncpy(hca_hwpn, hermon_flash_info.af_hwpn, 64);
+	} else {
+		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
+		    "device: %s\n", ibd_name);
+		return (1);
 	}
 	return (0);
 }
@@ -1462,9 +1451,7 @@ infiniband(char *path, char *buf, size_t size)
 
 	memset(dev_name, 0, 10);
 
-	if (check_path(path, CP_MTHCA, &device_num)) {
-		sprintf(dev_name, "mthca%d", device_num);
-	} else if (check_path(path, CP_MLX4, &device_num)) {
+	if (check_path(path, CP_MLX4, &device_num)) {
 		sprintf(dev_name, "mlx4_%d", device_num);
 	} else {
 		goto exit;

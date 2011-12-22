@@ -59,7 +59,6 @@ $(SUBDIRS):	FORCE
 # declare module dependencies
 librdmacm:		libibverbs
 libmlx4:		libibverbs
-libmthca:		libibverbs
 rds-tools:		libibverbs
 perftest:		libibverbs librdmacm libibverbs
 qperf:			libibverbs librdmacm
