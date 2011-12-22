@@ -55,7 +55,6 @@
 #include <infiniband/verbs.h>
 #include <infiniband/arch.h>
 
-#include <sys/ib/adapters/tavor/tavor_ioctl.h>
 #include <sys/ib/adapters/hermon/hermon_ioctl.h>
 
 /*
@@ -74,17 +73,6 @@
 #define	HERMON_IOCTL_GET_NODEDESC	(('t' << 8) | 0x31)
 #endif
 
-#ifdef	TAVOR_NODEDESC_UPDATE_STR
-#define	TAVOR_NODEDESC_UPDATE_STRING		0x00000001
-#endif
-#ifndef	TAVOR_NODEDESC_UPDATE_HCA_STRING
-#define	TAVOR_NODEDESC_UPDATE_HCA_STRING	0x00000002
-#undef	TAVOR_NODEDESC_UPDATE_HCA_MAP
-#endif
-#ifndef TAVOR_IOCTL_GET_NODEDESC
-#define	TAVOR_IOCTL_GET_NODEDESC	(('t' << 8) | 0x31)
-#endif
-
 #define	NODEDESC_UPDATE_STRING		0x00000001
 #define	NODEDESC_UPDATE_HCA_STRING	0x00000002
 #define	NODEDESC_READ			0x80000000
@@ -94,7 +82,7 @@
 static char *devpath_prefix = "/devices";
 static char *devpath_suffix = ":devctl";
 static char *ib_hca_driver_list[] = {
-	"tavor", "hermon", NULL
+	"hermon", NULL
 };
 static di_node_t	di_rootnode;
 char *argv0 = "solaris_set_nodedesc";
@@ -215,20 +203,7 @@ do_driver_read_ioctl(char *drivername)
 			hcanode = di_drv_next_node(hcanode);
 			continue;
 		}
-		if (strcmp(drivername, "tavor") == 0) {
-			tavor_nodedesc_ioctl_t		nodedesc_ioctl;
-
-			if ((rc = ioctl(devfd, TAVOR_IOCTL_GET_NODEDESC,
-			    (void *)&nodedesc_ioctl)) != 0) {
-				IBERROR("tavor ioctl failure");
-				free(access_devname);
-				close(devfd);
-				hcanode = di_drv_next_node(hcanode);
-				continue;
-			}
-			add_read_info_arr((char *)nodedesc_ioctl.node_desc_str,
-			    *hca_guid);
-		} else if (strcmp(drivername, "hermon") == 0) {
+		if (strcmp(drivername, "hermon") == 0) {
 			hermon_nodedesc_ioctl_t		nodedesc_ioctl;
 
 			if ((rc = ioctl(devfd, HERMON_IOCTL_GET_NODEDESC,
@@ -241,6 +216,8 @@ do_driver_read_ioctl(char *drivername)
 			}
 			add_read_info_arr((char *)nodedesc_ioctl.node_desc_str,
 			    *hca_guid);
+		} else {
+			IBERROR("drivername != hermon: %s", drivername);
 		}
 
 		free(access_devname);
@@ -300,25 +277,7 @@ do_driver_update_ioctl(char *drivername, char *node_desc, char *hca_desc,
 		free(access_devname);
 		return (rc);
 	}
-	if (strcmp(drivername, "tavor") == 0) {
-		tavor_nodedesc_ioctl_t		nodedesc_ioctl;
-
-		strncpy(nodedesc_ioctl.node_desc_str, desc_str, 64);
-		if (update_flag & NODEDESC_UPDATE_STRING)
-			nodedesc_ioctl.node_desc_update_flag =
-			    TAVOR_NODEDESC_UPDATE_STRING;
-		else if (update_flag & NODEDESC_UPDATE_HCA_STRING)
-			nodedesc_ioctl.node_desc_update_flag =
-			    TAVOR_NODEDESC_UPDATE_HCA_STRING;
-		else {
-			IBERROR("Invalid option");
-			exit(-1);
-		}
-		if ((rc = ioctl(devfd, TAVOR_IOCTL_SET_NODEDESC,
-		    (void *)&nodedesc_ioctl)) != 0) {
-			IBERROR("tavor ioctl failure");
-		}
-	} else if (strcmp(drivername, "hermon") == 0) {
+	if (strcmp(drivername, "hermon") == 0) {
 		hermon_nodedesc_ioctl_t		nodedesc_ioctl;
 
 		strncpy(nodedesc_ioctl.node_desc_str, desc_str, 64);
@@ -336,6 +295,8 @@ do_driver_update_ioctl(char *drivername, char *node_desc, char *hca_desc,
 		    (void *)&nodedesc_ioctl)) != 0) {
 			IBERROR("hermon ioctl failure");
 		}
+	} else {
+		IBERROR("drivername != hermon: %s", drivername);
 	}
 
 	free(access_devname);

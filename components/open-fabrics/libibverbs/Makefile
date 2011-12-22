@@ -34,7 +34,6 @@ include $(WS_TOP)/make-rules/configure.mk
 include ../ofed.mk
 
 # add flags to get at extra bits from other components' source trees
-CPPFLAGS +=	-I$(PWD)/../libmthca/libmthca-1.0.5/src
 CPPFLAGS +=	-I$(PWD)/../libmlx4/libmlx4-1.0.1/src
 CPPFLAGS +=	-I$(PWD)/../librdmacm/librdmacm-1.0.14.1/include
 
@@ -46,7 +45,6 @@ DISABLE_LIBCHECK=
 COMPONENT_PREP_ACTION = \
 	cp ofa_solaris.h $(@D)/include/infiniband ; \
 	cp solaris_compatibility.c $(@D)/src ; \
-	cd ../libmthca; gmake prep; \
 	cd ../libmlx4; gmake prep; \
 	cd ../librdmacm; gmake prep
 

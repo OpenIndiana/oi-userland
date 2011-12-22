@@ -246,7 +246,19 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	release_ca(ca);
  
  	return ret;
-@@ -522,6 +631,28 @@
+@@ -484,6 +593,11 @@
+ int umad_init(void)
+ {
+ 	TRACE("umad_init");
++	struct ibv_device **devlist = ibv_get_device_list(NULL);
++	if (devlist == NULL) {
++		IBWARN("No IB devices found");
++		return -1;
++	}
+ 	if (sys_read_uint(IB_UMAD_ABI_DIR, IB_UMAD_ABI_FILE, &abi_version) < 0) {
+ 		IBWARN
+ 		    ("can't read ABI version from %s/%s (%m): is ib_umad module loaded?",
+@@ -522,6 +636,28 @@
  
  int umad_get_cas_names(char cas[][UMAD_CA_NAME_LEN], int max)
  {
@@ -275,7 +287,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	struct dirent **namelist;
  	int n, i, j = 0;
  
-@@ -547,6 +678,7 @@
+@@ -547,6 +683,7 @@
  	}
  	if (n >= 0)
  		free(namelist);
