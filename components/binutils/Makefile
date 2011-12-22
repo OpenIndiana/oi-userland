@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.19
+COMPONENT_VERSION=	2.21.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha1:a150b97ec47996bf8f01d6bc14d41587faa4bbff
+COMPONENT_ARCHIVE_HASH=	sha1:525255ca6874b872540c9967a1d26acfbc7c8230
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
