@@ -20,17 +20,17 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sox
-COMPONENT_VERSION=	14.3.0
+COMPONENT_VERSION=	14.3.2
 COMPONENT_PROJECT_URL=	http://sox.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:34b8e991ba8511fa9683e9e9d356fb7f4179d03c
+COMPONENT_ARCHIVE_HASH=	sha1:ad462114ff47b094078f18148bc9e29e31b42b92
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/$(COMPONENT_NAME)/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
