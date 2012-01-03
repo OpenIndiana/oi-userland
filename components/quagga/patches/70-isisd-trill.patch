@@ -1,19 +1,16 @@
 diff --git configure.ac configure.ac
-index 78198cb..12e9729 100755
 --- configure.ac
 +++ configure.ac
-@@ -197,6 +197,10 @@ AC_ARG_ENABLE(watchquagga,
+@@ -202,6 +202,8 @@
  [  --disable-watchquagga   do not build watchquagga])
  AC_ARG_ENABLE(isisd,
  [  --enable-isisd          build isisd])
 +AC_ARG_ENABLE(trill,
-+[  --enable-trill          include TRILL support])
-+AC_ARG_ENABLE(solaris,
-+[  --enable-solaris          build solaris])
++[  --enable-trill          include trill support])
+ AC_ARG_ENABLE(solaris,
+ [  --enable-solaris          build solaris])
  AC_ARG_ENABLE(bgp-announce,
- [  --disable-bgp-announce, turn off BGP route announcement])
- AC_ARG_ENABLE(netlink,
-@@ -311,6 +315,30 @@ AC_SUBST(ISIS_TOPOLOGY_INCLUDES)
+@@ -328,6 +330,30 @@
  AC_SUBST(ISIS_TOPOLOGY_DIR)
  AC_SUBST(ISIS_TOPOLOGY_LIB)
  
@@ -44,19 +41,19 @@ index 78198cb..12e9729 100755
  if test "${enable_user}" = "yes" || test x"${enable_user}" = x""; then
    enable_user="quagga"
  elif test "${enable_user}" = "no"; then
-@@ -753,28 +781,31 @@ AC_SUBST(OTHER_METHOD)
- dnl --------------------------
- dnl Determine IS-IS I/O method
- dnl --------------------------
+@@ -785,28 +811,31 @@
+ AC_DEFINE(ISIS_METHOD_PFPACKET,	1, [ constant value for isis method pfpacket ])
+ AC_DEFINE(ISIS_METHOD_DLPI,	2, [ constant value for isis method dlpi ])
+ AC_DEFINE(ISIS_METHOD_BPF,	3, [ constant value for isis method bpf ])
 -AC_CHECK_HEADER(net/bpf.h)
 -AC_CHECK_HEADER(sys/dlpi.h)
 -AC_MSG_CHECKING(zebra IS-IS I/O method)
 -if test x"$opsys" = x"gnu-linux"; then
 -  AC_MSG_RESULT(pfpacket)
--  ISIS_METHOD=isis_pfpacket.o
+-  ISIS_METHOD_MACRO="ISIS_METHOD_PFPACKET"
 -elif test x"$opsys" = x"sol2-6" -o x"$opsys" = x"sol8"; then
 -  AC_MSG_RESULT(DLPI)
--  ISIS_METHOD="isis_dlpi.o"
+-  ISIS_METHOD_MACRO="ISIS_METHOD_DLPI"
 -else
 -  if test $ac_cv_header_net_bpf_h = no; then
 -    if test $ac_cv_header_sys_dlpi_h = no; then
@@ -67,54 +64,58 @@ index 78198cb..12e9729 100755
 -      AC_MSG_RESULT(DLPI)
 -    fi
 +if test "${enable_isisd}" = "yes"; then
-+  ISIS_METHOD=
++  ISIS_METHOD_MACRO=
 +  AC_CHECK_HEADER(net/bpf.h)
 +  AC_CHECK_HEADER(sys/dlpi.h)
 +  AC_MSG_CHECKING(zebra IS-IS I/O method)
 +  if test x"$opsys" = x"gnu-linux"; then
 +    AC_MSG_RESULT(pfpacket)
-+    ISIS_METHOD=isis_pfpacket.o
++    ISIS_METHOD_MACRO="ISIS_METHOD_PFPACKET"
 +  elif test x"$opsys" = x"sol2-6" -o x"$opsys" = x"sol8"; then
 +    AC_MSG_RESULT(DLPI)
-     ISIS_METHOD="isis_dlpi.o"
+     ISIS_METHOD_MACRO="ISIS_METHOD_DLPI"
    else
 -    AC_MSG_RESULT(BPF)
--    ISIS_METHOD="isis_bpf.o"
+-    ISIS_METHOD_MACRO="ISIS_METHOD_BPF"
 +    if test $ac_cv_header_net_bpf_h = no; then
 +      if test $ac_cv_header_sys_dlpi_h = no; then
-+	AC_MSG_RESULT(none)
-+	AC_MSG_WARN([*** IS-IS support will not be built ***])
-+	ISISD=""
++        AC_MSG_RESULT(none)
++        AC_MSG_WARN([*** IS-IS support will not be built ***])
++        ISISD=""
 +      else
-+	AC_MSG_RESULT(DLPI)
++        AC_MSG_RESULT(DLPI)
 +      fi
-+      ISIS_METHOD="isis_dlpi.o"
++      ISIS_METHOD_MACRO="ISIS_METHOD_DLPI"
 +    else
 +      AC_MSG_RESULT(BPF)
-+      ISIS_METHOD="isis_bpf.o"
++      ISIS_METHOD_MACRO="ISIS_METHOD_BPF"
 +    fi
    fi
  fi
- AC_SUBST(ISIS_METHOD)
+ AC_DEFINE_UNQUOTED(ISIS_METHOD, $ISIS_METHOD_MACRO, [ selected method for isis, == one of the constants ])
 diff --git isisd/Makefile.am isisd/Makefile.am
 index 859facd..9adcc05 100644
 --- isisd/Makefile.am
 +++ isisd/Makefile.am
-@@ -4,10 +4,11 @@ INCLUDES = @INCLUDES@ -I.. -I$(top_srcdir) -I$(top_srcdir)/lib \
+@@ -4,14 +4,15 @@
  	   @ISIS_TOPOLOGY_INCLUDES@
  DEFS = @DEFS@ -DSYSCONFDIR=\"$(sysconfdir)/\"
  INSTALL_SDATA=@INSTALL@ -m 600
 -LIBS = @LIBS@ 
 +LIBS = @LIBS@ @ISIS_LIBS@
+ 
+ AM_CFLAGS = $(PICFLAGS)
+ AM_LDFLAGS = $(PILDFLAGS)
+ 
  noinst_LIBRARIES = libisis.a
 -sbin_PROGRAMS = isisd 
 +sbin_PROGRAMS = @ISIS_TARGETS@
  SUBDIRS = topology
 +EXTRA_PROGRAMS = isisd trilld
  
- isis_method = @ISIS_METHOD@
- 
-@@ -23,16 +24,24 @@ noinst_HEADERS = \
+ libisis_a_SOURCES = \
+ 	isis_adjacency.c isis_lsp.c dict.c isis_circuit.c isis_pdu.c \
+@@ -25,13 +26,23 @@
  	isis_lsp.h dict.h isis_circuit.h isis_misc.h isis_network.h \
  	isis_zebra.h isis_dr.h isis_flags.h isis_dynhn.h isis_common.h \
  	iso_checksum.h isis_csm.h isis_events.h isis_spf.h isis_route.h \
@@ -122,15 +123,13 @@ index 859facd..9adcc05 100644
  	include-netbsd/clnp.h include-netbsd/esis.h include-netbsd/iso.h
  
  isisd_SOURCES = \
--	isis_main.c $(libisis_a_SOURCES)
-+	isis_main.c $(libisis_a_SOURCES) isis_trilldummy.c
+ 	isis_main.c $(libisis_a_SOURCES) \
+-	isis_bpf.c isis_dlpi.c isis_pfpacket.c
++	isis_bpf.c isis_dlpi.c isis_pfpacket.c isis_trilldummy.c
  
--isisd_LDADD = $(isis_method) @ISIS_TOPOLOGY_LIB@ ../lib/libzebra.la @LIBCAP@
-+isisd_LDADD = $(isis_method) @ISIS_TOPOLOGY_LIB@ ../lib/libzebra.la @LIBCAP@ @LIBM@
+-isisd_LDADD = @ISIS_TOPOLOGY_LIB@ ../lib/libzebra.la @LIBCAP@
++isisd_LDADD = @ISIS_TOPOLOGY_LIB@ ../lib/libzebra.la @LIBCAP@ @LIBM@
  
- isisd_DEPENDENCIES = $(isis_method)
- 
--EXTRA_DIST = isis_bpf.c isis_dlpi.c isis_pfpacket.c
 +trilld_SOURCES = \
 +	isis_main.c $(libisis_a_SOURCES) isis_trill.c isis_trillio.c \
 +	isis_trillvlans.c isis_trillbpdu.c
@@ -139,7 +138,7 @@ index 859facd..9adcc05 100644
 +
 +EXTRA_DIST = isis_bpf.c isis_dlpi.c isis_pfpacket.c isis_trill.c \
 +	isis_trillio.c isis_trillvlans.c isis_trillbpdu.c
- 
++
  examplesdir = $(exampledir)
  dist_examples_DATA = isisd.conf.sample
 diff --git isisd/bool.h isisd/bool.h
@@ -598,16 +597,15 @@ diff --git isisd/isis_dlpi.c isisd/isis_dlpi.c
 index 07ab547..5837201 100644
 --- isisd/isis_dlpi.c
 +++ isisd/isis_dlpi.c
-@@ -21,6 +21,8 @@
+@@ -21,6 +21,7 @@
   */
  
  #include <zebra.h>
 +#include <vty.h>
-+
+ #if ISIS_METHOD == ISIS_METHOD_DLPI
  #include <net/if.h>
  #include <netinet/if_ether.h>
- #include <sys/types.h>
-@@ -301,7 +303,7 @@ dlpiaddr (int fd, u_char *addr)
+@@ -302,7 +303,7 @@
  static int
  open_dlpi_dev (struct isis_circuit *circuit)
  {
@@ -616,7 +614,7 @@ index 07ab547..5837201 100644
    char devpath[MAXPATHLEN];
    dl_info_ack_t *dia = (dl_info_ack_t *)dlpi_ctl;
    ssize_t acklen;
-@@ -313,20 +315,21 @@ open_dlpi_dev (struct isis_circuit *circuit)
+@@ -314,20 +315,21 @@
  	circuit->interface->name);
        return ISIS_WARNING;
      }
@@ -645,7 +643,7 @@ index 07ab547..5837201 100644
        unit = -1;
        fd = dlpiopen (devpath, &acklen);
      }
-@@ -402,8 +405,8 @@ open_dlpi_dev (struct isis_circuit *circuit)
+@@ -403,8 +405,8 @@
      case DL_100BT:
        break;
      default:
@@ -656,18 +654,6 @@ index 07ab547..5837201 100644
        close (fd);
        return ISIS_WARNING;
      }
-@@ -471,9 +474,9 @@ open_dlpi_dev (struct isis_circuit *circuit)
-       sioc.ic_timout = 5;
-       sioc.ic_len = sizeof (struct packetfilt);
-       sioc.ic_dp = (char *)&pfil;
--      if (ioctl (fd, I_STR, &sioc) == -1)
-+      if (ioctl (fd, I_STR, &sioc) == -1) 
-          zlog_warn("%s: could not perform PF_IOCSETF on %s",
--           __func__, circuit->interface->name);
-+   	    __func__, circuit->interface->name);
-     }
- 
-   circuit->fd = fd;
 diff --git isisd/isis_dr.c isisd/isis_dr.c
 index 8d306c8..a481142 100644
 --- isisd/isis_dr.c
@@ -1087,7 +1073,7 @@ index 2411518..a75281d 100644
  };
  
  struct zebra_privs_t isisd_privs = {
-@@ -66,7 +78,7 @@ struct zebra_privs_t isisd_privs = {
+@@ -66,7 +78,7 @@
    .vty_group = VTY_GROUP,
  #endif
    .caps_p = _caps_p,
@@ -1096,7 +1082,7 @@ index 2411518..a75281d 100644
    .cap_num_i = 0
  };
  
-@@ -151,7 +163,10 @@ reload ()
+@@ -151,7 +163,10 @@
    zlog_debug ("Reload");
    /* FIXME: Clean up func call here */
    vty_reset ();
@@ -1107,7 +1093,7 @@ index 2411518..a75281d 100644
  }
  
  static void
-@@ -168,6 +183,9 @@ void
+@@ -168,6 +183,9 @@
  sighup (void)
  {
    zlog_debug ("SIGHUP received");
@@ -1117,7 +1103,7 @@ index 2411518..a75281d 100644
    reload ();
  
    return;
-@@ -227,6 +245,11 @@ main (int argc, char **argv, char **envp)
+@@ -227,6 +245,11 @@
    char *vty_addr = NULL;
    int dryrun = 0;
  
@@ -1129,7 +1115,7 @@ index 2411518..a75281d 100644
    /* Get the programname without the preceding path. */
    progname = ((p = strrchr (argv[0], '/')) ? ++p : argv[0]);
  
-@@ -319,6 +342,22 @@ main (int argc, char **argv, char **envp)
+@@ -319,6 +342,22 @@
    memory_init ();
    access_list_init();
    isis_init ();
@@ -1152,8 +1138,8 @@ index 2411518..a75281d 100644
    dyn_cache_init ();
    sort_node ();
  
-@@ -337,7 +376,8 @@ main (int argc, char **argv, char **envp)
-     daemon (0, 0);
+@@ -340,7 +379,8 @@
+     }
  
    /* Process ID file creation. */
 -  pid_output (pid_file);
@@ -7907,60 +7893,11 @@ index 2277f27..945d423 100644
 +#endif
  
  #endif /* ISISD_H */
-diff --git lib/command.c lib/command.c
-index 270bf0d..2c8d752 100644
---- lib/command.c
-+++ lib/command.c
-@@ -193,8 +193,8 @@ install_node (struct cmd_node *node,
- static int
- cmp_node (const void *p, const void *q)
- {
--  const struct cmd_element *a = *(struct cmd_element **)p;
--  const struct cmd_element *b = *(struct cmd_element **)q;
-+  const struct cmd_element *a = *(struct cmd_element * const *)p;
-+  const struct cmd_element *b = *(struct cmd_element * const *)q;
- 
-   return strcmp (a->string, b->string);
- }
-@@ -202,8 +202,8 @@ cmp_node (const void *p, const void *q)
- static int
- cmp_desc (const void *p, const void *q)
- {
--  const struct desc *a = *(struct desc **)p;
--  const struct desc *b = *(struct desc **)q;
-+  const struct desc *a = *(struct desc * const *)p;
-+  const struct desc *b = *(struct desc * const *)q;
- 
-   return strcmp (a->cmd, b->cmd);
- }
-@@ -491,8 +491,11 @@ install_element (enum node_type ntype, struct cmd_element *cmd)
- 
-   vector_set (cnode->cmd_vector, cmd);
- 
--  cmd->strvec = cmd_make_descvec (cmd->string, cmd->doc);
--  cmd->cmdsize = cmd_cmdsize (cmd->strvec);
-+  if (cmd->strvec == NULL)
-+    {
-+      cmd->strvec = cmd_make_descvec (cmd->string, cmd->doc);
-+      cmd->cmdsize = cmd_cmdsize (cmd->strvec);
-+    }
- }
- 
- static unsigned char itoa64[] =	
-@@ -3497,6 +3500,8 @@ DEFUN (no_banner_motd,
- void
- host_config_set (char *filename)
- {
-+  if (host.config != NULL)
-+    XFREE (MTYPE_HOST, host.config);
-   host.config = XSTRDUP (MTYPE_HOST, filename);
- }
- 
 diff --git lib/command.h lib/command.h
 index a725378..fefa6d3 100644
 --- lib/command.h
 +++ lib/command.h
-@@ -302,6 +302,8 @@ struct desc
+@@ -303,6 +303,8 @@
  #define OSPF6_DUMP_TYPE_LIST \
  "(neighbor|interface|area|lsa|zebra|config|dbex|spf|route|lsdb|redistribute|hook|asbr|prefix|abr)"
  #define ISIS_STR "IS-IS information\n"
@@ -7969,98 +7906,11 @@ index a725378..fefa6d3 100644
  #define AREA_TAG_STR "[area tag]\n"
  
  #define CONF_BACKUP_EXT ".sav"
-@@ -359,5 +361,5 @@ extern void host_config_set (char *);
- extern void print_version (const char *);
- 
- /* struct host global, ick */
--extern struct host host; 
-+extern struct host host;
- #endif /* _ZEBRA_COMMAND_H */
-diff --git lib/linklist.c lib/linklist.c
-index 11e16a8..a16e9e1 100644
---- lib/linklist.c
-+++ lib/linklist.c
-@@ -65,7 +65,9 @@ void
- listnode_add (struct list *list, void *val)
- {
-   struct listnode *node;
--
-+  
-+  assert (val != NULL);
-+  
-   node = listnode_new ();
- 
-   node->prev = list->tail;
-@@ -91,7 +93,9 @@ listnode_add_sort (struct list *list, void *val)
- {
-   struct listnode *n;
-   struct listnode *new;
--
-+  
-+  assert (val != NULL);
-+  
-   new = listnode_new ();
-   new->data = val;
- 
-@@ -130,7 +134,9 @@ void
- listnode_add_after (struct list *list, struct listnode *pp, void *val)
- {
-   struct listnode *nn;
--
-+  
-+  assert (val != NULL);
-+  
-   nn = listnode_new ();
-   nn->data = val;
- 
-@@ -158,6 +164,7 @@ listnode_add_after (struct list *list, struct listnode *pp, void *val)
- 
-       pp->next = nn;
-     }
-+  list->count++;
- }
- 
- 
-@@ -265,7 +272,9 @@ void
- list_add_node_prev (struct list *list, struct listnode *current, void *val)
- {
-   struct listnode *node;
--
-+  
-+  assert (val != NULL);
-+  
-   node = listnode_new ();
-   node->next = current;
-   node->data = val;
-@@ -286,7 +295,9 @@ void
- list_add_node_next (struct list *list, struct listnode *current, void *val)
- {
-   struct listnode *node;
--
-+  
-+  assert (val != NULL);
-+  
-   node = listnode_new ();
-   node->prev = current;
-   node->data = val;
-diff --git lib/memory.c lib/memory.c
-index eb67072..9ed5e10 100644
---- lib/memory.c
-+++ lib/memory.c
-@@ -501,7 +501,7 @@ mtype_memstr (char *buf, size_t len, unsigned long bytes)
-        * Just hacked to make it not warn on 'smaller' machines. 
-        * Static compiler analysis should mean no extra code
-        */
--      if (bytes & (1 << (sizeof (unsigned long) >= 8 ? 39 : 0)))
-+      if (bytes & (1UL << (sizeof (unsigned long) >= 8 ? 39 : 0)))
-         t++;
-       snprintf (buf, len, "%4d TiB", t);
-     }
 diff --git lib/memtypes.c lib/memtypes.c
 index c7028c9..476ad35 100644
 --- lib/memtypes.c
 +++ lib/memtypes.c
-@@ -225,20 +225,32 @@ struct memory_list memory_list_ospf6[] =
+@@ -228,20 +228,32 @@
  
  struct memory_list memory_list_isis[] =
  {
@@ -8107,12 +7957,12 @@ index c7028c9..476ad35 100644
    { -1, NULL },
  };
  
-diff --git lib/memtypes.h lib/memtypes.h
+diff --git lib/memtypes.h /dev/null
 deleted file mode 100644
 index 2d90e80..0000000
 --- lib/memtypes.h
 +++ /dev/null
-@@ -1,206 +0,0 @@
+@@ -1,209 +0,0 @@
 -/* Auto-generated from memtypes.c by gawk. */
 -/* Do not edit! */
 -
@@ -8188,10 +8038,12 @@ index 2d90e80..0000000
 -  MTYPE_STATIC_IPV4,
 -  MTYPE_STATIC_IPV6,
 -  MTYPE_BGP,
+-  MTYPE_BGP_LISTENER,
 -  MTYPE_BGP_PEER,
 -  MTYPE_BGP_PEER_HOST,
 -  MTYPE_PEER_GROUP,
 -  MTYPE_PEER_DESC,
+-  MTYPE_PEER_PASSWORD,
 -  MTYPE_ATTR,
 -  MTYPE_ATTR_EXTRA,
 -  MTYPE_AS_PATH,
@@ -8202,6 +8054,7 @@ index 2d90e80..0000000
 -  MTYPE_BGP_NODE,
 -  MTYPE_BGP_ROUTE,
 -  MTYPE_BGP_ROUTE_EXTRA,
+-  MTYPE_BGP_CONN,
 -  MTYPE_BGP_STATIC,
 -  MTYPE_BGP_ADVERTISE_ATTR,
 -  MTYPE_BGP_ADVERTISE,
@@ -8384,12 +8237,12 @@ diff --git solaris/Makefile.am solaris/Makefile.am
 index acccbdb..3520bc5 100644
 --- solaris/Makefile.am
 +++ solaris/Makefile.am
-@@ -12,7 +12,7 @@ pkg_depends := $(pkg_names:%=depend.%)
- pkg_packages := $(pkg_names:%=@PACKAGE_TARNAME@-%-$(pkg_name_rev).pkg)
- pkg_pkginfos := $(pkg_names:%=pkginfo.%.full)
- pkg_prototypes := $(pkg_names:%=prototype.%)
--pkg_manifests := quagga.xml
-+pkg_manifests := quagga.xml trill.xml
+@@ -14,7 +14,7 @@
+ pkg_packages = $(pkg_names:%=@PACKAGE_TARNAME@-%-$(pkg_name_rev).pkg)
+ pkg_pkginfos = $(pkg_names:%=pkginfo.%.full)
+ pkg_prototypes = $(pkg_names:%=prototype.%)
+-pkg_manifests = quagga.xml
++pkg_manifests = quagga.xml trill.xml
  
  # pkgmk variable substitutions wont grok ${variable} in prototype
  # file, so we cant let autoconf generate the file sadly
@@ -8458,7 +8311,7 @@ index 0000000..f768878
 +		timeout_seconds='60'>
 +		<method_context>
 +		  <method_credential
-+		   user='root' group='root'/>
++		   user='root' group='root' />
 + 		</method_context>
 +	</exec_method>
 +
