@@ -20,19 +20,19 @@
 #
 
 #
-# Copyright (c) 2006, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		quagga
-COMPONENT_VERSION=	0.99.8
+COMPONENT_VERSION=	0.99.19
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.quagga.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:9576d0ac266d173d2a90b8c6f72da8c6b43583d7
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/attic/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:614923aa21415a4d6dc19d4438ccee63548e2a9d
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 PATCH_LEVEL = 0
 
 # without this we bus error on sparc. Until the code in all of Quagga
@@ -40,7 +40,7 @@ PATCH_LEVEL = 0
 studio_ALIGN.sparc.32=  -xmemalign=8i
 
 # These options are carried over from the SFW consolidation. Using -xO4 was
-# explicitly commented out, but no reason was docuemnted.
+# explicitly commented out, but no reason was documented.
 
 studio_OPT = -xO3
 
@@ -59,7 +59,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS +=	--with-tags=""
 CONFIGURE_OPTIONS +=	--with-cflags="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-opaque-lsa
 CONFIGURE_OPTIONS +=	--localstatedir=$(CFGLOCALSTATEDIR)
@@ -73,6 +72,7 @@ CONFIGURE_OPTIONS +=	--enable-ospf6d
 CONFIGURE_OPTIONS +=	--enable-ripngd
 CONFIGURE_OPTIONS +=	--enable-user=root
 CONFIGURE_OPTIONS +=	--enable-group=root
+CONFIGURE_OPTIONS +=	--enable-solaris
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
