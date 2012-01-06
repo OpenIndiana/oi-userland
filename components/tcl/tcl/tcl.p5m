@@ -56,7 +56,7 @@ dir path=usr/share/man/man1t
 dir path=usr/share/man/man3
 dir path=usr/share/man/man3tcl
 file path=usr/bin/$(MACH64)/tclsh8.5
-file path=usr/bin/tclsh8.5
+file usr/bin/tclsh8.5 path=usr/bin/$(MACH32)/tclsh8.5
 file path=usr/include/tcl.h
 file path=usr/include/tclDecls.h
 file path=usr/include/tclPlatDecls.h
@@ -507,8 +507,10 @@ legacy pkg=SUNWTcl \
     desc="Tcl - Tool Command Language" \
     name="Tcl - Tool Command Language"
 license tcl.license license=BSD-like
-link path=usr/bin/tclsh target=tclsh8.5
+link path=usr/bin/$(MACH32)/tclsh target=tclsh8.5
 link path=usr/bin/$(MACH64)/tclsh target=tclsh8.5
+link path=usr/bin/tclsh target=tclsh8.5
+link path=usr/bin/tclsh8.5 target=$(MACH64)/tclsh8.5
 link path=usr/share/man/man3tcl/Tcl_AddErrorInfo.3tcl target=Tcl_GetReturnOptions.3tcl
 link path=usr/share/man/man3tcl/Tcl_AddObjErrorInfo.3tcl \
     target=Tcl_GetReturnOptions.3tcl
