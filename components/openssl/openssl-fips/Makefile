@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -38,7 +38,12 @@ COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+# To build x86 FIPS canister, gcc needs to be used so it must be
+# in the PATH. This is because according to the "OpenSSL FIPS 140-2
+# Security Policy" document, no file in the source distribution may
+# be changed in any way and as a result, gcc is chosen because
+# otherwise "-fast" is erroneously passed to the Studio cc compiler.
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin:$(SFWBIN)
 
 # In order to build a 32bit version on a 64bit system the isalist(1) command
 # must be substituted for the 32bit build so that amd64|sparcv9 is not part of
