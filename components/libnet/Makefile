@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libnet
-COMPONENT_VERSION=	1.1.2.1
+COMPONENT_VERSION=	1.1.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=	http://packetfactory.openwall.net/projects/libnet/
+COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/libnet-dev/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:9dca91ee0f19b1b9e5e60baaedb9bc44a30a1fc7
-COMPONENT_ARCHIVE_URL=	http://www.packetfactory.net/libnet/dist/deprecated/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:a2271762a7d6505c1ff6c4c048bf802e643b6790
+COMPONENT_ARCHIVE_URL=	http://cdnetworks-us-2.dl.sourceforge.net/project/libnet-dev/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
