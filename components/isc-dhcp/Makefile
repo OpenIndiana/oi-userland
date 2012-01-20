@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dhcp
-COMPONENT_VERSION=	4.1
-COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-ESV-R3
+COMPONENT_VERSION=	4.1-ESV-R4
+IPS_COMPONENT_VERSION=	4.1.0.4
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:6fc5ad06b1192c76edb1a35980fcf070a393c075
+COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  http://ftp.isc.org/isc/dhcp/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha1:2c05a978f5bcc47d9e2a9125ce51903144ebb940
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -40,7 +41,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 CONFIGURE_OPTIONS  +=	--sysconfdir=$(ETCDIR)/inet
 CONFIGURE_OPTIONS  +=	--sbindir=$(USRLIBDIR)/inet
 CONFIGURE_OPTIONS  +=	--bindir=$(USRSBINDIR)
-CONFIGURE_OPTIONS  +=	--enable-use-sockets --enable-ipv4-pktinfo
+CONFIGURE_OPTIONS  +=	--enable-use-sockets
+CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 
 build:		$(BUILD_32)
 
