@@ -20,17 +20,17 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache-tomcat
-COMPONENT_VERSION=	6.0.33
+COMPONENT_VERSION=	6.0.35
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:437db0ba55c6e398fe3af73c4fa5eed3c4666842
+COMPONENT_ARCHIVE_HASH=	sha1:1a47ad41d52a27757cfeddf7fa1627688ed4027a
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 # Tomcat subcomponents
@@ -40,9 +40,9 @@ COMPONENT_ARCHIVE_URL_1= http://archive.apache.org/dist/commons/dbcp/source/$(CO
 COMPONENT_ARCHIVE_2= commons-pool-1.5.6-src.tar.gz
 COMPONENT_ARCHIVE_HASH_2= sha1:d97caa6670d7683f97749defb96aee6a7bcdbdf9
 COMPONENT_ARCHIVE_URL_2= http://archive.apache.org/dist/commons/pool/source/$(COMPONENT_ARCHIVE_2)
-COMPONENT_ARCHIVE_3= ecj.jar
-COMPONENT_ARCHIVE_HASH_3= sha1:f4ddfbb80cb97b0bdfa8730102db9fec1630a983
-COMPONENT_ARCHIVE_URL_3= http://archive.eclipse.org/eclipse/downloads/drops/R-3.3.1-200709211145/$(COMPONENT_ARCHIVE_3)
+COMPONENT_ARCHIVE_3= ecj-3.7.jar
+COMPONENT_ARCHIVE_HASH_3= sha1:2377a3e1d3e89f342e1d7abe2bbfbfcc25b185ec
+COMPONENT_ARCHIVE_URL_3= http://download.eclipse.org/eclipse/downloads/drops/R-3.7-201106131736/$(COMPONENT_ARCHIVE_3)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
