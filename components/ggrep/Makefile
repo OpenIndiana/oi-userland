@@ -18,16 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	2.5.4
+COMPONENT_VERSION=	2.10
 COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:9bbd4f02b18bb264e0fcb17293b6f0445c8694d2
+
+# Note that the 2.10 version of the compressed GNU grep tarball on
+# ftp.gnu.org is only available in .xz format. We cannot use this
+# as xz is not currently part of the Solaris 11 Update CBE. We 
+# have recompressed that tarball as a .bz2 file and placed it in the
+# special Userland cache. The sha1 hash is for the payload .tar file.
+COMPONENT_ARCHIVE_HASH=	sha1:e8cab5e67ef06f74b460a8d8034f726c7a845f6d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
