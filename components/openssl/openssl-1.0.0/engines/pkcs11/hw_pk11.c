@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/hw_pk11.c */
@@ -148,7 +148,7 @@ int NID_aes_256_ctr = NID_undef;
  * uri_struct manipulation, and static token info. All of that is used by the
  * RSA keys by reference feature.
  */
-pthread_mutex_t *uri_lock;
+pthread_mutex_t *uri_lock = NULL;
 
 #ifdef	SOLARIS_HW_SLOT_SELECTION
 /*
@@ -906,6 +906,10 @@ static void pk11_free_all_locks(void)
 			session_cache[type].lock = NULL;
 			}
 		}
+	/* Free uri_lock */
+	(void) pthread_mutex_destroy(uri_lock);
+	OPENSSL_free(uri_lock);
+	uri_lock = NULL;
 	}
 
 /*
@@ -1214,10 +1218,16 @@ static int pk11_library_init(ENGINE *e)
 			}
 		}
 
-	if (pk11_dso == NULL)
+
+	/* Attempt to load PKCS#11 library */
+	if (!pk11_dso)
 		{
-		PK11err(PK11_F_LIBRARY_INIT, PK11_R_DSO_FAILURE);
-		goto err;
+		pk11_dso = DSO_load(NULL, get_PK11_LIBNAME(), NULL, 0);
+		if (pk11_dso == NULL)
+			{
+			PK11err(PK11_F_LOAD, PK11_R_DSO_FAILURE);
+			goto err;
+			}
 		}
 
 #ifdef	SOLARIS_AES_CTR
@@ -1342,9 +1352,14 @@ err:
 /* ARGSUSED */
 static int pk11_destroy(ENGINE *e)
 	{
+	int rtn = 1;
+
 	free_PK11_LIBNAME();
 	ERR_unload_pk11_strings();
-	return (1);
+	if (pk11_library_initialized == CK_TRUE)
+		rtn = pk11_finish(e);
+
+	return (rtn);
 	}
 
 /*
