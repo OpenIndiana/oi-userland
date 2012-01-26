@@ -66,7 +66,6 @@ COMPILER = gcc
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
-CONFIGURE_OPTIONS += INSTALL="/usr/ucb/install -c"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
 CONFIGURE_OPTIONS += --enable-hipe
