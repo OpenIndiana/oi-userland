@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -28,11 +28,11 @@ include ../../make-rules/shared-macros.mk
 LD_Z_IGNORE=
 
 COMPONENT_NAME=		gnuplot
-COMPONENT_VERSION=	4.4.0
+COMPONENT_VERSION=	4.4.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://gnuplot.info/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:04a2eede7b2af8e64144aa8ffede6535b7a043b5
+COMPONENT_ARCHIVE_HASH= sha1:d4f143eade1f8d8b27be44cbda431d37a71c6a31
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
 COMPONENT_BUILD_TARGETS = all info
