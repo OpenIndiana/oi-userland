@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,9 +34,9 @@ COMPONENT_SRC=		vim-$(COMPONENT_HG_REV)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).tar.bz2
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha1:19df428d07dfbbe771923871cde609becdf6992e
+COMPONENT_ARCHIVE_HASH=	sha1:411433171ab8a36b3edd41d68941feba2a2f20bc
 COMPONENT_HG_URL=	https://vim.googlecode.com/hg
-COMPONENT_HG_REV=	v7-3-254
+COMPONENT_HG_REV=	v7-3-421
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -48,18 +48,25 @@ TARBALLDIR=		$(COMPONENT_NAME)-$(COMPONENT_HG_REV)
 $(HGREPODIR)/.hg:
 	hg clone -U $(COMPONENT_HG_URL) $(@D)
 
+hgball-pull: $(HGREPODIR)/.hg
+	hg -R $(HGREPODIR) pull
+
+hgball: COMPONENT_HG_REV = $(shell hg -R $(HGREPODIR) tags | awk '$$1 ~ /^v7-/ {print $$1; exit}')
+
 # Create the tarball.  It should contain the working directory of the repo at
 # the desired revision, but not the .hg directory.  Note that the digest will
 # be different every time because .hg doesn't set the timestamps of the files
 # in the working directory.
-hgball: $(HGREPODIR)/.hg
-	hg -R $(HGREPODIR) pull
-	hg -R $(HGREPODIR) tags | awk '$$1 ~ /^v7-/ {print $$1; exit}'
+hgball: hgball-pull
 	rm -rf $(TARBALLDIR)
 	hg clone -u $(COMPONENT_HG_REV) $(HGREPODIR) $(TARBALLDIR)
 	rm -rf $(TARBALLDIR)/.hg
 	tar jcf $(COMPONENT_ARCHIVE) $(TARBALLDIR)
-	digest -a sha1 $(COMPONENT_ARCHIVE)
+	digest=$$(digest -a sha1 $(COMPONENT_ARCHIVE)); \
+		/usr/gnu/bin/sed -i \
+			-e "s/^COMPONENT_ARCHIVE_HASH=.*/COMPONENT_ARCHIVE_HASH=	sha1:$$digest/" \
+			-e "s/^COMPONENT_HG_REV=.*/COMPONENT_HG_REV=	$(COMPONENT_HG_REV)/" \
+			Makefile
 
 PATCH_LEVEL =	0
 
@@ -106,6 +113,8 @@ $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-vim-name=gvim
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-x
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gui=gtk2
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gtk2-check
+
+COMPONENT_PREP_ACTION = (cd $(@D)/src; autoconf)
 
 # Vim's build is too smart for itself and configure can't run outside of a
 # complete source tree.
