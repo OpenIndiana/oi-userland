@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -42,6 +42,12 @@ LDFLAGS +=	-L$(PROTO_DIR)/$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+
+COMPONENT_PREP_ACTION += (cd $(@D) ; \
+		aclocal --force ; \
+		libtoolize --copy --force --ltdl ; \
+		autoconf --force ; \
+		autoheader --force)
 
 COMPONENT_POST_INSTALL_ACTION =\
 	$(RM) $(PROTO_DIR)/$(CONFIGURE_LIBDIR.32)/$(COMPONENT_NAME).la;\

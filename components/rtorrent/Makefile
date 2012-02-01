@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,10 +42,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_PREP_ACTION = \
         (cd $(@D) ; \
-	    aclocal-1.10 -I./scripts -I. ; \
+	    aclocal -I./scripts -I. ; \
 	    autoheader; \
 	    libtoolize --automake --copy --force; \
-	    automake-1.10; \
+	    automake; \
 	    autoconf )
 
 # this is needed or we can't compile the rak headers

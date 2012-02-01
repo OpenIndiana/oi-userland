@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -81,8 +81,8 @@ CONFIGURE_OPTIONS += --with-jpeg
 COMPONENT_PREP_ACTION = \
 	( cd $(@D) ; \
 	    $(CP) makefiles/configure.in makefiles/Makefile.am . ; \
-		    libtoolize --force --copy ; aclocal-1.10 ; \
-		    automake-1.10 --add-missing --copy ; autoconf )
+		    libtoolize --force --copy ; aclocal ; \
+		    automake --add-missing --copy ; autoconf )
 
 $(BUILD_DIR)/libmng-64.pc:	Solaris/libmng-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@

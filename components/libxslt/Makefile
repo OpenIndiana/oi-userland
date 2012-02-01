@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -58,8 +58,8 @@ COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
 		    cp ../mapfile.exslt libexslt/libexslt.syms ; \
 		    $(RM) libxslt/xsltconfig.h libexslt/exsltconfig.h ; \
-		    libtoolize --force --copy ; aclocal-1.10 ; \
-		    automake-1.10 --addmissing --copy ; autoconf)
+		    libtoolize --force --copy ; aclocal ; \
+		    automake --addmissing --copy ; autoconf)
 
 # common targets
 build:		$(BUILD_32_and_64)
