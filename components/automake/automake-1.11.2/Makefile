@@ -20,26 +20,25 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		autoconf
-COMPONENT_VERSION=	2.68
-COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autoconf/
+COMPONENT_NAME=		automake
+COMPONENT_VERSION=	1.11.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:843f7dfcc6addf129dc2c8b12f7d72d371478f42
-COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autoconf/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:56ac7319562fb54ff05e1e25bcd0331260a4ceff
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
+CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
 
 # common targets
 build:		$(BUILD_32)
