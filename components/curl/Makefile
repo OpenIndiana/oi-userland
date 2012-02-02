@@ -41,8 +41,11 @@ GSSAPI_LIBDIR_32 = /usr/lib
 GSSAPI_LIBDIR_64 = /usr/lib/$(MACH64)
 
 CFLAGS += $(CPP_LARGEFILES)
+CFLAGS += `pkg-config --cflags libidn`
+CPPFLAGS += `pkg-config --cflags libidn`
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
