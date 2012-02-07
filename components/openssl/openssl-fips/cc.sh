@@ -21,14 +21,30 @@
 #
 
 #
-# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Very simple cc wrapper whose only purpose is to ensure that cc behaves as
-# desired when linking the fipscanister.o object. Currently that means adding
-# "-W2,-Rfully_unroll to the compiler options. As the fips module is only built
-# with Sun Studio on sparc (gcc is used on x86) this workaround will only happen
-# on sparc, in fact the compiler bug this is working around is sparc specific
-# anyway.
+# The fips module is built with Sun Studio cc compile on sparc and x86.
+# On x86, this cc wrapper is used to remove "-fast" from the compiler
+# option. According to the "OpenSSL FIPS 140-2 Security Policy"
+# document, no file in the source distribution may be changed in any way
+# and as a result, this wrapper is used to remove the -fast that is
+# passed to the Studio cc compiler.
+# On sparc, this wrapper is just a pass through to cc.
 
-exec $REALCC -W2,-Rfully_unroll "$@"
+MACH=`uname -p`
+
+if [ "$MACH" = "sparc" ]; then
+	exec $REALCC "$@"
+else
+	CC_CMD=""
+	while [ $# -ne 0 ]; do
+        	if [ "$1" != "-fast" ]; then
+                	CC_CMD="$CC_CMD '$1'"
+        	fi
+        	shift;
+	done
+
+	eval $REALCC $CC_CMD
+fi
+
