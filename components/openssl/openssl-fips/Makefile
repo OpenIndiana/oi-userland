@@ -38,12 +38,7 @@ COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 
-# To build x86 FIPS canister, gcc needs to be used so it must be
-# in the PATH. This is because according to the "OpenSSL FIPS 140-2
-# Security Policy" document, no file in the source distribution may
-# be changed in any way and as a result, gcc is chosen because
-# otherwise "-fast" is erroneously passed to the Studio cc compiler.
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin:$(SFWBIN)
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
 # In order to build a 32bit version on a 64bit system the isalist(1) command
 # must be substituted for the 32bit build so that amd64|sparcv9 is not part of
@@ -54,7 +49,7 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin:$(SFWBIN)
 # run as shown there. Nothing from the tarball can be modified. We use the U2
 # command set, see below.
 FAKE_ISALIST = 32/isalist
-FAKE_MAKE = gmake
+FAKE_MAKE = fips-gmake
 FAKE_CC = cc
 FAKE_APPS = $(FAKE_ISALIST) $(FAKE_MAKE) $(FAKE_CC)
 
@@ -83,7 +78,8 @@ COMPONENT_BUILD_TARGETS =
 COMPONENT_INSTALL_ARGS =
 COMPONENT_INSTALL_TARGETS = install
 CONFIGURE_ENV += FIPS_SITE_LD=$(LD) PATH=$(FIPS_PATH_$(BITS))
-COMPONENT_BUILD_ENV += FIPS_SITE_LD=$(LD) REALCC=$(CC) MYMAKE=$(MAKE)
+# Add COMPONENT_DIR to PATH so cc wrapper can be found.
+COMPONENT_BUILD_ENV += FIPS_SITE_LD=$(LD) REALCC=$(CC) MYMAKE=$(MAKE) PATH=$(COMPONENT_DIR):$(PATH)
 
 $(BUILD_32_and_64): $(FAKE_APPS)
 
@@ -94,7 +90,7 @@ build:		$(BUILD_32_and_64)
 
 # We must make the "install" target a no-op (but must run it to be compliant).
 # See above for more information.
-install:	GMAKE = $(COMPONENT_DIR)/gmake
+install:	GMAKE = $(COMPONENT_DIR)/fips-gmake
 install:	$(BUILD_DIR_32)/.verified $(BUILD_DIR_64)/.verified
 
 # This is a recommended set of commands to verify that the FIPS-140 mode can be
