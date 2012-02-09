@@ -1,0 +1,74 @@
+'\" te
+.\" 版权所有 (c) 2004，Oracle 和/或其附属公司。保留所有权利。
+.TH enhance 1 "2004 年 5 月 18 日" "SunOS 5.11" "用户命令"
+.SH 名称
+enhance \- 增强的命令行编辑功能
+.SH 用法概要
+.LP
+.nf
+\fBenhance\fR \fIcommand\fR [\fIargument\fR]...
+.fi
+
+.SH 描述
+.sp
+.LP
+\fBenhance\fR 程序为不具有任何源代码的、第三方应用程序的用户提供了增强的命令行编辑功能。它通过在应用程序和实际终端之间放置一个伪终端来实现此功能。它使用 \fBtecla\fR 命令行编辑库从实际终端读取输入，然后通过伪终端将每个刚完成的输入行转发至应用程序。来自应用程序的所有输出将按原样转发回实际终端。
+.sp
+.LP
+当应用程序停止生成输出的时间超出十分之一秒时，enhance 程序会将最后一个未完成的输出行视为提示符，并重新显示用户已在其后键入的任何未完成的输入行。用户觉察不到的微小延迟对于程序的正确操作而言是不必要的。它仅仅是一项优化，旨在阻止频繁地重新显示输入行，进而避免降低输出速率。
+.sp
+.LP
+由 Tecla 库提供的用户级命令行编辑功能记录在 \fBtecla\fR(5) 手册页中。
+.SS "缺点"
+.sp
+.LP
+唯一一个尚未解决的主要问题是如何处理用于更改控制终端是否回显所键入内容的应用程序。例如，要求输入口令的程序（例如 \fBftp\fR 和 \fBtelnet\fR）临时通知其控制终端不要回显用户键入的内容。由于此请求将传至伪终端的应用程序端，所以 enhance 程序没有办法知道发生了此问题，并会在用户键入口令时继续将所键入的内容回显到其控制终端。
+.sp
+.LP
+此外，在执行主机应用程序之前，enhance 程序最初会将伪终端设置为 \fBnoecho\fR 模式，因此它发送至该程序的所有内容都不会冗余回显。如果切换到 \fBnoecho\fR 模式的程序在之后显式恢复回显（而不是恢复以前的终端模式），则以后每当您输入新的输入行时，都会在其下一行显示重复内容。
+.SH 文件
+.sp
+.ne 2
+.mk
+.na
+\fB\fB/usr/lib/libtecla.so\fR\fR
+.ad
+.RS 24n
+.rt  
+\fBtecla\fR 库
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB~/.teclarc\fR\fR
+.ad
+.RS 24n
+.rt  
+\fBtecla\fR 个人自定义文件。
+.RE
+
+.SH 属性
+.sp
+.LP
+有关下列属性的描述，请参见 \fBattributes\fR(5)：
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性类型属性值
+_
+可用性library/libtecla
+_
+接口稳定性Committed（已确定）
+.TE
+
+.SH 另请参见
+.sp
+.LP
+\fBlibtecla\fR(3LIB)、\fBattributes\fR(5)、\fBtecla\fR(5)

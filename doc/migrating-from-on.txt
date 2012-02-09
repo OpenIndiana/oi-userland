@@ -1,0 +1,88 @@
+This is a case study of migrating one library (libtecla) from ON to Userland.
+I (JBeck) was able to figure out a fair amount on my own, but had to rely on
+Norm for a great deal more, so thought it would be worthwhile to document what
+we went through, to save others time in the future.
+
+* Initially just four files were needed:
+  * Makefile, which in this case I copied from libsndfile as it seemed to be
+    the closest match.
+  * The license: ON's usr/src/lib/libtecla/THIRDPARTYLICENSE copied verbatim
+    to Userland path components/libtecla/libtecla.license .
+  * The lint library: ON's usr/src/lib/libtecla/common/llib-ltecla copied to
+    Userland path components/libtecla/llib-ltecla .
+  * The package manifest: ON's usr/src/pkg/manifests/library-libtecla.mf,
+    with usr/man/pkg/library-libtecla.man.p5m included, copied to Userland
+    path libtecla.p5m .
+
+* Coming from ON, there were already "Solarified" man pages available, so we
+  specified the "--without-man-pages" configure option in the Makefile, and
+  copied all the man pages from ON's usr/man/man/... to the files/ directory
+  and added this Makefile line, which causes pkgdepend/pkgsend to add the
+  appended directories to their search paths when looking for content:
+
+  PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
+
+* Because one of the man pages (enhance.1) had been translated, and there
+  were thus multiple files with the same name, we tweaked the names of the
+  translated files, and used the tweaked names in the package manifest.  We
+  also added the following to get needed "action.hash" and "mangler.bypass"
+  attributes: the former causes pkgmogrify to take the last part of the file
+  action's path attribute (basename) and set the 'hash' value to the basename
+  so that it can be located at the top level of one of the search directories,
+  while the latter causes the userland-mangler to ignore the file, since as
+  mentioned above these man pages come pre-Solarified, whereas the default
+  for Userland is running a file mangler on some of the files to be packaged.
+  This file mangler adds ATTRIBUTES and NOTES sections to man pages with
+  'stability', 'availability', project and source urls.  It also strips the
+  CDDL from files right now.  More functionality may be added over time.
+
+  <transform file path=usr/share/man/man.+/(.+)$ -> set action.hash %<\1> >
+  <transform file path=usr/share/man/.+$ -> add mangler.bypass true >
+
+* On the package manifest fmri action, ON's macros:
+
+  $(PKGVERS_BUILTON)-$(PKGVERS_BRANCH)
+
+  needed to be changed to comparable Userland macros:
+
+  $(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+* These ON attributes needed to be removed:
+
+  set name=org.opensolaris.version-unlockable value=true
+  set name=variant.arch value=$(ARCH)
+
+* The info.upstream-url attribute value needed to be changed from the hard-
+  coded URL in ON to $(COMPONENT_PROJECT_URL) in Userland.
+
+* These needed to be added (note your actual year and ARC case number should
+  be used instead of "YYYY" and "CCC" respectively):
+
+  set name=org.opensolaris.arc-caseid value=PSARC/YYYY/CCC
+  set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+* The $(ARCH64) macro used by ON needed to be changed to $(MACH64).
+
+* ON's license action:
+
+  license usr/src/lib/libtecla/THIRDPARTYLICENSE \
+      license=usr/src/lib/libtecla/THIRDPARTYLICENSE
+
+  needed to be changed to:
+
+  license libtecla.license license="MIT-like"
+
+  Note that "MIT-like" applies to this library; others will have different
+  values.
+
+* Apparently this is unusual, but libtecla's Makefile structure did not have
+  support for $(DESTDIR), so we had to patch Makefile.in to add it.
+
+* Again this is apparently unusual, but libtecla's Makefile structure had
+  LD_RUN_PATH include the working directory, which resulted in build paths
+  being embedded in the binaries.  So we had to patch Makefile.rules to
+  remove that.
+
+* ldd was showing libthread despite it not being explicitly listed; this
+  turned out to be because Userland sets -mt by default, so we had to unset
+  studio_MT in the Makefile. 
