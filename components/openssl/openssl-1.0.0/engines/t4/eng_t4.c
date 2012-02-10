@@ -170,12 +170,21 @@ static int t4_bind(ENGINE *e);
 static t4_cipher_id get_cipher_index_by_nid(int nid);
 #pragma inline(get_cipher_index_by_nid)
 static void t4_instructions_present(_Bool *aes_present, _Bool *des_present,
-    _Bool *digest_present);
+    _Bool *digest_present, _Bool *montmul_present);
 #pragma inline(t4_instructions_present)
 
 /* Digest registration function. Called by ENGINE_set_ciphers() */
 int t4_get_all_digests(ENGINE *e, const EVP_MD **digest,
     const int **nids, int nid);
+
+/* RSA_METHOD structure used by ENGINE_set_RSA() */
+extern RSA_METHOD *t4_RSA(void);
+
+/* DH_METHOD structure used by ENGINE_set_DH() */
+extern DH_METHOD *t4_DH(void);
+
+/* DSA_METHOD structure used by ENGINE_set_DSA() */
+extern DSA_METHOD *t4_DSA(void);
 
 #ifndef	SOLARIS_NO_AES_CTR
 /*
@@ -542,13 +551,14 @@ t4_get_all_digests(ENGINE *e, const EVP_MD **digest,
  */
 
 /*
- * Set aes_present, des_present, and digest_present to 0 or 1 depending on
- * whether the current SPARC processor supports AES, DES, and
- * MD5/SHA1/SHA256/SHA512, respectively.
+ * Set aes_present, des_present, digest_present and montmul_present
+ * to B_FALSE or B_TRUE depending on
+ * whether the current SPARC processor supports AES, DES,
+ * MD5/SHA1/SHA256/SHA512 and MONTMUL, respectively.
  */
 static void
 t4_instructions_present(_Bool *aes_present, _Bool *des_present,
-    _Bool *digest_present)
+    _Bool *digest_present, _Bool *montmul_present)
 {
 #ifdef	OPENSSL_NO_DES
 #undef	AV_SPARC_DES
@@ -585,9 +595,10 @@ t4_instructions_present(_Bool *aes_present, _Bool *des_present,
 	uint_t		ui;
 
 	(void) getisax(&ui, 1);
-	*aes_present = (ui & AV_SPARC_AES) != 0;
-	*des_present = (ui & AV_SPARC_DES) != 0;
-	*digest_present = (ui & DIGEST_MASK) == DIGEST_MASK;
+	*aes_present = ((ui & AV_SPARC_AES) != 0);
+	*des_present = ((ui & AV_SPARC_DES) != 0);
+	*digest_present = ((ui & DIGEST_MASK) == DIGEST_MASK);
+	*montmul_present = ((ui & AV_SPARC_MONT) != 0);
 }
 
 
@@ -1085,9 +1096,10 @@ t4_destroy(ENGINE *e)
 static int
 t4_bind(ENGINE *e)
 {
-	_Bool aes_engage, digest_engage, des_engage;
+	_Bool aes_engage, digest_engage, des_engage, montmul_engage;
 
-	t4_instructions_present(&aes_engage, &des_engage, &digest_engage);
+	t4_instructions_present(&aes_engage, &des_engage, &digest_engage,
+	    &montmul_engage);
 #ifdef	DEBUG_T4
 	(void) fprintf(stderr,
 	    "t4_bind: engage aes=%d, des=%d, digest=%d\n",
@@ -1128,6 +1140,15 @@ t4_bind(ENGINE *e)
 	    !ENGINE_set_init_function(e, t4_init) ||
 	    (aes_engage && !ENGINE_set_ciphers(e, t4_get_all_ciphers)) ||
 	    (digest_engage && !ENGINE_set_digests(e, t4_get_all_digests)) ||
+#ifndef OPENSSL_NO_RSA
+	    (montmul_engage && !ENGINE_set_RSA(e, t4_RSA())) ||
+#endif	/* OPENSSL_NO_RSA */
+#ifndef OPENSSL_NO_DH
+	    (montmul_engage && !ENGINE_set_DH(e, t4_DH())) ||
+#endif	/* OPENSSL_NO_DH */
+#ifndef OPENSSL_NO_DSA
+	    (montmul_engage && !ENGINE_set_DSA(e, t4_DSA())) ||
+#endif	/* OPENSSL_NO_DSA */
 	    !ENGINE_set_destroy_function(e, t4_destroy)) {
 		T4_FREE_AES_CTR_NIDS;
 		return (0);
