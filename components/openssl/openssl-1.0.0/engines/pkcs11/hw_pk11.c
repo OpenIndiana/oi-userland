@@ -3915,17 +3915,11 @@ hw_aes_instruction_set_present(void)
 		uint_t ui = 0;
 
 		(void) getisax(&ui, 1);
-		/*
-		 * Note that we do not have AES optimization using AES-NI
-		 * instructions in pkcs11_softtoken on 32-bit systems.
-		 */
-#if defined(__amd64)
+
+#if defined(__amd64) || defined(__i386)
 		present = (ui & AV_386_AES) > 0;
 #elif defined(__sparc)
 		present = (ui & AV_SPARC_AES) > 0;
-#else
-		/* x86 32-bit */
-		present = 0;
 #endif
 		}
 
