@@ -18,6 +18,18 @@ diff -ru openssl-1.0.0d/Configure openssl-1.0.0d/Configure
  my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o::::::::::::void";
  my $mips3_asm=":bn-mips3.o::::::::::::void";
  my $s390x_asm="s390xcap.o s390xcpuid.o:bn-s390x.o s390x-mont.o::aes-s390x.o:::sha1-s390x.o sha256-s390x.o sha512-s390x.o::rc4-s390x.o:::::void";
+@@ -256,9 +256,9 @@
+ #
+ "solaris64-x86_64-cc-sunw","cc:-xO3 -m64 -xstrconst -Xa -DL_ENDIAN::-D_REENTRANT::-lsocket -lnsl -lc:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR DES_PTR DES_INT DES_UNROLL:${x86_64_asm}:elf:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign -M/usr/lib/ld/map.noexdata:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ #
+-"solaris-sparcv9-cc-sunw","cc:-xtarget=ultra -m32 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -Xa -DB_ENDIAN -DBN_DIV2W::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc:BN_LLONG RC4_CHUNK_LL DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m32 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"solaris-sparcv9-cc-sunw","cc:-xtarget=ultra -m32 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -Xa -DB_ENDIAN -DBN_DIV2W::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK_LL DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m32 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
+ #
+-"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/ccs/bin/ar rs::/64",
++"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/ccs/bin/ar rs::/64",
+ 
+ #### IRIX 5.x configs
+ # -mips2 flag is added by ./config when appropriate.
 Index: crypto/aes/Makefile
 ===================================================================
 diff -ru openssl-1.0.0d/crypto/aes/ openssl-1.0.0d/crypto/aes/Makefile
@@ -82,7 +94,7 @@ diff -ru openssl-1.0.0d/crypto/engine/Makefile openssl-1.0.0d/crypto/engine/Make
  	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
  	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
 +	eng_t4.c eng_t4_des.c eng_t4_md5.c \
-+	eng_t4_sha1.c eng_t4_sha256.c eng_t4_sha512.c \
++	eng_t4_sha1.c eng_t4_sha256.c eng_t4_sha512.c eng_t4_montmul.c \
  	hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
  LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
  	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
@@ -90,7 +102,7 @@ diff -ru openssl-1.0.0d/crypto/engine/Makefile openssl-1.0.0d/crypto/engine/Make
  	tb_cipher.o tb_digest.o tb_pkmeth.o tb_asnmth.o \
  	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
 +	eng_t4.o eng_t4_des.o eng_t4_md5.o \
-+	eng_t4_sha1.o eng_t4_sha256.o eng_t4_sha512.o \
++	eng_t4_sha1.o eng_t4_sha256.o eng_t4_sha512.o eng_t4_montmul.o \
  	hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
  
  SRC= $(LIBSRC)

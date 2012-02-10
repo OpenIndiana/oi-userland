@@ -167,8 +167,8 @@ install:	$(INSTALL_32_and_64)
 # We need to modify the default lint flags to include patched opensslconf.h from
 # the build directory. If we do not do that, lint will complain about md2.h
 # which is not enabled by default but it is in our opensslconf.h.
-LFLAGS_32 := -I$(BUILD_DIR_32)/include $(LINT_FLAGS)
-LFLAGS_64 := -I$(BUILD_DIR_64)/include $(LINT_FLAGS)
+LFLAGS_32 := -I$(BUILD_DIR_32)/include $(LINT_FLAGS) -lsoftcrypto
+LFLAGS_64 := -I$(BUILD_DIR_64)/include $(LINT_FLAGS) -lsoftcrypto
 
 # Set modified lint flags for our lint library targets.
 $(BUILD_DIR_32)/llib-lcrypto.ln: LINT_FLAGS="$(LFLAGS_32)"
