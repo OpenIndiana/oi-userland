@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,8 +36,6 @@ COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COM
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 
 PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.2/bin
 

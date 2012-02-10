@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -48,6 +48,8 @@ COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
 
 # order is important
 GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
+
+PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
 
 COMPARISON_TRANSFORMS +=	$(WS_TOP)/transforms/comparison-cleanup
 COMPARISON_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
