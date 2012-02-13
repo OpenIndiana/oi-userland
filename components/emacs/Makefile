@@ -18,16 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	23.1
+COMPONENT_VERSION=	23.4
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:5f2d5dfcc17e7627ea752f675c605fe37c9c145c
+COMPONENT_ARCHIVE_HASH=	sha1:5effbd2af6bf7a4feb2d80810e49b0ce47b463cb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -65,6 +65,10 @@ COMPILER =	gcc
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
+
+# The configure script runs the pkg-config command. Since we're building
+# 64-bit executables, we need pkg-config to use the 64-bit metadata files
+CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
