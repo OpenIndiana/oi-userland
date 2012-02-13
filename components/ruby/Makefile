@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	1.8.7
-COMPONENT_PATCH_VERSION=	334
+COMPONENT_PATCH_VERSION=	357
 COMPONENT_PROJECT_URL=	http://www.ruby-lang.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-p$(COMPONENT_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:4311ce257f2e54f247bfe07b48e799d293d041f2
+COMPONENT_ARCHIVE_HASH=	sha1:ba5ec0ab663976f00fb405be6cfef546bcf0e4e9
 COMPONENT_ARCHIVE_URL=	http://ftp.ruby-lang.org/pub/ruby/1.8/$(COMPONENT_ARCHIVE)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 
@@ -135,6 +135,8 @@ build:		$(BUILD_32)
 install:	build $(INSTALL_32) $(RUBYGEMS_INSTALL_TARGET)
 
 # one expected failure in TestHTTP::HTTPConnectionTest
+# also possibly test_endblockwarn(TestBeginEndBlock), 
+# test_step_ruby_core_35753(TestRange)
 test:	$(TEST_32)
 
 # install rubygems using ruby installed in proto area
