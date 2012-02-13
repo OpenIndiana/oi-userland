@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 NAME:             emacs
-VERSION:          23.1
+VERSION:          23.4
 DESCRIPTION:      GNU Emacs editor
 LICENSE:          GPLv3
 BUGTRAQ:          solaris/utility/emacs
@@ -36,14 +36,6 @@ information needed to understand how this component is put together.
 
 - We patch the following changes to the emacs sources:
 
-	buffer_menu.patch
-	    Fixes an issue with GTK and the Buffers menu where the
-	    menu contents is not updated to show the current buffers
-	    and instead shows a stale list. I based these patches
-	    on the official ones applied to the emacs development branch:
-
-	    http://lists.gnu.org/archive/html/emacs-diffs/2009-09/msg00039.html
-
 	sysmalloc.patch
 	    Use the system malloc instead of the built in one
 
@@ -55,13 +47,6 @@ information needed to understand how this component is put together.
 	xft.patch
 	    Patch configure script to provide necessary missing
 	    libraries for the GTK version of emacs.
-
-        etags.patch
-            The version of etags in Emacs 23.1 has a bug in the function
-            absolute_filename(). It uses strcpy() to do overlapped string
-            copies, which is undefined. This patch substitutes memmove(),
-            which exists specifically to handle that case.
-
 
 - Emacs can be built as either 32-bit or 64-bit, depending on the target
   machine. The benefit of a 64-bit emacs is that the size of the files it
@@ -82,23 +67,6 @@ information needed to understand how this component is put together.
   and the use of usr/lib/isaexec has been removed: This cuts the number of
   builds necessary in half, and also the binary package size. It also
   simplifies packaging, and the user's view of /usr/bin/emacs*.
-
-  Note that we're installing a 64-bit objects in /bin, and
-  usr/lib/emacs/$(COMPONENT_VERSION)/$(EMACS_ULEVDIR). The userland
-  pkglint plugin considers these to be a "32-bit path". There is an
-  RFE to suppress lint for specific attributes:
-
-        Bug 17777 - it would be nice if pkglint could suppress specific
-                    messages for specific actions
-        https://defect.opensolaris.org/bz/show_bug.cgi?id=17777
-
-  Until then, we simply assert that the whole action for those files is
-  linted with
-
-        pkg.linted=True
-
-  This disables all lint checking for these items, so extra care is needed
-  not to introduce some other error.
 
 - There are three different toolkit options: None, Athena widgets
   (aka Xaw, or lucid), and gtk. It would be nice to only support gtk,
@@ -134,10 +102,3 @@ information needed to understand how this component is put together.
   this is that we do not install update-game-score as setuid, and
   therefore the game files are not usable. This the same decision made
   by Debian, among others.
-
-- The depend line in gnu-emacs.p5m requiring one of the three toolkit versions
-  to be installed currently has the pkg.linted=true attribute set, pending
-  the resolution of
-
-        Bug 18202 - pkglint AttributeError when using require-any depend action
-        https://defect.opensolaris.org/bz/show_bug.cgi?id=18202
