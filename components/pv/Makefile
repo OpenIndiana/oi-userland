@@ -20,17 +20,17 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.1.4
+COMPONENT_VERSION=	1.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ivarch.com/programs/pv.shtml
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:2d84e212b543509b675351809d1e0257e679c5fa
+COMPONENT_ARCHIVE_HASH=	sha1:9888f07059f76a92327c6bedfbc6ca8ad4d4e41b
 COMPONENT_ARCHIVE_URL=	http://pipeviewer.googlecode.com/files/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -46,13 +46,14 @@ PKG_PROTO_DIRS += $(BUILD_DIR_32)
 
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
+COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)" 
 
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
