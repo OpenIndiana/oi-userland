@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,42 @@ COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/setup.py.mk
+
+# There are several pylint documentation files that setup.py isn't installing
+# but are present in the pylint package on other distributions. Copy them into
+# the proto area "manually", so they can be included in the package.
+PDOC =			$(PROTO_DIR)/usr/share/doc
+PDOC_PYLINT =		$(PDOC)/pylint
+PDOC_PYLINT_EXAMPLES =	$(PDOC_PYLINT)/examples
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PDOC_PYLINT) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/doc/beginner_pylint_tutorial.txt $(PDOC_PYLINT) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/doc/FAQ.txt $(PDOC_PYLINT) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/doc/features.txt $(PDOC_PYLINT) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/doc/manual.txt $(PDOC_PYLINT) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/doc/quickstart.txt $(PDOC_PYLINT) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/README $(PDOC_PYLINT) ;
+
+COMPONENT_POST_INSTALL_ACTION += \
+	$(MKDIR) $(PDOC_PYLINT_EXAMPLES) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/examples/custom.py $(PDOC_PYLINT_EXAMPLES) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/examples/custom_raw.py $(PDOC_PYLINT_EXAMPLES) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/elisp/pylint.el $(PDOC_PYLINT_EXAMPLES) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/examples/pylintrc_camelcase $(PDOC_PYLINT_EXAMPLES) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	$(CP) $(COMPONENT_SRC)/examples/pylintrc $(PDOC_PYLINT_EXAMPLES) ;
+
 
 # common targets
 
