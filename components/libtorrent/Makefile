@@ -59,7 +59,6 @@ CC=$(CXX)
 CXXFLAGS +=	$(studio_OPT)
 CXXFLAGS +=	-i
 CXXFLAGS +=	-xspace
-CXXFLAGS +=	-mr
 CXXFLAGS +=	$(studio_XREGS)
 
 CONFIGURE_OPTIONS  +=	--enable-shared

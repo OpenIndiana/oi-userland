@@ -55,7 +55,6 @@ LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib -lnsl -lsocket
 
 CXXFLAGS +=	-i
 CXXFLAGS +=	-xspace
-CXXFLAGS +=	-mr
 CXXFLAGS +=	$(studio_XREGS)
 CXXFLAGS +=	-I/usr/include/ncurses
 CONFIGURE_OPTIONS.32 +=		--srcdir=$(BUILD_DIR_32)
