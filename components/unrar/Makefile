@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -53,6 +53,7 @@ COMPONENT_BUILD_ENV += LDFLAGS="$(studio_NORUNPATH)"
 COMPONENT_BUILD_ENV += DEFINES="$(CPP_LARGEFILES)"
 
 COMPONENT_BUILD_ARGS += -f makefile.unix
+COMPONENT_BUILD_ARGS += STRIP="/bin/true"
 
 # common targets
 build:		$(BUILD_32)

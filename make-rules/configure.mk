@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -89,6 +89,10 @@ $(BUILD_DIR_32)/.configured:	BITS=32
 $(BUILD_DIR_64)/.configured:	BITS=64
 
 CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
+
+# temporarily work around some issues
+CONFIGURE_ENV += "ac_cv_func_realloc_0_nonnull=yes"
+COMPONENT_BUILD_ENV += "ac_cv_func_realloc_0_nonnull=yes"
 
 # configure the unpacked source for building 32 and 64 bit version
 CONFIGURE_SCRIPT =	$(SOURCE_DIR)/configure
