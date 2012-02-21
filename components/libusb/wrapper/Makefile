@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -42,6 +42,9 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 # common targets
 $(SOURCE_DIR)/.prep:
 	$(TOUCH) $@
+
+$(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc
+	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
 
 download:
 
