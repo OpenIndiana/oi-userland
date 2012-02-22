@@ -1,0 +1,25 @@
+--- binutils-2.21.1.orig/gas/write.c	Wed Mar 16 01:36:12 2011
++++ binutils-2.21.1/gas/write.c	Mon Feb 13 23:58:24 2012
+@@ -782,6 +782,22 @@
+ 	    sym = newsym;
+ 	  }
+ 
++	/* Also convert fx_subsy if present */
++	if (fixp->fx_subsy != NULL)
++	  {
++	    symbolS *sub_sym = fixp->fx_subsy;
++	    while (symbol_equated_reloc_p (sub_sym)
++		   || S_IS_WEAKREFR (sub_sym))
++	      {
++		symbolS *newsym = symbol_get_value_expression (sub_sym)->X_add_symbol;
++		if (sub_sym == newsym)
++		  break;
++		fixp->fx_offset -= symbol_get_value_expression (sub_sym)->X_add_number;
++		fixp->fx_subsy = newsym;
++		sub_sym = newsym;
++	      }
++	  }
++
+ 	if (symbol_mri_common_p (sym))
+ 	  {
+ 	    fixp->fx_offset += S_GET_VALUE (sym);
