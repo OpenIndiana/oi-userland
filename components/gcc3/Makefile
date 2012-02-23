@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -60,7 +60,7 @@ CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
 CONFIGURE_OPTIONS +=	--enable-languages='c,c++,f77,objc'
 CONFIGURE_OPTIONS +=	--enable-shared
 # sparc and x86 use different assemblers
-CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/ccs/bin/as
+CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
 CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
 CONFIGURE_OPTIONS +=	$(CONFIGURE_OPTIONS.$(MACH))
 
