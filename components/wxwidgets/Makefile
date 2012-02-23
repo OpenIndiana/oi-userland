@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -44,6 +44,7 @@ $(BUILD_64): CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 # get rid of compiler path set in RUNPATH
 LDFLAGS += $(studio_NORUNPATH)
 LDFLAGS += $(CC_BITS)
+LDFLAGS += $(studio_CXXLIB_CSTD)
 
 CXXFLAGS += $(studio_XREGS)
 
