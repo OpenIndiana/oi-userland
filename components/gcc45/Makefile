@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -53,15 +53,20 @@ CONFIG_SHELL = /bin/sh
 
 CONFIGURE_PREFIX = /usr/gcc/4.5
 
-CONFIGURE_OPTIONS += --enable-languages="c,c++,fortran,objc" \
-	--enable-shared \
-	--with-gmp-include=/usr/include/gmp \
-	--with-mpfr-include=/usr/include/mpfr \
-	--prefix=$(CONFIGURE_PREFIX) \
-	--mandir=$(CONFIGURE_MANDIR) \
-	--infodir=$(CONFIGURE_PREFIX)/share/info \
-	--libexecdir=$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
+CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS +=	--enable-languages="c,c++,fortran,objc"
+CONFIGURE_OPTIONS +=	--enable-shared
+CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
+CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
+CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
+
+# sparc and x86 use different assemblers
+CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
+CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
+CONFIGURE_OPTIONS +=    $(CONFIGURE_OPTIONS.$(MACH))
+
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 
