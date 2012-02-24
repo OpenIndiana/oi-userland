@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -78,7 +78,7 @@ include $(WS_MAKE_RULES)/ips-buildinfo.mk
 COMPILER =		studio
 BITS =			32
 PYTHON_VERSION =	2.6
-PYTHON_VERSIONS =	2.6
+PYTHON_VERSIONS =	2.7 2.6
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -239,12 +239,23 @@ LINT =		$(lint.$(BITS))
 
 LD =		/usr/bin/ld
 
+PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
+PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64
+PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
+PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
+PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
+
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
 PYTHON.2.6.32 =	/usr/bin/python2.6
 PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
+
+PYTHON.2.7.32 =	/usr/bin/python2.7
+PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
@@ -254,6 +265,7 @@ PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 # Modules which are shipped by the OS but not with the core Python distribution
 # belong in vendor-packages.
 PYTHON_LIB= /usr/lib/python$(PYTHON_VERSION)/vendor-packages
+PYTHON_DATA= $(PYTHON_LIB)
 
 JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
 

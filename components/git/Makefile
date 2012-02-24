@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -44,7 +44,7 @@ CONFIGURE_PREFIX    =	/usr
 CONFIGURE_OPTIONS  +=	--without-openssl
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
-CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON.32)
+CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1

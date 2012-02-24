@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,6 +42,9 @@ include ../../make-rules/setup.py.mk
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
+	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
+	
 
 # Expected failures for test target:
 # 722 test cases, 17 errors, 5 failures, 56 skipped

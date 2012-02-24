@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/library/python-2/cherrypy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -30,5 +30,10 @@ set name=info.upstream value="CherryPy Team <team@cherrypy.org>"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-depend fmri=library/python-2/cherrypy-26 predicate=runtime/python-26 \
+depend fmri=library/python-2/cherrypy-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-26 \
+    type=conditional
+
+depend fmri=library/python-2/cherrypy-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-27 \
     type=conditional
