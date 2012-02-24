@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/library/python-2/coverage-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -39,7 +39,12 @@ license coverage.copyright license=BSD
 license jquery.copyright license=MIT-1
 license jquery.isonscreen.copyright license=MIT-2
 
-depend fmri=library/python-2/coverage@3.2-0.171 type=optional
+# force a dependency on the Python 2.6 runtime
+depend fmri=__TBD pkg.debug.depend.file=python2.6 \
+       pkg.debug.depend.path=usr/bin type=require
+
+# force a dependency on the coverage package
+depend fmri=library/python-2/coverage@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 dir path=usr
 dir path=usr/bin

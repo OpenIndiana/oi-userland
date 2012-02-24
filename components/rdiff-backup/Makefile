@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,11 @@ COMPONENT_PROJECT_URL=  http://www.nongnu.org/rdiff-backup/
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/setup.py.mk
+
+# just build a Python 2.6 version for now, when the 2.7 modules show up, we can
+# switch
+PYTHON_VERSIONS = 2.6
+PYTHON_DATA = /usr
 
 # common targets
 

@@ -18,14 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
+$(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.installed:		PYTHON_VERSION=2.6
+$(BUILD_DIR)/%-2.7/.installed:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
@@ -37,6 +39,14 @@ INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 
 PYTHON_ENV =	CC="$(CC)"
 PYTHON_ENV +=	CFLAGS="$(CFLAGS)"
+
+# if we are building python 2.7 support, build it and install it first
+# so that python 2.6 is installed last and is the canonical version.
+# when we switch to 2.7 as the default, it should go last.
+ifneq ($(findstring 2.7,$(PYTHON_VERSIONS)),)
+$(BUILD_DIR)/%-2.6/.build:	$(BUILD_DIR)/%-2.7/.build
+$(BUILD_DIR)/%-2.6/.installed:	$(BUILD_DIR)/%-2.7/.installed
+endif
 
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
@@ -51,6 +61,10 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 
 COMPONENT_INSTALL_ARGS +=	--root $(PROTO_DIR) 
 COMPONENT_INSTALL_ARGS +=	--install-lib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS +=	--install-purelib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS +=	--install-platlib=$(PYTHON_LIB)
+COMPONENT_INSTALL_ARGS +=	--install-data=$(PYTHON_DATA)
+COMPONENT_INSTALL_ARGS +=	--force
 
 # install the built source into a prototype area
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built

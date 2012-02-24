@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -39,6 +39,12 @@ PATCH_LEVEL = 0
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+# build modules PIC (needed for Python 2.7)
+CFLAGS += $(CC_PIC)
+
+# to make sure that the docs get installed in the right place.
+PYTHON_DATA = /usr
 
 # common targets
 build:		$(BUILD_32_and_64)

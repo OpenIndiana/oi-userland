@@ -53,6 +53,7 @@ CONFIGURE_ENV +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=yes
+CONFIGURE_OPTIONS +=	--enable-python27=yes
 CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
@@ -63,6 +64,7 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
 	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python26
+	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python27
 
 # The test infrastructure doesn't run in a VPATHed environment.
 COMPONENT_PRE_TEST_ACTION = \
