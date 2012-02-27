@@ -55,7 +55,7 @@ CONFIGURE_OPTIONS  +=           --disable-rpath
 CONFIGURE_OPTIONS  +=           --with-x
 CONFIGURE_OPTIONS  +=           --with-pic
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf)
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -if)
 
 build: $(BUILD_32_and_64)
 
