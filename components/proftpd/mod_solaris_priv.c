@@ -2,7 +2,7 @@
  * ProFTPD - FTP server daemon
  * Copyright (c) 1997, 1998 Public Flood Software
  * Copyright (c) 2003-2010 The ProFTPD Project team
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -169,6 +169,12 @@ static void set_privs(void) {
 
     /* Needed to access /dev/urandom. */
     priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_DEVICES, NULL);
+
+    /* Needed for pam_unix_cred to chown files. */
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_CHOWN_SELF, NULL);
+
+    /* Needed to access /var/adm/wtmpx. */
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_DAC_WRITE, NULL);
 }
 
 /* Setup priviledges before the user responds to the user prompt
@@ -181,13 +187,53 @@ MODRET solaris_priv_pre_pass(cmd_rec *cmd) {
     return PR_DECLINED(cmd);
 }
 
+static priv_set_t* allocset(void) {
+  priv_set_t* ret;
+
+  if ((ret = priv_allocset()) == NULL) {
+    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": priv_allocset: %s",
+      strerror(errno));
+    pr_signals_unblock();
+    end_login(1);
+  }
+
+  return ret;
+}
+
+static void delset(priv_set_t *sp, const char *priv) {
+  if (priv_delset(sp, priv) != 0) {
+    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": priv_delset: %s",
+      strerror(errno));
+    pr_signals_unblock();
+    end_login(1);
+  }
+}
+
+static void addset(priv_set_t *sp, const char *priv) {
+  if (priv_addset(sp, priv) != 0) {
+    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": priv_addset: %s",
+      strerror(errno));
+    pr_signals_unblock();
+    end_login(1);
+  }
+}
+
+static void _setppriv(priv_op_t op, priv_ptype_t which, priv_set_t *set) {
+  if (setppriv(op, which, set) != 0) {
+    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": setppriv: %s",
+      strerror(errno));
+    pr_signals_unblock();
+    end_login(1);
+  }
+}
+
 /* The POST_CMD handler for "PASS" is only called after PASS has
  * successfully completed, which means authentication is successful,
  * so we can "tweak" our root access down to almost nothing.
  */
 MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   int res = 0;
-  priv_set_t *p, *i;
+  priv_set_t *ps = NULL;
 
   if (!use_privs)
     return PR_DECLINED(cmd);
@@ -203,56 +249,55 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
    * never need.
    */
 
-  i = priv_allocset();
-  priv_basicset(i);
-  priv_delset(i, PRIV_PROC_EXEC);
-  priv_delset(i, PRIV_PROC_FORK);
-  priv_delset(i, PRIV_PROC_INFO);
-  priv_delset(i, PRIV_PROC_SESSION);
-  setppriv(PRIV_SET, PRIV_INHERITABLE, i);
+  ps = allocset();
+  priv_basicset(ps);
+  delset(ps, PRIV_PROC_EXEC);
+  delset(ps, PRIV_PROC_FORK);
+  delset(ps, PRIV_PROC_INFO);
+  delset(ps, PRIV_PROC_SESSION);
+  _setppriv(PRIV_SET, PRIV_INHERITABLE, ps);
 
-  p = priv_allocset();
-  priv_basicset(p);
+  priv_basicset(ps);
 
-  priv_addset(p, PRIV_NET_PRIVADDR);
-  priv_addset(p, PRIV_PROC_AUDIT);
+  addset(ps, PRIV_NET_PRIVADDR);
+  addset(ps, PRIV_PROC_AUDIT);
 
-  priv_delset(p, PRIV_PROC_EXEC);
-  priv_delset(p, PRIV_PROC_FORK);
-  priv_delset(p, PRIV_PROC_INFO);
-  priv_delset(p, PRIV_PROC_SESSION);
+  delset(ps, PRIV_PROC_EXEC);
+  delset(ps, PRIV_PROC_FORK);
+  delset(ps, PRIV_PROC_INFO);
+  delset(ps, PRIV_PROC_SESSION);
 
   /* If the proftpd process is not running as root, but as user ftp,
    * then this is necessary in order to make the setreuid work.
    * Without this, the setreuid would fail. The PRIV_PROC_SETID privilege 
    * is removed afterwards.
    */
-  priv_addset(p, PRIV_PROC_SETID);
+  addset(ps, PRIV_PROC_SETID);
 
   /* Add any of the configurable privileges. */
   if (solaris_priv_flags & PRIV_USE_FILE_CHOWN)
-    priv_addset(p, PRIV_FILE_CHOWN);
+    addset(ps, PRIV_FILE_CHOWN);
 
   if (solaris_priv_flags & PRIV_USE_FILE_CHOWN_SELF)
-    priv_addset(p, PRIV_FILE_CHOWN_SELF);
+    addset(ps, PRIV_FILE_CHOWN_SELF);
 
   if (solaris_priv_flags & PRIV_USE_DAC_READ)
-    priv_addset(p, PRIV_FILE_DAC_READ);
+    addset(ps, PRIV_FILE_DAC_READ);
 
   if (solaris_priv_flags & PRIV_USE_DAC_WRITE)
-    priv_addset(p, PRIV_FILE_DAC_WRITE);
+    addset(ps, PRIV_FILE_DAC_WRITE);
 
   if (solaris_priv_flags & PRIV_USE_DAC_SEARCH)
-    priv_addset(p, PRIV_FILE_DAC_SEARCH);
+    addset(ps, PRIV_FILE_DAC_SEARCH);
 
   if (solaris_priv_flags & PRIV_USE_FILE_OWNER)
-    priv_addset(p, PRIV_FILE_OWNER);
+    addset(ps, PRIV_FILE_OWNER);
 
   if (solaris_priv_flags & PRIV_DROP_FILE_WRITE)
-    priv_delset(p, PRIV_FILE_WRITE);
+    delset(ps, PRIV_FILE_WRITE);
 
-  res = setppriv(PRIV_SET, PRIV_PERMITTED, p);
-  res = setppriv(PRIV_SET, PRIV_EFFECTIVE, p);
+  _setppriv(PRIV_SET, PRIV_PERMITTED, ps);
+  _setppriv(PRIV_SET, PRIV_EFFECTIVE, ps);
 
   if (setreuid(session.uid, session.uid) == -1) {
     pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": setreuid: %s",
@@ -262,21 +307,17 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   }
 
   if (!(solaris_priv_flags & PRIV_USE_SETID)) {
-    priv_delset(p, PRIV_PROC_SETID);
-    res = setppriv(PRIV_SET, PRIV_PERMITTED, p);
-    res = setppriv(PRIV_SET, PRIV_EFFECTIVE, p);
+    delset(ps, PRIV_PROC_SETID);
+    _setppriv(PRIV_SET, PRIV_PERMITTED, ps);
+    _setppriv(PRIV_SET, PRIV_EFFECTIVE, ps);
   }
+
+  priv_freeset(ps);
 
   pr_signals_unblock();
 
-  if (res != -1) {
-    /* That's it!  Disable all further id switching */
-    session.disable_id_switching = TRUE;
-
-  } else {
-    pr_log_pri(PR_LOG_NOTICE, MOD_SOLARIS_PRIV_VERSION ": attempt to configure "
-      "capabilities failed, reverting to normal operation");
-  }
+  /* That's it!  Disable all further id switching */
+  session.disable_id_switching = TRUE;
 
   return PR_DECLINED(cmd);
 }
