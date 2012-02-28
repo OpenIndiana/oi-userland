@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 export PREFIX=""
@@ -112,8 +112,8 @@ fi
 cd ${BUILDDIR}/build/lib
 ${CP} -fp libstdcxx4.so.4.2.1 ${LIBDIR}/
 cd ${LIBDIR}
-elfedit -e 'dyn:delete RUNPATH' libstdcxx4.so.4.2.1
-elfedit -e 'dyn:delete RPATH' libstdcxx4.so.4.2.1
+/usr/bin/elfedit -e 'dyn:delete RUNPATH' libstdcxx4.so.4.2.1
+/usr/bin/elfedit -e 'dyn:delete RPATH' libstdcxx4.so.4.2.1
 chmod 0755 libstdcxx4.so.4.2.1
 
 if [ -L libstdcxx4.so.4 ] ; then
