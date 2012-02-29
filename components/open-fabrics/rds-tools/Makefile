@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -33,9 +33,13 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include ../ofed.mk
 
+CPPFLAGS +=	-I$(PROTO_DIR)/usr/include
 CFLAGS +=	-O2 -Wall -D_XOPEN_SOURCE=500 -D__EXTENSIONS__ $(CPPFLAGS)
 
-LIBS +=	-lsocket -lnsl -llgrp -lkstat
+LIBS +=	-lsocket -lnsl -llgrp -lkstat -libverbs
+
+COMPONENT_PREP_ACTION = \
+	cp rds-vendor.c $(@D)/
 
 CLEANUP_DIRS =	$(PROTOUSRBINDIR)/net
 

@@ -15,21 +15,36 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  #include <sys/stat.h>
  #include <sys/poll.h>
  #include <ctype.h>
-@@ -22,8 +28,13 @@
+@@ -22,10 +28,16 @@
  #include <fcntl.h>
  #include <sched.h>
  #include <getopt.h>
 +#if !(defined(__SVR4) && defined(__sun))
  #include <byteswap.h>
  #include "rds.h"
+-
 +#else
-+#include <infiniband/ofa_solaris.h>
 +#include <sys/rds.h>
 +#endif
- 
  #include "pfhack.h"
++#if defined(__SVR4) && defined(__sun)
++#include <infiniband/ofa_solaris.h>
++#endif
  
-@@ -110,6 +121,7 @@
+ /*
+  *
+@@ -102,6 +114,10 @@
+ 
+ #define NR_STATS S__LAST
+ 
++#if defined(__SVR4) && defined(__sun)
++int sol_ioctl(int, int, struct rds_info_arg *, socklen_t *, int *);
++#endif
++
+ /*
+  * Parents share a mapped array of these with their children.  Each child
+  * gets one.  It's used to communicate between the child and the parent
+@@ -110,6 +126,7 @@
  struct child_control {
  	pid_t pid;
  	int ready;
@@ -37,7 +52,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	struct timeval start;
  	struct counter cur[NR_STATS];
  	struct counter last[NR_STATS];
-@@ -254,7 +266,20 @@
+@@ -254,7 +271,20 @@
  
  	die("invalid host name or dotted quad '%s'\n", ptr);
  }
@@ -58,7 +73,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  static void usage(void)
  {
          fprintf(stderr, "rds-stress version %s\n", RDS_VERSION);
-@@ -281,6 +306,9 @@
+@@ -281,6 +311,9 @@
  	" -c                measure cpu use with per-cpu soak processes\n"
  	" -V                trace execution\n"
  	" -z                print a summary at end of test only\n"
@@ -68,7 +83,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	"\n"
  	"Example:\n"
  	"  recv$ rds-stress\n"
-@@ -310,7 +338,7 @@
+@@ -310,7 +343,7 @@
  static void check_parent(pid_t pid)
  {
  	if (pid != getppid())
@@ -77,7 +92,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  }
  
  /*
-@@ -334,6 +362,7 @@
+@@ -334,6 +367,7 @@
  		msg_pattern[i] = k;
  }
  
@@ -85,7 +100,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  #if __BYTE_ORDER == __LITTLE_ENDIAN
  #define htonll(x)	bswap_64(x)
  #define ntohll(x)	bswap_64(x)
-@@ -341,6 +370,7 @@
+@@ -341,6 +375,7 @@
  #define htonll(x)	(x)
  #define ntohll(x)	(x)
  #endif
@@ -93,7 +108,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  
  static void encode_hdr(struct header *dst, const struct header *hdr)
  {
-@@ -584,7 +614,11 @@
+@@ -584,7 +619,11 @@
  	if (opts->receive_addr == 0)
  		return 1;
  
@@ -105,7 +120,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	sin.sin_port = htons(opts->starting_port);
  	sin.sin_addr.s_addr = htonl(opts->receive_addr);
  
-@@ -677,7 +711,11 @@
+@@ -677,7 +716,11 @@
  	size = sizeof(struct rdma_key_o_meter)
  			+ 2 * nr_tasks * sizeof(*kt)
  			+ 2 * RDMA_MAX_TRACKED_KEYS * sizeof(*ks);
@@ -117,7 +132,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (base == MAP_FAILED)
  		die_errno("alloc_rdma_buffers: mmap failed");
  
-@@ -828,7 +866,7 @@
+@@ -828,7 +871,7 @@
  	}
  
  	if (!failed)
@@ -126,7 +141,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  			(unsigned long long) pattern, addr);
  }
  
-@@ -865,7 +903,11 @@
+@@ -865,7 +908,11 @@
  	/* We use mmap here rather than malloc, because it is always
  	 * page aligned. */
  	len = 2 * opts->nr_tasks * opts->req_depth * (opts->rdma_vector * opts->rdma_size) + sys_page_size;
@@ -138,7 +153,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (base == MAP_FAILED)
  		die_errno("alloc_rdma_buffers: mmap failed");
  	memset(base, 0x2f, len);
-@@ -915,17 +957,16 @@
+@@ -915,17 +962,16 @@
  	if (RDMA_OP_READ == hdr->rdma_op) {
  		if (opt.verify)
  			rds_fill_buffer(rdma_addr, rdma_size, hdr->rdma_pattern);
@@ -162,7 +177,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	}
  }
  
-@@ -947,7 +988,7 @@
+@@ -947,7 +993,7 @@
  		die("Unexpected RDMA op %u in request\n", in_hdr->rdma_op);
  
  
@@ -171,7 +186,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		in_hdr->rdma_op == RDMA_OP_WRITE? "write to" : "read from",
  		rdma_size,
  		(unsigned long long) in_hdr->rdma_addr,
-@@ -1007,6 +1048,9 @@
+@@ -1007,6 +1053,9 @@
  	t->drain_rdmas = 0;
  }
  
@@ -181,7 +196,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  #define MSG_MAXIOVLEN 2
  
  /*
-@@ -1560,7 +1604,12 @@
+@@ -1560,7 +1609,12 @@
  	struct timeval start;
          int do_work = opts->simplex ? active : 1;
  
@@ -194,7 +209,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	sin.sin_port = htons(opts->starting_port + 1 + id);
  	sin.sin_addr.s_addr = htonl(opts->receive_addr);
  
-@@ -1572,7 +1621,11 @@
+@@ -1572,7 +1626,11 @@
  	for (i = 0; i < opts->nr_tasks; i++) {
  		tasks[i].nr = i;
  		tasks[i].src_addr = sin;
@@ -206,7 +221,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		tasks[i].dst_addr.sin_addr.s_addr = htonl(opts->send_addr);
  		tasks[i].dst_addr.sin_port = htons(opts->starting_port + 1 + i);
  		tasks[i].send_time = alloca(opts->req_depth * sizeof(struct timeval));
-@@ -1625,6 +1678,10 @@
+@@ -1625,6 +1683,10 @@
  				;
  		}
  
@@ -217,7 +232,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		/* keep the pipeline full */
  		can_send = !!(pfd.revents & POLLOUT);
  		for (i = 0, t = tasks; i < opts->nr_tasks; i++, t++) {
-@@ -1665,8 +1722,12 @@
+@@ -1665,8 +1727,12 @@
  	uint32_t i;
  
  	len = opts->nr_tasks * sizeof(*ctl);
@@ -230,7 +245,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (ctl == MAP_FAILED)
  		die("mmap of %u child control structs failed", opts->nr_tasks);
  
-@@ -1699,7 +1760,7 @@
+@@ -1699,7 +1765,7 @@
  			continue;
  		pid = waitpid(-1, NULL, WNOHANG);
  		if (pid)
@@ -239,7 +254,149 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		sleep(1);
  		i--; /* try this child again */
  	}
-@@ -1967,7 +2028,7 @@
+@@ -1823,6 +1889,7 @@
+ 
+ 	if (disable)
+ 		return;
++#if !(defined(__SVR4) && defined(__sun))
+ 	if ((fp = fopen("/proc/stat", "r")) == NULL) {
+ 		fprintf(stderr, "Cannot open /proc/stat (%s) - "
+ 				"not printing cpu stats\n",
+@@ -1856,10 +1923,37 @@
+ 		}
+ 	}
+ 	fclose(fp);
++#else
++#define NSEC_TO_TICK(v)		(v * sysconf(_SC_CLK_TCK)/1000000000)
++	sol_cpu_stats_t		stats;	
+ 
++	solaris_init();
++	if ((sol_get_cpu_stats(&stats)) < 0) {
++		disable = 1;
++		return;
++	}
++	solaris_fini();
++	current.times[0] = stats.t_user;
++	current.times[1] = 0;
++	current.times[2] = stats.t_kernel;
++	current.times[3] = stats.t_idle;
++	current.times[4] = stats.t_iowait;
++	current.times[5] = 0;
++	current.times[6] = 0;
++	current.times[7] = 0;
++	current.intr = NSEC_TO_TICK(stats.t_intr);	/* NSEC_TO_TICK */
++
++#endif
++
+ 	if (initialize) {
++#if !(defined(__SVR4) && defined(__sun))
+ 		printf(",user:percent,system:percent,idle:percent"
+ 		       ",irq:percent,intr:count");
++#else
++		/* Solaris kstat doesn't provide irq/softirq info. */
++		printf(",user:percent,system:percent,idle:percent"
++		       ",intr:count");
++#endif
+ 	} else {
+ 		struct sys_stats sys;
+ 		unsigned long sum = 0;
+@@ -1884,6 +1978,7 @@
+ 		 *  5	irq
+ 		 *  6	softirq
+ 		 */
++#if !(defined(__SVR4) && defined(__sun))
+ 		printf(",%f,%f,%f,%f,%Lu",
+ 			(sys.times[0] + sys.times[1]) * scale,
+ 			sys.times[2] * scale,
+@@ -1890,6 +1985,14 @@
+ 			(sys.times[3] + sys.times[4]) * scale,
+ 			(sys.times[5] + sys.times[6]) * scale,
+ 			sys.intr);
++#else
++		/* Solaris kstat doesn't provide irq/softirq info. */
++		printf(",%f,%f,%f,%Lu",
++			(sys.times[0] + sys.times[1]) * scale,
++			sys.times[2] * scale,
++			(sys.times[3] + sys.times[4]) * scale,
++			sys.intr);
++#endif
+ 	}
+ 	prev = current;
+ }
+@@ -1903,6 +2006,10 @@
+ 	static socklen_t buflen = 0;
+ 	static int sock_fd = -1;
+ 	int i, count, item_size;
++#if defined(__SVR4) && defined(__sun)
++	socklen_t len;
++	struct rds_info_arg arg;
++#endif
+ 
+ 	if (sock_fd < 0) {
+ 		sock_fd = socket(pf, SOCK_SEQPACKET, 0);
+@@ -1912,6 +2019,7 @@
+ 
+ 	/* We should only loop once on the first call; after that the
+ 	 * buffer requirements for RDS counters should not change. */
++#if !(defined(__SVR4) && defined(__sun))
+ 	while ((item_size = getsockopt(sock_fd, sol, RDS_INFO_COUNTERS, curr, &buflen)) < 0) {
+ 		if (errno != ENOSPC)
+ 			die_errno("getsockopt(RDS_INFO_COUNTERS) failed");
+@@ -1919,7 +2027,29 @@
+ 		if (!curr)
+ 			die_errno("Cannot allocate buffer for stats counters");
+ 	}
++#else
++	int retcode;
+ 
++	retcode = sol_ioctl(
++	    sock_fd, RDS_INFO_COUNTERS, &arg, &buflen, &item_size);
++	if (retcode != 0) {
++		if (retcode == 1) {
++			die_errno("ioctl(RDS_INFO_COUNTERS) failed");
++		} else if (retcode == 2) {
++			fprintf(stderr, "%s: Unable to allocate memory "
++			    "for %u bytes of info: %s\n",
++			    "rds-stress", buflen, strerror(errno));
++			return;
++		} else {
++			fprintf(stderr, "%s: Unable to access "
++			    "RDS_INFO_COUNTERS statistics: %s\n",
++			    "rds-stress", strerror(errno));
++			return;
++		}
++	}
++
++#endif
++
+ 	if (item_size > sizeof(*ctr))
+ 		die("Bad counter item size in RDS_INFO_COUNTERS (got %d, max %zd)\n",
+ 				item_size, sizeof(*ctr));
+@@ -1932,8 +2062,11 @@
+ 	}
+ 
+ 	for (i = 0; i < count; ++i)
++#if !(defined(__SVR4) && defined(__sun))
+ 		memcpy(ctr + i, curr + i * item_size, item_size);
+-
++#else
++		memcpy(ctr + i, ((void *)(uintptr_t)arg.datap) + i * item_size, item_size);
++#endif
+ 	gettimeofday(&now, NULL);
+ 
+ 	if (initialize) {
+@@ -1957,6 +2090,10 @@
+ 	memcpy(prev, ctr, count * sizeof(*ctr));
+ 	last_ts = now;
+ 
++#if defined(__SVR4) && defined(__sun)
++	free((void *)(uintptr_t)arg.datap);
++#endif
++
+ 	get_stats(initialize);
+ }
+ 
+@@ -1967,7 +2104,7 @@
  
  	pid = waitpid(-1, &status, wflags);
  	if (pid < 0)
@@ -248,7 +405,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (pid == 0)
  		return 0;
  
-@@ -1975,15 +2036,15 @@
+@@ -1975,15 +2112,15 @@
  		if (WEXITSTATUS(status) == 0)
  			return 1;
  		die("child pid %u exited with status %d\n",
@@ -267,7 +424,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  }
  
  static void release_children_and_wait(struct options *opts,
-@@ -2139,7 +2200,12 @@
+@@ -2139,7 +2276,12 @@
  	control_fd = -1;
  
  	if (nr_running) {
@@ -280,7 +437,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  			kill(ctl[i].pid, SIGTERM);
  		stop_soakers(soak_arr);
  	}
-@@ -2517,7 +2583,11 @@
+@@ -2517,7 +2659,11 @@
  	/* an extra terminating entry which will be all 0s */
  	len = (nr_soak + 1) * sizeof(struct soak_control);
  	soak_arr = mmap(NULL, len, PROT_READ|PROT_WRITE,
@@ -292,7 +449,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (soak_arr == MAP_FAILED)
  		die("mmap of %ld soak control structs failed", nr_soak);
  
-@@ -2589,6 +2659,7 @@
+@@ -2589,6 +2735,7 @@
  { "rtprio",		no_argument,		NULL,	'R'	},
  { "verify",		no_argument,		NULL,	'v'	},
  { "trace",		no_argument,		NULL,	'V'	},
@@ -300,7 +457,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  
  { "rdma-use-once",	required_argument,	NULL,	OPT_RDMA_USE_ONCE },
  { "rdma-use-get-mr",	required_argument,	NULL,	OPT_RDMA_USE_GET_MR },
-@@ -2652,7 +2723,7 @@
+@@ -2652,7 +2799,7 @@
  	while(1) {
  		int c, index;
  
@@ -309,7 +466,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  				long_options, &index);
  		if (c == -1)
  			break;
-@@ -2711,6 +2782,10 @@
+@@ -2711,6 +2858,10 @@
  			case 'V':
  				opts.tracing = 1;
  				break;
@@ -320,7 +477,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  			case OPT_USE_CONG_MONITOR:
  				opts.use_cong_monitor = parse_ull(optarg, 1);
  				break;
-@@ -2786,6 +2861,7 @@
+@@ -2786,6 +2937,7 @@
  	if (opts.rdma_size && 0)
  		opts.rdma_size = (opts.rdma_size + 4095) & ~4095;
  
@@ -346,7 +503,7 @@ diff -r -u /tmp/rds-tools-2.0.4/pfhack.h rds-tools-2.0.7/pfhack.h
 diff -r -u /tmp/rds-tools-2.0.4/rds-info.c rds-tools-2.0.7/rds-info.c
 --- /tmp/rds-tools-2.0.4/rds-info.c	Wed Aug  4 15:25:10 2010
 +++ rds-tools-2.0.7/rds-info.c	Thu Feb 24 13:27:51 2011
-@@ -42,16 +42,27 @@
+@@ -42,16 +42,28 @@
  #include <sys/types.h>
  #include <sys/socket.h>
  #include <errno.h>
@@ -361,6 +518,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-info.c rds-tools-2.0.7/rds-info.c
  
 +#if defined(__SVR4) && defined(__sun)
 +#include <sys/rds.h>
++#include <infiniband/ofa_solaris.h>
 +#else
  #include "rds.h"
 +#endif
@@ -375,7 +533,18 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-info.c rds-tools-2.0.7/rds-info.c
  
  #define min(a, b) (a < b ? a : b)
  #define array_size(foo) (sizeof(foo) / sizeof(foo[0]))
-@@ -234,8 +245,10 @@
+@@ -76,6 +88,10 @@
+ 
+ char *progname = "rds-info";
+ 
++#if defined(__SVR4) && defined(__sun)
++int sol_ioctl(int, int, struct rds_info_arg *, socklen_t *, int *);
++#endif
++
+ /* Like inet_ntoa, but can be re-entered several times without clobbering
+  * the previously returned string. */
+ static const char *paddr(int af, const void *addrp)
+@@ -234,8 +250,10 @@
  		print_msgs, "Send", 0 },
  	['t'] = { RDS_INFO_RETRANS_MESSAGES, "retransmit queue messages",
  		  print_msgs, "Retransmit", 0 },
@@ -386,18 +555,17 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-info.c rds-tools-2.0.7/rds-info.c
  	['I'] = { RDS_INFO_IB_CONNECTIONS, "IB transport connections",
  		  print_ib_conns, NULL, 0 },
  };
-@@ -266,6 +279,10 @@
+@@ -266,6 +284,9 @@
  	char optstring[258] = "v+";
  	int given_options = 0;
  	socklen_t len = 0;
 +#if defined(__SVR4) && defined(__sun)
-+	socklen_t ulen;
 +	struct rds_info_arg arg;
 +#endif
  	void *data = NULL;
  	int fd;
  	int each;
-@@ -322,6 +339,7 @@
+@@ -322,6 +343,7 @@
  		    (given_options && !infos[i].option_given))
  			continue;
  
@@ -405,25 +573,33 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-info.c rds-tools-2.0.7/rds-info.c
  		/* read in the info until we get a full snapshot */
  		while ((each = getsockopt(fd, sol, infos[i].opt_val, data,
  				   &len)) < 0) {
-@@ -345,15 +363,60 @@
+@@ -345,15 +367,47 @@
  				return 1;
  			}
  		}
 +#else
-+		/* 1st call gets the length of the data available */
-+		ulen = 0;
-+		bzero(&arg, sizeof (struct rds_info_arg));
-+		arg.lenp = (uint64_t)(uintptr_t)&ulen;
-+		arg.datap = NULL;
-+		each = ioctl(fd, infos[i].opt_val, &arg);
-+		if ((each < 0) && (errno != ENOSPC)) {
-+			verbosef(0, stderr, "%s: Unable get statistics: %s\n",
-+			    progname, strerror(errno));
-+			return 1;
-+		}
++		int retcode;
  
++		retcode = sol_ioctl(fd, infos[i].opt_val, &arg, &len, &each);
++		if (retcode != 0) {
++			if (retcode == 1) {
++				fprintf(stderr, "%s: Unable get statistics: "
++				    "%s\n", progname, strerror(errno));
++				return 1;
++			} else if (retcode == 2) {
++				fprintf(stderr, "%s: Unable to allocate memory"
++				    " for %u bytes of info: %s\n",
++				    progname, len, strerror(errno));
++				return 1;
++			} else {
++				fprintf(stderr, "%s: Unable to get statistics:"
++				    " %s\n", progname, strerror(errno));
++				return 1;
++			}
++		}
++
 +		/* No data at the driver */
-+		if (ulen == 0)
++		if (len == 0)
 +			invalid_opt = 1;;
 +#endif
 +
@@ -432,29 +608,9 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-info.c rds-tools-2.0.7/rds-info.c
  
 +#if !(defined(__SVR4) && defined(__sun))
  		infos[i].print(data, each, len, infos[i].extra);
+-
 +#else
-+		do {
-+			arg.datap = (uint64_t)(uintptr_t)realloc(
-+			    (char *)(uintptr_t)arg.datap, ulen);
-+			if (arg.datap == NULL) {
-+			    verbosef(0, stderr, "%s: Unable to allocate memory "
-+				"for %u bytes of info: %s\n",
-+				progname, ulen, strerror(errno));
-+				return 1;
-+			}
- 
-+			/* 2nd call gets the data */
-+			len = ulen;
-+			each = ioctl(fd, infos[i].opt_val, &arg);
-+			if ((each < 0) && (errno != ENOSPC)) {
-+				verbosef(0, stderr,
-+				    "%s: Unable get statistics: %s\n",
-+				    progname, strerror(errno));
-+				return 1;
-+			}
-+		} while (ulen > len);
-+
-+		infos[i].print((void *)(uintptr_t)arg.datap, each, ulen,
++		infos[i].print((void *)(uintptr_t)arg.datap, each, len,
 +		    infos[i].extra);
 +#endif
  		if (given_options && --given_options == 0)
@@ -985,7 +1141,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-ping.c rds-tools-2.0.7/rds-ping.c
 diff -r -u /tmp/rds-tools-2.0.4/Makefile.in rds-tools-2.0.7/Makefile.in
 --- /tmp/rds-tools-2.0.4/Makefile.in	Wed Aug  4 15:25:11 2010
 +++ rds-tools-2.0.7/Makefile.in	Thu Feb 24 13:27:51 2011
-@@ -4,10 +4,14 @@
+@@ -4,18 +4,22 @@
  mandir		= $(DESTDIR)@mandir@
  incdir		= $(DESTDIR)@includedir@
  
@@ -998,11 +1154,12 @@ diff -r -u /tmp/rds-tools-2.0.4/Makefile.in rds-tools-2.0.7/Makefile.in
 +CFLAGS += -O2 -Wall -Iinclude
 +CPPFLAGS += -D_XOPEN_SOURCE=500 -D__EXTENSIONS__ \
 +	-DDEBUG_EXE -DRDS_VERSION=\"@VERSION@\" -MD -MP -MF $(@D)/.$(basename $(@F)).d
-+LDFLAGS += -lsocket -lnsl -llgrp
++LDFLAGS += -libverbs -lsocket -lnsl -llgrp
  
  HEADERS = kernel-list.h pfhack.h include/rds.h
- COMMON_SOURCES = pfhack.c
-@@ -15,7 +19,7 @@
+-COMMON_SOURCES = pfhack.c
++COMMON_SOURCES = pfhack.c rds-vendor.c
+ SOURCES = $(addsuffix .c,$(PROGRAMS)) $(COMMON_SOURCES)
  CLEAN_OBJECTS = $(addsuffix .o,$(PROGRAMS)) $(subst .c,.o,$(COMMON_SOURCES))
  
  # This is the default
@@ -1133,7 +1290,7 @@ diff -r -u /tmp/rds-tools-2.0.4/configure rds-tools-2.0.7/configure
 diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
 --- /tmp/rds-tools-2.0.4/rds-stress.1	Wed Aug  4 15:25:11 2010
 +++ rds-tools-2.0.7/rds-stress.1	Thu Feb 24 13:27:52 2011
-@@ -1,99 +1,103 @@
+@@ -1,99 +1,102 @@
 -.Dd May 15, 2007
 -.Dt RDS-STRESS 1
 -.Os
@@ -1165,8 +1322,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
 +.nf
 +rds-stress [-p port_number] -r [receive_address] [-s send_address]
 +      [-a ack_bytes] [-q request_bytes] [-D rdma_bytes]
-+      [-d queue_depth] [-t Ar nr_tasks] [-c] [-R] [-V] [-v] [-o] 
-+      [-I iovecs] -M [nr] [-z] [-g lgrpid]
++      [-d queue_depth] [-t nr_tasks] [-c] [-R] [-V] [-v]
 +.fi
  
 -.Sh DESCRIPTION
@@ -1283,7 +1439,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  RDSv3 is capable of transmitting part of a message via RDMA directly from
  application buffer to application buffer. This option enables RDMA support
  in rds-stress: request packets include parameters for an RDMA READ or WRITE
-@@ -100,20 +104,25 @@
+@@ -100,20 +103,25 @@
  operation, which the receiving process executes at the time the ACK packet
  is sent.
  See section "Message Sizes" below.
@@ -1314,7 +1470,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  This causes rds-stress to create child tasks which just consume CPU cycles.
  One task is created for each CPU in the system.  First each child observes the
  maximum rate at which it can consume cycles.  This means that this option
-@@ -121,50 +130,78 @@
+@@ -121,50 +129,67 @@
  use of the system by observing the lesser rate at which the children consume
  cycles.  This option is *not* shared between the active and passive instances.
  It must be specified on each rds-stress command line.
@@ -1334,17 +1490,6 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
 -.El
 -.Pp
 +.TP
-+\fB\-o
-+Datagrams sent one way only (default is both)
-+.TP
-+\fB\-I iovecs
-+RDMA: number of user buffers to target (default is 1, max is 512)
-+.TP
-+\fB\-M nr
-+RDMA: mode (0=readwrite,1=readonly,2=writeonly)
-+.TP
-+\fB\-g lgrpid
-+bind the process to the specified lgrp
 +.PP
  
 -.Ss Message Sizes
@@ -1412,7 +1557,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  This is the percentage of available CPU resources on this machine that are being
  consumed since rds-stress started running.  It will show -1.00 if -c is not
  given.  It is calculated based on the amount of CPU resources that CPU soaking
-@@ -171,4 +208,3 @@
+@@ -171,4 +196,3 @@
  tasks are able to consume.  This lets it measure CPU use by the system, say in
  interrupt handlers, that task-based CPU accounting does not include.
  For this to work rds-stress must be started with -c on an idle system.

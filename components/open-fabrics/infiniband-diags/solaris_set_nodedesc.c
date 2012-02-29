@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -435,7 +435,8 @@ main(int argc, char **argv)
 	struct utsname	uts_name;
 	uint64_t	hca_guid;
 	boolean_t	guid_inited = B_FALSE;
-	extern int ibdebug;
+	extern int 	ibdebug;
+	char		nodename[64];
 
 	static char const str_opts[] = "N:H:G:vd";
 	static const struct option long_opts[] = {
@@ -539,10 +540,23 @@ main(int argc, char **argv)
 			rc = -1;
 			goto free_and_ret;
 		}
-	}
 
-	rc = update_nodedesc((char *)uts_name.nodename, NULL,
-	    0, NODEDESC_UPDATE_STRING);
+		/*
+		 * The common nodedesc string can have max 64 chars.
+		 * We can accomodate 63 chars from uname and alike
+		 * option -N, we append a space to the nodename.
+		 */
+		(void) strncpy(nodename, uts_name.nodename, 63);
+		if (nodename[strlen(nodename)] != ' ')
+			(void) strncat(nodename, " ", 1);
+
+		rc = update_nodedesc(nodename, NULL, 0,
+		    NODEDESC_UPDATE_STRING);
+		if (rc) {
+			IBERROR("write common node descriptor failed");
+			rc = -1;
+		}
+	}
 
 free_and_ret:
 	if (nodedesc)

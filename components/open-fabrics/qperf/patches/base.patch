@@ -31,27 +31,25 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/socket.c qperf-0.4.6/src/socket.c
 diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 --- /tmp/730054/qperf-0.4.6/src/qperf.c	Mon Aug 31 00:00:40 2009
 +++ qperf-0.4.6/src/qperf.c	Mon Nov  8 11:10:17 2010
-@@ -53,7 +53,19 @@
+@@ -53,7 +53,17 @@
  #include <sys/utsname.h>
  #include "qperf.h"
  
 +#if (defined(__SVR4) && defined(__sun))
 +#include <sys/filio.h>
 +#include <limits.h>	/* times() */
-+#include <kstat.h>	/* libkstat */
 +#include <sys/types.h>
 +#include <sys/processor.h>
 +#include <sys/procset.h>
 +#include <strings.h>
 +#include <infiniband/ofa_solaris.h>
  
-+static kstat_ctl_t	*kc = NULL;	/* libkstat cookie */
 +#endif
 +
  /*
   * Configurable parameters.  If your change makes this version of qperf
   * incompatible with previous versions (usually a change to the Req structure),
-@@ -224,7 +236,9 @@
+@@ -224,7 +234,9 @@
  static void      sig_alrm(int signo, siginfo_t *siginfo, void *ucontext);
  static void      sig_quit(int signo, siginfo_t *siginfo, void *ucontext);
  static void      sig_urg(int signo, siginfo_t *siginfo, void *ucontext);
@@ -62,7 +60,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  static void      start_test_timer(int seconds);
  static long      str_size(char *arg, char *str);
  static void      strncopy(char *d, char *s, int n);
-@@ -257,7 +271,9 @@
+@@ -257,7 +269,9 @@
  static STAT     IStat;
  static int      ListenFD;
  static LOOP    *Loops;
@@ -72,27 +70,22 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  static STAT     RStat;
  static int      ShowIndex;
  static SHOW     ShowTable[256];
-@@ -601,6 +617,9 @@
+@@ -601,6 +615,9 @@
      initialize();
      set_signals();
      do_args(&argv[1]);
 +#if (defined(__SVR4) && defined(__sun))
-+    (void) kstat_close(kc);
++    solaris_fini();
 +#endif
      return 0;
  }
  
-@@ -617,14 +636,24 @@
+@@ -617,14 +634,19 @@
      for (i = 0; i < P_N; ++i)
          if (ParInfo[i].index != i)
              error(BUG, "initialize: ParInfo: out of order: %d", i);
 +#if (defined(__SVR4) && defined(__sun))
-+    while ((kc = kstat_open()) == NULL) {
-+	if (errno == EAGAIN)
-+	    (void) poll(NULL, 0, 200);
-+	else
-+	    error(SYS, "cannot open /dev/kstat");
-+    }
++    solaris_init();
 +#else
      ProcStatFD = open("/proc/stat", 0);
      if (ProcStatFD < 0)
@@ -107,7 +100,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  /*
   * Look for a colon and skip past it and any spaces.
   */
-@@ -643,6 +672,7 @@
+@@ -643,6 +665,7 @@
          s++;
      return s;
  }
@@ -115,7 +108,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-@@ -1667,13 +1697,18 @@
+@@ -1667,13 +1690,18 @@
  {
      char count[STRSIZE];
      char speed[STRSIZE];
@@ -129,14 +122,14 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      int mixed = 0;
      FILE *fp = fopen("/proc/cpuinfo", "r");
 +#else
-+   sol_cpu_info_t	info;
++   sol_cpu_info_t	*info;
 +#endif
  
 +#if !(defined(__SVR4) && defined(__sun))
      if (!fp)
          error(0, "cannot open /proc/cpuinfo");
      cpu[0] = '\0';
-@@ -1732,6 +1767,7 @@
+@@ -1732,6 +1760,7 @@
  
      /* CPU speed */
      speed[0] = '\0';
@@ -144,7 +137,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!mixed) {
          int n = strlen(cpu);
          if (n < 3 || cpu[n-2] != 'H' || cpu[n-1] != 'z') {
-@@ -1745,7 +1781,23 @@
+@@ -1745,7 +1774,24 @@
              }
          }
      }
@@ -152,14 +145,15 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 +    cpu[0] = '\0';
 +    speed[0] = '\0';
  
-+    if (!sol_get_cpu_info(&info)) {
-+	(void) strcpy(cpu, info.cpu_name);
-+	cpus = info.cpu_num;
++    if ((cpus = sol_get_cpu_info(&info)) > 0 ) {
++	(void) strcpy(cpu, info[0].cpu_name);
 +
-+	if (info.cpu_mhz < 1000)
-+		snprintf(speed, sizeof(speed), " %dMHz", info.cpu_mhz);
++	if (info[0].cpu_mhz < 1000)
++		snprintf(speed, sizeof(speed), " %dMHz", info[0].cpu_mhz);
 +	else
-+		snprintf(speed, sizeof(speed), " %.1fGHz", info.cpu_mhz/1000.0);
++		snprintf(speed, sizeof(speed), " %.1fGHz",
++		    info[0].cpu_mhz/1000.0);
++	free(info);
 +    } else {
 +	return;
 +    }
@@ -168,7 +162,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      /* Number of CPUs */
      if (cpus == 1)
          count[0] = '\0';
-@@ -2615,14 +2667,22 @@
+@@ -2615,9 +2661,15 @@
  static void
  set_affinity(void)
  {
@@ -177,21 +171,22 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 +#endif
      int a = Req.affinity;
  
++#if defined(__SVR4) && defined(__sun)
++    if (processor_bind(P_LWPID, P_MYID, a, NULL) != 0)
++        error(SYS, "cannot set processor affinity (cpu %d)", a);
++#else
      if (!a)
          return;
-+
-+#if defined(__SVR4) && defined(__sun)
-+    if (processor_bind(P_LWPID, P_MYID, a-1, NULL) != 0)
-+#else
-+
      CPU_ZERO(&set);
+@@ -2624,6 +2676,7 @@
      CPU_SET(a-1, &set);
      if (sched_setaffinity(0, sizeof(set), &set) < 0)
-+#endif
          error(SYS, "cannot set processor affinity (cpu %d)", a-1);
++#endif
  }
  
-@@ -2771,9 +2831,74 @@
+ 
+@@ -2771,9 +2824,36 @@
  /*
   * Get various temporal parameters.
   */
@@ -203,57 +198,19 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  get_times(CLOCK timex[T_N])
  {
 +	struct tms tms;
-+	size_t	i, nr_cpus;
-+	kstat_t	*ksp;
-+	kstat_named_t	*knp;
-+	uint64_t	t_user = 0, t_kernel = 0, t_idle = 0;
-+	uint64_t	t_irq = 0, t_iowait = 0;
-+
++	sol_cpu_stats_t stats;  
++ 
 +	timex[T_REAL] = times(&tms);
 +
-+	nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
++	if ((sol_get_cpu_stats(&stats)) < 0)
++		return;
 +
-+	/* Aggregate the value of all CPUs */
-+	for (i = 0; i < nr_cpus; i++) {
-+		ksp = kstat_lookup(kc, "cpu", i, "sys");
-+		if (ksp == NULL)
-+	        	return;
-+
-+		if (kstat_read(kc, ksp, NULL) == -1)
-+	        	return;
-+
-+		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_ticks_user");
-+		if (knp == NULL)
-+			return;
-+		t_user += knp->value.ui64;
-+
-+		knp = (kstat_named_t *)kstat_data_lookup(ksp,
-+		    "cpu_ticks_kernel");
-+		if (knp == NULL)
-+			return;
-+		t_kernel += knp->value.ui64;
-+
-+		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_ticks_idle");
-+		if (knp == NULL)
-+			return;
-+		t_idle += knp->value.ui64;
-+
-+		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_ticks_wait");
-+		if (knp == NULL)
-+			return;
-+		t_iowait += knp->value.ui64;
-+
-+		knp = (kstat_named_t *)kstat_data_lookup(ksp, "cpu_nsec_intr");
-+		if (knp == NULL)
-+			return;
-+		t_irq += knp->value.ui64;	/* This is in NSEC */
-+	}
-+	timex[T_USER] = t_user;
++	timex[T_USER] = stats.t_user;
 +	timex[T_NICE] = 0;
-+	timex[T_KERNEL] = t_kernel;
-+	timex[T_IDLE] = t_idle;
-+	timex[T_IOWAIT] = t_iowait;
-+	timex[T_IRQ] = NSEC_TO_TICK(t_irq);	 /* NSEC_TO_TICK */
++	timex[T_KERNEL] = stats.t_kernel;
++	timex[T_IDLE] = stats.t_idle;
++	timex[T_IOWAIT] = stats.t_iowait;
++	timex[T_IRQ] = NSEC_TO_TICK(stats.t_intr);	 /* NSEC_TO_TICK */
 +	timex[T_SOFTIRQ] = 0;
 +	timex[T_STEAL] = 0;
 +}
@@ -266,7 +223,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      int n;
      char *p;
      char buf[BUFSIZE];
-@@ -2802,6 +2927,7 @@
+@@ -2802,6 +2882,7 @@
      while (n < T_N)
          timex[n++] = 0;
  }
@@ -289,7 +246,17 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  #include <unistd.h>
  #include <netinet/in.h>
  #include <rdma/rdma_cma.h>
-@@ -566,11 +570,15 @@
+@@ -110,7 +114,8 @@
+     uint32_t    srqn;                   /* Shared queue number */
+     uint32_t    rkey;                   /* Remote key */
+     uint32_t    alt_lid;                /* Alternate Path Local LID */
+-    uint32_t    rd_atomic;              /* Number of read/atomics supported */
++    uint32_t    rd_atomic               /* Number of read/atomics supported */
++    __attribute__ ((aligned (8)));	/* align struct size to 64-bit binary */
+ } NODE;
+ 
+ 
+@@ -566,11 +571,15 @@
  void
  run_client_uc_bi_bw(void)
  {
@@ -305,7 +272,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -580,7 +588,11 @@
+@@ -580,7 +589,11 @@
  void
  run_server_uc_bi_bw(void)
  {
@@ -317,7 +284,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -590,6 +602,9 @@
+@@ -590,6 +603,9 @@
  void
  run_client_uc_bw(void)
  {
@@ -327,7 +294,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
      par_use(L_ACCESS_RECV);
      par_use(R_ACCESS_RECV);
      par_use(L_NO_MSGS);
-@@ -597,6 +612,7 @@
+@@ -597,6 +613,7 @@
      rd_params(IBV_QPT_UC, K64, 1, 0);
      rd_client_bw(IBV_QPT_UC);
      show_results(BANDWIDTH_SR);
@@ -335,7 +302,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -606,7 +622,11 @@
+@@ -606,7 +623,11 @@
  void
  run_server_uc_bw(void)
  {
@@ -347,7 +314,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -616,8 +636,12 @@
+@@ -616,8 +637,12 @@
  void
  run_client_uc_lat(void)
  {
@@ -360,7 +327,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -627,7 +651,11 @@
+@@ -627,7 +652,11 @@
  void
  run_server_uc_lat(void)
  {
@@ -372,7 +339,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -637,9 +665,13 @@
+@@ -637,9 +666,13 @@
  void
  run_client_uc_rdma_write_bw(void)
  {
@@ -386,7 +353,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -649,7 +681,11 @@
+@@ -649,7 +682,11 @@
  void
  run_server_uc_rdma_write_bw(void)
  {
@@ -398,7 +365,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -659,8 +695,12 @@
+@@ -659,8 +696,12 @@
  void
  run_client_uc_rdma_write_lat(void)
  {
@@ -411,7 +378,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -670,7 +710,11 @@
+@@ -670,7 +711,11 @@
  void
  run_server_uc_rdma_write_lat(void)
  {
@@ -423,7 +390,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -680,9 +724,13 @@
+@@ -680,9 +725,13 @@
  void
  run_client_uc_rdma_write_poll_lat(void)
  {
@@ -437,7 +404,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -692,7 +740,11 @@
+@@ -692,7 +741,11 @@
  void
  run_server_uc_rdma_write_poll_lat(void)
  {
@@ -448,6 +415,42 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
 +#endif
  }
  
+ 
+@@ -1856,7 +1909,18 @@
+     struct sockaddr_in saddr ={
+         .sin_family      = AF_INET,
+         .sin_addr.s_addr = htonl(INADDR_ANY),
++#if (defined(__SVR4) && defined(__sun))
++/*
++ * Use the default listen port for right now to
++ * workaround CR 7099964 sol_ofs needs to support allocation
++ * of dynamic ports on rdma_bind_addr()
++ * need to remove when this is fix
++ */
++#define DEF_RDMA_LISTEN_PORT 19785           /* Listen port */
++        .sin_port        = htons(DEF_RDMA_LISTEN_PORT)
++#else
+         .sin_port        = htons(0)
++#endif
+     };
+     CMINFO *cm = &dev->cm;
+ 
+@@ -1864,10 +1928,16 @@
+         error(0, "rdma_bind_addr failed");
+     port = ntohs(rdma_get_src_port(cm->id));
+     encode_uint32(&port, port);
++#if !(defined(__SVR4) && defined(__sun))
+     send_mesg(&port, sizeof(port), "RDMA CM TCP IPv4 server port");
++#endif
+ 
+     if (rdma_listen(cm->id, 0) != 0)
+         error(0, "rdma_listen failed");
++
++#if (defined(__SVR4) && defined(__sun))
++    send_mesg(&port, sizeof(port), "RDMA CM TCP IPv4 server port");
++#endif
+     cm_expect_event(dev, RDMA_CM_EVENT_CONNECT_REQUEST);
+     rd_create_qp(dev, cm->event->id->verbs, cm->event->id);
  
 diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
 --- /tmp/730054/qperf-0.4.6/src/rds.c	Mon Aug 31 00:00:40 2009
@@ -509,3 +512,14 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
      qgetnameinfo((SA *)&sa, salen, 0, 0, p, sizeof(p), NI_NUMERICSERV);
      port = atoi(p);
      if (!port)
+diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.h qperf-0.4.6/src/qperf.h
+--- /tmp/730054/qperf-0.4.6/src/qperf.h	Mon Aug 31 00:00:40 2009
++++ qperf-0.4.6/src/qperf.h	Tue Oct 18 16:40:59 2011
+@@ -193,6 +193,7 @@
+     uint32_t    no_cpus;                /* Number of processors */
+     uint32_t    no_ticks;               /* Ticks per second */
+     uint32_t    max_cqes;               /* Maximum CQ entries */
++    __attribute__ ((aligned (8)))	/* align with 32-bit & 64-bit binary */
+     CLOCK       time_s[T_N];            /* Start times */
+     CLOCK       time_e[T_N];            /* End times */
+     USTAT       s;                      /* Send statistics */

@@ -1,7 +1,7 @@
 diff -r -u /tmp/perftest-1.3.0/Makefile perftest-1.3.0/Makefile
 --- /tmp/perftest-1.3.0/Makefile	Thu Jan 20 01:37:35 2011
 +++ perftest-1.3.0/Makefile	Fri Feb 11 04:12:45 2011
-@@ -2,6 +2,7 @@
+@@ -2,10 +2,11 @@
  MCAST_TESTS = send_bw send_lat
  TESTS = write_bw_postlist write_lat write_bw read_lat read_bw
  UTILS = clock_test
@@ -9,6 +9,11 @@ diff -r -u /tmp/perftest-1.3.0/Makefile perftest-1.3.0/Makefile
  
  all: ${RDMACM_TESTS} ${MCAST_TESTS} ${TESTS} ${UTILS}
  
+-CFLAGS += -Wall -g -D_GNU_SOURCE -O2
++CFLAGS += -Wall -g -D_GNU_SOURCE -O3
+ BASIC_FILES = get_clock.c
+ EXTRA_FILES = perftest_resources.c
+ MCAST_FILES = multicast_resources.c
 @@ -12,13 +13,14 @@
  BASIC_HEADERS = get_clock.h
  EXTRA_HEADERS = perftest_resources.h
@@ -38,47 +43,129 @@ diff -r -u /tmp/perftest-1.3.0/Makefile perftest-1.3.0/Makefile
  clean:
  	$(foreach fname,${RDMACM_TESTS}, rm -f ${fname})
  	$(foreach fname,${MCAST_TESTS}, rm -f ib_${fname})
+diff -r -u /tmp/perftest-1.3.0/clock_test.c perftest-1.3.0/clock_test.c
+--- /tmp/perftest-1.3.0/clock_test.c	Sun Nov  1 03:09:16 2009
++++ perftest-1.3.0/clock_test.c	Fri Sep 30 08:08:29 2011
+@@ -20,6 +20,10 @@
+ 		c1 = get_cycles();
+ 		sleep(1);
+ 		c2 = get_cycles();
++#if defined(__SVR4) && defined(__sun)
++		printf("1 sec = %g usec\n", (double)((c2 - c1))/1000);
++#else
+ 		printf("1 sec = %g usec\n", (c2 - c1) / mhz);
++#endif
+ 	}
+ }
 diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
 --- /tmp/perftest-1.3.0/get_clock.c	Sun Dec 19 06:36:26 2010
 +++ perftest-1.3.0/get_clock.c	Fri Feb 11 04:12:46 2011
-@@ -45,6 +45,9 @@
+@@ -45,6 +45,10 @@
  #include <unistd.h>
  #include <stdio.h>
  #include "get_clock.h"
 +#if defined(__SVR4) && defined(__sun)
++#include <stdlib.h>
 +#include <infiniband/ofa_solaris.h>
 +#endif
  
  #ifndef DEBUG
  #define DEBUG 0
-@@ -137,7 +140,11 @@
+@@ -56,6 +60,8 @@
+ #define MEASUREMENTS 200
+ #define USECSTEP 10
+ #define USECSTART 100
++#define NSECSTART 100000
++#define NSECSTEP 10000
+ 
+ /*
+  Use linear regression to calculate cycles per microsecond.
+@@ -63,14 +69,14 @@
+ */
+ static double sample_get_cpu_mhz(void)
+ {
+-	struct timeval tv1, tv2;
++	cycles_t tv1, tv2;
+ 	cycles_t start;
+ 	double sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
+-	double tx, ty;
++	cycles_t tx, ty;
+ 	int i;
+ 
+ 	/* Regression: y = a + b x */
+-	long x[MEASUREMENTS];
++	cycles_t x[MEASUREMENTS];
+ 	cycles_t y[MEASUREMENTS];
+ 	double a; /* system call overhead in cycles */
+ 	double b; /* cycles per microsecond */
+@@ -78,25 +84,16 @@
+ 
+ 	for (i = 0; i < MEASUREMENTS; ++i) {
+ 		start = get_cycles();
++		tv1 = get_cycles();
+ 
+-		if (gettimeofday(&tv1, NULL)) {
+-			fprintf(stderr, "gettimeofday failed.\n");
+-			return 0;
+-		}
+-
+ 		do {
+-			if (gettimeofday(&tv2, NULL)) {
+-				fprintf(stderr, "gettimeofday failed.\n");
+-				return 0;
+-			}
+-		} while ((tv2.tv_sec - tv1.tv_sec) * 1000000 +
+-			(tv2.tv_usec - tv1.tv_usec) < USECSTART + i * USECSTEP);
++			tv2 = get_cycles();
++		} while ((tv2 - tv1) < NSECSTART + i * NSECSTEP);
+ 
+-		x[i] = (tv2.tv_sec - tv1.tv_sec) * 1000000 +
+-			tv2.tv_usec - tv1.tv_usec;
++		x[i] = (tv2 - tv1);
+ 		y[i] = get_cycles() - start;
+ 		if (DEBUG_DATA)
+-			fprintf(stderr, "x=%ld y=%Ld\n", x[i], (long long)y[i]);
++			fprintf(stderr, "x=%lld y=%lld\n", x[i], y[i]);
+ 	}
+ 
+ 	for (i = 0; i < MEASUREMENTS; ++i) {
+@@ -134,10 +131,15 @@
+ 
+ static double proc_get_cpu_mhz(int no_cpu_freq_fail)
+ {
++#if !(defined(__SVR4) && defined(__sun))
  	FILE* f;
  	char buf[256];
- 	double mhz = 0.0;
-+#if defined(__SVR4) && defined(__sun)
-+	sol_cpu_info_t	info;
++#else
++	sol_cpu_info_t	*info;
 +#endif
+ 	double mhz = 0.0;
  
 +#if !(defined(__SVR4) && defined(__sun))
  	f = fopen("/proc/cpuinfo","r");
  	if (!f)
  		return 0.0;
-@@ -174,6 +181,12 @@
+@@ -174,6 +176,13 @@
  		}
  	}
  	fclose(f);
 +#else
-+	if (!sol_get_cpu_info(&info))
-+		mhz = info.cpu_mhz;
++	if (sol_get_cpu_info(&info) > 0)
++		mhz = info[0].cpu_mhz;
 +	else
 +		return (0.0);
++	free(info);
 +#endif
  	return mhz;
  }
  
-@@ -184,9 +197,6 @@
+@@ -183,10 +192,10 @@
+ 	double sample, proc, delta;
  	sample = sample_get_cpu_mhz();
  	proc = proc_get_cpu_mhz(no_cpu_freq_fail);
++#if defined(__SVR4) && defined(__sun)
++	sample = sample * proc;
++#endif
  
 -	if (!proc || !sample)
 -		return 0;
@@ -89,30 +176,26 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
 diff -r -u /tmp/perftest-1.3.0/get_clock.h perftest-1.3.0/get_clock.h
 --- /tmp/perftest-1.3.0/get_clock.h	Sun Nov  1 03:09:16 2009
 +++ perftest-1.3.0/get_clock.h	Fri Feb 11 04:12:46 2011
-@@ -71,6 +71,23 @@
- 	return ret;
- }
+@@ -36,8 +36,18 @@
  
-+#elif defined(__sparc)
+ #ifndef GET_CLOCK_H
+ #define GET_CLOCK_H
++#if defined(__SVR4) && defined(__sun)
 +#include <sys/times.h>
 +#include <limits.h>
-+typedef long	cycles_t;
-+
++#include <sys/time.h>
++typedef hrtime_t cycles_t;
+ 
+-#if defined (__x86_64__) || defined(__i386__)
 +static inline cycles_t get_cycles()
 +{
-+	struct timespec tp;
-+	long   time;
-+
-+	if (clock_gettime(CLOCK_HIGHRES, &tp))
-+		return -1;
-+
-+	time = (tp.tv_sec * 1000000) + (tp.tv_nsec / 1000);
-+	return time;
++	return (gethrtime());
 +}
 +
- #else
- #warning get_cycles not implemented for this architecture: attempt asm/timex.h
- #include <asm/timex.h>
++#elif defined (__x86_64__) || defined(__i386__)
+ /* Note: only x86 CPUs which have rdtsc instruction are supported. */
+ typedef unsigned long long cycles_t;
+ static inline cycles_t get_cycles()
 diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
 --- /tmp/perftest-1.3.0/rdma_bw.c	Wed Apr  7 09:44:56 2010
 +++ perftest-1.3.0/rdma_bw.c	Fri Feb 11 04:12:46 2011
@@ -241,7 +324,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			goto err;
  		}
  	
-@@ -310,7 +313,7 @@
+@@ -310,13 +313,13 @@
  		if (!data->rem_dest)
  			goto err;
  	
@@ -250,6 +333,13 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  				&data->rem_dest->qpn, &data->rem_dest->psn,
  				&data->rem_dest->rkey, &data->rem_dest->vaddr);
  	
+ 		if (parsed != 5) {
+ 			fprintf(stderr, "%d:%s: Couldn't parse line <%.*s>\n",
+-					pid, __func__, (int)sizeof msg, msg);
++					(int)pid, __func__, (int)sizeof msg, msg);
+ 			free(data->rem_dest);
+ 			goto err;
+ 		}
 @@ -347,7 +350,7 @@
  		goto err5;
  
@@ -597,7 +687,16 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
          rdma_ack_cm_event(event);
          rdma_destroy_id(data.cm_id);
          rdma_destroy_event_channel(data.cm_channel);
-@@ -909,17 +912,17 @@
+@@ -904,22 +907,26 @@
+ 			}
+ 		}
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	cycles_to_units = get_cpu_mhz(0) * 1000000;
++#else
++	cycles_to_units = 1000000000;
++#endif
+ 
  	tsize = duplex ? 2 : 1;
  	tsize = tsize * size;
  
@@ -619,7 +718,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			 (unsigned long)(tcompleted[iters - 1] - tposted[0]) *
  			 1024 / (tsize * iters));	
  }
-@@ -1046,7 +1049,7 @@
+@@ -1046,7 +1053,7 @@
  	pid = getpid();
  
  	printf("%d: | port=%d | ib_port=%d | size=%d | tx_depth=%d | sl=%d | iters=%d | duplex=%d | cma=%d |\n",
@@ -628,7 +727,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  		 sl, iters, duplex, data.use_cma);
  		
  	/* Done with parameter parsing. Perform setup. */
-@@ -1059,12 +1062,12 @@
+@@ -1059,12 +1066,12 @@
  		data.cm_channel = rdma_create_event_channel();
  		if (!data.cm_channel) {
  			fprintf(stderr, "%d:%s: rdma_create_event_channel failed\n",
@@ -643,7 +742,17 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			return 1;
  		}
  	
-@@ -1084,7 +1087,7 @@
+@@ -1079,12 +1086,17 @@
+ 		}
+ 	} else {
+ 		dev_list = ibv_get_device_list(NULL);
++		if (!dev_list) {
++			fprintf(stderr, "%d:%s: No IB devices found\n",
++			     (int)pid, __func__);
++			return 1;
++		}
+ 	
+ 		if (!ib_devname) {
  			data.ib_dev = dev_list[0];
  			if (!data.ib_dev) {
  				fprintf(stderr, "%d:%s: No IB devices found\n",
@@ -652,7 +761,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  				return 1;
  			}
  		} else {
-@@ -1093,7 +1096,7 @@
+@@ -1093,7 +1105,7 @@
  					break;
  			if (!data.ib_dev) {
  				fprintf(stderr, "%d:%s: IB device %s not found\n",
@@ -661,7 +770,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  				return 1;
  			}
  		}
-@@ -1109,7 +1112,7 @@
+@@ -1109,7 +1121,7 @@
  		data.my_dest.lid = pp_get_local_lid(ctx, data.ib_port);
  		if (!data.my_dest.lid) {
  			fprintf(stderr, "%d:%s: Local lid 0x0 detected. Is an SM running?\n",
@@ -670,7 +779,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			return 1;
  		}
  		data.my_dest.qpn = ctx->qp->qp_num;
-@@ -1129,12 +1132,12 @@
+@@ -1129,12 +1141,12 @@
  	}
  
  	printf("%d: Local address:  LID %#04x, QPN %#06x, PSN %#06x "
@@ -685,7 +794,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  			data.rem_dest->lid, data.rem_dest->qpn, data.rem_dest->psn,
  			data.rem_dest->rkey, data.rem_dest->vaddr);
  
-@@ -1219,7 +1222,7 @@
+@@ -1219,7 +1231,7 @@
  
  			if (ibv_post_send(qp, &ctx->wr, &bad_wr)) {
  				fprintf(stderr, "%d:%s: Couldn't post send: scnt=%d\n",
@@ -694,7 +803,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_bw.c perftest-1.3.0/rdma_bw.c
  				return 1;
  			}
  			++scnt;
-@@ -1235,17 +1238,17 @@
+@@ -1235,17 +1247,17 @@
  			tcompleted[ccnt] = get_cycles();
  
  			if (ne < 0) {
@@ -731,19 +840,19 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  
  #include <infiniband/verbs.h>
  #include <rdma/rdma_cma.h>
-@@ -59,7 +62,11 @@
- #include "get_clock.h"
+@@ -138,6 +141,11 @@
+ 	struct ibv_device *ib_dev = NULL;
  
- #define PINGPONG_RDMA_WRID	3
-+#if defined(__SVR4) && defined(__sun)
-+#define MAX_INLINE 372
-+#else
- #define MAX_INLINE 400
-+#endif
+ 	dev_list = ibv_get_device_list(NULL);
++	if (!dev_list) {
++		fprintf(stderr, "%d:%s: No IB devices found\n",
++		     (int)pid, __func__);
++		return NULL;
++	}
  
- static int inline_size = MAX_INLINE;
- static int sl = 0;
-@@ -155,7 +162,8 @@
+ 	if (!ib_devname) {
+ 		ib_dev = dev_list[0];
+@@ -155,7 +163,8 @@
  }
  
  #define KEY_MSG_SIZE (sizeof "0000:000000:000000:00000000:0000000000000000")
@@ -753,7 +862,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  
  static int pp_write_keys(int sockfd, const struct pingpong_dest *my_dest)
  {
-@@ -185,7 +193,7 @@
+@@ -185,7 +194,7 @@
  		return -1;
  	}
  
@@ -762,7 +871,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			&rem_dest->psn, &rem_dest->rkey, &rem_dest->vaddr);
  
  	if (parsed != 5) {
-@@ -220,7 +228,7 @@
+@@ -220,7 +229,7 @@
  
  	if (n < 0) {
  		fprintf(stderr, "%d:%s: %s for %s:%d\n", 
@@ -771,7 +880,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  				data->servername, data->port);
  		goto err4;
  	}
-@@ -233,7 +241,7 @@
+@@ -233,7 +242,7 @@
  		if (rdma_resolve_addr(data->cm_id, NULL,
  					 (struct sockaddr *)&sin, 2000)) {
  			fprintf(stderr, "%d:%s: rdma_resolve_addr failed\n",
@@ -780,7 +889,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err2;
  		}
  	
-@@ -248,7 +256,7 @@
+@@ -248,7 +257,7 @@
  
  		if (event->event != RDMA_CM_EVENT_ADDR_RESOLVED) {
  			fprintf(stderr, "%d:%s: unexpected CM event %d\n", 
@@ -789,7 +898,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err1;
  		}
  		rdma_ack_cm_event(event);
-@@ -256,7 +264,7 @@
+@@ -256,7 +265,7 @@
  retry_route:
  		if (rdma_resolve_route(data->cm_id, 2000)) {
  			fprintf(stderr, "%d:%s: rdma_resolve_route failed\n", 
@@ -798,7 +907,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err2;
  		}
  	
-@@ -271,7 +279,7 @@
+@@ -271,7 +280,7 @@
  
  		if (event->event != RDMA_CM_EVENT_ROUTE_RESOLVED) {
  			fprintf(stderr, "%d:%s: unexpected CM event %d\n", 
@@ -807,7 +916,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			rdma_ack_cm_event(event);
  			goto err1;
  		}
-@@ -278,7 +286,7 @@
+@@ -278,7 +287,7 @@
  		rdma_ack_cm_event(event);
  		ctx = pp_init_ctx(data->cm_id, data);
  		if (!ctx) {
@@ -816,7 +925,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err2;
  		}
  		data->my_dest.psn = lrand48() & 0xffffff;
-@@ -294,7 +302,7 @@
+@@ -294,7 +303,7 @@
  		conn_param.private_data_len = sizeof(data->my_dest);
  
  		if (rdma_connect(data->cm_id, &conn_param)) {
@@ -825,7 +934,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err2;
  		}
  	
-@@ -303,13 +311,13 @@
+@@ -303,13 +312,13 @@
  	
  		if (event->event != RDMA_CM_EVENT_ESTABLISHED) {
  			fprintf(stderr, "%d:%s: unexpected CM event %d\n", 
@@ -841,7 +950,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  				event->param.conn.private_data_len);
  			goto err1;
  		}
-@@ -332,7 +340,7 @@
+@@ -332,7 +341,7 @@
  		}
  		if (sockfd < 0) {
  			fprintf(stderr, "%d:%s: Couldn't connect to %s:%d\n", 
@@ -850,7 +959,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err3;
  		}
  		ctx = pp_init_ctx(data->ib_dev, data);
-@@ -393,7 +401,7 @@
+@@ -393,7 +402,7 @@
  		goto err5;
  
  	if ( (n = getaddrinfo(NULL, service, &hints, &res)) < 0 ) {
@@ -859,7 +968,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  					gai_strerror(n), data->port);
  		goto err5;
  	}
-@@ -403,12 +411,12 @@
+@@ -403,12 +412,12 @@
  		sin.sin_family = AF_INET;
  		sin.sin_port = htons(data->port);
  		if (rdma_bind_addr(data->cm_id, (struct sockaddr *)&sin)) {
@@ -874,7 +983,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err3;
  		}
  	
-@@ -417,13 +425,13 @@
+@@ -417,13 +426,13 @@
  
  		if (event->event != RDMA_CM_EVENT_CONNECT_REQUEST) {
  			fprintf(stderr, "%d:%s: bad event waiting for connect request %d\n", 
@@ -890,7 +999,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  				__func__, event->param.conn.private_data_len);
  			goto err2;
  		}
-@@ -451,18 +459,18 @@
+@@ -451,18 +460,18 @@
  		conn_param.private_data = &data->my_dest;
  		conn_param.private_data_len = sizeof(data->my_dest);
  		if (rdma_accept(child_cm_id, &conn_param)) {
@@ -912,7 +1021,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			goto err1;
  		}
  		rdma_ack_cm_event(event);	
-@@ -482,7 +490,7 @@
+@@ -482,7 +491,7 @@
  		}
  	
  		if (sockfd < 0) {
@@ -921,7 +1030,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  						__func__, data->port);
  			goto err4;
  		}
-@@ -491,7 +499,7 @@
+@@ -491,7 +500,7 @@
  		connfd = accept(sockfd, NULL, 0);
  		if (connfd < 0) {
  			perror("server accept");
@@ -930,7 +1039,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			close(sockfd);
  			goto err4;
  		}
-@@ -551,7 +559,7 @@
+@@ -551,7 +560,7 @@
  	ctx->buf = memalign(page_size, ctx->size * 2);
  	if (!ctx->buf) {
  		fprintf(stderr, "%d:%s: Couldn't allocate work buf.\n",
@@ -939,7 +1048,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  		return NULL;
  	}
  
-@@ -565,7 +573,7 @@
+@@ -565,7 +574,7 @@
  		cm_id = (struct rdma_cm_id *)ptr;
  		ctx->context = cm_id->verbs;
  		if (!ctx->context) {
@@ -948,7 +1057,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  							__func__);
  			return NULL;
  		}
-@@ -575,7 +583,7 @@
+@@ -575,7 +584,7 @@
  		ctx->context = ibv_open_device(ib_dev);
  		if (!ctx->context) {
  			fprintf(stderr, "%d:%s: Couldn't get context for %s\n", 
@@ -957,7 +1066,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			return NULL;
  		}
  	}
-@@ -582,7 +590,7 @@
+@@ -582,7 +591,7 @@
  
  	ctx->pd = ibv_alloc_pd(ctx->context);
  	if (!ctx->pd) {
@@ -966,7 +1075,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  		return NULL;
  	}
  
-@@ -592,13 +600,13 @@
+@@ -592,13 +601,13 @@
  	ctx->mr = ibv_reg_mr(ctx->pd, ctx->buf, ctx->size * 2,
  			     IBV_ACCESS_REMOTE_WRITE | IBV_ACCESS_LOCAL_WRITE);
  	if (!ctx->mr) {
@@ -982,7 +1091,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  								 __func__);
  		return NULL;
  	}
-@@ -605,7 +613,7 @@
+@@ -605,7 +614,7 @@
  
  	ctx->scq = ibv_create_cq(ctx->context, ctx->tx_depth, ctx, NULL, 0);
  	if (!ctx->scq) {
@@ -991,7 +1100,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  								 __func__);
  		return NULL;
  	}
-@@ -628,7 +636,7 @@
+@@ -628,7 +637,7 @@
  
  	if (data->use_cma) {
  		if (rdma_create_qp(cm_id, ctx->pd, &attr)) {
@@ -1000,7 +1109,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			return NULL;
  		}
  		ctx->qp = cm_id->qp;
-@@ -636,7 +644,7 @@
+@@ -636,7 +645,7 @@
  	} else {
  		ctx->qp = ibv_create_qp(ctx->pd, &attr);
  		if (!ctx->qp)  {
@@ -1009,7 +1118,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			return NULL;
  		}
  		{
-@@ -653,7 +661,7 @@
+@@ -653,7 +662,7 @@
  					IBV_QP_PORT               |
  					IBV_QP_ACCESS_FLAGS)) {
  				fprintf(stderr, "%d:%s: Failed to modify QP to INIT\n", 
@@ -1018,7 +1127,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  				return NULL;
  			}
  		}
-@@ -710,10 +718,10 @@
+@@ -710,10 +719,10 @@
  	return 0;
  }
  
@@ -1031,7 +1140,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  	/* Create connection between client and server.
  	 * We do it by exchanging data over a TCP socket connection. */
  
-@@ -727,7 +735,7 @@
+@@ -727,7 +736,7 @@
  	data->my_dest.rkey = ctx->mr->rkey;
  	data->my_dest.vaddr = (uintptr_t)ctx->buf + ctx->size;
  
@@ -1040,7 +1149,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			data->my_dest.rkey, data->my_dest.vaddr);
  
  	if (data->servername) {
-@@ -738,7 +746,7 @@
+@@ -738,7 +747,7 @@
  			return 1;
  	}
  
@@ -1049,7 +1158,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			data->rem_dest->psn, data->rem_dest->rkey, 
  			data->rem_dest->vaddr);
  
-@@ -783,7 +791,7 @@
+@@ -783,7 +792,7 @@
          rc = ibv_post_recv(ctx->qp, &wr, &bad_wr);
          if (rc) {
                  perror("ibv_post_recv");
@@ -1058,7 +1167,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  				 __func__, rc);
          }
  }
-@@ -799,13 +807,13 @@
+@@ -799,13 +808,13 @@
  	} while (ne == 0);
  
  	if (wc.status) 
@@ -1075,7 +1184,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  					 (int)wc.wr_id);
  }
  
-@@ -825,7 +833,7 @@
+@@ -825,7 +834,7 @@
  	ctx->wr.send_flags = IBV_SEND_SIGNALED;
  	ctx->wr.next       = NULL;
  	if (ibv_post_send(ctx->qp, &ctx->wr, &bad_wr)) {
@@ -1084,7 +1193,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  		return;
  	}
  	do {
-@@ -834,13 +842,13 @@
+@@ -834,13 +843,13 @@
  	} while (ne == 0);
  
  	if (wc.status) 
@@ -1101,7 +1210,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  						(int)wc.wr_id);
  }
  
-@@ -855,13 +863,13 @@
+@@ -855,13 +864,13 @@
  	} while (ne == 0);
  
  	if (wc.status) 
@@ -1118,7 +1227,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  					 (int)wc.wr_id);
  	pp_post_recv(ctx);
  }
-@@ -882,7 +890,7 @@
+@@ -882,7 +891,7 @@
  	ctx->wr.send_flags = IBV_SEND_SIGNALED;
  	ctx->wr.next       = NULL;
  	if (ibv_post_send(ctx->qp, &ctx->wr, &bad_wr)) {
@@ -1127,7 +1236,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  		return;
  	}
  	do {
-@@ -891,13 +899,13 @@
+@@ -891,13 +900,13 @@
  	} while (ne == 0);
  
  	if (wc.status) 
@@ -1144,7 +1253,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  					 (int)wc.wr_id);
  }
  
-@@ -910,7 +918,7 @@
+@@ -910,7 +919,7 @@
                  rc = rdma_disconnect(data.cm_id);
                  if (rc) {
  			perror("rdma_disconnect");
@@ -1153,7 +1262,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  								 __func__);
  			return;
                  }
-@@ -919,7 +927,7 @@
+@@ -919,7 +928,7 @@
          rdma_get_cm_event(data.cm_channel, &event);
          if (event->event != RDMA_CM_EVENT_DISCONNECTED)
                  fprintf(stderr, "%d:%s: unexpected event during disconnect %d\n", 
@@ -1162,7 +1271,26 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
          rdma_ack_cm_event(event);
          rdma_destroy_id(data.cm_id);
          rdma_destroy_event_channel(data.cm_channel);
-@@ -1164,12 +1172,12 @@
+@@ -989,10 +998,18 @@
+ 
+ 
+ 	if (options->cycles) {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = 1;
++#else
++		cycles_to_units = (1/get_cpu_mhz(0)) * 1000;
++#endif
+ 		units = "cycles";
+ 	} else {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = get_cpu_mhz(0);
++#else
++		cycles_to_units = 1000;
++#endif
+ 		units = "usec";
+ 	}
+ 
+@@ -1164,12 +1181,12 @@
  		data.cm_channel = rdma_create_event_channel();
  		if (!data.cm_channel) {
  			fprintf(stderr, "%d:%s: rdma_create_event_channel failed\n",
@@ -1177,7 +1305,7 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
  			return 1;
  		}
  	
-@@ -1184,12 +1192,12 @@
+@@ -1184,12 +1201,12 @@
  		}
  
  		printf("%d: Local address:  LID %#04x, QPN %#06x, PSN %#06x "
@@ -1191,6 +1319,31 @@ diff -r -u /tmp/perftest-1.3.0/rdma_lat.c perftest-1.3.0/rdma_lat.c
 +                        "RKey %#08x VAddr %#016llx\n\n", (int)pid,
                          data.rem_dest->lid, data.rem_dest->qpn, data.rem_dest->psn,
                          data.rem_dest->rkey, data.rem_dest->vaddr);
+ 
+diff -r -u /tmp/perftest-1.3.0/multicast_resources.h perftest-1.3.0/multicast_resources.h
+--- /tmp/perftest-1.3.0/multicast_resources.h	Wed Mar  2 11:01:36 2011
++++ perftest-1.3.0/multicast_resources.h	Fri Aug 26 05:14:56 2011
+@@ -68,7 +68,7 @@
+ #define DEF_PKEY_IDX        		0
+ #define DEF_SLL              		0
+ #define MAX_POLL_ITERATION_TIMEOUT  1000000
+-#define MCG_GID {255,1,0,0,0,2,201,133,0,0,0,0,0,0,0,0}
++#define MCG_GID {255,21,0,0,0,2,201,133,0,0,0,0,0,0,0,0}
+ 
+ //  Definitions section for MADs 
+ #define SUBN_ADM_ATTR_MC_MEMBER_RECORD 0x38
+@@ -80,10 +80,11 @@
+ #define DEF_TCLASS                     0
+ #define DEF_FLOW_LABLE                 0
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ // Macro for 64 bit variables to switch to from net 
+ #define ntohll(x) (((u_int64_t)(ntohl((int)((x << 32) >> 32))) << 32) | (unsigned int)ntohl(((int)(x >> 32)))) 
+ #define htonll(x) ntohll(x)
+-
++#endif
+ // generate a bit mask S bits width 
+ #define MASK32(S)  ( ((u_int32_t) ~0L) >> (32-(S)) )
  
 diff -r -u /tmp/perftest-1.3.0/perftest_resources.c perftest-1.3.0/perftest_resources.c
 --- /tmp/perftest-1.3.0/perftest_resources.c	Tue Jan 25 23:31:57 2011
@@ -1228,34 +1381,46 @@ diff -r -u /tmp/perftest-1.3.0/perftest_resources.c perftest-1.3.0/perftest_reso
  	} else {
  
  		switch (params->mtu) {
+@@ -869,7 +885,6 @@
+ 		close(sockfd);
+ 		return connfd;
+ 	}
+-
+ 	close(sockfd);
+ 	return connfd;
+ }
+@@ -882,6 +897,8 @@
+ 				   struct pingpong_dest *my_dest,
+ 				   struct pingpong_dest *rem_dest) {
+ 
++    int	temp_reads = 0;
++
+     // Client.
+     if (params->machine == CLIENT) {
+ 		if (ctx_write_keys(my_dest,params)) {
+@@ -904,6 +921,18 @@
+ 			return -1;
+ 		}
+     }
++    // We could have tavor at one end and hermon at the other.
++    // To avoid a modify QP error set max_rd_atomic to lowest
++    // on either side of connection.
++    if (rem_dest->out_reads > my_dest->out_reads)
++	temp_reads =  my_dest->out_reads;
++
++    if (my_dest->out_reads > rem_dest->out_reads)
++	my_dest->out_reads = rem_dest->out_reads;
++
++    if (temp_reads)
++	rem_dest->out_reads = temp_reads;
++
+     return 0;
+ }
+ 
 diff -r -u /tmp/perftest-1.3.0/perftest_resources.h perftest-1.3.0/perftest_resources.h
 --- /tmp/perftest-1.3.0/perftest_resources.h	Tue Jan 25 23:31:57 2011
 +++ perftest-1.3.0/perftest_resources.h	Fri Feb 11 04:12:48 2011
-@@ -78,7 +78,11 @@
- #define DEF_GID_INDEX (-1)
- #define DEF_NUM_QPS   (1)
- #define DEF_INLINE_BW (0)
-+#if defined(__SVR4) && defined(__sun)
-+#define DEF_INLINE_LT (372)
-+#else
- #define DEF_INLINE_LT (400)
-+#endif
- #define DEF_RX_RDMA   (1)
- #define DEF_RX_SEND   (600)
- 
-@@ -96,7 +100,11 @@
- #define MIN_QP_NUM    (1)
- #define MAX_QP_NUM	  (8)
- #define MIN_INLINE 	  (0)
-+#if defined(__SVR4) && defined(__sun)
-+#define MAX_INLINE 	  (372)
-+#else
- #define MAX_INLINE 	  (400)
-+#endif
- #define MIN_QP_MCAST  (1)
- #define MAX_QP_MCAST  (56)
- #define MIN_RX		  (1)
-@@ -128,10 +136,10 @@
+@@ -128,10 +128,10 @@
  #define KEY_MSG_SIZE_GID    98 // Message size with gid (MGID as well).
  
  // The Format of the message we pass through sockets , without passing Gid.
@@ -1268,7 +1433,7 @@ diff -r -u /tmp/perftest-1.3.0/perftest_resources.h perftest-1.3.0/perftest_reso
  
  // The Basic print format for all verbs.
  #define BASIC_ADDR_FMT " %s address: LID %#04x QPN %#06x PSN %#06x"
-@@ -140,7 +148,7 @@
+@@ -140,7 +140,7 @@
  #define READ_FMT       " OUT %#04x"
  
  // The print format of the pingpong_dest element for RDMA verbs.
@@ -1277,7 +1442,7 @@ diff -r -u /tmp/perftest-1.3.0/perftest_resources.h perftest-1.3.0/perftest_reso
  
  // The print format of a global address or a multicast address.
  #define GID_FMT " %s: %02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d:%02d\n"
-@@ -154,10 +162,10 @@
+@@ -154,10 +154,10 @@
  #define RESULT_FMT_LAT " #bytes #iterations    t_min[usec]    t_max[usec]  t_typical[usec]\n"
  
  // Result print format
@@ -1301,6 +1466,67 @@ diff -r -u /tmp/perftest-1.3.0/read_bw.c perftest-1.3.0/read_bw.c
  #include <time.h>
  #include <infiniband/verbs.h>
  
+@@ -336,7 +337,11 @@
+ 			}
+ 	}
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
++#else
++	cycles_to_units = 1000000000;
++#endif
+ 	tsize = user_param->duplex ? 2 : 1;
+ 	tsize = tsize * user_param->size;
+ 	
+@@ -443,6 +448,7 @@
+  ******************************************************************************/
+ int main(int argc, char *argv[]) {
+ 
++	int				ret = 0;
+ 	int                        i = 0;
+ 	struct ibv_device		   *ib_dev = NULL;
+ 	struct pingpong_context    *ctx;
+@@ -553,8 +559,10 @@
+ 
+ 		for (i = 1; i < 24 ; ++i) {
+ 			user_param.size = 1 << i;
+-			if(run_iter(ctx,&user_param,&rem_dest))
+-				return 17;
++			if(run_iter(ctx,&user_param,&rem_dest)) {
++				ret = 17;
++				goto exit;
++			}
+ 			print_report(&user_param);
+ 		}
+ 
+@@ -562,11 +570,13 @@
+ 
+ 	else {
+ 
+-		if(run_iter(ctx,&user_param,&rem_dest))
+-			return 17;
+-		
++		if(run_iter(ctx,&user_param,&rem_dest)) {
++			ret = 17;
++			goto exit;
++		}
+ 		print_report(&user_param);
+ 	}
++exit:
+ 
+ 	if (ctx_close_connection(&user_param,&my_dest,&rem_dest)) {
+ 		fprintf(stderr,"Failed to close connection between server and client\n");
+@@ -575,6 +585,9 @@
+ 	
+ 	printf(RESULT_LINE);
+ 
+-	return destroy_ctx_resources(ctx);
++	if (destroy_ctx_resources(ctx))
++		return 1;
++	else
++		return ret; 
+ 	
+ }
 diff -r -u /tmp/perftest-1.3.0/read_lat.c perftest-1.3.0/read_lat.c
 --- /tmp/perftest-1.3.0/read_lat.c	Tue Jan 25 23:31:57 2011
 +++ perftest-1.3.0/read_lat.c	Fri Feb 11 04:12:47 2011
@@ -1312,10 +1538,31 @@ diff -r -u /tmp/perftest-1.3.0/read_lat.c perftest-1.3.0/read_lat.c
  #include <infiniband/verbs.h>
  
  #include "get_clock.h"
+@@ -358,11 +359,20 @@
+ 
+ 
+ 	if (user_param->r_flag->cycles) {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = 1;
++#else
++		cycles_to_units =
++		   (1/get_cpu_mhz(user_param->cpu_freq_f)) * 1000;
++#endif
+ 		units = "cycles";
+ 	} else {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f);
++#else
++		cycles_to_units = 1000;
+ 		units = "usec";
++#endif
+ 	}
+ 
+ 	if (user_param->r_flag->unsorted) {
 diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
 --- /tmp/perftest-1.3.0/send_bw.c	Thu Jan 20 07:37:18 2011
 +++ perftest-1.3.0/send_bw.c	Fri Feb 11 04:12:47 2011
-@@ -1,1162 +1,1162 @@
+@@ -1,1162 +1,1166 @@
 -/*
 - * Copyright (c) 2005 Topspin Communications.  All rights reserved.
 - * Copyright (c) 2005 Mellanox Technologies Ltd.  All rights reserved.
@@ -2800,7 +3047,7 @@ diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
 +		user_parm->size = MTU_SIZE(user_parm->curr_mtu);
 +	}
 +
-+	if (is_dev_hermon(ctx->context) != NOT_HERMON && user_parm->inline_size != 0)
++	if (is_dev_hermon(ctx->context) == NOT_HERMON && user_parm->inline_size != 0)
 +		user_parm->inline_size = 0;
 +
 +	printf(" Inline data is used up to %d bytes message\n", user_parm->inline_size);
@@ -3129,7 +3376,11 @@ diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
 +			}
 +	}
 +
++#if !(defined(__SVR4) && defined(__sun))
 +	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
++#else
++	cycles_to_units = 1000000000;
++#endif
 +
 +	tsize = user_param->duplex ? 2 : 1;
 +	tsize = tsize * user_param->size;
@@ -3640,6 +3891,123 @@ diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
 +	printf(RESULT_LINE);
 +	return destroy_ctx_resources(ctx,&user_param,&my_dest,&rem_dest,&mcg_params);
 +}
+diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
+--- /tmp/perftest-1.3.0/send_lat.c	Wed Mar  2 16:04:50 2011
++++ perftest-1.3.0/send_lat.c	Fri Aug 26 05:29:53 2011
+@@ -61,7 +61,8 @@
+ 	struct ibv_sge          *sge_list;
+ 	struct ibv_recv_wr      *rwr;
+ 	struct ibv_context      *context;
+-	struct ibv_comp_channel *channel;
++	struct ibv_comp_channel *rx_channel;
++	struct ibv_comp_channel *tx_channel;
+ 	struct ibv_pd           *pd;
+ 	struct ibv_mr           *mr;
+ 	struct ibv_cq           *rcq;
+@@ -259,13 +260,20 @@
+ 		test_result = 1;
+ 	}
+ 
+-	if (ctx->channel) {
+-		if (ibv_destroy_comp_channel(ctx->channel)) {
+-			fprintf(stderr, "failed to destroy channel \n");
++	if (ctx->rx_channel) {
++		if (ibv_destroy_comp_channel(ctx->rx_channel)) {
++			fprintf(stderr, "failed to destroy rx_channel \n");
+ 			test_result = 1;
+ 		}
+ 	}
+ 	
++	if (ctx->tx_channel) {
++		if (ibv_destroy_comp_channel(ctx->tx_channel)) {
++			fprintf(stderr, "failed to destroy tx_channel \n");
++			test_result = 1;
++		}
++	}
++	
+ 	if (ibv_close_device(ctx->context)) {
+ 		fprintf(stderr, "failed to close device context\n");
+ 		test_result = 1;
+@@ -328,13 +336,20 @@
+ 	memset(ctx->buf, 0,buff_size);
+ 
+     if (user_parm->use_event) {
+-		ctx->channel = ibv_create_comp_channel(ctx->context);
+-		if (!ctx->channel) {
+-			fprintf(stderr, "Couldn't create completion channel\n");
++		ctx->rx_channel = ibv_create_comp_channel(ctx->context);
++		if (!ctx->rx_channel) {
++			fprintf(stderr, "Couldn't create completion rx_channel\n");
+ 			return NULL;
+ 		}
+-	} else
+-		ctx->channel = NULL;
++		ctx->tx_channel = ibv_create_comp_channel(ctx->context);
++		if (!ctx->rx_channel) {
++			fprintf(stderr, "Couldn't create completion tx_channel\n");
++			return NULL;
++		}
++	} else {
++		ctx->rx_channel = NULL;
++		ctx->tx_channel = NULL;
++	}
+ 
+ 	ctx->pd = ibv_alloc_pd(ctx->context);
+ 	if (!ctx->pd) {
+@@ -348,13 +363,13 @@
+ 		return NULL;
+ 	}
+ 	
+-	ctx->scq = ibv_create_cq(ctx->context,user_parm->tx_depth,NULL,ctx->channel,0);
++	ctx->scq = ibv_create_cq(ctx->context,user_parm->tx_depth,NULL,ctx->tx_channel,0);
+ 	if (!ctx->scq) {
+ 	    fprintf(stderr, "Couldn't create CQ\n");
+ 		return NULL;
+ 	}
+ 
+-	ctx->rcq = ibv_create_cq(ctx->context,user_parm->rx_depth*user_parm->num_of_qps,NULL,ctx->channel,0);
++	ctx->rcq = ibv_create_cq(ctx->context,user_parm->rx_depth*user_parm->num_of_qps,NULL,ctx->rx_channel,0);
+ 	if (!ctx->rcq) {
+ 	    fprintf(stderr, "Couldn't create CQ\n");
+ 		return NULL;
+@@ -583,10 +598,19 @@
+ 
+ 
+ 	if (user_param->r_flag->cycles) {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = 1;
++#else
++		cycles_to_units =
++		    (1/get_cpu_mhz(user_param->cpu_freq_f)) * 1000;
++#endif
+ 		units = "cycles";
+ 	} else {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f);
++#else
++		cycles_to_units = 1000;
++#endif
+ 		units = "usec";
+ 	}
+ 
+@@ -649,7 +673,7 @@
+ 		  
+ 			// Server is polling on recieve first .
+ 		    if (user_param->use_event) {
+-				if (ctx_notify_events(ctx->rcq,ctx->channel)) {
++				if (ctx_notify_events(ctx->rcq, ctx->rx_channel)) {
+ 					fprintf(stderr , " Failed to notify events to CQ");
+ 					return 1;
+ 				}
+@@ -701,7 +725,7 @@
+ 		    int s_ne;
+ 
+ 		    if (user_param->use_event) {
+-				if (ctx_notify_events(ctx->scq,ctx->channel)) {
++				if (ctx_notify_events(ctx->scq, ctx->tx_channel)) {
+ 					fprintf(stderr , " Failed to notify events to CQ");
+ 					return 1;
+ 				}
 diff -r -u /tmp/perftest-1.3.0/multicast_resources.c perftest-1.3.0/multicast_resources.c
 --- /tmp/perftest-1.3.0/multicast_resources.c	Thu Dec 16 08:21:05 2010
 +++ perftest-1.3.0/multicast_resources.c	Fri Feb 11 04:12:48 2011
@@ -3664,6 +4032,27 @@ diff -r -u /tmp/perftest-1.3.0/write_bw.c perftest-1.3.0/write_bw.c
  #include <time.h>
  #include <infiniband/verbs.h>
  
+@@ -224,7 +225,7 @@
+ 		return NULL;
+ 	}
+ 
+-	if (is_dev_hermon(ctx->context) != NOT_HERMON && user_parm->inline_size != 0)
++	if (is_dev_hermon(ctx->context) == NOT_HERMON && user_parm->inline_size != 0)
+ 		user_parm->inline_size = 0;
+ 
+ 	printf(" Inline data is used up to %d bytes message\n", user_parm->inline_size);
+@@ -384,7 +385,11 @@
+ 		  }
+ 	}
+ 	
++#if !(defined(__SVR4) && defined(__sun))
+ 	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
++#else
++	cycles_to_units = 1000000000;
++#endif
+ 
+ 	tsize = user_param->duplex ? 2 : 1;
+ 	tsize = tsize * user_param->size;
 diff -r -u /tmp/perftest-1.3.0/write_bw_postlist.c perftest-1.3.0/write_bw_postlist.c
 --- /tmp/perftest-1.3.0/write_bw_postlist.c	Thu Mar  3 17:03:54 2011
 +++ perftest-1.3.0/write_bw_postlist.c	Tue Mar 15 11:59:53 2011
@@ -3675,6 +4064,18 @@ diff -r -u /tmp/perftest-1.3.0/write_bw_postlist.c perftest-1.3.0/write_bw_postl
  #include <infiniband/verbs.h>
  
  #include "get_clock.h"
+@@ -323,7 +324,11 @@
+             }
+ 	}
+ 
++#if !(defined(__SVR4) && defined(__sun))
+ 	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
++#else
++	cycles_to_units = 1000000000;
++#endif
+ 
+ 	tsize = user_param->duplex ? 2 : 1;
+ 	tsize = tsize * user_param->size;
 diff -r -u /tmp/perftest-1.3.0/write_lat.c perftest-1.3.0/write_lat.c
 --- /tmp/perftest-1.3.0/write_lat.c	Sat Feb 26 01:02:48 2011
 +++ perftest-1.3.0/write_lat.c	Tue Mar 15 12:01:35 2011
@@ -3686,3 +4087,23 @@ diff -r -u /tmp/perftest-1.3.0/write_lat.c perftest-1.3.0/write_lat.c
  #include <infiniband/verbs.h>
  
  #include "get_clock.h"
+@@ -330,10 +331,19 @@
+ 
+ 
+ 	if (user_param->r_flag->cycles) {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = 1;
++#else
++		cycles_to_units =
++		    (1/get_cpu_mhz(user_param->cpu_freq_f)) * 1000;
++#endif
+ 		units = "cycles";
+ 	} else {
++#if !(defined(__SVR4) && defined(__sun))
+ 		cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f);
++#else
++		cycles_to_units = 1000;
++#endif
+ 		units = "usec";
+ 	}
+ 
