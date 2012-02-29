@@ -27,7 +27,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4-abi.h libmlx4-1.0.1/src/mlx4-abi.h
 diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 --- /tmp/839450/libmlx4-1.0.1/src/verbs.c	Thu Mar 10 04:48:34 2011
 +++ libmlx4-1.0.1/src/verbs.c	Fri Mar 11 14:40:18 2011
-@@ -56,6 +56,15 @@
+@@ -56,6 +56,14 @@
  	if (ret)
  		return ret;
  
@@ -39,11 +39,10 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	 */
 +	attr->max_srq_wr -=1;
 +#endif
-+
  	major     = (raw_fw_ver >> 32) & 0xffff;
  	minor     = (raw_fw_ver >> 16) & 0xffff;
  	sub_minor = raw_fw_ver & 0xffff;
-@@ -79,6 +88,9 @@
+@@ -79,6 +87,9 @@
  	struct ibv_alloc_pd       cmd;
  	struct mlx4_alloc_pd_resp resp;
  	struct mlx4_pd		 *pd;
@@ -53,14 +52,14 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	pd = malloc(sizeof *pd);
  	if (!pd)
-@@ -90,7 +102,16 @@
+@@ -90,7 +101,16 @@
  		return NULL;
  	}
  
 +#if defined(__SVR4) && defined(__sun)
 +	/*
-+	 * The kernel driver passes back the PD table index as opaque data.  This
-+	 * index is required for specifying the PD in user space address vectors.
++	 * kernel driver passes back the PD table index as opaque data.  This
++	 * is required for specifying the PD in user space address vectors.
 +	 */
 +	mdd     = (mlnx_umap_pd_data_out_t *) &resp.ibv_resp.drv_out;
 +	pd->pdn = mdd->mpd_pdnum;
@@ -70,7 +69,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	return &pd->ibv_pd;
  }
-@@ -168,6 +189,10 @@
+@@ -168,6 +188,10 @@
  	struct mlx4_create_cq_resp resp;
  	struct mlx4_cq		  *cq;
  	int			   ret;
@@ -81,7 +80,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	/* Sanity check CQ size before proceeding */
  	if (cqe > 0x3fffff)
-@@ -184,7 +209,8 @@
+@@ -184,7 +208,8 @@
  
  	cqe = align_queue_size(cqe + 1);
  
@@ -91,7 +90,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  		goto err;
  
  	cq->set_ci_db  = mlx4_alloc_db(to_mctx(context), MLX4_DB_TYPE_CQ);
-@@ -198,15 +224,84 @@
+@@ -198,15 +223,78 @@
  
  	cmd.buf_addr = (uintptr_t) cq->buf.buf;
  	cmd.db_addr  = (uintptr_t) cq->set_ci_db;
@@ -105,13 +104,11 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	ret = ibv_cmd_create_cq(context, cqe - 1, channel, comp_vector,
  				&cq->ibv_cq, &cmd.ibv_cmd, sizeof cmd,
  				&resp.ibv_resp, sizeof resp);
-+
 +#if defined(__SVR4) && defined(__sun)
-+	if (ret) {
-+		goto err;
-+	}
-+#else
  	if (ret)
++		goto err;
++#else
++	if (ret)
  		goto err_db;
 +#endif
  
@@ -132,18 +129,17 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +        cqbuf = mmap64((void *)0, mdd->mcq_maplen, (PROT_READ | PROT_WRITE),
 +                    MAP_SHARED, context->mmap_fd, mdd->mcq_mapoffset);
 +
-+        if (cqbuf == MAP_FAILED) {
++        if (cqbuf == MAP_FAILED)
 +                goto err_destroy;
-+        }
 +
 +        /*
 +         * Extract hardware driver values for the number of CQEs and the
 +	 * hardware CQ number to use (needed for user space doorbells).
 +         */
-+        cqe            = mdd->mcq_numcqe;
-+        cq->cqn        = mdd->mcq_cqnum;
-+        cq->buf.buf    = cqbuf;
-+        cq->buf.length = mdd->mcq_maplen;
++	cqe            = mdd->mcq_numcqe;
++	cq->cqn        = mdd->mcq_cqnum;
++	cq->buf.buf    = cqbuf;
++	cq->buf.length = mdd->mcq_maplen;
 +	cq->ibv_cq.cqe = cqe-1;
 +
 +	/*
@@ -156,27 +152,24 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	                              mdd->mcq_polldbr_mapoffset,
 +	                              mdd->mcq_polldbr_maplen,
 +	                              mdd->mcq_polldbr_offset);
-+        if (cq->set_ci_db == NULL) {
++        if (cq->set_ci_db == NULL)
 +                goto err_buf;
-+        }
 +
 +	cq->arm_db = mlx4_alloc_db(to_mctx(context),
 +	                           mdd->mcq_armdbr_mapoffset,
 +	                           mdd->mcq_armdbr_maplen,
 +	                           mdd->mcq_armdbr_offset);
-+        if (cq->arm_db == NULL) {
++        if (cq->arm_db == NULL)
 +                goto err_db;
-+        }
 +
 +	*cq->arm_db    = 0;
 +	cq->arm_sn     = 1;
 +	*cq->set_ci_db = 0;
 +#endif
-+
  	return &cq->ibv_cq;
  
  err_db:
-@@ -215,6 +310,22 @@
+@@ -215,6 +303,21 @@
  err_buf:
  	mlx4_free_buf(&cq->buf);
  
@@ -195,11 +188,10 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +
 +	ibv_cmd_destroy_cq(&cq->ibv_cq);
 +#endif
-+
  err:
  	free(cq);
  
-@@ -225,12 +336,17 @@
+@@ -225,12 +328,16 @@
  {
  	struct mlx4_cq *cq = to_mcq(ibcq);
  	struct mlx4_resize_cq cmd;
@@ -211,7 +203,6 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	void			*cqbuf;
 +	mlnx_umap_cq_data_out_t	*mdd;
 +#endif
-+	
  	/* Sanity check CQ size before proceeding */
  	if (cqe > 0x3fffff)
 -		return EINVAL;
@@ -219,7 +210,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	pthread_spin_lock(&cq->lock);
  
-@@ -247,32 +363,65 @@
+@@ -247,32 +354,76 @@
  		goto out;
  	}
  
@@ -227,10 +218,9 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	ret = mlx4_alloc_cq_buf(to_mdev(ibcq->context->device), &buf, cqe);
  	if (ret)
  		goto out;
- 
+-
 -	old_cqe = ibcq->cqe;
--	cmd.buf_addr = (uintptr_t) buf.buf;
-+        cmd.buf_addr = (uintptr_t) buf.buf;
+ 	cmd.buf_addr = (uintptr_t) buf.buf;
 +#endif
 +        old_cqe = ibcq->cqe;
  
@@ -248,14 +238,35 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 -		mlx4_free_buf(&buf);
 +
 +        if (ret) {
-+#if ! (defined(__SVR4) && defined(__sun))
++#if !(defined(__SVR4) && defined(__sun))
 +                mlx4_free_buf(&buf);
-+#endif
  		goto out;
  	}
  
 -	mlx4_cq_resize_copy_cqes(cq, buf.buf, old_cqe);
-+#if defined(__SVR4) && defined(__sun)
++        mlx4_cq_resize_copy_cqes(cq, buf.buf, old_cqe);
++        mlx4_free_buf(&cq->buf);
++        cq->buf = buf;
++#else
++		goto out;
++	}
++        if (cq->buf.buf != NULL) {
++        	buf.buf = malloc(cq->buf.length);
++        	if (!buf.buf) {
++                	ret = ENOMEM;
++                	goto out;
++        	}
+ 
+-	mlx4_free_buf(&cq->buf);
+-	cq->buf = buf;
++        	memcpy(buf.buf, cq->buf.buf, cq->buf.length);
++        	buf.length =  cq->buf.length;
++                ret = munmap((char *)cq->buf.buf, cq->buf.length);
++                if (ret) {
++                        free(buf.buf);
++                        goto out;
++                }
++        }
 +	/*
 +	 * For Solaris the kernel driver passes back mmap information for
 +	 * mapping the CQ memory it allocated.
@@ -268,35 +279,26 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +		goto out;
 +	}
  
--	mlx4_free_buf(&cq->buf);
--	cq->buf = buf;
 +	cqbuf = mmap64((void *)0, mdd->mcq_maplen, (PROT_READ | PROT_WRITE),
 +	     MAP_SHARED, ibcq->context->mmap_fd, mdd->mcq_mapoffset);
- 
++
 +	if (cqbuf == MAP_FAILED) {
 +		ret = EINVAL;
 +		goto out;
 +	}
-+#endif
-+
-+        mlx4_cq_resize_copy_cqes(cq, buf.buf, old_cqe);
-+
-+#if !(defined(__SVR4) && defined(__sun))
-+        mlx4_free_buf(&cq->buf);
-+#endif
-+        cq->buf = buf;
-+
-+#if defined(__SVR4) && defined(__sun)
-+	cqe            = mdd->mcq_numcqe;
-+	cq->cqn        = mdd->mcq_cqnum;
++	cq->buf.buf    = buf.buf;
++	cq->buf.length = buf.length;
++	mlx4_cq_resize_copy_cqes(cq, cqbuf, old_cqe);
 +	cq->buf.buf    = cqbuf;
 +	cq->buf.length = mdd->mcq_maplen;
-+	cq->ibv_cq.cqe = cqe-1;
++	free(buf.buf);
++	cq->ibv_cq.cqe =  mdd->mcq_numcqe - 1;
++	cq->cqn        = mdd->mcq_cqnum;
 +#endif
  out:
  	pthread_spin_unlock(&cq->lock);
  	return ret;
-@@ -287,6 +436,9 @@
+@@ -287,6 +438,9 @@
  		return ret;
  
  	mlx4_free_db(to_mctx(cq->context), MLX4_DB_TYPE_CQ, to_mcq(cq)->set_ci_db);
@@ -306,7 +308,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	mlx4_free_buf(&to_mcq(cq)->buf);
  	free(to_mcq(cq));
  
-@@ -300,6 +452,10 @@
+@@ -300,6 +454,10 @@
  	struct mlx4_create_srq_resp resp;
  	struct mlx4_srq		   *srq;
  	int			    ret;
@@ -317,7 +319,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	/* Sanity check SRQ size before proceeding */
  	if (attr->attr.max_wr > 1 << 16 || attr->attr.max_sge > 64)
-@@ -312,6 +468,7 @@
+@@ -312,6 +470,7 @@
  	if (pthread_spin_init(&srq->lock, PTHREAD_PROCESS_PRIVATE))
  		goto err;
  
@@ -325,7 +327,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	srq->max     = align_queue_size(attr->attr.max_wr + 1);
  	srq->max_gs  = attr->attr.max_sge;
  	srq->counter = 0;
-@@ -324,7 +481,23 @@
+@@ -324,7 +483,23 @@
  		goto err_free;
  
  	*srq->db = 0;
@@ -349,7 +351,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	cmd.buf_addr = (uintptr_t) srq->buf.buf;
  	cmd.db_addr  = (uintptr_t) srq->db;
  
-@@ -331,19 +504,97 @@
+@@ -331,19 +506,97 @@
  	ret = ibv_cmd_create_srq(pd, &srq->ibv_srq, attr,
  				 &cmd.ibv_cmd, sizeof cmd,
  				 &resp.ibv_resp, sizeof resp);
@@ -447,7 +449,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  err:
  	free(srq);
-@@ -357,7 +608,16 @@
+@@ -357,7 +610,16 @@
  {
  	struct ibv_modify_srq cmd;
  
@@ -464,7 +466,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  }
  
  int mlx4_query_srq(struct ibv_srq *srq,
-@@ -365,7 +625,17 @@
+@@ -365,7 +627,17 @@
  {
  	struct ibv_query_srq cmd;
  
@@ -482,32 +484,18 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  }
  
  int mlx4_destroy_srq(struct ibv_srq *ibsrq)
-@@ -414,7 +684,11 @@
- 		return -1;
- 
- 	if (attr->cap.max_inline_data) {
-+#if !(defined(__SVR4) && defined(__sun))
- 		nsegs = num_inline_segs(attr->cap.max_inline_data, attr->qp_type);
-+#else
-+		nsegs = mlx4_num_inline_segs(attr->cap.max_inline_data, attr->qp_type);
-+#endif
- 		size = MLX4_MAX_WQE_SIZE - nsegs * sizeof (struct mlx4_wqe_inline_seg);
- 		switch (attr->qp_type) {
- 		case IBV_QPT_UD:
-@@ -447,6 +721,12 @@
+@@ -447,6 +719,10 @@
  	struct mlx4_qp		 *qp;
  	int			  ret;
  	struct mlx4_context	 *context = to_mctx(pd->context);
 +#if defined(__SVR4) && defined(__sun)
 +	mlnx_umap_qp_data_out_t	*mdd;
 +	void			*qpbuf;
-+	int			max_send_sge;
-+	int			max_inline_data;
 +#endif
  
  
  	/* Sanity check QP size before proceeding */
-@@ -457,6 +737,7 @@
+@@ -457,6 +733,7 @@
  	if (!qp)
  		return NULL;
  
@@ -515,7 +503,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	mlx4_calc_sq_wqe_size(&attr->cap, attr->qp_type, qp);
  
  	/*
-@@ -466,6 +747,7 @@
+@@ -466,6 +743,7 @@
  	qp->sq_spare_wqes = (2048 >> qp->sq.wqe_shift) + 1;
  	qp->sq.wqe_cnt = align_queue_size(attr->cap.max_send_wr + qp->sq_spare_wqes);
  	qp->rq.wqe_cnt = align_queue_size(attr->cap.max_recv_wr);
@@ -523,38 +511,14 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	if (attr->srq || attr->qp_type == IBV_QPT_XRC)
  		attr->cap.max_recv_wr = qp->rq.wqe_cnt = 0;
-@@ -476,6 +758,46 @@
+@@ -476,6 +754,22 @@
  			attr->cap.max_recv_wr = 1;
  	}
  
 +#if defined(__SVR4) && defined(__sun)
 +	if (pthread_spin_init(&qp->sq.lock, PTHREAD_PROCESS_PRIVATE) ||
-+	    pthread_spin_init(&qp->rq.lock, PTHREAD_PROCESS_PRIVATE)) {
++	    pthread_spin_init(&qp->rq.lock, PTHREAD_PROCESS_PRIVATE))
 +		goto err;
-+	}
-+
-+	/*
-+	 * We adjust the number of send SGL entries to force the kernel to
-+	 * allocate a larger WQE that will fit the inline data requested.
-+	 * The Solaris Hermon driver does not look at inline data size when
-+	 * calculating the send WQE size, so this allows us to get closer
-+	 * to what the user has requested.
-+	 */
-+	max_send_sge = align(attr->cap.max_inline_data +
-+			mlx4_num_inline_segs(attr->cap.max_inline_data,
-+			attr->qp_type) * sizeof (struct mlx4_wqe_inline_seg),
-+			sizeof( struct mlx4_wqe_data_seg)) /
-+	                          sizeof(struct mlx4_wqe_data_seg);
-+
-+
-+	if (max_send_sge > attr->cap.max_send_sge) 
-+		attr->cap.max_send_sge = max_send_sge;
-+
-+	if (attr->cap.max_send_sge > context->max_sge) {
-+		free(qp);
-+		return (NULL);
-+	};
-+
 +
 +	/*
 +	 * Solaris QP work queue memory is supplied by the kernel, so
@@ -570,7 +534,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	if (mlx4_alloc_qp_buf(pd, &attr->cap, attr->qp_type, qp))
  		goto err;
  
-@@ -505,11 +827,120 @@
+@@ -505,17 +799,84 @@
  		; /* nothing */
  	cmd.sq_no_prefetch = 0;	/* OK for ABI 2: just a reserved field */
  	memset(cmd.reserved, 0, sizeof cmd.reserved);
@@ -580,11 +544,9 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	ret = ibv_cmd_create_qp(pd, &qp->ibv_qp, attr, &cmd.ibv_cmd, sizeof cmd,
  				&resp, sizeof resp);
-+
 +#if defined(__SVR4) && defined(__sun)
-+	if (ret) {
+ 	if (ret)
 +		goto err_free;
-+	}
 +
 +        /*
 +         * The kernel driver passes back mmap information for mapping the
@@ -599,9 +561,8 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	qpbuf = mmap64((void *)0, mdd->mqp_maplen, (PROT_READ | PROT_WRITE),
 +	                MAP_SHARED, pd->context->mmap_fd, mdd->mqp_mapoffset);
 +
-+	if (qpbuf == MAP_FAILED) {
++	if (qpbuf == MAP_FAILED)
 +		goto err_destroy;
-+	}
 +
 +	/*
 +	 * Need to set qp->buf here in case alloc_db fails then
@@ -615,100 +576,57 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +		                       mdd->mqp_rdbr_mapoffset,
 +		                       mdd->mqp_rdbr_maplen,
 +		                       mdd->mqp_rdbr_offset);
-+		if (qp->db == NULL) {
++		if (qp->db == NULL)
 +			goto err_buf;
-+		}
++
 +		*qp->db = 0;
 +	}
-+
-+	/*
-+	 * Calculate the official maximum inline data size, this is not done
-+	 * by the kernel driver, so we do it here and update the qp struct.
-+	 */
-+	max_inline_data =
-+			mdd->mqp_sq_wqesz - sizeof(struct mlx4_wqe_inline_seg);
-+	max_inline_data -= sizeof(struct mlx4_wqe_ctrl_seg);
-+
-+	switch (attr->qp_type) {
-+	case IBV_QPT_UD:
-+		max_inline_data -= sizeof(struct mlx4_wqe_datagram_seg);
-+		break;
-+
-+	case IBV_QPT_UC:
-+		max_inline_data -= sizeof(struct mlx4_wqe_raddr_seg);
-+		break;
-+
-+	case IBV_QPT_RC:
-+		max_inline_data -= sizeof(struct mlx4_wqe_raddr_seg);
-+		if (max_inline_data > (sizeof(struct mlx4_wqe_atomic_seg) +
-+		                       sizeof(struct mlx4_wqe_raddr_seg) +
-+		                       sizeof(struct mlx4_wqe_data_seg))) {
-+			max_inline_data -= sizeof(struct mlx4_wqe_atomic_seg) +
-+		                           sizeof(struct mlx4_wqe_raddr_seg) +
-+		                           sizeof(struct mlx4_wqe_data_seg);
-+		} else {
-+			max_inline_data = 0;
-+		}
-+		break;
-+
-+	default:
-+		break;
-+	}
-+
-+	attr->cap.max_inline_data = max_inline_data;
 +
 +	/*
 +	 * Retrieve sendqueue actual size, and the number of headroom WQEs
 +	 * that were required based on kernel setup of prefetch or not for
 +	 * send queue.
-+	 * 	Note: mqp_sq_numwqe includes the head room wqes.
-+	 *	      The private wqe.cnt also includes headroom wqes,
-+	 *	      the verbs count should reflect the wqe count that
-+	 *	      is usable.
++	 * 	Note: mqp_sq_numwqe includes the head room wqes. The private
++	 *	      wqe.cnt also includes headroom wqes, the verbs count
++	 *	      should reflect the wqe count that is usable.
 +	 */
 +	qp->sq_spare_wqes = mdd->mqp_sq_headroomwqes;
 +	qp->sq.wqe_cnt    = mdd->mqp_sq_numwqe;
 +
-+	if (attr->srq) {
++	if (attr->srq)
 +		qp->rq.wqe_cnt  = 0;
-+	} else {
++	else
 +		qp->rq.wqe_cnt  = mdd->mqp_rq_numwqe;
-+	}
 +
 +	if (mlx4_set_qp_buf(pd, qp, qpbuf, mdd->mqp_maplen,
 +	                    mdd->mqp_rq_wqesz, mdd->mqp_rq_off,
-+	                    mdd->mqp_sq_wqesz, mdd->mqp_sq_off)) {
-+		goto err_rq_db;
-+	}
-+
-+	mlx4_init_qp_indices(qp);
-+
-+	ret = mlx4_store_qp(to_mctx(pd->context), qp->ibv_qp.qp_num, qp);
-+	if (ret) {
-+		goto err_rq_db;
-+	}
-+#else
- 	if (ret)
++	                    mdd->mqp_sq_wqesz, mdd->mqp_sq_off))
  		goto err_rq_db;
  
-@@ -516,6 +947,7 @@
++	mlx4_init_qp_indices(qp);
++
  	ret = mlx4_store_qp(to_mctx(pd->context), qp->ibv_qp.qp_num, qp);
  	if (ret)
++		goto err_rq_db;
++#else
++	if (ret)
++		goto err_rq_db;
++
++	ret = mlx4_store_qp(to_mctx(pd->context), qp->ibv_qp.qp_num, qp);
++	if (ret)
  		goto err_destroy;
 +#endif
  	pthread_mutex_unlock(&to_mctx(pd->context)->qp_table_mutex);
  
  	qp->rq.wqe_cnt = attr->cap.max_recv_wr;
-@@ -536,9 +968,42 @@
+@@ -536,9 +897,38 @@
  
  	return &qp->ibv_qp;
  
 +#if defined(__SVR4) && defined(__sun)
 +err_rq_db:
-+	if (!attr->srq && attr->qp_type != IBV_QPT_XRC) {
++	if (!attr->srq && attr->qp_type != IBV_QPT_XRC)
 +		mlx4_free_db(to_mctx(pd->context), MLX4_DB_TYPE_RQ, qp->db);
-+	}
-+
 +err_buf:
 +	mlx4_free_buf(&qp->buf);
 +
@@ -723,16 +641,14 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 +	pthread_cond_init(&(qp->ibv_qp.cond), NULL);
 +	qp->ibv_qp.events_completed = 0;
  	ibv_cmd_destroy_qp(&qp->ibv_qp);
- 
 +err_free:
 +	pthread_mutex_unlock(&to_mctx(pd->context)->qp_table_mutex);
-+
+ 
 +	if (qp->sq.wrid)
 +		free(qp->sq.wrid);
 +
 +	if (qp->rq.wrid)
 +		free(qp->rq.wrid);
-+
 +err:
 +	free(qp);
 +#else
@@ -742,7 +658,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  err_rq_db:
  	pthread_mutex_unlock(&to_mctx(pd->context)->qp_table_mutex);
  	if (!attr->srq && attr->qp_type != IBV_QPT_XRC)
-@@ -552,6 +1017,7 @@
+@@ -552,6 +942,7 @@
  
  err:
  	free(qp);
@@ -750,7 +666,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  
  	return NULL;
  }
-@@ -745,6 +1211,13 @@
+@@ -745,6 +1136,13 @@
  				    struct ibv_cq *xrc_cq,
  				    struct ibv_srq_init_attr *attr)
  {
@@ -764,7 +680,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  	struct mlx4_create_xrc_srq  cmd;
  	struct mlx4_create_srq_resp resp;
  	struct mlx4_srq		   *srq;
-@@ -807,6 +1280,7 @@
+@@ -807,6 +1205,7 @@
  	free(srq);
  
  	return NULL;
@@ -772,34 +688,10 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
  }
  
  struct ibv_xrc_domain *mlx4_open_xrc_domain(struct ibv_context *context,
-@@ -893,5 +1367,4 @@
- {
- 	return ibv_cmd_unreg_xrc_rcv_qp(xrc_domain, xrc_qp_num);
- }
--
- #endif
 diff -r -u /tmp/839450/libmlx4-1.0.1/src/qp.c libmlx4-1.0.1/src/qp.c
 --- /tmp/839450/libmlx4-1.0.1/src/qp.c	Thu Mar 10 04:48:34 2011
 +++ libmlx4-1.0.1/src/qp.c	Tue Mar 15 07:09:43 2011
-@@ -511,7 +511,17 @@
- 	return ret;
- }
- 
-+#if defined(__SVR4) && defined(__sun)
-+/*
-+ * Create a non-static version that can be called externally;
-+ * default file local calls to now use the name of the non-static
-+ * version.
-+ */
-+#define	num_inline_segs mlx4_num_inline_segs
-+int mlx4_num_inline_segs(int data, enum ibv_qp_type type)
-+#else
- int num_inline_segs(int data, enum ibv_qp_type type)
-+#endif
- {
- 	/*
- 	 * Inline data segments are not allowed to cross 64 byte
-@@ -589,6 +599,58 @@
+@@ -589,6 +589,58 @@
  		; /* nothing */
  }
  
@@ -900,17 +792,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.h libmlx4-1.0.1/src/mlx4.h
  void mlx4_free_srq_wqe(struct mlx4_srq *srq, int ind);
  int mlx4_post_srq_recv(struct ibv_srq *ibsrq,
  		       struct ibv_recv_wr *wr,
-@@ -399,6 +413,9 @@
- 		       struct mlx4_srq *srq);
- void mlx4_clear_xrc_srq(struct mlx4_context *ctx, uint32_t xrc_srqn);
- 
-+#if defined(__SVR4) && defined(__sun)
-+int mlx4_num_inline_segs(int data, enum ibv_qp_type type);
-+#endif
- struct ibv_qp *mlx4_create_qp(struct ibv_pd *pd, struct ibv_qp_init_attr *attr);
- int mlx4_query_qp(struct ibv_qp *qp, struct ibv_qp_attr *attr,
- 		   int attr_mask,
-@@ -415,8 +432,14 @@
+@@ -415,8 +429,14 @@
  void mlx4_calc_sq_wqe_size(struct ibv_qp_cap *cap, enum ibv_qp_type type,
  			   struct mlx4_qp *qp);
  int num_inline_segs(int data, enum ibv_qp_type type);
@@ -1176,7 +1058,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
  
  	context = calloc(1, sizeof *context);
  	if (!context)
-@@ -150,11 +155,32 @@
+@@ -150,11 +155,30 @@
  		return NULL;
  
  	context->ibv_ctx.cmd_fd = cmd_fd;
@@ -1193,10 +1075,8 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
 +	 * OFED expects power of two, round up here to make user table
 +	 * large enough.
 +	 */
-+	for (temp_qp_num = 1; temp_qp_num < resp.qp_tab_size; temp_qp_num <<= 1) {
++	for (temp_qp_num = 1; temp_qp_num < resp.qp_tab_size; temp_qp_num <<= 1)
 +		;
-+	}
-+
 +	resp.qp_tab_size = temp_qp_num;
 +
 +	/*
@@ -1209,7 +1089,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
  	context->num_qps	= resp.qp_tab_size;
  	context->qp_table_shift = ffs(context->num_qps) - 1 - MLX4_QP_TABLE_BITS;
  	context->qp_table_mask	= (1 << context->qp_table_shift) - 1;
-@@ -172,20 +198,44 @@
+@@ -172,20 +196,44 @@
  	for (i = 0; i < MLX4_XRC_SRQ_TABLE_SIZE; ++i)
  		context->xrc_srq_table[i].refcnt = 0;
  
@@ -1254,7 +1134,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
  		if (context->bf_page == MAP_FAILED) {
  			fprintf(stderr, PFX "Warning: BlueFlame available, "
  				"but failed to mmap() BlueFlame page.\n");
-@@ -214,6 +264,7 @@
+@@ -214,6 +262,7 @@
  	context->max_qp_wr = dev_attrs.max_qp_wr;
  	context->max_sge = dev_attrs.max_sge;
  	context->max_cqe = dev_attrs.max_cqe;
@@ -1262,7 +1142,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
  	if (!(dev_attrs.device_cap_flags & IBV_DEVICE_XRC)) {
  		fprintf(stderr, PFX "There is a mismatch between "
  		        "the kernel and the userspace libraries: "
-@@ -220,6 +271,7 @@
+@@ -220,6 +269,7 @@
  			"Kernel does not support XRC. Exiting.\n");
  		goto query_free;
  	}
@@ -1270,15 +1150,7 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/mlx4.c libmlx4-1.0.1/src/mlx4.c
  
  	return &context->ibv_ctx;
  
-@@ -227,7 +279,6 @@
- 	munmap(context->uar, to_mdev(ibdev)->page_size);
- 	if (context->bf_page)
- 		munmap(context->bf_page, to_mdev(ibdev)->page_size);
--
- err_free:
- 	free(context);
- 	return NULL;
-@@ -240,6 +291,7 @@
+@@ -240,6 +290,7 @@
  	munmap(context->uar, to_mdev(ibctx->device)->page_size);
  	if (context->bf_page)
  		munmap(context->bf_page, to_mdev(ibctx->device)->page_size);
@@ -1320,13 +1192,29 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/libmlx4.spec.in libmlx4-1.0.1/libmlx4.spec.
  License: GPLv2 or BSD
  Url: http://openfabrics.org/
 -Source: http://openfabrics.org/downloads/libmlx4/libmlx4-1.0.1.tar.gz
-+Source: http://openfabrics.org/downloads/mlx4/libmlx4-1.0.1.tar.gz
++Source: http://openfabrics.org/downloads/libmlx4-1.0.1.tar.gz
  BuildRoot: %(mktemp -ud %{_tmppath}/%{name}-%{version}-%{release}-XXXXXX)
  
  BuildRequires: libibverbs-devel >= 1.1-0.1.rc2
 diff -r -u /tmp/839450/libmlx4-1.0.1/configure libmlx4-1.0.1/configure
 --- /tmp/839450/libmlx4-1.0.1/configure	Thu Mar 10 04:48:41 2011
 +++ libmlx4-1.0.1/configure	Tue Mar 15 07:35:49 2011
+@@ -3899,13 +3899,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-g -O3"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-O3"
+   else
+     CFLAGS=
+   fi
 @@ -8890,6 +8890,7 @@
  	;;
        esac
@@ -1335,22 +1223,23 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/configure libmlx4-1.0.1/configure
        ;;
  
      sunos4*)
-@@ -11616,6 +11617,14 @@
- # This bug is HP SR number 8606223364.
- { $as_echo "$as_me:${as_lineno-$LINENO}: checking size of long" >&5
- $as_echo_n "checking size of long... " >&6; }
-+
-+echo $CFLAGS | grep 64 > /dev/null
-+if [ $? -eq 0 ]; then
-+	ac_cv_sizeof_long=8
-+else
-+	ac_cv_sizeof_long=4
-+fi
-+
- if test "${ac_cv_sizeof_long+set}" = set; then :
-   $as_echo_n "(cached) " >&6
+@@ -11113,13 +11114,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-g -O3"
+   else
+     CFLAGS="-g"
+   fi
  else
-@@ -11654,11 +11663,11 @@
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-O3"
+   else
+     CFLAGS=
+   fi
+@@ -11654,11 +11655,11 @@
  
  ac_fn_c_check_member "$LINENO" "struct ibv_more_ops" "create_xrc_srq" "ac_cv_member_struct_ibv_more_ops_create_xrc_srq" "#include <infiniband/verbs.h>
  "

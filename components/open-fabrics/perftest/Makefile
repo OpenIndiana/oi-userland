@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -38,7 +38,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include ../ofed.mk
 
-MAN1FILES =	ib_clock_test.1
+MAN1FILES =	ib_clock_test.1 \
+		ib_write_bw.1 \
+		ib_read_bw.1 \
+		ib_send_bw.1 \
+		rdma_bw.1
 
 include $(WS_TOP)/make-rules/shared-targets.mk
 

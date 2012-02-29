@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -49,6 +49,8 @@
 #include <sys/param.h>
 #include <sys/ib/adapters/hermon/hermon_ioctl.h>
 #include <sys/ib/adapters/tavor/tavor_ioctl.h>
+#include <sys/ib/clients/of/sol_uverbs/sol_uverbs_ioctl.h>
+#include <sys/ib/clients/of/sol_umad/sol_umad_ioctl.h>
 
 #include <alloca.h>
 #include "../include/infiniband/arch.h"
@@ -57,67 +59,41 @@
 #include <pthread.h>
 #include <kstat.h>
 
+
 /*
- * The followings will be removed when sol_uverbs_ioctl.h and sol_umad_ioctl.h
+ * The followings will be removed when changes in sol_uverbs_ioctl.h
  * are delivered through ON.
  */
+#if !defined(UVERBS_IOCTL_NO_CMDS) || (UVERBS_IOCTL_NO_CMDS < 3)
 
-#define	UVERBS_IOCTL		('v' << 8)
+#define	UVERBS_IOCTL_GET_PKEYS		UVERBS_IOCTL | 0x02
+#define	UVERBS_IOCTL_GET_GIDS		UVERBS_IOCTL | 0x03
 
-#define	IB_USER_VERBS_SOLARIS_ABI_VERSION	1
+typedef struct sol_uverbs_pkey_s {
+	int32_t		uverbs_solaris_abi_version;
+	int16_t		uverbs_port_num;
+	int16_t		uverbs_pkey_cnt;
+	int16_t		uverbs_pkey_start_index;
+	int8_t		uverbs_pad1[6];		/* Padding for alignment */
+	uint16_t	uverbs_pkey[];
+} sol_uverbs_pkey_t;
 
-typedef enum {
-	UVERBS_IOCTL_GET_HCA_INFO	= UVERBS_IOCTL | 0x01
-} uverbs_ioctl_enum_t;
+typedef struct sol_uverbs_gid_s {
+	int32_t		uverbs_solaris_abi_version;
+	int16_t		uverbs_port_num;
+	int16_t		uverbs_gid_cnt;
+	int16_t		uverbs_gid_start_index;
+	int8_t		uverbs_pad1[6];		/* Padding for alignment */
+	uint8_t		uverbs_gids[][16];
+} sol_uverbs_gid_t;
 
-typedef struct sol_uverbs_hca_info_s {
-	char		uverbs_hca_psid_string[MAXNAMELEN];
-	char		uverbs_hca_ibdev_name[MAXNAMELEN];
-	char		uverbs_hca_driver_name[MAXNAMELEN];
-	uint32_t	uverbs_hca_driver_instance;
-	uint32_t	uverbs_hca_vendorid;
-	uint16_t	uverbs_hca_deviceid;
-	uint8_t		uverbs_hca_devidx;
-	uint8_t		uverbs_hca_pad1[5];
-} sol_uverbs_hca_info_t;
-
-typedef struct sol_uverbs_info_s {
-	int32_t			uverbs_abi_version;
-	int32_t			uverbs_solaris_abi_version;
-	int16_t			uverbs_hca_cnt;
-	int8_t			uverbs_pad1[6];    /* Padding for alignment */
-	sol_uverbs_hca_info_t	uverbs_hca_info[];
-} sol_uverbs_info_t;
-
-#define	UMAD_IOCTL		('m' << 8)
-
-#define	IB_USER_MAD_SOLARIS_ABI_VERSION	1
-
-typedef enum {
-	IB_USER_MAD_GET_PORT_INFO	= UMAD_IOCTL | 0x01
-} umad_ioctl_enum_t;
-
-typedef struct sol_umad_ioctl_port_info_s {
-	char		umad_port_ibdev_name[MAXNAMELEN];
-	uint32_t	umad_port_num;
-	uint16_t	umad_port_idx;
-	uint8_t		umad_port_pad1[2];
-} sol_umad_ioctl_port_info_t;
-
-typedef struct sol_umad_ioctl_info_s {
-	int32_t				umad_abi_version;
-	int32_t				umad_solaris_abi_version;
-	int16_t				umad_port_cnt;
-	int8_t				umad_pad1[6];    /* alignment padding */
-	sol_umad_ioctl_port_info_t	umad_port_info[];
-} sol_umad_ioctl_info_t;
-
-/* end of sol_uverbs_ioctl.h and sol_umad_ioctl.h contents */
+#endif	/* !defined(UVERBS_IOCTL_NO_CMDS) || (UVERBS_IOCTL_NO_CMDS < 3) */
+/* end of sol_uverbs_ioctl.h contents */
 
 /*
  * duplicate ABI definitions for HCAs as the HCA abi headers are not
  * installed in proto.
- */ 
+ */
 #define	MLX4_UVERBS_MAX_ABI_VERSION	3 /* mlx4-abi.h */
 #define	RDMA_USER_CM_MIN_ABI_VERSION	3 /* rdma_cma_abi.h */
 #define	RDMA_USER_CM_MAX_ABI_VERSION	4 /* rdma_cma_abi.h */
@@ -427,6 +403,8 @@ static pthread_mutex_t	umad_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t	ibdev_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t	uverbs_cache_mutex = PTHREAD_MUTEX_INITIALIZER;
 
+int sol_ibv_query_gid(struct ibv_context *, uint8_t, int, union ibv_gid *);
+int sol_ibv_query_pkey(struct ibv_context *, uint8_t, int, uint16_t *);
 void __attribute__((constructor))solaris_init(void);
 void __attribute__((destructor))solaris_fini(void);
 
@@ -588,7 +566,7 @@ uverbs_cache_init()
 
 	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s%d",
 	    IB_OFS_DEVPATH_PREFIX, UVERBS_KERNEL_SYSFS_NAME_BASE,
-		    sol_uverbs_minor_dev);
+	    sol_uverbs_minor_dev);
 
 	/*
 	 * using the first sol_uverbs minor node that can be opened to get
@@ -599,10 +577,10 @@ uverbs_cache_init()
 		    strerror(errno));
 		goto error_exit1;
 	}
-	
-	bufsize = sizeof(sol_uverbs_info_t) + sizeof(sol_uverbs_hca_info_t) *
+
+	bufsize = sizeof (sol_uverbs_info_t) + sizeof (sol_uverbs_hca_info_t) *
 	    MAX_HCAS;
- 
+
 	buf = malloc(bufsize);
 	memset(buf, 0, bufsize);
 	uverbs_infop = (sol_uverbs_info_t *)buf;
@@ -611,7 +589,7 @@ uverbs_cache_init()
 	if (ioctl(fd, UVERBS_IOCTL_GET_HCA_INFO, uverbs_infop) != 0) {
 		fprintf(stderr, "sol_uverbs ioctl failed: %s\n",
 		    strerror(errno));
-		
+
 		goto error_exit2;
 	}
 
@@ -635,7 +613,8 @@ uverbs_cache_init()
 		info.uvc_hca_instance =
 		    hca_infop->uverbs_hca_driver_instance;
 
-		snprintf(info.uvc_ibdev_hca_path, sizeof (info.uvc_ibdev_hca_path),
+		snprintf(info.uvc_ibdev_hca_path,
+		    sizeof (info.uvc_ibdev_hca_path),
 		    "%s/%s%d", IB_HCA_DEVPATH_PREFIX,
 		    hca_infop->uverbs_hca_driver_name,
 		    hca_infop->uverbs_hca_driver_instance);
@@ -668,7 +647,7 @@ error_exit2:
 	close(fd);
 
 error_exit1:
-	return(0);
+	return (0);
 }
 
 static int
@@ -701,9 +680,9 @@ umad_cache_init()
 		return (0);
 	}
 
-	bufsize = sizeof(sol_umad_ioctl_info_t) +
-	    (sizeof(sol_umad_ioctl_port_info_t) * MAX_HCAS * MAX_HCA_PORTS);
- 
+	bufsize = sizeof (sol_umad_ioctl_info_t) +
+	    (sizeof (sol_umad_ioctl_port_info_t) * MAX_HCAS * MAX_HCA_PORTS);
+
 	buf = malloc(bufsize);
 	memset(buf, 0, bufsize);
 	umad_infop = (sol_umad_ioctl_info_t *)buf;
@@ -712,7 +691,7 @@ umad_cache_init()
 	if (ioctl(fd, IB_USER_MAD_GET_PORT_INFO, umad_infop) != 0) {
 		fprintf(stderr, "sol_umad ioctl failed: %s\n",
 		    strerror(errno));
-		
+
 		goto error_exit;
 	}
 
@@ -976,22 +955,14 @@ get_port_info(const char *devname, uint8_t port_num,
 		if (!gids)
 			goto error_exit3;
 		/*
-		 * set high bit of port_num, and try get all gids in one go.
+		 * set high bit of port_num to get all gids in one shot.
 		 */
 		port_num |= 0x80;
-		rv = ibv_query_gid(ctx, port_num, port_attr->gid_tbl_len, gids);
+		rv = sol_ibv_query_gid(ctx, port_num, port_attr->gid_tbl_len,
+		    gids);
+		if (rv != 0)
+			goto error_exit4;
 
-		if (rv != 0) {
-			/*
-			 * Quering all gids didn't work try one at a time.
-			 */
-			port_num &= 0x7f;
-
-			for (i = 0; i < port_attr->gid_tbl_len; i++) {
-				if (ibv_query_gid(ctx, port_num, i, &gids[i]))
-					goto error_exit4;
-			}
-		}
 		*gid_table = gids;
 		gids = NULL;
 	}
@@ -1002,22 +973,15 @@ get_port_info(const char *devname, uint8_t port_num,
 		if (!pkeys)
 			goto error_exit4;
 
+		/*
+		 * set high bit of port_num to get all pkeys in one shot.
+		 */
 		port_num |= 0x80;
-
-		rv = ibv_query_pkey(ctx, port_num, port_attr->pkey_tbl_len,
+		rv = sol_ibv_query_pkey(ctx, port_num, port_attr->pkey_tbl_len,
 		    pkeys);
+		if (rv != 0)
+			goto error_exit5;
 
-		if (rv != 0) {
-			/*
-			 * Quering all gids didn't work try one at a time.
-			 */
-			port_num &= 0x7f;
-
-			for (i = 0; i < port_attr->pkey_tbl_len; i++) {
-				if (ibv_query_pkey(ctx, port_num, i, &pkeys[i]))
-					goto error_exit5;
-			}
-		}
 		*pkey_table = pkeys;
 		pkeys = NULL;
 	}
@@ -1058,8 +1022,8 @@ ibv_open_mmap_driver(char *dev_name)
 	int			uverbs_indx;
 
 	/*
-	 * Map the user verbs device (uverbs) to the associated 
-	 * hca device. 
+	 * Map the user verbs device (uverbs) to the associated
+	 * hca device.
 	 */
 	uverbs_indx = strtol(dev_name + strlen(UVERBS_KERNEL_SYSFS_NAME_BASE),
 	    NULL, 0);
@@ -1164,7 +1128,7 @@ infiniband_verbs(char *path, char *buf, size_t size)
 			goto exit;
 		}
 
-		len = 1 + sprintf(buf, "%d", uverbs_abi_version); 
+		len = 1 + sprintf(buf, "%d", uverbs_abi_version);
 	} else {
 		fprintf(stderr, "Unsupported read: %s\n", path);
 	}
@@ -1586,35 +1550,280 @@ exit:
 
 
 int
-sol_get_cpu_info(sol_cpu_info_t *info)
+sol_get_cpu_info(sol_cpu_info_t **info_p)
 {
 	kstat_t		*ksp;
 	kstat_named_t	*knp;
+	uint_t		ncpus = 0, i;
+	sol_cpu_info_t	*info;
+
+	ncpus = sysconf(_SC_NPROCESSORS_ONLN);
+
+	if (ncpus <= 0)
+		return (0);
+
+	if (!(*info_p = malloc(ncpus * sizeof (sol_cpu_info_t))))
+		return (-1);
+
+	info = *info_p;
+	bzero((void *)info, ncpus * sizeof (sol_cpu_info_t));
+
+	for (i = 0; i < ncpus; i++) {
+		if ((ksp = kstat_lookup(kc, "cpu_info", i, NULL)) == NULL) {
+			if (i >= ncpus)
+				goto err_exit;
+			else
+				continue;
+		}
+
+		if ((kstat_read(kc, ksp, NULL) == -1)) {
+			if (i >= ncpus)
+				goto err_exit;
+			else
+				continue;
+		}
+
+		if ((knp = (kstat_named_t *)kstat_data_lookup(ksp, "brand"))
+		    == NULL) {
+			if (i >= ncpus)
+				goto err_exit;
+			else
+				continue;
+		}
+
+		(void) strlcpy(info[i].cpu_name, knp->value.str.addr.ptr,
+		    knp->value.str.len);
+
+		if ((knp = (kstat_named_t *)kstat_data_lookup(ksp, "clock_MHz"))
+		    == NULL) {
+			if (i >= ncpus)
+				goto err_exit;
+			else
+				continue;
+		}
+
+		info[i].cpu_mhz = knp->value.ui64;
+		info[i].cpu_number = i;
+	}
+	return (ncpus);
+err_exit:
+	free(info);
+	return (-1);
+}
+
+int
+sol_get_cpu_stats(sol_cpu_stats_t *stats)
+{
+	size_t		i, nr_cpus;
+	kstat_t		*ksp;
+	kstat_named_t	*knp;
+
+	memset(stats, 0, sizeof (stats));
+	nr_cpus = sysconf(_SC_NPROCESSORS_ONLN);
+
+	/* Aggregate the value of all CPUs */
+	for (i = 0; i < nr_cpus; i++) {
+		/*
+		 * In case of some cpu_id doesn't have kstat info.,
+		 * skip it and continue if it isn't the last one.
+		 */
+		if ((ksp = kstat_lookup(kc, "cpu", i, "sys")) == NULL) {
+			if (i >= nr_cpus)
+				return (-1);
+			else
+				continue;
+		}
+
+		if (kstat_read(kc, ksp, NULL) == -1) {
+			if (i >= nr_cpus)
+				return (-1);
+			else
+				continue;
+		}
+
+		if ((knp = (kstat_named_t *)
+		    kstat_data_lookup(ksp, "cpu_ticks_user")) == NULL) {
+			if (i >= nr_cpus)
+				return (-1);
+			else
+				continue;
+		}
+
+		stats->t_user += knp->value.ui64;
+
+		if ((knp = (kstat_named_t *)
+		    kstat_data_lookup(ksp, "cpu_ticks_kernel")) == NULL) {
+			if ((knp == NULL) && i >= nr_cpus)
+				return (-1);
+			else
+				continue;
+		}
+		stats->t_kernel += knp->value.ui64;
+
+		if ((knp = (kstat_named_t *)
+		    kstat_data_lookup(ksp, "cpu_ticks_idle")) == NULL) {
+			if (i >= nr_cpus)
+				return (-1);
+			else
+				continue;
+		}
+		stats->t_idle += knp->value.ui64;
+
+		if ((knp = (kstat_named_t *)
+		    kstat_data_lookup(ksp, "cpu_ticks_wait")) == NULL) {
+			if (i >= nr_cpus)
+				return (-1);
+			else
+				continue;
+		}
+		stats->t_iowait += knp->value.ui64;
+
+		if ((knp = (kstat_named_t *)
+		    kstat_data_lookup(ksp, "cpu_nsec_intr")) == NULL) {
+			if (i >= nr_cpus)
+				return (-1);
+			else
+				continue;
+		}
+		stats->t_intr += knp->value.ui64;	/* This is in NSEC */
+	}
+	return (0);
+}
+
+int
+sol_ibv_query_gid(struct ibv_context *context, uint8_t port_num, int index,
+    union ibv_gid *gid)
+{
+	char uverbs_devpath[MAXPATHLEN];
+	int uverbs_fd;
+	int count, start;
+	sol_uverbs_gid_t *uverbs_gidp;
 
 	/*
-	 * We should check all CPUS, and make sure they
-	 * are all the same or return an array of structs.
+	 * Not exported via sysfs, use ioctl.
 	 */
-	ksp = kstat_lookup(kc, "cpu_info", 0, NULL);
-	if (ksp == NULL)
+	if (!context || !gid || (index < 0) ||
+	    ((port_num & 0x80) && (index == 0)))
 		return (-1);
 
-	if (kstat_read(kc, ksp, NULL) == -1)
+	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
+	    context->device->dev_name);
+
+	if ((uverbs_fd = open(uverbs_devpath, O_RDWR)) < 0)
 		return (-1);
 
-	knp = (kstat_named_t *)kstat_data_lookup(ksp, "brand");
-	if (knp == NULL)
+	if (port_num & 0x80) {
+		start = 0;
+		count = index;
+	} else {
+		start = index;
+		count = 1;
+	}
+
+	uverbs_gidp = (sol_uverbs_gid_t *)malloc(count *
+	    sizeof (union ibv_gid) + sizeof (sol_uverbs_gid_t));
+	if (uverbs_gidp == NULL) {
+		close(uverbs_fd);
 		return (-1);
+	}
 
-	(void) strlcpy(info->cpu_name, knp->value.str.addr.ptr,
-	    knp->value.str.len);
+	uverbs_gidp->uverbs_port_num = port_num & 0x7F;
+	uverbs_gidp->uverbs_gid_cnt = count;
+	uverbs_gidp->uverbs_gid_start_index = start;
 
-	knp = (kstat_named_t *)kstat_data_lookup(ksp, "clock_MHz");
-	if (knp == NULL)
-		return -1;
+	if (ioctl(uverbs_fd, UVERBS_IOCTL_GET_GIDS, uverbs_gidp) != 0) {
+#ifdef	DEBUG
+		fprintf(stderr, "UVERBS_IOCTL_GET_GIDS failed: %s\n",
+		    strerror(errno));
+#endif
+		goto gid_error_exit;
+	}
 
-	info->cpu_mhz = knp->value.ui64;	
-	info->cpu_num = sysconf(_SC_NPROCESSORS_ONLN);
+	if (uverbs_gidp->uverbs_solaris_abi_version !=
+	    IB_USER_VERBS_SOLARIS_ABI_VERSION) {
+#ifdef	DEBUG
+		fprintf(stderr, "sol_uverbs solaris_abi_version != "
+		    "IB_USER_VERBS_SOLARIS_ABI_VERSION : %d\n",
+		    uverbs_gidp->uverbs_solaris_abi_version);
+#endif
+		goto gid_error_exit;
+	}
+	memcpy(gid, uverbs_gidp->uverbs_gids, sizeof (union ibv_gid) * count);
+	free(uverbs_gidp);
+	close(uverbs_fd);
 	return (0);
+
+gid_error_exit:
+	free(uverbs_gidp);
+	close(uverbs_fd);
+	return (-1);
+}
+
+int
+sol_ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
+    int index, uint16_t *pkey)
+{
+	char uverbs_devpath[MAXPATHLEN];
+	int uverbs_fd;
+	int count, start;
+	sol_uverbs_pkey_t *uverbs_pkeyp;
+
+	/*
+	 * Not exported via sysfs, use ioctl.
+	 */
+	if (!context || !pkey || (index < 0) ||
+	    ((port_num & 0x80) && (index == 0)))
+		return (-1);
+
+	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
+	    context->device->dev_name);
+	if ((uverbs_fd = open(uverbs_devpath, O_RDWR)) < 0)
+		return (-1);
+
+	if (port_num & 0x80) {
+		start = 0;
+		count = index;
+	} else {
+		start = index;
+		count = 1;
+	}
+
+	uverbs_pkeyp = (sol_uverbs_pkey_t *)malloc(count *
+	    sizeof (uint16_t) + sizeof (sol_uverbs_pkey_t));
+	if (uverbs_pkeyp == NULL) {
+		close(uverbs_fd);
+		return (-1);
+	}
+
+	uverbs_pkeyp->uverbs_port_num = port_num & 0x7F;
+	uverbs_pkeyp->uverbs_pkey_cnt = count;
+	uverbs_pkeyp->uverbs_pkey_start_index = start;
+
+	if (ioctl(uverbs_fd, UVERBS_IOCTL_GET_PKEYS, uverbs_pkeyp) != 0) {
+#ifdef	DEBUG
+		fprintf(stderr, "UVERBS_IOCTL_GET_PKEYS failed: %s\n",
+		    strerror(errno));
+#endif
+		goto pkey_error_exit;
+	}
+
+	if (uverbs_pkeyp->uverbs_solaris_abi_version !=
+	    IB_USER_VERBS_SOLARIS_ABI_VERSION) {
+#ifdef	DEBUG
+		fprintf(stderr, "sol_uverbs solaris_abi_version != "
+		    "IB_USER_VERBS_SOLARIS_ABI_VERSION : %d\n",
+		    uverbs_pkeyp->uverbs_solaris_abi_version);
+#endif
+		goto pkey_error_exit;
+	}
+	memcpy(pkey, uverbs_pkeyp->uverbs_pkey, sizeof (uint16_t) * count);
+	free(uverbs_pkeyp);
+	close(uverbs_fd);
+	return (0);
+
+pkey_error_exit:
+	free(uverbs_pkeyp);
+	close(uverbs_fd);
+	return (-1);
 }
 #endif

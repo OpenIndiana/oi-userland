@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -35,7 +35,7 @@
  * DESC: OFED Solaris wrapper
  */
 #ifndef _OFA_SOLARIS_H
-#define _OFA_SOLARIS_H
+#define	_OFA_SOLARIS_H
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -72,29 +72,29 @@ typedef		__u64		u_int64_t;
 typedef		__s64		int64_t;
 #endif
 
-typedef        uint8_t         __be8;
-typedef        uint16_t        __be16;
-typedef        uint32_t        __be32;
-typedef        uint64_t        __be64;
+typedef		uint8_t		__be8;
+typedef		uint16_t	__be16;
+typedef		uint32_t	__be32;
+typedef		uint64_t	__be64;
 
 /* Size of a pointer */
 #if defined(_LP64) || defined(_I32LPx)
-#define __WORDSIZE 64
+#define	__WORDSIZE	64
 #else
-#define __WORDSIZE 32
+#define	__WORDSIZE	32
 #endif
 
 
 /*
  * Endian definitions
  */
-#define __LITTLE_ENDIAN 1234
-#define __BIG_ENDIAN    4321
+#define	__LITTLE_ENDIAN	1234
+#define	__BIG_ENDIAN	4321
 
 #ifdef _BIG_ENDIAN
-#define __BYTE_ORDER __BIG_ENDIAN
+#define	__BYTE_ORDER	__BIG_ENDIAN
 #elif defined _LITTLE_ENDIAN
-#define __BYTE_ORDER __LITTLE_ENDIAN
+#define	__BYTE_ORDER	__LITTLE_ENDIAN
 #else
 #error unknown endianness
 #endif
@@ -105,40 +105,53 @@ typedef        uint64_t        __be64;
 #define	bswap_8(x)	((x) & 0xff)
 
 #if !defined(__i386) && !defined(__amd64)
-#define bswap_16(x)	((bswap_8(x) << 8) | bswap_8((x) >> 8))
-#define bswap_32(x)     (((uint32_t)(x) << 24) | \
-                        (((uint32_t)(x) << 8) & 0xff0000) | \
-                        (((uint32_t)(x) >> 8) & 0xff00) | \
-                        ((uint32_t)(x)  >> 24))
+#define	bswap_16(x)	((bswap_8(x) << 8) | bswap_8((x) >> 8))
+#define	bswap_32(x)	(((uint32_t)(x) << 24) | \
+			(((uint32_t)(x) << 8) & 0xff0000) | \
+			(((uint32_t)(x) >> 8) & 0xff00) | \
+			((uint32_t)(x)  >> 24))
 #else /* x86 */
-#define bswap_16(x)     htons(x)
-#define bswap_32(x)     htonl(x)
+#define	bswap_16(x)	htons(x)
+#define	bswap_32(x)	htonl(x)
 #endif  /* !__i386 && !__amd64 */
 
 #if defined(_LP64) || defined(_LONGLONG_TYPE)
 #if (!defined(__i386) && !defined(__amd64))
-#define bswap_64(x)     (((uint64_t)(x) << 56) | \
-                        (((uint64_t)(x) << 40) & 0xff000000000000ULL) | \
-                        (((uint64_t)(x) << 24) & 0xff0000000000ULL) | \
-                        (((uint64_t)(x) << 8)  & 0xff00000000ULL) | \
-                        (((uint64_t)(x) >> 8)  & 0xff000000ULL) | \
-                        (((uint64_t)(x) >> 24) & 0xff0000ULL) | \
-                        (((uint64_t)(x) >> 40) & 0xff00ULL) | \
-                        ((uint64_t)(x)  >> 56))
+#define	bswap_64(x)	(((uint64_t)(x) << 56) | \
+			(((uint64_t)(x) << 40) & 0xff000000000000ULL) | \
+			(((uint64_t)(x) << 24) & 0xff0000000000ULL) | \
+			(((uint64_t)(x) << 8)  & 0xff00000000ULL) | \
+			(((uint64_t)(x) >> 8)  & 0xff000000ULL) | \
+			(((uint64_t)(x) >> 24) & 0xff0000ULL) | \
+			(((uint64_t)(x) >> 40) & 0xff00ULL) | \
+			((uint64_t)(x)  >> 56))
 #else /* x86 */
-#define bswap_64(x)	htonll(x)
+#define	bswap_64(x)	htonll(x)
 #endif  /* !__i386 && !__amd64 */
-#else /* no uint64_t */ 
-#define bswap_64(x)	((bswap_32(x) << 32) | bswap_32((x) >> 32))
+#else /* no uint64_t */
+#define	bswap_64(x)	((bswap_32(x) << 32) | bswap_32((x) >> 32))
 #endif
 
 typedef struct sol_cpu_info_s {
 	char	cpu_name[64];
 	uint_t	cpu_mhz;
-	uint_t	cpu_num;
+	uint_t	cpu_number;
 } sol_cpu_info_t;
 
-int sol_get_cpu_info(sol_cpu_info_t *);
+int sol_get_cpu_info(sol_cpu_info_t **);
+
+typedef struct sol_cpu_stats_s {
+	uint64_t	t_user;
+	uint64_t	t_kernel;
+	uint64_t	t_idle;
+	uint64_t	t_iowait;
+	uint64_t	t_intr;
+} sol_cpu_stats_t;
+
+int sol_get_cpu_stats(sol_cpu_stats_t *);
+
+void solaris_init(void);
+void solaris_fini(void);
 
 #ifdef __cplusplus
 }

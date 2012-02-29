@@ -371,52 +371,20 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  
  #include "ibverbs.h"
  
-@@ -93,6 +98,44 @@
+@@ -93,6 +98,12 @@
  int __ibv_query_gid(struct ibv_context *context, uint8_t port_num,
  		    int index, union ibv_gid *gid)
  {
 +#if defined(__SVR4) && defined(__sun)
-+	struct ibv_query_gid          cmd;
-+	struct ibv_query_gid_resp     resp;
++	extern int sol_ibv_query_gid();
 +
-+	/*
-+	 * Not exported via sysfs, use uverbs command.
-+	 */
-+	if (!context || !gid || (index < 0)) 
-+		return -1;
++	return sol_ibv_query_gid(context, port_num, index, gid);
 +
-+	if (port_num & 0x80) {
-+		if (!index) 
-+			return -1;
-+
-+		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_GID, gid,
-+		    sizeof (union ibv_gid) * index);
-+
-+		cmd.gid_index = index;
-+		cmd.port_num  = port_num;
-+
-+		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
-+			return -1;
-+		else
-+			return 0;
-+	} else {
-+		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_GID, &resp,
-+		    sizeof resp);
-+
-+		cmd.gid_index = index;
-+		cmd.port_num  = port_num;
-+
-+		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
-+			return -1;
-+
-+		memcpy(gid, resp.gid, sizeof resp.gid);	
-+		return 0;
-+	}
 +#else
  	char name[24];
  	char attr[41];
  	uint16_t val;
-@@ -112,6 +155,7 @@
+@@ -112,6 +123,7 @@
  	}
  
  	return 0;
@@ -424,52 +392,20 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  }
  default_symver(__ibv_query_gid, ibv_query_gid);
  
-@@ -118,6 +162,44 @@
+@@ -118,6 +130,12 @@
  int __ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
  		     int index, uint16_t *pkey)
  {
 +#if defined(__SVR4) && defined(__sun)
-+	struct ibv_query_pkey         cmd;
-+	struct ibv_query_pkey_resp    resp;
++	extern int sol_ibv_query_pkey();
 +
-+	/*
-+	 * Not exported via sysfs, use uverbs command.
-+	 */
-+	if (!context || !pkey || (index < 0)) 
-+		return -1;
++	return sol_ibv_query_pkey(context, port_num, index, pkey);
 +
-+	if (port_num & 0x80) {
-+		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_PKEY, pkey,
-+		    sizeof (uint16_t) * index);
-+
-+		if (!index)
-+			 return -1;
-+		cmd.pkey_index = index;
-+		cmd.port_num   = port_num;
-+
-+		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
-+			return -1;
-+		else
-+			return 0;
-+	} else {
-+
-+		IBV_INIT_CMD_RESP(&cmd, sizeof cmd, QUERY_PKEY, &resp,
-+		    sizeof resp);
-+
-+		cmd.pkey_index = index;
-+		cmd.port_num   = port_num;
-+
-+		if (write(context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
-+			return -1;
-+
-+		*pkey = resp.pkey;
-+		return 0;
-+	}
 +#else
  	char name[24];
  	char attr[8];
  	uint16_t val;
-@@ -133,6 +215,7 @@
+@@ -133,6 +151,7 @@
  
  	*pkey = htons(val);
  	return 0;
@@ -477,7 +413,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  }
  default_symver(__ibv_query_pkey, ibv_query_pkey);
  
-@@ -212,6 +295,10 @@
+@@ -212,6 +231,10 @@
  	struct ibv_comp_channel            *channel;
  	struct ibv_create_comp_channel      cmd;
  	struct ibv_create_comp_channel_resp resp;
@@ -488,7 +424,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  
  	if (abi_ver <= 2)
  		return ibv_create_comp_channel_v2(context);
-@@ -221,7 +308,23 @@
+@@ -221,7 +244,23 @@
  		return NULL;
  
  	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, CREATE_COMP_CHANNEL, &resp, sizeof resp);
@@ -512,7 +448,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  		free(channel);
  		return NULL;
  	}
-@@ -228,6 +331,9 @@
+@@ -228,6 +267,9 @@
  
  	VALGRIND_MAKE_MEM_DEFINED(&resp, sizeof resp);
  
@@ -845,7 +781,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/sysfs.c libibverbs-1.1.4/src/sysfs.c
  static char *sysfs_path;
  
  const char *ibv_get_sysfs_path(void)
-@@ -79,12 +83,20 @@
+@@ -79,12 +83,18 @@
  			char *buf, size_t size)
  {
  	char *path;
@@ -859,14 +795,12 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/sysfs.c libibverbs-1.1.4/src/sysfs.c
  
 +#if defined(__SVR4) && defined(__sun)
 +	len = sol_read_sysfs_file(path, buf, size);
-+
-+	if (len < 0)
-+		free(path);
++	free(path);
 +#else
  	fd = open(path, O_RDONLY);
  	if (fd < 0) {
  		free(path);
-@@ -98,6 +110,7 @@
+@@ -98,6 +108,7 @@
  
  	if (len > 0 && buf[len - 1] == '\n')
  		buf[--len] = '\0';
@@ -911,6 +845,22 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/configure libibverbs-1.1.4/configure
    ac_status=$?
    $as_echo "$as_me:${as_lineno-$LINENO}: \$? = $ac_status" >&5
    test $ac_status = 0; }
+@@ -3509,13 +3511,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-g -O3"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-O3"
+   else
+     CFLAGS=
+   fi
 @@ -8721,6 +8723,7 @@
  	;;
        esac
@@ -919,6 +869,22 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/configure libibverbs-1.1.4/configure
        ;;
  
      sunos4*)
+@@ -10945,13 +10948,13 @@
+   CFLAGS=$ac_save_CFLAGS
+ elif test $ac_cv_prog_cc_g = yes; then
+   if test "$GCC" = yes; then
+-    CFLAGS="-g -O2"
++    CFLAGS="-g -O3"
+   else
+     CFLAGS="-g"
+   fi
+ else
+   if test "$GCC" = yes; then
+-    CFLAGS="-O2"
++    CFLAGS="-O3"
+   else
+     CFLAGS=
+   fi
 @@ -11198,7 +11201,7 @@
    $as_echo_n "(cached) " >&6
  else
@@ -1419,16 +1385,3 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/examples/devinfo.c libibverbs-1.1.4/exam
  
  #include <infiniband/verbs.h>
  #include <infiniband/driver.h>
-@@ -292,8 +294,12 @@
- 		       port_state_str(port_attr.state), port_attr.state);
- 		printf("\t\t\tmax_mtu:\t\t%s (%d)\n",
- 		       mtu_str(port_attr.max_mtu), port_attr.max_mtu);
-+#if !(defined(__SVR4) && defined(__sun))
- 		printf("\t\t\tactive_mtu:\t\t%s (%d)\n",
- 		       mtu_str(port_attr.active_mtu), port_attr.active_mtu);
-+#else
-+		 printf("\t\t\tactive_mtu:\t\t%s\n", "Unknown");
-+#endif
- 		printf("\t\t\tsm_lid:\t\t\t%d\n", port_attr.sm_lid);
- 		printf("\t\t\tport_lid:\t\t%d\n", port_attr.lid);
- 		printf("\t\t\tport_lmc:\t\t0x%02x\n", port_attr.lmc);
