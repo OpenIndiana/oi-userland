@@ -20,7 +20,7 @@
 # CDDL HEADER END
 #
 #
-# Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -59,6 +59,8 @@ if [ "x${APACHE_VERSION}" != "x" ]; then
     APACHE_ETC_ROOT=${APACHE_ETC_ROOT}/${APACHE_VERSION}
     APACHE_VAR_ROOT=${APACHE_VAR_ROOT}/${APACHE_VERSION}
 fi
+
+APACHE_USER_ENVVARS=${APACHE_ETC_ROOT}/envvars
 
 getprop httpd/enable_64bit
 if [ "${PROPVAL}" != "" ] ; then
@@ -108,27 +110,27 @@ prefork)
 	# /etc/apache2/<version>/envvars file
 	# delete the line so that it defaults to prefork 
 	# type
-	ALREADY_SET=`grep "HTTPD=" ${APACHE_ETC_ROOT}/envvars`
+	ALREADY_SET=`grep "HTTPD=" ${APACHE_USER_ENVVARS}`
 	if [ "${ALREADY_SET}" != "" ]; then
-		sed -e '/^HTTPD=/ d' ${APACHE_ETC_ROOT}/envvars > ${APACHE_ETC_ROOT}/envvars.new
-		cp ${APACHE_ETC_ROOT}/envvars.new ${APACHE_ETC_ROOT}/envvars
-		rm ${APACHE_ETC_ROOT}/envvars.new
+		sed -e '/^HTTPD=/ d' ${APACHE_USER_ENVVARS} > ${APACHE_USER_ENVVARS}.new
+		cp ${APACHE_USER_ENVVARS}.new ${APACHE_USER_ENVVARS}
+		rm ${APACHE_USER_ENVVARS}.new
 	fi
 	;;
 worker)
 	# set HTTPD value to httpd.worker within 
 	# /etc/apache2/<version>/envvars file
-	ALREADY_SET=`grep "HTTPD=" ${APACHE_ETC_ROOT}/envvars`
+	ALREADY_SET=`grep "HTTPD=" ${APACHE_USER_ENVVARS}`
 	if [ "${ALREADY_SET}" != "" ]; then
 		sed -e '/^HTTPD=/c\
-HTTPD='${APACHE_BIN}'/httpd.worker' ${APACHE_ETC_ROOT}/envvars > ${APACHE_ETC_ROOT}/envvars.new
+HTTPD='${APACHE_BIN}'/httpd.worker' ${APACHE_USER_ENVVARS} > ${APACHE_USER_ENVVARS}.new
 	else
 		sed -e '$a\
-HTTPD='${APACHE_BIN}'/httpd.worker' ${APACHE_ETC_ROOT}/envvars > ${APACHE_ETC_ROOT}/envvars.new
+HTTPD='${APACHE_BIN}'/httpd.worker' ${APACHE_USER_ENVVARS} > ${APACHE_USER_ENVVARS}.new
 	fi
 
-	cp ${APACHE_ETC_ROOT}/envvars.new ${APACHE_ETC_ROOT}/envvars
-	rm ${APACHE_ETC_ROOT}/envvars.new
+	cp ${APACHE_USER_ENVVARS}.new ${APACHE_USER_ENVVARS}
+	rm ${APACHE_USER_ENVVARS}.new
 	;;
 *)
         if [ "x${APACHE_VERSION}" != "x" ]; then
@@ -156,7 +158,7 @@ stop)
 	;;
 esac
 
-${APACHE_BIN}/apachectl ${STARTUP_OPTIONS} ${cmd} 2>&1
+APACHE_USER_ENVVARS="${APACHE_USER_ENVVARS}" ${APACHE_BIN}/apachectl ${STARTUP_OPTIONS} ${cmd} 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Server failed to start. Check the error log (defaults to ${APACHE_VAR_ROOT}/logs/error_log) for more information, if any."
