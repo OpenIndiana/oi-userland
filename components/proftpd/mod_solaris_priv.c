@@ -175,6 +175,9 @@ static void set_privs(void) {
 
     /* Needed to access /var/adm/wtmpx. */
     priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_DAC_WRITE, NULL);
+
+    /* Enable chroot for anonymous login. */
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_CHROOT, NULL);
 }
 
 /* Setup priviledges before the user responds to the user prompt
