@@ -1,0 +1,22 @@
+--- ghostscript-9.00/jasper/src/libjasper/jpc/jpc_cs.c.orig	Wed Dec 14 13:09:06 2011
++++ ghostscript-9.00/jasper/src/libjasper/jpc/jpc_cs.c	Wed Dec 14 13:09:20 2011
+@@ -750,6 +750,10 @@
+ 		return -1;
+ 	}
+ 	compparms->numrlvls = compparms->numdlvls + 1;
++	if (compparms->numrlvls > JPC_MAXRLVLS) {
++		jpc_cox_destroycompparms(compparms);
++		return -1;
++	}	
+ 	if (prtflag) {
+ 		for (i = 0; i < compparms->numrlvls; ++i) {
+ 			if (jpc_getuint8(in, &tmp)) {
+@@ -1340,7 +1344,7 @@
+ 	jpc_crgcomp_t *comp;
+ 	uint_fast16_t compno;
+ 	crg->numcomps = cstate->numcomps;
+-	if (!(crg->comps = jas_malloc(cstate->numcomps * sizeof(uint_fast16_t)))) {
++	if (!(crg->comps = jas_malloc(cstate->numcomps * sizeof(jpc_crgcomp_t)))) {
+ 		return -1;
+ 	}
+ 	for (compno = 0, comp = crg->comps; compno < cstate->numcomps;
