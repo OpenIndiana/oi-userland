@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -29,12 +29,12 @@ PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 # can't call it.
 
 COMPONENT_NAME=		perl
-COMPONENT_VERSION=	5.12.3
+COMPONENT_VERSION=	5.12.4
 PERL_VERSION=		5.12
 COMPONENT_PROJECT_URL=	http://www.perl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:86d77c6cbc7a60068dc14c88ffd0729324d1174f
+COMPONENT_ARCHIVE_HASH=	sha1:68ff2f4a0901d1e4ea263f452001db0563d2edb3
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -65,6 +65,8 @@ studio_MT=
 # If that changes the sed filter needs to change.
 #
 
+# That last bit re-runs bison to regenerate perly.h.
+
 COMPONENT_PRE_BUILD_ACTION= \
 	(cd $(@D); $(ENV) -i \
 		MAKE=$(GMAKE) \
@@ -92,8 +94,9 @@ COMPONENT_PRE_BUILD_ACTION= \
 	    '/^myuname=/{print $$1" localhost "$$3" "$$5" "$$6" "$$7"\047"} ; \
 	    		!/^myuname=/ {print}' config.sh_orig \
 		| \
-		sed -e 's/[^ ]*SUNWspro[^ ]*//g' > config.sh )
-
+		sed -e 's/[^ ]*SUNWspro[^ ]*//g' > config.sh ) ; \
+	( $(RM) $(@D)/perly.act $(@D)/perly.tab $(@D)/perly.h; \
+		cd $(@D) ; $(GMAKE) regen_perly )
 
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
 #
