@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -34,7 +34,7 @@ TOUCH=/usr/bin/touch
 DHCPD_IPV4="svc:/network/dhcp/server:ipv4"
 DHCPD_IPV6="svc:/network/dhcp/server:ipv6"
 DHCPRELAY_IPV4="svc:/network/dhcp/relay:ipv4"
-DHCRELAY_IPV6="svc:/network/dhcp/relay:ipv6"
+DHCPRELAY_IPV6="svc:/network/dhcp/relay:ipv6"
 
 DHCPD_BIN="/usr/lib/inet/dhcpd"
 DHCPRELAY_BIN="/usr/lib/inet/dhcrelay"
@@ -53,7 +53,7 @@ fi
 # get_prop fmri propname
 #
 get_prop () {
-	VALUE="`$SVCPROP -p config/$1 $SMF_FMRI 2>/dev/null`"
+	VALUE="`$SVCPROP -cp config/$1 $SMF_FMRI 2>/dev/null`"
 	# Empty astring_list values show up as "" - do not return this.
 	if [ "$VALUE" != "\"\"" ]; then
 		echo $VALUE
@@ -117,7 +117,7 @@ get_dhcprelay_options_v4() {
 	# Get append_agent_option V4 property value 
 	#
 	if [ "`get_prop append_agent_option`" = "true" ]; then
-		APPEND="-m"
+		APPEND="-m append"
 	else
 		APPEND=""
 	fi
@@ -125,12 +125,12 @@ get_dhcprelay_options_v4() {
 	#
 	# get listen_ifname property value and modify it.  
 	# If listen_ifnames property value is "e1000g01 iprb0" then the
-	# command line option will look like  "- i e1000g0 -i iprb0"
+	# command line option will look like  "-i e1000g0 -i iprb0"
 	#
 	LISTENIFNAMES="`get_prop listen_ifnames`"
 	IIFLIST=""
 	if [ ! -z "$LISTENIFNAMES" ]; then
-		IIFLIST="`echo $LISTENIFNAMES | sed -e 's/[ \t]/ -i /g'`"
+		IIFLIST="-i `echo $LISTENIFNAMES | sed -e 's/[ \t]/ -i /g'`"
 	fi
 
 	#
@@ -143,7 +143,7 @@ get_dhcprelay_options_v4() {
 	#
 	DHCPSERVERS=`get_prop servers`
 	if [  -z "$DHCPSERVERS" ]; then
-		errlog "Must specify at least one servers prop value, exiting"
+		errlog 'Must specify at least one "servers" property value, exiting'
 		return 1
 	fi
 
@@ -164,7 +164,7 @@ get_dhcprelay_options_v6() {
 	#
 	RECVLINKS=`get_prop receive_query_links`
 	if [  -z "$RECVLINKS" ]; then
-        	errlog "Must specify at least one receive_query_links propvalue"
+        	errlog 'Must specify at least one "receive_query_links" property value'
 		errlog "Exiting."
 		return 1
 	fi
@@ -174,7 +174,7 @@ get_dhcprelay_options_v6() {
 	fi
 	#
 	# Get forwardlinks V6 property value and modify it:
-	# Given forwardquery_links property value is "1.2.3.4%bge0 bge2,"
+	# Given forward_query_links property value is "1.2.3.4%bge0 bge2,"
 	# then the command line option will look like  "-u 1.2.3.4%bge0 -u
 	# bge2"
 	#
@@ -182,21 +182,20 @@ get_dhcprelay_options_v6() {
 	# first specify a server using svccfg/setprop command
 	# before enabling service.
 	#
-	FWDLINKS=`get_prop forwardquery_links`
+	FWDLINKS=`get_prop forward_query_links`
 	if [ -z "$FWDLINKS" ]; then
-        	errlog "Must specify at least one forwardquery_links propvalue"
+        	errlog 'Must specify at least one "forward_query_links" property value'
 		errlog "Exiting"
 		return 1
 	fi
 	IFWDLINKS=""
 	if [ ! -z "$FWDLINKS" ]; then
-		IFWDLINKS="-u `echo $FWDLINKS sed -e 's/,/ -u /g'`"
+		IFWDLINKS="-u `echo $FWDLINKS | sed -e 's/[ \t]/ -u /g'`"
 	fi
 
 	export OPTIONS="$OPTIONS -6 $IRECVLINKS $IFWDLINKS"
 }
 
-export EXECFILE=$DHCPD_BIN
 export OPTIONS="--no-pid"
 
 case "$SMF_FMRI" in

@@ -44,6 +44,11 @@ CONFIGURE_OPTIONS  +=	--bindir=$(USRSBINDIR)
 CONFIGURE_OPTIONS  +=	--enable-use-sockets
 CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 
+
+# Disable message in omapip/errwarn.c.
+CPPFLAGS  +=	        -DNOMINUM
+CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)" 
+
 build:		$(BUILD_32)
 
 install:	build $(INSTALL_32) $(PROTO_DIR)/dhcpd.leases
