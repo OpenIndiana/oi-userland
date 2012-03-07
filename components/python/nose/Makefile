@@ -29,9 +29,9 @@ COMPONENT_NAME=		nose
 COMPONENT_VERSION=	1.0.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/python-nose/
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)%20%281%29.tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:186d223d0d74e94093bc0c42223d2ad92c090eed
-COMPONENT_ARCHIVE_URL=	http://python-nose.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/n/nose/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
