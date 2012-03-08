@@ -54,6 +54,16 @@ CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
 COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
 
+# Remove the hard-wired compiler locations in the LTCC and two CC lines
+# in the two versions of the libtool script.
+COMPONENT_POST_INSTALL_ACTION = \
+	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRBINDIR)/$(MACH64) ; do \
+		cd $$dir; \
+		/usr/gnu/bin/sed -i \
+			-e 's|^LTCC="/.*$$|LTCC="cc"|' \
+			-e 's|^CC="/.*$$|CC="cc"|' libtool ; \
+	done)
+
 # Macros to configure, build, and install the old version for the time being.
 BUILD_OLD_DIR_32 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH32)
 BUILD_OLD_DIR_64 = $(COMPONENT_DIR)/build/$(COMPONENT_VERSION_1)-$(MACH64)
