@@ -1,0 +1,31 @@
+This patch copied/pasted from this link:
+http://git.gnome.org/browse/libxml2/commit/?id=38af74f7b18af17097c1888bc4c96ab6a30e3bdf
+----------------------------------------------------------------------
+From 38af74f7b18af17097c1888bc4c96ab6a30e3bdf Mon Sep 17 00:00:00 2001
+From: Paul Smith <psmith@gnu.org>
+Date: Mon, 15 Mar 2010 09:22:25 +0000
+Subject: fix build error in libxml2/python
+
+There are missing $(srcdir) values in libxml2/python/Makefile.am which
+cause it to fail if built remote from out of tree.
+---
+diff --git a/python/Makefile.am b/python/Makefile.am
+index 8f148b1..3cf87e7 100644
+--- a/python/Makefile.am
++++ b/python/Makefile.am
+@@ -29,11 +29,11 @@ mylibs = \
+ 
+ python_LTLIBRARIES = libxml2mod.la
+ 
+-libxml2mod_la_SOURCES = libxml.c types.c
++libxml2mod_la_SOURCES = $(srcdir)/libxml.c $(srcdir)/types.c
+ nodist_libxml2mod_la_SOURCES = libxml2-py.c
+ libxml2mod_la_LIBADD = $(mylibs) @CYGWIN_EXTRA_PYTHON_LIBADD@ @PYTHON_LIBS@
+ 
+-libxml.c: libxml2-py.h # to generate before to compile
++$(srcdir)/libxml.c: libxml2-py.h # to generate before to compile
+ 
+ 
+ libxml2.py: $(srcdir)/libxml.py libxml2class.py
+--
+cgit v0.9.0.2
