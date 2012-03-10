@@ -1,0 +1,48 @@
+--- mutt-1.5.21/mutt_socket.c.orig
++++ mutt-1.5.21/mutt_socket.c
+@@ -78,7 +78,11 @@
+   if (conn->fd < 0)
+     dprint (1, (debugfile, "mutt_socket_close: Attempt to close closed connection.\n"));
+   else
++  {
++    mutt_allow_interrupt (1);
+     rc = conn->conn_close (conn);
++    mutt_allow_interrupt (0);
++  }
+ 
+   conn->fd = -1;
+   conn->ssf = 0;
+@@ -96,7 +99,9 @@
+     return -1;
+   }
+ 
++  mutt_allow_interrupt (1);
+   rc = conn->conn_read (conn, buf, len);
++  mutt_allow_interrupt (0);
+   /* EOF */
+   if (rc == 0)
+   {
+@@ -127,7 +132,10 @@
+   
+   while (sent < len)
+   {
+-    if ((rc = conn->conn_write (conn, buf + sent, len - sent)) < 0)
++    mutt_allow_interrupt (1);
++    rc = conn->conn_write (conn, buf + sent, len - sent);
++    mutt_allow_interrupt (0);
++    if (rc < 0)
+     {
+       dprint (1, (debugfile,
+                   "mutt_socket_write: error writing (%s), closing socket\n",
+@@ -169,7 +177,11 @@
+   if (conn->bufpos >= conn->available)
+   {
+     if (conn->fd >= 0)
++    {
++      mutt_allow_interrupt (1);
+       conn->available = conn->conn_read (conn, conn->inbuf, sizeof (conn->inbuf));
++      mutt_allow_interrupt (0);
++    }
+     else
+     {
+       dprint (1, (debugfile, "mutt_socket_readchar: attempt to read from closed connection.\n"));
