@@ -19,16 +19,16 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pcre
-COMPONENT_VERSION=	7.8
+COMPONENT_VERSION=	8.21
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:229e6585ec816fbb7081a6b3d29daf1e048f362f
+COMPONENT_ARCHIVE_HASH=	sha1:dffb43eff9729c0999843a86ef97961b8c4f6ac8
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://pcre.org/
 

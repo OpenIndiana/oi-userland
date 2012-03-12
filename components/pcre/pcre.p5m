@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -31,7 +31,7 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=org.opensolaris.arc-caseid \
-    value=PSARC/2007/164
+    value=PSARC/2012/081
 
 dir path=usr
 dir path=usr/bin
@@ -50,6 +50,8 @@ dir path=usr/share/man
 dir path=usr/share/man/man1
 dir path=usr/share/man/man3
 
+file path=usr/bin/$(MACH64)/pcregrep
+file path=usr/bin/$(MACH64)/pcretest
 file path=usr/bin/$(MACH64)/pcre-config
 file path=usr/bin/pcre-config
 file path=usr/bin/pcregrep
@@ -68,6 +70,7 @@ file path=usr/lib/$(MACH64)/libpcreposix.so.0.0.0
 file path=usr/lib/$(MACH64)/llib-lpcre.ln
 file path=usr/lib/$(MACH64)/pkgconfig/libpcre.pc
 file path=usr/lib/$(MACH64)/pkgconfig/libpcrecpp.pc
+file path=usr/lib/$(MACH64)/pkgconfig/libpcreposix.pc
 file path=usr/lib/libpcre.so.0.0.0
 file path=usr/lib/libpcrecpp.so.0.0.0
 file path=usr/lib/libpcreposix.so.0.0.0
@@ -75,8 +78,11 @@ file llib-lpcre path=usr/lib/llib-lpcre
 file path=usr/lib/llib-lpcre.ln
 file path=usr/lib/pkgconfig/libpcre.pc
 file path=usr/lib/pkgconfig/libpcrecpp.pc
+file path=usr/lib/pkgconfig/libpcreposix.pc
 file path=usr/share/doc/pcre/html/index.html
+file path=usr/share/doc/pcre/html/pcre-config.html
 file path=usr/share/doc/pcre/html/pcre.html
+file path=usr/share/doc/pcre/html/pcre_assign_jit_stack.html
 file path=usr/share/doc/pcre/html/pcre_compile.html
 file path=usr/share/doc/pcre/html/pcre_compile2.html
 file path=usr/share/doc/pcre/html/pcre_config.html
@@ -84,6 +90,7 @@ file path=usr/share/doc/pcre/html/pcre_copy_named_substring.html
 file path=usr/share/doc/pcre/html/pcre_copy_substring.html
 file path=usr/share/doc/pcre/html/pcre_dfa_exec.html
 file path=usr/share/doc/pcre/html/pcre_exec.html
+file path=usr/share/doc/pcre/html/pcre_free_study.html
 file path=usr/share/doc/pcre/html/pcre_free_substring.html
 file path=usr/share/doc/pcre/html/pcre_free_substring_list.html
 file path=usr/share/doc/pcre/html/pcre_fullinfo.html
@@ -93,6 +100,8 @@ file path=usr/share/doc/pcre/html/pcre_get_stringtable_entries.html
 file path=usr/share/doc/pcre/html/pcre_get_substring.html
 file path=usr/share/doc/pcre/html/pcre_get_substring_list.html
 file path=usr/share/doc/pcre/html/pcre_info.html
+file path=usr/share/doc/pcre/html/pcre_jit_stack_alloc.html
+file path=usr/share/doc/pcre/html/pcre_jit_stack_free.html
 file path=usr/share/doc/pcre/html/pcre_maketables.html
 file path=usr/share/doc/pcre/html/pcre_refcount.html
 file path=usr/share/doc/pcre/html/pcre_study.html
@@ -102,7 +111,10 @@ file path=usr/share/doc/pcre/html/pcrebuild.html
 file path=usr/share/doc/pcre/html/pcrecallout.html
 file path=usr/share/doc/pcre/html/pcrecompat.html
 file path=usr/share/doc/pcre/html/pcrecpp.html
+file path=usr/share/doc/pcre/html/pcredemo.html
 file path=usr/share/doc/pcre/html/pcregrep.html
+file path=usr/share/doc/pcre/html/pcrejit.html
+file path=usr/share/doc/pcre/html/pcrelimits.html
 file path=usr/share/doc/pcre/html/pcrematching.html
 file path=usr/share/doc/pcre/html/pcrepartial.html
 file path=usr/share/doc/pcre/html/pcrepattern.html
@@ -112,10 +124,12 @@ file path=usr/share/doc/pcre/html/pcreprecompile.html
 file path=usr/share/doc/pcre/html/pcresample.html
 file path=usr/share/doc/pcre/html/pcrestack.html
 file path=usr/share/doc/pcre/html/pcretest.html
+file path=usr/share/doc/pcre/html/pcreunicode.html
 file path=usr/share/man/man1/pcre-config.1
 file path=usr/share/man/man1/pcregrep.1
 file path=usr/share/man/man1/pcretest.1
 file path=usr/share/man/man3/pcre.3
+file path=usr/share/man/man3/pcre_assign_jit_stack.3
 file path=usr/share/man/man3/pcre_compile.3
 file path=usr/share/man/man3/pcre_compile2.3
 file path=usr/share/man/man3/pcre_config.3
@@ -123,6 +137,7 @@ file path=usr/share/man/man3/pcre_copy_named_substring.3
 file path=usr/share/man/man3/pcre_copy_substring.3
 file path=usr/share/man/man3/pcre_dfa_exec.3
 file path=usr/share/man/man3/pcre_exec.3
+file path=usr/share/man/man3/pcre_free_study.3
 file path=usr/share/man/man3/pcre_free_substring.3
 file path=usr/share/man/man3/pcre_free_substring_list.3
 file path=usr/share/man/man3/pcre_fullinfo.3
@@ -132,6 +147,8 @@ file path=usr/share/man/man3/pcre_get_stringtable_entries.3
 file path=usr/share/man/man3/pcre_get_substring.3
 file path=usr/share/man/man3/pcre_get_substring_list.3
 file path=usr/share/man/man3/pcre_info.3
+file path=usr/share/man/man3/pcre_jit_stack_alloc.3
+file path=usr/share/man/man3/pcre_jit_stack_free.3
 file path=usr/share/man/man3/pcre_maketables.3
 file path=usr/share/man/man3/pcre_refcount.3
 file path=usr/share/man/man3/pcre_study.3
@@ -141,6 +158,8 @@ file path=usr/share/man/man3/pcrebuild.3
 file path=usr/share/man/man3/pcrecallout.3
 file path=usr/share/man/man3/pcrecompat.3
 file path=usr/share/man/man3/pcrecpp.3
+file path=usr/share/man/man3/pcrejit.3
+file path=usr/share/man/man3/pcrelimits.3
 file path=usr/share/man/man3/pcrematching.3
 file path=usr/share/man/man3/pcrepartial.3
 file path=usr/share/man/man3/pcrepattern.3
@@ -150,6 +169,7 @@ file path=usr/share/man/man3/pcreprecompile.3
 file path=usr/share/man/man3/pcresample.3
 file path=usr/share/man/man3/pcrestack.3
 file path=usr/share/man/man3/pcresyntax.3
+file path=usr/share/man/man3/pcreunicode.3
 
 link path=usr/lib/$(MACH64)/libpcre.so target=libpcre.so.0.0.0
 link path=usr/lib/$(MACH64)/libpcre.so.0 target=libpcre.so.0.0.0
