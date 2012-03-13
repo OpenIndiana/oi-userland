@@ -18,126 +18,259 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr/lib/git-core/.* -> default mode 0555>
-<transform file path=usr/share/man/man./(.+$) -> set action.hash Documentation/%<\1> >
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
 set name=pkg.fmri \
     value=pkg:/developer/versioning/git@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="git - Fast Version Control System"
 set name=pkg.description \
     value="Git is a free & open source, distributed version control system designed to handle everything from small to very large projects with speed and efficiency."
-set name=pkg.summary value="git - Fast Version Control System"
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/Source Code Management"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/360
+set name=org.opensolaris.arc-caseid value=LSARC/2008/360
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-dir path=usr
-dir path=usr/bin
-dir path=usr/lib
-dir path=usr/lib/git-core
-dir path=usr/lib/python2.6
-dir path=usr/lib/python2.6/vendor-packages
-dir path=usr/lib/python2.6/vendor-packages/git_remote_helpers
-dir path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git
-dir path=usr/perl5
-dir path=usr/perl5/vendor_perl
-dir path=usr/perl5/vendor_perl/$(PERL_VERSION)
-dir path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)
-dir path=usr/share
-dir path=usr/share/git-core
-dir path=usr/share/git-core/templates
-dir path=usr/share/git-core/templates/branches
-dir path=usr/share/git-core/templates/hooks
-dir path=usr/share/git-core/templates/info
-dir path=usr/share/git-gui
-dir path=usr/share/git-gui/lib
-dir path=usr/share/git-gui/lib/msgs
-dir path=usr/share/gitk
-dir path=usr/share/gitk/lib
-dir path=usr/share/gitk/lib/msgs
-dir path=usr/share/gitweb
-dir path=usr/share/gitweb/static
-dir path=usr/share/man
-dir path=usr/share/man/man1
-dir path=usr/share/man/man4
-dir path=usr/share/man/man5
-file path=usr/bin/git
-file path=usr/bin/git-cvsserver
-file path=usr/bin/git-shell
-file path=usr/bin/git-upload-pack
+
+license git.license license=GPLv2
+
+dir  path=usr
+dir  path=usr/bin
+hardlink path=usr/bin/git target=../lib/git-core/git-cherry-pick
+hardlink path=usr/bin/git-cvsserver target=../lib/git-core/git-cvsserver
+hardlink path=usr/bin/git-receive-pack target=../lib/git-core/git-cherry-pick
+hardlink path=usr/bin/git-shell target=../lib/git-core/git-shell
+hardlink path=usr/bin/git-upload-archive target=../lib/git-core/git-cherry-pick
+hardlink path=usr/bin/git-upload-pack target=../lib/git-core/git-upload-pack
 file path=usr/bin/gitk
+dir  path=usr/lib
+dir  path=usr/lib/git-core
+hardlink path=usr/lib/git-core/git target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-add target=git-cherry-pick
 file path=usr/lib/git-core/git-add--interactive
 file path=usr/lib/git-core/git-am
+hardlink path=usr/lib/git-core/git-annotate target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-apply target=git-cherry-pick
 file path=usr/lib/git-core/git-archimport
+hardlink path=usr/lib/git-core/git-archive target=git-cherry-pick
 file path=usr/lib/git-core/git-bisect
+hardlink path=usr/lib/git-core/git-bisect--helper target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-blame target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-branch target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-bundle target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-cat-file target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-check-attr target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-check-ref-format target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-checkout target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-checkout-index target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-cherry target=git-cherry-pick
+file path=usr/lib/git-core/git-cherry-pick
+hardlink path=usr/lib/git-core/git-citool target=git-gui
+hardlink path=usr/lib/git-core/git-clean target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-clone target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-commit target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-commit-tree target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-config target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-count-objects target=git-cherry-pick
+file path=usr/lib/git-core/git-credential-cache
+file path=usr/lib/git-core/git-credential-cache--daemon
+file path=usr/lib/git-core/git-credential-store
 file path=usr/lib/git-core/git-cvsexportcommit
 file path=usr/lib/git-core/git-cvsimport
+file path=usr/lib/git-core/git-cvsserver
 file path=usr/lib/git-core/git-daemon
+hardlink path=usr/lib/git-core/git-describe target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-diff target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-diff-files target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-diff-index target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-diff-tree target=git-cherry-pick
 file path=usr/lib/git-core/git-difftool
 file path=usr/lib/git-core/git-difftool--helper
+hardlink path=usr/lib/git-core/git-fast-export target=git-cherry-pick
 file path=usr/lib/git-core/git-fast-import
+hardlink path=usr/lib/git-core/git-fetch target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-fetch-pack target=git-cherry-pick
 file path=usr/lib/git-core/git-filter-branch
+hardlink path=usr/lib/git-core/git-fmt-merge-msg target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-for-each-ref target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-format-patch target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-fsck target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-fsck-objects target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-gc target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-get-tar-commit-id target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-grep target=git-cherry-pick
 file path=usr/lib/git-core/git-gui
 file path=usr/lib/git-core/git-gui--askpass
+hardlink path=usr/lib/git-core/git-hash-object target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-help target=git-cherry-pick
 file path=usr/lib/git-core/git-http-backend
 file path=usr/lib/git-core/git-http-fetch
 file path=usr/lib/git-core/git-http-push
 file path=usr/lib/git-core/git-imap-send
+hardlink path=usr/lib/git-core/git-index-pack target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-init target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-init-db target=git-cherry-pick
 file path=usr/lib/git-core/git-instaweb
+hardlink path=usr/lib/git-core/git-log target=git-cherry-pick
 file path=usr/lib/git-core/git-lost-found
+hardlink path=usr/lib/git-core/git-ls-files target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-ls-remote target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-ls-tree target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-mailinfo target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-mailsplit target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-merge target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-merge-base target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-merge-file target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-merge-index target=git-cherry-pick
 file path=usr/lib/git-core/git-merge-octopus
 file path=usr/lib/git-core/git-merge-one-file
+hardlink path=usr/lib/git-core/git-merge-ours target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-merge-recursive target=git-cherry-pick
 file path=usr/lib/git-core/git-merge-resolve
+hardlink path=usr/lib/git-core/git-merge-subtree target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-merge-tree target=git-cherry-pick
 file path=usr/lib/git-core/git-mergetool
 file path=usr/lib/git-core/git-mergetool--lib
+hardlink path=usr/lib/git-core/git-mktag target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-mktree target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-mv target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-name-rev target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-notes target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-pack-objects target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-pack-redundant target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-pack-refs target=git-cherry-pick
 file path=usr/lib/git-core/git-parse-remote
+hardlink path=usr/lib/git-core/git-patch-id target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-peek-remote target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-prune target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-prune-packed target=git-cherry-pick
 file path=usr/lib/git-core/git-pull
+hardlink path=usr/lib/git-core/git-push target=git-cherry-pick
 file path=usr/lib/git-core/git-quiltimport
+hardlink path=usr/lib/git-core/git-read-tree target=git-cherry-pick
 file path=usr/lib/git-core/git-rebase
+file path=usr/lib/git-core/git-rebase--am
 file path=usr/lib/git-core/git-rebase--interactive
+file path=usr/lib/git-core/git-rebase--merge
+hardlink path=usr/lib/git-core/git-receive-pack target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-reflog target=git-cherry-pick
 file path=usr/lib/git-core/git-relink
-file path=usr/lib/git-core/git-remote-http
+hardlink path=usr/lib/git-core/git-remote target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-remote-ext target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-remote-fd target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-remote-ftp target=git-remote-ftps
+file path=usr/lib/git-core/git-remote-ftps
+hardlink path=usr/lib/git-core/git-remote-http target=git-remote-ftps
+hardlink path=usr/lib/git-core/git-remote-https target=git-remote-ftps
 file path=usr/lib/git-core/git-remote-testgit
 file path=usr/lib/git-core/git-repack
+hardlink path=usr/lib/git-core/git-replace target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-repo-config target=git-cherry-pick
 file path=usr/lib/git-core/git-request-pull
+hardlink path=usr/lib/git-core/git-rerere target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-reset target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-rev-list target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-rev-parse target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-revert target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-rm target=git-cherry-pick
 file path=usr/lib/git-core/git-send-email
+hardlink path=usr/lib/git-core/git-send-pack target=git-cherry-pick
+file path=usr/lib/git-core/git-sh-i18n
+file path=usr/lib/git-core/git-sh-i18n--envsubst
 file path=usr/lib/git-core/git-sh-setup
+file path=usr/lib/git-core/git-shell
+hardlink path=usr/lib/git-core/git-shortlog target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-show target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-show-branch target=git-cherry-pick
 file path=usr/lib/git-core/git-show-index
+hardlink path=usr/lib/git-core/git-show-ref target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-stage target=git-cherry-pick
 file path=usr/lib/git-core/git-stash
+hardlink path=usr/lib/git-core/git-status target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-stripspace target=git-cherry-pick
 file path=usr/lib/git-core/git-submodule
 file path=usr/lib/git-core/git-svn
+hardlink path=usr/lib/git-core/git-symbolic-ref target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-tag target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-tar-tree target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-unpack-file target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-unpack-objects target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-update-index target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-update-ref target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-update-server-info target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-upload-archive target=git-cherry-pick
+file path=usr/lib/git-core/git-upload-pack
+hardlink path=usr/lib/git-core/git-var target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-verify-pack target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-verify-tag target=git-cherry-pick
 file path=usr/lib/git-core/git-web--browse
-file \
-    path=usr/lib/python2.6/vendor-packages/git_remote_helpers-0.1.0-py2.6.egg-info
+hardlink path=usr/lib/git-core/git-whatchanged target=git-cherry-pick
+hardlink path=usr/lib/git-core/git-write-tree target=git-cherry-pick
+dir  path=usr/lib/git-core/mergetools
+file path=usr/lib/git-core/mergetools/araxis
+file path=usr/lib/git-core/mergetools/bc3
+file path=usr/lib/git-core/mergetools/defaults
+file path=usr/lib/git-core/mergetools/diffuse
+file path=usr/lib/git-core/mergetools/ecmerge
+file path=usr/lib/git-core/mergetools/emerge
+file path=usr/lib/git-core/mergetools/kdiff3
+file path=usr/lib/git-core/mergetools/kompare
+file path=usr/lib/git-core/mergetools/meld
+file path=usr/lib/git-core/mergetools/opendiff
+file path=usr/lib/git-core/mergetools/p4merge
+file path=usr/lib/git-core/mergetools/tkdiff
+file path=usr/lib/git-core/mergetools/tortoisemerge
+file path=usr/lib/git-core/mergetools/vim
+file path=usr/lib/git-core/mergetools/xxdiff
+dir  path=usr/lib/python2.6
+dir  path=usr/lib/python2.6/vendor-packages
+dir  path=usr/lib/python2.6/vendor-packages/git_remote_helpers
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers-0.1.0-py2.6.egg-info
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/__init__.py
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/__init__.pyc
+dir  path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/__init__.py
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/__init__.pyc
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/exporter.py
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/exporter.pyc
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/git.py
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/git.pyc
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/importer.py
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/importer.pyc
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/non_local.py
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/non_local.pyc
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/repo.py
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/git/repo.pyc
 file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/util.py
-file \
-    path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Error.pm
-file \
-    path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Git.pm
+file path=usr/lib/python2.6/vendor-packages/git_remote_helpers/util.pyc
+dir  path=usr/perl5
+dir  path=usr/perl5/vendor_perl
+dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)
+dir  path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Error.pm
+file path=usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)/Git.pm
+dir  path=usr/share
+dir  path=usr/share/git-core
+dir  path=usr/share/git-core/templates
+dir  path=usr/share/git-core/templates/branches
 file path=usr/share/git-core/templates/description
+dir  path=usr/share/git-core/templates/hooks
 file path=usr/share/git-core/templates/hooks/applypatch-msg.sample
 file path=usr/share/git-core/templates/hooks/commit-msg.sample
-file path=usr/share/git-core/templates/hooks/post-commit.sample
-file path=usr/share/git-core/templates/hooks/post-receive.sample
 file path=usr/share/git-core/templates/hooks/post-update.sample
 file path=usr/share/git-core/templates/hooks/pre-applypatch.sample
 file path=usr/share/git-core/templates/hooks/pre-commit.sample
 file path=usr/share/git-core/templates/hooks/pre-rebase.sample
 file path=usr/share/git-core/templates/hooks/prepare-commit-msg.sample
 file path=usr/share/git-core/templates/hooks/update.sample
+dir  path=usr/share/git-core/templates/info
 file path=usr/share/git-core/templates/info/exclude
+dir  path=usr/share/git-gui
+dir  path=usr/share/git-gui/lib
 file path=usr/share/git-gui/lib/about.tcl
 file path=usr/share/git-gui/lib/blame.tcl
 file path=usr/share/git-gui/lib/branch.tcl
@@ -160,9 +293,11 @@ file path=usr/share/git-gui/lib/encoding.tcl
 file path=usr/share/git-gui/lib/error.tcl
 file path=usr/share/git-gui/lib/git-gui.ico
 file path=usr/share/git-gui/lib/index.tcl
+file path=usr/share/git-gui/lib/line.tcl
 file path=usr/share/git-gui/lib/logo.tcl
 file path=usr/share/git-gui/lib/merge.tcl
 file path=usr/share/git-gui/lib/mergetool.tcl
+dir  path=usr/share/git-gui/lib/msgs
 file path=usr/share/git-gui/lib/msgs/de.msg
 file path=usr/share/git-gui/lib/msgs/el.msg
 file path=usr/share/git-gui/lib/msgs/fr.msg
@@ -170,6 +305,7 @@ file path=usr/share/git-gui/lib/msgs/hu.msg
 file path=usr/share/git-gui/lib/msgs/it.msg
 file path=usr/share/git-gui/lib/msgs/ja.msg
 file path=usr/share/git-gui/lib/msgs/nb.msg
+file path=usr/share/git-gui/lib/msgs/pt_br.msg
 file path=usr/share/git-gui/lib/msgs/ru.msg
 file path=usr/share/git-gui/lib/msgs/sv.msg
 file path=usr/share/git-gui/lib/msgs/zh_cn.msg
@@ -189,19 +325,31 @@ file path=usr/share/git-gui/lib/tools_dlg.tcl
 file path=usr/share/git-gui/lib/transport.tcl
 file path=usr/share/git-gui/lib/win32.tcl
 file path=usr/share/git-gui/lib/win32_shortcut.js
+dir  path=usr/share/gitk
+dir  path=usr/share/gitk/lib
+dir  path=usr/share/gitk/lib/msgs
 file path=usr/share/gitk/lib/msgs/de.msg
 file path=usr/share/gitk/lib/msgs/es.msg
 file path=usr/share/gitk/lib/msgs/fr.msg
 file path=usr/share/gitk/lib/msgs/hu.msg
 file path=usr/share/gitk/lib/msgs/it.msg
 file path=usr/share/gitk/lib/msgs/ja.msg
+file path=usr/share/gitk/lib/msgs/pt_br.msg
 file path=usr/share/gitk/lib/msgs/ru.msg
 file path=usr/share/gitk/lib/msgs/sv.msg
+dir  path=usr/share/gitweb
 file path=usr/share/gitweb/gitweb.cgi
+dir  path=usr/share/gitweb/static
 file path=usr/share/gitweb/static/git-favicon.png
 file path=usr/share/gitweb/static/git-logo.png
 file path=usr/share/gitweb/static/gitweb.css
 file path=usr/share/gitweb/static/gitweb.js
+dir  path=usr/share/locale
+dir  path=usr/share/locale/is
+dir  path=usr/share/locale/is/LC_MESSAGES
+file path=usr/share/locale/is/LC_MESSAGES/git.mo
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
 file path=usr/share/man/man1/git-add.1
 file path=usr/share/man/man1/git-am.1
 file path=usr/share/man/man1/git-annotate.1
@@ -226,6 +374,9 @@ file path=usr/share/man/man1/git-commit-tree.1
 file path=usr/share/man/man1/git-commit.1
 file path=usr/share/man/man1/git-config.1
 file path=usr/share/man/man1/git-count-objects.1
+file path=usr/share/man/man1/git-credential-cache--daemon.1
+file path=usr/share/man/man1/git-credential-cache.1
+file path=usr/share/man/man1/git-credential-store.1
 file path=usr/share/man/man1/git-cvsexportcommit.1
 file path=usr/share/man/man1/git-cvsimport.1
 file path=usr/share/man/man1/git-cvsserver.1
@@ -280,6 +431,7 @@ file path=usr/share/man/man1/git-mktree.1
 file path=usr/share/man/man1/git-mv.1
 file path=usr/share/man/man1/git-name-rev.1
 file path=usr/share/man/man1/git-notes.1
+file path=usr/share/man/man1/git-p4.1
 file path=usr/share/man/man1/git-pack-objects.1
 file path=usr/share/man/man1/git-pack-redundant.1
 file path=usr/share/man/man1/git-pack-refs.1
@@ -296,7 +448,10 @@ file path=usr/share/man/man1/git-rebase.1
 file path=usr/share/man/man1/git-receive-pack.1
 file path=usr/share/man/man1/git-reflog.1
 file path=usr/share/man/man1/git-relink.1
+file path=usr/share/man/man1/git-remote-ext.1
+file path=usr/share/man/man1/git-remote-fd.1
 file path=usr/share/man/man1/git-remote-helpers.1
+file path=usr/share/man/man1/git-remote-testgit.1
 file path=usr/share/man/man1/git-remote.1
 file path=usr/share/man/man1/git-repack.1
 file path=usr/share/man/man1/git-replace.1
@@ -310,6 +465,8 @@ file path=usr/share/man/man1/git-revert.1
 file path=usr/share/man/man1/git-rm.1
 file path=usr/share/man/man1/git-send-email.1
 file path=usr/share/man/man1/git-send-pack.1
+file path=usr/share/man/man1/git-sh-i18n--envsubst.1
+file path=usr/share/man/man1/git-sh-i18n.1
 file path=usr/share/man/man1/git-sh-setup.1
 file path=usr/share/man/man1/git-shell.1
 file path=usr/share/man/man1/git-shortlog.1
@@ -341,132 +498,23 @@ file path=usr/share/man/man1/git-whatchanged.1
 file path=usr/share/man/man1/git-write-tree.1
 file path=usr/share/man/man1/git.1
 file path=usr/share/man/man1/gitk.1
+file path=usr/share/man/man1/gitweb.1
+dir  path=usr/share/man/man4
 file path=usr/share/man/man4/gitattributes.4
 file path=usr/share/man/man4/githooks.4
 file path=usr/share/man/man4/gitignore.4
 file path=usr/share/man/man4/gitmodules.4
 file path=usr/share/man/man4/gitrepository-layout.4
+file path=usr/share/man/man4/gitweb.conf.4
+dir  path=usr/share/man/man5
 file path=usr/share/man/man5/gitcli.5
 file path=usr/share/man/man5/gitcore-tutorial.5
+file path=usr/share/man/man5/gitcredentials.5
 file path=usr/share/man/man5/gitcvs-migration.5
 file path=usr/share/man/man5/gitdiffcore.5
 file path=usr/share/man/man5/gitglossary.5
+file path=usr/share/man/man5/gitnamespaces.5
 file path=usr/share/man/man5/gitrevisions.5
 file path=usr/share/man/man5/gittutorial-2.5
 file path=usr/share/man/man5/gittutorial.5
 file path=usr/share/man/man5/gitworkflows.5
-hardlink path=usr/bin/git-receive-pack target=git
-hardlink path=usr/bin/git-upload-archive target=git
-hardlink path=usr/lib/git-core/git target=../../bin/git
-hardlink path=usr/lib/git-core/git-add target=../../bin/git
-hardlink path=usr/lib/git-core/git-annotate target=../../bin/git
-hardlink path=usr/lib/git-core/git-apply target=../../bin/git
-hardlink path=usr/lib/git-core/git-archive target=../../bin/git
-hardlink path=usr/lib/git-core/git-bisect--helper target=../../bin/git
-hardlink path=usr/lib/git-core/git-blame target=../../bin/git
-hardlink path=usr/lib/git-core/git-branch target=../../bin/git
-hardlink path=usr/lib/git-core/git-bundle target=../../bin/git
-hardlink path=usr/lib/git-core/git-cat-file target=../../bin/git
-hardlink path=usr/lib/git-core/git-check-attr target=../../bin/git
-hardlink path=usr/lib/git-core/git-check-ref-format target=../../bin/git
-hardlink path=usr/lib/git-core/git-checkout target=../../bin/git
-hardlink path=usr/lib/git-core/git-checkout-index target=../../bin/git
-hardlink path=usr/lib/git-core/git-cherry target=../../bin/git
-hardlink path=usr/lib/git-core/git-cherry-pick target=../../bin/git
-hardlink path=usr/lib/git-core/git-citool target=git-gui
-hardlink path=usr/lib/git-core/git-clean target=../../bin/git
-hardlink path=usr/lib/git-core/git-clone target=../../bin/git
-hardlink path=usr/lib/git-core/git-commit target=../../bin/git
-hardlink path=usr/lib/git-core/git-commit-tree target=../../bin/git
-hardlink path=usr/lib/git-core/git-config target=../../bin/git
-hardlink path=usr/lib/git-core/git-count-objects target=../../bin/git
-hardlink path=usr/lib/git-core/git-cvsserver target=../../bin/git-cvsserver
-hardlink path=usr/lib/git-core/git-describe target=../../bin/git
-hardlink path=usr/lib/git-core/git-diff target=../../bin/git
-hardlink path=usr/lib/git-core/git-diff-files target=../../bin/git
-hardlink path=usr/lib/git-core/git-diff-index target=../../bin/git
-hardlink path=usr/lib/git-core/git-diff-tree target=../../bin/git
-hardlink path=usr/lib/git-core/git-fast-export target=../../bin/git
-hardlink path=usr/lib/git-core/git-fetch target=../../bin/git
-hardlink path=usr/lib/git-core/git-fetch-pack target=../../bin/git
-hardlink path=usr/lib/git-core/git-fmt-merge-msg target=../../bin/git
-hardlink path=usr/lib/git-core/git-for-each-ref target=../../bin/git
-hardlink path=usr/lib/git-core/git-format-patch target=../../bin/git
-hardlink path=usr/lib/git-core/git-fsck target=../../bin/git
-hardlink path=usr/lib/git-core/git-fsck-objects target=../../bin/git
-hardlink path=usr/lib/git-core/git-gc target=../../bin/git
-hardlink path=usr/lib/git-core/git-get-tar-commit-id target=../../bin/git
-hardlink path=usr/lib/git-core/git-grep target=../../bin/git
-hardlink path=usr/lib/git-core/git-hash-object target=../../bin/git
-hardlink path=usr/lib/git-core/git-help target=../../bin/git
-hardlink path=usr/lib/git-core/git-index-pack target=../../bin/git
-hardlink path=usr/lib/git-core/git-init target=../../bin/git
-hardlink path=usr/lib/git-core/git-init-db target=../../bin/git
-hardlink path=usr/lib/git-core/git-log target=../../bin/git
-hardlink path=usr/lib/git-core/git-ls-files target=../../bin/git
-hardlink path=usr/lib/git-core/git-ls-remote target=../../bin/git
-hardlink path=usr/lib/git-core/git-ls-tree target=../../bin/git
-hardlink path=usr/lib/git-core/git-mailinfo target=../../bin/git
-hardlink path=usr/lib/git-core/git-mailsplit target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge-base target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge-file target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge-index target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge-ours target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge-recursive target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge-subtree target=../../bin/git
-hardlink path=usr/lib/git-core/git-merge-tree target=../../bin/git
-hardlink path=usr/lib/git-core/git-mktag target=../../bin/git
-hardlink path=usr/lib/git-core/git-mktree target=../../bin/git
-hardlink path=usr/lib/git-core/git-mv target=../../bin/git
-hardlink path=usr/lib/git-core/git-name-rev target=../../bin/git
-hardlink path=usr/lib/git-core/git-notes target=../../bin/git
-hardlink path=usr/lib/git-core/git-pack-objects target=../../bin/git
-hardlink path=usr/lib/git-core/git-pack-redundant target=../../bin/git
-hardlink path=usr/lib/git-core/git-pack-refs target=../../bin/git
-hardlink path=usr/lib/git-core/git-patch-id target=../../bin/git
-hardlink path=usr/lib/git-core/git-peek-remote target=../../bin/git
-hardlink path=usr/lib/git-core/git-prune target=../../bin/git
-hardlink path=usr/lib/git-core/git-prune-packed target=../../bin/git
-hardlink path=usr/lib/git-core/git-push target=../../bin/git
-hardlink path=usr/lib/git-core/git-read-tree target=../../bin/git
-hardlink path=usr/lib/git-core/git-receive-pack target=../../bin/git
-hardlink path=usr/lib/git-core/git-reflog target=../../bin/git
-hardlink path=usr/lib/git-core/git-remote target=../../bin/git
-hardlink path=usr/lib/git-core/git-remote-ftp target=git-remote-http
-hardlink path=usr/lib/git-core/git-remote-ftps target=git-remote-http
-hardlink path=usr/lib/git-core/git-remote-https target=git-remote-http
-hardlink path=usr/lib/git-core/git-replace target=../../bin/git
-hardlink path=usr/lib/git-core/git-repo-config target=../../bin/git
-hardlink path=usr/lib/git-core/git-rerere target=../../bin/git
-hardlink path=usr/lib/git-core/git-reset target=../../bin/git
-hardlink path=usr/lib/git-core/git-rev-list target=../../bin/git
-hardlink path=usr/lib/git-core/git-rev-parse target=../../bin/git
-hardlink path=usr/lib/git-core/git-revert target=../../bin/git
-hardlink path=usr/lib/git-core/git-rm target=../../bin/git
-hardlink path=usr/lib/git-core/git-send-pack target=../../bin/git
-hardlink path=usr/lib/git-core/git-shell target=../../bin/git-shell
-hardlink path=usr/lib/git-core/git-shortlog target=../../bin/git
-hardlink path=usr/lib/git-core/git-show target=../../bin/git
-hardlink path=usr/lib/git-core/git-show-branch target=../../bin/git
-hardlink path=usr/lib/git-core/git-show-ref target=../../bin/git
-hardlink path=usr/lib/git-core/git-stage target=../../bin/git
-hardlink path=usr/lib/git-core/git-status target=../../bin/git
-hardlink path=usr/lib/git-core/git-stripspace target=../../bin/git
-hardlink path=usr/lib/git-core/git-symbolic-ref target=../../bin/git
-hardlink path=usr/lib/git-core/git-tag target=../../bin/git
-hardlink path=usr/lib/git-core/git-tar-tree target=../../bin/git
-hardlink path=usr/lib/git-core/git-unpack-file target=../../bin/git
-hardlink path=usr/lib/git-core/git-unpack-objects target=../../bin/git
-hardlink path=usr/lib/git-core/git-update-index target=../../bin/git
-hardlink path=usr/lib/git-core/git-update-ref target=../../bin/git
-hardlink path=usr/lib/git-core/git-update-server-info target=../../bin/git
-hardlink path=usr/lib/git-core/git-upload-archive target=../../bin/git
-hardlink path=usr/lib/git-core/git-upload-pack \
-    target=../../bin/git-upload-pack
-hardlink path=usr/lib/git-core/git-var target=../../bin/git
-hardlink path=usr/lib/git-core/git-verify-pack target=../../bin/git
-hardlink path=usr/lib/git-core/git-verify-tag target=../../bin/git
-hardlink path=usr/lib/git-core/git-whatchanged target=../../bin/git
-hardlink path=usr/lib/git-core/git-write-tree target=../../bin/git
-license git.license license=GPLv2

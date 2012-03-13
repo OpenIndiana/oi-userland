@@ -23,18 +23,18 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		git
-COMPONENT_VERSION=	1.7.3.2
+COMPONENT_VERSION=	1.7.9.2
 COMPONENT_PROJECT_URL=	http://git-scm.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:cd8d806752aa6f5716cf193585024a002e098bf4
-COMPONENT_ARCHIVE_URL=	http://kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha1:7aff1048480a8637de94e8d82744d312c0b5e060
+COMPONENT_ARCHIVE_URL=	http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE)
 #
 # man pages are a separate archive
 #
-COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.bz2
-COMPONENT_ARCHIVE_HASH_1 = sha1:0be6fabbca523085e185711f2b80c99330f1e4ac
-COMPONENT_ARCHIVE_URL_1 = http://kernel.org/pub/software/scm/git/$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)-manpages-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_HASH_1 = sha1:d6992d899fb70e40983f94a2f96ad24b8ee93557
+COMPONENT_ARCHIVE_URL_1 = http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE_1)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -53,53 +53,42 @@ COMPONENT_INSTALL_ARGS+=	INSTALL="$(INSTALL)"
 
 COMPONENT_TEST_TARGETS = test
 
-#
 # This runs configure but configure doesn't generate a Makefile.
-# Instead a Makefile comes with git ...
+# Instead a Makefile comes with git.
 # Anyways viewpathing doesn't work.
 # Therefore we need cloney to copy a set of files to build.
-#
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-#
-# Processed man pages go here.
-#
-DOC=$(BUILD_DIR)/Documentation
+build:		$(BUILD_32)
 
-build:		$(BUILD_32) $(DOC)/.manpages
+install:	$(INSTALL_32) $(BUILD_DIR)/.manpages
 
-install:	$(INSTALL_32)
-
-#
-# tests fully pass when done in the archive directory.
-# fail here; probably due to the use of cloney.
-#
+# There are some known issues around I18N.
 test:	$(TEST_32)
 
-#
-# I know.  It's ugly.
-# But these man pages come in a separate archive with no Makefile
+# These man pages come in a separate archive with no Makefile
 # and Solaris likes some of them moved around hence we'll just
 # do it manually here.
-#
-$(DOC)/.manpages:
+
+$(BUILD_DIR)/.manpages:
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1)
-	$(MKDIR) $(@D)
-	cd $(BUILD_DIR)/man1 ; for manfile in *.1; \
+	$(MKDIR) $(PROTOUSRSHAREMAN1DIR)
+	$(MKDIR) $(PROTOUSRSHAREMAN4DIR)
+	$(MKDIR) $(PROTOUSRSHAREMAN5DIR)
+	cd $(BUILD_DIR) ; for manfile in man*/* ; \
 	do \
-		name=`basename $$manfile .1`; \
-		sed -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' $$manfile > $(DOC)/$$name.1; \
-	done
-	cd $(BUILD_DIR)/man5 ; for manfile in *.5; \
-	do \
-		name=`basename $$manfile .5`; \
-		sed -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' -e 's/"5"/"4"/' $$manfile > $(DOC)/$$name.4; \
-	done
-	cd $(BUILD_DIR)/man7 ; for manfile in *.7; \
-        do \
-		name=`basename $$manfile .7`; \
-		sed -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' -e 's/"7"/"5"/' $$manfile > $(DOC)/$$name.5; \
+		filename=`basename $$manfile`; \
+		fname=$${filename%.*}; \
+		ext=$${filename##*.}; \
+		newext=1; \
+		if [ $$ext = 5 ]; then newext=4; fi; \
+		if [ $$ext = 7 ]; then newext=5; fi; \
+		$(GSED) -e 's/\\m\[blue\]//g' -e 's/\\m\[\]//g' \
+		        -e 's/"5"/"4"/' -e 's/(5)/(4)/g' \
+			-e 's/"7"/"5"/' -e 's/(7)/(5)/g' $$manfile > \
+		   $(PROTOUSRSHAREMANDIR)/man$$newext/$$fname.$$newext; \
 	done
 	$(TOUCH) $@
 
