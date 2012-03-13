@@ -56,7 +56,6 @@ COMPONENT_TEST_TARGETS = tests
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \
-		    cp ../mapfile.exslt libexslt/libexslt.syms ; \
 		    $(RM) libxslt/xsltconfig.h libexslt/exsltconfig.h ; \
 		    libtoolize --force --copy ; aclocal ; \
 		    automake --addmissing --copy ; autoconf)
