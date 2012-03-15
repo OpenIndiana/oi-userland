@@ -23,13 +23,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dhcp
-COMPONENT_VERSION=	4.1-ESV-R4
+COMPONENT_VERSION=	4.1-ESV-R4-Oracle
 IPS_COMPONENT_VERSION=	4.1.0.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
-COMPONENT_ARCHIVE_URL=  http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha1:2c05a978f5bcc47d9e2a9125ce51903144ebb940
+COMPONENT_ARCHIVE_URL=  http://ftp.isc.org/isc/dhcp/private/76c65da874a2be30/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH= sha1:3735f981a6492224a2f12f6a1ae9132644514aaf
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
