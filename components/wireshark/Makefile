@@ -23,11 +23,11 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.4.11
+COMPONENT_VERSION=	1.6.5
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:113a9afca9b20184050c5a23bfdd2a1d366cb6c6
+COMPONENT_ARCHIVE_HASH=	sha1:42870fedaa6460681df30f6af9f18039a322b4a4
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -44,6 +44,17 @@ CONFIGURE_OPTIONS +=	--disable-idl2wrs
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
+
+# We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
+# create successfully IPS package of different Wireshark branch than is
+# installed on build system without dependency errors.
+COMPONENT_POST_CONFIGURE_ACTION = \
+	(cd $(@D); \
+	sed -e 's,-L/usr/lib -R/usr/lib,,' -e 's,-R/usr/lib,,' \
+		config.status > config.status.new; \
+	mv config.status.new config.status; \
+	chmod 755 config.status; \
+	./config.status)
 
 build:		$(BUILD_32)
 
