@@ -1,0 +1,26 @@
+# patch for 7148352
+--- stdcxx-4.2.1/include/rw/_basic_ios.h	2008-04-24 17:23:43.000000000 -0700
++++ stdcxx-4.2.1/include/rw/_basic_ios.h	2012-03-08 10:57:28.262697514 -0800
+@@ -217,12 +217,20 @@
+ 
+     // 27.4.4.2, p10
+     char narrow (char_type __c, char __dflt) const {
+-        return _USE_FACET (ctype<char_type>, getloc ()).narrow (__c, __dflt);
++	// For better performance, call the non-const version of getloc
++	basic_ios<_CharT, _Traits>* p =
++	    const_cast<basic_ios<_CharT, _Traits>*>(this);
++
++        return _USE_FACET (ctype<char_type>, p->getloc()).narrow (__c, __dflt);
+     }
+ 
+     // 27.4.4.2, p11
+     char_type widen (char __c) const {
+-        return _USE_FACET (ctype<char_type>, getloc ()).widen (__c);
++	// For better performance, call the non-const version of getloc
++	basic_ios<_CharT, _Traits>* p =
++	    const_cast<basic_ios<_CharT, _Traits>*>(this);
++
++        return _USE_FACET (ctype<char_type>, p->getloc()).widen (__c);
+     }
+ 
+ protected:
