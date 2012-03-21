@@ -416,26 +416,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rdma.c qperf-0.4.6/src/rdma.c
  }
  
  
-@@ -1856,7 +1909,18 @@
-     struct sockaddr_in saddr ={
-         .sin_family      = AF_INET,
-         .sin_addr.s_addr = htonl(INADDR_ANY),
-+#if (defined(__SVR4) && defined(__sun))
-+/*
-+ * Use the default listen port for right now to
-+ * workaround CR 7099964 sol_ofs needs to support allocation
-+ * of dynamic ports on rdma_bind_addr()
-+ * need to remove when this is fix
-+ */
-+#define DEF_RDMA_LISTEN_PORT 19785           /* Listen port */
-+        .sin_port        = htons(DEF_RDMA_LISTEN_PORT)
-+#else
-         .sin_port        = htons(0)
-+#endif
-     };
-     CMINFO *cm = &dev->cm;
- 
-@@ -1864,10 +1928,16 @@
+@@ -1864,10 +1917,16 @@
          error(0, "rdma_bind_addr failed");
      port = ntohs(rdma_get_src_port(cm->id));
      encode_uint32(&port, port);
