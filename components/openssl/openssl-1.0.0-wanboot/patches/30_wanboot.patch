@@ -1,0 +1,348 @@
+--- openssl-1.0.0e/Makefile	2011-09-06 06:18:01.000000000 -0700
++++ openssl-1.0.0e_patched/Makefile	2011-12-19 08:29:38.100618700 -0800
+@@ -111,7 +111,7 @@
+ ZLIB_INCLUDE=
+ LIBZLIB=
+ 
+-DIRS=   crypto ssl engines apps test tools
++DIRS=   crypto ssl
+ ENGDIRS= ccgost
+ SHLIBDIRS= crypto ssl
+ 
+--- openssl-1.0.0e/Makefile.org	2010-01-27 08:06:58.000000000 -0800
++++ openssl-1.0.0e_patched/Makefile.org	2011-12-19 08:30:01.795240100 -0800
+@@ -109,7 +109,7 @@
+ ZLIB_INCLUDE=
+ LIBZLIB=
+ 
+-DIRS=   crypto ssl engines apps test tools
++DIRS=   crypto ssl
+ ENGDIRS= ccgost
+ SHLIBDIRS= crypto ssl
+ 
+--- openssl-1.0.0e/crypto/cryptlib.c	2011-06-22 08:39:00.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/cryptlib.c	2011-12-12 06:17:45.422476900 -0800
+@@ -871,6 +871,10 @@
+ 	MessageBox (NULL,buf,_T("OpenSSL: FATAL"),MB_OK|MB_ICONSTOP);
+ }
+ #else
++/* Solaris libsa.a used for WAN boot doesn't provide for vfprintf(). Since
++ *  * OPENSSL_showfatal() is not used anywhere else then here we can safely use
++ *   * the code from 0.9.7d version. */
++#ifndef	_BOOT
+ void OPENSSL_showfatal (const char *fmta,...)
+ { va_list ap;
+ 
+@@ -878,14 +882,21 @@
+     vfprintf (stderr,fmta,ap);
+     va_end (ap);
+ }
++#endif	/* _BOOT */
+ int OPENSSL_isservice (void) { return 0; }
+ #endif
+ 
+ void OpenSSLDie(const char *file,int line,const char *assertion)
+ 	{
++#ifndef	_BOOT		
+ 	OPENSSL_showfatal(
+ 		"%s(%d): OpenSSL internal error, assertion failed: %s\n",
+ 		file,line,assertion);
++#else
++	fprintf(stderr,
++		"%s(%d): OpenSSL internal error, assertion failed: %s\n",
++		file,line,assertion);
++#endif	
+ #if !defined(_WIN32) || defined(__CYGWIN__)
+ 	abort();
+ #else
+--- openssl-1.0.0e/crypto/err/err_all.c	2009-08-09 07:58:05.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/err/err_all.c	2011-12-13 05:22:01.205351400 -0800
+@@ -142,7 +142,9 @@
+ 	ERR_load_X509V3_strings();
+ 	ERR_load_PKCS12_strings();
+ 	ERR_load_RAND_strings();
++#ifndef _BOOT
+ 	ERR_load_DSO_strings();
++#endif /* _BOOT */
+ 	ERR_load_TS_strings();
+ #ifndef OPENSSL_NO_ENGINE
+ 	ERR_load_ENGINE_strings();
+--- openssl-1.0.0e/crypto/evp/evp_key.c	2010-03-27 12:27:50.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/evp/evp_key.c	2011-12-13 05:19:32.956908600 -0800
+@@ -84,7 +84,7 @@
+ 	else
+ 		return(prompt_string);
+ 	}
+-
++#ifndef	_BOOT
+ /* For historical reasons, the standard function for reading passwords is
+  * in the DES library -- if someone ever wants to disable DES,
+  * this function will fail */
+@@ -111,6 +111,7 @@
+ 	OPENSSL_cleanse(buff,BUFSIZ);
+ 	return ret;
+ 	}
++#endif	/* !_BOOT */
+ 
+ int EVP_BytesToKey(const EVP_CIPHER *type, const EVP_MD *md, 
+ 	     const unsigned char *salt, const unsigned char *data, int datal,
+--- openssl-1.0.0e/crypto/rand/rand_unix.c	2009-04-06 07:31:36.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/rand/rand_unix.c	2011-12-19 07:28:39.988944800 -0800
+@@ -122,7 +122,11 @@
+ #include <sys/time.h>
+ #include <sys/times.h>
+ #include <sys/stat.h>
++#ifdef	_BOOT
++#include <sys/fcntl.h>
++#else
+ #include <fcntl.h>
++#endif
+ #include <unistd.h>
+ #include <time.h>
+ #if defined(OPENSSL_SYS_LINUX) /* should actually be available virtually everywhere */
+@@ -253,6 +257,11 @@
+ 	const char **egdsocket = NULL;
+ #endif
+ 
++#ifdef _BOOT
++/* open() is provided by standalone libsa not visible from here */
++extern int open(const char *, int);
++#endif
++
+ #ifdef DEVRANDOM
+ 	memset(randomstats,0,sizeof(randomstats));
+ 	/* Use a random entropy pool device. Linux, FreeBSD and OpenBSD
+@@ -295,9 +304,13 @@
+ 				{
+ 				int try_read = 0;
+ 
+-#if defined(OPENSSL_SYS_BEOS_R5)
++#if defined(OPENSSL_SYS_BEOS_R5) || defined(_BOOT)
+ 				/* select() is broken in BeOS R5, so we simply
+ 				 *  try to read something and snooze if we couldn't */
++				/* 
++				 * select() is not available when linking stand-alone
++				 * library for wanboot 
++				 */
+ 				try_read = 1;
+ 
+ #elif defined(OPENSSL_SYS_LINUX)
+@@ -355,6 +368,7 @@
+ 				else
+ 					r = -1;
+ 				
++#ifndef	_BOOT				
+ 				/* Some Unixen will update t in select(), some
+ 				   won't.  For those who won't, or if we
+ 				   didn't use select() in the first place,
+@@ -366,13 +380,17 @@
+ 				}
+ 			while ((r > 0 ||
+ 			       (errno == EINTR || errno == EAGAIN)) && usec != 0 && n < ENTROPY_NEEDED);
++#else	/* _BOOT */
++				}
++			while (r > 0 && n < ENTROPY_NEEDED);
++#endif	/* _BOOT */			
+ 
+ 			close(fd);
+ 			}
+ 		}
+ #endif /* defined(DEVRANDOM) */
+ 
+-#ifdef DEVRANDOM_EGD
++#if defined(DEVRANDOM_EGD) && !defined(_BOOT)
+ 	/* Use an EGD socket to read entropy from an EGD or PRNGD entropy
+ 	 * collecting daemon. */
+ 
+@@ -395,6 +413,7 @@
+ 		}
+ #endif
+ 
++#ifndef	_BOOT
+ 	/* put in some default random data, we need more than just this */
+ 	l=curr_pid;
+ 	RAND_add(&l,sizeof(l),0.0);
+@@ -403,6 +422,7 @@
+ 
+ 	l=time(NULL);
+ 	RAND_add(&l,sizeof(l),0.0);
++#endif /* !_BOOT */	
+ 
+ #if defined(OPENSSL_SYS_BEOS)
+ 	{
+
+--- openssl-1.0.0e/crypto/rand/randfile.c	2011-03-19 02:44:37.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/rand/randfile.c	2011-12-13 05:26:51.884824200 -0800
+@@ -57,7 +57,9 @@
+  */
+ 
+ /* We need to define this to get macros like S_IFBLK and S_IFCHR */
++#ifndef	_BOOT
+ #define _XOPEN_SOURCE 500
++#endif	/* _BOOT */
+ 
+ #include <errno.h>
+ #include <stdio.h>
+--- openssl-1.0.0e/crypto/x509v3/v3_utl.c	2009-07-27 14:08:53.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/x509v3/v3_utl.c	2011-12-13 05:10:08.844191400 -0800
+@@ -659,9 +659,52 @@
+ 		}
+ 	}
+ 
++#if	defined(_BOOT)
++/* This function was copied from bio/b_sock.c */
++static int get_ip(const char *str, unsigned char ip[4])
++	{
++	unsigned int tmp[4];
++	int num=0,c,ok=0;
++
++	tmp[0]=tmp[1]=tmp[2]=tmp[3]=0;
++
++	for (;;)
++		{
++		c= *(str++);
++		if ((c >= '0') && (c <= '9'))
++			{
++			ok=1;
++			tmp[num]=tmp[num]*10+c-'0';
++			if (tmp[num] > 255) return(0);
++			}
++		else if (c == '.')
++			{
++			if (!ok) return(-1);
++			if (num == 3) return(0);
++			num++;
++			ok=0;
++			}
++		else if (c == '\0' && (num == 3) && ok)
++			break;
++		else
++			return(0);
++		}
++	ip[0]=tmp[0];
++	ip[1]=tmp[1];
++	ip[2]=tmp[2];
++	ip[3]=tmp[3];
++	return(1);
++	}
++#endif /* _BOOT */
++
+ static int ipv4_from_asc(unsigned char *v4, const char *in)
+ 	{
+ 	int a0, a1, a2, a3;
++
++#if	defined(_BOOT)
++	if (get_ip(in, v4) != 1)
++		return 0;
++#else	/* _BOOT */
+ 	if (sscanf(in, "%d.%d.%d.%d", &a0, &a1, &a2, &a3) != 4)
+ 		return 0;
+ 	if ((a0 < 0) || (a0 > 255) || (a1 < 0) || (a1 > 255)
+@@ -671,6 +716,7 @@
+ 	v4[1] = a1;
+ 	v4[2] = a2;
+ 	v4[3] = a3;
++#endif	/* _BOOT */
+ 	return 1;
+ 	}
+ 
+--- openssl-1.0.0e/doc/crypto/hmac.pod	2009-09-30 16:40:52.000000000 -0700
++++ openssl-1.0.0e_patched/doc/crypto/hmac.pod	2011-12-12 05:39:53.818071600 -0800
+@@ -2,7 +2,7 @@
+ 
+ =head1 NAME
+ 
+-HMAC, HMAC_Init, HMAC_Update, HMAC_Final, HMAC_cleanup - HMAC message
++HMAC, HMAC_CTX_init, HMAC_Init, HMAC_Init_ex, HMAC_Update, HMAC_Final, HMAC_CTX_cleanup, HMAC_cleanup - HMAC message
+ authentication code
+ 
+ =head1 SYNOPSIS
+--- openssl-1.0.0e/e_os.h	2011-12-19 04:17:51.631087400 -0800
++++ openssl-1.0.0e_patched/e_os.h	2011-12-19 04:15:15.776668900 -0800
+@@ -207,10 +207,19 @@
+ #define get_last_socket_error()	errno
+ #define clear_socket_error()	errno=0
+ #define ioctlsocket(a,b,c)	ioctl(a,b,c)
++#ifdef	_BOOT
++#include <netinet/in.h>
++extern int socket_read(int, void *, size_t, int);
++extern int socket_close(int);
++#define	closesocket(s)		socket_close(s)
++#define	readsocket(s,b,n)	socket_read((s),(b),(n), 200)
++#define	writesocket(s,b,n)	send((s),(b),(n), 0)
++#else  /* !_BOOT */
+ #define closesocket(s)		close(s)
+ #define readsocket(s,b,n)	read((s),(b),(n))
+ #define writesocket(s,b,n)	write((s),(b),(n))
+ #endif
++#endif
+ 
+ #ifdef WIN16 /* never the case */
+ #  define MS_CALLBACK	_far _loadds
+--- openssl-1.0.0e/crypto/sparcv9cap.c	2010-09-05 12:48:01.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/sparcv9cap.c	2011-12-23 05:24:02.011607700 -0800
+@@ -12,7 +12,7 @@
+ #define SPARCV9_VIS2		(1<<3)	/* reserved */
+ #define SPARCV9_FMADD		(1<<4)	/* reserved for SPARC64 V */
+ 
+-static int OPENSSL_sparcv9cap_P=SPARCV9_TICK_PRIVILEGED;
++static int OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
+ 
+ int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num)
+ 	{
+@@ -32,6 +32,7 @@
+ void		_sparcv9_vis2_probe(void);
+ void		_sparcv9_fmadd_probe(void);
+ 
++#ifndef _BOOT
+ unsigned long OPENSSL_rdtsc(void)
+ 	{
+ 	if (OPENSSL_sparcv9cap_P&SPARCV9_TICK_PRIVILEGED)
+@@ -43,8 +44,19 @@
+ 	else
+ 		return _sparcv9_rdtick();
+ 	}
++#endif
++
++#if defined(_BOOT)
++/*
++ * Hardcoding sparc capabilities for wanboot.
++ * Older CPUs are EOLed anyway.
++ */
++void OPENSSL_cpuid_setup(void)
++	{
++	OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
++	}
+ 
+-#if 0 && defined(__sun) && defined(__SVR4)
++#elif 0 && defined(__sun) && defined(__SVR4)
+ /* This code path is disabled, because of incompatibility of
+  * libdevinfo.so.1 and libmalloc.so.1 (see below for details)
+  */
+--- openssl-1.0.0e/crypto/sparccpuid.S	2010-09-05 12:48:01.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/sparccpuid.S	2012-02-13 07:42:58.259478325 -0800
+@@ -397,6 +397,11 @@
+ .type	OPENSSL_cleanse,#function
+ .size	OPENSSL_cleanse,.-OPENSSL_cleanse
+ 
++#ifndef _BOOT
+ .section	".init",#alloc,#execinstr
+	call	OPENSSL_cpuid_setup
+	nop
++#else
++	nop
++	nop
++#endif
+--- openssl-1.0.0e/crypto/Makefile	2010-07-26 15:09:59.000000000 -0700
++++ openssl-1.0.0e_patched/crypto/Makefile	2011-12-22 08:26:22.041955800 -0800
+@@ -34,8 +34,8 @@
+ 
+ LIB= $(TOP)/libcrypto.a
+ SHARED_LIB= libcrypto$(SHLIB_EXT)
+-LIBSRC=	cryptlib.c mem.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c ebcdic.c uid.c o_time.c o_str.c o_dir.c
+-LIBOBJ= cryptlib.o mem.o mem_dbg.o cversion.o ex_data.o cpt_err.o ebcdic.o uid.o o_time.o o_str.o o_dir.o $(CPUID_OBJ)
++LIBSRC=	cryptlib.c mem.c mem_clr.c mem_dbg.c cversion.c ex_data.c cpt_err.c ebcdic.c uid.c o_time.c o_str.c o_dir.c stubs.c
++LIBOBJ= cryptlib.o mem.o mem_dbg.o cversion.o ex_data.o cpt_err.o ebcdic.o uid.o o_time.o o_str.o o_dir.o stubs.o $(CPUID_OBJ)
+ 
+ SRC= $(LIBSRC)
+ 
