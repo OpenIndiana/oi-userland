@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -171,6 +171,15 @@ file path=usr/include/openssl/ui_compat.h
 file path=usr/include/openssl/x509.h
 file path=usr/include/openssl/x509_vfy.h
 file path=usr/include/openssl/x509v3.h
+# Wanboot static standalone openssl binaries
+dir path=/lib
+dir path=/lib/openssl
+dir path=/lib/openssl/wanboot
+dir path=/lib/openssl/wanboot/$(MACH64)
+file path=/lib/openssl/wanboot/$(MACH64)/wanboot-openssl.o \
+    variant.arch=sparc \
+    pkg.depend.bypass-generate=.* \
+    pkg.linted.userland.action001=true
 # Manual pages.
 dir path=usr/share
 dir path=usr/share/man

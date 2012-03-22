@@ -1,0 +1,241 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+
+Disclaimer
+----
+
+The purpose of this directory is solely to build and deliver static OpenSSL
+binaries for wanboot. These binaries have some highly specific patches applied.
+Do not attempt to use these for any other purpose.
+
+
+Building
+----
+
+Building in this directory is triggered by running 'gmake build' in
+../openssl-1.0.0. Calling 'gmake build' locally is possible for debugging
+purposes.  There are no 'install' and 'publish' targets.  Only 64-bit sparc
+version is built, nothing is done for x86.
+
+The outcome of build is file wanboot-openssl.o containing all the openssl bits
+required for wanboot. As part of 'make install' in ../openssl-1.0.0 this file 
+is copied in to its proto area. From there, wanboot-openssl.o is published and
+delivered as a part of pkg:/library/security/openssl package.
+
+
+Patches
+----
+
+18-compiler_opts.patch:
+Taken from $USERLAND/components/openssl/openssl-1.0.0/patches/
+- modified not to link with libc (-lc);
+- '-xF=%all' added to comp. flags to create separate section for each function
+
+30_wanboot.patch:
+Wanboot specific patches.
+- modified Makefiles not to build in engines apps test tools
+- not using vfprintf for error print in crypto/cryptlib.c
+- not using ERR_load_DSO_strings() in crypto/err/err_all.c
+- not using EVP_read_pw_string() in crypto/evp/evp_key.c
+    - reading password is implemented in disabled DES library
+- avoid select() in crypto/rand/rand_unix.c
+- not defining _XOPEN_SOURCE in crypto/rand/randfile.c
+- direct reading of IP to avoid sscanf() in crypto/x509v3/v3_utl.c
+- using functions from libsock in e_os.h
+- by-passing version of sparc detection in crypto/sparcv9cap.c
+    - results in not using FPU for big numbers multiplication
+    - should be ok - original detection seems broken, FPU gets never used
+- stubs for EVP_read_pw_string_min(), OPENSSL_issetugid(), 
+    opendir(), readdir(), closedir() 
+- implementation of atoi()
+
+
+Configure options
+----
+
+Most of the Configure options where carried over from the original code when
+migrating openssl for wanboot from ON to Userland. For the most part, these
+options exclude unused ciphers.
+
+New options added:
+-DNO_CHMOD		chmod not available in stand-alone environment
+-DBOOT			guard for wanboot specific patches
+-DOPENSSL_NO_DTLS1	to avoid dtls1_min_mtu() - DTLS not used anyway
+
+
+List of object files for wanboot-openssl.o
+----
+
+At this moment, object files for wanboot-openssl.o need to be listed explicitly.
+This is cumbersome and relatively tedious with respect to upgrading to higher
+version of openssl.
+
+In future, it would be nice, if this could be performed automatically by the
+linker. The required interface for wanboot is already defined in a mapfile and
+linker option '-zdiscard-unused=sections,files' is already used to discard
+unused code. 
+But sadly, at this moment when the linker is given all the object files, it
+fails to recognize some unreferenced sections as unused. As a result, numerous
+object files are not discarded, although they should be. These files are not
+patched to work in standalone environment, which causes wanboot linking failure
+due to undefined references.
+
+In order to determine which openssl object files are required for wanboot,
+first build static standalone openssl bits in Userland. As a site effect,
+static libraries libssl.a and libcrypto.a are created.
+
+    $ cd $USERLAND/components/openssl/openssl-1.0.0-wanboot ; gmake build
+
+Next, collect some information from linking wanboot static libraries in ON.
+This can be done by the following hack.
+
+    $ cd $ON/usr/src/psm/stand/boot/sparcv9/sun4
+    $ touch wanboot.o
+    $ LD_OPTIONS="-Dfiles,symbols,output=ld.dbg \
+        -L$USERLAND/components/openssl/openssl-1.0.0-wanboot/build/sparcv9 " \
+        WAN_OPENSSL=" -lwanboot -lssl -lcrypto" dmake all
+
+The following sort of information ends up in ld.dbg (note that the debugging
+output from the link-editor is not considered a 'stable interface' and may
+change in the future):
+
+    debug:
+    debug: file=/builds/tkuthan/ul-s11u1/components/openssl/openssl-1.0.0-wanboot/build/sparcv9/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
+    debug:
+    debug: symbol table processing; file=/builds/tkuthan/ul-s11u1/components/openssl/openssl-1.0.0-wanboot/build/sparcv9/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
+    debug: symbol[1]=sparcv9cap.c
+    ...
+
+Now run the following script in Userland:
+
+    #!/bin/bash
+ 
+    # set to workspace paths:
+    USERLAND=/builds/tkuthan/ul-s11u1
+    ON=/builds/tkuthan/on11u1-wanboot-rti
+ 
+    BUILD=$USERLAND/components/openssl/openssl-1.0.0-wanboot/build/sparcv9
+    LD_DBG=$ON/usr/src/psm/stand/boot/sparcv9/sun4/ld.dbg
+ 
+    for i in `find $BUILD/crypto $BUILD/ssl -name '*.o'`
+    do
+            f=`basename $i`
+            if grep -q "^debug: file.*\<$f\>" $LD_DBG
+            then
+                    echo $i | sed "s#$BUILD/##"
+            fi
+    done
+
+to get the list of required object files.
+
+Additionally, you can format the list for including to Makefile by:
+    $ sort | tr '\n' ' ' | fold -s -w74 | sed -e 's/^/    /' -e 's/$/\\/'
+
+
+Linking with wanboot
+----
+
+When linking with wanboot please pay attention to following pitfalls.
+
+Correct openssl header files need to be included. This is done in
+$ON/usr/src/stand/lib/wanboot/Makefile
+Make sure CPPFLAGS point to the right directories.
+
+EXTREME CAUTION needs to be employed, if WANBOOT GREW IN SIZE because of the
+changes!
+Wanboot is a statically linked standalone binary and it is loaded on a fixed
+address before execution. This address is defined in 
+$ON/usr/src/psm/stand/boot/sparc/common/mapfile:
+
+     27 LOAD_SEGMENT text {
+     28 	FLAGS = READ EXECUTE;
+     29 	VADDR = 0x130000;
+     30 	ASSIGN_SECTION {
+     31 		TYPE = PROGBITS;
+     32 		FLAGS = ALLOC !WRITE;
+     33 	};
+     34 };
+
+This address (VADDR) NEEDS TO BE GREATER THEN 
+    size of .text section + size of .data section + 0x4000
+
+The reason for this is in how wanboot is loaded by OpenBoot Prom:
+1) user initiates boot from network - "boot net"
+2) obp loads wanboot binary at address 0x4000
+3) obp parses ELF header, reads virtual address where to load wanboot to
+4) obp mem-copies .text section to this address
+5) obp copies .data section behind .text
+6) obp starts executing wanboot at entry address
+
+If the given address is too small, obp overwrites part of .data with
+instructions from .text in step 4. resulting in .data being corrupted.
+Initialized variables get bogus values and failure is inevitable.
+This is very hard to troubleshoot.
+
+
+Testing wanboot with new openssl
+----
+
+With every upgrade of OpenSSL, it is necessary to make sure wanboot builds and
+works well with the new bits.
+
+Provided you have a freshly built ON workspace, you can link wanboot with new
+OpenSSL bits by redefining WAN_OPENSSL macro:
+
+    # copy wanboot-openssl.o to ON build machine
+    cp wanboot-openssl.o /var/tmp/
+
+    # prepare to rebuild wanboot
+    cd $ON
+    bldenv developer.sh
+    cd usr/src/psm/stand/boot/sparcv9/sun4
+
+    # hack to force a rebuild
+    touch wanboot.o
+
+    # link new OpenSSL to wanboot
+    WAN_OPENSSL=/var/tmp/wanboot-openssl.o dmake all
+
+Wanboot should build without warning.
+
+If there is something like this in the output:
+
+    Undefined                       first referenced
+     symbol                             in file
+    CRYPTO_ccm128_setiv                 /var/tmp/wanboot-openssl.o
+    SSL_get_srtp_profiles               /var/tmp/wanboot-openssl.o
+    ssl_parse_clienthello_use_srtp_ext  /var/tmp/wanboot-openssl.o
+    CRYPTO_gcm128_setiv                 /var/tmp/wanboot-openssl.o
+    ...
+    cmac_pkey_meth                      /var/tmp/wanboot-openssl.o
+    ld: fatal: symbol referencing errors. No output written to wanboot
+    *** Error code 1
+    dmake: Fatal error: Command failed for target `wanboot'
+
+some additional work has to be done in OpenSSL to either satisfy the function 
+references listed in the linker error message, or to remove the calls to these
+functions.
+
+Finally, resulting wanboot binary shall be deployed on some install server and
+wanbooting from this server shall be tested.

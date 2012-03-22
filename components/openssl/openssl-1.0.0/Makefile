@@ -22,18 +22,11 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME =	openssl
-# When new version of OpenSSL comes in, you must update both COMPONENT_VERSION
-# and IPS_COMPONENT_VERSION.
-COMPONENT_VERSION =	1.0.0g
-# Version for IPS. It is easier to do it manually than convert the letter to a
-# number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.0.7
-COMPONENT_PROJECT_URL=	http://www.openssl.org/
-COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:2b517baada2338663c27314cb922f9755e73e07f
-COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
+# COMPONENT_NAME, COMPONENT_VERSION, IPS_COMPONENT_VERSION and some other
+# related macros definitions were moved to ../openssl-1.0.0/Makefile.version
+# in order to keep OpenSSL versions in ../openssl-1.0.0 and
+# ../openssl-1.0.0-wanboot in sync
+include Makefile.version
 
 # Architecture-specific patches
 EXTRA_PATCHES.i386 = $(PATCH_DIR)/openssl-1.0.0d-aesni-v4.i386-patch
@@ -49,6 +42,11 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
 # OpenSSL does not use autoconf but its own configure system.
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
+
+# This is to force OpenSSL's Configure script to use gmake for 'make links'. 
+# Otherwise it fails with:
+#     mksh: Fatal error in reader: Unmatched `(' on line
+CONFIGURE_ENV += MAKE="$(GMAKE)"
 
 # Used in the configure options below.
 PKCS11_LIB32 = /usr/lib/libpkcs11.so.1
@@ -119,6 +117,35 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_POST_CONFIGURE_ACTION = \
     ( [ $(BITS) -eq 32 ] && $(GPATCH) -p1 $(@D)/crypto/opensslconf.h \
       patches-post-config/opensslconf.patch; cd $(@D); $(MAKE) depend; )
+
+# This conditional part triggers actions in ../openssl-1.0.0-wanboot directory
+# in order to create static openssl bits for linking with wanboot.
+# Specifically
+#     - propagate clean and clobber targets to wanboot dir
+#     - build wanboot bits and copy in wanboot-openssl.o to proto area
+#     - cache (link) openssl tarball from wanboot dir
+ifeq ($(MACH), sparc)
+WANBOOT_DIR	= $(COMPONENT_DIR)/../openssl-1.0.0-wanboot
+WANBOOT_TO	= $(PROTO_DIR)/lib/openssl/wanboot/$(MACH64)
+clobber clean::
+	(cd $(WANBOOT_DIR) ; $(GMAKE) $@)
+
+# In order not to download the tarball twice (once here and once in 
+# ../openssl-1.0.0-wanboot), there is a hacky caching applied.
+# After having build in ../openssl-1.0.0-wanboot an attempt is made to create
+# a soft-link in this directory pointing to the tarball. 
+$(WANBOOT_DIR)/build/$(MACH64)/.built:
+	(cd $(WANBOOT_DIR) ; $(GMAKE) build;)
+	-$(LN) -s $(WANBOOT_DIR)/$(COMPONENT_ARCHIVE) $(COMPONENT_DIR)/ 
+
+build: $(WANBOOT_DIR)/build/$(MACH64)/.built
+install: $(WANBOOT_DIR)/build/$(MACH64)/.built
+
+$(INSTALL_64): COMPONENT_POST_INSTALL_ACTION = \
+    ( $(MKDIR) -p $(WANBOOT_TO); \
+      $(CP) $(WANBOOT_DIR)/build/$(MACH64)/wanboot-openssl.o $(WANBOOT_TO); )
+endif
+
 
 # We do not ship our engines as patches since it would be more difficult to
 # update the files which have been under continuous development. We rather copy
