@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -33,12 +33,12 @@ if [ -z "$SMF_FMRI" ]; then
 fi
 
 tcsd_start() 	{
-	echo /usr/lib/tcsd 
-	/usr/lib/tcsd 2>&1 > /dev/null &
+	echo /usr/lib/64/tcsd 
+	/usr/lib/64/tcsd >/dev/null 2>&1 &
 }
 	
 tcsd_stop()	{
-	/usr/bin/pkill -x tcsd 2>&1 > /dev/null
+	/usr/bin/pkill -x tcsd >/dev/null 2>&1
 }
 
 case "$1" in
