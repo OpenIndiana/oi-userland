@@ -1,0 +1,13 @@
+diff -ru pcre-8.21.orig//pcre_compile.c pcre-8.21/pcre_compile.c
+--- pcre-8.21.orig//pcre_compile.c	Wed Dec  7 08:45:36 2011
++++ pcre-8.21/pcre_compile.c	Mon Mar 19 15:11:42 2012
+@@ -1655,7 +1655,8 @@
+     case OP_ASSERTBACK:
+     case OP_ASSERTBACK_NOT:
+     do cc += GET(cc, 1); while (*cc == OP_ALT);
+-    /* Fall through */
++    cc += _pcre_OP_lengths[*cc];
++    break;
+ 
+     /* Skip over things that don't match chars */
+ 
