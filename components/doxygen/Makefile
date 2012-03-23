@@ -18,17 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		doxygen
-COMPONENT_VERSION=	1.5.7.1
+COMPONENT_VERSION=	1.7.6.1
 COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:aecb0c453f76e900eb2aa8132ad063215005fca3
+COMPONENT_ARCHIVE_HASH=	sha1:6203d4423d12315f1094b56a4d7393347104bc4a
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
+
+# Download the manual so that we don't have to keep updating it in the gate.
+COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
+COMPONENT_ARCHIVE_HASH_1 =	sha1:e7d35dd1e23ec4572e98a36028e136a9c4bde1af
+COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -44,12 +49,13 @@ COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 # understand CC, CXX, etc.
 CONFIGURE_OPTIONS =	--platform solaris-cc
 CONFIGURE_OPTIONS +=	--prefix /usr
-CONFIGURE_OPTIONS +=	--enable-langs nl,se,cz,fr,id,it,de,jp,je,es,fi,ru,hr,pl,pt,hu,kr,ke,ro,si,cn,no,br,dk,sk,ua,gr,tw,sr,ca,lt,za,ar,fa
+CONFIGURE_OPTIONS +=	--enable-langs nl,sv,cz,fr,id,it,de,jp,je,es,fi,ru,hr,pl,pt,hu,kr,ke,ro,si,cn,no,br,dk,sk,ua,gr,tw,sr,ca,lt,za,ar,fa
 
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+	cd $(PROTO_DIR) ; $(UNPACK) ../../../$(COMPONENT_ARCHIVE_1) 
 
 test:	$(NO_TESTS)
 
