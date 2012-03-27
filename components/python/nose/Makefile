@@ -38,9 +38,9 @@ include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
