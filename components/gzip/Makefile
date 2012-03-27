@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.3.5
+COMPONENT_VERSION=	1.4
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:843272609b9bff1bdf2770a28d498d6519901e73
-COMPONENT_ARCHIVE_URL=	http://alpha.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:1d398dac6a7920a7de6e2685fe472a840eb2ce6e
+COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -37,11 +37,14 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
+COMPONENT_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
+COMPONENT_TEST_TARGETS = check
+
 # Fix references to Solaris renamed programs (z*->gz*) in man pages, info
 # pages and in wrapper scripts.
 COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(COMPONENT_SRC) ; \
-	 for file in `ls *.1 *.info z*.in` ; do \
+	 for file in `ls *.1 doc/*.info z*.in` ; do \
 		mv $$file $$file.tmp ; \
 		sed -f $(COMPONENT_DIR)/renaming.sed $$file.tmp > $$file ; \
 		$(RM) $$file.tmp ; \
@@ -49,7 +52,7 @@ COMPONENT_PRE_INSTALL_ACTION = \
 
 # Rename installed programs and man pages in proto dir (z*->gz*).
 COMPONENT_POST_INSTALL_ACTION = \
-	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) ; do \
+	(for dir in $(PROTOUSRBINDIR)/$(MACH64) $(PROTOUSRSHAREMAN1DIR) ; do \
 		cd $$dir; \
 	 	for zfile in `ls z*`; do \
 			mv $$zfile g$$zfile ; \
@@ -63,11 +66,11 @@ GZGREP_MAN_VARIANTS+=$(PROTOUSRSHAREMAN1DIR)/gzfgrep.1
 $(GZGREP_MAN_VARIANTS):
 	$(RM) $@; echo ".so man1/gzgrep.1" > $@
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32) $(GZGREP_MAN_VARIANTS)
+install:	$(INSTALL_64) $(GZGREP_MAN_VARIANTS)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

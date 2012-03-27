@@ -1,3 +1,4 @@
+s/z\$prog/gz\$prog/g 
 s/zcat/gzcat/g
 s/Zcat/Gzcat/g
 s/ZCAT/GZCAT/g
