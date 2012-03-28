@@ -20,10 +20,12 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
+
+PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
 COMPONENT_NAME=		otp_src
 COMPONENT_VERSION_MAJOR=	12

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -37,6 +37,9 @@ COMPONENT_ARCHIVE_URL=  http://download.freedesktop.org/ldtp/$(COMPONENT_MAJOR_V
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+COMPONENT_POST_INSTALL_ACTION = \
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f ldtp ldtp$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_32)
