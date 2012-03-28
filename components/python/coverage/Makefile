@@ -36,12 +36,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# Building for Python 2.7 requires a corresponding setuptools package, so only
-# build the Python 2.6 version for now.
-PYTHON_VERSIONS=2.6
-
 # common targets
 build:		$(BUILD_32)
+
+COMPONENT_POST_INSTALL_ACTION =	\
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f coverage coverage$(PYTHON_VERSION))
 
 install:	$(INSTALL_32)
 

@@ -70,6 +70,16 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/examples/pylintrc_camelcase $(PDOC_PYLINT_EXAMPLES) ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(COMPONENT_SRC)/examples/pylintrc $(PDOC_PYLINT_EXAMPLES) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTO_DIR)/usr/bin; $(MV) epylint epylint-$(PYTHON_VERSION)) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTO_DIR)/usr/bin; $(MV) pylint pylint-$(PYTHON_VERSION)) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTO_DIR)/usr/bin; $(MV) pylint-gui pylint-gui-$(PYTHON_VERSION)) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTO_DIR)/usr/bin; $(MV) pyreverse pyreverse-$(PYTHON_VERSION)) ;
+COMPONENT_POST_INSTALL_ACTION += \
+	(cd $(PROTO_DIR)/usr/bin; $(MV) symilar symilar-$(PYTHON_VERSION)) ;
 
 
 # common targets
