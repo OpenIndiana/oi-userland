@@ -46,7 +46,7 @@ COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(COMPONENT_SRC) ; \
 	 for file in `ls *.1 doc/*.info z*.in` ; do \
 		mv $$file $$file.tmp ; \
-		sed -f $(COMPONENT_DIR)/renaming.sed $$file.tmp > $$file ; \
+		$(GSED) -f $(COMPONENT_DIR)/renaming.sed $$file.tmp > $$file ; \
 		$(RM) $$file.tmp ; \
 	 done)
 
