@@ -29,9 +29,13 @@ set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2009/579
+set name=org.opensolaris.arc-caseid value=PSARC/2009/579
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir path=lib/python2.6/vendor-packages/lxml/isoschematron/resources
+dir path=lib/python2.6/vendor-packages/lxml/isoschematron/resources/rng
+dir path=lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl
+dir \
+    path=lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/iso-schematron-xslt1
 dir path=usr
 dir path=usr/lib
 dir path=usr/lib/python2.6
@@ -41,6 +45,7 @@ dir \
     path=usr/lib/python2.6/vendor-packages/lxml-$(COMPONENT_VERSION)-py2.6.egg-info
 dir path=usr/lib/python2.6/vendor-packages/lxml/64
 dir path=usr/lib/python2.6/vendor-packages/lxml/html
+dir path=usr/lib/python2.6/vendor-packages/lxml/isoschematron
 file \
     path=usr/lib/python2.6/vendor-packages/lxml-$(COMPONENT_VERSION)-py2.6.egg-info/PKG-INFO
 file \
@@ -60,25 +65,48 @@ file path=usr/lib/python2.6/vendor-packages/lxml/builder.py
 file path=usr/lib/python2.6/vendor-packages/lxml/cssselect.py
 file path=usr/lib/python2.6/vendor-packages/lxml/doctestcompare.py
 file path=usr/lib/python2.6/vendor-packages/lxml/etree.so
+file path=usr/lib/python2.6/vendor-packages/lxml/etree_defs.h
+file path=usr/lib/python2.6/vendor-packages/lxml/etreepublic.pxd
 file path=usr/lib/python2.6/vendor-packages/lxml/html/ElementSoup.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/__init__.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/_dictmixin.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/_diffcommand.py
+file path=usr/lib/python2.6/vendor-packages/lxml/html/_html5builder.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/_setmixin.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/builder.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/clean.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/defs.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/diff.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/formfill.py
+file path=usr/lib/python2.6/vendor-packages/lxml/html/html5parser.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/soupparser.py
 file path=usr/lib/python2.6/vendor-packages/lxml/html/usedoctest.py
+file path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/__init__.py
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/rng/iso-schematron.rng
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/RNG2Schtrn.xsl
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/XSD2Schtrn.xsl
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/iso-schematron-xslt1/iso_abstract_expand.xsl
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/iso-schematron-xslt1/iso_dsdl_include.xsl
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/iso-schematron-xslt1/iso_schematron_message.xsl
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/iso-schematron-xslt1/iso_schematron_skeleton_for_xslt1.xsl
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/iso-schematron-xslt1/iso_svrl_for_xslt1.xsl
+file \
+    path=usr/lib/python2.6/vendor-packages/lxml/isoschematron/resources/xsl/iso-schematron-xslt1/readme.txt
 file path=usr/lib/python2.6/vendor-packages/lxml/objectify.so
 file path=usr/lib/python2.6/vendor-packages/lxml/pyclasslookup.py
 file path=usr/lib/python2.6/vendor-packages/lxml/sax.py
+file path=usr/lib/python2.6/vendor-packages/lxml/tree.pxd
 file path=usr/lib/python2.6/vendor-packages/lxml/usedoctest.py
 license pylxml.copyright license="BSD, PSF, GPL"
 
 # force a dependency on the lxml package
 depend fmri=library/python-2/lxml@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
     type=require
-
