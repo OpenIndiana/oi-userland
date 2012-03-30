@@ -34,6 +34,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# To get correct @bindir@ substitution in the various gz<whatever> scripts.
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
@@ -52,7 +55,7 @@ COMPONENT_PRE_INSTALL_ACTION = \
 
 # Rename installed programs and man pages in proto dir (z*->gz*).
 COMPONENT_POST_INSTALL_ACTION = \
-	(for dir in $(PROTOUSRBINDIR)/$(MACH64) $(PROTOUSRSHAREMAN1DIR) ; do \
+	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRSHAREMAN1DIR) ; do \
 		cd $$dir; \
 	 	for zfile in `ls z*`; do \
 			mv $$zfile g$$zfile ; \
