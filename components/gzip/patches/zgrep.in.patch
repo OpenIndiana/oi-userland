@@ -1,0 +1,15 @@
+--- gzip-1.4/zgrep.in.orig	2012-03-29 11:17:35.341079056 -0700
++++ gzip-1.4/zgrep.in	2012-03-29 11:18:46.475732896 -0700
+@@ -26,7 +26,11 @@
+ esac
+ PATH=$bindir:$PATH
+ 
+-grep='${GREP-grep}'
++case "$1" in
++	-F) grep='${FGREP-fgrep}'; shift;;
++	-E) grep='${EGREP-egrep}'; shift;;
++	*)  grep='${GREP-grep}';;
++esac
+ 
+ version='zgrep (gzip) @VERSION@
+ Copyright (C) 2007, 2009-2010 Free Software Foundation, Inc.
