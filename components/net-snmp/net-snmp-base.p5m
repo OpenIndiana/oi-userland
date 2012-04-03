@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -578,3 +578,11 @@ link path=usr/lib/libnetsnmptrapd.so target=./libnetsnmptrapd.so.15.1.0
 link path=usr/lib/libnetsnmptrapd.so.15 target=./libnetsnmptrapd.so.15.1.0
 link path=usr/lib/libsnmp.so target=./libsnmp.so.15.1.0
 link path=usr/lib/libsnmp.so.15 target=./libsnmp.so.15.1.0
+
+depend fmri=library/python-2/net-snmp-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-26 \
+    type=conditional
+
+depend fmri=library/python-2/net-snmp-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-27 \
+    type=conditional

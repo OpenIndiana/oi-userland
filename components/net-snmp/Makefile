@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -63,6 +63,10 @@ MIB_MODULES = host disman/event-mib ucd-snmp/diskio udp-mib tcp-mib if-mib
 MIB_MOBULES += $(MIB_MODULES.$(MACH))
 CONFIGURE_OPTIONS  +=	--with-mib-modules="$(MIB_MODULES)"
 
+# Python bindings support.
+PYTHON_ARGS =		--basedir=/usr/bin
+CONFIGURE_OPTIONS  +=	--with-python-modules="$(PYTHON_ARGS)"
+
 # Only build 32 bit Perl support
 PERL_ARGS =			DESTDIR=$(PROTO_DIR) INSTALLDIRS=vendor
 CONFIGURE_OPTIONS.32  +=	PERLPROG="$(PERL)"
@@ -81,6 +85,10 @@ PKG_MACROS +=	BUILD_DIR=$(BUILD_DIR)
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun)
 
+# After we have configured, make a copy of the python bits so we
+# can build separate python 2.7 support.
+COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
+
 # for the goofy definition of ARCH in the extra Makefiles
 ARCH=32
 ARCH=$(BITS:64=$(MACH64))
@@ -94,9 +102,15 @@ $(BUILD_32): COMPONENT_POST_BUILD_ACTION= \
 $(BUILD_64): COMPONENT_POST_BUILD_ACTION= \
 	(cd $(BUILD_DIR)/$(MACH64)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS))
 
+$(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
+
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
-	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
+	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install) ; \
+	(cd $(@D)/python2.7 ; env PYTHON=$(PYTHON.2.7.$(BITS)) \
+		$(PYTHON.2.7.$(BITS)) ./setup.py install \
+			--root $(PROTO_DIR) \
+			--install-lib=$(PYTHON.2.7.VENDOR_PACKAGES))
 
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH64)/etc/net-snmp/snmp/mibs; \
