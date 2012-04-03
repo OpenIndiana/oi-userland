@@ -1,0 +1,18 @@
+--- Python-2.7.1/Lib/distutils/sysconfig.py.orig	2012-03-26 09:24:18.614278009 -0700
++++ Python-2.7.1/Lib/distutils/sysconfig.py	2012-03-27 09:58:03.446132438 -0700
+@@ -173,6 +173,15 @@
+             cflags = cflags + ' ' + os.environ['CPPFLAGS']
+             ldshared = ldshared + ' ' + os.environ['CPPFLAGS']
+ 
++        # Force PIC compilation. Determine if GNU compiler or otherwise
++        # and set the PIC flag(s) accordingly. Defaults to Studio compiler.
++        out = os.popen(cc + ' --version 2>/dev/null', 'r')
++        out_string = out.read()
++        out.close()
++        result = re.search(' (\d+\.\d+(\.\d+)*)', out_string)
++        kpic_flags = "-fPIC -DPIC" if result else "-KPIC -DPIC"
++        cflags += ' ' + kpic_flags
++
+         cc_cmd = cc + ' ' + cflags
+         compiler.set_executables(
+             preprocessor=cpp,
