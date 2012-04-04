@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates.  All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -35,8 +35,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_INSTALL_ARGS +=  INS_BASE=/usr GMAKE_NOWARN=true
-COMPONENT_BUILD_ARGS += RUNPATH= INS_BASE=/usr GMAKE_NOWARN=true
+COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
+COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true
 
 build:          $(BUILD_32)
 
