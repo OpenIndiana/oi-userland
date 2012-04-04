@@ -55,8 +55,10 @@ FAKE_APPS = $(FAKE_ISALIST) $(FAKE_MAKE) $(FAKE_CC)
 
 # Do not use $(PWD), it would not work if run from a different directory with
 # "gmake -C" as we do from openssl-0.9.8-fips-140.
-FIPS_PATH_32 = $(COMPONENT_DIR)/32:$(PATH)
-FIPS_PATH_64 = $(PATH)
+# we'll also pick up gcc if we find it in the path, so force it to
+# find one that doesn't work like it wants
+FIPS_PATH_32 = $(COMPONENT_DIR)/32:$(COMPONENT_DIR)/gcc:$(PATH)
+FIPS_PATH_64 = $(COMPONENT_DIR)/gcc:$(PATH)
 
 OPENSSL_FIPS_HMAC_KEY = etaonrishdlcupfm
 OPENSSL_FIPS_HMAC = 79193087e8115df76d3de1f346f7410df79cf6e0
