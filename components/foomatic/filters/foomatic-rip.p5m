@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -31,10 +31,7 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=org.opensolaris.arc-caseid value=LSARC/2004/262
 
-depend fmri=print/filter/a2ps type=require
-# The above line can be removed and replaced with the dependency below when
-# the a2ps package rename hits the canonical package repository
-#depend fmri=__TBD pkg.debug.depend.file=usr/bin/a2ps type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/a2ps type=require
 
 license foomatic-filters.license license='GPLv2'
 
@@ -71,12 +68,10 @@ file Solaris/foomatic.fd path=etc/lp/fd/foomatic.fd mode=0444
 file path=etc/gnu/foomatic/filter.conf preserve=renamenew
 file path=etc/gnu/foomatic/filter.conf.sample
 file path=usr/lib/cups/backend/beh
-file path=usr/lib/lp/bin/foomatic-gswrapper
 file path=usr/lib/lp/bin/foomatic-rip
 file Solaris/wecho.sh path=usr/lib/lp/bin/wecho
 file Solaris/netstandard_foomatic path=usr/lib/lp/model/netstandard_foomatic mode=0555
 file Solaris/standard_foomatic path=usr/lib/lp/model/standard_foomatic mode=0555
-file path=usr/share/man/man1/foomatic-gswrapper.1
 file path=usr/share/man/man1/foomatic-rip.1
 
 link path=usr/lib/cups/filter/foomatic-rip target=../../lp/bin/foomatic-rip

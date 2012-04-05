@@ -1,0 +1,93 @@
+This patch fixes the build when SPRO C compiler is used. The original source
+code inconsistently mix "int" and "pid_t" data types.
+
+compile error seen:
+
+"process.c", line 185: identifier redeclared: start_system_process
+"process.c", line 190: identifier redeclared: start_process
+cc: acomp failed for process.c
+make[2]: *** [foomatic_rip-process.o] Error 1
+make[1]: *** [all] Error 2
+
+--- a/foomaticrip.c	2012-03-14 20:45:28.000000000 +0100
++++ b/foomaticrip.c	2012-03-19 10:45:27.569249000 +0100
+@@ -981,7 +981,8 @@
+     int startpos;
+     size_t n;
+     FILE *fchandle = NULL;
+-    int fcpid = 0, ret;
++    pid_t fcpid = 0;
++    int ret;
+ 
+     if (!strcasecmp(filename, "<STDIN>"))
+         file = stdin;
+--- a/process.c	2012-03-14 20:45:28.000000000 +0100
++++ b/process.c	2012-03-19 10:36:39.639793000 +0100
+@@ -45,7 +45,7 @@
+     { "", -1, 0 }
+ };
+ 
+-void add_process(const char *name, int pid, int isgroup)
++void add_process(const char *name, pid_t pid, int isgroup)
+ {
+     int i;
+     for (i = 0; i < MAX_CHILDS; i++) {
+@@ -59,7 +59,7 @@
+     rip_die(EXIT_PRNERR_NORETRY_BAD_SETTINGS, "Didn't think there would be that many child processes... Exiting.\n");
+ }
+ 
+-int find_process(int pid)
++int find_process(pid_t pid)
+ {
+     int i;
+     for (i = 0; i < MAX_CHILDS; i++)
+@@ -90,7 +90,7 @@
+     clear_proc_list();
+ }
+ 
+-static int _start_process(const char *name,
++static pid_t _start_process(const char *name,
+                           int (*proc_func)(FILE *, FILE *, void *),
+                           void *user_arg, FILE **pipe_in, FILE **pipe_out,
+                           int createprocessgroup)
+@@ -182,17 +182,17 @@
+     return EXIT_PRNERR_NORETRY_BAD_SETTINGS;
+ }
+ 
+-int start_system_process(const char *name, const char *command, FILE **fdin, FILE **fdout)
++pid_t start_system_process(const char *name, const char *command, FILE **fdin, FILE **fdout)
+ {
+     return _start_process(name, exec_command, (void*)command, fdin, fdout, 1);
+ }
+ 
+-int start_process(const char *name, int (*proc_func)(FILE *, FILE *, void *), void *user_arg, FILE **fdin, FILE **fdout)
++pid_t start_process(const char *name, int (*proc_func)(FILE *, FILE *, void *), void *user_arg, FILE **fdin, FILE **fdout)
+ {
+     return _start_process(name, proc_func, user_arg, fdin, fdout, 0);
+ }
+ 
+-int wait_for_process(int pid)
++int wait_for_process(pid_t pid)
+ {
+     int i;
+     int status;
+@@ -216,7 +216,7 @@
+ 
+ int run_system_process(const char *name, const char *command)
+ {
+-    int pid = start_system_process(name, command, NULL, NULL);
++    pid_t pid = start_system_process(name, command, NULL, NULL);
+     return wait_for_process(pid);
+ }
+ 
+--- a/process.h	2012-03-14 20:45:28.000000000 +0100
++++ b/process.h	2012-03-19 10:37:07.577847000 +0100
+@@ -40,7 +40,7 @@
+                           const char *alreadyread,
+                           size_t alreadyread_len);
+ 
+-int wait_for_process(int pid);
++int wait_for_process(pid_t pid);
+ 
+ void kill_all_processes();
+ 
