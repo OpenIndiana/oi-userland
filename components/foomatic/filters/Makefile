@@ -18,16 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		foomatic-filters
-COMPONENT_VERSION=	3.0.2
+COMPONENT_VERSION=	4.0.15
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:31528f3bf0e933b7aac745471c31463023b40eec
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH=	sha1:20496bb95cc42bccb2bfd2f675b14081030387c5
+COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
 
 include ../../../make-rules/prep.mk
@@ -35,14 +35,16 @@ include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS +=	--prefix=$(USRLIBDIR)/lp
-CONFIGURE_OPTIONS +=	--sysconfdir=/$(ETCDIR)/gnu
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)/gnu
 CONFIGURE_OPTIONS +=	--bindir=$(USRLIBDIR)/lp/bin
 CONFIGURE_OPTIONS +=	--with-echo=wecho
 CONFIGURE_OPTIONS +=	--with-file-converter="a2ps -1 -q -c -B @@--medium=@@PAGESIZE@@ -o -"
 CONFIGURE_OPTIONS +=	--with-execpath=$(USRLIBDIR)/lp/bin:$(USRBINDIR):$(BINDIR)
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	PERL=$(PERL)
 CONFIGURE_OPTIONS +=	A2PS=$(USRBINDIR)/a2ps
+
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # common targets
 build:		$(BUILD_32)
