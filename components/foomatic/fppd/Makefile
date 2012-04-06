@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -44,8 +44,8 @@ $(SOURCE_DIR)/.built: $(SOURCE_DIR)/.prep $(COMPONENT_DIR)/nolicense $(COMPONENT
 # move tree of .ppd-s to proto and gzip it
 $(SOURCE_DIR)/.installed: $(SOURCE_DIR)/.built
 	$(MKDIR) $(PROTOUSRSHAREDIR)/ppd
+	/usr/bin/find $(SOURCE_DIR)/share/ppd -name "*.ppd" -exec gzip {} +
 	$(CLONEY) $(SOURCE_DIR)/share/ppd $(PROTOUSRSHAREDIR)/ppd/SUNWfoomatic
-	gzip -rf $(PROTOUSRSHAREDIR)/ppd/SUNWfoomatic
 	$(TOUCH) $@
 
 # common targets
