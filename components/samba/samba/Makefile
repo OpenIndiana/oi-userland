@@ -20,16 +20,16 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.5.12
+COMPONENT_VERSION=	3.6.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:cce0a391b4468a716dda2315a56271a785990c54
+COMPONENT_ARCHIVE_HASH=	sha1:430a1e13fe20c17e2808035c863eb5e77685c89b
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 
 COMPONENT_NAME_1=		docbook-xsl
@@ -141,30 +141,31 @@ endif
 
 CONFIGURE_LIBDIR.32 = /usr/lib/samba
 CONFIGURE_LIBDIR.64 = /usr/lib/samba/$(MACH64)
-CONFIGURE_OPTIONS += --includedir=/usr/include/samba
-CONFIGURE_OPTIONS += --sysconfdir=/etc/samba
-CONFIGURE_OPTIONS += --with-configdir=/etc/samba
-CONFIGURE_OPTIONS += --with-privatedir=/etc/samba/private
-CONFIGURE_OPTIONS += --with-swatdir=/usr/share/samba/swat
-CONFIGURE_OPTIONS += --localstatedir=/var/samba
-CONFIGURE_OPTIONS += --with-lockdir=/var/samba/locks
-CONFIGURE_OPTIONS += --with-piddir=/var/samba/locks
-CONFIGURE_OPTIONS += --with-logfilebase=/var/samba/log
-CONFIGURE_OPTIONS += --enable-shared=yes
-CONFIGURE_OPTIONS += --enable-static=no
-CONFIGURE_OPTIONS += --with-static-modules=
+CONFIGURE_OPTIONS +=	--includedir=/usr/include/samba
+CONFIGURE_OPTIONS +=	--sysconfdir=/etc/samba
+CONFIGURE_OPTIONS +=	--with-configdir=/etc/samba
+CONFIGURE_OPTIONS +=	--with-privatedir=/etc/samba/private
+CONFIGURE_OPTIONS +=	--with-swatdir=/usr/share/samba/swat
+CONFIGURE_OPTIONS +=	--localstatedir=/var/samba
+CONFIGURE_OPTIONS +=	--with-lockdir=/var/samba/locks
+CONFIGURE_OPTIONS +=	--with-piddir=/var/samba/locks
+CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
+CONFIGURE_OPTIONS +=	--enable-shared=yes
+CONFIGURE_OPTIONS +=	--enable-static=no
+CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl
 CONFIGURE_OPTIONS.32 += --with-shared-modules=vfs_zfsacl,vfs_samfs,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS.64 += --with-shared-modules=
-CONFIGURE_OPTIONS += --with-readline
-CONFIGURE_OPTIONS += --enable-cups
-CONFIGURE_OPTIONS += --with-aio-support
-CONFIGURE_OPTIONS += --with-acl-support
-CONFIGURE_OPTIONS += --with-ads
-CONFIGURE_OPTIONS += --with-ldap
-CONFIGURE_OPTIONS += --with-automount
-CONFIGURE_OPTIONS += --with-dnsupdate
-CONFIGURE_OPTIONS += --with-pam
-CONFIGURE_OPTIONS += --with-winbind
+CONFIGURE_OPTIONS +=	--with-readline
+CONFIGURE_OPTIONS +=	--enable-cups
+CONFIGURE_OPTIONS +=	--with-aio-support
+CONFIGURE_OPTIONS +=	--with-acl-support
+CONFIGURE_OPTIONS +=	--with-ads
+CONFIGURE_OPTIONS +=	--with-ldap
+CONFIGURE_OPTIONS +=	--with-automount
+CONFIGURE_OPTIONS +=	--with-dnsupdate=no
+CONFIGURE_OPTIONS +=	--with-pam
+CONFIGURE_OPTIONS +=	--with-winbind
+
 CONFIGURE_OPTIONS += 	LD="$(LD)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(BUILD_DIR)/libsam-LGPL/include"
@@ -204,7 +205,7 @@ $(PROTO_DIR)/etc/samba/smb.conf-example: $(BUILD_32)
 	   $(BUILD_DIR)/$(MACH32)/examples/smb.conf.default
 
 # Samba targets
-$(BUILD_32): COMPONENT_BUILD_TARGETS = showlayout everything
+$(BUILD_32): COMPONENT_BUILD_TARGETS = showlayout all libsmbclient modules smbtorture
 $(BUILD_64): COMPONENT_BUILD_TARGETS = showlayout nss_modules pam_modules pam_smbpass wins pam_winbind
 $(INSTALL_32): COMPONENT_INSTALL_TARGETS = showlayout install-everything
 $(INSTALL_64): COMPONENT_INSTALL_TARGETS = showlayout installpammodules
