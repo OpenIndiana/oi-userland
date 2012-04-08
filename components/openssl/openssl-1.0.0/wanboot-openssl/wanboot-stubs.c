@@ -22,6 +22,8 @@
  * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
  */
 
+/* Content of this file is only needed for wanboot. */
+#ifdef	_BOOT
 
 #include <sys/types.h>
 #include <dirent.h>
@@ -116,3 +118,5 @@ atoi(const char *p)
 	}
 	return (neg ? n : -n);
 }
+
+#endif	/* _BOOT */

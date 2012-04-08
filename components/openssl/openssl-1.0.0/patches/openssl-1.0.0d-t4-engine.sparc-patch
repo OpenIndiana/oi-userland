@@ -27,10 +27,9 @@ diff -ru openssl-1.0.0d/Configure openssl-1.0.0d/Configure
  #
 -"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/ccs/bin/ar rs::/64",
 +"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/ccs/bin/ar rs::/64",
- 
- #### IRIX 5.x configs
- # -mips2 flag is added by ./config when appropriate.
-Index: crypto/aes/Makefile
+ # Option -xF=%all instructs the compiler to place functions and data
+ # variables into separate section fragments. This enables the link editor
+ # to discard unused sections and files when linking wanboot-openssl.o
 ===================================================================
 diff -ru openssl-1.0.0d/crypto/aes/ openssl-1.0.0d/crypto/aes/Makefile
 --- openssl-1.0.0d/crypto/aes/Makefile	2011-05-24 17:03:31.000000000 -0700
