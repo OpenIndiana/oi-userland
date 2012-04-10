@@ -172,6 +172,8 @@ static void set_privs(void) {
 
     /* Needed for pam_unix_cred to chown files. */
     priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_CHOWN_SELF, NULL);
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_CHOWN, NULL);
+    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_OWNER, NULL);
 
     /* Needed to access /var/adm/wtmpx. */
     priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_DAC_WRITE, NULL);
