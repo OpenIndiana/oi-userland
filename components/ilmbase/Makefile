@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -36,19 +36,19 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL = 0
 
-# configure seems to add -nolibs, so we add that back to the C++ runtime and
-# stdlib
-CXXFLAGS += $(studio_CXXLIB_CSTD)
 # there seems to be no other way to enable large files support
 CXXFLAGS += $(CPP_LARGEFILES)
 # it seems that --with-pic doesn't get PIC flags to the C++ compiler
 CXXFLAGS += $(CC_PIC)
-# libtools seems to be forcing -nolibs, so we have to add back libc and libm
-LDFLAGS += -lc -lm
+# libtools seems to be forcing -nolibs, so we have to add back libc, libm,
+# libCstd and libCrun. The last two are needed because with Studio 12.2
+# (and beyond), there is a bug in the CC driver that is not correctly using
+# the '-library=Cstd,Crun' we are passing to it.
+LIBS += -lc -lm -lCstd -lCrun
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_ENV += LIBS="$(LIBS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS  +=           --disable-static
