@@ -1,0 +1,1453 @@
+--- filter/Makefile	Fri Apr 23 11:56:34 2010
++++ filter/Makefile	Mon Apr  2 15:58:21 2012
+@@ -56,7 +56,7 @@
+ 		bannertops.o commandtops.o gziptoany.o imagetops.o \
+ 		imagetoraster.o common.o pdftops.o pstext.o pstops.o \
+ 		rasterbench.o rastertoepson.o rastertohp.o rastertolabel.o \
+-		testimage.o testraster.o textcommon.o texttops.o
++		testimage.o testraster.o textcommon.o texttops.o tsol_labeled_banner.o
+ 
+ 
+ #
+@@ -281,10 +281,10 @@
+ # bannertops
+ #
+ 
+-bannertops:	bannertops.o pstext.o common.o ../cups/$(LIBCUPS) $(LIBCUPSIMAGE)
++bannertops:	bannertops.o pstext.o common.o tsol_labeled_banner.o ../cups/$(LIBCUPS) $(LIBCUPSIMAGE)
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o $@ bannertops.o pstext.o common.o $(LINKCUPSIMAGE) \
+-		$(IMGLIBS) $(LIBS)
++	$(CC) $(LDFLAGS) -o $@ bannertops.o pstext.o common.o tsol_labeled_banner.o $(LINKCUPSIMAGE) \
++		$(IMGLIBS) $(LIBS) -ltsol
+ 
+ 
+ #
+@@ -421,11 +421,11 @@
+ # imagetops
+ #
+ 
+-imagetops:	imagetops.o common.o $(LIBCUPSIMAGE) \
++imagetops:	imagetops.o common.o tsol_labeled_banner.o $(LIBCUPSIMAGE) \
+ 		../cups/$(LIBCUPS)
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o $@ imagetops.o common.o $(LINKCUPSIMAGE) \
+-		$(IMGLIBS) $(LIBS)
++	$(CC) $(LDFLAGS) -o $@ imagetops.o common.o tsol_labeled_banner.o $(LINKCUPSIMAGE) \
++		$(IMGLIBS) $(LIBS) -ltsol
+ 
+ 
+ #
+@@ -443,9 +443,9 @@
+ # pstops
+ #
+ 
+-pstops:	pstops.o common.o ../cups/$(LIBCUPS)
++pstops:	pstops.o common.o tsol_labeled_banner.o ../cups/$(LIBCUPS)
+ 	echo Linking $@...
+-	$(CC) $(LDFLAGS) -o $@ pstops.o common.o $(LIBS) -lm
++	$(CC) $(LDFLAGS) -o $@ pstops.o common.o tsol_labeled_banner.o $(LIBS) -lm -ltsol
+ 
+ 
+ #
+--- filter/common.c	Wed Jul 11 14:46:42 2007
++++ filter/common.c	Mon Apr  2 17:33:51 2012
+@@ -49,7 +49,37 @@
+ 	PageWidth = 612.0f,		/* Total page width */
+ 	PageLength = 792.0f;		/* Total page length */
+ 
++#if defined(HAVE_TSOL)
++char *ClippedLabel = "\
++     /ClippedLabel{ \n\
++        ESPpl length 80 lt { \n\
++          ESPpl \n\
++        } \n\
++        { \n\
++          ESPpl 0 80 getinterval \n\
++          (->) \n\
++          append \n\
++        } ifelse \n\
++     }bind put \n\
++";
+ 
++char *append = "\
++     /append{ \n\
++        2 copy length exch length add \n\
++        string dup \n\
++        4 2 roll \n\
++        2 index 0 3 index \n\
++        putinterval \n\
++        exch length exch putinterval \n\
++     } bind def \n\
++";
++
++char *ESPpf = "\
++     /ESPpf /Courier-Bold findfont 12 scalefont put \n\
++";
++
++#endif /* HAVE_TSOL */
++
+ /*
+  * 'SetCommonOptions()' - Set common filter options for media size, etc.
+  */
+@@ -299,7 +329,77 @@
+ }
+ 
+ 
++#if defined(HAVE_TSOL)
+ /*
++ * 'tsol_WriteLabelProlog()' - Write the prolog with the page label
++ *			       for labeled system.
++ */
++void
++tsol_WriteLabelProlog(const char   *label,	/* I - Page label */
++		   float        bottom,	/* I - Bottom position in points */
++		   float        top,	/* I - Top position in points */
++		   float        width)	/* I - Width in points */
++{
++  const char	*ptr;			/* Temporary string pointer */
++
++
++ /*
++  * If there is nothing to show, bind an empty 'write labels' procedure
++  * and return...
++  */
++
++  if (label == NULL || !label[0])
++  {
++    puts("userdict/ESPwl{}bind put\n");
++    return;
++  }
++
++ /*
++  * Set the page label string...
++  */
++  puts("userdict");
++  puts("/ESPpl(");
++
++  if (label)
++    puts(label);
++
++  puts(")put\n");
++
++  puts("userdict");
++  puts(ClippedLabel);
++  puts(append);
++
++  puts("\n");
++
++ /*
++  * Then get a 12 point Courier-Bold font...
++  */
++
++  puts("userdict");
++  puts(ESPpf);
++
++ /*
++  * Finally, the procedure to write the labels on the page...
++  */
++
++  puts("userdict/ESPwl{\n");
++  puts("  ESPpf setfont\n");
++  printf("  ClippedLabel stringwidth pop dup 12 add exch -0.5 mul %.0f add\n",
++	width * 0.5f);
++  puts("  0 setgray\n");
++  printf("  dup 6 sub %.0f 3 index 10 ESPrf\n", bottom - 1.0);
++  printf("  dup 6 sub %.0f 3 index 10 ESPrf\n", top - 19.0);
++  puts("  1 setgray\n");
++  printf("  dup 6 sub %.0f 3 index 10 ESPrs\n", bottom - 1.0);
++  printf("  dup 6 sub %.0f 3 index 10 ESPrs\n", top - 19.0);
++  printf("  dup %.0f moveto ClippedLabel show\n", bottom + 1.0);
++  printf("  %.0f moveto ClippedLabel show\n", top - 17.0);
++  puts("pop\n");
++  puts("}bind put\n");
++}
++#endif /* HAVE_TSOL */
++
++/*
+  * 'WriteLabelProlog()' - Write the prolog with the classification
+  *                        and page label.
+  */
+@@ -441,17 +541,40 @@
+     length = PageLength;
+   }
+ 
+-  switch (orient & 3)
++#ifdef HAVE_TSOL
++  /*
++   * Rotate the label so that it is always top and bottom of the job page.
++   */
++  if (is_system_labeled())
+   {
+-    case 1 : /* Landscape */
++    switch (Orientation)
++    {
++	case 1 : /* Landscape */
++	  printf("0.0 %.1f translate -90 rotate\n", length);
++	  break;
++	case 2 : /* Reverse Portrait */
++	  printf("%.1f %.1f translate 180 rotate\n", width, length);
++	  break;
++	case 3 : /* Reverse Landscape */
++	  printf("%.1f 0.0 translate 90 rotate\n", width);
++	  break;
++    }
++  }
++  else
++#endif /* HAVE_TSOL */
++  {
++    switch (orient & 3)
++    {
++      case 1 : /* Landscape */
+         printf("%.1f 0.0 translate 90 rotate\n", length);
+         break;
+-    case 2 : /* Reverse Portrait */
++      case 2 : /* Reverse Portrait */
+         printf("%.1f %.1f translate 180 rotate\n", width, length);
+         break;
+-    case 3 : /* Reverse Landscape */
++      case 3 : /* Reverse Landscape */
+         printf("0.0 %.1f translate -90 rotate\n", width);
+         break;
++    }
+   }
+ 
+   puts("ESPwl");
+--- filter/common.h	Wed Jul 11 14:46:42 2007
++++ filter/common.h	Mon Apr  2 17:33:51 2012
+@@ -69,7 +69,15 @@
+ extern void	WriteLabels(int orient);
+ extern void	WriteTextComment(const char *name, const char *value);
+ 
++#if defined(HAVE_TSOL)
++extern void	tsol_WriteLabelProlog(const char *label, float bottom,
++				float top, float width);
+ 
++extern char *ClippedLabel;
++extern char *append;
++extern char *ESPpf;
++#endif /* HAVE_TSOL */
++
+ /*
+  * C++ magic...
+  */
+--- filter/bannertops.c	Fri Aug  7 15:28:30 2009
++++ filter/bannertops.c	Mon Apr  2 17:33:51 2012
+@@ -31,6 +31,10 @@
+ #include "image.h"
+ #include <cups/i18n.h>
+ 
++#if defined(HAVE_TSOL)
++/* Trusted Extensions header */
++#include "tsol_labeled_banner.h" 
++#endif /* HAVE_TSOL */
+ 
+ /*
+  * Constants...
+@@ -101,7 +105,6 @@
+ 		*username;		/* Username from command-line */
+   int		num_pages;		/* Number of pages printed */
+ 
+-
+  /*
+   * Make sure status messages are not buffered...
+   */
+@@ -131,7 +134,24 @@
+   num_options = cupsParseOptions(argv[5], 0, &options);
+   banner      = load_banner(argv[6]);
+ 
++#if defined(HAVE_TSOL)
+  /*
++  * Check if it is banner or trailer page
++  */
++  if (is_system_labeled())
++  {
++    /*
++     * If it is banner or trailer page
++     * call tsol_labeled_banner function
++     */
++    if ((cupsGetOption("banner", num_options, options)) ||
++	(cupsGetOption("trailer", num_options, options)))
++      return (tsol_labeled_banner(argc, argv));
++
++  }
++#endif /* HAVE_TSOL */
++
++ /*
+   * Set standard options and get the PPD file for this printer...
+   */
+ 
+--- filter/imagetops.c	Fri Nov 21 11:00:11 2008
++++ filter/imagetops.c	Mon Apr  2 17:33:51 2012
+@@ -30,6 +30,10 @@
+ #include <math.h>
+ #include <cups/i18n.h>
+ 
++#if defined(HAVE_TSOL)
++#include <auth_attr.h>
++#include "tsol_labeled_banner.h"
++#endif /* HAVE_TSOL */
+ 
+ /*
+  * Globals...
+@@ -41,6 +45,10 @@
+ 	Collate = 0,		/* Collate copies? */
+ 	Copies = 1;		/* Number of copies */
+ 
++#if defined(HAVE_TSOL)
++/* nolabels option */
++static int		nolabels = 0;
++#endif /* HAVE_TSOL */ 
+ 
+ /*
+  * Local functions...
+@@ -164,6 +172,17 @@
+ 
+   ppd = SetCommonOptions(num_options, options, 0);
+ 
++#if defined(HAVE_TSOL)
++  /*
++   * Check for 'nolabels' options and if user is authorized
++   * to disable labeling.
++   */
++  if (is_system_labeled()) 
++    if ((extract_options(argv[5], "nolabels")) &&
++       (chkauthattr("solaris.print.unlabeled", argv[2])))
++	  nolabels = 1; 
++#endif /* HAVE_TSOL */
++
+   if ((val = cupsGetOption("multiple-document-handling", num_options, options)) != NULL)
+   {
+    /*
+@@ -632,29 +651,41 @@
+            "ifelse %.3f mul } bind settransfer\n", g, b);
+ 
+   WriteCommon();
+-  switch (Orientation)
++#if defined(HAVE_TSOL)
++  /*
++   * In case of Trusted systems labels should always be written on top
++   * and bottom of the job page irrespective of the orientation.
++   */
++  if (is_system_labeled())
++    tsol_WriteLabelProlog(cupsGetOption("page-label", num_options, options),
++					PageBottom, PageTop, PageWidth);
++  else
++#endif /* HAVE_TSOL */
+   {
+-    case 0 :
+-	WriteLabelProlog(cupsGetOption("page-label", num_options, options),
+-                	 PageBottom, PageTop, PageWidth);
+-        break;
++    switch (Orientation)
++    {
++      case 0 :
++	  WriteLabelProlog(cupsGetOption("page-label", num_options, options),
++                 	   PageBottom, PageTop, PageWidth);
++          break;
+ 
+-    case 1 :
+-	WriteLabelProlog(cupsGetOption("page-label", num_options, options),
+-                	 PageLeft, PageRight, PageLength);
+-        break;
++      case 1 :
++	  WriteLabelProlog(cupsGetOption("page-label", num_options, options),
++                	   PageLeft, PageRight, PageLength);
++          break;
+ 
+-    case 2 :
+-	WriteLabelProlog(cupsGetOption("page-label", num_options, options),
+-                	 PageLength - PageTop, PageLength - PageBottom,
+-			 PageWidth);
+-        break;
++      case 2 :
++	  WriteLabelProlog(cupsGetOption("page-label", num_options, options),
++                	   PageLength - PageTop, PageLength - PageBottom,
++			   PageWidth);
++          break;
+ 
+-    case 3 :
+-	WriteLabelProlog(cupsGetOption("page-label", num_options, options),
+-                	 PageWidth - PageRight, PageWidth - PageLeft,
+-			 PageLength);
+-        break;
++      case 3 :
++	  WriteLabelProlog(cupsGetOption("page-label", num_options, options),
++                	   PageWidth - PageRight, PageWidth - PageLeft,
++			   PageLength);
++          break;
++    }
+   }
+ 
+   if (realcopies > 1)
+@@ -916,7 +947,23 @@
+ 	}
+ 
+ 	puts("grestore");
++#ifdef HAVE_TSOL
++	/*
++	 * Page-label should not be written in case user gives '-o nolabels' option
++	 * and user is authorized to disable page-labels.
++	 *
++	 * 'nolabels' is set to '1' in case user is authorized to disable page-labels.
++	 */
++	if (is_system_labeled())
++        {
++          if (!nolabels)
++	    WriteLabels(0);
++        }
++        else
++          WriteLabels(0);
++#else
+ 	WriteLabels(0);
++#endif /* HAVE_TSOL */
+ 	puts("grestore");
+ 	puts("showpage");
+       }
+--- filter/tsol_labeled_banner.c	Mon Apr  2 16:00:28 2012
++++ filter/tsol_labeled_banner.c	Mon Apr  2 17:33:51 2012
+@@ -0,0 +1,360 @@
++/*
++ * Add TSOL banner, trailer, page header/footers to a print job
++ */
++#include "tsol_labeled_banner.h"
++
++/* typedefs */
++
++typedef int BOOL;
++
++/* constants */
++
++#ifndef FALSE
++#define	FALSE 0
++#endif
++#ifndef TRUE
++#define	TRUE 1
++#endif
++
++#define	ME "tsol_labeled_banner"
++#define	SEPARATORPS "/usr/lib/cups/filter/tsol_separator.ps"
++#define	BANNERPS "/usr/lib/cups/filter/tsol_banner.ps"
++#define	TRAILERPS "/usr/lib/cups/filter/tsol_trailer.ps"
++#define	MAXUSERLEN 32
++#define	MAXHOSTLEN 32
++
++/* prototypes for static functions */
++
++static int ProcessArgs(int argc, char **argv);
++static void ParseUsername(char *input, char *user, char *host);
++static void EmitPSFile(const char *name);
++static BOOL EmitFile(FILE *file);
++static void EmitJobData(void);
++static void EmitPrologue(void);
++static void EmitCommandLineInfo(void);
++static void EmitClockBasedInfo(time_t clock);
++static void EmitLabelInfo(void);
++
++/* static variables */
++
++static char *ArgSeparatorPS;
++static char *ArgBannerPS;
++static char *ArgTrailerPS;
++static char *ArgPrinter;
++static char *ArgJobID;
++static char *ArgUser;
++static char *ArgHost;
++static char *ArgTitle;
++static char *ArgFile;
++static char *ArgOptions;
++static char *ArgCopies;
++static FILE *ArgLogFile;
++static m_label_t *FileLabel;
++static char *plabel;
++static time_t c_time;
++static int banner;
++
++/*
++ * tsol_labeled_banner emits the labeled banner or trailer page
++ * This function gets called from bannertops filter.
++ */
++int
++tsol_labeled_banner(int argc, char *argv[])
++{
++	int	err;
++
++	if (ProcessArgs(argc, argv) != 0)
++		return(1);
++
++	if ((FileLabel = m_label_alloc(MAC_LABEL)) == NULL)
++		return(1);
++	/*
++	 * peer label can be read from CLASSIFICATION environment variable.
++	 * If there is no CLASSIFICATION value, the file label can be
++         * determined from its pathname.
++	 */
++	if ((plabel = getenv("CLASSIFICATION")) != NULL) {
++		m_label_free(FileLabel);
++		FileLabel = NULL;
++		if (str_to_label(plabel, &FileLabel, MAC_LABEL,
++		    L_NO_CORRECTION, &err) == -1) {
++			perror("str_to_label");
++			return(1);
++		}
++	} else if (getlabel(ArgFile, FileLabel) != 0) {
++		(void) fprintf(ArgLogFile,
++		    gettext("%1$s: cannot get label of %2$s: %3$s\n"),
++		    ME, ArgFile, strerror(errno));
++		return(1);
++	}
++
++	/* All of these functions return if they encounter an error */
++	EmitJobData();
++	EmitPSFile(ArgSeparatorPS);
++	
++	/*
++	 * check if banner or trailer
++	 */
++	if (banner)
++		EmitPSFile(ArgBannerPS);
++	else
++		EmitPSFile(ArgTrailerPS); 
++
++	m_label_free(FileLabel);
++	return (0);
++}
++
++static void
++EmitJobData(void)
++{
++	EmitPrologue();
++	EmitCommandLineInfo();
++	EmitClockBasedInfo(c_time);
++	EmitLabelInfo();
++
++	/* Emit ending PostScript code */
++	(void) printf("end\n\n");
++	(void) printf("%%%% End of code generated by tsol_labeled_banner\n\n");
++
++}
++
++static void
++EmitPrologue(void)
++{
++	/* Emit preliminary PostScript code */
++	(void) printf("%%!\n\n");
++	(void) printf("%%%% Begin code generated by tsol_labeled_banner\n\n");
++
++	(void) printf("%%%% Create JobDict if it doesn't exist\n");
++	(void) printf("userdict /JobDict known not {\n");
++	(void) printf("  userdict /JobDict 100 dict put\n");
++	(void) printf("} if\n\n");
++
++	(void) printf("%%%% Define job parameters, including TSOL security "
++	    "info\n");
++	(void) printf("JobDict\n");
++	(void) printf("begin\n");
++}
++
++/* Emit parameters obtained from command line options */
++static void
++EmitCommandLineInfo(void)
++{
++	char user[MAXUSERLEN + 1];
++	char host[MAXHOSTLEN + 1];
++
++	(void) printf("\t/Job_Printer (%s) def\n", ArgPrinter);
++
++	/*
++	 * If ArgHost is localhost, read SERVER_ADMIN env variable to get hostname.
++	 */
++	if(strcmp(ArgHost, "localhost") == 0)
++	{
++		ArgHost = getenv("SERVER_ADMIN");
++		ParseUsername(ArgHost, user, host);
++		(void) printf("\t/Job_Host (%s) def\n", host);
++	} else 
++		(void) printf("\t/Job_Host (%s) def\n", ArgHost);
++
++	(void) printf("\t/Job_User (%s) def\n", ArgUser);
++	(void) printf("\t/Job_JobID (%s-%s) def\n", ArgPrinter, ArgJobID);
++	(void) printf("\t/Job_Title (%s) def\n", ArgTitle);
++	(void) printf("\t/Job_DoPageLabels (NO) def\n");
++	(void) printf("\n");
++}
++
++/* Emit parameters generated from the system clock */
++static void
++EmitClockBasedInfo(time_t c_time)
++{
++	(void) printf("\t/Job_Date (%s) def\n", ctime(&c_time));
++	(void) printf("\t/Job_Hash (%ld) def\n", c_time % 100000L);
++	(void) printf("\n");
++}
++
++/* Emit parameters derived from the SL and IL of the file being printed. */
++static void
++EmitLabelInfo(void)
++{
++	char	*header = NULL;		/* DIA banner page fields */
++	char	*label = NULL;
++	char	*caveats = NULL;
++	char	*channels = NULL;
++	char	*page_label = NULL;	/* interior pages label */
++
++	if (label_to_str(FileLabel, &header, PRINTER_TOP_BOTTOM,
++	    DEF_NAMES) != 0) {
++		(void) fprintf(ArgLogFile,
++		    gettext("%s: label_to_str PRINTER_TOP_BOTTOM: %s.\n"),
++		    ME, strerror(errno));
++		return;
++	}
++	if (label_to_str(FileLabel, &label, PRINTER_LABEL,
++	    DEF_NAMES) != 0) {
++		(void) fprintf(ArgLogFile,
++		    gettext("%s: label_to_str PRINTER_LABEL: %s.\n"),
++		    ME, strerror(errno));
++		return;
++	}
++	if (label_to_str(FileLabel, &caveats, PRINTER_CAVEATS,
++	    DEF_NAMES) != 0) {
++		(void) fprintf(ArgLogFile,
++		    gettext("%s: label_to_str PRINTER_CAVEATS: %s.\n"),
++		    ME, strerror(errno));
++		return;
++	}
++	if (label_to_str(FileLabel, &channels, PRINTER_CHANNELS,
++	    DEF_NAMES) != 0) {
++		(void) fprintf(ArgLogFile,
++		    gettext("%s: label_to_str PRINTER_CHANNELS: %s.\n"),
++		    ME, strerror(errno));
++		return;
++	}
++	if (label_to_str(FileLabel, &page_label, M_LABEL,
++	    LONG_NAMES) != 0) {
++		(void) fprintf(ArgLogFile,
++		    gettext("%s: label_to_str M_LABEL: %s.\n"),
++		    ME, strerror(errno));
++		return;
++	}
++
++	(void) printf("\t/Job_Classification (%s) def\n", header);
++	(void) printf("\t/Job_Protect (%s) def\n", label);
++	(void) printf("\t/Job_Caveats (%s) def\n", caveats);
++	(void) printf("\t/Job_Channels (%s) def\n", channels);
++	(void) printf("\t/Job_SL_Internal (%s) def\n", page_label);
++
++	/* Free memory allocated label_to_str */
++	free(header);
++	free(label);
++	free(caveats);
++	free(channels);
++	free(page_label);
++}
++
++/*
++ * Parse input "host!user" to separate host and user names.
++ */
++
++static void
++ParseUsername(char *input, char *user, char *host)
++{
++	char *cp;
++
++	if ((cp = strchr(input, '@')) != NULL) {
++		/* user@host */
++		(void) strlcpy(host, cp + 1, MAXHOSTLEN + 1);
++		*cp = '\0';
++		(void) strlcpy(user, input, MAXUSERLEN + 1);
++		*cp = '@';
++	} else if ((cp = strchr(input, '!')) != NULL) {
++		/* host!user */
++		(void) strlcpy(user, cp + 1, MAXUSERLEN + 1);
++		*cp = '\0';
++		(void) strlcpy(host, input, MAXHOSTLEN + 1);
++		*cp = '!';
++	} else {
++		/* user */
++		(void) strlcpy(user, input, MAXUSERLEN + 1);
++		host[0] = '\0';
++	}
++}
++
++static BOOL
++EmitFile(FILE *file)
++{
++	int len;
++#define	BUFLEN 1024
++	char buf[BUFLEN];
++
++	while ((len = fread(buf, 1, BUFLEN, file)) > 0) {
++		if (fwrite(buf, 1, len, stdout) != len)
++			return (FALSE);
++	}
++	if (!feof(file))
++		return (FALSE);
++	return (TRUE);
++}
++
++
++static void
++EmitPSFile(const char *name)
++{
++	char path[PATH_MAX];
++	FILE *file;
++	BOOL emitted;
++
++	(void) strlcpy(path, name, sizeof (path));
++
++	file = fopen(path, "r");
++	if (file == NULL) {
++		(void) fprintf(ArgLogFile,
++		    gettext("%s: Error opening PostScript file %s. %s.\n"),
++		    ME, path, strerror(errno));
++		return;
++	}
++
++	emitted = EmitFile(file);
++	(void) fclose(file);
++	if (!emitted) {
++		(void) fprintf(ArgLogFile, gettext(
++		    "%s: Error copying PostScript file %s to stdout.\n"),
++		    ME, path);
++		return;
++	}
++}
++
++
++static int
++ProcessArgs(int argc, char *argv[])
++{
++	/* set default values for arguments */
++	ArgSeparatorPS = SEPARATORPS;
++	ArgBannerPS = BANNERPS;
++	ArgTrailerPS = TRAILERPS;
++	ArgLogFile = stderr;
++	banner = 0;
++
++	ArgPrinter = argv++[0];
++	ArgJobID = argv++[0];
++	ArgUser = argv++[0];
++	ArgTitle = argv++[0];
++	ArgCopies = argv++[0];
++	ArgOptions = argv++[0];
++	ArgFile = argv++[0];
++
++	/*
++	 * Read options string to check if call is for
++	 * banner page. If call is for banner page then
++	 * options string contains 'banner=true'. 
++	 */
++	if(extract_options(ArgOptions, "banner="))
++		banner = 1;
++
++	/*
++	 * Read options string to get the job creation time.
++	 */
++	c_time = atoi(extract_options(ArgOptions, "time-at-creation"));
++
++	/*
++	 * Read options string to get the originating hostname of
++	 * the job.
++	 */
++	ArgHost=extract_options(ArgOptions, "job-originating-host-name=");
++
++	return (0);
++}
++
++/* Check if string 'str' exists in options. */   
++char * extract_options(const char *options, const char *str) {
++	char *chk2 = NULL, *chk1 = NULL;
++	char *optstr = strdup(options);
++
++	chk2 = strstr(optstr, str);
++	if (chk2) {
++        	chk1 = strtok(chk2, "=");
++        	chk2 = strtok(NULL, " ");
++	}
++
++	return chk2;
++}
+--- filter/tsol_labeled_banner.h	Mon Apr  2 16:00:30 2012
++++ filter/tsol_labeled_banner.h	Mon Apr  2 17:33:51 2012
+@@ -0,0 +1,12 @@
++#include <stdio.h>
++#include <stdlib.h>
++#include <string.h>
++#include <time.h>
++#include <limits.h>
++#include <errno.h>
++#include <signal.h>
++#include <locale.h>
++#include <tsol/label.h>
++
++int tsol_labeled_banner(int argc, char *argv[]);
++char *extract_options(const char *, const char *);
+--- scheduler/client.c	Mon Apr  2 17:30:50 2012
++++ scheduler/client.c	Mon Apr  2 17:33:51 2012
+@@ -145,6 +145,8 @@
+   if (is_system_labeled()) {
+     ucred_t *cred = NULL;
+     m_label_t *slabel;
++    m_label_t *admin_low = m_label_alloc(MAC_LABEL);
++    m_label_t *admin_high = m_label_alloc(MAC_LABEL);
+ 
+     if (getpeerucred(fd, &cred) == -1)
+       return (-1);
+@@ -151,9 +153,32 @@
+ 
+     slabel = ucred_getlabel(cred);
+     *label = NULL;
+-    if (label_to_str(slabel, label, M_INTERNAL, DEF_NAMES) != 0)
+-      cupsdLogMessage(CUPSD_LOG_ERROR, "getpeercon(%d, 0x%8.8x): %s",
+-                      fd, (int)label, strerror(errno));
++
++    if ((admin_low == NULL) || (admin_high == NULL))
++      cupsdLogMessage(CUPSD_LOG_ERROR, "getpeerseclabel(%d, unable to"
++		      " allocate admin_low/admin_high label", fd);
++    else
++    {
++      bsllow(admin_low);
++      bslhigh(admin_high);
++
++      /*
++       * Remote print requests from the global zone
++       * arrive at admin_low, make them admin_high to
++       * avoid downgrade.
++       */
++      if (blequal(slabel, admin_low))
++      {
++        slabel = admin_high;
++        cupsdLogMessage(CUPSD_LOG_DEBUG, "getpeerseclabel(%d, upgrade"
++		        " admin_low label to admin_high", fd);
++      } 
++
++      if (label_to_str(slabel, label, M_LABEL, DEF_NAMES) != 0)
++        cupsdLogMessage(CUPSD_LOG_ERROR, "getpeerseclabel(%d, 0x%8.8x): %s",
++			fd, (int)label, strerror(errno));
++
++    }
+     ucred_free(cred);
+   }
+ 
+--- scheduler/job.c	Mon Apr  2 17:30:50 2012
++++ scheduler/job.c	Mon Apr  2 17:33:51 2012
+@@ -3193,6 +3193,24 @@
+   for (i = num_pwgppds, pwgppd = pwgppds; i > 0; i --, pwgppd ++)
+     newlength += 1 + strlen(pwgppd->name) + 1 + strlen(pwgppd->value);
+ 
++#if defined(HAVE_TSOL)
++  if (is_system_labeled())
++    if(job->current_file == 0)
++      /*
++       * Increase length to add option ' banner=true' to options string
++       * in case of banner page.
++       */
++      newlength += strlen(" banner=true");
++    else if (job->job_sheets->num_values > 1 &&
++             job->current_file == (job->num_files - 1))
++      /*
++       * Increase length to add option ' trailer=true' to options string
++       * in case of trailer page.
++       */
++      newlength += strlen(" trailer=true");
++
++#endif /* HAVE_TSOL */
++
+  /*
+   * Then allocate/reallocate the option buffer as needed...
+   */
+@@ -3380,6 +3398,24 @@
+ 
+   cupsFreeOptions(num_pwgppds, pwgppds);
+ 
++#if defined(HAVE_TSOL)
++  if (is_system_labeled())
++    if(job->current_file == 0)
++      /*
++       * Add option ' banner=true' to options string
++       * in case of banner page.
++       */
++      strlcat(optptr, " banner=true", 13);
++    else if (/*job->job_sheets->num_values > 1 && */
++             job->current_file == (job->num_files - 1)) 
++      /*
++       * Add option ' trailer=true' to options string
++       * in case of trailer page.
++       */
++      strlcat(optptr, " trailer=true", 14);
++
++#endif /* HAVE_TSOL */
++
+  /*
+   * Return the options string...
+   */
+--- scheduler/printers.c	Mon Apr  2 17:30:50 2012
++++ scheduler/printers.c	Mon Apr  2 17:33:51 2012
+@@ -2676,12 +2676,22 @@
+     ippDelete(oldattrs);
+   }
+ 
++#if defined(HAVE_TSOL)
+  /*
+-  * Force sharing off for remote queues...
++  * Allow sharing for remote queues.
++  * This is required for cascade printing.
+   */
+ 
+-  if (p->type & (CUPS_PRINTER_REMOTE | CUPS_PRINTER_IMPLICIT))
+-    p->shared = 0;
++  if ((p->type & (CUPS_PRINTER_REMOTE | CUPS_PRINTER_IMPLICIT)) &&
++       !is_system_labeled())
++#else
++  /*
++   * Force sharing off for remote queues...
++   */
++
++   if (p->type & (CUPS_PRINTER_REMOTE | CUPS_PRINTER_IMPLICIT))
++#endif /* HAVE_TSOL */
++    p->shared = 0; 
+   else
+   {
+    /*
+--- berkeley/lpq.c	Thu Apr  5 11:12:37 2012
++++ berkeley/lpq.c	Thu Apr  5 11:30:46 2012
+@@ -77,7 +77,6 @@
+ 
+   http       = NULL;
+   dest       = NULL;
+-  user       = NULL;
+   id         = 0;
+   interval   = 0;
+   longstatus = 0;
+@@ -84,6 +83,12 @@
+   all        = 0;
+   num_dests  = 0;
+   dests      = NULL;
++#if defined (HAVE_TSOL)
++  if (is_system_labeled())
++    user = cupsUser();
++  else
++#endif /* HAVE_TSOL */
++    user = NULL;
+ 
+   for (i = 1; i < argc; i ++)
+     if (argv[i][0] == '+')
+--- scheduler/auth.c	Wed Oct  6 13:07:44 2010
++++ scheduler/auth.c	Fri Apr  6 10:37:14 2012
+@@ -2253,8 +2253,38 @@
+ #endif /* HAVE_AUTHORIZATION_H */
+     {
+       if (best->satisfy == CUPSD_AUTH_SATISFY_ALL || auth == CUPSD_AUTH_DENY)
++      {
++#if defined(HAVE_TSOL)
++	if (is_system_labeled())
++	{
++	  /*
++	   * Read requesting-user-name attribute.
++	   */
++	  ipp_attribute_t *attr = ippFindAttribute(con->request,
++				"requesting-user-name", IPP_TAG_NAME);
++	  if (attr)
++	  {
++	    cupsdLogMessage(CUPSD_LOG_DEBUG,
++			    "cupsdIsAuthorized: requesting-user-name=\"%s\"",
++			    attr->values[0].string.text);
++	   /*
++	    * Check if requesting-user-name has
++	    * 'solaris.print.admin' authorization
++	    */
++	    if(chkauthattr("solaris.print.admin", attr->values[0].string.text))
++	    {
++	      cupsdLogMessage(CUPSD_LOG_DEBUG,
++			      "cupsdIsAuthorized: username=\"%s\" has "
++			      "solaris.print.admin authorization",
++			      attr->values[0].string.text);
++	      return (HTTP_OK);
++	    }
++	  } 
++	  cupsdLogMessage(CUPSD_LOG_DEBUG, "cupsdIsAuthorized: HTTP_UNAUTHORIZED");
++	}
++#endif /* HAVE_TSOL */
+ 	return (HTTP_UNAUTHORIZED);	/* Non-anonymous needs user/pass */
+-      else
++      } else
+ 	return (HTTP_OK);		/* unless overridden with Satisfy */
+     }
+ 
+--- scheduler/ipp.c	Fri Apr  6 10:44:27 2012
++++ scheduler/ipp.c	Fri Apr  6 10:55:56 2012
+@@ -124,6 +124,11 @@
+ #  endif /* HAVE_MEMBERSHIPPRIV_H */
+ #endif /* __APPLE__ */
+ 
++#if defined(HAVE_TSOL)
++#include <deflt.h>
++#include <auth_attr.h>
++#include <secdb.h>
++#endif /* HAVE_TSOL */
+ 
+ /*
+  * Local functions...
+@@ -836,18 +841,38 @@
+   printer = cupsdFindDest(job->dest);
+   attr    = ippFindAttribute(job->attrs, "job-sheets", IPP_TAG_NAME);
+ 
++#if defined(HAVE_TSOL) 
+   if (printer &&
+       !(printer->type & (CUPS_PRINTER_REMOTE | CUPS_PRINTER_IMPLICIT)) &&
+-      attr && attr->num_values > 1)
+-  {
+-   /*
+-    * Yes...
+-    */
++      attr && (attr->num_values > 1 || is_system_labeled()))
++#else
++  if (printer &&
++      !(printer->type & (CUPS_PRINTER_REMOTE | CUPS_PRINTER_IMPLICIT)) &&
++      attr && (attr->num_values > 1))  
++#endif /* HAVE_TSOL */ 
++ {
++    char *job_sheets_banner = attr->values[1].string.text;
+ 
++#if defined(HAVE_TSOL)
++    if (is_system_labeled()) {
++      /*
++       * Initialize job_sheets_banner to start banner value.
++       * In case start banner is 'none' and user is authorized
++       * to disable printing banner/trailer pages, trailer page
++       * should not be printed.
++       */
++      job_sheets_banner = attr->values[0].string.text;
++
++      if ((strcmp(job_sheets_banner, "none") != 0) ||
++	  (!chkauthattr("solaris.print.nobanner", job->username)))
++	  job_sheets_banner = "labeled";
++    }
++#endif /* HAVE_TSOL */
++
+     cupsdLogJob(job, CUPSD_LOG_INFO, "Adding end banner page \"%s\".",
+-                attr->values[1].string.text);
++                job_sheets_banner);
+ 
+-    if ((kbytes = copy_banner(NULL, job, attr->values[1].string.text)) < 0)
++    if ((kbytes = copy_banner(NULL, job, job_sheets_banner)) < 0)
+       return (-1);
+ 
+     cupsdUpdateQuota(printer, job->username, 0, kbytes);
+@@ -890,7 +915,7 @@
+ 
+     if (str_to_label(label, &sl, USER_CLEAR, L_NO_CORRECTION, NULL) == 0)
+     {
+-      (void) label_to_str(sl, &result, PRINTER_TOP_BOTTOM, DEF_NAMES);
++      (void) label_to_str(sl, &result, M_LABEL, LONG_NAMES);
+       if (result == NULL)
+         result = label;
+ 
+@@ -1751,7 +1776,7 @@
+ 
+     if (attr->value_tag != IPP_TAG_NAME ||
+         attr->num_values != 1 ||
+-        strcmp(con->http.hostname, "localhost"))
++        (strcmp(attr->values[0].string.text, "localhost") == 0))
+     {
+      /*
+       * Can't override the value if we aren't connected via localhost.
+@@ -1797,7 +1822,7 @@
+       attr->value_tag             = IPP_TAG_NAME;
+       attr->num_values            = 1;
+       attr->values[0].string.text = _cupsStrAlloc(con->http.hostname);
+-    }
++  }
+ 
+     attr->group_tag = IPP_TAG_JOB;
+   }
+@@ -2011,10 +2036,24 @@
+ 
+     if (!(printer->type & (CUPS_PRINTER_REMOTE | CUPS_PRINTER_IMPLICIT)))
+     {
++      char *job_sheets_banner = attr->values[0].string.text;
++
++#if defined(HAVE_TSOL)   
++      if (is_system_labeled()) {
++        /*
++         * If attr->values[0].string.text is 'none', then check if
++         * user is authorized to disable printing banner pages.
++         */
++	if ((strcmp(job_sheets_banner, "none") != 0) ||
++	  (!chkauthattr("solaris.print.nobanner", job->username)))
++	    job_sheets_banner = "labeled";
++      }
++#endif /* HAVE_TSOL */
++
+       cupsdLogJob(job, CUPSD_LOG_INFO, "Adding start banner page \"%s\".",
+-		  attr->values[0].string.text);
++		  job_sheets_banner);
+ 
+-      if ((kbytes = copy_banner(con, job, attr->values[0].string.text)) < 0)
++      if ((kbytes = copy_banner(con, job, job_sheets_banner)) < 0)
+       {
+         cupsdSetJobState(job, IPP_JOB_ABORTED, CUPSD_JOB_PURGE,
+ 	                 "Aborting job because the start banner could not be "
+@@ -7213,6 +7252,21 @@
+   else
+     username[0] = '\0';
+ 
++#if defined(HAVE_TSOL)
++ /*
++  * By default, see jobs for a specific user in case of
++  * Trusted Extensions environment.
++  * List all jobs if the user is authorized.
++  */
++
++  if (!chkauthattr("solaris.print.list", get_username(con)))
++    strlcpy(username, get_username(con), sizeof(username));
++  else
++    username[0] = '\0';
++
++#endif /* HAVE_TSOL */
++
++
+   if ((ra = create_requested_array(con->request)) == NULL &&
+       !ippFindAttribute(con->request, "requested-attributes", IPP_TAG_KEYWORD))
+   {
+--- filter/pstops.c	Tue Aug 31 11:36:08 2010
++++ filter/pstops.c	Fri Apr  6 11:05:36 2012
+@@ -61,6 +61,11 @@
+ #include <signal.h>
+ 
+ 
++#if defined(HAVE_TSOL)
++#include <auth_attr.h>
++#include "tsol_labeled_banner.h"
++#endif /* HAVE_TSOL */
++ 
+ /*
+  * Constants...
+  */
+@@ -166,6 +171,10 @@
+ 
+ static int		JobCanceled = 0;/* Set to 1 on SIGTERM */
+ 
++#if defined(HAVE_TSOL)
++/* nolabels option */
++static int		nolabels = 0;
++#endif /* HAVE_TSOL */ 
+ 
+ /*
+  * Local functions...
+@@ -222,6 +231,12 @@
+ static void		write_label_prolog(pstops_doc_t *doc, const char *label,
+ 			                   float bottom, float top,
+ 					   float width);
++#if defined(HAVE_TSOL)
++static void		tsol_write_label_prolog(pstops_doc_t *doc,
++                                                const char *label,
++						float bottom, float top,
++						float width);
++#endif /* HAVE_TSOL */
+ static void		write_labels(pstops_doc_t *doc, int orient);
+ static void		write_options(pstops_doc_t  *doc, ppd_file_t *ppd,
+ 			              int num_options, cups_option_t *options);
+@@ -322,6 +337,19 @@
+ 
+   set_pstops_options(&doc, ppd, argv, num_options, options);
+ 
++#if defined(HAVE_TSOL)
++  if (is_system_labeled()) 
++  {
++    /*
++     * Check for 'nolabels' options and if user is authorized
++     * to disable labeling.
++     */
++     if ((extract_options(argv[5], "nolabels")) &&
++         (chkauthattr("solaris.print.unlabeled", doc.user)))
++	  nolabels = 1; 
++  }
++#endif /* HAVE_TSOL */
++
+  /*
+   * Write any "exit server" options that have been selected...
+   */
+@@ -2076,6 +2104,19 @@
+   * Write the page and label prologs...
+   */
+ 
++#ifdef HAVE_TSOL
++  if (is_system_labeled())
++  {
++     if (Orientation & 1)
++       /* For landscape and reverse landscape */
++       tsol_write_label_prolog(doc, doc->page_label, PageLeft, PageRight,
++			       PageLength);
++     else
++       /* For portrait and reverse portrait */
++       tsol_write_label_prolog(doc, doc->page_label, PageBottom, PageTop, PageWidth);
++  } 
++  else 
++#endif /* HAVE_TSOL */ 
+   if (doc->number_up == 2 || doc->number_up == 6)
+   {
+    /*
+@@ -3290,7 +3331,76 @@
+   }
+ }
+ 
++#if defined(HAVE_TSOL)
++/*
++ * 'tsol_write_label_prolog()' - Write the prolog with the page label
++ *			       for labeled system.
++ */
++static void
++tsol_write_label_prolog(pstops_doc_t *doc,	/* I - Document info */
++                   const char   *label,	/* I - Page label */
++		   float        bottom,	/* I - Bottom position in points */
++		   float        top,	/* I - Top position in points */
++		   float        width)	/* I - Width in points */
++{
++  const char	*ptr;			/* Temporary string pointer */
+ 
++
++ /*
++  * If there is nothing to show, bind an empty 'write labels' procedure
++  * and return...
++  */
++  if (label == NULL || !label[0])
++  {
++    doc_puts(doc, "userdict/ESPwl{}bind put\n");
++    return;
++  }
++
++ /*
++  * Set the page label string...
++  */
++  doc_puts(doc, "userdict");
++  doc_puts(doc, "/ESPpl(");
++
++  if (label)
++    doc_puts(doc, label);
++
++  doc_puts(doc, ")put\n");
++
++  doc_puts(doc, "userdict");
++  doc_puts(doc, ClippedLabel);
++  doc_puts(doc, append);
++
++  doc_puts(doc, "\n");
++
++ /*
++  * Then get a 12 point Courier-Bold font...
++  */
++
++  doc_puts(doc, "userdict");
++  doc_puts(doc, ESPpf);
++
++ /*
++  * Finally, the procedure to write the labels on the page...
++  */
++
++  doc_puts(doc, "userdict/ESPwl{\n");
++  doc_puts(doc, "  ESPpf setfont\n");
++  doc_printf(doc, "  ClippedLabel stringwidth pop dup 12 add exch -0.5 mul %.0f add\n",
++	width * 0.5f);
++  doc_puts(doc, "  0 setgray\n");
++  doc_printf(doc, "  dup 6 sub %.0f 3 index 10 ESPrf\n", bottom - 1.0);
++  doc_printf(doc, "  dup 6 sub %.0f 3 index 10 ESPrf\n", top - 19.0);
++  doc_puts(doc, "  1 setgray\n");
++  doc_printf(doc, "  dup 6 sub %.0f 3 index 10 ESPrs\n", bottom - 1.0);
++  doc_printf(doc, "  dup 6 sub %.0f 3 index 10 ESPrs\n", top - 19.0);
++  doc_printf(doc, "  dup %.0f moveto ClippedLabel show\n", bottom + 1.0);
++  doc_printf(doc, "  %.0f moveto ClippedLabel show\n", top - 17.0);
++  doc_puts(doc, "pop\n");
++  doc_puts(doc, "}bind put\n");
++}
++#endif /* HAVE_TSOL */
++
+ /*
+  * 'write_label_prolog()' - Write the prolog with the classification
+  *                          and page label.
+@@ -3436,20 +3546,59 @@
+     length = PageLength;
+   }
+ 
+-  switch (orient & 3)
++#ifdef HAVE_TSOL
++  if (is_system_labeled())
+   {
+-    case 1 : /* Landscape */
+-        doc_printf(doc, "%.1f 0.0 translate 90 rotate\n", length);
+-        break;
+-    case 2 : /* Reverse Portrait */
+-        doc_printf(doc, "%.1f %.1f translate 180 rotate\n", width, length);
+-        break;
+-    case 3 : /* Reverse Landscape */
+-        doc_printf(doc, "0.0 %.1f translate -90 rotate\n", width);
+-        break;
++    /*
++     * For 2- and 6-up output, do not rotate the labels.
++     * Labels should be always on top & bottom of the job page.
++     */ 
++    if (doc->number_up != 2 && doc->number_up != 6) 
++    {
++      switch (orient & 3)
++      {
++        case 1 : /* Landscape */
++	  doc_printf(doc, "0.0 %.1f translate -90 rotate\n", length);
++	  break;
++	case 2 : /* Reverse Portrait */
++	  doc_printf(doc, "%.1f %.1f translate 180 rotate\n", width, length);
++	  break;
++	case 3 : /* Reverse Landscape */
++	  doc_printf(doc, "%.1f 0.0 translate 90 rotate\n", width);
++	  break;
++      }
++    }
+   }
++  else
++#endif /* HAVE_TSOL */
++  {
++    switch (orient & 3)
++    {
++      case 1 : /* Landscape */
++	doc_printf(doc, "%.1f 0.0 translate 90 rotate\n", length);
++	break;
++      case 2 : /* Reverse Portrait */
++	doc_printf(doc, "%.1f %.1f translate 180 rotate\n", width, length);
++	break;
++      case 3 : /* Reverse Landscape */
++	doc_printf(doc, "0.0 %.1f translate -90 rotate\n", width);
++	break;
++    }
++  }
+ 
++#ifdef HAVE_TSOL
++  /*
++   * Page-label should not be written in case user gives '-o nolabels' option
++   * and user is authorized to disable page-labels.
++   *
++   * 'nolabels' is set to '1' in case user is authorized to disable page-labels.
++   */
++  if (is_system_labeled() && !nolabels)
++     doc_puts(doc, "ESPwl\n");
++#else
+   doc_puts(doc, "ESPwl\n");
++#endif /* HAVE_TSOL */
++
+   doc_puts(doc, "grestore\n");
+ }
+ 
+--- systemv/lpadmin.c	Thu Aug 12 18:34:04 2010
++++ systemv/lpadmin.c	Fri Apr  6 11:10:17 2012
+@@ -701,6 +701,18 @@
+   ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI,
+                "printer-uri", NULL, uri);
+ 
++#if defined(HAVE_TSOL)
++  /*
++   * Add requesting-user-name to the request.
++   * This is required to authorize a user to add a printer to a class.
++   */
++  if (is_system_labeled())
++  {
++    ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
++		 "requesting-user-name", NULL, cupsUser());
++  }
++#endif /* HAVE_TSOL */
++
+  /*
+   * See if the printer is already in the class...
+   */
+@@ -804,6 +816,18 @@
+   ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI,
+                "printer-uri", NULL, uri);
+ 
++#if defined(HAVE_TSOL)
++  /*
++   * Add requesting-user-name to the request.
++   * This is required to authorize a user to set the default printer.
++   */
++  if (is_system_labeled())
++  {
++    ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
++		 "requesting-user-name", NULL, cupsUser());
++  }
++#endif /* HAVE_TSOL */
++
+  /*
+   * Do the request and get back a response...
+   */
+@@ -862,6 +886,18 @@
+   ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI,
+                "printer-uri", NULL, uri);
+ 
++#if defined(HAVE_TSOL)
++  /*
++   * Add requesting-user-name to the request.
++   * This is required to authorize a user to delete a printer.
++   */
++  if (is_system_labeled())
++  {
++    ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
++		 "requesting-user-name", NULL, cupsUser());
++  }
++#endif /* HAVE_TSOL */
++
+  /*
+   * Do the request and get back a response...
+   */
+@@ -983,6 +1019,19 @@
+ 
+     ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI,
+         	 "printer-uri", NULL, uri);
++
++#if defined(HAVE_TSOL)
++    /*
++     * Add requesting-user-name to the request.
++     * This is required to authorize a user to delete a printer from
++     * a class.
++     */
++    if (is_system_labeled())
++    {
++      ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
++                   "requesting-user-name", NULL, cupsUser());
++    }
++#endif /* HAVE_TSOL */
+   }
+   else
+   {
+@@ -1001,6 +1050,18 @@
+     ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI,
+         	 "printer-uri", NULL, uri);
+ 
++#if defined(HAVE_TSOL)
++    /*
++     * Add requesting-user-name to the request.
++     * This is required to authorize a user to delete a printer from
++     * a class.
++     */
++    if (is_system_labeled())
++    {
++      ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
++                   "requesting-user-name", NULL, cupsUser());
++    }
++#endif /* HAVE_TSOL */
+    /*
+     * Delete the printer from the class...
+     */
+@@ -1076,6 +1137,17 @@
+                    "localhost", 0, "/printers/%s", printer);
+   ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_URI,
+                "printer-uri", NULL, uri);
++#if defined(HAVE_TSOL)
++  /*
++   * Add requesting-user-name to the request.
++   * This is required to authorize a user to enable a printer.
++   */
++  if (is_system_labeled())
++  {
++    ippAddString(request, IPP_TAG_OPERATION, IPP_TAG_NAME,
++     		 "requesting-user-name", NULL, cupsUser());
++  }
++#endif /* HAVE_TSOL */
+ 
+   ippAddInteger(request, IPP_TAG_PRINTER, IPP_TAG_ENUM, "printer-state",
+                 IPP_PRINTER_IDLE);
