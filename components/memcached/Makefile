@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -45,6 +45,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 COMPONENT_TEST_TARGETS=	test
 
 studio_OPT = -xO5
+
+CFLAGS += -D__ATTRIBUTE_DISABLED
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
 CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/${MACH64}

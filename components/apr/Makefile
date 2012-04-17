@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -68,6 +68,7 @@ $(BUILD_DIR_64)/.installed: COMPONENT_POST_INSTALL_ACTION = \
 # Documentation is generated in and directly packaged from 32 bit build
 # directory using doxygen.
 PKG_PROTO_DIRS += $(BUILD_DIR_32)/docs/dox/html
+PKG_PROTO_DIRS += $(BUILD_DIR_32)/docs/dox/html/search
 
 docs: $(BUILD_DIR_32)/.built
 	cd $(BUILD_DIR_32); doxygen docs/doxygen.conf
