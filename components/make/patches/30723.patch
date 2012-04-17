@@ -1,0 +1,20 @@
+This patch is taken from:
+http://cvs.savannah.gnu.org/viewvc/make/main.c?root=make&r1=1.243&r2=1.244
+
+Fix Savannah bug #30723:
+expand MAKEFLAGS before we re-exec after rebuilding makefiles.
+
+bug #30723: implicit re-executing of subdirs breaks $(origin) with make-3.82
+https://savannah.gnu.org/bugs/?30723
+
+--- a/main.c	2010/07/19 07:10:53	1.243
++++ b/main.c	2010/08/10 07:35:34	1.244
+@@ -2093,7 +2093,7 @@
+             const char *pv = define_makeflags (1, 1);
+             char *p = alloca (sizeof ("MAKEFLAGS=") + strlen (pv) + 1);
+             sprintf (p, "MAKEFLAGS=%s", pv);
+-            putenv (p);
++            putenv (allocated_variable_expand (p));
+           }
+ 
+ 	  if (ISDB (DB_BASIC))
