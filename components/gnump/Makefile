@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,6 +40,8 @@ include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
+
+CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
 CFLAGS += -features=extinl,extensions
 CFLAGS += -xustr=ascii_utf16_ushort -xcsi

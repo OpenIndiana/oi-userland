@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -49,6 +49,9 @@ COMPONENT_PREP_ACTION= (cd $(SOURCE_DIR)/sys/unix ; sh setup.sh)
 COMPONENT_INSTALL_ARGS += CHOWN=true
 COMPONENT_INSTALL_ARGS += CHGRP=true
 COMPONENT_INSTALL_ARGS += ROOT=$(PROTO_DIR)
+
+COMPONENT_BUILD_ENV += CC=$(CC)
+COMPONENT_INSTALL_ENV += CC=$(CC)
 
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc
 

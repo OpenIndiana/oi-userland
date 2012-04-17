@@ -56,6 +56,9 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 		$(PYTHON.$(BITS)) ./setup.py build \
 			--build-temp $(@D:$(BUILD_DIR)/%=%))
 	$(COMPONENT_POST_BUILD_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) $(SOURCE_DIR)/$(@D:$(BUILD_DIR)/%=%)
+endif
 	$(TOUCH) $@
 
 
@@ -89,6 +92,14 @@ $(BUILD_DIR)/%/.tested:	$(COMPONENT_TEST_DEP)
 		$(COMPONENT_TEST_CMD) $(COMPONENT_TEST_ARGS) )
 	$(COMPONENT_POST_TEST_ACTION)
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+parfait: install
+	-$(PARFAIT) build
+else
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes parfait
+endif
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)

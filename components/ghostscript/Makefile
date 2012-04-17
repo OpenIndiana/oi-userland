@@ -19,8 +19,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+# parfait seems to spin when looking at the .bc files, so
+# for now disable it.
+PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         ghostscript

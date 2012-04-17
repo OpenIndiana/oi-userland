@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -39,6 +39,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
+CLOBBER_PATHS += libmpfr.pc
 PATCH_LEVEL = 0
 
 CFLAGS += -features=extinl,extensions

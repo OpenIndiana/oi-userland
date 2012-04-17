@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -77,7 +77,9 @@ clean:		$(COMPONENT_DIRS.nosetup)
 	$(RM) components.mk depends.mk .profile
 
 clobber:	$(COMPONENT_DIRS.nosetup) clean
+	@cd ../tools ; echo "clobbering tools..." ; $(GMAKE) clobber
 	$(RM) -r $(WS_REPO) $(WS_LOGS) $(WS_LINT_CACHE)
+
 
 setup:	$(WS_LOGS) $(WS_REPO) tools $(WS_LINT_CACHE)
 
@@ -104,7 +106,7 @@ else
 endif
 
 tools:
-	@cd ../tools ; echo "building tools..." ; $(GMAKE) setup
+	@cd ../tools ; echo "building tools..." ; $(GMAKE) clean setup
 
 # $(WS_COMPONENTS) is the home directory for the zone user, so create a profile
 # to pass a few things on to zone based builds
