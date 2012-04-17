@@ -1,98 +1,144 @@
---- junit4.5/build.xml	Tue Aug 19 15:12:22 2008
-+++ junit4.5/build.xml.new	Mon Sep  1 10:39:18 2008
-@@ -2,14 +2,14 @@
- 	<tstamp />
+--- junit4.10/build.xml.~1~	2011-09-29 14:20:56.000000000 -0700
++++ junit4.10/build.xml	2012-04-10 16:50:13.369334597 -0700
+@@ -1,19 +1,19 @@
+ <project name="junit" default="dist" basedir="."
+          xmlns:artifact="antlib:org.apache.maven.artifact.ant">
+   <tstamp />
+-  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
++ 
  
- 	<property file="${user.home}/.junit.properties" />
--	<property name="src" value="src/main/java" />
-+	<property name="src" value="src/main" />
- 	<property name="target" location="target" />
- 	<property name="bin" location="${target}/main" />
- 	<property name="version" value="4.5" />
--	<property name="dist" value="junit${version}" />
-+	<property name="dist" value="dist" />
- 	<property name="versionfile" value="${src}/junit/runner/Version.java" />
- 	<property name="zipfile"  value="${dist}/${dist}.zip" />
--	<property name="testsrc" location="src/test/java" />
-+	<property name="testsrc" location="src/test" />
- 	<property name="testbin" location="${target}/test/java" />
- 	<property name="unjarred" value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
- 	<property name="binjar" value="junit-${version}.jar" />
-@@ -18,11 +18,18 @@
- 	<property name="javadocdir" location="${dist}/javadoc" />
- 	<property name="javadoczip" location="${dist}-javadoc.zip" />
- 	<property name="javadocpackages" value="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners, org.hamcrest.core, org.junit.matchers" />
--	<property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
--	<property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
-+	<property name="hamcrestsrc" location="temp.hamcrest.source" />
- 	
- 	<target name="init">
- 		<tstamp/>
-+		<unjar src="${srcjar}" dest="${src}" />
-+		<copy todir="${testsrc}/org">
-+			<fileset dir="org" />
-+		</copy>
-+		<copy todir="${testsrc}/junit">
-+			<fileset dir="junit" />
-+		</copy>
-+
- 	</target>
+   <property file="${user.home}/.junit.properties" />
+-  <property name="src" value="src/main/java" />
++  <property name="src" value="src/main/" />
+   <property name="target" location="target" />
+   <property name="bin" location="${target}/main" />
+   <property name="version-base" value="4.10" />
+   <property name="version-status" value="" />
+   <property name="version" value="${version-base}${version-status}" />
+-  <property name="dist" value="junit${version}" />
++  <property name="dist" value="dist" />
+   <property name="versionfile" value="${src}/junit/runner/Version.java" />
+   <property name="zipfile"  value="${dist}/${dist}.zip" />
+-  <property name="testsrc" location="src/test/java" />
++  <property name="testsrc" location="src/test" />
+   <property name="testbin" location="${target}/test/java" />
+   <property name="unjarred" 
+             value="**/*.jar, ${testfiles}, doc/**, README.html, .classpath, .project, cpl-v10.html" />
+@@ -28,11 +28,18 @@
  
- 	<target name="versiontag" depends="init">
-@@ -39,6 +46,8 @@
- 		<!-- If two builds are made within a minute -->
- 		<delete dir="${dist}" quiet="true" />
- 		<!-- Delete all previous temporary build artifacts -->
+   <property name="javadocdir" location="${dist}/javadoc" />
+   <property name="javadoczip" location="${dist}-javadoc.zip" />
+-  <property name="hamcrestlib" location="lib/hamcrest-core-1.1.jar" />
+-  <property name="hamcrestsrc" location="${dist}/temp.hamcrest.source" />
++  <property name="javadocpackages" value="org.junit, org.junit.runner, org.junit.runner.description, org.junit.runner.manipulation, org.junit.runner.notification, org.junit.runners, org.hamcrest.core, org.junit.matchers" />
++  <property name="hamcrestsrc" location="temp.hamcrest.source" />
+ 
+   <target name="init">
+     <tstamp/>
++	<unjar src="${srcjar}" dest="${src}" />
++	<copy todir="${testsrc}/org">
++		<fileset dir="org" />
++	</copy>
++	<copy todir="${testsrc}/junit">
++		<fileset dir="junit" />
++	</copy>
+   </target>
+ 
+   <target name="versiontag" depends="init">
+@@ -50,6 +57,8 @@
+     <!-- If two builds are made within a minute -->
+     <delete dir="${dist}" quiet="true" />
+     <!-- Delete all previous temporary build artifacts -->
 +		<delete dir="${src}" quiet="true" />
 +		<delete dir="${testsrc}" quiet="true" />
- 		<delete dir="${target}" quiet="true" />
- 		
- 		<delete file="${zipfile}" quiet="true"/>
-@@ -71,9 +80,9 @@
- 	</macrodef>
- 	
- 	<target name="build" depends="versiontag">
--		<junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib}"/>
--		<unjar src="${hamcrestlib}" dest="${bin}" />
--		<junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
+     <delete dir="${target}" quiet="true" />
+     
+     <delete file="${zipfile}" quiet="true"/>
+@@ -76,12 +85,12 @@
+   </macrodef>
+   
+   <target name="build" depends="versiontag">
+-    <junit_compilation srcdir="${src}" destdir="${bin}" classpath="${hamcrestlib}"/>
+-    <unjar src="${hamcrestlib}" dest="${bin}" />
+-    <junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${hamcrestlib};${bin}"/>
 +		<junit_compilation srcdir="${hamcrestsrc}" destdir="${bin}" classpath=""/>
 +		<junit_compilation srcdir="${src}" destdir="${bin}" classpath="${bin}"/>
 +		<junit_compilation srcdir="${testsrc}" destdir="${testbin}" classpath="${bin}"/>
- 	</target>
+   </target>
  
- 	<target name="jars">
-@@ -97,16 +106,12 @@
+-  <target name="jars" depends="build">
++  <target name="jars">
+     <mkdir dir="${dist}" />
+     <jar 
+         jarfile="${dist}/${srcjar}"
+@@ -121,40 +130,33 @@
  
- 	<target name="samples-and-tests">
- 		<copy todir="${dist}">
--			<fileset dir="${testbin}" />
- 			<fileset dir="${testsrc}" />
- 		</copy>
- 	</target>
+   <target name="samples-and-tests">
+     <copy todir="${dist}">
+-      <fileset dir="${testbin}" />
+-      <fileset dir="${testsrc}" />
++   	    <fileset dir="${testsrc}" />
+     </copy>
+   </target>
  
--	<target name="unjar.hamcrest">
--		<unjar src="${hamcrestlib}" dest="${hamcrestsrc}" />
--	</target>
- 	
--	<target name="javadoc" depends="unjar.hamcrest">
+-  <target name="unjar.hamcrest">
+-    <unjar src="${hamcrestlib}" dest="${hamcrestsrc}" />
+-  </target>
+-  
++
+   <target name="release-notes">
+     <property name="basename" value="doc/ReleaseNotes${version-base}" />
+-    <exec executable="build/Markdown.pl" failonerror="true">
++          <exec executable="perl" failonerror="true">
++	    <arg file="../../Markdown.pl"/>
+       <arg file="${basename}.txt"/>
+       <redirector output="${basename}.html" />
+     </exec>
+   </target>
+   
+-  <target name="javadoc" depends="unjar.hamcrest">
+-    <javadoc destdir="${javadocdir}"
 +	<target name="javadoc" >
- 		<javadoc packagenames="${javadocpackages}"
- 		         destdir="${javadocdir}"
- 		         author="false"
-@@ -113,7 +118,7 @@
- 		         version="false"
- 		         use="false"
- 		         windowtitle="JUnit API"
--		         stylesheetfile="stylesheet.css"
-+		         stylesheetfile="javadoc/stylesheet.css"
- 		>
- 			<sourcepath location="${src}" />
- 			<sourcepath location="${hamcrestsrc}" />
-@@ -134,7 +139,6 @@
- 		</copy>
- 		<copy file="README.html" tofile="${dist}/README.html" />
- 		<copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
--		<copy file="build.xml" tofile="${dist}/build.xml" />
- 	</target>
++ 		<javadoc packagenames="${javadocpackages}"
++    	     destdir="${javadocdir}"
+              author="false"
+              version="false"
+              use="false"
+              windowtitle="JUnit API"
+-             stylesheetfile="stylesheet.css"
+-             >
+-      <excludepackage name="junit.*" />
+-      <excludepackage name="org.junit.internal.*" />
+-      <excludepackage name="org.junit.experimental.theories.internal.*" />
+-      
+-      <sourcepath location="${src}" />
+-      <sourcepath location="${hamcrestsrc}" />
+-      <link href="http://java.sun.com/javase/6/docs/api/" />
+-    </javadoc>
+-  </target>
++             stylesheetfile="javadoc/stylesheet.css"
++	>
++			<sourcepath location="${src}" />
++			<sourcepath location="${hamcrestsrc}" />
++		</javadoc>
++	</target>
  
- 	<target name="dist" depends="populate-dist">
+   <target name="javadoczip">
+     <delete file="${javadoczip}" />
+@@ -163,7 +165,7 @@
+   </target>
+ 
+   <target name="populate-dist" 
+-          depends="clean, build, jars, samples-and-tests, javadoc, release-notes"
++          depends="clean, build, jars, samples-and-tests, javadoc"
+           >
+     <copy todir="${dist}/doc">
+       <fileset dir="doc"/>
+@@ -171,7 +173,6 @@
+     <copy file="README.html" tofile="${dist}/README.html" />
+     <copy file="BUILDING" tofile="${dist}/BUILDING" />
+     <copy file="cpl-v10.html" tofile="${dist}/cpl-v10.html" />
+-    <copy file="build.xml" tofile="${dist}/build.xml" />
+   </target>
+ 
+   <macrodef name="run-tests">
