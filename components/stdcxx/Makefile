@@ -18,8 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+# we really need to use studio so we don't like that
+# parfait is g++ in disguise
+PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):/usr/gnu/bin:/usr/bin
@@ -32,6 +37,8 @@ COMPONENT_PROJECT_URL=	http://stdcxx.apache.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha1:38efa30958222b2733f22098b3db09161d2e6c8c
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/stdcxx/$(COMPONENT_ARCHIVE)
+
+CLOBBER_PATHS += install.sh
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

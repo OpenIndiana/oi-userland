@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 UNPACK =	$(WS_TOOLS)/userland-unpack
@@ -35,14 +35,28 @@ CLEAN_PATHS += $(SOURCE_DIR)
 # append filenames to PATCHES, you'll have to set $(EXTRA_PATCHES) prior to
 # inclusion.
 PATCH_DIR ?=	patches
+
+# we may need patches only for use with parfait
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PARFAIT_PATCH_DIR =	parfait
+endif
 PATCH_PATTERN ?=	*.patch
-PATCHES =	$(shell find $(PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
+PATCHES =	$(shell find $(PATCH_DIR) $(PARFAIT_PATCH_DIR) -type f -name '$(PATCH_PATTERN)' \
 				2>/dev/null | sort) $(EXTRA_PATCHES)
 STAMPS =	$(PATCHES:$(PATCH_DIR)/%=$(SOURCE_DIR)/.%ed)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+STAMPS +=	$(PATCHES:$(PARFAIT_PATCH_DIR)/%=$(SOURCE_DIR)/.%ed)
+endif
 
 $(SOURCE_DIR)/.%ed:	$(PATCH_DIR)/%
 	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $<
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+$(SOURCE_DIR)/.%ed:	$(PARFAIT_PATCH_DIR)/%
+	$(GPATCH) -d $(@D) $(GPATCH_FLAGS) < $<
+	$(TOUCH) $@
+endif
 
 # template for download rules. add new rules with $(call download-rule, suffix)
 define download-rule

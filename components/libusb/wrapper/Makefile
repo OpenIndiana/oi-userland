@@ -49,6 +49,7 @@ $(BUILD_DIR)/libusb-64.pc:	src/libusb-64.pc
 download:
 
 clobber:	clean
+	$(RM) $(SOURCE_DIR)/.prep
 
 prep:	$(SOURCE_DIR)/.prep
 
@@ -58,8 +59,6 @@ install:	$(INSTALL_32_and_64)
 
 # enumerates USB devices plugged into your system
 test:		$(TEST_32_and_64)
-
-CLEAN_PATHS +=	$(SOURCE_DIR)/.prep
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

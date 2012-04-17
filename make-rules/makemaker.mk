@@ -18,14 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we only do 32 bit perl for now.
 BITS=32
 
 COMMON_PERL_ENV +=	MAKE=$(GMAKE)
-COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(PATH)
+COMMON_PERL_ENV +=	PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:$(PATH)
 COMMON_PERL_ENV +=	LANG=""
 COMMON_PERL_ENV +=	CC="$(CC)"
 COMMON_PERL_ENV +=	CFLAGS="$(PERL_OPTIMIZE)"
@@ -82,6 +82,9 @@ $(PERLBD_ARCH)-%/.tested:	$(PERLBD_ARCH)-%/.built
 	(cd $(@D) ; $(ENV) $(COMPONENT_TEST_ENV) $(GMAKE) \
 			$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
 	$(COMPONENT_POST_TEST_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) build
+endif
 	$(TOUCH) $@
 
 clean:: 

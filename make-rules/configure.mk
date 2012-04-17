@@ -89,6 +89,16 @@ $(BUILD_DIR_32)/.configured:	BITS=32
 $(BUILD_DIR_64)/.configured:	BITS=64
 
 CONFIGURE_ENV += $(CONFIGURE_ENV.$(BITS))
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+# parfait creates '*.bc' files which can confuse configure's
+# object/exe extension detection. which we really don't need it
+# to do anyway, so we'll just tell it what they are.
+CONFIGURE_ENV += ac_cv_objext=o
+CONFIGURE_ENV += ac_cv_exeext=""
+# this is fixed in the clang compiler but we can't use it yet
+CONFIGURE_ENV += ac_cv_header_stdbool_h=yes
+endif
+
 
 # temporarily work around some issues
 CONFIGURE_ENV += "ac_cv_func_realloc_0_nonnull=yes"
@@ -110,6 +120,9 @@ $(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) build
+endif
 	$(TOUCH) $@
 
 # install the built source into a prototype area
@@ -127,6 +140,14 @@ $(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
 			$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
 	$(COMPONENT_POST_TEST_ACTION)
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+parfait: install
+	-$(PARFAIT) build
+else
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes parfait
+endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)

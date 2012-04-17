@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -42,6 +42,7 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 download:
 
 clobber:	clean
+	$(RM) $(SOURCE_DIR)/.prep
 
 # common targets
 $(SOURCE_DIR)/.prep:
@@ -55,8 +56,6 @@ install:	$(INSTALL_32_and_64)
 
 # enumerates USB devices plugged into your system
 test:		$(TEST_32_and_64)
-
-CLEAN_PATH +=	$(SOURCE_DIR)/.prep
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

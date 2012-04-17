@@ -19,8 +19,12 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+# parfait seems to hang on libcmsysTestDynload.so.bc, so for
+# now we have to disable it.
+PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 
@@ -47,6 +51,9 @@ LDFLAGS +=	$($(COMPILER)_NORUNPATH)
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
 CONFIGURE_ENV +=	CC="$(CC)"	
 CONFIGURE_ENV +=	CXX="$(CXX)"	
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+CONFIGURE_ENV +=	CXXFLAGS="-library=stdcxx4"	
+endif
 CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"	
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
 

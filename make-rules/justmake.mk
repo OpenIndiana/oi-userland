@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # Rules and Macros for building opens source software that just uses their
@@ -54,6 +54,9 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) build
+endif
 	$(TOUCH) $@
 
 # install the built source into a prototype area
@@ -64,6 +67,7 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
 
+
 # test the built source
 $(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_TEST_ACTION)
@@ -71,6 +75,14 @@ $(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
 		$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
 	$(COMPONENT_POST_TEST_ACTION)
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+parfait: install
+	-$(PARFAIT) build
+else
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes parfait
+endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)

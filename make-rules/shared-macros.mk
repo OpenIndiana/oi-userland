@@ -215,10 +215,20 @@ BUILD_TOOLS =	/ws/onnv-tools
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
 SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
 
+PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-0.5.0.1/
+PARFAIT= $(PARFAIT_ROOT)/bin/parfait
+export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc
+export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
+export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
+export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
+# for now
+export PARFAIT_CLANG=0
+
 GCC_ROOT =	/usr/sfw
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
+
 
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
@@ -229,8 +239,6 @@ CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
 CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
 
-CC =		$(CC.$(COMPILER).$(BITS))
-CXX =		$(CXX.$(COMPILER).$(BITS))
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
 lint.64 =	$(SPRO_VROOT)/bin/lint -m64
@@ -246,6 +254,22 @@ PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
 PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+CC.studio.32 =	$(WS_TOOLS)/parfait/cc
+CXX.studio.32 =	$(WS_TOOLS)/parfait/CC
+CC.studio.64 =	$(WS_TOOLS)/parfait/cc
+CXX.studio.64 =	$(WS_TOOLS)/parfait/CC
+CC.gcc.32 =	$(WS_TOOLS)/parfait/gcc
+CXX.gcc.32 =	$(WS_TOOLS)/parfait/g++
+CC.gcc.64 =	$(WS_TOOLS)/parfait/gcc
+CXX.gcc.64 =	$(WS_TOOLS)/parfait/g++
+LD =		$(WS_TOOLS)/parfait/ld
+endif
+
+CC =		$(CC.$(COMPILER).$(BITS))
+CXX =		$(CXX.$(COMPILER).$(BITS))
+
 
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
@@ -612,7 +636,7 @@ COMPONENT_INSTALL_ENV += $(COMPONENT_INSTALL_ENV.$(BITS))
 COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
 
 # declare these phony so that we avoid filesystem conflicts.
-.PHONY:	prep build install publish test clean clobber
+.PHONY:	prep build install publish test clean clobber parfait
 
 # If there are no tests to execute
 NO_TESTS =	test-nothing
