@@ -18,12 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/share/doc/junit/(.+)$ -> set action.hash %<\1> >
-<transform file path=usr/share/doc/junit/samples/(.+)$ -> set action.hash %<\1> >
+<transform file path=usr/share/doc/junit/samples/org/junit/samples/(.+)$ -> \
+	set action.hash build/$(MACH32)/junit/samples/%<1> >
 <transform file path=usr/share/lib/java/(.+)$ -> set action.hash %<\1> >
 <transform file path=usr/share/lib/java/javadoc/junit/(.+)$ -> set action.hash %<\1> >
 set name=pkg.fmri \
@@ -35,18 +36,17 @@ set name=info.classification \
     value=org.opensolaris.category.2008:Development/Java
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/633
+set name=org.opensolaris.arc-caseid value=LSARC/2008/633
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=usr
 dir path=usr/share
 dir path=usr/share/doc
+dir path=usr/share/doc/cookbook
+dir path=usr/share/doc/cookstour
+dir path=usr/share/doc/faq
 dir path=usr/share/doc/junit
 dir path=usr/share/doc/junit/doc
-dir path=usr/share/doc/junit/doc/cookbook
-dir path=usr/share/doc/junit/doc/cookstour
-dir path=usr/share/doc/junit/doc/faq
-dir path=usr/share/doc/junit/doc/testinfected
+dir path=usr/share/doc/junit/org/testinfected
 dir path=usr/share/doc/junit/samples
 dir path=usr/share/doc/junit/samples/org
 dir path=usr/share/doc/junit/samples/org/junit
@@ -69,10 +69,25 @@ dir path=usr/share/lib/java/javadoc/junit/resources
 dir path=usr/share/man
 dir path=usr/share/man/man3
 file path=usr/share/doc/junit/README.html
+file path=usr/share/doc/junit/doc/ReleaseNotes$(COMPONENT_VERSION).html
+file path=usr/share/doc/junit/doc/ReleaseNotes$(COMPONENT_VERSION).txt
 file path=usr/share/doc/junit/doc/ReleaseNotes4.4.html
 file path=usr/share/doc/junit/doc/ReleaseNotes4.4.txt
 file path=usr/share/doc/junit/doc/ReleaseNotes4.5.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.6.html
 file path=usr/share/doc/junit/doc/ReleaseNotes4.6.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.7.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.7.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.1.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.1.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.2.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.2.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.8.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.9.1.txt
+file path=usr/share/doc/junit/doc/ReleaseNotes4.9.html
+file path=usr/share/doc/junit/doc/ReleaseNotes4.9.txt
+file path=usr/share/doc/junit/doc/building-junit.txt
 file path=usr/share/doc/junit/doc/cookbook/cookbook.htm
 file path=usr/share/doc/junit/doc/cookbook/logo.gif
 file path=usr/share/doc/junit/doc/cookstour/Image1.gif
@@ -84,6 +99,7 @@ file path=usr/share/doc/junit/doc/cookstour/Image6.gif
 file path=usr/share/doc/junit/doc/cookstour/Image7.gif
 file path=usr/share/doc/junit/doc/cookstour/cookstour.htm
 file path=usr/share/doc/junit/doc/faq/faq.htm
+file path=usr/share/doc/junit/doc/homepage.html
 file path=usr/share/doc/junit/doc/index.htm
 file path=usr/share/doc/junit/doc/markdown.sh
 file path=usr/share/doc/junit/doc/testinfected/IMG00001.GIF
@@ -91,14 +107,25 @@ file path=usr/share/doc/junit/doc/testinfected/IMG00002.GIF
 file path=usr/share/doc/junit/doc/testinfected/IMG00003.GIF
 file path=usr/share/doc/junit/doc/testinfected/logo.gif
 file path=usr/share/doc/junit/doc/testinfected/testing.htm
+file path=usr/share/doc/junit/samples/org/junit/samples/AllTests.class
+file path=usr/share/doc/junit/samples/org/junit/samples/AllTests.java
 file path=usr/share/doc/junit/samples/org/junit/samples/ListTest.class
 file path=usr/share/doc/junit/samples/org/junit/samples/ListTest.java
 file path=usr/share/doc/junit/samples/org/junit/samples/SimpleTest.class
 file path=usr/share/doc/junit/samples/org/junit/samples/SimpleTest.java
+file path=usr/share/doc/junit/samples/org/junit/samples/money/IMoney.class
+file path=usr/share/doc/junit/samples/org/junit/samples/money/IMoney.java
+file path=usr/share/doc/junit/samples/org/junit/samples/money/Money.class
+file path=usr/share/doc/junit/samples/org/junit/samples/money/Money.java
+file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyBag.class
+file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyBag.java
 file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyTest.class
 file path=usr/share/doc/junit/samples/org/junit/samples/money/MoneyTest.java
 file \
+    path=usr/share/doc/junit/samples/org/junit/samples/money/package-info.class
+file \
     path=usr/share/doc/junit/samples/org/junit/samples/money/package-info.java
+file path=usr/share/doc/junit/samples/org/junit/samples/package-info.class
 file path=usr/share/doc/junit/samples/org/junit/samples/package-info.java
 file path=usr/share/lib/java/javadoc/junit/allclasses-frame.html
 file path=usr/share/lib/java/javadoc/junit/allclasses-noframe.html
@@ -128,8 +155,10 @@ file path=usr/share/lib/java/javadoc/junit/org/junit/Assert.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/Assume.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/Before.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/BeforeClass.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/ClassRule.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/ComparisonFailure.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/Ignore.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/Rule.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/Test.None.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/Test.html
 file \
@@ -143,6 +172,7 @@ file \
 file path=usr/share/lib/java/javadoc/junit/org/junit/package-frame.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/package-summary.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/package-tree.html
+file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Computer.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Describable.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/runner/Description.html
 file path=usr/share/lib/java/javadoc/junit/org/junit/runner/JUnitCore.html
@@ -208,8 +238,8 @@ file path=usr/share/lib/java/javadoc/junit/package-list
 file path=usr/share/lib/java/javadoc/junit/resources/inherit.gif
 file path=usr/share/lib/java/javadoc/junit/serialized-form.html
 file path=usr/share/lib/java/javadoc/junit/stylesheet.css
-file path=usr/share/lib/java/junit-4.5.jar
+file path=usr/share/lib/java/junit-$(COMPONENT_VERSION).jar
 file junit.3 path=usr/share/man/man3/junit.3
-license junit.license license=CPLv1.0
+license junit.license license="CPLv1.0, BSD"
 link path=usr/share/doc/junit/javadoc target=../../lib/java/javadoc/junit
-link path=usr/share/lib/java/junit.jar target=junit-4.5.jar
+link path=usr/share/lib/java/junit.jar target=junit-$(COMPONENT_VERSION).jar

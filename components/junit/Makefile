@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		junit
-COMPONENT_VERSION=	4.5
+COMPONENT_VERSION=	4.10
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/junit/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
-COMPONENT_ARCHIVE_HASH=	sha1:75d642adaf15091c7ca9ed54f0f2f058bd9ec653
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/junit/4.5/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha1:2613403253fccb245e2167acc276a16120b978d8
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/junit/4.10/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
