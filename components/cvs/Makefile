@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,6 +34,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+CFLAGS += -D__ATTRIBUTE_DISABLED
 CONFIGURE_OPTIONS  +=	--with-external-zlib
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
