@@ -28,11 +28,11 @@ include ../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		unrar
-COMPONENT_VERSION=	3.8.5
+COMPONENT_VERSION=	4.1.4
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_PROJECT_URL=	http://www.rarlabs.com/rar_add.htm
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)src-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:911d3ef2c279d9522afa22b452176dd86883a751
+COMPONENT_ARCHIVE_HASH=	sha1:ae4b1e2c99e96527c4a97f980daa547499f42a0f
 COMPONENT_ARCHIVE_URL=	http://www.rarlab.com/rar/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
