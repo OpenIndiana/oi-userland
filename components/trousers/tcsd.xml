@@ -21,7 +21,7 @@
 
  CDDL HEADER END
 
- Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
 
         NOTE:  This service manifest is not editable; its contents will
         be overwritten by package or patch operations, including
@@ -38,20 +38,25 @@
 
 	<create_default_instance enabled='false' />
 	<single_instance/>
-	<!--
-	   Wait for network interfaces to be initialized.
-	-->
-        <dependency
-                name='network'
-                grouping='require_all'
-                restart_on='none'
-                type='service'>
-                <service_fmri value='svc:/milestone/network:default' />
-        </dependency> 
 
-	<!--
-	   Wait for all local filesystems to be mounted.
-	-->
+	<!-- Wait for network interfaces to be initialized. -->
+	<dependency
+		name='network'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/milestone/network:default' />
+	</dependency>
+
+	<!-- Need / & /usr filesystems mounted, /var mounted read/write -->
+	<dependency
+		name='filesystem'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri value='svc:/system/filesystem/minimal' />
+	</dependency>
+
         <exec_method
                 type='method'
                 name='stop'
@@ -77,8 +82,7 @@
 			value='solaris.smf.manage.tcsd' />
 		<propval name='value_authorization' type='astring'
 			value='solaris.smf.manage.tcsd' />
-        </property_group>
-
+	</property_group>
 
 	<property_group name='config' type='application'>
 		<propval
@@ -91,17 +95,17 @@
 			value='solaris.smf.value.tcsd' />
 	</property_group>
 
-        <stability value='Unstable' />
+	<stability value='Unstable' />
 
-        <template>
-                <common_name>
-                        <loctext xml:lang='C'>
-                                TCS Daemon
-                        </loctext>
-                </common_name>
-                <documentation>
-                        <manpage title='tcsd' section='8' />
-                </documentation>
-        </template>
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				TCS Daemon
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='tcsd' section='8' />
+		</documentation>
+	</template>
 </service>
 </service_bundle>
