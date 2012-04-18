@@ -1,0 +1,38 @@
+--- dist/tcsd.conf.in	2010-01-28 08:27:50.000000000 -0800
++++ dist/tcsd.conf.in	2012-04-12 14:52:21.154590000 -0700
+@@ -9,10 +9,16 @@
+ #
+ 
+ # Option: port
+-# Values: 1 - 65535
++# Values: 0 - 65535
+ # Description: The port that the tcsd will listen on.
++# If 0, use UNIX Domain socket /var/tpm/system/tcsd-socket,
++# otherwise use the specified TCP port (30003 is the traditional tcsd TCP port).
+ #
+-# port = 30003
++# If using a TCP Port (that is, port is not 0), clients such as tpmadm must set
++# the port with shell environment variable TSS_TCSD_PORT. For example,
++#	export TSS_TCSD_PORT=30003
++# 
++# port = 0
+ #
+ 
+ # Option: num_threads
+@@ -37,6 +43,7 @@
+ #
+ # firmware_log_file = /sys/kernel/security/tpm0/binary_bios_measurements
+ #
++firmware_log_file=/var/tpm/system/pcrevent.log
+ 
+ # Option: kernel_log_file
+ # Values: Any absolute directory path
+@@ -54,7 +61,7 @@
+ # Description: A list of PCR indices that are manipulated only by the system
+ #  firmware and therefore are not extended or logged by the TCSD.
+ #
+-# firmware_pcrs =
++firmware_pcrs =0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,20,21
+ #
+ 
+ # Option: kernel_pcrs

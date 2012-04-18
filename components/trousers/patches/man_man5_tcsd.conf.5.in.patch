@@ -1,0 +1,29 @@
+--- man/man5/tcsd.conf.5.in	2010-01-28 08:27:51.000000000 -0800
++++ man/man5/tcsd.conf.5.in	2012-04-12 14:52:28.257160000 -0700
+@@ -32,8 +32,16 @@
+ .SH "OPTIONS"
+ .PP
+ .BI port
+-The port that TCSD will listen on for connections, local and remote, from
++The TCP port that TCSD will listen on for connections, local and remote, from
+ applications.
++If 0, TCSD uses UNIX Domain socket /var/tpm/system/tcsd-socket,
++otherwise TCSD uses the TCP port specified
++(30003 is the traditional tcsd TCP port).
++If using a TCP Port (that is, port is not 0), clients such as tpmadm must set
++the port with shell environment variable TSS_TCSD_PORT. For example,
++.nf
++export TSS_TCSD_PORT=30003
++.fi
+ 
+ .BI num_threads
+ The maximum number of threads that the TCSD will spawn simultaneously to service
+@@ -106,7 +114,7 @@
+ .PP
+ .IP
+ .nf
+-port = 30003
++port = 0
+ num_threads = 10
+ system_ps_file = /usr/local/var/tpm/system.data
+ firmware_log_file = /proc/tpm/firmware_events

@@ -1,10 +1,21 @@
---- configure.in.orig	Thu Jan 28 13:56:20 2010
-+++ configure.in	Wed Mar  3 16:40:12 2010
-@@ -351,6 +351,7 @@
+--- configure.in	2010-07-08 13:35:18.000000000 -0700
++++ configure.in	2012-04-10 17:37:23.820532000 -0700
+@@ -143,7 +143,9 @@
+ #
+ # The default port that the TCS daemon listens on
+ #
+-AC_SUBST(TCSD_DEFAULT_PORT, 30003)
++#AC_SUBST(TCSD_DEFAULT_PORT, 30003)
++# 0 designates UNIX Domain socket. For TCP sockets, 30003 is the traditional TCP port.
++AC_SUBST(TCSD_DEFAULT_PORT, 0)
+ #
+ # The RPC mechanism to build into both libtspi and the tcsd
+ #
+@@ -351,6 +353,7 @@
  
  AC_C_BIGENDIAN([AC_DEFINE(_BIG_ENDIAN, 1, [big-endian host])])
  AC_CHECK_DECL(htole32, [AC_DEFINE(HTOLE_DEFINED, 1, [htole32 function is available])])
 +AC_CHECK_HEADER(endian.h, [AC_DEFINE(HAVE_ENDIAN_H, 1, [endian.h header])])
  AC_CHECK_HEADER(sys/byteorder.h, [AC_DEFINE(HAVE_BYTEORDER_H, 1, [sys/byteorder.h header])])
  AC_CHECK_FUNC(daemon, [ AC_DEFINE(HAVE_DAEMON, 1, [daemon function is available]) ])
-
+  

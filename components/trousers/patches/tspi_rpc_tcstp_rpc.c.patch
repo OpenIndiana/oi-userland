@@ -1,0 +1,98 @@
+--- src/tspi/rpc/tcstp/rpc.c	2010-03-11 12:26:51.000000000 -0800
++++ src/tspi/rpc/tcstp/rpc.c	2012-04-11 14:28:08.181630000 -0700
+@@ -345,41 +345,67 @@
+ 	BYTE *buffer;
+ 	TSS_RESULT result;
+ 
+-	struct sockaddr_in addr;
+-	struct hostent *hEnt = NULL;
++	if (get_port() == 0) { /* use UNIX Domain socket */
++		struct sockaddr_un addr;
+ 
+-	sd = socket(PF_INET, SOCK_STREAM, 0);
+-	if (sd == -1) {
+-		LogError("socket: %s", strerror(errno));
+-		result = TSPERR(TSS_E_COMM_FAILURE);
+-		goto err_exit;
+-	}
+-
+-	memset(&addr, 0, sizeof(addr));
+-	addr.sin_family = AF_INET;
+-	addr.sin_port = htons(get_port());
++		sd = socket(PF_UNIX, SOCK_STREAM, 0);
++		if (sd == -1) {
++			LogError("socket(PF_UNIX): %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
++			goto err_exit;
++		}
+ 
+-	LogDebug("Sending TSP packet to host %s.", hte->hostname);
++		memset(&addr, 0, sizeof(addr));
++		addr.sun_family = AF_UNIX;
++		strncpy(addr.sun_path, TCSD_DEFAULT_SOCKET,
++			sizeof(addr.sun_path));
++
++		LogDebug("Connecting to UNIX Domain socket %s",
++			TCSD_DEFAULT_SOCKET);
++
++		if (connect(sd, (struct sockaddr *) &addr, sizeof (addr))) {
++			LogError("connect: %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
++			goto err_exit;
++		}
+ 
+-	/* try to resolve by hostname first */
+-	hEnt = gethostbyname((char *)hte->hostname);
+-	if (hEnt == NULL) {
+-		/* if by hostname fails, try by dot notation */
+-		if (inet_aton((char *)hte->hostname, &addr.sin_addr) == 0) {
+-			LogError("hostname %s does not resolve to a valid address.", hte->hostname);
+-			result = TSPERR(TSS_E_CONNECTION_FAILED);
++	} else { /* use TCP socket */
++		struct sockaddr_in addr;
++		struct hostent *hEnt = NULL;
++
++		sd = socket(PF_INET, SOCK_STREAM, 0);
++		if (sd == -1) {
++			LogError("socket: %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
+ 			goto err_exit;
+ 		}
+-	} else {
+-		memcpy(&addr.sin_addr, hEnt->h_addr_list[0], 4);
+-	}
+ 
+-	LogDebug("Connecting to %s", inet_ntoa(addr.sin_addr));
++		memset(&addr, 0, sizeof(addr));
++		addr.sin_family = AF_INET;
++		addr.sin_port = htons(get_port());
++
++		LogDebug("Sending TSP packet to host %s.", hte->hostname);
++
++		/* try to resolve by hostname first */
++		hEnt = gethostbyname((char *)hte->hostname);
++		if (hEnt == NULL) {
++			/* if by hostname fails, try by dot notation */
++			if (inet_aton((char *)hte->hostname, &addr.sin_addr) == 0) {
++				LogError("hostname %s does not resolve to a valid address.", hte->hostname);
++				result = TSPERR(TSS_E_CONNECTION_FAILED);
++				goto err_exit;
++			}
++		} else {
++			memcpy(&addr.sin_addr, hEnt->h_addr_list[0], 4);
++		}
+ 
+-	if (connect(sd, (struct sockaddr *) &addr, sizeof (addr))) {
+-		LogError("connect: %s", strerror(errno));
+-		result = TSPERR(TSS_E_COMM_FAILURE);
+-		goto err_exit;
++		LogDebug("Connecting to %s", inet_ntoa(addr.sin_addr));
++
++		if (connect(sd, (struct sockaddr *) &addr, sizeof (addr))) {
++			LogError("connect: %s", strerror(errno));
++			result = TSPERR(TSS_E_COMM_FAILURE);
++			goto err_exit;
++		}
+ 	}
+ 
+ 	if (send_to_socket(sd, hte->comm.buf, hte->comm.hdr.packet_size) < 0) {
