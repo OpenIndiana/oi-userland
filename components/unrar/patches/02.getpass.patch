@@ -1,11 +1,11 @@
---- consio.cpp.orig	Tue Jun  7 16:00:37 2011
-+++ consio.cpp	Tue Jun  7 16:01:33 2011
-@@ -124,7 +124,7 @@
-   OemToChar(Str,Str);
-   SetConsoleMode(hConIn,ConInMode);
+--- consio.cpp.orig	2012-04-17 08:23:59.905765212 -0700
++++ consio.cpp	2012-04-17 08:25:47.074246361 -0700
+@@ -141,7 +141,7 @@
    SetConsoleMode(hConOut,ConOutMode);
--#elif defined(_EMX) || defined(_BEOS) || defined(__sparc) || defined(sparc) || defined (__VMS)
-+#elif defined(_EMX) || defined(_BEOS) || defined (__VMS)
-   fgets(Str,MaxLength-1,stdin);
  #else
-   strncpyz(Str,getpass(""),MaxLength);
+   char StrA[MAXPASSWORD];
+-#if defined(_EMX) || defined(_BEOS) || defined(__sparc) || defined(sparc) || defined (__VMS)
++#if defined(_EMX) || defined(_BEOS) || defined (__VMS)
+   fgets(StrA,ASIZE(StrA)-1,stdin);
+ #else
+   strncpyz(StrA,getpass(""),ASIZE(StrA));
