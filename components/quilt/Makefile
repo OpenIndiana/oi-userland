@@ -20,17 +20,17 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		quilt
-COMPONENT_VERSION=	0.47
+COMPONENT_VERSION=	0.60
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:028dadd5ab60b1df12edd18af600e59fe0a83525
+COMPONENT_ARCHIVE_HASH=	sha1:c93c79598c55ba288f60babcc74a9fc9b04404b6
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -59,6 +59,7 @@ CONFIGURE_OPTIONS += --with-tail=/usr/gnu/bin/tail
 CONFIGURE_OPTIONS += --with-tr=/usr/gnu/bin/tr
 CONFIGURE_OPTIONS += --with-sed=/usr/gnu/bin/sed
 CONFIGURE_OPTIONS += --with-diff=/usr/gnu/bin/diff
+CONFIGURE_OPTIONS += --with-find=/usr/gnu/bin/find
 CONFIGURE_OPTIONS += --with-patch=/usr/gnu/bin/patch
 CONFIGURE_OPTIONS += --with-perl=/usr/perl5/$(PERL_VERSION)/bin/perl
 CONFIGURE_OPTIONS += --with-pod2man=/usr/perl5/$(PERL_VERSION)/bin/pod2man
