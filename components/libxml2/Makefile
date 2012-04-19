@@ -55,18 +55,13 @@ COMPONENT_TEST_TARGETS = tests
 
 # After we have configured, make a copy of the python bits so we
 # can build separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
+COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7 ; \
+			$(GSED) -i -e 's/2[.]6/2.7/g' python2.7/Makefile)
 
 # After we have built/installed libxml2, build/install the python
 # support for python 2.7
 COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) \
-                                PYTHON=$(PYTHON.2.7.$(BITS)) \
-                                PYTHON_VERSION=2.7 \
-                                PYTHON_INCLUDES=/usr/include/python2.7 \
-                                PYTHON_LIBS=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                PYTHON_SITE_PACKAGES=$(PYTHON.2.7.VENDOR_PACKAGES) \
-                                install)
+    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
 
 
 # common targets
