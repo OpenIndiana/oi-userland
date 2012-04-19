@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -39,8 +39,6 @@ dir path=etc
 dir path=etc/bash/bash_completion.d
 dir path=usr
 dir path=usr/bin
-dir path=usr/lib
-dir path=usr/lib/quilt
 dir path=usr/share
 dir path=usr/share/doc
 dir path=usr/share/doc/quilt-$(COMPONENT_VERSION)
@@ -53,25 +51,32 @@ dir path=usr/share/locale/fr
 dir path=usr/share/locale/fr/LC_MESSAGES
 dir path=usr/share/locale/ja
 dir path=usr/share/locale/ja/LC_MESSAGES
+dir path=usr/share/locale/ru
+dir path=usr/share/locale/ru/LC_MESSAGES
 dir path=usr/share/man
 dir path=usr/share/man/man1
 dir path=usr/share/quilt
 dir path=usr/share/quilt/compat
 dir path=usr/share/quilt/scripts
+dir path=usr/share/quilt/wrapper
+
 file etc/bash_completion.d/quilt path=etc/bash/bash_completion.d/quilt
 file path=etc/quilt.quiltrc \
     overlay=allow preserve=true original_name=SUNWquilt:etc/quilt.quiltrc \
     mode=0644
 file path=usr/bin/guards
 file path=usr/bin/quilt
-file path=usr/lib/quilt/backup-files mode=0555
-file path=usr/share/doc/quilt-$(COMPONENT_VERSION)/README
-file path=usr/share/doc/quilt-$(COMPONENT_VERSION)/README.MAIL
-file path=usr/share/doc/quilt-$(COMPONENT_VERSION)/quilt.pdf
+file usr/share/doc/quilt/README \
+    path=usr/share/doc/quilt-$(COMPONENT_VERSION)/README
+file usr/share/doc/quilt/README.MAIL \
+    path=usr/share/doc/quilt-$(COMPONENT_VERSION)/README.MAIL
+file usr/share/doc/quilt/quilt.pdf \
+    path=usr/share/doc/quilt-$(COMPONENT_VERSION)/quilt.pdf
 file path=usr/share/emacs/site-lisp/quilt.el
 file path=usr/share/locale/de/LC_MESSAGES/quilt.mo
 file path=usr/share/locale/fr/LC_MESSAGES/quilt.mo
 file path=usr/share/locale/ja/LC_MESSAGES/quilt.mo
+file path=usr/share/locale/ru/LC_MESSAGES/quilt.mo
 file path=usr/share/man/man1/guards.1
 file path=usr/share/man/man1/quilt.1
 file path=usr/share/quilt/add
@@ -97,41 +102,47 @@ file path=usr/share/quilt/pop
 file path=usr/share/quilt/previous
 file path=usr/share/quilt/push
 file path=usr/share/quilt/refresh
+file path=usr/share/quilt/remove
 file path=usr/share/quilt/rename
 file path=usr/share/quilt/revert
+file path=usr/share/quilt/scripts/backup-files
 file path=usr/share/quilt/scripts/dependency-graph
 file path=usr/share/quilt/scripts/edmail
 file path=usr/share/quilt/scripts/inspect
-file path=usr/share/quilt/scripts/parse-patch
 file path=usr/share/quilt/scripts/patchfns mode=444
 file path=usr/share/quilt/scripts/remove-trailing-ws
+file path=usr/share/quilt/scripts/utilfns
 file path=usr/share/quilt/series
 file path=usr/share/quilt/setup
 file path=usr/share/quilt/snapshot
 file path=usr/share/quilt/top
 file path=usr/share/quilt/unapplied
 file path=usr/share/quilt/upgrade
-link path=usr/share/quilt/compat/awk target=../../../bin/gawk
+file path=usr/share/quilt/wrapper/patch
+
+link path=usr/share/quilt/compat/awk target=../../../gnu/bin/awk
 link path=usr/share/quilt/compat/cp target=../../../gnu/bin/cp
 link path=usr/share/quilt/compat/date target=../../../gnu/bin/date
 link path=usr/share/quilt/compat/diff target=../../../gnu/bin/diff
+link path=usr/share/quilt/compat/find target=../../../gnu/bin/find
 link path=usr/share/quilt/compat/grep target=../../../gnu/bin/grep
 link path=usr/share/quilt/compat/patch target=../../../gnu/bin/patch
+link path=usr/share/quilt/compat/perl target=../../../perl5/5.12/bin/perl
 link path=usr/share/quilt/compat/sed target=../../../gnu/bin/sed
-link path=usr/share/quilt/compat/sendmail target=../../../lib/sendmail
+link path=usr/share/quilt/compat/sendmail target=../../../sbin/sendmail
 link path=usr/share/quilt/compat/tail target=../../../gnu/bin/tail
-link path=usr/share/quilt/compat/tar target=../../../bin/gtar
+link path=usr/share/quilt/compat/tar target=../../../gnu/bin/tar
 link path=usr/share/quilt/compat/tr target=../../../gnu/bin/tr
 
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/gawk type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/awk type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/cp type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/date type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/diff type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/find type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/grep type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/patch type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/sed type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/sendmail type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tail type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/bin/gtar type=require
+depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tar type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/tr type=require
-
