@@ -1,0 +1,24 @@
+--- a/src/cmd/ksh93/sh/args.c	Thu Sep  2 22:38:27 2010
++++ b/src/cmd/ksh93/sh/args.c	Tue Sep 27 10:48:45 2011
+@@ -26,6 +26,9 @@
+  * AT&T Labs
+  *
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #include	"defs.h"
+ #include	"path.h"
+@@ -302,6 +305,11 @@
+ 		}
+ 		else
+ 		{
++			if ((o == SH_RESTRICTED) &&
++			    sh_isoption(SH_RESTRICTED)) {
++				errormsg(SH_DICT, ERROR_exit(1),
++				    e_restricted, "r");
++			}
+ 			if(o==SH_XTRACE)
+ 				trace = 0;
+ 			off_option(&newflags,o);

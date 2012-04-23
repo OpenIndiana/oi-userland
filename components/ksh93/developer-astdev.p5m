@@ -1,0 +1,60 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+# The man pages are all at the top of a "files" directory; setting the hash to
+# # point to the files therein.
+<transform file path=usr/share/man/man.+/(.+)$ -> set action.hash %<\1> >
+# Bypassing the mangler for these files because they are pre-Solarified.
+<transform file path=usr/share/man/.+$ -> add mangler.bypass true >
+set name=pkg.fmri \
+    value=pkg:/developer/astdev@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="AT&T AST development utilities for extracting messages for localisation"
+set name=pkg.summary value="AT&T AST development utilities"
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Software Management"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream \
+    value="AT&T Software Technology (AST) OpenSource Software Collection"
+set name=info.upstream-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2012/002
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir path=usr group=sys
+dir path=usr/ast group=sys
+dir path=usr/ast/bin
+dir path=usr/share/man/man1
+file $(MACH64)/bin/msgcc path=usr/ast/bin/msgcc mode=0555
+file $(MACH64)/bin/msgcpp path=usr/ast/bin/msgcpp mode=0555
+file $(MACH64)/bin/msgcvt path=usr/ast/bin/msgcvt mode=0555
+file $(MACH64)/bin/msggen path=usr/ast/bin/msggen mode=0555
+file $(MACH64)/bin/msgget path=usr/ast/bin/msgget mode=0555
+file path=usr/share/man/man1/msgcc.1
+file path=usr/share/man/man1/msgcpp.1
+file path=usr/share/man/man1/msgcvt.1
+file path=usr/share/man/man1/msggen.1
+file path=usr/share/man/man1/msgget.1
+legacy pkg=SUNWastdev desc="AT&T AST development utilities" \
+    name="AT&T AST development utilities"
+license ksh93.license license=CPL

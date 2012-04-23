@@ -1,0 +1,160 @@
+'\" te
+.\" Copyright (c) 1982-2007 AT&T Knowledge Ventures
+.\" To view license terms, see http://www.opensource.org/licenses/cpl1.0.txt
+.\" Portions Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+.TH shcomp 1 "2011 7 月 12 日" "SunOS 5.11" "ユーザーコマンド"
+.SH 名前
+shcomp \- ksh シェルスクリプトのコンパイル
+.SH 形式
+.LP
+.nf
+\fBshcomp\fR [\fB-nv\fR] [\fIinfile\fR [\fIoutfile\fR]]
+.fi
+
+.LP
+.nf
+\fBshcomp\fR \fB-D\fR [\fIinfile\fR [\fIoutfile\fR]]
+.fi
+
+.SH 機能説明
+.sp
+.LP
+\fB-D\fR オプションが指定されていない場合、\fBshcomp\fR はシェルスクリプト \fIinfile\fR を使用して、\fBksh\fR が元のスクリプトと同様に読み取りおよび実行を行うバイナリ形式ファイル \fIoutfile\fR を作成します。
+.sp
+.LP
+スクリプトが読み込まれると別名が処理されます。変数の展開が必要な値を持つ別名定義は正常に動作しません。 
+.SH オプション
+.sp
+.LP
+次のオプションがサポートされています。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-D\fR\fR
+.ad
+.br
+.na
+\fB\fB--dictionary\fR\fR
+.ad
+.RS 16n
+.rt  
+国際化のためにメッセージカタログに格納する必要がある文字列のリストが生成されます。
+.sp
+このオプションを指定すると、\fB$\fR が前に付いた二重引用符で囲まれているすべての文字列が、1 行に 1 つのリテラルという形式で出力されます。リテラル \fB$"foo"\fR は、出力に \fB"foo"\fR と書き込まれます。これらは、国際化のためにロケール固有のバージョンに変換する必要があるメッセージです。 
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-n\fR\fR
+.ad
+.br
+.na
+\fB\fB--noexec\fR\fR
+.ad
+.RS 16n
+.rt  
+廃止された構成または準拠していない構成に対する警告メッセージを表示します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-v\fR\fR
+.ad
+.br
+.na
+\fB\fB--verbose\fR\fR
+.ad
+.RS 16n
+.rt  
+\fIinfile\fR から読み込んだ入力内容を標準エラー出力に書き込みます。
+.RE
+
+.SH オペランド
+.sp
+.LP
+次のオペランドがサポートされています。
+.sp
+.ne 2
+.mk
+.na
+\fB\fIinfile\fR\fR
+.ad
+.RS 11n
+.rt  
+入力として使用される、シェルスクリプトを含むファイルの名前を指定します。
+.sp
+\fIinfile\fR を省略した場合、シェルスクリプトは標準入力から読み込まれます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fIoutfile\fR\fR
+.ad
+.RS 11n
+.rt  
+出力ファイルの名前を指定します。
+.sp
+\fIoutfile\fR を省略した場合、いずれのモードでも結果は標準出力に書き込まれます。 
+.RE
+
+.SH 終了ステータス
+.sp
+.LP
+次の終了値が返されます。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB0\fR\fR
+.ad
+.RS 6n
+.rt  
+正常終了。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB>0\fR\fR
+.ad
+.RS 6n
+.rt  
+エラーが発生しました。
+.RE
+
+.SH 属性
+.sp
+.LP
+属性についての詳細は、\fBattributes\fR(5) を参照してください。
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性タイプ属性値
+_
+使用条件system/core-os
+_
+CSI有効
+_
+インタフェースの安定性下記を参照。
+.TE
+
+.sp
+.LP
+コマンド行インタフェースとシステム変数は「確実」です。コンパイルされたシェルコードの形式は「非公開」です。\fB-D\fR オプションの出力は「流動的」です。
+.SH 関連項目
+.sp
+.LP
+\fBksh\fR(1), \fBattributes\fR(5)

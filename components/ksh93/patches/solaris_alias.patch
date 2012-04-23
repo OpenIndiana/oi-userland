@@ -1,0 +1,363 @@
+diff -rupN b/lib/package/ast-base.pkg a/lib/package/ast-base.pkg
+--- b/lib/package/ast-base.pkg	2009-09-21 20:35:51.000000000 +0000
++++ a/lib/package/ast-base.pkg	2011-11-10 16:24:52.515495613 +0000
+@@ -3,7 +3,7 @@ ast-base :PACKAGE: \
+ 		libdll libexpr libodelta librecsort libsum libuu libvdelta \
+ 		libbz libz tests 3d coshell cpp cs mam msgcc nmake probe ss \
+ 		libcoshell libcs libmam libpp libcodex paxlib codexlib \
+-		libdss libpz dsslib
++		libdss libpz dsslib alias
+ 
+ :COVERS: ast-make ast-ksh ast-ast
+ 
+diff -rupN b/src/cmd/alias/alias.c a/src/cmd/alias/alias.c
+--- b/src/cmd/alias/alias.c	1970-01-01 00:00:00.000000000 +0000
++++ a/src/cmd/alias/alias.c	2011-11-10 16:24:28.356925339 +0000
+@@ -0,0 +1,255 @@
++/*
++ * CDDL HEADER START
++ *
++ * The contents of this file are subject to the terms of the
++ * Common Development and Distribution License (the "License").
++ * You may not use this file except in compliance with the License.
++ *
++ * You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++ * or http://www.opensolaris.org/os/licensing.
++ * See the License for the specific language governing permissions
++ * and limitations under the License.
++ *
++ * When distributing Covered Code, include this CDDL HEADER in each
++ * file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++ * If applicable, add the following below this CDDL HEADER, with the
++ * fields enclosed by brackets "[]" replaced with your own identifying
++ * information: Portions Copyright [yyyy] [name of copyright owner]
++ *
++ * CDDL HEADER END
++ */
++
++/*
++ * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
++
++/*
++ * alias.c is a C version of the alias.sh wrapper (which links ksh
++ * builtins to commands in /usr/bin/, e.g. calling this wrapper as
++ * /usr/bin/alias will call the ksh "alias" builtin, running it as
++ * /usr/bin/cut will call the ksh "cut" builtin etc.
++ */
++
++#include <shell.h>
++#include <nval.h>
++#include <stdio.h>
++#include <alias.h>
++
++typedef struct {
++	const char *name;
++	int (* func)(int, char **, void *);
++} bfastpathrec;
++
++/*
++ * We've disabled the "fastpath" codepath for some commands below
++ * because it causes a paradoxon for large input files (as used by
++ * ON PerfPIT for testing). For /usr/bin/rev (where the issue was
++ * first discovered) it looks like this:
++ * - for small files like /etc/profile the fastpath is faster in a loop
++ *   with 1000 iterations (8 seconds with fastpath, 14 seconds without
++ *   fastpath)
++ * - for large files (/usr/pub/UTF-8 replicated until the test file
++ *   reaches 24884706 bytes) the benchmark reverses: The fastpath now
++ *   needs 40 seconds and without fastpath it needs 30 seconds (for 100
++ *   iterations).
++ */
++#if 0
++#define	ENABLE_PERFORMANCE_PARADOXON 1
++#endif
++
++/*
++ * List of libcmd builtins which do not require a |Shell_t| context.
++ * This list was automatically generated from <ast/cmdext.h>
++ */
++static const
++bfastpathrec fastpath_builtins[] =
++{
++	/* This list must be alphabetically sorted for |strcmp()| usage */
++	{ "basename",	b_basename	},
++	{ "cat",	b_cat		},
++	{ "chgrp",	b_chgrp		},
++	{ "chmod",	b_chmod		},
++	{ "chown",	b_chown		},
++#ifdef ENABLE_PERFORMANCE_PARADOXON
++	{ "cksum",	b_cksum		},
++#endif /* ENABLE_PERFORMANCE_PARADOXON */
++	{ "cmp",	b_cmp		},
++	{ "comm",	b_comm		},
++	{ "cp",		b_cp		},
++	{ "cut",	b_cut		},
++	{ "date",	b_date		},
++	{ "dirname",	b_dirname	},
++	{ "expr",	b_expr		},
++	{ "fds",	b_fds		},
++	{ "fmt",	b_fmt		},
++	{ "fold",	b_fold		},
++	{ "getconf",	b_getconf	},
++	{ "head",	b_head		},
++	{ "id",		b_id		},
++	{ "join",	b_join		},
++	{ "ln",		b_ln		},
++	{ "logname",	b_logname	},
++	{ "md5sum",	b_md5sum	},
++	{ "mkdir",	b_mkdir		},
++	{ "mkfifo",	b_mkfifo	},
++	{ "mktemp",	b_mktemp	},
++	{ "mv",		b_mv		},
++	{ "paste",	b_paste 	},
++	{ "pathchk",	b_pathchk	},
++	{ "pids",	b_pids		},
++#ifdef ENABLE_PERFORMANCE_PARADOXON
++	{ "rev",	b_rev		},
++#endif /* ENABLE_PERFORMANCE_PARADOXON */
++	{ "rm",		b_rm		},
++	{ "rmdir",	b_rmdir		},
++	{ "stty",	b_stty		},
++#ifdef ENABLE_PERFORMANCE_PARADOXON
++	{ "sum",	b_sum		},
++#endif /* ENABLE_PERFORMANCE_PARADOXON */
++	{ "sync",	b_sync		},
++	{ "tail",	b_tail		},
++	{ "tee",	b_tee		},
++	{ "tty",	b_tty		},
++	{ "uname",	b_uname		},
++	{ "uniq",	b_uniq		},
++	{ "wc",		b_wc		},
++	{ NULL, 	(int (*)(int, char **, void *))NULL }
++};
++
++static inline
++const bfastpathrec *
++find_bfastpathrec(const char *name)
++{
++	unsigned int i;
++	signed int cmpres;
++	for (i = 0; fastpath_builtins[i].name != NULL; i++) {
++		cmpres = strcmp(fastpath_builtins[i].name, name);
++		if (cmpres == 0)
++			return (&fastpath_builtins[i]);
++		else if (cmpres > 0)
++			return (NULL);
++
++	}
++	return (NULL);
++}
++
++static inline
++int
++fastpath_builtin_main(const bfastpathrec *brec, int argc, char *argv[])
++{
++	setlocale(LC_ALL, ""); /* calls |_ast_setlocale()| */
++
++	return ((*brec->func)(argc, argv, NULL));
++}
++
++
++/* Builtin script, original derived from alias.sh */
++static const char *script = "\n"
++/* Get name of builtin */
++"typeset cmd=\"${0##*/}\"\n"
++/*
++ * If the requested command is not an alias load it explicitly
++ * to make sure it is not bound to a path (those built-ins which
++ * are mapped via shell aliases point to commands which are
++ * "special shell built-ins" which cannot be bound to a specific
++ * PATH element) - otherwise we may execute the wrong command
++ * if an executable with the same name sits in a PATH element
++ * before /usr/bin (e.g. /usr/xpg4/bin/ls would be executed
++ * before /usr/bin/ls if the path was something like
++ * PATH=/usr/xpg4/bin:/usr/bin).
++ */
++"if [[ \"${cmd}\" != ~(Elr)(alias|unalias|command) ]] && "
++	"! alias \"${cmd}\" >/dev/null 2>&1 ; then\n"
++	"PATH='' builtin \"${cmd}\"\n"
++"fi\n"
++/* command is a keyword and needs to be handled separately */
++"if [[ \"${cmd}\" == \"command\" ]] ; then\n"
++	"command \"$@\"\n"
++"else\n"
++#ifdef WORKAROUND_FOR_ALIAS_CRASH
++/*
++ * Work around a crash in /usr/bin/alias when invalid options are
++ * passed (e.g. $ /usr/bin/alias -c #). The shell code will call
++ * an error handler which does a |longjmp()| but somehow the code
++ * failed to do the |setjmp()| before this point.
++ * Putting the "alias" command in a subshell avoids the crash.
++ * Real cause of the issue is under investigation and a fix be
++ * delivered with the next ast-ksh update.
++ */
++	"( \"${cmd}\" \"$@\" )\n"
++#else
++	"\"${cmd}\" \"$@\"\n"
++#endif /* WORKAROUND_FOR_ALIAS_CRASH */
++"fi\n"
++"exitval=$?";
++
++
++static inline
++int
++script_builtin_main(int argc, char *argv[])
++{
++	int i;
++	Shell_t *shp;
++	Namval_t *np;
++	int exitval;
++
++	/*
++	 * Create copy of |argv| array shifted by one position to
++	 * emulate $ /usr/bin/sh <scriptname> <args1> <arg2> ... #.
++	 * First position is set to "/usr/bin/sh" since other
++	 * values may trigger special shell modes (e.g. *rsh* will
++	 * trigger "restricted" shell mode etc.).
++	 */
++	char *xargv[argc+2];
++	xargv[0] = "/usr/bin/sh";
++	xargv[1] = "scriptname";
++	for (i = 0; i < argc; i++) {
++		xargv[i+1] = argv[i];
++	}
++	xargv[i+1] = NULL;
++
++	shp = sh_init(argc+1, xargv, 0);
++	if (!shp)
++		error(ERROR_exit(1), "shell initialisation failed.");
++	(void) sh_trap(script, 0);
++
++	np = nv_open("exitval", shp->var_tree, 0);
++	if (!np)
++		error(ERROR_exit(1), "variable %s not found.", "exitval");
++	exitval = (int)nv_getnum(np);
++	nv_close(np);
++
++	return (exitval);
++}
++
++int
++main(int argc, char *argv[])
++{
++	const char *progname;
++	const bfastpathrec *brec;
++	char execnamebuff[PATH_MAX+1];
++
++	/* Get program name */
++	if (pathprog(argv[0], execnamebuff, sizeof (execnamebuff)) <= 0)
++		error(ERROR_exit(1), "could not determinate exec name.");
++
++	progname = (const char *)strrchr(execnamebuff, '/');
++	if (progname != NULL) {
++		progname++;
++	}
++	else
++	{
++		progname = execnamebuff;
++	}
++
++	/* Execute command... */
++	if (brec = find_bfastpathrec(progname)) {
++		/* ... either via a fast path (calling the code directly) ... */
++		return (fastpath_builtin_main(brec, argc, argv));
++	}
++	else
++	{
++		/* ... or from within a full shell. */
++		return (script_builtin_main(argc, argv));
++	}
++}
+diff -rupN b/src/cmd/alias/alias.h a/src/cmd/alias/alias.h
+--- b/src/cmd/alias/alias.h	1970-01-01 00:00:00.000000000 +0000
++++ a/src/cmd/alias/alias.h	2011-11-10 16:24:28.357387725 +0000
+@@ -0,0 +1,79 @@
++/***********************************************************************
++*                                                                      *
++*               This software is part of the ast package               *
++*          Copyright (c) 1992-2011 AT&T Intellectual Property          *
++*                      and is licensed under the                       *
++*                  Common Public License, Version 1.0                  *
++*                    by AT&T Intellectual Property                     *
++*                                                                      *
++*                A copy of the License is available at                 *
++*            http://www.opensource.org/licenses/cpl1.0.txt             *
++*         (with md5 checksum 059e8cd6165cb4c31e351f2b69388fd9)         *
++*                                                                      *
++*              Information and Software Systems Research               *
++*                            AT&T Research                             *
++*                           Florham Park NJ                            *
++*                                                                      *
++*                 Glenn Fowler <gsf@research.att.com>                  *
++*                  David Korn <dgk@research.att.com>                   *
++*                                                                      *
++***********************************************************************/
++
++extern int b_asa (int, char**, void *);
++extern int b_basename (int, char**, void *);
++extern int b_cat (int, char**, void *);
++extern int b_chgrp (int, char**, void *);
++extern int b_chmod (int, char**, void *);
++extern int b_chown (int, char**, void *);
++extern int b_cksum (int, char**, void *);
++extern int b_cmp (int, char**, void *);
++extern int b_comm (int, char**, void *);
++extern int b_cp (int, char**, void *);
++extern int b_cut (int, char**, void *);
++extern int b_date (int, char**, void *);
++extern int b_dirname (int, char**, void *);
++extern int b_egrep (int, char**, void *);
++extern int b_expr (int, char**, void *);
++extern int b_fds (int, char**, void *);
++extern int b_fgrep (int, char**, void *);
++extern int b_find (int, char**, void *);
++extern int b_fmt (int, char**, void *);
++extern int b_fold (int, char**, void *);
++extern int b_getconf (int, char**, void *);
++extern int b_grep (int, char**, void *);
++extern int b_head (int, char**, void *);
++extern int b_id (int, char**, void *);
++extern int b_join (int, char**, void *);
++extern int b_line (int, char**, void *);
++extern int b_ln (int, char**, void *);
++extern int b_logname (int, char**, void *);
++extern int b_ls (int, char**, void *);
++extern int b_md5sum (int, char**, void *);
++extern int b_mkdir (int, char**, void *);
++extern int b_mkfifo (int, char**, void *);
++extern int b_mktemp (int, char**, void *);
++extern int b_mv (int, char**, void *);
++extern int b_paste (int, char**, void *);
++extern int b_od (int, char**, void *);
++extern int b_pathchk (int, char**, void *);
++extern int b_pids (int, char**, void *);
++extern int b_pr (int, char**, void *);
++extern int b_rev (int, char**, void *);
++extern int b_readlink (int, char**, void *);
++extern int b_rm (int, char**, void *);
++extern int b_rmdir (int, char**, void *);
++extern int b_stty (int, char**, void *);
++extern int b_sum (int, char**, void *);
++extern int b_sync (int, char**, void *);
++extern int b_strings (int, char**, void *);
++extern int b_tail (int, char**, void *);
++extern int b_tee (int, char**, void *);
++extern int b_tr (int, char**, void *);
++extern int b_tty (int, char**, void *);
++extern int b_uname (int, char**, void *);
++extern int b_uniq (int, char**, void *);
++extern int b_vmstate (int, char**, void *);
++extern int b_wc (int, char**, void *);
++extern int b_who (int, char**, void *);
++extern int b_xgrep (int, char**, void *);
++extern int b_xargs (int, char**, void *);
+diff -rupN b/src/cmd/alias/Makefile a/src/cmd/alias/Makefile
+--- b/src/cmd/alias/Makefile	1970-01-01 00:00:00.000000000 +0000
++++ a/src/cmd/alias/Makefile	2011-11-10 16:24:28.357746164 +0000
+@@ -0,0 +1,5 @@
++:PACKAGE: ast:static
++
++LICENSE = cddl
++libtype = :static
++alias :: RELEASE alias.c +lshell

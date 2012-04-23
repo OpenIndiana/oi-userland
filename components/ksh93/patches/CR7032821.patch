@@ -1,0 +1,11 @@
+--- a/src/cmd/ksh93/bltins/typeset.c	Fri Dec 31 00:15:57 2010
++++ b/src/cmd/ksh93/bltins/typeset.c	Tue Jun 28 13:59:53 2011
+@@ -608,7 +608,7 @@
+ 			}
+ 			if(!nv_isarray(np) && !strchr(name,'=') && !(shp->envlist  && nv_onlist(shp->envlist,name)))
+ 			{
+-				if(comvar || (shp->last_root==shp->var_tree && (tp->tp || (!shp->st.real_fun && (nvflags&NV_STATIC)) || (!(flag&NV_EXPORT) && nv_isattr(np,(NV_EXPORT|NV_IMPORT))==(NV_EXPORT|NV_IMPORT)))))
++				if(comvar || (shp->last_root==shp->var_tree && (tp->tp || (!shp->st.real_fun && (nvflags&NV_STATIC)) || (!(flag&(NV_EXPORT|NV_RDONLY)) && nv_isattr(np,(NV_EXPORT|NV_IMPORT))==(NV_EXPORT|NV_IMPORT)))))
+ {
+ 					_nv_unset(np,0);
+ }

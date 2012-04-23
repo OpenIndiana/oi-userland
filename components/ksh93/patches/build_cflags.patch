@@ -1,0 +1,36 @@
+diff -rupN a/src/cmd/cs/Makefile b/src/cmd/cs/Makefile
+--- a/src/cmd/cs/Makefile	2000-05-12 20:08:02.000000000 +0000
++++ b/src/cmd/cs/Makefile	2011-11-02 13:55:16.327160444 +0000
+@@ -22,9 +22,9 @@ pid udp :SERVICE: pid.c
+ 
+ rsh tcp :SERVICE: rsh.c
+ 
+-tst-old tcp :SERVICE: CCFLAGS=-g tst-old.c
++tst-old tcp :SERVICE: CCFLAGS+=-g tst-old.c
+ 
+-tst tcp :SERVICE: CCFLAGS=-g tst.c
++tst tcp :SERVICE: CCFLAGS+=-g tst.c
+ 
+ 6263 tcp :SERVICE: 6263.c
+ 
+diff -rupN a/src/cmd/cs/Mamfile b/src/cmd/cs/Mamfile
+--- a/src/cmd/cs/Mamfile	2011-02-09 05:47:50.000000000 +0000
++++ b/src/cmd/cs/Mamfile	2011-11-02 13:31:23.512475642 +0000
+@@ -335,7 +335,7 @@ prev ${PACKAGE_ast_INCLUDE}/cs.h implici
+ done tst-old.c
+ meta tst-old.o %.c>%.o tst-old.c tst-old
+ prev tst-old.c
+-exec - ${CC} -g -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c tst-old.c
++exec - ${CC}  ${mam_cc_FLAGS} ${CCFLAGS} -g -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c tst-old.c
+ done tst-old.o generated
+ exec - ${CC} ${CCLDFLAGS} -g ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o tst-old.svc tst-old.o ${mam_libcs} ${mam_libast}
+ done tst-old.svc generated
+@@ -350,7 +350,7 @@ meta tst.o %.c>%.o tst.c tst
+ prev tst.c
+ exec - ${CC} -g -I${PACKAGE_ast_INCLUDE} -D_PACKAGE_ast -c tst.c
+ done tst.o generated
+-exec - ${CC} ${CCLDFLAGS} -g ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o tst.svc tst.o ${mam_libcs} ${mam_libast}
++exec - ${CC} ${mam_cc_FLAGS} ${CCFLAGS} ${CCLDFLAGS} -g ${LDFLAGS} ${mam_cc_L+-L${INSTALLROOT}/lib} -o tst.svc tst.o ${mam_libcs} ${mam_libast}
+ done tst.svc generated
+ make 6263.svc
+ make 6263.o
