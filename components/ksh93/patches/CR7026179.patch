@@ -1,0 +1,49 @@
+--- a/src/lib/libcmd/wclib.c	Tue Dec  1 17:10:57 2009
++++ b/src/lib/libcmd/wclib.c	Wed Jun 29 15:22:42 2011
+@@ -18,6 +18,9 @@
+ *                  David Korn <dgk@research.att.com>                   *
+ *                                                                      *
+ ***********************************************************************/
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ #pragma prototyped
+ /*
+  * David Korn
+@@ -341,7 +344,9 @@
+ 		int		xspace;
+ 		int		wasspace = 1;
+ 		unsigned char*	start;
++		int             flagm = 0;
+ 
++
+ 		lastchar = 0;
+ 		start = (endbuff = side) + 1;
+ 		xspace = iswspace(0xa0) || iswspace(0x85);
+@@ -367,6 +372,7 @@
+ 			if(mbc(lasttype))
+ 			{
+ 				c = lasttype;
++				flagm = 1;
+ 				goto mbyte;
+ 			}
+ 			if(!lasttype && spc(type[*cp]))
+@@ -415,6 +421,18 @@
+ 							skip = (c&7);
+ 							adjust += skip;
+ 							state = 0;
++							if (flagm == 1) {
++								flagm = 0;
++								oldc = *cp;
++								if (xspace && (
++								    iswspace
++								    (*cp)
++								    == 1)) {
++									state
++									    = 8;
++								}
++								continue;
++							}
+ 							if(skip==2 && (cp[-1]&0xc)==0 && (state=(cp[-1]&0x3)))
+ 								oldc = *cp;
+ 							else if(xspace && cp[-1]==0xc2)

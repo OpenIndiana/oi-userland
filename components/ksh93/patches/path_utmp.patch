@@ -1,0 +1,24 @@
+diff -rupN a/src/cmd/ss/ssd.c b/src/cmd/ss/ssd.c
+--- a/src/cmd/ss/ssd.c	2010-06-09 16:06:54.000000000 +0100
++++ b/src/cmd/ss/ssd.c	2011-10-24 15:46:09.321811427 +0100
+@@ -118,9 +118,6 @@ struct whod
+ #if	!defined(UTMP_PATHNAME) && defined(UTMPX_PATHNAME)
+ #define UTMP_PATHNAME	UTMPX_PATHNAME
+ #endif	
+-#if	!defined(_PATH_UTMP) && defined(_PATH_UTMPX)
+-#define _PATH_UTMP	_PATH_UTMPX
+-#endif     
+ 
+ #else
+ 
+@@ -142,8 +139,8 @@ static char*		usrfiles[] =
+ #ifdef	UTMP_PATHNAME
+ 	UTMP_PATHNAME,
+ #endif
+-#ifdef	_PATH_UTMP
+-	_PATH_UTMP,
++#ifdef	_PATH_UTMPX
++	_PATH_UTMPX,
+ #endif
+ #if _hdr_utmpx
+ 	"/etc/utmpx",

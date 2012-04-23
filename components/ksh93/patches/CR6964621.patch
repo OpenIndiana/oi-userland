@@ -1,0 +1,553 @@
+--- a/src/cmd/ksh93/sh/io.c	Tue Feb  8 17:15:45 2011
++++ b/src/cmd/ksh93/sh/io.c	Tue Sep 27 10:48:45 2011
+@@ -26,6 +26,9 @@
+  *   AT&T Labs
+  *
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #include	"defs.h"
+ #include	<fcin.h>
+@@ -596,8 +599,10 @@
+ 		((struct checkpt*)shp->jmplist)->mode = SH_JMPERREXIT;
+ 		errormsg(SH_DICT,ERROR_system(1),e_toomany);
+ 	}
+-	if(f2 >= shp->gd->lim.open_max)
+-		sh_iovalidfd(shp,f2);
++
++	VALIDATE_FD(shp, fd);
++	VALIDATE_FD(shp, f2);
++
+ 	if(shp->fdptrs[fd]=shp->fdptrs[f2])
+ 	{
+ 		if(f2==job.fd)
+@@ -623,7 +628,12 @@
+  */
+ int sh_iorenumber(Shell_t *shp, register int f1,register int f2)
+ {
+-	register Sfio_t *sp = shp->sftable[f2];
++	register Sfio_t *sp;
++
++	VALIDATE_FD(shp, f1);
++	VALIDATE_FD(shp, f2);
++
++	sp = shp->sftable[f2];
+ 	if(f1!=f2)
+ 	{
+ 		/* see whether file descriptor is in use */
+@@ -663,8 +673,7 @@
+ 		if(f2<=2)
+ 			sfset(sp,SF_SHARE|SF_PUBLIC,1);
+ 	}
+-	if(f2>=shp->gd->lim.open_max)
+-		sh_iovalidfd(shp,f2);
++	VALIDATE_FD(shp, f2);
+ 	return(f2);
+ }
+ 
+@@ -678,8 +687,9 @@
+ 	register int r = 0;
+ 	if(fd<0)
+ 		return(-1);
+-	if(fd >= shp->gd->lim.open_max)
+-		sh_iovalidfd(shp,fd);
++
++	VALIDATE_FD(shp, fd);
++
+ 	if(!(sp=shp->sftable[fd]) || sfclose(sp) < 0)
+ 	{
+ 		if(fdnotify)
+@@ -835,6 +845,9 @@
+ 		mode = (IOREAD|IOWRITE);
+ 	else
+ 		mode = IOREAD;
++
++	VALIDATE_FD(shp, fd);
++
+ 	shp->fdstatus[fd] = mode;
+ 	return(fd);
+ }
+@@ -858,9 +871,15 @@
+ {
+ 	Shell_t *shp = sh_getinterp();
+ 	register int fdnew;
++
++	VALIDATE_FD(shp, fdold);
++
+ 	if(fdold<0 || fdold>2)
+ 		return(fdold);
+ 	fdnew = sh_iomovefd(dup(fdold));
++
++	VALIDATE_FD(shp, fdnew);
++
+ 	shp->fdstatus[fdnew] = (shp->fdstatus[fdold]&~IOCLEX);
+ 	close(fdold);
+ 	shp->fdstatus[fdold] = IOCLOSE;
+@@ -878,6 +897,8 @@
+ 		errormsg(SH_DICT,ERROR_system(1),e_pipe);
+ 	pv[0] = sh_iomovefd(pv[0]);
+ 	pv[1] = sh_iomovefd(pv[1]);
++	VALIDATE_FD(shp, pv[0]);
++	VALIDATE_FD(shp, pv[1]);
+ 	shp->fdstatus[pv[0]] = IONOSEEK|IOREAD;
+ 	shp->fdstatus[pv[1]] = IONOSEEK|IOWRITE;
+ 	sh_subsavefd(pv[0]);
+@@ -897,6 +918,9 @@
+ 		sh_close(fd);
+ 	else
+ 		pv[out] = sh_iomovefd(fd);
++
++	VALIDATE_FD(shp, pv[out]);
++
+ 	if(fcntl(pv[out],F_SETFD,FD_CLOEXEC) >=0)
+ 		shp->fdstatus[pv[out]] |= IOCLEX;
+ 	shp->fdstatus[pv[out]] = (out?IOWRITE:IOREAD);
+@@ -929,6 +953,9 @@
+ 		errormsg(SH_DICT,ERROR_system(1),e_pipe);
+ 	}
+ 	fcntl(pv[out],F_SETFD,FD_CLOEXEC);
++
++	VALIDATE_FD(shp, pv[out]);
++
+ 	shp->fdstatus[pv[out]] |= IOCLEX;
+ 	pv[1-out] = -1;
+ 	pv[2] = port;
+@@ -958,9 +985,13 @@
+ static int io_patseek(Shell_t *shp, regex_t *rp, Sfio_t* sp, int flags)
+ {
+ 	char	*cp, *match;
+-	int	r, fd=sffileno(sp), close_exec = shp->fdstatus[fd]&IOCLEX;
++	int	r, fd, close_exec;
+ 	int	was_share,s=(PIPE_BUF>SF_BUFSIZE?SF_BUFSIZE:PIPE_BUF);
+ 	size_t	n,m;
++
++	fd = sffileno(sp);
++	VALIDATE_FD(shp, fd);
++	close_exec = shp->fdstatus[fd]&IOCLEX;
+ 	shp->fdstatus[sffileno(sp)] |= IOCLEX;
+ 	if(fd==0)
+ 		was_share = sfset(sp,SF_SHARE,1);
+@@ -994,12 +1025,17 @@
+ 
+ static Sfoff_t	file_offset(Shell_t *shp, int fn, char *fname)
+ {
+-	Sfio_t		*sp = shp->sftable[fn];
++	Sfio_t		*sp;
+ 	char		*cp;
+ 	Sfoff_t		off;
+ 	struct Eof	endf;
+ 	Namval_t	*mp = nv_open("EOF",shp->var_tree,0);
+ 	Namval_t	*pp = nv_open("CUR",shp->var_tree,0);
++
++	VALIDATE_FD(shp, fn);
++
++	sp = shp->sftable[fn];
++
+ 	memset(&endf,0,sizeof(struct Eof));
+ 	endf.fd = fn;
+ 	endf.hdr.disc = &EOF_disc;
+@@ -1169,7 +1205,7 @@
+ 			if((iof&IOLSEEK) || ((iof&IOMOV) && *fname=='-'))
+ 				fn = nv_getnum(np);
+ 		}
+-		if(fn>=shp->gd->lim.open_max && !sh_iovalidfd(shp,fn))
++		if (!VALIDATE_FD(shp, fn))
+ 			errormsg(SH_DICT,ERROR_system(1),e_file+4);
+ 		if(iof&IOLSEEK)
+ 		{
+@@ -1212,6 +1248,7 @@
+ 						message = e_file;
+ 						goto fail;
+ 					}
++					VALIDATE_FD(shp, dupfd);
+ 					if(shp->subshell && dupfd==1)
+ 					{
+ 						if(sfset(sfstdout,0,0)&SF_STRING)
+@@ -1248,8 +1285,7 @@
+ 					goto traceit;
+ 				if((fd=sh_fcntl(dupfd,F_DUPFD,3))<0)
+ 					goto fail;
+-				if(fd>= shp->gd->lim.open_max)
+-					sh_iovalidfd(shp,fd);
++				VALIDATE_FD(shp, fd);
+ 				sh_iocheckfd(shp,dupfd);
+ 				shp->fdstatus[fd] = (shp->fdstatus[dupfd]&~IOCLEX);
+ 				if(toclose<0 && shp->fdstatus[fd]&IOREAD)
+@@ -1362,7 +1398,11 @@
+ 			}
+ 			if(iof&IOLSEEK)
+ 			{
+-				Sfio_t *sp = shp->sftable[fn];
++				Sfio_t *sp;
++
++				VALIDATE_FD(shp, fn);
++
++				sp = shp->sftable[fn];
+ 				r = shp->fdstatus[fn];
+ 				if(!(r&(IOSEEK|IONOSEEK)))
+ 					r = sh_iocheckfd(shp,fn);
+@@ -1443,6 +1483,7 @@
+ 			}
+ 			if(fd<0)
+ 			{
++				VALIDATE_FD(shp, fn);
+ 				if(sh_inuse(shp,fn) || (fn && fn==shp->infd))
+ 				{
+ 					if(fn>9 || !(shp->inuse_bits&(1<<fn)))
+@@ -1462,7 +1503,7 @@
+ 					{
+ 						if((fn=fcntl(fd,F_DUPFD,10)) < 0)
+ 							goto fail;
+-						if(fn>=shp->gd->lim.open_max && !sh_iovalidfd(shp,fn))
++						if (!VALIDATE_FD(shp, fn))
+ 							goto fail;
+ 						shp->fdstatus[fn] = shp->fdstatus[fd];
+ 						sh_close(fd);
+@@ -1622,7 +1663,12 @@
+ 	filemap[shp->topfd++].save_fd = savefd;
+ 	if(savefd >=0)
+ 	{
+-		register Sfio_t* sp = shp->sftable[origfd];
++		register Sfio_t* sp;
++
++		VALIDATE_FD(shp, origfd);
++		VALIDATE_FD(shp, savefd);
++
++		sp = shp->sftable[origfd];
+ 		/* make saved file close-on-exec */
+ 		sh_fcntl(savefd,F_SETFD,FD_CLOEXEC);
+ 		if(origfd==job.fd)
+@@ -1655,6 +1701,7 @@
+ 			filemap[newfd++] = filemap[fd];
+ 		else
+ 		{
++			VALIDATE_FD(shp, savefd);
+ 			shp->sftable[savefd] = 0;
+ 			sh_close(savefd);
+ 		}
+@@ -1678,6 +1725,7 @@
+ 		{
+ 			if ((savefd = filemap[fd].save_fd) >= 0)
+ 			{
++				VALIDATE_FD(shp, savefd);
+ 				shp->sftable[savefd] = 0;
+ 				sh_close(savefd);
+ 			}
+@@ -1684,10 +1732,12 @@
+ 			continue;
+ 		}
+ 		origfd = filemap[fd].orig_fd;
++		VALIDATE_FD(shp, origfd);
+ 		if(origfd<0)
+ 		{
+ 			/* this should never happen */
+ 			savefd = filemap[fd].save_fd;
++			VALIDATE_FD(shp, savefd);
+ 			shp->sftable[savefd] = 0;
+ 			sh_close(savefd);
+ 			return;
+@@ -1699,6 +1749,7 @@
+ 		sh_close(origfd);
+ 		if ((savefd = filemap[fd].save_fd) >= 0)
+ 		{
++			VALIDATE_FD(shp, savefd);
+ 			sh_fcntl(savefd, F_DUPFD, origfd);
+ 			if(savefd==job.fd)
+ 				job.fd=origfd;
+@@ -1954,6 +2005,9 @@
+ int sh_iocheckfd(Shell_t *shp, register int fd)
+ {
+ 	register int flags, n;
++
++	VALIDATE_FD(shp, fd);
++
+ 	if((n=shp->fdstatus[fd])&IOCLOSE)
+ 		return(n);
+ 	if(!(n&(IOREAD|IOWRITE)))
+@@ -2145,7 +2199,7 @@
+ 		return;
+ 	}
+ #endif
+-	if(fd<0 || (fd>=shp->gd->lim.open_max && !sh_iovalidfd(shp,fd)))
++	if (fd < 0 || !VALIDATE_FD(shp, fd))
+ 		return;
+ 	if(sh_isstate(SH_NOTRACK))
+ 		return;
+@@ -2413,6 +2467,8 @@
+ {
+ 	Shell_t *shp = sh_getinterp();
+ 	register Sfio_t *sp;
++
++	VALIDATE_FD(shp, fd);
+ 	if(sp=shp->sftable[fd])
+ 		return(sfread(sp,buff,n));
+ 	else
+@@ -2427,6 +2483,8 @@
+ {
+ 	Shell_t *shp = sh_getinterp();
+ 	register Sfio_t *sp;
++
++	VALIDATE_FD(shp, fd);
+ 	if(sp=shp->sftable[fd])
+ 		return(sfwrite(sp,buff,n));
+ 	else
+@@ -2441,6 +2499,8 @@
+ {
+ 	Shell_t *shp = sh_getinterp();
+ 	register Sfio_t *sp;
++
++	VALIDATE_FD(shp, fd);
+ 	if((sp=shp->sftable[fd]) && (sfset(sp,0,0)&(SF_READ|SF_WRITE)))
+ 		return(sfseek(sp,offset,whence));
+ 	else
+@@ -2452,6 +2512,9 @@
+ {
+ 	Shell_t *shp = sh_getinterp();
+ 	register int fd = dup(old);
++
++	VALIDATE_FD(shp, old);
++	VALIDATE_FD(shp, fd);
+ 	if(fd>=0)
+ 	{
+ 		if(shp->fdstatus[old] == IOCLOSE)
+@@ -2473,13 +2536,15 @@
+ 	arg =  va_arg(ap, int) ;
+ 	va_end(ap);
+ 	newfd = fcntl(fd,op,arg);
++
++	VALIDATE_FD(shp, fd);
++	VALIDATE_FD(shp, newfd);
++
+ 	if(newfd>=0) switch(op)
+ 	{
+ 	    case F_DUPFD:
+ 		if(shp->fdstatus[fd] == IOCLOSE)
+ 			shp->fdstatus[fd] = 0;
+-		if(newfd>=shp->gd->lim.open_max)
+-			sh_iovalidfd(shp,newfd);
+ 		shp->fdstatus[newfd] = (shp->fdstatus[fd]&~IOCLEX);
+ 		if(fdnotify)
+ 			(*fdnotify)(fd,newfd);
+@@ -2548,6 +2613,7 @@
+ 		return(iop);
+ 	if(mode==SF_READ && !(n&IOREAD))
+ 		return(iop);
++	VALIDATE_FD(shp, fd);
+ 	if(!(iop = shp->sftable[fd]))
+ 		iop=sh_iostream(shp,fd);
+ 	return(iop);
+@@ -2567,7 +2633,10 @@
+ {
+ 	Shell_t	*shp = sh_getinterp();
+ 	register int status;
+-	Sfio_t *sp = shp->sftable[fd];
++	Sfio_t *sp;
++
++	VALIDATE_FD(shp, fd);
++	sp = shp->sftable[fd];
+ 	if(!sp  && (status = sh_iocheckfd(shp,fd))!=IOCLOSE)
+ 	{
+ 		register int flags=0;
+--- a/src/cmd/ksh93/include/io.h	Mon Nov 29 15:02:53 2010
++++ b/src/cmd/ksh93/include/io.h	Tue Aug 30 13:06:36 2011
+@@ -23,6 +23,9 @@
+  *	David Korn
+  *
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #include	<ast.h>
+ #include	<sfio.h>
+@@ -84,6 +87,12 @@
+ extern int	sh_isdevfd(const char*);
+ extern int	sh_source(Shell_t*, Sfio_t*, const char*);
+ 
++extern int	VALIDATE_FD(Shell_t *, int);
++
++#define	VALIDATE_FD(shp, fd) \
++	(((fd) >= (shp)->gd->lim.open_max) ? sh_iovalidfd(shp, fd) : 1)
++
++
+ /* the following are readonly */
+ extern const char	e_pexists[];
+ extern const char	e_query[];
+@@ -123,4 +132,5 @@
+ extern const char	e_stdprompt[];
+ extern const char	e_supprompt[];
+ extern const char	e_ambiguous[];
++
+ #endif /* KSHELL */
+--- a/src/cmd/ksh93/sh/lex.c	Fri Jan  7 16:37:35 2011
++++ b/src/cmd/ksh93/sh/lex.c	Tue Aug 30 13:06:36 2011
+@@ -25,6 +25,9 @@
+  * AT&T Labs
+  *
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #include	<ast.h>
+ #include	<stak.h>
+@@ -2053,6 +2056,7 @@
+ 	else
+ 		lp->lastline = shp->inlineno;
+ 	tokstr = fmttoken(lp,tok,tokbuf);
++	VALIDATE_FD(shp, shp->infd);
+ 	if((sp=fcfile()) || (shp->infd>=0 && (sp=shp->sftable[shp->infd])))
+ 	{
+ 		/* clear out any pending input */
+--- a/src/cmd/ksh93/sh/main.c	Wed Dec  1 22:10:07 2010
++++ b/src/cmd/ksh93/sh/main.c	Tue Aug 30 13:06:36 2011
+@@ -396,8 +401,10 @@
+ 		if(fno > 0)
+ 		{
+ 			int r;
++			VALIDATE_FD(shp, fno);
+ 			if(fno < 10 && ((r=sh_fcntl(fno,F_DUPFD,10))>=10))
+ 			{
++				VALIDATE_FD(shp, r);
+ 				shp->fdstatus[r] = shp->fdstatus[fno];
+ 				sh_close(fno);
+ 				fno = r;
+--- a/src/cmd/ksh93/sh/path.c	Mon Nov 22 20:55:38 2010
++++ b/src/cmd/ksh93/sh/path.c	Tue Sep 27 10:48:45 2011
+@@ -23,6 +23,9 @@
+  * AT&T Labs
+  *
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #include	"defs.h"
+ #include	<fcin.h>
+@@ -562,6 +565,7 @@
+ 	if(fd>=0 && (fd = sh_iomovefd(fd)) > 0)
+ 	{
+ 		fcntl(fd,F_SETFD,FD_CLOEXEC);
++		VALIDATE_FD(shp, fd);
+ 		shp->fdstatus[fd] |= IOCLEX;
+ 	}
+ 	return(fd);
+@@ -1239,6 +1243,7 @@
+ 	if(sp=fcfile())
+ 		while(sfstack(sp,SF_POPSTACK));
+ 	job_clear();
++	VALIDATE_FD(shp, shp->infd);
+ 	if(shp->infd>0 && (shp->fdstatus[shp->infd]&IOCLEX))
+ 		sh_close(shp->infd);
+ 	sh_setstate(sh_state(SH_FORKED));
+--- a/src/cmd/ksh93/sh/xec.c	Tue Feb  8 19:08:15 2011
++++ b/src/cmd/ksh93/sh/xec.c	Tue Aug 30 13:06:36 2011
+@@ -25,6 +25,9 @@
+  *   AT&T Labs
+  *
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #include	"defs.h"
+ #include	<fcin.h>
+@@ -94,6 +97,8 @@
+ 	usepipe++;
+ 	fcntl(subpipe[0],F_SETFD,FD_CLOEXEC);
+ 	subpipe[2] = fcntl(1,F_DUPFD,10);
++	VALIDATE_FD(shp, subpipe[1]);
++	VALIDATE_FD(shp, subpipe[2]);
+ 	shp->fdstatus[subpipe[2]] = shp->fdstatus[1];
+ 	close(1);
+ 	fcntl(subpipe[1],F_DUPFD,1);
+@@ -117,6 +122,7 @@
+ 	usepipe = 0;
+ 	close(1);
+ 	fcntl(subpipe[2], F_DUPFD, 1);
++	VALIDATE_FD(shp, subpipe[2]);
+ 	shp->fdstatus[1] = shp->fdstatus[subpipe[2]];
+ 	if(subdup) for(n=0; n < 10; n++)
+ 	{
+@@ -583,7 +589,10 @@
+ 	if(lineno)
+ 		shp->inlineno = lineno;
+ 	if(io_save)
++	{
+ 		sfclose(io_save);
++		io_save = 0;
++	}
+ 	sh_freeup(shp);
+ 	shp->st.staklist = saveslp;
+ 	shp->fn_reset = 0;
+@@ -844,6 +853,7 @@
+ 			if(filt > 2)
+ 			{
+ 				shp->coutpipe = shp->inpipe[1];
++				VALIDATE_FD(shp, shp->coutpipe);
+ 				shp->fdptrs[shp->coutpipe] = &shp->coutpipe;
+ 			}
+ 		}
+@@ -1487,6 +1497,7 @@
+ 						if(shp->cpipe[0]<0 || shp->cpipe[1] < 0)
+ 						{
+ 							sh_copipe(shp,shp->outpipe=shp->cpipe,0);
++							VALIDATE_FD(shp, shp->cpipe[0]);
+ 							shp->fdptrs[shp->cpipe[0]] = shp->cpipe;
+ 						}
+ 						sh_copipe(shp,shp->inpipe=pipes,0);
+@@ -3419,6 +3430,8 @@
+ 		if((outfd=shp->cpipe[1]) < 10) 
+ 		{
+ 		        int fd=fcntl(shp->cpipe[1],F_DUPFD,10);
++			VALIDATE_FD(shp, outfd);
++			VALIDATE_FD(shp, fd);
+ 			if(fd>=10)
+ 			{
+ 			        shp->fdstatus[fd] = (shp->fdstatus[outfd]&~IOCLEX);
+@@ -3427,6 +3440,9 @@
+ 				shp->cpipe[1] = fd;
+ 			}
+ 		}
++		VALIDATE_FD(shp, shp->cpipe[0]);
++		VALIDATE_FD(shp, shp->cpipe[1]);
++
+ 		if(fcntl(*shp->cpipe,F_SETFD,FD_CLOEXEC)>=0)
+ 			shp->fdstatus[shp->cpipe[0]] |= IOCLEX;
+ 		shp->fdptrs[shp->cpipe[0]] = shp->cpipe;
+@@ -3437,7 +3453,9 @@
+ 	shp->outpipe = shp->cpipe;
+ 	sh_pipe(shp->inpipe=pipes);
+ 	shp->coutpipe = shp->inpipe[1];
++	VALIDATE_FD(shp, shp->coutpipe);
+ 	shp->fdptrs[shp->coutpipe] = &shp->coutpipe;
++	VALIDATE_FD(shp, shp->outpipe[0]);
+ 	if(fcntl(shp->outpipe[0],F_SETFD,FD_CLOEXEC)>=0)
+ 		shp->fdstatus[shp->outpipe[0]] |= IOCLEX;
+ }
+@@ -3608,6 +3626,7 @@
+ 				int fd = shp->inpipe[1];
+ 				sh_iosave(shp,0,buff.topfd,(char*)0);
+ 				sh_iorenumber(shp,shp->inpipe[0],0);
++				VALIDATE_FD(shp, fd);
+ 				if(fd>=0 && (!(otype&FPOU) || (otype&FCOOP)) && fcntl(fd,F_SETFD,FD_CLOEXEC)>=0)
+ 					shp->fdstatus[fd] |= IOCLEX;
+ 			}
+@@ -3619,6 +3638,7 @@
+ #endif /* SHOPT_COSHELL */
+ 				sh_iosave(shp,1,buff.topfd,(char*)0);
+ 				sh_iorenumber(shp,sh_dup(shp->outpipe[1]),1);
++				VALIDATE_FD(shp, shp->outpipe[0]);
+ 				if(fcntl(shp->outpipe[0],F_SETFD,FD_CLOEXEC)>=0)
+ 					shp->fdstatus[shp->outpipe[0]] |= IOCLEX;
+ 			}
+@@ -3658,6 +3678,7 @@
+ 			signal(SIGQUIT,sh_fault);
+ 			signal(SIGINT,sh_fault);
+ 		}
++		VALIDATE_FD(shp, shp->inpipe[1]);
+ 		if((otype&FPIN) && (!(otype&FPOU) || (otype&FCOOP)) && fcntl(shp->inpipe[1],F_SETFD,FD_CLOEXEC)>=0)
+ 			shp->fdstatus[shp->inpipe[1]] &= ~IOCLEX;
+ 		if(t->fork.forkio || otype)

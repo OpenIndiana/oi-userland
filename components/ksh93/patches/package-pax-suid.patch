@@ -1,0 +1,78 @@
+diff -ru clean/bin/package patched/bin/package
+--- clean/bin/package	Thu Feb  3 15:45:18 2011
++++ patched/bin/package	Wed Sep 21 13:21:39 2011
+@@ -5111,7 +5111,7 @@
+ 						export INSTALLROOT VPATH
+ 						echo lib/$command
+ 						$MAKE -s $makeflags -f $i.pkg $qualifier list.installed $assign
+-						) | sort -u | pax -drw -ps $dest
++						) | sort -u | pax -drw $dest
+ 					)
+ 				fi
+ 			fi
+@@ -5916,7 +5916,7 @@
+ 					;;
+ 				esac
+ 			elif	test "" != "$PAX"
+-			then	$exec pax -L --from=ascii --local -m -ps -rvf "$f" || {
++			then	$exec pax -L --from=ascii --local -m -rvf "$f" || {
+ 					code=1
+ 					continue
+ 				}
+@@ -6010,7 +6010,7 @@
+ 					esac
+ 				}
+ 				# -m with delta bug fixed 2005-02-08
+-				$exec pax -L --from=ascii --local -ps -rvf "$f" -z "$b" || {
++				$exec pax -L --from=ascii --local -rvf "$f" -z "$b" || {
+ 					code=1
+ 					continue
+ 				}
+@@ -6052,7 +6052,7 @@
+ 					esac
+ 				}
+ 				# -m with delta bug fixed 2005-02-08
+-				$exec pax -L --from=ascii --local -ps -rvf "$f" -z "$b" || {
++				$exec pax -L --from=ascii --local -rvf "$f" -z "$b" || {
+ 					code=1
+ 					continue
+ 				}
+diff -ru clean/src/cmd/INIT/package.sh patched/src/cmd/INIT/package.sh
+--- clean/src/cmd/INIT/package.sh	Thu Feb  3 15:45:16 2011
++++ patched/src/cmd/INIT/package.sh	Wed Sep 21 13:22:04 2011
+@@ -5129,7 +5129,7 @@
+ 						export INSTALLROOT VPATH
+ 						echo lib/$command
+ 						$MAKE -s $makeflags -f $i.pkg $qualifier list.installed $assign
+-						) | sort -u | pax -drw -ps $dest
++						) | sort -u | pax -drw $dest
+ 					)
+ 				fi
+ 			fi
+@@ -5934,7 +5934,7 @@
+ 					;;
+ 				esac
+ 			elif	test "" != "$PAX"
+-			then	$exec pax -L --from=ascii --local -m -ps -rvf "$f" || {
++			then	$exec pax -L --from=ascii --local -m -rvf "$f" || {
+ 					code=1
+ 					continue
+ 				}
+@@ -6028,7 +6028,7 @@
+ 					esac
+ 				}
+ 				# -m with delta bug fixed 2005-02-08
+-				$exec pax -L --from=ascii --local -ps -rvf "$f" -z "$b" || {
++				$exec pax -L --from=ascii --local -rvf "$f" -z "$b" || {
+ 					code=1
+ 					continue
+ 				}
+@@ -6070,7 +6070,7 @@
+ 					esac
+ 				}
+ 				# -m with delta bug fixed 2005-02-08
+-				$exec pax -L --from=ascii --local -ps -rvf "$f" -z "$b" || {
++				$exec pax -L --from=ascii --local -rvf "$f" -z "$b" || {
+ 					code=1
+ 					continue
+ 				}

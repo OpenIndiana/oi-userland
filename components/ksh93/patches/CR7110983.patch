@@ -1,0 +1,24 @@
+diff -r bb8978c251cb -r 6fbea5c30b60 usr/src/cmd/ast/lib/libshell/common/sh/name.c
+--- a/src/cmd/ksh93/sh/name.c	Sun Mar 25 23:19:46 2012 -0700
++++ b/src/cmd/ksh93/sh/name.c	Mon Mar 26 05:09:19 2012 -0700
+@@ -22,6 +22,9 @@
+  * AT&T Labs
+  *
+  */
++/*
++ * Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
++ */
+ 
+ #define putenv	___putenv
+ 
+@@ -1832,7 +1835,10 @@
+ 			else
+ #endif
+ 			if(size==0 && nv_isattr(np,NV_HOST)!=NV_HOST &&nv_isattr(np,NV_LJUST|NV_RJUST|NV_ZFILL))
++			{
+ 				nv_setsize(np,size=dot);
++				tofree = up->cp;
++			}
+ 			else if(size > dot)
+ 				dot = size;
+ 			else if(nv_isattr(np,NV_LJUST|NV_RJUST)==NV_LJUST && dot>size)

@@ -1,0 +1,110 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+# The man pages are all at the top of a "files" directory; setting the hash to
+# point to the files therein.
+<transform file path=usr/share/man/man.+/(.+)$ -> set action.hash %<\1> >
+# Bypassing the mangler for these files because they are pre-Solarified.
+<transform file path=usr/share/man/.+$ -> add mangler.bypass true >
+set name=pkg.fmri \
+    value=pkg:/shell/ksh@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="Korn Shell 93: A command and programming language that executes commands read from a terminal or a file"
+set name=pkg.summary value="Ksh93 - The AT&T Korn Shell"
+set name=info.classification value=org.opensolaris.category.2008:System/Shells
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream \
+    value="AT&T Software Technology (AST) OpenSource Software Collection"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2012/002
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir path=usr group=sys
+dir path=usr/include
+dir path=usr/share group=sys
+dir path=usr/share/doc group=other
+dir path=usr/share/doc/ksh
+dir path=usr/share/man/ja_JP.UTF-8/man1
+dir path=usr/share/man/man1
+dir path=usr/share/man/zh_CN.UTF-8/man1
+file path=etc/ksh.kshrc group=sys original_name=SUNWcs:etc/ksh.kshrc \
+    preserve=renameold
+file $(MACH32)/bin/ksh path=usr/bin/$(MACH32)/ksh mode=0555
+file $(MACH32)/bin/shcomp path=usr/bin/$(MACH32)/shcomp mode=0555
+file $(MACH64)/bin/alias path=usr/bin/alias mode=0555
+file $(MACH64)/bin/ksh path=usr/bin/$(MACH64)/ksh mode=0555
+file $(MACH64)/bin/shcomp path=usr/bin/$(MACH64)/shcomp mode=0555
+file alias.1.ja_JP.UTF-8 path=usr/share/man/ja_JP.UTF-8/man1/alias.1
+file jsh.1.ja_JP.UTF-8 path=usr/share/man/ja_JP.UTF-8/man1/jsh.1
+file ksh.1.ja_JP.UTF-8 path=usr/share/man/ja_JP.UTF-8/man1/ksh.1
+file ksh93.1.ja_JP.UTF-8 path=usr/share/man/ja_JP.UTF-8/man1/ksh93.1
+file rksh.1.ja_JP.UTF-8 path=usr/share/man/ja_JP.UTF-8/man1/rksh.1
+file sh.1.ja_JP.UTF-8 path=usr/share/man/ja_JP.UTF-8/man1/sh.1
+file shcomp.1.ja_JP.UTF-8 path=usr/share/man/ja_JP.UTF-8/man1/shcomp.1
+file path=usr/share/man/man1/alias.1
+file path=usr/share/man/man1/jsh.1
+file path=usr/share/man/man1/ksh.1
+file path=usr/share/man/man1/ksh93.1
+file path=usr/share/man/man1/rksh.1
+file path=usr/share/man/man1/sh.1
+file path=usr/share/man/man1/shcomp.1
+file ksh.1.zh_CN.UTF-8 path=usr/share/man/zh_CN.UTF-8/man1/ksh.1
+file ksh93.1.zh_CN.UTF-8 path=usr/share/man/zh_CN.UTF-8/man1/ksh93.1
+file rksh.1.zh_CN.UTF-8 path=usr/share/man/zh_CN.UTF-8/man1/rksh.1
+file shcomp.1.zh_CN.UTF-8 path=usr/share/man/zh_CN.UTF-8/man1/shcomp.1
+hardlink path=usr/bin/$(MACH32)/ksh93 target=ksh
+hardlink path=usr/bin/$(MACH32)/rksh target=ksh
+hardlink path=usr/bin/$(MACH32)/rksh93 target=ksh
+hardlink path=usr/bin/$(MACH64)/ksh93 target=ksh
+hardlink path=usr/bin/$(MACH64)/rksh target=ksh
+hardlink path=usr/bin/$(MACH64)/rksh93 target=ksh
+hardlink path=usr/bin/bg target=alias
+hardlink path=usr/bin/cd target=alias
+hardlink path=usr/bin/command target=alias
+hardlink path=usr/bin/fc target=alias
+hardlink path=usr/bin/fg target=alias
+hardlink path=usr/bin/getopts target=alias
+hardlink path=usr/bin/hash target=alias
+hardlink path=usr/bin/jobs target=alias
+hardlink path=usr/bin/kill target=alias
+hardlink path=usr/bin/ksh target=../lib/isaexec
+hardlink path=usr/bin/ksh93 target=../lib/isaexec
+hardlink path=usr/bin/pfksh target=pfexec
+hardlink path=usr/bin/pfksh93 target=pfexec
+hardlink path=usr/bin/pfrksh target=pfexec
+hardlink path=usr/bin/pfrksh93 target=pfexec
+hardlink path=usr/bin/print target=alias
+hardlink path=usr/bin/read target=alias
+hardlink path=usr/bin/rksh target=../lib/isaexec
+hardlink path=usr/bin/rksh93 target=../lib/isaexec
+hardlink path=usr/bin/test target=alias
+hardlink path=usr/bin/type target=alias
+hardlink path=usr/bin/ulimit target=alias
+hardlink path=usr/bin/umask target=alias
+hardlink path=usr/bin/unalias target=alias
+hardlink path=usr/bin/wait target=alias
+license ksh93.license license=CPL
+link path=usr/bin/jsh target=ksh93
+link path=usr/bin/sh target=$(MACH32)/ksh93
+link path=usr/lib/rsh target=../bin/ksh93
+link path=usr/sbin/jsh target=../bin/ksh93
+link path=usr/sbin/sh target=../bin/$(MACH32)/ksh93

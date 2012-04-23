@@ -1,0 +1,160 @@
+'\" te
+.\" Copyright (c) 1982-2007 AT&T Knowledge Ventures
+.\" To view license terms, see http://www.opensource.org/licenses/cpl1.0.txt
+.\" Portions Copyright (c) 2009, 2011, Oracle and/or its affiliates. 保留所有权利。
+.TH shcomp 1 "2011 年 7 月 12 日" "SunOS 5.11" "用户命令"
+.SH 名称
+shcomp \- 编译 ksh shell 脚本
+.SH 用法概要
+.LP
+.nf
+\fBshcomp\fR [\fB-nv\fR] [\fIinfile\fR [\fIoutfile\fR]]
+.fi
+
+.LP
+.nf
+\fBshcomp\fR \fB-D\fR [\fIinfile\fR [\fIoutfile\fR]]
+.fi
+
+.SH 描述
+.sp
+.LP
+如果未指定 \fB-D\fR 选项，\fBshcomp\fR 会采用 shell 脚本 \fIinfile\fR，并且会创建二进制格式的文件 \fIoutfile\fR，\fBksh\fR 读取和执行该文件的效果与使用原始脚本的效果相同。
+.sp
+.LP
+读取脚本时处理别名。如果别名定义的值需要变量扩展，该定义将不能正常工作。 
+.SH 选项
+.sp
+.LP
+支持下列选项：
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-D\fR\fR
+.ad
+.br
+.na
+\fB\fB--dictionary\fR\fR
+.ad
+.RS 16n
+.rt  
+生成需要放置在消息目录中以实现国际化的字符串列表。
+.sp
+使用该选项，会打印字符串前有 \fB$\fR 的所有双引号括起来的字符串，每行一个字符串型。字符串型 \fB$"foo"\fR 会在输出中打印出 \fB"foo"\fR。这些消息需要转换为国际化的语言环境特定版本。 
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-n\fR\fR
+.ad
+.br
+.na
+\fB\fB--noexec\fR\fR
+.ad
+.RS 16n
+.rt  
+显示有关过时或尚未确认的结构的警告信息。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-v\fR\fR
+.ad
+.br
+.na
+\fB\fB--verbose\fR\fR
+.ad
+.RS 16n
+.rt  
+读取时将来自 \fIinfile\fR 的输入显示为标准错误。
+.RE
+
+.SH 操作数
+.sp
+.LP
+支持下列操作数：
+.sp
+.ne 2
+.mk
+.na
+\fB\fIinfile\fR\fR
+.ad
+.RS 11n
+.rt  
+指定包含要用作输入的 shell 脚本的文件名称。
+.sp
+如果省略 \fIinfile\fR，将从标准输入读取 shell 脚本。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fIoutfile\fR\fR
+.ad
+.RS 11n
+.rt  
+指定输出文件的名称。
+.sp
+如果省略 \fIoutfile\fR，则这两种模式都会将其结果写入标准输出。 
+.RE
+
+.SH 退出状态
+.sp
+.LP
+将返回以下退出值：
+.sp
+.ne 2
+.mk
+.na
+\fB\fB0\fR\fR
+.ad
+.RS 6n
+.rt  
+成功完成。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB>0\fR\fR
+.ad
+.RS 6n
+.rt  
+出现错误。
+.RE
+
+.SH 属性
+.sp
+.LP
+有关下列属性的描述，请参见 \fBattributes\fR(5)：
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性类型属性值
+_
+可用性system/core-os
+_
+CSIEnabled（已启用）
+_
+接口稳定性请参见下文。
+.TE
+
+.sp
+.LP
+命令行界面和系统变量是 "Committed"（已确定）。编译的 shell 代码格式是 "Private"（专用）。\fB-D\fR 选项的输出是 "Volatile"（可变）。
+.SH 另请参见
+.sp
+.LP
+\fBksh\fR(1)、\fBattributes\fR(5)

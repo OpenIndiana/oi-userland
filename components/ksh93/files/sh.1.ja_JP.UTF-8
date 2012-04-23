@@ -1,0 +1,1732 @@
+'\" te
+.\" Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
+.\" Copyright 1989 AT&T
+.\" Portions Copyright (c) 1992, X/Open Company Limited All Rights Reserved
+.\"  Sun Microsystems, Inc. gratefully acknowledges The Open Group for permission to reproduce portions of its copyrighted documentation. Original documentation from The Open Group can be obtained online at http://www.opengroup.org/bookstore/.
+.\" The Institute of Electrical and Electronics Engineers and The Open Group, have given us permission to reprint portions of their documentation. In the following statement, the phrase "this text" refers to portions of the system documentation. Portions of this text are reprinted and reproduced in electronic form in the Sun OS Reference Manual, from IEEE Std 1003.1, 2004 Edition, Standard for Information Technology -- Portable Operating System Interface (POSIX), The Open Group Base Specifications Issue 6, Copyright (C) 2001-2004 by the Institute of Electrical and Electronics Engineers, Inc and The Open Group. In the event of any discrepancy between these versions and the original IEEE and The Open Group Standard, the original IEEE and The Open Group Standard is the referee document. The original Standard can be obtained online at http://www.opengroup.org/unix/online.html. This notice shall appear on any product containing this material. 
+.TH sh 1 "2011 年 7 月 12 日" "SunOS 5.11" "ユーザーコマンド"
+.SH 名前
+sh, jsh \- 標準シェルとジョブ制御シェルおよびコマンドインタプリタ
+.SH 形式
+.LP
+.nf
+\fB/usr/bin/sh\fR  [\fB-acefhiknprstuvx\fR] [\fIargument\fR]...
+.fi
+
+.LP
+.nf
+\fB/usr/xpg4/bin/sh\fR  [\(+- abCefhikmnoprstuvx]
+     [\(+- o \fIoption\fR]... [\fB-c\fR \fIstring\fR] [\fIarg\fR]...
+.fi
+
+.LP
+.nf
+\fB/usr/bin/jsh\fR  [\fB-acefhiknprstuvx\fR] [\fIargument\fR]...
+.fi
+
+.SH 機能説明
+.sp
+.LP
+\fB/usr/bin/sh\fR ユーティリティは、端末またはファイルから読み取られたコマンドを 実行するコマンドおよびプログラミング言語です。
+.sp
+.LP
+\fB/usr/xpg4/bin/sh\fR ユーティリティーは標準に準拠したシェルです。このユーティリティーは \fBksh88\fR(1) のすべての機能を提供します。ただし、\fBksh\fR(1) で説明しているように、動作が異なる場合を除きます。
+.sp
+.LP
+\fBjsh\fR ユーティリティーは、\fBsh\fR のすべての機能を備えた、かつジョブ制御を可能にするシェルへのインタフェースです (下記の「ジョブ制御」を参照)。\fB\fR
+.sp
+.LP
+シェルへの引数については、後述の「呼び出し」にリストされています。\fB\fR
+.SS "定義"
+.sp
+.LP
+ブランク (\fIblank\fR) はタブ (tab) またはスペース (space) です。名前 (\fIname\fR) は \fBASCII\fR 英文字、数字、または下線の並びで、先頭文字は英文字または下線です。パラメータ ( \fIparameter\fR) は、名前、複数、または \fB*\fR、\fB@\fR、\fB#\fR、\fB?\fR、\fB-\fR、\fB$\fR、\fB!\fR などの文字のいずれかです。
+.SH 使用法
+.SS "コマンド (Commands)"
+.sp
+.LP
+単純コマンド (\fIsimple-command\fR) は、ブランクで区切られた、ブランクでないワードの並びです。先頭のワードは、実行するコマンド名を指定します。\fI\fR\fI\fR\fI\fR残りのワードは、次に述べる場合を除き、呼び出されたコマンドに引数として渡されます。\fI\fRコマンド名は引数 0 として渡されます (\fBexec\fR(2) を参照)。単純コマンドの値 (\fIvalue\fR) は、正常終了した場合は終了ステータス、異常終了した場合は \fB200\fR+\fIstatus\fR (8 進数) です。\fI\fRステータス値の一覧表については、\fBsignal.h\fR(3HEAD) を参照してください。
+.sp
+.LP
+パイプライン (\fIpipeline\fR) は、パイプ (\fB|\fR) で区切られた 1 つ以上のコマンドの並びです。\fI\fR最後のコマンドを除き、各コマンドの標準出力は \fBpipe\fR(2) によってその次のコマンドの標準入力と結合されます。\fI\fR\fI\fR各コマンドは、別々のプロセスとして実行されます。\fI\fRシェルは最後のコマンドが終了するのを待ちます。\fI\fR最後のコマンドの終了ステータスがパイプライン全体の終了ステータスとなります。\fI\fR\fI\fR
+.sp
+.LP
+リスト (\fIlist\fR) は、\fB;\fR、\fB&\fR、\fB&&\fR、または \fB|\||\fR で区切られた 1 つ以上のパイプラインの並びです。その並びの終わりに \fB;\fR または \fB&\fR を記述することもできます。\fI\fRこれら 4 つの記号の中で、\fB;\fR と \fB&\fR の優先度は同じで、\fB&&\fR と \fB|\||\fR の優先度より低くなります。\fB&&\fR と \fB|\||\fR の優先度は同じです。セミコロン (\fB;\fR) によって、直前のパイプラインが順次実行されます。つまりシェルはパイプラインが終了するのを待ってから、セミコロンの後のコマンドを実行します。\fI\fR\fI\fRアンパサンド記号 (\fB&\fR) によって、直前のパイプラインが非同期的に実行されます。つまりシェルはパイプラインが終了するのを待ちません。\fB\fR\fB&&\fR という記号は、直前のパイプラインの終了ステータスが 0 の場合にだけ、後続のリストを実行するものです。反対に (\|\fB|\||\fR) は、終了ステータスが 0 以外の場合にだけ、後続のリストを実行します。\fI\fRコマンドの区切りとして、セミコロンの代わりに任意の数の復帰改行を \fIlist\fR に指定できます。
+.sp
+.LP
+コマンド (\fIcommand\fR) は、単純コマンドまたは次のいずれかです。\fI\fR特に断わりのないかぎり、コマンドが返す値は、そのコマンド中で最後に実行された単純コマンドの値です。\fI\fR
+.sp
+.ne 2
+.mk
+.na
+\fB\fBfor\fR \fIname\fR [ \fBin\fR \fIword\fR .\|.\|. ] \fBdo\fR \fIlist\fR \fBdone\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fBfor\fR コマンドが実行されるたびに、\fIname\fR は \fBin\fR \fIword\fR リストから次に得られる \fIword\fR に設定されます。If \fBin\fR \fIword\fR .\|.\|. を省略すると、\fBfor\fR コマンドは、設定された各定位値パラメータに対して、\fBdo\fR \fIlist\fR を 1 回実行します (後述の「パラメータ置換」を参照)。\fB\fRリストの word がなくなると、実行は終了します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBcase\fR \fIword\fR \fBin\fR [ \fIpattern\fR [ | \fIpattern\fR ] \fB)\fR \fIlist\fR \fB;\|;\fR ] .\|.\|. \fBesac\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fBcase\fR コマンドは、\fIword\fR に一致する最初の \fIpattern\fR に対応した \fIlist\fR を実行します。パターンの形式は、ファイル名生成に使用される形式と同じです (「ファイル名の生成」の節を参照)。ただしスラッシュ、先行するドット、およびスラッシュ直後のドットは、明示的に一致しなくてもかまいません。\fB\fR
+.RE
+
+.sp
+.LP
+\fBif\fR \fIlist\fR \fB; then\fR \fIlist\fR \fBelif\fR \fIlist\fR \fB; then\fR \fIlist\fR \fB;\fR ] .\|.\|. [ \fBelse\fR \fI list\fR \fB;\fR ] \fBfi\fR
+.sp
+.LP
+\fIif\fR の後の \fBlist\fR を実行後、\fIlist\fR が 0 の終了ステータスを返すと、最初の \fBthen\fR の後の list を実行します。それ以外の場合、\fBelif\fR の後の \fIlist\fR を実行します。この値が 0 の場合、次の \fBthen\fR の後の \fIlist\fR を実行します。これが失敗すると、\fBelse\fR \fIlist\fR を実行します。\fBelse\fR \fIlist\fR も \fBthen\fR \fIlist\fR も実行しない場合、\fBif\fR コマンドは 0 の終了ステータスを返します。
+.sp
+.ne 2
+.mk
+.na
+\fB\fBwhile\fR \fIlist\fR \fBdo\fR \fIlist\fR \fBdone\fR\fR
+.ad
+.RS 27n
+.rt  
+\fBwhile\fR コマンドは、\fBwhile\fR \fIlist\fR を繰り返し実行し、list 中の最後のコマンドの終了ステータスが 0 の場合、\fBdo\fR \fIlist\fR を実行します。それ以外の場合、ループは終了します。\fBdo\fR \fIlist\fR 中のコマンドを実行しない場合、\fBwhile\fR コマンドは 0 の終了ステータスを返します。ループ終了条件の判定を逆にするには、\fBwhile\fR の代わりに \fBuntil\fR を使用します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB(\fR\fIlist\fR\fB)\fR\fR
+.ad
+.RS 27n
+.rt  
+サブシェル内の \fIlist\fR の実行
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB{\fR \fIlist\fR\fB;}\fR\fR
+.ad
+.RS 27n
+.rt  
+現在の (つまり、親) シェル内での \fIlist\fR の実行。記号 \fB{\fR の後にはスペースが必要です。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fIname\fR \fB(\|) {\fR \fIlist\fR\fB;}\fR\fR
+.ad
+.RS 27n
+.rt  
+\fIname\fR が参照する関数を定義します。\fB{\fR と \fB}\fR の間のコマンド群 (\fIlist\fR) が関数の本体となります (後述の「関数」参照)。記号 \fB{\fR の後にはスペースが必要です。関数の実行については「実行」の節で後述します。\fB\fR関数の本体が、前述の「コマンド」の節で定義したようなコマンドの場合、\fB{\fR および \fB}\fR は必要ではありません。\fI\fR\fB\fR
+.RE
+
+.sp
+.LP
+下記のワードは、コマンドの最初に現れたとき、およびクォートされずに記述されたときに認識されます。
+.sp
+.LP
+\fBif then else elif fi case esac for while until do done { }\fR
+.SS "注釈行"
+.sp
+.LP
+\fB#\fR でワードを始めると、そのワードおよび以降の 復帰改行までの文字がすべて無視されます。
+.SS "コマンド置換"
+.sp
+.LP
+シェルは、2 つの逆引用符 (\fB``\fR) で囲まれた文字列からコマンドを読み取ります。これらのコマンドからの標準出力は、ワードの一部または全体として使用できます。標準出力上で最後につく復帰改行は削除されます。
+.sp
+.LP
+文字列は、読み取られる前にはいっさい解釈されません。ただし例外として、文字のエスケープに使用されるバックスラッシュ (\fB\e\fR) の削除だけは行われます。バックスラッシュは、逆引用符 (\fB`\fR) または別のバックスラッシュ (\fB\e\fR) をエスケープするためにも使用され、コマンド文字列の読み取り前に削除されます。逆引用符をエスケープすることにより、コマンド置換のネストが可能になります。コマンド置換が、一対の二重引用符に囲まれている場合 (\fB" .\|.\|.\|` .\|.\|.\|` .\|.\|.\| "\fR)、二重引用符 (\fB\e"\fR) をエスケープするために使用されたバックスラッシュが削除されます。その他の場合は、変更がないままです。
+.sp
+.LP
+復帰改行文字のエスケープにバックスラッシュを用いた場合は (\fB\enewline\fR)、バックスラッシュと復帰改行の両方が削除されます (後述の「クォート」の節の後半を参照)。\fB\fRさらに、ドル記号 (\fB\e$\fR) をエスケープしているバックスラッシュも削除されます。コマンド文字列に対するパラメータの置換は 読み取り前には行われないので、バックスラッシュでドル記号をエスケープしようとしても 無意味です。\fB\e\fR、\fB`\fR、\fB"\fR、復帰改行 (\fBnewline\fR)、および \fB$\fR 以外の文字の前に付くバックスラッシュは、コマンド文字列の読み取り時にもそのまま残ります。
+.SS "パラメータ置換"
+.sp
+.LP
+文字 \fB$\fR は、置換可能なパラメータ (\fIparameter\fR) を示します。パラメータには、定位置パラメータとキーワードパラメータの 2 種類があります。パラメータが数字の場合、これは定位置パラメータです。\fI\fR定位置パラメータには、\fBset\fR によって値を割り当てることができます。キーワードパラメータ (変数とも呼ばれる) には、次の記述により値を代入することもできます。
+.sp
+.LP
+\fIname\fR\fB=\fR\fIvalue\fR [ \fIname\fR\fB=\fR\fIvalue\fR ] .\|.\|.
+.sp
+.LP
+\fIvalue\fR に対しては、パターンマッチングは行われません。同じ \fIname\fR を持つ関数と変数が存在することはできません。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB${\fR\fIparameter\fR\fB}\fR\fR
+.ad
+.RS 25n
+.rt  
+パラメータの値 ( もしあれば ) は置換されます。中括弧が必要となるのは、パラメータの後に、その名前の一部として解釈すべきでない文字、数字、または下線を指定するときだけです。\fI\fR\fIparameter\fR が \fB*\fR または \fB@\fR の場合、\fB$1\fR で始まる定位値パラメータはすべて (スペースで区切られて) 置換されます。パラメータ \fB$0\fR は、シェルが呼び出されたときに、引数 0 から設定されます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB${\fR\fIparameter\fR\fB:\(mi\fR\fIword\fR\fB}\fR\fR
+.ad
+.RS 25n
+.rt  
+デフォルト値の使用。\fIparameter\fR が未設定または NULL の場合は、\fIword\fR の展開結果に置換されます。それ以外の場合は、\fIparameter\fR の値に置換されます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB${\fR\fIparameter\fR\fB:=\fR\fIword\fR\fB}\fR\fR
+.ad
+.RS 25n
+.rt  
+デフォルト値の割り当て。\fIparameter\fR が未設定または NULL の場合は、\fIword\fR の展開結果が \fIparameter\fR に割り当てられます。どのような場合でも、\fIparameter\fR の最終的な値に置換されます。この割り当て方法は変数だけに使用可能で、定位置パラメータや特殊パラメータには使用できません。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB${\fR\fIparameter\fR\fB:?\fR\fIword\fR\fB}\fR\fR
+.ad
+.RS 25n
+.rt  
+\fIparameter\fR が NULL 以外の値に設定されている場合、その値に置き換えられます。その他の場合、\fIword\fR を出力しシェルを終了します。\fIword\fR を省略すると、メッセージ "parameter null or not set" が出力されます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB${\fR\fIparameter\fR\fB:+\fR\fIword\fR\fB}\fR\fR
+.ad
+.RS 25n
+.rt  
+\fIparameter\fR が NULL 以外の値に設定されている場合、\fIword\fR に置き換えられます。その他の場合は置換を行いません。
+.RE
+
+.sp
+.LP
+前述にあるように、\fIword\fR は、代入用文字列として使用する場合にだけ評価されます。たとえば次の例では、\fBpwd\fR が実行されるのは、\fBd\fR が設定されていないかあるいは NULL に設定されている場合だけです。
+.sp
+.in +2
+.nf
+\fBecho  ${d:\(mi`pwd`}\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+前述の式からコロン (\fB:\fR) を省略すると、シェルは \fIparameter\fR が設定されているかどうかだけをチェックします。
+.sp
+.LP
+次のパラメータは、シェルが自動的に設定します。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB#\fR\fR
+.ad
+.RS 8n
+.rt  
+定位置パラメータ数 (10 進数 )
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB\(mi\fR\fR
+.ad
+.RS 8n
+.rt  
+呼び出し時にまたは \fBset\fR コマンドによってシェルに与えられたフラグ
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB?\fR\fR
+.ad
+.RS 8n
+.rt  
+最後に同期実行されたコマンドが返した 10 進数
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB$\fR\fR
+.ad
+.RS 8n
+.rt  
+このシェルのプロセス番号
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB!\fR\fR
+.ad
+.RS 8n
+.rt  
+最後に呼び出されたバックグラウンドコマンドのプロセス番号
+.RE
+
+.sp
+.LP
+次のパラメータはシェルによって使用されます。このセクションのパラメータは、環境変数とも呼ばれます。
+.sp
+.ne 2
+.mk
+.na
+\fB\fBHOME\fR\fR
+.ad
+.RS 13n
+.rt  
+\fBcd\fR コマンドのデフォルト引数 (ホームディレクトリ)。\fBlogin\fR(1) によって、パスワードファイルから ユーザーのログインディレクトリに設定されます (\fBpasswd\fR(4) を参照)。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBPATH\fR\fR
+.ad
+.RS 13n
+.rt  
+コマンド用検索パス (後述の「実行」を参照)。\fB\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBCDPATH\fR\fR
+.ad
+.RS 13n
+.rt  
+\fBcd\fR コマンドの検索パスを指定します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBMAIL\fR\fR
+.ad
+.RS 13n
+.rt  
+このパラメータにメールファイルの名前がセットされていて、かつ \fBMAILPATH\fR パラメータが設定されていない場合、シェルは指定されたファイルにメールが到着するとユーザーに通知します。\fI\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBMAILCHECK\fR\fR
+.ad
+.RS 13n
+.rt  
+このパラメータは、\fBMAILPATH\fR または \fBMAIL\fR パラメータで指定されたファイルへメールが到着したか否かを、シェルが何秒ごとにチェックするかを指定します。デフォルト値は \fB600\fR 秒 (10 分) です。0 が設定された場合、シェルは各プロンプトを出す前にチェックを行います。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBMAILPATH\fR\fR
+.ad
+.RS 13n
+.rt  
+コロン (:) で区切ったファイル名のリスト。このパラメータが設定されると、指定されたいずれかのファイルにメールが到着するたびに、シェルはユーザーに通知します。各ファイル名の後には、% および更新時刻の変更時に出力されるメッセージを指定できます。デフォルトのメッセージは \fByou have mail\fR です。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBPS1\fR\fR
+.ad
+.RS 13n
+.rt  
+1 次プロンプト文字列。デフォルトは " $ \|" です。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBPS2\fR\fR
+.ad
+.RS 13n
+.rt  
+2 次プロンプト文字列。デフォルトは " > \|" です。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBIFS\fR\fR
+.ad
+.RS 13n
+.rt  
+内部フィールドセパレータ。通常はスペース、タブ、および復帰改行です (「ブランクの解釈」を参照)。\fB\fR\fB\fR\fB\fR\fB\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBSHACCT\fR\fR
+.ad
+.RS 13n
+.rt  
+このパラメータにユーザーが書き込み可能なファイル名が設定された場合、シェルは、実行された各シェルプロシージャーごとのアカウンティングレコードをこのファイルに書き込みます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBSHELL\fR\fR
+.ad
+.RS 13n
+.rt  
+シェルは、呼び出されると、このパラメータが示す名前が環境中に存在するかを確かめます (「環境」の節を参照)。\fB\fR
+.RE
+
+.sp
+.LP
+\fBsh\fR の実行に影響を与える次の環境変数についての詳細は、\fBenviron\fR(5) を参照してください。\fBLC_CTYPE\fR および \fBLC_MESSAGES\fR。
+.sp
+.LP
+シェルは、\fBPATH\fR、\fBPS1\fR、\fBPS2\fR、\fBMAILCHECK\fR、および \fBIFS\fR にデフォルト値を割り当てます。\fBHOME\fR および \fBMAIL\fR のデフォルト値は \fBlogin\fR(1) で設定します。
+.SS "ブランクの解釈"
+.sp
+.LP
+パラメータとコマンドの置換後、置換の結果内でフィールドセパレータ文字 (\fBIFS\fR で発見されるもの) を検索し、その文字が現れた位置で分割します。分割された各々が引数となります。明示的な NULL 引数 (\fB""\fR または \fB\&''\fR) は保持されます。暗示的な NULL 引数 (値を持たないパラメータにより生ずるもの) は削除されます。\fI\fR
+.SS "入出力のリダイレクト"
+.sp
+.LP
+シェルが解釈する特殊表記法によって、入出力をリダイレクションできます。以下は、単純コマンド内の任意の位置およびコマンドの前後に指定することができ、起動されたコマンドには引数として引き渡されません。\fI\fR\fI\fR\fB\fR\fB注: \fR \fIword\fR または \fIdigit\fR を使用する前にコマンドとパラメータの置換が発生します。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB<\fR\fIword\fR\fR
+.ad
+.RS 13n
+.rt  
+\fIword\fR というファイルを標準入力 ( ファイル記述子 0) として使用します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB>\fR\fIword\fR\fR
+.ad
+.RS 13n
+.rt  
+\fIword\fR というファイルを標準出力 ( ファイル記述子 1) として使用します。ファイルが存在しない場合は作成します。ファイルが存在していれば、ファイルの長さを 0 にします。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB>>\fR\fIword\fR\fR
+.ad
+.RS 13n
+.rt  
+\fIword\fR というファイルを標準出力として使用します。ファイルが存在する場合、(\fBEOF\fR までシークしたあと) そのファイルに出力を追加します。そうでない場合は、ファイルを作成します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB<\|>\fR\fIword\fR\fR
+.ad
+.RS 13n
+.rt  
+\fIword\fR というファイルを標準入力として読み書き用に開きます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB<<\fR[\fB-\fR]\fIword\fR\fR
+.ad
+.RS 13n
+.rt  
+\fIword\fR に対するパラメータおよびコマンド置換が行われた後、その結果得られた \fIword\fR と文字どおり一致する最初の行が現れるまで、または \fBEOF\fR に達するまでシェルへの入力が読み取られます。ただし \fB<<\fR に \fB\(mi\fR が付加されて指定された場合は、以下のようになります。
+.RS +4
+.TP
+1.
+まず、シェルへの入力の読み取り前に (ただしパラメータとコマンドの置換後) 、先行するタブを \fIword\fR から取り除きます。\fI\fR
+.RE
+.RS +4
+.TP
+2.
+読み取ったシェルへの入力の各行を \fIword\fR と比較する前に、その行から先行するタブを取り除きます。そして、
+.RE
+.RS +4
+.TP
+3.
+その結果得られた \fIword\fR と文字どおり一致する最初の行が現れるまで、または \fBEOF\fR に達するまでシェルへの入力が読み取られます。
+.RE
+\fIword\fR 中のいずれかの文字がクォートされている場合 (後述の「クォート」を参照) 、シェルへの入力に対して追加処理は行われません。\fB\fR\fIword\fR 中のどの文字もクォートされていない場合は、以下のようになります。
+.RS +4
+.TP
+1.
+まずパラメータとコマンドの置換を実施します。
+.RE
+.RS +4
+.TP
+2.
+エスケープされた復帰改行 ( \fB\enewline\fR ) を削除します。
+.RE
+.RS +4
+.TP
+3.
+文字 \fB\e\fR、\fB$\fR、および \fB`\fR に対しては、\fB\e\fR を使ってクォートしなければなりません。
+.RE
+その結果得られるドキュメントが標準入力となります。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB<&\fR\fIdigit\fR\fR
+.ad
+.RS 13n
+.rt  
+ファイル記述子 \fIdigit\fR に対応するファイルを標準入力として使用します。同様に、標準出力の使用には \fB>&\fR\fIdigit\fR を指定します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB<&-\fR\fR
+.ad
+.RS 13n
+.rt  
+標準入力をクローズします。同様に、標準出力については \fB>&\(mi\fR を使用します。
+.RE
+
+.sp
+.LP
+前述のいずれかの前に数字が付く場合、その値が (デフォルトの \fB0\fR または \fB1\fR の代わりに) 該当ファイルに対応したファイル記述子となります。例: 
+.sp
+.in +2
+.nf
+\fB\&... 2>&1\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+この例では、現在ファイル記述子 1 に関連しているファイルに、ファイル記述子 2 を関連付けます。
+.sp
+.LP
+リダイレクションを指定する場合、記述する順序が重要になります。シェルは、リダイレクション記述を左から右へ評価します。例: 
+.sp
+.in +2
+.nf
+\fB\&... 1>\fIxxx\fR 2>&1\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+前述の例では、まず \fIxxx\fR というファイルにファイル記述子 1 を関連付けます。次に、ファイル記述子 1 に関連するファイル ( つまり \fIxxx\fR) に、ファイル記述子 2 を関連付けます。リダイレクションの向きが逆であれば、まずファイル記述子 2 を端末に関連付け (ファイルを記述子 1 が既に端末に関連付けられているとみなし)、次にファイル記述子 1 をファイル \fIxxx\fR に関連付けます。
+.sp
+.LP
+最初のページの「コマンド」の節で述べた用語を使って説明すると、次のようになります。コマンドが複数の単純コマンドで構成される場合、リダイレクションは、個々の単純コマンドに対して行う前に、コマンド全体に対して評価されます。\fB\fR\fI\fR\fI\fR\fI\fR\fI\fRすなわち、シェルはまずリスト全体に対してリダイレクションを評価し、次にリスト内の各パイプラインに対して評価し、次にパイプライン内の各コマンドに対して評価し、最後にコマンド内の各単純コマンドに対して評価します。\fI\fR\fI\fR\fI\fR\fI\fR\fI\fR\fI\fR\fI\fR
+.sp
+.LP
+コマンドの後に \fB&\fR を指定すると、コマンドにおけるデフォルトの標準入力は \fB/dev/null\fR という空ファイルになります。その他の場合、コマンドを実行するための環境には、起動側シェルのファイル記述子 ( 入出力指定で変更可能 ) が含まれます。
+.SS "ファイル名の生成"
+.sp
+.LP
+コマンド実行に先立ち、各コマンドワードは、\fB*\fR、\fB?\fR、および \fB[\fR を含んでいないかチェックされます。\fI\fRこれらの文字のいずれかがあると、そのワードはパターンとみなされます。\fI\fRこのワードは、パターンと一致する、辞書編集方式の順にソートされたファイル名に置換されます。パターンと一致するファイル名が見つからない場合、ワードは変更されません。ファイル名の先頭のピリオド (\fB\&.\fR) または スラッシュ (\fB/\fR) 直後のピリオドは、明示的に一致しなければなりません (後者の場合はスラッシュ自体をも含む)。\fB\fR
+.sp
+.ne 2
+.mk
+.na
+\fB\fB*\fR\fR
+.ad
+.RS 13n
+.rt  
+NULL 文字列を含め、任意の文字列と一致します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB?\fR\fR
+.ad
+.RS 13n
+.rt  
+任意の単一文字と一致します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB[\fR.\|.\|.\fB]\fR\fR
+.ad
+.RS 13n
+.rt  
+括弧内のいずれか 1 文字を表します。2 つの 文字を \fB-\fR で区切ると、その間にある任意の文字 (その 2 つの文字も含む) に一致します。先頭の \fB[\fR の次の文字が \fB!\fR である場合、[ ] で囲まれていない任意の文字と一致します。
+.RE
+
+.sp
+.LP
+クォートされているすべての文字 ( 下記「クォート」を参照 ) は、ファイル名において明示的に一致しなければなりませんので、ご注意ください。
+.SS "クォート"
+.sp
+.LP
+次の文字はシェルに対しては特別な意味を持ち、クォートしない ( 後述の説明を参照 ) 限り ワードの終わりを表します。
+.sp
+.LP
+\fB;  &  (  )  |  ^  <  >\fR  復帰改行  スペース  タブ
+.sp
+.LP
+これらの文字をクォートする、つまり文字自身を表すには、文字の前にバックスラッシュ (\fB\e\fR) を付けるか、または一対の引用符 (\fB\|'\|'\fR または \fB""\fR) で囲みます。\fI\fR処理中、シェルは、特定の文字をクォートして、それらが特別の意味を持たないようにすることができます。単一の文字をクォートするのに用いるバックスラッシュは、コマンド実行前にワードから取り除かれます。\fB\e\fR と復帰改行との組み合せは、コマンドとパラメータの置換前にワードから取り除かれます。
+.sp
+.LP
+一対の単一引用符 (\fB\|'\|'\fR) で囲まれたすべての文字 ( ただし単一引用符は除く ) は、シェルによってクォートされます。バックスラッシュは、一対の単一引用符で囲まれていれば特殊な意味を持ちません。単一引用符は、一対の二重引用符で囲めばクォートされますが (例 \fB"\|'"\fR)、一対の単一引用符で囲んでもクォートされません。
+.sp
+.LP
+一対の二重引用符 (\fB""\fR) の中では、パラメータとコマンドの置換が実施され、シェルは、その結果をクォートして、ブランクの解釈とファイル名の生成が行われないようにします。\fB$*\fR が一組の二重引用符で囲まれている場合、定位置パラメータは置換され、クォートされ、クォートされたスペースで分けられます (\fB"$1 \|$2\fR \|. \|.\|.\fB"\fR). しかし \fB$@\fR が一組の二重引用符で囲まれている場合は、定位置パラメータは置換され、クォートされ、クォートされていないスペースで分けられます (\fB"$1"\|"$2" \fR \| .\|.\|. )。\fB\e\fR は \fB\e\fR、\fB`\fR、\fB"\fR、\fB,\fR (コンマ)、$ といった文字をクォートします。\fB\e\fR と復帰改行との組み合せは、コマンドとパラメータの置換前にワードから取り除かれます。バックスラッシュが \fB\e\fR、\fB`\fR、\fB"\fR、\fB,\fR (コンマ)、$、および 復帰改行以外の文字の前に付く場合は、バックスラッシュ自体がシェルによってクォートされます。
+.SS "プロンプト"
+.sp
+.LP
+シェルは、対話的に使用すると、コマンドを読み取る前に \fBPS1\fR の値によるプロンプトを発行します。復帰改行を入力したあとで、コマンドを完了するためにさらに入力が必要な場合は、2 次プロンプト (\fBPS2\fR の値 ) が出力されます。
+.SS "環境"
+.sp
+.LP
+環境 (\fIenvironment\fR) は、通常の引数リストが実行されるプログラムに引き渡される場合と同様の方法で引き渡される、名前と値の対の集まりです (\fBenviron\fR(5) を参照) 。シェルが環境と対話する方法はいくつかあります。シェルは、呼び出されると、環境を走査して、見つけた名前ごとに変数を作成し、対応する値を設定します。ユーザーがこれらのパラメータの値を変更したり 新しいパラメータを作成したときには、\fBexport\fR コマンドを用いてシェルのパラメータを環境に関連付けなければ、これらのパラメータは環境に何の影響も与えません (\fBset\fR \fB-a\fR の説明を参照)。環境からパラメータを削除するには、\fBunset\fR コマンドを使用します。したがって、実行されるコマンドが参照する環境は、シェルが最初に引き継いだ「名前 = 値」の対のうち 変更されていないものから、\fBunset\fR によって削除された対を引き、変更または追加した対をくわえたものです。これらはいずれも \fBexport\fR コマンドで指定する必要があります。
+.sp
+.LP
+単純コマンドの環境は、いくつかのパラメータ代入指定を先頭に付加すれば拡張できます。\fI\fRしたがって、
+.sp
+.in +2
+.nf
+\fBTERM=450  \fIcommand\fR\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+および
+.sp
+.in +2
+.nf
+\fB(export TERM; TERM=450;   \fIcommand\fR\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+は、\fIcommand\fR が特殊コマンドでなければ、\fIcommand\fR の実行に関するかぎり同じことを意味します。\fIcommand\fR が特殊コマンドの場合、
+.sp
+.in +2
+.nf
+\fBTERM=450   \fIcommand\fR\fR
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+現在のシェル内の \fBTERM\fR 変数を修正します。
+.sp
+.LP
+\fB-k\fR フラグを設定すると、すべてのキーワード引数は環境に格納されます。これらの引数がコマンド名の後に指定された場合も同様です。\fI\fR以下の例では、まず \fBa=b c\fR を、次に \fBc\fR を表示します。
+.sp
+.in +2
+.nf
+\fBecho a=b  c
+
+a=b  c
+
+set  \(mik
+
+echo a=b  c
+
+c\fR
+.fi
+.in -2
+.sp
+
+.SS "シグナル"
+.sp
+.LP
+起動されたコマンドに対する \fBINTERRUPT\fR シグナルと \fBQUIT\fR シグナルは、コマンドの後に \fB&\fR が付く場合には無視されます。その他の場合、シグナルは、シェルが親から引き継いだ値を持ちます。ただし、シグナル 11 だけは例外です ( 後述の \fBtrap\fR コマンドの説明を参照 ) 。
+.SS "実行"
+.sp
+.LP
+コマンド実行のたびに、前述の コマンドの置換、パラメータの置換、ブランクの解釈、入出力のリダイレクション、およびファイル名の生成が行われます。コマンド名が定義済みの関数名と一致する場合、その関数がシェルプロセスで実行されます ( これと実行時にサブシェルを要求する シェルスクリプトファイルの実行の違いに注意 ) 。定義済み関数名とは一致しないが、後述の特殊コマンドのいずれかと一致するコマンド名の場合、そのコマンドがシェルプロセスで実行されます。\fB\fR
+.sp
+.LP
+定位置パラメータの \fB$1\fR、\fB$2\fR、. \|.\|.  は関数の引数に設定されます。コマンド名が特殊コマンドとも定義済み関数の名前とも一致しない場合、新しいプロセスが作成され、\fBexec\fR(2) を用いてそのコマンドの実行が試みられます。\fB\fR
+.sp
+.LP
+\fBPATH\fR というシェルパラメータは、コマンドを含んでいる ディレクトリの検索パスを定義します。2 つのディレクトリ名は、コロン (\fB:\fR) で区切ります。デフォルトのパスは \fB/usr/bin\fR です。現在のディレクトリは NULL パス名によって指定されます。これは等号の直後、パスリスト内の任意の場所にある 2 つの区切り文字のコロンの間、またはパスリストの最後に記述できます。コマンド名に \fB/\fR が含まれている場合は、検索パスは使用されません。そうでない場合は、パスにおける各ディレクトリに実行可能ファイルがあるか検索します。ファイルが実行権を有するが、それが \fBa.out\fR ファイルでない場合、シェルコマンドの入ったファイルとみなされます。そのファイルを読み取るときは、サブシェルが生成されます。括弧で囲まれたコマンドもサブシェル内で実行されます。
+.sp
+.LP
+シェルは、(あとで不必要な \fIexec\fR を行わなくてもいいように) 検索パス内のコマンドの位置を記憶します。コマンドが相対ディレクトリにあった場合、その位置を 現在のディレクトリの変更のたびに再決定しなければなりません。シェルは、\fBPATH\fR 変数が変更されるか \fBhash\fR \fB-r\fR コマンドが実行されるたびに、記憶していたすべての位置を忘れてしまいます ( 下記参照 ) 。
+.SS "特殊コマンド"
+.sp
+.LP
+以下に示す特殊コマンドに対しては、入出力のリダイレクションが可能です。ファイル記述子 1 は、デフォルトの出力位置です。ジョブ制御が可能なときには、さらにいくつかの特殊コマンドがシェル環境に追加されます (「ジョブ制御」の節を参照)。\fB\fR\fB\fR
+.sp
+.ne 2
+.mk
+.na
+\fB\fB:\fR\fR
+.ad
+.sp .6
+.RS 4n
+コマンドは何もせず、実行による影響は何もありません。終了ステータス 0 が返されます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB\&.\|\fR \fIfilename\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fIfilename\fR からコマンドを読み取り実行し、戻ります。\fBPATH\fR によって指定された検索パスを用いて、\fIfilename\fR を含むディレクトリを探します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBbg\fR [\fB%\fR\fIjobid .\|.\|.\fR]\fR
+.ad
+.sp .6
+.RS 4n
+ジョブ制御が可能なとき、\fBbg\fR コマンドはジョブの操作用に ユーザー環境に追加されます。停止状態のジョブをバックグラウンドで再び実行します。\fB%\fR\fIjobid\fR を省略すると、現在のジョブとみなされます。 (詳細については後述の「ジョブ制御」の節を参照)。\fB\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBbreak\fR [ \fIn\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+\fBfor\fR または \fBwhile\fR ループがあれば抜け出します。\fIn\fR を指定すると、\fIn\fR レベル分ブレークします。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBcd\fR [ \fIargument\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+現在のディレクトリを \fIargument\fR に変更します。シェルパラメータ \fBHOME\fR は、\fIargument\fR のデフォルト値です。シェルパラメータ \fBCDPATH\fR は、\fIargument\fR を含むディレクトリの検索パスを定義します。2 つのディレクトリ名は、コロン (\fB:\fR) で区切ります。デフォルトのパスは空の文字列です (現在のディレクトリの指定)。\fB\fR\fBなお \fR現在のディレクトリは 空のパス名で指定します。このパス名は、等号の直後か、パスリスト内の区切り文字のコロンの間に指定します。\fIargument\fR の先頭文字が \fB/\fR の場合、検索パスは使用しません。それ以外の場合は、パス中の各ディレクトリで \fIargument\fR を検索します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBchdir\fR [ \fIdir\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+\fBchdir\fR はシェルの作業用ディレクトリを \fIdir\fR が示すディレクトリに変更します。引数を指定しないと、そのユーザーのホームディレクトリに変更します。\fIdir\fR が現在のディレクトリからは見つからない相対パス名の場合、変数 \fBCDPATH\fR 環境内のディレクトリリストを検索します。\fIdir\fR が \fB/\fR で始まる値を持つシェル変数の名前である場合、その変数の値が示すディレクトリに変更します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBcontinue\fR [ \fIn\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+\fBfor\fR または \fBwhile\fR ループの次の繰り返しを実行します。\fIn\fR を指定すると、\fIn\fR 番目のループから実行します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBecho\fR [ \fIarguments\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+\fIarguments\fR の文字列が スペース文字に区切られて、シェルの標準出力に書かれます。使用法と説明については \fBecho\fR(1) を参照してください。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBeval\fR [ \fIargument\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+引数をシェルへの入力として読み取り、生成されるコマンドを実行します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBexec\fR [ \fIargument\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+このシェルの代わりに、引数で指定されたコマンドを (新規プロセスは生成せずに) 実行します。入出力引数が指定可能で、その他の引数が指定されない場合は、これによってシェルの入出力が変更されます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBexit\fR [ \fIn\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+呼び出し元のシェルまたはシェルスクリプトを \fIn\fR で指定した終了ステータスで終了させます。\fIn\fR を省略すると、最後に実行されたコマンドの終了ステータスがシェルの終了ステータスになります (\fBEOF\fR によっても、シェルは終了します)。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBexport\fR [ \fIname\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+指定された \fIname\fR 群に対し、後で実行されるコマンドの環境へ自動的にエクスポートされるようにマークを付けます。\fI\fR引数を省略すると、現在のシェル実行中にエクスポートのマークが付けられた 変数名を一覧表示します。親シェルからエクスポートされた変数名は、現在のシェル実行中に再びエクスポートされた場合にだけ 一覧表示されます。関数名はエクスポートされません。\fB\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBfg\fR [\fB%\fR\fIjobid .\|.\|.\fR]\fR
+.ad
+.sp .6
+.RS 4n
+ジョブ制御が可能なとき、\fBfg\fR はジョブの操作用に ユーザー環境に追加されます。このコマンドは、フォアグラウンド状態の停止ジョブを再び実行します。また、実行中のバックグラウンドジョブをフォアグラウンドへ移します。\fB%\fR\fIjobid\fR を省略すると、現在のジョブとみなされます。(詳細については後述の「ジョブ制御」の節を参照。)\fB\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBgetopts\fR\fR
+.ad
+.sp .6
+.RS 4n
+コマンドシンタクス標準のサポート用に、シェルスクリプト内で使用されるコマンドです (\fBIntro\fR(1) を参照)。このコマンドは、定位置パラメータを構文解析し、オプションの正当性をチェックします。使用法と説明については、\fBgetoptcvt\fR(1) を参照してください。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBhash\fR [ \fB-r\fR ] [ \fIname\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+シェルは、各 \fIname\fR ごとに、それが示すコマンドの検索パス内の位置を決定し、記憶します。\fI\fR\fB-r\fR オプションを指定すると、シェルは記憶したすべての位置を忘れます。引数をまったく指定しないと、記憶されたコマンドに関する情報が表示されます。この出力表示において、\fIhits\fR はシェルプロセスによってコマンドが呼び出された回数を表します。\fIcost\fR は、検索パスのコマンドを見つけるのに必要な作業です。コマンドが検索パスの「相対」ディレクトリにある場合、そのディレクトリの変更後にそのコマンドが格納された位置が再計算されます。これが行われるコマンドに対しては、\fIhits\fR 情報の隣にアスタリスク (\fB*\fR) が示されます。\fICost\fR の値は、再計算が行われるたびに増加されます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBjobs\fR [\fB\fR\fB-p\fR\fB|\fR\fB-l\fR] [\fB%\fR\fIjobid ...\fR]\fR
+.ad
+.br
+.na
+\fB\fBjobs\fR \fB-x\fR \fIcommand\fR [\fIarguments\fR] \fR
+.ad
+.sp .6
+.RS 4n
+停止中またはバックグラウンドで実行中の すべてのジョブを報告します。\fB%\fR\fIjobid\fR を省略すると、停止中またはバックグラウンドで稼動中のすべてのジョブが報告されます。(詳細については後述の「ジョブ制御」の節を参照。)\fB\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBkill\fR [ \fB-\fR\fIsig\fR ] \fB%\fR\fIjob\fR .\|.\|.\fR
+.ad
+.br
+.na
+\fB\fBkill\fR \fB-l\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fBTERM\fR (終了) シグナルまたは指定されたシグナルのいずれかを、指定されたジョブまたはプロセスに送信します。シグナルは、番号または名前 (\fBsignal.h\fR(3HEAD) に示されるもので、ただし「SIG」という接頭辞を取り除いたもの (\fBCHLD\fR と名付けられる \fBSIGCHD\fR 以外)) で指定します。送信するシグナルが \fBTERM\fR (終了) または \fBHUP\fR (ハングアップ) の場合、停止中のジョブまたはプロセスには \fBCONT\fR (継続) シグナルを送信します。\fIjob\fR という引数は、活動中のジョブではないプロセスのプロセス ID を指定することもできます。後述の「ジョブ制御」の節を参照してください。\fB\fR\fI\fR第 2 の形式の \fBkill\fR \fB-l\fR は、シグナル番号とシグナル名をリスト表示します。(\fBkill\fR(1) 参照)。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBlogin\fR [ \fIargument\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+`\fBexec\fR \fBlogin\fR \fIargument\fR.\|.\|.\|' と同機能です。使用法と説明については、\fBlogin\fR(1) を参照してください。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBnewgrp\fR [ \fIargument\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+\fBexec\fR \fBnewgrp\fR\fI argument\fR と同機能です。使用法と説明については、\fBnewgrp\fR(1) を参照してください。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBpwd\fR\fR
+.ad
+.sp .6
+.RS 4n
+現在の作業用ディレクトリを表示します。使用法と説明については、\fBpwd\fR(1) を参照してください。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBread\fR \fIname\fR .\|.\|.\fR
+.ad
+.sp .6
+.RS 4n
+標準入力から 1 行を読み取り、内部フィールドセパレータの \fBIFS\fR (通常はスペースまたはタブ) を用いてワード境界を区切り、最初のワードを最初の \fIname\fR に割り当て、2 番目のワードを 2 番目の \fIname\fR に割り当て、続くワードも順次割り当てます。残ったワードは最後の \fIname\fR に割り当てます。\fB\e \fR に続いて復帰改行を入力すれば、行を継続できます。復帰改行以外の文字の前にバックスラッシュを付加すれば、その文字をクォートできます。\fB\fRこのバックスラッシュは、ワードが \fIname\fR に割り当てられる前に削除され、バックスラッシュの後に位置する文字は解釈されません。\fBEOF\fR に到達した場合を除き、リターンコードは \fB0\fR となります。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBreadonly\fR [ \fIname\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+指定された各 \fIname\fR に「読み取り専用」のマークを付け、これらの名前が後続の割り当てでは変更できないようにします。\fB\fR\fI\fR引数を省略すると、読み取り専用と指定された名前がすべて一覧表示されます。\fB\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBreturn\fR [ \fIn\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+関数を、\fIn\fR が示すリターンステータスで終了させます。\fIn\fR を省略すると、リターンステータスは最後に実行された コマンドのリターンステータスになります。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBset\fR [ \fB-aefhkntuvx\fR [ \fIargument\fR .\|.\|. ] ]\fR
+.ad
+.sp .6
+.RS 4n
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-a\fR\fR
+.ad
+.RS 6n
+.rt  
+エクスポート用に修正または作成された変数にマークを付けます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-e\fR\fR
+.ad
+.RS 6n
+.rt  
+コマンドが 0 以外の終了ステータスで終了した場合、直ちに終了します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-f\fR\fR
+.ad
+.RS 6n
+.rt  
+ファイル名を生成しないようにします。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-h\fR\fR
+.ad
+.RS 6n
+.rt  
+関数の定義時に、関数コマンドを検索しその位置を記憶します ( 通常、関数コマンドは関数実行時に検索されます ) 。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-k\fR\fR
+.ad
+.RS 6n
+.rt  
+コマンド名の前にあるキーワード引数だけでなく、すべてのキーワード引数がコマンド用の環境に置かれます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-n\fR\fR
+.ad
+.RS 6n
+.rt  
+コマンドを読み取るが、実行しません。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-t\fR\fR
+.ad
+.RS 6n
+.rt  
+1 つのコマンドを読み取り、実行し、終了します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-u\fR\fR
+.ad
+.RS 6n
+.rt  
+未設定の変数を置換時にエラーとして扱います。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-v\fR\fR
+.ad
+.RS 6n
+.rt  
+シェルへの入力行の読み取り時に、その内容を表示出力します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-x\fR\fR
+.ad
+.RS 6n
+.rt  
+コマンドおよび引数の実行時に、その内容を表示出力します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-\fR\fR
+.ad
+.RS 6n
+.rt  
+どのフラグも変更しません。\fB$1\fR に \fB-\fR を設定する際に便利です。
+.RE
+
+\fB-\fR の代わりに \fB+\fR を使用すると、 これらのフラグは無効になります。これらのフラグはシェル起動時にも使用できます。現在セットされているフラグは、\fB$-\fR で見つけられます。残りの引数は定位置パラメータで、次の順に割り当てられます。\fB$1\fR、\fB$2\fR、. \|.\|. 引数が指定されない場合、すべての名前の値が出力されます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBshift\fR [ \fIn\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+\fB$\fR\fIn\fR\fB+1\fR .\|.\|. から始まる一連の定位置パラメータを、次の名前に変更します。\fB$1\fR .\|.\|. 。 \fIn\fR を省略すると、1 と見なされます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBstop\fR \fIpid .\|.\|.\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fIpid\fR (プロセス ID 番号) の実行を停止します (\fBps\fR(1) を参照)。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBsuspend\fR\fR
+.ad
+.sp .6
+.RS 4n
+現在のシェルがログインシェルでない場合、その実行を中断します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBtest\fR\fR
+.ad
+.sp .6
+.RS 4n
+条件式を評価します。使用法と説明については、\fBtest\fR(1) を参照してください。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBtimes\fR\fR
+.ad
+.sp .6
+.RS 4n
+シェルから実行されたプロセスの、 ユーザー時間およびシステム時間の累計値を表示します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBtrap\fR [ \fIargument\fR \fIn\fR [ \fIn2\fR .\|.\|. ]]\fR
+.ad
+.sp .6
+.RS 4n
+\fIargument\fR が示すコマンドを、シェルが数値または記号シグナル (\fIn\fR) を受信した時に読み取り実行します。(\fB注:\fR \fIargument\fR は、トラップ設定時に一度、トラップ取り出し時に一度検索されます。)トラップコマンドは、シグナル番号または対応するシンボリック名の順序で実行されます。現在のシェルへの入力時に無視されたシグナルにトラップを 設定しようとしても無効となります。シグナル 11 ( メモリフォールト ) にトラップを指定しようとすると、エラーになります。\fIargument\fR を省略すると、すべてのトラップ \fIn\fR は元の値に再設定されます。\fIargument\fR が NULL 文字列の場合、シェルおよびシェルが呼び出したコマンドは、このシグナルを無視します。\fIn\fR が 0 の場合、\fIargument\fR が示すコマンドはシェル終了時に実行されます。引数なしの \fBtrap\fR コマンドは、コマンドの一覧を各々が対応しているシグナル番号とともに表示します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBtype\fR [ \fIname\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+各 \fIname\fR ごとに、コマンド名として使用される場合に どのように解釈されるかを指示します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBulimit\fR [ [\fB-HS\fR] [\fB-a\fR | \fB-cdfnstv\fR] ]\fR
+.ad
+.br
+.na
+\fB\fBulimit\fR [ [\fB-HS\fR] [\fB-c\fR | \fB-d\fR | \fB-f\fR | \fB-n\fR | \fB-s\fR | \fB-t\fR | \fB- v\fR] ] \fBlimit\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fBulimit\fR は、リソースの強い制限値または弱い制限値を 表示または設定します。これらの制限値については \fBgetrlimit\fR(2) の説明を参照してください。
+.sp
+\fIlimit\fR 引数を省略すると、\fBulimit\fR は指定されている制限値を表示します。制限値は一度にいくつでも表示できます。\fB-a\fR オプションは制限値すべてを表示します。
+.sp
+\fIlimit\fR 引数を指定すると、\fBulimit\fR は指定されたフラグに対応する制限値をその引数の値に設定します。\fI\fR文字列 \fBunlimited\fR は、現在の制限値 (ある場合) の削除を要求します。ユーザーはだれでも、強い制限値以下の値に弱い制限値を設定できます。ユーザーはだれでも、強い制限値を下げることができます。適切な特権を持ったユーザーだけが、強い制限値を上げたり、削除したりできます。\fBgetrlimit\fR(2) を参照してください。
+.sp
+\fB-H\fR オプションは強い制限値を表し、\fB-S\fR オプションは弱い制限値を表します。どちらのオプションも指定しない場合、\fBulimit\fR は両方の制限値を設定し、弱い制限値を表示します。
+.sp
+次のオプションは、制限値を表示または設定するリソースを指定します。オプションを一切指定しないと、ファイルサイズ限界値を表示または設定します。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-c\fR\fR
+.ad
+.RS 6n
+.rt  
+最大 core ファイルサイズ (512 バイトブロック単位)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-d\fR\fR
+.ad
+.RS 6n
+.rt  
+データセグメントまたはヒープの最大サイズ (K バイト単位)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-f\fR\fR
+.ad
+.RS 6n
+.rt  
+最大ファイルサイズ (512 バイトブロック単位)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-n\fR\fR
+.ad
+.RS 6n
+.rt  
+最大ファイル記述子プラス 1
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-s\fR\fR
+.ad
+.RS 6n
+.rt  
+スタックセグメントの最大サイズ (K バイト単位)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-t\fR\fR
+.ad
+.RS 6n
+.rt  
+最大 CPU 時間 (秒単位)
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-v\fR\fR
+.ad
+.RS 6n
+.rt  
+仮想メモリーの最大サイズ (K バイト単位)
+.RE
+
+システムで利用可能な最大上限値を 調べるには \fBsysdef\fR(1M) コマンドを実行してください。表示される値は 16 進数ですが、\fBbc\fR(1) コマンドを使って 10 進数に変換できます。\fBswap\fR(1M) を参照してください。)
+.sp
+たとえば、0M バイトにコアファイルダンプのサイズを制限するには次のように入力します。\fB\fR
+.sp
+.in +2
+.nf
+\fBulimit -c 0\fR
+.fi
+.in -2
+.sp
+
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBumask\fR [ \fInnn\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+ユーザーファイル作成マスクを \fInnn\fR が示す値に設定します (\fBumask\fR(1) を参照)。\fInnn\fR を省略すると、マスクの現在の値を出力します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBunset\fR [ \fIname\fR .\|.\|. ]\fR
+.ad
+.sp .6
+.RS 4n
+\fIname\fR ごとに、対応する変数または関数値を削除します。変数 \fBPATH\fR、\fBPS1\fR、\fBPS2\fR、\fBMAILCHECK\fR、および \fBIFS\fR は設定解除できません。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBwait\fR [ \fIn\fR ]\fR
+.ad
+.sp .6
+.RS 4n
+当該ユーザーのバックグラウンドプロセスのうち ID が \fIn\fR のプロセスを待ち、その終了ステータスを報告します。\fIn\fR が省略された場合、当該ユーザーの現在活動中のすべてのバックグラウンドプロセスを待ち、リターンコードは 0 になります。
+.RE
+
+.SS "呼び出し"
+.sp
+.LP
+\fBexec\fR(2) を介してシェルが呼び出される場合で、引数 0 の先頭文字が \fB\(mi\fR のとき、コマンドは、まず \fB/etc/profile\fR から読み込まれ、次に \fB$HOME/.profile\fR から読み込まれます (これらのファイルがある場合)。その後、コマンドは後述のように読み込まれます。シェルが \fB/usr/bin/sh\fR として呼び出される場合にも、このようになります。以下に述べるフラグは、呼び出し時にのみ、シェルによって解釈されます。\fBなお \fR \fB-c\fR または \fB-s\fR フラグが指定されないかぎり、先頭引数はコマンドを含むファイルの名前であるとみなされ、残りの引数は定位置パラメータとして そのコマンドファイルに引き渡されます。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-c\fR\fI\| string\fR\fR
+.ad
+.RS 15n
+.rt  
+このフラグが指定されると、\fIstring\fR からコマンドを読み取ります。\fB-\fR
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-i\fR\fR
+.ad
+.RS 15n
+.rt  
+このフラグが指定された場合あるいはシェル入出力が端末に接続されている場合、このシェルは対話型となります。\fB-\fR\fB\fRこの場合、\fBkill 0\fR が対話型シェルを終了しないように TERM を無視し、\fBwait\fR が割り込み可能になるように INTERRUPT を捕え、無視します。いずれの場合も、シェルは QUIT を無視します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-p\fR\fR
+.ad
+.RS 15n
+.rt  
+\fB-p\fR フラグが指定されると、シェルは実効ユーザーおよびグループ ID に、実ユーザーおよびグループ ID を設定しません。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-r\fR\fR
+.ad
+.RS 15n
+.rt  
+\fB-r\fR フラグを指定すると、シェルは制限付きシェルになります (\fBrsh\fR(1M) を参照)。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-s\fR\fR
+.ad
+.RS 15n
+.rt  
+このフラグが指定された場合または引数が残っていない場合、標準入力からコマンドを読み取ります。\fB-\fR引数が残っていれば、それらは定位置パラメータを指定します。前述の特殊コマンドの出力を除くシェル出力は、ファイル記述子 2 に書き込まれます。\fB\fR
+.RE
+
+.sp
+.LP
+他のフラグと引数については、前述の \fBset\fR コマンドの箇所で説明されています。
+.SS "ジョブ制御 (jsh)"
+.sp
+.LP
+シェルを \fBjsh\fR として呼び出すと、\fBsh\fR の説明で述べたすべての機能に加えて、ジョブ制御が可能になります。通常、ジョブ制御は対話型シェルに対してだけ可能です。非対話型シェルは、ジョブ制御の機能が追加されても、その恩恵を受けないのが通常です。
+.sp
+.LP
+ジョブ制御が可能な場合、ユーザーが端末から入力したコマンドまたはパイプラインは、すべてジョブ ( \fIjob\fR) と呼ばれます。どのジョブも、必ず次のいずれかの状態にあります。 フォアグラウンド、バックグラウンド、または停止です。これらの用語の定義を次に示します。
+.RS +4
+.TP
+1.
+フォアグラウンド状態にある ジョブは、制御している端末への読み取り および書き込み権を持っています。
+.RE
+.RS +4
+.TP
+2.
+バックグラウンド状態にあるジョブは、制御している端末への読み取り権を拒否されていますが、条件付き書き込み権は持っています (\fBstty\fR(1) を参照)。
+.RE
+.RS +4
+.TP
+3.
+停止ジョブは保留状態に置かれた ジョブであり、通常は \fBSIGTSTP\fR シグナルにより、この状態になります (\fBsignal.h\fR(3HEAD) を参照)。
+.RE
+.sp
+.LP
+シェルが起動するすべてのジョブには、ジョブ番号 (\fIjob number\fR) と呼ばれる正の整数が割り当てられます。シェルはこの番号を把握し、特定のジョブを示す識別子として使用します。また、シェルは現在 (\fIcurrent\fR) および直前 (\fIprevious\fR) のジョブも把握しています。現在のジョブとは、最後に起動または再起動されたジョブです。\fI\fR前回のジョブとは、その直前のジョブです。\fI\fR
+.sp
+.LP
+ジョブ識別子の正しい構文は次のような形式です。
+.sp
+.LP
+\fB%\fR\fIjobid\fR
+.sp
+.LP
+このうち \fIjobid\fR は、次のいずれかの形式で指定できます。
+.sp
+.ne 2
+.mk
+.na
+\fB\fB%\fR または \fB+\fR\fR
+.ad
+.RS 17n
+.rt  
+現在のジョブ
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB\(mi\fR\fR
+.ad
+.RS 17n
+.rt  
+前回のジョブ
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB?\fR\fI<string>\fR\fR
+.ad
+.RS 17n
+.rt  
+コマンド行が \fIstring\fR を含んでいるジョブ
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fIn\fR\fR
+.ad
+.RS 17n
+.rt  
+ジョブ番号が \fIn\fR のジョブ
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fIpref\fR\fR
+.ad
+.RS 17n
+.rt  
+コマンド名の先頭が \fIpref\fR のコマンド。たとえば \fBls\fR \fB-l\fR \fIname\fR がバックグラウンドで実行中だった場合、\fB%ls\fR と指定すればこのコマンドを示すことができます。\fIpref\fR は、クォートしない限り、ブランクを含めることができません。
+.RE
+
+.sp
+.LP
+ジョブ制御が可能なとき、ジョブの操作用に 次のコマンドがユーザー環境に追加されます。
+.sp
+.ne 2
+.mk
+.na
+\fB\fBbg\fR [\fB%\fR\fIjobid .\|.\|.\fR]\fR
+.ad
+.sp .6
+.RS 4n
+停止状態のジョブをバックグラウンドで再び実行します。\fB%\fR\fIjobid\fR を省略すると、現在のジョブとみなされます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBfg\fR [\fB%\fR\fIjobid .\|.\|.\fR]\fR
+.ad
+.sp .6
+.RS 4n
+停止状態のジョブをフォアグラウンドで再び実行します。また、実行中のバックグラウンドジョブをフォアグラウンドへ移します。\fB%\fR\fIjobid\fR を省略すると、現在のジョブとみなされます。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBjobs\fR [\fB-p\fR|\fB-l\fR] [\fB%\fR\fIjobid .\|.\|.\fR]\fR
+.ad
+.br
+.na
+\fB\fBjobs\fR \fB-x\fR \fBcommand\fR [\fIarguments\fR]\fR
+.ad
+.sp .6
+.RS 4n
+停止中またはバックグラウンドで実行中の すべてのジョブを報告します。\fB%\fR\fIjobid\fR を省略すると、停止中またはバックグラウンドで稼動中のすべてのジョブが報告されます。次のオプションは、\fBjobs\fR の出力を変更または拡張するために使用します。 
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-l\fR\fR
+.ad
+.RS 6n
+.rt  
+ジョブのプロセスグループ ID および作業ディレクトリを報告します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-p\fR\fR
+.ad
+.RS 6n
+.rt  
+ジョブのプロセスグループ ID のみを報告します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fB-x\fR\fR
+.ad
+.RS 6n
+.rt  
+コマンドまたは引数中に見つかった \fIjobid\fR を、対応するプロセスグループ ID に置き換え、コマンドに引数を渡して実行します。\fI\fR\fI\fR\fI\fR\fI\fR
+.RE
+
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBkill\fR [ \fB-signal\fR ] \fB%\fR\fIjobid\fR\fR
+.ad
+.sp .6
+.RS 4n
+\fBkill\fR コマンドの組み込みバージョン。\fBjobid\fR で示すプロセスに対して \fIkill\fR コマンドの機能を提供します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBstop\fR \fB%\fR\fIjobid .\|.\|.\fR\fR
+.ad
+.sp .6
+.RS 4n
+バックグラウンドジョブの実行を停止します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBsuspend\fR\fR
+.ad
+.sp .6
+.RS 4n
+現在のシェルがログインシェルでない場合、その実行を中断します。
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+\fB\fBwait\fR [\fB%\fR\fIjobid .\|.\|.\fR]\fR
+.ad
+.sp .6
+.RS 4n
+\fBwait\fR コマンドの組み込みバージョンで、ジョブ識別子の指定を受け入れます。\fB%\fR\fIjobid\fR が省略された場合、\fBwait\fR は、前述の「特殊コマンド」で説明したように動作します。\fB\fR
+.RE
+
+.SS "大規模ファイルの動作"
+.sp
+.LP
+ファイルが 2G バイト (2^31 バイト) 以上ある場合の \fBsh\fR と \fBjsh\fR の動作については、\fBlargefile\fR(5) を参照してください。
+.SH 終了ステータス
+.sp
+.LP
+構文エラーなどのエラーを検出すると、シェルは 0 以外の終了ステータスを返します。シェルを非対話型で使用している場合、シェルファイルの実行は中止されます。そうでない場合は、シェルは最後に実行されたコマンドの 終了ステータスを返します ( 前述の \fBexit\fR コマンドの説明を参照 ) 。
+.SS "jsh のみ"
+.sp
+.LP
+シェルが \fBjsh\fR として呼び出された場合、停止ジョブがあるのにシェルを終了させようとすると、シェルは次のような警告を出します。
+.sp
+.LP
+\fBThere are stopped jobs.\fR
+.sp
+.LP
+これが唯一のメッセージです。もう一度終了が試みられ、停止ジョブがまだ存在している場合、これらのジョブにカーネルから \fBSIGHUP\fR シグナルが送られ、シェルは終了します。
+.SH ファイル
+.sp
+.LP
+\fB$HOME/.profile\fR
+.sp
+.LP
+\fB/dev/null\fR
+.sp
+.LP
+\fB/etc/profile\fR
+.sp
+.LP
+\fB/tmp/sh*\fR
+.SH 属性
+.sp
+.LP
+属性についての詳細は、\fBattributes\fR(5) を参照してください。
+.SS "/usr/bin/sh, /usr/bin/jsh"
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性タイプ属性値
+_
+使用条件system/core-os
+_
+CSI有効
+.TE
+
+.SS "/usr/xpg4/bin/sh"
+.sp
+
+.sp
+.TS
+tab() box;
+cw(2.75i) |cw(2.75i) 
+lw(2.75i) |lw(2.75i) 
+.
+属性タイプ属性値
+_
+使用条件system/core-os
+_
+CSI有効
+.TE
+
+.SH 関連項目
+.sp
+.LP
+\fBIntro\fR(1), \fBbc\fR(1), \fBecho\fR(1), \fBgetoptcvt\fR(1), \fBkill\fR(1), \fBksh88\fR(1), \fBlogin\fR(1), \fBnewgrp\fR(1), \fBpfsh\fR(1), \fBpfexec\fR(1), \fBps\fR(1), \fBpwd\fR(1), \fBset\fR(1), \fBshell_builtins\fR(1), \fBstty\fR(1), \fBtest\fR(1), \fBumask\fR(1), \fBwait\fR(1), \fBrsh\fR(1M), \fBsu\fR(1M), \fBswap\fR(1M), \fBsysdef\fR(1M), \fBdup\fR(2), \fBexec\fR(2), \fBfork\fR(2), \fBgetrlimit\fR(2), \fBpipe\fR(2), \fBulimit\fR(2), \fBsetlocale\fR(3C), \fBsignal.h\fR(3HEAD), \fBpasswd\fR(4), \fBprofile\fR(4), \fBattributes\fR(5), \fBenviron\fR(5), \fBlargefile\fR(5), \fBXPG4\fR(5)
+.SH 警告
+.sp
+.LP
+シェルスクリプトを \fBsetuid\fR して使用することは避けてください。\fB\fR
+.SH 注意事項
+.sp
+.LP
+入出力のリダイレクションでファイル名に使用されたワードは、ファイル名生成では解釈されません (前述の「ファイル名の生成」の節を参照)。\fB\fRたとえば \fBcat file1 >a*\fR という指定は、\fBa*\fR という名前のファイルを生成します。
+.sp
+.LP
+パイプラインにあるコマンド群は それぞれ別個のプロセスとして稼動するので、パイプラインに設定された変数は親シェルには何の影響も与えません。
+.sp
+.LP
+\fBwhile\fR ループまたは \fBuntil\fR ループの入力または出力をリダイレクトする場合、ループ内のコマンドはサブシェルで実行されます。サブシェル内で設定または変更された変数は、親プロセスでは効力を失います。
+.sp
+.in +2
+.nf
+   lastline=
+   while read line
+   do
+
+           lastline=$line
+   done < /etc/passwd
+   echo "lastline=$lastline"       # lastline is empty!
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+このような場合、入力または出力をリダイレクトするには、次の例のように \fBexec\fR を使用します。
+.sp
+.in +2
+.nf
+   # Save standard input (file descriptor 0) as file
+   # descriptor 3, and redirect standard input from the file
+   /etc/passwd:
+
+   exec 3<&0               # save standard input as fd 3
+   exec </etc/passwd       # redirect input from file
+
+   lastline=
+   while read line
+   do
+           lastline=$line
+   done
+
+   exec 0<&3               # restore standard input
+   exec 3<&-               # close file descriptor 3
+   echo "$lastline"        # lastline
+.fi
+.in -2
+.sp
+
+.sp
+.LP
+\fBcannot fork, too many processes\fR というエラーメッセージを受け取った場合には、\fBwait\fR(1) コマンドを用いてユーザーのバックグラウンドプロセスをクリーンアップしてください。これを行なっても問題が解決しない場合には、システムのプロセステーブルが一杯になっていること、または実行中のフォアグラウンドプロセスの数が多すぎることが考えられます。ユーザーログインに結合するプロセス ID の数、およびシステムが把握できる数には 限度があります。
+.sp
+.LP
+パイプラインの最後のプロセスだけが、待つ対象になり得ます。
+.sp
+.LP
+あるコマンドを実行し、そのあとで同一名のコマンドが、検索パスにおいて元のコマンドがあるディレクトリの前に位置するディレクトリにインストールされた場合、シェルは元のコマンドの方を実行し続けます。\fB\fR新しい方のコマンドを実行させたければ、\fBhash\fR コマンドを使用してください。
+.sp
+.LP
+Bourne シェルにはプロセスの実効ユーザー \fBID\fR に対して制限があります。このユーザー ID が 100 よりも小さい (さらにプロセスの実ユーザー ID と同等ではない) 場合には、ユーザー ID はプロセスの実ユーザー ID にリセットされます。\fB\fR\fB\fR
+.sp
+.LP
+同じプロセスグループで フォアグラウンドジョブと バックグラウンドジョブの両方を シェルが実行しているため、ジョブは同じシグナルを受け取り、予期しない結果を招くことがあります。したがって、特に対話型のシェルを動作している場合は、他のジョブ制御のシェルを使用することを おすすめします。
+.sp
+.LP
+存在しないコマンドのインタプリタを実行しようとするシェルスクリプトを、シェルが処理した場合、シェルはシェルスクリプトが存在しないという間違った診断メッセージを 返します。
