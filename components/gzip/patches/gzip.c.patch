@@ -1,0 +1,69 @@
+--- gzip-1.4/gzip.c.orig	2012-04-16 11:27:08.478456051 -0700
++++ gzip-1.4/gzip.c	2012-04-23 13:06:53.395234301 -0700
+@@ -1699,36 +1699,25 @@
+     int fd;
+     char *dir;
+ {
++    struct dirent **namelist;
+     struct dirent *dp;
+-    DIR      *dirp;
+     char     nbuf[MAX_PATH_LEN];
+-    int      len;
++    int      len, n;
+ 
+-    dirp = fdopendir (fd);
+-
+-    if (dirp == NULL) {
++    /* Adjusted to use scandir to prevent compressing files multiple times
++     * on file systems that use a hash lookup for directory entries (such
++     * as btrfs and ZFS.
++     */
++    if ((n = scandir(dir, &namelist, 0, NULL)) < 0) {
+ 	progerror(dir);
+ 	close (fd);
+ 	return ;
+     }
+-    /*
+-     ** WARNING: the following algorithm could occasionally cause
+-     ** compress to produce error warnings of the form "<filename>.gz
+-     ** already has .gz suffix - ignored". This occurs when the
+-     ** .gz output file is inserted into the directory below
+-     ** readdir's current pointer.
+-     ** These warnings are harmless but annoying, so they are suppressed
+-     ** with option -r (except when -v is on). An alternative
+-     ** to allowing this would be to store the entire directory
+-     ** list in memory, then compress the entries in the stored
+-     ** list. Given the depth-first recursive algorithm used here,
+-     ** this could use up a tremendous amount of memory. I don't
+-     ** think it's worth it. -- Dave Mack
+-     ** (An other alternative might be two passes to avoid depth-first.)
+-     */
+-
+-    while ((errno = 0, dp = readdir(dirp)) != NULL) {
+ 
++    while (n--) {
++	if (errno != 0)
++	    break;
++	dp = namelist[n];
+ 	if (strequ(dp->d_name,".") || strequ(dp->d_name,"..")) {
+ 	    continue;
+ 	}
+@@ -1747,6 +1736,7 @@
+ 	    }
+ 	    strcpy(nbuf+len, dp->d_name);
+ 	    treat_file(nbuf);
++	    free(dp);
+ 	} else {
+ 	    fprintf(stderr,"%s: %s/%s: pathname too long\n",
+ 		    program_name, dir, dp->d_name);
+@@ -1755,8 +1745,8 @@
+     }
+     if (errno != 0)
+ 	progerror(dir);
+-    if (CLOSEDIR(dirp) != 0)
+-	progerror(dir);
++
++    free(namelist);
+ }
+ #endif /* ! NO_DIR */
+ 
