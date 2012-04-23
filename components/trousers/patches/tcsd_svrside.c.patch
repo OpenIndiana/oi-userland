@@ -1,5 +1,5 @@
 --- src/tcsd/svrside.c	2010-06-09 13:19:00.000000000 -0700
-+++ src/tcsd/svrside.c	2012-04-11 14:37:28.993408000 -0700
++++ src/tcsd/svrside.c	2012-04-19 11:27:31.232524632 -0700
 @@ -27,6 +27,15 @@
  #include <arpa/inet.h>
  #include <errno.h>
@@ -210,7 +210,7 @@
  	char *hostname = NULL;
  	struct passwd *pwd;
  	struct hostent *client_hostent = NULL;
-@@ -245,26 +418,49 @@
+@@ -245,26 +418,50 @@
  	if ((result = tcsd_startup()))
  		return (int)result;
  
@@ -231,6 +231,7 @@
 +		serv_addr.un.sun_family = AF_UNIX;
 +		strncpy(serv_addr.un.sun_path, TCSD_DEFAULT_SOCKET,
 +			sizeof (serv_addr.un.sun_path));
++		(void) unlink(TCSD_DEFAULT_SOCKET);
 +
 +	} else { /* TCP socket */
 +		sd = socket(AF_INET, SOCK_STREAM, 0);
@@ -279,7 +280,7 @@
  		LogError("Failed bind: %s", strerror(errno));
  		return -1;
  	}
-@@ -285,7 +481,6 @@
+@@ -285,7 +482,6 @@
  		LogError("Failed listen: %s", strerror(errno));
  		return -1;
  	}
@@ -287,7 +288,7 @@
  	
  	if (getenv("TCSD_FOREGROUND") == NULL) {
  		if (daemon(0, 0) == -1) {
-@@ -295,6 +490,12 @@
+@@ -295,6 +491,12 @@
  		}
  	}
  
@@ -300,7 +301,7 @@
  	LogInfo("%s: TCSD up and running.", PACKAGE_STRING);
  	do {
  		newsd = accept(sd, (struct sockaddr *) &client_addr, &client_len);
-@@ -314,20 +515,22 @@
+@@ -314,20 +516,22 @@
  		}
  		LogDebug("accepted socket %i", newsd);
  

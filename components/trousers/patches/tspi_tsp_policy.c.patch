@@ -1,0 +1,40 @@
+--- src/tspi/tsp_policy.c	2010-05-01 19:39:11.000000000 -0700
++++ src/tspi/tsp_policy.c	2012-04-20 18:10:16.757128000 -0700
+@@ -86,15 +86,13 @@
+ int
+ pin_mem(void *addr, size_t len)
+ {
+-	/* only root can lock pages into RAM */
+-	if (getuid() != (uid_t)0) {
+-		LogWarn("Not pinning secrets in memory due to insufficient perms.");
+-		return 0;
+-	}
+-
+ 	len += (uintptr_t)addr & PGOFFSET;
+ 	addr = (void *)((uintptr_t)addr & PGMASK);
+ 	if (mlock(addr, len) == -1) {
++		if (errno == EPERM) {
++			LogWarn("Not pinning secrets in memory due to insufficient perms.");
++			return 0;
++		}
+ 		LogError("mlock: %s", strerror(errno));
+ 		return 1;
+ 	}
+@@ -105,14 +103,12 @@
+ int
+ unpin_mem(void *addr, size_t len)
+ {
+-	/* only root can lock pages into RAM */
+-	if (getuid() != (uid_t)0) {
+-		return 0;
+-	}
+-
+ 	len += (uintptr_t)addr & PGOFFSET;
+ 	addr = (void *)((uintptr_t)addr & PGMASK);
+ 	if (munlock(addr, len) == -1) {
++		if (errno == EPERM) {
++			return 0;
++		}
+ 		LogError("mlock: %s", strerror(errno));
+ 		return 1;
+ 	}
