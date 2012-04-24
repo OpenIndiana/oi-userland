@@ -1,0 +1,20 @@
+https://issues.apache.org/bugzilla/show_bug.cgi?id=52774
+
+--- modules/mappers/mod_rewrite.c	Tue Jan 24 11:39:31 2012
++++ modules/mappers/mod_rewrite.c	Thu Apr  5 07:37:37 2012
+@@ -4266,9 +4266,13 @@
+         return DECLINED;
+     }
+ 
+-    if ((r->unparsed_uri[0] == '*' && r->unparsed_uri[1] == '\0')
+-        || !r->uri || r->uri[0] != '/') {
++    if ((r->unparsed_uri[0] == '*' && r->unparsed_uri[1] == '\0') || !r->uri) {
+         return DECLINED;
++    } else if (r->uri[0] != '/') {
++        if (strncmp(r->uri, "http://" , 7) != 0 && 
++            strncmp(r->uri, "https://", 8 )!= 0) {
++             return DECLINED;
++        }
+     }
+ 
+     /*
