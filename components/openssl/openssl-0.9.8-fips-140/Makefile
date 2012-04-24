@@ -20,6 +20,8 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+PARFAIT_BUILD=no
+
 include ../../../make-rules/shared-macros.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
