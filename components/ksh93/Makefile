@@ -20,6 +20,8 @@
 #
 # Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
 #
+PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_PROJECT_URL= http://www2.research.att.com/sw/download/

@@ -20,6 +20,11 @@
 #
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+# we hit parfait bug 12333159 in a case statement, so disable parfait
+# until we can move to clang
+PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cvs
