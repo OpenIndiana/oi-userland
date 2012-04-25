@@ -19,18 +19,18 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=	1.8.1
+SRC_VERSION=	1.8.3
 SRC_PATCH_VERSION=	2
 COMPONENT_VERSION=	$(SRC_VERSION).$(SRC_PATCH_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)p$(SRC_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:b743b3d7bdb06de68ea24eedfe13530e8fbcae09
+COMPONENT_ARCHIVE_HASH=	sha1:37d70b133f809116ce631229fa0e727d9f5125ad
 COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
 
@@ -43,10 +43,9 @@ CONFIGURE_ENV +=	"CFLAGS=$(CFLAGS)"
 CONFIGURE_ENV +=	"CXX=$(CXX)"
 CONFIGURE_ENV +=	"MAKE=$(GMAKE)"
 
-CONFIGURE_OPTIONS +=	--with-CC=$(CC)
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
-CONFIGURE_OPTIONS +=	--with-timedir=/var/run/sudo
+CONFIGURE_OPTIONS +=	--with-timedir=/system/volatile/sudo
 CONFIGURE_OPTIONS +=	--with-pam --with-pam-login
 CONFIGURE_OPTIONS +=	--with-tty-tickets
 CONFIGURE_OPTIONS +=	--without-insults
