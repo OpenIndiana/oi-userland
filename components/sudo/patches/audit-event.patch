@@ -1,15 +1,18 @@
---- sudo-1.8.1p2/plugins/sudoers/bsm_audit.c	Wed Mar 16 10:40:56 2011
-+++ sudo-1.8.1p2-fixes/plugins/sudoers/bsm_audit.c	Mon Aug  1 03:40:43 2011
-@@ -31,6 +31,7 @@
+--- sudo-1.8.3p2/plugins/sudoers/bsm_audit.c	Fri Oct 21 14:01:25 2011
++++ /tmp/bsm_audit.c	Mon Jan 30 17:06:00 2012
+@@ -30,8 +30,10 @@
+ #include <errno.h>
  #include <unistd.h>
  
++#include "gettext.h"
  #include "bsm_audit.h"
-+#define	AUE_sudo 6650
  
++
  /*
   * Solaris auditon() returns EINVAL if BSM audit not configured.
-@@ -100,7 +101,7 @@
- 		log_error(0, "au_open: failed");
+  * OpenBSM returns ENOSYS for unimplemented options.
+@@ -100,7 +102,7 @@
+ 		log_error(0, _("au_open: failed"));
  	if (getaudit_addr(&ainfo_addr, sizeof(ainfo_addr)) == 0) {
  		tok = au_to_subject_ex(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo_addr.ai_termid);
@@ -17,44 +20,53 @@
  	} else if (errno == ENOSYS) {
  		/*
  		 * NB: We should probably watch out for ERANGE here.
-@@ -108,7 +109,7 @@
+@@ -108,7 +110,7 @@
  		if (getaudit(&ainfo) < 0)
- 			log_error(0, "getaudit: failed");
+ 			log_error(0, _("getaudit: failed"));
  		tok = au_to_subject(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo.ai_termid);
 +		    getuid(), pid, &ainfo.ai_asid, &ainfo.ai_termid);
  	} else
- 		log_error(0, "getaudit: failed");
+ 		log_error(0, _("getaudit: failed"));
  	if (tok == NULL)
-@@ -122,7 +123,7 @@
+@@ -122,7 +124,7 @@
  	if (tok == NULL)
- 		log_error(0, "au_to_return32: failed");
+ 		log_error(0, _("au_to_return32: failed"));
  	au_write(aufd, tok);
 -	if (au_close(aufd, 1, AUE_sudo) == -1)
-+	if (au_close(aufd, 1, AUE_sudo, 0) == -1)
- 		log_error(0, "unable to commit audit record");
++	if (au_close(aufd, 1, AUE_sudo, PAD_FAILURE) == -1)
+ 		log_error(0, _("unable to commit audit record"));
  }
  
-@@ -157,12 +158,12 @@
- 		log_error(0, "au_open: failed");
+@@ -142,7 +144,7 @@
+ 	/*
+ 	 * If we are not auditing, don't cut an audit record; just return.
+ 	 */
+-	if (auditon(A_GETCOND, &au_cond, sizeof(long)) < 0) {
++	if (auditon(A_GETCOND, (caddr_t)&au_cond, sizeof(long)) < 0) {
+ 		if (errno == AUDIT_NOT_CONFIGURED)
+ 			return;
+ 		log_error(0, _("Could not determine audit condition"));
+@@ -157,12 +159,12 @@
+ 		log_error(0, _("au_open: failed"));
  	if (getaudit_addr(&ainfo_addr, sizeof(ainfo_addr)) == 0) { 
  		tok = au_to_subject_ex(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo_addr.ai_termid);
 +		    getuid(), pid, &ainfo_addr.ai_asid, &ainfo_addr.ai_termid);
  	} else if (errno == ENOSYS) {
  		if (getaudit(&ainfo) < 0) 
- 			log_error(0, "getaudit: failed");
+ 			log_error(0, _("getaudit: failed"));
  		tok = au_to_subject(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo.ai_termid);
 +		    getuid(), pid, &ainfo.ai_asid, &ainfo.ai_termid);
  	} else
- 		log_error(0, "getaudit: failed");
+ 		log_error(0, _("getaudit: failed"));
  	if (tok == NULL)
-@@ -181,6 +182,6 @@
+@@ -181,6 +183,6 @@
  	if (tok == NULL)
- 		log_error(0, "au_to_return32: failed");
+ 		log_error(0, _("au_to_return32: failed"));
  	au_write(aufd, tok);
 -	if (au_close(aufd, 1, AUE_sudo) == -1)
 +	if (au_close(aufd, 1, AUE_sudo, PAD_FAILURE) == -1)
- 		log_error(0, "unable to commit audit record");
+ 		log_error(0, _("unable to commit audit record"));
  }
