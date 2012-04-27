@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -28,7 +28,8 @@ COMPONENT_NAME=		ply
 COMPONENT_VERSION=	3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:38efe9e03bc39d40ee73fa566eb9c1975f1a8003
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:436461f455d83292bb9c2cd89ce02414de1421a2023628b94666bc5f71b0128b
 COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
 

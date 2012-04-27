@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		XML-Parser
 COMPONENT_VERSION=	2.36
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:74acac4f939ebf788d8ef5163cbc9802b1b04bfa
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:9fd529867402456bd826fe0e5588d35b3a2e27e586a2fd838d1352b71c2ed73f
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/authors/id/M/MS/MSERGEANT/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~msergeant/
 

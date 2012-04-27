@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	2.0.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libassuan/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:b7e9dbd41769cc20b1fb7db9f2ecdf276ffc352c
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:1117be532ac41b13790b4756df7fa747d3d04264f7b4544aa9d7ff468a24b457
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libassuan/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,7 +32,8 @@ HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=	http://slrn.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:f14d88eda39b78bd2f098f211d4a1c363c0fe924
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:3a896f42b78c32252878fd291b21d6482d466921b68ab97f7d8cbadf4a76b533
 COMPONENT_ARCHIVE_URL=	ftp://space.mit.edu/pub/davis/slrn/$(COMPONENT_ARCHIVE)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).1
 

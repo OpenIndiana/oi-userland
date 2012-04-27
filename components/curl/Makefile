@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=      7.21.2
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:af8182165d7a0d16b97e2c2936ed92f3ba5c868c
+COMPONENT_ARCHIVE_HASH= \
+    sha256:d8e0ce964b75b99efa2e6c58e6523027fe2fa56305cc180ecacda6ced636e2bf
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

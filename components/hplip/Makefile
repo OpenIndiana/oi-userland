@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -28,7 +28,8 @@ COMPONENT_VERSION=      3.10.9
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:5e145eafefbc5122bbe98345f2984fc0a55e5787
+COMPONENT_ARCHIVE_HASH= \
+    sha256:1d34630084eccfcc80c08065becdf9313fd8f5a09a4cf523dbd9d3ec724206b9
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

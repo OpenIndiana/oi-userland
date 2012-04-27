@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -28,7 +28,8 @@ COMPONENT_NAME=		libmemcached
 COMPONENT_VERSION=	0.16
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:9e22ff3fcdc1e3fbe770043d683b29f555c8aa15
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:d4fb3a64dc592c104caa4e98bc11f209fcb97eecdeb7f506797320dea75b9459
 COMPONENT_ARCHIVE_URL= http://launchpadlibrarian.net/33299595/${COMPONENT_ARCHIVE}
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 

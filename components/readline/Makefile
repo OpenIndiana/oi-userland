@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	5.2
 COMPONENT_PROJECT_URL=	http://cnswww.cns.cwru.edu/php/chet/readline/rltop.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:18f3412c73068509d5f491b7b4535aeaf9522834
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:12e88d96aee2cd1192500356f0535540db499282ca7f76339fb4228c31249f45
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

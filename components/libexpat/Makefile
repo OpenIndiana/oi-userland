@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	2.0.1
 COMPONENT_PROJECT_URL=	http://expat.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:663548c37b996082db1f2f2c32af060d7aa15c2d
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:847660b4df86e707c9150e33cd8c25bc5cd828f708c7418e765e3e983a2e5e93
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/expat/expat/2.0.1/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

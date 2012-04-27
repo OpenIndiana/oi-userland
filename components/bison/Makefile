@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	2.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bison/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:4df84c2c5971946111ff1982fb830b3c78d7c57e
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:52f78aa4761a74ceb7fdf770f3554dd84308c3b93c4255e3a5c17558ecda293e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

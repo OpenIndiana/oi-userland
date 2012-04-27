@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
@@ -28,7 +28,8 @@ COMPONENT_VERSION=	p17
 COMPONENT_PROJECT_URL=	http://knackered.knackered.org/angus/psutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:6f1ecb5846cffb644826a02bd9153fe5d6387a9b
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:3853eb79584ba8fbe27a815425b65a9f7f15b258e0d43a05a856bdb75d588ae4
 COMPONENT_ARCHIVE_URL= http://gd.tuwien.ac.at/publishing/tex/tex-utils/psutils/$(COMPONENT_ARCHIVE)
 #COMPONENT_ARCHIVE_URL= ftp://ftp.knackered.org/pub/psutils/psutils.tar.gz
 # Official ftp sources are currently unavailable, so I'm using mirror I found.

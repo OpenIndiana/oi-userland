@@ -29,7 +29,8 @@ COMPONENT_VERSION=	1.8.4
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:25c4f9b1ad1c5c8ef94ca5b120c9af6bdfd23bdc
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:4c9d7b8eeb5968592602795f6e67e4cf6ddf0a0e8cfc7eeda7d1a3996a3eab8f
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

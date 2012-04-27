@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		libsdp
 COMPONENT_VERSION=	1.1.108
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-0.15.gd7fdb72.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:95b056c499dec6af17696f3f1b40338f30b4046c
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:b72d4d84c7a02207c261082d1837757f8c131942193ceaf017daf684d61e8be1
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libsdp/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

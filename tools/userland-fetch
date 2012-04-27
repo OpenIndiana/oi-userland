@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # fetch.py - a file download utility
@@ -45,6 +45,10 @@ def printIOError(e, txt):
 	
 def validate(file, hash):
 	algorithm, hashvalue = hash.split(':')
+
+	# force migration away from sha1
+	if algorithm == "sha1":
+		algorithm = "sha256"
 	try:
 		m = hashlib.new(algorithm)
 	except ValueError:
@@ -79,11 +83,14 @@ def validate_payload(filename, hash):
 
 	expr_bz = re.compile('.+\.bz2$', re.IGNORECASE)
 	expr_gz = re.compile('.+\.gz$', re.IGNORECASE)
+	expr_tgz = re.compile('.+\.tgz$', re.IGNORECASE)
 
 	try:
 		if expr_bz.match(filename):
 			file = bz2.BZ2File(filename, 'r')
 		elif expr_gz.match(filename):
+			file = gzip.GzipFile(filename, 'r')
+		elif expr_tgz.match(filename):
 			file = gzip.GzipFile(filename, 'r')
 		else:
 			return False

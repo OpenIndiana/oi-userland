@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -29,7 +29,8 @@ COMPONENT_VERSION=	3.0
 COMPONENT_PROJECT_URL=	http://www.info-zip.org/Zip.html
 COMPONENT_SRC=		$(COMPONENT_NAME)30
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha1:c9f4099ecf2772b53c2dd4a8e508064ce015d182
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:f0e8bb1f9b7eb0b01285495a2699df3a4b766784c1765a8f1aeedf63c0806369
 COMPONENT_ARCHIVE_URL=	ftp://ftp.info-zip.org/pub/infozip/src/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

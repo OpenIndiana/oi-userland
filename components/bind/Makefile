@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -29,8 +29,9 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
-# hash from: sha1sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha1:\1/'
-COMPONENT_ARCHIVE_HASH=	sha1:6d9873a66dda3ef43c1db9a1082ad428722f7d69
+# hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
+COMPONENT_ARCHIVE_HASH=	 \
+    sha256:80e1ee926a49c2a787b4eb7c7516fbbe9fdac1f07f20c18fccfa6ce59196a6bc
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 

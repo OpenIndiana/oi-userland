@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.4.12
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/m4/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:013ca38511e17835dc1a1381cbe8e39179637a49
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:47e8f9a33ba06fa6710b42d6f6ded41f45027f6f4039b0a3ed887c5116bc2173
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/m4/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,7 +33,8 @@ IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ntp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:ff032582d66314ff2556a368162fd1fd15fbf9a6
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:97eeb4e90fba1ae3210e13574a4b3df715957cb9895264c6a455ee97dec87611
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-dev/$(COMPONENT_ARCHIVE)
 PATCH_LEVEL = 0
 

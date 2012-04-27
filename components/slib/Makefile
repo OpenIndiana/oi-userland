@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -34,7 +34,8 @@ COMPONENT_VERSION=	3b1
 COMPONENT_PROJECT_URL=	http://people.csail.mit.edu/jaffer/SLIB/
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_VERSION).zip
-COMPONENT_ARCHIVE_HASH=	sha1:e3342e4cb1e728bb3133449654b10b538ed8b043
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:8e3ec24d51be03ebb7357ad9a2f3554056b86dafbc9e48d1d491aeda1efa566f
 COMPONENT_ARCHIVE_URL=	http://groups.csail.mit.edu/mac/ftpdir/scm/OLD/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

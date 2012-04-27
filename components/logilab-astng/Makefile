@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	0.19.0
 COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-astng/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:87fe682ec98599c0088f228ba94cb50a7ed99466
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:e1b4d209e2a66b20c9e1adff2c30e3b19ea2a43226da3c7dff5c39747ca6e113
 COMPONENT_ARCHIVE_URL=	http://ftp.logilab.org/pub/astng/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	4.7.5.2
 COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:b7034e2b7bfed63e6a37d6be9f03d10f59f62dec
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:351f667d79d0045dedb3dd132ca770be3d51960627b2b0d0996d3cc8bab888f5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

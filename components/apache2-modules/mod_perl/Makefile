@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	2.0.4
 COMPONENT_PROJECT_URL=	http://perl.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:65299a16ec414a690a48a2bbe63acaa3c6bb897b
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:7da2046aa65dbef64ff5b71400bed4b6b82441e6313c8ca4becb85fb4a89a0f0
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 
 CONFIGURE_DEFAULT_DIRS=no

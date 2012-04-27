@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -31,7 +31,8 @@ IPS_COMPONENT_VERSION=  0.2006.7.25
 COMPONENT_PROJECT_URL=	http://www.eterna.com.au/ircii/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:421996726cd06b6659857b8e61195d614a68d8c6
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:09c5840cbf9a060acd4f57a24eb4bbacd7c3fba52986a356ffebad736b961dfe
 COMPONENT_ARCHIVE_URL=	ftp://ircii.warped.com/pub/ircII/old/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

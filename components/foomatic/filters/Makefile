@@ -26,7 +26,8 @@ COMPONENT_NAME=		foomatic-filters
 COMPONENT_VERSION=	4.0.15
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:20496bb95cc42bccb2bfd2f675b14081030387c5
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:f5b7b67aacedec4c0294d242cbffbe0d7d3cd0fdd2b410c055e818f25ed3bc79
 COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,7 +32,8 @@ HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=	http://www.proftpd.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:11c2951526476d9f52307aa714851463aa76aa61
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:1705192f8053978fdfc02d89ff500b385d7703555ac311d31c0d1c3accaaec76
 COMPONENT_ARCHIVE_URL=	ftp://ftp.proftpd.org/distrib/source/$(COMPONENT_ARCHIVE)
 
 # mod_gss subcomponent
@@ -40,7 +41,8 @@ COMPONENT_NAME_1=	mod_gss
 COMPONENT_VERSION_1=	$(COMPONENT_VERSION)
 COMPONENT_SRC_1=	$(COMPONENT_NAME_1)-$(COMPONENT_VERSION_1)
 COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
-COMPONENT_ARCHIVE_HASH_1= sha1:b17015a49e41ee643f1891940f9f3f8a7d77e522
+COMPONENT_ARCHIVE_HASH_1= \
+    sha256:24702cf0333720730cc269eb30529061365b1384fdce274bc3d46ccfc300934e
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARCHIVE_1)
 
 include ../../make-rules/prep.mk

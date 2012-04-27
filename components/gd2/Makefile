@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -29,7 +29,8 @@ COMPONENT_PROJECT_URL=  http://www.libgd.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 # this is the hash of the payload because it appears to be re-compressed
 # periodically causing it to have a new hash value.
-COMPONENT_ARCHIVE_HASH= sha1:eaa077067945956930f6d9258e130f1e043d9b39
+COMPONENT_ARCHIVE_HASH= \
+    sha256:44bd0819b64a2341fb800abbe99f23c7f6388327c71e1f5bd5ed7874a8cc0e49
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	0.11.7
 COMPONENT_PROJECT_URL=	http://elinks.or.cz/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:d13edc1477d0ab32cafe7d3c1f3a23ae1c0a5c54
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:456db6f704c591b1298b0cd80105f459ff8a1fc07a0ec1156a36c4da6f898979
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

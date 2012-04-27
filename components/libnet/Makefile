@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.1.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/libnet-dev/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:a2271762a7d6505c1ff6c4c048bf802e643b6790
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:75588f8d1232e1df34eccf2dba5e66be197b345a07fae80d8275db994496a20d
 COMPONENT_ARCHIVE_URL=	http://cdnetworks-us-2.dl.sourceforge.net/project/libnet-dev/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

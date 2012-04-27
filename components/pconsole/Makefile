@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.heiho.net/pconsole/
-COMPONENT_ARCHIVE_HASH=	sha1:5c841e90548263671b6903a31cde6101154a20a3
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:94520bf65f726df9d7e686bb486e9a2828c29d09a20b9522f1da4f7d66700bb2
 COMPONENT_ARCHIVE_URL=	http://www.heiho.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

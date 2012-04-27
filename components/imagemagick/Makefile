@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,7 +35,8 @@ HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:516bb273afb007fb08f15c2747862d819a94d391
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:25fb373ac3889e81555e5b48c8a22a3deabeac8b6129387cec9dc7e13804914e
 COMPONENT_ARCHIVE_URL=	http://image_magick.veidrodis.com/image_magick/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

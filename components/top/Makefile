@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	3.8beta1
 COMPONENT_PROJECT_URL=	http://www.unixtop.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:d3f911f8cd64d21a8beb7eb3694923b40d2532e2
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:6c683e9cb092078cbc1b2233b15fa8bd3d35a00874e6ba27cf54370d1d64fa4d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

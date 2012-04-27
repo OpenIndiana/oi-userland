@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -29,7 +29,8 @@ COMPONENT_VERSION=	2.0.1
 COMPONENT_RELEASE=	release_$(COMPONENT_VERSION)
 COMPONENT_SRC=		java_memcached-$(COMPONENT_RELEASE)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:e1abde88ac21d337c42e4fc8d9bc217eab96f881
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:f0978f387cd6c42191a3ec366ecc5519f66ee03e686c5d080eb2516ebbecdcc4
 COMPONENT_ARCHIVE_URL=	http://img.whalin.com/memcached/jdk5/standard/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://whalin.com/memcached/
 

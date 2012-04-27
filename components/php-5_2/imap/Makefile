@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		imap
 COMPONENT_VERSION=	2007e
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:ab8bd27de41926acb257b813a95c10d2ab04c6e8
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:4b1137b87249782496ec3eeacaf83bbf09312a7d2ae3aead262179041b55565f
 #
 # Firefox can download this:
 #	ftp://ftp.cac.washington.edu/imap/$(COMPONENT_ARCHIVE)

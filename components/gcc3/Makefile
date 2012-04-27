@@ -28,7 +28,8 @@ COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # unfortunately we have our own "special" tarball and not the community version, so use that.
-COMPONENT_ARCHIVE_HASH=	sha1:f7a27d5aeb07748eb6e924abfcfcf469c378b13e
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:3ab488fe2df01bf54a57acd70e745266e19232edacf77512f77655296748e7a0
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
 
 include ../../make-rules/prep.mk

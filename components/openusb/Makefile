@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	1.0.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://openusb.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:c8a6b493f31a349f19c27a45565425f58897d443
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:031098c376f16f6030c4dbd553266e107b39d1f7b3fc366f8f7fd412d3d7c3ad
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/openusb/files/$(COMPONENT_NAME)/libopenusb%201.0.1/$(COMPONENT_ARCHIVE)/download
 
 include ../../make-rules/prep.mk

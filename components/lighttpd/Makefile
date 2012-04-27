@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.4.23
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:37f8b4827d7a1f69812d8185fcecf72277020876
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:8555db22ed7d429160701555611d8cd5eff42fc7e6e3ad3b050279c9b2145469
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 LIGHTTPD_INSTALLDIR=/usr/lighttpd/1.4

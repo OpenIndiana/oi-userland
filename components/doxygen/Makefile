@@ -27,12 +27,14 @@ COMPONENT_VERSION=	1.7.6.1
 COMPONENT_PROJECT_URL=	http://www.stack.nl/~dimitri/doxygen/index.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).src.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:6203d4423d12315f1094b56a4d7393347104bc4a
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:0e60e794fb172d3fa4a9a9535f0b8e0eeb04e8366153f6b417569af0bcd61fcd
 COMPONENT_ARCHIVE_URL=	http://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE)
 
 # Download the manual so that we don't have to keep updating it in the gate.
 COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
-COMPONENT_ARCHIVE_HASH_1 =	sha1:e7d35dd1e23ec4572e98a36028e136a9c4bde1af
+COMPONENT_ARCHIVE_HASH_1 =	\
+    sha256:abe8ea7db00fe68632edeb2d6e44f94ad96a0dc798702b044afbc1752c7b2a61
 COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
 
 include ../../make-rules/prep.mk

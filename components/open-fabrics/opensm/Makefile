@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		opensm
 COMPONENT_VERSION=	3.3.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:9b8a37da3471bd17aa5b86ac7804a48fdc4a4efa
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:b8f333815e9d145cbb29310a38d2f2e39f9727b30eb6b15cb0d81fb9db39a2e1
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/management/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

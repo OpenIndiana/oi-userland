@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=      8.5.9
 COMPONENT_PROJECT_URL=	http://prdownloads.sourceforge.net/tcl/
 COMPONENT_SRC=          $(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC)-src.tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:ae87c5e58ba20760d9bc77117d219bbf1b6a5557
+COMPONENT_ARCHIVE_HASH= \
+    sha256:3ab671b417e3eeb41b9cef626d742d8f7f57425101e83e5fcad1d552cd99237d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
 include ../../../make-rules/prep.mk

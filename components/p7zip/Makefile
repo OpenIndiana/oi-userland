@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,7 +32,8 @@ COMPONENT_VERSION=	9.20.1
 COMPONENT_PROJECT_URL=	http://p7zip.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:1cd567e043ee054bf08244ce15f32cb3258306b7
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:49557e7ffca08100f9fc687f4dfc5aea703ca207640c76d9dee7b66f03cb4782
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

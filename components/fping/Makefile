@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -31,7 +31,8 @@ IPS_COMPONENT_VERSION=	2.4.2
 COMPONENT_PROJECT_URL=	http://fping.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:9318f2ec4b389cd74ca32f561fea95f9528f16a3
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:9f3b3ed7c9fffccefefa9af432eee7244a65592118851f75b5897814cb79b86f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -28,7 +28,8 @@ COMPONENT_VERSION=	1.4.0
 COMPONENT_PROJECT_URL=	http://meld.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:91e12464c44146cb1e30295c88530ebf33be1374
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:429a0d0408464f623d25e351adc387ff4ed92813b8760d1c16700cb3180f9303
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.4/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

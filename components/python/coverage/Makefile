@@ -29,7 +29,8 @@ COMPONENT_VERSION=	3.5
 COMPONENT_PROJECT_URL=	http://nedbatchelder.com/code/coverage/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:aa0f40e7e79bc81ea4a33ee7fc5ba66db7633321
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:b181d5ec72baf7478942fd600503d9f32bb525cfca413b1c73ebfa7ff1b95ae9
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/c/coverage/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

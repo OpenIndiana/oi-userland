@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.2.12
 COMPONENT_PROJECT_URL=	http://merd.sourceforge.net/pixel/hexedit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
-COMPONENT_ARCHIVE_HASH=	sha1:fee89e390945045fe6b74b5f07600a8e664c8b21
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:bcffbf3d128516cc4e1da64485866fbb5f62754f2af8327e7a527855186ba10f
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		xdebug
 COMPONENT_VERSION=	2.0.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha1:77e6a8fd56641d8b37be68ea3c4a5c52b7511114
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:4638641e643f4cedd9d2ec360fb13f47221973518b07ec6a2016c967063bb8b2
 COMPONENT_ARCHIVE_URL=	http://xdebug.org/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://xdebug.org/
 

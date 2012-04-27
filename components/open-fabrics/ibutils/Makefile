@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		ibutils
 COMPONENT_VERSION=	1.5.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:25c7fe1135bf8dc4c572a9462710c17902259015
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:8db2fcb20102c37e7037826c58b899092df034aac870d3d50a13263746f17f18
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/ibutils/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.9.6
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/automake/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:2c35431cba9ba94cbeea3b6f5dab405eaab8ec2a
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:e6d3030dd3f7a07ee2075da5f77864a3cc3e78c5bf76bb48df23dbe3d6ba13b9
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

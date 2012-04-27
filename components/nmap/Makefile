@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=      5.51
 COMPONENT_PROJECT_URL=	http://insecure.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH= sha1:bad24e4d332b293d08d8ce38583fefa176e9198d
+COMPONENT_ARCHIVE_HASH= \
+    sha256:d44cd28fc087a98056234ac56fc187b6742daa5c20f56bc4d524548042f4b25e
 COMPONENT_ARCHIVE_URL=  http://nmap.org/dist/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
