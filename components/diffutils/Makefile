@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	2.8.7
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:b05cfdd651137d46d97872dd646db0dd92077f0d
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:53d9c10830ac322c00dfcccf60d961014e767da86d2c802ccc5cbad7e7aea07c
 COMPONENT_ARCHIVE_URL=	http://alpha.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

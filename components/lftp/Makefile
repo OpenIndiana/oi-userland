@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	4.3.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://lftp.yar.ru/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:702023cababe34a0fe5854d792d6437c04e9f059
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:a3df26383053081e67b8101aa9e1705ee8274e14a5938746a944b0a2d97948e3
 COMPONENT_ARCHIVE_URL=	http://ftp.yars.free.net/pub/source/lftp/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

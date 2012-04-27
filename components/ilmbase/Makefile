@@ -27,7 +27,8 @@ COMPONENT_VERSION=      1.0.1
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.openexr.com/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:143adc547be83c6df75831ae957eef4b2706c9c0
+COMPONENT_ARCHIVE_HASH= \
+    sha256:4f14fc7b26a37a391ec5f979697148e6774bc36bc052de26e40ffabe401e397d
 COMPONENT_ARCHIVE_URL=  http://download.savannah.nongnu.org/releases/openexr/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

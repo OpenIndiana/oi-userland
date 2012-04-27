@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		idn
 COMPONENT_VERSION=	0.2.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha1:39406c22ac86d7f30e47261a08fb93cea5dc3f39
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:a83148468a181e2174cbfd8e89edfa21fa622f60630072c7ec0ce8fd7b72a97a
 COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/idn/
 

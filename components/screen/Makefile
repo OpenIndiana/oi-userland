@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	4.0.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/screen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:7bc6e2f0959ffaae6f52d698c26c774e7dec3545
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:78f0d5b1496084a5902586304d4a73954b2bfe33ea13edceecf21615c39e6c77
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

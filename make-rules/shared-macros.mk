@@ -210,7 +210,7 @@ $(BUILD_DIR_64)/.tested:       BITS=64
 COMPONENT_TEST_TARGETS =	check
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
-BUILD_TOOLS =	/ws/onnv-tools
+BUILD_TOOLS ?=	/ws/on11update-tools
 
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
 SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1

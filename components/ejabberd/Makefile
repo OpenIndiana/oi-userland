@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,7 +32,8 @@ COMPONENT_VERSION=	2.1.8
 COMPONENT_PROJECT_URL=	http://www.ejabberd.im/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:3f8ecc944e0719577bfc45a68e974b1945ffa296
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:dedf7684f9e96efbbc12f08f175096ef50b3f75b284bd27d172eaf75cecded7f
 COMPONENT_ARCHIVE_URL=	http://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

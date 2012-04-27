@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		libibverbs
 COMPONENT_VERSION=	1.1.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.22.g7257cd3.tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:7d7d466278ce5e18f74dd50ca14c3bba544f1e13
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:1e04aa9d518e3dc372fdda6bd25bf072caae4c85c38d0ae095a614104aa583d4
 COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libibverbs/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

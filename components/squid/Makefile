@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,7 +32,8 @@ COMPONENT_VERSION=      3.1.18
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:6ae3a7d75acea94e8af333a7086d6467416ff5ac
+COMPONENT_ARCHIVE_HASH= \
+    sha256:6a7122514d58c3077f2b43c928864be10753d8e2c8439133dacc9eba6c45e00d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.1/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

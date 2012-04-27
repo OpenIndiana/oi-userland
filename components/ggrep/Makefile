@@ -32,8 +32,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 # ftp.gnu.org is only available in .xz format. We cannot use this
 # as xz is not currently part of the Solaris 11 Update CBE. We 
 # have recompressed that tarball as a .bz2 file and placed it in the
-# special Userland cache. The sha1 hash is for the payload .tar file.
-COMPONENT_ARCHIVE_HASH=	sha1:e8cab5e67ef06f74b460a8d8034f726c7a845f6d
+# special Userland cache. The sha256 hash is for the payload .tar file.
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:299d0ccb0238894cc674da3c5a6a6fb82c3d63286f7f127e448e2ff97d21e2fb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

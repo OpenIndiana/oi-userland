@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	2.0b4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.beanshell.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:e5e956875fa4627d40eb06f3cce52fbf85798f1e
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:a6f02b46796ed6b6a212cfc2d17e4797212db3206e21a3f4959adb60bddfff5f
 # This should come from http://www.beanshell.org/ however they do not
 # maintain previous versions of archives there anymore.  When/if this
 # component is upgraded the download location should revert back to

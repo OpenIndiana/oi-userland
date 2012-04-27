@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	2.06
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/pwgen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:43dc4fbe6c3bdf96ae24b20d44c4a4584df93d8e
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:61598c9e3a0f7eb2e7367d4ecc71522c4f16a7d41ed31db29e3afee8d9843454
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/pwgen/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)	
 
 include ../../make-rules/prep.mk

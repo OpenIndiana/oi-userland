@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		tcpwrap
 COMPONENT_VERSION=	1.1.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha1:23cbfdc8ea9ff1e64814d52a14bbd365b1e16cf7
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:afd435399724b5032d2e65105a2c85a7fddb22bc5633571257299d32d46d9d54
 COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/tcpwrap/
 

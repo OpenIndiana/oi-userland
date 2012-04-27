@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -31,7 +31,8 @@ IPS_PKG_NAME=		text/gnu-gettext
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gettext/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:8642f4346dfd6a18ecd883329e150bfe9e0886c3
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:0bf850d1a079fb5a61f0a47b1a9efd35eb44032255375e1cedb0253bc27b376d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

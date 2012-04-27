@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	7.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/areca/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:23521b042cfb5129e32459c92113bd9d3b88117e
+COMPONENT_ARCHIVE_HASH=	 \
+    sha256:f3d90ae9dcf423fa116962bb22346101a45105914fc47e3d7b7c4202560eb917
 
 # Using our own special version of the source tarball. It's not clear 
 # where the source archive came from.  The community web has the

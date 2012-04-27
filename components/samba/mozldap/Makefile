@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -29,7 +29,8 @@ COMPONENT_VERSION=	6.0.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	https://wiki.mozilla.org/LDAP_C_SDK/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:6ddf73fe45b9b916423c06aaf46fe58680b4e02f
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:ec9884b56b31961d287190323764af7f3b00ad2658d5f3005fa8dc71c637e54c
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mozilla.org/pub/mozilla.org/directory/c-sdk/releases/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 
 include ../../../make-rules/prep.mk

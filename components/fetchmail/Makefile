@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -29,7 +29,8 @@ COMPONENT_NAME=		fetchmail
 COMPONENT_VERSION=	6.3.21
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:e32a0d40ec133d651782543ecd7bc9bbee52dff7
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:9b20eededa7d15ab2bde2d4a0c2d169d4882021cd63042ecbed2f13999185502
 COMPONENT_ARCHIVE_URL=	http://download.berlios.de/fetchmail/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://fetchmail.berlios.de/
 

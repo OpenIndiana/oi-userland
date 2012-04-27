@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.8.11
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://ipmitool.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:4cb6ff3736fd3e166abc5303d6373672327a5db1
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:5612f4835d89a6f2cede588eef978a05d63435cf2646256300d9785d8020a13e
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/ipmitool/files/ipmitool/1.8.11/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

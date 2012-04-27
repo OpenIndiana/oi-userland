@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	3.2.3
 COMPONENT_PROJECT_URL=	http://www.ncftp.com/ncftp/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:7d58ce15662a2aeeb0b564f98c2beea2f6e54a0b
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:46f4f2fbde40187a164bdd0fe3d37d2d85d36445e56f2bf08fc814ee8dcba510
 # though 3.2.3 is mysteriously missing from the upstream site, it would be here.
 COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/older_versions/$(COMPONENT_ARCHIVE)
 

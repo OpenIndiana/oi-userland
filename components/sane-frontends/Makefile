@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	1.0.14
 COMPONENT_PROJECT_URL=	http://www.sane-project.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:063e11df3e32d7a43161fd37026a4dc601d5482d
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:e7839dac1b70b5bb39124615aba8a136f5275d0e78bafd3d52ed76964ffea4a9
 COMPONENT_ARCHIVE_URL=	ftp://ftp2.sane-project.org/pub/sane/sane-frontends-1.0.14/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

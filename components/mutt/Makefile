@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -29,7 +29,8 @@ COMPONENT_NAME=		mutt
 COMPONENT_VERSION=	1.5.21
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:a8475f2618ce5d5d33bff85c0affdf21ab1d76b9
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:2141f36e8d0f4f71c9ca6780001e7cc679fe313e643953fc07f001223e67c4a0
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/mutt/devel/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	6.17.00
 COMPONENT_PROJECT_URL=	http://www.tcsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:9bf67d5ce1b406178e9ba535ecd34553fe0d4d36
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:575266122bc2bc351c84a7f858020c0e6b6f95a64ad4de3ce95e340f57e4a9a9
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

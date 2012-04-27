@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	0.48
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://jocr.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:2172fd04c556b70b19db2b2abbc47749f5d08130
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:e0c7b6fc864abfebcb0afa084963fb98f8967b356913e6406cf7b21cfd83d8a2
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/jocr/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

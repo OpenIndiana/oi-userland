@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -37,7 +37,8 @@ COMPONENT_VERSION=	3.0.37
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:5ec6bc6558b3c799f747eb49fbba019d5edf0cbd
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:bb67c0e13d4ccbd84b9200c8739393fdd9b3145b5aad216934dc670f0fcea266
 COMPONENT_ARCHIVE_URL=	http://www.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 
 include ../../../make-rules/prep.mk

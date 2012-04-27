@@ -29,7 +29,8 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
 COMPONENT_ARCHIVE_URL=  http://ftp.isc.org/isc/dhcp/private/76c65da874a2be30/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH= sha1:3735f981a6492224a2f12f6a1ae9132644514aaf
+COMPONENT_ARCHIVE_HASH= \
+    sha256:3160ede07cab03d78545fe5a18531f83237b404e6fc432ae46655ba6fe4957f1
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

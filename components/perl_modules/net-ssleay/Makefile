@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	1.36
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/Net-SSLeay/
-COMPONENT_ARCHIVE_HASH=	sha1:e8cfb6355a596471518356a29bfe53ab2011c685
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:e262897263c5aa9096e39f7813c7cb7d4d05508ca406b173878c4ecddb2c53ce
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/F/FL/FLORA/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk

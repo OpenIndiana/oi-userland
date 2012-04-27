@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -31,7 +31,8 @@ IPS_COMPONENT_VERSION=	0.2007.11.16
 COMPONENT_PROJECT_URL=	http://www.lesswatts.org/projects/acpi/utilities.php
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:997612de90eee65c3974a07b9eee68cfeb077abd
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:91751774976e39f6237efd0326eb35196a9346220b92ad35894a33283e872748
 COMPONENT_ARCHIVE_URL=	http://www.lesswatts.org/patches/linux_acpi/$(COMPONENT_ARCHIVE)
 
 # we're i386-only

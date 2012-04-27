@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -28,7 +28,8 @@ COMPONENT_VERSION=      6.0
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/gs-fonts/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha1:cdad2f3752c513fe1cfb0eeaf6661753e2cc182c
+COMPONENT_ARCHIVE_HASH= \
+    sha256:4cef38d05aa958dfee4dabb8d1599b8ad2b2347413b7895c94d8882c8a0fb9d3
 COMPONENT_ARCHIVE_URL=  http://softlayer.dl.sourceforge.net/sourceforge/gs-fonts/$(COMPONENT_ARCHIVE)
 
 # set relocate_to option while unpacking the tar ball

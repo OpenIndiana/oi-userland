@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -29,7 +29,8 @@ COMPONENT_NAME=		gdb
 COMPONENT_VERSION=	6.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:15e67382c39640caafa144abf2c8943106aa97d9
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:a3c5455f30ffb3e6eeafb9e54598b48f9fbf46e3e99f431120360c183ddcc889
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gdb/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

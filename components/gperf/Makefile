@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,7 +27,8 @@ COMPONENT_VERSION=	3.0.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gperf/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:3c535d2727eb0dca10ca87cefa03720a8280c7a2
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:63287527c8d9e27e801cf0804436f3494bd569db05d49dcdd2a942ae72fa9055
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

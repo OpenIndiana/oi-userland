@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	3.0.17
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_PROJECT_URL=	http://www.privoxy.org/
-COMPONENT_ARCHIVE_HASH=	sha1:cadef2eb8ec182278e092322d3d56f225cb69c93
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:d1de36dc141180a5ab5e910507551564e958cc23a7d8daaa411e1564c208cd77
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

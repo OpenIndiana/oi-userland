@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -30,7 +30,8 @@ COMPONENT_VERSION=	2.47
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://clisp.cons.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha1:63749bf07409cee134c195547e6d911554b619d6
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:565256a50caca44a969b7440c986b3203a0b9679babd0f1dbcbc61a4f4622edb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/clisp/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

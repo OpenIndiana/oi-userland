@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -26,7 +26,8 @@ COMPONENT_NAME=		suhosin
 COMPONENT_VERSION=	0.9.29
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha1:2fa7c716a32e71fbb577fc3a9feaf46d783a501b
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:3ac3a7d2ea5dc27189fadb7945da0caf18fe22c87369404bc32d7cf80ae95379
 COMPONENT_ARCHIVE_URL=	http://download.suhosin.org/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.hardened-php.net/suhosin/index.html
 

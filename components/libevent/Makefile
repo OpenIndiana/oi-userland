@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -31,7 +31,8 @@ IPS_COMPONENT_VERSION=	1.4.14.2
 COMPONENT_PROJECT_URL=	http://monkey.org/~provos/libevent/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)-stable
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha1:4a834364c28ad652ddeb00b5f83872506eede7d4
+COMPONENT_ARCHIVE_HASH=	\
+    sha256:afa61b476a222ba43fc7cca2d24849ab0bbd940124400cb699915d3c60e46301
 COMPONENT_ARCHIVE_URL=	http://cloud.github.com/downloads/libevent/libevent/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
