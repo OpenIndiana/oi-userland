@@ -34,9 +34,10 @@ COMPONENT_SRC=		vim-$(COMPONENT_HG_REV)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).tar.bz2
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:a4d1345af9f8d56d3e2c0537e6f037e8f33a395f25e0cdd9e6a45ec57a603c98
+COMPONENT_ARCHIVE_HASH=	sha256:11f5179b41ce84c7221e8126463b211d9511188423f5f955274f2198e987f427
 COMPONENT_HG_URL=	https://vim.googlecode.com/hg
-COMPONENT_HG_REV=	v7-3-421
+COMPONENT_HG_REV=	v7-3-515
+COMPONENT_HG_REV_OLD=	v7-3-515
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -62,10 +63,12 @@ hgball: hgball-pull
 	hg clone -u $(COMPONENT_HG_REV) $(HGREPODIR) $(TARBALLDIR)
 	rm -rf $(TARBALLDIR)/.hg
 	tar jcf $(COMPONENT_ARCHIVE) $(TARBALLDIR)
+	hg --cwd $(HGREPODIR) stat -ar --rev $(COMPONENT_HG_REV_OLD):tip runtime src/po
 	digest=$$(digest -a sha256 $(COMPONENT_ARCHIVE)); \
 		/usr/gnu/bin/sed -i \
 			-e "s/^COMPONENT_ARCHIVE_HASH=.*/COMPONENT_ARCHIVE_HASH=	sha256:$$digest/" \
 			-e "s/^COMPONENT_HG_REV=.*/COMPONENT_HG_REV=	$(COMPONENT_HG_REV)/" \
+			-e "s/^COMPONENT_HG_REV_OLD=.*/COMPONENT_HG_REV_OLD=	$(COMPONENT_HG_REV)/" \
 			Makefile
 
 PATCH_LEVEL =	0
@@ -113,8 +116,6 @@ $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-vim-name=gvim
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --with-x
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gui=gtk2
 $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gtk2-check
-
-COMPONENT_PREP_ACTION = (cd $(@D)/src; autoconf)
 
 # Vim's build is too smart for itself and configure can't run outside of a
 # complete source tree.
