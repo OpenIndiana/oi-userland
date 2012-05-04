@@ -75,6 +75,7 @@ CONFIGURE_OPTIONS  +=		--disable-gtktest
 CONFIGURE_OPTIONS  +=		--enable-threading
 CONFIGURE_OPTIONS  +=		--disable-pinentry-gtk
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
+CONFIGURE_OPTIONS  +=		--disable-ncurses
 
 build: $(BUILD_32)
 
