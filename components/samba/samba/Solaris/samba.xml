@@ -23,7 +23,7 @@
 -->
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
-	Copyright (c) 2006, 2011, Oracle and/or its affiliates. All rights reserved.
+	Copyright (c) 2006, 2012, Oracle and/or its affiliates. All rights reserved.
 
 	#ident	"@(#)samba.xml	1.6	10/07/26 SMI"
 
@@ -67,11 +67,11 @@
 	</dependent>
 
 	<exec_method type='method' name='start'
-		exec='/usr/sbin/smbd -D'
+		exec='/lib/svc/method/samba start /usr/sbin/smbd -D'
 		timeout_seconds='170' />
 
 	<exec_method type='method' name='stop'
-		exec='/usr/bin/kill `cat /var/samba/locks/smbd.pid`'
+		exec='/lib/svc/method/samba stop %{restarter/contract}'
 		timeout_seconds='60' />
 
 	<stability value='Unstable' />
