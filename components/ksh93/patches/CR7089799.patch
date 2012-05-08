@@ -1,0 +1,35 @@
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c INIT.2011-02-08/src/cmd/ksh93/sh/io.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/io.c	2012-05-07 14:33:37.179788579 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/sh/io.c	2012-05-07 14:39:11.089877123 +0100
+@@ -868,10 +868,10 @@ int sh_iomovefd(register int fdold)
+ {
+ 	Shell_t *shp = sh_getinterp();
+ 	register int fdnew;
++	VALIDATE_FD(shp, fdold);
+ 	if(fdold<0 || fdold>2)
+ 		return(fdold);
+ 	fdnew = sh_iomovefd(dup(fdold));
+-	VALIDATE_FD(shp, fdold);
+ 	VALIDATE_FD(shp, fdnew);
+ 	shp->fdstatus[fdnew] = (shp->fdstatus[fdold]&~IOCLEX);
+ 	close(fdold);
+@@ -890,6 +890,8 @@ int	sh_pipe(register int pv[])
+ 		errormsg(SH_DICT,ERROR_system(1),e_pipe);
+ 	pv[0] = sh_iomovefd(pv[0]);
+ 	pv[1] = sh_iomovefd(pv[1]);
++	VALIDATE_FD(shp, pv[0]);
++	VALIDATE_FD(shp, pv[1]);
+ 	shp->fdstatus[pv[0]] = IONOSEEK|IOREAD;
+ 	shp->fdstatus[pv[1]] = IONOSEEK|IOWRITE;
+ 	sh_subsavefd(pv[0]);
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/path.c INIT.2011-02-08/src/cmd/ksh93/sh/path.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/path.c	2012-05-07 14:33:37.182443770 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/sh/path.c	2012-05-07 14:40:06.256096054 +0100
+@@ -565,6 +565,7 @@ static int	path_opentype(Shell_t *shp,co
+ 	if(fd>=0 && (fd = sh_iomovefd(fd)) > 0)
+ 	{
+ 		fcntl(fd,F_SETFD,FD_CLOEXEC);
++		VALIDATE_FD(shp, fd);
+ 		shp->fdstatus[fd] |= IOCLEX;
+ 	}
+ 	return(fd);

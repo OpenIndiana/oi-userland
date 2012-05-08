@@ -1,0 +1,14 @@
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c INIT.2011-02-08/src/cmd/ksh93/sh/xec.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/xec.c	2012-05-07 15:03:41.210885978 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/sh/xec.c	2012-05-07 15:07:57.474149421 +0100
+@@ -586,7 +586,10 @@ int sh_eval(register Sfio_t *iop, int mo
+ 	if(lineno)
+ 		shp->inlineno = lineno;
+ 	if(io_save)
++	{
+ 		sfclose(io_save);
++		io_save = 0;
++	}
+ 	sh_freeup(shp);
+ 	shp->st.staklist = saveslp;
+ 	shp->fn_reset = 0;

@@ -1,0 +1,47 @@
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/init.c INIT.2011-02-08/src/cmd/ksh93/sh/init.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/init.c	2012-05-07 14:21:24.948093271 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/sh/init.c	2012-05-07 14:30:52.907885321 +0100
+@@ -1352,6 +1352,7 @@ Shell_t *sh_init(register int argc,regis
+ 	job_clear();
+ 	if(argc>0)
+ 	{
++		int dolv_index = -1;
+ 		/* check for restricted shell */
+ 		if(type&SH_TYPE_RESTRICTED)
+ 			sh_onoption(SH_RESTRICTED);
+@@ -1379,7 +1380,10 @@ Shell_t *sh_init(register int argc,regis
+ 			sh_done(shp,0);
+ 		}
+ 		opt_info.disc = 0;
+-		shp->st.dolv=argv+(argc-1)-shp->st.dolc;
++		dolv_index = (argc-1)-shp->st.dolc;
++		shp->st.dolv=argv+dolv_index;
++		shp->st.repl_index = dolv_index;
++		shp->st.repl_arg = argv[dolv_index];	
+ 		shp->st.dolv[0] = argv[0];
+ 		if(shp->st.dolc < 1)
+ 			sh_onoption(SH_SFLAG);
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/main.c INIT.2011-02-08/src/cmd/ksh93/sh/main.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/main.c	2012-05-07 14:43:03.840822719 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/sh/main.c	2012-05-07 14:59:12.341447529 +0100
+@@ -296,6 +296,8 @@ int sh_main(int ac, char *av[], Shinit_f
+ 					 * try to undo effect of solaris 2.5+
+ 					 * change for argv for setuid scripts
+ 					 */
++					if (shp->st.repl_index > 0)
++						av[shp->st.repl_index] = shp->st.repl_arg;
+ 					if(((type = sh_type(cp = av[0])) & SH_TYPE_SH) && (!(name = nv_getval(L_ARGNOD)) || !((type = sh_type(cp = name)) & SH_TYPE_SH)))
+ 					{
+ 						av[0] = (type & SH_TYPE_LOGIN) ? cp : path_basename(cp);
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/include/defs.h INIT.2011-02-08/src/cmd/ksh93/include/defs.h
+--- INIT.2011-02-08.clean/src/cmd/ksh93/include/defs.h	2012-05-08 12:33:38.805834763 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/include/defs.h	2012-05-08 12:36:40.987228722 +0100
+@@ -97,6 +97,8 @@ struct sh_scoped
+ 	char		**otrapcom;
+ 	void		*timetrap;
+ 	struct Ufunction *real_fun;	/* current 'function name' function */
++	int             repl_index;
++	char            *repl_arg;
+ };
+ 
+ struct limits

@@ -1,11 +1,11 @@
---- a/src/cmd/ksh93/bltins/typeset.c	Fri Dec 31 00:15:57 2010
-+++ b/src/cmd/ksh93/bltins/typeset.c	Tue Jun 28 13:59:53 2011
-@@ -608,7 +608,7 @@
- 			}
- 			if(!nv_isarray(np) && !strchr(name,'=') && !(shp->envlist  && nv_onlist(shp->envlist,name)))
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/jobs.c INIT.2011-02-08/src/cmd/ksh93/sh/jobs.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/jobs.c	2012-05-08 12:44:12.309610229 +0100
++++ INIT.2011-02-08/src/cmd/ksh93/sh/jobs.c	2012-05-08 12:48:34.559797683 +0100
+@@ -950,6 +950,7 @@ int job_walk(Sfio_t *file,int (*fun)(str
+ 			if(!(pw = job_bypid(pid)))
  			{
--				if(comvar || (shp->last_root==shp->var_tree && (tp->tp || (!shp->st.real_fun && (nvflags&NV_STATIC)) || (!(flag&NV_EXPORT) && nv_isattr(np,(NV_EXPORT|NV_IMPORT))==(NV_EXPORT|NV_IMPORT)))))
-+				if(comvar || (shp->last_root==shp->var_tree && (tp->tp || (!shp->st.real_fun && (nvflags&NV_STATIC)) || (!(flag&(NV_EXPORT|NV_RDONLY)) && nv_isattr(np,(NV_EXPORT|NV_IMPORT))==(NV_EXPORT|NV_IMPORT)))))
- {
- 					_nv_unset(np,0);
- }
+ 				pw = &dummy;
++				pw->p_shp = sh_getinterp();
+ 				pw->p_pid = pid;
+ 				pw->p_pgrp = pid;
+ 			}

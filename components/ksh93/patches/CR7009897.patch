@@ -1,0 +1,33 @@
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/macro.c INIT.2011-02-08/src/cmd/ksh93/sh/macro.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/macro.c	2012-05-02 01:59:48.571110152 -0700
++++ INIT.2011-02-08/src/cmd/ksh93/sh/macro.c	2012-05-02 02:05:56.082206972 -0700
+@@ -1262,7 +1262,7 @@ retry1:
+ 				stkseek(stkp,stktell(stkp)-2);
+ 				nv_local = 1;
+ 			}
+-			else
++			else if (type != M_VNAME)
+ 			{
+ 				stkseek(stkp,stktell(stkp)-1);
+ 				type = M_TREE;
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/nvtree.c INIT.2011-02-08/src/cmd/ksh93/sh/nvtree.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/nvtree.c	2012-05-02 01:59:52.497548227 -0700
++++ INIT.2011-02-08/src/cmd/ksh93/sh/nvtree.c	2012-05-02 02:07:16.084944399 -0700
+@@ -1069,7 +1069,7 @@ Namfun_t *nv_isvtree(Namval_t *np)
+  */
+ char *nv_getvtree(register Namval_t *np, Namfun_t *fp)
+ {
+-	int flags=0, dsize=fp->dsize;
++	int flags=0;
+ 	for(; fp && fp->next; fp=fp->next)
+ 	{
+ 		if(fp->next->disc && (fp->next->disc->getnum || fp->next->disc->getval))
+@@ -1083,7 +1083,7 @@ char *nv_getvtree(register Namval_t *np,
+ 		nv_offattr(np,NV_EXPORT);
+ 	if(flags |= nv_isattr(np,NV_TABLE))
+ 		nv_offattr(np,NV_TABLE);
+-	if(dsize && (flags&NV_EXPORT))
++	if( (fp) && (fp->dsize) && (flags&NV_EXPORT))
+ 		return("()");
+ 	return(walk_tree(np,(Namval_t*)0,flags));
+ }
