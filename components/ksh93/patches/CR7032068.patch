@@ -1,0 +1,33 @@
+diff -rupN INIT.2011-02-08.clean/src/cmd/ksh93/sh/macro.c INIT.2011-02-08/src/cmd/ksh93/sh/macro.c
+--- INIT.2011-02-08.clean/src/cmd/ksh93/sh/macro.c	2012-05-02 03:34:48.830258020 -0700
++++ INIT.2011-02-08/src/cmd/ksh93/sh/macro.c	2012-05-02 03:42:51.584924888 -0700
+@@ -1084,7 +1084,7 @@ static int varsub(Mac_t *mp)
+ {
+ 	register int	c;
+ 	register int	type=0; /* M_xxx */
+-	register char	*v,*argp=0;
++	register char	*v, *new_v = NULL, *argp=0;
+ 	register Namval_t	*np = NIL(Namval_t*);
+ 	register int 	dolg=0, mode=0;
+ 	Lex_t		*lp = (Lex_t*)mp->shp->lex_context;
+@@ -1436,6 +1436,7 @@ retry1:
+ 				if( (mp->arith||mp->let) && (np->nvfun || nv_isattr(np,(NV_LJUST|NV_RJUST|NV_ZFILL))) && !nv_isattr(np,NV_INTEGER) && (offset==0 || !isalnum(c)))
+ 					mp->zeros = 1;
+ 			}
++			new_v = v = strdup(v);
+ 			if(savptr==stakptr(0))
+ 				stkseek(stkp,offset);
+ 			else
+@@ -1963,8 +1964,12 @@ retry2:
+ 	}
+ 	if(np)
+ 		nv_close(np);
++ 	if (new_v)
++		free(new_v);
+ 	return(1);
+ nosub:
++	if (new_v)
++		free(new_v);
+ 	if(type==M_BRACE && sh_lexstates[ST_NORM][c]==S_BREAK)
+ 	{
+ 		fcseek(-1);

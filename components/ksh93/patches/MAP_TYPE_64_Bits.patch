@@ -1,0 +1,12 @@
+diff -rupN INIT.2011-02-08.clean/src/lib/libast/sfio/sfmode.c INIT.2011-02-08/src/lib/libast/sfio/sfmode.c
+--- INIT.2011-02-08.clean/src/lib/libast/sfio/sfmode.c	2012-05-07 15:45:04.418751281 +0100
++++ INIT.2011-02-08/src/lib/libast/sfio/sfmode.c	2012-05-07 15:49:09.326244280 +0100
+@@ -400,7 +400,7 @@ reg int		local;	/* a local call */
+ 
+ 	if(f->mode&SF_GETR)
+ 	{	f->mode &= ~SF_GETR;
+-#ifdef MAP_TYPE
++#if defined(MAP_TYPE) && (_ptr_bits < 64)
+ 		if((f->bits&SF_MMAP) && (f->tiny[0] += 1) >= (4*SF_NMAP) )
+ 		{	/* turn off mmap to avoid page faulting */
+ 			sfsetbuf(f,(Void_t*)f->tiny,(size_t)SF_UNBOUND);

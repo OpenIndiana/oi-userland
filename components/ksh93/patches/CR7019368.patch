@@ -1,0 +1,48 @@
+diff -rupN INIT.2011-02-08/src/cmd/INIT/regress.sh INIT.2011-02-08.clean/src/cmd/INIT/regress.sh
+--- INIT.2011-02-08/src/cmd/INIT/regress.sh	2010-06-13 16:38:43.000000000 +0100
++++ INIT.2011-02-08.clean/src/cmd/INIT/regress.sh	2012-05-07 15:27:52.975530153 +0100
+@@ -1351,7 +1351,7 @@ esac
+ export COLUMNS=80
+ SOURCE=$PWD
+ PATH=$SOURCE:${PATH#?(.):}
+-PATH=${PATH%%:?(.)}:/usr/5bin:/bin:/usr/bin
++PATH=${PATH%%:?(.)}:/bin:/usr/bin
+ UNIT=$1
+ shift
+ if	[[ -f $UNIT && ! -x $UNIT ]]
+diff -rupN INIT.2011-02-08/src/lib/libast/comp/mkdir.c INIT.2011-02-08.clean/src/lib/libast/comp/mkdir.c
+--- INIT.2011-02-08/src/lib/libast/comp/mkdir.c	2012-05-07 15:23:37.437905060 +0100
++++ INIT.2011-02-08.clean/src/lib/libast/comp/mkdir.c	2012-05-07 15:25:03.856907633 +0100
+@@ -39,7 +39,7 @@ mkdir(const char* path, mode_t mode)
+ 	register int	n;
+ 	char*		av[3];
+ 
+-	static char*	cmd[] = { "/bin/mkdir", "/usr/5bin/mkdir", 0 };
++	static char*	cmd[] = { "/bin/mkdir", 0 };
+ 
+ 
+ 	n = errno;
+diff -rupN INIT.2011-02-08/src/lib/libast/comp/rmdir.c INIT.2011-02-08.clean/src/lib/libast/comp/rmdir.c
+--- INIT.2011-02-08/src/lib/libast/comp/rmdir.c	2012-05-07 15:23:37.439623862 +0100
++++ INIT.2011-02-08.clean/src/lib/libast/comp/rmdir.c	2012-05-07 15:25:25.119862860 +0100
+@@ -39,7 +39,7 @@ rmdir(const char* path)
+ 	struct stat	st;
+ 	char*		av[3];
+ 
+-	static char*	cmd[] = { "/bin/rmdir", "/usr/5bin/rmdir", 0 };
++	static char*	cmd[] = { "/bin/rmdir", 0 };
+ 
+ 	if (stat(path, &st) < 0) return(-1);
+ 	if (!S_ISDIR(st.st_mode))
+diff -rupN INIT.2011-02-08/src/lib/libast/port/astconf.c INIT.2011-02-08.clean/src/lib/libast/port/astconf.c
+--- INIT.2011-02-08/src/lib/libast/port/astconf.c	2012-05-07 15:23:37.452538787 +0100
++++ INIT.2011-02-08.clean/src/lib/libast/port/astconf.c	2012-05-07 15:27:12.365726756 +0100
+@@ -565,7 +565,7 @@ initialize(register Feature_t* fp, const
+ 						}
+ 						if (fp->op == OP_universe)
+ 						{
+-							if (strneq(p, "xpg", 3) || strneq(p, "5bin", 4))
++							if (strneq(p, "xpg", 3))
+ 							{
+ 								ok = 1;
+ 								break;

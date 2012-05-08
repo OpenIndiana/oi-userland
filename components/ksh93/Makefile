@@ -57,13 +57,22 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:44ae3913e6c0c8992c6c3cba16864fd4c4a18c6da8e7d87c85a23060cea7cd1a
 COMPONENT_ARCHIVE_URL_1= http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE_1)
 COMPONENT_PATCHES_1= solaris_alias.patch build_cflags.patch path_utmp.patch \
-					 CR6919590.patch CR7032821.patch CR7071431.patch \
-					 CR6964621.patch CR7036535.patch \
+					 CR6919590.patch CR7033181.patch \
+					 CR7071431.patch CR7036535.patch \
 					 CRXXX_Error_Catalog.patch CR7025778.patch \
 					 CR7065478.patch CR7026179.patch \
 					 CR7065900.patch CR7110983.patch \
 					 CR7105086.patch disable_dll.patch \
-					 CR7057565.patch
+					 CR7057565.patch CR7046434.patch \
+					 CR7032821.patch CR7009897.patch \
+					 CR6964621.patch CR7032068.patch \
+					 CR7061011.patch CR6934836.patch \
+					 CR7089799.patch CR6917338.patch \
+					 CR7019368.patch CR6729252.patch \
+					 MAP_TYPE_64_Bits.patch
+
+					 
+					 
 
 # Make the unpack of the second archive relocate to a sensible place
 UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
