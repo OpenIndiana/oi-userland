@@ -69,7 +69,7 @@ COMPONENT_PATCHES_1= solaris_alias.patch build_cflags.patch path_utmp.patch \
 					 CR7061011.patch CR6934836.patch \
 					 CR7089799.patch CR6917338.patch \
 					 CR7019368.patch CR6729252.patch \
-					 MAP_TYPE_64_Bits.patch
+					 MAP_TYPE_64_Bits.patch CR7167466.patch
 
 					 
 					 
