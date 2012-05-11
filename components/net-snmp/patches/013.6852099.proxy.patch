@@ -1,29 +1,29 @@
---- net-snmp-5.4.1/agent/mibgroup/ucd-snmp/proxy.c	Tue Oct 17 09:16:29 2006
-+++ patch/net-snmp-5.4.1/agent/mibgroup/ucd-snmp/proxy.c	Tue Sep 29 07:36:48 2009
-@@ -408,6 +408,8 @@
-                 /*
-                  * too large 
-                  */
-+		if (pdu)
-+			snmp_free_pdu(pdu);
-                 snmp_log(LOG_ERR,
-                          "proxy oid request length is too long\n");
-                 return SNMP_ERR_NOERROR;
-@@ -437,6 +439,8 @@
-      */
-     if (!proxy_fill_in_session(handler, reqinfo, (void **)&configured)) {
+--- a/agent/mibgroup/ucd-snmp/proxy.c	2006-10-17 18:16:29.000000000 +0200
++++ b/agent/mibgroup/ucd-snmp/proxy.c	2012-03-27 09:02:10.488425400 +0200
+@@ -396,6 +396,8 @@
+ 
+     if (!pdu || !sp) {
          netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_GENERR);
-+	if (pdu)
-+		snmp_free_pdu(pdu);
++        if (pdu)
++            snmp_free_pdu(pdu);
          return SNMP_ERR_NOERROR;
      }
  
-@@ -451,6 +455,8 @@
+@@ -408,6 +410,8 @@
+                 /*
+                  * too large 
+                  */
++                if (pdu)
++                    snmp_free_pdu(pdu);
+                 snmp_log(LOG_ERR,
+                          "proxy oid request length is too long\n");
+                 return SNMP_ERR_NOERROR;
+@@ -437,6 +441,8 @@
+      */
+     if (!proxy_fill_in_session(handler, reqinfo, (void **)&configured)) {
+         netsnmp_set_request_error(reqinfo, requests, SNMP_ERR_GENERR);
++        if (pdu)
++            snmp_free_pdu(pdu);
+         return SNMP_ERR_NOERROR;
+     }
  
-     /* Free any special parameters generated on the session */
-     proxy_free_filled_in_session_args(sp->sess, (void **)&configured);
-+    if (pdu)
-+	snmp_free_pdu(pdu);
- 
-     return SNMP_ERR_NOERROR;
- }
