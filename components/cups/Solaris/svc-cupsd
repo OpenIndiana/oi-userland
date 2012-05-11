@@ -1,0 +1,33 @@
+#!/usr/bin/ksh
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+#
+# Standard prolog
+#
+. /lib/svc/share/smf_include.sh
+
+if [ -z "$SMF_FMRI" ] ; then
+	echo "SMF framework variables are not initialized."
+	exit $SMF_EXIT_ERR_NOSMF
+fi
+
+# directory where to look for startup scripts
+STARTUP=/usr/lib/cups/startup
+
+# for all startup scripts found in the directory
+for SCRIPT in $STARTUP/* ; do
+	# verify the script is executable
+	[ -x "$SCRIPT" ] || continue
+	# execute the script
+	if ! "$SCRIPT" "$SMF_FMRI" "startup/${SCRIPT##*/}" ; then
+		echo "Warning: startup script $SCRIPT failed."
+	fi
+done
+
+# execute the CUPS daemon
+exec /usr/sbin/cupsd
+
+# fatal error, failed to execute CUPS daemon
+exit $SMF_EXIT_ERR_FATAL

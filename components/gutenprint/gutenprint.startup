@@ -1,0 +1,50 @@
+#!/usr/bin/sh
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+# This script should be run from the CUPS scheduler service start method.
+#
+# usage: /usr/lib/cups/startup/gutenprint <fmri> <pg/prop>
+#
+# where: <fmri>    ... FMRI of the CUPS scheduler service
+#        <pg/prop> ... property group/name where to store status
+#
+
+SVC=$1
+PROP=$2
+
+# verify input arguments
+if [ -z "$SVC" -o -z "$PROP" ] ; then
+	echo "$0: Invalid arguments."
+	echo "usage: $0 <fmri> <pg/prop>"
+	exit 1
+fi
+
+# determine the package version
+VER=`pkg search -Hlo pkg.fmri "$0" | cut -d @ -f 2`
+if [ -z "$VER" ] ; then
+	echo "$0: Failed to read package version."
+	exit 1
+fi
+
+# read the value of status property, if it exists
+if svcprop -q -p "$PROP" "$SVC" ; then
+	VAL=`svcprop -p "$PROP" "$SVC"`
+fi
+
+# compare the value with package version
+if [ "$VAL" = "$VER" ] ; then
+	# PPD files already updated for this package version
+	exit 0
+fi
+
+# update PPD files
+if ! /usr/sbin/cups-genppdupdate ; then
+	echo "$0: Failed to update PPD files."
+	exit 1
+fi
+
+# store status into the SMF repository
+svccfg -s "$SVC" setprop "$PROP" = astring: "$VER"
+
+exit 0

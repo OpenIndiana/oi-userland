@@ -81,6 +81,7 @@ dir path=usr/lib/cups/driver
 dir path=usr/lib/cups/filter
 dir path=usr/lib/cups/monitor
 dir path=usr/lib/cups/notifier
+dir path=usr/lib/cups/startup
 
 # SMF help dir
 dir path=usr/lib/help/auths/locale/C
@@ -176,6 +177,9 @@ dir group=lp path=var/spool/cups/tmp mode=01770
 file group=lp mode=0640 path=etc/cups/cupsd.conf preserve=true
 file path=lib/svc/manifest/application/cups.xml mode=0444 \
      restart_fmri=svc:/system/manifest-import:default
+
+# SMF service start method script
+file Solaris/svc-cupsd path=lib/svc/method/svc-cupsd
 
 # SMF help
 file Solaris/ManageCUPS.html mode=0444 \
