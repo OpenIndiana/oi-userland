@@ -1,0 +1,171 @@
+--- net-snmp-5.4.1/agent/mibgroup/kernel_sunos5.c	Tue Apr 24 14:13:10 2012
++++ kernel_sunos5.c.latest	Tue Apr 24 14:11:58 2012
+@@ -1045,18 +1045,21 @@
+ static int
+ _dlpi_open(const char *devname)
+ {
+-    char *devstr;
++    char devstr[255], devstrcpy[255];
+     int fd = -1;
+     int ppa = -1;
++    int ret = -1; 	
+ 
+     DEBUGMSGTL(("kernel_sunos5", "_dlpi_open called\n"));
+ 
+     if (devname == NULL)
+-        return (-1);
++	return (-1);
++    
++    ret = snprintf(devstr, sizeof(devstr), "/dev/%s", devname);
+ 
+-    if ((devstr = malloc(5 + strlen(devname) + 1)) == NULL)
+-        return (-1);
+-    (void) sprintf(devstr, "/dev/%s", devname);
++    if(ret < 0 || ret > sizeof(devstr) - 1)
++	return -1;
++    
+     DEBUGMSGTL(("kernel_sunos5:dlpi", "devstr(%s)\n", devstr));
+     /*
+      * First try opening the device using style 1, if the device does not
+@@ -1067,13 +1070,49 @@
+     DEBUGMSGTL(("kernel_sunos5:dlpi", "style1 open(%s)\n", devstr));
+     if ((fd = open(devstr, O_RDWR | O_NONBLOCK)) < 0) {
+         DEBUGMSGTL(("kernel_sunos5:dlpi", "style1 open failed\n"));
+-        if (_dlpi_parse_devname(devstr, &ppa) == 0) {
+-            DEBUGMSGTL(("kernel_sunos5:dlpi", "style2 parse: %s, %d\n", 
+-                       devstr, ppa));
+-            /* try style 2 */
+-            DEBUGMSGTL(("kernel_sunos5:dlpi", "style2 open(%s)\n", devstr));
++	fd = -1;
++    } else {
++      DEBUGMSGTL(("kernel_sunos5:dlpi", "style1 open succeeded\n"));
++    }
+ 
+-            if ((fd = open(devstr, O_RDWR | O_NONBLOCK)) != -1) {
++    /* Creating a copy of the devname incase style 3 open
++     *  is required
++     */
++    ret = strlcpy(devstrcpy, devstr, sizeof(devstrcpy));
++
++    if(ret > sizeof(devstrcpy) - 1)
++        return -1;
++
++    DEBUGMSGTL(("kernel_sunos5:dlpi", "devstrcpy(%s)\n", devstrcpy));
++
++
++    if (fd == -1 ) {
++      ret = snprintf(devstr, sizeof(devstr), "/dev/net/%s", devname);
++      
++      if(ret < 0 || ret > sizeof(devstr) - 1)
++          return -1;
++
++      DEBUGMSGTL(("kernel_sunos5:dlpi", "devstr(%s)\n", devstr));
++      
++      /* try style 2 */
++
++     if ((fd = open(devstr, O_RDWR | O_NONBLOCK)) < 0) {
++        DEBUGMSGTL(("kernel_sunos5:dlpi", "style2 open failed\n"));
++	fd = -1;
++      } else {
++	DEBUGMSGTL(("kernel_sunos5:dlpi", "style2 open succeeded\n"));
++      }
++    }
++    
++
++    if (fd == -1 ) {
++        if (_dlpi_parse_devname(devstrcpy, &ppa) == 0) {
++            DEBUGMSGTL(("kernel_sunos5:dlpi", "style3 parse: %s, %d\n", 
++                       devstrcpy, ppa));
++            /* try style 3 */
++            DEBUGMSGTL(("kernel_sunos5:dlpi", "style3 open(%s)\n", devstrcpy));
++
++            if ((fd = open(devstrcpy, O_RDWR | O_NONBLOCK)) != -1) {
+                 if (_dlpi_attach(fd, ppa) == 0) {
+                     DEBUGMSGTL(("kernel_sunos5:dlpi", "attached\n"));
+                 } else {
+@@ -1082,16 +1121,11 @@
+                     fd = -1;
+                 }
+             } else {
+-                DEBUGMSGTL(("kernel_sunos5:dlpi", "style2 open failed\n"));
++                DEBUGMSGTL(("kernel_sunos5:dlpi", "style3 open failed\n"));
+             }
+         } 
+-    } else {
+-        DEBUGMSGTL(("kernel_sunos5:dlpi", "style1 open succeeded\n"));
+     }
+ 
+-    /* clean up */
+-    free(devstr);
+-
+     return (fd);
+ }
+ 
+@@ -1106,7 +1140,9 @@
+     struct strbuf       ctlbuf;
+     char                buf[MAX(DL_PHYS_ADDR_ACK_SIZE+64, DL_ERROR_ACK_SIZE)];
+     int                 flag = 0;
+-
++    struct pollfd 		pfd;
++    int			timeout = 100;
++	
+     DEBUGMSGTL(("kernel_sunos5:dlpi", "_dlpi_get_phys_address\n"));
+ 
+     paddr_req.dl_primitive = DL_PHYS_ADDR_REQ;
+@@ -1119,7 +1155,22 @@
+     ctlbuf.maxlen = sizeof(buf);
+     ctlbuf.len = 0;
+     ctlbuf.buf = buf;
+-    if (getmsg(fd, &ctlbuf, NULL, &flag) < 0)
++
++    pfd.fd = fd;
++    pfd.events = POLLIN | POLLPRI;
++
++    switch (poll(&pfd, 1, timeout)) {
++    default:
++	if (pfd.revents & POLLHUP)
++    	    return (-1);
++   	break;
++    case 0:
++    	return (-1);
++    case -1:
++    	return (-1);
++    }
++    
++	if (getmsg(fd, &ctlbuf, NULL, &flag) < 0)
+         return (-1);
+ 
+     if (ctlbuf.len < sizeof(uint32_t))
+@@ -1161,6 +1212,8 @@
+     struct strbuf       ctlbuf;
+     char                buf[MAX(DL_INFO_ACK_SIZE, DL_ERROR_ACK_SIZE)];
+     int                 flag = 0;
++    struct pollfd       pfd;
++    int                 timeout = 100;
+ 
+     DEBUGMSGTL(("kernel_sunos5:dlpi", "_dlpi_get_iftype\n"));
+ 
+@@ -1175,7 +1228,22 @@
+     ctlbuf.maxlen = sizeof(buf);
+     ctlbuf.len = 0;
+     ctlbuf.buf = buf;
+-    if (getmsg(fd, &ctlbuf, NULL, &flag) < 0) {
++   
++    pfd.fd = fd;
++    pfd.events = POLLIN | POLLPRI;
++
++    switch (poll(&pfd, 1, timeout)) {
++    default:
++        if (pfd.revents & POLLHUP)
++            return (-1);
++        break;
++    case 0:
++        return (-1);
++    case -1:
++        return (-1);
++    } 
++
++	if (getmsg(fd, &ctlbuf, NULL, &flag) < 0) {
+         DEBUGMSGTL(("kernel_sunos5:dlpi", "getmsg failed: %d\n", errno));
+         return (-1);
+     }
