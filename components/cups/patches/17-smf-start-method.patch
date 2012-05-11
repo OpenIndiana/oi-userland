@@ -1,0 +1,20 @@
+--- init/cups.xml.in.orig	Fri Apr 13 05:21:47 2012
++++ init/cups.xml.in	Fri Apr 13 05:22:51 2012
+@@ -71,7 +71,7 @@
+         <exec_method
+             type='method'
+             name='start'
+-            exec='@sbindir@/cupsd'
++            exec='/lib/svc/method/svc-cupsd'
+             timeout_seconds='60' >
+             <method_context>
+                 <method_credential user='root' group='@CUPS_GROUP@' />
+@@ -87,6 +87,8 @@
+                 value='solaris.smf.manage.cups' />
+         </property_group>
+ 
++        <property_group name='startup' type='application' />
++
+         <template>
+             <common_name>
+                 <loctext xml:lang='C'>
