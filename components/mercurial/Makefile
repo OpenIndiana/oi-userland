@@ -25,12 +25,12 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	1.8.4
+COMPONENT_VERSION=	2.2.1
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4c9d7b8eeb5968592602795f6e67e4cf6ddf0a0e8cfc7eeda7d1a3996a3eab8f
+    sha256:ab4ffe751553f852813c21ad73907530ffbc5aa39b0cf962f61fe70f196cbb81
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -54,7 +54,8 @@ install:	$(INSTALL_32)
 
 test:	$(INSTALL_32)
 	(cd $(COMPONENT_SRC)/tests ; \
-	 PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) $(PYTHON) ./run-tests.py)
+	 PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) TERM=dumb \
+	 $(PYTHON) ./run-tests.py --shell /bin/bash)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
