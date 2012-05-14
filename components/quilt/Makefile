@@ -25,6 +25,8 @@
 
 include ../../make-rules/shared-macros.mk
 
+PATH = /usr/gnu/bin:/usr/bin
+
 COMPONENT_NAME=		quilt
 COMPONENT_VERSION=	0.60
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
