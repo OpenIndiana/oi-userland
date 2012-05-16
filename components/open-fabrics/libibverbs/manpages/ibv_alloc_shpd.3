@@ -1,0 +1,37 @@
+.\" -*- nroff -*-
+.\"
+.TH IBV_ALLOC_SHPD 3 2012-02-29 libibverbs "Libibverbs Programmer's Manual"
+.SH "NAME"
+ibv_alloc_shpd \- allocate unique id for sharing a protection domain (PD). 
+.SH "SYNOPSIS"
+.nf
+.B #include <infiniband/verbs.h>
+.sp
+.BI "struct ibv_shpd *ibv_alloc_shpd(struct ibv_pd " "*pd" ", uint64_t "
+.BI " " "                               share_key" ", struct ibv_shpd " "*shpd");
+.sp
+.fi
+.SH "DESCRIPTION"
+.B ibv_alloc_shpd()
+allocates a unique identifier required for sharing the PD  
+.I pd\fR with another process.
+.I share_key
+is a 64 bit key which needs to be provided with 
+.B ibv_share_pd()
+call by another process to share the same PD in that other process. The argument 
+.I shpd
+specifies a pointer to a user allocated area where libibverbs can write the unique identifier for the
+.I pd\fR.
+.SH "RETURN VALUE"
+.B ibv_alloc_shpd()
+returns
+.I shpd
+- a pointer to the area where the unique identifier is written - or NULL if the request fails.
+.SH "NOTES"
+.B ibv_alloc_shpd()
+can be called on a particular PD only once.
+.SH "SEE ALSO"
+.BR ibv_share_pd (3)
+.SH "AUTHORS"
+.TP
+Arun Kaimalettu <gotoarunk at gmail dot com>

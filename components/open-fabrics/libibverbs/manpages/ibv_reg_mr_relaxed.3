@@ -1,0 +1,88 @@
+.\" -*- nroff -*-
+.\"
+.TH IBV_REG_MR_RELAXED 3 2012-02-29 libibverbs "Libibverbs Programmer's Manual"
+.SH "NAME"
+ibv_reg_mr_relaxed, ibv_dereg_mr_relaxed, ibv_flush_relaxed_mr \- register or deregister a memory region (MR) in relaxed mode, flush relaxed MRs
+.SH "SYNOPSIS"
+.nf
+.B #include <infiniband/verbs.h>
+.sp
+.BI "struct ibv_mr *ibv_reg_mr_relaxed(struct ibv_pd " "*pd" ", void " "*addr" ,
+.BI "                                  size_t " "length" ", int " "access" );
+.sp
+.BI "int ibv_dereg_mr_relaxed(struct ibv_mr " "*mr" );
+.sp
+.BI "int ibv_flush_relaxed_mr(struct ibv_pd " "*pd" );
+.fi
+.SH "DESCRIPTION"
+Relaxed MRs are different from normal MRs in following ways :
+.PP
+.PP
+ *  Registration is done using Fast Memory Registration(FMR) interface provided by the RDMA device.
+.PP
+ *  Access permissions are extended to specified memory area's last page boundary.
+.PP
+ *  There could be a finite time gap between the deregistration call and actual invalidation in the RDMA device for an MR.
+.sp
+.PP
+
+.B ibv_reg_mr_relaxed()
+registers a memory region (MR) associated with the protection domain
+.I pd\fR.
+The MR's starting address is
+.I addr
+and its size is
+.I length\fR.
+The argument
+.I access
+describes the desired memory protection attributes; for details on 
+.I access
+options see description of 
+.B ibv_reg_mr()\fR.
+.PP
+.B ibv_dereg_mr_relaxed()
+deregisters the MR
+.I mr\fR.
+This call marks 
+.I mr
+as ready to be invalidated; however actual invalidation happens later.
+.PP
+.B ibv_flush_relaxed_mr()
+forces all deregistered relaxed MRs under PD
+.I pd
+to be invalidated by the RDMA device.
+.SH "RETURN VALUE"
+.B ibv_reg_mr_relaxed()
+returns a pointer to the registered MR, or NULL if the request fails.
+The local key (\fBL_Key\fR) field
+.B lkey
+is used as the lkey field of struct ibv_sge when posting buffers with
+ibv_post_* verbs, and the remote key (\fBR_Key\fR)
+field
+.B rkey
+is used by remote processes to perform Atomic and RDMA operations.  The remote process places this
+.B rkey
+as the rkey field of struct ibv_send_wr passed to the ibv_post_send function.
+.PP
+.B ibv_dereg_mr_relaxed()
+returns 0 on success, or the value of errno on failure (which indicates the failure reason).
+.PP
+.B ibv_flush_relaxed_mr() 
+returns 0 on success, or the value of errno on failure.
+
+.SH "NOTES"
+.B ibv_reg_mr_relaxed()
+can return transient error EAGAIN. User may retry the operation after sometime.
+.PP
+The user of relaxed memory regions should take care to avoid reliance on
+immediate deregistration behavior.  Also, because of the page granularity
+of relaxed memory regions, it is often advisable to use page sized
+registrations or to align registered regions to a page boundary.
+.SH "SEE ALSO"
+.BR ibv_alloc_pd (3),
+.BR ibv_post_send (3),
+.BR ibv_post_recv (3),
+.BR ibv_post_srq_recv (3)
+.SH "AUTHORS"
+.TP
+Arun Kaimalettu <gotoarunk at gmail dot com>
