@@ -356,6 +356,18 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/kern_abi.h libibverbs-1.1.4/src/kern
  
  /*
   * Increment this value if any changes that break userspace ABI
+@@ -47,7 +51,10 @@
+ 	IB_USER_VERBS_CMD_ALLOC_PD,
+ 	IB_USER_VERBS_CMD_DEALLOC_PD,
+ 	IB_USER_VERBS_CMD_REG_MR,
+-	IB_USER_VERBS_CMD_DEREG_MR
++	IB_USER_VERBS_CMD_DEREG_MR,
++	IB_USER_VERBS_CMD_REG_MR_RELAXED,
++	IB_USER_VERBS_CMD_DEREG_MR_RELAXED,
++	IB_USER_VERBS_CMD_FLUSH_RELAXED_MR
+ };
+ 
+ /*
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 --- /tmp/846623/libibverbs-1.1.4/src/verbs.c	Thu Feb  3 01:53:17 2011
 +++ libibverbs-1.1.4/src/verbs.c	Fri Feb 11 04:02:33 2011
@@ -413,7 +425,90 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  }
  default_symver(__ibv_query_pkey, ibv_query_pkey);
  
-@@ -212,6 +231,10 @@
+@@ -148,6 +167,27 @@
+ }
+ default_symver(__ibv_alloc_pd, ibv_alloc_pd);
+ 
++struct ibv_shpd *__ibv_alloc_shpd(struct ibv_pd *pd, uint64_t share_key, struct ibv_shpd *shpd)
++{
++
++	shpd = pd->context->ops.alloc_shpd(pd, share_key, shpd);
++
++	return shpd;
++}
++default_symver(__ibv_alloc_shpd, ibv_alloc_shpd);
++
++struct ibv_pd *__ibv_share_pd(struct ibv_context *context, struct ibv_shpd *shpd, uint64_t share_key)
++{
++	struct ibv_pd *pd;
++
++	pd = context->ops.share_pd(context, shpd, share_key);
++	if (pd)
++		pd->context = context;
++
++	return pd;
++}
++default_symver(__ibv_share_pd, ibv_share_pd);
++
+ int __ibv_dealloc_pd(struct ibv_pd *pd)
+ {
+ 	return pd->context->ops.dealloc_pd(pd);
+@@ -175,6 +215,27 @@
+ }
+ default_symver(__ibv_reg_mr, ibv_reg_mr);
+ 
++struct ibv_mr *__ibv_reg_mr_relaxed(struct ibv_pd *pd, void *addr,
++			    size_t length, int access)
++{
++	struct ibv_mr *mr;
++
++	if (ibv_dontfork_range(addr, length))
++		return NULL;
++
++	mr = pd->context->ops.reg_mr_relaxed(pd, addr, length, access);
++	if (mr) {
++		mr->context = pd->context;
++		mr->pd      = pd;
++		mr->addr    = addr;
++		mr->length  = length;
++	} else
++		ibv_dofork_range(addr, length);
++
++	return mr;
++}
++default_symver(__ibv_reg_mr_relaxed, ibv_reg_mr_relaxed);
++
+ int __ibv_dereg_mr(struct ibv_mr *mr)
+ {
+ 	int ret;
+@@ -189,6 +250,26 @@
+ }
+ default_symver(__ibv_dereg_mr, ibv_dereg_mr);
+ 
++int __ibv_dereg_mr_relaxed(struct ibv_mr *mr)
++{
++	int ret;
++	void *addr	= mr->addr;
++	size_t length	= mr->length;
++
++	ret = mr->context->ops.dereg_mr_relaxed(mr);
++	if (!ret)
++		ibv_dofork_range(addr, length);
++
++	return ret;
++}
++default_symver(__ibv_dereg_mr_relaxed, ibv_dereg_mr_relaxed);
++
++int __ibv_flush_relaxed_mr(struct ibv_pd *pd)
++{
++	return pd->context->ops.flush_relaxed_mr(pd);
++}
++default_symver(__ibv_flush_relaxed_mr, ibv_flush_relaxed_mr);
++
+ static struct ibv_comp_channel *ibv_create_comp_channel_v2(struct ibv_context *context)
+ {
+ 	struct ibv_abi_compat_v2 *t = context->abi_compat;
+@@ -212,6 +293,10 @@
  	struct ibv_comp_channel            *channel;
  	struct ibv_create_comp_channel      cmd;
  	struct ibv_create_comp_channel_resp resp;
@@ -424,7 +519,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  
  	if (abi_ver <= 2)
  		return ibv_create_comp_channel_v2(context);
-@@ -221,7 +244,23 @@
+@@ -221,7 +306,23 @@
  		return NULL;
  
  	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, CREATE_COMP_CHANNEL, &resp, sizeof resp);
@@ -448,7 +543,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  		free(channel);
  		return NULL;
  	}
-@@ -228,6 +267,9 @@
+@@ -228,6 +329,9 @@
  
  	VALGRIND_MAKE_MEM_DEFINED(&resp, sizeof resp);
  
@@ -517,7 +612,37 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/ibverbs.h libibverbs-1.1.4/src/ibver
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/libibverbs.map libibverbs-1.1.4/src/libibverbs.map
 --- /tmp/846623/libibverbs-1.1.4/src/libibverbs.map	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/src/libibverbs.map	Mon Mar 28 13:44:44 2011
-@@ -71,6 +71,7 @@
+@@ -13,9 +13,14 @@
+ 		ibv_query_gid;
+ 		ibv_query_pkey;
+ 		ibv_alloc_pd;
++		ibv_alloc_shpd;
++		ibv_share_pd;
+ 		ibv_dealloc_pd;
+ 		ibv_reg_mr;
++		ibv_reg_mr_relaxed;
+ 		ibv_dereg_mr;
++		ibv_dereg_mr_relaxed;
++		ibv_flush_relaxed_mr;
+ 		ibv_create_comp_channel;
+ 		ibv_destroy_comp_channel;
+ 		ibv_create_cq;
+@@ -41,9 +46,14 @@
+ 		ibv_cmd_query_gid;
+ 		ibv_cmd_query_pkey;
+ 		ibv_cmd_alloc_pd;
++		ibv_cmd_alloc_shpd;
++		ibv_cmd_share_pd;
+ 		ibv_cmd_dealloc_pd;
+ 		ibv_cmd_reg_mr;
++		ibv_cmd_reg_mr_relaxed;
+ 		ibv_cmd_dereg_mr;
++		ibv_cmd_dereg_mr_relaxed;
++		ibv_cmd_flush_relaxed_mr;
+ 		ibv_cmd_create_cq;
+ 		ibv_cmd_poll_cq;
+ 		ibv_cmd_req_notify_cq;
+@@ -71,6 +81,7 @@
  		mult_to_ibv_rate;
  		ibv_get_sysfs_path;
  		ibv_read_sysfs_file;
@@ -641,7 +766,121 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	return 0;
  }
  
-@@ -315,7 +380,19 @@
+@@ -218,6 +283,45 @@
+ 	return 0;
+ }
+ 
++int ibv_cmd_alloc_shpd(struct ibv_context *context, struct ibv_pd *pd,
++         uint64_t share_key, struct ibv_shpd *shpd,
++		     struct ibv_alloc_shpd *cmd, size_t cmd_size,
++		     struct ibv_alloc_shpd_resp *resp, size_t resp_size)
++{
++	IBV_INIT_CMD_RESP(cmd, cmd_size, ALLOC_SHPD, resp, resp_size);
++        cmd->pd_handle = pd->handle;
++	cmd->share_key = share_key;
++
++	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
++		return errno;
++
++	VALGRIND_MAKE_MEM_DEFINED(resp, resp_size);
++
++	shpd->handle  = resp->shpd_handle;
++
++	return 0;
++}
++
++int ibv_cmd_share_pd(struct ibv_context *context, struct ibv_shpd *shpd,
++         uint64_t share_key, struct ibv_pd *pd,
++		     struct ibv_share_pd *cmd, size_t cmd_size,
++		     struct ibv_share_pd_resp *resp, size_t resp_size)
++{
++	IBV_INIT_CMD_RESP(cmd, cmd_size, SHARE_PD, resp, resp_size);
++	cmd->shpd_handle = shpd->handle;
++	cmd->share_key = share_key;
++
++	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
++		return errno;
++
++	VALGRIND_MAKE_MEM_DEFINED(resp, resp_size);
++
++	pd->handle  = resp->pd_handle;
++	pd->context = context;
++
++	return 0;
++}
++
+ int ibv_cmd_dealloc_pd(struct ibv_pd *pd)
+ {
+ 	struct ibv_dealloc_pd cmd;
+@@ -259,6 +363,34 @@
+ 	return 0;
+ }
+ 
++int ibv_cmd_reg_mr_relaxed(struct ibv_pd *pd, void *addr, size_t length,
++		   uint64_t hca_va, int access,
++		   struct ibv_mr *mr, struct ibv_reg_mr *cmd,
++		   size_t cmd_size,
++		   struct ibv_reg_mr_resp *resp, size_t resp_size)
++{
++
++	IBV_INIT_CMD_RESP(cmd, cmd_size, REG_MR_RELAXED, resp, resp_size);
++
++	cmd->start 	  = (uintptr_t) addr;
++	cmd->length 	  = length;
++	cmd->hca_va 	  = hca_va;
++	cmd->pd_handle 	  = pd->handle;
++	cmd->access_flags = access;
++
++	if (write(pd->context->cmd_fd, cmd, cmd_size) != cmd_size)
++		return errno;
++
++	VALGRIND_MAKE_MEM_DEFINED(resp, resp_size);
++
++	mr->handle  = resp->mr_handle;
++	mr->lkey    = resp->lkey;
++	mr->rkey    = resp->rkey;
++	mr->context = pd->context;
++
++	return 0;
++}
++
+ int ibv_cmd_dereg_mr(struct ibv_mr *mr)
+ {
+ 	struct ibv_dereg_mr cmd;
+@@ -272,6 +404,32 @@
+ 	return 0;
+ }
+ 
++int ibv_cmd_dereg_mr_relaxed(struct ibv_mr *mr)
++{
++	struct ibv_dereg_mr cmd;
++
++	IBV_INIT_CMD(&cmd, sizeof cmd, DEREG_MR_RELAXED);
++	cmd.mr_handle = mr->handle;
++
++	if (write(mr->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
++		return errno;
++
++	return 0;
++}
++
++int ibv_cmd_flush_relaxed_mr(struct ibv_pd *pd)
++{
++	struct ibv_flush_relaxed_mr cmd;
++
++	IBV_INIT_CMD(&cmd, sizeof cmd, FLUSH_RELAXED_MR);
++	cmd.pd_handle = pd->handle;
++
++	if (write(pd->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
++		return errno;
++
++	return 0;
++}
++
+ static int ibv_cmd_create_cq_v2(struct ibv_context *context, int cqe,
+ 				struct ibv_cq *cq,
+ 				struct ibv_create_cq *new_cmd, size_t new_cmd_size,
+@@ -315,7 +473,19 @@
  	cmd->user_handle   = (uintptr_t) cq;
  	cmd->cqe           = cqe;
  	cmd->comp_vector   = comp_vector;
@@ -661,7 +900,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->reserved      = 0;
  
  	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
-@@ -637,7 +714,19 @@
+@@ -637,7 +807,19 @@
  	cmd->max_send_sge    = attr->cap.max_send_sge;
  	cmd->max_recv_sge    = attr->cap.max_recv_sge;
  	cmd->max_inline_data = attr->cap.max_inline_data;
@@ -681,7 +920,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->qp_type 	     = attr->qp_type;
  	cmd->is_srq 	     = !!attr->srq;
  	cmd->srq_handle      = attr->qp_type == IBV_QPT_XRC ?
-@@ -1406,4 +1495,3 @@
+@@ -1406,4 +1588,3 @@
  		return errno;
  	return 0;
  }
@@ -769,7 +1008,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/init.c libibverbs-1.1.4/src/init.c
  static void add_device(struct ibv_device *dev,
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/enum_strs.c libibverbs-1.1.4/src/enum_strs.c
 --- /tmp/846623/libibverbs-1.1.4/src/enum_strs.c	Wed Sep 16 04:27:22 2009
-+++ libibverbs-1.1.4/src/enum_strs.c	Fri Mar 16 22:51:54 2012
++++ libibverbs-1.1.4/src/enum_strs.c	Tue Mar 20 16:27:45 2012
 @@ -85,6 +85,7 @@
  		[IBV_EVENT_SRQ_LIMIT_REACHED]	= "SRQ limit reached",
  		[IBV_EVENT_QP_LAST_WQE_REACHED]	= "last WQE reached",
@@ -944,10 +1183,15 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  /*
   * This file must be kept in sync with the kernel's version of
-@@ -94,6 +98,10 @@
+@@ -94,6 +98,15 @@
  	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP,
  	IB_USER_VERBS_CMD_REG_XRC_RCV_QP,
  	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP,
++	IB_USER_VERBS_CMD_REG_MR_RELAXED,
++	IB_USER_VERBS_CMD_DEREG_MR_RELAXED,
++	IB_USER_VERBS_CMD_FLUSH_RELAXED_MR,
++	IB_USER_VERBS_CMD_ALLOC_SHPD,
++	IB_USER_VERBS_CMD_SHARE_PD,
 +#if defined(__SVR4) && defined(__sun)
 +	IB_USER_VERBS_CMD_QUERY_GID,
 +	IB_USER_VERBS_CMD_QUERY_PKEY
@@ -955,7 +1199,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  };
  
  /*
-@@ -235,6 +243,38 @@
+@@ -235,6 +248,38 @@
  	__u8  reserved[2];
  };
  
@@ -994,7 +1238,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_alloc_pd {
  	__u32 command;
  	__u16 in_words;
-@@ -243,9 +283,24 @@
+@@ -243,10 +288,57 @@
  	__u64 driver_data[0];
  };
  
@@ -1017,9 +1261,56 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  };
 +#endif
  
++struct ibv_alloc_shpd {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u64 response;
++	__u32 pd_handle;
++	__u32 reserved;
++	__u64 share_key;
++	__u64 driver_data[0];
++};
++
++struct ibv_alloc_shpd_resp {
++	__u32 shpd_handle;
++};
++
++struct ibv_share_pd {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u64 response;
++	__u32 shpd_handle;
++	__u32 reserved;
++	__u64 share_key;
++	__u64 driver_data[0];
++};
++
++struct ibv_share_pd_resp {
++	__u32 pd_handle;
++        __u32 reserved;
++        ofuv_pd_drv_data_out_t drv_out;
++};
++
  struct ibv_dealloc_pd {
  	__u32 command;
-@@ -304,10 +359,25 @@
+ 	__u16 in_words;
+@@ -280,6 +372,13 @@
+ 	__u32 mr_handle;
+ };
+ 
++struct ibv_flush_relaxed_mr {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u32 pd_handle;
++};
++
+ struct ibv_create_comp_channel {
+ 	__u32 command;
+ 	__u16 in_words;
+@@ -304,10 +403,25 @@
  	__u64 driver_data[0];
  };
  
@@ -1045,7 +1336,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_kern_wc {
  	__u64  wr_id;
-@@ -363,7 +433,11 @@
+@@ -363,7 +477,11 @@
  struct ibv_resize_cq_resp {
  	__u32 cqe;
  	__u32 reserved;
@@ -1057,7 +1348,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  };
  
  struct ibv_destroy_cq {
-@@ -460,6 +534,14 @@
+@@ -460,6 +578,14 @@
  	__u64 driver_data[0];
  };
  
@@ -1072,7 +1363,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_create_qp_resp {
  	__u32 qp_handle;
  	__u32 qpn;
-@@ -469,7 +551,20 @@
+@@ -469,7 +595,20 @@
  	__u32 max_recv_sge;
  	__u32 max_inline_data;
  	__u32 reserved;
@@ -1093,7 +1384,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_qp_dest {
  	__u8  dgid[16];
-@@ -817,12 +912,29 @@
+@@ -817,12 +956,29 @@
  	__u64 driver_data[0];
  };
  
@@ -1123,10 +1414,53 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_modify_srq {
  	__u32 command;
+@@ -946,6 +1102,11 @@
+ 	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP_V2 = -1,
+ 	IB_USER_VERBS_CMD_REG_XRC_RCV_QP_V2 = -1,
+ 	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP_V2 = -1,
++	IB_USER_VERBS_CMD_REG_MR_RELAXED_V2 = -1,
++	IB_USER_VERBS_CMD_DEREG_MR_RELAXED_V2 = -1,
++	IB_USER_VERBS_CMD_FLUSH_RELAXED_MR_V2 = -1,
++  	IB_USER_VERBS_CMD_ALLOC_SHPD_V2 = -1,
++  	IB_USER_VERBS_CMD_SHARE_PD_V2 = -1,
+ };
+ 
+ struct ibv_destroy_cq_v1 {
 diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/driver.h libibverbs-1.1.4/include/infiniband/driver.h
 --- /tmp/846623/libibverbs-1.1.4/include/infiniband/driver.h	Thu Feb  3 01:53:17 2011
 +++ libibverbs-1.1.4/include/infiniband/driver.h	Fri Feb 11 04:02:20 2011
-@@ -164,8 +164,8 @@
+@@ -74,6 +74,14 @@
+ int ibv_cmd_alloc_pd(struct ibv_context *context, struct ibv_pd *pd,
+ 		     struct ibv_alloc_pd *cmd, size_t cmd_size,
+ 		     struct ibv_alloc_pd_resp *resp, size_t resp_size);
++int ibv_cmd_alloc_shpd(struct ibv_context *context, struct ibv_pd *pd,
++		     uint64_t share_key, struct ibv_shpd *shpd,
++		     struct ibv_alloc_shpd *cmd, size_t cmd_size,
++		     struct ibv_alloc_shpd_resp *resp, size_t resp_size);
++int ibv_cmd_share_pd(struct ibv_context *context, struct ibv_shpd *shpd,
++		     uint64_t share_key, struct ibv_pd *pd,
++		     struct ibv_share_pd *cmd, size_t cmd_size,
++		     struct ibv_share_pd_resp *resp, size_t resp_size);
+ int ibv_cmd_dealloc_pd(struct ibv_pd *pd);
+ #define IBV_CMD_REG_MR_HAS_RESP_PARAMS
+ int ibv_cmd_reg_mr(struct ibv_pd *pd, void *addr, size_t length,
+@@ -81,7 +89,15 @@
+ 		   struct ibv_mr *mr, struct ibv_reg_mr *cmd,
+ 		   size_t cmd_size,
+ 		   struct ibv_reg_mr_resp *resp, size_t resp_size);
++#define IBV_CMD_REG_MR_RELAXED_HAS_RESP_PARAMS
++int ibv_cmd_reg_mr_relaxed(struct ibv_pd *pd, void *addr, size_t length,
++		   uint64_t hca_va, int access,
++		   struct ibv_mr *mr, struct ibv_reg_mr *cmd,
++		   size_t cmd_size,
++		   struct ibv_reg_mr_resp *resp, size_t resp_size);
+ int ibv_cmd_dereg_mr(struct ibv_mr *mr);
++int ibv_cmd_dereg_mr_relaxed(struct ibv_mr *mr);
++int ibv_cmd_flush_relaxed_mr(struct ibv_pd *pd);
+ int ibv_cmd_create_cq(struct ibv_context *context, int cqe,
+ 		      struct ibv_comp_channel *channel,
+ 		      int comp_vector, struct ibv_cq *cq,
+@@ -164,8 +180,8 @@
  int ibv_read_sysfs_file(const char *dir, const char *file,
  			char *buf, size_t size);
  
@@ -1160,7 +1494,18 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  };
  
  struct ibv_pd {
-@@ -425,6 +429,14 @@
+@@ -305,6 +309,10 @@
+ 	uint32_t		handle;
+ };
+ 
++struct ibv_shpd {
++	uint32_t		handle;
++};
++
+ enum ibv_rereg_mr_flags {
+ 	IBV_REREG_MR_CHANGE_TRANSLATION	= (1 << 0),
+ 	IBV_REREG_MR_CHANGE_PD		= (1 << 1),
+@@ -425,6 +433,14 @@
  	uint32_t		max_inline_data;
  };
  
@@ -1175,7 +1520,20 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  struct ibv_qp_init_attr {
  	void		       *qp_context;
  	struct ibv_cq	       *send_cq;
-@@ -749,6 +761,13 @@
+@@ -743,6 +759,12 @@
+ 	int			(*detach_mcast)(struct ibv_qp *qp, const union ibv_gid *gid,
+ 						uint16_t lid);
+ 	void			(*async_event)(struct ibv_async_event *event);
++	struct ibv_mr *		(*reg_mr_relaxed)(struct ibv_pd *pd, void *addr, size_t length,
++					  int access);
++	int			(*dereg_mr_relaxed)(struct ibv_mr *mr);
++	int			(*flush_relaxed_mr)(struct ibv_pd *pd);
++	struct ibv_shpd *	(*alloc_shpd)(struct ibv_pd *pd, uint64_t share_key, struct ibv_shpd *shpd);
++	struct ibv_pd *		(*share_pd)(struct ibv_context *context, struct ibv_shpd *shpd, uint64_t share_key);
+ };
+ 
+ struct ibv_context {
+@@ -749,6 +771,13 @@
  	struct ibv_device      *device;
  	struct ibv_context_ops	ops;
  	int			cmd_fd;
@@ -1189,6 +1547,55 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  	int			async_fd;
  	int			num_comp_vectors;
  	pthread_mutex_t		mutex;
+@@ -858,6 +887,20 @@
+ struct ibv_pd *ibv_alloc_pd(struct ibv_context *context);
+ 
+ /**
++ * ibv_alloc_shpd - Mark given protection domain as shareable & return shpd structure
++ *                  that identify it.
++ *                  the storage for shpd structure needs to be provided by client.
++ */
++struct ibv_shpd *ibv_alloc_shpd(struct ibv_pd *pd, uint64_t share_key, struct ibv_shpd *shpd);
++
++/**
++ * ibv_share_pd - share the protection domain identified by given shpd struct & return a
++ *                process linked ibv_pd struct.
++ *                the share_key given should match with the share_key specifed in alloc_shpd().
++ */
++struct ibv_pd *ibv_share_pd(struct ibv_context *context, struct ibv_shpd *shpd, uint64_t share_key);
++
++/**
+  * ibv_dealloc_pd - Free a protection domain
+  */
+ int ibv_dealloc_pd(struct ibv_pd *pd);
+@@ -869,11 +912,27 @@
+ 			  size_t length, int access);
+ 
+ /**
++ * ibv_reg_mr_relaxed - Register a memory region using FMR
++ */
++struct ibv_mr *ibv_reg_mr_relaxed(struct ibv_pd *pd, void *addr,
++			  size_t length, int access);
++
++/**
+  * ibv_dereg_mr - Deregister a memory region
+  */
+ int ibv_dereg_mr(struct ibv_mr *mr);
+ 
+ /**
++ * ibv_dereg_mr_relaxed - Deregister a memory region registered using FMR
++ */
++int ibv_dereg_mr_relaxed(struct ibv_mr *mr);
++
++/**
++ * ibv_flush_relaxed_mr - Flush all free mr's in the protection domain
++ */
++int ibv_flush_relaxed_mr(struct ibv_pd *pd);
++
++/**
+  * ibv_create_comp_channel - Create a completion event channel
+  */
+ struct ibv_comp_channel *ibv_create_comp_channel(struct ibv_context *context);
 diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/arch.h libibverbs-1.1.4/include/infiniband/arch.h
 --- /tmp/846623/libibverbs-1.1.4/include/infiniband/arch.h	Wed Sep 16 04:27:22 2009
 +++ libibverbs-1.1.4/include/infiniband/arch.h	Fri Feb 11 04:02:20 2011

@@ -1,0 +1,52 @@
+.\" -*- nroff -*-
+.\"
+.TH IBV_SHARE_PD 3 2012-02-29 libibverbs "Libibverbs Programmer's Manual"
+.SH "NAME"
+ibv_share_pd \- share a protection domain (PD). 
+.SH "SYNOPSIS"
+.nf
+.B #include <infiniband/verbs.h>
+.sp
+.BI "struct ibv_pd *ibv_share_pd(struct ibv_context " "*context" ", "
+.BI "                            struct ibv_shpd " "*shpd" ", uint64_t " "share_key");
+.sp
+.fi
+.SH "DESCRIPTION"
+.B ibv_share_pd()
+shares the protection domain specified by a unique identifier 
+.I shpd
+for the RDMA device context 
+.I context\fR.
+.I share_key
+is the 64 bit key used to generate the unique identifier 
+.I shpd\fR.
+.I ibv_pd\fRs created using
+.B ibv_share_pd()
+can be deallocated using
+.B ibv_dealloc_pd()\fR.
+Libibverbs keeps track of each instance of the shared PD and removes the PD from RDMA device when the last instance of the shared PD is deallocated.
+.SH "RETURN VALUE"
+.B ibv_share_pd()
+returns a pointer to the shared pd or NULL if the request fails.
+
+.SH "NOTES"
+Even though the same PD is shared by multiple contexts of an RDMA device or processes, the life span of each resource created in an 'ibv_pd' linked to a context or process is limited by the life span of that instance of 'ibv_pd'. e.g. The life span of an MR 
+.I mr1
+created under ibv_pd
+.I pd1
+(which is an instance of shared PD 
+.I shPD1\fR)
+will end whenever
+.I pd1
+is deallocated, even though underlying 
+.I shPD1
+may continue to live on.
+.PP
+Sharing PD is not supported among 'ibv_context' created for different RDMA devices.
+.SH "SEE ALSO"
+.BR ibv_alloc_shpd (3),
+.BR ibv_dealloc_pd (3)
+
+.SH "AUTHORS"
+.TP
+Arun Kaimalettu <gotoarunk at gmail dot com>

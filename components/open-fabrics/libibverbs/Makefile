@@ -1,4 +1,4 @@
-#
+
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -33,6 +33,12 @@ COMPONENT_ARCHIVE_URL=	http://www.openfabrics.org/downloads/libibverbs/$(COMPONE
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include ../ofed.mk
+
+MAN3FILES =	ibv_alloc_shpd.3 \
+		ibv_reg_mr_relaxed.3 \
+		ibv_share_pd.3
+
+include $(WS_TOP)/make-rules/shared-targets.mk
 
 # add flags to get at extra bits from other components' source trees
 CPPFLAGS +=	-I$(PWD)/../libmlx4/libmlx4-1.0.1/src
@@ -71,7 +77,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 # common targets
 build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64) $(PROTOMAN3FILES)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
