@@ -1,0 +1,57 @@
+--- rsync-3.0.8/main.c.orig	Tue Feb 22 08:21:08 2011
++++ rsync-3.0.8/main.c	Tue May 15 23:45:20 2012
+@@ -1100,7 +1100,7 @@
+ 	for (i = 0; argv[i]; i++) {
+ 		if (!(argv[i] = strdup(argv[i]))) {
+ 			rprintf (FERROR, "out of memory at %s(%d)\n",
+-				 __FILE__, __LINE__);
++				 basename(__FILE__), __LINE__);
+ 			return RERR_MALLOC;
+ 		}
+ 	}
+--- rsync-3.0.8/cleanup.c.orig	Mon Feb 21 10:20:58 2011
++++ rsync-3.0.8/cleanup.c	Tue May 15 23:45:56 2012
+@@ -126,7 +126,7 @@
+ 		if (verbose > 3) {
+ 			rprintf(FINFO,
+ 				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): entered\n",
+-				who_am_i(), code, file, line);
++				who_am_i(), code, basename(file), line);
+ 		}
+ 
+ 		/* FALLTHROUGH */
+@@ -202,7 +202,7 @@
+ 			rprintf(FINFO,
+ 				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): "
+ 				"about to call exit(%d)\n",
+-				who_am_i(), unmodified_code, file, line, code);
++				who_am_i(), unmodified_code, basename(file), line, code);
+ 		}
+ 
+ 		/* FALLTHROUGH */
+--- rsync-3.0.8/t_stub.c.orig	Mon Feb 21 11:32:48 2011
++++ rsync-3.0.8/t_stub.c	Tue May 15 23:46:28 2012
+@@ -54,7 +54,7 @@
+  void _exit_cleanup(int code, const char *file, int line)
+ {
+ 	fprintf(stderr, "exit(%d): %s(%d)\n",
+-		code, file, line);
++		code, basename(file), line);
+ 	exit(code);
+ }
+ 
+--- rsync-3.0.8/log.c.orig	Wed May 16 15:59:20 2012
++++ rsync-3.0.8/log.c	Wed May 16 15:57:39 2012
+@@ -829,10 +829,10 @@
+ 		/* VANISHED is not an error, only a warning */
+ 		if (code == RERR_VANISHED) {
+ 			rprintf(FWARNING, "rsync warning: %s (code %d) at %s(%d) [%s=%s]\n",
+-				name, code, file, line, who_am_i(), RSYNC_VERSION);
++				name, code, basename(file), line, who_am_i(), RSYNC_VERSION);
+ 		} else {
+ 			rprintf(FERROR, "rsync error: %s (code %d) at %s(%d) [%s=%s]\n",
+-				name, code, file, line, who_am_i(), RSYNC_VERSION);
++				name, code, basename(file), line, who_am_i(), RSYNC_VERSION);
+ 		}
+ 	}
+ }
