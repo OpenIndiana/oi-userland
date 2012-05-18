@@ -1,0 +1,79 @@
+--- ipmitool-1.8.11.old/lib/helper.c	Wed Feb 25 12:38:52 2009
++++ ipmitool-1.8.11/lib/helper.c	Wed May 16 18:23:19 2012
+@@ -289,19 +289,33 @@
+ {
+ 	struct stat st1, st2;
+ 	FILE * fp;
++	int fd = -1;
+ 
+ 	/* verify existance */
++	errno = 0;
+ 	if (lstat(file, &st1) < 0) {
+-		if (rw) {
++		if (rw && (errno == ENOENT)) {
+ 			/* does not exist, ok to create */
+-			fp = fopen(file, "w");
+-			if (fp == NULL) {
++			fd = open(file,
++			    O_WRONLY | O_CREAT | O_EXCL, S_IRUSR | S_IWUSR
++			    | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
++
++			if ( fd == -1 ) {
+ 				lperror(LOG_ERR, "Unable to open file %s "
+ 					"for write", file);
+ 				return NULL;
+ 			}
+-			/* created ok, now return the descriptor */
+-			return fp;
++
++			fp = fdopen(fd, "w");
++			if (fp == NULL) {
++				close(fd);
++				lperror(LOG_ERR, "Unable to open file %s "
++				    "for write", file);
++				return NULL;
++			} else
++				/* created ok, now return the descriptor */
++				return fp;
++
+ 		} else {
+ 			lprintf(LOG_ERR, "File %s does not exist", file);
+ 			return NULL;
+@@ -322,7 +336,7 @@
+ 
+ 	/* it exists - only regular files, not links */
+ 	if (S_ISREG(st1.st_mode) == 0) {
+-		lprintf(LOG_ERR, "File %s has invalid mode: %d",
++		lprintf(LOG_ERR, "File %s has invalid mode: %#o",
+ 			file, st1.st_mode);
+ 		return NULL;
+ 	}
+@@ -347,10 +361,18 @@
+ 		return NULL;
+ 	}
+ 
++	/* verify dev */
++	if (st1.st_dev != st2.st_dev) {
++		lprintf(LOG_ERR, "File %s has invalid dev: %lu != %lu",
++			file, (ulong_t)st1.st_dev, (ulong_t)st2.st_dev);
++		fclose(fp);
++		return NULL;
++	}
++
+ 	/* verify inode */
+ 	if (st1.st_ino != st2.st_ino) {
+-		lprintf(LOG_ERR, "File %s has invalid inode: %d != %d",
+-			file, st1.st_ino, st2.st_ino);
++		lprintf(LOG_ERR, "File %s has invalid inode: %lu != %lu",
++			file, (ulong_t)st1.st_ino, (ulong_t)st2.st_ino);
+ 		fclose(fp);
+ 		return NULL;
+ 	}
+@@ -427,7 +449,6 @@
+ #endif
+ 
+ 	chdir("/");
+-	umask(0);
+ 
+ 	for (fd=0; fd<64; fd++) {
+ 		if (fd != intf->fd)
