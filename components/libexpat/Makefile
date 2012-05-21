@@ -26,22 +26,18 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		expat
-COMPONENT_VERSION=	2.0.1
+COMPONENT_VERSION=	2.1.0
 COMPONENT_PROJECT_URL=	http://expat.sourceforge.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:847660b4df86e707c9150e33cd8c25bc5cd828f708c7418e765e3e983a2e5e93
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/expat/expat/2.0.1/$(COMPONENT_ARCHIVE)
+    sha256:823705472f816df21c8f6aa026dd162b280806838bb55b3432b0fb1fcca7eb86
+COMPONENT_ARCHIVE_URL= \
+    http://downloads.sourceforge.net/project/expat/expat/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-PATCH_LEVEL=0
-
-# To allow '__func__' usage in C++ code (runtestspp.cpp).
-CXXFLAGS += $(studio_FEATURES_EXTENSIONS)
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) $(CPP_LARGEFILES)"
 CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
