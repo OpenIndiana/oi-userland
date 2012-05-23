@@ -1,0 +1,149 @@
+--- zlib-1.2.3/zlib.h.orig   Sun Jul 17 19:26:49 2005
++++ zlib-1.2.3/zlib.h        Tue May 22 10:17:54 2012
+@@ -37,8 +37,8 @@
+ extern "C" {
+ #endif
+ 
+-#define ZLIB_VERSION "1.2.3"
+-#define ZLIB_VERNUM 0x1230
++#define ZLIB_VERSION "1.2.3-T4mods"
++#define ZLIB_VERNUM 0x123f
+ 
+ /*
+      The 'zlib' compression library provides in-memory compression and
+--- zlib-1.2.3/Makefile.in.orig	Mon May 14 14:29:35 2012
++++ zlib-1.2.3/Makefile.in	Mon May 14 14:30:29 2012
+@@ -77,8 +77,8 @@
+ 	mv _match.o match.o
+ 	rm -f _match.s
+ 
+-$(SHAREDLIBV): $(OBJS)
+-	$(LDSHARED) -o $@ $(OBJS)
++$(SHAREDLIBV): $(OBJS) $(PIC_OBJS)
++	$(LDSHARED) -o $@ $(OBJS) $(PIC_OBJS)
+ 	rm -f $(SHAREDLIB) $(SHAREDLIBM)
+ 	ln -s $@ $(SHAREDLIB)
+ 	ln -s $@ $(SHAREDLIBM)
+
+--- zlib-1.2.3/inffast.c.orig	Fri Nov 12 22:05:29 2004
++++ zlib-1.2.3/inffast.c	Tue Mar 27 08:05:36 2012
+@@ -87,7 +87,7 @@
+     code const FAR *dcode;      /* local strm->distcode */
+     unsigned lmask;             /* mask for first level of length codes */
+     unsigned dmask;             /* mask for first level of distance codes */
+-    code this;                  /* retrieved table entry */
++    code *this;                 /* retrieved table entry */
+     unsigned op;                /* code bits, operation, extra bits, or */
+                                 /*  window position, window bytes to copy */
+     unsigned len;               /* match length, unused bytes */
+@@ -124,20 +124,20 @@
+             hold += (unsigned long)(PUP(in)) << bits;
+             bits += 8;
+         }
+-        this = lcode[hold & lmask];
++        this = (code *)(&(lcode[hold & lmask]));
+       dolen:
+-        op = (unsigned)(this.bits);
++        op = (unsigned)(this->bits);
+         hold >>= op;
+         bits -= op;
+-        op = (unsigned)(this.op);
++        op = (unsigned)(this->op);
+         if (op == 0) {                          /* literal */
+-            Tracevv((stderr, this.val >= 0x20 && this.val < 0x7f ?
++            Tracevv((stderr, this->val >= 0x20 && this->val < 0x7f ?
+                     "inflate:         literal '%c'\n" :
+-                    "inflate:         literal 0x%02x\n", this.val));
+-            PUP(out) = (unsigned char)(this.val);
++                    "inflate:         literal 0x%02x\n", this->val));
++            PUP(out) = (unsigned char)(this->val);
+         }
+         else if (op & 16) {                     /* length base */
+-            len = (unsigned)(this.val);
++            len = (unsigned)(this->val);
+             op &= 15;                           /* number of extra bits */
+             if (op) {
+                 if (bits < op) {
+@@ -155,14 +155,14 @@
+                 hold += (unsigned long)(PUP(in)) << bits;
+                 bits += 8;
+             }
+-            this = dcode[hold & dmask];
++            this = (code *)(&(dcode[hold & dmask]));
+           dodist:
+-            op = (unsigned)(this.bits);
++            op = (unsigned)(this->bits);
+             hold >>= op;
+             bits -= op;
+-            op = (unsigned)(this.op);
++            op = (unsigned)(this->op);
+             if (op & 16) {                      /* distance base */
+-                dist = (unsigned)(this.val);
++                dist = (unsigned)(this->val);
+                 op &= 15;                       /* number of extra bits */
+                 if (bits < op) {
+                     hold += (unsigned long)(PUP(in)) << bits;
+@@ -259,7 +259,8 @@
+                 }
+             }
+             else if ((op & 64) == 0) {          /* 2nd level distance code */
+-                this = dcode[this.val + (hold & ((1U << op) - 1))];
++                this = (code *)
++		    (&(dcode[this->val + (hold & ((1U << op) - 1))]));
+                 goto dodist;
+             }
+             else {
+@@ -269,7 +270,7 @@
+             }
+         }
+         else if ((op & 64) == 0) {              /* 2nd level length code */
+-            this = lcode[this.val + (hold & ((1U << op) - 1))];
++            this = (code *)(&(lcode[this->val + (hold & ((1U << op) - 1))]));
+             goto dolen;
+         }
+         else if (op & 32) {                     /* end-of-block */
+
+--- zlib-1.2.3/deflate.c.orig   Tue Mar 27 10:02:52 2012
++++ zlib-1.2.3/deflate.c        Sun Jul 17 19:27:31 2005
+@@ -88,9 +88,13 @@
+       void match_init OF((void)); /* asm code initialization */
+       uInt longest_match  OF((deflate_state *s, IPos cur_match));
+ #else
++#ifdef ORIG_LONGEST_MATCH
+ local uInt longest_match  OF((deflate_state *s, IPos cur_match));
++#else
++uInt longest_match  OF((deflate_state *s, IPos cur_match));
+ #endif
+ #endif
++#endif
+ local uInt longest_match_fast OF((deflate_state *s, IPos cur_match));
+ 
+ #ifdef DEBUG
+@@ -1010,6 +1014,7 @@
+ #endif
+ }
+ 
++#if defined(ORIG_LONGEST_MATCH) || defined(ORIG_LONGEST_MATCH_GLOBAL)
+ #ifndef FASTEST
+ /* ===========================================================================
+  * Set match_start to the longest match starting at the given string and
+@@ -1024,7 +1029,11 @@
+ /* For 80x86 and 680x0, an optimized version will be provided in match.asm or
+  * match.S. The code will be functionally equivalent.
+  */
++#ifdef ORIG_LONGEST_MATCH_GLOBAL
++uInt longest_match(s, cur_match)
++#else
+ local uInt longest_match(s, cur_match)
++#endif
+     deflate_state *s;
+     IPos cur_match;                             /* current match */
+ {
+@@ -1168,6 +1177,7 @@
+ }
+ #endif /* ASMV */
+ #endif /* FASTEST */
++#endif /* ORIG_LONGEST_MATCHT */
+ 
+ /* ---------------------------------------------------------------------------
+  * Optimized version for level == 1 or strategy == Z_RLE only
