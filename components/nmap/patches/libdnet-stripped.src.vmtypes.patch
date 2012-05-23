@@ -1,0 +1,72 @@
+--- nmap-5.51/libdnet-stripped/include/dnet/fw.h.orig	Fri May  4 09:39:17 2012
++++ nmap-5.51/libdnet-stripped/include/dnet/fw.h	Fri May  4 09:39:30 2012
+@@ -39,16 +39,16 @@
+ 	(rule)->fw_dport[0] = dp1; (rule)->fw_dport[1] = dp2;		\
+ } while (0)
+ 
+-typedef struct fw_handle fw_t;
++typedef struct fw_handle dnet_fw_t;
+ 
+ typedef int (*fw_handler)(const struct fw_rule *rule, void *arg);
+ 
+ __BEGIN_DECLS
+-fw_t	*fw_open(void);
+-int	 fw_add(fw_t *f, const struct fw_rule *rule);
+-int	 fw_delete(fw_t *f, const struct fw_rule *rule);
+-int	 fw_loop(fw_t *f, fw_handler callback, void *arg);
+-fw_t	*fw_close(fw_t *f);
++dnet_fw_t	*fw_open(void);
++int	 fw_add(dnet_fw_t *f, const struct fw_rule *rule);
++int	 fw_delete(dnet_fw_t *f, const struct fw_rule *rule);
++int	 fw_loop(dnet_fw_t *f, fw_handler callback, void *arg);
++dnet_fw_t	*fw_close(dnet_fw_t *f);
+ __END_DECLS
+ 
+ #endif /* DNET_FW_H */
+--- nmap-5.51/libdnet-stripped/src/fw-none.c.orig	Fri May  4 09:43:16 2012
++++ nmap-5.51/libdnet-stripped/src/fw-none.c	Fri May  4 09:43:28 2012
+@@ -14,7 +14,7 @@
+ 
+ #include "dnet.h"
+ 
+-fw_t *
++dnet_fw_t *
+ fw_open(void)
+ {
+ 	errno = ENOSYS;
+@@ -22,7 +22,7 @@
+ }
+ 
+ int
+-fw_add(fw_t *f, const struct fw_rule *rule)
++fw_add(dnet_fw_t *f, const struct fw_rule *rule)
+ {
+ 	errno = ENOSYS;
+ 	return (-1);
+@@ -29,7 +29,7 @@
+ }
+ 
+ int
+-fw_delete(fw_t *f, const struct fw_rule *rule)
++fw_delete(dnet_fw_t *f, const struct fw_rule *rule)
+ {
+ 	errno = ENOSYS;
+ 	return (-1);
+@@ -36,14 +36,14 @@
+ }
+ 
+ int
+-fw_loop(fw_t *f, fw_handler callback, void *arg)
++fw_loop(dnet_fw_t *f, fw_handler callback, void *arg)
+ {
+ 	errno = ENOSYS;
+ 	return (-1);
+ }
+ 
+-fw_t *
+-fw_close(fw_t *f)
++dnet_fw_t *
++fw_close(dnet_fw_t *f)
+ {
+ 	return (NULL);
+ }

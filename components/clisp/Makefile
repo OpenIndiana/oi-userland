@@ -51,7 +51,7 @@ unexport SHELLOPTS
 
 # clisp's configure script is not a GNU auto* tools generated configure script
 # and doesn't take --sbindir, so we need to override the default values.
-CONFIGURE_OPTIONS = CC="$(CC)"
+CONFIGURE_OPTIONS = CC="$(CC) -DNO_GENERATIONAL_GC"
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
