@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+
+ CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+ 
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+-->
+
+<api xmlns="http://xmlns.oracle.com/radadr" 
+  name="com.oracle.solaris.vp.panel.common.api.smf_old">
+
+	<struct name="Service">
+		<field type="string" name="fmri" />
+		<field type="name" name="objectName" />
+		<field name="instances">
+			<list type="string" />
+		</field>
+	</struct>
+
+	<enum name="SmfState">
+		<value name="NONE" />
+		<value name="UNINIT" />
+		<value name="MAINT" />
+		<value name="OFFLINE" />
+		<value name="DISABLED" />
+		<value name="ONLINE" />
+		<value name="DEGRADED" />
+		<value name="LEGACY" />
+	</enum>
+
+	<struct name="Instance">
+		<field type="string" name="fmri" />
+		<field type="name" name="objectName" />
+		<field type="time" name="STime" />	<!-- %!@$!@ java -->
+		<field typeref="SmfState" name="state" />
+	</struct>
+
+	<struct name="Dependency">
+		<field type="string" name="name" />
+		<field name="target">
+			<list type="string" />
+		</field>
+		<!-- Should be enums -->
+		<field type="string" name="grouping" />
+		<field type="string" name="restartOn" />
+	</struct>
+
+	<enum name="PropertyType">
+		<value name="UNKNOWN" value="0" />	 <!-- INVALID -->
+		<value name="BOOLEAN" />
+		<value name="COUNT" />
+		<value name="INTEGER" />
+		<value name="TIME" />
+		<value name="ASTRING" />
+		<value name="OPAQUE" />
+		<value name="USTRING" value="100" />
+		<value name="URI" value="200" />
+		<value name="FMRI" />
+		<value name="HOST" value="300" />
+		<value name="HOSTNAME" />
+		<value name="NET_ADDRESS_V4" />
+		<value name="NET_ADDRESS_V6" />
+		<value name="NET_ADDRESS" />
+	</enum>
+
+	<struct name="Manpage">
+		<field type="string" name="title" />
+		<field type="string" name="section" />
+		<field type="string" name="path" />
+	</struct>
+
+	<struct name="PropertyGroup">
+		<field type="string" name="name" />
+		<field type="string" name="type" />
+	</struct>
+
+	<enum name="PropertyVisibility">
+		<value name="HIDDEN" />
+		<value name="READONLY" />
+		<value name="READWRITE" />
+	</enum>
+
+	<struct name="Template">
+		<field type="string" name="name" nullable="true" />
+		<field type="string" name="description" nullable="true" />
+		<field type="string" name="units" nullable="true" />
+		<field typeref="PropertyVisibility" name="visibility" />
+		<field type="string" name="cardinality" nullable="true" />
+		<field name="separators" nullable="true" >
+			<list type="string" />
+		</field>
+		<field name="allowed" nullable="true" >
+			<list type="string" />
+		</field>
+	</struct>
+
+	<struct name="StateChange">
+		<field type="name" name="source" />
+		<field typeref="SmfState" name="state" />
+		<field typeref="SmfState" name="nextState" />
+		<field type="string" name="auxState" nullable="true" />
+		<field type="time" name="stateTime" />
+		<field type="string" name="reason" nullable="true" />
+		<field type="boolean" name="anomaly" />
+	</struct>
+
+	<enum name="SmfErrorCode">
+		<value name="NONE" value="1000" />
+		<value name="NOT_BOUND" />
+		<value name="NOT_SET" />
+		<value name="NOT_FOUND" />
+		<value name="TYPE_MISMATCH" />
+		<value name="IN_USE" />
+		<value name="CONNECTION_BROKEN" />
+		<value name="INVALID_ARGUMENT" />
+		<value name="NO_MEMORY" />
+		<value name="CONSTRAINT_VIOLATED" />
+		<value name="EXISTS" />
+		<value name="NO_SERVER" />
+		<value name="NO_RESOURCES" />
+		<value name="PERMISSION_DENIED" />
+		<value name="BACKEND_ACCESS" />
+		<value name="HANDLE_MISMATCH" />
+		<value name="HANDLE_DESTROYED" />
+		<value name="VERSION_MISMATCH" />
+		<value name="BACKEND_READONLY" />
+		<value name="DELETED" />
+		<value name="TEMPLATE_INVALID" />
+		<value name="CALLBACK_FAILED" value="1080" />
+		<value name="INTERNAL" value="1101" />
+	</enum>
+
+	<struct name="LogInfo">
+		<field type="string" name="name" />
+		<field type="integer" name="size" />
+		<field type="time" name="MTime" />
+		<field type="opaque" name="contents" />
+	</struct>
+
+	<struct name="SmfError">
+		<field typeref="SmfErrorCode" name="error" />
+		<field type="string" name="message" nullable="true" />
+	</struct>
+
+	<interface name="Aggregator">
+		<version major="1" minor="0" stability="private" />
+
+		<property name="services" access="ro">
+			<list typeref="Service" />
+			<error typeref="SmfError" />
+		</property>
+
+		<property name="instances" access="ro">
+			<list typeref="Instance" />
+			<error typeref="SmfError" />
+		</property>
+
+		<event typeref="StateChange" name="statechange" />
+	</interface>
+
+	<interface name="ServiceInfo">
+		<version major="1" minor="0" stability="private" />
+
+		<property type="string" name="fmri" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property name="methodNames" access="ro">
+			<list type="string" />
+			<error typeref="SmfError" />
+		</property>
+		<property name="dependencyNames" access="ro">
+			<list type="string" />
+			<error typeref="SmfError" />
+		</property>
+
+		<method name="getDependency">
+			<result typeref="Dependency" />
+			<error typeref="SmfError" />
+			<argument type="string" name="name" />
+		</method>
+
+		<method name="getPropertyNames">
+			<result>
+				<list type="string" />
+			</result>
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+		</method>
+		
+		<method name="getPropertyType">
+			<result typeref="PropertyType" />
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="prop_name" />
+		</method>
+		
+		<method name="getPropertyValues">
+			<result>
+				<list type="string" />
+			</result>
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="prop_name" />
+		</method>
+		
+		<method name="getSnapshotPropertyValues">
+			<result>
+				<list type="string" />
+			</result>
+			<error typeref="SmfError" />
+			<argument type="string" name="snap_name" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="prop_name" />
+		</method>
+
+		<method name="setPropertyValues">
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="prop_name" />
+			<argument name="values">
+				<list type="string" />
+			</argument>
+		</method>
+
+		<method name="createPropertyGroup">
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="pg_type" />
+		</method>
+
+		<method name="deletePropertyGroup">
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+		</method>
+
+		<method name="createProperty">
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="prop_name" />
+			<argument typeref="PropertyType" name="type" />
+		</method>
+
+		<method name="deleteProperty">
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="prop_name" />
+		</method>
+
+		<property name="propertyGroups" access="ro">
+			<list typeref="PropertyGroup" />
+			<error typeref="SmfError" />
+		</property>
+
+		<method name="getPropertyTemplate">
+			<result typeref="Template" />
+			<error typeref="SmfError" />
+			<argument type="string" name="pg_name" />
+			<argument type="string" name="prop_name" />
+			<argument type="string" name="locale" />
+		</method>
+
+		<method name="getCommonName">
+			<result type="string" nullable="true" />
+			<error typeref="SmfError" />
+			<argument type="string" name="locale" />
+		</method>
+
+		<method name="getDescription">
+			<result type="string" nullable="true" />
+			<error typeref="SmfError" />
+			<argument type="string" name="locale" />
+		</method>
+
+		<method name="getLogInfo">
+			<result typeref="LogInfo" />
+			<error />
+			<argument type="integer" name="max_size" />
+		</method>
+
+		<property name="manpages" access="ro">
+			<list typeref="Manpage" />
+			<error typeref="SmfError" />
+		</property>
+
+		<property name="doclinks" access="ro">
+			<list type="string" />
+			<error typeref="SmfError" />
+		</property>
+
+		<method name="delete">
+			<error typeref="SmfError" />
+		</method>
+
+		<method name="clear">
+			<error typeref="SmfError" />
+		</method>
+
+		<method name="degrade">
+			<error typeref="SmfError" />
+			<argument type="boolean" name="immediate" />
+		</method>
+
+		<method name="maintain">
+			<error typeref="SmfError" />
+			<argument type="boolean" name="immediate" />
+		</method>
+
+		<method name="restart">
+			<error typeref="SmfError" />
+		</method>
+
+		<method name="refresh">
+			<error typeref="SmfError" />
+		</method>
+
+		<property type="boolean" name="persistentlyEnabled" access="rw">
+			<error typeref="SmfError" />
+		</property>
+
+		<property type="boolean" name="temporarilyEnabled" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property type="boolean" name="enabled" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property type="boolean" name="instance" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property type="string" name="restarter" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property typeref="SmfState" name="state" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property typeref="SmfState" name="nextState" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property type="string" name="auxiliaryState" access="ro"
+		    nullable="true">
+			<error typeref="SmfError" />
+		</property>
+
+		<property type="time" name="stime" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<!-- Should be ulong -->
+		<property type="long" name="contractID" access="ro">
+			<error typeref="SmfError" />
+		</property>
+
+		<property type="string" name="reason" access="ro"
+		    nullable="true">
+			<error typeref="SmfError" />
+		</property>
+
+		<event typeref="StateChange" name="statechange" />
+	</interface>
+</api>

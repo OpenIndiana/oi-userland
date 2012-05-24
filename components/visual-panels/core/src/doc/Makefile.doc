@@ -1,0 +1,64 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+include $(SRC)/make-rules/Makefile.env
+
+# The location of the DocBook XSL stylesheets to use.  Most systems
+# should provide a catalog which automatically maps from the
+# DOCBOOK_XSL URL to a local path.
+
+DOCBOOK_XSL=	http://docbook.sourceforge.net/release/xsl/current
+
+STYLESHEET=	profile-docbook.xsl
+FO_XSL=		$(DOCBOOK_XSL)/fo/$(STYLESHEET)
+HTML_XSL=	$(DOCBOOK_XSL)/html/$(STYLESHEET)
+MAN_XSL=	$(DOCBOOK_XSL)/manpages/$(STYLESHEET)
+
+# The sections of the documentation that make comments intended for an
+# internal audience are given a status of "private".  Setting STATUS to
+# something other than "private" will cause those sections to be
+# eliminated from the generated output.
+
+STATUS=	private
+DBOPTS=	\
+	--stringparam funcsynopsis.style "ansi" \
+	--stringparam man.authors.section.enabled 0 \
+	--stringparam section.autolabel 1 \
+	--stringparam section.label.includes.component.label 1 \
+	--stringparam segmentedlist.as.table 1 \
+	--stringparam profile.status "$(STATUS)"
+
+# We assume xsltproc, xmllint, and Apache fop are all in the user's
+# path.
+
+XSLTPROC=	xsltproc --xinclude --nonet
+XMLLINT=	xmllint --xinclude --postvalid --noout
+
+DBXSLTPROC=	$(XSLTPROC) $(DBOPTS)
+FOP=		fop
+
+# Commands
+
+XSLT.man = $(DBXSLTPROC) $(MAN_XSL) $<

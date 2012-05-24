@@ -20,8 +20,7 @@
 #
 
 #
-# Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
-# Use is subject to license terms.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 # SFW service manifests
@@ -47,3 +46,13 @@
 # GNOME/XDG desktop files
 <transform file path=usr/share/applications/.*\.desktop$ -> \
     default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+
+# RAD
+<transform file path=usr/lib/rad/.* -> add restart_fmri \
+    svc:/system/rad:local>
+<transform file path=usr/lib/rad/.* -> add restart_fmri \
+    svc:/system/rad:remote>
+<transform file path=usr/lib/.*libadr.so.1 -> add restart_fmri \
+    svc:/system/rad:local>
+<transform file path=usr/lib/.*libadr.so.1 -> add restart_fmri \
+    svc:/system/rad:remote>

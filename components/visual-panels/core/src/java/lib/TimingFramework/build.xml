@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+ Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+
+ CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+ 
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+-->
+
+<project name="TimingFramework" default="package" basedir=".">
+
+	<property name="code.dir"        value="org/jdesktop/animation/timing" />
+	<property name="src.dir"         value="src" />
+	<property name="build.dir"       value="classes" />
+	<property name="install.dir"        value="${dist}/usr/share/vpanels" />
+	
+	<property environment="env"/>
+	<property file="build.properties"/>
+	<property name="project" value="TimingFramework"/>
+
+	<!-- package release -->
+	<!-- ant package -Dver=1.0 -->
+	<target name="package" depends="clean, setup, pkg-compile, jar">
+		<tar tarfile="TimingFramework-${ver}.tar.gz" basedir="." includes="TimingFramework-${ver}/**" compression="gzip"/>
+		<zip destfile="TimingFramework-${ver}.zip" basedir="." includes="TimingFramework-${ver}/**"/>
+		<copy file="TimingFramework-${ver}/TimingFramework-${ver}.jar" todir="."/>
+
+		<checksum file="TimingFramework-${ver}.tar.gz"/>
+		<checksum file="TimingFramework-${ver}.zip"/>
+		<checksum file="TimingFramework-${ver}.jar"/>
+		<delete dir="TimingFramework-${ver}" />
+
+		<tar tarfile="TimingFramework-${ver}.tar" basedir="." includes="TimingFramework-${ver}.*"/>
+	</target>
+
+        <target name="install" depends="jar">
+                <mkdir dir="${install.dir}" />
+		<copy file="TimingFramework-${ver}/TimingFramework-${ver}.jar" todir="${install.dir}"/>
+        </target>
+
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+		<delete dir="TimingFramework-${ver}" />
+		<delete file="TimingFramework-${ver}.tar.gz"/>
+		<delete file="TimingFramework-${ver}.zip"/>
+		<delete file="TimingFramework-${ver}.jar"/>
+		<delete file="TimingFramework-${ver}.tar.gz.MD5"/>
+		<delete file="TimingFramework-${ver}.zip.MD5"/>
+		<delete file="TimingFramework-${ver}.jar.MD5"/>
+	</target>
+
+	<target name="setup">
+		<mkdir dir="TimingFramework-${ver}"/>
+		<mkdir dir="TimingFramework-${ver}/classes"/>
+
+		<!-- copy source -->
+		<copy todir="TimingFramework-${ver}/src/com/danga/MemCached">
+			<fileset dir="${code.dir}" defaultexcludes="true" excludes="**/*.xml **/*.swp **/*.swo"/>
+		</copy>
+	</target>
+
+
+	<!-- compilation target for packeging operations -->
+	<target name="pkg-compile" depends="clean, setup">
+		<javac debug="yes" srcdir="TimingFramework-${ver}/src" destdir="TimingFramework-${ver}/classes" deprecation="true" />
+	</target>
+
+	<target name="jar" depends="pkg-compile">
+		<jar compress="yes" jarfile="TimingFramework-${ver}/TimingFramework-${ver}.jar" basedir="TimingFramework-${ver}/classes"/>
+    </target>
+
+	<!-- compilation target -->
+	<target name="compile">
+		<mkdir dir="${build.dir}"/>
+		<javac debug="yes" srcdir="${src.dir}" destdir="${build.dir}" deprecation="true" compiler="modern">
+			<compilerarg value="-Xlint:unchecked"/>
+			<classpath refid="project.class.path"/>
+		</javac>
+	</target>
+</project>

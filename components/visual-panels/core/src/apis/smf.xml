@@ -1,0 +1,1929 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+  CDDL HEADER END
+
+  Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+-->
+
+<api xmlns="http://xmlns.oracle.com/radadr"
+  name="com.oracle.solaris.rad.smf">
+
+  <doc>
+    <para>
+      This API exposes common SMF configuration, actions, and state to
+      <strong>rad(1m)</strong> clients.
+    </para>
+
+    <para>
+      Three core interfaces are provided:
+    </para>
+
+    <list type="ordered">
+      <item>
+        <link interface="Master">Master</link> - a top-level object providing access
+        to all services and instances on the system
+      </item>
+      <item>
+        <link interface="Service">Service</link> - an object that represents an SMF
+	service
+      </item>
+      <item>
+        <link interface="Instance">Instance</link> - an object that represents an SMF
+	instance
+      </item>
+    </list>
+
+    <para>
+      The latter two interfaces, <link interface="Service">Service</link> and <link
+      interface="Instance">Instance</link>, are derived from a common <link
+      interface="Entity">Entity</link> interface.
+    </para>
+
+    <heading>
+      Python SMF wrapper
+    </heading>
+
+    <para>
+      Provided alongside this API is a convenience wrapper around the
+      Python bindings to this API.  Accessible by importing
+      <code>smf.rad</code> from within a Python application, this wrapper
+      simplifies access to the <link interface="Master">Master</link>, <link
+      interface="Service">Service</link>, and <link interface="Instance">Instance</link>
+      objects.
+    </para>
+
+    <para>
+      Run <code>/usr/bin/pydoc smf.rad</code> for more information.
+    </para>
+  </doc>
+
+  <!-- Entity (service/instance common) definitions -->
+
+  <enum name="DepGrouping">
+    <summary>
+      indicates how dependencies are evaluated
+    </summary>
+    <value name="REQUIRE_ALL">
+      <summary>
+        all dependencies must be satisfied
+      </summary>
+    </value>
+    <value name="REQUIRE_ANY">
+      <summary>
+        only one dependency must be satisfied
+      </summary>
+    </value>
+    <value name="EXCLUDE_ALL">
+      <summary>
+        no dependency may be satisfied
+      </summary>
+    </value>
+    <value name="OPTIONAL_ALL">
+      <summary>
+        all satisfiable dependencies must be satisfied
+      </summary>
+    </value>
+  </enum>
+
+  <enum name="DepRestart">
+    <summary>
+      describes when the dependent should be restarted
+    </summary>
+    <value name="ERROR">
+      <summary>
+        restart when a dependency encounters an error
+      </summary>
+    </value>
+    <value name="RESTART">
+      <summary>
+        restart any time a dependency restarts
+      </summary>
+    </value>
+    <value name="REFRESH">
+      <summary>
+        restart when a dependency is refreshed
+      </summary>
+    </value>
+    <value name="NONE">
+      <summary>
+        only process dependencies when starting instance
+      </summary>
+    </value>
+  </enum>
+
+  <struct name="Dependency">
+    <summary>
+      describes a dependency group
+    </summary>
+    <doc>
+      Fully describes a dependency group, including
+      the FMRIs for the dependencies, the type of
+      dependency, and when the dependency should be
+      evaluated.
+    </doc>
+    <field type="string" name="name">
+      <summary>
+        the name of the dependency group
+      </summary>
+    </field>
+    <field name="target">
+      <summary>
+        the list of dependencies' FMRIs
+      </summary>
+      <list type="string" />
+    </field>
+    <field typeref="DepGrouping" name="grouping">
+      <summary>
+        how the dependencies are evaluated
+      </summary>
+    </field>
+    <field typeref="DepRestart" name="restartOn">
+      <summary>
+        when the dependent should be restarted
+      </summary>
+    </field>
+  </struct>
+
+  <enum name="PropertyType">
+    <summary>an SMF property type</summary>
+    <value name="UNKNOWN" value="0" />   <!-- INVALID -->
+    <value name="BOOLEAN" />
+    <value name="COUNT" />
+    <value name="INTEGER" />
+    <value name="TIME" />
+    <value name="ASTRING" />
+    <value name="OPAQUE" />
+    <value name="USTRING" value="100" />
+    <value name="URI" value="200" />
+    <value name="FMRI" />
+    <value name="HOST" value="300" />
+    <value name="HOSTNAME" />
+    <value name="NET_ADDRESS_V4" />
+    <value name="NET_ADDRESS_V6" />
+    <value name="NET_ADDRESS" />
+  </enum>
+
+  <struct name="Property">
+    <summary>an SMF property and its values</summary>
+    <doc>
+      Describes a property, its type, and all its values.
+    </doc>
+    <field type="string" name="name">
+      <summary>the name of the property</summary>
+    </field>
+    <field typeref="PropertyType" name="type">
+      <summary>the type of the property</summary>
+    </field>
+    <field name="values">
+      <summary>all the property's values</summary>
+      <doc>
+        A list of all the values held by the
+        property.  A single-valued property
+        will have a list of length 1.  A
+        property with no values will have a
+        list of length 0.
+      </doc>
+      <list type="string" />
+    </field>
+  </struct>
+
+  <struct name="Manpage">
+    <summary>a description of a man page</summary>
+    <doc>
+      Provides all the information needed to find a
+      man page.  The referenced man page can be
+      displayed by running <code>MANPATH=$path man
+      -s $section $title</code>.
+    </doc>
+    <field type="string" name="title">
+      <summary>the man page name</summary>
+    </field>
+    <field type="string" name="section">
+      <summary>the section the man page is found in</summary>
+    </field>
+    <field type="string" name="path" nullable="true">
+      <summary>the path the man page is found in</summary>
+      <doc>
+        The colon-separated <code>MANPATH</code> the
+        man page is found in.  If this field
+        has no value, the default
+        <code>MANPATH</code> should to be used.
+      </doc>
+    </field>
+  </struct>
+
+  <struct name="Doclink">
+    <summary>an on-line documentation link</summary>
+    <field type="string" name="name">
+      <summary>an informative name for the document</summary>
+    </field>
+    <field type="string" name="uri">
+      <summary>the URI of the document</summary>
+    </field>
+  </struct>
+
+  <struct name="PropertyGroup">
+    <summary>an SMF property group</summary>
+    <field type="string" name="name">
+      <summary>the name of the property group</summary>
+    </field>
+    <field type="string" name="type">
+      <summary>the type of the property group</summary>
+    </field>
+    <field type="uinteger" name="flags">
+      <summary>the property group flags</summary>
+    </field>
+  </struct>
+
+  <struct name="PGTemplate">
+    <summary>template data for a property group</summary>
+    <field type="string" name="pgname">
+      <summary>the property group name</summary>
+    </field>
+    <field type="string" name="pgtype">
+      <summary>the property group type</summary>
+    </field>
+    <field type="boolean" name="required">
+      <summary>is the property group required?</summary>
+    </field>
+    <field type="string" name="name" nullable="true">
+      <summary>a localized name</summary>
+    </field>
+    <field type="string" name="description" nullable="true">
+      <summary>a localized description</summary>
+    </field>
+  </struct>
+
+  <enum name="PropertyVisibility">
+    <summary>the recommended visibility of a property</summary>
+    <value name="HIDDEN">
+      <summary>the property shouldn't be displayed</summary>
+    </value>
+    <value name="READONLY">
+      <summary>
+        the property isn't intended to be modified
+      </summary>
+    </value>
+    <value name="READWRITE">
+      <summary>the property is modifiable</summary>
+    </value>
+  </enum>
+
+  <struct name="PropTemplate">
+    <summary>template data for a property</summary>
+    <field type="string" name="propname">
+      <summary>the name of the property</summary>
+    </field>
+    <field typeref="PropertyType" name="proptype">
+      <summary>the type of the property</summary>
+    </field>
+    <field type="boolean" name="required">
+      <summary>is the property required?</summary>
+    </field>
+    <field type="string" name="name" nullable="true">
+      <summary>a localized name</summary>
+    </field>
+    <field type="string" name="description" nullable="true">
+      <summary>a localized description</summary>
+    </field>
+    <field type="string" name="units" nullable="true">
+      <summary>a localized units label</summary>
+    </field>
+    <field typeref="PropertyVisibility" name="visibility">
+      <summary>how the property should be presented</summary>
+    </field>
+    <field type="ulong" name="cardinality_min">
+      <summary>the minimum number of values</summary>
+    </field>
+    <field type="ulong" name="cardinality_max">
+      <summary>the maximum number of values</summary>
+    </field>
+    <field name="separators" nullable="true">
+      <summary>value separator characters</summary>
+      <doc>
+        Separator characters used to embed
+        multiple values in a single property
+        value.
+      </doc>
+      <list type="string" />
+    </field>
+    <!-- XXX: Choices, constraints needed -->
+  </struct>
+
+  <struct name="PropChange">
+    <summary>a change to make to a property</summary>
+    <field type="string" name="name">
+      <summary>the property to change</summary>
+    </field>
+    <field typeref="PropertyType" name="type">
+      <summary>the type of the property to write</summary>
+    </field>
+    <field name="values">
+      <summary>a list of values</summary>
+      <list type="string" />
+    </field>
+  </struct>
+
+  <enum name="ErrorCode">
+    <summary>the general cause for failure</summary>
+    <doc>
+      Indicates the general cause for failure.
+      Specific meanings are defined by the individual
+      APIs.
+    </doc>
+    <value name="INTERNAL">
+      <summary>an internal error occurred</summary>
+    </value>
+    <value name="DENIED">
+      <summary>access denied</summary>
+    </value>
+    <value name="READONLY">
+      <summary>configuration database is read only</summary>
+    </value>
+    <value name="NOTFOUND">
+      <summary>named object wasn't found</summary>
+    </value>
+    <value name="EXISTS">
+      <summary>name is already in use</summary>
+    </value>
+    <value name="BADVALUE">
+      <summary>an illegal value was supplied</summary>
+    </value>
+    <value name="BADSTATE">
+      <summary>system was in an invalid state</summary>
+    </value>
+    <value name="INVALID">
+      <summary>API was called incorrectly</summary>
+    </value>
+  </enum>
+
+  <enum name="ErrorTarget">
+    <value name="NONE" />
+    <value name="SNAPSHOT" />
+    <value name="PROPERTYGROUP" />
+    <value name="PROPERTY" />
+    <value name="VALUE" />
+  </enum>
+
+  <struct name="SmfError">
+    <field typeref="ErrorCode" name="error" />
+    <field typeref="ErrorTarget" name="target" />
+    <field type="string" name="aux" nullable="true" />
+    <field type="string" name="message" nullable="true" />
+  </struct>
+
+  <interface name="Entity">
+    <summary>
+      functionality common to services and instances
+    </summary>
+
+    <property type="string" name="fmri" access="ro">
+      <summary>
+        the service/instance's FMRI
+      </summary>
+    </property>
+
+    <property type="string" name="scope" access="ro">
+      <summary>
+        the service/instance's scope
+      </summary>
+    </property>
+
+    <property type="string" name="service" access="ro">
+      <summary>
+        the service name of the service/instance
+      </summary>
+    </property>
+
+    <property name="dependencies" access="ro">
+      <summary>
+        the service/instance's dependencies
+      </summary>
+      <doc>
+        A list of dependency objects describing
+        the full nature of each dependency.  An
+        empty list is returned if there are no
+        dependencies.
+      </doc>
+      <list typeref="Dependency" />
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+
+    <property name="manpages" access="ro">
+      <summary>
+        the service/instance's manual pages
+      </summary>
+      <doc>
+        A list of manual page objects
+        describing the name, section, and path
+        of each relevant manual page.  An empty
+        list is returned if no manual pages are
+        defined.
+      </doc>
+      <list typeref="Manpage" />
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+
+    <property name="doclinks" access="ro">
+      <summary>
+        documentation links
+      </summary>
+      <doc>
+        A list of links to on-line
+        documentation for the
+        service/instance.  An empty list is
+        returned if no on-line documents are
+        defined.
+      </doc>
+      <list typeref="Doclink" />
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+
+    <property name="pgs" access="ro">
+      <summary>
+        directly-attached property groups
+      </summary>
+      <doc>
+        A list of all directly-attached
+        property groups, including name,
+        type and flags for each.
+      </doc>
+      <list typeref="PropertyGroup" />
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+
+    <method name="delete">
+      <summary>
+        delete the service/instance
+      </summary>
+      <doc>
+        Delete the service or instance.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to delete the service or
+            instance.  Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+            <item><code>EXISTS</code> -
+              delete was called on a service
+              and the service still had
+              instances
+            </item>
+          </list>
+        </doc>
+      </error>
+    </method>
+
+    <method name="deleteCust">
+      <summary>
+	delete administrative customizations
+      </summary>
+      <doc>
+	Delete all administrative customizations
+	applied to a service/instance and its 
+	children, if any exist.
+      </doc>
+      <error typeref="SmfError">
+	<doc>
+	  <para>
+	    Failed to delete the administrative 
+	    customizations applied to a service or
+	    instance.  Cause:
+	  </para>
+	  <list>
+	    <item><code>INTERNAL</code> -
+	    an internal error occurred
+	    </item>
+	    <item><code>DENIED</code> -
+	    insufficient authorization
+	    </item>
+	    <item><code>READONLY</code> -
+	    the repository is read-only
+	    </item>
+	  </list>
+	</doc>
+      </error>
+    </method>
+
+    <method name="createPG">
+      <summary>
+        create a property group
+      </summary>
+      <doc>
+        Create a property group on the
+        service/instance.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to create the property
+            group.  Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+            <item><code>EXISTS</code> -
+              the propery group already exists
+            </item>
+            <item><code>BADVALUE</code> -
+              an invalid property group name
+              or type was specified
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the new property group
+        </summary>
+      </argument>
+      <argument type="string" name="pg_type">
+        <summary>
+          the type of the new property group
+        </summary>
+      </argument>
+      <argument type="uinteger" name="pg_flags">
+	<summary>
+	  the property group flags
+	</summary>
+      </argument>
+    </method>
+
+    <method name="deletePG">
+      <summary>
+        delete a property group
+      </summary>
+      <doc>
+        Delete a directly-attached property
+        group and all its properties from the
+        service/instance.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to delete the property
+            group.  Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+            <item><code>NOTFOUND</code> -
+              the property group doesn't exist
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+    </method>
+
+    <method name="deletePGCust">
+      <summary>
+	delete administrative customizations
+      </summary>
+      <doc>
+	Delete all administrative customizations
+	applied to a property group and its children, 
+	if any exist.
+      </doc>
+      <error typeref="SmfError">
+	<doc>
+	  <para>
+	    Failed to delete the administrative customizations
+	    applied to a property group.  Cause:
+	  </para>
+	  <list>
+	    <item><code>INTERNAL</code> -
+	    an internal error occurred
+	    </item>
+	    <item><code>DENIED</code> -
+	    insufficient authorization
+	    </item>
+	    <item><code>READONLY</code> -
+	    the repository is read-only
+	    </item>
+	    <item><code>NOTFOUND</code> -
+	    the property group doesn't
+	    exist
+	    </item>
+	  </list>
+	</doc>
+      </error>
+      <argument type="string" name="pg_name">
+	<summary>
+	  the name of the property group
+	</summary>
+      </argument>
+    </method>
+
+    <method name="readProperties">
+      <summary>
+        reads all properties in a directly-attached
+        property group
+      </summary>
+      <doc>
+        Read all properties in the specified
+        directly-attached property group.  The
+        name, type, and values of each property
+        are included.
+      </doc>
+      <result>
+        <summary>
+          a list of properties in the
+          specified directly-attached
+          property group
+        </summary>
+        <list typeref="Property" />
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to read properties from
+            the property group. Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>NOTFOUND</code> -
+              the property group doesn't exist
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+    </method>
+
+    <method name="writeProperties">
+      <summary>
+        commit a list of property changes to a
+        property group
+      </summary>
+      <doc>
+        <para>
+        Commit a set of property changes to
+        the specified property group.  Each
+        property change specifies a property,
+        type, and optional set of values.  If
+        the property specified by a property
+        change doesn't exist prior to the call,
+        it will be created by the call.  If the
+        property specified by a property change
+        exists prior to the call but has a
+        different type, its type will be set to
+        the type specified by the call.
+        </para>
+        <para>
+        If the call succeeds, all the requested
+        property changes were made.  If the
+        call fails, none of the requested
+        changes were made.
+        </para>
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to make all the
+            requested property changes.
+            Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+            <item><code>NOTFOUND</code> -
+              the property group doesn't
+              exist (see target)
+            </item>
+            <item><code>BADVALUE</code> -
+              a property had an invalid name,
+              or a value couldn't be
+              converted to the requested type
+              (see target, aux)
+            </item>
+            <item><code>INVALID</code> -
+              the same property was
+              referenced by two
+              <code>PropertyChange</code>s.
+            </item>
+          </list>
+          <para>
+            When an invidual property is
+            the cause of the error, its
+            name will be returned in
+            <code>aux</code>.
+          </para>
+        </doc>
+      </error>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+      <argument name="props">
+        <summary>
+          the set of changes to apply
+        </summary>
+        <list typeref="PropChange" />
+      </argument>
+    </method>
+
+    <method name="readProperty">
+      <summary>
+        read a single directly-attached property's
+        values
+      </summary>
+      <doc>
+        Read a single property from the
+        specified directly-attached property
+        group.  The result includes the name,
+        type, and values of the property.
+      </doc>
+      <result typeref="Property">
+        <summary>
+          the specified property
+        </summary>
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to read the specified
+            property. Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>NOTFOUND</code> -
+              the property or property group
+              doesn't exist (see target)
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+      <argument type="string" name="prop_name">
+        <summary>
+          the name of the property
+        </summary>
+      </argument>
+    </method>
+
+    <method name="writeProperty">
+      <summary>
+        writes a list of values to a property
+      </summary>
+      <doc>
+        <para>
+          Change the specified property. If the 
+	  property doesn't exist prior to the 
+	  call, it will be created by the call.
+	  If the property exists prior to the 
+	  call but has a different type, its 
+	  type will be set to the type
+	  specified by the call.
+        </para>
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to make the requested
+            property change. Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+            <item><code>NOTFOUND</code> -
+              the property group doesn't
+              exist (see target)
+            </item>
+            <item><code>BADVALUE</code> -
+              the property had an invalid
+              name, or a value couldn't be
+              converted to the requested type
+              (see target)
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+      <argument type="string" name="prop_name">
+        <summary>
+          the name of the property
+        </summary>
+      </argument>
+      <argument typeref="PropertyType" name="prop_type">
+        <summary>
+          the type of the property
+        </summary>
+      </argument>
+      <argument name="values">
+        <summary>
+          the new values for the property
+        </summary>
+        <list type="string" />
+      </argument>
+    </method>
+
+    <method name="deleteProperty">
+      <summary>
+	delete a property
+      </summary>
+      <doc>
+	<para>
+	  Delete a property from the service/instance.
+	</para>
+      </doc>
+      <error typeref="SmfError">
+	<doc>
+	  <para>
+	    Failed to delete the property.
+	    Cause:
+	  </para>
+	  <list>
+	    <item><code>INTERNAL</code> -
+	    an internal error occurred
+	    </item>
+	    <item><code>DENIED</code> -
+	    insufficient authorization
+	    </item>
+	    <item><code>READONLY</code> -
+	    the repository is read-only
+	    </item>
+	    <item><code>NOTFOUND</code> -
+	    the property group doesn't
+	    exist, or the property to
+	    be deleted doesn't exist (see
+	    target)
+	    </item>
+	    <item><code>BADVALUE</code> -
+	    the property had an invalid
+	    name or type (see target)
+	    </item>
+	    <item><code>INVALID</code> -
+	    the property cannot be deleted
+	    while in use (see target)
+	    </item>
+	  </list>
+	</doc>
+      </error>
+      <argument type="string" name="pg_name">
+	<summary>
+	  the name of the property group
+	</summary>
+      </argument>
+      <argument type="string" name="prop_name">
+	<summary>
+	  the name of the property
+	</summary>
+      </argument>
+    </method>
+
+    <method name="deletePropertyCust">
+      <summary>
+	delete administrative customizations
+      </summary>
+      <doc>
+	Delete all administrative customizations
+	applied to this property.
+      </doc>
+      <error typeref="SmfError">
+	<doc>
+	  <para>
+	    Failed to delete the administrative customizations
+	    applied to this property.  Cause:
+	  </para>
+	  <list>
+	    <item><code>INTERNAL</code> -
+	    an internal error occurred
+	    </item>
+	    <item><code>DENIED</code> -
+	    insufficient authorization
+	    </item>
+	    <item><code>READONLY</code> -
+	    the repository is read-only
+	    </item>
+	    <item><code>NOTFOUND</code> -
+	    the property group, or property
+	    doesn't exist (see target)
+	    </item>
+	  </list>
+	</doc>
+      </error>
+      <argument type="string" name="pg_name">
+	<summary>
+	  the name of the property group
+	</summary>
+      </argument>
+      <argument type="string" name="prop_name">
+	<summary>
+	  the name of the property
+	</summary>
+      </argument>
+    </method>
+
+    <method name="getCommonName">
+      <summary>
+        obtain the service/instance's localized
+        common name
+      </summary>
+      <doc>
+        Obtain the localized common name for the
+        service/instance, if one exists.  If a
+        common name doesn't exist for the
+        specified locale, attempts to return
+        the common name for the "C" locale
+        instead.
+      </doc>
+      <result type="string" nullable="true">
+        <summary>
+          the common name if available, or null
+        </summary>
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          An internal error occurred.
+        </doc>
+      </error>
+      <argument type="string" name="locale">
+        <summary>
+          the desired locale
+        </summary>
+      </argument>
+    </method>
+
+    <method name="getDescription">
+      <summary>
+        obtain the service/instance's localized
+        description
+      </summary>
+      <doc>
+        Obtain the localized description for
+        the service/instance, if one exists.
+        If a description doesn't exist for the
+        specified locale, attempts to return
+        the description for the "C" locale
+        instead.
+      </doc>
+      <result type="string" nullable="true">
+        <summary>
+          the description if available, or null
+        </summary>
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          An internal error occurred.
+        </doc>
+      </error>
+      <argument type="string" name="locale">
+        <summary>
+          the desired locale
+        </summary>
+      </argument>
+    </method>
+
+    <method name="getPGTemplates">
+      <summary>
+        obtain all property group templates
+      </summary>
+      <doc>
+        Obtain all property group templates
+        for this service/instance.  If
+        templates aren't provided for the
+        specified locale, attempts to return
+        the templates for the "C" locale
+        instead.
+      </doc>
+      <result>
+        <summary>
+          all available property group templates
+        </summary>
+        <list typeref="PGTemplate" />
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          An internal error occurred.
+        </doc>
+      </error>
+      <argument type="string" name="locale">
+        <summary>
+          the desired locale
+        </summary>
+      </argument>
+    </method>
+
+    <method name="getPropTemplates">
+      <summary>
+        obtain all property templates for a
+        property group
+      </summary>
+      <doc>
+        Obtain all property templates for the
+        specified property group of this
+        service/instance.  If property
+        templates aren't provided for the
+        specified locale, attempts to return
+        the templates for the "C" locale
+        instead.  If no templates exist for
+        properties of the specified property
+        group, an empty list is returned.
+      </doc>
+      <result>
+        <summary>
+          all available property templates
+        </summary>
+        <list typeref="PropTemplate" />
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          An internal error occurred.
+        </doc>
+      </error>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+      <argument type="string" name="pg_type">
+        <summary>
+          the type of the property group
+        </summary>
+      </argument>
+      <argument type="string" name="locale">
+        <summary>
+          the desired locale
+        </summary>
+      </argument>
+    </method>
+  </interface>
+
+
+  <!-- Service definitions -->
+
+  <interface name="Service">
+    <summary>an SMF service object</summary>
+
+    <doc>
+      <para>
+        The <code>Service</code> interface is an <link interface="Entity">Entity</link> that
+	represents an SMF service.  Handles to this type of object can be
+        retrieved from the RAD server using an object name built with:
+      </para>
+
+      <list type="ordered">
+        <item>
+          the "<code>com.oracle.solaris.rad.smf</code>" domain name
+        </item>
+        <item>
+          a key named "<code>type</code>" paired with a value of
+          "<code>Service</code>"
+        </item>
+        <item>
+          a key named "<code>service</code>" paired with the service portion of
+          an SMF FMRI
+        </item>
+      </list>
+
+      <para>
+        Object names for services can be pulled from the <link
+        struct="Service">Service</link>s exposed by the <link interface="Master"
+        property="services">Master.services</link> property.  Or, they can be
+        built directly:
+      </para>
+
+      <example caption="Service interface (Python)">
+import rad.client
+import rad.util
+
+# Create a connection
+radconn = rad.util.connect_unix()
+
+# Retrieve a particular service
+service_name = rad.client.Name("<strong>com.oracle.solaris.rad.smf</strong>",
+    [("<strong>type</strong>", "<strong>Service</strong>"), ("<strong>service</strong>", "network/physical")])
+# Get a native-looking python object that throws RAD exceptions
+service = radconn.get_object(service_name)
+
+# Do something with our service
+print "service %s has %d instances" % (service.fmri, len(service.instances))</example>
+
+      <para>
+        If using the Python SMF convenience wrapper delivered with this
+        API, this can be simplified to:
+      </para>
+
+      <example caption="Service interface (Python, SMF wrapper)">
+import smf.rad
+
+repo = smf.rad.Repository()
+
+# Retrieve a particular service
+service = repo.lookup_byfmri("svc:/network/physical")
+
+# Do something with our service
+print "service %s has %d instances" % (service.fmri, len(service.instances))</example>
+    </doc>
+
+    <version major="1" minor="0" stability="private" />
+    <include typeref="Entity" />
+
+    <property name="instances" access="ro">
+      <summary>
+        the list of instances of this service
+      </summary>
+      <doc>
+        The list of instances of this service.
+        An empty list if the service has no
+        instances.
+      </doc>
+      <list type="string" />
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+  </interface>
+
+
+  <!-- Instance definitions -->
+
+  <enum name="SMFState">
+    <summary>
+      the state of an SMF instance
+    </summary>
+    <value name="NONE" />
+    <value name="UNINIT" />
+    <value name="MAINT" />
+    <value name="OFFLINE" />
+    <value name="DISABLED" />
+    <value name="ONLINE" />
+    <value name="DEGRADED" />
+    <value name="LEGACY" />
+  </enum>
+
+  <struct name="ExtendedState">
+    <!-- Includes state for atomicity -->
+    <summary>
+      extended instance state information
+    </summary>
+    <field typeref="SMFState" name="state">
+      <summary>the current state of the instance</summary>
+    </field>
+    <field typeref="SMFState" name="nextState">
+      <summary>the next state of the instance</summary>
+    </field>
+    <field type="string" name="auxstate" nullable="true">
+      <summary>the auxiliary state of the instance</summary>
+    </field>
+    <field type="time" name="stime">
+      <summary>the time of last state change</summary>
+    </field>
+    <field type="integer" name="contractid">
+      <summary>the contract ID, or -1 if none</summary>
+    </field>
+    <field type="boolean" name="enabled">
+      <summary>is the instance enabled?</summary>
+    </field>
+    <field type="boolean" name="enabled_temp">
+      <summary>is the instance enabled temporarily?</summary>
+      <doc>
+        Indicates if the instance is enabled
+        temporarily. If the instance isn't
+        enabled or disable temporarily, this
+        mirrors the value of enabled.
+      </doc>
+    </field>
+  </struct>
+
+  <struct name="LogInfo">
+    <summary>instance log data</summary>
+    <field type="string" name="name">
+      <summary>the log file's name</summary>
+    </field>
+    <field type="integer" name="size">
+      <summary>the log file's size</summary>
+    </field>
+    <field type="time" name="MTime">
+      <summary>the log file's modification time</summary>
+    </field>
+    <field type="opaque" name="contents">
+      <summary>log file contents</summary>
+    </field>
+  </struct>
+
+  <interface name="Instance">
+    <summary>an SMF instance object</summary>
+
+    <doc>
+      <para>
+        The <code>Instance</code> interface is an <link interface="Entity">Entity</link>
+        that represents an SMF instance.  Handles to this type of object can be
+        retrieved from the RAD server using an object name built with:
+      </para>
+
+      <list type="ordered">
+        <item>
+          the "<code>com.oracle.solaris.rad.smf</code>" domain name
+        </item>
+        <item>
+          a key named "<code>type</code>" paired with a value of
+          "<code>Instance</code>"
+        </item>
+        <item>
+          a key named "<code>service</code>" paired with the service portion of
+          an SMF FMRI
+        </item>
+        <item>
+          a key named "<code>instance</code>" paired with the instance portion of
+          an SMF FMRI
+        </item>
+      </list>
+
+      <para>
+        Object names for instances can be pulled from the <link
+        struct="Instance">Instance</link>s exposed by the <link interface="Master"
+        property="instances">Master.instances</link> property.  Or, they can be
+        built directly:
+      </para>
+
+      <example caption="Instance interface (Python)">
+import rad.client
+import rad.util
+
+# Create a connection
+radconn = rad.util.connect_unix()
+
+# Retrieve a particular instance
+instance_name = rad.client.Name("<strong>com.oracle.solaris.rad.smf</strong>",
+    [("<strong>type</strong>", "<strong>Instance</strong>"), ("<strong>service</strong>", "network/physical"),
+    ("<strong>instance</strong>", "default")])
+# Get a native-looking python object that throws RAD exceptions
+instance = radconn.get_object(instance_name)
+
+# Do something with our instance
+print "instance %s state: %s" % (instance.fmri, instance.state)</example>
+
+      <para>
+        If using the Python SMF convenience wrapper delivered with this
+        API, this can be simplified to:
+      </para>
+
+      <example caption="Instance interface (Python, SMF wrapper)">
+import smf.rad
+
+repo = smf.rad.Repository()
+
+# Retrieve a particular instance
+instance = repo.lookup_byfmri("svc:/network/physical:default")
+
+# Do something with our instance
+print "instance %s state: %s" % (instance.fmri, instance.state)</example>
+    </doc>
+
+    <version major="1" minor="0" stability="private" />
+    <include typeref="Entity" />
+
+    <property type="string" name="instance" access="ro">
+      <summary>the name of the instance</summary>
+    </property>
+    <property type="string" name="restarter" access="ro">
+      <summary>the fmri of the instance's restarter</summary>
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+    <property type="boolean" name="enabled" access="ro">
+      <summary>is the instance effectively enabled?</summary>
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+    <property typeref="SMFState" name="state" access="ro">
+      <summary>the current state of the instance</summary>
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+    <property typeref="ExtendedState" name="ex_state" access="ro">
+      <summary>the extended state of the instance</summary>
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+    <property name="snapshots" access="ro">
+      <summary>a list of the instance's snapshots</summary>
+      <list type="string" />
+      <error typeref="SmfError">
+        <doc>
+          An internal SMF error occurred.
+        </doc>
+      </error>
+    </property>
+
+    <method name="readSnapshotPGs">
+      <summary>
+        read all property groups in the
+        composed view of the specified snapshot
+      </summary>
+      <result>
+        <list typeref="PropertyGroup" />
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to read the list of
+            property groups. Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>NOTFOUND</code> -
+              the snapshot doesn't exist
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="snap_name" nullable="true">
+	<summary>
+	  the name of the snapshot, or null for the running snapshot
+	</summary>
+      </argument>
+    </method>
+
+    <method name="readSnapshotProperties">
+      <summary>
+        reads all properties in the composed view
+        of the specified snapshot of a property group
+      </summary>
+      <result>
+        <list typeref="Property" />
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to read properties from
+            the snapshot's composed view of
+            the specified property group.
+            Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>NOTFOUND</code> -
+              the property group or snapshot
+              doesn't exist (see target)
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="snap_name" nullable="true">
+	<summary>
+	  the name of the snapshot, or null for the running snapshot
+	</summary>
+      </argument>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+    </method>
+
+    <method name="readSnapshotProperty">
+      <summary>
+        reads a property in the composed view
+        of the specified snapshot
+      </summary>
+      <doc>
+        Reads a single property from the
+        composed view of the specified property
+        group.  The result includes the name,
+        type, and values of the property.
+      </doc>
+      <result typeref="Property" />
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Failed to read the property.
+            Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>NOTFOUND</code> -
+              the snapshot, property group,
+              or property doesn't exist (see
+              target)
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="string" name="snap_name" nullable="true">
+        <summary>
+          the name of the snapshot, or null for the running snapshot
+        </summary>
+      </argument>
+      <argument type="string" name="pg_name">
+        <summary>
+          the name of the property group
+        </summary>
+      </argument>
+      <argument type="string" name="prop_name">
+        <summary>
+          the name of the property
+        </summary>
+      </argument>
+    </method>
+
+    <method name="clear">
+      <summary>
+        clear the instance if degraded or in maintenance
+      </summary>
+      <doc>
+        Attempt to clear the maintenance or
+        degraded state from the instance.  This
+        operation occurs asynchronously, and
+        will return success even though the
+        attempt could fail.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Was unable to attempt clearing
+            the instance.  Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+            <item><code>BADSTATE</code> -
+              the instance wasn't in the
+              maintenance or degraded state
+            </item>
+          </list>
+        </doc>
+      </error>
+      <!-- <argument type="boolean" name="synchronous" /> -->
+    </method>
+
+    <method name="restart">
+      <summary>
+        restarts the instance
+      </summary>
+      <doc>
+        Attempt to restart the instance.  This
+        operation occurs asynchronously, and
+        will return success even though the
+        attempt could fail.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Was unable to attempt
+            restarting the instance.
+            Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+          </list>
+        </doc>
+      </error>
+      <!-- <argument type="boolean" name="synchronous" /> -->
+    </method>
+
+    <method name="refresh">
+      <summary>
+        refresh the instance
+      </summary>
+      <doc>
+        Attempt to refresh the instance.  This
+        operation occurs asynchronously, and
+        will return success even though the
+        attempt could fail.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Was unable to attempt
+            restarting the instance.
+            Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+          </list>
+        </doc>
+      </error>
+      <!-- <argument type="boolean" name="synchronous" /> -->
+    </method>
+
+    <method name="maintain">
+      <summary>
+        place the instance in maintenance
+      </summary>
+      <doc>
+        Attempt to place the instance in
+        maintenance.  This operation occurs
+        asynchronously, and will return success
+        even though the attempt could fail.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Was unable to attempt to place
+            the instance in maintenance.
+            Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="boolean" name="immediate">
+        <summary>
+          skip attempting a clean shutdown
+        </summary>
+      </argument>
+      <argument type="boolean" name="temporary">
+        <summary>
+          maintenance doesn't persist after reboot
+        </summary>
+      </argument>
+      <!-- <argument type="boolean" name="synchronous" /> -->
+    </method>
+
+    <method name="enable">
+      <summary>
+        enable the instance
+      </summary>
+      <doc>
+        Enable the instance.  This operation is
+        idempotent; enabling an enabled
+        instance has no effect.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Was unable to enable the
+            instance. Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="boolean" name="temporary">
+        <summary>
+          enable doesn't persist after reboot
+        </summary>
+      </argument>
+      <!-- <argument type="boolean" name="synchronous" /> -->
+    </method>
+
+    <method name="disable">
+      <summary>
+        disable the instance
+      </summary>
+      <doc>
+        Disable the instance.  This operation
+        is idempotent; disabling a disabled
+        instance has no effect.
+      </doc>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Was unable to disable the
+            instance. Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>READONLY</code> -
+              the repository is read-only
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="boolean" name="temporary">
+        <summary>
+          disable doesn't persist after reboot
+        </summary>
+      </argument>
+      <!-- <argument type="boolean" name="synchronous" /> -->
+    </method>
+
+    <method name="getLogInfo">
+      <summary>
+        obtain instance log file data
+      </summary>
+      <doc>
+        Obtain information from and about the
+        instance's log file.  Includes the
+        name, size, modification time, and
+        contents.
+      </doc>
+      <result typeref="LogInfo">
+        <summary>
+          the requested log file data
+        </summary>
+      </result>
+      <error typeref="SmfError">
+        <doc>
+          <para>
+            Was unable to obtain log data.
+            Cause:
+          </para>
+          <list>
+            <item><code>INTERNAL</code> -
+              an internal error occurred
+            </item>
+            <item><code>DENIED</code> -
+              insufficient authorization
+            </item>
+            <item><code>NOTFOUND</code> -
+              no log file found
+            </item>
+          </list>
+        </doc>
+      </error>
+      <argument type="integer" name="max_size">
+        <summary>
+          bytes of log file content to return
+        </summary>
+      </argument>
+    </method>
+  </interface>
+
+
+  <!-- Master object definitions -->
+
+  <struct name="Service">
+    <field type="string" name="fmri" />
+    <field type="name" name="objectName" />
+    <field name="instances">
+      <list type="string" />
+    </field>
+  </struct>
+
+  <struct name="Instance">
+    <field type="string" name="fmri" />
+    <field type="name" name="objectName" />
+    <field type="time" name="stime" />
+    <field typeref="SMFState" name="state" />
+  </struct>
+
+  <struct name="StateChange">
+    <field type="name" name="source" />
+    <field typeref="SMFState" name="state" />
+    <field typeref="SMFState" name="nextState" />
+    <field type="string" name="auxState" nullable="true" />
+    <field type="time" name="stateTime" />
+    <field type="string" name="reason" nullable="true" />
+  </struct>
+
+  <struct name="Addition">
+    <field type="name" name="name" />
+    <field type="string" name="frmi" />
+    <field typeref="Instance" name="instance" nullable="true" />
+    <field typeref="Service" name="service" nullable="true" />
+  </struct>
+
+  <struct name="Removal">
+    <field type="string" name="fmri" />
+  </struct>
+
+  <interface name="Master">
+    <summary>
+      a top-level object providing access to all services and instances on
+      the system
+    </summary>
+
+    <doc>
+      <para>
+        The <code>Master</code> interface provides an iterative entrypoint into the
+        SMF subsystem.  Handles to this type of object can be retrieved from the
+        RAD server using an object name built with:
+      </para>
+
+      <list type="ordered">
+        <item>
+          the "<code>com.oracle.solaris.rad.smf</code>" domain name
+        </item>
+        <item>
+          a key named "<code>type</code>" paired with a value of
+          "<code>Master</code>"
+        </item>
+      </list>
+
+      <para>
+        For example, to report the number of services in the <link
+        enum="SMFState" value="ONLINE">ONLINE</link> state:
+      </para>
+
+      <example caption="Master interface (Python)">
+import rad.client
+import rad.util
+
+# Create a connection
+radconn = rad.util.connect_unix()
+
+# Retrieve the Master object
+master_name = rad.client.Name("<strong>com.oracle.solaris.rad.smf</strong>",
+    [("<strong>type</strong>", "<strong>Master</strong>")])
+# Get a native-looking python object that throws RAD exceptions
+master = radconn.get_object(master_name)
+
+# Retrieve a handle to the SMFState enum
+SMFState = rad.client.get_types(master).SMFState
+
+# Do something with the Master object
+print "%d service instances are online" % \
+    len([x for x in master.instances if x.state is SMFState.ONLINE])</example>
+
+      <para>
+        If using the Python SMF convenience wrapper delivered with this
+        API, this can be simplified to:
+      </para>
+
+      <example caption="Master interface (Python, SMF wrapper)">
+import smf.rad
+
+# Get quick access to the Master interface
+repo = smf.rad.Repository()
+master = repo.get_master()
+
+# Retrieve a handle to the SMFState enum
+SMFState = rad.client.get_types(master).SMFState
+
+# Do something with the master object
+print "%d service instances are online" % \
+    len([x for x in master.instances if x.state is SMFState.ONLINE])</example>
+    </doc>
+
+    <version major="1" minor="0" stability="private" />
+
+    <property name="services" access="ro">
+      <list typeref="Service" />
+      <error typeref="SmfError" />
+    </property>
+
+    <property name="instances" access="ro">
+      <list typeref="Instance" />
+      <error typeref="SmfError" />
+    </property>
+
+    <event typeref="StateChange" name="statechange" />
+    <event typeref="Addition" name="additions" />
+    <event typeref="Removal" name="removals" />
+  </interface>
+</api>

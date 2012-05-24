@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!--
+  CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+  CDDL HEADER END
+
+  Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+-->
+
+<project name="panelsdef">
+	<import file="build-vpanels.xml" />
+
+	<property name="paneltmpl" value="panel.xml" />
+
+	<!-- Xslt would be a better way of doing this -->
+	<target name="generate_project">
+		<condition property="jar_aux"
+		    value="&lt;file&gt;${panel.jar_aux}&lt;/file&gt;" else="">
+			<isset property="panel.jar_aux"/>
+		</condition>
+
+		<generate.filter fromdir="${env.SRC}/ant-rules" pattern="${paneltmpl}"
+		    from="${paneltmpl}" to="${panel.panel}.xml">
+			<filter token="JAR_DIR" value="${abs.app}" />
+			<filter token="JAR_FILE" value="${proj.jarfile}" />
+			<filter token="JAR_AUX" value="${jar_aux}" />
+			<filter token="PANEL" value="${panel.panel}" />
+			<filter token="CLASS" value="${panel.class}" />
+			<filter token="TMPL_NAME" value="${panel.name}" />
+		</generate.filter>
+	</target>
+
+	<target name="install_icon">
+		<mkdir dir="${proto.pixmaps}" />
+		<copy file="${panel.icon.src}"
+		    tofile="${proto.pixmaps}/${panel.icon.dst}" />
+	</target>
+
+	<target name="install" depends="jar,install_project,l10n">
+		<install.default targetdir="${proto.app}" />
+		<install.l10n />
+		<mkdir dir="${proto.conf}" />
+		<copy file="${proj.gen}/${panel.panel}.xml"
+		    tofile="${proto.conf}/${panel.panel}.xml" />
+	</target>
+
+	<path id="classpath.panels">
+		<pathelement location="${proj.smf-old}/smf-old.jar" />
+		<pathelement location="${proj.util}/vpanels-util.jar" />
+		<pathelement location="${proj.vpanel}/vpanels-panel.jar" />
+	</path>
+
+	<path id="classpath.javac" refid="classpath.panels" />
+</project>

@@ -1,0 +1,105 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+set name=pkg.fmri value=pkg:/system/management/visual-panels-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Visual Panels framework"
+set name=info.classification value="org.opensolaris.category.2008:System/Administration and Configuration"
+
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=org.opensolaris.arc-caseid value=LSARC/2007/392
+
+license ../vpanels.copyright license=Oracle
+
+depend fmri=__TBD \
+       pkg.debug.depend.file=java \
+       pkg.debug.depend.path=usr/bin \
+       pkg.debug.depend.reason=usr/bin/vp \
+       pkg.debug.depend.type=script \
+       type=require
+
+depend fmri=__TBD \
+       pkg.debug.depend.file=jhall.jar \
+       pkg.debug.depend.path=usr/jdk/packages/lib/ext \
+       pkg.debug.depend.reason=usr/share/vpanels/app/vpanels-panels-browser.jar \
+       pkg.debug.depend.type=script \
+       type=require
+
+depend fmri=__TBD \
+       pkg.debug.depend.file=gfind \
+       pkg.debug.depend.path=usr/bin \
+       pkg.debug.depend.reason=usr/bin/vp \
+       pkg.debug.depend.type=script \
+       type=require
+
+depend fmri=__TBD \
+       pkg.debug.depend.file=rad.jar \
+       pkg.debug.depend.path=usr/lib/rad/java \
+       pkg.debug.depend.reason=usr/share/vpanels/vpanels-client.jar \
+       pkg.debug.depend.type=java \
+       type=require
+
+depend fmri=__TBD \
+       pkg.debug.depend.file=smf.jar \
+       pkg.debug.depend.path=usr/lib/rad/java \
+       pkg.debug.depend.reason=usr/share/vpanels/smf-old.jar \
+       pkg.debug.depend.type=java \
+       type=require
+
+depend fmri=pkg:/system/management/visual-panels-core/locale type=require
+
+dir path=usr
+dir path=usr/bin
+dir path=usr/lib
+dir path=usr/lib/rad
+dir path=usr/lib/rad/module
+dir path=usr/share
+dir path=usr/share/lib
+dir path=usr/share/lib/xml group=sys
+dir path=usr/share/lib/xml/dtd group=sys
+dir path=usr/share/man
+dir path=usr/share/man/man1
+dir path=usr/share/vpanels
+dir path=usr/share/vpanels/app
+dir path=usr/share/vpanels/conf
+dir path=usr/share/vpanels/locale
+file path=usr/bin/sleeklock
+file path=usr/bin/vp
+file path=usr/lib/rad/module/mod_files.so
+file path=usr/lib/rad/module/mod_network.so
+file path=usr/lib/rad/module/mod_panels.so
+file path=usr/lib/rad/module/mod_smf_old.so
+file path=usr/share/lib/xml/dtd/vpanel.dtd.1
+file path=usr/share/man/man1/vp.1
+file path=usr/share/vpanels/app/vpanels-panels-browser.jar
+file path=usr/share/vpanels/conf/browser.xml
+file path=usr/share/vpanels/java.policy
+file path=usr/share/vpanels/smf-old.jar
+file path=usr/share/vpanels/swingx-0.9.3.jar
+file path=usr/share/vpanels/TimingFramework-1.0.jar
+file path=usr/share/vpanels/vpanels-client.jar
+file path=usr/share/vpanels/vpanels-panel.jar
+file path=usr/share/vpanels/vpanels-util.jar
