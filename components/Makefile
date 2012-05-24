@@ -89,6 +89,7 @@ $(WS_LOGS):
 $(WS_REPO):
 	$(PKGREPO) create $(PKG_REPO)
 	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER)
+	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER_LOCALIZABLE)
 
 DUMMYPKG =  "set name=fmri value=pkg:/dummy@0,$(BUILD_VERSION)\n"
 DUMMYPKG += "set pkg.summary=dummy\n"

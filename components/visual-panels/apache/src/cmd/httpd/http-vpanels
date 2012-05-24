@@ -1,0 +1,334 @@
+#!/sbin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+. /lib/svc/share/ipf_include.sh
+
+APACHE_HOME=/usr/apache2/2.2
+CONF_FILE=/etc/vpanels/httpd.conf
+PIDFILE=/var/run/apache2/httpd.pid
+
+TEMPLATE="/etc/vpanels/httpd_conf.templ"
+APACHE_CONF="/var/run/httpd.conf"
+SERVER_PG="httpd"
+LISTEN_PORTS=""
+
+CAT="/usr/bin/cat"
+CMP="/usr/bin/cmp"
+CP="/usr/bin/cp"
+ECHO="usr/bin/echo"
+GREP="/usr/bin/grep"
+MKDIR="/usr/bin/mkdir"
+MV="/usr/bin/mv"
+RM="/usr/bin/rm"
+SED="/usr/bin/sed"
+SORT="/usr/bin/sort"
+SVCPROP="/usr/bin/svcprop"
+TR="/usr/bin/tr"
+UNIQ="/usr/bin/uniq"
+
+vhost_is_enabled()
+{
+	enabled=`$SVCPROP -p ${1}/enabled  ${SMF_FMRI}`
+	if [ "$enabled" = "false" ]; then
+		return 1;
+	else
+		return 0;
+	fi
+}
+
+#
+# Add the given port to LISTEN_PORTS
+#
+add_listen_port()
+{
+	LISTEN_PORTS="${LISTEN_PORTS} ${1}"
+}
+
+# Create additional module directives from vhost configurations. Modules
+# additions are in server config context so this methods has to run
+# before any call to generate_vhost()
+#
+process_modules()
+{
+	mods=`mktemp /tmp/apache_mod.XXXXXX`
+	if [ -z "$mods" ]; then
+		exit 1
+	fi
+
+	# Get a list of enabled virtual host.
+	list="$SERVER_PG"
+	for vhost in $1
+	do
+		vhost_is_enabled $vhost && list="$list $vhost"
+	done
+
+	for pg in $list
+	do
+		modules=`$SVCPROP $SMF_FMRI | /usr/xpg4/bin/grep "^$pg\/module" | \
+		     awk ' { printf("%s ", $1) }'`
+
+		for module in $modules
+		do
+			set -- `$SVCPROP -p $module ${SMF_FMRI}`
+			if echo "$1" | grep "MODULE:"  >/dev/null 2>&1; then
+				modname=`echo $1 | cut -f2 -d ':'`
+				file=$2
+			else
+				modname=`echo $2 | cut -f2 -d ':'`
+				file=$1
+			fi
+			echo "LoadModule $modname $file" >>$mods
+
+		done
+	done
+
+	if [ -f $mods ]; then
+		$CAT $mods | $SORT -u >$mods
+		$CAT $mods >>$APACHE_CONF
+		echo "">>$APACHE_CONF
+	fi
+}
+
+# Put additional mime definitions into vhost configurations
+#
+process_mimes()
+{
+	pg=$1
+	mimes=`$SVCPROP $SMF_FMRI | /usr/xpg4/bin/grep "^$pg\/mime" | \
+	    awk ' { printf("%s ", $1) }'`
+
+	for mime in $mimes
+	do
+		Mimetype=""
+		ext=""
+		set -- `$SVCPROP -p $mime $SMF_FMRI` 
+		for arg in "$@"
+		do
+			if echo "$arg" | grep "MIME:"  >/dev/null 2>&1; then
+				Mimetype=`echo $arg | cut -f2 -d ':'`
+			else
+				ext="$ext $arg"
+			fi
+		done
+		ext=`echo "$ext" | sed 's/[,|\\]/ /g'`
+		echo "AddType $Mimetype $ext" >>$APACHE_CONF
+	done
+}
+
+# Create vhost configuration in APACHE_CONF for 
+# named vhost.
+#
+generate_vhost()
+{
+	vhost_name="$1"
+
+	# Don't bother if this vhost is disabled
+	vhost_is_enabled $vhost || return 0
+
+	sslengine=`$SVCPROP -p ${vhost_name}/sslengine ${SMF_FMRI}`
+	echo "" >>$APACHE_CONF
+	if [ "$sslengine" = "true" ]; then
+		sslcert=`$SVCPROP -p ${vhost_name}/sslcert ${SMF_FMRI}`
+		sslkey=`$SVCPROP -p ${vhost_name}/sslkey ${SMF_FMRI}`
+		sslip=`$SVCPROP -p ${vhost_name}/sslip ${SMF_FMRI}`
+		sslport=`$SVCPROP -p ${vhost_name}/sslport ${SMF_FMRI}`
+
+		echo "Listen   ${sslip}:${sslport}" >>$APACHE_CONF
+		echo "<VirtualHost   ${sslip}:${sslport}>" >>$APACHE_CONF
+		echo "SSLEngine on" >>$APACHE_CONF
+                echo "SSLCertificateFile   ${sslcert}" >>$APACHE_CONF
+                echo "SSLCertificateKeyFile   ${sslkey}" >>$APACHE_CONF
+	else
+		port=`$SVCPROP -p ${vhost_name}/port ${SMF_FMRI}`
+		add_listen_port $port
+		echo "<VirtualHost   *:${port}>" >>$APACHE_CONF
+	fi
+
+	process_mimes $vhost_name
+	docroot=`$SVCPROP -p ${vhost_name}/docroot ${SMF_FMRI}`
+	use_custom=`$SVCPROP -p ${vhost_name}/custom_conf ${SMF_FMRI}`
+	custom_file=`$SVCPROP -p ${vhost_name}/custom_file ${SMF_FMRI}`
+	domain=`$SVCPROP -p ${vhost_name}/domain ${SMF_FMRI}`
+	serve_home_dir=`$SVCPROP -p ${vhost_name}/serve_home_dir ${SMF_FMRI}`
+
+	# Create DocumentRoot directive if it's not empty. Also
+	# create a Directory section with default permission for
+	# the specified DocumentRoot directory
+	#
+	if [ "$docroot" != "\"\"" ]; then
+		echo "DocumentRoot  ${docroot}" >>$APACHE_CONF
+
+		echo "<Directory  \"${docroot}\" >" >>$APACHE_CONF
+		echo "Options Indexes Includes FollowSymLinks " \
+		     "SymLinksifOwnerMatch ExecCGI MultiViews" >>$APACHE_CONF
+		echo "AllowOverride None" >>$APACHE_CONF
+		echo "Order allow,deny" >>$APACHE_CONF
+		echo "Allow from all" >>$APACHE_CONF
+    		echo "</Directory> " >>$APACHE_CONF
+	fi
+
+	if [ "$use_custom" = "true" ]; then
+		if [ "$custom_file" != "\"\"" ]; then
+			echo "Include  ${custom_file}" >>$APACHE_CONF
+		fi
+	fi
+
+	if [ "$serve_home_dir" = "true" ]; then
+		echo "UserDir   public_html" >>$APACHE_CONF
+
+		echo "<Directory /home/*/public_html>" >>$APACHE_CONF
+		echo "  AllowOverride Options FileInfo AuthConfig Limit" >>$APACHE_CONF
+		echo "  Options Indexes Includes FollowSymLinks " \
+		     "SymLinksifOwnerMatch ExecCGI MultiViews" >>$APACHE_CONF
+		echo "  <Limit GET POST OPTIONS>" >>$APACHE_CONF
+		echo "    Order allow,deny" >>$APACHE_CONF
+		echo "    Allow from all" >>$APACHE_CONF
+		echo "  </Limit>" >>$APACHE_CONF
+		echo "  <LimitExcept GET POST OPTIONS>" >>$APACHE_CONF
+		echo "    Order deny,allow" >>$APACHE_CONF
+		echo "    Allow from all" >>$APACHE_CONF
+		echo "  </LimitExcept>" >>$APACHE_CONF
+		echo "</Directory>" >>$APACHE_CONF
+	fi
+
+	echo "ServerName   ${domain}" >>$APACHE_CONF
+	echo "</VirtualHost>" >>$APACHE_CONF
+}
+
+get_vhost_list()
+{
+	svccfg -s $1 listpg | awk ' {
+	    if (($1 ~ /^vhost/) && ($2 == "application"))
+	        printf("%s ", $1)
+	    }'
+}
+
+gen_conf_file()
+{
+	httpd_custom_file=`$SVCPROP -p ${SERVER_PG}/custom_file ${SMF_FMRI}`
+	httpd_sslengine=`$SVCPROP -p ${SERVER_PG}/sslengine ${SMF_FMRI}` 
+	httpd_custom_conf=`$SVCPROP -p ${SERVER_PG}/custom_conf ${SMF_FMRI}`
+
+	# Generate general parameters 
+	if [ "$httpd_custom_conf" = "true" ]; then
+		$RM ${CONF_FILE} >/dev/null 2>&1
+		ln -s ${httpd_custom_file} ${CONF_FILE}
+		exit 0
+	else
+		$CP $TEMPLATE $APACHE_CONF
+	fi
+
+	if [ "$httpd_sslengine" = "true" ]; then
+		echo "\n SSLEngine	on" >>$APACHE_CONF
+	fi
+
+	# Get the list of vhost names
+	vhost_list=`get_vhost_list ${SMF_FMRI}`
+
+	# Add mimes for server and modules for both server and virtual hosts
+	process_modules "${vhost_list}"
+	process_mimes "${SERVER_PG}"
+
+	# Make sure root user's home directory is disabled
+	echo "UserDir	disabled	root" >>$APACHE_CONF
+
+	# Generate vhost clauses in configuration file
+	for vhost in $vhost_list
+	do
+		generate_vhost $vhost
+	done
+
+	echo >> $APACHE_CONF
+
+        # Add a "Listen <port>" line for each uniqe port
+	echo "$LISTEN_PORTS" | "$TR" ' ' '\n' | "$GREP" '^[0-9][0-9]*$' |
+	    "$SORT" | "$UNIQ" | "$SED" 's/^/Listen /' >> $APACHE_CONF
+
+        # Add a "NameVirtualHost: *:<port>" line for each duplicate port
+	echo "$LISTEN_PORTS" | "$TR" ' ' '\n' | "$GREP" '^[0-9][0-9]*$' |
+	    "$SORT" | "$UNIQ" -d |
+	    "$SED" 's/^/NameVirtualHost *:/' >> $APACHE_CONF
+
+	replace_file $CONF_FILE $APACHE_CONF
+}
+
+gen_ipf_conf()
+{
+	FMRI=$1
+	ipf_file=`fmri_to_file ${FMRI} $IPF_SUFFIX`
+        policy=`get_policy ${FMRI}`
+
+	echo "# $FMRI" >$ipf_file
+	# rules for global port
+	port=`$SVCPROP -p ${SERVER_PG}/port  ${FMRI} 2>/dev/null`
+	generate_rules $FMRI $policy "tcp" "any" $port $ipf_file
+
+	# rules for virtual hosts
+	vhost_list=`get_vhost_list ${FMRI}`
+	for vhost in $vhost_list
+	do
+		ip="any"
+		sslengine=`$SVCPROP -p ${vhost}/sslengine ${FMRI} 2>/dev/null`
+		if [ "$sslengine" = "true" ]; then
+			ip=`$SVCPROP -p ${vhost}/sslip ${FMRI} 2>/dev/null`
+			port=`$SVCPROP -p ${vhost}/sslport ${FMRI} 2>/dev/null`
+		else
+			port=`$SVCPROP -p ${vhost}/port ${FMRI} 2>/dev/null`
+		fi
+		generate_rules $FMRI $policy "tcp" $ip $port $ipf_file
+	done
+}
+
+
+
+case "$1" in
+start)
+	gen_conf_file
+	$RM -f ${PIDFILE}
+	$MKDIR -p /var/run/apache2
+	cmd="-DSSL -k start"
+	;;
+refresh)
+	gen_conf_file
+	cmd="-k graceful"
+	;;
+stop)
+	cmd="-k stop"
+	;;
+ipfilter)
+	gen_ipf_conf $2
+	exit $SMF_EXIT_OK
+	;;
+*)
+	echo "Usage: $0 {start|stop|refresh}"
+	exit 1
+	;;
+esac
+
+[ ! -f ${CONF_FILE} ] &&  exit $SMF_EXIT_ERR_CONFIG
+
+exec ${APACHE_HOME}/bin/apachectl -f $CONF_FILE $cmd 2>&1

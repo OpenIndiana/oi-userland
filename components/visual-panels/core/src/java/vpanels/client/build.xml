@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<!--
+  CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+  CDDL HEADER END
+
+  Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+-->
+
+<project name="vpanels-client" default="jar">
+	<property environment="env" />
+	<import file="${env.SRC}/ant-rules/build-vpanels.xml" />
+
+	<presetdef name="generate.constants">
+		<generate.filter pattern="com/**/*.java.in"
+		    from="*.java.in" to="*.java">
+			<filter token="VERSION" value="${app.version}" />
+		</generate.filter>
+	</presetdef>
+
+	<target name="run">
+		<java fork="true" jar="${proj.jarfile}">
+			<arg value="browser" />
+		</java>
+	</target>
+
+	<target name="profile">
+		<fail unless="netbeans.home">
+			This target can only be used within NetBeans.
+		</fail>
+
+		<nbprofiledirect>
+			<classpath refid="classpath.jar" />
+		</nbprofiledirect>
+
+		<java fork="true" jar="${proj.jarfile}">
+			<jvmarg value="${profiler.info.jvmargs.agent}" />
+		</java>
+	</target>
+
+	<target name="generate_project">
+		<generate.constants />
+	</target>
+
+	<path id="classpath.javac">
+		<fileset refid="proj.extlibs" />
+		<pathelement location="${proj.vpanel}/vpanels-panel.jar" />
+		<pathelement location="${proj.util}/vpanels-util.jar" />
+		<pathelement location="${abs.rad.java}/adr.jar" />
+		<pathelement location="${abs.rad.java}/rad.jar" />
+		<pathelement location="${abs.rad.java}/afunix.jar" />
+	</path>
+
+	<path id="classpath.jar">
+		<path refid="classpath.javac" />
+		<pathelement location="${proto.vpanels}/smf-old.jar" />
+	</path>
+</project>

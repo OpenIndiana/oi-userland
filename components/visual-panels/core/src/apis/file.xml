@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+
+ CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+ 
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+-->
+
+<api xmlns="http://xmlns.oracle.com/radadr" 
+  name="com.oracle.solaris.vp.panel.common.api.file">
+
+	<struct name="FileSnapshot">
+		<field type="string" name="path" />
+		<field type="string" name="absolutePath" />
+		<field type="string" name="baseName" />
+		<field type="string" name="canonicalPath" />
+		<field type="boolean" name="absolute" />
+		<field type="boolean" name="canonical" />
+		<field type="boolean" name="exists" />
+		<field type="boolean" name="readable" />
+		<field type="boolean" name="writable" />
+		<field type="boolean" name="directory" />
+		<field type="boolean" name="file" />
+		<field type="boolean" name="hidden" />
+		<field type="time" name="lastModified" />
+		<field type="long" name="length" />
+		<field type="long" name="freeSpace" />
+		<field type="long" name="totalSpace" />
+		<field type="long" name="usableSpace" />
+	</struct>
+
+	<interface name="FileBrowser">
+		<version major="1" minor="0" stability="private" />
+
+		<property name="roots" access="ro">
+			<list typeref="FileSnapshot" />
+		</property>
+
+		<method name="getFile">
+			<result typeref="FileSnapshot" />
+			<error />
+			<argument type="string" name="name" />
+		</method>
+
+		<method name="getFiles">
+			<result>
+				<list typeref="FileSnapshot" />
+			</result>
+			<error />
+			<argument type="string" name="directory" />
+		</method>
+	</interface>
+</api>

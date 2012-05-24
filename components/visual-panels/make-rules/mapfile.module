@@ -1,0 +1,111 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+# The only symbol modules need export is _rad_init.
+# Enforcing this eliminates bloat and noise in .dynsym/.dynstr,
+# and in turn helps reduce disk and memory footprint.
+
+$mapfile_version 2
+
+SYMBOL_VERSION SUNWprivate {
+	global:
+		_rad_init;
+
+		# Module API
+		rad_module_register	{ FLAGS = PARENT };
+
+		instance_create		{ FLAGS = PARENT };
+		instance_hold		{ FLAGS = PARENT };
+		instance_rele		{ FLAGS = PARENT };
+		instance_getname	{ FLAGS = PARENT };
+		instance_getdata	{ FLAGS = PARENT };
+		instance_notify		{ FLAGS = PARENT };
+
+		cont_insert		{ FLAGS = PARENT };
+		cont_insert_singleton	{ FLAGS = PARENT };
+		cont_insert_singleton_id	{ FLAGS = PARENT };
+		cont_remove		{ FLAGS = PARENT };
+		cont_register_dynamic	{ FLAGS = PARENT };
+
+		rad_log			{ FLAGS = PARENT };
+		rad_log_alloc		{ FLAGS = PARENT };
+		rad_get_loglevel	{ FLAGS = PARENT };
+
+		rad_thread_arg		{ FLAGS = PARENT };
+		rad_thread_ack		{ FLAGS = PARENT };
+		rad_thread_create	{ FLAGS = PARENT };
+		rad_thread_create_async	{ FLAGS = PARENT };
+
+		rad_mutex_init		{ FLAGS = PARENT };
+		rad_mutex_enter		{ FLAGS = PARENT };
+		rad_mutex_exit		{ FLAGS = PARENT };
+		rad_cond_init		{ FLAGS = PARENT };
+
+		rad_exec_params_alloc	{ FLAGS = PARENT };
+		rad_exec_params_free	{ FLAGS = PARENT };
+		rad_exec_params_set_cwd	{ FLAGS = PARENT };
+		rad_exec_params_set_env	{ FLAGS = PARENT };
+		rad_exec_params_set_loglevel	{ FLAGS = PARENT };
+		rad_exec_params_set_stdin	{ FLAGS = PARENT };
+		rad_exec_params_set_stdout	{ FLAGS = PARENT };
+		rad_exec_params_set_stderr	{ FLAGS = PARENT };
+		rad_forkexec		{ FLAGS = PARENT };
+		rad_forkexec_wait	{ FLAGS = PARENT };
+		rad_wait		{ FLAGS = PARENT };
+
+		rad_zalloc		{ FLAGS = PARENT };
+		rad_strndup		{ FLAGS = PARENT };
+		rad_strccmp		{ FLAGS = PARENT };
+		rad_openf		{ FLAGS = PARENT };
+		rad_fopenf		{ FLAGS = PARENT };
+
+		rad_locale_parse	{ FLAGS = PARENT };
+		rad_locale_free		{ FLAGS = PARENT };
+
+		rad_isproxy		{ FLAGS = PARENT };
+		rad_container		{ FLAGS = PARENT };
+
+		# Lists
+		list_create		{ FLAGS = PARENT };
+		list_destroy		{ FLAGS = PARENT };
+		list_head		{ FLAGS = PARENT };
+		list_insert_after	{ FLAGS = PARENT };
+		list_insert_before	{ FLAGS = PARENT };
+		list_insert_head	{ FLAGS = PARENT };
+		list_insert_tail	{ FLAGS = PARENT };
+		list_is_empty		{ FLAGS = PARENT };
+		list_link_active	{ FLAGS = PARENT };
+		list_link_init		{ FLAGS = PARENT };
+		list_link_replace	{ FLAGS = PARENT };
+		list_move_tail		{ FLAGS = PARENT };
+		list_next		{ FLAGS = PARENT };
+		list_prev		{ FLAGS = PARENT };
+		list_remove		{ FLAGS = PARENT };
+		list_remove_head	{ FLAGS = PARENT };
+		list_remove_tail	{ FLAGS = PARENT };
+		list_tail		{ FLAGS = PARENT };
+	local:
+		*;
+};

@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+
+ CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+ 
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+-->
+
+<api xmlns="http://xmlns.oracle.com/radadr" 
+  name="com.oracle.solaris.rad.usermgr">
+
+	<struct name="Group">
+		<summary>
+			describes a Solaris group
+		</summary>
+		<doc>
+			Fully describes a Solaris group, contains
+			group name, group id, group members.
+		</doc>
+		<field type="string" name="groupName">
+			<summary> Specifies the group name.</summary>
+		</field>
+		<field type="uinteger" name="groupID">
+			<summary> Specifies the Gid of the group.</summary>
+		</field>
+		<field name="groupMembers">
+			<summary> Specifies the members of the group.</summary>
+			<list type="string"/>
+		</field>
+	</struct>
+
+	<struct name="User">
+		<summary>
+			describes a Solaris user
+		</summary>
+		<doc>
+			Fully describes a Solaris user, contains
+			account, home directory and security attributes
+			associated with a user. See man passwd(4),
+			shadow(4), userattr(4) for more info on fields.
+		</doc>
+		<field type="string" name="username" nullable="false">
+			<summary> username for the account. </summary>
+		</field>
+		<field type="uinteger" name="userID">
+			<summary> UID for the account. </summary>
+		</field>
+		<field type="uinteger" name="groupID">
+			<summary> GID for the account. </summary>
+		</field>
+		<field type="string" name="description" nullable="true">
+			<summary> gecos info for the account. </summary>
+		</field>
+		<field type="string" name="homeDirectory" nullable="true">
+			<summary> homedirectory location for the account. </summary>
+		</field>
+		<field type="string" name="defaultShell" nullable="true">
+			<summary> default shell for the account. </summary>
+		</field>
+		<field type="integer" name="inactive">
+			<summary> Number of inactivity days allowed for the account.
+			</summary>
+		</field>
+		<field type="integer" name="min">
+			<summary> Minimum number of days between password changes
+				 for the account.
+			</summary>
+		</field>
+		<field type="integer" name="max"> 
+			<summary> Maximum cemunber of days the password is valid for
+				 the account.
+			</summary>
+		</field>
+		<field type="integer" name="warn">
+			<summary> Number of days before password expires the user 
+				 is warned.
+			</summary>
+		</field>
+		<field type="string" name="expire" nullable="true">
+			<summary> The date after which login will not be allowed for
+				 the account. The date format is %y-%m-%d %H:%M:%S.
+			</summary>
+		</field>
+		<field type="string" name="lockAfterRetries" nullable="true">
+			<summary> Specifies whether the account is locked
+				 after failed logins execeeds the allowable
+				 limit.
+			</summary>
+		</field>
+		<field type="string" name="alwaysAuditFlags" nullable="true">
+			<summary> Specifies per-user always audit pre-selection 
+				flags.
+			</summary>
+		</field>
+		<field type="string" name="neverAuditFlags" nullable="true">
+			<summary> Specifies per-user never-audit
+				 pre-selection flags.
+			</summary>
+		</field>
+		<field type="string" name="type" nullable="true">
+			<summary> specifies whether account is role or user. </summary>
+		</field>
+		<field type="string" name="defaultProj" nullable="true">
+			<summary> specifies the default project for the account. </summary>
+		</field>
+		<field type="string" name="clearance" nullable="true">
+			<summary> Specifies the max label at which the user can
+				 operate.
+		 	</summary>
+		</field>
+		<field type="string" name="minLabel" nullable="true">
+			<summary> Specifies the min labelthat the user can login .</summary>
+		</field>
+		<field type="string" name="roleAuth" nullable="true">
+			<summary> Specifies whether the account user role or user
+				 password for role authentication.
+			</summary>
+		</field>
+		<field type="string" name="idleCmd" nullable="true">
+			<summary> Specifies when the desktop session for the user gets
+				locked.
+			 </summary>
+		</field>
+		<field type="string" name="idleTime" nullable="true">
+			<summary> Specifies the idle time before the idlecmd is 
+				 executed.
+			</summary>
+		</field>
+		<field type="string" name="accountStatus" nullable="true">
+			<summary> Specifies the status of the account.</summary>
+		</field>
+		<field name="roles" nullable="true">
+			<summary> Specifies the roles that have been assigned to the
+				 account.
+			</summary>
+			<list type="string"/>
+		</field>
+		<field name="profiles" nullable="true">
+			<summary> Specifies the profiles that have been assigned to the
+				 account.
+			</summary>
+			<list type="string"/>
+		</field>
+		<field name="auths" nullable="true">
+			<summary> Specifies the authorizations that have been assigned
+				 to the account.
+			</summary>
+			<list type="string"/>
+		</field>
+		<field name="defaultPriv" nullable="true">
+			<summary> Specifies the default set of privileges assigned to
+				 user at login.
+			</summary>
+			<list type="string"/>
+		</field>
+		<field name="limitPriv" nullable="true">
+			<summary> Specifies the maximum  set of privileges the user or
+				 process started by the user can obtain.
+			</summary>
+			<list type="string"/>
+		</field>
+		<field name="groups" nullable="true">
+			<summary> Specifies the supplemental groups that have been
+				 assigned to the account.
+			</summary>
+			<list type="string"/>
+		</field>
+	</struct>
+
+	<struct name="UserChangeFields">
+		<summary>
+			Keeps track of all the fields that have been
+			changed in the user object.
+		</summary>
+		<doc>
+			Keeps track of all the fields that have been
+			changed in the user object. For every field
+			that has been changed in the User object the
+			respective changeField will be set to true.
+		</doc>
+		<field type="boolean" name="gidChanged"/>
+		<field type="boolean" name="descChanged"/>
+		<field type="boolean" name="homedirChanged"/>
+		<field type="boolean" name="defShellChanged"/>
+		<field type="boolean" name="profilesChanged"/>
+		<field type="boolean" name="rolesChanged"/>
+		<field type="boolean" name="authsChanged"/>
+		<field type="boolean" name="limitPrivChanged"/>
+		<field type="boolean" name="groupsChanged"/>
+		<field type="boolean" name="lockAfterRetriesChanged"/>
+		<field type="boolean" name="alwaysAuditChanged"/>
+		<field type="boolean" name="neverAuditChanged"/>
+		<field type="boolean" name="typeChanged"/>
+		<field type="boolean" name="defaultProjChanged"/>
+		<field type="boolean" name="minLabelChanged"/>
+		<field type="boolean" name="roleAuthChanged"/>
+		<field type="boolean" name="idleCmdChanged"/>
+		<field type="boolean" name="idleTimeChanged"/>
+		<field type="boolean" name="expireChanged"/>
+		<field type="boolean" name="minChanged"/>
+		<field type="boolean" name="maxChanged"/>
+		<field type="boolean" name="warnChanged"/>
+		<field type="boolean" name="uidChanged"/>
+	</struct>
+
+	<enum name="UserMgrErrorType">
+		<summary>User Manager api error types</summary>
+		<value name="INVALIDDATA"/>
+		<value name="USEREXISTS"/>
+		<value name="PERMDENIED"/>
+		<value name="READERROR"/>
+		<value name="LASTADMIN"/>
+		<value name="ROOTADMIN"/>
+		<value name="PASSERROR"/>
+	</enum>
+
+	<enum name="ScopeType">
+		<summary>Name service scope types</summary>
+		<value name="FILES"/>
+		<value name="LDAP"/>
+	</enum>
+
+	<struct name="UserMgrError">
+		<field typeref="UserMgrErrorType" name="errorCode"/>
+	</struct>
+
+	<enum name="UserType">
+		<value name="NORMAL"/>
+		<value name="ROLE"/>
+	</enum>
+
+	<interface name="UserMgr">
+		<summary>
+			Set of operations that can be performed on
+			users and roles.
+		</summary>
+		<version major="0" minor="1" stability="private"/>
+
+		<property name="users" access="ro">
+			<summary>
+				Lists users.
+			</summary>
+			<doc>
+				Lists the users present in the selected
+				scope based on the filter options.
+			</doc>
+			<list typeref="User"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user after
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="groups" access="ro">
+			<summary>
+				Lists groups.
+			</summary>
+			<doc>
+				Lists the groups present in the selected
+				scope.
+			</doc>
+			<list typeref="Group"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read the groups database.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="shells" access="ro">
+			<summary>
+				Lists shells.
+			</summary>
+			<doc>
+				Lists the set of available shells
+				that can be set as default shell for users.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read the default shells.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="defaultUser" typeref="User" access="ro">
+			<summary>
+				Lists user defaults.
+			</summary>
+			<doc>
+				Lists the default values for groups, basedir,
+				project, shell, skel, inactive, expire,
+				auths, profiles, roles, limitPriv,
+				defaultPriv, lockAfterRetries used  for
+				creation of users and roles.
+			</doc>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read default user properties.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="scopes" access="ro">
+			<summary>
+				Lists scopes.
+			</summary>
+			<doc>
+				Lists the set of name service repositories
+				that can be administered.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read the name services that can be managed.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+
+		<property name="roles" access="ro">
+			<summary>
+				Lists assigned roles.
+			</summary>
+			<doc>
+				Lists the roles assigned to a user.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user roles
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="profiles" access="ro">
+			<summary>
+				Lists assigned profiles.
+			</summary>
+			<doc>
+				Lists the profiles assigned to a user.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user profiles.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="auths" access="ro">
+			<summary>
+				Lists assigned authorizations.
+			</summary>
+			<doc>
+				Lists the authorizations assigned to a user.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user authorizations.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="defaultPrivs" access="ro">
+			<summary>
+				Lists default privileges.
+			</summary>
+			<doc>
+				Lists the default privileges assigned to a user.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user's default privileges.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="limitPrivs" access="ro">
+			<summary>
+				Lists limit privileges.
+			</summary>
+			<doc>
+				Lists the limit privileges assigned to a user.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user's limit privileges.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="supplGroups" access="ro">
+			<summary>
+				Lists supplemental groups.
+			</summary>
+			<doc>
+				Lists the supplemental groups that the user
+				is a member of.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user's supplemental groups.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="auditClasses" access="ro">
+			<summary>
+				Lists Assigned Audit Classes.
+			</summary>
+			<doc>
+				Lists the audit classes that are assigned to 
+				the user.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user's assigned audit classes.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<property name="pamUserConfFiles" access="ro">
+			<summary>
+				Lists users PAM configuration files.
+			</summary>
+			<doc>
+				Lists the per-user PAM configuration files.
+			</doc>
+			<list type="string"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user specific PAM configuration files.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</property>
+
+		<method name="getUser">
+			<summary>
+				gets User information for a given username.
+			</summary>
+			<doc>
+				Gets the user information for a given username from 
+				the name service repository based on the filter
+				options.
+			</doc>
+			<result typeref="User"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+			<argument type="string" name="username">
+				<summary> Specifies the username for which the
+					account information is to be retrieved.
+				</summary>
+			</argument>	
+		</method>
+
+		<method name="addUser">
+			<summary>
+				Add user or role.
+			</summary>
+			<doc>
+				Adds a user or role to the selected name
+				service repository based on the filter
+				options. Applies the properties set in 
+				the user object as the account, password,
+				security attributes.
+				Sets INVALIDDATA error when arguments are not valid.
+				Sets PASSERROR error when password update fails.
+				Sets READERROR error when unable to read user after
+				successful addition of new user.
+				Sets USEREXISTS error user already exists with same
+				username.
+			</doc>
+			<result typeref="User"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>INVALIDDATA</code>  - when arguments are not valid.
+             				</item> 
+					<item>
+					    <code>INVALIDDATA</code>  - when arguments are not valid.
+             				</item> 
+					<item>
+					    <code>READERROR</code>  - when unable to read user after adding new user.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+			<argument typeref="User" name="user">
+				<summary> user object which contains attributes of new
+					user account to be created.
+				</summary>
+			</argument>	
+			<argument type="secret" name="password">
+				<summary> password to be set for the new user account.
+				</summary>
+			</argument>
+		</method>
+
+		<method name="modifyUser">
+			<summary>
+				Modify user or role.
+			</summary>
+			<doc>
+				Modifies users or roles present in the selected
+				scope based on the filter options.
+				Applies the changed fields in the user object
+				to the user or role attributes.	
+				Sets INVALIDDATA error when arguments are not valid.
+				Sets PASSERROR error when password update fails.
+				Sets READERROR error when unable to read user after
+				successful modification of user.
+			</doc>
+			<result typeref="User"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>INVALIDDATA</code>  - when arguments are not valid.
+             				</item> 
+					<item>
+					    <code>INVALIDDATA</code>  - when arguments are not valid.
+             				</item> 
+					<item>
+					    <code>READERROR</code>  - when unable to read user after adding new user.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+			<argument typeref="User" name="user">
+				<summary> user object which contains user attributes
+					to be modified.
+				</summary>
+			</argument>
+			<argument type="secret" name="password" nullable="true">
+				<summary> password to be set for the new user account.
+				</summary>
+			</argument>
+			<argument typeref="UserChangeFields" name="changeFields">
+				<summary> Indicates which fields have been modified
+					in the user object by the client.
+				</summary>
+			</argument>
+		</method>
+
+		<method name="deleteUser">
+			<summary>
+				Delete user.
+			</summary>
+			<doc>
+				Deletes user or role based on username 
+				present in the selected scope based on the
+				filter options.
+				Sets READERROR error on failure.
+			</doc>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when unable to read user
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+			<argument type="string" name="username">
+				<summary> username of account that needs to be deleted.					</summary>
+			</argument>
+		</method>
+
+		<method name="setScope">
+			<summary>
+				sets the name-service repository scope.
+			</summary>
+			<doc>
+				Sets the name-service repository scope.
+				All subsequent operations will use the specified				scope.
+			</doc>
+			<argument name="scope" typeref="ScopeType">
+				<summary> Specifies the name-service scope to
+					be used for managing users.
+				</summary>
+			</argument>
+		</method>
+
+		<method name="setFilter">
+			<summary>
+				Sets the filter options.
+			</summary>
+			<doc>
+				Sets the filter options which are used for
+				all the subsequent operations. The options
+				are user or role and search string.
+			</doc>
+			<argument name="usertype" typeref="UserType">
+				<summary> Specifies if users or roles 
+					will be managed.
+				</summary>
+			</argument>
+			<argument name="searchstring" type="string">
+				<summary> Specifies the string to match
+					 against user or role names to be managed.
+				</summary>
+			</argument>
+		</method>
+
+		<method name="isSystemLabeled">
+			<summary>Checks if System is Labeled.
+			</summary>
+			<doc>
+				Checks if the Trusted Extensions feature is
+				enabled on the system.
+				Returns true if successful and sets
+				Sets READERROR error on failure.
+			</doc>
+			<result type="boolean" />
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when checking if Trusted Extensions is enabled fails.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+		</method>
+
+		<method name="getUserType">
+			<summary>Gets the user type.
+			</summary>
+			<doc>
+				Checks if the user is role or normal user.
+				Returns UserType set to role or normal user.
+				Sets READERROR error on failure.
+			</doc>
+			<result typeref="UserType"/>
+			<error typeref="UserMgrError">
+				<doc>
+			            <list>
+					<item>
+					    <code>READERROR</code>  - when checking if Trusted Extensions is enabled fails.
+             				</item> 
+				    </list>
+				</doc>
+			</error>
+			<argument name="username" type="string">
+				<summary> Specifies user name to check for user or role.
+				</summary>
+			</argument>
+		</method>
+	</interface>
+</api>

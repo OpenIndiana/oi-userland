@@ -1,0 +1,292 @@
+<?xml version="1.0"?>
+<!--
+  CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+  CDDL HEADER END
+
+  Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+-->
+
+<project name="commondef">
+  <import file="env-common.xml"/>
+
+  <!--
+    Projects can redefine these paths to set the classpath for
+    javac, javadoc (uses classpath.javac), and jar tasks.
+  -->
+  <path id="classpath.javac" />
+  <path id="classpath.jar" refid="classpath.javac" />
+
+  <!--
+    Generic copy/filter-based file generation task.
+  -->
+  <macrodef name="generate.filter">
+    <attribute name="pattern" />
+    <attribute name="fromdir" default="." />
+    <attribute name="from" />
+    <attribute name="to" />
+    <element name="filters" implicit="yes" />
+    <sequential>
+      <copy todir="${proj.gen}">
+        <globmapper from="@{from}" to="@{to}" />
+        <fileset dir="@{fromdir}"
+            includes="@{pattern}" />
+        <filterset begintoken="&lt;" endtoken="&gt;">
+            <filters />
+        </filterset>
+      </copy>
+    </sequential>
+  </macrodef>
+
+  <property name="adrdir" location="${abs.rad.java}" />
+  <macrodef name="generate.adr">
+    <attribute name="api" />
+    <sequential>
+      <exec executable="/usr/bin/radadrgen">
+        <env key="RADADR_SCHEMA" value="/usr/share/lib/xml/rng/radadr.rng.1"/>
+        <env key="RADADR_XSLDIR" value="/usr/share/lib/xml/style"/>
+        <env key="RADADR_JARDIR" value="${adrdir}"/>
+        <arg value="-j" />
+        <arg value="${proj.gen}" />
+        <arg value="${ws.apis}/@{api}" />
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="generate.adropt">
+    <attribute name="api" />
+    <sequential>
+      <exec executable="/usr/bin/radadrgen">
+        <env key="RADADR_SCHEMA" value="/usr/share/lib/xml/rng/radadr.rng.1"/>
+        <env key="RADADR_XSLDIR" value="/usr/share/lib/xml/style"/>
+        <env key="RADADR_JARDIR" value="${adrdir}"/>
+        <arg value="-N" />
+        <arg value="-j" />
+        <arg value="${proj.gen}" />
+        <arg value="${ws.apis}/@{api}" />
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <macrodef name="generate.adrimpl">
+    <attribute name="api" />
+    <sequential>
+      <exec executable="/usr/bin/radadrgen">
+        <env key="RADADR_SCHEMA" value="/usr/share/lib/xml/rng/radadr.rng.1"/>
+        <env key="RADADR_XSLDIR" value="/usr/share/lib/xml/style"/>
+        <env key="RADADR_JARDIR" value="${adrdir}"/>
+        <arg value="-j" />
+        <arg value="${proj.gen}" />
+        <arg value="-i" />
+        <arg value="${ws.apis}/@{api}" />
+      </exec>
+    </sequential>
+  </macrodef>
+
+  <target name="generate_project" />
+  <target name="generate" depends="generate_project">
+    <mkdir dir="${proj.gen}" />
+  </target>
+
+  <target name="clean_project" />
+  <target name="clean" depends="clean_project">
+    <delete dir="${proj.build}" />
+  </target>
+
+  <target name="clobber_project" />
+  <target name="clobber" depends="clean,clobber_project">
+    <delete file="${proj.jarfile}" />
+  </target>
+
+  <!--
+    Default compile target body.
+  -->
+  <presetdef name="javac.default">
+    <javac includeAntRuntime="no" sourcepathref="proj.srcroots"
+        destdir="${proj.classes}" debug="on"
+        classpathref="classpath.javac">
+      <src>
+        <dirset dir=".">
+          <include name="com"/>
+        </dirset>
+      </src>
+      <src location="build/gen" />
+      <compilerarg value="-Xlint" />
+      <compilerarg value="-Xlint:-serial" />
+    </javac>
+  </presetdef>
+
+  <target name="compile_project" />
+  <target name="compile" depends="generate,compile_project">
+    <mkdir dir="${proj.classes}" />
+    <javac.default />
+  </target>
+
+  <!--
+    Default jar target body.
+  -->
+  <presetdef name="jar.default">
+    <jar destfile="${proj.jarfile}">
+      <fileset dir="${proj.classes}" />
+      <fileset dir=".">
+        <patternset id="pattern.resources">
+          <include name="com/**/*.properties" />
+          <include name="com/**/panel.policy" />
+          <include name="com/**/help/**" />
+          <include name="com/**/images/**" />
+          <exclude name="com/**/images/**/*.xcf" />
+        </patternset>
+      </fileset>
+      <fileset dir="${proj.gen}">
+        <patternset refid="pattern.resources" />
+      </fileset>
+    </jar>
+  </presetdef>
+
+  <!--
+    A pathmapper that maps from a classpath in build-space to
+    install-space, mapping paths in the workspace to a single
+    directory and leaving absolute paths alone.
+  -->
+  <macrodef name="map.targetjar">
+    <attribute name="targetdir" default="${abs.java}" />
+    <attribute name="pathsep" default=" " />
+    <attribute name="property" />
+    <attribute name="pathref" />
+    <sequential>
+      <pathconvert pathsep="@{pathsep}" property="@{property}"
+          refid="@{pathref}">
+        <filtermapper>
+          <replaceregex pattern="^${ws.java}/.*/"
+              replace="@{targetdir}/" />
+        </filtermapper>
+      </pathconvert>
+    </sequential>
+  </macrodef>
+
+  <!--
+    Alternate jar target body, used for creating executables.
+  -->
+  <macrodef name="jar.executable">
+    <attribute name="mainclass" />
+    <attribute name="targetdir" default="${abs.java}" />
+    <element name="jar-elements" implicit="yes" optional="yes"/>
+    <sequential>
+      <map.targetjar targetdir="@{targetdir}"
+          property="jarclasspath" pathref="classpath.jar" />
+      <jar.default>
+      <manifest>
+        <attribute name="Main-Class"
+            value="@{mainclass}" />
+        <attribute name="Class-Path"
+            value="${jarclasspath}" />
+      </manifest>
+      <jar-elements />
+      </jar.default>
+    </sequential>
+  </macrodef>
+
+  <target name="jar" depends="compile">
+    <jar.default />
+  </target>
+
+  <!--
+    Default javadoc target body.
+  -->
+  <presetdef name="javadoc.default">
+    <javadoc noqualifier="all" sourcepathref="proj.srcroots"
+        destdir="${proj.javadoc}" classpathref="classpath.javac">
+      <packageset dir="." includes="com/" />
+    </javadoc>
+  </presetdef>
+
+  <target name="javadoc" unless="env.ANT_SKIP_JAVADOC">
+    <javadoc.default />
+  </target>
+
+        <presetdef name="l10n.default">
+               <copy todir="${proj.l10n}">
+                               <fileset dir=".">
+                                        <patternset id="pattern.resources">
+                                        <include name="com/**/*.properties" />
+                                        <include name="com/**/help/**" />
+                                        <exclude name="com/**/runtime.properties" />
+                                        </patternset>
+                                </fileset>
+                </copy>
+        </presetdef>
+        <target name="l10n" unless="env.ANT_SKIP_L10N">
+               <l10n.default />
+       </target>
+
+
+  <!--
+    Default install target body.
+  -->
+  <macrodef name="install.default">
+    <attribute name="targetdir" default="${proto.java}" />
+    <sequential>
+      <mkdir dir="@{targetdir}" />
+      <copy file="${proj.jarfile}" todir="@{targetdir}" />
+    </sequential>
+  </macrodef>
+
+  <!--
+    Optionally used by a project's install_project to install
+    javadoc.  Currently copies from build/javadoc; in the future
+    it might make sense to build javadoc differently in, and
+    directly into, each location.
+  -->
+  <macrodef name="install.javadoc">
+    <sequential>
+      <copy todir="${proto.javadoc}">
+        <fileset dir="${proj.javadoc}"
+            erroronmissingdir="false"/>
+      </copy>
+    </sequential>
+  </macrodef>
+
+        <macrodef name="install.l10n">
+                <sequential>
+                        <copy todir="${proto.l10n}">
+                                <fileset dir=".">
+                                        <patternset id="pattern.resources">
+                                        <include name="com/**/*.properties" />
+                                        <include name="com/**/help/**" />
+                                        <exclude name="com/**/runtime.properties" />
+                                        </patternset>
+                                </fileset>
+                        </copy>
+                </sequential>
+        </macrodef>
+
+
+  <target name="install_project" />
+
+  <target name="install" depends="jar,install_project,l10n">
+    <!-- Temporarily set targetdir -->
+    <install.default targetdir="${proto.vpanels}" />
+    <install.l10n />
+  </target>
+
+  <target name="build" depends="jar,build_project" />
+
+  <target name="build_project" />
+
+  <target name="lint" />
+</project>

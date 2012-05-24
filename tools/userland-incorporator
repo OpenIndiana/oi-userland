@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # incorporator - an utility to incorporate packages in a repo
@@ -28,23 +28,28 @@
 use Getopt::Long;
 
 sub enumerate_packages {
-	local ($repository, @fmris) = @_;
+	local ($repository, $publisher, @fmris) = @_;
         my @packages = ();
 
 	#printf "/usr/bin/pkg list -ng $repository @fmris\n";
-	open($fp, "-|", "/usr/bin/pkg", "list", "-ng", $repository, @fmris) ||
+	open($fp, "-|", "/usr/bin/pkgrepo", "list", "-H", "-s", $repository,
+		  "-p", $publisher, @fmris) ||
                   die "pkg: $!";
 	while (<$fp>) {
 
-		if (/^(\S+)\s\((\S+)\)\s+([\d.]+)-([\d.]+)\s+...$/) {
+		# lines should be in the form:
+		#   publisher   package   [r|o] version,branch:timestamp
+		if (/^(\S+)\s+(\S+)\s+\S?\s+([\d.]+),([\d.\-]+):.+$/) {
 			my ($package) = ();
 
-			$package->{name} = $1;
-			$package->{publisher} = $2;
+			$package->{publisher} = $1;
+			$package->{name} = $2;
 			$package->{version} = $3;
 			$package->{branch} = $4;
 
 			push(@packages, $package);
+		} else {
+			printf STDERR "SKIP: %s", $_;
 		}
 	}
 
@@ -83,7 +88,7 @@ printf "set name=pkg.depend.install-hold value=core-os.%s\n",
 		$consolidation;
 printf "set name=info.classification value='org.opensolaris.category.2008:Meta Packages/Incorporations'\n";
 
-@packages = enumerate_packages($repository, @fmris);
+@packages = enumerate_packages($repository, $consolidation, @fmris);
 for (@packages) {
 	printf "depend fmri=pkg:/%s@%s-%s %s=true type=incorporate\n",
 		%$_->{name}, %$_->{version}, %$_->{branch},

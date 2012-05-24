@@ -1,0 +1,309 @@
+<?xml version="1.0"?>
+<!--
+ Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+
+ CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+ 
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+-->
+
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<service_bundle type='manifest' name='vpanels'>
+
+<service
+	name='network/vpanels-http'
+	type='service'
+	version='1'>
+
+	<!--
+	  Because we may have multiple instances of network/http
+	  provided by different implementations, we keep dependencies
+	  and methods within the instance.
+	-->
+
+	<instance name='apache2' enabled='false'>
+		<!--
+		  Wait for network interfaces to be initialized.
+		-->
+		<dependency name='network'
+		    grouping='require_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri value='svc:/milestone/network:default'/>
+		</dependency>
+
+		<!--
+		  Wait for all local filesystems to be mounted.
+		-->
+		<dependency name='filesystem-local'
+		    grouping='require_all'
+		    restart_on='none'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/local:default'/>
+		</dependency>
+
+		<!--
+		  Wait for automounting to be available, as we may be
+		  serving data from home directories or other remote
+		  filesystems.
+		-->
+		<dependency name='autofs'
+		    grouping='optional_all'
+		    restart_on='error'
+		    type='service'>
+		    <service_fmri
+			value='svc:/system/filesystem/autofs:default'/>
+		</dependency>
+
+		<exec_method
+			type='method'
+			name='start'
+			exec='/lib/svc/method/http-vpanels start'
+			timeout_seconds='60' />
+
+		<exec_method
+			type='method'
+			name='stop'
+			exec='/lib/svc/method/http-vpanels stop'
+			timeout_seconds='60' />
+
+		<exec_method
+			type='method'
+			name='refresh'
+			exec='/lib/svc/method/http-vpanels refresh'
+			timeout_seconds='60' />
+
+		<property_group name='firewall_context' type='com.sun,fw_definition'>
+			<propval name='ipf_method' type='astring'
+			    value='/lib/svc/method/http-vpanels ipfilter' />
+		</property_group>
+
+		<property_group name='firewall_config' type='com.sun,fw_configuration'>
+			<propval name='policy' type='astring' value='use_global' />
+			<propval name='apply_to' type='astring' value='' />
+			<propval name='exceptions' type='astring' value='' />
+			<propval name='value_authorization' type='astring'
+				value='solaris.smf.value.firewall.config' />	
+                </property_group>
+
+		<property_group name='httpd' type='application'>
+			<stability value='Evolving' />
+			<propval name='sslengine' type='boolean' value='false' />
+			<propval name='custom_conf' type='boolean'
+			    value='false' />
+                        <propval name='user' type='astring'
+                            value='webservd' />
+                        <propval name='group' type='astring'
+                            value='webservd' />
+			<propval name='custom_file' type='astring'
+			    value='' />
+		</property_group>
+
+                <property_group name='vhost-1' type='application'>
+                        <stability value='Evolving' />
+			<propval name='enabled' type='boolean'
+			    value='true' />
+                        <propval name='port' type='count'
+                            value='80' />
+                        <propval name='docroot' type='astring'
+			    value='/var/apache2/2.2/htdocs' />
+			<propval name='custom_conf' type='boolean'
+			    value='false' />
+                        <propval name='custom_file' type='astring'
+                            value='' />
+                        <propval name='domain' type='astring'
+                            value='localhost' />
+                        <propval name='serve_home_dir' type='boolean'
+                            value='false' />
+                        <propval name='sslengine' type='boolean'
+                            value='false' />
+                        <propval name='sslip' type='astring'
+                            value='' />
+                        <propval name='sslport' type='count'
+                            value='443' />
+                        <propval name='sslcert' type='astring'
+                            value='' />
+                        <propval name='sslkey' type='astring'
+                            value='' />
+			<property name='mime-1' type='astring'>
+			    <astring_list>
+				<value_node value='MIME:video/x-msvideo'/>
+				<value_node value='avi'/>
+			    </astring_list>
+			</property>
+			<property name='mime-2' type='astring'>
+			    <astring_list>
+				<value_node value='MIME:x-conference/x-cooltalk'/>
+				<value_node value='ice'/>
+			    </astring_list>
+			</property>
+                </property_group>
+
+		<property_group name='tm_pg_pattern_httpd'
+		    type='template_pg_pattern'>
+			<propval name='name' type='astring' value='httpd' />
+			<propval name='type' type='astring' value='application' />
+			<propval name='required' type='boolean' value='true' />
+		</property_group>
+
+                <property_group name='tm_prop_pattern_httpd_ssl' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='ssl' />
+                        <propval name='type' type='astring' value='boolean' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Enable SSL' />
+                        <propval name='description_C' type='ustring' value='Start Apache in SSL mode' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_custom_conf' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='custom_conf' />
+                        <propval name='type' type='astring' value='boolean' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Use Custom Config' />
+                        <propval name='description_C' type='ustring' value='Start Apache with a custom configuration file' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_user' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='user' />
+                        <propval name='type' type='astring' value='astring' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='User' />
+                        <propval name='description_C' type='ustring' value='The user to run the Apache daemon as' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_group' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='group' />
+                        <propval name='type' type='astring' value='astring' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Group' />
+                        <propval name='description_C' type='ustring' value='The group to run the Apache daemon as' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_custom_file' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='custom_file' />
+                        <propval name='type' type='astring' value='astring' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Custom Config File' />
+                        <propval name='description_C' type='ustring' value='The path to the custom configuration file' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_admin_email' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='admin_email' />
+                        <propval name='type' type='astring' value='astring' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Admin email' />
+                        <propval name='description_C' type='ustring' value='The address Apache problems should be mailed to' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_docroot' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='docroot' />
+                        <propval name='type' type='astring' value='astring' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Document root' />
+                        <propval name='description_C' type='ustring' value='The path to the root of the documents you wish to share' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_logfile' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='logfile' />
+                        <propval name='type' type='astring' value='astring' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Logfile' />
+                        <propval name='description_C' type='ustring' value='The name of a file to write log messages to' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_loglevel' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='loglevel' />
+                        <propval name='type' type='astring' value='astring' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Log Level' />
+                        <propval name='description_C' type='ustring' value='The amount of data you want logged' />
+                </property_group>
+
+                <property_group name='tm_prop_pattern_httpd_share_homedirs' type='template_prop_pattern'>
+                        <propval name='pg_pattern' type='astring' value='tm_pg_pattern_httpd' />
+                        <propval name='name' type='astring' value='share_homedirs' />
+                        <propval name='type' type='astring' value='boolean' />
+                        <propval name='required' type='boolean' value='true' />
+                        <propval name='visibility' type='astring' value='readwrite' />
+                        <propval name='cardinality' type='astring' value='1' />
+                        <propval name='common_name_C' type='ustring' value='Share Home Directories' />
+                        <propval name='description_C' type='ustring' value='Set to true to share ~user/public_html' />
+                </property_group>
+
+		<property_group name='startd' type='framework'>
+			<!-- sub-process core dumps shouldn't restart
+				session -->
+			<propval name='ignore_error' type='astring'
+				value='core,signal' />
+		</property_group>
+
+	</instance>
+
+	<stability value='Evolving' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+				Apache Web Server
+			</loctext>
+		</common_name>
+		<description>
+			<loctext xml:lang='C'>
+				An alternate instance of the Apache
+				web server offering simplified
+				configuration management.
+			</loctext>
+		</description>
+		<documentation>
+			<manpage title='httpd' section='8'
+				manpath='/usr/apache2/man' />
+			<doc_link name='apache.org'
+				uri='http://httpd.apache.org' />
+		</documentation>
+	</template>
+</service>
+
+</service_bundle>

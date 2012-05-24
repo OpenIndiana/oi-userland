@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+
+ CDDL HEADER START
+
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+ 
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+-->
+
+<api xmlns="http://xmlns.oracle.com/radadr" 
+  name="com.oracle.solaris.vp.panels.time">
+
+	<struct name="ServerInfo">
+		<field type="string" name="server" />
+		<field type="boolean" name="enabled" />
+	</struct>
+
+	<struct name="Continent">
+		<field type="string" name="name" />
+		<field type="string" name="description" />
+	</struct>
+
+	<struct name="Country">
+		<field type="string" name="code" />
+		<field type="string" name="description" />
+	</struct>
+
+	<struct name="Coordinates">
+		<field type="integer" name="degreesE" />
+		<field type="integer" name="degreesN" />
+		<field type="integer" name="minutesE" />
+		<field type="integer" name="minutesN" />
+		<field type="integer" name="secondsE" />
+		<field type="integer" name="secondsN" />
+	</struct>
+
+	<struct name="TimeZoneInfo">
+		<field type="string" name="name" />
+		<field type="string" name="altName" nullable="true" />
+		<field type="string" name="countryCode" />
+		<field type="string" name="comments" nullable="true" />
+		<field typeref="Coordinates" name="coordinates" />
+	</struct>
+
+	<interface name="Time">
+		<version major="1" minor="0" stability="private" />
+
+		<!-- <property type="time" name="Time" access="rw" /> -->
+		<!-- read/write raw milliseconds for the time being -->
+		<property type="time" name="time" access="rw">
+			<error />
+		</property>
+		<property type="string" name="defaultTimeZone" access="rw">
+			<error />
+		</property>
+		<property name="ntpServers" access="rw">
+			<list typeref="ServerInfo" />
+			<error />
+		</property>
+		<property type="boolean" name="sufficientlyPrivileged"
+		    access="ro"/>
+		<property name="continents" access="ro">
+			<list typeref="Continent" />
+		</property>
+		<property name="countries" access="ro">
+			<list typeref="Country" />
+		</property>
+		<property name="timeZones" access="ro">
+			<list typeref="TimeZoneInfo" />
+		</property>
+	</interface>
+
+</api>

@@ -1,0 +1,139 @@
+#!/bin/ksh -p
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+export LC_ALL=C
+
+set -A types
+set -A props
+set -A range
+
+pkg=
+
+while getopts i:o: x; do
+	case $x in
+	i)	pkg=`echo ${OPTARG%/*} | sed -e s,/,.,g`
+		class=`basename $OPTARG .in`
+		exec < $OPTARG
+		;;
+	o)	mkdir -p `dirname $OPTARG`
+		exec > $OPTARG
+		;;
+	esac
+done
+shift $(($OPTIND - 1))
+
+if [[ -z "$pkg" ]]; then
+	pkg=$1
+	class=$2
+fi
+
+echo "package $pkg;"
+echo
+echo "import java.beans.*;"
+echo "import java.io.Serializable;"
+
+integer i=0
+while read type prop cmt ; do
+        test -z "$type" && break
+
+	if [[ "$type" = "import" ]]; then
+		echo "$type $prop"
+		continue;
+	fi
+	types[${#types[*]}]=$type
+	props[${#props[*]}]=$prop
+	cmts[${#cmts[*]}]=$cmt
+	range[$i]=$i
+	i=$((i+1))
+done
+
+echo
+echo "public class $class implements Serializable"
+echo "{"
+echo "\tprivate static final long serialVersionUID = 1;"
+
+# instance variables
+for i in ${range[*]}; do
+	echo "\tprivate ${types[$i]} ${props[$i]}_;"
+done
+echo
+
+# constructor properties
+echo "\t@ConstructorProperties({\c"
+for i in ${range[*]}; do
+	[[ $i -ne 0 ]] && echo ", \c"
+	echo "\"${props[$i]}\"\c"
+done
+echo "})"
+
+# constructor
+echo "\tpublic $class(\c"
+for i in ${range[*]}; do
+	[[ $i -ne 0 ]] && echo ", \c"
+	echo "${types[$i]} ${props[$i]}\c"
+done
+echo ") {"
+for i in ${range[*]}; do
+	echo "\t\t${props[$i]}_ = ${props[$i]};"
+done
+echo "\t}"
+
+# methods
+for i in ${range[*]}; do
+	prop=${props[$i]}
+	type=${types[$i]}
+	cmt=${cmts[$i]}
+	cap=`echo $prop | cut -c1 | tr '[:lower:]' '[:upper:]'`
+	cprop="$cap"`echo $prop | cut -c2-`
+
+	# accessor
+	echo
+	if [[ -n $cmt ]]; then
+		echo "\t/**"
+		echo "\t * $cmt"
+		echo "\t */"
+	fi
+	if [[ $type = "boolean" ]] || [[ $type = "Boolean" ]]; then
+		echo "\tpublic $type is$cprop()"
+	else
+		echo "\tpublic $type get$cprop()"
+	fi
+	echo "\t{"
+	echo "\t\treturn (${prop}_);"
+	echo "\t}"
+
+	# mutator
+	echo
+	echo "\tpublic void set$cprop($type $prop)"
+	echo "\t{"
+	echo "\t\t${prop}_ = $prop;"
+	echo "\t}"
+done
+
+# verbatim additions
+cat
+
+echo "}"

@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+  CDDL HEADER START
+ 
+  The contents of this file are subject to the terms of the
+  Common Development and Distribution License (the "License").
+  You may not use this file except in compliance with the License.
+ 
+  You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+  or http://www.opensolaris.org/os/licensing.
+  See the License for the specific language governing permissions
+  and limitations under the License.
+ 
+  When distributing Covered Code, include this CDDL HEADER in each
+  file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+  If applicable, add the following below this CDDL HEADER, with the
+  fields enclosed by brackets "[]" replaced with your own identifying
+  information: Portions Copyright [yyyy] [name of copyright owner]
+ 
+  CDDL HEADER END
+ 
+  Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+-->
+
+<project name="commonenv">
+	<property environment="env" />
+
+	<!--
+	  So that it is possible to compile outside a ws-like
+	  environment (e.g. when using Netbeans), we define ws.*
+	  relative to this file's location instead of env.SRC.
+
+	<dirname property="ws.java" file="${ant.file.commonenv}" />
+	-->
+	<!-- workspace locations -->
+	<property name="ws.java" location="${env.WS_JAVA}" />
+	<property name="ws.src" location="${ws.java}/.." />
+	<property name="ws.apis" location="${ws.src}/apis" />
+
+	<!-- project locations -->
+	<property name="proj.jarfile" value="${ant.project.name}.jar" />
+	<property name="proj.build" location="build" />
+	<property name="proj.classes" location="${proj.build}/classes" />
+	<property name="proj.gen" location="${proj.build}/gen" />
+	<property name="proj.javadoc" location="${proj.build}/javadoc" />
+	<property name="proj.l10n" location="${proj.build}/__LOCALE__" />
+	<path id="proj.srcroots">
+		<pathelement location="." />
+		<pathelement location="${proj.gen}" />
+	</path>
+
+	<!-- proto area locations -->
+	<property name="proto.root" location="${env.ROOT}" />
+	<property name="proto.bin" location="${proto.root}/usr/bin" />
+	<property name="proto.java"
+	    location="${proto.root}/usr/share/lib/java" />
+	<property name="proto.xml"
+	    location="${proto.root}/usr/share/lib/xml" />
+	<property name="proto.javadoc"
+	    location="${proto.java}/javadoc/${ant.project.name}" />
+	<property name="proto.manifest"
+	    location="${proto.root}/var/svc/manifest" />
+	<property name="proto.rad.java"
+	    location="${proto.root}/usr/lib/rad/java" />
+
+	<!-- absolute system locations -->
+	<property name="abs.java" location="/usr/share/lib/java" />
+	<property name="abs.lib" location="/usr/lib" />
+	<property name="abs.rad.java" location="/usr/lib/rad/java" />
+
+	<!-- vpanels locations -->
+	<property name="proto.vpanels"
+	    location="${proto.root}/usr/share/vpanels" />
+	<property name="proto.l10n"
+	    location="${proto.vpanels}/__LOCALE__" />
+	<property name="abs.vpanels" location="/usr/share/vpanels" />
+	<property name="abs.app" location="${abs.vpanels}/app" />
+
+	<property name="proj.core" location="${env.SRC}/core/build/${env.MACH32}" />
+	<property name="proj.util" location="${proj.core}/java/util" />
+	<property name="proj.smf-old" location="${proj.core}/java/smf-old" />
+	<property name="proj.vpanel" location="${proj.core}/java/vpanels/panel" />
+	<fileset id="proj.extlibs" dir="${proj.core}/java/lib"
+	    includes="swingx/build/${env.MACH32}/dist/swingx.jar, \
+	    TimingFramework/build/${env.MACH32}/TimingFramework-*/TimingFramework-*.jar" />
+
+</project>
