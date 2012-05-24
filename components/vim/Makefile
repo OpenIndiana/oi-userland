@@ -121,6 +121,8 @@ $(X_VARIANT)/.configured:	CONFIGURE_OPTIONS += --enable-gtk2-check
 # complete source tree.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+COMPONENT_TEST_TARGETS = test
+
 $(SOURCE_DIR)/runtime/doc/uganda.txt: prep
 
 $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
