@@ -1,0 +1,31 @@
+*** joshmarshall-jsonrpclib-e3a3cde/jsonrpclib/jsonrpc.py.orig	Thu Dec 15 09:46:35 2011
+--- joshmarshall-jsonrpclib-e3a3cde/jsonrpclib/jsonrpc.py	Thu Dec 15 09:48:42 2011
+***************
+*** 69,81 ****
+  except ImportError:
+      try:
+!         import json
+      except ImportError:
+!         try:
+!             import simplejson as json
+!         except ImportError:
+!             raise ImportError(
+!                 'You must have the cjson, json, or simplejson ' +
+!                 'module(s) available.'
+!             )
+  
+  IDCHARS = string.ascii_lowercase+string.digits
+--- 69,81 ----
+  except ImportError:
+      try:
+!         # use simplejson since it doesn't encode strings as unicode, which
+!         # allows us to avoid python issue 4978.  (4978 causes json rpc calls
+!         # using keword parameters to fail.)
+!         import simplejson as json
+      except ImportError:
+!         raise ImportError(
+!             'You must have the cjson or simplejson ' +
+!             'module(s) available.'
+!         )
+  
+  IDCHARS = string.ascii_lowercase+string.digits
