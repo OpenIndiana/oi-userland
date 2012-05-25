@@ -56,6 +56,9 @@ build:				$(BUILD_32)
 
 install:			$(INSTALL_32)
 
+download::
+	@echo 'No downloads for this component'
+
 CLEAN_PATH +=			$(SOURCE_DIR)/.prep
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
