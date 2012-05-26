@@ -60,6 +60,11 @@ _ipadm_addrobjs() {
 	compadd "$@" - $(ipadm show-addr -p -o addrobj)
 }
 
+_ipadm_addrobjs_or_ifs() {
+	compadd "$@" - $(ipadm show-addr -p -o addrobj) \
+		$(ipadm show-if -p -o ifname)
+}
+
 _ipadm_protos() {
 	compadd "$@" - $(ipadm show-prop -c -o proto)
 }
@@ -245,6 +250,7 @@ _ipadm() {
 		# This causes all options and arguments following -T to be
 		# stuck into $opt_args[-T].  It feels hacky, but it seems
 		# to do the trick.
+		# XXX When -T is static, it's not necessary.
 		_arguments -C -A "-*" \
 			'(-t --temporary)'{-t,--temporary}'[Address should be temporary]' \
 			'-T[Address type]:*::address type:->newaddr'
@@ -258,14 +264,14 @@ _ipadm() {
 				_arguments -A "-*" \
 				'(-d --down)'{-d,--down}'[Address should be marked down]' \
 				'(-a --address)'{-a,--address}'[Address specification]:address:_values -s , "address" $addrthingsv4' \
-				':address object name:_ipadm_addrobjs'
+				':address object name:_ipadm_addrobjs_or_ifs'
 				;;
 
 			("dhcp:"*)
 				_arguments -A "-*" \
 				'(-w --wait)'{-w,--wait}'[Seconds to wait for completion]:number or "forever":{if [[ -prefix [0-9]## ]]; then _message -e "number of seconds"; else _wanted forever expl "number or \"forever\"" compadd forever; fi}' \
 				'-h[Request a specific hostname]:hostname:' \
-				':address object name:_ipadm_addrobjs'
+				':address object name:_ipadm_addrobjs_or_ifs'
 				;;
 
 			("addrconf:"*)
@@ -275,7 +281,7 @@ _ipadm() {
 				_arguments -A "-*" \
 				'(-i --interface-id)'{-i,--interface-id}'[Interface ID]:address:_values -s , "interface id" $addrthingsv6' \
 				'(-p --prop)'{-p,--prop}'[Statefulness configuration]:statefulness configuration:_values -s , "statefulness" $statefulness' \
-				':address object name:_ipadm_addrobjs'
+				':address object name:_ipadm_addrobjs_or_ifs'
 				;;
 			(*)
 				_wanted commands expl "address type" compadd static dhcp addrconf
@@ -296,7 +302,7 @@ _ipadm() {
 			'(-d --dhcp -p --parseable)'{-d,--dhcp}'[Display DHCP status fields]' \
 			'(-p --parseable -d --dhcp)'{-p,--parseable}'[Parseable output]' \
 			'(-o --output)'{-o,--output}'[Properties to display]:property:_values -s , "property" $addrobj_properties' \
-			':address object name:_ipadm_addrobjs'
+			':address object name:_ipadm_addrobjs_or_ifs'
 		;;
 
 	({"up","down","disable","enable"}"-addr")
@@ -330,7 +336,7 @@ _ipadm() {
 			'(-c --parseable)'{-c,--parseable}'[Parseable output]' \
 			'(-o --output)'{-o,--output}'[Property properties to display]:property:_values -s , "property" $addr_propproperties' \
 			'(-p --prop)'{-p,--prop}'[Address object properties to display]:property:_values -s , "property" ${addr_properties%%\:*}' \
-			':address object name:_ipadm_addrobjs'
+			':address object name:_ipadm_addrobjs_or_ifs'
 		;;
 
 	("set-prop")

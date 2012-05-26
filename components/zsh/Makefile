@@ -27,12 +27,12 @@ include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	4.3.12
+COMPONENT_VERSION=	4.3.17
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4a9fd2dac76fc08fd1dc400deba854fcefa12ad76226d93fb6c01a801324f106
+    sha256:054e0452afd9c742c9f1489465175e1d4d7db50d88b602d132551d850cf7a704
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh-dev/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -70,10 +70,10 @@ $(PROTOETCDIR)/%: % $(PROTOETCDIR)
 $(PROTOETCDIR)/zprofile: $(PROTOETCDIR)
 	$(RM) $@; $(SYMLINK) profile $@
 
-# makepro.awk leaves turds behind when using gawk 3.1.5 and LANG=en_US.UTF-8.
+# makepro.awk leaves turds behind when using gawk 3.1.5 and a UTF-8 locale.
 # Upgrading gawk would fix the problem, but for now, all we can do is change
 # the language.
-COMPONENT_BUILD_ENV += LANG=C
+COMPONENT_BUILD_ENV += LC_ALL=C
 
 $(COMPONENT_SRC)/Completion/%: Completion/%
 	$(CP) $< $@
