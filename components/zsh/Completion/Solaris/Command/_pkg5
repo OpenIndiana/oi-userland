@@ -138,14 +138,16 @@ _pkg5() {
 	certs=( $(pkg -R $pkg5_root property -H ca-path | awk '{print $2}')/* )
 
 	# Options common to subcommands which might have to deal with BEs.
+	# Note that --backup-be-name needs to precede --be-name in order to
+	# ensure that completion sees "--b" as being ambiguous.
 	be_opts=(
 		"(--require-new-be)--deny-new-be[Fail the operation if a new BE would be required]"
 		"(--deny-new-be)--require-new-be[Force a new BE to be created]"
+		"--backup-be-name[Specify the name for the backup BE]:BE name: "
 		"--be-name[Specify a BE name]:BE name: "
 		"--no-be-activate[Don't activate the new BE]"
 		"(--require-backup-be)--no-backup-be[Don't leave behind a backup BE]"
 		"(--no-backup-be)--require-backup-be[Force leaving behind a backup BE]"
-		"--backup-be-name[Specify the name for the backup BE]:BE name: "
 	)
 
 	case $service in

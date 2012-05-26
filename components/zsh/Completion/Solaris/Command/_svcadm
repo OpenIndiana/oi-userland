@@ -4,7 +4,7 @@ _svcadm() {
 	local context state line subcmds
 	typeset -A opt_args
 
-	subcmds=( enable disable restart refresh mark clear milestone )
+	subcmds=( enable disable restart refresh mark delegate clear milestone )
 
 	if [[ $service == "svcadm" ]]; then
 		_arguments -C -A "-*" \
@@ -48,19 +48,18 @@ _svcadm() {
 			'*:instance FMRI:_svcs_fmri -i'
 		;;
 
+	(delegate)
+		_arguments -A "-*" \
+			'-s[Wait for instances to come online]' \
+			':restarter FMRI:_svcs_fmri -r' \
+			'*:FMRI:_svcs_fmri -i'
+		;;
+
 	(milestone)
 		_arguments -A "-*" \
 			'-d[Make milestone the default]' \
 			'*:milestone FMRI:_svcs_fmri -m'
 		;;
-
-# 	# The delegate subcommand has been removed, replaced by just using
-# 	# the restarter fmri
-# 	(delegate)
-# 		_arguments \
-# 			'1:restarter FMRI:_svcs_fmri -r' \
-# 			'*:instance FMRI:_svcs_fmri -i'
-# 		;;
 
 	(*)
 		_message "unknown svcadm subcommand: $service"

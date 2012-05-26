@@ -100,7 +100,7 @@ _zpool() {
 	(clear)
 		_arguments -A "-*" \
 			'-F[Discard transactions to allow pool opening]' \
-			'-n[With -F, check if discarding transactions would work' \
+			'-n[With -F, check if discarding transactions would work]' \
 			':pool name:_zfs_pool' \
 			'*:virtual device:_files'
 		;;
@@ -244,11 +244,13 @@ _zpool() {
 	(split)
 		_arguments -A "-*" \
 			'-R[Alternate root]:alternate root:_files -/' \
-			'-n[Display config without splitting]::' \
+			'-l[Display configuration in /dev/chassis location form]' \
+			'-n[Display configuration without splitting]' \
 			'-o[Set pool or dataset property]:property:_values -s , "property" $create_properties_dataset $rw_props' \
-			'*:pool name or id:_zfs_pool' \
-			'::new pool name:' \
-			'*:device:_files -/'
+			':pool name or id:_zfs_pool' \
+			':new pool name:' \
+			'*::virtual device:_files -/'
+		;;
 
 	(upgrade)
 		_arguments -A "-*" \
