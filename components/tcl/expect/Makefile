@@ -49,24 +49,28 @@ COMPONENT_PRE_BUILD_ACTION = \
 	(cd $(@D); $(GMAKE) all ${SCRIPTS};)
 
 CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS 	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH32)"
-CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH32)/generic"
 CONFIGURE_OPTIONS 	+= --enable-shared
+CONFIGURE_OPTIONS 	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
+CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))/generic"
+
+CONFIGURE_OPTIONS.64	+= LDFLAGS="$(LDFLAGS) -m64"
 
 COMPONENT_TEST_TARGETS = test
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32) 
+install:	$(INSTALL_32_and_64) 
 	
-test: 		$(TEST_32)
+test: 		$(TEST_32_and_64)
 
 # special targets due to tcl internals dependencies
 ../tcl/build/%/.built:
 	(cd ../tcl ; $(GMAKE) build)
 
 $(BUILD_32):    ../tcl/build/$(MACH32)/.built
+
+$(BUILD_64):    ../tcl/build/$(MACH64)/.built
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
