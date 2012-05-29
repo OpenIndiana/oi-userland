@@ -1,0 +1,20 @@
+--- tcl8.5.9/library/init.tcl.orig	2012-05-17 05:28:16.038636462 -0700
++++ tcl8.5.9/library/init.tcl	2012-05-17 05:29:58.370740558 -0700
+@@ -43,7 +43,16 @@
+     if {[info exists env(TCLLIBPATH)]} {
+ 	set auto_path $env(TCLLIBPATH)
+     } else {
+-	set auto_path ""
++        # Add in $MACH64 library directory (if needed).
++        if {$tcl_platform(wordSize) == 8} {
++            if {$tcl_platform(machine) eq "i86pc"} {
++                set auto_path "/usr/lib/amd64"
++            } else {
++                set auto_path "/usr/lib/sparcv9"
++            }
++        } else {
++            set auto_path ""
++        }
+     }
+ }
+ namespace eval tcl {
