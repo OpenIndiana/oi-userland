@@ -1,12 +1,19 @@
---- Python-2.6.4/configure.in	Thu Oct  6 14:37:11 2011
-+++ Python-2.6.4/configure.in	Thu Oct 20 14:46:16 2011
-@@ -1362,29 +1362,9 @@
+--- Python-2.6.8/configure.in.orig	2012-05-14 06:24:15.149791072 -0700
++++ Python-2.6.8/configure.in	2012-05-14 06:27:52.383479003 -0700
+@@ -1416,36 +1416,9 @@
  ])
  AC_MSG_RESULT($was_it_defined)
  
 -# Check whether using makedev requires defining _OSF_SOURCE
 -AC_MSG_CHECKING(for makedev)
--AC_TRY_LINK([#include <sys/types.h> ],
+-AC_TRY_LINK([
+-#if defined(MAJOR_IN_MKDEV)
+-#include <sys/mkdev.h>
+-#elif defined(MAJOR_IN_SYSMACROS)
+-#include <sys/sysmacros.h>
+-#else
+-#include <sys/types.h>
+-#endif ],
 -	    [ makedev(0, 0) ],
 -	    ac_cv_has_makedev=yes,
 -	    ac_cv_has_makedev=no)
