@@ -68,9 +68,9 @@ test: 		$(TEST_32_and_64)
 ../tcl/build/%/.built:
 	(cd ../tcl ; $(GMAKE) build)
 
-$(BUILD_32):    ../tcl/build/$(MACH32)/.built
+$(CONFIGURE_32):	../tcl/build/$(MACH32)/.built
 
-$(BUILD_64):    ../tcl/build/$(MACH64)/.built
+$(CONFIGURE_64):	../tcl/build/$(MACH64)/.built
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
