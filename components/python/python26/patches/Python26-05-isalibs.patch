@@ -13,9 +13,9 @@ diff --git Python-2.6.4/Lib/distutils/command/build_ext.py Python-2.6.4/Lib/dist
 @@ -677,7 +679,13 @@
          so_ext = get_config_var('SO')
          if os.name == 'nt' and self.debug:
-             return apply(os.path.join, ext_path) + '_d' + so_ext
+             return os.path.join(*ext_path) + '_d' + so_ext
 -        return os.path.join(*ext_path) + so_ext
-+        # .so extensions are word-size specific
++	# .so extensions are word-size specific
 +        path = apply(os.path.join, ext_path)
 +        if sys.maxint == 2147483647L:
 +            return path + so_ext
@@ -28,15 +28,7 @@ diff --git Python-2.6.4/Lib/distutils/command/build_ext.py Python-2.6.4/Lib/dist
 diff --git Python-2.6.4/Makefile.pre.in Python-2.6.4/Makefile.pre.in
 --- Python-2.6.4/Makefile.pre.in
 +++ Python-2.6.4/Makefile.pre.in
-@@ -87,18 +87,18 @@
- 
- # Expanded directories
- BINDIR=		$(exec_prefix)/bin
--LIBDIR=		$(exec_prefix)/lib
-+LIBDIR=		@libdir@
- MANDIR=		@mandir@
- INCLUDEDIR=	@includedir@
- CONFINCLUDEDIR=	$(exec_prefix)/include
+@@ -94,11 +94,11 @@
  SCRIPTDIR=	$(prefix)/lib
  
  # Detailed destination directories
@@ -56,7 +48,7 @@ diff --git Python-2.6.4/Makefile.pre.in Python-2.6.4/Makefile.pre.in
 diff --git Python-2.6.4/Python/import.c Python-2.6.4/Python/import.c
 --- Python-2.6.4/Python/import.c
 +++ Python-2.6.4/Python/import.c
-@@ -1191,6 +1191,57 @@
+@@ -1193,6 +1193,57 @@
  static int find_init_module(char *); /* Forward */
  static struct filedescr importhookdescr = {"", "", IMP_HOOK};
  
@@ -113,65 +105,64 @@ diff --git Python-2.6.4/Python/import.c Python-2.6.4/Python/import.c
 +
  static struct filedescr *
  find_module(char *fullname, char *subname, PyObject *path, char *buf,
- 	    size_t buflen, FILE **p_fp, PyObject **p_loader)
-@@ -1208,11 +1259,10 @@
- 	static struct filedescr fd_builtin = {"", "", C_BUILTIN};
- 	static struct filedescr fd_package = {"", "", PKG_DIRECTORY};
- 	char name[MAXPATHLEN+1];
+             size_t buflen, FILE **p_fp, PyObject **p_loader)
+@@ -1210,11 +1261,10 @@
+     static struct filedescr fd_builtin = {"", "", C_BUILTIN};
+     static struct filedescr fd_package = {"", "", PKG_DIRECTORY};
+     char name[MAXPATHLEN+1];
 -#if defined(PYOS_OS2)
- 	size_t saved_len;
- 	size_t saved_namelen;
- 	char *saved_buf = NULL;
+     size_t saved_len;
+     size_t saved_namelen;
+     char *saved_buf = NULL;
 -#endif
 +
- 	if (p_loader != NULL)
- 		*p_loader = NULL;
+     if (p_loader != NULL)
+         *p_loader = NULL;
  
-@@ -1431,15 +1481,19 @@
- 		}
+@@ -1433,15 +1483,18 @@
+         }
  #endif
  #endif
 -#if defined(PYOS_OS2)
 +
- 		/* take a snapshot of the module spec for restoration
- 		 * after the 8 character DLL hackery
- 		 */
- 		saved_buf = strdup(buf);
- 		saved_len = len;
- 		saved_namelen = namelen;
+         /* take a snapshot of the module spec for restoration
+          * after the 8 character DLL hackery
+          */
+         saved_buf = strdup(buf);
+         saved_len = len;
+         saved_namelen = namelen;
 -#endif /* PYOS_OS2 */
 +
- 		for (fdp = _PyImport_Filetab; fdp->suffix != NULL; fdp++) {
+         for (fdp = _PyImport_Filetab; fdp->suffix != NULL; fdp++) {
 +#ifdef HAVE_STAT
-+                        len += modify_path(fdp, buf, buflen);
++            len += modify_path(fdp, buf, buflen);
 +#endif
-+
  #if defined(PYOS_OS2) && defined(HAVE_DYNAMIC_LOADING)
- 			/* OS/2 limits DLLs to 8 character names (w/o
- 			   extension)
-@@ -1480,21 +1534,18 @@
- 					fp = NULL;
- 				}
- 			}
+             /* OS/2 limits DLLs to 8 character names (w/o
+                extension)
+@@ -1482,21 +1535,18 @@
+                     fp = NULL;
+                 }
+             }
 -#if defined(PYOS_OS2)
 +
- 			/* restore the saved snapshot */
- 			strcpy(buf, saved_buf);
- 			len = saved_len;
- 			namelen = saved_namelen;
+             /* restore the saved snapshot */
+             strcpy(buf, saved_buf);
+             len = saved_len;
+             namelen = saved_namelen;
 -#endif
- 		}
+         }
 -#if defined(PYOS_OS2)
- 		/* don't need/want the module name snapshot anymore */
- 		if (saved_buf)
- 		{
- 			free(saved_buf);
- 			saved_buf = NULL;
- 		}
+         /* don't need/want the module name snapshot anymore */
+         if (saved_buf)
+         {
+             free(saved_buf);
+             saved_buf = NULL;
+         }
 -#endif
- 		Py_XDECREF(copy);
- 		if (fp != NULL)
- 			break;
+         Py_XDECREF(copy);
+         if (fp != NULL)
+             break;
 diff --git Python-2.6.4/Python/importdl.h Python-2.6.4/Python/importdl.h
 --- Python-2.6.4/Python/importdl.h
 +++ Python-2.6.4/Python/importdl.h
@@ -262,7 +253,7 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
  # Arguments passed to configure.
  AC_SUBST(CONFIG_ARGS)
  CONFIG_ARGS="$ac_configure_args"
-@@ -1377,14 +1433,10 @@
+@@ -1436,14 +1492,10 @@
  
  # Sizes of various common basic types
  # ANSI C requires sizeof(char) == 1, so no need to check it
@@ -278,7 +269,7 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
  AC_CHECK_SIZEOF(pid_t, 4)
  
  AC_MSG_CHECKING(for long long support)
-@@ -1394,9 +1446,6 @@
+@@ -1453,9 +1505,6 @@
    have_long_long=yes
  ])
  AC_MSG_RESULT($have_long_long)
@@ -288,7 +279,7 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
  
  AC_MSG_CHECKING(for long double support)
  have_long_double=no
-@@ -1404,10 +1453,6 @@
+@@ -1463,10 +1512,6 @@
    AC_DEFINE(HAVE_LONG_DOUBLE, 1, [Define this if you have the type long double.])
    have_long_double=yes
  ])
@@ -299,12 +290,12 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
  
  AC_MSG_CHECKING(for _Bool support)
  have_c99_bool=no
-@@ -1421,102 +1466,26 @@
+@@ -1480,106 +1525,25 @@
  fi
  
  AC_CHECK_TYPES(uintptr_t, 
 -   [AC_CHECK_SIZEOF(uintptr_t, 4)], 
-+   [], 
++   [],
     [], [#ifdef HAVE_STDINT_H
          #include <stdint.h>
          #endif])
@@ -328,14 +319,15 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
 -ac_cv_sizeof_off_t=`cat conftestval`,
 -ac_cv_sizeof_off_t=0,
 -ac_cv_sizeof_off_t=4)
- ])
+-])
 -AC_MSG_RESULT($ac_cv_sizeof_off_t)
 -AC_DEFINE_UNQUOTED(SIZEOF_OFF_T, $ac_cv_sizeof_off_t,
 -[The number of bytes in an off_t.])
- 
- AC_MSG_CHECKING(whether to enable large file support)
--if test "$have_long_long" = yes -a \
--	"$ac_cv_sizeof_off_t" -gt "$ac_cv_sizeof_long" -a \
+-
+-AC_MSG_CHECKING(whether to enable large file support)
+-if test "$have_long_long" = yes
+-then
+-if test "$ac_cv_sizeof_off_t" -gt "$ac_cv_sizeof_long" -a \
 -	"$ac_cv_sizeof_long_long" -ge "$ac_cv_sizeof_off_t"; then
 -  AC_DEFINE(HAVE_LARGEFILE_SUPPORT, 1, 
 -  [Defined to enable large file support when an off_t is bigger than a long
@@ -346,7 +338,10 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
 -else
 -  AC_MSG_RESULT(no)
 -fi
- 
+-else
+-  AC_MSG_RESULT(no)
+-fi
+-
 -# AC_CHECK_SIZEOF() doesn't include <time.h>.
 -AC_MSG_CHECKING(size of time_t)
 -AC_CACHE_VAL(ac_cv_sizeof_time_t,
@@ -362,12 +357,12 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
 -ac_cv_sizeof_time_t=`cat conftestval`,
 -ac_cv_sizeof_time_t=0,
 -ac_cv_sizeof_time_t=4)
--])
+ ])
 -AC_MSG_RESULT($ac_cv_sizeof_time_t)
 -AC_DEFINE_UNQUOTED(SIZEOF_TIME_T, $ac_cv_sizeof_time_t, 
 -[The number of bytes in a time_t.])
 -
--
+ 
 -# if have pthread_t then define SIZEOF_PTHREAD_T
 -ac_save_cc="$CC"
 -if test "$ac_cv_kpthread" = "yes"
@@ -403,6 +398,7 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
 -   [The number of bytes in a pthread_t.])
 -fi
 -CC="$ac_save_cc"
++AC_MSG_CHECKING(whether to enable large file support)
 +AC_DEFINE(HAVE_LARGEFILE_SUPPORT, 1,
 +[Defined to enable large file support when an off_t is bigger than a long
 + and long long is available and at least as big as an off_t. You may need
@@ -412,7 +408,7 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
  
  AC_MSG_CHECKING(for --enable-toolbox-glue)
  AC_ARG_ENABLE(toolbox-glue,
-@@ -1810,12 +1779,6 @@
+@@ -1873,12 +1837,6 @@
  if test -z "$CCSHARED"
  then
  	case $ac_sys_system/$ac_sys_release in
@@ -425,7 +421,7 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
  	hp*|HP*) if test "$GCC" = yes;
  		 then CCSHARED="-fPIC";
  		 else CCSHARED="+z";
-@@ -3308,12 +3271,6 @@
+@@ -3383,12 +3341,6 @@
  wchar_h="no"
  )
  
@@ -438,7 +434,7 @@ diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
  AC_MSG_CHECKING(for UCS-4 tcl)
  have_ucs4_tcl=no
  AC_TRY_COMPILE([
-@@ -3344,6 +3301,11 @@
+@@ -3419,6 +3371,11 @@
    ac_cv_wchar_t_signed=no,
    ac_cv_wchar_t_signed=yes)])
    AC_MSG_RESULT($ac_cv_wchar_t_signed)

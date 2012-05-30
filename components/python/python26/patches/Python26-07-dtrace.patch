@@ -51,12 +51,12 @@ diff --git Python-2.6.4/Objects/frameobject.c Python-2.6.4/Objects/frameobject.c
 --- Python-2.6.4/Objects/frameobject.c
 +++ Python-2.6.4/Objects/frameobject.c
 @@ -698,6 +698,7 @@
- 	f->f_tstate = tstate;
+     f->f_tstate = tstate;
  
- 	f->f_lasti = -1;
-+ 	f->f_calllineno = code->co_firstlineno;
- 	f->f_lineno = code->co_firstlineno;
- 	f->f_iblock = 0;
+     f->f_lasti = -1;
++    f->f_calllineno = code->co_firstlineno;
+     f->f_lineno = code->co_firstlineno;
+     f->f_iblock = 0;
  
 diff --git Python-2.6.4/Python/ceval.c Python-2.6.4/Python/ceval.c
 --- Python-2.6.4/Python/ceval.c
@@ -73,8 +73,8 @@ diff --git Python-2.6.4/Python/ceval.c Python-2.6.4/Python/ceval.c
  #ifndef WITH_TSC
  
  #define READ_TIMESTAMP(var)
-@@ -527,6 +532,55 @@
- 			  NULL);
+@@ -546,6 +551,55 @@
+                       NULL);
  }
  
 +#ifdef HAVE_DTRACE
@@ -129,8 +129,8 @@ diff --git Python-2.6.4/Python/ceval.c Python-2.6.4/Python/ceval.c
  
  /* Interpreter main loop */
  
-@@ -538,9 +592,84 @@
- 	return PyEval_EvalFrameEx(f, 0);
+@@ -557,9 +611,84 @@
+     return PyEval_EvalFrameEx(f, 0);
  }
  
 +/*
@@ -212,49 +212,48 @@ diff --git Python-2.6.4/Python/ceval.c Python-2.6.4/Python/ceval.c
 +#endif /* HAVE_DTRACE */
 +
  #ifdef DXPAIRS
- 	int lastopcode = 0;
+     int lastopcode = 0;
  #endif
-@@ -763,6 +892,9 @@
- 		}
- 	}
+@@ -782,6 +911,9 @@
+         }
+     }
  
-+        if (PYTHON_FUNCTION_ENTRY_ENABLED())
-+                dtrace_entry(f);
++    if (PYTHON_FUNCTION_ENTRY_ENABLED())
++        dtrace_entry(f);
 +
- 	co = f->f_code;
- 	names = co->co_names;
- 	consts = co->co_consts;
-@@ -2383,6 +2515,10 @@
- 			PyObject **sp;
- 			PCALL(PCALL_ALL);
- 			sp = stack_pointer;
+     co = f->f_code;
+     names = co->co_names;
+     consts = co->co_consts;
+@@ -2406,6 +2538,10 @@
+             PyObject **sp;
+             PCALL(PCALL_ALL);
+             sp = stack_pointer;
 +#ifdef HAVE_DTRACE
-+			f->f_calllineno = PyCode_Addr2Line(f->f_code,
-+							   f->f_lasti);
++            f->f_calllineno = PyCode_Addr2Line(f->f_code,
++                                               f->f_lasti);
 +#endif
  #ifdef WITH_TSC
- 			x = call_function(&sp, oparg, &intr0, &intr1);
+             x = call_function(&sp, oparg, &intr0, &intr1);
  #else
-@@ -2425,6 +2561,11 @@
- 		    } else
- 			    Py_INCREF(func);
- 		    sp = stack_pointer;
+@@ -2448,6 +2584,10 @@
+             } else
+                 Py_INCREF(func);
+             sp = stack_pointer;
 +#ifdef HAVE_DTRACE
-+		    f->f_calllineno = PyCode_Addr2Line(f->f_code,
-+		                                       f->f_lasti);
++            f->f_calllineno = PyCode_Addr2Line(f->f_code,
++                                               f->f_lasti);
 +#endif
-+
- 		    READ_TIMESTAMP(intr0);
- 		    x = ext_do_call(func, &sp, flags, na, nk);
- 		    READ_TIMESTAMP(intr1);
-@@ -2723,6 +2864,8 @@
+             READ_TIMESTAMP(intr0);
+             x = ext_do_call(func, &sp, flags, na, nk);
+             READ_TIMESTAMP(intr1);
+@@ -2746,6 +2886,8 @@
  
- 	/* pop frame */
+     /* pop frame */
  exit_eval_frame:
-+	if (PYTHON_FUNCTION_RETURN_ENABLED())
-+		dtrace_return(f);
- 	Py_LeaveRecursiveCall();
- 	tstate->frame = f->f_back;
++    if (PYTHON_FUNCTION_RETURN_ENABLED())
++        dtrace_return(f);
+     Py_LeaveRecursiveCall();
+     tstate->frame = f->f_back;
  
 diff --git Python-2.6.4/Python/phelper.d Python-2.6.4/Python/phelper.d
 new file mode 100644
