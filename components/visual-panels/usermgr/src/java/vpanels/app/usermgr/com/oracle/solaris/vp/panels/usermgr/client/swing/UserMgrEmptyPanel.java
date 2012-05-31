@@ -50,6 +50,7 @@ public class UserMgrEmptyPanel extends JPanel {
 	msgLabel.setVerticalTextPosition(SwingConstants.CENTER);
 
 	setLayout(new BorderLayout());
+	setOpaque(false);
 	add(msgLabel);
     }
 }

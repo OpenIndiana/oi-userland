@@ -75,7 +75,7 @@ public class UserMgrUtils {
     public static void validateUserDesc(String userdesc)
 	throws ActionFailedException {
 	// Ensure that the user description, if specified, is valid.
-	if (!isValidUserDesc(userdesc)) {
+	if (userdesc == null || !isValidUserDesc(userdesc)) {
 	    throw new ActionFailedException(
 		Finder.getString("usermgr.error.userdesc.bad"));
 	}

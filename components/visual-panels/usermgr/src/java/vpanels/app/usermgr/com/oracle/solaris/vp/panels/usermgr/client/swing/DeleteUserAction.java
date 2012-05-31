@@ -116,8 +116,7 @@ public class DeleteUserAction extends DeleteManagedObjectAction
 	if (!selection.isEmpty()) {
 	    UserMgrPanelDescriptor descriptor = (UserMgrPanelDescriptor)
 		control.getPanelDescriptor();
-	    descriptor.addToDeleteList(selection.get(0));
-	    descriptor.saveDeletedUsers();
+	    descriptor.saveDeletedUser(selection.get(0));
 	    // If the running Control is a UserMgrControl for a just-deleted
 	    // service, reset the Control and navigate back to its parent
 	    Control child = control.getRunningChild();

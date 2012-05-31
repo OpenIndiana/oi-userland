@@ -46,7 +46,8 @@ import com.oracle.solaris.vp.util.swing.HasIcons;
 
 public class UserMgrPanelDescriptor
     extends AbstractPanelDescriptor<UserManagedObject>
-    implements SwingPanelDescriptor<UserManagedObject>, HasIcons {
+    implements SwingPanelDescriptor<UserManagedObject>, HasIcons,
+    ConnectionListener {
 
     //
     // Static data
@@ -62,6 +63,11 @@ public class UserMgrPanelDescriptor
     public static final String SCOPE_FILES = "files";
     public static final String MATCH_ALL = "*";
 
+    public static final String PASSWORD = "PASSWORD";
+    public static final String NOTACTIVATED = "NOTACTIVATED";
+    public static final String LOCKED = "LOCKED";
+    public static final String UNKNOWN = "UNKNOWN";
+
     //
     // Instance data
     //
@@ -75,19 +81,16 @@ public class UserMgrPanelDescriptor
     private String typeStr = USER_TYPE_NORMAL;
     private String matchStr = MATCH_ALL;
 
-    private List<UserManagedObject> deleteList =
-	new ArrayList<UserManagedObject> ();
-    private List<UserManagedObject> addList =
-	new ArrayList<UserManagedObject> ();
+    // Assignable lists
+    private List<String> scopeList = null;
+    private List<String> shellList = null;
+    private List<Group> groupList = null;
+    private List<String> profileList = null;
+    private List<String> authList = null;
+    private List<String> roleList = null;
+    private List<String> supplgroups = null;
 
-    private MutableProperty<Integer> addedProperty =
-	new IntegerProperty();
-    private MutableProperty<Integer> deletedProperty =
-	new IntegerProperty();
-    {
-	getChangeableAggregator().addChangeables(
-	    addedProperty, deletedProperty);
-    }
+    private User defUser = null;
 
     //
     // Constructors
@@ -104,7 +107,7 @@ public class UserMgrPanelDescriptor
      *		    a handle to interact with the Visual Panels client
      */
     public UserMgrPanelDescriptor(String id, ClientContext context)
-	throws TrackerException {
+	throws TrackerException, ActionFailedException {
 
         super(id, context);
 
@@ -116,13 +119,10 @@ public class UserMgrPanelDescriptor
 	// Initialize list of users
 	initUsers(SCOPE_FILES, USER_TYPE_NORMAL, MATCH_ALL);
 
-	// Keep track of users added/deleted
-	addedProperty.update(0, true);
-	deletedProperty.update(0, true);
-
         control = new PanelFrameControl<UserMgrPanelDescriptor>(this);
         mc = new MainControl(this);
 	control.addChildren(mc);
+	context.addConnectionListener(this);
     }
 
     //
@@ -229,67 +229,46 @@ public class UserMgrPanelDescriptor
 	addChildren(toAdd);
     }
 
-    public void addToAddList(UserManagedObject toAdd) {
-	addedProperty.setValue(addedProperty.getValue() + 1);
-	addList.add(toAdd);
-    }
-
-    public void addToDeleteList(UserManagedObject toRemove) {
-	deletedProperty.setValue(deletedProperty.getValue() + 1);
-	deleteList.add(toRemove);
-    }
-
-    public void saveDeletedUsers() throws ActionAbortedException,
+    public void saveDeletedUser(UserManagedObject umo)
+        throws ActionAbortedException,
 	ActionFailedException, ActionUnauthorizedException {
 
-	Iterator<UserManagedObject> it = deleteList.iterator();
-	while (it.hasNext()) {
-	    UserManagedObject umo = it.next();
-	    try {
-		getUserMgrBean().deleteUser(umo.getName());
-		deleteUserManagedObject(umo);
-		it.remove();
-		deletedProperty.setValue(deletedProperty.getValue() - 1);
-	    } catch (SecurityException se) {
-		throw new ActionUnauthorizedException(se);
-	    } catch (ObjectException e) {
-		UserMgrError ume = e.getPayload(UserMgrError.class);
-		String msg = Finder.getString("usermgr.error.invalidData");
-		String err = Finder.getString(
-		    "usermgr.error.delete", umo.getUsername());
-		getLog().log(Level.SEVERE, err + msg, e);
-		throw new ActionFailedException(err + msg);
-	    // Any other remaining exceptions
-	    } catch (Exception e) {
-		String msg = Finder.getString("usermgr.error.system");
-		String err = Finder.getString(
-		    "usermgr.error.delete", umo.getUsername());
-		getLog().log(Level.SEVERE, err + msg, e);
-		throw new ActionFailedException(err + msg);
-	    }
+	try {
+	    getUserMgrBean().deleteUser(umo.getName());
+	    deleteUserManagedObject(umo);
+	} catch (SecurityException se) {
+	    throw new ActionUnauthorizedException(se);
+	} catch (ObjectException e) {
+	    UserMgrError ume = e.getPayload(UserMgrError.class);
+	    String msg = Finder.getString("usermgr.error.invalidData");
+	    String err = Finder.getString(
+		"usermgr.error.delete", umo.getUsername());
+	    getLog().log(Level.SEVERE, err + msg, e);
+	    throw new ActionFailedException(err + msg);
+	// Any other remaining exceptions
+	} catch (Exception e) {
+	    String msg = Finder.getString("usermgr.error.system");
+	    String err = Finder.getString(
+		"usermgr.error.delete", umo.getUsername());
+	    getLog().log(Level.SEVERE, err + msg, e);
+	    throw new ActionFailedException(err + msg);
 	}
     }
 
-    public void saveAddedUsers() throws ActionAbortedException,
+    public void saveAddedUser(UserManagedObject umo)
+        throws ActionAbortedException,
 	ActionFailedException, ActionUnauthorizedException {
 
-	Iterator<UserManagedObject> it = addList.iterator();
-	while (it.hasNext()) {
-	    UserManagedObject umo = it.next();
-	    try {
-		char[] password = umo.getPassword();
-		User user = getUserMgrBean().addUser(
-		    umo.getNewUser(), password);
-		addUserManagedObject(umo);
-		Arrays.fill(password, (char)0);
+	try {
+	    char[] password = umo.getPassword();
+	    User user = getUserMgrBean().addUser(umo.getNewUser(), password);
+	    addUserManagedObject(umo);
+	    Arrays.fill(password, (char)0);
+	    umo.updateUser(user);
 
-		it.remove();
-		addedProperty.setValue(addedProperty.getValue() - 1);
-		umo.updateUser(user);
-	    } catch (SecurityException se) {
-		throw new ActionUnauthorizedException(se);
-	    } catch (ObjectException e) {
-		e.printStackTrace();
+	} catch (SecurityException se) {
+	    throw new ActionUnauthorizedException(se);
+	} catch (ObjectException e) {
 		UserMgrError ume = e.getPayload(UserMgrError.class);
 		String msg;
 		UserMgrErrorType error = (ume != null) ?
@@ -310,15 +289,13 @@ public class UserMgrPanelDescriptor
 		getLog().log(Level.SEVERE, err + msg, e);
     		deleteUserManagedObject(umo);
 		throw new ActionFailedException(err + msg);
-	    // Any other remaining exceptions
-	    } catch (Exception e) {
+	// Any other remaining exceptions
+	} catch (Exception e) {
 		String msg = Finder.getString("usermgr.error.system");
 		String err = Finder.getString(
 		    "usermgr.error.add", umo.getUsername());
 		getLog().log(Level.SEVERE, err + msg, e);
 		throw new ActionFailedException(err + msg);
-	    }
-	    umo.getChangeableAggregator().save();
 	}
     }
 
@@ -372,112 +349,53 @@ public class UserMgrPanelDescriptor
     }
 
     public List<Group> getGroups() {
-	try {
-	    return getUserMgrBean().getgroups();
-        } catch (ObjectException e) {
-            getLog().log(Level.SEVERE, "Error getting group list.", e);
-	}
-	return null;
+	return groupList;
     }
 
     public List<String> getSupplGroups() {
-	try {
-	    return getUserMgrBean().getsupplGroups();
-        } catch (ObjectException e) {
-            getLog().log(Level.SEVERE,
-	    "Error getting supplementary group list.", e);
-	}
-	return null;
+	return supplgroups;
     }
 
     public List<String> getShells() {
-	try {
-	    return getUserMgrBean().getshells();
-        } catch (ObjectException e) {
-            getLog().log(Level.SEVERE, "Error getting shell list.", e);
-	}
-	return null;
+        return shellList;
     }
 
     public List<String> getScopes() {
-	try {
-	    return getUserMgrBean().getscopes();
-        } catch (ObjectException e) {
-            getLog().log(Level.SEVERE, "Error getting  scopes list.", e);
-	}
-	return null;
+        return scopeList;
     }
 
     public List<String> getProfiles() {
-	try {
-	    return getUserMgrBean().getprofiles();
-        } catch (ObjectException e) {
-            getLog().log(Level.SEVERE, "Error getting profiles list.", e);
-	}
-	return null;
+        return profileList;
     }
 
     public List<String> getAuths() {
-	try {
-	    return getUserMgrBean().getauths();
-        } catch (ObjectException e) {
-            getLog().log(Level.SEVERE, "Error getting authorizations list.", e);
-	}
-	return null;
+        return authList;
     }
 
     public List<String> getRoles() {
-	try {
-	    return getUserMgrBean().getroles();
-        } catch (ObjectException e) {
-            getLog().log(Level.SEVERE, "Error getting roles list.", e);
-	}
-	return null;
-    }
-
-    public void setScope(String scope) {
-        ScopeType sType;
-	if (scope.equals(SCOPE_FILES)) {
-	    sType = ScopeType.FILES;
-	} else {
-	    sType = ScopeType.LDAP;
-	}
-
-	try {
-	    getUserMgrBean().setScope(sType);
-        } catch (Exception e) {
-            getLog().log(Level.SEVERE, "Error setting  scope.", e);
-	}
+        return roleList;
     }
 
     public UserImpl getDefaultUser() {
-	try {
-	    User defUser = getUserMgrBean().getdefaultUser();
-	    return new UserImpl(
+	UserImpl defaultUser = new UserImpl(
 		"", 0L, defUser.getGroupID(),
 		"", "", defUser.getDefaultShell(),
 		0, 0, 0, 0,
 		"", "", "", "", "", "",
 		"", "", "", "", "", "",
 		null, null, null, null, null, null);
-	} catch (ObjectException e) {
-	    getLog().log(Level.SEVERE, "Error getting default user.", e);
-	}
 
-	return null;
+        return defaultUser;
     }
 
     public void initUsers(String scopeStr,
-    		String typeStr, String matchStr) {
+    		String typeStr, String matchStr)
+		throws ActionFailedException {
 	int count = 0;
 	String statusStr;
 	String listTitle;
 
-	this.scopeStr = scopeStr;
-	this.typeStr = typeStr;
-	this.matchStr = matchStr;
 
-	setScope(scopeStr);
 
 	statusStr = Finder.getString("usermgr.status.scope") +
 	    " " + scopeStr;
@@ -489,15 +407,33 @@ public class UserMgrPanelDescriptor
 	    listTitle = Finder.getString("usermgr.list.title.role");
 	}
 
-	setFilter(uType, matchStr);
-	List<User> users = getUsers();
 
 	removeAllChildren();
 	try {
+	    UserMgrMXBean bean = getUserMgrBean();
+
+	    // Set scope only if the scope changed
+	    if (scopeStr.equals(this.scopeStr) == false) {
+		ScopeType sType;
+		if (scopeStr.equals(SCOPE_FILES)) {
+		    sType = ScopeType.FILES;
+		} else {
+		    sType = ScopeType.LDAP;
+		}
+		bean.selectScope(sType);
+		this.scopeStr = scopeStr;
+	    }
+
+	    setFilter(uType, matchStr);
+	    this.typeStr = typeStr;
+	    this.matchStr = matchStr;
+
+	    List<User> users = getUsers();
+
 	    boolean uTypeSet = false;
+
 	    for (User user : users) {
 		String username = user.getUsername();
-		UserMgrMXBean bean = getUserMgrBean();
 		if (uTypeSet == false) {
 		    uType = bean.getUserType(username);
 		    uTypeSet = true;
@@ -508,14 +444,47 @@ public class UserMgrPanelDescriptor
 		addChildren(umo);
 	    }
 
-	} catch (ObjectException e) {
-	    getLog().log(Level.SEVERE, "Error creating user list.", e);
+	    // Get Assignable Lists
+	    scopeList = bean.getscopes();
+	    groupList = bean.getgroups();
+	    shellList = bean.getshells();
+	    authList = bean.getauths();
+	    profileList = bean.getprofiles();
+	    roleList = bean.getroles();
+	    supplgroups = bean.getsupplGroups();
+	    defUser = bean.getdefaultUser();
+
+	} catch (Exception e) {
+	    String msg = Finder.getString("usermgr.error.system");
+	    throw new ActionFailedException(msg);
 	} finally {
 	    setStatusText(statusStr);
 	    if (mc != null) {
 		mc.setListTitle(listTitle);
 	    }
         }
+    }
+
+    /*
+     * Solaris provides 3 levels of password change:
+     *  1. Can change any password
+     *  2. Can only set initial password
+     *  3. Cannot change any password
+     */
+    public boolean canChangePassword(UserManagedObject umo) {
+	String statusStr =  defUser.getAccountStatus();
+
+	if (statusStr.equals(PASSWORD)) {
+	    return true;
+	} else if (statusStr.equals(LOCKED)) {
+            return false;
+	} else if (statusStr.equals(NOTACTIVATED) && (umo == null ||
+		umo.getAccountStatus().equals(UNKNOWN) ||
+		umo.getAccountStatus().equals(NOTACTIVATED))) {
+	    return true;
+	}
+
+        return false;
     }
 
     public boolean isTypeRole() {
@@ -539,11 +508,32 @@ public class UserMgrPanelDescriptor
         return (matchStr);
     }
 
+    /*
+     * Connection Listener interfaces
+     */
+
+    /*
+     * If a role assumption or user change occurs because
+     * of permission/auth failure, initialize the users list
+     */
+    public void connectionChanged(ConnectionEvent ce) {
+	try {
+	    initUsers(scopeStr, typeStr, matchStr);
+        } catch (Exception e) {
+            getLog().log(Level.SEVERE, "Error setting filter.", e);
+	}
+    }
+
+    public void connectionFailed(ConnectionEvent ce) {
+	setStatusText(Finder.getString("usermgr.error.connfailed"));
+    }
+
     //
     // Private methods
     //
 
     private List<User> getUsers() {
+
 	List<User> users = null;
 	try {
 	    users = getUserMgrBean().getusers();

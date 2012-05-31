@@ -316,24 +316,6 @@ public class RolesPanel extends JPanel {
             } else if (node.getUserObject() instanceof RoleTreeNode) {
                 RoleTreeNode rolesdef = (RoleTreeNode) node.getUserObject();
                 setText(rolesdef.toString());
-
-                if (selected) {
-                    if (node.isEnabled()) {
-                        cr.setTextSelectionColor(SystemColor.textText);
-                    } else {
-                        cr.setTextSelectionColor(
-			    SystemColor.inactiveCaptionText);
-		    }
-
-                } else {
-                    if (node.isEnabled()) {
-                        cr.setTextNonSelectionColor(SystemColor.textText);
-                    } else {
-
-                        cr.setTextNonSelectionColor(
-                        SystemColor.inactiveCaptionText);
-                    }
-                }
             }
 
             super.getTreeCellRendererComponent(tree, value, selected, expanded,
