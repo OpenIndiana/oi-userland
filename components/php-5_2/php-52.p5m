@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -27,17 +27,16 @@
 <transform file path=(etc/php/.*) -> default original_name SUNWphp52:%<1>>
 <transform file path=etc/php/.* -> default preserve renamenew>
 
-set name=pkg.fmri \
-    value=pkg:/web/php-52@5.2.17,$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/web/php-52@5.2.17,$(BUILD_VERSION)
 set name=pkg.description \
     value="A general-purpose scripting language originally designed for web development to produce dynamic web pages."
 set name=pkg.summary value="PHP Server"
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/PHP"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=info.source-url value=http://us.php.net/get/php-5.2.17.tar.gz/from/this/mirror
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/538
+set name=info.source-url \
+    value=http://us.php.net/get/php-5.2.17.tar.gz/from/this/mirror
+set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license php-52.license license='PHP, GPLv2, LGPLv2, Apache v2.0'
@@ -49,6 +48,7 @@ dir path=etc/php/5.2/conf.d
 dir path=etc/php/5.2/nsapi
 dir path=etc/php/5.2/zts-conf.d
 dir path=usr
+dir path=usr/bin
 dir path=usr/php
 dir path=usr/php/5.2
 dir path=usr/php/5.2/bin
@@ -94,9 +94,6 @@ dir path=usr/php/5.2/nsapi
 dir path=usr/php/5.2/samples
 dir path=usr/php/5.2/samples/scripts
 dir path=usr/php/5.2/zts-modules
-dir path=usr/share
-dir path=usr/share/man
-dir path=usr/share/man/man1
 dir path=var
 dir path=var/php
 dir path=var/php/5.2
@@ -135,8 +132,8 @@ file path=etc/php/5.2/zts-conf.d/sqlite.ini
 file path=etc/php/5.2/zts-conf.d/tidy.ini
 file path=usr/php/5.2/bin/php
 file path=usr/php/5.2/bin/php-cgi
-file path=usr/php/5.2/bin/php-config mode=0555
-file path=usr/php/5.2/bin/phpize mode=0555
+file path=usr/php/5.2/bin/php-config
+file path=usr/php/5.2/bin/phpize
 file path=usr/php/5.2/include/php/TSRM/TSRM.h
 file path=usr/php/5.2/include/php/TSRM/acconfig.h
 file path=usr/php/5.2/include/php/TSRM/readdir.h
@@ -438,11 +435,32 @@ file path=usr/php/5.2/zts-modules/pdo_sqlite.so
 file path=usr/php/5.2/zts-modules/snmp.so
 file path=usr/php/5.2/zts-modules/sqlite.so
 file path=usr/php/5.2/zts-modules/tidy.so
-file path=usr/share/man/man1/php.1 mangler.bypass=true
 link path=usr/php/5.2/bin/configure-webserver7 \
     target=../samples/scripts/configure-sun-webserver
-link path=usr/php/bin target=./5.2/bin
-link path=usr/php/include target=./5.2/include
-link path=usr/php/lib target=./5.2/lib
-link path=usr/php/man target=./5.2/man
-link path=usr/php/modules target=./5.2/modules
+link path=usr/php/bin target=5.2/bin mediator=php mediator-version=5.2
+link path=usr/php/include target=5.2/include mediator=php mediator-version=5.2
+link path=usr/php/lib target=5.2/lib mediator=php mediator-version=5.2
+link path=usr/php/man target=5.2/man mediator=php mediator-version=5.2
+link path=usr/php/modules target=5.2/modules mediator=php mediator-version=5.2
+link path=usr/bin/php target=../php/5.2/bin/php \
+    mediator=php mediator-version=5.2
+link path=usr/bin/php-config target=../php/5.2/bin/php-config \
+    mediator=php mediator-version=5.2
+link path=usr/bin/phpize target=../php/5.2/bin/phpize \
+    mediator=php mediator-version=5.2
+
+# Force other php parts onto the disk.
+# Drag documentation forward because the directory link changes to a
+#     mediated link.
+depend fmri=pkg:/web/php-52/documentation type=optional
+depend fmri=pkg:/web/php-52/extension/php-apc type=require
+depend fmri=pkg:/web/php-52/extension/php-idn type=require
+depend fmri=pkg:/web/php-52/extension/php-memcache type=require
+depend fmri=pkg:/web/php-52/extension/php-mysql type=require
+depend fmri=pkg:/web/php-52/extension/php-pear type=require
+depend fmri=pkg:/web/php-52/extension/php-suhosin type=require
+depend fmri=pkg:/web/php-52/extension/php-tcpwrap type=require
+depend fmri=pkg:/web/php-52/extension/php-xdebug type=require
+
+# force web/php-common onto the disk in case this package is installed/updated
+depend fmri=pkg:/web/php-common type=require

@@ -112,12 +112,16 @@ COMPONENT_POST_BUILD_ACTION = ( \
 	chmod 755 php-config-proto.zts )
 
 ADD_APACHE2_MODULE_SUPPORT = ( \
-	$(MKDIR) $(PROTO_DIR)/$(APACHE2_CONFDIR); \
+	$(MKDIR) $(PROTO_DIR)/$(APACHE2_PHP); \
 	$(CP) $(COMPONENT_DIR)/../Solaris/php$(PHP_REL).conf \
-		$(PROTO_DIR)/$(APACHE2_CONFDIR)/php$(PHP_REL).conf; \
-	$(CHMOD) 644 $(PROTO_DIR)/$(APACHE2_CONFDIR)/php$(PHP_REL).conf; \
+		$(PROTO_DIR)/$(APACHE2_PHP)/php$(PHP_REL).conf; \
+	$(CHMOD) 644 $(PROTO_DIR)/$(APACHE2_PHP)/php$(PHP_REL).conf; \
+	$(SYMLINK) php$(PHP_REL).conf \
+		$(PROTO_DIR)/$(APACHE2_PHP)/php.conf; \
 	$(CP) $(PROTO_DIR)/$(APACHE2_EXTDIR)/libphp5.so \
-		$(PROTO_DIR)/$(APACHE2_EXTDIR)/mod_php$(PHP_REL).so \
+		$(PROTO_DIR)/$(APACHE2_EXTDIR)/mod_php$(PHP_REL).so; \
+	$(SYMLINK) $(PROTO_DIR)/$(APACHE2_EXTDIR)/mod_php$(PHP_REL).so \
+		$(PROTO_DIR)/$(APACHE2_EXTDIR)/mod_php5.so; \
 	)
 
 # Ship a default php.ini to simplify ease of use.
@@ -152,13 +156,6 @@ INSTALL_SAMPLES = ( \
 						configure-webserver7; \
 	)
 
-# configure man pages
-INSTALL_MAN = ( \
-	$(MKDIR) $(PROTOUSRSHAREMAN1DIR); \
-	$(INSTALL) -m 444 $(COMPONENT_DIR)/../Solaris/php.1.sunman \
-		$(PROTOUSRSHAREMAN1DIR)/php.1; \
-	)
-
 # patch installation to support pear installation.
 PATCH_PEAR = ( \
 	cd $(PROTO_DIR)/$(PHP_BIN); \
@@ -177,12 +174,18 @@ PATCH_PEAR = ( \
 CREATE_SYMLINKS = ( \
 	cd $(PROTO_DIR)/usr/php; \
 	$(RM) bin lib include modules doc man; \
-	$(SYMLINK) ./$(PHP_REL)/bin bin; \
-	$(SYMLINK) ./$(PHP_REL)/lib lib; \
-	$(SYMLINK) ./$(PHP_REL)/include include; \
-	$(SYMLINK) ./$(PHP_REL)/modules modules; \
-	$(SYMLINK) ./$(PHP_REL)/doc doc; \
-	$(SYMLINK) ./$(PHP_REL)/man man; \
+	$(SYMLINK) $(PHP_REL)/bin . ; \
+	$(SYMLINK) $(PHP_REL)/lib . ; \
+	$(SYMLINK) $(PHP_REL)/include . ; \
+	$(SYMLINK) $(PHP_REL)/modules . ; \
+	$(SYMLINK) $(PHP_REL)/doc . ; \
+	$(SYMLINK) $(PHP_REL)/man . ; \
+	$(MKDIR) $(PROTO_DIR)/usr/bin; \
+	cd $(PROTO_DIR)/usr/bin; \
+	$(RM) php php-config phpize; \
+	$(SYMLINK) ../php/$(PHP_REL)/bin/php . ; \
+	$(SYMLINK) ../php/$(PHP_REL)/bin/php-config . ; \
+	$(SYMLINK) ../php/$(PHP_REL)/bin/phpize . ; \
 	)
 
 COMPONENT_POST_INSTALL_ACTION = ( \
@@ -191,7 +194,6 @@ COMPONENT_POST_INSTALL_ACTION = ( \
 	$(FIX_CONFIG_FILES_2); \
 	$(INSTALL_DOCS); \
 	$(INSTALL_SAMPLES); \
-	$(INSTALL_MAN); \
 	$(PATCH_PEAR); \
 	$(CREATE_SYMLINKS); \
 	)

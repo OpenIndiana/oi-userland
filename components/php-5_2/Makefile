@@ -18,17 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 include ../../make-rules/ips.mk
-
-##
-## DO:
-##   patch
-##        12_php_7050600.patch
-##   can go away once i get hold of 7052015 in b171
-##
 
 ##
 ## This Makefile for local usage only.

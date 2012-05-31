@@ -35,4 +35,4 @@ PATCH_DIR = ../tcpwrap/patches
 
 include ../extensions-zts.mk
 
-CONFIGURE_OPTIONS += --with-tcpwrap=/usr/sfw
+CONFIGURE_OPTIONS += --with-tcpwrap=/usr
