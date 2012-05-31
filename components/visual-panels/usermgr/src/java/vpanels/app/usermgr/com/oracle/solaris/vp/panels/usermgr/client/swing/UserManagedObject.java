@@ -44,9 +44,6 @@ public class UserManagedObject
     //
     // Static data
     //
-    public static final String PASSWORD = "PASSWORD";
-    public static final String NOTACTIVE = "NOTACTIVATED";
-
 
     // Icons - for user, roles
     protected static final List<ImageIcon> userIcons = Finder.getIcons(
@@ -314,14 +311,6 @@ public class UserManagedObject
 
     public boolean isNewUser() {
 	return isNewUser;
-    }
-
-    public boolean hasPassword() {
-        if (getAccountStatus().equals(PASSWORD)) {
-	    return (true);
-	}
-
-	return (false);
     }
 
     // Update the "auto-generated" properties for the newly created user

@@ -80,11 +80,6 @@ public class MainControl extends ListSelectorControl
     protected void save() throws ActionAbortedException, ActionFailedException,
 	ActionUnauthorizedException {
 
-	// First delete any users, then add new users, then modify users
-	getPanelDescriptor().saveDeletedUsers();
-
-	getPanelDescriptor().saveAddedUsers();
-
 	getPanelDescriptor().saveModifiedUsers();
 	control.clearChanges();
 

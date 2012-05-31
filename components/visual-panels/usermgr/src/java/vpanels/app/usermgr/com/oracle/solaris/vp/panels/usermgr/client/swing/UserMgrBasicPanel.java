@@ -166,6 +166,13 @@ public class UserMgrBasicPanel extends SettingsPanel
 	public MutableProperty<char[]> getPassConfirmProperty() {
 	    return passConfirmProperty;
 	}
+
+	//
+	// Enable/Disable the fields
+	public void setEnabled(boolean enabled) {
+	    passField.setEnabled(enabled);
+	    passConfirmField.setEnabled(enabled);
+	}
     }
 
     //
@@ -237,7 +244,6 @@ public class UserMgrBasicPanel extends SettingsPanel
 	// Sanity check -- the UI should be updated only on the event thread
 	assert EventQueue.isDispatchThread();
 
-
 	this.umo = umo;
 	descriptor = paneldesc;
 
@@ -285,13 +291,10 @@ public class UserMgrBasicPanel extends SettingsPanel
 	getPassConfirmProperty().update(
 	    umo.getPassProperty().getSavedValue(), false);
 
-	if (umo.hasPassword()) {
-	    changepassStr = Finder.getString("usermgr.basic.label.changepass");
-	} else {
-	    changepassStr = Finder.getString("usermgr.basic.label.initialpass");
-	}
+	changepassStr = Finder.getString("usermgr.basic.label.changepass");
 
 	passPanel.setCollapsed(true);
+	passPanel.setEnabled(descriptor.canChangePassword(umo));
 
 	settingsProperty.update(false, true);
     }
@@ -302,6 +305,7 @@ public class UserMgrBasicPanel extends SettingsPanel
 
     private JPanel createForm() {
 	JPanel form = new JPanel(new GridBagLayout());
+	form.setOpaque(false);
 	GridBagConstraints gbc = new GridBagConstraints();
 	int width = GUIUtil.getTextFieldWidth();
         int hGap = GUIUtil.getHalfGap();
@@ -487,5 +491,12 @@ public class UserMgrBasicPanel extends SettingsPanel
      */
     public void clearChanges() {
         settingsProperty.update(false, true);
+    }
+
+    /**
+     * Enable/Disable the password panel
+     */
+    public void enablePassword(boolean enabled) {
+	passPanel.setEnabled(enabled);
     }
 }

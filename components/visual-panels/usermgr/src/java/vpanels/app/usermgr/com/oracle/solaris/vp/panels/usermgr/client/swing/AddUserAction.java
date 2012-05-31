@@ -58,7 +58,7 @@ public class AddUserAction extends AddManagedObjectAction
     // Inner classes
     //
 
-    protected class Data implements ActionListener {
+    protected class Data {
 	//
 	// Instance data
 	//
@@ -84,7 +84,6 @@ public class AddUserAction extends AddManagedObjectAction
 	private JOptionPane pane;
 	private JDialog dialog;
         private static final String ACTION_ADV_SETTINGS = "settings";
-        private AdvancedSettingsDialog advDialog = null;
 	private UserMgrPanelDescriptor descriptor = null;
 	private ActionString actString = null;
 
@@ -304,50 +303,14 @@ public class AddUserAction extends AddManagedObjectAction
 	gbc.gridx = GridBagConstraints.RELATIVE;
         form.add(passConfirmField, gbc);
 
-	// Advanced Settings
-	actString = new ActionString("usermgr.advanced.settings");
-	JButton advSettings = new JButton(actString.getString());
-	advSettings.setActionCommand(ACTION_ADV_SETTINGS);
-	advSettings.addActionListener(this);
-	advSettings.setMnemonic(actString.getMnemonic());
-
-	// Add to the layout
-	gbc.gridx = 0;
-	gbc.gridy++;
-	gbc.gridwidth = GridBagConstraints.REMAINDER;
-	gbc.anchor = GridBagConstraints.SOUTHWEST;
-	form.add(advSettings, gbc);
+	// Disable password fields if the admin can set password
+	if (descriptor.canChangePassword(null) == false) {
+	    passField.setEnabled(false);
+	    passConfirmField.setEnabled(false);
+	}
 
 	return form;
     }
-
-	/**
-	 * action listener for Adv settings button
-	 */
-        @Override
-        public void actionPerformed(ActionEvent e)  {
-            String actionCmd = e.getActionCommand();
-	    if (actionCmd == ACTION_ADV_SETTINGS) {
-		UserMgrPanelDescriptor descriptor =
-			control.getPanelDescriptor();
-		if (umo == null || user == null) {
-		    user = new UserImpl();
-		    umo = new UserManagedObject(descriptor, user, null);
-		}
-
-		if (advDialog == null ||
-		    descriptor.isTypeRole() != advDialog.isTypeRole()) {
-		    advDialog = new AdvancedSettingsDialog(
-			getHasComponent().getComponent(), descriptor, umo);
-		} else {
-		    advDialog.setUser(umo);
-		}
-		advDialog.show();
-		if (advDialog.getValue() == JOptionPane.OK_OPTION) {
-		    advDialog.update();
-    		}
-	    }
-        }
     }
 
     //
@@ -454,8 +417,7 @@ public class AddUserAction extends AddManagedObjectAction
 	    umo.setUser(user, password);
 	}
 
-	descriptor.addToAddList(umo);
-	descriptor.saveAddedUsers();
+	descriptor.saveAddedUser(umo);
 
 	// Navigate to the newly created user
 	Navigable navigable = new SimpleNavigable(
