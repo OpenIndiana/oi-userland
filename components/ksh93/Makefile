@@ -56,13 +56,14 @@ COMPONENT_ARCHIVE_1= $(COMPONENT_NAME_1).$(COMPONENT_VERSION_1).tgz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:44ae3913e6c0c8992c6c3cba16864fd4c4a18c6da8e7d87c85a23060cea7cd1a
 COMPONENT_ARCHIVE_URL_1= http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE_1)
-COMPONENT_PATCHES_1= solaris_alias.patch build_cflags.patch path_utmp.patch \
+COMPONENT_PATCHES_1= compiler.patch path_utmp.patch\
+					 solaris_alias.patch \
 					 CR6919590.patch CR7033181.patch \
 					 CR7071431.patch CR7036535.patch \
 					 CRXXX_Error_Catalog.patch CR7025778.patch \
 					 CR7065478.patch CR7026179.patch \
 					 CR7065900.patch CR7110983.patch \
-					 CR7105086.patch disable_dll.patch \
+					 CR7105086.patch multi_lang_arith.patch \
 					 CR7057565.patch CR7046434.patch \
 					 CR7032821.patch CR7009897.patch \
 					 CR6964621.patch CR7032068.patch \
@@ -72,8 +73,9 @@ COMPONENT_PATCHES_1= solaris_alias.patch build_cflags.patch path_utmp.patch \
 					 MAP_TYPE_64_Bits.patch CR7167466.patch \
 					 CR7168611.patch
 
-					 
-					 
+# Fixup HOSTTYPE to match uname output and bits
+HOSTTYPE32=sol11.$(shell uname -p)
+HOSTTYPE64=sol11.$(shell uname -p)-64
 
 # Make the unpack of the second archive relocate to a sensible place
 UNPACK_ARGS_1= -r $(COMPONENT_SRC_1)
@@ -89,13 +91,16 @@ CC.LD.RUNPATH=
 CC.LD.ORIGIN=
 CC.DLL.ORIGIN=
 
+# Fix up the permissions of the compiler wrapper scripts from the patch
+COMPONENT_PRE_BUILD_ACTION=($(CHMOD) +x $(@D)/src/cmd/INIT/cc.sol11.*)
+
 # Prevent nmake from taking over the entire machine
-NPROCS=1
+NPROC=1
 
 # Set the built to build all targets, install all of ast-base, and test ksh93.
 COMPONENT_BUILD_TARGETS += 
 COMPONENT_INSTALL_PACKAGES += ast-base
-COMPONENT_TEST_TARGETS += ksh93
+COMPONENT_TEST_TARGETS = ksh93
 
 # Unpack the ast-base tarball and copy it into the INIT tree,
 # mark it as un-patched 

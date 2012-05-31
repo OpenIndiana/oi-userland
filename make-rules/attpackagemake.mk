@@ -47,21 +47,22 @@
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
 COMPONENT_BUILD_ENV += \
-	CC="$(CC)" \
-	CCFLAGS="$(CFLAGS)" \
-	CCFLAGS.FORCE="$(CXXFLAGS)" \
-	CC.RUNPATH="$(CC.RUNPATH)" \
-	CC.LD.RUNPATH="$(CC.LD.RUNPATH)" \
-	CC.LD.ORIGIN="$(CC.LD.ORIGIN)" \
-	CC.DLL.ORIGIN="$(CC.DLL.ORIGIN)" \
-	CCLDFLAGS="$(CXXFLAGS)" \
-	LDOPTIONS="$(CXXFLAGS)" \
-	NPROCS="$(NPROCS)" \
-	LDFLAGS="$(CXXFLAGS)"
+    CC_EXPLICIT="$(CC)" \
+	PATH=$(shell dirname $(CC)):$(PATH) \
+	CC=$(shell basename $(CC)) 
+	NPROC="$(NPROC)" 
 
-# This is a workaround for the AT&T nmake failing to always use
-# the environmental CCFLAGS in sub-compiles
-COMPONENT_BUILD_ARGS= $(COMPONENT_BUILD_ENV)
+# This explicitly exports the build type for 32/64 bit distinction 
+COMPONENT_BUILD_ARGS = \
+						HOSTTYPE="$(HOSTTYPE$(BITS))" \
+						CCFLAGS="$(CFLAGS)" \
+						LDFLAGS="$(CXXFLAGS)" 
+
+# The install and test process needs the same environment as the build
+COMPONENT_INSTALL_ENV = $(COMPONENT_BUILD_ENV)
+COMPONENT_TEST_ENV = $(COMPONENT_BUILD_ENV)
+COMPONENT_INSTALL_ARGS = HOSTTYPE="$(HOSTTYPE$(BITS))"
+COMPONENT_TEST_ARGS = HOSTTYPE="$(HOSTTYPE$(BITS))"
 
 # build the configured source
 $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
@@ -77,8 +78,9 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	$(RM) -r $(PROTO_DIR)/$(MACH$(BITS)); $(MKDIR) $(PROTO_DIR)/$(MACH$(BITS));
-	cd $(@D) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
+	cd $(@D); $(ENV) $(COMPONENT_INSTALL_ENV) \
 		bin/package flat $(COMPONENT_INSTALL_TARGETS) \
+		$(COMPONENT_INSTALL_ARGS) \
 		$(PROTO_DIR)/$(MACH$(BITS)) $(COMPONENT_INSTALL_PACKAGES) 
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
@@ -86,8 +88,9 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 # test the built source
 $(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_TEST_ACTION)
-	cd $(@D) ; $(ENV) $(COMPONENT_TEST_ENV) bin/package \
-		test $(COMPONENT_TEST_TARGETS) 
+	cd $(@D); $(ENV) $(COMPONENT_TEST_ENV) \
+		bin/package test $(COMPONENT_TEST_TARGETS) \
+		$(COMPONENT_TEST_ARGS)
 	$(COMPONENT_POST_TEST_ACTION)
 	$(TOUCH) $@
 
