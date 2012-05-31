@@ -1,6 +1,6 @@
---- Makefile.in.~1~	Thu Nov 25 09:55:59 2010
-+++ Makefile.in	Wed Apr 27 08:31:51 2011
-@@ -76,8 +76,8 @@
+--- Makefile.in	2011-07-16 04:50:53.000000000 -0700
++++ Makefile.in	2012-05-21 19:46:33.032512405 -0700
+@@ -85,8 +85,8 @@
  swig_rb_libdir = @libdir@
  
  ### these possibly need further discussion
@@ -10,36 +10,73 @@
 +swig_pydir_extra = /usr/lib/python2.6/vendor-packages/svn
  swig_pldir = @libdir@/svn-perl
  swig_rbdir = $(SWIG_RB_SITE_ARCH_DIR)/svn/ext
- contribdir = @bindir@/svn-contrib
-@@ -682,7 +682,14 @@
+ toolsdir = @bindir@/svn-tools
+@@ -135,7 +135,7 @@
+ SWIG_PY_INCLUDES = @SWIG_PY_INCLUDES@ -I$(SWIG_SRC_DIR)/python/libsvn_swig_py
+ SWIG_PY_COMPILE = @SWIG_PY_COMPILE@
+ SWIG_PY_LINK = @SWIG_PY_LINK@
+-SWIG_PY_LIBS = @SWIG_PY_LIBS@
++SWIG_PY_LIBS = @SWIG_PY_LIBS@ $(SVN_APR_LIBS) $(SVN_APRUTIL_LIBS)
+ SWIG_PL_INCLUDES = @SWIG_PL_INCLUDES@
+ SWIG_RB_INCLUDES = @SWIG_RB_INCLUDES@ -I$(SWIG_SRC_DIR)/ruby/libsvn_swig_ruby
+ SWIG_RB_COMPILE = @SWIG_RB_COMPILE@
+@@ -180,7 +180,8 @@
+ ### suppressed (but they may come from httpd or APR).
+ CPPFLAGS = @CPPFLAGS@ $(EXTRA_CPPFLAGS)
+ LDFLAGS = @LDFLAGS@ $(EXTRA_LDFLAGS)
+-SWIG_LDFLAGS = @SWIG_LDFLAGS@ $(EXTRA_SWIG_LDFLAGS)
++EXTRA_SWIG_LDFLAGS = -R$(libdir)
++SWIG_LDFLAGS = @SWIG_LDFLAGS@ $(EXTRA_SWIG_LDFLAGS) $(SWIG_PY_LIBS)
+ 
+ COMPILE = $(CC) $(CPPFLAGS) $(CFLAGS) $(INCLUDES)
+ COMPILE_CXX = $(CXX) $(CPPFLAGS) $(CXXFLAGS) $(INCLUDES)
+@@ -209,7 +210,7 @@
+ LINK_CXX_LIB = $(LINK_CXX) $(LT_SO_VERSION)
+ 
+ # special link rule for mod_dav_svn
+-LINK_APACHE_MOD = $(LIBTOOL) $(LTFLAGS) --mode=link $(CC) $(LT_LDFLAGS) $(CFLAGS) $(LDFLAGS) -rpath $(APACHE_LIBEXECDIR) -avoid-version -module $(APACHE_LDFLAGS)
++LINK_APACHE_MOD = $(LIBTOOL) $(LTFLAGS) --mode=link $(CC) $(LT_LDFLAGS) $(CFLAGS) $(LDFLAGS) $(SVN_APR_LIBS) $(SVN_APRUTIL_LIBS) -rpath $(APACHE_LIBEXECDIR) -avoid-version -module $(APACHE_LDFLAGS)
+ 
+ # Special LDFLAGS for some libraries
+ libsvn_auth_gnome_keyring_LDFLAGS = @libsvn_auth_gnome_keyring_LDFLAGS@
+@@ -235,7 +236,7 @@
+ COMPILE_RB_WRAPPER = $(LIBTOOL) $(LTFLAGS) --mode=compile $(SWIG_RB_COMPILE) $(LT_CFLAGS) $(CPPFLAGS) $(SWIG_RB_INCLUDES) -prefer-pic -c -o $@
+ 
+ # these commands link the wrapper objects into an extension library/module
+-LINK_PY_WRAPPER = $(LIBTOOL) $(LTFLAGS) --mode=link $(SWIG_PY_LINK) $(SWIG_LDFLAGS) -rpath $(swig_pydir) -avoid-version -module
++LINK_PY_WRAPPER = $(LIBTOOL) $(LTFLAGS) --mode=link $(SWIG_PY_LINK) $(SWIG_LDFLAGS) $(SWIG_PY_LIBS) -rpath $(swig_pydir) -avoid-version -module
+ LINK_RB_WRAPPER = $(LIBTOOL) $(LTFLAGS) --mode=link $(SWIG_RB_LINK) $(SWIG_LDFLAGS) -rpath $(swig_rbdir) -avoid-version -module
+ 
+ LINK_JAVAHL_CXX = $(LIBTOOL) $(LTCXXFLAGS) --mode=link $(CXX) $(LT_LDFLAGS) $(CXXFLAGS) $(LDFLAGS) $(LT_CXX_LIBADD) -rpath $(libdir)
+@@ -736,7 +737,14 @@
  	./config.status subversion/bindings/swig/perl/native/Makefile.PL
  
  $(SWIG_PL_DIR)/native/Makefile: $(SWIG_PL_DIR)/native/Makefile.PL
 -	cd $(SWIG_PL_DIR)/native; $(PERL) Makefile.PL
-+	(cd $(SWIG_PL_DIR)/native; $(PERL) Makefile.PL)
-+	(cd $(SWIG_PL_DIR)/native; \
-+	 for file in Makefile Makefile.client Makefile.delta Makefile.fs Makefile.ra \
-+			Makefile.repos Makefile.wc ; do \
-+		cp -f $$file $$file.orig ; \
-+		sed -e 's;^LD_RUN_PATH.*$$;LD_RUN_PATH=/usr/lib/svn;g' $$file.orig >$$file ; \
-+		rm -f $$file.orig ; \
-+	 done)
++	( cd $(SWIG_PL_DIR)/native; $(PERL) Makefile.PL )
++	( cd $(SWIG_PL_DIR)/native; \
++	    for file in Makefile Makefile.client Makefile.delta \
++	    Makefile.fs Makefile.ra Makefile.repos Makefile.wc ; do \
++	    cp -f $$file $$file.orig ; \
++	    sed -e 's;^LD_RUN_PATH.*$$;LD_RUN_PATH=/usr/lib/svn;g' $$file.orig >$$file ; \
++	    rm -f $$file.orig ; \
++	done )
  
  # There is a "readlink -f" command on some systems for the same purpose,
  # but it's not as portable (e.g. Mac OS X doesn't have it).  These should
-@@ -696,13 +703,13 @@
+@@ -750,13 +758,13 @@
  	if test "`$(READLINK_PL) $(SWIG_PL_DIR)`" != "`$(READLINK_PL) $(SWIG_PL_SRC_DIR)`"; then \
  	  ln -sf $(SWIG_PL_SRC_DIR)/native/*.c $(SWIG_PL_DIR)/native; \
  	fi
 -	cd $(SWIG_PL_DIR)/native; $(MAKE) OPTIMIZE="" OTHERLDFLAGS="$(SWIG_LDFLAGS)"
-+	cd $(SWIG_PL_DIR)/native; $(MAKE) -e OPTIMIZE="" OTHERLDFLAGS="$(SWIG_LDFLAGS)" LD_RUN_PATH="/usr/lib/svn"
++	cd $(SWIG_PL_DIR)/native; $(MAKE) OPTIMIZE="" OTHERLDFLAGS="$(SWIG_LDFLAGS)" LD_RUN_PATH="/usr/lib/svn"
  
  check-swig-pl: swig-pl swig-pl-lib
  	cd $(SWIG_PL_DIR)/native; $(MAKE) test
  
  install-swig-pl: swig-pl install-swig-pl-lib
 -	cd $(SWIG_PL_DIR)/native; $(MAKE) install
-+	cd $(SWIG_PL_DIR)/native; $(MAKE) -e install_vendor DESTDIR=$(DESTDIR) LD_RUN_PATH=""
++	cd $(SWIG_PL_DIR)/native; $(MAKE) install_vendor DESTDIR=$(DESTDIR) LD_RUN_PATH=""
  
  EXTRACLEAN_SWIG_PL=rm -f $(SWIG_PL_SRC_DIR)/native/svn_*.c \
                           $(SWIG_PL_SRC_DIR)/native/core.c
