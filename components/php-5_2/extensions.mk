@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -27,13 +27,20 @@ include $(WS_TOP)/make-rules/ips.mk
 
 include ../common.mk
 
+#
+# phpize-proto runs autoconf
+#
+# Patching PHP_EXECUTABLE will enable extensions to run the test target
+#
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	($(CLONEY) $(SOURCE_DIR) $(@D)); \
 	$(GSED) -e "s@^builddir=.*@builddir=$(BUILD_DIR_32)@" \
 		< $(COMPONENT_DIR)/../php-sapi/phpize-proto \
 		> $(COMPONENT_DIR)/phpize-proto; \
 	cd $(BUILD_DIR_32); \
-	$(ENV) -i $(ENVLINE) $(CONFIG_SHELL) $(COMPONENT_DIR)/phpize-proto)
+	$(ENV) -i $(ENVLINE) $(CONFIG_SHELL) $(COMPONENT_DIR)/phpize-proto; \
+	$(GSED) -i -e "s@^PHP_EXECUTABLE=.*@PHP_EXECUTABLE=$(COMPONENT_DIR)/../php-sapi/build/$(MACH32)/sapi/cli/php@" \
+		configure )
 
 
 CONFIGURE_OPTIONS  += \

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 PHP_REL=		5.2
@@ -34,6 +34,7 @@ APACHE_VAR_PREFIX=/var/$(APACHE_DIR_PREFIX)
 APACHE_ETC_PREFIX=/etc/$(APACHE_DIR_PREFIX)
 APACHE2_SAMPLES_CONFDIR=$(APACHE_ETC_PREFIX)/samples-conf.d
 APACHE2_CONFDIR=$(APACHE_ETC_PREFIX)/conf.d
+APACHE2_PHP=$(APACHE2_CONFDIR)/php
 APACHE2_EXTDIR=$(APACHE_USR_PREFIX)/libexec
 PHP_ROOT=/usr/php/$(PHP_REL)
 PHP_BIN=$(PHP_ROOT)/bin
@@ -194,7 +195,11 @@ COMPONENT_INSTALL_ENV += $(CONFIGURE_ENV)
 
 COMPONENT_TEST_ENV += $(CONFIGURE_ENV)
 COMPONENT_TEST_TARGETS = test
+# Turns off question at the end of the test run.
+COMPONENT_TEST_ENV += NO_INTERACTION=1
 
+# We provide an .ini file for some extensions.
+# Extensions without .ini's get handled below.
 FIX_CONFIG_FILES = ( \
 	$(MKDIR) $(COMPONENT_DIR)/tmp; \
 	cd $(COMPONENT_DIR)/tmp; \

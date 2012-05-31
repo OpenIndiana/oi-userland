@@ -1,6 +1,6 @@
 '\" te
-.\" Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
-.TH php 1 "01 Aug 2008" "SunOS 5.11" "User Commands"
+.\" Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+.TH php 1 "10 May 2012" "SunOS 5.11" "User Commands"
 
 .SH "NAME"
 php \- PHP Command Line Interface
@@ -60,18 +60,24 @@ You can view PHP's documentation with man(1)  by including
 /usr/php/man  in the MANPATH environment variable. Please note that
 running catman(1M) on the PHP manual pages is not supported.  For
 other Solaris-specific details, see the NOTES section below.
-.SH "ATTRIBUTES"
+.SH ATTRIBUTES
 See attributes(5) for descriptions of the  following  attributes:
 .sp
 .TS
-tab() allbox;
-cw(2.750000i)| cw(2.750000i)
-lw(2.750000i)| lw(2.750000i).
-ATTRIBUTE TYPEATTRIBUTE VALUE
-AvailabilityT{
-web/php-52, web/php-52/documentation, web/php-52/extension/php-mysql
+box;
+cdp-1 | cdp-1
+l | l .
+ATTRIBUTE TYPE	            ATTRIBUTE VALUE            
+=
+Availability	T{
+web/php-52, web/server/apache-22/module/apache-php52
 T}
-Interface StabilityUncommitted\&.
+=
+	T{
+web/php-53, web/server/apache-22/module/apache-php53
+T}
+=
+Stability	Uncommitted
 .TE
 .sp
 .SH "SEE ALSO"
@@ -81,7 +87,7 @@ http://www.php.net/docs.php PHP Documentation Page
 http://pear.php.net/        PEAR Repository
 http://pecl.php.net/        PECL Repository
 .fi
-.SH "NOTES"
+.SH NOTES
 .PP
 PHP has been built to be largefile-aware and to use
 64-bit integers, although the interpreter and the library
@@ -90,5 +96,31 @@ themselves are 32-bit applications (LP32).
 If you wish to build and install PHP add-on modules from PECL,
 you can do so using the phpize script  -  see phpize(1) for
 details.
+.PP
+Solaris 11 Update 1 ships with PHP 5.2.17 and 5.3.10.
+To install PHP 5.2.17 use the pkg(1) command:
+.PP
+pkg install web/php-52 web/server/apache-22/module/apache-php52
+.PP
+To install PHP 5.3.10:
+.PP
+pkg install web/php-53 web/server/apache-22/module/apache-php53
+.PP
+To set the default version of PHP change the pkg mediator value:
+.PP
+pkg set-mediator -V 5.3 php
+.PP
+where php mediator values are 5.2 or 5.3.
+.PP
+The configuration of php is controlled by editing the php
+configuration file for that specific version:
+.PP
+/etc/apache2/2.2/conf.d/php/php5.2.conf
+.br
+or
+.br
+/etc/apache2/2.2/conf.d/php/php5.3.conf
+.PP
+The pkg mediator will select the proper file to use.
 .PP
 PHP is a recursive acronym which stands for PHP Hypertext Pages.

@@ -18,33 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/web/server/apache-22/module/apache-php5@5.2.17,$(BUILD_VERSION)
-set name=pkg.summary value="PHP Server for Apache Web Server"
-set name=info.classification value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.source-url value=http://us.php.net/get/php-5.2.17.tar.gz/from/this/mirror
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/538
+# Legacy package information for renamed apache-php5 to apache-php52
+
+set name=pkg.fmri \
+    value=pkg:/web/server/apache-22/module/apache-php5@5.2.17-0.175.1.0.0.18
+set name=pkg.renamed value=true
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license apache-php5.license license='PHP, GPLv2, LGPLv2, Apache v2.0'
-
-dir path=etc
-dir path=etc/apache2
-dir path=etc/apache2/2.2
-dir path=etc/apache2/2.2/conf.d
-dir path=usr
-dir path=usr/apache2
-dir path=usr/apache2/2.2
-dir path=usr/apache2/2.2/libexec
-file path=etc/apache2/2.2/conf.d/php5.2.conf mode=0644 \
-    original_name=SUNWapch22-php52:etc/apache2/2.2/conf.d/php5.2.conf \
-    preserve=renamenew
-file path=usr/apache2/2.2/libexec/mod_php5.2.so
-link path=usr/apache2/2.2/libexec/mod_php5.so target=mod_php5.2.so
-
-# need generic dependency on PHP itself
-depend fmri=web/php-52@5.2.17 type=require
+depend fmri=web/server/apache-22/module/apache-php52@5.2.17-0.175.1.0.0.18 \
+    type=require

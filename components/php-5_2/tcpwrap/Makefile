@@ -33,7 +33,7 @@ COMPONENT_PROJECT_URL=	http://pecl.php.net/package/tcpwrap/
 
 include ../extensions.mk
 
-CONFIGURE_OPTIONS  += --with-tcpwrap=/usr/sfw
+CONFIGURE_OPTIONS  += --with-tcpwrap=/usr
 
 COMPONENT_POST_INSTALL_ACTION = ( \
 	$(FIX_CONFIG_FILES_2); \
