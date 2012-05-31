@@ -28,13 +28,13 @@ include ../../make-rules/shared-macros.mk
 PATH=$(dir $(CC)):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		subversion
-COMPONENT_VERSION=	1.6.16
+COMPONENT_VERSION=	1.7.5
 COMPONENT_PROJECT_URL=	http://subversion.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:54046728853cd33985101471c068df93cf742f16313642113622a5dfd8bff90c
-COMPONENT_ARCHIVE_URL=	http://subversion.tigris.org/downloads/$(COMPONENT_ARCHIVE)
+	sha256:cb102a437335a8921f00cef9bf730d84527713f1a5091e3e1eb2f16402f85dc1
+COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -67,7 +67,7 @@ CFLAGS += $(CPP_LARGEFILES)
 COMPONENT_POST_CONFIGURE_ACTION = \
     ( $(CLONEY) $(SOURCE_DIR) $(@D) ; \
     cd $(SOURCE_DIR) ; \
-	$(CONFIG_SHELL) ./build/transform_sql.sh ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_32)/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
+	$(PYTHON) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_32)/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
 
 COMPONENT_BUILD_TARGETS = all swig-py swig-pl javahl
 COMPONENT_INSTALL_TARGETS = install install-lib \
