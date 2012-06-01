@@ -1,0 +1,12 @@
+--- rsyslog/runtime/srutils.c	Mon Jan  9 06:05:17 2012
++++ rsyslog/runtime/srutils.c	Thu May 24 11:11:58 2012
+@@ -76,6 +76,9 @@
+ #	define LOG_AUTHPRIV LOG_AUTH
+ #endif
+ syslogName_t	syslogFacNames[] = {
++#if defined(LOG_AUDIT)
++	{"audit",        LOG_AUDIT},
++#endif
+ 	{"auth",         LOG_AUTH},
+ 	{"authpriv",     LOG_AUTHPRIV},
+ 	{"cron",         LOG_CRON},
