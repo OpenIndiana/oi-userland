@@ -64,30 +64,36 @@
  * The followings will be removed when changes in sol_uverbs_ioctl.h
  * are delivered through ON.
  */
-#if !defined(UVERBS_IOCTL_NO_CMDS) || (UVERBS_IOCTL_NO_CMDS < 3)
 
-#define	UVERBS_IOCTL_GET_PKEYS		UVERBS_IOCTL | 0x02
-#define	UVERBS_IOCTL_GET_GIDS		UVERBS_IOCTL | 0x03
+#if	(IB_USER_MAD_SOLARIS_ABI_VERSION == 1)
+#undef	IB_USER_MAD_SOLARIS_ABI_VERSION
+#define	IB_USER_MAD_SOLARIS_ABI_VERSION	2
+#endif
 
-typedef struct sol_uverbs_pkey_s {
-	int32_t		uverbs_solaris_abi_version;
-	int16_t		uverbs_port_num;
-	int16_t		uverbs_pkey_cnt;
-	int16_t		uverbs_pkey_start_index;
-	int8_t		uverbs_pad1[6];		/* Padding for alignment */
-	uint16_t	uverbs_pkey[];
-} sol_uverbs_pkey_t;
+#if	(IB_USER_VERBS_SOLARIS_ABI_VERSION == 1)
+#undef	IB_USER_VERBS_SOLARIS_ABI_VERSION
+#define	IB_USER_VERBS_SOLARIS_ABI_VERSION	2
+#define	IB_USER_VERBS_V2_IN_V1
+typedef struct sol_uverbs_hca_info_v2_s {
+	char		uverbs_hca_psid_string[MAXNAMELEN];
+	char		uverbs_hca_ibdev_name[MAXNAMELEN];
+	char		uverbs_hca_driver_name[MAXNAMELEN];
+	uint32_t	uverbs_hca_driver_instance;
+	uint32_t	uverbs_hca_vendorid;
+	uint16_t	uverbs_hca_deviceid;
+	uint16_t	uverbs_hca_devidx;
+	uint8_t		uverbs_hca_pad1[4];
+} sol_uverbs_hca_info_v2_t;
 
-typedef struct sol_uverbs_gid_s {
-	int32_t		uverbs_solaris_abi_version;
-	int16_t		uverbs_port_num;
-	int16_t		uverbs_gid_cnt;
-	int16_t		uverbs_gid_start_index;
-	int8_t		uverbs_pad1[6];		/* Padding for alignment */
-	uint8_t		uverbs_gids[][16];
-} sol_uverbs_gid_t;
+typedef struct sol_uverbs_info_v2_s {
+	int32_t			uverbs_abi_version;
+	int32_t			uverbs_solaris_abi_version;
+	int16_t			uverbs_hca_cnt;
+	int8_t			uverbs_pad1[6];    /* Padding for alignment */
+	sol_uverbs_hca_info_v2_t	uverbs_hca_info[];
+} sol_uverbs_info_v2_t;
+#endif
 
-#endif	/* !defined(UVERBS_IOCTL_NO_CMDS) || (UVERBS_IOCTL_NO_CMDS < 3) */
 /* end of sol_uverbs_ioctl.h contents */
 
 /*
@@ -99,7 +105,7 @@ typedef struct sol_uverbs_gid_s {
 #define	RDMA_USER_CM_MAX_ABI_VERSION	4 /* rdma_cma_abi.h */
 
 #define	MLX4	0
-#define	MAX_HCAS				16
+#define	MAX_HCAS				260
 #define	MAX_HCA_PORTS				16
 #define	HW_DRIVER_MAX_NAME_LEN			20
 #define	UVERBS_KERNEL_SYSFS_NAME_BASE		"uverbs"
@@ -159,6 +165,7 @@ typedef struct ibdev_cache_info_s {
 	uint_t		ibd_valid;
 	uint_t		ibd_hw_rev;
 	char		ibd_node_guid_str[20];
+	char		ibd_node_guid_external_str[20];
 	char		ibd_sys_image_guid[20];
 	char		ibd_fw_ver[16];
 	char		ibd_name[8];
@@ -517,6 +524,13 @@ ibdev_cache_init()
 		    (unsigned)(guid >> 16) & 0xffff,
 		    (unsigned)(guid >>  0) & 0xffff);
 
+		guid = ntohll(device_attr.node_guid_external);
+		sprintf(info.ibd_node_guid_external_str, "%04x:%04x:%04x:%04x",
+		    (unsigned)(guid >> 48) & 0xffff,
+		    (unsigned)(guid >> 32) & 0xffff,
+		    (unsigned)(guid >> 16) & 0xffff,
+		    (unsigned)(guid >>  0) & 0xffff);
+
 		guid = ntohll(device_attr.sys_image_guid);
 		sprintf(info.ibd_sys_image_guid, "%04x:%04x:%04x:%04x",
 		    (unsigned)(guid >> 48) & 0xffff,
@@ -528,7 +542,12 @@ ibdev_cache_init()
 		info.ibd_hw_rev = device_attr.hw_ver;
 
 		ibdev = ibv_get_device_name(*dev_list);
-		p = ibdev + (strlen(ibdev)-1);
+		if (strncmp(ibdev, "mlx4_", 5) == 0) {
+			p = ibdev + (strlen("mlx4_"));
+		} else {
+			fprintf(stderr, "Invalid device %s\n", ibdev);
+			goto error_exit3;
+		}
 		dev_num = atoi(p);
 		(void) strcpy(info.ibd_name, ibdev);
 
@@ -560,8 +579,13 @@ uverbs_cache_init()
 	uverbs_cache_info_t	info;
 	int			dev_num, fd, i, bufsize, hca_cnt;
 	char			uverbs_devpath[MAXPATHLEN];
+#ifndef	IB_USER_VERBS_V2_IN_V1
 	sol_uverbs_info_t	*uverbs_infop;
 	sol_uverbs_hca_info_t	*hca_infop;
+#else
+	sol_uverbs_info_v2_t	*uverbs_infop;
+	sol_uverbs_hca_info_v2_t	*hca_infop;
+#endif
 	char *buf;
 
 	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s%d",
@@ -578,12 +602,20 @@ uverbs_cache_init()
 		goto error_exit1;
 	}
 
+#ifndef	IB_USER_VERBS_V2_IN_V1
 	bufsize = sizeof (sol_uverbs_info_t) + sizeof (sol_uverbs_hca_info_t) *
 	    MAX_HCAS;
-
+#else
+	bufsize = sizeof (sol_uverbs_info_v2_t) +
+	    sizeof (sol_uverbs_hca_info_v2_t) * MAX_HCAS;
+#endif
 	buf = malloc(bufsize);
 	memset(buf, 0, bufsize);
+#ifndef	IB_USER_VERBS_V2_IN_V1
 	uverbs_infop = (sol_uverbs_info_t *)buf;
+#else
+	uverbs_infop = (sol_uverbs_info_v2_t *)buf;
+#endif
 	uverbs_infop->uverbs_hca_cnt = MAX_HCAS;
 
 	if (ioctl(fd, UVERBS_IOCTL_GET_HCA_INFO, uverbs_infop) != 0) {
@@ -619,7 +651,7 @@ uverbs_cache_init()
 		    hca_infop->uverbs_hca_driver_name,
 		    hca_infop->uverbs_hca_driver_instance);
 
-		if (! strncmp(hca_infop->uverbs_hca_ibdev_name, "mlx4_", 5))
+		if (strncmp(hca_infop->uverbs_hca_ibdev_name, "mlx4_", 5) == 0)
 			info.uvc_ibdev_abi_version =
 			    MLX4_UVERBS_MAX_ABI_VERSION;
 		else {
@@ -879,7 +911,13 @@ get_device_info(const char *devname)
 	}
 	(void) pthread_mutex_unlock(&ibdev_cache_mutex);
 
-	p = p+(strlen(p)-1);
+	if (strncmp(p, "mlx4_", 5) == 0) {
+		p = p+(strlen("mlx4_"));
+	} else {
+		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
+		    "device: %s\n", p);
+		return (NULL);
+	}
 	dev_num = atoi(p);
 
 	if (dev_num >= MAX_HCAS) {
@@ -1083,8 +1121,14 @@ infiniband_verbs(char *path, char *buf, size_t size)
 	if (!uverbs_cache_initialized) {
 		if (uverbs_cache_init())
 			uverbs_cache_initialized = B_TRUE;
-		else
+		else {
+			(void) pthread_mutex_unlock(&uverbs_cache_mutex);
+#ifdef	DEBUG
+			fprintf(stderr, "failed: to init uverbs cache %s\n",
+			    strerror(errno));
+#endif
 			goto exit;
+		}
 	}
 	(void) pthread_mutex_unlock(&uverbs_cache_mutex);
 
@@ -1353,8 +1397,16 @@ init_boardid_index(ibdev_cache_info_t *ibd_info)
 		goto boardid_err;
 	}
 	if (!uverbs_cache_initialized) {
-		uverbs_cache_init();
-		uverbs_cache_initialized = B_TRUE;
+		if (uverbs_cache_init())
+			uverbs_cache_initialized = B_TRUE;
+		else {
+			(void) pthread_mutex_unlock(&uverbs_cache_mutex);
+#ifdef	DEBUG
+			fprintf(stderr, "failed: to init uverbs cache %s\n",
+			    strerror(errno));
+#endif
+			goto boardid_err;
+		}
 	}
 	(void) pthread_mutex_unlock(&uverbs_cache_mutex);
 
@@ -1431,6 +1483,9 @@ infiniband(char *path, char *buf, size_t size)
 
 		if (strcmp(path, "node_guid") == 0) {
 			len = 1 + sprintf(buf, "%s", info->ibd_node_guid_str);
+		} else if (strcmp(path, "node_guid_external") == 0) {
+			len = 1 + sprintf(buf, "%s",
+			    info->ibd_node_guid_external_str);
 		} else if (strcmp(path, "sys_image_guid") == 0) {
 			len = 1 + sprintf(buf, "%s", info->ibd_sys_image_guid);
 		} else if (strcmp(path, "fw_ver") == 0) {
@@ -1468,8 +1523,14 @@ infiniband_mad(char *path, char *buf, size_t size)
 	if (!umad_cache_initialized) {
 		if (umad_cache_init())
 			umad_cache_initialized = B_TRUE;
-		else
+		else {
+			(void) pthread_mutex_unlock(&umad_cache_mutex);
+#ifdef	DEBUG
+			fprintf(stderr, "failed: to init umad cache %s\n",
+			    strerror(errno));
+#endif
 			goto exit;
+		}
 	}
 	(void) pthread_mutex_unlock(&umad_cache_mutex);
 

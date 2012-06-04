@@ -378,7 +378,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 +#if defined(__SVR4) && defined(__sun)
 +#include <fcntl.h>
 +#include <sys/stat.h>
-+#include <sys/sysmacros.h>
++#include <sys/mkdev.h>
 +#endif
  
  #include "ibverbs.h"
@@ -556,7 +556,36 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device.c
 --- /tmp/846623/libibverbs-1.1.4/src/device.c	Thu Feb  3 01:53:17 2011
 +++ libibverbs-1.1.4/src/device.c	Fri Feb 11 04:02:31 2011
-@@ -128,8 +128,13 @@
+@@ -122,6 +122,28 @@
+ }
+ default_symver(__ibv_get_device_guid, ibv_get_device_guid);
+ 
++uint64_t __ibv_get_device_guid_external(struct ibv_device *device)
++{
++	char attr[24];
++	uint64_t guid = 0;
++	uint16_t parts[4];
++	int i;
++
++	if (ibv_read_sysfs_file(device->ibdev_path, "node_guid_external",
++				attr, sizeof attr) < 0)
++		return 0;
++
++	if (sscanf(attr, "%hx:%hx:%hx:%hx",
++		   parts, parts + 1, parts + 2, parts + 3) != 4)
++		return 0;
++
++	for (i = 0; i < 4; ++i)
++		guid = (guid << 16) | parts[i];
++
++	return htonll(guid);
++}
++default_symver(__ibv_get_device_guid_external, ibv_get_device_guid_external);
++
+ struct ibv_context *__ibv_open_device(struct ibv_device *device)
+ {
+ 	char *devpath;
+@@ -128,8 +150,13 @@
  	int cmd_fd;
  	struct ibv_context *context;
  
@@ -570,7 +599,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device
  
  	/*
  	 * We'll only be doing writes, but we need O_RDWR in case the
-@@ -163,6 +168,9 @@
+@@ -163,6 +190,9 @@
  	int async_fd = context->async_fd;
  	int cmd_fd   = context->cmd_fd;
  	int cq_fd    = -1;
@@ -580,7 +609,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device
  
  	if (abi_ver <= 2) {
  		struct ibv_abi_compat_v2 *t = context->abi_compat;
-@@ -172,6 +180,11 @@
+@@ -172,6 +202,11 @@
  
  	context->device->ops.free_context(context);
  
@@ -660,7 +689,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
 +#if defined(__SVR4) && defined(__sun)
 +#include <fcntl.h>
 +#include <sys/stat.h>
-+#include <sys/sysmacros.h>
++#include <sys/mkdev.h>
 +#endif
  
  #include "ibverbs.h"
@@ -766,7 +795,15 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	return 0;
  }
  
-@@ -218,6 +283,45 @@
+@@ -120,6 +185,7 @@
+ 	memset(device_attr->fw_ver, 0, sizeof device_attr->fw_ver);
+ 	*raw_fw_ver			       = resp.fw_ver;
+ 	device_attr->node_guid 		       = resp.node_guid;
++	device_attr->node_guid_external	       = resp.node_guid_external;
+ 	device_attr->sys_image_guid 	       = resp.sys_image_guid;
+ 	device_attr->max_mr_size 	       = resp.max_mr_size;
+ 	device_attr->page_size_cap 	       = resp.page_size_cap;
+@@ -218,6 +284,45 @@
  	return 0;
  }
  
@@ -812,7 +849,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  int ibv_cmd_dealloc_pd(struct ibv_pd *pd)
  {
  	struct ibv_dealloc_pd cmd;
-@@ -259,6 +363,34 @@
+@@ -259,6 +364,34 @@
  	return 0;
  }
  
@@ -847,7 +884,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  int ibv_cmd_dereg_mr(struct ibv_mr *mr)
  {
  	struct ibv_dereg_mr cmd;
-@@ -272,6 +404,32 @@
+@@ -272,6 +405,32 @@
  	return 0;
  }
  
@@ -880,7 +917,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  static int ibv_cmd_create_cq_v2(struct ibv_context *context, int cqe,
  				struct ibv_cq *cq,
  				struct ibv_create_cq *new_cmd, size_t new_cmd_size,
-@@ -315,7 +473,19 @@
+@@ -315,7 +474,19 @@
  	cmd->user_handle   = (uintptr_t) cq;
  	cmd->cqe           = cqe;
  	cmd->comp_vector   = comp_vector;
@@ -900,7 +937,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->reserved      = 0;
  
  	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
-@@ -637,7 +807,19 @@
+@@ -637,7 +808,19 @@
  	cmd->max_send_sge    = attr->cap.max_send_sge;
  	cmd->max_recv_sge    = attr->cap.max_recv_sge;
  	cmd->max_inline_data = attr->cap.max_inline_data;
@@ -920,7 +957,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->qp_type 	     = attr->qp_type;
  	cmd->is_srq 	     = !!attr->srq;
  	cmd->srq_handle      = attr->qp_type == IBV_QPT_XRC ?
-@@ -1406,4 +1588,3 @@
+@@ -1406,4 +1589,3 @@
  		return errno;
  	return 0;
  }
@@ -1183,7 +1220,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  /*
   * This file must be kept in sync with the kernel's version of
-@@ -94,6 +98,15 @@
+@@ -94,6 +98,11 @@
  	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP,
  	IB_USER_VERBS_CMD_REG_XRC_RCV_QP,
  	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP,
@@ -1191,54 +1228,19 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
 +	IB_USER_VERBS_CMD_DEREG_MR_RELAXED,
 +	IB_USER_VERBS_CMD_FLUSH_RELAXED_MR,
 +	IB_USER_VERBS_CMD_ALLOC_SHPD,
-+	IB_USER_VERBS_CMD_SHARE_PD,
-+#if defined(__SVR4) && defined(__sun)
-+	IB_USER_VERBS_CMD_QUERY_GID,
-+	IB_USER_VERBS_CMD_QUERY_PKEY
-+#endif
++	IB_USER_VERBS_CMD_SHARE_PD
  };
  
  /*
-@@ -235,6 +248,38 @@
- 	__u8  reserved[2];
- };
- 
-+#if defined(__SVR4) && defined(__sun)
-+struct ibv_query_gid {
-+	__u32 command;
-+	__u16 in_words;
-+	__u16 out_words;
-+	__u64 response;
-+	__u32 gid_index;
-+	__u8  port_num;
-+	__u8  reserved[3];
-+	__u64 driver_data;
-+};
-+
-+struct ibv_query_gid_resp {
-+	__u8  gid[16];
-+};
-+
-+struct ibv_query_pkey {
-+	__u32 command;
-+	__u16 in_words;
-+	__u16 out_words;
-+	__u64 response;
-+	__u32 pkey_index;
-+	__u8  port_num;
-+	__u8  reserved[3];
-+	__u64 driver_data;
-+};
-+
-+struct ibv_query_pkey_resp {
-+	__u16 pkey;
-+	__u16 reserved;
-+};
-+#endif
- struct ibv_alloc_pd {
- 	__u32 command;
- 	__u16 in_words;
-@@ -243,10 +288,57 @@
+@@ -160,6 +169,7 @@
+ struct ibv_query_device_resp {
+ 	__u64 fw_ver;
+ 	__u64 node_guid;
++	__u64 node_guid_external;
+ 	__u64 sys_image_guid;
+ 	__u64 max_mr_size;
+ 	__u64 page_size_cap;
+@@ -243,10 +253,57 @@
  	__u64 driver_data[0];
  };
  
@@ -1296,7 +1298,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_dealloc_pd {
  	__u32 command;
  	__u16 in_words;
-@@ -280,6 +372,13 @@
+@@ -280,6 +337,13 @@
  	__u32 mr_handle;
  };
  
@@ -1310,7 +1312,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_create_comp_channel {
  	__u32 command;
  	__u16 in_words;
-@@ -304,10 +403,25 @@
+@@ -304,10 +368,25 @@
  	__u64 driver_data[0];
  };
  
@@ -1336,7 +1338,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_kern_wc {
  	__u64  wr_id;
-@@ -363,7 +477,11 @@
+@@ -363,7 +442,11 @@
  struct ibv_resize_cq_resp {
  	__u32 cqe;
  	__u32 reserved;
@@ -1348,7 +1350,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  };
  
  struct ibv_destroy_cq {
-@@ -460,6 +578,14 @@
+@@ -460,6 +543,14 @@
  	__u64 driver_data[0];
  };
  
@@ -1363,7 +1365,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_create_qp_resp {
  	__u32 qp_handle;
  	__u32 qpn;
-@@ -469,7 +595,20 @@
+@@ -469,7 +560,20 @@
  	__u32 max_recv_sge;
  	__u32 max_inline_data;
  	__u32 reserved;
@@ -1384,7 +1386,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_qp_dest {
  	__u8  dgid[16];
-@@ -817,12 +956,29 @@
+@@ -817,12 +921,29 @@
  	__u64 driver_data[0];
  };
  
@@ -1414,7 +1416,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_modify_srq {
  	__u32 command;
-@@ -946,6 +1102,11 @@
+@@ -946,6 +1067,11 @@
  	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP_V2 = -1,
  	IB_USER_VERBS_CMD_REG_XRC_RCV_QP_V2 = -1,
  	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP_V2 = -1,
@@ -1484,7 +1486,15 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  
  #ifdef __cplusplus
  #  define BEGIN_C_DECLS extern "C" {
-@@ -297,7 +300,8 @@
+@@ -105,6 +108,7 @@
+ struct ibv_device_attr {
+ 	char			fw_ver[64];
+ 	uint64_t		node_guid;
++	uint64_t		node_guid_external;
+ 	uint64_t		sys_image_guid;
+ 	uint64_t		max_mr_size;
+ 	uint64_t		page_size_cap;
+@@ -297,7 +301,8 @@
  	IBV_ACCESS_REMOTE_WRITE		= (1<<1),
  	IBV_ACCESS_REMOTE_READ		= (1<<2),
  	IBV_ACCESS_REMOTE_ATOMIC	= (1<<3),
@@ -1494,7 +1504,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  };
  
  struct ibv_pd {
-@@ -305,6 +309,10 @@
+@@ -305,6 +310,10 @@
  	uint32_t		handle;
  };
  
@@ -1505,7 +1515,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  enum ibv_rereg_mr_flags {
  	IBV_REREG_MR_CHANGE_TRANSLATION	= (1 << 0),
  	IBV_REREG_MR_CHANGE_PD		= (1 << 1),
-@@ -425,6 +433,14 @@
+@@ -425,6 +434,14 @@
  	uint32_t		max_inline_data;
  };
  
@@ -1520,7 +1530,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  struct ibv_qp_init_attr {
  	void		       *qp_context;
  	struct ibv_cq	       *send_cq;
-@@ -743,6 +759,12 @@
+@@ -743,6 +760,12 @@
  	int			(*detach_mcast)(struct ibv_qp *qp, const union ibv_gid *gid,
  						uint16_t lid);
  	void			(*async_event)(struct ibv_async_event *event);
@@ -1533,7 +1543,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  };
  
  struct ibv_context {
-@@ -749,6 +771,13 @@
+@@ -749,6 +772,13 @@
  	struct ibv_device      *device;
  	struct ibv_context_ops	ops;
  	int			cmd_fd;
@@ -1547,7 +1557,19 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  	int			async_fd;
  	int			num_comp_vectors;
  	pthread_mutex_t		mutex;
-@@ -858,6 +887,20 @@
+@@ -797,6 +827,11 @@
+ uint64_t ibv_get_device_guid(struct ibv_device *device);
+ 
+ /**
++ * ibv_get_device_guid_external - Return device's node external GUID
++ */
++uint64_t ibv_get_device_guid_external(struct ibv_device *device);
++
++/**
+  * ibv_open_device - Initialize device for use
+  */
+ struct ibv_context *ibv_open_device(struct ibv_device *device);
+@@ -858,6 +893,20 @@
  struct ibv_pd *ibv_alloc_pd(struct ibv_context *context);
  
  /**
@@ -1568,7 +1590,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
   * ibv_dealloc_pd - Free a protection domain
   */
  int ibv_dealloc_pd(struct ibv_pd *pd);
-@@ -869,11 +912,27 @@
+@@ -869,11 +918,27 @@
  			  size_t length, int access);
  
  /**
@@ -1778,7 +1800,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/examples/rc_pingpong.c libibverbs-1.1.4/
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/device_list.c libibverbs-1.1.4/examples/device_list.c
 --- /tmp/846623/libibverbs-1.1.4/examples/device_list.c	Sun Nov  1 06:47:19 2009
 +++ libibverbs-1.1.4/examples/device_list.c	Fri Feb 11 04:02:18 2011
-@@ -36,8 +36,10 @@
+@@ -36,16 +36,32 @@
  
  #include <stdio.h>
  
@@ -1787,8 +1809,82 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/examples/device_list.c libibverbs-1.1.4/
  #include <byteswap.h>
 +#endif
  
++#include <stdlib.h>
++#include <string.h>
  #include <infiniband/verbs.h>
  #include <infiniband/arch.h>
+ 
++/*
++ * Structure to hold the data printed by ibv_devices.
++ */
++typedef struct dev_print_s {
++	char			name[24];
++	unsigned long long	guid;
++	uint8_t			is_pf;
++} dev_print_t;
++
+ int main(int argc, char *argv[])
+ {
+ 	struct ibv_device **dev_list;
+ 	int num_devices, i;
++	unsigned long long	guid_external;
++	dev_print_t	*dp;
++	int	print_col = 0;
+ 
+ 	dev_list = ibv_get_device_list(&num_devices);
+ 	if (!dev_list) {
+@@ -53,15 +69,45 @@
+ 		return 1;
+ 	}
+ 
+-	printf("    %-16s\t   node GUID\n", "device");
+-	printf("    %-16s\t----------------\n", "------");
++	dp = (dev_print_t *)malloc(sizeof(dev_print_t) * num_devices);
+ 
+-	for (i = 0; i < num_devices; ++i) {
+-		printf("    %-16s\t%016llx\n",
+-		       ibv_get_device_name(dev_list[i]),
+-		       (unsigned long long) ntohll(ibv_get_device_guid(dev_list[i])));
++	for (i = (num_devices - 1); i >= 0; --i) {
++		strcpy(dp[i].name, ibv_get_device_name(dev_list[i]));
++
++		dp[i].guid = (unsigned long long) ntohll(ibv_get_device_guid(dev_list[i]));
++		guid_external = (unsigned long long) ntohll(ibv_get_device_guid_external(dev_list[i]));
++		if (dp[i].guid != guid_external) {
++			print_col = 1;
++			dp[i].is_pf = 0;
++		} else
++			dp[i].is_pf = 1;
+ 	}
+ 
++	if (print_col) {
++		printf("    %-16s\t   node GUID\t        type\n", "device");
++		printf("    %-16s\t----------------\t----\n", "------");
++		/* First print PFs */
++		for (i = (num_devices - 1); i >= 0; --i) {
++			if (dp[i].is_pf)
++				printf("    %-16s\t%016llx\t %s\n",
++					dp[i].name, dp[i].guid, "PF");
++		}
++		/* print VFs */
++		for (i = (num_devices - 1); i >= 0; --i) {
++			if (!dp[i].is_pf)
++				printf("    %-16s\t%016llx\t %s\n",
++					dp[i].name, dp[i].guid, "VF");
++		}
++	} else {
++		printf("    %-16s\t   node GUID\n", "device");
++		printf("    %-16s\t----------------\n", "------");
++		for (i = (num_devices - 1); i >= 0; --i) {
++			printf("    %-16s\t%016llx\n",
++				dp[i].name, dp[i].guid);
++		}
++	}
++	free(dp);
++
+ 	ibv_free_device_list(dev_list);
+ 
+ 	return 0;
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/devinfo.c libibverbs-1.1.4/examples/devinfo.c
 --- /tmp/846623/libibverbs-1.1.4/examples/devinfo.c	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/examples/devinfo.c	Fri Feb 11 04:02:19 2011
