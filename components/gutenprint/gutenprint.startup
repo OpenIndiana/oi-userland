@@ -20,10 +20,13 @@ if [ -z "$SVC" -o -z "$PROP" ] ; then
 	exit 1
 fi
 
+# package name
+PKG="pkg:/print/filter/gutenprint"
+
 # determine the package version
-VER=`pkg search -Hlo pkg.fmri "$0" | cut -d @ -f 2`
+VER=`pkg contents -H -a name=pkg.fmri -o value $PKG | cut -d @ -f 2`
 if [ -z "$VER" ] ; then
-	echo "$0: Failed to read package version."
+	echo "$0: Failed to read $PKG package version."
 	exit 1
 fi
 
