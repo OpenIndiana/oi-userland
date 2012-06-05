@@ -3094,11 +3094,11 @@ new file mode 100644
 index 0000000..3a38660
 --- /dev/null
 +++ isisd/isis_trill.c
-@@ -0,0 +1,2346 @@
+@@ -0,0 +1,2348 @@
 +/*
 + * IS-IS Rout(e)ing protocol - isis_trill.c
 + *
-+ * Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
 + *
 + * This program is free software; you can redistribute it and/or modify it 
 + * under the terms of the GNU General Public Licenseas published by the Free 
@@ -3119,6 +3119,7 @@ index 0000000..3a38660
 +#include <libdllink.h>
 +#include <libdlbridge.h>
 +#include <libdlvlan.h>
++#include <libnetcfg.h>
 +#include <net/trill.h>
 +
 +#include "thread.h"
@@ -5311,7 +5312,8 @@ index 0000000..3a38660
 +  dladm_status_t status;
 +  char errmsg[DLADM_STRSIZE];
 +
-+  if ((status = dladm_open (&dlhandle)) != DLADM_STATUS_OK)
++  if ((status = dladm_open (&dlhandle, NETADM_ACTIVE_PROFILE))
++      != DLADM_STATUS_OK)
 +    {
 +      zlog_err ("%s: unable to open datalink control: %s",
 +          area->trill->name, dladm_status2str(status, errmsg));
