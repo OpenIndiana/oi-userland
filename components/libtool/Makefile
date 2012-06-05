@@ -99,6 +99,7 @@ $(SOURCE_DIR_1)/.prep:        $(SOURCE_DIR_1)/.unpacked
 
 prep::	$(SOURCE_DIR_1)/.prep
 
+CLEAN_PATHS += $(SOURCE_DIR_1)
 
 # common targets
 build:		$(BUILD_32_and_64)

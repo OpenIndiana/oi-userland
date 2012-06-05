@@ -60,7 +60,10 @@ install:			$(INSTALL_32)
 download::
 	@echo 'No downloads for this component'
 
-CLEAN_PATH +=			$(SOURCE_DIR)/.prep
+clobber::	clean
+
+clean:: 
+	rm -f $(SOURCE_DIR)/.prep
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
