@@ -46,6 +46,7 @@ CONFIGURE_OPTIONS += --with-x
 CONFIGURE_OPTIONS += --enable-charset
 CONFIGURE_OPTIONS += --without-ext2undel
 CONFIGURE_OPTIONS += --with-screen=slang
+CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 
