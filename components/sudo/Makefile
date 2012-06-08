@@ -54,6 +54,7 @@ CONFIGURE_OPTIONS +=	--without-lecture
 CONFIGURE_OPTIONS +=	--with-ignore-dot
 CONFIGURE_OPTIONS +=	--with-bsm-audit
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/sudo
+CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
 
 COMPONENT_BUILD_ENV +=	CC=$(CC) CXX=$(CXX)
 COMPONENT_BUILD_ENV +=	"CFLAGS=$(CFLAGS)"

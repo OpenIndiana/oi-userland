@@ -38,6 +38,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
+COMPONENT_PRE_BUILD_ACTION = $(MKDIR) $(@D)/tmp 
+COMPONENT_BUILD_ENV += "ANT_OPTS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
+
 # common targets
 build:		$(BUILD_32)
 
