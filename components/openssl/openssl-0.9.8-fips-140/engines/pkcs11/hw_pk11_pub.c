@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  */
 
@@ -1864,11 +1864,14 @@ pk11_get_private_rsa_key(RSA* rsa, PK11_SESSION *sp)
 	 * problem. If the application expects the private components to be read
 	 * from the keystore then that is not a supported way of usage.
 	 */
-	if (rsa->d != NULL && (sp->opdata_rsa_d_num = BN_dup(rsa->d)) == NULL)
+	if (rsa->d != NULL)
 		{
-		PK11err(PK11_F_GET_PRIV_RSA_KEY, PK11_R_MALLOC_FAILURE);
-		rollback = CK_TRUE;
-		goto err;
+		if ((sp->opdata_rsa_d_num = BN_dup(rsa->d)) == NULL)
+			{
+			PK11err(PK11_F_GET_PRIV_RSA_KEY, PK11_R_MALLOC_FAILURE);
+			rollback = CK_TRUE;
+			goto err;
+			}
 		}
 	else
 		sp->opdata_rsa_d_num = NULL;
