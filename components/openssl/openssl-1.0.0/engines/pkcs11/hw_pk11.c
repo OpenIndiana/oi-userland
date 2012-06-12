@@ -818,6 +818,7 @@ static CK_SLOT_ID SLOTID = 0;
 static CK_BBOOL pk11_library_initialized = CK_FALSE;
 static CK_BBOOL pk11_atfork_initialized = CK_FALSE;
 static int pk11_pid = 0;
+static ENGINE* pk11_engine = NULL;
 
 static DSO *pk11_dso = NULL;
 
@@ -1032,10 +1033,31 @@ static ENGINE *engine_pk11(void)
 	return (ret);
 	}
 
+int
+pk11_engine_loaded()
+	{
+	ENGINE *e;
+	int rtrn = 0;
+
+	if ((e = ENGINE_by_id(engine_pk11_id)) != NULL)
+		{
+		rtrn = 1;
+		ENGINE_free(e);
+		}
+	return (rtrn);
+	}
+
 void
 ENGINE_load_pk11(void)
 	{
 	ENGINE *e_pk11 = NULL;
+
+	/*
+	 * Do not attempt to load the engine twice!
+	 * Multiple instances would share static variables from this file.
+	 */
+	if (pk11_engine_loaded())
+		return;
 
 	/*
 	 * Do not use dynamic PKCS#11 library on Solaris due to
@@ -1188,6 +1210,14 @@ static int pk11_library_init(ENGINE *e)
 	CK_ULONG ul_state_len;
 	int any_slot_found;
 	int i;
+
+	if (e != pk11_engine)
+		{
+		if (pk11_engine)
+			ENGINE_free(pk11_engine);
+		pk11_engine = e;
+		ENGINE_up_ref(e);
+		}
 
 	/*
 	 * pk11_library_initialized is set to 0 in pk11_finish() which is called
@@ -1371,6 +1401,15 @@ static int pk11_finish(ENGINE *e)
 	{
 	int i;
 
+	/*
+	 * Make sure, right engine instance is being destroyed.
+	 * Engine e may be the wrong instance if
+	 * 	1) either someone calls ENGINE_load_pk11 twice
+	 * 	2) or last ref. to an already finished engine is being destroyed
+	 */
+	if (e != pk11_engine)
+		goto err;
+
 	if (pk11_dso == NULL)
 		{
 		PK11err(PK11_F_FINISH, PK11_R_NOT_LOADED);
@@ -1426,6 +1465,8 @@ static int pk11_finish(ENGINE *e)
 	pFuncList = NULL;
 	pk11_library_initialized = CK_FALSE;
 	pk11_pid = 0;
+	ENGINE_free(pk11_engine);
+	pk11_engine = NULL;
 	/*
 	 * There is no way how to unregister atfork handlers (other than
 	 * unloading the library) so we just free the locks. For this reason
