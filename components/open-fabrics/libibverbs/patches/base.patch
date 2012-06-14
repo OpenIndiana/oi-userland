@@ -308,15 +308,45 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_devices.1 libibverbs-1.1.4/man/i
  
  .SH SYNOPSIS
  .B ibv_devices
-@@ -8,7 +8,7 @@
+@@ -8,8 +8,37 @@
  
  .SH DESCRIPTION
  .PP
 -List RDMA devices available for use from userspace.
 +List InfiniBand devices available for use from userspace.
  
++On SR-IOV capable systems, if a domain is configured with
++VFs (Virtual Function), ibv_devices lists for each IB device
++the node GUID and the type (PF or VF).  In this case, the PF
++devices are displayed before the VF devices.  The following
++shows the results of running ibv_devices on a domain with
++one PF and two VFs:
++
++    device                 node GUID            type
++    ------              ----------------        ----
++    mlx4_2              00212800013f3126         PF
++    mlx4_0              00212d00013f3126         VF
++    mlx4_1              00212900013f3126         VF
++
++If all of the IB devices are PFs, only node GUIDs are
++listed.  The following shows the results of running
++ibv_devices on a domain with one PF and no VFs:
++
++    device                 node GUID
++    ------              ----------------
++    mlx4_0              00212800013f3126
++
++On systems which are not SR-IOV capable only node GUIDs are
++listed.
++
++    device                 node GUID
++    ------              ----------------
++    mlx4_0              0021280001a0e4d8
++    mlx4_1              0021280001a0e754
++
  .SH SEE ALSO
  .BR ibv_devinfo (1)
+ 
 diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_create_qp.3 libibverbs-1.1.4/man/ibv_create_qp.3
 --- /tmp/846623/libibverbs-1.1.4/man/ibv_create_qp.3	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/man/ibv_create_qp.3	Tue May  3 13:50:06 2011
