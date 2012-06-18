@@ -39,9 +39,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# build modules PIC (needed for Python 2.7)
-CFLAGS += $(CC_PIC)
-
 # common targets
 build:		$(BUILD_32_and_64)
 

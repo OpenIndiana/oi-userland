@@ -41,9 +41,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-# build modules PIC (needed for Python 2.7)
-CFLAGS += $(CC_PIC)
-
 # to make sure that the docs get installed in the right place.
 PYTHON_DATA = /usr
 
