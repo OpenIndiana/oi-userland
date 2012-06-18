@@ -40,9 +40,6 @@ include $(WS_TOP)/make-rules/ips.mk
 # pycups requires VERSION to be defined. Originally set in the package Makefile
 CFLAGS += -DVERSION=\\\"$(COMPONENT_VERSION)\\\"
 
-# build modules PIC (needed for Python 2.7)
-CFLAGS += $(CC_PIC)
-
 # common targets
 build:		$(BUILD_32_and_64)
 
