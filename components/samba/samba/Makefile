@@ -123,6 +123,7 @@ $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
 CFLAGS.gcc	+=	-std=c99
 
+CPPFLAGS +=	-DSAMBA_VERSION_VENDOR_SUFFIX=\\\"Samba_bugs_8729_8952_fixed\\\"
 CPPFLAGS +=	$(CPP_LARGEFILES)
 CPPFLAGS +=	$(CPP_XPG6MODE)
 CPPFLAGS +=	-I$(PROTOUSRINCDIR)/samba -I$(PROTOUSRINCDIR)/samba/ldap6 -I$(BUILD_DIR_$(BITS))/include
