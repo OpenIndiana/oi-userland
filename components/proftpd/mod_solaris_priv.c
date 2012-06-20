@@ -139,106 +139,13 @@ MODRET set_solaris_priv_engine(cmd_rec *cmd) {
 /* Command handlers
  */
 
-/* The pre and post adat command handlers first enable
- * and then disable file_dac_read. This is done in order
- * for the mod_gss module to be able to read /etc/krb5/krb5.keytab,
- * when the proftpd server runs as user/group ftp/ftp.
- */
-MODRET solaris_priv_pre_adat(cmd_rec *cmd) {
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_DAC_READ, NULL);
-    return PR_DECLINED(cmd);
-}
-
-MODRET solaris_priv_post_adat(cmd_rec *cmd) {
-    priv_set(PRIV_OFF, PRIV_EFFECTIVE, PRIV_FILE_DAC_READ, NULL);
-    return PR_DECLINED(cmd);
-}
-
-static void set_privs(void) {
-    /* This is for PAM code which decides to create an audit session
-     * when the user is logging into ftp as root.
-     */
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_AUDIT, NULL);
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_AUDIT, NULL);
-
-    /* Needed to call seteuid(). */
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_SETID, NULL);
-
-    /* Needed to call settaskid(). */
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_TASKID, NULL);
-
-    /* Needed to access /dev/urandom. */
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_SYS_DEVICES, NULL);
-
-    /* Needed for pam_unix_cred to chown files. */
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_CHOWN_SELF, NULL);
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_CHOWN, NULL);
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_OWNER, NULL);
-
-    /* Needed to access /var/adm/wtmpx. */
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_FILE_DAC_WRITE, NULL);
-
-    /* Enable chroot for anonymous login. */
-    priv_set(PRIV_ON, PRIV_EFFECTIVE, PRIV_PROC_CHROOT, NULL);
-}
-
-/* Setup priviledges before the user responds to the user prompt
- * from the ftp server so that a secure Kerberos session can be
- * established and also the user can login as root
- * when the ftp server is running as user/group ftp/ftp.
- */
-MODRET solaris_priv_pre_pass(cmd_rec *cmd) {
-    set_privs();
-    return PR_DECLINED(cmd);
-}
-
-static priv_set_t* allocset(void) {
-  priv_set_t* ret;
-
-  if ((ret = priv_allocset()) == NULL) {
-    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": priv_allocset: %s",
-      strerror(errno));
-    pr_signals_unblock();
-    end_login(1);
-  }
-
-  return ret;
-}
-
-static void delset(priv_set_t *sp, const char *priv) {
-  if (priv_delset(sp, priv) != 0) {
-    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": priv_delset: %s",
-      strerror(errno));
-    pr_signals_unblock();
-    end_login(1);
-  }
-}
-
-static void addset(priv_set_t *sp, const char *priv) {
-  if (priv_addset(sp, priv) != 0) {
-    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": priv_addset: %s",
-      strerror(errno));
-    pr_signals_unblock();
-    end_login(1);
-  }
-}
-
-static void _setppriv(priv_op_t op, priv_ptype_t which, priv_set_t *set) {
-  if (setppriv(op, which, set) != 0) {
-    pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": setppriv: %s",
-      strerror(errno));
-    pr_signals_unblock();
-    end_login(1);
-  }
-}
-
 /* The POST_CMD handler for "PASS" is only called after PASS has
  * successfully completed, which means authentication is successful,
  * so we can "tweak" our root access down to almost nothing.
  */
 MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   int res = 0;
-  priv_set_t *ps = NULL;
+  priv_set_t *p, *i;
 
   if (!use_privs)
     return PR_DECLINED(cmd);
@@ -254,75 +161,69 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
    * never need.
    */
 
-  ps = allocset();
-  priv_basicset(ps);
-  delset(ps, PRIV_PROC_EXEC);
-  delset(ps, PRIV_PROC_FORK);
-  delset(ps, PRIV_PROC_INFO);
-  delset(ps, PRIV_PROC_SESSION);
-  _setppriv(PRIV_SET, PRIV_INHERITABLE, ps);
+  i = priv_allocset();
+  priv_basicset(i);
+  priv_delset(i, PRIV_PROC_EXEC);
+  priv_delset(i, PRIV_PROC_FORK);
+  priv_delset(i, PRIV_PROC_INFO);
+  priv_delset(i, PRIV_PROC_SESSION);
+  setppriv(PRIV_SET, PRIV_INHERITABLE, i);
 
-  priv_basicset(ps);
+  p = priv_allocset();
+  priv_basicset(p);
 
-  addset(ps, PRIV_NET_PRIVADDR);
-  addset(ps, PRIV_PROC_AUDIT);
+  priv_addset(p, PRIV_NET_PRIVADDR);
+  priv_addset(p, PRIV_PROC_AUDIT);
 
-  delset(ps, PRIV_PROC_EXEC);
-  delset(ps, PRIV_PROC_FORK);
-  delset(ps, PRIV_PROC_INFO);
-  delset(ps, PRIV_PROC_SESSION);
+  priv_delset(p, PRIV_PROC_EXEC);
+  priv_delset(p, PRIV_PROC_FORK);
+  priv_delset(p, PRIV_PROC_INFO);
+  priv_delset(p, PRIV_PROC_SESSION);
 
-  /* If the proftpd process is not running as root, but as user ftp,
-   * then this is necessary in order to make the setreuid work.
-   * Without this, the setreuid would fail. The PRIV_PROC_SETID privilege 
-   * is removed afterwards.
-   */
-  addset(ps, PRIV_PROC_SETID);
+  if (solaris_priv_flags & PRIV_USE_SETID)
+    priv_addset(p, PRIV_PROC_SETID);
 
   /* Add any of the configurable privileges. */
   if (solaris_priv_flags & PRIV_USE_FILE_CHOWN)
-    addset(ps, PRIV_FILE_CHOWN);
+    priv_addset(p, PRIV_FILE_CHOWN);
 
   if (solaris_priv_flags & PRIV_USE_FILE_CHOWN_SELF)
-    addset(ps, PRIV_FILE_CHOWN_SELF);
+    priv_addset(p, PRIV_FILE_CHOWN_SELF);
 
   if (solaris_priv_flags & PRIV_USE_DAC_READ)
-    addset(ps, PRIV_FILE_DAC_READ);
+    priv_addset(p, PRIV_FILE_DAC_READ);
 
   if (solaris_priv_flags & PRIV_USE_DAC_WRITE)
-    addset(ps, PRIV_FILE_DAC_WRITE);
+    priv_addset(p, PRIV_FILE_DAC_WRITE);
 
   if (solaris_priv_flags & PRIV_USE_DAC_SEARCH)
-    addset(ps, PRIV_FILE_DAC_SEARCH);
+    priv_addset(p, PRIV_FILE_DAC_SEARCH);
 
   if (solaris_priv_flags & PRIV_USE_FILE_OWNER)
-    addset(ps, PRIV_FILE_OWNER);
+    priv_addset(p, PRIV_FILE_OWNER);
 
   if (solaris_priv_flags & PRIV_DROP_FILE_WRITE)
-    delset(ps, PRIV_FILE_WRITE);
+    priv_delset(p, PRIV_FILE_WRITE);
 
-  _setppriv(PRIV_SET, PRIV_PERMITTED, ps);
-  _setppriv(PRIV_SET, PRIV_EFFECTIVE, ps);
+  res = setppriv(PRIV_SET, PRIV_PERMITTED, p);
+  res = setppriv(PRIV_SET, PRIV_EFFECTIVE, p);
 
   if (setreuid(session.uid, session.uid) == -1) {
     pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": setreuid: %s",
-      strerror(errno));
+	strerror(errno));
     pr_signals_unblock();
     end_login(1);
   }
-
-  if (!(solaris_priv_flags & PRIV_USE_SETID)) {
-    delset(ps, PRIV_PROC_SETID);
-    _setppriv(PRIV_SET, PRIV_PERMITTED, ps);
-    _setppriv(PRIV_SET, PRIV_EFFECTIVE, ps);
-  }
-
-  priv_freeset(ps);
-
   pr_signals_unblock();
 
-  /* That's it!  Disable all further id switching */
-  session.disable_id_switching = TRUE;
+  if (res != -1) {
+    /* That's it!  Disable all further id switching */
+    session.disable_id_switching = TRUE;
+
+  } else {
+    pr_log_pri(PR_LOG_NOTICE, MOD_SOLARIS_PRIV_VERSION ": attempt to configure "
+      "privileges failed, reverting to normal operation");
+  }
 
   return PR_DECLINED(cmd);
 }
@@ -331,7 +232,7 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
  */
 
 static int solaris_priv_sess_init(void) {
-  /* Check to see if the lowering of capabilities has been disabled in the
+  /* Check to see if the lowering of privileges has been disabled in the
    * configuration file.
    */
   if (use_privs) {
@@ -341,12 +242,12 @@ static int solaris_priv_sess_init(void) {
     if (solaris_priv_engine &&
         *solaris_priv_engine == FALSE) {
       pr_log_debug(DEBUG3, MOD_SOLARIS_PRIV_VERSION
-        ": lowering of capabilities disabled");
+        ": lowering of privileges disabled");
       use_privs = FALSE;
     }
   }
 
-  /* Check for which specific capabilities to include/exclude. */
+  /* Check for which specific privileges to include/exclude. */
   if (use_privs) {
     int use_setuid = FALSE;
     config_rec *c;
@@ -392,7 +293,7 @@ static int solaris_priv_sess_init(void) {
     /* We also need to check for things which want to revoke root privs
      * altogether: mod_exec, mod_sftp, and the RootRevoke directive.
      * Revoking root privs completely requires the SETUID/SETGID
-     * capabilities.
+     * privileges.
      */
 
     if (use_setuid == FALSE &&
@@ -448,9 +349,6 @@ static conftable solaris_priv_conftab[] = {
 };
 
 static cmdtable solaris_priv_cmdtab[] = {
-  { PRE_CMD, C_ADAT, G_NONE, solaris_priv_pre_adat, FALSE, FALSE },
-  { POST_CMD, C_ADAT, G_NONE, solaris_priv_post_adat, FALSE, FALSE },
-  { PRE_CMD, C_PASS, G_NONE, solaris_priv_pre_pass, FALSE, FALSE },
   { POST_CMD, C_PASS, G_NONE, solaris_priv_post_pass, FALSE, FALSE },
   { 0, NULL }
 };
@@ -462,7 +360,7 @@ module solaris_priv_module = {
   0x20,
 
   /* Module name */
-  "cap",
+  "privileges",
 
   /* Module configuration handler table */
   solaris_priv_conftab,
