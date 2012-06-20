@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2012, Oracle and/or its affiliates. All rights reserved.
  *
  * U.S. Government Rights - Commercial software. Government users are subject
  * to the Sun Microsystems, Inc. standard license agreement and applicable
@@ -83,8 +83,11 @@ get_motd(netsnmp_mib_handler *handler,
     case MODE_GET:
         motd[0] = '\0';
         fd = fopen("/etc/motd", "r");
-        fgets(motd, sizeof (motd), fd);
-        fclose(fd);
+
+	if (fd != NULL) {
+	    fgets(motd, sizeof (motd), fd);
+	    fclose(fd);
+	}
 
         snmp_set_var_typed_value(requests->requestvb, ASN_OCTET_STR,
                                 (u_char *) motd, strlen(motd));
