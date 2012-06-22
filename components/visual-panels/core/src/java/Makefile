@@ -24,7 +24,7 @@
 #
 
 MSUBDIRS = vpanels
-ASUBDIRS = util sleeklock smf smf-old
+ASUBDIRS = util sleeklock smf-old
 GSUBDIRS = lib
 
 lint:
