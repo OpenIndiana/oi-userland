@@ -30,4 +30,16 @@ APPS=	vp-time.desktop
 
 INSTAPPS=$(APPS:%=$(PROTO_APPS)/%)
 
-install: $(INSTAPPS)
+CLEAN_FILES=$(APPS) $(APPS).in.h
+
+install: build $(INSTAPPS)
+
+build: extract merge
+
+extract:
+	$(INTLTOOL_EXTRACT) --type=gettext/ini $(APPS).in
+
+merge: po
+	$(INTLTOOL_MERGE) ./po $(APPS).in $(APPS) -d -u
+
+po: extract
