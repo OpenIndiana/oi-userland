@@ -34,5 +34,16 @@ INSTAPPS=$(APPS:%=$(PROTO_APPS)/%)
 
 INSTAUTOSTART=$(AUTOSTART:%=$(PROTO_AUTOSTART)/%)
 
-install: $(INSTAPPS) $(INSTAUTOSTART)
+CLEAN_FILES=$(APPS) $(APPS).in.h
 
+install: build $(INSTAPPS) $(INSTAUTOSTART)
+
+build: extract merge
+
+extract:
+	$(INTLTOOL_EXTRACT) --type=gettext/ini $(APPS).in
+
+merge: po
+	$(INTLTOOL_MERGE) ./po $(APPS).in $(APPS) -d -u
+
+po: extract
