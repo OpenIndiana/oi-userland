@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.6.7
+COMPONENT_VERSION=	1.8.0
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1e9d806d02ebfc3a70b948b4e82d19ba5bcde671eb229b18569149f95681f17b
+    sha256:4cb802f116bbdcfa71afbc842dbfacd8f96594f4b221cbb5616d5c17bc696a62
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -41,7 +41,6 @@ CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
 CONFIGURE_OPTIONS +=	--disable-usr-local
 CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
-CONFIGURE_OPTIONS +=	--disable-idl2wrs
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
