@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2007, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2007, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 # smf_method(5) start/stop script required for server DNS
@@ -42,6 +42,9 @@ I=`/usr/bin/basename $0`
 case "$method" in
 'start')
     configuration_file=/etc/named.conf
+    rndc_config_file=/etc/rndc.conf
+    rndc_key_file=/etc/rndc.key
+    rndc_cmd_opts="-a"
     cmdopts=""
     properties="debug_level ip_interfaces listen_on_port
 	threads chroot_dir configuration_file server"
@@ -102,7 +105,25 @@ case "$method" in
     # If chroot option is set, note zones(5) are preferred, then
     # configuration file lives under chroot directory.
     if [ "${chroot_dir}" != "" ]; then
-      configuration_file=${chroot_dir}/${configuration_file}
+      configuration_file=${chroot_dir}${configuration_file}
+      rndc_config_file=${chroot_dir}${rndc_config_file}
+      rndc_key_file=${chroot_dir}${rndc_key_file}
+      rndc_cmd_opts="${rndc_cmd_opts} -t ${chroot_dir}"
+    fi
+
+    # Check if the rndc config file exists.
+    if [ ! -f ${rndc_config_file} ]; then
+      # If not, check if the default rndc key file exists.
+      if [ ! -f ${rndc_key_file} ]; then
+        echo "$I: Creating default rndc key file: ${rndc_key_file}." >&2
+        /usr/sbin/rndc-confgen ${rndc_cmd_opts}
+        if [ $? -ne 0 ]; then
+          echo "$I : Warning: rndc configuration failed! Use of 'rndc' to" \
+		    "control 'named' may fail and 'named' may report further error" \
+		    "messages to the system log. This is not fatal. For more" \
+		    "information see rndc(1M) and rndc-confgen(1M)." >&2
+        fi
+      fi
     fi
 
     # Check configuration file exists.
