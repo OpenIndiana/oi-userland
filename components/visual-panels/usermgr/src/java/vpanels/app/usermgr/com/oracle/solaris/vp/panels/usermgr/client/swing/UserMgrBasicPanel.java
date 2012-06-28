@@ -247,6 +247,9 @@ public class UserMgrBasicPanel extends SettingsPanel
 	this.umo = umo;
 	descriptor = paneldesc;
 
+	// Update the user information
+	umo.setUser(descriptor.getUser(umo.getName()));
+
 	// Set the current and saved values for each property
 	nameField.setText(umo.getName());
 	Long uidValue = new Long(umo.getUserId());
@@ -269,6 +272,14 @@ public class UserMgrBasicPanel extends SettingsPanel
 	    if (savedGid == g.getGroupID())
 		savedGname = g.getGroupName();
 	}
+
+	// If a group name not found for the gid, show the gid itself
+	if (gname == null) {
+	    gname = "" + gid;
+	    savedGname = gname;
+	    groupCombo.addItem(gname);
+	}
+
 	groupProperty.update(savedGname, false);
 	groupCombo.setSelectedItem(gname);
 

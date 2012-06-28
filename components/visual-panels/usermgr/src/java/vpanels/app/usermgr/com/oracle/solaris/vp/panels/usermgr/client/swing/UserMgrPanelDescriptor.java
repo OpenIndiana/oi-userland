@@ -61,7 +61,7 @@ public class UserMgrPanelDescriptor
 
     public static final String USER_TYPE_NORMAL = "normal";
     public static final String SCOPE_FILES = "files";
-    public static final String MATCH_ALL = "*";
+    public static final String MATCH_ALL = "";
 
     public static final String PASSWORD = "PASSWORD";
     public static final String NOTACTIVATED = "NOTACTIVATED";
@@ -526,6 +526,23 @@ public class UserMgrPanelDescriptor
 
     public void connectionFailed(ConnectionEvent ce) {
 	setStatusText(Finder.getString("usermgr.error.connfailed"));
+    }
+
+    //
+    // Get the user for the given user name
+    //
+    public User getUser(String name) {
+
+	User user = null;
+
+	try {
+	    user = getUserMgrBean().getUser(name);
+        } catch (ObjectException e) {
+            getLog().log(Level.SEVERE, "Error getting user " +
+		name + " : ", e);
+	}
+
+	return user;
     }
 
     //
