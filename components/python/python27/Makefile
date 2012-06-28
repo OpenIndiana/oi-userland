@@ -43,8 +43,17 @@ include $(WS_TOP)/make-rules/lint-libraries.mk
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; autoheader ; autoconf)
 
+# we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
+# python-config
+CC +=	$(CFLAGS)
+
+C99MODE=
+CPPFLAGS +=	-IPython
+
 # to find the ncurses headers
 CPPFLAGS +=	-I/usr/include/ncurses
+# enable large files how they did in JDS
+CPPFLAGS +=	-D_LARGEFILE64_SOURCE
 
 # libffi for _ctypes
 CPPFLAGS +=	$(shell pkg-config --cflags-only-I libffi)
@@ -89,8 +98,8 @@ CONFIGURE_OPTIONS  +=		--enable-ipv6
 CONFIGURE_OPTIONS  +=		ac_cv_opt_olimit_ok=no
 CONFIGURE_OPTIONS  +=		ac_cv_olimit_ok=no
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS  +=		BASECFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
 CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
