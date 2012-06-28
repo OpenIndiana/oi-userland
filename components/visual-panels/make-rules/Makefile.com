@@ -23,7 +23,7 @@
 # Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-CFLAGS += -g -mt -errwarn=%all
+CFLAGS += -g -mt -errwarn=%all -xc99=all
 CPPFLAGS += -I../../daemon -I$(ROOT)/usr/include
 LDLIBS += -L$(PROTO_LIB) -ladr
 
