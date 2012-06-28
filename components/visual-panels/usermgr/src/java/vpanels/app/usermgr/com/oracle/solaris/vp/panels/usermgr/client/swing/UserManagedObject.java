@@ -184,7 +184,7 @@ public class UserManagedObject
 	return sb.toString();
     }
 
-    public void setUser(User user, char[] password) {
+    public void setUser(User user) {
 
 	userNameProperty.update(user.getUsername(), true);
 	userDescProperty.update(user.getDescription(), true);
@@ -193,9 +193,20 @@ public class UserManagedObject
 	homeDirProperty.update(user.getHomeDirectory(), true);
 	shellProperty.update(user.getDefaultShell(), true);
 
-	passProperty.update(password, true);
+	// Additional attributes
+	rolesProperty.update(listToString(user.getRoles()), true);
+	rightsProperty.update(listToString(user.getProfiles()), true);
+	authsProperty.update(listToString(user.getAuths()), true);
+	groupsProperty.update(listToString(user.getGroups()), true);
+
     }
 
+    public void setUser(User user, char[] password) {
+
+	setUser(user);
+
+	passProperty.update(password, true);
+    }
     //
     // UserManagedObject methods
     //
