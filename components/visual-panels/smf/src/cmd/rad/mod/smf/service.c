@@ -39,13 +39,14 @@
  */
 /*ARGSUSED*/
 static svcerr_t
-rt_read_instances(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_instances(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	char iname[max_name + 1];
 	svcerr_t se;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
-	data_t *array = data_new_array(&t_array_string, 5);
+	adr_data_t *array = adr_data_new_array(&adr_t_array_string, 5);
 
 	scf_instance_t *instance = scf_instance_create(h);
 	scf_iter_t *iter = scf_iter_create(h);
@@ -70,7 +71,8 @@ rt_read_instances(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 			se = smfu_maperr(scf_error());
 			goto done;
 		}
-		(void) array_add(array, data_new_string(iname, lt_copy));
+		(void) adr_array_add(array,
+		    adr_data_new_string(iname, LT_COPY));
 	}
 
 	if (err != 0)
@@ -88,7 +90,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Service_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_instances, instance_getdata(inst), data,
 	    error));

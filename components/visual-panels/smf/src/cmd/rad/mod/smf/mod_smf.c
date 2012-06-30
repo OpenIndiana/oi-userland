@@ -75,8 +75,8 @@
  */
 
 struct read_services_data {
-	data_t *rsd_result;
-	data_t *rsd_insts;
+	adr_data_t *rsd_result;
+	adr_data_t *rsd_insts;
 };
 
 /*
@@ -91,7 +91,8 @@ read_services_inst_cb(scf_handle_t *scfhandle, scf_instance_t *instance,
 	struct read_services_data *rsd = arg;
 
 	assert(rsd->rsd_insts != NULL);
-	(void) array_add(rsd->rsd_insts, data_new_string(iname, lt_copy));
+	(void) adr_array_add(rsd->rsd_insts,
+	    adr_data_new_string(iname, LT_COPY));
 
 	return (SE_OK);
 }
@@ -109,24 +110,25 @@ read_services_svc_cb(scf_handle_t *scfhandle, scf_service_t *service,
 {
 	struct read_services_data *rsd = arg;
 
-	rsd->rsd_insts = data_new_array(&t_array_string, 5);
+	rsd->rsd_insts = adr_data_new_array(&adr_t_array_string, 5);
 
-	data_t *sdata = data_new_struct(&t__Service);
-	struct_set(sdata, "fmri",
-	    data_new_string(smfu_fmri_alloc(sname, NULL), lt_free));
-	struct_set(sdata, "objectName",
-	    data_new_name(smfu_name_alloc(sname, NULL)));
-	struct_set(sdata, "instances", rsd->rsd_insts);
-	(void) array_add(rsd->rsd_result, sdata);
+	adr_data_t *sdata = adr_data_new_struct(&t__Service);
+	adr_struct_set(sdata, "fmri",
+	    adr_data_new_string(smfu_fmri_alloc(sname, NULL), LT_FREE));
+	adr_struct_set(sdata, "objectName",
+	    adr_data_new_name(smfu_name_alloc(sname, NULL)));
+	adr_struct_set(sdata, "instances", rsd->rsd_insts);
+	(void) adr_array_add(rsd->rsd_result, sdata);
 
 	return (SE_OK);
 }
 
 /*ARGSUSED*/
 static svcerr_t
-rt_read_services(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_services(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
-	data_t *result = data_new_array(&t_array__Service, 200);
+	adr_data_t *result = adr_data_new_array(&t_array__Service, 200);
 	struct read_services_data rsd = { result, NULL };
 
 	svcerr_t se = smfu_iter_svcs(h, read_services_svc_cb,
@@ -139,13 +141,13 @@ rt_read_services(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 /* ARGSUSED */
 conerr_t
 interface_Master_read_services(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_services, NULL, data, error));
 }
 
 struct read_instances_data {
-	data_t *rid_result;
+	adr_data_t *rid_result;
 
 	/*
 	 * For efficiency, reuse a single set of objects.
@@ -170,10 +172,10 @@ read_instances_cb(scf_handle_t *scfhandle, scf_instance_t *instance,
 	struct read_instances_data *rid = arg;
 	svcerr_t se;
 
-	data_t *inst = NULL;
+	adr_data_t *inst = NULL;
 	if ((se = create_Instance(instance, sname, iname, &inst,
 	    rid->rid_pg, rid->rid_prop, rid->rid_val)) == SE_OK)
-		(void) array_add(rid->rid_result, inst);
+		(void) adr_array_add(rid->rid_result, inst);
 
 	return (se == SE_NOTFOUND ? SE_OK : se);
 }
@@ -185,7 +187,8 @@ read_instances_cb(scf_handle_t *scfhandle, scf_instance_t *instance,
  */
 /*ARGSUSED*/
 static svcerr_t
-rt_read_instances(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_instances(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	struct read_instances_data rid;
 	svcerr_t se;
@@ -199,7 +202,7 @@ rt_read_instances(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 		goto out;
 	}
 
-	rid.rid_result = data_new_array(&t_array__Instance, 200);
+	rid.rid_result = adr_data_new_array(&t_array__Instance, 200);
 	se = smfu_iter_svcs(h, NULL, read_instances_cb, &rid);
 
 out:
@@ -214,14 +217,14 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_Master_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_instances, NULL, data, error));
 }
 
 struct listdata {
 	adr_name_t *ld_pattern;
-	data_t *ld_result;
+	adr_data_t *ld_result;
 };
 
 /*
@@ -246,8 +249,8 @@ list_insts(scf_handle_t *scfhandle, scf_instance_t *instance, const char *sname,
 		return (SE_FATAL);
 
 	if (adr_name_match(name, ld->ld_pattern))
-		(void) array_add(ld->ld_result,
-		    data_new_string(adr_name_tostr(name), lt_free));
+		(void) adr_array_add(ld->ld_result,
+		    adr_data_new_string(adr_name_tostr(name), LT_FREE));
 	adr_name_rele(name);
 
 	return (SE_OK);
@@ -268,8 +271,8 @@ list_svcs(scf_handle_t *scfhandle, scf_service_t *service, const char *sname,
 		return (SE_FATAL);
 
 	if (adr_name_match(name, ld->ld_pattern))
-		(void) array_add(ld->ld_result,
-		    data_new_string(adr_name_tostr(name), lt_free));
+		(void) adr_array_add(ld->ld_result,
+		    adr_data_new_string(adr_name_tostr(name), LT_FREE));
 	adr_name_rele(name);
 
 	return (SE_OK);
@@ -286,10 +289,10 @@ struct arg_listf {
  */
 /*ARGSUSED*/
 static svcerr_t
-rt_listf(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_listf(scf_handle_t *h, void *arg, adr_data_t **ret, adr_data_t **error)
 {
 	struct arg_listf *rtarg = (struct arg_listf *)arg;
-	data_t *result = data_new_array(&t_array_string, 300);
+	adr_data_t *result = adr_data_new_array(&adr_t_array_string, 300);
 	struct listdata ld = { rtarg->pattern, result };
 
 	svcerr_t se = smfu_iter_svcs(h, rtarg->instance ? NULL : list_svcs,
@@ -303,7 +306,7 @@ rt_listf(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
  * Dynamic namespace list handler.
  */
 static conerr_t
-smf_listf(adr_name_t *pattern, data_t **names, void *arg)
+smf_listf(adr_name_t *pattern, adr_data_t **names, void *arg)
 {
 	struct arg_listf rtarg = { pattern, (boolean_t)arg };
 

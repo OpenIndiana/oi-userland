@@ -51,28 +51,30 @@ ssize_t max_value;
 ssize_t max_pgtype;
 
 svcerr_t
-error_scf(data_t **error, data_t *code, data_t *target, const char *aux,
-    const char *msg)
+error_scf(adr_data_t **error, adr_data_t *code, adr_data_t *target,
+    const char *aux, const char *msg)
 {
-	assert(data_type(code) == &t__ErrorCode);
-	assert(target == NULL || data_type(target) == &t__ErrorTarget);
+	assert(adr_data_type(code) == &t__ErrorCode);
+	assert(target == NULL || adr_data_type(target) == &t__ErrorTarget);
 
 	if (error != NULL) {
-		data_t *e = data_new_struct(&t__SmfError);
-		struct_set(e, "error", code);
-		struct_set(e, "target", target == NULL ?
+		adr_data_t *e = adr_data_new_struct(&t__SmfError);
+		adr_struct_set(e, "error", code);
+		adr_struct_set(e, "target", target == NULL ?
 		    &e__ErrorTarget_NONE : target);
 		if (aux != NULL)
-			struct_set(e, "aux", data_new_string(aux, lt_copy));
+			adr_struct_set(e, "aux",
+			    adr_data_new_string(aux, LT_COPY));
 		if (msg != NULL)
-			struct_set(e, "message", data_new_string(msg, lt_copy));
-		*error = data_purify(e);
+			adr_struct_set(e, "message",
+			    adr_data_new_string(msg, LT_COPY));
+		*error = adr_data_purify(e);
 	}
 	return (SE_FATAL);
 }
 
 svcerr_t
-internal_error(data_t **error, const char *msg)
+internal_error(adr_data_t **error, const char *msg)
 {
 	return (error_scf(error, &e__ErrorCode_INTERNAL, NULL, NULL, msg));
 }
@@ -153,7 +155,7 @@ smfu_value_get_string(scf_value_t *val, char **strp)
 svcerr_t
 smfu_instance_get_composed_pg(scf_handle_t *handle, scf_instance_t *instance,
     const char *snapname, const char *pgname, scf_propertygroup_t *pg,
-    data_t **error)
+    adr_data_t **error)
 {
 	svcerr_t se = SE_OK;
 	scf_snapshot_t *snap = NULL;
@@ -344,7 +346,7 @@ smfu_iter_pg_r(scf_handle_t *handle, smfu_entity_t *entity, const char *type,
  */
 svcerr_t
 smfu_get_pg(smfu_entity_t *entity, const char *name,
-    scf_propertygroup_t *pg, data_t **error)
+    scf_propertygroup_t *pg, adr_data_t **error)
 {
 	svcerr_t se = SE_OK;
 
@@ -600,16 +602,16 @@ smfu_obj_alloc(const char *sname, const char *iname)
  * Calls cb() repeatedly while it returns SE_RETRY, reconnecting to the
  * repository as necessary.
  *
- * For the convenience of the callback, if a data_t pointer is stored
+ * For the convenience of the callback, if a adr_data_t pointer is stored
  * in its result argument on failure it is freed.  Also verifies the
  * result on success.
  */
 static conerr_t
-smfu_rtrun_int(smfu_rtfunc_t cb, void *arg, data_t **ret, data_t **error,
-    boolean_t nullable)
+smfu_rtrun_int(smfu_rtfunc_t cb, void *arg, adr_data_t **ret,
+    adr_data_t **error, boolean_t nullable)
 {
 	svcerr_t se = SE_OK;
-	data_t *result = NULL;
+	adr_data_t *result = NULL;
 
 	do {
 		rad_handle_t *rh = rh_fetch();
@@ -619,7 +621,7 @@ smfu_rtrun_int(smfu_rtfunc_t cb, void *arg, data_t **ret, data_t **error,
 			se = cb(rh_hdl(rh), arg, &result, error);
 
 		if (se != SE_OK && result != NULL) {
-			data_free(result);
+			adr_data_free(result);
 			result = NULL;
 		}
 
@@ -631,10 +633,10 @@ smfu_rtrun_int(smfu_rtfunc_t cb, void *arg, data_t **ret, data_t **error,
 	assert(ret != NULL || result == NULL);
 	if (ret != NULL && se == SE_OK) {
 		if ((nullable && result == NULL) ||
-		    data_verify(result, NULL, B_TRUE)) {
+		    adr_data_verify(result, NULL, B_TRUE)) {
 			*ret = result;
 		} else {
-			data_free(result);
+			adr_data_free(result);
 			se = internal_error(error, NULL);
 		}
 	}
@@ -656,13 +658,14 @@ smfu_rtrun_int(smfu_rtfunc_t cb, void *arg, data_t **ret, data_t **error,
 }
 
 conerr_t
-smfu_rtrun_opt(smfu_rtfunc_t cb, void *arg, data_t **ret, data_t **error)
+smfu_rtrun_opt(smfu_rtfunc_t cb, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	return (smfu_rtrun_int(cb, arg, ret, error, B_TRUE));
 }
 
 conerr_t
-smfu_rtrun(smfu_rtfunc_t cb, void *arg, data_t **ret, data_t **error)
+smfu_rtrun(smfu_rtfunc_t cb, void *arg, adr_data_t **ret, adr_data_t **error)
 {
 	return (smfu_rtrun_int(cb, arg, ret, error, B_FALSE));
 }

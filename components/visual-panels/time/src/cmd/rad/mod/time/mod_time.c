@@ -51,9 +51,9 @@
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_time(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
-	*data = data_new_time_now();
+	*data = adr_data_new_time_now();
 	return (ce_ok);
 }
 
@@ -62,10 +62,10 @@ interface_Time_read_time(rad_instance_t *inst, adr_attribute_t *attr,
 /*ARGSUSED*/
 conerr_t
 interface_Time_write_time(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t *data, data_t **error)
+    adr_data_t *data, adr_data_t **error)
 {
-	long long seconds = data_to_time_secs(data);
-	int nanos = data_to_time_nsecs(data);
+	long long seconds = adr_data_to_time_secs(data);
+	int nanos = adr_data_to_time_nsecs(data);
 	int micros = nanos / NSPERUS;
 	time_t newtime;
 	struct timeval adj;
@@ -97,7 +97,7 @@ interface_Time_write_time(rad_instance_t *inst, adr_attribute_t *attr,
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_defaultTimeZone(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	char zonefile[PATH_MAX];
 	int n = snprintf(zonefile, PATH_MAX, "%s", ZONEINFO_DIR);
@@ -116,7 +116,7 @@ interface_Time_read_defaultTimeZone(rad_instance_t *inst, adr_attribute_t *attr,
 		    strncmp(resolved, ZONEINFO_DIR, n) == 0) {
 			tz = resolved + n;
 		}
-		*data = data_new_string(tz, lt_copy);
+		*data = adr_data_new_string(tz, LT_COPY);
 	}
 
 	return (err);
@@ -125,10 +125,10 @@ interface_Time_read_defaultTimeZone(rad_instance_t *inst, adr_attribute_t *attr,
 /*ARGSUSED*/
 conerr_t
 interface_Time_write_defaultTimeZone(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t *data, data_t **error)
+    adr_attribute_t *attr, adr_data_t *data, adr_data_t **error)
 {
 	conerr_t err = smfu_set_property((char *)SCF_INSTANCE_ENV,
-	    SMF_TZ_PGNAME, SMF_TZ_PROPNAME, (char *)data_to_string(data));
+	    SMF_TZ_PGNAME, SMF_TZ_PROPNAME, (char *)adr_data_to_string(data));
 	return (err);
 }
 
@@ -153,43 +153,43 @@ static const char *ntpservers[] = {
 static const char * const si_server_path[] = { "server", NULL };
 
 static void
-disable(data_t *array, const char *srv, int len)
+disable(adr_data_t *array, const char *srv, int len)
 {
-	if (array_nsearch(array, srv, len, si_server_path) >= 0)
+	if (adr_array_nsearch(array, srv, len, si_server_path) >= 0)
 		return;
-	data_t *entry = data_new_struct(&t__ServerInfo);
-	struct_set(entry, "server", data_new_nstring(srv, len));
-	struct_set(entry, "enabled", data_new_boolean(B_FALSE));
-	(void) array_add(array, entry);
+	adr_data_t *entry = adr_data_new_struct(&t__ServerInfo);
+	adr_struct_set(entry, "server", adr_data_new_nstring(srv, len));
+	adr_struct_set(entry, "enabled", adr_data_new_boolean(B_FALSE));
+	(void) adr_array_add(array, entry);
 }
 
 static void
-enable(data_t *array, const char *srv, int len)
+enable(adr_data_t *array, const char *srv, int len)
 {
-	int index = array_nsearch(array, srv, len, si_server_path);
+	int index = adr_array_nsearch(array, srv, len, si_server_path);
 	if (index >= 0) {
-		struct_set(array_get(array, index), "enabled",
-		    data_new_boolean(B_TRUE));
+		adr_struct_set(adr_array_get(array, index), "enabled",
+		    adr_data_new_boolean(B_TRUE));
 		return;
 	}
-	data_t *entry = data_new_struct(&t__ServerInfo);
-	struct_set(entry, "server", data_new_nstring(srv, len));
-	struct_set(entry, "enabled", data_new_boolean(B_TRUE));
-	(void) array_add(array, entry);
+	adr_data_t *entry = adr_data_new_struct(&t__ServerInfo);
+	adr_struct_set(entry, "server", adr_data_new_nstring(srv, len));
+	adr_struct_set(entry, "enabled", adr_data_new_boolean(B_TRUE));
+	(void) adr_array_add(array, entry);
 }
 
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_ntpServers(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
-	data_t *result = data_new_array(&t_array__ServerInfo, 4);
+	adr_data_t *result = adr_data_new_array(&t_array__ServerInfo, 4);
 	for (int i = 0; i < RAD_COUNT(ntpservers); i++) {
-		data_t *si = data_new_struct(&t__ServerInfo);
-		struct_set(si, "server",
-		    data_new_string(ntpservers[i], lt_copy));
-		struct_set(si, "enabled", data_new_boolean(B_FALSE));
-		(void) array_add(result, si);
+		adr_data_t *si = adr_data_new_struct(&t__ServerInfo);
+		adr_struct_set(si, "server",
+		    adr_data_new_string(ntpservers[i], LT_COPY));
+		adr_struct_set(si, "enabled", adr_data_new_boolean(B_FALSE));
+		(void) adr_array_add(result, si);
 	}
 
 	FILE *file = fopen(NTP_CONF, "r");
@@ -229,21 +229,21 @@ interface_Time_read_ntpServers(rad_instance_t *inst, adr_attribute_t *attr,
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_sufficientlyPrivileged(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	/* XXX: Crude */
-	*data = data_new_boolean(getuid() == 0);
+	*data = adr_data_new_boolean(getuid() == 0);
 	return (ce_ok);
 }
 
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_continents(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	FILE *file = fopen("/usr/share/lib/zoneinfo/tab/continent.tab", "r");
 	char str[1024];
-	data_t *result = data_new_array(&t_array__Continent, 5);
+	adr_data_t *result = adr_data_new_array(&t_array__Continent, 5);
 	while (fgets(str, sizeof (str), file) != NULL) {
 		if (str[0] == '#')
 			continue;
@@ -252,12 +252,12 @@ interface_Time_read_continents(rad_instance_t *inst, adr_attribute_t *attr,
 		char *eq = strchr(str, '\t');
 		if (eq == NULL)
 			continue;
-		data_t *name = data_new_nstring(str, eq - str);
-		data_t *desc = data_new_string(eq + 1, lt_copy);
-		data_t *cont = data_new_struct(&t__Continent);
-		struct_set(cont, "name", name);
-		struct_set(cont, "description", desc);
-		(void) array_add(result, cont);
+		adr_data_t *name = adr_data_new_nstring(str, eq - str);
+		adr_data_t *desc = adr_data_new_string(eq + 1, LT_COPY);
+		adr_data_t *cont = adr_data_new_struct(&t__Continent);
+		adr_struct_set(cont, "name", name);
+		adr_struct_set(cont, "description", desc);
+		(void) adr_array_add(result, cont);
 	}
 	(void) fclose(file);
 	*data = result;
@@ -268,11 +268,11 @@ interface_Time_read_continents(rad_instance_t *inst, adr_attribute_t *attr,
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_countries(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	FILE *file = fopen("/usr/share/lib/zoneinfo/tab/country.tab", "r");
 	char str[1024];
-	data_t *result = data_new_array(&t_array__Country, 5);
+	adr_data_t *result = adr_data_new_array(&t_array__Country, 5);
 	while (fgets(str, sizeof (str), file) != NULL) {
 		if (str[0] == '#')
 			continue;
@@ -285,12 +285,12 @@ interface_Time_read_countries(rad_instance_t *inst, adr_attribute_t *attr,
 		    rad_strccmp("we", str, eq - str) == 0 ||
 		    rad_strccmp("me", str, eq - str) == 0)
 			continue;
-		data_t *code = data_new_nstring(str, eq - str);
-		data_t *desc = data_new_string(eq + 1, lt_copy);
-		data_t *country = data_new_struct(&t__Country);
-		struct_set(country, "code", code);
-		struct_set(country, "description", desc);
-		(void) array_add(result, country);
+		adr_data_t *code = adr_data_new_nstring(str, eq - str);
+		adr_data_t *desc = adr_data_new_string(eq + 1, LT_COPY);
+		adr_data_t *country = adr_data_new_struct(&t__Country);
+		adr_struct_set(country, "code", code);
+		adr_struct_set(country, "description", desc);
+		(void) adr_array_add(result, country);
 	}
 	(void) fclose(file);
 	*data = result;
@@ -326,7 +326,7 @@ parse_coord(const char *str, int len, struct coord *c)
 	}
 }
 
-static data_t *
+static adr_data_t *
 parse_coords(const char *str, int len)
 {
 	int isnorth, iseast;
@@ -354,24 +354,26 @@ parse_coords(const char *str, int len)
 	    !parse_coord(eq + 1, len - (eq - str + 1), &east))
 		return (NULL);
 
-	data_t *result = data_new_struct(&t__Coordinates);
-	struct_set(result, "degreesE", data_new_integer(east.deg * iseast));
-	struct_set(result, "minutesE", data_new_integer(east.min));
-	struct_set(result, "secondsE", data_new_integer(east.sec));
-	struct_set(result, "degreesN", data_new_integer(north.deg * isnorth));
-	struct_set(result, "minutesN", data_new_integer(north.min));
-	struct_set(result, "secondsN", data_new_integer(north.sec));
+	adr_data_t *result = adr_data_new_struct(&t__Coordinates);
+	adr_struct_set(result, "degreesE",
+	    adr_data_new_integer(east.deg * iseast));
+	adr_struct_set(result, "minutesE", adr_data_new_integer(east.min));
+	adr_struct_set(result, "secondsE", adr_data_new_integer(east.sec));
+	adr_struct_set(result, "degreesN",
+	    adr_data_new_integer(north.deg * isnorth));
+	adr_struct_set(result, "minutesN", adr_data_new_integer(north.min));
+	adr_struct_set(result, "secondsN", adr_data_new_integer(north.sec));
 	return (result);
 }
 
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_timeZones(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	FILE *file = fopen("/usr/share/lib/zoneinfo/tab/zone_sun.tab", "r");
 	char buf[1024];
-	data_t *result = data_new_array(&t_array__TimeZoneInfo, 5);
+	adr_data_t *result = adr_data_new_array(&t_array__TimeZoneInfo, 5);
 	while (fgets(buf, sizeof (buf), file) != NULL) {
 		char *str = buf;
 		if (str[0] == '#')
@@ -385,25 +387,26 @@ interface_Time_read_timeZones(rad_instance_t *inst, adr_attribute_t *attr,
 		    rad_strccmp("we", str, eq - str) == 0 ||
 		    rad_strccmp("me", str, eq - str) == 0)
 			continue;
-		data_t *timezone = data_new_struct(&t__TimeZoneInfo);
-		struct_set(timezone, "countryCode",
-		    data_new_nstring(str, eq - str));
+		adr_data_t *timezone = adr_data_new_struct(&t__TimeZoneInfo);
+		adr_struct_set(timezone, "countryCode",
+		    adr_data_new_nstring(str, eq - str));
 
 		str = eq + 1;
 		eq = strchr(str, '\t');
-		data_t *coords;
+		adr_data_t *coords;
 		if (eq == NULL ||
 		    (coords = parse_coords(str, eq - str)) == NULL) {
-			data_free(timezone);
+			adr_data_free(timezone);
 			continue;
 		}
-		struct_set(timezone, "coordinates", coords);
+		adr_struct_set(timezone, "coordinates", coords);
 
 		str = eq + 1;
 		eq = strchr(str, '\t');
-		data_t *tz = eq != NULL ? data_new_nstring(str, eq - str) :
-		    data_new_string(str, lt_copy);
-		struct_set(timezone, "name", tz);
+		adr_data_t *tz = eq != NULL ?
+		    adr_data_new_nstring(str, eq - str) :
+		    adr_data_new_string(str, LT_COPY);
+		adr_struct_set(timezone, "name", tz);
 		if (eq == NULL)
 			goto done;
 
@@ -411,22 +414,22 @@ interface_Time_read_timeZones(rad_instance_t *inst, adr_attribute_t *attr,
 		eq = strchr(str, '\t');
 		if (eq != NULL) {
 			if (rad_strccmp("-", str, eq - str) != 0)
-				struct_set(timezone, "altName",
-				    data_new_nstring(str, eq - str));
+				adr_struct_set(timezone, "altName",
+				    adr_data_new_nstring(str, eq - str));
 		} else {
 			if (strcmp("-", str) != 0)
-				struct_set(timezone, "altName",
-				    data_new_string(str, lt_copy));
+				adr_struct_set(timezone, "altName",
+				    adr_data_new_string(str, LT_COPY));
 			goto done;
 		}
 
 		str = eq + 1;
 		if (*str != '\0' && strcmp(str, "-") != 0)
-			struct_set(timezone, "comments",
-			    data_new_string(str, lt_copy));
+			adr_struct_set(timezone, "comments",
+			    adr_data_new_string(str, LT_COPY));
 
 done:
-		(void) array_add(result, timezone);
+		(void) adr_array_add(result, timezone);
 	}
 	(void) fclose(file);
 	*data = result;
@@ -437,7 +440,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Time_write_ntpServers(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t *data, data_t **error)
+    adr_data_t *data, adr_data_t **error)
 {
 	FILE *from, *to, *tmp; /* Read, write, & temp files */
 	int err = 0; /* Indicates an error */
@@ -488,13 +491,13 @@ nobackup:
 		goto errorout;
 	}
 
-	for (int i = 0; i < array_size(data); i++) {
-		data_t *entry = array_get(data, i);
-		data_t *enabled = struct_get(entry, "enabled");
-		data_t *server = struct_get(entry, "server");
+	for (int i = 0; i < adr_array_size(data); i++) {
+		adr_data_t *entry = adr_array_get(data, i);
+		adr_data_t *enabled = adr_struct_get(entry, "enabled");
+		adr_data_t *server = adr_struct_get(entry, "server");
 		if (fprintf(tmp,
-		    data_to_boolean(enabled) ? "server %s\n" : "# server %s\n",
-		    data_to_string(server)) < 0)
+		    adr_data_to_boolean(enabled) ? "server %s\n" :
+		    "# server %s\n", adr_data_to_string(server)) < 0)
 			goto writefailed;
 	}
 	if (fclose(tmp) == EOF)

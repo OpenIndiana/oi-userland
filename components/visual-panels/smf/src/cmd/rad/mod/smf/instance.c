@@ -41,17 +41,18 @@
 /*ARGSUSED*/
 conerr_t
 interface_Instance_read_instance(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	*data = data_new_string(smfo->iname, lt_copy);
+	*data = adr_data_new_string(smfo->iname, LT_COPY);
 	return (*data == NULL ? ce_nomem : ce_ok);
 }
 
 
 /*ARGSUSED*/
 static svcerr_t
-rt_read_restarter(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_restarter(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
@@ -75,7 +76,8 @@ rt_read_restarter(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 
 	if (scf_pg_get_property(pg, SCF_PROPERTY_RESTARTER, prop) == -1) {
 		if (scf_error() == SCF_ERROR_NOT_FOUND)
-			*ret = data_new_string(SCF_SERVICE_STARTD, lt_const);
+			*ret = adr_data_new_string(SCF_SERVICE_STARTD,
+			    LT_CONST);
 		else
 			se = smfu_maperr(scf_error());
 		goto done;
@@ -87,7 +89,7 @@ rt_read_restarter(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 		goto done;
 	}
 
-	*ret = data_new_string(fmri, lt_copy);
+	*ret = adr_data_new_string(fmri, LT_COPY);
 
 done:
 	scf_value_destroy(value);
@@ -101,7 +103,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_read_restarter(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_restarter, instance_getdata(inst), data,
 	    error));
@@ -110,7 +112,8 @@ interface_Instance_read_restarter(rad_instance_t *inst, adr_attribute_t *attr,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_read_enabled(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_enabled(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
@@ -136,7 +139,7 @@ rt_read_enabled(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 		    value, SCF_PG_GENERAL, &bool);
 
 	if (serr == 0)
-		*ret = data_new_boolean(bool > 0);
+		*ret = adr_data_new_boolean(bool > 0);
 	else
 		se = smfu_maperr(serr);
 
@@ -152,7 +155,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_read_enabled(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_enabled, instance_getdata(inst), data,
 	    error));
@@ -161,7 +164,7 @@ interface_Instance_read_enabled(rad_instance_t *inst, adr_attribute_t *attr,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_read_state(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_state(scf_handle_t *h, void *arg, adr_data_t **ret, adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
@@ -200,7 +203,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_read_state(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_state, instance_getdata(inst), data, error));
 }
@@ -208,7 +211,8 @@ interface_Instance_read_state(rad_instance_t *inst, adr_attribute_t *attr,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_read_ex_state(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_ex_state(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
@@ -225,7 +229,7 @@ rt_read_ex_state(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 /*ARGSUSED*/
 conerr_t
 interface_Instance_read_ex_state(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_ex_state, instance_getdata(inst), data,
 	    error));
@@ -234,7 +238,8 @@ interface_Instance_read_ex_state(rad_instance_t *inst, adr_attribute_t *attr,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_read_snapshots(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_snapshots(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
@@ -243,7 +248,7 @@ rt_read_snapshots(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 
 	scf_snapshot_t *snap = scf_snapshot_create(h);
 	scf_iter_t *iter = scf_iter_create(h);
-	data_t *rdata = data_new_array(&t_array_string, 6);
+	adr_data_t *rdata = adr_data_new_array(&adr_t_array_string, 6);
 
 	if (snap == NULL || iter == NULL) {
 		se = SE_FATAL;
@@ -264,7 +269,8 @@ rt_read_snapshots(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 			se = smfu_maperr(scf_error());
 			goto done;
 		}
-		(void) array_add(rdata, data_new_string(sname, lt_copy));
+		(void) adr_array_add(rdata,
+		    adr_data_new_string(sname, LT_COPY));
 	}
 	if (e != 0)
 		se = smfu_maperr(scf_error());
@@ -281,7 +287,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_read_snapshots(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_snapshots, instance_getdata(inst), data,
 	    error));
@@ -289,20 +295,20 @@ interface_Instance_read_snapshots(rad_instance_t *inst, adr_attribute_t *attr,
 
 
 static svcerr_t
-rt_invoke_readSnapshotPGs(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_readSnapshotPGs(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
 	const char *snapname =
-	    ra->args[0] == NULL ? NULL : data_to_string(ra->args[0]);
+	    ra->args[0] == NULL ? NULL : adr_data_to_string(ra->args[0]);
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	svcerr_t se = SE_OK;
 	scf_error_t serr;
 
 	scf_propertygroup_t *pg = scf_pg_create(h);
 	scf_iter_t *iter = scf_iter_create(h);
-	data_t *result = data_new_array(&t_array__PropertyGroup, 5);
+	adr_data_t *result = adr_data_new_array(&t_array__PropertyGroup, 5);
 
 	if (pg == NULL || iter == NULL) {
 		se = SE_FATAL;
@@ -324,10 +330,10 @@ rt_invoke_readSnapshotPGs(scf_handle_t *h, void *arg, data_t **ret,
 
 	int e;
 	while ((e = scf_iter_next_pg(iter, pg)) > 0) {
-		data_t *dep;
+		adr_data_t *dep;
 		if ((se = create_PropertyGroup(pg, &dep)) != SE_OK)
 			goto done;
-		(void) array_add(result, dep);
+		(void) adr_array_add(result, dep);
 	}
 	if (e != 0)
 		se = smfu_maperr(scf_error());
@@ -343,7 +349,8 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_readSnapshotPGs(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_readSnapshotPGs, &ra, ret, error));
@@ -351,14 +358,14 @@ interface_Instance_invoke_readSnapshotPGs(rad_instance_t *inst,
 
 
 static svcerr_t
-rt_invoke_readSnapshotProperties(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_readSnapshotProperties(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
 	const char *snapname =
-	    ra->args[0] == NULL ? NULL : data_to_string(ra->args[0]);
-	const char *pgname = data_to_string(ra->args[1]);
+	    ra->args[0] == NULL ? NULL : adr_data_to_string(ra->args[0]);
+	const char *pgname = adr_data_to_string(ra->args[1]);
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	svcerr_t se = SE_OK;
 
@@ -386,7 +393,8 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_readSnapshotProperties(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_readSnapshotProperties, &ra, ret, error));
@@ -394,15 +402,15 @@ interface_Instance_invoke_readSnapshotProperties(rad_instance_t *inst,
 
 
 static svcerr_t
-rt_invoke_readSnapshotProperty(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_readSnapshotProperty(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
 	const char *snapname =
-	    ra->args[0] == NULL ? NULL : data_to_string(ra->args[0]);
-	const char *pgname = data_to_string(ra->args[1]);
-	const char *propname = data_to_string(ra->args[2]);
+	    ra->args[0] == NULL ? NULL : adr_data_to_string(ra->args[0]);
+	const char *pgname = adr_data_to_string(ra->args[1]);
+	const char *propname = adr_data_to_string(ra->args[2]);
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	svcerr_t se = SE_OK;
 
@@ -446,7 +454,8 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_readSnapshotProperty(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_readSnapshotProperty, &ra, ret, error));
@@ -457,7 +466,7 @@ interface_Instance_invoke_readSnapshotProperty(rad_instance_t *inst,
  * Custom retry implementation for smf_*_instance() routines.
  */
 static boolean_t
-smf_action(conerr_t *result, data_t **error, int rval)
+smf_action(conerr_t *result, adr_data_t **error, int rval)
 {
 	if (rval == 0) {
 		*result = ce_ok;
@@ -496,10 +505,10 @@ smf_action(conerr_t *result, data_t **error, int rval)
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_clear(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	/* boolean_t sync = data_to_boolean(args[0]); */
+	/* boolean_t sync = adr_data_to_boolean(args[0]); */
 
 	conerr_t res;
 	while (smf_action(&res, error, smf_restore_instance(smfo->fmri)))
@@ -510,10 +519,10 @@ interface_Instance_invoke_clear(rad_instance_t *inst, adr_method_t *meth,
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_restart(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	/* boolean_t sync = data_to_boolean(args[0]); */
+	/* boolean_t sync = adr_data_to_boolean(args[0]); */
 
 	conerr_t res;
 	while (smf_action(&res, error, smf_restart_instance(smfo->fmri)))
@@ -524,10 +533,10 @@ interface_Instance_invoke_restart(rad_instance_t *inst, adr_method_t *meth,
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_refresh(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	/* boolean_t sync = data_to_boolean(args[0]); */
+	/* boolean_t sync = adr_data_to_boolean(args[0]); */
 
 	conerr_t res;
 	while (smf_action(&res, error, smf_refresh_instance(smfo->fmri)))
@@ -538,12 +547,12 @@ interface_Instance_invoke_refresh(rad_instance_t *inst, adr_method_t *meth,
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_maintain(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	boolean_t imm = data_to_boolean(args[0]);
-	boolean_t temp = data_to_boolean(args[1]);
-	/* boolean_t sync = data_to_boolean(args[2]); */
+	boolean_t imm = adr_data_to_boolean(args[0]);
+	boolean_t temp = adr_data_to_boolean(args[1]);
+	/* boolean_t sync = adr_data_to_boolean(args[2]); */
 
 	int flags = 0;
 	if (imm)
@@ -561,11 +570,11 @@ interface_Instance_invoke_maintain(rad_instance_t *inst, adr_method_t *meth,
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_enable(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	boolean_t temp = data_to_boolean(args[0]);
-	/* boolean_t sync = data_to_boolean(args[1]); */
+	boolean_t temp = adr_data_to_boolean(args[0]);
+	/* boolean_t sync = adr_data_to_boolean(args[1]); */
 
 	int flags = 0;
 	if (temp)
@@ -580,11 +589,11 @@ interface_Instance_invoke_enable(rad_instance_t *inst, adr_method_t *meth,
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_disable(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	boolean_t temp = data_to_boolean(args[0]);
-	/* boolean_t sync = data_to_boolean(args[1]); */
+	boolean_t temp = adr_data_to_boolean(args[0]);
+	/* boolean_t sync = adr_data_to_boolean(args[1]); */
 
 	int flags = 0;
 	if (temp)
@@ -598,7 +607,7 @@ interface_Instance_invoke_disable(rad_instance_t *inst, adr_method_t *meth,
 
 
 static svcerr_t
-rt_get_logfile(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_get_logfile(scf_handle_t *h, void *arg, adr_data_t **ret, adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
@@ -635,7 +644,7 @@ rt_get_logfile(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 		goto done;
 	}
 
-	*ret = data_new_string(logfile, lt_free);
+	*ret = adr_data_new_string(logfile, LT_FREE);
 done:
 	scf_pg_destroy(pg);
 	scf_property_destroy(prop);
@@ -647,46 +656,46 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Instance_invoke_getLogInfo(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	data_t *logfile = NULL;
+	adr_data_t *logfile = NULL;
 	conerr_t ce = smfu_rtrun(rt_get_logfile, instance_getdata(inst),
 	    &logfile, error);
 	if (ce != ce_ok)
 		return (ce);
 
 	struct stat st;
-	if (stat(data_to_string(logfile), &st) != 0) {
-		data_free(logfile);
+	if (stat(adr_data_to_string(logfile), &st) != 0) {
+		adr_data_free(logfile);
 		(void) error_scf(error, &e__ErrorCode_NOTFOUND, NULL, NULL,
 		    NULL);
 		return (ce_object);
 	}
 
-	int max_size = data_to_integer(args[0]);
+	int max_size = adr_data_to_integer(args[0]);
 	int bsize = max_size >= 0 && max_size < st.st_size ?
 	    max_size : st.st_size;
 
 	char *buffer = malloc(bsize);
 	if (buffer == NULL) {
 		(void) internal_error(error, NULL);
-		data_free(logfile);
+		adr_data_free(logfile);
 		return (ce_object);
 	}
 
 	int fd;
-	if ((fd = open(data_to_string(logfile), O_RDONLY)) == -1) {
+	if ((fd = open(adr_data_to_string(logfile), O_RDONLY)) == -1) {
 		(void) error_scf(error, (errno == EACCES) ?
 		    &e__ErrorCode_DENIED : &e__ErrorCode_INTERNAL,
 		    NULL, NULL, NULL);
-		data_free(logfile);
+		adr_data_free(logfile);
 		free(buffer);
 		return (ce_object);
 	}
 
 	if (pread(fd, buffer, bsize, st.st_size - bsize) != bsize) {
 		(void) internal_error(error, NULL);
-		data_free(logfile);
+		adr_data_free(logfile);
 		free(buffer);
 		(void) close(fd);
 		return (ce_object);
@@ -694,13 +703,14 @@ interface_Instance_invoke_getLogInfo(rad_instance_t *inst, adr_method_t *meth,
 
 	(void) close(fd);
 
-	data_t *result = data_new_struct(&t__LogInfo);
-	struct_set(result, "name", logfile);
-	struct_set(result, "size", data_new_integer(st.st_size));
-	struct_set(result, "MTime", data_new_time_ts(&st.st_mtim));
-	struct_set(result, "contents", data_new_opaque(buffer, bsize, lt_free));
+	adr_data_t *result = adr_data_new_struct(&t__LogInfo);
+	adr_struct_set(result, "name", logfile);
+	adr_struct_set(result, "size", adr_data_new_integer(st.st_size));
+	adr_struct_set(result, "MTime", adr_data_new_time_ts(&st.st_mtim));
+	adr_struct_set(result, "contents",
+	    adr_data_new_opaque(buffer, bsize, LT_FREE));
 
-	if ((*ret = data_purify(result)) == NULL) {
+	if ((*ret = adr_data_purify(result)) == NULL) {
 		(void) internal_error(error, NULL);
 		return (ce_object);
 	}

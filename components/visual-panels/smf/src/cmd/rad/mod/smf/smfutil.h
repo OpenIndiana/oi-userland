@@ -108,8 +108,9 @@ extern ssize_t max_pgtype;
 /*
  * Error handling routines
  */
-svcerr_t error_scf(data_t **, data_t *, data_t *, const char *, const char *);
-svcerr_t internal_error(data_t **error, const char *msg);
+svcerr_t error_scf(adr_data_t **, adr_data_t *, adr_data_t *, const char *,
+    const char *);
+svcerr_t internal_error(adr_data_t **error, const char *msg);
 svcerr_t smfu_maperr(scf_error_t);
 
 typedef svcerr_t (*svc_callback_t)(scf_handle_t *, scf_service_t *,
@@ -125,7 +126,7 @@ scf_error_t smfu_read_enabled(scf_instance_t *, scf_propertygroup_t *,
 scf_error_t smfu_value_get_string(scf_value_t *val, char **strp);
 svcerr_t smfu_instance_get_composed_pg(scf_handle_t *handle,
     scf_instance_t *instance, const char *snapname, const char *pgname,
-    scf_propertygroup_t *pg, data_t **error);
+    scf_propertygroup_t *pg, adr_data_t **error);
 scf_error_t smfu_instance_iter_composed_pgs(scf_handle_t *handle,
     scf_instance_t *instance, const char *snapname, const char *pgtype,
     scf_iter_t *iter);
@@ -137,7 +138,7 @@ svcerr_t smfu_get_l10n_str(scf_handle_t *handle, scf_propertygroup_t *pg,
  * Operate on directly-attached property groups.
  */
 svcerr_t smfu_get_pg(smfu_entity_t *entity, const char *name,
-    scf_propertygroup_t *pg, data_t **);
+    scf_propertygroup_t *pg, adr_data_t **);
 svcerr_t smfu_iter_pg(smfu_entity_t *entity, const char *type,
     scf_iter_t *iter);
 
@@ -168,12 +169,13 @@ void smfu_obj_free(smfobj_t *);
 /* A frequently used lexical scope surrogate */
 typedef struct radarg {
 	rad_instance_t *inst;
-	data_t **args;
+	adr_data_t **args;
 } radarg_t;
 
-typedef svcerr_t (*smfu_rtfunc_t)(scf_handle_t *, void *, data_t **, data_t **);
-conerr_t smfu_rtrun(smfu_rtfunc_t, void *, data_t **, data_t **);
-conerr_t smfu_rtrun_opt(smfu_rtfunc_t, void *, data_t **, data_t **);
+typedef svcerr_t (*smfu_rtfunc_t)(scf_handle_t *, void *, adr_data_t **,
+    adr_data_t **);
+conerr_t smfu_rtrun(smfu_rtfunc_t, void *, adr_data_t **, adr_data_t **);
+conerr_t smfu_rtrun_opt(smfu_rtfunc_t, void *, adr_data_t **, adr_data_t **);
 
 void smfu_init();
 

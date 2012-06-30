@@ -36,29 +36,29 @@
 /*ARGSUSED*/
 conerr_t
 interface_Entity_read_fmri(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	*data = data_new_string(smfo->fmri, lt_copy);
+	*data = adr_data_new_string(smfo->fmri, LT_COPY);
 	return (*data == NULL ? ce_nomem : ce_ok);
 }
 
 /*ARGSUSED*/
 conerr_t
 interface_Entity_read_scope(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
-	*data = data_new_string("localhost", lt_const);
+	*data = adr_data_new_string("localhost", LT_CONST);
 	return (*data == NULL ? ce_nomem : ce_ok);
 }
 
 /*ARGSUSED*/
 conerr_t
 interface_Entity_read_service(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	smfobj_t *smfo = instance_getdata(inst);
-	*data = data_new_string(smfo->sname, lt_copy);
+	*data = adr_data_new_string(smfo->sname, LT_COPY);
 	return (*data == NULL ? ce_nomem : ce_ok);
 }
 
@@ -75,20 +75,20 @@ interface_Entity_read_service(rad_instance_t *inst, adr_attribute_t *attr,
 
 struct pgargs {
 	smfobj_t *smfo;
-	type_t *type;
+	adr_type_t *type;
 	const char *pgtype;
-	svcerr_t (*cb)(scf_handle_t *, scf_propertygroup_t *, data_t **);
+	svcerr_t (*cb)(scf_handle_t *, scf_propertygroup_t *, adr_data_t **);
 };
 
 /*ARGSUSED*/
 static svcerr_t
-rt_collect_pgs(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_collect_pgs(scf_handle_t *h, void *arg, adr_data_t **ret, adr_data_t **error)
 {
 	struct pgargs *pga = arg;
 	smfobj_t *smfo = pga->smfo;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	svcerr_t se = SE_OK;
-	data_t *result = data_new_array(pga->type, 5);
+	adr_data_t *result = adr_data_new_array(pga->type, 5);
 	scf_propertygroup_t *pg = scf_pg_create(h);
 	scf_iter_t *iter = scf_iter_create(h);
 
@@ -105,10 +105,10 @@ rt_collect_pgs(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 
 	int err;
 	while ((err = scf_iter_next_pg(iter, pg)) > 0) {
-		data_t *item = NULL;
+		adr_data_t *item = NULL;
 		se = pga->cb(h, pg, &item);
 		if (se == SE_OK)
-			(void) array_add(result, item);
+			(void) adr_array_add(result, item);
 		else if (se != SE_NOTFOUND)
 			goto done;
 	}
@@ -126,7 +126,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_read_dependencies(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	struct pgargs pga = {
 		.smfo = instance_getdata(inst),
@@ -140,7 +140,7 @@ interface_Entity_read_dependencies(rad_instance_t *inst, adr_attribute_t *attr,
 /*ARGSUSED*/
 conerr_t
 interface_Entity_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	struct pgargs pga = {
 		.smfo = instance_getdata(inst),
@@ -154,7 +154,7 @@ interface_Entity_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
 /*ARGSUSED*/
 conerr_t
 interface_Entity_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	struct pgargs pga = {
 		.smfo = instance_getdata(inst),
@@ -167,7 +167,7 @@ interface_Entity_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_read_pgs(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_read_pgs(scf_handle_t *h, void *arg, adr_data_t **ret, adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	svcerr_t se = SE_OK;
@@ -175,7 +175,7 @@ rt_read_pgs(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 
 	scf_propertygroup_t *pg = scf_pg_create(h);
 	scf_iter_t *iter = scf_iter_create(h);
-	data_t *result = data_new_array(&t_array__PropertyGroup, 5);
+	adr_data_t *result = adr_data_new_array(&t_array__PropertyGroup, 5);
 
 	if (pg == NULL || iter == NULL) {
 		se = SE_FATAL;
@@ -190,10 +190,10 @@ rt_read_pgs(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 
 	int e;
 	while ((e = scf_iter_next_pg(iter, pg)) > 0) {
-		data_t *pgdata;
+		adr_data_t *pgdata;
 		if ((se = create_PropertyGroup(pg, &pgdata)) != SE_OK)
 			goto done;
-		(void) array_add(result, pgdata);
+		(void) adr_array_add(result, pgdata);
 	}
 	if (e != 0)
 		se = smfu_maperr(scf_error());
@@ -210,7 +210,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_read_pgs(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_read_pgs, instance_getdata(inst), data, error));
 }
@@ -218,7 +218,8 @@ interface_Entity_read_pgs(rad_instance_t *inst, adr_attribute_t *attr,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_delete(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_invoke_delete(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	svcerr_t se = SE_OK;
@@ -257,7 +258,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_delete(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_invoke_delete, instance_getdata(inst), NULL,
 	    error));
@@ -266,7 +267,8 @@ interface_Entity_invoke_delete(rad_instance_t *inst, adr_method_t *meth,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_deleteCust(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_invoke_deleteCust(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	smfobj_t *smfo = arg;
 	svcerr_t se = SE_OK;
@@ -306,7 +308,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_deleteCust(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	return (smfu_rtrun(rt_invoke_deleteCust, instance_getdata(inst), NULL,
 	    error));
@@ -314,13 +316,14 @@ interface_Entity_invoke_deleteCust(rad_instance_t *inst, adr_method_t *meth,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_createPG(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_invoke_createPG(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
-	const char *pgtype = data_to_string(ra->args[1]);
-	unsigned int pgflags = data_to_uinteger(ra->args[2]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
+	const char *pgtype = adr_data_to_string(ra->args[1]);
+	unsigned int pgflags = adr_data_to_uinteger(ra->args[2]);
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 
@@ -363,7 +366,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_createPG(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_createPG, &ra, NULL, error));
@@ -372,11 +375,12 @@ interface_Entity_invoke_createPG(rad_instance_t *inst, adr_method_t *meth,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_deletePG(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_invoke_deletePG(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -416,7 +420,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_deletePG(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_deletePG, &ra, NULL, error));
@@ -425,11 +429,12 @@ interface_Entity_invoke_deletePG(rad_instance_t *inst, adr_method_t *meth,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_deletePGCust(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_invoke_deletePGCust(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -473,19 +478,19 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_deletePGCust(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_deletePGCust, &ra, NULL, error));
 }
 
 static svcerr_t
-rt_invoke_readProperties(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_readProperties(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -511,7 +516,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_readProperties(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_readProperties, &ra, ret, error));
@@ -520,7 +525,7 @@ interface_Entity_invoke_readProperties(rad_instance_t *inst, adr_method_t *meth,
 /*ARGSUSED*/
 static svcerr_t
 tx_write_prop(scf_handle_t *h, scf_transaction_t *tx,
-    const char *name, scf_type_t type, data_t *values, data_t **error)
+    const char *name, scf_type_t type, adr_data_t *values, adr_data_t **error)
 {
 	scf_transaction_entry_t *entry = scf_entry_create(h);
 
@@ -549,9 +554,9 @@ tx_write_prop(scf_handle_t *h, scf_transaction_t *tx,
 		}
 	}
 
-	int nvalues = array_size(values);
+	int nvalues = adr_array_size(values);
 	for (int i = 0; i < nvalues; i++) {
-		const char *vstr = data_to_string(array_get(values, i));
+		const char *vstr = adr_data_to_string(adr_array_get(values, i));
 		scf_value_t *v = scf_value_create(h);
 		if (v == NULL)
 			return (SE_FATAL);
@@ -571,13 +576,13 @@ tx_write_prop(scf_handle_t *h, scf_transaction_t *tx,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_writeProperties(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_writeProperties(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
-	data_t *data = ra->args[1];
+	const char *pgname = adr_data_to_string(ra->args[0]);
+	adr_data_t *data = ra->args[1];
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -598,14 +603,14 @@ top:
 	if (scf_transaction_start(tx, pg) == -1)
 		goto txerror;
 
-	int nprops = array_size(data);
+	int nprops = adr_array_size(data);
 	for (int i = 0; i < nprops; i++) {
-		data_t *propdata = array_get(data, i);
+		adr_data_t *propdata = adr_array_get(data, i);
 		const char *propname =
-		    data_to_string(struct_get(propdata, "name"));
+		    adr_data_to_string(adr_struct_get(propdata, "name"));
 		scf_type_t proptype =
-		    from_PropertyType(struct_get(propdata, "type"));
-		data_t *values = struct_get(propdata, "values");
+		    from_PropertyType(adr_struct_get(propdata, "type"));
+		adr_data_t *values = adr_struct_get(propdata, "values");
 
 		se = tx_write_prop(h, tx, propname, proptype, values, error);
 		if (se != SE_OK)
@@ -647,19 +652,21 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_writeProperties(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_writeProperties, &ra, NULL, error));
 }
 
 static svcerr_t
-rt_invoke_readProperty(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_invoke_readProperty(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
-	const char *propname = data_to_string(ra->args[1]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
+	const char *propname = adr_data_to_string(ra->args[1]);
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -697,7 +704,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_readProperty(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_readProperty, &ra, ret, error));
@@ -706,15 +713,15 @@ interface_Entity_invoke_readProperty(rad_instance_t *inst, adr_method_t *meth,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_writeProperty(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_writeProperty(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
-	const char *propname = data_to_string(ra->args[1]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
+	const char *propname = adr_data_to_string(ra->args[1]);
 	scf_type_t proptype = from_PropertyType(ra->args[2]);
-	data_t *data = ra->args[3];
+	adr_data_t *data = ra->args[3];
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -774,7 +781,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_writeProperty(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_writeProperty, &ra, NULL, error));
@@ -782,7 +789,7 @@ interface_Entity_invoke_writeProperty(rad_instance_t *inst, adr_method_t *meth,
 
 static svcerr_t
 tx_delete_prop(scf_handle_t *h, scf_transaction_t *tx,
-    const char *name, data_t **error)
+    const char *name, adr_data_t **error)
 {
 	scf_transaction_entry_t *entry = scf_entry_create(h);
 
@@ -810,13 +817,13 @@ tx_delete_prop(scf_handle_t *h, scf_transaction_t *tx,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_deleteProperty(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_deleteProperty(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
-	const char *propname = data_to_string(ra->args[1]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
+	const char *propname = adr_data_to_string(ra->args[1]);
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -875,7 +882,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_deleteProperty(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_deleteProperty, &ra, NULL, error));
@@ -883,7 +890,7 @@ interface_Entity_invoke_deleteProperty(rad_instance_t *inst, adr_method_t *meth,
 
 static svcerr_t
 tx_delete_propcust(scf_handle_t *h, scf_transaction_t *tx,
-    const char *name, data_t **error)
+    const char *name, adr_data_t **error)
 {
 	svcerr_t se = SE_OK;
 	scf_transaction_entry_t *entry = scf_entry_create(h);
@@ -916,13 +923,13 @@ tx_delete_propcust(scf_handle_t *h, scf_transaction_t *tx,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_deletePropertyCust(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_deletePropertyCust(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
-	const char *propname = data_to_string(ra->args[1]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
+	const char *propname = adr_data_to_string(ra->args[1]);
 	svcerr_t se = SE_OK;
 	smfu_entity_t entity = SMFU_ENTITY_INIT;
 	scf_propertygroup_t *pg = scf_pg_create(h);
@@ -981,7 +988,8 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_deletePropertyCust(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_deletePropertyCust, &ra, NULL, error));
@@ -1001,7 +1009,8 @@ struct tmplarg {
 
 /*ARGSUSED*/
 static svcerr_t
-rt_get_template(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
+rt_get_template(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	struct tmplarg *ta = arg;
 	svcerr_t se = SE_OK;
@@ -1020,7 +1029,7 @@ rt_get_template(scf_handle_t *h, void *arg, data_t **ret, data_t **error)
 
 	if ((se = smfu_get_pg_r(h, &entity, ta->pgname, pg)) == SE_OK &&
 	    (se = smfu_get_l10n_str(h, pg, ta->locale, &str)) == SE_OK) {
-		if ((*ret = data_new_string(str, lt_free)) == NULL)
+		if ((*ret = adr_data_new_string(str, LT_FREE)) == NULL)
 			se = SE_FATAL;
 	} else if (se == SE_NOTFOUND) {
 		se = SE_OK;
@@ -1036,12 +1045,12 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_getCommonName(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	struct tmplarg ta = {
 	    .smfo = instance_getdata(inst),
 	    .pgname = SCF_PG_TM_COMMON_NAME,
-	    .locale = data_to_string(args[0])
+	    .locale = adr_data_to_string(args[0])
 	};
 	return (smfu_rtrun_opt(rt_get_template, &ta, ret, error));
 }
@@ -1049,12 +1058,12 @@ interface_Entity_invoke_getCommonName(rad_instance_t *inst, adr_method_t *meth,
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_getDescription(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	struct tmplarg ta = {
 	    .smfo = instance_getdata(inst),
 	    .pgname = SCF_PG_TM_DESCRIPTION,
-	    .locale = data_to_string(args[0])
+	    .locale = adr_data_to_string(args[0])
 	};
 	return (smfu_rtrun_opt(rt_get_template, &ta, ret, error));
 }
@@ -1062,14 +1071,14 @@ interface_Entity_invoke_getDescription(rad_instance_t *inst, adr_method_t *meth,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_getPGTemplates(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_getPGTemplates(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *locale = data_to_string(ra->args[0]);
+	const char *locale = adr_data_to_string(ra->args[0]);
 	svcerr_t se = SE_OK;
-	data_t *result = data_new_array(&t_array__PGTemplate, 5);
+	adr_data_t *result = adr_data_new_array(&t_array__PGTemplate, 5);
 
 	scf_pg_tmpl_t *pgtmpl = scf_tmpl_pg_create(h);
 	if (pgtmpl == NULL) {
@@ -1080,10 +1089,10 @@ rt_invoke_getPGTemplates(scf_handle_t *h, void *arg, data_t **ret,
 	int e;
 	while ((e = scf_tmpl_iter_pgs(pgtmpl, smfo->fmri, NULL, NULL,
 	    SCF_PG_TMPL_FLAG_CURRENT)) == 1) {
-		data_t *t = NULL;
+		adr_data_t *t = NULL;
 		if ((se = create_PGTemplate(pgtmpl, locale, &t)) != SE_OK)
 			goto done;
-		(void) array_add(result, t);
+		(void) adr_array_add(result, t);
 	}
 	if (e == -1)
 		se = smfu_maperr(scf_error());
@@ -1097,7 +1106,7 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_getPGTemplates(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_getPGTemplates, &ra, ret, error));
@@ -1106,16 +1115,16 @@ interface_Entity_invoke_getPGTemplates(rad_instance_t *inst, adr_method_t *meth,
 
 /*ARGSUSED*/
 static svcerr_t
-rt_invoke_getPropTemplates(scf_handle_t *h, void *arg, data_t **ret,
-    data_t **error)
+rt_invoke_getPropTemplates(scf_handle_t *h, void *arg, adr_data_t **ret,
+    adr_data_t **error)
 {
 	radarg_t *ra = arg;
 	smfobj_t *smfo = instance_getdata(ra->inst);
-	const char *pgname = data_to_string(ra->args[0]);
-	const char *pgtype = data_to_string(ra->args[1]);
-	const char *locale = data_to_string(ra->args[2]);
+	const char *pgname = adr_data_to_string(ra->args[0]);
+	const char *pgtype = adr_data_to_string(ra->args[1]);
+	const char *locale = adr_data_to_string(ra->args[2]);
 	svcerr_t se = SE_OK;
-	data_t *result = data_new_array(&t_array__PropTemplate, 5);
+	adr_data_t *result = adr_data_new_array(&t_array__PropTemplate, 5);
 
 	scf_pg_tmpl_t *pgtmpl = scf_tmpl_pg_create(h);
 	scf_prop_tmpl_t *proptmpl = scf_tmpl_prop_create(h);
@@ -1133,10 +1142,10 @@ rt_invoke_getPropTemplates(scf_handle_t *h, void *arg, data_t **ret,
 
 	int e;
 	while ((e = scf_tmpl_iter_props(pgtmpl, proptmpl, 0)) == 0) {
-		data_t *t = NULL;
+		adr_data_t *t = NULL;
 		if ((se = create_PropTemplate(proptmpl, locale, &t)) != SE_OK)
 			goto done;
-		(void) array_add(result, t);
+		(void) adr_array_add(result, t);
 	}
 	if (e == -1)
 		se = smfu_maperr(scf_error());
@@ -1151,7 +1160,8 @@ done:
 /*ARGSUSED*/
 conerr_t
 interface_Entity_invoke_getPropTemplates(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	radarg_t ra = { .inst = inst, .args = args };
 	return (smfu_rtrun(rt_invoke_getPropTemplates, &ra, ret, error));

@@ -45,18 +45,18 @@
  */
 
 static int md5_file(const char *fname, unsigned char *hash);
-static data_t *get_text(xmlDoc *doc, xmlNode *node);
+static adr_data_t *get_text(xmlDoc *doc, xmlNode *node);
 static char *get_text_str(xmlDoc *doc, xmlNode *node);
-static data_t *get_prop(xmlNode *node, const char *name);
-static data_t *file_to_token(rad_locale_t *rlocale, const char *pname,
+static adr_data_t *get_prop(xmlNode *node, const char *name);
+static adr_data_t *file_to_token(rad_locale_t *rlocale, const char *pname,
     char *file);
-static conerr_t token_to_file(data_t *t, char **f);
-static data_t *create_resource(rad_locale_t *rlocale, const char *pname,
+static conerr_t token_to_file(adr_data_t *t, char **f);
+static adr_data_t *create_resource(rad_locale_t *rlocale, const char *pname,
     char *file);
 static void add_localized(rad_locale_t *rlocale, const char *pname,
-    data_t *farray, char *file);
-static data_t *read_panel_path(rad_locale_t *rlocale, const char *path);
-static data_t *read_panel(const char *locale, const char *pname);
+    adr_data_t *farray, char *file);
+static adr_data_t *read_panel_path(rad_locale_t *rlocale, const char *path);
+static adr_data_t *read_panel(const char *locale, const char *pname);
 
 /*
  * Static data
@@ -105,15 +105,15 @@ out:
  * Seems like overkill, but it's better than mixing xml-allocated
  * and other strings.
  */
-static data_t *
+static adr_data_t *
 get_text(xmlDoc *doc, xmlNode *node)
 {
-	data_t *result;
+	adr_data_t *result;
 	xmlChar *d = xmlNodeListGetString(doc, node, 1);
 	if (d == NULL)
 		return (NULL);
 
-	result = data_new_string((char *)d, lt_copy);
+	result = adr_data_new_string((char *)d, LT_COPY);
 	xmlFree(d);
 	return (result);
 }
@@ -131,20 +131,20 @@ get_text_str(xmlDoc *doc, xmlNode *node)
 	return (result);
 }
 
-static data_t *
+static adr_data_t *
 get_prop(xmlNode *node, const char *name)
 {
-	data_t *result;
+	adr_data_t *result;
 	xmlChar *d = xmlGetProp(node, (xmlChar *)name);
 	if (d == NULL)
 		return (NULL);
 
-	result = data_new_string((char *)d, lt_copy);
+	result = adr_data_new_string((char *)d, LT_COPY);
 	xmlFree(d);
 	return (result);
 }
 
-static data_t *
+static adr_data_t *
 file_to_token(rad_locale_t *rlocale, const char *pname, char *file)
 {
 	int llen = strlen(rlocale->locale);
@@ -164,14 +164,14 @@ file_to_token(rad_locale_t *rlocale, const char *pname, char *file)
 	p += plen + 1;
 	(void) strcpy(p, file);
 
-	return (data_new_opaque(token, tokenlen, lt_free));
+	return (adr_data_new_opaque(token, tokenlen, LT_FREE));
 }
 
 static conerr_t
-token_to_file(data_t *t, char **f)
+token_to_file(adr_data_t *t, char **f)
 {
-	char *token = data_to_opaque(t);
-	char tokenlen = opaque_size(t);
+	char *token = adr_data_to_opaque(t);
+	char tokenlen = adr_opaque_size(t);
 
 	/* Cursory validation */
 	int nullcnt = 0;
@@ -189,16 +189,16 @@ token_to_file(data_t *t, char **f)
 	char *pname = locale + strlen(locale) + 1;
 	char *file = pname + strlen(pname) + 1;
 
-	data_t *panel = read_panel(locale, pname);
+	adr_data_t *panel = read_panel(locale, pname);
 	if (panel == NULL) {
 		/* Bad panel */
 		return (ce_object);
 	}
 
-	data_t *resources = struct_get(panel, "resourceDescriptors");
+	adr_data_t *resources = adr_struct_get(panel, "resourceDescriptors");
 	static const char * const path[] = { "file", NULL };
-	int index = array_search(resources, file, path);
-	data_free(panel);
+	int index = adr_array_search(resources, file, path);
+	adr_data_free(panel);
 	if (index == -1) {
 		/* Bad file */
 		return (ce_object);
@@ -212,7 +212,7 @@ token_to_file(data_t *t, char **f)
 	return (ce_ok);
 }
 
-static data_t *
+static adr_data_t *
 create_resource(rad_locale_t *rlocale, const char *pname, char *file)
 {
 	unsigned char hbuf[MD5_DIGEST_LENGTH];
@@ -220,18 +220,19 @@ create_resource(rad_locale_t *rlocale, const char *pname, char *file)
 		return (NULL);
 	}
 
-	data_t *result = data_new_struct(&t__ResourceDescriptor);
-	struct_set(result, "token", file_to_token(rlocale, pname, file));
-	struct_set(result, "file", data_new_string(file, lt_copy));
-	struct_set(result, "hashAlgorithm", data_new_string("MD5", lt_const));
-	struct_set(result, "hash", data_new_opaque(hbuf, MD5_DIGEST_LENGTH,
-	    lt_copy));
+	adr_data_t *result = adr_data_new_struct(&t__ResourceDescriptor);
+	adr_struct_set(result, "token", file_to_token(rlocale, pname, file));
+	adr_struct_set(result, "file", adr_data_new_string(file, LT_COPY));
+	adr_struct_set(result, "hashAlgorithm",
+	    adr_data_new_string("MD5", LT_CONST));
+	adr_struct_set(result, "hash",
+	    adr_data_new_opaque(hbuf, MD5_DIGEST_LENGTH, LT_COPY));
 
 	return (result);
 }
 
 static void
-add_localized(rad_locale_t *rlocale, const char *pname, data_t *farray,
+add_localized(rad_locale_t *rlocale, const char *pname, adr_data_t *farray,
     char *file)
 {
 	if (rlocale != NULL && rlocale->language != NULL &&
@@ -275,23 +276,23 @@ add_localized(rad_locale_t *rlocale, const char *pname, data_t *farray,
 				    rlocale->territory, rlocale->modifier,
 				    base);
 				if (access(l10njar, F_OK) == 0) {
-					(void) array_add(farray,
+					(void) adr_array_add(farray,
 					    create_resource(rlocale, pname,
 					    l10njar));
 				}
 			}
 		}
 	}
-	(void) array_add(farray, create_resource(rlocale, pname, file));
+	(void) adr_array_add(farray, create_resource(rlocale, pname, file));
 }
 
-static data_t *
+static adr_data_t *
 read_panel_path(rad_locale_t *rlocale, const char *path)
 {
 	xmlParserCtxt *ctx;
 	xmlValidCtxt *vctx;
 	xmlDoc *doc;
-	data_t *panel = NULL;
+	adr_data_t *panel = NULL;
 
 	ctx = xmlNewParserCtxt();
 	vctx = xmlNewValidCtxt();
@@ -320,22 +321,24 @@ read_panel_path(rad_locale_t *rlocale, const char *path)
 		goto out;
 	}
 
-	panel = data_new_struct(&t__CustomPanel);
-	struct_set(panel, "locale", data_new_string(rlocale->locale, lt_copy));
+	panel = adr_data_new_struct(&t__CustomPanel);
+	adr_struct_set(panel, "locale",
+	    adr_data_new_string(rlocale->locale, LT_COPY));
 
-	data_t *pname = get_prop(root, "name");
-	struct_set(panel, "name", pname);
+	adr_data_t *pname = get_prop(root, "name");
+	adr_struct_set(panel, "name", pname);
 
-	data_t *farray = data_new_array(&t_array__ResourceDescriptor, 1);
-	struct_set(panel, "resourceDescriptors", farray);
+	adr_data_t *farray =
+	    adr_data_new_array(&t_array__ResourceDescriptor, 1);
+	adr_struct_set(panel, "resourceDescriptors", farray);
 
 	char *aroot = NULL;
 	for (xmlNode *np = root->children; np != NULL; np = np->next) {
 		if (np->type != XML_ELEMENT_NODE)
 			continue;
 		if (strcmp((const char *)np->name, "mainclass") == 0) {
-			data_t *mc = get_text(doc, np->children);
-			struct_set(panel, "panelDescriptorClassName", mc);
+			adr_data_t *mc = get_text(doc, np->children);
+			adr_struct_set(panel, "panelDescriptorClassName", mc);
 		} else if (strcmp((const char *)np->name, "approot") == 0) {
 			if (aroot != NULL)
 				continue;	/* schema violation */
@@ -359,8 +362,8 @@ read_panel_path(rad_locale_t *rlocale, const char *path)
 			    file);
 			free(file);
 
-			add_localized(rlocale, data_to_string(pname), farray,
-			    full);
+			add_localized(rlocale, adr_data_to_string(pname),
+			    farray, full);
 		}
 	}
 	if (aroot != NULL)
@@ -370,10 +373,10 @@ out:
 	xmlFreeDoc(doc);
 	xmlFreeParserCtxt(ctx);
 
-	return (data_purify_deep(panel));
+	return (adr_data_purify_deep(panel));
 }
 
-static data_t *
+static adr_data_t *
 read_panel(const char *locale, const char *pname)
 {
 	rad_locale_t *rlocale;
@@ -384,13 +387,13 @@ read_panel(const char *locale, const char *pname)
 	char path[PATH_MAX];
 	(void) snprintf(path, RAD_COUNT(path), "%s/%s.xml", PANELDESCDIR,
 	    pname);
-	data_t *panel = read_panel_path(rlocale, path);
+	adr_data_t *panel = read_panel_path(rlocale, path);
 
 	if (panel != NULL) {
 		/* Sanity check - ensure panel @name matches file name */
-		data_t *nameattr = struct_get(panel, "name");
-		if (strcmp(data_to_string(nameattr), pname) != 0) {
-			data_free(panel);
+		adr_data_t *nameattr = adr_struct_get(panel, "name");
+		if (strcmp(adr_data_to_string(nameattr), pname) != 0) {
+			adr_data_free(panel);
 			panel = NULL;
 		}
 	}
@@ -423,12 +426,13 @@ _rad_init(void *handle)
 /* ARGSUSED */
 conerr_t
 interface_Panel_invoke_getPanel(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	const char *pname = data_to_string(args[0]);
-	const char *locale = args[1] == NULL ? NULL : data_to_string(args[1]);
+	const char *pname = adr_data_to_string(args[0]);
+	const char *locale = args[1] == NULL ? NULL :
+	    adr_data_to_string(args[1]);
 
-	data_t *panel = read_panel(locale, pname);
+	adr_data_t *panel = read_panel(locale, pname);
 	if (panel == NULL) {
 		/*
 		 * Could be a memory or system error, but more likely an invalid
@@ -444,9 +448,9 @@ interface_Panel_invoke_getPanel(rad_instance_t *inst, adr_method_t *meth,
 /* ARGSUSED */
 conerr_t
 interface_Panel_read_panelNames(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
-	data_t *array = data_new_array(&t_array_string, 0);
+	adr_data_t *array = adr_data_new_array(&adr_t_array_string, 0);
 	if (array == NULL) {
 		return (ce_nomem);
 	}
@@ -466,11 +470,12 @@ interface_Panel_read_panelNames(rad_instance_t *inst, adr_attribute_t *attr,
 		if (len < 1 || strcmp(ent->d_name + len, ext) != 0) {
 			continue;
 		}
-		(void) array_add(array, data_new_nstring(ent->d_name, len));
+		(void) adr_array_add(array,
+		    adr_data_new_nstring(ent->d_name, len));
 	}
 
 	(void) closedir(d);
-	*data = data_purify(array);
+	*data = adr_data_purify(array);
 
 	return (*data == NULL ? ce_nomem : ce_ok);
 }
@@ -478,7 +483,7 @@ interface_Panel_read_panelNames(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_Panel_invoke_getResource(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	char *file;
 	conerr_t result = token_to_file(args[0], &file);
@@ -513,6 +518,6 @@ interface_Panel_invoke_getResource(rad_instance_t *inst, adr_method_t *meth,
 
 	(void) close(fd);
 
-	*ret = data_new_opaque(buffer, st.st_size, lt_free);
+	*ret = adr_data_new_opaque(buffer, st.st_size, LT_FREE);
 	return (*ret == NULL ? ce_nomem : ce_ok);
 }
