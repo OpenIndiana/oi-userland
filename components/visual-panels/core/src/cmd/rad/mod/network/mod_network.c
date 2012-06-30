@@ -65,14 +65,14 @@ if_count(int fd, int *count)
 /* ARGSUSED */
 conerr_t
 interface_Network_read_networkInterfaces(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	int fd;
 	int count, rcount;
 	int reqsize;
 	struct lifreq *reqs = NULL;
 	struct lifconf ifconf;
-	data_t *result;
+	adr_data_t *result;
 
 	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
 		return (ce_object);
@@ -86,7 +86,7 @@ interface_Network_read_networkInterfaces(rad_instance_t *inst,
 
 		if (count == 0) {
 			(void) close(fd);
-			*data = data_new_array(&t_array_string, 0);
+			*data = adr_data_new_array(&adr_t_array_string, 0);
 			return (ce_ok);
 		}
 
@@ -109,7 +109,7 @@ interface_Network_read_networkInterfaces(rad_instance_t *inst,
 		rcount = ifconf.lifc_len / sizeof (struct lifreq);
 	} while (rcount >= count);
 
-	result = data_new_array(&t_array_string, rcount);
+	result = adr_data_new_array(&adr_t_array_string, rcount);
 	for (int i = 0; i < rcount; i++) {
 		struct lifreq *r = &ifconf.lifc_req[i];
 		if (strchr(r->lifr_name, ':') != NULL)
@@ -118,37 +118,38 @@ interface_Network_read_networkInterfaces(rad_instance_t *inst,
 			continue;
 		if ((r->lifr_flags & (IFF_LOOPBACK | IFF_VIRTUAL)) != 0)
 			continue;
-		(void) array_add(result, data_new_string(r->lifr_name,
-		    lt_copy));
+		(void) adr_array_add(result, adr_data_new_string(r->lifr_name,
+		    LT_COPY));
 	}
 	(void) close(fd);
 	free(reqs);
 
-	*data = data_purify_deep(result);
+	*data = adr_data_purify_deep(result);
 	return (ce_ok);
 }
 
 /* ARGSUSED */
 conerr_t
 interface_Network_invoke_getHostNameForIP(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	int errnum;
 	struct hostent *he;
 	ipaddr_t addr;
 
-	if (inet_pton(AF_INET, data_to_string(args[0]), &addr) != 1)
+	if (inet_pton(AF_INET, adr_data_to_string(args[0]), &addr) != 1)
 		return (ce_object);
 
 	if ((he = getipnodebyaddr(&addr, sizeof (addr), AF_INET, &errnum))
 	    == NULL) {
 		/* Not found?  Bounce it back. */
-		(void) data_ref(args[0]);
+		(void) adr_data_ref(args[0]);
 		*ret = args[0];
 		return (ce_ok);
 	}
 
-	data_t *result = data_new_string(he->h_name, lt_copy);
+	adr_data_t *result = adr_data_new_string(he->h_name, LT_COPY);
 	freehostent(he);
 	*ret = result;
 
@@ -158,13 +159,13 @@ interface_Network_invoke_getHostNameForIP(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_Network_invoke_hostGetIPs(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	int errnum;
 	struct hostent *he;
 
-	if ((he = getipnodebyname(data_to_string(args[0]), AF_INET, AI_DEFAULT,
-	    &errnum)) == NULL) {
+	if ((he = getipnodebyname(adr_data_to_string(args[0]), AF_INET,
+	    AI_DEFAULT, &errnum)) == NULL) {
 		*ret = NULL;
 		return (ce_object);
 	}
@@ -172,16 +173,16 @@ interface_Network_invoke_hostGetIPs(rad_instance_t *inst, adr_method_t *meth,
 	int n = 0;
 	for (char **aptr = he->h_addr_list; *aptr != NULL; aptr++)
 		n++;
-	data_t *result = data_new_array(&t_array_string, n);
+	adr_data_t *result = adr_data_new_array(&adr_t_array_string, n);
 	for (int i = 0; i < n; i++) {
 		char abuf[INET_ADDRSTRLEN];
 		if (inet_ntop(AF_INET, he->h_addr_list[i], abuf,
 		    sizeof (abuf)) != NULL)
-			(void) array_add(result, data_new_string(abuf,
-			    lt_copy));
+			(void) adr_array_add(result, adr_data_new_string(abuf,
+			    LT_COPY));
 	}
 
-	*ret = data_purify_deep(result);
+	*ret = adr_data_purify_deep(result);
 	freehostent(he);
 
 	return (ce_ok);
@@ -190,7 +191,8 @@ interface_Network_invoke_hostGetIPs(rad_instance_t *inst, adr_method_t *meth,
 /* ARGSUSED */
 conerr_t
 interface_Network_invoke_isLocalAddress(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	struct ifaddrs *ifaddr;
 	struct ifaddrs *ifa;
@@ -201,7 +203,7 @@ interface_Network_invoke_isLocalAddress(rad_instance_t *inst,
 	(void) memset(buf, 0, sizeof (buf));
 
 	/* Set default return value */
-	*ret = data_new_boolean(B_FALSE);
+	*ret = adr_data_new_boolean(B_FALSE);
 
 	// Get IP addresses of each network interface.
 	//
@@ -224,9 +226,10 @@ interface_Network_invoke_isLocalAddress(rad_instance_t *inst,
 			sin = (struct sockaddr_in *)ifa->ifa_addr;
 
 			/* Match given IP address */
-			if (strcmp(data_to_string(args[0]), inet_ntop(AF_INET,
+			if (strcmp(adr_data_to_string(args[0]),
+			    inet_ntop(AF_INET,
 			    &sin->sin_addr.s_addr, buf, 1024)) == 0) {
-				*ret = data_new_boolean(B_TRUE);
+				*ret = adr_data_new_boolean(B_TRUE);
 				break;
 			}
 		} else {
@@ -234,9 +237,10 @@ interface_Network_invoke_isLocalAddress(rad_instance_t *inst,
 			sin6 = (struct sockaddr_in6 *)ifa->ifa_addr;
 
 			/* Match given IP address */
-			if (strcmp(data_to_string(args[0]), inet_ntop(AF_INET6,
+			if (strcmp(adr_data_to_string(args[0]),
+			    inet_ntop(AF_INET6,
 			    &sin6->sin6_addr.s6_addr, buf, 1024)) == 0) {
-				*ret = data_new_boolean(B_TRUE);
+				*ret = adr_data_new_boolean(B_TRUE);
 				break;
 			}
 		}

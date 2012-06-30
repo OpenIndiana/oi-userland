@@ -74,20 +74,21 @@ static const char *framework_pgtypes[] = {
 };
 
 static conerr_t
-error_scf(data_t **error, int code)
+error_scf(adr_data_t **error, int code)
 {
 	if (error != NULL) {
-		data_t *e = data_new_struct(&t__SmfError);
-		struct_set(e, "error", data_new_enum(&t__SmfErrorCode, code));
-		struct_set(e, "message",
-		    data_new_string(scf_strerror(code), lt_const));
-		*error = data_purify(e);
+		adr_data_t *e = adr_data_new_struct(&t__SmfError);
+		adr_struct_set(e, "error",
+		    adr_data_new_enum(&t__SmfErrorCode, code));
+		adr_struct_set(e, "message",
+		    adr_data_new_string(scf_strerror(code), LT_CONST));
+		*error = adr_data_purify(e);
 	}
 	return (ce_object);
 }
 
 static conerr_t
-simple_scf(data_t **error, int result)
+simple_scf(adr_data_t **error, int result)
 {
 	if (result == 0)
 		return (ce_ok);
@@ -123,9 +124,9 @@ handle_create(void)
 	return (h);
 }
 
-static int getpgs(servinst_t *si, data_t **data, boolean_t namesonly,
+static int getpgs(servinst_t *si, adr_data_t **data, boolean_t namesonly,
     boolean_t(*fp)(const char **, const char *), const char **set,
-    data_t **error)
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
 	scf_handle_t *scfhandle = handle_create();
@@ -159,8 +160,9 @@ static int getpgs(servinst_t *si, data_t **data, boolean_t namesonly,
 		}
 	}
 
-	data_t *result = namesonly ? data_new_array(&t_array_string, 5) :
-	    data_new_array(&t_array__PropertyGroup, 5);
+	adr_data_t *result = namesonly ?
+	    adr_data_new_array(&adr_t_array_string, 5) :
+	    adr_data_new_array(&t_array__PropertyGroup, 5);
 	while (scf_iter_next_pg(iter, pg) > 0) {
 		char nbuf[1000];
 		char tbuf[1000];
@@ -169,16 +171,16 @@ static int getpgs(servinst_t *si, data_t **data, boolean_t namesonly,
 
 		if (fp(set, tbuf)) {
 			if (namesonly) {
-				(void) array_add(result,
-				    data_new_string(nbuf, lt_copy));
+				(void) adr_array_add(result,
+				    adr_data_new_string(nbuf, LT_COPY));
 			} else {
-				data_t *pgdata =
-				    data_new_struct(&t__PropertyGroup);
-				struct_set(pgdata, "name",
-				    data_new_string(nbuf, lt_copy));
-				struct_set(pgdata, "type",
-				    data_new_string(tbuf, lt_copy));
-				(void) array_add(result, pgdata);
+				adr_data_t *pgdata =
+				    adr_data_new_struct(&t__PropertyGroup);
+				adr_struct_set(pgdata, "name",
+				    adr_data_new_string(nbuf, LT_COPY));
+				adr_struct_set(pgdata, "type",
+				    adr_data_new_string(tbuf, LT_COPY));
+				(void) adr_array_add(result, pgdata);
 			}
 		}
 	}
@@ -199,17 +201,17 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_fmri(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
-	*data = data_new_string(si->fmri, lt_copy);
+	*data = adr_data_new_string(si->fmri, LT_COPY);
 	return (ce_ok);
 }
 
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_methodNames(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	const char *pgtypes[] = { SCF_GROUP_METHOD, NULL };
 	return (getpgs(instance_getdata(inst), data, B_TRUE, strinset, pgtypes,
@@ -219,7 +221,7 @@ interface_ServiceInfo_read_methodNames(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_dependencyNames(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	const char *pgtypes[] = { SCF_GROUP_DEPENDENCY, NULL };
 	return (getpgs(instance_getdata(inst), data, B_TRUE, strinset, pgtypes,
@@ -229,7 +231,7 @@ interface_ServiceInfo_read_dependencyNames(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_propertyGroups(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	return (getpgs(instance_getdata(inst), data, B_FALSE, strnotinset,
 	    framework_pgtypes, error));
@@ -238,7 +240,7 @@ interface_ServiceInfo_read_propertyGroups(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	char *title, *section, *path;
@@ -256,13 +258,13 @@ interface_ServiceInfo_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
 		NULL
 	};
 
-	data_t *pgs;
+	adr_data_t *pgs;
 	conerr_t err = getpgs(si, &pgs, B_TRUE, strinset, pgtypes, error);
 	if (err != ce_ok)
 		return (err);
-	data_t *result = data_new_array(&t_array__Manpage, 5);
-	for (int i = 0; i < array_size(pgs); i++) {
-		const char *str = data_to_string(array_get(pgs, i));
+	adr_data_t *result = adr_data_new_array(&t_array__Manpage, 5);
+	for (int i = 0; i < adr_array_size(pgs); i++) {
+		const char *str = adr_data_to_string(adr_array_get(pgs, i));
 		if (strncmp(str, SCF_PG_TM_MAN_PREFIX,
 		    strlen(SCF_PG_TM_MAN_PREFIX)) != 0) {
 			continue;
@@ -272,14 +274,16 @@ interface_ServiceInfo_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
 		    &badprop) != 0)
 			continue;
 
-		data_t *mp = data_new_struct(&t__Manpage);
-		struct_set(mp, "title", data_new_string(title, lt_copy));
-		struct_set(mp, "section", data_new_string(section, lt_copy));
-		struct_set(mp, "path", data_new_string(path, lt_copy));
-		(void) array_add(result, mp);
+		adr_data_t *mp = adr_data_new_struct(&t__Manpage);
+		adr_struct_set(mp, "title",
+		    adr_data_new_string(title, LT_COPY));
+		adr_struct_set(mp, "section",
+		    adr_data_new_string(section, LT_COPY));
+		adr_struct_set(mp, "path", adr_data_new_string(path, LT_COPY));
+		(void) adr_array_add(result, mp);
 		rad_clean_propvec(evec);
 	}
-	data_free(pgs);
+	adr_data_free(pgs);
 	*data = result;
 
 	return (ce_ok);
@@ -288,7 +292,7 @@ interface_ServiceInfo_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	char *uri;
@@ -303,13 +307,13 @@ interface_ServiceInfo_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
 		NULL
 	};
 
-	data_t *pgs;
+	adr_data_t *pgs;
 	conerr_t err = getpgs(si, &pgs, B_TRUE, strinset, pgtypes, error);
 	if (err != ce_ok)
 		return (err);
-	data_t *result = data_new_array(&t_array_string, 5);
-	for (int i = 0; i < array_size(pgs); i++) {
-		const char *str = data_to_string(array_get(pgs, i));
+	adr_data_t *result = adr_data_new_array(&adr_t_array_string, 5);
+	for (int i = 0; i < adr_array_size(pgs); i++) {
+		const char *str = adr_data_to_string(adr_array_get(pgs, i));
 		if (strncmp(str, SCF_PG_TM_DOC_PREFIX,
 		    strlen(SCF_PG_TM_DOC_PREFIX)) != 0) {
 			continue;
@@ -317,11 +321,12 @@ interface_ServiceInfo_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
 
 		if (rad_read_propvec(si->fmri, str, B_FALSE, evec,
 		    &badprop) == 0) {
-			(void) array_add(result, data_new_string(uri, lt_copy));
+			(void) adr_array_add(result,
+			    adr_data_new_string(uri, LT_COPY));
 			rad_clean_propvec(evec);
 		}
 	}
-	data_free(pgs);
+	adr_data_free(pgs);
 	*data = result;
 
 	return (ce_ok);
@@ -330,7 +335,7 @@ interface_ServiceInfo_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_persistentlyEnabled(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -349,14 +354,14 @@ interface_ServiceInfo_read_persistentlyEnabled(rad_instance_t *inst,
 		return (error_scf(error, scferr));
 	rad_clean_propvec(evec);
 
-	*data = data_new_boolean(enabled);
+	*data = adr_data_new_boolean(enabled);
 	return (ce_ok);
 }
 
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_temporarilyEnabled(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -375,14 +380,14 @@ interface_ServiceInfo_read_temporarilyEnabled(rad_instance_t *inst,
 		    inst, attr, data, error));
 	rad_clean_propvec(evec);
 
-	*data = data_new_boolean(enabled);
+	*data = adr_data_new_boolean(enabled);
 	return (ce_ok);
 }
 
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_enabled(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	/*
 	 * XXX: The java version always had the same implementation for both.
@@ -394,17 +399,17 @@ interface_ServiceInfo_read_enabled(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_instance(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
-	*data = data_new_boolean(si->instance);
+	*data = adr_data_new_boolean(si->instance);
 	return (ce_ok);
 }
 
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_restarter(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -419,17 +424,17 @@ interface_ServiceInfo_read_restarter(rad_instance_t *inst,
 	rad_propvec_t *badprop;
 	if (rad_read_propvec(si->fmri, SCF_PG_GENERAL, B_FALSE, evec,
 	    &badprop) == 0) {
-		*data = data_new_string(fmri, lt_copy);
+		*data = adr_data_new_string(fmri, LT_COPY);
 		rad_clean_propvec(evec);
 	} else {
-		*data = data_new_fstring("svc:/%s:%s",
+		*data = adr_data_new_fstring("svc:/%s:%s",
 		    "system/svc/restarter", "default");
 	}
 
 	return (*data != NULL ? ce_ok : ce_system);
 }
 
-static data_t *
+static adr_data_t *
 state2enum(const char *state)
 {
 	if (strcmp(state, SCF_STATE_STRING_UNINIT) == 0) {
@@ -439,14 +444,14 @@ state2enum(const char *state)
 	} else if (strcmp(state, SCF_STATE_STRING_LEGACY) == 0) {
 		return (&e__SmfState_LEGACY);
 	} else {
-		return (data_new_enum_byname(&t__SmfState, state));
+		return (adr_data_new_enum_byname(&t__SmfState, state));
 	}
 }
 
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_state(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -464,7 +469,7 @@ interface_ServiceInfo_read_state(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_nextState(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -490,7 +495,7 @@ interface_ServiceInfo_read_nextState(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_auxiliaryState(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -513,7 +518,7 @@ interface_ServiceInfo_read_auxiliaryState(rad_instance_t *inst,
 		return (error_scf(error, scferr));
 	}
 
-	*data = data_new_string(aux, lt_copy);
+	*data = adr_data_new_string(aux, LT_COPY);
 	rad_clean_propvec(evec);
 
 	return (*data != NULL ? ce_ok : ce_system);
@@ -522,7 +527,7 @@ interface_ServiceInfo_read_auxiliaryState(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_stime(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -542,7 +547,7 @@ interface_ServiceInfo_read_stime(rad_instance_t *inst, adr_attribute_t *attr,
 
 	rad_clean_propvec(evec);
 
-	*data = data_new_time(time.t_seconds, time.t_ns);
+	*data = adr_data_new_time(time.t_seconds, time.t_ns);
 
 	return (*data != NULL ? ce_ok : ce_system);
 }
@@ -550,7 +555,7 @@ interface_ServiceInfo_read_stime(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_contractID(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t **data, data_t **error)
+    adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -569,7 +574,7 @@ interface_ServiceInfo_read_contractID(rad_instance_t *inst,
 		return (error_scf(error, scferr));
 	rad_clean_propvec(evec);
 
-	*data = data_new_long(count);
+	*data = adr_data_new_long(count);
 
 	return (*data != NULL ? ce_ok : ce_system);
 }
@@ -577,7 +582,7 @@ interface_ServiceInfo_read_contractID(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_read_reason(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -589,10 +594,10 @@ interface_ServiceInfo_read_reason(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_write_persistentlyEnabled(rad_instance_t *inst,
-    adr_attribute_t *attr, data_t *data, data_t **error)
+    adr_attribute_t *attr, adr_data_t *data, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
-	boolean_t enable = data_to_boolean(data);
+	boolean_t enable = adr_data_to_boolean(data);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -602,7 +607,7 @@ interface_ServiceInfo_write_persistentlyEnabled(rad_instance_t *inst,
 
 static conerr_t
 get_pg(scf_handle_t *scfhandle, scf_propertygroup_t *pg, servinst_t *si,
-    const char *snapname, const char *pgname, data_t **error)
+    const char *snapname, const char *pgname, adr_data_t **error)
 {
 	conerr_t err = ce_ok;
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -653,10 +658,11 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getDependency(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
+	const char *pgname = adr_data_to_string(args[0]);
 	servinst_t *si = instance_getdata(inst);
 	char type[1000];
 	char grouping[1000];
@@ -698,22 +704,24 @@ interface_ServiceInfo_invoke_getDependency(rad_instance_t *inst,
 		goto out;
 	}
 
-	data_t *result = data_new_struct(&t__Dependency);
-	data_t *array = data_new_array(&t_array_string, 5);
-	struct_set(result, "name", data_ref(args[0]));
-	struct_set(result, "grouping", data_new_string(grouping, lt_copy));
-	struct_set(result, "restartOn", data_new_string(restarton, lt_copy));
-	struct_set(result, "target", array);
+	adr_data_t *result = adr_data_new_struct(&t__Dependency);
+	adr_data_t *array = adr_data_new_array(&adr_t_array_string, 5);
+	adr_struct_set(result, "name", adr_data_ref(args[0]));
+	adr_struct_set(result, "grouping",
+	    adr_data_new_string(grouping, LT_COPY));
+	adr_struct_set(result, "restartOn",
+	    adr_data_new_string(restarton, LT_COPY));
+	adr_struct_set(result, "target", array);
 	while (scf_iter_next_value(iter, val) > 0) {
 		if (scf_value_get_as_string(val, type, sizeof (type)) == -1) {
 			err = error_scf(error, scf_error());
-			data_free(result);
+			adr_data_free(result);
 			goto out;
 		}
-		(void) array_add(array, data_new_string(type, lt_copy));
+		(void) adr_array_add(array, adr_data_new_string(type, LT_COPY));
 	}
-	if (!data_verify(result, NULL, B_TRUE)) {
-		data_free(result);
+	if (!adr_data_verify(result, NULL, B_TRUE)) {
+		adr_data_free(result);
 		err = error_scf(error, SCF_ERROR_NO_MEMORY);
 		goto out;
 	}
@@ -731,10 +739,11 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getPropertyNames(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
+	const char *pgname = adr_data_to_string(args[0]);
 	servinst_t *si = instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
@@ -751,12 +760,13 @@ interface_ServiceInfo_invoke_getPropertyNames(rad_instance_t *inst,
 	    != ce_ok)
 		goto out;
 
-	data_t *result = data_new_array(&t_array_string, 5);
+	adr_data_t *result = adr_data_new_array(&adr_t_array_string, 5);
 	(void) scf_iter_pg_properties(iter, pg);
 	while (scf_iter_next_property(iter, prop) > 0) {
 		char pbuf[1000];
 		(void) scf_property_get_name(prop, pbuf, 1000);
-		(void) array_add(result, data_new_string(pbuf, lt_copy));
+		(void) adr_array_add(result,
+		    adr_data_new_string(pbuf, LT_COPY));
 	}
 	*ret = result;
 
@@ -772,10 +782,11 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getPropertyType(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
-	const char *pgname = data_to_string(args[0]);
-	const char *propname = data_to_string(args[1]);
+	const char *pgname = adr_data_to_string(args[0]);
+	const char *propname = adr_data_to_string(args[1]);
 	conerr_t err = ce_ok;
 	servinst_t *si = instance_getdata(inst);
 
@@ -798,7 +809,7 @@ interface_ServiceInfo_invoke_getPropertyType(rad_instance_t *inst,
 		goto out;
 	}
 
-	data_t *result = data_new_enum(&t__PropertyType, type);
+	adr_data_t *result = adr_data_new_enum(&t__PropertyType, type);
 	if (result != NULL)
 		*ret = result;
 	else
@@ -814,11 +825,12 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getPropertyValues(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
-	const char *propname = data_to_string(args[1]);
+	const char *pgname = adr_data_to_string(args[0]);
+	const char *propname = adr_data_to_string(args[1]);
 
 	servinst_t *si = instance_getdata(inst);
 
@@ -853,11 +865,12 @@ interface_ServiceInfo_invoke_getPropertyValues(rad_instance_t *inst,
 		goto out;
 	}
 
-	data_t *result = data_new_array(&t_array_string, 5);
+	adr_data_t *result = adr_data_new_array(&adr_t_array_string, 5);
 	while (scf_iter_next_value(iter, val) > 0) {
 		char pbuf[1000];
 		(void) scf_value_get_as_string(val, pbuf, 1000);
-		(void) array_add(result, data_new_string(pbuf, lt_copy));
+		(void) adr_array_add(result,
+		    adr_data_new_string(pbuf, LT_COPY));
 	}
 	*ret = result;
 out:
@@ -876,12 +889,13 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getSnapshotPropertyValues(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *snapname = data_to_string(args[0]);
-	const char *pgname = data_to_string(args[1]);
-	const char *propname = data_to_string(args[2]);
+	const char *snapname = adr_data_to_string(args[0]);
+	const char *pgname = adr_data_to_string(args[1]);
+	const char *propname = adr_data_to_string(args[2]);
 
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -909,12 +923,13 @@ interface_ServiceInfo_invoke_getSnapshotPropertyValues(rad_instance_t *inst,
 		goto out;
 	}
 
-	data_t *result = data_new_array(&t_array_string, 5);
+	adr_data_t *result = adr_data_new_array(&adr_t_array_string, 5);
 	(void) scf_iter_property_values(iter, prop);
 	while (scf_iter_next_value(iter, val) > 0) {
 		char pbuf[1000];
 		(void) scf_value_get_as_string(val, pbuf, 1000);
-		(void) array_add(result, data_new_string(pbuf, lt_copy));
+		(void) adr_array_add(result,
+		    adr_data_new_string(pbuf, LT_COPY));
 	}
 	*ret = result;
 out:
@@ -930,12 +945,13 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_setPropertyValues(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
-	const char *propname = data_to_string(args[1]);
-	data_t *values = args[2];
+	const char *pgname = adr_data_to_string(args[0]);
+	const char *propname = adr_data_to_string(args[1]);
+	adr_data_t *values = args[2];
 
 	servinst_t *si = instance_getdata(inst);
 
@@ -947,7 +963,7 @@ interface_ServiceInfo_invoke_setPropertyValues(rad_instance_t *inst,
 	scf_transaction_t *tx = scf_transaction_create(scfhandle);
 	scf_transaction_entry_t *ent = scf_entry_create(scfhandle);
 	scf_value_t **val =
-	    rad_zalloc(array_size(values) * sizeof (scf_value_t *));
+	    rad_zalloc(adr_array_size(values) * sizeof (scf_value_t *));
 	scf_type_t type;
 
 	if (scfhandle == NULL || service == NULL || instance == NULL ||
@@ -957,7 +973,7 @@ interface_ServiceInfo_invoke_setPropertyValues(rad_instance_t *inst,
 		goto out;
 	}
 
-	for (int i = 0; i < array_size(values); i++) {
+	for (int i = 0; i < adr_array_size(values); i++) {
 		if ((val[i] = scf_value_create(scfhandle)) == NULL) {
 			err = error_scf(error, SCF_ERROR_NO_MEMORY);
 			goto out;
@@ -1002,9 +1018,9 @@ top:
 		goto out;
 	}
 
-	for (int i = 0; i < array_size(values); i++) {
+	for (int i = 0; i < adr_array_size(values); i++) {
 		if (scf_value_set_from_string(val[i], type,
-		    data_to_string(array_get(values, i))) != 0 ||
+		    adr_data_to_string(adr_array_get(values, i))) != 0 ||
 		    scf_entry_add_value(ent, val[i]) != 0) {
 			err = error_scf(error, scf_error());
 			goto out;
@@ -1022,7 +1038,7 @@ top:
 
 out:
 	if (val != NULL) {
-		for (int i = 0; i < array_size(values); i++) {
+		for (int i = 0; i < adr_array_size(values); i++) {
 			if (val[i] == NULL)
 				break;
 			scf_value_destroy(val[i]);
@@ -1044,11 +1060,12 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_createPropertyGroup(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
-	const char *pgtype = data_to_string(args[1]);
+	const char *pgname = adr_data_to_string(args[0]);
+	const char *pgtype = adr_data_to_string(args[1]);
 
 	servinst_t *si = instance_getdata(inst);
 
@@ -1095,10 +1112,11 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_deletePropertyGroup(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
+	const char *pgname = adr_data_to_string(args[0]);
 
 	servinst_t *si = instance_getdata(inst);
 
@@ -1151,12 +1169,13 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_createProperty(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
-	const char *propname = data_to_string(args[1]);
-	scf_type_t type = enum_tovalue(args[2]);
+	const char *pgname = adr_data_to_string(args[0]);
+	const char *propname = adr_data_to_string(args[1]);
+	scf_type_t type = adr_enum_tovalue(args[2]);
 	int sret;
 
 	servinst_t *si = instance_getdata(inst);
@@ -1232,11 +1251,12 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_deleteProperty(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
-	const char *propname = data_to_string(args[1]);
+	const char *pgname = adr_data_to_string(args[0]);
+	const char *propname = adr_data_to_string(args[1]);
 	int sret;
 
 	servinst_t *si = instance_getdata(inst);
@@ -1309,12 +1329,13 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getPropertyTemplate(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	conerr_t err = ce_ok;
-	const char *pgname = data_to_string(args[0]);
-	const char *propname = data_to_string(args[1]);
-	const char *locale = data_to_string(args[2]);
+	const char *pgname = adr_data_to_string(args[0]);
+	const char *propname = adr_data_to_string(args[1]);
+	const char *locale = adr_data_to_string(args[2]);
 
 	servinst_t *si = instance_getdata(inst);
 	scf_handle_t *scfhandle = handle_create();
@@ -1333,25 +1354,27 @@ interface_ServiceInfo_invoke_getPropertyTemplate(rad_instance_t *inst,
 		goto out;
 	}
 
-	data_t *result = data_new_struct(&t__Template);
+	adr_data_t *result = adr_data_new_struct(&t__Template);
 
 	char *name;
 	if (scf_tmpl_prop_common_name(proptmpl, locale, &name) >= 0)
-		struct_set(result, "name", data_new_string(name, lt_free));
+		adr_struct_set(result, "name",
+		    adr_data_new_string(name, LT_FREE));
 
 	if (scf_tmpl_prop_description(proptmpl, locale, &name) >= 0)
-		struct_set(result, "description",
-		    data_new_string(name, lt_free));
+		adr_struct_set(result, "description",
+		    adr_data_new_string(name, LT_FREE));
 
 	if (scf_tmpl_prop_units(proptmpl, locale, &name) >= 0)
-		struct_set(result, "units", data_new_string(name, lt_free));
+		adr_struct_set(result, "units",
+		    adr_data_new_string(name, LT_FREE));
 
 	uint8_t vis;
 	if (scf_tmpl_prop_visibility(proptmpl, &vis) == -1) {
-		data_free(result);
+		adr_data_free(result);
 		goto out;
 	}
-	data_t *visvalue = NULL;
+	adr_data_t *visvalue = NULL;
 	switch (vis) {
 	case SCF_TMPL_VISIBILITY_HIDDEN:
 		visvalue = &e__PropertyVisibility_HIDDEN;
@@ -1363,30 +1386,30 @@ interface_ServiceInfo_invoke_getPropertyTemplate(rad_instance_t *inst,
 		visvalue = &e__PropertyVisibility_READWRITE;
 		break;
 	}
-	struct_set(result, "visibility", visvalue);
+	adr_struct_set(result, "visibility", visvalue);
 
 	scf_values_t values;
 	if (scf_tmpl_prop_internal_seps(proptmpl, &values) == 0) {
-		data_t *array =
-		    data_new_array(&t_array_string, values.value_count);
+		adr_data_t *array =
+		    adr_data_new_array(&adr_t_array_string, values.value_count);
 		for (int i = 0; i < values.value_count; i++)
-			(void) array_add(array, data_new_string(
-			    values.values_as_strings[i], lt_copy));
-		struct_set(result, "separators", array);
+			(void) adr_array_add(array, adr_data_new_string(
+			    values.values_as_strings[i], LT_COPY));
+		adr_struct_set(result, "separators", array);
 		scf_values_destroy(&values);
 	}
 
 	if (scf_tmpl_value_name_choices(proptmpl, &values) == 0) {
-		data_t *array =
-		    data_new_array(&t_array_string, values.value_count);
+		adr_data_t *array =
+		    adr_data_new_array(&adr_t_array_string, values.value_count);
 		for (int i = 0; i < values.value_count; i++)
-			(void) array_add(array, data_new_string(
-			    values.values_as_strings[i], lt_copy));
-		struct_set(result, "allowed", array);
+			(void) adr_array_add(array, adr_data_new_string(
+			    values.values_as_strings[i], LT_COPY));
+		adr_struct_set(result, "allowed", array);
 		scf_values_destroy(&values);
 	}
 
-	if ((*ret = data_purify_deep(result)) == NULL)
+	if ((*ret = adr_data_purify_deep(result)) == NULL)
 		err = error_scf(error, SCF_ERROR_NO_MEMORY);
 out:
 	scf_tmpl_prop_destroy(proptmpl);
@@ -1398,7 +1421,7 @@ out:
 
 static int
 get_localedprop(servinst_t *si, const char *locale, const char *name,
-    data_t **ret, data_t **error)
+    adr_data_t **ret, adr_data_t **error)
 {
 	char *str;
 	rad_propvec_t *badprop;
@@ -1417,7 +1440,7 @@ get_localedprop(servinst_t *si, const char *locale, const char *name,
 		return (error_scf(error, scferr));
 	}
 
-	*ret = data_new_string(str, lt_copy);
+	*ret = adr_data_new_string(str, LT_COPY);
 	rad_clean_propvec(evec);
 	return (ce_ok);
 }
@@ -1425,9 +1448,10 @@ get_localedprop(servinst_t *si, const char *locale, const char *name,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getCommonName(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
-	const char *locale = data_to_string(args[0]);
+	const char *locale = adr_data_to_string(args[0]);
 	servinst_t *si = instance_getdata(inst);
 
 	if (get_localedprop(si, locale, SCF_PG_TM_COMMON_NAME, ret, NULL)
@@ -1439,9 +1463,10 @@ interface_ServiceInfo_invoke_getCommonName(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getDescription(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
-	const char *locale = data_to_string(args[0]);
+	const char *locale = adr_data_to_string(args[0]);
 	servinst_t *si = instance_getdata(inst);
 
 	if (get_localedprop(si, locale, SCF_PG_TM_DESCRIPTION, ret, NULL)
@@ -1453,7 +1478,8 @@ interface_ServiceInfo_invoke_getDescription(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
-    adr_method_t *meth, data_t **ret, data_t **args, int count, data_t **error)
+    adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
+    adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -1477,7 +1503,7 @@ interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
 		return (ce_object);
 	}
 
-	int max_size = data_to_integer(args[0]);
+	int max_size = adr_data_to_integer(args[0]);
 
 	int bsize = max_size >= 0 && max_size < st.st_size ?
 	    max_size : st.st_size;
@@ -1503,13 +1529,14 @@ interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
 
 	(void) close(fd);
 
-	data_t *result = data_new_struct(&t__LogInfo);
-	struct_set(result, "name", data_new_string(logname, lt_free));
-	struct_set(result, "size", data_new_integer(st.st_size));
-	struct_set(result, "MTime", data_new_time_ts(&st.st_mtim));
-	struct_set(result, "contents", data_new_opaque(buffer, bsize, lt_free));
+	adr_data_t *result = adr_data_new_struct(&t__LogInfo);
+	adr_struct_set(result, "name", adr_data_new_string(logname, LT_FREE));
+	adr_struct_set(result, "size", adr_data_new_integer(st.st_size));
+	adr_struct_set(result, "MTime", adr_data_new_time_ts(&st.st_mtim));
+	adr_struct_set(result, "contents",
+	    adr_data_new_opaque(buffer, bsize, LT_FREE));
 
-	if ((*ret = data_purify(result)) == NULL)
+	if ((*ret = adr_data_purify(result)) == NULL)
 		return (ce_object);
 
 	return (ce_ok);
@@ -1518,7 +1545,7 @@ interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_delete(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	conerr_t err = ce_ok;
 	servinst_t *si = instance_getdata(inst);
@@ -1554,7 +1581,7 @@ out:
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_clear(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -1566,33 +1593,33 @@ interface_ServiceInfo_invoke_clear(rad_instance_t *inst, adr_method_t *meth,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_degrade(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
 	return (simple_scf(error, smf_degrade_instance(si->fmri,
-	    data_to_boolean(args[0]) ? SMF_IMMEDIATE : 0)));
+	    adr_data_to_boolean(args[0]) ? SMF_IMMEDIATE : 0)));
 }
 
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_maintain(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
 	return (simple_scf(error, smf_maintain_instance(si->fmri,
-	    data_to_boolean(args[0]) ? SMF_IMMEDIATE : 0)));
+	    adr_data_to_boolean(args[0]) ? SMF_IMMEDIATE : 0)));
 }
 
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_restart(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -1604,7 +1631,7 @@ interface_ServiceInfo_invoke_restart(rad_instance_t *inst, adr_method_t *meth,
 /* ARGSUSED */
 conerr_t
 interface_ServiceInfo_invoke_refresh(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	servinst_t *si = instance_getdata(inst);
 	if (!si->instance)
@@ -1616,30 +1643,35 @@ interface_ServiceInfo_invoke_refresh(rad_instance_t *inst, adr_method_t *meth,
 /* ARGSUSED */
 conerr_t
 interface_Aggregator_read_services(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	rad_mutex_enter(&service_lock);
-	data_t *result = data_new_array(&t_array__Service, service_count);
+	adr_data_t *result =
+	    adr_data_new_array(&t_array__Service, service_count);
 
 	for (servinst_t *si = list_head(&service_list); si != NULL;
 	    si = list_next(&service_list, si)) {
-		data_t *insts = data_new_array(&t_array_string, si->ninstances);
+		adr_data_t *insts = adr_data_new_array(&adr_t_array_string,
+		    si->ninstances);
 		for (servinst_t *i = list_head(&si->instances); i != NULL;
 		    i = list_next(&si->instances, i))
-			(void) array_add(insts, data_new_string(i->iname,
-			    lt_copy));
+			(void) adr_array_add(insts,
+			    adr_data_new_string(i->iname,
+			    LT_COPY));
 
-		data_t *service = data_new_struct(&t__Service);
-		struct_set(service, "fmri", data_new_string(si->fmri, lt_copy));
-		struct_set(service, "objectName", instance_getname(si->inst));
-		struct_set(service, "instances", insts);
-		(void) array_add(result, service);
+		adr_data_t *service = adr_data_new_struct(&t__Service);
+		adr_struct_set(service, "fmri",
+		    adr_data_new_string(si->fmri, LT_COPY));
+		adr_struct_set(service, "objectName",
+		    instance_getname(si->inst));
+		adr_struct_set(service, "instances", insts);
+		(void) adr_array_add(result, service);
 	}
 
-	if (data_verify(result, NULL, B_TRUE))
+	if (adr_data_verify(result, NULL, B_TRUE))
 		*data = result;
 	else
-		data_free(result);
+		adr_data_free(result);
 
 	rad_mutex_exit(&service_lock);
 	return (*data != NULL ? ce_ok : ce_object);
@@ -1648,7 +1680,7 @@ interface_Aggregator_read_services(rad_instance_t *inst, adr_attribute_t *attr,
 /* ARGSUSED */
 conerr_t
 interface_Aggregator_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
 	conerr_t err = ce_ok;
 
@@ -1667,7 +1699,8 @@ interface_Aggregator_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
 	}
 
 	rad_mutex_enter(&service_lock);
-	data_t *result = data_new_array(&t_array__Instance, instance_count);
+	adr_data_t *result = adr_data_new_array(&t_array__Instance,
+	    instance_count);
 
 	/*
 	 * It would be easy to iterate over all instances -- not just the
@@ -1700,18 +1733,19 @@ interface_Aggregator_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
 		    scf_value_get_time(val, &seconds, &ns) != 0)
 			continue;
 
-		data_t *inst = data_new_struct(&t__Instance);
-		struct_set(inst, "fmri", data_new_string(si->fmri, lt_copy));
-		struct_set(inst, "objectName", instance_getname(si->inst));
-		struct_set(inst, "STime", data_new_time(seconds, ns));
-		struct_set(inst, "state", state2enum(statestr));
-		if (!data_verify(inst, NULL, B_TRUE))
-			data_free(inst);
+		adr_data_t *inst = adr_data_new_struct(&t__Instance);
+		adr_struct_set(inst, "fmri",
+		    adr_data_new_string(si->fmri, LT_COPY));
+		adr_struct_set(inst, "objectName", instance_getname(si->inst));
+		adr_struct_set(inst, "STime", adr_data_new_time(seconds, ns));
+		adr_struct_set(inst, "state", state2enum(statestr));
+		if (!adr_data_verify(inst, NULL, B_TRUE))
+			adr_data_free(inst);
 		else
-			(void) array_add(result, inst);
+			(void) adr_array_add(result, inst);
 	}
 
-	if ((*data = data_purify(result)) == NULL)
+	if ((*data = adr_data_purify(result)) == NULL)
 		err = ce_object;
 	rad_mutex_exit(&service_lock);
 out:
@@ -1770,8 +1804,8 @@ notify_thread(rad_thread_t *arg)
 
 		rad_log(RL_DEBUG, "identified SMF event: %s/%s", sname, iname);
 
-		data_t *stime = NULL, *state = NULL, *nstate = NULL;
-		data_t *astate = NULL, *reason = NULL;
+		adr_data_t *stime = NULL, *state = NULL, *nstate = NULL;
+		adr_data_t *astate = NULL, *reason = NULL;
 
 		/* Inefficient, but expedient */
 		(void) interface_ServiceInfo_read_stime(si->inst, NULL, &stime,
@@ -1785,23 +1819,23 @@ notify_thread(rad_thread_t *arg)
 		(void) interface_ServiceInfo_read_reason(si->inst, NULL,
 		    &reason, NULL);
 
-		data_t *event = data_new_struct(&t__StateChange);
-		struct_set(event, "source", instance_getname(si->inst));
-		struct_set(event, "state", state);
-		struct_set(event, "nextState", nstate);
-		struct_set(event, "stateTime", stime);
-		struct_set(event, "auxState", astate);
-		struct_set(event, "reason", reason);
-		struct_set(event, "anomaly", data_new_boolean(B_FALSE));
-		if (data_verify(event, NULL, B_FALSE)) {
+		adr_data_t *event = adr_data_new_struct(&t__StateChange);
+		adr_struct_set(event, "source", instance_getname(si->inst));
+		adr_struct_set(event, "state", state);
+		adr_struct_set(event, "nextState", nstate);
+		adr_struct_set(event, "stateTime", stime);
+		adr_struct_set(event, "auxState", astate);
+		adr_struct_set(event, "reason", reason);
+		adr_struct_set(event, "anomaly", adr_data_new_boolean(B_FALSE));
+		if (adr_data_verify(event, NULL, B_FALSE)) {
 			rad_log(RL_DEBUG, "sending SMF event");
 			if (agg_inst != NULL)
 				instance_notify(agg_inst, "statechange",
-				    0, data_ref(event));
+				    0, adr_data_ref(event));
 			instance_notify(si->inst, "statechange", 0, event);
 		} else {
 			rad_log(RL_DEBUG, "failed to send SMF event");
-			data_free(event);
+			adr_data_free(event);
 		}
 
 		rad_mutex_exit(&service_lock);

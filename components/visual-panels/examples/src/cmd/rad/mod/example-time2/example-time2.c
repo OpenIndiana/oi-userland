@@ -40,18 +40,18 @@
 /*ARGSUSED*/
 conerr_t
 interface_Time_read_time(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
-	*data = data_new_long((long long)time(NULL) * 1000);
+	*data = adr_data_new_long((long long)time(NULL) * 1000);
 	return (ce_ok);
 }
 
 /*ARGSUSED*/
 conerr_t
 interface_Time_write_time(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t *data, data_t **error)
+    adr_data_t *data, adr_data_t **error)
 {
-	long long rawtime = data_to_longint(data) / 1000;
+	long long rawtime = adr_data_to_longint(data) / 1000;
 	time_t newtime = (time_t)rawtime;
 
 	if (rawtime > LONG_MAX)

@@ -50,28 +50,30 @@
 
 #include "api_file.h"
 
-static data_t *
-empty_file(data_t *data, const char *apath, const char *cpath)
+static adr_data_t *
+empty_file(adr_data_t *data, const char *apath, const char *cpath)
 {
-	struct_set(data, "absolutePath", data_new_string(apath, lt_copy));
-	struct_set(data, "canonicalPath", data_new_string(cpath, lt_copy));
-	struct_set(data, "canonical", data_new_boolean(B_TRUE));
-	struct_set(data, "baseName", data_new_string("", lt_copy));
-	struct_set(data, "exists", data_new_boolean(B_FALSE));
-	struct_set(data, "readable", data_new_boolean(B_FALSE));
-	struct_set(data, "writable", data_new_boolean(B_FALSE));
-	struct_set(data, "hidden", data_new_boolean(B_FALSE));
-	struct_set(data, "directory", data_new_boolean(B_FALSE));
-	struct_set(data, "file", data_new_boolean(B_FALSE));
-	struct_set(data, "lastModified", data_new_time(0, 0));
-	struct_set(data, "length", data_new_long(0));
-	struct_set(data, "freeSpace", data_new_long(0));
-	struct_set(data, "totalSpace", data_new_long(0));
-	struct_set(data, "usableSpace", data_new_long(0));
-	return (data_purify(data));
+	adr_struct_set(data, "absolutePath",
+	    adr_data_new_string(apath, LT_COPY));
+	adr_struct_set(data, "canonicalPath",
+	    adr_data_new_string(cpath, LT_COPY));
+	adr_struct_set(data, "canonical", adr_data_new_boolean(B_TRUE));
+	adr_struct_set(data, "baseName", adr_data_new_string("", LT_COPY));
+	adr_struct_set(data, "exists", adr_data_new_boolean(B_FALSE));
+	adr_struct_set(data, "readable", adr_data_new_boolean(B_FALSE));
+	adr_struct_set(data, "writable", adr_data_new_boolean(B_FALSE));
+	adr_struct_set(data, "hidden", adr_data_new_boolean(B_FALSE));
+	adr_struct_set(data, "directory", adr_data_new_boolean(B_FALSE));
+	adr_struct_set(data, "file", adr_data_new_boolean(B_FALSE));
+	adr_struct_set(data, "lastModified", adr_data_new_time(0, 0));
+	adr_struct_set(data, "length", adr_data_new_long(0));
+	adr_struct_set(data, "freeSpace", adr_data_new_long(0));
+	adr_struct_set(data, "totalSpace", adr_data_new_long(0));
+	adr_struct_set(data, "usableSpace", adr_data_new_long(0));
+	return (adr_data_purify(data));
 }
 
-static data_t *
+static adr_data_t *
 read_file(const char *path, const char *file)
 {
 	struct stat64 st;
@@ -79,13 +81,13 @@ read_file(const char *path, const char *file)
 	char cpath[PATH_MAX] = "";
 	const char *name = file != NULL ? file : path;
 
-	data_t *data = data_new_struct(&t__FileSnapshot);
-	struct_set(data, "path", data_new_string(name, lt_copy));
-	struct_set(data, "absolute", data_new_boolean(name[0] == '/'));
+	adr_data_t *data = adr_data_new_struct(&t__FileSnapshot);
+	adr_struct_set(data, "path", adr_data_new_string(name, LT_COPY));
+	adr_struct_set(data, "absolute", adr_data_new_boolean(name[0] == '/'));
 
 	if (path[0] != '/') {
 		if (getcwd(apath, PATH_MAX) == NULL) {
-			data_free(data);
+			adr_data_free(data);
 			return (NULL);
 		}
 		if (apath[1] != '\0')
@@ -99,60 +101,66 @@ read_file(const char *path, const char *file)
 	    stat64(path, &st) == -1)
 		return (empty_file(data, apath, apath));
 
-	struct_set(data, "absolutePath", data_new_string(apath, lt_copy));
-	struct_set(data, "canonicalPath", data_new_string(cpath, lt_copy));
-	struct_set(data, "canonical",
-	    data_new_boolean(strcmp(apath, cpath) == 0));
-	struct_set(data, "baseName", data_new_string(basename(apath), lt_copy));
-	struct_set(data, "exists", data_new_boolean(B_TRUE));
-	struct_set(data, "readable", data_new_boolean(access(path, R_OK) == 0));
-	struct_set(data, "writable", data_new_boolean(access(path, W_OK) == 0));
-	struct_set(data, "hidden", data_new_boolean(B_FALSE));
-	struct_set(data, "directory", data_new_boolean(S_ISDIR(st.st_mode)));
-	struct_set(data, "file", data_new_boolean(S_ISREG(st.st_mode)));
-	struct_set(data, "lastModified", data_new_time_ts(&st.st_mtim));
+	adr_struct_set(data, "absolutePath",
+	    adr_data_new_string(apath, LT_COPY));
+	adr_struct_set(data, "canonicalPath",
+	    adr_data_new_string(cpath, LT_COPY));
+	adr_struct_set(data, "canonical",
+	    adr_data_new_boolean(strcmp(apath, cpath) == 0));
+	adr_struct_set(data, "baseName",
+	    adr_data_new_string(basename(apath), LT_COPY));
+	adr_struct_set(data, "exists", adr_data_new_boolean(B_TRUE));
+	adr_struct_set(data, "readable",
+	    adr_data_new_boolean(access(path, R_OK) == 0));
+	adr_struct_set(data, "writable",
+	    adr_data_new_boolean(access(path, W_OK) == 0));
+	adr_struct_set(data, "hidden", adr_data_new_boolean(B_FALSE));
+	adr_struct_set(data, "directory",
+	    adr_data_new_boolean(S_ISDIR(st.st_mode)));
+	adr_struct_set(data, "file", adr_data_new_boolean(S_ISREG(st.st_mode)));
+	adr_struct_set(data, "lastModified", adr_data_new_time_ts(&st.st_mtim));
 	/* XXX: 64-bitify */
-	struct_set(data, "length", data_new_long(st.st_size));
-	struct_set(data, "freeSpace", data_new_long(0));
-	struct_set(data, "totalSpace", data_new_long(0));
-	struct_set(data, "usableSpace", data_new_long(0));
-	return (data_purify(data));
+	adr_struct_set(data, "length", adr_data_new_long(st.st_size));
+	adr_struct_set(data, "freeSpace", adr_data_new_long(0));
+	adr_struct_set(data, "totalSpace", adr_data_new_long(0));
+	adr_struct_set(data, "usableSpace", adr_data_new_long(0));
+	return (adr_data_purify(data));
 }
 
 /* ARGSUSED */
 conerr_t
 interface_FileBrowser_read_roots(rad_instance_t *inst, adr_attribute_t *attr,
-    data_t **data, data_t **error)
+    adr_data_t **data, adr_data_t **error)
 {
-	data_t *result = data_new_array(&t_array__FileSnapshot, 1);
-	(void) array_add(result, read_file("/", NULL));
-	*data = data_purify(result);
+	adr_data_t *result = adr_data_new_array(&t_array__FileSnapshot, 1);
+	(void) adr_array_add(result, read_file("/", NULL));
+	*data = adr_data_purify(result);
 	return (ce_ok);
 }
 
 /* ARGSUSED */
 conerr_t
 interface_FileBrowser_invoke_getFile(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	*ret = read_file(data_to_string(args[0]), NULL);
+	*ret = read_file(adr_data_to_string(args[0]), NULL);
 	return (ce_ok);
 }
 
 /* ARGSUSED */
 conerr_t
 interface_FileBrowser_invoke_getFiles(rad_instance_t *inst, adr_method_t *meth,
-    data_t **ret, data_t **args, int count, data_t **error)
+    adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	const char *path = data_to_string(args[0]);
+	const char *path = adr_data_to_string(args[0]);
 	DIR *d = opendir(path);
 	struct dirent *ent;
-	data_t *result;
+	adr_data_t *result;
 
 	if (d == NULL)
 		return (ce_object);
 
-	result = data_new_array(&t_array__FileSnapshot, 1);
+	result = adr_data_new_array(&t_array__FileSnapshot, 1);
 	while ((ent = readdir(d)) != NULL) {
 		char buf[PATH_MAX];
 		if (strcmp(ent->d_name, ".") == 0 ||
@@ -163,12 +171,12 @@ interface_FileBrowser_invoke_getFiles(rad_instance_t *inst, adr_method_t *meth,
 			len--;
 		(void) snprintf(buf, PATH_MAX, "%.*s/%s", len, path,
 		    ent->d_name);
-		data_t *file = read_file(buf, NULL);
+		adr_data_t *file = read_file(buf, NULL);
 		if (file != NULL)
-			(void) array_add(result, file);
+			(void) adr_array_add(result, file);
 	}
 	(void) closedir(d);
-	*ret = data_purify(result);
+	*ret = adr_data_purify(result);
 
 	return (ce_ok);
 }

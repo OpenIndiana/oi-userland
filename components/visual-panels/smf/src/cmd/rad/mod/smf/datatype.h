@@ -37,27 +37,28 @@
 extern "C" {
 #endif
 
-data_t *create_SMFState(const char *);
-scf_type_t from_PropertyType(data_t *);
+adr_data_t *create_SMFState(const char *);
+scf_type_t from_PropertyType(adr_data_t *);
 
-svcerr_t create_Dependency(scf_handle_t *, scf_propertygroup_t *, data_t **);
-svcerr_t create_Manpage(scf_handle_t *, scf_propertygroup_t *, data_t **);
-svcerr_t create_Doclink(scf_handle_t *, scf_propertygroup_t *, data_t **);
+svcerr_t create_Dependency(scf_handle_t *, scf_propertygroup_t *,
+    adr_data_t **);
+svcerr_t create_Manpage(scf_handle_t *, scf_propertygroup_t *, adr_data_t **);
+svcerr_t create_Doclink(scf_handle_t *, scf_propertygroup_t *, adr_data_t **);
 
-svcerr_t create_PropertyGroup(scf_propertygroup_t *, data_t **);
+svcerr_t create_PropertyGroup(scf_propertygroup_t *, adr_data_t **);
 
 svcerr_t create_Property(scf_property_t *, scf_iter_t *, scf_value_t *,
-    data_t **, data_t **);
-svcerr_t create_Properties(scf_handle_t *, scf_propertygroup_t *, data_t **,
-    data_t **);
+    adr_data_t **, adr_data_t **);
+svcerr_t create_Properties(scf_handle_t *, scf_propertygroup_t *, adr_data_t **,
+    adr_data_t **);
 
-svcerr_t create_ExtendedState(scf_handle_t *, scf_instance_t *, data_t **);
+svcerr_t create_ExtendedState(scf_handle_t *, scf_instance_t *, adr_data_t **);
 
-svcerr_t create_PGTemplate(scf_pg_tmpl_t *, const char *, data_t **);
-svcerr_t create_PropTemplate(scf_prop_tmpl_t *, const char *, data_t **);
+svcerr_t create_PGTemplate(scf_pg_tmpl_t *, const char *, adr_data_t **);
+svcerr_t create_PropTemplate(scf_prop_tmpl_t *, const char *, adr_data_t **);
 
 svcerr_t create_Instance(scf_instance_t *, const char *, const char *,
-    data_t **, scf_propertygroup_t *, scf_property_t *, scf_value_t *);
+    adr_data_t **, scf_propertygroup_t *, scf_property_t *, scf_value_t *);
 
 #ifdef	__cplusplus
 }
