@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -54,24 +54,28 @@ $(ID_FILES):
 # License files for packaging are generated during the build
 LICENSES = $(ID_FILES:%=%.license)
 BUILT_LICENSES = $(LICENSES:%=$(BUILD_DIR)/%)
+TPNO_pci.ids.license = 7530
+TPNO_usb.ids.license = 7831
 
 # Extract the header up to the first blank line
-$(BUILD_DIR)/%.header: % $(BUILD_DIR)
+$(BUILD_DIR)/%.header: %
+	$(MKDIR) $(@D)
 	$(GSED) -e '/^$$/ q' $< > $@
 
 # Generate license files for each document by substituting in templates:
-# __FILENAME__ replace with name of ids file (uses basename to strip
-#		.license suffix, @F to strip the directories from file path)
+# __FILE_NAME_VERS__ replace with name & version of ids file
+# __TPNO__ - Oracle tracking number
 # __HEADER__ - read in contents of generated header file, then delete the 
 #		__HEADER__ line
 $(BUILD_DIR)/%.license: $(BUILD_DIR)/%.header
-	$(GSED) -e 's/__FILENAME__/$(basename $(@F))/' \
+	FILENAME="$(basename $(@F))" ; \
+	VERSION="$$(awk -F: '/Version:/ { print $$2 ; exit }' $<)" ; \
+	FILE_NAME_VERS="$${FILENAME}$${VERSION}" ; \
+	$(GSED) -e "s/__FILE_NAME_VERS__/$${FILE_NAME_VERS}/" \
+	    -e 's/__TPNO__/$(TPNO_$(@F))/' \
 	    -e '/__HEADER__/ r $<' -e '/__HEADER__/ d' ids.license.tmpl > $@
 
-$(BUILD_DIR):
-	$(MKDIR) $@
-
-install build:	$(BUILD_DIR) $(BUILT_LICENSES)
+install build: $(BUILT_LICENSES)
 
 test:	$(NO_TESTS)
 
