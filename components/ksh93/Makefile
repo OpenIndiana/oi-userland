@@ -117,9 +117,26 @@ COMPONENT_POST_INSTALL_ACTION= \
 	@$(MKDIR) -p $(PROTO_DIR)/etc/; \
 	$(CP) ksh.kshrc $(PROTO_DIR)/etc/ 
 
-# Packaging information
+# Packaging information.
+# Note how the AT&T "version letter symbol date" code is translated 
+# into the IPS version number:
+# 
+# shell/ksh93@93.<letter representation>.<0 or 1>.<yymmdd>
+#
+# <letter representation> is the numeric place in the alphabet of the 
+# major version letter.
+# 
+# <0 or 1> is the presence or absence of the "+" symbol in the AT&T
+# version code. The "+" represents a point/bugfix release and would appear as
+# "93<version letter>+" in the human readable form.
+#
+# EXAMPLE:
+# AT&T Version string: 93u+ 2011-02-08
+# IPS Version number: 93.21.1.20110208
+#
 IPS_PKG_NAME= ksh93
-IPS_COMPONENT_VERSION= 20110208
+IPS_COMPONENT_VERSION= 93.21.0.20110208
+IPS_HUMAN_VERSION= "93u 2011-02-08"
 
 # common targets
 build:		$(BUILD_32_and_64)
