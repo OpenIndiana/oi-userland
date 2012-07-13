@@ -1,0 +1,428 @@
+Solaris has md5 implementation conforming to rfc-1321.
+There is a name clash got failing on T4 (sun4v) systems.
+
+
+--- samba-3.6.6/source3/Makefile.in	Sun Jun 24 10:21:16 2012
++++ a/source3/Makefile.in	Tue Jul 10 06:46:18 2012
+@@ -430,7 +430,7 @@
+ 		   ../lib/util/blocking.o ../lib/util/rfc1738.o \
+ 		   ../lib/util/select.o ../lib/util/util_pw.o
+ 
+-CRYPTO_OBJ = ../lib/crypto/crc32.o ../lib/crypto/md5.o \
++CRYPTO_OBJ = ../lib/crypto/crc32.o @CRYPTO_MD5_OBJ@ \
+ 			 ../lib/crypto/hmacmd5.o ../lib/crypto/arcfour.o \
+ 			 ../lib/crypto/md4.o \
+ 			 ../lib/crypto/sha256.o ../lib/crypto/hmacsha256.o \
+--- samba-3.6.6/source3/configure.in	Sun Jun 24 10:21:16 2012
++++ a/source3/configure.in	Tue Jul 10 08:59:06 2012
+@@ -751,6 +751,25 @@
+ AC_CHECK_HEADERS(netgroup.h)
+ AC_CHECK_HEADERS(linux/falloc.h)
+ 
++dnl check for OS implementation of md5 conformant to rfc1321
++AC_CHECK_HEADERS(md5.h)
++if test x"$ac_cv_header_md5_h" = x"yes"; then
++	AC_DEFINE(HAVE_MD5_H, 1,
++		[Whether md5.h is available.])
++	AC_CHECK_LIB(md5, MD5Update,
++	    [
++		LIBS="${LIBS} -lmd5"
++		CRYPTO_MD5_OBJ=
++		AC_DEFINE(HAVE_LIBMD5, 1,
++		    [Whether libmd5 conformant to rfc1321 is available.])],
++	    [
++		CRYPTO_MD5_OBJ="../lib/crypto/md5.o"])
++else
++	CRYPTO_MD5_OBJ="../lib/crypto/md5.o"
++fi
++AC_SUBST(CRYPTO_MD5_OBJ)
++
++
+ AC_CHECK_HEADERS(rpcsvc/yp_prot.h,,,[[
+ #if HAVE_RPC_RPC_H
+ #include <rpc/rpc.h>
+--- samba-3.6.6/lib/crypto/md5.h	Sun Jun 24 10:21:16 2012
++++ a/lib/crypto/md5.h	Tue Jul 10 11:33:09 2012
+@@ -5,11 +5,21 @@
+ #define HEADER_MD5_H 
+ #endif
+ 
++#ifdef HAVE_MD5_H
++/*
++ * Try to avoid clashes with Solaris MD5 implementation.
++ * ...where almost all implementations follows:
++ * "Schneier's Cryptography Classics Library"
++ */
++#include <md5.h>
++#else
++
+ struct MD5Context {
+ 	uint32_t buf[4];
+ 	uint32_t bits[2];
+ 	uint8_t in[64];
+ };
++typedef struct MD5Context MD5_CTX;
+ 
+ void MD5Init(struct MD5Context *context);
+ void MD5Update(struct MD5Context *context, const uint8_t *buf,
+@@ -16,4 +26,6 @@
+ 	       size_t len);
+ void MD5Final(uint8_t digest[16], struct MD5Context *context);
+ 
++#endif /* !HAVE_MD5_H */
++
+ #endif /* !MD5_H */
+--- samba-3.6.6/lib/crypto/hmacmd5.h	Sun Jun 24 10:21:16 2012
++++ a/lib/crypto/hmacmd5.h	Tue Jul 10 12:20:30 2012
+@@ -25,7 +25,7 @@
+ 
+ typedef struct 
+ {
+-        struct MD5Context ctx;
++	MD5_CTX ctx;
+         uint8_t k_ipad[65];    
+         uint8_t k_opad[65];
+ 
+--- samba-3.6.6/lib/crypto/hmacmd5.c	Sun Jun 24 10:21:16 2012
++++ a/lib/crypto/hmacmd5.c	Tue Jul 10 10:02:50 2012
+@@ -36,7 +36,7 @@
+         /* if key is longer than 64 bytes reset it to key=MD5(key) */
+         if (key_len > 64)
+ 	{
+-                struct MD5Context tctx;
++		MD5_CTX tctx;
+ 
+                 MD5Init(&tctx);
+                 MD5Update(&tctx, key, key_len);
+@@ -91,7 +91,7 @@
+ ***********************************************************************/
+ _PUBLIC_ void hmac_md5_final(uint8_t *digest, HMACMD5Context *ctx)
+ {
+-        struct MD5Context ctx_o;
++	MD5_CTX ctx_o;
+ 
+         MD5Final(digest, &ctx->ctx);          
+ 
+--- samba-3.6.6/lib/crypto/md5test.c	Sun Jun 24 10:21:16 2012
++++ a/lib/crypto/md5test.c	Tue Jul 10 12:24:05 2012
+@@ -63,7 +63,7 @@
+ 	};
+ 
+ 	for (i=0; i < ARRAY_SIZE(testarray); i++) {
+-		struct MD5Context ctx;
++		MD5_CTX ctx;
+ 		uint8_t md5[16];
+ 		int e;
+ 
+--- samba-3.6.6/source3/modules/vfs_streams_xattr.c	Sun Jun 24 10:21:16 2012
++++ a/source3/modules/vfs_streams_xattr.c	Tue Jul 10 12:25:37 2012
+@@ -39,7 +39,7 @@
+ 
+ static SMB_INO_T stream_inode(const SMB_STRUCT_STAT *sbuf, const char *sname)
+ {
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+         unsigned char hash[16];
+ 	SMB_INO_T result;
+ 	char *upper_sname;
+--- samba-3.6.6/source3/libsmb/smb_signing.c	Sun Jun 24 10:21:16 2012
++++ a/source3/libsmb/smb_signing.c	Tue Jul 10 12:26:27 2012
+@@ -137,7 +137,7 @@
+ {
+ 	const size_t offset_end_of_sig = (smb_ss_field + 8);
+ 	uint8_t sequence_buf[8];
+-	struct MD5Context md5_ctx;
++	MD5_CTX md5_ctx;
+ 
+ 	/*
+ 	 * Firstly put the sequence number into the first 4 bytes.
+--- samba-3.6.6/source3/libsmb/ntlmssp.c	Sun Jun 24 10:21:16 2012
++++ a/source3/libsmb/ntlmssp.c	Tue Jul 10 12:27:10 2012
+@@ -612,7 +612,7 @@
+ 			return NT_STATUS_NO_MEMORY;
+ 		}
+ 	} else if (ntlmssp_state->neg_flags & NTLMSSP_NEGOTIATE_NTLM2) {
+-		struct MD5Context md5_session_nonce_ctx;
++		MD5_CTX md5_session_nonce_ctx;
+ 		uint8_t session_nonce[16];
+ 		uint8_t session_nonce_hash[16];
+ 		uint8_t user_session_key[16];
+--- samba-3.6.6/source3/web/swat.c	Sun Jun 24 10:21:16 2012
++++ a/source3/web/swat.c	Tue Jul 10 12:27:44 2012
+@@ -151,7 +151,7 @@
+ void get_xsrf_token(const char *username, const char *pass,
+ 		    const char *formname, time_t xsrf_time, char token_str[33])
+ {
+-	struct MD5Context md5_ctx;
++	MD5_CTX md5_ctx;
+ 	uint8_t token[16];
+ 	int i;
+ 
+--- samba-3.6.6/source3/rpc_client/init_samr.c	Sun Jun 24 10:21:16 2012
++++ a/source3/rpc_client/init_samr.c	Tue Jul 10 12:28:25 2012
+@@ -34,7 +34,7 @@
+ 	/* samr_CryptPasswordEx */
+ 
+ 	uchar pwbuf[532];
+-	struct MD5Context md5_ctx;
++	MD5_CTX md5_ctx;
+ 	uint8_t confounder[16];
+ 	DATA_BLOB confounded_session_key = data_blob(NULL, 16);
+ 
+--- samba-3.6.6/libcli/auth/smbencrypt.c	Sun Jun 24 10:21:16 2012
++++ a/libcli/auth/smbencrypt.c	Tue Jul 10 12:33:08 2012
+@@ -99,7 +99,7 @@
+ 
+ void E_md5hash(const uint8_t salt[16], const uint8_t nthash[16], uint8_t hash_out[16])
+ {
+-	struct MD5Context tctx;
++	MD5_CTX tctx;
+ 	MD5Init(&tctx);
+ 	MD5Update(&tctx, salt, 16);
+ 	MD5Update(&tctx, nthash, 16);
+@@ -623,7 +623,7 @@
+ 
+ void encode_or_decode_arc4_passwd_buffer(unsigned char pw_buf[532], const DATA_BLOB *psession_key)
+ {
+-	struct MD5Context tctx;
++	MD5_CTX tctx;
+ 	unsigned char key_out[16];
+ 
+ 	/* Confounder is last 16 bytes. */
+@@ -703,7 +703,7 @@
+ 					struct wkssvc_PasswordBuffer **pwd_buf)
+ {
+ 	uint8_t buffer[516];
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 	struct wkssvc_PasswordBuffer *my_pwd_buf = NULL;
+ 	DATA_BLOB confounded_session_key;
+ 	int confounder_len = 8;
+@@ -741,7 +741,7 @@
+ 					  char **pwd)
+ {
+ 	uint8_t buffer[516];
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 	size_t pwd_len;
+ 
+ 	DATA_BLOB confounded_session_key;
+--- samba-3.6.6/libcli/auth/schannel_sign.c	Sun Jun 24 10:21:16 2012
++++ a/libcli/auth/schannel_sign.c	Tue Jul 10 12:36:36 2012
+@@ -110,7 +110,7 @@
+ {
+ 	uint8_t packet_digest[16];
+ 	static const uint8_t zeros[4];
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 
+ 	MD5Init(&ctx);
+ 	MD5Update(&ctx, zeros, 4);
+--- samba-3.6.6/libcli/auth/ntlmssp_server.c	Sun Jun 24 10:21:16 2012
++++ a/libcli/auth/ntlmssp_server.c	Tue Jul 10 12:38:03 2012
+@@ -359,7 +359,7 @@
+ 	*/
+ 	if (ntlmssp_state->neg_flags & NTLMSSP_NEGOTIATE_NTLM2) {
+ 		if (ntlmssp_state->nt_resp.length == 24 && ntlmssp_state->lm_resp.length == 24) {
+-			struct MD5Context md5_session_nonce_ctx;
++			MD5_CTX md5_session_nonce_ctx;
+ 			state->doing_ntlm2 = true;
+ 
+ 			memcpy(state->session_nonce, ntlmssp_state->internal_chal.data, 8);
+--- samba-3.6.6/libcli/auth/ntlmssp_sign.c	Sun Jun 24 10:21:16 2012
++++ a/libcli/auth/ntlmssp_sign.c	Tue Jul 10 12:39:59 2012
+@@ -51,7 +51,7 @@
+ 			    DATA_BLOB session_key,
+ 			    const char *constant)
+ {
+-	struct MD5Context ctx3;
++	MD5_CTX ctx3;
+ 	MD5Init(&ctx3);
+ 	MD5Update(&ctx3, session_key.data, session_key.length);
+ 	MD5Update(&ctx3, (const uint8_t *)constant, strlen(constant)+1);
+--- samba-3.6.6/libcli/auth/credentials.c	Sun Jun 24 10:21:16 2012
++++ a/libcli/auth/credentials.c	Tue Jul 10 12:43:38 2012
+@@ -69,7 +69,7 @@
+ {
+ 	unsigned char zero[4], tmp[16];
+ 	HMACMD5Context ctx;
+-	struct MD5Context md5;
++	MD5_CTX md5;
+ 
+ 	ZERO_STRUCT(creds->session_key);
+ 
+--- samba-3.6.6/libcli/drsuapi/repl_decrypt.c	Sun Jun 24 10:21:16 2012
++++ a/libcli/drsuapi/repl_decrypt.c	Tue Jul 10 12:45:40 2012
+@@ -39,7 +39,7 @@
+ 	DATA_BLOB confounder;
+ 	DATA_BLOB enc_buffer;
+ 
+-	struct MD5Context md5;
++	MD5_CTX md5;
+ 	uint8_t _enc_key[16];
+ 	DATA_BLOB enc_key;
+ 
+@@ -198,7 +198,7 @@
+ 	DATA_BLOB rid_crypt_out = data_blob(NULL, 0);
+ 	DATA_BLOB confounder;
+ 
+-	struct MD5Context md5;
++	MD5_CTX md5;
+ 	uint8_t _enc_key[16];
+ 	DATA_BLOB enc_key;
+ 
+--- samba-3.6.6/source4/libcli/raw/smb_signing.c	Sun Jun 24 10:21:16 2012
++++ a/source4/libcli/raw/smb_signing.c	Tue Jul 10 13:27:44 2012
+@@ -103,7 +103,7 @@
+ void sign_outgoing_message(struct smb_request_buffer *out, DATA_BLOB *mac_key, unsigned int seq_num) 
+ {
+ 	uint8_t calc_md5_mac[16];
+-	struct MD5Context md5_ctx;
++	MD5_CTX md5_ctx;
+ 
+ 	/*
+ 	 * Firstly put the sequence number into the first 4 bytes.
+@@ -138,7 +138,7 @@
+ 	uint8_t calc_md5_mac[16];
+ 	uint8_t *server_sent_mac;
+ 	uint8_t sequence_buf[8];
+-	struct MD5Context md5_ctx;
++	MD5_CTX md5_ctx;
+ 	const size_t offset_end_of_sig = (HDR_SS_FIELD + 8);
+ 	int i;
+ 	const int sign_range = 0;
+--- samba-3.6.6/source4/ntp_signd/ntp_signd.c	Sun Jun 24 10:21:16 2012
++++ a/source4/ntp_signd/ntp_signd.c	Tue Jul 10 13:29:16 2012
+@@ -107,7 +107,7 @@
+ 	enum ndr_err_code ndr_err;
+ 	struct ldb_result *res;
+ 	const char *attrs[] = { "unicodePwd", "userAccountControl", "cn", NULL };
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 	struct samr_Password *nt_hash;
+ 	uint32_t user_account_control;
+ 	int ret;
+--- samba-3.6.6/source4/libnet/libnet_passwd.c	Sun Jun 24 10:21:16 2012
++++ a/source4/libnet/libnet_passwd.c	Tue Jul 10 13:30:45 2012
+@@ -274,7 +274,7 @@
+ 	DATA_BLOB session_key;
+ 	DATA_BLOB confounded_session_key = data_blob_talloc(mem_ctx, NULL, 16);
+ 	uint8_t confounder[16];	
+-	struct MD5Context md5;
++	MD5_CTX md5;
+ 
+ 	if (r->samr_handle.in.info21) {
+ 		return NT_STATUS_INVALID_PARAMETER_MIX;
+@@ -330,7 +330,7 @@
+ 	DATA_BLOB session_key;
+ 	DATA_BLOB confounded_session_key = data_blob_talloc(mem_ctx, NULL, 16);
+ 	uint8_t confounder[16];	
+-	struct MD5Context md5;
++	MD5_CTX md5;
+ 
+ 	if (!r->samr_handle.in.info21) {
+ 		return NT_STATUS_INVALID_PARAMETER_MIX;
+--- samba-3.6.6/source4/torture/ntp/ntp_signd.c	Sun Jun 24 10:21:16 2012
++++ a/source4/torture/ntp/ntp_signd.c	Tue Jul 10 13:32:00 2012
+@@ -78,7 +78,7 @@
+ 	char *unix_address;
+ 	int sys_errno;
+ 
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 	uint8_t sig[16];
+ 	enum ndr_err_code ndr_err;
+ 	bool ok;
+--- samba-3.6.6/source4/torture/rpc/samr.c	Sun Jun 24 10:21:16 2012
++++ a/source4/torture/rpc/samr.c	Tue Jul 10 13:33:48 2012
+@@ -771,7 +771,7 @@
+ 	uint8_t confounder[16];
+ 	char *newpass;
+ 	struct dcerpc_binding_handle *b = p->binding_handle;
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 	struct samr_GetUserPwInfo pwp;
+ 	struct samr_PwInfo info;
+ 	int policy_min_pw_len = 0;
+@@ -856,7 +856,7 @@
+ 	bool ret = true;
+ 	DATA_BLOB session_key;
+ 	DATA_BLOB confounded_session_key = data_blob_talloc(tctx, NULL, 16);
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 	uint8_t confounder[16];
+ 	char *newpass;
+ 	struct dcerpc_binding_handle *b = p->binding_handle;
+@@ -1140,7 +1140,7 @@
+ 	bool ret = true;
+ 	DATA_BLOB session_key;
+ 	DATA_BLOB confounded_session_key = data_blob_talloc(tctx, NULL, 16);
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 	uint8_t confounder[16];
+ 	char *newpass;
+ 	struct dcerpc_binding_handle *b = p->binding_handle;
+@@ -2458,7 +2458,7 @@
+ 	DATA_BLOB session_key;
+ 	DATA_BLOB confounded_session_key = data_blob_talloc(tctx, NULL, 16);
+ 	uint8_t confounder[16];
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 
+ 	bool ret = true;
+ 	struct lsa_String server, account;
+--- samba-3.6.6/source4/torture/rpc/samba3rpc.c	Sun Jun 24 10:21:16 2012
++++ a/source4/torture/rpc/samba3rpc.c	Tue Jul 10 13:34:47 2012
+@@ -774,7 +774,7 @@
+ 		DATA_BLOB session_key;
+ 		DATA_BLOB confounded_session_key = data_blob_talloc(
+ 			mem_ctx, NULL, 16);
+-		struct MD5Context ctx;
++		MD5_CTX ctx;
+ 		uint8_t confounder[16];
+ 
+ 		ZERO_STRUCT(u_info);
+--- samba-3.6.6/source4/torture/rpc/samlogon.c	Sun Jun 24 10:21:16 2012
++++ a/source4/torture/rpc/samlogon.c	Tue Jul 10 13:36:41 2012
+@@ -1075,7 +1075,7 @@
+ 	uint8_t session_nonce_hash[16];
+ 	uint8_t client_chall[8];
+ 
+-	struct MD5Context md5_session_nonce_ctx;
++	MD5_CTX md5_session_nonce_ctx;
+ 	HMACMD5Context hmac_ctx;
+ 
+ 	ZERO_STRUCT(user_session_key);
+--- samba-3.6.6/source4/auth/credentials/credentials_ntlm.c	Sun Jun 24 10:21:16 2012
++++ a/source4/auth/credentials/credentials_ntlm.c	Tue Jul 10 13:38:44 2012
+@@ -110,7 +110,7 @@
+ 		/* LM Key is incompatible... */
+ 		*flags &= ~CLI_CRED_LANMAN_AUTH;
+ 	} else if (*flags & CLI_CRED_NTLM2) {
+-		struct MD5Context md5_session_nonce_ctx;
++		MD5_CTX md5_session_nonce_ctx;
+ 		uint8_t session_nonce[16];
+ 		uint8_t session_nonce_hash[16];
+ 		uint8_t user_session_key[16];
+--- samba-3.6.6/source4/dsdb/samdb/ldb_modules/password_hash.c	Sun Jun 24 10:21:16 2012
++++ a/source4/dsdb/samdb/ldb_modules/password_hash.c	Tue Jul 10 13:40:01 2012
+@@ -1351,7 +1351,7 @@
+ 	}
+ 
+ 	for (i=0; i < ARRAY_SIZE(wdigest); i++) {
+-		struct MD5Context md5;
++		MD5_CTX md5;
+ 		MD5Init(&md5);
+ 		if (wdigest[i].nt4dom) {
+ 			MD5Update(&md5, wdigest[i].nt4dom->data, wdigest[i].nt4dom->length);
+--- samba-3.6.6/source4/rpc_server/samr/samr_password.c	Sun Jun 24 10:21:16 2012
++++ a/source4/rpc_server/samr/samr_password.c	Tue Jul 10 13:42:32 2012
+@@ -544,7 +544,7 @@
+ 	DATA_BLOB new_password;
+ 	DATA_BLOB co_session_key;
+ 	DATA_BLOB session_key = data_blob(NULL, 0);
+-	struct MD5Context ctx;
++	MD5_CTX ctx;
+ 
+ 	nt_status = dcesrv_fetch_session_key(dce_call->conn, &session_key);
+ 	if (!NT_STATUS_IS_OK(nt_status)) {
