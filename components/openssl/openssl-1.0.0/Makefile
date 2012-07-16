@@ -168,16 +168,17 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # Same holds for wanboot-stubs.c, which stubs out several functions, that are
 # not available in the stand-alone environment of wanboot.
 COMPONENT_PRE_BUILD_ACTION = \
-    ( $(CP) -fp engines/aesni/eng_aesni.c	$(@D)/crypto/engine; \
-      $(CP) -fp engines/aesni/aesni-x86*.pl	$(@D)/crypto/aes/asm; \
-      $(CP) -fp engines/devcrypto/*.[ch]	$(@D)/engines; \
-      $(CP) -fp engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
-      $(CP) -fp engines/t4/eng_t4*.[ch]		$(@D)/crypto/engine; \
-      $(CP) -fp engines/t4/t4_aes.S		$(@D)/crypto/aes/asm; \
-      $(CP) -fp engines/t4/t4_des.S		$(@D)/crypto/des/asm; \
-      $(CP) -fp engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
-      $(CP) -fp engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; \
-      $(CP) -fp wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; )
+    ( echo "Cloning engines..."; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/aesni/eng_aesni.c	$(@D)/crypto/engine; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/aesni/aesni-x86*.pl	$(@D)/crypto/aes/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/devcrypto/*.[ch]	$(@D)/engines; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/t4/eng_t4*.[ch]	$(@D)/crypto/engine; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_aes.S		$(@D)/crypto/aes/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_des.S		$(@D)/crypto/des/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; )
 
 # OpenSSL for wanboot is built on sparc only.
 ifeq ($(MACH), sparc)

@@ -142,7 +142,7 @@ download clobber clean::
 # update the files which have been under continuous development. We rather copy
 # the files to the right directories and let OpenSSL makefiles build it.
 COMPONENT_PRE_BUILD_ACTION = \
-    ( $(CP) -fp engines/pkcs11/* $(@D)/crypto/engine; ) 
+    ( $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*     $(@D)/crypto/engine; ) 
 
 # OpenSSL does not install into <dir>/$(MACH64) for 64-bit install so no such
 # directory is created and Userland install code would fail when installing lint
