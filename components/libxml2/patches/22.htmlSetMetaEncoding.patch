@@ -1,0 +1,83 @@
+Last file (tree.c) of original commit was left out since it modifies
+just comment where it wouldn't apply because of change in context.
+
+From 39d027cdb74371d64f68dc488556be41e1d14546 Mon Sep 17 00:00:00 2001
+From: Daniel Veillard <veillard@redhat.com>
+Date: Fri, 11 May 2012 04:38:23 +0000
+Subject: Fix html serialization error and htmlSetMetaEncoding()
+
+For https://bugzilla.gnome.org/show_bug.cgi?id=630682
+The python tests were reporting errors, some of it was due to
+a small change in case encoding, but the main one was about
+htmlSetMetaEncoding(doc, NULL) being broken by not removing
+the associated meta tag anymore
+---
+diff --git a/HTMLtree.c b/HTMLtree.c
+index f23ae02..5d0893b 100644
+--- a/HTMLtree.c
++++ b/HTMLtree.c
+@@ -151,7 +151,7 @@ found_content:
+  * htmlSetMetaEncoding:
+  * @doc:  the document
+  * @encoding:  the encoding string
+- * 
++ *
+  * Sets the current encoding in the Meta tags
+  * NOTE: this will not change the document content encoding, just
+  * the META flag associated.
+@@ -164,6 +164,7 @@ htmlSetMetaEncoding(htmlDocPtr doc, const xmlChar *encoding) {
+     const xmlChar *content = NULL;
+     char newcontent[100];
+ 
++    newcontent[0] = 0;
+ 
+     if (doc == NULL)
+ 	return(-1);
+@@ -244,7 +245,7 @@ found_meta:
+ 			    http = 1;
+ 			else
+                         {
+-                           if ((value != NULL) && 
++                           if ((value != NULL) &&
+                                (!xmlStrcasecmp(attr->name, BAD_CAST"content")))
+ 			       content = value;
+                         }
+@@ -278,8 +279,13 @@ create:
+             xmlNewProp(meta, BAD_CAST"content", BAD_CAST newcontent);
+         }
+     } else {
++        /* remove the meta tag if NULL is passed */
++        if (encoding == NULL) {
++            xmlUnlinkNode(meta);
++            xmlFreeNode(meta);
++        }
+         /* change the document only if there is a real encoding change */
+-        if (xmlStrcasestr(content, encoding) == NULL) {
++        else if (xmlStrcasestr(content, encoding) == NULL) {
+             xmlSetProp(meta, BAD_CAST"content", BAD_CAST newcontent);
+         }
+     }
+diff --git a/python/tests/serialize.py b/python/tests/serialize.py
+index 5b969a9..91753e7 100755
+--- a/python/tests/serialize.py
++++ b/python/tests/serialize.py
+@@ -96,7 +96,7 @@ str = doc.serialize("iso-8859-1", 1)
+ if str != """<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+ <html>
+ <head>
+-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
++<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+ <title>Hello</title>
+ </head>
+ <body><p>hello</p></body>
+@@ -131,7 +131,7 @@ if str != """<html>
+ str = root.serialize("iso-8859-1", 1)
+ if str != """<html>
+ <head>
+-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
++<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+ <title>Hello</title>
+ </head>
+ <body><p>hello</p></body>
+--
+cgit v0.9.0.2

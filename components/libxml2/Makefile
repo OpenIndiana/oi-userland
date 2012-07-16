@@ -34,6 +34,12 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:238c4f0203c012e5776522640c0fb3ac532c4064981c1ce3e74c00b75501d761
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxml2/$(COMPONENT_ARCHIVE)
 
+# W3C XML Conformance Test Suites
+COMPONENT_ARCHIVE_1= xmlts20080205.tar.gz
+COMPONENT_ARCHIVE_HASH_1= \
+    sha256:39ffe4a61be4187aac4b64b8fd34aa01bb004387527a1ec5dc9c8dd794a2562e
+COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -50,9 +56,11 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
+COMPONENT_PREP_ACTION =  (cd $(@D) ; gtar xf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1));
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
 
-COMPONENT_TEST_TARGETS = tests
+# Internal test suit needs data files ready.
+COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # After we have configured, make a copy of the python bits so we
 # can build separate python 2.7 support.
