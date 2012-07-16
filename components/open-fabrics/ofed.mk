@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Since we are building these as a set and not packaging them individually at
@@ -29,7 +29,7 @@ PROTO_DIR = $(WS_COMPONENTS)/open-fabrics/prototype/$(MACH)
 # OFED only builds with GCC
 COMPILER=gcc
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sfw/bin
+PATH=/usr/sfw/bin:/usr/bin:/usr/gnu/bin
 
 CPPFLAGS += "-Wformat=2"
 CFLAGS += -D_REENTRANT
