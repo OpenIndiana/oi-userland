@@ -1,0 +1,34 @@
+Second chunk of the patch was left out since it's already in 2.7.6 even
+according git history it was committed in one step.
+
+From 729601f15772c19778062b98bd0716d8f5c2af3b Mon Sep 17 00:00:00 2001
+From: Martin <gzlist@googlemail.com>
+Date: Mon, 12 Oct 2009 20:42:26 +0000
+Subject: Fix memory leak in xmlXPathEvalExpression()
+
+* xpath.c: plug some leaks when parsing misformed XPath expressions
+* python/tests/xpathleak.py: expand the regression tests for those
+---
+(limited to 'python/tests/xpathleak.py')
+
+diff --git a/python/tests/xpathleak.py b/python/tests/xpathleak.py
+index dcc144c..39f49e3 100644
+--- a/python/tests/xpathleak.py
++++ b/python/tests/xpathleak.py
+@@ -15,6 +15,14 @@ expect="""--> Invalid expression
+ --> xmlXPathEval: evaluation failed
+ --> Invalid expression
+ --> xmlXPathEval: evaluation failed
++--> Invalid expression
++--> xmlXPathEval: evaluation failed
++--> Invalid expression
++--> xmlXPathEval: evaluation failed
++--> Invalid expression
++--> xmlXPathEval: evaluation failed
++--> Invalid expression
++--> xmlXPathEval: evaluation failed
+ """
+ err=""
+ def callback(ctx, str):
+--
+cgit v0.9.0.2
