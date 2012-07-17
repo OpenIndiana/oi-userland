@@ -39,9 +39,9 @@ index 2494593..8daa53f 100644
 diff --git a/source3/modules/vfs_samfs.c b/source3/modules/vfs_samfs.c
 new file mode 100644
 index 0000000..9370768
---- /dev/null
-+++ b/source3/modules/vfs_samfs.c
-@@ -0,0 +1,166 @@
+--- /dev/null	2012-07-16 09:13:54.000000000 -0700
++++ b/source3/modules/vfs_samfs.c	2012-07-16 09:21:00.168046000 -0700
+@@ -0,0 +1,180 @@
 +/*
 + * Support for offline files with Sun SAM-QFS
 + *
@@ -91,16 +91,22 @@ index 0000000..9370768
 + *
 + * If something goes wrong we assume that the file is offline.
 + */
-+static bool samfs_is_offline(struct vfs_handle_struct *handle, const char *path, SMB_STRUCT_STAT *sbuf)
++static bool samfs_is_offline(struct vfs_handle_struct *handle, const struct smb_filename *fname, SMB_STRUCT_STAT *sbuf)
 +{
 +	struct sam_stat file_info;
 +	struct sam_stat *seg_info_ptr;
-+	bool offline;
-+	int number_of_segments;
++	int number_of_segments, number_of_segments_offline = 0;
 +	int result;
 +	int i;
++	NTSTATUS status;
++	char *path;
 +
-+	offline = false;
++        status = get_full_smb_filename(talloc_tos(), fname, &path);
++        if (!NT_STATUS_IS_OK(status)) {
++                errno = map_errno_from_nt_status(status);
++                return false;
++        }
++
 +	if (ISDOT(path) || ISDOTDOT(path)) {
 +		return false;
 +	}
@@ -161,14 +167,14 @@ index 0000000..9370768
 +		 */
 +		for (i = 0; i < number_of_segments; i++) {
 +			if (SS_ISOFFLINE(seg_info_ptr[i].attr)) {
-+				DEBUG(10,("samfs_is_offline: file %s has offline segment %d\n",
-+					path, i+1));
-+				break;
++				number_of_segments_offline++;
 +			}
 +		}
++		DEBUG(10,("samfs_is_offline: file %s has %d offline segments\n"
++			, path, number_of_segments_offline));
 +		TALLOC_FREE(seg_info_ptr);
 +	}
-+	return offline;
++	return (number_of_segments_offline) ? true : false ;
 +}
 +
 +/*
@@ -183,9 +189,17 @@ index 0000000..9370768
 + * See sam_release(3) for details.
 + *
 + */
-+static int samfs_set_offline(struct vfs_handle_struct *handle, const char *path)
++static int samfs_set_offline(struct vfs_handle_struct *handle, const struct smb_filename *fname)
 +{
 +	int result;
++	NTSTATUS status;
++	char *path;
++
++        status = get_full_smb_filename(talloc_tos(), fname, &path);
++        if (!NT_STATUS_IS_OK(status)) {
++                errno = map_errno_from_nt_status(status);
++                return false;
++        }
 +
 +	result = sam_release(path, "i");
 +	if (result != 0) {
