@@ -280,46 +280,34 @@ post_config() {
     cd ${BUILDDIR}/include
     if [ -f config.h ] ; then
         mv config.h config.h.orig
-        touch config.h
         unamep=`uname -p`
         is64bit=`echo ${CXXFLAGS} | grep -- "-m64"`
-        export HEADER_GUARD="__STDCXX"
         export HEADER_FILE="stdcxx"
         if [ "x${unamep}" = "xsparc" ] ; then
             if [ "x${is64bit}" = "x" ] ; then
-                export HEADER_GUARD="${HEADER_GUARD}_SPARC_H"
                 export HEADER_FILE="${HEADER_FILE}_sparc.h"
             else
-                export HEADER_GUARD="${HEADER_GUARD}_SPARCV9_H"
                 export HEADER_FILE="${HEADER_FILE}_sparcv9.h"
             fi
         else
             if [ "x${is64bit}" = "x" ] ; then
-                export HEADER_GUARD="${HEADER_GUARD}_I386_H"
                 export HEADER_FILE="${HEADER_FILE}_i386.h"
             else
-                export HEADER_GUARD="${HEADER_GUARD}_AMD64_H"
                 export HEADER_FILE="${HEADER_FILE}_amd64.h"
             fi
         fi
 
-        echo "#ifndef ${HEADER_GUARD}" >> config.h
-        echo "#define ${HEADER_GUARD}" >> config.h
-        echo "" >> config.h
-        echo "#include <sys/types.h>" >> config.h
-        echo "#include <inttypes.h>" >> config.h
-        echo "#include <limits.h>" >> config.h
-	echo "" >> config.h
-        echo "#ifndef _RWSTD_REENTRANT" >> config.h
-        echo "#define _RWSTD_REENTRANT" >> config.h
-        echo "#endif" >> config.h
-	echo "" >> config.h
-        cat config.h.orig >> config.h
-        echo "" >> config.h
-        echo "#endif /* ${HEADER_GUARD} */" >> config.h
-        echo "" >> config.h
+	if [ ! -f ../../Solaris/${HEADER_FILE} ] ; then
+	    echo "Required configuration header file ${HEADER_FILE} not found!"
+	    exit 1
+	fi
 
-        mv config.h "${HEADER_FILE}"
+	echo "Using configuration header file ${HEADER_FILE}"
+
+	cp -fp ../../Solaris/${HEADER_FILE} .
+	chmod 0644 ${HEADER_FILE}
+	touch -r config.h.orig -acm ${HEADER_FILE}
+
         if [ -f "${TOPLEVELDIR}/../Solaris/rwconfig_std.h" ] ; then
             cp -fp "${TOPLEVELDIR}/../Solaris/rwconfig_std.h" .
             chmod 0644 rwconfig_std.h
