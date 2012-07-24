@@ -1,0 +1,68 @@
+			     BASH PATCH REPORT
+			     =================
+
+Bash-Release:	4.1
+Patch-ID:	bash41-010
+
+Bug-Reported-by:	Stephane Jourdois <sjourdois@gmail.com>
+Bug-Reference-ID:	<AANLkTimbh1t2BmCjnCgACpEidArJMBIEtr30Vv3VzHxf@mail.gmail.com>
+Bug-Reference-URL:	http://lists.gnu.org/archive/html/bug-bash/2010-05/msg00165.html
+
+Bug-Description:
+
+The expansion of the \W prompt string escape sequence incorrectly used
+strcpy to copy overlapping strings.  Only memmove works in this case.
+
+Patch (apply with `patch -p0'):
+
+*** ../bash-4.1-patched/parse.y	2009-12-30 12:51:42.000000000 -0500
+--- parse.y	2011-02-24 16:40:48.000000000 -0500
+***************
+*** 5153,5157 ****
+  			t = strrchr (t_string, '/');
+  			if (t)
+! 			  strcpy (t_string, t + 1);
+  		      }
+  		  }
+--- 5153,5157 ----
+  			t = strrchr (t_string, '/');
+  			if (t)
+! 			  memmove (t_string, t + 1, strlen (t));
+  		      }
+  		  }
+*** ../bash-4.1-patched/y.tab.c	2009-12-30 12:52:02.000000000 -0500
+--- y.tab.c	2011-02-24 16:50:27.000000000 -0500
+***************
+*** 7482,7486 ****
+  			t = strrchr (t_string, '/');
+  			if (t)
+! 			  strcpy (t_string, t + 1);
+  		      }
+  		  }
+--- 7482,7486 ----
+  			t = strrchr (t_string, '/');
+  			if (t)
+! 			  memmove (t_string, t + 1, strlen (t));
+  		      }
+  		  }
+***************
+*** 8244,8246 ****
+  }
+  #endif /* HANDLE_MULTIBYTE */
+- 
+--- 8244,8245 ----
+*** ../bash-4.1-patched/patchlevel.h	2009-10-01 16:39:22.000000000 -0400
+--- patchlevel.h	2010-01-14 09:38:08.000000000 -0500
+***************
+*** 26,30 ****
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 9
+  
+  #endif /* _PATCHLEVEL_H_ */
+--- 26,30 ----
+     looks for to find the patch level (for the sccs version string). */
+  
+! #define PATCHLEVEL 10
+  
+  #endif /* _PATCHLEVEL_H_ */
