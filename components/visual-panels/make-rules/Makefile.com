@@ -44,7 +44,6 @@ LNFILES=$(SRCS:%.c=%.ln) rad_dummy.ln
 CLEAN_FILES += $(MOD_ALLOBJS) $(MOD_API_HDRS) $(MOD_API_CFILES) $(CLEANFILES) \
 	$(LNFILES)
 CLOBBER_FILES += $(MOD_LIBNAME)
-CTFCONVERT_HOOK = && $(CTFCONVERT) -l foo $@
 
 LDFLAGS = $(MAPOPTS) -Wl,-zdefs -lc
 
@@ -63,7 +62,6 @@ $(LNFILES) $(MOD_ALLOBJS): $(MOD_API_HDRS) $(MOD_API_CFILES)
 
 $(MOD_LIBNAME):	$(MOD_ALLOBJS) $(MAPFILES)
 	$(CC) -G -o $@ $(MOD_ALLOBJS) $(LDFLAGS) $(LDLIBS)
-	$(CTFMERGE) -l foo -o $(MOD_LIBNAME) $(MOD_ALLOBJS)
 
 install: $(MOD_INSTALLDIR)/$(MOD_LIBNAME)
 
@@ -76,7 +74,7 @@ $(MOD_INSTALLDIR)/%: %
 	$(INS.file)
 
 %.o: ../%.c
-	$(COMPILE.c) $(OUTPUT_OPTION) $< $(CTFCONVERT_HOOK)
+	$(COMPILE.c) $(OUTPUT_OPTION) $<
 
 %.ln: ../%.c
 	$(LINT.c) $(OUTPUT_OPTION) -c $<
