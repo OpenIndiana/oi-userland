@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.8.0
+COMPONENT_VERSION=	1.8.1
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4cb802f116bbdcfa71afbc842dbfacd8f96594f4b221cbb5616d5c17bc696a62
+    sha256:5966a3e23d34972eb35433ae8198fccf1945617f71b89c1af26dada9f342feb7
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
