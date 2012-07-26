@@ -22,27 +22,40 @@
 #
 include ../../../make-rules/shared-macros.mk
 
+# NOTE:
+#    Currently the version numbers in the package manifests, one
+#    level up, are manually set because the COMPONENT_VERSION, like
+#    below, is not available at the top level where this is IPS
+#    published from.
+
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.3.10
+COMPONENT_VERSION=	5.3.14
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:339157af2b386534597d287da292f2545e81d9b452e8b3fe525fb2c534ff344a
+    sha256:c8075b6e83c5db0d26cc8426a7456856421089a76c963813b1fcac3ced041cb3
 COMPONENT_ARCHIVE_URL=	http://us.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_PROJECT_URL=	http://www.php.net/
 
 #
 # php documentation
-COMPONENT_NAME_1=       php_manual_en_20120203
-#COMPONENT_VERSION_1=   NONE
-COMPONENT_SRC_1=        $(COMPONENT_NAME_1)
-COMPONENT_ARCHIVE_1=    $(COMPONENT_NAME_1).tar.gz
+COMPONENT_NAME_1=       php_manual_en
+COMPONENT_VERSION_1=	20120717
+COMPONENT_SRC_1=        $(COMPONENT_NAME_1)_$(COMPONENT_VERSION_1)
+COMPONENT_ARCHIVE_1=    $(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
-    sha256:b53619be9c1db4f20924da07b62a20e6ca51df1025b4e1eabc33125c1df11f7d
+    sha256:4c5d45e5f49bb164d40154fdef57b3193e7b77e306055559e60615c8ca9a3c30
 #
-# TODO: Need a copy of this on our internal server in order to freeze
-# the version.  php.net does not freeze the documentation version.
-COMPONENT_ARCHIVE_URL_1= http://us.php.net/get/$(COMPONENT_ARCHIVE_1)/from/this/mirror
+# This next download URL is completely hocus pocus.
+# php.net does not freeze their documentation to match the software versions.
+# So we need to take a snapshot of PHP's documentation by downloading what
+# they currently have from this URL:
+# COMPONENT_ARCHIVE_URL_1=http://us.php.net/get/php_manual_en.tar.gz/from/this/mirror
+# Then move that download to the name being constructed in the variables
+# above.  Finally, forward a copy to the gatekeeping staff to place
+# the copy in userland's download cache so that the following download URL
+# will pick it up.
+COMPONENT_ARCHIVE_URL_1=http://us.php.net/get/$(COMPONENT_ARCHIVE_1)/from/this/mirror
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -211,6 +224,10 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32) PHP-NSAPI_INSTALL PHP-CGI_INSTALL
 
+# Besides running this test target it is also strong advised to download
+# and test with:
+# Joomla!	http://www.joomla.org/
+# WordPress	http://wordpress.org/
 test:		$(TEST_32)
 
 ../imap/build/$(MACH32)/.built:
