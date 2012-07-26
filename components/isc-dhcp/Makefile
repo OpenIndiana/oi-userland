@@ -23,14 +23,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		dhcp
-COMPONENT_VERSION=	4.1-ESV-R4-Oracle
-IPS_COMPONENT_VERSION=	4.1.0.4
+COMPONENT_VERSION=	4.1-ESV-R6
+IPS_COMPONENT_VERSION=	4.1.0.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/dhcp/
-COMPONENT_ARCHIVE_URL=  http://ftp.isc.org/isc/dhcp/private/76c65da874a2be30/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=  \
+    http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
-    sha256:3160ede07cab03d78545fe5a18531f83237b404e6fc432ae46655ba6fe4957f1
+    sha256:deb666a1ab02dd1375c0ebd237ce1fcb3e4d9e7be520d25ba25f1f40eb0ead9e
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -48,7 +49,7 @@ CONFIGURE_OPTIONS  +=	--enable-ipv4-pktinfo
 
 # Disable message in omapip/errwarn.c.
 CPPFLAGS  +=	        -DNOMINUM
-CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)" 
+CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
 
 build:		$(BUILD_32)
 
