@@ -56,7 +56,7 @@
  */
 
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -140,15 +140,8 @@ static int t4_md5_final(unsigned char *md, MD5_CTX *c);
 #define	HASH_TRANSFORM		t4_md5_transform
 #define	HASH_FINAL		t4_md5_final
 #define	HASH_BLOCK_DATA_ORDER	t4_md5_multiblock
-/* HOST_l2c_t4: Hash is already byte-swapped as Little Endian for SPARC T4: */
-#define	HOST_l2c_t4(l, c)	(*((unsigned int *)(c)) = (l), (c) += 4, l)
-#define	HASH_MAKE_STRING(c, s)	do {	\
-		unsigned int ll;		\
-		ll = (c)->A; HOST_l2c_t4(ll, (s));	\
-		ll = (c)->B; HOST_l2c_t4(ll, (s));	\
-		ll = (c)->C; HOST_l2c_t4(ll, (s));	\
-		ll = (c)->D; HOST_l2c_t4(ll, (s));	\
-	} while (0)
+/* Hash is already byte-swapped as Little Endian for SPARC T4: */
+#define	HASH_MAKE_STRING(c, s)	memcpy((s), (c), MD5_DIGEST_LENGTH);
 
 /* This defines HASH_UPDATE, HASH_TRANSFORM, HASH_FINAL functions: */
 #include "md32_common.h"
