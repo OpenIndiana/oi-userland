@@ -44,7 +44,7 @@ PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.2/bin
 # The guile build is broken with studio (7073649), so we disable this for now.
 # CPPFLAGS +=	-I/usr/include/gmp
 # Java header files (--with-javaincludedir allows for only one directory)
-CPPFLAGS +=	-I/usr/java/include -I/usr/java/include/solaris
+CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
 CPPFLAGS +=	$(shell PATH=$(PATH) php-config --includes)
 CXX +=		$(studio_NORUNPATH)
