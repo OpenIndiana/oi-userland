@@ -3903,7 +3903,7 @@ hw_aes_instruction_set_present(void)
 #if defined(__amd64) || defined(__i386)
 		present = (ui & AV_386_AES) > 0;
 #elif defined(__sparc)
-		present = (ui & AV_SPARC_AES) > 0;
+		present = (ui & (AV_SPARC_AES|AV_SPARC_FJAES)) > 0;
 #endif
 		}
 
