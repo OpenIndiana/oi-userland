@@ -209,7 +209,9 @@ link path=usr/lib/libopenscap.so target=libopenscap.so.1.0.0
 link path=usr/lib/libopenscap.so.1 target=libopenscap.so.1.0.0
 
 # Bring in the language bindings if the language platforms are installed.
-depend fmri=security/openscap-perl-512@$(IPS_COMPONENT_VERSION) \
-    type=conditional predicate=runtime/perl-512
-depend fmri=security/openscap-python-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    type=conditional predicate=runtime/python-26
+depend type=conditional \
+    fmri=library/perl-5/openscap-512@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/perl-512
+depend type=conditional \
+    fmri=library/python-2/openscap-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-26
