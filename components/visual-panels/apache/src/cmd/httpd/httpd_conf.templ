@@ -39,11 +39,9 @@ ServerRoot "/usr/apache2/2.2"
 #
 <IfDefine 64bit>
 Include /etc/apache2/2.2/conf.d/modules-64.load
-LoadModule perl_module libexec/amd64/mod_perl.so
 </IfDefine>
 <IfDefine !64bit>
 Include /etc/apache2/2.2/conf.d/modules-32.load
-LoadModule perl_module libexec/mod_perl.so
 </IfDefine>
 
 
@@ -268,10 +266,13 @@ DefaultType text/plain
     # (You will also need to add "ExecCGI" to the "Options" directive.)
     #
     AddHandler cgi-script .cgi
+
+<IfModule mod_perl.c>
     AddHandler perl-script .pl
 
     PerlResponseHandler ModPerl::Registry
     PerlOptions +ParseHeaders
+</IfModule>
 
     # For type maps (negotiated resources):
     #AddHandler type-map var
@@ -317,12 +318,22 @@ DefaultType text/plain
 
 # Supplemental configuration
 #
-# The configuration files in the /etc/apache2/2.2/conf.d/ directory can be 
-# included to add extra features or to modify the default configuration of 
-# the server, or you may simply copy their contents here and change as 
+# Include all the .conf configuration files in the 
+# /etc/apache2/2.2/conf.d/ directory.
+#
+# You can place additional configuration files in the
+# /etc/apache2/2.2/conf.d/ directory to add extra features
+# or to modify the default configuration of the server,
+# or you may simply copy their contents here and change as 
 # necessary.
+#
+# Sample configuration files are in the
+# /etc/apache2/2.2/samples-conf.d directory. To use a 
+# sample .conf file, copy it to  /etc/apache2/2.2/conf.d 
+# directory and modify as required.
+#
+Include /etc/apache2/2.2/conf.d/*.conf
 
-Include /etc/apache2/2.2/conf.d/php5.2.conf
 #
 # Visual Panels will supply SSL configuration(s) 
 # Include /etc/apache2/2.2/conf.d/ssl.conf
