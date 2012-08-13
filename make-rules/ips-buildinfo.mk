@@ -24,31 +24,23 @@
 
 # The package branch version scheme is:
 #
-#       trunk_id.update.SRU.platform.buildid.nightlyid
+#       release_major.release_minor.update.SRU.platform.buildid.nightlyid
 #
 # where
-#       trunk_id : build number for tip development gate, with leading 0
 #       update   : 0 for FCS, 1 for update 1, etc.
 #       SRU      : SRU (support repository update) number for this update
 #       platform : reserved for future use.
 #       buildid  : the build number of the last non-zero element from above
-#       nightlyid: nightly build identifier
-
+#	nightlyid: nightly build identifier
 #
-# For reference, Solaris 11 FCS is branch-id 0.175.0.0.0.2.537
-#                       build 175, respin 2, workspace changeset 537
+# This scheme is used below.
 #
-
-#
-# The Solaris Marketing release build number.
-#
-TRUNK_ID ?= 0.175
 
 #
 # The Solaris Update number. This will be set by the gatekeepers.
 # The value must match the update number of the release.
 #
-UPDATENUM ?= 1
+UPDATENUM ?= 0
 
 #
 # Support Respository Update number. This is here to reserve space within the
@@ -69,27 +61,32 @@ PLATNUM ?= 0
 # the development build) of the Solaris Update is being built.
 # This is set by the gatekeepers.
 #
-BUILDID ?= 22
+BUILDID ?= 3
 
 # Each (nightly) build of the code that produces packages needs to
 # be uniquely identified so that packages produced by different
 # builds can't be mixed.  Mixing packages from different builds can
-# easily result in broken global and nonglobal zones.
+# easily result in broken global and nonglobal zones. Or at least
+# that's the case in ON, which this is copied from. We keep it simple,
+# though you could use something like this if you want:
 #
-NIGHTLYID ?= $(shell hg tip --template '{rev}\n')
+#NIGHTLYID ?= $(shell hg tip --template '{rev}\n')
+#
+NIGHTLYID ?= 0
 
 #
 # Branch Identifier.  Used in the version section of the package name to
 # identify the operating system branch that the package was produced for.
 #
 BRANCHID ?= \
-    $(TRUNK_ID).$(UPDATENUM).$(SRUNUM).$(PLATNUM).$(BUILDID).$(NIGHTLYID)
+    $(PKG_SOLARIS_VERSION).$(UPDATENUM).$(SRUNUM).$(PLATNUM).$(BUILDID).$(NIGHTLYID)
 
 #
 # Build Version.  Used in the version section of the package name to identify
 # the operating system version and branch that the package was produced for.
+# The 5.11- is needed for now.
 #
-BUILD_VERSION ?= $(OS_VERSION)-$(BRANCHID)
+BUILD_VERSION ?= 5.11-$(BRANCHID)
 
 # Set a default reference repository against which pkglint is run, in case it
 # hasn't been set in the environment.
