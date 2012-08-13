@@ -71,8 +71,11 @@ PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 
 ROOT =			/
 
+# Native OS version
 OS_VERSION =		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
+# Target OS version
+PKG_SOLARIS_VERSION ?= 5.12
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
