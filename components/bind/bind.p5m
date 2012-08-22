@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+<transform file path=usr/share/doc/bind/html/(.+)$ -> \
+	set action.hash doc/arm/%<\1> >
 
 set name=pkg.fmri \
     value=pkg:/service/network/dns/bind@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
@@ -47,12 +50,41 @@ dir path=usr/sbin
 dir path=usr/share
 dir path=usr/share/doc
 dir path=usr/share/doc/bind
+dir path=usr/share/doc/bind/html
 
 # Solaris additions
 file Solaris/server.xml path=lib/svc/manifest/network/dns/server.xml
 file Solaris/dns-server.sh path=lib/svc/method/dns-server mode=0555
 file Solaris/migration.txt path=usr/share/doc/bind/migration.txt
 
+# Documentation
+file doc/arm/Bv9ARM.pdf path=usr/share/doc/bind/Bv9ARM.pdf
+file path=usr/share/doc/bind/html/Bv9ARM.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch01.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch02.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch03.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch04.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch05.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch06.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch07.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch08.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch09.html
+file path=usr/share/doc/bind/html/Bv9ARM.ch10.html
+file path=usr/share/doc/bind/html/man.dig.html
+file path=usr/share/doc/bind/html/man.dnssec-dsfromkey.html
+file path=usr/share/doc/bind/html/man.dnssec-keyfromlabel.html
+file path=usr/share/doc/bind/html/man.dnssec-keygen.html
+file path=usr/share/doc/bind/html/man.dnssec-signzone.html
+file path=usr/share/doc/bind/html/man.host.html
+file path=usr/share/doc/bind/html/man.named-checkconf.html
+file path=usr/share/doc/bind/html/man.named-checkzone.html
+file path=usr/share/doc/bind/html/man.named.html
+file path=usr/share/doc/bind/html/man.nsupdate.html
+file path=usr/share/doc/bind/html/man.rndc-confgen.html
+file path=usr/share/doc/bind/html/man.rndc.conf.html
+file path=usr/share/doc/bind/html/man.rndc.html
+
+# Tools
 file path=usr/sbin/dnssec-dsfromkey
 file path=usr/sbin/dnssec-keyfromlabel
 file path=usr/sbin/dnssec-keygen

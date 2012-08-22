@@ -1,0 +1,20 @@
+diff --git a/lib/isc/pthreads/condition.c b/lib/isc/pthreads/condition.c
+index 50281a2..ca33e66 100644
+--- a/lib/isc/pthreads/condition.c
++++ b/lib/isc/pthreads/condition.c
+@@ -43,7 +43,14 @@ isc_condition_waituntil(isc_condition_t *c, isc_mutex_t *m, isc_time_t *t) {
+ 	 * POSIX defines a timespec's tv_sec as time_t.
+ 	 */
+ 	result = isc_time_secondsastimet(t, &ts.tv_sec);
+-	if (result != ISC_R_SUCCESS)
++
++	/*
++	 * If we have a range error ts.tv_sec is most probably a signed
++	 * 32 bit value.  Set ts.tv_sec to INT_MAX.  This is a kludge.
++	 */
++	if (result == ISC_R_RANGE)
++		ts.tv_sec = INT_MAX;
++	else if (result != ISC_R_SUCCESS)
+ 		return (result);
+ 
+ 	/*!
