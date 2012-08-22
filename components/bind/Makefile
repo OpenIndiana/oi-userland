@@ -59,7 +59,6 @@ CONFIGURE_OPTIONS +=	--enable-threads=yes
 CONFIGURE_OPTIONS +=	--enable-devpoll=yes
 CONFIGURE_OPTIONS +=	--disable-openssl-version-check
 CONFIGURE_OPTIONS +=	--enable-fixed-rrset
-CONFIGURE_OPTIONS +=	--disable-getifaddrs
 CONFIGURE_OPTIONS +=	--with-pkcs11
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
