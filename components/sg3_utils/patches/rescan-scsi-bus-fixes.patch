@@ -1,0 +1,259 @@
+From 38842b5eafcd85bc91d96e2b2d0b99ea8864d907 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Thu, 14 Jan 2010 12:50:05 +0100
+Subject: [PATCH 1/5] netapp - fixes in doreportlun
+
+---
+ rescan-scsi-bus.sh |   64 ++++++++++++++++++++++++++++++++++------------------
+ 1 files changed, 42 insertions(+), 22 deletions(-)
+
+diff --git a/rescan-scsi-bus.sh b/rescan-scsi-bus.sh
+index af1f843..8d52e39 100644
+--- a/rescan-scsi-bus.sh
++++ b/rescan-scsi-bus.sh
+@@ -371,38 +371,58 @@ dolunscan()
+ # Perform report lun scan
+ doreportlun()
+ {
+-  lun=0
++  lun=
+   SCSISTR=
+-  devnr="$host $channel $id $lun"
+-  echo "Scanning for device $devnr ..."
+-  #printf "${yellow}OLD: $norm"
+-  testexist -q
+-  if test -z "$SCSISTR"; then
+-    # Device does not exist, try to add
+-    #printf "\r${green}NEW: $norm"
+-    if test -e /sys/class/scsi_host/host${host}/scan; then
+-      echo "$channel $id $lun" > /sys/class/scsi_host/host${host}/scan 2> /dev/null
+-    else
+-      echo "scsi add-single-device $devnr" > /proc/scsi/scsi
+-    fi
++  for dev in /sys/class/scsi_device/${host}:${channel}:${id}:*; do
++        if [ -d "$dev" ]; then
++                lun=${dev##*:}
++                break
++        else
++                continue
++        fi
++  done
++  #If not a single LUN is present then assign lun=0
++  if [ -z $lun ]; then
++    lun=0
++    devnr="$host $channel $id $lun"
++    echo "Scanning for device $devnr ..."
++    printf "${yellow}OLD: $norm"
+     testexist -1
+     if test -z "$SCSISTR"; then
+-      # Device not present
+-      printf "\r\x1b[A";
+-      lunsearch=
+-      return
++      # Device does not exist, try to add
++      printf "\r${green}NEW: $norm"
++      if test -e /sys/class/scsi_host/host${host}/scan; then
++        echo "$channel $id $lun" > /sys/class/scsi_host/host${host}/scan 2> /dev/null
++      else
++        echo "scsi add-single-device $devnr" > /proc/scsi/scsi
++      fi
++      testexist
++      if test -z "$SCSISTR"; then
++        # Device not present
++        printf "\r\x1b[A";
++        lunsearch=
++        return
++      fi
+     fi
+     #testonline
+   fi
+-  lunsearch=`getluns`
++  flag=0
++  lun_search="`getluns`"
++  # Set flag=1 if all the LUNs are removed
++  if [ "${#lun_search}" = "1" ]; then
++    flag=1
++  fi
+   lunremove=
+   # Check existing luns
+   for dev in /sys/class/scsi_device/${host}:${channel}:${id}:*; do
+     [ -d "$dev" ] || continue
+     lun=${dev##*:}
++    if [ "$flag" = "1" ]; then
++      lunremove="$lunremove $lun"
++    fi
+     newsearch=
+-    oldsearch="$lunsearch"
+-    for tmplun in $lunsearch; do
++    oldsearch="$lun_search"
++    for tmplun in $lun_search; do
+       if test $tmplun -eq $lun ; then
+ 	dolunscan
+       else
+@@ -413,10 +433,10 @@ doreportlun()
+ 	# Stale lun
+ 	lunremove="$lunremove $lun"
+     fi
+-    lunsearch="$newsearch"
++    lun_search="$newsearch"
+   done
+   # Add new ones and check stale ones
+-  for lun in $lunsearch $lunremove; do
++  for lun in $lun_search $lunremove; do
+     dolunscan
+   done
+ }
+-- 
+1.6.6.1
+
+
+From 0e94e0c27d575f18a57938b9d98dfe02d8c11eb9 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Thu, 14 Jan 2010 12:50:59 +0100
+Subject: [PATCH 2/5] netapp - LIP is not required to do a scan on FC
+
+---
+ rescan-scsi-bus.sh |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/rescan-scsi-bus.sh b/rescan-scsi-bus.sh
+index 8d52e39..13e9283 100644
+--- a/rescan-scsi-bus.sh
++++ b/rescan-scsi-bus.sh
+@@ -587,11 +587,10 @@ declare -i rmvd=0
+ for host in $hosts; do
+   echo -n "Scanning host $host "
+   if test -e /sys/class/fc_host/host$host ; then
+-    # It's pointless to do a target scan on FC
+     if test -n "$lipreset" ; then
+       echo 1 > /sys/class/fc_host/host$host/issue_lip 2> /dev/null;
+-      echo "- - -" > /sys/class/scsi_host/host$host/scan 2> /dev/null;
+     fi
++    echo "- - -" > /sys/class/scsi_host/host$host/scan 2> /dev/null;
+     channelsearch=""
+     idsearch=""
+   fi
+-- 
+1.6.6.1
+
+
+From c3b67a28289bb010d141e172a184982c40e2fff2 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Thu, 14 Jan 2010 12:51:31 +0100
+Subject: [PATCH 3/5] space before getluns call is required
+
+---
+ rescan-scsi-bus.sh |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/rescan-scsi-bus.sh b/rescan-scsi-bus.sh
+index 13e9283..26a9853 100644
+--- a/rescan-scsi-bus.sh
++++ b/rescan-scsi-bus.sh
+@@ -407,7 +407,7 @@ doreportlun()
+     #testonline
+   fi
+   flag=0
+-  lun_search="`getluns`"
++  lun_search=" `getluns`"
+   # Set flag=1 if all the LUNs are removed
+   if [ "${#lun_search}" = "1" ]; then
+     flag=1
+-- 
+1.6.6.1
+
+
+From 5c10b085e2e83f371eddee16937157b0e7f63d5b Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Thu, 14 Jan 2010 15:15:34 +0100
+Subject: [PATCH 4/5] wait for device
+
+When a device reports "unit attention" state after calling sg_turs, then wait until the device comes online or a timeout is reached.
+---
+ rescan-scsi-bus.sh |    8 ++++++--
+ 1 files changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/rescan-scsi-bus.sh b/rescan-scsi-bus.sh
+index 26a9853..23fba7d 100644
+--- a/rescan-scsi-bus.sh
++++ b/rescan-scsi-bus.sh
+@@ -195,8 +195,12 @@ testonline ()
+   if test ! -x /usr/bin/sg_turs; then return 0; fi
+   sgdevice
+   if test -z "$SGDEV"; then return 0; fi
+-  sg_turs /dev/$SGDEV >/dev/null 2>&1
+-  RC=$?
++  for t in 1 2 3 4 5; do
++    sg_turs /dev/$SGDEV >/dev/null 2>&1
++    RC=$?
++    [ $RC -ne 6 ] && break
++    sleep $t
++  done
+   # echo -e "\e[A\e[A\e[A${yellow}Test existence of $SGDEV = $RC ${norm} \n\n\n"
+   if test $RC = 1; then return $RC; fi
+   # OK, device online, compare INQUIRY string
+-- 
+1.6.6.1
+
+
+From ab78298b801aa1afdbaa7091a9e4aecdf8d89d2c Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Fri, 25 Jun 2010 11:23:28 +0200
+Subject: [PATCH 5/5] accept user specified channel list when scanning FC host
+
+Allow the user to specify channels to scan on FC host when trying to find
+a first LUN. Option --forcerescan is used for that and when it's not given
+it defaults to the old behaviour when it gets available channels from
+/sys/class/scsi_device
+---
+ rescan-scsi-bus.sh |    2 +-
+ 1 files changed, 1 insertions(+), 1 deletions(-)
+
+diff --git a/rescan-scsi-bus.sh b/rescan-scsi-bus.sh
+index 23fba7d..a7fd1f3 100644
+--- a/rescan-scsi-bus.sh
++++ b/rescan-scsi-bus.sh
+@@ -595,7 +595,7 @@ for host in $hosts; do
+       echo 1 > /sys/class/fc_host/host$host/issue_lip 2> /dev/null;
+     fi
+     echo "- - -" > /sys/class/scsi_host/host$host/scan 2> /dev/null;
+-    channelsearch=""
++    [ -z $forcerescan ] && channelsearch=""
+     idsearch=""
+   fi
+   [ -n "$channelsearch" ] && echo -n "channels $channelsearch "
+-- 
+1.6.6.1
+
+From 857456759088a92cf9cd2dbfaa24b5bf9cb0829e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Dan=20Hor=C3=A1k?= <dan@danny.cz>
+Date: Wed, 22 Sep 2010 15:33:00 +0200
+Subject: [PATCH] issue scan command also for iSCSI
+
+iSCSI devices behave like FC ones, so they need to issue the scan command
+first to work when there is no LUN==0 mapped.
+---
+ rescan-scsi-bus.sh |    5 +++--
+ 1 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/rescan-scsi-bus.sh b/rescan-scsi-bus.sh
+index a7fd1f3..1b9ea7d 100644
+--- a/rescan-scsi-bus.sh
++++ b/rescan-scsi-bus.sh
+@@ -590,10 +590,11 @@ declare -i found=0
+ declare -i rmvd=0
+ for host in $hosts; do
+   echo -n "Scanning host $host "
+-  if test -e /sys/class/fc_host/host$host ; then
+-    if test -n "$lipreset" ; then
++  if test -e /sys/class/fc_host/host$host -o -e /sys/class/iscsi_host/host$host ; then
++    if test -e /sys/class/fc_host/host$host -a -n "$lipreset" ; then
+       echo 1 > /sys/class/fc_host/host$host/issue_lip 2> /dev/null;
+     fi
++    # always do a scan on FC or iSCSI
+     echo "- - -" > /sys/class/scsi_host/host$host/scan 2> /dev/null;
+     [ -z $forcerescan ] && channelsearch=""
+     idsearch=""
+-- 
+1.7.4.4
+
