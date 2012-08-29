@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =        curl
-COMPONENT_VERSION=      7.21.2
+COMPONENT_VERSION=      7.26.0
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://curl.haxx.se/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d8e0ce964b75b99efa2e6c58e6523027fe2fa56305cc180ecacda6ced636e2bf
+    sha256:79ccce9edb8aee17d20ad4d75e1f83a789f8c2e71e68f468e1bf8abf8933193f
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
