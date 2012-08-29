@@ -61,7 +61,7 @@ PLATNUM ?= 0
 # the development build) of the Solaris Update is being built.
 # This is set by the gatekeepers.
 #
-BUILDID ?= 3
+BUILDID ?= 4
 
 # Each (nightly) build of the code that produces packages needs to
 # be uniquely identified so that packages produced by different
@@ -84,9 +84,8 @@ BRANCHID ?= \
 #
 # Build Version.  Used in the version section of the package name to identify
 # the operating system version and branch that the package was produced for.
-# The 5.11- is needed for now.
 #
-BUILD_VERSION ?= 5.11-$(BRANCHID)
+BUILD_VERSION ?=  $(PKG_SOLARIS_VERSION)-$(BRANCHID)
 
 # Set a default reference repository against which pkglint is run, in case it
 # hasn't been set in the environment.
