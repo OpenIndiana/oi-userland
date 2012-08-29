@@ -18,13 +18,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 <transform file path=usr/share/doc/curl/html/(.+)$ -> \
-	set action.hash curl-7.21.2/docs/%<\1> >
+	set action.hash curl-7.26.0/docs/%<\1> >
 <transform file path=usr/share/doc/libcurl/html/(.+)$ -> \
-	set action.hash curl-7.21.2/docs/libcurl/%<\1> >
+	set action.hash curl-7.26.0/docs/libcurl/%<\1> >
 
 set name=pkg.fmri value=pkg:/web/curl@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The CURL Network Utility and Library"
@@ -33,7 +33,8 @@ set name=info.classification value="org.opensolaris.category.2008:System/Librari
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.arc-caseid \
-    value=PSARC/2007/165
+    value=PSARC/2007/165 \
+    value=PSARC/2012/252
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 #
 dir path=usr
@@ -57,6 +58,7 @@ dir path=usr/share/man/man3
 #
 file path=usr/bin/curl
 file path=usr/bin/curl-config
+file path=usr/bin/$(MACH64)/curl
 file path=usr/bin/$(MACH64)/curl-config
 file path=usr/include/curl/curlbuild.h
 file path=usr/include/curl/curl.h
@@ -67,9 +69,8 @@ file path=usr/include/curl/mprintf.h
 file path=usr/include/curl/multi.h
 file path=usr/include/curl/stdcheaders.h
 file path=usr/include/curl/typecheck-gcc.h
-file path=usr/include/curl/types.h
-file path=usr/lib/libcurl.so.3.0.0
-file path=usr/lib/$(MACH64)/libcurl.so.3.0.0
+file path=usr/lib/libcurl.so.4.2.0
+file path=usr/lib/$(MACH64)/libcurl.so.4.2.0
 file path=usr/lib/llib-lcurl
 file path=usr/lib/llib-lcurl.ln
 file path=usr/lib/$(MACH64)/llib-lcurl.ln
@@ -83,8 +84,11 @@ file path=usr/share/doc/libcurl/html/curl_easy_duphandle.html
 file path=usr/share/doc/libcurl/html/curl_easy_escape.html
 file path=usr/share/doc/libcurl/html/curl_easy_getinfo.html
 file path=usr/share/doc/libcurl/html/curl_easy_init.html
+file path=usr/share/doc/libcurl/html/curl_easy_pause.html
 file path=usr/share/doc/libcurl/html/curl_easy_perform.html
+file path=usr/share/doc/libcurl/html/curl_easy_recv.html
 file path=usr/share/doc/libcurl/html/curl_easy_reset.html
+file path=usr/share/doc/libcurl/html/curl_easy_send.html
 file path=usr/share/doc/libcurl/html/curl_easy_setopt.html
 file path=usr/share/doc/libcurl/html/curl_easy_strerror.html
 file path=usr/share/doc/libcurl/html/curl_easy_unescape.html
@@ -108,6 +112,7 @@ file path=usr/share/doc/libcurl/html/curl_multi_init.html
 file path=usr/share/doc/libcurl/html/curl_multi_perform.html
 file path=usr/share/doc/libcurl/html/curl_multi_remove_handle.html
 file path=usr/share/doc/libcurl/html/curl_multi_setopt.html
+file path=usr/share/doc/libcurl/html/curl_multi_socket_action.html
 file path=usr/share/doc/libcurl/html/curl_multi_socket.html
 file path=usr/share/doc/libcurl/html/curl_multi_strerror.html
 file path=usr/share/doc/libcurl/html/curl_multi_timeout.html
@@ -130,13 +135,17 @@ file path=usr/share/doc/libcurl/html/libcurl-tutorial.html
 file path=usr/share/doc/libcurl/html/libcurl.html
 file path=usr/share/man/man1/curl.1
 file path=usr/share/man/man1/curl-config.1
+file path=usr/share/man/man1/mk-ca-bundle.1
 file path=usr/share/man/man3/curl_easy_cleanup.3
 file path=usr/share/man/man3/curl_easy_duphandle.3
 file path=usr/share/man/man3/curl_easy_escape.3
 file path=usr/share/man/man3/curl_easy_getinfo.3
 file path=usr/share/man/man3/curl_easy_init.3
+file path=usr/share/man/man3/curl_easy_pause.3
 file path=usr/share/man/man3/curl_easy_perform.3
+file path=usr/share/man/man3/curl_easy_recv.3
 file path=usr/share/man/man3/curl_easy_reset.3
+file path=usr/share/man/man3/curl_easy_send.3
 file path=usr/share/man/man3/curl_easy_setopt.3
 file path=usr/share/man/man3/curl_easy_strerror.3
 file path=usr/share/man/man3/curl_easy_unescape.3
@@ -161,6 +170,7 @@ file path=usr/share/man/man3/curl_multi_perform.3
 file path=usr/share/man/man3/curl_multi_remove_handle.3
 file path=usr/share/man/man3/curl_multi_setopt.3
 file path=usr/share/man/man3/curl_multi_socket.3
+file path=usr/share/man/man3/curl_multi_socket_action.3
 file path=usr/share/man/man3/curl_multi_strerror.3
 file path=usr/share/man/man3/curl_multi_timeout.3
 file path=usr/share/man/man3/curl_share_cleanup.3
@@ -180,9 +190,11 @@ file path=usr/share/man/man3/libcurl-share.3
 file path=usr/share/man/man3/libcurl-tutorial.3
 file path=usr/share/man/man3/libcurl.3
 #
-link path=usr/lib/libcurl.so.3 target=libcurl.so.3.0.0
-link path=usr/lib/libcurl.so target=libcurl.so.3.0.0
-link path=usr/lib/$(MACH64)/libcurl.so.3 target=libcurl.so.3.0.0
-link path=usr/lib/$(MACH64)/libcurl.so target=libcurl.so.3.0.0
+link path=usr/lib/libcurl.so.3 target=libcurl.so.4.2.0
+link path=usr/lib/libcurl.so.4 target=libcurl.so.4.2.0
+link path=usr/lib/libcurl.so target=libcurl.so.4.2.0
+link path=usr/lib/$(MACH64)/libcurl.so.3 target=libcurl.so.4.2.0
+link path=usr/lib/$(MACH64)/libcurl.so.4 target=libcurl.so.4.2.0
+link path=usr/lib/$(MACH64)/libcurl.so target=libcurl.so.4.2.0
 #
 license curl.license license="CURL"
