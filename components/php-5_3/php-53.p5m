@@ -498,3 +498,9 @@ depend fmri=pkg:/web/php-common type=require
 
 # if php5.2 is present drag forward because of /usr/php/* mediated links
 depend fmri=pkg:/web/php-52@5.2.17,$(BUILD_VERSION) type=optional
+
+# if php5.2's apache module is present then make sure
+# php5.3's apache module is installed
+depend type=conditional \
+    predicate=web/server/apache-22/module/apache-php52 \
+         fmri=web/server/apache-22/module/apache-php53
