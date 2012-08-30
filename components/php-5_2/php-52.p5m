@@ -464,3 +464,9 @@ depend fmri=pkg:/web/php-52/extension/php-xdebug type=require
 
 # force web/php-common onto the disk in case this package is installed/updated
 depend fmri=pkg:/web/php-common type=require
+
+# if php5.3's apache module is present then make sure
+# php5.2's apache module is installed
+depend type=conditional \
+    predicate=web/server/apache-22/module/apache-php53 \
+         fmri=web/server/apache-22/module/apache-php52
