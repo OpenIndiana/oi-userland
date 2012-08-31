@@ -1,0 +1,217 @@
+/*
+ *  This patch fixes the performance issue observed while retrieving the 
+ *  hrStorage parameters in systems with large number of mountpoints 
+ *  parameters using snmpwalk. 
+ *   
+ *  This issue is happening due to the overhead of large number of 
+ *  ioctl() system calls in getmntent() function called by the 
+ *  Get_Next_HR_Filesys() function.
+ *  We see that in the Get_Next_HR_Filesys() function, inorder to access 
+ *  the last mountpoint, the /etc/mnttab is opened and we walk through 
+ *  all the mnttab entries for all filesystems till the end. This is the 
+ *  reason we find a large number of the MNTIOC_GETMNTENT ioctl() calls.  
+ *
+ *  To reduce the overhead of the getmntent() calls, we maintain a cache
+ *  of all the /etc/mnttab entries and walk through the cache instead of 
+ *  opening /etc/mnttab and walking all the entries for each mountpoint.
+ */
+
+--- net-snmp-5.4.1.orig/agent/mibgroup/host/hr_filesys.c	2007-05-18 11:08:01.000000000 -0700
++++ net-snmp-5.4.1/agent/mibgroup/host/hr_filesys.c	2012-08-17 01:23:04.781860694 -0700
+@@ -31,6 +31,10 @@
+ #include <sys/mount.h>
+ #endif
+ 
++#ifdef solaris2
++#include <sys/stat.h>
++#endif
++
+ #include <ctype.h>
+ #if HAVE_STRING_H
+ #include <string.h>
+@@ -85,7 +89,11 @@
+ #ifdef solaris2
+ 
+ struct mnttab   HRFS_entry_struct;
+-struct mnttab  *HRFS_entry = &HRFS_entry_struct;
++struct mnttab  *HRFS_entry;
++struct mnttab	*HRFS_list;
++static int fscount;
++static time_t last_access=-1;
++
+ #define	HRFS_name	mnt_special
+ #define	HRFS_mount	mnt_mountp
+ #define	HRFS_type	mnt_fstype
+@@ -563,6 +571,12 @@
+ void
+ Init_HR_FileSys(void)
+ {
++#ifdef solaris2
++	char buf[512]={NULL};
++	int lines=0, i=0;
++	struct stat file_stat;
++#endif
++
+ #if HAVE_GETFSSTAT
+ #if defined(HAVE_STATVFS) && defined(__NetBSD__)
+     fscount = getvfsstat(NULL, 0, ST_NOWAIT);
+@@ -603,10 +617,62 @@
+         }
+     }
+ #else
+-    HRFS_index = 1;
+-    if (fp != NULL)
+-        fclose(fp);
+-    fp = fopen(ETC_MNTTAB, "r");
++    	HRFS_index = 1;
++	if (fp != NULL)
++        	fclose(fp);
++#ifdef solaris2
++	HRFS_index = 0;
++	stat(ETC_MNTTAB, &file_stat);
++	if (last_access == -1 || last_access != file_stat.st_mtime) { 
++    		fp = fopen(ETC_MNTTAB, "r");
++		if(fp == NULL)
++		{
++			DEBUGMSGTL(("host/hr_filesys", "fopen failed for mnttab.\n"));
++			return;
++		}
++
++		while ( (fgets((char *)&buf,sizeof(buf),fp)) != NULL) {
++			lines++;
++		}	
++		fclose(fp);
++	
++		HRFS_list = (struct mnttab *) malloc (sizeof(struct mnttab) * lines);
++		
++		if(HRFS_list == NULL)
++		{
++			DEBUGMSGTL(("host/hr_filesys", "Memory allocation for mnttab cache failed.\n"));
++			return;
++		}				
++
++    		fp = fopen(ETC_MNTTAB, "r");
++		
++		if(fp == NULL)
++                {
++			DEBUGMSGTL(("host/hr_filesys", "fopen failed for mnttab.\n"));
++			free(HRFS_list);
++			return;
++                }
++
++		fscount = lines;
++		while (i < fscount)
++    		{
++			if (getmntent(fp, &HRFS_entry_struct) == 0)
++        		{
++				HRFS_list[i].mnt_special = strdup(HRFS_entry_struct.mnt_special);
++				HRFS_list[i].mnt_mountp = strdup(HRFS_entry_struct.mnt_mountp);
++				HRFS_list[i].mnt_fstype = strdup(HRFS_entry_struct.mnt_fstype);
++				HRFS_list[i].mnt_mntopts = strdup(HRFS_entry_struct.mnt_mntopts);
++        			i++;
++        		}
++    		}
++	
++		HRFS_entry = HRFS_list;
++		last_access = file_stat.st_mtime;
++	}
++#else    
++	fp = fopen(ETC_MNTTAB, "r");
++#endif
++
+ #endif
+ }
+ 
+@@ -699,21 +765,24 @@
+ #else
+     const char    **cpp;
+ 
+-    if (fp == NULL)
+-        return -1;
+ 
+ #ifdef solaris2
+-    if (getmntent(fp, HRFS_entry) != 0)
+-        return -1;
++
++	if (HRFS_index >= fscount)
++		return -1;
++	HRFS_entry = &HRFS_list[HRFS_index];
++		return ++HRFS_index;
++
+ #else
+-    HRFS_entry = getmntent(fp);
+-    if (HRFS_entry == NULL)
+-        return -1;
+-#endif                          /* solaris2 */
++	if (fp == NULL)
++                return -1;
++        HRFS_entry = getmntent(fp);
++        if (HRFS_entry == NULL)
++                return -1;
+ 
+-    for (cpp = HRFS_ignores; *cpp != NULL; ++cpp)
+-        if (!strcmp(HRFS_entry->HRFS_type, *cpp))
+-            return Get_Next_HR_FileSys();
++	for (cpp = HRFS_ignores; *cpp != NULL; ++cpp)
++		if (!strcmp(HRFS_entry->HRFS_type, *cpp))
++			return Get_Next_HR_FileSys();
+ 
+     /*
+      * Try and ensure that index values are persistent
+@@ -728,6 +797,8 @@
+     }
+ 
+     return HRFS_index++;
++#endif
++
+ #endif                          /* HAVE_GETFSSTAT */
+ }
+ 
+@@ -780,20 +851,34 @@
+ End_HR_FileSys(void)
+ {
+ #ifdef HAVE_GETFSSTAT
+-    if (fsstats)
+-        free((char *) fsstats);
+-    fsstats = NULL;
++	if (fsstats)
++		free((char *) fsstats);
++	fsstats = NULL;
+ #elif defined(aix4) || defined(aix5)
+-    if(aixmnt != NULL) {
+-        free(aixmnt);
+-        aixmnt = NULL;
+-        aixcurr = NULL;
+-        HRFS_entry = NULL;
+-    }
+-#else
+-    if (fp != NULL)
+-        fclose(fp);
+-    fp = NULL;
++	if(aixmnt != NULL) {
++		free(aixmnt);
++		aixmnt = NULL;
++		aixcurr = NULL;
++		HRFS_entry = NULL;
++	}
++#else
++	int i=0;
++	if (fp != NULL)
++		fclose(fp);
++	fp = NULL;
++
++#ifdef solaris2
++	while (i < fscount) {
++		free(HRFS_list[i].mnt_special);
++		free(HRFS_list[i].mnt_mountp);
++		free(HRFS_list[i].mnt_fstype);
++		free(HRFS_list[i].mnt_mntopts);
++		i++;
++	}
++	if (HRFS_list != NULL)
++		free(HRFS_list);
++#endif
++
+ #endif
+ }
+ 
