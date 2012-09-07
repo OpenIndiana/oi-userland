@@ -31,8 +31,7 @@ set name=pkg.description \
     value='Collection of utilities for devices that use the SCSI command set. Includes utilities to copy data based on "dd" syntax and semantics (called sg_dd, sgp_dd and sgm_dd); check INQUIRY data and VPD pages (sg_inq); check mode and log pages (sginfo, sg_modes and sg_logs); spin up and down disks (sg_start); do self tests (sg_senddiag); and various other functions. Warning: Some of these tools access the internals of your system and the incorrect usage of them may render your system inoperable.'
 set name=info.classification \
     value="org.opensolaris.category.2008:Applications/System Utilities"
-set name=info.source-url value=http://sg.danny.cz/sg/p/sg3_utils-1.28.tgz \
-    value=http://www.garloff.de/kurt/linux/rescan-scsi-bus.sh-1.35
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2009/029
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -45,6 +44,7 @@ dir  path=etc/security/prof_attr.d
 file sg3_utils-prof_attr path=etc/security/prof_attr.d/system:storage:sg3_utils
 dir  path=usr
 dir  path=usr/bin
+file path=usr/bin/sg_decode_sense
 file path=usr/bin/sg_format
 file path=usr/bin/sg_get_config
 file path=usr/bin/sg_get_lba_status
@@ -63,10 +63,12 @@ file path=usr/bin/sg_read_buffer
 file path=usr/bin/sg_read_long
 file path=usr/bin/sg_readcap
 file path=usr/bin/sg_reassign
+file path=usr/bin/sg_referrals
 file path=usr/bin/sg_requests
 file path=usr/bin/sg_rmsn
 file path=usr/bin/sg_rtpg
 file path=usr/bin/sg_safte
+file path=usr/bin/sg_sanitize
 file path=usr/bin/sg_sat_identify
 file path=usr/bin/sg_sat_phy_event
 file path=usr/bin/sg_sat_set_features
@@ -91,6 +93,7 @@ dir  path=usr/share
 dir  path=usr/share/man
 dir  path=usr/share/man/man1m
 file path=usr/share/man/man1m/sg3_utils.1m
+file path=usr/share/man/man1m/sg_decode_sense.1m
 file path=usr/share/man/man1m/sg_format.1m
 file path=usr/share/man/man1m/sg_get_config.1m
 file path=usr/share/man/man1m/sg_get_lba_status.1m
@@ -109,10 +112,12 @@ file path=usr/share/man/man1m/sg_read_buffer.1m
 file path=usr/share/man/man1m/sg_read_long.1m
 file path=usr/share/man/man1m/sg_readcap.1m
 file path=usr/share/man/man1m/sg_reassign.1m
+file path=usr/share/man/man1m/sg_referrals.1m
 file path=usr/share/man/man1m/sg_requests.1m
 file path=usr/share/man/man1m/sg_rmsn.1m
 file path=usr/share/man/man1m/sg_rtpg.1m
 file path=usr/share/man/man1m/sg_safte.1m
+file path=usr/share/man/man1m/sg_sanitize.1m
 file path=usr/share/man/man1m/sg_sat_identify.1m
 file path=usr/share/man/man1m/sg_sat_phy_event.1m
 file path=usr/share/man/man1m/sg_sat_set_features.1m
