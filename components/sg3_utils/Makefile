@@ -26,22 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sg3_utils
-COMPONENT_VERSION=	1.28
+COMPONENT_VERSION=	1.33
 COMPONENT_PROJECT_URL=	http://sg.danny.cz/sg/sg3_utils.html
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:da8bd627a6246b709e2a0321fa9d5ca09a33354a1ae40c74cd37efb69b9f8118
+    sha256:3034a4e798404cc963fc46437b0ceeb0edc635e02471ab13aa18acd8b716a27b
 COMPONENT_ARCHIVE_URL=	http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
-
-COMPONENT_ARCHIVE_1 =	rescan-scsi-bus.sh-1.35
-COMPONENT_ARCHIVE_HASH_1 = \
-    sha256:324630d65ef85480f3fc57e8c1648dba2c79fa1927e26e6dfd1b64c7b8aba0b1
-COMPONENT_ARCHIVE_URL_1 = http://www.garloff.de/kurt/linux/rescan-scsi-bus.sh-1.35
-
-COMPONENT_POST_UNPACK_ACTION = \
-	$(CP) $(COMPONENT_DIR)/rescan-scsi-bus.sh-1.35 \
-		$(COMPONENT_SRC)/rescan-scsi-bus.sh
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
