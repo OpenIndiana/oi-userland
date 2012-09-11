@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -84,10 +84,22 @@ function populate_texinfo_directory() {
 
 case "$1" in
 'start'|'refresh')
+	if [[ "$1" = 'start' ]]; then
+		if [[ ! -f "/.SELF-ASSEMBLY-REQUIRED" ]]; then
+			exit $SMF_EXIT_OK
+		fi
+	fi
+
 	# refresh texinfo directories
 	for dir_link in $(pkg search -H -l -o path ':link:path:*/info/dir' | \
 			  sort -u) ; do
-		populate_texinfo_directory /${dir_link}
+		# test the directory is writable
+		if [[ ! -w /${dir_link} ]]; then 
+			echo $SMF_EXIT_OK
+		else
+			populate_texinfo_directory /${dir_link}
+
+		fi
 	done
 	# remove any unreferenced directories
 	for link in $(find ${TEXINFO_DATA_DIR} -type l -name '*.backlink') ; do
