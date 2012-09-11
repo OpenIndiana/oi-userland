@@ -1205,6 +1205,24 @@ static int pk11_init(ENGINE *e)
 }
 
 /*
+ * Helper function that unsets reference to current engine (pk11_engine = NULL).
+ *
+ * Use of local variable only seems clumsy, it needs to be this way!
+ * This is to prevent double free in the unlucky scenario:
+ *     ENGINE_free calls pk11_destroy calls pk11_finish calls ENGINE_free
+ * Setting pk11_engine to NULL prior to ENGINE_free() avoids this.
+ */
+static void pk11_engine_free()
+	{
+	ENGINE* old_engine = pk11_engine;
+
+	if (old_engine) {
+		pk11_engine = NULL;
+		ENGINE_free(old_engine);
+	}
+	}
+
+/*
  * Initialization function. Sets up various PKCS#11 library components.
  * It selects a slot based on predefined critiera. In the process, it also
  * count how many ciphers and digests to support. Since the cipher and
@@ -1223,8 +1241,7 @@ static int pk11_library_init(ENGINE *e)
 
 	if (e != pk11_engine)
 		{
-		if (pk11_engine)
-			ENGINE_free(pk11_engine);
+		pk11_engine_free();
 		pk11_engine = e;
 		ENGINE_up_ref(e);
 		}
@@ -1473,8 +1490,7 @@ static int pk11_finish(ENGINE *e)
 	pFuncList = NULL;
 	pk11_library_initialized = CK_FALSE;
 	pk11_pid = 0;
-	ENGINE_free(pk11_engine);
-	pk11_engine = NULL;
+	pk11_engine_free();
 	/*
 	 * There is no way how to unregister atfork handlers (other than
 	 * unloading the library) so we just free the locks. For this reason
