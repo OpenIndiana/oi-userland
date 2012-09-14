@@ -219,14 +219,12 @@ BUILD_TOOLS ?=	/ws/on12-tools
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
 SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
 
-PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-0.5.0.1/
+PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
 export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc
 export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
 export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc
 export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++
-# for now
-export PARFAIT_CLANG=0
 
 GCC_ROOT =	/usr/sfw
 
