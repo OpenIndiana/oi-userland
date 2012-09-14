@@ -58,12 +58,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # requirements.
 COMPONENT_BUILD_TARGETS = profile-opt
 XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
-# the non-clang compiler we need to use for now doesn't like
-# this flag
-#ifneq   ($(strip $(PARFAIT_BUILD)),yes)
-PYFLAGS.i386 = -xtarget=opteron
-#endif
-PYFLAGS.i386 += -xarch=sse2 -xcache=generic
+PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
 PYFLAGS.sparc =
 CFLAGS += -xO5 $(PYFLAGS.$(MACH))
 LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
