@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gzip
-COMPONENT_VERSION=	1.4
+COMPONENT_VERSION=	1.5
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/gzip/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d166cfd3da380da1bd535633e8890bfb5664f9e68870a611d1dc01a3e9f711ee
+    sha256:b5d56e8ffc9918e8c941fab56e04121194f9870adeeb859e09c09eac264035a3
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -41,7 +41,16 @@ CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
-COMPONENT_TEST_ENV +=	PATH=/usr/gnu/bin:/usr/bin
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+# Get the binaries to test from the component build area.
+COMPONENT_TEST_ENV +=	PATH=$(BUILD_DIR_$(BITS)):/usr/xpg4/bin:/usr/bin
 COMPONENT_TEST_TARGETS = check
 
 # Fix references to Solaris renamed programs (z*->gz*) in man pages, info
