@@ -283,8 +283,8 @@ PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
 
-PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
-PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
+PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
+PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
 PYTHON =	$(PYTHON.$(PYTHON_VERSION).$(BITS))
 
 # The default is site-packages, but that directory belongs to the end-user.
@@ -352,7 +352,7 @@ INS.file=       $(INSTALL) -m 444 $< $(@D)
 
 PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
-PKG_CONFIG_PATH = PKG_CONFIG_PATH.$(BITS)
+PKG_CONFIG_PATH = $(PKG_CONFIG_PATH.$(BITS))
 
 
 #
