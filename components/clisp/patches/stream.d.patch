@@ -1,0 +1,11 @@
+--- src/stream.d.orig	2012-09-05 05:50:05.863643076 -0700
++++ src/stream.d	2012-09-05 07:32:38.494710125 -0700
+@@ -3483,6 +3483,8 @@
+   #define IS_EINVAL_EXTRA  ((errno==EBADF)||(errno==EACCES)||(errno==EBADRQC))
+ #elif defined(UNIX_DARWIN) || defined(UNIX_FREEBSD) || defined(UNIX_NETBSD) || defined(UNIX_OPENBSD)
+   #define IS_EINVAL_EXTRA  ((errno==EOPNOTSUPP)||(errno==ENOTSUP)||(errno==ENODEV))
++#elif defined(UNIX_SUNOS5)
++  #define IS_EINVAL_EXTRA  ((errno==ENXIO))
+ #else
+   #define IS_EINVAL_EXTRA  0
+ #endif

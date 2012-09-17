@@ -1,6 +1,6 @@
---- src.orig/makemake.in	Fri Oct 24 06:27:58 2008
-+++ src/makemake.in	Mon Feb  2 15:48:08 2009
-@@ -1826,7 +1826,7 @@
+--- src/makemake.in.orig	2012-05-30 11:27:19.564691644 -0700
++++ src/makemake.in	2012-05-30 11:29:55.415062484 -0700
+@@ -1904,7 +1904,7 @@
  echol "#   make distrib VERSION_SUFFIX=pre"
  echol "VERSION_SUFFIX="
  echol "# The distribution's top directory"
@@ -9,14 +9,15 @@
  echol
  echol '# Directories used by "make install":'
  echol "prefix = ${PREFIX}"
-@@ -3379,8 +3379,8 @@
-   case $f in
-     clisp.html | clisp.1 | clisp-1.html)
-       if [ $HOS = win32 ];
--      then platform_line=" | sed -e \"s,@PLATFORM@,${TSYS},g\""
--      else platform_line=" | sed -e \"s,@PLATFORM@,${host},g\""
-+      then platform_line=" | sed -e \"s,Platform: @PLATFORM@,User Commands,g\""
-+      else platform_line=" | sed -e \"s,Platform: @PLATFORM@,User Commands,g\""
+@@ -3450,9 +3448,9 @@
+     clisp.html | clisp.1 | clisp-1.html | \
+     clisp-link.html | clisp-link.1 | clisp-link-1.html )
+       if [ $HOS = win32 ]; then
+-        platform_line=" | sed -e \"s,@PLATFORM@,${TSYS},g\""
++        platform_line=" | sed -e \"s,Platform: @PLATFORM@,User Commands,g\""
+       else
+-        platform_line=" | sed -e \"s,@PLATFORM@,${host},g\""
++        platform_line=" | sed -e \"s,Platform: @PLATFORM@,User Commands,g\""
        fi
        sourcedir=${SRCDOCDIR} ;;
      *) sourcedir=${SRCDIR} ;;

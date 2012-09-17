@@ -26,17 +26,20 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		clisp
-COMPONENT_VERSION=	2.47
+COMPONENT_VERSION=	2.49
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://clisp.cons.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:565256a50caca44a969b7440c986b3203a0b9679babd0f1dbcbc61a4f4622edb
+    sha256:8132ff353afaa70e6b19367a25ae3d5a43627279c25647c220641fed00f8e890
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/clisp/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# To include correct locale header file in .../modules/regexp/gllib/regex.c
+CPPFLAGS += -I/usr/share/gettext/intl
 
 # Required to configure correctly.
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -52,6 +55,7 @@ unexport SHELLOPTS
 # clisp's configure script is not a GNU auto* tools generated configure script
 # and doesn't take --sbindir, so we need to override the default values.
 CONFIGURE_OPTIONS = CC="$(CC) -DNO_GENERATIONAL_GC"
+CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
@@ -59,6 +63,9 @@ CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --srcdir=$(SOURCE_DIR)
 CONFIGURE_OPTIONS += --with-libsigsegv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libreadline-prefix=$(CONFIGURE_PREFIX)
+
+# One of the tests now needs the GNU tail command.
+COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)"
 
 # common targets
 build:		$(BUILD_32)
