@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coreutils
-COMPONENT_VERSION=	8.5
+COMPONENT_VERSION=	8.16
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/coreutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dd243e2ac7d0ed203b170ecfb8299643779e7501fec2b45ae1cea8a450fa8ca0
+    sha256:2a458fead15d9336f46bb4304cc3eaa6ed9407b9130e7ee2ec533909881d2067
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -44,12 +44,20 @@ CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 # common targets
 build:		$(BUILD_32)
 
-#
-# whoami is in both /usr/bin and /usr/gnu/bin; mistake?
-#
 install:	$(INSTALL_32)
 
-test:		$(TEST_32)
+# Needed for "gmake test" to work successfully.
+# If SHELLOPTS is exported (as it is by the userland makefiles),
+# then all shell options get exported to child invocations of bash,
+# which results in test failures due to nounset and xtrace being
+# set unexpectedly, and errors such as "$1: unbound variable" and
+# diffs failing due to script tracing in output files.
+unexport SHELLOPTS
+
+# Get the binaries to test from the component proto area.
+COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
+
+test:		install $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
