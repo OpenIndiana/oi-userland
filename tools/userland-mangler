@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # userland-mangler - a file mangling utility
@@ -36,6 +36,9 @@ import pkg.fmri
 import pkg.manifest
 import pkg.actions
 import pkg.elf as elf
+
+attribute_oracle_table_header = """
+.\\\" Oracle has added the ARC stability level to this manual page"""
 
 attribute_table_header = """
 .SH ATTRIBUTES
@@ -61,12 +64,15 @@ attribute_table_footer = """
 .TE 
 .PP
 """
-def attributes_section_text(availability, stability):
+def attributes_section_text(availability, stability, modified_date):
 	result = ''
 
 	# is there anything to do?
 	if availability is not None or stability is not None:
-		result = attribute_table_header
+		result = attribute_oracle_table_header
+		if modified_date is not None:
+			result += ("\n.\\\" on %s" % modified_date)
+		result += attribute_table_header
 
 		if availability is not None:
 			result += (attribute_table_availability % availability)
@@ -75,6 +81,9 @@ def attributes_section_text(availability, stability):
 		result += attribute_table_footer
 
 	return result
+
+notes_oracle_comment = """
+.\\\" Oracle has added source availability information to this manual page"""
 
 notes_header = """
 .SH NOTES
@@ -87,13 +96,16 @@ notes_source = """
 This software was built from source available at http://opensolaris.org/.  The original community source was downloaded from  %s
 """
 
-def notes_section_text(header_seen, community, source):
+def notes_section_text(header_seen, community, source, modified_date):
 	result = ''
 
 	# is there anything to do?
 	if community is not None or source is not None:
 		if header_seen == False:
 			result += notes_header
+		result += notes_oracle_comment
+		if modified_date is not None:
+			result += ("\n.\\\" on %s" % modified_date)
 		if source is not None:
 			result += (notes_source % source)
 		if community is not None:
@@ -105,6 +117,7 @@ so_re = re.compile('^\.so.+$', re.MULTILINE)
 section_re = re.compile('\.SH "?([^"]+).*$', re.IGNORECASE)
 #
 # mangler.man.stability = (mangler.man.stability)
+# mangler.man.modified_date = (mangler.man.modified-date)
 # mangler.man.availability = (pkg.fmri)
 # mangler.man.source-url = (pkg.source-url)
 # mangler.man.upstream-url = (pkg.upstream-url)
@@ -115,6 +128,9 @@ def mangle_manpage(manifest, action, text):
 	if stability is None:
 		sys.stderr.write("ERROR: manpage action missing mangler.man.stability: %s" % action)
 		sys.exit(1)
+
+	# manpages may have a 'modified date'
+	modified_date = action.attrs.pop('mangler.man.modified-date', None)
 
 	attributes_written = False
 	notes_seen = False
@@ -149,16 +165,19 @@ def mangle_manpage(manifest, action, text):
 				if attributes_written == False:
 					result += attributes_section_text(
 								 availability,
-								 stability)
+								 stability,
+								 modified_date)
 					attributes_written = True
 				if section == 'NOTES':
 					notes_seen = True
 		result += ("%s\n" % line)
 
 	if attributes_written == False:
-		result += attributes_section_text(availability, stability)
+		result += attributes_section_text(availability, stability,
+		    modified_date)
 
-	result += notes_section_text(notes_seen, community, source)
+	result += notes_section_text(notes_seen, community, source,
+	    modified_date)
 
 	return result
 
