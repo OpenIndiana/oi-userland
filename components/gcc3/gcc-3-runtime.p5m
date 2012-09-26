@@ -18,8 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
+
+# All libraries directly installed under /usr/gcc/3.4/lib should have 
+# equivalent links under /usr/sfw/lib for backward compatibility.
+<transform file link path=usr/gcc/3.4/lib/([^/]*.so.[0-9]*)$ -> \
+    emit link path=usr/sfw/lib/%<1> target=../../gcc/3.4/lib/%<1>>
+# Include /usr/sfw/lib links for 64 bit library support
+<transform file link path=usr/gcc/3.4/lib/$(MACH64)/([^/]*.so.[0-9]*)$ -> \
+    emit link path=usr/sfw/lib/$(MACH64)/%<1> \
+    target=../../../gcc/3.4/lib/$(MACH64)/%<1>>
+
 set name=pkg.fmri value=pkg:/system/library/gcc-3-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GCC Runtime libraries"
 set name=pkg.description value="GCC Runtime - Shared libraries used by gcc and other gnu components"
@@ -28,37 +38,38 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.arc-caseid \
-	value=PSARC/2000/488
+    value=PSARC/2000/488 \
+    value=PSARC/2012/255
 
 dir path=usr
-dir path=usr/sfw
-dir path=usr/sfw/lib
-dir path=usr/sfw/lib/$(MACH64)
+dir path=usr/gcc/3.4
+dir path=usr/gcc/3.4/lib
+dir path=usr/gcc/3.4/lib/$(MACH64)
 
-file path=usr/sfw/lib/$(MACH64)/libg2c.so.0.0.0
-file path=usr/sfw/lib/$(MACH64)/libgcc_s.so.1
-file path=usr/sfw/lib/$(MACH64)/libobjc.so.1.0.0
-file path=usr/sfw/lib/$(MACH64)/libstdc++.so.6.0.3
-file path=usr/sfw/lib/libg2c.so.0.0.0
-file path=usr/sfw/lib/libgcc_s.so.1
-file path=usr/sfw/lib/libobjc.so.1.0.0
-file path=usr/sfw/lib/libstdc++.so.6.0.3
-link path=usr/sfw/lib/$(MACH64)/libg2c.so target=libg2c.so.0.0.0
-link path=usr/sfw/lib/$(MACH64)/libg2c.so.0 target=libg2c.so.0.0.0
-link path=usr/sfw/lib/$(MACH64)/libgcc_s.so target=libgcc_s.so.1
-link path=usr/sfw/lib/$(MACH64)/libgcc_s_$(MACH64).so target=libgcc_s.so.1
-link path=usr/sfw/lib/$(MACH64)/libobjc.so target=libobjc.so.1.0.0
-link path=usr/sfw/lib/$(MACH64)/libobjc.so.1 target=libobjc.so.1.0.0
-link path=usr/sfw/lib/$(MACH64)/libstdc++.so target=libstdc++.so.6.0.3
-link path=usr/sfw/lib/$(MACH64)/libstdc++.so.6 target=libstdc++.so.6.0.3
-link path=usr/sfw/lib/64 target=$(MACH64)
-link path=usr/sfw/lib/libg2c.so target=libg2c.so.0.0.0
-link path=usr/sfw/lib/libg2c.so.0 target=libg2c.so.0.0.0
-link path=usr/sfw/lib/libgcc_s.so target=libgcc_s.so.1
-link path=usr/sfw/lib/libobjc.so target=libobjc.so.1.0.0
-link path=usr/sfw/lib/libobjc.so.1 target=libobjc.so.1.0.0
-link path=usr/sfw/lib/libstdc++.so target=libstdc++.so.6.0.3
-link path=usr/sfw/lib/libstdc++.so.6 target=libstdc++.so.6.0.3
+file path=usr/gcc/3.4/lib/$(MACH64)/libg2c.so.0.0.0
+file path=usr/gcc/3.4/lib/$(MACH64)/libgcc_s.so.1
+file path=usr/gcc/3.4/lib/$(MACH64)/libobjc.so.1.0.0
+file path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.so.6.0.3
+file path=usr/gcc/3.4/lib/libg2c.so.0.0.0
+file path=usr/gcc/3.4/lib/libgcc_s.so.1
+file path=usr/gcc/3.4/lib/libobjc.so.1.0.0
+file path=usr/gcc/3.4/lib/libstdc++.so.6.0.3
+link path=usr/gcc/3.4/lib/$(MACH64)/libg2c.so target=libg2c.so.0.0.0
+link path=usr/gcc/3.4/lib/$(MACH64)/libg2c.so.0 target=libg2c.so.0.0.0
+link path=usr/gcc/3.4/lib/$(MACH64)/libgcc_s.so target=libgcc_s.so.1
+link path=usr/gcc/3.4/lib/$(MACH64)/libgcc_s_$(MACH64).so target=libgcc_s.so.1
+link path=usr/gcc/3.4/lib/$(MACH64)/libobjc.so target=libobjc.so.1.0.0
+link path=usr/gcc/3.4/lib/$(MACH64)/libobjc.so.1 target=libobjc.so.1.0.0
+link path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.so target=libstdc++.so.6.0.3
+link path=usr/gcc/3.4/lib/$(MACH64)/libstdc++.so.6 target=libstdc++.so.6.0.3
+link path=usr/gcc/3.4/lib/64 target=$(MACH64)
+link path=usr/gcc/3.4/lib/libg2c.so target=libg2c.so.0.0.0
+link path=usr/gcc/3.4/lib/libg2c.so.0 target=libg2c.so.0.0.0
+link path=usr/gcc/3.4/lib/libgcc_s.so target=libgcc_s.so.1
+link path=usr/gcc/3.4/lib/libobjc.so target=libobjc.so.1.0.0
+link path=usr/gcc/3.4/lib/libobjc.so.1 target=libobjc.so.1.0.0
+link path=usr/gcc/3.4/lib/libstdc++.so target=libstdc++.so.6.0.3
+link path=usr/gcc/3.4/lib/libstdc++.so.6 target=libstdc++.so.6.0.3
 
 legacy pkg=SUNWgccruntime \
     name="GCC Runtime libraries" \
