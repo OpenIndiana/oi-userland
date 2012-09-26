@@ -50,7 +50,7 @@ CC_BITS=
 # enabling this causes libstdc++ to break
 LD_B_DIRECT=
 
-CONFIGURE_PREFIX =	/usr/sfw
+CONFIGURE_PREFIX =	/usr/gcc/3.4
 
 # we need to override CONFIGURE_OPTIONS because GCC uses a configure that
 # can't deal with CC as an argument
@@ -78,10 +78,10 @@ build:		$(BUILD_32)
 
 $(PROTO_DIR)/.sedded:	$(INSTALL_32)
 	(cd $(@D) ; for file in libstdc++.la libsupc++.la ; do \
-		$(MV) usr/sfw/lib/$$file usr/sfw/lib/$$file.orig ; \
-		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/sfw/lib -lgcc_s -lm';" usr/sfw/lib/$$file.orig >usr/sfw/lib/$$file ; \
-		$(MV) usr/sfw/lib/$(MACH64)/$$file usr/sfw/lib/$(MACH64)/$$file.orig ; \
-		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/sfw/lib/$(MACH64) -lgcc_s -lm';" usr/sfw/lib/$(MACH64)/$$file.orig >usr/sfw/lib/$(MACH64)/$$file ; \
+		$(MV) usr/gcc/3.4/lib/$$file usr/gcc/3.4/lib/$$file.orig ; \
+		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/gcc/3.4/lib -lgcc_s -lm';" usr/gcc/3.4/lib/$$file.orig >usr/gcc/3.4/lib/$$file ; \
+		$(MV) usr/gcc/3.4/lib/$(MACH64)/$$file usr/gcc/3.4/lib/$(MACH64)/$$file.orig ; \
+		sed -e "s;\\(dependency_libs=\\).*;\\1' -L/usr/gcc/3.4/lib/$(MACH64) -lgcc_s -lm';" usr/gcc/3.4/lib/$(MACH64)/$$file.orig >usr/gcc/3.4/lib/$(MACH64)/$$file ; \
 	 done)
 	$(TOUCH) $@
 
