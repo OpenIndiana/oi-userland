@@ -36,9 +36,11 @@
 #include <time.h>
 
 /* The list of programs that we want to use a constant time. */
-static char *programs[] = { "autogen", "bash", "cpp", "cc1", "date", "doxygen",
-	"erl", "javadoc", "ksh", "ksh93", "ld", "perl", "perl5.8.4", "perl5.10",
-	"ruby", "sh", NULL };
+static char *programs[] = { 
+	"autogen", "bash", "cpp", "cc1", "date", "doxygen",
+	"erl", "grops", "gs", "gtroff", "javadoc", "ksh", "ksh93", "ld",
+	"perl", "perl5.8.4", "perl5.10", "ruby", "sh", NULL
+};
 
 static int
 stack_info(uintptr_t pc, int signo, void *arg)
