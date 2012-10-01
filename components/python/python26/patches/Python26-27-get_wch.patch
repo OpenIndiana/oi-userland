@@ -1,0 +1,48 @@
+--- Python-2.6.8/Modules/_cursesmodule.c.orig	2012-09-18 08:01:45.938603187 -0700
++++ Python-2.6.8/Modules/_cursesmodule.c	2012-09-18 08:05:15.216646894 -0700
+@@ -856,6 +856,37 @@
+ }
+ 
+ static PyObject *
++PyCursesWindow_Get_WCh(PyCursesWindowObject *self, PyObject *args)
++{
++    int x, y;
++    int ct;
++    wint_t rtn;
++
++    switch (PyTuple_Size(args)) {
++    case 0:
++        Py_BEGIN_ALLOW_THREADS
++        ct = wget_wch(self->win,&rtn);
++        Py_END_ALLOW_THREADS
++        break;
++    case 2:
++        if (!PyArg_ParseTuple(args,"ii;y,x",&y,&x))
++            return NULL;
++        Py_BEGIN_ALLOW_THREADS
++        ct = mvwget_wch(self->win,y,x,&rtn);
++        Py_END_ALLOW_THREADS
++        break;
++    default:
++        PyErr_SetString(PyExc_TypeError, "get_wch requires 0 or 2 arguments");
++        return NULL;
++    }
++    if (ct == ERR) {
++        PyErr_SetString(PyCursesError, "get_wch failed");
++        return NULL;
++    }
++    return PyInt_FromLong((long)rtn);
++}
++
++static PyObject *
+ PyCursesWindow_GetKey(PyCursesWindowObject *self, PyObject *args)
+ {
+     int x, y;
+@@ -1563,6 +1594,7 @@
+             {"getbegyx",        (PyCFunction)PyCursesWindow_getbegyx, METH_NOARGS},
+             {"getbkgd",         (PyCFunction)PyCursesWindow_GetBkgd, METH_NOARGS},
+             {"getch",           (PyCFunction)PyCursesWindow_GetCh, METH_VARARGS},
++            {"get_wch",         (PyCFunction)PyCursesWindow_Get_WCh, METH_VARARGS},
+             {"getkey",          (PyCFunction)PyCursesWindow_GetKey, METH_VARARGS},
+             {"getmaxyx",        (PyCFunction)PyCursesWindow_getmaxyx, METH_NOARGS},
+             {"getparyx",        (PyCFunction)PyCursesWindow_getparyx, METH_NOARGS},
