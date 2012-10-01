@@ -100,6 +100,38 @@ diff -r -u /tmp/libibmad-1.3.7/src/mad.c libibmad-1.3.7/src/mad.c
  	return next;
  }
  
+diff -r -u /tmp/libibmad-1.3.7/src/resolve.c libibmad-1.3.7/src/resolve.c
+--- /tmp/libibmad-1.3.7/src/resolve.c	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/src/resolve.c	Mon Oct  1 01:32:21 2012
+@@ -40,6 +40,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <arpa/inet.h>
++#include <errno.h>
+ 
+ #include <infiniband/umad.h>
+ #include <infiniband/mad.h>
+@@ -104,12 +105,18 @@
+ 
+ 	if (!sm_id) {
+ 		sm_id = &sm_portid;
+-		if (ib_resolve_smlid_via(sm_id, timeout, srcport) < 0)
++		if (ib_resolve_smlid_via(sm_id, timeout, srcport) < 0) {
++			if (!errno)
++				errno = EIO;
+ 			return -1;
++		}
+ 	}
+ 
+-	if (!smp_query_via(nodeinfo, &self, IB_ATTR_NODE_INFO, 0, 0, srcport))
++	if (!smp_query_via(nodeinfo, &self, IB_ATTR_NODE_INFO, 0, 0, srcport)) {
++		if (!errno)
++			errno = EIO;
+ 		return -1;
++	}
+ 	mad_decode_field(nodeinfo, IB_NODE_PORT_GUID_F, &selfguid);
+ 	mad_set_field64(selfgid, 0, IB_GID_PREFIX_F, IB_DEFAULT_SUBN_PREFIX);
+ 	mad_set_field64(selfgid, 0, IB_GID_GUID_F, selfguid);
 diff -r -u /tmp/libibmad-1.3.7/src/dump.c libibmad-1.3.7/src/dump.c
 --- /tmp/libibmad-1.3.7/src/dump.c	Wed Feb 16 02:12:53 2011
 +++ libibmad-1.3.7/src/dump.c	Thu Feb 24 11:27:11 2011
@@ -216,6 +248,25 @@ diff -r -u /tmp/libibmad-1.3.7/src/dump.c libibmad-1.3.7/src/dump.c
  		break;
  	case 3:
  		snprintf(buf, bufsz, "%06x", *(uint32_t *) val & 0xffffff);
+diff -r -u /tmp/libibmad-1.3.7/src/sa.c libibmad-1.3.7/src/sa.c
+--- /tmp/libibmad-1.3.7/src/sa.c	Wed Feb 16 02:12:53 2011
++++ libibmad-1.3.7/src/sa.c	Mon Oct  1 01:32:21 2012
+@@ -38,6 +38,7 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include <string.h>
++#include <errno.h>
+ 
+ #include <infiniband/mad.h>
+ #include "mad_internal.h"
+@@ -56,6 +57,7 @@
+ 
+ 	if (portid->lid <= 0) {
+ 		IBWARN("only lid routes are supported");
++		errno = EIO;
+ 		return NULL;
+ 	}
+ 
 diff -r -u /tmp/libibmad-1.3.7/src/rpc.c libibmad-1.3.7/src/rpc.c
 --- /tmp/libibmad-1.3.7/src/rpc.c	Wed Feb 16 02:12:53 2011
 +++ libibmad-1.3.7/src/rpc.c	Thu Feb 24 11:27:14 2011
