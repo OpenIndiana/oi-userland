@@ -1,6 +1,6 @@
-diff -uN tcpdump-4.1.1/Makefile.in tcpdump-4.1.1.new/Makefile.in
---- tcpdump-4.1.1/Makefile.in	2010-04-05 18:18:35.000000000 -0700
-+++ tcpdump-4.1.1.new/Makefile.in	2011-07-14 08:43:36.561637014 -0700
+diff -uN tcpdump-4.3.0/Makefile.in tcpdump-4.3.0.new/Makefile.in
+--- tcpdump-4.3.0/Makefile.in	2010-04-05 18:18:35.000000000 -0700
++++ tcpdump-4.3.0.new/Makefile.in	2011-07-14 08:43:36.561637014 -0700
 @@ -78,6 +78,7 @@
  	print-esp.c print-ether.c print-fddi.c print-fr.c \
  	print-gre.c print-hsrp.c print-icmp.c print-igmp.c \
@@ -9,33 +9,34 @@ diff -uN tcpdump-4.1.1/Makefile.in tcpdump-4.1.1.new/Makefile.in
  	print-ipx.c print-isoclns.c print-juniper.c print-krb.c \
  	print-l2tp.c print-lane.c print-ldp.c print-lldp.c print-llc.c \
          print-lmp.c print-lspping.c print-lwapp.c \
-diff -uN tcpdump-4.1.1/interface.h tcpdump-4.1.1.new/interface.h
---- tcpdump-4.1.1/interface.h	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.1.1.new/interface.h	2011-07-14 08:44:55.908614708 -0700
-@@ -192,6 +192,7 @@
- extern void ether_print(const u_char *, u_int, u_int,
-     void (*)(const u_char *), const u_char *);
- extern u_int ether_if_print(const struct pcap_pkthdr *, const u_char *);
+diff -uN tcpdump-4.3.0/interface.h tcpdump-4.3.0.new/interface.h
+--- tcpdump-4.3.0/interface.h	2010-03-11 17:56:44.000000000 -0800
++++ tcpdump-4.3.0.new/interface.h	2011-07-14 08:44:55.908614708 -0700
+@@ -185,6 +185,7 @@
+ extern u_int pflog_if_print(const struct pcap_pkthdr *, const u_char *);
+ extern u_int arcnet_if_print(const struct pcap_pkthdr *, const u_char *);
+ extern u_int arcnet_linux_if_print(const struct pcap_pkthdr *, const u_char *);
 +extern u_int ipoib_if_print(const struct pcap_pkthdr *, const u_char *);
  extern u_int token_print(const u_char *, u_int, u_int);
  extern u_int token_if_print(const struct pcap_pkthdr *, const u_char *);
  extern void fddi_print(const u_char *, u_int, u_int);
-Common subdirectories: tcpdump-4.1.1/lbl and tcpdump-4.1.1.new/lbl
-Common subdirectories: tcpdump-4.1.1/missing and tcpdump-4.1.1.new/missing
-diff -uN tcpdump-4.1.1/netdissect.h tcpdump-4.1.1.new/netdissect.h
---- tcpdump-4.1.1/netdissect.h	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.1.1.new/netdissect.h	2011-07-14 08:44:35.643598462 -0700
-@@ -320,6 +320,7 @@
+Common subdirectories: tcpdump-4.3.0/lbl and tcpdump-4.3.0.new/lbl
+Common subdirectories: tcpdump-4.3.0/missing and tcpdump-4.3.0.new/missing
+diff -uN tcpdump-4.3.0/netdissect.h tcpdump-4.3.0.new/netdissect.h
+--- tcpdump-4.3.0/netdissect.h	2010-03-11 17:56:44.000000000 -0800
++++ tcpdump-4.3.0.new/netdissect.h	2011-07-14 08:44:35.643598462 -0700
+@@ -300,6 +300,7 @@
  
- extern void arcnet_if_print(u_char*,const struct pcap_pkthdr *,const u_char *);
- extern void ether_if_print(u_char *,const struct pcap_pkthdr *,const u_char *);
-+extern void ipoib_if_print(u_char *,const struct pcap_pkthdr *,const u_char *);
- extern void token_if_print(u_char *,const struct pcap_pkthdr *,const u_char *);
- extern void fddi_if_print(u_char *,const struct pcap_pkthdr *, const u_char *);
+ extern u_int ether_if_print(netdissect_options *, 
+                             const struct pcap_pkthdr *,const u_char *);
++extern u_int ipoib_if_print(const struct pcap_pkthdr *, const u_char *);
+ extern u_int netanalyzer_if_print(netdissect_options *, 
+                                   const struct pcap_pkthdr *,const u_char *);
+ extern u_int netanalyzer_transparent_if_print(netdissect_options *, 
  
-diff -uN tcpdump-4.1.1/print-arp.c tcpdump-4.1.1.new/print-arp.c
---- tcpdump-4.1.1/print-arp.c	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.1.1.new/print-arp.c	2011-07-14 09:01:08.965396346 -0700
+diff -uN tcpdump-4.3.0/print-arp.c tcpdump-4.3.0.new/print-arp.c
+--- tcpdump-4.3.0/print-arp.c	2010-03-11 17:56:44.000000000 -0800
++++ tcpdump-4.3.0.new/print-arp.c	2011-07-14 09:01:08.965396346 -0700
 @@ -62,6 +62,7 @@
          u_char  ar_hln;         /* length of hardware address */
          u_char  ar_pln;         /* length of protocol address */
@@ -52,12 +53,13 @@ diff -uN tcpdump-4.1.1/print-arp.c tcpdump-4.1.1.new/print-arp.c
      { 0, NULL }
  };
  
-diff -uN tcpdump-4.1.1/print-ipoib.c tcpdump-4.1.1.new/print-ipoib.c
---- tcpdump-4.1.1/print-ipoib.c	1969-12-31 16:00:00.000000000 -0800
-+++ tcpdump-4.1.1.new/print-ipoib.c	2011-07-14 08:46:52.029342720 -0700
+diff -uN tcpdump-4.3.0/print-ipoib.c tcpdump-4.3.0.new/print-ipoib.c
+--- tcpdump-4.3.0/print-ipoib.c	1969-12-31 16:00:00.000000000 -0800
++++ tcpdump-4.3.0.new/print-ipoib.c	2011-07-14 08:46:52.029342720 -0700
 @@ -0,0 +1,131 @@
 +/*
-+ * Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 2000
++ * Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 
++ *	1997, 2000, 2011, 2012
 + *	The Regents of the University of California.  All rights reserved.
 + *
 + * Redistribution and use in source and binary forms, with or without
@@ -77,7 +79,7 @@ diff -uN tcpdump-4.1.1/print-ipoib.c tcpdump-4.1.1.new/print-ipoib.c
 + * MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 + */
 +/*
-+ * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 + */
 +#ifndef lint
 +static const char rcsid[] _U_ =
@@ -98,7 +100,7 @@ diff -uN tcpdump-4.1.1/print-ipoib.c tcpdump-4.1.1.new/print-ipoib.c
 +#include "addrtoname.h"
 +
 +extern const struct tok ethertype_values[];
-+extern int ethertype_print(u_short, const u_char *, u_int, u_int );
++extern int ethertype_print(netdissect_options *, u_short, const u_char *, u_int, u_int );
 +
 +#define	IPOIB_HDRLEN	44
 +
@@ -153,7 +155,7 @@ diff -uN tcpdump-4.1.1/print-ipoib.c tcpdump-4.1.1.new/print-ipoib.c
 +	ether_type = EXTRACT_16BITS(&p[40]);
 +	p += IPOIB_HDRLEN;
 +
-+	if (ethertype_print(ether_type, p, length, caplen) == 0) {
++	if (ethertype_print(gndo, ether_type, p, length, caplen) == 0) {
 +		/* ether_type not known, print raw packet */
 +		if (!eflag) {
 +			if (print_encap_header != NULL)
@@ -187,9 +189,9 @@ diff -uN tcpdump-4.1.1/print-ipoib.c tcpdump-4.1.1.new/print-ipoib.c
 + * End:
 + */
 +
-diff -uN tcpdump-4.1.1/tcpdump.c tcpdump-4.1.1.new/tcpdump.c
---- tcpdump-4.1.1/tcpdump.c	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.1.1.new/tcpdump.c	2011-07-14 08:44:25.329300635 -0700
+diff -uN tcpdump-4.3.0/tcpdump.c tcpdump-4.3.0.new/tcpdump.c
+--- tcpdump-4.3.0/tcpdump.c	2010-03-11 17:56:44.000000000 -0800
++++ tcpdump-4.3.0.new/tcpdump.c	2011-07-14 08:44:25.329300635 -0700
 @@ -299,6 +299,9 @@
  #ifdef DLT_IPV6
  	{ raw_if_print,		DLT_IPV6 },

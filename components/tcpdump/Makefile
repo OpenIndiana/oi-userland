@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tcpdump
-COMPONENT_VERSION=	4.1.1
+COMPONENT_VERSION=	4.3.0
 COMPONENT_PROJECT_URL=	http://www.tcpdump.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e6cd4bbd61ec7adbb61ba8352c4b4734f67b8caaa845d88cb826bc0b9f1e7f0a
+    sha256:efd08b610210d39977ec3175fa82dad9fbd33587930081be2a905a712dba4286
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -48,9 +48,12 @@ build:          $(BUILD_32)
 
 install:        $(INSTALL_32) 
 
-test:		$(NO_TESTS)
+COMPONENT_PRE_TEST_ACTION = \
+        ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
+
+test:		$(TEST_32)
+
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-
