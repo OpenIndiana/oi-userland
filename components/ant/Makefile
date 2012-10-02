@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache-ant
-COMPONENT_VERSION=	1.7.1
+COMPONENT_VERSION=	1.8.4
 COMPONENT_PROJECT_URL=	http://ant.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4dc49a7260ef90a6dc6611b7e96b9f047d507589736d4a2ad6efbe3edfc6fba6
+    sha256:5de65f7ba3f67e436ffffcdc0a73f591d1006e9fb41af8632c1f1f84d4a3e0b1
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -41,14 +41,19 @@ include ../../make-rules/ips.mk
 GMAKE=./build.sh
 
 ANT_ENV+=JAVA_HOME=$(JAVA_HOME)
-ANT_ENV+=CLASSPATH=/usr/share/lib/java/junit.jar:/usr/share/antlr-2.7.7/antlr.jar
 
 ANT_DIST_DIRS+=-Ddist.dir=$(PROTO_DIR)
 ANT_DIST_DIRS+=-Ddist.bin=$(PROTO_DIR)/usr/bin
 ANT_DIST_DIRS+=-Ddist.etc=$(PROTO_DIR)/usr/share/lib/ant
 ANT_DIST_DIRS+=-Ddist.docs=$(PROTO_DIR)/usr/share/doc/ant
+ANT_DIST_DIRS+=-Ddist.manual=$(PROTO_DIR)/usr/share/doc/ant/manual
 ANT_DIST_DIRS+=-Ddist.javadocs=$(PROTO_DIR)/usr/share/doc/ant/manual/api
 ANT_DIST_DIRS+=-Ddist.lib=$(PROTO_DIR)/usr/share/lib/ant
+
+OPTIONAL_LIBS+=/usr/share/lib/java/junit.jar
+OPTIONAL_LIBS+=/usr/share/antlr-2.7.7/antlr.jar
+
+COMPONENT_PRE_BUILD_ACTION = $(CP) $(OPTIONAL_LIBS) $(@D)/lib/optional
 
 COMPONENT_BUILD_TARGETS =	build
 COMPONENT_BUILD_ENV +=		$(ANT_ENV)
