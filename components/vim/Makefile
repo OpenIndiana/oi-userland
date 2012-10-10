@@ -34,10 +34,10 @@ COMPONENT_SRC=		vim-$(COMPONENT_HG_REV)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).tar.bz2
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:809275aa3c59a658c16e53cc6f61736251201892519fc29721cba97afe54417c
+COMPONENT_ARCHIVE_HASH=	sha256:08875264e852cc2021e605f26353ba64874064d59dd8ec1ff5fc62265c4be3ac
 COMPONENT_HG_URL=	https://vim.googlecode.com/hg
-COMPONENT_HG_REV=	v7-3-600
-COMPONENT_HG_REV_OLD=	v7-3-600
+COMPONENT_HG_REV=	v7-3-684
+COMPONENT_HG_REV_OLD=	v7-3-684
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -63,7 +63,7 @@ hgball: hgball-pull
 	hg clone -u $(COMPONENT_HG_REV) $(HGREPODIR) $(TARBALLDIR)
 	rm -rf $(TARBALLDIR)/.hg
 	tar jcf $(COMPONENT_ARCHIVE) $(TARBALLDIR)
-	hg --cwd $(HGREPODIR) stat -ar --rev $(COMPONENT_HG_REV_OLD):tip runtime src/po
+	hg --cwd $(HGREPODIR) stat -ar --rev $(COMPONENT_HG_REV_OLD):$(COMPONENT_HG_REV) runtime src/po
 	digest=$$(digest -a sha256 $(COMPONENT_ARCHIVE)); \
 		/usr/gnu/bin/sed -i \
 			-e "s/^COMPONENT_ARCHIVE_HASH=.*/COMPONENT_ARCHIVE_HASH=	sha256:$$digest/" \
