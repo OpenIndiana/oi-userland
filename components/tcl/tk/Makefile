@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tk
-COMPONENT_VERSION=	8.5.9
+COMPONENT_VERSION=	8.5.12
 COMPONENT_PROJECT_URL=	http://prdownloads.sourceforge.net/tk/
 COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f46b33d41e71ef533140f1814961f0dc22d62aac316df4a4fd3357e1fd788b83
+    sha256:c453d820925bf526bbe8a0d1c17ab3168b076fcb9844bea797ad75e3b9ad9291
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tcl/files/Tcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 
 include ../../../make-rules/prep.mk
