@@ -170,6 +170,32 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_guid.3 libibverbs-1.1
  .I device\fR.
  .SH "RETURN VALUE"
  .B ibv_get_device_guid()
+diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_post_send.3 libibverbs-1.1.4/man/ibv_post_send.3
+--- /tmp/846623/libibverbs-1.1.4/man/ibv_post_send.3	Thu Mar 10 06:58:20 2011
++++ libibverbs-1.1.4/man/ibv_post_send.3	Wed Oct 10 11:04:39 2012
+@@ -91,14 +91,17 @@
+ The attribute send_flags describes the properties of the \s-1WR\s0. It is either 0 or the bitwise \s-1OR\s0 of one or more of the following flags:
+ .PP
+ .TP
+-.B IBV_SEND_FENCE \fR Set the fence indicator.  Valid only for QPs with Transport Service Type \fBIBV_QPT_RC
++.B IBV_SEND_FENCE \fR
++Set the fence indicator.  Valid only for QPs with Transport Service Type \fBIBV_QPT_RC
+ .TP
+-.B IBV_SEND_SIGNALED \fR Set the completion notification indicator.  Relevant only if QP was created with sq_sig_all=0
++.B IBV_SEND_SIGNALED \fR
++Set the completion notification indicator.  Relevant only if QP was created with sq_sig_all=0
+ .TP
+-.B IBV_SEND_SOLICITED \fR Set the solicited event indicator.  Valid only for Send and RDMA Write with immediate
++.B IBV_SEND_SOLICITED \fR
++Set the solicited event indicator.  Valid only for Send and RDMA Write with immediate
+ .TP
+-.B IBV_SEND_INLINE \fR Send data in given gather list as inline data
+-in a send WQE.  Valid only for Send and RDMA Write.  The L_Key will not be checked.
++.B IBV_SEND_INLINE \fR
++Send data in given gather list as inline data in a send WQE.  Valid only for Send and RDMA Write.  The L_Key will not be checked.
+ .SH "RETURN VALUE"
+ .B ibv_post_send()
+ returns 0 on success, or the value of errno on failure (which indicates the failure reason).
 diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_alloc_pd.3 libibverbs-1.1.4/man/ibv_alloc_pd.3
 --- /tmp/846623/libibverbs-1.1.4/man/ibv_alloc_pd.3	Thu Mar 10 04:51:46 2011
 +++ libibverbs-1.1.4/man/ibv_alloc_pd.3	Mon Mar 28 03:11:45 2011
@@ -967,7 +993,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->reserved      = 0;
  
  	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
-@@ -637,7 +808,19 @@
+@@ -637,7 +808,20 @@
  	cmd->max_send_sge    = attr->cap.max_send_sge;
  	cmd->max_recv_sge    = attr->cap.max_recv_sge;
  	cmd->max_inline_data = attr->cap.max_inline_data;
@@ -977,6 +1003,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
 +		cmd->sq_sig_all =
 +		    (uint8_t)(attr->sq_sig_all & ~LIB_RDMACM_QP_BIT);
 +		cmd->sq_sig_all |= 0x80;
++		attr->sq_sig_all &= ~LIB_RDMACM_QP_BIT;
 +	} else {
 +		cmd->sq_sig_all = (uint8_t)attr->sq_sig_all;
 +	}
@@ -987,7 +1014,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->qp_type 	     = attr->qp_type;
  	cmd->is_srq 	     = !!attr->srq;
  	cmd->srq_handle      = attr->qp_type == IBV_QPT_XRC ?
-@@ -1406,4 +1589,3 @@
+@@ -1406,4 +1590,3 @@
  		return errno;
  	return 0;
  }
