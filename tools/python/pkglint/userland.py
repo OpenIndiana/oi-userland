@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Some userland consolidation specific lint checks
@@ -399,3 +399,14 @@ class UserlandManifestChecker(base.ManifestChecker):
 
 	component_check.pkglint_dest = _(
 		"license actions and ARC information are required if you deliver files.")
+
+        def publisher_in_fmri(self, manifest, engine, pkglint_id="002"):
+                lint_id = "%s%s" % (self.name, pkglint_id)
+                allowed_pubs = engine.get_param(
+                    "%s.allowed_pubs" % lint_id).split(" ") 
+
+                fmri = manifest.fmri
+                if fmri.publisher and fmri.publisher not in allowed_pubs:
+                        engine.error(_("package %s has a publisher set!") %
+                            manifest.fmri,
+                            msgid="%s%s.2" % (self.name, pkglint_id))
