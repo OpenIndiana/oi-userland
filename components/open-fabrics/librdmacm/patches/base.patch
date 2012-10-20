@@ -62,11 +62,14 @@ diff -r -u /tmp/librdmacm-1.0.14.1/src/cma.h librdmacm-1.0.14.1/src/cma.h
 diff -r -u /tmp/librdmacm-1.0.14.1/src/cma.c librdmacm-1.0.14.1/src/cma.c
 --- /tmp/librdmacm-1.0.14.1/src/cma.c	Fri Dec 10 12:05:34 2010
 +++ librdmacm-1.0.14.1/src/cma.c	Mon Mar 28 16:44:55 2011
-@@ -46,12 +46,15 @@
+@@ -46,12 +46,18 @@
  #include <poll.h>
  #include <unistd.h>
  #include <pthread.h>
-+#if !(defined(__SVR4) && defined(__sun))
++#if defined(__SVR4) && defined(__sun)
++#include <sys/stat.h>
++#include <sys/mkdev.h>
++#else
  #include <endian.h>
  #include <byteswap.h>
 +#endif
@@ -78,7 +81,7 @@ diff -r -u /tmp/librdmacm-1.0.14.1/src/cma.c librdmacm-1.0.14.1/src/cma.c
  #include <infiniband/driver.h>
  #include <infiniband/marshall.h>
  #include <rdma/rdma_cma.h>
-@@ -354,9 +357,18 @@
+@@ -354,9 +360,18 @@
  	if (!channel)
  		return NULL;
  
@@ -97,7 +100,7 @@ diff -r -u /tmp/librdmacm-1.0.14.1/src/cma.c librdmacm-1.0.14.1/src/cma.c
  		goto err;
  	}
  	return channel;
-@@ -1186,6 +1198,10 @@
+@@ -1186,6 +1201,10 @@
  	if (ret)
  		return ret;
  
@@ -108,7 +111,7 @@ diff -r -u /tmp/librdmacm-1.0.14.1/src/cma.c librdmacm-1.0.14.1/src/cma.c
  	qp = ibv_create_qp(pd, qp_init_attr);
  	if (!qp) {
  		ret = ERR(ENOMEM);
-@@ -1787,6 +1803,9 @@
+@@ -1787,6 +1806,9 @@
  
  	CMA_CREATE_MSG_CMD(msg, cmd, UCMA_CMD_ACCEPT, size);
  	cmd->id = id_priv->handle;
@@ -118,6 +121,27 @@ diff -r -u /tmp/librdmacm-1.0.14.1/src/cma.c librdmacm-1.0.14.1/src/cma.c
  
  	ret = write(id_priv->id.channel->fd, msg, size);
  	if (ret != size) {
+@@ -2051,8 +2073,20 @@
+ 
+ 	CMA_CREATE_MSG_CMD_RESP(msg, cmd, resp, UCMA_CMD_MIGRATE_ID, size);
+ 	cmd->id = id_priv->handle;
++
++#if !(defined(__SVR4) && defined(__sun))
+ 	cmd->fd = id->channel->fd;
++#else
++	{
++		struct stat	fstat_buf;
++		int		rc;
+ 
++		if ((rc = fstat(id->channel->fd, &fstat_buf)) != 0)
++			return (ERR(ENODATA));
++		cmd->fd = minor(fstat_buf.st_rdev);
++	}
++#endif
++
+ 	ret = write(channel->fd, msg, size);
+ 	if (ret != size)
+ 		return (ret >= 0) ? ERR(ENODATA) : -1;
 diff -r -u /tmp/librdmacm-1.0.14.1/man/rdma_create_id.3 librdmacm-1.0.14.1/man/rdma_create_id.3
 --- /tmp/librdmacm-1.0.14.1/man/rdma_create_id.3	Mon Oct  4 17:00:18 2010
 +++ librdmacm-1.0.14.1/man/rdma_create_id.3	Mon Mar 28 03:11:48 2011
