@@ -1,9 +1,9 @@
 .\"
-.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
+.\" Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
 .\"
 .\" logilab-common.3
 .\"
-.TH logilab-common 3 "30 Apr 2009"
+.TH logilab-common 3 "30 Jul 2012" "logilab-common 0.58.2"
 .SH NAME
 logilab-common \- Common Modules used by Logilab projects
 .SH DESCRIPTION
@@ -16,207 +16,182 @@ projects.
 .SH Provided modules
 .LP
 
-A brief description of the available modules :
+A brief description of the available modules:
 .LP
 
-* adbh.py:
-helper functions for using database advanced. Supported RDBMS
-include PostgreSQL, MySQL and sqlite. See also db.py. 
+.SH Modules providing high-level features
 .LP
 
-* astutils:
-Deprecated module. Use logilab.astng. 
+* `cache`, a cache implementation with a least recently used algorithm.
 .LP
 
-* bind.py :
-Deprecated module. 
-Provides a way to optimize globals in certain functions by binding
-their names to values provided in a dictionnary.
+* `changelog`, a tiny library to manipulate our simplified ChangeLog file format.
 .LP
 
-* cache.py :
-A cache implementation with a least recently used algorithm.
+* `clcommands`, high-level classes to define command line programs handling different subcommands. It is based on `configuration` to get easy command line / configuration file handling.
 .LP
 
-* clcommands.py:
-helper functions for command line programs handling different
-subcommands
+* `cli`, a base class for interactive programs using the command line.
 .LP
 
-* cli.py :
-Command line interface helper classes (for interactive programs
-using the command line)
+* `configuration`, some classes to handle unified configuration from both command line (using optparse) and configuration file (using ConfigParser).
 .LP
 
-* compat.py: 
-Transparent compatibility layer between different python version
+* `dbf`, read Visual Fox Pro DBF files.
 .LP
 
-* configuration.py :
-Two mix-in classes to handle configuration from both command line 
-(using optik/optparse) and configuration file.
+* `proc`, interface to Linux /proc.
 .LP
 
-* corbautils.py:
-Usefull functions for use with the OmniORB CORBA library.
+* `umessage`, unicode email support.
 .LP
 
-* daemon.py :
-A daemon mix-in class.
+* `ureports`, micro-reports, a way to create simple reports using python objects without care of the final formatting. ReST and html formatters are provided.
 .LP
 
-* date.py:
-date manipulation helper functions
+.SH Modules providing low-level functions and structures
 .LP
 
-* db.py :
-A generic method to get a database connection. See also adbh.py.
+* `compat`, provides a transparent compatibility layer between different python versions.
 .LP
 
-* debugger.py:
-pdb customization
+* `date`, a set of date manipulation functions.
 .LP
 
-* decorators.py:
-useful decorators (cached, timed...)
+* `daemon`, a daemon function and mix-in class to properly start an Unix daemon process.
 .LP
 
-* deprecation.py:
-mark functions / classes as deprecated or moved
+* `decorators`, function decorators such as cached, timed...
 .LP
 
-* fileutils.py :
-Some file / file path manipulation utilities.
+* `deprecation`, decorator, metaclass & all to mark functions / classes as deprecated or moved
 .LP
 
-* graph.py:
-graph manipulations, dot file generation
+* `fileutils`, some file / file path manipulation utilities.
 .LP
 
-* html.py :
-Deprecated module
-Return an html formatted traceback from python exception infos.
+* `graph`, graph manipulations functions such as cycle detection, bases for dot file generation.
 .LP
 
-* interface.py
-Bases class for interfaces.
+* `modutils`, python module manipulation functions.
 .LP
 
-* logger.py :
-Deprecated module : use logging from stdlib. 
-Define a logger interface and two concrete loggers : one which prints
-everything on stdout, the other using syslog.
+* `shellutils`, some powerful shell like functions to replace shell scripts with python scripts.
 .LP
 
-* logging_ext.py:
-extensions to stdlib's logging module
+* `tasksqueue`, a prioritized tasks queue implementation.
 .LP
 
-* logservice.py:
-Deprecated module. Use logging from stdlib. 
+* `textutils`, some text manipulation functions (ansi colorization, line wrapping, rest support...).
 .LP
 
-* modutils.py :
-Module manipulation utilities.
+* `tree`, base class to represent tree structure, and some others to make it works with the visitor implementation (see below).
 .LP
 
-* monclient.py:
-Deprecated module
+* `visitor`, a generic visitor pattern implementation.
 .LP
 
-* monserver.py:
-Deprecated module
+
+.SH Modules extending some standard modules
 .LP
 
-* optik_ext :
-Add an abstraction level to transparently import optik classes from
-optparse (python >= 2.3) or the optik package. It also defines two
-new option types (regexp, csv, color, date...)
+* `debugger`,  `pdb` customization.
 .LP
 
-* optparser.py:
-extend optparse's OptionParser to support commands 
+* `logging_ext`, extensions to `logging` module such as a colorized formatter and an easier initialization function.
 .LP
 
-* patricia.py :
-A Python implementation of PATRICIA trie (Practical Algorithm to
-Retrieve Information Coded in Alphanumeric).
+* `optik_ext`, defines some new option types (regexp, csv, color, date, etc.) for `optik` / `optparse`
 .LP
 
-* pdf_ext.py:
-pdf and fdf file manipulations, with pdftk. 
+* `xmlrpcutils`, auth support for XML-RPC
 .LP
 
-* pytest.py:
-unittest runner. See testlib
+
+.SH Modules extending some external modules
 .LP
 
-* shellutils.py:
-Some utilities to replace shell scripts with python scripts.
+* `corbautils`, useful functions for use with the OmniORB_ CORBA library.
 .LP
 
-* sqlgen.py :
-Helper class to generate SQL strings to use with python's DB-API.
+* `hg`, some Mercurial_ utility functions.
 .LP
 
-* table.py:
-manage tabular data (supports column and row names, sorting, grouping...
+* `pdf_ext`, pdf and fdf file manipulations, with pdftk.
 .LP
 
-* testlib.py :
-Generic tests execution methods.
+* `pyro_ext`, some Pyro_ utility functions.
 .LP
 
-* textutils.py:
-Some text manipulation utilities (ansi colorization, line wrapping,
-rest support...)
+* `sphinx_ext`, Sphinx_ plugin defining a `autodocstring` directive.
 .LP
 
-* tree.py :
-Base class to represent tree structure, and some others to make it
-works with the visitor implementation (see below).
+* `vcgutils` , utilities functions to generate file readable with Georg Sander's vcg tool (Visualization of Compiler Graphs).
 .LP
 
-* umessage.py:
-unicode email support
+
+.SH To be deprecated modules
 .LP
 
-* ureports:
-Provides a way to create simple reports using python objects
-without care of the final formatting. Some formatters text and html
-are provided.
+These `logilab.common` modules will probably be deprecated in future versions:
 .LP
 
-* vcgutils.py :
-utilities functions to generate file readable with Georg Sander's vcg
-(Visualization of Compiler Graphs).
+* `testlib`: use `unittest2`_ instead
+.LP
+* `pytest`: use `discover`_ instead
+.LP
+* `interface`: use `zope.interface`_ if you really want this
+.LP
+* `table`, `xmlutils`: is that used?
+.LP
+* `sphinxutils`: we won't go that way imo (i == syt)
 .LP
 
-* visitor.py :
-A generic visitor pattern implementation.
+
+.SH Deprecated modules
 .LP
 
-* twisted_distutils.py
-This module enables the installation of plugins.tml files using standard
-distutils syntax. Note that you can use this to install files that
-are not twisted plugins in any package directory of your application.
+These `logilab.common` modules are only for backward compatibility. They can go away at anytime.
 .LP
 
-* xmlrpcutils.py:
-Auth support for XML RPC
+* `optparser`: use `clcommands` instead
+.LP
+
+* `adbh`, `db`, `sqlgen`: see `logilab.database`_ instead
+.LP
+
+* `contexts`: content move to `shellutils`
+.LP
+
+* `html`: deprecated without replacement
 
 .LP
 
 .SH FILES
 .TP 2.2i
 .B /usr/lib/python2.6/vendor-packages/logilab/common
-shared object library files
+logilab-common python modules 
+.TP
+.B /usr/lib/python2.7/vendor-packages/logilab/common
+logilab-common python modules
 
 .SH AUTHORS
 Sylvain Thenault (sylvain.thenault@logilab.fr)
 
 .SH SUPPORT
-python-projects@logilab.org
+Use the python-projects@lists.logilab.org mailing list. Since we do not have
+publicly available bug tracker yet, bug reports should be emailed
+there too.
+.LP
+
+You can subscribe to this mailing list at
+http://lists.logilab.org/mailman/listinfo/python-projects
+.LP
+
+Archives are available at
+http://lists.logilab.org/pipermail/python-projects/
+
+.LP
 
 .SH SEE ALSO
 .IR logilab-astng (3),
