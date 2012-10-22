@@ -26,17 +26,24 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logilab-common
-COMPONENT_VERSION=	0.40.0
+COMPONENT_VERSION=	0.58.2
 COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-common/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0529201ad23ea4a57e72a4d4e6607cc440b5086b25c69d01db8ef6d1c9cc9c57
-COMPONENT_ARCHIVE_URL=	http://ftp.logilab.org/pub/common/$(COMPONENT_ARCHIVE)
+	sha256:c92db7d6bbac880969a439027a8239827a02a90815dbfba6bd4c031d85f4cd61
+COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/common/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/setup.py.mk
+
+# rename pytest to its versioned name; mediated links (depending on
+# the python version) in the manifest will create the link from pytest
+# to the correct pytest-${PYTHON_VERSION}
+COMPONENT_POST_INSTALL_ACTION = \
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pytest pytest-$(PYTHON_VERSION))
+
 
 # common targets
 
@@ -46,13 +53,23 @@ install:	$(INSTALL_32)
 	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 	
+# The tests are run using python 2.7 only and require that the
+# python-27 package is installed (does not have to be the default python). 
+# Testing using python-26 is done manually, since it requires
+# downloading and installing the unittest2 component (not part of Solaris).
+# which provides python 2.7 functionality to the unittest python library
+# in the python2.6 package.
+
+# Use the python 2.7 libraries (via PYTHONPATH setting) for testing.
+test: PYTHON_VERSION=2.7
+
+COMPONENT_TEST_CMD = $(PROTOUSRBINDIR)/pytest-2.7
+COMPONENT_TEST_ARGS =
 
 # Expected failures for test target:
-# 722 test cases, 17 errors, 5 failures, 56 skipped
-# 43 modules OK (7 failed)
-COMPONENT_TEST_DIR = $(COMPONENT_SRC)
-COMPONENT_TEST_CMD = bin/pytest
-COMPONENT_TEST_ARGS = test
+# 413 test cases, 1 error, 1 failures, 22 skipped
+# 21 modules OK (2 failed)
+# failures: unittest_shellutils [1/23], unittest_date [1/45]
 
 test:	$(TEST_32)
 

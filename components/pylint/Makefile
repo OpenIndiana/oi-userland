@@ -25,12 +25,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylint
-COMPONENT_VERSION=	0.18.0
+COMPONENT_VERSION=	0.25.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:54e8135fdb44b41797510ed8e246b19d09c98ead4dec704c5e5152028a79976f
-COMPONENT_ARCHIVE_URL=	http://ftp.logilab.org/pub/pylint/$(COMPONENT_ARCHIVE)
+	sha256:757f2b97071a87fb7e4d017fc7c9eb74f26dcf412e683b614d3c5d54b217212d
+COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -88,6 +88,38 @@ COMPONENT_POST_INSTALL_ACTION += \
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+
+# The tests are run using python 2.7 only and require that
+# the python-27 package is installed (does not have to be the default python). 
+# Testing using python-26 is done manually, since it requires
+# downloading and installing the unittest2 component (not part of Solaris),
+# which provides python 2.7 functionality to the unittest python library
+# in the python2.6 package.
+
+# Use the python 2.7 libraries for testing.
+test: PYTHON_VERSION=2.7
+
+# logilab-common and logilab-astng are runtime dependencies of pylint,
+# and we need to use their latest versions from this workspace.
+# We can't just add their install targets as dependencies here,
+# so just "gmake install" in the logilab-common and logilab-astng
+# component directories before running the pylint tests.
+COMPONENT_PRE_TEST_ACTION = ($(GMAKE) -C \
+	$(COMPONENT_DIR)/../logilab-common install; \
+	$(GMAKE) -C $(COMPONENT_DIR)/../logilab-astng install )
+
+COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(COMPONENT_DIR)/../logilab-astng/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
+
+# Run pytest-2.7 from logilab-common's proto area for now, until the 
+# new version of logilab-common containing pytest is in CBE.
+# Then we can change it to /usr/bin/pytest-$(PYTHON_VERSION).
+COMPONENT_TEST_CMD = $(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)/usr/bin/pytest-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS =
+
+# Expected failures for test target:
+# 799 test cases, 4 errors, 6 failures, 4 skipped
+# 9 modules OK (2 failed)
+# failures: smoketest [7/14], unittest_lint [3/21]
 
 test:		$(TEST_32)
 

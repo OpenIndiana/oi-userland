@@ -70,10 +70,12 @@ file path=usr/lib/python2.6/vendor-packages/pylint/checkers/design_analysis.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/exceptions.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/format.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/imports.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/logging.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/misc.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/newstyle.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/raw_metrics.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/similar.py
+file path=usr/lib/python2.6/vendor-packages/pylint/checkers/string_format.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/typecheck.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/utils.py
 file path=usr/lib/python2.6/vendor-packages/pylint/checkers/variables.py
@@ -89,8 +91,10 @@ file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/main.py
 file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/utils.py
 file path=usr/lib/python2.6/vendor-packages/pylint/pyreverse/writer.py
 file path=usr/lib/python2.6/vendor-packages/pylint/reporters/__init__.py
+file path=usr/lib/python2.6/vendor-packages/pylint/reporters/guireporter.py
 file path=usr/lib/python2.6/vendor-packages/pylint/reporters/html.py
 file path=usr/lib/python2.6/vendor-packages/pylint/reporters/text.py
+file path=usr/lib/python2.6/vendor-packages/pylint/testutils.py
 file path=usr/lib/python2.6/vendor-packages/pylint/utils.py
 
 link path=usr/bin/epylint target=epylint-2.6 mediator=python mediator-version=2.6
@@ -101,18 +105,11 @@ link path=usr/bin/symilar target=symilar-2.6 mediator=python mediator-version=2.
 
 license pylint.license license="GPLv2"
 
-# pkgdepend should have picked up the dependency on 
-# /library/python-2/logilab-common and /library/python-2/logilab-astng; 
-# this explicit depend action can be removed if pkgdepend is fixed later
-depend fmri=__TBD \
-    pkg.debug.depend.file=usr/lib/python2.6/vendor-packages/logilab/common/textutils.py \
-    pkg.debug.reason=usr/lib/python2.6/vendor-packages/pylint/utils.py \
-    type=require
+# force a dependency on logilab-common-26 version 0.58.2
+depend fmri=library/python-2/logilab-common-26@0.58.2 type=require
 
-depend fmri=__TBD \
-    pkg.debug.depend.file=usr/lib/python2.6/vendor-packages/logilab/astng/nodes.py \
-    pkg.debug.reason=usr/lib/python2.6/vendor-packages/pylint/lint.py \
-    type=require
+# force a dependency on logilab-astng-26 version 0.24.0
+depend fmri=library/python-2/logilab-astng-26@0.24.0 type=require
 
 # force a dependency on the Python 2.6 runtime
 depend fmri=__TBD pkg.debug.depend.file=python2.6 \

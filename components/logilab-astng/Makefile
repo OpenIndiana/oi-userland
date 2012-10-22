@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		logilab-astng
-COMPONENT_VERSION=	0.19.0
+COMPONENT_VERSION=	0.24.0
 COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-astng/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e1b4d209e2a66b20c9e1adff2c30e3b19ea2a43226da3c7dff5c39747ca6e113
-COMPONENT_ARCHIVE_URL=	http://ftp.logilab.org/pub/astng/$(COMPONENT_ARCHIVE)
+	sha256:2d9413fa338ccf8b3f4b86520b385e9d35e848117dc7602b3994972a3163647f
+COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/astng/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
@@ -44,15 +44,44 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# COMPONENT_TEST_CMD = ./fulltest.sh
-# COMPONENT_TEST_ARGS = $(PYTHON_VERSION)
+# The tests are run using python 2.7 only and require that
+# the python-27 package is installed (does not have to be the default python). 
+# Testing using python-26 is done manually, since it requires
+# downloading and installing the unittest2 component (not part of Solaris).
+# which provides python 2.7 functionality to the unittest python library
+# in the python2.6 package.
 
-# No runnable tests; the existing tests are missing a runtests.py
-# file, which isn't fixed until logilab-ast version 0.20.1.
-# When logilab-astng is updated, uncomment the above COMPONENT_TEST*
-# variables and change $(NO_TESTS) below to $(TEST_32)
+# Use the python 2.7 libraries for testing.
+test: PYTHON_VERSION=2.7
 
-test:		$(NO_TESTS)
+# logilab-common is a runtime dependency of logilab-astng,
+# and we need to use its latest version from the workspace.
+# We can't just add its install target as a dependency here,
+# so just run "gmake install" in the logilab-common component directory
+# before running logilab-astng tests.
+COMPONENT_PRE_TEST_ACTION = ( $(GMAKE) -C \
+	$(COMPONENT_DIR)/../logilab-common install )
+
+COMPONENT_TEST_ENV = PYTHONPATH=$(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)$(PYTHON_VENDOR_PACKAGES):$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES)
+
+# Run pytest-2.7 from logilab-common's proto area for now, until the 
+# new version of logilab-common containing pytest is in CBE.
+# Then we can change it to /usr/bin/pytest-$(PYTHON_VERSION).
+COMPONENT_TEST_CMD = $(COMPONENT_DIR)/../logilab-common/build/prototype/$(MACH)/usr/bin/pytest-$(PYTHON_VERSION)
+COMPONENT_TEST_ARGS =
+
+# Expected failures for test target:
+# sparc:
+# 242 test cases, 2 failures, 6 skipped
+# 8 modules OK (1 failed)
+# failures: unittest_builder [2/55]
+# x86:
+# 242 test cases, 4 failures, 8 skipped
+# 6 modules OK (3 failed)
+# failures: unittest_builder [2/55], unittest_lookup [1/21], 
+# unittest_inference [1/75]
+
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
