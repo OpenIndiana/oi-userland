@@ -1,0 +1,94 @@
+Allows to produce clean test run even when XSLT is configured outside of
+source directory.
+
+--- libxslt-1.1.27/tests/plugins/Makefile.am	Tue Sep  4 07:26:23 2012
++++ libxslt-1.1.27/tests/plugins/Makefile.am	Thu Oct 11 06:25:06 2012
+@@ -29,8 +29,8 @@
+ test tests: $(top_builddir)/xsltproc/xsltproc test-logall $(noinst_LTLIBRARIES)
+ 	@LD_LIBRARY_PATH=$(plugindir):$(top_builddir)/libxslt/.libs:$(LD_LIBRARY_PATH) \
+ 	 LIBXSLT_PLUGINS_PATH=$(plugindir) \
+-	 $(top_builddir)/xsltproc/xsltproc plugin.xsl plugin.xml > plugin.res
+-	@diff plugin.out plugin.res
++	 $(top_builddir)/xsltproc/xsltproc $(srcdir)/plugin.xsl $(srcdir)/plugin.xml > plugin.res
++	@diff $(srcdir)/plugin.out plugin.res
+ 	@rm plugin.res
+ 
+ else
+--- libxslt-1.1.27/tests/documents/Makefile.am	Tue Sep  4 07:26:23 2012
++++ libxslt-1.1.27/tests/documents/Makefile.am	Thu Oct 11 06:54:44 2012
+@@ -27,6 +27,7 @@
+ 	grep "MORY ALLO" .memdump  | grep -v "MEMORY ALLOCATED : 0" || true;\
+ 	rm -f result)
+ 	@($(CHECKER) $(top_builddir)/xsltproc/xsltproc $(srcdir)/test.xsl $(srcdir)/test_bad.xml > result 2>err ; \
++	sed 's|$(srcdir)/||' err > err.tmp; mv err.tmp err; \
+ 	diff $(srcdir)/test_bad.result result; \
+ 	diff $(srcdir)/test_bad.err err; \
+ 	grep "MORY ALLO" .memdump  | grep -v "MEMORY ALLOCATED : 0" || true;\
+--- libxslt-1.1.27/tests/general/Makefile.am	Fri Sep  7 00:49:41 2012
++++ libxslt-1.1.27/tests/general/Makefile.am	Mon Oct 15 02:41:07 2012
+@@ -207,10 +207,11 @@
+ 	  if [ ! -f $$j ] ; then continue ; fi ; \
+ 	  if [ -d $$j ] ; then continue ; fi ; \
+ 	  name=`basename $$j .xsl`; \
++	  real_docs_path=`cd $(srcdir)/../docs && pwd`; \
+ 	  out=$(srcdir)/"$$name".out; \
+ 	  err=$(srcdir)/"$$name".err; \
+ 	  log=`$(CHECKER) $(top_builddir)/xsltproc/xsltproc $$j $$i \
+-	  	> result.$$name 2>err.$$name; \
++	  	2>&1 > result.$$name | sed 's|$(srcdir)|.|' >err.$$name; \
+ 	  if [ ! -f $$out ] ; then \
+ 	  	cp result.$$name $$out ; \
+ 		if [ -s err.$$name ] ; then \
+@@ -217,6 +218,9 @@
+ 			cp err.$$name $$err ; \
+ 		fi ; \
+ 	  else \
++		grep '../docs/' $$out >/dev/null && \
++		  sed "s|$$real_docs_path|../docs|" result.$$name > \
++		  result.$$name.tmp && mv result.$$name.tmp result.$$name; \
+ 	  	diff $$out result.$$name; \
+ 		if [ -s $$err ] ; then \
+ 	  		diff $$err err.$$name; \
+@@ -239,10 +243,11 @@
+ 	  if [ ! -f $$j ] ; then continue ; fi ; \
+ 	  if [ -d $$j ] ; then continue ; fi ; \
+ 	  name=`basename $$j .xsl`; \
++	  real_docs_path=`cd $(srcdir)/../docs && pwd`; \
+ 	  out=$(srcdir)/"$$name".out; \
+ 	  err=$(srcdir)/"$$name".err; \
+ 	  log=`$(CHECKER) $(top_builddir)/xsltproc/xsltproc --nodict $$j $$i \
+-	  	> result.$$name 2>err.$$name; \
++	  	2>&1 > result.$$name | sed 's|$(srcdir)|.|' >err.$$name; \
+ 	  if [ ! -f $$out ] ; then \
+ 	  	cp result.$$name $$out ; \
+ 		if [ -s err.$$name ] ; then \
+@@ -249,6 +254,9 @@
+ 			cp err.$$name $$err ; \
+ 		fi ; \
+ 	  else \
++		grep '../docs/' $$out >/dev/null && \
++		  sed "s|$$real_docs_path|../docs|" result.$$name > \
++		  result.$$name.tmp && mv result.$$name.tmp result.$$name; \
+ 	  	diff $$out result.$$name; \
+ 		if [ -s $$err ] ; then \
+ 	  		diff $$err err.$$name; \
+--- libxslt-1.1.27/tests/REC/Makefile.am	Fri Sep  7 00:49:41 2012
++++ libxslt-1.1.27/tests/REC/Makefile.am	Thu Oct 11 08:04:48 2012
+@@ -96,7 +96,7 @@
+ 	  fi ; \
+ 	  log=`$(CHECKER) $(top_builddir)/xsltproc/xsltproc \
+ 	  	$(srcdir)/$$name.xsl $(srcdir)/$$name.xml \
+-	  	> $$name.res 2>$$name.bad ; \
++	  	2>&1 > $$name.res | sed 's|$(srcdir)|.|' >$$name.bad ; \
+ 	  if [ ! -f $(srcdir)/$$name.out ] ; then \
+ 	  	cp $$name.res $(srcdir)/$$name.out ; \
+ 		if [ -s $$name.bad ] ; then \
+@@ -158,7 +158,7 @@
+ 	  fi ; \
+ 	  log=`$(CHECKER) $(top_builddir)/xsltproc/xsltproc --nodict \
+ 	  	$(srcdir)/$$name.xsl $(srcdir)/$$name.xml \
+-	  	> $$name.res 2>$$name.bad ; \
++	  	2>&1 > $$name.res | sed 's|$(srcdir)|.|' >$$name.bad ; \
+ 	  if [ ! -f $(srcdir)/$$name.out ] ; then \
+ 	  	cp $$name.res $(srcdir)/$$name.out ; \
+ 		if [ -s $$name.bad ] ; then \
