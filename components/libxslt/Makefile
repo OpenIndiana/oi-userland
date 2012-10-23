@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libxslt
-COMPONENT_VERSION=	1.1.26
+COMPONENT_VERSION=	1.1.27
 COMPONENT_PROJECT_URL=	http://xmlsoft.org/XSLT/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:55dd52b42861f8a02989d701ef716d6280bfa02971e967c285016f99c66e3db1
+    sha256:b6a8d9a421f2630999ca91d9f8c091ee8ea2d580e6be84c1d21b2a45e11e7e26
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxslt/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
@@ -46,14 +46,13 @@ LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
-CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
 CONFIGURE_OPTIONS += --without-crypto
+CONFIGURE_OPTIONS += --with-html-dir=/usr/share/lib/xslt/doc
+CONFIGURE_OPTIONS += --with-html-subdir=html
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
-
-COMPONENT_TEST_TARGETS = tests
 
 COMPONENT_PREP_ACTION = \
 	(cd $(@D) ; cp ../mapfile.xslt libxslt/libxslt.syms ; \

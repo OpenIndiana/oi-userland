@@ -15,6 +15,13 @@
 #
 $mapfile_version 2
 
+SYMBOL_VERSION SUNW_1.5 {
+	global:
+		xsltMaxVars;
+		xsltFreeLocales;
+		xsltXPathCompileFlags;
+} SUNW_1.4;
+
 SYMBOL_VERSION SUNW_1.4 {
 	global:
 		xsltCheckExtURI;

@@ -1,0 +1,14 @@
+The new line at the end need to be added here to mitigated differences
+between Solaris and GNU grep commands. Where GNU grep will add new line
+at the end when used on file without it.
+
+--- libxslt-1.1.27/tests/docbook/Makefile.am	Fri Sep  7 00:49:41 2012
++++ libxslt-1.1.27/tests/docbook/Makefile.am	Thu Oct 11 00:39:36 2012
+@@ -73,6 +73,7 @@
+ 	  xhtml=result/xhtml/`basename $$i .xml`.xhtml; \
+ 	  log=`$(CHECKER) $(top_builddir)/xsltproc/xsltproc --nonet \
+ 		$(srcdir)/xhtml/docbook.xsl $$i > $$out ; \
++	  echo '' >> $$out ; \
+ 	  if [ -f $(srcdir)/$$xhtml ] ; then \
+ 	      grep -v id < $(srcdir)/$$xhtml > $$xhtml.noid ; \
+ 	      grep -v id < $$out > $$out.noid ; \
