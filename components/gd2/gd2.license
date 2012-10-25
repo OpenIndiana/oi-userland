@@ -1,56 +1,182 @@
+---------------------------------------
+- GD2 [Graphics Draw] Library v2.0.35 -
+---------------------------------------
+Oracle Internal Tracking Number 8786
+------------------------------------------------------------------------------
 
-The Graphics Draw Library and its associated programs are
-copyright (C) 1994-2002 by one or more of the following:
+John Ellson  (ellson@graphviz.org)  Oct 31, 1997
 
-Portions copyright (C) 1994, 1995, 1996, 1997, 1998, 1999, 2000, 2001,
-2002 by Cold Spring Harbor Laboratory. Funded under Grant
-P41-RR02188 by the National Institutes of Health.
+==============================================================================
 
-Portions copyright (C) 1996, 1997, 1998, 1999, 2000, 2001, 2002 by
-Boutell.Com, Inc.
+/********************************************/
+/* gd interface to freetype library         */
+/*                                          */
+/* John Ellson   ellson@graphviz.org        */
+/********************************************/
 
-Portions relating to GD2 format copyright (C) 1999, 2000, 2001, 2002
-Philip Warner.
+==============================================================================
 
-Portions relating to PNG copyright (C) 1999, 2000, 2001, 2002 Greg
-Roelofs.
+/*
+    This is a header file for gd font, generated using
+    bdftogd version 0.51 by Jan Pazdziora, adelton@fi.muni.cz
+    from bdf font
+    -Misc-Fixed-Bold-R-Normal-Sans-15-140-75-75-C-90-ISO8859-2
+    at Mon Jan 26 14:45:58 1998.
+    The original bdf was holding following copyright:
+    "Libor Skarvada, libor@informatics.muni.cz"
+ */
 
-Portions relating to gdttf.c copyright (C) 1999, 2000, 2001, 2002 John
-Ellson (ellson@lucent.com).
+==============================================================================
 
-Portions relating to gdft.c copyright (C) 2001, 2002 John Ellson
-(ellson@lucent.com).
+/*
+ * gd_jpeg.c: Read and write JPEG (JFIF) format image files using the
+ * gd graphics library (http://www.libgd.org).
+ * 
+ * This software is based in part on the work of the Independent JPEG
+ * Group.  For more information on the IJG JPEG software (and JPEG
+ * documentation, etc.), see ftp://ftp.uu.net/graphics/jpeg/.
+ *
+ * NOTE: IJG 12-bit JSAMPLE (BITS_IN_JSAMPLE == 12) mode is not
+ * supported at all on read in gd 2.0, and is not supported on write
+ * except for palette images, which is sort of pointless (TBB). Even that
+ * has never been tested according to DB.
+ *
+ * Copyright 2000 Doug Becker, mailto:thebeckers@home.com
+ *
+ * Modification 4/18/00 TBB: JPEG_DEBUG rather than just DEBUG,
+ * so VC++ builds don't spew to standard output, causing
+ * major CGI brain damage
+ *
+ * 2.0.10: more efficient gdImageCreateFromJpegCtx, thanks to
+ * Christian Aberger 
+ */
+==============================================================================
 
-Portions copyright (C) 2000, 2001, 2002, 2003, 2004, 2005, 2006, 2007
-Pierre-Alain Joye (pierre@libgd.org).
+/*---------------------------------------------------------------------------
+    gd_png.c                 Copyright 1999 Greg Roelofs and Thomas Boutell
+---------------------------------------------------------------------------*/
 
-Portions relating to JPEG and to color quantization copyright (C) 2000,
-2001, 2002, Doug Becker and copyright (C) 1994, 1995, 1996, 1997,
-1998, 1999, 2000, 2001, 2002, Thomas G. Lane. This software is
-based in part on the work of the Independent JPEG Group. See the
-file README-JPEG.TXT for more information.
+==============================================================================
 
-Portions relating to WBMP copyright (C) 2000, 2001, 2002 Maurice
-Szmurlo and Johan Van den Brande.
+/* Code drawn from ppmtogif.c, from the pbmplus package
+**
+** Based on GIFENCOD by David Rowley <mgardi@watdscu.waterloo.edu>. A
+** Lempel-Zim compression based on "compress".
+**
+** Modified by Marcel Wijkstra <wijkstra@fwi.uva.nl>
+**
+** Copyright (C) 1989 by Jef Poskanzer.
+**
+** Permission to use, copy, modify, and distribute this software and its
+** documentation for any purpose and without fee is hereby granted, provided
+** that the above copyright notice appear in all copies and that both that
+** copyright notice and this permission notice appear in supporting
+** documentation.  This software is provided "as is" without express or
+** implied warranty.
+**
+** The Graphics Interchange Format(c) is the Copyright property of
+** CompuServe Incorporated.  GIF(sm) is a Service Mark property of
+** CompuServe Incorporated.
+*/
 
-Permission has been granted to copy, distribute and modify gd in
-any context without fee, including a commercial application,
-provided that this notice is present in user-accessible supporting
-documentation.
+==============================================================================
 
-This does not affect your ownership of the derived work itself, and
-the intent is to assure proper credit for the authors of gd, not to
-interfere with your productive use of gd. If you have questions,
-   ask. "Derived works" includes all programs that utilize the
-library. Credit must be given in user-accessible documentation.
+/*
+   * io.c
+   *
+   * Implements the simple I/O 'helper' routines.
+   *
+   * Not really essential, but these routines were used extensively in GD,
+   * so they were moved here. They also make IOCtx calls look better...
+   *
+   * Written (or, at least, moved) 1999, Philip Warner.
+   *
+ */
 
-This software is provided "AS IS." The copyright holders disclaim
-all warranties, either express or implied, including but not
-limited to implied warranties of merchantability and fitness for a
-particular purpose, with respect to this code and accompanying
-documentation.
+==============================================================================
 
-Although their code does not appear in gd, the authors wish to thank
-David Koblas, David Rowley, and Hutchison Avenue Software Corporation
-for their prior contributions.
+
+/*
+   * gd_security.c
+   *
+   * Implements buffer overflow check routines.
+   *
+   * Written 2004, Phil Knirsch.
+   * Based on netpbm fixes by Alan Cox.
+   *
+ */
+
+==============================================================================
+
+/*
+   WBMP: Wireless Bitmap Type 0: B/W, Uncompressed Bitmap
+   Specification of the WBMP format can be found in the file: 
+   SPEC-WAESpec-19990524.pdf
+   You can download the WAP specification on: http://www.wapforum.com/ 
+
+   gd_wbmp.c
+
+   Copyright (C) Johan Van den Brande (johan@vandenbrande.com)
+
+   Fixed: gdImageWBMPPtr, gdImageWBMP
+
+   Recoded: gdImageWBMPCtx for use with my wbmp library
+   (wbmp library included, but you can find the latest distribution
+   at http://www.vandenbrande.com/wbmp)
+
+   Implemented: gdImageCreateFromWBMPCtx, gdImageCreateFromWBMP 
+
+   ---------------------------------------------------------------------------
+
+   Parts of this code are from Maurice Smurlo.
+
+
+   ** Copyright (C) Maurice Szmurlo --- T-SIT --- January 2000
+   ** (Maurice.Szmurlo@info.unicaen.fr)
+
+   ** Permission to use, copy, modify, and distribute this software and its
+   ** documentation for any purpose and without fee is hereby granted, provided
+   ** that the above copyright notice appear in all copies and that both that
+   ** copyright notice and this permission notice appear in supporting
+   ** documentation.  This software is provided "as is" without express or
+   ** implied warranty.
+
+   ---------------------------------------------------------------------------
+   Parts od this code are inspired by  'pbmtowbmp.c' and 'wbmptopbm.c' by 
+   Terje Sannum <terje@looplab.com>.
+   **
+   ** Permission to use, copy, modify, and distribute this software and its
+   ** documentation for any purpose and without fee is hereby granted, provided
+   ** that the above copyright notice appear in all copies and that both that
+   ** copyright notice and this permission notice appear in supporting
+   ** documentation.  This software is provided "as is" without express or
+   ** implied warranty.
+   **
+   -------------------------------------------------------------------------- */
+
+==============================================================================
+
+/*
+ * gd_topal, adapted from jquant2.c
+ *
+ * Copyright (C) 1991-1996, Thomas G. Lane.
+ * This file is part of the Independent JPEG Group's software.
+ * For conditions of distribution and use, see the accompanying README file.
+ *
+ * This file contains 2-pass color quantization (color mapping) routines.
+ * These routines provide selection of a custom color map for an image,
+ * followed by mapping of the image to that color map, with optional
+ * Floyd-Steinberg dithering.
+ * It is also possible to use just the second pass to map to an arbitrary
+ * externally-given color map.
+ *
+ * Note: ordered dithering is not supported, since there isn't any fast
+ * way to compute intercolor distances; it's unclear that ordered dither's
+ * fundamental assumptions even hold with an irregularly spaced color map.
+ */
+
+==============================================================================
+
+
+
 
