@@ -58,7 +58,7 @@ CONFIGURE_OPTIONS  +=   --with-zenmap
 CONFIGURE_OPTIONS  +=   --with-openssl
 CONFIGURE_OPTIONS  +=   --with-libpcap
 CONFIGURE_OPTIONS  +=   --with-libpcre
-CONFIGURE_OPTIONS  +=   --with-liblua 
+CONFIGURE_OPTIONS  +=   --without-liblua 
 CONFIGURE_OPTIONS  +=   --with-ncat 
 CONFIGURE_OPTIONS  +=   --with-ndiff
 CONFIGURE_OPTIONS  +=   am_cv_python_pythondir=$(PYTHON_LIB)

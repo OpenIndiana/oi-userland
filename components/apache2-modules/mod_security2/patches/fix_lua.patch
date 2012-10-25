@@ -1,0 +1,14 @@
+--- modsecurity-apache_2.5.9/apache2/msc_lua.c.orig	2012-10-22 05:18:52.549922682 -0700
++++ modsecurity-apache_2.5.9/apache2/msc_lua.c	2012-10-22 05:21:37.503228311 -0700
+@@ -81,7 +81,11 @@
+     dumpr.script = script;
+     dumpr.index = 0;
+ 
++#if LUA_VERSION_NUM >= 502
++    return lua_load(L, dump_reader, &dumpr, script->name, NULL);
++#else
+     return lua_load(L, dump_reader, &dumpr, script->name);
++#endif
+ }
+ 
+ /**
