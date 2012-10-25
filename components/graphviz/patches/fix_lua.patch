@@ -1,0 +1,16 @@
+--- graphviz-2.28.0/tclpkg/gv/Makefile.in.orig	2012-10-22 08:45:54.769848218 -0700
++++ graphviz-2.28.0/tclpkg/gv/Makefile.in	2012-10-22 11:28:30.216436995 -0700
+@@ -3359,6 +3359,13 @@
+ 	$(SWIG) -c++ -lua -o gv_lua.cpp $(srcdir)/gv.i
+ 	mv $@ $@.orig
+ 	sed '/include/s/malloc\.h/cstdlib/' $@.orig > $@
++	mv $@ $@.orig
++	(echo "#include <lua.h>\n\
++#if LUA_VERSION_NUM >= 502\n\
++#define LUA_GLOBALSINDEX LUA_REGISTRYINDEX\n\
++#define luaL_reg luaL_Reg\n\
++#endif\n" ; cat $@.orig) > $@
++
+ gv.ml gv.mli: gv_ocaml.cpp
+ gv_ocaml.cpp: gv.i
+ 	$(SWIG) -c++ -ocaml -o gv_ocaml.cpp $(srcdir)/gv.i
