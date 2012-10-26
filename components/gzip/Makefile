@@ -49,6 +49,8 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 # diffs failing due to script tracing in output files.
 unexport SHELLOPTS
 
+COMPONENT_PREP_ACTION = (cd $(SOURCE_DIR); $(AUTORECONF) -if)
+
 # Get the binaries to test from the component build area.
 COMPONENT_TEST_ENV +=	PATH=$(BUILD_DIR_$(BITS)):/usr/xpg4/bin:/usr/bin
 COMPONENT_TEST_TARGETS = check
