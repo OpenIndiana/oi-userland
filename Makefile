@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include make-rules/shared-macros.mk
@@ -35,11 +35,12 @@ clean:		TARGET = clean
 clobber:	TARGET = clobber
 setup:		TARGET = setup
 test:		TARGET = test
+component-hook:		TARGET = component-hook
 
 .DEFAULT:	publish
 
 download setup prep build install publish validate clean clobber \
-test: $(SUBDIRS)
+test component-hook: $(SUBDIRS)
 
 $(SUBDIRS):	FORCE
 	+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)

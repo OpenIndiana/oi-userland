@@ -650,3 +650,12 @@ COMPONENT_INSTALL_ARGS += $(COMPONENT_INSTALL_ARGS.$(BITS))
 NO_TESTS =	test-nothing
 test-nothing:
 	@echo "There are no tests available at this time."
+
+# default behaviour for 'component-hook' target is to echo the component
+# name and version information, but more complex behaviour can be implemented
+# via command line setting of the COMPONENT_HOOK macro.
+COMPONENT_HOOK ?=	echo $(COMPONENT_NAME) $(COMPONENT_VERSION)
+
+component-hook:
+	@$(COMPONENT_HOOK)
+
