@@ -44,7 +44,8 @@ CONFIGURE_PREFIX=/usr/apr-util/1.3
 CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.1
 CONFIGURE_OPTIONS +=	--with-expat=/usr
 CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
-CONFIGURE_OPTIONS +=	--with-ldap=ldap
+CONFIGURE_OPTIONS +=	--with-ldap=ldap_r-2.4
+CONFIGURE_OPTIONS +=	--with-ldap-include=/usr/include/openldap
 CONFIGURE_OPTIONS +=	--without-odbc
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
