@@ -72,7 +72,8 @@ COMPONENT_PATCHES_1= compiler.patch path_utmp.patch\
 					 CR7019368.patch CR6729252.patch \
 					 MAP_TYPE_64_Bits.patch CR7167466.patch \
 					 CR7168611.patch CR7178717.patch \
-					 CR7175995.patch
+					 CR7175995.patch \
+					 CR7186440_ksh93_disable_predictive_editing.patch
 
 # Fixup HOSTTYPE to match uname output and bits
 HOSTTYPE32=sol11.$(shell uname -p)
