@@ -27,10 +27,11 @@ include ../../make-rules/shared-macros.mk
 
 PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
-COMPONENT_NAME=		db
+COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.1.25
 COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC_NAME=	db
+COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:72eac5fcae4b51b0f1edc727c0368407f29b42e3f2f50ebc31a282d0d6c0a617

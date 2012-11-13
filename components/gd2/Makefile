@@ -22,9 +22,10 @@
 #
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=         gd
+COMPONENT_NAME=		gd2
 COMPONENT_VERSION=      2.0.35
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC_NAME=	gd
+COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://www.libgd.org/
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 # this is the hash of the payload because it appears to be re-compressed

@@ -22,7 +22,7 @@
 #
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		php
+COMPONENT_NAME=		php-common
 # This version # based on the version # of Solaris
 COMPONENT_VERSION=	11.1
 COMPONENT_PROJECT_URL=	http://www.php.net/

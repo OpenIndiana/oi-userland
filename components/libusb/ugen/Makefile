@@ -22,7 +22,7 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libusbugen
+COMPONENT_NAME=		libusb-ugen
 COMPONENT_VERSION=	0.1.8
 IPS_COMPONENT_VERSION=	0.5.11
 COMPONENT_PROJECT_URL=	http://libusb.sf.net/

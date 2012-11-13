@@ -26,6 +26,7 @@ include ofed.mk
 
 LD_Z_IGNORE =
 
+COMPONENT_NAME=	open-fabrics
 COMPONENT_VERSION=1.5.3
 
 COMPONENT_PROJECT_URL=	http://www.openfabrics.org/

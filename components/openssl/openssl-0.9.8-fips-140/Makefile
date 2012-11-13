@@ -26,13 +26,14 @@ include ../../../make-rules/shared-macros.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
-COMPONENT_NAME =	openssl
+COMPONENT_NAME =	openssl-fips-140
 # Note that this is the OpenSSL version that is used to build FIPS-140 certified
 # libraries. However, we use the FIPS canister version for the IPS package.
 COMPONENT_VERSION =	0.9.8q
 IPS_COMPONENT_VERSION = 1.2
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
-COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC_NAME =	openssl
+COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d522b3e8a2b48e83ba1e142d7205eaca01358a137bb58e8d64583574e697ffd7

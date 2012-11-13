@@ -1,0 +1,44 @@
+
+PKG_REPORTS=$(CANONICAL_MANIFESTS:%.p5m=$(BUILD_DIR)/%.pkg-report)
+
+HGWEB_BASE_URL = http://userland.us.oracle.com/hg/file/tip/
+ARIA_BASE_URL = http://people.us.oracle.com/pls/oracle/find_person?p_string=
+ARC_BASE_URL = http://psarc.us.oracle.com/
+
+REPORT_TRANSFORMS = $(WS_TOP)/transforms/report
+CDIR=$(COMPONENT_DIR:$(WS_TOP)/%=%)
+
+component-report:	$(BUILD_DIR)/component-report
+
+$(BUILD_DIR)/component-report:	$(BUILD_DIR)/package-info
+	@echo "<tr>" >$@
+	@echo "<td><a href='$(COMPONENT_PROJECT_URL)'>$(COMPONENT_NAME)</a></td>" >>$@
+	@echo "<td><a href='$(COMPONENT_ARCHIVE_URL)'>$(COMPONENT_VERSION)</a></td>" >>$@
+	@echo "<td><a href='$(HGWEB_BASE_URL)$(CDIR)'>$(CDIR)</a></td>" >>$@
+	@echo "<td>" >>$@ ; for pkg in $(PACKAGE) ; do \
+             echo "$$pkg<br>" >>$@ ; \
+	 done ; echo "</td>" >>$@
+	@echo "<td>" >>$@ ; for arc in $(ARC_CASE) ; do \
+             echo "<a href='$(ARC_BASE_URL)$$arc'>$$arc</a><br>" >>$@ ; \
+	 done ; echo "</td>" >>$@
+	@echo "<td>" >>$@ ; for license in $(LICENSE) ; do \
+	     echo "$$license<br>" >>$@ ; \
+	 done ; echo "</td>" >>$@
+	@echo "</tr>" >>$@
+
+$(BUILD_DIR)/package-info:	$(PKG_REPORTS)
+	@cat $(PKG_REPORTS) | sort -u >$@
+
+$(BUILD_DIR)/component-info:	$(PKG_REPORTS)
+	@echo "COMPONENT_NAME=\"$(COMPONENT_NAME)\"" >$@
+	@echo "COMPONENT_VERSION=\"$(COMPONENT_VERSION)\"" >>$@
+	@echo "COMPONENT_PROJECT_URL=\"$(COMPONENT_PROJECT_URL)\"" >>$@
+	@echo "COMPONENT_ARCHIVE_URL=\"$(COMPONENT_ARCHIVE_URL)\"" >>$@
+	@echo "COMPONENT_DIR=\"$(CDIR)\"" >>$@
+
+$(BUILD_DIR)/%.pkg-report:	%.p5m $(BUILD_DIR)
+	@$(PKGMOGRIFY) $(PKG_OPTIONS) -P $@ $< \
+		$(REPORT_TRANSFORMS) >/dev/null
+
+include $(BUILD_DIR)/package-info
+
