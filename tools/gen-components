@@ -1,0 +1,184 @@
+#!/usr/bin/python
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2012, Oracle and/or it's affiliates.  All rights reserved.
+#
+#
+# gen_components.py
+# A simple program to generate (on stdout) the component.html web page 
+# found at: http://userland.us.oracle.com/components.html
+#
+
+import getopt
+import os
+import sys
+
+debug = False
+
+# Initial HTML for the generated web page.
+preamble = """
+<html>
+<head>
+    <style type='text/css' media='screen'>
+        @import '/css/demo_table.css';
+        @import '/css/ColVis.css';
+        @import '/css/ColReorder.css';
+
+            tr.even:hover,  tr.even:hover td.sorting_1 ,
+            tr.odd:hover,  tr.odd:hover td.sorting_1 {
+                            background-color: gold;
+            }
+
+    </style>
+    <script type='text/javascript' src='js/jquery.js'></script>
+    <script type='text/javascript' src='js/jquery.dataTables.js'></script>
+    <script type='text/javascript' src='js/ColReorder.js'></script>
+    <script type='text/javascript' src='js/ColVis.js'></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#components').dataTable({
+                "sDom": 'C<"clear">Rlfrtip',
+                bPaginate: true,
+                bFilter: true,
+                bSort: true,
+                iDisplayLength: -1,
+                aLengthMenu: [ [ 10, 50, -1], [ 10, 50, 'All'] ]
+            });
+        });
+    </script>
+</head>
+<body>
+
+<h1>Userland Components</h1>
+<p>
+<table align='center' id='components'>
+<thead>
+<tr>
+    <th>Component</th>
+    <th>Version</th>
+    <th>Gate Path</th>
+    <th>Package(s)</th>
+    <th>ARC Case(s)</th>
+    <th>License(s)</th>
+</tr>
+</thead>
+<tbody>
+"""
+
+# Final HTML for the generated web page.
+postamble = """
+</tr>
+</tbody>
+</table>
+</body>
+</html>
+"""
+
+# Return a sorted list of the directories containing one or more .p5m files.
+def find_p5m_dirs(workspace):
+    p5m_dirs = []
+    for dir, _, files in os.walk(workspace + "/components"):
+        for file in files:
+            if file.endswith(".p5m"):
+                p5m_dirs.append(dir)
+
+    return sorted(list(set(p5m_dirs)))
+
+# Write out the initial HTML for the components.html web page.
+def write_preamble():
+    print preamble
+
+# Generate an HTML table entry for all the information for the component
+# in the given directory. This generates a file called 'component-report'
+# under the components build directory.
+def gen_reports(workspace, component_dir):
+    if debug:
+        print >> sys.stderr, "Processing %s" % component_dir
+
+    makefiles = "-f Makefile -f %s/make-rules/component-report" % workspace
+    targets = "clean component-hook"
+    cmd = "cd %s; gmake COMPONENT_HOOK='gmake %s component-report' %s" % \
+        (component_dir, makefiles, targets)
+
+    lines = os.popen(cmd).readlines()
+
+# Collect all the .../build/component-report files and write them to stdout.
+def write_reports(p5m_dirs):
+    for p5m_dir in p5m_dirs:
+        report = "%s/build/component-report" % p5m_dir
+        if debug:
+            print >> sys.stderr, "Reading %s" % report
+        try:
+            fin = open(report, 'r')
+            lines = fin.readlines()
+            fin.close()
+            sys.stdout.writelines(lines)
+        except:
+            if debug:
+                print >> sys.stderr, "Unable to read: %s" % report
+
+# Write out the final HTML for the components.html web page.
+def write_postamble():
+    print postamble
+
+# Write out a usage message showing valid options to this script.
+def usage():
+    print  >> sys.stderr, \
+"""
+Usage: 
+      update_man_pages.py [OPTION...]
+
+-d, --debug
+      Turn on debugging
+
+-w --workspace
+      Location of the Userland workspace
+"""
+
+    sys.exit(1)
+
+
+if __name__ == "__main__":
+    workspace = os.getenv('WS_TOP')
+
+    try:
+        opts, args = getopt.getopt(sys.argv[1:], "dw:",
+            [ "debug", "workspace=" ])
+    except getopt.GetoptError, err:
+        print str(err)
+        usage()
+
+    for opt, arg in opts:
+        if opt in [ "-w", "--workspace" ]:
+            workspace = arg
+        elif opt in [ "-d", "--debug" ]:
+            debug = True
+        else:
+            assert False, "unknown option"
+ 
+    write_preamble()
+    p5m_dirs = find_p5m_dirs(workspace)
+    for p5m_dir in p5m_dirs:
+        gen_reports(workspace, p5m_dir)
+    write_reports(p5m_dirs)
+    write_postamble()
+    sys.exit(0)

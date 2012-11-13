@@ -26,10 +26,11 @@ include ../../make-rules/shared-macros.mk
 
 PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
 
-COMPONENT_NAME=         gmp
+COMPONENT_NAME=		gnump
 COMPONENT_VERSION=      4.3.2
 COMPONENT_PROJECT_URL=	http://gmplib.org/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC_NAME=	gmp
+COMPONENT_SRC=          $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:7be3ad1641b99b17f6a8be6a976f1f954e997c41e919ad7e0c418fe848c13c97

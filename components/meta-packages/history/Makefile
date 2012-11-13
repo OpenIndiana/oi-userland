@@ -32,6 +32,8 @@ PKGSEND =	/usr/bin/pkgsend
 PKGLINT =	/usr/bin/pkglint
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 
+COMPONENT_NAME=		"Package History"
+
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
 ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
 GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.p5m)
