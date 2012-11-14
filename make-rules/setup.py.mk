@@ -48,13 +48,21 @@ $(BUILD_DIR)/%-2.6/.build:	$(BUILD_DIR)/%-2.7/.build
 $(BUILD_DIR)/%-2.6/.installed:	$(BUILD_DIR)/%-2.7/.installed
 endif
 
+# Create a distutils config file specific to the combination of build
+# characteristics (bittedness x Python version), and put it in its own
+# directory.  We can set $HOME to point distutils at it later, allowing
+# the install phase to find the temporary build directories.
+CFG=.pydistutils.cfg
+$(BUILD_DIR)/config-%/$(CFG):
+	$(MKDIR) $(@D)
+	echo "[build]\nbuild_base = $(BUILD_DIR)/$*" > $@
+
 # build the configured source
-$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
+$(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep $(BUILD_DIR)/config-%/$(CFG)
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) $(PYTHON_ENV) \
-		$(PYTHON.$(BITS)) ./setup.py build \
-			--build-temp $(@D:$(BUILD_DIR)/%=%))
+	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(PYTHON_ENV) \
+		$(PYTHON.$(BITS)) ./setup.py build)
 	$(COMPONENT_POST_BUILD_ACTION)
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 	-$(PARFAIT) $(SOURCE_DIR)/$(@D:$(BUILD_DIR)/%=%)
@@ -70,9 +78,9 @@ COMPONENT_INSTALL_ARGS +=	--install-data=$(PYTHON_DATA)
 COMPONENT_INSTALL_ARGS +=	--force
 
 # install the built source into a prototype area
-$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
+$(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built $(BUILD_DIR)/config-%/$(CFG)
 	$(COMPONENT_PRE_INSTALL_ACTION)
-	(cd $(SOURCE_DIR) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
+	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_INSTALL_ENV) \
 		$(PYTHON.$(BITS)) ./setup.py install $(COMPONENT_INSTALL_ARGS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
