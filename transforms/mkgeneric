@@ -1,0 +1,47 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+# This set of transforms helps us take a package that's parameterized on a
+# platform's versions and emit a package that conditionally depends on those
+# versioned packages, predicated on the platform version packages being
+# present.
+#
+# For instance, for a package "mako-generic", we want to create a package
+# "mako", which brings in "mako-26" if "python-26" is present, and "mako-27" if
+# "python-27" is present.
+#
+# We do this by grabbing just the set actions from "mako-generic", and emitting
+# those conditional depend actions.  We require that the parameterized package
+# name end in "-###" (typically by setting a pkgmogrify variable to "###"),
+# which we also remove here.  This works in conjunction with a set of rules in
+# make-rules/ips.mk which create and use another transform file that actually
+# emit the conditional dependencies.
+
+<transform file dir link hardlink license user group driver legacy signature -> drop>
+<transform depend -> default nodrop false>
+<transform depend nodrop=false -> drop>
+<transform set name=pkg.fmri value=(?:pkg:/)?(.+)-###@(.*) -> \
+	edit value -### "">
+<transform depend nodrop=true -> delete nodrop true>

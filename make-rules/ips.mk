@@ -92,13 +92,39 @@ PKG_PROTO_DIRS += $(MANGLED_DIR) $(PROTO_DIR) $(@D) $(COMPONENT_DIR) $(COMPONENT
 MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
+
+# Look for manifests which need to be duplicated for each version of python.
+ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
+UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PYVER.p5m,$(CANONICAL_MANIFESTS)))
+PY_MANIFESTS = $(filter %-PYVER.p5m,$(CANONICAL_MANIFESTS))
+PYV_MANIFESTS = $(foreach v,$(shell echo $(PYTHON_VERSIONS) | tr -d .),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
+PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
+else
+UNVERSIONED_MANIFESTS = $(CANONICAL_MANIFESTS)
+endif
+
+# Look for manifests which need to be duplicated for each version of perl.
+ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
+NOPERL_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS)))
+PERL_MANIFESTS = $(filter %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS))
+PERLV_MANIFESTS = $(foreach v,$(shell echo $(PERL_VERSIONS) | tr -d .),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
+PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
+else
+NOPERL_MANIFESTS = $(UNVERSIONED_MANIFESTS)
+endif
+
+VERSIONED_MANIFESTS = \
+	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
+	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
+	$(UNVERSIONED_MANIFESTS)
+
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
-MANIFESTS =		$(CANONICAL_MANIFESTS:%=$(MANIFEST_BASE)-%)
+MANIFESTS =		$(VERSIONED_MANIFESTS:%=$(MANIFEST_BASE)-%)
 
 
-DEPENDED=$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend)
-RESOLVED=$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
+DEPENDED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend)
+RESOLVED=$(VERSIONED_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.depend.res)
 PUBLISHED=$(RESOLVED:%.depend.res=%.published)
 
 COPYRIGHT_FILE ?=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).copyright
@@ -126,8 +152,69 @@ $(GENERATED).p5m:	install
 $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
 	cat $(METADATA_TEMPLATE) $< >$@
 
-# mogrify the manifest
-$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR) canonical-manifests
+# The text of a transform that will emit a dependency conditional on the
+# presence of a particular version of a runtime, which will then draw in the
+# runtime-version-specific version of the package we're operating on.  $(1) is
+# the name of the runtime package, and $(2) is the version suffix.
+mkgeneric = \
+	echo "<transform set name=pkg.fmri value=(?:pkg:/)?(.+)-\#\#\#@(.*)" \
+		"-> emit depend nodrop=true type=conditional" \
+		"predicate=$(1)-$(2) fmri=%<1>-$(2)@%<2>>" >> $@;
+
+# Define and execute a macro that generates a rule to create a manifest for a
+# python module specific to a particular version of the python runtime.
+define python-manifest-rule
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
+	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
+endef
+$(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
+
+# A rule to create a helper transform package for python, that will insert the
+# appropriate conditional dependencies into a python library's
+# runtime-version-generic package to pull in the version-specific bits when the
+# corresponding version of python is on the system.
+$(WS_TOP)/transforms/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
+	$(RM) $@
+	$(foreach ver,$(shell echo $(PYTHON_VERSIONS) | tr -d .), \
+		$(call mkgeneric,runtime/python,$(ver)))
+
+# Build Python version-wrapping manifests from the generic version.
+$(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(WS_TOP)/transforms/mkgeneric-python
+	$(PKGMOGRIFY) -D PYV=### $(WS_TOP)/transforms/mkgeneric-python \
+		$(WS_TOP)/transforms/mkgeneric $< > $@
+	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+
+# A rule to create a helper transform package for perl, that will insert the
+# appropriate conditional dependencies into a perl library's
+# runtime-version-generic package to pull in the version-specific bits when the
+# corresponding version of perl is on the system.
+$(WS_TOP)/transforms/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
+	$(RM) $@
+	$(foreach ver,$(shell echo $(PERL_VERSIONS) | tr -d .), \
+		$(call mkgeneric,runtime/perl,$(ver)))
+
+# Define and execute a macro that generates a rule to create a manifest for a
+# perl module specific to a particular version of the perl runtime.
+define perl-manifest-rule
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
+	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) $< > $@
+endef
+$(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
+
+# Build Perl version-wrapping manifests from the generic version.
+$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m
+	$(PKGMOGRIFY) -D PLV=### $(WS_TOP)/transforms/mkgeneric-perl \
+		$(WS_TOP)/transforms/mkgeneric $< > $@
+	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
+
+# mogrify non-parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+
+# mogrify parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
@@ -171,18 +258,18 @@ $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
 	$(TOUCH) $@
 
 print-package-names:	canonical-manifests
-	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
+	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-pkgs | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
  		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
 print-package-paths:	canonical-manifests
-	@cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	@cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
  		sed -e '/^$$/d' -e '/^#.*$$/d' | sort -u
 
 install-packages:	publish
 	@if [ $(IS_GLOBAL_ZONE) = 0 -o x$(ROOT) != x ]; then \
-	    cat $(CANONICAL_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
+	    cat $(VERSIONED_MANIFESTS) $(WS_TOP)/transforms/print-paths | \
 		$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 | \
  		sed -e '/^$$/d' -e '/^#.*$$/d' -e 's;/;;' | sort -u | \
 		(cd $(PROTO_DIR) ; pfexec /bin/cpio -dump $(ROOT)) ; \
