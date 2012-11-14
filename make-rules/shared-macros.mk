@@ -41,7 +41,9 @@ export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
 export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
 
 # The workspace starts at the mercurial root
-export WS_TOP ?=		$(shell hg root)
+ifeq ($(origin WS_TOP), undefined)
+export WS_TOP :=		$(shell hg root)
+endif
 
 WS_LOGS =	$(WS_TOP)/$(MACH)/logs
 WS_REPO =	$(WS_TOP)/$(MACH)/repo
@@ -72,7 +74,7 @@ PUBLISHER_LOCALIZABLE ?=	$(CONSOLIDATION)-localizable
 ROOT =			/
 
 # Native OS version
-OS_VERSION =		$(shell uname -r)
+OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
 PKG_SOLARIS_VERSION ?= 5.12
@@ -94,7 +96,7 @@ PKG_REPO =	file:$(WS_REPO)
 
 COMPONENT_SRC_NAME =	$(COMPONENT_NAME)
 
-COMPONENT_DIR =	$(shell pwd)
+COMPONENT_DIR :=	$(shell pwd)
 SOURCE_DIR =	$(COMPONENT_DIR)/$(COMPONENT_SRC)
 BUILD_DIR =	$(COMPONENT_DIR)/build
 PROTO_DIR =	$(BUILD_DIR)/prototype/$(MACH)
@@ -177,7 +179,7 @@ CONSTANT_TIME +=	LD_PRELOAD_64=$(WS_TOOLS)/time-$(MACH64).so
 CONSTANT_TIME +=	TIME_CONSTANT=$(TIME_CONSTANT)
 
 # set MACH from uname -p to either sparc or i386
-MACH =		$(shell uname -p)
+MACH :=		$(shell uname -p)
 
 # set MACH32 from MACH to either sparcv7 or i86
 MACH32_1 =	$(MACH:sparc=sparcv7)
@@ -310,13 +312,13 @@ PERL.5.12 =     /usr/perl5/5.12/bin/perl
 
 PERL =          $(PERL.$(PERL_VERSION))
 
-PERL_ARCH =     $(shell $(PERL) -e 'use Config; print $$Config{archname}')
+PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
 # Optimally we should ask perl which C compiler was used but it doesn't
 # result in a full path name.  Only "c" is being recorded
 # inside perl builds while we actually need a full path to
 # the studio compiler.
-#PERL_CC =      $(shell $(PERL) -e 'use Config; print $$Config{cc}')
-PERL_OPTIMIZE = $(shell $(PERL) -e 'use Config; print $$Config{optimize}')
+#PERL_CC :=	$(shell $(PERL) -e 'use Config; print $$Config{cc}')
+PERL_OPTIMIZE :=$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
@@ -372,8 +374,8 @@ CPP_C99_EXTENDED_MATH =	-D_STDC_99
 
 # Enables large file support for components that have no other means of doing
 # so.  Use CPP_LARGEFILES and not the .32/.64 variety directly
-CPP_LARGEFILES.32 =	$(shell getconf LFS_CFLAGS)
-CPP_LARGEFILES.64 =	$(shell getconf LFS64_CFLAGS)
+CPP_LARGEFILES.32 :=	$(shell getconf LFS_CFLAGS)
+CPP_LARGEFILES.64 :=	$(shell getconf LFS64_CFLAGS)
 CPP_LARGEFILES =		$(CPP_LARGEFILES.$(BITS))
 
 # Enables some #pragma redefine_extname to POSIX-compliant Standard C Library
