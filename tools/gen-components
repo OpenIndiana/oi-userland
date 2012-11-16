@@ -33,6 +33,9 @@ import sys
 
 debug = False
 
+# Hashtable of RE's / RM's keyed by component path.
+owners = {}
+
 # Initial HTML for the generated web page.
 preamble = """
 <html>
@@ -79,6 +82,8 @@ preamble = """
     <th>Package(s)</th>
     <th>ARC Case(s)</th>
     <th>License(s)</th>
+    <th>RE</th>
+    <th>RM</th>
 </tr>
 </thead>
 <tbody>
@@ -92,6 +97,26 @@ postamble = """
 </body>
 </html>
 """
+
+# Return a hashtable of RE's / RM's keyed by component path.
+def read_owners(owners_file):
+    if debug:
+        print >> sys.stderr, "Reading %s" % owners_file
+    try:
+        fin = open(owners_file, 'r')
+        lines = fin.readlines()
+        fin.close()
+    except:
+        if debug:
+            print >> sys.stderr, "Unable to read owners file: %s" % owners_file
+
+    owners = {}
+    for line in lines:
+        line = line[:-1]
+        component, re, rm = line.split("|")
+        owners[component] = [ re, rm ]
+
+    return owners
 
 # Return a sorted list of the directories containing one or more .p5m files.
 def find_p5m_dirs(workspace):
@@ -107,6 +132,26 @@ def find_p5m_dirs(workspace):
 def write_preamble():
     print preamble
 
+# Return the RE / RM for this component.
+def get_re_and_rm(p5m_dir):
+    re_and_rm = [ "Unknown", "Unknown" ]
+    component_path = ""
+    started = False
+    tokens = p5m_dir.split("/")
+    for token in tokens:
+        if started:
+            component_path += token + "/"
+        if token == "components":
+            started = True
+    component_path = component_path[:-1]
+    if component_path in owners:
+        re_and_rm = owners[component_path]
+    if debug:
+        print >> sys.stderr, "Component path: ", component_path,
+        print >> sys.stderr, "RE / RM: ", re_and_rm
+    
+    return re_and_rm
+
 # Generate an HTML table entry for all the information for the component
 # in the given directory. This generates a file called 'component-report'
 # under the components build directory.
@@ -114,15 +159,18 @@ def gen_reports(workspace, component_dir):
     if debug:
         print >> sys.stderr, "Processing %s" % component_dir
 
+    re, rm = get_re_and_rm(component_dir)
     makefiles = "-f Makefile -f %s/make-rules/component-report" % workspace
     targets = "clean component-hook"
-    cmd = "cd %s; gmake COMPONENT_HOOK='gmake %s component-report' %s" % \
-        (component_dir, makefiles, targets)
+    cmd = "cd %s; RESPONSIBLE_ENGINEER='%s' RESPONSIBLE_MANAGER='%s' gmake COMPONENT_HOOK='gmake %s component-report' %s" % \
+        (component_dir, re, rm, makefiles, targets)
 
+    if debug:
+        print >> sys.stderr, "gen_reports: command: `%s`" % cmd
     lines = os.popen(cmd).readlines()
 
 # Collect all the .../build/component-report files and write them to stdout.
-def write_reports(p5m_dirs):
+def write_reports(p5m_dirs, owners_file):
     for p5m_dir in p5m_dirs:
         report = "%s/build/component-report" % p5m_dir
         if debug:
@@ -150,6 +198,9 @@ Usage:
 -d, --debug
       Turn on debugging
 
+-o, --owners
+      Location of a file containing a list of RE's /RM's per component
+
 -w --workspace
       Location of the Userland workspace
 """
@@ -159,26 +210,30 @@ Usage:
 
 if __name__ == "__main__":
     workspace = os.getenv('WS_TOP')
+    owners_file = "/net/userland.us.oracle.com/gates/private/RM-RE-list.txt"
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "dw:",
-            [ "debug", "workspace=" ])
+        opts, args = getopt.getopt(sys.argv[1:], "do:w:",
+            [ "debug", "owners=", "workspace=" ])
     except getopt.GetoptError, err:
         print str(err)
         usage()
 
     for opt, arg in opts:
-        if opt in [ "-w", "--workspace" ]:
-            workspace = arg
-        elif opt in [ "-d", "--debug" ]:
+        if opt in [ "-d", "--debug" ]:
             debug = True
+        elif opt in [ "-o", "--owners" ]:
+            owners_file = arg
+        elif opt in [ "-w", "--workspace" ]:
+            workspace = arg
         else:
             assert False, "unknown option"
  
+    owners = read_owners(owners_file)
     write_preamble()
     p5m_dirs = find_p5m_dirs(workspace)
     for p5m_dir in p5m_dirs:
         gen_reports(workspace, p5m_dir)
-    write_reports(p5m_dirs)
+    write_reports(p5m_dirs, owners_file)
     write_postamble()
     sys.exit(0)
