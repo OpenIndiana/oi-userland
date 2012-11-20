@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH=	\
 # more attention at the google code repository of late.
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
 
+COMPONENT_BUGDB=	utility/beanshell
+
 IPS_COMPONENT_VERSION=	2.0
 
 include ../../make-rules/prep.mk

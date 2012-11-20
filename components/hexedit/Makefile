@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bcffbf3d128516cc4e1da64485866fbb5f62754f2af8327e7a527855186ba10f
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/hexedit
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -37,6 +37,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:299d0ccb0238894cc674da3c5a6a6fb82c3d63286f7f127e448e2ff97d21e2fb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 
+COMPONENT_BUGDB=	utility/ggrep
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:036d96991646d0449ed0aa952e4fbe21b476ce994abc276e49d30e686708bd37
 COMPONENT_ARCHIVE_URL=	ftp://ftp.info-zip.org/pub/infozip/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=http://www.info-zip.org/UnZip.html
+COMPONENT_BUGDB=	utility/zip
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

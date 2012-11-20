@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c453d820925bf526bbe8a0d1c17ab3168b076fcb9844bea797ad75e3b9ad9291
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tcl/files/Tcl/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_BUGDB=	library/libtk
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk

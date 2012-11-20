@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d522b3e8a2b48e83ba1e142d7205eaca01358a137bb58e8d64583574e697ffd7
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/openssl
 
 # Apply the patch on SPARC only. Must put this before including prep.mk as
 # mentioned in there.

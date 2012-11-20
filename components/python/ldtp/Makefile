@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:53215930b38edeb980f43130fc29783db4875ce2317c946391a7baa63d98aa0e
 COMPONENT_ARCHIVE_URL=  http://download.freedesktop.org/ldtp/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_MINOR_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	python-mod/ldtp
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

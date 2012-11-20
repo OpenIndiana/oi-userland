@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	 \
     sha256:a4fb8baa5c5018ef0ca7c1a035326efab32e84074daab82599fe5e63a562fa45
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	service/dns-server
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

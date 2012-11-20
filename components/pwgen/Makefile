@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:61598c9e3a0f7eb2e7367d4ecc71522c4f16a7d41ed31db29e3afee8d9843454
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/pwgen/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)	
+COMPONENT_BUGDB=	utility/pwgen
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

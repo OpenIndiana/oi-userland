@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:20ba7a10a30571983afd3599f19b441adb5222b21f1d2b27d0fba3ed8d4707c2
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libtcl
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk

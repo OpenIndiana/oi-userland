@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1795c7d067a43174113fdf03447532f373e1c6c57c08d61d9e4e9be5e244b05e
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/libpng/zlib/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libz
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

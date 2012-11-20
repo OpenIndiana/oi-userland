@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f93a5eda47d4607e35020622717ade5bc0e5ee82123a97331090f19e0b907c5f
 COMPONENT_ARCHIVE_URL=	http://pipeviewer.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/pv
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

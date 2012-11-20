@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,7 @@ COMPONENT_NAME=		rpm2cpio
 COMPONENT_VERSION=	0.5.11
 COMPONENT_PROJECT_URL=	http://www.iagora.com/~espel/rpm2cpio/
 COMPONENT_SRC=		src
+COMPONENT_BUGDB=	utility/rpm
 
 include ../../make-rules/prep.mk
 

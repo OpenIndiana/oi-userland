@@ -39,6 +39,8 @@ COMPONENT_ARCHIVE_HASH=	 \
 #        http://downloads.sourceforge.net/areca/areca-7.1-src.zip
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
 
+COMPONENT_BUGDB=	utility/areca
+
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk

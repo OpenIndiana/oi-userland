@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_URL= http://gd.tuwien.ac.at/publishing/tex/tex-utils/psutils/$
 # Official ftp sources are currently unavailable, so I'm using mirror I found.
 # I made sure that the tarball is equal to the one present in SFW
 
+COMPONENT_BUGDB=	utility/psutils
+
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk

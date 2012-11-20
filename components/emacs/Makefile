@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:26576f9e664397c729f78f5ffcd092969251988461896fe8793062346ee988b9
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/emacs
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

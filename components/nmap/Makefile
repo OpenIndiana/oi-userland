@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
     sha256:d44cd28fc087a98056234ac56fc187b6742daa5c20f56bc4d524548042f4b25e
 COMPONENT_ARCHIVE_URL=  http://nmap.org/dist/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/nmap
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

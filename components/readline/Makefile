@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:12e88d96aee2cd1192500356f0535540db499282ca7f76339fb4228c31249f45
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/readline
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3a896f42b78c32252878fd291b21d6482d466921b68ab97f7d8cbadf4a76b533
 COMPONENT_ARCHIVE_URL=	ftp://space.mit.edu/pub/davis/slrn/$(COMPONENT_ARCHIVE)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).1
+COMPONENT_BUGDB=	utility/slrn
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

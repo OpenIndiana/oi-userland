@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f5b7b67aacedec4c0294d242cbffbe0d7d3cd0fdd2b410c055e818f25ed3bc79
 COMPONENT_ARCHIVE_URL=	http://www.openprinting.org/download/foomatic/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
+COMPONENT_BUGDB=	utility/foomatic
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk

@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_PROJECT_URL=	http://www.snort.org/
 # the main site does not retain older releases
 COMPONENT_ARCHIVE_URL=	http://mirror2.openwrt.org/sources/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/snort
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

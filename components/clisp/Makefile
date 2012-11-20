@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:8132ff353afaa70e6b19367a25ae3d5a43627279c25647c220641fed00f8e890
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/clisp/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/clisp
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

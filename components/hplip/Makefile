@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:1d34630084eccfcc80c08065becdf9313fd8f5a09a4cf523dbd9d3ec724206b9
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/hplip
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

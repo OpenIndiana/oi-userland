@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:9a8257a9a2a55099af858b13338dc8f3a06dd2069f46f0df2c9c3bb84a01d5db
 COMPONENT_ARCHIVE_URL=	ftp://space.mit.edu/pub/davis/slang/v2.2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.jedsoft.org/slang/
+COMPONENT_BUGDB=	utility/slang
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

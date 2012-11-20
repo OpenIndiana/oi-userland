@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3ab488fe2df01bf54a57acd70e745266e19232edacf77512f77655296748e7a0
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
+COMPONENT_BUGDB=	utility/gnu-compiler
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

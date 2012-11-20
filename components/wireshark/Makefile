@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:83a85ff506b5e2a70f03c49de7af291802404983a23c7779e0f4ac3e672a2fb3
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/wireshark
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

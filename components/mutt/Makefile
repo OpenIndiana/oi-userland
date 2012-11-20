@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:2141f36e8d0f4f71c9ca6780001e7cc679fe313e643953fc07f001223e67c4a0
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mutt.org/mutt/devel/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.mutt.org/
+COMPONENT_BUGDB=	utility/mutt
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

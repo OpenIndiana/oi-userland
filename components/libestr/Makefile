@@ -29,6 +29,7 @@ COMPONENT_PROJECT_URL=	http://libestr.adiscon.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:0e8b95374fa271dc2afdfadfc9afc0f5826252a1b698ddea1474d5600a7c66ca
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/logger
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

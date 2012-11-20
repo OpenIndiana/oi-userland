@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-343-src.tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bb39c3d2a9ee2df4a0c8fdde708fbc63740853a7608d2f4c560b488124866fe4
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_BUGDB=	utility/nethack
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

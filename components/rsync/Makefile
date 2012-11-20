@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:4b3fc271f4c96036b4c73fb019be078e4d8cce2defe1e7ae7cde1117859a2114
 COMPONENT_ARCHIVE_URL=	http://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/rsync
 
 COPYRIGHT_FILE=	rsync.copyright
 

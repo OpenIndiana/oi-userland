@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:44e8cbe9ac851dad2373e2e0243a1faab690a4ca1e69b83a77591a47682806ae
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/ML/MLFISHER/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/perl-pmtools
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/makemaker.mk

@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:efd08b610210d39977ec3175fa82dad9fbd33587930081be2a905a712dba4286
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/tcpdump
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

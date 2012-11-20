@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c920fa01a34b7752e8cbbc99c6921b908df60611d84a29c4377e4a798604767e
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/perl
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

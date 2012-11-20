@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1117be532ac41b13790b4756df7fa747d3d04264f7b4544aa9d7ff468a24b457
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libassuan/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gnupg
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

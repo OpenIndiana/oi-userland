@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2a458fead15d9336f46bb4304cc3eaa6ed9407b9130e7ee2ec533909881d2067
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gnu-coreutils
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

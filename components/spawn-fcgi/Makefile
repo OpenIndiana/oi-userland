@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7507a822995731629149040ee5686279b7582ae46f0296efd64b542ef052a90e
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/spawn-fcgi
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

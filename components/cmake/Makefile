@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e6999b81ac367d85ffb0f69b6c4a0ef96f95dc154efd3592f9cfebacdf75728e
 COMPONENT_ARCHIVE_URL=	http://www.cmake.org/files/v2.8/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.cmake.org/
+COMPONENT_BUGDB=	utility/cmake
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

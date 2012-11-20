@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:4f14fc7b26a37a391ec5f979697148e6774bc36bc052de26e40ffabe401e397d
 COMPONENT_ARCHIVE_URL=  http://download.savannah.nongnu.org/releases/openexr/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/openexr
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

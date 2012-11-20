@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(HUMAN_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:fbddda9230cf6ee2a4f5706b4b11e2190ae45f5eda1f0409dc4f99b35e0a70ee
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/aa-project/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/aalib
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

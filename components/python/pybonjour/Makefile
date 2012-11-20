@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:006175b0fa6ef555fe8970132db81332827662a680d5f64dcb005bfcc80299ad
 COMPONENT_ARCHIVE_URL=	http://pybonjour.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	python-mod/pybonjour
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

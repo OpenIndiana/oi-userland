@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:cb102a437335a8921f00cef9bf730d84527713f1a5091e3e1eb2f16402f85dc1
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/svn
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:6326762da8b8281c9a910c66fe698cd4d1bc5f33c37b59e8f1c83343c25f3e98
 COMPONENT_ARCHIVE_URL=  ftp://ftp.berlios.de/pub/cdrecord/$(COMPONENT_ARCHIVE)
 PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+COMPONENT_BUGDB=	utility/cdrtools
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

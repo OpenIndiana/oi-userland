@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:d4fb3a64dc592c104caa4e98bc11f209fcb97eecdeb7f506797320dea75b9459
 COMPONENT_ARCHIVE_URL= http://launchpadlibrarian.net/33299595/${COMPONENT_ARCHIVE}
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
+COMPONENT_BUGDB=	database/memcached
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

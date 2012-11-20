@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:44bd0819b64a2341fb800abbe99f23c7f6388327c71e1f5bd5ed7874a8cc0e49
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/gd2
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

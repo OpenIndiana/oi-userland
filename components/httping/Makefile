@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f00da30e0744d86ed832f6a49ae455b9447570af3589e1111a1c6210a51cafee
 COMPONENT_ARCHIVE_URL=	http://www.vanheusden.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/httping
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

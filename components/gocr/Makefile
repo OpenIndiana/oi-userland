@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e0c7b6fc864abfebcb0afa084963fb98f8967b356913e6406cf7b21cfd83d8a2
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/jocr/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gocr
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

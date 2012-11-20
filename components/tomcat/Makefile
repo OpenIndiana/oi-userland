@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6e5205834bd595250c8e0b640e2345ef643f23364ae0e099334b5132103be764
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/tomcat
 
 # Tomcat subcomponents
 COMPONENT_ARCHIVE_1= commons-dbcp-1.4-src.tar.gz

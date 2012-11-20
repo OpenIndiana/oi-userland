@@ -37,6 +37,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:97eeb4e90fba1ae3210e13574a4b3df715957cb9895264c6a455ee97dec87611
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-dev/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	service/ntp
+
 PATCH_LEVEL = 0
 
 include ../../make-rules/prep.mk

@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:75588f8d1232e1df34eccf2dba5e66be197b345a07fae80d8275db994496a20d
 COMPONENT_ARCHIVE_URL=	http://cdnetworks-us-2.dl.sourceforge.net/project/libnet-dev/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libnet
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

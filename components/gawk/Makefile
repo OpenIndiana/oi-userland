@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5dbc7b2c4c328711337c2aacd09a122c7313122262e3ff034590f014067412b4
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gawk/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gawk
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

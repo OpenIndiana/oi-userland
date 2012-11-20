@@ -46,6 +46,8 @@ COMPONENT_ARCHIVE_URL_pci.ids =	http://pciids.sourceforge.net/v2.2/pci.ids
 COMPONENT_ARCHIVE_URL_usb.ids =	http://www.linux-usb.org/usb.ids
 COMPONENT_ARCHIVE_URLS = $(foreach i,$(ID_FILES),$(COMPONENT_ARCHIVE_URL_$(i)))
 
+COMPONENT_BUGDB=	utility/hwdata
+
 PKG_OPTIONS += -D COMPONENT_ARCHIVE_URLS='$(COMPONENT_ARCHIVE_URLS:%=value="%")'
 
 $(ID_FILES):

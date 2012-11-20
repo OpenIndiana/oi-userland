@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/Net-SSLeay/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e262897263c5aa9096e39f7813c7cb7d4d05508ca406b173878c4ecddb2c53ce
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/F/FL/FLORA/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/openssl
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/makemaker.mk

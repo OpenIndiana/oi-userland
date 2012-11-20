@@ -26,6 +26,7 @@ COMPONENT_NAME=		php-common
 # This version # based on the version # of Solaris
 COMPONENT_VERSION=	11.1
 COMPONENT_PROJECT_URL=	http://www.php.net/
+COMPONENT_BUGDB=	utility/php
 
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk

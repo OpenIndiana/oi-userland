@@ -30,6 +30,7 @@ GMAKE =				/usr/bin/make
 COMPONENT_NAME =		visual-panels-firewall
 COMPONENT_VERSION =		0.5.11
 COMPONENT_SRC =			src
+COMPONENT_BUGDB=		utility/vpanels
 
 include $(WS_MAKE_RULES)/justmake.mk
 include $(WS_MAKE_RULES)/ips.mk

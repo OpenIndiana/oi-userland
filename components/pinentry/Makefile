@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:14670c18f4a042ffcbd7a937aa3f15de392816c56b472588383d8378f65b42ab
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/pinentry/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gnupg
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

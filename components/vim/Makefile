@@ -39,6 +39,8 @@ COMPONENT_HG_URL=	https://vim.googlecode.com/hg
 COMPONENT_HG_REV=	v7-3-684
 COMPONENT_HG_REV_OLD=	v7-3-684
 
+COMPONENT_BUGDB=	utility/vim
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

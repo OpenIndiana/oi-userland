@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:adec50143a9ad634a671d24f7c7bbf2455487eb5f12d290f41797c32a98b93f3
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tls/files/tls/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
+COMPONENT_BUGDB=	library/libtls
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

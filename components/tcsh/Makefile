@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:575266122bc2bc351c84a7f858020c0e6b6f95a64ad4de3ce95e340f57e4a9a9
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/tcsh
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

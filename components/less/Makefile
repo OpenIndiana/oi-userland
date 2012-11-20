@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:9fe8287c647afeafb4149c5dedaeacfd20971ed7c26c7553794bb750536b5f57
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/less
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

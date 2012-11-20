@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH=	\
     sha256:df92699adbdf0716c19e9daf30118c65b82229d644594308b2a040dafe06a1f5
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/junit/4.10/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/junit
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
