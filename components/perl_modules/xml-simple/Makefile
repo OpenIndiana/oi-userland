@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:a54967c188cda3e20f496c83be4de3f1740eeaa83c0380712ecd969ad8766826
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
+COMPONENT_BUGDB=	perl-mod/xml-parser
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk

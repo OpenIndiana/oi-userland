@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:757f2b97071a87fb7e4d017fc7c9eb74f26dcf412e683b614d3c5d54b217212d
 COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
+COMPONENT_BUGDB=	utility/pylint
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk

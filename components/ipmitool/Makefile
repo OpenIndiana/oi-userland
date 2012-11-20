@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:5612f4835d89a6f2cede588eef978a05d63435cf2646256300d9785d8020a13e
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/ipmitool/files/ipmitool/1.8.11/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/ipmitool
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

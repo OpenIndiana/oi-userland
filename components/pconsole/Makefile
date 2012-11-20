@@ -33,6 +33,7 @@ COMPONENT_PROJECT_URL=	http://www.heiho.net/pconsole/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:94520bf65f726df9d7e686bb486e9a2828c29d09a20b9522f1da4f7d66700bb2
 COMPONENT_ARCHIVE_URL=	http://www.heiho.net/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/pconsole
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

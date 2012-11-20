@@ -31,6 +31,7 @@ COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/trousers/files/trousers/
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:91025f60248af44df192e8df16fa6b0c0f1e48c54f6dc51626567ed95758b0d6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/tss
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

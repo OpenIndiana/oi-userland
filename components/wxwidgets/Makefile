@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:13cf89f2c29bcb90bb56a31ac1af10f23003d3d43c3e4b24991518f5dc4e5abe
 COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/wxwindows/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.wxwidgets.org/
+COMPONENT_BUGDB=	library/wxwidgets
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

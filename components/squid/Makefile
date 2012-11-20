@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:6a7122514d58c3077f2b43c928864be10753d8e2c8439133dacc9eba6c45e00d
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.1/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/squid
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

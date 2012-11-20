@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e4eb6c074bbab168ac47b947c195ff8cef9d51a211cdd18ca9c9ef34d27a373e
 COMPONENT_ARCHIVE_URL= http://sourceforge.net/projects/mcrypt/files/Libmcrypt/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://mcrypt.sourceforge.net/
+COMPONENT_BUGDB=	library/libmcrypt
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

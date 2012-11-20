@@ -33,6 +33,7 @@ PKGLINT =	/usr/bin/pkglint
 PKGMOGRIFY =	/usr/bin/pkgmogrify
 
 COMPONENT_NAME=		"Package History"
+COMPONENT_BUGDB=	gate-stuff/userland
 
 CANONICAL_MANIFESTS =	$(wildcard *.p5m)
 ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))

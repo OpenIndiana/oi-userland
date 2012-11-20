@@ -38,6 +38,7 @@ COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:25fb373ac3889e81555e5b48c8a22a3deabeac8b6129387cec9dc7e13804914e
 COMPONENT_ARCHIVE_URL=	http://image_magick.veidrodis.com/image_magick/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/imagemagick
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

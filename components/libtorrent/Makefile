@@ -37,6 +37,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:cf9d2cd667fd6939a3e0bd27e48d0c7f35d9ab2f7affbb3214da03fd2c1360a8
 COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/rtorrent
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

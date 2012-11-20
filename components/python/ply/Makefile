@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:436461f455d83292bb9c2cd89ce02414de1421a2023628b94666bc5f71b0128b
 COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
+COMPONENT_BUGDB=	python-mod/ply
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

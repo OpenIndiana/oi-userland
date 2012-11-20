@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
 	sha256:c92db7d6bbac880969a439027a8239827a02a90815dbfba6bd4c031d85f4cd61
 COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/common/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	python-mod/logilab-common
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk

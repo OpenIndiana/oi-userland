@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:afa61b476a222ba43fc7cca2d24849ab0bbd940124400cb699915d3c60e46301
 COMPONENT_ARCHIVE_URL=	http://cloud.github.com/downloads/libevent/libevent/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libevent
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

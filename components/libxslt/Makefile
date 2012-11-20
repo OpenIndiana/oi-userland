@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b6a8d9a421f2630999ca91d9f8c091ee8ea2d580e6be84c1d21b2a45e11e7e26
 COMPONENT_ARCHIVE_URL=	ftp://xmlsoft.org/libxslt/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libxslt
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

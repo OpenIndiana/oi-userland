@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:898fddced320754121b53b3292d1d20a31bebc6733d5aeb92367143f8941fe6f
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/tomcat/tomcat-connectors/jk/source/jk-$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/apache
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk

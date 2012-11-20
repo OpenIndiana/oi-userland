@@ -31,7 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0b5ec9aa41faff761cda7819add93e9d8cb9c0bad85e65a686475e8375ac8a71
 COMPONENT_ARCHIVE_URL=	http://www.thrysoee.dk/editline/$(COMPONENT_ARCHIVE)
-
+COMPONENT_BUGDB=	library/libedit
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:074023e48ed151db743d194af1028e4a17fa72a18e4069b4f18d4683db4bb9cf
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
-
+COMPONENT_BUGDB=	library/tidy
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

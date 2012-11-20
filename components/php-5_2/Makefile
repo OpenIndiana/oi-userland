@@ -117,6 +117,7 @@ include ../../make-rules/ips.mk
 COMPONENT_NAME=		php
 COMPONENT_VERSION=	5.2.17
 COMPONENT_PROJECT_URL=	http://www.php.net/
+COMPONENT_BUGDB=	utility/php
 
 PKG_PROTO_DIRS += APC/build/prototype/$(MACH)
 PKG_PROTO_DIRS += APC-zts/build/prototype/$(MACH)

@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c315aec78490b588000467d1c51081b36e629de0537c5a17fd48b1acaf8a5135
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/convmv
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:170db26eb9610dde5d3307771ed0e0e14cc0778aaacd3b3d4e71240ccb61cec6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/pam-pkcs11
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

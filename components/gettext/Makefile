@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0bf850d1a079fb5a61f0a47b1a9efd35eb44032255375e1cedb0253bc27b376d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gettext/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gnu-gettext
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

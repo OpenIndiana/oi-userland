@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:429a0d0408464f623d25e351adc387ff4ed92813b8760d1c16700cb3180f9303
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.4/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/meld
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

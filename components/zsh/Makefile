@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:054e0452afd9c742c9f1489465175e1d4d7db50d88b602d132551d850cf7a704
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh-dev/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/zsh
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

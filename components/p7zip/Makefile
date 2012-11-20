@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC)_src_all.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:49557e7ffca08100f9fc687f4dfc5aea703ca207640c76d9dee7b66f03cb4782
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/p7zip/p7zip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/p7zip
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

@@ -30,6 +30,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bd7725fb80f305bf27666e3d26a9b7b79596e2248f2ae2d27e06bc15a501ac75
 COMPONENT_ARCHIVE_URL=	http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/git
+
 #
 # man pages are a separate archive
 #

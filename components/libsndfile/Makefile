@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:54c9c375598538263395a691f9b30987a2faa3d8a166d27e6a09ba4700223d4d
 COMPONENT_ARCHIVE_URL=	http://www.mega-nerd.com/libsndfile/files/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libsndfile
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -33,6 +33,8 @@ COMPONENT_ARCHIVE_HASH=	\
 # Therefore we created special Userland copy with version info.
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 
+COMPONENT_BUGDB=	utility/apache
+
 include ../../../make-rules/prep.mk
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk

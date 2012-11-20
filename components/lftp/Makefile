@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:a3df26383053081e67b8101aa9e1705ee8274e14a5938746a944b0a2d97948e3
 COMPONENT_ARCHIVE_URL=	http://ftp.yars.free.net/pub/source/lftp/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/lftp
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

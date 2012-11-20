@@ -29,6 +29,7 @@ COMPONENT_PROJECT_URL=	http://rsyslog.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:f8869a1c25d0dd9ff04468743969ffc9ff89c6f7afa3046f77f91c3982543cc1
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/logger
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

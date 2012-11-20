@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:508cca15547e55d1318498b838456a21770c450beb2dc7d7d4a96d90816e5a85
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)release/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libpcap
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

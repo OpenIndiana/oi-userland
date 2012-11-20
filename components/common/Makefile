@@ -28,6 +28,7 @@ include ../../make-rules/shared-macros.mk
 # There isn't anything really to do here
 COMPONENT_NAME=		gnu-common
 COMPONENT_VERSION=	0.5.11
+COMPONENT_BUGDB=	gate-stuff/userland
 
 include ../../make-rules/prep.mk
 

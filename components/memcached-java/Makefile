@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f0978f387cd6c42191a3ec366ecc5519f66ee03e686c5d080eb2516ebbecdcc4
 COMPONENT_ARCHIVE_URL=	http://img.whalin.com/memcached/jdk5/standard/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://whalin.com/memcached/
+COMPONENT_BUGDB=	database/memcached
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ant.mk

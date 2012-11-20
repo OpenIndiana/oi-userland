@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:62e1116549ce5b1ad92901f04d8338d5f7b59f92abce8d15e9a17cafe0efb102
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/pcre/files/pcre/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://pcre.org/
+COMPONENT_BUGDB=	library/pcre
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

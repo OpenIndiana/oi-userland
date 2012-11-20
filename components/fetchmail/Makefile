@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:09093168552119e962617f86f2713564cf6e3fe7fd32d6799aa0b87df28f1e89
 COMPONENT_ARCHIVE_URL=	http://download.berlios.de/fetchmail/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://fetchmail.berlios.de/
+COMPONENT_BUGDB=	utility/fetchmail
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

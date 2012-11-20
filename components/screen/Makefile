@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:78f0d5b1496084a5902586304d4a73954b2bfe33ea13edceecf21615c39e6c77
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/screen
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

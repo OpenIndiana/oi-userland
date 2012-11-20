@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e8d653159b152f3850a7224b3eb604955795dbd3fd6603816ee46411ea53e84a
 COMPONENT_ARCHIVE_URL=	http://bzero.se/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libconfuse
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

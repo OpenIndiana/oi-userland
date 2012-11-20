@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:cf41ea1ada17c0dfbd8480dd9dc800999e0db9f2972ffa8f7a2944751ad32aba
 COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
+COMPONENT_BUGDB=	utility/sudo
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

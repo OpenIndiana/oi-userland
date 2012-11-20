@@ -30,6 +30,8 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1f26880eaacf7bd806520a458963d2374ad6bf90353e08ed0de271b6d45c5b8a
 COMPONENT_ARCHIVE_URL=  http://scdbackup.sourceforge.net/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/xorriso
+
 CPPFLAGS+=		-I./test
 
 include ../../make-rules/prep.mk

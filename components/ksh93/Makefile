@@ -24,6 +24,8 @@ PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 
+COMPONENT_BUGDB=	utility/ksh93
+
 COMPONENT_PROJECT_URL= http://www2.research.att.com/sw/download/
 
 # These are required if retrieving packages from the AT&T website.

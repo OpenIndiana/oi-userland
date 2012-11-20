@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:2b03c44c8802e16ff4a493dd486de23c027fd5a46dedb08bf7561171b16cd084
 COMPONENT_ARCHIVE_URL=	http://iweb.dl.sourceforge.net/project/swig/swig/swig-1.3.35/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/swig
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

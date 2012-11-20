@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:906e1ea87ddb7cf0fd27f21c1b077f87644b402f1b7a66d4049a72b68e5eeb05
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.linuxfoundation.org/collaborate/workgroups/openprinting/database/foomatic/
+COMPONENT_BUGDB=	utility/foomatic
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/ips.mk

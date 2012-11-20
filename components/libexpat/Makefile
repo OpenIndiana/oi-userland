@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:823705472f816df21c8f6aa026dd162b280806838bb55b3432b0fb1fcca7eb86
 COMPONENT_ARCHIVE_URL= \
     http://downloads.sourceforge.net/project/expat/expat/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libexpat
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

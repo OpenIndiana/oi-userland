@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:bc2181f9568897b9ad4d57978bc0a72e2a31b97e837999e6f839bdbbc02c3fc8
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/autogen
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

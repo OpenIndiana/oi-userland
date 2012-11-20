@@ -31,6 +31,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:02352221ea268f8ae9aae5b84507f51eba2a67c0f7d2efd5cc88e85f1f394056
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/apache
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk

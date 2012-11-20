@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ee030ce638df0eb1047cf72578e0de15d9a3ee9ab24da2dc0023e2978be30c06
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.nongnu.org/rdiff-backup/
+COMPONENT_BUGDB=	utility/rdiff-backup
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk

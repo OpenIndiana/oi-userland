@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:6a4596462d4447a79a0ad607ea1475ba0599651e2d82305a7f7dade038827f0c
 COMPONENT_ARCHIVE_URL=	http://downloads.mysql.com/archives/mysql-5.1/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://dev.mysql.com/ 
+COMPONENT_BUGDB=	database/mysql
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

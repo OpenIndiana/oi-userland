@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:c18b3b0975ec7e0a6af03a9533d7ffbdc500bb146e0ca338a6174b1346d655bb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libsigsegv/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/libsigsegv
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

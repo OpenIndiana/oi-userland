@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9571b4b85484e46b3b10f07ccba77a1fa97d60660b32859f990effefb3005f91
 COMPONENT_ARCHIVE_URL=	http://memcached.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	database/memcached
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

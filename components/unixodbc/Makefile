@@ -32,6 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1f5be3edecff9e31072ef738ea1d8019594c4f0c2e3ab427e6eef153491db6a2
 COMPONENT_ARCHIVE_URL=	http://ftp.unixodbc.org/pub/unixODBC/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	library/unixodbc
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:e831795498d91cf27a519ea1332c2a92a2a9920b0844d817b2ea7f079056d12b
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/mod_fcgid/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/apache
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/justmake.mk

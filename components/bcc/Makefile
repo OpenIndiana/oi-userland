@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	Dev86src-$(COMPONENT_VERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:52ed4980c0e4b68d2624aadb0ceb0339cb3fd8dd7c2175419d4f77a451846cbe
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/other
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

@@ -34,6 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:09c5840cbf9a060acd4f57a24eb4bbacd7c3fba52986a356ffebad736b961dfe
 COMPONENT_ARCHIVE_URL=	ftp://ircii.warped.com/pub/ircII/old/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/ircii
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE_URL=  \
     http://ftp.isc.org/isc/dhcp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH= \
     sha256:25d579291a13ccce39c5dbb0e2f2ce8e974c82015bc4e3ee653cf95a4ed15ca4
+COMPONENT_BUGDB=	service/dhcp-server
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -33,6 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3b52f1c178d6a99c27114929d5469c009197d15379c967b329bafb956f397944
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/iperf/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/iperf
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

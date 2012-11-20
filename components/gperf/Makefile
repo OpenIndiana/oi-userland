@@ -30,6 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:63287527c8d9e27e801cf0804436f3494bd569db05d49dcdd2a942ae72fa9055
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/gperf
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

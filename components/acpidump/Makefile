@@ -35,6 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:91751774976e39f6237efd0326eb35196a9346220b92ad35894a33283e872748
 COMPONENT_ARCHIVE_URL=	http://www.lesswatts.org/patches/linux_acpi/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	utility/acpidump
 
 # we're i386-only
 ifeq ($(MACH), sparc)

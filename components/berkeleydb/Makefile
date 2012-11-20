@@ -36,6 +36,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:72eac5fcae4b51b0f1edc727c0368407f29b42e3f2f50ebc31a282d0d6c0a617
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=	database/berkeley
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
