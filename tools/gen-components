@@ -22,8 +22,8 @@
 # Copyright (c) 2012, Oracle and/or it's affiliates.  All rights reserved.
 #
 #
-# gen_components.py
-# A simple program to generate (on stdout) the component.html web page 
+# gen_components
+# A simple script to generate (on stdout), the component.html web page 
 # found at: http://userland.us.oracle.com/components.html
 #
 
@@ -32,6 +32,9 @@ import os
 import sys
 
 debug = False
+
+# Hashtable of components with TPNOs keyed by component name.
+comp_TPNOs = {}
 
 # Hashtable of RE's / RM's keyed by component path.
 owners = {}
@@ -82,6 +85,7 @@ preamble = """
     <th>Package(s)</th>
     <th>ARC Case(s)</th>
     <th>License(s)</th>
+    <th>TPNO</th>
     <th>BugDB</th>
     <th>RE</th>
     <th>RM</th>
@@ -118,6 +122,34 @@ def read_owners(owners_file):
         owners[component] = [ re, rm ]
 
     return owners
+
+# Return a hashtable of components with TPNOs keyed by component name.
+def find_TPNOs(workspace):
+    comp_TPNOs = {}
+    for directory, _, files in os.walk(workspace + "/components"):
+        for filename in files:
+            if filename.endswith(".license") or filename.endswith(".copyright"):
+                pathname = os.path.join(directory, filename)
+                fin = open(pathname, 'r')
+                lines = fin.readlines()
+                fin.close()
+
+                for line in lines:
+                    line = line.replace("\n", "")
+                    if line.startswith("Oracle Internal Tracking Number"):
+                        tpno_str = line.split()[-1]
+                        try:
+                            # Check that the TPNO is a valid number.
+                            tpno = int(tpno_str)
+                            if debug:
+                                print >> sys.stderr, "TPNO: %s: %s" % \
+                                    (directory, tpno_str)
+                            comp_TPNOs[directory] = tpno_str
+                        except:
+                            print >> sys.stderr, "Unable to read TPNO: %s" % \
+                                pathname
+
+    return(comp_TPNOs)
 
 # Return a sorted list of the directories containing one or more .p5m files.
 def find_p5m_dirs(workspace):
@@ -160,11 +192,16 @@ def gen_reports(workspace, component_dir):
     if debug:
         print >> sys.stderr, "Processing %s" % component_dir
 
+    try:
+        tpno = comp_TPNOs[component_dir]
+    except:
+        tpno = ""
+
     re, rm = get_re_and_rm(component_dir)
     makefiles = "-f Makefile -f %s/make-rules/component-report" % workspace
     targets = "clean component-hook"
-    cmd = "cd %s; RESPONSIBLE_ENGINEER='%s' RESPONSIBLE_MANAGER='%s' gmake COMPONENT_HOOK='gmake %s component-report' %s" % \
-        (component_dir, re, rm, makefiles, targets)
+    cmd = "cd %s; TPNO='%s' RESPONSIBLE_ENGINEER='%s' RESPONSIBLE_MANAGER='%s' gmake COMPONENT_HOOK='gmake %s component-report' %s" % \
+        (component_dir, tpno, re, rm, makefiles, targets)
 
     if debug:
         print >> sys.stderr, "gen_reports: command: `%s`" % cmd
@@ -232,6 +269,7 @@ if __name__ == "__main__":
  
     owners = read_owners(owners_file)
     write_preamble()
+    comp_TPNOs = find_TPNOs(workspace)
     p5m_dirs = find_p5m_dirs(workspace)
     for p5m_dir in p5m_dirs:
         gen_reports(workspace, p5m_dir)
