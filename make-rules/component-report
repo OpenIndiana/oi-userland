@@ -30,6 +30,7 @@ $(BUILD_DIR)/component-report:	$(BUILD_DIR)/package-info
 	 done ; echo "</td>" >>$@
 	@echo "<td><a href='$(ARIA_BASE_URL)$(RESPONSIBLE_ENGINEER)'>$(RESPONSIBLE_ENGINEER)</a></td>" >>$@
 	@echo "<td><a href='$(ARIA_BASE_URL)$(RESPONSIBLE_MANAGER)'>$(RESPONSIBLE_MANAGER)</a></td>" >>$@
+	@echo "<td>$(TEAM)</td>" >>$@
 	@echo "</tr>" >>$@
 
 $(BUILD_DIR)/package-info:	$(PKG_REPORTS)
@@ -45,10 +46,10 @@ $(BUILD_DIR)/component-info:	$(PKG_REPORTS)
 	@echo "COMPONENT_BUGDB=\"$(COMPONENT_BUGDB)\"" >>$@
 	@echo "RESPONSIBLE_ENGINEER=\"$(RESPONSIBLE_ENGINEER)\"" >>$@
 	@echo "RESPONSIBLE_MANAGER=\"$(RESPONSIBLE_MANAGER)\"" >>$@
+	@echo "TEAM=\"$(TEAM)\"" >>$@
 
 $(BUILD_DIR)/%.pkg-report:	%.p5m $(BUILD_DIR)
 	@$(PKGMOGRIFY) $(PKG_OPTIONS) -P $@ $< \
 		$(REPORT_TRANSFORMS) >/dev/null
 
 include $(BUILD_DIR)/package-info
-
