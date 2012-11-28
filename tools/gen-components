@@ -36,7 +36,7 @@ debug = False
 # Hashtable of components with TPNOs keyed by component name.
 comp_TPNOs = {}
 
-# Hashtable of RE's / RM's keyed by component path.
+# Hashtable of RE's, RM's and Teams keyed by component path.
 owners = {}
 
 # Initial HTML for the generated web page.
@@ -89,6 +89,7 @@ preamble = """
     <th>BugDB</th>
     <th>RE</th>
     <th>RM</th>
+    <th>Team</th>
 </tr>
 </thead>
 <tbody>
@@ -103,7 +104,7 @@ postamble = """
 </html>
 """
 
-# Return a hashtable of RE's / RM's keyed by component path.
+# Return a hashtable of RE's, RM's and Teams keyed by component path.
 def read_owners(owners_file):
     if debug:
         print >> sys.stderr, "Reading %s" % owners_file
@@ -118,8 +119,8 @@ def read_owners(owners_file):
     owners = {}
     for line in lines:
         line = line[:-1]
-        component, re, rm = line.split("|")
-        owners[component] = [ re, rm ]
+        component, re, rm, team = line.split("|")
+        owners[component] = [ re, rm, team ]
 
     return owners
 
@@ -165,9 +166,9 @@ def find_p5m_dirs(workspace):
 def write_preamble():
     print preamble
 
-# Return the RE / RM for this component.
-def get_re_and_rm(p5m_dir):
-    re_and_rm = [ "Unknown", "Unknown" ]
+# Return the RE,  RM and Team for this component.
+def get_owner(p5m_dir):
+    result = [ "Unknown", "Unknown", "Unknown" ]
     component_path = ""
     started = False
     tokens = p5m_dir.split("/")
@@ -178,12 +179,12 @@ def get_re_and_rm(p5m_dir):
             started = True
     component_path = component_path[:-1]
     if component_path in owners:
-        re_and_rm = owners[component_path]
+        result = owners[component_path]
     if debug:
         print >> sys.stderr, "Component path: ", component_path,
-        print >> sys.stderr, "RE / RM: ", re_and_rm
+        print >> sys.stderr, "RE, RM, Team: ", result
     
-    return re_and_rm
+    return result
 
 # Generate an HTML table entry for all the information for the component
 # in the given directory. This generates a file called 'component-report'
@@ -197,11 +198,16 @@ def gen_reports(workspace, component_dir):
     except:
         tpno = ""
 
-    re, rm = get_re_and_rm(component_dir)
+    re, rm, team = get_owner(component_dir)
     makefiles = "-f Makefile -f %s/make-rules/component-report" % workspace
     targets = "clean component-hook"
-    cmd = "cd %s; TPNO='%s' RESPONSIBLE_ENGINEER='%s' RESPONSIBLE_MANAGER='%s' gmake COMPONENT_HOOK='gmake %s component-report' %s" % \
-        (component_dir, tpno, re, rm, makefiles, targets)
+    template = "cd %s; "
+    template += "TPNO='%s' "
+    template += "RESPONSIBLE_ENGINEER='%s' "
+    template += "RESPONSIBLE_MANAGER='%s' "
+    template += "TEAM='%s' "
+    template += "gmake COMPONENT_HOOK='gmake %s component-report' %s"
+    cmd = template % (component_dir, tpno, re, rm, team, makefiles, targets)
 
     if debug:
         print >> sys.stderr, "gen_reports: command: `%s`" % cmd
