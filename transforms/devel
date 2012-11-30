@@ -20,26 +20,26 @@
 #
 
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 # header files
 <transform dir file link hardlink path=usr.*/include(/.+){0,1} -> \
-    default facet.devel true>
+    default facet.devel all>
 
 # archive libraries (on rare occasion, we should be delivering these)
-<transform file path=.*lib/.+\.a$ -> default facet.devel true>
+<transform file path=.*lib/.+\.a$ -> default facet.devel all>
 
 # .so links, we need to determine if this is a problem, I suspect that it is.
-#<transform link path=.*lib/.*\.so$ -> default facet.devel true>
+#<transform link path=.*lib/.*\.so$ -> default facet.devel all>
 
 # lint libraries
-<transform file link hardlink path=.*/lib/llib-.* -> default facet.devel true>
+<transform file link hardlink path=.*/lib/llib-.* -> default facet.devel all>
 
 # pkg-config data
 <transform dir file link hardlink path=.*/pkgconfig(/.+\.pc){0,1}$ -> \
-    default facet.devel true>
+    default facet.devel all>
 
 # autoconf macros
 <transform dir file link hardlink path=.*/aclocal(/.*\.m4){0,1}$ -> \
-    default facet.devel true>
+    default facet.devel all>
