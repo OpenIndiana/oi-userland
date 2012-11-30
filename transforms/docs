@@ -25,35 +25,35 @@
 
 # man pages
 <transform dir file link hardlink path=usr.*/man(/.+){0,1}$ -> \
-    default facet.doc.man true>
+    default facet.doc.man all>
 
 # texinfo docs
 <transform dir file link hardlink path=usr/.*/info(/.+){0,1}$ -> \
-    default facet.doc.info true>
+    default facet.doc.info all>
 <transform file path=usr/.*/info/.+$ -> \
     add restart_fmri svc:/application/texinfo-update:default>
 <transform file path=usr/.*/info/dir$ -> exit 1 "Error: packaged texinfo directory file (%<action.path>)" >
 
 # html docs
 <transform dir file link hardlink path=usr/.*/doc/.*(html?|css).* -> \
-    default facet.doc.html true>
+    default facet.doc.html all>
 <transform dir file link hardlink path=usr/lib/help/.*\.html$ -> \
-    default facet.doc.html true>
+    default facet.doc.html all>
 
 # pdf docs
 <transform dir file link hardlink path=usr/.*/doc/.*\.pdf$ -> \
-    default facet.doc.pdf true>
+    default facet.doc.pdf all>
 
 # ps docs
 <transform dir file link hardlink path=usr/.*/doc/.*\.ps$ -> \
-    default facet.doc.ps true>
+    default facet.doc.ps all>
 
 # general documentation
 <transform dir file link hardlink path=usr/.*/doc(/.+){0,1}$ -> \
-    default facet.doc true>
+    default facet.doc all>
 
 # drop facet.doc if we have a type specific facet.
-<transform dir file link hardlink facet.doc.html=true -> delete facet.doc true>
-<transform dir file link hardlink facet.doc.info=true -> delete facet.doc true>
-<transform dir file link hardlink facet.doc.pdf=true -> delete facet.doc true>
-<transform dir file link hardlink facet.doc.man=true -> delete facet.doc true>
+<transform dir file link hardlink facet.doc.html=all -> delete facet.doc all>
+<transform dir file link hardlink facet.doc.info=all -> delete facet.doc all>
+<transform dir file link hardlink facet.doc.pdf=all -> delete facet.doc all>
+<transform dir file link hardlink facet.doc.man=all -> delete facet.doc all>
