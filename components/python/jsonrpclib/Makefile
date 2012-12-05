@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:1480f0f189250d46552e29d2a6f04f5b92788ffd9b8f51d06fdaeee03aa2d8bb
 COMPONENT_ARCHIVE_URL=https://github.com/joshmarshall/jsonrpclib/tarball/$(COMPONENT_HASH)
-COMPONENT_BUGDB=	utility/python
+COMPONENT_BUGDB=	python-mod/jsonrpclib
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

@@ -34,7 +34,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_NAME).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:9f3b3ed7c9fffccefefa9af432eee7244a65592118851f75b5897814cb79b86f
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/network
+COMPONENT_BUGDB=	utility/fping
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

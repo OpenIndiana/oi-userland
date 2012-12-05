@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:32d0d92cc6a6589e88d6b476564be649908ca49152f3f13af5eeebf9522b1cf6
 COMPONENT_ARCHIVE_URL=	http://backpan.perl.org/authors/id/T/TI/TIMB/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~timb/DBI/
-COMPONENT_BUGDB=	utility/perl
+COMPONENT_BUGDB=	perl-mod/dbi
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk

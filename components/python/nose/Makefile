@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:b1ba12c1c45323fd8695be68ce7228456b86e51234f167027ebbc4ccda852c61
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/n/nose/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/nose
+COMPONENT_BUGDB=	python-mod/nose
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
