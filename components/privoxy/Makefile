@@ -33,7 +33,7 @@ COMPONENT_PROJECT_URL=	http://www.privoxy.org/
 COMPONENT_ARCHIVE_HASH=	\
     sha256:d1de36dc141180a5ab5e910507551564e958cc23a7d8daaa411e1564c208cd77
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/ijbswa/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/network
+COMPONENT_BUGDB=	utility/privoxy
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

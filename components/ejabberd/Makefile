@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:dedf7684f9e96efbbc12f08f175096ef50b3f75b284bd27d172eaf75cecded7f
 COMPONENT_ARCHIVE_URL=	http://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/ejabberd
+COMPONENT_BUGDB=	service/ejabberd
 
 include ../../make-rules/prep.mk
 

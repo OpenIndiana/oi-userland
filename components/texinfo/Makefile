@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:080a48f49bdad8797de0e1c18ba436b5fb030f24bd606bfd334ebf2dd91aeb62
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/texinfo/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/other
+COMPONENT_BUGDB=	utility/texinfo
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
