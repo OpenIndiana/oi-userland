@@ -61,6 +61,10 @@ CONFIGURE_OPTIONS +=	--enable-devpoll=yes
 CONFIGURE_OPTIONS +=	--disable-openssl-version-check
 CONFIGURE_OPTIONS +=	--enable-fixed-rrset
 CONFIGURE_OPTIONS +=	--with-pkcs11
+# Bind configure will check for libxml2 versions 2.6.x/2.7.x/2.8.x.
+# To make it use version 2.9.x we need to skip this check by
+# specifying path where libxml2 is installed.
+CONFIGURE_OPTIONS +=	--with-libxml2=/usr
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 # Configure will add "-mt" to CC which is already set in CFLAGS, so override.
