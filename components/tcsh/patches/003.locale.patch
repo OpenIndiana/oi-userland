@@ -1,97 +1,15 @@
---- tcsh-6.17.00/sh.c.orig	Tue Sep 22 13:39:07 2009
-+++ tcsh-6.17.00/sh.c	Wed Sep 23 00:46:27 2009
-@@ -160,6 +160,52 @@
+--- tcsh-6.18.01/configure.in.orig	Wed Sep  5 11:52:15 2012
++++ tcsh-6.18.01/configure.in	Wed Sep  5 11:52:40 2012
+@@ -303,7 +303,6 @@
+ AC_SEARCH_LIBS(gethostbyname, nsl)
+ AC_SEARCH_LIBS(connect, socket)
+ AC_SEARCH_LIBS(catgets, catgets)
+-AM_ICONV
  
- 	int		  main		(int, char **);
- 
-+#ifndef LOCALEDIR
-+#define LOCALEDIR "/usr/share/locale"
-+#endif
-+
-+static void
-+add_localedir_to_nslpath(char *path)
-+{
-+    char *old = getenv("NLSPATH");
-+    char *new;
-+    int len = 0;
-+
-+    if (path == NULL)
-+        return;
-+
-+    if (old != NULL)
-+        len += strlen(old);
-+
-+#if !defined(HAVE_SETENV)
-+    len += sizeof ("NLSPATH=");
-+#endif
-+
-+    len += (strlen(path) + sizeof ("/%L/LC_MESSAGES/%N.cat"));
-+
-+    if ((new = calloc(len, 1)) == NULL)
-+        return;
-+
-+#if !defined(HAVE_SETENV)
-+    strcpy(new, "NLSPATH=");
-+#endif
-+
-+    if (old != NULL) {
-+        strncat(new, old, len);
-+        strncat(new, ":", len);
-+    }
-+
-+    strncat(new, path, len);
-+    strncat(new, "/%L/LC_MESSAGES/%N.cat", len);
-+
-+#if defined(HAVE_SETENV)
-+    setenv("NLSPATH", new, 1);
-+    free(new);
-+#else
-+    putenv(new);
-+#endif
-+}
-+
- int
- main(int argc, char **argv)
- {
-@@ -192,6 +238,8 @@
- # endif /* LC_CTYPE */
- #endif /* NLS */
- 
-+    add_localedir_to_nslpath(LOCALEDIR);
-+
-     nlsinit();
- 
- #ifdef MALLOC_TRACE
---- tcsh-6.17.00/nls/Makefile.in.orig	Wed Oct  7 13:25:44 2009
-+++ tcsh-6.17.00/nls/Makefile.in	Wed Oct  7 13:31:57 2009
-@@ -0,0 +1,24 @@
-+# $tcsh: Makefile,v 1.14 2006/03/02 18:46:45 christos Exp $
-+
-+LOCALES=	C et finnish french german greek italian ja pl russian \
-+		spanish ukrainian
-+GENCAT=		gencat
-+INSTALL=	ginstall
-+
-+CATALOGS=$(LOCALES:%=%.cat)
-+INSTALLED=$(LOCALES:%=@localedir@/%/LC_MESSAGES/tcsh.cat)
-+
-+all:	$(CATALOGS)
-+
-+install:	$(INSTALLED)
-+
-+@localedir@/%/LC_MESSAGES/tcsh.cat:	%.cat
-+	mkdir -p $(@D)
-+	$(INSTALL) $< $@
-+
-+%.cat:
-+	$(GENCAT) $@ $(@:%.cat=%)/*set*
-+
-+clean:
-+	$(RM) $(CATALOGS)
-+
-
---- tcsh-6.17.00/Makefile.in.orig	Wed Jun 24 15:09:05 2009
-+++ tcsh-6.17.00/Makefile.in	Wed Oct  7 14:19:01 2009
+ dnl Checks for header files
+ AC_CHECK_HEADERS([auth.h crypt.h features.h inttypes.h paths.h] dnl
+--- tcsh-6.18.01/Makefile.in.orig	Wed Sep  5 11:56:12 2012
++++ tcsh-6.18.01/Makefile.in	Wed Sep  5 11:57:51 2012
 @@ -12,6 +12,7 @@
  BUILD=tcsh$(EXEEXT)
  VPATH=@srcdir@
@@ -100,18 +18,15 @@
  
  ################################################################
  ## CFLAGS.  For various -D things, see config.h
-@@ -137,8 +138,10 @@
+@@ -145,6 +146,7 @@
  #DFLAGS=-D_PATH_TCSHELL='"${DESTBIN}/tcsh"'
  ## The following is set by autoconf.
  DFLAGS = -D_PATH_TCSHELL='"${bindir}/tcsh"' @DFLAGS@ @CPPFLAGS@
 +DFLAGS += -DLOCALEDIR='"${localedir}"'
  
  
-+
  ################################################################
- ## LDFLAGS.  Define something here if you need to
- ################################################################
-@@ -231,7 +234,7 @@
+@@ -296,7 +298,7 @@
  #
  
  EXTRAFLAGS = @HESDEF@ $(AFSDEF)
@@ -120,21 +35,34 @@
  
  
  
---- tcsh-6.17.00/configure.in	Fri Jul 10 10:13:56 2009
-+++ tc/configure.in	Wed Oct  7 14:21:21 2009
-@@ -281,7 +281,6 @@
- AC_SEARCH_LIBS(tgetent, termlib termcap curses ncurses)
- AC_SEARCH_LIBS(gethostbyname, nsl)
- AC_SEARCH_LIBS(connect, socket)
--AM_ICONV
+--- tcsh-6.18.01/sh.c.orig	Thu Nov 15 14:26:18 2012
++++ tcsh-6.18.01/sh.c	Thu Nov 15 14:26:37 2012
+@@ -175,17 +175,10 @@
+     size_t len;
+     int add_LOC = 1;
+     int add_lang = 1;
+-    char trypath[MAXPATHLEN];
+-    struct stat st;
  
- dnl Checks for header files
- AC_CHECK_HEADERS([auth.h crypt.h inttypes.h shadow.h stdint.h utmp.h utmpx.h])
-@@ -440,5 +440,5 @@
- AC_SUBST(HESDEF)
- AC_SUBST(HESLIB)
+     if (path == NULL)
+         return;
  
--AC_CONFIG_FILES([Makefile])
-+AC_CONFIG_FILES([Makefile nls/Makefile])
- AC_OUTPUT
-
+-    (void) xsnprintf(trypath, sizeof(trypath), "%s/en/LC_MESSAGES/tcsh.cat",
+-	path);
+-    if (stat(trypath, &st) == -1)
+-	return;
+-
+     if ((old = getenv("NLSPATH")) != NULL)
+         len = strlen(old) + 1;	/* don't forget the colon. */
+     else
+--- tcsh-6.18.01/sh.func.c.orig	Mon Dec  3 13:09:33 2012
++++ tcsh-6.18.01/sh.func.c	Mon Dec  3 13:09:54 2012
+@@ -2627,6 +2627,8 @@
+ 
+     if (adrof(STRcatalog) != NULL)
+ 	catalog = xasprintf("tcsh.%s", short2str(varval(STRcatalog)));
++/* for compatibility */
++#undef NL_CAT_LOCALE
+ #ifdef NL_CAT_LOCALE /* POSIX-compliant. */
+     /*
+      * Check if LC_MESSAGES is set in the environment and use it, if so.
