@@ -24,7 +24,7 @@ PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_BUGDB=	utility/ksh93
+COMPONENT_BUGDB=    utility/ksh93
 
 COMPONENT_PROJECT_URL= http://www2.research.att.com/sw/download/
 
@@ -76,7 +76,8 @@ COMPONENT_PATCHES_1= compiler.patch path_utmp.patch\
 					 MAP_TYPE_64_Bits.patch CR7167466.patch \
 					 CR7168611.patch CR7178717.patch \
 					 CR7175995.patch \
-					 CR7186440_ksh93_disable_predictive_editing.patch
+					 CR7186440_ksh93_disable_predictive_editing.patch \
+					 CR7128313.patch 
 
 # Fixup HOSTTYPE to match uname output and bits
 HOSTTYPE32=sol11.$(shell uname -p)
