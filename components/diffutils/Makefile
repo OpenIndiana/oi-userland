@@ -26,14 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		diffutils
-COMPONENT_VERSION=	2.8.7
+COMPONENT_VERSION=	3.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/diffutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:53d9c10830ac322c00dfcccf60d961014e767da86d2c802ccc5cbad7e7aea07c
-COMPONENT_ARCHIVE_URL=	http://alpha.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/gnu-diffutils
+    sha256:2aaaebef615be7dc365306a14caa5d273a4fc174f9f10abca8b60e082c054ed3
+COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/diffutils/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
