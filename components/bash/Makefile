@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bash
-COMPONENT_VERSION=	4.1
+COMPONENT_VERSION=	4.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/bash/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:3f627124a83c6d34db503a923e20710d370573a29dd5d11d6f116d1aee7be1da
+COMPONENT_ARCHIVE_HASH = \
+    sha256:a27a1179ec9c0830c65c6aa5d7dab60f7ce1a2a608618570f96bfa72e95ab3d8
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bash
 
@@ -107,14 +107,14 @@ CONFIGURE_OPTIONS  += 		--enable-select
 CONFIGURE_OPTIONS  += 		--enable-separate-helpfiles	
 CONFIGURE_OPTIONS  += 		--enable-single-help-strings	
 CONFIGURE_OPTIONS  += 		--disable-strict-posix-default	
-CONFIGURE_OPTIONS  += 		--enable-usg-echo-default	
-CONFIGURE_OPTIONS  += 		--enable-xpg-echo-default	
+CONFIGURE_OPTIONS  += 		--enable-usg-echo-default=yes
+CONFIGURE_OPTIONS  += 		--enable-xpg-echo-default=yes
 CONFIGURE_OPTIONS  += 		--enable-mem-scramble	
 CONFIGURE_OPTIONS  += 		--disable-profiling	
 CONFIGURE_OPTIONS  += 		--enable-static-link	
 CONFIGURE_OPTIONS  += 		--enable-largefile
 CONFIGURE_OPTIONS  += 		--enable-nls	
-CONFIGURE_OPTIONS  += 		--with-bash-malloc	
+CONFIGURE_OPTIONS  += 		--with-bash-malloc=yes
 CONFIGURE_OPTIONS  += 		--with-curses	
 CONFIGURE_OPTIONS  += 		--with-installed-readline=no	
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
