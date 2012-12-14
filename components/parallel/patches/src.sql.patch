@@ -1,0 +1,16 @@
+This patch is needed because the sql script is expecting the which 
+command to return errors on stderr, not stdout and assumes anything
+on stdout is an actual path.   (And since /bin/which starts a new 
+csh, it only checks .cshrc $PATH not current $PATH settings.)
+
+--- parallel-20120422/src/sql.orig	2012-12-11 13:21:20.855778203 -0800
++++ parallel-20120422/src/sql	2012-12-11 13:22:33.870295549 -0800
+@@ -890,7 +890,7 @@
+ sub find_command_in_path {
+     # Find the command if it exists in the current path
+     my $command = shift;
+-    my $path = `which $command`;
++    my $path = `/usr/gnu/bin/which $command`;
+     chomp $path;
+     return $path;
+ }
