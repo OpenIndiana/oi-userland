@@ -1,6 +1,6 @@
---- apache-tomcat-6.0.33-src/build.xml	Tue Aug 16 05:26:13 2011
-+++ apache-tomcat-6.0.33-src/build.xml	Tue Aug 16 06:44:09 2011
-@@ -469,13 +469,6 @@
+--- apache-tomcat-6.0.36-src/build.xml	Tue Oct 16 01:05:51 2012
++++ apache-tomcat-6.0.36-src/build.xml	Thu Dec  6 04:01:54 2012
+@@ -487,13 +487,6 @@
  
    <target name="deploy" depends="build-only,build-docs,warn.dbcp">
  
@@ -14,7 +14,7 @@
      <!-- Copy scripts -->
      <copy todir="${tomcat.build}/bin">
        <fileset dir="bin">
-@@ -759,55 +752,6 @@
+@@ -777,41 +770,6 @@
            description="Download (and build as necessary) dependent components"
            depends="build-manifests">
  
@@ -25,24 +25,10 @@
 -      <param name="destdir" value="${tomcat-native.home}"/>
 -    </antcall>
 -
--    <antcall target="downloadfile-2">
--      <param name="sourcefile.1" value="${tomcat-native.dll.1}/win32/tcnative-1.dll"/>
--      <param name="sourcefile.2" value="${tomcat-native.dll.2}/win32/tcnative-1.dll"/>
--      <param name="destfile" value="${tomcat-native.dll.win32}"/>
--      <param name="destdir" value="${tomcat-native.home}"/>
--    </antcall>
--
--    <antcall target="downloadfile-2">
--      <param name="sourcefile.1" value="${tomcat-native.dll.1}/win64/x64/tcnative-1.dll"/>
--      <param name="sourcefile.2" value="${tomcat-native.dll.2}/win64/x64/tcnative-1.dll"/>
--      <param name="destfile" value="${tomcat-native.dll.x64}"/>
--      <param name="destdir" value="${tomcat-native.home}"/>
--    </antcall>
--
--    <antcall target="downloadfile-2">
--      <param name="sourcefile.1" value="${tomcat-native.dll.1}/win64/ia64/tcnative-1.dll"/>
--      <param name="sourcefile.2" value="${tomcat-native.dll.2}/win64/ia64/tcnative-1.dll"/>
--      <param name="destfile" value="${tomcat-native.dll.i64}"/>
+-    <antcall target="downloadzip-2">
+-      <param name="sourcefile.1" value="${tomcat-native.win.1}"/>
+-      <param name="sourcefile.2" value="${tomcat-native.win.2}"/>
+-      <param name="destfile" value="${tomcat-native.home}/LICENSE"/>
 -      <param name="destdir" value="${tomcat-native.home}"/>
 -    </antcall>
 -
@@ -70,7 +56,7 @@
      <!-- Build Tomcat DBCP bundle -->
      <antcall target="downloadgz-2">
        <param name="sourcefile.1" value="${commons-pool-src.loc.1}"/>
-@@ -832,15 +776,9 @@
+@@ -836,15 +794,9 @@
        <param name="destdir" value="${jdt.home}"/>
      </antcall>
  

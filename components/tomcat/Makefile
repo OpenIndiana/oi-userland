@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tomcat
-COMPONENT_VERSION=	6.0.35
+COMPONENT_VERSION=	6.0.36
 COMPONENT_PROJECT_URL=	http://tomcat.apache.org/
 COMPONENT_SRC_NAME=	apache-tomcat
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)-src
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6e5205834bd595250c8e0b640e2345ef643f23364ae0e099334b5132103be764
+    sha256:8da5b897ff28f688a5c7fe5abaa95e0ae0de9562283cec3c2643faaa13a6932c
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/tomcat/tomcat-6/v$(COMPONENT_VERSION)/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tomcat
 
@@ -41,14 +41,14 @@ COMPONENT_ARCHIVE_1= commons-dbcp-1.4-src.tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:f5f10846e79fc71121fe7402c61d71575506b01b59e719e974ebc4d99e6df283
 COMPONENT_ARCHIVE_URL_1= http://archive.apache.org/dist/commons/dbcp/source/$(COMPONENT_ARCHIVE_1)
-COMPONENT_ARCHIVE_2= commons-pool-1.5.6-src.tar.gz
+COMPONENT_ARCHIVE_2= commons-pool-1.5.7-src.tar.gz
 COMPONENT_ARCHIVE_HASH_2= \
-    sha256:0681c7394b3b6813dd9e06f985d4ddefe200e2abf81907352175477d91b41424
+    sha256:e9f414555c41e9584da1f6953af28208ece5cd4664ef2fea297e6a6aadc4377e
 COMPONENT_ARCHIVE_URL_2= http://archive.apache.org/dist/commons/pool/source/$(COMPONENT_ARCHIVE_2)
-COMPONENT_ARCHIVE_3= ecj-3.7.jar
+COMPONENT_ARCHIVE_3= ecj-3.7.2.jar
 COMPONENT_ARCHIVE_HASH_3= \
-    sha256:8387454f3557d2a03077cc5e96f4cfa4313e0fcd4b0febb4c385ada183de0c96
-COMPONENT_ARCHIVE_URL_3= http://download.eclipse.org/eclipse/downloads/drops/R-3.7-201106131736/$(COMPONENT_ARCHIVE_3)
+    sha256:e27bddb73290febbef88056cfd95c3dc29e00fba815321639286bb855a8cbe60
+COMPONENT_ARCHIVE_URL_3= http://download.eclipse.org/eclipse/downloads/drops/R-3.7.2-201202080800/$(COMPONENT_ARCHIVE_3)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
