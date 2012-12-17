@@ -1218,7 +1218,6 @@ static void pk11_engine_free()
 
 	if (old_engine) {
 		pk11_engine = NULL;
-		ENGINE_free(old_engine);
 	}
 	}
 
@@ -1243,7 +1242,6 @@ static int pk11_library_init(ENGINE *e)
 		{
 		pk11_engine_free();
 		pk11_engine = e;
-		ENGINE_up_ref(e);
 		}
 
 	/*
