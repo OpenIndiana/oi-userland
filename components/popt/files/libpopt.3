@@ -1,0 +1,1165 @@
+'\" te
+.TH libpopt 3 "31 May 2004" "" ""
+.SH "NAME"
+libpopt \- parse
+command-line options
+.SH ""
+.sp
+.nf
+\f(CW#include <popt\&.h>
+
+       poptContext poptGetContext(const char * name, int argc,
+                                  const char ** argv,
+                                  const struct poptOption * options,
+                                  int flags);
+
+       void poptFreeContext(poptContext con);
+
+       void poptResetContext(poptContext con);
+
+       int poptGetNextOpt(poptContext con);
+
+       const char * poptGetOptArg(poptContext con);
+
+       const char * poptGetArg(poptContext con);
+
+       const char * poptPeekArg(poptContext con);
+
+       const char ** poptGetArgs(poptContext con);
+
+       const char *const poptStrerror(const int error);
+
+       const char * poptBadOption(poptContext con, int flags);
+
+       int poptReadDefaultConfig(poptContext con, int flags);
+
+       int poptReadConfigFile(poptContext con, char * fn);
+
+       int poptAddAlias(poptContext con, struct poptAlias alias,
+                        int flags);
+
+       int poptParseArgvString(char * s, int *  argcPtr,
+                               const char *** argvPtr);
+
+       int poptDupArgv(int argc, const char ** argv, int * argcPtr,
+                               const char *** argvPtr);
+
+       int poptStuffArgs(poptContext con, const char ** argv);\fR
+.fi
+.sp
+.SH ""
+.PP
+The \fBpopt\fR library parses command-line options\&. The \fBpopt\fR library provides an alternative to parsing the \fBargv\fR array by hand, or using the \fBgetopt\fR(3) functions \fBgetopt()\fR and \fBgetopt_long()\fR\&. 
+.PP
+The \fBpopt\fR library has the following advantages:
+.sp
+.in +2
+\(bu
+.mk
+.in +3
+.rt
+\fBpopt\fR does not use global variables, thus
+enabling multiple passes in parsing \fBargv\fR\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+\fBpopt\fR can parse an arbitrary array of \fBargv\fR-style elements, allowing parsing of command-line strings from
+any source\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+\fBpopt\fR provides a standard method of option
+aliasing\&. This feature is discussed in detail below\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+\fBpopt\fR can exec external option filters\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+\fBpopt\fR can automatically generate help
+and usage messages for the application\&.
+.sp
+.in -3
+.in -2
+.PP
+The \fBpopt\fR library supports short and long options\&.
+A short option consists of a hyphen followed by a single alphanumeric character\&.
+A long option, common in GNU utilities, consists of two hyphens followed by
+a string composed of letters, numbers, and hyphens\&. Long options can optionally
+begin with a single hyphen, primarily to allow command-line compatibility
+between \fBpopt\fR applications and X toolkit applications\&.
+Either type of option can be followed by an argument\&. A space separates a
+short option from its argument\&. Either a space or an equals sign separates
+a long option from an argument\&.
+.PP
+The \fBpopt\fR library is highly portable and should
+work on any POSIX platform\&. The latest version is distributed with \fBrpm\fR and is available from: \fBftp://ftp\&.rpm\&.org/pub/rpm/dist\fR\&.
+.PP
+The \fBpopt\fR library may be redistributed under the
+X consortium license, see the file \fBCOPYING\fR in the \fBpopt\fR source distribution for details\&.
+.SH ""
+.SS "Option Tables"
+.PP
+Each application provides \fBpopt\fR with information
+about the command-line options for the application, by means of an option
+table\&. An option table is an array of \fBstruct poptOption\fR
+structures, with the following format:
+.sp
+.nf
+\f(CW#include <popt\&.h>
+
+struct poptOption {
+    const char * longName; /* may be NULL */
+    char shortName;        /* may be \&'\0\&' */
+    int argInfo;
+    void * arg;            /* depends on argInfo */
+    int val;               /* 0 means do not return, just update flag */
+    char * descrip;        /* description for autohelp -- may be NULL */
+    char * argDescrip;     /* argument description for autohelp */
+};\fR
+.fi
+.sp
+.SS "Option Table Members"
+.PP
+Each member of the table defines a single option that may be passed
+to the program\&. Long and short options are considered to be a single option
+that can occur in two different forms\&. The option table members are as follows:
+.sp
+.ne 2
+.mk
+\fB\fBlongName\fR\fR
+.in +24n
+.rt
+Defines
+the name of the option in a long name\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fBshortName\fR\fR
+.in +24n
+.rt
+Defines
+the name of the option in a single character\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fBargInfo\fR\fR
+.in +24n
+.rt
+Tells \fBpopt\fR what type of argument is expected after the option\&. Valid
+values are as follows: 
+.sp
+.sp
+.ne 2
+.mk
+\fBPOPT_ARG_DOUBLE\fR
+.in +16n
+.rt
+Double argument
+expected, \fBarg\fR type: \fBdouble\fR
+.sp
+.sp 2
+.in -16n
+.sp
+.ne 2
+.mk
+\fBPOPT_ARG_FLOAT\fR
+.in +16n
+.rt
+Float argument expected, \fBarg\fR type: \fBfloat\fR
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fBPOPT_ARG_INT\fR
+.in +16n
+.rt
+Integer argument expected, \fBarg\fR type: \fBint\fR
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fBPOPT_ARG_LONG\fR
+.in +16n
+.rt
+Long integer expected, \fBarg\fR type: \fBlong\fR
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fBPOPT_ARG_NONE\fR
+.in +16n
+.rt
+No argument expected, \fBarg\fR type: \fBint\fR
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fBPOPT_ARG_STRING\fR
+.in +16n
+.rt
+No type checking
+to be performed, \fBarg\fR type: \fBchar *\fR
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fBPOPT_ARG_VAL\fR
+.in +16n
+.rt
+Integer value taken
+from val, \fBarg\fR type: \fBint\fR
+.sp
+.sp 1
+.in -16n
+For numeric values, if the \fBargInfo\fR
+value is bitwise or\&'d with one of POPT_ARGFLAG_OR, POPT_ARGFLAG_AND, or POPT_ARGFLAG_XOR,
+the value is saved by performing an OR, AND, or XOR\&. If the \fBargInfo\fR value is bitwise or\&'d with POPT_ARGFLAG_NOT, the value is negated
+before saving\&. For the common operations of setting or clearing bits, POPT_BIT_SET
+and POPT_BIT_CLR have the appropriate flags set to perform bit operations\&.
+.sp
+If the \fBargInfo\fRvalue is bitwise or\&'d with POPT_ARGFLAG_ONEDASH,
+the long argument may be given with a single hyphen instead of two\&. For example,
+if -\fB-longopt\fR is an option with POPT_ARGFLAG_ONEDASH, -\fBlongopt\fR is also accepted\&.
+.sp
+.sp 0
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fBarg\fR\fR
+.in +24n
+.rt
+Allows \fBpopt\fR to automatically update program variables\&. If \fBarg\fR is NULL, \fBpopt\fR ignores \fBarg\fR
+and takes no special action\&. Otherwise, \fBarg\fR points to a
+variable of the appropriate type, as follows: 
+.sp
+.in +2
+\(bu
+.mk
+.in +3
+.rt
+If \fBargInfo\fR is POPT_ARG_NONE, the variable
+pointed to by \fBarg\fR is set to 1 when the option is used\&. 
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+If the option takes an argument, the variable pointed to by \fBarg\fR is updated to reflect the value of the argument\&. Any string
+is acceptable for POPT_ARG_STRING arguments\&. POPT_ARG_INT, POPT_ARG_LONG,
+POPT_ARG_FLOAT, and POPT_ARG_DOUBLE arguments are converted to the appropriate
+type, and an error returned if the conversion fails\&.
+.sp
+.in -3
+.in -2
+.sp
+POPT_ARG_VAL causes \fBarg\fR to be set to the integer
+value of \fBval\fR when the argument is found\&. This is useful
+for mutually-exclusive arguments in cases where it is not an error for multiple
+arguments to occur and where you want the last argument specified to take
+precedence, for example, \fBrm -i -f\fR\&.  POPT_ARG_VAL causes
+the parsing function not to return a value, because the value of \fBval\fR has already been used\&.
+.sp
+If the \fBargInfo\fR value is bitwise or\&'d with POPT_ARGFLAG_OPTIONAL,
+the argument to the long option may be omitted\&. If the long option is used
+without an argument, a default value of zero or NULL is saved if the \fBarg\fR pointer is present\&. Otherwise, the behavior is identical to
+that of a long option with an argument\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fBval\fR\fR
+.in +24n
+.rt
+The value
+returned by the \fBpopt\fR parsing function when the option
+is encountered\&. If \fBval\fR is 0, the parsing function does
+not return a value\&. Instead, \fBpopt\fR parses the next command-line
+argument\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBdescrip\fR
+.in +24n
+.rt
+Text description of the
+argument\&. Only required if automatic help messages are desired\&. Automatic
+usage messages can be generated without this argument\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBargDescrip\fR
+.in +24n
+.rt
+Short summary of the
+type of arguments expected by the option, or NULL if the option does not require
+any arguments\&. Only required if automatic help messages are desired\&. Automatic
+usage messages can be generated without this argument\&.
+.sp
+.sp 1
+.in -24n
+.PP
+The final structure in the table should have all pointer
+values set to NULL and all arithmetic values set to 0, marking the end of
+the table\&. The macro POPT_TABLEEND performs these tasks\&.
+.SS "Help and Usage Output"
+.PP
+If \fBpopt\fR should automatically provide -\fB\(miusage\fR and -\fB\(mihelp\fR options, one  line in the option
+table should contain the macro POPT_AUTOHELP\&. This macro includes another
+option table, via POPT_ARG_INCLUDE_TABLE, which provides the table entries
+for these arguments\&. When the -\fB\(miusage\fR or -\fB\(mihelp\fR option is passed to applications that use \fBpopt\fR
+automatic help, \fBpopt\fR displays the appropriate message
+on \fBstderr\fR, and exits the application with a return code
+of 0\&.  To use \fBpopt\fR automatic help generation in a different
+way, you must explicitly add the option entries to the application\&'s option
+table, instead of using POPT_AUTOHELP\&.
+.PP
+If the \fBargInfo\fR value is bitwise or\&'d with POPT_ARGFLAG_DOC_HIDDEN,
+the argument is not shown in help output\&.
+.PP
+If the \fBargInfo\fR value is bitwise or\&'d with POPT_ARGFLAG_SHOW_DEFAULT,
+the inital value of the \fBarg\fR is shown in help output\&.
+.SS "Special Option Table Entries"
+.PP
+Two types of option table entries do not specify command-line options\&.
+When either of these types of entries is used, the \fBlongName\fR
+element must be NULL and the \fBshortName\fR element must be \fB\\0\fR\&.
+.PP
+The first of these special entry types allows the application to nest
+another option table in the current option table\&. Such nesting may extend
+quite deeply, the actual depth is limited by the application stack\&. Including
+other option tables allows a library to provide a standard set of command-line
+options to every application that uses the library\&. This is often done in
+graphical programming toolkits, for example\&. To nest another option table,
+set the \fBargInfo\fR field to POPT_ARG_INCLUDE_TABLE and the \fBarg\fR field to point to the table that is being included\&. If automatic
+help generation is used, the \fBdescrip\fR field should contain
+an overall description of the option table being included\&.
+.PP
+The other special option table entry type tells \fBpopt\fR
+to call a function when any option in that table is found\&. This callback functionality
+is especially useful when included option tables are used, because the application
+that provides the top-level option table does not need to be aware of the
+other options that are provided by the included table\&. When a callback is
+set for a table, the parsing function never returns information on an option
+in the table\&. Instead, option information must be retained via the callback
+or by having \fBpopt\fR set a variable through the option\&'s \fBarg\fR field\&. Option callbacks should match the following prototype:
+.sp
+.nf
+void poptCallbackType(poptContext con,
+                      const struct poptOption * opt,
+                      const char * arg, void * data);
+.fi
+.sp
+.PP
+The callback uses the following parameters:
+.sp
+.ne 2
+.mk
+\fB\fBcon\fR\fR
+.in +16n
+.rt
+The context
+that is being parsed\&. See the next section for information on contexts\&.
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fB\fBopt\fR\fR
+.in +16n
+.rt
+The option
+that triggered this callback\&.
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fB\fBarg\fR\fR
+.in +16n
+.rt
+The argument
+for the \fBopt\fR option\&. If the option does not take an argument, \fBarg\fR is NULL\&.
+.sp
+.sp 1
+.in -16n
+.sp
+.ne 2
+.mk
+\fB\fBdata\fR\fR
+.in +16n
+.rt
+Taken from
+the \fBdescrip\fR field of the option table entry that defined
+the callback\&. As \fBdescrip\fR is a pointer, this allows you
+to pass an arbitrary set of data to callback functions, though a typecast
+must be used\&.
+.sp
+.sp 1
+.in -16n
+.PP
+The option table entry that defines a callback has an \fBargInfo\fR of POPT_ARG_CALLBACK, an \fBarg\fR that points
+to the callback function, and a \fBdescrip\fR field that specifies
+an arbitrary pointer to be passed to the callback\&.
+.SS "Creating a Context"
+.PP
+\fBpopt\fR can interleave the parsing of multiple command-line
+sets\&. \fBpopt\fR allows this by keeping all of the state information
+for a particular set of command-line arguments in a \fBpoptContext\fR
+data structure, an opaque type that should not be modified outside the \fBpopt\fR library\&.
+.PP
+New \fBpopt\fR contexts are created by \fBpoptGetContext()\fR:
+.sp
+.nf
+\f(CWpoptContext poptGetContext(const char * name, int argc,
+                           const char ** argv,
+                           const struct poptOption * options,
+                           int flags);\fR
+.fi
+.sp
+.PP
+The \fBpoptGetContext()\fR function takes the following
+parameters:
+.sp
+.ne 2
+.mk
+\fB\fBname\fR\fR
+.in +24n
+.rt
+Used only
+for alias handling\&. \fBname\fR should be the name of the application
+whose options are being parsed, or should be NULL if no option aliasing is
+desired\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fBargc\fR, \fBargv\fR\fR
+.in +24n
+.rt
+Specifies the command-line arguments to parse\&. These arguments
+are generally passed to \fBpoptGetContext()\fR exactly as they
+were passed to the application\&'s \fBmain()\fR function\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fBoptions\fR\fR
+.in +24n
+.rt
+Points
+to the table of command-line options\&. See the Option Tables section above\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fBflags\fR\fR
+.in +24n
+.rt
+Can take
+one of the following values:
+.sp
+.sp
+.ne 2
+.mk
+\fBPOPT_CONTEXT_NO_EXEC\fR
+.in +24n
+.rt
+Ignore \fBexec\fR expansions
+.sp
+.sp 2
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_CONTEXT_KEEP_FIRST\fR
+.in +24n
+.rt
+Do not ignore \fBargv[0]\fR
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_CONTEXT_POSIXMEHARDER\fR
+.in +24n
+.rt
+Options
+cannot follow arguments
+.sp
+.sp 1
+.in -24n
+.sp 0
+.in -24n
+.PP
+A \fBpoptContext\fR keeps track of which
+options have already been parsed and which remain to be parsed\&. If an application
+wishes to restart processing the options of a set of arguments, the application
+can reset the \fBpoptContext\fR by passing the context as the
+sole argument to \fBpoptResetContext()\fR\&.
+.PP
+When argument processing is complete, the process should free the \fBpoptContext\fR, as it contains dynamically allocated components\&. The \fBpoptFreeContext()\fR function takes a \fBpoptContext\fR
+as its sole argument  and frees the resources that the context is using\&.
+.PP
+Here are the prototypes of both \fBpoptResetContext()\fR
+and \fBpoptFreeContext()\fR:
+.sp
+.nf
+\f(CW#include <popt\&.h>
+void poptFreeContext(poptContext con);
+void poptResetContext(poptContext con);\fR
+.fi
+.sp
+.SS "Parsing the Command Line"
+.PP
+After an application has created a \fBpoptContext\fR, the \fBpoptContext\fR may begin parsing arguments\&. \fBpoptGetNextOpt()\fR performs the actual argument parsing:
+.sp
+.nf
+\f(CW#include <popt\&.h>
+int poptGetNextOpt(poptContext con);\fR
+.fi
+.sp
+.PP
+Taking the context as its sole argument, the \fBpoptGetNextOpt()\fR function parses the next command-line argument found\&. When \fBpoptGetNextOpt()\fR finds the next argument in the option table, the
+function populates the object pointed to by the option table entry\&'s \fBarg\fR pointer, if the pointer is not NULL\&. If the \fBval\fR
+entry for the option is not zero, the function returns that value\&. Otherwise, \fBpoptGetNextOpt()\fR continues to the next argument\&.
+.PP
+\fBpoptGetNextOpt()\fR returns \(mi1 when the final
+argument has been parsed, and other negative values when errors occur\&. Therefore,
+you should ensure that the \fBval\fR elements in the option table
+are greater than 0\&.
+.PP
+If all of the command-line options are handled through \fBarg\fR pointers, command-line parsing is reduced to the following line
+of code:
+.sp
+.nf
+\f(CWrc = poptGetNextOpt(poptcon);\fR
+.fi
+.sp
+.PP
+Many applications require more complex command-line parsing than this,
+however, and use the following structure:
+.sp
+.nf
+\f(CWwhile ((rc = poptGetNextOpt(poptcon)) > 0) {
+     switch (rc) {
+          /* specific arguments are handled here */
+     }
+}\fR
+.fi
+.sp
+.PP
+When returned options are handled, the application needs to know the
+value of any arguments that were specified after the option\&. There are two
+ways to discover these values:
+.sp
+.in +2
+\(bu
+.mk
+.in +3
+.rt
+Ask \fBpopt\fR to populate a variable with
+the value of the option from the option table\&'s \fBarg\fR elements\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+Use \fBpoptGetOptArg()\fR:
+.sp
+.nf
+\f(CW#include <popt\&.h>
+const char * poptGetOptArg(poptContext con);\fR
+.fi
+.sp
+.sp
+.in -3
+.in -2
+.PP
+The \fBpoptGetOptArg()\fR function returns the argument
+given for the final option returned by \fBpoptGetNextOpt()\fR,
+or returns NULL if no argument was specified\&.
+.SS "Leftover Arguments"
+.PP
+Many applications take an arbitrary number of command-line arguments,
+such as a list of file names\&. When \fBpopt\fR encounters an
+argument that does not begin with a hyphen, \fBpopt\fR assumes
+that this is such an argument, and adds the argument to a list of leftover
+arguments\&. Three functions allow applications to access such arguments:
+.sp
+.ne 2
+.mk
+\fB\fBconst char * poptGetArg(poptContext con);\fR\fR
+.sp .6
+.in +4
+Returns the next leftover argument and marks the argument
+as processed\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBconst char * poptPeekArg(poptContext con);\fR\fR
+.sp .6
+.in +4
+Returns the next leftover argument but does not mark the argument
+as processed\&. This allows an application to look ahead into the argument list,
+without modifying the list\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fB\fBconst char ** poptGetArgs(poptContext con);\fR\fR
+.sp .6
+.in +4
+Returns all of the leftover arguments in a manner identical
+to \fBargv\fR\&. The final element in the returned array points
+to NULL, indicating the end of the arguments\&.
+.sp
+.sp 1
+.in -4
+.SS "Automatic Help Messages"
+.PP
+The popt library can automatically generate help messages that describe
+the options that an application accepts\&. Two types of help messages can be
+generated:
+.sp
+.in +2
+\(bu
+.mk
+.in +3
+.rt
+Usage messages are short messages that list valid options,
+but do not describe the options\&.
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+Help messages describe each option in one or more lines, resulting
+in a longer but more useful message\&.
+.sp
+.in -3
+.in -2
+.PP
+Whenever automatic help messages are used, the \fBdescrip\fR
+and \fBargDescrip\fR members of the \fBstruct poptOption\fR structure should be populated for each option\&.
+.PP
+The POPT_AUTOHELP macro makes it easy to add usage and help messages
+to your application, as described earlier in this man page\&. If you need more
+control over your help messages, use the following functions:
+.sp
+.nf
+\f(CW#include <popt\&.h>
+void poptPrintHelp(poptContext con, FILE * f, int flags);
+void poptPrintUsage(poptContext con, FILE * f, int flags);\fR
+.fi
+.sp
+.PP
+\fBpoptPrintHelp()\fR displays the standard help message
+to the \fBstdio\fR file descriptor \fBf\fR, while \fBpoptPrintUsage()\fR displays the shorter usage message\&. Both functions
+currently ignore the \fBflags\fR argument, which is provided
+for future functionality\&.
+.SS "Option Aliasing"
+.PP
+One of the primary benefits of \fBpopt\fR is the ability
+to use option aliasing\&. Option aliasing allows the user to specify options
+that \fBpopt\fR expands into other options\&. For example\&. if
+the standard \fBgrep\fR command made use of \fBpopt\fR,
+users could add a -\fB\(mitext\fR option that expanded to \fB-i -n -E -2\fR, to allow users to more easily find information in text
+files\&.
+.SS "Specifying Aliases"
+.PP
+Aliases are normally specified in two places: 
+.sp
+.in +2
+\(bu
+.mk
+.in +3
+.rt
+\fB/etc/popt\fR
+.sp
+.in -3
+\(bu
+.mk
+.in +3
+.rt
+\fB$HOME/\&.popt\fR
+.sp
+.in -3
+.in -2
+.PP
+Both files have the same format, that is, an arbitrary number of lines
+formatted as follows: 
+.PP
+.nf
+\fIappname\fR alias \fInewoption\fR \fIexpansion\fR
+.fi
+.PP
+An alias specification is composed of the following elements:
+.sp
+.ne 2
+.mk
+\fB\fIappname\fR\fR
+.in +24n
+.rt
+Specifies the name of the application, which must be the same as the \fBname\fR parameter passed to \fBpoptGetContext()\fR\&. This
+allows each file to specify aliases for multiple programs\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBalias\fR
+.in +24n
+.rt
+Specifies that an alias is
+being defined\&. Currently, \fBpopt\fR configuration files support
+only aliases, but other abilities may be added in the future\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fInewoption\fR\fR
+.in +24n
+.rt
+Specifies the option that should be aliased, either a short option or
+a long option\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fB\fIexpansion\fR\fR
+.in +24n
+.rt
+Specifies the expansion for the alias\&. The expansion is parsed in a
+similar way to a shell command: backslashes are allowed, and single quotation
+marks can be used for quoting\&. If a backslash is the final character on a
+line, the next line in the file is assumed to be a logical continuation of
+the line containing the backslash, just as in a shell command\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.PP
+For example, the following entry would add to the \fBgrep\fR
+command the -\fB\(mitext\fR option described earlier:
+.PP
+\f(CWgrep alias --text -i -n -E -2\fR
+.SS "Enabling Aliases"
+.PP
+An application must enable alias expansion for a \fBpoptContext\fR, before calling \fBpoptGetNextArg()\fR for the first
+time\&. Three functions define aliases for a context:
+.sp
+.ne 2
+.mk
+\fBint poptReadDefaultConfig(poptContext con, int flags);\fR
+.sp .6
+.in +4
+Reads aliases from \fB/etc/popt\fR and \fB$HOME/\&.popt\fR\&.  The \fBflags\fR argument should be NULL,
+it is provided only for future expansion\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBint poptReadConfigFile(poptContext con, char * fn);\fR
+.sp .6
+.in +4
+Opens the file specified by \fBfn\fR and parses
+the file as a \fBpopt\fR configuration file\&. This allows applications
+to use application-specific configuration files\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBint poptAddAlias(poptContext con, struct poptAlias alias,
+int flags);\fR
+.sp .6
+.in +4
+Adds a new alias to a context\&. This function
+is useful when processes want to specify aliases without having to read them
+from a configuration file\&. The \fBflags\fR argument should be
+0, it is provided only for future expansion\&. The new alias is specified as
+a \fBstruct poptAlias\fR, which is defined as follows:
+.sp
+.sp
+.nf
+\f(CWstruct poptAlias {
+     const char * longName; /* may be NULL */
+     char shortName; /* may be \&'\0\&' */
+     int argc;
+     const char ** argv; /* must be free()able */
+};\fR
+.fi
+.sp
+\fBlongName\fR and \fBshortName\fR specify
+the option that is aliased\&. \fBargc\fR and \fBargv\fR
+define the expansion to use when the aliases option is encountered\&.
+.sp
+.sp 1
+.in -4
+.SS "Parsing Argument Strings"
+.PP
+\fBpopt\fR usually parses arguments that are already
+divided into an \fBargv\fR-style array\&. However, some applications
+need to parse strings that are formatted identically to command lines\&. To
+facilitate this, \fBpopt\fR provides a function that parses a
+string into an array of strings, using rules similar to those of normal shell
+parsing:
+.sp
+.nf
+\f(CW#include <popt\&.h>
+int poptParseArgvString(char * s, int * argcPtr,
+                        char *** argvPtr);
+int poptDupArgv(int argc, const char ** argv, int * argcPtr,
+                        const char *** argvPtr);\fR
+.fi
+.sp
+.PP
+The string \fBs\fR is parsed into an \fBargv\fR-style
+array\&. The integer pointed to by the \fBargcPtr\fR parameter
+contains the number of elements parsed, and the final \fBargvPtr\fR
+parameter contains the address of the newly created array\&. The routine \fBpoptDupArgv()\fR can be used to make a copy of an existing argument
+array\&.
+.PP
+The \fBargvPtr\fR created by \fBpoptParseArgvString()\fR or \fBpoptDupArgv()\fR can be passed directly to \fBpoptGetContext()\fR\&. Both routines return a single dynamically allocated
+contiguous block of storage and should be freed using \fBfree()\fR
+when the application is finished with the storage\&.
+.SS "Handling Extra Arguments"
+.PP
+Some applications implement the equivalent of option aliasing but do
+so using special logic\&. The \fBpoptStuffArgs()\fR function allows
+an application to insert new arguments into the current \fBpoptContext\fR:
+.sp
+.nf
+\f(CW#include <popt\&.h>
+int poptStuffArgs(poptContext con, const char ** argv);\fR
+.fi
+.sp
+.PP
+The passed \fBargv\fR must have a NULL pointer as its final
+element\&. When \fBpoptGetNextOpt()\fR is next called, the "stuffed"
+arguments are the first to be parsed\&. \fBpopt\fR returns to
+the normal arguments when all of the stuffed arguments have been exhausted\&.
+.SH ""
+.PP
+All of the \fBpopt\fR functions that can return errors
+return integers\&. When an error occurs, a negative error code is returned\&.
+The following error codes can occur:
+.sp
+.ne 2
+.mk
+\fBPOPT_ERROR_BADNUMBER\fR
+.in +24n
+.rt
+A string-to-number
+conversion failed because the string contains nonnumeric characters\&. This
+occurs when \fBpoptGetNextOpt()\fR is processing an argument
+of type POPT_ARG_INT, POPT_ARG_LONG, POPT_ARG_FLOAT, or POPT_ARG_DOUBLE\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_ERROR_BADOPT\fR
+.in +24n
+.rt
+An option was
+specified in \fBargv\fR but is not in the option table\&. This
+error can be returned only from \fBpoptGetNextOpt()\fR\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_ERROR_BADQUOTE\fR
+.in +24n
+.rt
+A parsed string
+has a quotation mismatch, for example, a single quotation mark\&. \fBpoptParseArgvString()\fR, \fBpoptReadConfigFile()\fR,
+or \fBpoptReadDefaultConfig()\fR can return this error\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_ERROR_ERRNO\fR
+.in +24n
+.rt
+A system call returned
+with an error, and \fBerrno\fR still contains the error from
+the system call\&. Both \fBpoptReadConfigFile()\fR and \fBpoptReadDefaultConfig()\fR can return this error\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_ERROR_NOARG\fR
+.in +24n
+.rt
+An option that
+requires an argument was specified on the command line, but no argument was
+given\&. This error can be returned only by \fBpoptGetNextOpt()\fR\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_ERROR_OPTSTOODEEP\fR
+.in +24n
+.rt
+A set of
+option aliases is nested too deeply\&.  Currently, \fBpopt\fR
+follows options to only 10 levels, to prevent infinite recursion\&. Only \fBpoptGetNextOpt()\fR can return this error\&.
+.sp
+.sp 1
+.in -24n
+.sp
+.ne 2
+.mk
+\fBPOPT_ERROR_OVERFLOW\fR
+.in +24n
+.rt
+A string-to-number
+conversion failed because the number is too large or too small\&. This error
+can occur only when  \fBpoptGetNextOpt()\fR is processing an
+argument of type POPT_ARG_INT, POPT_ARG_LONG, POPT_ARG_FLOAT, or POPT_ARG_DOUBLE\&.
+.sp
+.sp 1
+.in -24n
+.PP
+Two functions allow applications to provide good error
+messages:
+.sp
+.ne 2
+.mk
+\fBconst char *const poptStrerror(const int error);\fR
+.sp .6
+.in +4
+Takes a \fBpopt\fR error code and returns a string
+describing the error, just as with the standard \fBstrerror()\fR
+function\&.
+.sp
+.sp 1
+.in -4
+.sp
+.ne 2
+.mk
+\fBconst char * poptBadOption(poptContext con, int flags);\fR
+.sp .6
+.in +4
+Returns the option that caused the error, if an error
+occurred during \fBpoptGetNextOpt()\fR\&. If the \fBflags\fR argument is set to POPT_BADOPTION_NOALIAS, the outermost option
+is returned\&. Otherwise, \fBflags\fR should be 0, and the option
+that is returned may have been specified through an alias\&.
+.sp
+.sp 1
+.in -4
+.PP
+These two functions ensure that \fBpopt\fR
+error handling is trivial for most applications\&. When an error is detected
+from most of the functions, an error message is printed along with the error
+string from \fBpoptStrerror()\fR\&. When an error occurs during
+argument parsing, code similar to the following displays a useful error message:
+.sp
+.nf
+\f(CWfprintf(stderr, "%s: %s\n",
+        poptBadOption(optCon, POPT_BADOPTION_NOALIAS),
+        poptStrerror(rc));\fR
+.fi
+.sp
+.SH ""
+.PP
+\fBExample 1: Parse Program Created From robin Program\fR
+.PP
+The following example is a simplified version of the \fBrobin\fR program that appears in Chapter 15 of "Linux Application
+Development" by Michael K\&. Johnson and Erik W\&. Troan (copyright 1998
+by Addison Wesley Longman, Inc\&.)\&. The \fBrobin\fR program has
+been stripped of everything but its argument-parsing logic, slightly reworked,
+and renamed \fBparse\fR\&. This program illustrates some of the
+features of the extremely rich \fBpopt\fR library\&.
+.sp
+.nf
+\f(CW#include <popt\&.h>
+#include <stdio\&.h>
+
+void usage(poptContext optCon, int exitcode, char *error, char *addl) {
+    poptPrintUsage(optCon, stderr, 0);
+    if (error) fprintf(stderr, "%s: %s0, error, addl);
+    exit(exitcode);
+}
+
+int main(int argc, char *argv[]) {
+   char    c;            /* used for argument parsing */
+   int     i = 0;        /* used for tracking options */
+   char    *portname;
+   int     speed = 0;    /* used in argument parsing to set speed */
+   int     raw = 0;      /* raw mode? */
+   int     j;
+   char    buf[BUFSIZ+1];
+   poptContext optCon;   /* context for parsing command-line options */
+
+   struct poptOption optionsTable[] = {
+                         { "bps", \&'b\&', POPT_ARG_INT, &speed, 0,
+                              "signaling rate in bits-per-second", "BPS" },
+                         { "crnl", \&'c\&', 0, 0, \&'c\&',
+                              "expand cr characters to cr/lf sequences" },
+                         { "hwflow", \&'h\&', 0, 0, \&'h\&',
+                              "use hardware (RTS/CTS) flow control" },
+                         { "noflow", \&'n\&', 0, 0, \&'n\&',
+                              "use no flow control" },
+                         { "raw", \&'r\&', 0, &raw, 0,
+                              "don\&'t perform any character conversions" },
+                         { "swflow", \&'s\&', 0, 0, \&'s\&',
+                               "use software (XON/XOF) flow control" } ,
+                         POPT_AUTOHELP
+                         { NULL, 0, 0, NULL, 0 }
+   };
+
+   optCon = poptGetContext(NULL, argc, argv, optionsTable, 0);
+   poptSetOtherOptionHelp(optCon, "[OPTIONS]* <port>");
+
+   if (argc < 2) {
+                          poptPrintUsage(optCon, stderr, 0);
+                          exit(1);
+   }
+
+   /* Now do options processing, get portname */
+   while ((c = poptGetNextOpt(optCon)) >= 0) {
+      switch (c) {
+         case \&'c\&':
+            buf[i++] = \&'c\&';
+            break;
+         case \&'h\&':
+            buf[i++] = \&'h\&';
+            break;
+         case \&'s\&':
+            buf[i++] = \&'s\&';
+            break;
+         case \&'n\&':
+            buf[i++] = \&'n\&';
+            break;
+      }
+  }
+  portname = poptGetArg(optCon);
+  if((portname == NULL) || !(poptPeekArg(optCon) == NULL))
+     usage(optCon, 1, "Specify a single port", "\&.e\&.g\&., /dev/cua0");
+
+  if (c < -1) {
+     /* an error occurred during option processing */
+     fprintf(stderr, "%s: %s\n",
+             poptBadOption(optCon, POPT_BADOPTION_NOALIAS),
+             poptStrerror(c));
+     return 1;
+  }
+
+  /* Print out options, portname chosen */
+  printf("Options  chosen: ");
+  for(j = 0; j < i ; j++)
+     printf("-%c ", buf[j]);
+  if(raw) printf("-r ");
+  if(speed) printf("-b %d ", speed);
+  printf("\nPortname chosen: %s\n", portname);
+
+  poptFreeContext(optCon);
+  exit(0);
+}
+\fR
+.fi
+.sp
+.PP
+RPM, a popular Linux package management application, uses several \fBpopt\fR features\&. Many RPM command-line arguments are implemented
+using \fBpopt\fR aliases, which makes RPM an excellent example
+of how to take advantage of the \fBpopt\fR library\&. For more
+information about RPM, see \fBhttp://www\&.rpm\&.org\fR\&. The \fBpopt\fR source code distribution includes test programs that use all
+of the features of the \fBpopt\fR libraries in various ways\&.
+If a \fBpopt\fR feature does not work for you, check the \fBpopt\fR test code\&.
+.SH ""
+.PP
+The following files are used by this library:
+.sp
+.ne 2
+.mk
+\fB\fB/usr/lib/libpopt\&.so\fR \fR
+.in +24n
+.rt
+Command Line Parser API shared library
+.sp
+.sp 1
+.in -24n
+.SH ""
+.PP
+\fBgetopt\fR(3),
+\fBattributes\fR(5)
+.SH ""
+.PP
+Updated by Erwann Chenede, Sun Microsystems Inc\&., 2003\&. Written by Erik
+W\&. Troan (ewt@redhat\&.com), Michael K\&. Johnson, and Robert Lynch\&.
+...\" created by instant / solbook-to-man, Tue 21 Aug 2012, 08:56
