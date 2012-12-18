@@ -26,15 +26,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		parallel
-COMPONENT_VERSION=	20120422
+COMPONENT_VERSION=	20121122
 # A leading "0." is included to make it easier to upgrade the package, should
 # the maintainers decide to go to a more standard version numbering system.
-IPS_COMPONENT_VERSION=  0.2012.4.22
+IPS_COMPONENT_VERSION=  0.2012.11.22
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/parallel/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d727b195716448e287546106115ac2e916e98625edb5f0c5bd1a48234b811c80
+    sha256:0315336141612ba2ec1f76e6c8c58a72f4531777c96b79b91ef64b3980be584f
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
