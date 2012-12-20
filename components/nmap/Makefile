@@ -26,43 +26,49 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         nmap
-COMPONENT_VERSION=      5.51
-COMPONENT_PROJECT_URL=	http://insecure.org/
+COMPONENT_VERSION=      6.25
+COMPONENT_PROJECT_URL=	http://nmap.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d44cd28fc087a98056234ac56fc187b6742daa5c20f56bc4d524548042f4b25e
-COMPONENT_ARCHIVE_URL=  http://nmap.org/dist/$(COMPONENT_ARCHIVE)
+    sha256:42c54fd5cc5f05e5df909757d62307102a8ff1dfaf5c2626b1cb5f2ecd009e57
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/nmap
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Can't use the Studio compilers as they don't support the GNU 
+# __attribute__ extension
 COMPILER =	gcc
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS  +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=   CXX="$(CXX)"
 CONFIGURE_OPTIONS  +=   CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS  +=   CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS  +=   LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=   LIBS="-lsocket -lnsl"
 CONFIGURE_OPTIONS  +=   PYTHON="$(PYTHON)"
-CONFIGURE_OPTIONS  +=   --disable-shared 
-CONFIGURE_OPTIONS  +=   --enable-static 
-CONFIGURE_OPTIONS  +=   --disable-libtool-lock 
+CONFIGURE_OPTIONS  +=   --srcdir=$(BUILD_DIR_32)
 CONFIGURE_OPTIONS  +=   --localstatedir=/var 
 CONFIGURE_OPTIONS  +=   --without-localdirs 
 CONFIGURE_OPTIONS  +=   --with-zenmap 
 CONFIGURE_OPTIONS  +=   --with-openssl
 CONFIGURE_OPTIONS  +=   --with-libpcap
 CONFIGURE_OPTIONS  +=   --with-libpcre
-CONFIGURE_OPTIONS  +=   --without-liblua 
+CONFIGURE_OPTIONS  +=   --with-liblua 
 CONFIGURE_OPTIONS  +=   --with-ncat 
 CONFIGURE_OPTIONS  +=   --with-ndiff
-CONFIGURE_OPTIONS  +=   am_cv_python_pythondir=$(PYTHON_LIB)
+
+# pkgdepend doesn't like the first line of a Python script to be:
+# '#!/usr/bin/env python' so turn it into '#!/usr/bin/python2.6'
+COMPONENT_POST_INSTALL_ACTION += \
+        $(GSED) -i -e 's?env python?python2.6?' \
+                $(PROTOUSRBINDIR)/uninstall_zenmap
 
 # common targets
 build:		$(BUILD_32)
