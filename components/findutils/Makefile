@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,6 +42,9 @@ include ../../make-rules/ips.mk
 CONFIGURE_PREFIX =	/usr/gnu
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+
+# Disable the leaf optimisation feature, because the st_nlinks directory
+# field is incorrect on ZFS file systems.
 CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
 
 # common targets
