@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -63,6 +63,7 @@ CONFIGURE_OPTIONS +=	--enable-openssl
 CONFIGURE_OPTIONS +=	--enable-dbus
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS +=	--enable-64bit
+CONFIGURE_OPTIONS +=	--enable-auditing
 
 CONFIGURE_OPTIONS += 	ARCH64FLAGS=-m64
 CONFIGURE_OPTIONS += 	DSO64FLAGS="$(LDLIBS) -G"
