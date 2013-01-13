@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -28,34 +28,34 @@ include ../../make-rules/shared-macros.mk
 PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
 COMPONENT_NAME=			erlang
-COMPONENT_VERSION_MAJOR=	12
+COMPONENT_VERSION_MAJOR=	15
 COMPONENT_VERSION_MINOR=	B
-COMPONENT_VERSION_MICRO=	5
+COMPONENT_VERSION_MICRO=	03
 # IPS_COMPONENT_VERSION needs update whenever this is changed
-COMPONENT_VERSION=	R$(COMPONENT_VERSION_MAJOR)$(COMPONENT_VERSION_MINOR)-$(COMPONENT_VERSION_MICRO)
+COMPONENT_VERSION=	R$(COMPONENT_VERSION_MAJOR)$(COMPONENT_VERSION_MINOR)$(COMPONENT_VERSION_MICRO)
 COMPONENT_PROJECT_URL=	http://www.erlang.org/
 COMPONENT_SRC_NAME=	otp_src
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-1.tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6ec3f344dd626bd83494fcad66db98a03f930a039b2a1499313d1a5a57aadda7
+    sha256:4bccac86dd76aec050252e44276a0283a0df9218e6470cf042a9b9f9dfc9476c
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/erlang
 
 # manpages
 COMPONENT_NAME_1=	otp_doc_man
 COMPONENT_SRC_1=	$(COMPONENT_NAME_1)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
+COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1)-1.tar.gz
 COMPONENT_ARCHIVE_HASH_1=	\
-    sha256:f7acb458b72ffa8f9b1f45501bed85d3d9fb691c601f3f6997856c501e2f0659
+    sha256:07980d8014c7cf8194b7078c137353f5083992add4663ced3dcba2ff91f228d8
 COMPONENT_ARCHIVE_URL_1=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_1)
 
 # HTML documentation
 COMPONENT_NAME_2=	otp_doc_html
 COMPONENT_SRC_2=	$(COMPONENT_NAME_2)_$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE_2=	$(COMPONENT_SRC_2).tar.gz
+COMPONENT_ARCHIVE_2=	$(COMPONENT_SRC_2)-1.tar.gz
 COMPONENT_ARCHIVE_HASH_2=	\
-    sha256:db131a347217ab434ca4c483abb61dc01989e0db43e1fe6982c3067f60cf91d7
+    sha256:d06f580f11d1303217a5c1cf8d68a98d7e01c535be934dcd430ecdc254f7572e
 COMPONENT_ARCHIVE_URL_2=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
 
 include ../../make-rules/prep.mk
@@ -64,9 +64,10 @@ include ../../make-rules/ips.mk
 
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but it is not
 # enough for us. We need to include the $(COMPONENT_SUBVERSION) somehow.
-# Because the IPS_COMPONENT_VERSION cannot contain letters we use mapping:
-# R(major)(minor)-(micro) - (major).(minor as number).(micro)
-IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION_MAJOR).2.$(COMPONENT_VERSION_MICRO)
+# Because the IPS_COMPONENT_VERSION cannot contain letters or leading zeroes
+# we use mapping:
+# R(major)(minor)(micro) - (major).(minor as number).(micro)
+IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION_MAJOR).2.3
 
 # Built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
@@ -81,6 +82,9 @@ CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 
 CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS.64 += LIBS="-m64"
+
+# Needed for 'set name=info.source-url' action in erlang-doc.p5m
+PKG_MACROS += COMPONENT_ARCHIVE_URL_2=$(COMPONENT_ARCHIVE_URL_2) 
 
 # Use cp(1) instead of cloney because erlang's 'install' target uses 'tar'
 # to copy files and our tar doesn't handle long links by default.  Between
