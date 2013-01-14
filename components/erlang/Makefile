@@ -76,6 +76,9 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
+# The HiPE portion is a bit sensitive, and only seems to work 64-bit on 
+# amd64 (thus the variant.arch tagging in erlang.p5m). erts/config.log
+# can be very interesting if issues occur. 
 CONFIGURE_OPTIONS += --enable-hipe
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
