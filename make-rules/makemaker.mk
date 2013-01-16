@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we only do 32 bit perl for now.
@@ -35,7 +35,6 @@ COMMON_PERL_ENV +=	CFLAGS="$(PERL_OPTIMIZE)"
 # directories.
 PERLBD_ARCH = $(BUILD_DIR)/$(MACH32)
 
-$(PERLBD_ARCH)-5.8.4/.configured:		PERL_VERSION=5.8.4
 $(PERLBD_ARCH)-5.12/.configured:		PERL_VERSION=5.12
 
 BUILD_32 =	$(PERL_VERSIONS:%=$(PERLBD_ARCH)-%/.built)

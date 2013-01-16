@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -305,9 +305,8 @@ JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.12
 
-PERL_VERSIONS = 5.8.4 5.12
+PERL_VERSIONS = 5.12
 
-PERL.5.8.4 =    /usr/perl5/5.8.4/bin/perl
 PERL.5.12 =     /usr/perl5/5.12/bin/perl
 
 PERL =          $(PERL.$(PERL_VERSION))

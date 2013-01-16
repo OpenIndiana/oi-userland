@@ -18,21 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri value=pkg:/library/perl-5/xml-simple@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="XML::Simple - Easy API to maintain XML (esp config files)"
+set name=pkg.summary \
+    value="XML::Simple - Easy API to maintain XML (esp config files)"
 set name=pkg.description value="The XML::Simple module provides a simple API layer on top of an underlying XML parsing module (either XML::Parser or one of the SAX2 parser modules)."
-set name=info.classification value="org.opensolaris.category.2008:Development/Perl"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Perl"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-# perl 5.8.4
-depend fmri=library/perl-5/xml-simple-584 predicate=runtime/perl-584 \
-    type=conditional
+
 # perl 5.12
 depend fmri=library/perl-5/xml-simple-512 predicate=runtime/perl-512 \
     type=conditional
+
 # No legacy package because this is split from xml-parser
 depend fmri=library/perl-5/xml-parser type=require
