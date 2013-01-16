@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -32,7 +32,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:42ae2dc29a5ebf5088521cb8df2b1bdf039d28e14845fd9df4ab59658b565cfd
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/pyopenssl/main/0.11/+download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/openssl
+COMPONENT_BUGDB=	python-mod/pyopenssl
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
