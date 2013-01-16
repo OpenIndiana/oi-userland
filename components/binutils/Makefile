@@ -18,18 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		binutils
-COMPONENT_VERSION=	2.21.1
+COMPONENT_VERSION=	2.23.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/binutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:cdecfa69f02aa7b05fbcdf678e33137151f361313b2f3e48aba925f64eabf654
+	sha256:2ab2e5b03e086d12c6295f831adad46b3e1410a3a234933a2e8fac66cb2e7a19
 COMPONENT_BUGDB=	utility/gnu-binutils
 
 include ../../make-rules/prep.mk
@@ -41,13 +41,27 @@ GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 
 PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
 
+CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
+CFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
+CXXFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
+CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
+
 CONFIGURE_PREFIX =	/usr/gnu
 
-CONFIGURE_OPTIONS +=	 --mandir=$(CONFIGURE_MANDIR)
-CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS +=	--mandir=$(CONFIGURE_MANDIR)
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--enable-64-bit-bfd
+CONFIGURE_OPTIONS +=    --enable-gold=no
+CONFIGURE_OPTIONS +=    --enable-plugins=no
+CONFIGURE_OPTIONS +=    --enable-nls
+CONFIGURE_OPTIONS +=    --disable-libtool-lock
+CONFIGURE_OPTIONS +=    --enable-largefile=yes
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=	CC="$(CC)"
+CONFIGURE_OPTIONS +=	CXX="$(CXX)"
+CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=    CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
 
 # common targets
 build:		$(BUILD_32)
