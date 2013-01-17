@@ -172,7 +172,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_guid.3 libibverbs-1.1
  .B ibv_get_device_guid()
 diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_post_send.3 libibverbs-1.1.4/man/ibv_post_send.3
 --- /tmp/846623/libibverbs-1.1.4/man/ibv_post_send.3	Thu Mar 10 06:58:20 2011
-+++ libibverbs-1.1.4/man/ibv_post_send.3	Wed Oct 10 11:04:39 2012
++++ libibverbs-1.1.4/man/ibv_post_send.3	Tue Nov 13 10:04:25 2012
 @@ -91,14 +91,17 @@
  The attribute send_flags describes the properties of the \s-1WR\s0. It is either 0 or the bitwise \s-1OR\s0 of one or more of the following flags:
  .PP
@@ -220,6 +220,32 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_async_event.3 libibverbs-1.1
  .I context
  and returns it through the pointer
  .I event\fR,
+@@ -29,6 +29,8 @@
+ struct ibv_qp  *qp;             /* QP that got the event */
+ struct ibv_srq *srq;            /* SRQ that got the event */
+ int             port_num;       /* port number that got the event */
++uint32_t        xrc_qp_num;     /* XRC QP that got the event */
++union ibv_gid   gid;            /* list of guids that got the event */
+ .in -8
+ } element;
+ enum ibv_event_type     event_type;     /* type of the event */
+@@ -86,6 +88,16 @@
+ .TP
+ .B IBV_EVENT_DEVICE_FATAL \fR CA is in FATAL state
+ .PP
++.I Subnet events:
++.TP
++.B IBV_SM_EVENT_MCG_CREATED \fR notification of MCG creation
++.TP
++.B IBV_SM_EVENT_MCG_DELETED \fR notification of MCG deletion
++.TP
++.B IBV_SM_EVENT_GID_AVAIL \fR notification of GID available events
++.TP
++.B IBV_SM_EVENT_GID_UNAVAIL \fR notification of GID unavailable events
++.PP
+ .B ibv_ack_async_event()
+ acknowledge the async event
+ .I event\fR.
 diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_list.3 libibverbs-1.1.4/man/ibv_get_device_list.3
 --- /tmp/846623/libibverbs-1.1.4/man/ibv_get_device_list.3	Thu Mar 10 04:51:46 2011
 +++ libibverbs-1.1.4/man/ibv_get_device_list.3	Mon Mar 28 03:11:46 2011
@@ -277,15 +303,93 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_query_port.3 libibverbs-1.1.4/ma
 diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_asyncwatch.1 libibverbs-1.1.4/man/ibv_asyncwatch.1
 --- /tmp/846623/libibverbs-1.1.4/man/ibv_asyncwatch.1	Thu Mar 10 04:51:46 2011
 +++ libibverbs-1.1.4/man/ibv_asyncwatch.1	Mon Mar 28 03:11:45 2011
-@@ -8,7 +8,7 @@
+@@ -1,16 +1,78 @@
+-.TH IBV_ASYNCWATCH 1 "August 30, 2005" "libibverbs" "USER COMMANDS"
++'\" te
++.TH IBV_ASYNCWATCH 1 "August 8, 2012" "libibverbs" "USER COMMANDS"
  
+ .SH NAME
+ ibv_asyncwatch \- display asynchronous events
+ 
+ .SH SYNOPSIS
+-.B ibv_asyncwatch
+-
++.sp
++.nf
++\fIibv_asyncwatch\fR [\-G | \-M] [\-s[<guid>]] [\-p port]
++\fIibv_asyncwactch\fR \-s
++\fIibv_asyncwatch\fR \-G \-s
++\fIibv_asyncwatch\fR \-M \-s
++\fIibv_asyncwatch\fR \-G [\-p port] \-s<guid1>,<guid2>,...
++\fIibv_asyncwatch\fR \-M [\-p port] \-s<mgid1>,<mgid2>,...
++.fi
++.sp
  .SH DESCRIPTION
  .PP
 -Display asynchronous events forwarded to userspace for an RDMA device.
 +Display asynchronous events forwarded to userspace for an InfiniBand device.
++SM events can be monitored using the '-s' option, which optionally
++takes a remote port GUID, or list of remote port GUIDS separated by ','.
++If '-s' is specified with no argument then all remote nodes reachable
++form device 0 are monitored, otherwise only the specified remote
++nodes are monitored. The following SM events are monitored using
++the '-s' option: 
  
- .SH AUTHORS
- .TP
+-.SH AUTHORS
+-.TP
+-Roland Dreier
+-.RI < rolandd@cisco.com >
++    IBV_SM_EVENT_MCG_CREATED
++         An MCG specified by the "mgid" has been created
++         on this subnet.
++
++    IBV_SM_EVENT_MCG_DELETED
++         The MCG specified by the "mgid" has been deleted
++         on this subnet.
++
++    IBV_SM_EVENT_GID_AVAIL
++         The GID specified by the "guid" is available
++         on this subnet.
++
++    IBV_SM_EVENT_GID_UNAVAIL
++         The GID specified by the "guid" is no longer
++         available on this subnet.
++
++.SH OPTIONS
++.pp
++\-G               Monitor SM event for Unicast GIDs
++.sp
++.pp
++\-M               Monitor SM event for Multicast GIDs
++.pp
++\-s<GUID>         Takes as an optional argument a comma separated list of remote port GUIDs if \-G is specified or Multicast GIDs if \-M is specified.
++.sp
++.PP
++\-p <port>        use the specified ca_port.
++.sp
++.pp
++.SH EXAMPLES
++.PP
++To monitor event=IBV_SM_EVENT_ALL
++.sp
++ibv_asyncwatch -s
++.sp
++To monitor event=IBV_SM_EVENT_UGID_ALL
++.sp
++ibv_asyncwatch -G -s
++.sp
++To monitor event=IBV_SM_EVENT_MGID_ALL
++.sp
++ibv_asyncwatch -M -s
++.sp
++To monitor event=IBV_SM_EVENT_UGID
++.sp
++ibv_asyncwatch -G -s0x0021280001a0e4d9,0x0021280001a0e4da
++.sp
++To monitor event=IBV_SM_EVENT_MGID
++.sp
++ibv_asyncwatch -M -s0xff12:4001:ffff::c:2238
++.sp
 diff -r -u /tmp/846623/libibverbs-1.1.4/man/ibv_open_device.3 libibverbs-1.1.4/man/ibv_open_device.3
 --- /tmp/846623/libibverbs-1.1.4/man/ibv_open_device.3	Thu Mar 10 04:51:46 2011
 +++ libibverbs-1.1.4/man/ibv_open_device.3	Mon Mar 28 03:11:46 2011
@@ -473,7 +577,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  	char name[24];
  	char attr[8];
  	uint16_t val;
-@@ -133,6 +151,7 @@
+@@ -133,9 +151,142 @@
  
  	*pkey = htons(val);
  	return 0;
@@ -481,7 +585,142 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  }
  default_symver(__ibv_query_pkey, ibv_query_pkey);
  
-@@ -148,6 +167,27 @@
++int ibv_register_sm_events(struct ibv_context *context,
++    ibv_sm_event_type_t event, uint_t gid_num, union ibv_gid *gids)
++{
++	struct ibv_reg_sm_event		*cmd;
++	int				rc, cmd_size, data_size;
++	void				*data_p;
++
++	if (((gid_num > 0) && (gids == NULL)) ||
++	   ((gid_num == 0) && (gids != NULL))) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if ((event != IBV_SM_EVENT_UGID) && (event != IBV_SM_EVENT_UGID_ALL) &&
++	    (event != IBV_SM_EVENT_MGID) && (event != IBV_SM_EVENT_MGID_ALL) &&
++	    (event != IBV_SM_EVENT_ALL)) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if (((event == IBV_SM_EVENT_UGID) || (event == IBV_SM_EVENT_MGID)) &&
++	    (gid_num == 0)) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if (((event == IBV_SM_EVENT_UGID_ALL) ||
++	    (event == IBV_SM_EVENT_MGID_ALL) || (event == IBV_SM_EVENT_ALL)) &&
++	    (gid_num != 0)) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	data_size = gid_num * (sizeof (union ibv_gid));
++	cmd_size = (sizeof (struct ibv_reg_sm_event)) + data_size;
++	data_p = (void *)gids;
++	cmd  = alloca(cmd_size);
++	cmd->data_num = gid_num;
++
++	IBV_INIT_CMD(cmd, cmd_size, REG_SM_EVENT);
++
++	cmd->events = event;
++	if (gid_num > 0)
++		memcpy(cmd->driver_data, data_p, data_size);
++
++	rc = write(context->cmd_fd, cmd, cmd_size);
++	if (rc < 0) {
++		errno = -rc;
++		rc = -1;
++	}
++
++	return (rc);
++}
++
++int ibv_unregister_sm_events(struct ibv_context *context,
++    ibv_sm_event_type_t event, uint_t gid_num, union ibv_gid *gids)
++{
++	struct ibv_unreg_sm_event	*cmd;
++	int				rc, cmd_size, data_size;
++	void				*data_p;
++
++	if (((gid_num > 0) && (gids == NULL)) ||
++	   ((gid_num == 0) && (gids != NULL))) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if ((event != IBV_SM_EVENT_UGID) && (event != IBV_SM_EVENT_UGID_ALL) &&
++	    (event != IBV_SM_EVENT_MGID) && (event != IBV_SM_EVENT_MGID_ALL) &&
++	    (event != IBV_SM_EVENT_ALL)) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if (((event == IBV_SM_EVENT_UGID) || (event == IBV_SM_EVENT_MGID)) &&
++	    (gid_num == 0)) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if (((event == IBV_SM_EVENT_UGID_ALL) ||
++	    (event == IBV_SM_EVENT_MGID_ALL) || (event == IBV_SM_EVENT_ALL)) &&
++	    (gid_num != 0)) {
++		errno = EINVAL;
++		return (-1);
++	}
++
++	data_size = gid_num*(sizeof (union ibv_gid));
++	cmd_size = (sizeof (struct ibv_unreg_sm_event)) + data_size;
++	data_p = (void *)gids;
++	cmd  = alloca(cmd_size);
++	cmd->data_num = gid_num;
++
++	IBV_INIT_CMD(cmd, cmd_size, UNREG_SM_EVENT);
++
++	cmd->events = event;
++	if (gid_num > 0)
++		memcpy(cmd->driver_data, data_p, data_size);
++
++	rc = write(context->cmd_fd, cmd, cmd_size);
++	if (rc < 0) {
++		errno = -rc;
++		rc = -1;
++	}
++
++	return (rc);
++}
++
++int ibv_gid_reachable(struct ibv_context *context,
++    uint_t port, union ibv_gid *gid_p, int timeout)
++{
++	struct ibv_gid_reachable	*cmd;
++	int				rc;
++
++	cmd = alloca((sizeof (struct ibv_gid_reachable)));
++	cmd->port_num = port;
++	cmd->timeout = timeout;
++
++	IBV_INIT_CMD(cmd, sizeof (struct ibv_gid_reachable),
++	    GID_REACHABLE);
++
++	memcpy(cmd->gid, gid_p, sizeof (*gid_p));
++
++	rc = write(context->cmd_fd, cmd, sizeof(struct ibv_gid_reachable));
++	if (rc < 0) {
++		errno = -rc;
++		rc = -1;
++	}
++
++	return (rc);
++}
++
+ struct ibv_pd *__ibv_alloc_pd(struct ibv_context *context)
+ {
+ 	struct ibv_pd *pd;
+@@ -148,6 +299,27 @@
  }
  default_symver(__ibv_alloc_pd, ibv_alloc_pd);
  
@@ -509,7 +748,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  int __ibv_dealloc_pd(struct ibv_pd *pd)
  {
  	return pd->context->ops.dealloc_pd(pd);
-@@ -175,6 +215,27 @@
+@@ -175,6 +347,27 @@
  }
  default_symver(__ibv_reg_mr, ibv_reg_mr);
  
@@ -537,7 +776,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  int __ibv_dereg_mr(struct ibv_mr *mr)
  {
  	int ret;
-@@ -189,6 +250,26 @@
+@@ -189,6 +382,26 @@
  }
  default_symver(__ibv_dereg_mr, ibv_dereg_mr);
  
@@ -564,7 +803,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  static struct ibv_comp_channel *ibv_create_comp_channel_v2(struct ibv_context *context)
  {
  	struct ibv_abi_compat_v2 *t = context->abi_compat;
-@@ -212,6 +293,10 @@
+@@ -212,6 +425,10 @@
  	struct ibv_comp_channel            *channel;
  	struct ibv_create_comp_channel      cmd;
  	struct ibv_create_comp_channel_resp resp;
@@ -575,7 +814,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  
  	if (abi_ver <= 2)
  		return ibv_create_comp_channel_v2(context);
-@@ -221,7 +306,23 @@
+@@ -221,7 +438,23 @@
  		return NULL;
  
  	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, CREATE_COMP_CHANNEL, &resp, sizeof resp);
@@ -599,7 +838,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  		free(channel);
  		return NULL;
  	}
-@@ -228,6 +329,9 @@
+@@ -228,6 +461,9 @@
  
  	VALGRIND_MAKE_MEM_DEFINED(&resp, sizeof resp);
  
@@ -677,6 +916,22 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device
  	close(async_fd);
  	close(cmd_fd);
  	if (abi_ver <= 2)
+@@ -214,6 +249,15 @@
+ 		case IBV_EVENT_SRQ_LIMIT_REACHED:
+ 			event->element.srq = (void *) (uintptr_t) ev.element;
+ 			break;
++		case IBV_EVENT_GID_AVAIL:
++		case IBV_EVENT_GID_UNAVAIL:
++		case IBV_EVENT_MCG_CREATED:
++		case IBV_EVENT_MCG_DELETED:
++			event->element.gid.global.subnet_prefix
++			    = ev.subnet_prefix;
++                        event->element.gid.global.interface_id
++			    = ev.interface_id;
++			break;
+ 		default:
+ 			event->element.port_num = ev.element;
+ 			break;
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/ibverbs.h libibverbs-1.1.4/src/ibverbs.h
 --- /tmp/846623/libibverbs-1.1.4/src/ibverbs.h	Wed Sep 16 04:27:22 2009
 +++ libibverbs-1.1.4/src/ibverbs.h	Fri Feb 11 04:02:31 2011
@@ -697,9 +952,13 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/ibverbs.h libibverbs-1.1.4/src/ibver
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/libibverbs.map libibverbs-1.1.4/src/libibverbs.map
 --- /tmp/846623/libibverbs-1.1.4/src/libibverbs.map	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/src/libibverbs.map	Mon Mar 28 13:44:44 2011
-@@ -13,9 +13,14 @@
+@@ -12,10 +12,18 @@
+ 		ibv_query_port;
  		ibv_query_gid;
  		ibv_query_pkey;
++		ibv_register_sm_events;
++		ibv_unregister_sm_events;
++		ibv__gid_reachable;
  		ibv_alloc_pd;
 +		ibv_alloc_shpd;
 +		ibv_share_pd;
@@ -712,7 +971,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/libibverbs.map libibverbs-1.1.4/src/
  		ibv_create_comp_channel;
  		ibv_destroy_comp_channel;
  		ibv_create_cq;
-@@ -41,9 +46,14 @@
+@@ -41,9 +49,14 @@
  		ibv_cmd_query_gid;
  		ibv_cmd_query_pkey;
  		ibv_cmd_alloc_pd;
@@ -727,7 +986,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/libibverbs.map libibverbs-1.1.4/src/
  		ibv_cmd_create_cq;
  		ibv_cmd_poll_cq;
  		ibv_cmd_req_notify_cq;
-@@ -71,6 +81,7 @@
+@@ -71,6 +84,7 @@
  		mult_to_ibv_rate;
  		ibv_get_sysfs_path;
  		ibv_read_sysfs_file;
@@ -1103,14 +1362,22 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/init.c libibverbs-1.1.4/src/init.c
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/enum_strs.c libibverbs-1.1.4/src/enum_strs.c
 --- /tmp/846623/libibverbs-1.1.4/src/enum_strs.c	Wed Sep 16 04:27:22 2009
 +++ libibverbs-1.1.4/src/enum_strs.c	Tue Mar 20 16:27:45 2012
-@@ -85,6 +85,7 @@
+@@ -85,9 +85,14 @@
  		[IBV_EVENT_SRQ_LIMIT_REACHED]	= "SRQ limit reached",
  		[IBV_EVENT_QP_LAST_WQE_REACHED]	= "last WQE reached",
  		[IBV_EVENT_CLIENT_REREGISTER]	= "client reregistration",
 +		[IBV_EVENT_GID_CHANGE]		= "GID change",
++		[IBV_EVENT_MCG_CREATED]		= "MCG created",
++		[IBV_EVENT_MCG_DELETED]		= "MCG deleted",
++		[IBV_EVENT_GID_AVAIL]		= "GID available",
++		[IBV_EVENT_GID_UNAVAIL]		= "GID unavailable",
  	};
  
- 	if (event < IBV_EVENT_CQ_ERR || event > IBV_EVENT_CLIENT_REREGISTER)
+-	if (event < IBV_EVENT_CQ_ERR || event > IBV_EVENT_CLIENT_REREGISTER)
++	if (event < IBV_EVENT_CQ_ERR || event > IBV_EVENT_GID_UNAVAIL)
+ 		return "unknown";
+ 
+ 	return event_type_str[event];
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/sysfs.c libibverbs-1.1.4/src/sysfs.c
 --- /tmp/846623/libibverbs-1.1.4/src/sysfs.c	Wed Sep 16 04:27:22 2009
 +++ libibverbs-1.1.4/src/sysfs.c	Fri Feb 11 04:02:33 2011
@@ -1277,7 +1544,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  /*
   * This file must be kept in sync with the kernel's version of
-@@ -94,6 +98,11 @@
+@@ -94,6 +98,14 @@
  	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP,
  	IB_USER_VERBS_CMD_REG_XRC_RCV_QP,
  	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP,
@@ -1285,11 +1552,23 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
 +	IB_USER_VERBS_CMD_DEREG_MR_RELAXED,
 +	IB_USER_VERBS_CMD_FLUSH_RELAXED_MR,
 +	IB_USER_VERBS_CMD_ALLOC_SHPD,
-+	IB_USER_VERBS_CMD_SHARE_PD
++	IB_USER_VERBS_CMD_SHARE_PD,
++	IB_USER_VERBS_CMD_REG_SM_EVENT,
++	IB_USER_VERBS_CMD_UNREG_SM_EVENT,
++	IB_USER_VERBS_CMD_GID_REACHABLE
  };
  
  /*
-@@ -160,6 +169,7 @@
+@@ -111,6 +123,8 @@
+ 	__u64 element;
+ 	__u32 event_type;
+ 	__u32 reserved;
++	__u64 subnet_prefix;
++	__u64 interface_id;
+ };
+ 
+ struct ibv_comp_event {
+@@ -160,6 +174,7 @@
  struct ibv_query_device_resp {
  	__u64 fw_ver;
  	__u64 node_guid;
@@ -1297,7 +1576,42 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  	__u64 sys_image_guid;
  	__u64 max_mr_size;
  	__u64 page_size_cap;
-@@ -243,10 +253,57 @@
+@@ -235,6 +250,34 @@
+ 	__u8  reserved[2];
+ };
+ 
++struct ibv_reg_sm_event {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u32 events;
++	__u32 data_num;
++	__u64 driver_data[0];
++};
++
++struct ibv_unreg_sm_event {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u32 events;
++	__u32 data_num;
++	__u64 driver_data[0];
++};
++
++struct ibv_gid_reachable {
++	__u32 command;
++	__u16 in_words;
++	__u16 out_words;
++	__u32 timeout;
++	__u8  port_num;
++	__u8  reserved[3];
++	__u8  gid[16];
++};
++
+ struct ibv_alloc_pd {
+ 	__u32 command;
+ 	__u16 in_words;
+@@ -243,10 +286,57 @@
  	__u64 driver_data[0];
  };
  
@@ -1355,7 +1669,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_dealloc_pd {
  	__u32 command;
  	__u16 in_words;
-@@ -280,6 +337,13 @@
+@@ -280,6 +370,13 @@
  	__u32 mr_handle;
  };
  
@@ -1369,7 +1683,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_create_comp_channel {
  	__u32 command;
  	__u16 in_words;
-@@ -304,10 +368,25 @@
+@@ -304,10 +401,25 @@
  	__u64 driver_data[0];
  };
  
@@ -1395,7 +1709,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_kern_wc {
  	__u64  wr_id;
-@@ -363,7 +442,11 @@
+@@ -363,7 +475,11 @@
  struct ibv_resize_cq_resp {
  	__u32 cqe;
  	__u32 reserved;
@@ -1407,7 +1721,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  };
  
  struct ibv_destroy_cq {
-@@ -460,6 +543,14 @@
+@@ -460,6 +576,14 @@
  	__u64 driver_data[0];
  };
  
@@ -1422,7 +1736,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_create_qp_resp {
  	__u32 qp_handle;
  	__u32 qpn;
-@@ -469,7 +560,20 @@
+@@ -469,7 +593,20 @@
  	__u32 max_recv_sge;
  	__u32 max_inline_data;
  	__u32 reserved;
@@ -1443,7 +1757,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_qp_dest {
  	__u8  dgid[16];
-@@ -817,12 +921,29 @@
+@@ -817,12 +954,29 @@
  	__u64 driver_data[0];
  };
  
@@ -1473,7 +1787,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_modify_srq {
  	__u32 command;
-@@ -946,6 +1067,11 @@
+@@ -946,6 +1100,14 @@
  	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP_V2 = -1,
  	IB_USER_VERBS_CMD_REG_XRC_RCV_QP_V2 = -1,
  	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP_V2 = -1,
@@ -1482,6 +1796,9 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
 +	IB_USER_VERBS_CMD_FLUSH_RELAXED_MR_V2 = -1,
 +  	IB_USER_VERBS_CMD_ALLOC_SHPD_V2 = -1,
 +  	IB_USER_VERBS_CMD_SHARE_PD_V2 = -1,
++	IB_USER_VERBS_CMD_REG_SM_EVENT_V2 = -1,
++	IB_USER_VERBS_CMD_UNREG_SM_EVENT_V2 = -1,
++	IB_USER_VERBS_CMD_GID_REACHABLE_V2 = -1,
  };
  
  struct ibv_destroy_cq_v1 {
@@ -1551,7 +1868,39 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  	uint64_t		sys_image_guid;
  	uint64_t		max_mr_size;
  	uint64_t		page_size_cap;
-@@ -297,7 +301,8 @@
+@@ -212,6 +216,10 @@
+ 	IBV_EVENT_QP_LAST_WQE_REACHED,
+ 	IBV_EVENT_CLIENT_REREGISTER,
+ 	IBV_EVENT_GID_CHANGE,
++	IBV_EVENT_MCG_CREATED,
++	IBV_EVENT_MCG_DELETED,
++	IBV_EVENT_GID_AVAIL,
++	IBV_EVENT_GID_UNAVAIL,
+ };
+ 
+ enum ibv_event_flags {
+@@ -225,10 +233,20 @@
+ 		struct ibv_srq *srq;
+ 		int		port_num;
+ 		uint32_t	xrc_qp_num;
++		union ibv_gid	gid;
+ 	} element;
+ 	enum ibv_event_type	event_type;
+ };
+ 
++typedef enum ibv_sm_event_type_e {
++	IBV_SM_EVENT_MGID	= 1,
++	IBV_SM_EVENT_MGID_ALL	= 1 << 2,
++	IBV_SM_EVENT_UGID	= 1 << 3,
++	IBV_SM_EVENT_UGID_ALL	= 1 << 4,
++        IBV_SM_EVENT_ALL	= 1 << 5
++
++} ibv_sm_event_type_t;
++
+ enum ibv_wc_status {
+ 	IBV_WC_SUCCESS,
+ 	IBV_WC_LOC_LEN_ERR,
+@@ -297,7 +315,8 @@
  	IBV_ACCESS_REMOTE_WRITE		= (1<<1),
  	IBV_ACCESS_REMOTE_READ		= (1<<2),
  	IBV_ACCESS_REMOTE_ATOMIC	= (1<<3),
@@ -1561,7 +1910,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  };
  
  struct ibv_pd {
-@@ -305,6 +310,10 @@
+@@ -305,6 +324,10 @@
  	uint32_t		handle;
  };
  
@@ -1572,7 +1921,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  enum ibv_rereg_mr_flags {
  	IBV_REREG_MR_CHANGE_TRANSLATION	= (1 << 0),
  	IBV_REREG_MR_CHANGE_PD		= (1 << 1),
-@@ -425,6 +434,14 @@
+@@ -425,6 +448,14 @@
  	uint32_t		max_inline_data;
  };
  
@@ -1587,7 +1936,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  struct ibv_qp_init_attr {
  	void		       *qp_context;
  	struct ibv_cq	       *send_cq;
-@@ -743,6 +760,12 @@
+@@ -743,6 +774,12 @@
  	int			(*detach_mcast)(struct ibv_qp *qp, const union ibv_gid *gid,
  						uint16_t lid);
  	void			(*async_event)(struct ibv_async_event *event);
@@ -1600,7 +1949,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  };
  
  struct ibv_context {
-@@ -749,6 +772,13 @@
+@@ -749,6 +786,13 @@
  	struct ibv_device      *device;
  	struct ibv_context_ops	ops;
  	int			cmd_fd;
@@ -1614,7 +1963,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
  	int			async_fd;
  	int			num_comp_vectors;
  	pthread_mutex_t		mutex;
-@@ -797,6 +827,11 @@
+@@ -797,6 +841,11 @@
  uint64_t ibv_get_device_guid(struct ibv_device *device);
  
  /**
@@ -1626,7 +1975,31 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
   * ibv_open_device - Initialize device for use
   */
  struct ibv_context *ibv_open_device(struct ibv_device *device);
-@@ -858,6 +893,20 @@
+@@ -853,11 +902,44 @@
+ 		   int index, uint16_t *pkey);
+ 
+ /**
++ * ibv_register_sm_events - Register subnet event for GID change
++ */
++int ibv_register_sm_events(struct ibv_context *context,
++    ibv_sm_event_type_t event, uint_t gid_num, union ibv_gid *gids);
++
++/**
++ * ibv_unregister_sm_events - Unregister subnet event for GID change
++ */
++int ibv_unregister_sm_events(struct ibv_context *context,
++    ibv_sm_event_type_t event, uint_t gid_num, union ibv_gid *gids);
++
++/**
++ * ibv_gid_reachable - To contact subnet agent for GID status; reachable or
++ * not reachable
++ */
++int ibv_gid_reachable(struct ibv_context *context,
++    uint port, union ibv_gid *gid_p, int timeout);
++
++/**
+  * ibv_alloc_pd - Allocate a protection domain
+  */
  struct ibv_pd *ibv_alloc_pd(struct ibv_context *context);
  
  /**
@@ -1647,7 +2020,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/verbs.h libibverbs-1.
   * ibv_dealloc_pd - Free a protection domain
   */
  int ibv_dealloc_pd(struct ibv_pd *pd);
-@@ -869,11 +918,27 @@
+@@ -869,11 +951,27 @@
  			  size_t length, int access);
  
  /**
@@ -1795,10 +2168,16 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/Makefile.in libibverbs-1.1.4/Makefile.in
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c libibverbs-1.1.4/examples/asyncwatch.c
 --- /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/examples/asyncwatch.c	Fri Feb 11 04:02:18 2011
-@@ -35,8 +35,10 @@
+@@ -35,11 +35,72 @@
  #endif /* HAVE_CONFIG_H */
  
  #include <stdio.h>
++#include <stdlib.h>
++#include <ctype.h>
++#include <getopt.h>
++#include <signal.h>
++#include <string.h>
++#include <strings.h>
 +#if !(defined(__SVR4) && defined(__sun))
  #include <endian.h>
  #include <byteswap.h>
@@ -1806,6 +2185,375 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/examples/asyncwatch.c libibverbs-1.1.4/e
  
  #include <infiniband/verbs.h>
  
++#define IS_PORT_EVENT(event)				\
++	((event == IBV_EVENT_PORT_ACTIVE) ||		\
++	(event == IBV_EVENT_PORT_ERR ) ||		\
++	(event == IBV_EVENT_LID_CHANGE) ||		\
++	(event == IBV_EVENT_PKEY_CHANGE) ||		\
++	(event == IBV_EVENT_SM_CHANGE) ||		\
++	(event == IBV_EVENT_GID_CHANGE) ||		\
++	(event == IBV_EVENT_CLIENT_REREGISTER))
++
++#define IS_SM_EVENT(event)				\
++	((event == IBV_EVENT_MCG_CREATED) ||		\
++	(event == IBV_EVENT_MCG_DELETED) ||		\
++	(event == IBV_EVENT_GID_AVAIL) ||		\
++	(event == IBV_EVENT_GID_UNAVAIL))
++
++#define IS_QP_EVENT(event)				\
++	((event == IBV_EVENT_CQ_ERR) ||			\
++	(event == IBV_EVENT_QP_FATAL) ||		\
++	(event == IBV_EVENT_QP_REQ_ERR) ||		\
++	(event == IBV_EVENT_COMM_EST) ||		\
++	(event == IBV_EVENT_SQ_DRAINED) ||		\
++	(event == IBV_EVENT_PATH_MIG) ||		\
++	(event == IBV_EVENT_PATH_MIG_ERR) ||		\
++	(event == IBV_EVENT_QP_LAST_WQE_REACHED) ||	\
++	(event == IBV_EVENT_QP_ACCESS_ERR))
++
++#define IS_CQ_EVENT(event)				\
++	(event == IBV_EVENT_CQ_ERR)
++
++#define IS_SRQ_EVENT(event)				\
++	((event == IBV_EVENT_SRQ_ERR) ||		\
++	(event == IBV_EVENT_SRQ_LIMIT_REACHED))
++
++#define IS_CA_EVENT(event)				\
++	(event == IBV_EVENT_DEVICE_FATAL)
++
++
++struct ibv_device	**dev_list;
++struct ibv_context	*context;
++struct ibv_async_event	event;
++union ibv_gid		*gids = NULL;
++uint_t			num_gids = 0;
++ibv_sm_event_type_t	events;
++
++static struct option long_options[] = {
++    {"sm",		0, 0, 's'},
++    {"GUID",		0, 0, 'G'},
++    {"MCG",		0, 0, 'M'},
++    {"port",		1, 0, 'p'},
++    {0, 0, 0, 0}
++};
++
++
+ static const char *event_name_str(enum ibv_event_type event_type)
+ {
+ 	switch (event_type) {
+@@ -59,7 +120,14 @@
+ 		return "IBV_EVENT_CLIENT_REREGISTER";
+ 	case IBV_EVENT_GID_CHANGE:
+ 		return "IBV_EVENT_GID_CHANGE";
+-
++	case IBV_EVENT_MCG_CREATED:
++		return "IBV_EVENT_MCG_CREATED";
++	case IBV_EVENT_MCG_DELETED:
++		return "IBV_EVENT_MCG_DELETED";
++	case IBV_EVENT_GID_AVAIL:
++		return "IBV_EVENT_GID_AVAIL";
++	case IBV_EVENT_GID_UNAVAIL:
++		return "IBV_EVENT_GID_UNAVAIL";
+ 	case IBV_EVENT_CQ_ERR:
+ 	case IBV_EVENT_QP_FATAL:
+ 	case IBV_EVENT_QP_REQ_ERR:
+@@ -76,15 +144,173 @@
+ 	}
+ }
+ 
+-int main(int argc, char *argv[])
++static void catch_signal(int sig_num)
+ {
+-	struct ibv_device **dev_list;
+-	struct ibv_context *context;
+-	struct ibv_async_event event;
++	ibv_unregister_sm_events(context, events, num_gids, gids);
++	if (gids)
++		free(gids);
++	ibv_close_device(context);
++	(void) ibv_free_device_list(dev_list);
++	exit (0);
++}
+ 
+-	/* Force line-buffering in case stdout is redirected */
+-	setvbuf(stdout, NULL, _IOLBF, 0);
++static void usage(const char *argv0)
++{
++	printf("Usage:\n");
++	printf("\n");
++	printf("Options:\n");
++	printf("[ -s, --sm<gid> ]\t\tsm event\n");
++	printf("[ -M, --M ]\t\t\tsm event for MGID (multicast)\n");
++	printf("[ -G, --G ]\t\t\tsm event for UGID (unicast)\n");
++	printf("[ -p, --port=<port> ]\t\t(default 1)\n");
++	printf("\nExamples;\n");
++	printf("ibv_asyncwatch -s\t\t# monitor event=IBV_SM_EVENT_ALL\n");
++	printf("ibv_asyncwatch -G -s\t\t# monitor event="
++	    "IBV_SM_EVENT_UGID_ALL\n");
++	printf("ibv_asyncwatch -M -s\t\t# monitor event="
++	    "IBV_SM_EVENT_MGID_ALL\n");
++	printf("ibv_asyncwatch -G -s0x0021280001a0e4d9,0x0021280001a0e4da\n");
++	printf("\t\t\t\t# monitor event=IBV_SM_EVENT_UGID\n");
++	printf("ibv_asyncwatch -M -s0xff12:4001:ffff::c:2238,");
++	printf("0xff12:ffff::38:220c\n");
++	printf("\t\t\t\t# monitor event=IBV_SM_EVENT_MGID\n");
++}
+ 
++
++uint_t get_gids(char *argptr, uint64_t subnet_prefix)
++{
++	char		*curr, *next;
++	char		*guid_str_p1, *guid_str_p2 = NULL;
++	int		i = 0;
++	int		data_num;
++
++	for (curr = argptr; curr; curr = next, i++) {
++		next = strchr(curr, ',');
++		if (next)
++			next++;
++        }
++	data_num = i;
++	if (data_num == 0)
++		return (0);
++
++	gids = (union ibv_gid *)calloc(data_num, sizeof (union ibv_gid));
++	guid_str_p1 = malloc(strlen(argptr));
++	strncpy(guid_str_p1, argptr, strlen(argptr));
++
++	i = 0;
++	guid_str_p2 = strtok(guid_str_p1, (const char *)",");
++	while (guid_str_p2 != NULL) {
++		gids[i].global.subnet_prefix = subnet_prefix;
++		gids[i].global.interface_id =
++		    htonll((uint64_t)strtoull(guid_str_p2, 0, 0));
++		i++;
++		guid_str_p2 = strtok(NULL, (const char *)",");
++	}
++	free (guid_str_p1);
++	return (data_num);
++}
++
++void process_one_mcg_gid(union ibv_gid *gid, char *mcg_str)
++{
++	char		*token, *token_p, half_token[3];
++	uint8_t		mcg_gid[16];
++	int		i, j = 0, num_data = -1;
++	char		*curr, *next;
++
++	/* find out how many two-byte data from command line input */
++	for (curr = mcg_str; curr; curr = next, num_data++) {
++		next = strchr(curr, ':');
++		if (next)
++			next++;
++        }
++
++	if (num_data > 8) {
++		fprintf(stderr, "Invalid MGID input format: %s\n", mcg_str);
++		exit (-1);
++	}
++
++	curr = mcg_str + 2;	/* Skip past 0x */
++	while ((token = strsep(&curr, ":")) != NULL && j < 15) {
++		if (strncmp(token, "\0", 1) == 0) {
++			/* We have :: in the input */
++			for (i = 0; i < 8 - num_data; i++) {
++				mcg_gid[j++] = 0;
++				mcg_gid[j++] = 0;
++			}
++		} else {
++			if (strlen(token) < 3) {
++				mcg_gid[j++] = 0;
++				mcg_gid[j++] =
++				    (uint8_t)strtoll(token, NULL, 16);
++			} else {
++				memset(half_token, 0, 3);
++				token_p = token;
++				if (strlen(token) == 3) {
++					strncpy(half_token, token, 1);
++					token_p += 1;
++				} else {
++					strncpy(half_token, token, 2);
++					token_p += 2;
++				}
++				mcg_gid[j++] = (uint8_t)strtol(half_token,
++				    NULL, 16);
++
++				mcg_gid[j++] = (uint8_t)strtol(token_p,
++				    NULL, 16);
++			}
++		}
++	}
++
++	memcpy(gid->raw, mcg_gid, 16);
++}
++
++uint_t get_mcgs(char *argptr, uint64_t subnet_prefix)
++{
++	char            *curr, *next;
++	char		*mcg_str_p1, *mcg_str_p2 = NULL;
++	int		i = 0;
++	int		data_num;
++
++	for (curr = argptr; curr; curr = next, i++) {
++		next = strchr(curr, ',');
++		if (next)
++			next++;
++        }
++	data_num = i;
++	if (data_num == 0)
++		return (0);
++
++	gids = (union ibv_gid *)calloc(data_num, sizeof (union ibv_gid));
++	mcg_str_p1 = malloc(strlen(argptr));
++	strncpy(mcg_str_p1, argptr, strlen(argptr));
++
++	i = 0;
++	mcg_str_p2 = strtok(mcg_str_p1, (const char *)",");
++	while (mcg_str_p2 != NULL) {
++		if (strncmp(mcg_str_p2, "0xff", 4) != 0) {
++			fprintf(stderr, "Invalid MGID input format: %s\n",
++			    mcg_str_p2);
++			exit (-1);
++		}
++		process_one_mcg_gid(&gids[i], mcg_str_p2);
++		i++;
++		mcg_str_p2 = strtok(NULL, (const char *)",");
++	}
++	free(mcg_str_p1);
++	return (data_num);
++}
++
++int main(int argc, char *argv[])
++{
++	int		c;
++	int		ret;
++	uint_t		port = 1;	/* default */
++	uint_t		do_sm_event_register = 0;
++	union ibv_gid	sgid;
++	uint64_t	subnet_prefix = 0ULL;
++	int		mcgflag = 0;
++	int		guidflag = 0;
++
+ 	dev_list = ibv_get_device_list(NULL);
+ 	if (!dev_list) {
+ 		perror("Failed to get IB devices list");
+@@ -103,19 +329,111 @@
+ 		return 1;
+ 	}
+ 
+-	printf("%s: async event FD %d\n",
++	printf("\n%s: async event FD %d\n\n",
+ 	       ibv_get_device_name(*dev_list), context->async_fd);
+ 
++	ibv_query_gid(context, port, 0, &sgid);
++	subnet_prefix = sgid.global.subnet_prefix;
++
++	while ((c = getopt_long(argc, argv, "p:GMs::t:", long_options, NULL))
++	    != -1) {
++		switch(c) {
++			case 'G':
++				guidflag = 1;
++				break;
++			case 'M':
++				mcgflag = 1;
++				break;
++			case 's':
++				do_sm_event_register = 1;
++				if (mcgflag == 1)
++					num_gids =
++					    get_mcgs(optarg, subnet_prefix);
++				else
++					num_gids =
++					    get_gids(optarg, subnet_prefix);
++				break;
++			case 'p':
++				port = strtol(optarg, NULL, 0);
++				ibv_query_gid(context, port, 0, &sgid);
++				subnet_prefix = sgid.global.subnet_prefix;
++				break;
++			default:
++				usage(argv[0]);
++				return 1;
++		}
++	}
++
++	/* Force line-buffering in case stdout is redirected */
++	setvbuf(stdout, NULL, _IOLBF, 0);
++
++	if (num_gids) {
++		if (mcgflag)
++			events = IBV_SM_EVENT_MGID;
++		else
++			events = IBV_SM_EVENT_UGID;
++	} else {
++		if (mcgflag && guidflag)
++			events = IBV_SM_EVENT_ALL;
++		else if (mcgflag)
++			events = IBV_SM_EVENT_MGID_ALL;
++		else if (guidflag)
++			events = IBV_SM_EVENT_UGID_ALL;
++		else
++			events = IBV_SM_EVENT_ALL;
++	}
++
++	if (do_sm_event_register)
++		ret = ibv_register_sm_events(context, events, num_gids, gids);
++
++	(void) signal(SIGINT, catch_signal);
++
+ 	while (1) {
+ 		if (ibv_get_async_event(context, &event))
+ 			return 1;
+ 
+-		printf("  event_type %s (%d), port %d\n",
+-		       event_name_str(event.event_type),
+-		       event.event_type, event.element.port_num);
++		if (IS_PORT_EVENT(event.event_type))
++			printf("Event: %s (%d), port %d\n",
++			    event_name_str(event.event_type),
++			    event.event_type, event.element.port_num);
++		else if (IS_SM_EVENT(event.event_type))
++			printf("Event: %s (%d), gid " \
++			    "%02x%02x:%02x%02x:%02x%02x:%02x%02x:"\
++			    "%02x%02x:%02x%02x:%02x%02x:%02x%02x\n",
++			    event_name_str(event.event_type), event.event_type,
++			    event.element.gid.raw[0], event.element.gid.raw[1],
++			    event.element.gid.raw[2], event.element.gid.raw[3],
++			    event.element.gid.raw[4], event.element.gid.raw[5],
++			    event.element.gid.raw[6], event.element.gid.raw[7],
++			    event.element.gid.raw[8], event.element.gid.raw[9],
++			    event.element.gid.raw[10],
++			    event.element.gid.raw[11],
++			    event.element.gid.raw[12],
++			    event.element.gid.raw[13],
++			    event.element.gid.raw[14],
++			    event.element.gid.raw[15]);
++		else if (IS_QP_EVENT(event.event_type))
++			printf("Event: %s (%d) QPN %d\n",
++			    event_name_str(event.event_type), event.event_type,
++			    event.element.qp->qp_num);
++		else if (IS_CQ_EVENT(event.event_type))
++			printf("Event: %s (%d) CQE %d\n",
++			    event_name_str(event.event_type), event.event_type,
++			    event.element.cq->cqe);
++		else if (IS_SRQ_EVENT(event.event_type))
++			printf("Event: %s (%d) SRQ %d\n",
++			    event_name_str(event.event_type), event.event_type,
++			    event.element.srq->handle);
++		else
++			printf("Event: %s (%d)\n",
++			    event_name_str(event.event_type), event.event_type);
+ 
+ 		ibv_ack_async_event(&event);
+-	}
+ 
++		if (event.event_type == IBV_EVENT_GID_AVAIL) {
++			ret = ibv_gid_reachable(context, port,
++			    &event.element.gid, 0);
++		}
++	}
+ 	return 0;
+ }
 diff -r -u /tmp/846623/libibverbs-1.1.4/examples/srq_pingpong.c libibverbs-1.1.4/examples/srq_pingpong.c
 --- /tmp/846623/libibverbs-1.1.4/examples/srq_pingpong.c	Thu Mar 10 06:58:21 2011
 +++ libibverbs-1.1.4/examples/srq_pingpong.c	Wed Jun  8 09:46:34 2011
