@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -36,7 +36,9 @@ include ../ofed.mk
 
 MAN3FILES =	ibv_alloc_shpd.3 \
 		ibv_reg_mr_relaxed.3 \
-		ibv_share_pd.3
+		ibv_share_pd.3 \
+		ibv_gid_reachable.3 \
+		ibv_register_sm_events.3
 
 include $(WS_TOP)/make-rules/shared-targets.mk
 
