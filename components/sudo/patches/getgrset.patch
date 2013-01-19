@@ -1,0 +1,55 @@
+This patch is using solaris private interface _getgroupsbymember(). We should
+switch to similar public interface once Solaris has one.
+
+--- sudo-1.8.4p5/compat/getgrouplist.c	Sat Jan 19 22:45:01 2013
++++ sudo-1.8.4p5/compat/getgrouplist.c	Sat Jan 19 22:44:59 2013
+@@ -36,6 +36,15 @@
+ 
+ #include "missing.h"
+ 
++#ifdef HAVE__GETGRPSBYMEMBER
++extern int _getgroupsbymember
++(
++    const char* username, gid_t gid_array[],
++    int maxgids, int numgids
++); 
++#endif /* HAVE__GETGRPSBYMEMBER */
++
++
+ #ifdef HAVE_GETGRSET
+ /*
+  * BSD-compatible getgrouplist(3) using getgrset(3)
+@@ -81,6 +90,25 @@
+ 
+ #else /* HAVE_GETGRSET */
+ 
++#ifdef HAVE__GETGRPSBYMEMBER
++int
++getgrouplist(const char *name, gid_t basegid, gid_t *groups, int *ngroupsp)
++{
++    int grpsize = *ngroupsp;
++
++    if (grpsize <= 0)
++	return -1;
++    groups[0] = basegid;
++
++    if ((grpsize = _getgroupsbymember(name, groups, grpsize, 1)) == -1)
++	return -1;
++
++    *ngroupsp = grpsize;
++    return 0;
++}
++
++#else /* ! HAVE__GETGRPSBYMEMBER */
++
+ /*
+  * BSD-compatible getgrouplist(3) using getgrent(3)
+  */
+@@ -128,4 +156,7 @@
+ 
+     return rval;
+ }
++
++#endif /* ! HAVE__GETGRPSBYMEMBER */
++
+ #endif /* HAVE_GETGRSET */
