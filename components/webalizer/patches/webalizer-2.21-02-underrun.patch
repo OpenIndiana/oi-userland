@@ -1,0 +1,21 @@
+--- webalizer-2.21-02/webalizer.c		2009-01-13 06:35:54.000000000 +0100
++++ webalizer-2.21-02/webalizer.c.underrun	2009-03-29 14:16:21.000000000 +0200
+@@ -737,10 +737,16 @@
+          rec_sec =atoi(&log_rec.datetime[19]);   /* get second number       */
+ 
+          /* Kludge for Netscape server time (0-24?) error                   */
+-         if (rec_hour>23) rec_hour=0;
++         if (rec_hour > 23)
++         	rec_hour=0;
++         /* Handle leap seconds (AC 2004) */
++         if (rec_sec > 59 && rec_sec < 62)	/* 23:59:60/61 exist */
++         	rec_sec = 59;
+ 
+          /* minimal sanity check on date */
+-         if ((i>=12)||(rec_min>59)||(rec_sec>60)||(rec_year<1990))
++         if ( i >= 12 || rec_min < 0 || rec_min > 59 ||
++              rec_sec < 0 || rec_sec > 59 || rec_year<1990 ||
++         	rec_day < 0)
+          {
+             total_bad++;                /* if a bad date, bump counter      */
+             if (verbose)

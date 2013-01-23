@@ -1,0 +1,99 @@
+--- webalizer-2.01-10/hashtab.c.groupvisit	2001-06-15 11:34:24.000000000 +0300
++++ webalizer-2.01-10/hashtab.c	2006-03-30 12:52:30.000000000 +0300
+@@ -94,6 +94,8 @@
+ DNODEPTR host_table[MAXHASH];                 /* DNS hash table           */
+ #endif  /* USE_DNS */
+ 
++u_long   pre_tstamp = 0;                      /* prev. real record tstamp */
++
+ 
+ /*********************************************/
+ /* DEL_HTABS - clear out our hash tables     */
+@@ -184,6 +186,7 @@
+             nptr->visit=(visit-1);
+             nptr->lasturl=find_url(lasturl);
+             nptr->tstamp=tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+@@ -193,6 +196,7 @@
+                if (htab==sm_htab) update_entry(log_rec.url);
+                nptr->lasturl=find_url(log_rec.url);
+                nptr->tstamp=tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+                nptr->visit=1;
+             }
+          }
+@@ -214,7 +218,8 @@
+ 
+                if (ispage(log_rec.url))
+                {
+-                  if ((tstamp-cptr->tstamp)>=visit_timeout)
++                  if ((type!=OBJ_GRP)&&(cptr->flag!=OBJ_GRP)) pre_tstamp=cptr->tstamp;
++                  if ((tstamp-pre_tstamp)>=visit_timeout)
+                   {
+                      cptr->visit++;
+                      if (htab==sm_htab)
+@@ -247,6 +252,7 @@
+             nptr->visit = (visit-1);
+             nptr->lasturl=find_url(lasturl);
+             nptr->tstamp= tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+@@ -256,6 +262,7 @@
+                if (htab==sm_htab) update_entry(log_rec.url);
+                nptr->lasturl=find_url(log_rec.url);
+                nptr->tstamp= tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+                nptr->visit=1;
+             }
+          }
+@@ -840,11 +847,16 @@
+          {
+             nptr->visit=(visit-1);
+             nptr->tstamp=tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+          {
+-            if (ispage(log_rec.url)) nptr->tstamp=tstamp;
++            if (ispage(log_rec.url)) 
++            {
++               nptr->tstamp=tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
++            }
+          }
+       }
+    }
+@@ -864,7 +876,8 @@
+ 
+                if (ispage(log_rec.url))
+                {
+-                  if ((tstamp-cptr->tstamp)>=visit_timeout)
++                  if ((type!=OBJ_GRP)&&(cptr->flag!=OBJ_GRP)) pre_tstamp=cptr->tstamp;
++                  if ((tstamp-pre_tstamp)>=visit_timeout)
+                      cptr->visit++;
+                   cptr->tstamp=tstamp;
+                }
+@@ -888,11 +901,16 @@
+          {
+             nptr->visit = (visit-1);
+             nptr->tstamp= tstamp;
++            if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
+             return 0;
+          }
+          else
+          {
+-            if (ispage(log_rec.url)) nptr->tstamp= tstamp;
++            if (ispage(log_rec.url))
++            {
++               nptr->tstamp= tstamp;
++               if ((type!=OBJ_GRP)&&(nptr->flag!=OBJ_GRP)) pre_tstamp=nptr->tstamp;
++            }
+          }
+       }
+    }
