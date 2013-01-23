@@ -1,0 +1,52 @@
+diff -urNp stunnel-4.29-orig/doc/stunnel.8 stunnel-4.29/doc/stunnel.8
+--- stunnel-4.29-orig/doc/stunnel.8	2009-11-20 15:50:52.000000000 -0500
++++ stunnel-4.29/doc/stunnel.8	2009-12-09 16:44:25.000000000 -0500
+@@ -169,7 +169,7 @@ info (6), or debug (7).  All logs for th
+ all levels numerically less than it will be shown.  Use \fBdebug = debug\fR or
+ \&\fBdebug = 7\fR for greatest debugging output.  The default is notice (5).
+ .Sp
+-The syslog facility 'daemon' will be used unless a facility name is supplied.
++The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)
+ .Sp
+ Case is ignored for both facilities and levels.
+diff -urNp stunnel-4.29-orig/doc/stunnel.html stunnel-4.29/doc/stunnel.html
+--- stunnel-4.29-orig/doc/stunnel.html	2009-11-20 15:50:52.000000000 -0500
++++ stunnel-4.29/doc/stunnel.html	2009-12-09 16:43:09.000000000 -0500
+@@ -192,7 +192,7 @@ emerg (0), alert (1), crit (2), err (3),
+ info (6), or debug (7).  All logs for the specified level and
+ all levels numerically less than it will be shown.  Use <strong>debug = debug</strong> or
+ <strong>debug = 7</strong> for greatest debugging output.  The default is notice (5).</p>
+-<p>The syslog facility 'daemon' will be used unless a facility name is supplied.
++<p>The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)</p>
+ <p>Case is ignored for both facilities and levels.</p>
+ </dd>
+diff -urNp stunnel-4.29-orig/doc/stunnel.pod stunnel-4.29/doc/stunnel.pod
+--- stunnel-4.29-orig/doc/stunnel.pod	2009-11-20 15:48:33.000000000 -0500
++++ stunnel-4.29/doc/stunnel.pod	2009-12-09 16:43:52.000000000 -0500
+@@ -144,7 +144,7 @@ info (6), or debug (7).  All logs for th
+ all levels numerically less than it will be shown.  Use B<debug = debug> or
+ B<debug = 7> for greatest debugging output.  The default is notice (5).
+ 
+-The syslog facility 'daemon' will be used unless a facility name is supplied.
++The syslog facility 'authpriv' will be used unless a facility name is supplied.
+ (Facilities are not supported on Win32.)
+ 
+ Case is ignored for both facilities and levels.
+diff -urNp stunnel-4.29-orig/src/options.c stunnel-4.29/src/options.c
+--- stunnel-4.29-orig/src/options.c	2009-11-20 15:55:12.000000000 -0500
++++ stunnel-4.29/src/options.c	2009-12-09 16:45:57.000000000 -0500
+@@ -136,8 +136,12 @@ static char *global_options(CMD cmd, cha
+     case CMD_INIT:
+         options.debug_level=5;
+ #if !defined (USE_WIN32) && !defined (__vms)
++#if defined(LOG_AUTHPRIV)
++        options.facility=LOG_AUTHPRIV;
++#else
+         options.facility=LOG_DAEMON;
+ #endif
++#endif
+         break;
+     case CMD_EXEC:
+         if(strcasecmp(opt, "debug"))
