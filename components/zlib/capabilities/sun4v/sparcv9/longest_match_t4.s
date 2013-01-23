@@ -99,7 +99,7 @@ Ttdata.data:
 	 ld        [%i0 + 0x4c], %l4	!7
 	 ldn       [%i0 + 0x60], %l5	!7
 	 and       %i1, %l4, %l2	!7
-	 prefetch [%i5 + %l2], #n_reads	!7
+	 prefetch [%l5 + %l2], #n_reads	!7
 !7	ld        [%i0 + 0x9c], %l4
 	 ld        [%i0 + 0x9c], %l1	!7
 	ld        [%i0 + 0x44], %l6
