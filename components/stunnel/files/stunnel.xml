@@ -1,0 +1,184 @@
+<?xml version="1.0"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+<!--
+ CDDL HEADER START
+
+ The contents of this file are subject to the terms of the
+ Common Development and Distribution License (the "License").
+ You may not use this file except in compliance with the License.
+
+ You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+ or http://www.opensolaris.org/os/licensing.
+ See the License for the specific language governing permissions
+ and limitations under the License.
+
+ When distributing Covered Code, include this CDDL HEADER in each
+ file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+ If applicable, add the following below this CDDL HEADER, with the
+ fields enclosed by brackets "[]" replaced with your own identifying
+ information: Portions Copyright [yyyy] [name of copyright owner]
+
+ CDDL HEADER END
+	Copyright (c) 2010, Oracle and/or its affiliates. All rights reserved
+	Use is subject to license terms.
+
+	ident	"@(#)stunnel.xml	1.2	08/07/18 SMI"
+
+	NOTE:  This service manifest is not editable; its contents will
+	be overwritten by package or patch operations, including
+	operating system upgrade.  Make customizations in a different
+	file.
+-->
+<service_bundle type='manifest' name='SUNWstunnelr:stunnel'>
+
+<service
+	name='network/ssl/stunnel'
+	type='service'
+	version='1'>
+
+	<create_default_instance enabled='false' />
+
+	<single_instance />
+
+	<!-- Read/Write access required to /var/run for lockfiles -->
+	<dependency
+		name='filesystem'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri
+			value='svc:/system/filesystem/local'
+		/>
+	</dependency>
+
+	<dependency
+		name='loopback'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri
+			value='svc:/system/filesystem/local'
+		/>
+	</dependency>
+
+	<dependency
+		name='net-physical'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri
+			value='svc:/network/physical'
+		/>
+	</dependency>
+
+	<dependency
+		name='cryptosvc'
+		grouping='require_all'
+		restart_on='none'
+		type='service'>
+		<service_fmri
+			value='svc:/system/cryptosvc'
+		/>
+	</dependency>
+
+	<exec_method
+		type='method'
+		name='start'
+		exec='/usr/bin/stunnel %{config/config_file}'
+		timeout_seconds='60' />
+
+	<exec_method
+		type='method'
+		name='stop'
+		exec=':kill'
+		timeout_seconds='60' />
+
+	<property_group name='general' type='framework'>
+		<!-- A user with this authorization can:
+
+			svcadm restart stunnel
+			svcadm disable -t stunnel
+			svcadm mark <state> stunnel
+			svcadm clear stunnel
+
+		see auths(1) and user_attr(4)-->
+
+		<propval
+			name='action_authorization'
+			type='astring'
+			value='solaris.smf.manage.stunnel'
+		/>
+		<!-- A user with this authorization can:
+		
+			svcadm disable stunnel
+			svcadm enable stunnel
+
+		see auths(1) and user_attr(4)-->
+
+		<propval
+			name='value_authorization'
+			type='astring'
+			value='solaris.smf.value.stunnel'
+		/>
+	</property_group>
+
+	<!-- The properties defined below can be changed by a user
+	with 'solaris.smf.value.stunnel' authorization using the 
+	svccfg(1M) command.
+
+	e.g.
+
+	svccfg -s stunnel setprop config/config_file = /myconf/etc/stunnel.conf
+
+	Now refresh the service:
+
+	svcadm refresh network/stunnel
+
+	Note: svcadm disable/enable does not use the new property
+	until after the service has been refreshed.
+
+	***Do not edit this manifest to change these properties! -->
+
+	<property_group name='config' type='application'>
+		<propval
+			name='config_file'
+			type='astring'
+			value='/etc/stunnel/stunnel.conf'
+		/>
+		<propval
+			name='value_authorization'
+			type='astring'
+			value='solaris.smf.value.stunnel'
+		/>
+	</property_group>
+
+	<!-- default service model of 'contract' -->
+	<property_group name='startd' type='framework'>
+		<propval
+			name='duration'
+			type='astring'
+			value='contract'
+		/>
+	</property_group>
+
+	<stability value='Unstable' />
+
+	<template>
+		<common_name>
+			<loctext xml:lang='C'>
+			stunnel as a  daemon
+			</loctext>
+		</common_name>
+		<documentation>
+			<manpage title='stunnel' section='8'
+				manpath='/usr/share/man' />
+			<doc_link
+				name='stunnel.org website'
+				uri='http://www.stunnel.org'
+			/>
+		</documentation>
+	</template>
+
+</service>
+</service_bundle>
+
