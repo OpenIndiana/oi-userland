@@ -1,21 +1,70 @@
---- top-3.8beta1/machine/m_sunos5.c.orig	Tue Nov  8 11:23:08 2011
-+++ top-3.8beta1/machine/m_sunos5.c	Tue Nov  8 11:23:11 2011
-@@ -152,8 +152,17 @@
-  * one of the spare slots in the prinfo structure.
+#
+# Community BugDB: 	sf.net/tracker
+# Community BugID: 	3602141
+# Community BugURL:	https://sourceforge.net/tracker/?func=detail&aid=3602141&group_id=72892&atid=536042
+#
+
+--- top-3.8beta1/machine/m_sunos5.c.orig	Thu Jan 24 12:29:40 2013
++++ top-3.8beta1/machine/m_sunos5.c	Thu Jan 24 12:37:11 2013
+@@ -149,10 +149,10 @@
+  * These values are weighted over one minute whereas top output prefers
+  * a near-instantaneous measure of cpu utilization.  So we choose to
+  * ignore pr_pctcpu: we calculate our own cpu percentage and store it in
+- * one of the spare slots in the prinfo structure.
++ * oldpct field.
   */
++#define percent_cpu(pp)	(((struct oldproc *)hash_lookup_pid(prochash, pp->pr_pid))->oldpct)
  
 -#define percent_cpu(pp) (*(double *)dbl_align(&pp->pr_filler[0]))
-+#if OSREV > 59
-+/* 
-+ * on Solaris 10, psinfo.pr_filler is 4 bytes and not double-aligned, so we must * move our scratch space to the larger pr.lwp_pr_filler which is 20 bytes
-+ * XXX this is a time bomb and will likely break in future Solaris releases.
-+ */
-+#define percent_cpu(pp) (*(double *)dbl_align(&pp->pr_lwp.pr_filler[0]))
-+#else
-+#define percent_cpu(pp) (*(double *)dbl_align(&pp->pr_filler[0]))
-+#endif
  
-+
  /* definitions for indices in the nlist array */
  #define X_V			 0
- #define X_MPID			 1
+@@ -1965,6 +1965,7 @@
+ 	    op->fd_psinfo = -1;
+ 	    op->fd_lpsinfo = -1;
+ 	    op->oldtime = 0.0;
++	    op->oldpct = 0.0;
+ 	}
+ 
+ 	/* do we have a cached file? */
+@@ -2021,13 +2022,13 @@
+ 	 */
+ 	if (lasttime.tv_sec > 0)
+ 	{
+-	    percent_cpu(currproc) =
++            op->oldpct =
+ 		(TIMESPEC_TO_DOUBLE(currproc->pr_time) - op->oldtime) / timediff;
+ 	}
+ 	else
+ 	{
+ 	    /* first screen -- no difference is possible */
+-	    percent_cpu(currproc) = 0.0;
++            op->oldpct = 0.0;
+ 	}
+ 
+ 	/* save data for next time */
+@@ -2134,7 +2135,7 @@
+ 		    /* calculate percent cpu for just this thread */
+ 		    if (lasttime.tv_sec > 0)
+ 		    {
+-			percent_cpu(currproc) =
++			op->oldpct =
+ 			    (TIMESPEC_TO_DOUBLE(lwpp->pr_time) - op->oldtime) /
+ 			    timediff;
+ 		    }
+@@ -2141,13 +2142,13 @@
+ 		    else
+ 		    {
+ 			/* first screen -- no difference is possible */
+-			percent_cpu(currproc) = 0.0;
++			op->oldpct = 0.0;
+ 		    }
+ 
+ 		    dprintf("getptable: %d.%d: time %.0f, state %d, pctcpu %.2f\n",
+ 			    currproc->pr_pid, lwpp->pr_lwpid,
+ 			    TIMESPEC_TO_DOUBLE(currproc->pr_time),
+-			    currproc->px_state, percent_cpu(currproc));
++			    currproc->px_state, op->oldpct);
+ 		}
+ 
+ 		/* save data for next time */
