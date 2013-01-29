@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait seems to spin when looking at the .bc files, so
@@ -56,14 +56,20 @@ CONFIGURE_OPTIONS +=	--disable-compile-inits
 CONFIGURE_OPTIONS +=	--disable-freetype
 CONFIGURE_OPTIONS +=	--with-fontpath=/usr/share/ghostscript/$(COMPONENT_VERSION)/Resource:/usr/share/ghostscript/$(COMPONENT_VERSION)/Resource/Font:/usr/share/ghostscript/fonts:/usr/openwin/lib/X11/fonts/Type1:/usr/openwin/lib/X11/fonts/TrueType:/usr/openwin/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Type1:/usr/X11/lib/fonts/TrueType:/usr/X11/lib/X11/fonts/Type3:/usr/X11/lib/X11/fonts/Resource:/usr/X11/lib/X11/Resource/Font
 
+# configure options to generate 64 bit binaries
+$(BUILD_DIR)/$(MACH64)/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m64"
+$(BUILD_DIR)/$(MACH64)/ijs/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m64"
+
 # config env
 CONFIGURE_ENV += LDFLAGS_SO="-G"
 CONFIGURE_ENV += CUPSCONFIG=/usr/bin/cups-config
 
 GS_VARIANT = $(BUILD_DIR)/$(MACH32)
+GS_VARIANT_64 = $(BUILD_DIR)/$(MACH64)
 IJS_VARIANT = $(BUILD_DIR)/$(MACH32)/ijs
+IJS_VARIANT_64 = $(BUILD_DIR)/$(MACH64)/ijs
 
-VARIANTS = $(GS_VARIANT) $(IJS_VARIANT)
+VARIANTS = $(GS_VARIANT) $(IJS_VARIANT) $(GS_VARIANT_64) $(IJS_VARIANT_64)
 
 # autoconf - Generate configuration scripts
 COMPONENT_PREP_ACTION = \
@@ -76,7 +82,18 @@ $(GS_VARIANT)/.installed: COMPONENT_INSTALL_TARGETS += \
 	install-exec install-so install-scripts install-data \
 	install-contrib-extras
 
+$(GS_VARIANT_64)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(@D))
+
+$(GS_VARIANT_64)/.installed: COMPONENT_INSTALL_TARGETS += \
+	install-exec install-so install-scripts install-data \
+	install-contrib-extras
+
 $(IJS_VARIANT)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR)/ijs $(@D); \
+	cd $(@D) ; $(ENV) $(CONFIGURE_ENV) ./autogen.sh )
+
+$(IJS_VARIANT_64)/.configured: COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR)/ijs $(@D); \
 	cd $(@D) ; $(ENV) $(CONFIGURE_ENV) ./autogen.sh )
 

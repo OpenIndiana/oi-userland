@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 
@@ -37,13 +37,16 @@ dir path=etc
 dir path=etc/cups group=lp
 dir path=usr
 dir path=usr/bin
+dir path=usr/bin/$(MACH64)
 dir path=usr/include
 dir path=usr/include/ghostscript
 dir path=usr/include/ijs
 dir path=usr/lib
 dir path=usr/lib/cups
 dir path=usr/lib/cups/filter
+dir path=usr/lib/cups/filter/$(MACH64)
 dir path=usr/lib/pkgconfig
+dir path=usr/lib/$(MACH64)
 dir path=usr/sfw
 dir path=usr/sfw/bin
 dir path=usr/share
@@ -75,14 +78,17 @@ file path=usr/bin/eps2eps
 file path=usr/bin/fixmswrd.pl
 file path=usr/bin/font2c
 file path=usr/bin/gs
+file path=usr/bin/$(MACH64)/gs
 file path=usr/bin/gsbj
 file path=usr/bin/gsc
+file path=usr/bin/$(MACH64)/gsc
 file path=usr/bin/gsdj
 file path=usr/bin/gsdj500
 file path=usr/bin/gslj
 file path=usr/bin/gslp
 file path=usr/bin/gsnd
 file path=usr/bin/gsx
+file path=usr/bin/$(MACH64)/gsx
 file path=usr/bin/ijs-config
 file path=usr/bin/lprsetup.sh
 file path=usr/bin/pdf2dsc
@@ -110,10 +116,13 @@ file path=usr/include/ijs/ijs.h
 file path=usr/include/ijs/ijs_client.h
 file path=usr/include/ijs/ijs_server.h
 file path=usr/lib/cups/filter/pdftoraster mode=0555
+file build/$(MACH64)/bin/pdftoraster path=usr/lib/cups/filter/$(MACH64)/pdftoraster mode=0555
 file path=usr/lib/cups/filter/pstopxl mode=0555
 file path=usr/lib/cups/filter/pstoraster mode=0555
 file path=usr/lib/libgs.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libgs.so.$(COMPONENT_VERSION)
 file path=usr/lib/libijs.a
+file build/$(MACH64)/ijs/.libs/libijs.a path=usr/lib/$(MACH64)/libijs.a
 file path=usr/lib/pkgconfig/ijs.pc
 file path=usr/share/cups/model/pxlcolor.ppd
 file path=usr/share/cups/model/pxlmono.ppd
@@ -939,6 +948,9 @@ file path=usr/share/man/man1/wftopfa.1
 link path=usr/lib/libgs.so target=libgs.so.$(COMPONENT_VERSION)
 link path=usr/lib/libgs.so.9 target=libgs.so.$(COMPONENT_VERSION)
 link path=usr/lib/libgs.so.8 target=libgs.so.9
+link path=usr/lib/$(MACH64)/libgs.so target=libgs.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libgs.so.9 target=libgs.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libgs.so.8 target=libgs.so.9
 link path=usr/sfw/bin/bdftops target=../../bin/bdftops
 link path=usr/sfw/bin/dumphint target=../../bin/dumphint
 link path=usr/sfw/bin/dvipdf target=../../bin/dvipdf
