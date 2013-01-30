@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,28 +34,31 @@ COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/openscap
 
 COMPILER=		gcc
-CFLAGS+=		-std=c99 -DNDEBUG
+CFLAGS+=		-std=c99
+CFLAGS+=		-DNDEBUG
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CPPFLAGS +=	"-I/usr/include/openldap"
+CPPFLAGS +=	-I/usr/include/openldap
 
 # Perl related patch needs configure script recreation.
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
 
 # Needed to make "gmake test" work.
-CPPFLAGS +=	"-I$(SOURCE_DIR)/src/OVAL"
-CPPFLAGS +=	"-I$(SOURCE_DIR)/src/OVAL/probes"
-CPPFLAGS +=	"-I/usr/include/pcre"
+CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL
+CPPFLAGS +=	-I$(SOURCE_DIR)/src/OVAL/probes
+CPPFLAGS +=	-I/usr/include/pcre
 
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-debug=no
+CONFIGURE_OPTIONS +=	--enable-sce=yes
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_OPTIONS +=	LIBS="-lsocket -lnsl -lldap_r"
+CONFIGURE_OPTIONS +=	LIBS="-lsocket -lnsl -lldap_r -lscf"
 
 # common targets
 build:		$(BUILD_32)
