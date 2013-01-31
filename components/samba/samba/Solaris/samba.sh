@@ -22,12 +22,31 @@
 #
 
 #
-# Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
 
 SAMBA_CONFIG=/etc/samba/smb.conf
+
+# Check if given service is working properly
+check_running() {
+	case "$SMF_FMRI" in
+		svc:/network/winbind:*)
+			# It takes some time before winbind starts to really work
+			# This is infinite loop which will be killed after smf timeout
+			while : ; do
+				sleep 2
+				PING=`/usr/bin/wbinfo --ping-dc 2>&1`
+				if [ $? -eq 0 ]; then
+					break
+				fi
+				echo "$PING"
+			done
+			;;
+	esac
+	return 0
+}
 
 case "$1" in
 	start)
@@ -39,6 +58,7 @@ case "$1" in
 		# Command to execute is found in second and further script arguments
 		shift
 		eval "$@"
+		check_running
 		;;
 	stop)
 		# kill whole contract group
