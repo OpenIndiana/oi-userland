@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,6 +40,9 @@ include ../../make-rules/ips.mk
 CFLAGS += -D__ATTRIBUTE_DISABLED
 CONFIGURE_OPTIONS  +=	--with-external-zlib
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 # "check" is not working yet.  It's asking for a password.
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)

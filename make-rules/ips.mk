@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -244,6 +244,14 @@ $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 			-f $(WS_TOOLS)/pkglintrc $(RESOLVED)
 	$(TOUCH) $@
+
+lintme: FRC
+	@echo "VALIDATING MANIFEST CONTENT: $(RESOLVED)"
+	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)"\
+		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
+			-f $(WS_TOOLS)/pkglintrc $(RESOLVED)
+
+FRC:
 
 
 # published

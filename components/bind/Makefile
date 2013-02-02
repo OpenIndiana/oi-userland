@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -69,6 +69,9 @@ CONFIGURE_OPTIONS +=	--with-libxml2=/usr
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 # Configure will add "-mt" to CC which is already set in CFLAGS, so override.
 CONFIGURE_OPTIONS +=	CC="$(CC)"
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 .PHONY: build
 build:		$(BUILD_32)

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -60,6 +60,9 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	 for sheet in $(SOURCE_DIR)/sheets/*.ssh ; do \
 	     ln -s $$sheet ; \
 	 done)
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32)

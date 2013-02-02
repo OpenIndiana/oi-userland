@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -46,8 +46,7 @@ SCRIPTS = timed-run timed-read ftp-rfc autopasswd lpunlock weather \
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPONENT_PRE_BUILD_ACTION = \
-	(cd $(@D); $(GMAKE) all ${SCRIPTS};)
+COMPONENT_BUILD_TARGETS = all ${SCRIPTS}
 
 CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS 	+= --enable-shared
