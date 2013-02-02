@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -44,6 +44,9 @@ CONFIGURE_LIBDIR.64 =   $(GNULIB)/$(MACH64)
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 $(INSTALL_32):	$(INSTALL_64)
 

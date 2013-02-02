@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -64,6 +64,8 @@ CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS += --srcdir=$(SOURCE_DIR)
 CONFIGURE_OPTIONS += --with-libsigsegv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libreadline-prefix=$(CONFIGURE_PREFIX)
+
+# For now keep ASLR disabled for clisp (the default); build may core dump with ASLR
 
 # Prevent clisp.ps and clisp.pdf having different versions for SPARC
 # and x86 in the clisp package, because of embedded dates.

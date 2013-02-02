@@ -601,6 +601,16 @@ LD_Z_IGNORE =		-z ignore
 # use direct binding
 LD_B_DIRECT =		-Bdirect
 
+# use generic macro names for enabling/disabling ASLR
+ASLR_ENABLE = 		-z aslr=enable
+ASLR_DISABLE = 		-z aslr=disable
+ASLR_MODE = 		$(ASLR_DISABLE)
+
+# by default, turn off Address Space Layout Randomization for ELF executables;
+# to explicitly enable ASLR, set ASLR_MODE = $(ASLR_ENABLE)
+# in that component's Makefile
+LD_Z_ASLR =		$(ASLR_MODE)
+
 #
 # More Solaris linker flags that we want to be sure that everyone gets.  This
 # is automatically added to the calling environment during the 'build' and
@@ -633,12 +643,17 @@ LD_OPTIONS_SO +=	$(LD_Z_TEXT) $(LD_Z_DEFS) $(LD_DEF_LIBS)
 LD_OPTIONS +=	$(LD_MAP_NOEXSTK.$(MACH)) $(LD_MAP_NOEXDATA.$(MACH)) \
 		$(LD_MAP_PAGEALIGN) $(LD_B_DIRECT) $(LD_Z_IGNORE)
 
+# only used on executables
+LD_EXEC_OPTIONS = $(LD_Z_ASLR)
+
 # Environment variables and arguments passed into the build and install
 # environment(s).  These are the initial settings.
 COMPONENT_BUILD_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)"
+    LD_OPTIONS="$(LD_OPTIONS)" \
+    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 COMPONENT_INSTALL_ENV= \
-    LD_OPTIONS="$(LD_OPTIONS)"
+    LD_OPTIONS="$(LD_OPTIONS)" \
+    LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))

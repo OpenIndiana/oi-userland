@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Some userland consolidation specific lint checks
@@ -31,6 +31,7 @@ from pkg.lint.engine import lint_fmri_successor
 import pkg.elf as elf
 import re
 import os.path
+import subprocess
 
 class UserlandActionChecker(base.ActionChecker):
         """An opensolaris.org-specific class to check actions."""
@@ -200,6 +201,39 @@ class UserlandActionChecker(base.ActionChecker):
 
 		return result
 
+	def __elf_aslr_check(self, path, engine):
+		result = None
+
+		ei = elf.get_info(path)
+		type = ei.get("type");
+		if type != "exe":
+			return result
+
+		# get the ASLR tag string for this binary
+		aslr_tag_process = subprocess.Popen(
+			"/usr/bin/elfedit -r -e 'dyn:sunw_aslr' "
+			+ path, shell=True,
+			stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+		# aslr_tag_string will get stdout; err will get stderr
+		aslr_tag_string, err = aslr_tag_process.communicate()
+
+		# No ASLR tag was found; everthing must be tagged
+		if aslr_tag_process.returncode != 0:
+			engine.error(
+				_("'%s' is not tagged for aslr") % (path),
+				msgid="%s%s.5" % (self.name, "001"))
+			return result
+
+		# look for "ENABLE" anywhere in the string;
+		# warn about binaries which are not ASLR enabled
+		if re.search("ENABLE", aslr_tag_string) is not None:
+			return result
+		engine.warning(
+			_("'%s' does not have aslr enabled") % (path),
+			msgid="%s%s.6" % (self.name, "001"))
+		return result
+
 	def __elf_runpath_check(self, path, engine):
 		result = None
 		list = []
@@ -325,6 +359,7 @@ class UserlandActionChecker(base.ActionChecker):
 				if result != None:
 					engine.error(result % path, 
 						msgid="%s%s.3" % (self.name, pkglint_id))
+				result = self.__elf_aslr_check(fullpath, engine)
 
 	file_action.pkglint_desc = _("Paths should exist in the proto area.")
 

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -69,6 +69,8 @@ CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
 CONFIGURE_OPTIONS +=    $(CONFIGURE_OPTIONS.$(MACH))
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+
+# Keep ASLR disabled (the default) for gcc 4.5; build often core dumps with ASLR
 
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 
