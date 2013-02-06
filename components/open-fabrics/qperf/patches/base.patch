@@ -11,13 +11,11 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/socket.c qperf-0.4.6/src/socket.c
  
  
  /*
-@@ -707,10 +709,16 @@
+@@ -707,10 +709,14 @@
      ailist = getaddrinfo_port(serverflag ? 0 : ServerName, port, &hints);
      for (aip = ailist; aip; aip = aip->ai_next) {
          if (kind == K_SDP) {
 +#if (defined(__SVR4) && defined(__sun))
-+		aip->ai_family = AF_INET;
-+		aip->ai_socktype = SOCK_STREAM;
 +		aip->ai_protocol = PROTO_SDP;
 +#else
              if (aip->ai_family == AF_INET || aip->ai_family == AF_INET6)
@@ -80,12 +78,14 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      return 0;
  }
  
-@@ -617,14 +634,19 @@
+@@ -617,14 +634,21 @@
      for (i = 0; i < P_N; ++i)
          if (ParInfo[i].index != i)
              error(BUG, "initialize: ParInfo: out of order: %d", i);
 +#if (defined(__SVR4) && defined(__sun))
 +    solaris_init();
++    Req.affinity = -1;		/* default no affinity */
++    RReq.affinity = -1;
 +#else
      ProcStatFD = open("/proc/stat", 0);
      if (ProcStatFD < 0)
@@ -100,7 +100,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  /*
   * Look for a colon and skip past it and any spaces.
   */
-@@ -643,6 +665,7 @@
+@@ -643,6 +667,7 @@
          s++;
      return s;
  }
@@ -108,7 +108,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-@@ -1667,13 +1690,18 @@
+@@ -1667,13 +1692,18 @@
  {
      char count[STRSIZE];
      char speed[STRSIZE];
@@ -129,7 +129,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!fp)
          error(0, "cannot open /proc/cpuinfo");
      cpu[0] = '\0';
-@@ -1732,6 +1760,7 @@
+@@ -1732,6 +1762,7 @@
  
      /* CPU speed */
      speed[0] = '\0';
@@ -137,7 +137,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!mixed) {
          int n = strlen(cpu);
          if (n < 3 || cpu[n-2] != 'H' || cpu[n-1] != 'z') {
-@@ -1745,7 +1774,24 @@
+@@ -1745,7 +1776,24 @@
              }
          }
      }
@@ -162,7 +162,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      /* Number of CPUs */
      if (cpus == 1)
          count[0] = '\0';
-@@ -2615,9 +2661,15 @@
+@@ -2615,9 +2663,17 @@
  static void
  set_affinity(void)
  {
@@ -172,13 +172,15 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      int a = Req.affinity;
  
 +#if defined(__SVR4) && defined(__sun)
++    if (a == -1)	/* no affinity by default */
++	return;
 +    if (processor_bind(P_LWPID, P_MYID, a, NULL) != 0)
 +        error(SYS, "cannot set processor affinity (cpu %d)", a);
 +#else
      if (!a)
          return;
      CPU_ZERO(&set);
-@@ -2624,6 +2676,7 @@
+@@ -2624,6 +2680,7 @@
      CPU_SET(a-1, &set);
      if (sched_setaffinity(0, sizeof(set), &set) < 0)
          error(SYS, "cannot set processor affinity (cpu %d)", a-1);
@@ -186,7 +188,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  }
  
  
-@@ -2771,9 +2824,36 @@
+@@ -2771,9 +2828,36 @@
  /*
   * Get various temporal parameters.
   */
@@ -223,7 +225,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      int n;
      char *p;
      char buf[BUFSIZE];
-@@ -2802,6 +2882,7 @@
+@@ -2802,6 +2886,7 @@
      while (n < T_N)
          timex[n++] = 0;
  }
@@ -454,7 +456,30 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
  
  /*
   * Function prototypes.
-@@ -352,7 +356,11 @@
+@@ -298,13 +302,19 @@
+     if (bind(lfd, (SA *)&laddr, sizeof(laddr)) < 0)
+         error(SYS, "bind INET failed");
+ 
++    /*
++     * OFED generic fix - listen() should be setup first before sending server
++     * port message to the client.  There is a window that the client's
++     * connect() would fail after receiving the "server port" message if the
++     * server hasn't completed the listen().
++     */
++    if (listen(lfd, 1) < 0)
++        error(SYS, "listen failed");
++
+     port = get_socket_port(lfd);
+     encode_uint32(&port, port);
+     send_mesg(&port, sizeof(port), "TCP IPv4 server port");
+ 
+-    if (listen(lfd, 1) < 0)
+-        error(SYS, "listen failed");
+-
+     rlen = sizeof(raddr);
+     fd = accept(lfd, (SA *)&raddr, &rlen);
+     if (fd < 0)
+@@ -352,7 +362,11 @@
      SS sockaddr;
      socklen_t socklen;
  
@@ -466,7 +491,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
      if (sockfd < 0)
          error(SYS, "socket failed");
      setsockopt_one(sockfd, SO_REUSEADDR);
-@@ -373,7 +381,11 @@
+@@ -373,7 +387,11 @@
      struct sockaddr_in *sap = (struct sockaddr_in *)addr;
  
      memset(sap, 0, sizeof(*sap));
@@ -478,7 +503,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/rds.c qperf-0.4.6/src/rds.c
      inet_pton(AF_INET, host, &sap->sin_addr.s_addr);
      sap->sin_port = htons(port);
      *len = sizeof(struct sockaddr_in);
-@@ -431,6 +443,14 @@
+@@ -431,6 +449,14 @@
  
      if (getsockname(fd, (SA *)&sa, &salen) < 0)
          error(SYS, "getsockname failed");

@@ -50,7 +50,7 @@ diff -r -u /tmp/perftest-1.3.0/clock_test.c perftest-1.3.0/clock_test.c
  		c1 = get_cycles();
  		sleep(1);
  		c2 = get_cycles();
-+#if defined(__SVR4) && defined(__sun)
++#if defined(__sparc)
 +		printf("1 sec = %g usec\n", (double)((c2 - c1))/1000);
 +#else
  		printf("1 sec = %g usec\n", (c2 - c1) / mhz);
@@ -85,7 +85,7 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
  static double sample_get_cpu_mhz(void)
  {
 -	struct timeval tv1, tv2;
-+	cycles_t tv1, tv2;
++        struct timeval tv1, tv2;
  	cycles_t start;
  	double sx = 0, sy = 0, sxx = 0, syy = 0, sxy = 0;
 -	double tx, ty;
@@ -98,30 +98,28 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
  	cycles_t y[MEASUREMENTS];
  	double a; /* system call overhead in cycles */
  	double b; /* cycles per microsecond */
-@@ -78,25 +84,16 @@
+@@ -78,7 +84,6 @@
  
  	for (i = 0; i < MEASUREMENTS; ++i) {
  		start = get_cycles();
-+		tv1 = get_cycles();
- 
--		if (gettimeofday(&tv1, NULL)) {
--			fprintf(stderr, "gettimeofday failed.\n");
--			return 0;
--		}
 -
- 		do {
--			if (gettimeofday(&tv2, NULL)) {
--				fprintf(stderr, "gettimeofday failed.\n");
--				return 0;
--			}
--		} while ((tv2.tv_sec - tv1.tv_sec) * 1000000 +
--			(tv2.tv_usec - tv1.tv_usec) < USECSTART + i * USECSTEP);
-+			tv2 = get_cycles();
-+		} while ((tv2 - tv1) < NSECSTART + i * NSECSTEP);
+ 		if (gettimeofday(&tv1, NULL)) {
+ 			fprintf(stderr, "gettimeofday failed.\n");
+ 			return 0;
+@@ -86,7 +91,7 @@
  
--		x[i] = (tv2.tv_sec - tv1.tv_sec) * 1000000 +
--			tv2.tv_usec - tv1.tv_usec;
-+		x[i] = (tv2 - tv1);
+ 		do {
+ 			if (gettimeofday(&tv2, NULL)) {
+-				fprintf(stderr, "gettimeofday failed.\n");
++			        fprintf(stderr, "gettimeofday failed.\n");
+ 				return 0;
+ 			}
+ 		} while ((tv2.tv_sec - tv1.tv_sec) * 1000000 +
+@@ -94,9 +99,10 @@
+ 
+ 		x[i] = (tv2.tv_sec - tv1.tv_sec) * 1000000 +
+ 			tv2.tv_usec - tv1.tv_usec;
++
  		y[i] = get_cycles() - start;
  		if (DEBUG_DATA)
 -			fprintf(stderr, "x=%ld y=%Ld\n", x[i], (long long)y[i]);
@@ -129,7 +127,7 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
  	}
  
  	for (i = 0; i < MEASUREMENTS; ++i) {
-@@ -134,10 +131,15 @@
+@@ -134,10 +140,15 @@
  
  static double proc_get_cpu_mhz(int no_cpu_freq_fail)
  {
@@ -145,7 +143,7 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
  	f = fopen("/proc/cpuinfo","r");
  	if (!f)
  		return 0.0;
-@@ -174,6 +176,13 @@
+@@ -174,6 +185,13 @@
  		}
  	}
  	fclose(f);
@@ -159,20 +157,25 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.c perftest-1.3.0/get_clock.c
  	return mhz;
  }
  
-@@ -183,10 +192,10 @@
- 	double sample, proc, delta;
+@@ -184,8 +202,9 @@
  	sample = sample_get_cpu_mhz();
  	proc = proc_get_cpu_mhz(no_cpu_freq_fail);
-+#if defined(__SVR4) && defined(__sun)
-+	sample = sample * proc;
-+#endif
  
 -	if (!proc || !sample)
 -		return 0;
--
++#if defined(__sparc)
++	return proc;
++#endif
+ 
  	delta = proc > sample ? proc - sample : sample - proc;
  	if (delta / proc > 0.01) {
- 			fprintf(stderr, "Warning: measured timestamp frequency "
+@@ -194,5 +213,6 @@
+ 					sample, proc);
+ 			return sample;
+ 	}
++
+ 	return proc;
+ }
 diff -r -u /tmp/perftest-1.3.0/get_clock.h perftest-1.3.0/get_clock.h
 --- /tmp/perftest-1.3.0/get_clock.h	Sun Nov  1 03:09:16 2009
 +++ perftest-1.3.0/get_clock.h	Fri Feb 11 04:12:46 2011
@@ -180,16 +183,16 @@ diff -r -u /tmp/perftest-1.3.0/get_clock.h perftest-1.3.0/get_clock.h
  
  #ifndef GET_CLOCK_H
  #define GET_CLOCK_H
-+#if defined(__SVR4) && defined(__sun)
++#if defined(__sparc)
 +#include <sys/times.h>
 +#include <limits.h>
 +#include <sys/time.h>
-+typedef hrtime_t cycles_t;
++typedef unsigned long long cycles_t;
  
 -#if defined (__x86_64__) || defined(__i386__)
 +static inline cycles_t get_cycles()
 +{
-+	return (gethrtime());
++        return (gethrtime());
 +}
 +
 +#elif defined (__x86_64__) || defined(__i386__)
@@ -1470,7 +1473,7 @@ diff -r -u /tmp/perftest-1.3.0/read_bw.c perftest-1.3.0/read_bw.c
  			}
  	}
  
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
 +#else
 +	cycles_to_units = 1000000000;
@@ -1538,11 +1541,11 @@ diff -r -u /tmp/perftest-1.3.0/read_lat.c perftest-1.3.0/read_lat.c
  #include <infiniband/verbs.h>
  
  #include "get_clock.h"
-@@ -358,11 +359,20 @@
+@@ -358,10 +359,19 @@
  
  
  	if (user_param->r_flag->cycles) {
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  		cycles_to_units = 1;
 +#else
 +		cycles_to_units =
@@ -1550,15 +1553,14 @@ diff -r -u /tmp/perftest-1.3.0/read_lat.c perftest-1.3.0/read_lat.c
 +#endif
  		units = "cycles";
  	} else {
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  		cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f);
 +#else
 +		cycles_to_units = 1000;
- 		units = "usec";
 +#endif
+ 		units = "usec";
  	}
  
- 	if (user_param->r_flag->unsorted) {
 diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
 --- /tmp/perftest-1.3.0/send_bw.c	Thu Jan 20 07:37:18 2011
 +++ perftest-1.3.0/send_bw.c	Fri Feb 11 04:12:47 2011
@@ -3376,7 +3378,7 @@ diff -r -u /tmp/perftest-1.3.0/send_bw.c perftest-1.3.0/send_bw.c
 +			}
 +	}
 +
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
 +	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
 +#else
 +	cycles_to_units = 1000000000;
@@ -3970,19 +3972,21 @@ diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
  	if (!ctx->rcq) {
  	    fprintf(stderr, "Couldn't create CQ\n");
  		return NULL;
-@@ -583,10 +598,19 @@
+@@ -581,12 +596,20 @@
+ 	for (i = 0; i < user_param->iters - 1; ++i)
+ 		delta[i] = tstamp[i + 1] - tstamp[i];
  
- 
+-
  	if (user_param->r_flag->cycles) {
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  		cycles_to_units = 1;
 +#else
 +		cycles_to_units =
-+		    (1/get_cpu_mhz(user_param->cpu_freq_f)) * 1000;
++		        (1/get_cpu_mhz(user_param->cpu_freq_f)) * 1000;
 +#endif
  		units = "cycles";
  	} else {
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  		cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f);
 +#else
 +		cycles_to_units = 1000;
@@ -3990,7 +3994,7 @@ diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
  		units = "usec";
  	}
  
-@@ -649,7 +673,7 @@
+@@ -649,7 +672,7 @@
  		  
  			// Server is polling on recieve first .
  		    if (user_param->use_event) {
@@ -3999,7 +4003,7 @@ diff -r -u /tmp/perftest-1.3.0/send_lat.c perftest-1.3.0/send_lat.c
  					fprintf(stderr , " Failed to notify events to CQ");
  					return 1;
  				}
-@@ -701,7 +725,7 @@
+@@ -701,7 +724,7 @@
  		    int s_ne;
  
  		    if (user_param->use_event) {
@@ -4041,11 +4045,19 @@ diff -r -u /tmp/perftest-1.3.0/write_bw.c perftest-1.3.0/write_bw.c
  		user_parm->inline_size = 0;
  
  	printf(" Inline data is used up to %d bytes message\n", user_parm->inline_size);
-@@ -384,7 +385,11 @@
+@@ -368,7 +369,6 @@
+ 	cycles_t t;
+ 	int iters = user_param->iters;
+ 
+-
+ 	opt_delta = tcompleted[opt_posted] - tposted[opt_completed];
+ 
+ 	if (user_param->noPeak == OFF) {
+@@ -384,7 +384,11 @@
  		  }
  	}
  	
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  	cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f) * 1000000;
 +#else
 +	cycles_to_units = 1000000000;
@@ -4091,7 +4103,7 @@ diff -r -u /tmp/perftest-1.3.0/write_lat.c perftest-1.3.0/write_lat.c
  
  
  	if (user_param->r_flag->cycles) {
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  		cycles_to_units = 1;
 +#else
 +		cycles_to_units =
@@ -4099,7 +4111,7 @@ diff -r -u /tmp/perftest-1.3.0/write_lat.c perftest-1.3.0/write_lat.c
 +#endif
  		units = "cycles";
  	} else {
-+#if !(defined(__SVR4) && defined(__sun))
++#if !(defined(__sparc))
  		cycles_to_units = get_cpu_mhz(user_param->cpu_freq_f);
 +#else
 +		cycles_to_units = 1000;
