@@ -18,30 +18,32 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
-PATH=$(dir $(CC)):/usr/bin:/usr/gnu/bin
+#
+# Note this perl is 64-bit only.
+#
 
 # I want to override PERL_VERSION and PERL_ARCH because when building
 # a new version of perl it probably isn't installed so shared-macros.mk
 # can't call it.
 
 COMPONENT_NAME=		perl
-COMPONENT_VERSION=	5.12.4
-PERL_VERSION=		5.12
+COMPONENT_VERSION=	5.16.2
+PERL_VERSION=		5.16
 COMPONENT_PROJECT_URL=	http://www.perl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c920fa01a34b7752e8cbbc99c6921b908df60611d84a29c4377e4a798604767e
+    sha256:5ba91d9aa40220c615b644bb48fa5df7fbca4afb1c9e911bdc0ce2a93f072d7d
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 #
 # Override these compiler settings because they are causing problems
@@ -58,7 +60,39 @@ studio_C99MODE=
 studio_ALIGN=
 studio_MT=
 
+CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
+CONFIGURE_ENV += MAKE=$(GMAKE)
+CONFIGURE_ENV += PATH=$(dir $(CC)):$(PATH)
+
+# -Dperl_static_inline="static" turns OFF "static inline".
+# This was added because Configure probes
+# for static inline (C99 feature) and finds it in our default Studio
+# compiler.  But in the ON build of the perl add-ons, sun-solaris, the
+# shadow build with gcc 3.4.3 doesn't understand static inline so errors.
 #
+CONFIGURE_OPTIONS = \
+			-de \
+			-Dmksymlinks \
+			-Ulocincpth= \
+			-Uloclibpth= \
+                        -Dbin=/usr/perl5/$(PERL_VERSION)/bin \
+			-Dcc="cc" \
+			-Dcf_email="userland-discuss@opensolaris.org" \
+			-Dcf_by="perl-bugs" \
+			-Dlibperl=libperl.so \
+			-Dmyhostname="localhost" \
+			-Dperl_static_inline="static" \
+			-Dprefix=/usr/perl5/$(PERL_VERSION) \
+                        -Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
+			-Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \
+			-Dsiteprefix=/usr/perl5/$(PERL_VERSION) \
+			-Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION) \
+			-Dvendorprefix=/usr/perl5/$(PERL_VERSION) \
+			-Duseshrplib \
+			-Dusedtrace \
+			-Duse64bitall \
+			-Doptimize="$(CFLAGS.studio)"
+
 # The extra Configure parameters (cf_email, cf_by, myhostname) and
 # the gawk and sed that follow are attempting to sanatize the
 # resulting config.sh of values from our build environment that
@@ -66,31 +100,6 @@ studio_MT=
 # I'm assuming our compilers live on a path that contains "SUNWspro".
 # If that changes the sed filter needs to change.
 #
-
-# That last bit re-runs bison to regenerate perly.h.
-
-CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
-CONFIGURE_ENV += MAKE=$(GMAKE)
-CONFIGURE_ENV += PATH=$(dir $(CC)):$(PATH)
-CONFIGURE_OPTIONS = \
-			    -Dprefix=/usr/perl5/$(PERL_VERSION) \
-			    -Dprivlib=/usr/perl5/$(PERL_VERSION)/lib \
-			    -Dsitelib=/usr/perl5/site_perl/$(PERL_VERSION) \
-			    -Dvendorprefix=/usr/perl5/$(PERL_VERSION) \
-			    -Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION) \
-			    -Dlibperl=libperl.so \
-			    -Duseshrplib \
-			    -Dusedtrace \
-			    -Duse64bitint \
-			    -Dcc="cc" \
-			    -Doptimize="$(CFLAGS.studio)" \
-			    -Dcf_email="userland-discuss@opensolaris.org" \
-			    -Dcf_by="perl-bugs" \
-			    -Dmyhostname="localhost" \
-			    -Dmksymlinks \
-			    -O \
-			    -de
-
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D); \
 	    cp config.sh config.sh_orig ; \
@@ -98,36 +107,36 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	    '/^myuname=/{print $$1" localhost "$$3" "$$5" "$$6" "$$7"\047"} ; \
 	    		!/^myuname=/ {print}' config.sh_orig \
 		| \
-		sed -e 's/[^ ]*SUNWspro[^ ]*//g' > config.sh ) ; \
-	( $(RM) $(@D)/perly.act $(@D)/perly.tab $(@D)/perly.h; \
-		cd $(@D) ; $(GMAKE) regen_perly )
+		sed -e "s/[^ ']*SUNWspro[^ ']*//g" > config.sh )
 
-COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
-#
-# perl's install path for sparc is based off the value of the
-# "arch" command.  So we must package that way also.
-#
-PKG_MACROS		+=	PERL_ARCH=$(shell arch)
-PKG_MACROS		+=	PERL_VERSION=$(PERL_VERSION)
+
 #
 # Put studio compilers in PATH so we can tell Configure and gmake just
 # use cc.  Trying to avoid the full path so it doesn't end up in
 # perl's config.
 #
-COMPONENT_BUILD_ENV	+=	PATH=$(dir $(CC.studio.32)):$(PATH)
+COMPONENT_BUILD_ENV	+=	PATH=$(dir $(CC)):$(PATH)
+COMPONENT_INSTALL_ENV	+=	PATH=$(dir $(CC)):$(PATH)
+COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
+COMPONENT_TEST_ENV	+=	PATH=$(dir $(CC)):$(PATH)
 
-build:		$(BUILD_32)
+#
+# perl's install path for sparc is based off the value of the
+# "arch" command.  So we must package that way also.
+#
+PKG_MACROS		+=	P_ARCH=$(shell arch)
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
 
-test:		$(TEST_32)
+install:	$(INSTALL_64)
+
+test:		$(TEST_64)
 	#
 	#
 	# All tests should pass.
 	#
 	#
 
-
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include $(WS_TOP)/make-rules/depend.mk
