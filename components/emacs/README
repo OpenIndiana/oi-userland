@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 NAME:             emacs
@@ -37,16 +37,39 @@ information needed to understand how this component is put together.
 - We patch the following changes to the emacs sources:
 
 	sysmalloc.patch
-	    Use the system malloc instead of the built in one
+	    Use the system malloc instead of the built in one.
 
 	dldump.patch
 	    Use the native Solaris dldump() function (emacs/src/unexsol.c)
 	    to produce the dumped emacs, rather than the generic ELF
-	    code (emacs-22.1/src/unexelf.c).
+	    code (emacs-xxx/src/unexelf.c).
 
 	xft.patch
 	    Patch configure script to provide necessary missing
 	    libraries for the GTK version of emacs.
+
+	eval_file_local_var.patch
+	    When the Emacs user option `enable-local-variables' is set to
+	    `:safe' (the default value is t), Emacs should automatically refuse
+	    to evaluate `eval' forms in file-local variable sections. See:
+
+		http://www.openwall.com/lists/oss-security/2012/08/13/1
+		http://www.openwall.com/lists/oss-security/2012/08/13/2
+
+	find.patch
+	    The rgrep function uses the GNU-specific -path option to the
+	    find command. Change the default value for the find-program
+	    variable in grep.el to use GNU find.
+
+	tty_startup_hang.patch
+	    Emacs 23.x has a latent bug that causes it to run the X11 input
+	    select code even when running without a window system via the
+	    -nw option. This worked because a variable in libglib.so used
+	    to be zero, but in newer versions of libglib.so it is not. The
+	    result is that 'emacs -nw' hangs on startup and has to be killed
+	    from another shell. This is fixed in eamcs 24.2. See:
+
+		http://debbugs.gnu.org/cgi/bugreport.cgi?bug=9754
 
 - Emacs can be built as either 32-bit or 64-bit, depending on the target
   machine. The benefit of a 64-bit emacs is that the size of the files it
