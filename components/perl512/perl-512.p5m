@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -3682,8 +3682,18 @@ hardlink path=usr/perl5/$(PERL_VERSION)/bin/pstruct target=c2ph
 hardlink path=usr/perl5/$(PERL_VERSION)/man/man1/perlbug.1 target=perlthanks.1
 hardlink path=usr/perl5/$(PERL_VERSION)/man/man1/pstruct.1 target=c2ph.1
 hardlink path=usr/perl5/$(PERL_VERSION)/man/man1/s2p.1 target=psed.1
-link path=usr/bin/perl target=../perl5/5.12/bin/perl
-link path=usr/perl5/bin target=./5.12/bin
-link path=usr/perl5/man target=./5.12/man
-link path=usr/perl5/pod target=./5.12/lib/pod
+
+# This link is always mediated.
+# Customers may customize this link by creating their own IPS
+# packages with mediated links.
+# DELETE the dupaction once the mediated link is published
+# in the main repo.
+link path=usr/bin/perl target=../perl5/5.12/bin/perl \
+    mediator=perl mediator-version=5.12 mediator-priority=vendor \
+    pkg.linted.pkglint.dupaction010.2=true
+
+link path=usr/perl5/bin target=5.12/bin
+link path=usr/perl5/man target=5.12/man
+link path=usr/perl5/pod target=5.12/lib/pod
+
 license perl.license license=Artistic

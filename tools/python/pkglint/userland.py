@@ -46,6 +46,24 @@ class UserlandActionChecker(base.ActionChecker):
 			self.proto_path = path.split()
 		else:
 			self.proto_path = None
+		#
+		# These lists are used to check if a 32/64-bit binary
+		# is in a proper 32/64-bit directory.
+		#
+		self.pathlist32 = [
+			"i86",
+			"sparcv7",
+			"32",
+			"i86pc-solaris-64int",  # perl path
+			"sun4-solaris-64int"    # perl path
+		]
+		self.pathlist64 = [
+			"amd64",
+			"sparcv9",
+			"64",
+			"i86pc-solaris-64",     # perl path
+			"sun4-solaris-64"       # perl path
+		]
 		self.runpath_re = [
 			re.compile('^/lib(/.*)?$'),
 			re.compile('^/usr/'),
@@ -54,7 +72,9 @@ class UserlandActionChecker(base.ActionChecker):
 		self.runpath_64_re = [
 			re.compile('^.*/64(/.*)?$'),
 			re.compile('^.*/amd64(/.*)?$'),
-			re.compile('^.*/sparcv9(/.*)?$')
+			re.compile('^.*/sparcv9(/.*)?$'),
+			re.compile('^.*/i86pc-solaris-64(/.*)?$'), # perl path
+			re.compile('^.*/sun4-solaris-64(/.*)?$')   # perl path
 		]
 		self.initscript_re = re.compile("^etc/(rc.|init)\.d")
 
@@ -284,15 +304,15 @@ class UserlandActionChecker(base.ActionChecker):
 		type = ei.get("type");
                 elems = os.path.dirname(path).split("/")
 
-                if ("amd64" in elems) or ("sparcv9" in elems) or ("64" in elems):
-                    path64 = True
-                else:
-                    path64 = False
+                path64 = False
+		for p in self.pathlist64:
+		    if (p in elems):
+		    	path64 = True
 
-                if ("i86" in elems) or ("sparcv7" in elems) or ("32" in elems):
-                    path32 = True
-                else:
-                    path32 = False
+		path32 = False
+		for p in self.pathlist32:
+		    if (p in elems):
+		    	path32 = True
 
 		# ignore 64-bit executables in normal (non-32-bit-specific)
 		# locations, that's ok now.
