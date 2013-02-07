@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
 
@@ -2520,3 +2520,8 @@ depend type=require-any \
 	fmri=pkg:/editor/gnu-emacs/gnu-emacs-gtk \
 	fmri=pkg:/editor/gnu-emacs/gnu-emacs-x11 \
 	fmri=pkg:/editor/gnu-emacs/gnu-emacs-no-x11
+
+# The rgrep command uses GNU-find specific options, so we patch Solaris emacs
+# to use GNU find. As this functionality is relatively core, ensure that
+# installing emacs also brings in the package containing GNU find.
+depend type=require fmri=__TBD pkg.debug.depend.file=usr/gnu/bin/find 
