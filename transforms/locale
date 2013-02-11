@@ -20,14 +20,17 @@
 #
 
 #
-# Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 # general locale
 <transform dir link hardlink path=.*/locale$ -> default facet.locale true>
 
+# add locale specific facets to using the the locale name encoded in
+# the pathname.  We don't need the portion after the '@' or '.', only
+# .../locale/{locale-name}[@.]*.
 <transform dir file link hardlink \
-    path=.*/locale/([^/]+)(\..+){0,1}(/.+){0,1}$ -> \
+    path=.*/locale/([^/@\.]+)(.+){0,1}(/.+){0,1}$ -> \
     default facet.locale.%<\1> true>
 
 # unfacet the C locale
