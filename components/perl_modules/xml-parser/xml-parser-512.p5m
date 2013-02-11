@@ -18,45 +18,34 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
 set name=pkg.fmri value=pkg:/library/perl-5/xml-parser-512@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="XML::Parser - A perl module for parsing XML documents"
+set name=pkg.summary \
+    value="XML::Parser - A perl module for parsing XML documents"
 set name=pkg.description value="This module provides ways to parse XML documents. It is built on top of XML::Parser::Expat."
-set name=info.classification value="org.opensolaris.category.2008:Development/Perl"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Perl"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2004/251
+set name=org.opensolaris.arc-caseid value=LSARC/2004/251
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license xml-parser.license license='Artistic'
+
+depend type=optional fmri=library/perl-5/xml-parser@5.8.4-0.167
 
 dir path=usr
 dir path=usr/perl5
 dir path=usr/perl5/5.12
 dir path=usr/perl5/5.12/lib
 dir path=usr/perl5/5.12/lib/$(PERL_ARCH)
+#file path=usr/perl5/5.12/lib/$(PERL_ARCH)/perllocal.pod
 dir path=usr/perl5/5.12/man
 dir path=usr/perl5/5.12/man/man3
-dir path=usr/perl5/vendor_perl
-dir path=usr/perl5/vendor_perl/5.12
-dir path=usr/perl5/vendor_perl/5.12/XML
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Style
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/auto
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/auto/XML
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/auto/XML/Parser
-dir path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/auto/XML/Parser/Expat
-dir path=usr/share
-dir path=usr/share/man
-dir path=usr/share/man/man3
-#file path=usr/perl5/5.12/lib/$(PERL_ARCH)/perllocal.pod
 file path=usr/perl5/5.12/man/man3/XML::Parser.3
 file path=usr/perl5/5.12/man/man3/XML::Parser::Expat.3
 file path=usr/perl5/5.12/man/man3/XML::Parser::Style::Debug.3
@@ -64,64 +53,52 @@ file path=usr/perl5/5.12/man/man3/XML::Parser::Style::Objects.3
 file path=usr/perl5/5.12/man/man3/XML::Parser::Style::Stream.3
 file path=usr/perl5/5.12/man/man3/XML::Parser::Style::Subs.3
 file path=usr/perl5/5.12/man/man3/XML::Parser::Style::Tree.3
-file path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser.pm
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/Japanese_Encodings.msg
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/README
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/big5.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/euc-kr.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-2.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-3.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-4.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-5.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-7.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-8.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/iso-8859-9.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/windows-1250.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/windows-1252.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/x-euc-jp-jisx0221.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/x-euc-jp-unicode.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/x-sjis-cp932.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/x-sjis-jdk117.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/x-sjis-jisx0221.enc
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Encodings/x-sjis-unicode.enc
-file path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Expat.pm
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/LWPExternEnt.pl
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Style/Debug.pm
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Style/Objects.pm
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Style/Stream.pm
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Style/Subs.pm
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/XML/Parser/Style/Tree.pm
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/auto/XML/Parser/.packlist
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/auto/XML/Parser/Expat/Expat.bs
-file \
-    path=usr/perl5/vendor_perl/5.12/$(PERL_ARCH)/auto/XML/Parser/Expat/Expat.so
+dir path=usr/perl5/vendor_perl
+dir path=usr/perl5/vendor_perl/5.12
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser.pm
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/Japanese_Encodings.msg
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/README
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/big5.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/euc-kr.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/ibm866.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/iso-8859-2.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/iso-8859-3.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/iso-8859-4.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/iso-8859-5.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/iso-8859-7.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/iso-8859-8.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/iso-8859-9.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/koi8-r.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/windows-1250.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/windows-1251.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/windows-1252.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/windows-1255.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/x-euc-jp-jisx0221.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/x-euc-jp-unicode.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/x-sjis-cp932.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/x-sjis-jdk117.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/x-sjis-jisx0221.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Encodings/x-sjis-unicode.enc
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Expat.pm
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/LWPExternEnt.pl
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Style
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Style/Debug.pm
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Style/Objects.pm
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Style/Stream.pm
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Style/Subs.pm
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/XML/Parser/Style/Tree.pm
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/auto
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/auto/XML
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/auto/XML/Parser
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/auto/XML/Parser/.packlist
+dir path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/auto/XML/Parser/Expat
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/auto/XML/Parser/Expat/Expat.bs
+file path=usr/perl5/vendor_perl/5.12/$(PERL_A)-solaris-64int/auto/XML/Parser/Expat/Expat.so
+
 link path=usr/share/man/man3/XML::Parser.3 target=../../../perl5/5.12/man/man3/XML::Parser.3
 link path=usr/share/man/man3/XML::Parser::Expat.3 target=../../../perl5/5.12/man/man3/XML::Parser::Expat.3
 link path=usr/share/man/man3/XML::Parser::Style::Debug.3 target=../../../perl5/5.12/man/man3/XML::Parser::Style::Debug.3
@@ -129,4 +106,3 @@ link path=usr/share/man/man3/XML::Parser::Style::Objects.3 target=../../../perl5
 link path=usr/share/man/man3/XML::Parser::Style::Stream.3 target=../../../perl5/5.12/man/man3/XML::Parser::Style::Stream.3
 link path=usr/share/man/man3/XML::Parser::Style::Subs.3 target=../../../perl5/5.12/man/man3/XML::Parser::Style::Subs.3
 link path=usr/share/man/man3/XML::Parser::Style::Tree.3 target=../../../perl5/5.12/man/man3/XML::Parser::Style::Tree.3
-depend type=optional fmri=library/perl-5/xml-parser@5.8.4-0.167
