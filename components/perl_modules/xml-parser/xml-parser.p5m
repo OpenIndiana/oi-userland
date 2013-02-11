@@ -24,7 +24,8 @@
 # The version is specifically set until there is a version that is
 # greater than this due to the way xml-parser was originally delivered from
 # the desktop consolidation.
-set name=pkg.fmri value=pkg:/library/perl-5/xml-parser@5.12,$(BUILD_VERSION)
+
+set name=pkg.fmri value=pkg:/library/perl-5/xml-parser@5.12.1,$(BUILD_VERSION)
 set name=pkg.summary \
     value="XML::Parser - A perl module for parsing XML documents"
 set name=pkg.description value="This module provides ways to parse XML documents. It is built on top of XML::Parser::Expat."
@@ -36,6 +37,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 # perl 5.12
 depend fmri=library/perl-5/xml-parser-512 predicate=runtime/perl-512 \
+    type=conditional
+
+# perl 5.16
+depend fmri=library/perl-5/xml-parser-516 predicate=runtime/perl-516 \
     type=conditional
 
 legacy pkg=SUNWperl-xml-parser \

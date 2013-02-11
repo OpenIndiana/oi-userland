@@ -116,7 +116,7 @@ endif
 VERSIONED_MANIFESTS = \
 	$(PYV_MANIFESTS) $(PYNV_MANIFESTS) \
 	$(PERLV_MANIFESTS) $(PERLNV_MANIFESTS) \
-	$(UNVERSIONED_MANIFESTS)
+	$(NOPERL_MANIFESTS)
 
 GENERATED =		$(MANIFEST_BASE)-generated
 COMBINED =		$(MANIFEST_BASE)-combined
@@ -184,6 +184,15 @@ $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(WS_TOP)/transforms/mkgeneric-python
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
+# Define and execute a macro that generates a rule to create a manifest for a
+# perl module specific to a particular version of the perl runtime.
+define perl-manifest-rule
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
+	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) \
+		-D PERL_ARCH=$(call PERL_ARCH_FUNC,$(PERL.$(1))) $$< > $$@
+endef
+$(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
+
 # A rule to create a helper transform package for perl, that will insert the
 # appropriate conditional dependencies into a perl library's
 # runtime-version-generic package to pull in the version-specific bits when the
@@ -193,16 +202,8 @@ $(WS_TOP)/transforms/mkgeneric-perl: $(WS_TOP)/make-rules/shared-macros.mk
 	$(foreach ver,$(shell echo $(PERL_VERSIONS) | tr -d .), \
 		$(call mkgeneric,runtime/perl,$(ver)))
 
-# Define and execute a macro that generates a rule to create a manifest for a
-# perl module specific to a particular version of the perl runtime.
-define perl-manifest-rule
-$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PERLVER.p5m
-	$(PKGMOGRIFY) -D PERLVER=$(1) -D PLV=$(shell echo $(1) | tr -d .) $< > $@
-endef
-$(foreach ver,$(PERL_VERSIONS),$(eval $(call perl-manifest-rule,$(ver))))
-
 # Build Perl version-wrapping manifests from the generic version.
-$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m
+$(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
 	$(PKGMOGRIFY) -D PLV=### $(WS_TOP)/transforms/mkgeneric-perl \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi

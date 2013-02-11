@@ -18,18 +18,19 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		XML-Simple
-COMPONENT_VERSION=	2.18
+COMPONENT_VERSION=	2.20
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a54967c188cda3e20f496c83be4de3f1740eeaa83c0380712ecd969ad8766826
-COMPONENT_ARCHIVE_URL=	http://www.cpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
+    sha256:5cff13d0802792da1eb45895ce1be461903d98ec97c9c953bc8406af7294434a
+COMPONENT_ARCHIVE_URL=	\
+    http://www.cpan.org/authors/id/G/GR/GRANTM/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
 COMPONENT_BUGDB=	perl-mod/xml-parser
 
@@ -40,25 +41,16 @@ include $(WS_TOP)/make-rules/makemaker.mk
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
-# look in XML::Parser's proto area
-PERL_FLAGS = -I$(COMPONENT_DIR)/../xml-parser/build/prototype/$(MACH)/usr/perl5/vendor_perl/$(PERL_VERSION)/$(PERL_ARCH)
-
-
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
-# The tests with perl 5.8.4 are clean.
-# Perl 5.12.3 has lots of failures and issues.
 COMPONENT_TEST_TARGETS = test
-test:		$(TEST_32)
 
-# special targets; need xml-parser built and installed first
-../xml-parser/build/5.8.4/.installed ../xml-parser/build/5.12/.installed:
-	(cd ../xml-parser ; $(GMAKE) install)
+build:		$(BUILD_32_and_64)
 
-$(BUILD_32):	../xml-parser/build/5.8.4/.installed \
-		../xml-parser/build/5.12/.installed
+install:	$(INSTALL_32_and_64)
+
+	#
+	# Must have xml-parser installed for these tests to pass.
+	#
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

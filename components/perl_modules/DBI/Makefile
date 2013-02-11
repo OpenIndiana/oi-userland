@@ -18,16 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		DBI
-COMPONENT_VERSION=	1.58
+COMPONENT_VERSION=	1.623
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:32d0d92cc6a6589e88d6b476564be649908ca49152f3f13af5eeebf9522b1cf6
+    sha256:912d73f9eb0601f592aa58897d9c6787e238d9780f30ac86059c83b7085de3a1
 COMPONENT_ARCHIVE_URL=	http://backpan.perl.org/authors/id/T/TI/TIMB/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~timb/DBI/
 COMPONENT_BUGDB=	perl-mod/dbi
@@ -36,12 +36,13 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
 COMPONENT_TEST_TARGETS = test
-test:		$(TEST_32)
+
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
+
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

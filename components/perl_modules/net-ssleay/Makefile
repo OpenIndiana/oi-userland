@@ -26,14 +26,15 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Net-SSLeay
-COMPONENT_VERSION=	1.36
+COMPONENT_VERSION=	1.52
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://search.cpan.org/dist/Net-SSLeay/
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e262897263c5aa9096e39f7813c7cb7d4d05508ca406b173878c4ecddb2c53ce
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/F/FL/FLORA/$(COMPONENT_ARCHIVE)
+    sha256:48ece32f8f1b4c20acedfcaefd5d66f0ab8818ae6f994ab7c02da7f42e6d77ba
+COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/M/MI/MIKEM/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	perl-mod/net-ssleay
+
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/makemaker.mk
@@ -42,13 +43,13 @@ include $(WS_TOP)/make-rules/ips.mk
 # The component Makefile.PL file will ask some questions on whether we want
 # to run external tests, to which we want to answer with "n".
 COMPONENT_CONFIGURE_ENV += ; echo "n" |
+COMPONENT_TEST_TARGETS = test
 
-# common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

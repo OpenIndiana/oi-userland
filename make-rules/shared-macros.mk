@@ -305,13 +305,15 @@ JAVA_HOME =	/usr/jdk/instances/jdk1.6.0
 # Not necessarily the system's default version, i.e. /usr/bin/perl
 PERL_VERSION =  5.12
 
-PERL_VERSIONS = 5.12
+PERL_VERSIONS = 5.12 5.16
 
 PERL.5.12 =     /usr/perl5/5.12/bin/perl
+PERL.5.16 =	/usr/perl5/5.16/bin/perl
 
 PERL =          $(PERL.$(PERL_VERSION))
 
 PERL_ARCH :=	$(shell $(PERL) -e 'use Config; print $$Config{archname}')
+PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 # Optimally we should ask perl which C compiler was used but it doesn't
 # result in a full path name.  Only "c" is being recorded
 # inside perl builds while we actually need a full path to

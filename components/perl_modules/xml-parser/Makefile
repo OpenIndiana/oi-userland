@@ -18,18 +18,25 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+
+#
+# Note that package library/perl-5/xml-parser cannot use versionless
+# packaging because this package migrated from the desktop consolidation
+# with an incorrect version number.
+#
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		XML-Parser
-COMPONENT_VERSION=	2.36
+COMPONENT_VERSION=	2.41
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9fd529867402456bd826fe0e5588d35b3a2e27e586a2fd838d1352b71c2ed73f
-COMPONENT_ARCHIVE_URL=	http://www.cpan.org/authors/id/M/MS/MSERGEANT/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~msergeant/
+    sha256:b48197cd2265a26c5f016489f11a7b450d8833cb8b3d6a46ee15975740894de9
+COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/T/TO/TODDR/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://search.cpan.org/~toddr/
 COMPONENT_BUGDB=	perl-mod/xml-parser
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -39,12 +46,15 @@ include $(WS_TOP)/make-rules/makemaker.mk
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
-build:		$(BUILD_32)
-
-install:	$(INSTALL_32)
-
 COMPONENT_TEST_TARGETS = test
-test:		$(TEST_32)
+
+PKG_MACROS +=	PERL_A=$(shell arch)
+
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
+
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
