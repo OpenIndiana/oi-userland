@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 PARFAIT_BUILD=no
 
@@ -77,7 +77,7 @@ COMPONENT_PATCHES_1= compiler.patch path_utmp.patch\
 					 CR7168611.patch CR7178717.patch \
 					 CR7175995.patch \
 					 CR7186440_ksh93_disable_predictive_editing.patch \
-					 CR7128313.patch 
+					 CR7128313.patch  Bug15794787,15819673.patch
 
 # Fixup HOSTTYPE to match uname output and bits
 HOSTTYPE32=sol11.$(shell uname -p)
