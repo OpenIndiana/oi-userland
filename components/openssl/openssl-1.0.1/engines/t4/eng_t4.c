@@ -54,7 +54,7 @@
  */
 
 /*
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -97,11 +97,9 @@ typedef enum {
 	T4_AES_192_CFB128,
 	T4_AES_256_CFB128,
 #endif	/* !SOLARIS_NO_AES_CFB128 */
-#ifndef	SOLARIS_NO_AES_CTR
 	T4_AES_128_CTR,
 	T4_AES_192_CTR,
 	T4_AES_256_CTR,
-#endif
 	T4_AES_128_ECB,
 	T4_AES_192_ECB,
 	T4_AES_256_ECB,
@@ -186,24 +184,6 @@ extern DH_METHOD *t4_DH(void);
 /* DSA_METHOD structure used by ENGINE_set_DSA() */
 extern DSA_METHOD *t4_DSA(void);
 
-#ifndef	SOLARIS_NO_AES_CTR
-/*
- * NIDs for AES counter mode that will be defined during the engine
- * initialization (because OpenSSL doesn't support CTR mode).
- */
-static int NID_t4_aes_128_ctr = NID_undef;
-static int NID_t4_aes_192_ctr = NID_undef;
-static int NID_t4_aes_256_ctr = NID_undef;
-
-static int t4_add_NID(char *sn, char *ln);
-static int t4_add_aes_ctr_NIDs(void);
-#pragma inline(t4_add_aes_ctr_NIDs)
-static void t4_free_aes_ctr_NIDs(void);
-#define	T4_FREE_AES_CTR_NIDS	t4_free_aes_ctr_NIDs()
-#else
-#define	T4_FREE_AES_CTR_NIDS
-#endif	/* !SOLARIS_NO_AES_CTR */
-
 /* Static variables */
 /* This can't be const as NID*ctr is inserted when the engine is initialized */
 static int t4_cipher_nids[] = {
@@ -211,10 +191,7 @@ static int t4_cipher_nids[] = {
 #ifndef	SOLARIS_NO_AES_CFB128
 	NID_aes_128_cfb128, NID_aes_192_cfb128, NID_aes_256_cfb128,
 #endif
-#ifndef	SOLARIS_NO_AES_CTR
-	/* NID_t4_aes_128_ctr, NID_t4_aes_192, NID_t4_aes_256 */
-	NID_undef, NID_undef, NID_undef,
-#endif
+	NID_aes_128_ctr, NID_aes_192_ctr, NID_aes_256_ctr,
 	NID_aes_128_ecb, NID_aes_192_ecb, NID_aes_256_ecb,
 #ifndef	OPENSSL_NO_DES
 	/* Must be at end of list (see t4_des_cipher_count in t4_bind() */
@@ -242,15 +219,12 @@ static t4_cipher_t t4_cipher_table[] = {
 	{T4_AES_256_CFB128,	NID_aes_256_cfb128,	16, 32, 32,
 							EVP_CIPH_NO_PADDING},
 #endif
-#ifndef	SOLARIS_NO_AES_CTR
-	/* We don't know the correct NIDs until the engine is initialized */
-	{T4_AES_128_CTR,	NID_undef,		16, 16, 16,
+	{T4_AES_128_CTR,	NID_aes_128_ctr,	16, 16, 16,
 							EVP_CIPH_NO_PADDING},
-	{T4_AES_192_CTR,	NID_undef,		16, 24, 24,
+	{T4_AES_192_CTR,	NID_aes_192_ctr,	16, 24, 24,
 							EVP_CIPH_NO_PADDING},
-	{T4_AES_256_CTR,	NID_undef,		16, 32, 32,
+	{T4_AES_256_CTR,	NID_aes_256_ctr,	16, 32, 32,
 							EVP_CIPH_NO_PADDING},
-#endif
 	{T4_AES_128_ECB,	NID_aes_128_ecb,	0, 16, 16, 0},
 	{T4_AES_192_ECB,	NID_aes_192_ecb,	0, 24, 24, 0},
 	{T4_AES_256_ECB,	NID_aes_256_ecb,	0, 32, 32, 0},
@@ -275,14 +249,12 @@ static int t4_cipher_do_aes_192_cfb128(EVP_CIPHER_CTX *ctx, unsigned char *out,
 static int t4_cipher_do_aes_256_cfb128(EVP_CIPHER_CTX *ctx, unsigned char *out,
     const unsigned char *in, size_t inl);
 #endif
-#ifndef	SOLARIS_NO_AES_CTR
 static int t4_cipher_do_aes_128_ctr(EVP_CIPHER_CTX *ctx, unsigned char *out,
     const unsigned char *in, size_t inl);
 static int t4_cipher_do_aes_192_ctr(EVP_CIPHER_CTX *ctx, unsigned char *out,
     const unsigned char *in, size_t inl);
 static int t4_cipher_do_aes_256_ctr(EVP_CIPHER_CTX *ctx, unsigned char *out,
     const unsigned char *in, size_t inl);
-#endif	/* !SOLARIS_NO_AES_CTR */
 static int t4_cipher_do_aes_128_ecb(EVP_CIPHER_CTX *ctx, unsigned char *out,
     const unsigned char *in, size_t inl);
 static int t4_cipher_do_aes_192_ecb(EVP_CIPHER_CTX *ctx, unsigned char *out,
@@ -364,42 +336,33 @@ static const EVP_CIPHER t4_aes_256_cfb128 = {
 };
 #endif	/* !SOLARIS_NO_AES_CFB128 */
 
-#ifndef	SOLARIS_NO_AES_CTR
-/*
- * Counter mode is not defined in OpenSSL.
- * NID_undef's will be changed to AES counter mode NIDs as soon as they are
- * created in t4_add_aes_ctr_NIDs() when the engine is initialized.
- * Note that the need to change these structures during initialization is the
- * reason why we don't define them with the const keyword.
- */
 static EVP_CIPHER t4_aes_128_ctr = {
-	NID_undef,
+	NID_aes_128_ctr,
 	16, 16, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	t4_cipher_init_aes, t4_cipher_do_aes_128_ctr, NULL,
 	sizeof (t4_cipher_ctx_t),
 	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
 	NULL, NULL
 };
 static EVP_CIPHER t4_aes_192_ctr = {
-	NID_undef,
+	NID_aes_192_ctr,
 	16, 24, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	t4_cipher_init_aes, t4_cipher_do_aes_192_ctr, NULL,
 	sizeof (t4_cipher_ctx_t),
 	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
 	NULL, NULL
 };
 static EVP_CIPHER t4_aes_256_ctr = {
-	NID_undef,
+	NID_aes_256_ctr,
 	16, 32, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	t4_cipher_init_aes, t4_cipher_do_aes_256_ctr, NULL,
 	sizeof (t4_cipher_ctx_t),
 	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
 	NULL, NULL
 };
-#endif	/* !SOLARIS_NO_AES_CTR */
 
 /*
  * ECB modes don't use an Initial Vector, so that's why set_asn1_parameters,
@@ -602,123 +565,6 @@ t4_instructions_present(_Bool *aes_present, _Bool *des_present,
 }
 
 
-#ifndef	SOLARIS_NO_AES_CTR
-/* Create a new NID when we have no OID for that mechanism */
-static int
-t4_add_NID(char *sn, char *ln)
-{
-	ASN1_OBJECT	*o;
-	int		nid;
-
-	if ((o = ASN1_OBJECT_create(OBJ_new_nid(1), (unsigned char *)"",
-	    1, sn, ln)) == NULL) {
-		T4err(T4_F_ADD_NID, T4_R_ASN1_OBJECT_CREATE);
-		return (0);
-	}
-
-	/* Will return NID_undef on error */
-	nid = OBJ_add_object(o);
-	ASN1_OBJECT_free(o);
-
-	return (nid);
-}
-
-
-/*
- * Create new NIDs for AES counter mode.
- * OpenSSL doesn't support them now so we have to help ourselves here.
- */
-static int
-t4_add_aes_ctr_NIDs(void)
-{
-	/* Are we already set? */
-	if (NID_t4_aes_256_ctr != NID_undef)
-		return (1);
-
-	/*
-	 * There are no official names for AES counter modes yet so we just
-	 * follow the format of those that exist.
-	 */
-
-	/* Initialize NID_t4_aes_*_ctr and t4_cipher_table[] variables */
-	if ((NID_t4_aes_128_ctr = t4_add_NID("AES-128-CTR", "aes-128-ctr")) ==
-	    NID_undef)
-		return (0);
-	t4_cipher_table[T4_AES_128_CTR].nid =
-	    t4_aes_128_ctr.nid = NID_t4_aes_128_ctr;
-
-	if ((NID_t4_aes_192_ctr = t4_add_NID("AES-192-CTR", "aes-192-ctr")) ==
-	    NID_undef)
-		return (0);
-	t4_cipher_table[T4_AES_192_CTR].nid =
-	    t4_aes_192_ctr.nid = NID_t4_aes_192_ctr;
-
-	if ((NID_t4_aes_256_ctr = t4_add_NID("AES-256-CTR", "aes-256-ctr")) ==
-	    NID_undef)
-		return (0);
-	t4_cipher_table[T4_AES_256_CTR].nid =
-	    t4_aes_256_ctr.nid = NID_t4_aes_256_ctr;
-
-	/* Initialize t4_cipher_nids[] */
-	for (int i = 0; i < t4_cipher_count; ++i) {
-		if (t4_cipher_nids[i] == NID_undef) { /* found */
-			t4_cipher_nids[i] = NID_t4_aes_128_ctr;
-			t4_cipher_nids[++i] = NID_t4_aes_192_ctr;
-			t4_cipher_nids[++i] = NID_t4_aes_256_ctr;
-			break;
-		}
-	}
-
-	return (1);
-}
-
-
-static void
-t4_free_aes_ctr_NIDs(void)
-{
-	ASN1_OBJECT *o = NULL;
-
-	/* Clear entries in t4_cipher_nids[] */
-	for (int i = 0; i < t4_cipher_count; ++i) {
-		if (t4_cipher_nids[i] == NID_t4_aes_128_ctr) {
-			t4_cipher_nids[i] = NID_undef;
-		} else if (t4_cipher_nids[i] == NID_t4_aes_192_ctr) {
-			t4_cipher_nids[i] = NID_undef;
-		} else if (t4_cipher_nids[i] == NID_t4_aes_256_ctr) {
-			t4_cipher_nids[i] = NID_undef;
-		}
-	}
-
-	/* Clear NID_t4_aes_*_ctr and t4_cipher_table[] variables */
-	if (NID_t4_aes_128_ctr != NID_undef) {
-		o = OBJ_nid2obj(NID_t4_aes_128_ctr);
-		if (o != NULL)
-			ASN1_OBJECT_free(o);
-		NID_t4_aes_128_ctr = NID_undef;
-		t4_cipher_table[T4_AES_128_CTR].nid =
-		    t4_aes_128_ctr.nid = NID_undef;
-	}
-
-	if (NID_t4_aes_192_ctr != NID_undef) {
-		o = OBJ_nid2obj(NID_t4_aes_192_ctr);
-		if (o != NULL)
-			ASN1_OBJECT_free(o);
-		NID_t4_aes_192_ctr = NID_undef;
-		t4_cipher_table[T4_AES_192_CTR].nid =
-		    t4_aes_192_ctr.nid = NID_undef;
-	}
-
-	if (NID_t4_aes_256_ctr != NID_undef) {
-		o = OBJ_nid2obj(NID_t4_aes_256_ctr);
-		if (o != NULL)
-		ASN1_OBJECT_free(o);
-		NID_t4_aes_256_ctr = NID_undef;
-		t4_cipher_table[T4_AES_256_CTR].nid =
-		    t4_aes_256_ctr.nid = NID_undef;
-	}
-}
-#endif	/* !SOLARIS_NO_AES_CTR */
-
 
 /*
  * Cipher functions
@@ -783,26 +629,20 @@ t4_get_all_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 		*cipher = &t4_des3_ecb;
 		break;
 #endif	/* !OPENSSL_NO_DES */
+	case NID_aes_128_ctr:
+		*cipher = &t4_aes_128_ctr;
+		break;
+	case NID_aes_192_ctr:
+		*cipher = &t4_aes_192_ctr;
+		break;
+	case NID_aes_256_ctr:
+		*cipher = &t4_aes_256_ctr;
+		break;
 
 	default:
-#ifndef	SOLARIS_NO_AES_CTR
-		/* These NIDs cannot be const, so must be tested with "if" */
-		if (nid == NID_t4_aes_128_ctr) {
-			*cipher = &t4_aes_128_ctr;
-			break;
-		} else if (nid == NID_t4_aes_192_ctr) {
-			*cipher = &t4_aes_192_ctr;
-			break;
-		} else if (nid == NID_t4_aes_256_ctr) {
-			*cipher = &t4_aes_256_ctr;
-			break;
-		} else
-#endif	/* !SOLARIS_NO_AES_CTR */
-		{
-			/* cipher not supported */
-			*cipher = NULL;
-			return (0);
-		}
+		/* cipher not supported */
+		*cipher = NULL;
+		return (0);
 	}
 
 	return (1);
@@ -1041,7 +881,6 @@ T4_CIPHER_DO_AES(t4_cipher_do_aes_256_cfb128,
 #endif	/* !SOLARIS_NO_AES_CFB128 */
 
 /* AES CTR mode. */
-#ifndef	SOLARIS_NO_AES_CTR
 T4_CIPHER_DO_AES(t4_cipher_do_aes_128_ctr,
 	t4_aes128_load_keys_for_encrypt, t4_aes128_ctr_crypt,
 	t4_aes128_load_keys_for_decrypt, t4_aes128_ctr_crypt, tctx->iv)
@@ -1051,7 +890,6 @@ T4_CIPHER_DO_AES(t4_cipher_do_aes_192_ctr,
 T4_CIPHER_DO_AES(t4_cipher_do_aes_256_ctr,
 	t4_aes256_load_keys_for_encrypt, t4_aes256_ctr_crypt,
 	t4_aes256_load_keys_for_decrypt, t4_aes256_ctr_crypt, tctx->iv)
-#endif	/* !SOLARIS_NO_AES_CTR */
 
 /* AES ECB mode. */
 T4_CIPHER_DO_AES(t4_cipher_do_aes_128_ecb,
@@ -1082,7 +920,6 @@ t4_init(ENGINE *e)
 static int
 t4_destroy(ENGINE *e)
 {
-	T4_FREE_AES_CTR_NIDS;
 	ERR_unload_t4_strings();
 	return (1);
 }
@@ -1111,19 +948,6 @@ t4_bind(ENGINE *e)
 	}
 #endif
 
-#ifndef	SOLARIS_NO_AES_CTR
-	/*
-	 * We must do this before we start working with slots since we need all
-	 * NIDs there.
-	 */
-	if (aes_engage) {
-		if (t4_add_aes_ctr_NIDs() == 0) {
-			T4_FREE_AES_CTR_NIDS;
-			return (0);
-		}
-	}
-#endif	/* !SOLARIS_NO_AES_CTR */
-
 #ifdef	DEBUG_T4
 	(void) fprintf(stderr, "t4_cipher_count = %d; t4_cipher_nids[] =\n",
 	    t4_cipher_count);
@@ -1150,7 +974,6 @@ t4_bind(ENGINE *e)
 	    (montmul_engage && !ENGINE_set_DSA(e, t4_DSA())) ||
 #endif	/* OPENSSL_NO_DSA */
 	    !ENGINE_set_destroy_function(e, t4_destroy)) {
-		T4_FREE_AES_CTR_NIDS;
 		return (0);
 	}
 

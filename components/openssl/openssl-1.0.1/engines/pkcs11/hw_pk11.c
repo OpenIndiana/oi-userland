@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/hw_pk11.c */
@@ -122,15 +122,6 @@
 #define	DEBUG_SLOT_SEL(...)
 #endif
 
-/*
- * AES counter mode is not supported in the OpenSSL EVP API yet and neither
- * there are official OIDs for mechanisms based on this mode. With our changes,
- * an application can define its own EVP calls for AES counter mode and then
- * it can make use of hardware acceleration through this engine. However, it's
- * better if we keep AES CTR support code under ifdef's.
- */
-#define	SOLARIS_AES_CTR
-
 #include <security/cryptoki.h>
 #include <security/pkcs11.h>
 #include "hw_pk11.h"
@@ -138,16 +129,6 @@
 
 #define	PK11_ENGINE_LIB_NAME "PKCS#11 engine"
 #include "hw_pk11_err.c"
-
-#ifdef	SOLARIS_AES_CTR
-/*
- * NIDs for AES counter mode that will be defined during the engine
- * initialization.
- */
-int NID_aes_128_ctr = NID_undef;
-int NID_aes_192_ctr = NID_undef;
-int NID_aes_256_ctr = NID_undef;
-#endif	/* SOLARIS_AES_CTR */
 
 /*
  * We use this lock to prevent multiple C_Login()s, guard getpassphrase(),
@@ -221,11 +202,9 @@ enum pk11_cipher_id {
 	PK11_AES_192_ECB,
 	PK11_AES_256_ECB,
 	PK11_BLOWFISH_CBC,
-#ifdef	SOLARIS_AES_CTR
 	PK11_AES_128_CTR,
 	PK11_AES_192_CTR,
 	PK11_AES_256_CTR,
-#endif	/* SOLARIS_AES_CTR */
 	PK11_CIPHER_MAX
 };
 
@@ -308,10 +287,6 @@ static long set_PK11_LIBNAME(const char *name);
 
 /* Symmetric cipher and digest support functions */
 static int cipher_nid_to_pk11(int nid);
-#ifdef	SOLARIS_AES_CTR
-static int pk11_add_NID(char *sn, char *ln);
-static int pk11_add_aes_ctr_NIDs(void);
-#endif	/* SOLARIS_AES_CTR */
 static int pk11_usable_ciphers(const int **nids);
 static int pk11_usable_digests(const int **nids);
 static int pk11_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
@@ -413,15 +388,12 @@ static PK11_CIPHER ciphers[] =
 		CKK_AES,	CKM_AES_ECB, },
 	{ PK11_BLOWFISH_CBC,	NID_bf_cbc,		8,	16,  16,
 		CKK_BLOWFISH,	CKM_BLOWFISH_CBC, },
-#ifdef	SOLARIS_AES_CTR
-	/* we don't know the correct NIDs until the engine is initialized */
-	{ PK11_AES_128_CTR,	NID_undef,		16,	16,  16,
+	{ PK11_AES_128_CTR,	NID_aes_128_ctr,	16,	16,  16,
 		CKK_AES,	CKM_AES_CTR, },
-	{ PK11_AES_192_CTR,	NID_undef,		16,	24,  24,
+	{ PK11_AES_192_CTR,	NID_aes_192_ctr,	16,	24,  24,
 		CKK_AES,	CKM_AES_CTR, },
-	{ PK11_AES_256_CTR,	NID_undef,		16,	32,  32,
+	{ PK11_AES_256_CTR,	NID_aes_256_ctr,	16,	32,  32,
 		CKK_AES,	CKM_AES_CTR, },
-#endif	/* SOLARIS_AES_CTR */
 	};
 
 /*
@@ -610,17 +582,11 @@ static const EVP_CIPHER pk11_aes_256_ecb =
 	NULL
 	};
 
-#ifdef	SOLARIS_AES_CTR
-/*
- * NID_undef's will be changed to the AES counter mode NIDs as soon they are
- * created in pk11_library_init(). Note that the need to change these structures
- * is the reason why we don't define them with the const keyword.
- */
 static EVP_CIPHER pk11_aes_128_ctr =
 	{
-	NID_undef,
+	NID_aes_128_ctr,
 	16, 16, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	pk11_cipher_init,
 	pk11_cipher_do_cipher,
 	pk11_cipher_cleanup,
@@ -632,9 +598,9 @@ static EVP_CIPHER pk11_aes_128_ctr =
 
 static EVP_CIPHER pk11_aes_192_ctr =
 	{
-	NID_undef,
+	NID_aes_192_ctr,
 	16, 24, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	pk11_cipher_init,
 	pk11_cipher_do_cipher,
 	pk11_cipher_cleanup,
@@ -646,9 +612,9 @@ static EVP_CIPHER pk11_aes_192_ctr =
 
 static EVP_CIPHER pk11_aes_256_ctr =
 	{
-	NID_undef,
+	NID_aes_256_ctr,
 	16, 32, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	pk11_cipher_init,
 	pk11_cipher_do_cipher,
 	pk11_cipher_cleanup,
@@ -657,7 +623,6 @@ static EVP_CIPHER pk11_aes_256_ctr =
 	EVP_CIPHER_get_asn1_iv,
 	NULL
 	};
-#endif	/* SOLARIS_AES_CTR */
 
 static const EVP_CIPHER pk11_bf_cbc =
 	{
@@ -1285,15 +1250,6 @@ static int pk11_library_init(ENGINE *e)
 			}
 		}
 
-#ifdef	SOLARIS_AES_CTR
-	/*
-	 * We must do this before we start working with slots since we need all
-	 * NIDs there.
-	 */
-	if (pk11_add_aes_ctr_NIDs() == 0)
-		goto err;
-#endif	/* SOLARIS_AES_CTR */
-
 #ifdef	SOLARIS_HW_SLOT_SELECTION
 	if (check_hw_mechanisms() == 0)
 		goto err;
@@ -1458,27 +1414,6 @@ static int pk11_finish(ENGINE *e)
 #if 0
 	pFuncList->C_Finalize(NULL);
 #endif
-#ifdef	SOLARIS_AES_CTR
-	{
-		ASN1_OBJECT *ob = NULL;
-		if (NID_aes_128_ctr != NID_undef) {
-			ob = OBJ_nid2obj(NID_aes_128_ctr);
-			if (ob != NULL)
-				ASN1_OBJECT_free(ob);
-		}
-		if (NID_aes_192_ctr != NID_undef) {
-			ob = OBJ_nid2obj(NID_aes_192_ctr);
-			if (ob != NULL)
-				ASN1_OBJECT_free(ob);
-		}
-		if (NID_aes_256_ctr != NID_undef) {
-			ob = OBJ_nid2obj(NID_aes_256_ctr);
-			if (ob != NULL)
-				ASN1_OBJECT_free(ob);
-		}
-	}
-#endif
-
 	if (!DSO_free(pk11_dso))
 		{
 		PK11err(PK11_F_FINISH, PK11_R_DSO_FAILURE);
@@ -2383,9 +2318,7 @@ static int pk11_init_symmetric(EVP_CIPHER_CTX *ctx, PK11_CIPHER *pcipher,
 	PK11_SESSION *sp, CK_MECHANISM_PTR pmech)
 	{
 	CK_RV rv;
-#ifdef	SOLARIS_AES_CTR
 	CK_AES_CTR_PARAMS ctr_params;
-#endif	/* SOLARIS_AES_CTR */
 
 	/*
 	 * We expect pmech->mechanism to be already set and
@@ -2396,7 +2329,6 @@ static int pk11_init_symmetric(EVP_CIPHER_CTX *ctx, PK11_CIPHER *pcipher,
 	OPENSSL_assert(pmech->pParameter == NULL);
 	OPENSSL_assert(pmech->ulParameterLen == 0);
 
-#ifdef	SOLARIS_AES_CTR
 	if (ctx->cipher->nid == NID_aes_128_ctr ||
 	    ctx->cipher->nid == NID_aes_192_ctr ||
 	    ctx->cipher->nid == NID_aes_256_ctr)
@@ -2416,7 +2348,6 @@ static int pk11_init_symmetric(EVP_CIPHER_CTX *ctx, PK11_CIPHER *pcipher,
 		(void) memcpy(ctr_params.cb, ctx->iv, AES_BLOCK_SIZE);
 		}
 	else
-#endif	/* SOLARIS_AES_CTR */
 		{
 		if (pcipher->iv_len > 0)
 			{
@@ -2736,6 +2667,15 @@ pk11_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 		case NID_aes_256_ecb:
 			*cipher = &pk11_aes_256_ecb;
 			break;
+		case NID_aes_128_ctr:
+			*cipher = &pk11_aes_128_ctr;
+			break;
+		case NID_aes_192_ctr:
+			*cipher = &pk11_aes_192_ctr;
+			break;
+		case NID_aes_256_ctr:
+			*cipher = &pk11_aes_256_ctr;
+			break;
 		case NID_bf_cbc:
 			*cipher = &pk11_bf_cbc;
 			break;
@@ -2743,19 +2683,6 @@ pk11_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 			*cipher = &pk11_rc4;
 			break;
 		default:
-#ifdef	SOLARIS_AES_CTR
-			/*
-			 * These can't be in separated cases because the NIDs
-			 * here are not constants.
-			 */
-			if (nid == NID_aes_128_ctr)
-				*cipher = &pk11_aes_128_ctr;
-			else if (nid == NID_aes_192_ctr)
-				*cipher = &pk11_aes_192_ctr;
-			else if (nid == NID_aes_256_ctr)
-				*cipher = &pk11_aes_256_ctr;
-			else
-#endif	/* SOLARIS_AES_CTR */
 			*cipher = NULL;
 			break;
 		}
@@ -3536,60 +3463,6 @@ static void pk11_get_digest(CK_FUNCTION_LIST_PTR pflist, int slot_id,
 
 	return;
 	}
-
-#ifdef	SOLARIS_AES_CTR
-/* create a new NID when we have no OID for that mechanism */
-static int pk11_add_NID(char *sn, char *ln)
-	{
-	ASN1_OBJECT *o;
-	int nid;
-
-	if ((o = ASN1_OBJECT_create(OBJ_new_nid(1), (unsigned char *)"",
-	    1, sn, ln)) == NULL)
-		{
-		return (0);
-		}
-
-	/* will return NID_undef on error */
-	nid = OBJ_add_object(o);
-	ASN1_OBJECT_free(o);
-
-	return (nid);
-	}
-
-/*
- * Create new NIDs for AES counter mode. OpenSSL doesn't support them now so we
- * have to help ourselves here.
- */
-static int pk11_add_aes_ctr_NIDs(void)
-	{
-	/* are we already set? */
-	if (NID_aes_256_ctr != NID_undef)
-		return (1);
-
-	/*
-	 * There are no official names for AES counter modes yet so we just
-	 * follow the format of those that exist.
-	 */
-	if ((NID_aes_128_ctr = pk11_add_NID("AES-128-CTR", "aes-128-ctr")) ==
-	    NID_undef)
-		goto err;
-	ciphers[PK11_AES_128_CTR].nid = pk11_aes_128_ctr.nid = NID_aes_128_ctr;
-	if ((NID_aes_192_ctr = pk11_add_NID("AES-192-CTR", "aes-192-ctr")) ==
-	    NID_undef)
-		goto err;
-	ciphers[PK11_AES_192_CTR].nid = pk11_aes_192_ctr.nid = NID_aes_192_ctr;
-	if ((NID_aes_256_ctr = pk11_add_NID("AES-256-CTR", "aes-256-ctr")) ==
-	    NID_undef)
-		goto err;
-	ciphers[PK11_AES_256_CTR].nid = pk11_aes_256_ctr.nid = NID_aes_256_ctr;
-	return (1);
-
-err:
-	PK11err(PK11_F_ADD_AES_CTR_NIDS, PK11_R_ADD_NID_FAILED);
-	return (0);
-	}
-#endif	/* SOLARIS_AES_CTR */
 
 /* Find what symmetric ciphers this slot supports. */
 static void pk11_find_symmetric_ciphers(CK_FUNCTION_LIST_PTR pflist,

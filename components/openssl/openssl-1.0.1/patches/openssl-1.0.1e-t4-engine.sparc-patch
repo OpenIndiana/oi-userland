@@ -7,29 +7,33 @@ Index: Configure
 diff -ru openssl-1.0.0d/Configure openssl-1.0.0d/Configure
 --- openssl-1.0.0d/Configure	2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.0d/Configure	2011-07-27 10:48:17.817470000 -0700
-@@ -134,8 +134,8 @@
- 
- my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o::aes-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o";
- my $ia64_asm="ia64cpuid.o:bn-ia64.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::void";
--my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::void";
--my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::void";
-+my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o t4_aes.o::t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::void";
+@@ -135,8 +135,9 @@
+
+ my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o modexp512-x86_64.o::aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o rc4-md5-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:ghash-x86_64.o:";
+ my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
+-my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
+-my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o t4_aes.o::t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_fips_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o t4_aes.o::t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::ghash-sparcv9.o::void";
 +my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o t4_des.o:t4_aes.o::t4_md5.o:t4_sha1.o t4_sha2.o:::::::void";
- my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o::::::::::::void";
- my $mips3_asm=":bn-mips3.o::::::::::::void";
- my $s390x_asm="s390xcap.o s390xcpuid.o:bn-s390x.o s390x-mont.o::aes-s390x.o:::sha1-s390x.o sha256-s390x.o sha512-s390x.o::rc4-s390x.o:::::void";
-@@ -256,9 +256,9 @@
+ my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
+ my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
+ my $mips64_asm=":bn-mips.o mips-mont.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o sha512-mips.o::::::::";
+@@ -264,9 +264,11 @@
  #
  "solaris64-x86_64-cc-sunw","cc:-xO3 -m64 -xstrconst -Xa -DL_ENDIAN::-D_REENTRANT::-lsocket -lnsl -lc:SIXTY_FOUR_BIT_LONG RC4_CHUNK BF_PTR DES_PTR DES_INT DES_UNROLL:${x86_64_asm}:elf:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign -M/usr/lib/ld/map.noexdata:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
  #
 -"solaris-sparcv9-cc-sunw","cc:-xtarget=ultra -m32 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -Xa -DB_ENDIAN -DBN_DIV2W::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc:BN_LLONG RC4_CHUNK_LL DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m32 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
 +"solaris-sparcv9-cc-sunw","cc:-xtarget=ultra -m32 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -Xa -DB_ENDIAN -DBN_DIV2W::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK_LL DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m32 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
++"solaris-sparcv9-cc-sunw-fips","cc:-xtarget=ultra -m32 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -Xa -DB_ENDIAN -DBN_DIV2W::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK_LL DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_fips_asm}:dlfcn:solaris-shared:-KPIC:-m32 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR)",
  #
--"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/ccs/bin/ar rs::/64",
-+"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/ccs/bin/ar rs::/64",
+-"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/bin/ar rs::/64",
++"solaris64-sparcv9-cc-sunw","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/bin/ar rs::/64",
++"solaris64-sparcv9-cc-sunw-fips","cc:-xtarget=ultra -m64 -Qoption cg -xregs=no%appl -xO5 -xstrconst -xdepend -xspace -Xa -DB_ENDIAN::-D_REENTRANT:ULTRASPARC:-lsocket -lnsl -lc -lsoftcrypto:BN_LLONG RC4_CHUNK DES_INT DES_PTR DES_RISC1 DES_UNROLL BF_PTR:${sparcv9_fips_asm}:dlfcn:solaris-shared:-KPIC:-m64 -G -dy -z text -zdefs -Bdirect -zignore -M/usr/lib/ld/map.pagealign:.so.\$(SHLIB_MAJOR).\$(SHLIB_MINOR):/usr/bin/ar rs::/64",
  # Option -xF=%all instructs the compiler to place functions and data
  # variables into separate section fragments. This enables the link editor
  # to discard unused sections and files when linking wanboot-openssl.o
+Index: crypto/aes/Makefile
 ===================================================================
 diff -ru openssl-1.0.0d/crypto/aes/ openssl-1.0.0d/crypto/aes/Makefile
 --- openssl-1.0.0d/crypto/aes/Makefile	2011-05-24 17:03:31.000000000 -0700
@@ -45,7 +49,7 @@ diff -ru openssl-1.0.0d/crypto/aes/ openssl-1.0.0d/crypto/aes/Makefile
  GENERAL=Makefile
  #TEST=aestest.c
  TEST=
-@@ -57,6 +61,10 @@
+@@ -69,6 +73,10 @@
  aes-sparcv9.s: asm/aes-sparcv9.pl
  	$(PERL) asm/aes-sparcv9.pl $(CFLAGS) > $@
  
@@ -94,7 +98,7 @@ diff -ru openssl-1.0.0d/crypto/engine/Makefile openssl-1.0.0d/crypto/engine/Make
  	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
 +	eng_t4.c eng_t4_des.c eng_t4_md5.c \
 +	eng_t4_sha1.c eng_t4_sha256.c eng_t4_sha512.c eng_t4_montmul.c \
- 	hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
+ 	eng_rsax.c eng_rdrand.c hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
  LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
  	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
  	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
@@ -102,7 +106,7 @@ diff -ru openssl-1.0.0d/crypto/engine/Makefile openssl-1.0.0d/crypto/engine/Make
  	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
 +	eng_t4.o eng_t4_des.o eng_t4_md5.o \
 +	eng_t4_sha1.o eng_t4_sha256.o eng_t4_sha512.o eng_t4_montmul.o \
- 	hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
+ 	eng_rsax.o eng_rdrand.o hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
  
  SRC= $(LIBSRC)
 Index: crypto/engine/eng_all.c
@@ -110,39 +114,30 @@ Index: crypto/engine/eng_all.c
 diff -ru openssl-1.0.0d/crypto/engine/eng_all.c openssl-1.0.0d/crypto/engine/eng_all.c
 --- openssl-1.0.0d/crypto/engine/eng_all.c	2011-05-24 17:02:20.000000000 -0700
 +++ openssl-1.0.0d/crypto/engine/eng_all.c	2011-06-22 17:34:25.145829355 -0700
-@@ -61,6 +61,8 @@
- 
- void ENGINE_load_builtin_engines(void)
- 	{
-+	/* Engines may depend on CPU capabilities */
-+	OPENSSL_cpuid_setup();
- #if 0
- 	/* There's no longer any need for an "openssl" ENGINE unless, one day,
- 	 * it is the *only* way for standard builtin implementations to be be
-@@ -71,6 +73,10 @@
- #if !defined(OPENSSL_NO_HW) && (defined(__OpenBSD__) || defined(__FreeBSD__) || defined(HAVE_CRYPTODEV))
- 	ENGINE_load_cryptodev();
+@@ -79,6 +79,10 @@
+ #ifndef OPENSSL_NO_RDRAND
+	ENGINE_load_rdrand();
  #endif
 +#if !defined(OPENSSL_NO_HW) && !defined(OPENSSL_NO_HW_T4)
 +	ENGINE_load_t4();
 +	ENGINE_register_all_complete();
 +#endif
- 	ENGINE_load_dynamic();
+	ENGINE_load_dynamic();
  #ifndef OPENSSL_NO_HW_PKCS11
- 	ENGINE_load_pk11();
+	ENGINE_load_pk11();
 Index: crypto/engine/engine.h
 ==================================================================
 diff -ru openssl-1.0.0d/crypto/engine/engine.h openssl-1.0.0d/crypto/engine/engine.h
 --- openssl-1.0.0d/crypto/engine/engine.h	2011-05-24 17:02:20.000000000 -0700
 +++ openssl-1.0.0d/crypto/engine/engine.h	2011-05-24 18:05:29.075766123 -0700
-@@ -344,6 +344,7 @@
+@@ -351,6 +351,7 @@
  #endif
  #endif
  void ENGINE_load_cryptodev(void);
 +void ENGINE_load_t4(void);
  void ENGINE_load_pk11(void);
- void ENGINE_load_builtin_engines(void);
- 
+ void ENGINE_load_rsax(void);
+ void ENGINE_load_rdrand(void);
 Index: crypto/md5/Makefile
 ==================================================================
 diff -ru openssl-1.0.0d/crypto/md5/Makefile openssl-1.0.0d/crypto/md5/Makefile
@@ -186,15 +181,15 @@ diff -ru openssl-1.0.0d/crypto/sha/Makefile openssl-1.0.0d/crypto/sha/Makefile
  GENERAL=Makefile
  TEST=shatest.c sha1test.c sha256t.c sha512t.c
  APPS=
-@@ -76,6 +82,14 @@
- sha256-%.s:	asm/sha512-%.pl;	$(PERL) $< $@
- sha512-%.s:	asm/sha512-%.pl;	$(PERL) $< $@
+@@ -91,6 +95,14 @@
+ sha256-armv4.o:		sha256-armv4.S
+ sha512-armv4.o:		sha512-armv4.S
  
-+t4_sha1.o: asm/t4_sha1.S
++t4_sha1.o:	asm/t4_sha1.S
 +	as $(ASFLAGSYF) -o $@ asm/t4_sha1.S
 +	elfedit -e 'cap:hw1 -and -cmp vis vis3' $@
 +
-+t4_sha2.o: asm/t4_sha2.S
++t4_sha2.o:	asm/t4_sha2.S
 +	as $(ASFLAGSYF) -o $@ asm/t4_sha2.S
 +	elfedit -e 'cap:hw1 -and -cmp vis vis3' $@
 +
@@ -206,7 +201,7 @@ Index: util/libeay.num
 diff -ru openssl-1.0.0d/util/libeay.num openssl-1.0.0d/util/libeay.num
 --- openssl-1.0.0d/util/libeay.num	2010-07-25 09:56:06.000000000 -0700
 +++ openssl-1.0.0d/util/libeay.num	2011-05-25 11:19:15.585211842 -0700
-@@ -4178,6 +4178,7 @@
+@@ -4179,6 +4179,7 @@
  UI_method_set_prompt_constructor        4551	EXIST:!VMS:FUNCTION:
  UI_method_set_prompt_constructr         4551	EXIST:VMS:FUNCTION:
  EVP_read_pw_string_min                  4552	EXIST::FUNCTION:

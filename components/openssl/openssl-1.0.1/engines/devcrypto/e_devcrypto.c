@@ -18,7 +18,7 @@
  *
  * CDDL HEADER END
  *
- * Copyright (c) 2010, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <sys/types.h>
@@ -91,14 +91,6 @@ static int *cipher_nids = NULL;
 pthread_mutex_t *kernel_fd_lock;
 
 /*
- * NIDs for AES counter mode. They will be defined during the engine
- * initialization.
- */
-static int NID_aes_128_ctr = NID_undef;
-static int NID_aes_192_ctr = NID_undef;
-static int NID_aes_256_ctr = NID_undef;
-
-/*
  * Cipher Table for all supported symmetric ciphers.
  */
 static devcrypto_cipher_t cipher_table[] = {
@@ -128,17 +120,13 @@ static devcrypto_cipher_t cipher_table[] = {
 		CKK_AES,	CKM_AES_ECB, 0, CRYPTO_MECH_INVALID},
 	{ DEV_BLOWFISH_CBC,	NID_bf_cbc,		8,	16,  16,
 		CKK_BLOWFISH,	CKM_BLOWFISH_CBC, 0, CRYPTO_MECH_INVALID},
-	/*
-	 * For the following 3 AES counter mode entries, we don't know the
-	 * NIDs until the engine is initialized
-	 */
-	{ DEV_AES_128_CTR,	NID_undef,		16,	16,  16,
+	{ DEV_AES_128_CTR,	NID_aes_128_ctr,	16,	16,  16,
 		CKK_AES,	CKM_AES_CTR, EVP_CIPH_NO_PADDING,
 		CRYPTO_MECH_INVALID},
-	{ DEV_AES_192_CTR,	NID_undef,		16,	24,  24,
+	{ DEV_AES_192_CTR,	NID_aes_192_ctr,	16,	24,  24,
 		CKK_AES,	CKM_AES_CTR, EVP_CIPH_NO_PADDING,
 		CRYPTO_MECH_INVALID},
-	{ DEV_AES_256_CTR,	NID_undef,		16,	32,  32,
+	{ DEV_AES_256_CTR,	NID_aes_256_ctr,	16,	32,  32,
 		CKK_AES,	CKM_AES_CTR, EVP_CIPH_NO_PADDING,
 		CRYPTO_MECH_INVALID},
 	};
@@ -335,9 +323,9 @@ static const EVP_CIPHER dev_bf_cbc = {
  * NID_undef's will be changed for AES counter mode, as soon they are created.
  */
 static EVP_CIPHER dev_aes_128_ctr = {
-	NID_undef,
+	NID_aes_128_ctr,
 	16, 16, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	devcrypto_cipher_init,
 	devcrypto_cipher_do_cipher,
 	devcrypto_cipher_cleanup,
@@ -348,9 +336,9 @@ static EVP_CIPHER dev_aes_128_ctr = {
 };
 
 static EVP_CIPHER dev_aes_192_ctr = {
-	NID_undef,
+	NID_aes_192_ctr,
 	16, 24, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	devcrypto_cipher_init,
 	devcrypto_cipher_do_cipher,
 	devcrypto_cipher_cleanup,
@@ -361,9 +349,9 @@ static EVP_CIPHER dev_aes_192_ctr = {
 };
 
 static EVP_CIPHER dev_aes_256_ctr = {
-	NID_undef,
+	NID_aes_256_ctr,
 	16, 32, 16,
-	EVP_CIPH_CBC_MODE,
+	EVP_CIPH_CTR_MODE,
 	devcrypto_cipher_init,
 	devcrypto_cipher_do_cipher,
 	devcrypto_cipher_cleanup,
@@ -373,87 +361,6 @@ static EVP_CIPHER dev_aes_256_ctr = {
 	NULL
 };
 
-
-
-/*
- * This function creates a new NID.
- */
-static int
-devcrypto_add_NID(char *sn, char *ln)
-{
-	ASN1_OBJECT *o;
-	int nid;
-
-	if ((o = ASN1_OBJECT_create(OBJ_new_nid(1), (unsigned char *)"",
-	    1, sn, ln)) == NULL) {
-		return (0);
-	}
-
-	nid = OBJ_add_object(o); /* will return NID_undef on error */
-	ASN1_OBJECT_free(o);
-	return (nid);
-}
-
-
-/*
- * This function creates new NIDs for AES counter mode algorithms.
- * Note that OpenSSL doesn't support them now so we have to help
- * ourselves here.
- */
-static int
-devcrypto_add_aes_ctr_NIDs(void)
-{
-	if (NID_aes_256_ctr != NID_undef) /* already set */
-		return (1);
-
-	NID_aes_128_ctr = devcrypto_add_NID("AES-128-CTR", "aes-128-ctr");
-	if (NID_aes_128_ctr == NID_undef)
-		goto failed;
-	cipher_table[DEV_AES_128_CTR].nid =
-	    dev_aes_128_ctr.nid = NID_aes_128_ctr;
-
-	NID_aes_192_ctr = devcrypto_add_NID("AES-192-CTR", "aes-192-ctr");
-	if (NID_aes_192_ctr == NID_undef)
-		goto failed;
-	cipher_table[DEV_AES_192_CTR].nid =
-	    dev_aes_192_ctr.nid = NID_aes_192_ctr;
-
-	NID_aes_256_ctr = devcrypto_add_NID("AES-256-CTR", "aes-256-ctr");
-	if (NID_aes_256_ctr == NID_undef)
-		goto failed;
-	cipher_table[DEV_AES_256_CTR].nid =
-	    dev_aes_256_ctr.nid = NID_aes_256_ctr;
-
-	return (1);
-
-failed:
-	return (0);
-}
-
-
-static void
-devcrypto_free_aes_ctr_NIDs(void)
-{
-	ASN1_OBJECT *ob = NULL;
-
-	if (NID_aes_128_ctr != NID_undef) {
-		ob = OBJ_nid2obj(NID_aes_128_ctr);
-		if (ob != NULL)
-			ASN1_OBJECT_free(ob);
-	}
-
-	if (NID_aes_192_ctr != NID_undef) {
-		ob = OBJ_nid2obj(NID_aes_192_ctr);
-		if (ob != NULL)
-			ASN1_OBJECT_free(ob);
-	}
-
-	if (NID_aes_256_ctr != NID_undef) {
-		ob = OBJ_nid2obj(NID_aes_256_ctr);
-		if (ob != NULL)
-		ASN1_OBJECT_free(ob);
-	}
-}
 
 /*
  * Open the /dev/crypto device
@@ -1176,7 +1083,6 @@ devcrypto_cleanup(void)
 			OPENSSL_free(cipher_nids);
 			cipher_nids = NULL;
 		}
-		devcrypto_free_aes_ctr_NIDs();
 		(void) pthread_mutex_unlock(kernel_fd_lock);
 		(void) pthread_mutex_destroy(kernel_fd_lock);
 		OPENSSL_free(kernel_fd_lock);
@@ -1208,21 +1114,14 @@ devcrypto_bind(ENGINE *e)
 	int i;
 #endif
 
-	/* Get the NIDs for AES counter mode algorithms first. */
-	if (devcrypto_add_aes_ctr_NIDs() == 0) {
-		return (0);
-	}
-
 	/* Create a lock for the devcrypto device file descriptor */
 	if (kernel_fd_lock == NULL) {
 		kernel_fd_lock = OPENSSL_malloc(sizeof (pthread_mutex_t));
 		if (kernel_fd_lock == NULL) {
-			devcrypto_free_aes_ctr_NIDs();
 			return (0);
 		}
 
 		if (pthread_mutex_init(kernel_fd_lock, NULL) != 0) {
-			devcrypto_free_aes_ctr_NIDs();
 			OPENSSL_free(kernel_fd_lock);
 			kernel_fd_lock = NULL;
 			return (0);
@@ -1231,7 +1130,6 @@ devcrypto_bind(ENGINE *e)
 
 	/* Open the /dev/crypto device */
 	if (devcrypto_open() == 0) {
-		devcrypto_free_aes_ctr_NIDs();
 		pthread_mutex_destroy(kernel_fd_lock);
 		OPENSSL_free(kernel_fd_lock);
 		kernel_fd_lock = NULL;
