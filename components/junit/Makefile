@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -36,6 +36,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
+JAVA_HOME=$(JAVA6_HOME)
 COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Djavadocdir=${PROTO_DIR}
 COMPONENT_BUILD_TARGETS += dist
