@@ -19,7 +19,7 @@
 # CDDL HEADER END
 #
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -38,7 +38,7 @@ COMPONENT_BUILD_TARGETS = 	build
 COMPONENT_BUILD_ENV +=		ROOT=$(BUILD_DIR)/prototype/$(MACH)
 COMPONENT_BUILD_ENV +=		SRC=$(WS_COMPONENTS)/visual-panels
 COMPONENT_BUILD_ENV +=		WS_JAVA=$(BUILD_DIR_32)/java
-COMPONENT_BUILD_ENV +=		JAVA_HOME=/usr/java
+COMPONENT_BUILD_ENV +=		JAVA_HOME=$(JAVA_HOME)
 COMPONENT_BUILD_ENV +=		PATH=$(dir $(CC)):/usr/bin
 COMPONENT_BUILD_ENV +=		XGETTEXT=/usr/lib/intltool/gettext-tools/xgettext
 COMPONENT_BUILD_ENV +=		MACH32=$(MACH32)
