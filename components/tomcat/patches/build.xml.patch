@@ -1,5 +1,5 @@
---- apache-tomcat-6.0.36-src/build.xml	Tue Oct 16 01:05:51 2012
-+++ apache-tomcat-6.0.36-src/build.xml	Thu Dec  6 04:01:54 2012
+--- apache-tomcat-6.0.36-src/build.xml
++++ apache-tomcat-6.0.36-src/build.xml
 @@ -487,13 +487,6 @@
  
    <target name="deploy" depends="build-only,build-docs,warn.dbcp">
@@ -56,7 +56,19 @@
      <!-- Build Tomcat DBCP bundle -->
      <antcall target="downloadgz-2">
        <param name="sourcefile.1" value="${commons-pool-src.loc.1}"/>
-@@ -836,15 +794,9 @@
+@@ -823,6 +781,11 @@
+       <param name="sourcefile.2" value="${commons-dbcp-src.loc.2}"/>
+       <param name="destfile" value="${commons-dbcp.home}/build.xml" />
+     </antcall>
++    <!-- We need to patch DBCP so it can be built with JDK 1.7. -->
++    <exec executable="sh">
++      <arg value="-c" />
++      <arg value="cat ../../jdbc41.patch | gpatch -d ${commons-dbcp.home} -p0" />
++    </exec>
+     <mkdir dir="${tomcat-dbcp.home}"/>
+     <antcall target="build-tomcat-dbcp">
+       <param name="basedir" value="${tomcat-dbcp.home}" />
+@@ -836,15 +799,9 @@
        <param name="destdir" value="${jdt.home}"/>
      </antcall>
  
