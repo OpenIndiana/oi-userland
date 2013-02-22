@@ -54,8 +54,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=$(JAVA6_HOME)
-COMPONENT_BUILD_ENV += JAVA_HOME="$(JAVA_HOME)"
 COMPONENT_BUILD_ARGS=-Dbase.path=$(BUILD_DIR_32) -Dtomcat.build=$(PROTO_DIR)
 COMPONENT_BUILD_TARGETS=download deploy
 
