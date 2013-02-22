@@ -126,6 +126,9 @@ COMPONENT_TEST_ENV	+=	PATH=$(dir $(CC)):$(PATH)
 #
 PKG_MACROS		+=	P_ARCH=$(shell arch)
 
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
+
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
