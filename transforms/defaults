@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform dir path=etc$ -> default group sys>
@@ -122,4 +122,15 @@ set name=variant.arch value=$(MACH)
 # Set the default Python for mediated links
 #
 <transform link mediator=python mediator-version=2.6 -> default mediator-priority vendor>
+
+#
+# Add a facet.version-lock.{package} to each 'optional' consolidation
+# incorporation dependency so that we can install without having to
+# mangle the system in some way.
+#
+<transform depend type=optional fmri=(pkg:/)?consolidation/.+-incorporation@ -> \
+    default tmp.fmri %{pkg.fmri} >
+<transform depend tmp.fmri=pkg:/(.+)@.*$ -> \
+    default facet.version-lock.%<1> true >
+<transform depend tmp.fmri=.*-> delete tmp.fmri .* >
 
