@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		httping
-COMPONENT_VERSION=	1.4.4
+COMPONENT_VERSION=	1.5.7
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.vanheusden.com/httping/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f00da30e0744d86ed832f6a49ae455b9447570af3589e1111a1c6210a51cafee
+    sha256:b0d3d3e9708b7395b0c47c1c1cfdd17613e631360eaffd1c43edc599911e7411
 COMPONENT_ARCHIVE_URL=	http://www.vanheusden.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/httping
 
@@ -36,16 +36,24 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS) -Dstrndup=strndup -DVERSION=\\\"$(COMPONENT_VERSION)\\\""
+CC +=		$(CC_BITS)
+
+# Override the values in the Makefile but get optimization level etc. from 
+# make-rules/shared-macros.mk.
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS) -DVERSION=\\\"$(COMPONENT_VERSION)\\\""
+COMPONENT_BUILD_ARGS += WFLAGS=""
 COMPONENT_BUILD_ARGS +=	LDFLAGS="$(LDFLAGS) -lsocket -lnsl -lssl -lcrypto"
 COMPONENT_BUILD_ENV += CC="$(CC)"
 
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:	$(NO_TESTS)
+test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
