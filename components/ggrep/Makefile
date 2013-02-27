@@ -18,23 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	2.10
+COMPONENT_VERSION=	2.14
 COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 
-# Note that the 2.10 version of the compressed GNU grep tarball on
-# ftp.gnu.org is only available in .xz format. We cannot use this
-# as xz is not currently part of the Solaris 11 Update CBE. We 
-# have recompressed that tarball as a .bz2 file and placed it in the
-# special Userland cache. The sha256 hash is for the payload .tar file.
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:299d0ccb0238894cc674da3c5a6a6fb82c3d63286f7f127e448e2ff97d21e2fb
+    sha256:e70e801d4fbb16e761654a58ae48bf5020621c95c8e35bd864742577685872e1
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/ggrep
@@ -49,12 +44,26 @@ CFLAGS	+=			$(studio_FEATURES_EXTENSIONS)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--prefix=/usr
 
+# Enable aslr for this component
+ASLR_MODE = $(ASLR_ENABLE)
+
+# Needed for "gmake test" to work.
+# SHELLOPTS is exported via make-rules/shared-macros.mk,
+# causing the braceexpand option to be set.
+# This option causes "$1: unbound variable" errors during the check-TESTS,
+# and the gnulib-tests don't even run at all.
+# Note that the below unexports SHELLOPTS, even for targets
+# other than "test." 
+unexport SHELLOPTS
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+# 3 expected failures in gnulib-tests:
+# test-mbrtowc3.sh, test-mbrtowc4.sh, test-mbsrtowcs4.sh
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
