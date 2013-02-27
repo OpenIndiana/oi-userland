@@ -23,29 +23,38 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		junit
-COMPONENT_VERSION=	4.10
-COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/junit/
-COMPONENT_SRC=		$(COMPONENT_NAME)$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
+COMPONENT_VERSION=	4.11
+COMPONENT_PROJECT_URL=	https://github.com/junit-team/junit/archive
+COMPONENT_SRC=		$(COMPONENT_NAME)-r$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	r$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:df92699adbdf0716c19e9daf30118c65b82229d644594308b2a040dafe06a1f5
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)files/junit/4.10/$(COMPONENT_ARCHIVE)
+    sha256:3048cb3f2b07fada9d85b2c042bbedb93892ef70c1dcfe0594124850418f9ffb
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/junit
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
-JAVA_HOME=$(JAVA6_HOME)
+# These ARGS override what is set in build.xml
 COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Djavadocdir=${PROTO_DIR}
+COMPONENT_BUILD_ARGS    += -Dversion-status=""
 COMPONENT_BUILD_TARGETS += dist
 
 # common targets
 build:		$(BUILD_32)
 	
 install:	build	
-		
+
+# Testing is run as part of the build.
+# To really test AFTER you have installed the resulting package do:
+# $ java -cp /usr/share/lib/java/junit.jar:/usr/share/doc/junit/samples/org \
+#       junit/samples/money/MoneyTest
+# ......................
+# Time: 0.003
+#
+# OK (22 tests)
 test:		$(NO_TESTS)
 		
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
