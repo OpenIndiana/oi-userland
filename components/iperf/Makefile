@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iperf
-COMPONENT_VERSION=	2.0.4
+COMPONENT_VERSION=	2.0.5
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/iperf/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3b52f1c178d6a99c27114929d5469c009197d15379c967b329bafb956f397944
+    sha256:636b4eff0431cea80667ea85a67ce4c68698760a9837e1e9d13096d20362265b
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/iperf/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/iperf
 
@@ -51,6 +51,8 @@ CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_ARGS  +=	AM_CXXFLAGS=""
 COMPONENT_BUILD_ARGS  +=	AM_CFLAGS=""
 
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32)
