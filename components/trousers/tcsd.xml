@@ -21,7 +21,7 @@
 
  CDDL HEADER END
 
- Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
 
         NOTE:  This service manifest is not editable; its contents will
         be overwritten by package or patch operations, including
@@ -59,8 +59,8 @@
 
         <exec_method
                 type='method'
-                name='stop'
-                exec='/lib/svc/method/tcsd.sh stop'
+                name='start'
+                exec='/lib/svc/method/tcsd.sh start'
                 timeout_seconds='60'>
 		<method_context>
 			<method_credential user='root' group='sys' />
@@ -69,8 +69,8 @@
 
         <exec_method
                 type='method'
-                name='start'
-                exec='/lib/svc/method/tcsd.sh start'
+                name='stop'
+                exec=':kill'
                 timeout_seconds='60'>
 		<method_context>
 			<method_credential user='root' group='sys' />
@@ -100,7 +100,7 @@
 	<template>
 		<common_name>
 			<loctext xml:lang='C'>
-				TCS Daemon
+				Trusted Computing Services Daemon
 			</loctext>
 		</common_name>
 		<documentation>
