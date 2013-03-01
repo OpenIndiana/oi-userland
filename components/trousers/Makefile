@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,12 +42,16 @@ PATCH_LEVEL=0
 
 LIBS=-lnsl -lsocket -lgen
 
+CONFIGURE_OPTIONS += --sbindir=/usr/lib
 CONFIGURE_OPTIONS += --with-gui=openssl
 CONFIGURE_OPTIONS += CC="$(CC)"
 CONFIGURE_OPTIONS += LD="$(CC)"
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS) -lpthread -lbsm -lscf -lresolv"
 CONFIGURE_OPTIONS += LIBS="$(LIBS)"
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_POST_CONFIGURE_ACTION = (cd $(COMPONENT_SRC); \
 	for f in `ls src/include/tss/*.h` ; do \
