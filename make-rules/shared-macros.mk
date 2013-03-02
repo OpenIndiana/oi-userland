@@ -336,7 +336,11 @@ GSED =		/usr/gnu/bin/sed
 
 PKGREPO =	/usr/bin/pkgrepo
 PKGSEND =	/usr/bin/pkgsend
+ifeq   ($(strip $(PKGLINT_COMPONENT)),)
 PKGLINT =	/usr/bin/pkglint
+else
+PKGLINT =	${WS_TOOLS}/pkglint
+endif
 
 ACLOCAL =	/usr/bin/aclocal-1.10
 AUTOMAKE =	/usr/bin/automake-1.10
