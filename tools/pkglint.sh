@@ -1,3 +1,4 @@
+#!/bin/ksh
 #
 # CDDL HEADER START
 #
@@ -18,31 +19,20 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
+IFS=
+export WS_TOP=WS_TOP_XXX
 
-include make-rules/shared-macros.mk
+SLEEPTIME=60
 
-SUBDIRS += components
+LOCKFILE=${WS_TOP}/pkglint.lock
 
-download:	TARGET = download
-prep:		TARGET = prep
-build:		TARGET = build
-install:	TARGET = install
-publish:	TARGET = publish
-validate:	TARGET = validate
-clean:		TARGET = clean
-clobber:	TARGET = clobber
-setup:		TARGET = setup
-test:		TARGET = test
-component-hook:		TARGET = component-hook
+lockfile -${SLEEPTIME} ${LOCKFILE}
 
-.DEFAULT:	publish
+/usr/bin/pkglint $*
 
-download setup prep build install publish validate clean clobber \
-test component-hook: $(SUBDIRS)
+pls=$?
 
-$(SUBDIRS):	FORCE
-	@+echo "$(TARGET) $@" ; $(GMAKE) -C $@ $(TARGET)
-
-FORCE:
+rm -f ${LOCKFILE}
+exit ${pls}

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -99,7 +99,7 @@ DUMMYPKG += "set pkg.summary=dummy\n"
 DUMMYPKG += "set org.opensolaris.consolidation=userland\n"
 DUMMYPKG += "set info.classification=org.opensolaris.category.2008:System/Core"
 
-$(WS_LINT_CACHE):	$(WS_LOGS)
+$(WS_LINT_CACHE):	$(WS_LOGS) tools
 ifdef CANONICAL_REPO
 	@echo "Generating pkglint(1) cache from $(CANONICAL_REPO)..."
 	@(echo $(DUMMYPKG) | $(PKGLINT) \

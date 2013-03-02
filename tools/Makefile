@@ -18,20 +18,20 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
 
 download setup prep build install publish \
-validate:	links time-$(MACH32).so time-$(MACH64).so
+validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
 
 # generate wrappers for parfait. we need to generate them
 # with the correct compiler variables from the common makefiles because
 # some things reset the environment which causes lovely infinite
 # loops
 links:
-	$(MKDIR) parfait
+	@$(MKDIR) parfait
 	@for i in cc CC gcc g++ ld ; do \
 		$(MKDIR) parfait ; \
 		$(RM) parfait/$$i ; \
@@ -45,20 +45,28 @@ links:
 		chmod +x parfait/$$i ; \
 	done
 
+pkglint:
+	@rm -f pkglint
+	@sed -e "s,WS_TOP_XXX,$(WS_TOP)/$(MACH)," \
+	    < pkglint.sh \
+	    > pkglint
+	@chmod +x pkglint
+
 
 time-$(MACH64).o:			BITS=64
 time-$(MACH32).o time-$(MACH64).o:	CFLAGS += -Kpic
 
 time-$(MACH32).o time-$(MACH64).o:	time.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
 time-%.so:	time-%.o
-	$(LD) -G -o $@ $<
+	@$(LD) -G -o $@ $<
 
 clean:
-	$(RM) time-*.o time*.bc
+	@$(RM) time-*.o time*.bc
+	@$(RM) pkglint
 
 clobber:	clean
-	$(RM) time-*.so python/pkglint/*.pyc
-	$(RM) -r parfait
+	@$(RM) time-*.so python/pkglint/*.pyc
+	@$(RM) -r parfait
 
