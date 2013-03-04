@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -59,6 +59,8 @@ CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 
 CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)

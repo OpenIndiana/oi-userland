@@ -46,6 +46,8 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:		$(BUILD_32)
 

@@ -47,6 +47,8 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 # field is incorrect on ZFS file systems.
 CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:          $(BUILD_64)
 
