@@ -25,7 +25,6 @@
 
 include ../../make-rules/shared-macros.mk
 
-JAVA_HOME=$(JAVA6_HOME)
 PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
 COMPONENT_NAME=		berkeleydb
