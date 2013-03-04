@@ -29,13 +29,13 @@ JAVA_HOME=$(JAVA6_HOME)
 PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
 
 COMPONENT_NAME=		berkeleydb
-COMPONENT_VERSION=	5.1.25
+COMPONENT_VERSION=	5.3.21
 COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
 COMPONENT_SRC_NAME=	db
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:72eac5fcae4b51b0f1edc727c0368407f29b42e3f2f50ebc31a282d0d6c0a617
+    sha256:ddd92a930317df92021054c03992392db9ea5cddba43bef8920d392a82114fb8
 COMPONENT_ARCHIVE_URL=	http://download.oracle.com/berkeley-db/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/berkeley
 
@@ -46,12 +46,24 @@ include ../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+# Berkeley DB uses TCLSH to run all the test suite test cases.
+# Per the test suite instructions in the BDB build manual, the tclsh
+# include path must be correct in include.tcl then tclsh is run by
+# sourcing the test.tcl header and finally running the "run_std" command.
+# COMPONENT_POST_TEST_ACTION does this after BDB has been recompiled
+# for test (--enable-test)
+
 COMPONENT_POST_TEST_ACTION = \
         (cd $(@D); \
         echo "source test/tcl/test.tcl" > $(@D)/run_bdb.tcl; \
         echo "$(RUN)" >> $(@D)/run_bdb.tcl; \
         cd $(@D); \
-        ulimit -n 1024; $(ENV) /usr/bin/tclsh run_bdb.tcl)
+	$(CP) include.tcl include.tcl.orig; \
+	$(GSED) \
+	    's;set tclsh_path .*;set tclsh_path '$(TCLSH)';' \
+	    < include.tcl.orig > include.tcl; \
+        $(ENV) $(TCLSH) run_bdb.tcl)
 
 CONFIGURE_SCRIPT = dist/configure
 
@@ -82,6 +94,9 @@ CONFIGURE_OPTIONS += $(configure_test)
 
 COMPONENT_TEST_TARGETS = test
 
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
+
 $(BUILD_DIR)/%/.tested: configure_test= --enable-test
 
 # common targets
@@ -92,12 +107,9 @@ install:	$(INSTALL_32_and_64)
 
 test:		$(TEST_32_and_64) 
 
-# By default "gmake test" runs standard tests, takes ~6 hrs (default).
+# By default "gmake test" runs standard tests, takes ~2 days per $(BITS).
 RUN=run_std
 
-# Run all tests, takes ~3 days from command line using 
-# "gmake test RUN=run_all"
-
-BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS) $(TCLSH)
 
 include ../../make-rules/depend.mk
