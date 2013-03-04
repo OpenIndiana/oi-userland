@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -42,6 +42,8 @@ include ../../make-rules/ips.mk
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf) 
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -xstrconst -Dinline"
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32)

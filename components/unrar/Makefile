@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -56,6 +56,8 @@ COMPONENT_BUILD_ENV += DEFINES="$(CPP_LARGEFILES)"
 
 COMPONENT_BUILD_ARGS += -f makefile.unix
 COMPONENT_BUILD_ARGS += STRIP="/bin/true"
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32)

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -49,6 +49,8 @@ PKG_PROTO_DIRS += $(BUILD_DIR_32)
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)" 
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32)

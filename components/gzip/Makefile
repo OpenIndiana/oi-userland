@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -81,6 +81,8 @@ GZGREP_MAN_VARIANTS+=$(PROTOUSRSHAREMAN1DIR)/gzfgrep.1
 
 $(GZGREP_MAN_VARIANTS):
 	$(RM) $@; echo ".so man1/gzgrep.1" > $@
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 build:		$(BUILD_64)
 
