@@ -20,22 +20,19 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		slrn
-COMPONENT_VERSION=	0.9.9
-COMPONENT_SUBVERSION=	p1
-HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_SUBVERSION)
+COMPONENT_VERSION=	1.0.1
 COMPONENT_PROJECT_URL=	http://slrn.sourceforge.net/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3a896f42b78c32252878fd291b21d6482d466921b68ab97f7d8cbadf4a76b533
-COMPONENT_ARCHIVE_URL=	ftp://space.mit.edu/pub/davis/slrn/$(COMPONENT_ARCHIVE)
-IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).1
+    sha256:06b4a060939ec3077e5a060c7a2556747c96061a24eec2c09e1feacd5dbeaae6
+COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/slrn/files/slrn/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/slrn
 
 include ../../make-rules/prep.mk
@@ -56,10 +53,15 @@ CONFIGURE_OPTIONS +=	--enable-spool
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
-# common targets
-build:		$(BUILD_32)
+# Needed to successfully link the 64-bit programs.
+CC +=			$(CC_BITS)
 
-install:	$(INSTALL_32)
+ASLR_MODE = $(ASLR_ENABLE)
+
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
