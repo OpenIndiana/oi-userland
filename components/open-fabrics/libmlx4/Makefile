@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -44,7 +44,12 @@ CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
-COMPONENT_PREP_ACTION += (cd $(@D) ; \
+COMPONENT_PREP_ACTION += (if [ x$(MACH) = "xi386" ]; then \
+		cp mlx4.driver.i386 $(@D)/mlx4.driver; \
+		else \
+		cp mlx4.driver.sparc $(@D)/mlx4.driver; \
+		fi; \
+		cd $(@D) ; \
 		aclocal --force ; \
 		libtoolize --copy --force --ltdl ; \
 		autoconf --force ; \
