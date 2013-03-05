@@ -1,3 +1,6 @@
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
 diff -r -u /tmp/839450/libmlx4-1.0.1/Makefile.am libmlx4-1.0.1/Makefile.am
 --- /tmp/839450/libmlx4-1.0.1/Makefile.am	Tue Sep  8 06:40:35 2009
 +++ libmlx4-1.0.1/Makefile.am	Tue Mar 15 06:49:47 2011
@@ -823,7 +826,17 @@ diff -r -u /tmp/839450/libmlx4-1.0.1/src/verbs.c libmlx4-1.0.1/src/verbs.c
 diff -r -u /tmp/839450/libmlx4-1.0.1/src/qp.c libmlx4-1.0.1/src/qp.c
 --- /tmp/839450/libmlx4-1.0.1/src/qp.c	Thu Mar 10 04:48:34 2011
 +++ libmlx4-1.0.1/src/qp.c	Tue Mar 15 07:09:43 2011
-@@ -589,6 +589,58 @@
+@@ -407,7 +407,8 @@
+ out:
+ 	ctx = to_mctx(ibqp->context);
+ 
+-	if (nreq == 1 && inl && size > 1 && size < ctx->bf_buf_size / 16) {
++	if (ctx->ibv_ctx.device->blueflame_enabled && nreq == 1 && inl &&
++	    size > 1 && size < ctx->bf_buf_size / 16) {
+ 		ctrl->owner_opcode |= htonl((qp->sq.head & 0xffff) << 8);
+ 		*(uint32_t *) (&ctrl->vlan_tag) |= qp->doorbell_qpn;
+ 		/*
+@@ -589,6 +590,58 @@
  		; /* nothing */
  }
  
