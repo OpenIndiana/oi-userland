@@ -20,19 +20,19 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gocr
-COMPONENT_VERSION=	0.48
+COMPONENT_VERSION=	0.49
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://jocr.sourceforge.net/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e0c7b6fc864abfebcb0afa084963fb98f8967b356913e6406cf7b21cfd83d8a2
-COMPONENT_ARCHIVE_URL=	http://prdownloads.sourceforge.net/jocr/$(COMPONENT_ARCHIVE)
+    sha256:cc29931d50b3be11608dc79d1c7d8a20919dbe6313b1ba5dc88ecf99cffd171a
+COMPONENT_ARCHIVE_URL=	http://www-e.uni-magdeburg.de/jschulen/ocr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gocr
 
 include ../../make-rules/prep.mk
@@ -46,11 +46,15 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
+# Needed to successfully link the 64-bit version.
+CC +=              $(CC_BITS)
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
