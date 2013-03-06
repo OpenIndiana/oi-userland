@@ -1,0 +1,137 @@
+Enables puppet provider basic functionality with Solaris 11 zones. Also fixes a bug that
+was introduced with the putback of 15886 into the puppet gate that prevented
+zones networking from being created.
+--- puppet-3.0.1/lib/puppet/provider/zone/solaris.rb.orig	2013-02-15 15:00:38.925896083 -0700
++++ puppet-3.0.1/lib/puppet/provider/zone/solaris.rb	2013-02-15 15:00:48.805231725 -0700
+@@ -31,7 +31,7 @@
+ 
+   def multi_conf(name, should, &action)
+     has = properties[name]
+-    has = [] if has == :absent
++    has = [] if has == :absent or has.nil?
+     rms = has - should
+     adds = should - has
+     (rms.map{|o| action.call(:rm,o)} + adds.map{|o| action.call(:add,o)}).join("\n")
+@@ -60,12 +60,36 @@
+     end
+   end
+ 
++  def self.def_net_prop(var, &conf)
++     define_method(var.to_s) do |v|
++        o = properties[var]
++        return '' if o.nil? or o == :absent
++        o.join(' ')
++     end
++     define_method('%s_conf'% var.to_s) do |v| 
++        multi_conf(var, v, &conf) 
++     end 
++  end 
++
+   def_prop :iptype, "set ip-type=%s"
+   def_prop :autoboot, "set autoboot=%s"
+   def_prop :path, "set zonepath=%s"
+   def_prop :pool, "set pool=%s"
+   def_prop :shares, "add rctl\nset name=zone.cpu-shares\nadd value (priv=privileged,limit=%s,action=none)\nend"
+ 
++  if ['5.11', '5.12'].include? Facter.value(:kernelrelease)
++    def_net_prop :net_resource do |action, str|
++       case action
++        when :add
++          cmd = [" add anet"]
++	  cmd << "end"
++	  cmd.join("\n")
++        when :rm
++          " remove anet"
++        end
++     end
++  end
++
+   def_multiprop :ip do |action, str|
+     interface, ip, defrouter = str.split(':')
+     case action
+@@ -96,20 +120,27 @@
+     end
+   end
+ 
+-  def_multiprop :inherit do |action, str|
+-    case action
+-    when :add; ['add inherit-pkg-dir', "set dir=#{str}",'end'].join("\n")
+-    when :rm; "remove inherit-pkg-dir dir=#{str}"
+-    else self.fail action
++  if ['5.10'].include? Facter.value(:kernelrelease)
++    def_multiprop :inherit do |action, str|
++      case action
++        when :add; ['add inherit-pkg-dir', "set dir=#{str}",'end'].join("\n")
++        when :rm; "remove inherit-pkg-dir dir=#{str}"
++      else self.fail action
++      end
+     end
+   end
+ 
+   def my_properties
+-    [:path, :iptype, :autoboot, :pool, :shares, :ip, :dataset, :inherit]
++    if ['5.11', '5.12'].include? Facter.value(:kernelrelease)
++       [:path, :iptype, :autoboot, :pool, :shares, :ip, :dataset, :net_resource]
++    elsif ['5.10'].include? Facter.value(:kernelrelease)
++       [:path, :iptype, :autoboot, :pool, :shares, :ip, :dataset, :inherit]
++    end
+   end
+ 
+   # Perform all of our configuration steps.
+   def configure
++
+     self.fail "Path is required" unless @resource[:path]
+     arr = ["create -b #{@resource[:create_args]}"]
+ 
+@@ -161,6 +192,14 @@
+   end
+ 
+   def install(dummy_argument=:work_arround_for_ruby_GC_bug)
++    if ['5.11', '5.12'].include? Facter.value(:kernelrelease)
++       if !@resource[:install_args] and @resource[:config_profile]
++           @resource[:install_args] = "-c " + @resource[:config_profile]
++       else
++	  @resource[:install_args] << "-c " + @resource[:config_profile]
++       end
++    end
++       
+     if @resource[:clone] # TODO: add support for "-s snapshot"
+       zoneadm :clone, @resource[:clone]
+     elsif @resource[:install_args]
+@@ -183,6 +222,7 @@
+       end
+     end
+     @property_hash.dup
++    
+   end
+ 
+   # We need a way to test whether a zone is in process.  Our 'ensure'
+@@ -253,6 +293,7 @@
+ 
+   def start
+     # Check the sysidcfg stuff
++   if ['5.10'].include? Facter.value(:kernelrelease)
+     if cfg = @resource[:sysidcfg]
+       self.fail "Path is required" unless @resource[:path]
+       zoneetc = File.join(@resource[:path], "root", "etc")
+@@ -273,6 +314,7 @@
+         end
+       end
+     end
++   end
+ 
+     zoneadm :boot
+   end
+@@ -300,7 +342,11 @@
+   end
+ 
+   def stop
+-    zoneadm :halt
++   if ['5.10'].include? Facter.value(:kernelrelease)
++     execute_zoneadm :halt
++   elsif ['5.11', '5.12'].include? Facter.value(:kernelrelease)
++    zoneadm :shutdown
++   end
+   end
+ 
+   def unconfigure
