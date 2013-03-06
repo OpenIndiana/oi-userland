@@ -30,6 +30,11 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
     sha256:07b880faf29f3f9d9c0953717002ac29f5d061427797d2487a7c9c169e6395b3
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gcc/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_1= testsuite-$(COMPONENT_VERSION).tar.gz
+COMPONENT_ARCHIVE_URL_1 = \
+    http://ftp.gnu.org/pub/gnu/gcc/$(COMPONENT_SRC)/gcc-$(COMPONENT_ARCHIVE_1)
+COMPONENT_ARCHIVE_HASH_1= \
+    sha256:aeb50a52831048da9a6aed118d85a25fc33fa73cae6c80df8f84885712e1b357
 COMPONENT_BUGDB=	utility/gnu-compiler
 
 include ../../make-rules/prep.mk
@@ -63,6 +68,10 @@ CONFIGURE_OPTIONS +=	--with-gmp-include=/usr/include/gmp
 CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
 
+COMPONENT_POST_UNPACK_ACTION = \
+    ( cd $(COMPONENT_DIR) ; \
+	tar xf testsuite-$(COMPONENT_VERSION).tar.gz )
+
 # sparc and x86 use different assemblers
 CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
 CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
@@ -80,7 +89,16 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32) 
 
-test:		$(TEST_32)
+# To ensure that all tests that are expected to pass actually
+# pass, we have to increase the stacksize limit to at least 
+# 16384 Kb. Otherwise we'll get spurious failures in the test
+# harness (gcc.c-torture/compile/limits-exprparen.c and others).
+# With the soft stacksize limit set to 16384 we get very good
+# test results.
+test:
+	( cd $(BUILD_DIR_32)/gcc ; \
+	    ulimit -Ss 16384 ; \
+	    $(GMAKE) -k -i check )
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
