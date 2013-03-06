@@ -18,35 +18,36 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
-
-set name=pkg.fmri value=pkg:/image/gocr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary value="GOCR is an open source Optical Character Recognition program"
-set name=info.classification value="org.opensolaris.category.2008:Applications/Graphics and Imaging"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=pkg.fmri \
+    value=pkg:/image/gocr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="GOCR is an open source Optical Character Recognition program"
+set name=pkg.description \
+    value="gocr(1) is an optical character recognition program that can be used from the command line. It takes input in PNM, PGM, PBM, PPM, or PCX format, and writes recognized text to stdout."
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/Graphics and Imaging"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2008/746
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2008/746
-
-license gocr.license license='GPLv2'
-
-dir path=usr
-dir path=usr/bin
-dir path=usr/share
-dir path=usr/share/gocr
-dir path=usr/share/gocr/doc
-dir path=usr/share/gocr/examples
-dir path=usr/share/man
-dir path=usr/share/man/man1
-file path=usr/bin/gocr
-file usr/bin/gocr.tcl path=usr/share/gocr/gocr.tcl mode=0555
+dir  path=usr
+dir  path=usr/bin
+file usr/bin/$(MACH64)/gocr path=usr/bin/gocr
+dir  path=usr/share
+dir  path=usr/share/gocr
+dir  path=usr/share/gocr/doc
 file README path=usr/share/gocr/doc/README
 file doc/examples.txt path=usr/share/gocr/doc/examples.txt
 file doc/gocr.html path=usr/share/gocr/doc/gocr.html
+dir  path=usr/share/gocr/examples
 file examples/handwrt1.jpg path=usr/share/gocr/examples/handwrt1.jpg
-file examples/handwrt1.txt path=usr/share/gocr/examples/handwrt1.txt
+file examples/handwrt1.readme path=usr/share/gocr/examples/handwrt1.readme
+file usr/bin/$(MACH64)/gocr.tcl path=usr/share/gocr/gocr.tcl mode=0555
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
 file path=usr/share/man/man1/gocr.1
+license gocr.license license=GPLv2
