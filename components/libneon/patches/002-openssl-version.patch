@@ -1,0 +1,30 @@
+Author: joe
+Date: Fri Jul  6 21:23:20 2012
+New Revision: 1895
+
+Modified:
+   neon/trunk/src/ne_socket.c
+
+Log:
+* src/ne_socket.c (ne_sock_connect_ssl): Drop OpenSSL version check,
+  inappropriate with OpenSSL 1.x; patch by Mike Frysinger.
+
+
+Modified: neon/trunk/src/ne_socket.c
+==============================================================================
+--- src/ne_socket.c	(original)
++++ src/ne_socket.c	Fri Jul  6 21:23:20 2012
+@@ -1718,13 +1718,6 @@
+ 	return NE_SOCK_ERROR;
+     }
+ 
+-    /* If runtime library version differs from compile-time version
+-     * number in major/minor/fix level, abort soon. */
+-    if ((SSLeay() ^ OPENSSL_VERSION_NUMBER) & 0xFFFFF000) {
+-        set_error(sock, _("SSL disabled due to library version mismatch"));
+-        return NE_SOCK_ERROR;
+-    }
+-
+     sock->ssl = ssl = SSL_new(ctx->ctx);
+     if (!ssl) {
+ 	set_error(sock, _("Could not create SSL structure"));
