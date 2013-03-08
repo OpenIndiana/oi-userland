@@ -42,6 +42,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+COMPONENT_PREP_ACTION =	(cd $(@D) ; autoreconf -if)
+
 # need /usr/perl5/bin on path to access pod2man perl script, used by 
 # the build to create docs
 COMPONENT_BUILD_ENV +=  PATH=/usr/perl5/bin:$(PATH)
