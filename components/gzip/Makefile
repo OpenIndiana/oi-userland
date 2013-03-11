@@ -39,6 +39,8 @@ include ../../make-rules/ips.mk
 # To get correct @bindir@ substitution in the various gz<whatever> scripts.
 CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
+# Prevent gzip compilation using assembly code, which segv's with Studio 12.3.
+CONFIGURE_OPTIONS +=	gzip_cv_assembler=no
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
