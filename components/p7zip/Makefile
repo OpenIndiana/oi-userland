@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -50,10 +50,8 @@ $(SOURCE_DIR)/DOCS/copying.txt $(SOURCE_DIR)/DOCS/unRarLicense.txt: prep
 $(BUILD_DIR)/%: $(SOURCE_DIR)/DOCS/%
 	$(CP) $< $@
 
-$(BUILD_DIR)/copying.txt: $(SOURCE_DIR)/DOCS/copying.txt gpl_disclaimer
-	$(CP) gpl_disclaimer $@
-	echo "================================================================================" >> $@
-	cat $(SOURCE_DIR)/DOCS/copying.txt >> $@
+$(BUILD_DIR)/copying.txt: $(SOURCE_DIR)/DOCS/copying.txt
+	$(CP) $(SOURCE_DIR)/DOCS/copying.txt $@
 
 # common targets
 build:		$(BUILD_32)

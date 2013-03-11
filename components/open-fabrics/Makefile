@@ -35,6 +35,11 @@ COMPONENT_BUGDB=	library/ofuv_lib utility/ofuv_tools
 # for now, everything with a Makefile should be built
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
 
+# Do not apply the standard license transforms for this component. The
+# license actions in the open-fabrics.p5m file are already tagged with the
+# attributes.
+LICENSE_TRANSFORMS =
+
 .PHONY:	$(SUBDIRS)
 
 download:		TARGET = download

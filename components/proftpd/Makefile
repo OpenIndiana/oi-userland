@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -91,6 +91,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 # proftpd configure and build is not ready for run out of the source tree
 CONFIGURE_SCRIPT =	$(@D)/configure
+
+# Do not apply the standard license transforms for this component. The
+# license actions in the proftpd.p5m file are already tagged with the
+# attributes.
+LICENSE_TRANSFORMS =
 
 build:		$(BUILD_32)
 

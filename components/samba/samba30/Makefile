@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -129,6 +129,11 @@ CONFIGURE_OPTIONS +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
 
 COMPONENT_BUILD_TARGETS = libsmbclient
 COMPONENT_INSTALL_TARGETS = installclientlib
+
+# Do not apply the standard license transforms for this component. The
+# license actions in the samba.p5m file are already tagged with the
+# attributes.
+LICENSE_TRANSFORMS =
 
 # common targets
 build:		$(BUILD_32)

@@ -33,6 +33,9 @@ import sys
 
 debug = False
 
+# TPNO string to search for in each .p5m file.
+TPNO_str = "com.oracle.info.tpno"
+
 # Hashtable of components with TPNOs keyed by component name.
 comp_TPNOs = {}
 
@@ -129,7 +132,7 @@ def find_TPNOs(workspace):
     comp_TPNOs = {}
     for directory, _, files in os.walk(workspace + "/components"):
         for filename in files:
-            if filename.endswith(".license") or filename.endswith(".copyright"):
+            if filename.endswith(".p5m"):
                 pathname = os.path.join(directory, filename)
                 fin = open(pathname, 'r')
                 lines = fin.readlines()
@@ -137,8 +140,9 @@ def find_TPNOs(workspace):
 
                 for line in lines:
                     line = line.replace("\n", "")
-                    if line.startswith("Oracle Internal Tracking Number"):
-                        tpno_str = line.split()[-1]
+                    n = line.find(TPNO_str)
+                    if n != -1:
+                        tpno_str = line[n:].split("=")[1]
                         try:
                             # Check that the TPNO is a valid number.
                             tpno = int(tpno_str)
@@ -147,8 +151,28 @@ def find_TPNOs(workspace):
                                     (directory, tpno_str)
                             comp_TPNOs[directory] = tpno_str
                         except:
-                            print >> sys.stderr, "Unable to read TPNO: %s" % \
-                                pathname
+                            # Check to see if line end in a "\" character in
+                            # which case, it's an attribute rather than an
+                            # set name action, so extract it a different way.
+                            try:
+                                n += len(TPNO_str)+1
+                                tpno_str = line[n:].split()[0]
+                                # Check that the TPNO is a valid number.
+                                tpno = int(tpno_str)
+                                if debug:
+                                    print >> sys.stderr, "TPNO: %s: %s" % \
+                                        (directory, tpno_str)
+
+                                # If it's an attribute, there might be more
+                                # than one TPNO for this component.
+                                if directory in comp_TPNOs:
+                                    entry = comp_TPNOs[directory]
+                                    tpno_str = "%s,%s" % (entry, tpno_str)
+
+                                comp_TPNOs[directory] = tpno_str
+                            except:
+                                print >> sys.stderr, \
+                                    "Unable to read TPNO: %s" % pathname
 
     return(comp_TPNOs)
 
