@@ -135,6 +135,11 @@ PKG_PROTO_DIRS += tcpwrap-zts/build/prototype/$(MACH)
 PKG_PROTO_DIRS += xdebug/build/prototype/$(MACH)
 PKG_PROTO_DIRS += xdebug-zts/build/prototype/$(MACH)
 
+# Do not apply the standard license transforms for this component. The
+# license actions are already tagged with the attributes, in the various
+# .p5m files.
+LICENSE_TRANSFORMS =
+
 # for now, everything with a Makefile should be built
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
 

@@ -18,16 +18,20 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/database/mysql-common@0.5.11,$(BUILD_VERSION)
-set name=pkg.summary value="MySQL Database Management System (Base)"
-set name=com.oracle.info.description value="the MySQL Database Management System base software"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Databases
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-group groupname=mysql gid=70
-user username=mysql ftpuser=false gcos-field="MySQL Reserved UID" group=mysql \
-    password=NP uid=70
+# Create 'set name=com.oracle.info.name=NAME'
+# Get NAME from COMPONENT_NAME in the Makefile.
+<transform set name=pkg.fmri -> emit \
+    set name=com.oracle.info.name value=$(COMPONENT_NAME) >
 
+# Create 'set name=com.oracle.info.version=VERSION'
+# Get VERSION from pkg.human-version in the package manifest (if present)
+# or from $(IPS_COMPONENT_VERSION) in the Makefile.
+#
+# Note that this uses the synthetic action 'pkg', which fires after
+# the entire manifest has been read vs. as the actions are seen .
+<transform pkg pkg.fmri=.+@(.+),.+$ -> \
+    emit set name=com.oracle.info.version \
+             value=%{pkg.human-version;notfound='%<1>'} >

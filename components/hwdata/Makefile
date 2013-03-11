@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -48,7 +48,16 @@ COMPONENT_ARCHIVE_URLS = $(foreach i,$(ID_FILES),$(COMPONENT_ARCHIVE_URL_$(i)))
 
 COMPONENT_BUGDB=	utility/hwdata
 
+# Retrieve version from ids file
+ID_VERSION_EXTRACT_COMMAND=$(GSED) -n -e '/Version:/ { s/^.*: //p' -e ' q }'
+
 PKG_OPTIONS += -D COMPONENT_ARCHIVE_URLS='$(COMPONENT_ARCHIVE_URLS:%=value="%")'
+PKG_MACROS += $(foreach i,$(ID_FILES),\
+    COMPONENT_VERSION_$(i)='$(shell $(ID_VERSION_EXTRACT_COMMAND) $(i))')
+
+# Since we have two separately licensed components we don't use the default
+# license transform rules, but handle the license info metadata directly
+LICENSE_TRANSFORMS =
 
 $(ID_FILES):
 	curl -s -o $@ $(COMPONENT_ARCHIVE_URL_$(@F))
@@ -56,8 +65,6 @@ $(ID_FILES):
 # License files for packaging are generated during the build
 LICENSES = $(ID_FILES:%=%.license)
 BUILT_LICENSES = $(LICENSES:%=$(BUILD_DIR)/%)
-TPNO_pci.ids.license = 7530
-TPNO_usb.ids.license = 7831
 
 # Extract the header up to the first blank line
 $(BUILD_DIR)/%.header: %
@@ -65,17 +72,10 @@ $(BUILD_DIR)/%.header: %
 	$(GSED) -e '/^$$/ q' $< > $@
 
 # Generate license files for each document by substituting in templates:
-# __FILE_NAME_VERS__ replace with name & version of ids file
-# __TPNO__ - Oracle tracking number
 # __HEADER__ - read in contents of generated header file, then delete the 
 #		__HEADER__ line
 $(BUILD_DIR)/%.license: $(BUILD_DIR)/%.header
-	FILENAME="$(basename $(@F))" ; \
-	VERSION="$$(awk -F: '/Version:/ { print $$2 ; exit }' $<)" ; \
-	FILE_NAME_VERS="$${FILENAME}$${VERSION}" ; \
-	$(GSED) -e "s/__FILE_NAME_VERS__/$${FILE_NAME_VERS}/" \
-	    -e 's/__TPNO__/$(TPNO_$(@F))/' \
-	    -e '/__HEADER__/ r $<' -e '/__HEADER__/ d' ids.license.tmpl > $@
+	$(GSED) -e '/__HEADER__/ r $<' -e '/__HEADER__/ d' ids.license.tmpl > $@
 
 install build: $(BUILT_LICENSES)
 
