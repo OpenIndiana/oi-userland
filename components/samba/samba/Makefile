@@ -20,17 +20,17 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.6.8
+COMPONENT_VERSION=	3.6.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:4f5a171a8d902c6b4f822ed875c51eb8339196d9ccf0ecd7f6521c966b3514de
+COMPONENT_ARCHIVE_HASH=	sha256:6ff797c1772613bd5172d2c8b900fd56bf096d7252faee8b47c4925a4fdc9f8b
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -157,8 +157,9 @@ CONFIGURE_OPTIONS +=	--with-piddir=/var/samba/locks
 CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
 CONFIGURE_OPTIONS +=	--enable-shared=yes
 CONFIGURE_OPTIONS +=	--enable-static=no
-CONFIGURE_OPTIONS +=	--with-static-modules=vfs_solarisacl
+CONFIGURE_OPTIONS.32 +=	--with-static-modules=vfs_solarisacl
 CONFIGURE_OPTIONS.32 += --with-shared-modules=vfs_zfsacl,vfs_samfs,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
+CONFIGURE_OPTIONS.64 +=	--with-static-modules=
 CONFIGURE_OPTIONS.64 += --with-shared-modules=
 CONFIGURE_OPTIONS +=	--with-readline
 CONFIGURE_OPTIONS +=	--enable-cups
