@@ -18,19 +18,20 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
-COMPONENT_VERSION=	2.5.9
+COMPONENT_VERSION=	2.7.2
 COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
 COMPONENT_SRC_NAME=	modsecurity-apache
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:02352221ea268f8ae9aae5b84507f51eba2a67c0f7d2efd5cc88e85f1f394056
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
+    sha256:2fa43264e3aa024d29869eada3171a2aba19fc05180860fd84c7a6ebfd1f2854
+COMPONENT_ARCHIVE_URL= \
+    $(COMPONENT_PROJECT_URL)tarball/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
 include ../../../make-rules/prep.mk
@@ -42,25 +43,17 @@ APACHE_USR_PREFIX=/usr/apache2/2.2
 APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
 APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
 
-CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
 CONFIGURE_OPTIONS += --with-apr=`$(APXS.$(BITS)) -q APR_CONFIG`
 CONFIGURE_OPTIONS += --with-apu=`$(APXS.$(BITS)) -q APU_CONFIG`
 
-# Need to get right version of C compiler and GNU sed first.
-PATH=$(SPRO_VROOT)/bin:/usr/gnu/bin:/usr/bin
-
-# Some patches need configure script re-creation.
-COMPONENT_PREP_ACTION = (cd $(@D)/apache2; autoconf)
-
-CONFIGURE_SCRIPT = $(SOURCE_DIR)/apache2/configure
-
-# Header files are missing during build without cloning.
-COMPONENT_PRE_BUILD_ACTION += ($(CLONEY) $(SOURCE_DIR)/apache2 $(@D));
+COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
 
 build: $(BUILD_32_and_64)
 
-test: $(NO_TESTS)
+test: $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
