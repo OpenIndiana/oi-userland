@@ -1,34 +1,48 @@
-diff -rupN sudo-1.8.4p5.orig/plugins/sudoers/bsm_audit.c sudo-1.8.4p5/plugins/sudoers/bsm_audit.c
---- sudo-1.8.4p5.orig/plugins/sudoers/bsm_audit.c	2012-03-29 10:37:01.000000000 -0700
-+++ sudo-1.8.4p5/plugins/sudoers/bsm_audit.c	2012-05-18 14:20:39.003982000 -0700
-@@ -104,7 +104,7 @@ bsm_audit_success(char **exec_args)
- 		log_error(0, _("au_open: failed"));
+au_* calls need correct parameters.
+This legacy auditing will later be replaced by Solaris adt_* calls,
+so in the future, use of bsm_audit.c and configuring --with-bsm-audit will 
+be removed.
+
+--- sudo-1.8.6p7.orig/plugins/sudoers/bsm_audit.c	2012-09-18 06:56:29.000000000 -0700
++++ sudo-1.8.6p7/plugins/sudoers/bsm_audit.c	2013-03-07 10:18:20.309947000 -0800
+@@ -31,8 +31,8 @@
+ #include <unistd.h>
+ 
+ #include "gettext.h"
+-#include "error.h"
+ #include "sudo_debug.h"
++#include "error.h"
+ #include "bsm_audit.h"
+ 
+ /*
+@@ -103,7 +103,7 @@ bsm_audit_success(char **exec_args)
+ 		error(1, _("au_open: failed"));
  	if (getaudit_addr(&ainfo_addr, sizeof(ainfo_addr)) == 0) {
  		tok = au_to_subject_ex(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo_addr.ai_termid);
-+		    getuid(), pid, ainfo_addr.ai_asid, &ainfo_addr.ai_termid);
++		    getgid(), pid, ainfo_addr.ai_asid, &ainfo_addr.ai_termid);
  	} else if (errno == ENOSYS) {
  		/*
  		 * NB: We should probably watch out for ERANGE here.
-@@ -112,7 +112,7 @@ bsm_audit_success(char **exec_args)
+@@ -111,7 +111,7 @@ bsm_audit_success(char **exec_args)
  		if (getaudit(&ainfo) < 0)
- 			log_error(0, _("getaudit: failed"));
+ 			error(1, _("getaudit: failed"));
  		tok = au_to_subject(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo.ai_termid);
-+		    getuid(), pid, ainfo.ai_asid, &ainfo.ai_termid);
++		    getgid(), pid, ainfo.ai_asid, &ainfo.ai_termid);
  	} else
- 		log_error(0, _("getaudit: failed"));
+ 		error(1, _("getaudit: failed"));
  	if (tok == NULL)
-@@ -126,7 +126,7 @@ bsm_audit_success(char **exec_args)
+@@ -125,7 +125,7 @@ bsm_audit_success(char **exec_args)
  	if (tok == NULL)
- 		log_error(0, _("au_to_return32: failed"));
+ 		error(1, _("au_to_return32: failed"));
  	au_write(aufd, tok);
 -	if (au_close(aufd, 1, AUE_sudo) == -1)
 +	if (au_close(aufd, 1, AUE_sudo, PAD_FAILURE) == -1)
- 		log_error(0, _("unable to commit audit record"));
+ 		error(1, _("unable to commit audit record"));
  	debug_return;
  }
-@@ -148,7 +148,7 @@ bsm_audit_failure(char **exec_args, char
+@@ -147,7 +147,7 @@ bsm_audit_failure(char **exec_args, char
  	/*
  	 * If we are not auditing, don't cut an audit record; just return.
  	 */
@@ -36,28 +50,28 @@ diff -rupN sudo-1.8.4p5.orig/plugins/sudoers/bsm_audit.c sudo-1.8.4p5/plugins/su
 +	if (auditon(A_GETCOND, (caddr_t)&au_cond, sizeof(long)) < 0) {
  		if (errno == AUDIT_NOT_CONFIGURED)
  			debug_return;
- 		log_error(0, _("Could not determine audit condition"));
-@@ -163,12 +163,12 @@ bsm_audit_failure(char **exec_args, char
- 		log_error(0, _("au_open: failed"));
+ 		error(1, _("Could not determine audit condition"));
+@@ -162,12 +162,12 @@ bsm_audit_failure(char **exec_args, char
+ 		error(1, _("au_open: failed"));
  	if (getaudit_addr(&ainfo_addr, sizeof(ainfo_addr)) == 0) { 
  		tok = au_to_subject_ex(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo_addr.ai_termid);
-+		    getuid(), pid, ainfo_addr.ai_asid, &ainfo_addr.ai_termid);
++		    getgid(), pid, ainfo_addr.ai_asid, &ainfo_addr.ai_termid);
  	} else if (errno == ENOSYS) {
  		if (getaudit(&ainfo) < 0) 
- 			log_error(0, _("getaudit: failed"));
+ 			error(1, _("getaudit: failed"));
  		tok = au_to_subject(auid, geteuid(), getegid(), getuid(),
 -		    getuid(), pid, pid, &ainfo.ai_termid);
-+		    getuid(), pid, ainfo.ai_asid, &ainfo.ai_termid);
++		    getgid(), pid, ainfo.ai_asid, &ainfo.ai_termid);
  	} else
- 		log_error(0, _("getaudit: failed"));
+ 		error(1, _("getaudit: failed"));
  	if (tok == NULL)
-@@ -187,7 +187,7 @@ bsm_audit_failure(char **exec_args, char
+@@ -186,7 +186,7 @@ bsm_audit_failure(char **exec_args, char
  	if (tok == NULL)
- 		log_error(0, _("au_to_return32: failed"));
+ 		error(1, _("au_to_return32: failed"));
  	au_write(aufd, tok);
 -	if (au_close(aufd, 1, AUE_sudo) == -1)
 +	if (au_close(aufd, 1, AUE_sudo, PAD_FAILURE) == -1)
- 		log_error(0, _("unable to commit audit record"));
+ 		error(1, _("unable to commit audit record"));
  	debug_return;
  }
