@@ -91,6 +91,7 @@ CONFIGURE_OPTIONS = \
 			-Duseshrplib \
 			-Dusedtrace \
 			-Duse64bitall \
+			-Uuselargefiles \
 			-Doptimize="$(CFLAGS.studio)"
 
 # The extra Configure parameters (cf_email, cf_by, myhostname) and
