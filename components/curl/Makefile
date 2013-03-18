@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -74,6 +74,8 @@ CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 build: $(BUILD_32_and_64)
 
