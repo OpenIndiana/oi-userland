@@ -100,6 +100,8 @@ CONFIGURE_SCRIPT =	$(@D)/configure
 
 COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:	$(BUILD_32_and_64)
 
