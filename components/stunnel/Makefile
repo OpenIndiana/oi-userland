@@ -63,6 +63,8 @@ COMPONENT_PRE_INSTALL_ACTION = \
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:          $(BUILD_32_and_64)
 
