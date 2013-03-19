@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -65,6 +65,8 @@ CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) /usr/share/lib/terminfo/s/sun-color \
 	$(PROTO_DIR)$(GNULIB)/terminfo/s/
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:          $(BUILD_32_and_64)
