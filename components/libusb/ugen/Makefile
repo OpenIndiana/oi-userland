@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -39,6 +39,9 @@ COMPONENT_BUILD_ARGS += BITS=$(BITS)
 $(BUILD_DIR_32)/.installed:	BITS=32
 $(BUILD_DIR_64)/.installed:	BITS=64
 COMPONENT_INSTALL_ARGS += BITS=$(BITS)
+
+# Do not apply the standard licence transforms for this component.
+LICENSE_TRANSFORMS =
 
 download:
 

@@ -98,6 +98,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 $(BUILD_DIR)/%/.tested: configure_test= --enable-test
 
+# Do not apply the standard licence transforms for this component.
+LICENSE_TRANSFORMS =
+
 # common targets
 build:		$(BUILD_32_and_64)
 
