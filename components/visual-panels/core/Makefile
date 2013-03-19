@@ -47,6 +47,9 @@ COMPONENT_INSTALL_ENV =		$(COMPONENT_BUILD_ENV)
 COMPONENT_TEST_TARGETS =  	test
 COMPONENT_TEST_ENV =	  	$(COMPONENT_BUILD_ENV)
 
+# Do not apply the standard licence transforms for this component.
+LICENSE_TRANSFORMS =
+
 # common targets
 $(SOURCE_DIR)/.prep:
 	$(TOUCH) $@

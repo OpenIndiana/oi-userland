@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -107,6 +107,9 @@ CONFIGURE_OPTIONS.32 +=	--enable-dtrace DTRACEFLAGS='-32'
 	
 CONFIGURE_OPTIONS.64 += --libexecdir=$(CONFIGURE_PREFIX)/bin/$(MACH64)	
 CONFIGURE_OPTIONS.64 += --enable-dtrace DTRACEFLAGS='-64'	
+
+# Do not apply the standard licence transforms for this component.
+LICENSE_TRANSFORMS =
 
 build: $(BUILD_32_and_64)
 
