@@ -36,8 +36,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# the default setting of 8s makes us core dump
-studio_ALIGN.sparc.32=
+# fix my alignment issues instead of falling over on sparc
+studio_ALIGN.sparc.64=-xmemalign=16i
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --enable-ipv6=yes
@@ -47,14 +47,14 @@ CONFIGURE_OPTIONS += --without-crypto
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32) 
+install:        $(INSTALL_64) 
 
 COMPONENT_PRE_TEST_ACTION = \
         ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
