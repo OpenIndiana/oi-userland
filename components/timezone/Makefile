@@ -27,7 +27,7 @@ COMPONENT_NAME= 	timezone
 
 COMPONENT_BUGDB=	utility/timezone
 
-HUMAN_VERSION=		2012i
+HUMAN_VERSION=		2012j
 
 # "etcetera" must be listed before "backward" because it sets up links that
 # "backward" needs.
