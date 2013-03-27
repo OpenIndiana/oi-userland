@@ -1,0 +1,30 @@
+This patch fixes the lack of AC_LANG_PROGRAM in conditionals that contain
+raw code, which generates errors from autoconf when re-run on the package.
+We have upstream support ticket #12 to track the Solaris port, available
+at: https://fedorahosted.org/mlocate/ticket/12
+diff -rupN mlocate-0.25-clean/gnulib/m4/include_next.m4 mlocate-0.25/gnulib/m4/include_next.m4
+--- mlocate-0.25-clean/gnulib/m4/include_next.m4	2010-03-26 19:38:17.000000000 +0000
++++ mlocate-0.25/gnulib/m4/include_next.m4	2013-02-18 19:01:29.072014923 +0000
+@@ -30,7 +30,7 @@ EOF
+ EOF
+      save_CPPFLAGS="$CPPFLAGS"
+      CPPFLAGS="$CPPFLAGS -Iconftestd1 -Iconftestd2"
+-     AC_COMPILE_IFELSE([#include <conftest.h>],
++     AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <conftest.h>])],
+        [gl_cv_have_include_next=yes],
+        [gl_cv_have_include_next=no])
+      CPPFLAGS="$save_CPPFLAGS"
+diff -rupN mlocate-0.25-clean/gnulib/m4/wchar.m4 mlocate-0.25/gnulib/m4/wchar.m4
+--- mlocate-0.25-clean/gnulib/m4/wchar.m4	2010-03-26 19:38:18.000000000 +0000
++++ mlocate-0.25/gnulib/m4/wchar.m4	2013-02-18 19:03:20.362999117 +0000
+@@ -14,8 +14,8 @@ AC_DEFUN([gl_WCHAR_H],
+   AC_REQUIRE([gl_WCHAR_H_DEFAULTS])
+   AC_CACHE_CHECK([whether <wchar.h> is standalone],
+     [gl_cv_header_wchar_h_standalone],
+-    [AC_COMPILE_IFELSE([[#include <wchar.h>
+-wchar_t w;]],
++    [AC_COMPILE_IFELSE([AC_LANG_PROGRAM([#include <wchar.h>
++wchar_t w;])],
+       [gl_cv_header_wchar_h_standalone=yes],
+       [gl_cv_header_wchar_h_standalone=no])])
+   if test $gl_cv_header_wchar_h_standalone != yes; then
