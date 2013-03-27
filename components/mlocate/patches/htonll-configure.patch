@@ -1,0 +1,64 @@
+This patch removes htonll/ntohll substitution on platforms that already
+support it.
+We have upstream support ticket #12 to track the Solaris port, available
+at: https://fedorahosted.org/mlocate/ticket/12
+diff -rupN mlocate-0.25-clean/configure.ac mlocate-0.25/configure.ac
+--- mlocate-0.25-clean/configure.ac	2012-03-03 04:58:54.000000000 +0000
++++ mlocate-0.25/configure.ac	2013-02-18 20:09:21.901723375 +0000
+@@ -48,6 +48,8 @@ AM_GNU_GETTEXT_VERSION([0.17])
+ # Checks for library functions.
+ ## getopt_long () availability should be checked here
+ AC_CHECK_FUNCS_ONCE([fdopendir])
++AC_CHECK_FUNCS_ONCE([htonll])
++AC_CHECK_FUNCS_ONCE([ntohll])
+ AC_FUNC_GETMNTENT
+ 
+ # Checks for system services.
+diff -rupN mlocate-0.25-clean/src/lib.c mlocate-0.25/src/lib.c
+--- mlocate-0.25-clean/src/lib.c	2011-04-28 16:20:42.000000000 +0100
++++ mlocate-0.25/src/lib.c	2013-02-18 20:09:43.618165760 +0000
+@@ -36,6 +36,7 @@ Author: Miloslav Trmac <mitr@redhat.com>
+ #include "db.h"
+ #include "lib.h"
+ 
++#if !defined (HAVE_HTONLL)
+ /* Convert VAL to big endian */
+ uint64_t
+ htonll (uint64_t val)
+@@ -50,7 +51,9 @@ htonll (uint64_t val)
+   memcpy ((unsigned char *)&ret + sizeof (high), &low, sizeof (low));
+   return ret;
+ }
++#endif
+ 
++#if !defined (HAVE_NTOHLL)
+ /* Convert VAL from big endian */
+ uint64_t
+ ntohll (uint64_t val)
+@@ -62,6 +65,7 @@ ntohll (uint64_t val)
+   memcpy (&low, (unsigned char *)&val + sizeof (high), sizeof (low));
+   return (uint64_t)ntohl (high) << 32 | ntohl (low);
+ }
++#endif
+ 
+ /* A mapping table for dir_path_cmp: '\0' < '/' < anything else */
+ static unsigned char dir_path_cmp_table[UCHAR_MAX + 1];
+diff -rupN mlocate-0.25-clean/src/lib.h mlocate-0.25/src/lib.h
+--- mlocate-0.25-clean/src/lib.h	2011-03-29 22:59:00.000000000 +0100
++++ mlocate-0.25/src/lib.h	2013-02-18 20:09:43.619270168 +0000
+@@ -41,11 +41,15 @@ Author: Miloslav Trmac <mitr@redhat.com>
+ /* Number of entries in ARRAY */
+ #define ARRAY_SIZE(array) (sizeof (array) / sizeof (*array))
+ 
++#if !defined (HAVE_HTONLL)
+ /* Convert VAL to big endian */
+ extern uint64_t htonll (uint64_t val);
++#endif
+ 
++#if !defined (HAVE_NTOHLL)
+ /* Convert VAL from big endian */
+ extern uint64_t ntohll (uint64_t val);
++#endif
+ 
+ /* Initialize dir_path_cmp_table */
+ extern void dir_path_cmp_init (void);
