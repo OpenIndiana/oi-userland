@@ -44,6 +44,8 @@ include ../../make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CC +=	$(CC_BITS)
+
 CONFIGURE_ENV += "CC=$(CC)"
 
 # If the configure options are not explicitly set, then configure fails with:
@@ -56,12 +58,12 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		build
-	@cd $(BUILD_DIR_32); ./run_test.sh
+	@cd $(BUILD_DIR_64); ./run_test.sh
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
