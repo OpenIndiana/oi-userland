@@ -66,6 +66,7 @@ CONFIGURE_OPTIONS += --with-libsigsegv-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-libreadline-prefix=$(CONFIGURE_PREFIX)
 
 # For now keep ASLR disabled for clisp (the default); build may core dump with ASLR
+ASLR_MODE = $(ASLR_DISABLE)
 
 # Prevent clisp.ps and clisp.pdf having different versions for SPARC
 # and x86 in the clisp package, because of embedded dates.
