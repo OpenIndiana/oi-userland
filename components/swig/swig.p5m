@@ -22,53 +22,36 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+# Get usr/share/swig/$(COMPONENT_VERSION)/doc/devel files from Doc/Devel
+<transform file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/(.+$) -> set action.hash Doc/Devel/%<1>>
+
+# Get usr/share/swig/$(COMPONENT_VERSION)/doc/manual files from Doc/Manual
+<transform file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/(.+$) -> set action.hash Doc/Manual/%<1>>
 set name=pkg.fmri \
     value=pkg:/developer/swig@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Simplified Wrapper and Interface Generator"
-set name=com.oracle.info.description value="SWIG, the Simplified Wrapper and Interface Generator"
-set name=com.oracle.info.tpno value=5686
+set name=com.oracle.info.description \
+    value="SWIG, the Simplified Wrapper and Interface Generator"
+set name=com.oracle.info.tpno value=10991
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/Other Languages"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2008/475
+set name=org.opensolaris.arc-caseid value=PSARC/2008/475
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-dir path=usr
-dir path=usr/bin
-dir path=usr/share
-dir path=usr/share/man
-dir path=usr/share/man/man1
-dir path=usr/share/swig
-dir path=usr/share/swig/$(COMPONENT_VERSION)
-dir path=usr/share/swig/$(COMPONENT_VERSION)/allegrocl
-dir path=usr/share/swig/$(COMPONENT_VERSION)/cffi
-dir path=usr/share/swig/$(COMPONENT_VERSION)/chicken
-dir path=usr/share/swig/$(COMPONENT_VERSION)/clisp
-dir path=usr/share/swig/$(COMPONENT_VERSION)/csharp
-dir path=usr/share/swig/$(COMPONENT_VERSION)/doc
-dir path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel
-dir path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual
-dir path=usr/share/swig/$(COMPONENT_VERSION)/gcj
-dir path=usr/share/swig/$(COMPONENT_VERSION)/guile
-dir path=usr/share/swig/$(COMPONENT_VERSION)/java
-dir path=usr/share/swig/$(COMPONENT_VERSION)/lua
-dir path=usr/share/swig/$(COMPONENT_VERSION)/modula3
-dir path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme
-dir path=usr/share/swig/$(COMPONENT_VERSION)/ocaml
-dir path=usr/share/swig/$(COMPONENT_VERSION)/octave
-dir path=usr/share/swig/$(COMPONENT_VERSION)/perl5
-dir path=usr/share/swig/$(COMPONENT_VERSION)/php4
-dir path=usr/share/swig/$(COMPONENT_VERSION)/pike
-dir path=usr/share/swig/$(COMPONENT_VERSION)/python
-dir path=usr/share/swig/$(COMPONENT_VERSION)/r
-dir path=usr/share/swig/$(COMPONENT_VERSION)/ruby
-dir path=usr/share/swig/$(COMPONENT_VERSION)/std
-dir path=usr/share/swig/$(COMPONENT_VERSION)/tcl
-dir path=usr/share/swig/$(COMPONENT_VERSION)/typemaps
-dir path=usr/share/swig/$(COMPONENT_VERSION)/uffi
-file path=usr/bin/swig
+dir  path=usr
+dir  path=usr/bin
+file usr/bin/$(MACH64)/ccache-swig path=usr/bin/ccache-swig
+file usr/bin/$(MACH64)/swig path=usr/bin/swig
+dir  path=usr/share
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
+file path=usr/share/man/man1/ccache-swig.1
 file swig.1 path=usr/share/man/man1/swig.1
+dir  path=usr/share/swig
+dir  path=usr/share/swig/$(COMPONENT_VERSION)
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/allegrocl
 file path=usr/share/swig/$(COMPONENT_VERSION)/allegrocl/allegrocl.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/allegrocl/inout_typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/allegrocl/longlongs.i
@@ -79,20 +62,25 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/allkw.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/attribute.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/carrays.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/cdata.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/cffi
 file path=usr/share/swig/$(COMPONENT_VERSION)/cffi/cffi.swg
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/chicken
 file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/chicken.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/chickenkw.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/chickenrun.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/multi-generic.scm
 file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/swigclosprefix.scm
-file \
-    path=usr/share/swig/$(COMPONENT_VERSION)/chicken/tinyclos-multi-generic.patch
+file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/tinyclos-multi-generic.patch
 file path=usr/share/swig/$(COMPONENT_VERSION)/chicken/typemaps.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/clisp
 file path=usr/share/swig/$(COMPONENT_VERSION)/clisp/clisp.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/cmalloc.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/constraints.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/cpointer.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/csharp
+file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/arrays_csharp.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/boost_intrusive_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/boost_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/csharp.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/csharphead.swg
@@ -106,6 +94,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_deque.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_except.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_map.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_pair.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/std_wstring.i
@@ -114,137 +103,126 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/csharp/wchar.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/cstring.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/cwstring.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/d
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/boost_shared_ptr.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/carrays.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/cpointer.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/d.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dclassgen.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/ddirectives.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/denums.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dexception.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dhead.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/director.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dkw.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dmemberfunctionpointers.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/doperators.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dprimitives.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dstrings.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dswigtype.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/dvoid.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_common.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_deque.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_except.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_map.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_pair.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_shared_ptr.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_string.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/std_vector.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/stl.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/typemaps.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/d/wrapperloader.swg
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/doc
 file Doc/README path=usr/share/swig/$(COMPONENT_VERSION)/doc/README
-file Doc/Devel/cmdopt.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/cmdopt.html
-file Doc/Devel/engineering.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/engineering.html
-file Doc/Devel/file.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/file.html
-file Doc/Devel/index.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/index.html
-file Doc/Devel/internals.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/internals.html
-file Doc/Devel/migrate.txt \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/migrate.txt
-file Doc/Devel/parm.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/parm.html
-file Doc/Devel/runtime.txt \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/runtime.txt
-file Doc/Devel/scanner.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/scanner.html
-file Doc/Devel/tree.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/tree.html
-file Doc/Devel/wrapobj.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/wrapobj.html
-file Doc/Manual/Allegrocl.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Allegrocl.html
-file Doc/Manual/Arguments.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Arguments.html
-file Doc/Manual/CSharp.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/CSharp.html
-file Doc/Manual/Chicken.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Chicken.html
-file Doc/Manual/Contents.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Contents.html
-file Doc/Manual/Contract.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Contract.html
-file Doc/Manual/Customization.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Customization.html
-file Doc/Manual/Extending.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Extending.html
-file Doc/Manual/Guile.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Guile.html
-file Doc/Manual/Introduction.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Introduction.html
-file Doc/Manual/Java.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Java.html
-file Doc/Manual/Library.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Library.html
-file Doc/Manual/Lisp.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Lisp.html
-file Doc/Manual/Lua.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Lua.html
-file Doc/Manual/Modula3.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Modula3.html
-file Doc/Manual/Modules.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Modules.html
-file Doc/Manual/Mzscheme.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Mzscheme.html
-file Doc/Manual/Ocaml.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Ocaml.html
-file Doc/Manual/Octave.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Octave.html
-file Doc/Manual/Perl5.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Perl5.html
-file Doc/Manual/Php.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Php.html
-file Doc/Manual/Pike.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Pike.html
-file Doc/Manual/Preface.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Preface.html
-file Doc/Manual/Preprocessor.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Preprocessor.html
-file Doc/Manual/Python.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Python.html
-file Doc/Manual/R.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/R.html
-file Doc/Manual/README \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/README
-file Doc/Manual/Ruby.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Ruby.html
-file Doc/Manual/SWIG.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIG.html
-file Doc/Manual/SWIGDocumentation.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIGDocumentation.html
-file Doc/Manual/SWIGDocumentation.pdf \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIGDocumentation.pdf
-file Doc/Manual/SWIGPlus.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIGPlus.html
-file Doc/Manual/Scripting.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Scripting.html
-file Doc/Manual/Sections.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Sections.html
-file Doc/Manual/Tcl.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Tcl.html
-file Doc/Manual/Typemaps.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Typemaps.html
-file Doc/Manual/Varargs.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Varargs.html
-file Doc/Manual/Warnings.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Warnings.html
-file Doc/Manual/Windows.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Windows.html
-file Doc/Manual/ch11.1.png \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch11.1.png
-file Doc/Manual/ch11.2.png \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch11.2.png
-file Doc/Manual/ch11.3.png \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch11.3.png
-file Doc/Manual/ch12.1.png \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch12.1.png
-file Doc/Manual/ch2.1.png \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch2.1.png
-file Doc/Manual/ch9.table.2.png \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch9.table.2.png
-file Doc/Manual/chapters \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/chapters
-file Doc/Manual/index.html \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/index.html
-file Doc/Manual/margin-left.patch \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/margin-left.patch
-file Doc/Manual/style.css \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/style.css
-file Doc/Manual/swig16.png \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swig16.png
-file Doc/Manual/swightml.book \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swightml.book
-file Doc/Manual/swigpdf.book \
-    path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swigpdf.book
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/cmdopt.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/engineering.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/file.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/index.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/internals.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/migrate.txt
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/parm.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/runtime.txt
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/scanner.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/tree.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/devel/wrapobj.html
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Allegrocl.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Android.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Arguments.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/CCache.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/CSharp.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Chicken.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Contents.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Contract.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Customization.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/D.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Extending.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Go.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Guile.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Introduction.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Java.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Library.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Lisp.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Lua.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Modula3.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Modules.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Mzscheme.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Ocaml.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Octave.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Perl5.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Php.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Pike.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Preface.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Preprocessor.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Python.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/R.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/README
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Ruby.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIG.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIGDocumentation.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIGDocumentation.pdf
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/SWIGPlus.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Scripting.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Sections.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Tcl.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Typemaps.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Varargs.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Warnings.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/Windows.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/android-class.png
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/android-simple.png
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/ch2.1.png
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/chapters
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/index.html
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/linkchecker.config
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/margin-left.patch
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/style.css
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swig16.png
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swightml.book
+file path=usr/share/swig/$(COMPONENT_VERSION)/doc/manual/swigpdf.book
 file path=usr/share/swig/$(COMPONENT_VERSION)/exception.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/gcj
 file path=usr/share/swig/$(COMPONENT_VERSION)/gcj/cni.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/gcj/cni.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/gcj/javaprims.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/go
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/cdata.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/exception.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/go.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/gokw.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/goruntime.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_common.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_deque.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_except.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_list.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_map.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_pair.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_string.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/std_vector.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/stl.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/go/typemaps.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/guile
 file path=usr/share/swig/$(COMPONENT_VERSION)/guile/common.scm
 file path=usr/share/swig/$(COMPONENT_VERSION)/guile/cplusplus.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/guile/ghinterface.i
@@ -268,8 +246,11 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/guile/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/guile/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/guile/swigrun.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/guile/typemaps.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/intrusive_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/inttypes.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/java
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/arrays_java.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/java/boost_intrusive_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/boost_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/director.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/enums.swg
@@ -284,14 +265,17 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_deque.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_except.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_map.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_pair.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/std_wstring.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/java/various.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/lua
 file path=usr/share/swig/$(COMPONENT_VERSION)/lua/_std_common.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/lua/carrays.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/lua/factory.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/lua/lua.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/lua/lua_fnptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/lua/luarun.swg
@@ -308,9 +292,11 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/lua/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/lua/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/lua/wchar.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/math.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/modula3
 file path=usr/share/swig/$(COMPONENT_VERSION)/modula3/modula3.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/modula3/modula3head.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/modula3/typemaps.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme
 file path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme/mzrun.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme/mzscheme.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme/std_common.i
@@ -321,6 +307,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/mzscheme/typemaps.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/ocaml
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/carray.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/class.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/cstring.i
@@ -341,11 +328,12 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/swig.ml
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/swig.mli
-file build/$(MACH32)/Lib/ocaml/swigp4.ml \
+file build/$(MACH64)/Lib/ocaml/swigp4.ml \
     path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/swigp4.ml
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/typecheck.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ocaml/typeregister.swg
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/octave
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/attribute.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/boost_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/carrays.i
@@ -376,12 +364,14 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_complex.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_container.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_deque.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_except.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_list.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_map.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_pair.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/octave/typemaps.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/perl5
 file path=usr/share/swig/$(COMPONENT_VERSION)/perl5/Makefile.pl
 file path=usr/share/swig/$(COMPONENT_VERSION)/perl5/attribute.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/perl5/carrays.i
@@ -420,30 +410,36 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/perl5/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/perl5/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/perl5/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/perl5/typemaps.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/const.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/globalvar.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/php4.swg
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/php4init.swg
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/php4kw.swg
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/php4run.swg
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/phppointers.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/std_common.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/std_deque.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/std_map.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/std_pair.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/std_string.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/std_vector.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/stl.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/typemaps.i
-file path=usr/share/swig/$(COMPONENT_VERSION)/php4/utils.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/php
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/const.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/director.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/factory.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/globalvar.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/php.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/phpinit.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/phpkw.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/phppointers.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/phprun.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/std_common.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/std_deque.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/std_map.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/std_pair.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/std_string.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/std_vector.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/stl.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/typemaps.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/php/utils.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/pike
 file path=usr/share/swig/$(COMPONENT_VERSION)/pike/pike.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/pike/pikekw.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/pike/pikerun.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/pike/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/pointer.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/python
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/argcargv.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/attribute.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/boost_shared_ptr.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/python/builtin.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/carrays.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/ccomplex.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/cdata.i
@@ -462,8 +458,10 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/python/factory.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/file.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/implicit.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/jstring.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyabc.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyapi.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pybackward.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/python/pybuffer.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyclasses.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pycomplex.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pycontainer.swg
@@ -474,6 +472,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyhead.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyinit.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyiterators.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pymacros.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyname_compat.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyopers.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyprimtypes.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/pyrun.swg
@@ -504,6 +503,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_multimap.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_multiset.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_pair.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_set.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_shared_ptr.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_sstream.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_streambuf.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_string.i
@@ -517,11 +517,13 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/python/std_wstring.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/python/wchar.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/r
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/cdata.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/exception.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/r.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/rcontainer.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/rfragments.swg
+file path=usr/share/swig/$(COMPONENT_VERSION)/r/rkw.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/ropers.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/rrun.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/rstdcommon.swg
@@ -532,11 +534,14 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_common.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_container.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_deque.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_except.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_list.i
+file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_map.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_pair.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_string.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/std_vector.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/stl.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/r/typemaps.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/ruby
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/Makefile.swig
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/argcargv.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/attribute.i
@@ -611,6 +616,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/timeval.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/ruby/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/runtime.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/shared_ptr.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/std
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/_std_deque.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/std_alloc.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/std/std_basic_string.i
@@ -652,6 +658,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/swigrun.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/swigrun.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/swigwarn.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/swigwarnings.swg
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/tcl
 file path=usr/share/swig/$(COMPONENT_VERSION)/tcl/attribute.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/tcl/carrays.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/tcl/cdata.i
@@ -692,6 +699,7 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/tcl/tcluserdir.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/tcl/tclwstrings.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/tcl/typemaps.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/tcl/wish.i
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/typemaps
 file path=usr/share/swig/$(COMPONENT_VERSION)/typemaps/attribute.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/typemaps/carrays.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/typemaps/cdata.swg
@@ -724,8 +732,8 @@ file path=usr/share/swig/$(COMPONENT_VERSION)/typemaps/typemaps.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/typemaps/valtypes.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/typemaps/void.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/typemaps/wstring.swg
+dir  path=usr/share/swig/$(COMPONENT_VERSION)/uffi
 file path=usr/share/swig/$(COMPONENT_VERSION)/uffi/uffi.swg
 file path=usr/share/swig/$(COMPONENT_VERSION)/wchar.i
 file path=usr/share/swig/$(COMPONENT_VERSION)/windows.i
-
-license swig.license license=BSD-like
+license swig.license license=GPLv3
