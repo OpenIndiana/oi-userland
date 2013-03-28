@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pep8
-COMPONENT_VERSION=	1.3.3
+COMPONENT_VERSION=	1.4.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://pypi.python.org/pypi/pep8
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2033a40515a52068dd719857b38ecca651ce84dc9837b99fe500f314cadab634
+    sha256:a39adf83fdeab6072117087dd5b7daa8b6a5ec254730e1c4756f1d5687145258
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/p/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pep8
 
@@ -44,7 +44,15 @@ COMPONENT_PRE_BUILD_ACTION = \
 	/usr/bin/find $(SOURCE_DIR) -name *.py \
 		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
 
-COMPONENT_POST_INSTALL_ACTION = \
+# Put the correct pep8 version number on the .TH line in the man page in
+# the proto area.
+COMPONENT_POST_INSTALL_ACTION += \
+	($(MKDIR) $(PROTO_DIR)/usr/share/man/man1; \
+	$(GSED) -e 's/XXX/$(COMPONENT_VERSION)/' \
+	    $(COMPONENT_DIR)/files/pep8.1 > \
+	    $(PROTO_DIR)/usr/share/man/man1/pep8.1);
+
+COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pep8 pep8-$(PYTHON_VERSION))
 
 # common targets
