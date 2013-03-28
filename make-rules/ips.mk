@@ -242,9 +242,30 @@ PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
+# These files should contain a list of packages that the component is known to
+# depend on.  Using resolve.deps is not required, but significantly speeds up
+# the "pkg resolve" step.
+EXTDEPFILES = $(wildcard $(addsuffix resolve.deps, $(subst build/, , $(dir $(DEPENDED)))))
+
+# This is a target that should only be run by hand, and not something that
+# .resolved-$(MACH) should depend on.
+sample-resolve.deps:
+	echo "<transform depend type=require -> print %(fmri)>" > rd-trans
+	for i in build/*.depend; do \
+		$(PKGMOGRIFY) -O /dev/null $$i rd-trans | sort -u > m1; \
+		$(PKGMOGRIFY) -O /dev/null $$i.res rd-trans | sort -u > m2; \
+		comm -13 m1 m2; \
+	done | sed -e 's/@.*//' -e 's,^pkg:/,,' | sort -u > resolve.deps
+	$(RM) rd-trans m1 m2
+	if [[ ! -s resolve.deps ]]; then \
+		echo "No computed dependencies found; removing empty resolve.deps."; \
+		$(RM) resolve.deps; \
+	fi
+
+
 # resolve the dependencies all at once
 $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
-	$(PKGDEPEND) resolve -m $(DEPENDED)
+	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
 
 # lint the manifests all at once
