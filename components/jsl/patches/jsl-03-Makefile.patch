@@ -1,0 +1,201 @@
+--- jsl-0.3.0/src/Makefile.orig	1970-01-01 01:00:00.000000000 +0100
++++ jsl-0.3.0/src/Makefile	2012-10-12 16:09:20.690562824 +0100
+@@ -0,0 +1,195 @@
++#
++# CDDL HEADER START
++#
++# The contents of this file are subject to the terms of the
++# Common Development and Distribution License (the "License").
++# You may not use this file except in compliance with the License.
++#
++# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
++# or http://www.opensolaris.org/os/licensing.
++# See the License for the specific language governing permissions
++# and limitations under the License.
++#
++# When distributing Covered Code, include this CDDL HEADER in each
++# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
++# If applicable, add the following below this CDDL HEADER, with the
++# fields enclosed by brackets "[]" replaced with your own identifying
++# information: Portions Copyright [yyyy] [name of copyright owner]
++#
++# CDDL HEADER END
++#
++#
++# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
++#
++#
++
++FDLIBM_SRCS = \
++	src/fdlibm/k_standard.c \
++	src/fdlibm/k_rem_pio2.c \
++	src/fdlibm/k_cos.c \
++	src/fdlibm/k_sin.c \
++	src/fdlibm/k_tan.c \
++	src/fdlibm/e_acos.c \
++	src/fdlibm/e_acosh.c \
++	src/fdlibm/e_asin.c \
++	src/fdlibm/e_atan2.c \
++	src/fdlibm/e_atanh.c \
++	src/fdlibm/e_cosh.c \
++	src/fdlibm/e_exp.c \
++	src/fdlibm/e_fmod.c \
++	src/fdlibm/e_gamma.c \
++	src/fdlibm/e_gamma_r.c \
++	src/fdlibm/e_hypot.c \
++	src/fdlibm/e_j0.c \
++	src/fdlibm/e_j1.c \
++	src/fdlibm/e_jn.c \
++	src/fdlibm/e_lgamma.c \
++	src/fdlibm/e_lgamma_r.c \
++	src/fdlibm/e_log.c \
++	src/fdlibm/e_log10.c \
++	src/fdlibm/e_pow.c \
++	src/fdlibm/e_rem_pio2.c \
++	src/fdlibm/e_remainder.c \
++	src/fdlibm/e_scalb.c \
++	src/fdlibm/e_sinh.c \
++	src/fdlibm/e_sqrt.c \
++	src/fdlibm/w_acos.c \
++	src/fdlibm/w_acosh.c \
++	src/fdlibm/w_asin.c \
++	src/fdlibm/w_atan2.c \
++	src/fdlibm/w_atanh.c \
++	src/fdlibm/w_cosh.c \
++	src/fdlibm/w_exp.c \
++	src/fdlibm/w_fmod.c \
++	src/fdlibm/w_gamma.c \
++	src/fdlibm/w_gamma_r.c \
++	src/fdlibm/w_hypot.c \
++	src/fdlibm/w_j0.c \
++	src/fdlibm/w_j1.c \
++	src/fdlibm/w_jn.c \
++	src/fdlibm/w_lgamma.c \
++	src/fdlibm/w_lgamma_r.c \
++	src/fdlibm/w_log.c \
++	src/fdlibm/w_log10.c \
++	src/fdlibm/w_pow.c \
++	src/fdlibm/w_remainder.c \
++	src/fdlibm/w_scalb.c \
++	src/fdlibm/w_sinh.c \
++	src/fdlibm/w_sqrt.c \
++	src/fdlibm/s_asinh.c \
++	src/fdlibm/s_atan.c \
++	src/fdlibm/s_cbrt.c \
++	src/fdlibm/s_ceil.c \
++	src/fdlibm/s_copysign.c \
++	src/fdlibm/s_cos.c \
++	src/fdlibm/s_erf.c \
++	src/fdlibm/s_expm1.c \
++	src/fdlibm/s_fabs.c \
++	src/fdlibm/s_finite.c \
++	src/fdlibm/s_floor.c \
++	src/fdlibm/s_frexp.c \
++	src/fdlibm/s_ilogb.c \
++	src/fdlibm/s_isnan.c \
++	src/fdlibm/s_ldexp.c \
++	src/fdlibm/s_lib_version.c \
++	src/fdlibm/s_log1p.c \
++	src/fdlibm/s_logb.c \
++	src/fdlibm/s_matherr.c \
++	src/fdlibm/s_modf.c \
++	src/fdlibm/s_nextafter.c \
++	src/fdlibm/s_rint.c \
++	src/fdlibm/s_scalbn.c \
++	src/fdlibm/s_signgam.c \
++	src/fdlibm/s_significand.c \
++	src/fdlibm/s_sin.c \
++	src/fdlibm/s_tan.c \
++	src/fdlibm/s_tanh.c
++
++JS_SRCS= \
++	src/jsapi.c		\
++	src/jsarena.c	\
++	src/jsarray.c	\
++	src/jsatom.c	\
++	src/jsbool.c	\
++	src/jscntxt.c	\
++	src/jsdate.c	\
++	src/jsdbgapi.c	\
++	src/jsdhash.c	\
++	src/jsdtoa.c	\
++	src/jsemit.c	\
++	src/jsexn.c		\
++	src/jsfun.c		\
++	src/jsgc.c		\
++	src/jshash.c	\
++	src/jsinterp.c	\
++	src/jslock.c	\
++	src/jslog2.c	\
++	src/jslong.c	\
++	src/jsmath.c	\
++	src/jsnum.c		\
++	src/jsobj.c		\
++	src/jsopcode.c      \
++	src/jsparse.c	\
++	src/jsprf.c		\
++	src/jsregexp.c	\
++	src/jsscan.c	\
++	src/jsscope.c	\
++	src/jsscript.c	\
++	src/jsstr.c		\
++	src/jsutil.c        \
++	src/jsxdrapi.c	\
++	src/prmjtime.c
++
++PROG_SRCS = src/jsl.c
++
++SRCDIR = src
++
++LDLIBS += -lm
++CFLAGS += $(COPTFLAGS) -DXP_UNIX
++CFLAGS += -Wall -Werror -w
++CFLAGS += -Ifdlibm -I$(SRCDIR) -m64
++CFLAGS += -DHAVE_VA_COPY
++CFLAGS += -DVA_COPY=va_copy
++LDLAGS += -m64
++
++FDLIBM_OBJS = $(FDLIBM_SRCS:%.c=%.o)
++JS_OBJS = $(JS_SRCS:%.c=%.o)
++PROG_OBJS = $(PROG_SRCS:%.c=%.o)
++
++OBJS = $(FDLIBM_OBJS) $(JS_OBJS) $(PROG_OBJS)
++
++PROG= jsl
++CONF= example.conf
++JSAUTOCFG_H= $(SRCDIR)/jsautocfg.h
++JSCPUCFG= $(SRCDIR)/jscpucfg
++JSLSHAREDIR= $(USRSHAREDIR)/jsl
++
++all: $(PROG)
++
++install: $(BINDIR) $(JSLSHAREDIR)
++	$(RM) $(BINDIR)/$(PROG)
++	$(RM) $(JSLSHAREDIR)/$(CONF)
++	$(INSTALL) -t $(BINDIR) $(PROG)
++	$(INSTALL) -t $(JSLSHAREDIR) $(CONF)
++
++clean:
++	$(RM) -r $(SRCDIR)/*.o
++	$(RM) -r $(SRCDIR)fdlibm/*.o
++	$(RM) $(JSAUTOCFG_H)
++	$(RM) $(JSCPUCFG)
++	$(RM) $(PROG)
++
++clobber: clean
++
++$(BINDIR) $(JSLSHAREDIR):
++	$(MKDIR) -p $@
++
++$(PROG): $(JSAUTOCFG_H) $(OBJS)
++	$(LINK.c) $(DYNFLAGS) $(LDLIBS) -o $@ $(OBJS)
++
++$(JSAUTOCFG_H): $(JSCPUCFG)
++	$(RM) $@
++	$(SRCDIR)/jscpucfg > $@
++
++$(JSCPUCFG): $(SRCDIR)/jscpucfg.o
++	$(LINK.c) $(DYNFLAGS) -o $@ $(SRCDIR)/jscpucfg.o
++
++$(SRCDIR)/fdlibm/%.o $SRCDIR/%.0: %.c
++	$(COMPILE.c) -o $@ $<
