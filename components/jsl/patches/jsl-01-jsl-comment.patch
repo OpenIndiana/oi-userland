@@ -1,0 +1,39 @@
+--- jsl-0.3.0/src/jsscan.c.orig	Wed Oct 25 20:41:48 2006
++++ jsl-0.3.0/src/jsscan.c	Thu Oct 11 16:45:39 2012
+@@ -875,7 +875,7 @@
+      * with the syntax for the @...@ control comments and JScript conditional comments. The "jsl:" syntax
+      * is preferred for this reason.
+      */
+-    jschar controlCommentPrefix[4];
++    jschar controlCommentPrefix[5];
+     if (PeekChars(ts, 4, controlCommentPrefix) &&
+         JS_TOLOWER(controlCommentPrefix[0]) == 'j' &&
+         JS_TOLOWER(controlCommentPrefix[1]) == 's' &&
+@@ -885,6 +885,16 @@
+         SkipChars(ts, 4);
+         jslCC->isAtFormat = JS_FALSE;
+     }
++    else if (PeekChars(ts, 5, controlCommentPrefix) &&
++        JS_TOLOWER(controlCommentPrefix[0]) == ' ' &&
++        JS_TOLOWER(controlCommentPrefix[1]) == 'j' &&
++        JS_TOLOWER(controlCommentPrefix[2]) == 's' &&
++        JS_TOLOWER(controlCommentPrefix[3]) == 'l' &&
++        JS_TOLOWER(controlCommentPrefix[4]) == ':') {
++        /* pre-spaced jsl format */
++        SkipChars(ts, 5);
++        jslCC->isAtFormat = JS_FALSE;
++    }
+     else if (lint->enableLegacyControlComments && MatchChar(ts, '@')) {
+         /* legacy format */
+         jslCC->isAtFormat = JS_TRUE;
+@@ -1561,6 +1571,10 @@
+             while ((c = GetChar(ts)) != EOF &&
+                 !(c == '*' && MatchChar(ts, '/'))) {
+ 
++                /* allow for spaces around jsl: declarations */
++                if (c == ' ' && PeekChar(ts) == '*')
++                    continue;
++
+                 /* check for nested comments */
+                 if (c == '/' && PeekChar(ts) == '*' &&
+                     !js_ReportCompileErrorNumber(cx, ts, NULL,
