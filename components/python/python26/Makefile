@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -38,6 +38,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/lint-libraries.mk
+
+# Need to preserve timestamp for Grammar files.  If the pickle files are older, 
+# Python will try to rebuild them.  
+PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.txt
+PKGSEND_PUBLISH_OPTIONS += -T \*Grammar\*.pickle
 
 # We patch auto* files, so regenerate headers and configure
 COMPONENT_PREP_ACTION = \
@@ -85,8 +90,6 @@ CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--with-system-ffi
 CONFIGURE_OPTIONS  +=		--without-gcc
-CONFIGURE_OPTIONS  +=		ac_cv_opt_olimit_ok=no
-CONFIGURE_OPTIONS  +=		ac_cv_olimit_ok=no
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		CCSHARED="$(CC_PIC)"
@@ -97,19 +100,39 @@ CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
 COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
-COMPONENT_TEST_TARGETS =	test
-
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python2.6/lib-dynload
 
+# Setup pyconfig.h file to support 32 & 64 bit.
+# If the /usr/lib/python2.6/lib2to3/*.pickle files are older than the related
+# *.txt files in the same directory, it will rebuild them anytime you try to
+# build a Python module.  So here we also touch the pickle files to avoid this.
+#
+COMPONENT_POST_INSTALL_ACTION= \
+            (cd $(PROTOUSRDIR) ;  \
+             $(MV) include/python2.6/pyconfig.h include/python2.6/pyconfig-$(BITS).h ; \
+             $(TOUCH) lib/python2.6/lib2to3/*.pickle)
+                
 # common targets
+$(INSTALL_32):  $(INSTALL_64)
 build:		$(BUILD_32_and_64)
-
-$(INSTALL_32):	$(INSTALL_64)
-
 install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32_and_64)
+# Using "-uall,-network" ensures all tests are run except the network tests.
+# The network tests contain many expected failures when run behind a firewall.
+# The "-v" ensures verbose mode.  You can set TESTOPTS_PYTHON_TEST to a
+# particular test if you want to run just one test.  For example, run gmake with
+# "-k" so it continues and does both 32-bit and 64-bit tests, even if there is a
+# failure, like this:
+# $ TESTOPTS_PYTHON_TEST=test_sys gmake -k test
+# Note that when a test succeeds, the builds/*/.tested file gets created.  You
+# may need to remove these files, or run "gmake clobber" or "gmake clean"
+# between tests.
+#
+COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
+COMPONENT_TEST_TARGETS = test
+
+test:				$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

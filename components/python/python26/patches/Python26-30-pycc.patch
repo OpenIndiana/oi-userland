@@ -1,0 +1,13 @@
+This fixes CR #15620181.  Makes pycc work with Sun Studio.
+
+--- Python-2.6.8/pycc-orig	2013-01-23 12:09:28.026626781 -0800
++++ Python-2.6.8/pycc	2013-01-23 12:09:47.765962711 -0800
+@@ -150,7 +150,7 @@ extra_flags=
+ 
+ is_gcc=no
+ 
+-$CC --version >/dev/null 2>&1 && is_gcc=yes
++$CC --version 2>/dev/null | /usr/xpg4/bin/grep -q GCC && is_gcc=yes 
+ 
+ if [ "$is_gcc" = yes ]; then
+ 	for flag in "${@}"; do

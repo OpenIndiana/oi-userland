@@ -1,3 +1,7 @@
+This patch adds Python dtrace support.  Note it is necessary to modify 
+test_sys.py to add an integer to the frameobject structure size since this 
+patch adds "int f_calllineno" to the structure, so this test does not fail.
+
 diff --git Python-2.6.4/Include/frameobject.h Python-2.6.4/Include/frameobject.h
 --- Python-2.6.4/Include/frameobject.h
 +++ Python-2.6.4/Include/frameobject.h
@@ -414,3 +418,14 @@ new file mode 100644
 +#pragma D attributes Private/Private/Common provider python function
 +#pragma D attributes Evolving/Evolving/Common provider python name
 +#pragma D attributes Evolving/Evolving/Common provider python args
+--- Python-2.6.8/Lib/test/test_sys.py-orig	2012-12-13 06:54:26.954676255 -0800
++++ Python-2.6.8/Lib/test/test_sys.py	2012-12-13 06:54:37.809978034 -0800
+@@ -587,7 +587,7 @@ class SizeofTest(unittest.TestCase):
+         nfrees = len(x.f_code.co_freevars)
+         extras = x.f_code.co_stacksize + x.f_code.co_nlocals +\
+                  ncells + nfrees - 1
+-        check(x, size(vh + '12P3i' + CO_MAXBLOCKS*'3i' + 'P' + extras*'P'))
++        check(x, size(vh + '12P4i' + CO_MAXBLOCKS*'3i' + 'P' + extras*'P'))
+         # function
+         def func(): pass
+         check(func, size(h + '9P'))
