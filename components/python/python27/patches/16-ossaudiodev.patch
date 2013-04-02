@@ -1,0 +1,59 @@
+This patch is needed to make Python understand it can build the OSS plugin.  
+Some OSS ioctls are not supported on Solaris, so they are commented out.
+
+--- Python-2.7.3/Modules/ossaudiodev.c-orig	2012-12-20 12:26:23.028233427 -0600
++++ Python-2.7.3/Modules/ossaudiodev.c	2012-12-20 12:26:33.130986175 -0600
+@@ -1044,6 +1044,7 @@ initossaudiodev(void)
+     _EXPORT_INT(m, SOUND_MIXER_MONITOR);
+ #endif
+ 
++#ifndef __sun
+     /* Expose all the ioctl numbers for masochists who like to do this
+        stuff directly. */
+     _EXPORT_INT(m, SNDCTL_COPR_HALT);
+@@ -1056,6 +1057,7 @@ initossaudiodev(void)
+     _EXPORT_INT(m, SNDCTL_COPR_SENDMSG);
+     _EXPORT_INT(m, SNDCTL_COPR_WCODE);
+     _EXPORT_INT(m, SNDCTL_COPR_WDATA);
++#endif
+ #ifdef SNDCTL_DSP_BIND_CHANNEL
+     _EXPORT_INT(m, SNDCTL_DSP_BIND_CHANNEL);
+ #endif
+@@ -1077,8 +1079,12 @@ initossaudiodev(void)
+     _EXPORT_INT(m, SNDCTL_DSP_GETSPDIF);
+ #endif
+     _EXPORT_INT(m, SNDCTL_DSP_GETTRIGGER);
++#ifdef SNDCTL_DSP_MAPINBUF
+     _EXPORT_INT(m, SNDCTL_DSP_MAPINBUF);
++#endif
++#ifdef SNDCTL_DSP_MAPOUTBUF
+     _EXPORT_INT(m, SNDCTL_DSP_MAPOUTBUF);
++#endif
+     _EXPORT_INT(m, SNDCTL_DSP_NONBLOCK);
+     _EXPORT_INT(m, SNDCTL_DSP_POST);
+ #ifdef SNDCTL_DSP_PROFILE
+@@ -1098,6 +1104,7 @@ initossaudiodev(void)
+     _EXPORT_INT(m, SNDCTL_DSP_STEREO);
+     _EXPORT_INT(m, SNDCTL_DSP_SUBDIVIDE);
+     _EXPORT_INT(m, SNDCTL_DSP_SYNC);
++#ifndef __sun
+     _EXPORT_INT(m, SNDCTL_FM_4OP_ENABLE);
+     _EXPORT_INT(m, SNDCTL_FM_LOAD_INSTR);
+     _EXPORT_INT(m, SNDCTL_MIDI_INFO);
+@@ -1139,4 +1146,5 @@ initossaudiodev(void)
+     _EXPORT_INT(m, SNDCTL_TMR_STOP);
+     _EXPORT_INT(m, SNDCTL_TMR_TEMPO);
+     _EXPORT_INT(m, SNDCTL_TMR_TIMEBASE);
++#endif
+ }
+--- Python-2.7.3/setup.py-orig	2012-12-20 12:26:17.244961277 -0600
++++ Python-2.7.3/setup.py	2012-12-20 12:27:23.938119947 -0600
+@@ -1509,7 +1509,7 @@ class PyBuildExt(build_ext):
+         else:
+             missing.append('linuxaudiodev')
+ 
+-        if (platform in ('linux2', 'freebsd4', 'freebsd5', 'freebsd6',
++        if (platform in ('sunos5', 'linux2', 'freebsd4', 'freebsd5', 'freebsd6',
+                         'freebsd7', 'freebsd8')
+             or platform.startswith("gnukfreebsd")):
+             exts.append( Extension('ossaudiodev', ['ossaudiodev.c']) )

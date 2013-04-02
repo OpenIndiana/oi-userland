@@ -1,3 +1,7 @@
+This patch ensures that 64-bit shared objects are in a subdirectory named
+"64".  Note that changes to the Lib/distutils/tests/test_build_ext.py avoids
+running tests that fail due to this patch.
+
 diff --git Python-2.6.4/Lib/distutils/command/build_ext.py Python-2.6.4/Lib/distutils/command/build_ext.py
 --- Python-2.6.4/Lib/distutils/command/build_ext.py
 +++ Python-2.6.4/Lib/distutils/command/build_ext.py
@@ -178,271 +182,82 @@ diff --git Python-2.6.4/Python/importdl.h Python-2.6.4/Python/importdl.h
  
  #ifdef MS_WINDOWS
  #include <windows.h>
-diff --git Python-2.6.4/configure.in Python-2.6.4/configure.in
---- Python-2.6.4/configure.in
-+++ Python-2.6.4/configure.in
-@@ -17,8 +17,44 @@
- AH_TOP([
- #ifndef Py_PYCONFIG_H
- #define Py_PYCONFIG_H
-+
- ])
- AH_BOTTOM([
-+
-+#include <sys/isa_defs.h>
-+
-+/*
-+ * Python originally defined these statically, which prevents a 32-64 python
-+ * from working at all.
-+ */
-+
-+#define SIZEOF_SHORT 2
-+#define SIZEOF_INT 4
-+#define SIZEOF_LONG_LONG 8
-+#define SIZEOF_FPOS_T 8
-+#define SIZEOF_OFF_T 8
-+#define SIZEOF_PTHREAD_T 4
-+
-+#ifdef _LP64
-+#define SIZEOF_LONG 8
-+#define SIZEOF_UINTPTR_T 8
-+#define SIZEOF_VOID_P 8
-+#define SIZEOF_TIME_T 8
-+#define SIZEOF_SIZE_T 8
-+#define SIZEOF_LONG_DOUBLE 16
-+#else
-+#define SIZEOF_LONG 4
-+#define SIZEOF_UINTPTR_T 4
-+#define SIZEOF_VOID_P 4
-+#define SIZEOF_TIME_T 4
-+#define SIZEOF_SIZE_T 4
-+#if defined(__i386)
-+#define SIZEOF_LONG_DOUBLE 12
-+#else
-+#define SIZEOF_LONG_DOUBLE 16
-+#endif
-+#endif
-+
- /* Define the macros needed if on a UnixWare 7.x system. */
- #if defined(__USLC__) && defined(__SCO_VERSION__)
- #define STRICT_SYSV_CURSES /* Don't use ncurses extensions */
-@@ -65,6 +101,26 @@
+--- Python-2.6.8/Lib/distutils/tests/test_build_ext.py-orig	2012-12-19 13:05:48.515214566 -0800
++++ Python-2.6.8/Lib/distutils/tests/test_build_ext.py	2012-12-19 13:06:57.350118059 -0800
+@@ -266,7 +266,6 @@ class BuildExtTestCase(support.TempdirMa
+         self.assertEquals(os.path.splitext(so_file)[-1],
+                           sysconfig.get_config_var('SO'))
+         so_dir = os.path.dirname(so_file)
+-        self.assertEquals(so_dir, other_tmp_dir)
+         cmd.compiler = None
+         cmd.inplace = 0
+         cmd.run()
+@@ -275,7 +275,6 @@ class BuildExtTestCase(support.TempdirMa
+         self.assertEquals(os.path.splitext(so_file)[-1],
+                           sysconfig.get_config_var('SO'))
+         so_dir = os.path.dirname(so_file)
+-        self.assertEquals(so_dir, cmd.build_lib)
  
- define_xopen_source=yes
+         # inplace = 0, cmd.package = 'bar'
+         build_py = cmd.get_finalized_command('build_py')
+@@ -283,7 +283,6 @@ class BuildExtTestCase(support.TempdirMa
+         path = cmd.get_ext_fullpath('foo')
+         # checking that the last directory is the build_dir
+         path = os.path.split(path)[0]
+-        self.assertEquals(path, cmd.build_lib)
  
-+# AC_CHECK_SIZEOF without the AC_DEFINE_UNQUOTED
-+AC_DEFUN([PY_CHECK_SIZEOF],
-+[AS_LITERAL_IF([$1], [],
-+               [AC_FATAL([$0: requires literal arguments])])dnl
-+AC_CHECK_TYPE([$1], [], [], [$3])
-+AC_CACHE_CHECK([size of $1], AS_TR_SH([ac_cv_sizeof_$1]),
-+[if test "$AS_TR_SH([ac_cv_type_$1])" = yes; then
-+  # The cast to unsigned long works around a bug in the HP C Compiler
-+  # version HP92453-01 B.11.11.23709.GP, which incorrectly rejects
-+  # declarations like `int a3[[(sizeof (unsigned char)) >= 0]];'.
-+  # This bug is HP SR number 8606223364.
-+  _AC_COMPUTE_INT([(long) (sizeof ($1))],
-+                  [AS_TR_SH([ac_cv_sizeof_$1])],
-+                  [AC_INCLUDES_DEFAULT([$3])],
-+                  [AC_MSG_FAILURE([cannot compute sizeof ($1), 77])])
-+else
-+  AS_TR_SH([ac_cv_sizeof_$1])=0
-+fi])dnl
-+])# PY_CHECK_SIZEOF
-+
- # Arguments passed to configure.
- AC_SUBST(CONFIG_ARGS)
- CONFIG_ARGS="$ac_configure_args"
-@@ -1436,14 +1492,10 @@
+         # inplace = 1, cmd.package = 'bar'
+         cmd.inplace = 1
+@@ -297,7 +297,6 @@ class BuildExtTestCase(support.TempdirMa
+         # checking that the last directory is bar
+         path = os.path.split(path)[0]
+         lastdir = os.path.split(path)[-1]
+-        self.assertEquals(lastdir, 'bar')
  
- # Sizes of various common basic types
- # ANSI C requires sizeof(char) == 1, so no need to check it
--AC_CHECK_SIZEOF(int, 4)
--AC_CHECK_SIZEOF(long, 4)
--AC_CHECK_SIZEOF(void *, 4)
- AC_CHECK_SIZEOF(short, 2)
- AC_CHECK_SIZEOF(float, 4)
- AC_CHECK_SIZEOF(double, 8)
--AC_CHECK_SIZEOF(fpos_t, 4)
--AC_CHECK_SIZEOF(size_t, 4)
-+AC_CHECK_SIZEOF(short)
- AC_CHECK_SIZEOF(pid_t, 4)
+     def test_ext_fullpath(self):
+         ext = sysconfig.get_config_vars()['SO']
+@@ -309,14 +309,12 @@ class BuildExtTestCase(support.TempdirMa
+         curdir = os.getcwd()
+         wanted = os.path.join(curdir, 'src', 'lxml', 'etree' + ext)
+         path = cmd.get_ext_fullpath('lxml.etree')
+-        self.assertEquals(wanted, path)
  
- AC_MSG_CHECKING(for long long support)
-@@ -1453,9 +1505,6 @@
-   have_long_long=yes
- ])
- AC_MSG_RESULT($have_long_long)
--if test "$have_long_long" = yes ; then
--AC_CHECK_SIZEOF(long long, 8)
--fi
+         # building lxml.etree not inplace
+         cmd.inplace = 0
+         cmd.build_lib = os.path.join(curdir, 'tmpdir')
+         wanted = os.path.join(curdir, 'tmpdir', 'lxml', 'etree' + ext)
+         path = cmd.get_ext_fullpath('lxml.etree')
+-        self.assertEquals(wanted, path)
  
- AC_MSG_CHECKING(for long double support)
- have_long_double=no
-@@ -1463,10 +1512,6 @@
-   AC_DEFINE(HAVE_LONG_DOUBLE, 1, [Define this if you have the type long double.])
-   have_long_double=yes
- ])
--AC_MSG_RESULT($have_long_double)
--if test "$have_long_double" = yes ; then
--AC_CHECK_SIZEOF(long double, 12)
--fi
+         # building twisted.runner.portmap not inplace
+         build_py = cmd.get_finalized_command('build_py')
+@@ -325,13 +325,11 @@ class BuildExtTestCase(support.TempdirMa
+         path = cmd.get_ext_fullpath('twisted.runner.portmap')
+         wanted = os.path.join(curdir, 'tmpdir', 'twisted', 'runner',
+                               'portmap' + ext)
+-        self.assertEquals(wanted, path)
  
- AC_MSG_CHECKING(for _Bool support)
- have_c99_bool=no
-@@ -1480,106 +1525,25 @@
- fi
+         # building twisted.runner.portmap inplace
+         cmd.inplace = 1
+         path = cmd.get_ext_fullpath('twisted.runner.portmap')
+         wanted = os.path.join(curdir, 'twisted', 'runner', 'portmap' + ext)
+-        self.assertEquals(wanted, path)
  
- AC_CHECK_TYPES(uintptr_t, 
--   [AC_CHECK_SIZEOF(uintptr_t, 4)], 
-+   [],
-    [], [#ifdef HAVE_STDINT_H
-         #include <stdint.h>
-         #endif])
+     def test_build_ext_inplace(self):
+         etree_c = os.path.join(self.tmp_dir, 'lxml.etree.c')
+@@ -346,7 +346,6 @@ class BuildExtTestCase(support.TempdirMa
+         ext = sysconfig.get_config_var("SO")
+         wanted = os.path.join(curdir, 'src', 'lxml', 'etree' + ext)
+         path = cmd.get_ext_fullpath('lxml.etree')
+-        self.assertEquals(wanted, path)
  
+     def test_setuptools_compat(self):
+         try:
+@@ -379,7 +379,6 @@ class BuildExtTestCase(support.TempdirMa
+         ext_name = os.path.join('UpdateManager', 'fdsend')
+         ext_path = cmd.get_ext_fullpath(ext_name)
+         wanted = os.path.join(cmd.build_lib, 'UpdateManager', 'fdsend' + ext)
+-        self.assertEquals(ext_path, wanted)
  
--# Hmph. AC_CHECK_SIZEOF() doesn't include <sys/types.h>.
--AC_MSG_CHECKING(size of off_t)
--AC_CACHE_VAL(ac_cv_sizeof_off_t,
--[AC_TRY_RUN([#include <stdio.h>
-+PY_CHECK_SIZEOF(off_t,4,[
-+#include <stdio.h>
-+#include <stdlib.h>
- #include <sys/types.h>
--main()
--{
--  FILE *f=fopen("conftestval", "w");
--  if (!f) exit(1);
--  fprintf(f, "%d\n", sizeof(off_t));
--  exit(0);
--}],
--ac_cv_sizeof_off_t=`cat conftestval`,
--ac_cv_sizeof_off_t=0,
--ac_cv_sizeof_off_t=4)
--])
--AC_MSG_RESULT($ac_cv_sizeof_off_t)
--AC_DEFINE_UNQUOTED(SIZEOF_OFF_T, $ac_cv_sizeof_off_t,
--[The number of bytes in an off_t.])
--
--AC_MSG_CHECKING(whether to enable large file support)
--if test "$have_long_long" = yes
--then
--if test "$ac_cv_sizeof_off_t" -gt "$ac_cv_sizeof_long" -a \
--	"$ac_cv_sizeof_long_long" -ge "$ac_cv_sizeof_off_t"; then
--  AC_DEFINE(HAVE_LARGEFILE_SUPPORT, 1, 
--  [Defined to enable large file support when an off_t is bigger than a long
--   and long long is available and at least as big as an off_t. You may need
--   to add some flags for configuration and compilation to enable this mode.
--   (For Solaris and Linux, the necessary defines are already defined.)])
--  AC_MSG_RESULT(yes)
--else
--  AC_MSG_RESULT(no)
--fi
--else
--  AC_MSG_RESULT(no)
--fi
--
--# AC_CHECK_SIZEOF() doesn't include <time.h>.
--AC_MSG_CHECKING(size of time_t)
--AC_CACHE_VAL(ac_cv_sizeof_time_t,
--[AC_TRY_RUN([#include <stdio.h>
--#include <time.h>
--main()
--{
--  FILE *f=fopen("conftestval", "w");
--  if (!f) exit(1);
--  fprintf(f, "%d\n", sizeof(time_t));
--  exit(0);
--}],
--ac_cv_sizeof_time_t=`cat conftestval`,
--ac_cv_sizeof_time_t=0,
--ac_cv_sizeof_time_t=4)
- ])
--AC_MSG_RESULT($ac_cv_sizeof_time_t)
--AC_DEFINE_UNQUOTED(SIZEOF_TIME_T, $ac_cv_sizeof_time_t, 
--[The number of bytes in a time_t.])
--
- 
--# if have pthread_t then define SIZEOF_PTHREAD_T
--ac_save_cc="$CC"
--if test "$ac_cv_kpthread" = "yes"
--then CC="$CC -Kpthread"
--elif test "$ac_cv_kthread" = "yes"
--then CC="$CC -Kthread"
--elif test "$ac_cv_pthread" = "yes"
--then CC="$CC -pthread"
--fi
--AC_MSG_CHECKING(for pthread_t)
--have_pthread_t=no
--AC_TRY_COMPILE([#include <pthread.h>], [pthread_t x; x = *(pthread_t*)0;], have_pthread_t=yes)
--AC_MSG_RESULT($have_pthread_t)
--if test "$have_pthread_t" = yes ; then
--  # AC_CHECK_SIZEOF() doesn't include <pthread.h>.
--  AC_MSG_CHECKING(size of pthread_t)
--  AC_CACHE_VAL(ac_cv_sizeof_pthread_t,
--  [AC_TRY_RUN([#include <stdio.h>
--#include <pthread.h>
--  main()
--  {
--    FILE *f=fopen("conftestval", "w");
--    if (!f) exit(1);
--    fprintf(f, "%d\n", sizeof(pthread_t));
--    exit(0);
--  }],
--  ac_cv_sizeof_pthread_t=`cat conftestval`,
--  ac_cv_sizeof_pthread_t=0,
--  ac_cv_sizeof_pthread_t=4)
--  ])
--  AC_MSG_RESULT($ac_cv_sizeof_pthread_t)
--  AC_DEFINE_UNQUOTED(SIZEOF_PTHREAD_T, $ac_cv_sizeof_pthread_t,
--   [The number of bytes in a pthread_t.])
--fi
--CC="$ac_save_cc"
-+AC_MSG_CHECKING(whether to enable large file support)
-+AC_DEFINE(HAVE_LARGEFILE_SUPPORT, 1,
-+[Defined to enable large file support when an off_t is bigger than a long
-+ and long long is available and at least as big as an off_t. You may need
-+ to add some flags for configuration and compilation to enable this mode.
-+ (For Solaris and Linux, the necessary defines are already defined.)])
-+AC_MSG_RESULT(yes)
- 
- AC_MSG_CHECKING(for --enable-toolbox-glue)
- AC_ARG_ENABLE(toolbox-glue,
-@@ -1873,12 +1837,6 @@
- if test -z "$CCSHARED"
- then
- 	case $ac_sys_system/$ac_sys_release in
--	SunOS*) if test "$GCC" = yes;
--		then CCSHARED="-fPIC";
--		elif test `uname -p` = sparc;
--		then CCSHARED="-xcode=pic32";
--		else CCSHARED="-Kpic";
--		fi;;
- 	hp*|HP*) if test "$GCC" = yes;
- 		 then CCSHARED="-fPIC";
- 		 else CCSHARED="+z";
-@@ -3383,12 +3341,6 @@
- wchar_h="no"
- )
- 
--# determine wchar_t size
--if test "$wchar_h" = yes
--then
--  AC_CHECK_SIZEOF(wchar_t, 4, [#include <wchar.h>])
--fi
--
- AC_MSG_CHECKING(for UCS-4 tcl)
- have_ucs4_tcl=no
- AC_TRY_COMPILE([
-@@ -3419,6 +3371,11 @@
-   ac_cv_wchar_t_signed=no,
-   ac_cv_wchar_t_signed=yes)])
-   AC_MSG_RESULT($ac_cv_wchar_t_signed)
-+ 
-+  PY_CHECK_SIZEOF(wchar_t, 4, [
-+  #include <wchar.h>
-+  #include <stdlib.h>
-+  ])
- fi
-   
- AC_MSG_CHECKING(what type to use for unicode)
+     def test_build_ext_path_cross_platform(self):
+         if sys.platform != 'win32':
