@@ -1,0 +1,91 @@
+This is a guide to explain various useful variables in Userland component
+Makefiles.  To distinguish these from the Makefile(s) that are part of each
+component distribution, the latter will be referred to as native Makefiles.
+
+The following are the basics that just about every Makefile should have.
+* COMPONENT_NAME is typically a short name (e.g., vim).
+* COMPONENT_VERSION is typically numbers separated by dots (e.g. 7.3).
+* COMPONENT_SRC is where the archive is extracted.  A common value for this is
+  "$(COMPONENT_NAME)-$(COMPONENT_VERSION)".
+* COMPONENT_PROJECT_URL is the general web site for the component.
+* COMPONENT_ARCHIVE is the base name of the archive to be downloaded.  A common
+  value for this is "$(COMPONENT_SRC).tar.gz".
+* COMPONENT_ARCHIVE_HASH is typically "sha256:" followed by the first output
+  field of `sha256sum $(COMPONENT_ARCHIVE)`.
+* COMPONENT_ARCHIVE_URL is where the archive can be downloaded from.  This is
+  typically constructed from $(COMPONENT_PROJECT_URL) and $(COMPONENT_ARCHIVE).
+* COMPONENT_BUGDB is the lower-case rendering of the BugDB cat/subcat.
+
+These two are both initialized in make-rules/shared-macros.mk rather than any
+component-level Makefile, but are frequently referenced from the latter.
+* COMPONENT_DIR is the top-level directory of the given component in question.
+* SOURCE_DIR is set to $(COMPONENT_DIR)/$(COMPONENT_SRC).
+
+Additional pre/post configure, build, or install actions can be specified in
+a component Makefile by setting them in one of the following macros.  None of
+these have default values.  These are mostly used for miscellaneous set-up or
+clean-up tweaks as their names suggest.
+* COMPONENT_PRE_CONFIGURE_ACTION is used by several components to clone a
+  source directory.
+* COMPONENT_POST_CONFIGURE_ACTION
+* COMPONENT_PRE_BUILD_ACTION
+* COMPONENT_POST_BUILD_ACTION
+* COMPONENT_PRE_INSTALL_ACTION
+* COMPONENT_POST_INSTALL_ACTION
+* COMPONENT_PRE_TEST_ACTION
+* COMPONENT_POST_TEST_ACTION
+
+If component specific make targets need to be used for build or install or
+test, they can be specified via the following.
+* COMPONENT_BUILD_TARGETS is not usually set because the default target of most
+  open source software is the equivalent of a 'build' target.  This needs to be
+  set when building the software requires a different target than the default.
+  You should not override make macros here, but in COMPONENT_BUILD_ARGS.
+* COMPONENT_INSTALL_TARGETS has a default value of "install".  Very few
+  components need to alter this.
+* COMPONENT_TEST_TARGETS has a default value of "check".  Several components
+  need to set this to "test".
+
+* COMPONENT_BUILD_ARGS is probably the mostly useful variable here for solving
+  subtle build issues.  When you need to override a MACRO set in the native
+  Makefile of a component, do so by adding something like:
+     COMPONENT_BUILD_ARGS += MKDIR="$(MKDIR)"
+  Quoting is often important because values with white-space can be split up,
+  yielding the wrong results.
+* COMPONENT_BUILD_ENV is for when you just need to override things in the
+  calling environment, like PATH.
+* COMPONENT_INSTALL_ARGS is mainly used for altering target directories.
+* COMPONENT_INSTALL_ENV is mainly used for altering target directories.
+* COMPONENT_TEST_ARGS is little used.
+* COMPONENT_TEST_ENV is mainly used for altering PATH and friends.
+
+* COMPONENT_POST_UNPACK_ACTION is for making minor alterations to the unpacked
+  source directory before any patching has taken place.  It should almost never
+  be used.
+* COMPONENT_PREP_ACTION is used to make alterations to the unpacked and patched
+  source.  It should be used with care.
+
+* CONFIGURE_DEFAULT_DIRS should be "yes" or "no".  A value of "yes" (the
+  default) will trigger the following being passed to CONFIGURE_OPTIONS as
+  parameters to corresponding options.
+  * CONFIGURE_BINDIR is the value for the --bindir= option.
+  * CONFIGURE_LIBDIR is the value for the --libdir= option.
+  * CONFIGURE_MANDIR is the value for the --mandir= option.
+  * CONFIGURE_SBINDIR is the value for the --sbindir= option.
+* CONFIGURE_ENV is mainly used for passing CFLAGS and other common Makefile
+  variables to configure.  When should this be used as opposed to
+  CONFIGURE_OPTIONS and COMPONENT_BUILD_{ARGS,ENV}?  In general, you want
+  to tell configure how to build the software using CONFIGURE_OPTIONS.  But
+  sometimes you need to pass values in via the calling environment.  On rare
+  occasions, you still need to do things like override MACRO settings in the
+  generated Makefiles with COMPONENT_BUILD_ARGS.
+* CONFIGURE_LOCALEDIR is a cousin of the other *DIR variables above, but
+  rarely used and hence not triggered by CONFIGURE_DEFAULT_DIRS.
+* CONFIGURE_OPTIONS is extremely useful, possibly our most used "add-on"
+  variable, for passing various options to configure.  These tend to vary per
+  component, but --enable-foo and --disable-foo for various values of foo are
+  quite common.
+* CONFIGURE_PREFIX is the prefix for the various *DIR variables above.  Its
+  default is "/usr"; set it if some other value (e.g., "/usr/gnu") is needed.
+* CONFIGURE_SCRIPT should be set if the default "$(SOURCE_DIR)/configure" is
+  unsuitable for whatever reason.
