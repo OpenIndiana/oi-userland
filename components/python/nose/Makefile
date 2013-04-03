@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nose
-COMPONENT_VERSION=	1.1.2
+COMPONENT_VERSION=	1.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_PROJECT_URL=  http://code.google.com/p/python-nose/
+COMPONENT_PROJECT_URL=  https://github.com/nose-devs/nose
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b1ba12c1c45323fd8695be68ce7228456b86e51234f167027ebbc4ccda852c61
+    sha256:2171e9202d118d302d5db1decb52dd862b79e2a626ca19653a6914574a6ca7d9
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/n/nose/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/nose
 
