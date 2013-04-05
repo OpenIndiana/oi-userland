@@ -42,16 +42,20 @@ include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
 PKG_PROTO_DIRS = $(MANGLED_DIR)
-PKG_PROTO_DIRS += $(BUILD_DIR_32)
+PKG_PROTO_DIRS += $(BUILD_DIR_64)
 PKG_PROTO_DIRS += $(COMPONENT_DIR)
 
 PATCH_LEVEL =	0
 
 
+# Needed by .../unrar/os.hpp to correctly define platform endianness.
+CXXFLAGS.i386 = -DLITTLE_ENDIAN
+CXXFLAGS.sparc = -DBIG_ENDIAN
+CXXFLAGS += $(CXXFLAGS.$(MACH))
 CXXFLAGS += "-erroff=wvarhidemem"
 COMPONENT_BUILD_ENV += CXX="$(CXX)"
 COMPONENT_BUILD_ENV += CXXFLAGS="$(CXXFLAGS)"
-COMPONENT_BUILD_ENV += LDFLAGS="$(studio_NORUNPATH)"
+COMPONENT_BUILD_ENV += LDFLAGS="$(studio_NORUNPATH) -m64"
 COMPONENT_BUILD_ENV += DEFINES="$(CPP_LARGEFILES)"
 
 COMPONENT_BUILD_ARGS += -f makefile.unix
@@ -60,9 +64,9 @@ COMPONENT_BUILD_ARGS += STRIP="/bin/true"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(BUILD_32)
+install:	$(BUILD_64)
 
 test:		$(NO_TESTS)
 
