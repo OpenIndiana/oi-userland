@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,10 +34,10 @@ COMPONENT_SRC=		vim-$(COMPONENT_HG_REV)
 COMPONENT_PROJECT_URL=	http://www.vim.org/
 COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).tar.bz2
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:08875264e852cc2021e605f26353ba64874064d59dd8ec1ff5fc62265c4be3ac
+COMPONENT_ARCHIVE_HASH=	sha256:eda12f4f14b6456a579cc9d0ac29ebeecb8ff89ad9d5eb313fab75a751cf59ff
 COMPONENT_HG_URL=	https://vim.googlecode.com/hg
-COMPONENT_HG_REV=	v7-3-684
-COMPONENT_HG_REV_OLD=	v7-3-684
+COMPONENT_HG_REV=	v7-3-882
+COMPONENT_HG_REV_OLD:=	$(COMPONENT_HG_REV)
 
 COMPONENT_BUGDB=	utility/vim
 
@@ -70,30 +70,40 @@ hgball: hgball-pull
 		/usr/gnu/bin/sed -i \
 			-e "s/^COMPONENT_ARCHIVE_HASH=.*/COMPONENT_ARCHIVE_HASH=	sha256:$$digest/" \
 			-e "s/^COMPONENT_HG_REV=.*/COMPONENT_HG_REV=	$(COMPONENT_HG_REV)/" \
-			-e "s/^COMPONENT_HG_REV_OLD=.*/COMPONENT_HG_REV_OLD=	$(COMPONENT_HG_REV)/" \
 			Makefile
 
 PATCH_LEVEL =	0
 
 PKG_MACROS +=	VIMVER=vim73
 
-X_VARIANT =	$(BUILD_DIR)/$(MACH32)-gvim
-NOX_VARIANT =	$(BUILD_DIR)/$(MACH32)-vim
+ASLR_MODE =	$(ASLR_ENABLE)
+
+X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim
+NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-vim
 
 VARIANTS =	$(X_VARIANT) $(NOX_VARIANT)
 
-$(VARIANTS:%=%/.configured):	BITS=32
+$(VARIANTS:%=%/.configured):	BITS=64
 
-BUILD_32 = 	$(VARIANTS:%=%/.built)
+BUILD_64 = 	$(VARIANTS:%=%/.built)
 
 # Only install the non-X variant.  We will cherry-pick gvim out of the build
 # directory to avoid re-installing everything.
-INSTALL_32 = 	$(NOX_VARIANT)/.installed
+INSTALL_64 = 	$(NOX_VARIANT)/.installed
 
-TEST_32 = 	$(NOX_VARIANT)/.tested
+TEST_64 = 	$(NOX_VARIANT)/.tested
 
-# Override a broken imake that's always providing a 64-bit library directory.
-CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
+# Necessary to pass 64-bit flags to the link stage.
+CC +=			$(CC_BITS)
+
+# Put all the binaries directly in /usr/bin, not in /usr/bin/64.
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+
+# Use the 64-bit versions of pkg-config files (or GTK+ will add -R/usr/lib)
+CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+
+# Necessary to pass 64-bit flags to the compilation stage.
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
 CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"
@@ -131,11 +141,11 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 	nawk '/begin of license/ {p=1; getline; next} /end of license/ {p=0} p == 1 {print}' $< > $@
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32) $(X_VARIANT)/.built $(BUILD_DIR)/license
+install:	$(INSTALL_64) $(X_VARIANT)/.built $(BUILD_DIR)/license
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
