@@ -40,14 +40,10 @@ set name=info.upstream \
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/002
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-dir path=usr group=sys
-dir path=usr/include
-dir path=usr/share group=sys
-dir path=usr/share/doc group=other
-dir path=usr/share/doc/ksh
-dir path=usr/share/man/ja_JP.UTF-8/man1
-dir path=usr/share/man/man1
-dir path=usr/share/man/zh_CN.UTF-8/man1
+
+# This package name has known conflicts with other packages in the WOS
+set pkg.linted.pkglint.manifest004=true
+
 file path=etc/ksh.kshrc group=sys original_name=SUNWcs:etc/ksh.kshrc \
     preserve=renameold
 file $(MACH32)/bin/ksh path=usr/bin/$(MACH32)/ksh mode=0555

@@ -30,21 +30,15 @@ set name=info.upstream-url value=http://www.hardened-php.net/suhosin/index.html
 set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+# This package name has known conflicts with other packages in the WOS
+set pkg.linted.pkglint.manifest004=true
+
+
 license php-suhosin.license license='PHP, Apache v2.0' \
     com.oracle.info.description="the Suhosin extension module for PHP" \
     com.oracle.info.name=php-suhosin \
     com.oracle.info.version=0.9.33
 
-dir path=etc
-dir path=etc/php
-dir path=etc/php/5.3
-dir path=etc/php/5.3/conf.d
-dir path=etc/php/5.3/zts-conf.d
-dir path=usr
-dir path=usr/php
-dir path=usr/php/5.3
-dir path=usr/php/5.3/modules
-dir path=usr/php/5.3/zts-modules
 file path=etc/php/5.3/conf.d/suhosin.ini mode=0644 preserve=renamenew
 file path=etc/php/5.3/zts-conf.d/suhosin.ini mode=0644 preserve=renamenew
 file path=usr/php/5.3/modules/suhosin.so

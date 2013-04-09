@@ -36,29 +36,14 @@ license apache-php52.license license='PHP, GPLv2, LGPLv2, Apache v2.0' \
     com.oracle.info.name=apache-php52 \
     com.oracle.info.version=5.2.17
 
-dir path=etc
-dir path=etc/apache2
-dir path=etc/apache2/2.2
-dir path=etc/apache2/2.2/conf.d
-dir path=etc/apache2/2.2/conf.d/php
-dir path=usr
-dir path=usr/apache2
-dir path=usr/apache2/2.2
-dir path=usr/apache2/2.2/libexec
 file path=etc/apache2/2.2/conf.d/php/php5.2.conf mode=0644 \
     original_name=SUNWapch22-php52:etc/apache2/2.2/conf.d/php5.2.conf \
     preserve=renamenew
 link path=etc/apache2/2.2/conf.d/php/php.conf target=php5.2.conf \
     mediator=php mediator-version=5.2
-#
-# Once this is integrated and in the IPS repo we can remove
-# these pkg.linted.pkglint.dupaction010.2=true
-# mod_php5.so is legacy and will not be provided in future versions.
-#
-file path=usr/apache2/2.2/libexec/mod_php5.2.so \
-    pkg.linted.pkglint.dupaction001.1=true
-link path=usr/apache2/2.2/libexec/mod_php5.so target=mod_php5.2.so \
-    pkg.linted.pkglint.dupaction010.2=true
+
+file path=usr/apache2/2.2/libexec/mod_php5.2.so
+link path=usr/apache2/2.2/libexec/mod_php5.so target=mod_php5.2.so
 
 # depend on apache-php5 because this content came from there
 depend fmri=web/server/apache-22/module/apache-php5@5.2.17-0.175.1.0.0.18 \

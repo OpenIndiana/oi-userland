@@ -30,21 +30,16 @@ set name=info.source-url value=$(EXTERNAL_ARCHIVE_MIRROR)/php_manual_en_20090130
 set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
+# This package name has known conflicts with other packages in the WOS
+set pkg.linted.pkglint.manifest004=true
+
+
 license php-doc.license license='PHP' \
     com.oracle.info.description="the PHP documentation" \
     com.oracle.info.name=php-doc \
     com.oracle.info.version=5.3.14
 
-dir path=usr
-dir path=usr/php
-dir path=usr/php/5.3
-dir path=usr/php/5.3/doc
-dir path=usr/php/5.3/doc/php-chunked-xhtml
-dir path=usr/php/5.3/doc/php-chunked-xhtml/images
-# Once this is integrated and in the IPS repo we can remove
-# these pkg.linted.pkglint.dupaction
-link path=usr/php/doc target=5.3/doc mediator=php mediator-version=5.3 \
-    pkg.linted.pkglint.dupaction010.2=true
+link path=usr/php/doc target=5.3/doc mediator=php mediator-version=5.3
 file path=usr/php/5.3/doc/php-chunked-xhtml/about.formats.html
 file path=usr/php/5.3/doc/php-chunked-xhtml/about.generate.html
 file path=usr/php/5.3/doc/php-chunked-xhtml/about.howtohelp.html
