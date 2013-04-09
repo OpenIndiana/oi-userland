@@ -40,19 +40,8 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license php.license license='PHP, GPLv2, LGPLv2, Apache v2.0'
 
-dir path=etc
-dir path=etc/apache2/
-dir path=etc/apache2/2.2
-dir path=etc/apache2/2.2/conf.d
 file php.conf path=etc/apache2/2.2/conf.d/php.conf
-dir path=usr
-dir path=usr/share
-dir path=usr/share/man
-dir path=usr/share/man/man1
-# Once this is integrated and in the IPS repo we can remove
-# these pkg.linted.pkglint.dupaction
-file php.1.sunman path=usr/share/man/man1/php.1 \
-	pkg.linted.pkglint.dupaction001.1=true
+file php.1.sunman path=usr/share/man/man1/php.1
 
 # if php5.2 is present drag forward because the man page moved to here
 depend fmri=pkg:/web/php-52@5.2.17,$(BUILD_VERSION) type=optional

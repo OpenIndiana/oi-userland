@@ -396,11 +396,25 @@ class UserlandActionChecker(base.ActionChecker):
 		# Check against the target image (ref_paths), since links might
 		# resolve outside the packages delivering a particular
 		# component.
-		if not self.ref_paths.get(realtarget, None):
-			engine.error(
-				_("%s %s has unresolvable target '%s'") %
-					(action.name, path, target),
-				msgid="%s%s.0" % (self.name, pkglint_id))
+
+		# links to files should directly match a patch in the reference
+		# repo.
+		if self.ref_paths.get(realtarget, None):
+			return
+
+		# If it didn't match a path in the reference repo, it may still
+		# be a link to a directory that has no action because it uses
+		# the default attributes.  Look for a path that starts with
+		# this value plus a trailing slash to be sure this it will be
+		# resolvable on a fully installed system.
+		realtarget += '/'
+		for key in self.ref_paths:
+			if key.startswith(realtarget):
+				return
+
+		engine.error(_("%s %s has unresolvable target '%s'") %
+				(action.name, path, target),
+			msgid="%s%s.0" % (self.name, pkglint_id))
 
 	link_resolves.pkglint_desc = _("links should resolve.")
 

@@ -38,19 +38,13 @@ set name=info.upstream value="Rainer Gerhards"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/197
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-dir  path=etc
+
+dir  path=var/spool/rsyslog
+
 file rsyslog.conf-solaris path=etc/rsyslog.conf group=sys preserve=true \
     mode=0644 overlay=allow
-dir  path=lib
-dir  path=lib/svc
-dir  path=lib/svc/manifest
-dir  path=lib/svc/manifest/system
 file rsyslog.xml path=lib/svc/manifest/system/rsyslog.xml
-dir  path=lib/svc/method
 file rsyslog path=lib/svc/method/rsyslog
-dir  path=usr
-dir  path=usr/lib
-dir  path=usr/lib/rsyslog
 file path=usr/lib/rsyslog/imgssapi.so
 file path=usr/lib/rsyslog/immark.so
 file path=usr/lib/rsyslog/imsolaris.so
@@ -72,15 +66,8 @@ file path=usr/lib/rsyslog/ommail.so
 file path=usr/lib/rsyslog/omruleset.so
 file path=usr/lib/rsyslog/omtesting.so
 file path=usr/lib/rsyslog/rsyslogd mode=0555
-dir  path=usr/share
-dir  path=usr/share/man
-dir  path=usr/share/man/man1m
 file usr/share/man/man8/rsyslogd.8 path=usr/share/man/man1m/rsyslogd.1m \
     mangler.bypass=true
-dir  path=usr/share/man/man4
 file usr/share/man/man5/rsyslog.conf.5 path=usr/share/man/man4/rsyslog.conf.4
-dir  path=var
-dir  path=var/spool
-dir  path=var/spool/rsyslog
 license rsyslog.license license=GPLv3
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/stat type=require

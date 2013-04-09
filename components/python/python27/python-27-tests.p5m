@@ -44,39 +44,12 @@ set name=org.opensolaris.arc-caseid \
 
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-# pkgdepend doesn't like python 2.7 yet
-<transform file path=.+\.py$ -> \
-    default pkg.depend.bypass-generate .* >
+# This package name has known conflicts with other packages in the WOS
+set pkg.linted.pkglint.manifest004=true
+
 
 license python27.license license="PSFv2"
 
-dir path=usr
-dir path=usr/lib
-dir path=usr/lib/python2.7
-dir path=usr/lib/python2.7/bsddb/test
-dir path=usr/lib/python2.7/ctypes/test
-dir path=usr/lib/python2.7/distutils/tests
-dir path=usr/lib/python2.7/email/test
-dir path=usr/lib/python2.7/email/test/data
-dir path=usr/lib/python2.7/idlelib
-dir path=usr/lib/python2.7/json/tests
-dir path=usr/lib/python2.7/lib-dynload
-dir path=usr/lib/python2.7/lib-dynload/64
-dir path=usr/lib/python2.7/lib-tk/test
-dir path=usr/lib/python2.7/lib-tk/test/test_tkinter
-dir path=usr/lib/python2.7/lib-tk/test/test_ttk
-dir path=usr/lib/python2.7/lib2to3/tests
-dir path=usr/lib/python2.7/lib2to3/tests/data
-dir path=usr/lib/python2.7/lib2to3/tests/data/fixers
-dir path=usr/lib/python2.7/lib2to3/tests/data/fixers/myfixes
-dir path=usr/lib/python2.7/sqlite3/test
-dir path=usr/lib/python2.7/test
-dir path=usr/lib/python2.7/test/cjkencodings
-dir path=usr/lib/python2.7/test/data
-dir path=usr/lib/python2.7/test/decimaltestdata
-dir path=usr/lib/python2.7/test/subprocessdata
-dir path=usr/lib/python2.7/test/tracedmodules
-dir path=usr/lib/python2.7/test/xmltestdata
 
 file path=usr/lib/python2.7/bsddb/test/__init__.py
 file path=usr/lib/python2.7/bsddb/test/test_all.py
@@ -306,7 +279,8 @@ file path=usr/lib/python2.7/lib2to3/tests/data/fixers/parrot_example.py
 file path=usr/lib/python2.7/lib2to3/tests/data/infinite_recursion.py
 file path=usr/lib/python2.7/lib2to3/tests/data/py2_test_grammar.py
 file path=usr/lib/python2.7/lib2to3/tests/data/py3_test_grammar.py
-file path=usr/lib/python2.7/lib2to3/tests/pytree_idempotency.py
+file path=usr/lib/python2.7/lib2to3/tests/pytree_idempotency.py \
+    pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/lib2to3/tests/support.py
 file path=usr/lib/python2.7/lib2to3/tests/test_all_fixers.py
 file path=usr/lib/python2.7/lib2to3/tests/test_fixers.py
@@ -747,7 +721,7 @@ file path=usr/lib/python2.7/test/test_htmllib.py
 file path=usr/lib/python2.7/test/test_htmlparser.py
 file path=usr/lib/python2.7/test/test_httplib.py
 file path=usr/lib/python2.7/test/test_httpservers.py
-file path=usr/lib/python2.7/test/test_imageop.py
+file path=usr/lib/python2.7/test/test_imageop.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/test/test_imaplib.py
 file path=usr/lib/python2.7/test/test_imgfile.py
 file path=usr/lib/python2.7/test/test_imp.py
@@ -796,7 +770,7 @@ file path=usr/lib/python2.7/test/test_msilib.py
 file path=usr/lib/python2.7/test/test_multibytecodec.py
 file path=usr/lib/python2.7/test/test_multibytecodec_support.py
 file path=usr/lib/python2.7/test/test_multifile.py
-file path=usr/lib/python2.7/test/test_multiprocessing.py
+file path=usr/lib/python2.7/test/test_multiprocessing.py pkg.depend.bypass-generate=.*
 file path=usr/lib/python2.7/test/test_mutants.py
 file path=usr/lib/python2.7/test/test_mutex.py
 file path=usr/lib/python2.7/test/test_netrc.py
