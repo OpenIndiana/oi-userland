@@ -26,15 +26,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		stunnel
-COMPONENT_VERSION=	4.29
-COMPONENT_PROJECT_URL=	http://stunnel.mirt.net/
+COMPONENT_VERSION=	4.56
+COMPONENT_PROJECT_URL=	http://www.stunnel.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:018064e852a2a125bcfb4b81baa77b5701ccf6aabe6a47564bfc046b18d11f9b
+    sha256:9cae2cfbe26d87443398ce50d7d5db54e5ea363889d5d2ec8d2778a01c871293
 
-# ftp://stunnel.mirt.net/stunnel/stunnel-4.29.tar.gz is no longer there.
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/14dc3f8412947f0548975cbce74d6863/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)/ac4c4a30bd7a55b6687cbd62d864054c/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/stunnel
 
@@ -42,13 +41,14 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PREP_ACTION =	(cd $(@D) ; autoreconf -if)
-
 # need /usr/perl5/bin on path to access pod2man perl script, used by 
 # the build to create docs
 COMPONENT_BUILD_ENV +=  PATH=/usr/perl5/bin:$(PATH)
 
 CPPFLAGS +=	"-DPIDFILE='\"/var/run/stunnel.pid\"'"
+
+# used to generate the 64-bit interposer location
+CPPFLAGS += -DMACH64='\"$(MACH64)\"'
 
 CONFIGURE_OPTIONS +=	--disable-fips
 CONFIGURE_OPTIONS +=	--enable-ipv6
@@ -56,6 +56,9 @@ CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+
+# used to generate LD_PRELOAD_* interposer pathnames
+COMPONENT_BUILD_ARGS += pkglibdir=/usr/lib/stunnel
 
 COMPONENT_PRE_INSTALL_ACTION = \
 	$(MKDIR) $(PROTOETCDIR)/stunnel ; \

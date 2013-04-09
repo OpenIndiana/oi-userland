@@ -1,0 +1,25 @@
+# On Solaris, fix stunnel so that the linker know where both the 32 and 64 bit
+# interposer libraries are.  If you use LD_PRELOAD with the wrong bittedness
+# of interposer, the runtime linker hits a fatal error in trying to load
+# mismatched ELF objects.
+#
+diff -r -u stunnel-4.55.orig/src/client.c stunnel-4.55/src/client.c
+--- stunnel-4.55.orig/src/client.c	2013-02-28 00:17:58.000000000 -0800
++++ stunnel-4.55/src/client.c	2013-03-21 22:55:21.098479331 -0700
+@@ -1100,9 +1100,14 @@
+             /* just don't set these variables if getnameinfo() fails */
+             putenv(str_printf("REMOTE_HOST=%s", host));
+             if(c->opt->option.transparent_src) {
+-                putenv("LD_PRELOAD=" LIBDIR "/libstunnel.so");
+-                /* for Tru64 _RLD_LIST is used instead */
++#ifdef MACH64
++                putenv("LD_PRELOAD_32=" LIBDIR "/libstunnel.so");
++                putenv("LD_PRELOAD_64=" LIBDIR "/" MACH64 "/libstunnel.so");
++#elif __osf /* for Tru64 _RLD_LIST is used instead */
+                 putenv("_RLD_LIST=" LIBDIR "/libstunnel.so:DEFAULT");
++#else
++                putenv("LD_PRELOAD=" LIBDIR "/libstunnel.so");
++#endif
+             }
+         }
+ 
