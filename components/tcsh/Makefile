@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -48,13 +48,17 @@ COMPONENT_PREP_ACTION = \
 
 LOCALEDIR=$(PROTO_DIR)/$(CONFIGURE_LOCALEDIR)
 
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
-# common targets
-build:		$(BUILD_32)
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32)
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
