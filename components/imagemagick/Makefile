@@ -20,23 +20,20 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
-# The archive untars to directory without the '-2' suffix, so
-# COMPONENT_SUBVERSION had to be introduced
-#
 COMPONENT_NAME=			ImageMagick
-COMPONENT_VERSION=		6.3.4
-COMPONENT_SUBVERSION=	2
+COMPONENT_VERSION=		6.8.3
+COMPONENT_SUBVERSION=		5
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
 COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:25fb373ac3889e81555e5b48c8a22a3deabeac8b6129387cec9dc7e13804914e
+    sha256:daead80170bc6d44cf6a54b4817446cbb7211b8ee445532b64033af190265fe3
 COMPONENT_ARCHIVE_URL=	http://image_magick.veidrodis.com/image_magick/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/imagemagick
 
@@ -51,21 +48,23 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 #
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_SUBVERSION)
 
-# The archive contains pre-generated magick-config.h header, which is later on
-# being used and the build fails.  However, we want to use the header generated
-# by configure from BUILD_DIR_32 / BUILD_DIR_64 directory, so the pre-generated
-# header file needs to be deleted.
-#
-COMPONENT_PREP_ACTION= (cd $(@D) ; $(RM) magick/magick-config.h)
+COMPONENT_POST_UNPACK_ACTION= ( $(MV) $(COMPONENT_SRC)-$(COMPONENT_SUBVERSION) \
+    $(COMPONENT_SRC))
 
 # To get the Perl modules built it is necessary to copy the PerlMagick directory
 # to the build directory
 #
-COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D); cd $(SOURCE_DIR); $(AUTORECONF) -f)
+COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
+
+LIBS += -lsocket -lnsl
+CONFIGURE_ENV += LIBS="$(LIBS)"
 
 # Show name of "error tag" as part of the warning
 #
-CFLAGS+= -errtags
+CFLAGS += -errtags=yes
+# To remove the complier complaints about __restrict keyword,
+# -D_magickcore_restrict should be used.
+CFLAGS += -xc99=%all -D_magickcore_restrict=
 
 # Needed to generate a decent RUNPATH for Magick.so
 #
@@ -78,6 +77,12 @@ CONFIGURE_OPTIONS+= --with-modules
 CONFIGURE_OPTIONS+= --enable-shared=yes
 CONFIGURE_OPTIONS+= --enable-static=no
 CONFIGURE_OPTIONS+= --without-gvc
+# Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
+# configuration file 'type-ghostscript.xml' is being used.
+CONFIGURE_OPTIONS+= --with-fontconfig=no
+# Configure option 'with-gs-font-dir' is required because some build systems might 
+# not have ghostscript fonts installed.
+CONFIGURE_OPTIONS+= --with-gs-font-dir="/usr/share/ghostscript/fonts"
 CONFIGURE_OPTIONS+= --x-libraries=$(CONFIGURE_LIBDIR.$(BITS)) 
 CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
 CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
@@ -87,7 +92,16 @@ CONFIGURE_OPTIONS.64+= --without-perl
 #
 build:		$(BUILD_32_and_64)
 
+# Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
 install:	$(INSTALL_32_and_64)
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0
 
 # ImageMagick tests have hard-coded absolute paths inside, so essentially they
 # can be run only after ImageMagick is actually installed and this is not 
