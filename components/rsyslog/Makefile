@@ -40,6 +40,11 @@ COMPILER = gcc
 # This is needed for things to be built correctly.
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 
+# A normal 64-bit build would result in /usr/lib/$(MACH64)/rsyslog but since we
+# have a self-contained eco-system, simplify things for customers and just use
+# /usr/lib/rsyslog .
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
+
 CONFIGURE_OPTIONS +=    --enable-imsolaris
 CONFIGURE_OPTIONS +=    --enable-mail
 CONFIGURE_OPTIONS +=    --enable-gssapi_krb5
@@ -47,12 +52,14 @@ CONFIGURE_OPTIONS +=    --enable-gnutls
 CONFIGURE_OPTIONS +=    --disable-klog
 CONFIGURE_OPTIONS +=    --sbindir=/usr/lib/rsyslog
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
