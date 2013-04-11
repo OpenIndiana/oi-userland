@@ -77,6 +77,7 @@ CONFIGURE_OPTIONS+= --with-modules
 CONFIGURE_OPTIONS+= --enable-shared=yes
 CONFIGURE_OPTIONS+= --enable-static=no
 CONFIGURE_OPTIONS+= --without-gvc
+CONFIGURE_OPTIONS+= --disable-openmp
 # Using option 'with-fontconfig=no' so that the fonts/fonts path specified in
 # configuration file 'type-ghostscript.xml' is being used.
 CONFIGURE_OPTIONS+= --with-fontconfig=no
