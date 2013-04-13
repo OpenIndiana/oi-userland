@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -57,10 +57,13 @@ COMPONENT_INSTALL_ARGS += INSTALL_TOP=$(PROTOUSRDIR)
 $(INSTALL_64):	COMPONENT_INSTALL_ARGS += INSTALL_LIB=$(PROTOUSRLIBDIR64)
 $(INSTALL_64):	COMPONENT_INSTALL_ARGS += INSTALL_BIN=$(PROTOUSRBINDIR64)
 
+$(BUILD_DIR)/lua-64.pc:		files/lua-64.pc
+	/bin/sed -e "s#MACH64#$(MACH64)#g" < $< > $@
+
 # common targets
 build:		$(BUILD_32_and_64)
 	
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64) $(BUILD_DIR)/lua-64.pc
 		
 test: 		install
 		(gzip -dc $(LUA_TESTS).tar.gz | tar xopf -; \
