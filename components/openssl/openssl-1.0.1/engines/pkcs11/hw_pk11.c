@@ -332,6 +332,9 @@ static void pk11_free_all_locks(void);
 static int check_hw_mechanisms(void);
 static int nid_in_table(int nid, int *nid_table);
 static int hw_aes_instruction_set_present(void);
+#if	defined(__sparc)
+static int hw_yf_digest_instruction_present(void);
+#endif
 #endif	/* SOLARIS_HW_SLOT_SELECTION */
 
 #define	TRY_OBJ_DESTROY(sp, obj_hdl, retval, uselock, alg_type)	\
@@ -911,12 +914,22 @@ static int bind_pk11(ENGINE *e)
 
 	if (!ENGINE_set_id(e, engine_pk11_id) ||
 	    !ENGINE_set_name(e, engine_pk11_name) ||
-	    !ENGINE_set_ciphers(e, pk11_engine_ciphers) ||
-	    !ENGINE_set_digests(e, pk11_engine_digests))
+	    !ENGINE_set_ciphers(e, pk11_engine_ciphers))
 		return (0);
 
 	if (!ENGINE_set_pkey_meths(e, pk11_engine_pkey_methods))
 		return (0);
+
+#if	defined(__sparc)
+	/*
+	 * Enable hash mechanisms for pkcs11 engine only if T4 digest
+	 * instruction is not present.
+	 */
+	if (!hw_yf_digest_instruction_present())
+#endif	/* defined(__sparc) */
+		if (!ENGINE_set_digests(e, pk11_engine_digests)) {
+			return (0);
+		}
 
 #ifndef OPENSSL_NO_RSA
 	if (pk11_have_rsa == CK_TRUE)
@@ -3796,6 +3809,24 @@ hw_aes_instruction_set_present(void)
 
 	return (present);
 	}
+
+#if	defined(__sparc)
+static int
+hw_yf_digest_instruction_present(void)
+{
+	static int cached_result = -1;
+	uint_t ui = 0;
+
+	if (cached_result == -1) {
+		(void) getisax(&ui, 1);
+		cached_result = ((ui & AV_SPARC_MD5) != 0) &&
+		    ((ui & AV_SPARC_SHA1) != 0) &&
+		    ((ui & AV_SPARC_SHA256) != 0) &&
+		    ((ui & AV_SPARC_SHA512) != 0);
+	}
+	return (cached_result != 0);
+}
+#endif	/* defined(__sparc) */
 
 #endif	/* SOLARIS_HW_SLOT_SELECTION */
 

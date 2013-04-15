@@ -41,7 +41,8 @@ COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/openssl
 
 # Architecture-specific patches
-EXTRA_PATCHES.sparc = $(PATCH_DIR)/openssl-1.0.1e-t4-engine.sparc-patch
+EXTRA_PATCHES.sparc = $(PATCH_DIR)/openssl-t4-inline.sparc-patch
+EXTRA_PATCHES.sparc += $(PATCH_DIR)/openssl-1.0.1e-t4-engine.sparc-patch
 EXTRA_PATCHES = $(EXTRA_PATCHES.$(MACH))
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -179,7 +180,9 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_des.S		$(@D)/crypto/des/asm; \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; )
+      $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; )
 
 # OpenSSL for wanboot is built on sparc only.
 ifeq ($(MACH), sparc)
