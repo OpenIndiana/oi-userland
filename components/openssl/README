@@ -18,8 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+
 
 Build Layout
 ---
@@ -32,6 +33,24 @@ static libraries for wanboot are done for 32 and 64 bits. So, in total, OpenSSL
 is built seven times. OpenSSL for wanboot is only build on sparc.
 
 See also comments in all the Makefiles for more information.
+
+OpenSSL Version
+---
+
+For non-FIPS build, we currently deliver OpenSSL 1.0.1e with some updates
+from OpenSSL 1.0.2 to make T4 instructions embedded in the OpenSSL
+upstream code.  As of April 2013, 1.0.2 is not yet released, and therefore,
+we have decided to patch the code.
+The following files/code are copied in from 1.0.2.
+added:
+   components/openssl/openssl-1.0.1/inline-t4/md5-sparcv9.pl
+   components/openssl/openssl-1.0.1/inline-t4/sparc_arch.h
+   components/openssl/openssl-1.0.1/patches/openssl-t4-inline.sparc-patch
+TPNO for OpenSSL 1.0.1e is 13003.
+
+For FIPS build, we currently deliver OpenSSL 0.9.8y with OpenSSL FIPS module 2.1.
+TPNO for OpenSSL 0.9.8y is 13019.
+
 
 The non-fips Build.
 ---
@@ -98,18 +117,18 @@ Wanboot specific patches.
     - should be ok - original detection seems broken, FPU gets never used
 - implementation of atoi()
 
-
-openssl-1.0.0d-aesni-v4.i386-patch
-X86-only patch.
-Add a built-in engine, aesni, to support X86 AES-NI instructions, along with
-files engines/aesni/aesni-x86[_64].pl.
-This patch is for OpenSSL 1.0.0d.  For newer OpenSSL versions, a newer patch
-may be needed.
+31_dtls_version.patch
+Fix DTLS_BAD_VER bug reported after OpenSSL 1.0.1e is released.
 
 openssl-1.0.0d-t4-engine.sparc-patch
 SPARC-only patch.
 Add a built-in engine, t4, to support SPARC T4 crypto instructions.
 along with files in directory engines/t4.
+
+openssl-t4-inline.sparc-patch
+SPARC-only patch.
+Add patch to support inline T4 instruction in OpenSSL upstream code until
+OpenSSL 1.0.2 is released.
 
 opensslconf.patch
 Modifies opensslconf.h so that it is suitable for both 32bit and 64bit installs.

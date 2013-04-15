@@ -1,0 +1,854 @@
+#
+# This file addds inline T4 instruction support to OpenSSL upstream code.
+#
+Index: Configure
+===================================================================
+diff -ru openssl-1.0.1e/Configure openssl-1.0.1e/Configure
+--- openssl-1.0.1e/Configure 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/Configure 2011-07-27 10:48:17.817470000 -0700
+@@ -135,7 +135,7 @@
+
+ my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o modexp512-x86_64.o::aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o rc4-md5-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:ghash-x86_64.o:";
+ my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
+-my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
+ my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
+ my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
+ my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
+Index: crypto/sparccpuid.S
+===================================================================
+diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
+--- openssl-1.0.1e/crypto/sparccpuid.S 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/sparccpuid.S 2011-07-27 10:48:17.817470000 -0700
+@@ -251,6 +251,11 @@
+ !	UltraSPARC IIe		7
+ !	UltraSPARC III		7
+ !	UltraSPARC T1		24
++!	SPARC T4		65(*)
++!
++! (*)	result has lesser to do with VIS instruction latencies, rdtick
++!	appears that slow, but it does the trick in sense that FP and
++!	VIS code paths are still slower than integer-only ones.
+ !
+ ! Numbers for T2 and SPARC64 V-VII are more than welcomed.
+ !
+@@ -260,6 +265,8 @@
+ .global	_sparcv9_vis1_instrument
+ .align	8
+ _sparcv9_vis1_instrument:
++	.word	0x81b00d80	!fxor	%f0,%f0,%f0
++	.word	0x85b08d82	!fxor	%f2,%f2,%f2
+ 	.word	0x91410000	!rd	%tick,%o0
+ 	.word	0x81b00d80	!fxor	%f0,%f0,%f0
+ 	.word	0x85b08d82	!fxor	%f2,%f2,%f2
+@@ -314,6 +321,30 @@
+ .type	_sparcv9_fmadd_probe,#function
+ .size	_sparcv9_fmadd_probe,.-_sparcv9_fmadd_probe
+ 
++.global	_sparcv9_rdcfr
++.align	8
++_sparcv9_rdcfr:
++	retl
++	.word	0x91468000	!rd	%asr26,%o0
++.type	_sparcv9_rdcfr,#function
++.size	_sparcv9_rdcfr,.-_sparcv9_rdcfr
++
++.global	_sparcv9_vis3_probe
++.align	8
++_sparcv9_vis3_probe:
++	retl
++	.word	0x81b022a0	!xmulx	%g0,%g0,%g0
++.type	_sparcv9_vis3_probe,#function
++.size	_sparcv9_vis3_probe,.-_sparcv9_vis3_probe
++
++.global	_sparcv9_random
++.align	8
++_sparcv9_random:
++	retl
++	.word	0x91b002a0	!random	%o0
++.type	_sparcv9_random,#function
++.size	_sparcv9_random,.-_sparcv9_vis3_probe
++
+ .global	OPENSSL_cleanse
+ .align	32
+ OPENSSL_cleanse:
+
+Index: crypto/sparcv9cap.c
+===================================================================
+diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
+--- openssl-1.0.1e/crypto/sparcv9cap.c 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/sparcv9cap.c 2011-07-27 10:48:17.817470000 -0700
+@@ -6,17 +6,12 @@
+ #include <sys/time.h>
+ #include <openssl/bn.h>
+ 
+-#define SPARCV9_TICK_PRIVILEGED	(1<<0)
+-#define SPARCV9_PREFER_FPU	(1<<1)
+-#define SPARCV9_VIS1		(1<<2)
+-#define SPARCV9_VIS2		(1<<3)	/* reserved */
+-#define SPARCV9_FMADD		(1<<4)	/* reserved for SPARC64 V */
++#include "sparc_arch.h"
+ 
+-#ifndef	_BOOT
+-static int OPENSSL_sparcv9cap_P=SPARCV9_TICK_PRIVILEGED;
+-#else
+-static int OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
++#if defined(__GNUC__) && defined(__linux)
++__attribute__((visibility("hidden")))
+ #endif
++unsigned int OPENSSL_sparcv9cap_P[2]={SPARCV9_TICK_PRIVILEGED,0};
+ 
+ int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num)
+ 	{
+@@ -24,7 +19,7 @@
+ 	int bn_mul_mont_int(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
+ 
+ 	if (num>=8 && !(num&1) &&
+-	    (OPENSSL_sparcv9cap_P&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
++	    (OPENSSL_sparcv9cap_P[0]&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
+ 		(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
+ 		return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
+ 	else
+@@ -36,11 +31,15 @@
+ unsigned long	_sparcv9_vis1_instrument(void);
+ void		_sparcv9_vis2_probe(void);
+ void		_sparcv9_fmadd_probe(void);
++unsigned long	_sparcv9_rdcfr(void);
++void		_sparcv9_vis3_probe(void);
++unsigned long	_sparcv9_random(void);
++size_t 		_sparcv9_vis1_instrument_bus(unsigned int *,size_t);
++size_t		_sparcv8_vis1_instrument_bus2(unsigned int *,size_t,size_t);
+ 
+-#ifndef _BOOT
+ unsigned long OPENSSL_rdtsc(void)
+ 	{
+-	if (OPENSSL_sparcv9cap_P&SPARCV9_TICK_PRIVILEGED)
++	if (OPENSSL_sparcv9cap_P[0]&SPARCV9_TICK_PRIVILEGED)
+ #if defined(__sun) && defined(__SVR4)
+ 		return gethrtime();
+ #else
+@@ -49,19 +48,26 @@
+ 	else
+ 		return _sparcv9_rdtick();
+ 	}
+-#endif
+ 
+-#if defined(_BOOT)
+-/*
+- * Hardcoding sparc capabilities for wanboot.
+- * Older CPUs are EOLed anyway.
+- */
+-void OPENSSL_cpuid_setup(void)
++size_t OPENSSL_instrument_bus(unsigned int *out,size_t cnt)
+ 	{
+-	OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++			SPARCV9_BLK)
++		return _sparcv9_vis1_instrument_bus(out,cnt);
++	else
++		return 0;
+ 	}
+ 
+-#elif 0 && defined(__sun) && defined(__SVR4)
++size_t OPENSSL_instrument_bus2(unsigned int *out,size_t cnt,size_t max)
++	{
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++			SPARCV9_BLK)
++		return _sparcv9_vis1_instrument_bus2(out,cnt,max);
++	else
++		return 0;
++	}
++
++#if 0 && defined(__sun) && defined(__SVR4)
+ /* This code path is disabled, because of incompatibility of
+  * libdevinfo.so.1 and libmalloc.so.1 (see below for details)
+  */
+@@ -85,11 +91,11 @@
+ 	if (!strcmp (name,"SUNW,UltraSPARC") ||
+ 	    !strncmp(name,"SUNW,UltraSPARC-I",17))  /* covers II,III,IV */
+ 		{
+-		OPENSSL_sparcv9cap_P |= SPARCV9_PREFER_FPU|SPARCV9_VIS1;
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_PREFER_FPU|SPARCV9_VIS1;
+ 
+ 		/* %tick is privileged only on UltraSPARC-I/II, but not IIe */
+ 		if (name[14]!='\0' && name[17]!='\0' && name[18]!='\0')
+-			OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
++			OPENSSL_sparcv9cap_P[0] &= ~SPARCV9_TICK_PRIVILEGED;
+ 
+ 		return DI_WALK_TERMINATE;
+ 		}
+@@ -96,7 +102,7 @@
+ 	/* This is expected to catch remaining UltraSPARCs, such as T1 */
+ 	else if (!strncmp(name,"SUNW,UltraSPARC",15))
+ 		{
+-		OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
++		OPENSSL_sparcv9cap_P[0] &= ~SPARCV9_TICK_PRIVILEGED;
+ 
+ 		return DI_WALK_TERMINATE;
+ 		}
+@@ -115,7 +121,7 @@
+ 
+ 	if ((e=getenv("OPENSSL_sparcv9cap")))
+ 		{
+-		OPENSSL_sparcv9cap_P=strtoul(e,NULL,0);
++		OPENSSL_sparcv9cap_P[0]=strtoul(e,NULL,0);
+ 		return;
+ 		}
+ 
+@@ -123,17 +129,17 @@
+ 		{
+ 		if (strcmp(si,"sun4v"))
+ 			/* FPU is preferred for all CPUs, but US-T1/2 */
+-			OPENSSL_sparcv9cap_P |= SPARCV9_PREFER_FPU;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_PREFER_FPU;
+ 		}
+ 
+ 	if (sysinfo(SI_ISALIST,si,sizeof(si))>0)
+ 		{
+ 		if (strstr(si,"+vis"))
+-			OPENSSL_sparcv9cap_P |= SPARCV9_VIS1;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS1|SPARCV9_BLK;
+ 		if (strstr(si,"+vis2"))
+ 			{
+-			OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
+-			OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS2;
++			OPENSSL_sparcv9cap_P[0] &= ~SPARCV9_TICK_PRIVILEGED;
+ 			return;
+ 			}
+ 		}
+@@ -193,12 +199,14 @@
+  
+ 	if ((e=getenv("OPENSSL_sparcv9cap")))
+ 		{
+-		OPENSSL_sparcv9cap_P=strtoul(e,NULL,0);
++		OPENSSL_sparcv9cap_P[0]=strtoul(e,NULL,0);
++		if ((e=strchr(e,':')))
++			OPENSSL_sparcv9cap_P[1]=strtoul(e+1,NULL,0);
+ 		return;
+ 		}
+ 
+ 	/* Initial value, fits UltraSPARC-I&II... */
+-	OPENSSL_sparcv9cap_P = SPARCV9_PREFER_FPU|SPARCV9_TICK_PRIVILEGED;
++	OPENSSL_sparcv9cap_P[0] = SPARCV9_PREFER_FPU|SPARCV9_TICK_PRIVILEGED;
+ 
+ 	sigfillset(&all_masked);
+ 	sigdelset(&all_masked,SIGILL);
+@@ -221,20 +229,20 @@
+ 	if (sigsetjmp(common_jmp,1) == 0)
+ 		{
+ 		_sparcv9_rdtick();
+-		OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
++		OPENSSL_sparcv9cap_P[0] &= ~SPARCV9_TICK_PRIVILEGED;
+ 		}
+ 
+ 	if (sigsetjmp(common_jmp,1) == 0)
+ 		{
+ 		_sparcv9_vis1_probe();
+-		OPENSSL_sparcv9cap_P |= SPARCV9_VIS1;
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS1|SPARCV9_BLK;
+ 		/* detect UltraSPARC-Tx, see sparccpud.S for details... */
+ 		if (_sparcv9_vis1_instrument() >= 12)
+-			OPENSSL_sparcv9cap_P &= ~(SPARCV9_VIS1|SPARCV9_PREFER_FPU);
++			OPENSSL_sparcv9cap_P[0] &= ~(SPARCV9_VIS1|SPARCV9_PREFER_FPU);
+ 		else
+ 			{
+ 			_sparcv9_vis2_probe();
+-			OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS2;
+ 			}
+ 		}
+ 
+@@ -241,9 +249,37 @@
+ 	if (sigsetjmp(common_jmp,1) == 0)
+ 		{
+ 		_sparcv9_fmadd_probe();
+-		OPENSSL_sparcv9cap_P |= SPARCV9_FMADD;
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_FMADD;
+ 		}
+ 
++	/*
++	 * VIS3 flag is tested independently from VIS1, unlike VIS2 that is,
++	 * because VIS3 defines even integer instructions.
++	 */
++	if (sigsetjmp(common_jmp,1) == 0)
++		{
++		_sparcv9_vis3_probe();
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_VIS3;
++		}
++
++	if (sigsetjmp(common_jmp,1) == 0)
++		{
++		(void)_sparcv9_random();
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_RANDOM;
++		}
++
++	/*
++	 * In wait for better solution _sparcv9_rdcfr is masked by
++	 * VIS3 flag, because it goes to uninterruptable endless
++	 * loop on UltraSPARC II running Solaris. Things might be
++	 * different on Linux...
++	 */
++	if ((OPENSSL_sparcv9cap_P[0]&SPARCV9_VIS3) &&
++	    sigsetjmp(common_jmp,1) == 0)
++		{
++		OPENSSL_sparcv9cap_P[1] = (unsigned int)_sparcv9_rdcfr();
++		}
++
+ 	sigaction(SIGBUS,&bus_oact,NULL);
+ 	sigaction(SIGILL,&ill_oact,NULL);
+ 
+Index: crypto/md5/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/md5/Makefile openssl-1.0.1e/crypto/md5/Makefile
+--- openssl-1.0.1e/crypto/md5/Makefile    2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/md5/Makefile    2011-07-27 10:48:17.817470000 -0700
+@@ -52,6 +52,9 @@
+ 	$(CC) $(CFLAGS) -E asm/md5-ia64.S | \
+ 	$(PERL) -ne 's/;\s+/;\n/g; print;' > $@
+ 
++md5-sparcv9.S:	asm/md5-sparcv9.pl
++	$(PERL) asm/md5-sparcv9.pl $@ $(CFLAGS)
++
+ files:
+ 	$(PERL) $(TOP)/util/files.pl Makefile >> $(TOP)/MINFO
+ 
+Index: crypto/md5/md5_locl.h
+===================================================================
+diff -ru openssl-1.0.1e/crypto/md5/md5_locl.h openssl-1.0.1e/crypto/md5/md5_locl.h
+--- openssl-1.0.1e/crypto/md5/md5_locl.h    2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/md5/md5_locl.h    2011-07-27 10:48:17.817470000 -0700
+@@ -71,6 +71,8 @@
+ #  define md5_block_data_order md5_block_asm_data_order
+ # elif defined(__ia64) || defined(__ia64__) || defined(_M_IA64)
+ #  define md5_block_data_order md5_block_asm_data_order
++# elif defined(__sparc) || defined(__sparc__)
++#  define md5_block_data_order md5_block_asm_data_order
+ # endif
+ #endif
+
+Index: crypto/sha/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/sha/Makefile openssl-1.0.1e/crypto/sha/Makefile
+--- openssl-1.0.1e/crypto/sha/Makefile    2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/sha/Makefile    2011-07-27 10:48:17.817470000 -0700
+@@ -66,9 +66,9 @@
+ sha1-x86_64.s:	asm/sha1-x86_64.pl;	$(PERL) asm/sha1-x86_64.pl $(PERLASM_SCHEME) > $@
+ sha256-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
+ sha512-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
+-sha1-sparcv9.s:	asm/sha1-sparcv9.pl;	$(PERL) asm/sha1-sparcv9.pl $@ $(CFLAGS)
+-sha256-sparcv9.s:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+-sha512-sparcv9.s:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
++sha1-sparcv9.S:	asm/sha1-sparcv9.pl;	$(PERL) asm/sha1-sparcv9.pl $@ $(CFLAGS)
++sha256-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
++sha512-sparcv9.S:asm/sha512-sparcv9.pl;	$(PERL) asm/sha512-sparcv9.pl $@ $(CFLAGS)
+ 
+ sha1-ppc.s:	asm/sha1-ppc.pl;	$(PERL) asm/sha1-ppc.pl $(PERLASM_SCHEME) $@
+ sha256-ppc.s:	asm/sha512-ppc.pl;	$(PERL) asm/sha512-ppc.pl $(PERLASM_SCHEME) $@
+Index: crypto/sha/asm/sha1-sparcv9.pl
+===================================================================
+diff -ru openssl-1.0.1e/crypto/sha/asm/sha1-sparcv9.pl openssl-1.0.1e/crypto/sha/asm/sha1-sparcv9.pl
+--- openssl-1.0.1e/crypto/sha/asm/sha1-sparcv9.pl 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/sha/asm/sha1-sparcv9.pl 2011-07-27 10:48:17.817470000 -0700
+@@ -5,6 +5,8 @@
+ # project. The module is, however, dual licensed under OpenSSL and
+ # CRYPTOGAMS licenses depending on where you obtain it. For further
+ # details see http://www.openssl.org/~appro/cryptogams/.
++#
++# Hardware SPARC T4 support by David S. Miller <davem@davemloft.net>.
+ # ====================================================================
+ 
+ # Performance improvement is not really impressive on pre-T1 CPU: +8%
+@@ -18,6 +20,11 @@
+ # ensure scalability on UltraSPARC T1, or rather to avoid decay when
+ # amount of active threads exceeds the number of physical cores.
+ 
++# SPARC T4 SHA1 hardware achieves 3.72 cycles per byte, which is 3.1x
++# faster than software. Multi-process benchmark saturates at 11x
++# single-process result on 8-core processor, or ~9GBps per 2.85GHz
++# socket.
++
+ $bits=32;
+ for (@ARGV)	{ $bits=64 if (/\-m64/ || /\-xarch\=v9/); }
+ if ($bits==64)	{ $bias=2047; $frame=192; }
+@@ -183,11 +190,93 @@
+ .register	%g3,#scratch
+ ___
+ $code.=<<___;
++#include "sparc_arch.h"
++
+ .section	".text",#alloc,#execinstr
+ 
++#ifdef __PIC__
++SPARC_PIC_THUNK(%g1)
++#endif
++
+ .align	32
+ .globl	sha1_block_data_order
+ sha1_block_data_order:
++	SPARC_LOAD_ADDRESS_LEAF(OPENSSL_sparcv9cap_P,%g1,%g5)
++	ld	[%g1+4],%g1		! OPENSSL_sparcv9cap_P[1]
++
++	andcc	%g1, CFR_SHA1, %g0
++	be	.Lsoftware
++	nop
++
++	ld	[%o0 + 0x00], %f0	! load context
++	ld	[%o0 + 0x04], %f1
++	ld	[%o0 + 0x08], %f2
++	andcc	%o1, 0x7, %g0
++	ld	[%o0 + 0x0c], %f3
++	bne,pn	%icc, .Lhwunaligned
++	 ld	[%o0 + 0x10], %f4
++
++.Lhw_loop:
++	ldd	[%o1 + 0x00], %f8
++	ldd	[%o1 + 0x08], %f10
++	ldd	[%o1 + 0x10], %f12
++	ldd	[%o1 + 0x18], %f14
++	ldd	[%o1 + 0x20], %f16
++	ldd	[%o1 + 0x28], %f18
++	ldd	[%o1 + 0x30], %f20
++	subcc	%o2, 1, %o2		! done yet? 
++	ldd	[%o1 + 0x38], %f22
++	add	%o1, 0x40, %o1
++
++	.word	0x81b02820		! SHA1
++
++	bne,pt	`$bits==64?"%xcc":"%icc"`, .Lhw_loop
++	nop
++
++.Lhwfinish:
++	st	%f0, [%o0 + 0x00]	! store context
++	st	%f1, [%o0 + 0x04]
++	st	%f2, [%o0 + 0x08]
++	st	%f3, [%o0 + 0x0c]
++	retl
++	st	%f4, [%o0 + 0x10]
++
++.align	8
++.Lhwunaligned:
++	alignaddr %o1, %g0, %o1
++
++	ldd	[%o1 + 0x00], %f10
++.Lhwunaligned_loop:
++	ldd	[%o1 + 0x08], %f12
++	ldd	[%o1 + 0x10], %f14
++	ldd	[%o1 + 0x18], %f16
++	ldd	[%o1 + 0x20], %f18
++	ldd	[%o1 + 0x28], %f20
++	ldd	[%o1 + 0x30], %f22
++	ldd	[%o1 + 0x38], %f24
++	subcc	%o2, 1, %o2		! done yet?
++	ldd	[%o1 + 0x40], %f26
++	add	%o1, 0x40, %o1
++
++	faligndata %f10, %f12, %f8
++	faligndata %f12, %f14, %f10
++	faligndata %f14, %f16, %f12
++	faligndata %f16, %f18, %f14
++	faligndata %f18, %f20, %f16
++	faligndata %f20, %f22, %f18
++	faligndata %f22, %f24, %f20
++	faligndata %f24, %f26, %f22
++
++	.word	0x81b02820		! SHA1
++
++	bne,pt	`$bits==64?"%xcc":"%icc"`, .Lhwunaligned_loop
++	for	%f26, %f26, %f10	! %f10=%f26
++
++	ba	.Lhwfinish
++	nop
++
++.align	16
++.Lsoftware:
+ 	save	%sp,-$frame,%sp
+ 	sllx	$len,6,$len
+ 	add	$inp,$len,$len
+@@ -279,6 +368,62 @@
+ .align	4
+ ___
+ 
+-$code =~ s/\`([^\`]*)\`/eval $1/gem;
+-print $code;
++# Purpose of these subroutines is to explicitly encode VIS instructions,
++# so that one can compile the module without having to specify VIS
++# extentions on compiler command line, e.g. -xarch=v9 vs. -xarch=v9a.
++# Idea is to reserve for option to produce "universal" binary and let
++# programmer detect if current CPU is VIS capable at run-time.
++sub unvis {
++my ($mnemonic,$rs1,$rs2,$rd)=@_;
++my $ref,$opf;
++my %visopf = (	"faligndata"	=> 0x048,
++		"for"		=> 0x07c	);
++
++    $ref = "$mnemonic\t$rs1,$rs2,$rd";
++
++    if ($opf=$visopf{$mnemonic}) {
++	foreach ($rs1,$rs2,$rd) {
++	    return $ref if (!/%f([0-9]{1,2})/);
++	    $_=$1;
++	    if ($1>=32) {
++		return $ref if ($1&1);
++		# re-encode for upper double register addressing
++		$_=($1|$1>>5)&31;
++	    }
++	}
++
++	return	sprintf ".word\t0x%08x !%s",
++			0x81b00000|$rd<<25|$rs1<<14|$opf<<5|$rs2,
++			$ref;
++    } else {
++	return $ref;
++    }
++}
++sub unalignaddr {
++my ($mnemonic,$rs1,$rs2,$rd)=@_;
++my %bias = ( "g" => 0, "o" => 8, "l" => 16, "i" => 24 );
++my $ref="$mnemonic\t$rs1,$rs2,$rd";
++
++    foreach ($rs1,$rs2,$rd) {
++	if (/%([goli])([0-7])/)	{ $_=$bias{$1}+$2; }
++	else			{ return $ref; }
++    }
++    return  sprintf ".word\t0x%08x !%s",
++		    0x81b00300|$rd<<25|$rs1<<14|$rs2,
++		    $ref;
++}
++
++foreach (split("\n",$code)) {
++	s/\`([^\`]*)\`/eval $1/ge;
++
++	s/\b(f[^\s]*)\s+(%f[0-9]{1,2}),\s*(%f[0-9]{1,2}),\s*(%f[0-9]{1,2})/
++		&unvis($1,$2,$3,$4)
++	 /ge;
++	s/\b(alignaddr)\s+(%[goli][0-7]),\s*(%[goli][0-7]),\s*(%[goli][0-7])/
++		&unalignaddr($1,$2,$3,$4)
++	 /ge;
++
++	print $_,"\n";
++}
++
+ close STDOUT;
+
+Index: crypto/sha/asm/sha512-sparcv9.pl
+===================================================================
+diff -ru openssl-1.0.1e/crypto/sha/asm/sha512-sparcv9.pl openssl-1.0.1e/crypto/sha/asm/sha512-sparcv9.pl
+--- openssl-1.0.1e/crypto/sha/asm/sha512-sparcv9.pl 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/sha/asm/sha512-sparcv9.pl 2011-07-27 10:48:17.817470000 -0700
+@@ -5,6 +5,8 @@
+ # project. The module is, however, dual licensed under OpenSSL and
+ # CRYPTOGAMS licenses depending on where you obtain it. For further
+ # details see http://www.openssl.org/~appro/cryptogams/.
++#
++# Hardware SPARC T4 support by David S. Miller <davem@davemloft.net>.
+ # ====================================================================
+ 
+ # SHA256 performance improvement over compiler generated code varies
+@@ -41,6 +43,12 @@
+ #	loads are always slower than one 64-bit load. Once again this
+ #	is unlike pre-T1 UltraSPARC, where, if scheduled appropriately,
+ #	2x32-bit loads can be as fast as 1x64-bit ones.
++#
++# SPARC T4 SHA256/512 hardware achieves 3.17/2.01 cycles per byte,
++# which is 9.3x/11.1x faster than software. Multi-process benchmark
++# saturates at 11.5x single-process result on 8-core processor, or
++# ~11/16GBps per 2.85GHz socket.
++
+ 
+ $bits=32;
+ for (@ARGV)	{ $bits=64 if (/\-m64/ || /\-xarch\=v9/); }
+@@ -386,6 +394,8 @@
+ .register	%g3,#scratch
+ ___
+ $code.=<<___;
++#include "sparc_arch.h"
++
+ .section	".text",#alloc,#execinstr
+ 
+ .align	64
+@@ -457,8 +467,196 @@
+ }
+ $code.=<<___;
+ .size	K${label},.-K${label}
++
++#ifdef __PIC__
++SPARC_PIC_THUNK(%g1)
++#endif
++
+ .globl	sha${label}_block_data_order
++.align	32
+ sha${label}_block_data_order:
++	SPARC_LOAD_ADDRESS_LEAF(OPENSSL_sparcv9cap_P,%g1,%g5)
++	ld	[%g1+4],%g1		! OPENSSL_sparcv9cap_P[1]
++
++	andcc	%g1, CFR_SHA${label}, %g0
++	be	.Lsoftware
++	nop
++___
++$code.=<<___ if ($SZ==8); 		# SHA512
++	ldd	[%o0 + 0x00], %f0	! load context
++	ldd	[%o0 + 0x08], %f2
++	ldd	[%o0 + 0x10], %f4
++	ldd	[%o0 + 0x18], %f6
++	ldd	[%o0 + 0x20], %f8
++	ldd	[%o0 + 0x28], %f10
++	andcc	%o1, 0x7, %g0
++	ldd	[%o0 + 0x30], %f12
++	bne,pn	%icc, .Lhwunaligned
++	 ldd	[%o0 + 0x38], %f14
++
++.Lhwaligned_loop:
++	ldd	[%o1 + 0x00], %f16
++	ldd	[%o1 + 0x08], %f18
++	ldd	[%o1 + 0x10], %f20
++	ldd	[%o1 + 0x18], %f22
++	ldd	[%o1 + 0x20], %f24
++	ldd	[%o1 + 0x28], %f26
++	ldd	[%o1 + 0x30], %f28
++	ldd	[%o1 + 0x38], %f30
++	ldd	[%o1 + 0x40], %f32
++	ldd	[%o1 + 0x48], %f34
++	ldd	[%o1 + 0x50], %f36
++	ldd	[%o1 + 0x58], %f38
++	ldd	[%o1 + 0x60], %f40
++	ldd	[%o1 + 0x68], %f42
++	ldd	[%o1 + 0x70], %f44
++	subcc	%o2, 1, %o2		! done yet?
++	ldd	[%o1 + 0x78], %f46
++	add	%o1, 0x80, %o1
++
++	.word	0x81b02860		! SHA512
++
++	bne,pt	`$bits==64?"%xcc":"%icc"`, .Lhwaligned_loop
++	nop
++
++.Lhwfinish:
++	std	%f0, [%o0 + 0x00]	! store context
++	std	%f2, [%o0 + 0x08]
++	std	%f4, [%o0 + 0x10]
++	std	%f6, [%o0 + 0x18]
++	std	%f8, [%o0 + 0x20]
++	std	%f10, [%o0 + 0x28]
++	std	%f12, [%o0 + 0x30]
++	retl
++	 std	%f14, [%o0 + 0x38]
++
++.align	16
++.Lhwunaligned:
++	alignaddr %o1, %g0, %o1
++
++	ldd	[%o1 + 0x00], %f18
++.Lhwunaligned_loop:
++	ldd	[%o1 + 0x08], %f20
++	ldd	[%o1 + 0x10], %f22
++	ldd	[%o1 + 0x18], %f24
++	ldd	[%o1 + 0x20], %f26
++	ldd	[%o1 + 0x28], %f28
++	ldd	[%o1 + 0x30], %f30
++	ldd	[%o1 + 0x38], %f32
++	ldd	[%o1 + 0x40], %f34
++	ldd	[%o1 + 0x48], %f36
++	ldd	[%o1 + 0x50], %f38
++	ldd	[%o1 + 0x58], %f40
++	ldd	[%o1 + 0x60], %f42
++	ldd	[%o1 + 0x68], %f44
++	ldd	[%o1 + 0x70], %f46
++	ldd	[%o1 + 0x78], %f48
++	subcc	%o2, 1, %o2		! done yet?
++	ldd	[%o1 + 0x80], %f50
++	add	%o1, 0x80, %o1
++
++	faligndata %f18, %f20, %f16
++	faligndata %f20, %f22, %f18
++	faligndata %f22, %f24, %f20
++	faligndata %f24, %f26, %f22
++	faligndata %f26, %f28, %f24
++	faligndata %f28, %f30, %f26
++	faligndata %f30, %f32, %f28
++	faligndata %f32, %f34, %f30
++	faligndata %f34, %f36, %f32
++	faligndata %f36, %f38, %f34
++	faligndata %f38, %f40, %f36
++	faligndata %f40, %f42, %f38
++	faligndata %f42, %f44, %f40
++	faligndata %f44, %f46, %f42
++	faligndata %f46, %f48, %f44
++	faligndata %f48, %f50, %f46
++
++	.word	0x81b02860		! SHA512
++
++	bne,pt	`$bits==64?"%xcc":"%icc"`, .Lhwunaligned_loop
++	for	%f50, %f50, %f18	! %f18=%f50
++
++	ba	.Lhwfinish
++	nop
++___
++$code.=<<___ if ($SZ==4); 		# SHA256
++	ld	[%o0 + 0x00], %f0
++	ld	[%o0 + 0x04], %f1
++	ld	[%o0 + 0x08], %f2
++	ld	[%o0 + 0x0c], %f3
++	ld	[%o0 + 0x10], %f4
++	ld	[%o0 + 0x14], %f5
++	andcc	%o1, 0x7, %g0
++	ld	[%o0 + 0x18], %f6
++	bne,pn	%icc, .Lhwunaligned
++	 ld	[%o0 + 0x1c], %f7
++
++.Lhwloop:
++	ldd	[%o1 + 0x00], %f8
++	ldd	[%o1 + 0x08], %f10
++	ldd	[%o1 + 0x10], %f12
++	ldd	[%o1 + 0x18], %f14
++	ldd	[%o1 + 0x20], %f16
++	ldd	[%o1 + 0x28], %f18
++	ldd	[%o1 + 0x30], %f20
++	subcc	%o2, 1, %o2		! done yet?
++	ldd	[%o1 + 0x38], %f22
++	add	%o1, 0x40, %o1
++
++	.word	0x81b02840		! SHA256
++
++	bne,pt	`$bits==64?"%xcc":"%icc"`, .Lhwloop
++	nop
++
++.Lhwfinish:
++	st	%f0, [%o0 + 0x00]	! store context
++	st	%f1, [%o0 + 0x04]
++	st	%f2, [%o0 + 0x08]
++	st	%f3, [%o0 + 0x0c]
++	st	%f4, [%o0 + 0x10]
++	st	%f5, [%o0 + 0x14]
++	st	%f6, [%o0 + 0x18]
++	retl
++	 st	%f7, [%o0 + 0x1c]
++
++.align	8
++.Lhwunaligned:
++	alignaddr %o1, %g0, %o1
++
++	ldd	[%o1 + 0x00], %f10
++.Lhwunaligned_loop:
++	ldd	[%o1 + 0x08], %f12
++	ldd	[%o1 + 0x10], %f14
++	ldd	[%o1 + 0x18], %f16
++	ldd	[%o1 + 0x20], %f18
++	ldd	[%o1 + 0x28], %f20
++	ldd	[%o1 + 0x30], %f22
++	ldd	[%o1 + 0x38], %f24
++	subcc	%o2, 1, %o2		! done yet?
++	ldd	[%o1 + 0x40], %f26
++	add	%o1, 0x40, %o1
++
++	faligndata %f10, %f12, %f8
++	faligndata %f12, %f14, %f10
++	faligndata %f14, %f16, %f12
++	faligndata %f16, %f18, %f14
++	faligndata %f18, %f20, %f16
++	faligndata %f20, %f22, %f18
++	faligndata %f22, %f24, %f20
++	faligndata %f24, %f26, %f22
++
++	.word	0x81b02840		! SHA256
++
++	bne,pt	`$bits==64?"%xcc":"%icc"`, .Lhwunaligned_loop
++	for	%f26, %f26, %f10	! %f10=%f26
++
++	ba	.Lhwfinish
++	nop
++___
++$code.=<<___;
++.align	16
++.Lsoftware:
+ 	save	%sp,`-$frame-$locals`,%sp
+ 	and	$inp,`$align-1`,$tmp31
+ 	sllx	$len,`log(16*$SZ)/log(2)`,$len
+@@ -589,6 +787,62 @@
+ .align	4
+ ___
+ 
+-$code =~ s/\`([^\`]*)\`/eval $1/gem;
+-print $code;
++# Purpose of these subroutines is to explicitly encode VIS instructions,
++# so that one can compile the module without having to specify VIS
++# extentions on compiler command line, e.g. -xarch=v9 vs. -xarch=v9a.
++# Idea is to reserve for option to produce "universal" binary and let
++# programmer detect if current CPU is VIS capable at run-time.
++sub unvis {
++my ($mnemonic,$rs1,$rs2,$rd)=@_;
++my $ref,$opf;
++my %visopf = (	"faligndata"	=> 0x048,
++		"for"		=> 0x07c	);
++
++    $ref = "$mnemonic\t$rs1,$rs2,$rd";
++
++    if ($opf=$visopf{$mnemonic}) {
++	foreach ($rs1,$rs2,$rd) {
++	    return $ref if (!/%f([0-9]{1,2})/);
++	    $_=$1;
++	    if ($1>=32) {
++		return $ref if ($1&1);
++		# re-encode for upper double register addressing
++		$_=($1|$1>>5)&31;
++	    }
++	}
++
++	return	sprintf ".word\t0x%08x !%s",
++			0x81b00000|$rd<<25|$rs1<<14|$opf<<5|$rs2,
++			$ref;
++    } else {
++	return $ref;
++    }
++}
++sub unalignaddr {
++my ($mnemonic,$rs1,$rs2,$rd)=@_;
++my %bias = ( "g" => 0, "o" => 8, "l" => 16, "i" => 24 );
++my $ref="$mnemonic\t$rs1,$rs2,$rd";
++
++    foreach ($rs1,$rs2,$rd) {
++	if (/%([goli])([0-7])/)	{ $_=$bias{$1}+$2; }
++	else			{ return $ref; }
++    }
++    return  sprintf ".word\t0x%08x !%s",
++		    0x81b00300|$rd<<25|$rs1<<14|$rs2,
++		    $ref;
++}
++
++foreach (split("\n",$code)) {
++	s/\`([^\`]*)\`/eval $1/ge;
++
++	s/\b(f[^\s]*)\s+(%f[0-9]{1,2}),\s*(%f[0-9]{1,2}),\s*(%f[0-9]{1,2})/
++		&unvis($1,$2,$3,$4)
++	 /ge;
++	s/\b(alignaddr)\s+(%[goli][0-7]),\s*(%[goli][0-7]),\s*(%[goli][0-7])/
++		&unalignaddr($1,$2,$3,$4)
++	 /ge;
++
++	print $_,"\n";
++}
++
+ close STDOUT;
+Index: openssl/apps/speed.c
+===================================================================
+diff -ru openssl-1.0.1e/apps/spped.c openssl-1.0.1e/apps/speed.c
+--- openssl-1.0.1e/apps/speed.c 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/apps/spped.c 2011-07-27 10:48:17.817470000 -0700
+@@ -1551,7 +1551,7 @@
+ 			print_message(names[D_MD5],c[D_MD5][j],lengths[j]);
+ 			Time_F(START);
+ 			for (count=0,run=1; COND(c[D_MD5][j]); count++)
+-				EVP_Digest(&(buf[0]),(unsigned long)lengths[j],&(md5[0]),NULL,EVP_get_digestbyname("md5"),NULL);
++				MD5(buf,lengths[j],md5);
+ 			d=Time_F(STOP);
+ 			print_result(D_MD5,j,count,d);
+ 			}
+@@ -1591,7 +1591,7 @@
+ 			print_message(names[D_SHA1],c[D_SHA1][j],lengths[j]);
+ 			Time_F(START);
+ 			for (count=0,run=1; COND(c[D_SHA1][j]); count++)
+-				EVP_Digest(buf,(unsigned long)lengths[j],&(sha[0]),NULL,EVP_sha1(),NULL);
++				SHA1(buf,lengths[j],sha);
+ 			d=Time_F(STOP);
+ 			print_result(D_SHA1,j,count,d);
+ 			}

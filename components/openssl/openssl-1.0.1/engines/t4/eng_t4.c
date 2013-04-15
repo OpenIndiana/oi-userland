@@ -168,12 +168,8 @@ static int t4_bind(ENGINE *e);
 static t4_cipher_id get_cipher_index_by_nid(int nid);
 #pragma inline(get_cipher_index_by_nid)
 static void t4_instructions_present(_Bool *aes_present, _Bool *des_present,
-    _Bool *digest_present, _Bool *montmul_present);
+    _Bool *montmul_present);
 #pragma inline(t4_instructions_present)
-
-/* Digest registration function. Called by ENGINE_set_ciphers() */
-int t4_get_all_digests(ENGINE *e, const EVP_MD **digest,
-    const int **nids, int nid);
 
 /* RSA_METHOD structure used by ENGINE_set_RSA() */
 extern RSA_METHOD *t4_RSA(void);
@@ -402,168 +398,29 @@ extern const EVP_CIPHER t4_des3_ecb;
 
 
 /*
- * Message Digest variables
- */
-static const int t4_digest_nids[] = {
-#ifndef	OPENSSL_NO_MD5
-	NID_md5,
-#endif
-#ifndef	OPENSSL_NO_SHA
-#ifndef	OPENSSL_NO_SHA1
-	NID_sha1,
-#endif
-#ifndef	OPENSSL_NO_SHA256
-	NID_sha224,
-	NID_sha256,
-#endif
-#ifndef	OPENSSL_NO_SHA512
-	NID_sha384,
-	NID_sha512,
-#endif
-#endif	/* !OPENSSL_NO_SHA */
-};
-static const int t4_digest_count =
-	(sizeof (t4_digest_nids) / sizeof (t4_digest_nids[0]));
-
-#ifndef	OPENSSL_NO_MD5
-extern const EVP_MD t4_md5;
-#endif
-#ifndef	OPENSSL_NO_SHA
-#ifndef	OPENSSL_NO_SHA1
-extern const EVP_MD t4_sha1;
-#endif
-#ifndef	OPENSSL_NO_SHA256
-extern const EVP_MD t4_sha224;
-extern const EVP_MD t4_sha256;
-#endif
-#ifndef	OPENSSL_NO_SHA512
-extern const EVP_MD t4_sha384;
-extern const EVP_MD t4_sha512;
-#endif
-#endif	/* !OPENSSL_NO_SHA */
-
-/*
- * Message Digest functions
- */
-
-/*
- * Registered by the ENGINE with ENGINE_set_digests().
- * Finds out how to deal with a particular digest NID in the ENGINE.
- */
-/* ARGSUSED */
-int
-t4_get_all_digests(ENGINE *e, const EVP_MD **digest,
-    const int **nids, int nid)
-{
-	if (digest == NULL) { /* return a list of all supported digests */
-		*nids = (t4_digest_count > 0) ? t4_digest_nids : NULL;
-		return (t4_digest_count);
-	}
-
-	switch (nid) {
-#ifndef	OPENSSL_NO_MD5
-	case NID_md5:
-		*digest = &t4_md5;
-		break;
-#endif
-#ifndef	OPENSSL_NO_SHA
-#ifndef	OPENSSL_NO_SHA1
-	/*
-	 * A special case. For "openssl dgst -dss1 ...",
-	 * OpenSSL calls EVP_get_digestbyname() on "dss1" which ends up
-	 * calling t4_get_all_digests() for NID_dsa. Internally, if an
-	 * engine is not used, OpenSSL uses SHA1_Init() as expected for
-	 * DSA. So, we must return t4_sha1 for NID_dsa as well. Note
-	 * that this must have changed between 0.9.8 and 1.0.0 since we
-	 * did not have the problem with the 0.9.8 version.
-	 */
-	case NID_dsa:
-	case NID_sha1:
-		*digest = &t4_sha1;
-		break;
-#endif
-#ifndef	OPENSSL_NO_SHA256
-	case NID_sha224:
-		*digest = &t4_sha224;
-		break;
-	case NID_sha256:
-		*digest = &t4_sha256;
-		break;
-#endif
-#ifndef	OPENSSL_NO_SHA512
-	case NID_sha384:
-		*digest = &t4_sha384;
-		break;
-	case NID_sha512:
-		*digest = &t4_sha512;
-		break;
-#endif
-#endif	/* !OPENSSL_NO_SHA */
-	default:
-		/* digest not supported */
-		*digest = NULL;
-		return (0);
-	}
-
-	return (1);
-}
-
-
-/*
  * Utility Functions
  */
 
 /*
- * Set aes_present, des_present, digest_present and montmul_present
- * to B_FALSE or B_TRUE depending on
- * whether the current SPARC processor supports AES, DES,
- * MD5/SHA1/SHA256/SHA512 and MONTMUL, respectively.
+ * Set aes_present, des_present and montmul_present to B_FALSE or B_TRUE
+ * depending on whether the current SPARC processor supports AES, DES
+ * and MONTMUL, respectively.
  */
 static void
 t4_instructions_present(_Bool *aes_present, _Bool *des_present,
-    _Bool *digest_present, _Bool *montmul_present)
+    _Bool *montmul_present)
 {
 #ifdef	OPENSSL_NO_DES
 #undef	AV_SPARC_DES
 #define	AV_SPARC_DES	0
 #endif
-#ifdef	OPENSSL_NO_MD5
-#undef	AV_SPARC_MD5
-#define	AV_SPARC_MD5	0
-#endif
-#ifndef	OPENSSL_NO_SHA
-#ifdef	OPENSSL_NO_SHA1
-#undef	AV_SPARC_SHA1
-#define	AV_SPARC_SHA1	0
-#endif
-#ifdef	OPENSSL_NO_SHA256
-#undef	AV_SPARC_SHA256
-#define	AV_SPARC_SHA256	0
-#endif
-#ifdef	OPENSSL_NO_SHA512
-#undef	AV_SPARC_SHA512
-#define	AV_SPARC_SHA512	0
-#endif
-#else
-#undef	AV_SPARC_SHA1
-#undef	AV_SPARC_SHA256
-#undef	AV_SPARC_SHA512
-#define	AV_SPARC_SHA1	0
-#define	AV_SPARC_SHA256	0
-#define	AV_SPARC_SHA512	0
-#endif	/* !OPENSSL_NO_SHA */
-
-#define	DIGEST_MASK	(AV_SPARC_MD5 | AV_SPARC_SHA1 | AV_SPARC_SHA256 | \
-	AV_SPARC_SHA512)
 	uint_t		ui;
 
 	(void) getisax(&ui, 1);
 	*aes_present = ((ui & AV_SPARC_AES) != 0);
 	*des_present = ((ui & AV_SPARC_DES) != 0);
-	*digest_present = ((ui & DIGEST_MASK) == DIGEST_MASK);
 	*montmul_present = ((ui & AV_SPARC_MONT) != 0);
 }
-
 
 
 /*
@@ -933,14 +790,12 @@ t4_destroy(ENGINE *e)
 static int
 t4_bind(ENGINE *e)
 {
-	_Bool aes_engage, digest_engage, des_engage, montmul_engage;
+	_Bool aes_engage, des_engage, montmul_engage;
 
-	t4_instructions_present(&aes_engage, &des_engage, &digest_engage,
-	    &montmul_engage);
+	t4_instructions_present(&aes_engage, &des_engage, &montmul_engage);
 #ifdef	DEBUG_T4
 	(void) fprintf(stderr,
-	    "t4_bind: engage aes=%d, des=%d, digest=%d\n",
-	    aes_engage, des_engage, digest_engage);
+	    "t4_bind: engage aes=%d, des=%d\n", aes_engage, des_engage);
 #endif
 #ifndef	OPENSSL_NO_DES
 	if (!des_engage) { /* Remove DES ciphers from list */
@@ -963,7 +818,6 @@ t4_bind(ENGINE *e)
 	    aes_engage ? ENGINE_T4_NAME: ENGINE_NO_T4_NAME) ||
 	    !ENGINE_set_init_function(e, t4_init) ||
 	    (aes_engage && !ENGINE_set_ciphers(e, t4_get_all_ciphers)) ||
-	    (digest_engage && !ENGINE_set_digests(e, t4_get_all_digests)) ||
 #ifndef OPENSSL_NO_RSA
 	    (montmul_engage && !ENGINE_set_RSA(e, t4_RSA())) ||
 #endif	/* OPENSSL_NO_RSA */
