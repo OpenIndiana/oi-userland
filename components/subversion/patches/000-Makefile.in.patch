@@ -1,5 +1,5 @@
 --- Makefile.in	2011-07-16 04:50:53.000000000 -0700
-+++ Makefile.in	2012-05-21 19:46:33.032512405 -0700
++++ Makefile.in	2013-03-21 09:03:57.096238407 -0700
 @@ -85,8 +85,8 @@
  swig_rb_libdir = @libdir@
  
@@ -11,11 +11,13 @@
  swig_pldir = @libdir@/svn-perl
  swig_rbdir = $(SWIG_RB_SITE_ARCH_DIR)/svn/ext
  toolsdir = @bindir@/svn-tools
-@@ -135,7 +135,7 @@
+@@ -134,8 +134,8 @@
+ SWIG = @SWIG@
  SWIG_PY_INCLUDES = @SWIG_PY_INCLUDES@ -I$(SWIG_SRC_DIR)/python/libsvn_swig_py
  SWIG_PY_COMPILE = @SWIG_PY_COMPILE@
- SWIG_PY_LINK = @SWIG_PY_LINK@
+-SWIG_PY_LINK = @SWIG_PY_LINK@
 -SWIG_PY_LIBS = @SWIG_PY_LIBS@
++SWIG_PY_LINK = @SWIG_PY_LINK@ $(CFLAGS) $(EXTRA_CFLAGS)
 +SWIG_PY_LIBS = @SWIG_PY_LIBS@ $(SVN_APR_LIBS) $(SVN_APRUTIL_LIBS)
  SWIG_PL_INCLUDES = @SWIG_PL_INCLUDES@
  SWIG_RB_INCLUDES = @SWIG_RB_INCLUDES@ -I$(SWIG_SRC_DIR)/ruby/libsvn_swig_ruby

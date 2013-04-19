@@ -1,0 +1,92 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr/perl5/5.16/man.+ -> default mangler.man.stability uncommitted>
+
+<transform file path=(usr/perl5/vendor_perl/5.16/)(SVN/.+) -> \
+	set action.hash %<\1>i86pc-solaris-64/%<\2> >
+
+<transform file path=(usr/perl5/vendor_perl/5.16/)(SVN/.+) -> \
+	set action.hash %<\1>sun4-solaris-64/%<\2> >
+
+set name=pkg.fmri value=pkg:/library/perl-516/subversion-64@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Perl 64-bit bindings for the Subversion SCM"
+set name=com.oracle.info.description value="the Perl 64-bit bindings for the Subversion SCM"
+set name=com.oracle.info.tpno value=9086
+set name=info.classification value="org.opensolaris.category.2008:Development/Source Code Management"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.arc-caseid \
+    value=PSARC/2006/563
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+# This package name has known conflicts with other packages in the WOS
+set pkg.linted.pkglint.manifest004=true
+
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Client/_Client.bs variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Client/_Client.so variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Core/_Core.bs variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Core/_Core.so pkg.depend.bypass-generate=.* variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Delta/_Delta.bs variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Delta/_Delta.so variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Fs/_Fs.bs variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Fs/_Fs.so variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Ra/_Ra.bs variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Ra/_Ra.so variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Repos/_Repos.bs variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Repos/_Repos.so variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Wc/_Wc.bs variant.arch=i386
+file path=usr/perl5/vendor_perl/5.16/i86pc-solaris-64/auto/SVN/_Wc/_Wc.so variant.arch=i386
+
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Client/_Client.bs variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Client/_Client.so variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Core/_Core.bs variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Core/_Core.so pkg.depend.bypass-generate=.* variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Delta/_Delta.bs variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Delta/_Delta.so variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Fs/_Fs.bs variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Fs/_Fs.so variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Ra/_Ra.bs variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Ra/_Ra.so variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Repos/_Repos.bs variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Repos/_Repos.so variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Wc/_Wc.bs variant.arch=sparc
+file path=usr/perl5/vendor_perl/5.16/sun4-solaris-64/auto/SVN/_Wc/_Wc.so variant.arch=sparc
+
+file path=usr/perl5/5.16/man/man3/SVN::Base.3
+file path=usr/perl5/5.16/man/man3/SVN::Client.3
+file path=usr/perl5/5.16/man/man3/SVN::Core.3
+file path=usr/perl5/5.16/man/man3/SVN::Delta.3
+file path=usr/perl5/5.16/man/man3/SVN::Fs.3
+file path=usr/perl5/5.16/man/man3/SVN::Ra.3
+file path=usr/perl5/5.16/man/man3/SVN::Repos.3
+file path=usr/perl5/5.16/man/man3/SVN::Wc.3
+
+file path=usr/lib/svn/$(MACH64)/libsvn_swig_perl-1.so.0.0.0
+
+link path=usr/lib/svn/$(MACH64)/libsvn_swig_perl-1.so \
+	  target=libsvn_swig_perl-1.so.0.0.0
+link path=usr/lib/svn/$(MACH64)/libsvn_swig_perl-1.so.0 \
+	  target=libsvn_swig_perl-1.so.0.0.0
+
+license subversion.license license="Apache v2.0"
+
