@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,17 +42,18 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 PATCH_LEVEL = 0
-
 PYMODS = client core delta fs ra repos wc
-
 PLMODS= Fs Core Wc Client Repos Ra Delta
-
 JAVA_ROOT = $(JAVA_HOME)
+PERL_VERSION.32 = 5.12
+PERL_VERSION.64 = 5.16
+PERL_VERSION = $(PERL_VERSION.$(BITS))
+PERL = $(PERL.$(PERL_VERSION))
+GNUCP = /usr/gnu/bin/cp
 
 # because we can't seem to get -norunpath to the java bindings build any
 # other way.
 CXX += $(studio_NORUNPATH)
-
 CFLAGS += -features=extensions
 CFLAGS += -xustr=ascii_utf16_ushort -xcsi
 CXXFLAGS += -features=nestedaccess,tmplife,tmplrefstatic
@@ -61,14 +62,24 @@ CXXFLAGS += -verbose=template
 CXXFLAGS += -xustr=ascii_utf16_ushort
 CXXFLAGS += $(CC_PIC)
 CXXFLAGS += -mt -D_REENTRANT -DNDEBUG -DSOLARIS
+CXXFLAGS += $(CPP_LARGEFILES)
 CFLAGS += `pkg-config --cflags neon`
 CFLAGS += $(CPP_LARGEFILES)
+
+PERL_VERSION_12 = 5.12
+PERL_VERSION_16 = 5.16
+PERL_ARCH_12_i386 = i86pc-solaris-64int
+PERL_ARCH_16_i386 = i86pc-solaris-64
+PERL_ARCH_12_sparc = sun4-solaris-64int
+PERL_ARCH_16_sparc = sun4-solaris-64
+PERL_ARCH_12 = $(PERL_ARCH_12_$(MACH))
+PERL_ARCH_16 = $(PERL_ARCH_16_$(MACH))
 
 # Let's write some post-configure hacks
 COMPONENT_POST_CONFIGURE_ACTION = \
     ( $(CLONEY) $(SOURCE_DIR) $(@D) ; \
     cd $(SOURCE_DIR) ; \
-	$(PYTHON) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_32)/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
+	$(PYTHON.$(BITS)) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_$(BITS))/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
 
 COMPONENT_BUILD_TARGETS = all swig-py swig-pl javahl
 COMPONENT_INSTALL_TARGETS = install install-lib \
@@ -82,19 +93,30 @@ CONFIGURE_ENV += CXX="$(CXX)"
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
-CONFIGURE_ENV += PYTHON="$(PYTHON)"
+CONFIGURE_ENV += PYTHON="$(PYTHON.$(BITS))"
 CONFIGURE_ENV += PYMODS="$(PYMODS)"
-CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES.$(BITS))"
 CONFIGURE_ENV += JAVA_ROOT="$(JAVA_ROOT)"
 CONFIGURE_ENV += PERL="$(PERL)"
 CONFIGURE_ENV += PLMODS="$(PLMODS)"
+CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
+
+LIBSVNDIR.32 = $(CONFIGURE_PREFIX)/lib/svn
+LIBSVNDIR.64 = $(CONFIGURE_PREFIX)/lib/svn/$(MACH64)
+
+APR-CONFIG.32 = /usr/apr/1.3/bin/apr-1-config
+APR-CONFIG.64 = /usr/apr/1.3/bin/$(MACH64)/apr-1-config
+APU-CONFIG.32 = /usr/apr-util/1.3/bin/apu-1-config
+APU-CONFIG.64 = /usr/apr-util/1.3/bin/$(MACH64)/apu-1-config
+APXS.32 = /usr/apache2/2.2/bin/apxs
+APXS.64 = /usr/apache2/2.2/bin/$(MACH64)/apxs
 
 # Let's make noise just because we have to override --libdir
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
 CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
-CONFIGURE_OPTIONS += --libdir=$(CONFIGURE_PREFIX)/lib/svn
+CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR.$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared 
 CONFIGURE_OPTIONS += --disable-static
@@ -112,13 +134,32 @@ CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
 CONFIGURE_OPTIONS += --with-swig
 CONFIGURE_OPTIONS += --with-neon=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
+CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
+CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
 
-# common targets - we only build 32-bit subversion
-build:		$(BUILD_32)
+# Swig overwrites the 32-bit directory with 64-bit objects.
+# So we work around that.
+COMPONENT_POST_INSTALL_ACTION += \
+    ( cd $(PROTOUSRLIBDIR)/python$(PYTHON_VERSION) ; \
+	$(RM) -rf vendor-packages-$(BITS) ; \
+	$(MV) vendor-packages vendor-packages-$(BITS) ; \
+	$(MKDIR) -p vendor-packages ; \
+	$(MKDIR) -p vendor-packages/64 ; \
+	if test -d vendor-packages-64 ; then \
+	    $(GNUCP) -rpd vendor-packages-64/libsvn vendor-packages/64/ ; \
+	    $(GNUCP) -rpd vendor-packages-64/svn vendor-packages/64/ ; \
+	    $(GNUCP) -rpd vendor-packages-32/libsvn vendor-packages/ ; \
+	    $(GNUCP) -rpd vendor-packages-32/svn vendor-packages/ ; \
+	fi ; )
 
-install:	$(INSTALL_32)
+ASLR_MODE=$(ASLR_ENABLE)
 
-test:		$(TEST_32)
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
+
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -36,7 +36,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).9
+IPS_COMPONENT_VERSION = $(COMPONENT_VERSION).45
 PATCH_LEVEL = 0
 
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/Solaris
@@ -49,6 +49,7 @@ studio_XREGS.sparc = -xregs=appl
 
 # 8 byte memory alignment + interpretation of non-alignment instead of SIGBUS
 studio_ALIGN.sparc.32 = -xmemalign=8i
+studio_ALIGN.sparc.64 = -xmemalign=16i
 
 # -xinline=%auto -- we like inlining where appropriate
 CFLAGS += -xinline=%auto
@@ -69,7 +70,7 @@ LIBS =	-lc -lsocket -lgen
 LDFLAGS =	$(LD_Z_REDLOCSYM)
 
 # The bash test harness needs the GNU userland utilities
-TEST_PATH = "PATH=$(BUILD_DIR_32):$(GNUBIN):$(USRBINDIR)"
+TEST_PATH = "PATH=$(BUILD_DIR_64):$(GNUBIN):$(USRBINDIR)"
 TEST_OUTPUT = $(COMPONENT_DIR)/bash_test_results_$(MACH).out
 
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
@@ -123,15 +124,19 @@ TEST_ENV +=	-i
 TEST_ENV +=	$(TEST_PATH)
 TEST_ENV +=	$(TARGET_ENV)
 
-build: $(BUILD_32)
+ASLR_MODE=$(ASLR_ENABLE)
 
-install: $(INSTALL_32)
+build: $(BUILD_64)
+
+install: $(INSTALL_64)
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
 	    cp -Rp "en@boldquot" en ; \
 	    cp -Rp "en@boldquot" en_CA ; \
 	    cp -Rp "en@boldquot" en_GB )
 
-test: $(TEST_32)
+test:
+	( cd $(BUILD_DIR_64) ; \
+	    env - $(TEST_PATH) && $(GMAKE) check > $(TEST_OUTPUT) 2>&1 )
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
