@@ -26,7 +26,8 @@ set name=pkg.fmri value=pkg:/file/mc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description \
     value="GNU Midnight Commander is a full-screen text mode application that allows user to copy, move and delete files and whole directory trees, search for files and run commands in the subshell"
 set name=pkg.summary value="The GNU Midnight Commander file manager"
-set name=com.oracle.info.description value="GNU Midnight Commander file manager"
+set name=com.oracle.info.description value="The GNU Midnight Commander file manager"
+set name=com.oracle.info.tpno value=13150
 set name=info.classification \
     value="org.opensolaris.category.2008:Desktop (GNOME)/File Managers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -92,9 +93,7 @@ file path=usr/share/mc/bin/mc-wrapper.csh
 file path=usr/share/mc/bin/mc-wrapper.sh
 file path=usr/share/mc/bin/mc.csh
 file path=usr/share/mc/bin/mc.sh
-file path=usr/share/mc/cedit.menu
 file path=usr/share/mc/edit.indent.rc
-file path=usr/share/mc/edit.spell.rc
 file path=usr/share/mc/extfs.d/README
 file path=usr/share/mc/extfs.d/README.extfs
 file path=usr/share/mc/extfs.d/a+ mode=0555
@@ -120,7 +119,7 @@ file path=usr/share/mc/extfs.d/ualz mode=0555
 file path=usr/share/mc/extfs.d/uar mode=0555
 file path=usr/share/mc/extfs.d/uarc mode=0555
 file path=usr/share/mc/extfs.d/uarj mode=0555
-file path=usr/share/mc/extfs.d/uc1541 mode=0555
+file path=usr/share/mc/extfs.d/uc1541 mode=0555 pkg.depend.bypass-generate=.*
 file path=usr/share/mc/extfs.d/ucab mode=0555
 file path=usr/share/mc/extfs.d/uha mode=0555
 file path=usr/share/mc/extfs.d/ulha mode=0555
@@ -145,6 +144,7 @@ file path=usr/share/mc/fish/send
 file path=usr/share/mc/fish/unlink
 file path=usr/share/mc/mc.charsets
 file path=usr/share/mc/mc.ext
+file path=usr/share/mc/mcedit.menu
 file path=usr/share/mc/hints/mc.hint
 file path=usr/share/mc/hints/mc.hint.cs
 file path=usr/share/mc/hints/mc.hint.es
@@ -164,8 +164,8 @@ file path=usr/share/mc/help/mc.hlp.pl
 file path=usr/share/mc/help/mc.hlp.ru
 file path=usr/share/mc/help/mc.hlp.sr
 file path=usr/share/mc/mc.keymap
-file path=usr/share/mc/mc.keymap.default
-file path=usr/share/mc/mc.keymap.emacs
+file path=usr/share/mc/mc.default.keymap
+file path=usr/share/mc/mc.emacs.keymap
 file path=usr/share/mc/mc.lib
 file path=usr/share/mc/mc.menu
 file path=usr/share/mc/mc.menu.sr
@@ -249,7 +249,7 @@ file path=usr/share/mc/syntax/vhdl.syntax
 file path=usr/share/mc/syntax/xml.syntax
 file path=usr/share/mc/syntax/yum-repo.syntax
 file path=usr/share/mc/syntax/yxx.syntax
-license mc.license license=GPLv2
+license mc.license license=GPLv3
 link path=usr/bin/mcdiff target=mc
 link path=usr/bin/mcedit target=mc
 link path=usr/bin/mcview target=mc

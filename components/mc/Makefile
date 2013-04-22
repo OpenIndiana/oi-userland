@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mc
-COMPONENT_VERSION=	4.7.5.2
+COMPONENT_VERSION=	4.8.8
 COMPONENT_PROJECT_URL=	http://www.midnight-commander.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:351f667d79d0045dedb3dd132ca770be3d51960627b2b0d0996d3cc8bab888f5
+    sha256:7b5e6f90e6709d1c1bcb4a2bf6d2a62b9494adef3ff4325ffdb3551c29e42a1c
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mc
 
@@ -50,6 +50,8 @@ CONFIGURE_OPTIONS += --with-screen=slang
 CONFIGURE_OPTIONS += "mc_cv_nroff_tascii="
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
+# Enable Address Space Layout Randomization
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32)
