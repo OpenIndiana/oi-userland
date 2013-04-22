@@ -19,17 +19,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.10.9
+COMPONENT_VERSION=      3.12.4
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:1d34630084eccfcc80c08065becdf9313fd8f5a09a4cf523dbd9d3ec724206b9
+    sha256:350375c78d79adf635a59a448b27b3fe9ab7ac622637c47125fe5f7d8a537fff
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hplip
 
@@ -39,7 +39,7 @@ include ../../make-rules/ips.mk
 
 # We need to be able to return from void functions
 CC += $(studio_FEATURES_EXTENSIONS)
-CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_LIBRARY_NONE)
+CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD) 
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
