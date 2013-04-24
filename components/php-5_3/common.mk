@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 PHP_REL=		5.3
@@ -149,6 +149,8 @@ CPPFLAGS += -I../CPPFLAGSTEST
 LIBS = -lsocket -lnsl -ldl -lposix4
 LD = $(CXX) $(studio_NORUNPATH)
 LDFLAGS += -L$(MYSQL_LIBDIR) -lrt -L$(IMAP_CLIENT_DIR)
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=	CPPFLAGS="$(CPPFLAGS)"

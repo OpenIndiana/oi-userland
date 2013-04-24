@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait seems to hang on libcmsysTestDynload.so.bc, so for
@@ -72,6 +72,8 @@ COMPONENT_BUILD_ENV +=	CXX="$(CXX)"
 COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"	
 COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"	
 COMPONENT_BUILD_TARGETS =	all
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # Need C and C++ compiler locations for cmake tests
 COMPONENT_TEST_ENV += CC="$(CC)"

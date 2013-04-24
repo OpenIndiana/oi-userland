@@ -80,6 +80,7 @@ CONFIGURE_OPTIONS +=    $(CONFIGURE_OPTIONS.$(MACH))
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Keep ASLR disabled (the default) for gcc 4.5; build often core dumps with ASLR
+ASLR_MODE = $(ASLR_DISABLE)
 
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 

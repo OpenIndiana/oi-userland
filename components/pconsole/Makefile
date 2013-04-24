@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -44,7 +44,8 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # -I argument needed to find the generated config.h file.
-CONFIGURE_ENV += "CC=$(CC) -I."
+# CC_BITS needed to ensure -m64 is used for 64-bit compile
+CONFIGURE_ENV += "CC=$(CC) -I. $(CC_BITS)"
 
 # If the configure options are not explicitly set, then configure fails with:
 # configure: warning: CC=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/cc: invalid host type
@@ -52,13 +53,15 @@ CONFIGURE_ENV += "CC=$(CC) -I."
 # configure: error: can only configure for one host and one target at a time
 CONFIGURE_OPTIONS = --prefix=$(CONFIGURE_PREFIX)
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # DESTDIR doesn't work correctly, so we specify some of the paths directly.
 COMPONENT_INSTALL_ARGS +=	prefix=$(PROTOUSRDIR)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

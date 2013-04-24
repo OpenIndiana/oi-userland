@@ -82,6 +82,7 @@ CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
 # ASLR should remain disabled for emacs (the default); 
 # build consistently core dumps with ASLR
+ASLR_MODE = $(ASLR_DISABLE)
 
 # variant specific configure options
 $(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-x
