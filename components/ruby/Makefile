@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -118,6 +118,8 @@ LD_B_DIRECT=
 # don't use LD_Z_IGNORE: causes ruby linker problems with 
 # unreferenced symbol tgetent in libreadline, similar to CR #6919344
 LD_Z_IGNORE=
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 CONFIGURE_PREFIX =	$(USRDIR)/$(COMPONENT_NAME)/$(RUBY_VER)
 CONFIGURE_OPTIONS += $(DTRACE_FLAG)
