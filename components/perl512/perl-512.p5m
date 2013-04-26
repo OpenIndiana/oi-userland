@@ -50,7 +50,7 @@ file path=usr/perl5/$(PERL_VERSION)/bin/h2ph
 file path=usr/perl5/$(PERL_VERSION)/bin/h2xs
 file path=usr/perl5/$(PERL_VERSION)/bin/instmodsh
 file path=usr/perl5/$(PERL_VERSION)/bin/libnetcfg
-file path=usr/perl5/$(PERL_VERSION)/bin/perl$(COMPONENT_VERSION)
+file build/$(MACH32)-st/perl path=usr/perl5/$(PERL_VERSION)/bin/perl$(COMPONENT_VERSION)
 file path=usr/perl5/$(PERL_VERSION)/bin/perlbug
 file path=usr/perl5/$(PERL_VERSION)/bin/perldoc
 file path=usr/perl5/$(PERL_VERSION)/bin/perlivp
@@ -202,6 +202,8 @@ file \
 file path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/Cwd.pm
 file \
     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/Data/Dumper.pm
+file \
+    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/DB_File.pm
 file \
     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/Devel/DProf.pm
 file \
@@ -381,6 +383,10 @@ file \
     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/auto/Cwd/Cwd.so
 file \
     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/auto/Data/Dumper/Dumper.so
+file \
+    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/auto/DB_File/autosplit.ix
+file \
+    path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/auto/DB_File/DB_File.so
 file \
     path=usr/perl5/$(PERL_VERSION)/lib/$(PERL_ARCH)-solaris-64int/auto/Devel/DProf/DProf.so
 file \
@@ -1461,6 +1467,7 @@ file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl5121delta.pod
 file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl5122delta.pod
 file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl5123delta.pod
 file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl5124delta.pod
+file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl5125delta.pod
 file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl561delta.pod
 file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl56delta.pod
 file path=usr/perl5/$(PERL_VERSION)/lib/pod/perl570delta.pod
@@ -2556,6 +2563,7 @@ file path=usr/perl5/$(PERL_VERSION)/man/man1/perl5121delta.1
 file path=usr/perl5/$(PERL_VERSION)/man/man1/perl5122delta.1
 file path=usr/perl5/$(PERL_VERSION)/man/man1/perl5123delta.1
 file path=usr/perl5/$(PERL_VERSION)/man/man1/perl5124delta.1
+file path=usr/perl5/$(PERL_VERSION)/man/man1/perl5125delta.1
 file path=usr/perl5/$(PERL_VERSION)/man/man1/perl561delta.1
 file path=usr/perl5/$(PERL_VERSION)/man/man1/perl56delta.1
 file path=usr/perl5/$(PERL_VERSION)/man/man1/perl570delta.1
@@ -2836,6 +2844,7 @@ file path=usr/perl5/$(PERL_VERSION)/man/man3/DBM_Filter::int32.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/DBM_Filter::null.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/DBM_Filter::utf8.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Data::Dumper.3
+file path=usr/perl5/$(PERL_VERSION)/man/man3/DB_File.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Devel::DProf.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Devel::InnerPackage.3
 file path=usr/perl5/$(PERL_VERSION)/man/man3/Devel::PPPort.3
@@ -3305,7 +3314,7 @@ hardlink path=usr/perl5/$(PERL_VERSION)/man/man1/s2p.1 target=psed.1
 # This link is always mediated.
 # Customers may customize this link by creating their own IPS
 # packages with mediated links.
-link path=usr/bin/perl target=../perl5/5.12/bin/perl \
+link path=usr/bin/perl target=../perl5/$(PERL_VERSION)/bin/perl \
     mediator=perl mediator-version=5.12 mediator-priority=vendor
 
 link path=usr/perl5/bin target=5.12/bin
