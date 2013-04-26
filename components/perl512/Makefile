@@ -91,6 +91,9 @@ CONFIGURE_OPTIONS = \
 			    -O \
 			    -de
 
+CONFIGURE_THREAD_OPTIONS =  -Dusethreads \
+			    -Duseithreads
+
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D); \
 	    cp config.sh config.sh_orig ; \
@@ -115,6 +118,22 @@ PKG_MACROS		+=	PERL_VERSION=$(PERL_VERSION)
 # perl's config.
 #
 COMPONENT_BUILD_ENV	+=	PATH=$(dir $(CC.studio.32)):$(PATH)
+
+# ST=single-thread.  MT=multi-thread.  The only difference in the build is that
+# $(CONFIGURE_THREAD_OPTIONS) gets added to $(CONFIGURE_OPTIONS) in the MT case.
+#
+ST_VARIANT =	$(BUILD_DIR)/$(MACH32)-st
+MT_VARIANT =	$(BUILD_DIR)/$(MACH32)-mt
+
+VARIANTS =	$(MT_VARIANT) $(ST_VARIANT)
+
+$(VARIANTS:%=%/.configured):	BITS=32
+
+$(MT_VARIANT)/.configured:	CONFIGURE_OPTIONS += $(CONFIGURE_THREAD_OPTIONS)
+
+BUILD_32 =	$(VARIANTS:%=%/.built)
+INSTALL_32 =	$(VARIANTS:%=%/.installed)
+TEST_32 =	$(VARIANTS:%=%/.tested)
 
 build:		$(BUILD_32)
 
