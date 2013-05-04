@@ -119,7 +119,10 @@ LD_B_DIRECT=
 # unreferenced symbol tgetent in libreadline, similar to CR #6919344
 LD_Z_IGNORE=
 
-ASLR_MODE = $(ASLR_ENABLE)
+# keep ASLR disabled:
+# when building ruby, miniruby (used for boot-strapping ruby) may
+# core dump on sparc with ASLR enabled
+ASLR_MODE = $(ASLR_DISABLE)
 
 CONFIGURE_PREFIX =	$(USRDIR)/$(COMPONENT_NAME)/$(RUBY_VER)
 CONFIGURE_OPTIONS += $(DTRACE_FLAG)
