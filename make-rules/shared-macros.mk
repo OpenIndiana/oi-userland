@@ -82,7 +82,7 @@ PKG_SOLARIS_VERSION ?= 5.12
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
-COMPILER =		studio
+COMPILER =		gcc
 BITS =			32
 PYTHON_VERSION =	2.6
 PYTHON_VERSIONS =	2.7 2.6
