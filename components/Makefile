@@ -34,7 +34,9 @@ include ../make-rules/shared-macros.mk
 components.mk:	# Makefile # $(WS_TOP)/components
 	@echo "Generating component list..."
 	@$(BASS_O_MATIC) --workspace=$(WS_TOP) --components=paths \
-		| sed -e 's;^$(shell pwd)/;COMPONENT_DIRS += ;g' >$@
+		| sed -e 's;^$(shell pwd)/;;' \
+		| sed -f components.ignore \
+		| sed -e 's;^;COMPONENT_DIRS += ;g' >$@
 
 -include components.mk
 
@@ -43,7 +45,9 @@ components.mk:	# Makefile # $(WS_TOP)/components
 depends.mk:     components.mk
 	@echo "Generating component dependencies..."
 	@cat $(shell $(BASS_O_MATIC) --workspace=$(WS_TOP) --components=paths \
-		| sed -e 's;^$(shell pwd)/;;g' -e 's;$$;/depend.mk;g') >$@ \
+		| sed -e 's;^$(shell pwd)/;;g' \
+		| sed -f components.ignore \
+		| sed -e 's;$$;/depend.mk;g') >$@ \
 		2>/dev/null
  
 -include depends.mk
@@ -92,7 +96,8 @@ $(WS_LOGS):
 $(WS_REPO):
 	$(PKGREPO) create $(PKG_REPO)
 	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER)
-	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER_LOCALIZABLE)
+# Not required for OI
+#	$(PKGREPO) add-publisher -s $(PKG_REPO) $(PUBLISHER_LOCALIZABLE)
 
 DUMMYPKG =  "set name=fmri value=pkg:/dummy@0,$(BUILD_VERSION)\n"
 DUMMYPKG += "set pkg.summary=dummy\n"

@@ -35,8 +35,8 @@ PKGMOGRIFY =	/usr/bin/pkgmogrify
 COMPONENT_NAME=		"Package History"
 COMPONENT_BUGDB=	gate-stuff/userland
 
-CANONICAL_MANIFESTS =	$(wildcard *.p5m)
-ARCH_MANIFESTS =	$(wildcard *.p5m.$(MACH))
+CANONICAL_MANIFESTS =	$(shell ls *.p5m | sed -f manifests.ignore)
+ARCH_MANIFESTS =	$(shell ls *.p5m.$(MACH) | sed -f manifests.ignore)
 GENERATED_ARCH_MANIFESTS =	$(ARCH_MANIFESTS:%.p5m.$(MACH)=%.p5m)
 CANONICAL_MANIFESTS +=  $(GENERATED_ARCH_MANIFESTS)
 
@@ -58,9 +58,9 @@ $(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.mogrified $(BUILD_DIR)
 	$(CP) $< $@
 
 $(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(BUILD_DIR)
-	$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
-		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
-			-f $(WS_TOOLS)/pkglintrc $(MOGRIFIED)
+#	$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
+#		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
+#			-f $(WS_TOOLS)/pkglintrc $(MOGRIFIED)
 	$(TOUCH) $@
 
 $(BUILD_DIR)/.published-$(MACH): $(BUILD_DIR)/.linted-$(MACH) $(PUBLISHED)
