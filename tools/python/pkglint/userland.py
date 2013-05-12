@@ -379,7 +379,8 @@ class UserlandActionChecker(base.ActionChecker):
 				if result != None:
 					engine.error(result % path, 
 						msgid="%s%s.3" % (self.name, pkglint_id))
-				result = self.__elf_aslr_check(fullpath, engine)
+				# illumos does not support ASLR
+				#result = self.__elf_aslr_check(fullpath, engine)
 
 	file_action.pkglint_desc = _("Paths should exist in the proto area.")
 
