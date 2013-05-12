@@ -78,7 +78,7 @@ ROOT =			/
 OS_VERSION :=		$(shell uname -r)
 SOLARIS_VERSION =	$(OS_VERSION:5.%=2.%)
 # Target OS version
-PKG_SOLARIS_VERSION ?= 5.12
+PKG_SOLARIS_VERSION ?= 5.11
 
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
