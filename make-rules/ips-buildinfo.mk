@@ -78,8 +78,9 @@ NIGHTLYID ?= 1
 # Branch Identifier.  Used in the version section of the package name to
 # identify the operating system branch that the package was produced for.
 #
-BRANCHID ?= \
-    $(PKG_SOLARIS_VERSION).$(UPDATENUM).$(SRUNUM).$(PLATNUM).$(BUILDID).$(NIGHTLYID)
+#BRANCHID ?= \
+#    $(PKG_SOLARIS_VERSION).$(UPDATENUM).$(SRUNUM).$(PLATNUM).$(BUILDID).$(NIGHTLYID)
+BRANCHID ?= 0.151.1.8.1
 
 #
 # Build Version.  Used in the version section of the package name to identify
@@ -89,5 +90,5 @@ BUILD_VERSION ?=  $(PKG_SOLARIS_VERSION)-$(BRANCHID)
 
 # Set a default reference repository against which pkglint is run, in case it
 # hasn't been set in the environment.
-CANONICAL_REPO ?=		http://ipkg.us.oracle.com/solaris12/dev/
+#CANONICAL_REPO ?=		http://ipkg.us.oracle.com/solaris12/dev/
 
