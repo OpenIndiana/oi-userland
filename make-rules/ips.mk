@@ -245,7 +245,8 @@ $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 # These files should contain a list of packages that the component is known to
 # depend on.  Using resolve.deps is not required, but significantly speeds up
 # the "pkg resolve" step.
-EXTDEPFILES = $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
+# XXX existing pkg5 is too old for that
+#EXTDEPFILES = $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
 
 # This is a target that should only be run by hand, and not something that
 # .resolved-$(MACH) should depend on.
