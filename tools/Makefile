@@ -23,8 +23,9 @@
 
 include ../make-rules/shared-macros.mk
 
-download setup prep build install publish \
-validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
+#download setup prep build install publish \
+#validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
+download setup prep build install publish validate: pkglint
 
 # generate wrappers for parfait. we need to generate them
 # with the correct compiler variables from the common makefiles because
