@@ -29,34 +29,42 @@ set name=pkg.description \
     value="Squid is a caching proxy for the Web supporting HTTP, HTTPS, FTP, and more."
 set name=pkg.summary value="Squid Web Proxy Cache"
 set name=com.oracle.info.description value="the Squid Web Proxy Cache"
-set name=com.oracle.info.tpno value=9044
+set name=com.oracle.info.tpno value=13323
 set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2009/130
+set name=org.opensolaris.arc-caseid value=LSARC/2009/130
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license squid.license license=GPLv2
+
+# smf stuff to control start/stop of squid
+file files/http-squid path=lib/svc/method/http-squid \
+     restart_fmri=svc:/network/http:squid
+file files/http-squid.xml path=lib/svc/manifest/network/http-squid.xml
+
+# special attributes
+file path=etc/squid/cachemgr.conf group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/cachemgr.conf preserve=renamenew
+file path=etc/squid/mime.conf group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/mime.conf preserve=renamenew
+file path=etc/squid/msntauth.conf group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/msntauth.conf preserve=renamenew
+file path=etc/squid/squid.conf group=webservd mode=0644 \
+    original_name=SUNWsquid:etc/squid/squid.conf preserve=renamenew
 dir path=var/squid/cache group=webservd owner=webservd mode=0755
 dir path=var/squid/logs group=webservd owner=webservd mode=0755
 dir path=var/squid/run group=webservd owner=webservd mode=0755
-file path=etc/squid/cachemgr.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/cachemgr.conf preserve=renamenew
+
+# from here on files have no modified attributes
 file path=etc/squid/cachemgr.conf.default
 file path=etc/squid/errorpage.css
 file path=etc/squid/errorpage.css.default
-file path=etc/squid/mime.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/mime.conf preserve=renamenew
 file path=etc/squid/mime.conf.default
-file path=etc/squid/msntauth.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/msntauth.conf preserve=renamenew
 file path=etc/squid/msntauth.conf.default
-file path=etc/squid/squid.conf group=webservd mode=0644 \
-    original_name=SUNWsquid:etc/squid/squid.conf preserve=renamenew
 file path=etc/squid/squid.conf.default
 file path=etc/squid/squid.conf.documented
-file http-squid.xml path=lib/svc/manifest/network/http-squid.xml
-file http-squid path=lib/svc/method/http-squid
 file path=usr/squid/bin/squidclient
 file path=usr/squid/libexec/cachemgr.cgi
 file path=usr/squid/libexec/digest_ldap_auth
@@ -100,6 +108,9 @@ file path=usr/squid/sbin/squid
 file path=usr/squid/share/errors/COPYRIGHT
 file path=usr/squid/share/errors/TRANSLATORS
 file path=usr/squid/share/errors/af/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/af/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/af/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/af/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/af/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/af/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/af/ERR_CANNOT_FORWARD
@@ -136,7 +147,27 @@ file path=usr/squid/share/errors/af/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/af/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/af/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/af/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/af/error-details.txt
+link path=usr/squid/share/errors/ar-ae target=ar
+link path=usr/squid/share/errors/ar-bh target=ar
+link path=usr/squid/share/errors/ar-dz target=ar
+link path=usr/squid/share/errors/ar-eg target=ar
+link path=usr/squid/share/errors/ar-iq target=ar
+link path=usr/squid/share/errors/ar-jo target=ar
+link path=usr/squid/share/errors/ar-kw target=ar
+link path=usr/squid/share/errors/ar-lb target=ar
+link path=usr/squid/share/errors/ar-ly target=ar
+link path=usr/squid/share/errors/ar-ma target=ar
+link path=usr/squid/share/errors/ar-om target=ar
+link path=usr/squid/share/errors/ar-qa target=ar
+link path=usr/squid/share/errors/ar-sa target=ar
+link path=usr/squid/share/errors/ar-sy target=ar
+link path=usr/squid/share/errors/ar-tn target=ar
+link path=usr/squid/share/errors/ar-ye target=ar
 file path=usr/squid/share/errors/ar/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/ar/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/ar/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/ar/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/ar/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/ar/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/ar/ERR_CANNOT_FORWARD
@@ -173,7 +204,12 @@ file path=usr/squid/share/errors/ar/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/ar/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/ar/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/ar/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/ar/error-details.txt
+link path=usr/squid/share/errors/az-az target=az
 file path=usr/squid/share/errors/az/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/az/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/az/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/az/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/az/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/az/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/az/ERR_CANNOT_FORWARD
@@ -210,7 +246,12 @@ file path=usr/squid/share/errors/az/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/az/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/az/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/az/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/az/error-details.txt
+link path=usr/squid/share/errors/bg-bg target=bg
 file path=usr/squid/share/errors/bg/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/bg/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/bg/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/bg/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/bg/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/bg/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/bg/ERR_CANNOT_FORWARD
@@ -247,7 +288,11 @@ file path=usr/squid/share/errors/bg/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/bg/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/bg/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/bg/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/bg/error-details.txt
 file path=usr/squid/share/errors/ca/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/ca/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/ca/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/ca/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/ca/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/ca/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/ca/ERR_CANNOT_FORWARD
@@ -284,7 +329,12 @@ file path=usr/squid/share/errors/ca/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/ca/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/ca/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/ca/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/ca/error-details.txt
+link path=usr/squid/share/errors/cs-cz target=cs
 file path=usr/squid/share/errors/cs/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/cs/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/cs/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/cs/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/cs/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/cs/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/cs/ERR_CANNOT_FORWARD
@@ -321,7 +371,12 @@ file path=usr/squid/share/errors/cs/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/cs/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/cs/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/cs/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/cs/error-details.txt
+link path=usr/squid/share/errors/da-dk target=da
 file path=usr/squid/share/errors/da/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/da/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/da/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/da/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/da/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/da/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/da/ERR_CANNOT_FORWARD
@@ -358,7 +413,16 @@ file path=usr/squid/share/errors/da/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/da/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/da/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/da/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/da/error-details.txt
+link path=usr/squid/share/errors/de-at target=de
+link path=usr/squid/share/errors/de-ch target=de
+link path=usr/squid/share/errors/de-de target=de
+link path=usr/squid/share/errors/de-li target=de
+link path=usr/squid/share/errors/de-lu target=de
 file path=usr/squid/share/errors/de/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/de/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/de/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/de/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/de/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/de/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/de/ERR_CANNOT_FORWARD
@@ -395,7 +459,12 @@ file path=usr/squid/share/errors/de/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/de/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/de/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/de/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/de/error-details.txt
+link path=usr/squid/share/errors/el-gr target=el
 file path=usr/squid/share/errors/el/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/el/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/el/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/el/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/el/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/el/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/el/ERR_CANNOT_FORWARD
@@ -432,7 +501,26 @@ file path=usr/squid/share/errors/el/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/el/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/el/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/el/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/el/error-details.txt
+link path=usr/squid/share/errors/en-au target=en
+link path=usr/squid/share/errors/en-bz target=en
+link path=usr/squid/share/errors/en-ca target=en
+link path=usr/squid/share/errors/en-gb target=en
+link path=usr/squid/share/errors/en-ie target=en
+link path=usr/squid/share/errors/en-in target=en
+link path=usr/squid/share/errors/en-jm target=en
+link path=usr/squid/share/errors/en-nz target=en
+link path=usr/squid/share/errors/en-ph target=en
+link path=usr/squid/share/errors/en-sg target=en
+link path=usr/squid/share/errors/en-tt target=en
+link path=usr/squid/share/errors/en-uk target=en
+link path=usr/squid/share/errors/en-us target=en
+link path=usr/squid/share/errors/en-za target=en
+link path=usr/squid/share/errors/en-zw target=en
 file path=usr/squid/share/errors/en/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/en/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/en/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/en/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/en/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/en/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/en/ERR_CANNOT_FORWARD
@@ -469,7 +557,30 @@ file path=usr/squid/share/errors/en/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/en/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/en/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/en/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/en/error-details.txt
+link path=usr/squid/share/errors/es-ar target=es
+link path=usr/squid/share/errors/es-bo target=es
+link path=usr/squid/share/errors/es-cl target=es
+link path=usr/squid/share/errors/es-co target=es
+link path=usr/squid/share/errors/es-cr target=es
+link path=usr/squid/share/errors/es-do target=es
+link path=usr/squid/share/errors/es-ec target=es
+link path=usr/squid/share/errors/es-es target=es
+link path=usr/squid/share/errors/es-gt target=es
+link path=usr/squid/share/errors/es-hn target=es
+link path=usr/squid/share/errors/es-mx target=es
+link path=usr/squid/share/errors/es-ni target=es
+link path=usr/squid/share/errors/es-pa target=es
+link path=usr/squid/share/errors/es-pe target=es
+link path=usr/squid/share/errors/es-pr target=es
+link path=usr/squid/share/errors/es-py target=es
+link path=usr/squid/share/errors/es-sv target=es
+link path=usr/squid/share/errors/es-uy target=es
+link path=usr/squid/share/errors/es-ve target=es
 file path=usr/squid/share/errors/es/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/es/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/es/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/es/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/es/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/es/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/es/ERR_CANNOT_FORWARD
@@ -506,7 +617,12 @@ file path=usr/squid/share/errors/es/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/es/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/es/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/es/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/es/error-details.txt
+link path=usr/squid/share/errors/et-ee target=et
 file path=usr/squid/share/errors/et/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/et/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/et/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/et/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/et/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/et/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/et/ERR_CANNOT_FORWARD
@@ -543,7 +659,13 @@ file path=usr/squid/share/errors/et/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/et/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/et/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/et/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/et/error-details.txt
+link path=usr/squid/share/errors/fa-fa target=fa
+link path=usr/squid/share/errors/fa-ir target=fa
 file path=usr/squid/share/errors/fa/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/fa/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/fa/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/fa/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/fa/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/fa/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/fa/ERR_CANNOT_FORWARD
@@ -580,7 +702,12 @@ file path=usr/squid/share/errors/fa/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/fa/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/fa/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/fa/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/fa/error-details.txt
+link path=usr/squid/share/errors/fi-fi target=fi
 file path=usr/squid/share/errors/fi/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/fi/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/fi/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/fi/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/fi/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/fi/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/fi/ERR_CANNOT_FORWARD
@@ -617,7 +744,17 @@ file path=usr/squid/share/errors/fi/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/fi/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/fi/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/fi/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/fi/error-details.txt
+link path=usr/squid/share/errors/fr-be target=fr
+link path=usr/squid/share/errors/fr-ca target=fr
+link path=usr/squid/share/errors/fr-ch target=fr
+link path=usr/squid/share/errors/fr-fr target=fr
+link path=usr/squid/share/errors/fr-lu target=fr
+link path=usr/squid/share/errors/fr-mc target=fr
 file path=usr/squid/share/errors/fr/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/fr/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/fr/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/fr/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/fr/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/fr/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/fr/ERR_CANNOT_FORWARD
@@ -654,7 +791,12 @@ file path=usr/squid/share/errors/fr/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/fr/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/fr/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/fr/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/fr/error-details.txt
+link path=usr/squid/share/errors/he-il target=he
 file path=usr/squid/share/errors/he/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/he/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/he/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/he/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/he/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/he/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/he/ERR_CANNOT_FORWARD
@@ -691,7 +833,12 @@ file path=usr/squid/share/errors/he/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/he/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/he/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/he/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/he/error-details.txt
+link path=usr/squid/share/errors/hu-hu target=hu
 file path=usr/squid/share/errors/hu/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/hu/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/hu/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/hu/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/hu/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/hu/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/hu/ERR_CANNOT_FORWARD
@@ -728,7 +875,13 @@ file path=usr/squid/share/errors/hu/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/hu/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/hu/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/hu/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/hu/error-details.txt
+link path=usr/squid/share/errors/hy-am target=hy
+link path=usr/squid/share/errors/hy-armn target=hy
 file path=usr/squid/share/errors/hy/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/hy/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/hy/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/hy/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/hy/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/hy/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/hy/ERR_CANNOT_FORWARD
@@ -765,7 +918,12 @@ file path=usr/squid/share/errors/hy/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/hy/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/hy/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/hy/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/hy/error-details.txt
+link path=usr/squid/share/errors/id-id target=id
 file path=usr/squid/share/errors/id/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/id/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/id/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/id/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/id/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/id/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/id/ERR_CANNOT_FORWARD
@@ -802,7 +960,13 @@ file path=usr/squid/share/errors/id/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/id/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/id/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/id/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/id/error-details.txt
+link path=usr/squid/share/errors/it-ch target=it
+link path=usr/squid/share/errors/it-it target=it
 file path=usr/squid/share/errors/it/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/it/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/it/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/it/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/it/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/it/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/it/ERR_CANNOT_FORWARD
@@ -839,7 +1003,12 @@ file path=usr/squid/share/errors/it/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/it/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/it/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/it/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/it/error-details.txt
+link path=usr/squid/share/errors/ja-jp target=ja
 file path=usr/squid/share/errors/ja/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/ja/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/ja/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/ja/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/ja/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/ja/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/ja/ERR_CANNOT_FORWARD
@@ -876,7 +1045,13 @@ file path=usr/squid/share/errors/ja/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/ja/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/ja/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/ja/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/ja/error-details.txt
+link path=usr/squid/share/errors/ko-kp target=ko
+link path=usr/squid/share/errors/ko-kr target=ko
 file path=usr/squid/share/errors/ko/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/ko/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/ko/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/ko/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/ko/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/ko/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/ko/ERR_CANNOT_FORWARD
@@ -913,7 +1088,12 @@ file path=usr/squid/share/errors/ko/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/ko/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/ko/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/ko/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/ko/error-details.txt
+link path=usr/squid/share/errors/lt-lt target=lt
 file path=usr/squid/share/errors/lt/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/lt/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/lt/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/lt/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/lt/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/lt/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/lt/ERR_CANNOT_FORWARD
@@ -950,7 +1130,12 @@ file path=usr/squid/share/errors/lt/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/lt/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/lt/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/lt/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/lt/error-details.txt
+link path=usr/squid/share/errors/lv-lv target=lv
 file path=usr/squid/share/errors/lv/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/lv/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/lv/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/lv/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/lv/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/lv/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/lv/ERR_CANNOT_FORWARD
@@ -987,7 +1172,12 @@ file path=usr/squid/share/errors/lv/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/lv/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/lv/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/lv/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/lv/error-details.txt
+link path=usr/squid/share/errors/ms-my target=ms
 file path=usr/squid/share/errors/ms/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/ms/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/ms/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/ms/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/ms/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/ms/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/ms/ERR_CANNOT_FORWARD
@@ -1024,7 +1214,12 @@ file path=usr/squid/share/errors/ms/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/ms/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/ms/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/ms/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/ms/error-details.txt
+link path=usr/squid/share/errors/nl-nl target=nl
 file path=usr/squid/share/errors/nl/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/nl/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/nl/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/nl/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/nl/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/nl/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/nl/ERR_CANNOT_FORWARD
@@ -1061,7 +1256,11 @@ file path=usr/squid/share/errors/nl/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/nl/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/nl/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/nl/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/nl/error-details.txt
 file path=usr/squid/share/errors/oc/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/oc/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/oc/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/oc/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/oc/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/oc/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/oc/ERR_CANNOT_FORWARD
@@ -1098,7 +1297,12 @@ file path=usr/squid/share/errors/oc/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/oc/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/oc/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/oc/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/oc/error-details.txt
+link path=usr/squid/share/errors/pl-pl target=pl
 file path=usr/squid/share/errors/pl/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/pl/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/pl/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/pl/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/pl/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/pl/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/pl/ERR_CANNOT_FORWARD
@@ -1135,7 +1339,11 @@ file path=usr/squid/share/errors/pl/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/pl/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/pl/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/pl/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/pl/error-details.txt
 file path=usr/squid/share/errors/pt-br/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/pt-br/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/pt-br/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/pt-br/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/pt-br/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/pt-br/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/pt-br/ERR_CANNOT_FORWARD
@@ -1172,7 +1380,12 @@ file path=usr/squid/share/errors/pt-br/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/pt-br/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/pt-br/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/pt-br/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/pt-br/error-details.txt
+link path=usr/squid/share/errors/pt-pt target=pt
 file path=usr/squid/share/errors/pt/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/pt/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/pt/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/pt/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/pt/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/pt/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/pt/ERR_CANNOT_FORWARD
@@ -1209,7 +1422,13 @@ file path=usr/squid/share/errors/pt/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/pt/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/pt/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/pt/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/pt/error-details.txt
+link path=usr/squid/share/errors/ro-md target=ro
+link path=usr/squid/share/errors/ro-ro target=ro
 file path=usr/squid/share/errors/ro/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/ro/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/ro/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/ro/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/ro/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/ro/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/ro/ERR_CANNOT_FORWARD
@@ -1246,7 +1465,12 @@ file path=usr/squid/share/errors/ro/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/ro/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/ro/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/ro/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/ro/error-details.txt
+link path=usr/squid/share/errors/ru-ru target=ru
 file path=usr/squid/share/errors/ru/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/ru/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/ru/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/ru/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/ru/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/ru/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/ru/ERR_CANNOT_FORWARD
@@ -1283,7 +1507,12 @@ file path=usr/squid/share/errors/ru/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/ru/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/ru/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/ru/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/ru/error-details.txt
+link path=usr/squid/share/errors/sk-sk target=sk
 file path=usr/squid/share/errors/sk/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/sk/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/sk/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/sk/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/sk/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/sk/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/sk/ERR_CANNOT_FORWARD
@@ -1320,7 +1549,54 @@ file path=usr/squid/share/errors/sk/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/sk/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/sk/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/sk/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/sk/error-details.txt
+link path=usr/squid/share/errors/sl-si target=sl
+file path=usr/squid/share/errors/sl/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/sl/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/sl/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/sl/ERR_AGENT_WPAD
+file path=usr/squid/share/errors/sl/ERR_CACHE_ACCESS_DENIED
+file path=usr/squid/share/errors/sl/ERR_CACHE_MGR_ACCESS_DENIED
+file path=usr/squid/share/errors/sl/ERR_CANNOT_FORWARD
+file path=usr/squid/share/errors/sl/ERR_CONNECT_FAIL
+file path=usr/squid/share/errors/sl/ERR_DIR_LISTING
+file path=usr/squid/share/errors/sl/ERR_DNS_FAIL
+file path=usr/squid/share/errors/sl/ERR_ESI
+file path=usr/squid/share/errors/sl/ERR_FORWARDING_DENIED
+file path=usr/squid/share/errors/sl/ERR_FTP_DISABLED
+file path=usr/squid/share/errors/sl/ERR_FTP_FAILURE
+file path=usr/squid/share/errors/sl/ERR_FTP_FORBIDDEN
+file path=usr/squid/share/errors/sl/ERR_FTP_NOT_FOUND
+file path=usr/squid/share/errors/sl/ERR_FTP_PUT_CREATED
+file path=usr/squid/share/errors/sl/ERR_FTP_PUT_ERROR
+file path=usr/squid/share/errors/sl/ERR_FTP_PUT_MODIFIED
+file path=usr/squid/share/errors/sl/ERR_FTP_UNAVAILABLE
+file path=usr/squid/share/errors/sl/ERR_GATEWAY_FAILURE
+file path=usr/squid/share/errors/sl/ERR_ICAP_FAILURE
+file path=usr/squid/share/errors/sl/ERR_INVALID_REQ
+file path=usr/squid/share/errors/sl/ERR_INVALID_RESP
+file path=usr/squid/share/errors/sl/ERR_INVALID_URL
+file path=usr/squid/share/errors/sl/ERR_LIFETIME_EXP
+file path=usr/squid/share/errors/sl/ERR_NO_RELAY
+file path=usr/squid/share/errors/sl/ERR_ONLY_IF_CACHED_MISS
+file path=usr/squid/share/errors/sl/ERR_PRECONDITION_FAILED
+file path=usr/squid/share/errors/sl/ERR_READ_ERROR
+file path=usr/squid/share/errors/sl/ERR_READ_TIMEOUT
+file path=usr/squid/share/errors/sl/ERR_SECURE_CONNECT_FAIL
+file path=usr/squid/share/errors/sl/ERR_SHUTTING_DOWN
+file path=usr/squid/share/errors/sl/ERR_SOCKET_FAILURE
+file path=usr/squid/share/errors/sl/ERR_TOO_BIG
+file path=usr/squid/share/errors/sl/ERR_UNSUP_HTTPVERSION
+file path=usr/squid/share/errors/sl/ERR_UNSUP_REQ
+file path=usr/squid/share/errors/sl/ERR_URN_RESOLVE
+file path=usr/squid/share/errors/sl/ERR_WRITE_ERROR
+file path=usr/squid/share/errors/sl/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/sl/error-details.txt
+link path=usr/squid/share/errors/sr target=sr-latn
 file path=usr/squid/share/errors/sr-cyrl/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/sr-cyrl/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/sr-cyrl/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/sr-cyrl/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/sr-cyrl/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/sr-cyrl/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/sr-cyrl/ERR_CANNOT_FORWARD
@@ -1357,7 +1633,12 @@ file path=usr/squid/share/errors/sr-cyrl/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/sr-cyrl/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/sr-cyrl/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/sr-cyrl/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/sr-cyrl/error-details.txt
+link path=usr/squid/share/errors/sr-latn-cs target=sr-latn
 file path=usr/squid/share/errors/sr-latn/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/sr-latn/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/sr-latn/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/sr-latn/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/sr-latn/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/sr-latn/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/sr-latn/ERR_CANNOT_FORWARD
@@ -1394,7 +1675,14 @@ file path=usr/squid/share/errors/sr-latn/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/sr-latn/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/sr-latn/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/sr-latn/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/sr-latn/error-details.txt
+link path=usr/squid/share/errors/sr-sp target=sr-latn
+link path=usr/squid/share/errors/sv-fi target=sv
+link path=usr/squid/share/errors/sv-se target=sv
 file path=usr/squid/share/errors/sv/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/sv/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/sv/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/sv/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/sv/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/sv/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/sv/ERR_CANNOT_FORWARD
@@ -1431,7 +1719,11 @@ file path=usr/squid/share/errors/sv/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/sv/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/sv/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/sv/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/sv/error-details.txt
 file path=usr/squid/share/errors/templates/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/templates/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/templates/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/templates/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/templates/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/templates/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/templates/ERR_CANNOT_FORWARD
@@ -1468,7 +1760,12 @@ file path=usr/squid/share/errors/templates/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/templates/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/templates/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/templates/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/templates/error-details.txt
+link path=usr/squid/share/errors/th-th target=th
 file path=usr/squid/share/errors/th/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/th/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/th/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/th/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/th/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/th/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/th/ERR_CANNOT_FORWARD
@@ -1505,7 +1802,12 @@ file path=usr/squid/share/errors/th/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/th/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/th/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/th/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/th/error-details.txt
+link path=usr/squid/share/errors/tr-tr target=tr
 file path=usr/squid/share/errors/tr/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/tr/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/tr/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/tr/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/tr/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/tr/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/tr/ERR_CANNOT_FORWARD
@@ -1542,7 +1844,12 @@ file path=usr/squid/share/errors/tr/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/tr/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/tr/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/tr/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/tr/error-details.txt
+link path=usr/squid/share/errors/uk-ua target=uk
 file path=usr/squid/share/errors/uk/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/uk/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/uk/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/uk/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/uk/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/uk/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/uk/ERR_CANNOT_FORWARD
@@ -1579,7 +1886,11 @@ file path=usr/squid/share/errors/uk/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/uk/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/uk/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/uk/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/uk/error-details.txt
 file path=usr/squid/share/errors/uz/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/uz/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/uz/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/uz/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/uz/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/uz/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/uz/ERR_CANNOT_FORWARD
@@ -1616,7 +1927,12 @@ file path=usr/squid/share/errors/uz/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/uz/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/uz/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/uz/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/uz/error-details.txt
+link path=usr/squid/share/errors/vi-vn target=vi
 file path=usr/squid/share/errors/vi/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/vi/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/vi/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/vi/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/vi/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/vi/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/vi/ERR_CANNOT_FORWARD
@@ -1653,7 +1969,11 @@ file path=usr/squid/share/errors/vi/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/vi/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/vi/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/vi/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/vi/error-details.txt
 file path=usr/squid/share/errors/zh-cn/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/zh-cn/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/zh-cn/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/zh-cn/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/zh-cn/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/zh-cn/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/zh-cn/ERR_CANNOT_FORWARD
@@ -1690,7 +2010,14 @@ file path=usr/squid/share/errors/zh-cn/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/zh-cn/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/zh-cn/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/zh-cn/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/zh-cn/error-details.txt
+link path=usr/squid/share/errors/zh-hk target=zh-tw
+link path=usr/squid/share/errors/zh-mo target=zh-tw
+link path=usr/squid/share/errors/zh-sg target=zh-cn
 file path=usr/squid/share/errors/zh-tw/ERR_ACCESS_DENIED
+file path=usr/squid/share/errors/zh-tw/ERR_ACL_TIME_QUOTA_EXCEEDED
+file path=usr/squid/share/errors/zh-tw/ERR_AGENT_CONFIGURE
+file path=usr/squid/share/errors/zh-tw/ERR_AGENT_WPAD
 file path=usr/squid/share/errors/zh-tw/ERR_CACHE_ACCESS_DENIED
 file path=usr/squid/share/errors/zh-tw/ERR_CACHE_MGR_ACCESS_DENIED
 file path=usr/squid/share/errors/zh-tw/ERR_CANNOT_FORWARD
@@ -1727,6 +2054,7 @@ file path=usr/squid/share/errors/zh-tw/ERR_UNSUP_REQ
 file path=usr/squid/share/errors/zh-tw/ERR_URN_RESOLVE
 file path=usr/squid/share/errors/zh-tw/ERR_WRITE_ERROR
 file path=usr/squid/share/errors/zh-tw/ERR_ZERO_SIZE_OBJECT
+file path=usr/squid/share/errors/zh-tw/error-details.txt
 file path=usr/squid/share/icons/anthony-binhex.gif
 file path=usr/squid/share/icons/anthony-bomb.gif
 file path=usr/squid/share/icons/anthony-box.gif
@@ -1755,106 +2083,3 @@ file path=usr/squid/share/icons/anthony-unknown.gif
 file path=usr/squid/share/icons/anthony-xbm.gif
 file path=usr/squid/share/icons/anthony-xpm.gif
 file path=usr/squid/share/mib.txt
-license squid.license license=GPLv2
-link path=usr/squid/share/errors/ar-ae target=ar
-link path=usr/squid/share/errors/ar-bh target=ar
-link path=usr/squid/share/errors/ar-dz target=ar
-link path=usr/squid/share/errors/ar-eg target=ar
-link path=usr/squid/share/errors/ar-iq target=ar
-link path=usr/squid/share/errors/ar-jo target=ar
-link path=usr/squid/share/errors/ar-kw target=ar
-link path=usr/squid/share/errors/ar-lb target=ar
-link path=usr/squid/share/errors/ar-ly target=ar
-link path=usr/squid/share/errors/ar-ma target=ar
-link path=usr/squid/share/errors/ar-om target=ar
-link path=usr/squid/share/errors/ar-qa target=ar
-link path=usr/squid/share/errors/ar-sa target=ar
-link path=usr/squid/share/errors/ar-sy target=ar
-link path=usr/squid/share/errors/ar-tn target=ar
-link path=usr/squid/share/errors/ar-ye target=ar
-link path=usr/squid/share/errors/az-az target=az
-link path=usr/squid/share/errors/bg-bg target=bg
-link path=usr/squid/share/errors/cs-cz target=cs
-link path=usr/squid/share/errors/da-dk target=da
-link path=usr/squid/share/errors/de-at target=de
-link path=usr/squid/share/errors/de-ch target=de
-link path=usr/squid/share/errors/de-de target=de
-link path=usr/squid/share/errors/de-li target=de
-link path=usr/squid/share/errors/de-lu target=de
-link path=usr/squid/share/errors/el-gr target=el
-link path=usr/squid/share/errors/en-au target=en
-link path=usr/squid/share/errors/en-bz target=en
-link path=usr/squid/share/errors/en-ca target=en
-link path=usr/squid/share/errors/en-gb target=en
-link path=usr/squid/share/errors/en-ie target=en
-link path=usr/squid/share/errors/en-in target=en
-link path=usr/squid/share/errors/en-jm target=en
-link path=usr/squid/share/errors/en-nz target=en
-link path=usr/squid/share/errors/en-ph target=en
-link path=usr/squid/share/errors/en-sg target=en
-link path=usr/squid/share/errors/en-tt target=en
-link path=usr/squid/share/errors/en-uk target=en
-link path=usr/squid/share/errors/en-us target=en
-link path=usr/squid/share/errors/en-za target=en
-link path=usr/squid/share/errors/en-zw target=en
-link path=usr/squid/share/errors/es-ar target=es
-link path=usr/squid/share/errors/es-bo target=es
-link path=usr/squid/share/errors/es-cl target=es
-link path=usr/squid/share/errors/es-co target=es
-link path=usr/squid/share/errors/es-cr target=es
-link path=usr/squid/share/errors/es-do target=es
-link path=usr/squid/share/errors/es-ec target=es
-link path=usr/squid/share/errors/es-es target=es
-link path=usr/squid/share/errors/es-gt target=es
-link path=usr/squid/share/errors/es-hn target=es
-link path=usr/squid/share/errors/es-mx target=es
-link path=usr/squid/share/errors/es-ni target=es
-link path=usr/squid/share/errors/es-pa target=es
-link path=usr/squid/share/errors/es-pe target=es
-link path=usr/squid/share/errors/es-pr target=es
-link path=usr/squid/share/errors/es-py target=es
-link path=usr/squid/share/errors/es-sv target=es
-link path=usr/squid/share/errors/es-uy target=es
-link path=usr/squid/share/errors/es-ve target=es
-link path=usr/squid/share/errors/et-ee target=et
-link path=usr/squid/share/errors/fa-fa target=fa
-link path=usr/squid/share/errors/fa-ir target=fa
-link path=usr/squid/share/errors/fi-fi target=fi
-link path=usr/squid/share/errors/fr-be target=fr
-link path=usr/squid/share/errors/fr-ca target=fr
-link path=usr/squid/share/errors/fr-ch target=fr
-link path=usr/squid/share/errors/fr-fr target=fr
-link path=usr/squid/share/errors/fr-lu target=fr
-link path=usr/squid/share/errors/fr-mc target=fr
-link path=usr/squid/share/errors/he-il target=he
-link path=usr/squid/share/errors/hu-hu target=hu
-link path=usr/squid/share/errors/hy-am target=hy
-link path=usr/squid/share/errors/hy-armn target=hy
-link path=usr/squid/share/errors/id-id target=id
-link path=usr/squid/share/errors/it-ch target=it
-link path=usr/squid/share/errors/it-it target=it
-link path=usr/squid/share/errors/ja-jp target=ja
-link path=usr/squid/share/errors/ko-kp target=ko
-link path=usr/squid/share/errors/ko-kr target=ko
-link path=usr/squid/share/errors/lt-lt target=lt
-link path=usr/squid/share/errors/lv-lv target=lv
-link path=usr/squid/share/errors/ms-my target=ms
-link path=usr/squid/share/errors/nl-nl target=nl
-link path=usr/squid/share/errors/pl-pl target=pl
-link path=usr/squid/share/errors/pt-pt target=pt
-link path=usr/squid/share/errors/ro-md target=ro
-link path=usr/squid/share/errors/ro-ro target=ro
-link path=usr/squid/share/errors/ru-ru target=ru
-link path=usr/squid/share/errors/sk-sk target=sk
-link path=usr/squid/share/errors/sr target=sr-latn
-link path=usr/squid/share/errors/sr-latn-cs target=sr-latn
-link path=usr/squid/share/errors/sr-sp target=sr-latn
-link path=usr/squid/share/errors/sv-fi target=sv
-link path=usr/squid/share/errors/sv-se target=sv
-link path=usr/squid/share/errors/th-th target=th
-link path=usr/squid/share/errors/tr-tr target=tr
-link path=usr/squid/share/errors/uk-ua target=uk
-link path=usr/squid/share/errors/vi-vn target=vi
-link path=usr/squid/share/errors/zh-hk target=zh-tw
-link path=usr/squid/share/errors/zh-mo target=zh-tw
-link path=usr/squid/share/errors/zh-sg target=zh-cn
