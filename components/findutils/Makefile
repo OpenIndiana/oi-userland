@@ -50,9 +50,9 @@ CONFIGURE_OPTIONS +=	--disable-leaf-optimisation
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32)
 
-install:        $(INSTALL_64)
+install:        $(INSTALL_32)
 
 # findutils tests use dejagnu which isn't currently included in Solaris.
 test:           $(NO_TESTS)
