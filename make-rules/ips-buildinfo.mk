@@ -61,7 +61,7 @@ PLATNUM ?= 0
 # the development build) of the Solaris Update is being built.
 # This is set by the gatekeepers.
 #
-BUILDID ?= 21
+BUILDID ?= 22
 
 # Each (nightly) build of the code that produces packages needs to
 # be uniquely identified so that packages produced by different
@@ -72,7 +72,7 @@ BUILDID ?= 21
 #
 #NIGHTLYID ?= $(shell hg tip --template '{rev}\n')
 #
-NIGHTLYID ?= 1
+NIGHTLYID ?= 0
 
 #
 # Branch Identifier.  Used in the version section of the package name to
