@@ -1,0 +1,38 @@
+--- gcc-4.4.4/gcc/config/sol2.h.orig	Sun Feb 19 23:14:41 2012
++++ gcc-4.4.4/gcc/config/sol2.h	Sun Feb 19 23:17:09 2012
+@@ -123,12 +123,12 @@
+    %{YP,*} \
+    %{R*} \
+    %{compat-bsd: \
+-     %{!YP,*:%{p|pg:-Y P,/usr/ucblib:/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/usr/lib} \
+-             %{!p:%{!pg:-Y P,/usr/ucblib:/usr/ccs/lib:/usr/lib}}} \
++     %{!YP,*:%{p|pg:-Y P,/usr/ucblib:/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/lib:/usr/lib} \
++             %{!p:%{!pg:-Y P,/usr/ucblib:/usr/ccs/lib:/lib:/usr/lib}}} \
+              -R /usr/ucblib} \
+    %{!compat-bsd: \
+-     %{!YP,*:%{p|pg:-Y P,/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/usr/lib} \
+-             %{!p:%{!pg:-Y P,/usr/ccs/lib:/usr/lib}}}}"
++     %{!YP,*:%{p|pg:-Y P,/usr/ccs/lib/libp:/usr/lib/libp:/usr/ccs/lib:/lib:/usr/lib} \
++             %{!p:%{!pg:-Y P,/usr/ccs/lib:/lib:/usr/lib}}}}"
+ 
+ #undef LINK_ARCH32_SPEC
+ #define LINK_ARCH32_SPEC LINK_ARCH32_SPEC_BASE
+--- gcc-4.4.4/gcc/config/sparc/sol2-bi.h.orig	Sun Feb 19 23:10:05 2012
++++ gcc-4.4.4/gcc/config/sparc/sol2-bi.h	Sun Feb 19 23:12:42 2012
+@@ -172,12 +172,12 @@
+    %{YP,*} \
+    %{R*} \
+    %{compat-bsd: \
+-     %{!YP,*:%{p|pg:-Y P,/usr/ucblib/sparcv9:/usr/lib/libp/sparcv9:/usr/lib/sparcv9} \
+-       %{!p:%{!pg:-Y P,/usr/ucblib/sparcv9:/usr/lib/sparcv9}}} \
+-     -R /usr/ucblib/sparcv9} \
++     %{!YP,*:%{p|pg:-Y P,/usr/ucblib/64:/usr/lib/libp/64:/usr/lib/64} \
++       %{!p:%{!pg:-Y P,/usr/ucblib/64:/usr/lib/64}}} \
++     -R /usr/ucblib/64} \
+    %{!compat-bsd: \
+-     %{!YP,*:%{p|pg:-Y P,/usr/lib/libp/sparcv9:/usr/lib/sparcv9} \
+-       %{!p:%{!pg:-Y P,/usr/lib/sparcv9}}}}"
++     %{!YP,*:%{p|pg:-Y P,/usr/lib/libp/64:/lib/64:/usr/lib/64} \
++       %{!p:%{!pg:-Y P,/usr/lib/64}}}}"
+ 
+ #define LINK_ARCH64_SPEC LINK_ARCH64_SPEC_BASE
