@@ -273,6 +273,7 @@ WANBOOT_OBJS =  \
     crypto/evp/pmeth_fn.o crypto/evp/pmeth_gn.o crypto/evp/pmeth_lib.o \
     crypto/ex_data.o crypto/hmac/hm_ameth.o crypto/hmac/hm_pmeth.o \
     crypto/hmac/hmac.o crypto/lhash/lhash.o crypto/md4/md4_dgst.o \
+    crypto/md5/md5-sparcv9.o \
     crypto/md5/md5_dgst.o crypto/mem.o crypto/mem_dbg.o crypto/modes/cbc128.o \
     crypto/modes/ccm128.o crypto/modes/cfb128.o crypto/modes/ctr128.o \
     crypto/modes/gcm128.o crypto/modes/ghash-sparcv9.o crypto/modes/ofb128.o \
@@ -324,7 +325,7 @@ WANBOOT_OBJS =  \
     ssl/s3_both.o ssl/s3_clnt.o ssl/s3_enc.o ssl/s3_lib.o ssl/s3_pkt.o \
     ssl/ssl_algs.o ssl/ssl_asn1.o ssl/ssl_cert.o ssl/ssl_ciph.o ssl/ssl_err.o \
     ssl/ssl_err2.o ssl/ssl_lib.o ssl/ssl_rsa.o ssl/ssl_sess.o ssl/t1_enc.o \
-    ssl/t1_lib.o ssl/t1_reneg.o ssl/d1_srtp.o
+    ssl/t1_lib.o ssl/t1_reneg.o ssl/d1_srtp.o ssl/s3_cbc.o
 
 # Linking of openssl bits for wanboot.
 # Interface for wanboot is specified in mapfile.wanboot. Object files are
