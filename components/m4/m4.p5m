@@ -37,7 +37,8 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2008/388
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file usr/gnu/bin/$(MACH64)/m4 path=usr/gnu/bin/m4
+file path=usr/gnu/bin/m4
+file path=usr/gnu/bin/$(MACH64)/m4
 file path=usr/gnu/share/man/man1/m4.1
 file path=usr/share/info/m4.info
 file path=usr/share/info/m4.info-1
@@ -49,6 +50,9 @@ legacy pkg=SUNWgm4 \
 license m4.license license="GPLv3, FDLv1.2"
 link path=usr/bin/gm4 \
     target=../gnu/bin/m4 facet.compat.gnulinks=true
+link path=usr/bin/$(MACH64)/gm4 \
+    target=../../gnu/bin/$(MACH64)/m4 facet.compat.gnulinks=true
 link path=usr/sfw/bin/gm4 target=../../gnu/bin/m4
+link path=usr/sfw/bin/$(MACH64)/gm4 target=../../../gnu/bin/$(MACH64)/m4
 link path=usr/share/man/man1/gm4.1 \
     target=../../../gnu/share/man/man1/m4.1 facet.compat.gnulinks=all
