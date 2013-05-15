@@ -39,21 +39,12 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/lint-libraries.mk
 
-# pick up -xc99=all in CFLAGS
-studio_C99MODE=        $(studio_C99_ENABLE)
-
-# pick up -xlang=c99 in XPG5MODE
-studio_cplusplus_C99MODE=	$(studio_cplusplus_C99_ENABLE)
+# pick up -std=c99 in CFLAGS
+CFLAGS+=	-std=c99
 
 # turn on largefile support
 CFLAGS+=	$(CPP_LARGEFILES)
-
 CFLAGS+=	$(XPG6MODE)
-
-# Although -norunpath is set for CXXFLAGS, we need to put -norunpath 
-# here, otherwise -norunpath doesn't get set when creating the shared 
-# libraries (CC -G).
-CXX+=	$(studio_NORUNPATH)
 
 CXXFLAGS+=	$(CC_PIC)
 
