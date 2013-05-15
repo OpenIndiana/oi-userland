@@ -38,9 +38,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# We need to be able to return from void functions
-CFLAGS	+=			$(studio_FEATURES_EXTENSIONS)
-
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--prefix=/usr
 
@@ -57,13 +54,13 @@ ASLR_MODE = $(ASLR_ENABLE)
 unexport SHELLOPTS
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
 # 3 expected failures in gnulib-tests:
 # test-mbrtowc3.sh, test-mbrtowc4.sh, test-mbsrtowcs4.sh
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
