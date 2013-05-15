@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -61,6 +61,8 @@ COMPONENT_INSTALL_ARGS += sbindir=$(PROTOUSRSBINDIR)
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 COMPONENT_TEST_TARGETS = test
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:          $(BUILD_32)

@@ -113,6 +113,8 @@ COMPONENT_POST_INSTALL_ACTION= \
              $(MV) include/python2.6/pyconfig.h include/python2.6/pyconfig-$(BITS).h ; \
              $(TOUCH) lib/python2.6/lib2to3/*.pickle)
                 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 $(INSTALL_32):  $(INSTALL_64)
 build:		$(BUILD_32_and_64)

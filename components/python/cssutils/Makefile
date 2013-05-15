@@ -39,6 +39,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
+COMPONENT_TEST_ARGS= ./setup.py test
+
 # Remove the trailing Control-M's from the Python source files.
 COMPONENT_PRE_BUILD_ACTION = \
 	/usr/bin/find $(SOURCE_DIR)/src \
@@ -68,11 +71,14 @@ COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(SOURCE_DIR); $(RM) -r src ; $(CP) -rp src-$(PYTHON_VERSION) src )
 
 # common targets
+# This module delivers pure Python, so only 32-bit is built as the same is used
+# for both 32-bit and 64-bit.  We test both 32-bit and 64-bit, though.
+#
 build:          $(BUILD_32)
 
 install:        $(INSTALL_32)
 
-test:           $(NO_TESTS)
+test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
