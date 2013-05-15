@@ -39,6 +39,12 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
+COMPONENT_TEST_CMD= $(@D)/scripts-2.6/trial twisted
+COMPONENT_TEST_ARGS=""
+
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:          $(BUILD_32_and_64)
 
@@ -51,7 +57,7 @@ install:        $(INSTALL_32_and_64)
 # $ ../build/i86-2.6/scripts-2.6/trial twisted
 # $ ../build/i86-2.7/scripts-2.7/trial twisted
 #
-test:           $(NO_TESTS)
+test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

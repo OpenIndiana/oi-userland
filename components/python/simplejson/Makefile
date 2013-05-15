@@ -39,12 +39,17 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
+COMPONENT_TEST_ARGS= ./setup.py test
+
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:          $(BUILD_32_and_64)
 
 install:        $(INSTALL_32_and_64)
 
-test:           $(NO_TESTS)
+test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
