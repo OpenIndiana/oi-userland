@@ -36,10 +36,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# Needed for __func__ in cpp_test.cc
-CXXFLAGS += $(studio_FEATURES_EXTENSIONS)
-CFLAGS +=	$(studio_PIC)
-
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
 
