@@ -1,31 +1,28 @@
---- net-snmp-5.4.2.1/ltmain.sh	Fri Jun  6 02:34:34 2008
-+++ net-snmp-5.4.2.1/ltmain.mod.sh	Tue Feb  3 11:02:05 2009
-@@ -1425,7 +1425,9 @@
+#
+# The Net-SNMP libraries are built without -zdefs and are missing a large
+# number of dependency specifications (DT_NEEDED).  This makes it
+# impossible to build plugin modules against these libraries using
+# -zdefs, which should work. One such example is FMA in ON gate. 
+#
+--- net-snmp-5.7.2/ltmain.sh	Sun Dec 30 23:42:05 2012
++++ net-snmp-5.7.2/ltmain.sh	Sun Dec 30 23:49:01 2012
+@@ -5406,7 +5406,9 @@
  	  if test "$prev" = rpath; then
  	    case "$rpath " in
  	    *" $arg "*) ;;
--	    *) rpath="$rpath $arg" ;;
-+	    *) rpath="$rpath $arg"
-+        # This is make sure only $libdir path is encoded in RUNPATH
-+        sma_rpath="$rpath" ;;
+-	    *) func_append rpath " $arg" ;;
++	    *) func_append rpath " $arg"
++		# This is make sure only $libdir path is encoded in RUNPATH
++			sma_rpath="$rpath" ;;
  	    esac
  	  else
  	    case "$xrpath " in
-@@ -3915,7 +3917,7 @@
- 	if test "$hardcode_into_libs" = yes; then
- 	  # Hardcode the library paths
- 	  hardcode_libdirs=
--	  dep_rpath=
-+	  dep_rpath="-R $sma_rpath"
- 	  rpath="$finalize_rpath"
- 	  test "$mode" != relink && rpath="$compile_rpath$rpath"
- 	  for libdir in $rpath; do
-@@ -3935,7 +3937,7 @@
+@@ -8046,7 +8048,7 @@
  		fi
  	      else
  		eval flag=\"$hardcode_libdir_flag_spec\"
--		dep_rpath="$dep_rpath $flag"
-+		#dep_rpath="$dep_rpath $flag"
+-		func_append dep_rpath " $flag"
++#func_append dep_rpath " $flag"
  	      fi
  	    elif test -n "$runpath_var"; then
  	      case "$perm_rpath " in
