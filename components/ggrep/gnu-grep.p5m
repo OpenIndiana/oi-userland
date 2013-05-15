@@ -38,9 +38,12 @@ set name=org.opensolaris.arc-caseid \
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 
-file usr/bin/$(MACH64)/egrep path=usr/gnu/bin/egrep
-file usr/bin/$(MACH64)/fgrep path=usr/gnu/bin/fgrep
-file usr/bin/$(MACH64)/grep path=usr/gnu/bin/grep
+file usr/bin/egrep path=usr/gnu/bin/egrep
+file usr/bin/fgrep path=usr/gnu/bin/fgrep
+file usr/bin/grep path=usr/gnu/bin/grep
+file usr/bin/$(MACH64)/egrep path=usr/gnu/bin/$(MACH64)/egrep
+file usr/bin/$(MACH64)/fgrep path=usr/gnu/bin/$(MACH64)/fgrep
+file usr/bin/$(MACH64)/grep path=usr/gnu/bin/$(MACH64)/grep
 file path=usr/share/info/grep.info
 file path=usr/share/locale/af/LC_MESSAGES/grep.mo
 file path=usr/share/locale/be/LC_MESSAGES/grep.mo
@@ -100,6 +103,12 @@ link path=usr/bin/gfgrep \
     target=../gnu/bin/fgrep facet.compat.gnulinks=true
 link path=usr/bin/ggrep \
     target=../gnu/bin/grep facet.compat.gnulinks=true
+link path=usr/bin/$(MACH64)/gegrep \
+    target=../../gnu/bin/$(MACH64)/egrep facet.compat.gnulinks=true
+link path=usr/bin/$(MACH64)/gfgrep \
+    target=../../gnu/bin/$(MACH64)/fgrep facet.compat.gnulinks=true
+link path=usr/bin/$(MACH64)/ggrep \
+    target=../../gnu/bin/$(MACH64)/grep facet.compat.gnulinks=true
 link path=usr/share/man/man1/gegrep.1 \
     target=../../../gnu/share/man/man1/grep.1 facet.compat.gnulinks=all
 link path=usr/share/man/man1/gfgrep.1 \
@@ -109,3 +118,6 @@ link path=usr/share/man/man1/ggrep.1 \
 link path=usr/sfw/bin/gegrep target=../../gnu/bin/egrep
 link path=usr/sfw/bin/gfgrep target=../../gnu/bin/fgrep
 link path=usr/sfw/bin/ggrep target=../../gnu/bin/grep
+link path=usr/sfw/bin/$(MACH64)/gegrep target=../../../gnu/bin/$(MACH64)/egrep
+link path=usr/sfw/bin/$(MACH64)/gfgrep target=../../../gnu/bin/$(MACH64)/fgrep
+link path=usr/sfw/bin/$(MACH64)/ggrep target=../../../gnu/bin/$(MACH64)/grep
