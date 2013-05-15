@@ -1,0 +1,129 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013 David Hoeppner. All rights reserved.
+#
+
+# pull the manpages out of the component dir
+<transform file path=usr/share/man/(man3/.+$) -> set action.hash %<\1> >
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/library/libogg@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.description \
+    value="Ogg Vorbis is a fully open, non-proprietary, patent-and-royalty-free, general-purpose compressed audio format."
+set name=pkg.summary value="libogg - general-purpose compressed audio format"
+set name=com.oracle.info.description value="general-purpose compressed audio format"
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid \
+    value=PSARC/OPENINDIANA
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+file path=usr/lib/libogg.so.0.8.0
+file path=usr/lib/pkgconfig/ogg.pc
+file path=usr/lib/$(MACH64)/libogg.so.0.8.0
+file path=usr/lib/$(MACH64)/pkgconfig/ogg.pc
+file path=usr/share/aclocal/ogg.m4
+file path=usr/share/doc/libogg-1.3.0/index.html
+file path=usr/share/doc/libogg-1.3.0/vorbisword2.png
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_state.html
+file path=usr/share/doc/libogg-1.3.0/ogg/index.html
+file path=usr/share/doc/libogg-1.3.0/ogg/decoding.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_pageout.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_adv.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_destroy.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_writeinit.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_serialno.html
+file path=usr/share/doc/libogg-1.3.0/ogg/datastructures.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_read.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_bytes.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_bits.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_look1.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_writeclear.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_reset.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_clear.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_packets.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_init.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_packetpeek.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_pageseek.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_destroy.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_checksum_set.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_packetout.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_pageout.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_writetrunc.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_reset_serialno.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_version.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_writecopy.html
+file path=usr/share/doc/libogg-1.3.0/ogg/bitpacking.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_get_buffer.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_read1.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_pagein.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_flush.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_reset.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_bos.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_packet.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_look.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_buffer.html
+file path=usr/share/doc/libogg-1.3.0/ogg/general.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_pageno.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_granulepos.html
+file path=usr/share/doc/libogg-1.3.0/ogg/overview.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_init.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_clear.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_reset.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_packet_clear.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_readinit.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_write.html
+file path=usr/share/doc/libogg-1.3.0/ogg/encoding.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_eos.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_page_continued.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_packetin.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_adv1.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_sync_wrote.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_eos.html
+file path=usr/share/doc/libogg-1.3.0/ogg/reference.html
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_buffer.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_pageout_fill.html
+file path=usr/share/doc/libogg-1.3.0/ogg/style.css
+file path=usr/share/doc/libogg-1.3.0/ogg/oggpack_writealign.html
+file path=usr/share/doc/libogg-1.3.0/ogg/ogg_stream_state.html
+file path=usr/share/doc/libogg-1.3.0/rfc5334.txt
+file path=usr/share/doc/libogg-1.3.0/stream.png
+file path=usr/share/doc/libogg-1.3.0/skeleton.html
+file path=usr/share/doc/libogg-1.3.0/white-ogg.png
+file path=usr/share/doc/libogg-1.3.0/rfc3533.txt
+file path=usr/share/doc/libogg-1.3.0/white-xifish.png
+file path=usr/share/doc/libogg-1.3.0/ogg-multiplex.html
+file path=usr/share/doc/libogg-1.3.0/framing.html
+file path=usr/share/doc/libogg-1.3.0/oggstream.html
+file path=usr/include/ogg/ogg.h
+file path=usr/include/ogg/os_types.h
+file path=usr/include/ogg/config_types.h
+
+license libogg.license license=BSD
+
+link path=usr/lib/$(MACH64)/libogg.so target=./libogg.so.0.8.0
+link path=usr/lib/$(MACH64)/libogg.so.0 target=./libogg.so.0.8.0
+link path=usr/lib/libogg.so target=./libogg.so.0.8.0
+link path=usr/lib/libogg.so.0 target=./libogg.so.0.8.0
