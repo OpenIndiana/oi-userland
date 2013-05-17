@@ -463,9 +463,9 @@ class UserlandManifestChecker(base.ManifestChecker):
 			engine.error( _("missing license action"),
 				msgid="%s%s.0" % (self.name, pkglint_id))
 
-		if 'org.opensolaris.arc-caseid' not in manifest:
-			engine.error( _("missing ARC data (org.opensolaris.arc-caseid)"),
-				msgid="%s%s.0" % (self.name, pkglint_id))
+#		if 'org.opensolaris.arc-caseid' not in manifest:
+#			engine.error( _("missing ARC data (org.opensolaris.arc-caseid)"),
+#				msgid="%s%s.0" % (self.name, pkglint_id))
 
 	component_check.pkglint_dest = _(
 		"license actions and ARC information are required if you deliver files.")
