@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # unfortunately we have our own "special" tarball and not the community version, so use that.
 COMPONENT_ARCHIVE_HASH=	\
     sha256:3ab488fe2df01bf54a57acd70e745266e19232edacf77512f77655296748e7a0
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://dlc.openindiana.org/oi-build/source-archives/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-compiler
 
 include ../../make-rules/prep.mk
