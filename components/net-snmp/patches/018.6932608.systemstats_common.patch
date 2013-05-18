@@ -1,0 +1,19 @@
+--- patch/net-snmp-5.4.1-64/agent/mibgroup/ip-mib/data_access/systemstats_common.c	Tue Feb  8 13:58:36 2005
++++ net-snmp-5.4.1/agent/mibgroup/ip-mib/data_access/systemstats_common.c	Mon Aug  2 05:21:15 2010
+@@ -339,7 +339,7 @@
+      */
+     if (0 == need_wrap_check) {
+         SNMP_FREE(prev_vals->old_stats);
+-    }
++    } else {
+     
+     /*
+      * update old stats from new stats.
+@@ -346,6 +346,7 @@
+      * careful - old_stats is a pointer to stats...
+      */
+     memcpy(prev_vals->old_stats, &new_vals->stats, sizeof(new_vals->stats));
++    }
+     
+     return 0;
+ }
