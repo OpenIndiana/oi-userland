@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -26,13 +26,14 @@ PATH=$(SPRO_VROOT)/bin:/usr/gnu/bin:/usr/bin
 DOXYGEN=/usr/bin/doxygen
 
 COMPONENT_NAME=		net-snmp
-COMPONENT_VERSION=	5.7.2
+COMPONENT_VERSION=	5.4.1
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:09ed31b4cc1f3c0411ef9a16eff79ef3b30d89c32ca46d5a01a41826c4ceb816
-COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:0ea976722c993c87dede8eb6348e6feb059e3851bbef2de824bf18ac97cdb565
+#COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL= http://ftp.ntua.gr/mirror/net-snmp/OldFiles/net-snmp-5.4.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -80,9 +81,6 @@ CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS	+=	CC="$(CC)"
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 PKG_MACROS +=	BUILD_DIR=$(BUILD_DIR)
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -110,9 +108,7 @@ $(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
 	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install) ; \
-	(cd $(@D)/python2.7 ; env CFLAGS="-I$(BUILD_DIR)/$(MACH32)/include \
-		-L$(BUILD_DIR)/$(MACH32)/agent/.libs -L$(BUILD_DIR)/$(MACH32)/snmplib/.libs" \
-		PYTHON=$(PYTHON.2.7.$(BITS)) \
+	(cd $(@D)/python2.7 ; env PYTHON=$(PYTHON.2.7.$(BITS)) \
 		$(PYTHON.2.7.$(BITS)) ./setup.py install \
 			--root $(PROTO_DIR) \
 			--install-lib=$(PYTHON.2.7.VENDOR_PACKAGES))
