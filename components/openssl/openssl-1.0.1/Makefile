@@ -325,7 +325,7 @@ WANBOOT_OBJS =  \
     ssl/s3_both.o ssl/s3_clnt.o ssl/s3_enc.o ssl/s3_lib.o ssl/s3_pkt.o \
     ssl/ssl_algs.o ssl/ssl_asn1.o ssl/ssl_cert.o ssl/ssl_ciph.o ssl/ssl_err.o \
     ssl/ssl_err2.o ssl/ssl_lib.o ssl/ssl_rsa.o ssl/ssl_sess.o ssl/t1_enc.o \
-    ssl/t1_lib.o ssl/t1_reneg.o ssl/d1_srtp.o ssl/s3_cbc.o
+    ssl/t1_lib.o ssl/t1_reneg.o ssl/d1_srtp.o ssl/s3_cbc.o ssl/t1_clnt.o
 
 # Linking of openssl bits for wanboot.
 # Interface for wanboot is specified in mapfile.wanboot. Object files are
