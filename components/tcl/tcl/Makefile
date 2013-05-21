@@ -52,8 +52,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 #file at the pointed location 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
-CFLAGS += $(studio_XREGS) -xstrconst $(XPG6MODE) $(studio_C99_ENABLE)
-
 CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --enable-man-symlinks
