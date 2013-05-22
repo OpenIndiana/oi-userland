@@ -1,0 +1,245 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2012, Andrzej Szeszo
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file -> add pkg.depend.bypass-generate usr/gcc/3.*>
+<transform file -> add pkg.depend.bypass-generate usr/sfw/lib(.*)/libgcc_s.so.1>
+<transform file -> add pkg.depend.bypass-generate usr/sfw/lib(.*)/libstdc\\+\\+\\.so.*>
+
+set name=pkg.fmri \
+    value=pkg:/driver/graphics/nvidia@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="NVIDIA Graphics System Software"
+set name=pkg.description \
+    value="X and OpenGL Drivers for NVIDIA Quadro graphics"
+set name=description value="NVIDIA Graphics System Software"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Drivers/Display
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=variant.opensolaris.zone value=global value=nonglobal
+
+license driver-graphics-nvidia.license license="NVIDIA license"
+
+legacy pkg=NVDAgraphics \
+    desc="X and OpenGL Drivers for NVIDIA Quadro graphics" \
+    name="NVIDIA Graphics System Software" vendor="NVIDIA Corporation"
+
+legacy pkg=NVDAgraphicsr \
+    desc="Kernel Drivers for NVIDIA Quadro graphics" \
+    name="NVIDIA Graphics System Device Driver" vendor="NVIDIA Corporation"
+
+dir path=dev group=sys
+dir path=kernel variant.opensolaris.zone=global group=sys
+dir path=kernel/drv variant.opensolaris.zone=global group=sys
+dir path=kernel/drv/$(MACH64) variant.opensolaris.zone=global group=sys
+dir path=usr
+dir path=usr/X11
+dir path=usr/X11
+dir path=usr/X11/include
+dir path=usr/X11/include/NVIDIA
+dir path=usr/X11/include/NVIDIA/GL
+dir path=usr/X11/include/NVIDIA/vdpau
+dir path=usr/X11/lib
+dir path=usr/X11/lib/NVIDIA
+dir path=usr/X11/lib/NVIDIA/$(MACH64)
+dir path=usr/X11/lib/X11
+dir path=usr/X11/lib/X11/getconfig
+dir path=usr/X11/lib/modules
+dir path=usr/X11/lib/modules/NVIDIA
+dir path=usr/X11/lib/modules/NVIDIA/$(MACH64)
+dir path=usr/X11/lib/modules/drivers
+dir path=usr/X11/lib/modules/drivers/$(MACH64)
+dir path=usr/X11/lib/modules/extensions
+dir path=usr/X11/lib/modules/extensions/NVIDIA
+dir path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)
+dir path=usr/bin
+dir path=usr/dt
+dir path=usr/dt/appconfig
+dir path=usr/dt/appconfig/appmanager
+dir path=usr/dt/appconfig/appmanager/C
+dir path=usr/dt/appconfig/appmanager/C/Desktop_Apps
+dir path=usr/dt/appconfig/icons
+dir path=usr/dt/appconfig/icons/C
+dir path=usr/dt/appconfig/types
+dir path=usr/dt/appconfig/types/C
+dir path=usr/include
+dir path=usr/lib
+dir path=usr/lib/$(MACH64)
+dir path=usr/lib/$(MACH64)/vdpau
+dir path=usr/lib/vdpau
+dir path=usr/share
+dir path=usr/share/applications
+dir path=usr/share/control-center-2.0
+dir path=usr/share/control-center-2.0/capplets
+dir path=usr/share/doc
+dir path=usr/share/doc/NVIDIA
+dir path=usr/share/doc/NVIDIA/html
+dir path=usr/share/icons
+dir path=usr/share/icons/NVIDIA
+dir path=usr/share/man
+dir path=usr/share/man/man1
+file Solaris/gl.h path=usr/X11/include/NVIDIA/GL/gl.h
+file Solaris/glext.h path=usr/X11/include/NVIDIA/GL/glext.h
+file Solaris/glx.h path=usr/X11/include/NVIDIA/GL/glx.h
+file Solaris/glxext.h path=usr/X11/include/NVIDIA/GL/glxext.h
+file Solaris/vdpau.h path=usr/X11/include/NVIDIA/vdpau/vdpau.h
+file Solaris/vdpau_x11.h path=usr/X11/include/NVIDIA/vdpau/vdpau_x11.h
+file path=kernel/drv/$(MACH64)/nvidia reboot-needed=true \
+    variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia reboot-needed=true variant.opensolaris.zone=global group=sys
+file path=kernel/drv/nvidia.conf reboot-needed=false \
+    variant.opensolaris.zone=global group=sys
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
+file path=usr/X11/lib/NVIDIA/libGL.so.1
+file path=usr/X11/lib/NVIDIA/libnvidia-glcore.so.1
+file path=usr/X11/lib/NVIDIA/libnvidia-tls.so.1
+file path=usr/X11/lib/NVIDIA/libvdpau.so.1
+file path=usr/X11/lib/NVIDIA/libvdpau_nvidia.so.1
+file path=usr/X11/lib/NVIDIA/libvdpau_trace.so.1
+file path=usr/X11/lib/X11/getconfig/nvda.cfg
+file path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib/$(MACH64)
+file path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so.1 pkg.debug.depend.path=usr/lib
+file path=usr/X11/lib/modules/drivers/$(MACH64)/nvidia_drv.so
+file path=usr/X11/lib/modules/drivers/nvidia_drv.so
+file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
+file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
+file path=usr/bin/nvidia-SunOS-bug-report.sh
+file path=usr/bin/nvidia-settings
+file path=usr/bin/nvidia-xconfig
+file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings
+file path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.l_m.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.m.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.m.pm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.m_m.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.t.bm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm
+file path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm
+file path=usr/dt/appconfig/types/C/nvidia-settings.dt
+file path=usr/lib/libnvidia-cfg.so.1
+file path=usr/share/applications/nvidia-settings.desktop \
+    restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
+file path=usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop
+file path=usr/share/doc/NVIDIA/README.txt
+file path=usr/share/doc/NVIDIA/html/acknowledgements.html
+file path=usr/share/doc/NVIDIA/html/addtlresources.html
+file path=usr/share/doc/NVIDIA/html/appendices.html
+file path=usr/share/doc/NVIDIA/html/commonproblems.html
+file path=usr/share/doc/NVIDIA/html/configlaptop.html
+file path=usr/share/doc/NVIDIA/html/configmultxscreens.html
+file path=usr/share/doc/NVIDIA/html/configtvout.html
+file path=usr/share/doc/NVIDIA/html/configtwinview.html
+file path=usr/share/doc/NVIDIA/html/depth30.html
+file path=usr/share/doc/NVIDIA/html/displaydevicenames.html
+file path=usr/share/doc/NVIDIA/html/dpi.html
+file path=usr/share/doc/NVIDIA/html/editxconfig.html
+file path=usr/share/doc/NVIDIA/html/faq.html
+file path=usr/share/doc/NVIDIA/html/flippingubb.html
+file path=usr/share/doc/NVIDIA/html/framelock.html
+file path=usr/share/doc/NVIDIA/html/glxsupport.html
+file path=usr/share/doc/NVIDIA/html/index.html
+file path=usr/share/doc/NVIDIA/html/installationandconfiguration.html
+file path=usr/share/doc/NVIDIA/html/installdriver.html
+file path=usr/share/doc/NVIDIA/html/installedcomponents.html
+file path=usr/share/doc/NVIDIA/html/introduction.html
+file path=usr/share/doc/NVIDIA/html/knownissues.html
+file path=usr/share/doc/NVIDIA/html/minimumrequirements.html
+file path=usr/share/doc/NVIDIA/html/newusertips.html
+file path=usr/share/doc/NVIDIA/html/nvidiasettings.html
+file path=usr/share/doc/NVIDIA/html/openglenvvariables.html
+file path=usr/share/doc/NVIDIA/html/profiles.html
+file path=usr/share/doc/NVIDIA/html/programmingmodes.html
+file path=usr/share/doc/NVIDIA/html/sdi.html
+file path=usr/share/doc/NVIDIA/html/sli.html
+file path=usr/share/doc/NVIDIA/html/supportedchips.html
+file path=usr/share/doc/NVIDIA/html/swapcard.html
+file path=usr/share/doc/NVIDIA/html/vdpausupport.html
+file path=usr/share/doc/NVIDIA/html/xcompositeextension.html
+file path=usr/share/doc/NVIDIA/html/xconfigoptions.html
+file path=usr/share/doc/NVIDIA/html/xineramaglx.html
+file path=usr/share/doc/NVIDIA/html/xrandrextension.html
+file path=usr/share/icons/NVIDIA/nvidia-settings.png \
+    restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file path=usr/share/man/man1/nvidia-settings.1
+file path=usr/share/man/man1/nvidia-xconfig.1
+link path=dev/nvidia0 target=fbs/nvidia0 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia1 target=fbs/nvidia1 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia10 target=fbs/nvidia10 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia11 target=fbs/nvidia11 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia12 target=fbs/nvidia12 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia13 target=fbs/nvidia13 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia14 target=fbs/nvidia14 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia15 target=fbs/nvidia15 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia2 target=fbs/nvidia2 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia3 target=fbs/nvidia3 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia4 target=fbs/nvidia4 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia5 target=fbs/nvidia5 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia6 target=fbs/nvidia6 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia7 target=fbs/nvidia7 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia8 target=fbs/nvidia8 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidia9 target=fbs/nvidia9 variant.opensolaris.zone=global pkg.linted=true
+link path=dev/nvidiactl target=../devices/pseudo/nvidia@255:nvidiactl \
+    variant.opensolaris.zone=global pkg.linted=true
+link path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so target=libGL.so.1
+link path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so \
+    target=libnvidia-tls.so.1
+link path=usr/X11/lib/NVIDIA/libGL.so target=libGL.so.1
+link path=usr/X11/lib/NVIDIA/libnvidia-tls.so target=libnvidia-tls.so.1
+link path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so \
+    target=libnvidia-wfb.so.1
+link path=usr/X11/lib/modules/NVIDIA/libnvidia-wfb.so \
+    target=libnvidia-wfb.so.1
+link path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so \
+    target=libglx.so.1
+link path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so target=libglx.so.1
+link path=usr/include/vdpau target=../X11/include/NVIDIA/vdpau
+link path=usr/lib/$(MACH64)/libnvidia-glcore.so.1 \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-glcore.so.1
+link path=usr/lib/$(MACH64)/libnvidia-tls.so target=libnvidia-tls.so.1
+link path=usr/lib/$(MACH64)/libnvidia-tls.so.1 \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
+link path=usr/lib/$(MACH64)/libvdpau.so target=libvdpau.so.1
+link path=usr/lib/$(MACH64)/libvdpau.so.1 \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau.so.1
+link path=usr/lib/$(MACH64)/libvdpau_nvidia.so \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+link path=usr/lib/$(MACH64)/libvdpau_trace.so \
+    target=../../X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
+link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
+    target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
+link path=usr/lib/$(MACH64)/vdpau/libvdpau_trace.so.1 \
+    target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
+link path=usr/lib/libnvidia-cfg.so target=libnvidia-cfg.so.1
+link path=usr/lib/libnvidia-glcore.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-glcore.so.1
+link path=usr/lib/libnvidia-tls.so target=libnvidia-tls.so.1
+link path=usr/lib/libnvidia-tls.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-tls.so.1
+link path=usr/lib/libvdpau.so target=libvdpau.so.1
+link path=usr/lib/libvdpau.so.1 target=../X11/lib/NVIDIA/libvdpau.so.1
+link path=usr/lib/libvdpau_nvidia.so \
+    target=../X11/lib/NVIDIA/libvdpau_nvidia.so.1
+link path=usr/lib/libvdpau_trace.so \
+    target=../X11/lib/NVIDIA/libvdpau_trace.so.1
+link path=usr/lib/vdpau/libvdpau_nvidia.so.1 \
+    target=../../X11/lib/NVIDIA/libvdpau_nvidia.so.1
+link path=usr/lib/vdpau/libvdpau_trace.so.1 \
+    target=../../X11/lib/NVIDIA/libvdpau_trace.so.1
+
+driver name=nvidia perms="* 0666 root root" \
