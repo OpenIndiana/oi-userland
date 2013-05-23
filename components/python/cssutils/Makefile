@@ -70,15 +70,11 @@ COMPONENT_POST_BUILD_ACTION = \
 COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(SOURCE_DIR); $(RM) -r src ; $(CP) -rp src-$(PYTHON_VERSION) src )
 
-# common targets
-# This module delivers pure Python, so only 32-bit is built as the same is used
-# for both 32-bit and 64-bit.  We test both 32-bit and 64-bit, though.
-#
-build:          $(BUILD_32)
+build:          $(BUILD_NO_ARCH)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_NO_ARCH)
 
-test:           $(TEST_32_and_64)
+test:           $(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

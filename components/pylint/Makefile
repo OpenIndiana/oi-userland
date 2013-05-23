@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -86,9 +86,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 
 # common targets
 
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
 # The tests are run using python 2.7 only and require that
 # the python-27 package is installed (does not have to be the default python). 
@@ -122,7 +122,7 @@ COMPONENT_TEST_ARGS =
 # 9 modules OK (2 failed)
 # failures: smoketest [7/14], unittest_lint [3/21]
 
-test:		$(TEST_32)
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

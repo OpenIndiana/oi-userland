@@ -36,13 +36,15 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_TEST_ARGS =	setup.py test
+
 # common targets
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_NO_ARCH)
 
-test:		$(BUILD_32_and_64)
-	cd $(SOURCE_DIR) && $(PYTHON) setup.py test
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

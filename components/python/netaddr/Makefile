@@ -40,9 +40,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTOUSRBINDIR) ; $(MV) netaddr netaddr-$(PYTHON_VERSION))
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
 COMPONENT_TEST_DIR=	$(@D)/lib/netaddr
 COMPONENT_TEST_ARGS=	tests/__init__.py
@@ -51,7 +51,7 @@ COMPONENT_PRE_TEST_ACTION= \
 	  ln -s $(SOURCE_DIR)/netaddr/tests/2.x ; \
 	  ln -s $(SOURCE_DIR)/netaddr/tests/3.x )
 
-test:		$(TEST_32)
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

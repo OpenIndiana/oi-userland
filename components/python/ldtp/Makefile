@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -44,9 +44,9 @@ COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f ldtp ldtp$(PYTHON_VERSION))
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 
