@@ -1,0 +1,14 @@
+--- imap-2007b/src/osdep/unix/os_soln.h.ORIG	Sun Feb  8 18:02:42 2009
++++ imap-2007b/src/osdep/unix/os_soln.h	Sun Feb  8 18:03:21 2009
+@@ -37,7 +37,11 @@
+ #include <utime.h>
+ #include <syslog.h>
+ #include <sys/file.h>
++#if defined(_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS == 64)
++#define NOUSTAT 1
++#else
+ #include <ustat.h>
++#endif
+ 
+ 
+ /* Many versions of SysV get this wrong */
