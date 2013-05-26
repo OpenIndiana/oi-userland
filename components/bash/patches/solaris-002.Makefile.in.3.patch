@@ -9,15 +9,6 @@
  
  BASE_CCFLAGS = $(PROFILE_FLAGS) $(SYSTEM_FLAGS) $(LOCAL_DEFS) \
  	  $(DEFS) $(LOCAL_CFLAGS) $(INCLUDES)
-@@ -538,7 +538,7 @@
- 
- $(Program):  .build $(OBJECTS) $(BUILTINS_DEP) $(LIBDEP)
- 	$(RM) $@
--	$(PURIFY) $(CC) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS)
-+	$(PURIFY) $(CC) $(CFLAGS) $(BUILTINS_LDFLAGS) $(LIBRARY_LDFLAGS) $(LDFLAGS) -o $(Program) $(OBJECTS) $(LIBS) $(LD_OPTIONS) -s
- 	ls -l $(Program)
- 	-$(SIZE) $(Program)
- 
 @@ -552,10 +552,10 @@
  	@echo
  
