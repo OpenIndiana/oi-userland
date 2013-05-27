@@ -126,9 +126,9 @@ TEST_ENV +=	$(TARGET_ENV)
 
 ASLR_MODE=$(ASLR_ENABLE)
 
-build: $(BUILD_64)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_64)
+install: $(INSTALL_32_and_64)
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
 	    cp -Rp "en@boldquot" en ; \
 	    cp -Rp "en@boldquot" en_CA ; \
