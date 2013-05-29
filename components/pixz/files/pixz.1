@@ -1,0 +1,139 @@
+'\" te
+.TH pixz 1
+.SH NAME
+pixz \- parallel, indexing version of XZ
+
+.SH SYNOPSIS
+.LP
+.nf
+\fB/usr/bin/pixz\fR input output.pxz
+.fi
+
+.LP
+.nf
+\fB/usr/bin/pixz\fR -d input.pxz output
+.fi
+
+.LP
+.nf
+\fB/usr/bin/pixz\fR -l input.tpxz
+.fi
+
+.LP
+.nf
+\fB/usr/bin/pixz\fR -x /path/to/file < input.tpxz
+.fi
+
+.SH DESCRIPTION
+.sp
+.LP
+The existing XZ Utils ( http://tukaani.org/xz/ ) provide great compression
+in the .xz file format, but they have two significant problems:
+.sp
+.LP
+.RS +4
+.TP
+.ie t \(bu
+.el o
+They are single-threaded, while most users nowadays have multi-core computers.
+.RE
+.RS +4
+.TP
+.ie t \(bu
+.el o
+The .xz files they produce are just one big block of compressed data, rather than a collection of smaller blocks. This makes random access to the original data impossible.
+.RE
+.sp
+.LP
+With pixz, both these problems are solved.
+
+.SH EXAMPLES
+.sp
+.LP
+Specifying input and output:
+.sp
+.ne 2
+.mk
+.na
+$ pixz < foo.tar > foo.tpxz
+.LP
+
+.sp .6
+.RS 4n
+Same as 'pixz foo.tar foo.tpxz'
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+$ pixz -i foo.tar -o foo.tpxz
+.LP
+
+.sp .6
+.RS 4n
+Ditto. These both work for -x, -d and -l too, eg:
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+$ pixz -x -i foo.tpxz -o foo.tar file1 file2 ...
+.LP
+
+.sp .6
+.RS 4n
+# Extract the files from foo.tpxz into foo.tar
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+$ pixz foo.tar
+.LP
+
+.sp .6
+.RS 4n
+Compress it to foo.tpxz, removing the original
+.RE
+
+.sp
+.ne 2
+.mk
+.na
+$ pixz -d foo.tpxz
+.LP
+
+.sp .6
+.RS 4n
+Extract it to foo.tar, removing the original
+.RE
+
+.SH OPTIONS
+.TP
+.B -1
+Faster, worse compression.
+.TP
+.B -9
+Better, slower compression.
+.TP
+.B -p <number>
+Cap the number of threads at <number>.
+.TP
+.B -t
+Compress but don't treat it as a tarball (don't index it).
+.TP
+.B -d
+Decompress, don't check that contents match index.
+.TP
+.B -l
+List the xz blocks instead of files.
+
+.SH WARNING
+Running pixz without the -t flag will cause it to treat the input
+as a tarball, as long as it looks vaguely tarball-like. This means if the
+file starts with at least 1024 zero bytes, pixz will assume it's empty, and
+truncate the output! If your input files aren't tarballs, run with -t or
+face possible data-loss.
