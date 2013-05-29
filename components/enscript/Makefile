@@ -69,16 +69,12 @@ CONFIGURE_OPTIONS +=	--with-media=Letter
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
-COMPONENT_POST_INSTALL_ACTION = \
-	$(LN) $(PROTOUSRBINDIR)/$(MACH64)/enscript \
-		$(PROTOUSRBINDIR)/$(MACH64)/nenscript
-
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_64)
+install:        $(INSTALL_32_and_64)
 
-test:           $(TEST_64)
+test:           $(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
