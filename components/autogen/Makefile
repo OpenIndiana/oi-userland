@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
-COMPONENT_VERSION=	5.9
+COMPONENT_VERSION=	5.16.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bc2181f9568897b9ad4d57978bc0a72e2a31b97e837999e6f839bdbbc02c3fc8
+    sha256:aa51f5adbf49c2cb48a7d6de3dbab15b89e0a04e7152195fe6fb3380e05c4991
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/autogen
 
@@ -50,11 +50,17 @@ ENV +=	-i
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		build
+	-(cd $(BUILD_DIR_32)/agen5/test; gmake check)
+	-(cd $(BUILD_DIR_32)/getdefs/test; gmake check)
+	-(cd $(BUILD_DIR_32)/xml2ag/test; gmake check)
+	-(cd $(BUILD_DIR_64)/agen5/test; gmake check)
+	-(cd $(BUILD_DIR_64)/getdefs/test; gmake check)
+	-(cd $(BUILD_DIR_64)/xml2ag/test; gmake check)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
