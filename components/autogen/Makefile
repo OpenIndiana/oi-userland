@@ -46,6 +46,19 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 # strip the environment or install target fails
 ENV +=	-i
 
+# Replace all occurrences of "echo" with "/usr/gnu/bin/echo" in the two
+# scripts used by autogen that munge the man and mdoc output. This prevents
+# bogus conversions (like "\f" -> Control-L) happening.
+# Adjust "tr" to "/usr/gnu/bin/tr" in the autoopts vendor.test.
+# These changes now allow the autoopts tests to successfully complete.
+COMPONENT_POST_UNPACK_ACTION = \
+	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
+		$(SOURCE_DIR)/autoopts/tpl/mdoc2man.sh ; \
+	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
+		$(SOURCE_DIR)/autoopts/tpl/texi2mdoc.sh ; \
+	$(GSED) -i -e 's| tr | /usr/gnu/bin/tr |' \
+		$(SOURCE_DIR)/autoopts/test/vendor.test
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -54,13 +67,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		build
-	-(cd $(BUILD_DIR_32)/agen5/test; gmake check)
-	-(cd $(BUILD_DIR_32)/getdefs/test; gmake check)
-	-(cd $(BUILD_DIR_32)/xml2ag/test; gmake check)
-	-(cd $(BUILD_DIR_64)/agen5/test; gmake check)
-	-(cd $(BUILD_DIR_64)/getdefs/test; gmake check)
-	-(cd $(BUILD_DIR_64)/xml2ag/test; gmake check)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
