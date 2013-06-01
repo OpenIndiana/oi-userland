@@ -54,6 +54,7 @@ CONFIGURE_OPTIONS 	+= --with-tcl="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))"
 CONFIGURE_OPTIONS 	+= --with-tclinclude="$(COMPONENT_DIR)/../tcl/build/$(MACH$(BITS))/generic"
 
 CONFIGURE_OPTIONS.64	+= LDFLAGS="$(LDFLAGS) -m64"
+CONFIGURE_OPTIONS.64	+= LIBS=" -m64"
 
 COMPONENT_TEST_TARGETS = test
 
