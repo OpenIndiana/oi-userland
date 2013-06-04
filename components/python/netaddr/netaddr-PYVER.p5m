@@ -1,0 +1,81 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python-2/netaddr-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python network address manipulation"
+set name=pkg.description \
+    value="The netaddr Python library represents and manipulates network addresses. It supports the ability to work and interact with the following: IPv4 and IPv6 addresses and subnets; MAC addresses, OUI and IAB identifiers, IEEE EUI-64 identifiers; arbitrary (non-aligned) IP address ranges and IP address sets; various non-CIDR IP range formats such as nmap and glob-style formats."
+set name=com.oracle.info.description \
+    value="the Python network address manipulation library"
+set name=com.oracle.info.tpno value=13141
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2012/037
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+link path=usr/bin/netaddr target=netaddr-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+#
+# since we have IPython < 0.11, skip dependencies for
+# IPython.frontend.terminal.embed
+file path=usr/bin/netaddr-$(PYVER) \
+    pkg.depend.bypass-generate=.*(frontend|terminal|embed).*
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr-$(IPS_COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/iab.idx
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/iab.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/ieee.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/oui.idx
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/eui/oui.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/fbsocket.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/glob.py
+# urllib.request is not available in python 2.X
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/iana.py \
+    pkg.depend.bypass-generate=.*(urllib|request).*
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/intset.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/ipv4-address-space.xml
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/ipv6-address-space.xml
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/multicast-addresses.xml
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/nmap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/rfc1924.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/ip/sets.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/eui48.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/eui64.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/ipv4.py
+file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/strategy/ipv6.py
+#
+license LICENSE license=BSD
+#
+# force a dependency on the netaddr package
+depend type=require \
+    fmri=library/python-2/netaddr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

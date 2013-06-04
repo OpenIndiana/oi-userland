@@ -56,9 +56,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pep8 pep8-$(PYTHON_VERSION))
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_NO_ARCH)
 
 test:		$(NO_TESTS)
 

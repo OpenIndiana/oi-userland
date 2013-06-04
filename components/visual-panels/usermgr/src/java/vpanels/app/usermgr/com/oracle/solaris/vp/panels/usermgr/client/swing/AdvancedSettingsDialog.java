@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -90,6 +90,7 @@ public class AdvancedSettingsDialog implements ListSelectionListener {
     	new GroupsSettings(),
     	new RolesSettings(),
     	new RightsSettings(),
+    	new AuthRightsSettings(),
     	new AuthsSettings()
     };
 
@@ -97,6 +98,7 @@ public class AdvancedSettingsDialog implements ListSelectionListener {
     private AdvancedSettings roleSettings[] = {
     	new GroupsSettings(),
     	new RightsSettings(),
+    	new AuthRightsSettings(),
     	new AuthsSettings()
     };
 
@@ -108,6 +110,7 @@ public class AdvancedSettingsDialog implements ListSelectionListener {
     private String title = Finder.getString("usermgr.advanced.title");
 
     private MutableProperty<String> rightsProperty = new StringProperty();
+    private MutableProperty<String> authRightsProperty = new StringProperty();
     private MutableProperty<String> rolesProperty = new StringProperty();
     private MutableProperty<String> groupsProperty = new StringProperty();
     private MutableProperty<String> authsProperty = new StringProperty();

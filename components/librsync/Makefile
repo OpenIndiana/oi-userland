@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -62,6 +62,8 @@ CONFIGURE_OPTIONS  +=	--enable-shared
 PROTOUSRSHAREDOCDIR = $(PROTOUSRSHAREDIR)/doc/librsync-0.9.7
 
 PATCH_LEVEL = 1
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 build: $(BUILD_32_and_64)
 

@@ -40,7 +40,15 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Needed to correctly include <curses.h> and <term.h> when compiling the
+# various C source files.
+CFLAGS += -DINCLUDE_CURSES_H
+
 CONFIGURE_ENV += CC="$(CC)"
+CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
+
+CC += $(CC_BITS)
+COMPONENT_BUILD_ARGS += CC="$(CC)"
 
 # We need to reset configure options here because ircii is confused with
 # CC and CFLAGS definitions as configure parameters.
@@ -57,15 +65,15 @@ CONFIGURE_OPTIONS       += $(CONFIGURE_OPTIONS.$(BITS))
 #
 # This action modifies the libexecdir setting in the Makefile to /usr/bin
 COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i -e 's|/usr/libexec|/usr/bin|' $(BUILD_DIR_32)/Makefile
+	$(GSED) -i -e 's|/usr/libexec|/usr/bin|' $(BUILD_DIR_64)/Makefile
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:           $(NO_TESTS)
 

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -86,6 +86,7 @@ public class UserMgrPanelDescriptor
     private List<String> shellList = null;
     private List<Group> groupList = null;
     private List<String> profileList = null;
+    private List<String> authProfileList = null;
     private List<String> authList = null;
     private List<String> roleList = null;
     private List<String> supplgroups = null;
@@ -312,6 +313,7 @@ public class UserMgrPanelDescriptor
 			char[] password = null;
 			if (umo.getPassProperty().isChanged())
 			    password = umo.getPassword();
+			// System.out.println(umo.toString());
 			getUserMgrBean().modifyUser(user, password, changes);
 			if (password != null)
 			    Arrays.fill(password, (char)0);
@@ -383,7 +385,7 @@ public class UserMgrPanelDescriptor
 		0, 0, 0, 0,
 		"", "", "", "", "", "",
 		"", "", "", "", "", "",
-		null, null, null, null, null, null);
+		null, null, null, null, null, null, null);
 
         return defaultUser;
     }

@@ -78,7 +78,7 @@ Index: crypto/sparcv9cap.c
 diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 --- openssl-1.0.1e/crypto/sparcv9cap.c 2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.1e/crypto/sparcv9cap.c 2011-07-27 10:48:17.817470000 -0700
-@@ -6,17 +6,12 @@
+@@ -6,16 +6,15 @@
  #include <sys/time.h>
  #include <openssl/bn.h>
  
@@ -89,18 +89,19 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 -#define SPARCV9_FMADD		(1<<4)	/* reserved for SPARC64 V */
 +#include "sparc_arch.h"
  
--#ifndef	_BOOT
--static int OPENSSL_sparcv9cap_P=SPARCV9_TICK_PRIVILEGED;
--#else
--static int OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
 +#if defined(__GNUC__) && defined(__linux)
 +__attribute__((visibility("hidden")))
- #endif
++#endif
+ #ifndef	_BOOT
+-static int OPENSSL_sparcv9cap_P=SPARCV9_TICK_PRIVILEGED;
 +unsigned int OPENSSL_sparcv9cap_P[2]={SPARCV9_TICK_PRIVILEGED,0};
+ #else
+-static int OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
++unsigned int OPENSSL_sparcv9cap_P[2]={SPARCV9_VIS1,0};
+ #endif
  
  int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num)
- 	{
-@@ -24,7 +19,7 @@
+@@ -24,7 +23,7 @@
  	int bn_mul_mont_int(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
  
  	if (num>=8 && !(num&1) &&
@@ -109,7 +110,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  		(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
  		return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
  	else
-@@ -36,11 +31,15 @@
+@@ -36,11 +35,16 @@
  unsigned long	_sparcv9_vis1_instrument(void);
  void		_sparcv9_vis2_probe(void);
  void		_sparcv9_fmadd_probe(void);
@@ -117,9 +118,9 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 +void		_sparcv9_vis3_probe(void);
 +unsigned long	_sparcv9_random(void);
 +size_t 		_sparcv9_vis1_instrument_bus(unsigned int *,size_t);
-+size_t		_sparcv8_vis1_instrument_bus2(unsigned int *,size_t,size_t);
++size_t		_sparcv9_vis1_instrument_bus2(unsigned int *,size_t,size_t);
  
--#ifndef _BOOT
+ #ifndef _BOOT
  unsigned long OPENSSL_rdtsc(void)
  	{
 -	if (OPENSSL_sparcv9cap_P&SPARCV9_TICK_PRIVILEGED)
@@ -127,29 +128,19 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #if defined(__sun) && defined(__SVR4)
  		return gethrtime();
  #else
-@@ -49,19 +48,26 @@
- 	else
- 		return _sparcv9_rdtick();
+@@ -51,6 +55,25 @@
  	}
--#endif
+ #endif
  
--#if defined(_BOOT)
--/*
-- * Hardcoding sparc capabilities for wanboot.
-- * Older CPUs are EOLed anyway.
-- */
--void OPENSSL_cpuid_setup(void)
 +size_t OPENSSL_instrument_bus(unsigned int *out,size_t cnt)
- 	{
--	OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
++	{
 +	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
 +			SPARCV9_BLK)
 +		return _sparcv9_vis1_instrument_bus(out,cnt);
 +	else
 +		return 0;
- 	}
- 
--#elif 0 && defined(__sun) && defined(__SVR4)
++	}
++
 +size_t OPENSSL_instrument_bus2(unsigned int *out,size_t cnt,size_t max)
 +	{
 +	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
@@ -159,11 +150,20 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 +		return 0;
 +	}
 +
-+#if 0 && defined(__sun) && defined(__SVR4)
- /* This code path is disabled, because of incompatibility of
-  * libdevinfo.so.1 and libmalloc.so.1 (see below for details)
++
+ #if defined(_BOOT)
+ /*
+  * Hardcoding sparc capabilities for wanboot.
+@@ -58,7 +81,7 @@
   */
-@@ -85,11 +91,11 @@
+ void OPENSSL_cpuid_setup(void)
+ 	{
+-	OPENSSL_sparcv9cap_P = SPARCV9_VIS1;
++	OPENSSL_sparcv9cap_P[0] = SPARCV9_VIS1;
+ 	}
+ 
+ #elif 0 && defined(__sun) && defined(__SVR4)
+@@ -85,11 +108,11 @@
  	if (!strcmp (name,"SUNW,UltraSPARC") ||
  	    !strncmp(name,"SUNW,UltraSPARC-I",17))  /* covers II,III,IV */
  		{
@@ -177,7 +177,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  		return DI_WALK_TERMINATE;
  		}
-@@ -96,7 +102,7 @@
+@@ -96,7 +119,7 @@
  	/* This is expected to catch remaining UltraSPARCs, such as T1 */
  	else if (!strncmp(name,"SUNW,UltraSPARC",15))
  		{
@@ -186,7 +186,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  		return DI_WALK_TERMINATE;
  		}
-@@ -115,7 +121,7 @@
+@@ -115,7 +138,7 @@
  
  	if ((e=getenv("OPENSSL_sparcv9cap")))
  		{
@@ -195,7 +195,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  		return;
  		}
  
-@@ -123,17 +129,17 @@
+@@ -123,17 +146,17 @@
  		{
  		if (strcmp(si,"sun4v"))
  			/* FPU is preferred for all CPUs, but US-T1/2 */
@@ -217,7 +217,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  			return;
  			}
  		}
-@@ -193,12 +199,14 @@
+@@ -193,12 +216,14 @@
   
  	if ((e=getenv("OPENSSL_sparcv9cap")))
  		{
@@ -234,7 +234,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  	sigfillset(&all_masked);
  	sigdelset(&all_masked,SIGILL);
-@@ -221,20 +229,20 @@
+@@ -221,20 +246,20 @@
  	if (sigsetjmp(common_jmp,1) == 0)
  		{
  		_sparcv9_rdtick();
@@ -259,7 +259,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  			}
  		}
  
-@@ -241,9 +249,37 @@
+@@ -241,9 +266,37 @@
  	if (sigsetjmp(common_jmp,1) == 0)
  		{
  		_sparcv9_fmadd_probe();
