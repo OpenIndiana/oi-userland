@@ -29,7 +29,7 @@ COMPONENT_PROJECT_URL=	http://github.com/vasi/pixz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:912c60de88f7eca2e1c6fe13eec5371f723018dca933796c47cd50bf6a349fc9
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)archive/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/pixz/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pixz
 
 include ../../make-rules/prep.mk
