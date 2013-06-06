@@ -1,6 +1,6 @@
 '\" te
-.\" Copyright (c) 2008, 2011, Oracle and/or its affiliates. All rights reserved.
-.TH apache2 1M "May 2011" "SunOS 5.11" "System Administration Commands"
+.\" Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+.TH apache2 1M "May 2013" "SunOS 5.12" "System Administration Commands"
 .SH NAME
 apache2 \- Apache HTTP Server Version 2 overview
 .SH SYNOPSIS
@@ -19,6 +19,28 @@ files, and documentation.
 .LP
 Both 32-bit and 64-bit versions of the servers are installed. It also
 includes two of the most popular MPMs - Prefork and Worker.
+.sp
+Apache 2 can be enabled by authorized user within the service
+management facility (SMF), using the following fault management
+resource identifier (FMRI):
+.sp
+.in +2
+.nf
+svc:/network/http:apache22
+.fi
+.in -2
+.sp
+Available SMF properties are listed in the following table:
+.sp
+.TS
+tab(^G) allbox;
+cw(2.750000i)| cw(2.750000i)
+lw(2.750000i)| lw(2.750000i).
+SMF Property Name^Value 
+httpd/server_type^prefork (default) or worker 
+httpd/enable_64bit^true or false(default)
+httpd/startup_options^valid apachectl options
+.TE
 .SH FILES
 .sp
 .LP
@@ -65,6 +87,10 @@ $ /usr/apache2/[version]/bin/apachectl -v
 .RS 4n
 Contains server configuration files. A newly-installed server
 contains a default \fBhttpd.conf\fR file. This is the main configuration file.
+.sp
+If there is need to use different main configuration file (e.g. to run
+multiple Apache 2 instances), it's possible by providing Apache '-f'
+option via SMF property httpd/startup_options.
 .RE
 
 .sp
@@ -95,6 +121,11 @@ bundled Apache 2 modules respectively.
 File for specifying the environment settings which the server uses at
 startup. This is the user-editable version of the 
 /usr/apache2/[version]/bin/envvars file. 
+.sp
+Note that this is default path to envvars file only in case where main
+configuration file is in directory /etc/apache2/[version]/2.2/. If this
+is not the case Apache 2 will look for envvars file in the same
+directory where is main configuration file.
 .RE
 
 .sp
@@ -383,18 +414,67 @@ The location of the cache can also be changed by changing the proxy
 configuration in the \fBhttpd.conf\fR file.
 .RE
 
+.SH EXAMPLES
+.LP
+\fBExample 1 \fRTo enable 64-bit server
+.sp
+
+.in +2
+.nf
+# \fBsvccfg -s apache22 setprop httpd/enable_64bit=false\fR
+# \fBsvcadm refresh apache22\fR
+# \fBsvcadm enable apache22\fR
+.fi
+.in -2
+.sp
+
+.LP
+\fBExample 2 \fRTo switch to worker server type
+.sp
+
+.in +2
+.nf
+# \fBsvccfg -s apache22 setprop httpd/server_type=worker\fR
+# \fBsvcadm refresh apache22\fR
+# \fBsvcadm restart apache22\fR
+.fi
+.in -2
+.sp
+
+.LP
+\fBExample 3 \fRCreate new SMF apache instance
+.sp
+.LP
+This expects that valid configuration exists in
+/var/myapache/httpd.conf and it has altered all relevant directives
+against default apache instance (e.g. PidFile, Listen, DocumentRoot,
+ErrorLog and CustomLog).
+.sp
+.in +2
+.nf
+# \fBcp /lib/svc/manifest/network/http-apache22.xml my-apache22.xml\fR
+.sp
+Edit my-apache22.xml and rename instance name to my-apache22.
+
+# \fBsvccfg import my-apache22.xml\fR
+# \fBsvccfg -s my-apache22 setprop httpd/startup_options=\\("-f" "/var/myapache/httpd.conf"\\)\fR
+# \fBsvcadm refresh my-apache22\fR
+.fi
+.in -2
+.sp
+
 .SH SEE ALSO
 .sp
 .LP
 \fBattributes(5)\fR, \fBhttpd(8)\fR, apachectl(8)
 .sp
 .LP
-http://www.apache.org
+http://httpd.apache.org/docs/
 .SH NOTES
 .sp
 .LP
 In addition to the documentation and man pages included with Solaris,
-more information is available at http://www.apache.org\&.
+more information is available at http://httpd.apache.org/\&.
 .sp
 .LP
 The Apache 2 man pages are provided with the programming modules. To
