@@ -34,10 +34,15 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-#CC="/usr/gcc/3.4/bin/gcc" 
-#CXX="/usr/gcc/3.4/bin/g++" 
+CXXFLAGS+=-I/usr/include/ncurses
+
+LDFLAGS.32=	$(LDFLAGS) -L/usr/gnu/lib -R /usr/gnu/lib
+LDFLAGS.64=	$(LDFLAGS) -L/usr/gnu/lib/amd64 -R /usr/gnu/lib/amd64
+
 COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D)
-CONFIGURE_OPTIONS+=	--enable-shared --disable-static --with-pic --disable-wide-curses CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS+=	--enable-shared --disable-static --with-pic --with-curses=ncurses CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
+CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 
 build:		$(BUILD_32_and_64)
 
