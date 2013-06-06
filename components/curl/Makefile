@@ -35,7 +35,6 @@ COMPONENT_BUGDB=	library/curl
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
@@ -71,6 +70,7 @@ CONFIGURE_OPTIONS += --with-gssapi=/usr --without-ca-bundle
 CONFIGURE_OPTIONS += --with-ca-path=/etc/openssl/certs
 CONFIGURE_OPTIONS += --with-zlib=/usr --with-libidn=/usr
 CONFIGURE_OPTIONS += --with-pic
+CONFIGURE_OPTIONS += --without-libssh2
 CONFIGURE_OPTIONS += "curl_disallow_getifaddrs=yes"
 
 LINT_FLAGS += -I$(SOURCE_DIR)/include

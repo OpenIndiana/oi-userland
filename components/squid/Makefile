@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -28,12 +28,12 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
-COMPONENT_VERSION=      3.1.18
+COMPONENT_VERSION=      3.1.23
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:6a7122514d58c3077f2b43c928864be10753d8e2c8439133dacc9eba6c45e00d
+    sha256:ba5f6a7000a032f2315923c1b8d0b37458d33a7f59d603facecf9e8c12470b34
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)Versions/v3/3.1/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/squid
 
@@ -89,13 +89,40 @@ CONFIGURE_OPTIONS += --with-pthreads
 
 COMPONENT_POST_BUILD_ACTION= \
                 (cd $(COMPONENT_DIR) ; \
-                 $(CP) squid.conf.default $(@D)/src)
+                 $(CP) files/squid.conf.default $(@D)/src)
 
 # common targets
 build:		$(BUILD_32) 
 
 install:	$(INSTALL_32) 
-		
+
+# configure says it needs cppunit to test with.
+# After some work I can get cppunit to build but it quickly
+# falls over during test so giving up.
+# I don't think the test suite really tests squid's functionality anyways.
+#
+# To test manually follow along in the book
+# Squid Proxy Server 3.1 Beginner's Guide Page 34
+#
+# Add this to the top of /etc/squid/squid.conf:
+# cache_dir ufs /var/squid/cache/ 500 16 256
+# acl my_machine src 192.0.2.21 # Replace with your desktop's IP address
+# http_access allow my_machine
+#
+# Make sure apache is running.
+#	# svcs apache22
+# Start squid:
+#	# svcadm enable squid
+# On your desktop set your web browser to proxy through this squid:
+# Edit -> Preferences -> Advanced -> Network -> Settings
+#	Check: Manual proxy configuration
+#	HTTP Proxy: <squid servers IP address>    Port: 3128
+#   Save
+# Enter <squid server URL> in your web browser.  You should be accessing squid
+# and seeing files stored in the http server on that machine.
+# Enter <squid server URL>:897 in your web browser and squid should complain.
+# Squid is working properly.
+
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

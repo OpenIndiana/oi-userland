@@ -50,6 +50,7 @@ COMPONENT_PREP_ACTION = \
 # Needed to installed most of the files into the proto area.
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # common targets
 build:		$(BUILD_32)

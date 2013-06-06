@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autogen
-COMPONENT_VERSION=	5.9
+COMPONENT_VERSION=	5.16.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/autogen/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bc2181f9568897b9ad4d57978bc0a72e2a31b97e837999e6f839bdbbc02c3fc8
+    sha256:aa51f5adbf49c2cb48a7d6de3dbab15b89e0a04e7152195fe6fb3380e05c4991
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/autogen/rel$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/autogen
 
@@ -46,15 +46,28 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 # strip the environment or install target fails
 ENV +=	-i
 
+# Replace all occurrences of "echo" with "/usr/gnu/bin/echo" in the two
+# scripts used by autogen that munge the man and mdoc output. This prevents
+# bogus conversions (like "\f" -> Control-L) happening.
+# Adjust "tr" to "/usr/gnu/bin/tr" in the autoopts vendor.test.
+# These changes now allow the autoopts tests to successfully complete.
+COMPONENT_POST_UNPACK_ACTION = \
+	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
+		$(SOURCE_DIR)/autoopts/tpl/mdoc2man.sh ; \
+	$(GSED) -i -e 's|echo|/usr/gnu/bin/echo|' \
+		$(SOURCE_DIR)/autoopts/tpl/texi2mdoc.sh ; \
+	$(GSED) -i -e 's| tr | /usr/gnu/bin/tr |' \
+		$(SOURCE_DIR)/autoopts/test/vendor.test
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_32)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

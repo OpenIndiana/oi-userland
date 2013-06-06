@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -70,6 +70,9 @@ public class UserManagedObject
     private MutableProperty<String> rightsProperty =
 	new StringProperty();
 
+    private MutableProperty<String> authRightsProperty =
+	new StringProperty();
+
     private MutableProperty<String> rolesProperty =
 	new StringProperty();
 
@@ -99,8 +102,8 @@ public class UserManagedObject
     {
         ChangeableAggregator aggregator = getChangeableAggregator();
 	aggregator.addChangeables(groupIdProperty, homeDirProperty,
-	    passProperty, shellProperty,
-	    rolesProperty, rightsProperty, authsProperty, groupsProperty,
+	    passProperty, shellProperty, rolesProperty, rightsProperty,
+	    authRightsProperty, authsProperty, groupsProperty,
 	    userDescProperty, userIdProperty, userNameProperty);
     }
 
@@ -125,6 +128,7 @@ public class UserManagedObject
 
 	rolesProperty.update(listToString(user.getRoles()), true);
 	rightsProperty.update(listToString(user.getProfiles()), true);
+	authRightsProperty.update(listToString(user.getAuthProfiles()), true);
 	authsProperty.update(listToString(user.getAuths()), true);
 	groupsProperty.update(listToString(user.getGroups()), true);
 	accountStatusProperty.update(user.getAccountStatus() == null ? ""
@@ -177,6 +181,7 @@ public class UserManagedObject
 	    .append("\n\ttype: ")
 	    .append(type == UserType.NORMAL ? "user" : "role")
 	    .append("\n\trights: ").append(getRights())
+	    .append("\n\tauth_rights: ").append(getAuthRights())
 	    .append("\n\tauths: ").append(getAuths())
 	    .append("\n\tgroups: ").append(getGroups())
 	    .append("\n\troles: ").append(getRoles())
@@ -196,6 +201,7 @@ public class UserManagedObject
 	// Additional attributes
 	rolesProperty.update(listToString(user.getRoles()), true);
 	rightsProperty.update(listToString(user.getProfiles()), true);
+	authRightsProperty.update(listToString(user.getAuthProfiles()), true);
 	authsProperty.update(listToString(user.getAuths()), true);
 	groupsProperty.update(listToString(user.getGroups()), true);
 
@@ -219,9 +225,12 @@ public class UserManagedObject
 	return homeDirProperty;
     }
 
-
     public MutableProperty<String> getRightsProperty() {
 	return rightsProperty;
+    }
+
+    public MutableProperty<String> getAuthRightsProperty() {
+	return authRightsProperty;
     }
 
     public MutableProperty<String> getRolesProperty() {
@@ -296,6 +305,10 @@ public class UserManagedObject
 	return rightsProperty.getValue();
     }
 
+    public String getAuthRights() {
+	return authRightsProperty.getValue();
+    }
+
     public String getRoles() {
 	return rolesProperty.getValue();
     }
@@ -351,6 +364,10 @@ public class UserManagedObject
 	    newUser.setProfiles(stringToList(getRights()));
 	}
 
+	if (getAuthRights() != null) {
+	    // System.out.println("new user auth rights:" + getAuthRights());
+	    newUser.setAuthProfiles(stringToList(getAuthRights()));
+	}
 	if (getRoles() != null) {
 	    // System.out.println("new user roles:" + getRoles());
 	    newUser.setRoles(stringToList(getRoles()));
@@ -394,6 +411,13 @@ public class UserManagedObject
 	    // System.out.println("mod user rights " + getRights());
 	    modUser.setProfiles(stringToList(getRights()));
 	    modChanges.setProfilesChanged(true);
+	    bChanged = true;
+	}
+
+	if (authRightsProperty.isChanged()) {
+	    // System.out.println("mod user auth rights " + getAuthRights());
+	    modUser.setAuthProfiles(stringToList(getAuthRights()));
+	    modChanges.setAuthProfilesChanged(true);
 	    bChanged = true;
 	}
 

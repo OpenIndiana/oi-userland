@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		memcached
-COMPONENT_VERSION=	1.4.5
+COMPONENT_VERSION=	1.4.15
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://memcached.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9571b4b85484e46b3b10f07ccba77a1fa97d60660b32859f990effefb3005f91
+    sha256:169721ab7a7531add6ae9f6b14b6b5641725fe0b1f0bdf5c3a4327725901e2b4
 COMPONENT_ARCHIVE_URL=	http://memcached.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	database/memcached
 
@@ -46,24 +46,26 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 COMPONENT_TEST_TARGETS=	test
 
-studio_OPT = -xO5
-
 CFLAGS += -D__ATTRIBUTE_DISABLED
 
+CONFIGURE_BINDIR.32 =	$(CONFIGURE_PREFIX)/lib/
+CONFIGURE_OPTIONS.32 +=	--with-libevent=/usr/lib/
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
 CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/${MACH64}
-CONFIGURE_OPTIONS +=	--enable-dtrace --disable-docs --disable-coverage
+CONFIGURE_OPTIONS +=	--enable-dtrace
+CONFIGURE_OPTIONS +=	--disable-docs
+CONFIGURE_OPTIONS +=	--disable-coverage
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

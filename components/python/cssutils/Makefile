@@ -39,6 +39,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR= $(COMPONENT_SRC)
+COMPONENT_TEST_ARGS= ./setup.py test
+
 # Remove the trailing Control-M's from the Python source files.
 COMPONENT_PRE_BUILD_ACTION = \
 	/usr/bin/find $(SOURCE_DIR)/src \
@@ -67,12 +70,11 @@ COMPONENT_POST_BUILD_ACTION = \
 COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(SOURCE_DIR); $(RM) -r src ; $(CP) -rp src-$(PYTHON_VERSION) src )
 
-# common targets
-build:          $(BUILD_32)
+build:          $(BUILD_NO_ARCH)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_NO_ARCH)
 
-test:           $(NO_TESTS)
+test:           $(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 

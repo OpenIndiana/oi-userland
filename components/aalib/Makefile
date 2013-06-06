@@ -40,7 +40,6 @@ COMPONENT_BUGDB=	library/aalib
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 

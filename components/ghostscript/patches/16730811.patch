@@ -1,0 +1,14 @@
+/*
+ * Fix developed in-house.
+ * Upstream bug 693952, http://bugs.ghostscript.com/show_bug.cgi?id=693952#c2.
+ */
+--- ghostscript-9.00/base/gxsync.h.orig	Thu May  2 05:50:31 2013
++++ ghostscript-9.00/base/gxsync.h	Thu May  2 05:51:09 2013
+@@ -52,6 +52,7 @@
+ /* the event count is set to 1 (1st 'enter' succeeds immediately). */
+ typedef struct gx_monitor_s {
+     gs_memory_t *memory;	/* allocator to free memory */
++    int *dummy;			/* to address alignment issue on sparc */
+     gp_monitor native;		/* platform-dep impl, len is gp_monitor_sizeof() */
+ } gx_monitor_t;
+ 

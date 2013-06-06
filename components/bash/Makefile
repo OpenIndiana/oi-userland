@@ -42,7 +42,7 @@ PATCH_LEVEL = 0
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/Solaris
 
 # Enable C99 mode + -Xc for it's additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
+#studio_C99MODE = -Xc $(studio_C99_ENABLE)
 
 # Use the maximum number of registers on sparc since we have no libraries
 studio_XREGS.sparc = -xregs=appl
@@ -52,14 +52,14 @@ studio_ALIGN.sparc.32 = -xmemalign=8i
 studio_ALIGN.sparc.64 = -xmemalign=16i
 
 # -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
+# CFLAGS += -xinline=%auto
 
 # -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
+# CFLAGS += -xbuiltin=%none
 
-CFLAGS += $(XPG6MODE)
-CFLAGS += $(CPP_POSIX)
-CFLAGS += $(CPP_C99_EXTENDED_MATH)
+#CFLAGS += $(XPG6MODE)
+#CFLAGS += $(CPP_POSIX)
+#CFLAGS += $(CPP_C99_EXTENDED_MATH)
 
 # configure checks for some functions, but doesn't seem to want to link in
 # the required libraries for them. We avoid linking with libthread.so.1
@@ -112,7 +112,7 @@ CONFIGURE_OPTIONS  += 		--enable-usg-echo-default=yes
 CONFIGURE_OPTIONS  += 		--enable-xpg-echo-default=yes
 CONFIGURE_OPTIONS  += 		--enable-mem-scramble	
 CONFIGURE_OPTIONS  += 		--disable-profiling	
-CONFIGURE_OPTIONS  += 		--enable-static-link	
+#CONFIGURE_OPTIONS  += 		--enable-static-link	
 CONFIGURE_OPTIONS  += 		--enable-largefile
 CONFIGURE_OPTIONS  += 		--enable-nls	
 CONFIGURE_OPTIONS  += 		--with-bash-malloc=yes
@@ -126,9 +126,9 @@ TEST_ENV +=	$(TARGET_ENV)
 
 ASLR_MODE=$(ASLR_ENABLE)
 
-build: $(BUILD_64)
+build: $(BUILD_32_and_64)
 
-install: $(INSTALL_64)
+install: $(INSTALL_32_and_64)
 	( cd $(PROTOUSRSHAREDIR)/locale ; \
 	    cp -Rp "en@boldquot" en ; \
 	    cp -Rp "en@boldquot" en_CA ; \

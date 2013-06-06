@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,17 +42,18 @@ include ../../make-rules/setup.py.mk
 # rename pytest to its versioned name; mediated links (depending on
 # the python version) in the manifest will create the link from pytest
 # to the correct pytest-${PYTHON_VERSION}
+# compile all of the python .py files in the proto area since setup.py doesn't
+# seem to be doing it for this component.
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pytest pytest-$(PYTHON_VERSION))
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pytest pytest-$(PYTHON_VERSION)) ; \
+	($(PYTHON) -m compileall $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES))
 
 
 # common targets
 
-build:		$(BUILD_32)
+build:		$(BUILD_NO_ARCH)
 
-install:	$(INSTALL_32)
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
+install:	$(INSTALL_NO_ARCH)
 	
 # The tests are run using python 2.7 only and require that the
 # python-27 package is installed (does not have to be the default python). 
@@ -72,7 +73,7 @@ COMPONENT_TEST_ARGS =
 # 21 modules OK (2 failed)
 # failures: unittest_shellutils [1/23], unittest_date [1/45]
 
-test:	$(TEST_32)
+test:	$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

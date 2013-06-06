@@ -1,0 +1,32 @@
+Needed to get ircii to successfully run in 64-bit mode with Solaris
+libtermcap (really libcurses). Also need to have -DINCLUDE_CURSES_H
+defined in the component Makefile.
+
+This patch has not been sent upstream, because the Solaris integration
+of termcap diverges from the way that Linux systems do this.
+
+On Linux systems you do not need to have -DINCLUDE_CURSES_H defined, in 
+order to build ircii. The tgoto() routine has a prototype definition in 
+/usr/include/termcap.h (supplied by the ncurses package), which is 
+found by configure:
+
+...
+checking for termcap.h... yes
+...
+
+On Solaris, we do not have a /usr/include/termcap.h file. Therefore,
+according to the curs_termcap(3CURSES) man page, for C sources files
+that want to use the tgoto() routine, we need to include both 
+"#include <curses.h" and "#include <term.h>". For that we need to define
+-DINCLUDE_CURSES_H and also patch it to include term.h
+
+--- ircii-20111115/include/ircterm.h.orig	2013-05-09 14:53:15.390715728 -0700
++++ ircii-20111115/include/ircterm.h	2013-05-09 14:53:37.227217484 -0700
+@@ -39,6 +39,7 @@
+ 
+ #ifdef INCLUDE_CURSES_H
+ # include <curses.h>
++# include <term.h>
+ #endif /* INCLUDE_CURSES_H */
+ 
+ extern	int	term_reset_flag;

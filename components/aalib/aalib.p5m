@@ -22,32 +22,34 @@
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-
-set name=pkg.fmri value=pkg:/library/aalib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=pkg.fmri \
+    value=pkg:/library/aalib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="AAlib - Ascii art graphics library"
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=com.oracle.info.description value="the AAlib library"
-set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=com.oracle.info.tpno value=6118
+set name=info.classification \
+    value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid \
-    value=LSARC/2009/302
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2009/302
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license aalib.license license='LGPLv2'
-
-file path=usr/bin/aalib-config
 file path=usr/bin/$(MACH64)/aalib-config
+file path=usr/bin/aalib-config
 file usr/bin/aafire path=usr/demo/aalib/aafire mode=0555
 file usr/bin/aainfo path=usr/demo/aalib/aainfo mode=0555
 file usr/bin/aasavefont path=usr/demo/aalib/aasavefont mode=0555
 file usr/bin/aatest path=usr/demo/aalib/aatest mode=0555
 file path=usr/include/aalib.h
+link path=usr/lib/$(MACH64)/libaa.so target=libaa.so.1.0.4
+link path=usr/lib/$(MACH64)/libaa.so.1 target=libaa.so.1.0.4
 file path=usr/lib/$(MACH64)/libaa.so.1.0.4
-file path=usr/lib/$(MACH64)/llib-laa.ln
+#file path=usr/lib/$(MACH64)/llib-laa.ln
+link path=usr/lib/libaa.so target=libaa.so.1.0.4
+link path=usr/lib/libaa.so.1 target=libaa.so.1.0.4
 file path=usr/lib/libaa.so.1.0.4
-file path=usr/lib/llib-laa
-file path=usr/lib/llib-laa.ln
+#file path=usr/lib/llib-laa
+#file path=usr/lib/llib-laa.ln
 file path=usr/share/aclocal/aalib.m4
 file ANNOUNCE path=usr/share/doc/aalib/ANNOUNCE
 file AUTHORS path=usr/share/doc/aalib/AUTHORS
@@ -124,7 +126,4 @@ file path=usr/share/man/man3/aa_uninitkbd.3
 file path=usr/share/man/man3/aa_uninitmouse.3
 file path=usr/share/man/man3/mem_d.3
 file path=usr/share/man/man3/save_d.3
-link path=usr/lib/$(MACH64)/libaa.so target=libaa.so.1.0.4
-link path=usr/lib/$(MACH64)/libaa.so.1 target=libaa.so.1.0.4
-link path=usr/lib/libaa.so target=libaa.so.1.0.4
-link path=usr/lib/libaa.so.1 target=libaa.so.1.0.4
+license aalib.license license=LGPLv2
