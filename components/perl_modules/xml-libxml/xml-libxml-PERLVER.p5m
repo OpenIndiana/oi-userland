@@ -1,0 +1,138 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+#
+<transform depend pkg.debug.depend.path=usr.*/5.12-mt/bin ->  set pkg.debug.depend.file perl-threaded>
+<transform depend pkg.debug.depend.path=(usr.*/5.12)-mt(/bin) ->  set pkg.debug.depend.path %<1>%<2>  > 
+#
+<transform file path=usr.*/5.12-mt/(man|XML)/.* -> drop >
+# convert 5.12-mt to 5.12 in the path because that is where the threaded
+# perl bits really are.
+<transform file path=(usr.*/5.12)-mt(/.+) -> set path %<1>%<2>>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform set name=pkg.fmri value=(.*)512-mt(.+) -> set value %<1>threaded-512%<2>>
+<transform depend fmri=(.*)512-mt(.*) -> set fmri %<1>threaded-512%<2>>
+<transform depend predicate=(.*)512-mt(.*) -> set predicate %<1>threaded-512%<2>>
+
+set name=pkg.fmri \
+    value=pkg:/library/perl-5/xml-libxml-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value=XML-LibXML
+set name=pkg.description \
+    value="XML-LibXML is an an interface to libxml2, providing XML and HTML parsers with DOM, SAX and XMLReader interfaces."
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=com.oracle.info.description value="Perl interface to libxml2"
+set name=com.oracle.info.tpno value=12995
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Perl
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/117
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Attr.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::AttributeHash.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Boolean.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::CDATASection.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Comment.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Common.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::DOM.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Devel.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Document.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::DocumentFragment.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Dtd.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Element.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::ErrNo.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Error.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::InputCallback.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Literal.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Namespace.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Node.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::NodeList.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Number.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::PI.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Parser.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Pattern.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Reader.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::RegExp.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::RelaxNG.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::SAX.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::SAX::Builder.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::SAX::Generator.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Schema.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::Text.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::XPathContext.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::LibXML::XPathExpression.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Attr.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/AttributeHash.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Boolean.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/CDATASection.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Comment.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Common.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Common.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/DOM.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Devel.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Document.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/DocumentFragment.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Dtd.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Element.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/ErrNo.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/ErrNo.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Error.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Error.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/InputCallback.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Literal.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Namespace.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Node.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/NodeList.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Number.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/PI.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Parser.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Pattern.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Reader.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Reader.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/RegExp.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/RelaxNG.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/SAX.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/SAX.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/SAX/Builder.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/SAX/Builder.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/SAX/Generator.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/SAX/Parser.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Schema.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/Text.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/XPathContext.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/XPathContext.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/XML/LibXML/XPathExpression.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/LibXML/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/LibXML/LibXML.bs
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/LibXML/LibXML.so
+license xml-libxml.license license=Artistic
+
+# force a dependency on the Perl runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# force a dependency on the xml-libxml package
+depend type=require \
+    fmri=library/perl-5/xml-libxml@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

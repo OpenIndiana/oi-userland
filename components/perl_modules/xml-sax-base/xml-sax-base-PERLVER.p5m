@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 #
 <transform depend pkg.debug.depend.path=usr.*/5.12-mt/bin ->  set pkg.debug.depend.file perl-threaded>
@@ -31,32 +31,39 @@
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
 <transform set name=pkg.fmri value=(.*)512-mt(.+) -> set value %<1>threaded-512%<2>>
 <transform depend fmri=(.*)512-mt(.*) -> set fmri %<1>threaded-512%<2>>
-<transform depend predicate=(.*)512-mt(.*) -> set predicate %<1>threaded-512%<2>> 
+<transform depend predicate=(.*)512-mt(.*) -> set predicate %<1>threaded-512%<2>>
+<transform depend fmri=(.*)512-mt(.*) -> set fmri %<1>threaded-512%<2>>
+<transform depend predicate=(.*)512-mt(.*) -> set predicate %<1>threaded-512%<2>>
 
-set name=pkg.fmri value=pkg:/library/perl-5/xml-simple-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="XML::Simple - Easy API to maintain XML (esp config files)"
-set name=pkg.description value="The XML::Simple module provides a simple API layer on top of an underlying XML parsing module (either XML::Parser or one of the SAX2 parser modules)."
-set name=com.oracle.info.description value="the XML::Simple Perl module"
+set name=pkg.fmri \
+    value=pkg:/library/perl-5/xml-sax-base-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value=XML-SAX-Base
+set name=pkg.description \
+    value="This module provides a Base class for SAX Drivers and Filters."
+set name=pkg.human-version value=$(HUMAN_VERSION)
+set name=com.oracle.info.description value="Perl base class for SAX"
+set name=com.oracle.info.tpno value=13137
 set name=info.classification \
-    value="org.opensolaris.category.2008:Development/Perl"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+    value=org.opensolaris.category.2008:Development/Perl
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2004/251
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/117
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-
-license xml-simple.license license='Artistic'
-
-depend fmri=library/perl-5/xml-simple@2.18-0.167 type=optional
-depend fmri=library/perl-5/xml-parser type=require
+#file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/perllocal.pod
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::Base.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::BuildSAXBase.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::Exception.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/SAX/Base/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/Base.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/BuildSAXBase.pl
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/Exception.pm
+license xml-sax-base.license license=Artistic
 
 # force a dependency on the Perl runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=perl \
     pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
 
-#file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/perllocal.pod
-file path=usr/perl5/$(PERLVER)/man/man3/XML::Simple.3
-file path=usr/perl5/$(PERLVER)/man/man3/XML::Simple::FAQ.3
-file path=usr/perl5/vendor_perl/$(PERLVER)/XML/Simple.pm
-file path=usr/perl5/vendor_perl/$(PERLVER)/XML/Simple/FAQ.pod
-file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/Simple/.packlist
+# force a dependency on the xml-sax-base package
+depend type=require \
+    fmri=library/perl-5/xml-sax-base@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+

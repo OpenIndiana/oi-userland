@@ -1,0 +1,84 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+#
+<transform depend pkg.debug.depend.path=usr.*/5.12-mt/bin ->  set pkg.debug.depend.file perl-threaded>
+<transform depend pkg.debug.depend.path=(usr.*/5.12)-mt(/bin) ->  set pkg.debug.depend.path %<1>%<2>  > 
+#
+<transform file path=usr.*/5.12-mt/(man|XML)/.* -> drop >
+# convert 5.12-mt to 5.12 in the path because that is where the threaded
+# perl bits really are.
+<transform file path=(usr.*/5.12)-mt(/.+) -> set path %<1>%<2>>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform set name=pkg.fmri value=(.*)512-mt(.+) -> set value %<1>threaded-512%<2>>
+<transform depend fmri=(.*)512-mt(.*) -> set fmri %<1>threaded-512%<2>>
+<transform depend predicate=(.*)512-mt(.*) -> set predicate %<1>threaded-512%<2>> 
+
+set name=pkg.fmri \
+    value=pkg:/library/perl-5/xml-sax-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value=XML-SAX
+set name=pkg.description \
+    value="This module provides a Simple API for XML parsing in Perl."
+set name=com.oracle.info.description value="Perl simple API for XML Parsing"
+set name=com.oracle.info.tpno value=12998
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Perl
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/117
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::DocumentLocator.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::Intro.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::ParserFactory.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::PurePerl.3
+file path=usr/perl5/$(PERLVER)/man/man3/XML::SAX::PurePerl::Reader.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/XML/SAX/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/DocumentLocator.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/Intro.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/ParserFactory.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/DTDDecls.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/DebugHandler.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/DocType.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/EncodingDetect.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Exception.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/NoUnicodeExt.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Productions.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader/NoUnicodeExt.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader/Stream.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader/String.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader/URI.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/Reader/UnicodeExt.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/UnicodeExt.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/XML/SAX/PurePerl/XMLDecl.pm
+license xml-sax.license license=Artistic
+
+# force a dependency on the Perl runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
+
+# force a dependency on the xml-sax package
+depend type=require \
+    fmri=library/perl-5/xml-sax@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

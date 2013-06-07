@@ -34,6 +34,9 @@ COMPONENT_ARCHIVE_URL=	\
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~grantm/
 COMPONENT_BUGDB=	perl-mod/xml-parser
 
+# build threaded 5.12 support too
+PERL_VERSIONS += 5.12-mt
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk

@@ -18,33 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
-
-#
-# Note that package library/perl-5/xml-parser cannot use versionless
-# packaging because this package migrated from the desktop consolidation
-# with an incorrect version number.
-#
-
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		XML-Parser
-COMPONENT_VERSION=	2.41
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_NAME=		XML-LibXML
+COMPONENT_VERSION=	2.14
+HUMAN_VERSION=		2.0014
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b48197cd2265a26c5f016489f11a7b450d8833cb8b3d6a46ee15975740894de9
-COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/T/TO/TODDR/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL=	http://search.cpan.org/~toddr/
-COMPONENT_BUGDB=	perl-mod/xml-parser
+    sha256:c6c1e854b8be7abcedd243fb43e4845c45629d2c98b8f4ec5d423e6fafe15564
+COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/S/SH/SHLOMIF/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://search.cpan.org/~shlomif/XML-LibXML/
+COMPONENT_BUGDB=	perl-mod/xml-libxml
+
+# build threaded 5.12 support too
+PERL_VERSIONS += 5.12-mt
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk
-
-# build threaded 5.12 support too
-PERL_VERSIONS += 5.12-mt
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
@@ -53,8 +47,6 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
 COMPONENT_TEST_TARGETS = test
-
-PKG_MACROS +=	PERL_A=$(shell arch)
 
 build:		$(BUILD_32_and_64)
 

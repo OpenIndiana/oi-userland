@@ -36,16 +36,21 @@ COMMON_PERL_ENV +=	CFLAGS="$(PERL_OPTIMIZE)"
 
 $(BUILD_DIR)/$(MACH32)-5.12/.configured:	PERL_VERSION=5.12
 $(BUILD_DIR)/$(MACH32)-5.12/.configured:	BITS=32
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.configured:	PERL_VERSION=5.12-mt
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.configured:	BITS=32
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	BITS=64
 
 BUILD_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.built
+BUILD_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.built
 BUILD_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.built
 
 INSTALL_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.installed
+INSTALL_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.installed
 INSTALL_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.installed
 
 TEST_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.tested
+TEST_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.tested
 TEST_64 =	$(BUILD_DIR)/$(MACH64)-5.16/.tested
 
 COMPONENT_CONFIGURE_ENV +=	$(COMMON_PERL_ENV)
