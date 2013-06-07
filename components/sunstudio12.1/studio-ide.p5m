@@ -1,0 +1,183 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Andrzej Szeszo.  All rights reserved.
+#
+
+# XXX: manifest needs SPARC support
+
+<transform file path=.*/bin/+ -> default mode 0555>
+<transform file dir link hardlink path=.* -> default pkg.linted true>
+<transform dir path=opt -> default group sys>
+<transform dir path=usr -> default group sys>
+<transform dir path=usr/bin -> set group bin>
+<transform dir path=usr/share/man -> set group bin>
+<transform dir path=usr/share/man/man1 -> set group bin>
+<transform dir path=usr/share/man/man3 -> set group bin>
+<transform dir path=usr/share/man/man4 -> set group bin>
+<transform dir path=usr/share/pixmaps -> set group other>
+<transform dir path=usr/share/applications -> set group other>
+
+set name=pkg.fmri value=pkg:/developer/sunstudio12u1/studio-ide@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Sun Studio 12 update 1 - studio-ide"
+set name=info.classification value=org.opensolaris.category.2008:Development/C value=org.opensolaris.category.2008:Development/C++ value="org.opensolaris.category.2008:Development/High Performance Computing" value="org.opensolaris.category.2008:Development/Integrated Development Environments" value=org.opensolaris.category.2008:Development/Suites
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license sunstudio12u1.copyright license=sunstudio12u1.copyright
+
+dir  path=opt
+dir  path=opt/sunstudio12.1
+dir  path=opt/sunstudio12.1/READMEs
+link path=opt/sunstudio12.1/READMEs/compiler_ide \
+    target=../prod/READMEs/compiler_ide
+dir  path=opt/sunstudio12.1/bin
+link path=opt/sunstudio12.1/bin/sunstudio target=../prod/bin/sunstudio
+dir  path=opt/sunstudio12.1/man
+dir  path=opt/sunstudio12.1/man/man1
+link path=opt/sunstudio12.1/man/man1/sunstudio.1 \
+    target=../../prod/man/man1/sunstudio.1
+dir  path=opt/sunstudio12.1/prod
+dir  path=opt/sunstudio12.1/prod/READMEs
+file path=opt/sunstudio12.1/prod/READMEs/compiler_ide
+dir  path=opt/sunstudio12.1/prod/bin
+file path=opt/sunstudio12.1/prod/bin/jdk_chooser
+file path=opt/sunstudio12.1/prod/bin/sunstudio
+dir  path=opt/sunstudio12.1/prod/demos
+dir  path=opt/sunstudio12.1/prod/demos/flashdemo
+file path=opt/sunstudio12.1/prod/demos/flashdemo/fractals.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_scene.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_scene01.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_scene02.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_scene03.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_scene04.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_scene05.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_scene06.swf
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_studio_demo.html
+file path=opt/sunstudio12.1/prod/demos/flashdemo/sun_studio_demo.swf
+dir  path=opt/sunstudio12.1/prod/docs
+file path=opt/sunstudio12.1/prod/docs/NoRegistration.html
+dir  path=opt/sunstudio12.1/prod/etc
+file path=opt/sunstudio12.1/prod/etc/sunstudio.conf
+dir  path=opt/sunstudio12.1/prod/man
+dir  path=opt/sunstudio12.1/prod/man/man1
+file path=opt/sunstudio12.1/prod/man/man1/sunstudio.1
+dir  path=opt/sunstudio12.1/prod/modules
+dir  path=opt/sunstudio12.1/prod/modules-xml
+dir  path=opt/sunstudio12.1/prod/modules-xml/off
+file path=opt/sunstudio12.1/prod/modules-xml/off/org-netbeans-modules-cnd-debugger-gdb.xml
+file path=opt/sunstudio12.1/prod/modules-xml/off/org-netbeans-modules-cnd-kit.xml
+file path=opt/sunstudio12.1/prod/modules-xml/off/org-netbeans-modules-ide-branding-kit.xml
+file path=opt/sunstudio12.1/prod/modules-xml/off/org-netbeans-modules-registration.xml
+dir  path=opt/sunstudio12.1/prod/modules-xml/on
+file path=opt/sunstudio12.1/prod/modules/registration.jar
+dir  path=opt/sunstudio12.1/prod/nb-clusters
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/config
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-dlight-core.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-dlight-dbeapi.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-dlight-editorsupport.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-dlight-kit.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-dlight-projectsupport.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-dlight-remotesupport.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-dlight.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-forte-st-mpmt.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-debugger-dbxgui.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-advtools-actions-api.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-advtools-actions-control.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-advtools-actions-performanceanalyzeractions.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-advtools-actions-spi.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-sunstudio-registration.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-sunstudio-stat.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-sunstudio.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/config/Modules/com-sun-tools-swdev-toolscommon.xml
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/core
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/core/locale
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/core/locale/core_sunstudio.jar
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/lib
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/lib/SunOS-amd64
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/lib/SunOS-amd64/libbase.so
+link path=opt/sunstudio12.1/prod/nb-clusters/sside1/lib/SunOS-amd64/tools_exec \
+    target=../SunOS-x86/tools_exec
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/lib/SunOS-x86
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/lib/SunOS-x86/libbase.so
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/lib/SunOS-x86/tools_exec
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/autoload
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/autoload/com-sun-forte-st-mpmt.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/autoload/com-sun-tools-swdev-toolscommon.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-dlight-core.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-dlight-dbeapi.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-dlight-editorsupport.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-dlight-kit.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-dlight-projectsupport.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-dlight-remotesupport.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-dlight.jar
+link \
+    path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-forte-st-mpmt.jar \
+    target=autoload/com-sun-forte-st-mpmt.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-debugger-dbxgui.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-swdev-advtools-actions-api.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-swdev-advtools-actions-control.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-swdev-advtools-actions-performanceanalyzeractions.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-swdev-advtools-actions-spi.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-swdev-sunstudio-registration.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-swdev-sunstudio-stat.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/com-sun-tools-swdev-sunstudio.jar
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/docs
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/docs/analyzer_help.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/docs/com-sun-dlight.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/docs/com-sun-tools-debugger-dbxgui.jar
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/locale
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/locale/org-netbeans-core-windows_sunstudio.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/locale/org-netbeans-core_sunstudio.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/locale/org-netbeans-modules-cnd-makeproject_sunstudio.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/locale/org-netbeans-modules-cnd_sunstudio.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/locale/org-netbeans-modules-welcome_sunstudio.jar
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/modules/locale/org-openide-dialogs_sunstudio.jar
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/perfan
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/perfan/bin
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/perfan/bin/locale_dtracelets.sh
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/perfan/bin/ls_dtracelets.sh
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/perfan/bin/validate_paths.sh
+dir  path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-dlight-core.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-dlight-dbeapi.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-dlight-editorsupport.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-dlight-kit.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-dlight-projectsupport.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-dlight-remotesupport.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-dlight.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-forte-st-mpmt.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-debugger-dbxgui.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-swdev-advtools-actions-api.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-swdev-advtools-actions-control.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-swdev-advtools-actions-performanceanalyzeractions.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-swdev-advtools-actions-spi.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-swdev-sunstudio-registration.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-swdev-sunstudio-stat.xml
+file path=opt/sunstudio12.1/prod/nb-clusters/sside1/update_tracking/com-sun-tools-swdev-sunstudio.xml
+dir  path=opt/sunstudio12.1/prod/system
+dir  path=opt/sunstudio12.1/prod/system/Modules
+file path=opt/sunstudio12.1/prod/system/Modules/com-sun-ffj-modules-registration.xml
+dir  path=usr
+dir  path=usr/bin
+link path=usr/bin/sunstudio target=../../opt/sunstudio12.1/bin/sunstudio
+dir  path=usr/share
+dir  path=usr/share/applications
+file path=usr/share/applications/SunStudio.desktop
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
+link path=usr/share/man/man1/sunstudio.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/sunstudio.1
+dir  path=usr/share/pixmaps
+file path=usr/share/pixmaps/SunStudio.png

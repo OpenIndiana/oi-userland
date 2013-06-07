@@ -1,0 +1,219 @@
+#!/bin/sh
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2012, Andrzej Szeszo
+#
+
+#PREFIX=cde-runtime
+#SRCREPO=http://pkg.openindiana.org/legacy
+#PKGLIST=pkg:/cde/$PREFIX@0.5.11,5.11-0.134:20100302T005909Z
+
+set -e
+
+PREFIX=$1; shift
+SRCREPO=$1; shift
+PKGLIST="$@"
+
+[ -f $PREFIX.tar.gz ] && exit 0
+
+if [ ! -d $PREFIX.pkgrecv ]; then
+    mkdir $PREFIX.pkgrecv
+    pkgrecv -s $SRCREPO -d $PREFIX.pkgrecv --raw $PKGLIST
+fi
+
+dir() {
+    parm=$1
+    while [ ! x$1 = x ]; do
+        variant=
+        case $parm in
+            path=*)
+                path=`echo $parm|sed s/^path=//`
+                ;;
+            variant.arch=*)
+                variant=`echo $parm|sed s/^variant.arch=//`
+                ;;
+        esac
+        shift
+        parm=$1
+    done
+
+    if [ -z $variant ]; then
+        mkdir -p $PREFIX/i386/$path
+        mkdir -p $PREFIX/sparc/$path
+    elif [ $variant = i386 ]; then
+        mkdir -p $PREFIX/i386/$path
+    elif [ $variant = sparc ]; then
+        mkdir -p $PREFIX/sparc/$path
+    fi
+
+}
+
+file() {
+    hash=$1
+    parm=$1
+    while [ ! x$1 = x ]; do
+        variant=
+        case $parm in
+            path=*)
+                path=`echo $parm|sed s/^path=//`
+                ;;
+            mode=*)
+                mode=`echo $parm|sed s/^mode=//`
+                ;;
+            variant.arch=*)
+                variant=`echo $parm|sed s/^variant.arch=//`
+                ;;
+        esac
+        shift
+        parm=$1
+    done
+
+    if [ -z $variant ]; then
+        [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/i386/$path
+        chmod $mode $PREFIX/i386/$path
+        [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/sparc/$path
+        chmod $mode $PREFIX/sparc/$path
+    elif [ $variant = i386 ]; then
+        [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/i386/$path
+        chmod $mode $PREFIX/i386/$path
+    elif [ $variant = sparc ]; then
+        [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/sparc/$path
+        chmod $mode $PREFIX/sparc/$path
+    fi
+
+}
+
+hardlink() {
+    parm=$1
+    while [ ! x$1 = x ]; do
+        variant=
+        case $parm in
+            path=*)
+                path=`echo $parm|sed s/^path=//`
+                ;;
+            target=*)
+                target=`echo $parm|sed s/^target=//`
+                ;;
+            variant.arch=*)
+                variant=`echo $parm|sed s/^variant.arch=//`
+                ;;
+        esac
+        shift
+        parm=$1
+    done
+
+    if [ -z $variant ]; then
+        [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln `dirname $PREFIX/i386/$path`/$target $PREFIX/i386/$path
+        [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln `dirname $PREFIX/sparc/$path`/$target $PREFIX/sparc/$path
+    elif [ $variant = i386 ]; then
+        [ -f $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln `dirname $PREFIX/i386/$path`/$target $PREFIX/i386/$path
+    elif [ $variant = sparc ]; then
+        [ -f $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln `dirname $PREFIX/sparc/$path`/$target $PREFIX/sparc/$path
+    fi
+
+}
+
+link() {
+    parm=$1
+    while [ ! x$1 = x ]; do
+        variant=
+        case $parm in
+            path=*)
+                path=`echo $parm|sed s/^path=//`
+                ;;
+            target=*)
+                target=`echo $parm|sed s/^target=//`
+                ;;
+            variant.arch=*)
+                variant=`echo $parm|sed s/^variant.arch=//`
+                ;;
+        esac
+        shift
+        parm=$1
+    done
+
+    if [ -z $variant ]; then
+        [ -h $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln -s $target $PREFIX/i386/$path
+        [ -h $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln -s $target $PREFIX/sparc/$path
+    elif [ $variant = i386 ]; then
+        [ -h $PREFIX/i386/$path ] && rm -f $PREFIX/i386/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln -s $target $PREFIX/i386/$path
+    elif [ $variant = sparc ]; then
+        [ -h $PREFIX/sparc/$path ] && rm -f $PREFIX/sparc/$path
+        [ ! -d `dirname $PREFIX/i386/$path` ] || mkdir -p `dirname $PREFIX/i386/$path`
+        ln -s $target $PREFIX/sparc/$path
+    fi
+
+}
+
+license() {
+    hash=$1
+    parm=$1
+    while [ ! x"$1" = x ]; do
+        case $parm in
+            license=*)
+                license=`echo $parm|sed s/^license=//`
+                ;;
+        esac
+        shift
+        parm=$1
+    done
+    cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/i386/"$license"
+    cp `ls $PREFIX.pkgrecv/*/*/$hash|head -1` $PREFIX/sparc/"$license"
+
+}
+
+
+for i in $PREFIX.pkgrecv/*/*/manifest.dir; do
+    [ -f $i ] && . $i
+done
+
+for i in $PREFIX.pkgrecv/*/*/manifest.file; do
+    [ -f $i ] && . $i
+done
+
+for i in $PREFIX.pkgrecv/*/*/manifest.hardlink; do
+    [ -f $i ] && . $i
+done
+
+for i in $PREFIX.pkgrecv/*/*/manifest.link; do
+    [ -f $i ] && . $i
+done
+
+for i in $PREFIX.pkgrecv/*/*/manifest.license; do
+    [ -f $i ] && . $i
+done
+
+tar cf - $PREFIX | gzip -9 >$PREFIX.tar.gz
+
+rm -rf $PREFIX.pkgrecv $PREFIX

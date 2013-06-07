@@ -221,10 +221,10 @@ $(BUILD_DIR_64)/.tested:       BITS=64
 COMPONENT_TEST_TARGETS =	check
 
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
-BUILD_TOOLS ?=	/ws/on12-tools
+BUILD_TOOLS ?=	/opt
 
-SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
-SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
+SPRO_ROOT =	$(BUILD_TOOLS)/sunstudio12.1
+SPRO_VROOT =	$(SPRO_ROOT)
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.0.1/
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
@@ -373,6 +373,7 @@ INSTALL =	/usr/bin/ginstall
 CHMOD =		/usr/bin/chmod
 NAWK =		/usr/bin/nawk
 TEE =		/usr/bin/tee
+IPS2TGZ = 	$(WS_TOOLS)/ips2tgz
 
 INS.dir=        $(INSTALL) -d $@
 INS.file=       $(INSTALL) -m 444 $< $(@D)

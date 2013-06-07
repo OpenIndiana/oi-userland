@@ -1,0 +1,45 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Andrzej Szeszo.  All rights reserved.
+#
+
+# XXX: manifest needs SPARC support
+
+<transform file path=.*/bin/+ -> default mode 0555>
+<transform file dir link hardlink path=.* -> default pkg.linted true>
+<transform dir path=opt -> default group sys>
+<transform dir path=usr -> default group sys>
+<transform dir path=usr/bin -> set group bin>
+<transform dir path=usr/share/man -> set group bin>
+<transform dir path=usr/share/man/man1 -> set group bin>
+<transform dir path=usr/share/man/man3 -> set group bin>
+<transform dir path=usr/share/man/man4 -> set group bin>
+
+set name=pkg.fmri value=pkg:/developer/sunstudio12u1/ctags@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Sun Studio 12 update 1 - ctags"
+set name=info.classification value=org.opensolaris.category.2008:Development/C value=org.opensolaris.category.2008:Development/C++ value="org.opensolaris.category.2008:Development/High Performance Computing" value="org.opensolaris.category.2008:Development/Integrated Development Environments" value=org.opensolaris.category.2008:Development/Suites
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license sunstudio12u1.copyright license=sunstudio12u1.copyright
+
+dir  path=opt
+dir  path=opt/sunstudio12.1
+dir  path=opt/sunstudio12.1/sfw
+dir  path=opt/sunstudio12.1/sfw/bin
+file path=opt/sunstudio12.1/sfw/bin/ctags
+dir  path=opt/sunstudio12.1/sfw/man
+dir  path=opt/sunstudio12.1/sfw/man/man1
+file path=opt/sunstudio12.1/sfw/man/man1/ctags.1
+dir  path=opt/sunstudio12.1/sfw/src
+dir  path=opt/sunstudio12.1/sfw/src/ctags
+file path=opt/sunstudio12.1/sfw/src/ctags/ctags-5.5.4.tar.gz

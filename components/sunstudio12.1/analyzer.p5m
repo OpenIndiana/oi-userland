@@ -1,0 +1,432 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Andrzej Szeszo.  All rights reserved.
+#
+
+# XXX: manifest needs SPARC support
+
+<transform file path=.*/bin/+ -> default mode 0555>
+<transform file dir link hardlink path=.* -> default pkg.linted true>
+<transform dir path=opt -> default group sys>
+<transform dir path=usr -> default group sys>
+<transform dir path=usr/bin -> set group bin>
+<transform dir path=usr/share/man -> set group bin>
+<transform dir path=usr/share/man/man1 -> set group bin>
+<transform dir path=usr/share/man/man3 -> set group bin>
+<transform dir path=usr/share/man/man4 -> set group bin>
+
+set name=pkg.fmri value=pkg:/developer/sunstudio12u1/analyzer@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Sun Studio 12 update 1 - analyzer"
+set name=info.classification value=org.opensolaris.category.2008:Development/C value=org.opensolaris.category.2008:Development/C++ value="org.opensolaris.category.2008:Development/High Performance Computing" value="org.opensolaris.category.2008:Development/Integrated Development Environments" value=org.opensolaris.category.2008:Development/Suites
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license sunstudio12u1.copyright license=sunstudio12u1.copyright
+
+dir  path=opt
+dir  path=opt/sunstudio12.1
+dir  path=opt/sunstudio12.1/READMEs
+link path=opt/sunstudio12.1/READMEs/analyzer target=../prod/READMEs/analyzer
+dir  path=opt/sunstudio12.1/bin
+link path=opt/sunstudio12.1/bin/analyzer target=../prod/bin/analyzer
+link path=opt/sunstudio12.1/bin/collect target=../prod/bin/collect
+link path=opt/sunstudio12.1/bin/er_archive target=../prod/bin/er_archive
+link path=opt/sunstudio12.1/bin/er_cp target=../prod/bin/er_cp
+link path=opt/sunstudio12.1/bin/er_export target=../prod/bin/er_export
+link path=opt/sunstudio12.1/bin/er_html target=../prod/bin/er_html
+link path=opt/sunstudio12.1/bin/er_kernel target=../prod/bin/er_kernel
+link path=opt/sunstudio12.1/bin/er_mv target=../prod/bin/er_mv
+link path=opt/sunstudio12.1/bin/er_print target=../prod/bin/er_print
+link path=opt/sunstudio12.1/bin/er_rm target=../prod/bin/er_rm
+link path=opt/sunstudio12.1/bin/er_src target=../prod/bin/er_src
+link path=opt/sunstudio12.1/bin/ripc target=../prod/bin/ripc
+link path=opt/sunstudio12.1/bin/spot target=../prod/bin/spot
+link path=opt/sunstudio12.1/bin/spot_diff target=../prod/bin/spot_diff
+link path=opt/sunstudio12.1/bin/tha target=../prod/bin/analyzer
+dir  path=opt/sunstudio12.1/examples
+link path=opt/sunstudio12.1/examples/analyzer target=../prod/examples/analyzer
+link path=opt/sunstudio12.1/examples/general target=../prod/examples
+link path=opt/sunstudio12.1/examples/tha target=../prod/examples/tha
+dir  path=opt/sunstudio12.1/include
+link path=opt/sunstudio12.1/include/collectorAPI.h \
+    target=../prod/include/cc/collectorAPI.h
+link path=opt/sunstudio12.1/include/libcollector.h \
+    target=../prod/include/cc/libcollector.h
+link path=opt/sunstudio12.1/include/tha_interface.h \
+    target=../prod/include/cc/tha_interface.h
+dir  path=opt/sunstudio12.1/lib
+dir  path=opt/sunstudio12.1/lib/$(MACH64)
+link path=opt/sunstudio12.1/lib/$(MACH64)/libcollectorAPI.so \
+    target=libcollectorAPI.so.1
+link path=opt/sunstudio12.1/lib/$(MACH64)/libcollectorAPI.so.1 \
+    target=../../prod/lib/$(MACH64)/libcollectorAPI.so.1
+link path=opt/sunstudio12.1/lib/$(MACH64)/libfcollector.so \
+    target=libcollectorAPI.so
+link path=opt/sunstudio12.1/lib/$(MACH64)/libperfS10.so \
+    target=../../prod/lib/$(MACH64)/libperfS10.so
+link path=opt/sunstudio12.1/lib/$(MACH64)/libtha.so target=libtha.so.1
+link path=opt/sunstudio12.1/lib/$(MACH64)/libtha.so.1 \
+    target=../../prod/lib/$(MACH64)/libtha.so.1
+link path=opt/sunstudio12.1/lib/collector.jar target=../prod/lib/collector.jar
+link path=opt/sunstudio12.1/lib/er.rc target=../prod/lib/er.rc
+link path=opt/sunstudio12.1/lib/libcollectorAPI.so target=libcollectorAPI.so.1
+link path=opt/sunstudio12.1/lib/libcollectorAPI.so.1 \
+    target=../prod/lib/libcollectorAPI.so.1
+link path=opt/sunstudio12.1/lib/libfcollector.so target=libcollectorAPI.so
+link path=opt/sunstudio12.1/lib/libperfS10.so target=../prod/lib/libperfS10.so
+link path=opt/sunstudio12.1/lib/libtha.so target=libtha.so.1
+link path=opt/sunstudio12.1/lib/libtha.so.1 target=../prod/lib/libtha.so.1
+dir  path=opt/sunstudio12.1/lib/spot_resources
+dir  path=opt/sunstudio12.1/lib/spot_resources/locale
+dir  path=opt/sunstudio12.1/lib/spot_resources/locale/C
+link path=opt/sunstudio12.1/lib/spot_resources/locale/C/help.gif \
+    target=../../../../prod/lib/spot_resources/locale/C/help.gif
+link path=opt/sunstudio12.1/lib/spot_resources/locale/C/help.html \
+    target=../../../../prod/lib/spot_resources/locale/C/help.html
+link path=opt/sunstudio12.1/lib/spot_resources/locale/C/more.gif \
+    target=../../../../prod/lib/spot_resources/locale/C/more.gif
+link path=opt/sunstudio12.1/lib/spot_resources/sort_table.js \
+    target=../../prod/lib/spot_resources/sort_table.js
+dir  path=opt/sunstudio12.1/man
+dir  path=opt/sunstudio12.1/man/man1
+link path=opt/sunstudio12.1/man/man1/analyzer.1 \
+    target=../../prod/man/man1/analyzer.1
+link path=opt/sunstudio12.1/man/man1/bw.1 target=../../prod/man/man1/bw.1
+link path=opt/sunstudio12.1/man/man1/collect.1 \
+    target=../../prod/man/man1/collect.1
+link path=opt/sunstudio12.1/man/man1/collector.1 \
+    target=../../prod/man/man1/collector.1
+link path=opt/sunstudio12.1/man/man1/er_archive.1 \
+    target=../../prod/man/man1/er_archive.1
+link path=opt/sunstudio12.1/man/man1/er_bit.1 \
+    target=../../prod/man/man1/er_bit.1
+link path=opt/sunstudio12.1/man/man1/er_cp.1 target=../../prod/man/man1/er_cp.1
+link path=opt/sunstudio12.1/man/man1/er_export.1 \
+    target=../../prod/man/man1/er_export.1
+link path=opt/sunstudio12.1/man/man1/er_html.1 \
+    target=../../prod/man/man1/er_html.1
+link path=opt/sunstudio12.1/man/man1/er_kernel.1 \
+    target=../../prod/man/man1/er_kernel.1
+link path=opt/sunstudio12.1/man/man1/er_mpipp.1 \
+    target=../../prod/man/man1/er_mpipp.1
+link path=opt/sunstudio12.1/man/man1/er_mv.1 target=../../prod/man/man1/er_mv.1
+link path=opt/sunstudio12.1/man/man1/er_otfdump.1 \
+    target=../../prod/man/man1/er_otfdump.1
+link path=opt/sunstudio12.1/man/man1/er_print.1 \
+    target=../../prod/man/man1/er_print.1
+link path=opt/sunstudio12.1/man/man1/er_rm.1 target=../../prod/man/man1/er_rm.1
+link path=opt/sunstudio12.1/man/man1/er_src.1 \
+    target=../../prod/man/man1/er_src.1
+link path=opt/sunstudio12.1/man/man1/ripc.1 target=../../prod/man/man1/ripc.1
+link path=opt/sunstudio12.1/man/man1/spot.1 target=../../prod/man/man1/spot.1
+link path=opt/sunstudio12.1/man/man1/spot_diff.1 \
+    target=../../prod/man/man1/spot_diff.1
+link path=opt/sunstudio12.1/man/man1/tha.1 target=../../prod/man/man1/tha.1
+link path=opt/sunstudio12.1/man/man1/traps.1 target=../../prod/man/man1/traps.1
+dir  path=opt/sunstudio12.1/man/man3
+link path=opt/sunstudio12.1/man/man3/libcollector.3 \
+    target=../../prod/man/man3/libcollector.3
+link path=opt/sunstudio12.1/man/man3/libtha.3 \
+    target=../../prod/man/man3/libtha.3
+dir  path=opt/sunstudio12.1/prod
+dir  path=opt/sunstudio12.1/prod/READMEs
+file path=opt/sunstudio12.1/prod/READMEs/analyzer
+dir  path=opt/sunstudio12.1/prod/bin
+dir  path=opt/sunstudio12.1/prod/bin/$(MACH64)
+file path=opt/sunstudio12.1/prod/bin/$(MACH64)/er_kernel
+file path=opt/sunstudio12.1/prod/bin/$(MACH64)/er_print
+file path=opt/sunstudio12.1/prod/bin/$(MACH64)/ripc
+file path=opt/sunstudio12.1/prod/bin/analyzer
+file path=opt/sunstudio12.1/prod/bin/collect
+file path=opt/sunstudio12.1/prod/bin/er_archive
+file path=opt/sunstudio12.1/prod/bin/er_bit
+file path=opt/sunstudio12.1/prod/bin/er_cp
+file path=opt/sunstudio12.1/prod/bin/er_export
+file path=opt/sunstudio12.1/prod/bin/er_html
+file path=opt/sunstudio12.1/prod/bin/er_kernel
+file path=opt/sunstudio12.1/prod/bin/er_mpipp
+file path=opt/sunstudio12.1/prod/bin/er_mv
+file path=opt/sunstudio12.1/prod/bin/er_otfdump
+file path=opt/sunstudio12.1/prod/bin/er_print
+file path=opt/sunstudio12.1/prod/bin/er_rm
+file path=opt/sunstudio12.1/prod/bin/er_src
+file path=opt/sunstudio12.1/prod/bin/er_vtunify
+file path=opt/sunstudio12.1/prod/bin/perftools_ckthainstr
+file path=opt/sunstudio12.1/prod/bin/perftools_validate
+file path=opt/sunstudio12.1/prod/bin/perftools_whichami
+file path=opt/sunstudio12.1/prod/bin/ripc
+file path=opt/sunstudio12.1/prod/bin/spot
+file path=opt/sunstudio12.1/prod/bin/spot_diff
+dir  path=opt/sunstudio12.1/prod/config
+dir  path=opt/sunstudio12.1/prod/config/Modules
+file path=opt/sunstudio12.1/prod/config/Modules/com-sun-forte-st-mpmt.xml
+dir  path=opt/sunstudio12.1/prod/examples
+dir  path=opt/sunstudio12.1/prod/examples/analyzer
+dir  path=opt/sunstudio12.1/prod/examples/analyzer/cachetest
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/DEMO.cachetest
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/Makefile
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/README
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/barrier.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/dgemv_g.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/dgemv_hi.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/dgemv_opt.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/dgemv_p.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/main.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/cachetest/wtime.c
+dir  path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/DEMO.jsynprog
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/Intface.java
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/Launcher.java
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/Makefile
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/README
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/Routine.java
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/Sub_Routine.java
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/cloop.cc
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/defs.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/gethrtime.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/jsynprog.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/jsynprog/jsynprog.java
+dir  path=opt/sunstudio12.1/prod/examples/analyzer/mttest
+file path=opt/sunstudio12.1/prod/examples/analyzer/mttest/DEMO.mttest
+file path=opt/sunstudio12.1/prod/examples/analyzer/mttest/Makefile
+file path=opt/sunstudio12.1/prod/examples/analyzer/mttest/README
+file path=opt/sunstudio12.1/prod/examples/analyzer/mttest/cksigmask.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/mttest/defs.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/mttest/gethrtime.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/mttest/mttest.c
+dir  path=opt/sunstudio12.1/prod/examples/analyzer/omptest
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/DEMO.omptest
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/Makefile
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/README
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/atomsum.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/autodo.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/autosum.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/bardo.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/critsum.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/defs.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/dyndo.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/gethrtime.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/nestedsum.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/omptest.debug.in
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/omptest.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/pardo.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/parsec.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/pdo.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/psec.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/redsum.f
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/tasksum.f90
+file path=opt/sunstudio12.1/prod/examples/analyzer/omptest/timing.c
+dir  path=opt/sunstudio12.1/prod/examples/analyzer/synprog
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/DEMO.synprog
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/Makefile
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/README
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/callso.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/callsx.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/cksigmask.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/defs.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/endcases.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/fitos.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/gethrtime.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/inc_body.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/inc_brace.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/inc_entry.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/inc_exit.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/inc_func.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/inc_inline.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/inc_macro.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/iosyn.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/pagethrash.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/so_syn.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/so_syx.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/stopwatch.c
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/stopwatch.h
+file path=opt/sunstudio12.1/prod/examples/analyzer/synprog/synprog.c
+dir  path=opt/sunstudio12.1/prod/examples/tha
+dir  path=opt/sunstudio12.1/prod/examples/tha/din_philo
+file path=opt/sunstudio12.1/prod/examples/tha/din_philo/DEMO.din_philo
+file path=opt/sunstudio12.1/prod/examples/tha/din_philo/Makefile
+file path=opt/sunstudio12.1/prod/examples/tha/din_philo/din_philo.c
+file path=opt/sunstudio12.1/prod/examples/tha/din_philo/din_philo_fix1.c
+file path=opt/sunstudio12.1/prod/examples/tha/din_philo/din_philo_fix2.c
+dir  path=opt/sunstudio12.1/prod/examples/tha/hello_race
+file path=opt/sunstudio12.1/prod/examples/tha/hello_race/DEMO.hello_race
+file path=opt/sunstudio12.1/prod/examples/tha/hello_race/Makefile
+file path=opt/sunstudio12.1/prod/examples/tha/hello_race/hello_race.c
+dir  path=opt/sunstudio12.1/prod/examples/tha/prime_omp
+file path=opt/sunstudio12.1/prod/examples/tha/prime_omp/DEMO.prime_omp
+file path=opt/sunstudio12.1/prod/examples/tha/prime_omp/Makefile
+file path=opt/sunstudio12.1/prod/examples/tha/prime_omp/prime.c
+file path=opt/sunstudio12.1/prod/examples/tha/prime_omp/prime_omp.c
+file path=opt/sunstudio12.1/prod/examples/tha/prime_omp/prime_omp_fixed.c
+dir  path=opt/sunstudio12.1/prod/examples/tha/prime_pthr
+file path=opt/sunstudio12.1/prod/examples/tha/prime_pthr/DEMO.prime_pthr
+file path=opt/sunstudio12.1/prod/examples/tha/prime_pthr/Makefile
+file path=opt/sunstudio12.1/prod/examples/tha/prime_pthr/prime.c
+file path=opt/sunstudio12.1/prod/examples/tha/prime_pthr/prime_pthr.c
+file path=opt/sunstudio12.1/prod/examples/tha/prime_pthr/prime_pthr_fixed.c
+dir  path=opt/sunstudio12.1/prod/include
+dir  path=opt/sunstudio12.1/prod/include/cc
+file path=opt/sunstudio12.1/prod/include/cc/collectorAPI.h
+file path=opt/sunstudio12.1/prod/include/cc/libcollector.h
+file path=opt/sunstudio12.1/prod/include/cc/tha_interface.h
+dir  path=opt/sunstudio12.1/prod/include/f90
+link path=opt/sunstudio12.1/prod/include/f90/$(MACH64) target=../f95/$(MACH64)
+dir  path=opt/sunstudio12.1/prod/include/f95
+dir  path=opt/sunstudio12.1/prod/include/f95/$(MACH64)
+link path=opt/sunstudio12.1/prod/include/f95/$(MACH64)/libfcollector.h \
+    target=../libfcollector.h
+link path=opt/sunstudio12.1/prod/include/f95/$(MACH64)/tha_finterface.h \
+    target=../tha_finterface.h
+file path=opt/sunstudio12.1/prod/include/f95/libfcollector.h
+file path=opt/sunstudio12.1/prod/include/f95/tha_finterface.h
+dir  path=opt/sunstudio12.1/prod/lib
+dir  path=opt/sunstudio12.1/prod/lib/$(MACH64)
+dir  path=opt/sunstudio12.1/prod/lib/$(MACH64)/dbxruntime
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/dbxruntime/er_heap.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/dbxruntime/er_mpview.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/dbxruntime/er_mpview_MPICH2.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/dbxruntime/er_sync.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/dbxruntime/libcollector.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/dbxruntime/tha.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/libcollectorAPI.so.1
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/liber_dbe.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/libperfS10.so
+file path=opt/sunstudio12.1/prod/lib/$(MACH64)/libtha.so.1
+file path=opt/sunstudio12.1/prod/lib/analyzer_st.jar
+file path=opt/sunstudio12.1/prod/lib/collector.jar
+file path=opt/sunstudio12.1/prod/lib/com-sun-tools-swdev-toolscommon.jar
+dir  path=opt/sunstudio12.1/prod/lib/dbxruntime
+file path=opt/sunstudio12.1/prod/lib/dbxruntime/er_heap.so
+file path=opt/sunstudio12.1/prod/lib/dbxruntime/er_mpview.so
+file path=opt/sunstudio12.1/prod/lib/dbxruntime/er_mpview_MPICH2.so
+file path=opt/sunstudio12.1/prod/lib/dbxruntime/er_sync.so
+file path=opt/sunstudio12.1/prod/lib/dbxruntime/libcollector.so
+file path=opt/sunstudio12.1/prod/lib/dbxruntime/tha.so
+file path=opt/sunstudio12.1/prod/lib/er.rc
+file path=opt/sunstudio12.1/prod/lib/libcollectorAPI.so.1
+file path=opt/sunstudio12.1/prod/lib/liber_dbe.so
+file path=opt/sunstudio12.1/prod/lib/libperfS10.so
+file path=opt/sunstudio12.1/prod/lib/libtha.so.1
+dir  path=opt/sunstudio12.1/prod/lib/locale
+dir  path=opt/sunstudio12.1/prod/lib/locale/C
+dir  path=opt/sunstudio12.1/prod/lib/locale/C/LC_MESSAGES
+file path=opt/sunstudio12.1/prod/lib/locale/C/LC_MESSAGES/analyzer.msg
+dir  path=opt/sunstudio12.1/prod/lib/spot_resources
+dir  path=opt/sunstudio12.1/prod/lib/spot_resources/locale
+dir  path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C
+dir  path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/LC_MESSAGES
+file path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/LC_MESSAGES/bw.po
+file path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/LC_MESSAGES/spot.po
+file path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/LC_MESSAGES/spot_diff.po
+file path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/LC_MESSAGES/traps.po
+file path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/help.gif
+file path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/help.html
+file path=opt/sunstudio12.1/prod/lib/spot_resources/locale/C/more.gif
+file path=opt/sunstudio12.1/prod/lib/spot_resources/sort_table.js
+dir  path=opt/sunstudio12.1/prod/man
+dir  path=opt/sunstudio12.1/prod/man/man1
+file path=opt/sunstudio12.1/prod/man/man1/analyzer.1
+file path=opt/sunstudio12.1/prod/man/man1/bw.1
+file path=opt/sunstudio12.1/prod/man/man1/collect.1
+file path=opt/sunstudio12.1/prod/man/man1/collector.1
+file path=opt/sunstudio12.1/prod/man/man1/er_archive.1
+file path=opt/sunstudio12.1/prod/man/man1/er_bit.1
+file path=opt/sunstudio12.1/prod/man/man1/er_cp.1
+file path=opt/sunstudio12.1/prod/man/man1/er_export.1
+file path=opt/sunstudio12.1/prod/man/man1/er_html.1
+file path=opt/sunstudio12.1/prod/man/man1/er_kernel.1
+file path=opt/sunstudio12.1/prod/man/man1/er_mpipp.1
+file path=opt/sunstudio12.1/prod/man/man1/er_mv.1
+file path=opt/sunstudio12.1/prod/man/man1/er_otfdump.1
+file path=opt/sunstudio12.1/prod/man/man1/er_print.1
+file path=opt/sunstudio12.1/prod/man/man1/er_rm.1
+file path=opt/sunstudio12.1/prod/man/man1/er_src.1
+file path=opt/sunstudio12.1/prod/man/man1/ripc.1
+file path=opt/sunstudio12.1/prod/man/man1/spot.1
+file path=opt/sunstudio12.1/prod/man/man1/spot_diff.1
+file path=opt/sunstudio12.1/prod/man/man1/tha.1
+file path=opt/sunstudio12.1/prod/man/man1/traps.1
+dir  path=opt/sunstudio12.1/prod/man/man3
+file path=opt/sunstudio12.1/prod/man/man3/libcollector.3
+file path=opt/sunstudio12.1/prod/man/man3/libtha.3
+dir  path=opt/sunstudio12.1/prod/modules
+dir  path=opt/sunstudio12.1/prod/modules/autoload
+file path=opt/sunstudio12.1/prod/modules/autoload/com-sun-forte-st-mpmt.jar
+dir  path=opt/sunstudio12.1/prod/modules/docs
+file path=opt/sunstudio12.1/prod/modules/docs/analyzer_help.jar
+dir  path=usr
+dir  path=usr/bin
+link path=usr/bin/analyzer target=../../opt/sunstudio12.1/bin/analyzer
+link path=usr/bin/collect target=../../opt/sunstudio12.1/bin/collect
+link path=usr/bin/er_archive target=../../opt/sunstudio12.1/bin/er_archive
+link path=usr/bin/er_cp target=../../opt/sunstudio12.1/bin/er_cp
+link path=usr/bin/er_export target=../../opt/sunstudio12.1/bin/er_export
+link path=usr/bin/er_html target=../../opt/sunstudio12.1/bin/er_html
+link path=usr/bin/er_kernel target=../../opt/sunstudio12.1/bin/er_kernel
+link path=usr/bin/er_mv target=../../opt/sunstudio12.1/bin/er_mv
+link path=usr/bin/er_print target=../../opt/sunstudio12.1/bin/er_print
+link path=usr/bin/er_rm target=../../opt/sunstudio12.1/bin/er_rm
+link path=usr/bin/er_src target=../../opt/sunstudio12.1/bin/er_src
+link path=usr/bin/ripc target=../../opt/sunstudio12.1/bin/ripc
+link path=usr/bin/spot target=../../opt/sunstudio12.1/bin/spot
+link path=usr/bin/spot_diff target=../../opt/sunstudio12.1/bin/spot_diff
+link path=usr/bin/tha target=../../opt/sunstudio12.1/bin/tha
+dir  path=usr/share
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
+link path=usr/share/man/man1/analyzer.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/analyzer.1
+link path=usr/share/man/man1/bw.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/bw.1
+link path=usr/share/man/man1/collect.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/collect.1
+link path=usr/share/man/man1/collector.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/collector.1
+link path=usr/share/man/man1/er_archive.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_archive.1
+link path=usr/share/man/man1/er_bit.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_bit.1
+link path=usr/share/man/man1/er_cp.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_cp.1
+link path=usr/share/man/man1/er_export.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_export.1
+link path=usr/share/man/man1/er_html.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_html.1
+link path=usr/share/man/man1/er_kernel.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_kernel.1
+link path=usr/share/man/man1/er_mpipp.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_mpipp.1
+link path=usr/share/man/man1/er_mv.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_mv.1
+link path=usr/share/man/man1/er_otfdump.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_otfdump.1
+link path=usr/share/man/man1/er_print.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_print.1
+link path=usr/share/man/man1/er_rm.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_rm.1
+link path=usr/share/man/man1/er_src.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/er_src.1
+link path=usr/share/man/man1/ripc.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/ripc.1
+link path=usr/share/man/man1/spot.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/spot.1
+link path=usr/share/man/man1/spot_diff.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/spot_diff.1
+link path=usr/share/man/man1/tha.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/tha.1
+link path=usr/share/man/man1/traps.1 \
+    target=../../../../opt/sunstudio12.1/man/man1/traps.1
+dir  path=usr/share/man/man3
+link path=usr/share/man/man3/libcollector.3 \
+    target=../../../../opt/sunstudio12.1/man/man3/libcollector.3
+link path=usr/share/man/man3/libtha.3 \
+    target=../../../../opt/sunstudio12.1/man/man3/libtha.3
