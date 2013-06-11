@@ -182,7 +182,9 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; \
       $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; )
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/aest4-sparcv9.pl		$(@D)/crypto/aes/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9_modes.pl		$(@D)/crypto/perlasm; )
 
 # OpenSSL for wanboot is built on sparc only.
 ifeq ($(MACH), sparc)
@@ -194,7 +196,8 @@ build:		$(BUILD_32_and_64)
 # Object files for wanboot-openssl.o have to be listed explicitly.
 WANBOOT_OBJS =  \
     crypto/aes/aes-sparcv9.o crypto/aes/aes_cbc.o crypto/aes/aes_core.o \
-    crypto/aes/aes_misc.o crypto/aes/aes_wrap.o crypto/asn1/a_bitstr.o \
+    crypto/aes/aes_misc.o crypto/aes/aes_wrap.o crypto/aes/aest4-sparcv9.o \
+    crypto/asn1/a_bitstr.o \
     crypto/asn1/a_bool.o crypto/asn1/a_bytes.o crypto/asn1/a_d2i_fp.o \
     crypto/asn1/a_digest.o crypto/asn1/a_dup.o crypto/asn1/a_enum.o \
     crypto/asn1/a_gentm.o crypto/asn1/a_i2d_fp.o crypto/asn1/a_int.o \

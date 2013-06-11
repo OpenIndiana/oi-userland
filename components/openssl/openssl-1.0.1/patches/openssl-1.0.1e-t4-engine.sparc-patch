@@ -11,10 +11,10 @@ diff -ru openssl-1.0.0d/Configure openssl-1.0.0d/Configure
 
  my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o modexp512-x86_64.o::aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o rc4-md5-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:ghash-x86_64.o:";
  my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
--my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
+-my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
 -my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
-+my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o t4_aes.o::md5-sparcv9.o t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::ghash-sparcv9.o::void";
-+my $sparcv9_fips_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o t4_aes.o::md5-sparcv9.o t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_fips_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o:des_enc-sparc.o fcrypt_b.o t4_des.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o t4_md5.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o t4_sha1.o t4_sha2.o:::::::ghash-sparcv9.o::void";
 +my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o t4_des.o:t4_aes.o::t4_md5.o:t4_sha1.o t4_sha2.o:::::::void";
  my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
  my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
@@ -36,13 +36,13 @@ diff -ru openssl-1.0.0d/Configure openssl-1.0.0d/Configure
 Index: crypto/aes/Makefile
 ===================================================================
 diff -ru openssl-1.0.0d/crypto/aes/ openssl-1.0.0d/crypto/aes/Makefile
---- openssl-1.0.0d/crypto/aes/Makefile	2011-05-24 17:03:31.000000000 -0700
-+++ openssl-1.0.0d/crypto/aes/Makefile	2011-06-30 17:26:34.980110000 -0700
+--- openssl-1.0.0d/crypto/aes/Makefile 2011-05-24 17:03:31.000000000 -0700
++++ openssl-1.0.0d/crypto/aes/Makefile 2011-06-30 17:26:34.980110000 -0700
 @@ -17,6 +17,10 @@
  ASFLAGS= $(INCLUDES) $(ASFLAG)
  AFLAGS= $(ASFLAGS)
- 
-+BITS:=	$(shell if grep '^SHARED_LDFLAGS.*=.*-m32' ../../Makefile >/dev/null; \
+
++BITS:=		$(shell if grep '^SHARED_LDFLAGS.*=.*-m32' ../../Makefile >/dev/null; \
 +		then echo 32; else echo 64; fi)
 +ASFLAGSYF= -xregsym=no -K pic -P -xarch=v9v -D_sparcv9 -D_ASM -Dsparc -m$(BITS)
 +
@@ -52,7 +52,7 @@ diff -ru openssl-1.0.0d/crypto/aes/ openssl-1.0.0d/crypto/aes/Makefile
 @@ -69,6 +73,10 @@
  aes-sparcv9.s: asm/aes-sparcv9.pl
  	$(PERL) asm/aes-sparcv9.pl $(CFLAGS) > $@
- 
+
 +t4_aes.o: asm/t4_aes.S
 +	as $(ASFLAGSYF) -o $@ asm/t4_aes.S
 +	elfedit -e 'cap:hw1 -and -cmp vis vis3' $@

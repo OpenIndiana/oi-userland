@@ -58,71 +58,23 @@
  */
 
 /*
- * This engine supports SPARC microprocessors that provide AES and other
- * cipher and hash instructions, such as the T4 microprocessor.
+ * This engine supports SPARC microprocessors that provide T4 DES and MONTMUL
+ * instructions, such as the T4 microprocessor.
  */
 
 #include <openssl/opensslconf.h>
 
-#if !defined(OPENSSL_NO_HW) && !defined(OPENSSL_NO_HW_AES_T4) && \
-	!defined(OPENSSL_NO_AES)
+#if !defined(OPENSSL_NO_HW)
 #include <sys/types.h>
 #include <sys/auxv.h>	/* getisax() */
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
 #include <errno.h>
-#include <openssl/aes.h>
 #include <openssl/engine.h>
-#include "eng_t4_aes_asm.h"
 
 #define	T4_LIB_NAME "SPARC T4 engine"
 #include "eng_t4_err.c"
-
-/* Copied from Solaris aes_impl.h */
-#ifndef	MAX_AES_NR
-#define	MAX_AES_NR		14 /* Maximum number of rounds */
-#endif
-#ifndef	MAX_AES_NB
-#define	MAX_AES_NB		4  /* Number of columns comprising a state */
-#endif
-
-/* Index for the supported ciphers */
-typedef enum {
-	T4_AES_128_CBC,
-	T4_AES_192_CBC,
-	T4_AES_256_CBC,
-#ifndef	SOLARIS_NO_AES_CFB128
-	T4_AES_128_CFB128,
-	T4_AES_192_CFB128,
-	T4_AES_256_CFB128,
-#endif	/* !SOLARIS_NO_AES_CFB128 */
-	T4_AES_128_CTR,
-	T4_AES_192_CTR,
-	T4_AES_256_CTR,
-	T4_AES_128_ECB,
-	T4_AES_192_ECB,
-	T4_AES_256_ECB,
-	T4_CIPHER_MAX
-} t4_cipher_id;
-
-/* T4 cipher context; must be 8-byte aligned (last field must be uint64_t)  */
-typedef struct t4_cipher_ctx {
-	t4_cipher_id	index;
-	uint64_t	*iv;
-	uint64_t	aligned_iv_buffer[2]; /* use if original IV unaligned */
-	/* Encryption and decryption key schedule are the same: */
-	uint64_t	t4_ks[((MAX_AES_NR) + 1) * (MAX_AES_NB)];
-} t4_cipher_ctx_t;
-
-typedef struct t4_cipher {
-	t4_cipher_id	id;
-	int		nid;
-	int		iv_len;
-	int		min_key_len;
-	int		max_key_len;
-	unsigned long	flags;
-} t4_cipher_t;
 
 /* Constants used when creating the ENGINE */
 static const char *ENGINE_T4_ID = "t4";
@@ -165,10 +117,7 @@ static int t4_bind(ENGINE *e);
 #ifndef	DYNAMIC_ENGINE
 #pragma inline(t4_bind)
 #endif
-static t4_cipher_id get_cipher_index_by_nid(int nid);
-#pragma inline(get_cipher_index_by_nid)
-static void t4_instructions_present(_Bool *aes_present, _Bool *des_present,
-    _Bool *montmul_present);
+static void t4_instructions_present(_Bool *des_present, _Bool *montmul_present);
 #pragma inline(t4_instructions_present)
 
 /* RSA_METHOD structure used by ENGINE_set_RSA() */
@@ -183,12 +132,6 @@ extern DSA_METHOD *t4_DSA(void);
 /* Static variables */
 /* This can't be const as NID*ctr is inserted when the engine is initialized */
 static int t4_cipher_nids[] = {
-	NID_aes_128_cbc, NID_aes_192_cbc, NID_aes_256_cbc,
-#ifndef	SOLARIS_NO_AES_CFB128
-	NID_aes_128_cfb128, NID_aes_192_cfb128, NID_aes_256_cfb128,
-#endif
-	NID_aes_128_ctr, NID_aes_192_ctr, NID_aes_256_ctr,
-	NID_aes_128_ecb, NID_aes_192_ecb, NID_aes_256_ecb,
 #ifndef	OPENSSL_NO_DES
 	/* Must be at end of list (see t4_des_cipher_count in t4_bind() */
 	NID_des_cbc, NID_des_ede3_cbc, NID_des_ecb, NID_des_ede3_ecb,
@@ -198,65 +141,6 @@ static const int t4_des_cipher_count = 4;
 static int t4_cipher_count =
 	(sizeof (t4_cipher_nids) / sizeof (t4_cipher_nids[0]));
 
-/*
- * Cipher Table for all supported symmetric ciphers.
- * Must be in same order as t4_cipher_id.
- */
-static t4_cipher_t t4_cipher_table[] = {
-	/* ID			NID			IV min- max-key flags */
-	{T4_AES_128_CBC,	NID_aes_128_cbc,	16, 16, 16, 0},
-	{T4_AES_192_CBC,	NID_aes_192_cbc,	16, 24, 24, 0},
-	{T4_AES_256_CBC,	NID_aes_256_cbc,	16, 32, 32, 0},
-#ifndef	SOLARIS_NO_AES_CFB128
-	{T4_AES_128_CFB128,	NID_aes_128_cfb128,	16, 16, 16,
-							EVP_CIPH_NO_PADDING},
-	{T4_AES_192_CFB128,	NID_aes_192_cfb128,	16, 24, 24,
-							EVP_CIPH_NO_PADDING},
-	{T4_AES_256_CFB128,	NID_aes_256_cfb128,	16, 32, 32,
-							EVP_CIPH_NO_PADDING},
-#endif
-	{T4_AES_128_CTR,	NID_aes_128_ctr,	16, 16, 16,
-							EVP_CIPH_NO_PADDING},
-	{T4_AES_192_CTR,	NID_aes_192_ctr,	16, 24, 24,
-							EVP_CIPH_NO_PADDING},
-	{T4_AES_256_CTR,	NID_aes_256_ctr,	16, 32, 32,
-							EVP_CIPH_NO_PADDING},
-	{T4_AES_128_ECB,	NID_aes_128_ecb,	0, 16, 16, 0},
-	{T4_AES_192_ECB,	NID_aes_192_ecb,	0, 24, 24, 0},
-	{T4_AES_256_ECB,	NID_aes_256_ecb,	0, 32, 32, 0},
-};
-
-
-/* Formal declaration for functions in EVP_CIPHER structure */
-static int t4_cipher_init_aes(EVP_CIPHER_CTX *ctx, const unsigned char *key,
-    const unsigned char *iv, int enc);
-
-static int t4_cipher_do_aes_128_cbc(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_192_cbc(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_256_cbc(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-#ifndef	SOLARIS_NO_AES_CFB128
-static int t4_cipher_do_aes_128_cfb128(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_192_cfb128(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_256_cfb128(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-#endif
-static int t4_cipher_do_aes_128_ctr(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_192_ctr(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_256_ctr(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_128_ecb(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_192_ecb(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
-static int t4_cipher_do_aes_256_ecb(EVP_CIPHER_CTX *ctx, unsigned char *out,
-    const unsigned char *in, size_t inl);
 
 
 /*
@@ -274,120 +158,6 @@ static int t4_cipher_do_aes_256_ecb(EVP_CIPHER_CTX *ctx, unsigned char *out,
  *	set_asn1_parameters(), get_asn1_parameters(), ctrl(), app_data
  */
 
-static const EVP_CIPHER t4_aes_128_cbc = {
-	NID_aes_128_cbc,
-	16, 16, 16,
-	EVP_CIPH_CBC_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_128_cbc, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-static const EVP_CIPHER t4_aes_192_cbc = {
-	NID_aes_192_cbc,
-	16, 24, 16,
-	EVP_CIPH_CBC_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_192_cbc, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-static const EVP_CIPHER t4_aes_256_cbc = {
-	NID_aes_256_cbc,
-	16, 32, 16,
-	EVP_CIPH_CBC_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_256_cbc, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-
-#ifndef	SOLARIS_NO_AES_CFB128
-static const EVP_CIPHER t4_aes_128_cfb128 = {
-	NID_aes_128_cfb128,
-	16, 16, 16,
-	EVP_CIPH_CFB_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_128_cfb128, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-static const EVP_CIPHER t4_aes_192_cfb128 = {
-	NID_aes_192_cfb128,
-	16, 24, 16,
-	EVP_CIPH_CFB_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_192_cfb128, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-static const EVP_CIPHER t4_aes_256_cfb128 = {
-	NID_aes_256_cfb128,
-	16, 32, 16,
-	EVP_CIPH_CFB_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_256_cfb128, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-#endif	/* !SOLARIS_NO_AES_CFB128 */
-
-static EVP_CIPHER t4_aes_128_ctr = {
-	NID_aes_128_ctr,
-	16, 16, 16,
-	EVP_CIPH_CTR_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_128_ctr, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-static EVP_CIPHER t4_aes_192_ctr = {
-	NID_aes_192_ctr,
-	16, 24, 16,
-	EVP_CIPH_CTR_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_192_ctr, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-static EVP_CIPHER t4_aes_256_ctr = {
-	NID_aes_256_ctr,
-	16, 32, 16,
-	EVP_CIPH_CTR_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_256_ctr, NULL,
-	sizeof (t4_cipher_ctx_t),
-	EVP_CIPHER_set_asn1_iv, EVP_CIPHER_get_asn1_iv,
-	NULL, NULL
-};
-
-/*
- * ECB modes don't use an Initial Vector, so that's why set_asn1_parameters,
- * get_asn1_parameters, and cleanup fields are set to NULL.
- */
-static const EVP_CIPHER t4_aes_128_ecb = {
-	NID_aes_128_ecb,
-	16, 16, 0,
-	EVP_CIPH_ECB_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_128_ecb, NULL,
-	sizeof (t4_cipher_ctx_t),
-	NULL, NULL, NULL, NULL
-};
-static const EVP_CIPHER t4_aes_192_ecb = {
-	NID_aes_192_ecb,
-	16, 24, 0,
-	EVP_CIPH_ECB_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_192_ecb, NULL,
-	sizeof (t4_cipher_ctx_t),
-	NULL, NULL, NULL, NULL
-};
-static const EVP_CIPHER t4_aes_256_ecb = {
-	NID_aes_256_ecb,
-	16, 32, 0,
-	EVP_CIPH_ECB_MODE,
-	t4_cipher_init_aes, t4_cipher_do_aes_256_ecb, NULL,
-	sizeof (t4_cipher_ctx_t),
-	NULL, NULL, NULL, NULL
-};
 
 #ifndef	OPENSSL_NO_DES
 extern const EVP_CIPHER t4_des_cbc;
@@ -402,13 +172,12 @@ extern const EVP_CIPHER t4_des3_ecb;
  */
 
 /*
- * Set aes_present, des_present and montmul_present to B_FALSE or B_TRUE
- * depending on whether the current SPARC processor supports AES, DES
+ * Set des_present and montmul_present to B_FALSE or B_TRUE
+ * depending on whether the current SPARC processor supports DES
  * and MONTMUL, respectively.
  */
 static void
-t4_instructions_present(_Bool *aes_present, _Bool *des_present,
-    _Bool *montmul_present)
+t4_instructions_present(_Bool *des_present, _Bool *montmul_present)
 {
 #ifdef	OPENSSL_NO_DES
 #undef	AV_SPARC_DES
@@ -417,7 +186,6 @@ t4_instructions_present(_Bool *aes_present, _Bool *des_present,
 	uint_t		ui;
 
 	(void) getisax(&ui, 1);
-	*aes_present = ((ui & AV_SPARC_AES) != 0);
 	*des_present = ((ui & AV_SPARC_DES) != 0);
 	*montmul_present = ((ui & AV_SPARC_MONT) != 0);
 }
@@ -443,35 +211,6 @@ t4_get_all_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 	}
 
 	switch (nid) {
-	case NID_aes_128_cbc:
-		*cipher = &t4_aes_128_cbc;
-		break;
-	case NID_aes_192_cbc:
-		*cipher = &t4_aes_192_cbc;
-		break;
-	case NID_aes_256_cbc:
-		*cipher = &t4_aes_256_cbc;
-		break;
-	case NID_aes_128_ecb:
-		*cipher = &t4_aes_128_ecb;
-		break;
-	case NID_aes_192_ecb:
-		*cipher = &t4_aes_192_ecb;
-		break;
-	case NID_aes_256_ecb:
-		*cipher = &t4_aes_256_ecb;
-		break;
-#ifndef	SOLARIS_NO_AES_CFB128
-	case NID_aes_128_cfb128:
-		*cipher = &t4_aes_128_cfb128;
-		break;
-	case NID_aes_192_cfb128:
-		*cipher = &t4_aes_192_cfb128;
-		break;
-	case NID_aes_256_cfb128:
-		*cipher = &t4_aes_256_cfb128;
-		break;
-#endif	/* !SOLARIS_NO_AES_CFB128 */
 #ifndef	OPENSSL_NO_DES
 	case NID_des_cbc:
 		*cipher = &t4_des_cbc;
@@ -486,16 +225,6 @@ t4_get_all_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 		*cipher = &t4_des3_ecb;
 		break;
 #endif	/* !OPENSSL_NO_DES */
-	case NID_aes_128_ctr:
-		*cipher = &t4_aes_128_ctr;
-		break;
-	case NID_aes_192_ctr:
-		*cipher = &t4_aes_192_ctr;
-		break;
-	case NID_aes_256_ctr:
-		*cipher = &t4_aes_256_ctr;
-		break;
-
 	default:
 		/* cipher not supported */
 		*cipher = NULL;
@@ -504,260 +233,6 @@ t4_get_all_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 
 	return (1);
 }
-
-
-/* Called by t4_cipher_init_aes() */
-static t4_cipher_id
-get_cipher_index_by_nid(int nid)
-{
-	t4_cipher_id i;
-
-	for (i = (t4_cipher_id)0; i < T4_CIPHER_MAX; ++i)
-		if (t4_cipher_table[i].nid == nid)
-			return (i);
-	return (T4_CIPHER_MAX);
-}
-
-
-/* ARGSUSED2 */
-static int
-t4_cipher_init_aes(EVP_CIPHER_CTX *ctx, const unsigned char *key,
-    const unsigned char *iv, int enc)
-{
-	t4_cipher_ctx_t	*tctx = ctx->cipher_data;
-	uint64_t	*t4_ks = tctx->t4_ks;
-	t4_cipher_t	*t4_cipher;
-	t4_cipher_id	index;
-	int		key_len = ctx->key_len;
-	uint64_t	aligned_key_buffer[4]; /* 16, 24, or 32 bytes long */
-	uint64_t	*aligned_key;
-
-	if (key == NULL) {
-		T4err(T4_F_CIPHER_INIT_AES, T4_R_CIPHER_KEY);
-		return (0);
-	}
-
-	/* Get the cipher entry index in t4_cipher_table from nid */
-	index = get_cipher_index_by_nid(ctx->cipher->nid);
-	if (index >= T4_CIPHER_MAX) {
-		T4err(T4_F_CIPHER_INIT_AES, T4_R_CIPHER_NID);
-		return (0); /* Error */
-	}
-	t4_cipher = &t4_cipher_table[index];
-
-	/* Check key size and iv size */
-	if (ctx->cipher->iv_len < t4_cipher->iv_len) {
-		T4err(T4_F_CIPHER_INIT_AES, T4_R_IV_LEN_INCORRECT);
-		return (0); /* Error */
-	}
-	if ((key_len < t4_cipher->min_key_len) ||
-	    (key_len > t4_cipher->max_key_len)) {
-		T4err(T4_F_CIPHER_INIT_AES, T4_R_KEY_LEN_INCORRECT);
-		return (0); /* Error */
-	}
-
-	/* Set cipher flags, if any */
-	ctx->flags |= t4_cipher->flags;
-
-	/* Align the key */
-	if (((unsigned long)key & 0x7) == 0) /* already aligned */
-		aligned_key = (uint64_t *)key;
-	else { /* key is not 8-byte aligned */
-#ifdef	DEBUG_T4
-		(void) fprintf(stderr, "T4: key is not 8 byte aligned\n");
-#endif
-		(void) memcpy(aligned_key_buffer, key, key_len);
-		aligned_key = aligned_key_buffer;
-	}
-
-
-	/*
-	 * Expand the key schedule.
-	 * Copy original key to start of t4_ks key schedule. Note that the
-	 * encryption and decryption key schedule are the same for T4.
-	 */
-	switch (key_len) {
-		case 16:
-			t4_aes_expand128(&t4_ks[2],
-			    (const uint32_t *)aligned_key);
-			t4_ks[0] = aligned_key[0];
-			t4_ks[1] = aligned_key[1];
-			break;
-		case 24:
-			t4_aes_expand192(&t4_ks[3],
-			    (const uint32_t *)aligned_key);
-			t4_ks[0] = aligned_key[0];
-			t4_ks[1] = aligned_key[1];
-			t4_ks[2] = aligned_key[2];
-			break;
-		case 32:
-			t4_aes_expand256(&t4_ks[4],
-			    (const uint32_t *)aligned_key);
-			t4_ks[0] = aligned_key[0];
-			t4_ks[1] = aligned_key[1];
-			t4_ks[2] = aligned_key[2];
-			t4_ks[3] = aligned_key[3];
-			break;
-		default:
-			T4err(T4_F_CIPHER_INIT_AES, T4_R_CIPHER_KEY);
-			return (0);
-	}
-
-	/* Save index to cipher */
-	tctx->index = index;
-
-	/* Align IV, if needed */
-	if (t4_cipher->iv_len <= 0) { /* no IV (such as with ECB mode) */
-		tctx->iv = NULL;
-	} else if (((unsigned long)ctx->iv & 0x7) == 0) { /* already aligned */
-		tctx->iv = (uint64_t *)ctx->iv;
-	} else {
-		/* IV is not 8 byte aligned */
-		(void) memcpy(tctx->aligned_iv_buffer, ctx->iv,
-		    ctx->cipher->iv_len);
-		tctx->iv = tctx->aligned_iv_buffer;
-#ifdef	DEBUG_T4
-		(void) fprintf(stderr,
-		    "t4_cipher_init_aes: IV is not 8 byte aligned\n");
-		(void) fprintf(stderr,
-		    "t4_cipher_init_aes: ctx->cipher->iv_len =%d\n",
-		    ctx->cipher->iv_len);
-		(void) fprintf(stderr, "t4_cipher_init_aes: after "
-		    "re-alignment, tctx->iv = %p\n", (void *)tctx->iv);
-#endif	/* DEBUG_T4 */
-	}
-
-	return (1);
-}
-
-
-/*
- * ENCRYPT_UPDATE or DECRYPT_UPDATE
- */
-#define	T4_CIPHER_DO_AES(t4_cipher_do_aes, t4_aes_load_keys_for_encrypt, \
-    t4_aes_encrypt, t4_aes_load_keys_for_decrypt, t4_aes_decrypt, iv)	\
-static int								\
-t4_cipher_do_aes(EVP_CIPHER_CTX *ctx, unsigned char *out,		\
-    const unsigned char *in, size_t inl)				\
-{									\
-	t4_cipher_ctx_t	*tctx = ctx->cipher_data;			\
-	uint64_t	*t4_ks = tctx->t4_ks;				\
-	unsigned long	outl = inl;					\
-	unsigned char	*bufin_alloc = NULL, *bufout_alloc = NULL;	\
-	unsigned char	*bufin, *bufout;				\
-									\
-	/* "in" and "out" must be 8 byte aligned */			\
-	if (((unsigned long)in & 0x7) == 0) { /* already aligned */	\
-		bufin = (unsigned char *)in;				\
-	} else { /* "in" is not 8 byte aligned */			\
-		if (((unsigned long)out & 0x7) == 0) { /* aligned */	\
-			/* use output buffer for input */		\
-			bufin = out;					\
-		} else {						\
-			bufin = bufin_alloc = OPENSSL_malloc(inl);	\
-			if (bufin_alloc == NULL)			\
-				return (0); /* error */			\
-		}							\
-		(void) memcpy(bufin, in, inl);				\
-	}								\
-									\
-	if (((unsigned long)out & 0x7) == 0) { /* already aligned */	\
-		bufout = out;						\
-	} else { /* "out" is not 8 byte aligned */			\
-		if (bufin_alloc != NULL) {				\
-			/* use allocated input buffer for output */	\
-			bufout = bufin_alloc;				\
-		} else {						\
-			bufout = bufout_alloc = OPENSSL_malloc(outl);	\
-			if (bufout_alloc == NULL) {			\
-				OPENSSL_free(bufin_alloc);		\
-				return (0); /* error */			\
-			}						\
-		}							\
-	}								\
-									\
-	/* Data length must be an even multiple of block size. */	\
-	if ((inl & 0xf) != 0) {						\
-		OPENSSL_free(bufout_alloc);				\
-		OPENSSL_free(bufin_alloc);				\
-		T4err(T4_F_CIPHER_DO_AES, T4_R_NOT_BLOCKSIZE_LENGTH);	\
-		return (0);						\
-	}								\
-									\
-	if (ctx->encrypt) {						\
-		t4_aes_load_keys_for_encrypt(t4_ks);			\
-		t4_aes_encrypt(t4_ks, (uint64_t *)bufin,		\
-		    (uint64_t *)bufout, (size_t)inl, iv);		\
-	} else { /* decrypt */						\
-		t4_aes_load_keys_for_decrypt(t4_ks);			\
-		t4_aes_decrypt(t4_ks, (uint64_t *)bufin,		\
-		    (uint64_t *)bufout, (size_t)inl, iv);		\
-	}								\
-									\
-	/* Cleanup */							\
-	if (bufin_alloc != NULL) {					\
-		if (bufout == bufin_alloc)				\
-			(void) memcpy(out, bufout, outl);		\
-		OPENSSL_free(bufin_alloc);				\
-	}								\
-	if (bufout_alloc != NULL) {					\
-		(void) memcpy(out, bufout_alloc, outl);			\
-		OPENSSL_free(bufout_alloc);				\
-	}								\
-									\
-	return (1);							\
-}
-
-
-/* AES CBC mode. */
-T4_CIPHER_DO_AES(t4_cipher_do_aes_128_cbc,
-	t4_aes128_load_keys_for_encrypt, t4_aes128_cbc_encrypt,
-	t4_aes128_load_keys_for_decrypt, t4_aes128_cbc_decrypt, tctx->iv)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_192_cbc,
-	t4_aes192_load_keys_for_encrypt, t4_aes192_cbc_encrypt,
-	t4_aes192_load_keys_for_decrypt, t4_aes192_cbc_decrypt, tctx->iv)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_256_cbc,
-	t4_aes256_load_keys_for_encrypt, t4_aes256_cbc_encrypt,
-	t4_aes256_load_keys_for_decrypt, t4_aes256_cbc_decrypt, tctx->iv)
-
-/*
- * AES CFB128 mode.
- * CFB128 decrypt uses load_keys_for_encrypt() as the mode uses
- * the raw AES encrypt operation for the decryption, too.
- */
-#ifndef	SOLARIS_NO_AES_CFB128
-T4_CIPHER_DO_AES(t4_cipher_do_aes_128_cfb128,
-	t4_aes128_load_keys_for_encrypt, t4_aes128_cfb128_encrypt,
-	t4_aes128_load_keys_for_encrypt, t4_aes128_cfb128_decrypt, tctx->iv)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_192_cfb128,
-	t4_aes192_load_keys_for_encrypt, t4_aes192_cfb128_encrypt,
-	t4_aes192_load_keys_for_encrypt, t4_aes192_cfb128_decrypt, tctx->iv)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_256_cfb128,
-	t4_aes256_load_keys_for_encrypt, t4_aes256_cfb128_encrypt,
-	t4_aes256_load_keys_for_encrypt, t4_aes256_cfb128_decrypt, tctx->iv)
-#endif	/* !SOLARIS_NO_AES_CFB128 */
-
-/* AES CTR mode. */
-T4_CIPHER_DO_AES(t4_cipher_do_aes_128_ctr,
-	t4_aes128_load_keys_for_encrypt, t4_aes128_ctr_crypt,
-	t4_aes128_load_keys_for_decrypt, t4_aes128_ctr_crypt, tctx->iv)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_192_ctr,
-	t4_aes192_load_keys_for_encrypt, t4_aes192_ctr_crypt,
-	t4_aes192_load_keys_for_decrypt, t4_aes192_ctr_crypt, tctx->iv)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_256_ctr,
-	t4_aes256_load_keys_for_encrypt, t4_aes256_ctr_crypt,
-	t4_aes256_load_keys_for_decrypt, t4_aes256_ctr_crypt, tctx->iv)
-
-/* AES ECB mode. */
-T4_CIPHER_DO_AES(t4_cipher_do_aes_128_ecb,
-	t4_aes128_load_keys_for_encrypt, t4_aes128_ecb_encrypt,
-	t4_aes128_load_keys_for_decrypt, t4_aes128_ecb_decrypt, NULL)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_192_ecb,
-	t4_aes192_load_keys_for_encrypt, t4_aes192_ecb_encrypt,
-	t4_aes192_load_keys_for_decrypt, t4_aes192_ecb_decrypt, NULL)
-T4_CIPHER_DO_AES(t4_cipher_do_aes_256_ecb,
-	t4_aes256_load_keys_for_encrypt, t4_aes256_ecb_encrypt,
-	t4_aes256_load_keys_for_decrypt, t4_aes256_ecb_decrypt, NULL)
 
 
 /*
@@ -790,13 +265,8 @@ t4_destroy(ENGINE *e)
 static int
 t4_bind(ENGINE *e)
 {
-	_Bool aes_engage, des_engage, montmul_engage;
+	_Bool des_engage, montmul_engage;
 
-	t4_instructions_present(&aes_engage, &des_engage, &montmul_engage);
-#ifdef	DEBUG_T4
-	(void) fprintf(stderr,
-	    "t4_bind: engage aes=%d, des=%d\n", aes_engage, des_engage);
-#endif
 #ifndef	OPENSSL_NO_DES
 	if (!des_engage) { /* Remove DES ciphers from list */
 		t4_cipher_count -= t4_des_cipher_count;
@@ -815,9 +285,9 @@ t4_bind(ENGINE *e)
 	/* Register T4 engine ID, name, and functions */
 	if (!ENGINE_set_id(e, ENGINE_T4_ID) ||
 	    !ENGINE_set_name(e,
-	    aes_engage ? ENGINE_T4_NAME: ENGINE_NO_T4_NAME) ||
+	    des_engage ? ENGINE_T4_NAME : ENGINE_NO_T4_NAME) ||
 	    !ENGINE_set_init_function(e, t4_init) ||
-	    (aes_engage && !ENGINE_set_ciphers(e, t4_get_all_ciphers)) ||
+	    (des_engage && !ENGINE_set_ciphers(e, t4_get_all_ciphers)) ||
 #ifndef OPENSSL_NO_RSA
 	    (montmul_engage && !ENGINE_set_RSA(e, t4_RSA())) ||
 #endif	/* OPENSSL_NO_RSA */
@@ -861,4 +331,4 @@ IMPLEMENT_DYNAMIC_CHECK_FN()
 IMPLEMENT_DYNAMIC_BIND_FN(t4_bind_helper)
 #endif	/* DYNAMIC_ENGINE */
 #endif	/* COMPILE_HW_T4 */
-#endif	/* !OPENSSL_NO_HW && !OPENSSL_NO_HW_AES_T4 && !OPENSSL_NO_AES */
+#endif	/* !OPENSSL_NO_HW */

@@ -331,8 +331,13 @@ static void pk11_free_all_locks(void);
 #ifdef	SOLARIS_HW_SLOT_SELECTION
 static int check_hw_mechanisms(void);
 static int nid_in_table(int nid, int *nid_table);
-static int hw_aes_instruction_set_present(void);
-#if	defined(__sparc)
+
+#if defined(__amd64) || defined(__i386)
+static int hw_x86_aes_instruction_set_present(void);
+#endif
+#if defined(__sparc)
+static int hw_yf_aes_instruction_set_present(void);
+static int hw_fj_aes_instruction_set_present(void);
 static int hw_yf_digest_instruction_present(void);
 #endif
 #endif	/* SOLARIS_HW_SLOT_SELECTION */
@@ -2648,6 +2653,30 @@ pk11_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 	if (!cipher)
 		return (pk11_usable_ciphers(nids));
 
+#ifdef	__sparc
+	/*
+	 * If T4 AES instructions are present, don't advertise
+	 * the AES mechanisms for pkcs11 engine as AES operations
+	 * should be accelerated by the inline T4 instructions
+	 * in the OpenSSL upstream code.
+	 */
+	if (hw_yf_aes_instruction_set_present() == 1) {
+		switch (nid) {
+		case NID_aes_128_cbc:
+		case NID_aes_192_cbc:
+		case NID_aes_256_cbc:
+		case NID_aes_128_ecb:
+		case NID_aes_192_ecb:
+		case NID_aes_256_ecb:
+		case NID_aes_128_ctr:
+		case NID_aes_192_ctr:
+		case NID_aes_256_ctr:
+			*cipher = NULL;
+			return (0);
+		}
+	}
+#endif
+
 	switch (nid)
 		{
 		case NID_des_ede3_cbc:
@@ -3485,6 +3514,21 @@ static void pk11_find_symmetric_ciphers(CK_FUNCTION_LIST_PTR pflist,
 
 	for (i = 0; i < PK11_CIPHER_MAX; ++i)
 		{
+#ifdef	__sparc
+		/*
+		 * if T4 AES instruction is present, don't include AES mechanism
+		 * in the supported symmetric cipher list.
+		 */
+		if (hw_yf_aes_instruction_set_present() == 1) {
+			switch (ciphers[i].mech_type) {
+			case CKM_AES_CBC:
+			case CKM_AES_ECB:
+			case CKM_AES_CTR:
+				continue;
+			}
+		}
+#endif
+
 		pk11_get_symmetric_cipher(pflist, current_slot,
 		    current_slot_n_cipher, local_cipher_nids, &ciphers[i]);
 		}
@@ -3736,19 +3780,14 @@ static int nid_in_table(int nid, int *nid_table)
 	if (nid_table == NULL)
 		return (1);
 
+#if defined(__x86)
 	/*
-	 * If we have an AES instruction set on SPARC we route everything
-	 * through the Crypto Framework (ie., through pkcs11_softtoken in this
-	 * case). This is for T4 which has HW instructions for AES, DES, MD5,
-	 * SHA1, SHA256, SHA512, MONTMUL, and MPMUL.
-	 *
 	 * On Intel, if we have AES-NI instruction set we route AES to the
 	 * Crypto Framework. Intel CPUs do not have other instruction sets for
 	 * HW crypto acceleration so we check the HW NID table for any other
 	 * mechanism.
 	 */
-#if defined(__x86)
-	if (hw_aes_instruction_set_present() == 1)
+	if (hw_x86_aes_instruction_set_present() == 1)
 		{
 		switch (nid)
 			{
@@ -3758,21 +3797,24 @@ static int nid_in_table(int nid, int *nid_table)
 			case NID_aes_128_cbc:
 			case NID_aes_192_cbc:
 			case NID_aes_256_cbc:
-				return (1);
-			}
-		/*
-		 * These are variables, cannot be used as case expressions.
-		 */
-		if (nid == NID_aes_128_ctr ||
-		    nid == NID_aes_192_ctr ||
-		    nid == NID_aes_256_ctr)
-			{
+			case NID_aes_128_ctr:
+			case NID_aes_192_ctr:
+			case NID_aes_256_ctr:
 				return (1);
 			}
 		}
 #elif defined(__sparc)
-	if (hw_aes_instruction_set_present() == 1)
+	/*
+	 * If we have a T4 AES instruction set on SPARC, we won't process AES in
+	 * the Crypto Framework so that the job can be process directly using
+	 * the inline AES instruction. This is for T4 which has HW instructions
+	 * for AES, DES, MD5, SHA1, SHA256, SHA512, MONTMUL, and MPMUL.
+	 */
+	if (hw_yf_aes_instruction_set_present() == 1) {
+		return (0);
+	} else if (hw_fj_aes_instruction_set_present() == 1) {
 		return (1);
+	}
 #endif
 
 	/* The table is never full, there is always at least one NID_undef. */
@@ -3788,29 +3830,57 @@ static int nid_in_table(int nid, int *nid_table)
 	return (0);
 	}
 
+
+#if defined(__amd64) || defined(__i386)
 /* Do we have an AES instruction set? */
 static int
-hw_aes_instruction_set_present(void)
+hw_x86_aes_instruction_set_present(void)
 	{
 	static int present = -1;
 
 	if (present == -1)
 		{
 		uint_t ui = 0;
-
 		(void) getisax(&ui, 1);
-
-#if defined(__amd64) || defined(__i386)
 		present = (ui & AV_386_AES) > 0;
-#elif defined(__sparc)
-		present = (ui & (AV_SPARC_AES|AV_SPARC_FJAES)) > 0;
+		}
+
+	return (present);
+	}
 #endif
+
+#if defined(__sparc)
+
+/* Do we have a T4 AES instruction set? */
+static int
+hw_yf_aes_instruction_set_present(void)
+	{
+	static int present = -1;
+	if (present == -1)
+		{
+		uint_t ui = 0;
+		(void) getisax(&ui, 1);
+		present = (ui & (AV_SPARC_AES)) > 0;
 		}
 
 	return (present);
 	}
 
-#if	defined(__sparc)
+/* Do we have a Fujitsu AES instruction set? */
+static int
+hw_fj_aes_instruction_set_present(void)
+	{
+	static int present = -1;
+	if (present == -1)
+		{
+		uint_t ui = 0;
+		(void) getisax(&ui, 1);
+		present = (ui & (AV_SPARC_AES)) > 0;
+		}
+
+	return (present);
+	}
+
 static int
 hw_yf_digest_instruction_present(void)
 {
