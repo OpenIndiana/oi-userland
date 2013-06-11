@@ -2,7 +2,7 @@
  * ProFTPD - FTP server daemon
  * Copyright (c) 1997, 1998 Public Flood Software
  * Copyright (c) 2003-2010 The ProFTPD Project team
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,8 +144,9 @@ MODRET set_solaris_priv_engine(cmd_rec *cmd) {
  * so we can "tweak" our root access down to almost nothing.
  */
 MODRET solaris_priv_post_pass(cmd_rec *cmd) {
-  int res = 0;
-  priv_set_t *p, *i;
+  int res = -1;
+  priv_set_t *p = NULL;
+  priv_set_t *i = NULL;
 
   if (!use_privs)
     return PR_DECLINED(cmd);
@@ -162,6 +163,8 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
    */
 
   i = priv_allocset();
+  if (i == NULL)
+    goto out;
   priv_basicset(i);
   priv_delset(i, PRIV_PROC_EXEC);
   priv_delset(i, PRIV_PROC_FORK);
@@ -170,6 +173,8 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   setppriv(PRIV_SET, PRIV_INHERITABLE, i);
 
   p = priv_allocset();
+  if (p == NULL)
+    goto out;
   priv_basicset(p);
 
   priv_addset(p, PRIV_NET_PRIVADDR);
@@ -211,9 +216,18 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
   if (setreuid(session.uid, session.uid) == -1) {
     pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": setreuid: %s",
 	strerror(errno));
+    priv_freeset(i);
+    priv_freeset(p);
     pr_signals_unblock();
     end_login(1);
   }
+
+out:
+  if (i != NULL)
+    priv_freeset(i);
+  if (p != NULL)
+    priv_freeset(p);
+
   pr_signals_unblock();
 
   if (res != -1) {
@@ -224,6 +238,65 @@ MODRET solaris_priv_post_pass(cmd_rec *cmd) {
     pr_log_pri(PR_LOG_NOTICE, MOD_SOLARIS_PRIV_VERSION ": attempt to configure "
       "privileges failed, reverting to normal operation");
   }
+
+  return PR_DECLINED(cmd);
+}
+
+static void log_err_permitted(const char* fn) {
+  pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": %s(%s): %s",
+    fn, "permitted", strerror(errno));
+}
+
+static void log_err_effective(const char* fn) {
+  pr_log_pri(PR_LOG_ERR, MOD_SOLARIS_PRIV_VERSION ": %s(%s): %s",
+    fn, "effective", strerror(errno));
+}
+
+MODRET solaris_priv_post_fail(cmd_rec *cmd) {
+  priv_set_t* permitted_set = NULL;
+  priv_set_t* effective_set = NULL;
+
+  if ((permitted_set = priv_allocset()) == NULL) {
+    log_err_permitted("priv_allocset");
+    goto out;
+  }
+  if ((effective_set = priv_allocset()) == NULL) {
+    log_err_effective("priv_allocset");
+    goto out;
+  }
+
+  if (getppriv(PRIV_PERMITTED, permitted_set) != 0) {
+    log_err_permitted("getppriv");
+    goto out;
+  }
+  if (getppriv(PRIV_EFFECTIVE, effective_set) != 0) {
+    log_err_effective("getppriv");
+    goto out;
+  }
+
+  if (priv_addset(permitted_set, PRIV_PROC_AUDIT) != 0) {
+    log_err_permitted("priv_addset");
+    goto out;
+  }
+  if (priv_addset(effective_set, PRIV_PROC_AUDIT) != 0) {
+    log_err_effective("priv_addset");
+    goto out;
+  }
+
+  if (setppriv(PRIV_SET, PRIV_PERMITTED, permitted_set) != 0) {
+    log_err_permitted("setppriv");
+    goto out;
+  }
+  if (setppriv(PRIV_SET, PRIV_EFFECTIVE, effective_set) != 0) {
+    log_err_effective("setppriv");
+    goto out;
+  }
+
+out:
+  if (permitted_set != NULL)
+    priv_freeset(permitted_set);
+  if (effective_set != NULL)
+    priv_freeset(effective_set);
 
   return PR_DECLINED(cmd);
 }
@@ -350,6 +423,7 @@ static conftable solaris_priv_conftab[] = {
 
 static cmdtable solaris_priv_cmdtab[] = {
   { POST_CMD, C_PASS, G_NONE, solaris_priv_post_pass, FALSE, FALSE },
+  { POST_CMD_ERR, C_PASS, G_NONE, solaris_priv_post_fail, FALSE, FALSE },
   { 0, NULL }
 };
 
