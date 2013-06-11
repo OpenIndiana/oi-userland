@@ -44,6 +44,7 @@ file path=usr/gcc/4.5/lib/libobjc.so.2.0.0
 file path=usr/gcc/4.5/lib/libssp.so.0.0.0
 file path=usr/gcc/4.5/lib/libstdc++.so.6.0.14
 file path=usr/gcc/4.5/lib/$(MACH64)/libgcc_s.so.1
+    
 
 # pkg.debug.depend.path has been added to workaround a problem with pkgdepend not
 # being able to figure out the dependence of these .so's on libgcc_s which is
@@ -78,29 +79,105 @@ link path=usr/gcc/4.5/lib/libssp.so.0 target=libssp.so.0.0.0
 link path=usr/gcc/4.5/lib/libstdc++.so target=libstdc++.so.6.0.14
 link path=usr/gcc/4.5/lib/libstdc++.so.6 target=libstdc++.so.6.0.14
 
-link path=usr/lib/libgcc_s.so.1 target=../gcc/4.5/lib/libgcc_s.so.1 
-link path=usr/lib/libgcc_s.so target=../gcc/4.5/lib/libgcc_s.so 
-link path=usr/lib/libgfortran.so target=../gcc/4.5/lib/libgfortran.so 
-link path=usr/lib/libgfortran.so.3 target=../gcc/4.5/lib/libgfortran.so.3 
-link path=usr/lib/libobjc.so target=../gcc/4.5/lib/libobjc.so 
-link path=usr/lib/libobjc.so.2 target=../gcc/4.5/lib/libobjc.so.2 
-link path=usr/lib/libstdc++.so target=../gcc/4.5/lib/libstdc++.so 
-link path=usr/lib/libstdc++.so.6 target=../gcc/4.5/lib/libstdc++.so.6 
-link path=usr/lib/libgomp.so target=../gcc/4.5/lib/libgomp.so 
-link path=usr/lib/libgomp.so.1 target=../gcc/4.5/lib/libgomp.so.1 
-link path=usr/lib/libssp.so target=../gcc/4.5/lib/libssp.so 
-link path=usr/lib/libssp.so.0 target=../gcc/4.5/lib/libssp.so.0 
-link path=usr/lib/$(MACH64)/libgcc_s.so.1 target=../../gcc/4.5/lib/$(MACH64)/libgcc_s.so.1 
-link path=usr/lib/$(MACH64)/libgcc_s.so target=../../gcc/4.5/lib/$(MACH64)/libgcc_s.so 
-link path=usr/lib/$(MACH64)/libgcc_s_$(MACH64).so target=../../gcc/4.5/lib/$(MACH64)/libgcc_s.so 
-link path=usr/lib/$(MACH64)/libgfortran.so target=../../gcc/4.5/lib/$(MACH64)/libgfortran.so 
-link path=usr/lib/$(MACH64)/libgfortran.so.3 target=../../gcc/4.5/lib/$(MACH64)/libgfortran.so.3 
-link path=usr/lib/$(MACH64)/libstdc++.so target=../../gcc/4.5/lib/$(MACH64)/libstdc++.so 
-link path=usr/lib/$(MACH64)/libstdc++.so.6 target=../../gcc/4.5/lib/$(MACH64)/libstdc++.so.6 
-link path=usr/lib/$(MACH64)/libgomp.so target=../../gcc/4.5/lib/$(MACH64)/libgomp.so 
-link path=usr/lib/$(MACH64)/libgomp.so.1 target=../../gcc/4.5/lib/$(MACH64)/libgomp.so.1 
-link path=usr/lib/$(MACH64)/libssp.so target=../../gcc/4.5/lib/$(MACH64)/libssp.so 
-link path=usr/lib/$(MACH64)/libssp.so.0 target=../../gcc/4.5/lib/$(MACH64)/libssp.so.0 
-link path=usr/lib/$(MACH64)/libobjc.so target=../../gcc/4.5/lib/$(MACH64)/libobjc.so 
-link path=usr/lib/$(MACH64)/libobjc.so.2 target=../../gcc/4.5/lib/$(MACH64)/libobjc.so.2 
+# Mediated links for GCC 4.5
+link path=usr/lib/libgcc_s.so.1 \
+    target=../gcc/4.5/lib/libgcc_s.so.1 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libgcc_s.so \
+    target=../gcc/4.5/lib/libgcc_s.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libgfortran.so \
+    target=../gcc/4.5/lib/libgfortran.so  \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libgfortran.so.3 \
+    target=../gcc/4.5/lib/libgfortran.so.3 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libobjc.so \
+    target=../gcc/4.5/lib/libobjc.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libobjc.so.2 \
+    target=../gcc/4.5/lib/libobjc.so.2 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libstdc++.so \
+    target=../gcc/4.5/lib/libstdc++.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libstdc++.so.6 \
+    target=../gcc/4.5/lib/libstdc++.so.6 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libgomp.so \
+    target=../gcc/4.5/lib/libgomp.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libgomp.so.1 \
+    target=../gcc/4.5/lib/libgomp.so.1 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libssp.so \
+    target=../gcc/4.5/lib/libssp.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/libssp.so.0 \
+    target=../gcc/4.5/lib/libssp.so.0 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libgcc_s.so.1 \
+    target=../../gcc/4.5/lib/$(MACH64)/libgcc_s.so.1 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libgcc_s.so \
+    target=../../gcc/4.5/lib/$(MACH64)/libgcc_s.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libgcc_s_$(MACH64).so \
+    target=../../gcc/4.5/lib/$(MACH64)/libgcc_s.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libgfortran.so \
+    target=../../gcc/4.5/lib/$(MACH64)/libgfortran.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libgfortran.so.3 \
+    target=../../gcc/4.5/lib/$(MACH64)/libgfortran.so.3 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libstdc++.so \
+    target=../../gcc/4.5/lib/$(MACH64)/libstdc++.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libstdc++.so.6 \
+    target=../../gcc/4.5/lib/$(MACH64)/libstdc++.so.6 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libgomp.so \
+    target=../../gcc/4.5/lib/$(MACH64)/libgomp.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libgomp.so.1 \
+    target=../../gcc/4.5/lib/$(MACH64)/libgomp.so.1 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libssp.so \
+    target=../../gcc/4.5/lib/$(MACH64)/libssp.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libssp.so.0 \
+    target=../../gcc/4.5/lib/$(MACH64)/libssp.so.0 \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libobjc.so \
+    target=../../gcc/4.5/lib/$(MACH64)/libobjc.so \
+    mediator=gcc-runtime mediator-version=4.5
+    
+link path=usr/lib/$(MACH64)/libobjc.so.2 \
+    target=../../gcc/4.5/lib/$(MACH64)/libobjc.so.2 \
+    mediator=gcc-runtime mediator-version=4.5
+    
 
