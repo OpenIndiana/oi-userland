@@ -39,7 +39,10 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_BINDIR.32 =		$(CONFIGURE_PREFIX)/gnu/bin
+# Need to reduce optimization level in order to successfully run the
+# configure test for detecting whether Solaris can detect stack overflow.
+# See CR #16954300.
+studio_OPT = -xO3
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
@@ -47,11 +50,11 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
