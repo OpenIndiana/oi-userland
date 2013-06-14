@@ -1,0 +1,116 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/system/storage/smp_utils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Utilities for SMP expanders that help diagnose problems"
+set name=pkg.description \
+    value="The smp_utils package contains utilities for the Serial Attached SCSI (SAS) Serial Management Protocol (SMP). Most utilities correspond to a single SMP function, sending out a request, checking for errors and if all is well processing the response. The response is either decoded, printed out in ASCII hexadecimal or sent as binary to stdout."
+set name=info.classification \
+    value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=com.oracle.info.description value="SMP diagnostic tools"
+set name=com.oracle.info.tpno value=11065
+set name=org.opensolaris.arc-caseid value=PSARC/2012/329
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file smp_utils-prof_attr path=etc/security/prof_attr.d/smp_utils
+file smp_utils-exec_attr path=etc/security/exec_attr.d/smp_utils
+file RtSCSIDeviceInfo.html \
+	path=usr/lib/help/profiles/locale/RtSCSIDeviceInfo.html
+file RtSCSIDeviceManagement.html \
+	path=usr/lib/help/profiles/locale/RtSCSIDeviceManagement.html
+file usr/lib/$(MACH64)/libsmputils1.so.1.0.0 \
+    path=usr/lib/$(MACH64)/libsmputils1.so.1.0.0
+link path=usr/lib/$(MACH64)/libsmputils1.so target=libsmputils1.so.1.0.0
+link path=usr/lib/$(MACH64)/libsmputils1.so.1 target=libsmputils1.so.1.0.0
+file usr/sbin/$(MACH64)/smp_conf_general path=usr/sbin/smp_conf_general
+file usr/sbin/$(MACH64)/smp_conf_phy_event path=usr/sbin/smp_conf_phy_event
+file usr/sbin/$(MACH64)/smp_conf_route_info path=usr/sbin/smp_conf_route_info
+file usr/sbin/$(MACH64)/smp_conf_zone_man_pass \
+    path=usr/sbin/smp_conf_zone_man_pass
+file usr/sbin/$(MACH64)/smp_conf_zone_perm_tbl \
+    path=usr/sbin/smp_conf_zone_perm_tbl
+file usr/sbin/$(MACH64)/smp_conf_zone_phy_info \
+    path=usr/sbin/smp_conf_zone_phy_info
+file usr/sbin/$(MACH64)/smp_discover path=usr/sbin/smp_discover
+file usr/sbin/$(MACH64)/smp_discover_list path=usr/sbin/smp_discover_list
+file usr/sbin/$(MACH64)/smp_ena_dis_zoning path=usr/sbin/smp_ena_dis_zoning
+file usr/sbin/$(MACH64)/smp_phy_control path=usr/sbin/smp_phy_control
+file usr/sbin/$(MACH64)/smp_phy_test path=usr/sbin/smp_phy_test
+file usr/sbin/$(MACH64)/smp_read_gpio path=usr/sbin/smp_read_gpio
+file usr/sbin/$(MACH64)/smp_rep_broadcast path=usr/sbin/smp_rep_broadcast
+file usr/sbin/$(MACH64)/smp_rep_exp_route_tbl \
+    path=usr/sbin/smp_rep_exp_route_tbl
+file usr/sbin/$(MACH64)/smp_rep_general path=usr/sbin/smp_rep_general
+file usr/sbin/$(MACH64)/smp_rep_manufacturer path=usr/sbin/smp_rep_manufacturer
+file usr/sbin/$(MACH64)/smp_rep_phy_err_log path=usr/sbin/smp_rep_phy_err_log
+file usr/sbin/$(MACH64)/smp_rep_phy_event path=usr/sbin/smp_rep_phy_event
+file usr/sbin/$(MACH64)/smp_rep_phy_event_list \
+    path=usr/sbin/smp_rep_phy_event_list
+file usr/sbin/$(MACH64)/smp_rep_phy_sata path=usr/sbin/smp_rep_phy_sata
+file usr/sbin/$(MACH64)/smp_rep_route_info path=usr/sbin/smp_rep_route_info
+file usr/sbin/$(MACH64)/smp_rep_self_conf_stat \
+    path=usr/sbin/smp_rep_self_conf_stat
+file usr/sbin/$(MACH64)/smp_rep_zone_man_pass \
+    path=usr/sbin/smp_rep_zone_man_pass
+file usr/sbin/$(MACH64)/smp_rep_zone_perm_tbl \
+    path=usr/sbin/smp_rep_zone_perm_tbl
+file usr/sbin/$(MACH64)/smp_write_gpio path=usr/sbin/smp_write_gpio
+file usr/sbin/$(MACH64)/smp_zone_activate path=usr/sbin/smp_zone_activate
+file usr/sbin/$(MACH64)/smp_zone_lock path=usr/sbin/smp_zone_lock
+file usr/sbin/$(MACH64)/smp_zone_unlock path=usr/sbin/smp_zone_unlock
+file usr/sbin/$(MACH64)/smp_zoned_broadcast path=usr/sbin/smp_zoned_broadcast
+file path=usr/share/man/man1m/smp_conf_general.1m
+file path=usr/share/man/man1m/smp_conf_phy_event.1m
+file path=usr/share/man/man1m/smp_conf_route_info.1m
+file path=usr/share/man/man1m/smp_conf_zone_man_pass.1m
+file path=usr/share/man/man1m/smp_conf_zone_perm_tbl.1m
+file path=usr/share/man/man1m/smp_conf_zone_phy_info.1m
+file path=usr/share/man/man1m/smp_discover.1m
+file path=usr/share/man/man1m/smp_discover_list.1m
+file path=usr/share/man/man1m/smp_ena_dis_zoning.1m
+file path=usr/share/man/man1m/smp_phy_control.1m
+file path=usr/share/man/man1m/smp_phy_test.1m
+file path=usr/share/man/man1m/smp_read_gpio.1m
+file path=usr/share/man/man1m/smp_rep_broadcast.1m
+file path=usr/share/man/man1m/smp_rep_exp_route_tbl.1m
+file path=usr/share/man/man1m/smp_rep_general.1m
+file path=usr/share/man/man1m/smp_rep_manufacturer.1m
+file path=usr/share/man/man1m/smp_rep_phy_err_log.1m
+file path=usr/share/man/man1m/smp_rep_phy_event.1m
+file path=usr/share/man/man1m/smp_rep_phy_event_list.1m
+file path=usr/share/man/man1m/smp_rep_phy_sata.1m
+file path=usr/share/man/man1m/smp_rep_route_info.1m
+file path=usr/share/man/man1m/smp_rep_self_conf_stat.1m
+file path=usr/share/man/man1m/smp_rep_zone_man_pass.1m
+file path=usr/share/man/man1m/smp_rep_zone_perm_tbl.1m
+file path=usr/share/man/man1m/smp_utils.1m
+file path=usr/share/man/man1m/smp_write_gpio.1m
+file path=usr/share/man/man1m/smp_zone_activate.1m
+file path=usr/share/man/man1m/smp_zone_lock.1m
+file path=usr/share/man/man1m/smp_zone_unlock.1m
+file path=usr/share/man/man1m/smp_zoned_broadcast.1m
+license smp_utils.license license=BSD
+depend fmri=driver/storage/smp type=require

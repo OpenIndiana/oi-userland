@@ -1,0 +1,50 @@
+#Use -v to switch to standard error output. This patch is deemed
+#Solaris-centric and thus not worthy of being submitted upstream.
+diff -urN smp_utils-0.97/lib/Makefile.am smp_utils-0.97.new/lib/Makefile.am
+--- smp_utils-0.97/lib/Makefile.am	2011-08-06 20:47:17.000000000 -0700
++++ smp_utils-0.97.new/lib/Makefile.am	2012-10-29 23:22:01.250489177 -0700
+@@ -38,7 +38,7 @@
+ 
+ 
+ 
+-AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W
++AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -v
+ # AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W -pedantic -std=c99
+ 
+ lib_LTLIBRARIES = libsmputils1.la
+diff -urN smp_utils-0.97/lib/Makefile.in smp_utils-0.97.new/lib/Makefile.in
+--- smp_utils-0.97/lib/Makefile.in	2011-11-16 16:48:55.000000000 -0800
++++ smp_utils-0.97.new/lib/Makefile.in	2012-10-29 23:22:01.251160763 -0700
+@@ -243,7 +243,7 @@
+ @OS_SOLARIS_TRUE@EXTRA_libsmputils1_la_SOURCES = \
+ @OS_SOLARIS_TRUE@	smp_dummy.c
+ 
+-AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W
++AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -v
+ # AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W -pedantic -std=c99
+ lib_LTLIBRARIES = libsmputils1.la
+ libsmputils1_la_LDFLAGS = -version-info 1:0:0
+diff -urN smp_utils-0.97/src/Makefile.am smp_utils-0.97.new/src/Makefile.am
+--- smp_utils-0.97/src/Makefile.am	2011-11-29 12:11:36.000000000 -0800
++++ smp_utils-0.97.new/src/Makefile.am	2012-10-29 23:22:36.457726462 -0700
+@@ -28,7 +28,7 @@
+ ## endif
+ 
+ 
+-AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W
++AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -v
+ # AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W -pedantic -std=c99
+ 
+ smp_conf_general_SOURCES =	smp_conf_general.c
+diff -urN smp_utils-0.97/src/Makefile.in smp_utils-0.97.new/src/Makefile.in
+--- smp_utils-0.97/src/Makefile.in	2011-11-29 12:11:36.000000000 -0800
++++ smp_utils-0.97.new/src/Makefile.in	2012-10-29 23:22:36.458435498 -0700
+@@ -319,7 +319,7 @@
+ top_build_prefix = @top_build_prefix@
+ top_builddir = @top_builddir@
+ top_srcdir = @top_srcdir@
+-AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W
++AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -v
+ # AM_CFLAGS = -I ../include -D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64 -Wall -W -pedantic -std=c99
+ smp_conf_general_SOURCES = smp_conf_general.c
+ smp_conf_general_LDADD = ../lib/libsmputils1.la @os_libs@
