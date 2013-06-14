@@ -36,10 +36,16 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Solaris should really define these. See CR #15431883 and 15537286.
+CFLAGS +=	-Du_int8_t=uint8_t
+CFLAGS +=	-Du_int16_t=uint16_t
+CFLAGS +=	-Du_int32_t=uint32_t
+
 # Set -m32 or -m64 correctly for 32 and 64 bit versions.
 CC +=		$(CC_BITS)
 
 CONFIGURE_OPTIONS +=    --enable-static=no
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
