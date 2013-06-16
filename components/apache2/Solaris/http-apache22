@@ -20,7 +20,7 @@
 # CDDL HEADER END
 #
 #
-# Copyright (c) 2008, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -32,7 +32,7 @@ APACHE_VAR_ROOT=/var/apache2
 
 #if startup options contain multiple arguments separated by a blank,
 #then they should be specified as below
-#e.g., %> svccfg -s apache22 setprop httpd/startup_options=\("-f" "/etc/apache2/2.2/new.conf"\)
+#e.g., %> svccfg -s apache22 setprop 'httpd/startup_options=("-f" "/etc/apache2/2.2/new.conf")' 
 #
 STARTUP_OPTIONS=
 
@@ -50,20 +50,6 @@ getprop() {
         return
     fi
     return
-}
-
-# Check whether alternate config file was specified using option -f.
-# If it's the case, Apache will search in the same directory for
-# availability of environment file.
-envvars_path_update() {
-    eval "set -- $1"
-    while [ $# -gt 0 ]; do
-        case "$1" in
-          -f) APACHE_USER_ENVVARS=`dirname "${2:-}"`/envvars; break;;
-          -f*) APACHE_USER_ENVVARS=`dirname "${1#-f}"`/envvars; break;;
-        esac
-        shift
-    done
 }
 
 APACHE_VERSION=`echo ${SMF_FMRI} | sed 's/[^0-9]//g;s/./\.&/g;s/^\.//'` 
@@ -111,7 +97,6 @@ if [ "${PROPVAL}" != "" ] ; then
 	echo startupoptions set
 	echo val=${PROPVAL}
 	STARTUP_OPTIONS="${PROPVAL} -k"
-        envvars_path_update "${PROPVAL}"
 fi
 
 getprop httpd/server_type
@@ -121,10 +106,31 @@ fi
 
 case ${SERVER_TYPE} in
 prefork)
-	HTTPD=${APACHE_BIN}/httpd
+	# If HTTPD value is set in
+	# /etc/apache2/<version>/envvars file
+	# delete the line so that it defaults to prefork 
+	# type
+	ALREADY_SET=`grep "HTTPD=" ${APACHE_USER_ENVVARS}`
+	if [ "${ALREADY_SET}" != "" ]; then
+		sed -e '/^HTTPD=/ d' ${APACHE_USER_ENVVARS} > ${APACHE_USER_ENVVARS}.new
+		cp ${APACHE_USER_ENVVARS}.new ${APACHE_USER_ENVVARS}
+		rm ${APACHE_USER_ENVVARS}.new
+	fi
 	;;
 worker)
-	HTTPD=${APACHE_BIN}/httpd.worker
+	# set HTTPD value to httpd.worker within 
+	# /etc/apache2/<version>/envvars file
+	ALREADY_SET=`grep "HTTPD=" ${APACHE_USER_ENVVARS}`
+	if [ "${ALREADY_SET}" != "" ]; then
+		sed -e '/^HTTPD=/c\
+HTTPD='${APACHE_BIN}'/httpd.worker' ${APACHE_USER_ENVVARS} > ${APACHE_USER_ENVVARS}.new
+	else
+		sed -e '$a\
+HTTPD='${APACHE_BIN}'/httpd.worker' ${APACHE_USER_ENVVARS} > ${APACHE_USER_ENVVARS}.new
+	fi
+
+	cp ${APACHE_USER_ENVVARS}.new ${APACHE_USER_ENVVARS}
+	rm ${APACHE_USER_ENVVARS}.new
 	;;
 *)
         if [ "x${APACHE_VERSION}" != "x" ]; then
@@ -152,7 +158,7 @@ stop)
 	;;
 esac
 
-HTTPD="${HTTPD}" APACHE_USER_ENVVARS="${APACHE_USER_ENVVARS}" ${APACHE_BIN}/apachectl ${STARTUP_OPTIONS} ${cmd} 2>&1
+APACHE_USER_ENVVARS="${APACHE_USER_ENVVARS}" ${APACHE_BIN}/apachectl ${STARTUP_OPTIONS} ${cmd} 2>&1
 
 if [ $? -ne 0 ]; then
     echo "Server failed to start. Check the error log (defaults to ${APACHE_VAR_ROOT}/logs/error_log) for more information, if any."
