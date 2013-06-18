@@ -23,18 +23,21 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.8.5
+COMPONENT_VERSION=	1.10.0
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d4e4798216974a3c45e74b03644ee33b64481d2fe5c788c002266e5f141ee372
+    sha256:1f4b377ba6284a51797bcc437aa2918bfaeb5d30908cd6194bd09f7054c65add
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 PATCH_LEVEL=0
 
@@ -43,9 +46,11 @@ CONFIGURE_OPTIONS +=	--disable-usr-local
 CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
-CONFIGURE_OPTIONS +=	--with-lua=no
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
+
+# Version 1.10 (libwireshark.so) doesn't play nicely with -Bdirect.
+LD_B_DIRECT=
 
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
 # create successfully IPS package of different Wireshark branch than is
@@ -58,9 +63,9 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	chmod 755 config.status; \
 	./config.status)
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
