@@ -24,7 +24,7 @@
 
 # parfait seems to hang on libcmsysTestDynload.so.bc, so for
 # now we have to disable it.
-PARFAIT_BUILD=no
+export PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 

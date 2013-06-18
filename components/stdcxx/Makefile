@@ -23,7 +23,7 @@
 
 # we really need to use studio so we don't like that
 # parfait is g++ in disguise
-PARFAIT_BUILD=no
+export PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 

@@ -73,7 +73,7 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep $(BUILD_DIR)/config-%/$(CFG)
 		$(PYTHON.$(BITS)) ./setup.py build)
 	$(COMPONENT_POST_BUILD_ACTION)
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) $(SOURCE_DIR)/$(@D:$(BUILD_DIR)/%=%)
+	-$(PARFAIT) $(@D)
 endif
 	$(TOUCH) $@
 
@@ -110,8 +110,7 @@ $(BUILD_DIR)/%/.tested:	$(COMPONENT_TEST_DEP)
 	$(TOUCH) $@
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: install
-	-$(PARFAIT) build
+parfait: build
 else
 parfait:
 	$(MAKE) PARFAIT_BUILD=yes parfait

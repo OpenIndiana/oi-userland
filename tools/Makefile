@@ -41,7 +41,8 @@ links:
 		echo "export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC" >> parfait/$$i ; \
 		echo "export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc" >> parfait/$$i ; \
 		echo "export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++" >> parfait/$$i ; \
-		echo "exec" $(PARFAIT_ROOT)/bin/parfait-$$i '$$*' >> parfait/$$i ; \
+		echo "export PARFAIT_NATIVELD=/usr/bin/ld" >> parfait/$$i ; \
+		echo "exec" $(PARFAIT_ROOT)/$(MACH)/parfait-$$i '$$*' >> parfait/$$i ; \
 		chmod +x parfait/$$i ; \
 	done
 

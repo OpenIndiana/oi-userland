@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # Rules and Macros for building opens source software that just uses their
@@ -55,7 +55,7 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) build
+	-$(PARFAIT) $(@D)
 endif
 	$(TOUCH) $@
 
@@ -77,8 +77,7 @@ $(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
 	$(TOUCH) $@
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-parfait: install
-	-$(PARFAIT) build
+parfait: build
 else
 parfait:
 	$(MAKE) PARFAIT_BUILD=yes parfait

@@ -71,6 +71,9 @@ $(BUILD_DIR)/%/.built:	$(BUILD_DIR)/%/.configured
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(GMAKE) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) $(@D)
+endif
 	$(TOUCH) $@
 
 
@@ -92,10 +95,14 @@ $(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
 	(cd $(@D) ; $(ENV) $(COMPONENT_TEST_ENV) $(GMAKE) \
 			$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
 	$(COMPONENT_POST_TEST_ACTION)
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-	-$(PARFAIT) build
-endif
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+parfait: build
+else
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes parfait
+endif
 
 clean:: 
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)

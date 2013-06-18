@@ -1,0 +1,30 @@
+--- ./lib/cpp/antlr/TokenRefCount.hpp.orig	Mon Mar 18 11:58:26 2013
++++ ./lib/cpp/antlr/TokenRefCount.hpp	Mon Mar 18 11:58:52 2013
+@@ -84,9 +84,9 @@
+ 		return *this;
+ 	}
+ 
+-	operator T* ()  const { return ref ? static_cast<T*>(ref->ptr) : 0; }
+-	T* operator->() const { return ref ? static_cast<T*>(ref->ptr) : 0; }
+-	T* get()        const { return ref ? static_cast<T*>(ref->ptr) : 0; }
++	operator T* ()  const { return ref ? static_cast<T* const>(ref->ptr) : 0; }
++	T* operator->() const { return ref ? static_cast<T* const>(ref->ptr) : 0; }
++	T* get()        const { return ref ? static_cast<T* const>(ref->ptr) : 0; }
+ };
+ 
+ typedef TokenRefCount<Token> RefToken;
+--- ./lib/cpp/antlr/ASTRefCount.hpp.orig	Mon Mar 18 11:59:16 2013
++++ ./lib/cpp/antlr/ASTRefCount.hpp	Mon Mar 18 11:59:28 2013
+@@ -84,9 +84,9 @@
+ 		return *this;
+ 	}
+ 
+-	operator T* ()  const { return ref ? static_cast<T*>(ref->ptr) : 0; }
+-	T* operator->() const { return ref ? static_cast<T*>(ref->ptr) : 0; }
+-	T* get()        const { return ref ? static_cast<T*>(ref->ptr) : 0; }
++	operator T* ()  const { return ref ? static_cast<T* const>(ref->ptr) : 0; }
++	T* operator->() const { return ref ? static_cast<T* const>(ref->ptr) : 0; }
++	T* get()        const { return ref ? static_cast<T* const>(ref->ptr) : 0; }
+ };
+ 
+ typedef ASTRefCount<AST> RefAST;

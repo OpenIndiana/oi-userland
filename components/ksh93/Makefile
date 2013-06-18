@@ -20,7 +20,6 @@
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
-PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 

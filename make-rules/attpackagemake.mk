@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # Rules and Macros for building opens source software that uses AT&T's package
@@ -72,6 +72,9 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	cd $(@D); $(ENV) $(COMPONENT_BUILD_ENV) \
    		bin/package make $(COMPONENT_BUILD_TARGETS) $(COMPONENT_BUILD_ARGS)
 	$(COMPONENT_POST_BUILD_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) $(@D)
+endif
 	$(TOUCH) $@
 
 # install the built source into a prototype area
@@ -93,6 +96,13 @@ $(BUILD_DIR)/%/.tested: $(BUILD_DIR)/%/.built
 		$(COMPONENT_TEST_ARGS)
 	$(COMPONENT_POST_TEST_ACTION)
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+parfait: build
+else
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes parfait
+endif
 
 clean::
 	$(RM) -r $(BUILD_DIR) $(PROTO_DIR)

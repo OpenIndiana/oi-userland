@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 ANT=/usr/bin/ant
@@ -32,6 +32,9 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep
 	(cd $(@D) ; $(ENV) $(COMPONENT_BUILD_ENV) \
 		$(ANT) $(COMPONENT_BUILD_ARGS) $(COMPONENT_BUILD_TARGETS))
 	$(COMPONENT_POST_BUILD_ACTION)
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+	-$(PARFAIT) $(@D)
+endif
 	$(TOUCH) $@
 
 COMPONENT_INSTALL_ENV += JAVA_HOME="$(JAVA_HOME)"
@@ -42,6 +45,13 @@ $(BUILD_DIR)/%/.installed:	$(BUILD_DIR)/%/.built
 		$(ANT) $(COMPONENT_INSTALL_ARGS) $(COMPONENT_INSTALL_TARGETS))
 	$(COMPONENT_POST_INSTALL_ACTION)
 	$(TOUCH) $@
+
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+parfait: build
+else
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes parfait
+endif
 
 clean::
 	$(RM) -r $(SOURCE_DIR) $(BUILD_DIR)

@@ -55,6 +55,14 @@ CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
+# webalizer is defining u_int64_t but also uses db.h
+# which typedefs it, and parfait isn't happy.
+# gcc4 may not be as well.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+CC += -Du_int64_t=uint64_t
+CONFIGURE_OPTIONS +=	c_cv_type_u_int64_t=yes
+endif
+
 # Needed to correctly build that 64-bit library.
 LDFLAGS += $(CC_BITS)
 

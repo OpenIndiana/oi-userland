@@ -20,12 +20,12 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we really need to use studio, mostly because that's what
 # sigc++ uses, so we don't like that parfait is g++ in disguise
-PARFAIT_BUILD=no
+export PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 
