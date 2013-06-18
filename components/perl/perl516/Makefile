@@ -31,13 +31,13 @@ include ../../../make-rules/shared-macros.mk
 # can't call it.
 
 COMPONENT_NAME=		perl
-COMPONENT_VERSION=	5.16.2
+COMPONENT_VERSION=	5.16.3
 PERL_VERSION=		5.16
 COMPONENT_PROJECT_URL=	http://www.perl.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5ba91d9aa40220c615b644bb48fa5df7fbca4afb1c9e911bdc0ce2a93f072d7d
+    sha256:bb7bc735e6813b177dcfccd480defcde7eddefa173b5967eac11babd1bfa98e8
 COMPONENT_ARCHIVE_URL=	http://www.cpan.org/src/5.0/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/perl
 
