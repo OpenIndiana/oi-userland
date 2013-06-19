@@ -54,7 +54,10 @@ CONFIGURE_OPTIONS =	--platform solaris-cc-64
 CONFIGURE_OPTIONS +=	--prefix /usr
 CONFIGURE_OPTIONS +=	--enable-langs nl,sv,cz,fr,id,it,de,jp,je,es,fi,ru,hr,pl,pt,hu,kr,ke,ro,si,cn,no,br,dk,sk,ua,gr,tw,sr,ca,lt,za,ar,fa
 
-ASLR_MODE = $(ASLR_ENABLE)
+# It was found that 64-bit doxygen crashes when built with the 12.3 compiler
+# if ASLR is enabled.  Sun Studio bug #16984930 was filed about this.
+#
+ASLR_MODE = $(ASLR_DISABLE)
 
 # common targets
 build:		$(BUILD_64)
