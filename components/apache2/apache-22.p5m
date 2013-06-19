@@ -21,6 +21,9 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file link hardlink path=usr/apache2/2.2/build/.* -> \
+    default facet.devel all>
+
 set name=pkg.fmri \
     value=pkg:/web/server/apache-22@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
@@ -73,7 +76,7 @@ file Solaris/http-apache22.xml path=lib/svc/manifest/network/http-apache22.xml
 file path=lib/svc/method/http-apache22
 file path=usr/apache2/2.2/bin/$(MACH64)/ab
 file path=usr/apache2/2.2/bin/$(MACH64)/apachectl
-file path=usr/apache2/2.2/bin/$(MACH64)/apxs
+file path=usr/apache2/2.2/bin/$(MACH64)/apxs facet.devel=true
 file path=usr/apache2/2.2/bin/$(MACH64)/checkgid
 file path=usr/apache2/2.2/bin/$(MACH64)/dbmmanage
 file path=usr/apache2/2.2/bin/$(MACH64)/envvars
@@ -90,7 +93,7 @@ file path=usr/apache2/2.2/bin/$(MACH64)/rotatelogs
 file usr/apache2/2.2/bin/$(MACH64)/suexec path=usr/apache2/2.2/bin/$(MACH64)/suexec.disabled mode=0500
 file path=usr/apache2/2.2/bin/ab
 file path=usr/apache2/2.2/bin/apachectl
-file path=usr/apache2/2.2/bin/apxs
+file path=usr/apache2/2.2/bin/apxs facet.devel=true
 file path=usr/apache2/2.2/bin/checkgid
 file path=usr/apache2/2.2/bin/dbmmanage
 file path=usr/apache2/2.2/bin/envvars
@@ -316,7 +319,7 @@ file path=usr/apache2/2.2/man/man1/htdigest.1
 file path=usr/apache2/2.2/man/man1/htpasswd.1
 file path=usr/apache2/2.2/man/man8/ab.8
 file path=usr/apache2/2.2/man/man8/apachectl.8
-file path=usr/apache2/2.2/man/man8/apxs.8
+file path=usr/apache2/2.2/man/man8/apxs.8 facet.devel=all
 file path=usr/apache2/2.2/man/man8/htcacheclean.8
 file path=usr/apache2/2.2/man/man8/httpd.8
 file path=usr/apache2/2.2/man/man8/logresolve.8
@@ -575,7 +578,7 @@ link path=usr/apache2/2.2/bin/64 target=$(MACH64)
 link path=usr/apache2/2.2/build/64 target=$(MACH64)
 link path=usr/apache2/2.2/libexec/64 target=$(MACH64)
 link path=usr/bin/$(MACH64)/ab target=../../apache2/2.2/bin/$(MACH64)/ab
-link path=usr/bin/$(MACH64)/apxs target=../../apache2/2.2/bin/$(MACH64)/apxs
+link path=usr/bin/$(MACH64)/apxs target=../../apache2/2.2/bin/$(MACH64)/apxs facet.devel=all
 link path=usr/bin/$(MACH64)/dbmmanage target=../../apache2/2.2/bin/$(MACH64)/dbmmanage
 link path=usr/bin/$(MACH64)/htcacheclean target=../../apache2/2.2/bin/$(MACH64)/htcacheclean
 link path=usr/bin/$(MACH64)/htdbm target=../../apache2/2.2/bin/$(MACH64)/htdbm
