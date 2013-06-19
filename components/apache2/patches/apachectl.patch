@@ -1,0 +1,14 @@
+Allows SMF method to override Apache binary to start and thus select if
+we want prefork/worker Apache MPM.
+
+--- support/apachectl.in	Tue Jul 11 20:38:44 2006
++++ support/apachectl.in	Tue May 14 07:40:03 2013
+@@ -41,7 +41,7 @@
+ # --------------------                              --------------------
+ # 
+ # the path to your httpd binary, including options if necessary
+-HTTPD='@exp_sbindir@/@progname@'
++HTTPD=${HTTPD:-@exp_sbindir@/@progname@}
+ #
+ # pick up any necessary environment variables
+ if test -f @exp_sbindir@/envvars; then
