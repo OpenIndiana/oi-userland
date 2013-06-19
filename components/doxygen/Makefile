@@ -42,15 +42,15 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# Necessary to find CC during build
-PATH=$(SPRO_VROOT)/bin:/usr/bin
+# Necessary to find gcc during build
+PATH=$(GCC_ROOT)/bin:/usr/bin
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Need to override default options since configure doesn't
 # understand CC, CXX, etc.
-CONFIGURE_OPTIONS =	--platform solaris-cc-64
+CONFIGURE_OPTIONS =	--platform solaris-g++
 CONFIGURE_OPTIONS +=	--prefix /usr
 CONFIGURE_OPTIONS +=	--enable-langs nl,sv,cz,fr,id,it,de,jp,je,es,fi,ru,hr,pl,pt,hu,kr,ke,ro,si,cn,no,br,dk,sk,ua,gr,tw,sr,ca,lt,za,ar,fa
 
