@@ -1,0 +1,65 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform depend pkg.debug.depend.path=usr.*/5.12-mt/bin ->  set pkg.debug.depend.file perl-threaded>
+<transform depend pkg.debug.depend.path=(usr.*/5.12)-mt(/bin) ->  set pkg.debug.depend.path %<1>%<2>  >
+#
+<transform file path=usr.*/5.12-mt/(man|XML)/.* -> drop >
+# convert 5.12-mt to 5.12 in the path because that is where the threaded
+# perl bits really are.
+<transform file path=(usr.*/5.12)-mt(/.+) -> set path %<1>%<2>>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform set name=pkg.fmri value=(.*)512-mt(.+) -> set value %<1>threaded-512%<2>>
+<transform depend fmri=(.*)512-mt(.*) -> set fmri %<1>threaded-512%<2>>
+<transform depend predicate=(.*)512-mt(.*) -> set predicate %<1>threaded-512%<2>>
+
+set name=pkg.fmri value=pkg:/library/perl-5/authen-pam-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Authen::PAM - PAM Perl Module"
+set name=pkg.description value="the Authen::PAM Perl module for using PAM"
+set name=com.oracle.info.description value="the Authen::PAM Perl module"
+set name=com.oracle.info.tpno value=9303
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Perl"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.arc-caseid value=LSARC/2004/251
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license authen-pam.license license=Artistic
+
+#file path=usr/perl5/$(PERLVER)/lib/$(PERL_ARCH)/perllocal.pod
+file path=usr/perl5/$(PERLVER)/man/man3/Authen::PAM.3
+file path=usr/perl5/$(PERLVER)/man/man3/Authen::PAM::FAQ.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Authen/PAM.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/Authen/PAM/FAQ.pod
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Authen/PAM/.packlist
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Authen/PAM/PAM.bs
+file path=usr/perl5/vendor_perl/$(PERLVER)/$(PERL_ARCH)/auto/Authen/PAM/PAM.so
+
+# force a dependency on the Perl runtime
+depend fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin type=require
+
+# force a dependency on the authen-pam package
+depend fmri=library/perl-5/authen-pam@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    type=require 
