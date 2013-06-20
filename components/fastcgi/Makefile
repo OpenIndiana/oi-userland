@@ -39,13 +39,12 @@ COMPONENT_BUGDB=	library/fcgi
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS) $(studio_XREGS)"
+CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS)"
 
 # common targets
 build:     $(BUILD_32_and_64)
