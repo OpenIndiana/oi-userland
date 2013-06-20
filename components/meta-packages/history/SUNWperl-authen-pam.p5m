@@ -18,16 +18,13 @@
 #
 # CDDL HEADER END
 #
-
-#
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-# perl-authen-pam was previously in the 'desktop' consolidation. This optional
-# dependency is here to facilitate the safe transfer of the package 
-# to the 'userland' consolidation.
-depend type=optional fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.25.0
+#
+# Legacy package information for renamed SUNWperl-authen-pam package
+#
+set name=pkg.fmri value=pkg:/SUNWperl-authen-pam@0.5.11,5.11-0.175.0.0.0.0.0
+set name=pkg.renamed value=true
 
-# force the perl version agnostic package to component version 5.8.4 because the
-# desktop delivered it at that version instead of the component version
-<transform set name=pkg.fmri value=(pkg:/library/perl-5/authen-pam)@$(IPS_COMPONENT_VERSION),($(BUILD_VERSION)$) -> set value %<1>@5.8.4,%<2> > 
+depend fmri=library/perl-5/authen-pam@0.5.11-0.133 type=require
