@@ -37,21 +37,20 @@ COMPONENT_BUGDB=	library/pcre
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/lint-libraries.mk
 
 # pick up -std=c99 in CFLAGS
 CFLAGS+=	-std=c99
 
 # turn on largefile support
 CFLAGS+=	$(CPP_LARGEFILES)
-CFLAGS+=	$(XPG6MODE)
+#CFLAGS+=	$(XPG6MODE)
 
 CXXFLAGS+=	$(CC_PIC)
 
 # turn on support for large files
 CXXFLAGS+=	$(CPP_LARGEFILES)
 
-CXXFLAGS+=	$(XPG5MODE)
+#CXXFLAGS+=	$(XPG5MODE)
 
 # We need to do this because libtool adds wrong paths to RPATH.
 LDFLAGS += -L$(CONFIGURE_LIBDIR.$(BITS)) -R$(CONFIGURE_LIBDIR.$(BITS))
