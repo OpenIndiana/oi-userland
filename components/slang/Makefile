@@ -46,9 +46,6 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/slsh
 
-# Fails with -j24 on the hipster build server
-COMPONENT_BUILD_ARGS  +=	-j1
-
 # common targets
 build:		$(BUILD_32_and_64)
 
