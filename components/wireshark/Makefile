@@ -49,6 +49,9 @@ CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
 
+# Use the 64-bit versions of pkg-config files
+CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
+
 # Version 1.10 (libwireshark.so) doesn't play nicely with -Bdirect.
 LD_B_DIRECT=
 
@@ -57,7 +60,9 @@ LD_B_DIRECT=
 # installed on build system without dependency errors.
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D); \
-	sed -e 's,-L/usr/lib -R/usr/lib,,' -e 's,-R/usr/lib,,' \
+	sed -e 's,-R/usr/lib/$(MACH64),,' \
+	    -e 's,-R/usr/lib,,' \
+	    -e 's,-R\$$libdir,,' \
 		config.status > config.status.new; \
 	mv config.status.new config.status; \
 	chmod 755 config.status; \
