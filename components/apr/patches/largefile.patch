@@ -11,11 +11,11 @@
 +          APR_ADDTO(THREADED_CPPFLAGS, [-D_POSIX_PTHREAD_SEMANTICS])
 +          dnl If using native compiler, use recommended -mt option to ensure
 +          dnl proper preprocessor definitions and library link order.
-+          if $CC -flags 2>&1 | grep '^-mt.*multi-threaded' > /dev/null 2>&1; then
-+            APR_ADDTO(THREADED_CPPFLAGS, [-mt])
-+          else
++          #if $CC -flags 2>&1 | grep '^-mt.*multi-threaded' > /dev/null 2>&1; then
++            #APR_ADDTO(THREADED_CPPFLAGS, [-mt])
++          #else
 +            APR_ADDTO(THREADED_CPPFLAGS, [-D_REENTRANT])
-+          fi
++          #fi
 +        fi
 +	APR_ADDTO(CPPFLAGS, [-DSOLARIS2=$PLATOSVERS $THREADED_CPPFLAGS -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64])
 +        APR_SETIFNULL(apr_lock_method, [USE_PROC_PTHREAD_SERIALIZE])
