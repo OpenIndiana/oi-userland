@@ -37,7 +37,6 @@ COMPONENT_BUGDB=	utility/python
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
-include $(WS_TOP)/make-rules/lint-libraries.mk
 
 # Need to preserve timestamp for Grammar files.  If the pickle files are older, 
 # Python will try to rebuild them.  
@@ -57,23 +56,13 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 	 perl -pi -e 's/^(\#define _XOPEN_SOURCE_EXTENDED.*)/\/* $$1 *\//' \
 			pyconfig.h)
 
-# The python build is profile-guided for studio; to see the benefits of that,
-# Python must be compiled with -xO5 and a different build target must be used.
-# Use of xprofile requires that the same options be used during compilation and
-# linking.  The targets chosen are based on Solaris 11 minimum supported system
-# requirements.
-COMPONENT_BUILD_TARGETS = profile-opt
-XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
-PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
-PYFLAGS.sparc =
-CFLAGS += -xO5 $(PYFLAGS.$(MACH))
-LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
+CFLAGS += $(XPG6MODE)
+CFLAGS += -std=c99
 
 # we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
 # python-config
 CC +=	$(CFLAGS)
 
-C99MODE=
 CPPFLAGS +=	-IPython
 
 # so we find the ncurses headers
@@ -89,16 +78,13 @@ LINT_FLAGS +=	-I$(SOURCE_DIR)/Include
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--with-system-ffi
-CONFIGURE_OPTIONS  +=		--without-gcc
 CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		CCSHARED="$(CC_PIC)"
 CONFIGURE_OPTIONS  +=		CXX="$(CXX)"
 CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
-CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
-COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 # 64 bit shared objects need to go in a 64-bit directory
 COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python2.6/lib-dynload
