@@ -39,18 +39,12 @@ COMPONENT_BUGDB=	library/libmpfr
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 CLOBBER_PATHS += libmpfr.pc
 PATCH_LEVEL = 0
 
-CFLAGS += -features=extinl,extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
-# -xthreadvar=%all: allow thread-local storage via __thread
-#  qualifier for all types of variables (global, static and dynamic)
-CFLAGS += -xthreadvar=%all -mt $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
-CFLAGS += $(studio_PIC)
+CFLAGS += $(CPP_C99_EXTENDED_MATH)
+CFLAGS += -std=c99 $(CPP_XPG6MODE)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 
 MPN32_i386 = x86/pentium x86 generic
