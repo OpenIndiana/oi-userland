@@ -42,25 +42,15 @@ COMPONENT_ARCHIVE_URL_1 = http://download.berlios.de/tldchk/$(COMPONENT_ARCHIVE_
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
 LINT_FLAGS += -I$(PROTOUSRINCDIR)/idn
-
-# Enable C99 mode + -Xc for its additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
-
-# -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
 
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
+CFLAGS += -std=c99
 
 GUNZIP = /usr/bin/gunzip
 TAR = /usr/bin/tar
