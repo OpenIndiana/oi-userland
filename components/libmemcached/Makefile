@@ -38,7 +38,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS += -xstrconst
 LDFLAGS += -lsocket -lnsl
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
