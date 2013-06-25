@@ -48,6 +48,7 @@ $(BUILD_32):$(SOURCE_DIR)/.prep
 	$(CC) -std=c99 -m64 -c cxa_atexit.c -o cxa_atexit.64.o && \
 	$(CC) -std=c99 -m64 -c cxa_finalize.c  -o cxa_finalize.64.o && \
 	/usr/ccs/bin/ld -r cxa_finalize.64.o cxa_atexit.64.o -o cxa_finalize_tg.64.o && \
+	( [ -d $(BUILD_DIR_32) ] || mkdir -p $(BUILD_DIR_32) ) &&\
 	touch $(BUILD_32)
 		
 
