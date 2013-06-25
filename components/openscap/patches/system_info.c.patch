@@ -1,0 +1,97 @@
+This patch provides the system info probe functionality for solaris. It
+detects the ethernet network interfaces and MAC and IP addresses associated
+with them.
+This patch has not been contributed upstream, but is planned to be done by
+ 2013-Jul-12.
+
+--- openscap-0.9.5/src/OVAL/probes/independent/system_info.c.~1~	2012-11-06 05:51:30.048128639 -0800
++++ openscap-0.9.5/src/OVAL/probes/independent/system_info.c	2013-04-03 15:04:36.221945232 -0700
+@@ -92,7 +92,73 @@
+ 
+        return mac_buf;
+ }
++#else if defined(__SVR4) && defined(__sun)
++#include <sys/socket.h>
++#include <ifaddrs.h>
++#include <netdb.h>
++#include <sys/ioctl.h>
++#include <string.h>
++#include <net/if.h>
++#include <arpa/inet.h>
++#include <sys/sockio.h>
++#include <net/if_types.h>
++#include <libdlpi.h>
+ 
++static int fd=-1;
++
++static char *get_mac(const struct ifaddrs *ifa)
++{
++       struct lifreq lifr;
++	uint_t physaddrlen = DLPI_PHYSADDR_MAX;
++	uchar_t physaddr[DLPI_PHYSADDR_MAX];
++	static char mac_buf[DLPI_PHYSADDR_MAX];
++	char *str;
++	int retv;
++	dlpi_handle_t dh;
++	dlpi_info_t dlinfo;
++
++	memset(mac_buf, 0, sizeof(mac_buf));
++       memset(&lifr, 0, sizeof(struct lifreq));
++       strlcpy(lifr.lifr_name, ifa->ifa_name, sizeof (lifr.lifr_name));
++	if (ioctl(fd, SIOCGLIFFLAGS, &lifr) >= 0) {
++
++		if (lifr.lifr_flags & (IFF_VIRTUAL| IFF_IPMP))
++			return (mac_buf);
++
++		if (dlpi_open(lifr.lifr_name, &dh, 0) != DLPI_SUCCESS)
++			return (NULL);
++
++		retv = dlpi_get_physaddr(dh, DL_CURR_PHYS_ADDR, physaddr,
++			&physaddrlen);
++		if (retv != DLPI_SUCCESS) {
++			dlpi_close(dh);
++			return (NULL);
++		}
++		
++		retv = dlpi_info(dh, &dlinfo, DLPI_INFO_VERSION);
++		if (retv != DLPI_SUCCESS) {
++			dlpi_close(dh);
++			return (NULL);
++		}
++		dlpi_close(dh);
++		str = _link_ntoa(physaddr, NULL, physaddrlen, IFT_OTHER);
++
++		if (str != NULL && physaddrlen != 0) {
++			switch(dlinfo.di_mactype) {
++			case DL_IB:
++				break;	
++			default:
++				strlcpy(mac_buf, str, sizeof(mac_buf));
++				break;
++			}
++			free(str);
++		}
++	}
++	return mac_buf;
++}
++#endif
++
++#if defined(__linux__) || (defined(__SVR4) && defined(__sun))
+ static int get_ifs(SEXP_t *item)
+ {
+        struct ifaddrs *ifaddr, *ifa;
+@@ -119,6 +185,14 @@
+                         continue;
+ 
+                 mac = get_mac(ifa);
++#if defined(__SVR4) && defined(__sun)
++		if (mac == NULL) {
++			rc = 1;
++			goto leave2;
++		}
++		if (mac[0] == '\0')
++			continue;
++#endif
+ 		if (family == AF_INET) {
+ 			rc = getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in),
+ 				host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST);

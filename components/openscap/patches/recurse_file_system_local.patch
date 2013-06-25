@@ -1,14 +1,26 @@
---- openscap-0.8.1/src/OVAL/probes/oval_fts.c.~1~	2011-10-10 02:03:15.000000000 -0700
-+++ openscap-0.8.1/src/OVAL/probes/oval_fts.c	2013-02-20 09:31:53.973553902 -0800
-@@ -45,6 +45,7 @@
- #include "SEAP/public/seap-debug.h"
+This patch fixes the issue with recursing directories when local is specified
+on solaris. It no longer traverses remote and pseudo file systems like proc,
+etc.
+
+This patch has not been contributed upstream, but is planned to be done by
+ 2013-Jul-12.
+
+--- openscap-0.9.5/src/OVAL/probes/oval_fts.c.~1~	2013-01-14 05:21:10.139830956 -0800
++++ openscap-0.9.5/src/OVAL/probes/oval_fts.c	2013-02-27 14:12:10.322103381 -0800
+@@ -44,11 +44,11 @@
+ #include "oval_fts.h"
  #if defined(__SVR4) && defined(__sun)
  #include "fts_sun.h"
 +#include <sys/mntent.h>
  #else
  #include <fts.h>
  #endif
-@@ -128,14 +129,73 @@
+ 
+-#undef OSCAP_FTS_DEBUG
+ 
+ static OVAL_FTS *OVAL_FTS_new()
+ {
+@@ -130,14 +130,73 @@
  	return;
  }
  
@@ -82,77 +94,89 @@
  }
  
  static char *__regex_locate(char *str)
-@@ -410,11 +470,15 @@
+@@ -695,6 +754,9 @@
+ 	}
  
- 	if (path) { /* filepath == NULL */
- 		if (filesystem == OVAL_RECURSE_FS_LOCAL) {
-+#if	defined(__SVR4) && defined(__sun)
-+			ofts->localdevs = NULL;
+ 	if (filesystem == OVAL_RECURSE_FS_LOCAL) {
++#if   defined(__SVR4) && defined(__sun)
++		ofts->localdevs = NULL;
 +#else
- 			ofts->localdevs = fsdev_init(NULL, 0);
- 			if (ofts->localdevs == NULL) {
- 				_F("fsdev_init() failed.\n");
- 				return (NULL);
- 			}
-+#endif
+ 		ofts->localdevs = fsdev_init(NULL, 0);
+ 		if (ofts->localdevs == NULL) {
+ 			dE("fsdev_init() failed.\n");
+@@ -705,6 +767,7 @@
+ 			oval_fts_close(ofts);
+ 			return (NULL);
  		}
- 
- 		ofts->ofts_spath = SEXP_ref(path); /* path entity */
-@@ -444,7 +508,18 @@
++#endif
+ 	} else if (filesystem == OVAL_RECURSE_FS_DEFINED) {
+ 		/* store the device id for future comparison */
+ 		FTSENT *fts_ent;
+@@ -745,7 +808,6 @@
  		fts_ent = fts_read(ofts->ofts_match_path_fts);
  		if (fts_ent == NULL)
  			return NULL;
 -
-+#if defined(__SVR4) && defined(__sun)
-+		/* pseudo filesystems will be skipped */
-+		/* no need to match in non-local fs when local is specified */
-+		if ((fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
-+		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
-+				(fts_ent->fts_statp != NULL) ?
-+				&fts_ent->fts_statp->st_fstype : NULL))) {
-+			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_SKIP);
-+			dI("Skipping path:%s\n", fts_ent->fts_path);
-+			continue;
-+		}
-+#endif
  		switch (fts_ent->fts_info) {
  		case FTS_DP:
  			continue;
-@@ -605,14 +680,23 @@
+@@ -769,13 +831,21 @@
+ 			fts_set(ofts->ofts_match_path_fts, fts_ent, FTS_FOLLOW);
+ 			continue;
+ 		}
+-
++#if   defined(__SVR4) && defined(__sun)
++		/* pseudo filesystems will be skipped */
++		/* don't recurse into remote fs if local is specified */
++		if ((fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
++		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
++		    (fts_ent->fts_statp != NULL) ?
++		    &fts_ent->fts_statp->st_fstype : NULL))) {
++#else
+ 		/* don't recurse into non-local filesystems */
+ 		if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
+ 		    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+ 		    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
+ 					 (fts_ent->fts_statp != NULL) ?
+ 					 &fts_ent->fts_statp->st_dev : NULL))) {
++#endif
+ 			dI("Don't recurse into non-local filesystems, skipping '%s'.\n", fts_ent->fts_path);
+ 			fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
+ 			continue;
+@@ -964,6 +1034,15 @@
  					continue;
  				}
  			}
--
-+#if	defined(__SVR4) && defined(__sun)
++#if   defined(__SVR4) && defined(__sun)
 +			/* pseudo filesystems will be skipped */
-+			/* don't recurse into non-local fs if configured so */
-+			if ((fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
-+			    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
-+					(fts_ent->fts_statp != NULL) ?
-+					&fts_ent->fts_statp->st_fstype : NULL))) {
++			/* don't recurse into remote fs if local is specified */
++			if ((fts_ent->fts_info == FTS_D ||
++			    fts_ent->fts_info == FTS_SL)
++                            && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
++			    (fts_ent->fts_statp != NULL) ?
++			    &fts_ent->fts_statp->st_fstype : NULL))) {
 +#else
- 			/* don't recurse into non-local fs if configured so */
+ 
+ 			/* don't recurse into non-local filesystems */
  			if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
- 			    && (fts_ent->fts_info == FTS_D || fts_ent->fts_info == FTS_SL)
+@@ -971,6 +1050,7 @@
  			    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
  					(fts_ent->fts_statp != NULL) ?
  					&fts_ent->fts_statp->st_dev : NULL))) {
 +#endif
  				fts_set(ofts->ofts_recurse_path_fts, fts_ent, FTS_SKIP);
-+				dI("Skipping path:%s\n", fts_ent->fts_path);
  				continue;
  			}
- 		}
-@@ -644,12 +728,18 @@
- 
+@@ -1039,12 +1119,18 @@
  				if (ofts->ofts_recurse_path_curdepth == 0)
  					ofts->ofts_recurse_path_devid = fts_ent->fts_statp->st_dev;
+ 				*/
 -
-+#if 	defined(__SVR4) && defined(__sun)
++#if   defined(__SVR4) && defined(__sun)
 +				if ((!OVAL_FTS_localp(ofts, fts_ent->fts_path,
-+						(fts_ent->fts_statp != NULL) ?
-+						&fts_ent->fts_statp->st_fstype : NULL)))
-+					break;
++				    (fts_ent->fts_statp != NULL) ?
++				    &fts_ent->fts_statp->st_fstype : NULL)))
++				       break;
 +#else
  				if (ofts->filesystem == OVAL_RECURSE_FS_LOCAL
  				    && (!OVAL_FTS_localp(ofts, fts_ent->fts_path,
@@ -163,46 +187,8 @@
  				if (ofts->filesystem == OVAL_RECURSE_FS_DEFINED
  				    && ofts->ofts_recurse_path_devid != fts_ent->fts_statp->st_dev)
  					break;
---- openscap-0.8.1/src/OVAL/probes/fsdev.c.~1~	2011-09-21 04:46:46.000000000 -0700
-+++ openscap-0.8.1/src/OVAL/probes/fsdev.c	2013-02-19 11:12:36.120977086 -0800
-@@ -223,7 +223,7 @@
- 	FILE *fp;
- 	size_t i;
- 
--	struct mnttab *ment;
-+	struct mnttab ment;
- 	struct stat st;
- 
- 	fp = fopen(MNTTAB, "r");
-@@ -248,9 +248,8 @@
- 	i = 0;
- 
- 	if (fs == NULL) {
--		while ((getmntent(fp, ment)) != 0) {
--                        /* TODO: Is this check reliable? */
--                        if (stat (ment->mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
-+		while ((getmntent(fp, &ment)) == 0) {
-+                        if (stat (ment.mnt_special, &st) == 0 && (st.st_mode & S_IFCHR)) {
- 
- 				if (i >= lfs->cnt) {
- 					lfs->cnt += DEVID_ARRAY_ADD;
-@@ -261,9 +260,12 @@
- 			}
- 		}
- 	} else {
--		while ((getmntent(fp, ment)) != 0) {
-+		while ((getmntent(fp, &ment)) == 0) {
- 
--			if (match_fs(ment->mnt_fstype, fs, fs_cnt)) {
-+			if (match_fs(ment.mnt_fstype, fs, fs_cnt)) {
-+
-+				if (stat(ment.mnt_mountp, &st) != 0)
-+					continue;
- 
- 				if (i >= lfs->cnt) {
- 					lfs->cnt += DEVID_ARRAY_ADD;
---- openscap-0.8.1/src/OVAL/fts_sun.c.~1~	2011-09-21 04:46:45.000000000 -0700
-+++ openscap-0.8.1/src/OVAL/fts_sun.c	2013-02-15 17:11:38.926803711 -0800
+--- openscap-0.9.5/src/OVAL/fts_sun.c.~1~	2012-11-06 05:51:31.668229747 -0800
++++ openscap-0.9.5/src/OVAL/fts_sun.c	2013-02-27 11:32:47.333961072 -0800
 @@ -1022,6 +1022,10 @@
  	p->fts_instr = FTS_NOINSTR;
  	p->fts_number = 0;

@@ -1,9 +1,20 @@
---- openscap-0.8.1/src/OVAL/probes/unix/solaris/smf.c.~1~	2011-09-21 04:46:46.000000000 -0700
-+++ openscap-0.8.1/src/OVAL/probes/unix/solaris/smf.c	2013-01-28 15:39:59.601258629 -0800
-@@ -28,10 +28,238 @@
-  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- */
+This patch implements the smf probe on solaris, which gathers service_name,
+service_state, exec_as_user from the smf repository for the fmri that is
+provided.
+This patch has not been contributed upstream, but is planned to be done by
+ 2013-Jul-12.
+
+--- openscap-0.9.7/src/OVAL/probes/unix/solaris/smf.c.~1~	2013-04-23 06:21:51.479000001 -0700
++++ openscap-0.9.7/src/OVAL/probes/unix/solaris/smf.c	2013-06-18 13:13:20.112012008 -0700
+@@ -33,9 +33,240 @@
+ #endif
  
+ #include "probe-api.h"
++#ifdef HAVE_CONFIG_H
++#include <config.h>
++#endif
++
++#if	defined(__SVR4) && defined(__sun)
 +/*
 + * smf probe:
 + *
@@ -16,7 +27,7 @@
 + * exec_as_user
 + */
 +
-+
+ 
 +#include <stdlib.h>
 +#include <string.h>
 +#include <stdio.h>
@@ -29,7 +40,6 @@
 +#include <libscf.h>
 +#include <libscf_priv.h>
 +#include "seap.h"
- #include "probe-api.h"
 +#include "probe/entcmp.h"
 +#include "alloc.h"
 +#include "common/debug_priv.h"
@@ -48,9 +58,8 @@
 +	char *server_arguments;
 +	char *exec_as_user;
 +};
- 
- 
--int probe_main(probe_ctx *ctx, void *probe_arg)
++
++
 +static void
 +toUpperCase(char *str)
 +{
@@ -66,8 +75,7 @@
 +
 +static char *
 +strdup_check(char *p)
- {
--        return(PROBE_EOPNOTSUPP);
++{
 +	char *ret;
 +
 +	if ((ret = strdup(p)) == NULL) {
@@ -77,29 +85,27 @@
 +	return (ret);
 +}
 +
-+static int
-+get_smf_prop(scf_handle_t *h, const char *fmri,
++static void
++get_smf_prop_val(scf_handle_t *h, const char *fmri,
 +    const char *prop_grp_name, const char *prop_name, char **val)
 +{
 +	scf_simple_prop_t *prop;
-+	char *state;
++	char *prop_val;
 +	*val = NULL;
 +
 +	if ((prop = scf_simple_prop_get(h, fmri, prop_grp_name,
 +	    prop_name)) == NULL) {
-+		if (scf_error() == SCF_ERROR_NOT_FOUND)
++		if (scf_error() == SCF_ERROR_NOT_FOUND) {
 +			oscap_dlprintf(DBG_E, "Error: Specified service "
 +			    " %s has no %s/%s property.\n",
 +			    fmri, prop_grp_name, prop_name);
-+		if (scf_error() == SCF_ERROR_INVALID_ARGUMENT) {
-+			oscap_dlprintf(DBG_E, "Error: %s is not a valid "
-+			    "service.\n", fmri);
-+			(void) scf_handle_unbind(h);
-+			scf_handle_destroy(h);
-+			return (PROBE_EINVAL);
++		} else if (scf_error() == SCF_ERROR_INVALID_ARGUMENT) {
++			oscap_dlprintf(DBG_E, "Error: Invalid service "
++			    " %s does not exist.\n",
++			    fmri);
 +		}
 +	} else {
-+		if ((state =
++		if ((prop_val =
 +		    scf_simple_prop_next_astring(prop)) == NULL) {
 +			oscap_dlprintf(DBG_E,
 +			    "Error: Could not read "
@@ -107,48 +113,13 @@
 +			    prop_grp_name,
 +			    prop_name,
 +			    fmri);
-+		} else if (state[0] != '\0') {
-+			*val = strdup_check(state);
++		} else if (prop_val[0] != '\0') {
++			*val = strdup_check(prop_val);
 +		}
 +		scf_simple_prop_free(prop);
 +	}
-+	return (0);
 +}
 +
-+static int
-+find_smf(struct result_info *res)
-+{
-+	scf_handle_t *scf_hdl;
-+	int i;
-+
-+	oscap_dlprintf(DBG_I, "In find_smf\n");
-+	if ((scf_hdl = scf_handle_create(SCF_VERSION)) == NULL) {
-+		oscap_dlprintf(DBG_E, "Unexpected libscf error: %s. Exiting.\n",
-+		    scf_strerror(scf_error()));
-+		return (PROBE_EFATAL);
-+	}
-+	if (scf_handle_bind(scf_hdl) == -1) {
-+		oscap_dlprintf(DBG_E, "Error: Could not bind to"
-+		    " svc.configd.\n");
-+		scf_handle_destroy(scf_hdl);
-+		return (PROBE_EFATAL);
-+	}
-+	if ((i = get_smf_prop(scf_hdl, res->fmri, SCF_PG_RESTARTER,
-+	    SCF_PROPERTY_STATE, &(res->service_state))) != 0) {
-+		return (i);
-+	} else {
-+		toUpperCase(res->service_state);
-+	}
-+	if ((i = get_smf_prop(scf_hdl, res->fmri, SCF_PG_START,
-+	    SCF_PROPERTY_EXEC, &(res->server_executable))) != 0)
-+		return (i);
-+	if ((i = get_smf_prop(scf_hdl, res->fmri, SCF_PG_START,
-+	    SCF_PROPERTY_USER, &(res->exec_as_user))) != 0)
-+		return (i);
-+	(void) scf_handle_unbind(scf_hdl);
-+	scf_handle_destroy(scf_hdl);
-+	return (0);
-+}
 +
 +static void
 +report_finding(struct result_info *res, probe_ctx *ctx)
@@ -174,9 +145,13 @@
 +collect_smf_info(char *fmri, probe_ctx *ctx)
 +{
 +	struct result_info r;
-+	int i, rc, type;
++	int rc = 0, type;
 +	const char *service, *instance, *scope, *propgrp, *prop;
 +	char *tmp;
++	scf_handle_t *scf_hdl = NULL;
++	scf_instance_t *inst = NULL;
++	scf_service_t *svc = NULL;
++
 +
 +	oscap_dlprintf(DBG_I, "In collect_smf_info.\n");
 +	memset(&r, 0, sizeof (r));
@@ -185,10 +160,8 @@
 +	scf_parse_fmri(r.service_name, &type, &scope, &service,
 +	    &instance, &propgrp, &prop);
 +	if (scf_error() == SCF_ERROR_INVALID_ARGUMENT) {
-+		oscap_dlprintf(DBG_E, "Error: Not a valid fmri:%s.\n",
-+		    fmri);
-+		free(r.service_name);
-+		return (PROBE_EINVAL);
++		rc = PROBE_EINVAL;
++		goto cleanup;
 +	}
 +	if (instance == NULL)
 +		r.service_name = strdup(service);
@@ -198,21 +171,47 @@
 +		exit(PROBE_ENOMEM);
 +	free(tmp);
 +	r.fmri = fmri;
-+	if ((rc = find_smf(&r)) > 0) {
-+		free(r.service_name);
-+		return (rc);
++	if ((scf_hdl = scf_handle_create(SCF_VERSION)) == NULL ||
++	    scf_handle_bind(scf_hdl) != 0 ||
++	    (svc = scf_service_create(scf_hdl)) == NULL ||
++	    (instance != NULL &&
++	    (inst = scf_instance_create(scf_hdl)) == NULL)) {
++		rc = PROBE_EFATAL;
++		goto cleanup;
 +	}
-+	oscap_dlprintf(DBG_I, "service params %s, %s, %s, %s, %s, %s, %s\n",
-+	    r.fmri, r.service_name, r.service_state, r.protocol,
-+	    r.server_executable, r.server_arguments, r.exec_as_user);
++	/* To check if service exists */
++	get_smf_prop_val(scf_hdl, r.fmri, SCF_PG_RESTARTER,
++	    SCF_PROPERTY_STATE, &(r.service_state));
++	if (scf_error() == SCF_ERROR_NOT_FOUND) {
++		if (scf_handle_decode_fmri(scf_hdl, fmri, NULL, svc,
++		    (instance == NULL ? NULL : inst),
++		    NULL, NULL, SCF_DECODE_FMRI_EXACT) != 0 ||
++			scf_error() == SCF_ERROR_NOT_FOUND) {
++			oscap_dlprintf(DBG_I,"decode_fmri failed.\n");
++			goto cleanup;
++		}
++	}
++	if (r.service_state != NULL &&
++	    r.service_state[0] != '\0')
++		toUpperCase(r.service_state);
++	get_smf_prop_val(scf_hdl, r.fmri, SCF_PG_START,
++	    SCF_PROPERTY_EXEC, &(r.server_executable));
++	get_smf_prop_val(scf_hdl, r.fmri, SCF_PG_START,
++	    SCF_PROPERTY_USER, &(r.exec_as_user));
 +	report_finding(&r, ctx);
 +	free(r.protocol);
-+	free(r.service_name);
 +	free(r.service_state);
 +	free(r.server_executable);
 +	free(r.server_arguments);
 +	free(r.exec_as_user);
-+	return (0);
++cleanup:
++	free(r.service_name);
++	scf_service_destroy(svc);
++	scf_instance_destroy(inst);
++	if (scf_hdl != NULL)
++		scf_handle_unbind(scf_hdl);
++	scf_handle_destroy(scf_hdl);
++	return (rc);
 +}
 +
 +int
@@ -240,4 +239,11 @@
 +	SEXP_free(fmri_val);
 +	SEXP_free(fmri);
 +	return (rc);
++} 
++#else
+ 
+ int probe_main(probe_ctx *ctx, void *probe_arg)
+ {
+         return(PROBE_EOPNOTSUPP);
  }
++#endif

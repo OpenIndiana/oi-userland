@@ -1,0 +1,169 @@
+This patch provides ports for oscap-info.c, isainfo.c, sce_engince.c,
+xccdf_policy.c for solaris.
+This patch has not been contributed upstream, but is planned to be done by
+ 2013-Jul-12.
+
+--- openscap-0.9.7/src/OVAL/probes/unix/solaris/isainfo.c.orig	2012-12-12 07:09:05.809498641 -0800
++++ openscap-0.9.7/src/OVAL/probes/unix/solaris/isainfo.c	2012-12-28 11:57:46.931236023 -0800
+@@ -47,6 +47,7 @@
+ #include <arpa/inet.h>
+ #include <regex.h>
+ #include <sys/systeminfo.h>
++#include "../../../../common/debug_priv.h"
+ 
+ /* man sysinfo (2) recommends using 257 for this size */
+ #define MAX_STR_RESULT 257
+--- openscap-0.9.7/utils/oscap-info.c.~1~	2012-12-14 02:13:18.113881933 -0800
++++ openscap-0.9.7/utils/oscap-info.c	2013-01-16 09:55:13.348770490 -0800
+@@ -34,7 +34,11 @@
+ #include <time.h>
+ #include <sys/types.h>
+ #include <sys/stat.h>
++#if defined(__SVR4) && defined (__sun)
++#include <limits.h>
++#else
+ #include <linux/limits.h>
++#endif
+ 
+ #include <oscap.h>
+ #include <oval_results.h>
+--- openscap-0.9.7/src/SCE/sce_engine.c.~1~	2013-02-25 06:14:51.840092360 -0800
++++ openscap-0.9.7/src/SCE/sce_engine.c	2013-04-03 15:31:16.479290382 -0700
+@@ -52,7 +52,11 @@
+ {
+ 	char* href;
+ 	char* basename;
++#if defined(__SVR4) && defined(__sun)
++	char* std_out;
++#else
+ 	char* stdout;
++#endif
+ 	int exit_code;
+ 	struct oscap_stringlist* environment_variables;
+ 	xccdf_test_result_type_t xccdf_result;
+@@ -63,7 +67,11 @@
+ 	struct sce_check_result* ret = oscap_alloc(sizeof(struct sce_check_result));
+ 	ret->href = NULL;
+ 	ret->basename = NULL;
++#if defined(__SVR4) && defined(__sun)
++	ret->std_out = NULL;
++#else
+ 	ret->stdout = NULL;
++#endif
+ 	ret->environment_variables = oscap_stringlist_new();
+ 	ret->xccdf_result = XCCDF_RESULT_UNKNOWN;
+ 
+@@ -79,8 +87,13 @@
+ 		oscap_free(v->href);
+ 	if (v->basename)
+ 		oscap_free(v->basename);
++#if defined(__SVR4) && defined(__sun)
++	if (v->std_out)
++		oscap_free(v->std_out);
++#else
+ 	if (v->stdout)
+ 		oscap_free(v->stdout);
++#endif
+ 
+ 	oscap_stringlist_free(v->environment_variables);
+ 
+@@ -115,15 +128,24 @@
+ 
+ void sce_check_result_set_stdout(struct sce_check_result* v, const char* _stdout)
+ {
++#if defined(__SVR4) && defined(__sun)
++	if (v->std_out)
++		oscap_free(v->std_out);
++	v->std_out = oscap_strdup(_stdout);
++#else
+ 	if (v->stdout)
+ 		oscap_free(v->stdout);
+-
+ 	v->stdout = oscap_strdup(_stdout);
++#endif
+ }
+ 
+ const char* sce_check_result_get_stdout(struct sce_check_result* v)
+ {
++#if defined(__SVR4) && defined(__sun)
++	return v->std_out;
++#else
+ 	return v->stdout;
++#endif
+ }
+ 
+ void sce_check_result_set_exit_code(struct sce_check_result* v, int exit_code)
+@@ -178,7 +200,11 @@
+ 	oscap_string_iterator_free(it);
+ 	fprintf(f, "\t</sceres:environment>\n");
+ 	fprintf(f, "\t<sceres:stdout><![CDATA[\n");
++#if defined(__SVR4) && defined(__sun)
++	fwrite(v->std_out, 1, strlen(v->std_out), f);
++#else
+ 	fwrite(v->stdout, 1, strlen(v->stdout), f);
++#endif
+ 	fprintf(f, "\t]]></sceres:stdout>\n");
+ 	fprintf(f, "\t<sceres:exit_code>%i</sceres:exit_code>\n", sce_check_result_get_exit_code(v));
+ 	fprintf(f, "\t<sceres:result>%s</sceres:result>\n", xccdf_test_result_type_get_text(sce_check_result_get_xccdf_result(v)));
+--- openscap-0.9.7/src/XCCDF_POLICY/xccdf_policy.c.~1~	2013-03-19 07:58:22.307735235 -0700
++++ openscap-0.9.7/src/XCCDF_POLICY/xccdf_policy.c	2013-04-03 15:35:39.100347346 -0700
+@@ -521,7 +521,11 @@
+             if (r_value != NULL) {
+                 selector = xccdf_refine_value_get_selector(r_value);
+                 /* This refine value changes the value content */
++#if defined(__SVR4) && defined(__sun)
++                if (!isnan((double)xccdf_refine_value_get_oper(r_value))) {
++#else
+                 if (!isnan(xccdf_refine_value_get_oper(r_value))) {
++#endif
+                     binding->operator = xccdf_refine_value_get_oper(r_value);
+                 } else binding->operator = xccdf_value_get_oper(value);
+ 
+@@ -2142,9 +2146,17 @@
+                 
+             } else if (xccdf_item_get_type(item) == XCCDF_RULE) {
+                 /* Perform all changes in rule */
++#if defined(__SVR4) && defined(__sun)
++                if (!isnan((double)xccdf_refine_rule_get_role(r_rule)))
++#else
+                 if (!isnan(xccdf_refine_rule_get_role(r_rule)))
++#endif
+                     xccdf_rule_set_role((struct xccdf_rule *) item, xccdf_refine_rule_get_role(r_rule));
++#if defined(__SVR4) && defined(__sun)
++                if (!isnan((double)xccdf_refine_rule_get_severity(r_rule)))
++#else
+                 if (!isnan(xccdf_refine_rule_get_severity(r_rule)))
++#endif
+                     xccdf_rule_set_severity((struct xccdf_rule *) item, xccdf_refine_rule_get_severity(r_rule));
+ 
+             } else {}/* TODO oscap_err ? */;
+@@ -2201,7 +2213,11 @@
+     const struct xccdf_version_info* version_info = xccdf_benchmark_get_schema_version(benchmark);
+     doc_version = xccdf_version_info_get_version(version_info);
+ 
++#ifdef __USE_GNU
+     if (strverscmp("1.2", doc_version) >= 0)
++#else
++    if (strcmp("1.2", doc_version) >= 0)
++#endif
+     {
+         // we have to enforce a certain type of ids for XCCDF 1.2+
+ 
+@@ -2376,9 +2392,17 @@
+             if (r_rule == NULL) return item;
+ 
+             new_item = (struct xccdf_item *) xccdf_rule_clone((struct xccdf_rule *) item);
++#if defined(__SVR4) && defined(__sun)
++            if (!isnan((double)xccdf_refine_rule_get_role(r_rule)))
++#else
+             if (!isnan(xccdf_refine_rule_get_role(r_rule)))
++#endif
+                 xccdf_rule_set_role((struct xccdf_rule *) new_item, xccdf_refine_rule_get_role(r_rule));
++#if defined(__SVR4) && defined(__sun)
++            if (!isnan((double)xccdf_refine_rule_get_severity(r_rule)))
++#else
+             if (!isnan(xccdf_refine_rule_get_severity(r_rule)))
++#endif
+                 xccdf_rule_set_severity((struct xccdf_rule *) new_item, xccdf_refine_rule_get_severity(r_rule));
+             if (xccdf_refine_rule_weight_defined(r_rule))
+                 xccdf_rule_set_weight((struct xccdf_rule *) new_item, xccdf_refine_rule_get_weight(r_rule));

@@ -1,18 +1,27 @@
---- openscap-0.8.1/configure.ac.orig	2012-05-09 09:09:41.227540183 -0700
-+++ openscap-0.8.1/configure.ac	2012-05-09 15:05:59.163156764 -0700
-@@ -837,11 +837,11 @@
+This patch fixes the configure script to pick up the perl libraries correctly
+for supporting perl bindings.
+This patch has not been contributed upstream, but is planned to be done by
+ 2013-Jul-12.
+
+--- openscap-0.9.7/configure.ac.~1~	2013-04-26 04:47:24.501000000 -0700
++++ openscap-0.9.7/configure.ac	2013-06-20 10:56:13.253028642 -0700
+@@ -1067,14 +1067,14 @@
+ if test "x${perl_bind}" = xyes; then
+ 	AC_PATH_PROG(PERL, perl)
+ 	PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
+-	vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}'  | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
+-	vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
++ 	vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}')"
++ 	vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}')"
+ 	AC_SUBST([PERL_INCLUDES], ["-I$PERL_INCLUDES"])
+-	AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
+-	AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
++ 	AC_SUBST([perl_vendorlibdir], [$vendorlib])
++ 	AC_SUBST([perl_vendorarchdir], [$vendorarch])
+ 	save_CPPFLAGS="$CPPFLAGS"
+ 	CPPFLAGS="$CPPFLAGS $PERL_INCLUDES"
+-	AC_CHECK_HEADERS([EXTERN.h],[],[AC_MSG_ERROR(Perl development librarier are needed for perl bindings)],[-])
++	AC_CHECK_HEADERS([EXTERN.h],[],[AC_MSG_ERROR(Perl development libraries are needed for perl bindings)],[-])
+ 	CPPFLAGS="$save_CPPFLAGS"
+ fi
  
- AC_PATH_PROG(PERL, perl)
- PERL_INCLUDES="`$PERL -e 'use Config; print $Config{archlib}'`/CORE"
--vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}'  | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
--vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}' | sed "s|$($PERL -e 'use Config; print $Config{prefix}')||" )"
-+vendorlib="$(  $PERL -e 'use Config; print $Config{vendorlib}')"
-+vendorarch="$( $PERL -e 'use Config; print $Config{vendorarch}')"
- AC_SUBST([PERL_INCLUDES], ["$PERL_INCLUDES"])
--AC_SUBST([perl_vendorlibdir], ['${prefix}'$vendorlib])
--AC_SUBST([perl_vendorarchdir], ['${prefix}'$vendorarch])
-+AC_SUBST([perl_vendorlibdir], [$vendorlib])
-+AC_SUBST([perl_vendorarchdir], [$vendorarch])
- 
- AC_ARG_ENABLE([oval],
-      [AC_HELP_STRING([--enable-oval], [include support for OVAL (default=yes)])],

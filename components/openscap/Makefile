@@ -25,13 +25,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openscap
-COMPONENT_VERSION=	0.8.1
-COMPONENT_PROJECT_URL=  http://www.open-scap.org/
+COMPONENT_VERSION=	0.9.7
+COMPONENT_PROJECT_URL=  http://www.open-scap.org
+COMPONENT_DOWNLOAD_URL= https://fedorahosted.org/releases/o/p/openscap
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:3365a5f4e7535e5f7134fdf386d4bd35d9b98f61d185be67606e946dc62efedc
-COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/openscap
+COMPONENT_ARCHIVE_HASH= sha256:0d9ae804026d69e60d44e27cf489e65dd1c2865895cde2cb174ff90fd7868a6a
+COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
+COMPONENT_BUGDB=        utility/openscap
 
 COMPILER=		gcc
 CFLAGS+=		-std=c99
@@ -42,6 +43,11 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 CPPFLAGS +=	-I/usr/include/openldap
+
+#Need to do cloney, so that the schema files
+#can get packaged.
+COMPONENT_PRE_CONFIGURE_ACTION = \
+        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # Perl related patch needs configure script recreation.
 COMPONENT_PREP_ACTION +=(cd $(@D); autoreconf);
@@ -55,10 +61,11 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	--enable-debug=no
 CONFIGURE_OPTIONS +=	--enable-sce=yes
+CONFIGURE_OPTIONS +=	--enable-perl=yes
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
-CONFIGURE_OPTIONS +=	LIBS="-lsocket -lnsl -lldap_r -lscf"
+CONFIGURE_OPTIONS +=	LIBS="-lldap_r -lscf -ldlpi"
 
 # common targets
 build:		$(BUILD_32)

@@ -1,0 +1,50 @@
+This patch fixes the file probe from crashing on solaris when encountering file
+types of door and port.
+This patch has not been contributed upstream, but is planned to be done by
+ 2013-Jul-12.
+
+--- openscap-0.9.7/src/OVAL/probes/unix/file.c.~1~	2012-12-12 07:09:05.806498654 -0800
++++ openscap-0.9.7/src/OVAL/probes/unix/file.c	2013-03-12 19:52:50.739765914 -0700
+@@ -84,6 +84,9 @@
+ static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
+ static SEXP_t *gr_t_fifo = NULL, *gr_t_sock = NULL, *gr_t_char = NULL;
+ static SEXP_t  gr_lastpath;
++#if defined(__SVR4) && defined(__sun)
++static SEXP_t *gr_t_door = NULL, *gr_t_port = NULL;
++#endif
+ 
+ static SEXP_t *se_filetype (mode_t mode)
+ {
+@@ -95,6 +98,10 @@
+         case S_IFIFO:  return (gr_t_fifo);
+         case S_IFSOCK: return (gr_t_sock);
+         case S_IFCHR:  return (gr_t_char);
++#if	defined(__SVR4) && defined(__sun)
++	case S_IFDOOR: return (gr_t_door);
++	case S_IFPORT: return (gr_t_port);
++#endif
+         default:
+                 abort ();
+         }
+@@ -355,6 +362,10 @@
+ #define STR_SOCKET    "socket"
+ #define STR_CHARSPEC  "character special"
+ #define STRLEN_PAIR(str) (str), strlen(str)
++#if	defined(__SVR4) && (__sun)
++#define	STR_DOOR	"door"
++#define	STR_PORT	"port"
++#endif
+ 
+         gr_t_reg  = SEXP_string_new (STRLEN_PAIR(STR_REGULAR));
+         gr_t_dir  = SEXP_string_new (STRLEN_PAIR(STR_DIRECTORY));
+@@ -363,6 +374,10 @@
+         gr_t_fifo = SEXP_string_new (STRLEN_PAIR(STR_FIFO));
+         gr_t_sock = SEXP_string_new (STRLEN_PAIR(STR_SOCKET));
+         gr_t_char = SEXP_string_new (STRLEN_PAIR(STR_CHARSPEC));
++#if	defined(__SVR4) && (__sun)
++        gr_t_door = SEXP_string_new (STRLEN_PAIR(STR_DOOR));
++        gr_t_port = SEXP_string_new (STRLEN_PAIR(STR_PORT));
++#endif
+ 
+ 	SEXP_init(&gr_lastpath);
+ 
