@@ -21,17 +21,18 @@
 
 #
 # Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserverd.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ncurses
-COMPONENT_VERSION=	5.7
+COMPONENT_VERSION=	5.9
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/ncurses/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0a9bdea5c7de8ded5c9327ed642915f2cc380753f12d4ad120ef7da3ea3498f4
+    sha256:9046298fb440324c9d4135ecea7879ffed8546dd1b58e59430ea07a4633f563b
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/ncurses
 
@@ -44,6 +45,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_PREFIX =	/usr/gnu
+
+# force XPG6 standard
+CXXFLAGS += -D_XPG6
+LDFLAGS += -D_XPG6
 
 # Needed to correctly build that 64-bit library.
 LDFLAGS += $(CC_BITS)
