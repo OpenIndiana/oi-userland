@@ -1,0 +1,390 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013 David Hoeppner. All rights reserved.
+#
+
+# pull the manpages out of the component dir
+<transform file path=usr/share/man/(man3/.+$) -> set action.hash %<\1> >
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/developer/vala@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Vala programming language"
+set name=pkg.description value="Vala programming language"
+set name=info.classification value="org.opensolaris.category.2008:Development/Other Languages"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+file path=usr/bin/$(MACH64)/vala-0.20
+file path=usr/bin/$(MACH64)/vala-gen-introspect-0.20
+file path=usr/bin/$(MACH64)/valac-0.20
+file path=usr/bin/$(MACH64)/vapicheck-0.20
+file path=usr/bin/$(MACH64)/vapigen-0.20
+file path=usr/bin/vala-0.20
+file path=usr/bin/vala-gen-introspect-0.20
+file path=usr/bin/valac-0.20
+file path=usr/bin/vapicheck-0.20
+file path=usr/bin/vapigen-0.20
+file path=usr/include/vala-0.20/vala.h
+file path=usr/include/vala-0.20/valaccode.h
+file path=usr/include/vala-0.20/valacodegen.h
+file path=usr/include/vala-0.20/valagee.h
+file path=usr/lib/$(MACH64)/libvala-0.20.so.0.0.0
+file path=usr/lib/$(MACH64)/pkgconfig/libvala-0.20.pc
+file path=usr/lib/$(MACH64)/vala-0.20/gen-introspect-0.20
+file path=usr/lib/libvala-0.20.so.0.0.0
+file path=usr/lib/pkgconfig/libvala-0.20.pc
+file path=usr/lib/vala-0.20/gen-introspect-0.20
+file path=usr/share/aclocal/vala.m4
+file path=usr/share/aclocal/vapigen.m4
+file path=usr/share/devhelp/books/vala-0.20/attributes.html
+file path=usr/share/devhelp/books/vala-0.20/classes.html
+file path=usr/share/devhelp/books/vala-0.20/default.css
+file path=usr/share/devhelp/books/vala-0.20/delegates.html
+file path=usr/share/devhelp/books/vala-0.20/enums.html
+file path=usr/share/devhelp/books/vala-0.20/exceptions.html
+file path=usr/share/devhelp/books/vala-0.20/expressions.html
+file path=usr/share/devhelp/books/vala-0.20/index.html
+file path=usr/share/devhelp/books/vala-0.20/interfaces.html
+file path=usr/share/devhelp/books/vala-0.20/methods.html
+file path=usr/share/devhelp/books/vala-0.20/namespaces.html
+file path=usr/share/devhelp/books/vala-0.20/overview.html
+file path=usr/share/devhelp/books/vala-0.20/statements.html
+file path=usr/share/devhelp/books/vala-0.20/structs.html
+file path=usr/share/devhelp/books/vala-0.20/types.html
+file path=usr/share/devhelp/books/vala-0.20/vala-0.20.devhelp2
+file path=usr/share/man/man1/vala-gen-introspect-0.20.1
+file path=usr/share/man/man1/valac-0.20.1
+file path=usr/share/man/man1/vapigen-0.20.1
+file path=usr/share/pkgconfig/vapigen-0.20.pc
+file path=usr/share/pkgconfig/vapigen.pc
+file path=usr/share/vala-0.20/vapi/alsa.deps
+file path=usr/share/vala-0.20/vapi/alsa.vapi
+file path=usr/share/vala-0.20/vapi/atk.vapi
+file path=usr/share/vala-0.20/vapi/atspi-2.deps
+file path=usr/share/vala-0.20/vapi/atspi-2.vapi
+file path=usr/share/vala-0.20/vapi/avahi-client.vapi
+file path=usr/share/vala-0.20/vapi/avahi-gobject.deps
+file path=usr/share/vala-0.20/vapi/avahi-gobject.vapi
+file path=usr/share/vala-0.20/vapi/bzlib.vapi
+file path=usr/share/vala-0.20/vapi/cairo-xcb.deps
+file path=usr/share/vala-0.20/vapi/cairo-xcb.vapi
+file path=usr/share/vala-0.20/vapi/cairo.vapi
+file path=usr/share/vala-0.20/vapi/ccss-1.vapi
+file path=usr/share/vala-0.20/vapi/clutter-1.0.deps
+file path=usr/share/vala-0.20/vapi/clutter-1.0.vapi
+file path=usr/share/vala-0.20/vapi/clutter-gst-1.0.deps
+file path=usr/share/vala-0.20/vapi/clutter-gst-1.0.vapi
+file path=usr/share/vala-0.20/vapi/clutter-gtk-0.10.deps
+file path=usr/share/vala-0.20/vapi/clutter-gtk-0.10.vapi
+file path=usr/share/vala-0.20/vapi/clutter-gtk-1.0.deps
+file path=usr/share/vala-0.20/vapi/clutter-gtk-1.0.vapi
+file path=usr/share/vala-0.20/vapi/clutter-json-1.0.vapi
+file path=usr/share/vala-0.20/vapi/cogl-1.0.deps
+file path=usr/share/vala-0.20/vapi/cogl-1.0.vapi
+file path=usr/share/vala-0.20/vapi/cogl-pango-1.0.deps
+file path=usr/share/vala-0.20/vapi/cogl-pango-1.0.vapi
+file path=usr/share/vala-0.20/vapi/curses.vapi
+file path=usr/share/vala-0.20/vapi/dbus-glib-1.vapi
+file path=usr/share/vala-0.20/vapi/enchant.vapi
+file path=usr/share/vala-0.20/vapi/fuse.deps
+file path=usr/share/vala-0.20/vapi/fuse.vapi
+file path=usr/share/vala-0.20/vapi/gconf-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gdk-2.0.deps
+file path=usr/share/vala-0.20/vapi/gdk-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gdk-3.0.deps
+file path=usr/share/vala-0.20/vapi/gdk-3.0.vapi
+file path=usr/share/vala-0.20/vapi/gdk-pixbuf-2.0.deps
+file path=usr/share/vala-0.20/vapi/gdk-pixbuf-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gdk-x11-2.0.deps
+file path=usr/share/vala-0.20/vapi/gdk-x11-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gdk-x11-3.0.deps
+file path=usr/share/vala-0.20/vapi/gdk-x11-3.0.vapi
+file path=usr/share/vala-0.20/vapi/gdl-1.0.deps
+file path=usr/share/vala-0.20/vapi/gdl-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gdl-3.0.deps
+file path=usr/share/vala-0.20/vapi/gdl-3.0.vapi
+file path=usr/share/vala-0.20/vapi/gdu-gtk.deps
+file path=usr/share/vala-0.20/vapi/gdu-gtk.vapi
+file path=usr/share/vala-0.20/vapi/gdu.deps
+file path=usr/share/vala-0.20/vapi/gdu.vapi
+file path=usr/share/vala-0.20/vapi/gedit-2.20.deps
+file path=usr/share/vala-0.20/vapi/gedit-2.20.vapi
+file path=usr/share/vala-0.20/vapi/gedit.deps
+file path=usr/share/vala-0.20/vapi/gedit.vapi
+file path=usr/share/vala-0.20/vapi/gio-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gio-unix-2.0.deps
+file path=usr/share/vala-0.20/vapi/gio-unix-2.0.vapi
+file path=usr/share/vala-0.20/vapi/glib-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gmodule-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gnet-2.0.deps
+file path=usr/share/vala-0.20/vapi/gnet-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gnome-desktop-2.0.deps
+file path=usr/share/vala-0.20/vapi/gnome-desktop-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gnome-keyring-1.vapi
+file path=usr/share/vala-0.20/vapi/gnome-vfs-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gnutls.vapi
+file path=usr/share/vala-0.20/vapi/gobject-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gobject-introspection-1.0.vapi
+file path=usr/share/vala-0.20/vapi/goocanvas.deps
+file path=usr/share/vala-0.20/vapi/goocanvas.vapi
+file path=usr/share/vala-0.20/vapi/gsl.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-app-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-app-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-app-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-app-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-audio-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-audio-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-audio-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-audio-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-base-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-base-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-base-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-base-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-cdda-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-cdda-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-check-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-check-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-check-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-check-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-controller-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-controller-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-controller-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-controller-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-dataprotocol-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-dataprotocol-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-fft-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-fft-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-fft-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-fft-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-interfaces-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-interfaces-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-net-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-net-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-net-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-net-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-netbuffer-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-netbuffer-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-pbutils-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-pbutils-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-pbutils-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-pbutils-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-riff-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-riff-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-rtp-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-rtp-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-rtp-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-rtp-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-rtsp-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-rtsp-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-rtsp-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-rtsp-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-rtsp-server-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-rtsp-server-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-sdp-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-sdp-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-sdp-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-sdp-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-tag-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-tag-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-tag-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-tag-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-video-0.10.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-video-0.10.vapi
+file path=usr/share/vala-0.20/vapi/gstreamer-video-1.0.deps
+file path=usr/share/vala-0.20/vapi/gstreamer-video-1.0.vapi
+file path=usr/share/vala-0.20/vapi/gtk+-2.0.deps
+file path=usr/share/vala-0.20/vapi/gtk+-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gtk+-3.0.deps
+file path=usr/share/vala-0.20/vapi/gtk+-3.0.vapi
+file path=usr/share/vala-0.20/vapi/gtkmozembed.deps
+file path=usr/share/vala-0.20/vapi/gtkmozembed.vapi
+file path=usr/share/vala-0.20/vapi/gtksourceview-2.0.deps
+file path=usr/share/vala-0.20/vapi/gtksourceview-2.0.vapi
+file path=usr/share/vala-0.20/vapi/gtksourceview-3.0.deps
+file path=usr/share/vala-0.20/vapi/gtksourceview-3.0.vapi
+file path=usr/share/vala-0.20/vapi/gudev-1.0.deps
+file path=usr/share/vala-0.20/vapi/gudev-1.0.vapi
+file path=usr/share/vala-0.20/vapi/hal.deps
+file path=usr/share/vala-0.20/vapi/hal.vapi
+file path=usr/share/vala-0.20/vapi/hildon-1.deps
+file path=usr/share/vala-0.20/vapi/hildon-1.vapi
+file path=usr/share/vala-0.20/vapi/hildon-fm-2.deps
+file path=usr/share/vala-0.20/vapi/hildon-fm-2.vapi
+file path=usr/share/vala-0.20/vapi/json-glib-1.0.deps
+file path=usr/share/vala-0.20/vapi/json-glib-1.0.vapi
+file path=usr/share/vala-0.20/vapi/libarchive.deps
+file path=usr/share/vala-0.20/vapi/libarchive.vapi
+file path=usr/share/vala-0.20/vapi/libbonoboui-2.0.vapi
+file path=usr/share/vala-0.20/vapi/libdaemon.vapi
+file path=usr/share/vala-0.20/vapi/libepc-1.0.vapi
+file path=usr/share/vala-0.20/vapi/libesmtp.vapi
+file path=usr/share/vala-0.20/vapi/libftdi.deps
+file path=usr/share/vala-0.20/vapi/libftdi.vapi
+file path=usr/share/vala-0.20/vapi/libgda-4.0.deps
+file path=usr/share/vala-0.20/vapi/libgda-4.0.vapi
+file path=usr/share/vala-0.20/vapi/libgda-report-4.0.deps
+file path=usr/share/vala-0.20/vapi/libgda-report-4.0.vapi
+file path=usr/share/vala-0.20/vapi/libgdata.deps
+file path=usr/share/vala-0.20/vapi/libgdata.vapi
+file path=usr/share/vala-0.20/vapi/libglade-2.0.deps
+file path=usr/share/vala-0.20/vapi/libglade-2.0.vapi
+file path=usr/share/vala-0.20/vapi/libgnome-2.0.vapi
+file path=usr/share/vala-0.20/vapi/libgnome-menu-3.0.vapi
+file path=usr/share/vala-0.20/vapi/libgnome-menu.vapi
+file path=usr/share/vala-0.20/vapi/libgnomeui-2.0.deps
+file path=usr/share/vala-0.20/vapi/libgnomeui-2.0.vapi
+file path=usr/share/vala-0.20/vapi/libgsf-1.deps
+file path=usr/share/vala-0.20/vapi/libgsf-1.vapi
+file path=usr/share/vala-0.20/vapi/libgvc.vapi
+file path=usr/share/vala-0.20/vapi/libmagic.vapi
+file path=usr/share/vala-0.20/vapi/libnl-1.vapi
+file path=usr/share/vala-0.20/vapi/libnl-2.0.deps
+file path=usr/share/vala-0.20/vapi/libnl-2.0.vapi
+file path=usr/share/vala-0.20/vapi/libnl-3.0.deps
+file path=usr/share/vala-0.20/vapi/libnl-3.0.vapi
+file path=usr/share/vala-0.20/vapi/libnotify.deps
+file path=usr/share/vala-0.20/vapi/libnotify.vapi
+file path=usr/share/vala-0.20/vapi/liboobs-1.vapi
+file path=usr/share/vala-0.20/vapi/libosso.vapi
+file path=usr/share/vala-0.20/vapi/libpanelapplet-2.0.deps
+file path=usr/share/vala-0.20/vapi/libpanelapplet-2.0.vapi
+file path=usr/share/vala-0.20/vapi/libpeas-1.0.deps
+file path=usr/share/vala-0.20/vapi/libpeas-1.0.vapi
+file path=usr/share/vala-0.20/vapi/libpq.vapi
+file path=usr/share/vala-0.20/vapi/librsvg-2.0.deps
+file path=usr/share/vala-0.20/vapi/librsvg-2.0.vapi
+file path=usr/share/vala-0.20/vapi/libsexy.deps
+file path=usr/share/vala-0.20/vapi/libsexy.vapi
+file path=usr/share/vala-0.20/vapi/libsoup-2.2.vapi
+file path=usr/share/vala-0.20/vapi/libsoup-2.4.deps
+file path=usr/share/vala-0.20/vapi/libsoup-2.4.vapi
+file path=usr/share/vala-0.20/vapi/libusb-1.0.deps
+file path=usr/share/vala-0.20/vapi/libusb-1.0.vapi
+file path=usr/share/vala-0.20/vapi/libusb.vapi
+file path=usr/share/vala-0.20/vapi/libvala-0.20.vapi
+file path=usr/share/vala-0.20/vapi/libwnck-1.0.deps
+file path=usr/share/vala-0.20/vapi/libwnck-1.0.vapi
+file path=usr/share/vala-0.20/vapi/libwnck-3.0.deps
+file path=usr/share/vala-0.20/vapi/libwnck-3.0.vapi
+file path=usr/share/vala-0.20/vapi/libxml-2.0.vapi
+file path=usr/share/vala-0.20/vapi/linux.deps
+file path=usr/share/vala-0.20/vapi/linux.vapi
+file path=usr/share/vala-0.20/vapi/loudmouth-1.0.vapi
+file path=usr/share/vala-0.20/vapi/lua.vapi
+file path=usr/share/vala-0.20/vapi/mx-1.0.deps
+file path=usr/share/vala-0.20/vapi/mx-1.0.vapi
+file path=usr/share/vala-0.20/vapi/mysql.vapi
+file path=usr/share/vala-0.20/vapi/orc-0.4.vapi
+file path=usr/share/vala-0.20/vapi/pango.deps
+file path=usr/share/vala-0.20/vapi/pango.vapi
+file path=usr/share/vala-0.20/vapi/pangocairo.deps
+file path=usr/share/vala-0.20/vapi/pangocairo.vapi
+file path=usr/share/vala-0.20/vapi/pixman-1.vapi
+file path=usr/share/vala-0.20/vapi/poppler-glib.deps
+file path=usr/share/vala-0.20/vapi/poppler-glib.vapi
+file path=usr/share/vala-0.20/vapi/posix.vapi
+file path=usr/share/vala-0.20/vapi/purple.deps
+file path=usr/share/vala-0.20/vapi/purple.vapi
+file path=usr/share/vala-0.20/vapi/raptor.vapi
+file path=usr/share/vala-0.20/vapi/rasqal.deps
+file path=usr/share/vala-0.20/vapi/rasqal.vapi
+file path=usr/share/vala-0.20/vapi/readline.vapi
+file path=usr/share/vala-0.20/vapi/rest-0.6.deps
+file path=usr/share/vala-0.20/vapi/rest-0.6.vapi
+file path=usr/share/vala-0.20/vapi/rest-0.7.deps
+file path=usr/share/vala-0.20/vapi/rest-0.7.vapi
+file path=usr/share/vala-0.20/vapi/rest-extras-0.6.deps
+file path=usr/share/vala-0.20/vapi/rest-extras-0.6.vapi
+file path=usr/share/vala-0.20/vapi/sdl-gfx.deps
+file path=usr/share/vala-0.20/vapi/sdl-gfx.vapi
+file path=usr/share/vala-0.20/vapi/sdl-image.deps
+file path=usr/share/vala-0.20/vapi/sdl-image.vapi
+file path=usr/share/vala-0.20/vapi/sdl-mixer.deps
+file path=usr/share/vala-0.20/vapi/sdl-mixer.vapi
+file path=usr/share/vala-0.20/vapi/sdl-net.deps
+file path=usr/share/vala-0.20/vapi/sdl-net.vapi
+file path=usr/share/vala-0.20/vapi/sdl-ttf.deps
+file path=usr/share/vala-0.20/vapi/sdl-ttf.vapi
+file path=usr/share/vala-0.20/vapi/sdl.vapi
+file path=usr/share/vala-0.20/vapi/sqlite3.vapi
+file path=usr/share/vala-0.20/vapi/taglib_c.vapi
+file path=usr/share/vala-0.20/vapi/tiff.vapi
+file path=usr/share/vala-0.20/vapi/tokyocabinet.vapi
+file path=usr/share/vala-0.20/vapi/tracker-indexer-module-1.0.vapi
+file path=usr/share/vala-0.20/vapi/twitter-glib-1.0.deps
+file path=usr/share/vala-0.20/vapi/twitter-glib-1.0.vapi
+file path=usr/share/vala-0.20/vapi/udisks2.deps
+file path=usr/share/vala-0.20/vapi/udisks2.vapi
+file path=usr/share/vala-0.20/vapi/unique-1.0.deps
+file path=usr/share/vala-0.20/vapi/unique-1.0.vapi
+file path=usr/share/vala-0.20/vapi/v4l2.vapi
+file path=usr/share/vala-0.20/vapi/vte-2.90.deps
+file path=usr/share/vala-0.20/vapi/vte-2.90.vapi
+file path=usr/share/vala-0.20/vapi/vte.deps
+file path=usr/share/vala-0.20/vapi/vte.vapi
+file path=usr/share/vala-0.20/vapi/webkit-1.0.deps
+file path=usr/share/vala-0.20/vapi/webkit-1.0.vapi
+file path=usr/share/vala-0.20/vapi/x11.vapi
+file path=usr/share/vala-0.20/vapi/xcb.vapi
+file path=usr/share/vala-0.20/vapi/xtst.deps
+file path=usr/share/vala-0.20/vapi/xtst.vapi
+file path=usr/share/vala-0.20/vapi/zlib.vapi
+file path=usr/share/vala/Makefile.vapigen
+
+link path=usr/lib/libvala-0.20.so target=./libvala-0.20.so.0.0.0
+link path=usr/lib/libvala-0.20.so.0 target=./libvala-0.20.so.0.0.0
+link path=usr/lib/$(MACH64)/libvala-0.20.so target=./libvala-0.20.so.0.0.0
+link path=usr/lib/$(MACH64)/libvala-0.20.so.0 target=./libvala-0.20.so.0.0.0
+
+link path=usr/bin/$(MACH64)/vala target=vala-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/$(MACH64)/vala-gen-introspect target=vala-gen-introspect-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/$(MACH64)/valac target=valac-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/$(MACH64)/vapicheck target=vapicheck-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/$(MACH64)/vapigen target=vapigen-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/vala target=vala-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/vala-gen-introspect target=vala-gen-introspect-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/valac target=valac-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/vapicheck target=vapicheck-0.20 \
+    mediator=vala mediator-version=0.20
+link path=usr/bin/vapigen target=vapigen-0.20 \
+    mediator=vala mediator-version=0.20
+
+link path=usr/share/man/man1/vala-gen-introspect.1 target=vala-gen-introspect-0.20.1 \
+    mediator=vala mediator-version=0.20
+link path=usr/share/man/man1/valac.1 target=valac-0.20.1 \
+    mediator=vala mediator-version=0.20
+link path=usr/share/man/man1/vapigen.1 target=vapigen-0.20.1 \
+    mediator=vala mediator-version=0.20
+
+license vala.license license=LGPL2.1
