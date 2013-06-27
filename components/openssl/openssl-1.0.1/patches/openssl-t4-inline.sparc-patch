@@ -11,7 +11,7 @@ diff -ru openssl-1.0.1e/Configure openssl-1.0.1e/Configure
  my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o modexp512-x86_64.o::aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o rc4-md5-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:ghash-x86_64.o:";
  my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
 -my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
-+my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o dest4-sparcv9.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
  my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
  my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
  my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
@@ -829,6 +829,340 @@ diff -ru openssl-1.0.1e/crypto/sha/asm/sha512-sparcv9.pl openssl-1.0.1e/crypto/s
 +}
 +
  close STDOUT;
+Index: crypto/des/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/des/Makefile.orig openssl-1.0.1e/crypto/des/Makefile
+--- a/crypto/des/Makefile
++++ b/crypto/des/Makefile
+@@ -61,6 +61,8 @@ des: des.o cbc3_enc.o lib
+ 
+ des_enc-sparc.S:	asm/des_enc.m4
+ 	m4 -B 8192 asm/des_enc.m4 > des_enc-sparc.S
++dest4-sparcv9.s:	asm/dest4-sparcv9.pl
++	$(PERL) asm/dest4-sparcv9.pl $(CFLAGS) > $@
+ 
+ des-586.s:	asm/des-586.pl ../perlasm/x86asm.pl ../perlasm/cbc.pl
+ 	$(PERL) asm/des-586.pl $(PERLASM_SCHEME) $(CFLAGS) > $@
+Index: crypto/evp/e_des.c
+===================================================================
+diff -ru openssl-1.0.1e/crypto/evp/e_des.c.orig openssl-1.0.1e/crypto/evp/e_des.c
+--- a/crypto/evp/e_des.c
++++ b/crypto/evp/e_des.c
+@@ -65,6 +65,30 @@
+ #include <openssl/des.h>
+ #include <openssl/rand.h>
+ 
++typedef struct
++	{
++	union { double align; DES_key_schedule ks; } ks;
++	union {
++		void (*cbc)(const void *,void *,size_t,const void *,void *);
++	} stream;
++	} EVP_DES_KEY;
++
++#if defined(AES_ASM) && (defined(__sparc) || defined(__sparc__))
++/* ---------^^^ this is not a typo, just a way to detect that
++ * assembler support was in general requested... */
++#include "sparc_arch.h"
++
++extern unsigned int OPENSSL_sparcv9cap_P[];
++
++#define SPARC_DES_CAPABLE	(OPENSSL_sparcv9cap_P[1] & CFR_DES)
++
++void	des_t4_key_expand(const void *key, DES_key_schedule *ks);
++void	des_t4_cbc_encrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++void	des_t4_cbc_decrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++#endif
++
+ static int des_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			const unsigned char *iv, int enc);
+ static int des_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr);
+@@ -99,6 +123,13 @@ static int des_ofb_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ static int des_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ 			  const unsigned char *in, size_t inl)
+ {
++	EVP_DES_KEY *dat = (EVP_DES_KEY *)ctx->cipher_data;
++
++	if (dat->stream.cbc)
++		{
++		(*dat->stream.cbc)(in,out,inl,&dat->ks.ks,ctx->iv);
++		return 1;
++		}
+ 	while(inl>=EVP_MAXCHUNK)
+ 		{
+ 		DES_ncbc_encrypt(in, out, (long)EVP_MAXCHUNK, ctx->cipher_data,
+@@ -176,18 +207,18 @@
+     return 1;
+     }
+ 
+-BLOCK_CIPHER_defs(des, DES_key_schedule, NID_des, 8, 8, 8, 64,
++BLOCK_CIPHER_defs(des, EVP_DES_KEY, NID_des, 8, 8, 8, 64,
+ 			EVP_CIPH_RAND_KEY, des_init_key, NULL,
+ 			EVP_CIPHER_set_asn1_iv,
+ 			EVP_CIPHER_get_asn1_iv,
+ 			des_ctrl)
+ 
+-BLOCK_CIPHER_def_cfb(des,DES_key_schedule,NID_des,8,8,1,
++BLOCK_CIPHER_def_cfb(des,EVP_DES_KEY,NID_des,8,8,1,
+ 		     EVP_CIPH_RAND_KEY, des_init_key,NULL,
+ 		     EVP_CIPHER_set_asn1_iv,
+ 		     EVP_CIPHER_get_asn1_iv,des_ctrl)
+ 
+-BLOCK_CIPHER_def_cfb(des,DES_key_schedule,NID_des,8,8,8,
++BLOCK_CIPHER_def_cfb(des,EVP_DES_KEY,NID_des,8,8,8,
+ 		     EVP_CIPH_RAND_KEY,des_init_key,NULL,
+ 		     EVP_CIPHER_set_asn1_iv,
+ 		     EVP_CIPHER_get_asn1_iv,des_ctrl)
+@@ -196,8 +227,25 @@ static int des_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			const unsigned char *iv, int enc)
+ 	{
+ 	DES_cblock *deskey = (DES_cblock *)key;
++	EVP_DES_KEY *dat = (EVP_DES_KEY *)ctx->cipher_data;
++
++	dat->stream.cbc = NULL;
++#if defined(SPARC_DES_CAPABLE)
++	if (SPARC_DES_CAPABLE)
++		{
++		int mode = ctx->cipher->flags & EVP_CIPH_MODE;
++
++		if (mode == EVP_CIPH_CBC_MODE)
++			{
++			des_t4_key_expand(key,&dat->ks.ks);
++			dat->stream.cbc = enc ? des_t4_cbc_encrypt :
++						des_t4_cbc_decrypt;
++			return 1;
++			}
++		}
++#endif
+ #ifdef EVP_CHECK_DES_KEY
+-	if(DES_set_key_checked(deskey,ctx->cipher_data) != 0)
++	if(DES_set_key_checked(deskey,dat->ks.ks) != 0)
+ 		return 0;
+ #else
+ 	DES_set_key_unchecked(deskey,ctx->cipher_data);
+Index: crypto/evp/e_des3.c
+===================================================================
+diff -ru openssl-1.0.1e/crypto/evp/e_des3.c.orig openssl-1.0.1e/crypto/evp/e_des3.c
+--- a/crypto/evp/e_des3.c
++++ b/crypto/evp/e_des3.c
+@@ -65,6 +65,33 @@
+ #include <openssl/des.h>
+ #include <openssl/rand.h>
+ 
++typedef struct
++	{
++	union { double align; DES_key_schedule ks[3]; } ks;
++	union {
++		void (*cbc)(const void *,void *,size_t,const void *,void *);
++	} stream;
++	} DES_EDE_KEY;
++#define ks1 ks.ks[0]
++#define ks2 ks.ks[1]
++#define ks3 ks.ks[2]
++
++#if defined(AES_ASM) && (defined(__sparc) || defined(__sparc__))
++/* ---------^^^ this is not a typo, just a way to detect that
++ * assembler support was in general requested... */
++#include "sparc_arch.h"
++
++extern unsigned int OPENSSL_sparcv9cap_P[];
++
++#define SPARC_DES_CAPABLE	(OPENSSL_sparcv9cap_P[1] & CFR_DES)
++
++void	des_t4_key_expand(const void *key, DES_key_schedule *ks);
++void	des_t4_ede3_cbc_encrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++void	des_t4_ede3_cbc_decrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++#endif
++
+ #ifndef OPENSSL_FIPS
+ 
+ static int des_ede_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+@@ -75,13 +100,6 @@ static int des_ede3_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 
+ static int des3_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr);
+ 
+-typedef struct
+-    {
+-    DES_key_schedule ks1;/* key schedule */
+-    DES_key_schedule ks2;/* key schedule (for ede) */
+-    DES_key_schedule ks3;/* key schedule (for ede3) */
+-    } DES_EDE_KEY;
+-
+ #define data(ctx) ((DES_EDE_KEY *)(ctx)->cipher_data)
+ 
+ /* Because of various casts and different args can't use IMPLEMENT_BLOCK_CIPHER */
+@@ -121,6 +141,8 @@ static int des_ede_ofb_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ static int des_ede_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ 			      const unsigned char *in, size_t inl)
+ {
++	DES_EDE_KEY *dat = data(ctx);
++
+ #ifdef KSSL_DEBUG
+ 	{
+         int i;
+@@ -132,10 +152,16 @@ static int des_ede_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ 	printf("\n");
+ 	}
+ #endif    /* KSSL_DEBUG */
++	if (dat->stream.cbc)
++		{
++		(*dat->stream.cbc)(in,out,inl,&dat->ks,ctx->iv);
++		return 1;
++		}
++
+ 	if (inl>=EVP_MAXCHUNK)
+ 		{
+ 		DES_ede3_cbc_encrypt(in, out, (long)EVP_MAXCHUNK,
+-			     &data(ctx)->ks1, &data(ctx)->ks2, &data(ctx)->ks3,
++			     &dat->ks1, &dat->ks2, &dat->ks3,
+ 			     (DES_cblock *)ctx->iv, ctx->encrypt);
+ 		inl-=EVP_MAXCHUNK;
+ 		in +=EVP_MAXCHUNK;
+@@ -143,7 +169,7 @@ static int des_ede_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ 		}
+ 	if (inl)
+ 		DES_ede3_cbc_encrypt(in, out, (long)inl,
+-			     &data(ctx)->ks1, &data(ctx)->ks2, &data(ctx)->ks3,
++			     &dat->ks1, &dat->ks2, &dat->ks3,
+                              (DES_cblock *)ctx->iv, ctx->encrypt);
+ 	return 1;
+ }
+@@ -208,9 +234,8 @@ static int des_ede3_cfb8_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+     }
+ 
+ BLOCK_CIPHER_defs(des_ede, DES_EDE_KEY, NID_des_ede, 8, 16, 8, 64,
+-			EVP_CIPH_RAND_KEY, des_ede_init_key, NULL, 
+-			EVP_CIPHER_set_asn1_iv,
+-			EVP_CIPHER_get_asn1_iv,
++			EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_DEFAULT_ASN1,
++			des_ede_init_key, NULL, NULL, NULL,
+ 			des3_ctrl)
+ 
+ #define des_ede3_cfb64_cipher des_ede_cfb64_cipher
+@@ -219,37 +246,53 @@
+ #define des_ede3_ecb_cipher des_ede_ecb_cipher
+ 
+ BLOCK_CIPHER_defs(des_ede3, DES_EDE_KEY, NID_des_ede3, 8, 24, 8, 64,
+-			EVP_CIPH_RAND_KEY, des_ede3_init_key, NULL, 
+-			EVP_CIPHER_set_asn1_iv,
+-			EVP_CIPHER_get_asn1_iv,
+-			des3_ctrl)
++		EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_FIPS|EVP_CIPH_FLAG_DEFAULT_ASN1,
++		des_ede3_init_key, NULL, NULL, NULL,
++		des3_ctrl)
+ 
+ BLOCK_CIPHER_def_cfb(des_ede3,DES_EDE_KEY,NID_des_ede3,24,8,1,
+-		     EVP_CIPH_RAND_KEY, des_ede3_init_key,NULL,
+-		     EVP_CIPHER_set_asn1_iv,
+-		     EVP_CIPHER_get_asn1_iv,
+-		     des3_ctrl)
++		EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_FIPS|EVP_CIPH_FLAG_DEFAULT_ASN1,
++		des_ede3_init_key, NULL, NULL, NULL,
++		des3_ctrl)
+ 
+ BLOCK_CIPHER_def_cfb(des_ede3,DES_EDE_KEY,NID_des_ede3,24,8,8,
+-		     EVP_CIPH_RAND_KEY, des_ede3_init_key,NULL,
+-		     EVP_CIPHER_set_asn1_iv,
+-		     EVP_CIPHER_get_asn1_iv,
+-		     des3_ctrl)
++		EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_FIPS|EVP_CIPH_FLAG_DEFAULT_ASN1,
++		des_ede3_init_key, NULL, NULL, NULL,
++		des3_ctrl)
+ 
+ static int des_ede_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			    const unsigned char *iv, int enc)
+ 	{
+ 	DES_cblock *deskey = (DES_cblock *)key;
++	DES_EDE_KEY *dat = data(ctx);
++
++	dat->stream.cbc = NULL;
++#if defined(SPARC_DES_CAPABLE)
++	if (SPARC_DES_CAPABLE)
++		{
++		int mode = ctx->cipher->flags & EVP_CIPH_MODE;
++
++		if (mode == EVP_CIPH_CBC_MODE)
++			{
++			des_t4_key_expand(&deskey[0],&dat->ks1);
++			des_t4_key_expand(&deskey[1],&dat->ks2);
++			memcpy(&dat->ks3,&dat->ks1,sizeof(dat->ks1));
++			dat->stream.cbc = enc ? des_t4_ede3_cbc_encrypt :
++						des_t4_ede3_cbc_decrypt;
++			return 1;
++			}
++		}
++#endif
+ #ifdef EVP_CHECK_DES_KEY
+-	if (DES_set_key_checked(&deskey[0],&data(ctx)->ks1)
+-		!! DES_set_key_checked(&deskey[1],&data(ctx)->ks2))
++	if (DES_set_key_checked(&deskey[0],&dat->ks1)
++		!! DES_set_key_checked(&deskey[1],&dat->ks2))
+ 		return 0;
+ #else
+-	DES_set_key_unchecked(&deskey[0],&data(ctx)->ks1);
+-	DES_set_key_unchecked(&deskey[1],&data(ctx)->ks2);
++	DES_set_key_unchecked(&deskey[0],&dat->ks1);
++	DES_set_key_unchecked(&deskey[1],&dat->ks2);
+ #endif
+-	memcpy(&data(ctx)->ks3,&data(ctx)->ks1,
+-	       sizeof(data(ctx)->ks1));
++	memcpy(&dat->ks3,&dat->ks1,
++		sizeof(dat->ks1));
+ 	return 1;
+ 	}
+ 
+@@ -257,6 +300,8 @@ static int des_ede3_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			     const unsigned char *iv, int enc)
+ 	{
+ 	DES_cblock *deskey = (DES_cblock *)key;
++	DES_EDE_KEY *dat = data(ctx);
++
+ #ifdef KSSL_DEBUG
+ 	{
+         int i;
+@@ -268,15 +313,32 @@ static int des_ede3_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 	}
+ #endif	/* KSSL_DEBUG */
+ 
++	dat->stream.cbc = NULL;
++#if defined(SPARC_DES_CAPABLE)
++	if (SPARC_DES_CAPABLE)
++		{
++		int mode = ctx->cipher->flags & EVP_CIPH_MODE;
++
++		if (mode == EVP_CIPH_CBC_MODE)
++			{
++			des_t4_key_expand(&deskey[0],&dat->ks1);
++			des_t4_key_expand(&deskey[1],&dat->ks2);
++			des_t4_key_expand(&deskey[2],&dat->ks3);
++			dat->stream.cbc = enc ? des_t4_ede3_cbc_encrypt :
++						des_t4_ede3_cbc_decrypt;
++			return 1;
++			}
++		}
++#endif
+ #ifdef EVP_CHECK_DES_KEY
+-	if (DES_set_key_checked(&deskey[0],&data(ctx)->ks1)
+-		|| DES_set_key_checked(&deskey[1],&data(ctx)->ks2)
+-		|| DES_set_key_checked(&deskey[2],&data(ctx)->ks3))
++	if (DES_set_key_checked(&deskey[0],&dat->ks1)
++		|| DES_set_key_checked(&deskey[1],&dat->ks2)
++		|| DES_set_key_checked(&deskey[2],&dat->ks3))
+ 		return 0;
+ #else
+-	DES_set_key_unchecked(&deskey[0],&data(ctx)->ks1);
+-	DES_set_key_unchecked(&deskey[1],&data(ctx)->ks2);
+-	DES_set_key_unchecked(&deskey[2],&data(ctx)->ks3);
++	DES_set_key_unchecked(&deskey[0],&dat->ks1);
++	DES_set_key_unchecked(&deskey[1],&dat->ks2);
++	DES_set_key_unchecked(&deskey[2],&dat->ks3);
+ #endif
+ 	return 1;
+ 	}
 Index: openssl/apps/speed.c
 ===================================================================
 diff -ru openssl-1.0.1e/apps/spped.c openssl-1.0.1e/apps/speed.c
@@ -856,7 +1190,7 @@ Index: openssl/crypto/aes/Makefile
 ===================================================================
 --- Makefile    Thu May  2 13:42:37 2013
 +++ Makefile.orig       Thu May  2 13:41:51 2013
-@@ -73,6 +73,9 @@
+@@ -69,6 +69,9 @@
  aes-sparcv9.s: asm/aes-sparcv9.pl
  	$(PERL) asm/aes-sparcv9.pl $(CFLAGS) > $@
  

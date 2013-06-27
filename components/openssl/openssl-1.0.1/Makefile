@@ -177,13 +177,13 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/eng_t4*.[ch]	$(@D)/crypto/engine; \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_aes.S		$(@D)/crypto/aes/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_des.S		$(@D)/crypto/des/asm; \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
       $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; \
       $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/aest4-sparcv9.pl		$(@D)/crypto/aes/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/dest4-sparcv9.pl		$(@D)/crypto/des/asm; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9_modes.pl		$(@D)/crypto/perlasm; )
 
 # OpenSSL for wanboot is built on sparc only.
@@ -246,7 +246,8 @@ WANBOOT_OBJS =  \
     crypto/conf/conf_mod.o crypto/cpt_err.o crypto/cryptlib.o \
     crypto/des/cfb64ede.o crypto/des/cfb64enc.o crypto/des/cfb_enc.o \
     crypto/des/des_enc-sparc.o crypto/des/ecb3_enc.o crypto/des/ecb_enc.o \
-    crypto/des/ofb64ede.o crypto/des/ofb64enc.o crypto/des/set_key.o \
+    crypto/des/ofb64ede.o crypto/des/ofb64enc.o crypto/des/dest4-sparcv9.o \
+    crypto/des/set_key.o \
     crypto/des/xcbc_enc.o crypto/dh/dh_ameth.o crypto/dh/dh_asn1.o \
     crypto/dh/dh_check.o crypto/dh/dh_err.o crypto/dh/dh_gen.o \
     crypto/dh/dh_key.o crypto/dh/dh_lib.o crypto/dh/dh_pmeth.o \

@@ -58,7 +58,7 @@
  */
 
 /*
- * This engine supports SPARC microprocessors that provide T4 DES and MONTMUL
+ * This engine supports SPARC microprocessors that provide T4 MONTMUL
  * instructions, such as the T4 microprocessor.
  */
 
@@ -117,7 +117,7 @@ static int t4_bind(ENGINE *e);
 #ifndef	DYNAMIC_ENGINE
 #pragma inline(t4_bind)
 #endif
-static void t4_instructions_present(_Bool *des_present, _Bool *montmul_present);
+static void t4_instructions_present(_Bool *montmul_present);
 #pragma inline(t4_instructions_present)
 
 /* RSA_METHOD structure used by ENGINE_set_RSA() */
@@ -129,110 +129,23 @@ extern DH_METHOD *t4_DH(void);
 /* DSA_METHOD structure used by ENGINE_set_DSA() */
 extern DSA_METHOD *t4_DSA(void);
 
-/* Static variables */
-/* This can't be const as NID*ctr is inserted when the engine is initialized */
-static int t4_cipher_nids[] = {
-#ifndef	OPENSSL_NO_DES
-	/* Must be at end of list (see t4_des_cipher_count in t4_bind() */
-	NID_des_cbc, NID_des_ede3_cbc, NID_des_ecb, NID_des_ede3_ecb,
-#endif
-};
-static const int t4_des_cipher_count = 4;
-static int t4_cipher_count =
-	(sizeof (t4_cipher_nids) / sizeof (t4_cipher_nids[0]));
-
-
-
-/*
- * Cipher Algorithms
- *
- * OpenSSL's libcrypto EVP stuff. This is how this engine gets wired to EVP.
- * EVP_CIPHER is defined in evp.h.  To maintain binary compatibility the
- * definition cannot be modified.
- * Stuff specific to the t4 engine is kept in t4_cipher_ctx_t, which is
- * pointed to by cipher_data or md_data
- *
- * Fields: nid, block_size, key_len, iv_len, flags,
- *	init(), do_cipher(), cleanup(),
- *	ctx_size,
- *	set_asn1_parameters(), get_asn1_parameters(), ctrl(), app_data
- */
-
-
-#ifndef	OPENSSL_NO_DES
-extern const EVP_CIPHER t4_des_cbc;
-extern const EVP_CIPHER t4_des3_cbc;
-extern const EVP_CIPHER t4_des_ecb;
-extern const EVP_CIPHER t4_des3_ecb;
-#endif	/* OPENSSL_NO_DES */
-
-
 /*
  * Utility Functions
  */
 
 /*
- * Set des_present and montmul_present to B_FALSE or B_TRUE
- * depending on whether the current SPARC processor supports DES
- * and MONTMUL, respectively.
+ * Set montmul_present to B_FALSE or B_TRUE depending on whether the
+ * current SPARC processor supports MONTMUL.
  */
 static void
-t4_instructions_present(_Bool *des_present, _Bool *montmul_present)
+t4_instructions_present(_Bool *montmul_present)
 {
-#ifdef	OPENSSL_NO_DES
-#undef	AV_SPARC_DES
-#define	AV_SPARC_DES	0
-#endif
 	uint_t		ui;
 
 	(void) getisax(&ui, 1);
-	*des_present = ((ui & AV_SPARC_DES) != 0);
 	*montmul_present = ((ui & AV_SPARC_MONT) != 0);
 }
 
-
-/*
- * Cipher functions
- */
-
-
-/*
- * Registered by the ENGINE with ENGINE_set_ciphers().
- * Finds out how to deal with a particular cipher NID in the ENGINE.
- */
-/* ARGSUSED */
-static int
-t4_get_all_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
-    const int **nids, int nid)
-{
-	if (cipher == NULL) { /* return a list of all supported ciphers */
-		*nids = (t4_cipher_count > 0) ? t4_cipher_nids : NULL;
-		return (t4_cipher_count);
-	}
-
-	switch (nid) {
-#ifndef	OPENSSL_NO_DES
-	case NID_des_cbc:
-		*cipher = &t4_des_cbc;
-		break;
-	case NID_des_ede3_cbc:
-		*cipher = &t4_des3_cbc;
-		break;
-	case NID_des_ecb:
-		*cipher = &t4_des_ecb;
-		break;
-	case NID_des_ede3_ecb:
-		*cipher = &t4_des3_ecb;
-		break;
-#endif	/* !OPENSSL_NO_DES */
-	default:
-		/* cipher not supported */
-		*cipher = NULL;
-		return (0);
-	}
-
-	return (1);
-}
 
 
 /*
@@ -245,7 +158,6 @@ t4_init(ENGINE *e)
 {
 	return (1);
 }
-
 
 /* Passed to ENGINE_set_destroy_function(). */
 /* ARGSUSED */
@@ -265,29 +177,13 @@ t4_destroy(ENGINE *e)
 static int
 t4_bind(ENGINE *e)
 {
-	_Bool des_engage, montmul_engage;
-
-#ifndef	OPENSSL_NO_DES
-	if (!des_engage) { /* Remove DES ciphers from list */
-		t4_cipher_count -= t4_des_cipher_count;
-	}
-#endif
-
-#ifdef	DEBUG_T4
-	(void) fprintf(stderr, "t4_cipher_count = %d; t4_cipher_nids[] =\n",
-	    t4_cipher_count);
-	for (int i = 0; i < t4_cipher_count; ++i) {
-		(void) fprintf(stderr, " %d", t4_cipher_nids[i]);
-	}
-	(void) fprintf(stderr, "\n");
-#endif	/* DEBUG_T4 */
+	_Bool montmul_engage;
 
 	/* Register T4 engine ID, name, and functions */
 	if (!ENGINE_set_id(e, ENGINE_T4_ID) ||
 	    !ENGINE_set_name(e,
-	    des_engage ? ENGINE_T4_NAME : ENGINE_NO_T4_NAME) ||
+	    montmul_engage ? ENGINE_T4_NAME : ENGINE_NO_T4_NAME) ||
 	    !ENGINE_set_init_function(e, t4_init) ||
-	    (des_engage && !ENGINE_set_ciphers(e, t4_get_all_ciphers)) ||
 #ifndef OPENSSL_NO_RSA
 	    (montmul_engage && !ENGINE_set_RSA(e, t4_RSA())) ||
 #endif	/* OPENSSL_NO_RSA */
