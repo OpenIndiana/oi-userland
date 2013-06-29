@@ -97,10 +97,24 @@ $(BUILD_DIR)/$(MACH)/.overlay: $(BUILD_DIR)/$(MACH)/.built
 
 	$(CP) -RP $(COMPONENT_DIR)/overlay $(BUILD_DIR)/$(MACH)
 
-	O=$(BUILD_DIR)/$(MACH)/overlay
-
 	# Boot Splash Images
-	$(CP) $(O)/boot/splashimage.xpm $(O)/boot/solaris.xpm || true
+	$(CP) $(BUILD_DIR)/$(MACH)/overlay/boot/splashimage.xpm \
+	    $(BUILD_DIR)/$(MACH)/overlay/boot/solaris.xpm || true
+	
+	# Fix closed lc_core.h header
+	# Patch was taken from here https://www.illumos.org/issues/3853
+
+	if ! grep 199711L \
+	    $(SOURCE_DIR)/proto/root_$(MACH)/usr/include/sys/lc_core.h \
+	    >/dev/null; then \
+	    mkdir -p $(BUILD_DIR)/$(MACH)/overlay/usr/include/sys; \
+	    cp $(SOURCE_DIR)/proto/root_$(MACH)/usr/include/sys/lc_core.h \
+	    $(BUILD_DIR)/$(MACH)/overlay/usr/include/sys/lc_core.h; \
+	    (printf "/^struct tm;$/\n-2\na\n#if __cplusplus >= 199711L\nnamespace std {\n#endif\n.\n"; \
+	    printf "+2\na\n#if __cplusplus >= 199711L\n}\n#endif /* end of namespace std */\n\n.\nw\nq\n") | \
+		ed -s $(BUILD_DIR)/$(MACH)/overlay/usr/include/sys/lc_core.h \
+		>/dev/null; \
+	fi
 
 	$(TOUCH) $@
 
