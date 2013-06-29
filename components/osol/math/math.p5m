@@ -1,0 +1,81 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2012, Andrzej Szeszo
+#
+
+# XXX: manifest needs SPARC support
+
+set name=pkg.fmri value=pkg:/system/library/math@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Math & Microtasking Libraries"
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+legacy pkg=SUNWlibms \
+    desc="Math & Microtasking Libraries (Usr)" \
+    name="Math & Microtasking Libraries (Usr)"
+legacy pkg=SUNWlibmsr \
+    desc="Math & Microtasking Libraries (Root)" \
+    name="Math & Microtasking Libraries (Root)"
+
+license SUNWlibms.copyright license=SUNWlibms.copyright
+license SUNWlibmsr.copyright license=SUNWlibmsr.copyright
+
+dir  path=lib
+dir  path=lib/$(MACH64)
+link path=lib/$(MACH64)/libm.so target=libm.so.2
+file path=lib/$(MACH64)/libm.so.1
+file path=lib/$(MACH64)/libm.so.2
+link path=lib/$(MACH64)/libmtsk.so target=libmtsk.so.1
+file path=lib/$(MACH64)/libmtsk.so.1
+link path=lib/$(MACH64)/libmtsk_db.so target=libmtsk_db.so.1
+file path=lib/$(MACH64)/libmtsk_db.so.1
+link path=lib/$(MACH64)/libmvec.so target=libmvec.so.1
+file path=lib/$(MACH64)/libmvec.so.1
+link path=lib/cpp target=../usr/lib/cpp pkg.linted=true
+link path=lib/libm.so target=libm.so.2
+file path=lib/libm.so.1
+file path=lib/libm.so.2
+link path=lib/libmtsk.so target=libmtsk.so.1
+file path=lib/libmtsk.so.1
+link path=lib/libmtsk_db.so target=libmtsk_db.so.1
+file path=lib/libmtsk_db.so.1
+dir  path=lib/libmvec
+link path=lib/libmvec.so target=libmvec.so.1
+file path=lib/libmvec.so.1
+file path=lib/libmvec/libmvec_hwcap1.so.1
+dir  path=usr
+dir  path=usr/lib
+dir  path=usr/lib/$(MACH64)
+link path=usr/lib/$(MACH64)/libm.so target=../../../lib/$(MACH64)/libm.so.2
+link path=usr/lib/$(MACH64)/libm.so.1 target=../../../lib/$(MACH64)/libm.so.1
+link path=usr/lib/$(MACH64)/libm.so.2 target=../../../lib/$(MACH64)/libm.so.2
+link path=usr/lib/$(MACH64)/libmtsk.so \
+    target=../../../lib/$(MACH64)/libmtsk.so.1
+link path=usr/lib/$(MACH64)/libmtsk.so.1 \
+    target=../../../lib/$(MACH64)/libmtsk.so.1
+link path=usr/lib/$(MACH64)/libmtsk_db.so \
+    target=../../../lib/$(MACH64)/libmtsk_db.so.1
+link path=usr/lib/$(MACH64)/libmtsk_db.so.1 \
+    target=../../../lib/$(MACH64)/libmtsk_db.so.1
+link path=usr/lib/$(MACH64)/libmvec.so \
+    target=../../../lib/$(MACH64)/libmvec.so.1
+link path=usr/lib/$(MACH64)/libmvec.so.1 \
+    target=../../../lib/$(MACH64)/libmvec.so.1
+link path=usr/lib/libm.so target=../../lib/libm.so.2
+link path=usr/lib/libm.so.1 target=../../lib/libm.so.1
+link path=usr/lib/libm.so.2 target=../../lib/libm.so.2
+link path=usr/lib/libmtsk.so target=../../lib/libmtsk.so.1
+link path=usr/lib/libmtsk.so.1 target=../../lib/libmtsk.so.1
+link path=usr/lib/libmtsk_db.so target=../../lib/libmtsk_db.so.1
+link path=usr/lib/libmtsk_db.so.1 target=../../lib/libmtsk_db.so.1
+link path=usr/lib/libmvec.so target=../../lib/libmvec.so.1
+link path=usr/lib/libmvec.so.1 target=../../lib/libmvec.so.1

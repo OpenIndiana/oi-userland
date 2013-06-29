@@ -1,0 +1,58 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2012, Andrzej Szeszo
+#
+
+# XXX: manifest needs SPARC support
+
+set name=pkg.fmri value=pkg:/system/library/math/header-math@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Math & Microtasking Library Headers & Lint Files"
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+legacy pkg=SUNWlibm \
+    desc="Math & Microtasking Library Headers & Lint Files (Usr)" \
+    name="Math & Microtasking Library Headers & Lint Files (Usr)"
+legacy pkg=SUNWlibmr \
+    desc="Math Library Lint Files (Root)" \
+    name="Math Library Lint Files (Root)"
+
+license SUNWlibm.copyright license=SUNWlibm.copyright
+license SUNWlibmr.copyright license=SUNWlibmr.copyright
+license SUNWlibms.copyright license=SUNWlibms.copyright
+license SUNWlibmsr.copyright license=SUNWlibmsr.copyright
+
+dir  path=lib
+dir  path=lib/$(MACH64)
+file path=lib/$(MACH64)/llib-lm.ln
+file path=lib/llib-lm
+file path=lib/llib-lm.ln
+dir  path=usr
+dir  path=usr/include
+file path=usr/include/complex.h
+file path=usr/include/fenv.h
+file path=usr/include/floatingpoint.h
+dir  path=usr/include/iso
+file path=usr/include/iso/math_c99.h
+file path=usr/include/iso/math_iso.h
+file path=usr/include/libmtsk_db.h
+file path=usr/include/math.h
+file path=usr/include/omp.h
+file path=usr/include/omp_collector_api.h
+dir  path=usr/include/sys
+file path=usr/include/sys/ieeefp.h
+file path=usr/include/tgmath.h
+dir  path=usr/lib
+dir  path=usr/lib/$(MACH64)
+link path=usr/lib/$(MACH64)/llib-lm.ln target=../../../lib/$(MACH64)/llib-lm.ln
+link path=usr/lib/llib-lm target=../../lib/llib-lm
+link path=usr/lib/llib-lm.ln target=../../lib/llib-lm.ln
