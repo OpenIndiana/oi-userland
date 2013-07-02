@@ -1,0 +1,41 @@
+
+https://bugzilla.redhat.com/bugzilla/show_bug.cgi?id=158174
+
+--- webalizer-2.23-05/webalizer.c.orig	2013-07-02 22:58:20.471324594 +0200
++++ webalizer-2.23-05/webalizer.c	2013-07-02 23:01:59.618093806 +0200
+@@ -296,6 +296,8 @@
+ 
+    int    max_ctry;                      /* max countries defined       */
+ 
++   struct stat st;
++
+    /* month names used for parsing logfile (shouldn't be lang specific) */
+    char *log_month[12]={ "jan", "feb", "mar",
+                          "apr", "may", "jun",
+@@ -313,7 +315,9 @@
+ 
+    sprintf(tmp_buf,"%s/webalizer.conf",ETCDIR);
+    /* check for default config file */
+-   if (!access("webalizer.conf",F_OK))
++   /* and make sure running user is the owner */
++   /* see: https://bugzilla.redhat.com/show_bug.cgi?id=158174 */
++   if (stat("webalizer.conf", &st) == 0 && st.st_uid == getuid())
+       get_config("webalizer.conf");
+    else if (!access(tmp_buf,F_OK))
+       get_config(tmp_buf);
+
+--- webalizer-2.23-05/webalizer.1.orig	2013-07-02 23:02:17.691312738 +0200
++++ webalizer-2.23-05/webalizer.1	2013-07-02 23:03:51.108079057 +0200
+@@ -45,9 +45,9 @@
+ .B o
+ A default configuration file is scanned for.  A file named
+ \fIwebalizer.conf\fP is searched for in the current directory, and if
+-found, it's configuration data is parsed.  If the file is not
+-present in the current directory,  the file \fI/etc/webalizer.conf\fP
+-is searched for and, if found, is used instead.
++found, and is owned by the invoking user, then its configuration data is parsed.
++If the file is not present in the current directory,
++the file \fI/etc/webalizer.conf\fP is searched for and, if found, is used instead.
+ .TP 8
+ .B o
+ Any command line arguments given to the program are parsed.  This
