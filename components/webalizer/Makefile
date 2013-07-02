@@ -21,18 +21,19 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		webalizer
-COMPONENT_VERSION=	2.21.2
-HUMAN_VERSION=		2.21-02
-COMPONENT_PROJECT_URL=	http://www.mrunix.net/webalizer/
+COMPONENT_VERSION=	2.23.5
+HUMAN_VERSION=		2.23-05
+COMPONENT_PROJECT_URL=	http://www.webalizer.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f2663d67f5820644a0b1c0b7dee4a5c764d829166fa28d5880442c28886729d9
+    sha256:afc88b8ee0927d9ed004962cb7e3d3054ef7628c7bc8a7b2e3ea1d758a47885a
 COMPONENT_ARCHIVE_URL=	ftp://ftp.mrunix.net/pub/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/webalizer
 
@@ -51,7 +52,9 @@ COMPONENT_PRE_BUILD_ACTION += \
 COMPILER =	gcc
 
 CONFIGURE_OPTIONS +=	--enable-dns
+CONFIGURE_OPTIONS +=	--enable-bz2
 CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2
+CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
@@ -59,9 +62,9 @@ CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 LDFLAGS += $(CC_BITS)
 
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_64)
+install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
