@@ -1,0 +1,21 @@
+--- aspell-0.60.6.1/configure.ac	2013-07-04 00:43:53.656112701 +0400
++++ aspell-0.60.6.1/configure.ac	2013-07-04 00:44:43.932695165 +0400
+@@ -419,17 +419,13 @@
+            [
+ 
+          AC_TRY_LINK(
+-           [#define _XOPEN_SOURCE_EXTENDED 1
+-            #include <wchar.h>
++           [ #include <wchar.h>
+             #include CURSES_HEADER
+            ],
+            [wchar_t wch = 0;
+             addnwstr(&wch, 1);],
+            [AC_MSG_RESULT(yes)
+             AC_DEFINE(HAVE_WIDE_CURSES, 1)
+-            AC_DEFINE(DEFINE_XOPEN_SOURCE_EXTENDED, 1, 
+-                      [Defined if _XOPEN_SOURCE_EXTENDED needs to be defined. 
+-                       (Can't define globally as that will cause problems with some systems)])
+            ],
+            [AC_MSG_RESULT(no)
+             AC_MSG_WARN([Aspell will not be able to Display UTF-8 characters correctly.])])])
