@@ -42,7 +42,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CLONEY) $(SOURCE_DIR) $(@D)); (cd $(SOURCE_DIR); $(GSED) -i -e 's/u_int64_t/uint64_t/g' *.c *.h configure.in configure)
 
 # Adjust the log file pathname in the sample configuration file.
 COMPONENT_PRE_BUILD_ACTION += \
@@ -50,6 +50,8 @@ COMPONENT_PRE_BUILD_ACTION += \
 		$(SOURCE_DIR)/sample.conf
 
 COMPILER =	gcc
+CFLAGS += -I/usr/gnu/include
+LDFLAGS += -L$(GNULIB) -L$(GNULIB64)
 
 CONFIGURE_OPTIONS +=	--enable-dns
 CONFIGURE_OPTIONS +=	--enable-bz2
