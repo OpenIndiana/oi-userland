@@ -39,7 +39,8 @@ CXXFLAGS+=-I/usr/include/ncurses
 LDFLAGS.32=	$(LDFLAGS) -L/usr/gnu/lib -R /usr/gnu/lib
 LDFLAGS.64=	$(LDFLAGS) -L/usr/gnu/lib/amd64 -R /usr/gnu/lib/amd64
 
-COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D)
+COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D) && \
+			cd $(@D) && autoconf
 CONFIGURE_OPTIONS+=	--enable-shared --disable-static --with-pic --with-curses=ncurses CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
 CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
