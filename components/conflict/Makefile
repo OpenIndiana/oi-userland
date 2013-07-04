@@ -58,9 +58,9 @@ CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		build
 	@cd $(BUILD_DIR_64); ./run_test.sh

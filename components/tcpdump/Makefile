@@ -47,14 +47,14 @@ CONFIGURE_OPTIONS += --without-crypto
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_64) 
+install:        $(INSTALL_32_and_64)
 
 COMPONENT_PRE_TEST_ACTION = \
         ($(CP) -r $(SOURCE_DIR)/tests $(@D)/.)
 
-test:		$(TEST_64)
+test:		$(TEST_32_and_64)
 
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)

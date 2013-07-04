@@ -40,28 +40,13 @@ COMPONENT_BUGDB=	library/gnump
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 PATCH_LEVEL = 0
 
 CLOBBER_PATHS += libgmp.pc libgmpxx.pc
 
-CFLAGS += -features=extinl,extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
-# -xthreadvar=%all: allow thread-local storage via __thread
-#  qualifier for all types of variables (global, static and dynamic)
-CFLAGS += -xthreadvar=%all $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_C99_ENABLE) $(CPP_XPG6MODE)
-CFLAGS += $(studio_PIC)
-CXXFLAGS = -mt -features=anachronisms,except,rtti,export,extensions,nestedaccess,tmplife,tmplrefstatic
-CXXFLAGS += -instances=global -template=geninlinefuncs -verbose=template
-CXXFLAGS += -xbuiltin=%none -xinline=%auto -xlibmil
-CXXFLAGS += -xustr=ascii_utf16_ushort -xlibmopt
-CXXFLAGS += $(studio_cplusplus_C99_ENABLE) $(studio_PIC)
-CXXFLAGS += $(CPP_XPG5MODE)
-# -Qoption ccfe -features=zla: allow VLA/ZLA in C++ (like in C99)
-CXXFLAGS += -Qoption ccfe -features=zla
-CXXFLAGS += -xF=%none -xthreadvar=%all
+CFLAGS += $(CPP_C99_EXTENDED_MATH)
+CFLAGS += -std=c99 $(CPP_XPG6MODE)
 CPPFLAGS += $(CPP_POSIX) $(CPP_LARGEFILES)
 LDFLAGS += $(LD_Z_REDLOCSYM) $(LD_Z_RESCAN_NOW)
 

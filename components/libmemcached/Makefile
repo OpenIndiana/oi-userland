@@ -20,17 +20,18 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libmemcached
-COMPONENT_VERSION=	0.16
+COMPONENT_VERSION=	1.0.17
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d4fb3a64dc592c104caa4e98bc11f209fcb97eecdeb7f506797320dea75b9459
-COMPONENT_ARCHIVE_URL= http://launchpadlibrarian.net/33299595/${COMPONENT_ARCHIVE}
+    sha256:7bb27b2589400f918df1cf5002cb01ef7ccac6e23f818604e2386de62c80bba5
+COMPONENT_ARCHIVE_URL=  https://launchpad.net/libmemcached/1.0/1.0.17/+download/${COMPONENT_ARCHIVE}
 COMPONENT_PROJECT_URL=  http://libmemcached.org/libMemcached.html
 COMPONENT_BUGDB=	database/memcached
 
@@ -38,8 +39,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS += -xstrconst
-LDFLAGS += -lsocket -lnsl
+CXXFLAGS += -D__EXTENSIONS__ -D_XPG5
+LDFLAGS += -D__EXTENSIONS__ -D_XPG5 -lsocket -lnsl
 
 CONFIGURE_ENV +=	MAKE=$(GMAKE)
 
@@ -48,6 +49,11 @@ CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 CONFIGURE_OPTIONS +=	--includedir=$(CONFIGURE_INCLUDEDIR)
+
+CONFIGURE_OPTIONS +=    --disable-static
+CONFIGURE_OPTIONS +=    --without-mysql
+CONFIGURE_OPTIONS +=    --without-gearmand
+CONFIGURE_OPTIONS +=    --without-memcached
 
 # need some files in $(SOURCE_DIR)/docs during build
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -64,6 +70,8 @@ COMPONENT_BUILD_ENV +=	MAKE="$(GMAKE)"
 # as a build argument (CFLAGS in the environment won't take precedence
 # over the Makefile one).
 COMPONENT_BUILD_ARGS +=	CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ARGS +=	CXXFLAGS="$(CXXFLAGS)"
+COMPONENT_BUILD_ARGS +=	LDFLAGS="$(LDFLAGS)"
 
 # Similarly, set pkglibdir in the arguments to gmake; otherwise
 # the Makefile sets runpath to a non-existent /usr/lib/libmemcached directory.
@@ -81,7 +89,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# Tests fail, probably because memcached is not running.
+# Some tests fail because memcached is not running.
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

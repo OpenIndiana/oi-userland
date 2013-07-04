@@ -32,7 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:7b5e6f90e6709d1c1bcb4a2bf6d2a62b9494adef3ff4325ffdb3551c29e42a1c
-COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://ftp.midnight-commander.org/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mc
 
 include ../../make-rules/prep.mk
@@ -54,9 +54,9 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

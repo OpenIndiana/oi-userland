@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -30,22 +31,24 @@ set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=pkg.summary value="A flexible Web server log file analysis program"
 set name=pkg.description \
     value="The Webalizer is a Web server log analysis program. It is designed to scan Web server log files in various formats and produce usage statistics in HTML format for viewing through a browser. It produces professional looking graphs which make analyzing when and where your Web traffic is coming from easy."
-set name=com.oracle.info.description value="the Webalizer utility"
 set name=info.classification \
     value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
-set name=info.source-url \
-    value=ftp://ftp.mrunix.net/pub/webalizer/webalizer-$(HUMAN_VERSION)-src.tar.bz2
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=LSARC/2008/503
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file sample.conf path=etc/webalizer.conf.sample
-file usr/bin/$(MACH64)/webalizer path=usr/bin/webalizer
-file path=usr/share/man/man1/webalizer.1
-license webalizer.license license=GPLv2
-depend type=require fmri=image/library/libpng
 
-# webalizer was previously in the 'desktop' consolidation. This optional
-# dependency is here to facilitate the safe transfer of the package to the
-# 'userland' consolidation.
-depend type=optional fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.15.0
+license webalizer.license license=GPLv2
+
+file path=etc/webalizer.conf.sample
+file path=usr/bin/$(MACH64)/wcmgr pkg.depend.runpath=$PKGDEPEND_RUNPATH:/usr/gnu/lib/amd64
+file path=usr/bin/$(MACH64)/webalizer pkg.depend.runpath=$PKGDEPEND_RUNPATH:/usr/gnu/lib/amd64
+link path=usr/bin/$(MACH64)/webazolver target=webalizer
+file path=usr/bin/wcmgr pkg.depend.runpath=$PKGDEPEND_RUNPATH:/usr/gnu/lib
+file path=usr/bin/webalizer pkg.depend.runpath=$PKGDEPEND_RUNPATH:/usr/gnu/lib
+link path=usr/bin/webazolver target=webalizer
+file path=usr/share/man/man1/wcmgr.1
+file path=usr/share/man/man1/webalizer.1
+link path=usr/share/man/man1/webazolver.1 target=webalizer.1
+
+depend type=require fmri=image/library/libpng
 
