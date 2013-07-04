@@ -20,7 +20,7 @@
 #
 # Copyright 2011 EveryCity Ltd. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		aspell
 COMPONENT_VERSION=	0.60.6.1
@@ -30,9 +30,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:f52583a83a63633701c5f71db3dc40aab87b7f76b29723aeb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include ../../../make-rules/prep.mk
+include ../../../make-rules/configure.mk
+include ../../../make-rules/ips.mk
 
 CXXFLAGS+=-I/usr/include/ncurses
 
@@ -41,13 +41,13 @@ LDFLAGS.64=	$(LDFLAGS) -L/usr/gnu/lib/amd64 -R /usr/gnu/lib/amd64
 
 COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D) && \
 			cd $(@D) && autoconf
-CONFIGURE_OPTIONS+=	--enable-shared --disable-static --with-pic --with-curses=ncurses CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS+=	--sysconfdir=/etc --enable-shared --disable-static --with-pic --with-curses=ncurses CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
 CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 
 build:		$(BUILD_32_and_64)
 
-include ../../make-rules/shared-targets.mk
+include ../../../make-rules/shared-targets.mk
 
 install:	$(INSTALL_32_and_64)
 
