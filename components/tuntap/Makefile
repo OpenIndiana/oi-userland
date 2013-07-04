@@ -17,12 +17,12 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		tuntap
 COMPONENT_VERSION=	1.3.0
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_SRC_VERSION=	1.3
-COMPONENT_SRC=		tun-$(COMPONENT_SRC_VERSION)
+COMPONENT_GIT_REV=	348e202
+COMPONENT_SRC=		kaizawa-$(COMPONENT_NAME)-$(COMPONENT_GIT_REV)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:64668b7ae7eb60e7d8bce67ec83911ed7f72e19c5eda6fece2c2a0b0bb38bfb4
+COMPONENT_ARCHIVE_HASH= sha256:72c9a7dc56cf52297ad163451df46f345a1c6019ba8fa84936e59550ab0f506e
 COMPONENT_PROJECT_URL=	http://www.whiteboard.ne.jp/~admin2/tuntap/
-COMPONENT_ARCHIVE_URL=  https://github.com/joyent/illumos-extra/raw/master/tun/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL= 	https://codeload.github.com/kaizawa/tuntap/legacy.tar.gz/v$(COMPONENT_VERSION)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
