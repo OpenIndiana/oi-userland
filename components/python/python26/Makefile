@@ -57,7 +57,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 			pyconfig.h)
 
 CFLAGS += $(XPG6MODE)
-CFLAGS += -std=c99
+CFLAGS += $(gcc_C99_ENABLE)
 
 # we don't want to leak $(CC_BITS) into BASECFLAGS as it causes problems with
 # python-config

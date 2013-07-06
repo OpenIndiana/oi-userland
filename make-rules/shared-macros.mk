@@ -462,6 +462,9 @@ studio_cplusplus_C99_DISABLE =
 # And this is the macro you should actually use
 studio_cplusplus_C99MODE = 
 
+# Turn on C99 for gcc
+gcc_C99_ENABLE =	-std=c99
+
 # Allow zero-sized struct/union declarations and void functions with return
 # statements.
 studio_FEATURES_EXTENSIONS =	-features=extensions
