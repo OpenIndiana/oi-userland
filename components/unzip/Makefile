@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	ftp://ftp.info-zip.org/pub/infozip/src/$(COMPONENT_ARCHIV
 COMPONENT_PROJECT_URL=http://www.info-zip.org/UnZip.html
 COMPONENT_BUGDB=	utility/zip
 
+LD_OPTIONS=
+
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
@@ -42,7 +44,7 @@ include ../../make-rules/ips.mk
 COMPONENT_PREP_ACTION = $(RM) $(SOURCE_DIR)/crc_i386.S
 
 COMPONENT_BUILD_ENV += \
- "LOCAL_UNZIP=-DUNICODE_SUPPORT -DNO_WORKING_ISPRINT -DUNICODE_WCHAR"
+ "LOCAL_UNZIP=-DUNICODE_SUPPORT -DNO_WORKING_ISPRINT -DUNICODE_WCHAR -DNO_LCHMOD"
 
 # The Makefile we want is under unix/Makefile
 COMPONENT_BUILD_ARGS += -f unix/Makefile
