@@ -1,0 +1,20 @@
+--- php-5.4.16/configure	2013-07-08 00:52:42.068529371 +0400
++++ php-5.4.16/configure	2013-07-08 00:53:35.342908285 +0400
+@@ -7127,7 +7127,7 @@
+   APU_CONFIG=`$APXS -q APU_CONFIG 2>/dev/null ||
+     echo $APU_BINDIR/apu-config`
+ 
+-  APR_CFLAGS="`$APR_CONFIG --cppflags --includes`"
++  APR_CFLAGS="`$APR_CONFIG --cppflags --includes| sed -e 's/-mt//'`"
+   APU_CFLAGS="`$APU_CONFIG --includes`"
+ 
+   for flag in $APXS_CFLAGS; do
+@@ -7997,7 +7997,7 @@
+   APU_CONFIG=`$APXS -q APU_CONFIG 2>/dev/null ||
+     echo $APU_BINDIR/apu-config`
+ 
+-  APR_CFLAGS="`$APR_CONFIG --cppflags --includes`"
++  APR_CFLAGS="`$APR_CONFIG --cppflags --includes| sed -e 's/-mt//'`"
+   APU_CFLAGS="`$APU_CONFIG --includes`"
+ 
+   for flag in $APXS_CFLAGS; do
