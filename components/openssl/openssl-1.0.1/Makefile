@@ -42,7 +42,6 @@ COMPONENT_BUGDB=	utility/openssl
 
 # Architecture-specific patches
 EXTRA_PATCHES.sparc = $(PATCH_DIR)/openssl-t4-inline.sparc-patch
-EXTRA_PATCHES.sparc += $(PATCH_DIR)/openssl-1.0.1e-t4-engine.sparc-patch
 EXTRA_PATCHES = $(EXTRA_PATCHES.$(MACH))
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -175,16 +174,15 @@ COMPONENT_PRE_BUILD_ACTION = \
     ( echo "Cloning engines..."; \
       $(LN) -fs $(COMPONENT_DIR)/engines/devcrypto/*.[ch]	$(@D)/engines; \
       $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/eng_t4*.[ch]	$(@D)/crypto/engine; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_aes.S		$(@D)/crypto/aes/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; \
       $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/aest4-sparcv9.pl		$(@D)/crypto/aes/asm; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/dest4-sparcv9.pl		$(@D)/crypto/des/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9_modes.pl		$(@D)/crypto/perlasm; )
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9_modes.pl		$(@D)/crypto/perlasm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/vis3-mont.pl		$(@D)/crypto/bn/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9-gf2m.pl	$(@D)/crypto/bn/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparct4-mont.pl	$(@D)/crypto/bn/asm; )
 
 # OpenSSL for wanboot is built on sparc only.
 ifeq ($(MACH), sparc)
@@ -232,6 +230,7 @@ WANBOOT_OBJS =  \
     crypto/bn/bn_prime.o crypto/bn/bn_print.o crypto/bn/bn_rand.o \
     crypto/bn/bn_recp.o crypto/bn/bn_shift.o crypto/bn/bn_sqr.o \
     crypto/bn/bn_word.o crypto/bn/sparcv9-mont.o crypto/bn/sparcv9a-mont.o \
+    crypto/bn/sparct4-mont.o crypto/bn/vis3-mont.o \
     crypto/buffer/buf_err.o crypto/buffer/buf_str.o crypto/buffer/buffer.o \
     crypto/camellia/camellia.o crypto/camellia/cmll_cbc.o \
     crypto/camellia/cmll_cfb.o crypto/camellia/cmll_ecb.o \

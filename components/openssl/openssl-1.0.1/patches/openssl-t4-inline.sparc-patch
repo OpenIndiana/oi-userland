@@ -11,7 +11,7 @@ diff -ru openssl-1.0.1e/Configure openssl-1.0.1e/Configure
  my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o modexp512-x86_64.o::aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o rc4-md5-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:ghash-x86_64.o:";
  my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
 -my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
-+my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o dest4-sparcv9.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o vis3-mont.o sparct4-mont.o sparcv9-gf2m.o:des_enc-sparc.o fcrypt_b.o dest4-sparcv9.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
  my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
  my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
  my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
@@ -20,19 +20,50 @@ Index: crypto/sparccpuid.S
 diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
 --- openssl-1.0.1e/crypto/sparccpuid.S 2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.1e/crypto/sparccpuid.S 2011-07-27 10:48:17.817470000 -0700
-@@ -251,6 +251,11 @@
+@@ -1,3 +1,7 @@
++#ifdef OPENSSL_FIPSCANISTER
++#include <openssl/fipssyms.h>
++#endif
++
+ #if defined(__SUNPRO_C) && defined(__sparcv9)
+ # define ABI64  /* They've said -xarch=v9 at command line */
+ #elif defined(__GNUC__) && defined(__arch64__)
+@@ -123,7 +127,7 @@
+ 			fmovs	%f1,%f3
+ 			fmovs	%f0,%f2
+ 
+-	add	%fp,BIAS,%i0	! return pointer to caller´s top of stack
++	add	%fp,BIAS,%i0	! return pointer to caller?s top of stack
+ 
+ 	ret
+ 	restore
+@@ -235,10 +239,10 @@
+ .global	_sparcv9_vis1_probe
+ .align	8
+ _sparcv9_vis1_probe:
++	.word	0x81b00d80	!fxor	%f0,%f0,%f0
+ 	add	%sp,BIAS+2,%o1
+-	.word	0xc19a5a40	!ldda	[%o1]ASI_FP16_P,%f0
+ 	retl
+-	.word	0x81b00d80	!fxor	%f0,%f0,%f0
++	.word	0xc19a5a40	!ldda	[%o1]ASI_FP16_P,%f0
+ .type	_sparcv9_vis1_probe,#function
+ .size	_sparcv9_vis1_probe,.-_sparcv9_vis1_probe
+ 
+@@ -251,7 +255,12 @@
  !	UltraSPARC IIe		7
  !	UltraSPARC III		7
  !	UltraSPARC T1		24
 +!	SPARC T4		65(*)
-+!
+ !
 +! (*)	result has lesser to do with VIS instruction latencies, rdtick
 +!	appears that slow, but it does the trick in sense that FP and
 +!	VIS code paths are still slower than integer-only ones.
- !
++!
  ! Numbers for T2 and SPARC64 V-VII are more than welcomed.
  !
-@@ -260,6 +265,8 @@
+ ! It would be possible to detect specifically US-T1 by instrumenting
+@@ -260,6 +269,8 @@
  .global	_sparcv9_vis1_instrument
  .align	8
  _sparcv9_vis1_instrument:
@@ -41,7 +72,7 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  	.word	0x91410000	!rd	%tick,%o0
  	.word	0x81b00d80	!fxor	%f0,%f0,%f0
  	.word	0x85b08d82	!fxor	%f2,%f2,%f2
-@@ -314,6 +321,30 @@
+@@ -314,6 +325,30 @@
  .type	_sparcv9_fmadd_probe,#function
  .size	_sparcv9_fmadd_probe,.-_sparcv9_fmadd_probe
  
@@ -72,14 +103,125 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  .global	OPENSSL_cleanse
  .align	32
  OPENSSL_cleanse:
+@@ -397,11 +432,102 @@
+ .type	OPENSSL_cleanse,#function
+ .size	OPENSSL_cleanse,.-OPENSSL_cleanse
+ 
+-#ifndef _BOOT
++.global	_sparcv9_vis1_instrument_bus
++.align	8
++_sparcv9_vis1_instrument_bus:
++	mov	%o1,%o3					! save cnt
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	mov	%o4,%o5					! lasttick = tick
++	set	0,%g4					! diff
++
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++
++.Loop:	.word	0x99410000	!rd	%tick,%o4
++	sub	%o4,%o5,%g4				! diff=tick-lasttick
++	mov	%o4,%o5					! lasttick=tick
++
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++	subcc	%o1,1,%o1				! --$cnt
++	bnz	.Loop
++	add	%o0,4,%o0				! ++$out
++
++	retl
++	mov	%o3,%o0
++.type	_sparcv9_vis1_instrument_bus,#function
++.size	_sparcv9_vis1_instrument_bus,.-_sparcv9_vis1_instrument_bus
++
++.global	_sparcv9_vis1_instrument_bus2
++.align	8
++_sparcv9_vis1_instrument_bus2:
++	mov	%o1,%o3					! save cnt
++	sll	%o1,2,%o1				! cnt*=4
++
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	mov	%o4,%o5					! lasttick = tick
++	set	0,%g4					! diff
++
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	sub	%o4,%o5,%g4				! diff=tick-lasttick
++	mov	%o4,%o5					! lasttick=tick
++	mov	%g4,%g5					! lastdiff=diff
++.Loop2:
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++
++	subcc	%o2,1,%o2				! --max
++	bz	.Ldone2
++	nop
++
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	sub	%o4,%o5,%g4				! diff=tick-lasttick
++	mov	%o4,%o5					! lasttick=tick
++	cmp	%g4,%g5
++	mov	%g4,%g5					! lastdiff=diff
++
++	.word	0x83408000	!rd	%ccr,%g1
++	and	%g1,4,%g1				! isolate zero flag
++	xor	%g1,4,%g1				! flip zero flag
++
++	subcc	%o1,%g1,%o1				! conditional --$cnt
++	bnz	.Loop2
++	add	%o0,%g1,%o0				! conditional ++$out
++
++.Ldone2:
++	srl	%o1,2,%o1
++	retl
++	sub	%o3,%o1,%o0
++.type	_sparcv9_vis1_instrument_bus2,#function
++.size	_sparcv9_vis1_instrument_bus2,.-_sparcv9_vis1_instrument_bus2
++
+ .section	".init",#alloc,#execinstr
+ 	call	OPENSSL_cpuid_setup
+ 	nop
+-#else
+-	nop
+-	nop
+-#endif
 
 Index: crypto/sparcv9cap.c
 ===================================================================
 diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 --- openssl-1.0.1e/crypto/sparcv9cap.c 2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.1e/crypto/sparcv9cap.c 2011-07-27 10:48:17.817470000 -0700
-@@ -6,16 +6,15 @@
+@@ -4,31 +4,55 @@
+ #include <setjmp.h>
+ #include <signal.h>
  #include <sys/time.h>
++#include <unistd.h>
  #include <openssl/bn.h>
  
 -#define SPARCV9_TICK_PRIVILEGED	(1<<0)
@@ -101,16 +243,50 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #endif
  
  int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num)
-@@ -24,7 +23,7 @@
+ 	{
++	int bn_mul_mont_vis3(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
+ 	int bn_mul_mont_fpu(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
  	int bn_mul_mont_int(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
  
- 	if (num>=8 && !(num&1) &&
+-	if (num>=8 && !(num&1) &&
 -	    (OPENSSL_sparcv9cap_P&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
-+	    (OPENSSL_sparcv9cap_P[0]&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
- 		(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
- 		return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
- 	else
-@@ -36,11 +35,16 @@
+-		(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
+-		return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
+-	else
+-		return bn_mul_mont_int(rp,ap,bp,np,n0,num);
++	if (!(num&1) && num>=6)
++		{
++		if ((num&15)==0 && num<=64 &&
++		    (OPENSSL_sparcv9cap_P[1]&(CFR_MONTMUL|CFR_MONTSQR))== 
++		    			     (CFR_MONTMUL|CFR_MONTSQR))
++			{
++			typedef int (*bn_mul_mont_f)(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_8(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_16(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_24(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_32(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			static const bn_mul_mont_f funcs[4] = {
++				bn_mul_mont_t4_8,	bn_mul_mont_t4_16,
++				bn_mul_mont_t4_24,	bn_mul_mont_t4_32 };
++			bn_mul_mont_f worker = funcs[num/16-1];
++
++			if ((*worker)(rp,ap,bp,np,n0)) return 1;
++			/* retry once and fall back */
++			if ((*worker)(rp,ap,bp,np,n0)) return 1;
++			return bn_mul_mont_vis3(rp,ap,bp,np,n0,num);
++			}
++		if ((OPENSSL_sparcv9cap_P[0]&SPARCV9_VIS3))
++			return bn_mul_mont_vis3(rp,ap,bp,np,n0,num);
++		else if (num>=8 &&
++			(OPENSSL_sparcv9cap_P[0]&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
++			(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
++			return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
++		}
++	return bn_mul_mont_int(rp,ap,bp,np,n0,num);
+ 	}
+ 
+ unsigned long	_sparcv9_rdtick(void);
+@@ -36,11 +60,16 @@
  unsigned long	_sparcv9_vis1_instrument(void);
  void		_sparcv9_vis2_probe(void);
  void		_sparcv9_fmadd_probe(void);
@@ -128,13 +304,13 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #if defined(__sun) && defined(__SVR4)
  		return gethrtime();
  #else
-@@ -51,6 +55,25 @@
+@@ -51,6 +81,25 @@
  	}
  #endif
  
 +size_t OPENSSL_instrument_bus(unsigned int *out,size_t cnt)
 +	{
-+	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++	if ((OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK)) ==
 +			SPARCV9_BLK)
 +		return _sparcv9_vis1_instrument_bus(out,cnt);
 +	else
@@ -143,7 +319,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 +
 +size_t OPENSSL_instrument_bus2(unsigned int *out,size_t cnt,size_t max)
 +	{
-+	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++	if ((OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK)) ==
 +			SPARCV9_BLK)
 +		return _sparcv9_vis1_instrument_bus2(out,cnt,max);
 +	else
@@ -154,7 +330,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #if defined(_BOOT)
  /*
   * Hardcoding sparc capabilities for wanboot.
-@@ -58,7 +81,7 @@
+@@ -58,7 +106,7 @@
   */
  void OPENSSL_cpuid_setup(void)
  	{
@@ -163,7 +339,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  	}
  
  #elif 0 && defined(__sun) && defined(__SVR4)
-@@ -85,11 +108,11 @@
+@@ -85,11 +116,11 @@
  	if (!strcmp (name,"SUNW,UltraSPARC") ||
  	    !strncmp(name,"SUNW,UltraSPARC-I",17))  /* covers II,III,IV */
  		{
@@ -177,7 +353,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  		return DI_WALK_TERMINATE;
  		}
-@@ -96,7 +119,7 @@
+@@ -96,7 +127,7 @@
  	/* This is expected to catch remaining UltraSPARCs, such as T1 */
  	else if (!strncmp(name,"SUNW,UltraSPARC",15))
  		{
@@ -186,7 +362,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  		return DI_WALK_TERMINATE;
  		}
-@@ -115,7 +138,7 @@
+@@ -115,7 +146,7 @@
  
  	if ((e=getenv("OPENSSL_sparcv9cap")))
  		{
@@ -195,7 +371,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  		return;
  		}
  
-@@ -123,17 +146,17 @@
+@@ -123,17 +154,17 @@
  		{
  		if (strcmp(si,"sun4v"))
  			/* FPU is preferred for all CPUs, but US-T1/2 */
@@ -217,7 +393,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  			return;
  			}
  		}
-@@ -193,12 +216,14 @@
+@@ -193,12 +224,14 @@
   
  	if ((e=getenv("OPENSSL_sparcv9cap")))
  		{
@@ -234,7 +410,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  	sigfillset(&all_masked);
  	sigdelset(&all_masked,SIGILL);
-@@ -221,20 +246,20 @@
+@@ -221,20 +254,20 @@
  	if (sigsetjmp(common_jmp,1) == 0)
  		{
  		_sparcv9_rdtick();
@@ -259,7 +435,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  			}
  		}
  
-@@ -241,9 +266,37 @@
+@@ -241,13 +274,53 @@
  	if (sigsetjmp(common_jmp,1) == 0)
  		{
  		_sparcv9_fmadd_probe();
@@ -298,6 +474,22 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  	sigaction(SIGBUS,&bus_oact,NULL);
  	sigaction(SIGILL,&ill_oact,NULL);
  
+ 	sigprocmask(SIG_SETMASK,&oset,NULL);
++
++	if (sizeof(size_t)==8)
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_64BIT_STACK;
++#ifdef __linux
++	else
++		{
++		int ret = syscall(340);
++
++		if (ret>=0 && ret&1)
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_64BIT_STACK;
++		}
++#endif
+ 	}
+ 
+ #endif
 Index: crypto/md5/Makefile
 ===================================================================
 diff -ru openssl-1.0.1e/crypto/md5/Makefile openssl-1.0.1e/crypto/md5/Makefile
@@ -1163,6 +1355,292 @@ diff -ru openssl-1.0.1e/crypto/evp/e_des3.c.orig openssl-1.0.1e/crypto/evp/e_des
  #endif
  	return 1;
  	}
+Index: openssl/crypto/bn/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/bn/Makefile openssl-1.0.1e/crypto/bn/Makefile.new
+--- openssl-1.0.1e/crypto/bn/Makefile 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/bn/Makefile 2011-07-27 10:48:17.817470000 -0700
+@@ -77,6 +77,12 @@
+ 	$(PERL) asm/sparcv9a-mont.pl $(CFLAGS) > $@
+ sparcv9-mont.s:		asm/sparcv9-mont.pl
+ 	$(PERL) asm/sparcv9-mont.pl $(CFLAGS) > $@
++vis3-mont.s:		asm/vis3-mont.pl
++	$(PERL) asm/vis3-mont.pl $(CFLAGS) > $@
++sparct4-mont.S:	asm/sparct4-mont.pl
++	$(PERL) asm/sparct4-mont.pl $(CFLAGS) > $@
++sparcv9-gf2m.S:	asm/sparcv9-gf2m.pl
++	$(PERL) asm/sparcv9-gf2m.pl $(CFLAGS) > $@
+ 
+ bn-mips3.o:	asm/mips3.s
+ 	@if [ "$(CC)" = "gcc" ]; then \
+Index: openssl/crypto/bn/bn_exp.c
+===================================================================
+diff -ru openssl-1.0.1e/crypto/bn/bn_exp.c openssl-1.0.1e/crypto/bn/bn_exp.c.new
+--- bn_exp.c	2011/10/29 19:25:13	1.38
++++ bn_exp.c	2012/11/17 10:34:11	1.39
+@@ -123,8 +123,15 @@
+ # ifndef alloca
+ #  define alloca(s) __builtin_alloca((s))
+ # endif
++#else
++#include <alloca.h>
+ #endif
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++# include "sparc_arch.h"
++extern unsigned int OPENSSL_sparcv9cap_P[];
++#endif
++
+ /* maximum precomputation table size for *variable* sliding windows */
+ #define TABLE_SIZE	32
+ 
+@@ -467,7 +467,15 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 	wstart=bits-1;	/* The top bit of the window */
+ 	wend=0;		/* The bottom bit of the window */
+ 
++#if 1	/* by Shay Gueron's suggestion */
++	j = mont->N.top;	/* borrow j */
++	if (bn_wexpand(r,j) == NULL) goto err;
++	r->d[0] = (0-m->d[0])&BN_MASK2;		/* 2^(top*BN_BITS2) - m */
++	for(i=1;i<j;i++) r->d[i] = (~m->d[i])&BN_MASK2;
++	r->top = j;
++#else
+ 	if (!BN_to_montgomery(r,BN_value_one(),mont,ctx)) goto err;
++#endif
+ 	for (;;)
+ 		{
+ 		if (BN_is_bit_set(p,wstart) == 0)
+@@ -519,6 +527,17 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 		start=0;
+ 		if (wstart < 0) break;
+ 		}
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_VIS3|SPARCV9_PREFER_FPU))
++ 	{
++ 		j = mont->N.top;	/* borrow j */
++ 		val[0]->d[0] = 1;	/* borrow val[0] */
++ 		for (i=1;i<j;i++) val[0]->d[i] = 0;
++ 		val[0]->top = j;
++ 		if (!BN_mod_mul_montgomery(rr,r,val[0],mont,ctx)) goto err;
++ 		}
++ 	else
++#endif
+ 	if (!BN_from_montgomery(rr,r,mont,ctx)) goto err;
+ 	ret=1;
+ err:
+@@ -528,6 +547,28 @@ err:
+ 	return(ret);
+ 	}
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++static BN_ULONG bn_get_bits(const BIGNUM *a, int bitpos)
++	{
++	BN_ULONG ret=0;
++	int wordpos;
++
++	wordpos = bitpos/BN_BITS2;
++	bitpos %= BN_BITS2;
++	if (wordpos>=0 && wordpos < a->top)
++		{
++		ret = a->d[wordpos]&BN_MASK2;
++		if (bitpos)
++			{
++			ret >>= bitpos;
++			if (++wordpos < a->top)
++				ret |= a->d[wordpos]<<(BN_BITS2-bitpos);
++			}
++		}
++
++	return ret&BN_MASK2;
++}
++#endif
+ 
+ /* BN_mod_exp_mont_consttime() stores the precomputed powers in a specific layout
+  * so that accessing any of these table values shows the same access pattern as far
+@@ -587,6 +592,9 @@
+ 	int powerbufLen = 0;
+ 	unsigned char *powerbuf=NULL;
+ 	BIGNUM tmp, am;
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++	unsigned int t4=0;
++#endif
+ 
+ 	bn_check_top(a);
+ 	bn_check_top(p);
+@@ -621,9 +629,18 @@
+ 
+ 	/* Get the window size to use with size of p. */
+ 	window = BN_window_bits_for_ctime_exponent_size(bits);
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++	if (window>=5 && (top&15)==0 && top<=64 &&
++	    (OPENSSL_sparcv9cap_P[1]&(CFR_MONTMUL|CFR_MONTSQR))==
++	    			     (CFR_MONTMUL|CFR_MONTSQR) &&
++	    (t4=OPENSSL_sparcv9cap_P[0]))
++		window=5;
++	else
++#endif
+ #if defined(OPENSSL_BN_ASM_MONT5)
+ 	if (window==6 && bits<=1024) window=5;	/* ~5% improvement of 2048-bit RSA sign */
+ #endif
++	(void)0;
+ 
+ 	/* Allocate a buffer large enough to hold all of the pre-computed
+ 	 * powers of am, am itself and tmp.
+@@ -656,13 +715,13 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 	tmp.flags = am.flags = BN_FLG_STATIC_DATA;
+ 
+ 	/* prepare a^0 in Montgomery domain */
+-#if 1
+- 	if (!BN_to_montgomery(&tmp,BN_value_one(),mont,ctx))	goto err;
+-#else
++#if 1	/* by Shay Gueron's suggestion */
+ 	tmp.d[0] = (0-m->d[0])&BN_MASK2;	/* 2^(top*BN_BITS2) - m */
+ 	for (i=1;i<top;i++)
+ 		tmp.d[i] = (~m->d[i])&BN_MASK2;
+ 	tmp.top = top;
++#else
++	if (!BN_to_montgomery(&tmp,BN_value_one(),mont,ctx))	goto err;
+ #endif
+ 
+ 	/* prepare a^1 in Montgomery domain */
+@@ -673,6 +690,121 @@
+ 		}
+ 	else	if (!BN_to_montgomery(&am,a,mont,ctx))		goto err;
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++    if (t4)
++	{
++	typedef int (*bn_pwr5_mont_f)(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_8(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_16(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_24(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_32(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	static const bn_pwr5_mont_f pwr5_funcs[4] = {
++			bn_pwr5_mont_t4_8,	bn_pwr5_mont_t4_16,
++			bn_pwr5_mont_t4_24,	bn_pwr5_mont_t4_32 };
++	bn_pwr5_mont_f pwr5_worker = pwr5_funcs[top/16-1];
++
++	typedef int (*bn_mul_mont_f)(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_8(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_16(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_24(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_32(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	static const bn_mul_mont_f mul_funcs[4] = {
++			bn_mul_mont_t4_8,	bn_mul_mont_t4_16,
++			bn_mul_mont_t4_24,	bn_mul_mont_t4_32 };
++	bn_mul_mont_f mul_worker = mul_funcs[top/16-1];
++
++	void bn_mul_mont_vis3(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,
++			const BN_ULONG *n0,int num);
++	void bn_mul_mont_t4(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,
++			const BN_ULONG *n0,int num);
++	void bn_mul_mont_gather5_t4(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *table,const BN_ULONG *np,
++			const BN_ULONG *n0,int num,int power);
++	void bn_flip_n_scatter5_t4(const BN_ULONG *inp,size_t num,
++			void *table,size_t power);
++	void bn_gather5_t4(BN_ULONG *out,size_t num,
++			void *table,size_t power);
++	void bn_flip_t4(BN_ULONG *dst,BN_ULONG *src,size_t num);
++
++	BN_ULONG *np=mont->N.d, *n0=mont->n0;
++	int stride = 5*(6-(top/16-1));	/* multiple of 5, but less than 32 */
++
++	/* BN_to_montgomery can contaminate words above .top
++	 * [in BN_DEBUG[_DEBUG] build]... */
++	for (i=am.top; i<top; i++)	am.d[i]=0;
++	for (i=tmp.top; i<top; i++)	tmp.d[i]=0;
++
++	bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,0);
++	bn_flip_n_scatter5_t4(am.d,top,powerbuf,1);
++	if (!(*mul_worker)(tmp.d,am.d,am.d,np,n0) &&
++	    !(*mul_worker)(tmp.d,am.d,am.d,np,n0))
++		bn_mul_mont_vis3(tmp.d,am.d,am.d,np,n0,top);
++	bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,2);
++
++	for (i=3; i<32; i++)
++		{
++		/* Calculate a^i = a^(i-1) * a */
++		if (!(*mul_worker)(tmp.d,tmp.d,am.d,np,n0) &&
++		    !(*mul_worker)(tmp.d,tmp.d,am.d,np,n0))
++			bn_mul_mont_vis3(tmp.d,tmp.d,am.d,np,n0,top);
++		bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,i);
++		}
++
++	/* switch to 64-bit domain */ 
++	np = alloca(top*sizeof(BN_ULONG));
++	top /= 2;
++	bn_flip_t4(np,mont->N.d,top);
++
++	bits--;
++	for (wvalue=0, i=bits%5; i>=0; i--,bits--)
++		wvalue = (wvalue<<1)+BN_is_bit_set(p,bits);
++	bn_gather5_t4(tmp.d,top,powerbuf,wvalue);
++
++	/* Scan the exponent one window at a time starting from the most
++	 * significant bits.
++	 */
++	while (bits >= 0)
++		{
++		if (bits < stride) stride = bits+1;
++		bits -= stride;
++		wvalue = (bn_get_bits(p,bits+1));
++
++		if ((*pwr5_worker)(tmp.d,np,n0,powerbuf,wvalue,stride)) continue;
++		/* retry once and fall back */
++		if ((*pwr5_worker)(tmp.d,np,n0,powerbuf,wvalue,stride)) continue;
++
++		bits += stride-5;
++		wvalue >>= stride-5;
++		wvalue &= 31;
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_gather5_t4(tmp.d,tmp.d,powerbuf,np,n0,top,wvalue);
++		}
++
++	bn_flip_t4(tmp.d,tmp.d,top);
++	top *= 2;
++	/* back to 32-bit domain */
++	tmp.top=top;
++	bn_correct_top(&tmp);
++	OPENSSL_cleanse(np,top*sizeof(BN_ULONG));
++	}
++    else
++#endif
+ #if defined(OPENSSL_BN_ASM_MONT5)
+     /* This optimization uses ideas from http://eprint.iacr.org/2011/239,
+      * specifically optimization of cache-timing attack countermeasures
+@@ -816,6 +990,15 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 	}
+ 
+  	/* Convert the final result from montgomery to standard format */
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_VIS3|SPARCV9_PREFER_FPU))
++		{
++		am.d[0] = 1;	/* borrow am */
++		for (i=1;i<top;i++) am.d[i] = 0;
++		if (!BN_mod_mul_montgomery(rr,&tmp,&am,mont,ctx)) goto err;
++		}
++	else
++#endif
+ 	if (!BN_from_montgomery(rr,&tmp,mont,ctx)) goto err;
+ 	ret=1;
+ err:
 Index: openssl/apps/speed.c
 ===================================================================
 diff -ru openssl-1.0.1e/apps/spped.c openssl-1.0.1e/apps/speed.c
