@@ -136,6 +136,8 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 include $(WS_TOP)/make-rules/shared-targets.mk
 
+COMPONENT_BUILD_GMAKE_ARGS = -j1
+
 # common targets
 
 build:		$(BUILD_32)
