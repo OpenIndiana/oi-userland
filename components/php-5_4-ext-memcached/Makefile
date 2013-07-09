@@ -34,6 +34,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+CLEAN_PATHS +=  package.xml
+
 PHP_PREFIX=/usr/php/5.4
 PHP_SYSCONFDIR=/etc/php/5.4
 PHP_DATADIR=/var/php/5.4
