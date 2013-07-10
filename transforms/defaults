@@ -23,10 +23,20 @@
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-#
-# LP print service
-#
+<transform dir path=etc$ -> default group sys>
+<transform dir path=etc/inet$ -> default group sys>
+<transform dir path=var$ -> default group sys>
 
+<transform dir path=etc/skel$ -> default group sys>
+<transform dir path=usr$ -> default group sys>
+<transform dir path=usr/lib/pkgconfig$ -> default group other>
+<transform dir path=usr/lib/.*/pkgconfig$ -> default group other>
+<transform dir path=usr/share$ -> default group sys>
+<transform dir path=usr/share/aclocal$ -> default group other>
+<transform dir path=usr/share/doc$ -> default group other>
+<transform dir path=usr/share/lib$ -> default group sys>
+<transform dir path=usr/share/lib/java$ -> default group sys>
+<transform dir path=usr/share/lib/java/javadoc$ -> default group other>
 
 #
 # Changes to zoneinfo files on live systems need to trigger a refresh of
@@ -35,16 +45,41 @@
 <transform file link hardlink path=usr/share/lib/zoneinfo/.+ -> add refresh_fmri "svc:/system/timezone:default">
 
 #
-# SMF files
+# Most directories and files under /etc/security are group sys
 #
+<transform dir path=etc/security$ -> default group sys>
+<transform dir path=etc/security/exec_attr.d$ -> default group sys>
+<transform file path=etc/security/exec_attr.d/.* -> default group sys>
+<transform dir path=etc/security/prof_attr.d$ -> default group sys>
+<transform file path=etc/security/prof_attr.d/.* -> default group sys>
+<transform dir path=etc/security/auth_attr.d$ -> default group sys>
+<transform file path=etc/security/auth_attr.d/.* -> default group sys>
+
+#
+# SMF directories and files
+#
+<transform dir path=lib/svc/manifest -> default group sys>
+<transform file path=lib/svc/manifest -> default group sys>
 <transform file path=lib/svc/method/.* -> default mode 0555>
 
 #
 # Many files under /usr/share are group other
 #
+<transform dir path=usr/share/locale(/.+){0,2}$ -> default group other>
 <transform file path=usr/share/locale(/.+){3}$ -> default group other>
+<transform dir path=usr/share/applications$ -> default group other>
 <transform file path=usr/share/applications/.* -> default group other>
+<transform dir path=usr/share/pixmaps$ -> default group other>
 <transform file path=usr/share/pixmaps/.* -> default group other>
+
+<transform dir path=usr/gnu/share$ -> default group sys>
+
+<transform dir path=var/db$ -> default group sys>
+<transform dir path=var/lib$ -> default group other>
+<transform dir path=var/log$ -> default group sys>
+
+# usr/share/icons, and all its subdirectories at any level are group other
+<transform dir path=usr/share/icons(/.*){0,1}$ -> default group other>
 
 #
 # programs & shared objects should generally have mode 0555
