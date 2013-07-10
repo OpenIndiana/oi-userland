@@ -93,7 +93,8 @@ CONFIGURE_OPTIONS.64+= --without-perl
 #
 build:		$(BUILD_32_and_64)
 
-# Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
+# Remove build machine runpath from libMagick++-6.Q16.so.1.0.0 and
+# libMagickCore-6.Q16.so.1.0.0
 install:	$(INSTALL_32_and_64)
 	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
 	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
@@ -103,6 +104,14 @@ install:	$(INSTALL_32_and_64)
 	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
 	/usr/bin/elfedit -e 'dyn:delete RPATH' \
 	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagickCore-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagickCore-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagickCore-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagickCore-6.Q16.so.1.0.0
 
 # ImageMagick tests have hard-coded absolute paths inside, so essentially they
 # can be run only after ImageMagick is actually installed and this is not 
