@@ -41,8 +41,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
 #
@@ -58,13 +56,6 @@ COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
-
-# Show name of "error tag" as part of the warning
-#
-# CFLAGS += -errtags=yes
-# To remove the complier complaints about __restrict keyword,
-# -D_magickcore_restrict should be used.
-CFLAGS += -D_magickcore_restrict=
 
 # Needed to generate a decent RUNPATH for Magick.so
 #
