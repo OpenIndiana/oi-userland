@@ -97,7 +97,7 @@ install:	$(INSTALL_32_and_64)
 	/usr/bin/elfedit -e 'dyn:delete RPATH' \
 	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
 	/usr/bin/elfedit -e 'dyn:delete RPATH' \
-	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0 \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0 ;\
 	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
 	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
 	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
