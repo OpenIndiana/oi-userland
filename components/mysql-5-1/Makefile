@@ -36,6 +36,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
+
 PATCH_LEVEL=0
 
 COMPONENT_PRE_CONFIGURE_ACTION = \

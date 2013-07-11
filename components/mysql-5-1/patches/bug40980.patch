@@ -1,0 +1,113 @@
+# Fixes Solaris bug #15688738
+# ===========================
+
+--- storage/myisam/mi_delete_table.c	2006-12-31 00:32:21 +0000
++++ storage/myisam/mi_delete_table.c	2010-04-01 14:49:02 +0000
+@@ -19,6 +19,41 @@
+ 
+ #include "fulltext.h"
+ 
++
++/**
++  Remove MyISAM data/index file safely
++
++  @details
++    If name is a symlink and file it is pointing to is not in
++    data directory, file is also removed.
++
++  @param name    file to remove
++  
++  @returns
++    0 on success or my_errno on failure
++*/
++
++static int _mi_safe_delete_file(const char *name)
++{
++  DBUG_ENTER("_mi_safe_delete_file");
++  if (my_is_symlink(name) && (*myisam_test_invalid_symlink)(name))
++  {
++    /*
++      Symlink is pointing to file in data directory.
++      Remove symlink, keep file.
++    */
++    if (my_delete(name, MYF(MY_WME)))
++      DBUG_RETURN(my_errno);
++  }
++  else
++  {
++    if (my_delete_with_symlink(name, MYF(MY_WME)))
++      DBUG_RETURN(my_errno);
++  }
++  DBUG_RETURN(0);
++}
++
++
+ int mi_delete_table(const char *name)
+ {
+   char from[FN_REFLEN];
+@@ -58,12 +93,12 @@ int mi_delete_table(const char *name)
+ #endif /* USE_RAID */
+ 
+   fn_format(from,name,"",MI_NAME_IEXT,MY_UNPACK_FILENAME|MY_APPEND_EXT);
+-  if (my_delete_with_symlink(from, MYF(MY_WME)))
++  if (_mi_safe_delete_file(from))
+     DBUG_RETURN(my_errno);
+   fn_format(from,name,"",MI_NAME_DEXT,MY_UNPACK_FILENAME|MY_APPEND_EXT);
+ #ifdef USE_RAID
+   if (raid_type)
+     DBUG_RETURN(my_raid_delete(from, raid_chunks, MYF(MY_WME)) ? my_errno : 0);
+ #endif
+-  DBUG_RETURN(my_delete_with_symlink(from, MYF(MY_WME)) ? my_errno : 0);
++  DBUG_RETURN(_mi_safe_delete_file(from));
+ }
+
+--- mysql-test/r/bug40980.result	1970-01-01 01:00:00.000000000 +0100
++++ mysql-test/r/bug40980.result	2013-06-20 21:42:12.280326900 +0200
+@@ -0,0 +1,14 @@
++drop table if exists t1,t2,t7,t8,t9;
++drop database if exists mysqltest;
++#
++# BUG#40980 - Drop table can remove another MyISAM table's
++#             data and index files
++#
++CREATE TABLE user(a INT) DATA DIRECTORY='MYSQL_TMP_DIR/mysql'
++                             INDEX DIRECTORY='MYSQL_TMP_DIR/mysql';
++FLUSH TABLE user;
++# Symlinking mysql database to tmpdir
++FLUSH TABLE mysql.user;
++DROP TABLE user;
++FLUSH TABLE mysql.user;
++SELECT * FROM mysql.user;
+
+--- mysql-test/t/bug40980.test	1970-01-01 01:00:00.000000000 +0100
++++ mysql-test/t/bug40980.test	2013-06-20 21:41:50.813398500 +0200
+@@ -0,0 +1,29 @@
++--source include/have_symlink.inc
++--source include/not_windows.inc
++
++--disable_warnings
++drop table if exists t1,t2,t7,t8,t9;
++drop database if exists mysqltest;
++--enable_warnings
++
++--echo #
++--echo # BUG#40980 - Drop table can remove another MyISAM table's
++--echo #             data and index files
++--echo #
++--mkdir $MYSQL_TMP_DIR/mysql 
++--replace_result $MYSQL_TMP_DIR MYSQL_TMP_DIR
++eval CREATE TABLE user(a INT) DATA DIRECTORY='$MYSQL_TMP_DIR/mysql'
++                             INDEX DIRECTORY='$MYSQL_TMP_DIR/mysql';
++FLUSH TABLE user;
++--echo # Symlinking mysql database to tmpdir
++--remove_file $MYSQL_TMP_DIR/mysql/user.MYD
++--remove_file $MYSQL_TMP_DIR/mysql/user.MYI
++--rmdir $MYSQL_TMP_DIR/mysql
++--exec ln -s $MYSQLD_DATADIR/mysql $MYSQL_TMP_DIR/mysql
++FLUSH TABLE mysql.user;
++DROP TABLE user;
++FLUSH TABLE mysql.user;
++--disable_result_log
++SELECT * FROM mysql.user;
++--enable_result_log
++--remove_file $MYSQL_TMP_DIR/mysql

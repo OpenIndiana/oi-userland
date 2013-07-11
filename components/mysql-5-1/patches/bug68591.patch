@@ -1,0 +1,287 @@
+# Fixes Solaris bug #15688738
+# ===========================
+
+--- sql/spatial.h	revid:joro@sun.com-20090713174543-cd2x7q1gi1hzoand
++++ sql/spatial.h	2013-06-26 05:14:10 +0000
+@@ -324,6 +324,26 @@
+   {
+     return (cur_data + data_amount > m_data_end);
+   }
++
++  /**
++     Check if there're enough points remaining as requested
++
++     Need to perform the calculation in logical units, since multiplication
++     can overflow the size data type.
++
++     @arg data              pointer to the begining of the points array
++     @arg expected_points   number of points expected
++     @arg extra_point_space extra space for each point element in the array
++     @return               true if there are not enough points
++  */
++  inline bool not_enough_points(const char *data, uint32 expected_points,
++                                uint32 extra_point_space = 0) const
++  {
++    return (m_data_end < data ||
++            (expected_points > ((m_data_end - data) /
++                                (POINT_DATA_SIZE + extra_point_space))));
++  }
++
+   const char *m_data;
+   const char *m_data_end;
+ };
+
+=== modified file 'sql/spatial.cc'
+--- sql/spatial.cc	revid:joro@sun.com-20090713174543-cd2x7q1gi1hzoand
++++ sql/spatial.cc	2013-06-26 05:14:10 +0000
+@@ -393,7 +393,7 @@
+   points= uint4korr(data);
+   data+= 4;
+ 
+-  if (no_data(data, (SIZEOF_STORED_DOUBLE * 2 + offset) * points))
++  if (not_enough_points(data, points, offset))
+     return 0;
+ 
+   /* Calculate MBR for points */
+@@ -476,9 +476,16 @@
+ 
+ uint32 Gis_line_string::get_data_size() const 
+ {
++  size_t n_points;
+   if (no_data(m_data, 4))
+     return GET_SIZE_ERROR;
+-  return 4 + uint4korr(m_data) * POINT_DATA_SIZE;
++
++  n_points= uint4korr(m_data);
++
++  if (not_enough_points(m_data + 4, n_points))
++    return GET_SIZE_ERROR;
++
++  return 4 + n_points * POINT_DATA_SIZE;
+ }
+ 
+ 
+@@ -548,7 +555,7 @@
+   data += 4;
+ 
+   if (n_points < 1 ||
+-      no_data(data, SIZEOF_STORED_DOUBLE * 2 * n_points) ||
++      not_enough_points(data, n_points) ||
+       txt->reserve(((MAX_DIGITS_IN_DOUBLE + 1)*2 + 1) * n_points))
+     return 1;
+ 
+@@ -585,7 +592,7 @@
+     return 1;
+   n_points= uint4korr(data);
+   data+= 4;
+-  if (n_points < 1 || no_data(data, SIZEOF_STORED_DOUBLE * 2 * n_points))
++  if (n_points < 1 || not_enough_points(data, n_points))
+     return 1;
+ 
+   get_point(&prev_x, &prev_y, data);
+@@ -619,7 +626,7 @@
+     return 0;
+   }
+   data+= 4;
+-  if (no_data(data, SIZEOF_STORED_DOUBLE * 2 * n_points))
++  if (n_points == 0 || not_enough_points(data, n_points))
+     return 1;
+ 
+   /* Get first point */
+@@ -690,9 +697,16 @@
+ 
+   while (n_linear_rings--)
+   {
++    size_t n_points;
+     if (no_data(data, 4))
+       return GET_SIZE_ERROR;
+-    data+= 4 + uint4korr(data)*POINT_DATA_SIZE;
++    n_points= uint4korr(data);
++    data+= 4;
++
++    if (not_enough_points(data, n_points))
++      return GET_SIZE_ERROR;
++
++    data+= n_points * POINT_DATA_SIZE;
+   }
+   return (uint32) (data - m_data);
+ }
+@@ -786,8 +800,9 @@
+       return 1;
+     n_points= uint4korr(data);
+     data+= 4;
+-    if (no_data(data, (SIZEOF_STORED_DOUBLE*2) * n_points) ||
+-	txt->reserve(2 + ((MAX_DIGITS_IN_DOUBLE + 1) * 2 + 1) * n_points))
++
++    if (not_enough_points(data, n_points) ||
++        txt->reserve(2 + ((MAX_DIGITS_IN_DOUBLE + 1) * 2 + 1) * n_points))
+       return 1;
+     txt->qs_append('(');
+     data= append_points(txt, n_points, data, 0);
+@@ -840,7 +855,7 @@
+     if (no_data(data, 4))
+       return 1;
+     n_points= uint4korr(data);
+-    if (no_data(data, (SIZEOF_STORED_DOUBLE*2) * n_points))
++    if (not_enough_points(data, n_points))
+       return 1;
+     get_point(&prev_x, &prev_y, data+4);
+     data+= (4+SIZEOF_STORED_DOUBLE*2);
+@@ -876,7 +891,7 @@
+   n_points= uint4korr(data);
+   data+= 4;
+   length= n_points * POINT_DATA_SIZE;
+-  if (no_data(data, length) || result->reserve(1+4+4+ length))
++  if (not_enough_points(data, n_points) || result->reserve(1+4+4+ length))
+     return 1;
+ 
+   result->q_append((char) wkb_ndr);
+@@ -922,7 +937,7 @@
+   n_points= uint4korr(data);
+   points_size= n_points * POINT_DATA_SIZE;
+   data+= 4;
+-  if (no_data(data, points_size) || result->reserve(1+4+4+ points_size))
++  if (not_enough_points(data, n_points) || result->reserve(1+4+4+ points_size))
+     return 1;
+ 
+   result->q_append((char) wkb_ndr);
+@@ -964,7 +979,7 @@
+       return 1;
+     org_n_points= n_points= uint4korr(data);
+     data+= 4;
+-    if (no_data(data, (SIZEOF_STORED_DOUBLE*2) * n_points))
++    if (not_enough_points(data, n_points))
+       return 1;
+     get_point(&prev_x, &prev_y, data);
+     data+= (SIZEOF_STORED_DOUBLE*2);
+@@ -1021,14 +1036,21 @@
+ 
+ /***************************** MultiPoint *******************************/
+ 
+-uint32 Gis_multi_point::get_data_size() const 
++uint32 Gis_multi_point::get_data_size() const
+ {
++  size_t n_points;
++
+   if (no_data(m_data, 4))
+     return GET_SIZE_ERROR;
+-  return 4 + uint4korr(m_data)*(POINT_DATA_SIZE + WKB_HEADER_SIZE);
++
++  n_points= uint4korr(m_data);
++
++  if (not_enough_points(m_data + 4, n_points, WKB_HEADER_SIZE))
++    return GET_SIZE_ERROR;
++
++  return 4 + n_points * (POINT_DATA_SIZE + WKB_HEADER_SIZE);
+ }
+ 
+-
+ bool Gis_multi_point::init_from_wkt(Gis_read_stream *trs, String *wkb)
+ {
+   uint32 n_points= 0;
+@@ -1085,24 +1107,26 @@
+   return proper_size;
+ }
+ 
+-
+ bool Gis_multi_point::get_data_as_wkt(String *txt, const char **end) const
+ {
+   uint32 n_points;
+-  if (no_data(m_data, 4))
++  const char *data= m_data;
++
++  if (no_data(data, 4))
+     return 1;
+ 
+-  n_points= uint4korr(m_data);
+-  if (no_data(m_data+4,
+-	      n_points * (SIZEOF_STORED_DOUBLE * 2 + WKB_HEADER_SIZE)) ||
++  n_points= uint4korr(data);
++  data+= 4;
++
++  if (not_enough_points(data, n_points, WKB_HEADER_SIZE) ||
+       txt->reserve(((MAX_DIGITS_IN_DOUBLE + 1) * 2 + 1) * n_points))
+     return 1;
+-  *end= append_points(txt, n_points, m_data+4, WKB_HEADER_SIZE);
+-  txt->length(txt->length()-1);			// Remove end ','
++
++  *end= append_points(txt, n_points, data, WKB_HEADER_SIZE);
++  txt->length(txt->length()-1);                 // Remove end ','
+   return 0;
+ }
+ 
+-
+ bool Gis_multi_point::get_mbr(MBR *mbr, const char **end) const
+ {
+   return (*end= get_mbr_for_points(mbr, m_data, WKB_HEADER_SIZE)) == 0;
+@@ -1155,11 +1179,20 @@
+ 
+   while (n_line_strings--)
+   {
++    size_t n_points;
++
+     if (no_data(data, WKB_HEADER_SIZE + 4))
+       return GET_SIZE_ERROR;
+-    data+= (WKB_HEADER_SIZE + 4 + uint4korr(data + WKB_HEADER_SIZE) *
+-	    POINT_DATA_SIZE);
++
++    n_points= uint4korr(data + WKB_HEADER_SIZE);
++    data+= WKB_HEADER_SIZE + 4;
++
++    if (not_enough_points(data, n_points))
++      return GET_SIZE_ERROR;
++
++    data+= n_points * POINT_DATA_SIZE;
+   }
++
+   return (uint32) (data - m_data);
+ }
+ 
+@@ -1251,7 +1284,7 @@
+       return 1;
+     n_points= uint4korr(data + WKB_HEADER_SIZE);
+     data+= WKB_HEADER_SIZE + 4;
+-    if (no_data(data, n_points * (SIZEOF_STORED_DOUBLE*2)) ||
++    if (not_enough_points(data, n_points) ||
+ 	txt->reserve(2 + ((MAX_DIGITS_IN_DOUBLE + 1) * 2 + 1) * n_points))
+       return 1;
+     txt->qs_append('(');
+@@ -1312,7 +1345,7 @@
+       return 1;
+     n_points= uint4korr(data + WKB_HEADER_SIZE);
+     length= WKB_HEADER_SIZE + 4+ POINT_DATA_SIZE * n_points;
+-    if (no_data(data, length))
++    if (not_enough_points(data + WKB_HEADER_SIZE + 4, n_points))
+       return 1;
+     if (!--num)
+       break;
+@@ -1410,9 +1443,16 @@
+ 
+     while (n_linear_rings--)
+     {
++      size_t n_points;
+       if (no_data(data, 4))
+-	return GET_SIZE_ERROR;
+-      data+= 4 + uint4korr(data) * POINT_DATA_SIZE;
++        return GET_SIZE_ERROR;
++      n_points= uint4korr(data);
++      data+= 4;
++
++      if (not_enough_points(data, n_points))
++        return GET_SIZE_ERROR;
++
++      data+= n_points * POINT_DATA_SIZE;
+     }
+   }
+   return (uint32) (data - m_data);
+@@ -1512,7 +1552,7 @@
+         return 1;
+       uint32 n_points= uint4korr(data);
+       data+= 4;
+-      if (no_data(data, (SIZEOF_STORED_DOUBLE * 2) * n_points) ||
++      if (not_enough_points(data, n_points) ||
+ 	  txt->reserve(2 + ((MAX_DIGITS_IN_DOUBLE + 1) * 2 + 1) * n_points,
+ 		       512))
+ 	return 1;
+
+=== modified file 'sql/spatial.h'
