@@ -80,6 +80,9 @@ CONFIGURE_OPTIONS.32+= --with-perl=$(PERL)
 CONFIGURE_OPTIONS.32+= --with-perl-options="INSTALLDIRS=vendor"
 CONFIGURE_OPTIONS.64+= --without-perl
 
+# https://www.illumos.org/issues/3880 - complex.h is broken with gcc
+CONFIGURE_OPTIONS+= --without-fftw
+
 # common targets
 #
 build:		$(BUILD_32_and_64)
