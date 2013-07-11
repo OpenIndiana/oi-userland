@@ -1,0 +1,28 @@
+--- ImageMagick-6.8.3/PerlMagick/Makefile.PL.in	2013-07-10 17:10:44.745435794 +0400
++++ ImageMagick-6.8.3/PerlMagick/Makefile.PL.in	2013-07-10 17:11:42.277058145 +0400
+@@ -232,8 +232,9 @@
+    # Perl binary name (if a Perl binary is built)
+    'MAP_TARGET'	=> 'PerlMagick',
+ 
+-   # Let CFLAGS drive optimization flags by setting OPTIMIZE to empty
+-   # 'OPTIMIZE'	=> '',
++   # Remove Solaris Studio specific flags
++   'OPTIMIZE'	=> '-Os',
++   'CCCDLFLAGS' => '-fPIC',
+ 
+    # Use same compiler as ImageMagick
+    'PERLMAINCC'	=> '@PERLMAINCC@ @OPENMP_CFLAGS@',
+--- ImageMagick-6.8.3/PerlMagick/quantum/Makefile.PL.in	2013-07-10 17:12:56.307539148 +0400
++++ ImageMagick-6.8.3/PerlMagick/quantum/Makefile.PL.in	2013-07-10 17:15:51.736517654 +0400
+@@ -229,8 +229,9 @@
+    # Perl binary name (if a Perl binary is built)
+    'MAP_TARGET'	=> 'PerlMagick',
+ 
+-   # Let CFLAGS drive optimization flags by setting OPTIMIZE to empty
+-   # 'OPTIMIZE'	=> '',
++   # Solaris Studio workaround
++   'OPTIMIZE'	=> '-Os',
++   'CCCDLFLAGS' => '-fPIC',
+ 
+    # Use same compiler as ImageMagick
+    'PERLMAINCC'	=> '@PERLMAINCC@ @OPENMP_CFLAGS@',

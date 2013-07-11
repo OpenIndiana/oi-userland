@@ -41,8 +41,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
-
 # IPS_COMPONENT_VERSION is by default set to $(COMPONENT_VERSION) but in
 # this case we need to replace the '-' by '.'.
 #
@@ -58,13 +56,6 @@ COMPONENT_PRE_CONFIGURE_ACTION= ($(CP) -R $(SOURCE_DIR)/PerlMagick $(@D))
 
 LIBS += -lsocket -lnsl
 CONFIGURE_ENV += LIBS="$(LIBS)"
-
-# Show name of "error tag" as part of the warning
-#
-CFLAGS += -errtags=yes
-# To remove the complier complaints about __restrict keyword,
-# -D_magickcore_restrict should be used.
-CFLAGS += -xc99=%all -D_magickcore_restrict=
 
 # Needed to generate a decent RUNPATH for Magick.so
 #
@@ -93,8 +84,17 @@ CONFIGURE_OPTIONS.64+= --without-perl
 #
 build:		$(BUILD_32_and_64)
 
+# Doing it twice because /usr/lib is deep...
 # Remove build machine runpath from libMagick++-6.Q16.so.1.0.0
 install:	$(INSTALL_32_and_64)
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
+	/usr/bin/elfedit -e 'dyn:delete RPATH' \
+	    $(PROTO_DIR)/usr/lib/$(MACH64)/libMagick++-6.Q16.so.1.0.0 \
 	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
 	    $(PROTO_DIR)/usr/lib/libMagick++-6.Q16.so.1.0.0; \
 	/usr/bin/elfedit -e 'dyn:delete RUNPATH' \
