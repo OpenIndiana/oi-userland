@@ -1,0 +1,387 @@
+/*
+ * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ CR 7136531 xscreensaver incorrectly processes PAM_ERROR_MSG and possibly PAM_TEXT_INFO 
+ Displayed PAM_ERROR_MSG and PAM_TEXT_INFO  at Locked screen with Dismiss button. 
+ After reading message, user can click Dismiss button or press Enter to close the
+ Locked Screen.
+*/
+
+---
+ driver/lock-Gtk.c   |   49 ++++++++++++++++++++++--------
+ driver/lock.c       |   49 +++++++++++++++++++++++++------
+ driver/passwd-pam.c |   81 +++++++++++++++++++++++++++++++++++++++++++++++---
+ 3 files changed, 152 insertions(+), 27 deletions(-)
+
+diff --git driver/lock-Gtk.c driver/lock-Gtk.c
+--- driver/lock-Gtk.c
++++ driver/lock-Gtk.c
+@@ -396,11 +396,13 @@ make_dialog (gboolean center_pos)
+                        NULL);
+ 
+   /* Ok button */
+-  button = gtk_button_new_from_stock (GTK_STOCK_OK);
++  button = g_object_new (GTK_TYPE_BUTTON, "visible", FALSE, "label",
++                         "Dismiss",  "can_focus", TRUE, NULL) ;
+   pwd->button = button;
+ 
+   gtk_box_pack_end (GTK_BOX (bbox), button,
+                     FALSE, TRUE, 0);
++  gtk_box_pack_start (GTK_BOX (vbox2), bbox, FALSE, FALSE, 0);
+ 
+   free (user);
+   free (version);
+@@ -419,18 +421,26 @@ ok_clicked_cb (GtkWidget *button, PasswdDialog *pwd)
+ {
+   const char *s;
+ 
+-  g_object_set (pwd->msg_label, "label", _("<b>Checking...</b>"), NULL);
++  if (GTK_IS_BUTTON (button) && gtk_widget_get_visible (button)) /* Is it Dismiss Dialog Box */
++    {
++      write_to_parent ("dismiss", "true", TRUE);
++      gtk_widget_hide (button);
++    }
++  else
++    {
++      g_object_set (pwd->msg_label, "label", _("<b>Checking...</b>"), NULL);
+ 
+-  s = gtk_entry_get_text (GTK_ENTRY (pwd->user_input_entry));
+-  write_to_parent ("input", s, TRUE);
++      s = gtk_entry_get_text (GTK_ENTRY (pwd->user_input_entry));
++      write_to_parent ("input", s, TRUE);
+ 
+-  /* Reset password field to blank, else passwd field shows old passwd *'s,
+-     visible when passwd is expired, and pam is walking the user to change
+-     old passwd.
+-   */
+-  gtk_editable_delete_text (GTK_EDITABLE (pwd->user_input_entry), 0, -1);
+-  gtk_widget_hide (pwd->user_input_entry);
+-  gtk_widget_hide (pwd->user_prompt_label);
++      /* Reset password field to blank, else passwd field shows old passwd *'s,
++         visible when passwd is expired, and pam is walking the user to change
++         old passwd.
++       */
++      gtk_editable_delete_text (GTK_EDITABLE (pwd->user_input_entry), 0, -1);
++      gtk_widget_hide (pwd->user_input_entry);
++      gtk_widget_hide (pwd->user_prompt_label);
++    }
+ }
+ 
+ static void
+@@ -447,6 +457,10 @@ connect_signals (PasswdDialog *pwd)
+   g_signal_connect (pwd->dialog, "delete-event",
+                     G_CALLBACK (gtk_main_quit),
+                     NULL);
++
++  g_signal_connect (pwd->button, "button-press-event",
++                    G_CALLBACK (ok_clicked_cb),
++                    pwd);
+ }
+ 
+ static GdkFilterReturn
+@@ -563,6 +577,7 @@ handle_input (GIOChannel *source, GIOCondition cond, gpointer data)
+             {
+               gtk_label_set_text (GTK_LABEL (pwd->user_prompt_label), msgstr);
+               gtk_widget_show (pwd->user_prompt_label);
++              gtk_widget_hide (pwd->button);
+               msgstr = NULL; /* clear message so we don't show it twice */
+             }
+           else if ((strcmp (str, "ul_prompt_echo") == 0))
+@@ -597,6 +612,14 @@ handle_input (GIOChannel *source, GIOCondition cond, gpointer data)
+             {
+               hmsg = NULL; /* only show msg */
+             }
++          else if ((strcmp (str, "ul_pam_msg") == 0))
++            {
++              GTK_WIDGET_SET_FLAGS (pwd->button,GTK_CAN_DEFAULT);
++              gtk_widget_show (pwd->button);
++              gtk_widget_grab_default (pwd->button);
++              gtk_widget_grab_focus (pwd->button);
++              hmsg = NULL; /* only show msg */
++            }
+           else
+             {
+               /* Should not be others, but if so just show it */
+diff --git driver/lock.c driver/lock.c
+--- driver/lock.c
++++ driver/lock.c
+@@ -437,6 +437,10 @@ handle_passwd_input (XtPointer xtdata, int *fd, XtInputId *id)
+       pw->passwd_string = strdup (data);
+       memset (data, 0, strlen(data));
+     }
++  else if ((strcmp(msg, "dismiss") == 0)) /* Dismiss Dialog */
++    {
++      si->unlock_state = ul_finished;
++    }
+   else if ((strcmp(msg, "ungrab_keyboard") == 0))
+     {
+       /* An accessibility helper needs to access the keyboard, so we have
+@@ -514,7 +518,7 @@ handle_passwd_input (XtPointer xtdata, int *fd, XtInputId *id)
+               si->num_typeahead_events = 0;
+             }
+           XGrabKeyboard (si->dpy, window, True, GrabModeAsync, GrabModeAsync, CurrentTime);
+-          XGrabPointer (si->dpy, window, True, 0, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
++          XGrabPointer (si->dpy, window, True, ButtonPressMask, GrabModeAsync, GrabModeAsync, None, None, CurrentTime);
+           XFlush (si->dpy);
+           XSetInputFocus (si->dpy, window, RevertToPointerRoot, CurrentTime);
+           XSync (si->dpy, False);
+@@ -957,7 +961,7 @@ static int
+ make_passwd_window (saver_info *si,
+ 		    const char *info_msg,
+ 		    const char *prompt,
+-		    Bool echo)
++		    Bool echo, Bool dismissDialog)
+ {
+ #ifndef HAVE_XSCREENSAVER_LOCK
+   XSetWindowAttributes attrs;
+@@ -1006,7 +1010,7 @@ make_passwd_window (saver_info *si,
+     }
+ 
+   if (info_msg)
+-    write_to_child (si, "ul_message", info_msg);
++    write_to_child (si,  dismissDialog ? "ul_pam_msg" : "ul_message", info_msg);
+   if (prompt)
+     {
+       write_to_child (si, "ul_pamprompt", prompt);
+@@ -2709,8 +2713,22 @@ passwd_event_loop (saver_info *si)
+           handle_passwd_key (si, &event.x_event.xkey);
+           si->pw_data->caps_p = (event.x_event.xkey.state & LockMask);
+         }
+-#ifndef HAVE_XSCREENSAVER_LOCK
+-      else if (event.x_event.xany.type == ButtonPress || 
++#ifdef HAVE_XSCREENSAVER_LOCK
++      else if ( event.x_event.xany.type == ButtonPress)
++        {
++          Bool status;
++          status= safe_XSendEvent (si->dpy, si->passwd_dialog,
++                                   False, ButtonPressMask,  &event);
++          if (si->prefs.verbose_p)
++            {
++              if (status)
++                fprintf (stderr, "sent Button Press...\n");
++              else
++                fprintf (stderr, "error %d  Button Press...\n", status);
++            }
++        }
++#else
++      else if (event.x_event.xany.type == ButtonPress ||
+                event.x_event.xany.type == ButtonRelease)
+ 	{
+ 	  si->pw_data->button_state_changed_p = True;
+@@ -2925,6 +2943,8 @@ gui_auth_conv(int num_msg,
+   const char *info_msg, *prompt;
+   struct auth_response *responses;
+ 
++  Bool dismissDialog = False;
++
+   if (si->unlock_state == ul_cancel ||
+       si->unlock_state == ul_time)
+     /* If we've already cancelled or timed out in this PAM conversation,
+@@ -2965,9 +2985,14 @@ gui_auth_conv(int num_msg,
+ 	info_msg_trimmed = remove_trailing_whitespace(info_msg);
+ 	prompt_trimmed = remove_trailing_whitespace(prompt);
+ 
++        if( info_msg_trimmed != NULL &&  prompt_trimmed == NULL )
++            dismissDialog = True;
++        else
++            dismissDialog = False;
++
+ 	if (make_passwd_window(si, info_msg_trimmed, prompt_trimmed,
+                                auth_msgs[i].type == AUTH_MSGTYPE_PROMPT_ECHO
+-                               ? True : False)
++                               ? True : False, dismissDialog)
+             < 0)
+           goto fail;
+ 
+@@ -2989,6 +3014,9 @@ gui_auth_conv(int num_msg,
+       handle_typeahead (si);
+       passwd_event_loop (si);
+ 
++      if( dismissDialog )
++          goto fail; /* If it is DismissDialog, no response message */
++
+       if (si->unlock_state == ul_cancel)
+ 	goto fail;
+ 
+@@ -3028,10 +3056,13 @@ fail:
+     {
+       for (i = 0; i < num_msg; ++i)
+ 	if (responses[i].response)
+-	  free (responses[i].response);
++          {
++            bzero(responses[i].response, strlen(responses[i].response));
++            free (responses[i].response);
++          }
+       free (responses);
+     }
+-
++  *resp = NULL;
+   return -1;
+ }
+ 
+@@ -3067,7 +3098,7 @@ auth_finished_cb (saver_info *si)
+   else						/* good, with no failures, */
+     goto END;					/* or timeout, or cancel. */
+ 
+-  make_passwd_window (si, s, NULL, True);
++  make_passwd_window (si, s, NULL, True, False);
+   XSync (si->dpy, False);
+ 
+   {
+diff --git driver/passwd-pam.c driver/passwd-pam.c
+--- driver/passwd-pam.c
++++ driver/passwd-pam.c
+@@ -540,7 +540,7 @@ pam_try_unlock(saver_info *si, Bool verbose_p,
+       else if (acct_rc != PAM_SUCCESS)
+         {
+           pam_auth_status = acct_rc;
+-          write_to_child (si, "pw_acct_fail", PAM_STRERROR(pamh, acct_rc));
++          write_to_child (si, "ul_acct_fail", PAM_STRERROR(pamh, acct_rc));
+           sleep (3);
+           goto DONE;
+         }
+@@ -712,6 +712,7 @@ pam_conversation (int nmsgs,
+   struct pam_response *pam_responses;
+   saver_info *si = (saver_info *) vsaver_info;
+   Bool verbose_p;
++  size_t msg_len = 0;
+ 
+   /* On SunOS 5.6, the `closure' argument always comes in as random garbage. */
+   si = (saver_info *) suns_pam_implementation_blows;
+@@ -727,6 +728,20 @@ pam_conversation (int nmsgs,
+    * pass along whatever was passed in here.
+    */
+ 
++  if (nmsgs >= PAM_MAX_NUM_MSG)
++    {
++      if (verbose_p)
++        {
++          fprintf (stderr, "Too many PAM messages "
++                  "%d >= %d\n", nmsgs, PAM_MAX_NUM_MSG);
++        }
++
++      syslog (LOG_AUTH | LOG_ERR, "Too many PAM messages "
++               "%d >= %d", nmsgs, PAM_MAX_NUM_MSG);
++      *resp = NULL;
++      return (PAM_CONV_ERR);
++    }
++
+   messages = calloc(nmsgs, sizeof(struct auth_message));
+   pam_responses = calloc(nmsgs, sizeof(*pam_responses));
+   
+@@ -738,6 +753,34 @@ pam_conversation (int nmsgs,
+ 
+   for (i = 0; i < nmsgs; ++i)
+     {
++
++      if (msg[i]->msg == NULL)
++        {
++          if (verbose_p)
++            {
++              fprintf (stderr, "PAM message[%d] "
++                      "style %d NULL\n", i, msg[i]->msg_style);
++            }
++          syslog (LOG_AUTH | LOG_WARNING, "PAM message[%d] "
++                  "style %d NULL", i, msg[i]->msg_style);
++          goto end;
++        }
++
++        msg_len = strlen (msg[i]->msg);
++
++        if (msg_len > PAM_MAX_MSG_SIZE)
++          {
++            if (verbose_p)
++              {
++                fprintf (stderr, "PAM message[%d] "
++                        " style %d length %d too long\n",
++                        i, msg[i]->msg_style, msg_len);
++              }
++             syslog (LOG_AUTH | LOG_WARNING, "PAM message[%d] "
++                     "style %d length %d too long",i, msg[i]->msg_style, msg_len);
++             goto end;
++          }
++
+       if (verbose_p && i > 0) fprintf (stderr, ", ");
+ 
+       messages[i].msg = msg[i]->msg;
+@@ -755,9 +798,16 @@ pam_conversation (int nmsgs,
+       case PAM_TEXT_INFO:       messages[i].type = AUTH_MSGTYPE_INFO;
+         if (verbose_p) fprintf (stderr, "TEXT_INFO");
+         break;
+-      default:                  messages[i].type = AUTH_MSGTYPE_PROMPT_ECHO;
+-        if (verbose_p) fprintf (stderr, "PROMPT_ECHO");
+-        break;
++      default:
++         if (verbose_p)
++           {
++             fprintf (stderr, "Invalid PAM "
++                     "message style %d\n", msg[i]->msg_style);
++           }
++          syslog (LOG_AUTH | LOG_WARNING, "Invalid PAM "
++                 "message style %d", msg[i]->msg_style);
++
++          goto end;
+       }
+ 
+       if (verbose_p) 
+@@ -779,8 +829,28 @@ pam_conversation (int nmsgs,
+ 
+   if (ret == 0)
+     {
++      msg_len = 0;
+       for (i = 0; i < nmsgs; ++i)
+-	pam_responses[i].resp = authresp[i].response;
++      {
++        if (authresp[i].response)
++            msg_len = strlen (authresp[i].response);
++
++        if (msg_len > PAM_MAX_RESP_SIZE)
++          {
++            if (verbose_p)
++              {
++                fprintf (stderr, "PAM "
++                        "message[%d] style %d response %d too long\n",
++                        i, msg[i]->msg_style, msg_len);
++              }
++            syslog (LOG_AUTH | LOG_WARNING, "PAM "
++                    "message[%d] style %d response %d too long",
++                    i, msg[i]->msg_style, msg_len);
++            ret = -1;
++            goto end;
++          }
++        pam_responses[i].resp = authresp[i].response;
++      }
+     }
+ 
+ end:
+@@ -804,6 +874,7 @@ end:
+     if (pam_responses)
+       free(pam_responses);
+ 
++    *resp == NULL;
+     return PAM_CONV_ERR;
+ }
+ 
+1.7.3.2
+

@@ -1,0 +1,513 @@
+/*
+ * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+Centralize atom handling and use XInternAtoms to get the atoms from
+the server in one round trip instead of a separate synchronous/blocking
+round trip for each XInternAtom individual call.
+---
+ driver/Makefile.in            |   14 +++---
+ driver/atoms.c                |  113 +++++++++++++++++++++++++++++++++++++++++
+ driver/atoms.h                |   33 ++++++++++++
+ driver/demo-Gtk.c             |   26 ++-------
+ driver/demo-Xm.c              |   25 ++-------
+ driver/remote.c               |    4 +-
+ driver/windows.c              |    4 +-
+ driver/xscreensaver-command.c |   35 ++-----------
+ driver/xscreensaver.c         |   45 ++++++-----------
+ driver/xscreensaver.h         |    3 -
+ 10 files changed, 188 insertions(+), 114 deletions(-)
+ create mode 100644 driver/atoms.c
+ create mode 100644 driver/atoms.h
+
+diff --git driver/Makefile.in driver/Makefile.in
+--- driver/Makefile.in
++++ driver/Makefile.in
+@@ -190,18 +190,18 @@ SAVER_OBJS_1	= xscreensaver.o windows.o screens.o timers.o subprocs.o \
+ 		  exec.o xset.o splash.o setuid.o stderr.o mlstring.o
+ 
+ SAVER_SRCS	= $(SAVER_SRCS_1) prefs.c dpms.c $(LOCK_SRCS) \
+-		  $(SAVER_UTIL_SRCS) $(GL_SRCS)
++		  $(SAVER_UTIL_SRCS) $(GL_SRCS) atoms.c
+ SAVER_OBJS	= $(SAVER_OBJS_1) prefs.o dpms.o $(LOCK_OBJS) \
+-		  $(SAVER_UTIL_OBJS) $(GL_OBJS)
++		  $(SAVER_UTIL_OBJS) $(GL_OBJS) atoms.o
+ 
+-CMD_SRCS	= remote.c xscreensaver-command.c
+-CMD_OBJS	= remote.o xscreensaver-command.o
++CMD_SRCS	= remote.c atoms.c xscreensaver-command.c
++CMD_OBJS	= remote.o atoms.o xscreensaver-command.o
+ 
+ DEMO_SRCS_1	= prefs.c dpms.c
+ DEMO_OBJS_1	= prefs.o dpms.o
+ 
+-DEMO_SRCS	= $(DEMO_SRCS_1) remote.c exec.c $(DEMO_UTIL_SRCS)
+-DEMO_OBJS	= $(DEMO_OBJS_1) remote.o exec.o $(DEMO_UTIL_OBJS)
++DEMO_SRCS	= $(DEMO_SRCS_1) remote.c atoms.c exec.c $(DEMO_UTIL_SRCS)
++DEMO_OBJS	= $(DEMO_OBJS_1) remote.o atoms.o exec.o $(DEMO_UTIL_OBJS)
+ 
+ PDF2JPEG_SRCS	= pdf2jpeg.m
+ PDF2JPEG_OBJS	= pdf2jpeg.o
+@@ -231,7 +231,7 @@ SCRIPTS		= $(SCRIPTS_1) @SCRIPTS_OSX@
+ HDRS		= XScreenSaver_ad.h XScreenSaver_Xm_ad.h \
+ 		  xscreensaver.h prefs.h remote.h exec.h \
+ 		  demo-Gtk-widgets.h demo-Gtk-stubs.h demo-Gtk-support.h \
+-		  demo-Gtk-conf.h auth.h mlstring.h types.h
++		  demo-Gtk-conf.h auth.h mlstring.h types.h atoms.h
+ MEN_1		= xscreensaver.man xscreensaver-demo.man \
+ 		  xscreensaver-command.man \
+ 		  xscreensaver-text.man \
+diff --git driver/atoms.c driver/atoms.c
+new file mode 100644
+--- /dev/null
++++ driver/atoms.c
+@@ -0,0 +1,113 @@
++/* xscreensaver, Copyright (c) 1991-2010 Jamie Zawinski <jwz@jwz.org>
++ *
++ * Permission to use, copy, modify, distribute, and sell this software and its
++ * documentation for any purpose is hereby granted without fee, provided that
++ * the above copyright notice appear in all copies and that both that
++ * copyright notice and this permission notice appear in supporting
++ * documentation.  No representations are made about the suitability of this
++ * software for any purpose.  It is provided "as is" without express or
++ * implied warranty.
++ */
++
++#ifdef HAVE_CONFIG_H
++# include "config.h"
++#endif
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <sys/types.h>
++
++#include <X11/Xproto.h>		/* for CARD32 */
++#include <X11/Xlib.h>
++#include <X11/Xos.h>
++
++#include "atoms.h"
++
++/* Atoms to retrieve info from remote daemon */
++Atom XA_SCREENSAVER, XA_SCREENSAVER_ID, XA_SCREENSAVER_VERSION,
++   XA_SCREENSAVER_RESPONSE, XA_SCREENSAVER_STATUS;
++
++/* Atoms to send commands to remote daemon */
++Atom XA_ACTIVATE, XA_BLANK, XA_CYCLE, XA_DEACTIVATE, XA_DEMO,
++  XA_EXIT, XA_LOCK, XA_NEXT, XA_PREFS, XA_PREV, XA_RESTART,
++  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE;
++
++static const struct atom_request remote_control_atom_list[] =
++{
++    { &XA_SCREENSAVER, "SCREENSAVER" },
++    { &XA_SCREENSAVER_ID, "_SCREENSAVER_ID" },
++    { &XA_SCREENSAVER_VERSION, "_SCREENSAVER_VERSION" },
++    { &XA_SCREENSAVER_RESPONSE, "_SCREENSAVER_RESPONSE" },
++    { &XA_SCREENSAVER_STATUS, "_SCREENSAVER_STATUS" },
++    { &XA_ACTIVATE, "ACTIVATE" },
++    { &XA_BLANK, "BLANK" },
++    { &XA_CYCLE, "CYCLE" },
++    { &XA_DEACTIVATE, "DEACTIVATE" },
++    { &XA_DEMO, "DEMO" },
++    { &XA_EXIT, "EXIT" },
++    { &XA_LOCK, "LOCK" },
++    { &XA_NEXT, "NEXT" },
++    { &XA_PREFS, "PREFS" },
++    { &XA_PREV, "PREV" },
++    { &XA_RESTART, "RESTART" },
++    { &XA_SELECT, "SELECT" },
++    { &XA_THROTTLE, "THROTTLE" },
++    { &XA_UNTHROTTLE, "UNTHROTTLE" },
++    { NULL, NULL } /* Must be last to terminate list */
++};
++
++const struct atom_request *remote_control_atoms = remote_control_atom_list;
++
++/* Load a list of atoms in a single round trip to the X server instead of
++   waiting for a synchronous round trip for each and every atom */
++Status request_atoms ( Display *dpy,
++		       const struct atom_request **request_lists )
++{
++  int atom_count, n;
++  Status result;
++  const struct atom_request **l, *r;
++  Atom *atoms;
++  const char **names;
++
++  /* Count the number of items across all the lists passed in */
++  atom_count = 0;
++  for (l = request_lists; l != NULL && *l != NULL; l++)
++    {
++      for (r = *l; r != NULL && r->name != NULL; r++)
++	{
++	  atom_count++;
++	}
++    }
++
++  atoms = calloc(atom_count, sizeof(Atom));
++  names = calloc(atom_count, sizeof(char *));
++  if (!atoms || !names)
++    return -1;
++
++  n = 0;
++  for (l = request_lists; l != NULL && *l != NULL; l++)
++    {
++      for (r = *l; r != NULL && r->name != NULL; r++)
++	{
++	  names[n++] = r->name;
++	}
++    }
++  result = XInternAtoms( dpy, (char **) names, atom_count, False, atoms );
++
++  n = 0;
++  for (l = request_lists; l != NULL && *l != NULL; l++)
++    {
++      for (r = *l; r != NULL && r->name != NULL; r++)
++	{
++#if DEBUG_ATOMS
++	  fprintf (stderr, "atom: %s => %d\n", names[n], atoms[n]);
++#endif
++	  *(r->atomp) = atoms[n++];
++	}
++    }
++
++  free(atoms);
++  free(names);
++
++  return result;
++}
+diff --git driver/atoms.h driver/atoms.h
+new file mode 100644
+--- /dev/null
++++ driver/atoms.h
+@@ -0,0 +1,33 @@
++/* xscreensaver, Copyright (c) 1991-2010 Jamie Zawinski <jwz@jwz.org>
++ *
++ * Permission to use, copy, modify, distribute, and sell this software and its
++ * documentation for any purpose is hereby granted without fee, provided that
++ * the above copyright notice appear in all copies and that both that
++ * copyright notice and this permission notice appear in supporting
++ * documentation.  No representations are made about the suitability of this
++ * software for any purpose.  It is provided "as is" without express or
++ * implied warranty.
++ */
++
++#ifndef _XSCREENSAVER_ATOMS_H_
++#define _XSCREENSAVER_ATOMS_H_
++
++struct atom_request {
++    Atom *atomp;
++    const char *name;
++};
++
++extern const struct atom_request *remote_control_atoms;
++extern Status request_atoms ( Display *dpy,
++			      const struct atom_request **request_lists );
++
++/* Atoms to retrieve info from remote daemon */
++extern Atom XA_SCREENSAVER, XA_SCREENSAVER_ID, XA_SCREENSAVER_VERSION,
++  XA_SCREENSAVER_RESPONSE, XA_SCREENSAVER_STATUS;
++
++/* Atoms to send commands to remote daemon */
++extern Atom XA_ACTIVATE, XA_BLANK, XA_CYCLE, XA_DEACTIVATE, XA_DEMO,
++  XA_EXIT, XA_LOCK, XA_NEXT, XA_PREFS, XA_PREV, XA_RESTART,
++  XA_SELECT, XA_THROTTLE, XA_UNTHROTTLE;
++
++#endif /* _XSCREENSAVER_ATOMS_H_ */
+diff --git driver/demo-Gtk.c driver/demo-Gtk.c
+--- driver/demo-Gtk.c
++++ driver/demo-Gtk.c
+@@ -118,6 +118,7 @@
+ #include "resources.h"		/* for parse_time() */
+ #include "visual.h"		/* for has_writable_cells() */
+ #include "remote.h"		/* for xscreensaver_command() */
++#include "atoms.h"
+ #include "usleep.h"
+ 
+ #include "logo-50.xpm"
+@@ -252,12 +253,6 @@ typedef struct {
+    a closure object of our own down into the various widget callbacks. */
+ static state *global_state_kludge;
+ 
+-Atom XA_VROOT;
+-Atom XA_SCREENSAVER, XA_SCREENSAVER_RESPONSE, XA_SCREENSAVER_VERSION;
+-Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_SELECT, XA_DEMO;
+-Atom XA_ACTIVATE, XA_BLANK, XA_LOCK, XA_RESTART, XA_EXIT;
+-
+-
+ static void populate_demo_window (state *, int list_elt);
+ static void populate_prefs_page (state *);
+ static void populate_popup_window (state *);
+@@ -5050,20 +5045,11 @@ main (int argc, char **argv)
+ 
+   /* Intern the atoms that xscreensaver_command() needs.
+    */
+-  XA_VROOT = XInternAtom (dpy, "__SWM_VROOT", False);
+-  XA_SCREENSAVER = XInternAtom (dpy, "SCREENSAVER", False);
+-  XA_SCREENSAVER_VERSION = XInternAtom (dpy, "_SCREENSAVER_VERSION",False);
+-  XA_SCREENSAVER_STATUS = XInternAtom (dpy, "_SCREENSAVER_STATUS", False);
+-  XA_SCREENSAVER_ID = XInternAtom (dpy, "_SCREENSAVER_ID", False);
+-  XA_SCREENSAVER_RESPONSE = XInternAtom (dpy, "_SCREENSAVER_RESPONSE", False);
+-  XA_SELECT = XInternAtom (dpy, "SELECT", False);
+-  XA_DEMO = XInternAtom (dpy, "DEMO", False);
+-  XA_ACTIVATE = XInternAtom (dpy, "ACTIVATE", False);
+-  XA_BLANK = XInternAtom (dpy, "BLANK", False);
+-  XA_LOCK = XInternAtom (dpy, "LOCK", False);
+-  XA_EXIT = XInternAtom (dpy, "EXIT", False);
+-  XA_RESTART = XInternAtom (dpy, "RESTART", False);
+-
++  {
++    const struct atom_request *atom_lists[2] = { NULL, NULL };
++    atom_lists[0] = remote_control_atoms;
++    request_atoms (dpy, atom_lists);
++  }
+ 
+   /* Create the window and all its widgets.
+    */
+diff --git driver/demo-Xm.c driver/demo-Xm.c
+--- driver/demo-Xm.c
++++ driver/demo-Xm.c
+@@ -82,6 +82,7 @@
+ #include "resources.h"		/* for parse_time() */
+ #include "visual.h"		/* for has_writable_cells() */
+ #include "remote.h"		/* for xscreensaver_command() */
++#include "atoms.h"
+ #include "usleep.h"
+ 
+ #include <stdio.h>
+@@ -110,12 +111,6 @@ extern const char *visual_menu[];
+ 
+ static char *short_version = 0;
+ 
+-Atom XA_VROOT;
+-Atom XA_SCREENSAVER, XA_SCREENSAVER_RESPONSE, XA_SCREENSAVER_VERSION;
+-Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_SELECT, XA_DEMO;
+-Atom XA_ACTIVATE, XA_BLANK, XA_LOCK, XA_RESTART, XA_EXIT;
+-
+-
+ static void populate_demo_window (Widget toplevel,
+                                   int which, prefs_pair *pair);
+ static void populate_prefs_page (Widget top, prefs_pair *pair);
+@@ -1791,19 +1786,11 @@ main (int argc, char **argv)
+ 
+   /* Intern the atoms that xscreensaver_command() needs.
+    */
+-  XA_VROOT = XInternAtom (dpy, "__SWM_VROOT", False);
+-  XA_SCREENSAVER = XInternAtom (dpy, "SCREENSAVER", False);
+-  XA_SCREENSAVER_VERSION = XInternAtom (dpy, "_SCREENSAVER_VERSION",False);
+-  XA_SCREENSAVER_STATUS = XInternAtom (dpy, "_SCREENSAVER_STATUS", False);
+-  XA_SCREENSAVER_ID = XInternAtom (dpy, "_SCREENSAVER_ID", False);
+-  XA_SCREENSAVER_RESPONSE = XInternAtom (dpy, "_SCREENSAVER_RESPONSE", False);
+-  XA_SELECT = XInternAtom (dpy, "SELECT", False);
+-  XA_DEMO = XInternAtom (dpy, "DEMO", False);
+-  XA_ACTIVATE = XInternAtom (dpy, "ACTIVATE", False);
+-  XA_BLANK = XInternAtom (dpy, "BLANK", False);
+-  XA_LOCK = XInternAtom (dpy, "LOCK", False);
+-  XA_EXIT = XInternAtom (dpy, "EXIT", False);
+-  XA_RESTART = XInternAtom (dpy, "RESTART", False);
++  {
++    const struct atom_request *atom_lists[2] = { NULL, NULL };
++    atom_lists[0] = remote_control_atoms;
++    request_atoms (dpy, atom_lists);
++  }
+ 
+   /* Create the window and all its widgets.
+    */
+diff --git driver/remote.c driver/remote.c
+--- driver/remote.c
++++ driver/remote.c
+@@ -34,15 +34,13 @@
+ #include <X11/Xos.h>
+ 
+ #include "remote.h"
++#include "atoms.h"
+ 
+ #ifdef _VROOT_H_
+ ERROR! you must not include vroot.h in this file
+ #endif
+ 
+ extern char *progname;
+-extern Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_RESPONSE;
+-extern Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_EXIT;
+-extern Atom XA_VROOT, XA_SELECT, XA_DEMO, XA_BLANK, XA_LOCK;
+ 
+ 
+ static XErrorHandler old_handler = 0;
+diff --git driver/windows.c driver/windows.c
+--- driver/windows.c
++++ driver/windows.c
+@@ -69,14 +69,12 @@ typedef long PROP32;
+ #include "xscreensaver.h"
+ #include "visual.h"
+ #include "fade.h"
++#include "atoms.h"
+ 
+ 
+ extern int kill (pid_t, int);		/* signal() is in sys/signal.h... */
+ 
+ Atom XA_VROOT, XA_XSETROOT_ID, XA_ESETROOT_PMAP_ID, XA_XROOTPMAP_ID;
+-Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_ID;
+-Atom XA_SCREENSAVER_STATUS;
+-
+ 
+ extern saver_info *global_si_kludge;	/* I hate C so much... */
+ 
+diff --git driver/xscreensaver-command.c driver/xscreensaver-command.c
+--- driver/xscreensaver-command.c
++++ driver/xscreensaver-command.c
+@@ -40,6 +40,7 @@
+ typedef long PROP32;
+ 
+ #include "remote.h"
++#include "atoms.h"
+ #include "version.h"
+ 
+ #ifdef _VROOT_H_
+@@ -48,13 +49,6 @@ ERROR! you must not include vroot.h in this file
+ 
+ char *progname;
+ 
+-Atom XA_VROOT;
+-Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_RESPONSE;
+-Atom XA_SCREENSAVER_ID, XA_SCREENSAVER_STATUS, XA_SELECT, XA_DEMO, XA_EXIT;
+-Atom XA_BLANK, XA_LOCK;
+-static Atom XA_ACTIVATE, XA_DEACTIVATE, XA_CYCLE, XA_NEXT, XA_PREV;
+-static Atom XA_RESTART, XA_PREFS, XA_THROTTLE, XA_UNTHROTTLE;
+-
+ static char *screensaver_version;
+ # ifdef __GNUC__
+   __extension__   /* don't warn about "string length is greater than the
+@@ -285,28 +279,11 @@ main (int argc, char **argv)
+       exit (1);
+     }
+ 
+-  XA_VROOT = XInternAtom (dpy, "__SWM_VROOT", False);
+-  XA_SCREENSAVER = XInternAtom (dpy, "SCREENSAVER", False);
+-  XA_SCREENSAVER_ID = XInternAtom (dpy, "_SCREENSAVER_ID", False);
+-  XA_SCREENSAVER_VERSION = XInternAtom (dpy, "_SCREENSAVER_VERSION",False);
+-  XA_SCREENSAVER_STATUS = XInternAtom (dpy, "_SCREENSAVER_STATUS", False);
+-  XA_SCREENSAVER_RESPONSE = XInternAtom (dpy, "_SCREENSAVER_RESPONSE", False);
+-  XA_ACTIVATE = XInternAtom (dpy, "ACTIVATE", False);
+-  XA_DEACTIVATE = XInternAtom (dpy, "DEACTIVATE", False);
+-  XA_RESTART = XInternAtom (dpy, "RESTART", False);
+-  XA_CYCLE = XInternAtom (dpy, "CYCLE", False);
+-  XA_NEXT = XInternAtom (dpy, "NEXT", False);
+-  XA_PREV = XInternAtom (dpy, "PREV", False);
+-  XA_SELECT = XInternAtom (dpy, "SELECT", False);
+-  XA_EXIT = XInternAtom (dpy, "EXIT", False);
+-  XA_DEMO = XInternAtom (dpy, "DEMO", False);
+-  XA_PREFS = XInternAtom (dpy, "PREFS", False);
+-  XA_LOCK = XInternAtom (dpy, "LOCK", False);
+-  XA_BLANK = XInternAtom (dpy, "BLANK", False);
+-  XA_THROTTLE = XInternAtom (dpy, "THROTTLE", False);
+-  XA_UNTHROTTLE = XInternAtom (dpy, "UNTHROTTLE", False);
+-
+-  XSync (dpy, 0);
++  {
++    const struct atom_request *atom_lists[2] = { NULL, NULL };
++    atom_lists[0] = remote_control_atoms;
++    request_atoms (dpy, atom_lists);
++  }
+ 
+   if (cmd == &XA_WATCH)
+     {
+diff --git driver/xscreensaver.c driver/xscreensaver.c
+--- driver/xscreensaver.c
++++ driver/xscreensaver.c
+@@ -224,6 +224,7 @@
+ #include "visual.h"
+ #include "usleep.h"
+ #include "auth.h"
++#include "atoms.h"
+ 
+ saver_info *global_si_kludge = 0;	/* I hate C so much... */
+ 
+@@ -232,12 +233,6 @@ char *progclass = 0;
+ XrmDatabase db = 0;
+ 
+ 
+-static Atom XA_SCREENSAVER_RESPONSE;
+-static Atom XA_ACTIVATE, XA_DEACTIVATE, XA_CYCLE, XA_NEXT, XA_PREV;
+-static Atom XA_RESTART, XA_SELECT;
+-static Atom XA_THROTTLE, XA_UNTHROTTLE;
+-Atom XA_DEMO, XA_PREFS, XA_EXIT, XA_LOCK, XA_BLANK;
+-
+ 
+ static XrmOptionDescRec options [] = {
+ 
+@@ -628,30 +623,20 @@ connect_to_server (saver_info *si, int *argc, char **argv)
+ 
+   db = si->prefs.db;	/* resources.c needs this */
+ 
+-  XA_VROOT = XInternAtom (si->dpy, "__SWM_VROOT", False);
+-  XA_SCREENSAVER = XInternAtom (si->dpy, "SCREENSAVER", False);
+-  XA_SCREENSAVER_VERSION = XInternAtom (si->dpy, "_SCREENSAVER_VERSION",False);
+-  XA_SCREENSAVER_ID = XInternAtom (si->dpy, "_SCREENSAVER_ID", False);
+-  XA_SCREENSAVER_STATUS = XInternAtom (si->dpy, "_SCREENSAVER_STATUS", False);
+-  XA_SCREENSAVER_RESPONSE = XInternAtom (si->dpy, "_SCREENSAVER_RESPONSE",
+-					 False);
+-  XA_XSETROOT_ID = XInternAtom (si->dpy, "_XSETROOT_ID", False);
+-  XA_ESETROOT_PMAP_ID = XInternAtom (si->dpy, "ESETROOT_PMAP_ID", False);
+-  XA_XROOTPMAP_ID = XInternAtom (si->dpy, "_XROOTPMAP_ID", False);
+-  XA_ACTIVATE = XInternAtom (si->dpy, "ACTIVATE", False);
+-  XA_DEACTIVATE = XInternAtom (si->dpy, "DEACTIVATE", False);
+-  XA_RESTART = XInternAtom (si->dpy, "RESTART", False);
+-  XA_CYCLE = XInternAtom (si->dpy, "CYCLE", False);
+-  XA_NEXT = XInternAtom (si->dpy, "NEXT", False);
+-  XA_PREV = XInternAtom (si->dpy, "PREV", False);
+-  XA_SELECT = XInternAtom (si->dpy, "SELECT", False);
+-  XA_EXIT = XInternAtom (si->dpy, "EXIT", False);
+-  XA_DEMO = XInternAtom (si->dpy, "DEMO", False);
+-  XA_PREFS = XInternAtom (si->dpy, "PREFS", False);
+-  XA_LOCK = XInternAtom (si->dpy, "LOCK", False);
+-  XA_BLANK = XInternAtom (si->dpy, "BLANK", False);
+-  XA_THROTTLE = XInternAtom (si->dpy, "THROTTLE", False);
+-  XA_UNTHROTTLE = XInternAtom (si->dpy, "UNTHROTTLE", False);
++  {
++    const struct atom_request root_atoms[] =
++      {
++	{ &XA_VROOT, "__SWM_VROOT" },
++	{ &XA_XSETROOT_ID, "_XSETROOT_ID" },
++	{ &XA_ESETROOT_PMAP_ID, "ESETROOT_PMAP_ID" },
++	{ &XA_XROOTPMAP_ID, "_XROOTPMAP_ID" },
++	{ NULL, NULL } /* Must be last to terminate list */
++      };
++    const struct atom_request *atom_lists[3] = { NULL, NULL, NULL };
++    atom_lists[0] = remote_control_atoms;
++    atom_lists[1] = root_atoms;
++    request_atoms (si->dpy, atom_lists);
++  }
+ 
+   return toplevel_shell;
+ }
+diff --git driver/xscreensaver.h driver/xscreensaver.h
+--- driver/xscreensaver.h
++++ driver/xscreensaver.h
+@@ -200,8 +200,5 @@ Bool safe_XF86VidModeGetViewPort (Display *, int, int *, int *);
+ #endif /* HAVE_XF86VMODE */
+ 
+ extern Atom XA_VROOT, XA_XSETROOT_ID, XA_ESETROOT_PMAP_ID, XA_XROOTPMAP_ID;
+-extern Atom XA_SCREENSAVER, XA_SCREENSAVER_VERSION, XA_SCREENSAVER_ID;
+-extern Atom XA_SCREENSAVER_STATUS, XA_LOCK, XA_BLANK;
+-extern Atom XA_DEMO, XA_PREFS;
+ 
+ #endif /* __XSCREENSAVER_H__ */
+
