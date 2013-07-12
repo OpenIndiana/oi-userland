@@ -50,6 +50,9 @@ include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/lint-libraries.mk
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/perl5/bin
+endif
 
 # Variant of OpenSSL for wanboot is built in build/sparcv9-wanboot.
 BUILD_DIR_WANBOOT = $(BUILD_DIR)/$(MACH64)-wanboot

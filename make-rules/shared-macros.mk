@@ -225,7 +225,8 @@ BUILD_TOOLS ?=	/ws/on12-tools
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
 SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
 
-PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.2.0.1
+PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.2.0.2
+PARFAIT_TOOLS=	$(WS_TOOLS)/$(MACH)/parfait
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
 export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc
 export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC
@@ -264,15 +265,15 @@ PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
 
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-CC.studio.32 =	$(WS_TOOLS)/parfait/cc
-CXX.studio.32 =	$(WS_TOOLS)/parfait/CC
-CC.studio.64 =	$(WS_TOOLS)/parfait/cc
-CXX.studio.64 =	$(WS_TOOLS)/parfait/CC
-CC.gcc.32 =	$(WS_TOOLS)/parfait/gcc
-CXX.gcc.32 =	$(WS_TOOLS)/parfait/g++
-CC.gcc.64 =	$(WS_TOOLS)/parfait/gcc
-CXX.gcc.64 =	$(WS_TOOLS)/parfait/g++
-LD =		$(WS_TOOLS)/parfait/ld
+CC.studio.32 =	$(PARFAIT_TOOLS)/cc
+CXX.studio.32 =	$(PARFAIT_TOOLS)/CC
+CC.studio.64 =	$(PARFAIT_TOOLS)/cc
+CXX.studio.64 =	$(PARFAIT_TOOLS)/CC
+CC.gcc.32 =	$(PARFAIT_TOOLS)/gcc
+CXX.gcc.32 =	$(PARFAIT_TOOLS)/g++
+CC.gcc.64 =	$(PARFAIT_TOOLS)/gcc
+CXX.gcc.64 =	$(PARFAIT_TOOLS)/g++
+LD =		$(PARFAIT_TOOLS)/ld
 endif
 
 CC =		$(CC.$(COMPILER).$(BITS))

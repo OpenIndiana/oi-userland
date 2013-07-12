@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -45,6 +45,9 @@ $(BUILD_DIR_32)/.built: COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/ap
 $(BUILD_DIR_64)/.built: COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+endif
 
 build: $(BUILD_32_and_64)
 

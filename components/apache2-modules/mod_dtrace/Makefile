@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -39,6 +39,9 @@ $(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -32"
 $(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -64"
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+endif
 
 download:
 

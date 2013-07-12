@@ -18,8 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cdrtools
@@ -30,8 +31,12 @@ COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:6326762da8b8281c9a910c66fe698cd4d1bc5f33c37b59e8f1c83343c25f3e98
 COMPONENT_ARCHIVE_URL=  ftp://ftp.berlios.de/pub/cdrecord/$(COMPONENT_ARCHIVE)
-PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 COMPONENT_BUGDB=	utility/cdrtools
+
+PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+endif
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
@@ -39,6 +44,11 @@ include ../../make-rules/ips.mk
 
 COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
 COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPONENT_BUILD_ENV +=	"ac_cv_exeext=no"
+COMPONENT_BUILD_ENV +=	"ac_cv_objext=o"
+endif
+
 
 build:          $(BUILD_32)
 

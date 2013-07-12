@@ -31,19 +31,19 @@ validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
 # some things reset the environment which causes lovely infinite
 # loops
 links:
-	@$(MKDIR) parfait
+	@$(MKDIR) $(PARFAIT_TOOLS)
 	@for i in cc CC gcc g++ ld ; do \
-		$(MKDIR) parfait ; \
-		$(RM) parfait/$$i ; \
-		echo "#!/bin/ksh" > parfait/$$i ; \
-		echo "IFS=" >> parfait/$$i ; \
-		echo "export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc" >> parfait/$$i ; \
-		echo "export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC" >> parfait/$$i ; \
-		echo "export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc" >> parfait/$$i ; \
-		echo "export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++" >> parfait/$$i ; \
-		echo "export PARFAIT_NATIVELD=/usr/bin/ld" >> parfait/$$i ; \
-		echo "exec" $(PARFAIT_ROOT)/$(MACH)/parfait-$$i '$$*' >> parfait/$$i ; \
-		chmod +x parfait/$$i ; \
+		$(MKDIR) $(PARFAIT_TOOLS) ; \
+		$(RM) $(PARFAIT_TOOLS)/$$i ; \
+		echo "#!/bin/ksh" > $(PARFAIT_TOOLS)/$$i ; \
+		echo "IFS=" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "export PARFAIT_NATIVELD=/usr/bin/ld" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "exec" $(PARFAIT_ROOT)/$(MACH)/parfait-$$i '$$*' >> $(PARFAIT_TOOLS)/$$i ; \
+		chmod +x $(PARFAIT_TOOLS)/$$i ; \
 	done
 
 pkglint:
@@ -69,5 +69,5 @@ clean:
 
 clobber:	clean
 	@$(RM) time-*.so python/pkglint/*.pyc
-	@$(RM) -r parfait
+	@$(RM) -r $(PARFAIT_TOOLS)
 

@@ -44,6 +44,10 @@ include ../../make-rules/ips.mk
 
 # Necessary to find CC during build
 PATH=$(SPRO_VROOT)/bin:/usr/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
+endif
+
 
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =	($(CLONEY) $(SOURCE_DIR) $(@D))
