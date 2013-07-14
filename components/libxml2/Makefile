@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -47,41 +48,47 @@ include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
 CFLAGS +=	$(CPP_LARGEFILES)
-LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
+LDFLAGS +=	$(CC_BITS) $(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --with-threads
 CONFIGURE_OPTIONS += --with-python=$(PYTHON.$(BITS))
-# Cannot link to lzma since it's not in /lib.
-CONFIGURE_OPTIONS += --without-lzma
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
-COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
+COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms )
+# autoreconf breaking libtool
+#COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
+
+#
+# Disabling python2.7 builds and tests as currently not available in OI
+# but leaving for future builds
+#
 
 # After we have configured, make a copy of the python bits so we
 # can build and test separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7 ; \
-    $(GSED) -i -e 's/2[.]6/2.7/g' `find python2.7 -name Makefile`)
+#COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7 ; \
+#    $(GSED) -i -e 's/2[.]6/2.7/g' `find python2.7 -name Makefile`)
 
 # After we have built/installed libxml2, build/install the python
 # support for python 2.7
-COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
+#COMPONENT_POST_INSTALL_ACTION = \
+#    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
 
 # It's nice to test also python 2.7 module.
-COMPONENT_POST_TEST_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_TEST_ARGS) test)
+#COMPONENT_POST_TEST_ACTION = \
+#    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_TEST_ARGS) test)
 
 # We have patched our 64 bit python so it will search for modules only in
 # '64/' directories. Now we need to provide one. Otherwise python will
 # end up using libxml2mod.so installed on system.
 $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
-    $(MKDIR) $(@D)/python/.libs/64 $(@D)/python2.7/.libs/64; \
-    $(SYMLINK) ../libxml2mod.so $(@D)/python/.libs/64/libxml2mod.so; \
-    $(SYMLINK) ../libxml2mod.so $(@D)/python2.7/.libs/64/libxml2mod.so);
+    $(MKDIR) $(@D)/python/.libs/64; \
+    $(SYMLINK) ../libxml2mod.so $(@D)/python/.libs/64/libxml2mod.so; )
+#    $(MKDIR) $(@D)/python/.libs/64 $(@D)/python2.7/.libs/64; \
+#    $(SYMLINK) ../libxml2mod.so $(@D)/python2.7/.libs/64/libxml2mod.so);
 
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1));
@@ -91,7 +98,7 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
+#	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
 
 test:		$(TEST_32_and_64)
 
