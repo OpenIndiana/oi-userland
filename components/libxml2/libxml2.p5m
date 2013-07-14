@@ -19,25 +19,22 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
 set name=pkg.fmri \
     value=pkg:/library/libxml2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The XML library"
-set name=com.oracle.info.description value="the XML library"
-set name=com.oracle.info.tpno value=5302
 set name=info.classification \
     value=org.opensolaris.category.2008:System/Libraries
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2009/630
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file usr/lib/$(MACH64)/libxml2.so.2 path=lib/$(MACH64)/libxml2.so.2
-file $(MACH64)/llib-lxml2.ln path=lib/$(MACH64)/llib-lxml2.ln
-file usr/lib/libxml2.so.2 path=lib/libxml2.so.2
-file $(MACH32)/llib-lxml2.ln path=lib/llib-lxml2.ln
+
+file path=usr/bin/$(MACH64)/xml2-config facet.devel=true
+file path=usr/bin/$(MACH64)/xmlcatalog
+file path=usr/bin/$(MACH64)/xmllint
 file path=usr/bin/xml2-config facet.devel=true
 file path=usr/bin/xmlcatalog
 file path=usr/bin/xmllint
@@ -88,8 +85,16 @@ file path=usr/include/libxml2/libxml/xmlwriter.h
 file path=usr/include/libxml2/libxml/xpath.h
 file path=usr/include/libxml2/libxml/xpathInternals.h
 file path=usr/include/libxml2/libxml/xpointer.h
+link path=usr/lib/$(MACH64)/libxml2.so target=libxml2.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libxml2.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libxml2.so.2 target=libxml2.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/llib-lxml2.ln
 file path=usr/lib/$(MACH64)/pkgconfig/libxml-2.0.pc
-file llib-lxml2 path=usr/lib/llib-lxml2
+link path=usr/lib/libxml2.so target=libxml2.so.$(COMPONENT_VERSION)
+file path=usr/lib/libxml2.so.$(COMPONENT_VERSION)
+link path=usr/lib/libxml2.so.2 target=libxml2.so.$(COMPONENT_VERSION)
+file path=usr/lib/llib-lxml2
+file path=usr/lib/llib-lxml2.ln
 file path=usr/lib/pkgconfig/libxml-2.0.pc
 file path=usr/share/aclocal/libxml.m4
 file path=usr/share/man/man1/xml2-config.1 facet.devel=all
@@ -97,23 +102,9 @@ file path=usr/share/man/man1/xmlcatalog.1
 file path=usr/share/man/man1/xmllint.1
 file path=usr/share/man/man3/libxml.3
 file libxml2.3 path=usr/share/man/man3/libxml2.3
-legacy pkg=SUNWlxml desc="The XML library" name="The XML library"
-license COPYING license="libxml license"
-link path=lib/$(MACH64)/libxml2.so target=libxml2.so.2
-link path=lib/libxml2.so target=libxml2.so.2
-link path=usr/lib/$(MACH64)/libxml2.so target=libxml2.so.2
-link path=usr/lib/$(MACH64)/libxml2.so.2 \
-    target=../../../lib/$(MACH64)/libxml2.so.2
-link path=usr/lib/$(MACH64)/llib-lxml2.ln \
-    target=../../../lib/$(MACH64)/llib-lxml2.ln
-link path=usr/lib/libxml2.so target=./libxml2.so.2
-link path=usr/lib/libxml2.so.2 target=../../lib/libxml2.so.2
-link path=usr/lib/llib-lxml2.ln target=../../lib/llib-lxml2.ln
+
+license libxml2.license license="libxml license"
 
 depend fmri=library/python-2/libxml2-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
     predicate=runtime/python-26 \
-    type=conditional
-
-depend fmri=library/python-2/libxml2-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/python-27 \
     type=conditional
