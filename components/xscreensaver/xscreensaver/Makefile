@@ -102,11 +102,14 @@ COMPONENT_POST_CONFIGURE_ACTION+=	( \
 
 COMPONENT_INSTALL_ENV += MAKEFLAGS=-e install_prefix=$(PROTO_DIR)
 
+../rss-glx/build/i86/.built:
+	(cd ../rss-glx ; $(GMAKE) build)
+
 # common targets
 build:		$(BUILD_32)
 
-install:	$(INSTALL_32)
-
+install:	$(INSTALL_32) ../rss-glx/build/i86/.built
+	perl ../rss-glx/build/i86/utils/rss-glx_install.pl $(PROTO_DIR)/usr/share/X11/app-defaults/XScreenSaver
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
