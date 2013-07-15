@@ -20,7 +20,6 @@
 <transform file path=usr/bin/xscreensaver$-> default mode 4555>
 <transform dir path=usr/share/locale$ -> default facet.locale true>
 <transform dir path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
-<transform dir path=etc/.* -> default group sys>
 
 set name=pkg.fmri value=pkg:/desktop/xscreensaver@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -34,19 +33,19 @@ set name=info.classification value=org.opensolaris.category.2008:System/X11
 
 license xscreensaver.license license="CDDL"
 
-dir path=etc/config
-dir path=etc/xdg
-dir path=etc/xdg/autostart
+dir path=etc/config group=sys
+dir path=etc/xdg group=sys
+dir path=etc/xdg/autostart group=sys
 dir path=usr/X11
 dir path=usr/X11/bin
 dir path=usr/X11/lib
 dir path=usr/X11/lib/X11
 dir path=usr/X11/lib/X11/app-defaults
 dir path=usr/lib/xscreensaver/config/control-center-2.0
-file files/xscreensaver.desktop path=etc/xdg/autostart/xscreensaver.desktop
-file files/xscreensaver-openindiana-logo.png path=etc/config/unlock-logo.png 
-file files/xscreensaver-openindiana-logo.png path=etc/config/trusted-logo.png 
-file files/xscreensaver-openindiana-logo.png path=etc/config/openindiana-logo.png
+file files/xscreensaver.desktop path=etc/xdg/autostart/xscreensaver.desktop group=sys
+file files/xscreensaver-openindiana-logo.png path=etc/config/unlock-logo.png group=sys
+file files/xscreensaver-openindiana-logo.png path=etc/config/trusted-logo.png group=sys
+file files/xscreensaver-openindiana-logo.png path=etc/config/openindiana-logo.png group=sys
 file files/logo-180.gif path=etc/config/logo-180.gif
 file path=usr/lib/xscreensaver/config/control-center-2.0/README
 link path=usr/X11/bin/xscreensaver target=../../bin/xscreensaver
