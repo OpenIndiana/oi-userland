@@ -338,6 +338,7 @@ static int hw_x86_aes_instruction_set_present(void);
 #if defined(__sparc)
 static int hw_yf_aes_instruction_set_present(void);
 static int hw_fj_aes_instruction_set_present(void);
+static int hw_yf_des_instruction_set_present(void);
 static int hw_yf_digest_instruction_present(void);
 #endif
 #endif	/* SOLARIS_HW_SLOT_SELECTION */
@@ -2655,11 +2656,19 @@ pk11_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 
 #ifdef	__sparc
 	/*
-	 * If T4 AES instructions are present, don't advertise
-	 * the AES mechanisms for pkcs11 engine as AES operations
-	 * should be accelerated by the inline T4 instructions
+	 * If T4 DES/AESinstructions are present, don't advertise
+	 * the DES_CBC/AES mechanisms for pkcs11 engine as DES_CBC/AES
+	 * operations should be accelerated by the inline T4 instructions
 	 * in the OpenSSL upstream code.
 	 */
+	if (hw_yf_des_instruction_set_present() == 1) {
+		switch (nid) {
+		case NID_des_ede3_cbc:
+		case NID_des_cbc:
+			*cipher = NULL;
+			return (0);
+		}
+	}
 	if (hw_yf_aes_instruction_set_present() == 1) {
 		switch (nid) {
 		case NID_aes_128_cbc:
@@ -3516,9 +3525,17 @@ static void pk11_find_symmetric_ciphers(CK_FUNCTION_LIST_PTR pflist,
 		{
 #ifdef	__sparc
 		/*
-		 * if T4 AES instruction is present, don't include AES mechanism
-		 * in the supported symmetric cipher list.
+		 * if T4 DES/AES instruction is present, don't include
+		 * DES_CBC/AES mechanism in the supported symmetric
+		 * cipher list.
 		 */
+		if (hw_yf_des_instruction_set_present() == 1) {
+			switch (ciphers[i].mech_type) {
+			case CKM_DES_CBC:
+			case CKM_DES3_CBC:
+				continue;
+			}
+		}
 		if (hw_yf_aes_instruction_set_present() == 1) {
 			switch (ciphers[i].mech_type) {
 			case CKM_AES_CBC:
@@ -3805,15 +3822,34 @@ static int nid_in_table(int nid, int *nid_table)
 		}
 #elif defined(__sparc)
 	/*
-	 * If we have a T4 AES instruction set on SPARC, we won't process AES in
-	 * the Crypto Framework so that the job can be process directly using
-	 * the inline AES instruction. This is for T4 which has HW instructions
-	 * for AES, DES, MD5, SHA1, SHA256, SHA512, MONTMUL, and MPMUL.
+	 * If we have a T4 DES/AES instruction set on SPARC, we won't process
+	 * DES_CBC/AES in the Crypto Framework so that the job can be processed
+	 * directly using the inlined DES/AES instructions.
+	 * If we have Fujitsu AES  instruction set, we route AES to the
+	 * Crypto Framework.
 	 */
-	if (hw_yf_aes_instruction_set_present() == 1) {
-		return (0);
-	} else if (hw_fj_aes_instruction_set_present() == 1) {
-		return (1);
+	switch (nid) {
+		case NID_aes_128_ecb:
+		case NID_aes_192_ecb:
+		case NID_aes_256_ecb:
+		case NID_aes_128_cbc:
+		case NID_aes_192_cbc:
+		case NID_aes_256_cbc:
+		case NID_aes_128_ctr:
+		case NID_aes_192_ctr:
+		case NID_aes_256_ctr:
+			if (hw_yf_aes_instruction_set_present() == 1) {
+				return (0);
+			} else if (hw_fj_aes_instruction_set_present() == 1) {
+				return (1);
+			}
+			break;
+		case NID_des_ede3_cbc:
+		case NID_des_cbc:
+			if (hw_yf_des_instruction_set_present() == 1) {
+				return (0);
+			}
+			break;
 	}
 #endif
 
@@ -3876,6 +3912,20 @@ hw_fj_aes_instruction_set_present(void)
 		uint_t ui = 0;
 		(void) getisax(&ui, 1);
 		present = (ui & (AV_SPARC_AES)) > 0;
+		}
+
+	return (present);
+	}
+
+static int
+hw_yf_des_instruction_set_present(void)
+	{
+	static int present = -1;
+	if (present == -1)
+		{
+		uint_t ui = 0;
+		(void) getisax(&ui, 1);
+		present = (ui & (AV_SPARC_DES)) > 0;
 		}
 
 	return (present);
