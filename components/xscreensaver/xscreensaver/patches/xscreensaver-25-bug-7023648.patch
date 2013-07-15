@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+7023648 xscreensaver does not allow user to enter password and login w/ sv_SE.ISO8859-01/-15
+*/
+
+---
+ driver/lock-Gtk.c |    3 +++
+ 1 files changed, 3 insertions(+), 0 deletions(-)
+
+diff --git driver/lock-Gtk.c driver/lock-Gtk.c
+--- driver/lock-Gtk.c
++++ driver/lock-Gtk.c
+@@ -663,6 +663,7 @@ main (int argc, char *argv[])
+   GConfClient *client;
+   const char *modulesptr = NULL;
+   int i;
++  const char *locale = NULL;
+ 
+   gboolean  at_enable  = FALSE; /* accessibility mode enabled ? */
+   Bonobo_ServerInfoList *server_list = NULL;
+@@ -953,6 +954,8 @@ main (int argc, char *argv[])
+   gtk_widget_grab_focus (pwd->user_input_entry);
+ 
+   ioc = g_io_channel_unix_new (0);
++  g_get_charset (&locale);
++  g_io_channel_set_encoding(ioc, locale, NULL);
+   g_io_add_watch (ioc, G_IO_IN | G_IO_HUP, handle_input, pwd);
+ 
+   gtk_main ();
+

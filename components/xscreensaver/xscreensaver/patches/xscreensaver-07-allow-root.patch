@@ -1,0 +1,230 @@
+/*
+ * Copyright (c) 2003, 2011, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+Fix for: 4849641: xscreensaver won't run as root
+
+Let root lock the screen, but don't launch the hacks for root.
+
+(Upstream maintainer argues instead that users should not login as root,
+ which is correct, but not something we can force our customers to stop
+ doing.  See http://www.jwz.org/xscreensaver/faq.html#root-lock for his side.)
+---
+ driver/demo-Gtk.c     |   26 ++++++++++++++++++++++++++
+ driver/exec.c         |    2 ++
+ driver/setuid.c       |   12 ++++++++++++
+ driver/subprocs.c     |    3 +++
+ driver/timers.c       |    2 +-
+ driver/xscreensaver.c |    7 ++++---
+ 6 files changed, 48 insertions(+), 4 deletions(-)
+
+diff --git driver/demo-Gtk.c driver/demo-Gtk.c
+--- driver/demo-Gtk.c
++++ driver/demo-Gtk.c
+@@ -687,6 +687,14 @@ run_cmd (state *s, Atom command, int arg)
+   char *err = 0;
+   int status;
+ 
++  if (getuid () == 0)
++    {
++      char buf [255];
++      strlcpy (buf, _("Can not run hacks if logged in as root!"), sizeof(buf));
++      warning_dialog (s->toplevel_widget, buf, False, 100);
++      return;
++    }
++
+   flush_dialog_changes_and_save (s);
+   status = xscreensaver_command (GDK_DISPLAY(), command, arg, False, &err);
+ 
+@@ -717,6 +725,14 @@ run_hack (state *s, int list_elt, Bool report_errors_p)
+   char *err = 0;
+   int status;
+ 
++  if (getuid () == 0)
++    {
++      char buf [255];
++      strlcpy (buf, _("Can not run hacks if logged in as root!"), sizeof(buf));
++      warning_dialog (s->toplevel_widget, buf, False, 100);
++      return;
++    }
++
+   if (list_elt < 0) return;
+   hack_number = s->list_elt_to_hack_number[list_elt];
+ 
+@@ -5155,6 +5171,15 @@ main (int argc, char **argv)
+     GtkMenu *menu = GTK_MENU (gtk_option_menu_get_menu (opt));
+     GList *kids = gtk_container_children (GTK_CONTAINER (menu));
+     int i;
++
++    if (getuid () == 0)
++      {
++        /* If logged in as root disable menu so user can't activate a hack. */
++        gtk_widget_set_sensitive (GTK_WIDGET (opt), False);
++        gtk_widget_set_sensitive (GTK_WIDGET (menu), False);
++      }
++    else
++    {
+     for (i = 0; kids; kids = kids->next, i++)
+       {
+         gtk_signal_connect (GTK_OBJECT (kids->data), "activate",
+@@ -5168,6 +5193,7 @@ main (int argc, char **argv)
+             mode_menu_order[i] == RANDOM_HACKS_SAME)
+           gtk_widget_hide (GTK_WIDGET (kids->data));
+       }
++    }
+ 
+     if (s->nscreens <= 1)   /* recompute option-menu size */
+       {
+diff --git driver/exec.c driver/exec.c
+--- driver/exec.c
++++ driver/exec.c
+@@ -186,6 +186,7 @@ exec_command (const char *shell, const char *command, int nice_level)
+   hairy_p = !!strpbrk (command, "*?$&!<>[];`'\\\"=");
+   /* note: = is in the above because of the sh syntax "FOO=bar cmd". */
+ 
++#ifdef DONT_ALLOW_ROOT_LOGIN
+   if (getuid() == (uid_t) 0 || geteuid() == (uid_t) 0)
+     {
+       /* If you're thinking of commenting this out, think again.
+@@ -196,6 +197,7 @@ exec_command (const char *shell, const char *command, int nice_level)
+                blurb());
+       exit (-1);
+     }
++#endif /*DONT_ALLOW_ROOT_LOGIN*/
+ 
+   if (hairy_p)
+     /* If it contains any shell metacharacters, do it the hard way,
+diff --git driver/setuid.c driver/setuid.c
+--- driver/setuid.c
++++ driver/setuid.c
+@@ -121,6 +121,10 @@ set_ids_by_number (uid_t uid, gid_t gid, char **message_ret)
+   struct passwd *p = getpwuid (uid);
+   struct group  *g = getgrgid (gid);
+ 
++  /* if we are logged in as root i.e. uid==0 then dont do anything*/
++  if (getuid () == (uid_t) 0)
++   return 0;
++
+   if (message_ret)
+     *message_ret = 0;
+ 
+@@ -278,11 +282,13 @@ hack_uid (saver_info *si)
+          of the xscreensaver manual titled "LOCKING AND ROOT LOGINS",
+          and "USING XDM".
+    */
++#ifdef DONT_ALLOW_ROOT_LOGIN
+   if (getuid() == (uid_t) 0)
+     {
+       si->locking_disabled_p = True;
+       si->nolock_reason = "running as root";
+     }
++#endif /*DONT_ALLOW_ROOT_LOGIN*/
+ 
+ 
+   /* If we're running as root, switch to a safer user.  This is above and
+@@ -297,6 +303,8 @@ hack_uid (saver_info *si)
+          of the xscreensaver manual titled "LOCKING AND ROOT LOGINS", 
+          and "USING XDM".
+    */
++/* We are letting root login to fix a P1 bug, i.e. root should lock screen*/
++#ifdef DONT_ALLOW_ROOT_LOGIN
+   if (getuid() == (uid_t) 0)
+     {
+       struct passwd *p;
+@@ -315,6 +323,7 @@ hack_uid (saver_info *si)
+       if (set_ids_by_number (p->pw_uid, p->pw_gid, &si->uid_message) != 0)
+ 	saver_exit (si, -1, 0);
+     }
++#endif /*DONT_ALLOW_ROOT_LOGIN*/
+ 
+ 
+   /* If there's anything even remotely funny looking about the passwd struct,
+@@ -357,7 +366,10 @@ hack_uid (saver_info *si)
+ 		 (p && p->pw_name && *p->pw_name
+ 		  ? p->pw_name : "<unknown>"));
+ 	si->nolock_reason = buf;
++
++#ifdef DONT_ALLOW_ROOT_LOGIN
+ 	si->locking_disabled_p = True;
++#endif
+ 	si->dangerous_uid_p = True;
+       }
+   }
+diff --git driver/subprocs.c driver/subprocs.c
+--- driver/subprocs.c
++++ driver/subprocs.c
+@@ -939,6 +939,9 @@ spawn_screenhack (saver_screen_info *ssi)
+   saver_preferences *p = &si->prefs;
+   char* complete_hack_command;
+ 
++  if (getuid () == 0)
++    return;  /* Dont let hacks run if logged in as root*/
++
+   if (si->prefs.verbose_p)
+    fprintf(stderr, "--> spawn_screenhack()\n");
+ 
+diff --git driver/timers.c driver/timers.c
+--- driver/timers.c
++++ driver/timers.c
+@@ -282,7 +282,7 @@ cycle_timer (XtPointer closure, XtIntervalId *id)
+ 
+       raise_window (si, True, True, False);
+ 
+-      if (!si->throttled_p)
++      if (!si->throttled_p && getuid () != 0)
+         for (i = 0; i < si->nscreens; i++)
+           spawn_screenhack (&si->screens[i]);
+       else
+diff --git driver/xscreensaver.c driver/xscreensaver.c
+--- driver/xscreensaver.c
++++ driver/xscreensaver.c
+@@ -458,6 +458,7 @@ startup_ehandler (String name, String type, String class,
+ 
+   describe_uids (si, stderr);
+ 
++#ifdef DONT_ALLOW_ROOT_LOGIN
+   if (si->orig_uid && !strncmp (si->orig_uid, "root/", 5))
+     {
+       fprintf (stderr, "\n"
+@@ -471,11 +472,11 @@ startup_ehandler (String name, String type, String class,
+                blurb());
+     }
+   else
++#endif /*DONT_ALLOW_ROOT_LOGIN*/
+     {
+       fprintf (stderr, "\n"
+           "%s: Errors at startup are usually authorization problems.\n"
+-"              But you're not logging in as root (good!) so something\n"
+-"              else must be wrong.  Did you read the manual and the FAQ?\n",
++"              Did you read the manual and the FAQ?\n",
+            blurb());
+     }
+ 
+@@ -1269,7 +1270,7 @@ main_loop (saver_info *si)
+         kill_screenhack (&si->screens[i]);
+ 
+       raise_window (si, True, True, False);
+-      if (si->throttled_p)
++      if (si->throttled_p || getuid () == 0)
+         fprintf (stderr, "%s: not launching hack (throttled.)\n", blurb());
+       else
+         for (i = 0; i < si->nscreens; i++)

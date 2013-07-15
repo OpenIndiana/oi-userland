@@ -1,0 +1,118 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov
+#
+
+# Transforms
+<transform file path=.+/lib/.+\.a$ -> drop>
+<transform file path=.+/lib/.+\.la$ -> drop>
+<transform file path=.+/share/info/dir -> drop>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+<transform file path=(.+)/man/man6/(.+).6$ -> set action.hash %<\1>/man/man1/%<\2>.1>
+<transform file path=usr/lib/xscreensaver/hacks/(.+) -> default mode 0555>
+
+set name=pkg.fmri value=pkg:/desktop/xscreensaver/hacks/rss-glx@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=description value="XScreenSaver - Really Slick ScreenSaver OpenGL display modules"
+set name=pkg.summary value="XScreenSaver - Really Slick ScreenSaver OpenGL display modules"
+set name=pkg.description value="Modules that provide additional OpenGL-based display modes (hacks) for XScreenSaver"
+set name=info.classification value=org.opensolaris.category.2008:System/X11
+
+license rss-glx.license license="GPLv2"
+
+depend fmri=desktop/xscreensaver/hacks/hacks-gl type=require
+depend fmri=consolidation/gnome/gnome-incorporation type=require
+depend fmri=x11/library/libxext type=require
+depend fmri=x11/library/mesa type=require
+depend fmri=service/opengl/ogl-select type=require
+depend fmri=x11/library/libx11 type=require
+depend fmri=system/library/math type=require
+depend fmri=system/library type=require
+depend fmri=compress/bzip2 type=require
+depend fmri=system/library/g++-4-runtime type=require
+depend fmri=image/imagemagick type=require
+
+dir  path=usr/lib/xscreensaver/config/control-center-2.0
+file path=usr/lib/xscreensaver/config/control-center-2.0/biof.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/busyspheres.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/colorfire.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/cyclone.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/drempels.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/euphoria.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/feedback.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/fieldlines.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/flocks.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/flux.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/helios.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/hufo_smoke.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/hufo_tunnel.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/hyperspace.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/lattice.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/lorenz.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/matrixview.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/pixelcity.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/plasma.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/skyrocket.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/solarwinds.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/spirographx.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/sundancer2.xml
+dir  path=usr/lib/xscreensaver/hacks
+file path=usr/lib/xscreensaver/hacks/biof pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/busyspheres pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/colorfire pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/cyclone pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/drempels pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/euphoria pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/feedback pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/fieldlines pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/flocks pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/flux pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/helios pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/hufo_smoke pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/hufo_tunnel pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/hyperspace pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/lattice pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/lorenz pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/matrixview pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/pixelcity pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/plasma pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/skyrocket pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/solarwinds pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/spirographx \
+    pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/sundancer2 \
+    pkg.depend.bypass-generate=.*
+dir  path=usr/share/man
+dir  path=usr/share/man/man6
+file path=usr/share/man/man6/biof.6
+file path=usr/share/man/man6/busyspheres.6
+file path=usr/share/man/man6/colorfire.6
+file path=usr/share/man/man6/cyclone.6
+file path=usr/share/man/man6/drempels.6
+file path=usr/share/man/man6/euphoria.6
+file path=usr/share/man/man6/feedback.6
+file path=usr/share/man/man6/fieldlines.6
+file path=usr/share/man/man6/flocks.6
+file path=usr/share/man/man6/flux.6
+file path=usr/share/man/man6/helios.6
+file path=usr/share/man/man6/hufo_smoke.6
+file path=usr/share/man/man6/hufo_tunnel.6
+file path=usr/share/man/man6/hyperspace.6
+file path=usr/share/man/man6/lattice.6
+file path=usr/share/man/man6/lorenz.6
+file path=usr/share/man/man6/matrixview.6
+file path=usr/share/man/man6/pixelcity.6
+file path=usr/share/man/man6/plasma.6
+file path=usr/share/man/man6/skyrocket.6
+file path=usr/share/man/man6/solarwinds.6
+file path=usr/share/man/man6/spirographx.6
+file path=usr/share/man/man6/sundancer2.6

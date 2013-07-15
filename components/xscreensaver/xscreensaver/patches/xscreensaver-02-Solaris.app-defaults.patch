@@ -1,0 +1,243 @@
+/*
+ * Copyright (c) 2002, 2011, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+Various settings to meet Sun/Solaris policies/customizations, including:
+
+   -    enable screen lock by default, disable splash screen
+   -    disable using screen grabs in hacks to avoid security leaks
+   -    set default mode to screen blank
+   -    disable bsod by default to avoid confusion in shops with real NT boxes
+   -    enable & disable various hacks by default for aesthetic reasons
+   -    branding changes for various hacks & defaults (like RSS feed)
+4871833 DPMS settings should be consistent between CDE and Gnome
+6368607 increase unlock dialog box timeout to 2 minutes
+6526791 xscreensaver and Xorg need to change timeouts for MOU4
+6652454 xscreensaver does not invoke after IDLE time expires from a Sun Ray DTU
+---
+ driver/XScreenSaver.ad.in |   68 ++++++++++++++++++++++-----------------------
+ 1 files changed, 33 insertions(+), 35 deletions(-)
+
+diff --git driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
+--- driver/XScreenSaver.ad.in
++++ driver/XScreenSaver.ad.in
+@@ -28,42 +28,43 @@
+ 
+ ! /* (xrdb prevention kludge: whole file)
+ 
+-*mode:			random
++! We want the default mode to be just blank the screen
++*mode:	      	      	blank
+ *timeout:		0:10:00
+ *cycle:			0:10:00
+ *lockTimeout:		0:00:00
+-*passwdTimeout:		0:00:30
+-*dpmsEnabled:		False
++*passwdTimeout:		0:02:00
++*dpmsEnabled:		True
+ *dpmsQuickoffEnabled:	False
+-*dpmsStandby:		2:00:00
+-*dpmsSuspend:		2:00:00
+-*dpmsOff:		4:00:00
+-*grabDesktopImages:	True
++*dpmsStandby:		0:10:00
++*dpmsSuspend:		0:10:00
++*dpmsOff:		0:10:00
++*grabDesktopImages:	False
+ *grabVideoFrames:	False
+ *chooseRandomImages:	@DEFAULT_IMAGES_P@
+ ! This can be a local directory name, or the URL of an RSS or Atom feed.
+ *imageDirectory:	@DEFAULT_IMAGE_DIRECTORY@
+-*nice:			10
++*nice:			19
+ *memoryLimit:		0
+-*lock:			False
++*lock:			True
+ *verbose:		False
+ *timestamp:		True
+ *fade:			True
+ *unfade:		False
+ *fadeSeconds:		0:00:03
+ *fadeTicks:		20
+-*splash:		True
++*splash:		False
+ *splashDuration:	0:00:05
+ *visualID:		default
+ *captureStderr: 	True
+ *ignoreUninstalledPrograms: False
+ 
+-*textMode:		file
++*textMode:		date
+ *textLiteral:		XScreenSaver
+ *textFile:		@DEFAULT_TEXT_FILE@
+-*textProgram:		fortune
+-*textURL:		http://twitter.com/statuses/public_timeline.atom
+-!*textURL:		http://www.livejournal.com/stats/latest-rss.bml
++*textProgram:		date
++*textURL:		http://blogs.oracle.com/observatory/en_US/feed/entries/atom
++!*textURL:		http://twitter.com/statuses/public_timeline.atom
+ 
+ *overlayTextForeground:	#FFFF00
+ *overlayTextBackground:	#000000
+@@ -76,7 +77,7 @@
+ *procInterrupts:	True
+ 
+ ! Turning this on makes pointerHysteresis not work.
+-*xinputExtensionDev:	False
++*xinputExtensionDev:	True
+ 
+ ! Set this to True if you are experiencing longstanding XFree86 bug #421
+ ! (xscreensaver not covering the whole screen)
+@@ -160,23 +161,23 @@ GetViewPortIsFullOfLies: False
+ @GL_KLUDGE@ GL: 				superquadrics -root			    \n\
+ 				attraction -root			    \n\
+ 				blitspin -root				    \n\
+-				greynetic -root				    \n\
+-				helix -root				    \n\
++-				greynetic -root				    \n\
++-				helix -root				    \n\
+ 				hopalong -root				    \n\
+ 				imsmap -root				    \n\
+ -				noseguy -root				    \n\
+ -				pyro -root				    \n\
+ 				qix -root				    \n\
+ -				rocks -root				    \n\
+-				rorschach -root				    \n\
++-				rorschach -root				    \n\
+ 				decayscreen -root			    \n\
+-				flame -root				    \n\
++-				flame -root				    \n\
+ 				halo -root				    \n\
+ 				slidescreen -root			    \n\
+-				pedal -root				    \n\
++-				pedal -root				    \n\
+ 				bouboule -root				    \n\
+ -				braid -root				    \n\
+-				coral -root				    \n\
++-				coral -root				    \n\
+ 				deco -root				    \n\
+ 				drift -root				    \n\
+ -				fadeplot -root				    \n\
+@@ -185,13 +186,13 @@ GetViewPortIsFullOfLies: False
+ 				grav -root				    \n\
+ 				ifs -root				    \n\
+ @GL_KLUDGE@ GL: 				jigsaw -root				    \n\
+-				julia -root				    \n\
++-				julia -root				    \n\
+ -				kaleidescope -root			    \n\
+ @GL_KLUDGE@ GL: 				moebius -root				    \n\
+-				moire -root				    \n\
++-				moire -root				    \n\
+ @GL_KLUDGE@ GL: 				morph3d -root				    \n\
+ 				mountain -root				    \n\
+-				munch -root				    \n\
++-				munch -root				    \n\
+ 				penrose -root				    \n\
+ @GL_KLUDGE@ GL: 				pipes -root				    \n\
+ 				rd-bomb -root				    \n\
+@@ -206,7 +207,7 @@ GetViewPortIsFullOfLies: False
+ 				xjack -root				    \n\
+ 				xlyap -root				    \n\
+ @GL_KLUDGE@ GL: 				atlantis -root				    \n\
+-				bsod -root				    \n\
++-				bsod -root				    \n\
+ @GL_KLUDGE@ GL: 				bubble3d -root				    \n\
+ @GL_KLUDGE@ GL: 				cage -root				    \n\
+ -				crystal -root				    \n\
+@@ -219,7 +220,7 @@ GetViewPortIsFullOfLies: False
+ 				interference -root			    \n\
+ 				kumppa -root				    \n\
+ @GL_KLUDGE@ GL: 				lament -root				    \n\
+-				moire2 -root				    \n\
++-				moire2 -root				    \n\
+ @GL_KLUDGE@ GL: 				sonar -root				    \n\
+ @GL_KLUDGE@ GL: 				stairs -root				    \n\
+ 				truchet -root				    \n\
+@@ -227,9 +228,9 @@ GetViewPortIsFullOfLies: False
+ 				blaster -root				    \n\
+ 				bumps -root				    \n\
+ 				ccurve -root				    \n\
+-				compass -root				    \n\
++-				compass -root				    \n\
+ 				deluxe -root				    \n\
+--				demon -root				    \n\
++				demon -root				    \n\
+ @GLE_KLUDGE@ GL: 				extrusion -root				    \n\
+ -				loop -root				    \n\
+ 				penetrate -root				    \n\
+@@ -243,7 +244,7 @@ GetViewPortIsFullOfLies: False
+ 				squiral -root				    \n\
+ 				wander -root				    \n\
+ -				webcollage -root			    \n\
+-				xflame -root				    \n\
++				xflame -root -bitmap /usr/lib/xscreensaver/config/unlock-logo.png \n\
+ 				xmatrix -root				    \n\
+ @GL_KLUDGE@ GL: 				gflux -root				    \n\
+ -				nerverot -root				    \n\
+@@ -258,14 +259,14 @@ GetViewPortIsFullOfLies: False
+ @GL_KLUDGE@ GL: 				menger -root				    \n\
+ @GL_KLUDGE@ GL: 				molecule -root				    \n\
+ 				rotzoomer -root				    \n\
+-				speedmine -root				    \n\
++-				speedmine -root				    \n\
+ @GL_KLUDGE@ GL: 				starwars -root				    \n\
+ @GL_KLUDGE@ GL: 				stonerview -root			    \n\
+ 				vermiculate -root			    \n\
+ 				whirlwindwarp -root			    \n\
+ 				zoom -root				    \n\
+ 				anemone -root				    \n\
+-				apollonian -root			    \n\
++-				apollonian -root			    \n\
+ @GL_KLUDGE@ GL: 				boxed -root				    \n\
+ @GL_KLUDGE@ GL: 				cubenetic -root				    \n\
+ @GL_KLUDGE@ GL: 				endgame -root				    \n\
+@@ -294,12 +295,11 @@ GetViewPortIsFullOfLies: False
+ @GL_KLUDGE@ GL: 				cubestorm -root				    \n\
+ 				eruption -root				    \n\
+ @GL_KLUDGE@ GL: 				flipflop -root				    \n\
+-@GL_KLUDGE@ GL: 				flyingtoasters -root			    \n\
+ 				fontglide -root				    \n\
+ @GL_KLUDGE@ GL: 				gleidescope -root			    \n\
+ @GL_KLUDGE@ GL: 				glknots -root				    \n\
+ @GL_KLUDGE@ GL: 				glmatrix -root				    \n\
+-- GL: 				glslideshow -root			    \n\
++@GL_KLUDGE@ GL: 				glslideshow -root			    \n\
+ @GL_KLUDGE@ GL: 				hypertorus -root			    \n\
+ - GL: 				jigglypuff -root			    \n\
+ 				metaballs -root				    \n\
+@@ -319,7 +319,6 @@ GetViewPortIsFullOfLies: False
+ 				intermomentary -root			    \n\
+ 				memscroller -root			    \n\
+ @GL_KLUDGE@ GL: 				noof -root				    \n\
+-				pacman -root				    \n\
+ @GL_KLUDGE@ GL: 				pinion -root				    \n\
+ @GL_KLUDGE@ GL: 				polyhedra -root				    \n\
+ - GL: 				providence -root			    \n\
+@@ -451,7 +450,6 @@ XScreenSaver.bourneShell:		/bin/sh
+ *hacks.flipscreen3d.name:   FlipScreen3D
+ *hacks.fliptext.name:       FlipText
+ *hacks.fluidballs.name:     FluidBalls
+-*hacks.flyingtoasters.name: FlyingToasters
+ *hacks.fontglide.name:      FontGlide
+ *hacks.fuzzyflakes.name:    FuzzyFlakes
+ *hacks.gflux.name:          GFlux
+

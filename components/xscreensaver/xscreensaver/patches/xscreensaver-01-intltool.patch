@@ -1,0 +1,27 @@
+---
+ po/Makefile.in.in |    6 ++++++
+ 1 files changed, 6 insertions(+), 0 deletions(-)
+
+diff --git po/Makefile.in.in po/Makefile.in.in
+--- po/Makefile.in.in
++++ po/Makefile.in.in
+@@ -84,6 +84,9 @@
+ #       refering to $(srcdir) anyway.  So I just commented (my half-fixed
+ #       version of) this rule out.
+ #
++# The following line is needed to keep the intltool.m4 autoconf macros from
++# throwing an error message:
++# INTLTOOL_MAKEFILE
+ 
+ GETTEXT_PACKAGE = @GETTEXT_PACKAGE@
+ PACKAGE = @PACKAGE@
+@@ -149,6 +152,9 @@ TARFILES = $(DISTFILES_1) $(POFILES) $(SOURCES)
+ 
+ POTFILES = \
+ 
++# Don't delete this line!
++# Need to keep a non-blank line after POTFILES for sed commands from
++# aclocal.m4 to generate Makefile from Makefile.in without losing CATALOGS
+ CATALOGS = @CATALOGS@
+ CATOBJEXT = @CATOBJEXT@
+ INSTOBJEXT = @INSTOBJEXT@
