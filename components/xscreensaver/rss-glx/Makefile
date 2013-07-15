@@ -25,7 +25,6 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rss-glx
-# Don't change - compatibility issues
 COMPONENT_VERSION= 	0.91
 HUMAN_VERSION=		0.9.1
 COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/rss-glx/
