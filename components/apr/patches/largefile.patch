@@ -1,27 +1,26 @@
 --- build/apr_hints.m4.orig	Tue Jun 26 16:47:46 2007
 +++ build/apr_hints.m4	Fri Feb  8 04:54:31 2008
-@@ -243,8 +243,19 @@
+@@ -245,7 +245,19 @@
  	;;
      *-solaris2*)
      	PLATOSVERS=`echo $host | sed 's/^.*solaris2.//'`
 -	APR_ADDTO(CPPFLAGS, [-DSOLARIS2=$PLATOSVERS -D_POSIX_PTHREAD_SEMANTICS -D_REENTRANT])
--        APR_SETIFNULL(apr_lock_method, [USE_FCNTL_SERIALIZE])
-+        APR_SETVAR(THREADED_CPPFLAGS, [])
-+        if test "$enable_threads" != "no"; then
-+          APR_ADDTO(THREADED_CPPFLAGS, [-D_POSIX_PTHREAD_SEMANTICS])
-+          dnl If using native compiler, use recommended -mt option to ensure
-+          dnl proper preprocessor definitions and library link order.
-+          if $CC -flags 2>&1 | grep '^-mt.*multi-threaded' > /dev/null 2>&1; then
-+            APR_ADDTO(THREADED_CPPFLAGS, [-mt])
-+          else
-+            APR_ADDTO(THREADED_CPPFLAGS, [-D_REENTRANT])
-+          fi
-+        fi
-+	APR_ADDTO(CPPFLAGS, [-DSOLARIS2=$PLATOSVERS $THREADED_CPPFLAGS -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64])
-+        APR_SETIFNULL(apr_lock_method, [USE_PROC_PTHREAD_SERIALIZE])
-         # readdir64_r error handling seems broken on Solaris (at least
-         # up till 2.8) -- it will return -1 at end-of-directory.
-         APR_SETIFNULL(ac_cv_func_readdir64_r, [no])
++	APR_SETVAR(THREADED_CPPFLAGS, [])
++	if test "$enable_threads" != "no"; then
++	  APR_ADDTO(THREADED_CPPFLAGS, [-D_POSIX_PTHREAD_SEMANTICS])
++	  dnl If using native compiler, use recommended -mt option to ensure
++	  dnl proper preprocessor definitions and library link order.
++	  if $CC -flags 2>&1 | grep '^-mt.*multi-threaded' > /dev/null 2>&1; then
++	    APR_ADDTO(THREADED_CPPFLAGS, [-mt])
++	  else
++	    APR_ADDTO(THREADED_CPPFLAGS, [-D_REENTRANT])
++	  fi
++	fi
++	APR_ADDTO(CPPFLAGS, [-DSOLARIS2=$PLATOSVERS $THREADED_CPPFLAGS])
++	APR_ADDTO(CPPFLAGS, [-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64])
+         if test $PLATOSVERS -ge 10; then
+             APR_SETIFNULL(apr_lock_method, [USE_PROC_PTHREAD_SERIALIZE])
+         else
 --- configure.in.orig	Sat Nov  3 07:13:08 2007
 +++ configure.in	Fri Feb  8 04:54:31 2008
 @@ -107,7 +107,7 @@

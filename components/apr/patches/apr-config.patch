@@ -1,0 +1,43 @@
+--- apr-config.in.orig	Thu Aug  3 04:05:27 2006
++++ apr-config.in	Tue Feb 12 02:24:17 2008
+@@ -30,6 +30,27 @@
+ installbuilddir="@installbuilddir@"
+ includedir="@includedir@"
+ 
++# Determine the root directory of the Apache installation using the directory
++# in which this script resides. Use this directory as the base for all the paths
++cur_dir=`pwd`
++install_root=`dirname $0`
++cd $install_root
++install_root=`pwd`
++new_install_root=`echo $install_root | sed -e "s!@bindir@!!"`
++if test "$install_root" != "$new_install_root"; then
++    install_root="$new_install_root"
++else
++    install_root=""
++fi
++cd $cur_dir
++prefix="${install_root}@prefix@"
++exec_prefix="@exec_prefix@"
++bindir="@bindir@"
++libdir="@libdir@"
++datadir="${install_root}@datadir@"
++installbuilddir="${install_root}@installbuilddir@"
++includedir="@includedir@"
++
+ CC="@CC@"
+ CPP="@CPP@"
+ SHELL="@SHELL@"
+@@ -200,7 +221,11 @@
+         ### avoid using -L if libdir is a "standard" location like /usr/lib
+         # Since the user is specifying they are linking with libtool, we
+         # *know* that -R will be recognized by libtool.
+-        flags="$flags -L$libdir -R$libdir -l${APR_LIBNAME}"
++        if test -n "$install_root"; then
++            flags="$flags -L$libdir -l${APR_LIBNAME}"
++        else
++            flags="$flags -L$libdir -R$libdir -l${APR_LIBNAME}"
++        fi
+     else
+         flags="$flags $LA_FILE"
+     fi
