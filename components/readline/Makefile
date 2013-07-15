@@ -50,6 +50,7 @@ CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS  +=		CC="$(CC) $(CC_BITS)"
 
 # common targets
 build:		$(BUILD_32_and_64)
