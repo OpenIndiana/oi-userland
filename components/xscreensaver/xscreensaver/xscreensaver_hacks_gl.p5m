@@ -1,0 +1,291 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov
+#
+
+# Transforms
+<transform file path=.+/lib/.+\.a$ -> drop>
+<transform file path=.+/lib/.+\.la$ -> drop>
+<transform file path=.+/share/info/dir -> drop>
+<transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
+
+set name=pkg.fmri value=pkg:/desktop/xscreensaver/hacks/hacks-gl@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=description value="XScreenSaver - OpenGL display mode modules"
+set name=pkg.summary value="XScreenSaver - OpenGL display mode modules"
+set name=pkg.description value="Modules that provide different OpenGL-based display modes (hacks) for the screen saver"
+set name=info.classification value=org.opensolaris.category.2008:System/X11
+
+license xscreensaver_hacks_gl.license license="misc"
+
+depend fmri=desktop/xscreensaver type=require
+depend fmri=desktop/xscreensaver/hacks type=require
+depend fmri=service/opengl/ogl-select type=require
+depend fmri=consolidation/gnome/gnome-incorporation type=require
+depend fmri=x11/library/toolkit/libxt type=require
+depend fmri=x11/library/libx11 type=require
+depend fmri=system/library type=require
+depend fmri=x11/library/mesa type=require
+depend fmri=x11/library/libxmu type=require
+depend fmri=system/library/math type=require
+depend fmri=x11/library/libxext type=require
+depend fmri=library/desktop/gtk2 type=require
+depend fmri=library/glib2 type=require
+
+dir path=usr/lib
+dir path=usr/lib/xscreensaver
+dir path=usr/lib/xscreensaver/bin
+dir path=usr/lib/xscreensaver/config
+dir path=usr/lib/xscreensaver/config/control-center-2.0
+dir path=usr/lib/xscreensaver/hacks
+dir path=usr/share
+dir path=usr/share/man
+dir path=usr/share/man/man6
+file path=usr/lib/xscreensaver/bin/xscreensaver-gl-helper pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/config/control-center-2.0/antinspect.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/antmaze.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/antspotlight.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/atlantis.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/atunnel.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/blinkbox.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/blocktube.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/boing.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/bouncingcow.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/boxed.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/bubble3d.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/cage.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/carousel.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/circuit.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/crackberg.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/cube21.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/cubenetic.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/cubestorm.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/cubicgrid.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/dangerball.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/endgame.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/engine.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/flipflop.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/flipscreen3d.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/fliptext.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/flurry.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/gears.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/gflux.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glblur.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glcells.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/gleidescope.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glhanoi.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glknots.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glmatrix.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glplanet.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glschool.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glslideshow.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/glsnake.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/gltext.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/hypertorus.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/hypnowheel.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/jigglypuff.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/jigsaw.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/juggler3d.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/klein.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/lament.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/lavalite.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/lockward.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/menger.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/mirrorblob.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/moebius.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/moebiusgears.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/molecule.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/morph3d.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/noof.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/photopile.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/pinion.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/pipes.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/polyhedra.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/polytopes.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/providence.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/pulsar.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/queens.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/rubik.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/rubikblocks.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/sballs.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/sierpinski3d.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/skytentacles.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/spheremonics.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/sproingies.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/stairs.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/starwars.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/stonerview.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/superquadrics.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/surfaces.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/tangram.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/timetunnel.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/topblock.xml
+file path=usr/lib/xscreensaver/config/control-center-2.0/voronoi.xml
+file path=usr/lib/xscreensaver/hacks/antinspect pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/antmaze pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/antspotlight pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/atlantis pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/atunnel pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/blinkbox pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/blocktube pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/boing pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/bouncingcow pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/boxed pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/bubble3d pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/cage pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/carousel pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/circuit pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/crackberg pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/cube21 pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/cubenetic pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/cubestorm pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/cubicgrid pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/dangerball pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/endgame pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/engine pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/flipflop pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/flipscreen3d pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/fliptext pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/flurry pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/gears pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/gflux pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glblur pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glcells pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/gleidescope pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glhanoi pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glknots pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glmatrix pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glplanet pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glschool pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glslideshow pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/glsnake pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/gltext pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/hypertorus pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/hypnowheel pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/jigglypuff pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/jigsaw pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/juggler3d pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/klein pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/lament pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/lavalite pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/lockward pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/menger pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/mirrorblob pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/moebius pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/moebiusgears pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/molecule pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/morph3d pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/noof pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/photopile pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/pinion pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/pipes pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/polyhedra pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/polytopes pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/providence pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/pulsar pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/queens pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/rubik pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/rubikblocks pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/sballs pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/sierpinski3d pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/skytentacles pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/spheremonics pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/sproingies pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/stairs pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/starwars pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/stonerview pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/superquadrics pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/surfaces pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/tangram pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/timetunnel pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/topblock pkg.depend.bypass-generate=.*
+file path=usr/lib/xscreensaver/hacks/voronoi pkg.depend.bypass-generate=.*
+file path=usr/share/man/man6/antinspect.6
+file path=usr/share/man/man6/antmaze.6
+file path=usr/share/man/man6/antspotlight.6
+file path=usr/share/man/man6/atlantis.6
+file path=usr/share/man/man6/atunnel.6
+file path=usr/share/man/man6/blinkbox.6
+file path=usr/share/man/man6/blocktube.6
+file path=usr/share/man/man6/boing.6
+file path=usr/share/man/man6/bouncingcow.6
+file path=usr/share/man/man6/boxed.6
+file path=usr/share/man/man6/bubble3d.6
+file path=usr/share/man/man6/cage.6
+file path=usr/share/man/man6/carousel.6
+file path=usr/share/man/man6/circuit.6
+file path=usr/share/man/man6/crackberg.6
+file path=usr/share/man/man6/cube21.6
+file path=usr/share/man/man6/cubenetic.6
+file path=usr/share/man/man6/cubestorm.6
+file path=usr/share/man/man6/cubicgrid.6
+file path=usr/share/man/man6/dangerball.6
+file path=usr/share/man/man6/endgame.6
+file path=usr/share/man/man6/engine.6
+file path=usr/share/man/man6/flipflop.6
+file path=usr/share/man/man6/flipscreen3d.6
+file path=usr/share/man/man6/fliptext.6
+file path=usr/share/man/man6/flurry.6
+file path=usr/share/man/man6/gears.6
+file path=usr/share/man/man6/gflux.6
+file path=usr/share/man/man6/glblur.6
+file path=usr/share/man/man6/glcells.6
+file path=usr/share/man/man6/gleidescope.6
+file path=usr/share/man/man6/glhanoi.6
+file path=usr/share/man/man6/glknots.6
+file path=usr/share/man/man6/glmatrix.6
+file path=usr/share/man/man6/glplanet.6
+file path=usr/share/man/man6/glschool.6
+file path=usr/share/man/man6/glslideshow.6
+file path=usr/share/man/man6/glsnake.6
+file path=usr/share/man/man6/gltext.6
+file path=usr/share/man/man6/hypertorus.6
+file path=usr/share/man/man6/hypnowheel.6
+file path=usr/share/man/man6/jigglypuff.6
+file path=usr/share/man/man6/jigsaw.6
+file path=usr/share/man/man6/juggler3d.6
+file path=usr/share/man/man6/klein.6
+file path=usr/share/man/man6/lament.6
+file path=usr/share/man/man6/lavalite.6
+file path=usr/share/man/man6/lockward.6
+file path=usr/share/man/man6/menger.6
+file path=usr/share/man/man6/mirrorblob.6
+file path=usr/share/man/man6/moebius.6
+file path=usr/share/man/man6/moebiusgears.6
+file path=usr/share/man/man6/molecule.6
+file path=usr/share/man/man6/morph3d.6
+file path=usr/share/man/man6/noof.6
+file path=usr/share/man/man6/photopile.6
+file path=usr/share/man/man6/pinion.6
+file path=usr/share/man/man6/pipes.6
+file path=usr/share/man/man6/polyhedra.6
+file path=usr/share/man/man6/polytopes.6
+file path=usr/share/man/man6/providence.6
+file path=usr/share/man/man6/pulsar.6
+file path=usr/share/man/man6/queens.6
+file path=usr/share/man/man6/rubik.6
+file path=usr/share/man/man6/rubikblocks.6
+file path=usr/share/man/man6/sballs.6
+file path=usr/share/man/man6/sierpinski3d.6
+file path=usr/share/man/man6/skytentacles.6
+file path=usr/share/man/man6/spheremonics.6
+file path=usr/share/man/man6/sproingies.6
+file path=usr/share/man/man6/stairs.6
+file path=usr/share/man/man6/starwars.6
+file path=usr/share/man/man6/stonerview.6
+file path=usr/share/man/man6/superquadrics.6
+file path=usr/share/man/man6/surfaces.6
+file path=usr/share/man/man6/tangram.6
+file path=usr/share/man/man6/timetunnel.6
+file path=usr/share/man/man6/topblock.6
+file path=usr/share/man/man6/voronoi.6
+file path=usr/share/man/man6/xscreensaver-gl-helper.6

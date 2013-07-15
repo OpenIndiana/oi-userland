@@ -1,0 +1,291 @@
+/*
+ * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice (including the next
+ * paragraph) shall be included in all copies or substantial portions of the
+ * Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+Sun bug 5077981/GNOME bug 147579:
+        There should be an option to extend/disable lockout timer
+        http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=5077981
+        http://bugzilla.gnome.org/show_bug.cgi?id=147579
+
+Sun bug 6176524:
+        passwdTimeoutEnable for disabled user (xscreensaver-lock)
+        http://bugs.opensolaris.org/bugdatabase/view_bug.do?bug_id=6176524
+---
+ driver/XScreenSaver.ad.in       |    1 +
+ driver/demo-Gtk.c               |   13 +++++
+ driver/lock.c                   |    8 +++
+ driver/prefs.c                  |    6 ++
+ driver/types.h                  |    2 +
+ driver/xscreensaver-demo.glade2 |   98 ++++++++++++++++++++++++++++++++++++++-
+ 6 files changed, 127 insertions(+), 1 deletions(-)
+
+diff --git driver/XScreenSaver.ad.in driver/XScreenSaver.ad.in
+--- driver/XScreenSaver.ad.in
++++ driver/XScreenSaver.ad.in
+@@ -34,6 +34,7 @@
+ *cycle:			0:10:00
+ *lockTimeout:		0:00:00
+ *passwdTimeout:		0:02:00
++*passwdTimeoutEnabled:	True
+ *dpmsEnabled:		True
+ *dpmsQuickoffEnabled:	False
+ *dpmsStandby:		0:10:00
+diff --git driver/demo-Gtk.c driver/demo-Gtk.c
+--- driver/demo-Gtk.c
++++ driver/demo-Gtk.c
+@@ -1558,6 +1558,8 @@ flush_dialog_changes_and_save (state *s)
+ 
+   MINUTES  (&p2->timeout,         "timeout_spinbutton");
+   MINUTES  (&p2->cycle,           "cycle_spinbutton");
++  CHECKBOX (p2->unlock_timeout_p, "pwd_button");	/* bugid 5077981 */
++  MINUTES  (&p2->passwd_timeout,  "pwd_spinbutton");
+   CHECKBOX (p2->lock_p,           "lock_button");
+   MINUTES  (&p2->lock_timeout,    "lock_spinbutton");
+ 
+@@ -1660,6 +1662,8 @@ flush_dialog_changes_and_save (state *s)
+   COPY(cycle,          "cycle");
+   COPY(lock_p,         "lock_p");
+   COPY(lock_timeout,   "lock_timeout");
++  COPY(unlock_timeout_p,"unlock_timeout_p");		/* bugid 5077981 */
++  COPY(passwd_timeout, "passwd_timeout");
+ 
+   COPY(dpms_enabled_p,  "dpms_enabled_p");
+   COPY(dpms_quickoff_p, "dpms_quickoff_enabled_p");
+@@ -2791,6 +2795,9 @@ populate_prefs_page (state *s)
+   FMT_MINUTES ("timeout_spinbutton",      p->timeout);
+   FMT_MINUTES ("cycle_spinbutton",        p->cycle);
+   FMT_MINUTES ("lock_spinbutton",         p->lock_timeout);
++  /* bugid 5077981 */
++  FMT_MINUTES ("pwd_spinbutton",          p->passwd_timeout);
++
+   FMT_MINUTES ("dpms_standby_spinbutton", p->dpms_standby);
+   FMT_MINUTES ("dpms_suspend_spinbutton", p->dpms_suspend);
+   FMT_MINUTES ("dpms_off_spinbutton",     p->dpms_off);
+@@ -2803,6 +2810,7 @@ populate_prefs_page (state *s)
+   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (name_to_widget (s,(NAME))),\
+                                 (ACTIVEP))
+ 
++  TOGGLE_ACTIVE ("pwd_button",	      p->unlock_timeout_p); /* bugid 5077981 */
+   TOGGLE_ACTIVE ("lock_button",       p->lock_p);
+ #if 0
+   TOGGLE_ACTIVE ("verbose_button",    p->verbose_p);
+@@ -2908,6 +2916,10 @@ populate_prefs_page (state *s)
+ 
+     /* Blanking and Locking
+      */
++    /* bugid 5077081 */
++    SENSITIZE ("pwd_spinbutton", p->unlock_timeout_p);
++    SENSITIZE ("pwd_mlabel",     p->unlock_timeout_p);
++
+     SENSITIZE ("lock_button",     can_lock_p);
+     SENSITIZE ("lock_spinbutton", can_lock_p && p->lock_p);
+     SENSITIZE ("lock_mlabel",     can_lock_p && p->lock_p);
+@@ -3082,6 +3094,7 @@ fix_text_entry_sizes (state *s)
+ # if 0   /* appears no longer necessary with Gtk 1.2.10 */
+   const char * const spinbuttons[] = {
+     "timeout_spinbutton", "cycle_spinbutton", "lock_spinbutton",
++    "pwd_spinbutton", /* bugid 5077981 */
+     "dpms_standby_spinbutton", "dpms_suspend_spinbutton",
+     "dpms_off_spinbutton",
+     "-fade_spinbutton" };
+diff --git driver/lock.c driver/lock.c
+--- driver/lock.c
++++ driver/lock.c
+@@ -1646,6 +1646,10 @@ update_passwd_window (saver_info *si, const char *printed_passwd, float ratio)
+       event.xclient.data.l[1] = 0;
+       event.xclient.data.l[2] = 0;
+ 
++      /* CR 5077981: option to disable unlock timer */
++      if (! si->prefs.unlock_timeout_p)
++        event.xclient.data.l[1] = 1;
++
+       if (!safe_XSendEvent (si->dpy, si->passwd_dialog, False, 0L, &event))
+         fprintf (stderr, "%s: error sending ratio to lock dialog\n", blurb ());
+     }
+@@ -2343,6 +2347,10 @@ passwd_animate_timer (XtPointer closure, XtIntervalId *id)
+ 
+   if (!pw) return;
+ 
++  /* CR 5077981: option to disable unlock timer */
++  if (! si->prefs.unlock_timeout_p)
++    return;
++
+ #ifdef HAVE_XSCREENSAVER_LOCK
+   /* We want to make sure dialog is up before we update countdown timer */
+   if (!si->passwd_dialog)
+diff --git driver/prefs.c driver/prefs.c
+--- driver/prefs.c
++++ driver/prefs.c
+@@ -251,6 +251,7 @@ static const char * const prefs[] = {
+   "lockVTs",			/* not saved */
+   "lockTimeout",
+   "passwdTimeout",
++  "passwdTimeoutEnabled",	/* bugid 5077981 */
+   "visualID",
+   "installColormap",
+   "verbose",
+@@ -784,6 +785,9 @@ write_init_file (Display *dpy,
+       CHECK("lockVTs")		continue;  /* don't save, unused */
+       CHECK("lockTimeout")	type = pref_time, t = p->lock_timeout;
+       CHECK("passwdTimeout")	type = pref_time, t = p->passwd_timeout;
++
++/* bugid 5077981 */
++      CHECK("passwdTimeoutEnabled") type = pref_bool, b = p->unlock_timeout_p;
+       CHECK("visualID")		type = pref_str,  s =    visual_name;
+       CHECK("installColormap")	type = pref_bool, b = p->install_cmap_p;
+       CHECK("verbose")		type = pref_bool, b = p->verbose_p;
+@@ -1068,6 +1072,8 @@ load_init_file (Display *dpy, saver_preferences *p)
+   p->lock_timeout    = 1000 * get_minutes_resource (dpy, "lockTimeout", "Time");
+   p->cycle           = 1000 * get_minutes_resource (dpy, "cycle", "Time");
+   p->passwd_timeout  = 1000 * get_seconds_resource (dpy, "passwdTimeout", "Time");
++  /* bugid 5077981 */
++  p->unlock_timeout_p = get_boolean_resource (dpy, "passwdTimeoutEnabled", "Boolean");
+   p->pointer_timeout = 1000 * get_seconds_resource (dpy, "pointerPollTime", "Time");
+   p->pointer_hysteresis = get_integer_resource (dpy, "pointerHysteresis","Integer");
+   p->notice_events_timeout = 1000*get_seconds_resource(dpy,
+diff --git driver/types.h driver/types.h
+--- driver/types.h
++++ driver/types.h
+@@ -77,6 +77,8 @@ struct saver_preferences {
+   Bool xsync_p;			/* whether XSynchronize has been called */
+ 
+   Bool lock_p;			/* whether to lock as well as save */
++  Bool unlock_timeout_p;	/* whether to timeout unlock dialog */
++                                /* bugid 5077981 */
+ 
+   Bool fade_p;			/* whether to fade to black, if possible */
+   Bool unfade_p;		/* whether to fade from black, if possible */
+diff --git driver/xscreensaver-demo.glade2 driver/xscreensaver-demo.glade2
+--- driver/xscreensaver-demo.glade2
++++ driver/xscreensaver-demo.glade2
+@@ -165,7 +165,7 @@
+ 		  <child>
+ 		    <widget class="GtkTable" id="blanking_table">
+ 		      <property name="visible">True</property>
+-		      <property name="n_rows">3</property>
++		      <property name="n_rows">4</property>
+ 		      <property name="n_columns">4</property>
+ 		      <property name="homogeneous">False</property>
+ 		      <property name="row_spacing">2</property>
+@@ -466,6 +466,102 @@
+ 			  <property name="y_options"></property>
+ 			</packing>
+ 		      </child>
++
++		      <child>
++			<widget class="GtkSpinButton" id="pwd_spinbutton">
++			  <property name="visible">True</property>
++			  <property name="tooltip" translatable="yes">How long the unlock dialog waits for input before disappearing.</property>
++			  <property name="can_focus">True</property>
++			  <property name="climb_rate">15</property>
++			  <property name="digits">0</property>
++			  <property name="numeric">True</property>
++			  <property name="update_policy">GTK_UPDATE_ALWAYS</property>
++			  <property name="snap_to_ticks">True</property>
++			  <property name="wrap">False</property>
++			  <property name="adjustment">0 0 720 1 15 15</property>
++			  <accessibility>
++			    <atkrelation target="pwd_button" type="controlled-by"/>
++			    <atkrelation target="pwd_button" type="labelled-by"/>
++			    <atkrelation target="pwd_mlabel" type="labelled-by"/>
++			  </accessibility>
++			  <signal name="activate" handler="pref_changed_cb"/>
++			  <signal name="focus_out_event" handler="pref_changed_event_cb"/>
++			  <signal name="value_changed" handler="pref_changed_cb"/>
++			</widget>
++			<packing>
++			  <property name="left_attach">2</property>
++			  <property name="right_attach">3</property>
++			  <property name="top_attach">3</property>
++			  <property name="bottom_attach">4</property>
++			  <property name="y_padding">10</property>
++			  <property name="x_options">fill</property>
++			  <property name="y_options"></property>
++			</packing>
++		      </child>
++
++		      <child>
++			<widget class="GtkEventBox" id="pwd_button_eventbox">
++			  <property name="visible">True</property>
++			  <property name="tooltip" translatable="yes">Whether the unlock dialog box should disappear after a timeout.</property>
++			  <property name="visible_window">True</property>
++			  <property name="above_child">False</property>
++
++			  <child>
++			    <widget class="GtkCheckButton" id="pwd_button">
++			      <property name="visible">True</property>
++			      <property name="can_focus">True</property>
++			      <property name="label" translatable="yes">Timeout _Unlock After</property>
++			      <property name="use_underline">True</property>
++			      <property name="relief">GTK_RELIEF_NORMAL</property>
++			      <property name="focus_on_click">True</property>
++			      <property name="active">False</property>
++			      <property name="inconsistent">False</property>
++			      <property name="draw_indicator">True</property>
++			      <accessibility>
++				<atkrelation target="pwd_spinbutton" type="controller-for"/>
++				<atkrelation target="pwd_spinbutton" type="label-for"/>
++				<atkrelation target="pwd_spinbutton" type="flows-to"/>
++			      </accessibility>
++			      <signal name="toggled" handler="pref_changed_cb"/>
++			    </widget>
++			  </child>
++			</widget>
++			<packing>
++			  <property name="left_attach">0</property>
++			  <property name="right_attach">2</property>
++			  <property name="top_attach">3</property>
++			  <property name="bottom_attach">4</property>
++			  <property name="x_options">fill</property>
++			  <property name="y_options">fill</property>
++			</packing>
++		      </child>
++
++		      <child>
++			<widget class="GtkLabel" id="pwd_mlabel">
++			  <property name="visible">True</property>
++			  <property name="label" translatable="yes">minutes</property>
++			  <property name="use_underline">False</property>
++			  <property name="use_markup">False</property>
++			  <property name="justify">GTK_JUSTIFY_LEFT</property>
++			  <property name="wrap">False</property>
++			  <property name="selectable">False</property>
++			  <property name="xalign">0</property>
++			  <property name="yalign">0.5</property>
++			  <property name="xpad">8</property>
++			  <property name="ypad">0</property>
++			  <accessibility>
++			    <atkrelation target="pwd_spinbutton" type="label-for"/>
++			    <atkrelation target="pwd_spinbutton" type="flows-from"/>
++			  </accessibility>
++			</widget>
++			<packing>
++			  <property name="left_attach">3</property>
++			  <property name="right_attach">4</property>
++			  <property name="top_attach">3</property>
++			  <property name="bottom_attach">4</property>
++			  <property name="y_options"></property>
++			</packing>
++		      </child>
+ 		    </widget>
+ 		    <packing>
+ 		      <property name="left_attach">0</property>

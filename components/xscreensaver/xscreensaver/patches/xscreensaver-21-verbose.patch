@@ -1,0 +1,43 @@
+Bug 16559 - xscreensaver shows extra messages
+https://defect.opensolaris.org/bz/show_bug.cgi?id=16559
+
+Make messages that annoy users only appear when verbose is set.
+(Upstream wasn't showing these until we started capturing stderr.)
+---
+ driver/passwd.c |   12 +++++++++---
+ 1 files changed, 9 insertions(+), 3 deletions(-)
+
+diff --git driver/passwd.c driver/passwd.c
+--- driver/passwd.c
++++ driver/passwd.c
+@@ -283,8 +283,11 @@ xss_authenticate(saver_info *si, Bool verbose_p)
+           si->cached_passwd &&
+           !*si->cached_passwd)
+         {
+-          fprintf (stderr, "%s: assuming null password means cancel.\n",
+-                   blurb());
++          if (verbose_p)
++            {
++              fprintf (stderr, "%s: assuming null password means cancel.\n",
++                       blurb());
++            }
+           si->unlock_state = ul_cancel;
+         }
+ 
+@@ -313,11 +316,14 @@ xss_authenticate(saver_info *si, Bool verbose_p)
+         {
+           /* If any auth method gets a cancel or timeout, don't try the
+              next auth method!  We're done! */
+-          fprintf (stderr,
++          if (verbose_p)
++            {
++              fprintf (stderr,
+                    "%s: authentication via %s %s.\n",
+                        blurb(), methods[i].name,
+                    (si->unlock_state == ul_cancel
+                     ? "cancelled" : "timed out"));
++            }
+           goto DONE;
+         }
+     }
+
