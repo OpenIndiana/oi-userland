@@ -19,44 +19,36 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013  Erol Zavidic. All rights reserved.
 #
 
+<transform file path=.+/lib/.+\.la$ -> drop>
+<transform file path=.+/lib/.+\.a$ -> drop>
 <transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
 set name=pkg.fmri \
     value=pkg:/library/zlib@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The Zip compression library"
-set name=com.oracle.info.description value="the zip compression library"
-set name=com.oracle.info.tpno value=9246
 set name=info.classification \
     value=org.opensolaris.category.2008:System/Libraries
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid \
-    value=PSARC/2006/537
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 
-
-file usr/lib/libz.so.1 path=lib/libz.so.1
-file usr/lib/llib-lz.ln path=lib/llib-lz.ln
-file usr/lib/$(MACH64)/libz.so.1 path=lib/$(MACH64)/libz.so.1
-file usr/lib/$(MACH64)/llib-lz.ln path=lib/$(MACH64)/llib-lz.ln
 file path=usr/include/zconf.h
 file path=usr/include/zlib.h
+link path=usr/lib/$(MACH64)/libz.so target=libz.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/libz.so.$(COMPONENT_VERSION)
+link path=usr/lib/$(MACH64)/libz.so.1 target=libz.so.$(COMPONENT_VERSION)
+file path=usr/lib/$(MACH64)/llib-lz.ln
+file path=usr/lib/$(MACH64)/pkgconfig/zlib.pc
+link path=usr/lib/libz.so target=libz.so.$(COMPONENT_VERSION)
+file path=usr/lib/libz.so.$(COMPONENT_VERSION)
+link path=usr/lib/libz.so.1 target=libz.so.$(COMPONENT_VERSION)
 file path=usr/lib/llib-lz
-file usr/share/man/man3/zlib.3 path=usr/share/man/man3/libz.3
-file zlib.3.sunman path=usr/share/man/man3/zlib.3
-
-link path=lib/$(MACH64)/libz.so target=libz.so.1
-link path=lib/libz.so target=libz.so.1
-link path=usr/lib/$(MACH64)/libz.so target=libz.so.1
-link path=usr/lib/$(MACH64)/libz.so.1 target=../../../lib/$(MACH64)/libz.so.1
-link path=usr/lib/$(MACH64)/llib-lz.ln target=../../../lib/$(MACH64)/llib-lz.ln
-link path=usr/lib/libz.so target=./libz.so.1
-link path=usr/lib/libz.so.1 target=../../lib/libz.so.1
-link path=usr/lib/llib-lz.ln target=../../lib/llib-lz.ln
+file path=usr/lib/llib-lz.ln
+file path=usr/lib/pkgconfig/zlib.pc
+file path=usr/share/man/man3/zlib.3
+file libz.3.sunman path=usr/share/man/man3/libz.3
 
 license zlib.license license="zlib license"
-
-legacy pkg=SUNWzlib \
-    name="The Zip compression library" \
-    desc="The Zip compression library"
