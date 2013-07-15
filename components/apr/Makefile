@@ -40,7 +40,7 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-CONFIGURE_PREFIX=/usr/apr/1.3
+CONFIGURE_PREFIX=/usr/apr
 
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS +=	--enable-other-child
