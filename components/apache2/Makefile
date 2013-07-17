@@ -23,13 +23,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apache2
-COMPONENT_VERSION=	2.2.24
+COMPONENT_VERSION=	2.2.25
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/
 COMPONENT_SRC_NAME=	httpd
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:df651442b13685b32505df68e6a68e5644f13f032121edac4b240291a568a6f7
+    sha256:b641b4512f280aaa568eab090ab52fdea86894f9ef22f384811a4572fc405bf3
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
@@ -94,10 +94,10 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-Apache2-$(MACH64)
-CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/1.3/bin/apr-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/1.3/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/1.3/bin/apu-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/1.3/bin/$(MACH64)/apu-1-config
+CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
+CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
+CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/bin/apu-1-config
+CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/bin/$(MACH64)/apu-1-config
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
