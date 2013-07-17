@@ -1,0 +1,13 @@
+--- build/dbd.m4.orig	2013-07-16 12:08:35.699891023 +0400
++++ build/dbd.m4	2013-07-16 12:16:13.267331539 +0400
+@@ -169,8 +169,8 @@
+       AC_PATH_PROG([MYSQL_CONFIG],[mysql_config])
+       if test "x$MYSQL_CONFIG" != 'x'; then
+         mysql_CPPFLAGS="`$MYSQL_CONFIG --include`"
+-        mysql_LDFLAGS="`$MYSQL_CONFIG --libs_r | sed -e 's/-l[[^ ]]\+//g'`"
+-        mysql_LIBS="`$MYSQL_CONFIG --libs_r`"
++        mysql_LDFLAGS="`$MYSQL_CONFIG --libs_r | sed -e 's/-l[[^ ]]\+//g' -e 's:-L/opt/SUNWspro/lib::g' -e 's:-lCrun::g'`" 
++        mysql_LIBS="`$MYSQL_CONFIG --libs_r | sed -e 's:-L/opt/SUNWspro/lib::g' -e 's:-lCrun::g'`"
+ 
+         APR_ADDTO(CPPFLAGS, [$mysql_CPPFLAGS])
+         APR_ADDTO(LIBS, [$mysql_LIBS])
