@@ -1,6 +1,3 @@
-#
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-#
 diff -r -u /tmp/846623/libibverbs-1.1.4/Makefile.am libibverbs-1.1.4/Makefile.am
 --- /tmp/846623/libibverbs-1.1.4/Makefile.am	Thu Feb  3 01:53:17 2011
 +++ libibverbs-1.1.4/Makefile.am	Fri Feb 11 04:02:12 2011
@@ -897,7 +894,23 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device
  
  	/*
  	 * We'll only be doing writes, but we need O_RDWR in case the
-@@ -163,6 +190,9 @@
+@@ -141,6 +168,15 @@
+ 	if (cmd_fd < 0)
+ 		return NULL;
+ 
++#if defined(__SVR4) && defined(__sun)
++	/* We don't support parent-child sharing of IB resources on Solaris */
++	if (fcntl(cmd_fd, F_SETFD, FD_CLOEXEC) < 0) {
++		fprintf(stderr, "ibv_open_device: FD_CLOEXEC failed: %s\n",
++		    strerror(errno));
++		goto err;
++	}
++#endif
++
+ 	context = device->ops.alloc_context(device, cmd_fd);
+ 	if (!context)
+ 		goto err;
+@@ -163,6 +199,9 @@
  	int async_fd = context->async_fd;
  	int cmd_fd   = context->cmd_fd;
  	int cq_fd    = -1;
@@ -907,7 +920,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device
  
  	if (abi_ver <= 2) {
  		struct ibv_abi_compat_v2 *t = context->abi_compat;
-@@ -172,6 +202,11 @@
+@@ -172,6 +211,11 @@
  
  	context->device->ops.free_context(context);
  
@@ -919,7 +932,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/device.c libibverbs-1.1.4/src/device
  	close(async_fd);
  	close(cmd_fd);
  	if (abi_ver <= 2)
-@@ -214,6 +249,15 @@
+@@ -214,6 +258,15 @@
  		case IBV_EVENT_SRQ_LIMIT_REACHED:
  			event->element.srq = (void *) (uintptr_t) ev.element;
  			break;
@@ -1046,7 +1059,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  
  	t = malloc(sizeof *t);
  	if (!t)
-@@ -67,9 +96,20 @@
+@@ -67,12 +96,36 @@
  
  	IBV_INIT_CMD_RESP(cmd, cmd_size, GET_CONTEXT, resp, resp_size);
  	cmd->cq_fd_tab = (uintptr_t) &cq_fd;
@@ -1067,7 +1080,23 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  
  	VALGRIND_MAKE_MEM_DEFINED(resp, resp_size);
  
-@@ -87,13 +127,28 @@
++#if defined(__SVR4) && defined(__sun)
++	/* We don't support parent-child sharing of IB resources on Solaris */
++	if (fcntl(resp->async_fd, F_SETFD, FD_CLOEXEC) < 0) {
++		fprintf(stderr, "ibv_get_context: FD_CLOEXEC failed "
++		    "for async_fd: %s\n", strerror(errno));
++		return errno;
++	}
++	if (fcntl(cq_fd, F_SETFD, FD_CLOEXEC) < 0) {
++		fprintf(stderr, "ibv_get_context: FD_CLOEXEC failed "
++		    "for cq_fd: %s\n", strerror(errno));
++		return errno;
++	}
++#endif
+ 	context->async_fd         = resp->async_fd;
+ 	context->num_comp_vectors = 1;
+ 	t->channel.context        = context;
+@@ -87,19 +140,53 @@
  			size_t cmd_size, struct ibv_get_context_resp *resp,
  			size_t resp_size)
  {
@@ -1096,7 +1125,15 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  
  	VALGRIND_MAKE_MEM_DEFINED(resp, resp_size);
  
-@@ -100,6 +155,16 @@
++#if defined(__SVR4) && defined(__sun)
++	/* We don't support parent-child sharing of IB resources on Solaris */
++	if (fcntl(resp->async_fd, F_SETFD, FD_CLOEXEC) < 0) {
++		fprintf(stderr, "ibv_get_context: FD_CLOEXEC failed: %s\n",
++		    strerror(errno));
++		return errno;
++	}
++#endif
++
  	context->async_fd         = resp->async_fd;
  	context->num_comp_vectors = resp->num_comp_vectors;
  
@@ -1113,7 +1150,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	return 0;
  }
  
-@@ -120,6 +185,7 @@
+@@ -120,6 +207,7 @@
  	memset(device_attr->fw_ver, 0, sizeof device_attr->fw_ver);
  	*raw_fw_ver			       = resp.fw_ver;
  	device_attr->node_guid 		       = resp.node_guid;
@@ -1121,7 +1158,16 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	device_attr->sys_image_guid 	       = resp.sys_image_guid;
  	device_attr->max_mr_size 	       = resp.max_mr_size;
  	device_attr->page_size_cap 	       = resp.page_size_cap;
-@@ -218,6 +284,45 @@
+@@ -207,6 +295,8 @@
+ {
+ 	IBV_INIT_CMD_RESP(cmd, cmd_size, ALLOC_PD, resp, resp_size);
+ 
++	cmd->user_handle     = (uintptr_t) pd;
++
+ 	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
+ 		return errno;
+ 
+@@ -218,6 +308,47 @@
  	return 0;
  }
  
@@ -1132,6 +1178,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
 +{
 +	IBV_INIT_CMD_RESP(cmd, cmd_size, ALLOC_SHPD, resp, resp_size);
 +        cmd->pd_handle = pd->handle;
++	cmd->user_handle = (uintptr_t) pd;
 +	cmd->share_key = share_key;
 +
 +	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
@@ -1152,6 +1199,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
 +	IBV_INIT_CMD_RESP(cmd, cmd_size, SHARE_PD, resp, resp_size);
 +	cmd->shpd_handle = shpd->handle;
 +	cmd->share_key = share_key;
++	cmd->user_handle     = (uintptr_t) pd;
 +
 +	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
 +		return errno;
@@ -1167,7 +1215,23 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  int ibv_cmd_dealloc_pd(struct ibv_pd *pd)
  {
  	struct ibv_dealloc_pd cmd;
-@@ -259,6 +364,34 @@
+@@ -224,6 +355,7 @@
+ 
+ 	IBV_INIT_CMD(&cmd, sizeof cmd, DEALLOC_PD);
+ 	cmd.pd_handle = pd->handle;
++	cmd.user_handle = (uintptr_t) pd;
+ 
+ 	if (write(pd->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
+ 		return errno;
+@@ -244,6 +376,7 @@
+ 	cmd->length 	  = length;
+ 	cmd->hca_va 	  = hca_va;
+ 	cmd->pd_handle 	  = pd->handle;
++	cmd->user_handle  = (uintptr_t) mr;
+ 	cmd->access_flags = access;
+ 
+ 	if (write(pd->context->cmd_fd, cmd, cmd_size) != cmd_size)
+@@ -259,6 +392,35 @@
  	return 0;
  }
  
@@ -1184,6 +1248,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
 +	cmd->length 	  = length;
 +	cmd->hca_va 	  = hca_va;
 +	cmd->pd_handle 	  = pd->handle;
++	cmd->user_handle  = (uintptr_t) mr;
 +	cmd->access_flags = access;
 +
 +	if (write(pd->context->cmd_fd, cmd, cmd_size) != cmd_size)
@@ -1202,7 +1267,15 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  int ibv_cmd_dereg_mr(struct ibv_mr *mr)
  {
  	struct ibv_dereg_mr cmd;
-@@ -272,6 +405,32 @@
+@@ -265,6 +427,7 @@
+ 
+ 	IBV_INIT_CMD(&cmd, sizeof cmd, DEREG_MR);
+ 	cmd.mr_handle = mr->handle;
++	cmd.user_handle  = (uintptr_t) mr;
+ 
+ 	if (write(mr->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
+ 		return errno;
+@@ -272,6 +435,34 @@
  	return 0;
  }
  
@@ -1212,6 +1285,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
 +
 +	IBV_INIT_CMD(&cmd, sizeof cmd, DEREG_MR_RELAXED);
 +	cmd.mr_handle = mr->handle;
++	cmd.user_handle  = (uintptr_t) mr;
 +
 +	if (write(mr->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
 +		return errno;
@@ -1225,6 +1299,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
 +
 +	IBV_INIT_CMD(&cmd, sizeof cmd, FLUSH_RELAXED_MR);
 +	cmd.pd_handle = pd->handle;
++	cmd.user_handle  = (uintptr_t) pd;
 +
 +	if (write(pd->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
 +		return errno;
@@ -1235,7 +1310,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  static int ibv_cmd_create_cq_v2(struct ibv_context *context, int cqe,
  				struct ibv_cq *cq,
  				struct ibv_create_cq *new_cmd, size_t new_cmd_size,
-@@ -315,7 +474,19 @@
+@@ -315,7 +506,19 @@
  	cmd->user_handle   = (uintptr_t) cq;
  	cmd->cqe           = cqe;
  	cmd->comp_vector   = comp_vector;
@@ -1255,7 +1330,63 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->reserved      = 0;
  
  	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size)
-@@ -637,7 +808,20 @@
+@@ -346,6 +549,7 @@
+ 	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, POLL_CQ, resp, rsize);
+ 	cmd.cq_handle = ibcq->handle;
+ 	cmd.ne        = ne;
++	cmd.user_handle  = (uintptr_t) ibcq;
+ 
+ 	if (write(ibcq->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd) {
+ 		ret = -1;
+@@ -384,6 +588,7 @@
+ 	IBV_INIT_CMD(&cmd, sizeof cmd, REQ_NOTIFY_CQ);
+ 	cmd.cq_handle = ibcq->handle;
+ 	cmd.solicited = !!solicited_only;
++	cmd.user_handle  = (uintptr_t) ibcq;
+ 
+ 	if (write(ibcq->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
+ 		return errno;
+@@ -399,6 +604,7 @@
+ 	IBV_INIT_CMD_RESP(cmd, cmd_size, RESIZE_CQ, resp, resp_size);
+ 	cmd->cq_handle = cq->handle;
+ 	cmd->cqe       = cqe;
++	cmd->user_handle   = (uintptr_t) cq;
+ 
+ 	if (write(cq->context->cmd_fd, cmd, cmd_size) != cmd_size)
+ 		return errno;
+@@ -434,6 +640,7 @@
+ 	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, DESTROY_CQ, &resp, sizeof resp);
+ 	cmd.cq_handle = cq->handle;
+ 	cmd.reserved  = 0;
++	cmd.user_handle  = (uintptr_t) cq;
+ 
+ 	if (write(cq->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
+ 		return errno;
+@@ -555,6 +762,7 @@
+ 	cmd->attr_mask	= srq_attr_mask;
+ 	cmd->max_wr	= srq_attr->max_wr;
+ 	cmd->srq_limit	= srq_attr->srq_limit;
++	cmd->user_handle   = (uintptr_t) srq;
+ 
+ 	if (write(srq->context->cmd_fd, cmd, cmd_size) != cmd_size)
+ 		return errno;
+@@ -569,6 +777,7 @@
+ 
+ 	IBV_INIT_CMD_RESP(cmd, cmd_size, QUERY_SRQ, &resp, sizeof resp);
+ 	cmd->srq_handle = srq->handle;
++	cmd->user_handle   = (uintptr_t) srq;
+ 	cmd->reserved   = 0;
+ 
+ 	if (write(srq->context->cmd_fd, cmd, cmd_size) != cmd_size)
+@@ -606,6 +815,7 @@
+ 
+ 	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, DESTROY_SRQ, &resp, sizeof resp);
+ 	cmd.srq_handle = srq->handle;
++	cmd.user_handle  = (uintptr_t) srq;
+ 	cmd.reserved   = 0;
+ 
+ 	if (write(srq->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
+@@ -637,7 +847,20 @@
  	cmd->max_send_sge    = attr->cap.max_send_sge;
  	cmd->max_recv_sge    = attr->cap.max_recv_sge;
  	cmd->max_inline_data = attr->cap.max_inline_data;
@@ -1276,7 +1407,47 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/cmd.c libibverbs-1.1.4/src/cmd.c
  	cmd->qp_type 	     = attr->qp_type;
  	cmd->is_srq 	     = !!attr->srq;
  	cmd->srq_handle      = attr->qp_type == IBV_QPT_XRC ?
-@@ -1406,4 +1590,3 @@
+@@ -691,6 +914,7 @@
+ 	IBV_INIT_CMD_RESP(cmd, cmd_size, QUERY_QP, &resp, sizeof resp);
+ 	cmd->qp_handle = qp->handle;
+ 	cmd->attr_mask = attr_mask;
++	cmd->user_handle   = (uintptr_t) qp;
+ 
+ 	if (write(qp->context->cmd_fd, cmd, cmd_size) != cmd_size)
+ 		return errno;
+@@ -772,6 +996,7 @@
+ 	IBV_INIT_CMD(cmd, cmd_size, MODIFY_QP);
+ 
+ 	cmd->qp_handle 		 = qp->handle;
++	cmd->user_handle   	 = (uintptr_t) qp;
+ 	cmd->attr_mask 		 = attr_mask;
+ 	cmd->qkey 		 = attr->qkey;
+ 	cmd->rq_psn 		 = attr->rq_psn;
+@@ -1292,6 +1517,7 @@
+ 	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, DESTROY_QP, &resp, sizeof resp);
+ 	cmd.qp_handle = qp->handle;
+ 	cmd.reserved  = 0;
++	cmd.user_handle  = (uintptr_t) qp;
+ 
+ 	if (write(qp->context->cmd_fd, &cmd, sizeof cmd) != sizeof cmd)
+ 		return errno;
+@@ -1313,6 +1539,7 @@
+ 	IBV_INIT_CMD(&cmd, sizeof cmd, ATTACH_MCAST);
+ 	memcpy(cmd.gid, gid->raw, sizeof cmd.gid);
+ 	cmd.qp_handle = qp->handle;
++	cmd.user_handle  = (uintptr_t) qp;
+ 	cmd.mlid      = lid;
+ 	cmd.reserved  = 0;
+ 
+@@ -1329,6 +1556,7 @@
+ 	IBV_INIT_CMD(&cmd, sizeof cmd, DETACH_MCAST);
+ 	memcpy(cmd.gid, gid->raw, sizeof cmd.gid);
+ 	cmd.qp_handle = qp->handle;
++	cmd.user_handle  = (uintptr_t) qp;
+ 	cmd.mlid      = lid;
+ 	cmd.reserved  = 0;
+ 
+@@ -1406,4 +1634,3 @@
  		return errno;
  	return 0;
  }
@@ -1605,7 +1776,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  	__u64 sys_image_guid;
  	__u64 max_mr_size;
  	__u64 page_size_cap;
-@@ -235,6 +250,34 @@
+@@ -235,23 +250,103 @@
  	__u8  reserved[2];
  };
  
@@ -1640,7 +1811,9 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_alloc_pd {
  	__u32 command;
  	__u16 in_words;
-@@ -243,10 +286,57 @@
+ 	__u16 out_words;
+ 	__u64 response;
++	__u64 user_handle;
  	__u64 driver_data[0];
  };
  
@@ -1671,6 +1844,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
 +	__u32 pd_handle;
 +	__u32 reserved;
 +	__u64 share_key;
++	__u64 user_handle;
 +	__u64 driver_data[0];
 +};
 +
@@ -1686,6 +1860,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
 +	__u32 shpd_handle;
 +	__u32 reserved;
 +	__u64 share_key;
++	__u64 user_handle;
 +	__u64 driver_data[0];
 +};
 +
@@ -1698,8 +1873,27 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_dealloc_pd {
  	__u32 command;
  	__u16 in_words;
-@@ -280,6 +370,13 @@
+ 	__u16 out_words;
+ 	__u32 pd_handle;
++	__u32 reserved;
++	__u64 user_handle;
+ };
+ 
+ struct ibv_reg_mr {
+@@ -264,6 +359,7 @@
+ 	__u64 hca_va;
+ 	__u32 pd_handle;
+ 	__u32 access_flags;
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -278,8 +374,19 @@
+ 	__u16 in_words;
+ 	__u16 out_words;
  	__u32 mr_handle;
++	__u32 reserved;
++	__u64 user_handle;
  };
  
 +struct ibv_flush_relaxed_mr {
@@ -1707,12 +1901,14 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
 +	__u16 in_words;
 +	__u16 out_words;
 +	__u32 pd_handle;
++	__u32 reserved;
++	__u64 user_handle;
 +};
 +
  struct ibv_create_comp_channel {
  	__u32 command;
  	__u16 in_words;
-@@ -304,10 +401,25 @@
+@@ -304,10 +411,25 @@
  	__u64 driver_data[0];
  };
  
@@ -1738,7 +1934,31 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_kern_wc {
  	__u64  wr_id;
-@@ -363,7 +475,11 @@
+@@ -334,6 +456,7 @@
+ 	__u64 response;
+ 	__u32 cq_handle;
+ 	__u32 ne;
++	__u64 user_handle;
+ };
+ 
+ struct ibv_poll_cq_resp {
+@@ -348,6 +471,7 @@
+ 	__u16 out_words;
+ 	__u32 cq_handle;
+ 	__u32 solicited;
++	__u64 user_handle;
+ };
+ 
+ struct ibv_resize_cq {
+@@ -357,6 +481,7 @@
+ 	__u64 response;
+ 	__u32 cq_handle;
+ 	__u32 cqe;
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -363,7 +488,11 @@
  struct ibv_resize_cq_resp {
  	__u32 cqe;
  	__u32 reserved;
@@ -1750,7 +1970,15 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  };
  
  struct ibv_destroy_cq {
-@@ -460,6 +576,14 @@
+@@ -373,6 +502,7 @@
+ 	__u64 response;
+ 	__u32 cq_handle;
+ 	__u32 reserved;
++	__u64 user_handle;
+ };
+ 
+ struct ibv_destroy_cq_resp {
+@@ -460,6 +590,14 @@
  	__u64 driver_data[0];
  };
  
@@ -1765,7 +1993,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  struct ibv_create_qp_resp {
  	__u32 qp_handle;
  	__u32 qpn;
-@@ -469,7 +593,20 @@
+@@ -469,7 +607,20 @@
  	__u32 max_recv_sge;
  	__u32 max_inline_data;
  	__u32 reserved;
@@ -1786,7 +2014,47 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_qp_dest {
  	__u8  dgid[16];
-@@ -817,12 +954,29 @@
+@@ -493,6 +644,7 @@
+ 	__u64 response;
+ 	__u32 qp_handle;
+ 	__u32 attr_mask;
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -560,6 +712,7 @@
+ 	__u8  alt_port_num;
+ 	__u8  alt_timeout;
+ 	__u8  reserved[2];
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -570,6 +723,7 @@
+ 	__u64 response;
+ 	__u32 qp_handle;
+ 	__u32 reserved;
++	__u64 user_handle;
+ };
+ 
+ struct ibv_destroy_qp_resp {
+@@ -775,6 +929,7 @@
+ 	__u32 qp_handle;
+ 	__u16 mlid;
+ 	__u16 reserved;
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -786,6 +941,7 @@
+ 	__u32 qp_handle;
+ 	__u16 mlid;
+ 	__u16 reserved;
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -817,12 +973,29 @@
  	__u64 driver_data[0];
  };
  
@@ -1816,7 +2084,31 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/include/infiniband/kern-abi.h libibverbs
  
  struct ibv_modify_srq {
  	__u32 command;
-@@ -946,6 +1100,14 @@
+@@ -832,6 +1005,7 @@
+ 	__u32 attr_mask;
+ 	__u32 max_wr;
+ 	__u32 srq_limit;
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -842,6 +1016,7 @@
+ 	__u64 response;
+ 	__u32 srq_handle;
+ 	__u32 reserved;
++	__u64 user_handle;
+ 	__u64 driver_data[0];
+ };
+ 
+@@ -859,6 +1034,7 @@
+ 	__u64 response;
+ 	__u32 srq_handle;
+ 	__u32 reserved;
++	__u64 user_handle;
+ };
+ 
+ struct ibv_destroy_srq_resp {
+@@ -946,6 +1122,14 @@
  	IB_USER_VERBS_CMD_QUERY_XRC_RCV_QP_V2 = -1,
  	IB_USER_VERBS_CMD_REG_XRC_RCV_QP_V2 = -1,
  	IB_USER_VERBS_CMD_UNREG_XRC_RCV_QP_V2 = -1,
