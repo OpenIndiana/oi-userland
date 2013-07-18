@@ -33,6 +33,8 @@ include ../../../make-rules/ips.mk
 
 APACHE_USR_PREFIX=/usr/apache2/2.2
 
+COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
+
 $(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/apxs
 $(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
 $(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -32"
