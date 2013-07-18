@@ -94,6 +94,7 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-Apache2-$(MACH64)
+CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
 CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/bin/apu-1-config
