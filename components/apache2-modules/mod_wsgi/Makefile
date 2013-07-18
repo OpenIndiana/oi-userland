@@ -47,12 +47,12 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # but since mod_wsgi doesn't use setup.py, we can't just include
 # setup.py.mk
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
+#$(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.installed:	PYTHON_VERSION=2.6
-$(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
+#$(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
