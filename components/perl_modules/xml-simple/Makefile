@@ -46,14 +46,14 @@ COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
 
 COMPONENT_TEST_TARGETS = test
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
 	#
 	# Must have xml-parser installed for these tests to pass.
 	#
-test:		$(TEST_32_and_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
