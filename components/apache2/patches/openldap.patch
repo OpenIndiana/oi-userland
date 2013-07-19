@@ -1,25 +1,3 @@
---- modules/aaa/config.m4	Mon Jun  9 09:04:46 2008
-+++ modules/aaa/config.m4	Thu Nov 10 07:04:40 2011
-@@ -35,7 +35,7 @@
- dnl LDAP authentication module. This module has both the authn and authz
- dnl modules in one, so as to share the LDAP server config directives.
- APACHE_MODULE(authnz_ldap, LDAP based authentication, , , no, [
--  MOD_AUTHNZ_LDAP_LDADD="`$apu_config --ldap-libs`" || MOD_AUTHNZ_LDAP_LDADD=""
-+  MOD_AUTHNZ_LDAP_LDADD="-lldap_r-2.4  -llber"
-   AC_SUBST(MOD_AUTHNZ_LDAP_LDADD)
- ])
- 
---- modules/ldap/config.m4	Mon Jun  9 09:04:46 2008
-+++ modules/ldap/config.m4	Thu Nov 10 07:02:52 2011
-@@ -5,7 +5,7 @@
- 
- ldap_objects="util_ldap.lo util_ldap_cache.lo util_ldap_cache_mgr.lo"
- APACHE_MODULE(ldap, LDAP caching and connection pooling services, $ldap_objects, , no, [
--  MOD_LDAP_LDADD="`$apu_config --ldap-libs`" || MOD_LDAP_LDADD=""
-+  MOD_LDAP_LDADD="-lldap_r-2.4  -llber"
-   AC_SUBST(MOD_LDAP_LDADD)
- ])
- 
 --- configure.in	Sat Apr 16 12:09:47 2011
 +++ configure.in	Thu Nov 10 07:18:54 2011
 @@ -144,7 +144,7 @@
