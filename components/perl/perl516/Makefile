@@ -23,7 +23,7 @@
 include ../../../make-rules/shared-macros.mk
 
 #
-# Note this perl is 64-bit only.
+# Note this perl is 32-bit only.
 #
 
 # I want to override PERL_VERSION and PERL_ARCH because when building
@@ -53,16 +53,10 @@ include $(WS_TOP)/make-rules/ips.mk
 # This also produces a perl more inline with past perl's.  For better
 # or worse.
 #
-studio_XBITS=
-studio_XREGS=
-studio_IROPTS=
-studio_C99MODE=
-studio_ALIGN=
-studio_MT=
 
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/Configure
 CONFIGURE_ENV += MAKE=$(GMAKE)
-CONFIGURE_ENV += PATH=$(dir $(CC)):$(PATH)
+#CONFIGURE_ENV += PATH=$(dir $(CC)):$(PATH)
 
 # -Dperl_static_inline="static" turns OFF "static inline".
 # This was added because Configure probes
@@ -76,7 +70,7 @@ CONFIGURE_OPTIONS = \
 			-Ulocincpth= \
 			-Uloclibpth= \
                         -Dbin=/usr/perl5/$(PERL_VERSION)/bin \
-			-Dcc="cc" \
+			-Dcc="$(CC) $(CC_BITS)" \
 			-Dcf_email="userland-discuss@opensolaris.org" \
 			-Dcf_by="perl-bugs" \
 			-Dlibperl=libperl.so \
@@ -88,11 +82,10 @@ CONFIGURE_OPTIONS = \
 			-Dsiteprefix=/usr/perl5/$(PERL_VERSION) \
 			-Dvendorlib=/usr/perl5/vendor_perl/$(PERL_VERSION) \
 			-Dvendorprefix=/usr/perl5/$(PERL_VERSION) \
+			-Duse64bitint \
 			-Duseshrplib \
 			-Dusedtrace \
-			-Duse64bitall \
-			-Uuselargefiles \
-			-Doptimize="$(CFLAGS.studio)"
+			-Uuselargefiles 
 
 # The extra Configure parameters (cf_email, cf_by, myhostname) and
 # the gawk and sed that follow are attempting to sanatize the
@@ -116,10 +109,10 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # use cc.  Trying to avoid the full path so it doesn't end up in
 # perl's config.
 #
-COMPONENT_BUILD_ENV	+=	PATH=$(dir $(CC)):$(PATH)
-COMPONENT_INSTALL_ENV	+=	PATH=$(dir $(CC)):$(PATH)
+# COMPONENT_BUILD_ENV	+=	PATH=$(dir $(CC)):$(PATH)
+#COMPONENT_INSTALL_ENV	+=	PATH=$(dir $(CC)):$(PATH)
 COMPONENT_INSTALL_ENV	+=	DESTDIR="$(PROTO_DIR)"
-COMPONENT_TEST_ENV	+=	PATH=$(dir $(CC)):$(PATH)
+#COMPONENT_TEST_ENV	+=	PATH=$(dir $(CC)):$(PATH)
 
 #
 # perl's install path for sparc is based off the value of the
@@ -128,13 +121,13 @@ COMPONENT_TEST_ENV	+=	PATH=$(dir $(CC)):$(PATH)
 PKG_MACROS		+=	P_ARCH=$(shell arch)
 
 # Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+# ASLR_MODE = $(ASLR_ENABLE)
 
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
-test:		$(TEST_64)
+test:		$(TEST_32)
 	#
 	#
 	# All tests should pass.
