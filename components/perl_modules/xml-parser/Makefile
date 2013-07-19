@@ -44,7 +44,7 @@ include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk
 
 # Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+#ASLR_MODE = $(ASLR_ENABLE)
 
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
@@ -53,11 +53,11 @@ COMPONENT_TEST_TARGETS = test
 
 PKG_MACROS +=	PERL_A=$(shell arch)
 
-build:		$(BUILD_32_and_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32)
 
-test:		$(TEST_32_and_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
