@@ -1,0 +1,78 @@
+diff -ur gaa-1.6.6.orig/source/gaa_parser.c gaa-1.6.6/source/gaa_parser.c
+--- gaa-1.6.6.orig/source/gaa_parser.c	2011-12-17 14:04:43.802204275 +0000
++++ gaa-1.6.6/source/gaa_parser.c	2011-12-17 14:05:08.981412995 +0000
+@@ -2111,7 +2111,7 @@
+ /* Returns the number of the line, that the index-th character
+  * is placed.
+  */
+-int getline(FILE* fd, int index)
++int gaa_getline(FILE* fd, int index)
+ {
+     int tmp, line = 1, i;
+     int a = 0;
+@@ -2136,7 +2136,7 @@
+ void copy_line(FILE* fd, int index, FILE* target, char* file, char term)
+ {
+     int a;
+-    fprintf(target, "#line %d \"%s\"\n\t", getline(fd, index), file);
++    fprintf(target, "#line %d \"%s\"\n\t", gaa_getline(fd, index), file);
+     fseek(fd, index, SEEK_SET);
+     do
+     {
+@@ -2159,7 +2159,7 @@
+     int a;
+     char *str_cmp;
+     int i, flag = 1;
+-    fprintf(target, "#line %d \"%s\"\n", getline(fd, index), file);
++    fprintf(target, "#line %d \"%s\"\n", gaa_getline(fd, index), file);
+     fprintf(target, "{");
+     fseek(fd, index, SEEK_SET);
+     if(opt[0] == 0)
+@@ -2260,7 +2260,7 @@
+ void copy_file(FILE* fd, int index, FILE* target, char *file)
+ {
+     int a, pa = -1;
+-    fprintf(target, "#line %d \"%s\"\n", getline(fd, index), file);
++    fprintf(target, "#line %d \"%s\"\n", gaa_getline(fd, index), file);
+     fseek(fd, index, SEEK_SET);
+     while( (a=fgetc(fd)) != EOF)
+     {
+diff -ur gaa-1.6.6.orig/source/gaa_parser.y gaa-1.6.6/source/gaa_parser.y
+--- gaa-1.6.6.orig/source/gaa_parser.y	2011-12-17 14:04:43.801856731 +0000
++++ gaa-1.6.6/source/gaa_parser.y	2011-12-17 14:05:07.418762544 +0000
+@@ -805,7 +805,7 @@
+ /* Returns the number of the line, that the index-th character
+  * is placed.
+  */
+-int getline(FILE* fd, int index)
++int gaa_getline(FILE* fd, int index)
+ {
+     int tmp, line = 1, i;
+     int a = 0;
+@@ -830,7 +830,7 @@
+ void copy_line(FILE* fd, int index, FILE* target, char* file, char term)
+ {
+     int a;
+-    fprintf(target, "#line %d \"%s\"\n\t", getline(fd, index), file);
++    fprintf(target, "#line %d \"%s\"\n\t", gaa_getline(fd, index), file);
+     fseek(fd, index, SEEK_SET);
+     do
+     {
+@@ -853,7 +853,7 @@
+     int a;
+     char *str_cmp;
+     int i, flag = 1;
+-    fprintf(target, "#line %d \"%s\"\n", getline(fd, index), file);
++    fprintf(target, "#line %d \"%s\"\n", gaa_getline(fd, index), file);
+     fprintf(target, "{");
+     fseek(fd, index, SEEK_SET);
+     if(opt[0] == 0)
+@@ -954,7 +954,7 @@
+ void copy_file(FILE* fd, int index, FILE* target, char *file)
+ {
+     int a, pa = -1;
+-    fprintf(target, "#line %d \"%s\"\n", getline(fd, index), file);
++    fprintf(target, "#line %d \"%s\"\n", gaa_getline(fd, index), file);
+     fseek(fd, index, SEEK_SET);
+     while( (a=fgetc(fd)) != EOF)
+     {
