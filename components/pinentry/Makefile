@@ -40,23 +40,11 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL = 0
 
-# Enable C99 mode + -Xc for its additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
-
-# -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
-
-# void function cannot return value, unless it's GNU C
-CFLAGS += -features=extinl,extensions
-
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
 CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
+CFLAGS += $(gcc_C99_ENABLE)
 
 # prevent libtool from removing these
 LDFLAGS += -lsocket -lnsl -lpkcs11
