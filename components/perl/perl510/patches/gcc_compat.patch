@@ -1,0 +1,47 @@
+--- perl-510/i386/usr/perl5/5.10.0/lib/i86pc-solaris-64int/Config.pm	2013-07-19 15:29:05.000000000 +0400
++++ perl-510/i386/usr/perl5/5.10.0/lib/i86pc-solaris-64int/Config.pm	2013-07-20 13:21:54.429931400 +0400
+@@ -72,7 +72,7 @@
+ tie %Config, 'Config', {
+     archlibexp => '/usr/perl5/5.10.0/lib/i86pc-solaris-64int',
+     archname => 'i86pc-solaris-64int',
+-    cc => 'cc',
++    cc => 'gcc',
+     d_readlink => 'define',
+     d_symlink => 'define',
+     dlsrc => 'dl_dlopen.xs',
+--- perl-510/i386/usr/perl5/5.10.0/lib/i86pc-solaris-64int/Config_heavy.pl	2013-07-20 14:00:15.000000000 +0400
++++ perl-510/i386/usr/perl5/5.10.0/lib/i86pc-solaris-64int/Config_heavy.pl	2013-07-20 13:24:12.028784487 +0400
+@@ -144,12 +144,12 @@
+ c='\c'
+ castflags='0'
+ cat='cat'
+-cc='cc'
+-cccdlflags='-KPIC'
++cc='/usr/gcc/4.7/bin/gcc'
++cccdlflags='-fPIC -DPIC'
+ ccdlflags='-R /usr/perl5/5.10.0/lib/i86pc-solaris-64int/CORE '
+ ccflags='-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64 -D_TS_ERRNO -DPERL_USE_SAFE_PUTENV'
+ ccflags_uselargefiles='-D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64'
+-ccname='cc'
++ccname='gcc'
+ ccsymbols=''
+ ccversion='Sun C 5.9 SunOS_i386 Patch 124868-07 2008/10/07'
+ cf_by='perl-bugs'
+@@ -826,7 +826,7 @@
+ ivtype='long long'
+ known_extensions='B ByteLoader Compress/Raw/Zlib Cwd DB_File Data/Dumper Devel/DProf Devel/PPPort Devel/Peek Digest/MD5 Digest/SHA Encode Fcntl File/Glob Filter/Util/Call GDBM_File Hash/Util I18N/Langinfo IO IPC/SysV List/Util MIME/Base64 Math/BigInt/FastCalc NDBM_File ODBM_File Opcode POSIX PerlIO/encoding PerlIO/scalar PerlIO/via SDBM_File Socket Storable Sys/Hostname Sys/Syslog Text/Soundex Time/HiRes Time/Piece Unicode/Normalize Win32 Win32API/File Win32CORE XS/APItest XS/Typemap attrs re threads threads/shared Hash/Util/FieldHash'
+ ksh=''
+-ld='cc'
++ld='gcc'
+ lddlflags='-G'
+ ldflags=''
+ ldflags_uselargefiles=''
+@@ -911,7 +911,7 @@
+ o_nonblock='O_NONBLOCK'
+ obj_ext='.o'
+ old_pthread_create_joinable=''
+-optimize='-xO3 -xspace -xildoff'
++optimize='-O3'
+ orderlib='false'
+ osname='solaris'
+ osvers='2.11'
