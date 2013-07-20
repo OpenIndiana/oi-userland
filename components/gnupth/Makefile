@@ -38,19 +38,10 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL = 0
 
-# Enable C99 mode + -Xc for its additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
-
-# -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
-
-# -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
-
 CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += $(XPG6MODE)
 CFLAGS += $(CPP_POSIX)
-CFLAGS += $(studio_PIC)
+CFLAGS += $(gcc_C99_ENABLE)
 
 CPPFLAGS += $(CPP_LARGEFILES) $(CPP_POSIX)
 
