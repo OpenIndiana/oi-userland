@@ -23,14 +23,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libconfuse
-COMPONENT_VERSION=	2.6
+COMPONENT_VERSION=	2.7
 COMPONENT_SRC_NAME=	confuse
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.nongnu.org/confuse/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e8d653159b152f3850a7224b3eb604955795dbd3fd6603816ee46411ea53e84a
-COMPONENT_ARCHIVE_URL=	http://bzero.se/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:e32574fd837e950778dac7ade40787dd2259ef8e28acd6ede6847ca895c88778
+COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/confuse/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libconfuse
 
 include ../../make-rules/prep.mk
