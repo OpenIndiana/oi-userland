@@ -313,7 +313,7 @@ JAVA_HOME = $(JAVA7_HOME)
 PERL_VERSION =  5.16
 
 #PERL_VERSIONS = 5.10.0 5.12 5.16
-PERL_VERSIONS = 5.16
+PERL_VERSIONS = 5.10.0 5.16
 
 PERL.5.10.0 =     /usr/perl5/5.10.0/bin/perl
 PERL.5.12 =     /usr/perl5/5.12/bin/perl
@@ -328,7 +328,6 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 # inside perl builds while we actually need a full path to
 # the studio compiler.
 #PERL_CC :=	$(shell $(PERL) -e 'use Config; print $$Config{cc}')
-PERL_OPTIMIZE :=$(shell $(PERL) -e 'use Config; print $$Config{optimize}')
 
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
@@ -682,6 +681,13 @@ COMPONENT_BUILD_ENV= \
 COMPONENT_INSTALL_ENV= \
     LD_OPTIONS="$(LD_OPTIONS)" \
     LD_EXEC_OPTIONS="$(LD_EXEC_OPTIONS)"
+
+# PERL options which depend on C options should be placed here
+# Don't trust Perl $Config{optimize}, we can get Studio flags
+PERL_OPTIMIZE =$(gcc_OPT)
+
+# We need this to overwrite options of perl used to compile illumos-gate
+PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_PIC)" ld="$(CC)" ccname="$(shell basename $(CC))" optimize="$(gcc_OPT)"
 
 # Add any bit-specific settings
 COMPONENT_BUILD_ENV += $(COMPONENT_BUILD_ENV.$(BITS))
