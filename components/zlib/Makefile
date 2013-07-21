@@ -49,6 +49,9 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(RM) $(@D)/Makefile $(@D)/zconf.h; \
 	$(CP) $(SOURCE_DIR)/zconf.h $(@D) )
 
+#Fixes firefox crash with new zlib, don't remove until proper fix
+gcc_OPT="-O2"
+
 # Also, the x86 architecture does not require alignment for multi-byte
 # loads, so we can define UNALIGNED_OK for x86
 CFLAGS.32 += -DUNALIGNED_OK
