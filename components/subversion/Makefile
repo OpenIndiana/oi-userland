@@ -44,36 +44,36 @@ include ../../make-rules/ips.mk
 PATCH_LEVEL = 0
 PYMODS = client core delta fs ra repos wc
 PLMODS= Fs Core Wc Client Repos Ra Delta
-JAVA_ROOT = $(JAVA_HOME)
-PERL_VERSION.32 = 5.12
-PERL_VERSION.64 = 5.16
-PERL_VERSION = $(PERL_VERSION.$(BITS))
-PERL = $(PERL.$(PERL_VERSION))
+JAVA_ROOT = $(JAVA6_HOME)
+#PERL_VERSION.32 = 5.12
+#PERL_VERSION.64 = 5.16
+#PERL_VERSION = $(PERL_VERSION.$(BITS))
+#PERL = $(PERL.$(PERL_VERSION))
 GNUCP = /usr/gnu/bin/cp
 
 # because we can't seem to get -norunpath to the java bindings build any
 # other way.
-CXX += $(studio_NORUNPATH)
-CFLAGS += -features=extensions
-CFLAGS += -xustr=ascii_utf16_ushort -xcsi
-CXXFLAGS += -features=nestedaccess,tmplife,tmplrefstatic
-CXXFLAGS += -template=geninlinefuncs
-CXXFLAGS += -verbose=template
-CXXFLAGS += -xustr=ascii_utf16_ushort
+#CXX += $(studio_NORUNPATH)
+#CFLAGS += -features=extensions
+#CFLAGS += -xustr=ascii_utf16_ushort -xcsi
+#CXXFLAGS += -features=nestedaccess,tmplife,tmplrefstatic
+#CXXFLAGS += -template=geninlinefuncs
+#CXXFLAGS += -verbose=template
+#CXXFLAGS += -xustr=ascii_utf16_ushort
 CXXFLAGS += $(CC_PIC)
-CXXFLAGS += -mt -D_REENTRANT -DNDEBUG -DSOLARIS
+#CXXFLAGS += -mt -D_REENTRANT -DNDEBUG -DSOLARIS
 CXXFLAGS += $(CPP_LARGEFILES)
 CFLAGS += `pkg-config --cflags neon`
 CFLAGS += $(CPP_LARGEFILES)
 
-PERL_VERSION_12 = 5.12
-PERL_VERSION_16 = 5.16
-PERL_ARCH_12_i386 = i86pc-solaris-64int
-PERL_ARCH_16_i386 = i86pc-solaris-64
-PERL_ARCH_12_sparc = sun4-solaris-64int
-PERL_ARCH_16_sparc = sun4-solaris-64
-PERL_ARCH_12 = $(PERL_ARCH_12_$(MACH))
-PERL_ARCH_16 = $(PERL_ARCH_16_$(MACH))
+#PERL_VERSION_12 = 5.12
+#PERL_VERSION_16 = 5.16
+#PERL_ARCH_12_i386 = i86pc-solaris-64int
+#PERL_ARCH_16_i386 = i86pc-solaris-64
+#PERL_ARCH_12_sparc = sun4-solaris-64int
+#PERL_ARCH_16_sparc = sun4-solaris-64
+#PERL_ARCH_12 = $(PERL_ARCH_12_$(MACH))
+#PERL_ARCH_16 = $(PERL_ARCH_16_$(MACH))
 
 # Let's write some post-configure hacks
 COMPONENT_POST_CONFIGURE_ACTION = \
@@ -81,12 +81,22 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     cd $(SOURCE_DIR) ; \
 	$(PYTHON.$(BITS)) ./build/transform_sql.py ./subversion/libsvn_fs_fs/rep-cache-db.sql < ./subversion/libsvn_fs_fs/rep-cache-db.sql > $(BUILD_DIR_$(BITS))/subversion/libsvn_fs_fs/rep-cache-db.h 2>&1 )
 
-COMPONENT_BUILD_TARGETS = all swig-py swig-pl javahl
-COMPONENT_INSTALL_TARGETS = install install-lib \
+COMPONENT_BUILD_TARGETS.32 = all swig-py swig-pl javahl
+COMPONENT_BUILD_TARGETS.64 = all swig-py javahl
+COMPONENT_INSTALL_TARGETS.32 = install install-lib \
 			    install-swig-pl install-swig-py \
 			    install-javahl install-javahl-lib \
 			    install-mods-shared \
 			    install-bin install-docs
+COMPONENT_INSTALL_TARGETS.64 = install install-lib \
+			    install-swig-py \
+			    install-javahl install-javahl-lib \
+			    install-mods-shared \
+			    install-bin install-docs
+
+
+COMPONENT_BUILD_TARGETS = $(COMPONENT_BUILD_TARGETS.$(BITS))
+COMPONENT_INSTALL_TARGETS = $(COMPONENT_INSTALL_TARGETS.$(BITS))
 
 CONFIGURE_ENV += CC="$(CC)"
 CONFIGURE_ENV += CXX="$(CXX)"
@@ -101,13 +111,15 @@ CONFIGURE_ENV += PERL="$(PERL)"
 CONFIGURE_ENV += PLMODS="$(PLMODS)"
 CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
+BUILD_ENV += PYCC_CC="$(CC)"
+
 LIBSVNDIR.32 = $(CONFIGURE_PREFIX)/lib/svn
 LIBSVNDIR.64 = $(CONFIGURE_PREFIX)/lib/svn/$(MACH64)
 
-APR-CONFIG.32 = /usr/apr/1.3/bin/apr-1-config
-APR-CONFIG.64 = /usr/apr/1.3/bin/$(MACH64)/apr-1-config
-APU-CONFIG.32 = /usr/apr-util/1.3/bin/apu-1-config
-APU-CONFIG.64 = /usr/apr-util/1.3/bin/$(MACH64)/apu-1-config
+APR-CONFIG.32 = /usr/apr/bin/apr-1-config
+APR-CONFIG.64 = /usr/apr/bin/$(MACH64)/apr-1-config
+APU-CONFIG.32 = /usr/apr-util/bin/apu-1-config
+APU-CONFIG.64 = /usr/apr-util/bin/$(MACH64)/apu-1-config
 APXS.32 = /usr/apache2/2.2/bin/apxs
 APXS.64 = /usr/apache2/2.2/bin/$(MACH64)/apxs
 
@@ -119,7 +131,7 @@ CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_SBINDIR.$(BITS))
 CONFIGURE_OPTIONS += --libdir=$(LIBSVNDIR.$(BITS))
 CONFIGURE_OPTIONS += --localstatedir=/var
 CONFIGURE_OPTIONS += --enable-shared 
-CONFIGURE_OPTIONS += --disable-static
+#CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --disable-libtool-lock 
 CONFIGURE_OPTIONS += --disable-neon-version-check
 CONFIGURE_OPTIONS += --disable-experimental-libtool
@@ -127,8 +139,8 @@ CONFIGURE_OPTIONS += --with-apxs=/usr/apache2/2.2/bin/apxs
 CONFIGURE_OPTIONS += --with-ssl 
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
-CONFIGURE_OPTIONS += --with-apr=/usr/apr/1.3
-CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util/1.3
+CONFIGURE_OPTIONS += --with-apr=/usr/apr
+CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
@@ -153,7 +165,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    $(GNUCP) -rpd vendor-packages-32/svn vendor-packages/ ; \
 	fi ; )
 
-ASLR_MODE=$(ASLR_ENABLE)
+#ASLR_MODE=$(ASLR_ENABLE)
 
 build:		$(BUILD_32_and_64)
 
