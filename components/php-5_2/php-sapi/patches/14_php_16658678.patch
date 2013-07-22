@@ -1,0 +1,201 @@
+From
+http://git.php.net/?p=php-src.git;a=commitdiff;h=cc4c318b0c71e1a9c9cf803b5ee5d437344d64db
+Check if soap.wsdl_cache_dir confirms to open_basedir
+
+--- php-5.2.17/ext/soap/soap.c_orig	2010-06-09 08:48:22.000000000 -0700
++++ php-5.2.17/ext/soap/soap.c	2013-06-05 14:11:41.182400088 -0700
+@@ -416,10 +416,44 @@
+ 	return SUCCESS;
+ }
+ 
++static PHP_INI_MH(OnUpdateCacheDir)
++{
++	/* Only do the safemode/open_basedir check at runtime */
++	if (stage == PHP_INI_STAGE_RUNTIME || stage == PHP_INI_STAGE_HTACCESS) {
++		char *p;
++
++		if (memchr(new_value, '\0', new_value_length) != NULL) {
++			return FAILURE;
++		}
++
++		/* we do not use zend_memrchr() since path can contain ; itself */
++		if ((p = strchr(new_value, ';'))) {
++			char *p2;
++			p++;
++			if ((p2 = strchr(p, ';'))) {
++				p = p2 + 1;
++			}
++		} else {
++			p = new_value;
++		}
++
++		if (PG(safe_mode) && *p && (!php_checkuid(p, NULL, CHECKUID_CHECK_FILE_AND_DIR))) {
++			return FAILURE;
++		}
++
++		if (PG(open_basedir) && *p && php_check_open_basedir(p TSRMLS_CC)) {
++			return FAILURE;
++		}
++	}
++
++	OnUpdateString(entry, new_value, new_value_length, mh_arg1, mh_arg2, mh_arg3, stage TSRMLS_CC);
++	return SUCCESS;
++}
++
+ PHP_INI_BEGIN()
+ STD_PHP_INI_ENTRY("soap.wsdl_cache_enabled",     "1", PHP_INI_ALL, OnUpdateCacheEnabled,
+                   cache_enabled, zend_soap_globals, soap_globals)
+-STD_PHP_INI_ENTRY("soap.wsdl_cache_dir",         "/tmp", PHP_INI_ALL, OnUpdateString,
++STD_PHP_INI_ENTRY("soap.wsdl_cache_dir",         "/tmp", PHP_INI_ALL, OnUpdateCacheDir,
+                   cache_dir, zend_soap_globals, soap_globals)
+ STD_PHP_INI_ENTRY("soap.wsdl_cache_ttl",         "86400", PHP_INI_ALL, OnUpdateLong,
+                   cache_ttl, zend_soap_globals, soap_globals)
+
+
+From
+http://git.php.net/?p=php-src.git;a=commitdiff;h=8e76d0404b7f664ee6719fd98f0483f0ac4669d6
+Fixed external entity loading
+http://git.php.net/?p=php-src.git;a=commitdiff;h=fcd4b5335a6df4e0676ee32e2267ca71d70fe623
+Fix TSRM (after afc1debb)
+
+--- php-5.2.17/ext/libxml/libxml.c_orig	2010-01-03 01:23:27.000000000 -0800
++++ php-5.2.17/ext/libxml/libxml.c	2013-06-05 14:18:21.153940829 -0700
+@@ -267,6 +267,7 @@
+ 	libxml_globals->stream_context = NULL;
+ 	libxml_globals->error_buffer.c = NULL;
+ 	libxml_globals->error_list = NULL;
++	libxml_globals->entity_loader_disabled = 0;
+ }
+ 
+ /* Channel libxml file io layer through the PHP streams subsystem.
+@@ -356,16 +357,15 @@
+ }
+ 
+ static xmlParserInputBufferPtr
+-php_libxml_input_buffer_noload(const char *URI, xmlCharEncoding enc)
+-{
+-	return NULL;
+-}
+-
+-static xmlParserInputBufferPtr
+ php_libxml_input_buffer_create_filename(const char *URI, xmlCharEncoding enc)
+ {
+ 	xmlParserInputBufferPtr ret;
+ 	void *context = NULL;
++	TSRMLS_FETCH();
++
++	if (LIBXML(entity_loader_disabled)) {
++		return NULL;
++	}
+ 
+ 	if (URI == NULL)
+ 		return(NULL);
+@@ -839,28 +839,25 @@
+ }
+ /* }}} */
+ 
++PHP_LIBXML_API zend_bool php_libxml_disable_entity_loader(zend_bool disable TSRMLS_DC)
++{
++	zend_bool old = LIBXML(entity_loader_disabled);
++
++	LIBXML(entity_loader_disabled) = disable;
++	return old;
++}
++
+ /* {{{ proto bool libxml_disable_entity_loader([boolean disable]) 
+    Disable/Enable ability to load external entities */
+ static PHP_FUNCTION(libxml_disable_entity_loader)
+ {
+ 	zend_bool disable = 1;
+-	xmlParserInputBufferCreateFilenameFunc old;
+ 
+ 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "|b", &disable) == FAILURE) {
+ 		return;
+ 	}
+ 
+-	if (disable == 0) {
+-		old = xmlParserInputBufferCreateFilenameDefault(php_libxml_input_buffer_create_filename);
+-	} else {
+-		old = xmlParserInputBufferCreateFilenameDefault(php_libxml_input_buffer_noload);
+-	}
+-
+-	if (old == php_libxml_input_buffer_noload) {
+-		RETURN_TRUE;
+-	}
+-
+-	RETURN_FALSE;
++	RETURN_BOOL(php_libxml_disable_entity_loader(disable TSRMLS_CC));
+ }
+ /* }}} */
+ 
+--- php-5.2.17/ext/libxml/php_libxml.h_orig	2010-01-03 01:23:27.000000000 -0800
++++ php-5.2.17/ext/libxml/php_libxml.h	2013-06-05 14:20:23.311490825 -0700
+@@ -41,6 +41,7 @@
+ 	zval *stream_context;
+ 	smart_str error_buffer;
+ 	zend_llist *error_list;
++	zend_bool entity_loader_disabled;
+ ZEND_END_MODULE_GLOBALS(libxml)
+ 
+ typedef struct _libxml_doc_props {
+@@ -91,6 +92,7 @@
+ PHP_LIBXML_API int php_libxml_xmlCheckUTF8(const unsigned char *s);
+ PHP_LIBXML_API zval *php_libxml_switch_context(zval *context TSRMLS_DC);
+ PHP_LIBXML_API void php_libxml_issue_error(int level, const char *msg TSRMLS_DC);
++PHP_LIBXML_API zend_bool php_libxml_disable_entity_loader(zend_bool disable TSRMLS_DC);
+ 
+ /* Init/shutdown functions*/
+ PHP_LIBXML_API void php_libxml_initialize(void);
+--- php-5.2.17/ext/soap/php_xml.c_orig	2010-01-03 01:23:27.000000000 -0800
++++ php-5.2.17/ext/soap/php_xml.c	2013-06-05 14:28:21.292038266 -0700
+@@ -20,6 +20,7 @@
+ /* $Id: php_xml.c 293036 2010-01-03 09:23:27Z sebastian $ */
+ 
+ #include "php_soap.h"
++#include "ext/libxml/php_libxml.h"
+ #include "libxml/parser.h"
+ #include "libxml/parserInternals.h"
+ 
+@@ -91,13 +92,17 @@
+ 	ctxt = xmlCreateFileParserCtxt(filename);
+ 	PG(allow_url_fopen) = old_allow_url_fopen;
+ 	if (ctxt) {
++		zend_bool old;
++
+ 		ctxt->keepBlanks = 0;
+ 		ctxt->sax->ignorableWhitespace = soap_ignorableWhitespace;
+ 		ctxt->sax->comment = soap_Comment;
+ 		ctxt->sax->warning = NULL;
+ 		ctxt->sax->error = NULL;
+ 		/*ctxt->sax->fatalError = NULL;*/
++		old = php_libxml_disable_entity_loader(1 TSRMLS_CC);
+ 		xmlParseDocument(ctxt);
++		php_libxml_disable_entity_loader(old TSRMLS_CC);
+ 		if (ctxt->wellFormed) {
+ 			ret = ctxt->myDoc;
+ 			if (ret->URL == NULL && ctxt->directory != NULL) {
+@@ -128,11 +133,14 @@
+ 	xmlParserCtxtPtr ctxt = NULL;
+ 	xmlDocPtr ret;
+ 
++	TSRMLS_FETCH();
+ /*
+ 	xmlInitParser();
+ */
+ 	ctxt = xmlCreateMemoryParserCtxt(buf, buf_size);
+ 	if (ctxt) {
++		zend_bool old;
++
+ 		ctxt->sax->ignorableWhitespace = soap_ignorableWhitespace;
+ 		ctxt->sax->comment = soap_Comment;
+ 		ctxt->sax->warning = NULL;
+@@ -141,7 +149,9 @@
+ #if LIBXML_VERSION >= 20703
+ 		ctxt->options |= XML_PARSE_HUGE;
+ #endif
++		old = php_libxml_disable_entity_loader(1 TSRMLS_CC);
+ 		xmlParseDocument(ctxt);
++		php_libxml_disable_entity_loader(old TSRMLS_CC);
+ 		if (ctxt->wellFormed) {
+ 			ret = ctxt->myDoc;
+ 			if (ret->URL == NULL && ctxt->directory != NULL) {

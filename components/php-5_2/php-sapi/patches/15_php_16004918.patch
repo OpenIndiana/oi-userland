@@ -1,0 +1,89 @@
+From
+http://git.php.net/?p=php-src.git;a=commitdiff;h=fc74503792b1ee92e4b813690890f3ed38fa3ad5
+improve overflow checks
+
+--- php-5.2.17/main/streams/streams.c_orig	2010-01-06 04:54:53.000000000 -0800
++++ php-5.2.17/main/streams/streams.c	2013-07-09 10:14:05.583023604 -0700
+@@ -2083,8 +2083,8 @@
+ 	php_stream *stream;
+ 	php_stream_dirent sdp;
+ 	char **vector = NULL;
+-	int vector_size = 0;
+-	int nfiles = 0;
++	unsigned int vector_size = 0;
++	unsigned int nfiles = 0;
+ 
+ 	if (!namelist) {
+ 		return FAILURE;
+@@ -2100,9 +2100,14 @@
+ 			if (vector_size == 0) {
+ 				vector_size = 10;
+ 			} else {
++				if(vector_size*2 < vector_size) {
++					/* overflow */
++					efree(vector);
++					return FAILURE;
++				}
+ 				vector_size *= 2;
+ 			}
+-			vector = (char **) erealloc(vector, vector_size * sizeof(char *));
++			vector = (char **) safe_erealloc(vector, vector_size, sizeof(char *), 0);
+ 		}
+ 
+ 		vector[nfiles] = estrdup(sdp.d_name);
+
+
+From
+http://git.php.net/?p=php-src.git;a=commitdiff;h=055ecbc62878e86287d742c7246c21606cee8183
+Improve check for :memory: pseudo-filename in SQlite
+php5.2 doesn't have sqlite3 so apply fix to sqlite.
+ 
+--- php-5.2.17/ext/pdo_sqlite/sqlite_driver.c_orig	2010-06-20 07:12:06.000000000 -0700
++++ php-5.2.17/ext/pdo_sqlite/sqlite_driver.c	2013-06-10 10:28:40.178224391 -0700
+@@ -642,7 +642,7 @@
+ 
+ static char *make_filename_safe(const char *filename TSRMLS_DC)
+ {
+-	if (*filename && strncmp(filename, ":memory:", sizeof(":memory:")-1)) {
++	if (*filename && memcmp(filename, ":memory:", sizeof(":memory:"))) {
+ 		char *fullpath = expand_filepath(filename, NULL TSRMLS_CC);
+ 
+ 		if (!fullpath) {
+--- php-5.2.17/ext/sqlite/sqlite.c_orig	2010-04-28 05:10:10.000000000 -0700
++++ php-5.2.17/ext/sqlite/sqlite.c	2013-06-10 11:08:25.397573242 -0700
+@@ -747,7 +747,7 @@
+ 			return SQLITE_OK;
+ #ifdef SQLITE_ATTACH
+ 		case SQLITE_ATTACH:
+-			if (strncmp(arg3, ":memory:", sizeof(":memory:") - 1)) {
++			if (memcmp(arg3, ":memory:", sizeof(":memory:"))) {
+ 				TSRMLS_FETCH();
+ 				if (PG(safe_mode) && (!php_checkuid(arg3, NULL, CHECKUID_CHECK_FILE_AND_DIR))) {
+ 					return SQLITE_DENY;
+@@ -1230,7 +1230,7 @@
+ 		ZVAL_NULL(errmsg);
+ 	}
+ 
+-	if (strncmp(filename, ":memory:", sizeof(":memory:") - 1)) {
++	if (memcmp(filename, ":memory:", sizeof(":memory:")) != 0) {
+ 		/* resolve the fully-qualified path name to use as the hash key */
+ 		if (!(fullpath = expand_filepath(filename, NULL TSRMLS_CC))) {
+ 			RETURN_FALSE;
+@@ -1306,7 +1306,7 @@
+ 		ZVAL_NULL(errmsg);
+ 	}
+ 
+-	if (strncmp(filename, ":memory:", sizeof(":memory:") - 1)) {
++	if (memcmp(filename, ":memory:", sizeof(":memory:")) != 0) {
+ 		/* resolve the fully-qualified path name to use as the hash key */
+ 		if (!(fullpath = expand_filepath(filename, NULL TSRMLS_CC))) {
+ 			php_std_error_handling();
+@@ -1358,7 +1358,7 @@
+ 		ZVAL_NULL(errmsg);
+ 	}
+ 
+-	if (strncmp(filename, ":memory:", sizeof(":memory:") - 1)) {
++	if (memcmp(filename, ":memory:", sizeof(":memory:")) != 0) {
+ 		/* resolve the fully-qualified path name to use as the hash key */
+ 		if (!(fullpath = expand_filepath(filename, NULL TSRMLS_CC))) {
+ 			php_std_error_handling();

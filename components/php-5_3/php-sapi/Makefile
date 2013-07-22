@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -29,11 +29,11 @@ include ../../../make-rules/shared-macros.mk
 #    published from.
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.3.14
+COMPONENT_VERSION=	5.3.27
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-    sha256:c8075b6e83c5db0d26cc8426a7456856421089a76c963813b1fcac3ced041cb3
+    sha256:e12db21c623b82a2244c4dd9b06bb75af20868c1b748a105a6829a5acc36b287
 COMPONENT_ARCHIVE_URL=	http://us.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 COMPONENT_PROJECT_URL=	http://www.php.net/
 

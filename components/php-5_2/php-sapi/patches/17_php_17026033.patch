@@ -1,0 +1,54 @@
+From
+http://git.php.net/?p=php-src.git;a=commitdiff;h=4828f7343b3f31d914f4d4a5545865b8a19f7fb6
+Integer overflow in SndToJewish leads to php hang
+and
+http://git.php.net/?p=php-src.git;a=commitdiff;h=c50cef1dc54ffd1d0fb71d1afb8b2c3cb3c5b6ef
+Fixed bug #64895 Integer overflow in SndToJewish
+
+CVE-2013-2110 - use correct formula to calculate string size
+does NOT apply because no such function to patch.
+
+--- php-5.2.17/ext/calendar/jewish.c_orig	2003-03-22 17:44:58.000000000 -0800
++++ php-5.2.17/ext/calendar/jewish.c	2013-07-01 15:33:18.280118195 -0700
+@@ -272,6 +272,7 @@
+ #define HALAKIM_PER_METONIC_CYCLE (HALAKIM_PER_LUNAR_CYCLE * (12 * 19 + 7))
+ 
+ #define JEWISH_SDN_OFFSET 347997
++#define JEWISH_SDN_MAX 324542846L /* 12/13/887605, greater value raises interger overflow */
+ #define NEW_MOON_OF_CREATION 31524
+ 
+ #define SUNDAY    0
+@@ -519,7 +520,7 @@
+ 	int tishri1After;
+ 	int yearLength;
+ 
+-	if (sdn <= JEWISH_SDN_OFFSET) {
++	if (sdn <= JEWISH_SDN_OFFSET || sdn > JEWISH_SDN_MAX) {
+ 		*pYear = 0;
+ 		*pMonth = 0;
+ 		*pDay = 0;
+
+
+--- php-5.2.17/ext/calendar/tests/jdtojewish64.phpt_orig	2013-07-01 15:41:34.918645609 -0700
++++ php-5.2.17/ext/calendar/tests/jdtojewish64.phpt	2013-07-01 15:37:34.054921308 -0700
+@@ -0,0 +1,19 @@
++--TEST--
++Bug #64895: Integer overflow in SndToJewish
++--SKIPIF--
++<?php 
++include 'skipif.inc';
++if (PHP_INT_SIZE == 4) {
++        die("skip this test is for 64bit platform only");
++}
++?>
++--FILE--
++<?php
++$a = array(38245310, 324542846, 324542847, 9223372036854743639);
++
++foreach ($a as $x) var_dump(jdtojewish($x));
++--EXPECTF--
++string(11) "2/22/103759"
++string(12) "12/13/887605"
++string(5) "0/0/0"
++string(5) "0/0/0"
+

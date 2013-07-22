@@ -1,0 +1,14 @@
+This test now causing an infinite loop.
+Produced fix by comparing to the php 5.3.26 version of the test.
+
+--- php-5.2.17/ext/openssl/tests/bug48182.phpt_orig	2009-09-22 03:15:10.000000000 -0700
++++ php-5.2.17/ext/openssl/tests/bug48182.phpt	2013-06-20 14:16:39.947981967 -0700
+@@ -51,7 +51,7 @@
+ 	$socket = stream_socket_client($host, $errno, $errstr, 10, $flags);
+ 	stream_set_blocking($socket, 0);
+ 
+-	while ($data) {
++	while ($socket && $data) {
+ 		$wrote = fwrite($socket, $data, strlen($data));
+ 		$data = substr($data, $wrote);
+ 	}
