@@ -103,11 +103,10 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  .global	OPENSSL_cleanse
  .align	32
  OPENSSL_cleanse:
-@@ -397,11 +432,102 @@
- .type	OPENSSL_cleanse,#function
+@@ -398,6 +433,102 @@
  .size	OPENSSL_cleanse,.-OPENSSL_cleanse
  
--#ifndef _BOOT
+ #ifndef _BOOT
 +.global	_sparcv9_vis1_instrument_bus
 +.align	8
 +_sparcv9_vis1_instrument_bus:
@@ -207,11 +206,6 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  .section	".init",#alloc,#execinstr
  	call	OPENSSL_cpuid_setup
  	nop
--#else
--	nop
--	nop
--#endif
-
 Index: crypto/sparcv9cap.c
 ===================================================================
 diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
@@ -286,15 +280,17 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  	}
  
  unsigned long	_sparcv9_rdtick(void);
-@@ -36,11 +60,16 @@
+@@ -36,11 +60,18 @@
  unsigned long	_sparcv9_vis1_instrument(void);
  void		_sparcv9_vis2_probe(void);
  void		_sparcv9_fmadd_probe(void);
 +unsigned long	_sparcv9_rdcfr(void);
 +void		_sparcv9_vis3_probe(void);
 +unsigned long	_sparcv9_random(void);
-+size_t 		_sparcv9_vis1_instrument_bus(unsigned int *,size_t);
++#ifndef _BOOT
++size_t 	_sparcv9_vis1_instrument_bus(unsigned int *,size_t);
 +size_t		_sparcv9_vis1_instrument_bus2(unsigned int *,size_t,size_t);
++#endif
  
  #ifndef _BOOT
  unsigned long OPENSSL_rdtsc(void)
@@ -304,10 +300,11 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #if defined(__sun) && defined(__SVR4)
  		return gethrtime();
  #else
-@@ -51,6 +81,25 @@
+@@ -49,6 +80,24 @@
+ 	else
+ 		return _sparcv9_rdtick();
  	}
- #endif
- 
++
 +size_t OPENSSL_instrument_bus(unsigned int *out,size_t cnt)
 +	{
 +	if ((OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK)) ==
@@ -325,12 +322,10 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 +	else
 +		return 0;
 +	}
-+
-+
+ #endif
+
  #if defined(_BOOT)
- /*
-  * Hardcoding sparc capabilities for wanboot.
-@@ -58,7 +106,7 @@
+@@ -58,7 +107,7 @@
   */
  void OPENSSL_cpuid_setup(void)
  	{
@@ -2208,7 +2203,7 @@ Index: openssl/crypto/evp/e_aes.c
  		dat->block	= (block128_f)AES_encrypt;
  		dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
  					(cbc128_f)AES_cbc_encrypt :
-@@ -825,7 +1199,7 @@
+@@ -828,7 +1202,7 @@
  #ifdef BSAES_CAPABLE
  		if (BSAES_CAPABLE)
  			{
@@ -2217,7 +2212,7 @@ Index: openssl/crypto/evp/e_aes.c
  			CRYPTO_gcm128_init(&gctx->gcm,&gctx->ks,
  					(block128_f)AES_encrypt);
  			gctx->ctr = (ctr128_f)bsaes_ctr32_encrypt_blocks;
-@@ -836,7 +1210,7 @@
+@@ -839,7 +1213,7 @@
  #ifdef VPAES_CAPABLE
  		if (VPAES_CAPABLE)
  			{
@@ -2226,7 +2221,7 @@ Index: openssl/crypto/evp/e_aes.c
  			CRYPTO_gcm128_init(&gctx->gcm,&gctx->ks,
  					(block128_f)vpaes_encrypt);
  			gctx->ctr = NULL;
-@@ -843,7 +1217,7 @@
+@@ -846,7 +1220,7 @@
  			break;
  			}
  #endif
@@ -2235,7 +2230,7 @@ Index: openssl/crypto/evp/e_aes.c
  		CRYPTO_gcm128_init(&gctx->gcm, &gctx->ks, (block128_f)AES_encrypt);
  #ifdef AES_CTR_ASM
  		gctx->ctr = (ctr128_f)AES_ctr32_encrypt;
-@@ -1074,17 +1448,17 @@
+@@ -1077,17 +1451,17 @@
  		    {
  		    if (enc)
  			{
@@ -2256,7 +2251,7 @@ Index: openssl/crypto/evp/e_aes.c
  		xctx->xts.block2 = (block128_f)vpaes_encrypt;
  
  		xctx->xts.key1 = &xctx->ks1;
-@@ -1093,17 +1467,17 @@
+@@ -1096,17 +1470,17 @@
  #endif
  		if (enc)
  			{
@@ -2277,7 +2272,7 @@ Index: openssl/crypto/evp/e_aes.c
  		xctx->xts.block2 = (block128_f)AES_encrypt;
  
  		xctx->xts.key1 = &xctx->ks1;
-@@ -1214,7 +1588,7 @@
+@@ -1217,7 +1591,7 @@
  #ifdef VPAES_CAPABLE
  		if (VPAES_CAPABLE)
  			{
@@ -2286,7 +2281,7 @@ Index: openssl/crypto/evp/e_aes.c
  			CRYPTO_ccm128_init(&cctx->ccm, cctx->M, cctx->L,
  					&cctx->ks, (block128_f)vpaes_encrypt);
  			cctx->str = NULL;
-@@ -1222,7 +1596,7 @@
+@@ -1225,7 +1599,7 @@
  			break;
  			}
  #endif
@@ -2295,7 +2290,7 @@ Index: openssl/crypto/evp/e_aes.c
  		CRYPTO_ccm128_init(&cctx->ccm, cctx->M, cctx->L,
  					&cctx->ks, (block128_f)AES_encrypt);
  		cctx->str = NULL;
-@@ -1310,5 +1684,4 @@
+@@ -1313,5 +1687,4 @@
  BLOCK_CIPHER_custom(NID_aes,192,1,12,ccm,CCM,EVP_CIPH_FLAG_FIPS|CUSTOM_FLAGS)
  BLOCK_CIPHER_custom(NID_aes,256,1,12,ccm,CCM,EVP_CIPH_FLAG_FIPS|CUSTOM_FLAGS)
  
