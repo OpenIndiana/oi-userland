@@ -1,0 +1,18 @@
+This module is taken from illumos sources - usr/src/cmd/perl/contrib/Sun
+
+src/Sun/Solaris/Intrs/sys/pci_tools.h is a private illumos header used to build
+Intrs perl module.
+
+Following changes were applied to allow it build outside of the gate:
+Sun/Solaris/Exacct/(File|Catalog|Object)/Makefile.PL: 
+	change '-R\$$ORIGIN/.. $(INST_ARCHAUTODIR)/../Exacct.so' to
+	'-R\$$ORIGIN/.. ../$(dir $(INST_ARCHAUTODIR))/Exacct.so'
+
+Sun/Solaris/Exacct/Makefile.PL:
+	remove '.WAIT subdirs/'
+
+Sun/Solaris/Intrs/Makefile.PL:
+	add -isystem . to INC to allow usage of private pci_tools.h header
+
+Sun/Solaris/PerlGcc/Makefile.PL:
+	change my $pver=sprintf('%vd',$^V) to my $pver = "5.16" (we don't need third number)
