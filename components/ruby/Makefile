@@ -124,6 +124,15 @@ LD_Z_IGNORE=
 # core dump on sparc with ASLR enabled
 ASLR_MODE = $(ASLR_DISABLE)
 
+# Several of the drb tests will leave stray ruby processes behind;
+# move these tests aside so they won't be run by the test target.
+# They aren't needed by the build or packages, so we keep them 
+# renamed.
+COMPONENT_PRE_TEST_ACTION += \
+	if [ -e $(SOURCE_DIR)/test/drb/test_drbssl.rb ]; then \
+		$(MV) $(SOURCE_DIR)/test/drb/test_drbssl.rb $(SOURCE_DIR)/test/drb/test_drbssl.rb-save; \
+	fi
+
 CONFIGURE_PREFIX =	$(USRDIR)/$(COMPONENT_NAME)/$(RUBY_VER)
 CONFIGURE_OPTIONS += $(DTRACE_FLAG)
 CONFIGURE_OPTIONS += --enable-shared
