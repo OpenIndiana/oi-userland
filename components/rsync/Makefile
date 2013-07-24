@@ -43,10 +43,13 @@ CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--prefix=/usr
 CONFIGURE_OPTIONS  +=		--with-included-popt
 
-# common targets
-build:		$(BUILD_32)
+# Enable ASLR for this component
+ASLR_MODE =	$(ASLR_ENABLE)
 
-install:	$(INSTALL_32)
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 

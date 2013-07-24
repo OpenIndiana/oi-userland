@@ -1,6 +1,14 @@
 --- rsync-3.0.9/main.c.orig	2011-06-18 12:44:47.000000000 -0700
-+++ rsync-3.0.9/main.c	2013-04-19 14:14:00.331981573 -0700
-@@ -1100,7 +1100,7 @@
++++ rsync-3.0.9/main.c	2013-07-03 17:44:42.596018396 -0700
+@@ -26,6 +26,7 @@
+ #if defined CONFIG_LOCALE && defined HAVE_LOCALE_H
+ #include <locale.h>
+ #endif
++#include <libgen.h>
+ 
+ extern int verbose;
+ extern int dry_run;
+@@ -1100,7 +1101,7 @@
  	for (i = 0; argv[i]; i++) {
  		if (!(argv[i] = strdup(argv[i]))) {
  			rprintf (FERROR, "out of memory at %s(%d)\n",
@@ -10,48 +18,72 @@
  		}
  	}
 --- rsync-3.0.9/cleanup.c.orig	2011-02-21 10:20:58.000000000 -0800
-+++ rsync-3.0.9/cleanup.c	2013-04-19 14:14:00.332420836 -0700
-@@ -126,7 +126,7 @@
++++ rsync-3.0.9/cleanup.c	2013-07-03 18:10:38.003756993 -0700
+@@ -21,6 +21,7 @@
+  */
+ 
+ #include "rsync.h"
++#include <libgen.h>
+ 
+ extern int am_server;
+ extern int am_daemon;
+@@ -126,7 +127,7 @@
  		if (verbose > 3) {
  			rprintf(FINFO,
  				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): entered\n",
 -				who_am_i(), code, file, line);
-+				who_am_i(), code, basename(file), line);
++				who_am_i(), code, basename((char *)file), line);
  		}
  
  		/* FALLTHROUGH */
-@@ -202,7 +202,7 @@
+@@ -202,7 +203,7 @@
  			rprintf(FINFO,
  				"[%s] _exit_cleanup(code=%d, file=%s, line=%d): "
  				"about to call exit(%d)\n",
 -				who_am_i(), unmodified_code, file, line, code);
-+				who_am_i(), unmodified_code, basename(file), line, code);
++				who_am_i(), unmodified_code, basename((char *)file), line, code);
  		}
  
  		/* FALLTHROUGH */
 --- rsync-3.0.9/t_stub.c.orig	2011-02-21 11:32:48.000000000 -0800
-+++ rsync-3.0.9/t_stub.c	2013-04-19 14:14:00.332763107 -0700
-@@ -54,7 +54,7 @@
++++ rsync-3.0.9/t_stub.c	2013-07-03 17:44:42.597023354 -0700
+@@ -20,6 +20,7 @@
+  */
+ 
+ #include "rsync.h"
++#include <libgen.h>
+ 
+ int modify_window = 0;
+ int module_id = -1;
+@@ -54,7 +55,7 @@
   void _exit_cleanup(int code, const char *file, int line)
  {
  	fprintf(stderr, "exit(%d): %s(%d)\n",
 -		code, file, line);
-+		code, basename(file), line);
++		code, basename((char *)file), line);
  	exit(code);
  }
  
 --- rsync-3.0.9/log.c.orig	2011-01-29 19:25:53.000000000 -0800
-+++ rsync-3.0.9/log.c	2013-04-19 14:14:00.333124681 -0700
-@@ -829,10 +829,10 @@
++++ rsync-3.0.9/log.c	2013-07-03 18:12:34.878333604 -0700
+@@ -21,6 +21,7 @@
+ 
+ #include "rsync.h"
+ #include "ifuncs.h"
++#include <libgen.h>
+ 
+ extern int verbose;
+ extern int dry_run;
+@@ -829,10 +830,10 @@
  		/* VANISHED is not an error, only a warning */
  		if (code == RERR_VANISHED) {
  			rprintf(FWARNING, "rsync warning: %s (code %d) at %s(%d) [%s=%s]\n",
 -				name, code, file, line, who_am_i(), RSYNC_VERSION);
-+				name, code, basename(file), line, who_am_i(), RSYNC_VERSION);
++				name, code, basename((char *)file), line, who_am_i(), RSYNC_VERSION);
  		} else {
  			rprintf(FERROR, "rsync error: %s (code %d) at %s(%d) [%s=%s]\n",
 -				name, code, file, line, who_am_i(), RSYNC_VERSION);
-+				name, code, basename(file), line, who_am_i(), RSYNC_VERSION);
++				name, code, basename((char *)file), line, who_am_i(), RSYNC_VERSION);
  		}
  	}
  }
