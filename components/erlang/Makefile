@@ -72,8 +72,6 @@ IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION_MAJOR).2.3
 # Built in SFW with gcc and builds cleanly now only with gcc
 COMPILER = gcc
 
-CONFIGURE_ENV += HOME="/tmp"
-
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
