@@ -78,14 +78,12 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      return 0;
  }
  
-@@ -617,14 +634,21 @@
+@@ -617,14 +634,19 @@
      for (i = 0; i < P_N; ++i)
          if (ParInfo[i].index != i)
              error(BUG, "initialize: ParInfo: out of order: %d", i);
 +#if (defined(__SVR4) && defined(__sun))
 +    solaris_init();
-+    Req.affinity = -1;		/* default no affinity */
-+    RReq.affinity = -1;
 +#else
      ProcStatFD = open("/proc/stat", 0);
      if (ProcStatFD < 0)
@@ -100,7 +98,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  /*
   * Look for a colon and skip past it and any spaces.
   */
-@@ -643,6 +667,7 @@
+@@ -643,6 +665,7 @@
          s++;
      return s;
  }
@@ -108,7 +106,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
  
  
  /*
-@@ -1667,13 +1692,18 @@
+@@ -1667,13 +1690,18 @@
  {
      char count[STRSIZE];
      char speed[STRSIZE];
@@ -129,7 +127,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!fp)
          error(0, "cannot open /proc/cpuinfo");
      cpu[0] = '\0';
-@@ -1732,6 +1762,7 @@
+@@ -1732,6 +1760,7 @@
  
      /* CPU speed */
      speed[0] = '\0';
@@ -137,7 +135,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      if (!mixed) {
          int n = strlen(cpu);
          if (n < 3 || cpu[n-2] != 'H' || cpu[n-1] != 'z') {
-@@ -1745,7 +1776,24 @@
+@@ -1745,7 +1774,24 @@
              }
          }
      }
@@ -162,7 +160,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      /* Number of CPUs */
      if (cpus == 1)
          count[0] = '\0';
-@@ -2615,9 +2663,17 @@
+@@ -2615,14 +2661,20 @@
  static void
  set_affinity(void)
  {
@@ -171,24 +169,19 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
 +#endif
      int a = Req.affinity;
  
-+#if defined(__SVR4) && defined(__sun)
-+    if (a == -1)	/* no affinity by default */
-+	return;
-+    if (processor_bind(P_LWPID, P_MYID, a, NULL) != 0)
-+        error(SYS, "cannot set processor affinity (cpu %d)", a);
-+#else
      if (!a)
          return;
++#if defined(__SVR4) && defined(__sun)
++    if (processor_bind(P_LWPID, P_MYID, a - 1, NULL) != 0)
++#else
      CPU_ZERO(&set);
-@@ -2624,6 +2680,7 @@
      CPU_SET(a-1, &set);
      if (sched_setaffinity(0, sizeof(set), &set) < 0)
-         error(SYS, "cannot set processor affinity (cpu %d)", a-1);
 +#endif
+         error(SYS, "cannot set processor affinity (cpu %d)", a-1);
  }
  
- 
-@@ -2771,9 +2828,36 @@
+@@ -2771,9 +2823,36 @@
  /*
   * Get various temporal parameters.
   */
@@ -225,7 +218,7 @@ diff -r -u /tmp/730054/qperf-0.4.6/src/qperf.c qperf-0.4.6/src/qperf.c
      int n;
      char *p;
      char buf[BUFSIZE];
-@@ -2802,6 +2886,7 @@
+@@ -2802,6 +2881,7 @@
      while (n < T_N)
          timex[n++] = 0;
  }
