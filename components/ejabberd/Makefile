@@ -47,6 +47,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 COMPONENT_BUILD_ENV += "HOME=/tmp"
+CONFIGURE_ENV += "HOME=/tmp"
 
 # tail with -n is needed
 CONFIGURE_ENV += "PATH=/usr/xpg4/bin:/usr/bin"
