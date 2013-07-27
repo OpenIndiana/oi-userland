@@ -44,7 +44,8 @@ include ../../make-rules/ips.mk
 COMPILER =	gcc
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(@D))
+	($(CLONEY) $(SOURCE_DIR) $(@D) && \
+	  cd $(@D)/libdnet-stripped && autoconf )
 
 CONFIGURE_OPTIONS  +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=   CXX="$(CXX)"
