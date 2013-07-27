@@ -44,4 +44,6 @@ install: build
 	ln -sf $(SOURCE_DIR)/NVDAgraphics/reloc $(PROTO_DIR)/usr
 
 clean::
-	[ -d $(BUILD_DIR) ] && rm -rf $(BUILD_DIR)
+	if [ -d $(BUILD_DIR) ] ;  then \
+ 	  rm -rf $(BUILD_DIR) ; \
+	fi
