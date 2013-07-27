@@ -1,0 +1,46 @@
+From 204b94605020eb347f92e825734ddf7f756a1ddb Mon Sep 17 00:00:00 2001
+From: Richard Palo <richard.palo@baou.fr>
+Date: Wed, 19 Dec 2012 10:08:15 +0000
+Subject: libtool: Add SONAME to the so when exporting explicit symbols on Solaris
+
+m4/libtool.m (_LT_LANG_CXX_CONFIG) [Solaris] <archive_expsym_cmds>: Feed
+-h $soname to the linker just as is done in archive_cmds.
+THANKS: Update.
+
+Copyright-paperwork-exempt: Yes
+Signed-off-by: Peter Rosin <peda@lysator.liu.se>
+---
+diff --git a/THANKS b/THANKS
+index ef617e4..1259cbf 100644
+--- libtool-2.4.2/THANKS
++++ libtool-2.4.2/THANKS
+@@ -165,6 +165,7 @@
+   Rainer Tammer			tammer@tammer.net
+   Ralf Menzel			menzel@ls6.cs.uni-dortmund.de
+   Richard B. Kreckel		kreckel@ginac.de
++  Richard Palo			richard.palo@baou.fr
+   Richard Purdie		rpurdie@rpsys.net
+   Richard Sandiford		richards@transitive.com
+   Robert Garron			Robert.Garron@Access3000.net
+diff --git a/m4/libtool.m4 b/m4/libtool.m4
+index 3cf14e7..205b1e3 100644
+--- libtool-2.4.2/libltdl/m4/libtool.m4.~1~	2011-10-17 14:17:05.000000000 +0400
++++ libtool-2.4.2/libltdl/m4/libtool.m4	2013-07-26 16:30:40.035534020 +0400
+@@ -6742,7 +6742,7 @@
+ 	      if $CC --version | $GREP -v '^2\.7' > /dev/null; then
+ 	        _LT_TAGVAR(archive_cmds, $1)='$CC -shared $pic_flag -nostdlib $LDFLAGS $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-h $wl$soname -o $lib'
+ 	        _LT_TAGVAR(archive_expsym_cmds, $1)='echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~echo "local: *; };" >> $lib.exp~
+-		  $CC -shared $pic_flag -nostdlib ${wl}-M $wl$lib.exp -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$RM $lib.exp'
++		  $CC -shared $pic_flag -nostdlib ${wl}-M $wl$lib.exp $wl-h $wl$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$RM $lib.exp'
+ 
+ 	        # Commands to make compiler produce verbose output that lists
+ 	        # what "hidden" libraries, object files and flags are used when
+@@ -6753,7 +6753,7 @@
+ 	        # platform.
+ 	        _LT_TAGVAR(archive_cmds, $1)='$CC -G -nostdlib $LDFLAGS $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags ${wl}-h $wl$soname -o $lib'
+ 	        _LT_TAGVAR(archive_expsym_cmds, $1)='echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~echo "local: *; };" >> $lib.exp~
+-		  $CC -G -nostdlib ${wl}-M $wl$lib.exp -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$RM $lib.exp'
++		  $CC -G -nostdlib ${wl}-M $wl$lib.exp $wl-h $wl$soname -o $lib $predep_objects $libobjs $deplibs $postdep_objects $compiler_flags~$RM $lib.exp'
+ 
+ 	        # Commands to make compiler produce verbose output that lists
+ 	        # what "hidden" libraries, object files and flags are used when

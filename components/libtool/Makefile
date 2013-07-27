@@ -55,7 +55,8 @@ CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		PERL="$(PERL)"
 
-COMPONENT_PREP_ACTION = (cd $(@D) ; ./bootstrap)
+
+COMPONENT_PREP_ACTION = (cd $(@D) ; env AUTOMAKE=/usr/bin/automake-1.11  ./bootstrap)
 
 # Remove the hard-wired compiler locations in the LTCC and two CC lines
 # in the two versions of the libtool script.
@@ -63,8 +64,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 	(for dir in $(PROTOUSRBINDIR) $(PROTOUSRBINDIR)/$(MACH64) ; do \
 		cd $$dir; \
 		/usr/gnu/bin/sed -i \
-			-e 's|^LTCC="/.*$$|LTCC="cc"|' \
-			-e 's|^CC="/.*$$|CC="cc"|' libtool ; \
+			-e 's|^LTCC="/.*$$|LTCC="gcc"|' \
+			-e 's|^CC="/.*$$|CC="gcc"|' libtool ; \
 	done)
 
 # Macros to configure, build, and install the old version for the time being.
