@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pixz
-COMPONENT_VERSION=	1.0
+COMPONENT_VERSION=	1.0.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://github.com/vasi/pixz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:912c60de88f7eca2e1c6fe13eec5371f723018dca933796c47cd50bf6a349fc9
+    sha256:af9dac41edd6bf57953471f7fcbd4793810003bf911593ba4c84f7cccb5f74af
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/pixz/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pixz
 
@@ -36,7 +36,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-PKG_PROTO_DIRS += $(BUILD_DIR_64)
+PKG_PROTO_DIRS += $(BUILD_DIR_32)
 PKG_PROTO_DIRS += $(COMPONENT_DIR)/files
 
 # Userland default includes -mt which links with libthread which we don't need.
@@ -46,17 +46,17 @@ studio_MT =
 # then appends CFLAGS & LDFLAGS to each.  Here we include their preset values
 # minus the gcc-only parts, so we can build with Studio.
 COMPONENT_BUILD_ARGS += CC="$(CC)"
-COMPONENT_BUILD_ARGS += MYCFLAGS='$(patsubst %,-I%/include,$(LIBPREFIX)) $(OPT)'
-COMPONENT_BUILD_ARGS += MYLDFLAGS='$(patsubst %,-L%/lib,$(LIBPREFIX)) $(OPT)'
+#COMPONENT_BUILD_ARGS += MYCFLAGS='$(patsubst %,-I%/include,$(LIBPREFIX)) $(OPT)'
+#COMPONENT_BUILD_ARGS += MYLDFLAGS='$(patsubst %,-L%/lib,$(LIBPREFIX)) $(OPT)'
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
-COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS)"
+COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS) -lm"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(BUILD_64)
+install:	$(BUILD_32)
 
 test:		$(NO_TESTS)
 
