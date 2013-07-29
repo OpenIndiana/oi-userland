@@ -1,0 +1,15 @@
+Fix psrinfo output to handle kernel zones.
+--- facter-1.6.16/lib/facter/physicalprocessorcount.rb.orig	2013-06-10 15:28:25.355442031 -0600
++++ facter-1.6.16/lib/facter/physicalprocessorcount.rb	2013-06-10 15:31:09.056896313 -0600
+@@ -75,7 +75,10 @@
+     cmd = "/usr/sbin/psrinfo"
+     result = nil
+     if (major_version > 5) or (major_version == 5 and minor_version >= 8) then
+-      result = Facter::Util::Resolution.exec("#{cmd} -p")
++      result = Facter::Util::Resolution.exec("#{cmd} -p 2> /dev/null")
++        if result.nil?
++          result = 0
++        end
+     else
+       output = Facter::Util::Resolution.exec(cmd)
+       result = output.split("\n").length.to_s

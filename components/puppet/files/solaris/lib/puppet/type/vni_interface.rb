@@ -1,4 +1,3 @@
-#!/usr/bin/ksh -p
 #
 # CDDL HEADER START
 #
@@ -24,41 +23,20 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Load SMF constants and functions
-. /lib/svc/share/smf_include.sh
+Puppet::Type.newtype(:vni_interface) do
+    @doc = "Manage the configuration of Solaris VNI interfaces"
 
-# Establish PATH for non-built in commands
-export PATH=/usr/bin:/usr/sbin
+    ensurable
 
-case "$1" in
-'start')
-	# handles startup of puppet agent
+    newparam(:name) do
+        desc "The name of the VNI interface"
+        isnamevar
+    end
 
-	flags=""
-
-	#
-	# retrieve the server property.  If the variable is left
-	# empty, do not add the --server flag to the CLI
-	#
-	server=$(svcprop -p config/server $SMF_FMRI)
-	if [[ $? -eq 0 ]] && [[ "$server" != '' ]]; then
-		flags+=" --server $server"
-	fi
-
-	# retrieve the logfile property.
-	logdest=$(svcprop -p config/logdest $SMF_FMRI)
-	if [[ "$logdest" != '' ]]; then
-		flags+=" --logdest $logdest"
-	fi
-
-	cmd="puppet agent ${flags}"
-
-	exec $cmd
-
-	;;
-*)
-	echo "Usage: $0 { start }"
-	exit $SMF_EXIT_ERR_CONFIG
-	;;
-esac
-exit $SMF_EXIT_OK
+    newparam(:temporary)  do
+        desc "Optional parameter that specifies that the VNI interface is
+              temporary.  Temporary interfaces last until the next reboot.  
+              Defaults to `false`."
+        newvalues(:true, :false)
+    end
+end

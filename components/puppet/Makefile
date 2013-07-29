@@ -47,9 +47,14 @@ INSTALL_RB_BINDIR =	$(USRSBINDIR)
 
 # common targets
 build:		$(BUILD_32)
+	# Ruby extension for auditing
+	(cd ext; $(RUBY) extconf.rb; $(GMAKE))
 
 # make sure facter is installed first
 install:	../facter/build/$(MACH32)/.installed $(INSTALL_32)
+
+clean::
+	(cd ext; $(GMAKE) clean; $(RM) Makefile)
 
 # puppet requires the installation of the following rubygems to run
 # the unittests:  rspec rspec-expectations mocha rake rack hiera rgen

@@ -282,6 +282,7 @@ CXX =		$(CXX.$(COMPILER).$(BITS))
 RUBY_VERSION =	1.8
 RUBY.1.8 =	/usr/bin/ruby18
 VENDOR_RUBY =	/usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_VERSION)
+RUBY =		$(RUBY.$(RUBY_VERSION))
 
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64

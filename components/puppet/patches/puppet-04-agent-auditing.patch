@@ -1,0 +1,36 @@
+Add auditing support to agent execution
+
+--- puppet-3.2.2/lib/puppet/agent.rb.orig	2013-03-08 16:03:45.000000000 -0700
++++ puppet-3.2.2/lib/puppet/agent.rb	2013-03-08 16:03:45.000000000 -0700
+@@ -1,5 +1,8 @@
+ require 'sync'
+ require 'puppet/application'
++if Facter.value(:osfamily) == "Solaris"
++  require 'PuppetAudit'
++end
+ 
+ # A general class for triggering a run of another
+ # class.
+@@ -35,6 +38,11 @@
+       return
+     end
+ 
++    if Facter.value(:osfamily) == "Solaris"
++        audit_handle = PuppetAudit.new
++        audit_handle.audit_start
++    end
++
+     result = nil
+     block_run = Puppet::Application.controlled_run do
+       splay
+@@ -50,6 +58,10 @@
+           end
+         end
+       end
++      if Facter.value(:osfamily) == "Solaris"
++          audit_handle.audit_stop
++          audit_handle.audit_teardown
++      end
+       true
+     end
+     Puppet.notice "Shutdown/restart in progress (#{Puppet::Application.run_status.inspect}); skipping run" unless block_run

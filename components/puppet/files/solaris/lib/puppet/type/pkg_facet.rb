@@ -1,4 +1,3 @@
-#!/usr/bin/ksh -p
 #
 # CDDL HEADER START
 #
@@ -24,40 +23,18 @@
 # Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-# Load SMF constants and functions
-. /lib/svc/share/smf_include.sh
+Puppet::Type.newtype(:pkg_facet) do
+    @doc = "Manage Oracle Solaris package facets"
 
-# Establish PATH for non-built in commands
-export PATH=/usr/bin:/usr/sbin
+    ensurable
 
-case "$1" in
-'start')
-	# handles startup of puppet master
+    newparam(:name) do
+        desc "The facet name"
+        isnamevar
+    end
 
-	flags=""
-
-	#
-	# retrieve the server property.  If the variable is left
-	# empty, do not add the --server flag to the CLI
-	#
-	server=$(svcprop -p config/server $SMF_FMRI)
-	if [[ $? -eq 0 ]] && [[ "$server" != '' ]]; then
-		flags+=" --server $server"
-	fi
-
-	# retrieve the logfile property.
-	logdest=$(svcprop -p config/logdest $SMF_FMRI)
-	if [[ "$logdest" != '' ]]; then
-		flags+=" --logdest $logdest"
-	fi
-
-	cmd="puppet master ${flags}"
-	exec $cmd
-
-	;;
-*)
-	echo "Usage: $0 { start }"
-	exit $SMF_EXIT_ERR_CONFIG
-	;;
-esac
-exit $SMF_EXIT_OK
+    newproperty(:value) do
+        desc "The value for the facet"
+        newvalues(/[tT]rue/, /[fF]alse/, /[nN]one/)
+    end
+end

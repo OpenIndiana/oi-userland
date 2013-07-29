@@ -1,0 +1,38 @@
+Add auditing hooks for puppet apply
+--- puppet-3.2.2/lib/puppet/application/apply.rb.orig	2013-06-13 12:15:55.000000000 -0600
++++ puppet-3.2.2/lib/puppet/application/apply.rb	2013-07-01 14:02:10.263603171 -0600
+@@ -1,5 +1,8 @@
+ require 'puppet/application'
+ require 'puppet/configurer'
++if Facter.value(:osfamily) == "Solaris"
++  require 'PuppetAudit'
++end
+ 
+ class Puppet::Application::Apply < Puppet::Application
+ 
+@@ -204,6 +207,12 @@
+     end
+ 
+     begin
++      # configure auditing on Solaris
++      if Facter.value(:osfamily) == "Solaris"
++          audit_handle = PuppetAudit.new
++          audit_handle.audit_start
++      end
++
+       # Compile our catalog
+       starttime = Time.now
+       catalog = Puppet::Resource::Catalog.indirection.find(node.name, :use_node => node)
+@@ -232,6 +241,12 @@
+     rescue => detail
+       Puppet.log_exception(detail)
+       exit(1)
++    ensure
++      # clean up auditing records on Solaris
++      if Facter.value(:osfamily) == "Solaris"
++          audit_handle.audit_stop
++          audit_handle.audit_teardown
++      end
+     end
+   end
+ 
