@@ -78,6 +78,10 @@ $(COMPONENT_DIR)/../gcc47-libmpfr/build/$(MACH32)/.installed:
 	$(GMAKE) -C $(COMPONENT_DIR)/../gcc47-libmpfr install
 
 COMPONENT_POST_INSTALL_ACTION = \
+  for file in $(PROTO_DIR)/usr/gcc/4.7/lib/libgfortran.so.3.0.0 $(PROTO_DIR)/usr/gcc/4.7/lib/$(MACH64)/libgfortran.so.3.0.0; do \
+    elfedit -e 'dyn:delete RUNPATH' $$file ; \
+    elfedit -e 'dyn:delete RPATH' $$file ; \
+  done ; \
   $(CP) -PR $(COMPONENT_DIR)/../gcc47-libgmp/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/include/* \
     $(PROTO_DIR)$(CONFIGURE_PREFIX)/include; \
   $(CP) -PR $(COMPONENT_DIR)/../gcc47-libgmp/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/lib/* \
