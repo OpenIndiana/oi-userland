@@ -53,6 +53,7 @@ DISABLE_LIBCHECK=
 
 COMPONENT_PREP_ACTION = \
 	cp ofa_solaris.h $(@D)/include/infiniband ; \
+	cp MELLANOX.h $(@D)/include/infiniband ; \
 	cp solaris_compatibility.c $(@D)/src ; \
 	cd ../libmlx4; gmake prep; \
 	cd ../librdmacm; gmake prep

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -55,46 +55,40 @@
 #include <alloca.h>
 #include "../include/infiniband/arch.h"
 #include "../include/infiniband/verbs.h"
+#include "../include/infiniband/MELLANOX.h"
 #include <errno.h>
 #include <pthread.h>
 #include <kstat.h>
 
+#define	min(a, b)	((a) < (b) ? (a) : (b))
+
 
 /*
- * The followings will be removed when changes in sol_uverbs_ioctl.h
+ * The followings will be removed when changes in hermon_ioctl.h
  * are delivered through ON.
  */
+#ifndef	HERMON_GET_HWINFO_IOCTL_SUP
+#define	HERMON_IOCTL_GET_HWINFO	(('t' << 8) | 0x32)
+#pragma	pack(1)
 
-#if	(IB_USER_MAD_SOLARIS_ABI_VERSION == 1)
-#undef	IB_USER_MAD_SOLARIS_ABI_VERSION
-#define	IB_USER_MAD_SOLARIS_ABI_VERSION	2
+/* Structure used for getting HW info */
+typedef struct hermon_hw_info_ioctl_s {
+	uint32_t	af_hw_info_version;
+	uint32_t	af_padding1;	/* Padding for af_hwpn to be on */
+					/* 64 byte boundary */
+	char		af_hwpn[64];
+	uint16_t	af_pn_len;
+	uint64_t	af_padding2:48;	/* Padding for af_psid to be on */
+					/* 64 byte boundary */
+	char		af_psid[16];
+	uint16_t	af_psid_len;
+	uint32_t	af_padding3;	/* Padding for reserved to be on */
+					/* 64 byte boundary */
+	uint8_t		reserved[64];
+} hermon_hw_info_ioctl_t;
+#pragma	pack()
 #endif
 
-#if	(IB_USER_VERBS_SOLARIS_ABI_VERSION == 1)
-#undef	IB_USER_VERBS_SOLARIS_ABI_VERSION
-#define	IB_USER_VERBS_SOLARIS_ABI_VERSION	2
-#define	IB_USER_VERBS_V2_IN_V1
-typedef struct sol_uverbs_hca_info_v2_s {
-	char		uverbs_hca_psid_string[MAXNAMELEN];
-	char		uverbs_hca_ibdev_name[MAXNAMELEN];
-	char		uverbs_hca_driver_name[MAXNAMELEN];
-	uint32_t	uverbs_hca_driver_instance;
-	uint32_t	uverbs_hca_vendorid;
-	uint16_t	uverbs_hca_deviceid;
-	uint16_t	uverbs_hca_devidx;
-	uint8_t		uverbs_hca_pad1[4];
-} sol_uverbs_hca_info_v2_t;
-
-typedef struct sol_uverbs_info_v2_s {
-	int32_t			uverbs_abi_version;
-	int32_t			uverbs_solaris_abi_version;
-	int16_t			uverbs_hca_cnt;
-	int8_t			uverbs_pad1[6];    /* Padding for alignment */
-	sol_uverbs_hca_info_v2_t	uverbs_hca_info[];
-} sol_uverbs_info_v2_t;
-#endif
-
-/* end of sol_uverbs_ioctl.h contents */
 
 /*
  * duplicate ABI definitions for HCAs as the HCA abi headers are not
@@ -170,6 +164,7 @@ typedef struct ibdev_cache_info_s {
 	char		ibd_fw_ver[16];
 	char		ibd_name[8];
 	int		ibd_boardid_index;
+	uint_t		ibd_device_id;
 } ibdev_cache_info_t;
 
 /* hermon - hence 2 */
@@ -194,209 +189,6 @@ typedef struct umad_cache_info_s {
 } umad_cache_info_t;
 static umad_cache_info_t	umad_dev_cache[MAX_HCAS * MAX_HCA_PORTS];
 static int			umad_abi_version = -1;
-
-/*
- * Structure to hold the part number  & PSID for an HCA card
- * This is a sub-set of the file :
- * /ws/onnv-clone/usr/src/cmd/fwflash/plugins/hdrs/MELLANOX.h
- */
-typedef struct mlx_mdr_s {
-	char *mlx_pn;
-	char *mlx_psid;
-} mlx_mdr_t;
-
-/*
- * Magic decoder ring for matching HCA hardware/firmware.
- * Part Number / PSID / String ID
- */
-mlx_mdr_t mlx_mdr[] = {
-	/* For failure case, use unknown as "board-id" */
-	{ "unknown",		"unknown"	},
-
-	/* Part No		PSID		*/
-	{ "375-3605-01",	"SUN0160000001" },
-	{ "375-3382-01",	"SUN0030000001" },
-	{ "375-3481-01",	"SUN0040000001" },
-	{ "375-3418-01",	"SUN0040000001" },
-	{ "375-3259-01",	"SUN0010000001" },
-	{ "375-3259-03",	"SUN0010000001" },
-	{ "X1289A-Z",		"SUN0010010001" },
-	{ "375-3548-01",	"SUN0060000001" },
-	{ "375-3549-01",	"SUN0070000001" },
-	{ "375-3549-01",	"SUN0070130001" },
-	{ "375-3481-01",	"SUN0050000001" },
-	{ "375-3439-01",	"SUN0051000001" },
-	{ "375-3260-03",	"SUN0020000001" },
-	{ "375-3605-01",	"SUN0160000002" },
-	{ "375-3697-01",	"SUN0160000002" },
-	{ "375-3606-01",	"SUN0150000001" },
-	{ "375-3606-02",	"SUN0150000009" },
-	{ "375-3606-03",	"SUN0150000009" },
-	{ "375-3606-02",	"SUN0170000009" },
-	{ "375-3696-01",	"SUN0170000009" },
-	{ "375-3551-05",	"SUN0080000001" },
-	{ "MHEA28-XS",		"MT_0250000001" },
-	{ "MHEA28-XSC",		"MT_0390110001" },
-	{ "MHEA28-XT",		"MT_0150000001" },
-	{ "MHEA28-XTC",		"MT_0370110001" },
-	{ "MHGA28-XT",		"MT_0150000002" },
-	{ "MHGA28-XTC",		"MT_0370110002" },
-	{ "MHGA28-XTC",		"MT_0370130002" },
-	{ "MHGA28-XS",		"MT_0250000002" },
-	{ "MHGA28-XSC",		"MT_0390110002" },
-	{ "MHGA28-XSC",		"MT_0390130002" },
-	{ "MHEL-CF128",		"MT_0190000001" },
-	{ "MHEL-CF128-T",	"MT_00A0000001" },
-	{ "MTLP25208-CF128T",	"MT_00A0000001" },
-	{ "MHEL-CF128-TC",	"MT_00A0010001" },
-	{ "MHEL-CF128-TC",	"MT_0140010001" },
-	{ "MHEL-CF128-SC",	"MT_0190010001" },
-	{ "MHEA28-1TC",		"MT_02F0110001" },
-	{ "MHEA28-1SC",		"MT_0330110001" },
-	{ "MHGA28-1T",		"MT_0200000001" },
-	{ "MHGA28-1TC",		"MT_02F0110002" },
-	{ "MHGA28-1SC",		"MT_0330110002" },
-	{ "MHGA28-1S",		"MT_0430000001" },
-	{ "MHEL-CF256-T",	"MT_00B0000001" },
-	{ "MTLP25208-CF256T",	"MT_00B0000001" },
-	{ "MHEL-CF256-TC",	"MT_00B0010001" },
-	{ "MHEA28-2TC",		"MT_0300110001" },
-	{ "MHEA28-2SC",		"MT_0340110001" },
-	{ "MHGA28-2T",		"MT_0210000001" },
-	{ "MHGA28-2TC",		"MT_0300110002" },
-	{ "MHGA28-2SC",		"MT_0340110002" },
-	{ "MHEL-CF512-T",	"MT_00C0000001" },
-	{ "MTLP25208-CF512T",	"MT_00C0000001" },
-	{ "MHGA28-5T",		"MT_0220000001" },
-	{ "MHES14-XSC",		"MT_0410110001" },
-	{ "MHES14-XT",		"MT_01F0000001" },
-	{ "MHES14-XTC",		"MT_03F0110001" },
-	{ "MHES18-XS",		"MT_0260000001" },
-	{ "MHES18-XS",		"MT_0260010001" },
-	{ "MHES18-XSC",		"MT_03D0110001" },
-	{ "MHES18-XSC",		"MT_03D0120001" },
-	{ "MHES18-XSC",		"MT_03D0130001" },
-	{ "MHES18-XT",		"MT_0230000002" },
-	{ "MHES18-XT",		"MT_0230010002" },
-	{ "MHES18-XTC",		"MT_03B0110001" },
-	{ "MHES18-XTC",		"MT_03B0120001" },
-	{ "MHES18-XTC",		"MT_03B0140001" },
-	{ "MHGS18-XS",		"MT_0260000002" },
-	{ "MHGS18-XSC",		"MT_03D0110002" },
-	{ "MHGS18-XSC",		"MT_03D0120002" },
-	{ "MHGS18-XSC",		"MT_03D0130002" },
-	{ "MHGS18-XT",		"MT_0230000001" },
-	{ "MHGS18-XTC",		"MT_03B0110002" },
-	{ "MHGS18-XTC",		"MT_03B0120002" },
-	{ "MHGS18-XTC",		"MT_03B0140002" },
-	{ "MHXL-CF128",		"MT_0180000001" },
-	{ "MHXL-CF128-T",	"MT_0030000001" },
-	{ "MTLP23108-CF128T",	"MT_0030000001" },
-	{ "MHET2X-1SC",		"MT_0280110001" },
-	{ "MHET2X-1SC",		"MT_0280120001" },
-	{ "MHET2X-1TC",		"MT_0270110001" },
-	{ "MHET2X-1TC",		"MT_0270120001" },
-	{ "MHXL-CF256-T",	"MT_0040000001" },
-	{ "MHET2X-2SC",		"MT_02D0110001" },
-	{ "MHET2X-2SC",		"MT_02D0120001" },
-	{ "MHET2X-2TC",		"MT_02B0110001" },
-	{ "MHET2X-2TC",		"MT_02B0120001" },
-	{ "MHX-CE128-T",	"MT_0000000001" },
-	{ "MTPB23108-CE128",	"MT_0000000001" },
-	{ "MHX-CE256-T",	"MT_0010000001" },
-	{ "MTPB23108-CE256",	"MT_0010000001" },
-	{ "MHX-CE512-T",	"MT_0050000001" },
-	{ "MTPB23108-CE512",	"MT_0050000001" },
-	{ "MHEH28-XSC",		"MT_04C0110001" },
-	{ "MHEH28-XSC",		"MT_04C0130005" },
-	{ "MHEH28-XTC",		"MT_04A0110001" },
-	{ "MHEH28-XTC",		"MT_04A0130005" },
-	{ "MHGH28-XSC",		"MT_04C0110002" },
-	{ "MHGH28-XSC",		"MT_04C0120002" },
-	{ "MHGH28-XSC",		"MT_04C0140005" },
-	{ "MHGH28-XTC",		"MT_04A0110002" },
-	{ "MHGH28-XTC",		"MT_04A0120002" },
-	{ "MHGH28-XTC",		"MT_04A0140005" },
-	{ "MHGH29-XSC",		"MT_0A60110002" },
-	{ "MHGH29-XSC",		"MT_0A60120005" },
-	{ "MHGH29-XTC",		"MT_0A50110002" },
-	{ "MHGH29-XTC",		"MT_0A50120005" },
-	{ "MHJH29-XTC",		"MT_04E0110003" },
-	{ "MHJH29-XSC",		"MT_0500120005" },
-	{ "MHQH29-XTC",		"MT_04E0120005" },
-	{ "MHQH19-XTC",		"MT_0C40110009" },
-	{ "MHQH29-XTC",		"MT_0BB0110003" },
-	{ "MHQH29-XTC",		"MT_0BB0120003" },
-	{ "MHEH28B-XSR",	"MT_0D10110001" },
-	{ "MHEH28B-XTR",	"MT_0D20110001" },
-	{ "MHGH28B-XSR",	"MT_0D10110002" },
-	{ "MHGH28B-XTR",	"MT_0D20110002" },
-	{ "MHGH18B-XTR",	"MT_0D30110002" },
-	{ "MNEH28B-XSR",	"MT_0D40110004" },
-	{ "MNEH28B-XTR",	"MT_0D50110004" },
-	{ "MNEH29B-XSR",	"MT_0D40110010" },
-	{ "MNEH29B-XTR",	"MT_0D50110010" },
-	{ "MHGH29B-XSR",	"MT_0D10110008" },
-	{ "MHGH29B-XTR",	"MT_0D20110008" },
-	{ "MHJH29B-XSR",	"MT_0D10110009" },
-	{ "MHJH29B-XSR",	"MT_0D10120009" },
-	{ "MHJH29B-XTR",	"MT_0D20110009" },
-	{ "MHJH29B-XTR",	"MT_0D20120009" },
-	{ "MHGH19B-XSR",	"MT_0D60110008" },
-	{ "MHGH19B-XTR",	"MT_0D30110008" },
-	{ "MHJH19B-XTR",	"MT_0D30110009" },
-	{ "MHQH29B-XSR",	"MT_0D70110009" },
-	{ "MHQH29B-XTR",	"MT_0D80110009" },
-	{ "MHQH29B-XTR",	"MT_0D80120009" },
-	{ "MHQH29B-XTR",	"MT_0D80130009" },
-	{ "MHQH29B-XTR",	"MT_0E30110009" },
-	{ "MHRH29B-XSR",	"MT_0D70110008" },
-	{ "MHRH29B-XTR",	"MT_0D80110008" },
-	{ "MHQH19B-XTR",	"MT_0D90110009" },
-	{ "MHRH19B-XSR",	"MT_0E40110009" },
-	{ "MHRH19B-XTR",	"MT_0D90110008" },
-	{ "MNPH28C-XSR",	"MT_0DA0110004" },
-	{ "MNPH28C-XTR",	"MT_0DB0110004" },
-	{ "MNPH29C-XSR",	"MT_0DA0110010" },
-	{ "MNPH29C-XTR",	"MT_0DB0110010" },
-	{ "MNPH29C-XTR",	"MT_0DB0120010" },
-	{ "MNPH29C-XTR",	"MT_0DB0130010" },
-	{ "MNZH29-XSR",		"MT_0DC0110009" },
-	{ "MNZH29-XTR",		"MT_0DD0110009" },
-	{ "MNZH29-XTR",		"MT_0DD0120009" },
-	{ "MHQH19B-XNR",	"MT_0DF0110009" },
-	{ "MHQH19B-XNR",	"MT_0DF0120009" },
-	{ "MNQH19-XTR",		"MT_0D80110017" },
-	{ "MNQH19C-XTR",	"MT_0E20110017" },
-	{ "MHZH29B-XSR",	"MT_0E80110009" },
-	{ "MHZH29B-XTR",	"MT_0E90110009" },
-	{ "MHZH29B-XTR",	"MT_0E90110009" },
-	{ "MHQA19-XTR",		"MT_0EA0110009" },
-	{ "MHRA19-XTR",		"MT_0EB0110008" },
-	{ "MHQH29C-XTR",	"MT_0EF0110009" },
-	{ "MHQH29C-XSR",	"MT_0F00110009" },
-	{ "MHRH29C-XTR",	"MT_0F10110008" },
-	{ "MHRH29C-XSR",	"MT_0F20110008" },
-	{ "MHPH29D-XTR",	"MT_0F30110010" },
-	{ "MHPH29D-XSR",	"MT_0F40110010" },
-	{ "MNPA19-XTR",		"MT_0F60110010" },
-	{ "MNPA19-XSR",		"MT_0F70110010" },
-
-	/* Ethernet cards */
-	{ "MNEH28B-XTR",	"MT_0D50110004" },
-	{ "MNEH29B-XSR",	"MT_0D40110010" },
-	{ "MNEH29B-XTR",	"MT_0D50110010" },
-	{ "MNPH28C-XSR",	"MT_0DA0110004" },
-	{ "MNPH28C-XTR",	"MT_0DB0110004" },
-	{ "MNPH29C-XSR",	"MT_0DA0110010" },
-	{ "MNPH29C-XTR",	"MT_0DB0110010" },
-	{ "X6275 M2 10GbE",	"X6275M2_10G"   }
-};
-
-/* Get mlx_mdr[] array size */
-#define	MLX_SZ_MLX_MDR		sizeof (mlx_mdr)
-#define	MLX_SZ_MLX_MDR_STRUCT	sizeof (mlx_mdr[0])
-#define	MLX_MAX_ID		(MLX_SZ_MLX_MDR / MLX_SZ_MLX_MDR_STRUCT)
 
 pthread_once_t		oneTimeInit = PTHREAD_ONCE_INIT;
 static int 		umad_cache_cnt = 0;
@@ -540,6 +332,7 @@ ibdev_cache_init()
 
 		(void) strcpy(info.ibd_fw_ver, device_attr.fw_ver);
 		info.ibd_hw_rev = device_attr.hw_ver;
+		info.ibd_device_id = device_attr.vendor_part_id;
 
 		ibdev = ibv_get_device_name(*dev_list);
 		if (strncmp(ibdev, "mlx4_", 5) == 0) {
@@ -1356,6 +1149,33 @@ exit:
 	return (len);
 }
 
+/*
+ * This function passes the HW PSID / HWPN string obtained from
+ * driver HERMON_IOCTL_GET_HWINFO IOCTL. The memory for "hca_hwpsid"
+ * & "hca_hwpn" argument has to be passed by the caller and has to
+ * be at least 16 bytes & 64 bytes in size.
+ */
+static int
+get_hca_psid_pn(char *ibd_name, int fd, char *hca_hwpsid,
+    char *hca_hwpn)
+{
+	hermon_hw_info_ioctl_t		hermon_hw_info;
+	int				rc;
+
+	if (strncmp(ibd_name, "mlx4_", 5) == 0) {
+		if ((rc = ioctl(fd, HERMON_IOCTL_GET_HWINFO,
+		    &hermon_hw_info)) != 0)
+			return (rc);
+
+		strncpy(hca_hwpsid, hermon_hw_info.af_psid, 16);
+		strncpy(hca_hwpn, hermon_hw_info.af_hwpn, 64);
+	} else {
+		fprintf(stderr, "libibverbs: sol_uverbs unsupported "
+		    "device: %s\n", ibd_name);
+		return (1);
+	}
+	return (0);
+}
 
 /*
  * This function passes the HW Part number string obtained from driver
@@ -1384,11 +1204,12 @@ get_hca_hwpn_str(char *ibd_name, int fd, char *hca_hwpn)
 static void
 init_boardid_index(ibdev_cache_info_t *ibd_info)
 {
-	int	i;
-	int	fd;
-	char	hca_hwpn[64];
-	char	*hwpnp;
-
+	int		i;
+	int		fd;
+	char		hca_hwpsid[16];
+	char		hca_hwpn[64];
+	char		*pn_psidp;
+	boolean_t	psid_valid, pn_valid;
 
 	if (pthread_mutex_lock(&uverbs_cache_mutex) != 0) {
 		fprintf(stderr, "failed: to acquire "
@@ -1429,23 +1250,54 @@ init_boardid_index(ibdev_cache_info_t *ibd_info)
 		goto boardid_err;
 	}
 
-	if (get_hca_hwpn_str(ibd_info->ibd_name, fd, hca_hwpn)) {
-		close(fd);
-		goto boardid_err;
+	psid_valid = pn_valid = B_FALSE;
+	if (get_hca_psid_pn(ibd_info->ibd_name, fd,
+	    hca_hwpsid, hca_hwpn)) {
+		if (get_hca_hwpn_str(ibd_info->ibd_name, fd, hca_hwpn)) {
+			close(fd);
+			goto boardid_err;
+		} else {
+			if (hca_hwpn[0]) {
+				if ((pn_psidp = strchr(
+				    hca_hwpn, ' ')) != NULL)
+					*pn_psidp = '\0';
+				pn_valid = B_TRUE;
+			}
+		}
+	} else {
+		if (hca_hwpsid[0]) {
+			if ((pn_psidp = strchr(
+			    hca_hwpsid, ' ')) != NULL)
+				*pn_psidp = '\0';
+			psid_valid = B_TRUE;
+		} else if (hca_hwpn[0]) {
+			if ((pn_psidp = strchr(
+			    hca_hwpn, ' ')) != NULL)
+				*pn_psidp = '\0';
+			pn_valid = B_TRUE;
+		}
 	}
 	close(fd);
-	if ((hwpnp = strchr(hca_hwpn, ' ')) != NULL)
-		*hwpnp = '\0';
 
-	/*
-	 * Find part number, set the boardid_index,
-	 * Skip index 0, as it is for failure "unknown"
-	 * case.
-	 */
-	for (i = 1; i < MLX_MAX_ID; i++) {
-		if (strcmp((const char *)hca_hwpn,
-		    mlx_mdr[i].mlx_pn) == 0) {
+	if (pn_valid == B_FALSE && psid_valid == B_FALSE)
+		goto boardid_err;
 
+	for (i = 0; i < MLX_MAX_ID; i++) {
+		/*
+		 * Find PSID number, set the boardid_index,
+		 * Skip index 0, as it is for failure "unknown"
+		 * case
+		 */
+		if ((psid_valid == B_TRUE &&
+		    strncmp(mlx_mdr[i].mlx_psid,
+		    (const char *)hca_hwpsid,
+		    min(strlen(hca_hwpsid),
+		    strlen(mlx_mdr[i].mlx_psid))) == 0) ||
+		    (pn_valid == B_TRUE &&
+		    strncmp(mlx_mdr[i].mlx_pn,
+		    (const char *)hca_hwpn,
+		    min(strlen(hca_hwpn),
+		    strlen(mlx_mdr[i].mlx_pn))) == 0)) {
 			/* Set boardid_index */
 			ibd_info->ibd_boardid_index = i;
 			return;
@@ -1454,7 +1306,7 @@ init_boardid_index(ibdev_cache_info_t *ibd_info)
 
 boardid_err:
 	/* Failure case, default to "unknown" */
-	ibd_info->ibd_boardid_index = 0;
+	ibd_info->ibd_boardid_index = -2;
 }
 
 static int
@@ -1494,15 +1346,21 @@ infiniband(char *path, char *buf, size_t size)
 			len = 1 + sprintf(buf, "%d", info->ibd_hw_rev);
 		} else if (strcmp(path, "hca_type") == 0) {
 			if (!(strncmp(info->ibd_name, "mlx4", 4)))
-				len = 1 + sprintf(buf, "%d", 0);
+				len = 1 + sprintf(buf, "MT%d",
+				    info->ibd_device_id);
 			else
 				len = 1 + sprintf(buf, "unavailable");
 		} else if (strcmp(path, "board_id") == 0) {
 			if (info->ibd_boardid_index == -1)
 				init_boardid_index(info);
 
-			len = 1 + sprintf(buf, "%s",
-			    mlx_mdr[info->ibd_boardid_index].mlx_psid);
+			if (info->ibd_boardid_index >= 0) {
+				len = 1 + sprintf(buf, "%s",
+				    mlx_mdr[info->ibd_boardid_index].mlx_psid);
+			} else {
+				len = 1 + sprintf(buf, "%s",
+				    "unknown");
+			}
 		}
 	}
 exit:
