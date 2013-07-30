@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.swing.timezone;
@@ -280,7 +280,7 @@ public class TimeZonePanel extends SettingsPanel
     // Constructors
     //
 
-    public TimeZonePanel(TimeMXBean bean, final SimpleTimeModel model) {
+    public TimeZonePanel(Time bean, final SimpleTimeModel model) {
 
 	getHelpField().setText(Finder.getString("timezone.desc"));
 
@@ -290,7 +290,7 @@ public class TimeZonePanel extends SettingsPanel
 	constraint.setGap(0);
 
 	/*
-	 * Read metadata from MBean.  Ideally would be read from the model.
+	 * Read metadata from Time bean.  Ideally would be read from the model.
 	 */
 	List<TimeZoneInfo> infoSet = bean.gettimeZones();
 	List<Continent> continents = bean.getcontinents();

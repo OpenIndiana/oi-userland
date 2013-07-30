@@ -20,13 +20,11 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
 
-import javax.management.*;
-import com.oracle.solaris.rad.jmx.RadNotification;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.common.api.smf_old.*;
@@ -36,16 +34,6 @@ public class SmfUtil {
     //
     // Static data
     //
-
-    public static final NotificationFilter NOTIFY_FILTER_STATE_CHANGE =
-	new NotificationFilter() {
-	    @Override
-	    public boolean isNotificationEnabled(Notification n) {
-		return n instanceof RadNotification &&
-		    n.getType().equals("statechange") &&
-		    ((RadNotification)n).getPayload(StateChange.class) != null;
-	    }
-	};
 
     //
     // Static methods

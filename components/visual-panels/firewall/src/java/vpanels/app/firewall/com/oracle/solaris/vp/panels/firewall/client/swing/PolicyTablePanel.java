@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.firewall.client.swing;
@@ -33,8 +33,8 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.table.DefaultTableCellRenderer;
-import com.oracle.solaris.rad.ObjectException;
-import com.oracle.solaris.vp.panel.common.api.network.NetworkMXBean;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.vp.panel.common.api.network.Network;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
 import com.oracle.solaris.vp.util.swing.*;
 import com.oracle.solaris.vp.util.swing.layout.*;
@@ -528,7 +528,7 @@ public class PolicyTablePanel extends EditableTablePanel
     }
 
     //
-    // Methods for interaction with NetworkMXBean from
+    // Methods for interaction with NetworkBean from
     // FirewallPanelDescriptor
     //
 
@@ -539,24 +539,24 @@ public class PolicyTablePanel extends EditableTablePanel
     public String getHostNameForIP(String ip) {
 	try {
 	    return (descriptor == null ? ip :
-		descriptor.getNetworkMXBean().getHostNameForIP(ip));
-	} catch (ObjectException e) {
+		descriptor.getNetworkBean().getHostNameForIP(ip));
+	} catch (RadObjectException e) {
 	    return ip;
 	}
     }
 
     public List<String> getNetworkInterfaces() {
 	try {
-	    return descriptor.getNetworkMXBean().getnetworkInterfaces();
-	} catch (ObjectException e) {
+	    return descriptor.getNetworkBean().getnetworkInterfaces();
+	} catch (RadObjectException e) {
 	    return Collections.emptyList();
 	}
     }
 
     public List<String> hostGetIPs(String hostName) {
 	try {
-	    return descriptor.getNetworkMXBean().hostGetIPs(hostName);
-	} catch (ObjectException e) {
+	    return descriptor.getNetworkBean().hostGetIPs(hostName);
+	} catch (RadObjectException e) {
 	    return Collections.emptyList();
 	}
     }

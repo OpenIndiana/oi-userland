@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.swing.smf;
@@ -28,7 +28,6 @@ package com.oracle.solaris.vp.panel.swing.smf;
 import java.awt.Component;
 import java.io.IOException;
 import java.util.logging.*;
-import javax.management.InstanceNotFoundException;
 import com.oracle.solaris.vp.panel.common.model.PanelDescriptor;
 import com.oracle.solaris.vp.panel.common.smf.*;
 import com.oracle.solaris.vp.panel.swing.control.SettingsControl;
@@ -89,8 +88,6 @@ public class SmfStatusControl<P extends PanelDescriptor>
 
 	try {
 	    getComponent().init(tracker);
-	} catch (InstanceNotFoundException e) {
-	    t = e;
 	} catch (IOException e) {
 	    t = e;
 	}

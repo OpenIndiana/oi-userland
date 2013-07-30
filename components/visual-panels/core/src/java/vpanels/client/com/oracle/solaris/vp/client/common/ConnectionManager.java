@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.client.common;
@@ -28,8 +28,6 @@ package com.oracle.solaris.vp.client.common;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import javax.management.*;
-import javax.management.remote.JMXConnectionNotification;
 import javax.swing.tree.*;
 import javax.swing.WindowConstants;
 import com.oracle.solaris.vp.panel.common.*;
@@ -203,15 +201,6 @@ public class ConnectionManager {
     // Static data
     //
 
-    private static NotificationFilter nFilter =
-	new NotificationFilter() {
-	    @Override
-	    public boolean isNotificationEnabled(Notification notification) {
-		return notification.getType().equals(
-		    JMXConnectionNotification.FAILED);
-	    }
-	};
-
     //
     // Instance data
     //
@@ -223,19 +212,6 @@ public class ConnectionManager {
 
     private Map<Object, DependencyTreeNode> nodeMap =
 	new HashMap<Object, DependencyTreeNode>();
-
-    private NotificationListener nListener =
-	new NotificationListener() {
-	    @Override
-	    public void handleNotification(Notification notification,
-		Object handback) {
-
-		if (nFilter.isNotificationEnabled(notification)) {
-		    ConnectionTreeNode node = (ConnectionTreeNode)handback;
-		    fireConnectionFailed(node);
-		}
-	    }
-	};
 
     private ConnectionListListeners listeners =
         new ConnectionListListeners();
@@ -312,9 +288,6 @@ public class ConnectionManager {
 	    }
 
 	    node = new ConnectionTreeNode(info);
-
-	    info.getConnector().addConnectionNotificationListener(
-		nListener, nFilter, node);
 
 	    parent.add(node);
 	    fireAddEvent(info);
@@ -514,11 +487,6 @@ public class ConnectionManager {
 
 	if (node instanceof ConnectionTreeNode) {
 	    ConnectionInfo info = ((ConnectionTreeNode)node).getUserObject();
-	    try {
-		info.getConnector().removeConnectionNotificationListener(
-		    nListener);
-	    } catch (ListenerNotFoundException ignore) {
-	    }
 	}
 
 	DependencyTreeNode<?> parent = (DependencyTreeNode)node.getParent();

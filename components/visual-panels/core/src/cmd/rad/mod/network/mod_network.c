@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <sys/types.h>
@@ -75,26 +75,26 @@ interface_Network_read_networkInterfaces(rad_instance_t *inst,
 	adr_data_t *result;
 
 	if ((fd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)
-		return (ce_object);
+		return (CE_OBJECT);
 
 	do {
 		if (reqs != NULL)
 			free(reqs);
 
 		if (if_count(fd, &count) == -1)
-			return (ce_object);
+			return (CE_OBJECT);
 
 		if (count == 0) {
 			(void) close(fd);
 			*data = adr_data_new_array(&adr_t_array_string, 0);
-			return (ce_ok);
+			return (CE_OK);
 		}
 
 		count += 5;
 		reqsize = count * sizeof (struct lifreq);
 		if ((reqs = malloc(reqsize)) == NULL) {
 			(void) close(fd);
-			return (ce_object);
+			return (CE_OBJECT);
 		}
 
 		ifconf.lifc_family = AF_INET;
@@ -104,7 +104,7 @@ interface_Network_read_networkInterfaces(rad_instance_t *inst,
 		if (ioctl(fd, SIOCGLIFCONF, &ifconf) == -1) {
 			(void) close(fd);
 			free(reqs);
-			return (ce_object);
+			return (CE_OBJECT);
 		}
 		rcount = ifconf.lifc_len / sizeof (struct lifreq);
 	} while (rcount >= count);
@@ -125,7 +125,7 @@ interface_Network_read_networkInterfaces(rad_instance_t *inst,
 	free(reqs);
 
 	*data = adr_data_purify_deep(result);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -139,21 +139,21 @@ interface_Network_invoke_getHostNameForIP(rad_instance_t *inst,
 	ipaddr_t addr;
 
 	if (inet_pton(AF_INET, adr_data_to_string(args[0]), &addr) != 1)
-		return (ce_object);
+		return (CE_OBJECT);
 
 	if ((he = getipnodebyaddr(&addr, sizeof (addr), AF_INET, &errnum))
 	    == NULL) {
 		/* Not found?  Bounce it back. */
 		(void) adr_data_ref(args[0]);
 		*ret = args[0];
-		return (ce_ok);
+		return (CE_OK);
 	}
 
 	adr_data_t *result = adr_data_new_string(he->h_name, LT_COPY);
 	freehostent(he);
 	*ret = result;
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -167,7 +167,7 @@ interface_Network_invoke_hostGetIPs(rad_instance_t *inst, adr_method_t *meth,
 	if ((he = getipnodebyname(adr_data_to_string(args[0]), AF_INET,
 	    AI_DEFAULT, &errnum)) == NULL) {
 		*ret = NULL;
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 
 	int n = 0;
@@ -185,7 +185,7 @@ interface_Network_invoke_hostGetIPs(rad_instance_t *inst, adr_method_t *meth,
 	*ret = adr_data_purify_deep(result);
 	freehostent(he);
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -216,7 +216,7 @@ interface_Network_invoke_isLocalAddress(rad_instance_t *inst,
 	//
 	// See: man -s3 socket getifaddrs
 	if (getifaddrs(&ifaddr) == -1) {
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 
 	/* Iterate over linked list of IP addresses */
@@ -246,23 +246,30 @@ interface_Network_invoke_isLocalAddress(rad_instance_t *inst,
 		}
 	}
 	freeifaddrs(ifaddr);
-	return (ce_ok);
+	return (CE_OK);
 }
 
-static rad_modinfo_t modinfo = { "network", "Network panel support" };
-
 int
-_rad_init(void *handle)
+_rad_init(void)
 {
-	if (rad_module_register(handle, RAD_MODVERSION, &modinfo) == -1)
+	adr_name_t *aname = adr_name_vcreate(MOD_DOMAIN, 1, "type", "Network");
+	conerr_t cerr =  rad_cont_insert_singleton(rad_container, aname,
+	    &modinfo, &interface_Network_svr);
+	adr_name_rele(aname);
+	if (cerr != CE_OK) {
+		rad_log(RL_ERROR, "(mod_network) failed to insert Network");
 		return (-1);
-
-	if (rad_isproxy)
-		return (0);
-
-	(void) cont_insert_singleton(rad_container, adr_name_fromstr(
-	    "com.oracle.solaris.vp.panel.common.api.network:type=Network"),
-	    &interface_Network_svr);
+	}
 
 	return (0);
+}
+
+/*
+ * _rad_fini is called by the RAD daemon when the module is unloaded. Any
+ * module finalisation is completed here.
+ */
+/*ARGSUSED*/
+void
+_rad_fini(void *unused)
+{
 }

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.apache.client.swing;
@@ -28,7 +28,7 @@ package com.oracle.solaris.vp.panels.apache.client.swing;
 import java.util.*;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.api.smf_old.*;
-import com.oracle.solaris.vp.panel.common.smf.ServiceMXBean;
+import com.oracle.solaris.vp.panel.common.smf.ServiceBean;
 
 public class PropertyGroupNamePool {
     //
@@ -41,7 +41,7 @@ public class PropertyGroupNamePool {
     // Instance data
     //
 
-    private ServiceMXBean service;
+    private ServiceBean service;
     private String prefix;
     private List<Integer> existing = new LinkedList<Integer>();
     private List<Integer> reserved = new LinkedList<Integer>();
@@ -51,7 +51,7 @@ public class PropertyGroupNamePool {
     // Constructors
     //
 
-    public PropertyGroupNamePool(ServiceMXBean service, String prefix)
+    public PropertyGroupNamePool(ServiceBean service, String prefix)
 	throws ScfException {
 
 	this.service = service;

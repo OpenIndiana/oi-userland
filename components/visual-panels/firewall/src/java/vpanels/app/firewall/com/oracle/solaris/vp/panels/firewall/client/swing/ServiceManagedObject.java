@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.firewall.client.swing;
@@ -30,12 +30,11 @@ import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.*;
 import java.util.logging.Level;
-import javax.management.*;
 import javax.swing.*;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.jmx.IncompatibleVersionException;
-import com.oracle.solaris.rad.jmx.RadJMX;
-import com.oracle.solaris.rad.jmx.RadNotification;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.rad.client.RadException;
+import com.oracle.solaris.rad.client.Version;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.ActionFailedException;
@@ -50,8 +49,7 @@ import com.oracle.solaris.vp.util.swing.HasIcon;
 @SuppressWarnings({"serial"})
 public class ServiceManagedObject
     extends AbstractManagedObject<ManagedObject>
-    implements HasIcon, HasAccessPolicy, ConnectionListener,
-    NotificationListener {
+    implements HasIcon, HasAccessPolicy, ConnectionListener {
 
     //
     // Static data
@@ -85,10 +83,10 @@ public class ServiceManagedObject
     //
 
     private FirewallPanelDescriptor descriptor;
-    private MBeanServerConnection mbsc;
+    private Connection conn;
     private AggregatedRefreshService bean;
     private SimpleSmfPropertyGroupInfo pgInfo;
-    private ObjectName oName;
+    private ADRName aname;
     private String svcName;
     private String id;
 
@@ -103,15 +101,14 @@ public class ServiceManagedObject
     //
 
     public ServiceManagedObject(FirewallPanelDescriptor descriptor,
-	MBeanServerConnection mbsc, Instance inst)
-	throws IOException, MalformedObjectNameException, ScfException,
-	InvalidScfDataException, MissingScfDataException,
-	InstanceNotFoundException, IncompatibleVersionException, JMException {
+	Connection conn, Instance inst) throws IOException,
+	ScfException, InvalidScfDataException,
+	MissingScfDataException {
 
 	this.descriptor = descriptor;
-	oName = inst.getObjectName();
-	svcName = ServiceUtil.toService(oName);
-	id = ServiceUtil.toFMRI(oName);
+	aname = inst.getObjectName();
+	svcName = ServiceUtil.toService(aname);
+	id = ServiceUtil.toFMRI(aname);
 
 	bean = new AggregatedRefreshService();
 	connectionUpdate(descriptor.getClientContext().getConnectionInfo());
@@ -170,55 +167,15 @@ public class ServiceManagedObject
 	try {
 	    connectionUpdate(info);
 	} catch (IOException e) {
-	    getLog().log(Level.SEVERE, Finder.getString("error.jmx.general"),
+	    getLog().log(Level.SEVERE, Finder.getString("error.server.general"),
 		e);
-	} catch (JMException e) {
-	    // Message logged, ignore.
 	}
     }
 
     @Override
     public void connectionFailed(ConnectionEvent event) {
-	if (mbsc != null) {
-	    try {
-		mbsc.removeNotificationListener(oName, this);
-
-	    // The connection is likely already closed
-	    } catch (Throwable ignore) {
-	    }
-
-	    mbsc = null;
-	}
-    }
-
-    //
-    // NotificationListener methods
-    //
-
-    /**
-     * Handles changes to this {@code ServiceManagedObject}.
-     * This implementation listens only for {@code StateChangeNotification}s and
-     * fires a {@code PropertyChangeEvent} to registered {@code
-     * PropertyChangeEvent}s.
-     */
-    @Override
-    public void handleNotification(Notification n, Object h) {
-	boolean success = false;
-
-	if (n instanceof RadNotification && n.getType().equals("statechange")) {
-	    try {
-		refresh();
-		success = true;
-	    } catch (ScfException e) {
-		getLog().log(Level.SEVERE,
-		    Finder.getString("error.io.repository"), e);
-	    }
-	}
-
-	if (success) {
-	    PropertyChangeEvent event = new PropertyChangeEvent(
-		this, null, null, null);
-	    firePropertyChange(event);
+	if (conn != null) {
+	    conn = null;
 	}
     }
 
@@ -227,36 +184,23 @@ public class ServiceManagedObject
     //
 
     protected void connectionUpdate(ConnectionInfo info)
-	throws IOException, InstanceNotFoundException, JMException {
+	throws IOException, RadException {
 
-	if (mbsc != null) {
-	    try {
-		mbsc.removeNotificationListener(oName, this);
-
-	    // If something prevented us from removing ourselves as a
-	    // notification listener, it probably doesn't matter anymore.
-	    } catch (Throwable ignore) {
-	    }
-	    mbsc = null;
+	if (conn != null) {
+	    conn = null;
 	}
 
 	try {
-	    mbsc = info.getConnector().getMBeanServerConnection();
-	    mbsc.addNotificationListener(oName, this, null, null);
-	    bean.setService(new ServiceMXBeanAdaptor(
-		RadJMX.newMXBeanProxy(mbsc, oName,
-		ServiceInfoMXBean.class, Stability.PRIVATE)));
-	} catch (InstanceNotFoundException e) {
+	    conn = info.getConnection();
+	    bean.setService(new ServiceBeanAdaptor(
+		(ServiceInfo)conn.getObject(aname)));
+	} catch (RadException e) {
 	    getLog().log(Level.SEVERE,
-		Finder.getString("error.jmx.mxbean.missing", oName), e);
+		Finder.getString("error.server.object.missing", aname), e);
 	    throw e;
-	} catch (IncompatibleVersionException e) {
-	    getLog().log(Level.SEVERE,
-		Finder.getString("error.jmx.proxy.version"), e);
-	    throw e;
-	} catch (JMException e) {
+	} catch (IOException e) {
 	    getLog().log(Level.WARNING,
-		Finder.getString("error.jmx.proxy.general"), e);
+		Finder.getString("error.server.proxy.general"), e);
 	    throw e;
 	}
     }

@@ -20,22 +20,22 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.zconsole.client.text;
 
 import java.io.IOException;
 import java.util.logging.Level;
-import com.oracle.solaris.rad.ObjectException;
-import com.oracle.solaris.rad.zonesbridge.IOMXBean;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.zonesbridge.IO;
 
 public abstract class BeanToStdout extends ZoneIOThread {
     //
     // Constructors
     //
 
-    public BeanToStdout(IOMXBean bean, long token) {
+    public BeanToStdout(IO bean, long token) {
 	super(bean, token);
     }
 
@@ -46,7 +46,7 @@ public abstract class BeanToStdout extends ZoneIOThread {
     @Override
     public void run() {
 	boolean success = true;
-	IOMXBean bean = getBean();
+	IO bean = getBean();
 	long token = getToken();
 
 	try {
@@ -55,7 +55,7 @@ public abstract class BeanToStdout extends ZoneIOThread {
 		System.out.write(bytes);
 		System.out.flush();
 	    }
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    // Console has been closed
 
 	} catch (IOException e) {

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -29,8 +29,6 @@ import java.beans.*;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.logging.Level;
-import javax.management.*;
-import com.oracle.solaris.rad.jmx.RadNotification;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.smf_old.*;
@@ -68,39 +66,13 @@ public abstract class ServicePanelDescriptor<C extends ManagedObject>
 	    }
 	};
 
-    /**
-     * Handles changes to this {@code ServicePanelDescriptor}'s service.
-     * This implementation listens only for {@code StateChangeNotification}s and
-     * fires a {@code PropertyChangeEvent} to registered {@code
-     * PropertyChangeEvent}s.  Subclasses with {@code ManagedObject} children
-     * may wish to override/extend this implementation.
-     */
-    private NotificationListener notifyListener =
-	new NotificationListener() {
-	    @Override
-	    public void handleNotification(Notification n, Object h) {
-		StateChange sc = ((RadNotification)n).getPayload(
-		    StateChange.class);
-
-		firePropertyChange(PROPERTY_STATE, null, sc.getState());
-		setStatus();
-		setStatusText();
-		try {
-		    refresh(false);
-		} catch (Exception e) {
-		    getLog().log(Level.SEVERE, Finder.getString(
-			"error.repository.read"), e);
-		}
-	    }
-	};
-
     //
     // Constructors
     //
 
     public ServicePanelDescriptor(String id, ClientContext context,
 	String serviceName, String instanceName) throws IOException,
-	InstanceNotFoundException, TrackerException {
+	TrackerException {
 
 	super(id, context);
 
@@ -108,8 +80,6 @@ public abstract class ServicePanelDescriptor<C extends ManagedObject>
 	this.instanceName = instanceName;
 
 	tracker = new ServiceTracker(serviceName, instanceName, context);
-	tracker.addNotificationListener(notifyListener,
-	    SmfUtil.NOTIFY_FILTER_STATE_CHANGE, null);
 	tracker.addPropertyChangeListener(ServiceTracker.PROPERTY_SERVICE,
 	    serviceListener);
 
@@ -215,7 +185,7 @@ public abstract class ServicePanelDescriptor<C extends ManagedObject>
     protected ManagedObjectStatus getCalculatedStatus() {
 	ManagedObjectStatus status = super.getCalculatedStatus();
 
-	ServiceMXBean service = getService();
+	ServiceBean service = getService();
 	if (service != null) {
 	    ManagedObjectStatus sStatus = null;
 
@@ -238,7 +208,7 @@ public abstract class ServicePanelDescriptor<C extends ManagedObject>
     protected String getCalculatedStatusText() {
 	SmfState state = null;
 	SmfState nextState = null;
-	ServiceMXBean service = getService();
+	ServiceBean service = getService();
 
 	try {
 	    state = service.getState();

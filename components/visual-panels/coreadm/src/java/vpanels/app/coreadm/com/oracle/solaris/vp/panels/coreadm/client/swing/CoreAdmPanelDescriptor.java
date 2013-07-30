@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.coreadm.client.swing;
@@ -28,10 +28,11 @@ package com.oracle.solaris.vp.panels.coreadm.client.swing;
 import java.beans.*;
 import java.io.IOException;
 import java.util.*;
-import javax.management.*;
 import javax.swing.Icon;
 import javax.swing.border.Border;
-import com.oracle.solaris.adr.Stability;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.rad.client.Interface;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.file.*;
@@ -59,16 +60,16 @@ public class CoreAdmPanelDescriptor
 
     private static String findSvc(ClientContext context) throws IOException
     {
-	ObjectName tmpon;
+	Connection conn = context.getConnectionInfo().getConnection();
+	ADRName tmpon;
+
 	try {
 	    tmpon = ServiceUtil.getServiceObjectName(TMP_SERVICE, null);
-	} catch (MalformedObjectNameException ex) {
+	    Interface iface = conn.getObject(tmpon);
+	} catch (Exception ex) {
 	    return (SERVICE);
 	}
-
-	return (context.getConnectionInfo().getConnector().
-	    getMBeanServerConnection().isRegistered(tmpon) ?
-	    TMP_SERVICE : SERVICE);
+	return TMP_SERVICE;
     }
 
     //
@@ -78,7 +79,7 @@ public class CoreAdmPanelDescriptor
     private DefaultControl control;
     private CoreConfig coreConfig_ = new CoreConfig();
     private CoreAdmSettingsTab settingsTab_;
-    private MXBeanTracker<FileBrowserMXBean> filesBeanTracker;
+    private BeanTracker<FileBrowser> filesBeanTracker;
 
     private PropertyChangeListener filesBeanListener =
 	new PropertyChangeListener() {
@@ -93,17 +94,17 @@ public class CoreAdmPanelDescriptor
     //
 
     public CoreAdmPanelDescriptor(String id, ClientContext context)
-	throws InstanceNotFoundException, IOException, TrackerException,
+	throws IOException, TrackerException,
 	ScfException, InvalidScfDataException, MissingScfDataException {
 
 	super(id, context, findSvc(context), INSTANCE);
 
-	filesBeanTracker = new MXBeanTracker<FileBrowserMXBean>(
-	    FileBrowserUtil.OBJECT_NAME, FileBrowserMXBean.class,
-	    Stability.PRIVATE, context);
+	filesBeanTracker = new BeanTracker<FileBrowser>(
+	    (new FileBrowser()).getName(), FileBrowser.class,
+	    context);
 
         filesBeanTracker.addPropertyChangeListener(
-	    MXBeanTracker.PROPERTY_BEAN, filesBeanListener);
+	    BeanTracker.PROPERTY_BEAN, filesBeanListener);
 	updateCoreConfig();
 
 	setComparator(SimpleHasId.COMPARATOR);

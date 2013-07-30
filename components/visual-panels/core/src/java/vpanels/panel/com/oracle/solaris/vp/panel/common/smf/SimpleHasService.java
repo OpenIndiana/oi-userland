@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -30,13 +30,13 @@ public class SimpleHasService implements HasService {
     // Instance data
     //
 
-    private ServiceMXBean service;
+    private ServiceBean service;
 
     //
     // Constructors
     //
 
-    public SimpleHasService(ServiceMXBean service) {
+    public SimpleHasService(ServiceBean service) {
 	this.service = service;
     }
 
@@ -45,7 +45,7 @@ public class SimpleHasService implements HasService {
     //
 
     @Override
-    public ServiceMXBean getService() {
+    public ServiceBean getService() {
 	return service;
     }
 }

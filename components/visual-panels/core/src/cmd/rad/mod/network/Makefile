@@ -20,16 +20,17 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(SRC)/make-rules/Makefile.env
 
 LDLIBS += -lsocket -lnsl
 
+VERS=.1
 MOD_APIS=network
 MOD_OBJS=mod_network.o
-MOD_LIBNAME=mod_network.so
+MOD_LIBNAME=mod_network.so$(VERS)
 MOD_INSTALLDIR=$(RADDIR_MODULE)
 APISDIR=../../../../apis
 

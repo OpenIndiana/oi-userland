@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.client.common;
@@ -32,17 +32,16 @@ import java.security.cert.*;
 import java.security.cert.Certificate;
 import java.util.*;
 import java.util.logging.*;
-import javax.management.*;
-import javax.management.remote.*;
+import java.net.InetAddress;
 import javax.swing.JOptionPane;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.*;
-import com.oracle.solaris.rad.jmx.*;
+import com.oracle.solaris.rad.client.ProxyInterface;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.rad.pam.*;
+import com.oracle.solaris.rad.transports.RadTrustManager;
 import com.oracle.solaris.rad.zonesbridge.*;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.*;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
 import com.oracle.solaris.vp.util.misc.*;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
 
@@ -82,8 +81,8 @@ public abstract class RadLoginManager {
 	}
 
 	public abstract Block initiate(LoginRequest request,
-	    AuthenticationMXBean auth) throws ActionAbortedException,
-	    ObjectException;
+	    Authentication auth) throws ActionAbortedException,
+	    RadObjectException;
 
 	public abstract void prompt(LoginRequest request,
 	    List<LoginProperty> properties, boolean isFirst)
@@ -93,8 +92,8 @@ public abstract class RadLoginManager {
     private class UserPrompter extends AuthPrompter {
 	@Override
 	public Block initiate(LoginRequest request,
-	    AuthenticationMXBean auth) throws ActionAbortedException,
-	    ObjectException {
+	    Authentication auth) throws ActionAbortedException,
+	    RadObjectException {
 
 	    setLoginStatus(request, Finder.getString("login.status.login",
 		request.getUser().getValue()));
@@ -121,8 +120,8 @@ public abstract class RadLoginManager {
     private class RolePrompter extends AuthPrompter {
 	@Override
 	public Block initiate(LoginRequest request,
-	    AuthenticationMXBean auth) throws ActionAbortedException,
-	    ObjectException {
+	    Authentication auth) throws ActionAbortedException,
+	    RadObjectException {
 
 	    setLoginStatus(request, Finder.getString("login.status.assume",
 		request.getRole().getValue()));
@@ -148,8 +147,8 @@ public abstract class RadLoginManager {
     private class ZoneUserPrompter extends AuthPrompter {
 	@Override
 	public Block initiate(LoginRequest request,
-	    AuthenticationMXBean auth) throws ActionAbortedException,
-	    ObjectException {
+	    Authentication auth) throws ActionAbortedException,
+	    RadObjectException {
 
 	    return auth.login(Locale.getDefault().getLanguage(),
 		request.getZoneUser().getValue());
@@ -173,8 +172,8 @@ public abstract class RadLoginManager {
     private class ZoneRolePrompter extends AuthPrompter {
 	@Override
 	public Block initiate(LoginRequest request,
-	    AuthenticationMXBean auth) throws ActionAbortedException,
-	    ObjectException {
+	    Authentication auth) throws ActionAbortedException,
+	    RadObjectException {
 
 	    return auth.assume(Locale.getDefault().getLanguage(),
 		request.getZoneRole().getValue());
@@ -384,7 +383,6 @@ public abstract class RadLoginManager {
 		case 1:
 		    gatherRoleData(request, data);
 		    step++;
-
 		case 2:
 		    doZone = request.getZonePrompt().getValue();
 		    if (doZone != null && doZone) {
@@ -645,7 +643,7 @@ public abstract class RadLoginManager {
 
     @SuppressWarnings({"fallthrough"})
     private boolean authConverse(LoginRequest request,
-	AuthenticationMXBean auth, AuthPrompter prompter)
+	Authentication auth, AuthPrompter prompter)
 	throws ActionAbortedException, ActionRegressedException {
 
 	List<DialogMessage> messages = request.getMessages();
@@ -710,24 +708,22 @@ public abstract class RadLoginManager {
 			messages.clear();
 		    }
 
-		    List<char[]> response = new LinkedList<char[]>();
+		    List<String> response = new LinkedList<String>();
 		    for (LoginProperty property : properties) {
 			Object value = property.getValue();
 			if (value != null) {
 			    response.add(value instanceof char[] ?
-				(char[])value : ((String)value).toCharArray());
+				new String((char[])value) : (String)value);
 			}
 		    }
-
 		    answer = auth.submit(response);
 		    // clear out passwords
-		    for (char[] res : response) {
-			Arrays.fill(res, (char)0);
-			res = null;
+		    for (String s : response) {
+			s = null;
 		    }
 		}
 	    }
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    messages.add(new DialogMessage(
 		Finder.getString("login.err.io",
 		request.getHost().getValue()),
@@ -736,31 +732,17 @@ public abstract class RadLoginManager {
 	}
     }
 
-    private <T> T createMXBeanProxy(LoginRequest request, ConnectionInfo info,
-	Class<T> ifaceClass, Stability s, String domain, String name)
+    private <T> T createProxy(LoginRequest request, ConnectionInfo info,
+	Class<T> ifaceClass, String domain, String name)
 	throws ActionFailedException {
 
-	MBeanServerConnection mbsc = getMBeanServerConnection(request, info);
-	if (mbsc == null) {
-	    return null;
-	}
-
-	ObjectName oName = MBeanUtil.makeObjectName(domain, name);
-
 	try {
-	    return ifaceClass.cast(RadJMX.newMXBeanProxy(mbsc, oName,
-		ifaceClass, s));
-	} catch (IncompatibleVersionException e) {
+	    ProxyInterface proxy = (ProxyInterface) ifaceClass.newInstance();
+	    return info.getConnection().getObject(proxy);
+	} catch (RadObjectException e) {
 	    List<DialogMessage> messages = request.getMessages();
 	    messages.add(new DialogMessage(Finder.getString(
-		"proxy.error.version", e.getClientVersion(),
-		e.getServerVersion(), ifaceClass.getSimpleName()),
-		JOptionPane.ERROR_MESSAGE));
-	    requestFailed(request);
-	} catch (JMException e) {
-	    List<DialogMessage> messages = request.getMessages();
-	    messages.add(new DialogMessage(Finder.getString(
-		"proxy.error.general", oName),
+		"proxy.error.general", ifaceClass.getSimpleName()),
 		JOptionPane.ERROR_MESSAGE));
 	    requestFailed(request);
 	} catch (IOException e) {
@@ -769,20 +751,25 @@ public abstract class RadLoginManager {
 		"proxy.error.io", ifaceClass.getSimpleName()),
 		JOptionPane.ERROR_MESSAGE));
 	    requestFailed(request);
+	} catch (Exception e) {
+	    List<DialogMessage> messages = request.getMessages();
+	    messages.add(new DialogMessage(Finder.getString(
+		"proxy.error.general", ifaceClass.getSimpleName()),
+		JOptionPane.ERROR_MESSAGE));
+	    requestFailed(request);
 	}
 	return null;
     }
 
-    private AuthenticationMXBean createAuthBean(LoginRequest request,
+    private Authentication createAuthBean(LoginRequest request,
 	ConnectionInfo info) throws ActionFailedException {
-	return createMXBeanProxy(request, info, AuthenticationMXBean.class,
-	    Stability.PRIVATE, "com.oracle.solaris.rad.pam", "Authentication");
+	return createProxy(request, info, Authentication.class,
+	    "com.oracle.solaris.rad.pam", "Authentication");
     }
 
-    private JMXConnector createConnector(String host)
-	throws KeyStoreException, NoSuchAlgorithmException,
-	CertificateException, MalformedURLException, IOException,
-	ActionAbortedException {
+    private Connection createConnector(String host)
+	throws KeyStoreException, ActionAbortedException, CertificateException,
+	UnknownHostException, NoSuchAlgorithmException, IOException {
 
 	if (NetUtil.isLocalAddress(host)) {
 	    String[] paths = {
@@ -791,43 +778,43 @@ public abstract class RadLoginManager {
 	    };
 
 	    for (String path : paths) {
-		JMXServiceURL url = null;
 		try {
-		    url = new JMXServiceURL(RadConnector.PROTOCOL_UNIX, "", 0,
-			path);
-		    return JMXConnectorFactory.connect(url);
+		    return Connection.connectUnix(new File(path));
 		} catch (IOException e) {
 		    // Not necessarily an error
 		    Logger.getLogger(getClass().getName()).log(Level.CONFIG,
-			"unable to utilize local AF_UNIX connector: " +
-			(url == null ? path : url), e);
+			"unable to utilize local AF_UNIX connection: " +
+			path, e);
 		}
 	    }
 	}
+
+	InetAddress addr = InetAddress.getByName(host);
 
 	File truststore = getTrustStoreFile();
 	if (!truststore.exists()) {
 	    createTrustStore(truststore);
 	}
 
-	Map<String, Object> env = new HashMap<String, Object>();
-	env.put(RadConnector.KEY_TLS_TRUSTSTORE,
-	    truststore.getAbsolutePath());
-	env.put(RadConnector.KEY_TLS_TRUSTPASS,
-	    getTrustStorePassword());
+	String tsloc = truststore.getAbsolutePath();
+	String tspass = getTrustStorePassword();
+	if (tsloc == null || tspass == null)
+	    throw new IOException("Must supply truststore and password");
+	RadTrustManager mtm = new RadTrustManager();
 
-	JMXServiceURL url = new JMXServiceURL(
-	    RadConnector.PROTOCOL_TLS, host, 0);
+	KeyStore ks;
 
-	// Throws MalformedURLException
-	JMXConnector connector = JMXConnectorFactory.newJMXConnector(url, null);
+	try {
+	    ks = KeyStore.getInstance("JKS");
+	    ks.load(new FileInputStream(tsloc), tspass.toCharArray());
+	} catch (Exception e) {
+	    throw new IOException(e);
+	}
 
+	Connection conn = null;
 	for (;;) {
-	    RadTrustManager mtm = new RadTrustManager();
-	    env.put(RadConnector.KEY_TLS_RADMANAGER, mtm);
-
 	    try {
-		connector.connect(env);
+		conn = Connection.connectTLS(addr, host, ks, mtm);
 		break;
 	    } catch (IOException e) {
 		X509Certificate[] chain = mtm.getBadChain();
@@ -840,14 +827,13 @@ public abstract class RadLoginManager {
 		}
 	    }
 	}
-
-	return connector;
+	return conn;
     }
 
-    private JMXConnector createConnector(LoginRequest request)
+    private Connection createConnector(LoginRequest request)
 	throws ActionAbortedException {
 
-	JMXConnector connector = null;
+	Connection connector = null;
 	LoginProperty<String> host = request.getHost();
 	String hostVal = host.getValue();
 	List<DialogMessage> messages = request.getMessages();
@@ -859,29 +845,17 @@ public abstract class RadLoginManager {
 
 	    connector = createConnector(hostVal);
 	    success = true;
-
-	// Thrown by JMXConnector.connect
 	} catch (UnknownHostException e) {
 	    messages.add(new DialogMessage(Finder.getString(
 		"login.err.host.unknown", hostVal), JOptionPane.ERROR_MESSAGE));
-
-	// Thrown by JMXConnector.connect
-	} catch (ConnectException e) {
-	    messages.add(new DialogMessage(Finder.getString(
-		"login.err.host.refused", hostVal), JOptionPane.ERROR_MESSAGE));
-
-	// Thrown by JMXConnector.connect
 	} catch (SecurityException e) {
 	    messages.add(new DialogMessage(Finder.getString(
 		"login.err.security", hostVal),
 		JOptionPane.ERROR_MESSAGE));
-
-	// Thrown by createTrustStore
 	} catch (KeyStoreException e) {
 	    messages.add(new DialogMessage(Finder.getString(
 		"login.err.keystore", e.getMessage()),
 		JOptionPane.ERROR_MESSAGE));
-
 	// Thrown by createTrustStore
 	} catch (NoSuchAlgorithmException e) {
 	    messages.add(new DialogMessage(Finder.getString(
@@ -894,13 +868,7 @@ public abstract class RadLoginManager {
 		"login.err.nocerts", hostVal),
 		JOptionPane.ERROR_MESSAGE));
 
-	// Thrown by new JMXServiceURL
-	} catch (MalformedURLException e) {
-	    messages.add(new DialogMessage(Finder.getString(
-		"login.err.url.invalid"),
-		JOptionPane.ERROR_MESSAGE));
-
-	// Thrown by JMXConnector.connect et al
+	// Thrown by RAD java client
 	} catch (IOException e) {
 	    messages.add(new DialogMessage(Finder.getString(
 		"login.err.io", hostVal),
@@ -915,22 +883,26 @@ public abstract class RadLoginManager {
 	return connector;
     }
 
-    private IOMXBean createZonesBridgeBean(LoginRequest request,
+    private IO createZonesBridgeBean(LoginRequest request,
 	ConnectionInfo info) throws ActionFailedException {
-	return createMXBeanProxy(request, info, IOMXBean.class,
-	    Stability.PRIVATE, "com.oracle.solaris.rad.zonesbridge", "IO");
+	return createProxy(request, info, IO.class,
+	    "com.oracle.solaris.rad.zonesbridge", "IO");
     }
 
-    private UtilMXBean createZonesUtilBean(LoginRequest request,
+
+    private Util createZonesUtilBean(LoginRequest request,
 	ConnectionInfo info) throws ActionFailedException {
-	return createMXBeanProxy(request, info, UtilMXBean.class,
-	    Stability.PRIVATE, "com.oracle.solaris.rad.zonesbridge", "Util");
+	return createProxy(request, info, Util.class,
+	    "com.oracle.solaris.rad.zonesbridge", "Util");
     }
 
-    private JMXConnector createZoneConnector(LoginRequest request,
-	IOMXBean bean) {
 
-	JMXConnector connector = null;
+    private Connection createZoneConnector(LoginRequest request,
+	IO bean) throws ActionAbortedException {
+
+	Connection conn = null;
+	LoginProperty<String> host = request.getHost();
+	String hostVal = host.getValue();
 	LoginProperty<String> zone = request.getZone();
 	String zoneVal = zone.getValue();
 	String zoneUserVal = request.getZoneUser().getValue();
@@ -938,28 +910,29 @@ public abstract class RadLoginManager {
 	boolean success = false;
 
 	try {
-	    JMXServiceURL url = new JMXServiceURL(
-		RadConnector.PROTOCOL_ZONESBRIDGE, zoneVal, 0,
-		"/" + zoneUserVal);
-
-	    Map<String, Object> env = new HashMap<String, Object>();
-	    env.put(RadConnector.KEY_ZONESBRIDGE_MXBEAN, bean);
-
-	    connector = JMXConnectorFactory.connect(url, env);
+	    Connection rc = createConnector(hostVal);
+	    conn = Connection.connectZone(rc, zoneVal, zoneUserVal, null);
 	    success = true;
-
-	// Thrown by JMXConnector.connect
 	} catch (SecurityException e) {
 	    messages.add(new DialogMessage(Finder.getString(
 		"login.err.zone.security", zoneVal, zoneUserVal),
 		JOptionPane.ERROR_MESSAGE));
-
-	// Thrown by new JMXServiceURL
-	} catch (MalformedURLException e) {
+	} catch (KeyStoreException e) {
 	    messages.add(new DialogMessage(Finder.getString(
-		"login.err.url.invalid"), JOptionPane.ERROR_MESSAGE));
+		"login.err.keystore", e.getMessage()),
+		JOptionPane.ERROR_MESSAGE));
+	// Thrown by createTrustStore
+	} catch (NoSuchAlgorithmException e) {
+	    messages.add(new DialogMessage(Finder.getString(
+		"login.err.keystore", e.getMessage()),
+		JOptionPane.ERROR_MESSAGE));
 
-	// Thrown by JMXConnector.connect et al
+	// Thrown by getDaemonCertificateChain
+	} catch (CertificateException e) {
+	    messages.add(new DialogMessage(Finder.getString(
+		"login.err.nocerts", hostVal),
+		JOptionPane.ERROR_MESSAGE));
+
 	} catch (IOException e) {
 	    messages.add(new DialogMessage(Finder.getString(
 		"login.err.io", zoneVal), JOptionPane.ERROR_MESSAGE));
@@ -969,8 +942,7 @@ public abstract class RadLoginManager {
 		zone.setErrored(true);
 	    }
 	}
-
-	return connector;
+	return conn;
     }
 
     private void gatherHostAndUserData(LoginRequest request, LoginData data)
@@ -1044,13 +1016,13 @@ public abstract class RadLoginManager {
 	    }
 
 	    // Create connection, append to messages on error
-	    JMXConnector connector = createConnector(request);
-	    if (connector != null) {
+	    Connection connection = createConnector(request);
+	    if (connection != null) {
 		ConnectionInfo info = new ConnectionInfo(hostVal, userVal, null,
-		    connector);
+		    connection);
 
 		// Get/create auth bean, append to messages on error
-		AuthenticationMXBean auth = createAuthBean(request, info);
+		Authentication auth = createAuthBean(request, info);
 		if (auth != null) {
 		    setLoginStatus(request,
 			Finder.getString("login.status.user"));
@@ -1109,7 +1081,7 @@ public abstract class RadLoginManager {
 	String zoneUserVal = zoneUser.getValue();
 
 	// Get/create auth bean, append to messages on error
-	AuthenticationMXBean userAuth = createAuthBean(request, data.peek(0));
+	Authentication userAuth = createAuthBean(request, data.peek(0));
 	if (userAuth == null) {
 	    // Not likely, but handle it anyway
 	    requestFailed(request);
@@ -1174,16 +1146,16 @@ public abstract class RadLoginManager {
 		byte[] token = userAuth.createToken();
 
 		// Create connection, append to messages on error
-		JMXConnector connector = createConnector(request);
+		Connection connector = createConnector(request);
 		if (connector != null) {
 		    ConnectionInfo info = new ConnectionInfo(hostVal, userVal,
 			roleVal, connector);
 
 		    // Create auth bean, append to messages on error
-		    AuthenticationMXBean roleAuth = createAuthBean(request,
+		    Authentication roleAuth = createAuthBean(request,
 			info);
 		    if (roleAuth != null) {
-			roleAuth.redeemToken(userVal, token);
+			    roleAuth.redeemToken(userVal, token);
 
 			AuthPrompter prompter = new RolePrompter();
 			do {
@@ -1211,7 +1183,7 @@ public abstract class RadLoginManager {
 		}
 
 	    // Thrown by createToken/redeemToken
-	    } catch (ObjectException e) {
+	    } catch (RadObjectException e) {
 		messages.add(new DialogMessage(Finder.getString(
 		    "login.err.io", hostVal), JOptionPane.ERROR_MESSAGE));
 
@@ -1225,8 +1197,8 @@ public abstract class RadLoginManager {
 	throws ActionAbortedException, ActionFailedException,
 	ActionRegressedException {
 
-	IOMXBean zcon = createZonesBridgeBean(request, data.peek(0));
-	UtilMXBean zutil = createZonesUtilBean(request, data.peek(0));
+	IO zcon = createZonesBridgeBean(request, data.peek(0));
+	Util zutil = createZonesUtilBean(request, data.peek(0));
 	if (zcon == null || zutil == null) {
 	    requestFailed(request);
 	}
@@ -1238,7 +1210,7 @@ public abstract class RadLoginManager {
 	List<String> zones = null;
 	try {
 	    zones = zutil.getZones(ZoneState.RUNNING);
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    messages.add(new DialogMessage(Finder.getString(
                 "login.err.io", request.getHost().getValue()),
                 JOptionPane.ERROR_MESSAGE));
@@ -1304,7 +1276,7 @@ public abstract class RadLoginManager {
 		return;
 	    }
 
-	    JMXConnector connector = createZoneConnector(request, zcon);
+	    Connection connector = createZoneConnector(request, zcon);
 	    if (connector != null) {
 		ConnectionInfo info = new ConnectionInfo(
 		    request.getHost().getValue(), request.getUser().getValue(),
@@ -1312,7 +1284,7 @@ public abstract class RadLoginManager {
 		    connector);
 
 		// Get/create auth bean, append to messages on error
-		AuthenticationMXBean auth = createAuthBean(request, info);
+		Authentication auth = createAuthBean(request, info);
 		if (auth != null) {
 		    if (zoneUserVal.equals(auth.getuser())) {
 			data.push(info, acknowledged);
@@ -1371,7 +1343,7 @@ public abstract class RadLoginManager {
 	String zoneUserVal = zoneUser.getValue();
 
 	// Get/create auth bean, append to messages on error
-	AuthenticationMXBean userAuth = createAuthBean(request, data.peek(0));
+	Authentication userAuth = createAuthBean(request, data.peek(0));
 	if (userAuth == null) {
 	    // Not likely, but handle it anyway
 	    requestFailed(request);
@@ -1389,7 +1361,7 @@ public abstract class RadLoginManager {
 	    isRoleValid(request, roles, true);
 	}
 
-	IOMXBean zcon = null;
+	IO zcon = null;
 
 	// Loop until no role is chosen, or chosen role is authenticated
 	while (true) {
@@ -1446,16 +1418,16 @@ public abstract class RadLoginManager {
 		}
 
 		// Create connection, append to messages on error
-		JMXConnector connector = createZoneConnector(request, zcon);
+		Connection connector = createZoneConnector(request, zcon);
 		if (connector != null) {
 		    ConnectionInfo info = new ConnectionInfo(hostVal, userVal,
 			roleVal, zoneVal, zoneUserVal, zoneRoleVal, connector);
 
 		    // Create auth bean, append to messages on error
-		    AuthenticationMXBean roleAuth = createAuthBean(request,
+		    Authentication roleAuth = createAuthBean(request,
 			info);
 		    if (roleAuth != null) {
-			roleAuth.redeemToken(userVal, token);
+			    roleAuth.redeemToken(userVal, token);
 
 			AuthPrompter prompter = new ZoneRolePrompter();
 			do {
@@ -1484,7 +1456,7 @@ public abstract class RadLoginManager {
 		}
 
 	    // Thrown by createToken/redeemToken
-	    } catch (ObjectException e) {
+	    } catch (RadObjectException e) {
 		messages.add(new DialogMessage(Finder.getString(
 		    "login.err.io", hostVal), JOptionPane.ERROR_MESSAGE));
 
@@ -1492,20 +1464,6 @@ public abstract class RadLoginManager {
 	    } catch (ActionRegressedException e) {
 	    }
 	}
-    }
-
-    private MBeanServerConnection getMBeanServerConnection(LoginRequest request,
-	ConnectionInfo info) {
-
-	try {
-	    return info.getConnector().getMBeanServerConnection();
-	} catch (IOException e) {
-	    request.getMessages().add(new DialogMessage(
-		Finder.getString("login.err.io",
-		request.getHost().getValue()),
-		JOptionPane.ERROR_MESSAGE));
-	}
-	return null;
     }
 
     private <T> boolean inSet(LoginProperty<T> property, List<T> valid,

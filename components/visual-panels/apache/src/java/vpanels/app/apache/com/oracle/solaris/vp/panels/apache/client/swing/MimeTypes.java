@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.apache.client.swing;
@@ -157,7 +157,7 @@ public class MimeTypes extends AbstractManagedObject<MimeType>
     }
 
     public void refresh(boolean force) throws ScfException {
-	ServiceMXBean service = info.getPanelDescriptor().getService();
+	ServiceBean service = info.getPanelDescriptor().getService();
 	String group = info.getPropertyGroupName();
 
 	// Build list of names of MIME type properties
@@ -170,7 +170,7 @@ public class MimeTypes extends AbstractManagedObject<MimeType>
 	Collections.sort(properties);
 
 	// Remove names of properties that are pending removal on client
-	for (Iterator<MimeType> i = removed.iterator(); i.hasNext();) {
+	for (Iterator<MimeType> i = removed.iterator(); i.hasNext(); ) {
 	    MimeType mimeType = i.next();
 	    String property = mimeType.getPropertyName();
 	    if (properties.remove(property)) {

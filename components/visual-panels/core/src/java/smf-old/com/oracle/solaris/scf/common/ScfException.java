@@ -20,12 +20,12 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.scf.common;
 
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.panel.common.api.smf_old.SmfError;
 import com.oracle.solaris.vp.panel.common.api.smf_old.SmfErrorCode;
 
@@ -40,10 +40,10 @@ public class ScfException extends Exception
     private SmfErrorCode error_ = null;
     private String msg_ = "";
 
-    public ScfException(ObjectException e)
+    public ScfException(RadObjectException e)
     {
 	super(e);
-	SmfError se = e.getPayload(SmfError.class);
+	SmfError se = (SmfError)e.getPayload();
 	if (se != null) {
 	    error_ = se.getError();
 	    msg_ = se.getMessage();

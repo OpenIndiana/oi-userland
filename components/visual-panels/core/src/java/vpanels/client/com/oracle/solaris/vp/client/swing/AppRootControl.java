@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.client.swing;
@@ -30,8 +30,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 import javax.help.HelpSet;
-import com.oracle.solaris.rad.ObjectException;
-import com.oracle.solaris.rad.jmx.IncompatibleVersionException;
+import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.client.common.*;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.ActionAbortedException;
@@ -55,7 +54,7 @@ public class AppRootControl extends DefaultControl<PanelDescriptor> {
 
     private PanelDescriptorFactory factory;
     private HelpSet helpSet;
-    private PanelMXBeanTracker panelBeanTracker;
+    private PanelBeanTracker panelBeanTracker;
 
     //
     // Constructors
@@ -114,7 +113,7 @@ public class AppRootControl extends DefaultControl<PanelDescriptor> {
 		showError(e.getMessage(), e.getCause());
 
 	    // Assume invalid panel name
-	    } catch (ObjectException e) {
+	    } catch (RadObjectException e) {
 	    }
 	}
 
@@ -129,20 +128,13 @@ public class AppRootControl extends DefaultControl<PanelDescriptor> {
 	super.start(navigator, parameters);
 
 	try {
-	    panelBeanTracker = new PanelMXBeanTracker(getClientContext());
+	    panelBeanTracker = new PanelBeanTracker(getClientContext());
 
 	} catch (TrackerException e) {
 	    String message = null;
 	    Throwable cause = e.getCause();
 
-	    if (cause instanceof IncompatibleVersionException) {
-		IncompatibleVersionException ive =
-		    (IncompatibleVersionException)cause;
-
-		message = Finder.getString("panelproxy.error.version",
-		    ive.getClientVersion(), ive.getServerVersion(),
-		    ive.getInterfaceClass().getSimpleName());
-	    } else if (cause instanceof IOException) {
+	    if (cause instanceof IOException) {
 		message = Finder.getString("panelproxy.error.io");
 	    } else {
 		message = Finder.getString("panelproxy.error.general");

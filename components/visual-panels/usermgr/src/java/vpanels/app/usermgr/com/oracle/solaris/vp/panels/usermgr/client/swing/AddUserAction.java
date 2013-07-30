@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -30,6 +30,7 @@ import java.awt.event.*;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
+import com.oracle.solaris.rad.client.ADRUinteger;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.swing.action.AddManagedObjectAction;
@@ -52,7 +53,7 @@ public class AddUserAction extends AddManagedObjectAction
     <UserManagedObject, AddUserAction.Data, UserManagedObject> {
 
     private UserManagedObject umo = null;
-    private UserImpl user = null;
+    private User user = null;
 
     //
     // Inner classes
@@ -76,10 +77,10 @@ public class AddUserAction extends AddManagedObjectAction
 	public MutableProperty<String> groupProperty = new StringProperty();
 	public MutableProperty<String> homeProperty = new StringProperty();
 	public MutableProperty<String> shellProperty = new StringProperty();
-	public MutableProperty<char[]> passProperty =
-	    new BasicMutableProperty<char[]>();
-	public MutableProperty<char[]> passConfirmProperty =
-	    new BasicMutableProperty<char[]>();
+	public MutableProperty<String> passProperty =
+	    new BasicMutableProperty<String>();
+	public MutableProperty<String> passConfirmProperty =
+	    new BasicMutableProperty<String>();
 
 	private JOptionPane pane;
 	private JDialog dialog;
@@ -102,7 +103,7 @@ public class AddUserAction extends AddManagedObjectAction
 		title);
 	}
 
-    private JPanel createForm() {
+        private JPanel createForm() {
 	    ActionListener listener =
 		new ActionListener() {
 		    @Override
@@ -210,7 +211,7 @@ public class AddUserAction extends AddManagedObjectAction
 
 	for (Group g : descriptor.getGroups()) {
 	    groupCombo.addItem(g.getGroupName());
-	    if (user.getGroupID() == g.getGroupID()) {
+	    if (user.getGroupID().equals(g.getGroupID())) {
 		groupCombo.setSelectedItem(g.getGroupName());
 	    }
 	}
@@ -265,13 +266,13 @@ public class AddUserAction extends AddManagedObjectAction
 	gbc.gridx = GridBagConstraints.RELATIVE;
         form.add(shellCombo, gbc);
 
-	    // Password
+	// Password
 	actString = new ActionString("usermgr.basic.label.pass");
         JLabel passLabel = new JLabel(actString.getString());
         passLabel.setDisplayedMnemonic(actString.getMnemonic());
 
-	    JPasswordField passField = new JPasswordField(width);
-	    passField.addActionListener(listener);
+	JPasswordField passField = new JPasswordField(width);
+	passField.addActionListener(listener);
 	new PasswordFieldPropertySynchronizer(passProperty, passField, false);
 
 	// Connect the label to the field
@@ -377,10 +378,8 @@ public class AddUserAction extends AddManagedObjectAction
 
     @Override
     public UserManagedObject workBusy(List<UserManagedObject> selection,
-	Data uData) throws ActionFailedException,
-		ActionAbortedException,
+	Data uData) throws ActionFailedException, ActionAbortedException,
 	ActionUnauthorizedException {
-
 
 	UserMgrPanelDescriptor descriptor = control.getPanelDescriptor();
 
@@ -394,8 +393,8 @@ public class AddUserAction extends AddManagedObjectAction
 	String shell = uData.shellProperty.getValue();
 	String homedir = uData.homeProperty.getValue();
 
-	char[] password = uData.passProperty.getValue();
-	char[] password2 = uData.passConfirmProperty.getValue();
+	String password = uData.passProperty.getValue();
+	String password2 = uData.passConfirmProperty.getValue();
 	UserMgrUtils.validatePassword(true, password, password2);
 
 	UserMgrUtils.clearPassword(password2);
@@ -403,7 +402,7 @@ public class AddUserAction extends AddManagedObjectAction
 	user.setUsername(username);
 	if (uData.uidProperty.isChanged()) {
 	    long uid = uData.uidProperty.getValue();
-	    user.setUserID(uid);
+	    user.setUserID(new ADRUinteger(uid));
 	}
 
 	user.setDescription(description);

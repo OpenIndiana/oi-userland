@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -133,7 +133,7 @@ public class InstanceManagedObject extends SmfManagedObject
     }
 
     public void setEnabled(boolean enable) throws ScfException {
-	ServiceMXBean bean = getService();
+	ServiceBean bean = getService();
 	if (bean != null) {
 	    bean.setPersistentlyEnabled(enable);
 	}

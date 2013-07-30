@@ -20,18 +20,19 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.swing.timezone;
 
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.vp.panel.common.action.*;
-import com.oracle.solaris.vp.panel.common.api.time.HasTimeMXBean;
+import com.oracle.solaris.vp.panel.common.api.time.HasTimeBean;
 import com.oracle.solaris.vp.panel.common.model.AbstractModel;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
 
-public class TimeZoneModel extends AbstractModel<HasTimeMXBean> {
+public class TimeZoneModel extends AbstractModel<HasTimeBean> {
     //
     // Instance data
     //
@@ -43,7 +44,7 @@ public class TimeZoneModel extends AbstractModel<HasTimeMXBean> {
     // Constructors
     //
 
-    public TimeZoneModel(HasTimeMXBean descriptor) {
+    public TimeZoneModel(HasTimeBean descriptor) {
 	super(descriptor);
     }
 
@@ -67,8 +68,8 @@ public class TimeZoneModel extends AbstractModel<HasTimeMXBean> {
 
     public void load() {
 	try {
-	    setTimeZone(getSource().getTimeMXBean().getdefaultTimeZone());
-	} catch (ObjectException e) {
+	    setTimeZone(getSource().getTimeBean().getdefaultTimeZone());
+	} catch (RadObjectException e) {
 	    setTimeZone("UTC");
 	}
     }
@@ -80,12 +81,12 @@ public class TimeZoneModel extends AbstractModel<HasTimeMXBean> {
 	validate();
 
 	try {
-	    getSource().getTimeMXBean().setdefaultTimeZone(timeZone);
+	    getSource().getTimeBean().setdefaultTimeZone(timeZone);
 
-	} catch (SecurityException e) {
+	} catch (RadPrivilegeException e) {
 	    throw new ActionUnauthorizedException(e);
 
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    throw new ActionFailedException(Finder.getString(
 		"timezone.error.syserror"), e);
 	}

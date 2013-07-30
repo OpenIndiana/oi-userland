@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <sys/list.h>
@@ -46,9 +46,6 @@ static list_t instance_list;
 static rad_instance_t *agg_inst;
 static int service_count = 0;
 static int instance_count = 0;
-
-static const char *aggregator_pattern =
-	"com.oracle.solaris.vp.panel.common.api.smf_old:type=Aggregator";
 
 typedef struct servinst {
 	char *sname;		/* Service name */
@@ -84,14 +81,14 @@ error_scf(adr_data_t **error, int code)
 		    adr_data_new_string(scf_strerror(code), LT_CONST));
 		*error = adr_data_purify(e);
 	}
-	return (ce_object);
+	return (CE_OBJECT);
 }
 
 static conerr_t
 simple_scf(adr_data_t **error, int result)
 {
 	if (result == 0)
-		return (ce_ok);
+		return (CE_OK);
 	return (error_scf(error, scf_error()));
 }
 
@@ -128,7 +125,7 @@ static int getpgs(servinst_t *si, adr_data_t **data, boolean_t namesonly,
     boolean_t(*fp)(const char **, const char *), const char **set,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
 	scf_instance_t *instance = scf_instance_create(scfhandle);
@@ -203,9 +200,9 @@ conerr_t
 interface_ServiceInfo_read_fmri(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	*data = adr_data_new_string(si->fmri, LT_COPY);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -214,8 +211,8 @@ interface_ServiceInfo_read_methodNames(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	const char *pgtypes[] = { SCF_GROUP_METHOD, NULL };
-	return (getpgs(instance_getdata(inst), data, B_TRUE, strinset, pgtypes,
-	    error));
+	return (getpgs(rad_instance_getdata(inst), data, B_TRUE,
+	    strinset, pgtypes, error));
 }
 
 /* ARGSUSED */
@@ -224,8 +221,8 @@ interface_ServiceInfo_read_dependencyNames(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
 	const char *pgtypes[] = { SCF_GROUP_DEPENDENCY, NULL };
-	return (getpgs(instance_getdata(inst), data, B_TRUE, strinset, pgtypes,
-	    error));
+	return (getpgs(rad_instance_getdata(inst), data, B_TRUE,
+	    strinset, pgtypes, error));
 }
 
 /* ARGSUSED */
@@ -233,8 +230,8 @@ conerr_t
 interface_ServiceInfo_read_propertyGroups(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
-	return (getpgs(instance_getdata(inst), data, B_FALSE, strnotinset,
-	    framework_pgtypes, error));
+	return (getpgs(rad_instance_getdata(inst), data, B_FALSE,
+	    strnotinset, framework_pgtypes, error));
 }
 
 /* ARGSUSED */
@@ -242,7 +239,7 @@ conerr_t
 interface_ServiceInfo_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	char *title, *section, *path;
 	rad_propvec_t *badprop;
 	rad_propvec_t evec[] = {
@@ -260,7 +257,7 @@ interface_ServiceInfo_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
 
 	adr_data_t *pgs;
 	conerr_t err = getpgs(si, &pgs, B_TRUE, strinset, pgtypes, error);
-	if (err != ce_ok)
+	if (err != CE_OK)
 		return (err);
 	adr_data_t *result = adr_data_new_array(&t_array__Manpage, 5);
 	for (int i = 0; i < adr_array_size(pgs); i++) {
@@ -286,7 +283,7 @@ interface_ServiceInfo_read_manpages(rad_instance_t *inst, adr_attribute_t *attr,
 	adr_data_free(pgs);
 	*data = result;
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -294,7 +291,7 @@ conerr_t
 interface_ServiceInfo_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	char *uri;
 	rad_propvec_t *badprop;
 	rad_propvec_t evec[] = {
@@ -309,7 +306,7 @@ interface_ServiceInfo_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
 
 	adr_data_t *pgs;
 	conerr_t err = getpgs(si, &pgs, B_TRUE, strinset, pgtypes, error);
-	if (err != ce_ok)
+	if (err != CE_OK)
 		return (err);
 	adr_data_t *result = adr_data_new_array(&adr_t_array_string, 5);
 	for (int i = 0; i < adr_array_size(pgs); i++) {
@@ -329,7 +326,7 @@ interface_ServiceInfo_read_doclinks(rad_instance_t *inst, adr_attribute_t *attr,
 	adr_data_free(pgs);
 	*data = result;
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -337,7 +334,7 @@ conerr_t
 interface_ServiceInfo_read_persistentlyEnabled(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -355,7 +352,7 @@ interface_ServiceInfo_read_persistentlyEnabled(rad_instance_t *inst,
 	rad_clean_propvec(evec);
 
 	*data = adr_data_new_boolean(enabled);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -363,7 +360,7 @@ conerr_t
 interface_ServiceInfo_read_temporarilyEnabled(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -381,7 +378,7 @@ interface_ServiceInfo_read_temporarilyEnabled(rad_instance_t *inst,
 	rad_clean_propvec(evec);
 
 	*data = adr_data_new_boolean(enabled);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -401,9 +398,9 @@ conerr_t
 interface_ServiceInfo_read_instance(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	*data = adr_data_new_boolean(si->instance);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -411,7 +408,7 @@ conerr_t
 interface_ServiceInfo_read_restarter(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -431,7 +428,7 @@ interface_ServiceInfo_read_restarter(rad_instance_t *inst,
 		    "system/svc/restarter", "default");
 	}
 
-	return (*data != NULL ? ce_ok : ce_system);
+	return (*data != NULL ? CE_OK : CE_SYSTEM);
 }
 
 static adr_data_t *
@@ -453,7 +450,7 @@ conerr_t
 interface_ServiceInfo_read_state(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -463,7 +460,7 @@ interface_ServiceInfo_read_state(rad_instance_t *inst, adr_attribute_t *attr,
 
 	*data = state2enum(state);
 	free(state);
-	return (*data != NULL ? ce_ok : ce_system);
+	return (*data != NULL ? CE_OK : CE_SYSTEM);
 }
 
 /* ARGSUSED */
@@ -471,7 +468,7 @@ conerr_t
 interface_ServiceInfo_read_nextState(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -489,7 +486,7 @@ interface_ServiceInfo_read_nextState(rad_instance_t *inst,
 
 	*data = state2enum(state);
 	rad_clean_propvec(evec);
-	return (*data != NULL ? ce_ok : ce_system);
+	return (*data != NULL ? CE_OK : CE_SYSTEM);
 }
 
 /* ARGSUSED */
@@ -497,7 +494,7 @@ conerr_t
 interface_ServiceInfo_read_auxiliaryState(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -513,7 +510,7 @@ interface_ServiceInfo_read_auxiliaryState(rad_instance_t *inst,
 	if (scferr != 0) {
 		if (scferr == SCF_ERROR_NOT_FOUND) {
 			*data = NULL;
-			return (ce_ok);
+			return (CE_OK);
 		}
 		return (error_scf(error, scferr));
 	}
@@ -521,7 +518,7 @@ interface_ServiceInfo_read_auxiliaryState(rad_instance_t *inst,
 	*data = adr_data_new_string(aux, LT_COPY);
 	rad_clean_propvec(evec);
 
-	return (*data != NULL ? ce_ok : ce_system);
+	return (*data != NULL ? CE_OK : CE_SYSTEM);
 }
 
 /* ARGSUSED */
@@ -529,7 +526,7 @@ conerr_t
 interface_ServiceInfo_read_stime(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -549,7 +546,7 @@ interface_ServiceInfo_read_stime(rad_instance_t *inst, adr_attribute_t *attr,
 
 	*data = adr_data_new_time(time.t_seconds, time.t_ns);
 
-	return (*data != NULL ? ce_ok : ce_system);
+	return (*data != NULL ? CE_OK : CE_SYSTEM);
 }
 
 /* ARGSUSED */
@@ -557,7 +554,7 @@ conerr_t
 interface_ServiceInfo_read_contractID(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -576,7 +573,7 @@ interface_ServiceInfo_read_contractID(rad_instance_t *inst,
 
 	*data = adr_data_new_long(count);
 
-	return (*data != NULL ? ce_ok : ce_system);
+	return (*data != NULL ? CE_OK : CE_SYSTEM);
 }
 
 /* ARGSUSED */
@@ -584,11 +581,11 @@ conerr_t
 interface_ServiceInfo_read_reason(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 	*data = NULL;
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -596,7 +593,7 @@ conerr_t
 interface_ServiceInfo_write_persistentlyEnabled(rad_instance_t *inst,
     adr_attribute_t *attr, adr_data_t *data, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	boolean_t enable = adr_data_to_boolean(data);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
@@ -609,7 +606,7 @@ static conerr_t
 get_pg(scf_handle_t *scfhandle, scf_propertygroup_t *pg, servinst_t *si,
     const char *snapname, const char *pgname, adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	scf_service_t *service = scf_service_create(scfhandle);
 	scf_instance_t *instance = scf_instance_create(scfhandle);
 	scf_snapshot_t *snap = scf_snapshot_create(scfhandle);
@@ -661,9 +658,9 @@ interface_ServiceInfo_invoke_getDependency(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	char type[1000];
 	char grouping[1000];
 	char restarton[1000];
@@ -680,7 +677,7 @@ interface_ServiceInfo_invoke_getDependency(rad_instance_t *inst,
 		goto out;
 	}
 	if ((err = get_pg(scfhandle, pg, si, "running", pgname, error))
-	    != ce_ok)
+	    != CE_OK)
 		goto out;
 
 	if (scf_pg_get_type(pg, type, sizeof (type)) == 0) {
@@ -742,9 +739,9 @@ interface_ServiceInfo_invoke_getPropertyNames(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_iter_t *iter = scf_iter_create(scfhandle);
@@ -757,7 +754,7 @@ interface_ServiceInfo_invoke_getPropertyNames(rad_instance_t *inst,
 	}
 
 	if ((err = get_pg(scfhandle, pg, si, "running", pgname, error))
-	    != ce_ok)
+	    != CE_OK)
 		goto out;
 
 	adr_data_t *result = adr_data_new_array(&adr_t_array_string, 5);
@@ -787,8 +784,8 @@ interface_ServiceInfo_invoke_getPropertyType(rad_instance_t *inst,
 {
 	const char *pgname = adr_data_to_string(args[0]);
 	const char *propname = adr_data_to_string(args[1]);
-	conerr_t err = ce_ok;
-	servinst_t *si = instance_getdata(inst);
+	conerr_t err = CE_OK;
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_propertygroup_t *pg = scf_pg_create(scfhandle);
@@ -800,7 +797,7 @@ interface_ServiceInfo_invoke_getPropertyType(rad_instance_t *inst,
 		goto out;
 	}
 	if ((err = get_pg(scfhandle, pg, si, "running", pgname, error))
-	    != ce_ok)
+	    != CE_OK)
 		goto out;
 
 	if (scf_pg_get_property(pg, propname, prop) != 0 ||
@@ -828,11 +825,11 @@ interface_ServiceInfo_invoke_getPropertyValues(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
 	const char *propname = adr_data_to_string(args[1]);
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -892,12 +889,12 @@ interface_ServiceInfo_invoke_getSnapshotPropertyValues(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *snapname = adr_data_to_string(args[0]);
 	const char *pgname = adr_data_to_string(args[1]);
 	const char *propname = adr_data_to_string(args[2]);
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -916,7 +913,7 @@ interface_ServiceInfo_invoke_getSnapshotPropertyValues(rad_instance_t *inst,
 	}
 
 	if ((err = get_pg(scfhandle, pg, si, "running", pgname, error))
-	    != ce_ok)
+	    != CE_OK)
 		goto out;
 	if (scf_pg_get_property(pg, propname, prop) != 0) {
 		err = error_scf(error, scf_error());
@@ -948,12 +945,12 @@ interface_ServiceInfo_invoke_setPropertyValues(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
 	const char *propname = adr_data_to_string(args[1]);
 	adr_data_t *values = args[2];
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -1063,11 +1060,11 @@ interface_ServiceInfo_invoke_createPropertyGroup(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
 	const char *pgtype = adr_data_to_string(args[1]);
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -1115,10 +1112,10 @@ interface_ServiceInfo_invoke_deletePropertyGroup(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -1172,13 +1169,13 @@ interface_ServiceInfo_invoke_createProperty(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
 	const char *propname = adr_data_to_string(args[1]);
 	scf_type_t type = adr_enum_tovalue(args[2]);
 	int sret;
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -1254,12 +1251,12 @@ interface_ServiceInfo_invoke_deleteProperty(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
 	const char *propname = adr_data_to_string(args[1]);
 	int sret;
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -1332,12 +1329,12 @@ interface_ServiceInfo_invoke_getPropertyTemplate(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	const char *pgname = adr_data_to_string(args[0]);
 	const char *propname = adr_data_to_string(args[1]);
 	const char *locale = adr_data_to_string(args[2]);
 
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	scf_handle_t *scfhandle = handle_create();
 	scf_pg_tmpl_t *pgtmpl = scf_tmpl_pg_create(scfhandle);
 	scf_prop_tmpl_t *proptmpl = scf_tmpl_prop_create(scfhandle);
@@ -1435,14 +1432,14 @@ get_localedprop(servinst_t *si, const char *locale, const char *name,
 	if (scferr != 0) {
 		if (error != NULL && scferr == SCF_ERROR_NOT_FOUND) {
 			*ret = NULL;
-			return (ce_ok);
+			return (CE_OK);
 		}
 		return (error_scf(error, scferr));
 	}
 
 	*ret = adr_data_new_string(str, LT_COPY);
 	rad_clean_propvec(evec);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -1452,11 +1449,11 @@ interface_ServiceInfo_invoke_getCommonName(rad_instance_t *inst,
     adr_data_t **error)
 {
 	const char *locale = adr_data_to_string(args[0]);
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	if (get_localedprop(si, locale, SCF_PG_TM_COMMON_NAME, ret, NULL)
-	    == ce_ok)
-		return (ce_ok);
+	    == CE_OK)
+		return (CE_OK);
 	return (get_localedprop(si, "C", SCF_PG_TM_COMMON_NAME, ret, error));
 }
 
@@ -1467,11 +1464,11 @@ interface_ServiceInfo_invoke_getDescription(rad_instance_t *inst,
     adr_data_t **error)
 {
 	const char *locale = adr_data_to_string(args[0]);
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 
 	if (get_localedprop(si, locale, SCF_PG_TM_DESCRIPTION, ret, NULL)
-	    == ce_ok)
-		return (ce_ok);
+	    == CE_OK)
+		return (CE_OK);
 	return (get_localedprop(si, "C", SCF_PG_TM_DESCRIPTION, ret, error));
 }
 
@@ -1481,9 +1478,9 @@ interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
     adr_method_t *meth, adr_data_t **ret, adr_data_t **args, int count,
     adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
-		return (ce_object);
+		return (CE_OBJECT);
 
 	char *logname = NULL;
 	rad_propvec_t evec[] = {
@@ -1495,12 +1492,12 @@ interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
 	int errval = rad_read_propvec(si->fmri, SCF_PG_RESTARTER, B_FALSE,
 	    evec, &badprop);
 	if (errval != 0)
-		return (ce_object);
+		return (CE_OBJECT);
 
 	struct stat st;
 	if (stat(logname, &st) != 0) {
 		free(logname);
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 
 	int max_size = adr_data_to_integer(args[0]);
@@ -1510,21 +1507,21 @@ interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
 	char *buffer = malloc(bsize);
 	if (buffer == NULL) {
 		free(logname);
-		return (ce_nomem);
+		return (CE_NOMEM);
 	}
 
 	int fd;
 	if ((fd = open(logname, O_RDONLY)) == -1) {
 		free(buffer);
 		free(logname);
-		return (ce_priv);
+		return (CE_PRIV);
 	}
 
 	if (pread(fd, buffer, bsize, st.st_size - bsize) != bsize) {
 		(void) close(fd);
 		free(buffer);
 		free(logname);
-		return (ce_system);
+		return (CE_SYSTEM);
 	}
 
 	(void) close(fd);
@@ -1537,9 +1534,9 @@ interface_ServiceInfo_invoke_getLogInfo(rad_instance_t *inst,
 	    adr_data_new_opaque(buffer, bsize, LT_FREE));
 
 	if ((*ret = adr_data_purify(result)) == NULL)
-		return (ce_object);
+		return (CE_OBJECT);
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -1547,8 +1544,8 @@ conerr_t
 interface_ServiceInfo_invoke_delete(rad_instance_t *inst, adr_method_t *meth,
     adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	conerr_t err = ce_ok;
-	servinst_t *si = instance_getdata(inst);
+	conerr_t err = CE_OK;
+	servinst_t *si = rad_instance_getdata(inst);
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -1583,7 +1580,7 @@ conerr_t
 interface_ServiceInfo_invoke_clear(rad_instance_t *inst, adr_method_t *meth,
     adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -1595,7 +1592,7 @@ conerr_t
 interface_ServiceInfo_invoke_degrade(rad_instance_t *inst, adr_method_t *meth,
     adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -1608,7 +1605,7 @@ conerr_t
 interface_ServiceInfo_invoke_maintain(rad_instance_t *inst, adr_method_t *meth,
     adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -1621,7 +1618,7 @@ conerr_t
 interface_ServiceInfo_invoke_restart(rad_instance_t *inst, adr_method_t *meth,
     adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -1633,7 +1630,7 @@ conerr_t
 interface_ServiceInfo_invoke_refresh(rad_instance_t *inst, adr_method_t *meth,
     adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
-	servinst_t *si = instance_getdata(inst);
+	servinst_t *si = rad_instance_getdata(inst);
 	if (!si->instance)
 		return (error_scf(error, SCF_ERROR_INVALID_ARGUMENT));
 
@@ -1663,7 +1660,7 @@ interface_Aggregator_read_services(rad_instance_t *inst, adr_attribute_t *attr,
 		adr_struct_set(service, "fmri",
 		    adr_data_new_string(si->fmri, LT_COPY));
 		adr_struct_set(service, "objectName",
-		    instance_getname(si->inst));
+		    rad_instance_getname(si->inst));
 		adr_struct_set(service, "instances", insts);
 		(void) adr_array_add(result, service);
 	}
@@ -1674,7 +1671,7 @@ interface_Aggregator_read_services(rad_instance_t *inst, adr_attribute_t *attr,
 		adr_data_free(result);
 
 	rad_mutex_exit(&service_lock);
-	return (*data != NULL ? ce_ok : ce_object);
+	return (*data != NULL ? CE_OK : CE_OBJECT);
 }
 
 /* ARGSUSED */
@@ -1682,7 +1679,7 @@ conerr_t
 interface_Aggregator_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
@@ -1736,7 +1733,8 @@ interface_Aggregator_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
 		adr_data_t *inst = adr_data_new_struct(&t__Instance);
 		adr_struct_set(inst, "fmri",
 		    adr_data_new_string(si->fmri, LT_COPY));
-		adr_struct_set(inst, "objectName", instance_getname(si->inst));
+		adr_struct_set(inst, "objectName",
+		    rad_instance_getname(si->inst));
 		adr_struct_set(inst, "STime", adr_data_new_time(seconds, ns));
 		adr_struct_set(inst, "state", state2enum(statestr));
 		if (!adr_data_verify(inst, NULL, B_TRUE))
@@ -1746,7 +1744,7 @@ interface_Aggregator_read_instances(rad_instance_t *inst, adr_attribute_t *attr,
 	}
 
 	if ((*data = adr_data_purify(result)) == NULL)
-		err = ce_object;
+		err = CE_OBJECT;
 	rad_mutex_exit(&service_lock);
 out:
 	scf_value_destroy(val);
@@ -1776,7 +1774,7 @@ notify_thread(rad_thread_t *arg)
 	    _scf_notify_add_pgtype(scfhandle, SCF_GROUP_FRAMEWORK) != 0)
 		goto out;
 
-	rad_thread_ack(arg, rm_ok);
+	rad_thread_ack(arg, RM_OK);
 	while ((ret = _scf_notify_wait(pg, fmri, 5)) >= 0) {
 		rad_log(RL_DEBUG, "received SMF event");
 
@@ -1820,7 +1818,8 @@ notify_thread(rad_thread_t *arg)
 		    &reason, NULL);
 
 		adr_data_t *event = adr_data_new_struct(&t__StateChange);
-		adr_struct_set(event, "source", instance_getname(si->inst));
+		adr_struct_set(event, "source",
+		    rad_instance_getname(si->inst));
 		adr_struct_set(event, "state", state);
 		adr_struct_set(event, "nextState", nstate);
 		adr_struct_set(event, "stateTime", stime);
@@ -1830,9 +1829,9 @@ notify_thread(rad_thread_t *arg)
 		if (adr_data_verify(event, NULL, B_FALSE)) {
 			rad_log(RL_DEBUG, "sending SMF event");
 			if (agg_inst != NULL)
-				instance_notify(agg_inst, "statechange",
+				rad_instance_notify(agg_inst, "statechange",
 				    0, adr_data_ref(event));
-			instance_notify(si->inst, "statechange", 0, event);
+			rad_instance_notify(si->inst, "statechange", 0, event);
 		} else {
 			rad_log(RL_DEBUG, "failed to send SMF event");
 			adr_data_free(event);
@@ -1852,7 +1851,7 @@ out:
 
 	rad_log(RL_ERROR, "exiting SMF event loop");
 
-	return (rm_system);
+	return (RM_SYSTEM);
 }
 
 static servinst_t *
@@ -1866,20 +1865,19 @@ make_service(char *sname, char *iname)
 	/* LINTED */
 	if (si->instance = inst) {
 		(void) asprintf(&si->fmri, "svc:/%s:%s", sname, iname);
-		objname = adr_name_vcreate(
-		    "com.oracle.solaris.vp.panel.common.api.smf_old", 3,
-		    "type", "service", "service", sname, "instance", iname);
+		objname = adr_name_vcreate(MOD_DOMAIN, 3,
+		    "type", "ServiceInfo", "service", sname, "instance", iname);
 	} else {
 		list_create(&si->instances, sizeof (servinst_t),
 		    offsetof(servinst_t, snode));
 		(void) asprintf(&si->fmri, "svc:/%s", sname);
-		objname = adr_name_vcreate(
-		    "com.oracle.solaris.vp.panel.common.api.smf_old", 2,
-		    "type", "service", "service", sname);
+		objname = adr_name_vcreate(MOD_DOMAIN, 2,
+		    "type", "ServiceInfo", "service", sname);
 	}
-	si->inst = instance_create(objname, &interface_ServiceInfo_svr,
-	    si, NULL);
-	(void) cont_insert(rad_container, si->inst, INST_ID_PICK);
+
+	si->inst = rad_instance_create(objname, &modinfo,
+	    &interface_ServiceInfo_svr, si, NULL);
+	(void) rad_cont_insert(rad_container, si->inst, INST_ID_PICK);
 
 	if (inst) {
 		list_insert_tail(&instance_list, si);
@@ -1893,16 +1891,11 @@ make_service(char *sname, char *iname)
 	return (si);
 }
 
-static rad_modinfo_t modinfo = { "smf_old", "Legacy SMF module" };
-
 int
-_rad_init(void *handle)
+_rad_init(void)
 {
-	if (rad_module_register(handle, RAD_MODVERSION, &modinfo) == -1)
-		return (-1);
-
-	if (rad_isproxy)
-		return (0);
+	adr_name_t *aname;
+	conerr_t cerr;
 
 	list_create(&service_list, sizeof (servinst_t),
 	    offsetof(servinst_t, node));
@@ -1939,12 +1932,26 @@ _rad_init(void *handle)
 	scf_scope_destroy(scope);
 	scf_handle_destroy(scfhandle);
 
-	agg_inst = instance_create(adr_name_fromstr(aggregator_pattern),
-	    &interface_Aggregator_svr, NULL, NULL);
-	if (agg_inst != NULL)
-		(void) cont_insert(rad_container, agg_inst, INST_ID_PICK);
+	aname = adr_name_vcreate(MOD_DOMAIN, 1, "type", "Aggregator");
+	cerr =  rad_cont_insert_singleton(rad_container, aname,
+	    &modinfo, &interface_Aggregator_svr);
+	adr_name_rele(aname);
+	if (cerr != CE_OK) {
+		rad_log(RL_ERROR, "(mod_smf) failed to insert Aggregator");
+		return (-1);
+	}
 
-	if (rad_thread_create(notify_thread, NULL) != rm_ok)
+	if (rad_thread_create(notify_thread, NULL) != RM_OK)
 		rad_log(RL_ERROR, "failed to start SMF listener");
 	return (0);
+}
+
+/*
+ * _rad_fini is called by the RAD daemon when the module is unloaded. Any
+ * module finalisation is completed here.
+ */
+/*ARGSUSED*/
+void
+_rad_fini(void *unused)
+{
 }

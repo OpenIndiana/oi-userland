@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -129,7 +129,7 @@ public class PropertyGroupsManagedObject
     }
 
     public void refresh(boolean force) throws ScfException {
-	ServiceMXBean service = tracker.getService();
+	ServiceBean service = tracker.getService();
 	if (service == null) {
 	    return;
 	}

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -31,12 +31,12 @@ import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.api.smf_old.*;
 
 /**
- * An SMF service (and instance) MXBean interface
+ * An SMF service (and instance) Bean interface
  *
- * (This isn't actually an MXBean interface, it's a wrapper around the
+ * (This isn't actually an Bean interface, it's a wrapper around the
  * real one.)
  */
-public interface ServiceMXBean
+public interface ServiceBean
 {
 	/**
 	 * Get the FMRI.

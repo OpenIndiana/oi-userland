@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <sys/types.h>
@@ -35,7 +35,7 @@
 #include <rad/adr.h>
 #include <rad/rad_modapi.h>
 
-#include "api_example-time2.h"
+#include "api_example_time2.h"
 
 /*ARGSUSED*/
 conerr_t
@@ -43,7 +43,7 @@ interface_Time_read_time(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
 	*data = adr_data_new_long((long long)time(NULL) * 1000);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /*ARGSUSED*/
@@ -55,32 +55,35 @@ interface_Time_write_time(rad_instance_t *inst, adr_attribute_t *attr,
 	time_t newtime = (time_t)rawtime;
 
 	if (rawtime > LONG_MAX)
-		return (ce_object);
+		return (CE_OBJECT);
 
 	if (stime(&newtime) == -1) {
 		if (errno == EPERM)
-			return (ce_priv);
-		return (ce_object);
+			return (CE_PRIV);
+		return (CE_OBJECT);
 	}
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
-static rad_modinfo_t modinfo = { "example-time2", "Example Time2" };
 
 int
-_rad_init(void *handle)
+_rad_init(void)
 {
-	if (rad_module_register(handle, RAD_MODVERSION, &modinfo) == -1)
-		return (-1);
-
-	if (rad_isproxy)
-		return (0);
-
-	adr_name_t *name = adr_name_fromstr(
-	    "com.oracle.solaris.vp.panels.example.time2:type=Time");
-	(void) cont_insert_singleton(rad_container, name,
+	adr_name_t *name = adr_name_vcreate(
+	    MOD_DOMAIN, 1, "type", "Time");
+	(void) rad_cont_insert_singleton(rad_container, name, &modinfo,
 	    &interface_Time_svr);
 
 	return (0);
+}
+
+/*
+ * _rad_fini is called by the RAD daemon when the module is unloaded. Any
+ * module finalisation is completed here.
+ */
+/*ARGSUSED*/
+void
+_rad_fini(void *unused)
+{
 }

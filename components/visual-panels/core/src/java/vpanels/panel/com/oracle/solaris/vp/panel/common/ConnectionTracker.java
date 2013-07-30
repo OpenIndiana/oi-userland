@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common;
@@ -29,7 +29,8 @@ import java.beans.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.*;
-import javax.management.*;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.vp.util.misc.ObjectUtil;
 import com.oracle.solaris.vp.util.misc.event.PropertyChangeListeners;
 
@@ -41,12 +42,12 @@ import com.oracle.solaris.vp.util.misc.event.PropertyChangeListeners;
  * automatically removed/added when the tracked {@code ClientContext}
  * fails/changes.
  * </p>
- * {@code NotificationListener}s that depend on an {@code MBeanServerConnection}
+ * {@code NotificationListener}s that depend on a {@code Connection}
  * are automatically removed/added when the tracked {@code
- * MBeanServerConnection} or {@code ObjectName} changes.
+ * Connection} or {@code ObjectName} changes.
  * </p>
  * Property change notifications are sent out when the tracked {@code
- * ClientContext}, {@code ConnectionInfo}, {@code MBeanServerConnection}, or
+ * ClientContext}, {@code ConnectionInfo}, {@code Connection}, or
  * {@code ObjectName} changes.
  */
 public class ConnectionTracker implements ConnectionListener {
@@ -56,18 +57,15 @@ public class ConnectionTracker implements ConnectionListener {
 
     private abstract class NotifyParams<O> {
 	private O listener;
-	private NotificationFilter filter;
 	private Object handback;
 
 	//
 	// Constructors
 	//
 
-	public NotifyParams(O listener, NotificationFilter filter,
-	    Object handback) {
+	public NotifyParams(O listener, Object handback) {
 
 	    this.listener = listener;
-	    this.filter = filter;
 	    this.handback = handback;
 	}
 
@@ -79,11 +77,9 @@ public class ConnectionTracker implements ConnectionListener {
 	    return ObjectUtil.equals(this.listener, listener);
 	}
 
-	public boolean equals(Object listener, NotificationFilter filter,
-	    Object handback) {
+	public boolean equals(Object listener, Object handback) {
 
 	    return ObjectUtil.equals(this.listener, listener) &&
-		ObjectUtil.equals(this.filter, filter) &&
 		ObjectUtil.equals(this.handback, handback);
 	}
 
@@ -91,91 +87,36 @@ public class ConnectionTracker implements ConnectionListener {
 	    return listener;
 	}
 
-	public NotificationFilter getFilter() {
-	    return filter;
-	}
-
 	public Object getHandback() {
 	    return handback;
 	}
 
 	public abstract void add()
-	    throws InstanceNotFoundException, IOException;
+	    throws IOException;
 
 	public abstract void remove()
-	    throws InstanceNotFoundException, IOException;
+	    throws IOException;
     }
 
-    private class ListenerNotifyParams
-	extends NotifyParams<NotificationListener> {
+    private class ObjectNameNotifyParams extends NotifyParams<ADRName> {
 	//
 	// Constructors
 	//
 
-	public ListenerNotifyParams(NotificationListener listener,
-	    NotificationFilter filter, Object handback) {
-	    super(listener, filter, handback);
+	public ObjectNameNotifyParams(ADRName listener,
+	    Object handback) {
+	    super(listener, handback);
 	}
-
-	//
-	// ListenerNotifyParams methods
-	//
-
-	@Override
-	public void add() throws InstanceNotFoundException, IOException {
-	    if (mbsc != null && oName != null) {
-		mbsc.addNotificationListener(oName, getListener(), getFilter(),
-		    getHandback());
-	    }
-	}
-
-	@Override
-	public void remove() throws InstanceNotFoundException,
-	    IOException {
-
-	    if (mbsc != null && oName != null) {
-		try {
-		    mbsc.removeNotificationListener(oName, getListener(),
-			getFilter(), getHandback());
-		} catch (ListenerNotFoundException ignore) {
-		}
-	    }
-	}
-    }
-
-    private class ObjectNameNotifyParams extends NotifyParams<ObjectName> {
-	//
-	// Constructors
-	//
-
-	public ObjectNameNotifyParams(ObjectName listener,
-	    NotificationFilter filter, Object handback) {
-	    super(listener, filter, handback);
-	}
-
 	//
 	// ObjectNameNotifyParams methods
 	//
 
 	@Override
-	public void add() throws InstanceNotFoundException, IOException {
-	    if (mbsc != null && oName != null) {
-		mbsc.addNotificationListener(oName, getListener(), getFilter(),
-		    getHandback());
-	    }
+	public void add() throws IOException {
 	}
 
 	@Override
-	public void remove() throws InstanceNotFoundException,
-	    IOException {
-
-	    if (mbsc != null && oName != null) {
-		try {
-		    mbsc.removeNotificationListener(oName, getListener(),
-			getFilter(), getHandback());
-		} catch (ListenerNotFoundException ignore) {
-		}
-	    }
+	public void remove() throws IOException {
 	}
     }
 
@@ -195,9 +136,9 @@ public class ConnectionTracker implements ConnectionListener {
 
     /**
      * The name of the property that changes with {@link
-     * #setMBeanServerConnection}.
+     * #setServerConnection}.
      */
-    public static final String PROPERTY_MBSC = "mbsc";
+    public static final String PROPERTY_SCONN = "sconn";
 
     /**
      * The name of the property that changes with {@link #setObjectName}.
@@ -210,8 +151,8 @@ public class ConnectionTracker implements ConnectionListener {
 
     private ClientContext context;
     private ConnectionInfo info;
-    private MBeanServerConnection mbsc;
-    private ObjectName oName;
+    private Connection conn;
+    private ADRName aname;
     private PropertyChangeListeners pListeners = new PropertyChangeListeners();
     private List<NotifyParams> nListeners = new LinkedList<NotifyParams>();
 
@@ -219,19 +160,19 @@ public class ConnectionTracker implements ConnectionListener {
     // Constructors
     //
 
-    public ConnectionTracker(ObjectName oName) {
+    public ConnectionTracker(ADRName aname) {
 	try {
-	    setObjectName(oName);
+	    setObjectName(aname);
 
 	// Impossible because no NotificationListeners have been added yet
 	} catch (TrackerException impossible) {
 	}
     }
 
-    public ConnectionTracker(ObjectName oName, ClientContext context)
+    public ConnectionTracker(ADRName aname, ClientContext context)
 	throws TrackerException {
 
-	this(oName);
+	this(aname);
 	setClientContext(context);
     }
 
@@ -263,23 +204,10 @@ public class ConnectionTracker implements ConnectionListener {
     // ConnectionTracker methods
     //
 
-    public void addNotificationListener(NotificationListener listener,
-	NotificationFilter filter, Object handback)
-	throws InstanceNotFoundException, IOException {
+    public void addNotificationListener(ADRName listener, Object handback)
+	throws IOException {
 
-	NotifyParams params = new ListenerNotifyParams(listener, filter,
-	    handback);
-
-	params.add();
-	nListeners.add(params);
-    }
-
-    public void addNotificationListener(ObjectName listener,
-	NotificationFilter filter, Object handback)
-	throws InstanceNotFoundException, IOException {
-
-	NotifyParams params = new ObjectNameNotifyParams(listener, filter,
-	    handback);
+	NotifyParams params = new ObjectNameNotifyParams(listener, handback);
 
 	params.add();
 	nListeners.add(params);
@@ -319,22 +247,22 @@ public class ConnectionTracker implements ConnectionListener {
 	return info;
     }
 
-    public MBeanServerConnection getMBeanServerConnection() {
-	return mbsc;
+    public Connection getServerConnection() {
+	return conn;
     }
 
-    public ObjectName getObjectName() {
-	return oName;
+    public ADRName getObjectName() {
+	return aname;
     }
 
     protected PropertyChangeListeners getPropertyChangeListeners() {
 	return pListeners;
     }
 
-    public void removeNotificationListener(NotificationListener listener)
-	throws InstanceNotFoundException, IOException {
+    public void removeNotificationListener(ADRName listener)
+	throws IOException {
 
-	for (Iterator<NotifyParams> i = nListeners.iterator(); i.hasNext();) {
+	for (Iterator<NotifyParams> i = nListeners.iterator(); i.hasNext(); ) {
 	    NotifyParams params = i.next();
 	    if (params.equals(listener)) {
 		params.remove();
@@ -343,39 +271,13 @@ public class ConnectionTracker implements ConnectionListener {
 	}
     }
 
-    public void removeNotificationListener(NotificationListener listener,
-	NotificationFilter filter, Object handback)
-	throws InstanceNotFoundException, IOException {
+    public void removeNotificationListener(ADRName name, ADRName listener,
+	Object handback)
+	throws IOException {
 
-	for (Iterator<NotifyParams> i = nListeners.iterator(); i.hasNext();) {
+	for (Iterator<NotifyParams> i = nListeners.iterator(); i.hasNext(); ) {
 	    NotifyParams params = i.next();
-	    if (params.equals(listener, filter, handback)) {
-		params.remove();
-		i.remove();
-		return;
-	    }
-	}
-    }
-
-    public void removeNotificationListener(ObjectName listener)
-	throws InstanceNotFoundException, IOException {
-
-	for (Iterator<NotifyParams> i = nListeners.iterator(); i.hasNext();) {
-	    NotifyParams params = i.next();
-	    if (params.equals(listener)) {
-		params.remove();
-		i.remove();
-	    }
-	}
-    }
-
-    public void removeNotificationListener(ObjectName name, ObjectName listener,
-	NotificationFilter filter, Object handback)
-	throws InstanceNotFoundException, IOException {
-
-	for (Iterator<NotifyParams> i = nListeners.iterator(); i.hasNext();) {
-	    NotifyParams params = i.next();
-	    if (params.equals(listener, filter, handback)) {
+	    if (params.equals(listener, handback)) {
 		params.remove();
 		i.remove();
 		return;
@@ -422,7 +324,7 @@ public class ConnectionTracker implements ConnectionListener {
 
     /**
      * Sets the {@code ConnectionInfo}, then calls {@link
-     * #setMBeanServerConnection}.
+     * #setServerConnection}.
      *
      * @exception   TrackerException
      *		    if an error occurred during initialization
@@ -436,30 +338,26 @@ public class ConnectionTracker implements ConnectionListener {
 	    this.info = info;
 	    pListeners.propertyChange(e);
 
-	    try {
-		setMBeanServerConnection(info == null ? null :
-		    info.getConnector().getMBeanServerConnection());
-	    } catch (IOException ex) {
-		throw new TrackerException(ex);
-	    }
+	    setServerConnection(info == null ? null :
+		info.getConnection());
 	}
     }
 
     /**
-     * Sets the {@code MBeanServerConnection}.
+     * Sets the {@code ServerConnection}.
      *
      * @exception   TrackerException
      *		    if an error occurred during initialization
      */
-    public void setMBeanServerConnection(MBeanServerConnection mbsc)
+    public void setServerConnection(Connection conn)
 	throws TrackerException {
 
-	if (this.mbsc != mbsc) {
+	if (this.conn != conn) {
 	    removeNotificationListeners();
 
 	    PropertyChangeEvent e = new PropertyChangeEvent(
-		this, PROPERTY_MBSC, this.mbsc, mbsc);
-	    this.mbsc = mbsc;
+		this, PROPERTY_SCONN, this.conn, conn);
+	    this.conn = conn;
 	    pListeners.propertyChange(e);
 
 	    addNotificationListeners();
@@ -472,15 +370,15 @@ public class ConnectionTracker implements ConnectionListener {
      * @exception   TrackerException
      *		    if an error occurred during initialization
      */
-    public void setObjectName(ObjectName oName)
+    public void setObjectName(ADRName aname)
 	throws TrackerException {
 
-	if (!ObjectUtil.equals(this.oName, oName)) {
+	if (!ObjectUtil.equals(this.aname, aname)) {
 	    removeNotificationListeners();
 
 	    PropertyChangeEvent e = new PropertyChangeEvent(
-		this, PROPERTY_OBJECTNAME, this.oName, oName);
-	    this.oName = oName;
+		this, PROPERTY_OBJECTNAME, this.aname, aname);
+	    this.aname = aname;
 	    pListeners.propertyChange(e);
 
 	    addNotificationListeners();
@@ -494,12 +392,10 @@ public class ConnectionTracker implements ConnectionListener {
     private void addNotificationListeners()
 	throws TrackerException {
 
-	if (mbsc != null && oName != null) {
+	if (conn != null && aname != null) {
 	    for (NotifyParams params : nListeners) {
 		try {
 		    params.add();
-		} catch (InstanceNotFoundException e) {
-		    throw new TrackerException(e);
 		} catch (IOException e) {
 		    throw new TrackerException(e);
 		}
@@ -508,7 +404,7 @@ public class ConnectionTracker implements ConnectionListener {
     }
 
     private void removeNotificationListeners() {
-	if (mbsc != null && oName != null) {
+	if (conn != null && aname != null) {
 	    for (NotifyParams params : nListeners) {
 		try {
 		    params.remove();

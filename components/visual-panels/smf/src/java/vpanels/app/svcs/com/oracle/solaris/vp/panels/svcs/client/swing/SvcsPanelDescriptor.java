@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.svcs.client.swing;
@@ -28,7 +28,6 @@ package com.oracle.solaris.vp.panels.svcs.client.swing;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.*;
-import javax.management.InstanceNotFoundException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.common.model.*;
@@ -56,7 +55,7 @@ public class SvcsPanelDescriptor
 
     @SuppressWarnings({"unchecked"})
     public SvcsPanelDescriptor(String id, ClientContext context)
-	throws InstanceNotFoundException, IOException, TrackerException {
+	throws IOException, TrackerException {
 
 	super(id, context);
 

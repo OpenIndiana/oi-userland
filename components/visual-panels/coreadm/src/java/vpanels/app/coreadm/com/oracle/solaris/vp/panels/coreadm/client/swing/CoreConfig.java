@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.coreadm.client.swing;
@@ -229,7 +229,7 @@ public class CoreConfig {
 		config.pattern_, config.enabled_, config.setid_);
 	}
 
-	public ScopeConfig(ServiceMXBean service, String pfx, String altpfx)
+	public ScopeConfig(ServiceBean service, String pfx, String altpfx)
 	    throws ScfException, InvalidScfDataException,
 	    MissingScfDataException
 	{
@@ -295,7 +295,7 @@ public class CoreConfig {
 	 * ScopeConfig methods.
 	 */
 
-        void write(ServiceMXBean service, String pfx, String altpfx)
+        void write(ServiceBean service, String pfx, String altpfx)
 	    throws ScfException
 	{
 	    service.setPropertyValues(CONFIG_PG, altpfx + PROP_SFX_CONTENT,
@@ -389,7 +389,7 @@ public class CoreConfig {
 	    new ScopeConfig(cc.processScope_), cc.logging_);
     }
 
-    CoreConfig(ServiceMXBean service) throws ScfException,
+    CoreConfig(ServiceBean service) throws ScfException,
 	InvalidScfDataException, MissingScfDataException
     {
 	globalScope_ =
@@ -406,7 +406,7 @@ public class CoreConfig {
 	}
     }
 
-    void write(ServiceMXBean service) throws ScfException
+    void write(ServiceBean service) throws ScfException
     {
 	globalScope_.write(service, PROP_PFX_GLOBAL, PROP_PFX_GLOBAL);
 	processScope_.write(service, PROP_PFX_PROC, PROP_PFX_ALTPROC);

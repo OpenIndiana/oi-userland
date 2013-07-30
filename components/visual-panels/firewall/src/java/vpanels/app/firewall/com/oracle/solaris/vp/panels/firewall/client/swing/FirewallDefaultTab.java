@@ -20,13 +20,14 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.firewall.client.swing;
 
 import java.awt.Component;
 import java.util.Map;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.swing.control.SettingsControl;
@@ -93,7 +94,7 @@ public class FirewallDefaultTab
 	    getPanelDescriptor().updateAccessPolicy(policy);
 	    getPanelDescriptor().getEnabledProperty().setValue(
 		enabledProperty.getValue());
-	} catch (SecurityException e) {
+	} catch (RadPrivilegeException e) {
 	    throw new ActionUnauthorizedException(e);
 	} finally {
 	    setPropertyChangeIgnore(false);

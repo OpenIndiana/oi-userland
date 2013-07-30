@@ -20,11 +20,12 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.coreadm.client.swing;
 
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.common.smf.SmfUtil;
@@ -80,7 +81,7 @@ public class CustomCoreSchemeEditControl extends
 	    value.write(descriptor.getService());
 	} catch (ScfException e) {
 	    SmfUtil.throwActionException(e);
-	} catch (SecurityException e) {
+	} catch (RadPrivilegeException e) {
 	    throw new ActionUnauthorizedException(e);
 	}
 

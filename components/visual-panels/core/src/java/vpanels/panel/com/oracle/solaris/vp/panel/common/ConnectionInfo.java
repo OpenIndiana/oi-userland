@@ -20,17 +20,17 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common;
 
 import java.net.*;
-import javax.management.remote.JMXConnector;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.vp.util.misc.*;
 
 /**
- * The {@code ConnectionInfo} class encapsulate an open {@code JMXConnector} and
+ * The {@code ConnectionInfo} class encapsulate an open {@code Connection} and
  * some of its attributes.
  */
 public class ConnectionInfo implements LoginInfo {
@@ -44,7 +44,7 @@ public class ConnectionInfo implements LoginInfo {
     private String zone;
     private String zoneUser;
     private String zoneRole;
-    private JMXConnector connector;
+    private Connection connection;
     private InetAddress[] addrs;
     private Boolean isLocalAddress;
 
@@ -53,7 +53,7 @@ public class ConnectionInfo implements LoginInfo {
     //
 
     public ConnectionInfo(String host, String user, String role,
-	String zone, String zoneUser, String zoneRole, JMXConnector connector) {
+	String zone, String zoneUser, String zoneRole, Connection connection) {
 
 	this.host = host;
 	this.user = user;
@@ -61,13 +61,13 @@ public class ConnectionInfo implements LoginInfo {
 	this.zone = zone;
 	this.zoneUser = zoneUser;
 	this.zoneRole = zoneRole;
-	this.connector = connector;
+	this.connection = connection;
     }
 
     public ConnectionInfo(String host, String user, String role,
-	JMXConnector connector) {
+	Connection connection) {
 
-	this(host, user, role, null, null, null, connector);
+	this(host, user, role, null, null, null, connection);
     }
 
     //
@@ -127,7 +127,7 @@ public class ConnectionInfo implements LoginInfo {
 
     @Override
     public void finalize() throws Throwable {
-	IOUtil.closeIgnore(connector);
+	IOUtil.closeIgnore(connection);
 	super.finalize();
     }
 
@@ -145,8 +145,8 @@ public class ConnectionInfo implements LoginInfo {
     // ConnectionInfo methods
     //
 
-    public JMXConnector getConnector() {
-	return connector;
+    public Connection getConnection() {
+	return connection;
     }
 
     public synchronized InetAddress[] getInetAddresses() {

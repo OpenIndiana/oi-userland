@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -135,7 +135,7 @@ interface_FileBrowser_read_roots(rad_instance_t *inst, adr_attribute_t *attr,
 	adr_data_t *result = adr_data_new_array(&t_array__FileSnapshot, 1);
 	(void) adr_array_add(result, read_file("/", NULL));
 	*data = adr_data_purify(result);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -144,7 +144,7 @@ interface_FileBrowser_invoke_getFile(rad_instance_t *inst, adr_method_t *meth,
     adr_data_t **ret, adr_data_t **args, int count, adr_data_t **error)
 {
 	*ret = read_file(adr_data_to_string(args[0]), NULL);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -158,7 +158,7 @@ interface_FileBrowser_invoke_getFiles(rad_instance_t *inst, adr_method_t *meth,
 	adr_data_t *result;
 
 	if (d == NULL)
-		return (ce_object);
+		return (CE_OBJECT);
 
 	result = adr_data_new_array(&t_array__FileSnapshot, 1);
 	while ((ent = readdir(d)) != NULL) {
@@ -178,23 +178,31 @@ interface_FileBrowser_invoke_getFiles(rad_instance_t *inst, adr_method_t *meth,
 	(void) closedir(d);
 	*ret = adr_data_purify(result);
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
-static rad_modinfo_t modinfo = { "files", "File Browser module" };
-
 int
-_rad_init(void *handle)
+_rad_init(void)
 {
-	if (rad_module_register(handle, RAD_MODVERSION, &modinfo) == -1)
+	adr_name_t *aname = adr_name_vcreate(
+	    MOD_DOMAIN, 1, "type", "FileBrowser");
+	conerr_t cerr =  rad_cont_insert_singleton(rad_container, aname,
+	    &modinfo, &interface_FileBrowser_svr);
+	adr_name_rele(aname);
+	if (cerr != CE_OK) {
+		rad_log(RL_ERROR, "(mod_files) failed to insert FileBrowser");
 		return (-1);
-
-	if (rad_isproxy)
-		return (0);
-
-	(void) cont_insert_singleton(rad_container, adr_name_fromstr(
-	    "com.oracle.solaris.vp.panel.common.api.file:type=FileBrowser"),
-	    &interface_FileBrowser_svr);
+	}
 
 	return (0);
+}
+
+/*
+ * _rad_fini is called by the RAD daemon when the module is unloaded. Any
+ * module finalisation is completed here.
+ */
+/*ARGSUSED*/
+void
+_rad_fini(void *unused)
+{
 }

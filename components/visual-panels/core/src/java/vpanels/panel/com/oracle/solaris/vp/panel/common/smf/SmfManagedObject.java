@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -28,8 +28,8 @@ package com.oracle.solaris.vp.panel.common.smf;
 import java.net.URISyntaxException;
 import java.util.*;
 import java.util.logging.*;
-import javax.management.ObjectName;
 import javax.swing.*;
+import com.oracle.solaris.rad.client.ADRName;
 import com.oracle.solaris.scf.common.*;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.smf_old.Dependency;
@@ -58,7 +58,7 @@ public abstract class SmfManagedObject extends DepManagedObject<ManagedObject>
     //
 
     private ServiceTracker tracker;
-    private ObjectName on;
+    private ADRName an;
     private FMRI fmri;
     private String name;
     private String desc;
@@ -70,17 +70,17 @@ public abstract class SmfManagedObject extends DepManagedObject<ManagedObject>
     // Constructors
     //
 
-    public SmfManagedObject(ClientContext context, String fmri, ObjectName on)
+    public SmfManagedObject(ClientContext context, String fmri, ADRName an)
 	throws TrackerException {
 
-	tracker = new ServiceTracker(on, context);
+	tracker = new ServiceTracker(an, context);
 	try {
 	    this.fmri = new FMRI(fmri);
 	} catch (URISyntaxException e) {
 	    this.fmri = null;
 	}
-	this.on = on;
-	serviceName = ServiceUtil.toService(on);
+	this.an = an;
+	serviceName = ServiceUtil.toService(an);
     }
 
     //
@@ -206,7 +206,7 @@ public abstract class SmfManagedObject extends DepManagedObject<ManagedObject>
 
 	    try {
 		dependencies = new HashMap<String, Dependency>();
-		ServiceMXBean service = getService();
+		ServiceBean service = getService();
 		List<String> deps = service.getDependencyNames();
 		for (String dep : deps) {
 		    dependencies.put(dep, service.getDependency(dep));
@@ -218,7 +218,7 @@ public abstract class SmfManagedObject extends DepManagedObject<ManagedObject>
 	}
     }
 
-    public ObjectName getObjectName() {
-	return on;
+    public ADRName getObjectName() {
+	return an;
     }
 }

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <assert.h>
@@ -34,7 +34,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include "api_panels.h"
+#include "api_panel.h"
 
 #define	PANELDESCDIR	"/usr/share/vpanels/conf"
 
@@ -63,7 +63,6 @@ static adr_data_t *read_panel(const char *locale, const char *pname);
  */
 
 static xmlDtd *dtd;
-static rad_modinfo_t modinfo = { "panels", "Visual Panels module" };
 
 /*
  * Static functions
@@ -182,7 +181,7 @@ token_to_file(adr_data_t *t, char **f)
 	}
 	if (nullcnt != 3 || token[tokenlen - 1] != '\0') {
 		/* Bad token */
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 
 	char *locale = token;
@@ -192,7 +191,7 @@ token_to_file(adr_data_t *t, char **f)
 	adr_data_t *panel = read_panel(locale, pname);
 	if (panel == NULL) {
 		/* Bad panel */
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 
 	adr_data_t *resources = adr_struct_get(panel, "resourceDescriptors");
@@ -201,15 +200,15 @@ token_to_file(adr_data_t *t, char **f)
 	adr_data_free(panel);
 	if (index == -1) {
 		/* Bad file */
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 
 	*f = strdup(file);
 	if (*f == NULL) {
-		return (ce_nomem);
+		return (CE_NOMEM);
 	}
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 static adr_data_t *
@@ -408,19 +407,31 @@ read_panel(const char *locale, const char *pname)
  */
 
 int
-_rad_init(void *handle)
+_rad_init(void)
 {
-	if (rad_module_register(handle, RAD_MODVERSION, &modinfo) == -1)
-		return (-1);
-
 	dtd = xmlParseDTD(NULL,
 	    (xmlChar *)"/usr/share/lib/xml/dtd/vpanel.dtd.1");
 
-	adr_name_t *name = adr_name_fromstr(
-	    "com.oracle.solaris.vp.panel.common.api.panel:type=Panel");
-	(void) cont_insert_singleton(rad_container, name, &interface_Panel_svr);
+	adr_name_t *aname = adr_name_vcreate(MOD_DOMAIN, 1, "type", "Panel");
+	conerr_t cerr =  rad_cont_insert_singleton(rad_container, aname,
+	    &modinfo, &interface_Panel_svr);
+	adr_name_rele(aname);
+	if (cerr != CE_OK) {
+		rad_log(RL_ERROR, "(mod_panels) failed to insert Panel");
+		return (-1);
+	}
 
 	return (0);
+}
+
+/*
+ * _rad_fini is called by the RAD daemon when the module is unloaded. Any
+ * module finalisation is completed here.
+ */
+/*ARGSUSED*/
+void
+_rad_fini(void *unused)
+{
 }
 
 /* ARGSUSED */
@@ -438,11 +449,11 @@ interface_Panel_invoke_getPanel(rad_instance_t *inst, adr_method_t *meth,
 		 * Could be a memory or system error, but more likely an invalid
 		 * name was specified.
 		 */
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 	*ret = panel;
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /* ARGSUSED */
@@ -452,15 +463,15 @@ interface_Panel_read_panelNames(rad_instance_t *inst, adr_attribute_t *attr,
 {
 	adr_data_t *array = adr_data_new_array(&adr_t_array_string, 0);
 	if (array == NULL) {
-		return (ce_nomem);
+		return (CE_NOMEM);
 	}
 
 	DIR *d;
 	if ((d = opendir(PANELDESCDIR)) == NULL) {
 		if (errno == ENOENT) {
-			return (ce_ok);
+			return (CE_OK);
 		}
-		return (ce_system);
+		return (CE_SYSTEM);
 	}
 
 	struct dirent *ent;
@@ -477,7 +488,7 @@ interface_Panel_read_panelNames(rad_instance_t *inst, adr_attribute_t *attr,
 	(void) closedir(d);
 	*data = adr_data_purify(array);
 
-	return (*data == NULL ? ce_nomem : ce_ok);
+	return (*data == NULL ? CE_NOMEM : CE_OK);
 }
 
 /* ARGSUSED */
@@ -487,37 +498,37 @@ interface_Panel_invoke_getResource(rad_instance_t *inst, adr_method_t *meth,
 {
 	char *file;
 	conerr_t result = token_to_file(args[0], &file);
-	if (result != ce_ok) {
+	if (result != CE_OK) {
 		return (result);
 	}
 
 	struct stat st;
 	if (stat(file, &st) != 0) {
 		free(file);
-		return (ce_object);
+		return (CE_OBJECT);
 	}
 
 	char *buffer = malloc(st.st_size);
 	if (buffer == NULL) {
 		free(file);
-		return (ce_nomem);
+		return (CE_NOMEM);
 	}
 
 	int fd = open(file, O_RDONLY);
 	free(file);
 	if (fd == -1) {
 		free(buffer);
-		return (ce_priv);
+		return (CE_PRIV);
 	}
 
 	if (read(fd, buffer, st.st_size) != st.st_size) {
 		(void) close(fd);
 		free(buffer);
-		return (ce_system);
+		return (CE_SYSTEM);
 	}
 
 	(void) close(fd);
 
 	*ret = adr_data_new_opaque(buffer, st.st_size, LT_FREE);
-	return (*ret == NULL ? ce_nomem : ce_ok);
+	return (*ret == NULL ? CE_NOMEM : CE_OK);
 }

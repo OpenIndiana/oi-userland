@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.apache.client.swing;
@@ -151,7 +151,7 @@ public class Modules extends AbstractManagedObject<Module>
     }
 
     public void refresh(boolean force) throws ScfException {
-	ServiceMXBean service = info.getPanelDescriptor().getService();
+	ServiceBean service = info.getPanelDescriptor().getService();
 	String group = info.getPropertyGroupName();
 
 	// Build list of names of Module properties
@@ -164,7 +164,7 @@ public class Modules extends AbstractManagedObject<Module>
 	Collections.sort(properties);
 
 	// Remove names of properties that are pending removal on client
-	for (Iterator<Module> i = removed.iterator(); i.hasNext();) {
+	for (Iterator<Module> i = removed.iterator(); i.hasNext(); ) {
 	    Module module = i.next();
 	    String property = module.getPropertyName();
 	    if (properties.remove(property)) {
@@ -226,7 +226,7 @@ public class Modules extends AbstractManagedObject<Module>
 		    }
 		    addedProperty.setValue(0);
 
-		    for (Iterator<Module> i = removed.iterator(); i.hasNext();)
+		    for (Iterator<Module> i = removed.iterator(); i.hasNext(); )
 		    {
 			Module module = i.next();
 			module.removeFromRepo();

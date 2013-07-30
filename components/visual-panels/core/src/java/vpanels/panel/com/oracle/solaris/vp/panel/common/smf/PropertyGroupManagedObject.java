@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -153,7 +153,7 @@ public class PropertyGroupManagedObject
 
     public void refresh(boolean force) throws ScfException {
 	ServiceTracker tracker = parent.getServiceTracker();
-	ServiceMXBean service = tracker.getService();
+	ServiceBean service = tracker.getService();
 	if (service == null) {
 	    return;
 	}
@@ -226,7 +226,7 @@ public class PropertyGroupManagedObject
     // Static methods
     //
 
-    private static Template getPropertyTemplate(ServiceMXBean service,
+    private static Template getPropertyTemplate(ServiceBean service,
 	String pgName, String pName, String locale) throws ScfException {
 
 	Template templ = null;

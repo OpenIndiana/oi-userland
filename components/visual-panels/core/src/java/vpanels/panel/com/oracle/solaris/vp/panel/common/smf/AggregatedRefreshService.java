@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -32,14 +32,14 @@ import com.oracle.solaris.vp.panel.common.api.smf_old.*;
 
 /**
  * The {@code AggregatedRefreshService} class is a wrapper around another {@link
- * ServiceMXBean} that aggregates calls to {@link #refresh} to minimize the
+ * ServiceBean} that aggregates calls to {@link #refresh} to minimize the
  * churn in the SMF repository and the risk of incomplete data.  Use of this
  * class should generally follow this pattern:
  * <br/>
  * 1. Prevent refreshes of the wrapped service by calling {@link #pause}.
  * <br/>
  * 2. Use this class with one or more classes that operate on a {@link
- *    ServiceMXBean} (like {@link BasicSmfMutableProperty}).  These classes may
+ *    ServiceBean} (like {@link BasicSmfMutableProperty}).  These classes may
  *    call {@link #refresh} repeatedly.
  * <br/>
  * 3. Flush the pending refresh requests with {@link #unpause}.
@@ -47,12 +47,12 @@ import com.oracle.solaris.vp.panel.common.api.smf_old.*;
  * Users of this class must take care to invoke step 3 even if step 2 results in
  * an exception.
  */
-public class AggregatedRefreshService implements ServiceMXBean {
+public class AggregatedRefreshService implements ServiceBean {
     //
     // Instance data
     //
 
-    private ServiceMXBean service;
+    private ServiceBean service;
     private boolean paused;
     private boolean refreshNeeded;
     private Boolean instance = null;
@@ -64,12 +64,12 @@ public class AggregatedRefreshService implements ServiceMXBean {
     public AggregatedRefreshService() {
     }
 
-    public AggregatedRefreshService(ServiceMXBean service) {
+    public AggregatedRefreshService(ServiceBean service) {
 	setService(service);
     }
 
     //
-    // ServiceMXBean methods
+    // ServiceBean methods
     //
 
     @Override
@@ -280,7 +280,7 @@ public class AggregatedRefreshService implements ServiceMXBean {
 	return refreshNeeded;
     }
 
-    public ServiceMXBean getService() {
+    public ServiceBean getService() {
 	return service;
     }
 
@@ -288,7 +288,7 @@ public class AggregatedRefreshService implements ServiceMXBean {
      * Calls refresh on the service if not paused and a refresh is needed.
      *
      * @exception   ScfException
-     *		    thrown by {@link ServiceMXBean#refresh}
+     *		    thrown by {@link ServiceBean#refresh}
      */
     public synchronized void refreshConditional() throws ScfException {
 	if (!paused && refreshNeeded) {
@@ -311,7 +311,7 @@ public class AggregatedRefreshService implements ServiceMXBean {
     }
 
     /**
-     * Sets the underlying {@link ServiceMXBean} for this {@code
+     * Sets the underlying {@link ServiceBean} for this {@code
      * AggregatedRefreshService}.
      *
      * @param	    force
@@ -323,7 +323,7 @@ public class AggregatedRefreshService implements ServiceMXBean {
      *		    if this {@code AggregatedRefreshService} is {@link #pause
      *		    paused} or {@link #getRefreshNeeded needs a refresh}
      */
-    public synchronized void setService(ServiceMXBean service, boolean force) {
+    public synchronized void setService(ServiceBean service, boolean force) {
 	if (this.service != service) {
 	    if (paused && !force) {
 		throw new IllegalStateException(
@@ -345,7 +345,7 @@ public class AggregatedRefreshService implements ServiceMXBean {
     /**
      * Calls {@link #setService setService}{@code (service, true)}.
      */
-    public void setService(ServiceMXBean service) {
+    public void setService(ServiceBean service) {
 	setService(service, true);
     }
 }

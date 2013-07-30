@@ -20,15 +20,17 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(SRC)/make-rules/Makefile.env
 
 LDLIBS += -lscf
+
+VERS=.1
 MOD_APIS=smf_old
-MOD_OBJS=mod_smf.o propvec.o
-MOD_LIBNAME=mod_smf_old.so
+MOD_OBJS=mod_smf.o propvec.o /usr/lib/libcmdutils.so.1
+MOD_LIBNAME=mod_smf_old.so$(VERS)
 MOD_INSTALLDIR=$(RADDIR_MODULE)
 APISDIR=../../../../apis
 

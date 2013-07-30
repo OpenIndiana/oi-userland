@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.api.file;
@@ -30,8 +30,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.util.misc.IOUtil;
 
@@ -40,7 +39,7 @@ public class RemoteFileSystemView extends FileSystemView {
     // Instance data
     //
 
-    private MXBeanTracker<FileBrowserMXBean> tracker;
+    private BeanTracker<FileBrowser> tracker;
 
     //
     // Constructors
@@ -49,9 +48,8 @@ public class RemoteFileSystemView extends FileSystemView {
     public RemoteFileSystemView(ClientContext context)
 	throws TrackerException {
 
-	tracker = new MXBeanTracker<FileBrowserMXBean>(
-            FileBrowserUtil.OBJECT_NAME, FileBrowserMXBean.class,
-            Stability.PRIVATE, context);
+	tracker = new BeanTracker<FileBrowser>(
+            (new FileBrowser()).getName(), FileBrowser.class, context);
     }
 
     //
@@ -69,11 +67,11 @@ public class RemoteFileSystemView extends FileSystemView {
     @Override
     public RemoteFile createFileObject(String path) {
 	try {
-	    FileBrowserMXBean browser = tracker.getBean();
+	    FileBrowser browser = tracker.getBean();
 	    FileSnapshot snap = browser.getFile(path);
 	    return snap != null ?
 		new RemoteFile(browser, browser.getFile(path)) : null;
-	} catch (ObjectException ex) {
+	} catch (RadObjectException ex) {
 	    return null;
 	}
     }
@@ -107,18 +105,18 @@ public class RemoteFileSystemView extends FileSystemView {
     public RemoteFile[] getFiles(File dir, boolean useFileHiding) {
 	List<RemoteFile> files = new ArrayList<RemoteFile>();
 
-	FileBrowserMXBean browser = tracker.getBean();
+	FileBrowser browser = tracker.getBean();
 	List<FileSnapshot> snapshots;
 	try {
 		snapshots = browser.getFiles(dir.getAbsolutePath());
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 		return (new RemoteFile[0]);
 	} catch (java.lang.reflect.UndeclaredThrowableException e) {
 		/*
 		 * Our caller, BasicDirectoryModel, may interrupt us at
 		 * any time.  This can cause exceptions to be thrown.
 		 * In our case, our transport may throw an exception
-		 * which is mapped by the MBean proxy to a
+		 * which is mapped by the proxy to a
 		 * UndeclaredThrowableException.
 		 *
 		 * Unfortunately, the FileSystemView interface doesn't
@@ -152,7 +150,7 @@ public class RemoteFileSystemView extends FileSystemView {
     }
 
     public RemoteFile[] getRoots() {
-	FileBrowserMXBean browser = tracker.getBean();
+	FileBrowser browser = tracker.getBean();
 	List<FileSnapshot> snapshots = browser.getroots();
 	return RemoteFile.toFiles(browser, snapshots);
     }

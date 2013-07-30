@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.sysmon.client.swing;
@@ -28,7 +28,6 @@ package com.oracle.solaris.vp.panels.sysmon.client.swing;
 import java.beans.PropertyChangeListener;
 import java.io.IOException;
 import java.util.List;
-import javax.management.InstanceNotFoundException;
 import javax.swing.Icon;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.control.*;
@@ -61,7 +60,7 @@ public class SmfMonitoredResource extends MonitoredResource implements HasIcons
     //
 
     public SmfMonitoredResource(ClientContext context)
-	throws InstanceNotFoundException, IOException, TrackerException {
+	throws IOException, TrackerException {
 
 	this.context = context;
 	setName(NAME);

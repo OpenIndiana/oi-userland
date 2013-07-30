@@ -20,14 +20,14 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.apache.client.swing;
 
 import java.util.List;
 import javax.swing.*;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.model.*;
 import com.oracle.solaris.vp.panel.common.smf.*;
@@ -356,7 +356,7 @@ public class VirtualHost extends AbstractManagedObject<ManagedObject>
 
     protected void removeFromRepo() throws ScfException {
 	if (group != null) {
-	    ServiceMXBean service = getService();
+	    ServiceBean service = getService();
 	    service.deletePropertyGroup(group);
 	    service.refresh();
 	    parent.getVirtualHostNamePool().put(group);
@@ -468,13 +468,13 @@ public class VirtualHost extends AbstractManagedObject<ManagedObject>
 
 	    try {
                 boolean isLocalAddress =
-		    parent.getNetworkMXBean().isLocalAddress(sslIP);
+		    parent.getNetworkBean().isLocalAddress(sslIP);
 
 		if (!isLocalAddress) {
 		    throw new VirtualHostSSLValidationException(getId(),
 			Finder.getString("vhost.ssl.error.ip.invalid", sslIP));
 		}
-	    } catch (ObjectException e) {
+	    } catch (RadObjectException e) {
 		throw new VirtualHostSSLValidationException(getId(),
 		    Finder.getString("vhost.ssl.error.ip.syserror", e));
 	    }

@@ -19,7 +19,7 @@
 
   CDDL HEADER END
 
-  Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+  Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
 -->
 
 <project name="commondef">
@@ -60,39 +60,12 @@
       <exec executable="/usr/bin/radadrgen">
         <env key="RADADR_SCHEMA" value="/usr/share/lib/xml/rng/radadr.rng.1"/>
         <env key="RADADR_XSLDIR" value="/usr/share/lib/xml/style"/>
-        <env key="RADADR_JARDIR" value="${adrdir}"/>
-        <arg value="-j" />
+        <arg value="-l" />
+        <arg value="java" />
+        <arg value="-s" />
+        <arg value="client" />
+        <arg value="-d" />
         <arg value="${proj.gen}" />
-        <arg value="${ws.apis}/@{api}" />
-      </exec>
-    </sequential>
-  </macrodef>
-
-  <macrodef name="generate.adropt">
-    <attribute name="api" />
-    <sequential>
-      <exec executable="/usr/bin/radadrgen">
-        <env key="RADADR_SCHEMA" value="/usr/share/lib/xml/rng/radadr.rng.1"/>
-        <env key="RADADR_XSLDIR" value="/usr/share/lib/xml/style"/>
-        <env key="RADADR_JARDIR" value="${adrdir}"/>
-        <arg value="-N" />
-        <arg value="-j" />
-        <arg value="${proj.gen}" />
-        <arg value="${ws.apis}/@{api}" />
-      </exec>
-    </sequential>
-  </macrodef>
-
-  <macrodef name="generate.adrimpl">
-    <attribute name="api" />
-    <sequential>
-      <exec executable="/usr/bin/radadrgen">
-        <env key="RADADR_SCHEMA" value="/usr/share/lib/xml/rng/radadr.rng.1"/>
-        <env key="RADADR_XSLDIR" value="/usr/share/lib/xml/style"/>
-        <env key="RADADR_JARDIR" value="${adrdir}"/>
-        <arg value="-j" />
-        <arg value="${proj.gen}" />
-        <arg value="-i" />
         <arg value="${ws.apis}/@{api}" />
       </exec>
     </sequential>

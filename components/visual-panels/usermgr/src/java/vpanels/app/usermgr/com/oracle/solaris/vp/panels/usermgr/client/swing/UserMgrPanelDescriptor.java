@@ -27,13 +27,13 @@ package com.oracle.solaris.vp.panels.usermgr.client.swing;
 
 import java.util.*;
 import java.util.logging.Level;
-import javax.management.ObjectName;
 import javax.swing.Icon;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.ADRUinteger;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.*;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.common.model.*;
 import com.oracle.solaris.vp.panel.swing.control.PanelFrameControl;
@@ -53,12 +53,6 @@ public class UserMgrPanelDescriptor
     // Static data
     //
 
-    // Constants needed for registering the MBean
-    public static final String INTERFACE_NAME =
-    	"com.oracle.solaris.rad.usermgr";
-    public static final ObjectName OBJECT_NAME =
-        MBeanUtil.makeObjectName(INTERFACE_NAME, "UserMgr");
-
     public static final String USER_TYPE_NORMAL = "normal";
     public static final String SCOPE_FILES = "files";
     public static final String MATCH_ALL = "";
@@ -74,7 +68,7 @@ public class UserMgrPanelDescriptor
 
     private MainControl mc;
     private DefaultControl control;
-    private MXBeanTracker<UserMgrMXBean> beanTracker;
+    private BeanTracker<UserMgr> beanTracker;
     private UserType uType;
 
     private String scopeStr = SCOPE_FILES;
@@ -112,8 +106,8 @@ public class UserMgrPanelDescriptor
 
         super(id, context);
 
-	beanTracker = new MXBeanTracker<UserMgrMXBean>(
-	    OBJECT_NAME, UserMgrMXBean.class, Stability.PRIVATE, context);
+	beanTracker = new BeanTracker<UserMgr>((new UserMgr()).getName(),
+	    UserMgr.class, context);
 
 	setComparator(SimpleHasId.COMPARATOR);
 
@@ -202,7 +196,7 @@ public class UserMgrPanelDescriptor
 	aggregator.reset();
     }
 
-    public UserMgrMXBean getUserMgrBean() {
+    public UserMgr getUserMgrBean() {
         return beanTracker.getBean();
     }
 
@@ -237,10 +231,10 @@ public class UserMgrPanelDescriptor
 	try {
 	    getUserMgrBean().deleteUser(umo.getName());
 	    deleteUserManagedObject(umo);
-	} catch (SecurityException se) {
+	} catch (RadPrivilegeException se) {
 	    throw new ActionUnauthorizedException(se);
-	} catch (ObjectException e) {
-	    UserMgrError ume = e.getPayload(UserMgrError.class);
+	} catch (RadObjectException e) {
+	    UserMgrError ume = (UserMgrError)e.getPayload();
 	    String msg = Finder.getString("usermgr.error.invalidData");
 	    String err = Finder.getString(
 		"usermgr.error.delete", umo.getUsername());
@@ -261,16 +255,16 @@ public class UserMgrPanelDescriptor
 	ActionFailedException, ActionUnauthorizedException {
 
 	try {
-	    char[] password = umo.getPassword();
-	    User user = getUserMgrBean().addUser(umo.getNewUser(), password);
+	    String password = umo.getPassword();
+	    User newUser = umo.getNewUser();
+	    User user = getUserMgrBean().addUser(newUser, password);
 	    addUserManagedObject(umo);
-	    Arrays.fill(password, (char)0);
+	    password = null;
 	    umo.updateUser(user);
-
-	} catch (SecurityException se) {
+	} catch (RadPrivilegeException se) {
 	    throw new ActionUnauthorizedException(se);
-	} catch (ObjectException e) {
-		UserMgrError ume = e.getPayload(UserMgrError.class);
+	} catch (RadObjectException e) {
+		UserMgrError ume = (UserMgrError)e.getPayload();
 		String msg;
 		UserMgrErrorType error = (ume != null) ?
 		    ume.getErrorCode() : UserMgrErrorType.INVALIDDATA;
@@ -302,7 +296,6 @@ public class UserMgrPanelDescriptor
 
     public void saveModifiedUsers() throws ActionAbortedException,
 	ActionFailedException, ActionUnauthorizedException {
-
 	List<UserManagedObject> kids = getChildren();
 	for (UserManagedObject umo : kids) {
 	    if (umo.getChangeableAggregator().isChanged()) {
@@ -310,18 +303,16 @@ public class UserMgrPanelDescriptor
 		UserChangeFields changes = umo.getModifiedChanges();
 		try {
 		    if (user != null) {
-			char[] password = null;
+			String password = null;
 			if (umo.getPassProperty().isChanged())
 			    password = umo.getPassword();
-			// System.out.println(umo.toString());
-			getUserMgrBean().modifyUser(user, password, changes);
-			if (password != null)
-			    Arrays.fill(password, (char)0);
+			getUserMgrBean().modifyUser(user, changes, password);
+			password = null;
 		    }
-		} catch (SecurityException se) {
+		} catch (RadPrivilegeException se) {
 		    throw new ActionUnauthorizedException(se);
-		} catch (ObjectException e) {
-		    UserMgrError ume = e.getPayload(UserMgrError.class);
+		} catch (RadObjectException e) {
+			UserMgrError ume = (UserMgrError)e.getPayload();
 		    String msg;
 		    UserMgrErrorType error = (ume != null) ?
 			ume.getErrorCode() : UserMgrErrorType.INVALIDDATA;
@@ -378,9 +369,9 @@ public class UserMgrPanelDescriptor
         return roleList;
     }
 
-    public UserImpl getDefaultUser() {
-	UserImpl defaultUser = new UserImpl(
-		"", 0L, defUser.getGroupID(),
+    public User getDefaultUser() {
+	User defaultUser = new User(
+		"", new ADRUinteger(0L), defUser.getGroupID(),
 		"", "", defUser.getDefaultShell(),
 		0, 0, 0, 0,
 		"", "", "", "", "", "",
@@ -390,14 +381,16 @@ public class UserMgrPanelDescriptor
         return defaultUser;
     }
 
+    public ADRUinteger getDefaultGroupID() {
+	    return defUser.getGroupID();
+    }
+
     public void initUsers(String scopeStr,
     		String typeStr, String matchStr)
 		throws ActionFailedException {
 	int count = 0;
 	String statusStr;
 	String listTitle;
-
-
 
 	statusStr = Finder.getString("usermgr.status.scope") +
 	    " " + scopeStr;
@@ -409,10 +402,9 @@ public class UserMgrPanelDescriptor
 	    listTitle = Finder.getString("usermgr.list.title.role");
 	}
 
-
 	removeAllChildren();
 	try {
-	    UserMgrMXBean bean = getUserMgrBean();
+	    UserMgr bean = getUserMgrBean();
 
 	    // Set scope only if the scope changed
 	    if (scopeStr.equals(this.scopeStr) == false) {
@@ -539,7 +531,7 @@ public class UserMgrPanelDescriptor
 
 	try {
 	    user = getUserMgrBean().getUser(name);
-        } catch (ObjectException e) {
+        } catch (RadObjectException e) {
             getLog().log(Level.SEVERE, "Error getting user " +
 		name + " : ", e);
 	}
@@ -556,7 +548,7 @@ public class UserMgrPanelDescriptor
 	List<User> users = null;
 	try {
 	    users = getUserMgrBean().getusers();
-        } catch (ObjectException e) {
+        } catch (RadObjectException e) {
             getLog().log(Level.SEVERE, "Error getting user list.", e);
 	}
 	return users;

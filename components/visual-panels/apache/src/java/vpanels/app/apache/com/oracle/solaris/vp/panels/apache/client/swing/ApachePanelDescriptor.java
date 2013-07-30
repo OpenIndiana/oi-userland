@@ -20,17 +20,15 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.apache.client.swing;
 
 import java.io.IOException;
 import java.util.*;
-import javax.management.InstanceNotFoundException;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
-import com.oracle.solaris.adr.Stability;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.network.*;
@@ -92,7 +90,7 @@ public class ApachePanelDescriptor
 
     private DefaultControl control;
     private RemoteFileSystemView fsView;
-    private MXBeanTracker<NetworkMXBean> networkBeanTracker;
+    private BeanTracker<Network> networkBeanTracker;
 
     private BasicSmfMutableProperty<Boolean> customEnabledProperty =
 	new BooleanSmfProperty(PROPERTY_CUSTOM_ENABLED, this);
@@ -117,15 +115,14 @@ public class ApachePanelDescriptor
 
     public ApachePanelDescriptor(String id, ClientContext context)
 	throws IOException, ScfException, InvalidScfDataException,
-	MissingScfDataException, InstanceNotFoundException,
-	TrackerException {
+	MissingScfDataException, TrackerException {
 
 	super(id, context, SERVICE, INSTANCE);
 
 	fsView = new RemoteFileSystemView(context);
 
-	networkBeanTracker = new MXBeanTracker<NetworkMXBean>(
-	    NetworkUtil.OBJECT_NAME, NetworkMXBean.class, Stability.PRIVATE,
+	networkBeanTracker = new BeanTracker<Network>(
+	    (new Network()).getName(), Network.class,
 	    context);
 
 	vHostNamePool = new PropertyGroupNamePool(getService(),
@@ -449,7 +446,7 @@ public class ApachePanelDescriptor
     // ApachePanelDescriptor classes
     //
 
-    public NetworkMXBean getNetworkMXBean() {
+    public Network getNetworkBean() {
         return networkBeanTracker.getBean();
     }
 }

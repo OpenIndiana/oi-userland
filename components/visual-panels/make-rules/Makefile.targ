@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -96,11 +96,11 @@ $(ROOTLIBDIR32) $(ROOTLIBDIR64):
 $(LINTLIB): $(LINTSRCS)
 	$(LINT.c) -mnuvxy -o $(LIBNAME) $(LINTSRCS) > $(LINTOUT) 2>&1
 
-api_%.h api_%_impl.c: $(APISDIR)/%.xml
-	$(RADADRGEN) -c . -rm $(ADROPTS) $<
+api_%.h api_%_impl.c: $(APISDIR)/%.adr
+	$(RADADRGEN) -s server -l c -d . $<
 
-api_%.h api_%_impl.c: %.xml
-	$(RADADRGEN) -c . -rm $(ADROPTS) $<
+api_%.h api_%_impl.c: %.adr
+	$(RADADRGEN) -s server -l c -d . $<
 
 .c.o:
 	$(COMPILE.c) $(OUTPUT_OPTION) $<

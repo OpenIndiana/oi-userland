@@ -20,13 +20,13 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.zconsole.client.text;
 
 import java.util.logging.Logger;
-import com.oracle.solaris.rad.zonesbridge.IOMXBean;
+import com.oracle.solaris.rad.zonesbridge.IO;
 
 public abstract class ZoneIOThread extends Thread {
     //
@@ -39,14 +39,14 @@ public abstract class ZoneIOThread extends Thread {
     // Instance data
     //
 
-    private IOMXBean bean;
+    private IO bean;
     private long token;
 
     //
     // Constructors
     //
 
-    public ZoneIOThread(IOMXBean bean, long token) {
+    public ZoneIOThread(IO bean, long token) {
 	this.bean = bean;
 	this.token = token;
     }
@@ -63,7 +63,7 @@ public abstract class ZoneIOThread extends Thread {
      */
     public abstract void done(boolean success);
 
-    public IOMXBean getBean() {
+    public IO getBean() {
 	return bean;
     }
 

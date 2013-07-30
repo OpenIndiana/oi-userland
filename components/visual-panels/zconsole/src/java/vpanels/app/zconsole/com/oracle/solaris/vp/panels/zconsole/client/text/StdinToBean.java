@@ -20,15 +20,15 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.zconsole.client.text;
 
 import java.io.*;
 import java.util.logging.Level;
-import com.oracle.solaris.rad.ObjectException;
-import com.oracle.solaris.rad.zonesbridge.IOMXBean;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.zonesbridge.IO;
 import com.oracle.solaris.vp.util.misc.*;
 
 public abstract class StdinToBean extends ZoneIOThread {
@@ -54,7 +54,7 @@ public abstract class StdinToBean extends ZoneIOThread {
     // Constructors
     //
 
-    public StdinToBean(IOMXBean bean, long token, byte escape, boolean noext) {
+    public StdinToBean(IO bean, long token, byte escape, boolean noext) {
 	super(bean, token);
 	this.escape = escape;
 	this.noext = noext;
@@ -67,7 +67,7 @@ public abstract class StdinToBean extends ZoneIOThread {
     @Override
     public void run() {
 	boolean success = true;
-	IOMXBean bean = getBean();
+	IO bean = getBean();
 	long token = getToken();
 
 	try {
@@ -150,7 +150,7 @@ public abstract class StdinToBean extends ZoneIOThread {
 	    getLog().log(Level.SEVERE, "unable to read from stdin", e);
 	    success = false;
 
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    getLog().log(Level.SEVERE, "unable to write to console", e);
 	    success = false;
 	}

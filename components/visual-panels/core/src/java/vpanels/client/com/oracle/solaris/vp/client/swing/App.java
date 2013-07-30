@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.client.swing;
@@ -29,7 +29,7 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.util.logging.*;
-import com.oracle.solaris.afunix.*;
+import com.oracle.solaris.rad.transports.*;
 import com.oracle.solaris.vp.client.common.*;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.*;

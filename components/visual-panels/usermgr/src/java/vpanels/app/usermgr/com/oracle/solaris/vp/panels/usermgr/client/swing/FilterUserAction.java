@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -51,7 +51,7 @@ public class FilterUserAction extends SwingManagedObjectAction
     <UserManagedObject, FilterUserAction.Data, UserManagedObject> {
 
     private UserManagedObject umo = null;
-    private UserImpl user = null;
+    private User user = null;
 
     //
     // Inner classes

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.time.client.swing;
@@ -29,7 +29,7 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.Timer;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.swing.control.*;
 import com.oracle.solaris.vp.panel.swing.timezone.TimeZoneModel;
@@ -170,8 +170,8 @@ public class MainControl extends ChildControlListSelectorControl<
 
 	    String zoneId;
 	    try {
-		zoneId = descriptor.getTimeMXBean().getdefaultTimeZone();
-	    } catch (ObjectException e) {
+		zoneId = descriptor.getTimeBean().getdefaultTimeZone();
+	    } catch (RadObjectException e) {
 		zoneId = "UTC";
 	    }
 	    TimeZone zone = TimeZone.getTimeZone(zoneId);

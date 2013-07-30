@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <sys/types.h>
@@ -54,7 +54,7 @@ interface_Time_read_time(rad_instance_t *inst, adr_attribute_t *attr,
     adr_data_t **data, adr_data_t **error)
 {
 	*data = adr_data_new_time_now();
-	return (ce_ok);
+	return (CE_OK);
 }
 
 #define	NSPERUS	(NANOSEC / MICROSEC)
@@ -79,7 +79,7 @@ interface_Time_write_time(rad_instance_t *inst, adr_attribute_t *attr,
 	}
 
 	if (seconds > LONG_MAX)
-		return (ce_object);
+		return (CE_OBJECT);
 
 	newtime = (time_t)seconds;
 	adj.tv_sec = 0;
@@ -87,11 +87,11 @@ interface_Time_write_time(rad_instance_t *inst, adr_attribute_t *attr,
 
 	if (stime(&newtime) == -1 || adjtime(&adj, NULL) == -1) {
 		if (errno == EPERM)
-			return (ce_priv);
-		return (ce_object);
+			return (CE_PRIV);
+		return (CE_OBJECT);
 	}
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /*ARGSUSED*/
@@ -105,7 +105,7 @@ interface_Time_read_defaultTimeZone(rad_instance_t *inst, adr_attribute_t *attr,
 	conerr_t err = smfu_get_property((char *)SCF_INSTANCE_ENV,
 	    SMF_TZ_PGNAME, SMF_TZ_PROPNAME, tz, PATH_MAX - n);
 
-	if (err == ce_ok) {
+	if (err == CE_OK) {
 		/*
 		 * The stored time zone may be the name of a symlink
 		 * (i.e. "localtime"), under ZONEINFO_DIR.  Resolve that symlink
@@ -223,7 +223,7 @@ interface_Time_read_ntpServers(rad_instance_t *inst, adr_attribute_t *attr,
 	}
 
 	*data = result;
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /*ARGSUSED*/
@@ -233,7 +233,7 @@ interface_Time_read_sufficientlyPrivileged(rad_instance_t *inst,
 {
 	/* XXX: Crude */
 	*data = adr_data_new_boolean(getuid() == 0);
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /*ARGSUSED*/
@@ -262,7 +262,7 @@ interface_Time_read_continents(rad_instance_t *inst, adr_attribute_t *attr,
 	(void) fclose(file);
 	*data = result;
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /*ARGSUSED*/
@@ -295,7 +295,7 @@ interface_Time_read_countries(rad_instance_t *inst, adr_attribute_t *attr,
 	(void) fclose(file);
 	*data = result;
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /*
@@ -434,7 +434,7 @@ done:
 	(void) fclose(file);
 	*data = result;
 
-	return (ce_ok);
+	return (CE_OK);
 }
 
 /*ARGSUSED*/
@@ -506,30 +506,37 @@ nobackup:
 	/* Rename temp file */
 	if (chmod(NTP_CONF_TMP, 0644) == 0 &&
 	    rename(NTP_CONF_TMP, NTP_CONF) == 0)
-		return (ce_ok);
+		return (CE_OK);
 
 writefailed:
 	err = errno;
 	(void) unlink(NTP_CONF_TMP);
 
 errorout:
-	return (err == EACCES ? ce_priv : ce_object);
+	return (err == EACCES ? CE_PRIV : CE_OBJECT);
 }
 
-static rad_modinfo_t modinfo = { "time", "Time panel support" };
-
 int
-_rad_init(void *handle)
+_rad_init(void)
 {
-	if (rad_module_register(handle, RAD_MODVERSION, &modinfo) == -1)
+	adr_name_t *aname = adr_name_vcreate(MOD_DOMAIN, 1, "type", "Time");
+	conerr_t cerr =  rad_cont_insert_singleton(rad_container, aname,
+	    &modinfo, &interface_Time_svr);
+	adr_name_rele(aname);
+	if (cerr != CE_OK) {
+		rad_log(RL_ERROR, "(mod_time) failed to insert Time");
 		return (-1);
-
-	if (rad_isproxy)
-		return (0);
-
-	(void) cont_insert_singleton(rad_container,
-	    adr_name_fromstr("com.oracle.solaris.vp.panels.time:type=Time"),
-	    &interface_Time_svr);
+	}
 
 	return (0);
+}
+
+/*
+ * _rad_fini is called by the RAD daemon when the module is unloaded. Any
+ * module finalisation is completed here.
+ */
+/*ARGSUSED*/
+void
+_rad_fini(void *unused)
+{
 }

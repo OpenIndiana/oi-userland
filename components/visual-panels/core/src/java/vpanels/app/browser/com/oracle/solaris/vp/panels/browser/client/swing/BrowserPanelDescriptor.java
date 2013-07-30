@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.browser.client.swing;
@@ -28,7 +28,7 @@ package com.oracle.solaris.vp.panels.browser.client.swing;
 import java.beans.*;
 import java.util.*;
 import java.util.logging.Level;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.panel.*;
 import com.oracle.solaris.vp.panel.common.control.*;
@@ -52,7 +52,7 @@ public class BrowserPanelDescriptor
     private DefaultControl topControl;
     private Map<String, PanelManagedObject> panels_ =
 	new HashMap<String, PanelManagedObject>();
-    private PanelMXBeanTracker panelBeanTracker;
+    private PanelBeanTracker panelBeanTracker;
 
     private PropertyChangeListener beanListener =
 	new PropertyChangeListener() {
@@ -74,9 +74,9 @@ public class BrowserPanelDescriptor
 
 	super(id, context);
 
-	panelBeanTracker = new PanelMXBeanTracker(getClientContext());
+	panelBeanTracker = new PanelBeanTracker(getClientContext());
 	panelBeanTracker.addPropertyChangeListener(
-	    MXBeanTracker.PROPERTY_BEAN, beanListener);
+	    BeanTracker.PROPERTY_BEAN, beanListener);
 
 	beanChanged();
 
@@ -112,7 +112,7 @@ public class BrowserPanelDescriptor
     }
 
     private void beanChanged() {
-	PanelMXBean bean = panelBeanTracker.getBean();
+	Panel bean = panelBeanTracker.getBean();
 
 	panels_.clear();
 	clearChildren();
@@ -123,12 +123,12 @@ public class BrowserPanelDescriptor
 		    try {
 			CustomPanel custom = bean.getPanel(name, null);
 			panels_.put(name, new PanelManagedObject(custom));
-		    } catch (ObjectException e) {
+		    } catch (RadObjectException e) {
 			getLog().log(Level.SEVERE,
 			    "could not load panel: " + name, e);
 		    }
 		}
-	    } catch (ObjectException e) {
+	    } catch (RadObjectException e) {
 		getLog().log(Level.SEVERE, "could not get panel names", e);
 	    }
 	}

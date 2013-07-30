@@ -20,14 +20,13 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.sysmon.client.swing;
 
 import java.io.IOException;
 import java.util.List;
-import javax.management.InstanceNotFoundException;
 import javax.swing.*;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.control.Control;
@@ -76,7 +75,7 @@ public class SysMonPanelDescriptor
     //
 
     public SysMonPanelDescriptor(String id, ClientContext context)
-	throws InstanceNotFoundException, IOException, TrackerException {
+	throws IOException, TrackerException {
 
 	super(id, context);
 

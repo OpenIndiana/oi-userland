@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.apache.client.swing;
@@ -39,7 +39,7 @@ public class ApacheUtil {
     public static String getNextAvailablePropertyName(SmfPropertyGroupInfo info,
 	String prefix) throws ScfException {
 
-	ServiceMXBean service = info.getService();
+	ServiceBean service = info.getService();
 	String group = info.getPropertyGroupName();
 
 	List<String> names = new ArrayList<String>(

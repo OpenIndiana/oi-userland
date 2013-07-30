@@ -20,15 +20,17 @@
 #
 
 #
-# Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(SRC)/make-rules/Makefile.env
 
 LDLIBS += -lscf
+
+VERS=.1
 MOD_APIS=time
 MOD_OBJS=mod_time.o smfutil.o
-MOD_LIBNAME=mod_time.so
+MOD_LIBNAME=mod_time.so$(VERS)
 MOD_INSTALLDIR=$(RADDIR_MODULE)
 APISDIR=$(PROJ_CORE)/apis
 

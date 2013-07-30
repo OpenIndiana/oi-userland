@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -28,6 +28,7 @@ package com.oracle.solaris.vp.panels.usermgr.client.swing;
 
 import java.util.List;
 import java.util.Map;
+import com.oracle.solaris.rad.client.ADRUinteger;
 import com.oracle.solaris.rad.usermgr.*;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.common.control.*;
@@ -112,8 +113,8 @@ public class UserMgrBasicControl
 
 	 if (panel.getPassProperty().isChanged() ||
 	    panel.getPassConfirmProperty().isChanged()) {
-	    char[] pass1 = panel.getPassProperty().getValue();
-	    char[] pass2 = panel.getPassConfirmProperty().getValue();
+	    String pass1 = panel.getPassProperty().getValue();
+	    String pass2 = panel.getPassConfirmProperty().getValue();
 	    UserMgrUtils.validatePassword(umo.isNewUser(), pass1, pass2);
 	    umo.getPassProperty().setValue(pass1);
 	 }
@@ -138,13 +139,13 @@ public class UserMgrBasicControl
 	panel.init(getPanelDescriptor(), umo);
     }
 
-    private long toGid(String gName) {
+    private ADRUinteger toGid(String gName) {
 	List<Group> groups = getPanelDescriptor().getGroups();
  	for (Group g : groups) {
 	    if (gName.equals(g.getGroupName()))
  		return (g.getGroupID());
  	}
- 	return 1L;
+ 	return (new ADRUinteger(1L));
     }
 
     @Override

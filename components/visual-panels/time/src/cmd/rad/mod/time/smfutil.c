@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 #include <rad/rad_modapi.h>
@@ -47,11 +47,11 @@ maperr(scf_error_t e)
 {
 	switch (e) {
 	case SCF_ERROR_NONE:
-		return (ce_ok);
+		return (CE_OK);
 	case SCF_ERROR_PERMISSION_DENIED:
-		return (ce_priv);
+		return (CE_PRIV);
 	default:
-		return (ce_system);
+		return (CE_SYSTEM);
 	}
 }
 
@@ -59,7 +59,7 @@ conerr_t
 smfu_get_property(char *fmri, char *pgname, char *propname, char *value,
     size_t n)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
 	scf_instance_t *instance = scf_instance_create(scfhandle);
@@ -70,7 +70,7 @@ smfu_get_property(char *fmri, char *pgname, char *propname, char *value,
 
 	if (scfhandle == NULL || service == NULL || instance == NULL ||
 	    pg == NULL || prop == NULL || iter == NULL || val == NULL) {
-		err = ce_nomem;
+		err = CE_NOMEM;
 		goto out;
 	}
 
@@ -114,7 +114,7 @@ out:
 conerr_t
 smfu_set_property(char *fmri, char *pgname, char *propname, char *value)
 {
-	conerr_t err = ce_ok;
+	conerr_t err = CE_OK;
 	scf_handle_t *scfhandle = handle_create();
 	scf_service_t *service = scf_service_create(scfhandle);
 	scf_instance_t *instance = scf_instance_create(scfhandle);
@@ -128,7 +128,7 @@ smfu_set_property(char *fmri, char *pgname, char *propname, char *value)
 	if (scfhandle == NULL || service == NULL || instance == NULL ||
 	    pg == NULL || prop == NULL || tx == NULL || ent == NULL ||
 	    val == NULL) {
-		err = ce_nomem;
+		err = CE_NOMEM;
 		goto out;
 	}
 

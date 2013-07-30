@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.scf.common;
@@ -30,13 +30,12 @@ import java.net.URISyntaxException;
 import java.beans.ConstructorProperties;
 import java.util.Map;
 import java.util.EnumMap;
-import javax.management.openmbean.*;
 
 /**
  * A basic FMRI class.  Probably should be named "SmfFMRI", as
  * legacy-run services aren't an SCF concept.
  */
-public class FMRI implements Comparable<FMRI>, CompositeDataView
+public class FMRI implements Comparable<FMRI>
 {
 	/*
 	 * Static data
@@ -323,27 +322,6 @@ public class FMRI implements Comparable<FMRI>, CompositeDataView
 	    "svcType", "scope", "name", "service", "instance", "propertyGroup",
 	    "property" };
 
-	/*
-	 * Manually convert the FMRI to its automatically-determined
-	 * CompositeType.  This conversion is normally performed by the
-	 * MXBean implementation, but the automatic conversion uses our
-	 * accessors to inspect the object.  Performing the conversion
-	 * manually permits us to circumvent the run-time checking
-	 * performed by our accessors (or to put it differently, permits
-	 * us to leave the run-time checking in place).
-	 */
-	public CompositeData toCompositeData(CompositeType ct)
-	{
-		Object[] itemValues = new Object[] { scheme_.name(),
-		    svctype_.name(), scope_, name_, service_, instance_, pg_,
-		    property_ };
-		try {
-			return (new CompositeDataSupport(ct, itemNames,
-			    itemValues));
-		} catch (OpenDataException ex) {
-			throw (new RuntimeException(ex));
-		}
-	}
 
 	// Comparable methods
 

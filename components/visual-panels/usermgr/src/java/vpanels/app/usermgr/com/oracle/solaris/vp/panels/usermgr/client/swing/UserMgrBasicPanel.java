@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -29,6 +29,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.Border;
+import com.oracle.solaris.rad.client.ADRUinteger;
 import com.oracle.solaris.vp.panel.swing.view.ChangeIndicator;
 import com.oracle.solaris.vp.util.misc.ChangeableAggregator;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
@@ -76,10 +77,10 @@ public class UserMgrBasicPanel extends SettingsPanel
 	private JLabel passConfirmLabel;
 	private JPasswordField passConfirmField;
 
-	private MutableProperty<char[]> passProperty =
-	    new BasicMutableProperty<char[]>();
-	private MutableProperty<char[]> passConfirmProperty =
-	    new BasicMutableProperty<char[]>();
+	private MutableProperty<String> passProperty =
+	    new BasicMutableProperty<String>();
+	private MutableProperty<String> passConfirmProperty =
+	    new BasicMutableProperty<String>();
 
 	//
 	// Constructors
@@ -159,11 +160,11 @@ public class UserMgrBasicPanel extends SettingsPanel
 	// PasswordPanel methods
 	//
 
-	public MutableProperty<char[]> getPassProperty() {
+	public MutableProperty<String> getPassProperty() {
 	    return passProperty;
 	}
 
-	public MutableProperty<char[]> getPassConfirmProperty() {
+	public MutableProperty<String> getPassConfirmProperty() {
 	    return passConfirmProperty;
 	}
 
@@ -232,11 +233,11 @@ public class UserMgrBasicPanel extends SettingsPanel
 	return settingsProperty;
     }
 
-    public MutableProperty<char[]> getPassProperty() {
+    public MutableProperty<String> getPassProperty() {
 	return passPanel.passProperty;
     }
 
-    public MutableProperty<char[]> getPassConfirmProperty() {
+    public MutableProperty<String> getPassConfirmProperty() {
 	return passPanel.passConfirmProperty;
     }
 
@@ -252,24 +253,24 @@ public class UserMgrBasicPanel extends SettingsPanel
 
 	// Set the current and saved values for each property
 	nameField.setText(umo.getName());
-	Long uidValue = new Long(umo.getUserId());
+	ADRUinteger uidValue = umo.getUserId();
 	uidField.setText(uidValue.toString());
 
 	descProperty.update(umo.getUserDescProperty().getSavedValue(), false);
 	descField.setText(umo.getUserDescription());
 
 	// group
-	long gid = umo.getGroupId();
+	ADRUinteger gid = umo.getGroupId();
 	String gname = null;
-	long savedGid = umo.getGroupIdProperty().getSavedValue();
+	ADRUinteger savedGid = umo.getGroupIdProperty().getSavedValue();
 	String savedGname = null;
 	if (groupCombo.getItemCount() > 0)
 	    groupCombo.removeAllItems();
 	for (Group g : descriptor.getGroups()) {
 	    groupCombo.addItem(g.getGroupName());
-	    if (gid == g.getGroupID())
+	    if (gid.equals(g.getGroupID()))
 		gname = g.getGroupName();
-	    if (savedGid == g.getGroupID())
+	    if (savedGid.equals(g.getGroupID()))
 		savedGname = g.getGroupName();
 	}
 

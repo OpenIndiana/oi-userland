@@ -20,21 +20,18 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.time.client.swing;
 
 import java.io.IOException;
 import java.util.List;
-import javax.management.*;
 import javax.swing.*;
-import com.oracle.solaris.adr.Stability;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.*;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
 import com.oracle.solaris.vp.panel.common.api.smf_old.SmfState;
-import com.oracle.solaris.vp.panel.common.api.time.HasTimeMXBean;
+import com.oracle.solaris.vp.panel.common.api.time.HasTimeBean;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.common.model.*;
 import com.oracle.solaris.vp.panel.common.smf.*;
@@ -47,7 +44,7 @@ import com.oracle.solaris.vp.util.swing.HasIcons;
 @SuppressWarnings({"serial"})
 public class TimePanelDescriptor
     extends ServicePanelDescriptor<ManagedObject>
-    implements SwingPanelDescriptor<ManagedObject>, HasIcons, HasTimeMXBean {
+    implements SwingPanelDescriptor<ManagedObject>, HasIcons, HasTimeBean {
 
     //
     // Static data
@@ -67,7 +64,7 @@ public class TimePanelDescriptor
     //
 
     private DefaultControl control;
-    private MXBeanTracker<TimeMXBean> beanTracker;
+    private BeanTracker<Time> beanTracker;
     private boolean hasFullPrivs;
 
     //
@@ -75,18 +72,16 @@ public class TimePanelDescriptor
     //
 
     public TimePanelDescriptor(String id, ClientContext context)
-	throws IOException, InstanceNotFoundException, ScfException,
+	throws IOException, ScfException,
 	InvalidScfDataException, MissingScfDataException,
 	TrackerException {
 
 	super(id, context, SERVICE, INSTANCE);
 
-	ObjectName oName = MBeanUtil.makeObjectName(
-	    MBeanUtil.VP_PANEL_DOMAIN + ".time", "Time");
-	beanTracker = new MXBeanTracker<TimeMXBean>(
-	    oName, TimeMXBean.class, Stability.PRIVATE, context);
+	beanTracker = new BeanTracker<Time>(
+	    (new Time()).getName(), Time.class, context);
 
-	hasFullPrivs = getTimeMXBean().issufficientlyPrivileged();
+	hasFullPrivs = getTimeBean().issufficientlyPrivileged();
 
 	refresh(true);
 	control = new PanelFrameControl<TimePanelDescriptor>(this);
@@ -103,11 +98,11 @@ public class TimePanelDescriptor
     }
 
     //
-    // HasTimeMXBean methods
+    // HasTimeBean methods
     //
 
     @Override
-    public TimeMXBean getTimeMXBean() {
+    public Time getTimeBean() {
 	return beanTracker.getBean();
     }
 

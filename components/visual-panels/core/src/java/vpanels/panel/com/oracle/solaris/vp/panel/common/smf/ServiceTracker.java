@@ -20,24 +20,23 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
 
 import java.beans.PropertyChangeEvent;
-import javax.management.ObjectName;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.vp.panel.common.api.smf_old.ServiceInfoMXBean;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.vp.panel.common.api.smf_old.ServiceInfo;
 import com.oracle.solaris.vp.panel.common.*;
 
 /**
- * The {@code ServiceTracker} is a {@link MXBeanTracker} that automatically
+ * The {@code ServiceTracker} is a {@link BeanTracker} that automatically
  * creates and re-creates an {@link #getService AggregatedRefreshService}, which
- * wraps a {@link ServiceMXBeanAdaptor}, which wraps a {@link
- * ServiceInfoMXBean}.
+ * wraps a {@link ServiceBeanAdaptor}, which wraps a {@link
+ * ServiceInfo}.
  */
-public class ServiceTracker extends MXBeanTracker<ServiceInfoMXBean>
+public class ServiceTracker extends BeanTracker<ServiceInfo>
     implements HasService {
 
     //
@@ -59,16 +58,16 @@ public class ServiceTracker extends MXBeanTracker<ServiceInfoMXBean>
     // Constructors
     //
 
-    public ServiceTracker(ObjectName oName, ClientContext context)
+    public ServiceTracker(ADRName oName, ClientContext context)
 	throws TrackerException {
 
-	super(oName, ServiceInfoMXBean.class, Stability.PRIVATE, context);
+	super(oName, ServiceInfo.class, context);
     }
 
     public ServiceTracker(String serviceName, String instanceName,
 	ClientContext context) throws TrackerException {
 
-	this(ServiceUtil.toObjectName(serviceName, instanceName), context);
+	this(ServiceUtil.toADRName(serviceName, instanceName), context);
     }
 
     //
@@ -81,11 +80,11 @@ public class ServiceTracker extends MXBeanTracker<ServiceInfoMXBean>
     }
 
     //
-    // MXBeanTracker methods
+    // BeanTracker methods
     //
 
     @Override
-    public void setBean(ServiceInfoMXBean bean) {
+    public void setBean(ServiceInfo bean) {
 	if (getBean() != bean) {
 	    super.setBean(bean);
 	    setService();
@@ -99,7 +98,7 @@ public class ServiceTracker extends MXBeanTracker<ServiceInfoMXBean>
     public void setObjectName(String serviceName, String instanceName)
         throws TrackerException {
 
-	ObjectName oName = ServiceUtil.toObjectName(serviceName, instanceName);
+	ADRName oName = ServiceUtil.toADRName(serviceName, instanceName);
 	setObjectName(oName);
     }
 
@@ -117,7 +116,7 @@ public class ServiceTracker extends MXBeanTracker<ServiceInfoMXBean>
     //
 
     private void setService() {
-	setService(new AggregatedRefreshService(new ServiceMXBeanAdaptor(
+	setService(new AggregatedRefreshService(new ServiceBeanAdaptor(
 	    getBean())));
     }
 }

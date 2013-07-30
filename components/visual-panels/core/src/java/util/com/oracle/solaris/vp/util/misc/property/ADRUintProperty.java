@@ -20,20 +20,24 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
-package com.oracle.solaris.vp.panel.common.api.file;
+package com.oracle.solaris.vp.util.misc.property;
 
-import javax.management.ObjectName;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
+import com.oracle.solaris.rad.client.ADRUinteger;
+import com.oracle.solaris.vp.util.misc.converter.ADRUintStringConverter;
 
-public class FileBrowserUtil {
+public class ADRUintProperty extends BasicMutableProperty<ADRUinteger> {
     //
-    // Static data
+    // Constructors
     //
 
-    private static final String DOMAIN = MBeanUtil.VP_DOMAIN + ".file";
-    public static final ObjectName OBJECT_NAME =
-	MBeanUtil.makeObjectName(DOMAIN, "FileBrowser");
+    public ADRUintProperty() {
+	this(null);
+    }
+
+    public ADRUintProperty(String name) {
+	super(name, ADRUintStringConverter.INSTANCE);
+    }
 }

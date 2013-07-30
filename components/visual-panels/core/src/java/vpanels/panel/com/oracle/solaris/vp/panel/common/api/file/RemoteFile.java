@@ -20,14 +20,14 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.api.file;
 
 import java.io.*;
 import java.util.List;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
 
 @SuppressWarnings({"serial"})
 public class RemoteFile extends File {
@@ -35,14 +35,14 @@ public class RemoteFile extends File {
     // Instance data
     //
 
-    private FileBrowserMXBean browser;
+    private FileBrowser browser;
     private FileSnapshot snapshot;
 
     //
     // Constructors
     //
 
-    public RemoteFile(FileBrowserMXBean browser, FileSnapshot snapshot) {
+    public RemoteFile(FileBrowser browser, FileSnapshot snapshot) {
 	super(snapshot.getPath());
 	this.browser = browser;
 	this.snapshot = snapshot;
@@ -108,7 +108,7 @@ public class RemoteFile extends File {
 	String path = snapshot.getCanonicalPath();
 	try {
 	    return new RemoteFile(browser, browser.getFile(path));
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    throw new IOException(e);
 	}
     }
@@ -136,7 +136,7 @@ public class RemoteFile extends File {
 	try {
 	    return parent == null ? null :
 		new RemoteFile(browser, browser.getFile(parent));
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    /* Not correct, but our choices are limited */
 	    return null;
 	}
@@ -193,7 +193,7 @@ public class RemoteFile extends File {
 		names[i++] = ss.getBaseName();
 
 	    return names;
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    return null;
 	}
     }
@@ -203,7 +203,7 @@ public class RemoteFile extends File {
 	try {
 	    List<FileSnapshot> snapshots = browser.getFiles(getAbsolutePath());
 	    return toFiles(snapshots);
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    return null;
 	}
     }
@@ -278,7 +278,7 @@ public class RemoteFile extends File {
     // RemoteFile methods
     //
 
-    public FileBrowserMXBean getBrowser() {
+    public FileBrowser getBrowser() {
 	return browser;
     }
 
@@ -295,7 +295,7 @@ public class RemoteFile extends File {
     //
 
     public static RemoteFile[] toFiles(
-	FileBrowserMXBean browser, List<FileSnapshot> snapshots) {
+	FileBrowser browser, List<FileSnapshot> snapshots) {
 
 	RemoteFile[] files = new RemoteFile[snapshots.size()];
 

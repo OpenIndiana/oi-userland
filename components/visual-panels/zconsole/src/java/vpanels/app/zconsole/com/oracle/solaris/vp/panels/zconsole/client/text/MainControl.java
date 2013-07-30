@@ -20,15 +20,16 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.zconsole.client.text;
 
 import java.util.Map;
 import java.util.logging.Level;
-import com.oracle.solaris.rad.ObjectException;
-import com.oracle.solaris.rad.zonesbridge.IOMXBean;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
+import com.oracle.solaris.rad.zonesbridge.IO;
 import com.oracle.solaris.vp.panel.common.ConnectionInfo;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.util.misc.TermUtil;
@@ -49,7 +50,7 @@ public class MainControl extends DefaultControl<ZoneConsolePanelDescriptor> {
 
     private String zone;
     private long token;
-    private IOMXBean bean;
+    private IO bean;
     private BeanToStdout beanToStdout;
     private StdinToBean stdinToBean;
 
@@ -58,7 +59,7 @@ public class MainControl extends DefaultControl<ZoneConsolePanelDescriptor> {
     //
 
     public MainControl(ZoneConsolePanelDescriptor descriptor,
-	IOMXBean bean) {
+	IO bean) {
 
 	super(descriptor.getId(), descriptor.getName(), descriptor);
 	this.bean = bean;
@@ -92,7 +93,7 @@ public class MainControl extends DefaultControl<ZoneConsolePanelDescriptor> {
 
 	try {
 	    token = bean.openConsole(zone);
-	} catch (SecurityException e) {
+	} catch (RadPrivilegeException e) {
 	    ConnectionInfo info = getClientContext().getConnectionInfo();
 	    String user = info.getRole();
 	    if (user == null) {
@@ -100,7 +101,7 @@ public class MainControl extends DefaultControl<ZoneConsolePanelDescriptor> {
 	    }
             throw new NavigationFailedException(Finder.getString(
 		"error.security", user, info.getHost(), zone), e);
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    ConnectionInfo info = getClientContext().getConnectionInfo();
 	    String user = info.getRole();
 	    if (user == null) {
@@ -165,7 +166,7 @@ public class MainControl extends DefaultControl<ZoneConsolePanelDescriptor> {
     private void closeBean() {
 	try {
 	    bean.close(token);
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    getLog().log(Level.SEVERE, "unable to close console connection", e);
 	}
     }

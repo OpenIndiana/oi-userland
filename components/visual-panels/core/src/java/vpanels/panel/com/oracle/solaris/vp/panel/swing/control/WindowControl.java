@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.swing.control;
@@ -252,11 +252,8 @@ public class WindowControl<P extends PanelDescriptor, C extends Window>
 			ConnectionInfo info = getPanelDescriptor().
 			    getClientContext().getConnectionInfo();
 
-			try {
-			    // Test connection.
-			    info.getConnector().
-				getMBeanServerConnection();
-			} catch (IOException e) {
+			// Test connection - check if there is a connection
+			if (info == null || !(info.getConnection().isOpen())) {
 			    // Show indicator for broken connection.
 			    connListener.connectionFailed(
 				new ConnectionEvent(this, info));

@@ -20,36 +20,27 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
-package com.oracle.solaris.vp.panels.example.time1.client.swing;
+package com.oracle.solaris.vp.panel.common.api.panel;
 
-import java.awt.Component;
-import java.util.Date;
-import com.oracle.solaris.vp.panel.swing.control.SwingControl;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.vp.panel.common.*;
 
-public class TimeControl extends SwingControl<TimePanelDescriptor, TimePanel> {
+public class PanelBeanTracker extends BeanTracker<Panel> {
     //
     // Constructors
     //
 
-    public TimeControl(TimePanelDescriptor descriptor) {
-	super(descriptor.getId(), descriptor.getName(), descriptor);
+    public PanelBeanTracker() {
+	super(new Panel().getName(), Panel.class);
     }
 
-    //
-    // SwingControl methods
-    //
+    public PanelBeanTracker(ClientContext context)
+	throws TrackerException {
 
-    @Override
-    protected TimePanel createComponent() {
-	return new TimePanel();
-    }
-
-    @Override
-    protected void initComponent() {
-	Date date = new Date();
-	getComponent().getSpinnerDateModel().setValue(date);
+	this();
+	setClientContext(context);
     }
 }

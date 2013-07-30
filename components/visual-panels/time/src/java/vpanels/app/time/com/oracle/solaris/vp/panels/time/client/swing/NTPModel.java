@@ -20,13 +20,14 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.time.client.swing;
 
 import java.util.*;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.common.api.smf_old.SmfState;
@@ -63,13 +64,13 @@ public class NTPModel extends AbstractModel<TimePanelDescriptor> {
 	// XXX generic NTPModel shouldn't assume a ServicePanelDescriptor
 	enabled_ = getSource().isEnabled();
 	try {
-	    servers_ = getSource().getTimeMXBean().getntpServers();
-	} catch (ObjectException e) {
+	    servers_ = getSource().getTimeBean().getntpServers();
+	} catch (RadObjectException e) {
 	    servers_ = Collections.emptyList();
 	}
 
 	// Read only state
-	ServiceMXBean service = getSource().getService();
+	ServiceBean service = getSource().getService();
 	try {
 	    state_ = service.getState();
 	    nextState_ = service.getNextState();
@@ -83,15 +84,15 @@ public class NTPModel extends AbstractModel<TimePanelDescriptor> {
 	validate();
 
 	TimePanelDescriptor descriptor = getSource();
-	TimeMXBean bean = descriptor.getTimeMXBean();
+	Time bean = descriptor.getTimeBean();
 
 	try {
 	    bean.setntpServers(servers_);
 
-	} catch (SecurityException e) {
+	} catch (RadPrivilegeException e) {
 	    throw new ActionUnauthorizedException(e);
 
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    throw new ActionFailedException(
 		Finder.getString("ntp.error.syserror"), e);
 	}
@@ -102,7 +103,7 @@ public class NTPModel extends AbstractModel<TimePanelDescriptor> {
 	    smfEnabledProp.setValue(enabled_);
 	    smfEnabledProp.saveToRepo();
 
-	} catch (SecurityException e) {
+	} catch (RadPrivilegeException e) {
 	    throw new ActionUnauthorizedException(e);
 
 	} catch (ScfException e) {

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.util.swing.property;
@@ -36,7 +36,7 @@ import com.oracle.solaris.vp.util.swing.DocumentAdapter;
  * automatically be reflected in the other.
  */
 public class PasswordFieldPropertySynchronizer
-    extends PropertySynchronizer<char[], JPasswordField> {
+    extends PropertySynchronizer<String, JPasswordField> {
 
     //
     // Instance data
@@ -54,7 +54,7 @@ public class PasswordFieldPropertySynchronizer
     // Constructors
     //
 
-    public PasswordFieldPropertySynchronizer(MutableProperty<char[]> property,
+    public PasswordFieldPropertySynchronizer(MutableProperty<String> property,
 	JPasswordField field, boolean initFromProp) {
 
 	super(property, field, initFromProp);
@@ -65,7 +65,7 @@ public class PasswordFieldPropertySynchronizer
      * Constructs a {@code PasswordFieldPropertySynchronizer} with initial
      * synchronization from the property to the {@code JPasswordField}.
      */
-    public PasswordFieldPropertySynchronizer(MutableProperty<char[]> property,
+    public PasswordFieldPropertySynchronizer(MutableProperty<String> property,
 	JPasswordField field) {
 
 	this(property, field, true);
@@ -82,12 +82,12 @@ public class PasswordFieldPropertySynchronizer
     }
 
     @Override
-    public char[] getValue() {
-	return getObject().getPassword();
+    public String getValue() {
+	return new String(getObject().getPassword());
     }
 
     @Override
-    public void setValue(char[] value) {
+    public void setValue(String value) {
 	String text = value == null ? "" : new String(value);
 	getObject().setText(text);
     }

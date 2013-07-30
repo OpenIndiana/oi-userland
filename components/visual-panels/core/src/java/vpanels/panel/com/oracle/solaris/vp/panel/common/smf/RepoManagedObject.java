@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -29,12 +29,9 @@ import java.beans.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.*;
-import javax.management.*;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.ObjectException;
-import com.oracle.solaris.rad.jmx.RadNotification;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.panel.common.*;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
 import com.oracle.solaris.vp.panel.common.api.file.*;
 import com.oracle.solaris.vp.panel.common.api.smf_old.*;
 import com.oracle.solaris.vp.panel.common.model.*;
@@ -43,36 +40,16 @@ public class RepoManagedObject
     extends AbstractManagedObject<InstanceManagedObject> {
 
     //
-    // Static data
-    //
-
-    private static final String DOMAIN = MBeanUtil.VP_DOMAIN + ".smf_old";
-    private static final ObjectName oName =
-	MBeanUtil.makeObjectName(DOMAIN, "Aggregator");
-
-    //
     // Instance data
     //
 
     private Set<Service> services;
     private Set<Instance> instances;
-    private Map<ObjectName, SmfManagedObject> objects;
+    private Map<ADRName, SmfManagedObject> objects;
     private AbstractManagedObject<ServiceManagedObject> serviceMo;
 
-    private MXBeanTracker<AggregatorMXBean> beanTracker;
-    private MXBeanTracker<FileBrowserMXBean> filebeanTracker;
-
-    private NotificationListener stateListener =
-	new NotificationListener() {
-	    @Override
-	    public void handleNotification(Notification notification,
-		Object handback) {
-
-		StateChange sc = ((RadNotification)notification).getPayload(
-		    StateChange.class);
-		stateChanged(sc);
-	    }
-	};
+    private BeanTracker<Aggregator> beanTracker;
+    private BeanTracker<FileBrowser> filebeanTracker;
 
     private PropertyChangeListener beanListener =
 	new PropertyChangeListener() {
@@ -87,22 +64,18 @@ public class RepoManagedObject
     //
 
     public RepoManagedObject(String id, ClientContext context)
-	throws InstanceNotFoundException, IOException, TrackerException {
+	throws IOException, TrackerException {
 
 	super(id);
 
-	beanTracker = new MXBeanTracker<AggregatorMXBean>(
-	    oName, AggregatorMXBean.class, Stability.PRIVATE, context);
-
-	beanTracker.addNotificationListener(stateListener,
-	    SmfUtil.NOTIFY_FILTER_STATE_CHANGE, null);
+	beanTracker = new BeanTracker<Aggregator>(
+	    (new Aggregator()).getName(), Aggregator.class, context);
 
 	beanTracker.addPropertyChangeListener(
-	    MXBeanTracker.PROPERTY_BEAN, beanListener);
+	    BeanTracker.PROPERTY_BEAN, beanListener);
 
-	filebeanTracker = new MXBeanTracker<FileBrowserMXBean>(
-            FileBrowserUtil.OBJECT_NAME, FileBrowserMXBean.class,
-            Stability.PRIVATE, context);
+	filebeanTracker = new BeanTracker<FileBrowser>(
+            (new FileBrowser()).getName(), FileBrowser.class, context);
 
 	objects = Collections.emptyMap();
 	serviceMo = new AbstractManagedObject<ServiceManagedObject>() {};
@@ -129,19 +102,12 @@ public class RepoManagedObject
     //
 
     public boolean hasInstance(String service) {
-	ObjectName pattern;
-
-	try {
-	    pattern = ServiceUtil.getServiceObjectName(service, "*");
-	} catch (MalformedObjectNameException ex) {
-	    return false;
-	}
-
-	for (Instance instance : instances)
-	    if (pattern.apply(instance.getObjectName())) {
+	String pattern = ServiceUtil.getServiceObjectName(service, ".*").
+	    toString();
+	for (Instance instance : instances) {
+	    if (instance.getObjectName().toString().matches(pattern))
 		return true;
-	    }
-
+	}
 	return false;
     }
 
@@ -174,7 +140,7 @@ public class RepoManagedObject
     public boolean fileExists(String filename) {
 	try {
 	    return filebeanTracker.getBean().getFile(filename).isExists();
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	}
 	return false;
     }
@@ -187,12 +153,12 @@ public class RepoManagedObject
 	services = Collections.emptySet();
 	instances = Collections.emptySet();
 
-	AggregatorMXBean bean = beanTracker.getBean();
+	Aggregator bean = beanTracker.getBean();
 	if (bean != null) {
 	    try {
 		services = new HashSet<Service>(bean.getservices());
 		instances = new HashSet<Instance>(bean.getinstances());
-	    } catch (ObjectException e) {
+	    } catch (RadObjectException e) {
 		Logger.getLogger(getClass().getName()).log(Level.SEVERE,
 		    "could not retrieve smf services/instances", e);
 	    }
@@ -208,13 +174,13 @@ public class RepoManagedObject
 
 	clearChildren();
 	serviceMo.clearChildren();
-	Map<ObjectName, SmfManagedObject> oldObjects = objects;
-	objects = new HashMap<ObjectName, SmfManagedObject>(objects);
+	Map<ADRName, SmfManagedObject> oldObjects = objects;
+	objects = new HashMap<ADRName, SmfManagedObject>(objects);
 
 	for (Service svc : services) {
-	    ObjectName oName = svc.getObjectName();
+	    ADRName name = svc.getObjectName();
             ServiceManagedObject smo =
-		(ServiceManagedObject)oldObjects.get(oName);
+		(ServiceManagedObject)oldObjects.get(name);
 	    if (smo == null) {
 		try {
 		    smo = new ServiceManagedObject(this,
@@ -223,19 +189,19 @@ public class RepoManagedObject
 		    smo = null;
 		}
 	    } else {
-		oldObjects.remove(oName);
+		oldObjects.remove(name);
 	    }
 
 	    if (smo != null) {
-		objects.put(oName, smo);
+		objects.put(name, smo);
 		serviceMo.addChildren(smo);
 	    }
 	}
 
 	for (Instance inst : instances) {
-	    ObjectName oName = inst.getObjectName();
+	    ADRName name = inst.getObjectName();
 	    InstanceManagedObject imo =
-		(InstanceManagedObject)oldObjects.get(oName);
+		(InstanceManagedObject)oldObjects.get(name);
 	    if (imo == null) {
 		try {
 		    imo = new InstanceManagedObject(
@@ -244,11 +210,11 @@ public class RepoManagedObject
 		    imo = null;
 		}
 	    } else {
-		oldObjects.remove(oName);
+		oldObjects.remove(name);
 	    }
 
 	    if (imo != null) {
-		objects.put(oName, imo);
+		objects.put(name, imo);
 		addChildren(imo);
 	    }
 	}
@@ -257,14 +223,6 @@ public class RepoManagedObject
 	// prepared for garbage collection
 	for (SmfManagedObject smo : oldObjects.values()) {
 	    smo.dispose();
-	}
-    }
-
-    private void stateChanged(StateChange sc) {
-	SmfManagedObject smo = objects.get(sc.getSource());
-	if (smo != null && smo instanceof InstanceManagedObject) {
-	    InstanceManagedObject imo = (InstanceManagedObject)smo;
-	    imo.handleStateChange(sc);
 	}
     }
 }

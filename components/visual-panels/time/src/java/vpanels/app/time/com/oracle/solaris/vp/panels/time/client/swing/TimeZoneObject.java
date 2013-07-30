@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.time.client.swing;
@@ -63,7 +63,7 @@ public class TimeZoneObject extends
 		onsave.run();
 	    }
 	};
-	panel_ = new TimeZonePanel(desc.getTimeMXBean(), updateModel);
+	panel_ = new TimeZonePanel(desc.getTimeBean(), updateModel);
         SimpleModelControl<?, TimePanelDescriptor, ?> control =
 	    SimpleModelControl.createControl(ID, NAME, desc, dataModel, panel_);
 	control.setHelpMapID("timezone");

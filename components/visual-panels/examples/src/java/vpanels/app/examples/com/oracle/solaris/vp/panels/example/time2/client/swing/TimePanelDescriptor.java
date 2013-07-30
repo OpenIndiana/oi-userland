@@ -20,19 +20,20 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.example.time2.client.swing;
 
-import com.oracle.solaris.adr.Stability;
+import java.io.IOException;
+import java.util.logging.Level;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.common.model.*;
 import com.oracle.solaris.vp.panel.swing.control.PanelFrameControl;
 import com.oracle.solaris.vp.panel.swing.model.SwingPanelDescriptor;
-import com.oracle.solaris.vp.panels.example.time2.*;
-import com.oracle.solaris.vp.panels.example.time2.common.TimeUtil;
+import com.oracle.solaris.vp.panels.example.example_time2.*;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
 
 public class TimePanelDescriptor
@@ -44,7 +45,7 @@ public class TimePanelDescriptor
     //
 
     private DefaultControl control;
-    private MXBeanTracker<TimeMXBean> beanTracker;
+    private Time bean;
 
     //
     // Constructors
@@ -61,15 +62,22 @@ public class TimePanelDescriptor
      *		    a handle to interact with the Visual Panels client
      */
     public TimePanelDescriptor(String id, ClientContext context)
-	throws TrackerException {
+	throws IOException {
 
 	super(id, context);
 
 	control = new PanelFrameControl<TimePanelDescriptor>(this);
 	control.addChildren(new TimeControl(this));
 
-	beanTracker = new MXBeanTracker<TimeMXBean>(
-	    TimeUtil.OBJECT_NAME, TimeMXBean.class, Stability.PRIVATE, context);
+	try {
+		Connection conn = context.getConnectionInfo().getConnection();
+		bean = conn.getObject(new Time());
+	} catch (IOException e) {
+	    String msg = "Error contacting server while creating " +
+		"proxy for: " + Time.class.getSimpleName();
+	    getLog().log(Level.SEVERE, msg, e);
+	    throw e;
+	}
     }
 
     //
@@ -81,7 +89,6 @@ public class TimePanelDescriptor
      */
     @Override
     public void dispose() {
-	beanTracker.dispose();
 	super.dispose();
     }
 
@@ -103,7 +110,7 @@ public class TimePanelDescriptor
     // TimePanelDescriptor methods
     //
 
-    public TimeMXBean getTimeBean() {
-	return beanTracker.getBean();
+    public Time getTimeBean() {
+	return bean;
     }
 }

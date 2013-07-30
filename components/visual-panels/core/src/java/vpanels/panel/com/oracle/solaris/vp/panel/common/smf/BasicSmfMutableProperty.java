@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -188,7 +188,7 @@ public abstract class BasicSmfMutableProperty<T>
 	for (T v : values)
 	    array.add(converter.revert(v));
 
-	ServiceMXBean service = info.getService();
+	ServiceBean service = info.getService();
 	String group = info.getPropertyGroupName();
 	String name = getSmfPropertyName();
 
@@ -304,7 +304,7 @@ public abstract class BasicSmfMutableProperty<T>
     }
 
     public void removeFromRepo() throws ScfException {
-	ServiceMXBean service = info.getService();
+	ServiceBean service = info.getService();
 	String group = info.getPropertyGroupName();
 	String name = getSmfPropertyName();
 

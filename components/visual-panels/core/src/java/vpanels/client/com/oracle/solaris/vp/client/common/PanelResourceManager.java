@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.client.common;
@@ -29,7 +29,6 @@ import java.io.*;
 import java.net.*;
 import java.security.*;
 import java.util.*;
-import com.oracle.solaris.rad.jmx.IncompatibleVersionException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.ActionAbortedException;
 import com.oracle.solaris.vp.panel.common.api.panel.*;
@@ -83,8 +82,8 @@ public abstract class PanelResourceManager {
 	List<URL> urls = new ArrayList<URL>();
 	boolean isLocal = NetUtil.isLocalAddress(info.getHost());
 
-	PanelMXBeanTracker tracker = null;
-	PanelMXBean bean = null;
+	PanelBeanTracker tracker = null;
+	Panel bean = null;
 
 	// Download each resource
 	for (ResourceDescriptor descriptor : panel.getResourceDescriptors()) {
@@ -212,31 +211,19 @@ public abstract class PanelResourceManager {
     // Private methods
     //
 
-    private PanelMXBeanTracker createTracker(ConnectionInfo info)
+    private PanelBeanTracker createTracker(ConnectionInfo info)
 	throws PanelResourceException {
 
-	PanelMXBeanTracker tracker;
+	PanelBeanTracker tracker;
 
 	try {
-	    tracker = new PanelMXBeanTracker();
+	    tracker = new PanelBeanTracker();
 	    tracker.setConnectionInfo(info);
 
 	} catch (TrackerException e) {
 	    Throwable cause = e.getCause();
-	    String message;
-
-	    if (cause instanceof IncompatibleVersionException) {
-		IncompatibleVersionException ive =
-		    (IncompatibleVersionException)cause;
-
-		message = Finder.getString("proxy.error.version",
-		    ive.getClientVersion(), ive.getServerVersion(),
-		    ive.getInterfaceClass().getSimpleName());
-	    } else {
-		message = Finder.getString("download.error.general",
-		    info.getHost());
-	    }
-
+	    String message = Finder.getString("download.error.general",
+		info.getHost());
 	    throw new PanelResourceException(message, cause);
 	}
 

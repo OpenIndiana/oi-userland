@@ -20,12 +20,13 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.firewall.client.swing;
 
 import java.util.List;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.swing.action.EnableManagedObjectAction;
 import com.oracle.solaris.vp.panel.swing.control.SwingControl;
@@ -59,7 +60,7 @@ public class EnableServiceAction
 		service.setEnabled(enable);
 //	    } catch (ScfException e) {
 //		SmfUtil.throwActionException(e);
-//	    } catch (SecurityException e) {
+//	    } catch (RadPrivilegeException e) {
 //		throw new ActionUnauthorizedException(e);
 //	    }
 	}

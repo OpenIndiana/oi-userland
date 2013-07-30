@@ -20,10 +20,24 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-# The only symbol modules need export is _rad_init.
+#
+# MAPFILE HEADER START
+#
+# WARNING:  STOP NOW.  DO NOT MODIFY THIS FILE.
+# Object versioning must comply with the rules detailed in
+#
+#	usr/src/lib/README.mapfiles
+#
+# You should not be making modifications here until you've read the most current
+# copy of that file. If you need help, contact a gatekeeper for guidance.
+#
+# MAPFILE HEADER END
+#
+
+# The only symbols that modules need to export are _rad_reg & _rad_init.
 # Enforcing this eliminates bloat and noise in .dynsym/.dynstr,
 # and in turn helps reduce disk and memory footprint.
 
@@ -31,23 +45,28 @@ $mapfile_version 2
 
 SYMBOL_VERSION SUNWprivate {
 	global:
+		_rad_fini;
 		_rad_init;
+		_rad_reg;
 
 		# Module API
 		rad_module_register	{ FLAGS = PARENT };
+		rad_module_init		{ FLAGS = PARENT };
+		rad_module_find_by_namespace	{ FLAGS = PARENT };
 
-		instance_create		{ FLAGS = PARENT };
-		instance_hold		{ FLAGS = PARENT };
-		instance_rele		{ FLAGS = PARENT };
-		instance_getname	{ FLAGS = PARENT };
-		instance_getdata	{ FLAGS = PARENT };
-		instance_notify		{ FLAGS = PARENT };
+		rad_instance_create	{ FLAGS = PARENT };
+		rad_instance_hold	{ FLAGS = PARENT };
+		rad_instance_rele	{ FLAGS = PARENT };
+		rad_instance_getname	{ FLAGS = PARENT };
+		rad_instance_getdata	{ FLAGS = PARENT };
+		rad_instance_notify	{ FLAGS = PARENT };
 
-		cont_insert		{ FLAGS = PARENT };
-		cont_insert_singleton	{ FLAGS = PARENT };
-		cont_insert_singleton_id	{ FLAGS = PARENT };
-		cont_remove		{ FLAGS = PARENT };
-		cont_register_dynamic	{ FLAGS = PARENT };
+		rad_cont_insert		{ FLAGS = PARENT };
+		rad_cont_insert_singleton	{ FLAGS = PARENT };
+		rad_cont_insert_singleton_id	{ FLAGS = PARENT };
+		rad_cont_remove		{ FLAGS = PARENT };
+		rad_cont_supercede	{ FLAGS = PARENT };
+		rad_cont_register_dynamic	{ FLAGS = PARENT };
 
 		rad_log			{ FLAGS = PARENT };
 		rad_log_alloc		{ FLAGS = PARENT };
@@ -86,26 +105,6 @@ SYMBOL_VERSION SUNWprivate {
 
 		rad_isproxy		{ FLAGS = PARENT };
 		rad_container		{ FLAGS = PARENT };
-
-		# Lists
-		list_create		{ FLAGS = PARENT };
-		list_destroy		{ FLAGS = PARENT };
-		list_head		{ FLAGS = PARENT };
-		list_insert_after	{ FLAGS = PARENT };
-		list_insert_before	{ FLAGS = PARENT };
-		list_insert_head	{ FLAGS = PARENT };
-		list_insert_tail	{ FLAGS = PARENT };
-		list_is_empty		{ FLAGS = PARENT };
-		list_link_active	{ FLAGS = PARENT };
-		list_link_init		{ FLAGS = PARENT };
-		list_link_replace	{ FLAGS = PARENT };
-		list_move_tail		{ FLAGS = PARENT };
-		list_next		{ FLAGS = PARENT };
-		list_prev		{ FLAGS = PARENT };
-		list_remove		{ FLAGS = PARENT };
-		list_remove_head	{ FLAGS = PARENT };
-		list_remove_tail	{ FLAGS = PARENT };
-		list_tail		{ FLAGS = PARENT };
 	local:
 		*;
 };

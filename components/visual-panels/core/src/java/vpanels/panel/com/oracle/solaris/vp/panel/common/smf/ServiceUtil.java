@@ -20,16 +20,16 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
 
 import java.text.DateFormat;
 import java.util.*;
-import javax.management.*;
+import com.oracle.solaris.rad.client.ADRName;
 import com.oracle.solaris.scf.common.FMRI;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
+import com.oracle.solaris.vp.panel.common.api.smf_old.ServiceInfo;
 import com.oracle.solaris.vp.panel.common.api.smf_old.SmfState;
 import com.oracle.solaris.vp.panel.common.model.ManagedObjectStatus;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
@@ -40,74 +40,84 @@ public class ServiceUtil {
     //
 
     public static final String SERVICE_DOMAIN =
-	MBeanUtil.VP_DOMAIN + ".smf_old";
+	"com.oracle.solaris.vp.panel.common.api.smf_old";
 
     //
     // Static methods
     //
 
-    public static ObjectName getServiceObjectName(
-	String service, String instance) throws MalformedObjectNameException {
+    public static ADRName getServiceObjectName(
+	String service, String instance) {
 
-	/*
-	 * We don't use ObjectName.quote() because we can be called to
-	 * construct a pattern, and no valid FMRI characters require quoting
-	 * in a quoted ObjectName values.
-	 */
-	String namestr = String.format("%s:type=service,service=\"%s\"",
+	String namestr = String.format("%s:type=ServiceInfo,service=%s",
 	    SERVICE_DOMAIN, service);
 	if (instance != null)
-	    namestr = String.format("%s,instance=\"%s\"", namestr, instance);
+	    namestr = String.format("%s,instance=%s", namestr, instance);
 
-	return (new ObjectName(namestr));
+	return (new ADRName(namestr));
     }
 
-    public static ObjectName toObjectName(String service, String instance)
-    {
+    public static ADRName toADRName(String service, String instance) {
 	try {
 		return (getServiceObjectName(service, instance));
-	} catch (MalformedObjectNameException e) {
+	} catch (Exception e) {
 		throw (new IllegalArgumentException(e));
 	}
     }
 
-    public static ObjectName toObjectName(FMRI fmri)
-    {
+    public static ADRName toADRName(FMRI fmri) {
 	switch (fmri.getSvcType()) {
 	case INSTANCE:
-	    return (toObjectName(fmri.getService(), fmri.getInstance()));
+	    return (toADRName(fmri.getService(), fmri.getInstance()));
 	case SERVICE:
-	    return (toObjectName(fmri.getService(), null));
+	    return (toADRName(fmri.getService(), null));
 	default:
 	    return (null);
 	}
     }
 
-    public static String toFMRI(ObjectName on)
-    {
-	String service = ObjectName.unquote(on.getKeyProperty("service"));
-	String instance = ObjectName.unquote(on.getKeyProperty("instance"));
+    public static String toFMRI(ADRName an) {
 
-	if (!on.getDomain().equals(SERVICE_DOMAIN) || service == null)
-	    throw (new IllegalArgumentException("Not an SMF ObjectName"));
+	String name = an.toString();
+	String[] pieces = name.split(":", 2);
+        String[] kvpairs = pieces[1].split(",");
+	String domain = pieces[0];
 
-	service = service.replace('+', ',');
-	if (instance != null)
-		instance = instance.replace('+', ',');
+	Map<String, String> kvs = new HashMap<String, String>();
+	for (String s : kvpairs) {
+		String[] kv = s.split("=");
+		kvs.put(kv[0], kv[1]);
+	}
+
+	String service = kvs.get("service");
+	String instance = kvs.get("instance");
+	if (!domain.equals(SERVICE_DOMAIN) || service == null)
+		throw new IllegalArgumentException("Not an SMF Object name");
 
 	return ("svc:/" + (instance == null ?
 	    service : service + ":" + instance));
     }
 
-    public static String toService(ObjectName on)
-    {
-	try {
-	    String service = on.getKeyProperty("service");
-	    if (on.getDomain().equals(SERVICE_DOMAIN) && service != null)
-		return ObjectName.unquote(service);
-	} catch (IllegalArgumentException e) {
+    public static String toService(ADRName an) {
+
+	String name = an.toString();
+	String[] pieces = name.split(":", 2);
+	String[] kvpairs = pieces[1].split(",");
+	String domain = pieces[0];
+	String service = null;
+
+	for (int i = 0; i < kvpairs.length; i++) {
+		if (kvpairs[i].startsWith("service=")) {
+			String[] kv = kvpairs[i].split("=");
+			service = kv[1];
+			break;
+		}
 	}
-	throw new IllegalArgumentException("Not an SMF ObjectName");
+
+	if (domain.equals(SERVICE_DOMAIN) && service != null)
+		return service;
+	else
+		throw new IllegalArgumentException("Not an SMF Object name");
     }
 
     public static ManagedObjectStatus getPanelStatus(SmfState state) {

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -38,12 +38,9 @@ public class UserMgrUtils {
     private static final int VALID_UID = 100;
     private static final int VALID_HOMEDIRLEN = 2;
 
-    public static void clearPassword(char[] password) {
-	if (password != null) {
-	    for (int i = 0; i < password.length; i++) {
-		password[i] = 0;
-	    }
-	}
+    public static void clearPassword(String password) {
+	password = null;
+        return;
     }
 
     //
@@ -82,10 +79,12 @@ public class UserMgrUtils {
     }
 
     public static void validatePassword(boolean bNewUser,
-	char[] pass1, char[] pass2) throws ActionFailedException {
+	String pass1, String pass2) throws ActionFailedException {
 
 	// Ensure that the passwords match
-	if (!Arrays.equals(pass1, pass2)) {
+	if (pass1 != null && pass2 != null && pass1.equals(pass2))
+		return;
+	else {
 	    throw new ActionFailedException(
 		Finder.getString("usermgr.error.pass.nomatch"));
 	}

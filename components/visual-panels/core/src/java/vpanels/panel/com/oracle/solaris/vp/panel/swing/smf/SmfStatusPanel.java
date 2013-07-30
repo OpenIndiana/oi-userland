@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.swing.smf;
@@ -31,9 +31,7 @@ import java.beans.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.*;
-import javax.management.*;
 import javax.swing.*;
-import com.oracle.solaris.rad.jmx.RadNotification;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.api.smf_old.*;
 import com.oracle.solaris.vp.panel.common.smf.*;
@@ -98,25 +96,6 @@ public class SmfStatusPanel extends SettingsPanel {
 	    @Override
 	    public void propertyChange(PropertyChangeEvent event) {
 		serviceChanged();
-	    }
-	};
-
-    private NotificationListener notifyListener =
-	new NotificationListener() {
-	    @Override
-	    public void handleNotification(Notification n, Object h) {
-		final StateChange sc =
-		    ((RadNotification)n).getPayload(StateChange.class);
-
-		EventQueue.invokeLater(
-		    new Runnable() {
-			@Override
-			public void run() {
-			    setServiceState(sc.getState(),
-				sc.getNextState(), sc.getAuxState(),
-				sc.getStateTime());
-			}
-		    });
 	    }
 	};
 
@@ -221,14 +200,12 @@ public class SmfStatusPanel extends SettingsPanel {
     }
 
     public void init(ServiceTracker tracker)
-	throws InstanceNotFoundException, IOException {
+	throws IOException {
 
 	if (this.tracker != tracker) {
 	    if (this.tracker != null) {
 		this.tracker.removePropertyChangeListener(
 		    ServiceTracker.PROPERTY_SERVICE, serviceListener);
-                this.tracker.removeNotificationListener(notifyListener,
-		    SmfUtil.NOTIFY_FILTER_STATE_CHANGE, null);
 	    }
 
 	    this.tracker = tracker;
@@ -236,8 +213,6 @@ public class SmfStatusPanel extends SettingsPanel {
 	    if (tracker != null) {
 		tracker.addPropertyChangeListener(
 		    ServiceTracker.PROPERTY_SERVICE, serviceListener);
-                tracker.addNotificationListener(notifyListener,
-		    SmfUtil.NOTIFY_FILTER_STATE_CHANGE, null);
 	    }
 
 	    serviceChanged();
@@ -406,7 +381,7 @@ public class SmfStatusPanel extends SettingsPanel {
     }
 
     private void serviceChanged() {
-	ServiceMXBean service = tracker == null ? null : tracker.getService();
+	ServiceBean service = tracker == null ? null : tracker.getService();
 
 	Logger log = Logger.getLogger(getClass().getPackage().getName());
 

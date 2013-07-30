@@ -20,21 +20,13 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
-package com.oracle.solaris.vp.panels.example.time2.common;
+package com.oracle.solaris.vp.panel.common.api.time;
 
-import javax.management.ObjectName;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
+import com.oracle.solaris.vp.panels.time.*;
 
-public class TimeUtil {
-    //
-    // Static data
-    //
-
-    public static final String DOMAIN =
-	MBeanUtil.VP_PANEL_DOMAIN + ".example.time2";
-    public static final ObjectName OBJECT_NAME =
-        MBeanUtil.makeObjectName(DOMAIN, "Time");
+public interface HasTimeBean {
+    Time getTimeBean();
 }

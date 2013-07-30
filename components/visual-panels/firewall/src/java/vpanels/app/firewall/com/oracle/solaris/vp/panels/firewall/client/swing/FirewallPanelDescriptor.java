@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.firewall.client.swing;
@@ -29,13 +29,10 @@ import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.net.UnknownHostException;
 import java.util.*;
-import javax.management.*;
-import javax.management.remote.JMXConnector;
 import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.ObjectException;
-import com.oracle.solaris.rad.jmx.RadJMX;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.network.*;
@@ -83,7 +80,7 @@ public class FirewallPanelDescriptor
 
     private DefaultControl control;
     private RemoteFileSystemView fsView;
-    private MXBeanTracker<NetworkMXBean> networkBeanTracker;
+    private BeanTracker<Network> networkBeanTracker;
     private SimpleHasId tmpHasId = new SimpleHasId();
 
     private SimpleSmfPropertyGroupInfo defaultPgInfo;
@@ -99,17 +96,16 @@ public class FirewallPanelDescriptor
     //
 
     public FirewallPanelDescriptor(String id,
-	ClientContext context) throws InstanceNotFoundException, IOException,
+	ClientContext context) throws IOException,
 	ScfException, InvalidScfDataException, MissingScfDataException,
-	JMException, TrackerException {
+	TrackerException {
 
 	super(id, context, SERVICE, INSTANCE);
 
 	fsView = new RemoteFileSystemView(context);
 
-	networkBeanTracker = new MXBeanTracker<NetworkMXBean>(
-	    NetworkUtil.OBJECT_NAME, NetworkMXBean.class, Stability.PRIVATE,
-	    context);
+	networkBeanTracker = new BeanTracker<Network>(
+	    (new Network()).getName(), Network.class, context);
 
 	setComparator(SimpleHasId.COMPARATOR);
 
@@ -313,7 +309,7 @@ public class FirewallPanelDescriptor
 	    getEnabledProperty().reset();
     }
 
-    public NetworkMXBean getNetworkMXBean() {
+    public Network getNetworkBean() {
 	return networkBeanTracker.getBean();
     }
 
@@ -330,27 +326,20 @@ public class FirewallPanelDescriptor
     }
 
     private void populateServiceList() throws ScfException,
-	InvalidScfDataException, MissingScfDataException, JMException {
+	InvalidScfDataException, MissingScfDataException {
 
 	ConnectionInfo cinfo = getClientContext().getConnectionInfo();
-	JMXConnector jmxc = cinfo.getConnector();
+	Connection conn = cinfo.getConnection();
 
 	Set<Instance> instances = null;
-	MBeanServerConnection mbsc = null;
-	AggregatorMXBean aggbean = null;
 
 	try {
-	    ObjectName on =
-		new ObjectName("com.oracle.solaris.vp.panel.common.api.smf_old"
-		    + ":type=Aggregator");
-	    mbsc = jmxc.getMBeanServerConnection();
-	    aggbean = RadJMX.newMXBeanProxy(mbsc, on,
-		AggregatorMXBean.class, Stability.PRIVATE);
+	    Aggregator aggbean = conn.getObject(new Aggregator());
 	    instances = new HashSet<Instance>(aggbean.getinstances());
 
 	    for (Instance inst : instances) {
 		ServiceManagedObject sobj = new ServiceManagedObject(this,
-		    mbsc, inst);
+		    conn, inst);
 
 		if (!sobj.isFirewallSupported())
 		    continue;
@@ -365,11 +354,9 @@ public class FirewallPanelDescriptor
 		    super.addChildren(sobj);
 		}
 	    }
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	} catch (IOException e) {
-	} catch (MalformedObjectNameException e) {
-	} catch (InstanceNotFoundException e) {
-	} catch (JMException e) {
+	} catch (Exception e) {
 	    throw e; // Propagate proxy creation exception
 	}
 

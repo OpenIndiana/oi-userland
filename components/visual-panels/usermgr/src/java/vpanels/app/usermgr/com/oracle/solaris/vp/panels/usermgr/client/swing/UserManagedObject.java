@@ -27,6 +27,7 @@ package com.oracle.solaris.vp.panels.usermgr.client.swing;
 
 import java.util.*;
 import javax.swing.*;
+import com.oracle.solaris.rad.client.ADRUinteger;
 import com.oracle.solaris.vp.panel.common.model.AbstractManagedObject;
 import com.oracle.solaris.rad.usermgr.*;
 import com.oracle.solaris.vp.util.misc.*;
@@ -59,10 +60,10 @@ public class UserManagedObject
     private UserMgrPanelDescriptor descriptor;
     private UserType type = UserType.NORMAL;
     private boolean isNewUser = false;
-    private UserChangeFieldsImpl modChanges = null;
+    private UserChangeFields modChanges = null;
 
-    private MutableProperty<Long> groupIdProperty =
-	new LongProperty();
+    private MutableProperty<ADRUinteger> groupIdProperty =
+	new ADRUintProperty();
 
     private MutableProperty<String> homeDirProperty =
 	new StringProperty();
@@ -88,8 +89,8 @@ public class UserManagedObject
     private MutableProperty<String> userDescProperty =
 	new StringProperty();
 
-    private MutableProperty<Long> userIdProperty =
-	new LongProperty();
+    private MutableProperty<ADRUinteger> userIdProperty =
+	new ADRUintProperty();
 
     private MutableProperty<String> userNameProperty =
 	new StringProperty();
@@ -97,8 +98,8 @@ public class UserManagedObject
     private MutableProperty<String> accountStatusProperty =
 	new StringProperty();
 
-    private MutableProperty<char[]> passProperty =
-	new BasicMutableProperty<char[]>();
+    private MutableProperty<String> passProperty =
+	new BasicMutableProperty<String>();
     {
         ChangeableAggregator aggregator = getChangeableAggregator();
 	aggregator.addChangeables(groupIdProperty, homeDirProperty,
@@ -113,7 +114,7 @@ public class UserManagedObject
 
     UserManagedObject(UserMgrPanelDescriptor descriptor,
 	User user, UserType type,
-	char[] password, boolean bNewUser) {
+	String password, boolean bNewUser) {
 
 	this.descriptor = descriptor;
 	this.type = type;
@@ -140,7 +141,7 @@ public class UserManagedObject
     }
 
     UserManagedObject(UserMgrPanelDescriptor descriptor,
-	User user, char[] password) {
+	User user, String password) {
 	this(descriptor, user, UserType.NORMAL, password, true);
     }
 
@@ -207,8 +208,7 @@ public class UserManagedObject
 
     }
 
-    public void setUser(User user, char[] password) {
-
+    public void setUser(User user, String password) {
 	setUser(user);
 
 	passProperty.update(password, true);
@@ -217,7 +217,7 @@ public class UserManagedObject
     // UserManagedObject methods
     //
 
-    public MutableProperty<Long> getGroupIdProperty() {
+    public MutableProperty<ADRUinteger> getGroupIdProperty() {
 	return groupIdProperty;
     }
 
@@ -249,7 +249,7 @@ public class UserManagedObject
 	return userDescProperty;
     }
 
-    public MutableProperty<char[]> getPassProperty() {
+    public MutableProperty<String> getPassProperty() {
 	return passProperty;
     }
 
@@ -257,7 +257,7 @@ public class UserManagedObject
 	return shellProperty;
     }
 
-    public MutableProperty<Long> getUserIdProperty() {
+    public MutableProperty<ADRUinteger> getUserIdProperty() {
 	return userIdProperty;
     }
 
@@ -277,11 +277,11 @@ public class UserManagedObject
 	return userDescProperty.getValue();
     }
 
-    public long getUserId() {
+    public ADRUinteger getUserId() {
 	return userIdProperty.getValue();
     }
 
-    public long getGroupId() {
+    public ADRUinteger getGroupId() {
 	return groupIdProperty.getValue();
     }
 
@@ -289,7 +289,7 @@ public class UserManagedObject
 	return homeDirProperty.getValue();
     }
 
-    public char[] getPassword() {
+    public String getPassword() {
 	return passProperty.getValue();
     }
 
@@ -346,8 +346,8 @@ public class UserManagedObject
 
     // Construct a new User object from the defined properties
     public User getNewUser() {
+	User newUser = getUninitializedUser();
 
-	UserImpl newUser = new UserImpl();
 	newUser.setUsername(getUsername());
 	newUser.setUserID(getUserId());
 	newUser.setGroupID(getGroupId());
@@ -387,8 +387,11 @@ public class UserManagedObject
     // Construct a User object with only modified properties set
     public User getModifiedUser() {
 	boolean bChanged = false;
-	UserImpl modUser = new UserImpl();
-	modChanges = new UserChangeFieldsImpl();
+	User modUser = getUninitializedUser();
+	modChanges = new UserChangeFields(false, false, false,
+		false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false,
+		false, false, false, false, false, false, false);
 
 	// check each property for changes
 	if (userDescProperty.isChanged()) {
@@ -403,6 +406,7 @@ public class UserManagedObject
 	    modUser.setGroupID(getGroupId());
 	    bChanged = true;
 	}
+
 	if (passProperty.isChanged()) {
 	    bChanged = true;
 	}
@@ -483,7 +487,20 @@ public class UserManagedObject
 	return (list);
     }
 
-    public UserChangeFieldsImpl getModifiedChanges() {
+    public UserChangeFields getModifiedChanges() {
         return (modChanges);
+    }
+
+    /*
+     * Set User fields to initial values
+     */
+    private User getUninitializedUser() {
+	return new User(null,
+	    new ADRUinteger(0L), descriptor.getDefaultGroupID(),
+	    null, null, null,
+	    0, 0, 0, 0,
+	    null, null, null, null, null, null,
+	    null, null, null, null, null, null,
+	    null, null, null, null, null, null, null);
     }
 }

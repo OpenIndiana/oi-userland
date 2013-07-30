@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -97,7 +97,7 @@ public class SmfEnabledProperty extends BooleanProperty
 
     @Override
     public void setRepoValue(Boolean value) throws ScfException {
-	ServiceMXBean service = info.getService();
+	ServiceBean service = info.getService();
 	service.setPersistentlyEnabled(value);
     }
 

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common;
@@ -28,22 +28,22 @@ package com.oracle.solaris.vp.panel.common;
 import java.beans.PropertyChangeEvent;
 import java.io.IOException;
 import java.util.logging.*;
-import javax.management.*;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.jmx.*;
+import com.oracle.solaris.rad.client.ADRName;
+import com.oracle.solaris.rad.client.RadException;
+import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.vp.util.misc.ObjectUtil;
 import com.oracle.solaris.vp.util.misc.event.PropertyChangeListeners;
 
 /**
- * The {@code MXBeanTracker} is a {@link ConnectionTracker} that automatically
- * creates and re-creates an {@link #getBean MXBean} after changes in the {@link
- * #setMBeanServerConnection MBeanServerConnection} or {@link #setObjectName
+ * The {@code BeanTracker} is a {@link ConnectionTracker} that automatically
+ * creates and re-creates an {@link #getBean Bean} after changes in the {@link
+ * #setServerConnection ServerConnection} or {@link #setObjectName
  * ObjectName}.
  * </p>
- * A property change notification is sent out when the tracked {@code MXBean}
+ * A property change notification is sent out when the tracked {@code Bean}
  * changes.
  */
-public class MXBeanTracker<T> extends ConnectionTracker {
+public class BeanTracker<T> extends ConnectionTracker {
     //
     // Static data
     //
@@ -59,27 +59,26 @@ public class MXBeanTracker<T> extends ConnectionTracker {
 
     private Class<T> clazz;
     private T bean;
-    private Stability stability;
 
     //
     // Constructors
     //
 
-    public MXBeanTracker(ObjectName oName, Class<T> clazz, Stability stability)
+    public BeanTracker(ADRName aName, Class<T> clazz)
     {
-	super(oName);
+	super(aName);
 	try {
-	    setClass(clazz, stability);
+	    setClass(clazz);
 
-	// Impossible because mbsc not yet set
+	// Impossible because ServerConnection not yet set
 	} catch (TrackerException impossible) {
 	}
     }
 
-    public MXBeanTracker(ObjectName oName, Class<T> clazz, Stability stability,
+    public BeanTracker(ADRName aName, Class<T> clazz,
 	ClientContext context) throws TrackerException {
 
-	this(oName, clazz, stability);
+	this(aName, clazz);
 	setClientContext(context);
     }
 
@@ -88,38 +87,36 @@ public class MXBeanTracker<T> extends ConnectionTracker {
     //
 
     @Override
-    public void setMBeanServerConnection(MBeanServerConnection mbsc)
+    public void setServerConnection(Connection conn)
 	throws TrackerException {
 
-	if (getMBeanServerConnection() != mbsc) {
-	    super.setMBeanServerConnection(mbsc);
+	if (getServerConnection() != conn) {
+	    super.setServerConnection(conn);
 	    setBean();
 	}
     }
 
     @Override
-    public void setObjectName(ObjectName oName)
+    public void setObjectName(ADRName aName)
 	throws TrackerException {
 
-	if (!ObjectUtil.equals(getObjectName(), oName)) {
-	    super.setObjectName(oName);
+	if (!ObjectUtil.equals(getObjectName(), aName)) {
+	    super.setObjectName(aName);
 	    setBean();
 	}
     }
 
     //
-    // MXBeanTracker methods
+    // BeanTracker methods
     //
 
-    protected T createBean() throws JMException,
-	IncompatibleVersionException, IOException {
+    protected T createBean() throws RadException, IOException {
 
 	T bean = null;
-	MBeanServerConnection mbsc = getMBeanServerConnection();
-	ObjectName oName = getObjectName();
-	if (mbsc != null && oName != null && clazz != null && stability != null)
-	{
-	    bean = RadJMX.newMXBeanProxy(mbsc, oName, clazz, stability);
+	Connection conn = getServerConnection();
+	ADRName aname = getObjectName();
+	if (conn != null && aname != null && clazz != null) {
+		bean = conn.getObject(aname);
 	}
 
 	return bean;
@@ -131,10 +128,6 @@ public class MXBeanTracker<T> extends ConnectionTracker {
 
     public Class<T> getBeanClass() {
 	return clazz;
-    }
-
-    public Stability getStability() {
-	return stability;
     }
 
     public void setBean(T bean) {
@@ -150,11 +143,10 @@ public class MXBeanTracker<T> extends ConnectionTracker {
     // Private methods
     //
 
-    private void setClass(Class<T> clazz, Stability stability)
+    private void setClass(Class<T> clazz)
 	throws TrackerException {
 
 	this.clazz = clazz;
-	this.stability = stability;
 	setBean();
     }
 
@@ -165,19 +157,13 @@ public class MXBeanTracker<T> extends ConnectionTracker {
 
 	try {
 	    bean = createBean();
-
-	} catch (IncompatibleVersionException e) {
+	} catch (RadException e) {
 	    cause = e;
-	    message = "Incompatible client and server versions for: "
-		+ clazz.getSimpleName();
-
-	} catch (JMException e) {
-	    cause = e;
-	    message = "Error getting MBean information for: " + getObjectName();
-
+	    message = "Error getting object information for: "
+		+ getObjectName();
 	} catch (IOException e) {
 	    cause = e;
-	    message = "Error contacting MBean server while "
+	    message = "Error contacting server while "
 		+ "creating proxy for: " + clazz.getSimpleName();
 	}
 

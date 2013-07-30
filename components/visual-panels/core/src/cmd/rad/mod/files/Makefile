@@ -20,14 +20,15 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(SRC)/make-rules/Makefile.env
 
+VERS=.1
 MOD_APIS=file
 MOD_OBJS=mod_files.o
-MOD_LIBNAME=mod_files.so
+MOD_LIBNAME=mod_files.so$(VERS)
 MOD_INSTALLDIR=$(RADDIR_MODULE)
 APISDIR=../../../../apis
 

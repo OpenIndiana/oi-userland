@@ -20,16 +20,17 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.time.client.swing;
 
 import java.util.Date;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.common.model.AbstractModel;
-import com.oracle.solaris.vp.panels.time.TimeMXBean;
+import com.oracle.solaris.vp.panels.time.Time;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
 
 public class TimeModel extends AbstractModel<TimePanelDescriptor> {
@@ -48,9 +49,9 @@ public class TimeModel extends AbstractModel<TimePanelDescriptor> {
 
     public void load() {
 	try {
-	    offset_ = getSource().getTimeMXBean().gettime().getTime() -
+	    offset_ = getSource().getTimeBean().gettime().getTime() -
 		System.currentTimeMillis();
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    offset_ = 0;
 	}
     }
@@ -58,15 +59,15 @@ public class TimeModel extends AbstractModel<TimePanelDescriptor> {
     public void save() throws ActionFailedException,
 	ActionUnauthorizedException {
 
-	TimeMXBean bean = getSource().getTimeMXBean();
+	Time bean = getSource().getTimeBean();
 
 	try {
 	    bean.settime(new Date(System.currentTimeMillis() + offset_));
 
-	} catch (SecurityException e) {
+	} catch (RadPrivilegeException e) {
 	    throw new ActionUnauthorizedException(e);
 
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    throw new ActionFailedException(Finder.getString(
 		"time.time.error.syserror"), e);
 	}

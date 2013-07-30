@@ -20,13 +20,14 @@
  */
 
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.example.time2.client.swing;
 
 import java.util.Date;
-import com.oracle.solaris.rad.ObjectException;
+import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.vp.panel.common.action.*;
 import com.oracle.solaris.vp.panel.swing.control.SettingsControl;
 
@@ -61,9 +62,9 @@ public class TimeControl
 	    long time = date.getTime();
 	    try {
 		getPanelDescriptor().getTimeBean().settime(time);
-	    } catch (ObjectException e) {
+	    } catch (RadObjectException e) {
 		throw new ActionFailedException(e);
-	    } catch (SecurityException e) {
+	    } catch (RadPrivilegeException e) {
 		throw new ActionUnauthorizedException(e);
 	    }
 	}
@@ -91,7 +92,7 @@ public class TimeControl
 	try {
 	    long time = getPanelDescriptor().getTimeBean().gettime();
 	    date = new Date(time);
-	} catch (ObjectException e) {
+	} catch (RadObjectException e) {
 	    /* Shouldn't happen */
 	    date = new Date();
 	}

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.time.client.swing;
@@ -89,7 +89,7 @@ public class ServersPropertySynchronizer
 	for (int row = 0; row < n; row++) {
 	    String server = (String)model.getValueAt(row, 0);
 	    Boolean enabled = (Boolean)model.getValueAt(row, 1);
-	    value[row] = new ServerInfoImpl(server, enabled);
+	    value[row] = new ServerInfo(server, enabled);
 	}
 
 	return value;

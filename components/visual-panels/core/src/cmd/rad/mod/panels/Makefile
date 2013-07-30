@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(SRC)/make-rules/Makefile.env
@@ -31,9 +31,10 @@ LDLIBS += -lxml2 -lcrypto
 # Compensate for libxml's lint library
 LINTFLAGS += -erroff=E_INCONS_ARG_DECL2
 
-MOD_APIS=panels
+VERS=.1
+MOD_APIS=panel
 MOD_OBJS=mod_panels.o
-MOD_LIBNAME=mod_panels.so
+MOD_LIBNAME=mod_panels.so$(VERS)
 MOD_INSTALLDIR=$(RADDIR_MODULE)
 
 DTDDIR=$(ROOT)/usr/share/lib/xml/dtd

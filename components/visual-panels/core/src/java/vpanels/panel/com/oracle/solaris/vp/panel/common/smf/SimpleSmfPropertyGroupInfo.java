@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -44,7 +44,7 @@ public class SimpleSmfPropertyGroupInfo implements SmfPropertyGroupInfo {
 	this.group = group;
     }
 
-    public SimpleSmfPropertyGroupInfo(ServiceMXBean service, String group) {
+    public SimpleSmfPropertyGroupInfo(ServiceBean service, String group) {
 	this(new SimpleHasService(service), group);
     }
 
@@ -53,7 +53,7 @@ public class SimpleSmfPropertyGroupInfo implements SmfPropertyGroupInfo {
     //
 
     @Override
-    public ServiceMXBean getService() {
+    public ServiceBean getService() {
 	return info.getService();
     }
 

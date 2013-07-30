@@ -20,19 +20,17 @@
  */
 
 /*
- * Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.zconsole.client.text;
 
 import java.io.IOException;
 import java.util.logging.Level;
-import javax.management.*;
-import com.oracle.solaris.adr.Stability;
-import com.oracle.solaris.rad.jmx.*;
-import com.oracle.solaris.rad.zonesbridge.IOMXBean;
+import com.oracle.solaris.rad.client.RadException;
+import com.oracle.solaris.rad.connect.Connection;
+import com.oracle.solaris.rad.zonesbridge.IO;
 import com.oracle.solaris.vp.panel.common.ClientContext;
-import com.oracle.solaris.vp.panel.common.api.panel.MBeanUtil;
 import com.oracle.solaris.vp.panel.common.control.Control;
 import com.oracle.solaris.vp.panel.common.model.*;
 
@@ -51,34 +49,22 @@ public class ZoneConsolePanelDescriptor
     //
 
     public ZoneConsolePanelDescriptor(String id, ClientContext context)
-	throws JMException, IncompatibleVersionException, IOException {
+	throws IOException {
 
 	super(id, context);
 
-	MBeanServerConnection mbsc = context.getConnectionInfo().getConnector().
-	    getMBeanServerConnection();
-
-	ObjectName oName = MBeanUtil.makeObjectName(
-	    "com.oracle.solaris.rad.zonesbridge", "IO");
-
-	IOMXBean bean;
+	IO bean = null;
 	try {
-	    bean = RadJMX.newMXBeanProxy(mbsc, oName, IOMXBean.class,
-		Stability.PRIVATE);
-	} catch (IncompatibleVersionException e) {
-	    String msg = "Incompatible client and server versions for: " +
-		IOMXBean.class.getSimpleName();
-	    getLog().log(Level.SEVERE, msg, e);
-	    throw e;
-	} catch (JMException e) {
-	    // InstanceNotFoundException, IntrospectionException,
-	    // or ReflectionException
-	    String msg = "Error getting MBean information for: " + oName;
+		Connection conn = context.getConnectionInfo().getConnection();
+		bean = conn.getObject(new IO());
+	} catch (RadException e) {
+	    String msg = "Error getting object information for: " +
+		IO.class.getSimpleName();
 	    getLog().log(Level.SEVERE, msg, e);
 	    throw e;
 	} catch (IOException e) {
-	    String msg = "Error contacting MBean server while creating " +
-		"proxy for: " + IOMXBean.class.getSimpleName();
+	    String msg = "Error contacting server while creating " +
+		"proxy for: " + IO.class.getSimpleName();
 	    getLog().log(Level.SEVERE, msg, e);
 	    throw e;
 	}
