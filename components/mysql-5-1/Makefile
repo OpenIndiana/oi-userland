@@ -36,6 +36,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+# Enable ASLR for this component
+#ASLR_MODE = $(ASLR_ENABLE)
+
 PATCH_LEVEL=0
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -56,16 +59,15 @@ CONFIGURE_MANDIR=$(CONFIGURE_PREFIX)/man
 # Although -norunpath is set in CXXFLAGS, we need to append
 # the -norunpath option here, so it's picked up when building
 # shared libraries (CC -G)
-CXX += $(studio_NORUNPATH)
+# CXX += $(studio_NORUNPATH)
 
 # C common compiler flags
-CFLAGS += -xstrconst -xprefetch=auto -xprefetch_level=3 -fns=no -fsimple=1 -xbuiltin=%none \
--xlibmil -xlibmopt -xnorunpath 
+# CFLAGS += -xstrconst -xprefetch=auto -xprefetch_level=3 -fns=no -fsimple=1 -xbuiltin=%none \
+# -xlibmil -xlibmopt -xnorunpath 
 
 # C++ common compiler flags
-CXXFLAGS += -DDBUG_OFF -noex -DBIG_TABLES -DHAVE_RWLOCK_T $(CC_PIC) $($(COMPILER)_opt) \
-$($(COMPILER)_MT) -xprefetch=auto -xprefetch_level=3 -fns=no -fsimple=1 -xbuiltin=%none \
--xlibmil -xlibmopt
+CXXFLAGS += -DDBUG_OFF -DBIG_TABLES -DHAVE_RWLOCK_T $(CC_PIC) $($(COMPILER)_opt) 
+
 
 #build environment common to both 32 & 64bit builds
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
@@ -75,7 +77,7 @@ COMPONENT_BUILD_ENV +=	LDFLAGS="$(LDFLAGS)"
 COMPONENT_BUILD_ENV.32 +=	CXXFLAGS="$(CXXFLAGS)" 
 
 #build environment applicable to only 64bit
-COMPONENT_BUILD_ENV.64 +=       CXXFLAGS="$(CXXFLAGS) -features=no%except" 
+COMPONENT_BUILD_ENV.64 +=       CXXFLAGS="$(CXXFLAGS)" 
 
 #common configure options for both 32 & 64bits
 CONFIGURE_OPTIONS +=	ac_cv_func_stpcpy=no
@@ -100,7 +102,6 @@ CONFIGURE_OPTIONS +=	--enable-local-infile
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS +=	studio_NORUNPATH="$(studio_NORUNPATH)"	
 
 CONFIGURE_OPTIONS.32 +=	--libexecdir=$(CONFIGURE_PREFIX)/bin
 CONFIGURE_OPTIONS.32 +=	--enable-dtrace DTRACEFLAGS='-32'
