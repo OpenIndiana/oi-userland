@@ -193,6 +193,91 @@ diff -r -u /tmp/ibutils-1.5.7/ibdiag/doc/Makefile.in ibutils-1.5.7/ibdiag/doc/Ma
  install_sh_PROGRAM = $(install_sh) -c
  install_sh_SCRIPT = $(install_sh) -c
  INSTALL_HEADER = $(INSTALL_DATA)
+diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/ibdebug.tcl ibutils-1.5.7/ibdiag/src/ibdebug.tcl
+--- /tmp/ibutils-1.5.7/ibdiag/src/ibdebug.tcl	Tue Mar  8 03:08:02 2011
++++ ibutils-1.5.7/ibdiag/src/ibdebug.tcl	Thu Jun 27 22:46:57 2013
+@@ -352,13 +352,16 @@
+     if {[file exists $ibisOutDir/$ibisLogFile] && (![file writable $ibisOutDir/$ibisLogFile])} {
+ 	set ibisLogFile $ibisLogFile.[pid]
+     }
++
++    ## Check if the file exists. If it does delete it. The log file is opened with the 'w' access
++    ## mode which truncates the file to zero length, so the contents are not preserved. Deleting
++    ## the file prevents any softlink based system file clobbering issues.
+     if {[file exists $ibisOutDir/$ibisLogFile]} {
+-	if {![file writable $ibisOutDir/$ibisLogFile]} {
+-	    if {![file writable $ibisOutDir/$ibisLogFile]} {
+-		catch {set ibisLogFd [open $ibisOutDir/$ibisLogFile w]} errMsg
+-		inform "-E-ibis:file.not.writable" -value $ibisOutDir/$ibisLogFile -errMsg $errMsg
+-	    }
+-	}
++        ## Since we have already verified the directory is writable and open with 'w' option
++        ## truncates the file, it is safe to delete the file if it exists.
++        if {[catch {file delete $ibisOutDir/$ibisLogFile} errMsg]} {
++            inform "-E-ibis:could.not.delete.file" -value $ibisOutDir/$ibisLogFile
++        }
+     }
+     inform "-V-ibis.ibis.log.file" -value $ibisOutDir/$ibisLogFile
+ 
+@@ -5123,6 +5126,16 @@
+         return 1
+     }
+ 
++    ## If the file exists delete the file to prevent any symlink
++    ## system file clobbering. The file is about to be opened with
++    ## the access mode of 'w', which will truncate the file to zero
++    ## length anyway. So, it is safe to delete the file now.
++    if {[file exists $G(outfiles,.db)]} {
++        if {[catch {file delete $G(outfiles,.db)} errMsg]} {
++           return 1
++        }
++    }
++
+     set FileID [InitializeOutputFile $G(var:tool.name).db]
+ 
+     foreach {array_name data} {G data* Neighbor *} {
+diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl
+--- /tmp/ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl	Thu Oct  7 07:29:56 2010
++++ ibutils-1.5.7/ibdiag/src/ibdebug_if.tcl	Wed Jun 19 07:43:17 2013
+@@ -675,6 +675,16 @@
+     }
+ 
+     ## Command line check - Test5.0: log file
++
++    ## The directory has been verified to be writable, delete the file if it exists since
++    ## we anyway open it with 'w' which will truncate it to zero length. Deleting the file
++    ## will prevent symlink based system file clobbering.
++    if {[file exists $G(outfiles,.log)]} {
++        if {[catch {file delete $G(outfiles,.log)} errMsg]} {
++            ## Print the delete failure error message and exit
++            inform "-E-loading:cannot.delete.file" $G(outfiles,.log) -fn $G(outfiles,.log) -errMsg $errMsg
++        }
++    }
+     if {[catch {set G(logFileID) [open $G(outfiles,.log) w]} errMsg]} {
+ 	 inform "-E-loading:cannot.open.file" $G(outfiles,.log) -fn $G(outfiles,.log) -errMsg $errMsg
+     }
+@@ -1229,6 +1239,10 @@
+ 	    append msgText "IBIS: The following file is write protected: $msgF(value)%n"
+ 	    append msgText "Error message: \"$msgF(errMsg)\""
+ 	}
++	"-E-ibis:could.not.delete.file" {
++	    append msgText "IBIS: Could not delete the file : $msgF(value)%n"
++	    append msgText "Error message: \"$msgF(errMsg)\""
++	}
+ 	"-V-ibis:ibis_get_local_ports_info" {
+ 	    append msgText "IBIS: ibis_get_local_ports_info:%n$msgF(value)"
+ 	}
+@@ -1260,6 +1274,10 @@
+ 	    append msgText "Failed to load ibdiag external DB from: $msgF(fn)%n"
+ 	    append msgText "Error message: \"$msgF(errMsg)\""
+ 	}
++	"-E-loading:cannot.delete.file" {
++	    append msgText "Could not delete the file : $msgF(fn)%n"
++	    append msgText "Error message: \"$msgF(errMsg)\""
++	}
+         "-W-loading:old.osm.version" {
+ 	    append msgText "OSM: The current OSM version is not up-to-date"
+ 	}
 diff -r -u /tmp/ibutils-1.5.7/ibdiag/src/Makefile.in ibutils-1.5.7/ibdiag/src/Makefile.in
 --- /tmp/ibutils-1.5.7/ibdiag/src/Makefile.in	Tue Mar  8 03:09:32 2011
 +++ ibutils-1.5.7/ibdiag/src/Makefile.in	Thu Feb 24 16:51:16 2011
