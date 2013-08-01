@@ -69,12 +69,15 @@ Puppet::Type.type(:dns).provide(:dns) do
                     svccfg("-s", @@dns_fmri, "setprop",
                            "config/" + field.to_s, "=", '"' + should + '"')
                 end
-                svccfg("-s", @@dns_fmri, "refresh")
             rescue => detail
                 raise Puppet::Error,
                     "Unable to set #{field.to_s} to #{should.inspect}\n"
                     "#{detail}\n"
             end
         end
+    end
+
+    def flush
+        svccfg("-s", @@dns_fmri, "refresh")
     end
 end

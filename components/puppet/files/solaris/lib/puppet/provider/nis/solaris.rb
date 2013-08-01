@@ -76,7 +76,6 @@ Puppet::Type.type(:nis).provide(:nis) do
             begin
                 svccfg("-s", @@client_fmri, "setprop", "config/" + field.to_s,
                        "=", '"' + should.to_s + '"')
-                svccfg("-s", @@client_fmri, "refresh")
             rescue => detail
                 raise Puppet::Error,
                     "Unable to set #{field.to_s} to #{should.inspect}\n"
@@ -110,12 +109,16 @@ Puppet::Type.type(:nis).provide(:nis) do
                     svccfg("-s", @@domain_fmri, "setprop",
                            "config/" + field.to_s, "=", '"' + should + '"')
                 end
-                svccfg("-s", @@domain_fmri, "refresh")
             rescue => detail
                 raise Puppet::Error,
                     "Unable to set #{field.to_s} to #{should.inspect}\n"
                     "#{detail}\n"
             end
         end
+    end
+
+    def flush
+        svccfg("-s", @@domain_fmri, "refresh")
+        svccfg("-s", @@client_fmri, "refresh")
     end
 end

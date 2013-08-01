@@ -61,12 +61,15 @@ Puppet::Type.type(:nsswitch).provide(:nsswitch) do
             begin
                 svccfg("-s", @@nsswitch_fmri, "setprop",
                        "config/" + field.to_s, "=", '"' + should + '"')
-                svccfg("-s", @@nsswitch_fmri, "refresh")
             rescue => detail
                 raise Puppet::Error,
                     "Unable to set #{field.to_s} to #{should.inspect}\n"
                     "#{detail}\n"
             end
         end
+    end
+
+    def flush
+        svccfg("-s", @@nsswitch_fmri, "refresh")
     end
 end
