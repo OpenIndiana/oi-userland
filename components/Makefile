@@ -66,6 +66,13 @@ ifeq   ($(strip $(PKGLINT_COMPONENT)),)
 publish:		MAKEFLAGS += PKGLINT=/bin/true
 endif
 
+# In order to work around an IPS simultaneous publication issue and to improve
+# top level build performance, we postpone catalog and index updates until the
+# end of the build.  Individual component builds postpone the updates until
+# they have published all of their packages.
+publish:		MAKEFLAGS += DISABLE_IPS_CATALOG_AND_INDEX_UPDATES=yes
+
+
 .DEFAULT:	publish
 
 build install publish test: $(COMPONENT_DIRS)
@@ -125,7 +132,7 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 			 $(@:%=--component %) --make $(TARGET) $(LOG)
 
 publish:
-	$(PKGREPO) rebuild -s $(PKG_REPO)
+	$(PKGREPO) refresh -s $(PKG_REPO)
 	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
 	  -p pkg:/consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation@0.$(OS_VERSION),$(BUILD_VERSION) \
 	  -s "$(CONSOLIDATION) consolidation incorporation" \
@@ -133,6 +140,7 @@ publish:
 	  -c $(CONSOLIDATION) >$(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
 	  $(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
+	$(PKGREPO) refresh -s $(PKG_REPO)
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'

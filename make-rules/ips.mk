@@ -286,14 +286,19 @@ FRC:
 
 
 # published
-PKGSEND_PUBLISH_OPTIONS = -s $(WS_REPO) publish --fmri-in-manifest
+PKGSEND_PUBLISH_OPTIONS = -s $(PKG_REPO) publish --fmri-in-manifest
+PKGSEND_PUBLISH_OPTIONS += --no-catalog
 PKGSEND_PUBLISH_OPTIONS += $(PKG_PROTO_DIRS:%=-d %)
 PKGSEND_PUBLISH_OPTIONS += -T \*.py
+
 $(MANIFEST_BASE)-%.published:	$(MANIFEST_BASE)-%.depend.res $(BUILD_DIR)/.linted-$(MACH)
 	$(PKGSEND) $(PKGSEND_PUBLISH_OPTIONS) $<
 	$(PKGFMT) <$< >$@
 
 $(BUILD_DIR)/.published-$(MACH):	$(PUBLISHED)
+ifndef DISABLE_IPS_CATALOG_AND_INDEX_UPDATES
+	$(PKGREPO) refresh -s $(PKG_REPO)
+endif
 	$(TOUCH) $@
 
 print-package-names:	canonical-manifests

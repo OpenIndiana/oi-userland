@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -54,7 +54,7 @@ $(MANIFEST_BASE)-%.mogrified: %.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) -D CONSOLIDATION=$(CONSOLIDATION) $< > $@
 
 $(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.mogrified $(BUILD_DIR)
-	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest $<
+	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest --no-catalog $<
 	$(CP) $< $@
 
 $(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(BUILD_DIR)
@@ -64,6 +64,9 @@ $(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(BUILD_DIR)
 	$(TOUCH) $@
 
 $(BUILD_DIR)/.published-$(MACH): $(BUILD_DIR)/.linted-$(MACH) $(PUBLISHED)
+ifndef DISABLE_IPS_CATALOG_AND_INDEX_UPDATES
+	$(PKGREPO) refresh -s $(PKG_REPO)
+endif
 	$(TOUCH) $@
 
 publish: $(BUILD_DIR)/.published-$(MACH)
