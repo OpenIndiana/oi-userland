@@ -1,0 +1,224 @@
+diff -ur fsvs-1.2.5/src/checksum.h fsvs-1.2.5/src/checksum.h
+--- fsvs-1.2.5/src/checksum.h	2009-01-19 10:29:41.000000000 +0300
++++ fsvs-1.2.5/src/checksum.h	2013-08-02 19:23:00.188863121 +0400
+@@ -11,7 +11,7 @@
+ 
+ #include "global.h"
+ #include "interface.h"
+-#include <subversion-1/svn_delta.h>
++#include <svn/svn_delta.h>
+ 
+ /** \file
+  * CRC, manber function header file. */
+diff -ur fsvs-1.2.5/src/commit.c fsvs-1.2.5/src/commit.c
+--- fsvs-1.2.5/src/commit.c	2009-10-12 23:05:54.000000000 +0400
++++ fsvs-1.2.5/src/commit.c	2013-08-02 19:22:16.386134178 +0400
+@@ -69,11 +69,11 @@
+ #include <apr_pools.h>
+ #include <apr_user.h>
+ #include <apr_file_io.h>
+-#include <subversion-1/svn_delta.h>
+-#include <subversion-1/svn_ra.h>
+-#include <subversion-1/svn_error.h>
+-#include <subversion-1/svn_string.h>
+-#include <subversion-1/svn_time.h>
++#include <svn/svn_delta.h>
++#include <svn/svn_ra.h>
++#include <svn/svn_error.h>
++#include <svn/svn_string.h>
++#include <svn/svn_time.h>
+ 
+ #include <sys/types.h>
+ #include <sys/mman.h>
+diff -ur fsvs-1.2.5/src/commit.h fsvs-1.2.5/src/commit.h
+--- fsvs-1.2.5/src/commit.h	2008-02-19 08:57:01.000000000 +0300
++++ fsvs-1.2.5/src/commit.h	2013-08-02 19:24:59.250624194 +0400
+@@ -9,7 +9,7 @@
+ #ifndef __COMMIT_H__
+ #define __COMMIT_H__
+ 
+-#include <subversion-1/svn_delta.h>
++#include <svn/svn_delta.h>
+ 
+ #include "actions.h"
+ 
+diff -ur fsvs-1.2.5/src/export.c fsvs-1.2.5/src/export.c
+--- fsvs-1.2.5/src/export.c	2009-10-12 23:05:54.000000000 +0400
++++ fsvs-1.2.5/src/export.c	2013-08-02 19:21:05.075336686 +0400
+@@ -14,9 +14,9 @@
+  * a WAA area.
+  * */
+ 
+-#include <subversion-1/svn_delta.h>
+-#include <subversion-1/svn_ra.h>
+-#include <subversion-1/svn_error.h>
++#include <svn/svn_delta.h>
++#include <svn/svn_ra.h>
++#include <svn/svn_error.h>
+ 
+ #include "export.h"
+ #include "helper.h"
+diff -ur fsvs-1.2.5/src/fsvs.c fsvs-1.2.5/src/fsvs.c
+--- fsvs-1.2.5/src/fsvs.c	2011-11-11 22:19:12.000000000 +0400
++++ fsvs-1.2.5/src/fsvs.c	2013-08-02 19:25:33.856166931 +0400
+@@ -18,7 +18,7 @@
+ 
+ #include <apr_pools.h>
+ 
+-#include <subversion-1/svn_error.h>
++#include <svn/svn_error.h>
+ 
+ #include "global.h"
+ #include "interface.h"
+diff -ur fsvs-1.2.5/src/global.h fsvs-1.2.5/src/global.h
+--- fsvs-1.2.5/src/global.h	2011-11-11 19:42:22.000000000 +0400
++++ fsvs-1.2.5/src/global.h	2013-08-02 19:23:19.992768041 +0400
+@@ -19,8 +19,8 @@
+ #include <sys/types.h>
+ #include <apr_md5.h>
+ #include <apr_file_io.h>
+-#include <subversion-1/svn_ra.h>
+-#include <subversion-1/svn_string.h>
++#include <svn/svn_ra.h>
++#include <svn/svn_string.h>
+ #include <pcre.h>
+ 
+ 
+diff -ur fsvs-1.2.5/src/helper.c fsvs-1.2.5/src/helper.c
+--- fsvs-1.2.5/src/helper.c	2011-04-26 10:44:42.000000000 +0400
++++ fsvs-1.2.5/src/helper.c	2013-08-02 19:24:38.833573553 +0400
+@@ -19,7 +19,7 @@
+ #include <pwd.h>
+ #include <apr_file_io.h>
+ #include <apr_md5.h>
+-#include <subversion-1/svn_config.h>
++#include <svn/svn_config.h>
+ 
+ #include "global.h"
+ #include "waa.h"
+diff -ur fsvs-1.2.5/src/log.c fsvs-1.2.5/src/log.c
+--- fsvs-1.2.5/src/log.c	2009-10-12 23:05:54.000000000 +0400
++++ fsvs-1.2.5/src/log.c	2013-08-02 19:22:43.017698607 +0400
+@@ -45,10 +45,10 @@
+ 
+ 
+ #include <apr_pools.h>
+-#include <subversion-1/svn_ra.h>
+-#include <subversion-1/svn_error.h>
+-#include <subversion-1/svn_string.h>
+-#include <subversion-1/svn_time.h>
++#include <svn/svn_ra.h>
++#include <svn/svn_error.h>
++#include <svn/svn_string.h>
++#include <svn/svn_time.h>
+ 
+ #include <sys/types.h>
+ #include <unistd.h>
+diff -ur fsvs-1.2.5/src/props.c fsvs-1.2.5/src/props.c
+--- fsvs-1.2.5/src/props.c	2012-07-10 11:48:57.000000000 +0400
++++ fsvs-1.2.5/src/props.c	2013-08-02 19:24:26.192140943 +0400
+@@ -24,7 +24,7 @@
+ #include <unistd.h>
+ #include <gdbm.h>
+ #include <fcntl.h>
+-#include <subversion-1/svn_props.h>
++#include <svn/svn_props.h>
+ 
+ #include "global.h"
+ #include "waa.h"
+diff -ur fsvs-1.2.5/src/racallback.c fsvs-1.2.5/src/racallback.c
+--- fsvs-1.2.5/src/racallback.c	2011-04-29 16:20:18.000000000 +0400
++++ fsvs-1.2.5/src/racallback.c	2013-08-02 19:24:11.872506848 +0400
+@@ -15,10 +15,10 @@
+ #include <time.h>
+ #include <unistd.h>
+ 
+-#include <subversion-1/svn_ra.h>
+-#include <subversion-1/svn_auth.h>
+-#include <subversion-1/svn_client.h>
+-#include <subversion-1/svn_cmdline.h>
++#include <svn/svn_ra.h>
++#include <svn/svn_auth.h>
++#include <svn/svn_client.h>
++#include <svn/svn_cmdline.h>
+ 
+ 
+ 
+diff -ur fsvs-1.2.5/src/racallback.h fsvs-1.2.5/src/racallback.h
+--- fsvs-1.2.5/src/racallback.h	2009-06-10 10:22:59.000000000 +0400
++++ fsvs-1.2.5/src/racallback.h	2013-08-02 19:21:24.703337819 +0400
+@@ -9,7 +9,7 @@
+ #ifndef __RACALLBACK_H__
+ #define __RACALLBACK_H__
+ 
+-#include <subversion-1/svn_ra.h>
++#include <svn/svn_ra.h>
+ 
+ /** \file
+  * The cb__record_changes() and other callback functions header file.  */
+diff -ur fsvs-1.2.5/src/revert.c fsvs-1.2.5/src/revert.c
+--- fsvs-1.2.5/src/revert.c	2009-10-12 23:05:54.000000000 +0400
++++ fsvs-1.2.5/src/revert.c	2013-08-02 19:25:15.009417867 +0400
+@@ -10,8 +10,8 @@
+ #include <fcntl.h>
+ #include <time.h>
+ 
+-#include <subversion-1/svn_delta.h>
+-#include <subversion-1/svn_ra.h>
++#include <svn/svn_delta.h>
++#include <svn/svn_ra.h>
+ 
+ #include "revert.h"
+ #include "waa.h"
+diff -ur fsvs-1.2.5/src/sync.c fsvs-1.2.5/src/sync.c
+--- fsvs-1.2.5/src/sync.c	2009-10-12 23:05:54.000000000 +0400
++++ fsvs-1.2.5/src/sync.c	2013-08-02 19:23:51.348457144 +0400
+@@ -65,11 +65,11 @@
+ #include <apr_pools.h>
+ #include <apr_user.h>
+ #include <apr_file_io.h>
+-#include <subversion-1/svn_delta.h>
+-#include <subversion-1/svn_ra.h>
+-#include <subversion-1/svn_error.h>
+-#include <subversion-1/svn_string.h>
+-#include <subversion-1/svn_time.h>
++#include <svn/svn_delta.h>
++#include <svn/svn_ra.h>
++#include <svn/svn_error.h>
++#include <svn/svn_string.h>
++#include <svn/svn_time.h>
+ 
+ #include <sys/types.h>
+ #include <unistd.h>
+diff -ur fsvs-1.2.5/src/update.c fsvs-1.2.5/src/update.c
+--- fsvs-1.2.5/src/update.c	2009-10-12 23:05:54.000000000 +0400
++++ fsvs-1.2.5/src/update.c	2013-08-02 19:25:55.200354136 +0400
+@@ -57,11 +57,11 @@
+ #include <apr_pools.h>
+ #include <apr_user.h>
+ #include <apr_file_io.h>
+-#include <subversion-1/svn_delta.h>
+-#include <subversion-1/svn_ra.h>
+-#include <subversion-1/svn_error.h>
+-#include <subversion-1/svn_string.h>
+-#include <subversion-1/svn_time.h>
++#include <svn/svn_delta.h>
++#include <svn/svn_ra.h>
++#include <svn/svn_error.h>
++#include <svn/svn_string.h>
++#include <svn/svn_time.h>
+ 
+ #include <sys/types.h>
+ #include <unistd.h>
+diff -ur fsvs-1.2.5/src/waa.c fsvs-1.2.5/src/waa.c
+--- fsvs-1.2.5/src/waa.c	2012-07-10 11:48:57.000000000 +0400
++++ fsvs-1.2.5/src/waa.c	2013-08-02 19:20:38.053195701 +0400
+@@ -12,7 +12,7 @@
+ #include <errno.h>
+ #include <apr_pools.h>
+ #include <apr_md5.h>
+-#include <subversion-1/svn_md5.h>
++#include <svn/svn_md5.h>
+ #include <ctype.h>
+ #include <unistd.h>
+ #include <strings.h>
