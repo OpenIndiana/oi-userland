@@ -51,7 +51,7 @@ Puppet::Type.type(:ldap).provide(:ldap) do
 
             pg, prop = fullprop.split("/")
 
-            # handle the domainname differently as it's not in validprops
+            # handle the profile name differently as it's not in validprops
             if prop == "profile"
                 props[:name] = value
             else
@@ -100,6 +100,10 @@ Puppet::Type.type(:ldap).provide(:ldap) do
     end
 
     def flush
+        # the namevar is a param and will never get set by the setters defined
+        # above.  It must always be specified, so set it here.
+        svccfg("-s", @@ldap_fmri, "setprop", "config/profile", "=",
+               @resource[:name])
         svccfg("-s", @@ldap_fmri, "refresh")
     end
 end

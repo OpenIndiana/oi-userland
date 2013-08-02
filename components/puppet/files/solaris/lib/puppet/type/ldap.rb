@@ -335,7 +335,7 @@ Puppet::Type.newtype(:ldap) do
         self.pg = "cred"
     end
 
-    newproperty(:admin_dn) do
+    newproperty(:admin_bind_dn) do
         desc "The Bind Distinguised Name for the administrator identity that
               is used for shadow information update"
         class << self
@@ -344,7 +344,7 @@ Puppet::Type.newtype(:ldap) do
         self.pg = "cred"
     end
 
-    newproperty(:admin_password) do
+    newproperty(:admin_bind_passwd) do
         desc "The administrator password"
         class << self
             attr_accessor :pg
