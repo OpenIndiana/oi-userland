@@ -41,8 +41,7 @@ include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f cherryd cherryd$(PYTHON_VERSION))
-
+	(cd $(PROTO_DIR)/usr/bin ; $(MV) cherryd cherryd$(PYTHON_VERSION))
 
 # common targets
 build:		$(BUILD_NO_ARCH)
