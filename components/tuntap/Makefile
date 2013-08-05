@@ -35,6 +35,24 @@ CONFIGURE_SCRUPT= $(@D)/configure
 
 CONFIGURE_OPTIONS.32 = --disable-64bit
 
+PKGLINT=true
+
 build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_32_and_64)
+install:       
+	$(INSTALL) -d -m 0755 $(PROTOUSRDIR)/kernel/drv 
+	$(INSTALL) -d -m 0755 $(PROTOUSRDIR)/kernel/$(MACH64)/drv
+	$(INSTALL) -d -m 0755 $(PROTOUSRINCDIR)/net
+
+	$(INSTALL) -m 644 $(BUILD_DIR_32)/if_tun.h $(PROTOUSRINCDIR)/net
+	$(INSTALL) -m 644 $(BUILD_DIR_32)/tun $(PROTOUSRDIR)/kernel/drv
+	$(INSTALL) -m 644 $(BUILD_DIR_32)/tap $(PROTOUSRDIR)/kernel/drv
+	$(INSTALL) -m 644 $(BUILD_DIR_32)/tun.conf $(PROTOUSRDIR)/kernel/drv 
+	$(INSTALL) -m 644 $(BUILD_DIR_32)/tap.conf $(PROTOUSRDIR)/kernel/drv
+
+	$(INSTALL) -m 644 $(BUILD_DIR_64)/tun $(PROTOUSRDIR)/kernel/$(MACH64)/drv 
+	$(INSTALL) -m 644 $(BUILD_DIR_64)/tap $(PROTOUSRDIR)/kernel/$(MACH64)/drv
+
+	$(TOUCH) $(BUILD_DIR_32)/.installed
+	$(TOUCH) $(BUILD_DIR_64)/.installed
+
