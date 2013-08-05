@@ -1,0 +1,21 @@
+Without this patch Error: CFI instruction used without previous .cfi_startproc is generated
+--- mariadb-5.5.32/mysys/my_context_orig.c	2013-08-04 10:20:51.484531391 +0400
++++ mariadb-5.5.32/mysys/my_context.c	2013-08-04 10:23:22.272060119 +0400
+@@ -206,7 +206,7 @@
+     (
+      "movq %%rsp, (%[save])\n\t"
+      "movq %[stack], %%rsp\n\t"
+-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER)
++#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER) && !defined(__sun)
+      /*
+        This emits a DWARF DW_CFA_undefined directive to make the return address
+        undefined. This indicates that this is the top of the stack frame, and
+@@ -456,7 +456,7 @@
+     (
+      "movl %%esp, (%[save])\n\t"
+      "movl %[stack], %%esp\n\t"
+-#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER)
++#if __GNUC__ >= 4 && __GNUC_MINOR__ >= 4 && !defined(__INTEL_COMPILER) && !defined(__sun)
+      /*
+        This emits a DWARF DW_CFA_undefined directive to make the return address
+        undefined. This indicates that this is the top of the stack frame, and
