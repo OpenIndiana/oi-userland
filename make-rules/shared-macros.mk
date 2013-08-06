@@ -83,6 +83,7 @@ PKG_SOLARIS_VERSION ?= 5.11
 include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER =		gcc
+LINKER =		ccs	
 BITS =			32
 PYTHON_VERSION =	2.6
 PYTHON_VERSIONS =	2.6
@@ -602,7 +603,11 @@ CXXFLAGS +=	$(CC_BITS)
 #
 
 # set the bittedness that we want to link
-LD_BITS =	-$(BITS)
+ccs.ld.64 = -64
+gcc.ld.32 = -m32
+gcc.ld.64 = -m64
+LD_BITS =      $($(LINKER).ld.$(BITS))
+LDFLAGS =      $(LD_BITS)
 
 # Reduce the symbol table size, effectively conflicting with -g.  We should
 # get linker guidance here.
