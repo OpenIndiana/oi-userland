@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 
@@ -49,7 +49,6 @@ COMPONENT_ARCHIVE_URL_1= ftp://ftp.eenet.ee/pub/cpan/authors/id/I/IA/IANC/$(COMP
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -92,6 +91,9 @@ CONFIGURE_OPTIONS += --with-tls=openssl
 PROTOULD = $(PROTOUSRLIBDIR)
 COMPONENT_TEST_ENV += LD_LIBRARY_PATH="$(PROTOULD):$(PROTOULD)/$(MACH64):"
 COMPONENT_TEST_ARGS += -e
+
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:	$(BUILD_32_and_64)
