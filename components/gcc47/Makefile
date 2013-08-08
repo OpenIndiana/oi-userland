@@ -103,3 +103,6 @@ build: \
   $(BUILD_32)
 
 install: $(INSTALL_32)
+
+clean::
+	$(RM) -r $(COMPONENT_DIR)/../gcc47-libgmp/build $(COMPONENT_DIR)/../gcc47-libmpc/build $(COMPONENT_DIR)/../gcc47-libmpfr/build
