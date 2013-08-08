@@ -43,6 +43,22 @@
             <service_fmri value='svc:/system/filesystem/minimal' />
     </dependency>
 
+    <dependency
+        name='network'
+        grouping='require_all'
+        restart_on='error'
+        type='service'>
+            <service_fmri value='svc:/milestone/network' />
+    </dependency>
+
+    <dependency
+        name='identity'
+        grouping='require_all'
+        restart_on='error'
+        type='service'>
+            <service_fmri value='svc:/system/identity:node' />
+    </dependency>
+
     <exec_method type='method' name='start' exec=':true' timeout_seconds='60' />
     <exec_method type='method' name='stop' exec=':kill' timeout_seconds='60' />
 
