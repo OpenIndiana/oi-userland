@@ -32,6 +32,7 @@ CONFIGURE_PREFIX= /usr/gcc/4.7
 
 CONFIGURE_OPTIONS+= --enable-cxx
 CONFIGURE_OPTIONS+= CFLAGS="-fexceptions"
+CONFIGURE_OPTIONS+= ABI=32
 
 build:          $(BUILD_32)
 
