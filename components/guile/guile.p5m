@@ -36,21 +36,30 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2008/315
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/$(MACH64)/guile
-file path=usr/bin/$(MACH64)/guile-config
-file path=usr/bin/$(MACH64)/guile-snarf
-file path=usr/bin/$(MACH64)/guile-tools
-file path=usr/bin/guile
-file path=usr/bin/guile-config
-file path=usr/bin/guile-snarf
-file path=usr/bin/guile-tools
+file guile-config.1 path=usr/share/man/man1/guile-config.1
+file guile-snarf.1 path=usr/share/man/man1/guile-snarf.1
+file guile-tools.1 path=usr/share/man/man1/guile-tools.1
+file guile.1 path=usr/share/man/man1/guile.1
+license guile.license license="LGPLv2.1, FDLv1.2"
+
+file path=usr/bin/$(MACH64)/guile mode=0555
+file path=usr/bin/$(MACH64)/guile-config mode=0555
+file path=usr/bin/$(MACH64)/guile-snarf mode=0555
+file path=usr/bin/$(MACH64)/guile-tools mode=0555
+file path=usr/bin/guile mode=0555
+file path=usr/bin/guile-config mode=0555
+file path=usr/bin/guile-snarf mode=0555
+file path=usr/bin/guile-tools mode=0555
+dir  path=usr/include/guile
 file path=usr/include/guile/gh.h
 file path=usr/include/guile/readline.h
+dir  path=usr/include/guile/srfi
 file path=usr/include/guile/srfi/srfi-1.h
 file path=usr/include/guile/srfi/srfi-13.h
 file path=usr/include/guile/srfi/srfi-14.h
 file path=usr/include/guile/srfi/srfi-4.h
 file path=usr/include/guile/srfi/srfi-60.h
+dir  path=usr/include/libguile
 file path=usr/include/libguile.h
 file path=usr/include/libguile/__scm.h
 file path=usr/include/libguile/alist.h
@@ -152,20 +161,67 @@ file path=usr/include/libguile/vectors.h
 file path=usr/include/libguile/version.h
 file path=usr/include/libguile/vports.h
 file path=usr/include/libguile/weaks.h
-file path=usr/lib/$(MACH64)/libguile-srfi-srfi-1-v-3.so.3.0.2
-file path=usr/lib/$(MACH64)/libguile-srfi-srfi-13-14-v-3.so.3.0.1
-file path=usr/lib/$(MACH64)/libguile-srfi-srfi-4-v-3.so.3.0.1
-file path=usr/lib/$(MACH64)/libguile-srfi-srfi-60-v-2.so.2.0.2
-file path=usr/lib/$(MACH64)/libguile.so.17.3.0
-file path=usr/lib/$(MACH64)/libguilereadline-v-17.so.17.0.3
-file path=usr/lib/libguile-srfi-srfi-1-v-3.so.3.0.2
-file path=usr/lib/libguile-srfi-srfi-13-14-v-3.so.3.0.1
-file path=usr/lib/libguile-srfi-srfi-4-v-3.so.3.0.1
-file path=usr/lib/libguile-srfi-srfi-60-v-2.so.2.0.2
-file path=usr/lib/libguile.so.17.3.0
-file path=usr/lib/libguilereadline-v-17.so.17.0.3
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-1-v-3.so \
+    target=libguile-srfi-srfi-1-v-3.so.3.0.2
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-1-v-3.so.3 \
+    target=libguile-srfi-srfi-1-v-3.so.3.0.2
+file path=usr/lib/$(MACH64)/libguile-srfi-srfi-1-v-3.so.3.0.2 mode=0555
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-13-14-v-3.so \
+    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-13-14-v-3.so.3 \
+    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
+file path=usr/lib/$(MACH64)/libguile-srfi-srfi-13-14-v-3.so.3.0.1 mode=0555
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-4-v-3.so \
+    target=libguile-srfi-srfi-4-v-3.so.3.0.1
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-4-v-3.so.3 \
+    target=libguile-srfi-srfi-4-v-3.so.3.0.1
+file path=usr/lib/$(MACH64)/libguile-srfi-srfi-4-v-3.so.3.0.1 mode=0555
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-60-v-2.so \
+    target=libguile-srfi-srfi-60-v-2.so.2.0.2
+link path=usr/lib/$(MACH64)/libguile-srfi-srfi-60-v-2.so.2 \
+    target=libguile-srfi-srfi-60-v-2.so.2.0.2
+file path=usr/lib/$(MACH64)/libguile-srfi-srfi-60-v-2.so.2.0.2 mode=0555
+link path=usr/lib/$(MACH64)/libguile.so target=libguile.so.17.4.0
+link path=usr/lib/$(MACH64)/libguile.so.17 target=libguile.so.17.4.0
+file path=usr/lib/$(MACH64)/libguile.so.17.4.0 mode=0555
+link path=usr/lib/$(MACH64)/libguilereadline-v-17.so \
+    target=libguilereadline-v-17.so.17.0.3
+link path=usr/lib/$(MACH64)/libguilereadline-v-17.so.17 \
+    target=libguilereadline-v-17.so.17.0.3
+file path=usr/lib/$(MACH64)/libguilereadline-v-17.so.17.0.3 mode=0555
+link path=usr/lib/libguile-srfi-srfi-1-v-3.so \
+    target=libguile-srfi-srfi-1-v-3.so.3.0.2
+link path=usr/lib/libguile-srfi-srfi-1-v-3.so.3 \
+    target=libguile-srfi-srfi-1-v-3.so.3.0.2
+file path=usr/lib/libguile-srfi-srfi-1-v-3.so.3.0.2 mode=0555
+link path=usr/lib/libguile-srfi-srfi-13-14-v-3.so \
+    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
+link path=usr/lib/libguile-srfi-srfi-13-14-v-3.so.3 \
+    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
+file path=usr/lib/libguile-srfi-srfi-13-14-v-3.so.3.0.1 mode=0555
+link path=usr/lib/libguile-srfi-srfi-4-v-3.so \
+    target=libguile-srfi-srfi-4-v-3.so.3.0.1
+link path=usr/lib/libguile-srfi-srfi-4-v-3.so.3 \
+    target=libguile-srfi-srfi-4-v-3.so.3.0.1
+file path=usr/lib/libguile-srfi-srfi-4-v-3.so.3.0.1 mode=0555
+link path=usr/lib/libguile-srfi-srfi-60-v-2.so \
+    target=libguile-srfi-srfi-60-v-2.so.2.0.2
+link path=usr/lib/libguile-srfi-srfi-60-v-2.so.2 \
+    target=libguile-srfi-srfi-60-v-2.so.2.0.2
+file path=usr/lib/libguile-srfi-srfi-60-v-2.so.2.0.2 mode=0555
+link path=usr/lib/libguile.so target=libguile.so.17.4.0
+link path=usr/lib/libguile.so.17 target=libguile.so.17.4.0
+file path=usr/lib/libguile.so.17.4.0 mode=0555
+link path=usr/lib/libguilereadline-v-17.so \
+    target=libguilereadline-v-17.so.17.0.3
+link path=usr/lib/libguilereadline-v-17.so.17 \
+    target=libguilereadline-v-17.so.17.0.3
+file path=usr/lib/libguilereadline-v-17.so.17.0.3 mode=0555
 file path=usr/share/aclocal/guile.m4
+dir  path=usr/share/guile
+dir  path=usr/share/guile/1.8
 file path=usr/share/guile/1.8/guile-procedures.txt
+dir  path=usr/share/guile/1.8/ice-9
 file path=usr/share/guile/1.8/ice-9/and-let-star.scm
 file path=usr/share/guile/1.8/ice-9/boot-9.scm
 file path=usr/share/guile/1.8/ice-9/buffered-input.scm
@@ -173,12 +229,20 @@ file path=usr/share/guile/1.8/ice-9/calling.scm
 file path=usr/share/guile/1.8/ice-9/channel.scm
 file path=usr/share/guile/1.8/ice-9/common-list.scm
 file path=usr/share/guile/1.8/ice-9/debug.scm
+dir  path=usr/share/guile/1.8/ice-9/debugger
 file path=usr/share/guile/1.8/ice-9/debugger.scm
 file path=usr/share/guile/1.8/ice-9/debugger/command-loop.scm
 file path=usr/share/guile/1.8/ice-9/debugger/commands.scm
 file path=usr/share/guile/1.8/ice-9/debugger/state.scm
 file path=usr/share/guile/1.8/ice-9/debugger/trc.scm
 file path=usr/share/guile/1.8/ice-9/debugger/utils.scm
+dir  path=usr/share/guile/1.8/ice-9/debugging
+file path=usr/share/guile/1.8/ice-9/debugging/example-fns.scm
+file path=usr/share/guile/1.8/ice-9/debugging/ice-9-debugger-extensions.scm
+file path=usr/share/guile/1.8/ice-9/debugging/steps.scm
+file path=usr/share/guile/1.8/ice-9/debugging/trace.scm
+file path=usr/share/guile/1.8/ice-9/debugging/traps.scm
+file path=usr/share/guile/1.8/ice-9/debugging/trc.scm
 file path=usr/share/guile/1.8/ice-9/deprecated.scm
 file path=usr/share/guile/1.8/ice-9/documentation.scm
 file path=usr/share/guile/1.8/ice-9/emacs.scm
@@ -186,6 +250,8 @@ file path=usr/share/guile/1.8/ice-9/expect.scm
 file path=usr/share/guile/1.8/ice-9/format.scm
 file path=usr/share/guile/1.8/ice-9/ftw.scm
 file path=usr/share/guile/1.8/ice-9/gap-buffer.scm
+file path=usr/share/guile/1.8/ice-9/gds-client.scm
+file path=usr/share/guile/1.8/ice-9/gds-server.scm
 file path=usr/share/guile/1.8/ice-9/getopt-long.scm
 file path=usr/share/guile/1.8/ice-9/hcons.scm
 file path=usr/share/guile/1.8/ice-9/history.scm
@@ -225,9 +291,12 @@ file path=usr/share/guile/1.8/ice-9/syncase.scm
 file path=usr/share/guile/1.8/ice-9/threads.scm
 file path=usr/share/guile/1.8/ice-9/time.scm
 file path=usr/share/guile/1.8/ice-9/weak-vector.scm
+dir  path=usr/share/guile/1.8/lang
+dir  path=usr/share/guile/1.8/lang/elisp
 file path=usr/share/guile/1.8/lang/elisp/base.scm
 file path=usr/share/guile/1.8/lang/elisp/example.el
 file path=usr/share/guile/1.8/lang/elisp/interface.scm
+dir  path=usr/share/guile/1.8/lang/elisp/internals
 file path=usr/share/guile/1.8/lang/elisp/internals/evaluation.scm
 file path=usr/share/guile/1.8/lang/elisp/internals/format.scm
 file path=usr/share/guile/1.8/lang/elisp/internals/fset.scm
@@ -238,6 +307,7 @@ file path=usr/share/guile/1.8/lang/elisp/internals/set.scm
 file path=usr/share/guile/1.8/lang/elisp/internals/signal.scm
 file path=usr/share/guile/1.8/lang/elisp/internals/time.scm
 file path=usr/share/guile/1.8/lang/elisp/internals/trace.scm
+dir  path=usr/share/guile/1.8/lang/elisp/primitives
 file path=usr/share/guile/1.8/lang/elisp/primitives/buffers.scm
 file path=usr/share/guile/1.8/lang/elisp/primitives/char-table.scm
 file path=usr/share/guile/1.8/lang/elisp/primitives/features.scm
@@ -259,6 +329,8 @@ file path=usr/share/guile/1.8/lang/elisp/primitives/system.scm
 file path=usr/share/guile/1.8/lang/elisp/primitives/time.scm
 file path=usr/share/guile/1.8/lang/elisp/transform.scm
 file path=usr/share/guile/1.8/lang/elisp/variables.scm
+dir  path=usr/share/guile/1.8/oop
+dir  path=usr/share/guile/1.8/oop/goops
 file path=usr/share/guile/1.8/oop/goops.scm
 file path=usr/share/guile/1.8/oop/goops/accessors.scm
 file path=usr/share/guile/1.8/oop/goops/active-slot.scm
@@ -272,23 +344,25 @@ file path=usr/share/guile/1.8/oop/goops/save.scm
 file path=usr/share/guile/1.8/oop/goops/simple.scm
 file path=usr/share/guile/1.8/oop/goops/stklos.scm
 file path=usr/share/guile/1.8/oop/goops/util.scm
-file path=usr/share/guile/1.8/scripts/PROGRAM
-file path=usr/share/guile/1.8/scripts/api-diff
-file path=usr/share/guile/1.8/scripts/autofrisk
-file path=usr/share/guile/1.8/scripts/display-commentary
-file path=usr/share/guile/1.8/scripts/doc-snarf
-file path=usr/share/guile/1.8/scripts/frisk
-file path=usr/share/guile/1.8/scripts/generate-autoload
-file path=usr/share/guile/1.8/scripts/lint
-file path=usr/share/guile/1.8/scripts/punify
-file path=usr/share/guile/1.8/scripts/read-rfc822
-file path=usr/share/guile/1.8/scripts/read-scheme-source
-file path=usr/share/guile/1.8/scripts/read-text-outline
-file path=usr/share/guile/1.8/scripts/scan-api
-file path=usr/share/guile/1.8/scripts/snarf-check-and-output-texi
-file path=usr/share/guile/1.8/scripts/snarf-guile-m4-docs
-file path=usr/share/guile/1.8/scripts/summarize-guile-TODO
-file path=usr/share/guile/1.8/scripts/use2dot
+dir  path=usr/share/guile/1.8/scripts
+file path=usr/share/guile/1.8/scripts/PROGRAM mode=0555
+file path=usr/share/guile/1.8/scripts/api-diff mode=0555
+file path=usr/share/guile/1.8/scripts/autofrisk mode=0555
+file path=usr/share/guile/1.8/scripts/display-commentary mode=0555
+file path=usr/share/guile/1.8/scripts/doc-snarf mode=0555
+file path=usr/share/guile/1.8/scripts/frisk mode=0555
+file path=usr/share/guile/1.8/scripts/generate-autoload mode=0555
+file path=usr/share/guile/1.8/scripts/lint mode=0555
+file path=usr/share/guile/1.8/scripts/punify mode=0555
+file path=usr/share/guile/1.8/scripts/read-rfc822 mode=0555
+file path=usr/share/guile/1.8/scripts/read-scheme-source mode=0555
+file path=usr/share/guile/1.8/scripts/read-text-outline mode=0555
+file path=usr/share/guile/1.8/scripts/scan-api mode=0555
+file path=usr/share/guile/1.8/scripts/snarf-check-and-output-texi mode=0555
+file path=usr/share/guile/1.8/scripts/snarf-guile-m4-docs mode=0555
+file path=usr/share/guile/1.8/scripts/summarize-guile-TODO mode=0555
+file path=usr/share/guile/1.8/scripts/use2dot mode=0555
+dir  path=usr/share/guile/1.8/srfi
 file path=usr/share/guile/1.8/srfi/srfi-1.scm
 file path=usr/share/guile/1.8/srfi/srfi-10.scm
 file path=usr/share/guile/1.8/srfi/srfi-11.scm
@@ -309,6 +383,7 @@ file path=usr/share/guile/1.8/srfi/srfi-6.scm
 file path=usr/share/guile/1.8/srfi/srfi-60.scm
 file path=usr/share/guile/1.8/srfi/srfi-69.scm
 file path=usr/share/guile/1.8/srfi/srfi-8.scm
+file path=usr/share/guile/1.8/srfi/srfi-88.scm
 file path=usr/share/guile/1.8/srfi/srfi-9.scm
 file path=usr/share/info/goops.info
 file path=usr/share/info/guile-tut.info
@@ -321,52 +396,3 @@ file path=usr/share/info/guile.info-5
 file path=usr/share/info/guile.info-6
 file path=usr/share/info/guile.info-7
 file path=usr/share/info/r5rs.info
-file guile-config.1 path=usr/share/man/man1/guile-config.1
-file guile-snarf.1 path=usr/share/man/man1/guile-snarf.1
-file guile-tools.1 path=usr/share/man/man1/guile-tools.1
-file guile.1 path=usr/share/man/man1/guile.1
-license guile.license license="LGPLv2.1, FDLv1.2"
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-1-v-3.so \
-    target=libguile-srfi-srfi-1-v-3.so.3.0.2
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-1-v-3.so.3 \
-    target=libguile-srfi-srfi-1-v-3.so.3.0.2
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-13-14-v-3.so \
-    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-13-14-v-3.so.3 \
-    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-4-v-3.so \
-    target=libguile-srfi-srfi-4-v-3.so.3.0.1
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-4-v-3.so.3 \
-    target=libguile-srfi-srfi-4-v-3.so.3.0.1
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-60-v-2.so \
-    target=libguile-srfi-srfi-60-v-2.so.2.0.2
-link path=usr/lib/$(MACH64)/libguile-srfi-srfi-60-v-2.so.2 \
-    target=libguile-srfi-srfi-60-v-2.so.2.0.2
-link path=usr/lib/$(MACH64)/libguile.so target=libguile.so.17.3.0
-link path=usr/lib/$(MACH64)/libguile.so.17 target=libguile.so.17.3.0
-link path=usr/lib/$(MACH64)/libguilereadline-v-17.so \
-    target=libguilereadline-v-17.so.17.0.3
-link path=usr/lib/$(MACH64)/libguilereadline-v-17.so.17 \
-    target=libguilereadline-v-17.so.17.0.3
-link path=usr/lib/libguile-srfi-srfi-1-v-3.so \
-    target=libguile-srfi-srfi-1-v-3.so.3.0.2
-link path=usr/lib/libguile-srfi-srfi-1-v-3.so.3 \
-    target=libguile-srfi-srfi-1-v-3.so.3.0.2
-link path=usr/lib/libguile-srfi-srfi-13-14-v-3.so \
-    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
-link path=usr/lib/libguile-srfi-srfi-13-14-v-3.so.3 \
-    target=libguile-srfi-srfi-13-14-v-3.so.3.0.1
-link path=usr/lib/libguile-srfi-srfi-4-v-3.so \
-    target=libguile-srfi-srfi-4-v-3.so.3.0.1
-link path=usr/lib/libguile-srfi-srfi-4-v-3.so.3 \
-    target=libguile-srfi-srfi-4-v-3.so.3.0.1
-link path=usr/lib/libguile-srfi-srfi-60-v-2.so \
-    target=libguile-srfi-srfi-60-v-2.so.2.0.2
-link path=usr/lib/libguile-srfi-srfi-60-v-2.so.2 \
-    target=libguile-srfi-srfi-60-v-2.so.2.0.2
-link path=usr/lib/libguile.so target=libguile.so.17.3.0
-link path=usr/lib/libguile.so.17 target=libguile.so.17.3.0
-link path=usr/lib/libguilereadline-v-17.so \
-    target=libguilereadline-v-17.so.17.0.3
-link path=usr/lib/libguilereadline-v-17.so.17 \
-    target=libguilereadline-v-17.so.17.0.3
