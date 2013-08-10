@@ -41,8 +41,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_BUILD_ENV += CC="$(CC) -m64"
-
 COMPONENT_INSTALL_ARGS +=	BASENAME=$(PROTOUSRDIR)
 COMPONENT_INSTALL_ARGS +=	MANDIR=$(PROTOUSRSHAREMANDIR)
 
@@ -51,9 +49,9 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32)
 
-install:        $(INSTALL_64)
+install:        $(INSTALL_32)
 
 test:           $(NO_TESTS)
 
