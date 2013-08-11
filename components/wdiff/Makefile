@@ -39,9 +39,9 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS.64 +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--enable-experimental
 
-CFLAGS +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
+CFLAGS_BUILD +=	-DDIFF_PROGRAM="/usr/gnu/bin/diff"
 
-COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS) $(CFLAGS_BUILD)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 
