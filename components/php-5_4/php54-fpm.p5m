@@ -34,6 +34,11 @@ link path=/usr/bin/php-fpm target=../php/5.4/bin/php-fpm mediator=php mediator-v
 link path=/usr/bin/$(MACH64)/php-fpm target=../../php/5.4/bin/$(MACH64)/php-fpm mediator=php mediator-version=$(COMPONENT_VERSION)
 link path=/usr/share/man/man8/php-fpm.8 target=../../../php/5.4/share/man/man8/php-fpm.8 mediator=php mediator-version=$(COMPONENT_VERSION)
 
+file files/auth_attr path=etc/security/auth_attr.d/php-fpm-54
+file files/prof_attr path=etc/security/prof_attr.d/php-fpm-54
+file files/php-fpm.xml \
+path=lib/svc/manifest/network/php-fpm-54.xml
+
 dir path=/usr/php
 dir path=/usr/php/5.4
 dir path=/usr/php/5.4/bin
@@ -42,8 +47,10 @@ dir path=/usr/php/5.4/share/man/man8
 dir path=/var/php
 dir path=/var/php/5.4
 dir path=/var/php/5.4/fpm
+dir owner=webservd group=webservd path=/var/php/5.4/run
+dir owner=webservd group=webservd path=/var/php/5.4/log
 file path=/usr/php/5.4/bin/$(MACH64)/php-fpm
 file path=/usr/php/5.4/bin/php-fpm
 file path=/usr/php/5.4/share/man/man8/php-fpm.8
 file path=/var/php/5.4/fpm/status.html
-file path=/etc/php/5.4/php-fpm.conf.default
+file files/php-fpm.conf path=/etc/php/5.4/php-fpm.conf mode=0644 preserve=true
