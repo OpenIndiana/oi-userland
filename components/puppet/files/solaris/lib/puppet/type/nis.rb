@@ -38,18 +38,27 @@ end
 Puppet::Type.newtype(:nis) do
     @doc = "Manage the configuration of the NIS client for Oracle Solaris"
 
-    newparam(:domainname) do
-        desc "The NIS domainname"
+    newparam(:name) do
+       desc "The symbolic name for the NIS domain and client settings to use.
+              This name is used for human reference only."
         isnamevar
+    end
+
+    newproperty(:domainname) do
+        desc "The NIS domainname"
     end
 
     newproperty(:ypservers, :parent => Puppet::Property::List) do
         desc "The hosts or IP addresses to use as NIS servers.  Specify
               multiple entries as an array"
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
 
         def insync?(is)
@@ -73,46 +82,11 @@ Puppet::Type.newtype(:nis) do
         end
     end
 
-    newproperty(:securenets, :parent => Puppet::Property::List) do
-        desc "Entries for /var/yp/securenets.  Each entry must be a 2 element
-              array.  The first element must be either a host or a netmask.
+    newproperty(:securenets) do
+        desc "Entries for /var/yp/securenets.  Each entry must be a hash.
+              The first element in the hash is either a host or a netmask.
               The second element must be an IP network address.  Specify
-              multiple entires as an array of arrays"
-
-        # ensure should remains an array
-        def should
-            @should
-        end
-
-        def insync?(is)
-            is = [] if is == :absent or is.nil?
-            is.sort == self.should.sort
-        end
-
-        # svcprop returns multivalue entries delimited with a space
-        def delimiter
-            " "
-        end
-
-        validate do |value|
-            netmask, network = value
-            # check the netmask
-            begin
-                ip = IPAddr.new(netmask)
-            rescue ArgumentError
-                # the value wasn't a valid IP address, so check the hostname
-                raise Puppet::Error, "securenets entry:  #{value} has an
-                    invalid netmask" if not valid_hostname? netmask
-            end
-
-            begin
-                ip = IPAddr.net(network)
-            rescue ArgumentError
-                # the value wasn't a valid IP address
-                raise Puppet::Error, "securenets entry:  #{value} has an 
-                    invalid network"
-            end
-        end
+              multiple entires as separate entries in the hash."
     end
 
     newproperty(:use_broadcast) do

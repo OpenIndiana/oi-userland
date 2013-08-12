@@ -34,7 +34,7 @@ Puppet::Type.type(:nsswitch).provide(:nsswitch) do
 
     def self.instances
         props = {}
-        svcprop("-p", "config", @@frmi).split("\n").collect do |line|
+        svcprop("-p", "config", @@nsswitch_fmri).split("\n").collect do |line|
             fullprop, type, value = line.split(" ", 2)
             pg, prop = fullprop.split("/")
             props[prop] = value \

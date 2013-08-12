@@ -33,6 +33,12 @@ Puppet::Type.type(:nis).provide(:nis) do
     @@client_fmri = "svc:/network/nis/client"
     @@domain_fmri = "svc:/network/nis/domain"
 
+    def initialize(value={})
+        super(value)
+        @client_refresh = false
+        @domain_refresh = false
+    end
+
     def self.instances
         props = {}
         validprops = Puppet::Type.type(:nis).validproperties
@@ -49,15 +55,10 @@ Puppet::Type.type(:nis).provide(:nis) do
                 end
 
                 pg, prop = fullprop.split("/")
-
-                # handle the domainname differently as it's not in validprops
-                if prop == "domainname"
-                    props[:name] = value
-                else
-                    props[prop] = value if validprops.include? prop.to_sym
-                end
+                props[prop] = value if validprops.include? prop.to_sym
             end
         end
+        props[:name] = "current"
         return Array new(props)
     end
 
@@ -81,6 +82,7 @@ Puppet::Type.type(:nis).provide(:nis) do
                     "Unable to set #{field.to_s} to #{should.inspect}\n"
                     "#{detail}\n"
             end
+            @client_refresh = true
         end
     end
 
@@ -114,11 +116,16 @@ Puppet::Type.type(:nis).provide(:nis) do
                     "Unable to set #{field.to_s} to #{should.inspect}\n"
                     "#{detail}\n"
             end
+            @domain_refresh = true
         end
     end
 
     def flush
-        svccfg("-s", @@domain_fmri, "refresh")
-        svccfg("-s", @@client_fmri, "refresh")
+        if @domain_refresh == true
+            svccfg("-s", @@domain_fmri, "refresh")
+        end
+        if @client_refresh == true
+            svccfg("-s", @@client_fmri, "refresh")
+        end
     end
 end

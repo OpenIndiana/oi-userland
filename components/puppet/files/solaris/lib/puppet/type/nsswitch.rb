@@ -84,8 +84,8 @@ Puppet::Type.newtype(:nsswitch) do
         desc "The alias database lookup override"
     end
 
-    newproperty(:servicde) do
-        desc "The servicde database lookup override"
+    newproperty(:service) do
+        desc "The service database lookup override"
     end
 
     newproperty(:project) do

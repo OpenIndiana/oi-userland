@@ -44,9 +44,13 @@ Puppet::Type.newtype(:dns) do
               3 IP addresses may be specified.  Specify multiple IP addresses
               as an array"
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
 
         def insync?(is)
@@ -78,9 +82,13 @@ Puppet::Type.newtype(:dns) do
               entries may be specified.  Specify multiple search entries as an
               array."
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
 
         def insync?(is)
@@ -99,9 +107,13 @@ Puppet::Type.newtype(:dns) do
               be specified in IP 'slash notation'.  A maximum of 10 sortlist
               entries may be specified.  Specify multiple entries as an array."
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
 
         def insync?(is)
@@ -129,9 +141,13 @@ Puppet::Type.newtype(:dns) do
               no-check-names, inet6.  For values with 'n', specify 'n' as an
               integer.  Specify multiple options as an array."
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
 
         def insync?(is)

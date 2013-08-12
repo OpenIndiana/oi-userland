@@ -32,6 +32,11 @@ Puppet::Type.type(:ldap).provide(:ldap) do
     class << self; attr_accessor :ldap_fmri end
     @@ldap_fmri = "svc:/network/ldap/client"
 
+    def initialize(resource)
+        super
+        @refresh_needed = false
+    end
+
     def self.instances
         if Process.euid != 0
             return []
@@ -50,16 +55,11 @@ Puppet::Type.type(:ldap).provide(:ldap) do
             end
 
             pg, prop = fullprop.split("/")
-
-            # handle the profile name differently as it's not in validprops
-            if prop == "profile"
-                props[:name] = value
-            else
-                props[prop] = value if validprops.include? prop.to_sym
-            end
+            props[prop] = value if validprops.include? prop.to_sym
         end
         props[:bind_passwd] = svcprop("-p", "cred/bind_passwd",
                                       "svc:/network/ldap/client").strip
+        props[:name] = "current"
         return Array new(props)
     end
 
@@ -91,6 +91,7 @@ Puppet::Type.type(:ldap).provide(:ldap) do
                     svccfg("-s", @@ldap_fmri, "setprop",
                            pg + "/" + field.to_s, "=", should.to_s)
                 end
+                @refresh_needed = true
             rescue => detail
                 raise Puppet::Error,
                     "Unable to set #{field.to_s} to #{should.inspect}\n"
@@ -100,10 +101,8 @@ Puppet::Type.type(:ldap).provide(:ldap) do
     end
 
     def flush
-        # the namevar is a param and will never get set by the setters defined
-        # above.  It must always be specified, so set it here.
-        svccfg("-s", @@ldap_fmri, "setprop", "config/profile", "=",
-               @resource[:name])
-        svccfg("-s", @@ldap_fmri, "refresh")
+        if @refresh_needed == true
+            svccfg("-s", @@ldap_fmri, "refresh")
+        end
     end
 end

@@ -48,8 +48,18 @@ Puppet::Type.newtype(:ldap) do
     @doc = "Manage the configuration of the LDAP client for Oracle Solaris"
 
     newparam(:name) do
-        desc "The LDAP profile name"
+        desc "The symbolic name for the LDAP client settings to use.  This name
+              is used for human reference only."
         isnamevar
+    end
+
+    newproperty(:profile) do
+        desc "The LDAP profile name"
+        class << self
+            attr_accessor :pg
+        end
+        self.pg = "config"
+        desc "The LDAP profile name"
     end
 
     newproperty(:server_list, :parent => Puppet::Property::List) do
@@ -61,11 +71,15 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
-
+        
         def insync?(is)
             is = [] if is == :absent or is.nil?
             is.sort == self.should.sort
@@ -90,11 +104,15 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
-
+        
         def insync?(is)
             is = [] if is == :absent or is.nil?
             is.sort == self.should.sort
@@ -140,11 +158,15 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
         
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
-
+        
         def insync?(is)
             is = [] if is == :absent or is.nil?
             is.sort == self.should.sort
@@ -214,11 +236,15 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
         
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
-
+        
         def insync?(is)
             is = [] if is == :absent or is.nil?
             is.sort == self.should.sort
@@ -240,11 +266,15 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
-
+        
         def insync?(is)
             is = [] if is == :absent or is.nil?
             is.sort == self.should.sort
@@ -276,11 +306,15 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
-
+        
         def insync?(is)
             is = [] if is == :absent or is.nil?
             is.sort == self.should.sort
@@ -301,11 +335,15 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "cred"
 
-        # ensure should remains an array
+        # ensure should remains an array as long as there's more than 1 entry
         def should
-            @should
+            if @should.length == 1
+                @should.to_s
+            else
+                @should
+            end
         end
-
+        
         def insync?(is)
             is = [] if is == :absent or is.nil?
             is.sort == self.should.sort
