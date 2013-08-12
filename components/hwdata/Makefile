@@ -55,6 +55,9 @@ PKG_OPTIONS += -D COMPONENT_ARCHIVE_URLS='$(COMPONENT_ARCHIVE_URLS:%=value="%")'
 PKG_MACROS += $(foreach i,$(ID_FILES),\
     COMPONENT_VERSION_$(i)='$(shell $(ID_VERSION_EXTRACT_COMMAND) $(i))')
 
+# This package delivers only data files and has no dependencies.
+EXTDEPFILES = $(NULLDEPFILE)
+
 # Since we have two separately licensed components we don't use the default
 # license transform rules, but handle the license info metadata directly
 LICENSE_TRANSFORMS =

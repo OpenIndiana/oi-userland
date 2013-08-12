@@ -245,7 +245,14 @@ $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
 # These files should contain a list of packages that the component is known to
 # depend on.  Using resolve.deps is not required, but significantly speeds up
 # the "pkg resolve" step.
-EXTDEPFILES = $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
+EXTDEPFILES ?= $(wildcard $(sort $(addsuffix ../resolve.deps, $(dir $(DEPENDED)))))
+
+# If the package contains no automatically discoverable dependencies, then
+# we can speed up resolution by providing a dummy resolve.deps to skip loading
+# all the possible packages for resolution.  Unfortunately, pkgdepend does not
+# accept a completely empty resolve.deps, so we pass the userland-incorporation
+# as a quick, content-free placeholder.
+NULLDEPFILE = $(BUILD_DIR)/null-resolve.deps
 
 # This is a target that should only be run by hand, and not something that
 # .resolved-$(MACH) should depend on.
@@ -265,6 +272,9 @@ sample-resolve.deps:
 
 # resolve the dependencies all at once
 $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
+	if [[ $(EXTDEPFILES) == $(NULLDEPFILE) ]] ; then \
+	  echo 'consolidation/userland/userland-incorporation' > $(NULLDEPFILE) ; \
+	fi
 	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
 	$(TOUCH) $@
 

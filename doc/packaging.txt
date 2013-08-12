@@ -141,7 +141,10 @@ Dependencies Resolved
     through the resolution stage) without a file "resolve.deps" in the component
     directory, and run "gmake sample-resolve.deps".  If the file is empty (that
     is, no computed dependencies were found), a warning will be emitted and the
-    file will be removed, as pkgdepend currently errors out in that case.
+    file will be removed, as pkgdepend currently errors out in that case.  If a
+    component has no dependencies that pkgdepend can discover and resolve, you
+    can set EXTDEPFILES = $(NULLDEPFILE) in your component Makefile to get the
+    performance benefits without providing a placeholder resolve.deps yourself.
 
     To test, run "gmake clean" and re-publish.
 
