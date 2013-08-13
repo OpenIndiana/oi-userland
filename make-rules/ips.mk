@@ -272,7 +272,7 @@ sample-resolve.deps:
 
 # resolve the dependencies all at once
 $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
-	if [[ $(EXTDEPFILES) == $(NULLDEPFILE) ]] ; then \
+	if [[ "$(EXTDEPFILES)" == "$(NULLDEPFILE)" ]] ; then \
 	  echo 'consolidation/userland/userland-incorporation' > $(NULLDEPFILE) ; \
 	fi
 	$(PKGDEPEND) resolve $(EXTDEPFILES:%=-e %) -m $(DEPENDED)
