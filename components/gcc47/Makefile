@@ -30,8 +30,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_PREFIX= /usr/gcc/4.7
+CC_BITS=
+CFLAGS=         -g -O2
 
+CONFIGURE_PREFIX= /usr/gcc/4.7
+PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
 PARCH = $(MACH:i386=i386-pc)
 GNU_ARCH = $(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
@@ -58,9 +61,9 @@ CONFIGURE_OPTIONS+= --host $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --build $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --target $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --with-boot-ldflags=-R$(CONFIGURE_PREFIX)/lib
-CONFIGURE_OPTIONS+= --with-gmp=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS+= --with-mpfr=$(CONFIGURE_PREFIX)
-CONFIGURE_OPTIONS+= --with-mpc=$(CONFIGURE_PREFIX)
+CONFIGURE_OPTIONS+= --with-gmp-include=/usr/include/gmp
+CONFIGURE_OPTIONS+= --with-mpfr-include=/usr/include/mpfr
+CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto
 CONFIGURE_OPTIONS+= --enable-ld=no
 CONFIGURE_OPTIONS+= --with-as=/usr/bin/gas
@@ -70,39 +73,13 @@ CONFIGURE_OPTIONS+= --disable-libitm
 
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
 
-$(COMPONENT_DIR)/../gcc47-libgmp/build/$(MACH32)/.installed:
-	$(GMAKE) -C $(COMPONENT_DIR)/../gcc47-libgmp install
-$(COMPONENT_DIR)/../gcc47-libmpc/build/$(MACH32)/.installed:
-	$(GMAKE) -C $(COMPONENT_DIR)/../gcc47-libmpc install
-$(COMPONENT_DIR)/../gcc47-libmpfr/build/$(MACH32)/.installed:
-	$(GMAKE) -C $(COMPONENT_DIR)/../gcc47-libmpfr install
-
 COMPONENT_POST_INSTALL_ACTION = \
   for file in $(PROTO_DIR)/usr/gcc/4.7/lib/libgfortran.so.3.0.0 $(PROTO_DIR)/usr/gcc/4.7/lib/$(MACH64)/libgfortran.so.3.0.0; do \
     elfedit -e 'dyn:delete RUNPATH' $$file ; \
     elfedit -e 'dyn:delete RPATH' $$file ; \
   done ; \
-  $(CP) -PR $(COMPONENT_DIR)/../gcc47-libgmp/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/include/* \
-    $(PROTO_DIR)$(CONFIGURE_PREFIX)/include; \
-  $(CP) -PR $(COMPONENT_DIR)/../gcc47-libgmp/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/lib/* \
-    $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib; \
-  $(CP) -PR $(COMPONENT_DIR)/../gcc47-libmpc/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/include/* \
-    $(PROTO_DIR)$(CONFIGURE_PREFIX)/include; \
-  $(CP) -PR $(COMPONENT_DIR)/../gcc47-libmpc/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/lib/* \
-    $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib; \
-  $(CP) -PR $(COMPONENT_DIR)/../gcc47-libmpfr/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/include/* \
-    $(PROTO_DIR)$(CONFIGURE_PREFIX)/include; \
-  $(CP) -PR $(COMPONENT_DIR)/../gcc47-libmpfr/build/prototype/$(MACH)$(CONFIGURE_PREFIX)/lib/* \
-    $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib; \
   $(RM) -r $(PROTO_DIR)$(CONFIGURE_PREFIX)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed
 
-build: \
-  $(COMPONENT_DIR)/../gcc47-libgmp/build/$(MACH32)/.installed \
-  $(COMPONENT_DIR)/../gcc47-libmpc/build/$(MACH32)/.installed \
-  $(COMPONENT_DIR)/../gcc47-libmpfr/build/$(MACH32)/.installed \
-  $(BUILD_32)
+build: $(BUILD_32)
 
 install: $(INSTALL_32)
-
-clean::
-	$(RM) -r $(COMPONENT_DIR)/../gcc47-libgmp/build $(COMPONENT_DIR)/../gcc47-libmpc/build $(COMPONENT_DIR)/../gcc47-libmpfr/build
