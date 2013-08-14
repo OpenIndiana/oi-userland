@@ -390,7 +390,7 @@ Puppet::Type.newtype(:ldap) do
         self.pg = "cred"
     end
 
-    newproperty(:certificate_path) do
+    newproperty(:host_certpath) do
         desc "The location of the certificate files"
         class << self
             attr_accessor :pg
