@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -46,6 +46,10 @@ CONFIGURE_OPTIONS += --with-pic
 CONFIGURE_OPTIONS += --includedir=$(CONFIGURE_INCLUDEDIR)/fastcgi
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CXXFLAGS="$(CFLAGS) $(studio_XREGS)"
+
+CXX += $(studio_NORUNPATH)
+
+COMPONENT_PREP_ACTION = (cd $(@D) ; touch NEWS AUTHORS ChangeLog ; autoreconf -if)
 
 # common targets
 build:     $(BUILD_32_and_64)
