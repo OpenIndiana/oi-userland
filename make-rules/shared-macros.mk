@@ -627,6 +627,7 @@ LD_B_DIRECT =		-Bdirect
 # use generic macro names for enabling/disabling ASLR
 ASLR_ENABLE = 		-z aslr=enable
 ASLR_DISABLE = 		-z aslr=disable
+ASLR_NOT_APPLICABLE = 	-z aslr=disable
 ASLR_MODE = 		$(ASLR_DISABLE)
 
 # by default, turn off Address Space Layout Randomization for ELF executables;

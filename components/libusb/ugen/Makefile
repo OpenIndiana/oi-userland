@@ -43,6 +43,8 @@ COMPONENT_INSTALL_ARGS += BITS=$(BITS)
 # Do not apply the standard licence transforms for this component.
 LICENSE_TRANSFORMS =
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 download:
 
 clobber:	clean

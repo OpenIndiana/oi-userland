@@ -43,6 +43,8 @@ include $(WS_TOP)/make-rules/ips.mk
 COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) cherryd cherryd$(PYTHON_VERSION))
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 

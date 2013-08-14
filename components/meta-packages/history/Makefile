@@ -44,6 +44,8 @@ MANIFEST_BASE =		$(BUILD_DIR)/manifest-$(MACH)
 MOGRIFIED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.mogrified)
 PUBLISHED =		$(CANONICAL_MANIFESTS:%.p5m=$(MANIFEST_BASE)-%.published)
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 download prep build install:
 	@echo "nothing to be done for $@"
 

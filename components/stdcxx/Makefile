@@ -229,6 +229,8 @@ COMPONENT_POST_BUILD_ACTION = \
 	$(GCP) -rpd $(COMPONENT_SRC) $(COMPONENT_SRC)-$(BITS) ; \
 	$(RM) -rf $(COMPONENT_SRC) )
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 build: $(BUILD_32) $(BUILD_64)
 
 install: $(BUILD_DIR_32)/.built $(BUILD_DIR_64)/.built

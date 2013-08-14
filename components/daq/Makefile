@@ -47,7 +47,7 @@ CC +=		$(CC_BITS)
 CONFIGURE_OPTIONS +=    --enable-static=no
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)

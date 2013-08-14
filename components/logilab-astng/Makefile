@@ -39,6 +39,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/setup.py.mk
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 
 build:		$(BUILD_NO_ARCH)

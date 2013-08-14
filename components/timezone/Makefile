@@ -39,6 +39,8 @@ include ../../make-rules/ips.mk
 
 POFILE=zoneinfo.po
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 download:
 	@echo "Nothing to download."
 

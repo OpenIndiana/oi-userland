@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -91,6 +91,8 @@ COMPONENT_PREP_ACTION = \
 	    $(CP) makefiles/configure.in makefiles/Makefile.am . ; \
 		    libtoolize --force --copy ; aclocal ; \
 		    automake --add-missing --copy ; autoconf )
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 $(BUILD_DIR)/libmng-64.pc:	Solaris/libmng-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@

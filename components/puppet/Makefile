@@ -45,6 +45,8 @@ COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/prototype/$(M
 # set the bindir to /usr/sbin
 INSTALL_RB_BINDIR =	$(USRSBINDIR)
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_32)
 	# Ruby extension for auditing

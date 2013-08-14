@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -120,6 +120,8 @@ COMPONENT_POST_INSTALL_ACTION = \
 	$(PROTOPKGCONFIGDIR64) ; \
       $(INSTALL) -m 0644 $(COMPONENT_DIR)/Solaris/libmpfr.3 \
 	$(PROTOUSRSHAREMAN3DIR)/ )
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build: $(BUILD_32_and_64)

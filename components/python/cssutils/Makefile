@@ -70,6 +70,8 @@ COMPONENT_POST_BUILD_ACTION = \
 COMPONENT_PRE_INSTALL_ACTION = \
 	(cd $(SOURCE_DIR); $(RM) -r src ; $(CP) -rp src-$(PYTHON_VERSION) src )
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 build:          $(BUILD_NO_ARCH)
 
 install:        $(INSTALL_NO_ARCH)

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,6 +40,8 @@ include ../../make-rules/ips.mk
 # Meld has no configure however it honors DESTDIR which is necessary so
 # we don't try to install into roots /usr but rather our proto areas usr
 COMPONENT_INSTALL_ARGS +=	DESTDIR=$(PROTO_DIR)
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_32)

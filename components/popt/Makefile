@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -60,6 +60,8 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 
 PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:          $(BUILD_32_and_64)

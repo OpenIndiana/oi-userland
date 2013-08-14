@@ -48,6 +48,7 @@ COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pytest pytest-$(PYTHON_VERSION)) ; \
 	($(PYTHON) -m compileall $(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES))
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 

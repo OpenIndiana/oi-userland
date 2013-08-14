@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -40,6 +40,8 @@ PROTOGSSHAREDIR=$(PROTOUSRSHAREDIR)/ghostscript
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # untar the tar ball and apply the patches
 build:		$(SOURCE_DIR)/.prep

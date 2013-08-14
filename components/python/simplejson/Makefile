@@ -42,7 +42,7 @@ include $(WS_TOP)/make-rules/ips.mk
 COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
 COMPONENT_TEST_ARGS= ./setup.py test
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:          $(BUILD_32_and_64)

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -48,6 +48,7 @@ include ../../make-rules/ips.mk
 COMPONENT_BUILD_TARGETS += install -buildfile build.xml
 COMPONENT_BUILD_ENV += ANT_OPTS="-Dfile.encoding=iso-8859-1"
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_32)

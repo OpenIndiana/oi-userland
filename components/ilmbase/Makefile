@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -57,6 +57,8 @@ CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-threading
 CONFIGURE_OPTIONS  +=           --enable-posix-sem
 CONFIGURE_OPTIONS  +=           --with-pic
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build: $(BUILD_32_and_64)
 

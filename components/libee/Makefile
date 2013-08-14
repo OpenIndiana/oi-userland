@@ -41,6 +41,8 @@ studio_MT =
 # This is needed for the 64-bit library to be built correctly.
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_32_and_64)
 

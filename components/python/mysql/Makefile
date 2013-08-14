@@ -43,6 +43,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CFLAGS +=	-L/usr/mysql/lib/mysql -R/usr/mysql/lib/mysql
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:          $(BUILD_32)
 

@@ -68,6 +68,8 @@ INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 $(BUILD_32): CONFIGURE_OPTIONS += --with-python=$(PYTHON.32)
 $(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=/usr/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION = \
 	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec ; \
 		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)

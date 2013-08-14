@@ -62,7 +62,7 @@ PKG_PROTO_DIRS +=	$(COMPONENT_DIR)/files
 
 COMPONENT_TEST_TARGETS = test
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:          $(BUILD_32)

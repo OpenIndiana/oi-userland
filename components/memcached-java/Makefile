@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -67,6 +67,8 @@ COMPONENT_POST_BUILD_ACTION += \
 # Nothing is installed into the proto area.
 # All files in the package will come from the build directory.
 PKG_PROTO_DIRS +=	$(BUILD_DIR_$(BITS))
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 

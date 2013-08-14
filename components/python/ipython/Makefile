@@ -48,6 +48,8 @@ COMPONENT_PRE_BUILD_ACTION = \
 COMPONENT_POST_UNPACK_ACTION = \
 	(cd $(SOURCE_DIR)/docs/man; /usr/bin/gunzip * )
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:          $(BUILD_32)
 

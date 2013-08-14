@@ -69,6 +69,8 @@ $(ID_FILES):
 LICENSES = $(ID_FILES:%=%.license)
 BUILT_LICENSES = $(LICENSES:%=$(BUILD_DIR)/%)
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # Extract the header up to the first blank line
 $(BUILD_DIR)/%.header: %
 	$(MKDIR) $(@D)

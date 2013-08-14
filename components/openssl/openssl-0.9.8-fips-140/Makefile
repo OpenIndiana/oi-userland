@@ -126,6 +126,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
     ( [ $(BITS) -eq 32 ] && $(GPATCH) -p1 $(@D)/crypto/opensslconf.h \
       patches-post-config/opensslconf.patch; cd $(@D); $(MAKE) depend; )
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # We must make sure that openssl-fips component is built before this 0.9.8
 # component since in order to build FIPS-140 certified libraries, the canister
 # is needed. Note that we must unset BITS that would override the same variable

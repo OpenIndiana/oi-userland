@@ -46,6 +46,8 @@ include ../../make-rules/ips.mk
 # automatically generated
 COMPONENT_BUILD_ENV +=    PATH="/usr/bin:/usr/gnu/bin:/usr/perl5/bin"
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_32)
 

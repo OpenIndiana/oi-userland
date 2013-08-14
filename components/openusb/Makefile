@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -48,6 +48,8 @@ PATCH_LEVEL = 1
 
 COMPONENT_POST_BUILD_ACTION = \
 	(cd $(@D)/src; $(MAKE) install-sunos-backend)
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build: $(BUILD_32_and_64)
 

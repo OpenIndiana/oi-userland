@@ -43,7 +43,7 @@ COMPONENT_TEST_DIR= $(COMPONENT_SRC)
 COMPONENT_TEST_CMD= $(@D)/scripts-2.6/trial twisted
 COMPONENT_TEST_ARGS=""
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:          $(BUILD_32_and_64)

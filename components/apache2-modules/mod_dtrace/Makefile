@@ -43,6 +43,8 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
 endif
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 download:
 
 clobber: clean

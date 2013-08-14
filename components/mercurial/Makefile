@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -47,6 +47,8 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)/doc
 # Set mod time of patched file from patch.  Use this to ensure that the .py
 # file consistently gets the same timestamp.
 $(SOURCE_DIR)/.https_proxy.patched: GPATCH_FLAGS += -Z
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_32)

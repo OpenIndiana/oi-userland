@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -66,6 +66,8 @@ CONFIGURE_ENV  +=   CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV  +=   CPP="$(CC) $(CPPFLAGS) $(CFLAGS) -E"
 CONFIGURE_ENV  +=   LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=    INSTALL="$(INSTALL)"
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build: $(BUILD_32_and_64)
 

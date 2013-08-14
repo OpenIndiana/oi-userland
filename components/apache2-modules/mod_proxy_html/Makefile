@@ -49,6 +49,8 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin
 endif
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 build: $(BUILD_32_and_64)
 
 test: $(NO_TESTS)

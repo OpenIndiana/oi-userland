@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -49,6 +49,8 @@ $(SOURCE_DIR)/.installed: $(SOURCE_DIR)/.built
 	/usr/bin/find $(SOURCE_DIR)/share/ppd -name "*.ppd" -exec gzip {} +
 	$(CLONEY) $(SOURCE_DIR)/share/ppd $(PROTOUSRSHAREDIR)/ppd/SUNWfoomatic
 	$(TOUCH) $@
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:	$(SOURCE_DIR)/.built

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -66,6 +66,8 @@ COMPONENT_INSTALL_ENV +=	$(ANT_ENV)
 
 COMPONENT_TEST_TARGETS =	test
 COMPONENT_TEST_ENV +=		$(ANT_ENV)
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 build:	$(BUILD_32)
 

@@ -135,6 +135,8 @@ COMPONENT_INSTALL_TARGETS = installclientlib
 # attributes.
 LICENSE_TRANSFORMS =
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_32)
 

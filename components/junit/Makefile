@@ -42,6 +42,8 @@ COMPONENT_BUILD_ARGS    += -Djavadocdir=${PROTO_DIR}
 COMPONENT_BUILD_ARGS    += -Dversion-status=""
 COMPONENT_BUILD_TARGETS += dist
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_32)
 	

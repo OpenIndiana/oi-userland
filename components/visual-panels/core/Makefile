@@ -50,6 +50,8 @@ COMPONENT_TEST_ENV =	  	$(COMPONENT_BUILD_ENV)
 # Do not apply the standard licence transforms for this component.
 LICENSE_TRANSFORMS =
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 $(SOURCE_DIR)/.prep:
 	$(TOUCH) $@

@@ -41,7 +41,7 @@ include ../../make-rules/ips.mk
 
 COMPONENT_TEST_ENV +=	PATH="$(GNUBIN):$(PATH)"
 
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_64)

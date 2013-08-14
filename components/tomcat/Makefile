@@ -62,6 +62,8 @@ COMPONENT_POST_BUILD_ACTION= \
 	(cd $(PROTO_DIR) ; $(RM) conf/CONF.tar.gz ; \
 	    gtar cfz conf/CONF.tar.gz conf/* )
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 build:	$(BUILD_32)
 
 install: build

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -101,6 +101,8 @@ $(SOURCE_DIR_1)/.prep:        $(SOURCE_DIR_1)/.unpacked
 prep::	$(SOURCE_DIR_1)/.prep
 
 CLEAN_PATHS += $(SOURCE_DIR_1)
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)

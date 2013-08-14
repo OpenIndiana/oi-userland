@@ -83,6 +83,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/usr/bin; $(MV) symilar symilar-$(PYTHON_VERSION)) ;
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 

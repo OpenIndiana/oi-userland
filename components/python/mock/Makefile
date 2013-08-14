@@ -39,6 +39,8 @@ include $(WS_TOP)/make-rules/ips.mk
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
 COMPONENT_TEST_ARGS =	setup.py test
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_NO_ARCH)
 

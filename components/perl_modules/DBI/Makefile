@@ -41,6 +41,8 @@ ASLR_MODE = $(ASLR_ENABLE)
 
 COMPONENT_TEST_TARGETS = test
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)

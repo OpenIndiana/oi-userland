@@ -46,8 +46,7 @@ include $(WS_TOP)/make-rules/makemaker.mk
 # build threaded 5.12 support too
 PERL_VERSIONS += 5.12-mt
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # man pages go in the common area
 COMPONENT_INSTALL_ENV += INSTALLVENDORMAN3DIR=$(USRSHAREMAN3DIR)
