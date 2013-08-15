@@ -56,7 +56,9 @@ build:		$(BUILD_32)
 install:	../facter/build/$(MACH32)/.installed $(INSTALL_32)
 
 clean::
-	(cd ext; $(GMAKE) clean; $(RM) Makefile)
+	@if [ -f ext/Makefile ]; then \
+		(cd ext; $(GMAKE) clean; $(RM) Makefile) \
+	fi
 
 # puppet requires the installation of the following rubygems to run
 # the unittests:  rspec rspec-expectations mocha rake rack hiera rgen
