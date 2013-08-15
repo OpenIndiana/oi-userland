@@ -95,7 +95,8 @@ CONFIGURE_OPTIONS+= --build $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --target $(GNU_ARCH)
 CONFIGURE_OPTIONS+= --with-boot-ldflags=-R$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS+= --enable-plugins
-CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto
+CONFIGURE_OPTIONS+= --enable-objc-gc
+CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --enable-ld=no
 CONFIGURE_OPTIONS+= --with-as=/usr/bin/gas
 CONFIGURE_OPTIONS+= --with-gnu-as
