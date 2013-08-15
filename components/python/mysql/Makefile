@@ -41,7 +41,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS +=	-L/usr/mysql/lib/mysql -R/usr/mysql/lib/mysql
+CFLAGS +=	-L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
+
+PATH=/usr/bin:/usr/gnu/bin:/usr/mariadb/5.5/bin
 
 # common targets
 build:          $(BUILD_32)
