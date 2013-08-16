@@ -43,10 +43,7 @@ CONFIGURE_OPTIONS += --with-aprinc=/usr/apr/include
 CONFIGURE_OPTIONS += --with-aprlib=/usr/apr/lib
 CONFIGURE_OPTIONS += --with-aprutillib=/usr/apr-util/lib
 CONFIGURE_OPTIONS += --with-svnlib=/usr/lib/svn
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS += CC="$(CC)"
 
 COMPONENT_PREP_ACTION =        (cd $(@D) && autoconf)
 COMPONENT_PRE_CONFIGURE_ACTION = (cp -a $(SOURCE_DIR)/* $(@D))

@@ -61,8 +61,6 @@ CFLAGS                  +=      $(CFLAGS.$(BITS))
 CPPFLAGS                +=      $(CPPFLAGS.$(BITS))
 LDFLAGS                 +=      $(LDFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS     +=        CC="$(CC)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
-
 CONFIGURE_ENV         +=	PHP_PDO_MYSQL="$(ECPREFIX)/lib/mysql/5.5/bin/mysql_config"
 CONFIGURE_SCRIPT       =	$(@D)/configure
 

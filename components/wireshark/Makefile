@@ -44,7 +44,6 @@ CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
 CONFIGURE_OPTIONS +=	--with-lua=no
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
 
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can

@@ -41,8 +41,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) $(CPP_LARGEFILES)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
+CFLAGS += $(CPP_LARGEFILES)
 
 # common targets
 build:		$(BUILD_32_and_64)

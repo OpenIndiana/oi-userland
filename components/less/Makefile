@@ -41,8 +41,6 @@ include ../../make-rules/ips.mk
 
 CC += $(CC_BITS)
 
-CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
-
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)

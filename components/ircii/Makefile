@@ -44,9 +44,6 @@ include ../../make-rules/ips.mk
 # various C source files.
 CFLAGS += -DINCLUDE_CURSES_H
 
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-
 CC += $(CC_BITS)
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 

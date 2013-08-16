@@ -99,9 +99,6 @@ CONFIGURE_OPTIONS +=	--with-readline
 CONFIGURE_OPTIONS +=	--with-extra-charsets=complex
 CONFIGURE_OPTIONS +=	--with-plugins=archive,blackhole,csv,myisam,example,federated,innobase,myisammrg
 CONFIGURE_OPTIONS +=	--enable-local-infile
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 CONFIGURE_OPTIONS.32 +=	--libexecdir=$(CONFIGURE_PREFIX)/bin
 CONFIGURE_OPTIONS.32 +=	--enable-dtrace DTRACEFLAGS='-32'

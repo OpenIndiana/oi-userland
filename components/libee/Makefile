@@ -38,9 +38,6 @@ include ../../make-rules/ips.mk
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
 
-# This is needed for the 64-bit library to be built correctly.
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-
 # common targets
 build:		$(BUILD_32_and_64)
 

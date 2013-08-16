@@ -39,8 +39,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_ENV +=        CFLAGS="$(CFLAGS)"
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets

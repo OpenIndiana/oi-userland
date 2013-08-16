@@ -49,7 +49,6 @@ CONFIGURE_OPTIONS  +=	--without-openssl
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
 CONFIGURE_OPTIONS  +=	--with-perl=$(PERL)
 CONFIGURE_OPTIONS  +=	--with-python=$(PYTHON)
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_BUILD_ENV+=	NO_PERL_MAKEMAKER=1
 COMPONENT_INSTALL_ENV+=	PERL_LIB=$(shell $(PERL) -MConfig -e 'print "$$Config{installvendorarch}"')

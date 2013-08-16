@@ -41,8 +41,6 @@ include ../../make-rules/ips.mk
 # new configure for it to configure and build properly.
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf) 
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets

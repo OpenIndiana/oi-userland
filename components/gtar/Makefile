@@ -44,7 +44,6 @@ CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 
 CONFIGURE_OPTIONS +=	--with-rmt=/usr/sbin/rmt
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/sbin
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 
 COMPONENT_BUILD_TARGETS = all
 

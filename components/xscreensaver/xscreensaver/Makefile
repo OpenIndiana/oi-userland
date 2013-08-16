@@ -77,10 +77,6 @@ CONFIGURE_OPTIONS+=	 --libexecdir=/usr/lib/xscreensaver/bin
 CONFIGURE_OPTIONS+=	--with-configdir=/usr/lib/xscreensaver/config/control-center-2.0
 CONFIGURE_OPTIONS+=	--with-image-directory=/usr/share/pixmaps/backgrounds
 CONFIGURE_OPTIONS+=	--with-text-file=/etc/motd
-CONFIGURE_OPTIONS+=	--with-x-app-defaults=/usr/share/X11/app-defaults
-CONFIGURE_OPTIONS+= 	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS+= 	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS+= 	LDFLAGS="$(LDFLAGS)"
 
 COMPONENT_POST_CONFIGURE_ACTION+=	( \
 	cd $(@D)/po && \

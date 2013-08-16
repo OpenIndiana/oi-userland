@@ -40,7 +40,6 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

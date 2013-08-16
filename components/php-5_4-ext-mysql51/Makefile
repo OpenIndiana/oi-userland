@@ -61,8 +61,6 @@ CFLAGS			+=	$(CFLAGS.$(BITS))
 CPPFLAGS		+=	$(CPPFLAGS.$(BITS))
 LDFLAGS			+=	$(LDFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS     +=        CC="$(CC)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
-
 CONFIGURE_SCRIPT       =	$(@D)/configure
 
 COMPONENT_PRE_CONFIGURE_ACTION	 =	cp -R $(SOURCE_DIR)/ext/mysql/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize

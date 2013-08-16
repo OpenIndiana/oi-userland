@@ -49,7 +49,6 @@ CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
 CONFIGURE_OPTIONS +=	--with-ldap=ldap_r-2.4
 CONFIGURE_OPTIONS +=	--with-ldap-include=/usr/include/openldap
 CONFIGURE_OPTIONS +=	--without-odbc
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
 CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config

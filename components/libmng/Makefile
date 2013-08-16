@@ -65,8 +65,6 @@ CFLAGS += `pkg-config --cflags lcms`
 # because it's unclear that --enable-largefile works properly
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-
 CONFIGURE_OPTIONS += --includedir=/usr/include/libmng
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --with-pic

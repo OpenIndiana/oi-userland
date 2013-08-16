@@ -41,7 +41,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--prefix=/usr
 CONFIGURE_OPTIONS  +=		--with-included-popt
 

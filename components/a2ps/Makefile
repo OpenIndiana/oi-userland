@@ -47,7 +47,6 @@ CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--sysconfdir=/etc/gnu
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--with-medium=letter
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 # because viewpathing isn't quite right in this version of a2ps
 COMPONENT_PREP_ACTION = \

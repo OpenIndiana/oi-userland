@@ -55,8 +55,6 @@ IPS_COMPONENT_VERSION=	2.6
 #
 COMPONENT_PREP_ACTION=	(cd $(@D) ; autoconf) 
 
-CONFIGURE_OPTIONS+= 	CFLAGS="$(CFLAGS)"
-
 # This is to get rid of gcc specific -Wxxx options in pwgen makefile
 #
 COMPONENT_BUILD_ARGS = WALL_OPTS=

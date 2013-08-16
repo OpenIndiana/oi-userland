@@ -53,9 +53,7 @@ studio_ALIGN.sparc.32=	-xmemalign=1i
 IFTOP_LIBDIR=	/usr/gnu/lib
 LDFLAGS +=	-L$(IFTOP_LIBDIR) -R$(IFTOP_LIBDIR)
 CPPFLAGS +=	-I/usr/gnu/include -I/usr/include/ncurses
-CONFIGURE_OPTIONS  +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 
 # common targets

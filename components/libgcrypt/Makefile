@@ -37,7 +37,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 CONFIGURE_OPTIONS	+=	--with-gnu-ld
 CONFIGURE_OPTIONS.64	+=	--disable-asm
