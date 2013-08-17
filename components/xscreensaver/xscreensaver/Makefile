@@ -10,7 +10,6 @@
 
 #
 # Copyright (c) 2013 Alexander Pyhalov
-# Copyright (c) 2013 Louis M. Picciano. All Rights Reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -37,9 +36,7 @@ COMPONENT_POST_UNPACK_ACTION=	( cp -r $(COMPONENT_DIR)/files/po-sun/* $(SOURCE_D
 					cp $(COMPONENT_DIR)/files/*.p5i.in $(SOURCE_DIR)/driver && \
 					chmod a+x  $(SOURCE_DIR)/install-sh && \
 					mkdir -p $(SOURCE_DIR)/mesa/GL && \
-					ln -s /usr/include/mesa/*.h $(SOURCE_DIR)/mesa/GL && \
-					mkdir -p $(SOURCE_DIR)/gconf && \
-					ln -s /usr/include/gconf/2/gconf/*.h $(SOURCE_DIR)/gconf )
+					ln -s /usr/include/mesa/*.h $(SOURCE_DIR)/mesa/GL )
 
 COMPONENT_PRE_CONFIGURE_ACTION += chmod -R u+r $(SOURCE_DIR)/ && \
 			cp -r $(SOURCE_DIR)/* $(@D) && \
