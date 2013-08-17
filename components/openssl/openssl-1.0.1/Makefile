@@ -187,6 +187,9 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9-gf2m.pl	$(@D)/crypto/bn/asm; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparct4-mont.pl	$(@D)/crypto/bn/asm; )
 
+# Enable ASLR for this component
+ASLR_MODE =	$(ASLR_ENABLE)
+
 # OpenSSL for wanboot is built on sparc only.
 ifeq ($(MACH), sparc)
 BUILD_64 +=	$(BUILD_DIR_WANBOOT)/.built
