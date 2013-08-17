@@ -73,10 +73,11 @@ CONFIGURE_OPTIONS+=	--with-gl=/usr
 CONFIGURE_OPTIONS+=	--without-motif
 CONFIGURE_OPTIONS+=	--with-jpeg=/usr
 CONFIGURE_OPTIONS+=	--with-hackdir=/usr/lib/xscreensaver/hacks 
-CONFIGURE_OPTIONS+=	 --libexecdir=/usr/lib/xscreensaver/bin
+CONFIGURE_OPTIONS+=	--libexecdir=/usr/lib/xscreensaver/bin
 CONFIGURE_OPTIONS+=	--with-configdir=/usr/lib/xscreensaver/config/control-center-2.0
 CONFIGURE_OPTIONS+=	--with-image-directory=/usr/share/pixmaps/backgrounds
 CONFIGURE_OPTIONS+=	--with-text-file=/etc/motd
+CONFIGURE_OPTIONS+=	--with-x-app-defaults=/usr/share/X11/app-defaults
 
 COMPONENT_POST_CONFIGURE_ACTION+=	( \
 	cd $(@D)/po && \
