@@ -40,11 +40,13 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
+CC	= gcc
+CFLAGS     += "$(CC_BITS)"
 LINT_FLAGS += -I$(PROTO_DIR)/usr/include
 
 # readline likes to use ld directly and this is the easiest
 # way to get it to add -lc
-LDFLAGS += -lc
+# LDFLAGS += -lc
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=		--enable-shared
 CONFIGURE_OPTIONS  +=		--disable-static
