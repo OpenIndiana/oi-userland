@@ -23,7 +23,7 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME			= sqlite
+COMPONENT_NAME			= sqlite-3
 COMPONENT_VERSION		= 3.7.17
 COMPONENT_SRC			= sqlite-autoconf-3071700
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
@@ -34,8 +34,6 @@ COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2013/$(COMPONENT_ARCHIVE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-CFLAGS			+= "$(CC_BITS)"
 
 CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+=	--sysconfdir=$(ETCDIR)
