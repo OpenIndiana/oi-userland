@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -42,6 +42,8 @@ include ../../make-rules/ips.mk
 # Can't use the Studio compilers as they don't support the GNU 
 # __attribute__ extension
 COMPILER =	gcc
+CC = /usr/gcc/4.7/bin/gcc
+CXX = /usr/gcc/4.7/bin/g++
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
