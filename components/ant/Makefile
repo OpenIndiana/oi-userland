@@ -42,7 +42,7 @@ include ../../make-rules/ips.mk
 
 GMAKE=./build.sh
 
-ANT_ENV+=JAVA_HOME=$(JAVA_HOME)
+ANT_ENV+=JAVA_HOME=$(JAVA6_HOME)
 
 ANT_DIST_DIRS+=-Ddist.dir=$(PROTO_DIR)
 ANT_DIST_DIRS+=-Ddist.bin=$(PROTO_DIR)/usr/bin
