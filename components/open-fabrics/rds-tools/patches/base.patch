@@ -15,10 +15,11 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  #include <sys/stat.h>
  #include <sys/poll.h>
  #include <ctype.h>
-@@ -22,10 +28,16 @@
+@@ -22,12 +28,51 @@
  #include <fcntl.h>
  #include <sched.h>
  #include <getopt.h>
++#include <sys/ioctl.h>
 +#if !(defined(__SVR4) && defined(__sun))
  #include <byteswap.h>
  #include "rds.h"
@@ -32,8 +33,81 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
 +#endif
  
  /*
++ * Define these here until these are defined in rds.h
++ * (rds_reset, rds_asend_args and rds_rdma_send_notify)
++ */
++#define	SIOCRDSSETTOS		11000
++#define	SIOCRDSGETTOS		11001
++#define	RDS_SEND_NOTIFY_ME	0x0100
++#define	RDS_CMSG_ASYNC_SEND	10
++#define	RDS_CONN_RESET		8
++
++struct rds_reset {
++	u_int8_t	tos;
++#if defined(__SVR4) && defined(__sun)
++	u_int32_t	src;
++	u_int32_t	dst;
++#else
++	struct in_addr	src;
++	struct in_addr	dst;
++#endif
++};
++
++struct rds_asend_args {
++	u_int64_t	user_token;
++	u_int64_t	flags;
++};
++
++struct rds_rdma_send_notify {
++	u_int64_t	user_token;
++	int32_t		status;
++};
++
++
++/*
   *
-@@ -102,6 +114,10 @@
+  * TODO
+  *  - checksum the data some day.
+@@ -74,11 +119,38 @@
+ 	uint32_t        rdma_vector;
+ 	uint32_t	rdma_alignment;
+ 	uint32_t	connect_retries;
++	uint8_t         reset;
++	uint8_t         tos;
++	uint8_t         async;
+ } __attribute__((packed));
+ 
++#define MAX_BUCKETS 16
++
+ static struct options	opt;
+ static int		control_fd;
++static uint64_t         rtt_threshold;
++static int              show_histogram;
+ 
++static int get_bucket(uint64_t rtt_time)
++{
++  int i;
++  uint64_t l_rtt_time = rtt_time;
++
++  if (!l_rtt_time)
++    i = 0;
++  else
++  {
++    i = -1;
++    while (l_rtt_time)
++    {
++      i++;
++      l_rtt_time = (l_rtt_time >> 1);
++    }
++  }
++
++  return i;
++}
++
+ struct counter {
+ 	uint64_t	nr;
+ 	uint64_t	sum;
+@@ -102,6 +174,10 @@
  
  #define NR_STATS S__LAST
  
@@ -44,7 +118,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  /*
   * Parents share a mapped array of these with their children.  Each child
   * gets one.  It's used to communicate between the child and the parent
-@@ -110,6 +126,7 @@
+@@ -110,9 +186,11 @@
  struct child_control {
  	pid_t pid;
  	int ready;
@@ -52,7 +126,52 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	struct timeval start;
  	struct counter cur[NR_STATS];
  	struct counter last[NR_STATS];
-@@ -254,7 +271,20 @@
++        uint64_t       latency_histogram[MAX_BUCKETS];
+ } __attribute__((aligned (256))); /* arbitrary */
+ 
+ struct soak_control {
+@@ -132,6 +210,7 @@
+  */
+ #define OP_REQ		1
+ #define OP_ACK		2
++#define OP_DUMP		3
+ 
+ #define RDMA_OP_READ	1
+ #define RDMA_OP_WRITE	2
+@@ -143,12 +222,12 @@
+  */
+ struct header {
+ 	uint32_t	seq;
++	uint8_t         op;
+ 	uint32_t	from_addr;
+ 	uint32_t	to_addr;
+ 	uint16_t	from_port;
+ 	uint16_t	to_port;
+ 	uint16_t	index;
+-	uint8_t		op;
+ 
+ 	/* RDMA related.
+ 	 * rdma_op must be the first field, because we
+@@ -163,11 +242,18 @@
+ 	uint32_t        rdma_vector;
+ 
+ 	uint8_t		data[0];
++	uint8_t        retry;
++	uint8_t        rdma_remote_err;
++	uint8_t         pending;
+ } __attribute__((packed));
+ 
+ #define MIN_MSG_BYTES		(sizeof(struct header))
+ #define BASIC_HEADER_SIZE	(size_t)(&((struct header *) 0)->rdma_op)
+ 
++#define print_outlier(...) do {         \
++        fprintf(stderr, __VA_ARGS__);   \
++} while (0)
++
+ #define die(fmt...) do {		\
+ 	fprintf(stderr, fmt);		\
+ 	exit(1);			\
+@@ -254,7 +340,20 @@
  
  	die("invalid host name or dotted quad '%s'\n", ptr);
  }
@@ -73,7 +192,15 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  static void usage(void)
  {
          fprintf(stderr, "rds-stress version %s\n", RDS_VERSION);
-@@ -281,6 +311,9 @@
+@@ -273,6 +372,7 @@
+ 	" -d [depth, 1]     request pipeline depth, nr outstanding\n"
+ 	" -t [nr, 1]        number of child tasks\n"
+ 	" -T [seconds, 0]   runtime of test, 0 means infinite\n"
++	" -Q [tos, 0]       Type of Service\n"
+ 	" -D [bytes]        RDMA: size\n"
+ 	" -I [iovecs, 1]    RDMA: number of user buffers to target (max 512)\n"
+         " -M [nr, 0]        RDMA: mode (0=readwrite,1=readonly,2=writeonly)\n"
+@@ -281,6 +381,9 @@
  	" -c                measure cpu use with per-cpu soak processes\n"
  	" -V                trace execution\n"
  	" -z                print a summary at end of test only\n"
@@ -83,7 +210,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	"\n"
  	"Example:\n"
  	"  recv$ rds-stress\n"
-@@ -310,7 +343,7 @@
+@@ -310,7 +413,7 @@
  static void check_parent(pid_t pid)
  {
  	if (pid != getppid())
@@ -92,7 +219,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  }
  
  /*
-@@ -334,6 +367,7 @@
+@@ -334,6 +437,7 @@
  		msg_pattern[i] = k;
  }
  
@@ -100,7 +227,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  #if __BYTE_ORDER == __LITTLE_ENDIAN
  #define htonll(x)	bswap_64(x)
  #define ntohll(x)	bswap_64(x)
-@@ -341,6 +375,7 @@
+@@ -341,6 +445,7 @@
  #define htonll(x)	(x)
  #define ntohll(x)	(x)
  #endif
@@ -108,7 +235,71 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  
  static void encode_hdr(struct header *dst, const struct header *hdr)
  {
-@@ -584,7 +619,11 @@
+@@ -361,6 +466,7 @@
+ 	dst->rdma_key = htonll(hdr->rdma_key);
+ 	dst->rdma_size = htonl(hdr->rdma_size);
+ 	dst->rdma_vector = htonl(hdr->rdma_vector);
++	dst->retry = hdr->retry;
+ }
+ 
+ static void decode_hdr(struct header *dst, const struct header *hdr)
+@@ -382,6 +488,7 @@
+ 	dst->rdma_key = ntohll(hdr->rdma_key);
+ 	dst->rdma_size = ntohl(hdr->rdma_size);
+ 	dst->rdma_vector = ntohl(hdr->rdma_vector);
++	dst->retry = hdr->retry;
+ }
+ 
+ static void fill_hdr(void *message, uint32_t bytes, struct header *hdr)
+@@ -412,11 +519,19 @@
+  * Compare incoming message header with expected header. All header fields
+  * are in host byte order except for address and port fields.
+  */
+-static int check_hdr(void *message, uint32_t bytes, const struct header *hdr)
++static int check_hdr(void *message, uint32_t bytes, struct header *hdr, struct options *opts)
+ {
+ 	struct header msghdr;
++	uint32_t	inc_seq;
++	uint32_t	my_seq;
+ 
+ 	decode_hdr(&msghdr, message);
++	inc_seq = msghdr.seq;
++	my_seq = hdr->seq;
++
++	if (msghdr.retry && (inc_seq < my_seq))
++		return -1;
++
+ 	if (memcmp(&msghdr, hdr, BASIC_HEADER_SIZE)) {
+ #define bleh(var, disp)					\
+ 		disp(hdr->var),				\
+@@ -428,7 +543,7 @@
+ 		 * with stdout() and we don't get things stomping on each
+ 		 * other
+ 		 */
+-		printf( "An incoming message had a header which\n"
++		printf( "An incoming message had a %s header which\n"
+ 			"didn't contain the fields we expected:\n"
+ 			"    member        expected eq             got\n"
+ 			"       seq %15u %s %15u\n"
+@@ -438,6 +553,7 @@
+ 			"   to_port %15u %s %15u\n"
+ 			"     index %15u %s %15u\n"
+ 			"        op %15u %s %15u\n",
++			(msghdr.retry) ? "RETRY" : "",
+ 			bleh(seq, /**/),
+ 			bleh(from_addr, inet_ntoa_32),
+ 			bleh(from_port, ntohs),
+@@ -569,6 +685,9 @@
+ 
+ 	fcntl(fd, F_SETFL, O_NONBLOCK);
+ 
++	if (opts->tos && ioctl(fd, SIOCRDSSETTOS, &opts->tos)) 
++		die_errno("ERROR: failed to set TOS\n");
++
+ 	return fd;
+ }
+ 
+@@ -584,7 +703,11 @@
  	if (opts->receive_addr == 0)
  		return 1;
  
@@ -120,7 +311,16 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	sin.sin_port = htons(opts->starting_port);
  	sin.sin_addr.s_addr = htonl(opts->receive_addr);
  
-@@ -677,7 +716,11 @@
+@@ -639,7 +762,7 @@
+ 	mr_args.flags = RDS_FREE_MR_ARGS_INVALIDATE;
+ #endif
+ 	if (setsockopt(fd, sol, RDS_FREE_MR, &mr_args, sizeof(mr_args)))
+-		die_errno("setsockopt(RDS_FREE_MR) failed");
++		return;
+ 	mrs_allocated--;
+ }
+ 
+@@ -677,7 +800,11 @@
  	size = sizeof(struct rdma_key_o_meter)
  			+ 2 * nr_tasks * sizeof(*kt)
  			+ 2 * RDMA_MAX_TRACKED_KEYS * sizeof(*ks);
@@ -132,7 +332,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (base == MAP_FAILED)
  		die_errno("alloc_rdma_buffers: mmap failed");
  
-@@ -828,7 +871,7 @@
+@@ -828,13 +955,20 @@
  	}
  
  	if (!failed)
@@ -141,7 +341,35 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  			(unsigned long long) pattern, addr);
  }
  
-@@ -865,7 +908,11 @@
++struct retry_entry {
++	uint32_t	retries;
++	uint32_t	seq;
++	int		status;
++};
++
+ struct task {
+ 	unsigned int		nr;
+ 	unsigned int		pending;
++	int			trace;
+ 	unsigned int		unacked;
+ 	struct sockaddr_in	src_addr;	/* same for all tasks */
+ 	struct sockaddr_in	dst_addr;
+@@ -846,7 +980,14 @@
+ 	uint16_t		recv_index;
+ 	struct timeval *	send_time;
+ 	struct header *		ack_header;
++	struct header *         ack2_header;
++	struct header *         req_header;
++	uint64_t *		retry_token;
++	uint32_t		retries;
++	uint32_t            	last_retry_seq;
++	uint32_t		retry_index;
+ 
++
+ 	/* RDMA related stuff */
+ 	uint64_t **		local_buf;
+ 	uint64_t **		rdma_buf;
+@@ -865,7 +1006,11 @@
  	/* We use mmap here rather than malloc, because it is always
  	 * page aligned. */
  	len = 2 * opts->nr_tasks * opts->req_depth * (opts->rdma_vector * opts->rdma_size) + sys_page_size;
@@ -153,7 +381,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (base == MAP_FAILED)
  		die_errno("alloc_rdma_buffers: mmap failed");
  	memset(base, 0x2f, len);
-@@ -915,17 +962,16 @@
+@@ -915,17 +1060,16 @@
  	if (RDMA_OP_READ == hdr->rdma_op) {
  		if (opt.verify)
  			rds_fill_buffer(rdma_addr, rdma_size, hdr->rdma_pattern);
@@ -177,7 +405,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	}
  }
  
-@@ -947,7 +993,7 @@
+@@ -947,7 +1091,7 @@
  		die("Unexpected RDMA op %u in request\n", in_hdr->rdma_op);
  
  
@@ -186,7 +414,101 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		in_hdr->rdma_op == RDMA_OP_WRITE? "write to" : "read from",
  		rdma_size,
  		(unsigned long long) in_hdr->rdma_addr,
-@@ -1007,6 +1053,9 @@
+@@ -966,21 +1110,33 @@
+ 	hdr->rdma_vector = in_hdr->rdma_vector;
+ }
+ 
+-static inline unsigned int rdma_user_token(struct task *t, unsigned int qindex)
++static inline uint64_t rdma_user_token(struct task *t, unsigned int qindex,  unsigned int type, uint32_t seq)
+ {
+-	return t->nr * opt.req_depth + qindex;
++	uint64_t tmp = seq;
++	return (tmp << 32) | ((t->nr * opt.req_depth + qindex) << 2 | type);
+ }
+ 
+-static void rdma_mark_completed(struct task *tasks, unsigned int token, int status)
++static void rdma_mark_completed(struct task *tasks, uint64_t token, int status, struct options *opts)
+ {
+ 	struct task *t;
+ 	unsigned int i;
++	struct header *hdr = NULL;
++	uint32_t seq = token >> 32;
++	unsigned int type = token & 0x03;
++	unsigned int index = (token & 0xFFFFFFFF) >> 2;
+ 
+-	trace("RDS rdma completion for token %x\n", token);
++	trace("RDS rdma completion for token 0x%lx\n", token);
+ 
+-	t = &tasks[token / opt.req_depth];
+-	i = token % opt.req_depth;
++	t = &tasks[index / opt.req_depth];
++	i = index % opt.req_depth;
+ 
++	if (opts->async) {
++		if (type == OP_REQ)
++			hdr = &t->req_header[i];
++		else
++			hdr = &t->ack2_header[i];
++	}
++
+ 	if (status) {
+ 		const char *errmsg;
+ 
+@@ -987,10 +1143,10 @@
+ 		switch (status) {
+ 		case RDS_RDMA_REMOTE_ERROR:
+ 			errmsg = "remote error"; break;
+-		case RDS_RDMA_CANCELED:
+-			errmsg = "operation was cancelled"; break;
+ 		case RDS_RDMA_DROPPED:
+ 			errmsg = "operation was dropped"; break;
++		case RDS_RDMA_CANCELED:
++			errmsg = "operation was cancelled"; break;
+ 		case RDS_RDMA_OTHER_ERROR:
+ 			errmsg = "other error"; break;
+ 		default:
+@@ -997,10 +1153,38 @@
+ 			errmsg = "unknown error"; break;
+ 		}
+ 
+-		printf("%s:%u: RDMA op %u failed: %s\n",
++		trace("%s:%u: %s failed: %s\n",
+ 				inet_ntoa(t->dst_addr.sin_addr),
+ 				ntohs(t->dst_addr.sin_port),
+-				i, errmsg);
++				type ? "SEND" : "RDMA",
++				errmsg);
++
++		if (hdr &&
++			(status == RDS_RDMA_DROPPED ||
++			 status == RDS_RDMA_REMOTE_ERROR)) {
++
++			if (hdr->seq == seq) {
++				hdr->retry = 1;
++				if (hdr->seq > t->last_retry_seq) {
++					if (status == RDS_RDMA_REMOTE_ERROR)
++						hdr->rdma_remote_err = 1;
++					t->retry_token[t->retry_index] = token;
++					t->retry_index = (t->retry_index + 1) %
++						(2 * opts->req_depth);
++					t->retries += 1;
++					t->last_retry_seq = hdr->seq;
++					if (t->retries > 2 * opts->req_depth)
++						die("Exceeded MAX retry entries..\n");
++				}
++			} else
++				die("SEQ Out-Of-Sync: %u/%u\n", hdr->seq, seq);
++		} else if (hdr) {
++			hdr->pending = 0;
++			hdr->retry = 0;
++		}
++	} else if (hdr) {
++		hdr->pending = 0;
++		hdr->retry = 0;
+ 	}
+ 
+ 	t->rdma_inflight[i] = 0;
+@@ -1007,6 +1191,9 @@
  	t->drain_rdmas = 0;
  }
  
@@ -196,10 +518,421 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  #define MSG_MAXIOVLEN 2
  
  /*
-@@ -1560,7 +1609,12 @@
+@@ -1018,11 +1205,14 @@
+ 	static char ctlbuf[1024];
+ 	struct cmsghdr *cmsg;
+ 
+-	msg->msg_control = ctlbuf;
+-	msg->msg_controllen = CMSG_SPACE(size);
+-
+-	cmsg = CMSG_FIRSTHDR(msg);
+-	cmsg->cmsg_level = sol;
++	if (!msg->msg_control) {
++		msg->msg_control = ctlbuf;
++		msg->msg_controllen = CMSG_SPACE(size);
++		cmsg = CMSG_FIRSTHDR(msg);
++	} else {
++		cmsg = (struct cmsghdr *)((char *)msg->msg_control + msg->msg_controllen);
++		msg->msg_controllen += CMSG_SPACE(size);
++	}cmsg->cmsg_level = sol;
+ 	cmsg->cmsg_type = type;
+ 	cmsg->cmsg_len = CMSG_LEN(size);
+ 	memcpy(CMSG_DATA(cmsg), ptr, size);
+@@ -1034,7 +1224,7 @@
+  * the ACK packet.
+  */
+ static void rdma_build_cmsg_xfer(struct msghdr *msg, const struct header *hdr,
+-		unsigned int user_token, void *local_buf)
++		uint64_t user_token, void *local_buf)
+ {
+ 
+ #define RDS_MAX_IOV 512 /* FIX_ME - put this into rds.h or use socket max ?*/
+@@ -1048,7 +1238,7 @@
+ 	rdma_size = hdr->rdma_size;
+ 	rdma_vector = hdr->rdma_vector;
+ 
+-	trace("RDS issuing rdma for token %x key %Lx len %u local_buf %p vector %u\n",
++	trace("RDS issuing rdma for token 0x%lx key 0x%llx len %d local_buf %p vector %d\n",
+ 			user_token,
+ 			(unsigned long long) hdr->rdma_key,
+ 			rdma_size, local_buf,
+@@ -1102,6 +1292,15 @@
+ 	rdma_put_cmsg(msg, RDS_CMSG_RDMA_ARGS, &args, sizeof(args));
+ }
+ 
++static void build_cmsg_async_send(struct msghdr *msg, uint64_t user_token)
++{
++	struct rds_asend_args  args;
++
++	args.flags |= RDS_SEND_NOTIFY_ME;
++	args.user_token = user_token;
++	rdma_put_cmsg(msg, RDS_CMSG_ASYNC_SEND, &args, sizeof(args));
++}
++
+ static void rdma_build_cmsg_dest(struct msghdr *msg, rds_rdma_cookie_t rdma_dest)
+ {
+ 	rdma_put_cmsg(msg, RDS_CMSG_RDMA_DEST, &rdma_dest, sizeof(rdma_dest));
+@@ -1174,19 +1373,17 @@
+ 	hdr->index = qindex;
+ }
+ 
+-static int send_packet(int fd, struct task *t,
+-		struct header *hdr, unsigned int size)
++static int send_msg(int fd, struct task *t, struct header *hdr,
++		    unsigned int size, struct options *opts, 
++		    struct child_control *ctl)
+ {
+-	unsigned char buf[size], *rdma_flight_recorder = NULL;
++	unsigned char buf[size];
++	uint8_t *rdma_flight_recorder = NULL;
+ 	rds_rdma_cookie_t cookie = 0;
+ 	struct msghdr msg;
+ 	struct iovec iov;
+ 	ssize_t ret;
+ 
+-	/* Make sure we always have the current sequence number.
+-	 * When we send ACK packets, the seq that gets filled in is
+-	 * stale. */
+-	hdr->seq = t->send_seq;
+ 	fill_hdr(buf, size, hdr);
+ 
+ 	memset(&msg, 0, sizeof(msg));
+@@ -1198,27 +1395,10 @@
+ 	iov.iov_base = buf;
+ 	iov.iov_len = size;
+ 
+-	/* If this is a REQ packet in which we pass the MR to the
+-	 * peer, extract the RDMA cookie and pass it on in the control
+-	 * message for now. */
+-	if (hdr->op == OP_REQ && hdr->rdma_op != 0) {
+-		if (hdr->rdma_key != 0) {
+-			/* We used GET_MR to obtain a key */
+-			rdma_build_cmsg_dest(&msg, hdr->rdma_key);
+-			cookie = hdr->rdma_key;
+-			hdr->rdma_key = 0;
+-		} else {
+-			/* Use the RDMA_MAP cmsg to have sendmsg do the
+-			 * mapping on the fly. */
+-			rdma_build_cmsg_map(&msg, hdr->rdma_addr,
+-					    hdr->rdma_size * hdr->rdma_vector,
+-					    &cookie);
+-		}
+-	}
+ 
+ 	/* If this is an ACK packet with RDMA, build the cmsg
+-	 * header that goes with it. */
+-	if (hdr->op == OP_ACK && hdr->rdma_op != 0) {
++	   * header that goes with it. */
++	if (hdr->op == OP_ACK && hdr->rdma_op != 0 && !hdr->rdma_remote_err) {
+ 		unsigned int qindex = hdr->index;
+ 
+ 		if (t->rdma_inflight[qindex] != 0) {
+@@ -1230,16 +1410,35 @@
+ 			 *
+ 			 * We return one of the more obscure error messages,
+ 			 * which we recognize and handle in the top loop. */
+-			trace("Drain RDMA 0x%x\n", rdma_user_token(t, qindex));
++			trace("Drain RDMA 0x%lx\n", rdma_user_token(t, qindex, 0, hdr->seq));
+ 			errno = EBADSLT;
+ 			return -1;
+ 		}
+ 		rdma_build_cmsg_xfer(&msg, hdr,
+-				rdma_user_token(t, qindex),
++				rdma_user_token(t, qindex, 0, hdr->seq),
+ 				t->local_buf[qindex]);
+ 		rdma_flight_recorder = &t->rdma_inflight[qindex];
++	} else if (opts->async) {
++		if (hdr->op == OP_REQ)
++			build_cmsg_async_send(&msg,
++				rdma_user_token(t, hdr->index, OP_REQ, hdr->seq));
++		else
++			build_cmsg_async_send(&msg,
++				rdma_user_token(t, hdr->index, OP_ACK, hdr->seq));
+ 	}
+ 
++	if (hdr->op == OP_REQ && hdr->rdma_op != 0) {
++		if (hdr->rdma_key != 0) {
++			rdma_build_cmsg_dest(&msg, hdr->rdma_key);
++			cookie = hdr->rdma_key;
++			hdr->rdma_key = 0;
++		} else {
++			rdma_build_cmsg_map(&msg, hdr->rdma_addr,
++					hdr->rdma_size * hdr->rdma_vector,
++					&cookie);
++		}
++	}
++
+ 	ret = sendmsg(fd, &msg, 0);
+ 	if (ret < 0) {
+ 		if (errno != EAGAIN && errno != ENOBUFS)
+@@ -1256,10 +1455,41 @@
+ 		 * lower 32bit of the cookie */
+ 		rdma_key_o_meter_add(cookie);
+ 	}
++
++	hdr->pending = 1;
++
++	return ret;
++}
++
++static int send_packet(int fd, struct task *t,
++		struct header *hdr, unsigned int size,
++		struct options *opts, struct child_control *ctl)
++{
++	ssize_t ret;
++
++	/* Make sure we always have the current sequence number.
++	 * When we send ACK packets, the seq that gets filled in is
++	 * stale. */
++	hdr->seq = t->send_seq;
++
++	ret = send_msg(fd, t, hdr, size, opts, ctl);
++	if (ret < 0) return ret;
++
+ 	t->send_seq++;
+ 	return ret;
+ }
+ 
++static int resend_packet(int fd, struct task *t,
++		struct header *hdr, unsigned int size,
++		struct options *opts, struct child_control *ctl)
++{
++	ssize_t ret;
++
++	ret = send_msg(fd, t, hdr, size, opts, ctl);
++
++	return ret;
++}
++
+ static int send_one(int fd, struct task *t,
+ 		struct options *opts,
+ 		struct child_control *ctl)
+@@ -1266,12 +1496,16 @@
+ {
+ 	struct timeval start;
+ 	struct timeval stop;
+-	struct header hdr;
++	struct header *hdr = &t->req_header[t->send_index]; 
+ 	int ret;
+ 
+-	build_header(t, &hdr, OP_REQ, t->send_index);
++	if (opts->async && hdr->pending) {
++		return -1;
++	}
++
++	build_header(t, hdr, OP_REQ, t->send_index);
+ 	if (opts->rdma_size && t->send_seq > 10)
+-		rdma_build_req(fd, &hdr, t,
++		rdma_build_req(fd, hdr, t,
+ 				opts->rdma_size,
+ 				opts->req_depth,
+ 				opts->rw_mode,
+@@ -1279,7 +1513,7 @@
+ 
+ 
+ 	gettimeofday(&start, NULL);
+-	ret = send_packet(fd, t, &hdr, opts->req_size);
++	ret = send_packet(fd, t, hdr, opts->req_size, opts, ctl);
+ 	gettimeofday(&stop, NULL);
+ 
+ 	if (ret < 0)
+@@ -1302,10 +1536,15 @@
+ 		struct child_control *ctl)
+ {
+ 	struct header *hdr = &t->ack_header[qindex];
++	struct header *hdr2 = &t->ack2_header[qindex];
+ 	ssize_t ret;
+ 
++	if (opts->async && hdr2->pending) {
++		return -1;
++	}
++
+ 	/* send an ack in response to the req we just got */
+-	ret = send_packet(fd, t, hdr, opts->ack_size);
++	ret = send_packet(fd, t, hdr, opts->ack_size, opts, ctl);
+ 	if (ret < 0)
+ 		return ret;
+ 	if (ret != opts->ack_size)
+@@ -1324,6 +1563,8 @@
+ 		break;
+ 	}
+ 
++	memcpy(hdr2, hdr, sizeof(struct header));
++
+ 	return ret;
+ }
+ 
+@@ -1354,8 +1595,49 @@
+ 			struct child_control *ctl,
+ 			int can_send, int do_work)
+ {
++	struct header *hdr;
++	unsigned int index;
++	int req_size;
++	int num_retries = t->retries;
++	uint64_t token;
++	unsigned int type;
++	unsigned int index2;
++	unsigned int i;
++
++	while (opts->async && num_retries > 0) {
++		index = (t->retry_index - num_retries +
++			(2 * opts->req_depth)) % (2 * opts->req_depth);
++
++		token = t->retry_token[index];
++		type = token & 0x03;
++		index2 = (token & 0xFFFFFFFF) >> 2;
++		i = index2 % opts->req_depth;
++
++		if (type == OP_REQ)
++			hdr = &t->req_header[i];
++		else
++			hdr = &t->ack2_header[i];
++
++		if (!hdr->retry)
++			goto next;
++
++		if (hdr->op == OP_REQ)
++			req_size = opts->req_size;
++		else
++			req_size = opts->ack_size;
++
++		if (resend_packet(fd, t, hdr, req_size, opts, ctl) < 0) {
++			return -1;
++		}
++		hdr->retry = 0;
++next:
++		num_retries--;
++	}
++	t->last_retry_seq = t->retries = 0;
++
+ 	if (ack_anything(fd, t, opts, ctl, can_send) < 0)
+ 		return -1;
++
+ 	while (do_work && t->pending < opts->req_depth) {
+ 		if (!can_send)
+ 			goto eagain;
+@@ -1375,7 +1657,8 @@
+ 		rds_rdma_cookie_t *cookie,
+ 		struct sockaddr_in *sin,
+ 		struct timeval *tstamp,
+-		struct task *tasks)
++		struct task *tasks,
++		struct options *opts)
+ {
+ 	struct cmsghdr *cmsg;
+ 	char cmsgbuf[256];
+@@ -1400,13 +1683,13 @@
+ 		return ret;
+ 	if (ret && ret < sizeof(struct header))
+ 		die("recvmsg() returned short data: %zd", ret);
+-	if (msg.msg_namelen < sizeof(struct sockaddr_in))
++	if (ret && msg.msg_namelen < sizeof(struct sockaddr_in))
+ 		die("socklen = %d < sizeof(sin) (%zu)\n",
+ 		    msg.msg_namelen, sizeof(struct sockaddr_in));
+ 
+ 	/* See if the message comes with a RDMA destination */
+ 	for (cmsg = CMSG_FIRSTHDR(&msg); cmsg; cmsg = CMSG_NXTHDR(&msg, cmsg)) {
+-		struct rds_rdma_notify notify;
++		struct rds_rdma_send_notify notify;
+ 
+ 		if (cmsg->cmsg_level != sol)
+ 			continue;
+@@ -1436,7 +1719,7 @@
+ 			if (cmsg->cmsg_len < CMSG_LEN(sizeof(notify)))
+ 				die("RDS_CMSG_RDMA_DEST data too small");
+ 			memcpy(&notify, CMSG_DATA(cmsg), sizeof(notify));
+-			rdma_mark_completed(tasks, notify.user_token, notify.status);
++			rdma_mark_completed(tasks, notify.user_token, notify.status, opts);
+ 			break;
+ 		}
+ 	}
+@@ -1445,7 +1728,8 @@
+ 
+ static int recv_one(int fd, struct task *tasks,
+ 			struct options *opts,
+-		struct child_control *ctl)
++		struct child_control *ctl,
++		struct child_control *all_ctl)
+ {
+ 	char buf[max(opts->req_size, opts->ack_size)];
+ 	rds_rdma_cookie_t rdma_dest = 0;
+@@ -1456,15 +1740,18 @@
+ 	uint16_t expect_index;
+ 	int task_index;
+ 	ssize_t ret;
++	int	check_status;
+ 
+-	ret = recv_message(fd, buf, sizeof(buf), &rdma_dest, &sin, &tstamp, tasks);
++
++	ret = recv_message(fd, buf, sizeof(buf), &rdma_dest, &sin, &tstamp, tasks, opts);
+ 	if (ret < 0)
+ 		return ret;
+ 
+ 	/* If we received only RDMA completions or cong updates,
+ 	 * ret will be 0 */
+-	if (ret == 0)
++	if (ret == 0) {
+ 		return 0;
++	}
+ 
+ 	/* check the incoming sequence number */
+ 	task_index = ntohs(sin.sin_port) - opts->starting_port - 1;
+@@ -1508,16 +1795,32 @@
+ 	hdr.to_port = t->src_addr.sin_port;
+ 	hdr.index = expect_index;
+ 
+-	if (check_hdr(buf, ret, &hdr))
+-		die("header from %s:%u to id %u bogus\n",
+-		    inet_ntoa(sin.sin_addr), htons(sin.sin_port),
+-		    ntohs(t->src_addr.sin_port));
++	check_status = check_hdr(buf, ret, &hdr, opts);
++	if (check_status) {
++		if (check_status > 0) {
++			die("header from %s:%u to id %u bogus\n",
++		    	inet_ntoa(sin.sin_addr), htons(sin.sin_port),
++		    	ntohs(t->src_addr.sin_port));
++		} else
++			return 0;
++	}
+ 
+ 	if (hdr.op == OP_ACK) {
+-		stat_inc(&ctl->cur[S_RTT_USECS],
+-			 usec_sub(&tstamp, &t->send_time[expect_index]));
+-		t->pending -= 1;
++                uint64_t rtt_time = 
++                  usec_sub(&tstamp, &t->send_time[expect_index]);
+ 
++		stat_inc(&ctl->cur[S_RTT_USECS], rtt_time);
++                if (rtt_time > rtt_threshold)
++			print_outlier("Found RTT = 0x%lx\n", rtt_time);
++
++                if (show_histogram)
++                {
++                  ctl->latency_histogram[get_bucket(rtt_time)]++;
++                }
++
++		if (t->pending > 0)
++			t->pending -= 1;
++
+ 		if (in_hdr.rdma_key)
+ 			rdma_process_ack(fd, &in_hdr, ctl);
+ 	} else {
+@@ -1549,6 +1852,7 @@
+ }
+ 
+ static void run_child(pid_t parent_pid, struct child_control *ctl,
++			struct child_control *all_ctl,
+ 		      struct options *opts, uint16_t id, int active)
+ {
+ 	struct sockaddr_in sin;
+@@ -1559,8 +1863,15 @@
+ 	struct task tasks[opts->nr_tasks];
  	struct timeval start;
          int do_work = opts->simplex ? active : 1;
++	int j;
  
++
 +#if defined(__SVR4) && defined(__sun)
 +	set_my_lgrp();
 +	sin.sin_family = AF_INET_OFFLOAD;
@@ -209,7 +942,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	sin.sin_port = htons(opts->starting_port + 1 + id);
  	sin.sin_addr.s_addr = htonl(opts->receive_addr);
  
-@@ -1572,7 +1626,11 @@
+@@ -1572,7 +1883,11 @@
  	for (i = 0; i < opts->nr_tasks; i++) {
  		tasks[i].nr = i;
  		tasks[i].src_addr = sin;
@@ -221,7 +954,37 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		tasks[i].dst_addr.sin_addr.s_addr = htonl(opts->send_addr);
  		tasks[i].dst_addr.sin_port = htons(opts->starting_port + 1 + i);
  		tasks[i].send_time = alloca(opts->req_depth * sizeof(struct timeval));
-@@ -1625,6 +1683,10 @@
+@@ -1581,6 +1896,15 @@
+ 		tasks[i].rdma_buf = alloca(opts->req_depth * sizeof(uint64_t *));
+ 		tasks[i].local_buf = alloca(opts->req_depth * sizeof(uint64_t *));
+ 		tasks[i].ack_header = alloca(opts->req_depth * sizeof(struct header));
++		tasks[i].ack2_header = alloca(opts->req_depth * sizeof(struct header));
++		for (j=0;j<opts->req_depth;j++)
++			tasks[i].ack2_header[j].pending = 0;
++
++		tasks[i].req_header = alloca(opts->req_depth * sizeof(struct header));
++		for (j=0;j<opts->req_depth;j++)
++			tasks[i].req_header[j].pending = 0;
++
++		tasks[i].retry_token = alloca(2 * opts->req_depth * sizeof(uint64_t));
+ 		tasks[i].rdma_next_op = (i & 1)? RDMA_OP_READ : RDMA_OP_WRITE;
+ 	}
+ 
+@@ -1611,7 +1935,7 @@
+ 
+ 		check_parent(parent_pid);
+ 
+-		ret = poll(&pfd, 1, -1);
++		ret = poll(&pfd, 1, 1000);
+ 		if (ret < 0) {
+ 			if (errno == EINTR)
+ 				continue;
+@@ -1621,10 +1945,14 @@
+ 		pfd.events = POLLIN;
+ 
+ 		if (pfd.revents & POLLIN) {
+-			while (recv_one(fd, tasks, opts, ctl) >= 0)
++			while (recv_one(fd, tasks, opts, ctl, all_ctl) >= 0)
  				;
  		}
  
@@ -232,7 +995,15 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		/* keep the pipeline full */
  		can_send = !!(pfd.revents & POLLOUT);
  		for (i = 0, t = tasks; i < opts->nr_tasks; i++, t++) {
-@@ -1665,8 +1727,12 @@
+@@ -1633,6 +1961,7 @@
+ 			if (t->drain_rdmas)
+ 				continue;
+ 			if (send_anything(fd, t, opts, ctl, can_send, do_work) < 0) {
++
+ 				pfd.events |= POLLOUT;
+ 
+ 				/* If the send queue is full, we will see EAGAIN.
+@@ -1665,8 +1994,12 @@
  	uint32_t i;
  
  	len = opts->nr_tasks * sizeof(*ctl);
@@ -245,7 +1016,16 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (ctl == MAP_FAILED)
  		die("mmap of %u child control structs failed", opts->nr_tasks);
  
-@@ -1699,7 +1765,7 @@
+@@ -1688,7 +2021,7 @@
+ 				control_fd = -1;
+ 			}
+ 			rdma_key_o_meter_set_self(i);
+-			run_child(parent, ctl + i, opts, i, active);
++			run_child(parent, ctl + i, ctl, opts, i, active);
+ 			exit(0);
+ 		}
+ 		ctl[i].pid = pid;
+@@ -1699,7 +2032,7 @@
  			continue;
  		pid = waitpid(-1, NULL, WNOHANG);
  		if (pid)
@@ -254,7 +1034,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		sleep(1);
  		i--; /* try this child again */
  	}
-@@ -1823,6 +1889,7 @@
+@@ -1823,6 +2156,7 @@
  
  	if (disable)
  		return;
@@ -262,7 +1042,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if ((fp = fopen("/proc/stat", "r")) == NULL) {
  		fprintf(stderr, "Cannot open /proc/stat (%s) - "
  				"not printing cpu stats\n",
-@@ -1856,10 +1923,37 @@
+@@ -1856,10 +2190,37 @@
  		}
  	}
  	fclose(fp);
@@ -300,7 +1080,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	} else {
  		struct sys_stats sys;
  		unsigned long sum = 0;
-@@ -1884,6 +1978,7 @@
+@@ -1884,6 +2245,7 @@
  		 *  5	irq
  		 *  6	softirq
  		 */
@@ -308,7 +1088,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  		printf(",%f,%f,%f,%f,%Lu",
  			(sys.times[0] + sys.times[1]) * scale,
  			sys.times[2] * scale,
-@@ -1890,6 +1985,14 @@
+@@ -1890,6 +2252,14 @@
  			(sys.times[3] + sys.times[4]) * scale,
  			(sys.times[5] + sys.times[6]) * scale,
  			sys.intr);
@@ -323,7 +1103,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	}
  	prev = current;
  }
-@@ -1903,6 +2006,10 @@
+@@ -1903,6 +2273,10 @@
  	static socklen_t buflen = 0;
  	static int sock_fd = -1;
  	int i, count, item_size;
@@ -334,7 +1114,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  
  	if (sock_fd < 0) {
  		sock_fd = socket(pf, SOCK_SEQPACKET, 0);
-@@ -1912,6 +2019,7 @@
+@@ -1912,6 +2286,7 @@
  
  	/* We should only loop once on the first call; after that the
  	 * buffer requirements for RDS counters should not change. */
@@ -342,7 +1122,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	while ((item_size = getsockopt(sock_fd, sol, RDS_INFO_COUNTERS, curr, &buflen)) < 0) {
  		if (errno != ENOSPC)
  			die_errno("getsockopt(RDS_INFO_COUNTERS) failed");
-@@ -1919,7 +2027,29 @@
+@@ -1919,7 +2294,29 @@
  		if (!curr)
  			die_errno("Cannot allocate buffer for stats counters");
  	}
@@ -372,7 +1152,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (item_size > sizeof(*ctr))
  		die("Bad counter item size in RDS_INFO_COUNTERS (got %d, max %zd)\n",
  				item_size, sizeof(*ctr));
-@@ -1932,8 +2062,11 @@
+@@ -1932,8 +2329,11 @@
  	}
  
  	for (i = 0; i < count; ++i)
@@ -385,7 +1165,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	gettimeofday(&now, NULL);
  
  	if (initialize) {
-@@ -1957,6 +2090,10 @@
+@@ -1957,6 +2357,10 @@
  	memcpy(prev, ctr, count * sizeof(*ctr));
  	last_ts = now;
  
@@ -396,7 +1176,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	get_stats(initialize);
  }
  
-@@ -1967,7 +2104,7 @@
+@@ -1967,7 +2371,7 @@
  
  	pid = waitpid(-1, &status, wflags);
  	if (pid < 0)
@@ -405,7 +1185,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (pid == 0)
  		return 0;
  
-@@ -1975,15 +2112,15 @@
+@@ -1975,15 +2379,15 @@
  		if (WEXITSTATUS(status) == 0)
  			return 1;
  		die("child pid %u exited with status %d\n",
@@ -424,7 +1204,22 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  }
  
  static void release_children_and_wait(struct options *opts,
-@@ -2139,7 +2276,12 @@
+@@ -1995,9 +2399,13 @@
+ 	struct counter summary[NR_STATS];
+ 	struct timeval start, end, now, first_ts, last_ts;
+ 	double cpu_total = 0;
+-	uint16_t i, cpu_samples = 0;
++	uint16_t i, j, cpu_samples = 0;
+ 	uint16_t nr_running;
++        uint64_t latency_histogram[MAX_BUCKETS];
+ 
++	if (show_histogram) 
++	        memset(latency_histogram, 0, sizeof(latency_histogram));
++
+ 	gettimeofday(&start, NULL);
+ 	start.tv_sec += 2;
+ 	for (i = 0; i < opts->nr_tasks; i++)
+@@ -2139,7 +2547,12 @@
  	control_fd = -1;
  
  	if (nr_running) {
@@ -437,7 +1232,90 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  			kill(ctl[i].pid, SIGTERM);
  		stop_soakers(soak_arr);
  	}
-@@ -2517,7 +2659,11 @@
+@@ -2167,6 +2580,19 @@
+ 			avg(&summary[S_SENDMSG_USECS]),
+ 			avg(&summary[S_RTT_USECS]),
+ 			soak_arr? scale * cpu_total : -1.0);
++
++		if (show_histogram) 
++		{
++			for (i = 0; i < opts->nr_tasks; i++)
++			  for (j=0;j < MAX_BUCKETS; j++)
++			    latency_histogram[j] += ctl[i].latency_histogram[j];
++			    
++			printf("\nRTT histogram\n");
++			printf("RTT (us)        \t\t    Count\n");
++			for (i=0;i < MAX_BUCKETS; i++)
++			  printf("[%6u - %6u] \t\t %8u\n", 1 << i, 1 << (i+1), 
++			         (unsigned int)latency_histogram[i]);
++		}
+ 	}
+ }
+ 
+@@ -2262,6 +2688,9 @@
+         dst->simplex = src->simplex;                    /* byte sized */
+         dst->rw_mode = src->rw_mode;                    /* byte sized */
+         dst->rdma_vector = htonl(src->rdma_vector);
++	dst->tos = src->tos;
++	dst->reset = src->reset;
++	dst->async = src->async;
+ }
+ 
+ static void decode_options(struct options *dst, const struct options *src)
+@@ -2295,6 +2724,9 @@
+         dst->simplex = src->simplex;                    /* byte sized */
+         dst->rw_mode = src->rw_mode;                    /* byte sized */
+ 	dst->rdma_vector = ntohl(src->rdma_vector);
++	dst->tos = src->tos;
++	dst->reset = src->reset;
++	dst->async = src->async;
+ }
+ 
+ static void verify_option_encdec(const struct options *opts)
+@@ -2316,6 +2748,30 @@
+ 		die("encode/decode check of options struct failed");
+ }
+ 
++static void reset_conn(struct options *opts)
++{
++	struct rds_reset val;
++	int fd;
++	struct sockaddr_in sin;
++
++	sin.sin_family = AF_INET;
++	sin.sin_port = htons(opts->starting_port);
++	sin.sin_addr.s_addr = htonl(opts->receive_addr);
++
++	fd = bound_socket(pf, SOCK_SEQPACKET, 0, &sin);
++
++	val.tos = opts->tos;
++#if defined(__SVR4) && defined(__sun)
++	val.src = htonl(opts->receive_addr);
++	val.dst = htonl(opts->send_addr);
++#else
++	val.src.s_addr = htonl(opts->receive_addr);
++	val.dst.s_addr = htonl(opts->send_addr);
++#endif
++	if (setsockopt(fd, sol, RDS_CONN_RESET, &val, sizeof(val)))
++		die_errno("setsockopt RDS_CONN_RESET failed");
++}
++
+ static int active_parent(struct options *opts, struct soak_control *soak_arr)
+ {
+ 	struct options enc_options;
+@@ -2324,6 +2780,11 @@
+ 	int fd;
+ 	uint8_t ok;
+ 
++	if (opts->reset) {
++		reset_conn(opts);
++		return 0;
++	}
++
+ 	if (opts->show_params) {
+ 		unsigned int k;
+ 
+@@ -2517,7 +2978,11 @@
  	/* an extra terminating entry which will be all 0s */
  	len = (nr_soak + 1) * sizeof(struct soak_control);
  	soak_arr = mmap(NULL, len, PROT_READ|PROT_WRITE,
@@ -449,7 +1327,24 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  	if (soak_arr == MAP_FAILED)
  		die("mmap of %ld soak control structs failed", nr_soak);
  
-@@ -2589,6 +2735,7 @@
+@@ -2572,6 +3037,10 @@
+ 	OPT_CONNECT_RETRIES,
+ 	OPT_USE_CONG_MONITOR,
+ 	OPT_PERFDATA,
++        OPT_SHOW_OUTLIERS,
++        OPT_SHOW_HISTOGRAM,
++	OPT_RESET,
++	OPT_ASYNC,
+ };
+ 
+ static struct option long_options[] = {
+@@ -2584,11 +3053,13 @@
+ { "send-addr",		required_argument,	NULL,	's'	},
+ { "port",		required_argument,	NULL,	'p'	},
+ { "time",		required_argument,	NULL,	'T'	},
++{ "tos",                required_argument,      NULL,   'Q'     },
+ { "report-cpu",		no_argument,		NULL,	'c'	},
+ { "report-summary",	no_argument,		NULL,	'z'	},
  { "rtprio",		no_argument,		NULL,	'R'	},
  { "verify",		no_argument,		NULL,	'v'	},
  { "trace",		no_argument,		NULL,	'V'	},
@@ -457,16 +1352,55 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
  
  { "rdma-use-once",	required_argument,	NULL,	OPT_RDMA_USE_ONCE },
  { "rdma-use-get-mr",	required_argument,	NULL,	OPT_RDMA_USE_GET_MR },
-@@ -2652,7 +2799,7 @@
+@@ -2601,6 +3072,10 @@
+ { "show-perfdata",	no_argument,		NULL,	OPT_PERFDATA },
+ { "connect-retries",	required_argument,	NULL,	OPT_CONNECT_RETRIES },
+ { "use-cong-monitor",	required_argument,	NULL,	OPT_USE_CONG_MONITOR },
++{ "show-outliers",      required_argument,      NULL,   OPT_SHOW_OUTLIERS    },
++{ "show-histogram",     no_argument,            NULL,   OPT_SHOW_HISTOGRAM   },
++{ "reset",              no_argument,            NULL,   OPT_RESET },
++{ "async",              no_argument,            NULL,   OPT_ASYNC },
+ 
+ { NULL }
+ };
+@@ -2640,6 +3115,8 @@
+ 	opts.use_cong_monitor = 1;
+ 	opts.rdma_use_fence = 1;
+ 	opts.rdma_cache_mrs = 0;
++	opts.rdma_use_once = 0;
++	opts.rdma_use_get_mr = 0;
+ 	opts.rdma_alignment = 0;
+ 	opts.rdma_key_o_meter = 0;
+ 	opts.show_params = 0;
+@@ -2648,11 +3125,16 @@
+         opts.simplex = 0;
+         opts.rw_mode = 0;
+ 	opts.rdma_vector = 1;
++        rtt_threshold = ~0U;
++        show_histogram = 0;
++	opts.tos = 0;
++	opts.reset = 0;
++	opts.async = 0;
+ 
  	while(1) {
  		int c, index;
  
 -		c = getopt_long(argc, argv, "+a:cD:d:hI:M:op:q:Rr:s:t:T:vVz",
-+		c = getopt_long(argc, argv, "+a:cD:d:hI:M:op:q:Rr:s:t:T:vVg:z",
++		c = getopt_long(argc, argv, "+a:cD:d:hI:M:op:q:Rr:s:t:T:Q:vVg:z",
  				long_options, &index);
  		if (c == -1)
  			break;
-@@ -2711,6 +2858,10 @@
+@@ -2702,6 +3184,9 @@
+ 			case 'T':
+ 				opts.run_time = parse_ull(optarg, (uint32_t)~0);
+ 				break;
++			case 'Q':
++				opts.tos = parse_ull(optarg, (uint8_t)~0);
++				break;
+ 			case 'z':
+ 				opts.summary_only = 1;
+ 				break;
+@@ -2711,9 +3196,25 @@
  			case 'V':
  				opts.tracing = 1;
  				break;
@@ -474,10 +1408,25 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.c rds-tools-2.0.7/rds-stress.c
 +				lgrp_id = (lgrp_id_t)parse_ull(optarg,
 +				    (uint32_t)~0);
 +				break;
++                        case OPT_SHOW_OUTLIERS:
++                                rtt_threshold = parse_ull(optarg, ~0U);
++                                break;
++                        case OPT_SHOW_HISTOGRAM:
++                                show_histogram = 1;
++                                break;
  			case OPT_USE_CONG_MONITOR:
  				opts.use_cong_monitor = parse_ull(optarg, 1);
  				break;
-@@ -2786,6 +2937,7 @@
++			case OPT_RESET:
++				opts.reset = 1;
++				break;
++			case OPT_ASYNC:
++				opts.async = 1;
++				break;
+ 			case OPT_RDMA_USE_ONCE:
+ 				opts.rdma_use_once = parse_ull(optarg, 1);
+ 				break;
+@@ -2786,6 +3287,7 @@
  	if (opts.rdma_size && 0)
  		opts.rdma_size = (opts.rdma_size + 4095) & ~4095;
  
@@ -1290,7 +2239,7 @@ diff -r -u /tmp/rds-tools-2.0.4/configure rds-tools-2.0.7/configure
 diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
 --- /tmp/rds-tools-2.0.4/rds-stress.1	Wed Aug  4 15:25:11 2010
 +++ rds-tools-2.0.7/rds-stress.1	Thu Feb 24 13:27:52 2011
-@@ -1,99 +1,102 @@
+@@ -1,99 +1,106 @@
 -.Dd May 15, 2007
 -.Dt RDS-STRESS 1
 -.Os
@@ -1321,7 +2270,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
 +.HP
 +.nf
 +rds-stress [-p port_number] -r [receive_address] [-s send_address]
-+      [-a ack_bytes] [-q request_bytes] [-D rdma_bytes]
++      [-Q tos] [-a ack_bytes] [-q request_bytes] [-D rdma_bytes]
 +      [-d queue_depth] [-t nr_tasks] [-c] [-R] [-V] [-v]
 +.fi
  
@@ -1423,6 +2372,10 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  which it connects to the destination address.
 -.It Fl a Ar ack_bytes
 +.TP
++\fB\-Q tos
++Uses the RDS connection between IP addresses with the specified tos value. By 
++default, the base (tos = 0) RDS connection is used.
++.TP
 +\fB\-a ack_bytes
  This specifies the size of the ack messages, in bytes. There is a minimum size
  which depends on the format of the ack messages, which may change over time.
@@ -1439,7 +2392,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  RDSv3 is capable of transmitting part of a message via RDMA directly from
  application buffer to application buffer. This option enables RDMA support
  in rds-stress: request packets include parameters for an RDMA READ or WRITE
-@@ -100,20 +103,25 @@
+@@ -100,20 +107,25 @@
  operation, which the receiving process executes at the time the ACK packet
  is sent.
  See section "Message Sizes" below.
@@ -1470,7 +2423,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  This causes rds-stress to create child tasks which just consume CPU cycles.
  One task is created for each CPU in the system.  First each child observes the
  maximum rate at which it can consume cycles.  This means that this option
-@@ -121,50 +129,67 @@
+@@ -121,50 +133,67 @@
  use of the system by observing the lesser rate at which the children consume
  cycles.  This option is *not* shared between the active and passive instances.
  It must be specified on each rds-stress command line.
@@ -1537,7 +2490,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  WRITEs for all children.
 -.It tx us/c
 +.TP
-+mbi K/s
++mbo K/s
 +The total number of bytes that are being transmited via RDMA READs and
 +WRITEs for all children.
 +.TP
@@ -1557,7 +2510,7 @@ diff -r -u /tmp/rds-tools-2.0.4/rds-stress.1 rds-tools-2.0.7/rds-stress.1
  This is the percentage of available CPU resources on this machine that are being
  consumed since rds-stress started running.  It will show -1.00 if -c is not
  given.  It is calculated based on the amount of CPU resources that CPU soaking
-@@ -171,4 +196,3 @@
+@@ -171,4 +200,3 @@
  tasks are able to consume.  This lets it measure CPU use by the system, say in
  interrupt handlers, that task-based CPU accounting does not include.
  For this to work rds-stress must be started with -c on an idle system.
