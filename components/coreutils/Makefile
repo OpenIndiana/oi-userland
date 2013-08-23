@@ -42,6 +42,9 @@ CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
+# To allow stdbuf to correctly find /usr/lib/libstdbuf.so
+COMPONENT_BUILD_ARGS += pkglibexecdir=/usr/lib
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
