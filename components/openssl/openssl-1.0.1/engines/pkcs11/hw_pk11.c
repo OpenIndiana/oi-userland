@@ -3911,7 +3911,7 @@ hw_fj_aes_instruction_set_present(void)
 		{
 		uint_t ui = 0;
 		(void) getisax(&ui, 1);
-		present = (ui & (AV_SPARC_AES)) > 0;
+		present = (ui & (AV_SPARC_FJAES)) > 0;
 		}
 
 	return (present);
