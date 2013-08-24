@@ -16,7 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gui_install
 COMPONENT_VERSION=	0.1
-COMPONENT_SUMMARY=	A meta-package that installs common applications for the Live CD and desktops
+COMPONENT_SUMMARY=	"A meta-package that installs common applications for the Live CD and desktops"
 
 include ../../../make-rules/ips.mk
 

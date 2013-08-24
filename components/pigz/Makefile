@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pigz
-COMPONENT_VERSION=	2.2.5
+COMPONENT_VERSION=	2.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://zlib.net/pigz/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e37498cbf3a475d7ebe2519751188c29564bf8dd27ba68bd3c7fe1ac08792759
+    sha256:74bbd5962f9420549fc987ddd1ccda692ec2b29d2d612fbbe26edf3fa348ff21
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pigz
 COMPONENT_TEST_TARGETS=	test
@@ -37,20 +37,19 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-PKG_PROTO_DIRS += $(BUILD_DIR_64)
+PKG_PROTO_DIRS += $(BUILD_DIR_32)
 
-CC += $(CC_BITS)
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
 
-ASLR_MODE = $(ASLR_ENABLE)
+#ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(BUILD_64)
+install:	$(BUILD_32)
 
-test:		$(TEST_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -1,0 +1,38 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri value=pkg:/benchmark/sysbench@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value=org.opensolaris.category.2008:Development/System
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+legacy arch=i386 category=system desc="$(COMPONENT_SUMMARY) ($(IPS_COMPONENT_VERSION))" name="$(COMPONENT_SUMMARY)" pkg=SUNWsysbench
+license sysbench.license license=GPLv2
+
+dir path=usr/benchmarks
+dir path=usr/benchmarks/sysbench
+dir path=usr/benchmarks/sysbench/bin
+dir path=usr/share/doc
+dir path=usr/share/doc/sysbench
+dir path=usr/share/man
+dir path=usr/share/man/man1
+
+file mode=0555 path=usr/benchmarks/sysbench/bin/sysbench pkg.csize=54891 pkg.size=117184
+file path=usr/share/doc/sysbench/manual.xml
+file files/sysbench.1 path=usr/share/man/man1/sysbench.1

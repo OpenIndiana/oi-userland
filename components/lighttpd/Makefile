@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.23
+COMPONENT_VERSION=	1.4.32
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8555db22ed7d429160701555611d8cd5eff42fc7e6e3ad3b050279c9b2145469
+    sha256:0765e07dac432393dea3950639d5ba646ded95a9408ad002e54b3353ab6b9645
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
@@ -57,7 +57,7 @@ CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/bin/mysql_config
+CONFIGURE_OPTIONS +=	--with-mysql=/usr/mariadb/5.5/bin/mysql_config
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Enable ASLR for this component

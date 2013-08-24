@@ -1,15 +1,15 @@
---- src/Makefile.am.orig	2012-02-10 08:34:40.481201984 -0800
-+++ src/Makefile.am	2012-02-10 08:36:45.578998263 -0800
-@@ -87,7 +87,7 @@
+--- src/Makefile.am	2013-08-21 10:56:15.714925768 +0400
++++ src/Makefile.am	2013-08-21 11:00:05.035387485 +0400
+@@ -88,7 +88,7 @@
  lib_LTLIBRARIES += liblightcomp.la
  liblightcomp_la_SOURCES=$(common_src)
- liblightcomp_la_CFLAGS=$(AM_CFLAGS)
+ liblightcomp_la_CFLAGS=$(AM_CFLAGS) $(LIBEV_CFLAGS)
 -liblightcomp_la_LDFLAGS = -avoid-version -no-undefined
 +liblightcomp_la_LDFLAGS = -avoid-version
- liblightcomp_la_LIBADD = $(PCRE_LIB) $(SSL_LIB) $(FAM_LIBS)
+ liblightcomp_la_LIBADD = $(PCRE_LIB) $(SSL_LIB) $(FAM_LIBS) $(LIBEV_LIBS)
  common_libadd = liblightcomp.la
  else
-@@ -97,171 +97,171 @@
+@@ -98,171 +98,171 @@
  
  lib_LTLIBRARIES += mod_flv_streaming.la
  mod_flv_streaming_la_SOURCES = mod_flv_streaming.c
@@ -184,7 +184,7 @@
  mod_compress_la_LIBADD = $(Z_LIB) $(BZ_LIB) $(common_libadd)
  
  lib_LTLIBRARIES += mod_auth.la
- mod_auth_la_SOURCES = mod_auth.c http_auth_digest.c http_auth.c
+ mod_auth_la_SOURCES = mod_auth.c http_auth.c
 -mod_auth_la_LDFLAGS = -module -export-dynamic -avoid-version -no-undefined
 +mod_auth_la_LDFLAGS = -module -export-dynamic -avoid-version
  mod_auth_la_LIBADD = $(CRYPT_LIB) $(LDAP_LIB) $(LBER_LIB) $(common_libadd)

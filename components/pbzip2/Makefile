@@ -39,18 +39,17 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-# pbzip2 Solaris Sun Studio build uses a non-standard Makefile
-COMPONENT_BUILD_ARGS +=		CC="$(CXX)"
-COMPONENT_BUILD_ARGS +=		-f Makefile.solaris.sunstudio
-COMPONENT_INSTALL_ARGS +=	-f Makefile.solaris.sunstudio
+COMPONENT_BUILD_ARGS += CC="$(CXX)"
+COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
+
 COMPONENT_INSTALL_ARGS +=	PREFIX=$(PROTOUSRDIR)
 
-ASLR_MODE = $(ASLR_ENABLE)
+#ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 

@@ -1,13 +1,14 @@
---- src/network.c-orig	Mon Sep  7 05:46:50 2009
-+++ src/network.c	Mon Sep  7 05:59:17 2009
-@@ -175,6 +175,10 @@
- 		log_error_write(srv, __FILE__, __LINE__, "ss", "socketsockopt failed:", strerror(errno));
- 		return -1;
+--- src/network.c	2013-08-21 11:28:25.018215726 +0400
++++ src/network.c	2013-08-21 12:13:10.725590569 +0400
+@@ -236,6 +236,11 @@
+ 		}
  	}
-+        if (setsockopt(srv_socket->fd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val)) < 0) {
-+                log_error_write(srv, __FILE__, __LINE__, "ss", "socketsockopt failed:", strerror(errno));
-+                return -1;
-+        }
  
- 	switch(srv_socket->addr.plain.sa_family) {
- #ifdef HAVE_IPV6
++	if (setsockopt(srv_socket->fd, IPPROTO_TCP, TCP_NODELAY, &val, sizeof(val)) < 0) {
++                log_error_write(srv, __FILE__, __LINE__, "ss", "socketsockopt failed:", strerror(errno));
++                goto error_free_socket;
++        }
++
+ #ifdef FD_CLOEXEC
+ 	/* set FD_CLOEXEC now, fdevent_fcntl_set is called later; needed for pipe-logger forks */
+ 	fcntl(srv_socket->fd, F_SETFD, FD_CLOEXEC);
