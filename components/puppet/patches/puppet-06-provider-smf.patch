@@ -1,0 +1,24 @@
+Add check for existence of smf service
+--- puppet-3.2.2/lib/puppet/provider/service/smf.rb.orig	2013-07-15 09:23:24.667341073 -0600
++++ puppet-3.2.2/lib/puppet/provider/service/smf.rb	2013-07-15 10:13:03.196178924 -0600
+@@ -80,9 +80,18 @@
+       return
+     end
+ 
++    # get the current state and the next state, and if the next
++    # state is set (i.e. not "-") use it for state comparison
++
++    # Check to see if the service exists
++    cmd = Array[command(:svccfg), "select", @resource[:name]]
++    output = Puppet::Util::Execution.execute(
++        cmd, :combine => true, :failonfail => false)
++    if $CHILD_STATUS.exitstatus != 0
++      info output
++    end
++
+     begin
+-      # get the current state and the next state, and if the next
+-      # state is set (i.e. not "-") use it for state comparison
+       states = svcs("-H", "-o", "state,nstate", @resource[:name]).chomp.split
+       state = states[1] == "-" ? states[0] : states[1]
+     rescue Puppet::ExecutionFailure
