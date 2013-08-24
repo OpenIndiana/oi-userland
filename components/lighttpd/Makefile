@@ -58,7 +58,6 @@ CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	--with-mysql=/usr/mariadb/5.5/bin/mysql_config
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
