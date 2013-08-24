@@ -43,7 +43,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CFLAGS += "-Dinline"
-LDFLAGS += $(CC_BITS)
 
 ASLR_MODE = $(ASLR_ENABLE)
 

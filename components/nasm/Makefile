@@ -30,7 +30,6 @@ include ../../make-rules/ips.mk
 IPS_COMPONENT_VERSION=	2.9.10
 
 CFLAGS+="-I$(BUILD_DIR_$(BITS))"
-LDFLAGS += "$(CC_BITS)"
 
 COMPONENT_POST_CONFIGURE_ACTION += (mkdir -p $(BUILD_DIR_32)/lib $(BUILD_DIR_64)/lib)
 
