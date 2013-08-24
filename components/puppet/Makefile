@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		puppet
-COMPONENT_VERSION=	3.1.1
+COMPONENT_VERSION=	3.2.2
 COMPONENT_PROJECT_URL=	http://puppetlabs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4401f6388bb96b1301a107f247af6fa558127d78467bb5cef1a1e0ff66b4463d
+    sha256:c47745aa73912b2cb1a20b07e8741b8af37a920b9bc8dc8afb14b23d8df7d13d
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/puppet/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/puppet
 
@@ -52,7 +52,7 @@ build:		$(BUILD_32)
 install:	../facter/build/$(MACH32)/.installed $(INSTALL_32)
 
 # puppet requires the installation of the following rubygems to run
-# the unittests:  rspec rspec-expectations mocha rake rack hiera
+# the unittests:  rspec rspec-expectations mocha rake rack hiera rgen
 # Disable the tests until these rubygems are available.
 test:		$(NO_TESTS)
 
