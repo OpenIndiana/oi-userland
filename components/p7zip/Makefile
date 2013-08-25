@@ -41,7 +41,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PREP_ACTION = (cd $(@D); cp ../makefile.solaris makefile.machine)
+COMPONENT_PREP_ACTION = (cd $(@D); cp makefile.solaris_x86 makefile.machine)
 COMPONENT_BUILD_TARGETS = all3
 COMPONENT_INSTALL_ARGS += DEST_HOME=/usr DEST_DIR=$(PROTO_DIR)
 
