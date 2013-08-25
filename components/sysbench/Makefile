@@ -18,7 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= sysbench
 
 COMPONENT_VERSION= 0.4.12
-COMPONENT_SUMMARY= "Sysbench - sytem performance benchmark"
+COMPONENT_SUMMARY= Sysbench - sytem performance benchmark
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
