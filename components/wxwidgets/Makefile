@@ -45,11 +45,10 @@ PKG_PROTO_DIRS += $(COMPONENT_DIR)/man
 $(BUILD_64): CONFIGURE_OPTIONS += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # get rid of compiler path set in RUNPATH
-LDFLAGS += $(studio_NORUNPATH)
+# LDFLAGS += $(studio_NORUNPATH)
 LDFLAGS += $(CC_BITS)
-LDFLAGS += $(studio_CXXLIB_CSTD)
-
-CXXFLAGS += $(studio_XREGS)
+#LDFLAGS += $(studio_CXXLIB_CSTD)
+CXXFLAGS += -fpermissive
 
 CONFIGURE_OPTIONS += --with-gtk
 CONFIGURE_OPTIONS += --enable-gtk2
@@ -64,9 +63,6 @@ CONFIGURE_OPTIONS += --without-gnomeprint
 CONFIGURE_OPTIONS += --without-gnomevfs
 CONFIGURE_OPTIONS += --with-opengl
 CONFIGURE_OPTIONS += --without-libmpack
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 
 include ../../make-rules/shared-targets.mk
 
