@@ -38,7 +38,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 $(INSTALL_64):	COMPONENT_POST_INSTALL_ACTION = \
 	/usr/bin/elfedit -e "dyn:runpath ''" $(PROTOUSRLIBDIR64)/libraptor2.so.0.0.0

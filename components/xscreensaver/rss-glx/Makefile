@@ -47,11 +47,7 @@ CONFIGURE_OPTIONS+=	--prefix=/usr/lib/xscreensaver
 CONFIGURE_OPTIONS+=	--bindir=/usr/lib/xscreensaver/hacks
 CONFIGURE_OPTIONS+=	--mandir=/usr/share/man
 CONFIGURE_OPTIONS+=	--with-configdir=/usr/lib/xscreensaver/config/control-center-2.0
-CONFIGURE_OPTIONS+= 	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS+= 	CPPFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS+= 	LDFLAGS="$(LDFLAGS)"
-CONFIGURE_OPTIONS+= 	CC="$(CC)"
-CONFIGURE_OPTIONS+= 	CXX="$(CXX)"
 
 #COMPONENT_INSTALL_ENV += MAKEFLAGS=-e install_prefix=$(PROTO_DIR)
 

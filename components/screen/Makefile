@@ -40,7 +40,6 @@ CONFIGURE_OPTIONS +=	--enable-colors256
 CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
 CONFIGURE_OPTIONS +=	--disable-socket-dir
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 PROTOTERMINFODIR=$(PROTOUSRSHAREDIR)/lib/terminfo
 

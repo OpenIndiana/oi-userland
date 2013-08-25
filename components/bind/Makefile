@@ -68,10 +68,6 @@ CONFIGURE_OPTIONS +=	--with-pkcs11
 # specifying path where libxml2 is installed.
 CONFIGURE_OPTIONS +=	--with-libxml2=/usr
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-# Configure will add "-mt" to CC which is already set in CFLAGS, so override.
-CONFIGURE_OPTIONS +=	CC="$(CC)"
-
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 

@@ -50,8 +50,6 @@ CFLAGS += $(gcc_C99_ENABLE)
 LDFLAGS += -lsocket -lnsl -lpkcs11
 LIBS = -lsocket -lnsl -lpkcs11
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 CONFIGURE_ENV +=	LIBS="$(LIBS)"
 

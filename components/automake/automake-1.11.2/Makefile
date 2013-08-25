@@ -39,7 +39,6 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=	PERL="$(PERL)"
 
 # common targets

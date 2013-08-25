@@ -41,7 +41,8 @@ include ../../make-rules/ips.mk
 # so we require the following line to add the -m option to CC
 #
 CC += $(CC_BITS)
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS) -DHAVE_CONFIG_H"
+
+CFLAGS += "-DHAVE_CONFIG_H"
 
 # common targets
 build:		$(BUILD_32_and_64)

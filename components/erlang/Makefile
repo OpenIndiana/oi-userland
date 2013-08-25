@@ -74,7 +74,6 @@ COMPILER = gcc
 
 COMPONENT_BUILD_ENV +=	"HOME=/tmp"
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"
 CONFIGURE_OPTIONS += --enable-smp-support
 CONFIGURE_OPTIONS += --enable-threads
@@ -85,7 +84,6 @@ CONFIGURE_OPTIONS += --enable-hipe
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 
-CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS.64 += LIBS="-m64"
 
 # Needed for 'set name=info.source-url' action in erlang-doc.p5m

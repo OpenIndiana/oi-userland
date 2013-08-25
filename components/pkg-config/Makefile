@@ -40,7 +40,6 @@ include ../../make-rules/ips.mk
 # otherwise our default PKG_CONFIG_PATH will change to the 64-bit libdir
 #CONFIGURE_LIBDIR.64 =   $(CONFIGURE_PREFIX)/lib
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)" 
 COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
 ASLR_MODE = $(ASLR_ENABLE)
 

@@ -39,7 +39,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_OPTIONS  +=		--with-kerberos5
 CONFIGURE_OPTIONS  +=		--with-ssl

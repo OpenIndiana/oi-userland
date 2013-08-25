@@ -47,7 +47,6 @@ include ../../make-rules/ips.mk
 
 CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet

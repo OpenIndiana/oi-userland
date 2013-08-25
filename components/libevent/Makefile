@@ -50,7 +50,6 @@ COMPONENT_PRE_CONFIGURE_ACTION =  \
 #
 #/usr/bin/event_rpcgen.py
 
-CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --disable-static
 
 build:		$(BUILD_32_and_64)

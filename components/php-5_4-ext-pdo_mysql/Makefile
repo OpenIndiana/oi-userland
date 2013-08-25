@@ -57,9 +57,8 @@ CFLAGS                  +=      -I/usr/mariadb/5.5/include
 CPPFLAGS                +=      -I/usr/mariadb/5.5/include
 LDFLAGS                 +=      $(LDFLAGS.$(BITS))
 
-CONFIGURE_OPTIONS     +=        CC="$(CC)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
-
 CONFIGURE_ENV         +=	PHP_PDO_MYSQL="/usr/mariadb/5.5/bin/mysql_config"
+
 CONFIGURE_SCRIPT       =	$(@D)/configure
 
 COMPONENT_PRE_CONFIGURE_ACTION	=	cp -R $(SOURCE_DIR)/ext/pdo_mysql/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize

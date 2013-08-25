@@ -64,9 +64,6 @@ INSTALL_32 = 	$(VARIANTS:%=%/.installed)
 
 TEST_32 = 	$(NOX_VARIANT)/.tested
 
-# Necessary to pass 64-bit flags to the compilation stage.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
 CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"

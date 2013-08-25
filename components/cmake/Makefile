@@ -51,12 +51,9 @@ LDFLAGS +=	$($(COMPILER)_NORUNPATH)
 
 # We need these in the environment, although they are already passed
 # as CONFIGURE_OPTIONS; otherwise the correct compilers are not used
-CONFIGURE_ENV +=	CC="$(CC)"	
-CONFIGURE_ENV +=	CXX="$(CXX)"	
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CONFIGURE_ENV +=	CXXFLAGS="-library=stdcxx4"	
 endif
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"	
 CONFIGURE_ENV +=	MAKE="$(GMAKE)"	
 
 # Use system-installed third-party libraries, rather than the private

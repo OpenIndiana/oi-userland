@@ -63,8 +63,6 @@ COMPONENT_PRE_BUILD_ACTION = \
 # we need to enable large file support
 CFLAGS += $(CPP_LARGEFILES)
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 CONFIGURE_ENV += "ac_cv_lib_net_main=no"
 CONFIGURE_ENV += "ac_cv_lib_net_socket==no"
 CONFIGURE_ENV += "ac_cv_lib_inet_socket==no"

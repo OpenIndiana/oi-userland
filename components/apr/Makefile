@@ -40,13 +40,14 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
+CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
+
 CONFIGURE_PREFIX=/usr/apr
 
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS +=	--enable-other-child
 CONFIGURE_OPTIONS +=	--enable-nonportable-atomics
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--tag=CC --silent"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)

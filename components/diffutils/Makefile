@@ -42,7 +42,6 @@ include ../../make-rules/ips.mk
 CONFIGURE_BINDIR.32 =		$(CONFIGURE_PREFIX)/gnu/bin
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 

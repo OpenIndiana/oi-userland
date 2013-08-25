@@ -64,6 +64,8 @@ $(VARIANT_WORKER)/$(MACH64)/.configured:  BITS=64
 $(VARIANT_PREFORK)/%/.configured: CONFIGURE_OPTIONS += --with-mpm=prefork
 $(VARIANT_WORKER)/%/.configured:  CONFIGURE_OPTIONS += --with-mpm=worker
 
+CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
+
 # pipefail wouldn't allow APR-util version check
 CONFIGURE_ENV += SHELLOPTS=
 
@@ -90,7 +92,6 @@ CONFIGURE_OPTIONS +=	--enable-authnz-ldap
 CONFIGURE_OPTIONS +=	--enable-ldap
 CONFIGURE_OPTIONS +=	--enable-ssl
 CONFIGURE_OPTIONS +=	--enable-exception-hook
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-Apache2-$(MACH64)

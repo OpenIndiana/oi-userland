@@ -36,12 +36,17 @@ include ../../../make-rules/ips.mk
 
 CXXFLAGS+=-I/usr/include/ncurses
 
-LDFLAGS.32=	$(LDFLAGS) -L/usr/gnu/lib -R /usr/gnu/lib
-LDFLAGS.64=	$(LDFLAGS) -L/usr/gnu/lib/amd64 -R /usr/gnu/lib/amd64
+LDFLAGS.32=	$(LDFLAGS) -L$(GNULIB) -R $(GNULIB)
+LDFLAGS.64=	$(LDFLAGS) -L$(GNULIB64) -R $(GNULIB64)
 
 COMPONENT_PRE_CONFIGURE_ACTION += cp -r $(SOURCE_DIR)/* $(@D) && \
 			cd $(@D) && autoconf
-CONFIGURE_OPTIONS+=	--sysconfdir=/etc --enable-shared --disable-static --with-pic --with-curses=ncurses CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+CONFIGURE_OPTIONS+=	--sysconfdir=/etc 
+CONFIGURE_OPTIONS+=	--enable-shared
+CONFIGURE_OPTIONS+=	--disable-static 
+CONFIGURE_OPTIONS+=	--with-pic 
+CONFIGURE_OPTIONS+=	--with-curses=ncurses 
+
 CONFIGURE_OPTIONS.32+=	LDFLAGS="$(LDFLAGS.32)"
 CONFIGURE_OPTIONS.64+=	LDFLAGS="$(LDFLAGS.64)"
 

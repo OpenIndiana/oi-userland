@@ -57,10 +57,6 @@ CONFIGURE_OPTIONS +=    --enable-nls
 CONFIGURE_OPTIONS +=    --disable-libtool-lock
 CONFIGURE_OPTIONS +=    --enable-largefile=yes
 
-CONFIGURE_OPTIONS +=	CC="$(CC)"
-CONFIGURE_OPTIONS +=	CXX="$(CXX)"
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=    CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=    CPPFLAGS="$(CPPFLAGS)"
 
 # common targets
