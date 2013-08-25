@@ -54,7 +54,7 @@ CONFIGURE_PREFIX= /usr/lighttpd/1.4
 CONFIGURE_MANDIR= $(CONFIGURE_PREFIX)/man
 
 CONFIGURE_OPTIONS +=	--with-pic
-CONFIGURE_OPTIONS +=	--with-lua
+CONFIGURE_OPTIONS +=	--without-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	--with-mysql=/usr/mariadb/5.5/bin/mysql_config
