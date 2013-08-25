@@ -17,7 +17,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= sun-solaris
 
-COMPONENT_SUMMARY= "Perl Sun::Solaris Modules"
+COMPONENT_SUMMARY=Perl Sun::Solaris Modules
 COMPONENT_SRC= src
 
 PERL_VERSIONS = 5.16
