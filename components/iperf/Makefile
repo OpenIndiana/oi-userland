@@ -43,8 +43,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS  +=	PTHREAD_CFLAGS=-pthreads
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 
 # these default to unnecessary gcc options, which
 # are all that prevents us from using studio. so null them.

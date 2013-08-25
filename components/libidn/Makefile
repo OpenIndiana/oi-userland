@@ -56,8 +56,6 @@ GUNZIP = /usr/bin/gunzip
 TAR = /usr/bin/tar
 FIND = /usr/bin/find
 
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 
 CONFIGURE_OPTIONS  +=		--includedir=/usr/include/idn

@@ -50,19 +50,11 @@ CONFIGURE_PREFIX =	/usr/gnu
 CXXFLAGS += -D_XPG6
 LDFLAGS += -D_XPG6
 
-# Needed to correctly build that 64-bit library.
-LDFLAGS += $(CC_BITS)
-
 CONFIGURE_OPTIONS +=	--with-shared
 CONFIGURE_OPTIONS +=	--with-normal
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-widec
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
-
-# Needed to pass -m32 or -m64 to the C/C++ compiler and linker.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 # XXX: Ugly hack copied directly from the desktop SUNWncurses.spec file:
 # The sun-color terminfo included in ncurses does not work;

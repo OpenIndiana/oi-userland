@@ -49,7 +49,6 @@ COMPONENT_PRE_BUILD_ACTION += \
 	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
 		$(SOURCE_DIR)/sample.conf
 
-COMPILER =	gcc
 CFLAGS += -I/usr/gnu/include
 LDFLAGS += -L$(GNULIB) -L$(GNULIB64)
 
@@ -57,8 +56,6 @@ CONFIGURE_OPTIONS +=	--enable-dns
 CONFIGURE_OPTIONS +=	--enable-bz2
 CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 # Needed to correctly build that 64-bit library.
 LDFLAGS += $(CC_BITS)

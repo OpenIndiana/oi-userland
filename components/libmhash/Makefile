@@ -36,7 +36,6 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 CONFIGURE_OPTIONS  +=	--enable-shared
 CONFIGURE_OPTIONS  +=	--disable-static
 CONFIGURE_OPTIONS  +=	--with-pic
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 include ../../make-rules/shared-targets.mk
 

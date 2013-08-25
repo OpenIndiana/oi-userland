@@ -40,7 +40,6 @@ CONFIGURE_PREFIX	 =	/usr/gnu
 CONFIGURE_OPTIONS	+=	--libdir=/usr/lib
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
-CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)

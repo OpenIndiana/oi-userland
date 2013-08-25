@@ -48,10 +48,7 @@ CXXFLAGS += $(CC_PIC)
 # the '-library=Cstd,Crun' we are passing to it.
 LIBS += -lc -lm
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_ENV += LIBS="$(LIBS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-threading

@@ -40,7 +40,6 @@ CONFIGURE_PREFIX    =	/usr/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS  +=	--disable-iberty
 CONFIGURE_OPTIONS  +=	--disable-dependency-tracking
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # common targets
 build:		$(BUILD_32)

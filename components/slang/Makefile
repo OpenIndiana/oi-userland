@@ -42,8 +42,6 @@ include ../../make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 CONFIGURE_SCRIPT = $(@D)/configure
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		LDFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/slsh
 
 # common targets

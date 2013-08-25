@@ -38,7 +38,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
-CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
 # common targets
 build:		$(BUILD_32)

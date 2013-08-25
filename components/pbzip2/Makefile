@@ -39,9 +39,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_BUILD_ARGS += CC="$(CXX)"
-COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
-
 COMPONENT_INSTALL_ARGS +=	PREFIX=$(PROTOUSRDIR)
 
 #ASLR_MODE = $(ASLR_ENABLE)

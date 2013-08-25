@@ -43,7 +43,6 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--with-ssl=openssl
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)" 
 CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 
 # Wget test suite will skip majority of tests with few Perl modules

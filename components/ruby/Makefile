@@ -132,7 +132,6 @@ CONFIGURE_OPTIONS += --disable-option-checking
 CONFIGURE_OPTIONS += --with-openssl
 CONFIGURE_OPTIONS += --with-tk-dir=/usr
 CONFIGURE_OPTIONS += --with-curses-dir=/usr
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
 include $(WS_TOP)/make-rules/shared-targets.mk
 

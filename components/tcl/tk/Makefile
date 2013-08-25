@@ -51,7 +51,6 @@ CONFIGURE_SCRIPT = $(SOURCE_DIR)/unix/configure
 
 CFLAGS += $(XPG6MODE) -std=c99
 
-CONFIGURE_OPTIONS 	+= CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS	+= --enable-shared
 CONFIGURE_OPTIONS	+= --enable-man-symlinks
 CONFIGURE_OPTIONS	+= --enable-threads

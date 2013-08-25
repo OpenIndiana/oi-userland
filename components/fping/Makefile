@@ -43,8 +43,6 @@ include ../../make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets

@@ -58,7 +58,6 @@ CFLAGS.32 += -DUNALIGNED_OK
 
 CFLAGS += $(CC_PIC)
 CFLAGS += $(CFLAGS.$(BITS))
-LDFLAGS += $(CC_BITS)
 
 # We need to reset configure options here because zlib is confused with
 # CC and CFLAGS definitions as configure parameters.
@@ -68,9 +67,6 @@ CONFIGURE_OPTIONS.64	+= --64
 CONFIGURE_OPTIONS.64	+= --libdir=/usr/lib/$(MACH64)
 CONFIGURE_OPTIONS	+= $(CONFIGURE_OPTIONS.$(BITS))
 
-CONFIGURE_ENV += CC="$(CC)"
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV += LDSHARED="$(CC) $(CFLAGS) -G"
 
 # This LDSHARED definitions is forced to get all required options plus
