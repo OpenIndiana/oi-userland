@@ -41,7 +41,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_PREFIX =	/usr/gnu
 CONFIGURE_OPTIONS  +=	--infodir=$(CONFIGURE_INFODIR)
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 ASLR_MODE = $(ASLR_ENABLE)
 

@@ -46,7 +46,6 @@ CONFIGURE_OPTIONS  +=		--without-emacs
 CONFIGURE_OPTIONS  +=		--disable-openmp
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--disable-shared
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
 # common targets
 build:		$(BUILD_32)

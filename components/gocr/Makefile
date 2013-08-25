@@ -44,8 +44,6 @@ PKG_PROTO_DIRS +=	$(COMPONENT_SRC)
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-
 # Needed to successfully link the 64-bit version.
 CC +=              $(CC_BITS)
 

@@ -37,7 +37,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=           --disable-static
 CONFIGURE_OPTIONS  +=           --enable-shared
-CONFIGURE_OPTIONS  +=           CFLAGS="$(CFLAGS)"
 
 build:		$(BUILD_32_and_64)
 

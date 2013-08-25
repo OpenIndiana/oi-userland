@@ -41,9 +41,12 @@ IPS_COMPONENT_VERSION =	3.8
 # viewpathing support in the build is broken in the 'install' target
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
-
 ASLR_MODE = $(ASLR_ENABLE)
+
+# top build process is producing both 32-bit and 64-bit in one Makefile target.
+# It will receive LDFLAGS and cause 64-bit object files linked with 32-bit argument.
+# Till top fixes that mess, unseting LDFLAGS is the hacky workaround.
+LDFLAGS=
 
 # common targets
 build:		$(BUILD_32_and_64)

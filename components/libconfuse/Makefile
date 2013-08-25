@@ -39,7 +39,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--enable-shared
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # This is really only needed to get the test target to pass.
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D)) 

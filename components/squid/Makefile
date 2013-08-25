@@ -49,7 +49,6 @@ CFLAGS += $(CPP_LARGEFILES)
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
 
-CONFIGURE_OPTIONS +=   CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --libexecdir=$(CONFIGURE_PREFIX)/libexec
 CONFIGURE_OPTIONS += --localstatedir=/var/squid
 CONFIGURE_OPTIONS += --sharedstatedir=/var/squid

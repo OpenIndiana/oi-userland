@@ -41,7 +41,6 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=	--disable-static
 CONFIGURE_OPTIONS  +=	--disable-gomp
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 # common targets
 build:		$(BUILD_32_and_64)

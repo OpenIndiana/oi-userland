@@ -42,7 +42,6 @@ CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning
 CONFIGURE_OPTIONS +=	ac_cv_type_complex_double=no
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # common targets
 build:		$(BUILD_32_and_64)

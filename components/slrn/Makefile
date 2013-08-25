@@ -51,7 +51,6 @@ CONFIGURE_OPTIONS +=	--with-server-file=/etc/nntpserver
 CONFIGURE_OPTIONS +=	--with-slrnpull=/var/spool/slrnpull
 CONFIGURE_OPTIONS +=	--enable-spool
 CONFIGURE_OPTIONS +=	--with-ssl
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Needed to successfully link the 64-bit programs.
 CC +=			$(CC_BITS)

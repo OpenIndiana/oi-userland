@@ -26,8 +26,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+<<<<<<< HEAD
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 
+=======
+>>>>>>> 0dc76efa03f40ccc1716f0d4f9a2c6237c5f48ea
 CONFIGURE_OPTIONS += --disable-static
 
 COMPONENT_PRE_CONFIGURE_ACTION=($(CLONEY) $(SOURCE_DIR) $(@D))

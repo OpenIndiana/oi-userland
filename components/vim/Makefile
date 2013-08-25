@@ -28,16 +28,15 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		vim
-COMPONENT_VERSION=	7.3
+COMPONENT_VERSION=	7.4
 IPS_COMPONENT_VERSION=	$(shell echo $(COMPONENT_HG_REV) | sed -e 's/-/./g' -e 's/v//')
-COMPONENT_SRC=		vim-$(COMPONENT_HG_REV)
+COMPONENT_SRC=		vim-359743c1f59a
 COMPONENT_PROJECT_URL=	http://www.vim.org/
-COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).tar.bz2
-COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
-COMPONENT_ARCHIVE_HASH=	sha256:eda12f4f14b6456a579cc9d0ac29ebeecb8ff89ad9d5eb313fab75a751cf59ff
+COMPONENT_ARCHIVE=	vim-$(COMPONENT_HG_REV).zip
+COMPONENT_ARCHIVE_URL=	http://vim.googlecode.com/archive/$(COMPONENT_HG_REV).zip
+#COMPONENT_ARCHIVE_HASH=	sha256:0a12dd12c7c13c54357b425bb36a936cb341e935977d880049a5e31c74b8030e
 COMPONENT_HG_URL=	https://vim.googlecode.com/hg
-COMPONENT_HG_REV=	v7-3-882
-COMPONENT_HG_REV_OLD:=	$(COMPONENT_HG_REV)
+COMPONENT_HG_REV=	v7-4
 
 COMPONENT_BUGDB=	utility/vim
 
@@ -45,65 +44,26 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-HGREPODIR=		$(COMPONENT_NAME).hg
-TARBALLDIR=		$(COMPONENT_NAME)-$(COMPONENT_HG_REV)
-
-$(HGREPODIR)/.hg:
-	hg clone -U $(COMPONENT_HG_URL) $(@D)
-
-hgball-pull: $(HGREPODIR)/.hg
-	hg -R $(HGREPODIR) pull
-
-hgball: COMPONENT_HG_REV = $(shell hg -R $(HGREPODIR) tags | awk '$$1 ~ /^v7-/ {print $$1; exit}')
-
-# Create the tarball.  It should contain the working directory of the repo at
-# the desired revision, but not the .hg directory.  Note that the digest will
-# be different every time because .hg doesn't set the timestamps of the files
-# in the working directory.
-hgball: hgball-pull
-	rm -rf $(TARBALLDIR)
-	hg clone -u $(COMPONENT_HG_REV) $(HGREPODIR) $(TARBALLDIR)
-	rm -rf $(TARBALLDIR)/.hg
-	tar jcf $(COMPONENT_ARCHIVE) $(TARBALLDIR)
-	hg --cwd $(HGREPODIR) stat -ar --rev $(COMPONENT_HG_REV_OLD):$(COMPONENT_HG_REV) runtime src/po
-	digest=$$(digest -a sha256 $(COMPONENT_ARCHIVE)); \
-		/usr/gnu/bin/sed -i \
-			-e "s/^COMPONENT_ARCHIVE_HASH=.*/COMPONENT_ARCHIVE_HASH=	sha256:$$digest/" \
-			-e "s/^COMPONENT_HG_REV=.*/COMPONENT_HG_REV=	$(COMPONENT_HG_REV)/" \
-			Makefile
-
 PATCH_LEVEL =	0
 
-PKG_MACROS +=	VIMVER=vim73
+COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/configure  $(@D)/src/auto/configure $(@D)/src/configure $(@D)/src/mkinstalldirs ; \
+				  find $(@D) -name \*.sh  -exec chmod +x '{}' ';' )
+
+PKG_MACROS +=	VIMVER=vim74
 
 ASLR_MODE =	$(ASLR_ENABLE)
 
-X_VARIANT =	$(BUILD_DIR)/$(MACH64)-gvim
-NOX_VARIANT =	$(BUILD_DIR)/$(MACH64)-vim
+X_VARIANT =	$(BUILD_DIR)/$(MACH32)-gvim
+NOX_VARIANT =	$(BUILD_DIR)/$(MACH32)-vim
 
 VARIANTS =	$(X_VARIANT) $(NOX_VARIANT)
 
-$(VARIANTS:%=%/.configured):	BITS=64
+BUILD_32 = 	$(VARIANTS:%=%/.built)
 
-BUILD_64 = 	$(VARIANTS:%=%/.built)
+INSTALL_32 = 	$(VARIANTS:%=%/.installed)
 
-# Only install the non-X variant.  We will cherry-pick gvim out of the build
-# directory to avoid re-installing everything.
-INSTALL_64 = 	$(NOX_VARIANT)/.installed
+TEST_32 = 	$(NOX_VARIANT)/.tested
 
-TEST_64 = 	$(NOX_VARIANT)/.tested
-
-# Necessary to pass 64-bit flags to the link stage.
-CC +=			$(CC_BITS)
-
-# Put all the binaries directly in /usr/bin, not in /usr/bin/64.
-CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
-
-# Use the 64-bit versions of pkg-config files (or GTK+ will add -R/usr/lib)
-CONFIGURE_ENV +=	PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
-
-# Necessary to pass 64-bit flags to the compilation stage.
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	--with-features=huge
 CONFIGURE_OPTIONS +=	--with-compiledby="the Solaris Userland build environment"
 CONFIGURE_OPTIONS +=	--with-modified-by="Solaris Userland <userland-discuss@opensolaris.org>"
@@ -141,11 +101,11 @@ $(BUILD_DIR)/license: $(SOURCE_DIR)/runtime/doc/uganda.txt
 	nawk '/begin of license/ {p=1; getline; next} /end of license/ {p=0} p == 1 {print}' $< > $@
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64) $(X_VARIANT)/.built $(BUILD_DIR)/license
+install:	$(INSTALL_32)
 
-test:		$(TEST_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

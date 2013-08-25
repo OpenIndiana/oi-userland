@@ -45,9 +45,7 @@ CFLAGS += $(CPP_LARGEFILES)
 CFLAGS += `pkg-config --cflags libidn`
 CPPFLAGS += `pkg-config --cflags libidn`
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
 CONFIGURE_OPTIONS += --enable-http --enable-ftp

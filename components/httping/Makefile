@@ -23,13 +23,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		httping
-COMPONENT_VERSION=	1.5.7
+COMPONENT_VERSION=	1.5.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.vanheusden.com/httping/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b0d3d3e9708b7395b0c47c1c1cfdd17613e631360eaffd1c43edc599911e7411
-COMPONENT_ARCHIVE_URL=	http://www.vanheusden.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+    sha256:f4c1d216349d308f5d5cfe2840ee4fe75b767bf76b49ba3dc140be55db5947bf
+COMPONENT_ARCHIVE_URL=	http://critical.ch/distfiles/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/httping
 
 include ../../make-rules/prep.mk
@@ -49,9 +49,9 @@ COMPONENT_BUILD_ENV += CC="$(CC)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 

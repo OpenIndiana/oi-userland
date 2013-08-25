@@ -39,7 +39,6 @@ include ../../make-rules/ips.mk
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += --enable-ipv6=yes
 CONFIGURE_OPTIONS += --with-user=nobody
 CONFIGURE_OPTIONS += --without-crypto

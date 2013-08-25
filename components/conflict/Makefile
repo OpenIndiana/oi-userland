@@ -46,8 +46,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 CC +=	$(CC_BITS)
 
-CONFIGURE_ENV += "CC=$(CC)"
-
 # If the configure options are not explicitly set, then configure fails with:
 # configure: warning: CC=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/cc: invalid host type
 # configure: warning: CXX=/ws/onnv-tools/SUNWspro/sunstudio12.1/bin/CC: invalid host type
