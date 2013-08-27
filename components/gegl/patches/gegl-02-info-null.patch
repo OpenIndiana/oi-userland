@@ -1,0 +1,19 @@
+--- gegl-0.0.22/gegl/property-types/gegl-path.c.old	2009-02-24 17:27:52.615641000 +0800
++++ gegl-0.0.22/gegl/property-types/gegl-path.c	2009-02-24 17:27:38.830330000 +0800
+@@ -1458,6 +1458,8 @@
+   GeglPathList *prev = NULL;
+   InstructionInfo *info = lookup_instruction_info (knot->type);
+ 
++  if (info != NULL)
++    {
+   gint count=0;
+   for (iter = priv->path; iter; iter=iter->next)
+     {
+@@ -1492,6 +1494,7 @@
+   priv->flat_path_clean = FALSE;
+   priv->length_clean = FALSE;
+   gegl_path_emit_changed (vector, NULL);
++    }
+ }
+ 
+ void  gegl_path_replace_node (GeglPath           *vector,
