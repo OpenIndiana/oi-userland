@@ -40,8 +40,6 @@ CONFIGURE_OPTIONS+= --disable-ruby
 CONFIGURE_OPTIONS+= --enable-tcl
 CONFIGURE_OPTIONS+= --enable-static=no
 
-install: $(INSTALL_32) 
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
