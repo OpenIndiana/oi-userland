@@ -55,8 +55,6 @@ COMPONENT_POST_INSTALL_ACTION =  for file in `echo $(PROTO_DIR)/usr/clang/$(COMP
 				  elfedit -e 'dyn:delete RPATH' $$file ; \
 				done
 
-install: $(INSTALL_32) 
-
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
