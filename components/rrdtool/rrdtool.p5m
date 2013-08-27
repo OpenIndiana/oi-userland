@@ -1,0 +1,216 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/image/rrdtool@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license rrdtool.license license="GPLv2 with FLOSS License Exception"
+
+depend fmri=developer/gcc-47 type=require
+depend fmri=developer/gnu-binutils type=require
+depend fmri=developer/linker type=require
+depend fmri=system/header type=require
+depend fmri=system/library/math/header-math type=require
+depend fmri=developer/library/lint type=require
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/bin/+ -> default mode 0555>
+<transform file path=.* -> default pkg.depend.bypass-generate perl >
+
+depend fmri=runtime/perl-510@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/perl-510 \
+    type=conditional
+
+depend fmri=runtime/perl-516@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/perl-516 \
+    type=conditional
+
+# Generated section:
+
+dir  path=usr group=sys
+dir  path=usr/bin
+file path=usr/bin/rrdcached
+file path=usr/bin/rrdcgi
+file path=usr/bin/rrdtool
+file path=usr/bin/rrdupdate
+dir  path=usr/include
+file path=usr/include/rrd.h
+file path=usr/include/rrd_client.h
+file path=usr/include/rrd_format.h
+dir  path=usr/lib
+link path=usr/lib/librrd.so target=librrd.so.4.2.0
+link path=usr/lib/librrd.so.4 target=librrd.so.4.2.0
+file path=usr/lib/librrd.so.4.2.0
+link path=usr/lib/librrd_th.so target=librrd_th.so.4.2.0
+link path=usr/lib/librrd_th.so.4 target=librrd_th.so.4.2.0
+file path=usr/lib/librrd_th.so.4.2.0
+dir  path=usr/lib/lua
+dir  path=usr/lib/lua/5.2
+link path=usr/lib/lua/5.2/rrd.so target=rrd.so.0.0.0
+link path=usr/lib/lua/5.2/rrd.so.0 target=rrd.so.0.0.0
+file path=usr/lib/lua/5.2/rrd.so.0.0.0
+dir  path=usr/lib/pkgconfig
+file path=usr/lib/pkgconfig/librrd.pc
+dir  path=usr/lib/rrdtool
+file path=usr/lib/rrdtool/ifOctets.tcl
+file path=usr/lib/rrdtool/pkgIndex.tcl
+file path=usr/lib/tclrrd1.4.7.so
+dir  path=usr/share
+dir  path=usr/share/doc
+dir  path=usr/share/doc/rrdtool-1.4.7
+dir  path=usr/share/doc/rrdtool-1.4.7/html
+file path=usr/share/doc/rrdtool-1.4.7/html/RRDp.html
+file path=usr/share/doc/rrdtool-1.4.7/html/RRDs.html
+file path=usr/share/doc/rrdtool-1.4.7/html/bin_dec_hex.html
+file path=usr/share/doc/rrdtool-1.4.7/html/cdeftutorial.html
+link path=usr/share/doc/rrdtool-1.4.7/html/index.html target=rrdtool.html
+file path=usr/share/doc/rrdtool-1.4.7/html/librrd.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rpntutorial.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrd-beginners.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdbuild.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdcached.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdcgi.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdcreate.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrddump.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdfetch.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdfirst.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdflushcached.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdgraph.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdgraph_data.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdgraph_examples.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdgraph_graph.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdgraph_rpn.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdinfo.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdlast.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdlastupdate.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdlua.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdresize.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdrestore.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdthreads.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdtool.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdtune.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdtutorial.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdupdate.html
+file path=usr/share/doc/rrdtool-1.4.7/html/rrdxport.html
+dir  path=usr/share/doc/rrdtool-1.4.7/txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/bin_dec_hex.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/bin_dec_hex.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/cdeftutorial.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/cdeftutorial.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/librrd.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rpntutorial.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rpntutorial.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrd-beginners.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrd-beginners.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdbuild.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdbuild.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdcached.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdcached.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdcgi.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdcgi.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdcreate.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdcreate.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrddump.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrddump.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdfetch.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdfetch.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdfirst.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdfirst.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdflushcached.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdflushcached.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_data.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_data.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_examples.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_examples.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_graph.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_graph.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_rpn.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdgraph_rpn.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdinfo.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdinfo.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdlast.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdlast.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdlastupdate.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdlastupdate.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdlua.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdlua.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdresize.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdresize.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdrestore.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdrestore.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdthreads.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdthreads.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdtool.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdtool.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdtune.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdtune.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdtutorial.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdtutorial.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdupdate.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdupdate.txt
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdxport.pod
+file path=usr/share/doc/rrdtool-1.4.7/txt/rrdxport.txt
+dir  path=usr/share/man
+dir  path=usr/share/man/man1
+file path=usr/share/man/man1/bin_dec_hex.1
+file path=usr/share/man/man1/cdeftutorial.1
+file path=usr/share/man/man1/rpntutorial.1
+file path=usr/share/man/man1/rrd-beginners.1
+file path=usr/share/man/man1/rrdbuild.1
+file path=usr/share/man/man1/rrdcached.1
+file path=usr/share/man/man1/rrdcgi.1
+file path=usr/share/man/man1/rrdcreate.1
+file path=usr/share/man/man1/rrddump.1
+file path=usr/share/man/man1/rrdfetch.1
+file path=usr/share/man/man1/rrdfirst.1
+file path=usr/share/man/man1/rrdflushcached.1
+file path=usr/share/man/man1/rrdgraph.1
+file path=usr/share/man/man1/rrdgraph_data.1
+file path=usr/share/man/man1/rrdgraph_examples.1
+file path=usr/share/man/man1/rrdgraph_graph.1
+file path=usr/share/man/man1/rrdgraph_rpn.1
+file path=usr/share/man/man1/rrdinfo.1
+file path=usr/share/man/man1/rrdlast.1
+file path=usr/share/man/man1/rrdlastupdate.1
+file path=usr/share/man/man1/rrdlua.1
+file path=usr/share/man/man1/rrdresize.1
+file path=usr/share/man/man1/rrdrestore.1
+file path=usr/share/man/man1/rrdthreads.1
+file path=usr/share/man/man1/rrdtool.1
+file path=usr/share/man/man1/rrdtune.1
+file path=usr/share/man/man1/rrdtutorial.1
+file path=usr/share/man/man1/rrdupdate.1
+file path=usr/share/man/man1/rrdxport.1
+dir  path=usr/share/man/man3
+file path=usr/share/man/man3/librrd.3
+dir  path=usr/share/rrdtool
+dir  path=usr/share/rrdtool/examples
+file path=usr/share/rrdtool/examples/4charts.pl
+file path=usr/share/rrdtool/examples/bigtops.pl
+file path=usr/share/rrdtool/examples/cgi-demo.cgi
+file path=usr/share/rrdtool/examples/minmax.pl
+file path=usr/share/rrdtool/examples/perftest.pl
+file path=usr/share/rrdtool/examples/piped-demo.pl
+dir  path=usr/share/rrdtool/examples/rrdcached
+file path=usr/share/rrdtool/examples/rrdcached/RRDCached.pm
+file path=usr/share/rrdtool/examples/rrdcached/rrdcached-size.pl
+file path=usr/share/rrdtool/examples/shared-demo.pl
+file path=usr/share/rrdtool/examples/stripes.pl
