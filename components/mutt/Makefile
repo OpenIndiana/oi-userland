@@ -56,8 +56,8 @@ CONFIGURE_OPTIONS  +=		--with-sasl
 
 # Add in the C compiler information to the muttbug (a.k.a. flea) script.
 COMPONENT_POST_CONFIGURE_ACTION = \
-	$(GSED) -i 's%XXX-CUSAGE-XXX%$(shell $(CC) -V 2>&1 | head -1)%' \
-	$(BUILD_DIR_64)/muttbug.sh 
+	$(GSED) -i 's%XXX-CUSAGE-XXX%$(shell $(CC) --version 2>&1 | head -1)%' \
+	$(BUILD_DIR_$(BITS))/muttbug.sh 
 
 ASLR_MODE = $(ASLR_ENABLE)
 
