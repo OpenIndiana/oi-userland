@@ -35,14 +35,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-<<<<<<< HEAD
-CONFIGURE_OPTIONS	+= CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS	+=	--sysconfdir=$(ETCDIR)
-=======
 CFLAGS			+= "$(CC_BITS)"
 
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
->>>>>>> 0dc76efa03f40ccc1716f0d4f9a2c6237c5f48ea
 
 include ../../make-rules/shared-targets.mk
 
