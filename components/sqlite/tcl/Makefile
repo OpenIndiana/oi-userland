@@ -23,22 +23,20 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME			= sqlite
+COMPONENT_NAME			= tcl-sqlite
 COMPONENT_VERSION		= 3.7.17
 TARBALL_VERSION			= 3071700
+COMPONENT_SUMMARY		= SQL database engine library - tcl files
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
 	sha256:8ff46d0baa9e64c0815544e829e985f1161c096aa6344c8f430791dbeadc2baf
 COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2013/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL=	http://www.sqlite.org/
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
-
-COMPONENT_PREP_ACTION	+= $(TOUCH) $(@D)/Makefile.am ;
-COMPONENT_PRE_CONFIGURE_ACTION   += $(CLONEY) $(SOURCE_DIR) $(@D);
-COMPONENT_PRE_CONFIGURE_ACTION   += $(CP) $(COMPONENT_DIR)/mapfile $(@D)
 
 CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
 CFLAGS			+= -DNDEBUG
@@ -51,10 +49,12 @@ CFLAGS			+= -DHAVE_STATVFS
 CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
 CFLAGS			+= -DSQLITE_ENABLE_STAT2
 
-CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
-CONFIGURE_OPTIONS	+= --enable-threadsafe 
+CONFIGURE_SCRIPT=       $(SOURCE_DIR)/tea/configure
+
 CONFIGURE_OPTIONS	+= --enable-shared
-CONFIGURE_OPTIONS	+= --disable-static
+CONFIGURE_OPTIONS.32	+= --with-tcl="/usr/lib"
+CONFIGURE_OPTIONS.64	+= --with-tcl="/usr/lib/$(MACH64)"
+CONFIGURE_OPTIONS.64	+= LIBS="-m64"
 
 include ../../../make-rules/shared-targets.mk
 

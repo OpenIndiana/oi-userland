@@ -1,0 +1,14 @@
+--- a/sqlite3.c	2011-06-08 14:50:51.185910263 +0800
++++ b/sqlite3.c	2011-06-08 14:51:57.485764632 +0800
+@@ -24491,7 +24491,11 @@
+ #define osFchmod    ((int(*)(int,mode_t))aSyscall[14].pCurrent)
+ 
+ #if defined(HAVE_POSIX_FALLOCATE) && HAVE_POSIX_FALLOCATE
++#if !defined(_LP64) && _FILE_OFFSET_BITS == 64
++  { "fallocate",    (sqlite3_syscall_ptr)posix_fallocate64,  0 },
++#else
+   { "fallocate",    (sqlite3_syscall_ptr)posix_fallocate,  0 },
++#endif
+ #else
+   { "fallocate",    (sqlite3_syscall_ptr)0,                0 },
+ #endif
