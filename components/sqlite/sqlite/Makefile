@@ -21,25 +21,42 @@
 # Copyright (c) 2013 Louis M. Picciano. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME			= sqlite-3
 COMPONENT_VERSION		= 3.7.17
-COMPONENT_SRC			= sqlite-autoconf-3071700
+TARBALL_VERSION			= 3071700
+COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
 COMPONENT_ARCHIVE		= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH	= \
 	sha256:8ff46d0baa9e64c0815544e829e985f1161c096aa6344c8f430791dbeadc2baf
 COMPONENT_ARCHIVE_URL=	http://www.sqlite.org/2013/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include ../../../make-rules/prep.mk
+include ../../../make-rules/configure.mk
+include ../../../make-rules/ips.mk
 
-CFLAGS			+= "$(CC_BITS)"
+COMPONENT_PREP_ACTION	+= $(TOUCH) $(@D)/Makefile.am ;
+COMPONENT_PRE_CONFIGURE_ACTION   += $(CLONEY) $(SOURCE_DIR) $(@D);
+COMPONENT_PRE_CONFIGURE_ACTION   += $(CP) $(COMPONENT_DIR)/mapfile $(@D)
+
+CFLAGS			+= -D_POSIX_PTHREAD_SEMANTICS
+CFLAGS			+= -DNDEBUG
+CFLAGS			+= -DSQLITE_SECURE_DELETE 
+CFLAGS			+= -DSQLITE_ENABLE_FTS3 
+CFLAGS			+= -DUSE_PREAD 
+CFLAGS			+= -DHAVE_USLEEP
+CFLAGS			+= -DHAVE_FDATASYNC
+CFLAGS			+= -DHAVE_STATVFS 
+CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
+CFLAGS			+= -DSQLITE_ENABLE_STAT2
 
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
+CONFIGURE_OPTIONS	+= --enable-threadsafe 
+CONFIGURE_OPTIONS	+= --enable-shared
+CONFIGURE_OPTIONS	+= --disable-static
 
-include ../../make-rules/shared-targets.mk
+include ../../../make-rules/shared-targets.mk
 
 build:		$(BUILD_32) $(BUILD_64)
 
@@ -49,4 +66,4 @@ test:		$(TEST_32) $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-include ../../make-rules/depend.mk
+include ../../../make-rules/depend.mk
