@@ -23,7 +23,7 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME			= sqlite-3
+COMPONENT_NAME			= sqlite
 COMPONENT_VERSION		= 3.7.17
 TARBALL_VERSION			= 3071700
 COMPONENT_SRC			= sqlite-autoconf-$(TARBALL_VERSION)
