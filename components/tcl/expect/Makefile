@@ -57,6 +57,8 @@ CONFIGURE_OPTIONS.64	+= LDFLAGS="$(LDFLAGS) -m64"
 
 COMPONENT_TEST_TARGETS = test
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:		$(BUILD_32_and_64)
 

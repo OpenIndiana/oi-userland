@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -61,6 +61,8 @@ CONFIGURE_OPTIONS	+= --enable-threads
 CONFIGURE_OPTIONS.64	+= --enable-64bit
 
 COMPONENT_TEST_TARGETS = test
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)
