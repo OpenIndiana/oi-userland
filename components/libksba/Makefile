@@ -18,29 +18,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Colin Ellis. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libksba
-COMPONENT_VERSION=	1.1.0
+COMPONENT_VERSION=	1.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/related_software/libksba/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d8eb845d7272d23a00d4da6dc65f108ded6a977f32abf4488a075335433769f7
+    sha256:5a61eed50550d4d0dcb47457ce7b6a90f8e719d42a3b25f7e79333e8cd721971
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/libksba/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += $(XPG6MODE)
-CFLAGS += $(CPP_POSIX)
-CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += -std=c99
 
 CONFIGURE_ENV +=	INSTALL="$(INSTALL)"
 

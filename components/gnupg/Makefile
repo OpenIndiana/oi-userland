@@ -18,17 +18,18 @@
 #
 # CDDL HEADER END
 #
+# Copyright (c) 2013, Colin Ellis. All rights reserved.
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnupg
-COMPONENT_VERSION=	2.0.17
+COMPONENT_VERSION=	2.0.21
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.gnupg.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ea649d5ecb2f97cc8d81c5796c6ad8d7d8581f9554241c39d2b11ab12139eea6
+    sha256:00df8902c7cef4d2440d36ca2a45985853eb36c34a4163bc995c3578030eeef5
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
@@ -37,19 +38,19 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # Enable C99 mode + -Xc for its additional warnings.
-studio_C99MODE = -Xc $(studio_C99_ENABLE)
+#studio_C99MODE = -Xc $(studio_C99_ENABLE)
 
 # -xinline=%auto -- we like inlining where appropriate
-CFLAGS += -xinline=%auto
+#CFLAGS += -xinline=%auto
 
 # -xbuiltin=%none -- builtins have been known to be buggy
-CFLAGS += -xbuiltin=%none
+#CFLAGS += -xbuiltin=%none
 
 CFLAGS += $(CPP_LARGEFILES)
-CFLAGS += $(XPG6MODE)
-CFLAGS += $(CPP_POSIX)
-CFLAGS += $(CPP_C99_EXTENDED_MATH)
-CFLAGS += $(studio_PIC)
+#CFLAGS += $(XPG6MODE)
+#CFLAGS += $(CPP_POSIX)
+#CFLAGS += $(CPP_C99_EXTENDED_MATH)
+#CFLAGS += $(studio_PIC)
 
 # If we pass -lc, -mt won't link with -lthread
 # (which is what it does by default, and we don't
