@@ -17,14 +17,14 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		xscreensaver
 # Don't change - compatibility issues
 COMPONENT_VERSION=	5.11
-HUMAN_VERSION= 		5.15
+HUMAN_VERSION= 		5.22
 COMPONENT_PROJECT_URL=	http://www.jwz.org/xscreensaver/
 
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4f6d1f1e4c15dbb74e2296f8fe57a73d47d602515178c248bbc838f779d5082d
-COMPONENT_ARCHIVE_URL=	ftp://ftp.FreeBSD.org/pub/FreeBSD/ports/distfiles/$(COMPONENT_ARCHIVE)
+    sha256:47b703ed22dce46a08f11ddd7d67d52e4f7ad8df844bdf956431069a0db36797
+COMPONENT_ARCHIVE_URL=	http://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
 
 PATCH_LEVEL=		0
 
@@ -49,7 +49,6 @@ CONFIGURE_SCRIPT=	$(@D)/configure
 CFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL  -std=gnu99
 CXXFLAGS+=	-funsafe-math-optimizations -Wall -I$(SOURCE_DIR)/mesa/GL
 LDFLAGS+=	-I$(@D)/mesa/GL 
-LDFLAGS+=	$(CC_BITS)
 
 CONFIGURE_ENV+=	"XGETTEXT=/usr/gnu/bin/xgettext"
 CONFIGURE_ENV+= "GNOME_DATADIR=/usr/lib/xscreensaver/config"
