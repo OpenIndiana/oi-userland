@@ -1,0 +1,63 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni)
+#
+
+<transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man8/%<1>.8 >
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file path=usr/include/qb/qbarray.h
+file path=usr/include/qb/qbatomic.h
+file path=usr/include/qb/qbconfig.h
+file path=usr/include/qb/qbdefs.h
+file path=usr/include/qb/qbhdb.h
+file path=usr/include/qb/qbipc_common.h
+file path=usr/include/qb/qbipcc.h
+file path=usr/include/qb/qbipcs.h
+file path=usr/include/qb/qblist.h
+file path=usr/include/qb/qblog.h
+file path=usr/include/qb/qbloop.h
+file path=usr/include/qb/qbmap.h
+file path=usr/include/qb/qbrb.h
+file path=usr/include/qb/qbutil.h
+link path=usr/lib/libqb.so target=libqb.so.0.18.0
+link path=usr/lib/libqb.so.0 target=libqb.so.0.18.0
+file path=usr/lib/libqb.so.0.18.0
+file path=usr/lib/pkgconfig/libqb.pc
+file path=usr/sbin/qb-blackbox
+file path=usr/share/doc/libqb/COPYING
+file path=usr/share/doc/libqb/INSTALL
+file path=usr/share/doc/libqb/README.markdown
+file path=usr/share/man/man3/qbarray.h.3
+file path=usr/share/man/man3/qbatomic.h.3
+file path=usr/share/man/man3/qbdefs.h.3
+file path=usr/share/man/man3/qbhdb.h.3
+file path=usr/share/man/man3/qbipc_common.h.3
+file path=usr/share/man/man3/qbipcc.h.3
+file path=usr/share/man/man3/qbipcs.h.3
+file path=usr/share/man/man3/qblist.h.3
+file path=usr/share/man/man3/qblog.h.3
+file path=usr/share/man/man3/qbloop.h.3
+file path=usr/share/man/man3/qbmap.h.3
+file path=usr/share/man/man3/qbrb.h.3
+file path=usr/share/man/man3/qbutil.h.3
+file path=usr/share/man/man1m/qb-blackbox.1m
+
