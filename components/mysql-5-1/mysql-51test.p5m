@@ -3872,10 +3872,4 @@ link path=usr/mysql/mysql-test target=5.1/mysql-test mediator=mysql mediator-ver
 link path=usr/mysql/sql-bench target=5.1/sql-bench mediator=mysql mediator-version=5.1
 depend fmri=__TBD pkg.debug.depend.file=usr/mysql/5.1/bin/mysql type=require
 
-depend fmri=runtime/perl-510@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-510 \
-    type=conditional
-
-depend fmri=runtime/perl-516@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-516 \
-    type=conditional
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516

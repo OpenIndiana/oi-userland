@@ -32,13 +32,7 @@ link path=usr/bin/mysql target=../percona-server/5.5/bin/mysql mediator=mysql me
 link path=usr/share/man/man1/mysql.1 target=../../../percona-server/5.5/man/man1/mysql.1 mediator=mysql mediator-version=5.5 mediator-implementation=percona-server
 depend fmri=database/mysql-common type=require
 
-depend fmri=runtime/perl-510@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-510 \
-    type=conditional
-
-depend fmri=runtime/perl-516@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-516 \
-    type=conditional
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
 
 file path=usr/percona-server/5.5/man/man1/mysql.1
 file path=usr/percona-server/5.5/man/man1/mysql_config.1
