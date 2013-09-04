@@ -50,14 +50,7 @@ link path=var/mysql/data target=../percona-server/5.5/data mediator=mysql mediat
 depend fmri=database/mysql-common type=require
 depend fmri=database/percona-server-55/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
-
-depend fmri=runtime/perl-510@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-510 \
-    type=conditional
-
-depend fmri=runtime/perl-516@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-516 \
-    type=conditional
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
 
 dir  path=usr/percona-server
 dir  path=usr/percona-server/5.5
