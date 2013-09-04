@@ -1,0 +1,26 @@
+commit 1b57b0ac3c5e1afca9fcd17952391ef398fd8ef7
+Author: Andreas Grueninger <andreas.grueninger@nomail.com>
+Date:   Sat Oct 22 18:28:27 2016 +0200
+
+     Fix: watchdog : compiles now on Solaris/Illumos …
+    
+    It compiles and the reboot will work.
+    But all accesses to procfs will produce failures.
+    If the functionality is required further investigations are necessary.
+
+diff --git a/lib/common/watchdog.c b/lib/common/watchdog.c
+index 022884f..da0a0e4 100644
+--- a/lib/common/watchdog.c
++++ b/lib/common/watchdog.c
+@@ -142,7 +142,11 @@ pcmk_panic_local(void)
+ 
+     sysrq_trigger('b');
+     /* reboot(RB_HALT_SYSTEM); rc = errno; */
++#ifdef ON_SOLARIS
++    reboot(RB_AUTOBOOT, (char *)"reboot initiated by pacemaker");
++#else
+     reboot(RB_AUTOBOOT);
++#endif		
+     rc = errno;
+ 
+     do_crm_log_always(LOG_EMERG, "Reboot failed, escalating to %d: %s (%d)", ppid, pcmk_strerror(rc), rc);

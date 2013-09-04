@@ -1,0 +1,288 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2016 Andreas Grueninger, Grueninger GmbH, (grueni). All rights reserved.
+#
+
+<transform file path=usr/share/man/man1m/(.+).1m$ -> set action.hash usr/share/man/man8/%<1>.8 >
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="$(COMPONENT_CLASSIFICATION)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/uid.conf path=etc/corosync/uidgid.d/uid.conf
+
+file path=usr/bin/corosync-blackbox
+file path=usr/bin/corosync-xmlproc
+file path=usr/bin/cpg_test_agent
+file path=usr/bin/sam_test_agent
+file path=usr/bin/votequorum_test_agent
+file path=usr/include/corosync/cfg.h
+file path=usr/include/corosync/cmap.h
+file path=usr/include/corosync/corodefs.h
+file path=usr/include/corosync/corotypes.h
+file path=usr/include/corosync/cpg.h
+file path=usr/include/corosync/hdb.h
+file path=usr/include/corosync/quorum.h
+file path=usr/include/corosync/sam.h
+file path=usr/include/corosync/totem/totem.h
+file path=usr/include/corosync/totem/totemip.h
+file path=usr/include/corosync/totem/totempg.h
+file path=usr/include/corosync/votequorum.h
+link path=usr/lib/libcfg.so target=libcfg.so.6.0.0
+link path=usr/lib/libcfg.so.6 target=libcfg.so.6.0.0
+file path=usr/lib/libcfg.so.6.0.0
+link path=usr/lib/libcmap.so target=libcmap.so.4.1.0
+link path=usr/lib/libcmap.so.4 target=libcmap.so.4.1.0
+file path=usr/lib/libcmap.so.4.1.0
+link path=usr/lib/libcorosync_common.so target=libcorosync_common.so.4.0.0
+link path=usr/lib/libcorosync_common.so.4 target=libcorosync_common.so.4.0.0
+file path=usr/lib/libcorosync_common.so.4.0.0
+link path=usr/lib/libcpg.so target=libcpg.so.4.1.0
+link path=usr/lib/libcpg.so.4 target=libcpg.so.4.1.0
+file path=usr/lib/libcpg.so.4.1.0
+link path=usr/lib/libquorum.so target=libquorum.so.5.0.0
+link path=usr/lib/libquorum.so.5 target=libquorum.so.5.0.0
+file path=usr/lib/libquorum.so.5.0.0
+link path=usr/lib/libsam.so target=libsam.so.4.4.0
+link path=usr/lib/libsam.so.4 target=libsam.so.4.4.0
+file path=usr/lib/libsam.so.4.4.0
+link path=usr/lib/libtotem_pg.so target=libtotem_pg.so.5.0.0
+link path=usr/lib/libtotem_pg.so.5 target=libtotem_pg.so.5.0.0
+file path=usr/lib/libtotem_pg.so.5.0.0
+link path=usr/lib/libvotequorum.so target=libvotequorum.so.7.0.0
+link path=usr/lib/libvotequorum.so.7 target=libvotequorum.so.7.0.0
+file path=usr/lib/libvotequorum.so.7.0.0
+file path=usr/lib/pkgconfig/corosync.pc
+file path=usr/lib/pkgconfig/libcfg.pc
+file path=usr/lib/pkgconfig/libcmap.pc
+file path=usr/lib/pkgconfig/libcorosync_common.pc
+file path=usr/lib/pkgconfig/libcpg.pc
+file path=usr/lib/pkgconfig/libquorum.pc
+file path=usr/lib/pkgconfig/libsam.pc
+file path=usr/lib/pkgconfig/libtotem_pg.pc
+file path=usr/lib/pkgconfig/libvotequorum.pc
+file path=usr/sbin/corosync
+file path=usr/sbin/corosync-cfgtool
+file path=usr/sbin/corosync-cmapctl
+file path=usr/sbin/corosync-cpgtool
+file path=usr/sbin/corosync-keygen
+file path=usr/sbin/corosync-notifyd
+file path=usr/sbin/corosync-qdevice
+file path=usr/sbin/corosync-qdevice-net-certutil
+file path=usr/sbin/corosync-qdevice-tool
+file path=usr/sbin/corosync-quorumtool
+file path=usr/share/augeas/lenses/corosync.aug
+file path=usr/share/augeas/lenses/tests/test_corosync.aug
+file path=usr/share/corosync/examples/conf/corosync.conf.example
+file path=usr/share/corosync/examples/conf/corosync.conf.example.udpu
+file path=usr/share/corosync/examples/conf/corosync.xml.example
+file path=usr/share/corosync/examples/logrotate.d/corosync
+file path=usr/share/corosync/xml2conf.xsl
+file path=usr/share/doc/corosync/AUTHORS
+file path=usr/share/doc/corosync/INSTALL
+file path=usr/share/doc/corosync/LICENSE
+file path=usr/share/doc/corosync/README.recovery
+file path=usr/share/doc/corosync/SECURITY
+file path=usr/share/doc/corosync/html/cmap_context_get.3.html
+file path=usr/share/doc/corosync/html/cmap_context_set.3.html
+file path=usr/share/doc/corosync/html/cmap_dec.3.html
+file path=usr/share/doc/corosync/html/cmap_delete.3.html
+file path=usr/share/doc/corosync/html/cmap_dispatch.3.html
+file path=usr/share/doc/corosync/html/cmap_fd_get.3.html
+file path=usr/share/doc/corosync/html/cmap_finalize.3.html
+file path=usr/share/doc/corosync/html/cmap_get.3.html
+file path=usr/share/doc/corosync/html/cmap_inc.3.html
+file path=usr/share/doc/corosync/html/cmap_initialize.3.html
+file path=usr/share/doc/corosync/html/cmap_iter_finalize.3.html
+file path=usr/share/doc/corosync/html/cmap_iter_init.3.html
+file path=usr/share/doc/corosync/html/cmap_iter_next.3.html
+file path=usr/share/doc/corosync/html/cmap_keys.8.html
+file path=usr/share/doc/corosync/html/cmap_overview.8.html
+file path=usr/share/doc/corosync/html/cmap_set.3.html
+file path=usr/share/doc/corosync/html/cmap_track_add.3.html
+file path=usr/share/doc/corosync/html/cmap_track_delete.3.html
+file path=usr/share/doc/corosync/html/corosync-blackbox.8.html
+file path=usr/share/doc/corosync/html/corosync-cfgtool.8.html
+file path=usr/share/doc/corosync/html/corosync-cmapctl.8.html
+file path=usr/share/doc/corosync/html/corosync-cpgtool.8.html
+file path=usr/share/doc/corosync/html/corosync-keygen.8.html
+file path=usr/share/doc/corosync/html/corosync-notifyd.8.html
+file path=usr/share/doc/corosync/html/corosync-qdevice-net-certutil.8.html
+file path=usr/share/doc/corosync/html/corosync-qdevice-tool.8.html
+file path=usr/share/doc/corosync/html/corosync-qdevice.8.html
+file path=usr/share/doc/corosync/html/corosync-quorumtool.8.html
+file path=usr/share/doc/corosync/html/corosync-xmlproc.8.html
+file path=usr/share/doc/corosync/html/corosync.8.html
+file path=usr/share/doc/corosync/html/corosync.conf.5.html
+file path=usr/share/doc/corosync/html/corosync.xml.5.html
+file path=usr/share/doc/corosync/html/corosync_overview.8.html
+file path=usr/share/doc/corosync/html/cpg_context_get.3.html
+file path=usr/share/doc/corosync/html/cpg_context_set.3.html
+file path=usr/share/doc/corosync/html/cpg_dispatch.3.html
+file path=usr/share/doc/corosync/html/cpg_fd_get.3.html
+file path=usr/share/doc/corosync/html/cpg_finalize.3.html
+file path=usr/share/doc/corosync/html/cpg_initialize.3.html
+file path=usr/share/doc/corosync/html/cpg_iteration_finalize.3.html
+file path=usr/share/doc/corosync/html/cpg_iteration_initialize.3.html
+file path=usr/share/doc/corosync/html/cpg_iteration_next.3.html
+file path=usr/share/doc/corosync/html/cpg_join.3.html
+file path=usr/share/doc/corosync/html/cpg_leave.3.html
+file path=usr/share/doc/corosync/html/cpg_local_get.3.html
+file path=usr/share/doc/corosync/html/cpg_mcast_joined.3.html
+file path=usr/share/doc/corosync/html/cpg_membership_get.3.html
+file path=usr/share/doc/corosync/html/cpg_model_initialize.3.html
+file path=usr/share/doc/corosync/html/cpg_overview.8.html
+file path=usr/share/doc/corosync/html/cpg_zcb_alloc.3.html
+file path=usr/share/doc/corosync/html/cpg_zcb_free.3.html
+file path=usr/share/doc/corosync/html/cpg_zcb_mcast_joined.3.html
+file path=usr/share/doc/corosync/html/index.html
+file path=usr/share/doc/corosync/html/quorum_context_get.3.html
+file path=usr/share/doc/corosync/html/quorum_context_set.3.html
+file path=usr/share/doc/corosync/html/quorum_dispatch.3.html
+file path=usr/share/doc/corosync/html/quorum_fd_get.3.html
+file path=usr/share/doc/corosync/html/quorum_finalize.3.html
+file path=usr/share/doc/corosync/html/quorum_getquorate.3.html
+file path=usr/share/doc/corosync/html/quorum_initialize.3.html
+file path=usr/share/doc/corosync/html/quorum_overview.8.html
+file path=usr/share/doc/corosync/html/quorum_trackstart.3.html
+file path=usr/share/doc/corosync/html/quorum_trackstop.3.html
+file path=usr/share/doc/corosync/html/sam_data_getsize.3.html
+file path=usr/share/doc/corosync/html/sam_data_restore.3.html
+file path=usr/share/doc/corosync/html/sam_data_store.3.html
+file path=usr/share/doc/corosync/html/sam_finalize.3.html
+file path=usr/share/doc/corosync/html/sam_hc_callback_register.3.html
+file path=usr/share/doc/corosync/html/sam_hc_send.3.html
+file path=usr/share/doc/corosync/html/sam_initialize.3.html
+file path=usr/share/doc/corosync/html/sam_mark_failed.3.html
+file path=usr/share/doc/corosync/html/sam_overview.8.html
+file path=usr/share/doc/corosync/html/sam_register.3.html
+file path=usr/share/doc/corosync/html/sam_start.3.html
+file path=usr/share/doc/corosync/html/sam_stop.3.html
+file path=usr/share/doc/corosync/html/sam_warn_signal_set.3.html
+file path=usr/share/doc/corosync/html/votequorum.5.html
+file path=usr/share/doc/corosync/html/votequorum_context_get.3.html
+file path=usr/share/doc/corosync/html/votequorum_context_set.3.html
+file path=usr/share/doc/corosync/html/votequorum_dispatch.3.html
+file path=usr/share/doc/corosync/html/votequorum_fd_get.3.html
+file path=usr/share/doc/corosync/html/votequorum_finalize.3.html
+file path=usr/share/doc/corosync/html/votequorum_getinfo.3.html
+file path=usr/share/doc/corosync/html/votequorum_initialize.3.html
+file path=usr/share/doc/corosync/html/votequorum_overview.8.html
+file path=usr/share/doc/corosync/html/votequorum_qdevice_master_wins.3.html
+file path=usr/share/doc/corosync/html/votequorum_qdevice_poll.3.html
+file path=usr/share/doc/corosync/html/votequorum_qdevice_register.3.html
+file path=usr/share/doc/corosync/html/votequorum_qdevice_unregister.3.html
+file path=usr/share/doc/corosync/html/votequorum_qdevice_update.3.html
+file path=usr/share/doc/corosync/html/votequorum_setexpected.3.html
+file path=usr/share/doc/corosync/html/votequorum_setvotes.3.html
+file path=usr/share/doc/corosync/html/votequorum_trackstart.3.html
+file path=usr/share/doc/corosync/html/votequorum_trackstop.3.html
+file path=usr/share/man/man3/cmap_context_get.3
+file path=usr/share/man/man3/cmap_context_set.3
+file path=usr/share/man/man3/cmap_dec.3
+file path=usr/share/man/man3/cmap_delete.3
+file path=usr/share/man/man3/cmap_dispatch.3
+file path=usr/share/man/man3/cmap_fd_get.3
+file path=usr/share/man/man3/cmap_finalize.3
+file path=usr/share/man/man3/cmap_get.3
+file path=usr/share/man/man3/cmap_inc.3
+file path=usr/share/man/man3/cmap_initialize.3
+file path=usr/share/man/man3/cmap_iter_finalize.3
+file path=usr/share/man/man3/cmap_iter_init.3
+file path=usr/share/man/man3/cmap_iter_next.3
+file path=usr/share/man/man3/cmap_set.3
+file path=usr/share/man/man3/cmap_track_add.3
+file path=usr/share/man/man3/cmap_track_delete.3
+file path=usr/share/man/man3/cpg_context_get.3
+file path=usr/share/man/man3/cpg_context_set.3
+file path=usr/share/man/man3/cpg_dispatch.3
+file path=usr/share/man/man3/cpg_fd_get.3
+file path=usr/share/man/man3/cpg_finalize.3
+file path=usr/share/man/man3/cpg_initialize.3
+file path=usr/share/man/man3/cpg_iteration_finalize.3
+file path=usr/share/man/man3/cpg_iteration_initialize.3
+file path=usr/share/man/man3/cpg_iteration_next.3
+file path=usr/share/man/man3/cpg_join.3
+file path=usr/share/man/man3/cpg_leave.3
+file path=usr/share/man/man3/cpg_local_get.3
+file path=usr/share/man/man3/cpg_mcast_joined.3
+file path=usr/share/man/man3/cpg_membership_get.3
+file path=usr/share/man/man3/cpg_model_initialize.3
+file path=usr/share/man/man3/cpg_zcb_alloc.3
+file path=usr/share/man/man3/cpg_zcb_free.3
+file path=usr/share/man/man3/cpg_zcb_mcast_joined.3
+file path=usr/share/man/man3/quorum_context_get.3
+file path=usr/share/man/man3/quorum_context_set.3
+file path=usr/share/man/man3/quorum_dispatch.3
+file path=usr/share/man/man3/quorum_fd_get.3
+file path=usr/share/man/man3/quorum_finalize.3
+file path=usr/share/man/man3/quorum_getquorate.3
+file path=usr/share/man/man3/quorum_initialize.3
+file path=usr/share/man/man3/quorum_trackstart.3
+file path=usr/share/man/man3/quorum_trackstop.3
+file path=usr/share/man/man3/sam_data_getsize.3
+file path=usr/share/man/man3/sam_data_restore.3
+file path=usr/share/man/man3/sam_data_store.3
+file path=usr/share/man/man3/sam_finalize.3
+file path=usr/share/man/man3/sam_hc_callback_register.3
+file path=usr/share/man/man3/sam_hc_send.3
+file path=usr/share/man/man3/sam_initialize.3
+file path=usr/share/man/man3/sam_mark_failed.3
+file path=usr/share/man/man3/sam_register.3
+file path=usr/share/man/man3/sam_start.3
+file path=usr/share/man/man3/sam_stop.3
+file path=usr/share/man/man3/sam_warn_signal_set.3
+file path=usr/share/man/man3/votequorum_context_get.3
+file path=usr/share/man/man3/votequorum_context_set.3
+file path=usr/share/man/man3/votequorum_dispatch.3
+file path=usr/share/man/man3/votequorum_fd_get.3
+file path=usr/share/man/man3/votequorum_finalize.3
+file path=usr/share/man/man3/votequorum_getinfo.3
+file path=usr/share/man/man3/votequorum_initialize.3
+file path=usr/share/man/man3/votequorum_qdevice_master_wins.3
+file path=usr/share/man/man3/votequorum_qdevice_poll.3
+file path=usr/share/man/man3/votequorum_qdevice_register.3
+file path=usr/share/man/man3/votequorum_qdevice_unregister.3
+file path=usr/share/man/man3/votequorum_qdevice_update.3
+file path=usr/share/man/man3/votequorum_setexpected.3
+file path=usr/share/man/man3/votequorum_setvotes.3
+file path=usr/share/man/man3/votequorum_trackstart.3
+file path=usr/share/man/man3/votequorum_trackstop.3
+file path=usr/share/man/man5/corosync.conf.5
+file path=usr/share/man/man5/corosync.xml.5
+file path=usr/share/man/man5/votequorum.5
+file path=usr/share/man/man1m/cmap_keys.1m
+file path=usr/share/man/man1m/cmap_overview.1m
+file path=usr/share/man/man1m/corosync-blackbox.1m
+file path=usr/share/man/man1m/corosync-cfgtool.1m
+file path=usr/share/man/man1m/corosync-cmapctl.1m
+file path=usr/share/man/man1m/corosync-cpgtool.1m
+file path=usr/share/man/man1m/corosync-keygen.1m
+file path=usr/share/man/man1m/corosync-notifyd.1m
+file path=usr/share/man/man1m/corosync-qdevice-net-certutil.1m
+file path=usr/share/man/man1m/corosync-qdevice-tool.1m
+file path=usr/share/man/man1m/corosync-qdevice.1m
+file path=usr/share/man/man1m/corosync-quorumtool.1m
+file path=usr/share/man/man1m/corosync-xmlproc.1m
+file path=usr/share/man/man1m/corosync.1m
+file path=usr/share/man/man1m/corosync_overview.1m
+file path=usr/share/man/man1m/cpg_overview.1m
+file path=usr/share/man/man1m/quorum_overview.1m
+file path=usr/share/man/man1m/sam_overview.1m
+file path=usr/share/man/man1m/votequorum_overview.1m
+file path=usr/share/snmp/mibs/COROSYNC-MIB.txt
