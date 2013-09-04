@@ -34,13 +34,7 @@ set name=info.classification value=org.opensolaris.category.2008:System/X11
 
 license xscreensaver.license license="CDDL"
 
-depend fmri=runtime/perl-510@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-510 \
-    type=conditional
-
-depend fmri=runtime/perl-516@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-516 \
-    type=conditional
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
 
 dir path=etc/config group=sys
 dir path=etc/xdg group=sys
@@ -69,25 +63,6 @@ link path=usr/X11/lib/xscreensaver target=../../lib/xscreensaver
 # pkgsend generate build/prototype/i386/ | \
 # sed -e 's/group=bin//' -e 's/mode=[0-9]*//' -e 's/owner=root//' -e 's/amd64/$(MACH64)/' \
 # |grep -v 'xscreensaver/hacks' | grep -v gl-helper |grep -v '/control-center-2.0'| grep -v '/man6'|   pkgfmt >> xscreensaver.p5m
-dir  path=mangled
-dir  path=mangled/usr
-dir  path=mangled/usr/share
-dir  path=mangled/usr/share/man
-dir  path=mangled/usr/share/man/man1
-file mangled/usr/share/man/man1/xscreensaver-command.1 \
-    path=mangled/usr/share/man/man1/xscreensaver-command.1
-file mangled/usr/share/man/man1/xscreensaver-demo.1 \
-    path=mangled/usr/share/man/man1/xscreensaver-demo.1
-file mangled/usr/share/man/man1/xscreensaver-getimage-file.1 \
-    path=mangled/usr/share/man/man1/xscreensaver-getimage-file.1
-file mangled/usr/share/man/man1/xscreensaver-getimage-video.1 \
-    path=mangled/usr/share/man/man1/xscreensaver-getimage-video.1
-file mangled/usr/share/man/man1/xscreensaver-getimage.1 \
-    path=mangled/usr/share/man/man1/xscreensaver-getimage.1
-file mangled/usr/share/man/man1/xscreensaver-text.1 \
-    path=mangled/usr/share/man/man1/xscreensaver-text.1
-file mangled/usr/share/man/man1/xscreensaver.1 \
-    path=mangled/usr/share/man/man1/xscreensaver.1
 dir  path=usr
 dir  path=usr/bin
 file usr/bin/xscreensaver path=usr/bin/xscreensaver
