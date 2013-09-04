@@ -226,6 +226,7 @@ $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
+ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
 # auto-generate file/directory list
 $(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
 	(cat $(METADATA_TEMPLATE); \
@@ -233,6 +234,10 @@ $(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
 		cat $< - >$@
+else
+$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
+	cat $<  >$@ 
+endif
 
 # mogrify non-parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	%.generated
