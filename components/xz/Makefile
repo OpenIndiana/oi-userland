@@ -32,6 +32,11 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/xz
 
+COMPONENT_AUTOGEN_MANIFEST=	yes
+COMPONENT_FMRI=		compress/xz
+COMPONENT_LICENSE=	LGPLv2.1
+COMPONENT_LICENSE_FILE=	COPYING.LGPLv2.1
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
