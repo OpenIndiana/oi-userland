@@ -34,6 +34,7 @@ COMPONENT_BUGDB=	utility/xz
 
 COMPONENT_AUTOGEN_MANIFEST=	yes
 COMPONENT_FMRI=		compress/xz
+COMPONENT_SUMMARY=	'XZ Utils - loss-less file compression application and library.'
 COMPONENT_LICENSE=	LGPLv2.1
 COMPONENT_LICENSE_FILE=	COPYING.LGPLv2.1
 
