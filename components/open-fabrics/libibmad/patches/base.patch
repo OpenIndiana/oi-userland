@@ -1192,14 +1192,57 @@ diff -r -u /tmp/libibmad-1.3.7/src/fields.c libibmad-1.3.7/src/fields.c
 diff -r -u /tmp/libibmad-1.3.7/src/mad.c libibmad-1.3.7/src/mad.c
 --- /tmp/libibmad-1.3.7/src/mad.c	Wed Feb 16 02:12:53 2011
 +++ libibmad-1.3.7/src/mad.c	Thu Sep 13 09:31:03 2012
-@@ -61,6 +61,7 @@
+@@ -40,6 +40,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <time.h>
++#include <errno.h>
+ 
+ #include <infiniband/umad.h>
+ #include <infiniband/mad.h>
+@@ -49,18 +50,25 @@
+ #undef DEBUG
+ #define DEBUG	if (ibdebug)	IBWARN
+ 
++#define GET_IB_USERLAND_TID(tid)	(tid & 0x00000000ffffffff)
++/*
++ * Generate the 64 bit MAD transaction ID. The upper 32 bits are reserved for
++ * use by the kernel. We clear the upper 32 bits here, but MADs received from
++ * the kernel may contain kernel specific data in these bits, consequently
++ * userland TID matching should only be done on the lower 32 bits.
++ */
++
+ uint64_t mad_trid(void)
+ {
+-	static uint64_t base;
+ 	static uint64_t trid;
+ 	uint64_t next;
+ 
+-	if (!base) {
++	if (!trid) {
+ 		srandom((int)time(0) * getpid());
+-		base = random();
  		trid = random();
  	}
- 	next = ++trid | (base << 32);
-+	next &= 0x00ffffffffffffff;
+-	next = ++trid | (base << 32);
++	next = ++trid;
++	next = GET_IB_USERLAND_TID(next);
  	return next;
  }
  
+@@ -91,10 +99,12 @@
+ 	if (rpc->mgtclass == IB_SMI_DIRECT_CLASS) {
+ 		if (!drpath) {
+ 			IBWARN("encoding dr mad without drpath (null)");
++			errno = EINVAL;
+ 			return NULL;
+ 		}
+ 		if (drpath->cnt >= IB_SUBNET_PATH_HOPS_MAX) {
+ 			IBWARN("dr path with hop count %d", drpath->cnt);
++			errno = EINVAL;
+ 			return NULL;
+ 		}
+ 		mad_set_field(buf, 0, IB_DRSMP_HOPCNT_F, drpath->cnt);
 diff -r -u /tmp/libibmad-1.3.7/src/resolve.c libibmad-1.3.7/src/resolve.c
 --- /tmp/libibmad-1.3.7/src/resolve.c	Wed Feb 16 02:12:53 2011
 +++ libibmad-1.3.7/src/resolve.c	Mon Oct  1 01:32:21 2012
@@ -1211,27 +1254,40 @@ diff -r -u /tmp/libibmad-1.3.7/src/resolve.c libibmad-1.3.7/src/resolve.c
  
  #include <infiniband/umad.h>
  #include <infiniband/mad.h>
-@@ -57,10 +58,18 @@
+@@ -57,10 +58,15 @@
  
  	memset(sm_id, 0, sizeof(*sm_id));
  
 -	if (!smp_query_via(portinfo, &self, IB_ATTR_PORT_INFO, 0, 0, srcport))
 +	if (!smp_query_via(portinfo, &self, IB_ATTR_PORT_INFO, 0, 0, srcport)) {
-+		if (!errno)
-+			errno = EIO;
  		return -1;
 +	}
  
  	mad_decode_field(portinfo, IB_PORT_SMLID_F, &lid);
-+	if (lid == 0) {
-+		if (!errno)
-+			errno = EIO;
++	if (!IB_LID_VALID(lid)) {
++		errno = ENXIO;
 +		return -1;
 +	}
  	mad_decode_field(portinfo, IB_PORT_SMSL_F, &sm_id->sl);
  
  	return ib_portid_set(sm_id, lid, 0, 0);
-@@ -95,7 +104,7 @@
+@@ -75,11 +81,13 @@
+ 		       ib_portid_t * sm_id, int timeout,
+ 		       const struct ibmad_port *srcport)
+ {
+-	ib_portid_t sm_portid;
++	ib_portid_t sm_portid = { 0 };
+ 	char buf[IB_SA_DATA_SIZE] = { 0 };
+ 
+-	if (!sm_id) {
++	if (!sm_id)
+ 		sm_id = &sm_portid;
++
++	if (!IB_LID_VALID(sm_id->lid)) {
+ 		if (ib_resolve_smlid_via(sm_id, timeout, srcport) < 0)
+ 			return -1;
+ 	}
+@@ -95,7 +103,7 @@
  			ib_portid_t * sm_id, int timeout,
  			const struct ibmad_port *srcport)
  {
@@ -1240,7 +1296,7 @@ diff -r -u /tmp/libibmad-1.3.7/src/resolve.c libibmad-1.3.7/src/resolve.c
  	uint8_t buf[IB_SA_DATA_SIZE] = { 0 };
  	ib_portid_t self = { 0 };
  	uint64_t selfguid, prefix;
-@@ -102,14 +111,19 @@
+@@ -102,14 +110,17 @@
  	ibmad_gid_t selfgid;
  	uint8_t nodeinfo[64];
  
@@ -1248,137 +1304,82 @@ diff -r -u /tmp/libibmad-1.3.7/src/resolve.c libibmad-1.3.7/src/resolve.c
 +	if (!sm_id)
  		sm_id = &sm_portid;
 +
-+	if (!sm_id->lid) {
++	if (!IB_LID_VALID(sm_id->lid)) {
  		if (ib_resolve_smlid_via(sm_id, timeout, srcport) < 0)
  			return -1;
  	}
  
 -	if (!smp_query_via(nodeinfo, &self, IB_ATTR_NODE_INFO, 0, 0, srcport))
 +	if (!smp_query_via(nodeinfo, &self, IB_ATTR_NODE_INFO, 0, 0, srcport)) {
-+		if (!errno)
-+			errno = EIO;
  		return -1;
 +	}
  	mad_decode_field(nodeinfo, IB_NODE_PORT_GUID_F, &selfguid);
  	mad_set_field64(selfgid, 0, IB_GID_PREFIX_F, IB_DEFAULT_SUBN_PREFIX);
  	mad_set_field64(selfgid, 0, IB_GID_GUID_F, selfguid);
+@@ -145,18 +156,24 @@
+ 	switch (dest_type) {
+ 	case IB_DEST_LID:
+ 		lid = strtol(addr_str, 0, 0);
+-		if (!IB_LID_VALID(lid))
++		if (!IB_LID_VALID(lid)) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 		return ib_portid_set(portid, lid, 0, 0);
+ 
+ 	case IB_DEST_DRPATH:
+-		if (str2drpath(&portid->drpath, addr_str, 0, 0) < 0)
++		if (str2drpath(&portid->drpath, addr_str, 0, 0) < 0) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 		return 0;
+ 
+ 	case IB_DEST_GUID:
+-		if (!(guid = strtoull(addr_str, 0, 0)))
++		if (!(guid = strtoull(addr_str, 0, 0))) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 
+ 		/* keep guid in portid? */
+ 		return ib_resolve_guid_via(portid, &guid, sm_id, 0, srcport);
+@@ -164,8 +181,10 @@
+ 	case IB_DEST_DRSLID:
+ 		lid = strtol(addr_str, &routepath, 0);
+ 		routepath++;
+-		if (!IB_LID_VALID(lid))
++		if (!IB_LID_VALID(lid)) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 		ib_portid_set(portid, lid, 0, 0);
+ 
+ 		/* handle DR parsing and set DrSLID to local lid */
+@@ -172,8 +191,10 @@
+ 		if (ib_resolve_self_via(&selfportid, &selfport, 0, srcport) < 0)
+ 			return -1;
+ 		if (str2drpath(&portid->drpath, routepath, selfportid.lid, 0) <
+-		    0)
++		    0) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 		return 0;
+ 
+ 	case IB_DEST_GID:
+@@ -182,6 +203,7 @@
+ 		return ib_resolve_gid_via(portid, gid, sm_id, 0, srcport);
+ 	default:
+ 		IBWARN("bad dest_type %d", dest_type);
++		errno = EINVAL;
+ 	}
+ 
+ 	return -1;
 diff -r -u /tmp/libibmad-1.3.7/src/dump.c libibmad-1.3.7/src/dump.c
 --- /tmp/libibmad-1.3.7/src/dump.c	Wed Feb 16 02:12:53 2011
 +++ libibmad-1.3.7/src/dump.c	Mon May 27 17:23:19 2013
-@@ -46,12 +46,24 @@
- 
- void mad_dump_int(char *buf, int bufsz, void *val, int valsz)
- {
-+	/*
-+	 * the val pointer passed to the dump routines are always 32 bit
-+	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
-+	 * uint8_t or uint16_t. This is because mad_decode_field always returns
-+	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
-+	 */
- 	switch (valsz) {
- 	case 1:
--		snprintf(buf, bufsz, "%d", *(uint32_t *) val & 0xff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint8_t *)val) + 3;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "%d", *(uint8_t *) val & 0xff);
- 		break;
- 	case 2:
--		snprintf(buf, bufsz, "%d", *(uint32_t *) val & 0xffff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint16_t *)val) + 1;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "%d", *(uint16_t *) val & 0xffff);
- 		break;
- 	case 3:
- 	case 4:
-@@ -71,12 +83,24 @@
- 
- void mad_dump_uint(char *buf, int bufsz, void *val, int valsz)
- {
-+	/*
-+	 * the val pointer passed to the dump routines are always 32 bit
-+	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
-+	 * uint8_t or uint16_t. This is because mad_decode_field always returns
-+	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
-+	 */
- 	switch (valsz) {
- 	case 1:
--		snprintf(buf, bufsz, "%u", *(uint32_t *) val & 0xff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint8_t *)val) + 3;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "%u", *(uint8_t *) val & 0xff);
- 		break;
- 	case 2:
--		snprintf(buf, bufsz, "%u", *(uint32_t *) val & 0xffff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint16_t *)val) + 1;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "%u", *(uint16_t *) val & 0xffff);
- 		break;
- 	case 3:
- 	case 4:
-@@ -96,15 +120,28 @@
- 
- void mad_dump_hex(char *buf, int bufsz, void *val, int valsz)
- {
-+	/*
-+	 * the val pointer passed to the dump routines are always 32 bit
-+	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
-+	 * uint8_t or uint16_t. This is because mad_decode_field always returns
-+	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
-+	 */
- 	switch (valsz) {
- 	case 1:
--		snprintf(buf, bufsz, "0x%02x", *(uint32_t *) val & 0xff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint8_t *)val) + 3;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "0x%02x", *(uint8_t *) val & 0xff);
- 		break;
- 	case 2:
--		snprintf(buf, bufsz, "0x%04x", *(uint32_t *) val & 0xffff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint16_t *)val) + 1;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "0x%04x", *(uint16_t *) val & 0xffff);
- 		break;
- 	case 3:
--		snprintf(buf, bufsz, "0x%06x", *(uint32_t *) val & 0xffffff);
-+		//snprintf(buf, bufsz, "0x%06x", *(uint32_t *) val & 0xffffff);
-+		snprintf(buf, bufsz, "0x%x", *(uint32_t *)val & 0xffffff);
- 		break;
- 	case 4:
- 		snprintf(buf, bufsz, "0x%08x", *(uint32_t *) val);
-@@ -132,12 +169,24 @@
- 
- void mad_dump_rhex(char *buf, int bufsz, void *val, int valsz)
- {
-+	/*
-+	 * the val pointer passed to the dump routines are always 32 bit
-+	 * integers for valsz <= 4 and 64 bit integer for the rest. It is never
-+	 * uint8_t or uint16_t. This is because mad_decode_field always returns
-+	 * the values as 32 bit integer even if they are 8 bit or 16 bit fields.
-+	 */
- 	switch (valsz) {
- 	case 1:
--		snprintf(buf, bufsz, "%02x", *(uint32_t *) val & 0xff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint8_t *)val) + 3;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "%02x", *(uint8_t *) val & 0xff);
- 		break;
- 	case 2:
--		snprintf(buf, bufsz, "%04x", *(uint32_t *) val & 0xffff);
-+#if defined(_BIG_ENDIAN)
-+		val = ((uint16_t *)val) + 1;
-+#endif /* _BIG_ENDIAN */
-+		snprintf(buf, bufsz, "%04x", *(uint16_t *) val & 0xffff);
- 		break;
- 	case 3:
- 		snprintf(buf, bufsz, "%06x", *(uint32_t *) val & 0xffffff);
-@@ -308,6 +357,21 @@
+@@ -308,6 +308,21 @@
  	dump_linkspeed(buf, bufsz, speed);
  }
  
@@ -1400,7 +1401,7 @@ diff -r -u /tmp/libibmad-1.3.7/src/dump.c libibmad-1.3.7/src/dump.c
  void mad_dump_portstate(char *buf, int bufsz, void *val, int valsz)
  {
  	int state = *(int *)val;
-@@ -760,6 +824,158 @@
+@@ -760,6 +775,158 @@
  	_dump_fields(buf, bufsz, val, IB_PSC_OPCODE_F, IB_PSC_LAST_F);
  }
  
@@ -1641,6 +1642,15 @@ diff -r -u /tmp/libibmad-1.3.7/src/libibmad.map libibmad-1.3.7/src/libibmad.map
 diff -r -u /tmp/libibmad-1.3.7/src/rpc.c libibmad-1.3.7/src/rpc.c
 --- /tmp/libibmad-1.3.7/src/rpc.c	Wed Feb 16 02:12:53 2011
 +++ libibmad-1.3.7/src/rpc.c	Thu Feb 24 11:27:14 2011
+@@ -128,7 +128,7 @@
+ _do_madrpc(int port_id, void *sndbuf, void *rcvbuf, int agentid, int len,
+ 	   int timeout, int max_retries)
+ {
+-	uint32_t trid;		/* only low 32 bits */
++	uint32_t trid;		/* only low 32 bits - see mad_trid() */
+ 	int retries;
+ 	int length, status;
+ 
 @@ -152,7 +152,7 @@
  
  		length = len;
@@ -1659,15 +1669,31 @@ diff -r -u /tmp/libibmad-1.3.7/src/rpc.c libibmad-1.3.7/src/rpc.c
  				return -1;
  			}
  
-@@ -175,6 +175,7 @@
- 					 IB_MAD_TRID_F) != trid);
+@@ -181,6 +181,7 @@
+ 			return length;
+ 	}
  
- 		status = umad_status(rcvbuf);
-+		errno = status;
- 		if (!status)
- 			return length;	/* done */
- 		if (status == ENOMEM)
-@@ -337,7 +338,7 @@
++	errno = status;
+ 	ERRS("timeout after %d retries, %d ms", retries, timeout * retries);
+ 	return -1;
+ }
+@@ -246,6 +247,7 @@
+ 	if (status != 0) {
+ 		ERRS("MAD completed with error status 0x%x; dport (%s)",
+ 		     status, portid2str(dport));
++		errno = EIO;
+ 		return NULL;
+ 	}
+ 
+@@ -286,6 +288,7 @@
+ 	if ((status = mad_get_field(mad, 0, IB_MAD_STATUS_F)) != 0) {
+ 		ERRS("MAD completed with error status 0x%x; dport (%s)",
+ 		     status, portid2str(dport));
++		errno = EIO;
+ 		return NULL;
+ 	}
+ 
+@@ -337,7 +340,7 @@
  		IBPANIC("can't init UMAD library");
  
  	if ((fd = umad_open_port(dev_name, dev_port)) < 0)
@@ -1696,7 +1722,19 @@ diff -r -u /tmp/libibmad-1.3.7/src/serv.c libibmad-1.3.7/src/serv.c
  		return -1;
  	}
  
-@@ -157,7 +158,7 @@
+@@ -97,8 +98,10 @@
+ 	int is_smi;
+ 
+ 	if (!portid) {
+-		if (!(mad_addr = umad_get_mad_addr(umad)))
++		if (!(mad_addr = umad_get_mad_addr(umad))) {
++			errno = EINVAL;
+ 			return -1;
++		}
+ 
+ 		memset(&rport, 0, sizeof(rport));
+ 
+@@ -157,7 +160,7 @@
  	if (umad_send
  	    (srcport->port_id, srcport->class_agents[rpc.mgtclass], umad,
  	     IB_MAD_SIZE, mad_get_timeout(srcport, rpc.timeout), 0) < 0) {
@@ -1705,7 +1743,7 @@ diff -r -u /tmp/libibmad-1.3.7/src/serv.c libibmad-1.3.7/src/serv.c
  		return -1;
  	}
  
-@@ -179,7 +180,7 @@
+@@ -179,7 +182,7 @@
  			       mad_get_timeout(srcport, timeout))) < 0) {
  		if (!umad)
  			umad_free(mad);
