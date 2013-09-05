@@ -234,13 +234,21 @@ $(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
 		cat $< - >$@
-else
-$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
-	cat $<  >$@ 
-endif
 
 # mogrify non-parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	%.generated
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+
+# mogrify parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+else
+# mogrify non-parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
@@ -250,6 +258,7 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+endif
 
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
