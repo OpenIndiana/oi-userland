@@ -246,7 +246,7 @@ $(MANIFEST_BASE)-%.mogrified:	%.generated
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
 
 # mogrify parameterized manifests
-$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
