@@ -303,10 +303,4 @@ link path=usr/share/man/man1/mysql.1 target=mysql_51.1 mediator=mysql mediator-v
 link path=var/mysql/data target=5.1/data mediator=mysql mediator-version=5.1
 depend fmri=database/mysql-common@0.5.11 type=require
 
-depend fmri=runtime/perl-510@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-510 \
-    type=conditional
-
-depend fmri=runtime/perl-516@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-516 \
-    type=conditional
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516

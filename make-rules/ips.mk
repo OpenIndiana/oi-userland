@@ -72,6 +72,12 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
+ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
+AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
+else
+AUTOGEN_MANIFEST_TRANSFORMS +=		$(WS_TOP)/transforms/drop-all
+endif
+
 PKG_MACROS +=		MACH=$(MACH)
 PKG_MACROS +=		MACH32=$(MACH32)
 PKG_MACROS +=		MACH64=$(MACH64)
@@ -90,6 +96,9 @@ PKG_MACROS +=		COMPONENT_ARCHIVE_URL=$(COMPONENT_ARCHIVE_URL)
 PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
 PKG_MACROS +=		COMPONENT_HG_REV=$(COMPONENT_HG_REV)
 PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
+PKG_MACROS +=		COMPONENT_FMRI=$(COMPONENT_FMRI)
+PKG_MACROS +=		COMPONENT_LICENSE=$(COMPONENT_LICENSE)
+PKG_MACROS +=		COMPONENT_LICENSE_FILE=$(COMPONENT_LICENSE_FILE)
 PKG_MACROS +=		TPNO=$(TPNO)
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %) -D COMPONENT_SUMMARY="$(COMPONENT_SUMMARY)"
@@ -217,6 +226,27 @@ $(MANIFEST_BASE)-%.p5m: %-PERLVER.p5m $(WS_TOP)/transforms/mkgeneric-perl
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
+ifeq   ($(strip $(COMPONENT_AUTOGEN_MANIFEST)),yes)
+# auto-generate file/directory list
+$(MANIFEST_BASE)-%.generated:	%.p5m $(BUILD_DIR)
+	(cat $(METADATA_TEMPLATE); \
+	$(PKGSEND) generate $(PKG_HARDLINKS:%=--target %) $(PROTO_DIR)) | \
+	$(PKGMOGRIFY) $(PKG_OPTIONS) /dev/fd/0 $(AUTOGEN_MANIFEST_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | $(PKGFMT) | \
+		cat $< - >$@
+
+# mogrify non-parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	%.generated
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+
+# mogrify parameterized manifests
+$(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.generated
+	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
+		$(PUBLISH_TRANSFORMS) | \
+		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+else
 # mogrify non-parameterized manifests
 $(MANIFEST_BASE)-%.mogrified:	%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
@@ -228,6 +258,7 @@ $(MANIFEST_BASE)-%.mogrified:	$(MANIFEST_BASE)-%.p5m $(BUILD_DIR)
 	$(PKGMOGRIFY) $(PKG_OPTIONS) $< \
 		$(PUBLISH_TRANSFORMS) | \
 		sed -e '/^$$/d' -e '/^#.*$$/d' | uniq >$@
+endif
 
 # mangle the file contents
 $(BUILD_DIR) $(MANGLED_DIR):
