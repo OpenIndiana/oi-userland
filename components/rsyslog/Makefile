@@ -35,11 +35,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPILER = gcc
-
-# This is needed for things to be built correctly.
-CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
-
 # A normal 64-bit build would result in /usr/lib/$(MACH64)/rsyslog but since we
 # have a self-contained eco-system, simplify things for customers and just use
 # /usr/lib/rsyslog .
@@ -55,11 +50,11 @@ CONFIGURE_OPTIONS +=    --sbindir=/usr/lib/rsyslog
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
-test:		$(TEST_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
