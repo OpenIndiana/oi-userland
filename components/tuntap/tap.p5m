@@ -12,10 +12,12 @@
 # Copyright 2013, Adam Stevko. All rights reserved.
 #
 
+<transform file dir path=.*kernel.* -> default group sys>
 <transform file path=.*kernel/drv/.+\.conf -> default mode 0644>
 <transform file path=.*kernel/drv/.+ -> default mode 0755>
 <transform file path=.*kernel/$(MACH64)/drv/.+ -> default mode 0755>
 <transform file path=.*kernel/.+(?<!\.conf)$ -> default reboot-needed true>
+
 <transform file dir link hardlink path=.*kernel/.* -> set variant.opensolaris.zone global>
 <transform dir path=kernel$ -> set variant.opensolaris.zone global>
 <transform dir path=.*/kernel$ -> set variant.opensolaris.zone global>
