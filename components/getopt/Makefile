@@ -40,13 +40,13 @@ include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
 # getopt doesn't use configure, override the hard-wired values in the Makefile.
-COMPONENT_BUILD_ARGS+=	CC="$(SPRO_VROOT)/bin/cc $(CC_BITS)"
+COMPONENT_BUILD_ARGS+=	CC="$(CC) $(CC_BITS)"
 COMPONENT_BUILD_ARGS+=	CFLAGS="$(CFLAGS)"
 COMPONENT_BUILD_ARGS+=	LIBCGETOPT=0
 
 COMPONENT_INSTALL_ARGS+=	prefix=/usr/gnu
 COMPONENT_INSTALL_ARGS+=	mandir=/usr/gnu/share/man
-COMPONENT_INSTALL_ARGS+=	CC="$(SPRO_VROOT)/bin/cc $(CC_BITS)"
+COMPONENT_INSTALL_ARGS+=	CC="$(CC) $(CC_BITS)"
 COMPONENT_INSTALL_ARGS+=	CFLAGS="$(CFLAGS)"
 
 # Stupid source tarball distribution contains two .o files.
@@ -56,9 +56,9 @@ COMPONENT_POST_UNPACK_ACTION= \
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 
