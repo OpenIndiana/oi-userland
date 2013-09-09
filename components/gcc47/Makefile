@@ -58,7 +58,7 @@ CC_BITS=
 GCC_LD_OPTIONS.sparc=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.pagealign -z ignore
 GCC_LD_OPTIONS.i386=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.pagealign -z ignore
 GCC_LD_OPTIONS = $(GCC_LD_OPTIONS.$(MACH))
-LD_OPTIONS := -z relax=secadj $(GCC_LD_OPTIONS)
+LD_OPTIONS := $(GCC_LD_OPTIONS)
 
 CONFIG_SHELL = /bin/sh
 MAKESHELL = /bin/sh
@@ -96,7 +96,11 @@ COMPONENT_POST_INSTALL_ACTION = \
       cd $(PROTOUSRDIR)/gcc/4.7/share/gcc-4.7.3/python/libstdcxx ; \
 	$(PYTHON) -m compileall . ; \
       cd $(PROTOUSRDIR)/gcc/4.7/share/gcc-4.7.3/python/libstdcxx/v6 ; \
-	$(PYTHON) -m compileall . )
+	$(PYTHON) -m compileall . ; \
+      cd $(COMPONENT_DIR) ; \
+	chmod 0755 ./gcc_post_install_processing.sh ; \
+	$(SHELL) ./gcc_post_install_processing.sh -protodir=$(PROTO_DIR) \
+	  -python=$(PYTHON) -gccversion=$(COMPONENT_VERSION) )
 
 # ASLR has side-effects with libitm and libgomp.
 # Disable ASLR for now.
