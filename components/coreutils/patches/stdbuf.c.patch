@@ -1,0 +1,50 @@
+Changes needed to get stdbuf to successfully preload libstdbuf.so
+for both 32-bit and 64-bit applications. See comment in the patch
+for more details.
+
+--- coreutils-8.16/src/stdbuf.c.orig	2013-09-04 19:05:35.225857588 -0700
++++ coreutils-8.16/src/stdbuf.c	2013-09-04 19:11:51.945113130 -0700
+@@ -195,37 +195,13 @@
+      gcc stdbuf.c -Wl,-rpath,'$ORIGIN' -Wl,-rpath,$PKGLIBEXECDIR
+      However we want the lookup done for the exec'd command not stdbuf.
+ 
+-     Since we don't link against libstdbuf.so add it to PKGLIBEXECDIR
+-     rather than to LIBDIR.  */
+-  char const *const search_path[] = {
+-    program_path,
+-    PKGLIBEXECDIR,
+-    NULL
+-  };
++     Since we don't link against libstdbuf.so, we need to LD_PRELOAD it.
++     As libstdbuf.so lives in /usr/lib and /usr/lib/64, we just use
++     LD_PRELOAD=libstdbuf.so, and ld.so.1 finds the right one associated
++     with the process class. ie. we don't use full path names for the
++     preload names.  */
+ 
+-  char const *const *path = search_path;
+-  char *libstdbuf;
+-
+-  while (true)
+-    {
+-      struct stat sb;
+-
+-      if (!**path)              /* system default  */
+-        {
+-          libstdbuf = xstrdup (LIB_NAME);
+-          break;
+-        }
+-      ret = asprintf (&libstdbuf, "%s/%s", *path, LIB_NAME);
+-      if (ret < 0)
+-        xalloc_die ();
+-      if (stat (libstdbuf, &sb) == 0)   /* file_exists  */
+-        break;
+-      free (libstdbuf);
+-
+-      ++path;
+-      if ( ! *path)
+-        error (EXIT_CANCELED, 0, _("failed to find %s"), quote (LIB_NAME));
+-    }
++  char *libstdbuf = xstrdup (LIB_NAME);
+ 
+   /* FIXME: Do we need to support libstdbuf.dll, c:, '\' separators etc?  */
+ 

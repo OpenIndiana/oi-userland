@@ -37,21 +37,19 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_PREFIX	 =	/usr/gnu
+CONFIGURE_OPTIONS	+=	--bindir=/usr/gnu/bin
 CONFIGURE_OPTIONS	+=	--libdir=/usr/lib
 CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
-# To allow stdbuf to correctly find /usr/lib/libstdbuf.so
-COMPONENT_BUILD_ARGS += pkglibexecdir=/usr/lib
-
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 # Needed for "gmake test" to work successfully.
 # If SHELLOPTS is exported (as it is by the userland makefiles),
@@ -64,7 +62,10 @@ unexport SHELLOPTS
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
 
-test:		install $(TEST_32)
+# There are two known test failures:
+# misc/stdbuf             - see CR #15941179
+# misc/timeout-parameters - see CR #17425658
+test:		install $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
