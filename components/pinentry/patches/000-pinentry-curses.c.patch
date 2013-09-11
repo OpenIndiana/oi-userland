@@ -1,15 +1,26 @@
---- pinentry/pinentry-curses.c	Thu Apr 16 08:06:53 2009
-+++ pinentry/pinentry-curses.c	Mon Nov  9 08:23:40 2009
-@@ -665,7 +665,7 @@
+--- pinentry/pinentry-curses.c.orig	2013-09-09 22:22:05.276047760 -0600
++++ pinentry/pinentry-curses.c	2013-09-09 22:23:41.071035990 -0600
+@@ -767,7 +767,7 @@ dialog_run (pinentry_t pinentry, const c
    if (has_colors ())
      {
        start_color ();
 -      use_default_colors ();
-+      /* use_default_colors (); */
++/*      use_default_colors (); */
  
        if (pinentry->color_so == PINENTRY_COLOR_DEFAULT)
  	{
-@@ -741,7 +741,7 @@
+@@ -811,10 +811,6 @@ dialog_run (pinentry_t pinentry, const c
+ 
+       switch (c)
+ 	{
+-#ifndef HAVE_DOSISH_SYSTEM
+-	case ERR:
+-	  continue;
+-#endif
+ 	case KEY_LEFT:
+ 	case KEY_UP:
+ 	  switch (diag.pos)
+@@ -858,7 +854,7 @@ dialog_run (pinentry_t pinentry, const c
  	    }
  	  break;
  
@@ -18,12 +29,7 @@
  	  switch (diag.pos)
  	    {
  	    case DIALOG_POS_PIN:
-@@ -767,11 +767,11 @@
- 	    }
- 	  break;
-   
--	case '\e':
-+	case '\005': /* ENQ */
+@@ -888,7 +884,7 @@ dialog_run (pinentry_t pinentry, const c
  	  done = -2;
  	  break;
  
