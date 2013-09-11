@@ -23,12 +23,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_proxy_html
-COMPONENT_VERSION=	3.1.1
+COMPONENT_VERSION=	3.1.2
 COMPONENT_PROJECT_URL=	http://apache.webthing.com/mod_proxy_html/
 COMPONENT_SRC=		$(COMPONENT_NAME)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-$(COMPONENT_VERSION).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:36f5341589a4d6705e3590eafc29f99fb16e4169f39ddc0fa30b9d5da2a0e7d5
+    sha256:a1aee758bda605e153868b91188ebf2c527b8eeb0f115d11af152078e65895bf
 # Original archive from community didn't contain name in its version.
 # Therefore we created special Userland copy with version info.
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
