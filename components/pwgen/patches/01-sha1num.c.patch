@@ -1,0 +1,13 @@
+# fixes Parfait problem file leak
+
+--- pwgen-2.06/sha1num.c	2007-07-04 16:42:19.000000000 -0700
++++ pwgen-2.06-fixed/sha1num.c	2013-09-05 07:33:17.194749959 -0700
+@@ -54,6 +54,8 @@
+ 		sha1_update( &sha1_ctx, buf, i );
+ 	}
+ 
++	fclose(f);
++
+ 	return;
+ }
+ 
