@@ -1,0 +1,13 @@
+In-House patch. Submitted to upstream, but not accepted yet.
+Added errno.h to remove compile error of defininig extern int errno without including errno.h.
+
+--- tmux-1.8/server-client.c.orig	2013-08-13 12:42:15.161702456 -0700
++++ tmux-1.8/server-client.c	2013-08-13 12:44:32.917403564 -0700
+@@ -25,6 +25,7 @@
+ #include <string.h>
+ #include <time.h>
+ #include <unistd.h>
++#include <errno.h>
+ 
+ #include "tmux.h"
+ 
