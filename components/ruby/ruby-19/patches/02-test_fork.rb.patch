@@ -1,0 +1,49 @@
+# Comment out this test case for now.  It causes a ruby
+# core dump.  See https://bugs.ruby-lang.org/issues/8860
+
+--- ruby-1.9.3-p448.orig/bootstraptest/test_fork.rb	Thu Jun 30 15:29:34 2011
++++ ruby-1.9.3-p448/bootstraptest/test_fork.rb	Thu Aug 22 15:02:22 2013
+@@ -48,22 +48,25 @@
+   end
+ }, '[ruby-core:28924]'
+ 
+-assert_equal '[1, 2]', %q{
+-  a = []
+-  trap(:INT) { a.push(1) }
+-  trap(:TERM) { a.push(2) }
+-  pid = $$
+-  begin
+-    fork do
+-      sleep 0.5
+-      Process.kill(:INT, pid)
+-      Process.kill(:TERM, pid)
+-    end
+-
+-    sleep 1
+-    a.sort
+-  rescue NotImplementedError
+-    [1, 2]
+-  end
+-}, '[ruby-dev:44005] [Ruby 1.9 - Bug #4950]'
++# Comment out this test assertion for now.
++# It core dumps ruby, halting testing.
++# A ruby bug was reported at https://bugs.ruby-lang.org/issues/6334
++#assert_equal '[1, 2]', %q{
++#  a = []
++#  trap(:INT) { a.push(1) }
++#  trap(:TERM) { a.push(2) }
++#  pid = $$
++#  begin
++#    fork do
++#      sleep 0.5
++#      Process.kill(:INT, pid)
++#      Process.kill(:TERM, pid)
++#    end
++#
++#    sleep 1
++#    a.sort
++#  rescue NotImplementedError
++#    [1, 2]
++#  end
++#}, '[ruby-dev:44005] [Ruby 1.9 - Bug #4950]'
+ 

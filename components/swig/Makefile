@@ -45,6 +45,8 @@ CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
+# keep swig building with ruby 1.8 for now
+CONFIGURE_OPTIONS +=	--with-ruby=$(RUBY.1.8)
 
 ASLR_MODE = $(ASLR_ENABLE)
 

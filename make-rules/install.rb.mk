@@ -38,6 +38,7 @@ $(BUILD_DIR)/%/.installed:      $(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_INSTALL_ACTION)
 	(cd $(SOURCE_DIR) ; $(ENV) $(COMPONENT_INSTALL_ENV) \
                 ./install.rb --destdir=$(PROTO_DIR) \
+                --ruby=$(RUBY) \
                 --bindir=$(INSTALL_RB_BINDIR) \
                 --sitelibdir=$(VENDOR_RUBY) \
                 --mandir=$(USRSHAREMANDIR))

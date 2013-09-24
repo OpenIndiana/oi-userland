@@ -1,0 +1,19 @@
+# Until we add libyaml to Solaris, ruby will build with syck instead of psych;
+# eliminate warning message, so it won't show up for every invocation of gem
+#
+--- ruby-1.9.3-p448.orig/lib/yaml.rb	Wed May 29 05:00:57 2013
++++ ruby-1.9.3-p448/lib/yaml.rb	Mon Aug 26 14:57:17 2013
+@@ -85,9 +85,10 @@
+     require 'psych'
+     engine = 'psych'
+   rescue LoadError
+-    warn "#{caller[0]}:"
+-    warn "It seems your ruby installation is missing psych (for YAML output)."
+-    warn "To eliminate this warning, please install libyaml and reinstall your ruby."
++# remove warning for now, until libyaml is included in Solaris
++#    warn "#{caller[0]}:"
++#    warn "It seems your ruby installation is missing psych (for YAML output)."
++#    warn "To eliminate this warning, please install libyaml and reinstall your ruby."
+     require 'syck'
+     engine = 'syck'
+   end

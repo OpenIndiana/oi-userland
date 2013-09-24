@@ -99,6 +99,10 @@ CONFIGURE_ENV += PYTHONPATH="$(PYTHON_VENDOR_PACKAGES.$(BITS))"
 CONFIGURE_ENV += JAVA_ROOT="$(JAVA_ROOT)"
 CONFIGURE_ENV += PERL="$(PERL)"
 CONFIGURE_ENV += PLMODS="$(PLMODS)"
+# Current version of subversion only supports ruby 1.8, not 1.9.
+# Until subversion is updated to 1.8.0 (ruby 1.9 support added)
+# or later, use ruby 1.8.
+CONFIGURE_ENV += RUBY="$(RUBY.1.8)"
 CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 
 LIBSVNDIR.32 = $(CONFIGURE_PREFIX)/lib/svn

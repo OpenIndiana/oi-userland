@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -52,6 +52,9 @@ CXX +=		$(studio_NORUNPATH)
 
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	PERL=$(PERL)
+# Explicitly use Ruby 1.8.  Allows switching Ruby default without
+# affecting graphviz build.
+CONFIGURE_ENV +=	RUBY=$(RUBY.1.8)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=yes

@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	1.8.7
@@ -95,7 +95,7 @@ POST_RUBYGEMS_INSTALL_ACTION += \
 	/bin/sed -f Solaris/rbconfig.sedscript $(PROTO_RBCONFIG_FILE) \
 	> rbconfig.rb.mod ; \
 	$(MV) rbconfig.rb.mod $(PROTO_RBCONFIG_FILE) ; \
-	/bin/sed -e '1s;^\#!/.*;\#!/usr/bin/ruby;' $(PROTORUBYDIR)/bin/gem \
+	/bin/sed -e '1s;^\#!/.*;\#!/usr/ruby/$(RUBY_VER)/bin/ruby;' $(PROTORUBYDIR)/bin/gem \
 	> gem.mod ; \
 	$(MV) gem.mod $(PROTORUBYDIR)/bin/gem
 
