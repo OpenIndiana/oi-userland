@@ -69,6 +69,8 @@ COMPONENT_INSTALL_ARGS += sys_tmac_prefix=$(PROTOUSRSHARELIBDIR)/tmac/
 COMPONENT_PRE_INSTALL_ACTION = \
 	($(MKDIR) $(PROTOUSRBINDIR) )
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:		$(BUILD_64)
 

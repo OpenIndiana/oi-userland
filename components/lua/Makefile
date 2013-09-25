@@ -60,6 +60,8 @@ $(INSTALL_64):	COMPONENT_INSTALL_ARGS += INSTALL_BIN=$(PROTOUSRBINDIR64)
 $(BUILD_DIR)/lua-64.pc:		files/lua-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" < $< > $@
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:		$(BUILD_32_and_64)
 	
