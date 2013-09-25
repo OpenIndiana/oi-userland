@@ -1,0 +1,1351 @@
+'\" t
+.\"     Title: rabbitmqctl
+.\"    Author: The RabbitMQ Team <info@rabbitmq.com>
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 05/10/2013
+.\"    Manual: RabbitMQ Service
+.\"    Source: RabbitMQ Server
+.\"  Language: English
+.\"
+.TH "RABBITMQCTL" "1" "05/10/2013" "RabbitMQ Server" "RabbitMQ Service"
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+rabbitmqctl \- command line tool for managing a RabbitMQ broker
+.SH "SYNOPSIS"
+.HP \w'\fBrabbitmqctl\fR\ 'u
+\fBrabbitmqctl\fR [\-n\ \fInode\fR] [\-q] {\fIcommand\fR} [\fIcommand\ options\fR...]
+.SH "DESCRIPTION"
+.PP
+RabbitMQ is an implementation of AMQP, the emerging standard for high performance enterprise messaging\&. The RabbitMQ server is a robust and scalable implementation of an AMQP broker\&.
+.PP
+
+\fBrabbitmqctl\fR
+is a command line tool for managing a RabbitMQ broker\&. It performs all actions by connecting to one of the broker\'s nodes\&.
+.PP
+Diagnostic information is displayed if the broker was not running, could not be reached, or rejected the connection due to mismatching Erlang cookies\&.
+.SH "OPTIONS"
+.PP
+[\-n \fInode\fR]
+.RS 4
+Default node is "rabbit@server", where server is the local host\&. On a host named "server\&.example\&.com", the node name of the RabbitMQ Erlang node will usually be rabbit@server (unless RABBITMQ_NODENAME has been set to some non\-default value at broker startup time)\&. The output of
+\fBhostname \-s\fR
+is usually the correct suffix to use after the "@" sign\&. See rabbitmq\-server(1) for details of configuring the RabbitMQ broker\&.
+.RE
+.PP
+[\-q]
+.RS 4
+Quiet output mode is selected with the "\-q" flag\&. Informational messages are suppressed when quiet mode is in effect\&.
+.RE
+.SH "COMMANDS"
+.SS "Application and Cluster Management"
+.PP
+\fBstop\fR [\fIpid_file\fR]
+.RS 4
+Stops the Erlang node on which RabbitMQ is running\&. To restart the node follow the instructions for
+Running the Server
+in the
+\fBinstallation guide\fR\&\s-2\u[1]\d\s+2\&.
+.sp
+If a
+\fBpid_file\fR
+is specified, also waits for the process specified there to terminate\&. See the description of the
+\fBwait\fR
+command below for details on this file\&.
+.RE
+.PP
+\fBstop_app\fR
+.RS 4
+Stops the RabbitMQ application, leaving the Erlang node running\&.
+.sp
+This command is typically run prior to performing other management actions that require the RabbitMQ application to be stopped, e\&.g\&.
+\fBreset\fR\&.
+.RE
+.PP
+\fBstart_app\fR
+.RS 4
+Starts the RabbitMQ application\&.
+.sp
+This command is typically run after performing other management actions that required the RabbitMQ application to be stopped, e\&.g\&.
+\fBreset\fR\&.
+.RE
+.PP
+\fBwait\fR {\fIpid_file\fR}
+.RS 4
+Wait for the RabbitMQ application to start\&.
+.sp
+This command will wait for the RabbitMQ application to start at the node\&. It will wait for the pid file to be created, then for a process with a pid specified in the pid file to start, and then for the RabbitMQ application to start in that process\&. It will fail if the process terminates without starting the RabbitMQ application\&.
+.sp
+A suitable pid file is created by the
+\fBrabbitmq\-server\fR
+script\&. By default this is located in the Mnesia directory\&. Modify the
+\fBRABBITMQ_PID_FILE\fR
+environment variable to change the location\&.
+.RE
+.PP
+\fBreset\fR
+.RS 4
+Return a RabbitMQ node to its virgin state\&.
+.sp
+Removes the node from any cluster it belongs to, removes all data from the management database, such as configured users and vhosts, and deletes all persistent messages\&.
+.sp
+For
+\fBreset\fR
+and
+\fBforce_reset\fR
+to succeed the RabbitMQ application must have been stopped, e\&.g\&. with
+\fBstop_app\fR\&.
+.RE
+.PP
+\fBforce_reset\fR
+.RS 4
+Forcefully return a RabbitMQ node to its virgin state\&.
+.sp
+The
+\fBforce_reset\fR
+command differs from
+\fBreset\fR
+in that it resets the node unconditionally, regardless of the current management database state and cluster configuration\&. It should only be used as a last resort if the database or cluster configuration has been corrupted\&.
+.sp
+For
+\fBreset\fR
+and
+\fBforce_reset\fR
+to succeed the RabbitMQ application must have been stopped, e\&.g\&. with
+\fBstop_app\fR\&.
+.RE
+.PP
+\fBrotate_logs\fR {\fIsuffix\fR}
+.RS 4
+Instruct the RabbitMQ node to rotate the log files\&.
+.sp
+The RabbitMQ broker appends the contents of its log files to files with names composed of the original name and the suffix, and then resumes logging to freshly created files at the original location\&. I\&.e\&. effectively the current log contents are moved to the end of the suffixed files\&.
+.sp
+When the target files do not exist they are created\&. When no
+\fBsuffix\fR
+is specified, the empty log files are simply created at the original location; no rotation takes place\&.
+.RE
+.SS "Cluster management"
+.PP
+\fBjoin_cluster\fR {\fIclusternode\fR} [\-\-ram]
+.RS 4
+.PP
+clusternode
+.RS 4
+Node to cluster with\&.
+.RE
+.PP
+[\-\-ram]
+.RS 4
+If provided, the node will join the cluster as a RAM node\&.
+.RE
+.sp
+Instruct the node to become a member of the cluster that the specified node is in\&. Before clustering, the node is reset, so be careful when using this command\&. For this command to succeed the RabbitMQ application must have been stopped, e\&.g\&. with
+\fBstop_app\fR\&.
+.sp
+Cluster nodes can be of two types: disc or RAM\&. Disc nodes replicate data in RAM and on disc, thus providing redundancy in the event of node failure and recovery from global events such as power failure across all nodes\&. RAM nodes replicate data in RAM only (with the exception of queue contents, which can reside on disc if the queue is persistent or too big to fit in memory) and are mainly used for scalability\&. RAM nodes are more performant only when managing resources (e\&.g\&. adding/removing queues, exchanges, or bindings)\&. A cluster must always have at least one disc node, and usually should have more than one\&.
+.sp
+The node will be a disc node by default\&. If you wish to create a RAM node, provide the
+\fB\-\-ram\fR
+flag\&.
+.sp
+After executing the
+\fBcluster\fR
+command, whenever the RabbitMQ application is started on the current node it will attempt to connect to the nodes that were in the cluster when the node went down\&.
+.sp
+To leave a cluster,
+\fBreset\fR
+the node\&. You can also remove nodes remotely with the
+\fBforget_cluster_node\fR
+command\&.
+.sp
+For more details see the
+\fBclustering guide\fR\&\s-2\u[2]\d\s+2\&.
+.RE
+.PP
+\fBcluster_status\fR
+.RS 4
+Displays all the nodes in the cluster grouped by node type, together with the currently running nodes\&.
+.RE
+.PP
+\fBchange_cluster_node_type\fR {disc | ram}
+.RS 4
+Changes the type of the cluster node\&. The node must be stopped for this operation to succeed, and when turning a node into a RAM node the node must not be the only disc node in the cluster\&.
+.RE
+.PP
+\fBforget_cluster_node\fR [\-\-offline]
+.RS 4
+.PP
+[\-\-offline]
+.RS 4
+Enables node removal from an offline node\&. This is only useful in the situation where all the nodes are offline and the last node to go down cannot be brought online, thus preventing the whole cluster from starting\&. It should not be used in any other circumstances since it can lead to inconsistencies\&.
+.RE
+.sp
+Removes a cluster node remotely\&. The node that is being removed must be offline, while the node we are removing from must be online, except when using the
+\fB\-\-offline\fR
+flag\&.
+.RE
+.PP
+\fBupdate_cluster_nodes\fR {clusternode}
+.RS 4
+.PP
+clusternode
+.RS 4
+The node to consult for up to date information\&.
+.RE
+.sp
+Instructs an already clustered node to contact
+\fBclusternode\fR
+to cluster when waking up\&. This is different from
+\fBjoin_cluster\fR
+since it does not join any cluster \- it checks that the node is already in a cluster with
+\fBclusternode\fR\&.
+.sp
+The need for this command is motivated by the fact that clusters can change while a node is offline\&. Consider the situation in which node A and B are clustered\&. A goes down, C clusters with B, and then B leaves the cluster\&. When A wakes up, it\'ll try to contact B, but this will fail since B is not in the cluster anymore\&.
+\fBupdate_cluster_nodes \-n A C\fR
+will solve this situation\&.
+.RE
+.PP
+\fBsync_queue\fR {queue}
+.RS 4
+.PP
+queue
+.RS 4
+The name of the queue to synchronise\&.
+.RE
+.sp
+Instructs a mirrored queue with unsynchronised slaves to synchronise itself\&. The queue will block while synchronisation takes place (all publishers to and consumers from the queue will block)\&. The queue must be mirrored for this command to succeed\&.
+.sp
+Note that unsynchronised queues from which messages are being drained will become synchronised eventually\&. This command is primarily useful for queues which are not being drained\&.
+.RE
+.PP
+\fBcancel_sync_queue\fR {queue}
+.RS 4
+.PP
+queue
+.RS 4
+The name of the queue to cancel synchronisation for\&.
+.RE
+.sp
+Instructs a synchronising mirrored queue to stop synchronising itself\&.
+.RE
+.SS "User management"
+.PP
+Note that
+\fBrabbitmqctl\fR
+manages the RabbitMQ internal user database\&. Users from any alternative authentication backend will not be visible to
+\fBrabbitmqctl\fR\&.
+.PP
+\fBadd_user\fR {\fIusername\fR} {\fIpassword\fR}
+.RS 4
+.PP
+username
+.RS 4
+The name of the user to create\&.
+.RE
+.PP
+password
+.RS 4
+The password the created user will use to log in to the broker\&.
+.RE
+.RE
+.PP
+\fBdelete_user\fR {\fIusername\fR}
+.RS 4
+.PP
+username
+.RS 4
+The name of the user to delete\&.
+.RE
+.RE
+.PP
+\fBchange_password\fR {\fIusername\fR} {\fInewpassword\fR}
+.RS 4
+.PP
+username
+.RS 4
+The name of the user whose password is to be changed\&.
+.RE
+.PP
+newpassword
+.RS 4
+The new password for the user\&.
+.RE
+.RE
+.PP
+\fBclear_password\fR {\fIusername\fR}
+.RS 4
+.PP
+username
+.RS 4
+The name of the user whose password is to be cleared\&.
+.RE
+.RE
+.PP
+\fBset_user_tags\fR {\fIusername\fR} {\fItag\fR \&.\&.\&.}
+.RS 4
+.PP
+username
+.RS 4
+The name of the user whose tags are to be set\&.
+.RE
+.PP
+tag
+.RS 4
+Zero, one or more tags to set\&. Any existing tags will be removed\&.
+.RE
+.RE
+.PP
+\fBlist_users\fR
+.RS 4
+Lists users\&. Each result row will contain the user name followed by a list of the tags set for that user\&.
+.RE
+.SS "Access control"
+.PP
+Note that
+\fBrabbitmqctl\fR
+manages the RabbitMQ internal user database\&. Permissions for users from any alternative authorisation backend will not be visible to
+\fBrabbitmqctl\fR\&.
+.PP
+\fBadd_vhost\fR {\fIvhostpath\fR}
+.RS 4
+.PP
+vhostpath
+.RS 4
+The name of the virtual host entry to create\&.
+.RE
+.sp
+Creates a virtual host\&.
+.RE
+.PP
+\fBdelete_vhost\fR {\fIvhostpath\fR}
+.RS 4
+.PP
+vhostpath
+.RS 4
+The name of the virtual host entry to delete\&.
+.RE
+.sp
+Deletes a virtual host\&.
+.sp
+Deleting a virtual host deletes all its exchanges, queues, bindings, user permissions, parameters and policies\&.
+.RE
+.PP
+\fBlist_vhosts\fR [\fIvhostinfoitem\fR \&.\&.\&.]
+.RS 4
+Lists virtual hosts\&.
+.sp
+The
+\fBvhostinfoitem\fR
+parameter is used to indicate which virtual host information items to include in the results\&. The column order in the results will match the order of the parameters\&.
+\fBvhostinfoitem\fR
+can take any value from the list that follows:
+.PP
+name
+.RS 4
+The name of the virtual host with non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+tracing
+.RS 4
+Whether tracing is enabled for this virtual host\&.
+.RE
+.sp
+If no
+\fBvhostinfoitem\fRs are specified then the vhost name is displayed\&.
+.RE
+.PP
+\fBset_permissions\fR [\-p \fIvhostpath\fR] {\fIuser\fR} {\fIconf\fR} {\fIwrite\fR} {\fIread\fR}
+.RS 4
+.PP
+vhostpath
+.RS 4
+The name of the virtual host to which to grant the user access, defaulting to
+\fB/\fR\&.
+.RE
+.PP
+user
+.RS 4
+The name of the user to grant access to the specified virtual host\&.
+.RE
+.PP
+conf
+.RS 4
+A regular expression matching resource names for which the user is granted configure permissions\&.
+.RE
+.PP
+write
+.RS 4
+A regular expression matching resource names for which the user is granted write permissions\&.
+.RE
+.PP
+read
+.RS 4
+A regular expression matching resource names for which the user is granted read permissions\&.
+.RE
+.sp
+Sets user permissions\&.
+.RE
+.PP
+\fBclear_permissions\fR [\-p \fIvhostpath\fR] {\fIusername\fR}
+.RS 4
+.PP
+vhostpath
+.RS 4
+The name of the virtual host to which to deny the user access, defaulting to
+\fB/\fR\&.
+.RE
+.PP
+username
+.RS 4
+The name of the user to deny access to the specified virtual host\&.
+.RE
+.sp
+Sets user permissions\&.
+.RE
+.PP
+\fBlist_permissions\fR [\-p \fIvhostpath\fR]
+.RS 4
+.PP
+vhostpath
+.RS 4
+The name of the virtual host for which to list the users that have been granted access to it, and their permissions\&. Defaults to
+\fB/\fR\&.
+.RE
+.sp
+Lists permissions in a virtual host\&.
+.RE
+.PP
+\fBlist_user_permissions\fR {\fIusername\fR}
+.RS 4
+.PP
+username
+.RS 4
+The name of the user for which to list the permissions\&.
+.RE
+.sp
+Lists user permissions\&.
+.RE
+.SS "Parameter Management"
+.PP
+Certain features of RabbitMQ (such as the federation plugin) are controlled by dynamic, cluster\-wide
+\fIparameters\fR\&. Each parameter consists of a component name, a name and a value, and is associated with a virtual host\&. The component name and name are strings, and the value is an Erlang term\&. Parameters can be set, cleared and listed\&. In general you should refer to the documentation for the feature in question to see how to set parameters\&.
+.PP
+\fBset_parameter\fR [\-p \fIvhostpath\fR] {\fIcomponent_name\fR} {\fIname\fR} {\fIvalue\fR}
+.RS 4
+Sets a parameter\&.
+.PP
+component_name
+.RS 4
+The name of the component for which the parameter is being set\&.
+.RE
+.PP
+name
+.RS 4
+The name of the parameter being set\&.
+.RE
+.PP
+value
+.RS 4
+The value for the parameter, as a JSON term\&. In most shells you are very likely to need to quote this\&.
+.RE
+.RE
+.PP
+\fBclear_parameter\fR [\-p \fIvhostpath\fR] {\fIcomponent_name\fR} {\fIkey\fR}
+.RS 4
+Clears a parameter\&.
+.PP
+component_name
+.RS 4
+The name of the component for which the parameter is being cleared\&.
+.RE
+.PP
+name
+.RS 4
+The name of the parameter being cleared\&.
+.RE
+.RE
+.PP
+\fBlist_parameters\fR [\-p \fIvhostpath\fR]
+.RS 4
+Lists all parameters for a virtual host\&.
+.RE
+.SS "Policy Management"
+.PP
+Policies are used to control and modify the behaviour of queues and exchanges on a cluster\-wide basis\&. Policies apply within a given vhost, and consist of a name, pattern, definition and an optional priority\&. Policies can be set, cleared and listed\&.
+.PP
+\fBset_policy\fR [\-p \fIvhostpath\fR] {\fIname\fR} {\fIpattern\fR} {\fIdefinition\fR} [\fIpriority\fR]
+.RS 4
+Sets a policy\&.
+.PP
+name
+.RS 4
+The name of the policy\&.
+.RE
+.PP
+pattern
+.RS 4
+The regular expression, which when matches on a given resources causes the policy to apply\&.
+.RE
+.PP
+definition
+.RS 4
+The definition of the policy, as a JSON term\&. In most shells you are very likely to need to quote this\&.
+.RE
+.PP
+priority
+.RS 4
+The priority of the policy as an integer, defaulting to 0\&. Higher numbers indicate greater precedence\&.
+.RE
+.RE
+.PP
+\fBclear_policy\fR [\-p \fIvhostpath\fR] {\fIname\fR}
+.RS 4
+Clears a policy\&.
+.PP
+name
+.RS 4
+The name of the policy being cleared\&.
+.RE
+.RE
+.PP
+\fBlist_policies\fR [\-p \fIvhostpath\fR]
+.RS 4
+Lists all policies for a virtual host\&.
+.RE
+.SS "Server Status"
+.PP
+The server status queries interrogate the server and return a list of results with tab\-delimited columns\&. Some queries (\fBlist_queues\fR,
+\fBlist_exchanges\fR,
+\fBlist_bindings\fR, and
+\fBlist_consumers\fR) accept an optional
+\fBvhost\fR
+parameter\&. This parameter, if present, must be specified immediately after the query\&.
+.PP
+The list_queues, list_exchanges and list_bindings commands accept an optional virtual host parameter for which to display results\&. The default value is "/"\&.
+.PP
+\fBlist_queues\fR [\-p \fIvhostpath\fR] [\fIqueueinfoitem\fR \&.\&.\&.]
+.RS 4
+Returns queue details\&. Queue details of the
+\fB/\fR
+virtual host are returned if the "\-p" flag is absent\&. The "\-p" flag can be used to override this default\&.
+.sp
+The
+\fBqueueinfoitem\fR
+parameter is used to indicate which queue information items to include in the results\&. The column order in the results will match the order of the parameters\&.
+\fBqueueinfoitem\fR
+can take any value from the list that follows:
+.PP
+name
+.RS 4
+The name of the queue with non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+durable
+.RS 4
+Whether or not the queue survives server restarts\&.
+.RE
+.PP
+auto_delete
+.RS 4
+Whether the queue will be deleted automatically when no longer used\&.
+.RE
+.PP
+arguments
+.RS 4
+Queue arguments\&.
+.RE
+.PP
+policy
+.RS 4
+Policy name applying to the queue\&.
+.RE
+.PP
+pid
+.RS 4
+Id of the Erlang process associated with the queue\&.
+.RE
+.PP
+owner_pid
+.RS 4
+Id of the Erlang process representing the connection which is the exclusive owner of the queue\&. Empty if the queue is non\-exclusive\&.
+.RE
+.PP
+exclusive_consumer_pid
+.RS 4
+Id of the Erlang process representing the channel of the exclusive consumer subscribed to this queue\&. Empty if there is no exclusive consumer\&.
+.RE
+.PP
+exclusive_consumer_tag
+.RS 4
+Consumer tag of the exclusive consumer subscribed to this queue\&. Empty if there is no exclusive consumer\&.
+.RE
+.PP
+messages_ready
+.RS 4
+Number of messages ready to be delivered to clients\&.
+.RE
+.PP
+messages_unacknowledged
+.RS 4
+Number of messages delivered to clients but not yet acknowledged\&.
+.RE
+.PP
+messages
+.RS 4
+Sum of ready and unacknowledged messages (queue depth)\&.
+.RE
+.PP
+consumers
+.RS 4
+Number of consumers\&.
+.RE
+.PP
+active_consumers
+.RS 4
+Number of active consumers\&. An active consumer is one which could immediately receive any messages sent to the queue \- i\&.e\&. it is not limited by its prefetch count, TCP congestion, flow control, or because it has issued channel\&.flow\&. At least one of messages_ready and active_consumers must always be zero\&.
+.sp
+Note that this value is an instantaneous snapshot \- when consumers are restricted by their prefetch count they may only appear to be active for small fractions of a second until more messages are sent out\&.
+.RE
+.PP
+memory
+.RS 4
+Bytes of memory consumed by the Erlang process associated with the queue, including stack, heap and internal structures\&.
+.RE
+.PP
+slave_pids
+.RS 4
+If the queue is mirrored, this gives the IDs of the current slaves\&.
+.RE
+.PP
+synchronised_slave_pids
+.RS 4
+If the queue is mirrored, this gives the IDs of the current slaves which are synchronised with the master \- i\&.e\&. those which could take over from the master without message loss\&.
+.RE
+.PP
+status
+.RS 4
+The status of the queue\&. Normally \'running\', but may be "{syncing, MsgCount}" if the queue is synchronising\&.
+.RE
+.sp
+If no
+\fBqueueinfoitem\fRs are specified then queue name and depth are displayed\&.
+.RE
+.PP
+\fBlist_exchanges\fR [\-p \fIvhostpath\fR] [\fIexchangeinfoitem\fR \&.\&.\&.]
+.RS 4
+Returns exchange details\&. Exchange details of the
+\fB/\fR
+virtual host are returned if the "\-p" flag is absent\&. The "\-p" flag can be used to override this default\&.
+.sp
+The
+\fBexchangeinfoitem\fR
+parameter is used to indicate which exchange information items to include in the results\&. The column order in the results will match the order of the parameters\&.
+\fBexchangeinfoitem\fR
+can take any value from the list that follows:
+.PP
+name
+.RS 4
+The name of the exchange with non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+type
+.RS 4
+The exchange type (such as [\fBdirect\fR,
+\fBtopic\fR,
+\fBheaders\fR,
+\fBfanout\fR])\&.
+.RE
+.PP
+durable
+.RS 4
+Whether or not the exchange survives server restarts\&.
+.RE
+.PP
+auto_delete
+.RS 4
+Whether the exchange will be deleted automatically when no longer used\&.
+.RE
+.PP
+internal
+.RS 4
+Whether the exchange is internal, i\&.e\&. cannot be directly published to by a client\&.
+.RE
+.PP
+arguments
+.RS 4
+Exchange arguments\&.
+.RE
+.PP
+policy
+.RS 4
+Policy name for applying to the exchange\&.
+.RE
+.sp
+If no
+\fBexchangeinfoitem\fRs are specified then exchange name and type are displayed\&.
+.RE
+.PP
+\fBlist_bindings\fR [\-p \fIvhostpath\fR] [\fIbindinginfoitem\fR \&.\&.\&.]
+.RS 4
+Returns binding details\&. By default the bindings for the
+\fB/\fR
+virtual host are returned\&. The "\-p" flag can be used to override this default\&.
+.sp
+The
+\fBbindinginfoitem\fR
+parameter is used to indicate which binding information items to include in the results\&. The column order in the results will match the order of the parameters\&.
+\fBbindinginfoitem\fR
+can take any value from the list that follows:
+.PP
+source_name
+.RS 4
+The name of the source of messages to which the binding is attached\&. With non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+source_kind
+.RS 4
+The kind of the source of messages to which the binding is attached\&. Currently always exchange\&. With non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+destination_name
+.RS 4
+The name of the destination of messages to which the binding is attached\&. With non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+destination_kind
+.RS 4
+The kind of the destination of messages to which the binding is attached\&. With non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+routing_key
+.RS 4
+The binding\'s routing key, with non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+arguments
+.RS 4
+The binding\'s arguments\&.
+.RE
+.sp
+If no
+\fBbindinginfoitem\fRs are specified then all above items are displayed\&.
+.RE
+.PP
+\fBlist_connections\fR [\fIconnectioninfoitem\fR \&.\&.\&.]
+.RS 4
+Returns TCP/IP connection statistics\&.
+.sp
+The
+\fBconnectioninfoitem\fR
+parameter is used to indicate which connection information items to include in the results\&. The column order in the results will match the order of the parameters\&.
+\fBconnectioninfoitem\fR
+can take any value from the list that follows:
+.PP
+pid
+.RS 4
+Id of the Erlang process associated with the connection\&.
+.RE
+.PP
+name
+.RS 4
+Readable name for the connection\&.
+.RE
+.PP
+port
+.RS 4
+Server port\&.
+.RE
+.PP
+host
+.RS 4
+Server hostname obtained via reverse DNS, or its IP address if reverse DNS failed or was not enabled\&.
+.RE
+.PP
+peer_port
+.RS 4
+Peer port\&.
+.RE
+.PP
+peer_host
+.RS 4
+Peer hostname obtained via reverse DNS, or its IP address if reverse DNS failed or was not enabled\&.
+.RE
+.PP
+ssl
+.RS 4
+Boolean indicating whether the connection is secured with SSL\&.
+.RE
+.PP
+ssl_protocol
+.RS 4
+SSL protocol (e\&.g\&. tlsv1)
+.RE
+.PP
+ssl_key_exchange
+.RS 4
+SSL key exchange algorithm (e\&.g\&. rsa)
+.RE
+.PP
+ssl_cipher
+.RS 4
+SSL cipher algorithm (e\&.g\&. aes_256_cbc)
+.RE
+.PP
+ssl_hash
+.RS 4
+SSL hash function (e\&.g\&. sha)
+.RE
+.PP
+peer_cert_subject
+.RS 4
+The subject of the peer\'s SSL certificate, in RFC4514 form\&.
+.RE
+.PP
+peer_cert_issuer
+.RS 4
+The issuer of the peer\'s SSL certificate, in RFC4514 form\&.
+.RE
+.PP
+peer_cert_validity
+.RS 4
+The period for which the peer\'s SSL certificate is valid\&.
+.RE
+.PP
+last_blocked_by
+.RS 4
+The reason for which this connection was last blocked\&. One of \'resource\' \- due to a memory or disk alarm, \'flow\' \- due to internal flow control, or \'none\' if the connection was never blocked\&.
+.RE
+.PP
+last_blocked_age
+.RS 4
+Time, in seconds, since this connection was last blocked, or \'infinity\'\&.
+.RE
+.PP
+state
+.RS 4
+Connection state (one of [\fBstarting\fR,
+\fBtuning\fR,
+\fBopening\fR,
+\fBrunning\fR,
+\fBblocking\fR,
+\fBblocked\fR,
+\fBclosing\fR,
+\fBclosed\fR])\&.
+.RE
+.PP
+channels
+.RS 4
+Number of channels using the connection\&.
+.RE
+.PP
+protocol
+.RS 4
+Version of the AMQP protocol in use (currently one of
+\fB{0,9,1}\fR
+or
+\fB{0,8,0}\fR)\&. Note that if a client requests an AMQP 0\-9 connection, we treat it as AMQP 0\-9\-1\&.
+.RE
+.PP
+auth_mechanism
+.RS 4
+SASL authentication mechanism used, such as
+\fBPLAIN\fR\&.
+.RE
+.PP
+user
+.RS 4
+Username associated with the connection\&.
+.RE
+.PP
+vhost
+.RS 4
+Virtual host name with non\-ASCII characters escaped as in C\&.
+.RE
+.PP
+timeout
+.RS 4
+Connection timeout / negotiated heartbeat interval, in seconds\&.
+.RE
+.PP
+frame_max
+.RS 4
+Maximum frame size (bytes)\&.
+.RE
+.PP
+client_properties
+.RS 4
+Informational properties transmitted by the client during connection establishment\&.
+.RE
+.PP
+recv_oct
+.RS 4
+Octets received\&.
+.RE
+.PP
+recv_cnt
+.RS 4
+Packets received\&.
+.RE
+.PP
+send_oct
+.RS 4
+Octets send\&.
+.RE
+.PP
+send_cnt
+.RS 4
+Packets sent\&.
+.RE
+.PP
+send_pend
+.RS 4
+Send queue size\&.
+.RE
+.sp
+If no
+\fBconnectioninfoitem\fRs are specified then user, peer host, peer port, time since flow control and memory block state are displayed\&.
+.RE
+.PP
+\fBlist_channels\fR [\fIchannelinfoitem\fR \&.\&.\&.]
+.RS 4
+Returns information on all current channels, the logical containers executing most AMQP commands\&. This includes channels that are part of ordinary AMQP connections, and channels created by various plug\-ins and other extensions\&.
+.sp
+The
+\fBchannelinfoitem\fR
+parameter is used to indicate which channel information items to include in the results\&. The column order in the results will match the order of the parameters\&.
+\fBchannelinfoitem\fR
+can take any value from the list that follows:
+.PP
+pid
+.RS 4
+Id of the Erlang process associated with the connection\&.
+.RE
+.PP
+connection
+.RS 4
+Id of the Erlang process associated with the connection to which the channel belongs\&.
+.RE
+.PP
+name
+.RS 4
+Readable name for the channel\&.
+.RE
+.PP
+number
+.RS 4
+The number of the channel, which uniquely identifies it within a connection\&.
+.RE
+.PP
+user
+.RS 4
+Username associated with the channel\&.
+.RE
+.PP
+vhost
+.RS 4
+Virtual host in which the channel operates\&.
+.RE
+.PP
+transactional
+.RS 4
+True if the channel is in transactional mode, false otherwise\&.
+.RE
+.PP
+confirm
+.RS 4
+True if the channel is in confirm mode, false otherwise\&.
+.RE
+.PP
+consumer_count
+.RS 4
+Number of logical AMQP consumers retrieving messages via the channel\&.
+.RE
+.PP
+messages_unacknowledged
+.RS 4
+Number of messages delivered via this channel but not yet acknowledged\&.
+.RE
+.PP
+messages_uncommitted
+.RS 4
+Number of messages received in an as yet uncommitted transaction\&.
+.RE
+.PP
+acks_uncommitted
+.RS 4
+Number of acknowledgements received in an as yet uncommitted transaction\&.
+.RE
+.PP
+messages_unconfirmed
+.RS 4
+Number of published messages not yet confirmed\&. On channels not in confirm mode, this remains 0\&.
+.RE
+.PP
+prefetch_count
+.RS 4
+QoS prefetch count limit in force, 0 if unlimited\&.
+.RE
+.PP
+client_flow_blocked
+.RS 4
+True if the client issued a
+\fBchannel\&.flow{active=false}\fR
+command, blocking the server from delivering messages to the channel\'s consumers\&.
+.RE
+.sp
+If no
+\fBchannelinfoitem\fRs are specified then pid, user, consumer_count, and messages_unacknowledged are assumed\&.
+.RE
+.PP
+\fBlist_consumers\fR [\-p \fIvhostpath\fR]
+.RS 4
+List consumers, i\&.e\&. subscriptions to a queue\'s message stream\&. Each line printed shows, separated by tab characters, the name of the queue subscribed to, the id of the channel process via which the subscription was created and is managed, the consumer tag which uniquely identifies the subscription within a channel, and a boolean indicating whether acknowledgements are expected for messages delivered to this consumer\&.
+.sp
+The output is a list of rows containing, in order, the queue name, channel process id, consumer tag, and a boolean indicating whether acknowledgements are expected from the consumer\&.
+.RE
+.PP
+\fBstatus\fR
+.RS 4
+Displays broker status information such as the running applications on the current Erlang node, RabbitMQ and Erlang versions, OS name, memory and file descriptor statistics\&. (See the
+\fBcluster_status\fR
+command to find out which nodes are clustered and running\&.)
+.RE
+.PP
+\fBenvironment\fR
+.RS 4
+Display the name and value of each variable in the application environment\&.
+.RE
+.PP
+\fBreport\fR
+.RS 4
+Generate a server status report containing a concatenation of all server status information for support purposes\&. The output should be redirected to a file when accompanying a support request\&.
+.RE
+.PP
+\fBeval\fR {\fIexpr\fR}
+.RS 4
+Evaluate an arbitrary Erlang expression\&.
+.RE
+.SS "Miscellaneous"
+.PP
+\fBclose_connection\fR {\fIconnectionpid\fR} {\fIexplanation\fR}
+.RS 4
+.PP
+connectionpid
+.RS 4
+Id of the Erlang process associated with the connection to close\&.
+.RE
+.PP
+explanation
+.RS 4
+Explanation string\&.
+.RE
+.sp
+Instruct the broker to close the connection associated with the Erlang process id
+\fBconnectionpid\fR
+(see also the
+\fBlist_connections\fR
+command), passing the
+\fBexplanation\fR
+string to the connected client as part of the AMQP connection shutdown protocol\&.
+.RE
+.PP
+\fBtrace_on\fR [\-p \fIvhost\fR]
+.RS 4
+.PP
+vhost
+.RS 4
+The name of the virtual host for which to start tracing\&.
+.RE
+.sp
+Starts tracing\&.
+.RE
+.PP
+\fBtrace_off\fR [\-p \fIvhost\fR]
+.RS 4
+.PP
+vhost
+.RS 4
+The name of the virtual host for which to stop tracing\&.
+.RE
+.sp
+Stops tracing\&.
+.RE
+.PP
+\fBset_vm_memory_high_watermark\fR {\fIfraction\fR}
+.RS 4
+.PP
+fraction
+.RS 4
+The new memory threshold fraction at which flow control is triggered, as a floating point number greater than or equal to 0\&.
+.RE
+.RE
+.SH "EXAMPLES"
+.PP
+\fBrabbitmqctl stop\fR
+.RS 4
+This command instructs the RabbitMQ node to terminate\&.
+.RE
+.PP
+\fBrabbitmqctl stop_app\fR
+.RS 4
+This command instructs the RabbitMQ node to stop the RabbitMQ application\&.
+.RE
+.PP
+\fBrabbitmqctl start_app\fR
+.RS 4
+This command instructs the RabbitMQ node to start the RabbitMQ application\&.
+.RE
+.PP
+\fBrabbitmqctl wait /var/run/rabbitmq/pid\fR
+.RS 4
+This command will return when the RabbitMQ node has started up\&.
+.RE
+.PP
+\fBrabbitmqctl reset\fR
+.RS 4
+This command resets the RabbitMQ node\&.
+.RE
+.PP
+\fBrabbitmqctl force_reset\fR
+.RS 4
+This command resets the RabbitMQ node\&.
+.RE
+.PP
+\fBrabbitmqctl rotate_logs \&.1\fR
+.RS 4
+This command instructs the RabbitMQ node to append the contents of the log files to files with names consisting of the original logs\' names and "\&.1" suffix, e\&.g\&. rabbit@mymachine\&.log\&.1 and rabbit@mymachine\-sasl\&.log\&.1\&. Finally, logging resumes to fresh files at the old locations\&.
+.RE
+.PP
+\fBrabbitmqctl join_cluster hare@elena \-\-ram\fR
+.RS 4
+This command instructs the RabbitMQ node to join the cluster that
+\fBhare@elena\fR
+is part of, as a ram node\&.
+.RE
+.PP
+\fBrabbitmqctl cluster_status\fR
+.RS 4
+This command displays the nodes in the cluster\&.
+.RE
+.PP
+\fBrabbitmqctl change_cluster_node_type disc\fR
+.RS 4
+This command will turn a RAM node into a disc node\&.
+.RE
+.PP
+\fBrabbitmqctl \-n hare@mcnulty forget_cluster_node rabbit@stringer\fR
+.RS 4
+This command will remove the node
+\fBrabbit@stringer\fR
+from the node
+\fBhare@mcnulty\fR\&.
+.RE
+.PP
+\fBrabbitmqctl add_user tonyg changeit\fR
+.RS 4
+This command instructs the RabbitMQ broker to create a (non\-administrative) user named
+\fBtonyg\fR
+with (initial) password
+\fBchangeit\fR\&.
+.RE
+.PP
+\fBrabbitmqctl delete_user tonyg\fR
+.RS 4
+This command instructs the RabbitMQ broker to delete the user named
+\fBtonyg\fR\&.
+.RE
+.PP
+\fBrabbitmqctl change_password tonyg newpass\fR
+.RS 4
+This command instructs the RabbitMQ broker to change the password for the user named
+\fBtonyg\fR
+to
+\fBnewpass\fR\&.
+.RE
+.PP
+\fBrabbitmqctl clear_password tonyg\fR
+.RS 4
+This command instructs the RabbitMQ broker to clear the password for the user named
+\fBtonyg\fR\&. This user now cannot log in with a password (but may be able to through e\&.g\&. SASL EXTERNAL if configured)\&.
+.RE
+.PP
+\fBrabbitmqctl set_user_tags tonyg administrator\fR
+.RS 4
+This command instructs the RabbitMQ broker to ensure the user named
+\fBtonyg\fR
+is an administrator\&. This has no effect when the user logs in via AMQP, but can be used to permit the user to manage users, virtual hosts and permissions when the user logs in via some other means (for example with the management plugin)\&.
+.RE
+.PP
+\fBrabbitmqctl set_user_tags tonyg\fR
+.RS 4
+This command instructs the RabbitMQ broker to remove any tags from the user named
+\fBtonyg\fR\&.
+.RE
+.PP
+\fBrabbitmqctl list_users\fR
+.RS 4
+This command instructs the RabbitMQ broker to list all users\&.
+.RE
+.PP
+\fBrabbitmqctl add_vhost test\fR
+.RS 4
+This command instructs the RabbitMQ broker to create a new virtual host called
+\fBtest\fR\&.
+.RE
+.PP
+\fBrabbitmqctl delete_vhost test\fR
+.RS 4
+This command instructs the RabbitMQ broker to delete the virtual host called
+\fBtest\fR\&.
+.RE
+.PP
+\fBrabbitmqctl list_vhosts name tracing\fR
+.RS 4
+This command instructs the RabbitMQ broker to list all virtual hosts\&.
+.RE
+.PP
+\fBrabbitmqctl set_permissions \-p /myvhost tonyg "^tonyg\-\&.*" "\&.*" "\&.*"\fR
+.RS 4
+This command instructs the RabbitMQ broker to grant the user named
+\fBtonyg\fR
+access to the virtual host called
+\fB/myvhost\fR, with configure permissions on all resources whose names starts with "tonyg\-", and write and read permissions on all resources\&.
+.RE
+.PP
+\fBrabbitmqctl clear_permissions \-p /myvhost tonyg\fR
+.RS 4
+This command instructs the RabbitMQ broker to deny the user named
+\fBtonyg\fR
+access to the virtual host called
+\fB/myvhost\fR\&.
+.RE
+.PP
+\fBrabbitmqctl list_permissions \-p /myvhost\fR
+.RS 4
+This command instructs the RabbitMQ broker to list all the users which have been granted access to the virtual host called
+\fB/myvhost\fR, and the permissions they have for operations on resources in that virtual host\&. Note that an empty string means no permissions granted\&.
+.RE
+.PP
+\fBrabbitmqctl list_user_permissions tonyg\fR
+.RS 4
+This command instructs the RabbitMQ broker to list all the virtual hosts to which the user named
+\fBtonyg\fR
+has been granted access, and the permissions the user has for operations on resources in these virtual hosts\&.
+.RE
+.PP
+\fBrabbitmqctl set_parameter federation local_username \'"guest"\'\fR
+.RS 4
+This command sets the parameter
+\fBlocal_username\fR
+for the
+\fBfederation\fR
+component in the default virtual host to the JSON term
+\fB"guest"\fR\&.
+.RE
+.PP
+\fBrabbitmqctl clear_parameter federation local_username\fR
+.RS 4
+This command clears the parameter
+\fBlocal_username\fR
+for the
+\fBfederation\fR
+component in the default virtual host\&.
+.RE
+.PP
+\fBrabbitmqctl list_parameters\fR
+.RS 4
+This command lists all parameters in the default virtual host\&.
+.RE
+.PP
+\fBrabbitmqctl set_policy federate\-me "^amq\&." \'{"federation\-upstream\-set":"all"}\'\fR
+.RS 4
+This command sets the policy
+\fBfederate\-me\fR
+in the default virtual host so that built\-in exchanges are federated\&.
+.RE
+.PP
+\fBrabbitmqctl clear_policy federate\-me\fR
+.RS 4
+This command clears the
+\fBfederate\-me\fR
+policy in the default virtual host\&.
+.RE
+.PP
+\fBrabbitmqctl list_policies\fR
+.RS 4
+This command lists all policies in the default virtual host\&.
+.RE
+.PP
+\fBrabbitmqctl list_queues \-p /myvhost messages consumers\fR
+.RS 4
+This command displays the depth and number of consumers for each queue of the virtual host named
+\fB/myvhost\fR\&.
+.RE
+.PP
+\fBrabbitmqctl list_exchanges \-p /myvhost name type\fR
+.RS 4
+This command displays the name and type for each exchange of the virtual host named
+\fB/myvhost\fR\&.
+.RE
+.PP
+\fBrabbitmqctl list_bindings \-p /myvhost exchange_name queue_name\fR
+.RS 4
+This command displays the exchange name and queue name of the bindings in the virtual host named
+\fB/myvhost\fR\&.
+.RE
+.PP
+\fBrabbitmqctl list_connections send_pend port\fR
+.RS 4
+This command displays the send queue size and server port for each connection\&.
+.RE
+.PP
+\fBrabbitmqctl list_channels connection messages_unacknowledged\fR
+.RS 4
+This command displays the connection process and count of unacknowledged messages for each channel\&.
+.RE
+.PP
+\fBrabbitmqctl status\fR
+.RS 4
+This command displays information about the RabbitMQ broker\&.
+.RE
+.PP
+\fBrabbitmqctl report > server_report\&.txt\fR
+.RS 4
+This command creates a server report which may be attached to a support request email\&.
+.RE
+.PP
+\fBrabbitmqctl eval \'node()\&.\'\fR
+.RS 4
+This command returns the name of the node to which rabbitmqctl has connected\&.
+.RE
+.PP
+\fBrabbitmqctl close_connection "<rabbit@tanto\&.4262\&.0>" "go away"\fR
+.RS 4
+This command instructs the RabbitMQ broker to close the connection associated with the Erlang process id
+\fB<rabbit@tanto\&.4262\&.0>\fR, passing the explanation
+\fBgo away\fR
+to the connected client\&.
+.RE
+.SH "AUTHOR"
+.PP
+\fBThe RabbitMQ Team <\fR\fB\fBinfo@rabbitmq\&.com\fR\fR\fB>\fR
+.SH "NOTES"
+.IP " 1." 4
+installation guide
+.RS 4
+\%http://www.rabbitmq.com/install.html
+.RE
+.IP " 2." 4
+clustering guide
+.RS 4
+\%http://www.rabbitmq.com/clustering.html
+.RE

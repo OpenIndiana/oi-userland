@@ -1,0 +1,93 @@
+Changes from Doug Leavitt needed to make "gmake test" work.
+
+Two tests are known to fail.
+
+Commentary from Doug:
+
+  The two test cases that failed are not critical.
+
+  One fails because it says the library does not throw a value error on a
+  bad URL. This one fails, as the bad url it is trying is an edge case:
+  ldap:///?????  and not that important.
+
+  The other failure is for a test case that has a comment before the test case:
+  # these two constants are pointless? XXX
+  The answer being yes.  And the constants are not defined in the latest
+  version of python-ldap. 
+
+--- python-ldap-2.4.10/Tests/runtests.sh.orig	2013-08-27 06:55:02.811070599 -0700
++++ python-ldap-2.4.10/Tests/runtests.sh	2013-08-29 14:08:44.244509377 -0700
+@@ -13,7 +13,7 @@
+ failed=
+ for test in t_*.py;  do
+     echo "$test:"
+-    PYTHONPATH="../build/lib.$plat_specifier" $PYTHON "$test" "$@" || 
++    PYTHONPATH="$PYTHONPATH" $PYTHON "$test" "$@" || 
+         failed="$failed $test"
+ done
+ 
+--- python-ldap-2.4.10/Tests/slapd.py.orig	2013-08-27 06:55:17.348745615 -0700
++++ python-ldap-2.4.10/Tests/slapd.py	2013-08-30 15:45:41.532814947 -0700
+@@ -4,7 +4,7 @@
+ and talking to it with ldapsearch/ldapadd.
+ """
+ 
+-import sys, os, socket, time, subprocess, logging
++import sys, os, socket, time, subprocess, logging, tempfile
+ 
+ _log = logging.getLogger("slapd")
+ 
+@@ -52,14 +52,20 @@
+ 
+     _log = logging.getLogger("Slapd")
+ 
+-    # Use /var/tmp to placate apparmour on Ubuntu:
+-    PATH_TMPDIR = "/var/tmp/python-ldap-test"  
++    # Try to create a unique temporary directory under the component build
++    # directory, so it can automatically cleaned up.
++    PATH_BUILDDIR = os.environ['BUILD_DIR']
++    if PATH_BUILDDIR:
++        PATH_TMPDIR = tempfile.mkdtemp(prefix=PATH_BUILDDIR)
++    else:
++        PATH_TMPDIR = "/tmp"  
++    PATH_LIBDIR = "/usr/lib"
+     PATH_SBINDIR = "/usr/sbin"
+     PATH_BINDIR = "/usr/bin"
+-    PATH_SCHEMA_CORE = "/etc/ldap/schema/core.schema"
+-    PATH_LDAPADD = os.path.join(PATH_BINDIR, "ldapadd")
+-    PATH_LDAPSEARCH = os.path.join(PATH_BINDIR, "ldapsearch")
+-    PATH_SLAPD = os.path.join(PATH_SBINDIR, "slapd")
++    PATH_SCHEMA_CORE = "/etc/openldap/schema/core.schema"
++    PATH_LDAPADD = os.path.join(PATH_BINDIR, "openldapadd")
++    PATH_LDAPSEARCH = os.path.join(PATH_BINDIR, "openldapsearch")
++    PATH_SLAPD = os.path.join(PATH_LIBDIR, "slapd")
+     PATH_SLAPTEST = os.path.join(PATH_SBINDIR, "slaptest")
+ 
+     # TODO add paths for other OSs
+@@ -266,6 +272,7 @@
+         """Runs ldapadd on this slapd instance, passing it the ldif content"""
+         self._log.debug("adding %s", repr(ldif))
+         p = subprocess.Popen([self.PATH_LDAPADD, 
++                "-a",
+                 "-x",
+                 "-D", self.get_root_dn(),
+                 "-w", self.get_root_password(),
+--- python-ldap-2.4.10/Tests/t_cext.py.orig	2013-08-27 06:55:30.369505885 -0700
++++ python-ldap-2.4.10/Tests/t_cext.py	2013-09-04 10:39:22.688268552 -0700
+@@ -1,6 +1,6 @@
+ 
+ import unittest, slapd
+-import _ldap
++import _ldap, ldap
+ import logging
+ 
+ reusable_server = None
+@@ -34,7 +34,7 @@
+     def _init(self, reuse_existing=True, bind=True):
+         """Starts a server, and returns a LDAPObject bound to it"""
+         server = self._init_server(reuse_existing)
+-        l = _ldap.initialize(server.get_url())
++        l = ldap.initialize(server.get_url())
+         if bind:
+             # Perform a simple bind
+             l.set_option(_ldap.OPT_PROTOCOL_VERSION, _ldap.VERSION3)

@@ -1,0 +1,42 @@
+Adjust the Python code to work with Python 2.6 as well as Python 2.7.
+
+--- boto-2.9.2/bin/mturk.orig	2013-05-02 11:07:33.957693616 -0700
++++ boto-2.9.2/bin/mturk	2013-05-02 12:27:47.929525927 -0700
+@@ -56,11 +56,11 @@
+     PercentAssignmentsApproved = '000000000000000000L0',
+     PercentAssignmentsRejected = '000000000000000000S0')
+ 
+-qual_comparators = {v : k for k, v in dict(
++qual_comparators = dict((v, k) for k, v in dict(
+     LessThan = '<', LessThanOrEqualTo = '<=',
+     GreaterThan = '>', GreaterThanOrEqualTo = '>=',
+     EqualTo = '==', NotEqualTo = '!=',
+-    Exists = 'exists').items()}
++    Exists = 'exists').items())
+ 
+ example_config_file = '''Example configuration file:
+ 
+@@ -212,11 +212,11 @@
+ 
+ def digest_assignment(a):
+     return dict(
+-        answers = {str(x.qid): str(x.fields[0]) for x in a.answers[0]},
+-        **{k: str(getattr(a, k)) for k in (
++        answers = dict((str(x.qid), str(x.fields[0])) for x in a.answers[0]),
++        **dict((k, str(getattr(a, k))) for k in (
+             'AcceptTime', 'SubmitTime',
+             'HITId', 'AssignmentId', 'WorkerId',
+-            'AssignmentStatus')})
++            'AssignmentStatus')))
+ 
+ # --------------------------------------------------
+ # Commands
+@@ -278,7 +278,7 @@
+ but apparently, it does.'''
+     con.disable_hit(hit)
+     global nicknames
+-    nicknames = {k: v for k, v in nicknames.items() if v != hit}
++    nicknames = dict((k, v) for k, v in nicknames.items() if v != hit)
+ 
+ def list_assignments(hit, only_reviewable = False):
+     assignments = map(digest_assignment, con.get_assignments(

@@ -1,0 +1,134 @@
+'\" t
+.\"     Title: rabbitmq-plugins
+.\"    Author: The RabbitMQ Team <info@rabbitmq.com>
+.\" Generator: DocBook XSL Stylesheets v1.75.2 <http://docbook.sf.net/>
+.\"      Date: 05/10/2013
+.\"    Manual: RabbitMQ Service
+.\"    Source: RabbitMQ Server
+.\"  Language: English
+.\"
+.TH "RABBITMQ\-PLUGINS" "1" "05/10/2013" "RabbitMQ Server" "RabbitMQ Service"
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+rabbitmq-plugins \- command line tool for managing RabbitMQ broker plugins
+.SH "SYNOPSIS"
+.HP \w'\fBrabbitmq\-plugins\fR\ 'u
+\fBrabbitmq\-plugins\fR {\fIcommand\fR} [\fIcommand\ options\fR...]
+.SH "DESCRIPTION"
+.PP
+
+\fBrabbitmq\-plugins\fR
+is a command line tool for managing RabbitMQ broker plugins\&. It allows one to enable, disable and browse plugins\&. It must be run by a user with write permissions to the RabbitMQ configuration directory\&.
+.PP
+Some plugins depend on others to work correctly\&.
+\fBrabbitmq\-plugins\fR
+traverses these dependencies and enables all required plugins\&. Plugins listed on the
+\fBrabbitmq\-plugins\fR
+command line are marked as explicitly enabled; dependent plugins are marked as implicitly enabled\&. Implicitly enabled plugins are automatically disabled again when they are no longer required\&.
+.SH "COMMANDS"
+.PP
+\fBlist\fR [\-v] [\-m] [\-E] [\-e] [\fIpattern\fR]
+.RS 4
+.PP
+\-v
+.RS 4
+Show all plugin details (verbose)\&.
+.RE
+.PP
+\-m
+.RS 4
+Show only plugin names (minimal)\&.
+.RE
+.PP
+\-E
+.RS 4
+Show only explicitly enabled plugins\&.
+.RE
+.PP
+\-e
+.RS 4
+Show only explicitly or implicitly enabled plugins\&.
+.RE
+.PP
+pattern
+.RS 4
+Pattern to filter the plugin names by\&.
+.RE
+.sp
+Lists all plugins, their versions, dependencies and descriptions\&. Each plugin is prefixed with a status indicator \- [ ] to indicate that the plugin is not enabled, [E] to indicate that it is explicitly enabled, [e] to indicate that it is implicitly enabled, and [!] to indicate that it is enabled but missing and thus not operational\&.
+.sp
+If the optional pattern is given, only plugins whose name matches
+\fBpattern\fR
+are shown\&.
+.RE
+.PP
+\fBenable\fR {\fIplugin\fR \&.\&.\&.}
+.RS 4
+.PP
+plugin
+.RS 4
+One or more plugins to enable\&.
+.RE
+.sp
+Enables the specified plugins and all their dependencies\&.
+.RE
+.PP
+\fBdisable\fR {\fIplugin\fR \&.\&.\&.}
+.RS 4
+.PP
+plugin
+.RS 4
+One or more plugins to disable\&.
+.RE
+.sp
+Disables the specified plugins and all plugins that depend on them\&.
+.RE
+.SH "EXAMPLES"
+.PP
+\fBrabbitmq\-plugins list\fR
+.RS 4
+This command lists all plugins, on one line each\&.
+.RE
+.PP
+\fBrabbitmq\-plugins list \-v \fR
+.RS 4
+This command lists all plugins\&.
+.RE
+.PP
+\fBrabbitmq\-plugins list \-v management\fR
+.RS 4
+This command lists all plugins whose name contains "management"\&.
+.RE
+.PP
+\fBrabbitmq\-plugins list \-e rabbit\fR
+.RS 4
+This command lists all implicitly or explicitly enabled RabbitMQ plugins\&.
+.RE
+.PP
+\fBrabbitmq\-plugins enable rabbitmq_shovel rabbitmq_management\fR
+.RS 4
+This command enables the
+\fBshovel\fR
+and
+\fBmanagement\fR
+plugins and all their dependencies\&.
+.RE
+.PP
+\fBrabbitmq\-plugins disable amqp_client\fR
+.RS 4
+This command disables
+\fBamqp_client\fR
+and all plugins that depend on it\&.
+.RE
+.SH "AUTHOR"
+.PP
+\fBThe RabbitMQ Team <\fR\fB\fBinfo@rabbitmq\&.com\fR\fR\fB>\fR

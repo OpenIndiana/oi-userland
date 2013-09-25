@@ -1,0 +1,95 @@
+#!/usr/sbin/sh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+RABBIT_SERVER=/usr/bin/rabbitmq-server
+RABBIT_CTL=/usr/bin/rabbitmqctl
+
+if [[ -z "$SMF_FMRI" ]]; then
+	echo "This script can only be invoked by smf(5)"
+	exit $SMF_EXIT_ERR_NOSMF
+fi
+
+# rabbitmq-env handles pulling in configuration from a number of sources.  Out
+# of that, the server builds more configuration variables if they haven't
+# already been set.  getenv() gives us the variable as the server would see it.
+# It's up to the caller to massage it as the server would.
+getenv() {
+	# Has the RABBITMQ_ version been set?  If so, that takes precedence.
+	r=$(eval print \$RABBITMQ_${1})
+	if [[ -n $r ]]; then
+		print $r
+	else
+		print $(
+			SCRIPT_DIR=/usr/lib/rabbitmq/bin;
+			. /usr/lib/rabbitmq/bin/rabbitmq-env;
+			eval print \${$1}
+		)
+	fi
+}
+
+# If RABBITMQ_NODENAME isn't set in the environment, then use the FMRI instance
+# name, unless the instance name is "default", in which case we use the default
+# from the configuration files.  If the instance name doesn't have an @ in it,
+# then append the hostname.
+if [[ -z $RABBITMQ_NODENAME ]]; then
+	INSTANCE=${SMF_FMRI##*:}
+	if [[ $INSTANCE == default ]]; then
+		INSTANCE=$(getenv NODENAME)
+	fi
+	if [[ $INSTANCE != *@* ]]; then
+		INSTANCE=$INSTANCE@$(hostname)
+	fi
+	export RABBITMQ_NODENAME=$INSTANCE
+fi
+
+# XXX Why isn't HOME set for us?
+export HOME=/var/lib/rabbitmq
+
+case "$1" in
+"start")
+	$RABBIT_SERVER -detached
+	;;
+
+"stop")
+	$RABBIT_CTL -n $RABBITMQ_NODENAME stop
+	# XXX epmd should be in a separate SMF service (16749936); for now,
+	# though, be sure to kill it here.
+	epmd_pid=$(pgrep -c $(svcs -H -o ctid $SMF_FMRI) epmd)
+	if [[ -n $epmd_pid ]]; then
+		sleep 2
+		epmd -kill
+	fi
+	;;
+
+*)
+	echo "Usage: $0 { start | stop }"
+	exit $SMF_EXIT_ERR_CONFIG
+	;;
+esac
+
+exit $SMF_EXIT_OK

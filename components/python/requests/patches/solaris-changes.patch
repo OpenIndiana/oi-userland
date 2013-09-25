@@ -1,0 +1,39 @@
+This patch file makes two changes:
+
+1/ Corrects the definition of is_solaris in compat.py.
+2/ Adjusts the where() routine in certs.py to return the location
+   of the standard certs bundle on Solaris.
+
+These changes have been sent upstream.
+
+--- requests-1.2.3/requests/compat.py.orig	2013-07-31 07:31:19.545770096 -0700
++++ requests-1.2.3/requests/compat.py	2013-07-31 07:31:53.534460102 -0700
+@@ -71,7 +71,7 @@
+ is_linux = ('linux' in str(sys.platform).lower())
+ is_osx = ('darwin' in str(sys.platform).lower())
+ is_hpux = ('hpux' in str(sys.platform).lower())   # Complete guess.
+-is_solaris = ('solar==' in str(sys.platform).lower())   # Complete guess.
++is_solaris = ('sunos' in str(sys.platform).lower())
+ 
+ try:
+     import simplejson as json
+--- requests-1.2.3/requests/certs.py.orig	2013-07-31 07:34:29.859095710 -0700
++++ requests-1.2.3/requests/certs.py	2013-07-31 09:31:36.868103751 -0700
+@@ -13,12 +13,15 @@
+ """
+ 
+ import os.path
+-
++import compat
+ 
+ def where():
+     """Return the preferred certificate bundle."""
+     # vendored bundle inside Requests
+-    return os.path.join(os.path.dirname(__file__), 'cacert.pem')
++    if compat.is_solaris:
++        return "/etc/certs/ca-certificates.crt"
++    else:
++        return os.path.join(os.path.dirname(__file__), 'cacert.pem')
+ 
+ if __name__ == '__main__':
+     print(where())
