@@ -51,6 +51,10 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	$(GSED) -i -e 's?awk?/usr/gnu/bin/awk?' \
 		$(SOURCE_DIR)/src/roff/grog/grog.sh
 
+# Everything is under /usr/bin and /usr/lib so set bindir and libdir correctly.
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
+
 CONFIGURE_OPTIONS += \
     --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
 
