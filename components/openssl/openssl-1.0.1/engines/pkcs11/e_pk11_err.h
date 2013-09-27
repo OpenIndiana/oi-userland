@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -64,8 +64,8 @@
  *
  */
 
-#ifndef	HW_PK11_ERR_H
-#define	HW_PK11_ERR_H
+#ifndef	E_PK11_ERR_H
+#define	E_PK11_ERR_H
 
 #ifdef	__cplusplus
 extern "C" {
@@ -239,4 +239,4 @@ void PK11err_add_data(int function, int reason, CK_RV rv);
 #ifdef	__cplusplus
 }
 #endif
-#endif /* HW_PK11_ERR_H */
+#endif /* E_PK11_ERR_H */

@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
-/* crypto/engine/hw_pk11.h */
+/* crypto/engine/e_pk11.h */
 /*
  * This product includes software developed by the OpenSSL Project for
  * use in the OpenSSL Toolkit (http://www.openssl.org/).
@@ -65,10 +65,10 @@
  *
  */
 
-#ifndef	HW_PK11_H
-#define	HW_PK11_H
+#ifndef	E_PK11_H
+#define	E_PK11_H
 
-#include "hw_pk11_err.h"
+#include "e_pk11_err.h"
 
 #ifdef	__cplusplus
 extern "C" {
@@ -211,7 +211,7 @@ extern pthread_mutex_t *find_lock[];
 extern PK11_active *active_list[];
 /*
  * These variables are specific for the RSA keys by reference code. See
- * hw_pk11_pub.c for explanation.
+ * e_pk11_pub.c for explanation.
  */
 extern char *passphrasedialog;
 extern CK_FLAGS pubkey_token_flags;
@@ -254,4 +254,4 @@ extern CK_FUNCTION_LIST_PTR pFuncList;
 #ifdef	__cplusplus
 }
 #endif
-#endif /* HW_PK11_H */
+#endif /* E_PK11_H */

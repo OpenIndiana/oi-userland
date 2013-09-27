@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
 /*
@@ -48,8 +48,8 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef	HW_PK11_URI_H
-#define	HW_PK11_URI_H
+#ifndef	E_PK11_URI_H
+#define	E_PK11_URI_H
 
 #include <security/pkcs11t.h>
 
@@ -110,4 +110,4 @@ int pk11_token_relogin(CK_SESSION_HANDLE session);
 #ifdef	__cplusplus
 }
 #endif
-#endif /* HW_PK11_URI_H */
+#endif /* E_PK11_URI_H */

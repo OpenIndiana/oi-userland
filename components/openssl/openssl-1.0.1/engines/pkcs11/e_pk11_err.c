@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
-/* crypto/engine/hw_pk11_err.c */
+/* crypto/engine/e_pk11_err.c */
 /*
  * This product includes software developed by the OpenSSL Project for
  * use in the OpenSSL Toolkit (http://www.openssl.org/).
@@ -67,7 +67,7 @@
 
 #include <stdio.h>
 #include <openssl/err.h>
-#include "hw_pk11_err.h"
+#include "e_pk11_err.h"
 
 /* BEGIN ERROR CODES */
 #ifndef OPENSSL_NO_ERR

@@ -1,8 +1,8 @@
 /*
- * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
-/* crypto/engine/hw_pk11_pub.c */
+/* crypto/engine/e_pk11_pub.c */
 /*
  * This product includes software developed by the OpenSSL Project for
  * use in the OpenSSL Toolkit (http://www.openssl.org/).
@@ -91,7 +91,6 @@
 #include <openssl/rand.h>
 #include <openssl/objects.h>
 #include <openssl/x509.h>
-#include <cryptlib.h>
 #include <pthread.h>
 #include <libgen.h>
 
@@ -100,8 +99,8 @@
 
 #include <security/cryptoki.h>
 #include <security/pkcs11.h>
-#include "hw_pk11.h"
-#include "hw_pk11_uri.h"
+#include "e_pk11.h"
+#include "e_pk11_uri.h"
 
 static CK_BBOOL pk11_login_done = CK_FALSE;
 extern CK_SLOT_ID pubkey_SLOTID;
@@ -462,9 +461,6 @@ PK11_DH(void)
 /* Lengths of DSA data and signature */
 #define	DSA_DATA_LEN		20
 #define	DSA_SIGNATURE_LEN	40
-
-static CK_BBOOL pk11_true = CK_TRUE;
-static CK_BBOOL pk11_false = CK_FALSE;
 
 #ifndef OPENSSL_NO_RSA
 /*

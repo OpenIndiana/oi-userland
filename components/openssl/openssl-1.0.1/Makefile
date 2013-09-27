@@ -175,8 +175,7 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # not available in the stand-alone environment of wanboot.
 COMPONENT_PRE_BUILD_ACTION = \
     ( echo "Cloning engines..."; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/devcrypto/*.[ch]	$(@D)/engines; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/engines; \
       $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; \

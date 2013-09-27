@@ -2,7 +2,7 @@
  * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  */
 
-/* crypto/engine/hw_pk11.c */
+/* crypto/engine/e_pk11.c */
 /*
  * This product includes software developed by the OpenSSL Project for
  * use in the OpenSSL Toolkit (http://www.openssl.org/).
@@ -93,7 +93,6 @@
 #include <openssl/objects.h>
 #include <openssl/x509.h>
 #include <openssl/aes.h>
-#include <cryptlib.h>
 #include <dlfcn.h>
 #include <pthread.h>
 
@@ -124,11 +123,15 @@
 
 #include <security/cryptoki.h>
 #include <security/pkcs11.h>
-#include "hw_pk11.h"
-#include "hw_pk11_uri.h"
+#include "e_pk11.h"
+#include "e_pk11_uri.h"
 
+static CK_BBOOL pk11_true = CK_TRUE;
+static CK_BBOOL pk11_false = CK_FALSE;
 #define	PK11_ENGINE_LIB_NAME "PKCS#11 engine"
-#include "hw_pk11_err.c"
+#include "e_pk11_err.c"
+#include "e_pk11_uri.c"
+#include "e_pk11_pub.c"
 
 /*
  * We use this lock to prevent multiple C_Login()s, guard getpassphrase(),
@@ -331,16 +334,7 @@ static void pk11_free_all_locks(void);
 #ifdef	SOLARIS_HW_SLOT_SELECTION
 static int check_hw_mechanisms(void);
 static int nid_in_table(int nid, int *nid_table);
-
-#if defined(__amd64) || defined(__i386)
-static int hw_x86_aes_instruction_set_present(void);
-#endif
-#if defined(__sparc)
-static int hw_yf_aes_instruction_set_present(void);
-static int hw_fj_aes_instruction_set_present(void);
-static int hw_yf_des_instruction_set_present(void);
-static int hw_yf_digest_instruction_present(void);
-#endif
+static int hw_aes_instruction_set_present(void);
 #endif	/* SOLARIS_HW_SLOT_SELECTION */
 
 #define	TRY_OBJ_DESTROY(sp, obj_hdl, retval, uselock, alg_type)	\
@@ -801,9 +795,7 @@ static const char PK11_GET_FUNCTION_LIST[] = "C_GetFunctionList";
  */
 static const char def_PK11_LIBNAME[] = PK11_LIB_LOCATION;
 
-static CK_BBOOL pk11_true = CK_TRUE;
-static CK_BBOOL pk11_false = CK_FALSE;
-/* Needed in hw_pk11_pub.c as well so that's why it is not static. */
+/* Needed in e_pk11_pub.c as well so that's why it is not static. */
 CK_SLOT_ID pubkey_SLOTID = 0;
 static CK_SLOT_ID rand_SLOTID = 0;
 static CK_SLOT_ID SLOTID = 0;
@@ -920,22 +912,12 @@ static int bind_pk11(ENGINE *e)
 
 	if (!ENGINE_set_id(e, engine_pk11_id) ||
 	    !ENGINE_set_name(e, engine_pk11_name) ||
-	    !ENGINE_set_ciphers(e, pk11_engine_ciphers))
+	    !ENGINE_set_ciphers(e, pk11_engine_ciphers) ||
+	    !ENGINE_set_digests(e, pk11_engine_digests))
 		return (0);
 
 	if (!ENGINE_set_pkey_meths(e, pk11_engine_pkey_methods))
 		return (0);
-
-#if	defined(__sparc)
-	/*
-	 * Enable hash mechanisms for pkcs11 engine only if T4 digest
-	 * instruction is not present.
-	 */
-	if (!hw_yf_digest_instruction_present())
-#endif	/* defined(__sparc) */
-		if (!ENGINE_set_digests(e, pk11_engine_digests)) {
-			return (0);
-		}
 
 #ifndef OPENSSL_NO_RSA
 	if (pk11_have_rsa == CK_TRUE)
@@ -994,8 +976,6 @@ static int bind_pk11(ENGINE *e)
 	return (1);
 	}
 
-/* Dynamic engine support is disabled at a higher level for Solaris */
-#ifdef	ENGINE_DYNAMIC_SUPPORT
 static int bind_helper(ENGINE *e, const char *id)
 	{
 	if (id && (strcmp(id, engine_pk11_id) != 0))
@@ -1009,92 +989,6 @@ static int bind_helper(ENGINE *e, const char *id)
 
 IMPLEMENT_DYNAMIC_CHECK_FN()
 IMPLEMENT_DYNAMIC_BIND_FN(bind_helper)
-
-#else
-static ENGINE *engine_pk11(void)
-	{
-	ENGINE *ret = ENGINE_new();
-
-	if (!ret)
-		return (NULL);
-
-	if (!bind_pk11(ret))
-		{
-		ENGINE_free(ret);
-		return (NULL);
-		}
-
-	return (ret);
-	}
-
-int
-pk11_engine_loaded()
-	{
-	ENGINE *e;
-	int rtrn = 0;
-
-	if ((e = ENGINE_by_id(engine_pk11_id)) != NULL)
-		{
-		rtrn = 1;
-		ENGINE_free(e);
-		}
-	return (rtrn);
-	}
-
-void
-ENGINE_load_pk11(void)
-	{
-	ENGINE *e_pk11 = NULL;
-
-	/*
-	 * Do not attempt to load the engine twice!
-	 * Multiple instances would share static variables from this file.
-	 */
-	if (pk11_engine_loaded())
-		return;
-
-	/*
-	 * Do not use dynamic PKCS#11 library on Solaris due to
-	 * security reasons. We will link it in statically.
-	 */
-	/* Attempt to load PKCS#11 library */
-	if (!pk11_dso)
-		pk11_dso = DSO_load(NULL, get_PK11_LIBNAME(), NULL, 0);
-
-	if (pk11_dso == NULL)
-		{
-		PK11err(PK11_F_LOAD, PK11_R_DSO_FAILURE);
-		return;
-		}
-
-	e_pk11 = engine_pk11();
-	if (!e_pk11)
-		{
-		DSO_free(pk11_dso);
-		pk11_dso = NULL;
-		return;
-		}
-
-	/*
-	 * At this point, the pk11 shared library is either dynamically
-	 * loaded or statically linked in. So, initialize the pk11
-	 * library before calling ENGINE_set_default since the latter
-	 * needs cipher and digest algorithm information
-	 */
-	if (!pk11_library_init(e_pk11))
-		{
-		DSO_free(pk11_dso);
-		pk11_dso = NULL;
-		ENGINE_free(e_pk11);
-		return;
-		}
-
-	ENGINE_add(e_pk11);
-
-	ENGINE_free(e_pk11);
-	ERR_clear_error();
-	}
-#endif	/* ENGINE_DYNAMIC_SUPPORT */
 
 /*
  * These are the static string constants for the DSO file name and
@@ -2654,38 +2548,6 @@ pk11_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 	if (!cipher)
 		return (pk11_usable_ciphers(nids));
 
-#ifdef	__sparc
-	/*
-	 * If T4 DES/AESinstructions are present, don't advertise
-	 * the DES_CBC/AES mechanisms for pkcs11 engine as DES_CBC/AES
-	 * operations should be accelerated by the inline T4 instructions
-	 * in the OpenSSL upstream code.
-	 */
-	if (hw_yf_des_instruction_set_present() == 1) {
-		switch (nid) {
-		case NID_des_ede3_cbc:
-		case NID_des_cbc:
-			*cipher = NULL;
-			return (0);
-		}
-	}
-	if (hw_yf_aes_instruction_set_present() == 1) {
-		switch (nid) {
-		case NID_aes_128_cbc:
-		case NID_aes_192_cbc:
-		case NID_aes_256_cbc:
-		case NID_aes_128_ecb:
-		case NID_aes_192_ecb:
-		case NID_aes_256_ecb:
-		case NID_aes_128_ctr:
-		case NID_aes_192_ctr:
-		case NID_aes_256_ctr:
-			*cipher = NULL;
-			return (0);
-		}
-	}
-#endif
-
 	switch (nid)
 		{
 		case NID_des_ede3_cbc:
@@ -3523,29 +3385,6 @@ static void pk11_find_symmetric_ciphers(CK_FUNCTION_LIST_PTR pflist,
 
 	for (i = 0; i < PK11_CIPHER_MAX; ++i)
 		{
-#ifdef	__sparc
-		/*
-		 * if T4 DES/AES instruction is present, don't include
-		 * DES_CBC/AES mechanism in the supported symmetric
-		 * cipher list.
-		 */
-		if (hw_yf_des_instruction_set_present() == 1) {
-			switch (ciphers[i].mech_type) {
-			case CKM_DES_CBC:
-			case CKM_DES3_CBC:
-				continue;
-			}
-		}
-		if (hw_yf_aes_instruction_set_present() == 1) {
-			switch (ciphers[i].mech_type) {
-			case CKM_AES_CBC:
-			case CKM_AES_ECB:
-			case CKM_AES_CTR:
-				continue;
-			}
-		}
-#endif
-
 		pk11_get_symmetric_cipher(pflist, current_slot,
 		    current_slot_n_cipher, local_cipher_nids, &ciphers[i]);
 		}
@@ -3804,7 +3643,7 @@ static int nid_in_table(int nid, int *nid_table)
 	 * HW crypto acceleration so we check the HW NID table for any other
 	 * mechanism.
 	 */
-	if (hw_x86_aes_instruction_set_present() == 1)
+	if (hw_aes_instruction_set_present() == 1)
 		{
 		switch (nid)
 			{
@@ -3821,36 +3660,8 @@ static int nid_in_table(int nid, int *nid_table)
 			}
 		}
 #elif defined(__sparc)
-	/*
-	 * If we have a T4 DES/AES instruction set on SPARC, we won't process
-	 * DES_CBC/AES in the Crypto Framework so that the job can be processed
-	 * directly using the inlined DES/AES instructions.
-	 * If we have Fujitsu AES  instruction set, we route AES to the
-	 * Crypto Framework.
-	 */
-	switch (nid) {
-		case NID_aes_128_ecb:
-		case NID_aes_192_ecb:
-		case NID_aes_256_ecb:
-		case NID_aes_128_cbc:
-		case NID_aes_192_cbc:
-		case NID_aes_256_cbc:
-		case NID_aes_128_ctr:
-		case NID_aes_192_ctr:
-		case NID_aes_256_ctr:
-			if (hw_yf_aes_instruction_set_present() == 1) {
-				return (0);
-			} else if (hw_fj_aes_instruction_set_present() == 1) {
-				return (1);
-			}
-			break;
-		case NID_des_ede3_cbc:
-		case NID_des_cbc:
-			if (hw_yf_des_instruction_set_present() == 1) {
-				return (0);
-			}
-			break;
-	}
+	if (hw_aes_instruction_set_present() == 1)
+		return (1);
 #endif
 
 	/* The table is never full, there is always at least one NID_undef. */
@@ -3866,87 +3677,27 @@ static int nid_in_table(int nid, int *nid_table)
 	return (0);
 	}
 
-
-#if defined(__amd64) || defined(__i386)
 /* Do we have an AES instruction set? */
 static int
-hw_x86_aes_instruction_set_present(void)
+hw_aes_instruction_set_present(void)
 	{
 	static int present = -1;
 
 	if (present == -1)
 		{
 		uint_t ui = 0;
+
 		(void) getisax(&ui, 1);
+
+#if defined(__amd64) || defined(__i386)
 		present = (ui & AV_386_AES) > 0;
-		}
-
-	return (present);
-	}
+#elif defined(__sparc)
+		present = (ui & (AV_SPARC_AES|AV_SPARC_FJAES)) > 0;
 #endif
-
-#if defined(__sparc)
-
-/* Do we have a T4 AES instruction set? */
-static int
-hw_yf_aes_instruction_set_present(void)
-	{
-	static int present = -1;
-	if (present == -1)
-		{
-		uint_t ui = 0;
-		(void) getisax(&ui, 1);
-		present = (ui & (AV_SPARC_AES)) > 0;
 		}
 
 	return (present);
 	}
-
-/* Do we have a Fujitsu AES instruction set? */
-static int
-hw_fj_aes_instruction_set_present(void)
-	{
-	static int present = -1;
-	if (present == -1)
-		{
-		uint_t ui = 0;
-		(void) getisax(&ui, 1);
-		present = (ui & (AV_SPARC_FJAES)) > 0;
-		}
-
-	return (present);
-	}
-
-static int
-hw_yf_des_instruction_set_present(void)
-	{
-	static int present = -1;
-	if (present == -1)
-		{
-		uint_t ui = 0;
-		(void) getisax(&ui, 1);
-		present = (ui & (AV_SPARC_DES)) > 0;
-		}
-
-	return (present);
-	}
-
-static int
-hw_yf_digest_instruction_present(void)
-{
-	static int cached_result = -1;
-	uint_t ui = 0;
-
-	if (cached_result == -1) {
-		(void) getisax(&ui, 1);
-		cached_result = ((ui & AV_SPARC_MD5) != 0) &&
-		    ((ui & AV_SPARC_SHA1) != 0) &&
-		    ((ui & AV_SPARC_SHA256) != 0) &&
-		    ((ui & AV_SPARC_SHA512) != 0);
-	}
-	return (cached_result != 0);
-}
-#endif	/* defined(__sparc) */
 
 #endif	/* SOLARIS_HW_SLOT_SELECTION */
 
