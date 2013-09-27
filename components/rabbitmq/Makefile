@@ -33,7 +33,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:ebb8b0dba8ef82e5523194072f465f2abe451783e09255bf1474c560667a67a5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/releases/$(COMPONENT_NAME)/v$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/rabbitmq
+COMPONENT_BUGDB=	service/rabbitmq
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
