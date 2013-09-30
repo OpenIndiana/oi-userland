@@ -16,13 +16,13 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		APC
 COMPONENT_FMRI=		web/php-54/extension/php-apc
-COMPONENT_VERSION=	3.1.9
+COMPONENT_VERSION=	3.1.13
 COMPONENT_LICENSE=	PHP3.01
 COMPONENT_PROJECT_URL=	http://pecl.php.net/package/APC
 COMPONENT_SUMMARY=	APC is a free, open, and robust framework for caching and optimizing PHP intermediate code
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
-COMPONENT_ARCHIVE_HASH=	sha256:47def118d9da1a68521e1c9b3dd6660cf94be638ebecad010bdd7d7ca482d671
+COMPONENT_ARCHIVE_HASH=	sha256:5ef8ba07729e72946e95951672a5378bed98cb5a294e79bf0f0a97ac62829abd
 COMPONENT_ARCHIVE_URL=	http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
