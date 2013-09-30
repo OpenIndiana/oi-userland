@@ -14,15 +14,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.4.19
+COMPONENT_VERSION=	5.4.20
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a1bdb9f2088c7aad13ef6fc35fca673142b253634e04ba33073d4927ef953eb3
+COMPONENT_ARCHIVE_HASH=	sha256:33da252e919715492769cdddb9c999080cfd84a0b432f10f197bc950cb02da09
 COMPONENT_ARCHIVE_URL=	http://uk3.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+PATH= /usr/bin:/usr/gnu/bin:/usr/sbin
 
 # Apache Paths
 AP_PREFIX=/usr/apache2/2.2
@@ -112,6 +114,7 @@ CONFIGURE_OPTIONS     +=	--disable-libgcc
 #CONFIGURE_OPTIONS     +=	--disable-libtool-lock
 #CONFIGURE_OPTIONS     +=	--disable-rpath
 
+CONFIGURE_OPTIONS     +=	--enable-dtrace
 CONFIGURE_OPTIONS     +=	--without-dbm
 CONFIGURE_OPTIONS     +=	--without-t1lib
 
