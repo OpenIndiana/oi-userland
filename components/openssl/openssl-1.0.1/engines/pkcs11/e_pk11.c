@@ -3078,7 +3078,8 @@ pk11_choose_slots(int *any_slot_found)
 		{
 		current_slot = pSlotList[i];
 
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG, i);
+		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
+		    current_slot);
 		/* Check if slot has random support. */
 		rv = pFuncList->C_GetTokenInfo(current_slot, &token_info);
 		if (rv != CKR_OK)
@@ -3107,7 +3108,8 @@ pk11_choose_slots(int *any_slot_found)
 		CK_BBOOL slot_has_dh = CK_FALSE;
 		current_slot = pSlotList[i];
 
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG, i);
+		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
+		    current_slot);
 		rv = pFuncList->C_GetTokenInfo(current_slot, &token_info);
 		if (rv != CKR_OK)
 			continue;
@@ -3220,9 +3222,11 @@ pk11_choose_slots(int *any_slot_found)
 	SLOTID = pSlotList[0];
 	for (i = 0; i < ulSlotCount; i++)
 		{
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG, i);
-
 		current_slot = pSlotList[i];
+
+		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
+		    current_slot);
+
 		current_slot_n_cipher = 0;
 		current_slot_n_digest = 0;
 		(void) memset(local_cipher_nids, 0, sizeof (local_cipher_nids));
