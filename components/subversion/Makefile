@@ -141,6 +141,7 @@ CONFIGURE_OPTIONS += --with-neon=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-apr=$(APR-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apr-util=$(APU-CONFIG.$(BITS))
 CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
+CONFIGURE_OPTIONS += --with-gssapi=$(CONFIGURE_PREFIX)
 
 # Swig overwrites the 32-bit directory with 64-bit objects.
 # So we work around that.
@@ -156,6 +157,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	    $(GNUCP) -rpd vendor-packages-32/libsvn vendor-packages/ ; \
 	    $(GNUCP) -rpd vendor-packages-32/svn vendor-packages/ ; \
 	fi ; )
+
+PKG_MACROS += PERL_ARCH_16="$(PERL_ARCH_16)"
 
 ASLR_MODE=$(ASLR_ENABLE)
 
