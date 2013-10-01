@@ -1,159 +1,218 @@
---- etc/snort.conf.orig	Wed Mar 11 21:22:03 2009
-+++ etc/snort.conf	Wed May 20 15:22:07 2009
-@@ -191,27 +191,27 @@
- # Load all dynamic preprocessors from the install path
- # (same as command line option --dynamic-preprocessor-lib-dir)
+--- snort-2.9.2/etc/snort.conf.orig	2013-05-15 07:26:24.138736340 -0700
++++ snort-2.9.2/etc/snort.conf	2013-05-15 07:36:06.628399989 -0700
+@@ -143,7 +143,7 @@
+ # Configure DAQ related options for inline operation. For more information, see README.daq
  #
+ # config daq: <type>
+-# config daq_dir: <dir>
++config daq_dir: /usr/lib/daq/
+ # config daq_mode: <mode>
+ # config daq_var: <var>
+ #
+@@ -217,13 +217,13 @@
+ ###################################################
+ 
+ # path to dynamic preprocessor libraries
 -dynamicpreprocessor directory /usr/local/lib/snort_dynamicpreprocessor/
 +dynamicpreprocessor directory /usr/lib/snort_dynamicpreprocessor/
- #
- # Load a specific dynamic preprocessor library from the install path
- # (same as command line option --dynamic-preprocessor-lib)
- #
--# dynamicpreprocessor file /usr/local/lib/snort_dynamicpreprocessor/libdynamicexample.so
-+# dynamicpreprocessor file /usr/lib/snort_dynamicpreprocessor/libdynamicexample.so
- #
- # Load a dynamic engine from the install path
- # (same as command line option --dynamic-engine-lib)
- #
+ 
+ # path to base preprocessor engine
 -dynamicengine /usr/local/lib/snort_dynamicengine/libsf_engine.so
 +dynamicengine /usr/lib/snort_dynamicengine/libsf_engine.so
- #
- # Load all dynamic rules libraries from the install path
- # (same as command line option --dynamic-detection-lib-dir)
- #
--# dynamicdetection directory /usr/local/lib/snort_dynamicrule/
-+# dynamicdetection directory /usr/lib/snort_dynamicrule/
- #
- # Load a specific dynamic rule library from the install path
- # (same as command line option --dynamic-detection-lib)
- #
--# dynamicdetection file /usr/local/lib/snort_dynamicrule/libdynamicexamplerule.so
-+# dynamicdetection file /usr/lib/snort_dynamicrule/libdynamicexamplerule.so
- #
+ 
+ # path to dynamic rules libraries
+-dynamicdetection directory /usr/local/lib/snort_dynamicrules
++dynamicdetection directory /usr/lib/snort_dynamicrules
  
  ###################################################
-@@ -307,11 +307,11 @@
- # lots of options available here. See doc/README.http_inspect.
- # unicode.map should be wherever your snort.conf lives, or given
- # a full path to where snort can find it.
--preprocessor http_inspect: global \
--    iis_unicode_map unicode.map 1252 
-+#preprocessor http_inspect: global \
-+#    iis_unicode_map unicode.map 1252 
+ # Step #5: Configure preprocessors
+@@ -264,34 +264,34 @@
+ # preprocessor perfmonitor: time 300 file /var/snort/snort.stats pktcnt 10000
  
+ # HTTP normalization and anomaly detection.  For more information, see README.http_inspect
+-preprocessor http_inspect: global iis_unicode_map unicode.map 1252 compress_depth 65535 decompress_depth 65535
 -preprocessor http_inspect_server: server default \
--    profile all ports { 80 8080 8180 } oversize_dir_length 500
+-    chunk_length 500000 \
+-    server_flow_depth 0 \
+-    client_flow_depth 0 \
+-    post_depth 65495 \
+-    oversize_dir_length 500 \
+-    max_header_length 750 \
+-    max_headers 100 \
+-    ports { 80 81 311 591 593 901 1220 1414 1830 2301 2381 2809 3128 3702 5250 7001 7777 7779 8000 8008 8028 8080 8088 8118 8123 8180 8181 8243 8280 8888 9090 9091 9443 9999 11371 } \
+-    non_rfc_char { 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 } \
+-    enable_cookie \
+-    extended_response_inspection \
+-    inspect_gzip \
+-    normalize_utf \
+-    unlimited_decompress \
+-    apache_whitespace no \
+-    ascii no \
+-    bare_byte no \
+-    directory no \
+-    double_decode no \
+-    iis_backslash no \
+-    iis_delimiter no \
+-    iis_unicode no \
+-    multi_slash no \
+-   utf_8 no \
+-    u_encode yes \
+-    webroot no
++#preprocessor http_inspect: global iis_unicode_map unicode.map 1252 compress_depth 65535 decompress_depth 65535
 +#preprocessor http_inspect_server: server default \
-+#    profile all ports { 80 8080 8180 } oversize_dir_length 500
++#    chunk_length 500000 \
++#    server_flow_depth 0 \
++#    client_flow_depth 0 \
++#    post_depth 65495 \
++#    oversize_dir_length 500 \
++#    max_header_length 750 \
++#    max_headers 100 \
++#    ports { 80 81 311 591 593 901 1220 1414 1830 2301 2381 2809 3128 3702 5250 7001 7777 7779 8000 8008 8028 8080 8088 8118 8123 8180 8181 8243 8280 8888 9090 9091 9443 9999 11371 } \
++#    non_rfc_char { 0x00 0x01 0x02 0x03 0x04 0x05 0x06 0x07 } \
++#    enable_cookie \
++#    extended_response_inspection \
++#    inspect_gzip \
++#    normalize_utf \
++#    unlimited_decompress \
++#    apache_whitespace no \
++#    ascii no \
++#    bare_byte no \
++#    directory no \
++#    double_decode no \
++#    iis_backslash no \
++#    iis_delimiter no \
++#    iis_unicode no \
++#    multi_slash no \
++#   utf_8 no \
++#    u_encode yes \
++#    webroot no
  
- #
- #  Example unique server configuration
-@@ -760,7 +760,7 @@
- # such as:  c:\snort\etc\classification.config
- #
+ # ONC-RPC normalization and anomaly detection.  For more information, see the Snort Manual, Configuring Snort - Preprocessors - RPC Decode
+ preprocessor rpc_decode: 111 32770 32771 32772 32773 32774 32775 32776 32777 32778 32779 no_alert_multiple_requests no_alert_large_fragments no_alert_incomplete
+@@ -487,8 +487,8 @@
+ # output alert_prelude
  
+ # metadata reference data.  do not modify these lines
 -include classification.config
-+#include classification.config
- 
- #
- # Include reference systems
-@@ -768,7 +768,7 @@
- # such as:  c:\snort\etc\reference.config
- #
- 
 -include reference.config
-+#include reference.config
++# include classification.config
++# include reference.config
  
- ####################################################################
- # Step #5: Configure snort with config statements
-@@ -807,45 +807,45 @@
- # README.alert_order for how rule ordering affects how alerts are triggered.
- #=========================================
  
+ ###################################################
+@@ -499,61 +499,61 @@
+ ###################################################
+ 
+ # site specific rules
 -include $RULE_PATH/local.rules
++# include $RULE_PATH/local.rules
+ 
+-include $RULE_PATH/attack-responses.rules
+-include $RULE_PATH/backdoor.rules
 -include $RULE_PATH/bad-traffic.rules
--include $RULE_PATH/exploit.rules
--include $RULE_PATH/scan.rules
--include $RULE_PATH/finger.rules
--include $RULE_PATH/ftp.rules
--include $RULE_PATH/telnet.rules
--include $RULE_PATH/rpc.rules
--include $RULE_PATH/rservices.rules
--include $RULE_PATH/dos.rules
+-include $RULE_PATH/blacklist.rules
+-include $RULE_PATH/botnet-cnc.rules
+-include $RULE_PATH/chat.rules
+-include $RULE_PATH/content-replace.rules
 -include $RULE_PATH/ddos.rules
 -include $RULE_PATH/dns.rules
--include $RULE_PATH/tftp.rules
-+# include $RULE_PATH/local.rules
-+# include $RULE_PATH/bad-traffic.rules
-+# include $RULE_PATH/exploit.rules
-+# include $RULE_PATH/scan.rules
-+# include $RULE_PATH/finger.rules
-+# include $RULE_PATH/ftp.rules
-+# include $RULE_PATH/telnet.rules
-+# include $RULE_PATH/rpc.rules
-+# include $RULE_PATH/rservices.rules
-+# include $RULE_PATH/dos.rules
-+# include $RULE_PATH/ddos.rules
-+# include $RULE_PATH/dns.rules
-+# include $RULE_PATH/tftp.rules
- 
--include $RULE_PATH/web-cgi.rules
--include $RULE_PATH/web-coldfusion.rules
--include $RULE_PATH/web-iis.rules
--include $RULE_PATH/web-frontpage.rules
--include $RULE_PATH/web-misc.rules
--include $RULE_PATH/web-client.rules
--include $RULE_PATH/web-php.rules
-+# include $RULE_PATH/web-cgi.rules
-+# include $RULE_PATH/web-coldfusion.rules
-+# include $RULE_PATH/web-iis.rules
-+# include $RULE_PATH/web-frontpage.rules
-+# include $RULE_PATH/web-misc.rules
-+# include $RULE_PATH/web-client.rules
-+# include $RULE_PATH/web-php.rules
- 
--include $RULE_PATH/sql.rules
--include $RULE_PATH/x11.rules
+-include $RULE_PATH/dos.rules
+-include $RULE_PATH/exploit.rules
+-include $RULE_PATH/finger.rules
+-include $RULE_PATH/ftp.rules
 -include $RULE_PATH/icmp.rules
--include $RULE_PATH/netbios.rules
--include $RULE_PATH/misc.rules
--include $RULE_PATH/attack-responses.rules
--include $RULE_PATH/oracle.rules
--include $RULE_PATH/mysql.rules
--include $RULE_PATH/snmp.rules
-+# include $RULE_PATH/sql.rules
-+# include $RULE_PATH/x11.rules
-+# include $RULE_PATH/icmp.rules
-+# include $RULE_PATH/netbios.rules
-+# include $RULE_PATH/misc.rules
-+# include $RULE_PATH/attack-responses.rules
-+# include $RULE_PATH/oracle.rules
-+# include $RULE_PATH/mysql.rules
-+# include $RULE_PATH/snmp.rules
- 
--include $RULE_PATH/smtp.rules
+-include $RULE_PATH/icmp-info.rules
 -include $RULE_PATH/imap.rules
+-include $RULE_PATH/info.rules
+-include $RULE_PATH/misc.rules
+-include $RULE_PATH/multimedia.rules
+-include $RULE_PATH/mysql.rules
+-include $RULE_PATH/netbios.rules
+-include $RULE_PATH/nntp.rules
+-include $RULE_PATH/oracle.rules
+-include $RULE_PATH/other-ids.rules
+-include $RULE_PATH/p2p.rules
+-include $RULE_PATH/phishing-spam.rules
+-include $RULE_PATH/policy.rules
 -include $RULE_PATH/pop2.rules
 -include $RULE_PATH/pop3.rules
-+# include $RULE_PATH/smtp.rules
+-include $RULE_PATH/rpc.rules
+-include $RULE_PATH/rservices.rules
+-include $RULE_PATH/scada.rules
+-include $RULE_PATH/scan.rules
+-include $RULE_PATH/shellcode.rules
+-include $RULE_PATH/smtp.rules
+-include $RULE_PATH/snmp.rules
+-include $RULE_PATH/specific-threats.rules
+-include $RULE_PATH/spyware-put.rules
+-include $RULE_PATH/sql.rules
+-include $RULE_PATH/telnet.rules
+-include $RULE_PATH/tftp.rules
+-include $RULE_PATH/virus.rules
+-include $RULE_PATH/voip.rules
+-include $RULE_PATH/web-activex.rules
+-include $RULE_PATH/web-attacks.rules
+-include $RULE_PATH/web-cgi.rules
+-include $RULE_PATH/web-client.rules
+-include $RULE_PATH/web-coldfusion.rules
+-include $RULE_PATH/web-frontpage.rules
+-include $RULE_PATH/web-iis.rules
+-include $RULE_PATH/web-misc.rules
+-include $RULE_PATH/web-php.rules
+-include $RULE_PATH/x11.rules
++# include $RULE_PATH/attack-responses.rules
++# include $RULE_PATH/backdoor.rules
++# include $RULE_PATH/bad-traffic.rules
++# include $RULE_PATH/blacklist.rules
++# include $RULE_PATH/botnet-cnc.rules
++# include $RULE_PATH/chat.rules
++# include $RULE_PATH/content-replace.rules
++# include $RULE_PATH/ddos.rules
++# include $RULE_PATH/dns.rules
++# include $RULE_PATH/dos.rules
++# include $RULE_PATH/exploit.rules
++# include $RULE_PATH/finger.rules
++# include $RULE_PATH/ftp.rules
++# include $RULE_PATH/icmp.rules
++# include $RULE_PATH/icmp-info.rules
 +# include $RULE_PATH/imap.rules
++# include $RULE_PATH/info.rules
++# include $RULE_PATH/misc.rules
++# include $RULE_PATH/multimedia.rules
++# include $RULE_PATH/mysql.rules
++# include $RULE_PATH/netbios.rules
++# include $RULE_PATH/nntp.rules
++# include $RULE_PATH/oracle.rules
++# include $RULE_PATH/other-ids.rules
++# include $RULE_PATH/p2p.rules
++# include $RULE_PATH/phishing-spam.rules
++# include $RULE_PATH/policy.rules
 +# include $RULE_PATH/pop2.rules
 +# include $RULE_PATH/pop3.rules
++# include $RULE_PATH/rpc.rules
++# include $RULE_PATH/rservices.rules
++# include $RULE_PATH/scada.rules
++# include $RULE_PATH/scan.rules
++# include $RULE_PATH/shellcode.rules
++# include $RULE_PATH/smtp.rules
++# include $RULE_PATH/snmp.rules
++# include $RULE_PATH/specific-threats.rules
++# include $RULE_PATH/spyware-put.rules
++# include $RULE_PATH/sql.rules
++# include $RULE_PATH/telnet.rules
++# include $RULE_PATH/tftp.rules
++# include $RULE_PATH/virus.rules
++# include $RULE_PATH/voip.rules
++# include $RULE_PATH/web-activex.rules
++# include $RULE_PATH/web-attacks.rules
++# include $RULE_PATH/web-cgi.rules
++# include $RULE_PATH/web-client.rules
++# include $RULE_PATH/web-coldfusion.rules
++# include $RULE_PATH/web-frontpage.rules
++# include $RULE_PATH/web-iis.rules
++# include $RULE_PATH/web-misc.rules
++# include $RULE_PATH/web-php.rules
++# include $RULE_PATH/x11.rules
  
--include $RULE_PATH/nntp.rules
--include $RULE_PATH/other-ids.rules
-+# include $RULE_PATH/nntp.rules
-+# include $RULE_PATH/other-ids.rules
- # include $RULE_PATH/web-attacks.rules
- # include $RULE_PATH/backdoor.rules
- # include $RULE_PATH/shellcode.rules
-@@ -859,7 +859,7 @@
- # include $RULE_PATH/p2p.rules
- # include $RULE_PATH/spyware-put.rules
- # include $RULE_PATH/specific-threats.rules
--include $RULE_PATH/experimental.rules
-+# include $RULE_PATH/experimental.rules
- 
- # include $PREPROC_RULE_PATH/preprocessor.rules
- # include $PREPROC_RULE_PATH/decoder.rules
+ ###################################################
+ # Step #8: Customize your preprocessor and decoder alerts
