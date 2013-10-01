@@ -26,31 +26,38 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		snort
-COMPONENT_VERSION=	2.8.4.1
+COMPONENT_VERSION=	2.9.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:ee7f790eb3df4e6156a7c865f1ba22855394c9e3c13fdc57d60a8647267fc209
+    sha256:04d375b627dd256d6257f2cbe5a770e4552e3f35d5e2100b97f75426b600d8cb
 COMPONENT_PROJECT_URL=	http://www.snort.org/
-# the main site does not retain older releases
-COMPONENT_ARCHIVE_URL=	http://mirror2.openwrt.org/sources/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dl/snort-current/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/snort
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PATCH_LEVEL =	0
+PATH=/usr/gnu/bin:/usr/bin
 
-# without this we bus error on sparc. sadly I don't see any patches
-# that might relate from the upstream (though maybe that's really
-# "happily", as this is simpler)
-studio_ALIGN.sparc.32=	-xmemalign=1i
+# Need to recreate the configure script for gethrtime checks.
+COMPONENT_PREP_ACTION +=	(cd $(@D); autoconf);
 
-CONFIGURE_OPTIONS +=	--with-libpcre=included
-CONFIGURE_OPTIONS +=	--with-libpcap=/usr
-CONFIGURE_OPTIONS +=	--enable-static=no
+CONFIGURE_OPTIONS +=	--with-libpcre-libraries="/usr/lib"
+CONFIGURE_OPTIONS +=	--with-dnet-libraries="/usr/lib"
+CONFIGURE_OPTIONS +=	--without-mysql
+CONFIGURE_OPTIONS +=	--without-postgresql
+CONFIGURE_OPTIONS +=	--enable-zlib
+CONFIGURE_OPTIONS +=	--enable-ipv6
+CONFIGURE_OPTIONS +=	--disable-static-daq
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
+
+# Move snort shared objects to 64-bit path to stop pkglint bitching.
+#COMPONENT_POST_INSTALL_ACTION += \
+#	$(MV) $(PROTOUSRLIBDIR)/snort_dynamicengine $(PROTOUSRLIBDIR64); \
+#	$(MV) $(PROTOUSRLIBDIR)/snort_dynamicpreprocessor $(PROTOUSRLIBDIR64) ;
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
