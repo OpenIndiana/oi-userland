@@ -41,7 +41,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPILER = gcc
+COMPILER = gcc3
 
 CFLAGS += -I/usr/include/kerberosv5
 CFLAGS += $(CPP_LARGEFILES)

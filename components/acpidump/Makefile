@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -48,7 +48,7 @@ include ../../make-rules/ips.mk
 
 PKG_PROTO_DIRS += $(BUILD_DIR_32)
 
-COMPILER =	gcc
+COMPILER =	gcc3
 
 COMPONENT_BUILD_ENV  +=		CC=$(CC)
 

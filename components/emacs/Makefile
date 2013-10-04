@@ -62,7 +62,7 @@ LD_MAP_NOEXDATA.sparc=
 # configure script has problems using a non-GNU cpp. I am not aware of
 # any reason Sun Studio could not be made to work, but simply made a
 # cost/benefit decision not to pursue it at this time
-COMPILER =	gcc
+COMPILER =	gcc3
 
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.

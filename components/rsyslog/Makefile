@@ -35,7 +35,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPILER = gcc
+COMPILER = gcc3
 
 # This is needed for things to be built correctly.
 CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"

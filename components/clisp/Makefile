@@ -46,7 +46,7 @@ CPPFLAGS += -I/usr/share/gettext/intl
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPILER=	gcc
+COMPILER=	gcc3
 PATCH_LEVEL=	0
 
 # SHELLOPTS appears to cause clisp's configure script to fail while

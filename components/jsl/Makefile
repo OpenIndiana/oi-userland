@@ -39,7 +39,7 @@ include ../../make-rules/ips.mk
 # Preferred compiler set to gcc and not Studio as on Sparc architecture
 # some assembler code is required for locking which fails to compile on
 # solaris, when using gcc this is inlined (see jslock.c)
-COMPILER=	gcc
+COMPILER=	gcc3
 
 COMPONENT_BUILD_ARGS += -f src/Makefile
 COMPONENT_BUILD_ARGS += CC="$(CC)"

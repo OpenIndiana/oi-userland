@@ -38,7 +38,7 @@ include $(WS_TOP)/make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPILER =	gcc
+COMPILER =	gcc3
 gcc_OPT =	-O2
 
 COMPONENT_PRE_BUILD_ACTION = \

@@ -42,8 +42,9 @@ include ../../make-rules/ips.mk
 # Can't use the Studio compilers as they don't support the GNU 
 # __attribute__ extension
 COMPILER =	gcc
-CC = /usr/gcc/4.7/bin/gcc
-CXX = /usr/gcc/4.7/bin/g++
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPILER =	gcc3
+endif
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))

@@ -48,12 +48,16 @@ install:		TARGET = install
 clean:			TARGET = clean
 clobber:		TARGET = clobber
 test:			TARGET = test
+parfait:		TARGET = parfait
 
 build:		install
 
 .DEFAULT:	publish
 
 download prep install test: $(SUBDIRS)
+
+parfait:
+	$(MAKE) PARFAIT_BUILD=yes install
 
 clean:	$(SUBDIRS)
 	$(RM) -r prototype build

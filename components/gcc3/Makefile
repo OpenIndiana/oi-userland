@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -43,7 +43,7 @@ GNU_ARCH =	$(PARCH:sparc=sparc-sun)-solaris$(SOLARIS_VERSION)
 PKG_MACROS +=	GNU_ARCH="$(GNU_ARCH)"
 
 # we build gcc with gcc
-COMPILER =	gcc
+COMPILER =	gcc3
 
 # CC_BITS may get in the way
 CC_BITS=

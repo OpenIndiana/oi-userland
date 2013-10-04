@@ -48,7 +48,7 @@ COMPONENT_PRE_BUILD_ACTION += \
 	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
 		$(SOURCE_DIR)/sample.conf
 
-COMPILER =	gcc
+COMPILER =	gcc3
 
 CONFIGURE_OPTIONS +=	--enable-dns
 CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2

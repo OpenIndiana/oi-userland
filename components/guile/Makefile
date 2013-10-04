@@ -37,7 +37,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # Built in SFW with gcc and builds cleanly now only with gcc
-COMPILER = gcc
+COMPILER = gcc3
 CONFIGURE_OPTIONS +=	CPPFLAGS="-I/usr/include/gmp -D__USE_LEGACY_PROTOTYPES__"
 CONFIGURE_OPTIONS +=	--disable-static 
 CONFIGURE_OPTIONS +=	--disable-error-on-warning

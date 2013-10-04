@@ -33,7 +33,6 @@ validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
 links:
 	@$(MKDIR) $(PARFAIT_TOOLS)
 	@for i in cc CC gcc g++ ld ; do \
-		$(MKDIR) $(PARFAIT_TOOLS) ; \
 		$(RM) $(PARFAIT_TOOLS)/$$i ; \
 		echo "#!/bin/ksh" > $(PARFAIT_TOOLS)/$$i ; \
 		echo "IFS=" >> $(PARFAIT_TOOLS)/$$i ; \
@@ -44,6 +43,14 @@ links:
 		echo "export PARFAIT_NATIVELD=/usr/bin/ld" >> $(PARFAIT_TOOLS)/$$i ; \
 		echo "exec" $(PARFAIT_ROOT)/$(MACH)/parfait-$$i '$$*' >> $(PARFAIT_TOOLS)/$$i ; \
 		chmod +x $(PARFAIT_TOOLS)/$$i ; \
+	done
+	@$(MKDIR) $(PARFAIT_TOOLS_GCC3)
+	@for i in cc CC gcc g++ ld ; do \
+		$(RM) $(PARFAIT_TOOLS_GCC3)/$$i ; \
+		sed \
+		    -e "s,$(GCC_ROOT),$(GCC3_ROOT)," < $(PARFAIT_TOOLS)/$$i \
+		    > $(PARFAIT_TOOLS_GCC3)/$$i ; \
+		chmod +x $(PARFAIT_TOOLS_GCC3)/$$i ; \
 	done
 
 pkglint:
@@ -69,5 +76,5 @@ clean:
 
 clobber:	clean
 	@$(RM) time-*.so python/pkglint/*.pyc
-	@$(RM) -r $(PARFAIT_TOOLS)
+	@$(RM) -r $(PARFAIT_TOOLS) $(PARFAIT_TOOLS_GCC3) $(MACH)
 

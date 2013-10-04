@@ -40,7 +40,7 @@ include ../../make-rules/ips.mk
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 # built in SFW with gcc and builds cleanly now only with gcc
-COMPILER = gcc
+COMPILER = gcc3
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # strip the environment or install target fails
