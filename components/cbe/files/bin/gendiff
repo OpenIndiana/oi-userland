@@ -1,0 +1,12 @@
+#!/bin/sh
+
+[ -z "$1" -o -z "$2" ] && {
+# usage
+  echo "usage: $0 <directory> <diff-extension>" 1>&2
+  exit 1
+}
+
+find $1 \( -name "*$2" -o -name ".*$2" \) -print |
+while read f; do
+	diff -u $f `echo $f | sed s/$2\$//`
+done
