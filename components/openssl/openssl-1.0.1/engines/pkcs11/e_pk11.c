@@ -192,7 +192,8 @@ PK11_active *active_list[OP_MAX] = { NULL };
 static CK_SESSION_HANDLE	global_session = CK_INVALID_HANDLE;
 
 /* Index for the supported ciphers */
-enum pk11_cipher_id {
+enum pk11_cipher_id
+	{
 	PK11_DES_CBC,
 	PK11_DES3_CBC,
 	PK11_DES_ECB,
@@ -209,10 +210,11 @@ enum pk11_cipher_id {
 	PK11_AES_192_CTR,
 	PK11_AES_256_CTR,
 	PK11_CIPHER_MAX
-};
+	};
 
 /* Index for the supported digests */
-enum pk11_digest_id {
+enum pk11_digest_id
+	{
 	PK11_MD5,
 	PK11_SHA1,
 	PK11_SHA224,
@@ -220,7 +222,7 @@ enum pk11_digest_id {
 	PK11_SHA384,
 	PK11_SHA512,
 	PK11_DIGEST_MAX
-};
+	};
 
 typedef struct PK11_CIPHER_st
 	{
@@ -1078,9 +1080,9 @@ static void pk11_fork_child(void)
 
 /* Initialization function for the pk11 engine */
 static int pk11_init(ENGINE *e)
-{
+	{
 	return (pk11_library_init(e));
-}
+	}
 
 /*
  * Helper function that unsets reference to current engine (pk11_engine = NULL).
@@ -1094,9 +1096,10 @@ static void pk11_engine_free()
 	{
 	ENGINE* old_engine = pk11_engine;
 
-	if (old_engine) {
+	if (old_engine)
+		{
 		pk11_engine = NULL;
-	}
+		}
 	}
 
 /*
@@ -1230,11 +1233,12 @@ static int pk11_library_init(ENGINE *e)
 	 * this function is required by OpenSSL digest copy function
 	 */
 	if (pFuncList->C_GetOperationState(global_session, NULL, &ul_state_len)
-			== CKR_FUNCTION_NOT_SUPPORTED) {
+			== CKR_FUNCTION_NOT_SUPPORTED)
+		{
 		DEBUG_SLOT_SEL("%s: C_GetOperationState() not supported, "
 		    "setting digest_count to 0\n", PK11_DBG);
 		digest_count = 0;
-	}
+		}
 
 	pk11_library_initialized = CK_TRUE;
 	pk11_pid = getpid();
@@ -2322,10 +2326,11 @@ pk11_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	 */
 	if (ctx->cipher->iv_len < p_ciph_table_row->iv_len ||
 	    ctx->key_len < p_ciph_table_row->min_key_len ||
-	    ctx->key_len > p_ciph_table_row->max_key_len) {
+	    ctx->key_len > p_ciph_table_row->max_key_len)
+		{
 		PK11err(PK11_F_CIPHER_INIT, PK11_R_KEY_OR_IV_LEN_PROBLEM);
 		return (0);
-	}
+		}
 
 	if ((sp = pk11_get_session(OP_CIPHER)) == NULL)
 		return (0);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  *
  */
 
@@ -205,7 +205,8 @@ PK11_active *active_list[OP_MAX] = { NULL };
 static CK_SESSION_HANDLE	global_session = CK_INVALID_HANDLE;
 
 /* Index for the supported ciphers */
-enum pk11_cipher_id {
+enum pk11_cipher_id
+	{
 	PK11_DES_CBC,
 	PK11_DES3_CBC,
 	PK11_DES_ECB,
@@ -224,10 +225,11 @@ enum pk11_cipher_id {
 	PK11_AES_256_CTR,
 #endif	/* SOLARIS_AES_CTR */
 	PK11_CIPHER_MAX
-};
+	};
 
 /* Index for the supported digests */
-enum pk11_digest_id {
+enum pk11_digest_id
+	{
 	PK11_MD5,
 	PK11_SHA1,
 	PK11_SHA224,
@@ -235,7 +237,7 @@ enum pk11_digest_id {
 	PK11_SHA384,
 	PK11_SHA512,
 	PK11_DIGEST_MAX
-};
+	};
 
 typedef struct PK11_CIPHER_st
 	{
@@ -1166,9 +1168,9 @@ static void pk11_fork_child(void)
 
 /* Initialization function for the pk11 engine */
 static int pk11_init(ENGINE *e)
-{
+	{
 	return (pk11_library_init(e));
-}
+	}
 
 /*
  * Initialization function. Sets up various PKCS#11 library components.
@@ -1298,11 +1300,12 @@ static int pk11_library_init(ENGINE *e)
 	 * this function is required by OpenSSL digest copy function
 	 */
 	if (pFuncList->C_GetOperationState(global_session, NULL, &ul_state_len)
-			== CKR_FUNCTION_NOT_SUPPORTED) {
+			== CKR_FUNCTION_NOT_SUPPORTED)
+		{
 		DEBUG_SLOT_SEL("%s: C_GetOperationState() not supported, "
 		    "setting digest_count to 0\n", PK11_DBG);
 		digest_count = 0;
-	}
+		}
 
 	pk11_library_initialized = CK_TRUE;
 	pk11_pid = getpid();
@@ -1382,24 +1385,27 @@ static int pk11_finish(ENGINE *e)
 	pFuncList->C_Finalize(NULL);
 #endif
 #ifdef	SOLARIS_AES_CTR
-	{
+		{
 		ASN1_OBJECT *ob = NULL;
-		if (NID_aes_128_ctr != NID_undef) {
+		if (NID_aes_128_ctr != NID_undef)
+			{
 			ob = OBJ_nid2obj(NID_aes_128_ctr);
 			if (ob != NULL)
 				ASN1_OBJECT_free(ob);
-		}
-		if (NID_aes_192_ctr != NID_undef) {
+			}
+		if (NID_aes_192_ctr != NID_undef)
+			{
 			ob = OBJ_nid2obj(NID_aes_192_ctr);
 			if (ob != NULL)
 				ASN1_OBJECT_free(ob);
-		}
-		if (NID_aes_256_ctr != NID_undef) {
+			}
+		if (NID_aes_256_ctr != NID_undef)
+			{
 			ob = OBJ_nid2obj(NID_aes_256_ctr);
 			if (ob != NULL)
 				ASN1_OBJECT_free(ob);
+			}
 		}
-	}
 #endif
 
 	if (!DSO_free(pk11_dso))
@@ -2400,10 +2406,11 @@ pk11_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	 */
 	if (ctx->cipher->iv_len < p_ciph_table_row->iv_len ||
 	    ctx->key_len < p_ciph_table_row->min_key_len ||
-	    ctx->key_len > p_ciph_table_row->max_key_len) {
+	    ctx->key_len > p_ciph_table_row->max_key_len)
+		{
 		PK11err(PK11_F_CIPHER_INIT, PK11_R_KEY_OR_IV_LEN_PROBLEM);
 		return (0);
-	}
+		}
 
 	if ((sp = pk11_get_session(OP_CIPHER)) == NULL)
 		return (0);
@@ -3147,7 +3154,8 @@ pk11_choose_slots(int *any_slot_found)
 		{
 		current_slot = pSlotList[i];
 
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG, i);
+		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
+			current_slot);
 		/* Check if slot has random support. */
 		rv = pFuncList->C_GetTokenInfo(current_slot, &token_info);
 		if (rv != CKR_OK)
@@ -3176,7 +3184,8 @@ pk11_choose_slots(int *any_slot_found)
 		CK_BBOOL slot_has_dh = CK_FALSE;
 		current_slot = pSlotList[i];
 
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG, i);
+		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
+			current_slot);
 		rv = pFuncList->C_GetTokenInfo(current_slot, &token_info);
 		if (rv != CKR_OK)
 			continue;
@@ -3289,9 +3298,11 @@ pk11_choose_slots(int *any_slot_found)
 	SLOTID = pSlotList[0];
 	for (i = 0; i < ulSlotCount; i++)
 		{
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG, i);
-
 		current_slot = pSlotList[i];
+
+		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
+			current_slot);
+
 		current_slot_n_cipher = 0;
 		current_slot_n_digest = 0;
 		(void) memset(local_cipher_nids, 0, sizeof (local_cipher_nids));

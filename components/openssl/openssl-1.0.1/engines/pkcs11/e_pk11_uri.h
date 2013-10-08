@@ -81,7 +81,8 @@ extern "C" {
 #define	PK11_MAX_PIN_LEN	256
 
 /* Add new attributes of the PKCS#11 URI here. */
-typedef struct pkcs11_uri_struct {
+typedef struct pkcs11_uri_struct
+	{
 	char	*object;	/* object label, the only mandatory info */
 	char	*objecttype;	/* (private|public|cert), currently unused */
 	char	*token;		/* token label */
@@ -91,7 +92,7 @@ typedef struct pkcs11_uri_struct {
 	char	*askpass;	/* full path to the command to get the PIN */
 	/* Not part of the PKCS11 URI itself. */
 	char	*pin;		/* token PIN */
-} pkcs11_uri;
+	} pkcs11_uri;
 
 /* For URI processing. */
 extern pthread_mutex_t *uri_lock;

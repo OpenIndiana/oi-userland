@@ -267,7 +267,7 @@ ERR_load_pk11_strings(void)
 		ERR_load_strings(0, pk11_engine_lib_name);
 #endif
 		}
-}
+	}
 
 static void
 ERR_unload_pk11_strings(void)
@@ -285,22 +285,22 @@ ERR_unload_pk11_strings(void)
 
 		pk11_error_init = 1;
 		}
-}
+	}
 
 void
 ERR_pk11_error(int function, int reason, char *file, int line)
-{
+	{
 	if (pk11_lib_error_code == 0)
 		pk11_lib_error_code = ERR_get_next_error_library();
 	ERR_PUT_error(pk11_lib_error_code, function, reason, file, line);
-}
+	}
 
 void
 PK11err_add_data(int function, int reason, CK_RV rv)
-{
+	{
 	char tmp_buf[20];
 
 	PK11err(function, reason);
 	(void) snprintf(tmp_buf, sizeof (tmp_buf), "%lx", rv);
 	ERR_add_error_data(2, "PK11 CK_RV=0X", tmp_buf);
-}
+	}
