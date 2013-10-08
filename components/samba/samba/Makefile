@@ -190,6 +190,9 @@ $(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep: $(COMPONENT_ARCHIVE_1) \
 	cd $(DOCS-XML_DIR) ; $(GMAKE) clobber
 	$(TOUCH) $@
 
+prep::
+	$(MAKE) -C $(COMPONENT_DIR)/../mozldap prep
+
 # create also the: $(DOCS-XML_DIR)/configure and $(DOCS-XML_DIR)/build/catalog.xml
 # needed to buils docs from XML sources
 $(DOCS-XML_DIR)/Makefile.settings: $(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep
