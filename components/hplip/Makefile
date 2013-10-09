@@ -38,8 +38,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 # We need to be able to return from void functions
-CC += $(studio_FEATURES_EXTENSIONS)
-CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD) 
+# CC += $(studio_FEATURES_EXTENSIONS)
+# CXX += $(studio_FEATURES_EXTENSIONS) $(studio_NORUNPATH) $(studio_CXXLIB_CSTD) 
 
 ROOTPPDCACHE =  $(PROTO_DIR)/usr/lib/lp/caches/SUNWhpijs.cache
 
@@ -48,7 +48,7 @@ CONFIGURE_OPTIONS +=	--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS +=	--disable-pp-build
 CONFIGURE_OPTIONS +=	--disable-gui-build
 
-CONFIGURE_ENV +=	LDFLAGS=" -lnsl"
+LDFLAGS          +=  -lnsl
 
 HPLIP_VARIANT = $(BUILD_DIR)/$(MACH32)-hplip
 HPIJS_VARIANT = $(BUILD_DIR)/$(MACH32)-hpijs
