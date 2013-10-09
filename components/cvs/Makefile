@@ -48,11 +48,11 @@ ASLR_MODE = $(ASLR_ENABLE)
 COMPONENT_TEST_ENV += PATH=$(GNUBIN):$(PATH)
 COMPONENT_TEST_TARGETS = localcheck
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
