@@ -1,31 +1,30 @@
-*** bison-2.3/lib/Makefile.in.orig	Thu Nov 16 13:34:32 2006
---- bison-2.3/lib/Makefile.in	Thu Nov 16 13:37:18 2006
-***************
-*** 248,254 ****
-  BUILT_SOURCES = $(GETOPT_H) $(STDBOOL_H) $(UNISTD_H)
-  EXTRA_DIST = getopt_.h getopt_int.h stdbool_.h
-  MOSTLYCLEANFILES = getopt.h getopt.h-t stdbool.h stdbool.h-t unistd.h
-! lib_LIBRARIES = $(YACC_LIBRARY)
-  EXTRA_LIBRARIES = liby.a
-  noinst_LIBRARIES = libbison.a
-  liby_a_SOURCES = main.c yyerror.c
---- 251,257 ----
-  BUILT_SOURCES = $(GETOPT_H) $(STDBOOL_H) $(UNISTD_H)
-  EXTRA_DIST = getopt_.h getopt_int.h stdbool_.h
-  MOSTLYCLEANFILES = getopt.h getopt.h-t stdbool.h stdbool.h-t unistd.h
-! lib_LIBRARIES = $(YACC_LIBRARY) liby.so.1
-  EXTRA_LIBRARIES = liby.a
-  noinst_LIBRARIES = libbison.a
-  liby_a_SOURCES = main.c yyerror.c
-***************
-*** 363,368 ****
---- 366,374 ----
-  	-rm -f liby.a
-  	$(liby_a_AR) liby.a $(liby_a_OBJECTS) $(liby_a_LIBADD)
-  	$(RANLIB) liby.a
-+ liby.so.1:    $(liby_a_OBJECTS) $(liby_a_DEPENDENCIES)
-+ 	-rm -f liby.so.1
-+ 	$(CC) $(CFLAGS) -G -h liby.so.1 -o liby.so.1 $(liby_a_OBJECTS)
-  
-  mostlyclean-compile:
-  	-rm -f *.$(OBJEXT)
+--- bison-2.7.1/lib/Makefile.in.~1~	2013-04-15 13:00:41.000000000 +0400
++++ bison-2.7.1/lib/Makefile.in	2013-10-09 14:35:26.382921904 +0400
+@@ -1665,7 +1665,7 @@
+ 
+ 
+ # The Yacc compatibility library.
+-lib_LIBRARIES = $(YACC_LIBRARY)
++lib_LIBRARIES = liby.so.1
+ EXTRA_LIBRARIES = liby.a
+ liby_a_SOURCES = main.c yyerror.c
+ all: $(BUILT_SOURCES) config.h
+@@ -1761,6 +1761,9 @@
+ 	$(AM_V_at)-rm -f liby.a
+ 	$(AM_V_AR)$(liby_a_AR) liby.a $(liby_a_OBJECTS) $(liby_a_LIBADD)
+ 	$(AM_V_at)$(RANLIB) liby.a
++liby.so.1:    $(liby_a_OBJECTS) $(liby_a_DEPENDENCIES)
++	$(AM_V_at)-rm -f liby.so.1
++	$(CC) $(CFLAGS) -shared -Wl,-h -Wl,liby.so.1 -o liby.so.1 $(liby_a_OBJECTS)
+ 
+ mostlyclean-compile:
+ 	-rm -f *.$(OBJEXT)
+@@ -1912,7 +1915,7 @@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/yyerror.Po@am__quote@
+ 
+ .c.o:
+-@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
++@am__fastdepCC_TRUE@	$(AM_V_CC)$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -fPIC -c -o $@ $<
+ @am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
+ @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
+ @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
