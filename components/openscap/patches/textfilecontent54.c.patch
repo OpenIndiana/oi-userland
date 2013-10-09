@@ -1,0 +1,17 @@
+Fixed issue with textfilecontent54 not matching patterns in certain files on 
+solaris.
+
+--- openscap-0.9.7/src/OVAL/probes/independent/textfilecontent54.c.~1~	2013-04-23 06:21:51.427000001 -0700
++++ openscap-0.9.7/src/OVAL/probes/independent/textfilecontent54.c	2013-08-20 09:38:16.335266038 -0700
+@@ -72,7 +72,11 @@
+ 	for (i = 0; i < ovector_len; ++i)
+ 		ovector[i] = -1;
+ 
++#if defined(__SVR4) && defined(__sun)
++	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, PCRE_NO_UTF8_CHECK, ovector, ovector_len);
++#else
+ 	rc = pcre_exec(re, NULL, str, strlen(str), *ofs, 0, ovector, ovector_len);
++#endif
+ 
+ 	if (rc < -1) {
+ 		return -1;

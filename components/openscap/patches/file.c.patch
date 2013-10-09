@@ -1,11 +1,22 @@
+Fixed issue with file probe not returning has_extended_acl on solaris.
 This patch fixes the file probe from crashing on solaris when encountering file
 types of door and port.
 This patch has not been contributed upstream, but is planned to be done by
- 2013-Jul-12.
+2013-Jul-12.
 
---- openscap-0.9.7/src/OVAL/probes/unix/file.c.~1~	2012-12-12 07:09:05.806498654 -0800
-+++ openscap-0.9.7/src/OVAL/probes/unix/file.c	2013-03-12 19:52:50.739765914 -0700
-@@ -84,6 +84,9 @@
+--- openscap-0.9.7/src/OVAL/probes/unix/file.c.~1~	2013-04-23 06:21:51.447000001 -0700
++++ openscap-0.9.7/src/OVAL/probes/unix/file.c	2013-08-16 13:04:51.171523322 -0700
+@@ -77,6 +77,9 @@
+ #else
+ # error "Sorry, your OS isn't supported."
+ #endif
++#if defined(__SVR4) && defined(__sun)
++#include <sys/acl.h>
++#endif
+ 
+ oval_version_t over;
+ 
+@@ -84,6 +87,9 @@
  static SEXP_t *gr_t_dir  = NULL, *gr_t_lnk  = NULL, *gr_t_blk  = NULL;
  static SEXP_t *gr_t_fifo = NULL, *gr_t_sock = NULL, *gr_t_char = NULL;
  static SEXP_t  gr_lastpath;
@@ -15,7 +26,7 @@ This patch has not been contributed upstream, but is planned to be done by
  
  static SEXP_t *se_filetype (mode_t mode)
  {
-@@ -95,6 +98,10 @@
+@@ -95,6 +101,10 @@
          case S_IFIFO:  return (gr_t_fifo);
          case S_IFSOCK: return (gr_t_sock);
          case S_IFCHR:  return (gr_t_char);
@@ -26,7 +37,20 @@ This patch has not been contributed upstream, but is planned to be done by
          default:
                  abort ();
          }
-@@ -355,6 +362,10 @@
+@@ -286,8 +297,12 @@
+ 			se_acl = acl_extended_file(st_path) ? gr_true : gr_false;
+ 		}
+ #else
++#if defined(__SVR4) && defined(__sun)
++		se_acl = acl_trivial(st_path) ? gr_true : gr_false;
++#else
+ 		se_acl = NULL;
+ #endif
++#endif
+ 
+                 item = probe_item_create(OVAL_UNIX_FILE, NULL,
+                                          "filepath", OVAL_DATATYPE_SEXP, se_filepath,
+@@ -355,6 +370,10 @@
  #define STR_SOCKET    "socket"
  #define STR_CHARSPEC  "character special"
  #define STRLEN_PAIR(str) (str), strlen(str)
@@ -37,7 +61,7 @@ This patch has not been contributed upstream, but is planned to be done by
  
          gr_t_reg  = SEXP_string_new (STRLEN_PAIR(STR_REGULAR));
          gr_t_dir  = SEXP_string_new (STRLEN_PAIR(STR_DIRECTORY));
-@@ -363,6 +374,10 @@
+@@ -363,6 +382,10 @@
          gr_t_fifo = SEXP_string_new (STRLEN_PAIR(STR_FIFO));
          gr_t_sock = SEXP_string_new (STRLEN_PAIR(STR_SOCKET));
          gr_t_char = SEXP_string_new (STRLEN_PAIR(STR_CHARSPEC));

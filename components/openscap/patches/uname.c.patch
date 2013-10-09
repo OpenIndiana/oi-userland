@@ -1,0 +1,41 @@
+--- openscap-0.9.7/src/OVAL/probes/unix/uname.c.~1~	2013-04-23 06:21:51.480000001 -0700
++++ openscap-0.9.7/src/OVAL/probes/unix/uname.c	2013-08-27 10:06:34.813681695 -0700
+@@ -50,6 +50,9 @@
+ #endif
+ #include <string.h>
+ #include <sys/utsname.h>
++#if defined (__SVR4) && defined (__sun)
++#include <sys/systeminfo.h>
++#endif
+ 
+ #include "seap.h"
+ #include "probe-api.h"
+@@ -59,17 +62,28 @@
+ {
+ 	struct utsname buf;
+         SEXP_t *item;
++#if defined (__SVR4) && defined (__sun)
++	char procbuf[SYS_NMLN];
++#endif
+ 
+ 	// Collect the info
+ 	uname(&buf);
+ 
++#if defined (__SVR4) && defined (__sun)
++	if (sysinfo(SI_ARCHITECTURE, procbuf, sizeof(procbuf)) == -1)
++		return(PROBE_EFATAL);
++#endif
+         item = probe_item_create(OVAL_UNIX_UNAME, NULL,
+                                  "machine_class",  OVAL_DATATYPE_STRING, buf.machine,
+                                  "node_name",      OVAL_DATATYPE_STRING, buf.nodename,
+                                  "os_name",        OVAL_DATATYPE_STRING, buf.sysname,
+                                  "os_release",     OVAL_DATATYPE_STRING, buf.release,
+                                  "os_version",     OVAL_DATATYPE_STRING, buf.version,
++#if defined (__SVR4) && defined (__sun)
++                                 "processor_type", OVAL_DATATYPE_STRING, procbuf,
++#else
+                                  "processor_type", OVAL_DATATYPE_STRING, buf.machine,
++#endif
+                                  NULL);
+ 
+         probe_item_collect(ctx, item);
