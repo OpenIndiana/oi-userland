@@ -144,6 +144,7 @@ CONFIGURE_OPTIONS     +=	--enable-tokenizer=shared
 CONFIGURE_OPTIONS     +=	--enable-exif=shared
 CONFIGURE_OPTIONS     +=	--enable-dom=shared
 CONFIGURE_OPTIONS     +=	--enable-ftp=shared
+CONFIGURE_OPTIONS     +=	--enable-intl=shared
 CONFIGURE_OPTIONS     +=	--enable-pdo=shared
 CONFIGURE_OPTIONS     +=	--enable-mbstring=shared
 CONFIGURE_OPTIONS     +=	--enable-xmlreader=shared
@@ -175,6 +176,8 @@ COMPONENT_PRE_INSTALL_ACTION+= \
 COMPONENT_BUILD_ENV+=	CC="$(CC) $(CC_BITS)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV.32 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV.64 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions/$(MACH64)
+CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/g++/bin/icu-config
+CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/g++/bin/amd64/icu-config
 
 # Standard build
 #$(BUILD_DIR_32)/.configured:	CONFIGURE_VARIANT_OPTIONS= \
