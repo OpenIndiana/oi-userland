@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		facter
-COMPONENT_VERSION=	1.6.16
+COMPONENT_VERSION=	1.6.18
 COMPONENT_PROJECT_URL=	http://puppetlabs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fcac57ea59e004e131a2c66be030109465c89c1b30d91c26d1b5cdcf10379125
+    sha256:18a63a04a32713c52270000c548fd1fcdf66e30e8ec29ace65225f12f5517f2b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/facter/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/puppet
 
@@ -39,9 +39,9 @@ include $(WS_TOP)/make-rules/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 # facter requires the installation of the following rubygems to run
 # the unittests:  rspec rspec-expectations mocha rake rack hiera

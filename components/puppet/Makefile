@@ -48,12 +48,12 @@ INSTALL_RB_BINDIR =	$(USRSBINDIR)
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 	# Ruby extension for auditing
 	(cd ext; $(RUBY) extconf.rb; $(GMAKE))
 
 # make sure facter is installed first
-install:	../facter/build/$(MACH32)/.installed $(INSTALL_32)
+install:	../facter/build/$(MACH64)/.installed $(INSTALL_64)
 
 clean::
 	@if [ -f ext/Makefile ]; then \
