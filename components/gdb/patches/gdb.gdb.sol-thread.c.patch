@@ -1,0 +1,11 @@
+--- gdb-7.6/gdb/sol-thread.c	2012-12-31 22:32:50.000000000 -0800
++++ gdb-7.6/gdb/sol-thread.c	2013-08-22 12:03:52.780558508 -0700
+@@ -1224,7 +1224,7 @@
+ 
+   init_sol_thread_ops ();
+ 
+-  dlhandle = dlopen ("libthread_db.so.1", RTLD_NOW);
++  dlhandle = dlopen ("libthread_db.so.1", RTLD_LAZY|RTLD_GLOBAL);
+   if (!dlhandle)
+     goto die;
+ 

@@ -1,0 +1,20 @@
+--- gdb-7.6/gdb/target.c	2013-03-11 05:22:20.000000000 -0700
++++ gdb-7.6/gdb/target.c	2013-07-11 00:14:34.536673600 -0700
+@@ -4208,7 +4208,7 @@
+ 
+   for (t = current_target.beneath; t != NULL; t = t->beneath)
+     if (t->to_disable_btrace != NULL)
+-      return t->to_disable_btrace (btinfo);
++      t->to_disable_btrace (btinfo);
+ 
+   tcomplain ();
+ }
+@@ -4222,7 +4222,7 @@
+ 
+   for (t = current_target.beneath; t != NULL; t = t->beneath)
+     if (t->to_teardown_btrace != NULL)
+-      return t->to_teardown_btrace (btinfo);
++      t->to_teardown_btrace (btinfo);
+ 
+   tcomplain ();
+ }
