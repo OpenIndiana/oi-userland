@@ -102,6 +102,7 @@ endif
 
 # temporarily work around some issues
 CONFIGURE_ENV += "ac_cv_func_realloc_0_nonnull=yes"
+CONFIGURE_ENV += "NM=/usr/gnu/bin/nm"
 COMPONENT_BUILD_ENV += "ac_cv_func_realloc_0_nonnull=yes"
 
 # configure the unpacked source for building 32 and 64 bit version

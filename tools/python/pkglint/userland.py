@@ -296,13 +296,13 @@ class UserlandActionChecker(base.ActionChecker):
 
 		return result
 
-	def __elf_wrong_location_check(self, path):
+	def __elf_wrong_location_check(self, path, inspath):
 		result = None
 
 		ei = elf.get_info(path)
 		bits = ei.get("bits")
 		type = ei.get("type");
-                elems = os.path.dirname(path).split("/")
+                elems = os.path.dirname(inspath).split("/")
 
                 path64 = False
 		for p in self.pathlist64:
@@ -331,9 +331,11 @@ class UserlandActionChecker(base.ActionChecker):
 		if action.name not in ["file"]:
 			return
 
+		inspath=action.attrs["path"]
+
 		path = action.hash
 		if path == None or path == 'NOHASH':
-			path = action.attrs["path"]
+			path = inspath
 
 		# check for writable files without a preserve attribute
 		if "mode" in action.attrs:
@@ -371,9 +373,9 @@ class UserlandActionChecker(base.ActionChecker):
 					msgid="%s%s.1" % (self.name, pkglint_id))
 			elif elf.is_elf_object(fullpath):
 				# 32/64 bit in wrong place
-				result = self.__elf_wrong_location_check(fullpath)
+				result = self.__elf_wrong_location_check(fullpath, inspath)
 				if result != None:
-					engine.error(result % path, 
+					engine.error(result % inspath, 
 						msgid="%s%s.2" % (self.name, pkglint_id))
 				result = self.__elf_runpath_check(fullpath, engine)
 				if result != None:
