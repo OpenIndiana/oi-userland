@@ -27,12 +27,13 @@ DOXYGEN=/usr/bin/doxygen
 
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.4.1
+COMPONENT_PATCHLEVEL=	2
+IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION).$(COMPONENT_PATCHLEVEL)
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION).$(COMPONENT_PATCHLEVEL)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:0ea976722c993c87dede8eb6348e6feb059e3851bbef2de824bf18ac97cdb565
-#COMPONENT_ARCHIVE_URL=	http://ftp.ntua.gr/mirror/net-snmp/net-snmp/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:17d67076ab5c5fb6dfaffe70a2757526f99b0638bca102dec27af08ec01a9068
 COMPONENT_ARCHIVE_URL= http://ftp.ntua.gr/mirror/net-snmp/OldFiles/net-snmp-5.4.x/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 
@@ -40,8 +41,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS += $(studio_C99_ENABLE)
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
+
+CONFIGURE_ENV      +=   PERLPROG=$(PERL)
 
 CONFIGURE_OPTIONS  +=	--with-default-snmp-version=3
 CONFIGURE_OPTIONS  +=	--with-sys-contact="root@localhost"
@@ -57,6 +59,16 @@ CONFIGURE_OPTIONS  +=	--enable-ipv6
 CONFIGURE_OPTIONS  +=	--enable-mfd-rewrites
 CONFIGURE_OPTIONS  +=	--with-pkcs
 CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
+
+# Embedded perl is disabled, because it causes 
+# failures during illumos build 
+# (  https://www.illumos.org/issues/4190 )
+# If you want to enable it, also turn on --enable-as-needed,
+# uncomment #dep_rpath="$dep_rpath $flag" in ltmain.sh patch
+# and add necessary patches to pass -fstack-protector option
+# to libtool ( one of the options is to patch Makefiles.in )
+CONFIGURE_OPTIONS  +=	--disable-embedded-perl
+#CONFIGURE_OPTIONS  +=	--enable-as-needed
 
 # Which MIB modules do we want to build
 MIB_MOBULES.sparc = ucd-snmp/lmSensors
@@ -74,7 +86,6 @@ CONFIGURE_OPTIONS.32  +=	PERLPROG="$(PERL)"
 CONFIGURE_OPTIONS.32  +=	--with-perl-modules="$(PERL_ARGS)"
 CONFIGURE_OPTIONS.32  +=	--disable-perl-cc-checks
 
-CONFIGURE_OPTIONS.64  +=	--disable-embedded-perl
 CONFIGURE_OPTIONS.64  +=	--without-perl-modules
 
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
@@ -83,12 +94,17 @@ CONFIGURE_OPTIONS	+=	CC="$(CC)"
 
 PKG_MACROS +=	BUILD_DIR=$(BUILD_DIR)
 
+COMPONENT_PREP_ACTION = \
+        (cd $(@D) ; \
+            autoconf ; )
+
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D); $(CLONEY) $(COMPONENT_DIR)/sun $(@D)/sun)
 
 # After we have configured, make a copy of the python bits so we
 # can build separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
+# COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
 
 # for the goofy definition of ARCH in the extra Makefiles
 ARCH=32
@@ -107,11 +123,7 @@ $(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
-	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install) ; \
-	(cd $(@D)/python2.7 ; env PYTHON=$(PYTHON.2.7.$(BITS)) \
-		$(PYTHON.2.7.$(BITS)) ./setup.py install \
-			--root $(PROTO_DIR) \
-			--install-lib=$(PYTHON.2.7.VENDOR_PACKAGES))
+	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
 
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH64)/etc/net-snmp/snmp/mibs; \
