@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 #
 # incorporator - an utility to incorporate packages in a repo
@@ -38,8 +38,11 @@ sub enumerate_packages {
 	while (<$fp>) {
 
 		# lines should be in the form:
-		#   publisher   package   [r|o] version,branch:timestamp
-		if (/^(\S+)\s+(\S+)\s+\S?\s+([\d.]+),[\d.]+-([\d.]+):.+$/) {
+		#   publisher   package   [r|o] version,5.12-branch:timestamp
+		# or lines should be in the form:
+		#   publisher   package   [r|o] version-branch:timestamp
+		if ((/^(\S+)\s+(\S+)\s+\S?\s+([\d.]+),[\d.]+-([\d.]+):.+$/) ||
+		   (/^(\S+)\s+(\S+)\s+\S?\s+([\d.]+)-([\d.]+):.+$/)) { 
 			my ($package) = ();
 
 			$package->{publisher} = $1;
@@ -47,9 +50,11 @@ sub enumerate_packages {
 			$package->{version} = $3;
 			$package->{branch} = $4;
 
-			push(@packages, $package);
+			if ($package->{name} !~ m/incorporation/) {
+				push(@packages, $package);
+			} 
 		} else {
-			printf STDERR "SKIP: %s", $_;
+			die "cannot handle: ", $_;
 		}
 	}
 
@@ -91,6 +96,6 @@ printf "set name=info.classification value='org.opensolaris.category.2008:Meta P
 @packages = enumerate_packages($repository, $consolidation, @fmris);
 for (@packages) {
 	printf "depend fmri=pkg:/%s@%s-%s %s=true type=incorporate\n",
-		%$_->{name}, %$_->{version}, %$_->{branch},
-		"facet.version-lock.".%$_->{name};
+		$_->{name}, $_->{version}, $_->{branch},
+		"facet.version-lock.".$_->{name}; 
 }
