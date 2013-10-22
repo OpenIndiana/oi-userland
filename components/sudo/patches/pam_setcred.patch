@@ -1,0 +1,17 @@
+# Fix for
+# 17617070 sudo does not use pam_setcred correctly to set the audit context
+diff -ru sudo-1.8.6p7-orig//plugins/sudoers/auth/pam.c sudo-1.8.6p7/plugins/sudoers/auth/pam.c
+--- sudo-1.8.6p7-orig//plugins/sudoers/auth/pam.c	Mon Feb 25 11:42:44 2013
++++ sudo-1.8.6p7/plugins/sudoers/auth/pam.c	Mon Oct 21 13:32:27 2013
+@@ -229,8 +229,10 @@
+      * for the setcred module.  Because we haven't called pam_authenticate(),
+      * this is not set and so pam_setcred() returns PAM_PERM_DENIED.
+      * We can't call pam_acct_mgmt() with Linux-PAM for a similar reason.
++     *
++     * Reinitialize credentials when changing a user. 
+      */
+-    (void) pam_setcred(pamh, PAM_ESTABLISH_CRED);
++    (void) pam_setcred(pamh, PAM_REINITIALIZE_CRED);
+ 
+ #ifdef HAVE_PAM_GETENVLIST
+     /*
