@@ -40,6 +40,13 @@ CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=   --enable-shared
 CONFIGURE_OPTIONS +=   --disable-static
 
+# Adjust the .so line in the libssh2_sftp_fstatvfs man page to correctly find
+# the file it references (as we place it in the man3ssh2 section on Solaris).
+#
+COMPONENT_POST_INSTALL_ACTION += \
+        $(GSED) -i -e 's|3|3ssh2|g' \
+		$(PROTOUSRSHAREMAN3DIR)/libssh2_sftp_fstatvfs.3;
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
