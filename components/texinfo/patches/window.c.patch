@@ -1,0 +1,36 @@
+texinfo-4.13 info command gives Bus Error. There has been reported bug in texinfo 4.13a in info/window.c.
+--- texinfo-4.13/info/window.c.orig	2013-10-09 17:07:32.875146313 -0700
++++ texinfo-4.13/info/window.c	2013-10-09 17:35:44.959317979 -0700
+@@ -1579,10 +1579,11 @@
+        mbi_advance (iter))
+     {
+       const char *carried_over_ptr;
+-      size_t carried_over_len, carried_over_count;
++      size_t carried_over_len = 0;
++      size_t carried_over_count = 0;
+       const char *cur_ptr = mbi_cur_ptr (iter);
+-      int cur_len = mb_len (mbi_cur (iter));
+-      int replen;
++      size_t cur_len = mb_len (mbi_cur (iter));
++      size_t replen = 0;
+       int delim = 0;
+       int rc;
+ 
+@@ -1831,7 +1832,7 @@
+  */
+ int
+ window_scan_line (WINDOW *win, int line, int phys,
+-		  void (*fun) (void *closure, long cpos, int replen),
++		  void (*fun) (void *closure, long cpos, size_t replen),
+ 		  void *closure)
+ {
+   mbi_iterator_t iter;
+@@ -1853,7 +1854,7 @@
+     {
+       const char *cur_ptr = mbi_cur_ptr (iter);
+       int cur_len = mb_len (mbi_cur (iter));
+-      int replen;
++      size_t replen;
+ 
+       if (cur_ptr >= endp)
+ 	break;
