@@ -333,6 +333,23 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
+PG_VERSION ?=   9.3
+PG_VERNUM =     $(subst .,,$(PG_VERSION))
+PG_HOME =       /usr/postgres/$(PG_VERSION)
+PG_BINDIR.32 =  $(PG_HOME)/bin
+PG_BINDIR.64 =  $(PG_HOME)/bin/$(MACH64)
+PG_INCDIR =     $(PG_HOME)/include
+PG_MANDIR =     $(PG_HOME)/man
+PG_SHAREDIR =   $(PG_HOME)/share
+PG_DOCDIR =     $(PG_HOME)/doc
+PG_LIBDIR.32 =  $(PG_HOME)/lib
+PG_LIBDIR.64 =  $(PG_HOME)/lib/$(MACH64)
+PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
+PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
+
+PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
+PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
+
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
 TCL_VERSION =  8.5

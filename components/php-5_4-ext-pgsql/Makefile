@@ -45,8 +45,8 @@ CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 CONFIGURE_OPTIONS.64  +=	--with-php-config=$(PHP_PREFIX)/bin/$(MACH64)/php-config
-CONFIGURE_OPTIONS.32  +=	--with-pgsql=/usr/postgres/8.4/bin/
-CONFIGURE_OPTIONS.64  +=	--with-pgsql=/usr/postgres/8.4/bin/$(MACH64)/
+CONFIGURE_OPTIONS.32  +=	--with-pgsql=$(PG_BINDIR.32)
+CONFIGURE_OPTIONS.64  +=	--with-pgsql=$(PG_BINDIR.64)
 
 CONFIGURE_OPTIONS     +=	$(CONFIGURE_OPTIONS.$(BITS))
 
