@@ -54,6 +54,7 @@ COPYRIGHT_TEMPLATE =		$(WS_TOP)/transforms/copyright-template
 GENERATE_TRANSFORMS +=		$(WS_TOP)/transforms/generate-cleanup
 
 PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/libtool-drop
+PKGMOGRIFY_TRANSFORMS +=	$(WS_TOP)/transforms/ignore-libs
 
 COMPARISON_TRANSFORMS +=	$(WS_TOP)/transforms/comparison-cleanup
 COMPARISON_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)

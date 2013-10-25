@@ -43,7 +43,7 @@ PATCH_LEVEL=0
 CONFIGURE_PREFIX=/usr/apr-util
 
 CONFIGURE_OPTIONS +=	--with-mysql=/usr/mariadb/5.5
-CONFIGURE_OPTIONS +=	--with-pgsql=/usr/postgres/8.4
+CONFIGURE_OPTIONS +=	--with-pgsql=$(PG_HOME)
 CONFIGURE_OPTIONS +=	--with-expat=/usr
 CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
 CONFIGURE_OPTIONS +=	--with-ldap=ldap_r-2.4
@@ -54,7 +54,7 @@ CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
 CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/bin/apr-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/bin/$(MACH64)/apr-1-config
 CONFIGURE_OPTIONS.64 +=	MYSQL_CONFIG=/usr/mariadb/5.5/bin/$(MACH64)/mysql_config
-CONFIGURE_OPTIONS.64 +=	PGSQL_CONFIG=/usr/postgres/8.4/bin/$(MACH64)/pg_config
+CONFIGURE_OPTIONS.64 +=	PGSQL_CONFIG=$(PG_CONFIG.64)
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
