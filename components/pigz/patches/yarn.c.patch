@@ -1,0 +1,16 @@
+# <sys/feature_tests.h> became XPG7-aware in s12_33, thus requiring building
+# in C99 mode.  But for s12_32 and earlier, it would crap out in C99 mode
+# unless _XPG6 was defined.  Since this is to work around an oddity with
+# Solaris header files and build versions, this patch will not be offered
+# upstream.
+#
+--- pigz-2.2.5/yarn.c.orig	2012-01-13 14:56:17.000000000 -0800
++++ pigz-2.2.5/yarn.c	2013-10-24 13:13:58.198937572 -0700
+@@ -23,6 +23,7 @@
+ #define _XOPEN_SOURCE 700
+ #define _POSIX_C_SOURCE 200809L
+ #define _THREAD_SAFE
++#define _XPG6
+ 
+ /* use large file functions if available */
+ #define _FILE_OFFSET_BITS 64

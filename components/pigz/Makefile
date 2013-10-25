@@ -39,6 +39,8 @@ include ../../make-rules/ips.mk
 
 PKG_PROTO_DIRS += $(BUILD_DIR_64)
 
+studio_C99MODE=	$(studio_C99_ENABLE) 
+
 CC += $(CC_BITS)
 COMPONENT_BUILD_ARGS += CC="$(CC)"
 COMPONENT_BUILD_ARGS += CFLAGS="$(CFLAGS)"
