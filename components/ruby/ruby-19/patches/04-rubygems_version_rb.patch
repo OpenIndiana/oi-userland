@@ -1,0 +1,15 @@
+# Fix for 17650189 Problem with utility/ruby
+diff -ru ruby-1.9.3-p448-orig/lib/rubygems/version.rb ruby-1.9.3-p448/lib/rubygems/version.rb
+--- ruby-1.9.3-p448-orig/lib/rubygems/version.rb	Thu Apr 19 15:43:16 2012
++++ ruby-1.9.3-p448/lib/rubygems/version.rb	Wed Oct 23 15:52:30 2013
+@@ -145,8 +145,8 @@
+ 
+   include Comparable
+ 
+-  VERSION_PATTERN = '[0-9]+(\.[0-9a-zA-Z]+)*' # :nodoc:
+-  ANCHORED_VERSION_PATTERN = /\A\s*(#{VERSION_PATTERN})*\s*\z/ # :nodoc:
++  VERSION_PATTERN = '[0-9]+(?>\.[0-9a-zA-Z]+)*' # :nodoc:
++  ANCHORED_VERSION_PATTERN = /\A\s*(#{VERSION_PATTERN})?\s*\z/ # :nodoc:
+ 
+   ##
+   # A string representation of this Version.
