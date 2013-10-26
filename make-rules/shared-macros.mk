@@ -32,13 +32,15 @@ INTERNAL_ARCHIVE_MIRROR =	http://userland.us.oracle.com/source-archives
 
 # The location of an external mirror of community source archives that we build
 # in this gate.  The external mirror is a replica of the internal mirror.
-EXTERNAL_ARCHIVE_MIRROR = \
-	http://static.opensolaris.org/action/browse/userland/tarball/userland
+EXTERNAL_ARCHIVE_MIRROR = 
+	
 
 # Default to looking for source archives on the internal mirror and the external
 # mirror before we hammer on the community source archive repositories.
 export DOWNLOAD_SEARCH_PATH +=	$(INTERNAL_ARCHIVE_MIRROR)
+ifneq   ($(strip $(EXTERNAL_ARCHIVE_MIRROR)),)
 export DOWNLOAD_SEARCH_PATH +=	$(EXTERNAL_ARCHIVE_MIRROR)
+endif
 
 # The workspace starts at the mercurial root
 ifeq ($(origin WS_TOP), undefined)
