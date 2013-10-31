@@ -1,0 +1,40 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/database/postgres/pgbouncer@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license pgbouncer.license license="BSD"
+
+file files/pgbouncer.ini path=etc/pgbouncer/pgbouncer.ini preserve=true
+file files/pgbouncer.xml path=lib/svc/manifest/application/database/pgbouncer.xml restart_fmri=svc:/system/manifest-import:default
+
+# We need postgres user
+depend type=require fmri=database/postgres-common@8.4.18
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+dir path=var/postgres/pgbouncer owner=postgres group=postgres
+file path=usr/bin/pgbouncer mode=0555
+file path=usr/share/doc/pgbouncer/NEWS
+file path=usr/share/doc/pgbouncer/README
+file path=usr/share/doc/pgbouncer/pgbouncer.ini
+file path=usr/share/doc/pgbouncer/userlist.txt
+file path=usr/share/man/man1/pgbouncer.1
+file path=usr/share/man/man5/pgbouncer.5
