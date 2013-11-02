@@ -1,0 +1,102 @@
+'\" t
+.\"
+.\" CDDL HEADER START
+.\"
+.\" The contents of this file are subject to the terms of the
+.\" Common Development and Distribution License (the "License").
+.\" You may not use this file except in compliance with the License.
+.\"
+.\" You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+.\" or http://www.opensolaris.org/os/licensing.
+.\" See the License for the specific language governing permissions
+.\" and limitations under the License.
+.\"
+.\" When distributing Covered Code, include this CDDL HEADER in each
+.\" file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+.\" If applicable, add the following below this CDDL HEADER, with the
+.\" fields enclosed by brackets "[]" replaced with your own identifying
+.\" information: Portions Copyright [yyyy] [name of copyright owner]
+.\"
+.\" CDDL HEADER END
+.\"
+.\" Copyright 2010 Sun Microsystems, Inc.  All rights reserved.
+.\" Use is subject to license terms.
+.\"
+.\" #ident	"@(#)pgagent.1	1.2	10/03/16 SMI"
+.\"
+.TH "pgagent" "1" "" "" "User Commands"
+.SH NAME
+pgAgent \- a job scheduler for PostgreSQL
+
+.SH SYNOPSIS
+.sp
+\fBpgagent\fR [ \fB\fIoption\fB\fR\fI...\fR ]   [ \fB\fIconnection\fR ]
+.SH DESCRIPTION
+pgAgent is a job scheduling agent for PostgreSQL, capable of running
+multi-step batch/shell and SQL tasks on complex schedules. Jobs may 
+be easily created using pgAdmin III. 
+
+Full documentation of pgAgent is available in pgAdmin III's online
+help. Launch pgAdmin III (simply type "pgadmin3" at command prompt) and
+select "Help..." from the "Help" menu. Browse through the pgAdmin III
+documentation until you find "pgAgent". Both database setup and system
+part of the installation are detailed. You will also find instructions
+to create jobs and schedules.
+
+However, some of the features can be accessed through command line.
+
+.SH "OPTIONS"
+.PP
+The following options are supported:
+.TP
+\fB\fIconnection\fB\fR
+Connection string specifies the server to which the connection
+has to be established
+.TP
+\fB-f\fR
+Run in the foreground (do not detach from the terminal)
+.TP
+\fB-t \fIseconds\fB\fR
+Poll time interval in seconds (default 10)
+.TP
+\fB-r \fIseconds\fB\fR
+Retry period after connection abort in seconds (>=10, default 30)
+.TP
+\fB-s \fIfile\fB\fR
+Log file (messages are logged to STDOUT if not specified)
+.TP
+\fB-l \fIvalue\fB\fR
+logging verbosity (ERROR=0, WARNING=1, DEBUG=2, default 0)
+.PP
+
+.\" Begin Sun update
+.SH ATTRIBUTES
+See
+.BR attributes (5)
+for descriptions of the following attributes:
+.sp
+.TS
+box;
+cbp-1 | cbp-1
+l | l .
+ATTRIBUTE TYPE	ATTRIBUTE VALUE
+=
+Availability	database/postgres/pgadmin
+=
+Interface Stability	Committed
+.TE
+
+.SH NOTES
+You may find useful informations in the help menu of pgadmin3.
+You may also find Solaris specific PostgreSQL informations in "postgres"
+man page. Source for pgAgent is available on http://www.pgadmin.org/.
+.\" End Sun update
+
+
+.SH SEE ALSO
+.PP
+pgadmin3(1)
+
+.SH REFERENCES
+.PP
+http://www.pgadmin.org
