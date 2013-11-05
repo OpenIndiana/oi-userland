@@ -66,6 +66,7 @@ CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_LIBDIR.$(BITS))
 CONFIGURE_OPTIONS +=	am_cv_python_pythondir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	LIBS="-lldap_r -lscf -ldlpi -lsec"
+CONFIGURE_OPTIONS +=	--with-report-branding="/usr/share/lib/xml/style/os-logo.xsl"
 
 # common targets
 build:		$(BUILD_32)

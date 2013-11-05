@@ -1,0 +1,231 @@
+This patch provides a new configure option --with-report-branding to generate
+ the reports with vendor specific brand and logo. If the option is not used
+ reports get generated using the default template and colors.
+This change was developed in-house and has not been submitted upstream.
+
+
+--- openscap-0.9.7/xsl/Makefile.am.~1~  2013-10-17 19:32:43.848277759 -0700
++++ openscap-0.9.7/xsl/Makefile.am      2013-10-17 19:31:32.960110050 -0700
+@@ -17,7 +17,8 @@
+                        xccdf_1.1_remove_dangling_sub.xsl \
+              xccdf-tailor.xsl \
+              xccdf-substitute.xsl \
+-             xccdf-share.xsl
++             xccdf-share.xsl \
++             os-brand.xsl
+ 
+ EXTRA_DIST = security-guide.xsl \
+              xccdf-report.xsl \
+@@ -35,5 +36,6 @@
+              oscap-share.xsl \
+              xccdf-tailor.xsl \
+              xccdf-substitute.xsl \
+-             xccdf-share.xsl
++             xccdf-share.xsl \
++             os-brand.xsl
+
+--- openscap-0.9.7/xsl/xccdf-report.xsl.~1~	2013-04-23 06:21:53.014000001 -0700
++++ openscap-0.9.7/xsl/xccdf-report.xsl	2013-10-17 20:37:01.886707203 -0700
+@@ -40,6 +40,7 @@
+ <xsl:import href="security-guide.xsl" />
+ <xsl:import href="oval-report.xsl" />
+ <xsl:import href="sce-report.xsl" />
++<xsl:import href="os-brand.xsl" />
+ 
+ <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
+ 
+@@ -134,7 +135,14 @@
+         id='{@id}'
+     >
+     <info>
+-        <title>XCCDF test result</title>
++	<xsl:choose>
++	  <xsl:when test="$branded='yes'" >
++	    <title>XCCDF Assessment Report</title>
++	  </xsl:when>
++	  <xsl:otherwise>
++	    <title>XCCDF Test Report</title>
++	  </xsl:otherwise>
++	</xsl:choose>
+         <xsl:call-template name='footerinfo'/>
+     </info>
+ 
+@@ -348,8 +356,10 @@
+     <xsl:call-template name='idents'/>
+     <!-- overrides (n) -->
+     <!-- messages (n) -->
+-    <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
+-    <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
++	<xsl:if test="cdf:result='fail'" >
++	  <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
++	  <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
++        </xsl:if>
+     <xsl:apply-templates select='.' mode='engine-results'/>
+     <xsl:call-template name='references'/>
+   </section>
+--- /dev/null	2013-10-17 20:38:34.000000000 -0700
++++ openscap-0.9.7/xsl/os-brand.xsl.in	2013-10-17 20:57:48.565359270 -0700
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="UTF-8" ?>
++<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
++<xsl:variable name="branded" select="'@BRANDED@'"/>
++@BRANDTEMPLATE@
++</xsl:stylesheet>
+--- openscap-0.9.7/configure.ac.~2~	2013-10-18 10:46:29.041272020 -0700
++++ openscap-0.9.7/configure.ac	2013-10-18 10:49:44.494855545 -0700
+@@ -233,6 +233,7 @@
+ probe_dpkginfo_req_deps_missing=
+ probe_dpkginfo_opt_deps_ok=yes
+ probe_dpkginfo_opt_deps_missing=
++report_branding=
+ 
+ #
+ # env
+@@ -990,6 +991,22 @@
+      [],
+      [crypto=gcrypt])
+ 
++#used for generating os-brand.xsl
++AC_ARG_WITH([report-branding],
++     [AS_HELP_STRING([--with-report-branding=<location of the branded logo template> enables report-branding.])],
++     [report_branding="${with_report_branding}"],
++     [])
++
++notbranded='<xsl:template name="operating-system-logo"/>'
++osbranded="<xsl:include href='${report_branding}' />"
++if test  "x${report_branding}" = "x" ; then
++AC_SUBST([BRANDED], "no")
++AC_SUBST([BRANDTEMPLATE], "${notbranded}")
++else
++AC_SUBST([BRANDED], "yes")
++AC_SUBST([BRANDTEMPLATE], "${osbranded}")
++fi
++
+ if test "x${libexecdir}" = xNONE; then
+ 	probe_dir="/usr/local/libexec/openscap"
+ else
+@@ -1196,6 +1213,7 @@
+                  lib/Makefile
+                  src/Makefile
+                  xsl/Makefile
++		 xsl/os-brand.xsl
+                  schemas/Makefile
+                  cpe/Makefile
+ 		 selinux/Makefile
+--- openscap-0.9.7/xsl/dbout-html.xsl.~1~	2013-04-23 06:21:52.991000001 -0700
++++ openscap-0.9.7/xsl/dbout-html.xsl	2013-10-21 11:38:46.988422014 -0700
+@@ -36,6 +36,7 @@
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     exclude-result-prefixes="xsl db exsl htm"
+ 	>
++<xsl:include href='os-brand.xsl' />
+ 
+ <xsl:output method="xml" encoding="UTF-8" indent="no"
+   doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+@@ -254,7 +255,23 @@
+ </xsl:template>
+ 
+ <xsl:template mode='dbout.html.title' match='db:book/db:title|db:book/db:info/db:title|db:article/db:title|db:article/db:info/db:title'>
+-  <h1><xsl:call-template name='dbout.html.inline'/></h1>
++  <xsl:choose>
++    <xsl:when test="$branded='yes'" >
++      <table id="header" width="100%">
++	<tr id="header" valign="middle">
++	  <td id="header">
++	    <xsl:call-template name='operating-system-logo'/>
++	  </td>
++	  <td id="header">
++	    <h1><xsl:call-template name='dbout.html.inline'/></h1>
++	  </td>
++	</tr>
++      </table>
++    </xsl:when>
++    <xsl:otherwise>
++      <h1><xsl:call-template name='dbout.html.inline'/></h1>
++    </xsl:otherwise>
++  </xsl:choose> 
+ </xsl:template>
+ 
+ <xsl:template mode='dbout.html.title' match='db:chapter/db:title|db:chapter/db:info/db:title|db:preface/db:title|db:preface/db:info/db:title|db:bibliography/db:title|db:bibliography/db:info/db:title'>
+@@ -433,7 +450,14 @@
+ <!-- CSS stylesheet -->
+ <xsl:template name='css'>
+   <style type='text/css' media='all'>
++    <xsl:choose>
++      <xsl:when test="$branded='yes'" >
++    html, body { background-color: white; font-family:sans-serif; margin:0; padding:0; }
++      </xsl:when>	
++      <xsl:otherwise>
+     html, body { background-color: black; font-family:sans-serif; margin:0; padding:0; }
++      </xsl:otherwise>
++    </xsl:choose>
+     abbr { text-transform:none; border:none; font-variant:normal; }
+     div.score-outer { height: .8em; width:100%; min-width:100px; background-color: red; }
+     div.score-inner { height: 100%; background-color: green; }
+@@ -476,7 +500,18 @@
+   <style type='text/css' media='screen'>
+     div#content, div#header, div#footer { margin-left:1em; margin-right:1em; }
+     div#content { background-color: white; padding:2em; }
++    <xsl:choose>
++      <xsl:when test="$branded='yes'" >
++    div#header { background-color:red; color:black; text-align:center; }
++    div#footer { background-color:red; color:white; text-align:center; }
++    table#header { border: 0px solid red; cellpadding="0"; cellspacing="0"; }
++    table tr#header { border-bottom: 0px solid red; }
++    table td#header { border-right: 0px solid red; }
++      </xsl:when>
++      <xsl:otherwise>
+     div#footer, div#header { color:white; text-align:center; }
++      </xsl:otherwise>
++    </xsl:choose>
+     a, a:visited { color:blue; text-decoration:underline; }
+     div#content p.link { text-align:right; font-size:.8em; }
+     div#footer a { color:white; }
+--- openscap-0.9.7/xsl/oval-results-report.xsl.~1~	2013-04-23 06:21:53.012000001 -0700
++++ openscap-0.9.7/xsl/oval-results-report.xsl	2013-10-21 11:48:29.340966226 -0700
+@@ -63,6 +63,8 @@
+ 	xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:windows-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
+ 	xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
+ 	<xsl:output method="html" indent="yes" omit-xml-declaration="yes"/>
++       
++        <xsl:include href='os-brand.xsl'/>
+ 
+ 	<xsl:key name="definition-index" use="@id" match="/oval-res:oval_results/oval-def:oval_definitions/oval-def:definitions/oval-def:definition"/>
+ 
+@@ -70,7 +72,15 @@
+ 	<xsl:template name="oval_res_style">
+ 		<style type="text/css">
+ 
++<xsl:choose>
++    <xsl:when test="$branded='yes'" >
++TD.title {BACKGROUND-COLOR: #FF0000; COLOR: #ffc; TEXT-ALIGN: left; font: bold 12pt/14pt "Arial"}
++DIV.header { background-color: red }
++    </xsl:when>
++    <xsl:otherwise>
+ TD.title {BACKGROUND-COLOR: #000000; COLOR: #ffc; TEXT-ALIGN: left; font: bold 12pt/14pt "Arial"} 
++    </xsl:otherwise>
++  </xsl:choose>
+ TD.label {BACKGROUND-COLOR: #99cc99; font: 10pt/12pt "Arial"}
+ TD.label2 {font: bold 10pt/14pt "Arial"}
+ TD.text {font: 10pt/12pt "Arial"}
+@@ -173,6 +183,20 @@
+ 				<xsl:call-template name="oval_res_style"/>
+ 			</head>
+ 			<body>
++                               <xsl:choose>
++                                 <xsl:when test="$branded='yes'" >
++				   <div class="header">
++				      <table width="100%" background-color="red">
++					  <tr>
++					      <td>
++					      <xsl:call-template name='operating-system-logo'/>
++					      </td>
++					  </tr>
++				      </table>
++				   </div>
++				   <br/>
++                                 </xsl:when>
++                               </xsl:choose>
+ 								
+ 				<!-- display results and definition generator information -->
+ 				<table border="1" cellpadding="0" cellspacing="0" width="100%">
