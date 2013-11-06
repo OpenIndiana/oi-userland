@@ -108,10 +108,13 @@ DUMMYPKG += "set info.classification=org.opensolaris.category.2008:System/Core"
 
 $(WS_LINT_CACHE):	$(WS_LOGS) tools
 ifdef CANONICAL_REPO
-	@echo "Generating pkglint(1) cache from $(CANONICAL_REPO)..."
+	@echo "Generating pkglint(1) cache from CANONICAL_REPO $(CANONICAL_REPO)..."
 	@(echo $(DUMMYPKG) | $(PKGLINT) \
 		-c $(WS_LINT_CACHE) -r $(CANONICAL_REPO) /dev/fd/0 \
-		>$(WS_LOGS)/naughty-canonical-repo-actions 2>&1 ; exit 0)
+		>$(WS_LOGS)/naughty-canonical-repo-actions 2>&1 || \
+		( echo "pkglint(1) failed, please see $(WS_LOGS)/naughty-canonical-repo-actions"; \
+		  exit 1 ) \
+	)
 else
 	$(MKDIR) $(WS_LINT_CACHE)
 endif
