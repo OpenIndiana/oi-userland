@@ -72,6 +72,15 @@ file path=etc/apache2/2.2/samples-conf.d/reqtimeout.conf
 file etc/apache2/2.2/extra/httpd-ssl.conf path=etc/apache2/2.2/samples-conf.d/ssl.conf
 file etc/apache2/2.2/extra/httpd-userdir.conf path=etc/apache2/2.2/samples-conf.d/userdir.conf
 file etc/apache2/2.2/extra/httpd-vhosts.conf path=etc/apache2/2.2/samples-conf.d/vhosts.conf
+dir path=etc/security/auth_attr.d owner=root group=sys mode=755
+file Solaris/auth_attr path=etc/security/auth_attr.d/web:server:apache-22 \
+    owner=root group=sys mode=644 preserve=true restart_fmri=svc:/system/svc-rbac:default
+dir path=etc/security/prof_attr.d owner=root group=sys mode=755
+file Solaris/prof_attr path=etc/security/prof_attr.d/web:server:apache-22 \
+    owner=root group=sys mode=644 preserve=true restart_fmri=svc:/system/svc-rbac:default
+file Solaris/RtApacheSrvcMngmnt.html path=usr/lib/help/profiles/locale/C/RtApacheSrvcMngmnt.html
+file Solaris/SmfApacheStates.html path=usr/lib/help/auths/locale/C/SmfApacheStates.html
+file Solaris/SmfValueApache.html path=usr/lib/help/auths/locale/C/SmfValueApache.html
 file Solaris/http-apache22.xml path=lib/svc/manifest/network/http-apache22.xml
 file path=lib/svc/method/http-apache22
 file path=usr/apache2/2.2/bin/$(MACH64)/ab
