@@ -37,6 +37,9 @@ TZFILES= africa antarctica asia australasia etcetera europe \
 
 include ../../make-rules/ips.mk
 
+# This package delivers only data files and has no dependencies.
+EXTDEPFILES = $(NULLDEPFILE)
+
 POFILE=zoneinfo.po
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)

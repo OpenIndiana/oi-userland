@@ -36,6 +36,9 @@ include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
+# This package delivers only data files and has no dependencies.
+EXTDEPFILES = $(NULLDEPFILE)
+
 COMPONENT_PRE_CONFIGURE_ACTION = $(CLONEY) $(SOURCE_DIR) $(@D)
 
 # One file is not gzipped; fix it

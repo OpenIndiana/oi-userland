@@ -41,6 +41,9 @@ PROTOGSSHAREDIR=$(PROTOUSRSHAREDIR)/ghostscript
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 
+# This package delivers only data files and has no dependencies.
+EXTDEPFILES = $(NULLDEPFILE)
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # untar the tar ball and apply the patches

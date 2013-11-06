@@ -35,6 +35,9 @@ COMPONENT_BUGDB=	utility/foomatic
 include ../../../make-rules/prep.mk
 include ../../../make-rules/ips.mk
 
+# This package delivers only data files and has no dependencies.
+EXTDEPFILES = $(NULLDEPFILE)
+
 CACHE_FILE=$(PROTOUSRLIBDIR)/lp/caches/SUNWfoomatic.cache
 
 $(SOURCE_DIR)/.built: $(SOURCE_DIR)/.prep $(COMPONENT_DIR)/nolicense $(COMPONENT_DIR)/supportedonly.sh
