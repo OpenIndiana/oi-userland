@@ -17,42 +17,34 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		tuntap
 COMPONENT_VERSION=	1.3.0
 COMPONENT_LICENSE=	GPLv2
-COMPONENT_GIT_REV=	348e202
+COMPONENT_GIT_REV=	16eed2b
 COMPONENT_SRC=		kaizawa-$(COMPONENT_NAME)-$(COMPONENT_GIT_REV)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:72c9a7dc56cf52297ad163451df46f345a1c6019ba8fa84936e59550ab0f506e
+COMPONENT_ARCHIVE_HASH=	sha256:25e0cfcdd47ffcd814b40b2e6e89670650c85634b566ed615c789ccacd0eca42
 COMPONENT_PROJECT_URL=	http://www.whiteboard.ne.jp/~admin2/tuntap/
-COMPONENT_ARCHIVE_URL= 	https://codeload.github.com/kaizawa/tuntap/legacy.tar.gz/v$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE_URL= 	https://codeload.github.com/kaizawa/tuntap/legacy.tar.gz/$(COMPONENT_GIT_REV)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-        ($(CLONEY) $(SOURCE_DIR) $(@D))
+PATCH_LEVEL = 0
 
-CONFIGURE_SCRUPT= $(@D)/configure
+CFLAGS +=	$(CPP_LARGEFILES)
+LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
-CONFIGURE_OPTIONS.32 = --disable-64bit
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS.32 +=  --disable-64bit
+CONFIGURE_OPTIONS.64 +=  --enable-64bit
 
 PKGLINT=true
 
+# common targets
 build:          $(BUILD_32_and_64)
 
-install:       
-	$(INSTALL) -d -m 0755 $(PROTOUSRDIR)/kernel/drv 
-	$(INSTALL) -d -m 0755 $(PROTOUSRDIR)/kernel/$(MACH64)/drv
-	$(INSTALL) -d -m 0755 $(PROTOUSRINCDIR)/net
+install:	$(INSTALL_32_and_64)
 
-	$(INSTALL) -m 644 $(BUILD_DIR_32)/if_tun.h $(PROTOUSRINCDIR)/net
-	$(INSTALL) -m 644 $(BUILD_DIR_32)/tun $(PROTOUSRDIR)/kernel/drv
-	$(INSTALL) -m 644 $(BUILD_DIR_32)/tap $(PROTOUSRDIR)/kernel/drv
-	$(INSTALL) -m 644 $(BUILD_DIR_32)/tun.conf $(PROTOUSRDIR)/kernel/drv 
-	$(INSTALL) -m 644 $(BUILD_DIR_32)/tap.conf $(PROTOUSRDIR)/kernel/drv
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
-	$(INSTALL) -m 644 $(BUILD_DIR_64)/tun $(PROTOUSRDIR)/kernel/$(MACH64)/drv 
-	$(INSTALL) -m 644 $(BUILD_DIR_64)/tap $(PROTOUSRDIR)/kernel/$(MACH64)/drv
-
-	$(TOUCH) $(BUILD_DIR_32)/.installed
-	$(TOUCH) $(BUILD_DIR_64)/.installed
-
+include ../../make-rules/depend.mk
