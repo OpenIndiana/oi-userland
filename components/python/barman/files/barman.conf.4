@@ -1,0 +1,309 @@
+'\" t
+.\"     Title: barman\&.conf
+.\"    Author: [see the "AUTHORS" section]
+.\" Generator: DocBook XSL Stylesheets v1.76.1 <http://docbook.sf.net/>
+.\"      Date: 07/08/2013
+.\"    Manual: \ \&
+.\"    Source: \ \&
+.\"  Language: English
+.\"
+.TH "BARMAN.CONF" "4" "07/08/2013" "\ \&" "\ \&"
+.\" -----------------------------------------------------------------
+.\" * Define some portability stuff
+.\" -----------------------------------------------------------------
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.\" http://bugs.debian.org/507673
+.\" http://lists.gnu.org/archive/html/groff/2009-02/msg00013.html
+.\" ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.ie \n(.g .ds Aq \(aq
+.el       .ds Aq '
+.\" -----------------------------------------------------------------
+.\" * set default formatting
+.\" -----------------------------------------------------------------
+.\" disable hyphenation
+.nh
+.\" disable justification (adjust text to left margin only)
+.ad l
+.\" -----------------------------------------------------------------
+.\" * MAIN CONTENT STARTS HERE *
+.\" -----------------------------------------------------------------
+.SH "NAME"
+barman\&.conf \- configuration file for Barman (backup and recovery manager for PostgreSQL)
+.SH "CONFIGURATION FILE LOCATIONS"
+.sp
+The system\-level Barman configuration file is located at
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+/etc/barman\&.conf
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+or
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+/etc/barman/barman\&.conf
+.fi
+.if n \{\
+.RE
+.\}
+.sp
+and is overridden on a per\-user level by
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+$HOME/\&.barman\&.conf
+.fi
+.if n \{\
+.RE
+.\}
+.SH "CONFIGURATION FILE SYNTAX"
+.sp
+The Barman configuration file is a plain ini file\&. There is a general section called [barman] and a section [servername] for each server you want to backup\&. Rows starting with ; are comments\&.
+.SH "CONFIGURATION FILE DIRECTORY"
+.sp
+Barman supports the inclusion of multiple configuration files, through the configuration_files_directory option\&. Included files must contain only server specifications, not global configurations\&. If the value of configuration_files_directory is a directory, Barman reads all files with \&.conf extension that exist in that folder\&. For example, if you set it to /etc/barman\&.d, you can specify your PostgreSQL servers placing each section in a separate \&.conf file inside the /etc/barman\&.d folder\&.
+.SH "OPTIONS"
+.PP
+\fBactive\fR
+.RS 4
+Ignored\&. Server\&.
+.RE
+.PP
+\fBdescription\fR
+.RS 4
+A human readable description of a server\&. Server\&.
+.RE
+.PP
+\fBssh_command\fR
+.RS 4
+Command used by Barman to login to the Postgres server via ssh\&. Server\&.
+.RE
+.PP
+\fBconninfo\fR
+.RS 4
+Connection string used by Barman to connect to the Postgres server\&. Server\&.
+.RE
+.PP
+\fBbasebackups_directory\fR
+.RS 4
+Directory where base backups will be placed\&. Global/Server\&.
+.RE
+.PP
+\fBwals_directory\fR
+.RS 4
+Directory which contains WAL files\&. Global/Server\&.
+.RE
+.PP
+\fBincoming_wals_directory\fR
+.RS 4
+Directory where incoming WAL files are archived into\&. Global/Server\&.
+.RE
+.PP
+\fBlock_file\fR
+.RS 4
+Lock file for a backup in progress\&. Global/Server\&.
+.RE
+.PP
+\fBcustom_compression_filter\fR
+.RS 4
+Compression algorithm applied to WAL files\&. Global/Server\&.
+.RE
+.PP
+\fBcustom_decompression_filter\fR
+.RS 4
+Decompression algorithm applied to compressed WAL files; this must match the compression algorithm\&. Global/Server\&.
+.RE
+.PP
+\fBpre_backup_script\fR
+.RS 4
+Hook script launched before a base backup\&. Global/Server\&.
+.RE
+.PP
+\fBpost_backup_script\fR
+.RS 4
+Hook script launched after a base backup\&. Global/Server\&.
+.RE
+.PP
+\fBminimum_redundancy\fR
+.RS 4
+Minimum number of backups to be retained\&. Default 0\&. Global/Server\&.
+.RE
+.PP
+\fBretention_policy\fR
+.RS 4
+Policy for retention of periodical backups and archive logs\&. If left empty, retention policies are not enforced\&. For redundancy based retention policy use "REDUNDANCY i" (where i is an integer > 0 and defines the number of backups to retain)\&. For recovery window retention policy use "RECOVERY WINDOW OF i DAYS" or "RECOVERY WINDOW OF i WEEKS" or "RECOVERY WINDOW OF i MONTHS" where i is a positive integer representing, specifically, the number of days, weeks or months to retain your backups\&. For more detailed information, refer to the official documentation\&. Default value is empty\&. Global/Server\&.
+.RE
+.PP
+\fBwal_retention_policy\fR
+.RS 4
+Policy for retention of archive logs (WAL files)\&. Currently only "MAIN" is available\&. Global/Server\&.
+.RE
+.PP
+\fBretention_policy_mode\fR
+.RS 4
+Currently only "auto" is implemented\&. Global/Server\&.
+.RE
+.PP
+\fBbandwidth_limit\fR
+.RS 4
+This option allows you to specify a maximum transfer rate in kilobytes per second\&. A value of zero specifies no limit (default)\&. Global/Server\&.
+.RE
+.PP
+\fBtablespace_bandwidth_limit\fR
+.RS 4
+This option allows you to specify a maximum transfer rate in kilobytes per second, by specifying a comma separated list of tablespaces (pairs TBNAME:BWLIMIT)\&. A value of zero specifies no limit (default)\&. Global/Server\&.
+.RE
+.SH "HOOK SCRIPTS"
+.sp
+The script definition is passed to a shell and can return any exit code\&.
+.sp
+The shell environment will contain the following variables:
+.PP
+BARMAN_BACKUP_DIR
+.RS 4
+backup destination directory
+.RE
+.PP
+BARMAN_BACKUP_ID
+.RS 4
+ID of the backup
+.RE
+.PP
+BARMAN_CONFIGURATION
+.RS 4
+configuration file used by barman
+.RE
+.PP
+BARMAN_ERROR
+.RS 4
+error message, if any (only for the
+\fIpost\fR
+phase)
+.RE
+.PP
+BARMAN_PHASE
+.RS 4
+
+\fIpre\fR
+or
+\fIpost\fR
+.RE
+.PP
+BARMAN_PREVIOUS_ID
+.RS 4
+ID of the previous backup (if present)
+.RE
+.PP
+BARMAN_SERVER
+.RS 4
+name of the server
+.RE
+.PP
+BARMAN_STATUS
+.RS 4
+status of the backup
+.RE
+.PP
+BARMAN_VERSION
+.RS 4
+version of Barman
+.RE
+.sp
+No check is performed on the exit code of the script\&. The result will be simply written in the log file\&.
+.SH "EXAMPLE"
+.sp
+Example of the configuration file:
+.sp
+.if n \{\
+.RS 4
+.\}
+.nf
+[barman]
+; Main directory
+barman_home = /var/lib/barman
+
+; System user
+barman_user = barman
+
+; Log location
+log_file = /var/log/barman/barman\&.log
+
+; Default compression level
+;compression = gzip
+
+; \*(Aqmain\*(Aq PostgreSQL Server configuration
+[main]
+; Human readable description
+description =  "Main PostgreSQL Database"
+
+; SSH options
+ssh_command = ssh postgres@pg
+
+; PostgreSQL connection string
+conninfo = host=pg user=postgres
+
+; Minimum number of required backups (redundancy)
+minimum_redundancy = 1
+
+; Retention policy (based on redundancy)
+retention_policy = REDUNDANCY 2
+.fi
+.if n \{\
+.RE
+.\}
+.SH "AUTHORS"
+.sp
+In alphabetical order:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Gabriele Bartolini <gabriele\&.bartolini@2ndquadrant\&.it>
+.RE
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Marco Nenciarini <marco\&.nenciarini@2ndquadrant\&.it>
+.RE
+.sp
+Past contributors:
+.sp
+.RS 4
+.ie n \{\
+\h'-04'\(bu\h'+03'\c
+.\}
+.el \{\
+.sp -1
+.IP \(bu 2.3
+.\}
+Carlo Ascani
+.RE
+.SH "RESOURCES"
+.sp
+Homepage: http://www\&.pgbarman\&.org/
+.SH "COPYING"
+.sp
+Barman is the exclusive property of 2ndQuadrant Italia and its code is distributed under GNU General Public License v3\&.
+.sp
+Copyright \(co 2011\-2013, 2ndQuadrant Italia (Devise\&.IT S\&.r\&.l\&.) \- http://www\&.2ndQuadrant\&.it/\&.
