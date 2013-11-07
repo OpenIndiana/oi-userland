@@ -26,6 +26,17 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+PATCH_LEVEL = 0
+
+CPPFLAGS +=	-I$(WS_TOP)/components/tuntap/build/prototype/$(MACH)/usr/include
+CFLAGS +=	$(CPP_LARGEFILES)
+LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
+
+CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
+CONFIGURE_OPTIONS += GREP=/usr/gnu/bin/grep
+CONFIGURE_OPTIONS += --disable-lzo
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 
