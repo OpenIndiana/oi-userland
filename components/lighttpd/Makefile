@@ -57,7 +57,7 @@ CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/bin/mysql_config
+CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.1/bin/mysql_config
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 # Enable ASLR for this component

@@ -48,11 +48,12 @@ file usr/mysql/5.1/share/mysql/my-small.cnf path=etc/mysql/5.1/my-small.cnf \
     mode=0644 preserve=true
 file usr/mysql/5.1/share/mysql/my-small.cnf path=etc/mysql/5.1/my.cnf \
     mode=0644 preserve=renamenew
-file Solaris/auth_attr path=etc/security/auth_attr.d/mysql-51
-file Solaris/prof_attr path=etc/security/prof_attr.d/mysql-51
+
+# SMF Configuration
 file Solaris/mysql_51.xml \
-    path=lib/svc/manifest/application/database/mysql_51.xml
+     path=lib/svc/manifest/application/database/mysql_51.xml
 file Solaris/mysql_51 path=lib/svc/method/mysql_51 mode=0555
+
 file path=usr/mysql/5.1/bin/$(MACH64)/innochecksum
 file path=usr/mysql/5.1/bin/$(MACH64)/msql2mysql
 file path=usr/mysql/5.1/bin/$(MACH64)/my_print_defaults
@@ -290,14 +291,9 @@ file path=usr/mysql/5.1/share/mysql/swedish/errmsg.sys
 file path=usr/mysql/5.1/share/mysql/ukrainian/errmsg.sys
 file Solaris/mysql_51.1 path=usr/share/man/man1/mysql_51.1
 license mysql-51.license license=GPLv2
-link path=etc/mysql/my.cnf target=5.1/my.cnf
-link path=usr/bin/mysql target=../mysql/5.1/bin/mysql
+link path=usr/bin/mysql target=../mysql/5.1/bin/$(MACH64)/mysql mediator=mysql mediator-version=5.1
 link path=usr/mysql/5.1/bin/64 target=$(MACH64)
-link path=usr/mysql/bin target=5.1/bin
-link path=usr/mysql/docs target=5.1/docs
-link path=usr/mysql/include target=5.1/include
-link path=usr/mysql/man target=5.1/man
-link path=usr/mysql/share target=5.1/share
-link path=usr/share/man/man1/mysql.1 target=mysql_51.1
-link path=var/mysql/data target=5.1/data
-depend fmri=database/mysql-common@0.5.11 type=require
+link path=usr/share/man/man1/mysql.1 target=mysql_51.1 mediator=mysql mediator-version=5.1
+
+# added dependency to bring forward mysql-common with latest profile and authorizations
+depend fmri=database/mysql-common@5.11,5.12-5.12.0.0.0.35.0 type=require

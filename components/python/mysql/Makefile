@@ -25,7 +25,7 @@
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/mysql/bin:/usr/bin:/usr/gnu/bin
+PATH=/usr/mysql/5.1/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		MySQL-python
 COMPONENT_VERSION=	1.2.2
@@ -41,7 +41,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS +=	-L/usr/mysql/lib/mysql -R/usr/mysql/lib/mysql
+CFLAGS +=	-L/usr/mysql/5.1/lib/mysql -R/usr/mysql/5.1/lib/mysql
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 

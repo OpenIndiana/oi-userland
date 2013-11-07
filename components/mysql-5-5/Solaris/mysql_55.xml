@@ -2,7 +2,7 @@
 <!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
 <!--
 
- Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+ Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 
  CDDL HEADER START
 
@@ -57,21 +57,21 @@
                 <service_fmri value='svc:/system/filesystem/local:default' />
         </dependency> 
 
-        <instance name='version_51' enabled='false'>
-                <method_context working_directory='/var/mysql'>
+        <instance name='version_55' enabled='false'>
+                <method_context working_directory='/usr/mysql/5.5'>
                         <method_credential user='mysql' group='mysql' />
                 </method_context>
 
                 <exec_method
                         type='method'
                         name='start'
-                        exec='/lib/svc/method/mysql_51 start'
+                        exec='/lib/svc/method/mysql_55 start'
                         timeout_seconds='60' />
 
                 <exec_method
                         type='method'
                         name='stop'
-                        exec='/lib/svc/method/mysql_51 stop %{restarter/contract}'
+                        exec='/lib/svc/method/mysql_55 stop %{restarter/contract}'
                         timeout_seconds='60' />
 
                 <!--
@@ -79,16 +79,14 @@
                    because mysqld by itself cannot accept a HUP signal to
                    reload the configuration file my.cnf
                 -->
-                
-        	<property_group  name='mysql' type='application'>
+
+                <property_group  name='mysql' type='application'>
                         <propval name='cnf' type='astring'
-                                 value='/etc/mysql/5.1/my.cnf' />
+                                 value='/etc/mysql/5.5/my.cnf' />
                         <propval name='bin' type='astring'
-                                 value='/usr/mysql/5.1/bin' />
-                	<propval name='data' type='astring'
-                    	         value='/var/mysql/5.1/data' />
-                        <propval name='enable_64bit' type='boolean'
-			         value='true' />
+                                 value='/usr/mysql/5.5/bin' />
+                        <propval name='data' type='astring'
+                                 value='/var/mysql/5.5/data' />
                         <propval name='value_authorization' type='astring'
                                  value='solaris.smf.value.mysql' /> 
                         <propval name='action_authorization' type='astring'
@@ -110,7 +108,7 @@
                         </common_name>
 
                         <documentation>
-                                <manpage title='MySQL 5.1' section='1' />
+                                <manpage title='MySQL 5.5' section='1' />
                                 <doc_link name='mysql.com'
                                         uri='http://dev.mysql.com/doc' />
                         </documentation>

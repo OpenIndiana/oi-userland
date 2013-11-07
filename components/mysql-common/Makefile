@@ -18,15 +18,24 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
+include ../../make-rules/shared-macros.mk
 
-set name=pkg.fmri value=pkg:/database/mysql-common@0.5.11,$(BUILD_VERSION)
-set name=pkg.summary value="MySQL Database Management System (Base)"
-set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Databases
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-group groupname=mysql gid=70
-user username=mysql ftpuser=false gcos-field="MySQL Reserved UID" group=mysql \
-    password=NP uid=70
+COMPONENT_NAME=		mysql-common
+COMPONENT_VERSION=	5.11
+COMPONENT_PROJECT_URL=	http://dev.mysql.com/
+COMPONENT_BUGDB=	database/mysql
 
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
+
+# ASLR Mode should be set as not applicable
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+# nothing to download or build; just package
+download prep build install test:
+
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
+
+clobber:	clean

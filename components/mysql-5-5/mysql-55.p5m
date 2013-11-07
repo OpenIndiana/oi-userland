@@ -1,0 +1,264 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/database/mysql-55@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="MySQL 5.5 Database Management System"
+set name=com.oracle.info.description \
+    value="MySQL is a fast, stable and true multi-user, multi-threaded SQL database server."
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/Databases"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/333
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license mysql-55.license license=GPLv2
+
+# added dependency on mysql-common package
+depend fmri=database/mysql-common@5.11,5.12-5.12.0.0.0.35.0 type=require
+depend fmri=database/mysql-51@5.1.37,5.12-5.12.0.0.0.35.0 type=optional
+
+# added ownership of var/mysql/* to mysql user/ group
+dir path=var/mysql group=mysql mode=0700 owner=mysql
+dir path=var/mysql/5.5 group=mysql mode=0700 owner=mysql
+dir path=var/mysql/5.5/data group=mysql mode=0700 owner=mysql
+
+# SMF Configuration
+file Solaris/mysql_55.xml \
+     path=lib/svc/manifest/application/database/mysql_55.xml
+file Solaris/mysql_55 path=lib/svc/method/mysql_55 mode=0555
+
+# Regular mysql-55 files
+file path=usr/mysql/5.5/COPYING
+file path=usr/mysql/5.5/INSTALL-BINARY
+file path=usr/mysql/5.5/README
+file path=usr/mysql/5.5/bin/$(MACH32)/mysql_config
+file path=usr/mysql/5.5/bin/innochecksum
+file path=usr/mysql/5.5/bin/my_print_defaults
+file path=usr/mysql/5.5/bin/myisam_ftdump
+file path=usr/mysql/5.5/bin/myisamchk
+file path=usr/mysql/5.5/bin/myisamlog
+file path=usr/mysql/5.5/bin/myisampack
+file path=usr/mysql/5.5/bin/mysql_config
+file path=usr/mysql/5.5/bin/mysql_convert_table_format
+file path=usr/mysql/5.5/bin/mysql_embedded
+file path=usr/mysql/5.5/bin/mysql_install_db
+file path=usr/mysql/5.5/bin/mysql_plugin
+file path=usr/mysql/5.5/bin/mysql_secure_installation
+file path=usr/mysql/5.5/bin/mysql_setpermission
+file path=usr/mysql/5.5/bin/mysql_tzinfo_to_sql
+file path=usr/mysql/5.5/bin/mysql_upgrade
+file path=usr/mysql/5.5/bin/mysql_zap
+file path=usr/mysql/5.5/bin/mysqld
+file path=usr/mysql/5.5/bin/mysqld_multi
+file path=usr/mysql/5.5/bin/mysqld_safe
+file path=usr/mysql/5.5/bin/mysqlhotcopy
+file path=usr/mysql/5.5/bin/mysqltest
+file path=usr/mysql/5.5/bin/mysqltest_embedded
+file path=usr/mysql/5.5/bin/perror
+file path=usr/mysql/5.5/bin/replace
+file path=usr/mysql/5.5/bin/resolve_stack_dump
+file path=usr/mysql/5.5/bin/resolveip
+file path=usr/mysql/5.5/data/test/db.opt
+file path=usr/mysql/5.5/docs/ChangeLog
+file path=usr/mysql/5.5/docs/INFO_BIN
+file path=usr/mysql/5.5/docs/INFO_SRC
+file path=usr/mysql/5.5/docs/mysql.info
+file path=usr/mysql/5.5/include/decimal.h
+file path=usr/mysql/5.5/include/errmsg.h
+file path=usr/mysql/5.5/include/keycache.h
+file path=usr/mysql/5.5/include/m_ctype.h
+file path=usr/mysql/5.5/include/m_string.h
+file path=usr/mysql/5.5/include/my_alloc.h
+file path=usr/mysql/5.5/include/my_attribute.h
+file path=usr/mysql/5.5/include/my_compiler.h
+file path=usr/mysql/5.5/include/my_config.h
+file path=usr/mysql/5.5/include/my_dbug.h
+file path=usr/mysql/5.5/include/my_dir.h
+file path=usr/mysql/5.5/include/my_getopt.h
+file path=usr/mysql/5.5/include/my_global.h
+file path=usr/mysql/5.5/include/my_list.h
+file path=usr/mysql/5.5/include/my_net.h
+file path=usr/mysql/5.5/include/my_pthread.h
+file path=usr/mysql/5.5/include/my_sys.h
+file path=usr/mysql/5.5/include/my_xml.h
+file path=usr/mysql/5.5/include/mysql.h
+file path=usr/mysql/5.5/include/mysql/client_plugin.h
+file path=usr/mysql/5.5/include/mysql/innodb_priv.h
+file path=usr/mysql/5.5/include/mysql/plugin.h
+file path=usr/mysql/5.5/include/mysql/plugin_audit.h
+file path=usr/mysql/5.5/include/mysql/plugin_auth.h
+file path=usr/mysql/5.5/include/mysql/plugin_auth_common.h
+file path=usr/mysql/5.5/include/mysql/plugin_ftparser.h
+file path=usr/mysql/5.5/include/mysql/psi/mysql_file.h
+file path=usr/mysql/5.5/include/mysql/psi/mysql_thread.h
+file path=usr/mysql/5.5/include/mysql/psi/psi.h
+file path=usr/mysql/5.5/include/mysql/psi/psi_abi_v1.h
+file path=usr/mysql/5.5/include/mysql/psi/psi_abi_v2.h
+file path=usr/mysql/5.5/include/mysql/service_my_snprintf.h
+file path=usr/mysql/5.5/include/mysql/service_thd_alloc.h
+file path=usr/mysql/5.5/include/mysql/service_thd_wait.h
+file path=usr/mysql/5.5/include/mysql/service_thread_scheduler.h
+file path=usr/mysql/5.5/include/mysql/services.h
+file path=usr/mysql/5.5/include/mysql/thread_pool_priv.h
+file path=usr/mysql/5.5/include/mysql_com.h
+file path=usr/mysql/5.5/include/mysql_embed.h
+file path=usr/mysql/5.5/include/mysql_time.h
+file path=usr/mysql/5.5/include/mysql_version.h
+file path=usr/mysql/5.5/include/mysqld_ername.h
+file path=usr/mysql/5.5/include/mysqld_error.h
+file path=usr/mysql/5.5/include/plugin.h
+file path=usr/mysql/5.5/include/plugin_audit.h
+file path=usr/mysql/5.5/include/plugin_ftparser.h
+file path=usr/mysql/5.5/include/sql_common.h
+file path=usr/mysql/5.5/include/sql_state.h
+file path=usr/mysql/5.5/include/sslopt-case.h
+file path=usr/mysql/5.5/include/sslopt-longopts.h
+file path=usr/mysql/5.5/include/sslopt-vars.h
+file path=usr/mysql/5.5/include/typelib.h
+file path=usr/mysql/5.5/lib/plugin/adt_null.so
+file path=usr/mysql/5.5/lib/plugin/auth.so
+file path=usr/mysql/5.5/lib/plugin/auth_test_plugin.so
+file path=usr/mysql/5.5/lib/plugin/daemon_example.ini
+file path=usr/mysql/5.5/lib/plugin/ha_example.so
+file path=usr/mysql/5.5/lib/plugin/libdaemon_example.so
+file path=usr/mysql/5.5/lib/plugin/mypluglib.so
+file path=usr/mysql/5.5/lib/plugin/qa_auth_client.so
+file path=usr/mysql/5.5/lib/plugin/qa_auth_interface.so
+file path=usr/mysql/5.5/lib/plugin/qa_auth_server.so
+file path=usr/mysql/5.5/lib/plugin/semisync_master.so
+file path=usr/mysql/5.5/lib/plugin/semisync_slave.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/adt_null.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/auth.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/auth_test_plugin.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/daemon_example.ini
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/ha_example.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/libdaemon_example.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/mypluglib.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/qa_auth_client.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/qa_auth_interface.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/qa_auth_server.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/semisync_master.so
+file path=usr/mysql/5.5/lib/$(MACH64)/plugin/semisync_slave.so
+file path=usr/mysql/5.5/man/man1/innochecksum.1
+file path=usr/mysql/5.5/man/man1/myisam_ftdump.1
+file path=usr/mysql/5.5/man/man1/comp_err.1
+file path=usr/mysql/5.5/man/man1/my_print_defaults.1
+file path=usr/mysql/5.5/man/man1/myisamchk.1
+file path=usr/mysql/5.5/man/man1/myisamlog.1
+file path=usr/mysql/5.5/man/man1/myisampack.1
+file path=usr/mysql/5.5/man/man1/mysql-stress-test.pl.1
+file path=usr/mysql/5.5/man/man1/mysql.server.1
+file path=usr/mysql/5.5/man/man1/mysql_config.1
+file path=usr/mysql/5.5/man/man1/mysql_convert_table_format.1
+file path=usr/mysql/5.5/man/man1/mysql_install_db.1
+file path=usr/mysql/5.5/man/man1/mysql_plugin.1
+file path=usr/mysql/5.5/man/man1/mysql_secure_installation.1
+file path=usr/mysql/5.5/man/man1/mysql_setpermission.1
+file path=usr/mysql/5.5/man/man1/mysql_tzinfo_to_sql.1
+file path=usr/mysql/5.5/man/man1/mysql_upgrade.1
+file path=usr/mysql/5.5/man/man1/mysql_zap.1
+file path=usr/mysql/5.5/man/man1/mysqld_multi.1
+file path=usr/mysql/5.5/man/man1/mysqld_safe.1
+file path=usr/mysql/5.5/man/man1/mysqlhotcopy.1
+file path=usr/mysql/5.5/man/man1/mysqlman.1
+file path=usr/mysql/5.5/man/man1/mysqltest.1
+file path=usr/mysql/5.5/man/man1/mysqltest_embedded.1
+file path=usr/mysql/5.5/man/man1/perror.1
+file path=usr/mysql/5.5/man/man1/replace.1
+file path=usr/mysql/5.5/man/man1/resolve_stack_dump.1
+file path=usr/mysql/5.5/man/man1/resolveip.1
+file path=usr/mysql/5.5/man/man8/mysqld.8
+file path=usr/mysql/5.5/share/aclocal/mysql.m4
+file path=usr/mysql/5.5/share/charsets/Index.xml
+file path=usr/mysql/5.5/share/charsets/README
+file path=usr/mysql/5.5/share/charsets/armscii8.xml
+file path=usr/mysql/5.5/share/charsets/ascii.xml
+file path=usr/mysql/5.5/share/charsets/cp1250.xml
+file path=usr/mysql/5.5/share/charsets/cp1251.xml
+file path=usr/mysql/5.5/share/charsets/cp1256.xml
+file path=usr/mysql/5.5/share/charsets/cp1257.xml
+file path=usr/mysql/5.5/share/charsets/cp850.xml
+file path=usr/mysql/5.5/share/charsets/cp852.xml
+file path=usr/mysql/5.5/share/charsets/cp866.xml
+file path=usr/mysql/5.5/share/charsets/dec8.xml
+file path=usr/mysql/5.5/share/charsets/geostd8.xml
+file path=usr/mysql/5.5/share/charsets/greek.xml
+file path=usr/mysql/5.5/share/charsets/hebrew.xml
+file path=usr/mysql/5.5/share/charsets/hp8.xml
+file path=usr/mysql/5.5/share/charsets/keybcs2.xml
+file path=usr/mysql/5.5/share/charsets/koi8r.xml
+file path=usr/mysql/5.5/share/charsets/koi8u.xml
+file path=usr/mysql/5.5/share/charsets/latin1.xml
+file path=usr/mysql/5.5/share/charsets/latin2.xml
+file path=usr/mysql/5.5/share/charsets/latin5.xml
+file path=usr/mysql/5.5/share/charsets/latin7.xml
+file path=usr/mysql/5.5/share/charsets/macce.xml
+file path=usr/mysql/5.5/share/charsets/macroman.xml
+file path=usr/mysql/5.5/share/charsets/swe7.xml
+file path=usr/mysql/5.5/share/czech/errmsg.sys
+file path=usr/mysql/5.5/share/danish/errmsg.sys
+file path=usr/mysql/5.5/share/dutch/errmsg.sys
+file path=usr/mysql/5.5/share/english/errmsg.sys
+file path=usr/mysql/5.5/share/errmsg-utf8.txt
+file path=usr/mysql/5.5/share/estonian/errmsg.sys
+file path=usr/mysql/5.5/share/fill_help_tables.sql
+file path=usr/mysql/5.5/share/french/errmsg.sys
+file path=usr/mysql/5.5/share/german/errmsg.sys
+file path=usr/mysql/5.5/share/greek/errmsg.sys
+file path=usr/mysql/5.5/share/hungarian/errmsg.sys
+file path=usr/mysql/5.5/share/italian/errmsg.sys
+file path=usr/mysql/5.5/share/japanese/errmsg.sys
+file path=usr/mysql/5.5/share/korean/errmsg.sys
+file path=usr/mysql/5.5/share/mysql_system_tables.sql
+file path=usr/mysql/5.5/share/mysql_system_tables_data.sql
+file path=usr/mysql/5.5/share/mysql_test_data_timezone.sql
+file path=usr/mysql/5.5/share/norwegian-ny/errmsg.sys
+file path=usr/mysql/5.5/share/norwegian/errmsg.sys
+file path=usr/mysql/5.5/share/polish/errmsg.sys
+file path=usr/mysql/5.5/share/portuguese/errmsg.sys
+file path=usr/mysql/5.5/share/romanian/errmsg.sys
+file path=usr/mysql/5.5/share/russian/errmsg.sys
+file path=usr/mysql/5.5/share/serbian/errmsg.sys
+file path=usr/mysql/5.5/share/slovak/errmsg.sys
+file path=usr/mysql/5.5/share/spanish/errmsg.sys
+file path=usr/mysql/5.5/share/swedish/errmsg.sys
+file path=usr/mysql/5.5/share/ukrainian/errmsg.sys
+file path=usr/mysql/5.5/support-files/binary-configure
+file path=usr/mysql/5.5/support-files/config.huge.ini
+file path=usr/mysql/5.5/support-files/config.medium.ini
+file path=usr/mysql/5.5/support-files/config.small.ini
+file path=usr/mysql/5.5/support-files/magic
+file path=usr/mysql/5.5/support-files/my-huge.cnf
+file path=usr/mysql/5.5/support-files/my-innodb-heavy-4G.cnf
+file path=usr/mysql/5.5/support-files/my-large.cnf
+file path=usr/mysql/5.5/support-files/my-medium.cnf
+file path=usr/mysql/5.5/support-files/my-small.cnf
+file usr/mysql/5.5/support-files/my-small.cnf path=etc/mysql/5.5/my.cnf \
+     mode=0644 preserve=renamenew
+file path=usr/mysql/5.5/support-files/mysql-log-rotate
+file path=usr/mysql/5.5/support-files/mysql.server
+file path=usr/mysql/5.5/support-files/mysqld_multi.server
+file path=usr/mysql/5.5/support-files/ndb-config-2-node.ini

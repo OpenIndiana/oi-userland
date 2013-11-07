@@ -1,0 +1,46 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/database/mysql-common@$(COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="MySQL Database Management System (Base)"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Databases
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/333
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license mysql.license license=Oracle
+
+# mysql user account and group setup
+group groupname=mysql gid=70
+
+user username=mysql ftpuser=false gcos-field="MySQL Reserved UID" group=mysql \
+    password=NP uid=70
+
+# optionally depend on mysql-51 to bring it forward if already installed
+depend fmri=database/mysql-51@5.1.37,5.12-5.12.0.0.0.35.0 type=optional
+
+# mysql common SMF config
+file Solaris/mysql-auth path=etc/security/auth_attr.d/mysql
+file Solaris/mysql-prof path=etc/security/prof_attr.d/mysql
+

@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 . /lib/svc/share/smf_include.sh
@@ -42,13 +42,12 @@ MYSQLBIN=`getproparg mysql/bin`
 MYSQLDATA=`getproparg mysql/data`
 PIDFILE=${MYSQLDATA}/`/usr/bin/uname -n`.pid
 
-
 if [ -z ${MYSQLCNF} ]; then
         echo "mysql/cnf property not set"
         exit $SMF_EXIT_ERR_CONFIG
 fi
 
-if [ -z ${MYSQLBIN} ]; then 
+if [ -z ${MYSQLBIN} ]; then
         echo "mysql/bin property not set"
         exit $SMF_EXIT_ERR_CONFIG
 fi
@@ -72,28 +71,8 @@ fi
 # cannot accept a HUP signal to reload the configuration file my.cnf
 
 mysql_start() 	{
-	MYSQLDVAL=`getproparg mysql/enable_64bit mysql:version_51`
-	if [ "$MYSQLDVAL" != "" ] ; then
-	case "$MYSQLDVAL" in
-	true|1)
-		#Check if the system architecture supports 64-bit applications
-		PLATFORM=`isainfo -b`
-		if [ "${PLATFORM}" != "64" ]; then
-		echo "This system is not capable of supporting 64-bit applications."
-		echo "Set the \"enable_64bit\" property value to \"false\" to start the 32-bit server."
-		exit $SMF_EXIT_ERR_CONFIG
-		else
-		echo ${MYSQLBIN}/64/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE}
-		${MYSQLBIN}/64/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE} > /dev/null &
-		fi
-	;;
-	false|0)
-		echo ${MYSQLBIN}/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE}
-		${MYSQLBIN}/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE} > /dev/null &
-		
-	;;
-	esac
-	fi
+	echo ${MYSQLBIN}/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE}
+	${MYSQLBIN}/mysqld_safe --defaults-file=${MYSQLCNF} --user=mysql --datadir=${MYSQLDATA} --pid-file=${PIDFILE} > /dev/null &
 
 }
 
