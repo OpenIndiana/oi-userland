@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -22,9 +22,9 @@ COMPONENT_ARCHIVE_HASH=	sha256:20bda3f9debb9a52db262aecddfa4e814050a9404a9106136
 COMPONENT_PROJECT_URL=	http://openvpn.net
 COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.org/community/releases/$(COMPONENT_ARCHIVE)
 
-include ../../make-rules/prep.mk
-include ../../make-rules/configure.mk
-include ../../make-rules/ips.mk
+include $(WS_TOP)/make-rules/prep.mk
+include $(WS_TOP)/make-rules/configure.mk
+include $(WS_TOP)/make-rules/ips.mk
 
 PATCH_LEVEL = 0
 
@@ -33,10 +33,7 @@ CFLAGS +=	$(CPP_LARGEFILES)
 LDFLAGS +=	$(LD_Z_DEFS) $(LD_Z_TEXT) -lpthread
 
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS += GREP=/usr/gnu/bin/grep
-CONFIGURE_OPTIONS += --disable-lzo
 CONFIGURE_OPTIONS += --disable-static
 CONFIGURE_OPTIONS += --enable-shared
 

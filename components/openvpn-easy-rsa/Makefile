@@ -14,14 +14,17 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		lzop
-COMPONENT_VERSION=	1.03
-IPS_COMPONENT_VERSION=	1.0.3
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_NAME=		easy-rsa
+COMPONENT_VERSION=	2.2.0
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)_master
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c1425b8c77d49f5a679d5a126c90ea6ad99585a55e335a613cae59e909dbb2c9
-COMPONENT_PROJECT_URL=	http://www.lzop.org
-COMPONENT_ARCHIVE_URL=	http://www.lzop.org/download/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:d23ddc3a764b40d03ada76f387c92ae4dcf4f5266da54c2bae130325b05eebe2
+COMPONENT_FMRI=		network/openvpn/easy-rsa
+COMPONENT_LICENSE=	GPLv2
+COMPONENT_LICENSE_FILE=	easy-rsa.license
+COMPONENT_SUMMARY=	Simple shell based CA utility
+COMPONENT_PROJECT_URL=	https://github.com/OpenVPN/easy-rsa	
+COMPONENT_ARCHIVE_URL=	http://swupdate.openvpn.net/community/releases/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
