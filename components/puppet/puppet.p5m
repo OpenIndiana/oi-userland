@@ -1073,5 +1073,9 @@ group groupname=puppet gid=40
 user username=puppet ftpuser=false gcos-field="Puppet Admin" group=puppet \
     home-dir=/etc/puppet login-shell=/bin/false uid=40
 license puppet.license license="Apache v2.0"
-# puppet has a hard dependency on facter
-depend type=require fmri=system/management/facter
+# Puppet has a hard dependency on facter.
+# Facter & puppet were both changed to use ruby 1.9 in 
+# the same build in which facter was updated to 1.6.18.
+# We make the dependency on facter 1.6.18, to ensure
+# puppet and facter are both using ruby 1.9.
+depend type=require fmri=system/management/facter@1.6.18

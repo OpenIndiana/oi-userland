@@ -35238,32 +35238,21 @@ file \
 license ruby-19.license \
     license="Ruby License, GPLv2, LGPLv2.1, Artistic, BSD, PD, BSD-like, MIT, Unicode, MPL1.1"
 
-# Remove dupaction010.2=true once mediated links for ruby
-# make it into the repo; a few man1 symlinks (erb.1, irb.1,
-# ri.1) & a usr/bin symlink (rake) did not exist in ruby 1.8, so
-# they won't get dupaction errors
-link path=usr/bin/erb mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true target=./erb19
+link path=usr/bin/erb mediator=ruby mediator-version=1.9 target=./erb19
 link path=usr/bin/erb19 target=../ruby/$(RUBY_VER)/bin/erb
-link path=usr/bin/gem mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true target=./gem19
+link path=usr/bin/gem mediator=ruby mediator-version=1.9 target=./gem19
 link path=usr/bin/gem19 target=../ruby/$(RUBY_VER)/bin/gem
-link path=usr/bin/irb mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true target=./irb19
+link path=usr/bin/irb mediator=ruby mediator-version=1.9 target=./irb19
 link path=usr/bin/irb19 target=../ruby/$(RUBY_VER)/bin/irb
 link path=usr/bin/rake mediator=ruby mediator-version=1.9 target=./rake19
 link path=usr/bin/rake19 target=../ruby/$(RUBY_VER)/bin/rake
-link path=usr/bin/rdoc mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true target=./rdoc19
+link path=usr/bin/rdoc mediator=ruby mediator-version=1.9 target=./rdoc19
 link path=usr/bin/rdoc19 target=../ruby/$(RUBY_VER)/bin/rdoc
-link path=usr/bin/ri mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true target=./ri19
+link path=usr/bin/ri mediator=ruby mediator-version=1.9 target=./ri19
 link path=usr/bin/ri19 target=../ruby/$(RUBY_VER)/bin/ri
-link path=usr/bin/ruby mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true target=./ruby19
+link path=usr/bin/ruby mediator=ruby mediator-version=1.9 target=./ruby19
 link path=usr/bin/ruby19 target=../ruby/$(RUBY_VER)/bin/ruby
-link path=usr/bin/testrb mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true target=./testrb19
+link path=usr/bin/testrb mediator=ruby mediator-version=1.9 target=./testrb19
 link path=usr/bin/testrb19 target=../ruby/$(RUBY_VER)/bin/testrb
 # this symlink in the default location allows vim to
 # find the ruby library without linking against it
@@ -35281,23 +35270,17 @@ link path=usr/ruby/$(RUBY_VER)/lib/64 target=$(MACH64)
 link path=usr/share/man/man1/erb.1 mediator=ruby mediator-version=1.9 \
     target=../../../ruby/$(RUBY_VER)/share/man/man1/erb.1
 link path=usr/share/man/man1/gem.1 mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true \
     target=../../../ruby/$(RUBY_VER)/share/man/man1/gem.1
 link path=usr/share/man/man1/irb.1 mediator=ruby mediator-version=1.9 \
     target=../../../ruby/$(RUBY_VER)/share/man/man1/irb.1
 link path=usr/share/man/man1/rake.1 mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true \
     target=../../../ruby/$(RUBY_VER)/share/man/man1/rake.1
 link path=usr/share/man/man1/ri.1 mediator=ruby mediator-version=1.9 \
     target=../../../ruby/$(RUBY_VER)/share/man/man1/ri.1
 link path=usr/share/man/man1/ruby.1 mediator=ruby mediator-version=1.9 \
-    pkg.linted.pkglint.dupaction010.2=true \
     target=../../../ruby/$(RUBY_VER)/share/man/man1/ruby.1
 
 # Force a dependency on the ruby-18 package, if it's installed
 # (type=optional), to ensure that older ruby-18 packages with unmediated
 # symlinks are replaced with ruby-18 containing mediated symlinks.
-# For now we put $(BUILD_VERSION), the same build version as
-# ruby-19, but later change this to be the specific build version
-# in which ruby-18 with mediated symlinks is integrated.
-depend fmri=pkg:/runtime/ruby-18@1.8.7.374,$(BUILD_VERSION) type=optional
+depend fmri=pkg:/runtime/ruby-18@1.8.7.374-5.12.0.0.0.32.0 type=optional
