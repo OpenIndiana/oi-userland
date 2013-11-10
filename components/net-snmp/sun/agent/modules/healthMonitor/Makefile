@@ -30,9 +30,9 @@ LDFLAGS_32=-I$(ROOT)$(CFGPREFIX)/include -I.
 LDFLAGS_amd64=-m64 -I$(ROOT)$(CFGPREFIX)/include -I.
 LDFLAGS=$(LDFLAGS_$(MARCH))
 
-CFLAGS_32=-Kpic
-CFLAGS_sparcv9=-Kpic
-CFLAGS_amd64=-Kpic
+CFLAGS_32=-fPIC -DPIC
+CFLAGS_sparcv9=-fPIC -DPIC
+CFLAGS_amd64=--fPIC -DPIC
 CFLAGS=$(CFLAGS_$(MARCH))
 
 LDLIBS_sparcv9= -L/usr/lib/sparcv9 -l kstat

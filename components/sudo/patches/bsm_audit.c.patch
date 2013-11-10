@@ -1,0 +1,58 @@
+--- sudo-1.8.6p7/plugins/sudoers/bsm_audit.c.orig	2013-09-08 02:48:35.111774246 +0200
++++ sudo-1.8.6p7/plugins/sudoers/bsm_audit.c	2013-09-08 02:49:06.530643623 +0200
+@@ -31,10 +31,12 @@
+ #include <unistd.h>
+ 
+ #include "gettext.h"
+-#include "error.h"
+ #include "sudo_debug.h"
++#include "error.h"
+ #include "bsm_audit.h"
+ 
++#define        AUE_sudo 6650
++
+ /*
+  * Solaris auditon() returns EINVAL if BSM audit not configured.
+  * OpenBSM returns ENOSYS for unimplemented options.
+@@ -103,7 +105,7 @@
+ 		error(1, _("au_open: failed"));
+ 	if (getaudit_addr(&ainfo_addr, sizeof(ainfo_addr)) == 0) {
+ 		tok = au_to_subject_ex(auid, geteuid(), getegid(), getuid(),
+-		    getuid(), pid, pid, &ainfo_addr.ai_termid);
++		    getuid(), pid, ainfo_addr.ai_asid, &ainfo_addr.ai_termid);
+ 	} else if (errno == ENOSYS) {
+ 		/*
+ 		 * NB: We should probably watch out for ERANGE here.
+@@ -111,7 +113,7 @@
+ 		if (getaudit(&ainfo) < 0)
+ 			error(1, _("getaudit: failed"));
+ 		tok = au_to_subject(auid, geteuid(), getegid(), getuid(),
+-		    getuid(), pid, pid, &ainfo.ai_termid);
++		    getuid(), pid, ainfo.ai_asid, &ainfo.ai_termid);
+ 	} else
+ 		error(1, _("getaudit: failed"));
+ 	if (tok == NULL)
+@@ -147,7 +149,7 @@
+ 	/*
+ 	 * If we are not auditing, don't cut an audit record; just return.
+ 	 */
+-	if (auditon(A_GETCOND, &au_cond, sizeof(long)) < 0) {
++	if (auditon(A_GETCOND, (caddr_t)&au_cond, sizeof(long)) < 0) {
+ 		if (errno == AUDIT_NOT_CONFIGURED)
+ 			debug_return;
+ 		error(1, _("Could not determine audit condition"));
+@@ -162,12 +164,12 @@
+ 		error(1, _("au_open: failed"));
+ 	if (getaudit_addr(&ainfo_addr, sizeof(ainfo_addr)) == 0) { 
+ 		tok = au_to_subject_ex(auid, geteuid(), getegid(), getuid(),
+-		    getuid(), pid, pid, &ainfo_addr.ai_termid);
++		    getuid(), pid, ainfo_addr.ai_asid, &ainfo_addr.ai_termid);
+ 	} else if (errno == ENOSYS) {
+ 		if (getaudit(&ainfo) < 0) 
+ 			error(1, _("getaudit: failed"));
+ 		tok = au_to_subject(auid, geteuid(), getegid(), getuid(),
+-		    getuid(), pid, pid, &ainfo.ai_termid);
++		    getuid(), pid, ainfo.ai_asid, &ainfo.ai_termid);
+ 	} else
+ 		error(1, _("getaudit: failed"));
+ 	if (tok == NULL)

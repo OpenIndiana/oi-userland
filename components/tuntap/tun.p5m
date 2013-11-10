@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -12,9 +12,10 @@
 # Copyright 2013, Adam Stevko. All rights reserved.
 #
 
+<transform file dir path=.*kernel.* -> default group sys>
 <transform file path=.*kernel/drv/.+\.conf -> default mode 0644>
 <transform file path=.*kernel/drv/.+ -> default mode 0755>
-<transform file path=.*kernel/$(MACH64)/drv/.+ -> default mode 0755>
+<transform file path=.*kernel/drv/$(MACH64)/.+ -> default mode 0755>
 <transform file path=.*kernel/.+(?<!\.conf)$ -> default reboot-needed true>
 
 <transform file dir link hardlink path=.*kernel/.* -> set variant.opensolaris.zone global>
@@ -36,8 +37,7 @@ driver name=tun
 dir  path=usr
 dir  path=usr/kernel
 dir  path=usr/kernel/drv
-dir  path=usr/kernel/$(MACH64)
-dir  path=usr/kernel/$(MACH64)/drv
+dir  path=usr/kernel/drv/$(MACH64)
 file path=usr/kernel/drv/tun
-file path=usr/kernel/$(MACH64)/drv/tun
+file path=usr/kernel/drv/$(MACH64)/tun
 file path=usr/kernel/drv/tun.conf preserve=true

@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -14,15 +14,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.4.19
+COMPONENT_VERSION=	5.4.21
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:a1bdb9f2088c7aad13ef6fc35fca673142b253634e04ba33073d4927ef953eb3
+COMPONENT_ARCHIVE_HASH=	sha256:d7d9a99c656d456c53234c67fe8883438212536364d23b8764110760313c3b7c
 COMPONENT_ARCHIVE_URL=	http://uk3.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+PATH= /usr/bin:/usr/gnu/bin:/usr/sbin
 
 # Apache Paths
 AP_PREFIX=/usr/apache2/2.2
@@ -112,6 +114,7 @@ CONFIGURE_OPTIONS     +=	--disable-libgcc
 #CONFIGURE_OPTIONS     +=	--disable-libtool-lock
 #CONFIGURE_OPTIONS     +=	--disable-rpath
 
+CONFIGURE_OPTIONS     +=	--enable-dtrace
 CONFIGURE_OPTIONS     +=	--without-dbm
 CONFIGURE_OPTIONS     +=	--without-t1lib
 
@@ -141,6 +144,7 @@ CONFIGURE_OPTIONS     +=	--enable-tokenizer=shared
 CONFIGURE_OPTIONS     +=	--enable-exif=shared
 CONFIGURE_OPTIONS     +=	--enable-dom=shared
 CONFIGURE_OPTIONS     +=	--enable-ftp=shared
+CONFIGURE_OPTIONS     +=	--enable-intl=shared
 CONFIGURE_OPTIONS     +=	--enable-pdo=shared
 CONFIGURE_OPTIONS     +=	--enable-mbstring=shared
 CONFIGURE_OPTIONS     +=	--enable-xmlreader=shared
@@ -172,6 +176,8 @@ COMPONENT_PRE_INSTALL_ACTION+= \
 COMPONENT_BUILD_ENV+=	CC="$(CC) $(CC_BITS)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 CONFIGURE_ENV.32 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions
 CONFIGURE_ENV.64 +=     EXTENSION_DIR=$(PHP_PREFIX)/extensions/$(MACH64)
+CONFIGURE_ENV.32 +=     ICU_CONFIG=/usr/g++/bin/icu-config
+CONFIGURE_ENV.64 +=     ICU_CONFIG=/usr/g++/bin/amd64/icu-config
 
 # Standard build
 #$(BUILD_DIR_32)/.configured:	CONFIGURE_VARIANT_OPTIONS= \

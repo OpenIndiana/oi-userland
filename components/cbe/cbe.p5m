@@ -1,0 +1,64 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2011, Andrzej Szeszo
+#
+
+set name=pkg.fmri value=pkg:/developer/build/cbe@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Desktop CBE: env setup scripts for the Desktop CBE"
+set name=info.classification value="org.opensolaris.category.2008:Development/Distribution Tools"
+set name=info.upstream_url value=http://dlc.sun.com/osol/jds/downloads/cbe/test/
+
+license cbe.license license="CDDL"
+
+dir path=opt/dtbld
+dir path=opt/dtbld/bin
+dir path=opt/dtbld/lib
+dir path=opt/dtbld/lib/cbe-env
+dir path=opt/jdsbld
+dir path=opt/jdsbld/share
+file path=opt/dtbld/bin/env.csh
+file path=opt/dtbld/bin/env.sh
+file path=opt/dtbld/bin/env_include.sh
+file path=opt/dtbld/bin/gendiff
+file path=opt/dtbld/bin/ld-wrapper
+file path=opt/dtbld/lib/cbe-env/gcc3
+file path=opt/dtbld/lib/cbe-env/gcc3.1
+file path=opt/dtbld/lib/cbe-env/gcc47
+file path=opt/dtbld/lib/cbe-env/sexp
+file path=opt/dtbld/lib/cbe-env/ss12
+link path=opt/dtbld/bin/aclocal target=../../../usr/bin/aclocal-1.10
+link path=opt/dtbld/bin/automake target=../../../usr/bin/automake-1.10
+link path=opt/dtbld/bin/diff target=../../../usr/bin/gdiff
+link path=opt/dtbld/bin/grep target=../../../usr/gnu/bin/grep
+link path=opt/dtbld/bin/install target=../../../usr/bin/ginstall
+link path=opt/dtbld/bin/m4 target=../../../usr/gnu/bin/m4
+link path=opt/dtbld/bin/make target=../../../usr/gnu/bin/make
+link path=opt/dtbld/lib/cbe-env/default target=gcc47
+link path=opt/jdsbld/bin target=../dtbld/bin
+link path=opt/jdsbld/share/aclocal target=../../../usr/share/aclocal
+
+depend fmri=developer/build/ant type=require
+depend fmri=developer/macro/gnu-m4 type=require
+depend fmri=developer/build/autoconf type=require
+depend fmri=developer/build/libtool type=require
+depend fmri=developer/build/automake-19 type=require
+depend fmri=developer/build/automake-110 type=require
+depend fmri=developer/parser/bison type=require
+depend fmri=file/gnu-coreutils type=require
+depend fmri=text/gnu-diffutils type=require
+depend fmri=developer/lexer/flex type=require
+depend fmri=text/gnu-gettext type=require
+depend fmri=developer/build/gnu-make type=require
+depend fmri=developer/versioning/subversion type=require
+depend fmri=developer/build/cmake type=require
+
+depend fmri=package/pkgbuild type=require
