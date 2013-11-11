@@ -58,6 +58,8 @@ COMPONENT_POST_UNPACK_ACTION = \
 	$(GSED) -i -e 's| tr | /usr/gnu/bin/tr |' \
 		$(SOURCE_DIR)/autoopts/test/vendor.test
 
+CONFIGURE_ENV.64 += PATH=/usr/bin/$(MACH64):/usr/bin
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
