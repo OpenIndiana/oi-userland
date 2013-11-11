@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		emacs
-COMPONENT_VERSION=	23.4
+COMPONENT_VERSION=	24.3
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/emacs/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:26576f9e664397c729f78f5ffcd092969251988461896fe8793062346ee988b9
+    sha256:0098ca3204813d69cd8412045ba33e8701fa2062f4bff56bedafc064979eef41
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
 
@@ -58,12 +58,6 @@ PKG_MACROS +=	EMACS_ULEVDIR=$(EMACS_ULEVDIR)
 LD_MAP_NOEXSTK.sparc=
 LD_MAP_NOEXDATA.sparc=
 
-# This code is built with gcc. The primary reason for this is that the
-# configure script has problems using a non-GNU cpp. I am not aware of
-# any reason Sun Studio could not be made to work, but simply made a
-# cost/benefit decision not to pursue it at this time
-COMPILER =	gcc3
-
 # Uncomment this for debugging only. It configures emacs to run from the
 # local proto instead of from its final installed location.
 #CONFIGURE_PREFIX =	$(PROTO_DIR)/usr
@@ -74,18 +68,20 @@ CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # configure options common to all variants of emacs that we want to build.
 CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
-CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)  --with-compress-info=no
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
 CONFIGURE_OPTIONS +=	--with-gif=no
 CONFIGURE_OPTIONS +=	ac_cv_sys_long_file_names=yes
 
-# ASLR should remain disabled for emacs (the default); 
-# build consistently core dumps with ASLR
+# ASLR should remain disabled for emacs (the default). ASLR undermines
+# emacs's dumping code, which requires every execution to have the same
+# mappings. Since emacs is not network facing, or run with elevated
+# privileges, this is not a security concern.
 ASLR_MODE = $(ASLR_DISABLE)
 
 # variant specific configure options
-$(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS +=	--without-x
+$(BUILD_DIR)/%-nox/.configured: CONFIGURE_OPTIONS += --without-all --without-x
 $(BUILD_DIR)/%-x/.configured:    CONFIGURE_OPTIONS +=	--with-x-toolkit=lucid
 $(BUILD_DIR)/%-gtk/.configured:  CONFIGURE_OPTIONS +=	--with-x-toolkit=gtk
 
@@ -105,7 +101,8 @@ PGSHAREMAN1=	$(PROTO_DIR)/usr/gnu/share/man/man1
 PSHAREMAN1=	$(PROTO_DIR)/usr/share/man/man1
 PVAR=		$(PROTO_DIR)/var
 
-# Remove emacs existing emacs executables/script from usr/bin
+# Remove existing emacs executable from usr/bin, so that we can replace
+# it with our script.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PBIN)/emacs $(PBIN)/emacs-* ;
 
 # GTK binaries
@@ -133,7 +130,11 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += $(CP) augment/emacs $(PBIN) ;
 COMPONENT_POST_INSTALL_ACTION += $(CHMOD) +x $(PBIN)/emacs ;
 
-# ctags and etags go in /usr/gnu/bin instead of /usr/bin
+# ctags and etags go in /usr/gnu/bin instead of /usr/bin. At this time,
+# etags could arguably go into /usr/bin, but we'd like to preserve the
+# ability to replace the standard Solaris /usr/bin/ctags, along with
+# both of the ones we're delivering, with Exuberant Ctags. Putting both
+# emacs tags programs in /usr/gnu/bin helps that, and is a simpler story.
 COMPONENT_POST_INSTALL_ACTION += $(MKDIR) $(PGBIN) ;
 COMPONENT_POST_INSTALL_ACTION += $(MV) $(PBIN)/ctags $(PBIN)/etags $(PGBIN) ;
 
@@ -150,6 +151,8 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) $(BUILD_DIR)/$(MACH64)-x/etc/DOC-$(COMPONENT_VERSION).1 \
 		$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
 
+# Provide manpages for the emacs variants, which are our creation, refering
+# the reader to the main emacs(1) manpage.
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) augment/man/man1/emacs-gtk.1 $(PSHAREMAN1)/emacs-gtk.1 ;
 COMPONENT_POST_INSTALL_ACTION += \
