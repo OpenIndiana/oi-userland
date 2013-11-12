@@ -34,6 +34,7 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        (cp -a $(SOURCE_DIR)/* $(@D))
+CONFIGURE_ENV +=        "XMLTO=xmlto --skip-validation"
 
 build: $(BUILD_32)
 
