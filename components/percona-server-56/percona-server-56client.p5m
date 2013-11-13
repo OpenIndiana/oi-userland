@@ -1,0 +1,89 @@
+#
+# This file its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/database/percona-server-56/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Percona Server 5.6 Database Management System - client tools"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Databases
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform file -> default pkg.depend.bypass-generate perl >
+<transform file -> default mangler.man.stability committed>
+
+license percona-server-56.license license=GPLv2
+
+link path=usr/bin/mysql target=../percona-server/5.6/bin/mysql mediator=mysql mediator-version=5.6 mediator-implementation=percona-server
+link path=usr/share/man/man1/mysql.1 target=../../../percona-server/5.6/man/man1/mysql.1 mediator=mysql mediator-version=5.6 mediator-implementation=percona-server
+depend fmri=database/mysql-common type=require
+
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
+
+file path=usr/percona-server/5.6/man/man1/msql2mysql.1
+file path=usr/percona-server/5.6/man/man1/mysql.1
+file path=usr/percona-server/5.6/man/man1/mysql_config.1
+file path=usr/percona-server/5.6/man/man1/mysql_config_editor.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysql_config
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysql_config
+file mode=0555  path=usr/percona-server/5.6/bin/mysql_config_editor
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysql_config_editor
+file mode=0555  path=usr/percona-server/5.6/bin/mysql
+file mode=0555  path=usr/percona-server/5.6/bin/msql2mysql
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/msql2mysql
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysql
+file path=usr/percona-server/5.6/man/man1/mysql_find_rows.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysql_find_rows
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysql_find_rows
+file path=usr/percona-server/5.6/man/man1/mysql_waitpid.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysql_waitpid
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysql_waitpid
+file path=usr/percona-server/5.6/man/man1/mysqlaccess.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysqlaccess.conf
+file mode=0555  path=usr/percona-server/5.6/bin/mysqlaccess
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqlaccess.conf
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqlaccess
+file path=usr/percona-server/5.6/man/man1/mysqladmin.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysqladmin
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqladmin
+file mode=0555 path=usr/percona-server/5.6/bin/amd64/mysql_convert_table_format
+file mode=0555 path=usr/percona-server/5.6/bin/mysql_convert_table_format
+file path=usr/percona-server/5.6/man/man1/mysql_convert_table_format.1
+file path=usr/percona-server/5.6/man/man1/mysqlcheck.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysqlcheck
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqlcheck
+file path=usr/percona-server/5.6/man/man1/mysqldumpslow.1
+file path=usr/percona-server/5.6/man/man1/mysqldump.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysqldumpslow
+file mode=0555  path=usr/percona-server/5.6/bin/mysqldump
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqldump
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqldumpslow
+file path=usr/percona-server/5.6/man/man1/mysqlimport.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysqlimport
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqlimport
+file path=usr/percona-server/5.6/man/man1/mysqlshow.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysqlshow
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqlshow
+file path=usr/percona-server/5.6/man/man1/mysqlslap.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysqlslap
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysqlslap
+file path=usr/percona-server/5.6/man/man1/mysql_setpermission.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysql_setpermission
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysql_setpermission
+file path=usr/percona-server/5.6/man/man1/mysql_tzinfo_to_sql.1
+file mode=0555  path=usr/percona-server/5.6/bin/mysql_tzinfo_to_sql
+file mode=0555  path=usr/percona-server/5.6/bin/$(MACH64)/mysql_tzinfo_to_sql
