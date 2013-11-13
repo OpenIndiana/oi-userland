@@ -37,7 +37,7 @@ COMPONENT_BUILD_ARGS = CFLAGS="-m$(BITS)"
 
 build:         $(BUILD_32_and_64)
 
-install:
+install:       $(BUILD_32_and_64)
 		$(MKDIR) $(PROTOUSRBINDIR)
 		$(MKDIR) $(PROTOUSRBINDIR64)
 		$(MKDIR) $(PROTOUSRSHAREMAN1MDIR) 
