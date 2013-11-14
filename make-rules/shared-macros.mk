@@ -238,16 +238,24 @@ GCC_ROOT =	/usr/gcc/4.7
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
+F77.studio.32 = $(SPRO_VROOT)/bin/f77
+FC.studio.32 = 	$(SPRO_VROOT)/bin/f90
 
 
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
+F77.studio.64 = $(SPRO_VROOT)/bin/f77
+FC.studio.64 = 	$(SPRO_VROOT)/bin/f90
 
-CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
+CC.gcc.32 =		$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
+F77.gcc.32 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.32 =		$(GCC_ROOT)/bin/gfortran
 
-CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
+CC.gcc.64 =		$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
+F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.64 =		$(GCC_ROOT)/bin/gfortran
 
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
@@ -279,6 +287,8 @@ endif
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
+F77 =		$(F77.$(COMPILER).$(BITS))
+FC =		$(FC.$(COMPILER).$(BITS))
 
 RUBY_VERSION =	1.8
 RUBY.1.8 =	/usr/bin/ruby18
@@ -595,6 +605,11 @@ CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
+
+# Build 32 or 64 bit objects in FORTRAN as well.
+F77FLAGS +=	$(CC_BITS)
+FCFLAGS +=	$(CC_BITS)
+
 
 #
 # Solaris linker flag sets to ease feature selection.  Add the required
