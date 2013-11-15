@@ -39,16 +39,16 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# GDB wants the GNU utilities
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
-
 # There are a large number of macros in the GCB code written
 # specifically for GCC's preprocessor. Studio does not expand
 # these macros the same way GCC does, and the resulting gdb is
 # not usable. Building gdb with a GCC >= 4.7.2 produces very
 # good results, even on SPARC.
-CC = /usr/gcc/4.7/bin/gcc
-CXX = /usr/gcc/4.7/bin/g++
+COMPILER=gcc
+GCCHOME=/usr/gcc/4.7
+
+# GDB wants the GNU utilities
+PATH=/usr/gnu/bin:$(GCCHOME)/bin:/usr/bin:/usr/perl5/bin
 
 CFLAGS_sparc =	-g -O2 -mcpu=ultrasparc -mtune=ultrasparc
 CFLAGS_sparc +=	-mno-unaligned-doubles
@@ -69,7 +69,6 @@ CONFIGURE_ENV += CFLAGS="`echo $(CFLAGS)`"
 CONFIGURE_ENV += CPPFLAGS="`echo $(CPPFLAGS)`"
 CONFIGURE_ENV += LDFLAGS="`echo $(LDFLAGS)`"
 
-CONFIGURE_OPTIONS += --with-system-readline
 CONFIGURE_OPTIONS += --with-x=no
 CONFIGURE_OPTIONS += --with-curses
 CONFIGURE_OPTIONS += --disable-werror
