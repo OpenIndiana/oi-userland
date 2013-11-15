@@ -1,0 +1,120 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/diagnostic/mrtg@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license mrtg.license license="GPLv2"
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/bin/+ -> default mode 0555>
+<transform file path=.* -> default pkg.depend.bypass-generate perl >
+
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
+depend type=require fmri=image/rrdtool@1.4.7
+
+file files/mrtg-traffic-sum.1 path=usr/share/man/man1/mrtg-traffic-sum.1
+file files/rateup.1 path=usr/share/man/man1/rateup.1
+
+# Generated section:
+
+file path=usr/bin/cfgmaker
+file path=usr/bin/indexmaker
+file path=usr/bin/mrtg
+file path=usr/bin/mrtg-traffic-sum
+file path=usr/bin/rateup
+file path=usr/lib/mrtg2/BER.pm
+file path=usr/lib/mrtg2/MRTG_lib.pm
+file path=usr/lib/mrtg2/Net_SNMP_util.pm
+file path=usr/lib/mrtg2/Pod/InputObjects.pm
+file path=usr/lib/mrtg2/Pod/Parser.pm
+file path=usr/lib/mrtg2/Pod/PlainText.pm
+file path=usr/lib/mrtg2/Pod/Select.pm
+file path=usr/lib/mrtg2/Pod/Usage.pm
+file path=usr/lib/mrtg2/SNMP_Session.pm
+file path=usr/lib/mrtg2/SNMP_util.pm
+file path=usr/lib/mrtg2/locales_mrtg.pm
+file path=usr/share/doc/mrtg2/CHANGES
+file path=usr/share/doc/mrtg2/COPYING
+file path=usr/share/doc/mrtg2/COPYRIGHT
+file path=usr/share/doc/mrtg2/README
+file path=usr/share/doc/mrtg2/THANKS
+file path=usr/share/doc/mrtg2/cfgmaker.pod
+file path=usr/share/doc/mrtg2/cfgmaker.txt
+file path=usr/share/doc/mrtg2/indexmaker.pod
+file path=usr/share/doc/mrtg2/indexmaker.txt
+file path=usr/share/doc/mrtg2/mrtg-contrib.pod
+file path=usr/share/doc/mrtg2/mrtg-contrib.txt
+file path=usr/share/doc/mrtg2/mrtg-faq.pod
+file path=usr/share/doc/mrtg2/mrtg-faq.txt
+file path=usr/share/doc/mrtg2/mrtg-forum.pod
+file path=usr/share/doc/mrtg2/mrtg-forum.txt
+file path=usr/share/doc/mrtg2/mrtg-ipv6.pod
+file path=usr/share/doc/mrtg2/mrtg-ipv6.txt
+file path=usr/share/doc/mrtg2/mrtg-l.png
+file path=usr/share/doc/mrtg2/mrtg-logfile.pod
+file path=usr/share/doc/mrtg2/mrtg-logfile.txt
+file path=usr/share/doc/mrtg2/mrtg-m.png
+file path=usr/share/doc/mrtg2/mrtg-mibhelp.pod
+file path=usr/share/doc/mrtg2/mrtg-mibhelp.txt
+file path=usr/share/doc/mrtg2/mrtg-nt-guide.pod
+file path=usr/share/doc/mrtg2/mrtg-nt-guide.txt
+file path=usr/share/doc/mrtg2/mrtg-nw-guide.pod
+file path=usr/share/doc/mrtg2/mrtg-nw-guide.txt
+file path=usr/share/doc/mrtg2/mrtg-r.png
+file path=usr/share/doc/mrtg2/mrtg-reference.pod
+file path=usr/share/doc/mrtg2/mrtg-reference.txt
+file path=usr/share/doc/mrtg2/mrtg-rrd.pod
+file path=usr/share/doc/mrtg2/mrtg-rrd.txt
+file path=usr/share/doc/mrtg2/mrtg-squid.pod
+file path=usr/share/doc/mrtg2/mrtg-squid.txt
+file path=usr/share/doc/mrtg2/mrtg-ti.png
+file path=usr/share/doc/mrtg2/mrtg-unix-guide.pod
+file path=usr/share/doc/mrtg2/mrtg-unix-guide.txt
+file path=usr/share/doc/mrtg2/mrtg-webserver.pod
+file path=usr/share/doc/mrtg2/mrtg-webserver.txt
+file path=usr/share/doc/mrtg2/mrtg.pod
+file path=usr/share/doc/mrtg2/mrtg.txt
+file path=usr/share/doc/mrtg2/mrtglib.pod
+file path=usr/share/doc/mrtg2/mrtglib.txt
+file path=usr/share/man/man1/cfgmaker.1
+file path=usr/share/man/man1/indexmaker.1
+file path=usr/share/man/man1/mrtg-contrib.1
+file path=usr/share/man/man1/mrtg-faq.1
+file path=usr/share/man/man1/mrtg-forum.1
+file path=usr/share/man/man1/mrtg-ipv6.1
+file path=usr/share/man/man1/mrtg-logfile.1
+file path=usr/share/man/man1/mrtg-mibhelp.1
+file path=usr/share/man/man1/mrtg-nt-guide.1
+file path=usr/share/man/man1/mrtg-nw-guide.1
+file path=usr/share/man/man1/mrtg-reference.1
+file path=usr/share/man/man1/mrtg-rrd.1
+file path=usr/share/man/man1/mrtg-squid.1
+file path=usr/share/man/man1/mrtg-unix-guide.1
+file path=usr/share/man/man1/mrtg-webserver.1
+file path=usr/share/man/man1/mrtg.1
+file path=usr/share/man/man1/mrtglib.1
+file path=usr/share/mrtg2/icons/mrtg-l.gif
+file path=usr/share/mrtg2/icons/mrtg-l.png
+file path=usr/share/mrtg2/icons/mrtg-m.gif
+file path=usr/share/mrtg2/icons/mrtg-m.png
+file path=usr/share/mrtg2/icons/mrtg-r.gif
+file path=usr/share/mrtg2/icons/mrtg-r.png
+file path=usr/share/mrtg2/icons/mrtg-ti.gif
+file path=usr/share/mrtg2/icons/mrtg-ti.png
