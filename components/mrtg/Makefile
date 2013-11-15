@@ -15,32 +15,28 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= rrdtool
+COMPONENT_NAME= mrtg
 
-COMPONENT_VERSION= 1.4.7
-COMPONENT_SUMMARY= Data analysis tool generating graphical representations
+COMPONENT_VERSION= 2.17.4
+COMPONENT_SUMMARY= mrtg - The Multi Router Traffic Grapher
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:956aaf431c955ba88dd7d98920ade3a8c4bad04adb1f9431377950a813a7af11
+  sha256:5efa7fae8040159208472e5f889be5b41d8c8a2ea6b31616f0f75cc7f48d2365
 COMPONENT_ARCHIVE_URL= \
-  http://oss.oetiker.ch/rrdtool/pub/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://oss.oetiker.ch/rrdtool/
+  http://oss.oetiker.ch/mrtg/pub/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = http://oss.oetiker.ch/mrtg/
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# Missing files in build dir for configure without this.
-COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
+COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
-CONFIGURE_ENV	+=  PERL=$(PERL)
-CONFIGURE_ENV	+=  PERLCC=$(CC)
-CONFIGURE_OPTIONS+= --with-perl-options="CC=$(CC) LD=$(CC) LIB=/usr/perl5/$(PERL_VERSION)/lib"
-CONFIGURE_OPTIONS+= --disable-python
-CONFIGURE_OPTIONS+= --disable-ruby
-CONFIGURE_OPTIONS+= --enable-tcl
-CONFIGURE_OPTIONS+= --enable-static=no
+CONFIGURE_SCRIPT=       $(@D)/configure
+CONFIGURE_OPTIONS+=	--with-gd-lib=/usr/lib
+CONFIGURE_OPTIONS+=	--with-gd-inc=/usr/include/gd2
+
 
 build: $(BUILD_32)
 
