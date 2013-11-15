@@ -3027,14 +3027,17 @@ pk11_choose_slots(int *any_slot_found)
 	CK_TOKEN_INFO token_info;
 	int i;
 	CK_RV rv;
-	CK_SLOT_ID best_slot_sofar;
-	CK_BBOOL found_candidate_slot = CK_FALSE;
-	int slot_n_cipher = 0;
-	int slot_n_digest = 0;
+	CK_SLOT_ID best_pubkey_slot_sofar;
+#ifdef DEBUG_SLOT_SELECTION
+	CK_SLOT_ID best_cd_slot_sofar;
+#endif
+	int slot_n_cipher = -1;
+	int slot_n_digest = -1;
 	CK_SLOT_ID current_slot = 0;
 	int current_slot_n_cipher = 0;
 	int current_slot_n_digest = 0;
-
+	int best_number_of_mechs = 0;
+	int current_number_of_mechs = 0;
 	int local_cipher_nids[PK11_CIPHER_MAX];
 	int local_digest_nids[PK11_DIGEST_MAX];
 
@@ -3078,33 +3081,6 @@ pk11_choose_slots(int *any_slot_found)
 	DEBUG_SLOT_SEL("%s: provider: %s\n", PK11_DBG, def_PK11_LIBNAME);
 	DEBUG_SLOT_SEL("%s: number of slots: %d\n", PK11_DBG, ulSlotCount);
 
-	DEBUG_SLOT_SEL("%s: == checking rand slots ==\n", PK11_DBG);
-	for (i = 0; i < ulSlotCount; i++)
-		{
-		current_slot = pSlotList[i];
-
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
-		    current_slot);
-		/* Check if slot has random support. */
-		rv = pFuncList->C_GetTokenInfo(current_slot, &token_info);
-		if (rv != CKR_OK)
-			continue;
-
-		DEBUG_SLOT_SEL("%s: token label: %.32s\n", PK11_DBG,
-		    token_info.label);
-
-		if (token_info.flags & CKF_RNG)
-			{
-			DEBUG_SLOT_SEL(
-			    "%s: this token has CKF_RNG flag\n", PK11_DBG);
-			pk11_have_random = CK_TRUE;
-			rand_SLOTID = current_slot;
-			break;
-			}
-		}
-
-	DEBUG_SLOT_SEL("%s: == checking pubkey slots ==\n", PK11_DBG);
-
 	pubkey_SLOTID = pSlotList[0];
 	for (i = 0; i < ulSlotCount; i++)
 		{
@@ -3112,8 +3088,7 @@ pk11_choose_slots(int *any_slot_found)
 		CK_BBOOL slot_has_dsa = CK_FALSE;
 		CK_BBOOL slot_has_dh = CK_FALSE;
 		current_slot = pSlotList[i];
-
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
+		DEBUG_SLOT_SEL("%s: == checking slot: %d ==\n", PK11_DBG,
 		    current_slot);
 		rv = pFuncList->C_GetTokenInfo(current_slot, &token_info);
 		if (rv != CKR_OK)
@@ -3122,6 +3097,19 @@ pk11_choose_slots(int *any_slot_found)
 		DEBUG_SLOT_SEL("%s: token label: %.32s\n", PK11_DBG,
 		    token_info.label);
 
+		DEBUG_SLOT_SEL("%s: checking rand slots\n", PK11_DBG);
+
+		if (((token_info.flags & CKF_RNG) != 0) && !pk11_have_random)
+			{
+			DEBUG_SLOT_SEL(
+			    "%s: this token has CKF_RNG flag\n", PK11_DBG);
+			pk11_have_random = CK_TRUE;
+			rand_SLOTID = current_slot;
+			}
+
+		DEBUG_SLOT_SEL("%s: checking pubkey slots\n", PK11_DBG);
+
+		current_number_of_mechs = 0;
 #ifndef OPENSSL_NO_RSA
 		/*
 		 * Check if this slot is capable of signing and
@@ -3147,6 +3135,7 @@ pk11_choose_slots(int *any_slot_found)
 			    (mech_info.flags & CKF_DECRYPT)))
 				{
 				slot_has_rsa = CK_TRUE;
+				current_number_of_mechs++;
 				}
 			}
 #endif	/* OPENSSL_NO_RSA */
@@ -3162,6 +3151,7 @@ pk11_choose_slots(int *any_slot_found)
 		    (mech_info.flags & CKF_VERIFY)))
 			{
 			slot_has_dsa = CK_TRUE;
+			current_number_of_mechs++;
 			}
 
 #endif	/* OPENSSL_NO_DSA */
@@ -3181,56 +3171,28 @@ pk11_choose_slots(int *any_slot_found)
 			if (rv == CKR_OK && (mech_info.flags & CKF_DERIVE))
 				{
 				slot_has_dh = CK_TRUE;
+				current_number_of_mechs++;
 				}
 			}
 #endif	/* OPENSSL_NO_DH */
 
-		if (!found_candidate_slot &&
-		    (slot_has_rsa || slot_has_dsa || slot_has_dh))
+		if (current_number_of_mechs > best_number_of_mechs)
 			{
-			DEBUG_SLOT_SEL(
-			    "%s: potential slot: %d\n", PK11_DBG, current_slot);
-			best_slot_sofar = current_slot;
+			best_pubkey_slot_sofar = current_slot;
 			pk11_have_rsa = slot_has_rsa;
 			pk11_have_dsa = slot_has_dsa;
 			pk11_have_dh = slot_has_dh;
-			found_candidate_slot = CK_TRUE;
+			best_number_of_mechs = current_number_of_mechs;
 			/*
 			 * Cache the flags for later use. We might need those if
 			 * RSA keys by reference feature is used.
 			 */
 			pubkey_token_flags = token_info.flags;
-			DEBUG_SLOT_SEL(
-			    "%s: setting found_candidate_slot to CK_TRUE\n",
-			    PK11_DBG);
-			DEBUG_SLOT_SEL("%s: best slot so far: %d\n", PK11_DBG,
-			    best_slot_sofar);
 			DEBUG_SLOT_SEL("%s: pubkey flags changed to "
 			    "%lu.\n", PK11_DBG, pubkey_token_flags);
 			}
-		else
-			{
-			DEBUG_SLOT_SEL("%s: no rsa/dsa/dh\n", PK11_DBG);
-			}
-		} /* for */
 
-	if (found_candidate_slot == CK_TRUE)
-		{
-		pubkey_SLOTID = best_slot_sofar;
-		}
-
-	found_candidate_slot = CK_FALSE;
-	best_slot_sofar = 0;
-
-	DEBUG_SLOT_SEL("%s: == checking cipher/digest ==\n", PK11_DBG);
-
-	SLOTID = pSlotList[0];
-	for (i = 0; i < ulSlotCount; i++)
-		{
-		current_slot = pSlotList[i];
-
-		DEBUG_SLOT_SEL("%s: checking slot: %d\n", PK11_DBG,
-		    current_slot);
+		DEBUG_SLOT_SEL("%s: checking cipher/digest\n", PK11_DBG);
 
 		current_slot_n_cipher = 0;
 		current_slot_n_digest = 0;
@@ -3247,8 +3209,6 @@ pk11_choose_slots(int *any_slot_found)
 			current_slot_n_cipher);
 		DEBUG_SLOT_SEL("%s: current_slot_n_digest %d\n", PK11_DBG,
 			current_slot_n_digest);
-		DEBUG_SLOT_SEL("%s: best cipher/digest slot so far: %d\n",
-			PK11_DBG, best_slot_sofar);
 
 		/*
 		 * If the current slot supports more ciphers/digests than
@@ -3260,7 +3220,10 @@ pk11_choose_slots(int *any_slot_found)
 			{
 			DEBUG_SLOT_SEL("%s: changing best slot to %d\n",
 				PK11_DBG, current_slot);
-			best_slot_sofar = SLOTID = current_slot;
+			SLOTID = current_slot;
+#ifdef DEBUG_SLOT_SELECTION
+			best_cd_slot_sofar = current_slot;
+#endif
 			cipher_count = slot_n_cipher = current_slot_n_cipher;
 			digest_count = slot_n_digest = current_slot_n_digest;
 			(void) memcpy(cipher_nids, local_cipher_nids,
@@ -3268,6 +3231,18 @@ pk11_choose_slots(int *any_slot_found)
 			(void) memcpy(digest_nids, local_digest_nids,
 			    sizeof (local_digest_nids));
 			}
+
+		DEBUG_SLOT_SEL("%s: best cipher/digest slot so far: %d\n",
+			PK11_DBG, best_cd_slot_sofar);
+		}
+
+	if (best_number_of_mechs == 0)
+		{
+		DEBUG_SLOT_SEL("%s: no rsa/dsa/dh\n", PK11_DBG);
+		}
+	else
+		{
+		pubkey_SLOTID = best_pubkey_slot_sofar;
 		}
 
 	DEBUG_SLOT_SEL("%s: chosen pubkey slot: %d\n", PK11_DBG, pubkey_SLOTID);
@@ -3297,11 +3272,18 @@ static void pk11_get_symmetric_cipher(CK_FUNCTION_LIST_PTR pflist,
     int slot_id, int *current_slot_n_cipher, int *local_cipher_nids,
     PK11_CIPHER *cipher)
 	{
-	CK_MECHANISM_INFO mech_info;
-	CK_RV rv;
+	static CK_MECHANISM_INFO mech_info;
+	static CK_RV rv;
+	static CK_MECHANISM_TYPE last_checked_mech = (CK_MECHANISM_TYPE)-1;
 
 	DEBUG_SLOT_SEL("%s: checking mech: %x", PK11_DBG, cipher->mech_type);
-	rv = pflist->C_GetMechanismInfo(slot_id, cipher->mech_type, &mech_info);
+	if (cipher->mech_type != last_checked_mech)
+		{
+		rv = pflist->C_GetMechanismInfo(slot_id, cipher->mech_type,
+		    &mech_info);
+		}
+
+	last_checked_mech = cipher->mech_type;
 
 	if (rv != CKR_OK)
 		{
