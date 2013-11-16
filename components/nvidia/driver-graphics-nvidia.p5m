@@ -72,6 +72,8 @@ dir path=usr/X11/lib/modules/extensions
 dir path=usr/X11/lib/modules/extensions/NVIDIA
 dir path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)
 dir path=usr/bin
+dir path=usr/bin/$(MACH64)
+dir path=usr/bin/$(MACH32)
 dir path=usr/dt
 dir path=usr/dt/appconfig
 dir path=usr/dt/appconfig/appmanager
@@ -114,8 +116,13 @@ file path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
 file path=usr/X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
+file path=usr/X11/lib/NVIDIA/libEGL.so.1
 file path=usr/X11/lib/NVIDIA/libGL.so.1
+file path=usr/X11/lib/NVIDIA/libGLESv1_CM.so.1
+file path=usr/X11/lib/NVIDIA/libGLESv2.so.2
+file path=usr/X11/lib/NVIDIA/libnvidia-eglcore.so.1
 file path=usr/X11/lib/NVIDIA/libnvidia-glcore.so.1
+file path=usr/X11/lib/NVIDIA/libnvidia-glsi.so.1
 file path=usr/X11/lib/NVIDIA/libnvidia-tls.so.1
 file path=usr/X11/lib/NVIDIA/libvdpau.so.1
 file path=usr/X11/lib/NVIDIA/libvdpau_nvidia.so.1
@@ -128,8 +135,10 @@ file path=usr/X11/lib/modules/drivers/nvidia_drv.so
 file path=usr/X11/lib/modules/extensions/NVIDIA/$(MACH64)/libglx.so.1
 file path=usr/X11/lib/modules/extensions/NVIDIA/libglx.so.1
 file path=usr/bin/nvidia-SunOS-bug-report.sh
-file path=usr/bin/nvidia-settings
-file path=usr/bin/nvidia-xconfig
+file path=usr/bin/$(MACH64)/nvidia-settings
+file path=usr/bin/$(MACH64)/nvidia-xconfig
+file path=usr/bin/$(MACH32)/nvidia-settings
+file path=usr/bin/$(MACH32)/nvidia-xconfig
 file path=usr/dt/appconfig/appmanager/C/Desktop_Apps/nvidia-settings
 file path=usr/dt/appconfig/icons/C/nvidia-settings.l.bm
 file path=usr/dt/appconfig/icons/C/nvidia-settings.l.pm
@@ -141,12 +150,14 @@ file path=usr/dt/appconfig/icons/C/nvidia-settings.t.bm
 file path=usr/dt/appconfig/icons/C/nvidia-settings.t.pm
 file path=usr/dt/appconfig/icons/C/nvidia-settings.t_m.bm
 file path=usr/dt/appconfig/types/C/nvidia-settings.dt
+file path=usr/lib/$(MACH64)/libnvidia-cfg.so.1
 file path=usr/lib/libnvidia-cfg.so.1
 file path=usr/share/applications/nvidia-settings.desktop \
     restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
 file path=usr/share/control-center-2.0/capplets/nvidia-settings.s10.desktop
 file path=usr/share/doc/NVIDIA/README.txt
 file path=usr/share/doc/NVIDIA/html/acknowledgements.html
+file path=usr/share/doc/NVIDIA/html/addressingcapabilities.html
 file path=usr/share/doc/NVIDIA/html/addtlresources.html
 file path=usr/share/doc/NVIDIA/html/appendices.html
 file path=usr/share/doc/NVIDIA/html/commonproblems.html
@@ -162,6 +173,7 @@ file path=usr/share/doc/NVIDIA/html/faq.html
 file path=usr/share/doc/NVIDIA/html/flippingubb.html
 file path=usr/share/doc/NVIDIA/html/framelock.html
 file path=usr/share/doc/NVIDIA/html/glxsupport.html
+file path=usr/share/doc/NVIDIA/html/gpunames.html
 file path=usr/share/doc/NVIDIA/html/index.html
 file path=usr/share/doc/NVIDIA/html/installationandconfiguration.html
 file path=usr/share/doc/NVIDIA/html/installdriver.html
@@ -208,7 +220,10 @@ link path=dev/nvidiactl target=../devices/pseudo/nvidia@255:nvidiactl \
 link path=usr/X11/lib/NVIDIA/$(MACH64)/libGL.so target=libGL.so.1
 link path=usr/X11/lib/NVIDIA/$(MACH64)/libnvidia-tls.so \
     target=libnvidia-tls.so.1
+link path=usr/X11/lib/NVIDIA/libEGL.so target=libEGL.so.1
 link path=usr/X11/lib/NVIDIA/libGL.so target=libGL.so.1
+link path=usr/X11/lib/NVIDIA/libGLESv1_CM.so target=libGLESv1_CM.so.1
+link path=usr/X11/lib/NVIDIA/libGLESv2.so target=libGLESv2.so.2
 link path=usr/X11/lib/NVIDIA/libnvidia-tls.so target=libnvidia-tls.so.1
 link path=usr/X11/lib/modules/NVIDIA/$(MACH64)/libnvidia-wfb.so \
     target=libnvidia-wfb.so.1
@@ -234,9 +249,20 @@ link path=usr/lib/$(MACH64)/vdpau/libvdpau_nvidia.so.1 \
     target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_nvidia.so.1
 link path=usr/lib/$(MACH64)/vdpau/libvdpau_trace.so.1 \
     target=../../../X11/lib/NVIDIA/$(MACH64)/libvdpau_trace.so.1
+link path=usr/lib/libEGL.so target=libEGL.so.1
+link path=usr/lib/libEGL.so.1 target=../X11/lib/NVIDIA/libEGL.so.1
+link path=usr/lib/libGLESv1_CM.so.1 target=../X11/lib/NVIDIA/libGLESv1_CM.so.1
+link path=usr/lib/libGLESv1_CM.so target=libGLESv1_CM.so.1
+link path=usr/lib/libGLESv2.so.2 target=../X11/lib/NVIDIA/libGLESv2.so.2
+link path=usr/lib/libGLESv2.so target=libGLESv2.so.2
+link path=usr/lib/$(MACH64)/libnvidia-cfg.so target=libnvidia-cfg.so.1
 link path=usr/lib/libnvidia-cfg.so target=libnvidia-cfg.so.1
+link path=usr/lib/libnvidia-eglcore.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-eglcore.so.1
 link path=usr/lib/libnvidia-glcore.so.1 \
     target=../X11/lib/NVIDIA/libnvidia-glcore.so.1
+link path=usr/lib/libnvidia-glsi.so.1 \
+    target=../X11/lib/NVIDIA/libnvidia-glsi.so.1
 link path=usr/lib/libnvidia-tls.so target=libnvidia-tls.so.1
 link path=usr/lib/libnvidia-tls.so.1 \
     target=../X11/lib/NVIDIA/libnvidia-tls.so.1
@@ -250,6 +276,8 @@ link path=usr/lib/vdpau/libvdpau_nvidia.so.1 \
     target=../../X11/lib/NVIDIA/libvdpau_nvidia.so.1
 link path=usr/lib/vdpau/libvdpau_trace.so.1 \
     target=../../X11/lib/NVIDIA/libvdpau_trace.so.1
+hardlink path=usr/bin/nvidia-settings target=../lib/isaexec pkg.linted=true
+hardlink path=usr/bin/nvidia-xconfg target=../lib/isaexec pkg.linted=true
 
 driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,191" \
@@ -523,6 +551,7 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,de3" \
 	alias="pci10de,de4" \
 	alias="pci10de,de5" \
+	alias="pci10de,de7" \
 	alias="pci10de,de8" \
 	alias="pci10de,de9" \
 	alias="pci10de,dea" \
@@ -556,6 +585,7 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,fc1" \
 	alias="pci10de,fc2" \
 	alias="pci10de,fc6" \
+	alias="pci10de,fcd" \
 	alias="pci10de,fce" \
 	alias="pci10de,fd1" \
 	alias="pci10de,fd2" \
@@ -570,7 +600,12 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,fe2" \
 	alias="pci10de,fe3" \
 	alias="pci10de,fe4" \
+	alias="pci10de,fe9" \
+	alias="pci10de,fea" \
+	alias="pci10de,fef" \
 	alias="pci10de,ff2" \
+	alias="pci10de,ff6" \
+	alias="pci10de,ff8" \
 	alias="pci10de,ff9" \
 	alias="pci10de,ffa" \
 	alias="pci10de,ffb" \
@@ -578,11 +613,13 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,ffd" \
 	alias="pci10de,ffe" \
 	alias="pci10de,fff" \
+	alias="pci10de,1004" \
 	alias="pci10de,1005" \
 	alias="pci10de,1021" \
 	alias="pci10de,1022" \
 	alias="pci10de,1026" \
 	alias="pci10de,1028" \
+	alias="pci10de,103a" \
 	alias="pci10de,1040" \
 	alias="pci10de,1042" \
 	alias="pci10de,1048" \
@@ -600,6 +637,7 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,1059" \
 	alias="pci10de,105a" \
 	alias="pci10de,105b" \
+	alias="pci10de,107c" \
 	alias="pci10de,107d" \
 	alias="pci10de,1080" \
 	alias="pci10de,1081" \
@@ -622,17 +660,25 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,1140" \
 	alias="pci10de,1180" \
 	alias="pci10de,1183" \
+	alias="pci10de,1184" \
 	alias="pci10de,1185" \
+	alias="pci10de,1187" \
 	alias="pci10de,1188" \
 	alias="pci10de,1189" \
+	alias="pci10de,118a" \
 	alias="pci10de,118f" \
+	alias="pci10de,1193" \
 	alias="pci10de,119d" \
+	alias="pci10de,119e" \
 	alias="pci10de,119f" \
 	alias="pci10de,11a0" \
 	alias="pci10de,11a1" \
 	alias="pci10de,11a2" \
 	alias="pci10de,11a3" \
 	alias="pci10de,11a7" \
+	alias="pci10de,11b6" \
+	alias="pci10de,11b7" \
+	alias="pci10de,11b8" \
 	alias="pci10de,11ba" \
 	alias="pci10de,11bc" \
 	alias="pci10de,11bd" \
@@ -641,12 +687,15 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,11c0" \
 	alias="pci10de,11c2" \
 	alias="pci10de,11c3" \
+	alias="pci10de,11c4" \
 	alias="pci10de,11c6" \
+	alias="pci10de,11c8" \
 	alias="pci10de,11e0" \
 	alias="pci10de,11e1" \
 	alias="pci10de,11e2" \
 	alias="pci10de,11e3" \
 	alias="pci10de,11fa" \
+	alias="pci10de,11fc" \
 	alias="pci10de,1200" \
 	alias="pci10de,1201" \
 	alias="pci10de,1203" \
@@ -670,7 +719,12 @@ driver name=nvidia perms="* 0666 root root" \
 	alias="pci10de,124d" \
 	alias="pci10de,1251" \
 	alias="pci10de,1280" \
+	alias="pci10de,1282" \
+	alias="pci10de,1284" \
 	alias="pci10de,1290" \
 	alias="pci10de,1291" \
 	alias="pci10de,1292" \
-	alias="pci10de,1293"
+	alias="pci10de,1293" \
+	alias="pci10de,1298" \
+	alias="pci10de,12b9" \
+	alias="pci10de,12ba"
