@@ -1,0 +1,23 @@
+--- evolution-data-server-2.30.3/camel/camel-sasl-gssapi.c.~1~	2010-06-20 16:15:40.000000000 +0400
++++ evolution-data-server-2.30.3/camel/camel-sasl-gssapi.c	2013-11-16 12:54:31.402967566 +0400
+@@ -31,18 +31,8 @@
+ #include <string.h>
+ #include <sys/socket.h>
+ #include <sys/types.h>
+-#ifdef HAVE_HEIMDAL_KRB5
+-#include <krb5.h>
+-#else
+-#include <krb5/krb5.h>
+-#endif
+-#ifdef HAVE_ET_COM_ERR_H
+-#include <et/com_err.h>
+-#else
+-#ifdef HAVE_COM_ERR_H
+-#include <com_err.h>
+-#endif
+-#endif
++#include <kerberosv5/krb5.h>
++#include <kerberosv5/com_err.h>
+ #ifdef HAVE_MIT_KRB5
+ #include <gssapi/gssapi.h>
+ #include <gssapi/gssapi_generic.h>
