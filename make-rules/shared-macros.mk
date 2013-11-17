@@ -410,6 +410,13 @@ PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
 PKG_CONFIG_PATH = $(PKG_CONFIG_PATH.$(BITS))
 
+# Set default path for environment modules
+MODULE_VERSION =	3.2.10
+MODULE_PATH =		/usr/share/Modules/modulefiles
+MODULE_VERSIONS_PATH =	/usr/share/Modules/versions
+
+# Path to bash completions
+BASH_COMPLETIONS_PATH =	/usr/share/bash-completion/completions
 
 #
 # C preprocessor flag sets to ease feature selection.  Add the required
