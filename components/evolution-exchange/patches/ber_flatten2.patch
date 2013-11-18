@@ -1,0 +1,13 @@
+--- evolution-exchange-2.30.3/addressbook/e-book-backend-gal.c.1	2013-11-18 16:48:33.187958469 +0400
++++ evolution-exchange-2.30.3/addressbook/e-book-backend-gal.c	2013-11-18 16:49:16.733282016 +0400
+@@ -80,6 +80,10 @@
+ static const gchar *query_prop_to_ldap (const gchar *query_prop);
+ static gint build_query (EBookBackendGAL *bl, const gchar *query, const gchar *ldap_filter, gchar **ldap_query);
+ 
++#ifdef SUNLDAP
++static gint ber_flatten2( BerElement *ber, struct berval *bv, gint alloc );
++#endif
++
+ #define PARENT_TYPE E_TYPE_BOOK_BACKEND
+ static EBookBackendClass *parent_class;
+ 
