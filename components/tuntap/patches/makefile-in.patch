@@ -1,0 +1,44 @@
+Allow build from outside SRCDIR
+
+--- Makefile.in.~1~	Tue Jul 17 11:15:22 2012
++++ Makefile.in	Tue Jan 29 18:15:54 2013
+@@ -36,6 +36,7 @@
+ REM_DRV = /usr/sbin/rem_drv
+ DRV_DIR = @DRV_DIR@
+ DRV_CONF_DIR = /usr/kernel/drv
++SRCDIR = @srcdir@
+ DESTDIR = @prefix@
+ 
+ INSTALL = @INSTALL@
+@@ -47,20 +48,20 @@
+ tap: tap.o
+ 	$(LD) $(LD_FLAGS) -r -o tap tap.o
+ 
+-tun.o: tun.c if_tun.h
+-	$(CC) $(KCFLAGS) -c tun.c -o tun.o -DTUNTAP_TUN
++tun.o: $(SRCDIR)/tun.c $(SRCDIR)/if_tun.h
++	$(CC) $(KCFLAGS) -c $(SRCDIR)/tun.c -o tun.o -DTUNTAP_TUN
+ 
+-tap.o: tun.c if_tun.h
+-	$(CC) $(KCFLAGS) -c tun.c -o tap.o -DTUNTAP_TAP
++tap.o: $(SRCDIR)/tun.c $(SRCDIR)/if_tun.h
++	$(CC) $(KCFLAGS) -c $(SRCDIR)/tun.c -o tap.o -DTUNTAP_TAP
+ 
+ install: tun tap
+-	$(INSTALL) -d -m 0755 -o root -g bin $(DESTDIR)/usr/include/net
+-	$(INSTALL) -d -m 0755 -o root -g sys $(DESTDIR)$(DRV_DIR)
+-	$(INSTALL) -m 644 -o root -g root if_tun.h $(DESTDIR)/usr/include/net 
+-	$(INSTALL) -m 644 -o root -g root tun $(DESTDIR)$(DRV_DIR)
+-	$(INSTALL) -m 644 -o root -g root tap $(DESTDIR)$(DRV_DIR)
+-	$(INSTALL) -m 644 -o root -g root tun.conf $(DESTDIR)$(DRV_CONF_DIR)
+-	$(INSTALL) -m 644 -o root -g root tap.conf $(DESTDIR)$(DRV_CONF_DIR)
++	$(INSTALL) -d -m 0755 $(DESTDIR)/usr/include/net
++	$(INSTALL) -d -m 0755 $(DESTDIR)$(DRV_DIR)
++	$(INSTALL) -m 644 $(SRCDIR)/if_tun.h $(DESTDIR)/usr/include/net 
++	$(INSTALL) -m 644 tun $(DESTDIR)$(DRV_DIR)
++	$(INSTALL) -m 644 tap $(DESTDIR)$(DRV_DIR)
++	$(INSTALL) -m 644 $(SRCDIR)/tun.conf $(DESTDIR)$(DRV_CONF_DIR)
++	$(INSTALL) -m 644 $(SRCDIR)/tap.conf $(DESTDIR)$(DRV_CONF_DIR)
+ 	-[ -z "$(DESTDIR)" ]&& $(REM_DRV) tun >/dev/null 2>&1
+ 	-[ -z "$(DESTDIR)" ]&& $(REM_DRV) tap >/dev/null 2>&1
+ 	-[ -z "$(DESTDIR)" ]&& $(ADD_DRV) tun	

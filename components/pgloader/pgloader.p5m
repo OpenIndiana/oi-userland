@@ -1,0 +1,80 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/database/postgres/pgloader@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Databases"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license pgloader.license license="BSD"
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+
+depend fmri=library/python-2/psycopg2-26 type=require
+
+file path=usr/bin/pgloader mode=0555
+file path=usr/lib/python2.6/pgloader/RRRtools.py
+file path=usr/lib/python2.6/pgloader/__init__.py
+file path=usr/lib/python2.6/pgloader/csvreader.py
+file path=usr/lib/python2.6/pgloader/db.py
+file path=usr/lib/python2.6/pgloader/fixedreader.py
+file path=usr/lib/python2.6/pgloader/lo.py
+file path=usr/lib/python2.6/pgloader/logger.py
+file path=usr/lib/python2.6/pgloader/options.py
+file path=usr/lib/python2.6/pgloader/pgloader.py
+file path=usr/lib/python2.6/pgloader/reader.py
+file path=usr/lib/python2.6/pgloader/textreader.py
+file path=usr/lib/python2.6/pgloader/tools.py
+file path=usr/lib/python2.6/reformat/__init__.py
+file path=usr/lib/python2.6/reformat/mysql.py
+file path=usr/lib/python2.6/reformat/pgtime.py
+file path=usr/share/doc/pgloader/BUGS.txt
+file path=usr/share/doc/pgloader/TODO.txt
+file path=usr/share/doc/pgloader/examples/README
+file path=usr/share/doc/pgloader/examples/allcols/allcols.data
+file path=usr/share/doc/pgloader/examples/allcols/allcols.sql
+file path=usr/share/doc/pgloader/examples/clob/clob.data
+file path=usr/share/doc/pgloader/examples/clob/clob.out
+file path=usr/share/doc/pgloader/examples/clob/clob.sql
+file path=usr/share/doc/pgloader/examples/cluttered/cluttered.data
+file path=usr/share/doc/pgloader/examples/cluttered/cluttered.sql
+file path=usr/share/doc/pgloader/examples/csv/csv.data
+file path=usr/share/doc/pgloader/examples/csv/csv.sql
+file path=usr/share/doc/pgloader/examples/errors/errors.data
+file path=usr/share/doc/pgloader/examples/errors/errors.sql
+file path=usr/share/doc/pgloader/examples/fixed/fixed.data
+file path=usr/share/doc/pgloader/examples/fixed/fixed.sql
+file path=usr/share/doc/pgloader/examples/parallel.conf
+file path=usr/share/doc/pgloader/examples/parallel/parallel.data
+file path=usr/share/doc/pgloader/examples/parallel/parallel.sql
+file path=usr/share/doc/pgloader/examples/partial/partial.data
+file path=usr/share/doc/pgloader/examples/partial/partial.sql
+file path=usr/share/doc/pgloader/examples/pgloader.conf
+file path=usr/share/doc/pgloader/examples/reformat/reformat.data
+file path=usr/share/doc/pgloader/examples/reformat/reformat.sql
+file path=usr/share/doc/pgloader/examples/serial/serial.data
+file path=usr/share/doc/pgloader/examples/serial/serial.sql
+file path=usr/share/doc/pgloader/examples/simple/simple.data
+file path=usr/share/doc/pgloader/examples/simple/simple.sql
+file path=usr/share/doc/pgloader/examples/stdin/stdin.data
+file path=usr/share/doc/pgloader/examples/stdin/stdin.sql
+file path=usr/share/doc/pgloader/examples/udc/udc.data
+file path=usr/share/doc/pgloader/examples/udc/udc.sql
+file path=usr/share/doc/pgloader/examples/xzero/xzero.data
+file path=usr/share/doc/pgloader/examples/xzero/xzero.sql
+file path=usr/share/man/man1/pgloader.1

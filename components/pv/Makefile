@@ -26,38 +26,39 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pv
-COMPONENT_VERSION=	1.2.0
+COMPONENT_VERSION=	1.4.12
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_FMRI=		shell/pipe-viewer
+COMPONENT_SUMMARY=	'Pipe Viewer'
+COMPONENT_LICENSE=	Artistic
+COMPONENT_LICENSE_FILE=	pv.license
 COMPONENT_PROJECT_URL=	http://www.ivarch.com/programs/pv.shtml
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f93a5eda47d4607e35020622717ade5bc0e5ee82123a97331090f19e0b907c5f
-COMPONENT_ARCHIVE_URL=	http://pipeviewer.googlecode.com/files/$(COMPONENT_ARCHIVE)
+    sha256:6a5aa4c9442a8efc164015f4ffd2b3311c2d79aa2b1eb57ee7aec55928d9d742
+COMPONENT_ARCHIVE_URL=	http://www.ivarch.com/programs/sources/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pv
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+PKG_PROTO_DIRS += $(BUILD_DIR_32)
+
 COMPONENT_PRE_CONFIGURE_ACTION = \
     ($(CLONEY) $(SOURCE_DIR) $(@D))
-
-PATCH_LEVEL=	0
-
-PKG_PROTO_DIRS += $(BUILD_DIR_64)
-
-CONFIGURE_OPTIONS  +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_TEST_ENV +=  PATH="$(GNUBIN):$(PATH)" 
 
 ASLR_MODE = $(ASLR_ENABLE)
+LD_Z_IGNORE =
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
-test:		$(TEST_64)
+test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -34,7 +34,7 @@ COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:91751774976e39f6237efd0326eb35196a9346220b92ad35894a33283e872748
-COMPONENT_ARCHIVE_URL=	http://www.lesswatts.org/patches/linux_acpi/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/pmtools/$(COMPONENT_ARCHIVE)/10aa00d2ae9f1b4653e3995589a394a3/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/acpidump
 
 # we're i386-only
@@ -47,8 +47,6 @@ include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
 PKG_PROTO_DIRS += $(BUILD_DIR_32)
-
-COMPILER =	gcc
 
 COMPONENT_BUILD_ENV  +=		CC=$(CC)
 

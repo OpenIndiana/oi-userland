@@ -1,0 +1,86 @@
+This patch does three things:
+
+1/ Uses gethrtime() rather than trying to read the %tick register (the
+   latter has issues in MP environments)
+2/ Allows Studio to compile in 64-bit and normal optimization.
+3/ Removed the need to define lines like "CFLAGS += -Du_int8_t=uint8_t"
+   in the snort component Makefile.
+
+It has been sent upstream for consideration by the snort maintainers for 
+a future release.
+
+--- snort-2.9.2/configure.in.orig	2013-06-04 14:05:22.814684109 -0700
++++ snort-2.9.2/configure.in	2013-06-04 14:41:42.703306013 -0700
+@@ -686,27 +686,8 @@
+     AC_MSG_RESULT(no)
+ fi
+ 
+-# check for sparc %time register
+-if eval "echo $host_cpu|grep -i sparc >/dev/null"; then
+-    OLD_CFLAGS="$CFLAGS"
+-    CFLAGS="$CFLAGS -mcpu=v9 "
+-    AC_MSG_CHECKING([for sparc %time register])
+-    AC_RUN_IFELSE(
+-    [AC_LANG_PROGRAM(
+-    [[]],
+-    [[
+-        int val;
+-        __asm__ __volatile__("rd %%tick, %0" : "=r"(val));
+-    ]])],
+-    [sparcv9="yes"],
+-    [sparcv9="no"])
+-    AC_MSG_RESULT($sparcv9)
+-    if test "x$sparcv9" = "xyes"; then
+-        AC_DEFINE([SPARCV9],[1],[For sparc v9 with %time register])
+-    else
+-        CFLAGS="$OLD_CFLAGS"
+-    fi
+-fi
++# Check for the presence of the Solaris gethrtime routine.
++AC_CHECK_FUNCS(gethrtime)
+ 
+ # modified from gnulib/m4/visibility.m4
+ AC_DEFUN([CC_VISIBILITY],
+--- snort-2.9.2/src/cpuclock.h.orig	2013-06-04 12:30:59.362777817 -0700
++++ snort-2.9.2/src/cpuclock.h	2013-06-04 14:19:42.869930833 -0700
+@@ -83,26 +83,15 @@
+     val = ((uint64_t)tbl) | (((uint64_t)tbu0) << 32);  \
+ }
+ #else
+-/* SPARC */
+-#ifdef SPARCV9
+-#ifdef _LP64
++/* SOLARIS */
++#ifdef HAVE_GETHRTIME
+ #define get_clockticks(val) \
+ { \
+-    __asm__ __volatile__("rd %%tick, %0" : "=r"(val)); \
++    val = gethrtime(); \
+ }
+ #else
+-#define get_clockticks(val) \
+-{ \
+-    uint32_t a, b; \
+-    __asm__ __volatile__("rd %%tick, %0\n" \
+-                         "srlx %0, 32, %1" \
+-                         : "=r"(a), "=r"(b)); \
+-    val = ((uint64_t)a) | (((uint64_t)b) << 32); \
+-}
+-#endif /* _LP64 */
+-#else
+ #define get_clockticks(val)
+-#endif /* SPARC */
++#endif /* HAVE_GETTHRTIME */
+ #endif /* POWERPC || PPC */
+ #endif /* IA64 && HPUX */
+ #endif /* IA64 && GNUC */
+--- snort-2.9.2/src/sfutil/sf_ip.h.orig	2013-06-04 12:33:38.923475148 -0700
++++ snort-2.9.2/src/sfutil/sf_ip.h	2013-06-04 12:33:52.951704625 -0700
+@@ -38,6 +38,7 @@
+ #endif
+ 
+ #include "snort_debug.h" /* for inline definition */
++#include "sf_types.h"
+ 
+ /* define SFIP_ROBUST to check pointers passed into the sfip libs.
+  * Robustification should not be enabled if the client code is trustworthy.

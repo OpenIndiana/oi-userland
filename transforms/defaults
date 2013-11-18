@@ -38,6 +38,21 @@
 <transform dir path=usr/share/lib/java$ -> default group sys>
 <transform dir path=usr/share/lib/java/javadoc$ -> default group other>
 
+# 
+# C++ libraries compiled with GCC have incompatible ABI with Studio-compiled,
+# so they go to separate directory if we need several library versions.
+# Here we set default directories permissions which should be compatible
+# with SFE directory permissions.
+#
+<transform dir path=usr/g\+\+/lib/pkgconfig$ -> default group other>
+<transform dir path=usr/g\+\+/lib/.*/pkgconfig$ -> default group other>
+<transform dir path=usr/g\+\+/share$ -> default group sys>
+<transform dir path=usr/g\+\+/share/aclocal$ -> default group other>
+<transform dir path=usr/g\+\+/share/doc$ -> default group other>
+<transform dir path=usr/g\+\+/share/lib$ -> default group sys>
+<transform dir path=usr/g\+\+/share/lib/java$ -> default group sys>
+<transform dir path=usr/g\+\+/lib/java/javadoc$ -> default group other>
+
 #
 # Changes to zoneinfo files on live systems need to trigger a refresh of
 # the timezone reloader.  See tzreload(1m).
@@ -125,3 +140,4 @@ set name=variant.arch value=$(MACH)
     default facet.version-lock.%<1> true >
 <transform depend tmp.fmri=.*-> delete tmp.fmri .* >
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>

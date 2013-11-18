@@ -1,0 +1,115 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/text/asciidoc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Text Tools"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license asciidoc.license license="GPLv2"
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+
+file usr/bin/a2x.py path=usr/lib/python2.6/a2x.py mode=0555
+file usr/bin/asciidoc.py path=usr/lib/python2.6/asciidoc.py mode=0555
+link path=usr/bin/a2x target=../lib/python2.6/a2x.py
+link path=usr/bin/asciidoc target=../lib/python2.6/asciidoc.py
+
+file path=etc/asciidoc/asciidoc.conf preserve=renamenew
+
+file path=etc/asciidoc/dblatex/asciidoc-dblatex.sty
+file path=etc/asciidoc/dblatex/asciidoc-dblatex.xsl
+file path=etc/asciidoc/docbook-xsl/chunked.xsl
+file path=etc/asciidoc/docbook-xsl/common.xsl
+file path=etc/asciidoc/docbook-xsl/epub.xsl
+file path=etc/asciidoc/docbook-xsl/fo.xsl
+file path=etc/asciidoc/docbook-xsl/htmlhelp.xsl
+file path=etc/asciidoc/docbook-xsl/manpage.xsl
+file path=etc/asciidoc/docbook-xsl/text.xsl
+file path=etc/asciidoc/docbook-xsl/xhtml.xsl
+file path=etc/asciidoc/docbook45.conf
+file path=etc/asciidoc/filters/code/code-filter.conf
+file path=etc/asciidoc/filters/code/code-filter.py mode=0555
+file path=etc/asciidoc/filters/graphviz/graphviz-filter.conf
+file path=etc/asciidoc/filters/graphviz/graphviz2png.py mode=0555
+file path=etc/asciidoc/filters/latex/latex-filter.conf
+file path=etc/asciidoc/filters/latex/latex2png.py mode=0555
+file path=etc/asciidoc/filters/music/music-filter.conf
+file path=etc/asciidoc/filters/music/music2png.py mode=0555
+file path=etc/asciidoc/filters/source/source-highlight-filter.conf
+file path=etc/asciidoc/help.conf
+file path=etc/asciidoc/html4.conf
+file path=etc/asciidoc/html5.conf
+file path=etc/asciidoc/images/icons/README
+file path=etc/asciidoc/images/icons/callouts/1.png
+file path=etc/asciidoc/images/icons/callouts/10.png
+file path=etc/asciidoc/images/icons/callouts/11.png
+file path=etc/asciidoc/images/icons/callouts/12.png
+file path=etc/asciidoc/images/icons/callouts/13.png
+file path=etc/asciidoc/images/icons/callouts/14.png
+file path=etc/asciidoc/images/icons/callouts/15.png
+file path=etc/asciidoc/images/icons/callouts/2.png
+file path=etc/asciidoc/images/icons/callouts/3.png
+file path=etc/asciidoc/images/icons/callouts/4.png
+file path=etc/asciidoc/images/icons/callouts/5.png
+file path=etc/asciidoc/images/icons/callouts/6.png
+file path=etc/asciidoc/images/icons/callouts/7.png
+file path=etc/asciidoc/images/icons/callouts/8.png
+file path=etc/asciidoc/images/icons/callouts/9.png
+file path=etc/asciidoc/images/icons/caution.png
+file path=etc/asciidoc/images/icons/example.png
+file path=etc/asciidoc/images/icons/home.png
+file path=etc/asciidoc/images/icons/important.png
+file path=etc/asciidoc/images/icons/next.png
+file path=etc/asciidoc/images/icons/note.png
+file path=etc/asciidoc/images/icons/prev.png
+file path=etc/asciidoc/images/icons/tip.png
+file path=etc/asciidoc/images/icons/up.png
+file path=etc/asciidoc/images/icons/warning.png
+file path=etc/asciidoc/javascripts/ASCIIMathML.js
+file path=etc/asciidoc/javascripts/LaTeXMathML.js
+file path=etc/asciidoc/javascripts/asciidoc.js
+file path=etc/asciidoc/javascripts/slidy.js
+file path=etc/asciidoc/javascripts/toc.js
+file path=etc/asciidoc/lang-de.conf
+file path=etc/asciidoc/lang-el.conf
+file path=etc/asciidoc/lang-en.conf
+file path=etc/asciidoc/lang-es.conf
+file path=etc/asciidoc/lang-fr.conf
+file path=etc/asciidoc/lang-hu.conf
+file path=etc/asciidoc/lang-it.conf
+file path=etc/asciidoc/lang-nl.conf
+file path=etc/asciidoc/lang-pt-BR.conf
+file path=etc/asciidoc/lang-ru.conf
+file path=etc/asciidoc/lang-uk.conf
+file path=etc/asciidoc/latex.conf
+file path=etc/asciidoc/slidy.conf
+file path=etc/asciidoc/stylesheets/asciidoc.css
+file path=etc/asciidoc/stylesheets/docbook-xsl.css
+file path=etc/asciidoc/stylesheets/pygments.css
+file path=etc/asciidoc/stylesheets/slidy.css
+file path=etc/asciidoc/stylesheets/toc2.css
+file path=etc/asciidoc/stylesheets/xhtml11-quirks.css
+file path=etc/asciidoc/text.conf
+file path=etc/asciidoc/themes/flask/flask.css
+file path=etc/asciidoc/themes/volnitsky/volnitsky.css
+file path=etc/asciidoc/wordpress.conf
+file path=etc/asciidoc/xhtml11-quirks.conf
+file path=etc/asciidoc/xhtml11.conf
+file path=usr/share/man/man1/a2x.1
+file path=usr/share/man/man1/asciidoc.1

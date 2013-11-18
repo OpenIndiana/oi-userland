@@ -1,0 +1,211 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/database/postgres/pgadmin@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value=org.opensolaris.category.2008:System/Databases
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license pgadmin.license license="BSD"
+<transform file path=usr.*/man/.+ -> default mangler.man.stability committed>
+
+file files/pgadmin3.desktop path=usr/share/applications/pgadmin3.desktop restart_fmri=svc:/application/desktop-cache/desktop-mime-cache:default
+file files/icons/128x128/apps/pgadmin.png path=usr/share/icons/hicolor/128x128/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/16x16/apps/pgadmin.png path=usr/share/icons/hicolor/16x16/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/192x192/apps/pgadmin.png path=usr/share/icons/hicolor/192x192/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/22x22/apps/pgadmin.png path=usr/share/icons/hicolor/22x22/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/24x24/apps/pgadmin.png path=usr/share/icons/hicolor/24x24/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/32x32/apps/pgadmin.png path=usr/share/icons/hicolor/32x32/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/36x36/apps/pgadmin.png path=usr/share/icons/hicolor/36x36/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/48x48/apps/pgadmin.png path=usr/share/icons/hicolor/48x48/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/64x64/apps/pgadmin.png path=usr/share/icons/hicolor/64x64/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/72x72/apps/pgadmin.png path=usr/share/icons/hicolor/72x72/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/96x96/apps/pgadmin.png path=usr/share/icons/hicolor/96x96/apps/pgadmin.png restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/icons/scalable/apps/pgadmin.svg path=usr/share/icons/hicolor/scalable/apps/pgadmin.svg restart_fmri=svc:/application/desktop-cache/icon-cache:default
+file files/pgadmin3.1 path=usr/share/man/man1/pgadmin3.1  
+
+# pgadmin earlier contained pgagent
+depend type=require fmri=database/postgres/pgagent
+
+legacy desc="$(COMPONENT_SUMMARY)" name="$(COMPONENT_SUMMARY)" pkg=SUNWpgadmin3
+
+file path=usr/bin/pgadmin3 mode=0555
+file path=usr/share/pgadmin3/branding/branding.ini
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/fki.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/instrumentation91_with.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/instrumentation91_without.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/multiple.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/object-editing.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/pk.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/saving-passwords.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/vacuum-full.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/cs_CZ/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/cs_CZ/pgadmin3.css
+file path=usr/share/pgadmin3/docs/de_DE/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/fki.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/multiple.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/object-editing.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/pk.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/saving-passwords.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/de_DE/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/de_DE/pgadmin3.css
+file path=usr/share/pgadmin3/docs/en_US/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/en_US/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/en_US/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/en_US/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/en_US/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/en_US/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/en_US/hints/fki.html
+file path=usr/share/pgadmin3/docs/en_US/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/en_US/hints/instrumentation91_with.html
+file path=usr/share/pgadmin3/docs/en_US/hints/instrumentation91_without.html
+file path=usr/share/pgadmin3/docs/en_US/hints/multiple.html
+file path=usr/share/pgadmin3/docs/en_US/hints/object-editing.html
+file path=usr/share/pgadmin3/docs/en_US/hints/pk.html
+file path=usr/share/pgadmin3/docs/en_US/hints/saving-passwords.html
+file path=usr/share/pgadmin3/docs/en_US/hints/vacuum-full.html
+file path=usr/share/pgadmin3/docs/en_US/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/en_US/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/en_US/pgadmin3.css
+file path=usr/share/pgadmin3/docs/es_ES/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/fki.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/multiple.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/object-editing.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/pk.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/es_ES/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/es_ES/pgadmin3.css
+file path=usr/share/pgadmin3/docs/fi_FI/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/fki.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/multiple.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/object-editing.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/pk.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/saving-passwords.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/fi_FI/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/fi_FI/pgadmin3.css
+file path=usr/share/pgadmin3/docs/fr_FR/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/fki.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/instrumentation91_with.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/instrumentation91_without.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/multiple.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/pk.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/vacuum-full.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/fr_FR/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/fr_FR/pgadmin3.css
+file path=usr/share/pgadmin3/docs/sl_SI/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/fki.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/multiple.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/pk.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/sl_SI/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/sl_SI/pgadmin3.css
+file path=usr/share/pgadmin3/docs/zh_CN/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/fki.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/multiple.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/object-editing.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/pk.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/saving-passwords.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/zh_CN/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/zh_CN/pgadmin3.css
+file path=usr/share/pgadmin3/docs/zh_TW/hints/autovacuum.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/conn-hba.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/conn-ident.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/conn-listen.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/encoding-ascii.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/encoding-unicode.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/fki.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/instrumentation.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/multiple.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/object-editing.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/pk.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/saving-passwords.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/vacuum.html
+file path=usr/share/pgadmin3/docs/zh_TW/hints/view-without-pk.html
+file path=usr/share/pgadmin3/docs/zh_TW/pgadmin3.css
+file path=usr/share/pgadmin3/i18n/ca_ES/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/ca_ES/wxstd.mo
+file path=usr/share/pgadmin3/i18n/cs_CZ/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/cs_CZ/wxstd.mo
+file path=usr/share/pgadmin3/i18n/de_DE/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/de_DE/wxstd.mo
+file path=usr/share/pgadmin3/i18n/fr_FR/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/fr_FR/wxstd.mo
+file path=usr/share/pgadmin3/i18n/ja_JP/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/ja_JP/wxstd.mo
+file path=usr/share/pgadmin3/i18n/lv_LV/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/lv_LV/wxstd.mo
+file path=usr/share/pgadmin3/i18n/pg_settings.csv
+file path=usr/share/pgadmin3/i18n/pgadmin3.lng
+file path=usr/share/pgadmin3/i18n/pl_PL/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/pl_PL/wxstd.mo
+file path=usr/share/pgadmin3/i18n/ru_RU/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/ru_RU/wxstd.mo
+file path=usr/share/pgadmin3/i18n/sr_RS/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/sr_RS/wxstd.mo
+file path=usr/share/pgadmin3/i18n/wxstd.mo
+file path=usr/share/pgadmin3/i18n/zh_CN/pgadmin3.mo
+file path=usr/share/pgadmin3/i18n/zh_CN/wxstd.mo
+file path=usr/share/pgadmin3/plugins.d/plugins.ini
+file path=usr/share/pgadmin3/settings.ini

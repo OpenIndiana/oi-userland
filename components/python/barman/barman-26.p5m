@@ -1,0 +1,69 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/database/postgres/barman-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Databases"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license barman.license license="GPLv3"
+
+depend fmri=library/python-2/argh-26@0.23.3 type=require
+depend fmri=library/python-2/psycopg2-26@2.5.1 type=require
+depend fmri=library/python-2/python-dateutil-26@1.5 type=require
+
+depend fmri=database/postgres/barman@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
+
+link path=usr/bin/barman target=barman-2.6 mediator=python \
+    mediator-version=2.6
+link path=usr/share/man/man1/barman.1 \
+    target=../../../lib/python2.6/vendor-packages/share/man/man1/barman.1 mediator=python \
+    mediator-version=2.6
+link path=usr/share/man/man4/barman.conf.4 \
+    target=../../../lib/python2.6/vendor-packages/share/man/man4/barman.conf.4 mediator=python \
+    mediator-version=2.6
+
+file path=usr/bin/barman-2.6 mode=0555
+file path=usr/lib/python2.6/vendor-packages/barman-1.2.3-py2.6.egg-info/PKG-INFO
+file path=usr/lib/python2.6/vendor-packages/barman-1.2.3-py2.6.egg-info/SOURCES.txt
+file path=usr/lib/python2.6/vendor-packages/barman-1.2.3-py2.6.egg-info/dependency_links.txt
+file path=usr/lib/python2.6/vendor-packages/barman-1.2.3-py2.6.egg-info/requires.txt
+file path=usr/lib/python2.6/vendor-packages/barman-1.2.3-py2.6.egg-info/top_level.txt
+file path=usr/lib/python2.6/vendor-packages/barman/__init__.py
+file path=usr/lib/python2.6/vendor-packages/barman/__init__.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/backup.py
+file path=usr/lib/python2.6/vendor-packages/barman/backup.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/cli.py
+file path=usr/lib/python2.6/vendor-packages/barman/cli.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/command_wrappers.py
+file path=usr/lib/python2.6/vendor-packages/barman/command_wrappers.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/compression.py
+file path=usr/lib/python2.6/vendor-packages/barman/compression.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/config.py
+file path=usr/lib/python2.6/vendor-packages/barman/config.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/lockfile.py
+file path=usr/lib/python2.6/vendor-packages/barman/lockfile.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/retention_policies.py
+file path=usr/lib/python2.6/vendor-packages/barman/retention_policies.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/server.py
+file path=usr/lib/python2.6/vendor-packages/barman/server.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/version.py
+file path=usr/lib/python2.6/vendor-packages/barman/version.pyc
+file path=usr/lib/python2.6/vendor-packages/barman/xlog.py
+file path=usr/lib/python2.6/vendor-packages/barman/xlog.pyc
+file path=usr/lib/python2.6/vendor-packages/share/man/man1/barman.1
+file files/barman.conf.4 path=usr/lib/python2.6/vendor-packages/share/man/man4/barman.conf.4

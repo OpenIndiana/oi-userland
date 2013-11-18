@@ -32,13 +32,7 @@ link path=usr/mysql/sql-bench target=../percona-server/5.5/mysql-test mediator=m
 
 depend fmri=pkg:/database/percona-server-55/client@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
-depend fmri=runtime/perl-510@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-510 \
-    type=conditional
-
-depend fmri=runtime/perl-516@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
-    predicate=runtime/perl-516 \
-    type=conditional
+depend type=require-any fmri=runtime/perl-510 fmri=runtime/perl-516
 
 dir path=usr/percona-server/5.5/mysql-test
 dir path=usr/percona-server/5.5/sql-bench
@@ -1496,6 +1490,7 @@ file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/binlog_stm_drop_tb
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/binlog_stm_unsafe_warning-master.opt
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/binlog_incident.test
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/binlog_row_ctype_ucs.test
+file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/binlog_percona_fake_changes.test
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/percona_bug1162085.test
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/binlog_killed_simulate.test
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/t/binlog_killed_simulate-master.opt
@@ -1620,6 +1615,7 @@ file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/binlog_stm_drop_tm
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/percona_binlog_unsafe_limit.result
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/binlog_tmp_table.result
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/binlog_query_filter_rules.result
+file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/binlog_percona_fake_changes.result
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/percona_bug1162085.result
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/binlog_old_versions.result
 file    path=usr/percona-server/5.5/mysql-test/suite/binlog/r/binlog_row_mix_innodb_myisam.result

@@ -59,7 +59,7 @@ update:
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
 	cd $(SOURCE_DIR); $(GIT) pull $(GIT_REPO); \
-	  [ $$($(GIT) log -1 --format=%H) == $$(cat .downloaded) ] || \
+	  [ "$$($(GIT) log -1 --format=%H)" == "$$(cat .downloaded)" ] || \
 	  $(GIT) log -1 --format=%H > .downloaded
 
 download:: $(SOURCE_DIR)/.downloaded

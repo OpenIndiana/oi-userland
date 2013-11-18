@@ -1,0 +1,252 @@
+--- icu/source/data/mappings/convrtrs.txt	Fri Sep 17 07:04:39 2010
++++ icu/source/data/mappings/convrtrs.txt	Thu Dec  9 01:53:56 2010
+@@ -137,6 +137,7 @@
+ 
+ # Fully algorithmic converters
+ 
++# Sun modifications: UNICODE-1-1-UTF-8 unicode-2-0-utf-8
+ UTF-8 { IANA* MIME* JAVA* WINDOWS }
+                                 ibm-1208 { IBM* } # UTF-8 with IBM PUA
+                                 ibm-1209 { IBM }  # UTF-8
+@@ -148,8 +149,11 @@
+                                 ibm-17593 { IBM } # Unicode 4.0, UTF-8
+                                 windows-65001 { WINDOWS* }
+                                 cp1208
++				UNICODE-1-1-UTF-8
++				unicode-2-0-utf-8
+                                 x-UTF_8J
+ 
++# Sun modification: csUnicode11 csUnicodeASCII csUnicodeLatin1 ISO-10646 ISO-10646-J-1 ISO-10646-UCS-BASIC ISO-10646-Unicode-Latin1
+ # The ICU 2.2 UTF-16/32 converters detect and write a BOM.
+ UTF-16 { IANA* MIME* JAVA* }    ISO-10646-UCS-2 { IANA }
+                                 ibm-1204 { IBM* } # UTF-16 with IBM PUA and BOM sensitive
+@@ -157,6 +161,14 @@
+                                 unicode
+                                 csUnicode
+                                 ucs-2
++                                csUnicode11
++                                csUnicodeASCII
++                                csUnicodeLatin1
++                                ISO-10646
++                                ISO-10646-J-1
++                                ISO-10646-UCS-BASIC
++                                ISO-10646-Unicode-Latin1
++
+ # The following Unicode CCSIDs (IBM) are not valid in ICU because they are
+ # considered pure DBCS (exactly 2 bytes) of Unicode,
+ # and they are a subset of Unicode. ICU does not support their encoding structures.
+@@ -301,8 +313,10 @@
+ #     utf7Converter=ucnv_open("UTF-7,version=1");
+ #
+ # For details about email headers see RFC 2047.
+-UTF-7 { IANA* MIME* WINDOWS }   windows-65000 { WINDOWS* }
++# Sun modification: csUnicode11UTF7 UNICODE-1-1-URF-7 UNICODE-1-1-UTF-7
++UTF-7 { IANA* MIME* WINDOWS }   windows-65000 { WINDOWS* } csUnicode11UTF7 UNICODE-1-1-URF-7 UNICODE-1-1-UTF-7
+ 
++
+ # UTF-EBCDIC doesn't exist in ICU, but the aliases are here for reference.
+ #UTF-EBCDIC ibm-1210 { IBM* } ibm-1211 { IBM }
+ 
+@@ -312,7 +326,8 @@
+ # RFC 2060: INTERNET MESSAGE ACCESS PROTOCOL - VERSION 4rev1
+ # (http://www.ietf.org/rfc/rfc2060.txt)
+ # Section 5.1.3.  Mailbox International Naming Convention
+-IMAP-mailbox-name
++# Sun modification: IMAP-MODIFIED-UTF-7 IMAP_UTF_7 IMAP-UTF-7 MODIFIED_UTF_7 MODIFIED-UTF-7 MUTF_7 MUTF-7
++IMAP-mailbox-name        IMAP-MODIFIED-UTF-7 IMAP_UTF_7 IMAP-UTF-7 MODIFIED_UTF_7 MODIFIED-UTF-7 MUTF_7 MUTF-7
+ 
+ SCSU { IANA* }
+     ibm-1212 { IBM }  # SCSU with IBM PUA
+@@ -328,6 +343,7 @@
+ 
+ # Standard iso-8859-1, which does not have the Euro update.
+ # See iso-8859-15 (latin9) for the Euro update
++# Sun modification: iso_8859-1:1978 ISO-8859-1-Windows-3.0-Latin-1 ISO-8859-1-Windows-3.1-Latin-1
+ ISO-8859-1 { MIME* IANA JAVA* }
+     ibm-819 { IBM* JAVA }    # This is not truely ibm-819 because it's missing the fallbacks.
+     IBM819 { IANA }
+@@ -339,6 +355,7 @@
+     ISO_8859-1:1987 { IANA* JAVA }
+     l1 { IANA JAVA }
+     819 { JAVA }
++    iso_8859-1:1978 ISO-8859-1-Windows-3.0-Latin-1 ISO-8859-1-Windows-3.1-Latin-1 LATIN_1
+     # windows-28591 { WINDOWS* } # This has odd behavior because it has the Euro update, which isn't correct.
+     # LATIN_1     # Old ICU name
+     # ANSI_X3.110-1983  # This is for a different IANA alias.  This isn't iso-8859-1.
+@@ -365,6 +382,7 @@
+ # Table-based interchange codepages
+ 
+ # Central Europe
++# Sun modification: ISO-8859-2-Windows-Latin-2
+ ibm-912_P100-1995 { UTR22* }
+                         ibm-912 { IBM* JAVA }
+                         ISO-8859-2 { MIME* IANA JAVA* WINDOWS }
+@@ -377,6 +395,7 @@
+                         cp912 { JAVA }
+                         912 { JAVA }
+                         windows-28592 { WINDOWS* }
++                        ISO-8859-2-Windows-Latin-2
+ 
+ # Maltese Esperanto
+ ibm-913_P100-2000 { UTR22* }
+@@ -484,6 +503,7 @@
+ # -E means explicit. -I means implicit.
+ # -E requires the client to handle the ISO 6429 bidirectional controls
+ # This matches the official mapping on unicode.org
++# Sun modification: ISO-8859-8-Visual visual iso-8859-8i
+ ibm-5012_P100-1999 { UTR22* }
+                         ibm-5012 { IBM* }
+                         ISO-8859-8 { MIME* IANA WINDOWS JAVA* }
+@@ -495,6 +515,7 @@
+                         ISO-8859-8-E { IANA MIME } # IANA and Windows considers this alias different and BiDi needs to be applied.
+                         8859_8 { JAVA }
+                         windows-28598 { WINDOWS* } # Hebrew (ISO-Visual). A hybrid between ibm-5012 and ibm-916 with extra PUA mappings.
++			ISO-8859-8-Visual visual iso-8859-8i
+                         hebrew8 # Reflect HP-UX code page update
+ 
+ # Unfortunately, the Java aliases are split across ibm-916 and ibm-5012
+@@ -603,6 +624,7 @@
+                         pck     # Probably SOLARIS
+                         sjis    # This might be for ibm-1351
+                         ibm-943_VSUB_VPUA
++			ibm-943_P14A-2000 cp943 ms_kanji 943
+                         x-MS932_0213 { JAVA }
+                         x-JISAutoDetect { JAVA }
+                         # cp943 # This isn't Windows, and no one else uses it.
+@@ -615,6 +637,7 @@
+                         ibm-943_VASCII_VSUB_VPUA
+                         x-IBM943 { JAVA }
+                         # japanese. Unicode name is \u30b7\u30d5\u30c8\u7b26\u53f7\u5316\u8868\u73fe
++# Sun modification:
+ ibm-33722_P12A_P12A-2004_U2 { UTR22* }
+                         ibm-33722   # Leave untagged because this isn't the default
+                         ibm-5050    # Leave untagged because this isn't the default, and yes this alias is correct
+@@ -625,6 +648,7 @@
+                         windows-51932 { WINDOWS* }
+                         ibm-33722_VPUA
+                         IBM-eucJP
++                        x-euc
+ ibm-33722_P120-1999 { UTR22* }  # Japan EUC with \ <-> Yen mapping
+                         ibm-33722 { IBM* JAVA }
+                         ibm-5050 { IBM }    # Yes this is correct
+@@ -669,6 +693,7 @@
+                         windows-950 { WINDOWS* }
+                         x-windows-950 { JAVA }
+                         x-big5
++			ibm-1370 CN-Big5 x-x-big5
+ ibm-950_P110-1999 { UTR22* }                # Taiwan Big-5 (w/o euro update)
+                         ibm-950 { IBM* JAVA }
+                         cp950 { JAVA* }
+@@ -692,16 +717,20 @@
+                         Big5_Solaris { JAVA }
+                         x-Big5-Solaris { JAVA }
+ # GBK
++# Sun modification: zh_cn
+ ibm-1386_P100-2001  { UTR22* }
+                         ibm-1386 { IBM* }
+                         cp1386
+                         windows-936 # Alternate mapping. Leave untagged. This is the IBM interpretation of a Windows codepage.
+                         ibm-1386_VSUB_VPUA
++			zh_cn
++# Sun modification: x-gbk
+ windows-936-2000 { UTR22* }
+                         GBK { IANA* WINDOWS JAVA* }
+                         CP936 { IANA JAVA }
+                         MS936 { IANA }  # In JDK 1.5, this goes to x-mswin-936. This is an IANA name split.
+                         windows-936 { IANA WINDOWS* JAVA }
++			x-gbk
+ 
+ # Java has two different tables for ibm-1383 and gb2312. We pick closest set for tagging.
+ ibm-1383_P110-1999 { UTR22* }       # China EUC.
+@@ -724,6 +753,7 @@
+                         gb2312-1980
+                         GB2312.1980-0   # From X11R6
+ 
++# Sun modification: cns11643_1 x-euc-tw
+ ibm-964_P110-1999 { UTR22* }                # Taiwan EUC. x-euc-tw is a MIME name
+                         ibm-964 { IBM* JAVA }
+                         EUC-TW
+@@ -733,6 +763,7 @@
+                         964 { JAVA }
+                         ibm-964_VPUA
+                         x-IBM964 { JAVA }
++			cns11643_1 x-euc-tw
+ 
+ # ISO-2022 needs one, and other people may need others.
+ ibm-949_P110-1999 { UTR22* }
+@@ -791,6 +822,7 @@
+ 
+ # Java, Solaris and AIX use euc-kr to also mean ksc5601, and _sometimes_ for Windows too.
+ # ibm-1363 is almost a superset of ibm-970.
++# Sun modification: ks_x_1001:1992 ksc5601_1992 ksc5601-1992 x-windows-949
+ ibm-1363_P11B-1998 { UTR22* }
+                         ibm-1363 # Leave untagged because this isn't the default
+                         KS_C_5601-1987 { IANA* }
+@@ -805,8 +837,10 @@
+                         windows-949 # Alternate mapping. Leave untagged. This is the IBM interpretation of a Windows codepage.
+                         ibm-1363_VSUB_VPUA
+                         x-IBM1363C { JAVA }
+-                        # ks_x_1001:1992
+-                        # ksc5601-1992
++                        ks_x_1001:1992
++                        ksc5601-1992
++			ksc5601_1992
++			x-windows-949
+ 
+ ibm-1363_P110-1997 { UTR22* } # Korean KSC MBCS with \ <-> Won mapping
+                         ibm-1363 { IBM* }
+@@ -824,16 +858,18 @@
+                         ms949 { JAVA }
+                         x-KSC5601 { JAVA }
+ 
++johab        johap x-johab x-johap ks_x_1001:1992-3 ksc5601.1992-3 ks_x_1001.1992-3 ksx1001.1992-3 ks_c_5601.1992-3
++
+ windows-1361-2000 { UTR22* }
+                         ksc5601_1992
+                         ms1361
+-                        johab
+-                        x-Johab { JAVA }
+ 
++# Sun modification: 874 iso-8859-11 TIS620.2533
+ windows-874-2000 { UTR22* }   # Thai (w/ euro update)
+                         TIS-620 { WINDOWS }
+                         windows-874 { JAVA* WINDOWS* }
+                         MS874 { JAVA }
++			874 iso-8859-11 TIS620.2533
+                         x-windows-874 { JAVA }
+                         # iso-8859-11 { WINDOWS } # iso-8859-11 is similar to TIS-620. ibm-13162 is a closer match.
+ 
+@@ -887,15 +923,24 @@
+ # The cp aliases in this section aren't really windows aliases, but it was used by ICU for Windows.
+ # cp is usually used to denote IBM in Java, and that is why we don't do that anymore.
+ # The windows-* aliases mean windows codepages.
+-ibm-5346_P100-1998 { UTR22* }   ibm-5346 { IBM* } windows-1250 { IANA* JAVA* WINDOWS* } cp1250 { WINDOWS JAVA } # Windows Latin2 (w/ euro update)
+-ibm-5347_P100-1998 { UTR22* }   ibm-5347 { IBM* } windows-1251 { IANA* JAVA* WINDOWS* } cp1251 { WINDOWS JAVA } ANSI1251 # Windows Cyrillic (w/ euro update). ANSI1251 is from Solaris
+-ibm-5348_P100-1997 { UTR22* }   ibm-5348 { IBM* } windows-1252 { IANA* JAVA* WINDOWS* } cp1252 { JAVA }         # Windows Latin1 (w/ euro update)
+-ibm-5349_P100-1998 { UTR22* }   ibm-5349 { IBM* } windows-1253 { IANA* JAVA* WINDOWS* } cp1253 { JAVA }         # Windows Greek (w/ euro update)
+-ibm-5350_P100-1998 { UTR22* }   ibm-5350 { IBM* } windows-1254 { IANA* JAVA* WINDOWS* } cp1254 { JAVA }         # Windows Turkish (w/ euro update)
+-ibm-9447_P100-2002 { UTR22* }   ibm-9447 { IBM* } windows-1255 { IANA* JAVA* WINDOWS* } cp1255 { JAVA }         # Windows Hebrew (w/ euro update)
+-ibm-9448_X100-2005 { UTR22* }   ibm-9448 { IBM* } windows-1256 { IANA* JAVA* WINDOWS* } cp1256 { WINDOWS JAVA } x-windows-1256S { JAVA } # Windows Arabic (w/ euro update)
+-ibm-9449_P100-2002 { UTR22* }   ibm-9449 { IBM* } windows-1257 { IANA* JAVA* WINDOWS* } cp1257 { JAVA }         # Windows Baltic (w/ euro update)
+-ibm-5354_P100-1998 { UTR22* }   ibm-5354 { IBM* } windows-1258 { IANA* JAVA* WINDOWS* } cp1258 { JAVA }         # Windows Vietnamese (w/ euro update)
++# Sun modification: x-cp1250
++ibm-5346_P100-1998 { UTR22* }   ibm-5346 { IBM* } windows-1250 { IANA* JAVA* WINDOWS* } cp1250 { WINDOWS JAVA } x-cp1250 # Windows Latin2 (w/ euro update)
++# Sun modification: csWindows31Latin5 iso-8859-5-windows-latin-5 x-cp1251 ansi-1251
++ibm-5347_P100-1998 { UTR22* }   ibm-5347 { IBM* } windows-1251 { IANA* JAVA* WINDOWS* } cp1251 { WINDOWS JAVA } ANSI1251 csWindows31Latin5 iso-8859-5-windows-latin-5 x-cp1251 ansi-1251 # Windows Cyrillic (w/ euro update). ANSI1251 is from Solaris
++# Sun modification: 1252 x-cp1252
++ibm-5348_P100-1997 { UTR22* }   ibm-5348 { IBM* } windows-1252 { IANA* JAVA* WINDOWS* } cp1252 { JAVA } 1252 x-cp1252        # Windows Latin1 (w/ euro update)
++# Sun modification: x-cp1253
++ibm-5349_P100-1998 { UTR22* }   ibm-5349 { IBM* } windows-1253 { IANA* JAVA* WINDOWS* } cp1253 { JAVA } x-cp1253        # Windows Greek (w/ euro update)
++# Sun modification: x-cp1254
++ibm-5350_P100-1998 { UTR22* }   ibm-5350 { IBM* } windows-1254 { IANA* JAVA* WINDOWS* } cp1254 { JAVA } x-cp1254        # Windows Turkish (w/ euro update)
++# Sun modification: x-cp1255 Win1255
++ibm-9447_P100-2002 { UTR22* }   ibm-9447 { IBM* } windows-1255 { IANA* JAVA* WINDOWS* } cp1255 { JAVA } x-cp1255 Win1255        # Windows Hebrew (w/ euro update)
++# Sun modification: x-cp1256
++ibm-9448_X100-2005 { UTR22* }   ibm-9448 { IBM* } windows-1256 { IANA* JAVA* WINDOWS* } cp1256 { WINDOWS JAVA } x-windows-1256S { JAVA } x-cp1256 # Windows Arabic (w/ euro update)
++# Sun modification: x-cp1257
++ibm-9449_P100-2002 { UTR22* }   ibm-9449 { IBM* } windows-1257 { IANA* JAVA* WINDOWS* } cp1257 { JAVA } x-cp1257        # Windows Baltic (w/ euro update)
++# Sun modification: x-cp1258
++ibm-5354_P100-1998 { UTR22* }   ibm-5354 { IBM* } windows-1258 { IANA* JAVA* WINDOWS* } cp1258 { JAVA } x-cp1258        # Windows Vietnamese (w/ euro update)
+ 
+ # These tables are out of date, and most don't have the Euro
+ # Leave the windows- variants untagged. They are alternate tables of the newer ones above.

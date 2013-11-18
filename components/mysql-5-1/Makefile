@@ -97,7 +97,7 @@ CONFIGURE_OPTIONS +=	--with-big-tables
 CONFIGURE_OPTIONS +=	--with-ssl
 CONFIGURE_OPTIONS +=	--with-readline
 CONFIGURE_OPTIONS +=	--with-extra-charsets=complex
-CONFIGURE_OPTIONS +=	--with-plugins=archive,blackhole,csv,myisam,example,federated,innobase,myisammrg
+CONFIGURE_OPTIONS +=	--with-plugins=archive,blackhole,csv,myisam,example,federated,innobase,myisammrg,ndbcluster
 CONFIGURE_OPTIONS +=	--enable-local-infile
 
 CONFIGURE_OPTIONS.32 +=	--libexecdir=$(CONFIGURE_PREFIX)/bin

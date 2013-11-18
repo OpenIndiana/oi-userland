@@ -41,15 +41,15 @@ include ../../make-rules/ips.mk
 # we only build and deliver 64-bit binaries.
 VARIANTS =	nox x gtk
 
-BUILD_64 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
-INSTALL_64 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
+BUILD_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
+INSTALL_32 = $(VARIANTS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 
 # emacs creates a directory in usr/lib/emacs/$(COMPONENT_VERSION) that
 # contains the platform name. Although the name is platform dependent,
 # the files inside it are the same on all platforms. By adding this
 # to the pkgmogrify macros, we can write our manifests in a portable way.
 EMACS_ULEV_PFX = $(MACH:sparc=sparc-sun)
-EMACS_ULEVDIR =	 $(EMACS_ULEV_PFX:i386=x86_64-pc)-solaris$(SOLARIS_VERSION)
+EMACS_ULEVDIR =	 $(EMACS_ULEV_PFX:i386=i386-pc)-solaris$(SOLARIS_VERSION)
 PKG_MACROS +=	EMACS_ULEVDIR=$(EMACS_ULEVDIR)
 
 # LD_OPTIONS is defined to apply desirable link-editor options to Userland
@@ -70,10 +70,9 @@ COMPILER =	gcc
 
 # The configure script runs the pkg-config command. Since we're building
 # 64-bit executables, we need pkg-config to use the 64-bit metadata files
-CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
+# CONFIGURE_ENV += PKG_CONFIG_PATH=/usr/lib/$(MACH64)/pkgconfig
 
 # configure options common to all variants of emacs that we want to build.
-CONFIGURE_OPTIONS +=	CC="$(CC) -m64"
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	--datarootdir=$(CONFIGURE_PREFIX)/share
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
@@ -110,21 +109,21 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PBIN)/emacs $(PBIN)/emacs-* ;
 
 # GTK binaries
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH64)-gtk/src/emacs-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH32)-gtk/src/emacs-$(COMPONENT_VERSION).1 \
 		$(PBIN)/emacs-gtk ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-gtk $(PBIN)/emacs-gtk-$(COMPONENT_VERSION) ;
 
 # Non-X11 binaries
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH64)-nox/src/emacs-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH32)-nox/src/emacs-$(COMPONENT_VERSION).1 \
 		$(PBIN)/emacs-nox ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-nox $(PBIN)/emacs-nox-$(COMPONENT_VERSION) ;
 
 # X11 (Athena) binaries
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH64)-x/src/emacs-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH32)-x/src/emacs-$(COMPONENT_VERSION).1 \
 		$(PBIN)/emacs-x ;
 COMPONENT_POST_INSTALL_ACTION += \
 	$(LN) $(PBIN)/emacs-x $(PBIN)/emacs-x-$(COMPONENT_VERSION) ;
@@ -147,7 +146,7 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) -r $(PVAR) ;
 # DOC-23.1.1. Remove and replace.
 COMPONENT_POST_INSTALL_ACTION += $(RM) $(PETC)/DOC-$(COMPONENT_VERSION).2 ;
 COMPONENT_POST_INSTALL_ACTION += \
-	$(CP) $(BUILD_DIR)/$(MACH64)-x/etc/DOC-$(COMPONENT_VERSION).1 \
+	$(CP) $(BUILD_DIR)/$(MACH32)-x/etc/DOC-$(COMPONENT_VERSION).1 \
 		$(PETC)/DOC-$(COMPONENT_VERSION).1 ;
 
 COMPONENT_POST_INSTALL_ACTION += \
@@ -170,9 +169,9 @@ COMPONENT_POST_INSTALL_ACTION += $(RM) $(PROTO_DIR)/usr/share/info/dir ;
 
 
 # common targets
-build:          $(BUILD_64)
+build:          $(BUILD_32)
 
-install:	$(BUILD_64) $(BUILD_DIR)/$(MACH64)-x/.installed 
+install:	$(BUILD_32) $(BUILD_DIR)/$(MACH32)-x/.installed 
 
 test:
 	@echo "no tests available"

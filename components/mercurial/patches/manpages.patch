@@ -17,6 +17,7 @@ terminating the indented paragraph).  It needs a preceding .RS to do the
 right thing, and .RS 0 seems to give the best effect.  Probably most
 .INDENT/.UNINDENT pairs should be converted to .RS/.RE, too.
 
+.IP Note also should be precessed by .RE
 --- mercurial-2.7-orig/doc/hgrc.5	2013-08-02 07:37:47.000000000 +0400
 +++ mercurial-2.7/doc/hgrc.5	2013-08-19 15:09:36.450154886 +0400
 @@ -3,33 +3,6 @@
@@ -867,12 +868,9 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .SH COPYING
  .sp
  This manual page is copyright 2006 Vadim Gelfer.
---- mercurial-2.7-orig/doc/hg.1	2013-08-02 07:37:46.000000000 +0400
-+++ mercurial-2.7/doc/hg.1	2013-08-19 16:08:51.082793422 +0400
-@@ -1,35 +1,8 @@
--.\" Man page generated from reStructuredText.
-+\" Man page generated from reStructuredText.
- .
+--- mercurial-2.8/doc/hg.1.~1~	2013-11-02 02:04:20.000000000 +0400
++++ mercurial-2.8/doc/hg.1	2013-11-08 11:46:53.093053688 +0400
+@@ -3,33 +3,6 @@
  .TH HG 1 "" "" "Mercurial Manual"
  .SH NAME
  hg \- Mercurial source code management system
@@ -1061,7 +1059,15 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Prepare a new changeset with the effect of REV undone in the
-@@ -444,11 +417,11 @@
+@@ -432,6 +405,7 @@
+ If REV is the parent of the working directory, then this new changeset
+ is committed automatically. Otherwise, hg needs to merge the
+ changes and the merged result is left uncommitted.
++.RE
+ .IP Note
+ .
+ backout cannot be used to fix either an unwanted or
+@@ -444,11 +418,11 @@
  working directory and a new child of REV that simply undoes REV.
  .sp
  Before version 1.7, the behavior without \-\-merge was equivalent
@@ -1075,7 +1081,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -498,9 +471,9 @@
+@@ -498,9 +472,9 @@
  .SS bisect
  .sp
  .nf
@@ -1087,7 +1093,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This command helps to find changesets which introduce problems. To
-@@ -530,10 +503,10 @@
+@@ -530,10 +504,10 @@
  start a bisection with known bad revision 12, and good revision 34:
  .sp
  .nf
@@ -1100,7 +1106,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -541,10 +514,10 @@
+@@ -541,10 +515,10 @@
  bad:
  .sp
  .nf
@@ -1113,7 +1119,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -552,10 +525,10 @@
+@@ -552,41 +526,41 @@
  that revision is not usable because of another issue):
  .sp
  .nf
@@ -1126,16 +1132,18 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -563,7 +536,7 @@
- .INDENT 2.0
- .INDENT 3.5
+ skip all revisions that do not touch directories \fBfoo\fP or \fBbar\fP:
  .sp
--hg bisect \-\-skip \(aq!( file("path:foo") & file("path:bar") )\(aq
-+hg bisect \-\-skip '!( file("path:foo") & file("path:bar") )'
- .UNINDENT
- .UNINDENT
+ .nf
+-.ft C
+-hg bisect \-\-skip "!( file(\(aqpath:foo\(aq) & file(\(aqpath:bar\(aq) )"
+-.ft P
++.ft
++hg bisect \-\-skip "!( file('path:foo') & file('path:bar') )"
++.ft
+ .fi
  .IP \(bu 2
-@@ -571,22 +544,22 @@
+ .
  forget the current bisection:
  .sp
  .nf
@@ -1157,14 +1165,13 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  hg bisect \-\-reset
  hg bisect \-\-bad 34
  hg bisect \-\-good 12
--hg bisect \-\-command \(aqmake && make tests\(aq
+ hg bisect \-\-command "make && make tests"
 -.ft P
-+hg bisect \-\-command 'make && make tests'
 +.ft
  .fi
  .IP \(bu 2
  .
-@@ -594,9 +567,9 @@
+@@ -594,9 +568,9 @@
  bisection:
  .sp
  .nf
@@ -1176,7 +1183,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -604,31 +577,31 @@
+@@ -604,31 +578,31 @@
  if running with \-U/\-\-noupdate):
  .sp
  .nf
@@ -1215,7 +1222,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -666,27 +639,27 @@
+@@ -666,27 +640,27 @@
  .SS bookmarks
  .sp
  .nf
@@ -1252,7 +1259,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  have that revision checked out (and the bookmark made active) by
  default.
  .sp
-@@ -723,32 +696,32 @@
+@@ -723,32 +697,33 @@
  .SS branch
  .sp
  .nf
@@ -1262,6 +1269,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -.ft P
 +.ft
  .fi
++.RE
  .IP Note
  .
 -Branch names are permanent and global. Use \%\fBhg bookmark\fP\: to create a
@@ -1293,7 +1301,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -766,19 +739,19 @@
+@@ -766,19 +741,19 @@
  .SS branches
  .sp
  .nf
@@ -1318,7 +1326,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0.
  .sp
-@@ -796,9 +769,9 @@
+@@ -796,9 +771,9 @@
  .SS bundle
  .sp
  .nf
@@ -1330,7 +1338,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Generate a compressed changegroup file collecting changesets not
-@@ -865,9 +838,9 @@
+@@ -865,9 +840,9 @@
  .SS cat
  .sp
  .nf
@@ -1342,7 +1350,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print the specified files as they were at the given revision. If
-@@ -884,7 +857,7 @@
+@@ -884,7 +859,7 @@
  .TP
  .B \fB%d\fP
  .sp
@@ -1351,7 +1359,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B \fB%p\fP
  .sp
-@@ -919,9 +892,9 @@
+@@ -919,9 +894,9 @@
  .SS clone
  .sp
  .nf
@@ -1363,7 +1371,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Create a copy of an existing repository in a new directory.
-@@ -929,7 +902,7 @@
+@@ -929,7 +904,7 @@
  If no destination directory name is specified, it defaults to the
  basename of the source.
  .sp
@@ -1372,7 +1380,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  \fB.hg/hgrc\fP file, as the default to be used for future pulls.
  .sp
  Only local paths and \fBssh://\fP URLs are supported as
-@@ -939,12 +912,12 @@
+@@ -939,12 +914,12 @@
  To pull only a subset of changesets, specify one or more revisions
  identifiers with \-r/\-\-rev or branches with \-b/\-\-branch. The
  resulting clone will contain only the specified changesets and
@@ -1387,7 +1395,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  revision will be checked out in the new repository by default.
  .sp
  To check out a particular version, use \-u/\-\-update, or
-@@ -961,9 +934,9 @@
+@@ -961,9 +936,9 @@
  directory using full hardlinks with
  .sp
  .nf
@@ -1399,7 +1407,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This is the fastest way to clone, but it is not always safe. The
-@@ -982,7 +955,7 @@
+@@ -982,7 +957,7 @@
  .IP b. 3
  .
  if \-u . and the source repository is local, the first parent of
@@ -1408,7 +1416,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .IP c. 3
  .
  the changeset specified with \-u (if a branch name, this means the
-@@ -998,7 +971,7 @@
+@@ -998,7 +973,7 @@
  the tipmost head specified with the url#branch source syntax
  .IP g. 3
  .
@@ -1417,7 +1425,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .IP h. 3
  .
  the tipmost head of the default branch
-@@ -1014,27 +987,27 @@
+@@ -1014,27 +989,27 @@
  clone a remote repository to a new directory named hg/:
  .sp
  .nf
@@ -1451,7 +1459,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -1042,31 +1015,31 @@
+@@ -1042,31 +1017,31 @@
  specified version:
  .sp
  .nf
@@ -1490,7 +1498,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -1112,16 +1085,16 @@
+@@ -1112,16 +1087,16 @@
  .SS commit
  .sp
  .nf
@@ -1511,7 +1519,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  will be committed.
  .sp
  If you are committing the result of a merge, do not provide any
-@@ -1134,19 +1107,19 @@
+@@ -1134,19 +1109,19 @@
  .sp
  The \-\-amend flag can be used to amend the parent of the
  working directory with a new commit that contains the changes
@@ -1536,7 +1544,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success, 1 if nothing changed.
  .sp
-@@ -1202,9 +1175,9 @@
+@@ -1202,9 +1177,9 @@
  .SS copy
  .sp
  .nf
@@ -1548,7 +1556,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Mark dest as having copies of source files. If dest is a
-@@ -1216,7 +1189,7 @@
+@@ -1216,7 +1191,7 @@
  operation is recorded, but no copying is performed.
  .sp
  This command takes effect with the next commit. To undo a copy
@@ -1557,7 +1565,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success, 1 if errors are encountered.
  .sp
-@@ -1248,9 +1221,9 @@
+@@ -1248,18 +1223,19 @@
  .SS diff
  .sp
  .nf
@@ -1569,7 +1577,9 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Show differences between revisions for the specified files.
-@@ -1259,7 +1232,7 @@
+ .sp
+ Differences between files are shown using the unified diff format.
++.RE
  .IP Note
  .
  diff may generate unexpected results for merges, as it will
@@ -1578,7 +1588,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  parent changeset if no revisions are specified.
  .RE
  .sp
-@@ -1277,7 +1250,7 @@
+@@ -1277,7 +1253,7 @@
  anyway, probably with undesirable results.
  .sp
  Use the \-g/\-\-git option to generate diffs in the git extended diff
@@ -1587,7 +1597,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Examples:
  .INDENT 0.0
-@@ -1286,47 +1259,47 @@
+@@ -1286,47 +1262,47 @@
  compare a file in the current working directory to its parent:
  .sp
  .nf
@@ -1646,7 +1656,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -1398,9 +1371,9 @@
+@@ -1398,9 +1374,9 @@
  .SS export
  .sp
  .nf
@@ -1658,7 +1668,15 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print the changeset header and diffs for one or more revisions.
-@@ -1462,7 +1435,7 @@
+@@ -1409,6 +1385,7 @@
+ The information shown in the changeset header is: author, date,
+ branch name (if non\-default), changeset hash, parent(s) and commit
+ comment.
++.RE
+ .IP Note
+ .
+ export may generate unexpected diff output for merge
+@@ -1462,7 +1439,7 @@
  diff anyway, probably with undesirable results.
  .sp
  Use the \-g/\-\-git option to generate diffs in the git extended diff
@@ -1667,7 +1685,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  With the \-\-switch\-parent option, the diff will be against the
  second parent. It can be useful to review a merge.
-@@ -1475,9 +1448,9 @@
+@@ -1475,9 +1452,9 @@
  branch:
  .sp
  .nf
@@ -1679,7 +1697,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -1485,9 +1458,9 @@
+@@ -1485,9 +1462,9 @@
  rename information:
  .sp
  .nf
@@ -1691,7 +1709,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -1495,9 +1468,9 @@
+@@ -1495,9 +1472,9 @@
  descriptive names:
  .sp
  .nf
@@ -1703,7 +1721,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -1533,9 +1506,9 @@
+@@ -1533,9 +1510,9 @@
  .SS forget
  .sp
  .nf
@@ -1715,7 +1733,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Mark the specified files so they will no longer be tracked
-@@ -1545,7 +1518,7 @@
+@@ -1545,7 +1522,7 @@
  entire project history, and it does not delete them from the
  working directory.
  .sp
@@ -1724,7 +1742,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Examples:
  .INDENT 0.0
-@@ -1554,18 +1527,18 @@
+@@ -1554,18 +1531,18 @@
  forget newly\-added binary files:
  .sp
  .nf
@@ -1747,7 +1765,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -1585,15 +1558,15 @@
+@@ -1585,15 +1562,15 @@
  .SS graft
  .sp
  .nf
@@ -1764,11 +1782,11 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -history graph. This is sometimes known as \(aqbackporting\(aq or
 -\(aqcherry\-picking\(aq. By default, graft will copy user, date, and
 +history graph. This is sometimes known as 'backporting' or
-+'cherry\-picking'. By default, graft will copy user, date, and
++ 'cherry\-picking'. By default, graft will copy user, date, and
  description from the source changesets.
  .sp
  Changesets that are ancestors of the current revision, that have
-@@ -1603,9 +1576,9 @@
+@@ -1603,15 +1580,16 @@
  of the form:
  .sp
  .nf
@@ -1780,7 +1798,14 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  If a graft merge results in conflicts, the graft process is
-@@ -1624,37 +1597,37 @@
+ interrupted so that the current merge can be manually resolved.
+ Once all conflicts are addressed, the graft process can be
+ continued with the \-c/\-\-continue option.
++.RE
+ .IP Note
+ .
+ The \-c/\-\-continue option does not reapply earlier options.
+@@ -1624,37 +1602,37 @@
  copy a single change to the stable branch and edit its description:
  .sp
  .nf
@@ -1826,7 +1851,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -1706,9 +1679,9 @@
+@@ -1706,9 +1684,9 @@
  .SS grep
  .sp
  .nf
@@ -1838,7 +1863,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Search revisions of files for a regular expression.
-@@ -1780,9 +1753,9 @@
+@@ -1780,9 +1758,9 @@
  .SS heads
  .sp
  .nf
@@ -1850,7 +1875,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  With no arguments, show all open branch heads in the repository.
-@@ -1792,11 +1765,11 @@
+@@ -1792,11 +1770,11 @@
  .sp
  If one or more REVs are given, only open branch heads on the
  branches associated with the specified changesets are shown. This
@@ -1864,7 +1889,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  If STARTREV is specified, only those heads that are descendants of
  STARTREV will be displayed.
-@@ -1836,9 +1809,9 @@
+@@ -1836,9 +1814,9 @@
  .SS help
  .sp
  .nf
@@ -1876,7 +1901,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  With no arguments, print a list of commands with short help messages.
-@@ -1866,9 +1839,9 @@
+@@ -1866,9 +1844,9 @@
  .SS identify
  .sp
  .nf
@@ -1888,7 +1913,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print a summary identifying the repository state at REV using one or
-@@ -1889,27 +1862,27 @@
+@@ -1889,27 +1867,27 @@
  generate a build identifier for the working directory:
  .sp
  .nf
@@ -1922,7 +1947,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -1959,9 +1932,9 @@
+@@ -1959,9 +1937,9 @@
  .SS import
  .sp
  .nf
@@ -1934,7 +1959,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Import a list of patches and commit them individually (unless
-@@ -1977,7 +1950,7 @@
+@@ -1977,7 +1955,7 @@
  text/plain body parts before first diff are added to commit
  message.
  .sp
@@ -1943,7 +1968,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  description from patch override values from message headers and
  body. Values given on command line with \-m/\-\-message and \-u/\-\-user
  override these.
-@@ -1994,11 +1967,11 @@
+@@ -1994,11 +1972,11 @@
  revision.
  .sp
  With \-s/\-\-similarity, hg will attempt to discover renames and
@@ -1957,7 +1982,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Examples:
  .INDENT 0.0
-@@ -2007,27 +1980,27 @@
+@@ -2007,27 +1985,27 @@
  import a traditional patch from a website and detect renames:
  .sp
  .nf
@@ -1991,7 +2016,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -2035,9 +2008,9 @@
+@@ -2035,9 +2013,9 @@
  possible):
  .sp
  .nf
@@ -2003,7 +2028,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -2064,7 +2037,7 @@
+@@ -2064,7 +2042,7 @@
  .TP
  .B \-\-no\-commit
  .
@@ -2012,7 +2037,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B \-\-bypass
  .
-@@ -2103,9 +2076,9 @@
+@@ -2103,9 +2081,9 @@
  .SS incoming
  .sp
  .nf
@@ -2024,7 +2049,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Show new changesets found in the specified path/URL or the default
-@@ -2199,9 +2172,9 @@
+@@ -2199,9 +2177,9 @@
  .SS init
  .sp
  .nf
@@ -2036,7 +2061,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Initialize a new repository in the given directory. If the given
-@@ -2210,7 +2183,7 @@
+@@ -2210,7 +2188,7 @@
  If no directory is given, the current directory is used.
  .sp
  It is possible to specify an \fBssh://\fP URL as the destination.
@@ -2045,7 +2070,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -2232,9 +2205,9 @@
+@@ -2232,9 +2210,9 @@
  .SS locate
  .sp
  .nf
@@ -2057,7 +2082,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print files under Mercurial control in the working directory whose
-@@ -2280,9 +2253,9 @@
+@@ -2280,9 +2258,9 @@
  .SS log
  .sp
  .nf
@@ -2069,7 +2094,15 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print the revision history of the specified files or the entire
-@@ -2323,90 +2296,90 @@
+@@ -2301,6 +2279,7 @@
+ tags, non\-trivial parents, user, date and time, and a summary for
+ each commit. When the \-v/\-\-verbose switch is used, the list of
+ changed files and full commit message are shown.
++.RE
+ .IP Note
+ .
+ log \-p/\-\-patch may generate unexpected diff output for merge
+@@ -2323,90 +2302,90 @@
  changesets with full descriptions and file lists:
  .sp
  .nf
@@ -2181,7 +2214,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  specifying custom templates.
  .sp
  Returns 0 on success.
-@@ -2507,9 +2480,9 @@
+@@ -2507,9 +2486,9 @@
  .SS manifest
  .sp
  .nf
@@ -2193,7 +2226,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print a list of version controlled files for the given revision.
-@@ -2538,9 +2511,9 @@
+@@ -2538,9 +2517,9 @@
  .SS merge
  .sp
  .nf
@@ -2205,7 +2238,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The current working directory is updated with all changes made in
-@@ -2553,16 +2526,16 @@
+@@ -2553,16 +2532,16 @@
  .sp
  \fB\-\-tool\fP can be used to specify the merge tool used for file
  merges. It overrides the HGMERGE environment variable and your
@@ -2226,7 +2259,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  will check out a clean copy of the original merge parent, losing
  all changes.
  .sp
-@@ -2590,9 +2563,9 @@
+@@ -2590,9 +2569,9 @@
  .SS outgoing
  .sp
  .nf
@@ -2238,7 +2271,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Show changesets not found in the specified destination repository
-@@ -2679,12 +2652,12 @@
+@@ -2679,12 +2658,12 @@
  .SS parents
  .sp
  .nf
@@ -2254,7 +2287,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  given via \-r/\-\-rev, the parent of that revision will be printed.
  If a file argument is given, the revision in which the file was
  last changed (before the working directory revision or the
-@@ -2710,9 +2683,9 @@
+@@ -2710,9 +2689,9 @@
  .SS paths
  .sp
  .nf
@@ -2266,7 +2299,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Show definition of symbolic path name NAME. If no name is given,
-@@ -2733,18 +2706,18 @@
+@@ -2733,18 +2712,18 @@
  as the fallback for both.  When cloning a repository, the clone
  source is written as \fBdefault\fP in \fB.hg/hgrc\fP.  Note that
  \fBdefault\fP and \fBdefault\-push\fP apply to all inbound (e.g.
@@ -2290,7 +2323,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  With no argument, show the phase name of specified revisions.
-@@ -2752,13 +2725,13 @@
+@@ -2752,13 +2731,13 @@
  With one of \-p/\-\-public, \-d/\-\-draft or \-s/\-\-secret, change the
  phase value of the specified revisions.
  .sp
@@ -2307,7 +2340,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Return 0 on success, 1 if no phases were changed or some could not
-@@ -2790,9 +2763,9 @@
+@@ -2790,9 +2769,9 @@
  .SS pull
  .sp
  .nf
@@ -2319,7 +2352,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Pull changes from a remote repository to a local one.
-@@ -2802,13 +2775,13 @@
+@@ -2802,13 +2781,13 @@
  \-R is specified). By default, this does not update the copy of the
  project in the working directory.
  .sp
@@ -2338,7 +2371,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success, 1 if an update had unresolved files.
  .sp
-@@ -2850,9 +2823,9 @@
+@@ -2850,9 +2829,9 @@
  .SS push
  .sp
  .nf
@@ -2350,7 +2383,15 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Push changesets from the local repository to the specified
-@@ -2880,7 +2853,7 @@
+@@ -2869,6 +2848,7 @@
+ Use \-\-new\-branch if you want to allow push to create a new named
+ branch that is not present at the destination. This allows you to
+ only create a new branch without forcing other changes.
++.RE
+ .IP Note
+ .
+ Extra care should be taken with the \-f/\-\-force option,
+@@ -2883,7 +2863,7 @@
  ancestors, and the bookmark will be pushed to the remote
  repository.
  .sp
@@ -2359,7 +2400,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  URLs. If DESTINATION is omitted, a default path will be used.
  .sp
  Returns 0 if push was successful, 1 if nothing to push.
-@@ -2923,9 +2896,9 @@
+@@ -2926,9 +2906,9 @@
  .SS recover
  .sp
  .nf
@@ -2371,7 +2412,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Recover from an interrupted commit or pull.
-@@ -2938,16 +2911,16 @@
+@@ -2941,16 +2921,16 @@
  .SS remove
  .sp
  .nf
@@ -2392,7 +2433,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  \-A/\-\-after can be used to remove only files that have already
  been deleted, \-f/\-\-force can be used to force deletion, and \-Af
-@@ -2957,7 +2930,7 @@
+@@ -2960,7 +2940,7 @@
  The following table details the behavior of remove for different
  file states (columns) and option combinations (rows). The file
  states are Added [A], Clean [C], Modified [M] and Missing [!]
@@ -2401,7 +2442,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  (from branch) and Delete (from disk):
  .TS
  center;
-@@ -3049,9 +3022,9 @@
+@@ -3057,9 +3037,9 @@
  .SS rename
  .sp
  .nf
@@ -2413,7 +2454,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Mark dest as copies of sources; mark sources for deletion. If dest
-@@ -3063,7 +3036,7 @@
+@@ -3071,7 +3051,7 @@
  operation is recorded, but no copying is performed.
  .sp
  This command takes effect at the next commit. To undo a rename
@@ -2422,7 +2463,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success, 1 if errors are encountered.
  .sp
-@@ -3095,24 +3068,24 @@
+@@ -3103,24 +3083,24 @@
  .SS resolve
  .sp
  .nf
@@ -2453,7 +2494,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  files, discarding any previous merge attempts. Re\-merging is not
  performed for files already marked as resolved. Use \fB\-\-all/\-a\fP
  to select all unresolved files. \fB\-\-tool\fP can be used to specify
-@@ -3121,21 +3094,21 @@
+@@ -3129,21 +3109,21 @@
  contents are saved with a \fB.orig\fP suffix.
  .IP \(bu 2
  .
@@ -2479,7 +2520,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  commit after a conflicting merge.
  .sp
  Returns 0 on success, 1 if any files fail a resolve attempt.
-@@ -3178,15 +3151,15 @@
+@@ -3186,15 +3166,16 @@
  .SS revert
  .sp
  .nf
@@ -2489,6 +2530,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -.ft P
 +.ft
  .fi
++.RE
  .IP Note
  .
 -To check out earlier revisions, you should use \%\fBhg update REV\fP\:.
@@ -2499,7 +2541,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .RE
  .sp
  With no revision specified, revert the specified files or directories
-@@ -3200,13 +3173,13 @@
+@@ -3208,13 +3189,13 @@
  directories to their states as of a specific revision. Because
  revert does not change the working directory parents, this will
  cause these files to appear modified. This can be helpful to "back
@@ -2515,7 +2557,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -3244,12 +3217,12 @@
+@@ -3252,12 +3233,12 @@
  .SS rollback
  .sp
  .nf
@@ -2531,7 +2573,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  mistakes in the last commit.
  .sp
  This command should be used with care. There is only one level of
-@@ -3283,7 +3256,7 @@
+@@ -3291,7 +3272,7 @@
  .UNINDENT
  .sp
  To avoid permanent data loss, rollback will refuse to rollback a
@@ -2540,7 +2582,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  override this protection.
  .sp
  This command is not intended for use on public repositories. Once
-@@ -3309,9 +3282,9 @@
+@@ -3317,9 +3298,9 @@
  .SS root
  .sp
  .nf
@@ -2552,7 +2594,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print the root directory of the current repository.
-@@ -3320,9 +3293,9 @@
+@@ -3328,9 +3309,9 @@
  .SS serve
  .sp
  .nf
@@ -2564,7 +2606,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Start a local HTTP repository browser and pull server. You can use
-@@ -3420,9 +3393,9 @@
+@@ -3428,9 +3409,9 @@
  .SS showconfig
  .sp
  .nf
@@ -2576,7 +2618,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  With no arguments, print names and values of all config items.
-@@ -3450,9 +3423,9 @@
+@@ -3458,9 +3439,9 @@
  .SS status
  .sp
  .nf
@@ -2588,7 +2630,15 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Show status of files in the repository. If names are given, only
-@@ -3480,7 +3453,7 @@
+@@ -3472,6 +3453,7 @@
+ .sp
+ Option \-q/\-\-quiet hides untracked (unknown and ignored) files
+ unless explicitly requested with \-u/\-\-unknown or \-i/\-\-ignored.
++.RE
+ .IP Note
+ .
+ status may appear to disagree with diff if permissions have
+@@ -3488,7 +3470,7 @@
  The codes used to show the status of files are:
  .sp
  .nf
@@ -2597,7 +2647,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  M = modified
  A = added
  R = removed
-@@ -3489,7 +3462,7 @@
+@@ -3497,7 +3479,7 @@
  ? = not tracked
  I = ignored
    = origin of the previous file listed as A (added)
@@ -2606,7 +2656,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Examples:
-@@ -3500,27 +3473,27 @@
+@@ -3508,27 +3490,27 @@
  changeset:
  .sp
  .nf
@@ -2640,7 +2690,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -3598,9 +3571,9 @@
+@@ -3606,9 +3588,9 @@
  .SS summary
  .sp
  .nf
@@ -2652,7 +2702,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This generates a brief summary of the working directory state,
-@@ -3623,9 +3596,9 @@
+@@ -3631,9 +3613,9 @@
  .SS tag
  .sp
  .nf
@@ -2664,7 +2714,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Name a particular revision using <name>.
-@@ -3646,11 +3619,11 @@
+@@ -3654,11 +3636,11 @@
  repositories).
  .sp
  Tag commits are usually made at the head of a branch. If the parent
@@ -2678,7 +2728,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Since tag names have priority over branch names during revision
  lookup, using an existing branch name as a tag name is discouraged.
-@@ -3695,9 +3668,9 @@
+@@ -3703,9 +3685,9 @@
  .SS tags
  .sp
  .nf
@@ -2690,7 +2740,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This lists both regular and local tags. When the \-v/\-\-verbose
-@@ -3707,9 +3680,9 @@
+@@ -3715,9 +3697,9 @@
  .SS tip
  .sp
  .nf
@@ -2702,7 +2752,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The tip revision (usually just called the tip) is the changeset
-@@ -3721,7 +3694,7 @@
+@@ -3729,7 +3711,7 @@
  that repository becomes the current tip. The "tip" tag is special
  and cannot be renamed or assigned to a different changeset.
  .sp
@@ -2711,7 +2761,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -3747,9 +3720,9 @@
+@@ -3755,9 +3737,9 @@
  .SS unbundle
  .sp
  .nf
@@ -2723,7 +2773,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Apply one or more compressed changegroup files generated by the
-@@ -3767,21 +3740,21 @@
+@@ -3775,21 +3757,21 @@
  .SS update
  .sp
  .nf
@@ -2753,7 +2803,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  option, the working directory is checked for uncommitted changes; if
  none are found, the working directory is updated to the specified
  changeset.
-@@ -3793,7 +3766,7 @@
+@@ -3801,7 +3783,7 @@
  .
  If neither \-c/\-\-check nor \-C/\-\-clean is specified, and if
  the requested changeset is an ancestor or descendant of
@@ -2762,7 +2812,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  are merged into the requested changeset and the merged
  result is left uncommitted. If the requested changeset is
  not an ancestor or descendant (that is, it is on another
-@@ -3810,15 +3783,15 @@
+@@ -3818,15 +3800,15 @@
  .UNINDENT
  .sp
  To cancel an uncommitted merge (and lose your changes), use
@@ -2782,7 +2832,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success, 1 if there are unresolved files.
  .sp
-@@ -3846,19 +3819,19 @@
+@@ -3854,19 +3836,19 @@
  .SS verify
  .sp
  .nf
@@ -2806,7 +2856,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  for more information about recovery from corruption of the
  repository.
  .sp
-@@ -3866,9 +3839,9 @@
+@@ -3874,9 +3856,9 @@
  .SS version
  .sp
  .nf
@@ -2818,7 +2868,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  output version and copyright information
-@@ -3936,7 +3909,7 @@
+@@ -3944,7 +3926,7 @@
  \fBnow\fP \- right now
  .UNINDENT
  .sp
@@ -2827,7 +2877,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .INDENT 0.0
  .IP \(bu 2
  .
-@@ -3965,7 +3938,7 @@
+@@ -3973,7 +3955,7 @@
  .UNINDENT
  .SH DIFF FORMATS
  .sp
@@ -2836,7 +2886,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  a file is compatible with the unified format of GNU diff, which can be
  used by GNU patch and many other standard tools.
  .sp
-@@ -3992,15 +3965,15 @@
+@@ -4000,15 +3982,15 @@
  format.
  .sp
  This means that when generating diffs from a Mercurial repository
@@ -2855,7 +2905,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  section of your configuration file. You do not need to set this option
  when importing diffs in this format or using them in the mq extension.
  .SH ENVIRONMENT VARIABLES
-@@ -4008,10 +3981,10 @@
+@@ -4016,10 +3998,10 @@
  .TP
  .B HG
  .
@@ -2865,11 +2915,11 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -the hg executable\(aqs name if it\(aqs frozen, or an executable named
 -\(aqhg\(aq (with %PATHEXT% [defaulting to COM/EXE/BAT/CMD] extensions on
 +the hg executable's name if it's frozen, or an executable named
-+'hg' (with %PATHEXT% [defaulting to COM/EXE/BAT/CMD] extensions on
++ 'hg' (with %PATHEXT% [defaulting to COM/EXE/BAT/CMD] extensions on
  Windows) is searched.
  .TP
  .B HGEDITOR
-@@ -4029,16 +4002,16 @@
+@@ -4037,16 +4019,16 @@
  .TP
  .B HGENCODINGMODE
  .
@@ -2889,7 +2939,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  "ambiguous" widths like accented Latin characters with East Asian
  fonts. By default, Mercurial assumes ambiguous characters are
  narrow, set this variable to "wide" if such characters cause
-@@ -4063,7 +4036,7 @@
+@@ -4071,7 +4053,7 @@
  .INDENT 7.0
  .IP \(bu 2
  .
@@ -2898,7 +2948,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .IP \(bu 2
  .
  otherwise, the file itself will be added
-@@ -4072,7 +4045,7 @@
+@@ -4080,7 +4062,7 @@
  .B HGPLAIN
  .
  When set, this disables any configuration settings that might
@@ -2907,7 +2957,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  defaults, verbose mode, debug mode, quiet mode, tracebacks, and
  localization. This can be useful when scripting against Mercurial
  in the face of existing user configuration.
-@@ -4132,7 +4105,7 @@
+@@ -4140,7 +4122,7 @@
  editor it uses is determined by looking at the environment
  variables HGEDITOR, VISUAL and EDITOR, in that order. The first
  non\-empty one is chosen. If all of them are empty, the editor
@@ -2916,7 +2966,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B PYTHONPATH
  .
-@@ -4151,22 +4124,22 @@
+@@ -4159,22 +4141,22 @@
  like this:
  .sp
  .nf
@@ -2944,7 +2994,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Extensions are not loaded by default for a variety of reasons:
  they can increase startup overhead; they may be meant for advanced
-@@ -4180,13 +4153,13 @@
+@@ -4188,13 +4170,13 @@
  broader scope, prepend its path with !:
  .sp
  .nf
@@ -2960,7 +3010,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  disabled extensions:
-@@ -4264,7 +4237,7 @@
+@@ -4272,7 +4254,7 @@
  .TP
  .B inotify
  .
@@ -2969,16 +3019,16 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B interhg
  .
-@@ -4346,7 +4319,7 @@
+@@ -4362,7 +4344,7 @@
  files.
  .sp
  Like other file patterns, this pattern type is indicated by a prefix,
 -\(aqset:\(aq. The language supports a number of predicates which are joined
-+'set:'. The language supports a number of predicates which are joined
++ 'set:'. The language supports a number of predicates which are joined
  by infix operators. Parenthesis can be used for grouping.
  .sp
  Identifiers such as filenames or patterns must be quoted with single
-@@ -4357,7 +4330,7 @@
+@@ -4373,7 +4355,7 @@
  .sp
  Special characters can be used in quoted identifiers by escaping them,
  e.g., \fB\en\fP is interpreted as a newline. To prevent them from being
@@ -2987,7 +3037,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  There is a single prefix operator:
  .INDENT 0.0
-@@ -4491,58 +4464,58 @@
+@@ -4507,58 +4489,58 @@
  Show status of files that appear to be binary in the working directory:
  .sp
  .nf
@@ -3062,7 +3112,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .SH GLOSSARY
  .INDENT 0.0
  .TP
-@@ -4552,14 +4525,14 @@
+@@ -4568,14 +4550,14 @@
  changesets from a given changeset. More precisely, the ancestors
  of a changeset can be defined by two properties: a parent of a
  changeset is an ancestor, and a parent of an ancestor is an
@@ -3079,19 +3129,19 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  when you make a commit.
  .sp
  Bookmarks can be renamed, copied and deleted. Bookmarks are local,
-@@ -4571,9 +4544,9 @@
+@@ -4587,9 +4569,9 @@
  .
  (Noun) A child changeset that has been created from a parent that
  is not a head. These are known as topological branches, see
 -\(aqBranch, topological\(aq. If a topological branch is named, it becomes
-+'Branch, topological'. If a topological branch is named, it becomes
++ 'Branch, topological'. If a topological branch is named, it becomes
  a named branch. If a topological branch is not named, it becomes
 -an anonymous branch. See \(aqBranch, anonymous\(aq and \(aqBranch, named\(aq.
 +an anonymous branch. See 'Branch, anonymous' and 'Branch, named'.
  .sp
  Branches may be created when changes are pulled from or pushed to
  a remote repository, since new heads may be created by these
-@@ -4588,7 +4561,7 @@
+@@ -4604,7 +4586,7 @@
  (Verb) The action of creating a child changeset which results in
  its parent having more than one child.
  .sp
@@ -3100,7 +3150,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Branch, anonymous
  .
-@@ -4607,27 +4580,27 @@
+@@ -4623,27 +4605,27 @@
  .TP
  .B Branch head
  .
@@ -3135,7 +3185,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  branches.
  .sp
  Named branches can be thought of as a kind of namespace, dividing
-@@ -4640,7 +4613,7 @@
+@@ -4656,7 +4638,7 @@
  .TP
  .B Branch tip
  .
@@ -3144,7 +3194,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Branch, topological
  .
-@@ -4690,24 +4663,24 @@
+@@ -4706,24 +4688,24 @@
  revision. This use should probably be avoided where possible, as
  changeset is much more appropriate than checkout in this context.
  .sp
@@ -3175,7 +3225,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Clone
  .
-@@ -4716,13 +4689,13 @@
+@@ -4732,13 +4714,13 @@
  .sp
  Example: "Is your clone up to date?".
  .sp
@@ -3192,7 +3242,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Commit
  .
-@@ -4747,13 +4720,13 @@
+@@ -4763,13 +4745,13 @@
  system (DVCS) can be described as a directed acyclic graph (DAG),
  consisting of nodes and edges, where nodes correspond to
  changesets and edges imply a parent \-> child relation. This graph
@@ -3208,7 +3258,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Descendant
  .
-@@ -4761,7 +4734,7 @@
+@@ -4777,7 +4759,7 @@
  from a given changeset. More precisely, the descendants of a
  changeset can be defined by two properties: the child of a
  changeset is a descendant, and the child of a descendant is a
@@ -3217,16 +3267,16 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Diff
  .
-@@ -4786,7 +4759,7 @@
+@@ -4802,7 +4784,7 @@
  Mercurial, that will be recorded in the next commit. The working
  directory initially corresponds to the snapshot at an existing
  changeset, known as the parent of the working directory. See
 -\(aqParent, working directory\(aq. The state may be modified by changes
-+'Parent, working directory'. The state may be modified by changes
++ 'Parent, working directory'. The state may be modified by changes
  to the files introduced manually or by a merge. The repository
  metadata exists in the .hg directory inside the working directory.
  .TP
-@@ -4794,17 +4767,17 @@
+@@ -4810,17 +4792,17 @@
  .
  Changesets in the draft phase have not been shared with publishing
  repositories and may thus be safely changed by history\-modifying
@@ -3245,11 +3295,11 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -\(aqHead, repository\(aq for specific definitions.
 +The term 'head' may be used to refer to both a branch head or a
 +repository head, depending on the context. See 'Head, branch' and
-+'Head, repository' for specific definitions.
++ 'Head, repository' for specific definitions.
  .sp
  Heads are where development generally takes place and are the
  usual targets for update and merge operations.
-@@ -4816,9 +4789,9 @@
+@@ -4832,9 +4814,9 @@
  .B Head, closed branch
  .
  A changeset that marks a head as no longer interesting. The closed
@@ -3261,7 +3311,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Closed heads can be re\-opened by committing new changeset as the
  child of the changeset that marks a head as closed.
-@@ -4847,11 +4820,11 @@
+@@ -4863,11 +4845,11 @@
  .TP
  .B Immutable history
  .
@@ -3275,7 +3325,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Manifest
  .
-@@ -4868,37 +4841,37 @@
+@@ -4884,37 +4866,37 @@
  .TP
  .B Named branch
  .
@@ -3322,7 +3372,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  (Verb) The process of using a patch file to transform one
  changeset into another.
-@@ -4908,13 +4881,13 @@
+@@ -4924,13 +4906,13 @@
  .B Phase
  .
  A per\-changeset state tracking how the changeset has been or
@@ -3339,7 +3389,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Pull
  .
-@@ -4922,7 +4895,7 @@
+@@ -4938,7 +4920,7 @@
  not in the local repository are brought into the local
  repository. Note that this operation without special arguments
  only updates the repository, it does not update the files in the
@@ -3348,7 +3398,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Push
  .
-@@ -4930,7 +4903,7 @@
+@@ -4946,7 +4928,7 @@
  not in a remote repository are sent to the remote repository. Note
  that this operation only adds changesets which have been committed
  locally to the remote repository. Uncommitted changes are not
@@ -3357,7 +3407,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Repository
  .
-@@ -4943,13 +4916,13 @@
+@@ -4959,13 +4941,13 @@
  .TP
  .B Repository head
  .
@@ -3374,16 +3424,16 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Revision number
  .
-@@ -4958,7 +4931,7 @@
+@@ -4974,7 +4956,7 @@
  to a repository, starting with revision number 0. Note that the
  revision number may be different in each clone of a repository. To
  identify changesets uniquely between different clones, see
 -\(aqChangeset id\(aq.
-+'Changeset id'.
++ 'Changeset id'.
  .TP
  .B Revlog
  .
-@@ -4969,7 +4942,7 @@
+@@ -4985,7 +4967,7 @@
  .TP
  .B Rewriting history
  .
@@ -3392,7 +3442,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B Root
  .
-@@ -4979,13 +4952,13 @@
+@@ -4995,13 +4977,13 @@
  .B Secret
  .
  Changesets in the secret phase may not be shared via push, pull,
@@ -3408,7 +3458,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  will thus automatically be shared with other using push and pull.
  .TP
  .B Tip
-@@ -4997,7 +4970,7 @@
+@@ -5013,7 +4995,7 @@
  .
  The head of a given branch with the highest revision number. When
  a branch name is used as a revision identifier, it refers to the
@@ -3417,7 +3467,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  numbers may be different in different repository clones, the
  branch tip may be different in different cloned repositories.
  .TP
-@@ -5005,21 +4978,21 @@
+@@ -5021,21 +5003,21 @@
  .
  (Noun) Another synonym of changeset.
  .sp
@@ -3443,7 +3493,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .UNINDENT
  .SH SYNTAX FOR MERCURIAL IGNORE FILES
  .SS Synopsis
-@@ -5047,16 +5020,16 @@
+@@ -5063,16 +5045,16 @@
  .sp
  In addition, a Mercurial configuration file can reference a set of
  per\-user or global ignore files. See the \fBignore\fP configuration
@@ -3464,7 +3514,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  in .hgignore.
  .SS Syntax
  .sp
-@@ -5071,9 +5044,9 @@
+@@ -5087,9 +5069,9 @@
  To change the syntax used, use a line of the following form:
  .sp
  .nf
@@ -3476,7 +3526,11 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  where \fBNAME\fP is one of the following:
-@@ -5098,14 +5071,14 @@
+@@ -5111,17 +5093,18 @@
+ the form \fB*.c\fP will match a file ending in \fB.c\fP in any directory,
+ and a regexp pattern of the form \fB\e.c$\fP will do the same. To root a
+ regexp pattern, start it with \fB^\fP.
++.RE
  .IP Note
  .
  Patterns specified in other than \fB.hgignore\fP are always rooted.
@@ -3493,7 +3547,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  # use glob syntax.
  syntax: glob
  
-@@ -5116,14 +5089,14 @@
+@@ -5132,14 +5115,14 @@
  # switch to regexp syntax.
  syntax: regexp
  ^\e.pc/
@@ -3511,7 +3565,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  \fBhgweb.cgi\fP and \fBhgweb.fcgi\fP.
  .sp
  This file uses the same syntax as other Mercurial configuration files
-@@ -5144,7 +5117,7 @@
+@@ -5160,7 +5143,7 @@
  .UNINDENT
  .UNINDENT
  .sp
@@ -3520,7 +3574,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  The \fBpaths\fP section maps URL paths to paths of repositories in the
  filesystem. hgweb will not expose the filesystem directly \- only
-@@ -5166,13 +5139,13 @@
+@@ -5182,13 +5165,13 @@
  In this example:
  .sp
  .nf
@@ -3536,7 +3590,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .INDENT 0.0
  .IP \(bu 2
-@@ -5201,8 +5174,8 @@
+@@ -5217,8 +5200,8 @@
  ancestor of the two file versions, so they can determine the changes
  made on both branches.
  .sp
@@ -3547,7 +3601,11 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Usually, the merge tool tries to automatically reconcile the files by
  combining all non\-overlapping changes that occurred separately in
-@@ -5310,7 +5283,7 @@
+@@ -5323,10 +5306,11 @@
+ .
+ The merge of the file fails and must be resolved before commit.
+ .UNINDENT
++.RE
  .IP Note
  .
  After selecting a merge program, Mercurial will by default attempt
@@ -3556,7 +3614,11 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  succeed because of conflicting changes Mercurial will actually execute the
  merge program. Whether to use the simple merge algorithm first can be
  controlled by the premerge setting of the merge tool. Premerge is enabled by
-@@ -5346,7 +5319,7 @@
+@@ -5359,10 +5343,11 @@
+ patterns.
+ .sp
+ Alternate pattern notations must be specified explicitly.
++.RE
  .IP Note
  .
  Patterns specified in \fB.hgignore\fP are not rooted.
@@ -3565,7 +3627,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .RE
  .sp
  To use a plain path name without any pattern matching, start it with
-@@ -5371,17 +5344,17 @@
+@@ -5387,17 +5372,17 @@
  Plain examples:
  .sp
  .nf
@@ -3586,7 +3648,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  glob:*.c       any name ending in ".c" in the current directory
  *.c            any name ending in ".c" in the current directory
  **.c           any name ending in ".c" in any subdirectory of the
-@@ -5389,27 +5362,27 @@
+@@ -5405,27 +5390,27 @@
  foo/*.c        any name ending in ".c" in the directory foo
  foo/**.c       any name ending in ".c" in any subdirectory of foo
                 including itself.
@@ -3620,7 +3682,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .SH WORKING WITH PHASES
  .SS What are phases?
  .sp
-@@ -5446,14 +5419,14 @@
+@@ -5462,14 +5447,14 @@
  .sp
  Once changesets become public, extensions like mq and rebase will
  refuse to operate on them to prevent creating duplicate changesets.
@@ -3638,16 +3700,18 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  \- all draft changesets that are pulled or cloned appear in phase
  public on the client
  
-@@ -5461,7 +5434,7 @@
+@@ -5477,8 +5462,9 @@
  client and server
  
  \- secret changesets are neither pushed, pulled, or cloned
 -.ft P
 +.ft
  .fi
++.RE
  .IP Note
  .
-@@ -5474,13 +5447,13 @@
+ Pulling a draft changeset from a publishing server does not mark it
+@@ -5490,13 +5476,14 @@
  repository to disable publishing in its configuration file:
  .sp
  .nf
@@ -3661,10 +3725,11 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
 -See \%\fBhg help config\fP\: for more information on configuration files.
 +See \fBhg help config\fP for more information on configuration files.
++.RE
  .IP Note
  .
  Servers running older versions of Mercurial are treated as
-@@ -5495,51 +5468,51 @@
+@@ -5511,51 +5498,51 @@
  list changesets in draft or secret phase:
  .sp
  .nf
@@ -3713,10 +3778,9 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  .nf
 -.ft C
--hg phase \-fd \(aqoutgoing(URL)\(aq
--.ft P
 +.ft
-+hg phase \-fd 'outgoing(URL)'
+ hg phase \-fd "outgoing(URL)"
+-.ft P
 +.ft
  .fi
  .UNINDENT
@@ -3728,7 +3792,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .SH SPECIFYING SINGLE REVISIONS
  .sp
  Mercurial supports several ways to specify individual revisions.
-@@ -5585,7 +5558,7 @@
+@@ -5601,7 +5588,7 @@
  .sp
  Special characters can be used in quoted identifiers by escaping them,
  e.g., \fB\en\fP is interpreted as a newline. To prevent them from being
@@ -3737,7 +3801,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  There is a single prefix operator:
  .INDENT 0.0
-@@ -5742,7 +5715,7 @@
+@@ -5758,7 +5745,7 @@
  .TP
  .B \fBcontains(pattern)\fP
  .sp
@@ -3746,7 +3810,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  for information about file patterns.
  .TP
  .B \fBconverted([id])\fP
-@@ -5752,7 +5725,7 @@
+@@ -5768,7 +5755,7 @@
  .TP
  .B \fBdate(interval)\fP
  .sp
@@ -3755,7 +3819,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B \fBdesc(string)\fP
  .sp
-@@ -5801,7 +5774,7 @@
+@@ -5817,7 +5804,7 @@
  Changesets connected to the specified filelog.
  .sp
  For performance reasons, \fBfilelog()\fP does not show every changeset
@@ -3764,7 +3828,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  a slower, more accurate result, use \fBfile()\fP.
  .TP
  .B \fBfirst(set, [n])\fP
-@@ -5810,13 +5783,13 @@
+@@ -5826,13 +5813,13 @@
  .TP
  .B \fBfollow([file])\fP
  .sp
@@ -3780,7 +3844,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  to ensure special escape characters are handled correctly. Unlike
  \fBkeyword(string)\fP, the match is case\-sensitive.
  .TP
-@@ -5921,7 +5894,7 @@
+@@ -5937,7 +5924,7 @@
  .TP
  .B \fBpresent(set)\fP
  .sp
@@ -3789,7 +3853,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  all revisions in set.
  .sp
  If any of specified revisions is not present in the local repository,
-@@ -5935,7 +5908,7 @@
+@@ -5951,7 +5938,7 @@
  .B \fBremote([id [,path]])\fP
  .sp
  Local revision that corresponds to the given identifier in a
@@ -3798,7 +3862,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  synonym for the current local branch.
  .TP
  .B \fBremoves(pattern)\fP
-@@ -6003,9 +5976,9 @@
+@@ -6019,9 +6006,9 @@
  existing predicates or other aliases. An alias definition looks like:
  .sp
  .nf
@@ -3810,7 +3874,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  in the \fBrevsetalias\fP section of a Mercurial configuration file. Arguments
-@@ -6015,21 +5988,21 @@
+@@ -6031,21 +6018,21 @@
  For example,
  .sp
  .nf
@@ -3836,7 +3900,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  \-f    \->  ::.
  \-d x  \->  date(x)
  \-k x  \->  keyword(x)
-@@ -6038,7 +6011,7 @@
+@@ -6054,7 +6041,7 @@
  \-b x  \->  branch(x)
  \-P x  \->  !::x
  \-l x  \->  limit(expr, x)
@@ -3845,7 +3909,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Some sample queries:
-@@ -6048,27 +6021,27 @@
+@@ -6064,27 +6051,27 @@
  Changesets on the default branch:
  .sp
  .nf
@@ -3879,7 +3943,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -6076,18 +6049,18 @@
+@@ -6092,18 +6079,18 @@
  \fBhgext/*\fP:
  .sp
  .nf
@@ -3904,7 +3968,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .IP \(bu 2
  .
-@@ -6095,9 +6068,9 @@
+@@ -6111,9 +6098,9 @@
  release:
  .sp
  .nf
@@ -3916,7 +3980,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .SH SUBREPOSITORIES
-@@ -6123,18 +6096,18 @@
+@@ -6139,18 +6126,18 @@
  subrepositories are referenced like:
  .sp
  .nf
@@ -3939,7 +4003,15 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  where \fBpath/to/nested\fP is the checkout location relatively to the
-@@ -6204,7 +6177,7 @@
+@@ -6169,6 +6156,7 @@
+ subrepositories to the state they were committed in a parent
+ repository changeset. Mercurial automatically record the nested
+ repositories states when committing in the parent repository.
++.RE
+ .IP Note
+ .
+ The \fB.hgsubstate\fP file should not be edited manually.
+@@ -6220,7 +6208,7 @@
  have been modified, Mercurial will abort.  Mercurial can be made
  to instead commit all modified subrepositories by specifying
  \-S/\-\-subrepos, or setting "ui.commitsubrepos=True" in a
@@ -3948,7 +4020,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  longer any modified subrepositories, it records their state and
  finally commits it in the parent repository.
  .TP
-@@ -6235,7 +6208,7 @@
+@@ -6251,7 +6239,7 @@
  .B pull
  .
  pull is not recursive since it is not clear what to pull prior
@@ -3957,7 +4029,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  subrepositories changes referenced by the parent repository pulled
  changesets is expensive at best, impossible in the Subversion
  case.
-@@ -6286,19 +6259,19 @@
+@@ -6302,19 +6290,19 @@
  Usage:
  .sp
  .nf
@@ -3981,7 +4053,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Strings in curly braces are called keywords. The availability of
-@@ -6390,24 +6363,24 @@
+@@ -6406,24 +6394,24 @@
  .TP
  .B p1node
  .
@@ -4010,7 +4082,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  second parent, or \-1 if the changeset has no second parent.
  .TP
  .B parents
-@@ -6436,15 +6409,15 @@
+@@ -6452,15 +6440,15 @@
  The "date" keyword does not produce human\-readable output. If you
  want to use a date in your output, you can use a filter to process
  it. Filters are functions which return a string based on the input
@@ -4029,7 +4101,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  List of filters:
-@@ -6532,7 +6505,7 @@
+@@ -6548,7 +6536,7 @@
  .TP
  .B nonempty
  .
@@ -4038,7 +4110,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B obfuscate
  .
-@@ -6651,73 +6624,73 @@
+@@ -6667,73 +6655,73 @@
  Format lists, e.g. files:
  .sp
  .nf
@@ -4096,7 +4168,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -.ft P
 +.ft
 +$ hg log \-r 0 \-\-template "{ifeq(branch, 'default', 'on the main branch',
-+'on branch {branch}')}\en"
++ 'on branch {branch}')}\en"
 +.ft
  .fi
  .IP \(bu 2
@@ -4137,7 +4209,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .SH URL PATHS
-@@ -6725,24 +6698,24 @@
+@@ -6741,24 +6729,24 @@
  Valid URLs are of the form:
  .sp
  .nf
@@ -4169,7 +4241,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  possible if the feature is explicitly enabled on the remote Mercurial
  server.
  .sp
-@@ -6757,26 +6730,26 @@
+@@ -6773,26 +6761,26 @@
  and a copy of hg in the remote path or specified with as remotecmd.
  .IP \(bu 2
  .
@@ -4202,7 +4274,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Alternatively specify "ssh \-C" as your ssh command in your
-@@ -6787,16 +6760,16 @@
+@@ -6803,16 +6791,16 @@
  aliases under the [paths] section like so:
  .sp
  .nf
@@ -4222,14 +4294,14 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Two path aliases are special because they are used as defaults when
  you do not provide the URL to a command:
-@@ -6805,14 +6778,14 @@
+@@ -6821,14 +6809,14 @@
  .B default:
  .
  When you create a repository with hg clone, the clone command saves
 -the location of the source repository as the new repository\(aqs
 -\(aqdefault\(aq path. This is then used when you omit path from push\- and
-+the location of the source repository as the new repository's 'default' path.
-+This is then used when you omit path from push\- and
++the location of the source repository as the new repository's
++ 'default' path. This is then used when you omit path from push\- and
  pull\-like commands (including incoming and outgoing).
  .TP
  .B default\-push:
@@ -4241,7 +4313,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .UNINDENT
  .SH EXTENSIONS
  .sp
-@@ -6897,7 +6870,7 @@
+@@ -6913,7 +6901,7 @@
  .SS Example Configuration
  .sp
  .nf
@@ -4250,7 +4322,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [hooks]
  
  # Use this if you want to check access restrictions at commit time
-@@ -6973,12 +6946,12 @@
+@@ -6989,12 +6977,12 @@
  src/main/resources/** = *
  
  \&.hgtags = release_engineer
@@ -4266,7 +4338,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  be created.
  .sp
  The "!" prefix allows you to prevent anyone except a given user or group to
-@@ -6990,18 +6963,18 @@
+@@ -7006,18 +6994,18 @@
  3) Deny access to a file to anyone but user "gollum"
  .sp
  .nf
@@ -4290,7 +4362,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  lake = !@hobbit
  
  # You can also deny access based on file paths:
-@@ -7010,10 +6983,10 @@
+@@ -7026,10 +7014,10 @@
  # Empty
  
  [acl.deny]
@@ -4304,7 +4376,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .SS blackbox
  .sp
-@@ -7024,7 +6997,7 @@
+@@ -7040,7 +7028,7 @@
  Examples:
  .sp
  .nf
@@ -4313,7 +4385,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [blackbox]
  track = *
  
-@@ -7039,15 +7012,15 @@
+@@ -7055,15 +7043,15 @@
  maxsize = 1.5 MB
  # rotate up to N log files when the current one gets too big
  maxfiles = 3
@@ -4332,7 +4404,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  view the recent repository events
-@@ -7230,9 +7203,9 @@
+@@ -7246,9 +7234,9 @@
  line:
  .sp
  .nf
@@ -4344,7 +4416,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  See also the \fB[usermap]\fP section.
-@@ -7318,14 +7291,14 @@
+@@ -7334,14 +7322,14 @@
  Activating the extension:
  .sp
  .nf
@@ -4361,7 +4433,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Example configurations:
-@@ -7337,7 +7310,7 @@
+@@ -7353,7 +7341,7 @@
  with a web interface at \fBhttp://my\-project.org/hg\fP.
  .sp
  .nf
@@ -4370,7 +4442,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [bugzilla]
  bzurl=http://my\-project.org/bugzilla
  user=bugmail@my\-project.org
-@@ -7350,7 +7323,7 @@
+@@ -7366,7 +7354,7 @@
  
  [web]
  baseurl=http://my\-project.org/hg
@@ -4379,7 +4451,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  XMLRPC+email example configuration. This uses the Bugzilla at
-@@ -7362,7 +7335,7 @@
+@@ -7378,7 +7366,7 @@
  \fBbugzilla@my\-project.org\fP.
  .sp
  .nf
@@ -4388,7 +4460,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [bugzilla]
  bzurl=http://my\-project.org/bugzilla
  user=bugmail@my\-project.org
-@@ -7379,7 +7352,7 @@
+@@ -7395,7 +7383,7 @@
  
  [usermap]
  user@emaildomain.com=user.name@bugzilladomain.com
@@ -4397,7 +4469,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  MySQL example configuration. This has a local Bugzilla 3.2 installation
-@@ -7390,7 +7363,7 @@
+@@ -7406,7 +7394,7 @@
  with a web interface at \fBhttp://my\-project.org/hg\fP.
  .sp
  .nf
@@ -4406,7 +4478,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [bugzilla]
  host=localhost
  password=XYZZY
-@@ -7407,35 +7380,35 @@
+@@ -7423,35 +7411,35 @@
  
  [usermap]
  user@emaildomain.com=user.name@bugzilladomain.com
@@ -4450,7 +4522,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  revision is given via \-r/\-\-rev, the children of that revision will
  be printed. If a file argument is given, revision in which the
  file was last changed (after the working directory revision or the
-@@ -7463,9 +7436,9 @@
+@@ -7479,9 +7467,9 @@
  .SS churn
  .sp
  .nf
@@ -4462,28 +4534,20 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This command will display a histogram representing the number
-@@ -7481,28 +7454,28 @@
+@@ -7497,7 +7485,7 @@
  Examples:
  .sp
  .nf
 -.ft C
 +.ft
  # display count of changed lines for every committer
--hg churn \-t \(aq{author|email}\(aq
-+hg churn \-t '{author|email}'
+ hg churn \-t "{author|email}"
  
- # display daily activity graph
--hg churn \-f \(aq%H\(aq \-s \-c
-+hg churn \-f '%H' \-s \-c
- 
- # display activity of developers by month
--hg churn \-f \(aq%Y\-%m\(aq \-s \-c
-+hg churn \-f '%Y\-%m' \-s \-c
+@@ -7509,16 +7497,16 @@
  
  # display count of lines changed in every year
--hg churn \-f \(aq%Y\(aq \-s
+ hg churn \-f "%Y" \-s
 -.ft P
-+hg churn \-f '%Y' \-s
 +.ft
  .fi
  .sp
@@ -4499,7 +4563,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Such a file may be specified with the \-\-aliases option, otherwise
-@@ -7571,7 +7544,7 @@
+@@ -7587,7 +7575,7 @@
  Default effects may be overridden from your configuration file:
  .sp
  .nf
@@ -4508,7 +4572,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [color]
  status.modified = blue bold underline red_background
  status.added = green bold
-@@ -7580,7 +7553,7 @@
+@@ -7596,7 +7584,7 @@
  status.unknown = magenta bold underline
  status.ignored = black bold
  
@@ -4517,8 +4581,8 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  status.clean = none
  status.copied = none
  
-@@ -7615,20 +7588,20 @@
- rebase.remaining = red bold
+@@ -7635,20 +7623,20 @@
+ shelve.name = blue bold
  
  histedit.remaining = red bold
 -.ft P
@@ -4530,9 +4594,9 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -ECMA\-48 mode, the options are \(aqbold\(aq, \(aqinverse\(aq, \(aqitalic\(aq, and
 -\(aqunderline\(aq.  How each is rendered depends on the terminal emulator.
 +The available effects in terminfo mode are 'blink', 'bold', 'dim',
-+'inverse', 'invisible', 'italic', 'standout', and 'underline'; in
++ 'inverse', 'invisible', 'italic', 'standout', and 'underline'; in
 +ECMA\-48 mode, the options are 'bold', 'inverse', 'italic', and
-+'underline'.  How each is rendered depends on the terminal emulator.
++ 'underline'.  How each is rendered depends on the terminal emulator.
  Some may not be available for a given terminal type, and will be
  silently ignored.
  .sp
@@ -4544,7 +4608,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  either using ansi mode (or auto mode), or by using less \-r (which will
  pass through all terminal control codes, not just color control
  codes).
-@@ -7638,31 +7611,31 @@
+@@ -7658,31 +7646,31 @@
  for your terminal type, assuming terminfo mode.  For instance:
  .sp
  .nf
@@ -4562,7 +4626,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -\(aqorange\(aq to colors in 256\-color xterm\(aqs default color cube.  These
 +to set 'brightblue' to color slot 12 (useful for 16 color terminals
 +that have brighter colors defined in the upper eight) and, 'pink' and
-+'orange' to colors in 256\-color xterm's default color cube.  These
++ 'orange' to colors in 256\-color xterm's default color cube.  These
  defined colors may then be used as any of the pre\-defined eight,
 -including appending \(aq_background\(aq to set the background to that color.
 +including appending '_background' to set the background to that color.
@@ -4585,7 +4649,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  disable color.
  .SS convert
  .sp
-@@ -7671,9 +7644,9 @@
+@@ -7691,9 +7679,9 @@
  .SS convert
  .sp
  .nf
@@ -4597,7 +4661,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Accepted source formats [identifiers]:
-@@ -7723,7 +7696,7 @@
+@@ -7743,7 +7731,7 @@
  .sp
  If no destination directory name is specified, it defaults to the
  basename of the source with \fB\-hg\fP appended. If the destination
@@ -4606,7 +4670,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  By default, all sources except Mercurial will use \-\-branchsort.
  Mercurial uses \-\-sourcesort to preserve original revision numbers
-@@ -7755,19 +7728,19 @@
+@@ -7775,19 +7763,19 @@
  sources.
  .UNINDENT
  .sp
@@ -4631,7 +4695,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  and can be run repeatedly to copy new commits.
  .sp
  The authormap is a simple text file that maps each source commit
-@@ -7776,9 +7749,9 @@
+@@ -7796,9 +7784,9 @@
  author mapping and the line format is:
  .sp
  .nf
@@ -4643,7 +4707,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Empty lines and lines starting with a \fB#\fP are ignored.
-@@ -7788,13 +7761,13 @@
+@@ -7808,13 +7796,13 @@
  directives:
  .sp
  .nf
@@ -4659,7 +4723,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Comment lines start with \fB#\fP. A specified path matches if it
-@@ -7818,9 +7791,9 @@
+@@ -7838,9 +7826,9 @@
  comma\-separated values:
  .sp
  .nf
@@ -4671,7 +4735,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The key is the revision ID in the source
-@@ -7840,9 +7813,9 @@
+@@ -7860,9 +7848,9 @@
  lines of the form:
  .sp
  .nf
@@ -4683,7 +4747,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  where "original_branch_name" is the name of the branch in the
-@@ -8105,9 +8078,9 @@
+@@ -8124,9 +8112,9 @@
  Files with the declared format of \fBCRLF\fP or \fBLF\fP are always
  checked out and stored in the repository in that format and files
  declared to be binary (\fBBIN\fP) are left unchanged. Additionally,
@@ -4695,7 +4759,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  default behaviour; it is only needed if you need to override a later,
  more general pattern.
  .sp
-@@ -8124,7 +8097,7 @@
+@@ -8143,7 +8131,7 @@
  Example versioned \fB.hgeol\fP file:
  .sp
  .nf
@@ -4704,16 +4768,18 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [patterns]
  **.py = native
  **.vcproj = CRLF
-@@ -8134,7 +8107,7 @@
+@@ -8153,8 +8141,9 @@
  
  [repository]
  native = LF
 -.ft P
 +.ft
  .fi
++.RE
  .IP Note
  .
-@@ -8151,7 +8124,7 @@
+ The rules will first apply when files are touched in the working
+@@ -8170,7 +8159,7 @@
  .
  \fBeol.native\fP (default \fBos.linesep\fP) can be set to \fBLF\fP or
  \fBCRLF\fP to override the default interpretation of \fBnative\fP for
@@ -4722,7 +4788,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  generate an archive where files have line endings for Windows.
  .IP \(bu 2
  .
-@@ -8181,7 +8154,7 @@
+@@ -8200,7 +8189,7 @@
  \fBeol.checkallhook\fP hook. These hooks are best used as
  \fBpretxnchangegroup\fP hooks.
  .sp
@@ -4731,7 +4797,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  used.
  .SS extdiff
  .sp
-@@ -8194,12 +8167,12 @@
+@@ -8213,12 +8202,12 @@
  files to compare.
  .sp
  The extdiff extension also allows you to configure new diff commands, so
@@ -4747,7 +4813,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  cdiff = gdiff \-Nprc5
  ## or the old way:
  #cmd.cdiff = gdiff
-@@ -8216,46 +8189,46 @@
+@@ -8235,46 +8224,46 @@
  # English user, be sure to put "let g:DirDiffDynamicDiffText = 1" in
  # your .vimrc
  vimdiff = gvim \-f "+next" \e
@@ -4804,7 +4870,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Show differences between revisions for the specified files, using
-@@ -8313,9 +8286,9 @@
+@@ -8332,9 +8321,9 @@
  By default, keys are specified as:
  .sp
  .nf
@@ -4816,7 +4882,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  If the factotum extension is unable to read the required key, one will be
-@@ -8325,12 +8298,12 @@
+@@ -8344,12 +8333,12 @@
  default, these entries are:
  .sp
  .nf
@@ -4831,7 +4897,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The executable entry defines the full path to the factotum binary. The
-@@ -8343,9 +8316,9 @@
+@@ -8362,9 +8351,9 @@
  .SS fetch
  .sp
  .nf
@@ -4843,7 +4909,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This finds all changes from the repository at the specified path
-@@ -8360,7 +8333,7 @@
+@@ -8379,7 +8368,7 @@
  the newly pulled changes. Local changes are then merged into the
  pulled changes. To switch the merge order, use \-\-switch\-parent.
  .sp
@@ -4852,7 +4918,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Returns 0 on success.
  .sp
-@@ -8418,24 +8391,24 @@
+@@ -8437,24 +8426,24 @@
  .SS sigcheck
  .sp
  .nf
@@ -4882,7 +4948,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -8471,9 +8444,9 @@
+@@ -8490,9 +8479,9 @@
  .SS sigs
  .sp
  .nf
@@ -4894,7 +4960,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  list signed changesets
-@@ -8488,9 +8461,9 @@
+@@ -8507,9 +8496,9 @@
  .SS glog
  .sp
  .nf
@@ -4906,7 +4972,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Print a revision history alongside a revision graph drawn with
-@@ -8598,7 +8571,7 @@
+@@ -8617,7 +8606,7 @@
  configure it, set the following options in your hgrc:
  .sp
  .nf
@@ -4915,7 +4981,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [cia]
  # your registered CIA user name
  user = foo
-@@ -8630,7 +8603,7 @@
+@@ -8649,7 +8638,7 @@
  [web]
  # If you want hyperlinks (optional)
  baseurl = http://server/path/to/repo
@@ -4924,7 +4990,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .SS hgk
  .sp
-@@ -8646,25 +8619,25 @@
+@@ -8665,25 +8654,25 @@
  the contrib directory, and the extension is shipped in the hgext
  repository, and needs to be enabled.
  .sp
@@ -4955,7 +5021,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Revisions context menu will now display additional entries to fire
-@@ -8673,9 +8646,9 @@
+@@ -8692,9 +8681,9 @@
  .SS view
  .sp
  .nf
@@ -4967,7 +5033,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  start interactive history viewer
-@@ -8692,18 +8665,18 @@
+@@ -8711,18 +8700,18 @@
  syntax highlighting for hgweb (requires Pygments)
  .sp
  It depends on the Pygments syntax highlighting library:
@@ -4990,7 +5056,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .SS histedit
  .sp
  interactive history editing
-@@ -8712,7 +8685,7 @@
+@@ -8731,7 +8720,7 @@
  is as follows, assuming the following history:
  .sp
  .nf
@@ -4999,7 +5065,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  @  3[tip]   7c2fd3b9020c   2009\-04\-27 18:04 \-0500   durin42
  |    Add delta
  |
-@@ -8724,14 +8697,14 @@
+@@ -8743,14 +8732,14 @@
  |
  o  0   d8d2fcd0e319   2009\-04\-27 18:04 \-0500   durin42
       Add alpha
@@ -5016,7 +5082,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  pick c561b4e977df Add beta
  pick 030b686bedc4 Add gamma
  pick 7c2fd3b9020c Add delta
-@@ -8745,7 +8718,7 @@
+@@ -8764,7 +8753,7 @@
  #  d, drop = remove commit from history
  #  m, mess = edit message without changing commit content
  #
@@ -5025,7 +5091,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  In this file, lines beginning with \fB#\fP are ignored. You must specify a rule
-@@ -8754,7 +8727,7 @@
+@@ -8773,7 +8762,7 @@
  would reorganize the file to look like this:
  .sp
  .nf
@@ -5034,7 +5100,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  pick 030b686bedc4 Add gamma
  pick c561b4e977df Add beta
  fold 7c2fd3b9020c Add delta
-@@ -8768,7 +8741,7 @@
+@@ -8787,7 +8776,7 @@
  #  d, drop = remove commit from history
  #  m, mess = edit message without changing commit content
  #
@@ -5043,7 +5109,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  At which point you close the editor and \fBhistedit\fP starts working. When you
-@@ -8776,21 +8749,21 @@
+@@ -8795,21 +8784,21 @@
  those revisions together, offering you a chance to clean up the commit message:
  .sp
  .nf
@@ -5069,7 +5135,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  @  2[tip]   989b4d060121   2009\-04\-27 18:04 \-0500   durin42
  |    Add beta and delta.
  |
-@@ -8799,32 +8772,32 @@
+@@ -8818,32 +8807,32 @@
  |
  o  0   d8d2fcd0e319   2009\-04\-27 18:04 \-0500   durin42
       Add alpha
@@ -5110,7 +5176,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  much work it will be to rearrange history, or that you made a mistake,
  you can use \fBhg histedit \-\-abort\fP to abandon the new changes you
  have made and return to the state before you attempted to edit your
-@@ -8834,7 +8807,7 @@
+@@ -8853,7 +8842,7 @@
  changes, such that we have the following history:
  .sp
  .nf
@@ -5119,7 +5185,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  @  6[tip]   038383181893   2009\-04\-27 18:04 \-0500   stefan
  |    Add theta
  |
-@@ -8855,7 +8828,7 @@
+@@ -8874,7 +8863,7 @@
  |
  o  0   d8d2fcd0e319   2009\-04\-27 18:04 \-0500   durin42
       Add alpha
@@ -5128,19 +5194,37 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  If you run \fBhg histedit \-\-outgoing\fP on the clone then it is the same
-@@ -8866,9 +8839,9 @@
+@@ -8885,9 +8874,9 @@
  .SS histedit
  .sp
  .nf
 -.ft C
 +.ft
- hg histedit [PARENT]
+ hg histedit ANCESTOR | \-\-outgoing [URL]
 -.ft P
 +.ft
  .fi
  .sp
- interactively edit changeset history
-@@ -8886,7 +8859,7 @@
+ This command edits changesets between ANCESTOR and the parent of
+@@ -8895,7 +8884,7 @@
+ .sp
+ With \-\-outgoing, this edits changesets not found in the
+ destination repository. If URL of the destination is omitted, the
+-\(aqdefault\-push\(aq (or \(aqdefault\(aq) path will be used.
++ 'default\-push' (or 'default') path will be used.
+ .sp
+ For safety, this command is aborted, also if there are ambiguous
+ outgoing revisions which may confuse users: for example, there are
+@@ -8903,7 +8892,7 @@
+ .sp
+ Use "min(outgoing() and ::.)" or similar revset specification
+ instead of \-\-outgoing to specify edit target revision exactly in
+-such ambiguous situation. See \%\fBhg help revsets\fP\: for detail about
++such ambiguous situation. See \fBhg help revsets\fP for detail about
+ selecting revisions.
+ .sp
+ Returns 0 on success, 1 if user intervention is required (not only
+@@ -8923,7 +8912,7 @@
  .TP
  .B \-k,  \-\-keep
  .
@@ -5149,7 +5233,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B \-\-abort
  .
-@@ -8906,14 +8879,14 @@
+@@ -8943,14 +8932,14 @@
  .UNINDENT
  .SS inotify
  .sp
@@ -5167,7 +5251,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  start an inotify server for this repository
-@@ -8960,7 +8933,7 @@
+@@ -8997,7 +8986,7 @@
  Example:
  .sp
  .nf
@@ -5176,16 +5260,18 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [keyword]
  # expand keywords in every python file except those matching "x*"
  **.py =
-@@ -8969,7 +8942,7 @@
+@@ -9006,8 +8995,9 @@
  [keywordset]
  # prefer svn\- over cvs\-like default keywordmaps
  svn = True
 -.ft P
 +.ft
  .fi
++.RE
  .IP Note
  .
-@@ -8978,7 +8951,7 @@
+ The more specific you are in your filename patterns the less you
+@@ -9015,7 +9005,7 @@
  .RE
  .sp
  For [keywordmaps] template mapping and expansion demonstration and
@@ -5194,7 +5280,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  available templates and filters.
  .sp
  Three additional date template filters are provided:
-@@ -8997,26 +8970,26 @@
+@@ -9034,26 +9024,26 @@
  "2006\-09\-18 08:13:13 \-700 (Mon, 18 Sep 2006)"
  .UNINDENT
  .sp
@@ -5228,7 +5314,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Show current, custom, or default keyword template maps and their
-@@ -9027,7 +9000,7 @@
+@@ -9064,7 +9054,7 @@
  .sp
  Use \-d/\-\-default to disable current configuration.
  .sp
@@ -5237,7 +5323,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -9043,9 +9016,9 @@
+@@ -9080,9 +9070,9 @@
  .SS kwexpand
  .sp
  .nf
@@ -5249,7 +5335,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Run after (re)enabling keyword expansion.
-@@ -9066,9 +9039,9 @@
+@@ -9103,9 +9093,9 @@
  .SS kwfiles
  .sp
  .nf
@@ -5261,7 +5347,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  List which files in the working directory are matched by the
-@@ -9078,19 +9051,19 @@
+@@ -9115,19 +9105,19 @@
  execution by including only files that are actual candidates for
  expansion.
  .sp
@@ -5284,7 +5370,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Options:
-@@ -9119,9 +9092,9 @@
+@@ -9156,9 +9146,9 @@
  .SS kwshrink
  .sp
  .nf
@@ -5296,7 +5382,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Must be run before changing/disabling active keywords.
-@@ -9145,10 +9118,10 @@
+@@ -9182,10 +9172,10 @@
  .sp
  Large binary files tend to be not very compressible, not very
  diffable, and not at all mergeable. Such files are not handled
@@ -5309,7 +5395,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  problems by adding a centralized client\-server layer on top of
  Mercurial: largefiles live in a \fIcentral store\fP out on the network
  somewhere, and you only fetch the revisions that you need when you
-@@ -9160,18 +9133,18 @@
+@@ -9197,18 +9187,18 @@
  identified by the SHA\-1 hash of their contents, which is written to
  the standin. largefiles uses that revision ID to get/put largefile
  revisions from/to the central store. This saves both disk space and
@@ -5333,7 +5419,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  When you push a changeset that adds/modifies largefiles to a remote
-@@ -9188,8 +9161,8 @@
+@@ -9225,8 +9215,8 @@
  copy to the latest pulled revision (and thereby downloading any new
  largefiles).
  .sp
@@ -5344,7 +5430,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  If you know you are pulling from a non\-default location and want to
  download all the largefiles that correspond to the new changesets at
-@@ -9208,12 +9181,12 @@
+@@ -9245,12 +9235,12 @@
  If you already have large files tracked by Mercurial without the
  largefiles extension, you will need to convert your repository in
  order to benefit from largefiles. This is done with the
@@ -5360,7 +5446,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  In repositories that already have largefiles in them, any new file
-@@ -9223,27 +9196,27 @@
+@@ -9260,27 +9250,27 @@
  \-\-lfsize option to the add command (also in megabytes):
  .sp
  .nf
@@ -5393,7 +5479,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Files that match one of these patterns will be added as largefiles
-@@ -9252,15 +9225,15 @@
+@@ -9289,15 +9279,15 @@
  The \fBlargefiles.minsize\fP and \fBlargefiles.patterns\fP config options
  will be ignored for any repositories not already containing a
  largefile. To add the first largefile to a repository, you must
@@ -5412,7 +5498,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Convert repository SOURCE to a new repository DEST, identical to
-@@ -9293,16 +9266,16 @@
+@@ -9330,16 +9320,16 @@
  .SS lfpull
  .sp
  .nf
@@ -5433,7 +5519,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Some examples:
  .INDENT 0.0
-@@ -9311,18 +9284,18 @@
+@@ -9348,18 +9338,18 @@
  pull largefiles for all branch heads:
  .sp
  .nf
@@ -5456,7 +5542,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -9356,10 +9329,10 @@
+@@ -9393,10 +9383,10 @@
  Known patches are represented as patch files in the .hg/patches
  directory. Applied patches are both patch files and changesets.
  .sp
@@ -5469,7 +5555,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  create new patch                          qnew
  import existing patch                     qimport
  
-@@ -9369,7 +9342,7 @@
+@@ -9406,7 +9396,7 @@
  add known patch to applied stack          qpush
  remove patch from applied stack           qpop
  refresh contents of top applied patch     qrefresh
@@ -5478,7 +5564,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  By default, mq will automatically use git patches when required to
-@@ -9377,39 +9350,39 @@
+@@ -9414,39 +9404,39 @@
  files creations or deletions. This behaviour can be configured with:
  .sp
  .nf
@@ -5495,7 +5581,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
 -\(aqno\(aq, mq will override the [diff] section and always generate git or
 +If set to 'keep', mq will obey the [diff] section configuration while
 +preserving existing git patches upon qrefresh. If set to 'yes' or
-+'no', mq will override the [diff] section and always generate git or
++ 'no', mq will override the [diff] section and always generate git or
  regular patches, possibly losing data in the second case.
  .sp
  It may be desirable for mq changesets to be kept in the secret phase (see
@@ -5529,7 +5615,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  make them behave as if \-\-keep\-changes were passed, and non\-conflicting
-@@ -9419,9 +9392,9 @@
+@@ -9459,9 +9449,9 @@
  .SS qapplied
  .sp
  .nf
@@ -5541,7 +5627,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -9440,9 +9413,9 @@
+@@ -9480,9 +9470,9 @@
  .SS qclone
  .sp
  .nf
@@ -5553,7 +5639,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  If source is local, destination will have no patches applied. If
-@@ -9455,7 +9428,7 @@
+@@ -9495,7 +9485,7 @@
  default. Use \-p <url> to change.
  .sp
  The patch directory must be a nested Mercurial repository, as
@@ -5562,7 +5648,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Return 0 on success.
  .sp
-@@ -9493,12 +9466,12 @@
+@@ -9533,12 +9523,12 @@
  .SS qcommit
  .sp
  .nf
@@ -5578,7 +5664,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -9552,9 +9525,9 @@
+@@ -9592,9 +9582,9 @@
  .SS qdelete
  .sp
  .nf
@@ -5590,7 +5676,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The patches must not be applied, and at least one patch is required. Exact
-@@ -9562,7 +9535,7 @@
+@@ -9602,7 +9592,7 @@
  preserved in the patch directory.
  .sp
  To stop managing a patch and move it into permanent history,
@@ -5599,7 +5685,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -9580,9 +9553,9 @@
+@@ -9620,9 +9610,9 @@
  .SS qdiff
  .sp
  .nf
@@ -5611,7 +5697,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Shows a diff which includes the current patch as well as any
-@@ -9590,8 +9563,8 @@
+@@ -9630,8 +9620,8 @@
  last refresh (thus showing what the current patch would become
  after a qrefresh).
  .sp
@@ -5622,7 +5708,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  made by the current patch without including changes made since the
  qrefresh.
  .sp
-@@ -9651,9 +9624,9 @@
+@@ -9691,9 +9681,9 @@
  .SS qfinish
  .sp
  .nf
@@ -5634,7 +5720,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Finishes the specified revisions (corresponding to applied
-@@ -9681,9 +9654,9 @@
+@@ -9721,9 +9711,9 @@
  .SS qfold
  .sp
  .nf
@@ -5646,7 +5732,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Patches must not yet be applied. Each patch will be successively
-@@ -9720,9 +9693,9 @@
+@@ -9760,9 +9750,9 @@
  .SS qgoto
  .sp
  .nf
@@ -5658,7 +5744,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -9745,30 +9718,30 @@
+@@ -9785,30 +9775,31 @@
  .SS qguard
  .sp
  .nf
@@ -5679,6 +5765,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  With no arguments, print the currently active guards.
  With arguments, set guards for the named patch.
++.RE
  .IP Note
  .
 -Specifying negative guards now requires \(aq\-\-\(aq.
@@ -5696,7 +5783,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -9787,18 +9760,18 @@
+@@ -9827,18 +9818,18 @@
  .SS qheader
  .sp
  .nf
@@ -5719,7 +5806,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The patch is inserted into the series after the last applied
-@@ -9819,7 +9792,7 @@
+@@ -9859,7 +9850,7 @@
  under mq control). With \-g/\-\-git, patches imported with \-\-rev will
  use the git diff format. See the diffs help topic for information
  on why this is important for preserving rename/copy information
@@ -5728,7 +5815,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  from mq control.
  .sp
  To import a patch from standard input, pass \- as the patch file.
-@@ -9829,9 +9802,9 @@
+@@ -9869,9 +9860,9 @@
  To import an existing patch while renaming it:
  .sp
  .nf
@@ -5740,7 +5827,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 if import succeeded.
-@@ -9866,9 +9839,9 @@
+@@ -9906,9 +9897,9 @@
  .SS qinit
  .sp
  .nf
@@ -5752,7 +5839,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The queue repository is unversioned by default. If
-@@ -9877,8 +9850,8 @@
+@@ -9917,8 +9908,8 @@
  an unversioned patch repository into a versioned one). You can use
  qcommit to commit changes to this queue repository.
  .sp
@@ -5763,7 +5850,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -9890,9 +9863,9 @@
+@@ -9930,9 +9921,9 @@
  .SS qnew
  .sp
  .nf
@@ -5775,7 +5862,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  qnew creates a new patch on top of the currently\-applied patch (if
-@@ -9908,7 +9881,7 @@
+@@ -9948,7 +9939,7 @@
  .sp
  \-e/\-\-edit, \-m/\-\-message or \-l/\-\-logfile set the patch header as
  well as the commit message. If none is specified, the header is
@@ -5784,7 +5871,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Use the \-g/\-\-git option to keep the patch in the git extended diff
  format. Read the diffs help topic for more information on why this
-@@ -9967,9 +9940,9 @@
+@@ -10007,9 +9998,9 @@
  .SS qnext
  .sp
  .nf
@@ -5796,7 +5883,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -9984,9 +9957,9 @@
+@@ -10024,9 +10015,9 @@
  .SS qpop
  .sp
  .nf
@@ -5808,7 +5895,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Without argument, pops off the top of the patch stack. If given a
-@@ -10026,9 +9999,9 @@
+@@ -10066,9 +10057,9 @@
  .SS qprev
  .sp
  .nf
@@ -5820,7 +5907,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -10043,9 +10016,9 @@
+@@ -10083,9 +10074,9 @@
  .SS qpush
  .sp
  .nf
@@ -5832,7 +5919,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  By default, abort if the working directory contains uncommitted
-@@ -10097,9 +10070,9 @@
+@@ -10137,9 +10128,9 @@
  .SS qqueue
  .sp
  .nf
@@ -5844,7 +5931,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Supports switching between different patch queues, as well as creating
-@@ -10150,9 +10123,9 @@
+@@ -10190,9 +10181,9 @@
  .SS qrefresh
  .sp
  .nf
@@ -5856,7 +5943,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  If any file patterns are provided, the refreshed patch will
-@@ -10223,9 +10196,9 @@
+@@ -10263,9 +10254,9 @@
  .SS qrename
  .sp
  .nf
@@ -5868,7 +5955,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  With one argument, renames the current patch to PATCH1.
-@@ -10241,12 +10214,12 @@
+@@ -10281,12 +10272,12 @@
  .SS qrestore
  .sp
  .nf
@@ -5884,7 +5971,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -10262,12 +10235,12 @@
+@@ -10302,12 +10293,12 @@
  .SS qsave
  .sp
  .nf
@@ -5900,7 +5987,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -10299,23 +10272,23 @@
+@@ -10339,23 +10330,23 @@
  .SS qselect
  .sp
  .nf
@@ -5929,7 +6016,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This activates the "stable" guard. mq will skip foo.patch (because
-@@ -10362,9 +10335,9 @@
+@@ -10402,9 +10393,9 @@
  .SS qseries
  .sp
  .nf
@@ -5941,7 +6028,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -10383,9 +10356,9 @@
+@@ -10423,9 +10414,9 @@
  .SS qtop
  .sp
  .nf
@@ -5953,7 +6040,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -10400,9 +10373,9 @@
+@@ -10440,9 +10431,9 @@
  .SS qunapplied
  .sp
  .nf
@@ -5965,30 +6052,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Returns 0 on success.
-@@ -10421,9 +10394,9 @@
- .SS strip
- .sp
- .nf
--.ft C
-+.ft
- hg strip [\-k] [\-f] [\-n] [\-B bookmark] [\-r] REV...
--.ft P
-+.ft
- .fi
- .sp
- The strip command removes the specified changesets and all their
-@@ -10437,8 +10410,8 @@
- completes.
- .sp
- Any stripped changesets are stored in \fB.hg/strip\-backup\fP as a
--bundle (see \%\fBhg help bundle\fP\: and \%\fBhg help unbundle\fP\:). They can
--be restored by running \%\fBhg unbundle .hg/strip\-backup/BUNDLE\fP\:,
-+bundle (see \fBhg help bundle\fP and \fBhg help unbundle\fP). They can
-+be restored by running \fBhg unbundle .hg/strip\-backup/BUNDLE\fP,
- where BUNDLE is the bundle file created by the strip. Note that
- the local revision numbers will in general be different after the
- restore.
-@@ -10494,13 +10467,13 @@
+@@ -10465,13 +10456,13 @@
  This extension implements hooks to send email notifications when
  changesets are sent from or received by the local repository.
  .sp
@@ -6004,7 +6068,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [hooks]
  # one email for each incoming changeset
  incoming.notify = python:hgext.notify.hook
-@@ -10509,7 +10482,7 @@
+@@ -10480,7 +10471,7 @@
  
  # one email for all outgoing changesets
  outgoing.notify = python:hgext.notify.hook
@@ -6013,7 +6077,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This registers the hooks. To enable notification, subscribers must
-@@ -10518,7 +10491,7 @@
+@@ -10489,7 +10480,7 @@
  multiple recipients to a single repository:
  .sp
  .nf
@@ -6022,7 +6086,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [usersubs]
  # key is subscriber email, value is a comma\-separated list of repo patterns
  user@host = pattern
-@@ -10526,7 +10499,7 @@
+@@ -10497,7 +10488,7 @@
  [reposubs]
  # key is repo pattern, value is a comma\-separated list of subscriber emails
  pattern = user@host
@@ -6031,7 +6095,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  A \fBpattern\fP is a \fBglob\fP matching the absolute path to a repository,
-@@ -10534,10 +10507,10 @@
+@@ -10505,10 +10496,10 @@
  present, is separated from the glob by a hash. Example:
  .sp
  .nf
@@ -6044,7 +6108,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This sends to \fBqa\-team@example.com\fP whenever a changeset on the \fBrelease\fP
-@@ -10548,10 +10521,10 @@
+@@ -10519,10 +10510,10 @@
  incorporated by reference:
  .sp
  .nf
@@ -6057,7 +6121,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Notifications will not be sent until the \fBnotify.test\fP value is set
-@@ -10567,7 +10540,7 @@
+@@ -10538,7 +10529,7 @@
  .B notify.sources
  .
  Space\-separated list of change sources. Notifications are activated only
@@ -6066,7 +6130,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .INDENT 7.0
  .TP
  .B \fBserve\fP
-@@ -10632,7 +10605,7 @@
+@@ -10603,7 +10594,7 @@
  .TP
  .B notify.maxsubject
  .
@@ -6075,7 +6139,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B notify.diffstat
  .
-@@ -10674,10 +10647,10 @@
+@@ -10645,10 +10636,10 @@
  To set the pager that should be used, set the application variable:
  .sp
  .nf
@@ -6088,7 +6152,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  If no pager is set, the pager extensions uses the environment variable
-@@ -10687,20 +10660,20 @@
+@@ -10658,20 +10649,20 @@
  pager.ignore list:
  .sp
  .nf
@@ -6113,7 +6177,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Setting pager.attend to an empty value will cause all commands to be
-@@ -10708,7 +10681,7 @@
+@@ -10679,7 +10670,7 @@
  .sp
  If pager.attend is present, pager.ignore will be ignored.
  .sp
@@ -6122,7 +6186,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  to specify them in your user configuration file.
  .sp
  The \-\-pager=... option can also be used to control when the pager is
-@@ -10733,7 +10706,7 @@
+@@ -10704,7 +10695,7 @@
  [Optional] The result of running diffstat on the patch.
  .IP \(bu 2
  .
@@ -6131,7 +6195,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .UNINDENT
  .sp
  Each message refers to the first in the series using the In\-Reply\-To
-@@ -10744,20 +10717,20 @@
+@@ -10715,20 +10706,20 @@
  configuration file:
  .sp
  .nf
@@ -6155,7 +6219,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  changesets as a patchbomb.
  .sp
  You can also either configure the method option in the email section
-@@ -10769,13 +10742,13 @@
+@@ -10740,13 +10731,13 @@
  .SS email
  .sp
  .nf
@@ -6172,7 +6236,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  of N]" introduction, which describes the series as a whole.
  .sp
  Each patch email has a Subject line of "[PATCH M of N] ...", using
-@@ -10786,7 +10759,7 @@
+@@ -10757,7 +10748,7 @@
  With the \-d/\-\-diffstat option, if the diffstat program is
  installed, the result of running diffstat on the patch is inserted.
  .sp
@@ -6181,7 +6245,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  With the \-d/\-\-diffstat or \-\-confirm options, you will be presented
  with a final summary of all messages and asked for confirmation before
-@@ -10826,7 +10799,7 @@
+@@ -10797,7 +10788,7 @@
  Examples:
  .sp
  .nf
@@ -6190,7 +6254,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  hg email \-r 3000          # send patch 3000 only
  hg email \-r 3000 \-r 3001  # send patches 3000 and 3001
  hg email \-r 3000:3005     # send patches 3000 through 3005
-@@ -10847,7 +10820,7 @@
+@@ -10818,7 +10809,7 @@
  hg email \-o \-m mbox &&    # generate an mbox file ...
    formail \-s sendmail \e   # ... and use formail to send from the mbox
      \-bm \-t < mbox         # ... using sendmail
@@ -6199,7 +6263,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Before using this command, you will need to enable email in your
-@@ -10984,7 +10957,7 @@
+@@ -10955,7 +10946,7 @@
  The following settings are available:
  .sp
  .nf
@@ -6208,7 +6272,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [progress]
  delay = 3 # number of seconds (float) before showing the progress bar
  changedelay = 1 # changedelay: minimum delay before showing a new topic.
-@@ -10994,11 +10967,11 @@
+@@ -10965,11 +10956,11 @@
  format = topic bar number estimate # format of the progress bar
  width = <none> # if set, the maximum width of the progress information
                 # (that is, min(width, term width) will be used)
@@ -6223,7 +6287,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Valid entries for the format field are topic, bar, number, unit,
-@@ -11013,9 +10986,9 @@
+@@ -10984,9 +10975,9 @@
  .SS purge
  .sp
  .nf
@@ -6235,7 +6299,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Delete files not known to Mercurial. This is useful to test local
-@@ -11025,7 +10998,7 @@
+@@ -10996,7 +10987,7 @@
  .INDENT 0.0
  .IP \(bu 2
  .
@@ -6244,7 +6308,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .IP \(bu 2
  .
  Empty directories: in fact Mercurial ignores directories unless
-@@ -11042,7 +11015,7 @@
+@@ -11013,7 +11004,7 @@
  Ignored files (unless \-\-all is specified)
  .IP \(bu 2
  .
@@ -6253,7 +6317,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .UNINDENT
  .sp
  If directories are given on the command line, only files in these
-@@ -11090,14 +11063,14 @@
+@@ -11061,14 +11052,14 @@
  repository.
  .sp
  For more information:
@@ -6271,7 +6335,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Rebase uses repeated merging to graft changesets from one part of
-@@ -11111,9 +11084,9 @@
+@@ -11082,9 +11073,9 @@
  pulling in your rebased changesets.
  .sp
  In its default configuration, Mercurial will prevent you from
@@ -6283,7 +6347,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  rebase uses the current branch tip as the destination. (The
  destination changeset is not modified by rebasing, but new
  changesets are added as its descendants.)
-@@ -11145,7 +11118,7 @@
+@@ -11116,7 +11107,7 @@
  and source branch is that, unlike \fBmerge\fP, rebase will do
  nothing if you are at the branch tip of a named branch
  with two heads. You need to explicitly specify source and/or
@@ -6292,7 +6356,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  the intended source branch).
  .sp
  If a rebase is interrupted to manually resolve a merge, it can be
-@@ -11227,25 +11200,25 @@
+@@ -11199,25 +11190,25 @@
  .SS qrecord
  .sp
  .nf
@@ -6325,7 +6389,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  You will be prompted for whether to record changes to each
  modified file, and for files with multiple changes, for each
-@@ -11253,7 +11226,7 @@
+@@ -11225,7 +11216,7 @@
  possible:
  .sp
  .nf
@@ -6334,7 +6398,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  y \- record this change
  n \- skip this change
  e \- edit this change manually
-@@ -11266,7 +11239,7 @@
+@@ -11238,7 +11229,7 @@
  q \- quit, recording no changes
  
  ? \- display help
@@ -6343,7 +6407,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  This command is not available when committing a merge.
-@@ -11337,9 +11310,9 @@
+@@ -11309,9 +11300,9 @@
  .SS relink
  .sp
  .nf
@@ -6355,7 +6419,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  When repositories are cloned locally, their data files will be
-@@ -11371,28 +11344,28 @@
+@@ -11343,28 +11334,28 @@
  lot of repositories to act like a scheme, for example:
  .sp
  .nf
@@ -6390,7 +6454,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  The syntax is taken from Mercurial templates, and you have unlimited
-@@ -11404,14 +11377,14 @@
+@@ -11376,14 +11367,14 @@
  For convenience, the extension adds these schemes by default:
  .sp
  .nf
@@ -6407,7 +6471,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  You can override a predefined scheme by defining a new scheme with the
-@@ -11423,9 +11396,9 @@
+@@ -11395,13 +11386,14 @@
  .SS share
  .sp
  .nf
@@ -6419,7 +6483,12 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Initialize a new repository and working directory that shares its
-@@ -11452,9 +11425,9 @@
+ history with another repository.
++.RE
+ .IP Note
+ .
+ using rollback or extensions that destroy/modify history (mq,
+@@ -11424,9 +11416,9 @@
  .SS unshare
  .sp
  .nf
@@ -6431,7 +6500,63 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Copy the store data to the repo and remove the sharedpath data.
-@@ -11463,7 +11436,7 @@
+@@ -11440,7 +11432,7 @@
+ .sp
+ Later on, the "hg unshelve" command restores the changes saved by "hg
+ shelve". Changes can be restored even after updating to a different
+-parent, in which case Mercurial\(aqs merge machinery will resolve any
++parent, in which case Mercurial's merge machinery will resolve any
+ conflicts if necessary.
+ .sp
+ You can have more than one shelved change outstanding at a time; each
+@@ -11450,9 +11442,9 @@
+ .SS shelve
+ .sp
+ .nf
+-.ft C
++.ft
+ hg shelve
+-.ft P
++.ft
+ .fi
+ .sp
+ Shelving takes files that "hg status" reports as not clean, saves
+@@ -11521,9 +11513,9 @@
+ .SS unshelve
+ .sp
+ .nf
+-.ft C
++.ft
+ hg unshelve [SHELVED]
+-.ft P
++.ft
+ .fi
+ .sp
+ This command accepts an optional name of a shelved change to
+@@ -11568,9 +11560,9 @@
+ .SS strip
+ .sp
+ .nf
+-.ft C
++.ft
+ hg strip [\-k] [\-f] [\-n] [\-B bookmark] [\-r] REV...
+-.ft P
++.ft
+ .fi
+ .sp
+ The strip command removes the specified changesets and all their
+@@ -11584,8 +11576,8 @@
+ completes.
+ .sp
+ Any stripped changesets are stored in \fB.hg/strip\-backup\fP as a
+-bundle (see \%\fBhg help bundle\fP\: and \%\fBhg help unbundle\fP\:). They can
+-be restored by running \%\fBhg unbundle .hg/strip\-backup/BUNDLE\fP\:,
++bundle (see \fBhg help bundle\fP and \fBhg help unbundle\fP). They can
++be restored by running \fBhg unbundle .hg/strip\-backup/BUNDLE\fP,
+ where BUNDLE is the bundle file created by the strip. Note that
+ the local revision numbers will in general be different after the
+ restore.
+@@ -11639,7 +11631,7 @@
  command to transplant changesets from another branch
  .sp
  This extension allows you to transplant changes to another parent revision,
@@ -6440,7 +6565,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Transplanted patches are recorded in .hg/transplant/transplants, as a
  map from a changeset hash to its hash in the source repository.
-@@ -11471,9 +11444,9 @@
+@@ -11647,9 +11639,9 @@
  .SS transplant
  .sp
  .nf
@@ -6452,7 +6577,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  Selected changesets will be applied on top of the current working
-@@ -11490,9 +11463,9 @@
+@@ -11666,9 +11658,9 @@
  of the form:
  .sp
  .nf
@@ -6464,7 +6589,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  You can rewrite the changelog message with the \-\-filter option.
-@@ -11514,9 +11487,9 @@
+@@ -11690,9 +11682,9 @@
  transplant all changes up to REV on top of your current revision:
  .sp
  .nf
@@ -6476,7 +6601,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .UNINDENT
  .sp
-@@ -11526,14 +11499,14 @@
+@@ -11702,14 +11694,14 @@
  normally instead of transplanting them.
  .sp
  Merge changesets may be transplanted directly by specifying the
@@ -6495,7 +6620,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .sp
  Options:
  .INDENT 0.0
-@@ -11630,10 +11603,10 @@
+@@ -11806,10 +11798,10 @@
  You can specify the encoding by config option:
  .sp
  .nf
@@ -6508,7 +6633,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .sp
  It is useful for the users who want to commit with UTF\-8 log message.
-@@ -11656,7 +11629,7 @@
+@@ -11832,7 +11824,7 @@
  To perform automatic newline conversion, use:
  .sp
  .nf
@@ -6517,7 +6642,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  [extensions]
  win32text =
  [encode]
-@@ -11666,28 +11639,28 @@
+@@ -11842,28 +11834,28 @@
  [decode]
  ** = cleverdecode:
  # or ** = macdecode:
@@ -6551,7 +6676,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .SS zeroconf
  .sp
-@@ -11698,23 +11671,23 @@
+@@ -11874,23 +11866,23 @@
  without knowing their actual IP address.
  .sp
  To allow other people to discover your repository using run
@@ -6581,7 +6706,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .fi
  .SH FILES
  .INDENT 0.0
-@@ -11724,20 +11697,20 @@
+@@ -11900,20 +11892,20 @@
  This file contains defaults and configuration. Values in
  \fB.hg/hgrc\fP override those in \fB$HOME/.hgrc\fP, and these override
  settings made in the global \fB/etc/mercurial/hgrc\fP configuration.
@@ -6605,7 +6730,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  .TP
  .B \fB.hgsubstate\fP
  .sp
-@@ -11752,7 +11725,7 @@
+@@ -11928,7 +11920,7 @@
  .TP
  .B \fB.hg/last\-message.txt\fP
  .sp
@@ -6614,7 +6739,7 @@ right thing, and .RS 0 seems to give the best effect.  Probably most
  in case the commit fails.
  .TP
  .B \fB.hg/localtags\fP
-@@ -11767,21 +11740,21 @@
+@@ -11943,21 +11935,21 @@
  it will be overwritten.
  .SH BUGS
  .sp
