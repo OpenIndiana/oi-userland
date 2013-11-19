@@ -239,23 +239,22 @@ GCC_ROOT =	/usr/gcc/4.7
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
 F77.studio.32 = $(SPRO_VROOT)/bin/f77
-FC.studio.32 = 	$(SPRO_VROOT)/bin/f90
-
+FC.studio.32 =  $(SPRO_VROOT)/bin/f90
 
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
 F77.studio.64 = $(SPRO_VROOT)/bin/f77
-FC.studio.64 = 	$(SPRO_VROOT)/bin/f90
+FC.studio.64 =  $(SPRO_VROOT)/bin/f90
 
-CC.gcc.32 =		$(GCC_ROOT)/bin/gcc
+CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
 F77.gcc.32 =	$(GCC_ROOT)/bin/gfortran
-FC.gcc.32 =		$(GCC_ROOT)/bin/gfortran
+FC.gcc.32 =	$(GCC_ROOT)/bin/gfortran
 
-CC.gcc.64 =		$(GCC_ROOT)/bin/gcc
+CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
 F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
-FC.gcc.64 =		$(GCC_ROOT)/bin/gfortran
+FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
