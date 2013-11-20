@@ -1,0 +1,65 @@
+--- src/afsd/afs.rc.solaris.2.11.orig	2013-11-21 16:38:33.013466837 +0100
++++ src/afsd/afs.rc.solaris.2.11	2013-11-21 16:45:50.628884544 +0100
+@@ -7,7 +7,7 @@
+ # ln -s ../init.d/afs.rc /etc/rc0.d/K66afs
+ # ln -s ../init.d/afs.rc /etc/rc2.d/S70afs
+ #
+-CONFIG=/usr/vice/etc/config
++CONFIG=/etc/openafs
+ AFSDOPT=$CONFIG/afsd.options
+ PACKAGE=$CONFIG/package.options
+ 
+@@ -112,9 +112,9 @@
+ # Start the AFS server processes if a bosserver exists
+ #
+ 
+-if [ -x /usr/afs/bin/bosserver ]; then
++if [ -x /usr/sbin/bosserver ]; then
+       echo "Starting AFS Server processes"
+-      /usr/afs/bin/bosserver &
++      /usr/sbin/bosserver &
+       OPTIONS="$OPTIONS -nosettime"
+       sleep 30
+ fi
+@@ -123,8 +123,8 @@
+ # Check that all of the client configuration files exist
+ #
+ 
+-for file in /usr/vice/etc/afsd /usr/vice/etc/cacheinfo \
+-          /usr/vice/etc/ThisCell /usr/vice/etc/CellServDB
++for file in /usr/sbin/afsd /etc/openafs/cacheinfo \
++          /etc/openafs/ThisCell /etc/openafs/CellServDB
+ do
+       if [ ! -f ${file} ]; then
+               echo "${file} does not exist. Not starting AFS client."
+@@ -134,10 +134,10 @@
+ 
+ #
+ # Check that the root directory for AFS (/afs)
+-# and the cache directory (/usr/vice/cache) both exist
++# and the cache directory (as specified in /etc/openafs/cacheinfo) both exist
+ #
+ 
+-for dir in `awk -F: '{print $1, $2}' /usr/vice/etc/cacheinfo`
++for dir in `awk -F: '{print $1, $2}' /etc/openafs/cacheinfo`
+ do
+       if [ ! -d ${dir} ]; then
+               echo "${dir} does not exist. Not starting AFS client."
+@@ -146,7 +146,7 @@
+ done
+ 
+ echo "Starting afsd"
+-/usr/vice/etc/afsd $OPTIONS
++/usr/sbin/afsd $OPTIONS
+ 
+ #
+ # Run package to update the disk
+@@ -195,7 +195,7 @@
+ bosrunning=`ps -ef | awk '/bosserver/ && ! /awk/'`
+ if [ "${bosrunning}" != "" ]; then
+       echo "Shutting down AFS server processes"
+-      /usr/afs/bin/bos shutdown localhost -localauth -wait
++      /usr/sbin/bos shutdown localhost -localauth -wait
+       echo "Killing AFS bosserver"
+       killproc bosserver
+ fi
