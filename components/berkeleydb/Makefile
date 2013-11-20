@@ -25,8 +25,6 @@
 
 include ../../make-rules/shared-macros.mk
 
-PATH=$(SPRO_VROOT)/bin:$(JAVA_HOME)/bin:/usr/bin
-
 COMPONENT_NAME=		berkeleydb
 COMPONENT_VERSION=	5.3.21
 COMPONENT_PROJECT_URL=	http://www.oracle.com/technetwork/database/berkeleydb/overview/index.html
@@ -42,6 +40,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+JAVA_HOME=$(JAVA6_HOME)
+PATH=/usr/gnu/bin:$(JAVA_HOME)/bin:/usr/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -67,7 +67,7 @@ COMPONENT_POST_TEST_ACTION = \
 CONFIGURE_SCRIPT = dist/configure
 
 # adding to the C++ compiler because libtool appears to strip it from CXXFLAGS
-CXX +=	$(studio_NORUNPATH)
+# CXX +=	$(studio_NORUNPATH)
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
