@@ -1,0 +1,20 @@
+In-house developed patch.
+Patch to overall Cheetah test framework to find the correct version of
+Python to use based on the $PYTHON_VERSION environment variable.
+Solaris-specific; not suitable for upstream
+
+--- Cheetah-2.4.4/cheetah/Tests/CheetahWrapper.py.orig	Thu Sep 16 12:21:36 2010
++++ Cheetah-2.4.4/cheetah/Tests/CheetahWrapper.py	Sun Sep  1 01:27:50 2013
+@@ -63,7 +63,11 @@
+         """Create the top-level directories, subdirectories and .tmpl
+            files.
+         """
+-        self.cmd = self.locate_cheetah('cheetah')
++        if not os.environ.get('PYTHON_VERSION'):
++            self.cmd = self.locate_cheetah('cheetah')
++        else:
++            self.cmd = self.locate_cheetah(
++                ''.join(['cheetah-', os.environ['PYTHON_VERSION']]))
+         pythonPath = os.getcwd()
+         if not os.environ.get('PYTHONPATH'):
+             os.environ['PYTHONPATH'] = pythonPath
