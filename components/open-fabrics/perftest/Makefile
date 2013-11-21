@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -59,6 +59,13 @@ COMMON_ARGS  +=	INSTALL=$(INSTALL)
 COMMON_ARGS  +=  BINDIR=$(CONFIGURE_BINDIR.$(BITS))
 COMPONENT_BUILD_ARGS  +=	$(COMMON_ARGS)
 COMPONENT_INSTALL_ARGS  +=	$(COMMON_ARGS)
+
+# need to translate ctrl-M in downloaded send_bw.c
+COMPONENT_POST_UNPACK_ACTION= \
+		cd $(@D); \
+		/usr/bin/tr -d '\r' < send_bw.c > send_bw.c.tmp; \
+		mv send_bw.c.tmp send_bw.c; \
+		cd ..;
 
 COMPONENT_PREP_ACTION = $(TOUCH) $(@D)/configure
 
