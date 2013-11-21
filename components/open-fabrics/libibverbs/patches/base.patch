@@ -531,7 +531,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/kern_abi.h libibverbs-1.1.4/src/kern
 diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 --- /tmp/846623/libibverbs-1.1.4/src/verbs.c	Thu Feb  3 01:53:17 2011
 +++ libibverbs-1.1.4/src/verbs.c	Fri Feb 11 04:02:33 2011
-@@ -41,6 +41,11 @@
+@@ -41,9 +41,24 @@
  #include <stdlib.h>
  #include <errno.h>
  #include <string.h>
@@ -543,7 +543,20 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  
  #include "ibverbs.h"
  
-@@ -93,6 +98,12 @@
++#define	IBV_IS_VALID_UGID(gid)	\
++	(gid->raw[0] != 0xff)
++
++#define	IBV_IS_VALID_MGID(gid)					\
++	((gids->raw[0] == 0xff) &&				\
++	((gids->raw[1] == 0x0e) || (gids->raw[1] == 0x02) ||	\
++	(gids->raw[1] == 0x05)  || (gids->raw[1] == 0x08) ||	\
++	(gids->raw[1] == 0x1e)  || (gids->raw[1] == 0x12) ||	\
++	(gids->raw[1] == 0x15)  || (gids->raw[1] == 0x18)))
++
+ int ibv_rate_to_mult(enum ibv_rate rate)
+ {
+ 	switch (rate) {
+@@ -93,6 +108,12 @@
  int __ibv_query_gid(struct ibv_context *context, uint8_t port_num,
  		    int index, union ibv_gid *gid)
  {
@@ -556,7 +569,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  	char name[24];
  	char attr[41];
  	uint16_t val;
-@@ -112,6 +123,7 @@
+@@ -112,6 +133,7 @@
  	}
  
  	return 0;
@@ -564,7 +577,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  }
  default_symver(__ibv_query_gid, ibv_query_gid);
  
-@@ -118,6 +130,12 @@
+@@ -118,6 +140,12 @@
  int __ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
  		     int index, uint16_t *pkey)
  {
@@ -577,7 +590,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  	char name[24];
  	char attr[8];
  	uint16_t val;
-@@ -133,9 +151,142 @@
+@@ -133,9 +161,159 @@
  
  	*pkey = htons(val);
  	return 0;
@@ -589,7 +602,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 +    ibv_sm_event_type_t event, uint_t gid_num, union ibv_gid *gids)
 +{
 +	struct ibv_reg_sm_event		*cmd;
-+	int				rc, cmd_size, data_size;
++	int				cmd_size, data_size;
 +	void				*data_p;
 +
 +	if (((gid_num > 0) && (gids == NULL)) ||
@@ -624,26 +637,35 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 +	cmd  = alloca(cmd_size);
 +	cmd->data_num = gid_num;
 +
++	if ((event == IBV_SM_EVENT_UGID) && (!IBV_IS_VALID_UGID(gids))) { 
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if ((event == IBV_SM_EVENT_MGID) && (!IBV_IS_VALID_MGID(gids))) { 
++		errno = EINVAL;
++		return (-1);
++	}
++
 +	IBV_INIT_CMD(cmd, cmd_size, REG_SM_EVENT);
 +
 +	cmd->events = event;
 +	if (gid_num > 0)
 +		memcpy(cmd->driver_data, data_p, data_size);
 +
-+	rc = write(context->cmd_fd, cmd, cmd_size);
-+	if (rc < 0) {
-+		errno = -rc;
-+		rc = -1;
++	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size) {
++		errno = EINVAL;
++		return (-1);
 +	}
 +
-+	return (rc);
++	return (0);
 +}
 +
 +int ibv_unregister_sm_events(struct ibv_context *context,
 +    ibv_sm_event_type_t event, uint_t gid_num, union ibv_gid *gids)
 +{
 +	struct ibv_unreg_sm_event	*cmd;
-+	int				rc, cmd_size, data_size;
++	int				cmd_size, data_size;
 +	void				*data_p;
 +
 +	if (((gid_num > 0) && (gids == NULL)) ||
@@ -678,19 +700,28 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 +	cmd  = alloca(cmd_size);
 +	cmd->data_num = gid_num;
 +
++	if ((event == IBV_SM_EVENT_UGID) && (!IBV_IS_VALID_UGID(gids))) { 
++		errno = EINVAL;
++		return (-1);
++	}
++
++	if ((event == IBV_SM_EVENT_MGID) && (!IBV_IS_VALID_MGID(gids))) { 
++		errno = EINVAL;
++		return (-1);
++	}
++
 +	IBV_INIT_CMD(cmd, cmd_size, UNREG_SM_EVENT);
 +
 +	cmd->events = event;
 +	if (gid_num > 0)
 +		memcpy(cmd->driver_data, data_p, data_size);
 +
-+	rc = write(context->cmd_fd, cmd, cmd_size);
-+	if (rc < 0) {
-+		errno = -rc;
-+		rc = -1;
++	if (write(context->cmd_fd, cmd, cmd_size) != cmd_size) {
++		errno = EINVAL;
++		return (-1);
 +	}
 +
-+	return (rc);
++	return (0);
 +}
 +
 +int ibv_gid_reachable(struct ibv_context *context,
@@ -710,17 +741,16 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
 +
 +	rc = write(context->cmd_fd, cmd, sizeof(struct ibv_gid_reachable));
 +	if (rc < 0) {
-+		errno = -rc;
-+		rc = -1;
++		return (-1);
 +	}
 +
-+	return (rc);
++	return (0);
 +}
 +
  struct ibv_pd *__ibv_alloc_pd(struct ibv_context *context)
  {
  	struct ibv_pd *pd;
-@@ -148,6 +299,27 @@
+@@ -148,6 +326,27 @@
  }
  default_symver(__ibv_alloc_pd, ibv_alloc_pd);
  
@@ -748,7 +778,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  int __ibv_dealloc_pd(struct ibv_pd *pd)
  {
  	return pd->context->ops.dealloc_pd(pd);
-@@ -175,6 +347,27 @@
+@@ -175,6 +374,27 @@
  }
  default_symver(__ibv_reg_mr, ibv_reg_mr);
  
@@ -776,7 +806,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  int __ibv_dereg_mr(struct ibv_mr *mr)
  {
  	int ret;
-@@ -189,6 +382,26 @@
+@@ -189,6 +409,26 @@
  }
  default_symver(__ibv_dereg_mr, ibv_dereg_mr);
  
@@ -803,7 +833,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  static struct ibv_comp_channel *ibv_create_comp_channel_v2(struct ibv_context *context)
  {
  	struct ibv_abi_compat_v2 *t = context->abi_compat;
-@@ -212,6 +425,10 @@
+@@ -212,6 +452,10 @@
  	struct ibv_comp_channel            *channel;
  	struct ibv_create_comp_channel      cmd;
  	struct ibv_create_comp_channel_resp resp;
@@ -814,7 +844,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  
  	if (abi_ver <= 2)
  		return ibv_create_comp_channel_v2(context);
-@@ -221,7 +438,23 @@
+@@ -221,7 +465,23 @@
  		return NULL;
  
  	IBV_INIT_CMD_RESP(&cmd, sizeof cmd, CREATE_COMP_CHANNEL, &resp, sizeof resp);
@@ -838,7 +868,7 @@ diff -r -u /tmp/846623/libibverbs-1.1.4/src/verbs.c libibverbs-1.1.4/src/verbs.c
  		free(channel);
  		return NULL;
  	}
-@@ -228,6 +461,9 @@
+@@ -228,6 +488,9 @@
  
  	VALGRIND_MAKE_MEM_DEFINED(&resp, sizeof resp);
  
