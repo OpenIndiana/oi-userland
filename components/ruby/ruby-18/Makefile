@@ -68,12 +68,19 @@ PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/ruby/$(RUBY_VER)/$(MACH)-solaris$(SOLARI
 # these macros are used in the package manifest
 PKG_MACROS+=	RUBY_VER=$(RUBY_VER)
 
+# patches to rubygems are in a separate directory from the ruby patches
+PATCH_DIR_1 = rubygems-patches
+PATCHES_1 = $(shell find $(PATCH_DIR_1) -type f -name $(PATCH_PATTERN) \
+    2>/dev/null | sort)
+
 # Since configure.in is patched, we need to autoconf after the patch.
 # Also, unpack the 2nd archive for rubygems.
-# Rubygems does not have patches, nor does it use configure nor make.
+# Rubygems has patches, but it does not use configure nor make.
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf); \
 	$(RM) -r $(SOURCE_DIR_1); \
-	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
+	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
+	$(foreach patch,$(PATCHES_1), \
+	$(GPATCH) -d $(SOURCE_DIR_1) $(GPATCH_FLAGS) < $(patch))
 
 # These modifications of ruby.1 must occur after ruby
 # is installed, not before.  Although there are some other patches
