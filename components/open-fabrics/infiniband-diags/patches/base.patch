@@ -792,6 +792,66 @@ diff -r -u /tmp/infiniband-diags-1.5.8/libibnetdisc/src/query_smp.c infiniband-d
  
  	memset(umad, 0, sizeof(umad));
  
+diff -r -u /tmp/infiniband-diags-1.5.8/libibnetdisc/src/internal.h infiniband-diags-1.5.8/libibnetdisc/src/internal.h
+--- /tmp/infiniband-diags-1.5.8/libibnetdisc/src/internal.h	Wed Feb 16 02:13:21 2011
++++ infiniband-diags-1.5.8/libibnetdisc/src/internal.h	Tue Sep 17 13:12:20 2013
+@@ -41,12 +41,56 @@
+ #include <infiniband/ibnetdisc.h>
+ #include <complib/cl_qmap.h>
+ 
++#if defined(__SVR4) && defined(__sun)
++#include <sys/varargs.h>
++
++static inline void
++ibnd_msg_internal(FILE *fd, const char *format, va_list alist)
++{
++	const char	*filename;
++	char		*filename_p;
++	char		*format_p = format;
++
++	/*
++	 * The filename returned by va_arg() has the full path. Skip "%s"
++	 * from format="%s:%u; " and truncate full pathname of src file to
++	 * start with infiniband-diags.
++	 */
++	filename = va_arg(alist, const char *);
++	format_p += 2;
++	if ((filename_p = strstr(filename, "infiniband-diags-")) != NULL) {
++		(void) fprintf(fd, "%s", filename_p);
++		(void) vfprintf(fd, format_p, alist);
++	} else {
++		(void) fprintf(fd, "%s", filename);
++		(void) vfprintf(fd, format_p, alist);
++	}
++}
++
++static inline void
++ibnd_msg(FILE *fd, const char *format, ...)
++{
++	va_list alist;
++
++	va_start(alist, format);
++	ibnd_msg_internal(fd, format, alist);
++	va_end(alist);
++}
++
+ #define	IBND_DEBUG(fmt, ...) \
+ 	if (ibdebug) { \
++		ibnd_msg(stdout, "%s:%u; " fmt, __FILE__, __LINE__, ## __VA_ARGS__); \
++	}
++#define	IBND_ERROR(fmt, ...) \
++		ibnd_msg(stderr, "%s:%u; " fmt, __FILE__, __LINE__, ## __VA_ARGS__)
++#else
++#define	IBND_DEBUG(fmt, ...) \
++	if (ibdebug) { \
+ 		printf("%s:%u; " fmt, __FILE__, __LINE__, ## __VA_ARGS__); \
+ 	}
+ #define	IBND_ERROR(fmt, ...) \
+ 		fprintf(stderr, "%s:%u; " fmt, __FILE__, __LINE__, ## __VA_ARGS__)
++#endif
+ 
+ /* HASH table defines */
+ #define HASHGUID(guid) ((uint32_t)(((uint32_t)(guid) * 101) ^ ((uint32_t)((guid) >> 32) * 103)))
 diff -r -u /tmp/infiniband-diags-1.5.8/man/ibstat.8 infiniband-diags-1.5.8/man/ibstat.8
 --- /tmp/infiniband-diags-1.5.8/man/ibstat.8	Wed Feb 16 02:13:21 2011
 +++ infiniband-diags-1.5.8/man/ibstat.8	Thu Feb 24 11:26:48 2011
