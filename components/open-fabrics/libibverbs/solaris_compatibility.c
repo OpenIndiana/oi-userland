@@ -51,11 +51,11 @@
 #include <sys/ib/adapters/tavor/tavor_ioctl.h>
 #include <sys/ib/clients/of/sol_uverbs/sol_uverbs_ioctl.h>
 #include <sys/ib/clients/of/sol_umad/sol_umad_ioctl.h>
+#include <sys/ib/adapters/MELLANOX.h>
 
 #include <alloca.h>
 #include "../include/infiniband/arch.h"
 #include "../include/infiniband/verbs.h"
-#include "../include/infiniband/MELLANOX.h"
 #include <errno.h>
 #include <pthread.h>
 #include <kstat.h>
