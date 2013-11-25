@@ -26,12 +26,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lighttpd
-COMPONENT_VERSION=	1.4.23
+COMPONENT_VERSION=	1.4.33
 COMPONENT_PROJECT_URL=	http://www.lighttpd.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8555db22ed7d429160701555611d8cd5eff42fc7e6e3ad3b050279c9b2145469
+    sha256:91f574d8bea8d9f75535e86cb2abc389beb8be24f003b71e6304b8c8ba1d3753
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
@@ -43,7 +43,7 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-# libtool linking will fail unless we re-create configure.
+# We need to run autogen because we patch configure.ac file
 COMPONENT_PREP_ACTION = ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh )
 
 # lighttpd is logging using __FILE__ macro. Cloning will make this happen
@@ -53,22 +53,27 @@ COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 CONFIGURE_PREFIX= /usr/lighttpd/1.4
 CONFIGURE_MANDIR= $(CONFIGURE_PREFIX)/man
 
+# Force lighttpd binaries and private modules to standard path
+CONFIGURE_SBINDIR.64 = $(CONFIGURE_PREFIX)/sbin
+CONFIGURE_LIBDIR.64 = $(CONFIGURE_PREFIX)/lib
+
 CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.1/bin/mysql_config
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.1/bin/64/mysql_config
+CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=    PCRECONFIG="/usr/bin/$(MACH64)/pcre-config"
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

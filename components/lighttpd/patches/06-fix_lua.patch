@@ -1,6 +1,11 @@
+Developed in-house, fed to community. Developed in order to
+reflect community issue.
+http://redmine.lighttpd.net/issues/2421
+Awaiting accept.
+
 --- src/mod_cml_lua.c.orig	2012-10-22 06:17:17.418886286 -0700
 +++ src/mod_cml_lua.c	2012-10-22 06:25:50.289753316 -0700
-@@ -33,6 +33,10 @@
+@@ -28,6 +28,10 @@
  #include <lualib.h>
  #include <lauxlib.h>
  
@@ -11,7 +16,7 @@
  typedef struct {
  	stream st;
  	int done;
-@@ -290,7 +294,11 @@
+@@ -285,7 +285,11 @@
  	lua_settable(L, LUA_GLOBALSINDEX);
  
  	/* load lua program */
@@ -22,18 +27,17 @@
 +#endif
  		log_error_write(srv, __FILE__, __LINE__, "s",
  				lua_tostring(L,-1));
+
+--- src/mod_magnet.c	2011-06-13 04:17:01.000000000 -0700
++++ src/mod_magnet.c2	2013-10-01 06:39:18.771549986 -0700
+@@ -24,6 +24,10 @@
+ #define MAGNET_CONFIG_PHYSICAL_PATH "magnet.attract-physical-path-to"
+ #define MAGNET_RESTART_REQUEST      99
  
---- src/mod_magnet.c.orig	2012-10-22 06:17:24.314956607 -0700
-+++ src/mod_magnet.c	2012-10-22 06:19:25.001600796 -0700
-@@ -785,7 +785,11 @@
- 	lua_setfield(L, -2, "lighty"); /* lighty.*                   (sp -= 1) */
- 
- 	lua_newtable(L); /* the meta-table for the new env           (sp += 1) */
 +#if LUA_VERSION_NUM >= 502
-+	lua_pushvalue(L, LUA_REGISTRYINDEX);                      /* (sp += 1) */
-+#else
- 	lua_pushvalue(L, LUA_GLOBALSINDEX);                       /* (sp += 1) */
++#define LUA_GLOBALSINDEX LUA_REGISTRYINDEX
 +#endif
- 	lua_setfield(L, -2, "__index"); /* { __index = _G }          (sp -= 1) */
- 	lua_setmetatable(L, -2); /* setmetatable({}, {__index = _G}) (sp -= 1) */
++
+ /* plugin config for all request/connections */
  
+ static jmp_buf exceptionjmp;
