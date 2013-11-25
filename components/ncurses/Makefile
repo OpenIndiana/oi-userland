@@ -53,6 +53,7 @@ CONFIGURE_OPTIONS +=	--with-normal
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-widec
 CONFIGURE_OPTIONS +=	--includedir=$(USRINCDIR)/ncurses
+CONFIGURE_OPTIONS +=	--with-default-terminfo-dir=$(GNUSHARE)/terminfo
 
 # Needed to pass -m32 or -m64 to the C/C++ compiler and linker.
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
@@ -64,7 +65,7 @@ CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 # copying the one shipped with Sun's curses fixes it:
 COMPONENT_POST_INSTALL_ACTION += \
 	$(CP) /usr/share/lib/terminfo/s/sun-color \
-	$(PROTO_DIR)$(GNULIB)/terminfo/s/
+	$(PROTO_DIR)$(GNUSHARE)/terminfo/s/
 
 ASLR_MODE = $(ASLR_ENABLE)
 
