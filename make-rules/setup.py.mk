@@ -70,7 +70,7 @@ $(BUILD_DIR)/%/.built:	$(SOURCE_DIR)/.prep $(BUILD_DIR)/config-%/$(CFG)
 	$(RM) -r $(@D) ; $(MKDIR) $(@D)
 	$(COMPONENT_PRE_BUILD_ACTION)
 	(cd $(SOURCE_DIR) ; $(ENV) HOME=$(BUILD_DIR)/config-$* $(COMPONENT_BUILD_ENV) \
-		$(PYTHON.$(BITS)) ./setup.py build)
+		$(PYTHON.$(BITS)) ./setup.py build $(COMPONENT_BUILD_ARGS))
 	$(COMPONENT_POST_BUILD_ACTION)
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 	-$(PARFAIT) $(SOURCE_DIR)/$(@D:$(BUILD_DIR)/%=%)

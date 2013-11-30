@@ -34,7 +34,9 @@ include ../../make-rules/ips.mk
 # Missing files in build dir for configure without this.
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf ) 
 
-CONFIGURE_OPTIONS+= --disable-perl
+CONFIGURE_ENV	+=  PERL=$(PERL)
+CONFIGURE_ENV	+=  PERLCC=$(CC)
+CONFIGURE_OPTIONS+= --with-perl-options="CC=$(CC) LD=$(CC) LIB=/usr/perl5/$(PERL_VERSION)/lib"
 CONFIGURE_OPTIONS+= --disable-python
 CONFIGURE_OPTIONS+= --disable-ruby
 CONFIGURE_OPTIONS+= --enable-tcl

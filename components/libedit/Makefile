@@ -23,13 +23,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libedit
-COMPONENT_VERSION=	20110802-3.0
-IPS_COMPONENT_VERSION=  3.0
+COMPONENT_VERSION=	20130712-3.1
+IPS_COMPONENT_VERSION=  3.1
 COMPONENT_PROJECT_URL=	http://www.thrysoee.dk/editline/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0b5ec9aa41faff761cda7819add93e9d8cb9c0bad85e65a686475e8375ac8a71
+    sha256:5d9b1a9dd66f1fe28bbd98e4d8ed1a22d8da0d08d902407dcc4a0702c8d88a37
 COMPONENT_ARCHIVE_URL=	http://www.thrysoee.dk/editline/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libedit
 
@@ -37,7 +37,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=   --enable-shared
 CONFIGURE_OPTIONS +=   --disable-static
 
