@@ -1,0 +1,233 @@
+Developed by community.
+http://marc.info/?l=oss-security&m=137049241132104&w=4
+Fix following CVEs:
+CVE-2013-4440, CVE-2013-4441, CVE-2013-4442, CVE-2013-4443
+with an exception of number bias in short passwords (won't be fixed,
+it's a feature)
+
+--- pwgen-2.06/configure.in	2007-07-05 09:42:19.000000000 +1000
++++ pwgen-2.06-mik/configure.in	2013-05-27 16:48:46.399195554 +1000
+@@ -6,7 +6,7 @@
+ AC_PATH_PROG(RM, rm, rm)
+ AC_PATH_PROG(SED, sed, sed)
+ AC_PATH_PROG(PERL, perl, perl)
+-AC_CHECK_FUNCS(drand48 getopt_long)
++AC_CHECK_FUNCS(getopt_long)
+ AC_CHECK_HEADERS(getopt.h)
+ pwgen_sha="internal"
+ SHA_OBJ=""
+--- pwgen-2.06/debian/control	2013-06-06 09:57:01.000000000 +1000
++++ pwgen-2.06-mik/debian/control	2013-06-06 10:05:44.315608968 +1000
+@@ -8,6 +8,7 @@
+ Package: pwgen
+ Architecture: any
+ Depends: ${shlibs:Depends}
++Suggests: passwdqc
+ Description: Automatic Password generation
+  pwgen generates random, meaningless but pronounceable passwords.
+  These passwords contain either only lowercase letters, or upper
+--- pwgen-2.06/pwgen.c	2013-06-06 09:57:01.000000000 +1000
++++ pwgen-2.06-mik/pwgen.c	2013-06-06 13:50:19.541188659 +1000
+@@ -25,7 +25,7 @@
+ 
+ int	pw_length = 8;
+ int	num_pw = -1;
+-int	pwgen_flags = 0;
++int	pwgen_flags = PW_LOWERS | PW_UPPERS | PW_DIGITS;
+ int	do_columns = 0;
+ 
+ #ifdef HAVE_GETOPT_LONG
+@@ -42,11 +42,12 @@
+ 	{ "sha1", required_argument, 0, 'H' },
+ 	{ "ambiguous", no_argument, 0, 'B' },
+ 	{ "no-vowels", no_argument, 0, 'v' },
++	{ "insecure-phonemes", no_argument, 0, 'P' },
+ 	{ 0, 0, 0, 0}
+ };
+ #endif
+ 
+-const char *pw_options = "01AaBCcnN:shH:vy";
++const char *pw_options = "01AaBCcnN:shH:vyP";
+ 
+ static void usage(void)
+ {
+@@ -82,6 +83,8 @@
+ 	fputs("  -v or --no-vowels\n", stderr);
+ 	fputs("\tDo not use any vowels so as to avoid accidental nasty words\n",
+ 	      stderr);
++	fputs("  -P or --insecure-phonemes\n", stderr);
++	fputs("\tGenerate insecure phonemes, as was previously the default\n", stderr);
+ 	exit(1);
+ }
+ 
+@@ -94,11 +97,10 @@
+ 	char	*buf, *tmp;
+ 	void	(*pwgen)(char *inbuf, int size, int pw_flags);
+ 
+-	pwgen = pw_phonemes;
++	pwgen = pw_rand;
+ 	pw_number = pw_random_number;
+ 	if (isatty(1)) {
+ 		do_columns = 1;
+-		pwgen_flags |= PW_DIGITS | PW_UPPERS;
+ 	}
+ 
+ 	while (1) {
+@@ -140,6 +144,9 @@
+ 			pwgen = pw_rand;
+ 			pwgen_flags = PW_DIGITS | PW_UPPERS;
+ 			break;
++		case 'P':
++			pwgen = pw_phonemes;
++			break;
+ 		case 'C':
+ 			do_columns = 1;
+ 			break;
+--- pwgen-2.06/pwgen.h	2007-07-05 09:42:19.000000000 +1000
++++ pwgen-2.06-mik/pwgen.h	2013-06-06 10:08:42.186709620 +1000
+@@ -28,6 +28,7 @@
+ #define PW_SYMBOLS	0x0004
+ #define PW_AMBIGUOUS	0x0008
+ #define PW_NO_VOWELS	0x0010
++#define PW_LOWERS	0x0020  /* At least one lowercase! */
+ 
+ /* pointer to choose between random or sha1 pseudo random number generator */
+ extern int (*pw_number)(int max_num);
+--- pwgen-2.06/pw_rand.c	2007-07-05 09:42:19.000000000 +1000
++++ pwgen-2.06-mik/pw_rand.c	2013-06-06 13:51:38.948600125 +1000
+@@ -72,10 +72,12 @@
+ 			feature_flags &= ~PW_UPPERS;
+ 		if (strchr(pw_symbols, ch))
+ 			feature_flags &= ~PW_SYMBOLS;
++		if (strchr(pw_lowers, ch))
++			feature_flags &= ~PW_LOWERS;
+ 	}
+-	if (feature_flags & (PW_UPPERS | PW_DIGITS | PW_SYMBOLS))
++	if (feature_flags & (PW_UPPERS | PW_DIGITS | PW_SYMBOLS | PW_LOWERS))
+ 		goto try_again;
+ 	buf[size] = 0;
+ 	free(chars);
+ 	return;
+-}	
++}
+--- pwgen-2.06/randnum.c	2007-07-05 09:42:19.000000000 +1000
++++ pwgen-2.06-mik/randnum.c	2013-06-06 10:00:23.149212710 +1000
+@@ -7,53 +7,45 @@
+  * License.
+  */
+ 
++#include <stdio.h>
++#include <string.h>
+ #include <unistd.h>
+ #include <stdlib.h>
+ #include <sys/types.h>
+-#include <sys/time.h>
+ #include <sys/stat.h>
+ #include <fcntl.h>
+ #include <errno.h>
+ 
+ #include "pwgen.h"
+ 
+-#ifdef HAVE_DRAND48
+-extern double drand48(void);
+-#endif
+-
+ static int get_random_fd(void);
+ 
+ /* Borrowed/adapted from e2fsprogs's UUID generation code */
+ static int get_random_fd()
+ {
+-	struct timeval	tv;
+-	static int	fd = -2;
+-	int		i;
++	static int fd = -2;
+ 
+-	if (fd == -2) {
+-		gettimeofday(&tv, 0);
++	if(fd == -2) {
+ 		fd = open("/dev/urandom", O_RDONLY);
+-		if (fd == -1)
+-			fd = open("/dev/random", O_RDONLY | O_NONBLOCK);
+-#ifdef HAVE_DRAND48
+-		srand48((tv.tv_sec<<9) ^ (getpgrp()<<15) ^
+-			(getpid()) ^ (tv.tv_usec>>11));
+-#else
+-		srandom((getpid() << 16) ^ (getpgrp() << 8) ^ getuid() 
+-		      ^ tv.tv_sec ^ tv.tv_usec);
+-#endif
++		if (fd == -1) {
++			fprintf(stderr, "Unable to open /dev/urandom: %s\n", strerror(errno));
++			abort();
++		}
+ 	}
+-	/* Crank the random number generator a few times */
+-	gettimeofday(&tv, 0);
+-	for (i = (tv.tv_sec ^ tv.tv_usec) & 0x1F; i > 0; i--)
+-#ifdef HAVE_DRAND48
+-		drand48();
+-#else
+-		random();
+-#endif
+ 	return fd;
+ }
+ 
++static unsigned int get_mask(int max_num)
++{
++	unsigned int numBits = 0;
++	while(max_num > 0)
++	{
++		numBits++;
++		max_num >>= 1;
++	}
++	return (1<<numBits) - 1;
++}
++
+ /*
+  * Generate a random number n, where 0 <= n < max_num, using
+  * /dev/urandom if possible.
+@@ -62,34 +54,20 @@
+ 	int max_num;
+ {
+ 	int i, fd = get_random_fd();
+-	int lose_counter = 0, nbytes=4;
+ 	unsigned int rand_num;
+-	char *cp = (char *) &rand_num;
+ 
+-	if (fd >= 0) {
+-		while (nbytes > 0) {
+-			i = read(fd, cp, nbytes);
+-			if ((i < 0) &&
+-			    ((errno == EINTR) || (errno == EAGAIN)))
+-				continue;
+-			if (i <= 0) {
+-				if (lose_counter++ == 8)
+-					break;
+-				continue;
+-			}
+-			nbytes -= i;
+-			cp += i;
+-			lose_counter = 0;
+-		}
++	i = read(fd, (void *)&rand_num, sizeof(rand_num));
++	if(i < 0) {
++		fprintf(stderr, "Error reading from /dev/urandom: %s\n", strerror(errno));
++		abort();
+ 	}
+-	if (nbytes == 0)
+-		return (rand_num % max_num);
+ 
+-	/* OK, we weren't able to use /dev/random, fall back to rand/rand48 */
++        rand_num &= get_mask(max_num);
+ 
+-#ifdef HAVE_DRAND48
+-	return ((int) ((drand48() * max_num)));
+-#else
+-	return ((int) (random() / ((float) RAND_MAX) * max_num));
+-#endif
++	if(rand_num < max_num) {
++		return rand_num;
++	}
++
++	return pw_random_number(max_num); /* tail-recurse */
+ }
++

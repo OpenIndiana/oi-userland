@@ -1,0 +1,78 @@
+Developed in-house, not fed back - can't submit new issue
+ - community seems dead.
+Solaris specific: uses internal implementation of SHA1
+
+--- pwgen-2.06/sha1num.c	2013-11-25 12:09:31.359377740 -0800
++++ pwgen-2.06/sha1num.c	2013-11-25 12:09:26.489379943 -0800
+@@ -11,7 +11,16 @@
+ #include <stdio.h>
+ #include <stdlib.h>
+ #include "pwgen.h"
++#ifdef SHA_INTERNAL
+ #include "sha1.h"
++#endif
++#ifdef SHA_SOLARIS
++#include <sha1.h>
++#define sha1_context SHA1_CTX
++#define sha1_starts SHA1Init
++#define sha1_update SHA1Update
++#define sha1_finish(a,b) SHA1Final(b,a)
++#endif
+ 
+ sha1_context sha1_ctx;
+ char *sha1_seed;
+--- pwgen-2.06/configure.in	2013-12-02 02:57:12.022589524 -0800
++++ pwgen-2.06/configure.in	2013-12-02 02:56:10.404769485 -0800
+@@ -8,4 +8,23 @@
+ AC_PATH_PROG(PERL, perl, perl)
+ AC_CHECK_FUNCS(drand48 getopt_long)
+ AC_CHECK_HEADERS(getopt.h)
++pwgen_sha="internal"
++SHA_OBJ=""
++SHA_SRC=""
++SHA_LIB=""
++SHA_HEAD=""
++AC_CHECK_LIB(md, SHA1Init, [pwgen_sha="solaris"])
++if test x"$pwgen_sha" = x"internal" ; then
++	CFLAGS="${CFLAGS} -DSHA_INTERNAL"
++	SHA_OBJ="sha1.o"
++	SHA_SRC="sha1.c"
++	SHA_HEAD="sha1.h"
++elif test x"$pwgen_sha" = x"solaris" ; then
++	SHA_LIB="-lmd"
++	CFLAGS="${CFLAGS} -DSHA_SOLARIS"
++fi
++AC_SUBST(SHA_OBJ)
++AC_SUBST(SHA_SRC)
++AC_SUBST(SHA_LIB)
++AC_SUBST(SHA_HEAD)
+ AC_OUTPUT(Makefile)
+--- pwgen-2.06/Makefile.in	2013-12-02 03:52:49.960581781 -0800
++++ pwgen-2.06/Makefile.in	2013-12-02 03:52:25.323489891 -0800
+@@ -19,7 +19,7 @@
+ CFLAGS = @CFLAGS@ $(WALL_OPTS)
+ CPPFLAGS = @CPPFLAGS@
+ ALL_CFLAGS = $(CPPFLAGS) $(DEFS) $(USE_WFLAGS) $(CFLAGS) $(XTRA_CFLAGS) 
+-LDFLAGS = @LDFLAGS@
++LDFLAGS = @LDFLAGS@ @SHA_LIB@
+ RM = @RM@
+ MV = @MV@
+ SED = @SED@
+@@ -31,9 +31,9 @@
+ .c.o:
+ 	$(CC) -c $(ALL_CFLAGS) $< -o $@
+ 
+-OBJS= pwgen.o pw_phonemes.o pw_rand.o randnum.o sha1.o sha1num.o
++OBJS= pwgen.o pw_phonemes.o pw_rand.o randnum.o @SHA_OBJ@ sha1num.o
+ 
+-SRCS= pwgen.c pw_phonemes.c pw_rand.c randnum.c sha1.c sha1num.c
++SRCS= pwgen.c pw_phonemes.c pw_rand.c randnum.c @SHA_SRC@ sha1num.c
+ 
+ 
+ pwgen: $(OBJS)
+@@ -127,4 +127,4 @@
+ pw_rand.o: pw_rand.c pwgen.h
+ randnum.o: randnum.c pwgen.h
+ sha1.o: sha1.c sha1.h 
+-sha1num.o: sha1num.c sha1.h pwgen.h
++sha1num.o: sha1num.c @SHA_HEAD@ pwgen.h
