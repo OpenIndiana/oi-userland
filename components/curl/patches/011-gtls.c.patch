@@ -1,0 +1,50 @@
+From 71c9842a710787145ff31603f100e4269dd676c1 Mon Sep 17 00:00:00 2001
+From: Daniel Stenberg <daniel@haxx.se>
+Date: Fri, 29 Nov 2013 22:46:05 +0100
+Subject: [PATCH] gtls: respect *VERIFYHOST independently of *VERIFYPEER
+
+This is basically the same fix that 3c3622b6 brought to the OpenSSL
+backend and that resulted in CVE-2013-4545.
+
+This version of the problem was independently introduced to the GnuTLS
+backend with commit 59cf93cc, present in the code since the libcurl
+7.21.4 release.
+
+Bug: http://curl.haxx.se/mail/lib-2013-11/0214.html
+Reported-by: Marc Deslauriers
+---
+ lib/gtls.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
+
+--- lib/gtls.c.orig	2013-12-03 16:28:01.281292080 -0800
++++ lib/gtls.c	2013-12-03 16:28:09.281423499 -0800
+@@ -5,7 +5,7 @@
+  *                            | (__| |_| |  _ <| |___
+  *                             \___|\___/|_| \_\_____|
+  *
+- * Copyright (C) 1998 - 2012, Daniel Stenberg, <daniel@haxx.se>, et al.
++ * Copyright (C) 1998 - 2013, Daniel Stenberg, <daniel@haxx.se>, et al.
+  *
+  * This software is licensed as described in the file COPYING, which
+  * you should have received as part of this distribution. The terms
+@@ -609,10 +609,8 @@
+     else
+       infof(data, "\t server certificate verification OK\n");
+   }
+-  else {
++  else
+     infof(data, "\t server certificate verification SKIPPED\n");
+-    goto after_server_cert_verification;
+-  }
+ 
+   /* initialize an X.509 certificate structure. */
+   gnutls_x509_crt_init(&x509_cert);
+@@ -742,8 +740,6 @@
+ 
+   gnutls_x509_crt_deinit(x509_cert);
+ 
+-after_server_cert_verification:
+-
+   /* compression algorithm (if any) */
+   ptr = gnutls_compression_get_name(gnutls_compression_get(session));
+   /* the *_get_name() says "NULL" if GNUTLS_COMP_NULL is returned */
