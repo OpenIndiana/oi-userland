@@ -36,9 +36,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk
 
-# Enable ASLR for this component
-ASLR_MODE = $(ASLR_ENABLE)
-
 COMPONENT_TEST_TARGETS = test
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
