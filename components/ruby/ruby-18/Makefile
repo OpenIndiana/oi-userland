@@ -80,7 +80,7 @@ COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf); \
 	$(RM) -r $(SOURCE_DIR_1); \
 	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
 	$(foreach patch,$(PATCHES_1), \
-	$(GPATCH) -d $(SOURCE_DIR_1) $(GPATCH_FLAGS) < $(patch))
+	$(GPATCH) -d $(SOURCE_DIR_1) $(GPATCH_FLAGS) < $(patch); )
 
 # These modifications of ruby.1 must occur after ruby
 # is installed, not before.  Although there are some other patches
