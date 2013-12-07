@@ -36,6 +36,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license python27.license license=PSFv2
 
+# We can't generate Python 2.7 dependencies without updating IPS
+<transform file path=.*\.py$ -> default pkg.depend.bypass-generate .* >
+<transform file path=.*\.pyc$ -> default pkg.depend.bypass-generate .* >
+
 file path=usr/lib/python2.7/lib-dynload/64/_tkinter.so
 file path=usr/lib/python2.7/lib-dynload/_tkinter.so
 file path=usr/lib/python2.7/lib-tk/Canvas.py
