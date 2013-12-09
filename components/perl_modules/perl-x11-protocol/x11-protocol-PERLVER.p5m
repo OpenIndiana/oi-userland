@@ -1,0 +1,75 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+set name=pkg.fmri \
+    value=pkg:/library/perl-5/perl-x11-protocol-$(PLV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="CPAN X11::Protocol module"
+set name=pkg.description \
+    value="perl-x11-protocol is a client-side interface to the X11 Protocol, allowing perl programs to display windows and graphics on X11 servers."
+set name=com.oracle.info.description value="the perl x11-protocol library."
+set name=com.oracle.info.tpno value=13258
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Perl
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/272
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Auth.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Keysyms.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Connection.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Connection::FileHandle.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Connection::INETFH.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Connection::INETSocket.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Connection::Socket.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Connection::UNIXFH.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Connection::UNIXSocket.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Ext::BIG_REQUESTS.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Ext::DPMS.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Ext::RENDER.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Ext::SHAPE.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Ext::XC_MISC.3
+file path=usr/perl5/$(PERLVER)/man/man3/X11::Protocol::Ext::XFree86_Misc.3
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Auth.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Keysyms.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Connection.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Connection/FileHandle.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Connection/INETFH.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Connection/INETSocket.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Connection/Socket.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Connection/UNIXFH.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Connection/UNIXSocket.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Constants.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Ext/BIG_REQUESTS.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Ext/DPMS.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Ext/RENDER.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Ext/SHAPE.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Ext/XC_MISC.pm
+file path=usr/perl5/vendor_perl/$(PERLVER)/X11/Protocol/Ext/XFree86_Misc.pm
+license x11-protocol.license license=Artistic
+#
+# force a dependency on the Perl runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=perl \
+    pkg.debug.depend.path=usr/perl5/$(PERLVER)/bin
