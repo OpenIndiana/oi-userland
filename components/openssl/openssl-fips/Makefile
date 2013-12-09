@@ -18,22 +18,22 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
-# This component is not to be installed. It is used from openssl-0.9.8-fips-140
-# to build FIPS-140 certified OpenSSL libraries.
+# This component is not to be installed. It is used to build FIPS-140
+# certified OpenSSL libraries.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl-fips
-COMPONENT_VERSION =	1.2
-COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_VERSION =	2.0.5
+COMPONENT_SRC =		$(COMPONENT_NAME)-ecp-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:645cc77775a3e2e50d766ae0e0631327ceec6ab7793fe582da51cb04c007a5e1
+    sha256:f1abdd0ca1a9467a3eba15564fc2b3447114d1d63020c33cd3210f2a43a5ff4d
 COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/openssl
 
@@ -47,7 +47,7 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 # its output. isalist is used internally when configuring the canister before
 # building it. In order to allow make install to be run as a no-op we have to
 # fake "make install" since we do not want to install the files anywhere. The
-# command sets U1 and U2 are defined in the FIPS 1.2 security policy and must be
+# command sets U1 and U2 are defined in the FIPS 2.0.5 security policy and must be
 # run as shown there. Nothing from the tarball can be modified. We use the U2
 # command set, see below.
 FAKE_ISALIST = 32/isalist
@@ -58,14 +58,14 @@ FAKE_APPS = $(FAKE_ISALIST) $(FAKE_MAKE) $(FAKE_CC)
 CLOBBER_PATHS += $(FAKE_APPS)
 
 # Do not use $(PWD), it would not work if run from a different directory with
-# "gmake -C" as we do from openssl-0.9.8-fips-140.
+# "gmake -C" as we do from openssl-1.0.1
 # we'll also pick up gcc if we find it in the path, so force it to
 # find one that doesn't work like it wants
 FIPS_PATH_32 = $(COMPONENT_DIR)/32:$(COMPONENT_DIR)/gcc:$(PATH)
 FIPS_PATH_64 = $(COMPONENT_DIR)/gcc:$(PATH)
 
 OPENSSL_FIPS_HMAC_KEY = etaonrishdlcupfm
-OPENSSL_FIPS_HMAC = 79193087e8115df76d3de1f346f7410df79cf6e0
+OPENSSL_FIPS_HMAC = 148e4e127ffef1df80c0ed61bae35b07ec7b7b36
 
 # There is a broken link in the tarball which causes cp(1) to fail which would
 # fail the whole configure process. It's safer to get rid of the link than
@@ -77,8 +77,18 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( cd $(@D); \
 # There is a specific way that must be followed to build the FIPS-140 canister.
 # It is "./config fipscanisterbuild; make; make install" and is called a command
 # set "U2" in the OpenSSL FIPS-140 User Guide.
+ifeq ($(MACH), sparc)
+CONFIGURE_SCRIPT_32 = config
+# For 64-bit, use './Configure fipscanisterbuild solaris64-sparcv9-cc'.
+CONFIGURE_SCRIPT_64 = ./Configure
+CONFIGURE_OPTIONS.64 = solaris64-sparcv9-cc
+CONFIGURE_SCRIPT = $(CONFIGURE_SCRIPT_$(BITS))
+else
 CONFIGURE_SCRIPT = config
+endif
+
 CONFIGURE_OPTIONS = fipscanisterbuild
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(BITS))
 COMPONENT_BUILD_ARGS =
 COMPONENT_BUILD_TARGETS =
 COMPONENT_INSTALL_ARGS =
@@ -103,8 +113,8 @@ install:	$(BUILD_DIR_32)/.verified $(BUILD_DIR_64)/.verified
 # used and that we used the correct tarball.
 $(BUILD_DIR)/%/.verified:	$(BUILD_DIR)/%/.installed
 	(printf x; \
-	$(ENV) - OPENSSL_FIPS=1 LD_LIBRARY_PATH=$(@D) \
-	$(@D)/apps/openssl sha1 -hmac $(OPENSSL_FIPS_HMAC_KEY) \
+	$(ENV) - LD_LIBRARY_PATH=$(@D) \
+	openssl sha1 -hmac $(OPENSSL_FIPS_HMAC_KEY) \
 	    $(COMPONENT_ARCHIVE)) | \
 	    $(NAWK) '{ if ($$2 != "$(OPENSSL_FIPS_HMAC)") exit 1 }'
 	@echo Basic FIPS-140 mode verification passed.
