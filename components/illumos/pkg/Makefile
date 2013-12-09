@@ -18,13 +18,14 @@ COMPONENT_NAME=		pkg
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
 GIT=git
-GIT_REPO=git://github.com/xen0l/pkg5.git
+GIT_REPO=git://github.com/OpenIndiana/pkg5.git
 GIT_BRANCH=oi
 GIT_CHANGESET=HEAD
 
 MAKE=/usr/bin/make
 
-PKG_BUILDNUM=151.1.8.1
+# BRANCHID is defined in make-rules/ips-buildinfo.mk
+PKG_BUILDNUM=$(BRANCHID)
 
 PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/repo
 
@@ -54,8 +55,8 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded
 	cd $(SOURCE_DIR)/src && \
 	$(MAKE) && $(MAKE) install && \
 	cd pkg && \
-	$(MAKE) BUILDNUM=$(PKG_BUILDNUM) && \
-	$(MAKE) publish-pkgs BUILDNUM=$(PKG_BUILDNUM) && \
+	$(MAKE) PKGVERS=$(PKG_BUILDNUM) && \
+	$(MAKE) publish-pkgs PKGVERS=$(PKG_BUILDNUM) && \
 	$(MAKE) repository-metadata && \
 	$(TOUCH) $@
 
