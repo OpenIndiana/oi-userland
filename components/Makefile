@@ -134,7 +134,7 @@ $(COMPONENT_DIRS):	$(WS_LOGS) setup FORCE
 	 $(BASS_O_MATIC) $(TEMPLATE_ZONE:%=--template-zone %) \
 			 $(@:%=--component %) --make $(TARGET) $(LOG)
 
-publish:
+incorporation:
 	$(PKGREPO) refresh -s $(PKG_REPO)
 	$(WS_TOOLS)/userland-incorporator --repository $(PKG_REPO) \
 	  -p pkg:/consolidation/$(CONSOLIDATION)/$(CONSOLIDATION)-incorporation@0.$(OS_VERSION),$(BUILD_VERSION) \
@@ -143,7 +143,9 @@ publish:
 	  -c $(CONSOLIDATION) >$(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
 	$(PKGSEND) -s $(PKG_REPO) publish --fmri-in-manifest \
 	  $(WS_LOGS)/$(CONSOLIDATION)-incorporation.p5m
-	$(PKGREPO) refresh -s $(PKG_REPO)
+
+publish:
+	$(MAKE) incorporation
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'

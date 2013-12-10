@@ -54,7 +54,7 @@ sub enumerate_packages {
 				push(@packages, $package);
 			} 
 		} else {
-			die "cannot handle: ", $_;
+			die "error: cannot handle: ", $_;
 		}
 	}
 
@@ -73,6 +73,7 @@ sub print_incorporate {
 }
 
 my ($repository, $fmri, $summary, $description, $consolidation) = ();
+my %seen = ();
 
 $consolidation = 'userland';
 
@@ -94,8 +95,13 @@ printf "set name=pkg.depend.install-hold value=core-os.%s\n",
 printf "set name=info.classification value='org.opensolaris.category.2008:Meta Packages/Incorporations'\n";
 
 @packages = enumerate_packages($repository, $consolidation, @fmris);
+
 for (@packages) {
+	if ($seen->{$_->{name}} == 1) {
+		die "error: duplicate package ", $_->{name};
+	}
 	printf "depend fmri=pkg:/%s@%s-%s %s=true type=incorporate\n",
 		$_->{name}, $_->{version}, $_->{branch},
 		"facet.version-lock.".$_->{name}; 
+	$seen->{$_->{name}} = 1;
 }
