@@ -25,7 +25,7 @@ GIT_CHANGESET=HEAD
 MAKE=/usr/bin/make
 
 # BRANCHID is defined in make-rules/ips-buildinfo.mk
-PKG_BUILDNUM=$(BRANCHID)
+PKG_BUILDNUM=$(BUILD_VERSION)
 
 PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/repo
 
