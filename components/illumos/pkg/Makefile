@@ -24,9 +24,6 @@ GIT_CHANGESET=HEAD
 
 MAKE=/usr/bin/make
 
-# BRANCHID is defined in make-rules/ips-buildinfo.mk
-PKG_BUILDNUM=$(BUILD_VERSION)
-
 PKG_REPO=$(SOURCE_DIR)/packages/$(MACH)/repo
 
 CLEAN_PATHS += $(BUILD_DIR)
@@ -55,8 +52,8 @@ $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded
 	cd $(SOURCE_DIR)/src && \
 	$(MAKE) && $(MAKE) install && \
 	cd pkg && \
-	$(MAKE) PKGVERS=$(PKG_BUILDNUM) && \
-	$(MAKE) publish-pkgs PKGVERS=$(PKG_BUILDNUM) && \
+	$(MAKE) BUILD_VERSION=$(BUILD_VERSION) && \
+	$(MAKE) publish-pkgs BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) repository-metadata && \
 	$(TOUCH) $@
 
