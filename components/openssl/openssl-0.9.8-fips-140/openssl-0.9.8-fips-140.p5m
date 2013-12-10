@@ -39,19 +39,19 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file etc/openssl/openssl.cnf path=etc/openssl/fips-140/openssl.cnf group=sys mode=0644 preserve=true
 link path=lib/openssl/fips-140/64 target=$(MACH64)
 # 32 bit libraries, lint libraries, and engines.
-file $(MACH32)/libcrypto.so.1.0.0 path=lib/openssl/fips-140/libcrypto.so.1.0.0
-link path=lib/openssl/fips-140/libcrypto.so target=libcrypto.so.1.0.0
-file $(MACH32)/libssl.so.1.0.0 path=lib/openssl/fips-140/libssl.so.1.0.0
-link path=lib/openssl/fips-140/libssl.so target=libssl.so.1.0.0
+file $(MACH32)/libcrypto.so.0.9.8 path=lib/openssl/fips-140/libcrypto.so.0.9.8
+link path=lib/openssl/fips-140/libcrypto.so target=libcrypto.so.0.9.8
+file $(MACH32)/libssl.so.0.9.8 path=lib/openssl/fips-140/libssl.so.0.9.8
+link path=lib/openssl/fips-140/libssl.so target=libssl.so.0.9.8
 file llib-lcrypto path=lib/openssl/fips-140/llib-lcrypto
 file $(MACH32)/llib-lcrypto.ln path=lib/openssl/fips-140/llib-lcrypto.ln
 file llib-lssl path=lib/openssl/fips-140/llib-lssl
 file $(MACH32)/llib-lssl.ln path=lib/openssl/fips-140/llib-lssl.ln
 # 64 bit libraries, lint libraries, and engines.
-file $(MACH64)/libcrypto.so.1.0.0 path=lib/openssl/fips-140/$(MACH64)/libcrypto.so.1.0.0
-link path=lib/openssl/fips-140/$(MACH64)/libcrypto.so target=libcrypto.so.1.0.0
-file $(MACH64)/libssl.so.1.0.0 path=lib/openssl/fips-140/$(MACH64)/libssl.so.1.0.0
-link path=lib/openssl/fips-140/$(MACH64)/libssl.so target=libssl.so.1.0.0
+file $(MACH64)/libcrypto.so.0.9.8 path=lib/openssl/fips-140/$(MACH64)/libcrypto.so.0.9.8
+link path=lib/openssl/fips-140/$(MACH64)/libcrypto.so target=libcrypto.so.0.9.8
+file $(MACH64)/libssl.so.0.9.8 path=lib/openssl/fips-140/$(MACH64)/libssl.so.0.9.8
+link path=lib/openssl/fips-140/$(MACH64)/libssl.so target=libssl.so.0.9.8
 file llib-lcrypto path=lib/openssl/fips-140/$(MACH64)/llib-lcrypto
 file $(MACH64)/llib-lcrypto.ln path=lib/openssl/fips-140/$(MACH64)/llib-lcrypto.ln
 file llib-lssl path=lib/openssl/fips-140/$(MACH64)/llib-lssl
@@ -72,8 +72,6 @@ file path=usr/include/openssl/fips-140/openssl/blowfish.h
 file path=usr/include/openssl/fips-140/openssl/bn.h
 file path=usr/include/openssl/fips-140/openssl/buffer.h
 file path=usr/include/openssl/fips-140/openssl/cast.h
-file path=usr/include/openssl/fips-140/openssl/cmac.h
-file path=usr/include/openssl/fips-140/openssl/cms.h
 file path=usr/include/openssl/fips-140/openssl/comp.h
 file path=usr/include/openssl/fips-140/openssl/conf.h
 file path=usr/include/openssl/fips-140/openssl/conf_api.h
@@ -86,9 +84,6 @@ file path=usr/include/openssl/fips-140/openssl/dso.h
 file path=usr/include/openssl/fips-140/openssl/dtls1.h
 file path=usr/include/openssl/fips-140/openssl/e_os2.h
 file path=usr/include/openssl/fips-140/openssl/ebcdic.h
-file path=usr/include/openssl/fips-140/openssl/ec.h
-file path=usr/include/openssl/fips-140/openssl/ecdh.h
-file path=usr/include/openssl/fips-140/openssl/ecdsa.h
 file path=usr/include/openssl/fips-140/openssl/engine.h
 file path=usr/include/openssl/fips-140/openssl/err.h
 file path=usr/include/openssl/fips-140/openssl/evp.h
@@ -101,7 +96,6 @@ file path=usr/include/openssl/fips-140/openssl/lhash.h
 file path=usr/include/openssl/fips-140/openssl/md2.h
 file path=usr/include/openssl/fips-140/openssl/md4.h
 file path=usr/include/openssl/fips-140/openssl/md5.h
-file path=usr/include/openssl/fips-140/openssl/modes.h
 file path=usr/include/openssl/fips-140/openssl/obj_mac.h
 file path=usr/include/openssl/fips-140/openssl/objects.h
 file path=usr/include/openssl/fips-140/openssl/ocsp.h
@@ -112,6 +106,7 @@ file path=usr/include/openssl/fips-140/openssl/pem.h
 file path=usr/include/openssl/fips-140/openssl/pem2.h
 file path=usr/include/openssl/fips-140/openssl/pkcs12.h
 file path=usr/include/openssl/fips-140/openssl/pkcs7.h
+file path=usr/include/openssl/fips-140/openssl/pq_compat.h
 file path=usr/include/openssl/fips-140/openssl/pqueue.h
 file path=usr/include/openssl/fips-140/openssl/rand.h
 file path=usr/include/openssl/fips-140/openssl/rc2.h
@@ -120,21 +115,19 @@ file path=usr/include/openssl/fips-140/openssl/ripemd.h
 file path=usr/include/openssl/fips-140/openssl/rsa.h
 file path=usr/include/openssl/fips-140/openssl/safestack.h
 file path=usr/include/openssl/fips-140/openssl/sha.h
-file path=usr/include/openssl/fips-140/openssl/srp.h
-file path=usr/include/openssl/fips-140/openssl/srtp.h
 file path=usr/include/openssl/fips-140/openssl/ssl.h
 file path=usr/include/openssl/fips-140/openssl/ssl2.h
 file path=usr/include/openssl/fips-140/openssl/ssl23.h
 file path=usr/include/openssl/fips-140/openssl/ssl3.h
 file path=usr/include/openssl/fips-140/openssl/stack.h
+file path=usr/include/openssl/fips-140/openssl/store.h
 file path=usr/include/openssl/fips-140/openssl/symhacks.h
 file path=usr/include/openssl/fips-140/openssl/tls1.h
-file path=usr/include/openssl/fips-140/openssl/ts.h
+file path=usr/include/openssl/fips-140/openssl/tmdiff.h
 file path=usr/include/openssl/fips-140/openssl/txt_db.h
 file path=usr/include/openssl/fips-140/openssl/ui.h
 file path=usr/include/openssl/fips-140/openssl/ui_compat.h
-file path=usr/include/openssl/fips-140/openssl/whrlpool.h
 file path=usr/include/openssl/fips-140/openssl/x509.h
 file path=usr/include/openssl/fips-140/openssl/x509_vfy.h
 file path=usr/include/openssl/fips-140/openssl/x509v3.h
-license openssl-1.0.1-fips-140.license license="OpenSSL, SSLeay"
+license openssl-0.9.8-fips-140.license license="OpenSSL, SSLeay"

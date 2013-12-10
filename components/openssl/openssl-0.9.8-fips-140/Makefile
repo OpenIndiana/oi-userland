@@ -29,20 +29,21 @@ PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 COMPONENT_NAME =	openssl-fips-140
 # Note that this is the OpenSSL version that is used to build FIPS-140 certified
 # libraries. However, we use the FIPS canister version for the IPS package.
-COMPONENT_VERSION =	1.0.1e
-IPS_COMPONENT_VERSION = 2.0.5
+COMPONENT_VERSION =	0.9.8y
+IPS_COMPONENT_VERSION = 1.2
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC_NAME =	openssl
 COMPONENT_SRC =		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f74f15e8c8ff11aa3d5bb5f276d202ec18d7246e95f961db76054199c69c1ae3
+    sha256:bbecf13495e612936e3a9860c29c0701413564b7a964bf771a3575eaa867cee3
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/openssl
 
-# OpenSSL FIPS 2.0.5 directory
-OPENSSL_FIPS_DIR = $(COMPONENT_DIR)/../openssl-fips
-
+# Apply the patch on SPARC only. Must put this before including prep.mk as
+# mentioned in there.
+PATCH_sparc = patches/sparc-01-ccwrap.patch
+EXTRA_PATCHES = $(PATCH_$(MACH))
 # Note that the SPARC patch above does not fit this pattern. That is intentional
 # and a reason why we can add it to the EXTRA_PATCHES variable so that we use it
 # only on SPARC.
@@ -65,9 +66,9 @@ ENGINESDIR_64 = /lib/openssl/engines/64
 # Built openssl/openssl-fips component is used when building FIPS-140 libraries.
 # What we do here follows the OpenSSL FIPS-140 User Guide instructions.
 FIPS_BUILD_DIR_32 = $(shell echo $(BUILD_DIR_32) | \
-    sed -e 's/openssl-1.0.1-fips-140/openssl-fips/g' )
+    sed -e 's/openssl-0.9.8-fips-140/openssl-fips/g' )
 FIPS_BUILD_DIR_64 = $(shell echo $(BUILD_DIR_64) | \
-    sed -e 's/openssl-1.0.1-fips-140/openssl-fips/g' )
+    sed -e 's/openssl-0.9.8-fips-140/openssl-fips/g' )
 
 CONFIGURE_OPTIONS =  -DSOLARIS_OPENSSL -DNO_WINDOWS_BRAINDEATH
 CONFIGURE_OPTIONS += --openssldir=/etc/openssl
@@ -75,7 +76,9 @@ CONFIGURE_OPTIONS += --prefix=/usr
 # We use OpenSSL install code for installing only manual pages and we do that
 # for 32-bit version only.
 CONFIGURE_OPTIONS += --install_prefix=$(PROTO_DIR)
-CONFIGURE_OPTIONS += no-ec2m
+CONFIGURE_OPTIONS += no-ec
+CONFIGURE_OPTIONS += no-ecdh
+CONFIGURE_OPTIONS += no-ecdsa
 CONFIGURE_OPTIONS += no-rc3
 CONFIGURE_OPTIONS += no-rc5
 CONFIGURE_OPTIONS += no-mdc2
@@ -93,13 +96,7 @@ CONFIGURE_OPTIONS += no-hw_ubsec
 CONFIGURE_OPTIONS += no-hw_cswift
 CONFIGURE_OPTIONS += threads
 CONFIGURE_OPTIONS += shared
-CONFIGURE_OPTIONS += fips --with-fipslibdir="$(FIPS_BUILD_DIR_$(BITS))/fips/"
-CONFIGURE_OPTIONS += --with-fipsdir="$(BUILD_DIR_$(BITS))"
-
-# MD2 is not enabled by default in OpensSSL but some software we have in
-# Userland needs it. One example is nmap.
-CONFIGURE_OPTIONS += enable-md2
-CONFIGURE_OPTIONS += no-seed
+CONFIGURE_OPTIONS += fips --with-fipslibdir="$(FIPS_BUILD_DIR_$(BITS))/fips"
 
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
@@ -126,12 +123,12 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # header file usable on both architectures. The patch was generated against the
 # opensslconf.h version from the 32 bit build.
 COMPONENT_POST_CONFIGURE_ACTION = \
-   ( [ $(BITS) -eq 32 ] && $(GPATCH) -p1 $(@D)/crypto/opensslconf.h \
+    ( [ $(BITS) -eq 32 ] && $(GPATCH) -p1 $(@D)/crypto/opensslconf.h \
       patches-post-config/opensslconf.patch; cd $(@D); $(MAKE) depend; )
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# We must make sure that openssl-fips component is built before this 1.0.1
+# We must make sure that openssl-fips component is built before this 0.9.8
 # component since in order to build FIPS-140 certified libraries, the canister
 # is needed. Note that we must unset BITS that would override the same variable
 # used in openssl-fips' Makefile, and we would end up up with both canisters
@@ -148,27 +145,28 @@ download clobber clean::
 # We do not ship our engines as patches since it would be more difficult to
 # update the files which have been under continuous development. We rather copy
 # the files to the right directories and let OpenSSL makefiles build it.
-# We also copy some FIPS specific header files needed to build FIPS version
-# of OpenSSL from FIPS module (openssl-fips-ecp-2.0.5).
 COMPONENT_PRE_BUILD_ACTION = \
-    ( $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*     $(@D)/crypto/engine; \
-      $(MKDIR) $(@D)/bin; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fips.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fipssyms.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/rand/fips_rand.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fipsld $(@D)/bin/; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/build/$(MACH$(BITS))/fips/fips_standalone_sha1 $(@D)/bin/; \
-      $(LN) -fs $(COMPONENT_DIR)/build/$(MACH$(BITS))/fips_premain_dso $(@D)/bin/;)
+    ( $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*     $(@D)/crypto/engine; ) 
 
 # OpenSSL does not install into <dir>/$(MACH64) for 64-bit install so no such
 # directory is created and Userland install code would fail when installing lint
 # libraries.
 COMPONENT_PRE_INSTALL_ACTION = ( $(MKDIR) $(PROTO_DIR)/usr/lib/$(MACH64); )
 
+# For ccwrap on SPARC. This is to workaround a problem with the cc compiler on
+# SPARC. We must modify PATH so that the wrapper can be found when run from
+# fips/fipsld.
+COMPONENT_BUILD_ENV += PATH=$(COMPONENT_DIR):$(PATH)
+COMPONENT_INSTALL_ENV += PATH=$(COMPONENT_DIR):$(PATH)
+
 $(SOURCE_DIR)/.prep: $(COMPONENT_DIR)/../openssl-fips/build/$(MACH32)/.installed \
 		     $(COMPONENT_DIR)/../openssl-fips/build/$(MACH64)/.installed
 
+# We need ccwrap for building the libraries.
+$(BUILD_32_and_64):	ccwrap
 build:			$(BUILD_32_and_64)
+
+CLOBBER_PATHS += ccwrap
 
 # We follow what we do for install in openssl/openssl-1.0.0 component. Please
 # see the comment in Makefile in there for more information.

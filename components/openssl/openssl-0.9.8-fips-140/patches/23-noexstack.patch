@@ -1,14 +1,14 @@
---- /tmp/Makefile.shared	Mon Feb 14 14:33:05 2011
-+++ openssl-1.0.0d/Makefile.shared	Mon Feb 14 14:35:56 2011
-@@ -389,6 +389,7 @@
+diff -ruN openssl-0.9.8k/Makefile.shared openssl-0.9.8k/Makefile.shared
+--- openssl-0.9.8k/Makefile.shared	2008-09-17 17:56:40.000000000 +0200
++++ openssl-0.9.8k/Makefile.shared	2009-05-25 22:26:49.611468992 +0200
+@@ -347,12 +347,17 @@
  		SHAREDFLAGS="$(CFLAGS) $(SHARED_LDFLAGS) -h $$SHLIB$$SHLIB_SOVER$$SHLIB_SUFFIX -Wl,-Bsymbolic"; \
  	fi; \
  	$(LINK_SO_A)
 +# Make sure the apps have non-executable stacks and data (x86/x64 only).
  link_app.solaris:
- 	@ if $(DETECT_GNU_LD); then \
+ 	@ if ${DETECT_GNU_LD}; then \
  		$(DO_GNU_APP); \
-@@ -395,6 +396,10 @@
  	else \
  		LDFLAGS="$(CFLAGS)"; \
  	fi; \

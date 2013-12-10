@@ -1,6 +1,6 @@
---- /tmp/18/Configure	Fri Feb 11 15:15:50 2011
-+++ openssl-1.0.0d/Configure	Fri Feb 11 15:18:09 2011
-@@ -18,6 +18,8 @@
+--- openssl-0.9.8n/Configure	2010-04-19 17:45:39.421625300 -0700
++++ openssl-0.9.8n/Configure.new	2010-06-18 15:18:52.437417100 -0700
+@@ -20,6 +20,8 @@
  #               --prefix option is given; /usr/local/ssl otherwise)
  # --prefix      prefix for the OpenSSL include, lib and bin directories
  #               (Default: the OPENSSLDIR directory)
@@ -9,7 +9,7 @@
  #
  # --pk11-libname  PKCS#11 library name.
  #               (Default: none)
-@@ -672,6 +672,7 @@
+@@ -607,6 +609,7 @@
  my $prefix="";
  my $libdir="";
  my $openssldir="";
@@ -17,7 +17,7 @@
  my $exe_ext="";
  my $install_prefix= "$ENV{'INSTALL_PREFIX'}";
  my $cross_compile_prefix="";
-@@ -904,6 +904,10 @@
+@@ -858,6 +861,10 @@
  				{
  				$openssldir=$1;
  				}
@@ -28,23 +28,32 @@
  			elsif (/^--install.prefix=(.*)$/)
  				{
  				$install_prefix=$1;
-@@ -1211,6 +1218,10 @@
- # we're ready to tolerate, so don't...
- $multilib="" if !-d "$prefix/lib$multilib";
+@@ -1125,8 +1132,16 @@
+ 	}
+ $prefix=$openssldir if $prefix eq "";
  
-+if ($enginesdir eq "") {
-+	$enginesdir = "$prefix/lib/engines";
-+}
++if ($enginesdir eq "")
++	{
++		$enginesdir = "$prefix/lib/engines";
++	}
 +
- $libdir="lib$multilib" if $libdir eq "";
+ $libdir="lib" if $libdir eq "";
  
- $cflags = "$cflags$exp_cflags";
-@@ -1830,7 +1841,7 @@
++
++
++
+ $default_ranlib= &which("ranlib") or $default_ranlib="true";
+ $perl=$ENV{'PERL'} or $perl=&which("perl5") or $perl=&which("perl")
+   or $perl="perl";
+@@ -1724,10 +1739,7 @@
  		}
  	elsif	(/^#define\s+ENGINESDIR/)
  		{
--		my $foo = "$prefix/$libdir/engines";
-+		my $foo = "$enginesdir";
+-		# $foo is to become "$prefix/lib$multilib/engines";
+-		# as Makefile.org and engines/Makefile are adapted for
+-		# $multilib suffix.
+-		my $foo = "$prefix/lib/engines";
++                my $foo = $enginesdir;
  		$foo =~ s/\\/\\\\/g;
  		print OUT "#define ENGINESDIR \"$foo\"\n";
  		}

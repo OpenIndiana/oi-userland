@@ -1,8 +1,8 @@
 --- openssl-0.9.8m/apps/openssl.c	Thu Oct 15 19:28:02 2009
 +++ openssl-0.9.8m/apps/openssl.c	Fri Feb 26 16:12:30 2010
-@@ -133,6 +133,9 @@
- #include <openssl/fips.h>
- #endif
+@@ -130,6 +130,9 @@
+ #include "s_apps.h"
+ #include <openssl/err.h>
  
 +/* Solaris OpenSSL */
 +#include <dlfcn.h>
@@ -10,7 +10,7 @@
  /* The LHASH callbacks ("hash" & "cmp") have been replaced by functions with the
   * base prototypes (we cast each variable inside the function to the required
   * type of "FUNCTION*"). This removes the necessity for macro-generated wrapper
-@@ -152,9 +155,10 @@
+@@ -151,9 +154,10 @@
  #endif
  
  
@@ -22,7 +22,7 @@
  	const char *errstr = NULL;
  	int rw;
  	
-@@ -165,7 +169,7 @@
+@@ -164,7 +168,7 @@
  		goto err;
  		}
  
@@ -31,24 +31,9 @@
  		{
  		errstr = "type out of bounds";
  		goto err;
-@@ -310,6 +314,14 @@
- 	if (getenv("OPENSSL_DEBUG_LOCKING") != NULL)
- #endif
- 		{
-+		modes = OPENSSL_malloc(CRYPTO_num_locks() * sizeof (int));
-+		if (modes == NULL) {
-+			ERR_load_crypto_strings();
-+			BIO_printf(bio_err,"Memory allocation failure\n");
-+			ERR_print_errors(bio_err);
-+			EXIT(1);
-+		}
-+		memset(modes, 0, CRYPTO_num_locks() * sizeof (int));
- 		CRYPTO_set_locking_callback(lock_dbg_cb);
- 		}
+@@ -235,19 +239,29 @@
  
-@@ -313,18 +325,28 @@
- 		CRYPTO_set_locking_callback(lock_dbg_cb);
- 		}
+ 	in_FIPS_mode = 0;
  
 +/*
 + * Solaris OpenSSL
@@ -68,6 +53,7 @@
  			ERR_print_errors(BIO_new_fp(stderr,BIO_NOCLOSE));
  			EXIT(1);
  		}
+ 		in_FIPS_mode = 1;
 -#else
 -		fprintf(stderr, "FIPS mode not supported.\n");
 +	} else {
@@ -78,5 +64,29 @@
  		}
 +		}
  
- 	apps_startup();
+ 	if (bio_err == NULL)
+ 		if ((bio_err=BIO_new(BIO_s_file())) != NULL)
+@@ -272,6 +286,14 @@
+ 	if (getenv("OPENSSL_DEBUG_LOCKING") != NULL)
+ #endif
+ 		{
++		modes = OPENSSL_malloc(CRYPTO_num_locks() * sizeof (int));
++		if (modes == NULL) {
++			ERR_load_crypto_strings();
++			BIO_printf(bio_err,"Memory allocation failure\n");
++			ERR_print_errors(bio_err);
++			EXIT(1);
++		}
++		memset(modes, 0, CRYPTO_num_locks() * sizeof (int));
+ 		CRYPTO_set_locking_callback(lock_dbg_cb);
+ 		}
+ 
+@@ -379,6 +401,8 @@
+ 		BIO_free(bio_err);
+ 		bio_err=NULL;
+ 		}
++
++	if (modes != NULL) OPENSSL_free(modes);
+ 	OPENSSL_EXIT(ret);
+ 	}
  
