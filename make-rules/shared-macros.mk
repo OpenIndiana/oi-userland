@@ -67,6 +67,10 @@ test:		SHELLOPTS=
 install:	SHELLOPTS=
 publish:	SHELLOPTS=pipefail
 
+# some things don't build properly in non-C locales,
+# so lets stay there
+export LC_ALL=C
+
 SHELL=	/bin/bash
 
 CONSOLIDATION =	userland
