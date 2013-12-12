@@ -1,0 +1,23 @@
+This patch fixed segfault when supplying multiple options like '-f' for iftop.
+The fixing has been integrated into open iftop-1.0 pre-release version. We can
+see the fixing log here: 
+http://www.ex-parrot.com/~pdw/iftop/cvs/iftop/ChangeLog
+
+--- cfgfile.c.orig	2013-12-02 00:37:09.851645000 -0800
++++ cfgfile.c	2013-12-02 00:31:53.734822000 -0800
+@@ -230,8 +230,13 @@
+     stringmap S;
+ 
+     S = stringmap_find(config, directive);
+-    if (S) stringmap_delete_free(S);
+-    stringmap_insert(config, directive, item_ptr(xstrdup(s)));
++    if (S) {
++	xfree(S->d.v);
++	S->d = item_ptr(xstrdup(s));
++    }
++    else {
++	stringmap_insert(config, directive, item_ptr(xstrdup(s)));
++    }
+ }
+ 
+ int read_config(char *file, int whinge_on_error) {
