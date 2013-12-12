@@ -1,0 +1,22 @@
+--- src/Makefile.am.orig	2013-12-12 15:45:14.805853065 +0100
++++ src/Makefile.am	2013-12-12 15:44:18.560296002 +0100
+@@ -69,7 +69,7 @@
+ 	$(COMPILE) $(srcdir)/predicates_init.c -o $(srcdir)/predicates_init
+ 
+ predicates_init.h: predicates_init
+-	./predicates_init >  $(srcdir)/predicates_init.h
++	$(srcdir)/predicates_init >  $(srcdir)/predicates_init.h
+ 
+ CLEANFILES = $(BUILT_SOURCES)
+ 
+--- src/Makefile.in.orig	2013-12-12 15:58:21.985456331 +0100
++++ src/Makefile.in	2013-12-12 15:59:13.253019742 +0100
+@@ -744,7 +744,7 @@
+ 	$(COMPILE) $(srcdir)/predicates_init.c -o $(srcdir)/predicates_init
+ 
+ predicates_init.h: predicates_init
+-	./predicates_init >  $(srcdir)/predicates_init.h
++	$(srcdir)/predicates_init >  $(srcdir)/predicates_init.h
+ 
+ gts.def: libgts.la .libs/libgts.a
+ 	nm -g .libs/libgts.a | awk 'BEGIN{print "EXPORTS"}{if ($$2 == "T" || $$2 == "D" || $$2 == "B") print "    " $$3}' > gts.def
