@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
+# Common Development and Distribution License ("CDDL)". You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -9,28 +9,36 @@
 #
 
 #
-# Copyright 2013, EveryCity Ltd. All rights reserved.
+# Copyright 2013 EveryCity Ltd. All rights reserved.
 #
+
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.4.23
+COMPONENT_NAME=		tcpwrap
+COMPONENT_FMRI=		web/php-54/extension/php-tcpwrap
+COMPONENT_VERSION=	1.1.3
+COMPONENT_LICENSE=	PHP3.01
+COMPONENT_PROJECT_URL=	http://pecl.php.net/package/tcpwrap
+COMPONENT_SUMMARY=	Binding to the GNU libidn for using Internationalized Domain Names
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:c9add0e59f41298a253bbb9090c47a03064b099120a563ca8ad289e18fcd1ce7
-COMPONENT_ARCHIVE_URL=	http://uk3.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE_HASH=	sha256:afd435399724b5032d2e65105a2c85a7fddb22bc5633571257299d32d46d9d54
+COMPONENT_ARCHIVE_URL=  http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PHP_PREFIX		=	/usr/php/5.4
-PHP_SYSCONFDIR		=	/etc/php/5.4
-PHP_DATADIR		=	/var/php/5.4
+CLEAN_PATHS +=	package.xml
 
-CONFIGURE_OPTIONS	=	--prefix=$(PHP_PREFIX)
-CONFIGURE_OPTIONS.32	=	--bindir=$(PHP_PREFIX)/bin
-CONFIGURE_OPTIONS.64	=	--bindir=$(PHP_PREFIX)/bin/$(MACH64)
+# PHP Paths
+PHP_PREFIX=/usr/php/5.4
+PHP_SYSCONFDIR=/etc/php/5.4
+PHP_DATADIR=/var/php/5.4
+
+CONFIGURE_OPTIONS      =	--prefix=$(PHP_PREFIX)
+CONFIGURE_OPTIONS.32  +=	--bindir=$(PHP_PREFIX)/bin
+CONFIGURE_OPTIONS.64  +=	--bindir=$(PHP_PREFIX)/bin/$(MACH64)
 CONFIGURE_OPTIONS.32  +=	--sbindir=$(PHP_PREFIX)/bin
 CONFIGURE_OPTIONS.64  +=	--sbindir=$(PHP_PREFIX)/bin/$(MACH64)
 CONFIGURE_OPTIONS.32  +=	--libdir=$(PHP_PREFIX)/lib
@@ -45,26 +53,20 @@ CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 CONFIGURE_OPTIONS.64  +=	--with-php-config=$(PHP_PREFIX)/bin/$(MACH64)/php-config
-CONFIGURE_OPTIONS.32  +=	--with-pgsql=$(PG_BINDIR.32)
-CONFIGURE_OPTIONS.64  +=	--with-pgsql=$(PG_BINDIR.64)
 
 CONFIGURE_OPTIONS     +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-CFLAGS			=	$(CC_BITS) -D_POSIX_PTHREAD_SEMANTICS
-CFLAGS.32		=	-I/usr/lib
-CFLAGS.64		=	-I/usr/lib/$(MACH64)
-CPPFLAGS.32           +=	-I/usr/include
-CPPFLAGS.64           +=	-I/usr/include/$(MACH64)
-LDFLAGS.32            +=	-L/usr/lib -R/usr/lib
-LDFLAGS.64            +=	-L/usr/lib/$(MACH64) -R/usr/lib/$(MACH64)
+CFLAGS                +=	-I$(PHP_PREFIX)/include $(CC_BITS)
+CPPFLAGS              +=	$(CFLAGS)
+LDFLAGS		      +=	-lnsl -lsocket
+LDFLAGS.32            +=	-L$(PHP_PREFIX)/lib -R$(PHP_PREFIX)/lib
+LDFLAGS.64            +=	-L$(PHP_PREFIX)/lib/$(MACH64) -R$(PHP_PREFIX)/lib/$(MACH64)
 
-CFLAGS                  +=      $(CFLAGS.$(BITS))
-CPPFLAGS                +=      $(CPPFLAGS.$(BITS))
-LDFLAGS                 +=      $(LDFLAGS.$(BITS))
+CONFIGURE_OPTIONS     +=	CC="$(CC)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
 
 CONFIGURE_SCRIPT       =	$(@D)/configure
 
-COMPONENT_PRE_CONFIGURE_ACTION	 =	cp -R $(SOURCE_DIR)/ext/pgsql/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize
+COMPONENT_PRE_CONFIGURE_ACTION	 =	cp -R $(SOURCE_DIR)/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize
 COMPONENT_INSTALL_ARGS		+=	INSTALL_ROOT=$(PROTO_DIR)
 
 build:		$(BUILD_32_and_64)
