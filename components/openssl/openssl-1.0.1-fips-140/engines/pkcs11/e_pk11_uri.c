@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
  *
  */
 
@@ -69,8 +69,8 @@
 
 #include <security/cryptoki.h>
 #include <security/pkcs11.h>
-#include "hw_pk11.h"
-#include "hw_pk11_uri.h"
+#include "e_pk11.h"
+#include "e_pk11_uri.h"
 
 /*
  * The keystore used is always from the pubkey slot so we need to know which one

@@ -151,7 +151,7 @@ download clobber clean::
 # We also copy some FIPS specific header files needed to build FIPS version
 # of OpenSSL from FIPS module (openssl-fips-ecp-2.0.5).
 COMPONENT_PRE_BUILD_ACTION = \
-    ( $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*     $(@D)/crypto/engine; \
+    ( $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*     $(@D)/engines; \
       $(MKDIR) $(@D)/bin; \
       $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fips.h $(@D)/include/openssl; \
       $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fipssyms.h $(@D)/include/openssl; \
