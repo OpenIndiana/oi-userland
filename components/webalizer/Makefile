@@ -48,7 +48,11 @@ COMPONENT_PRE_BUILD_ACTION += \
 	$(GSED) -i -e 's?lib/httpd/logs/?apache2/2.2/logs/?' \
 		$(SOURCE_DIR)/sample.conf
 
+COMPILER =	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 COMPILER =	gcc3
+endif
 
 CONFIGURE_OPTIONS +=	--enable-dns
 CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2
@@ -56,12 +60,9 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 
 # webalizer is defining u_int64_t but also uses db.h
-# which typedefs it, and parfait isn't happy.
-# gcc4 may not be as well.
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+# which typedefs it, and parfait and gcc 4.7 aren't happy.
 CC += -Du_int64_t=uint64_t
 CONFIGURE_OPTIONS +=	c_cv_type_u_int64_t=yes
-endif
 
 # Needed to correctly build that 64-bit library.
 LDFLAGS += $(CC_BITS)

@@ -39,7 +39,11 @@ include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
-COMPILER=gcc3
+COMPILER =	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPILER =	gcc3
+endif
 
 COMPONENT_PRE_CONFIGURE_ACTION = ($(CLONEY) $(SOURCE_DIR) $(@D))
 

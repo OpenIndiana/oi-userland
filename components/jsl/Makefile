@@ -39,7 +39,11 @@ include ../../make-rules/ips.mk
 # Preferred compiler set to gcc and not Studio as on Sparc architecture
 # some assembler code is required for locking which fails to compile on
 # solaris, when using gcc this is inlined (see jslock.c)
-COMPILER=	gcc3
+COMPILER =	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPILER =	gcc3
+endif
 
 COMPONENT_BUILD_ARGS += -f src/Makefile
 COMPONENT_BUILD_ARGS += CC="$(CC)"

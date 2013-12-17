@@ -38,8 +38,12 @@ include $(WS_TOP)/make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+COMPILER =	gcc
+CC =		$(COMPONENT_DIR)/CC.sh
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 COMPILER =	gcc3
-gcc_OPT =	-O2
+endif
 
 COMPONENT_PRE_BUILD_ACTION = \
 	$(MKDIR) $(SOURCE_DIR)/64

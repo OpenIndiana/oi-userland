@@ -52,7 +52,11 @@ COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/
 ifeq ($(MACH), sparc)
 COMPILER = studio
 else
-COMPILER = gcc3
+COMPILER =	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPILER =      gcc3
+endif
 endif
 
 include ../../../make-rules/prep.mk
@@ -118,6 +122,7 @@ $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
 
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
+CFLAGS.gcc	+=	-std=c99
 CFLAGS.gcc3	+=	-std=c99
 
 #CPPFLAGS +=	-DSAMBA_VERSION_VENDOR_SUFFIX=\\\"Placeholder_for_vendor_suffix\\\"

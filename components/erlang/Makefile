@@ -70,7 +70,11 @@ include ../../make-rules/ips.mk
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION_MAJOR).2.3
 
 # Built in SFW with gcc and builds cleanly now only with gcc
-COMPILER = gcc3
+COMPILER =	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPILER =	gcc3
+endif
 
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS) -I/usr/include/gd2"

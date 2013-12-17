@@ -43,7 +43,11 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
 PKG_PROTO_DIRS += $(COMPONENT_SRC)/doc/man/man3
-COMPILER=	gcc3
+COMPILER =	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPILER =	gcc3
+endif
 CFLAGS += -g -fPIC
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS.32 += --srcdir=$(BUILD_DIR_32)

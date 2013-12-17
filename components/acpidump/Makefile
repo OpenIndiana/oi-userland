@@ -48,7 +48,11 @@ include ../../make-rules/ips.mk
 
 PKG_PROTO_DIRS += $(BUILD_DIR_32)
 
+COMPILER =	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 COMPILER =	gcc3
+endif
 
 COMPONENT_BUILD_ENV  +=		CC=$(CC)
 
