@@ -46,7 +46,24 @@ CPPFLAGS += -I/usr/share/gettext/intl
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-COMPILER=	gcc3
+# There is a compiler optimization problem when using -O2 on io.c and
+# lisparit.c on SPARC with the gcc 4.7.X compilers. Remove the '-O2"
+# just for those two source files.
+COMPONENT_POST_CONFIGURE_ACTION.sparc = \
+	$(GSED) -i -e '/^CFLAGS/aCFLAGSNOOPT = \$$\(CFLAGS:-O2=)' \
+	    -e 's/(CFLAGS) -c io.c/(CFLAGSNOOPT) -c io.c/' \
+	    -e 's/(CFLAGS) -c lisparit.c/(CFLAGSNOOPT) -c lisparit.c/' \
+	    $(BUILD_DIR_32)/Makefile
+
+COMPONENT_POST_CONFIGURE_ACTION = \
+	$(COMPONENT_POST_CONFIGURE_ACTION.$(MACH))
+
+COMPILER=	gcc
+# Parfait doesn't work with the GNU 4.7 compilers yet.
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+COMPILER =	gcc3
+endif
+
 PATCH_LEVEL=	0
 
 # SHELLOPTS appears to cause clisp's configure script to fail while
@@ -60,6 +77,7 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CONFIGURE_OPTIONS = CC="$(CC) -DNO_GENERATIONAL_GC -DNO_ASM"
 endif
 CONFIGURE_OPTIONS += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_OPTIONS += CFLAGS=
 CONFIGURE_OPTIONS += --prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_MANDIR)
 CONFIGURE_OPTIONS += --bindir=$(CONFIGURE_BINDIR.$(BITS))
