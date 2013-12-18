@@ -1,0 +1,17 @@
+Index: openssl/ssl/t1_enc.c
+============================================================================
+$ diff -ru ssl/t1_enc.c ssl/t1_enc.c
+--- t1_enc.c.orig       Tue Dec 10 15:36:05 2013
++++ t1_enc.c    Wed Dec 11 09:29:02 2013
+@@ -980,7 +980,10 @@
+ 		}
+ 		else
+ 		{
+-			EVP_MD_CTX_copy(&hmac,hash);
++			if (EVP_MD_CTX_copy(&hmac,hash) != 1)
++				{
++				return (0);
++				}
+ 			mac_ctx = &hmac;
+ 		}
+ 
