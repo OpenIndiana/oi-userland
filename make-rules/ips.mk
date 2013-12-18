@@ -91,6 +91,8 @@ PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
 PKG_MACROS +=		COMPONENT_HG_REV=$(COMPONENT_HG_REV)
 PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
 PKG_MACROS +=		TPNO=$(TPNO)
+PKG_MACROS +=		PYTHON_2.6_ONLY=\#
+PKG_MACROS +=		PYTHON_2.7_ONLY=\#
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 
@@ -173,6 +175,8 @@ mkgeneric = \
 # Define and execute a macro that generates a rule to create a manifest for a
 # python module specific to a particular version of the python runtime.
 define python-manifest-rule
+$(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
+
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
 	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
