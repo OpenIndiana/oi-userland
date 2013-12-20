@@ -1,0 +1,30 @@
+#
+# OpenSSH has special hacks in the code to deal with Solaris private API
+# changes in audit (au_close, getacna) for S11. This patch merely modifies the
+# configure script to consider any S11+ a 'newer Solaris' too, not just S11.
+#
+# We reported this problem to the OpenSSH upstream community on Dec 06 2013.
+# For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2178
+#
+--- openssh-6.0p1/configure	2012-04-19 22:03:38.000000000 -0700
++++ new/configure	2013-01-10 03:10:29.200564881 -0800
+@@ -9393,7 +9393,7 @@
+ 
+ $as_echo "#define USE_BSM_AUDIT 1" >>confdefs.h
+ 
+-		if test "$sol2ver" -eq 11; then
++		if test "$sol2ver" -ge 11; then
+ 		   	SSHDLIBS="$SSHDLIBS -lscf"
+ 
+ $as_echo "#define BROKEN_BSM_API 1" >>confdefs.h
+--- openssh-6.0p1/configure.ac	2013-12-05 05:31:15.809371483 -0800
++++ new/configure.ac	2013-12-05 05:31:25.689099600 -0800
+@@ -1483,7 +1483,7 @@
+ 		# These are optional
+ 		AC_CHECK_FUNCS([getaudit_addr aug_get_machine])
+ 		AC_DEFINE([USE_BSM_AUDIT], [1], [Use BSM audit module])
+-		if test "$sol2ver" -eq 11; then
++		if test "$sol2ver" -ge 11; then
+ 		   	SSHDLIBS="$SSHDLIBS -lscf"
+                    	AC_DEFINE([BROKEN_BSM_API], [1], 
+ 		        	  [The system has incomplete BSM API])

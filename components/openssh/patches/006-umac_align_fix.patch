@@ -1,0 +1,49 @@
+#
+# This is to fix an alignment problem on Sparc.  We reported the problem to the
+# OpenSSH upstream community with suggested fixes in May 2013. The upstream 
+# accepted the union fix and has integrated the fix in the 6.3 release. In the 
+# future, when we upgrade OpenSSH to 6.3 or later, we should remove this patch.
+# For more information, see https://bugzilla.mindrot.org/show_bug.cgi?id=2101
+#
+--- orig/mac.c	Fri Sep 20 14:53:41 2013
++++ new/mac.c	Fri Sep 20 15:04:13 2013
+@@ -132,12 +132,15 @@
+ u_char *
+ mac_compute(Mac *mac, u_int32_t seqno, u_char *data, int datalen)
+ {
+-	static u_char m[EVP_MAX_MD_SIZE];
++	static union {
++		u_char m[EVP_MAX_MD_SIZE];
++		u_int64_t for_align;
++	} u;
+ 	u_char b[4], nonce[8];
+ 
+-	if (mac->mac_len > sizeof(m))
++	if (mac->mac_len > sizeof(u))
+ 		fatal("mac_compute: mac too long %u %lu",
+-		    mac->mac_len, (u_long)sizeof(m));
++		    mac->mac_len, (u_long)sizeof(u));
+ 
+ 	switch (mac->type) {
+ 	case SSH_EVP:
+@@ -146,17 +149,17 @@
+ 		HMAC_Init(&mac->evp_ctx, NULL, 0, NULL);
+ 		HMAC_Update(&mac->evp_ctx, b, sizeof(b));
+ 		HMAC_Update(&mac->evp_ctx, data, datalen);
+-		HMAC_Final(&mac->evp_ctx, m, NULL);
++		HMAC_Final(&mac->evp_ctx, u.m, NULL);
+ 		break;
+ 	case SSH_UMAC:
+ 		put_u64(nonce, seqno);
+ 		umac_update(mac->umac_ctx, data, datalen);
+-		umac_final(mac->umac_ctx, m, nonce);
++		umac_final(mac->umac_ctx, u.m, nonce);
+ 		break;
+ 	default:
+ 		fatal("mac_compute: unknown MAC type");
+ 	}
+-	return (m);
++	return (u.m);
+ }
+ 
+ void

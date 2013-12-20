@@ -1,0 +1,42 @@
+#
+# To comply to the Solaris PAM policy, the UsePAM option is changed to be
+# always on and not configurable on Solaris.  This is for Solaris only, so we
+# will not contribute the changes to the upstream community.
+#
+*** orig/servconf.c	Mon Dec  5 17:23:03 2011
+--- new/servconf.c	Wed Dec  7 13:41:04 2011
+***************
+*** 145,151 ****
+--- 145,156 ----
+  {
+  	/* Portable-specific options */
+  	if (options->use_pam == -1)
++ #ifdef SET_USE_PAM
++ 		/* use_pam should be always set to 1 on Solaris */
++ 		options->use_pam = 1;
++ #else
+  		options->use_pam = 0;
++ #endif
+  
+  	/* Standard Options */
+  	if (options->protocol == SSH_PROTO_UNKNOWN)
+***************
+*** 755,762 ****
+--- 760,776 ----
+  	switch (opcode) {
+  	/* Portable-specific options */
+  	case sUsePAM:
++ #ifdef SET_USE_PAM
++ 		/* UsePAM is always on and not configurable on Solaris */
++ 		logit("%s line %d: ignoring UsePAM option value."
++ 		    " This option is always on.", filename, linenum);
++ 		while (arg)
++ 			arg = strdelim(&cp);
++ 		break; 
++ #else
+  		intptr = &options->use_pam;
+  		goto parse_flag;
++ #endif
+  
+  	/* Standard Options */
+  	case sBadOption:

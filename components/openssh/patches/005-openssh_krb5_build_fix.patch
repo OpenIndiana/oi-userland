@@ -1,0 +1,142 @@
+#
+# This is to work around an unresloved symbol problem with the Kerberos
+# build option. Unlike MIT Kerberos, the gss_krb5_copy_ccache() function
+# is not supported on Solaris, because it violates API abstraction. This
+# workaround disables delegated credentials storing on server side.  
+#
+# The long term goal is to replace Solaris Kerberos libraries with MIT Kerberos
+# delivered from Userland gate (The Solaris MIT Kerberos Drop in Project). 
+# After that, function gss_krb5_copy_ccache() will be available in Solaris and
+# the delegating credentials functionality will be made available using the
+# upstream code.
+#
+diff -ur old/configure new/configure
+--- old/configure	2012-10-22 01:40:00.738542671 -0700
++++ new/configure	2012-10-22 02:18:52.991019932 -0700
+@@ -15022,6 +15022,12 @@
+ 			fi
+ 			K5CFLAGS="`$KRB5CONF --cflags $k5confopts`"
+ 			K5LIBS="`$KRB5CONF --libs $k5confopts`"
++
++			# Oracle Solaris
++			# OpenSSH is mixed-up gssapi AND krb5 aplication
++			K5CFLAGS="$K5CFLAGS `$KRB5CONF --cflags krb5`"
++			K5LIBS="$K5LIBS `$KRB5CONF --libs krb5`"
++
+ 			CPPFLAGS="$CPPFLAGS $K5CFLAGS"
+ 			{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether we are using Heimdal" >&5
+ $as_echo_n "checking whether we are using Heimdal... " >&6; }
+diff -ru old/ssh-gss.h new/ssh-gss.h
+--- old/ssh-gss.h	2012-10-22 02:42:41.469718263 -0700
++++ new/ssh-gss.h	2012-10-22 02:52:00.222302785 -0700
+@@ -45,7 +45,13 @@
+ /* MIT Kerberos doesn't seem to define GSS_NT_HOSTBASED_SERVICE */
+ 
+ #ifndef GSS_C_NT_HOSTBASED_SERVICE
++/* 
++ * on Solaris in gssapi.h there is: 
++ *     extern const gss_OID GSS_C_NT_HOSTBASED_SERVICE; 
++ */
++#ifndef KRB5_BUILD_FIX
+ #define GSS_C_NT_HOSTBASED_SERVICE gss_nt_service_name
++#endif /* KRB5_BUILD_FIX */
+ #endif /* GSS_C_NT_... */
+ #endif /* !HEIMDAL */
+ #endif /* KRB5 */
+diff -u -r old/auth2-gss.c new/auth2-gss.c
+--- old/auth2-gss.c	2011-05-04 21:04:11.000000000 -0700
++++ new/auth2-gss.c	2012-10-25 02:57:42.332456661 -0700
+@@ -47,6 +47,10 @@
+ 
+ extern ServerOptions options;
+ 
++#ifdef KRB5_BUILD_FIX
++	extern gss_OID_set g_supported;
++#endif
++
+ static void input_gssapi_token(int type, u_int32_t plen, void *ctxt);
+ static void input_gssapi_mic(int type, u_int32_t plen, void *ctxt);
+ static void input_gssapi_exchange_complete(int type, u_int32_t plen, void *ctxt);
+@@ -77,7 +81,12 @@
+ 		return (0);
+ 	}
+ 
++#ifdef KRB5_BUILD_FIX
++	/* use value obtained in privileged parent */
++	supported = g_supported;
++#else
+ 	ssh_gssapi_supported_oids(&supported);
++#endif
+ 	do {
+ 		mechs--;
+ 
+diff -u -r old/sshd.c new/sshd.c
+--- old/sshd.c	2012-10-22 01:28:17.260247177 -0700
++++ new/sshd.c	2012-10-25 02:53:41.663248837 -0700
+@@ -257,6 +257,11 @@
+ /* Unprivileged user */
+ struct passwd *privsep_pw = NULL;
+ 
++#if defined(KRB5_BUILD_FIX) && defined(GSSAPI)
++/* Temporary storing supported GSS mechs */
++gss_OID_set g_supported;
++#endif
++
+ /* Prototypes for various functions defined later in this file. */
+ void destroy_sensitive_data(void);
+ void demote_sensitive_data(void);
+@@ -1351,6 +1356,9 @@
+ 	compat_init_setproctitle(ac, av);
+ 	av = saved_argv;
+ #endif
++#if defined(KRB5_BUILD_FIX) && defined(GSSAPI)
++	OM_uint32 ms;
++#endif
+ 
+ 	if (geteuid() == 0 && setgroups(0, NULL) == -1)
+ 		debug("setgroups(): %.200s", strerror(errno));
+@@ -1984,6 +1992,11 @@
+ 	buffer_init(&loginmsg);
+ 	auth_debug_reset();
+ 
++#if defined(KRB5_BUILD_FIX) && defined(GSSAPI)
++	/* collect gss mechs for later use in privsep child */
++	ssh_gssapi_supported_oids(&g_supported);
++#endif
++
+ 	if (use_privsep)
+ 		if (privsep_preauth(authctxt) == 1)
+ 			goto authenticated;
+@@ -2018,6 +2031,9 @@
+ 		close(startup_pipe);
+ 		startup_pipe = -1;
+ 	}
++#if defined(KRB5_BUILD_FIX) && defined(GSSAPI)
++	gss_release_oid_set(&ms, &g_supported);
++#endif 
+ 
+ #ifdef SSH_AUDIT_EVENTS
+ 	audit_event(SSH_AUTH_SUCCESS);
+--- old/gss-serv-krb5.c	2006-08-31 22:38:36.000000000 -0700
++++ new/gss-serv-krb5.c	2012-10-25 03:09:36.080638790 -0700
+@@ -126,6 +126,12 @@
+ 		return;
+ 	}
+ 
++#ifdef KRB5_BUILD_FIX
++	/* currently unimplemented - print an error, but continue */
++	error("Delegated credentials storing not implemented.");
++	return;
++#else
++
+ 	if (ssh_gssapi_krb5_init() == 0)
+ 		return;
+ 
+@@ -182,6 +188,7 @@
+ 	krb5_cc_close(krb_context, ccache);
+ 
+ 	return;
++#endif /* KRB5_BUILD_FIX */
+ }
+ 
+ ssh_gssapi_mech gssapi_kerberos_mech = {

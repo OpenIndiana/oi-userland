@@ -1,0 +1,701 @@
+#
+# OpenSSH uses the BSD/Linux man page scheme which is different from the SysV
+# man page scheme used in Solaris.  In order to comply to the Solaris man page
+# policy and also use the IPS mediator to switch between SunSSH and OpenSSH man
+# pages, the section numbers of some OpenSSH man pages are changed to be as 
+# same as their corresponding ones in SunSSH.
+#
+--- orig/moduli.5	Thu Jan 10 15:04:00 2013
++++ new/moduli.5	Thu Jan 10 17:25:53 2013
+@@ -14,7 +14,7 @@
+ .\" ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ .Dd $Mdocdate: October 14 2010 $
+-.Dt MODULI 5
++.Dt MODULI 4
+ .Os
+ .Sh NAME
+ .Nm moduli
+@@ -23,7 +23,7 @@
+ The
+ .Pa /etc/moduli
+ file contains prime numbers and generators for use by
+-.Xr sshd 8
++.Xr sshd 1M
+ in the Diffie-Hellman Group Exchange key exchange method.
+ .Pp
+ New moduli may be generated with
+@@ -40,7 +40,7 @@
+ .Ic ssh-keygen -T ,
+ provides a high degree of assurance that the numbers are prime and are
+ safe for use in Diffie-Hellman operations by
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ This
+ .Nm
+ format is used as the output from each pass.
+@@ -70,7 +70,7 @@
+ Further primality testing with
+ .Xr ssh-keygen 1
+ produces safe prime moduli (type 2) that are ready for use in
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ Other types are not used by OpenSSH.
+ .It tests
+ Decimal number indicating the type of primality tests that the number
+@@ -105,16 +105,16 @@
+ .El
+ .Pp
+ When performing Diffie-Hellman Group Exchange,
+-.Xr sshd 8
++.Xr sshd 1M
+ first estimates the size of the modulus required to produce enough
+ Diffie-Hellman output to sufficiently key the selected symmetric cipher.
+-.Xr sshd 8
++.Xr sshd 1M
+ then randomly selects a modulus from
+ .Fa /etc/moduli
+ that best meets the size requirement.
+ .Sh SEE ALSO
+ .Xr ssh-keygen 1 ,
+-.Xr sshd 8
++.Xr sshd 1M
+ .Rs
+ .%R RFC 4419
+ .%T "Diffie-Hellman Group Exchange for the Secure Shell (SSH) Transport Layer Protocol"
+--- orig/sftp-server.8	Thu Jan 10 15:04:00 2013
++++ new/sftp-server.8	Thu Jan 10 15:48:21 2013
+@@ -23,7 +23,7 @@
+ .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ .\"
+ .Dd $Mdocdate: January 9 2010 $
+-.Dt SFTP-SERVER 8
++.Dt SFTP-SERVER 1M
+ .Os
+ .Sh NAME
+ .Nm sftp-server
+@@ -40,7 +40,7 @@
+ to stdout and expects client requests from stdin.
+ .Nm
+ is not intended to be called directly, but from
+-.Xr sshd 8
++.Xr sshd 1M
+ using the
+ .Cm Subsystem
+ option.
+@@ -51,7 +51,7 @@
+ .Cm Subsystem
+ declaration.
+ See
+-.Xr sshd_config 5
++.Xr sshd_config 4
+ for more information.
+ .Pp
+ Valid options are:
+@@ -106,8 +106,8 @@
+ .Sh SEE ALSO
+ .Xr sftp 1 ,
+ .Xr ssh 1 ,
+-.Xr sshd_config 5 ,
+-.Xr sshd 8
++.Xr sshd_config 4 ,
++.Xr sshd 1M
+ .Rs
+ .%A T. Ylonen
+ .%A S. Lehtinen
+--- orig/ssh_config.5	Thu Jan 10 15:04:00 2013
++++ new/ssh_config.5	Thu Jan 10 15:48:48 2013
+@@ -35,7 +35,7 @@
+ .\"
+ .\" $OpenBSD: ssh_config.5,v 1.154 2011/09/09 00:43:00 djm Exp $
+ .Dd $Mdocdate: September 9 2011 $
+-.Dt SSH_CONFIG 5
++.Dt SSH_CONFIG 4
+ .Os
+ .Sh NAME
+ .Nm ssh_config
+@@ -353,7 +353,7 @@
+ .Dq Fl O No exit
+ option).
+ If set to a time in seconds, or a time in any of the formats documented in
+-.Xr sshd_config 5 ,
++.Xr sshd_config 4 ,
+ then the backgrounded master connection will automatically terminate
+ after it has remained idle (with no client connections) for the
+ specified time.
+@@ -473,7 +473,7 @@
+ using the format described in the
+ .Sx TIME FORMATS
+ section of
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ X11 connections received by
+ .Xr ssh 1
+ after this time will be refused.
+@@ -540,7 +540,7 @@
+ These hashed names may be used normally by
+ .Xr ssh 1
+ and
+-.Xr sshd 8 ,
++.Xr sshd 1M ,
+ but they do not reveal identifying information should the file's contents
+ be disclosed.
+ The default is
+@@ -885,7 +885,7 @@
+ The command can be basically anything,
+ and should read from its standard input and write to its standard output.
+ It should eventually connect an
+-.Xr sshd 8
++.Xr sshd 1M
+ server running on some machine, or execute
+ .Ic sshd -i
+ somewhere.
+@@ -967,7 +967,7 @@
+ will only succeed if the server's
+ .Cm GatewayPorts
+ option is enabled (see
+-.Xr sshd_config 5 ) .
++.Xr sshd_config 4 ) .
+ .It Cm RequestTTY
+ Specifies whether to request a pseudo-tty for the session.
+ The argument may be one of:
+@@ -1019,7 +1019,7 @@
+ Refer to
+ .Cm AcceptEnv
+ in
+-.Xr sshd_config 5
++.Xr sshd_config 4
+ for how to configure the server.
+ Variables are specified by name, which may contain wildcard characters.
+ Multiple environment variables may be separated by whitespace or spread
+--- orig/ssh-keysign.8	Thu Jan 10 15:04:00 2013
++++ new/ssh-keysign.8	Thu Jan 10 15:49:23 2013
+@@ -23,7 +23,7 @@
+ .\" THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ .\"
+ .Dd $Mdocdate: August 31 2010 $
+-.Dt SSH-KEYSIGN 8
++.Dt SSH-KEYSIGN 1M
+ .Os
+ .Sh NAME
+ .Nm ssh-keysign
+@@ -52,7 +52,7 @@
+ See
+ .Xr ssh 1
+ and
+-.Xr sshd 8
++.Xr sshd 1M
+ for more information about host-based authentication.
+ .Sh FILES
+ .Bl -tag -width Ds -compact
+@@ -81,8 +81,8 @@
+ .Sh SEE ALSO
+ .Xr ssh 1 ,
+ .Xr ssh-keygen 1 ,
+-.Xr ssh_config 5 ,
+-.Xr sshd 8
++.Xr ssh_config 4 ,
++.Xr sshd 1M
+ .Sh HISTORY
+ .Nm
+ first appeared in
+--- orig/ssh-pkcs11-helper.8	Thu Jan 10 15:04:00 2013
++++ new/ssh-pkcs11-helper.8	Thu Jan 10 15:49:48 2013
+@@ -15,7 +15,7 @@
+ .\" OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ .\"
+ .Dd $Mdocdate: February 10 2010 $
+-.Dt SSH-PKCS11-HELPER 8
++.Dt SSH-PKCS11-HELPER 1M
+ .Os
+ .Sh NAME
+ .Nm ssh-pkcs11-helper
+--- orig/sshd_config.5	Thu Jan 10 15:04:00 2013
++++ new/sshd_config.5	Fri Jan 11 15:56:09 2013
+@@ -35,7 +35,7 @@
+ .\"
+ .\" $OpenBSD: sshd_config.5,v 1.136 2011/09/09 00:43:00 djm Exp $
+ .Dd $Mdocdate: September 9 2011 $
+-.Dt SSHD_CONFIG 5
++.Dt SSHD_CONFIG 4
+ .Os
+ .Sh NAME
+ .Nm sshd_config
+@@ -43,7 +43,7 @@
+ .Sh SYNOPSIS
+ .Nm /etc/ssh/sshd_config
+ .Sh DESCRIPTION
+-.Xr sshd 8
++.Xr sshd 1M
+ reads configuration data from
+ .Pa /etc/ssh/sshd_config
+ (or the file specified with
+@@ -68,7 +68,7 @@
+ See
+ .Cm SendEnv
+ in
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ for how to configure the client.
+ Note that environment passing is only supported for protocol 2.
+ Variables are specified by name, which may contain the wildcard characters
+@@ -85,7 +85,7 @@
+ The default is not to accept any environment variables.
+ .It Cm AddressFamily
+ Specifies which address family should be used by
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ Valid arguments are
+ .Dq any ,
+ .Dq inet
+@@ -120,7 +120,7 @@
+ See
+ .Sx PATTERNS
+ in
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ for more information on patterns.
+ .It Cm AllowTcpForwarding
+ Specifies whether TCP forwarding is permitted.
+@@ -149,7 +149,7 @@
+ See
+ .Sx PATTERNS
+ in
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ for more information on patterns.
+ .It Cm AuthorizedKeysFile
+ Specifies the file that contains the public keys that can be used
+@@ -157,7 +157,7 @@
+ The format is described in the
+ .Sx AUTHORIZED_KEYS FILE FORMAT
+ section of
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ .Cm AuthorizedKeysFile
+ may contain tokens of the form %T which are substituted during connection
+ setup.
+@@ -182,7 +182,7 @@
+ in
+ .Sx AUTHORIZED_KEYS FILE FORMAT
+ in
+-.Xr sshd 8 ) .
++.Xr sshd 1M ) .
+ Empty lines and comments starting with
+ .Ql #
+ are ignored.
+@@ -210,7 +210,7 @@
+ though the
+ .Cm principals=
+ key option offers a similar facility (see
+-.Xr sshd 8
++.Xr sshd 1M
+ for details).
+ .It Cm Banner
+ The contents of the specified file are sent to the remote user before
+@@ -233,7 +233,7 @@
+ All components of the pathname must be root-owned directories that are
+ not writable by any other user or group.
+ After the chroot,
+-.Xr sshd 8
++.Xr sshd 1M
+ changes the working directory to the user's home directory.
+ .Pp
+ The pathname may contain the following tokens that are expanded at runtime once
+@@ -266,7 +266,7 @@
+ though sessions which use logging do require
+ .Pa /dev/log
+ inside the chroot directory (see
+-.Xr sftp-server 8
++.Xr sftp-server 1M
+ for details).
+ .Pp
+ The default is not to
+@@ -297,7 +297,7 @@
+ .It Cm ClientAliveCountMax
+ Sets the number of client alive messages (see below) which may be
+ sent without
+-.Xr sshd 8
++.Xr sshd 1M
+ receiving any messages back from the client.
+ If this threshold is reached while client alive messages are being sent,
+ sshd will disconnect the client, terminating the session.
+@@ -324,7 +324,7 @@
+ .It Cm ClientAliveInterval
+ Sets a timeout interval in seconds after which if no data has been received
+ from the client,
+-.Xr sshd 8
++.Xr sshd 1M
+ will send a message through the encrypted
+ channel to request a response from the client.
+ The default
+@@ -357,7 +357,7 @@
+ See
+ .Sx PATTERNS
+ in
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ for more information on patterns.
+ .It Cm DenyUsers
+ This keyword can be followed by a list of user name patterns, separated
+@@ -378,7 +378,7 @@
+ See
+ .Sx PATTERNS
+ in
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ for more information on patterns.
+ .It Cm ForceCommand
+ Forces the execution of the command specified by
+@@ -403,7 +403,7 @@
+ Specifies whether remote hosts are allowed to connect to ports
+ forwarded for the client.
+ By default,
+-.Xr sshd 8
++.Xr sshd 1M
+ binds remote port forwardings to the loopback address.
+ This prevents other remote hosts from connecting to forwarded ports.
+ .Cm GatewayPorts
+@@ -451,7 +451,7 @@
+ A setting of
+ .Dq yes
+ means that
+-.Xr sshd 8
++.Xr sshd 1M
+ uses the name supplied by the client rather than
+ attempting to resolve the name from the TCP connection itself.
+ The default is
+@@ -462,7 +462,7 @@
+ by
+ .Cm HostKey .
+ The default behaviour of
+-.Xr sshd 8
++.Xr sshd 1M
+ is not to load any certificates.
+ .It Cm HostKey
+ Specifies a file containing a private host key
+@@ -476,7 +476,7 @@
+ .Pa /etc/ssh/ssh_host_rsa_key
+ for protocol version 2.
+ Note that
+-.Xr sshd 8
++.Xr sshd 1M
+ will refuse to use a file if it is group/world-accessible.
+ It is possible to have multiple host key files.
+ .Dq rsa1
+@@ -504,7 +504,7 @@
+ .Dq yes .
+ .It Cm IgnoreUserKnownHosts
+ Specifies whether
+-.Xr sshd 8
++.Xr sshd 1M
+ should ignore the user's
+ .Pa ~/.ssh/known_hosts
+ during
+@@ -580,7 +580,7 @@
+ Multiple algorithms must be comma-separated.
+ The default is
+ .Dq ecdh-sha2-nistp256 ,
+-.Dq ecdh-sha2-nistp384 ,
++.Dq ecdh-sha2-nistp834 ,
+ .Dq ecdh-sha2-nistp521 ,
+ .Dq diffie-hellman-group-exchange-sha256 ,
+ .Dq diffie-hellman-group-exchange-sha1 ,
+@@ -597,7 +597,7 @@
+ The default is 3600 (seconds).
+ .It Cm ListenAddress
+ Specifies the local addresses
+-.Xr sshd 8
++.Xr sshd 1M
+ should listen on.
+ The following forms may be used:
+ .Pp
+@@ -640,7 +640,7 @@
+ The default is 120 seconds.
+ .It Cm LogLevel
+ Gives the verbosity level that is used when logging messages from
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ The possible values are:
+ QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG, DEBUG1, DEBUG2, and DEBUG3.
+ The default is INFO.
+@@ -681,7 +681,7 @@
+ lists and may use the wildcard and negation operators described in the
+ .Sx PATTERNS
+ section of
+-.Xr ssh_config 5 .
++.Xr ssh_config 4 .
+ .Pp
+ The patterns in an
+ .Cm Address
+@@ -751,7 +751,7 @@
+ the three colon separated values
+ .Dq start:rate:full
+ (e.g. "10:30:60").
+-.Xr sshd 8
++.Xr sshd 1M
+ will refuse connection attempts with a probability of
+ .Dq rate/100
+ (30%)
+@@ -855,7 +855,7 @@
+ options in
+ .Pa ~/.ssh/authorized_keys
+ are processed by
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ The default is
+ .Dq no .
+ Enabling environment processing may enable users to bypass access
+@@ -868,7 +868,7 @@
+ .Pa /var/run/sshd.pid .
+ .It Cm Port
+ Specifies the port number that
+-.Xr sshd 8
++.Xr sshd 1M
+ listens on.
+ The default is 22.
+ Multiple options of this type are permitted.
+@@ -876,7 +876,7 @@
+ .Cm ListenAddress .
+ .It Cm PrintLastLog
+ Specifies whether
+-.Xr sshd 8
++.Xr sshd 1M
+ should print the date and time of the last user login when a user logs
+ in interactively.
+ The default is
+@@ -883,7 +883,7 @@
+ .Dq yes .
+ .It Cm PrintMotd
+ Specifies whether
+-.Xr sshd 8
++.Xr sshd 1M
+ should print
+ .Pa /etc/motd
+ when a user logs in interactively.
+@@ -891,10 +891,11 @@
+ .Pa /etc/profile ,
+ or equivalent.)
+ The default is
+-.Dq yes .
++.Dq no
++on Solaris.
+ .It Cm Protocol
+ Specifies the protocol versions
+-.Xr sshd 8
++.Xr sshd 1M
+ supports.
+ The possible values are
+ .Sq 1
+@@ -936,7 +937,7 @@
+ The minimum value is 512, and the default is 1024.
+ .It Cm StrictModes
+ Specifies whether
+-.Xr sshd 8
++.Xr sshd 1M
+ should check file modes and ownership of the
+ user's files and home directory before accepting login.
+ This is normally desirable because novices sometimes accidentally leave their
+@@ -952,7 +953,7 @@
+ to execute upon subsystem request.
+ .Pp
+ The command
+-.Xr sftp-server 8
++.Xr sftp-server 1M
+ implements the
+ .Dq sftp
+ file transfer subsystem.
+@@ -970,7 +971,7 @@
+ Note that this option applies to protocol version 2 only.
+ .It Cm SyslogFacility
+ Gives the facility code that is used when logging messages from
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ The possible values are: DAEMON, USER, AUTH, LOCAL0, LOCAL1, LOCAL2,
+ LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7.
+ The default is AUTH.
+@@ -1013,7 +1014,7 @@
+ .Xr ssh-keygen 1 .
+ .It Cm UseDNS
+ Specifies whether
+-.Xr sshd 8
++.Xr sshd 1M
+ should look up the remote host name and check that
+ the resolved host name for the remote IP address maps back to the
+ very same IP address.
+@@ -1058,13 +1059,14 @@
+ If
+ .Cm UsePAM
+ is enabled, you will not be able to run
+-.Xr sshd 8
++.Xr sshd 1M
+ as a non-root user.
+ The default is
+-.Dq no .
++.Dq yes
++on Solaris.
+ .It Cm UsePrivilegeSeparation
+ Specifies whether
+-.Xr sshd 8
++.Xr sshd 1M
+ separates privileges by creating an unprivileged child process
+ to deal with incoming network traffic.
+ After successful authentication, another process will be created that has
+@@ -1081,7 +1083,7 @@
+ restrictions.
+ .It Cm X11DisplayOffset
+ Specifies the first display number available for
+-.Xr sshd 8 Ns 's
++.Xr sshd 1M Ns 's
+ X11 forwarding.
+ This prevents sshd from interfering with real X11 servers.
+ The default is 10.
+@@ -1096,7 +1098,7 @@
+ .Pp
+ When X11 forwarding is enabled, there may be additional exposure to
+ the server and to client displays if the
+-.Xr sshd 8
++.Xr sshd 1M
+ proxy display is configured to listen on the wildcard address (see
+ .Cm X11UseLocalhost
+ below), though this is not the default.
+@@ -1107,7 +1109,7 @@
+ forwarding (see the warnings for
+ .Cm ForwardX11
+ in
+-.Xr ssh_config 5 ) .
++.Xr ssh_config 4 ) .
+ A system administrator may have a stance in which they want to
+ protect clients that may expose themselves to attack by unwittingly
+ requesting X11 forwarding, which can warrant a
+@@ -1121,7 +1123,7 @@
+ is enabled.
+ .It Cm X11UseLocalhost
+ Specifies whether
+-.Xr sshd 8
++.Xr sshd 1M
+ should bind the X11 forwarding server to the loopback address or to
+ the wildcard address.
+ By default,
+@@ -1152,7 +1154,7 @@
+ .Pa /usr/X11R6/bin/xauth .
+ .El
+ .Sh TIME FORMATS
+-.Xr sshd 8
++.Xr sshd 1M
+ command-line arguments and configuration file options that specify time
+ may be expressed using a sequence of the form:
+ .Sm off
+@@ -1196,12 +1198,12 @@
+ .Bl -tag -width Ds
+ .It Pa /etc/ssh/sshd_config
+ Contains configuration data for
+-.Xr sshd 8 .
++.Xr sshd 1M .
+ This file should be writable by root only, but it is recommended
+ (though not necessary) that it be world-readable.
+ .El
+ .Sh SEE ALSO
+-.Xr sshd 8
++.Xr sshd 1M
+ .Sh AUTHORS
+ OpenSSH is a derivative of the original and free
+ ssh 1.2.12 release by Tatu Ylonen.
+--- orig/sshd.8	Thu Jan 10 15:04:00 2013
++++ new/sshd.8	Thu Jan 10 15:53:31 2013
+@@ -35,7 +35,7 @@
+ .\"
+ .\" $OpenBSD: sshd.8,v 1.264 2011/09/23 00:22:04 dtucker Exp $
+ .Dd $Mdocdate: September 23 2011 $
+-.Dt SSHD 8
++.Dt SSHD 1M
+ .Os
+ .Sh NAME
+ .Nm sshd
+@@ -79,7 +79,7 @@
+ .Nm
+ can be configured using command-line options or a configuration file
+ (by default
+-.Xr sshd_config 5 ) ;
++.Xr sshd_config 4 ) ;
+ command-line options override values specified in the
+ configuration file.
+ .Nm
+@@ -204,7 +204,7 @@
+ This is useful for specifying options for which there is no separate
+ command-line flag.
+ For full details of the options, and their values, see
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ .It Fl p Ar port
+ Specifies the port on which the server listens for connections
+ (default 22).
+@@ -274,7 +274,7 @@
+ though this can be changed via the
+ .Cm Protocol
+ option in
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ Protocol 2 supports DSA, ECDSA and RSA keys;
+ protocol 1 only supports RSA keys.
+ For both protocols,
+@@ -399,7 +399,7 @@
+ See the
+ .Cm PermitUserEnvironment
+ option in
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ .It
+ Changes to user's home directory.
+ .It
+@@ -542,7 +542,7 @@
+ environment variable.
+ Note that this option applies to shell, command or subsystem execution.
+ Also note that this command may be superseded by either a
+-.Xr sshd_config 5
++.Xr sshd_config 4
+ .Cm ForceCommand
+ directive or a command embedded in a certificate.
+ .It Cm environment="NAME=value"
+@@ -565,7 +565,7 @@
+ See
+ .Sx PATTERNS
+ in
+-.Xr ssh_config 5
++.Xr ssh_config 4
+ for more information on patterns.
+ .Pp
+ In addition to the wildcard matching that may be applied to hostnames or
+@@ -859,7 +859,7 @@
+ .It Pa /etc/moduli
+ Contains Diffie-Hellman groups used for the "Diffie-Hellman Group Exchange".
+ The file format is described in
+-.Xr moduli 5 .
++.Xr moduli 4 .
+ .Pp
+ .It Pa /etc/motd
+ See
+@@ -918,7 +918,7 @@
+ Contains configuration data for
+ .Nm sshd .
+ The file format and configuration options are described in
+-.Xr sshd_config 5 .
++.Xr sshd_config 4 .
+ .Pp
+ .It Pa /etc/ssh/sshrc
+ Similar to
+@@ -954,10 +954,10 @@
+ .Xr chroot 2 ,
+ .Xr hosts_access 5 ,
+ .Xr login.conf 5 ,
+-.Xr moduli 5 ,
+-.Xr sshd_config 5 ,
+-.Xr inetd 8 ,
+-.Xr sftp-server 8
++.Xr moduli 4 ,
++.Xr sshd_config 4 ,
++.Xr inetd 1M ,
++.Xr sftp-server 1M
+ .Sh AUTHORS
+ OpenSSH is a derivative of the original and free
+ ssh 1.2.12 release by Tatu Ylonen.
