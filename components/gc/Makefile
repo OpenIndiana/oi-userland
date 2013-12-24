@@ -24,7 +24,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC)e.tar.gz
 COMPONENT_ARCHIVE_HASH= \
   sha256:09315b48a82d600371207691126ad058c04677281ac318d86fa84c98c3c9af4b
 COMPONENT_ARCHIVE_URL= \
-  https://launchpad.net/libgc/main/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
+  https://launchpad.net/libgc/main/$(COMPONENT_VERSION)e/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://launchpad.net/libgc
 
 include ../../make-rules/prep.mk
