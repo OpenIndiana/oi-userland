@@ -1,0 +1,161 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/library/gc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Development/C++"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license gc.license license="GPLv2, MIT"
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/bin/+ -> default mode 0555>
+<transform file path=usr/include/gc/atomic_ops(.+)$ -> set action.hash usr/include/atomic_ops%<\1> >
+
+file usr/share/gc/gc.man path=usr/share/man/man3/gc.3
+
+# Generated section:
+
+file path=usr/include/gc/atomic_ops.h
+file path=usr/include/gc/atomic_ops/generalize-small.h
+file path=usr/include/gc/atomic_ops/generalize.h
+file path=usr/include/gc/atomic_ops/sysdeps/README
+file path=usr/include/gc/atomic_ops/sysdeps/acquire_release_volatile.h
+file path=usr/include/gc/atomic_ops/sysdeps/aligned_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/all_acquire_release_volatile.h
+file path=usr/include/gc/atomic_ops/sysdeps/all_aligned_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/all_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/ao_t_is_int.h
+file path=usr/include/gc/atomic_ops/sysdeps/armcc/arm_v6.h
+file path=usr/include/gc/atomic_ops/sysdeps/atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/char_acquire_release_volatile.h
+file path=usr/include/gc/atomic_ops/sysdeps/char_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/emul_cas.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/alpha.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/arm.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/avr32.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/cris.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/hexagon.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/hppa.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/ia64.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/m68k.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/mips.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/powerpc.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/s390.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/sh.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/sparc.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/x86.h
+file path=usr/include/gc/atomic_ops/sysdeps/gcc/x86_64.h
+file path=usr/include/gc/atomic_ops/sysdeps/generic_pthread.h
+file path=usr/include/gc/atomic_ops/sysdeps/hpc/hppa.h
+file path=usr/include/gc/atomic_ops/sysdeps/hpc/ia64.h
+file path=usr/include/gc/atomic_ops/sysdeps/ibmc/powerpc.h
+file path=usr/include/gc/atomic_ops/sysdeps/icc/ia64.h
+file path=usr/include/gc/atomic_ops/sysdeps/int_acquire_release_volatile.h
+file path=usr/include/gc/atomic_ops/sysdeps/int_aligned_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/int_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/msftc/arm.h
+file path=usr/include/gc/atomic_ops/sysdeps/msftc/common32_defs.h
+file path=usr/include/gc/atomic_ops/sysdeps/msftc/x86.h
+file path=usr/include/gc/atomic_ops/sysdeps/msftc/x86_64.h
+file path=usr/include/gc/atomic_ops/sysdeps/ordered.h
+file path=usr/include/gc/atomic_ops/sysdeps/ordered_except_wr.h
+file path=usr/include/gc/atomic_ops/sysdeps/read_ordered.h
+file path=usr/include/gc/atomic_ops/sysdeps/short_acquire_release_volatile.h
+file path=usr/include/gc/atomic_ops/sysdeps/short_aligned_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/short_atomic_load_store.h
+file path=usr/include/gc/atomic_ops/sysdeps/standard_ao_double_t.h
+file path=usr/include/gc/atomic_ops/sysdeps/sunc/sparc.h
+file path=usr/include/gc/atomic_ops/sysdeps/sunc/x86.h
+file path=usr/include/gc/atomic_ops/sysdeps/sunc/x86_64.h
+file path=usr/include/gc/atomic_ops/sysdeps/test_and_set_t_is_ao_t.h
+file path=usr/include/gc/atomic_ops/sysdeps/test_and_set_t_is_char.h
+file path=usr/include/gc/atomic_ops_malloc.h
+file path=usr/include/gc/atomic_ops_stack.h
+file path=usr/include/gc.h
+file path=usr/include/gc/cord.h
+file path=usr/include/gc/gc.h
+file path=usr/include/gc/gc_allocator.h
+file path=usr/include/gc/gc_amiga_redirects.h
+file path=usr/include/gc/gc_backptr.h
+file path=usr/include/gc/gc_config_macros.h
+file path=usr/include/gc/gc_gcj.h
+file path=usr/include/gc/gc_inline.h
+file path=usr/include/gc/gc_mark.h
+file path=usr/include/gc/gc_pthread_redirects.h
+file path=usr/include/gc/gc_tiny_fl.h
+file path=usr/include/gc/gc_typed.h
+file path=usr/include/gc/gc_version.h
+file path=usr/include/gc/leak_detector.h
+file path=usr/include/gc/new_gc_alloc.h
+file path=usr/include/gc/weakpointer.h
+link path=usr/lib/$(MACH64)/libcord.so target=libcord.so.1.0.3
+link path=usr/lib/$(MACH64)/libcord.so.1 target=libcord.so.1.0.3
+file path=usr/lib/$(MACH64)/libcord.so.1.0.3 mode=0555
+link path=usr/lib/$(MACH64)/libgc.so target=libgc.so.1.0.3
+link path=usr/lib/$(MACH64)/libgc.so.1 target=libgc.so.1.0.3
+file path=usr/lib/$(MACH64)/libgc.so.1.0.3 mode=0555
+file path=usr/lib/$(MACH64)/pkgconfig/bdw-gc.pc
+link path=usr/lib/libcord.so target=libcord.so.1.0.3
+link path=usr/lib/libcord.so.1 target=libcord.so.1.0.3
+file path=usr/lib/libcord.so.1.0.3 mode=0555
+link path=usr/lib/libgc.so target=libgc.so.1.0.3
+link path=usr/lib/libgc.so.1 target=libgc.so.1.0.3
+file path=usr/lib/libgc.so.1.0.3 mode=0555
+file path=usr/lib/pkgconfig/bdw-gc.pc
+file path=usr/share/gc/README
+file path=usr/share/gc/README.DGUX386
+file path=usr/share/gc/README.Mac
+file path=usr/share/gc/README.MacOSX
+file path=usr/share/gc/README.OS2
+file path=usr/share/gc/README.amiga
+file path=usr/share/gc/README.arm.cross
+file path=usr/share/gc/README.autoconf
+file path=usr/share/gc/README.changes
+file path=usr/share/gc/README.cmake
+file path=usr/share/gc/README.contributors
+file path=usr/share/gc/README.cords
+file path=usr/share/gc/README.darwin
+file path=usr/share/gc/README.dj
+file path=usr/share/gc/README.environment
+file path=usr/share/gc/README.ews4800
+file path=usr/share/gc/README.hp
+file path=usr/share/gc/README.linux
+file path=usr/share/gc/README.macros
+file path=usr/share/gc/README.rs6000
+file path=usr/share/gc/README.sgi
+file path=usr/share/gc/README.solaris2
+file path=usr/share/gc/README.uts
+file path=usr/share/gc/README.win32
+file path=usr/share/gc/README.win64
+file path=usr/share/gc/barrett_diagram
+file path=usr/share/gc/debugging.html
+file path=usr/share/gc/gc.man
+file path=usr/share/gc/gcdescr.html
+file path=usr/share/gc/gcinterface.html
+file path=usr/share/gc/leak.html
+file path=usr/share/gc/overview.html
+file path=usr/share/gc/porting.html
+file path=usr/share/gc/scale.html
+file path=usr/share/gc/simple_example.html
+file path=usr/share/gc/tree.html
+file path=usr/share/libatomic_ops/COPYING
+file path=usr/share/libatomic_ops/LICENSING.txt
+file path=usr/share/libatomic_ops/README.txt
+file path=usr/share/libatomic_ops/README_malloc.txt
+file path=usr/share/libatomic_ops/README_stack.txt
+file path=usr/share/libatomic_ops/README_win32.txt
