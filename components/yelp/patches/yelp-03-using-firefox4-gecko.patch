@@ -1,0 +1,362 @@
+--- yelp-2.23.1/src/yelp-gecko-utils.cpp.old	2008-06-18 00:01:04.174673000 +0800
++++ yelp-2.23.1/src/yelp-gecko-utils.cpp	2008-06-19 13:43:45.555230000 +0800
+@@ -27,9 +27,6 @@
+ 
+ #include <nsStringAPI.h>
+ 
+-#ifdef HAVE_GECKO_1_9
+-#include <gtkmozembed_glue.cpp>
+-#endif
+ 
+ #include <gtkmozembed.h>
+ #include <gtkmozembed_internal.h>
+--- a/m4/gecko.m4
++++ b/m4/gecko.m4
+@@ -73,6 +73,9 @@
+ 		elif $PKG_CONFIG --exists $lizard-unstable; then
+ 			gecko_cv_gecko=$lizard
+ 			break;
++         	elif $PKG_CONFIG --exist $lizard; then
++	                gecko_cv_gecko=$lizard
++	                break;
+ 		fi
+ 	done
+ fi
+@@ -113,7 +116,7 @@
+ 
+ if $PKG_CONFIG --exists  ${gecko_cv_gecko}-xpcom; then
+ 	_GECKO_INCLUDE_ROOT="`$PKG_CONFIG --variable=includedir ${gecko_cv_gecko}-xpcom`"
+-	_GECKO_CFLAGS="-I$_GECKO_INCLUDE_ROOT"
++	_GECKO_CFLAGS="`$PKG_CONFIG --cflags ${gecko_cv_gecko}-xpcom`"
+ 	_GECKO_LIBDIR="`$PKG_CONFIG --variable=libdir ${gecko_cv_gecko}-xpcom`"
+ 	_GECKO_HOME="`$PKG_CONFIG --variable=libdir ${gecko_cv_gecko}-xpcom`"
+ 	_GECKO_PREFIX="`$PKG_CONFIG --variable=prefix ${gecko_cv_gecko}-xpcom`"
+@@ -308,8 +311,10 @@
+ 	version = "1.9";
+ } else if (strncmp (MOZILLA_VERSION, "1.8", strlen ("1.8")) == 0) {
+ 	version = "1.8";
+-} else {
++} else if (strncmp (MOZILLA_VERSION, "1.", strlen ("1.")) == 0) {
+ 	version = "1.7";
++} else {
++	version = "2.0";
+ }
+ #endif
+ fprintf (stream, "%s\n", version);
+@@ -328,7 +333,7 @@
+ 
+ gecko_cv_gecko_version_int="$(echo "$gecko_cv_gecko_version" | $AWK -F . '{print [$]1 * 1000000 + [$]2 * 1000 + [$]3}')"
+ 
+-if test "$gecko_cv_gecko_version_int" -lt "1007000" -o "$gecko_cv_gecko_version_int" -gt "1009000"; then
++if test "$gecko_cv_gecko_version_int" -lt "1007000" -o "$gecko_cv_gecko_version_int" -gt "2000000"; then
+ 	AC_MSG_ERROR([Gecko version $gecko_cv_gecko_version is not supported!])
+ fi
+ 
+@@ -348,6 +353,10 @@
+ 	AC_DEFINE([HAVE_GECKO_1_9],[1],[Define if we have gecko 1.9])
+ 	gecko_cv_have_gecko_1_9=yes
+ fi
++if test "$gecko_cv_gecko_version_int" -ge "2000000"; then
++	AC_DEFINE([HAVE_GECKO_2_0],[1],[Define if we have gecko 2.0])
++	gecko_cv_have_gecko_2_0=yes
++fi
+ 
+ if test "${gecko_cv_gecko}" = "libxul-embedding" -o "${gecko_cv_gecko}" = "libxul"; then
+ 	PKG_CHECK_EXISTS([${gecko_cv_gecko} >= 1.9.1],[gecko_cv_have_gecko_1_9_1=yes gecko_cv_gecko_version="1.9.1" gecko_cv_gecko_version_int=1009001],[gecko_cv_have_gecko_1_9_1=no])
+--- a/src/Yelper.cpp
++++ b/src/Yelper.cpp
+@@ -309,6 +309,14 @@ Yelper::Print (YelpPrintInfo *print_info, PRBool preview, int *prev_pages)
+     rv = print->PrintPreview (settings, mDOMWindow, nsnull);
+     rv |= print->GetPrintPreviewNumPages (prev_pages);
+   }
++
++#ifdef HAVE_GECKO_2_0
++  if (rv) {
++    print_info->started = FALSE;
++    yelp_print_cancel(print_info);
++  }
++#endif
++
+   return rv;
+ 
+ }
+--- a/src/yelp-gecko-services.cpp
++++ b/src/yelp-gecko-services.cpp
+@@ -32,7 +32,9 @@
+ #include <nsIComponentManager.h>
+ #include <nsComponentManagerUtils.h>
+ #include <nsIComponentRegistrar.h>
++#ifndef HAVE_GECKO_2_0
+ #include <nsIGenericFactory.h>
++#endif
+ #include <nsILocalFile.h>
+ #include <nsIPrintSettings.h>
+ #include <nsServiceManagerUtils.h>
+@@ -214,7 +216,11 @@ PrintListener::SetPrintSettings (YelpPrintInfo *settings,
+   target->SetIsInitializedFromPrinter (PR_FALSE);
+   target->SetIsInitializedFromPrefs (PR_FALSE);
+   target->SetPrintSilent (PR_FALSE);
++#ifndef HAVE_GECKO_2_0
+   target->SetShowPrintProgress (PR_TRUE);
++#else
++  target->SetShowPrintProgress (PR_FALSE);
++#endif
+   target->SetNumCopies (1);
+ 
+   /* We always print PS to a file and then hand that off to gtk-print */
+@@ -235,6 +241,7 @@ PrintListener::SetPrintSettings (YelpPrintInfo *settings,
+     GtkPageSet pageSet;
+     GtkPrintPages printPages;
+ 
++#ifndef HAVE_GECKO_2_0
+     target->SetPrintToFile (PR_TRUE);
+ 
+     temp_dir = g_get_tmp_dir ();
+@@ -250,6 +257,7 @@ PrintListener::SetPrintSettings (YelpPrintInfo *settings,
+ 		       NS_CSTRING_ENCODING_UTF8, tmp);
+     target->SetPrintToFile (PR_TRUE);
+     target->SetToFileName (tmp.get());
++#endif
+ 
+     pageSet = gtk_print_settings_get_page_set (settings->config);
+     target->SetPrintOptions (nsIPrintSettings::kPrintEvenPages,
+@@ -418,6 +426,7 @@ PrintListener::SetPrintSettings (YelpPrintInfo *settings,
+ 
+ /* component registration */
+ 
++#ifndef HAVE_GECKO_2_0
+ NS_GENERIC_FACTORY_CONSTRUCTOR(GPrintingPromptService)
+ 
+ static const nsModuleComponentInfo sAppComps[] = {
+@@ -462,3 +471,4 @@ yelp_register_printing ()
+     }
+     
+ }
++#endif
+--- a/src/yelp-gecko-utils.cpp
++++ b/src/yelp-gecko-utils.cpp
+@@ -243,7 +243,9 @@ yelp_gecko_init (void)
+ 
+ 	gtk_moz_embed_push_startup ();
+ 
++#ifndef HAVE_GECKO_2_0
+ 	yelp_register_printing ();
++#endif
+ 
+ 	nsCOMPtr<nsIPrefService> prefService (do_GetService (NS_PREFSERVICE_CONTRACTID, &rv));
+ 	NS_ENSURE_SUCCESS (rv, FALSE);
+--- a/src/yelp-html.cpp
++++ b/src/yelp-html.cpp
+@@ -491,7 +491,11 @@ yelp_html_select_all (YelpHtml *html)
+ void
+ yelp_html_print (YelpHtml *html, YelpPrintInfo *info, gboolean preview, gint *npages)
+ {
+-    html->priv->yelper->Print (info, preview, npages);
++    nsresult rv = html->priv->yelper->Print (info, preview, npages);
++#ifdef HAVE_GECKO_2_0
++    if (!rv)
++	gtk_window_present (GTK_WINDOW (info->dialog));
++#endif
+ }
+ 
+ void
+--- a/src/yelp-print.c
++++ b/src/yelp-print.c
+@@ -22,6 +22,8 @@
+  *
+  */
+ 
++#include <config.h>
++
+ #include <unistd.h>
+ #include <string.h>
+ #include <sys/stat.h>
+@@ -116,7 +118,12 @@ print_present_config_dialog (YelpPrintInfo *info)
+     }
+     while (1) {
+ 	
++#ifndef HAVE_GECKO_2_0
+ 	ret = gtk_dialog_run (GTK_DIALOG (info->print_dialog));
++#else	
++	ret = GTK_RESPONSE_OK;
++#endif
++
+ 	info->config = 
+ 	   gtk_print_unix_dialog_get_settings (
+ 				   GTK_PRINT_UNIX_DIALOG (info->print_dialog));
+@@ -279,6 +286,11 @@ yelp_print_verify_postscript (GtkPrinter *printer, GtkWidget *print_dialog)
+ static gboolean
+ print_idle_cb (YelpPrintInfo *info)
+ {
++#ifdef HAVE_GECKO_2_0
++    yelp_finish_printing (NULL, info, NULL);
++    return FALSE;
++#endif
++
+     GtkPrintJob *job;
+     
+     if (g_file_test (info->tempfile, G_FILE_TEST_EXISTS) == FALSE) 
+@@ -376,13 +388,19 @@ yelp_print_present_status_dialog (YelpWindow *window, YelpPrintInfo *info)
+ 		      G_CALLBACK (cancel_print_cb),
+ 		      (gpointer) info);
+ 
++#ifndef HAVE_GECKO_2_0
+     gtk_window_present (GTK_WINDOW (info->dialog));
++#endif
+ }
+ 
+ void 
+ yelp_print_cancel (YelpPrintInfo *info)
+ {
+     cancel_print_cb (NULL, 0, info);
++#ifdef HAVE_GECKO_2_0
++    if (g_slist_length (current_jobs) == 0)
++	currently_running = FALSE;
++#endif
+ }
+ 
+ void
+--- a/src/yelp-window.c
++++ b/src/yelp-window.c
+@@ -2060,7 +2060,9 @@ window_print_signal (YelpDocument       *document,
+ 
+ 	yelp_page_free ((YelpPage *) func_data);
+ 
++#ifndef HAVE_GECKO_2_0
+ 	yelp_print_run (print->window, print->html, print->gtk_win, print->vbox);
++#endif
+ 	break;
+     case YELP_DOCUMENT_SIGNAL_TITLE:
+ 	g_free (func_data);
+@@ -2077,6 +2079,13 @@ window_print_signal (YelpDocument       *document,
+ 
+ }
+ 
++#ifdef HAVE_GECKO_2_0
++/* We need to wait the page load completed before popup the Gecko print dialog. */
++static void load_finished_cb (GtkWidget *gtk_win, PrintStruct *print)
++{
++	yelp_print_run (print->window, print->html, print->gtk_win, print->vbox);
++}
++#endif
+ 
+ static void
+ window_print_document_cb (GtkAction *action, YelpWindow *window)
+@@ -2117,6 +2126,9 @@ window_print_document_cb (GtkAction *action, YelpWindow *window)
+     print->vbox = (GtkVBox *) vbox;
+     print->html = html;
+ 
++#ifdef HAVE_GECKO_2_0
++    g_signal_connect (GTK_OBJECT(html), "net_stop", G_CALLBACK(load_finished_cb), print);
++#endif
+     yelp_document_get_page (doc,
+ 			    "x-yelp-index",
+ 			    (YelpDocumentFunc) window_print_signal,
+@@ -2151,7 +2163,9 @@ window_print_page_cb (GtkAction *action, YelpWindow *window)
+     print->vbox = (GtkVBox *) vbox;
+     print->html = html;
+ 
+-
++#ifdef HAVE_GECKO_2_0
++    g_signal_connect (GTK_OBJECT(html), "net_stop", G_CALLBACK(load_finished_cb), print);
++#endif
+     if (priv->current_document) {
+ 	/* Need to go through the paging system */
+ 	yelp_document_get_page (priv->current_document,
+@@ -2216,8 +2230,9 @@ window_print_page_cb (GtkAction *action, YelpWindow *window)
+ 
+ 	yelp_html_close (html);
+ 
++#ifndef HAVE_GECKO_2_0
+ 	yelp_print_run (window, html, gtk_win, vbox);
+-
++#endif
+     }
+ }
+ 
+--- a/src/yelp-gecko-services.cpp	2012-01-29 12:40:16.780223084 +0800
++++ b/src/yelp-gecko-services.cpp	2012-01-29 12:41:57.378690988 +0800
+@@ -71,7 +71,7 @@
+ }
+ 
+ /* void showProgress (in nsIDOMWindow parent, in nsIWebBrowserPrint webBrowserPrint, in nsIPrintSettings printSettings, in nsIObserver openDialogObserver, in boolean isForPrinting, out nsIWebProgressListener webProgressListener, out nsIPrintProgressParams printProgressParams, out boolean notifyOnOpen); */
+-NS_IMETHODIMP GPrintingPromptService::ShowProgress(nsIDOMWindow *parent, nsIWebBrowserPrint *webBrowserPrint, nsIPrintSettings *printSettings, nsIObserver *openDialogObserver, PRBool isForPrinting, nsIWebProgressListener **webProgressListener, nsIPrintProgressParams **printProgressParams, PRBool *notifyOnOpen)
++NS_IMETHODIMP GPrintingPromptService::ShowProgress(nsIDOMWindow *parent, nsIWebBrowserPrint *webBrowserPrint, nsIPrintSettings *printSettings, nsIObserver *openDialogObserver, bool isForPrinting, nsIWebProgressListener **webProgressListener, nsIPrintProgressParams **printProgressParams, bool *notifyOnOpen)
+ {
+   return NS_OK;
+ }
+--- a/src/yelp-gecko-utils.cpp	2012-08-16 13:30:16.258303499 +0800
++++ b/src/yelp-gecko-utils.cpp	2012-08-16 13:30:20.243664359 +0800
+@@ -260,7 +260,7 @@
+ yelp_gecko_shutdown (void)
+ {
+ 	NS_IF_RELEASE (gPrefBranch);
+-	gPrefBranch = nsnull;
++	gPrefBranch = NULL;
+ 
+ 	gtk_moz_embed_pop_startup ();
+ 
+--- a/src/yelp-gecko-services.cpp	2012-08-16 13:30:07.441261577 +0800
++++ b/src/yelp-gecko-services.cpp	2012-08-16 13:31:27.816520617 +0800
+@@ -103,7 +103,7 @@
+ }
+ 
+ /* void onLocationChange (in nsIWebProgress aWebProgress, in nsIRequest aRequest, in nsIURI location); */
+-NS_IMETHODIMP GPrintingPromptService::OnLocationChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, nsIURI *location)
++NS_IMETHODIMP GPrintingPromptService::OnLocationChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, nsIURI *location, PRUint32 aFlags)
+ {
+   return NS_ERROR_NOT_IMPLEMENTED;
+ }
+@@ -183,7 +183,7 @@
+ }
+ 
+ /* void onLocationChange (in nsIWebProgress aWebProgress, in nsIRequest aRequest, in nsIURI location); */
+-NS_IMETHODIMP PrintListener::OnLocationChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, nsIURI *location)
++NS_IMETHODIMP PrintListener::OnLocationChange(nsIWebProgress *aWebProgress, nsIRequest *aRequest, nsIURI *location, PRUint32 aFlags)
+ {
+   return NS_ERROR_NOT_IMPLEMENTED;
+ }
+--- a/src/Yelper.cpp	2012-08-16 13:29:57.202008215 +0800
++++ b/src/Yelper.cpp	2012-08-16 13:30:23.962537980 +0800
+@@ -123,10 +123,10 @@
+ void
+ Yelper::Destroy ()
+ {
+-	mEmbed = nsnull;
+-	mWebBrowser = nsnull;
+-	mDOMWindow = nsnull;
+-	mFinder = nsnull;
++	mEmbed = NULL;
++	mWebBrowser = NULL;
++	mDOMWindow = NULL;
++	mFinder = NULL;
+ 
+ 	mInitialised = PR_FALSE;
+ }
+@@ -139,7 +139,7 @@
+ 	nsCOMPtr<nsICommandManager> cmdManager (do_GetInterface (mWebBrowser));
+ 	if (!cmdManager) return;
+ 
+-	cmdManager->DoCommand (aCommand, nsnull, nsnull);
++	cmdManager->DoCommand (aCommand, NULL, NULL);
+ }
+ 
+ void
+@@ -265,7 +265,7 @@
+ 	/* Mozilla uses 2 as its right mouse button code */
+ 	if (button != 2) return;
+ 
+-	nsCOMPtr<nsIDOMNSEvent> nsEvent (do_QueryInterface (event));
++	nsCOMPtr<nsIDOMEvent> nsEvent (do_QueryInterface (event));
+ 	if (!nsEvent) return;
+ 
+ 	nsresult rv;
+@@ -306,7 +306,7 @@
+   if (!preview)
+     rv = print->Print (settings, listener);
+   else {
+-    rv = print->PrintPreview (settings, mDOMWindow, nsnull);
++    rv = print->PrintPreview (settings, mDOMWindow, NULL);
+     rv |= print->GetPrintPreviewNumPages (prev_pages);
+   }
+ 
