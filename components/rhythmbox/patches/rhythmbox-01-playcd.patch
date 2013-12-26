@@ -1,0 +1,13 @@
+--- rhythmbox-0.11.2/plugins/audiocd/rb-audiocd-source.c.bak	2007-12-07 13:57:27.000000000 +0800
++++ rhythmbox-0.11.2/plugins/audiocd/rb-audiocd-source.c	2007-06-17 11:20:32.000000000 +0800
+@@ -664,6 +664,10 @@
+ 	}
+ 
+ 	rb_debug ("cdda longname: %s", gst_element_factory_get_longname (gst_element_get_factory (priv->cdda)));
++
++#ifdef __sun
++       priv->device_path = g_strdup_printf ("/dev/rdsk/%s", priv->device_path + strlen ("/dev/dsk/"));
++#endif
+ 	g_object_set (G_OBJECT (priv->cdda), "device", priv->device_path, NULL);
+ 	priv->pipeline = gst_pipeline_new ("pipeline");
+ 	priv->fakesink = gst_element_factory_make ("fakesink", "fakesink");
