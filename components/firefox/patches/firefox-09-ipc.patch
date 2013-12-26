@@ -1,0 +1,4401 @@
+--- a/dom/plugins/ipc/PluginModuleChild.h
++++ b/dom/plugins/ipc/PluginModuleChild.h
+@@ -288,7 +288,7 @@ private:
+ 
+     // we get this from the plugin
+     NP_PLUGINSHUTDOWN mShutdownFunc;
+-#ifdef OS_LINUX
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+     NP_PLUGINUNIXINIT mInitializeFunc;
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     NP_PLUGININIT mInitializeFunc;
+--- a/dom/plugins/ipc/PluginModuleParent.h
++++ b/dom/plugins/ipc/PluginModuleParent.h
+@@ -193,7 +193,7 @@ private:
+ 
+     // Implement the module-level functions from NPAPI; these are
+     // normally resolved directly from the DSO.
+-#ifdef OS_LINUX
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+     NPError NP_Initialize(const NPNetscapeFuncs* npnIface,
+                           NPPluginFuncs* nppIface);
+ #else
+--- a/dom/plugins/ipc/PluginProcessParent.cpp
++++ b/dom/plugins/ipc/PluginProcessParent.cpp
+@@ -101,6 +101,9 @@ PluginProcessParent::Launch(PRInt32 timeoutMs)
+         else if (base::PROCESS_ARCH_ARM & pluginLibArchitectures & containerArchitectures) {
+           selectedArchitecture = base::PROCESS_ARCH_ARM;
+         }
++        else if (base::PROCESS_ARCH_SPARC & pluginLibArchitectures & containerArchitectures) {
++          selectedArchitecture = base::PROCESS_ARCH_SPARC;
++        }
+         else {
+             return false;
+         }
+diff --git a/ipc/chromium/Makefile.in b/ipc/chromium/Makefile.in
+index 00b834f..1ff687a 100644
+--- a/ipc/chromium/Makefile.in
++++ b/ipc/chromium/Makefile.in
+@@ -49,7 +49,9 @@ FORCE_STATIC_LIB = 1
+ LIBXUL_LIBRARY = 1
+ EXPORT_LIBRARY = 1
+ 
++ifndef SOLARIS_SUNPRO_CC
+ ACDEFINES =
++endif
+ 
+ ifndef MOZ_NATIVE_LIBEVENT # {
+ vpath %.c \
+@@ -274,6 +276,37 @@ endif
+ 
+ endif # } OS_LINUX
+ 
++ifdef OS_SOLARIS # {
++
++CPPSRCS += \
++  atomicops_internals_x86_gcc.cc \
++  idle_timer.cc \
++  data_pack.cc \
++  file_version_info_linux.cc \
++  process_util_linux.cc \
++  base_paths_linux.cc \
++  time_posix.cc \
++  $(NULL)
++
++ifdef MOZ_ENABLE_GTK2
++CPPSRCS += \
++  message_pump_glib.cc \
++  $(NULL)
++endif
++
++ifdef MOZ_ENABLE_QT
++MOCSRCS = \
++  moc_message_pump_qt.cc \
++  $(NULL)
++
++CPPSRCS += \
++  $(MOCSRCS) \
++  message_pump_qt.cc \
++  $(NULL)
++endif
++
++endif # } OS_SOLARIS
++
+ # libevent
+ 
+ ifndef MOZ_NATIVE_LIBEVENT # {
+@@ -312,6 +345,14 @@ CSRCS += \
+   $(NULL)
+ endif # }
+ 
++ifdef OS_SOLARIS # {
++LOCAL_INCLUDES += -I$(srcdir)/src/third_party/libevent/solaris
++CSRCS += \
++  devpoll.c \
++  evport.c \
++  $(NULL)
++endif # }
++
+ endif # }
+ 
+ endif # }
+diff --git a/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc b/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
+index 933ca51..b0b3eb1 100644
+--- a/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
++++ b/ipc/chromium/src/base/atomicops_internals_x86_gcc.cc
+@@ -19,13 +19,13 @@
+ // Inline cpuid instruction.  In PIC compilations, %ebx contains the address
+ // of the global offset table.  To avoid breaking such executables, this code
+ // must preserve that register's value across cpuid instructions.
+-#if defined(__i386__)
++#if defined(__i386__) || defined (__i386)
+ #define cpuid(a, b, c, d, inp) \
+   asm ("mov %%ebx, %%edi\n"    \
+        "cpuid\n"               \
+        "xchg %%edi, %%ebx\n"   \
+        : "=a" (a), "=D" (b), "=c" (c), "=d" (d) : "a" (inp))
+-#elif defined (__x86_64__)
++#elif defined (__x86_64__) || defined(__x86_64)
+ #define cpuid(a, b, c, d, inp) \
+   asm ("mov %%rbx, %%rdi\n"    \
+        "cpuid\n"               \
+diff --git a/ipc/chromium/src/base/atomicops_internals_x86_gcc.h b/ipc/chromium/src/base/atomicops_internals_x86_gcc.h
+index fda5029..364beee 100644
+--- a/ipc/chromium/src/base/atomicops_internals_x86_gcc.h
++++ b/ipc/chromium/src/base/atomicops_internals_x86_gcc.h
+@@ -29,18 +29,18 @@ inline Atomic32 NoBarrier_CompareAndSwap(volatile Atomic32* ptr,
+                                          Atomic32 old_value,
+                                          Atomic32 new_value) {
+   Atomic32 prev;
+-  __asm__ __volatile__("lock; cmpxchgl %1,%2"
++  __asm__ __volatile__("lock; cmpxchgl %1,(%2)"
+                        : "=a" (prev)
+-                       : "q" (new_value), "m" (*ptr), "0" (old_value)
++                       : "q" (new_value), "r" (ptr), "0" (old_value)
+                        : "memory");
+   return prev;
+ }
+ 
+ inline Atomic32 NoBarrier_AtomicExchange(volatile Atomic32* ptr,
+                                          Atomic32 new_value) {
+-  __asm__ __volatile__("xchgl %1,%0"  // The lock prefix is implicit for xchg.
++  __asm__ __volatile__("xchgl (%1),%0"  // The lock prefix is implicit for xchg.
+                        : "=r" (new_value)
+-                       : "m" (*ptr), "0" (new_value)
++                       : "r" (ptr), "0" (new_value)
+                        : "memory");
+   return new_value;  // Now it's the previous value.
+ }
+@@ -48,8 +48,8 @@ inline Atomic32 NoBarrier_AtomicExchange(volatile Atomic32* ptr,
+ inline Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr,
+                                           Atomic32 increment) {
+   Atomic32 temp = increment;
+-  __asm__ __volatile__("lock; xaddl %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddl %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now holds the old value of *ptr
+   return temp + increment;
+@@ -58,8 +58,8 @@ inline Atomic32 NoBarrier_AtomicIncrement(volatile Atomic32* ptr,
+ inline Atomic32 Barrier_AtomicIncrement(volatile Atomic32* ptr,
+                                         Atomic32 increment) {
+   Atomic32 temp = increment;
+-  __asm__ __volatile__("lock; xaddl %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddl %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now holds the old value of *ptr
+   if (AtomicOps_Internalx86CPUFeatures.has_amd_lock_mb_bug) {
+@@ -153,18 +153,18 @@ inline Atomic64 NoBarrier_CompareAndSwap(volatile Atomic64* ptr,
+                                          Atomic64 old_value,
+                                          Atomic64 new_value) {
+   Atomic64 prev;
+-  __asm__ __volatile__("lock; cmpxchgq %1,%2"
++  __asm__ __volatile__("lock; cmpxchgq %1,(%2)"
+                        : "=a" (prev)
+-                       : "q" (new_value), "m" (*ptr), "0" (old_value)
++                       : "q" (new_value), "r" (ptr), "0" (old_value)
+                        : "memory");
+   return prev;
+ }
+ 
+ inline Atomic64 NoBarrier_AtomicExchange(volatile Atomic64* ptr,
+                                          Atomic64 new_value) {
+-  __asm__ __volatile__("xchgq %1,%0"  // The lock prefix is implicit for xchg.
++  __asm__ __volatile__("xchgq (%1),%0"  // The lock prefix is implicit for xchg.
+                        : "=r" (new_value)
+-                       : "m" (*ptr), "0" (new_value)
++                       : "r" (ptr), "0" (new_value)
+                        : "memory");
+   return new_value;  // Now it's the previous value.
+ }
+@@ -172,8 +172,8 @@ inline Atomic64 NoBarrier_AtomicExchange(volatile Atomic64* ptr,
+ inline Atomic64 NoBarrier_AtomicIncrement(volatile Atomic64* ptr,
+                                           Atomic64 increment) {
+   Atomic64 temp = increment;
+-  __asm__ __volatile__("lock; xaddq %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddq %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now contains the previous value of *ptr
+   return temp + increment;
+@@ -182,8 +182,8 @@ inline Atomic64 NoBarrier_AtomicIncrement(volatile Atomic64* ptr,
+ inline Atomic64 Barrier_AtomicIncrement(volatile Atomic64* ptr,
+                                         Atomic64 increment) {
+   Atomic64 temp = increment;
+-  __asm__ __volatile__("lock; xaddq %0,%1"
+-                       : "+r" (temp), "+m" (*ptr)
++  __asm__ __volatile__("lock; xaddq %0,(%1)"
++                       : "+r" (temp), "+r" (ptr)
+                        : : "memory");
+   // temp now contains the previous value of *ptr
+   if (AtomicOps_Internalx86CPUFeatures.has_amd_lock_mb_bug) {
+diff --git a/ipc/chromium/src/base/base_paths.h b/ipc/chromium/src/base/base_paths.h
+index 5f08dc4..a85534e 100644
+--- a/ipc/chromium/src/base/base_paths.h
++++ b/ipc/chromium/src/base/base_paths.h
+@@ -13,7 +13,7 @@
+ #include "base/base_paths_win.h"
+ #elif defined(OS_MACOSX)
+ #include "base/base_paths_mac.h"
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include "base/base_paths_linux.h"
+ #endif
+ #include "base/path_service.h"
+diff --git a/ipc/chromium/src/base/base_paths_linux.cc b/ipc/chromium/src/base/base_paths_linux.cc
+index b235f6b..865c348 100644
+--- a/ipc/chromium/src/base/base_paths_linux.cc
++++ b/ipc/chromium/src/base/base_paths_linux.cc
+@@ -21,11 +21,19 @@ bool PathProviderLinux(int key, FilePath* result) {
+     case base::FILE_EXE:
+     case base::FILE_MODULE: { // TODO(evanm): is this correct?
+       char bin_dir[PATH_MAX + 1];
++#ifdef OS_SOLARIS
++      if (!(realpath(getexecname(), bin_dir) && bin_dir[0] != '[')) {
++        NOTREACHED() << "Unable to get exec name.";
++        return false;
++      }
++      int bin_dir_size = strlen(bin_dir);
++#else
+       int bin_dir_size = readlink("/proc/self/exe", bin_dir, PATH_MAX);
+       if (bin_dir_size < 0 || bin_dir_size > PATH_MAX) {
+         NOTREACHED() << "Unable to resolve /proc/self/exe.";
+         return false;
+       }
++#endif      
+       bin_dir[bin_dir_size] = 0;
+       *result = FilePath(bin_dir);
+       return true;
+diff --git a/ipc/chromium/src/base/basictypes.h b/ipc/chromium/src/base/basictypes.h
+index dd2595c..ea2ba0c 100644
+--- a/ipc/chromium/src/base/basictypes.h
++++ b/ipc/chromium/src/base/basictypes.h
+@@ -109,9 +109,15 @@ const  int64 kint64max  = (( int64) GG_LONGLONG(0x7FFFFFFFFFFFFFFF));
+ #  if defined(OS_POSIX)
+ #    define __STDC_FORMAT_MACROS 1
+ #    include <inttypes.h>           // for 64-bit integer format macros
++#   if defined(COMPILER_SUNPRO)
++#    define PRId64L L"I64d"
++#    define PRIu64L L"I64u"
++#    define PRIx64L L"I64x"
++#   else
+ #    define PRId64L "I64d"
+ #    define PRIu64L "I64u"
+ #    define PRIx64L "I64x"
++#   endif
+ #  elif defined(OS_WIN)
+ #    define PRId64 "I64d"
+ #    define PRIu64 "I64u"
+@@ -155,6 +161,7 @@ const  int64 kint64max  = (( int64) GG_LONGLONG(0x7FFFFFFFFFFFFFFF));
+ // This template function declaration is used in defining arraysize.
+ // Note that the function doesn't need an implementation, as we only
+ // use its type.
++#if !defined(COMPILER_SUNPRO) || __SUNPRO_CC >= 0x5100
+ template <typename T, size_t N>
+ char (&ArraySizeHelper(T (&array)[N]))[N];
+ 
+@@ -167,6 +174,7 @@ char (&ArraySizeHelper(const T (&array)[N]))[N];
+ #endif
+ 
+ #define arraysize(array) (sizeof(ArraySizeHelper(array)))
++#endif
+ 
+ // ARRAYSIZE_UNSAFE performs essentially the same calculation as arraysize,
+ // but can be used on anonymous types or types defined inside
+@@ -209,6 +217,9 @@ char (&ArraySizeHelper(const T (&array)[N]))[N];
+   ((sizeof(a) / sizeof(*(a))) / \
+    static_cast<size_t>(!(sizeof(a) % sizeof(*(a)))))
+ 
++#if defined(COMPILER_SUNPRO) && __SUNPRO_CC < 0x5100
++#define arraysize(array) (ARRAYSIZE_UNSAFE(array))
++#endif
+ 
+ // Use implicit_cast as a safe version of static_cast or const_cast
+ // for upcasting in the type hierarchy (i.e. casting a pointer to Foo
+diff --git a/ipc/chromium/src/base/clipboard.cc b/ipc/chromium/src/base/clipboard.cc
+index e41fd93..fc6b7f2 100644
+--- a/ipc/chromium/src/base/clipboard.cc
++++ b/ipc/chromium/src/base/clipboard.cc
+@@ -50,13 +50,13 @@ void Clipboard::DispatchObject(ObjectType type, const ObjectMapParams& params) {
+       WriteWebSmartPaste();
+       break;
+ 
+-#if defined(OS_WIN) || defined(OS_LINUX)
++#if defined(OS_WIN) || defined(OS_LINUX) || defined(OS_SOLARIS)
+     case CBF_BITMAP:
+       if (!IsBitmapSafe(params))
+         return;
+       WriteBitmap(&(params[0].front()), &(params[1].front()));
+       break;
+-#endif  // defined(OS_WIN) || defined(OS_LINUX)
++#endif  // defined(OS_WIN) || defined(OS_LINUX) || defined(OS_SOLARIS)
+ 
+     default:
+       NOTREACHED();
+diff --git a/ipc/chromium/src/base/clipboard.h b/ipc/chromium/src/base/clipboard.h
+index 98f3b31..c18e5d2 100644
+--- a/ipc/chromium/src/base/clipboard.h
++++ b/ipc/chromium/src/base/clipboard.h
+@@ -17,7 +17,7 @@
+ class Clipboard {
+  public:
+   typedef std::string FormatType;
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   typedef struct _GtkClipboard GtkClipboard;
+   typedef std::map<FormatType, std::pair<char*, size_t> > TargetMap;
+ #endif
+@@ -179,7 +179,7 @@ class Clipboard {
+ 
+   // True if we can create a window.
+   bool create_window_;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   // Data is stored in the |clipboard_data_| map until it is saved to the system
+   // clipboard. The Store* functions save data to the |clipboard_data_| map. The
+   // SetGtkClipboard function replaces whatever is on the system clipboard with
+diff --git a/ipc/chromium/src/base/crypto/signature_verifier.h b/ipc/chromium/src/base/crypto/signature_verifier.h
+index 18873e8..3dd9aac 100644
+--- a/ipc/chromium/src/base/crypto/signature_verifier.h
++++ b/ipc/chromium/src/base/crypto/signature_verifier.h
+@@ -7,7 +7,7 @@
+ 
+ #include "build/build_config.h"
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include <cryptoht.h>
+ #elif defined(OS_MACOSX)
+ #include <Security/cssm.h>
+@@ -81,7 +81,7 @@ class SignatureVerifier {
+ 
+   std::vector<uint8> signature_;
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   VFYContext* vfy_context_;
+ #elif defined(OS_MACOSX)
+   std::vector<uint8> public_key_info_;
+diff --git a/ipc/chromium/src/base/eintr_wrapper.h b/ipc/chromium/src/base/eintr_wrapper.h
+index a3fb1e4..fa44e05 100644
+--- a/ipc/chromium/src/base/eintr_wrapper.h
++++ b/ipc/chromium/src/base/eintr_wrapper.h
+@@ -16,6 +16,7 @@
+ 
+ #include <errno.h>
+ 
++#ifndef COMPILER_SUNPRO
+ #define HANDLE_EINTR(x) ({ \
+   typeof(x) __eintr_result__; \
+   do { \
+@@ -23,6 +24,15 @@
+   } while (__eintr_result__ == -1 && errno == EINTR); \
+   __eintr_result__;\
+ })
++#else
++#define HANDLE_EINTR(x) ({ \
++  ssize_t __eintr_result__; \
++  do { \
++    __eintr_result__ = x; \
++  } while (__eintr_result__ == -1 && errno == EINTR); \
++  __eintr_result__;\
++})
++#endif
+ 
+ #else
+ 
+diff --git a/ipc/chromium/src/base/file_util.cc b/ipc/chromium/src/base/file_util.cc
+index b79a7b6..cc98243 100644
+--- a/ipc/chromium/src/base/file_util.cc
++++ b/ipc/chromium/src/base/file_util.cc
+@@ -16,10 +16,8 @@
+ 
+ #include "base/file_path.h"
+ #include "base/logging.h"
+-#include "base/string_util.h"
+-
+ #include "base/string_piece.h"
+-#include "base/sys_string_conversions.h"
++#include "base/string_util.h"
+ 
+ namespace {
+ 
+@@ -29,34 +27,6 @@ const FilePath::CharType kExtensionSeparator = FILE_PATH_LITERAL('.');
+ 
+ namespace file_util {
+ 
+-void PathComponents(const FilePath& path,
+-                    std::vector<FilePath::StringType>* components) {
+-  DCHECK(components);
+-  if (!components)
+-    return;
+-
+-  FilePath::StringType path_str = path.value();
+-  FilePath::StringType::size_type start = 0;
+-  FilePath::StringType::size_type end =
+-      path_str.find_first_of(FilePath::kSeparators);
+-
+-  // If the path starts with a separator, add it to components.
+-  if (end == start) {
+-    components->push_back(FilePath::StringType(path_str, 0, 1));
+-    start = end + 1;
+-    end = path_str.find_first_of(FilePath::kSeparators, start);
+-  }
+-  while (end != FilePath::StringType::npos) {
+-    FilePath::StringType component =
+-        FilePath::StringType(path_str, start, end - start);
+-    components->push_back(component);
+-    start = end + 1;
+-    end = path_str.find_first_of(FilePath::kSeparators, start);
+-  }
+-
+-  components->push_back(FilePath::StringType(path_str, start));
+-}
+-
+ bool EndsWithSeparator(const FilePath& path) {
+   FilePath::StringType value = path.value();
+   if (value.empty())
+@@ -79,11 +49,6 @@ bool EnsureEndsWithSeparator(FilePath* path) {
+   return true;
+ }
+ 
+-void TrimTrailingSeparator(std::wstring* dir) {
+-  while (dir->length() > 1 && EndsWithSeparator(dir))
+-    dir->resize(dir->length() - 1);
+-}
+-
+ FilePath::StringType GetFileExtensionFromPath(const FilePath& path) {
+   FilePath::StringType file_name = path.BaseName().value();
+   const FilePath::StringType::size_type last_dot =
+@@ -160,21 +125,60 @@ bool ContentsEqual(const FilePath& filename1, const FilePath& filename2) {
+     file1.read(buffer1, BUFFER_SIZE);
+     file2.read(buffer2, BUFFER_SIZE);
+ 
+-    if ((file1.eof() && !file2.eof()) ||
+-        (!file1.eof() && file2.eof()) ||
++    if ((file1.eof() != file2.eof()) ||
+         (file1.gcount() != file2.gcount()) ||
+         (memcmp(buffer1, buffer2, file1.gcount()))) {
+       file1.close();
+       file2.close();
+       return false;
+     }
+-  } while (!file1.eof() && !file2.eof());
++  } while (!file1.eof() || !file2.eof());
+ 
+   file1.close();
+   file2.close();
+   return true;
+ }
+ 
++bool TextContentsEqual(const FilePath& filename1, const FilePath& filename2) {
++  std::ifstream file1(filename1.value().c_str(), std::ios::in);
++  std::ifstream file2(filename2.value().c_str(), std::ios::in);
++
++  // Even if both files aren't openable (and thus, in some sense, "equal"),
++  // any unusable file yields a result of "false".
++  if (!file1.is_open() || !file2.is_open())
++    return false;
++
++  do {
++    std::string line1, line2;
++    getline(file1, line1);
++    getline(file2, line2);
++
++    // Check for mismatched EOF states, or any error state.
++    if ((file1.eof() != file2.eof()) ||
++        file1.bad() || file2.bad()) {
++      return false;
++    }
++
++    // Trim all '\r' and '\n' characters from the end of the line.
++    std::string::size_type end1 = line1.find_last_not_of("\r\n");
++    if (end1 == std::string::npos)
++      line1.clear();
++    else if (end1 + 1 < line1.length())
++      line1.erase(end1 + 1);
++
++    std::string::size_type end2 = line2.find_last_not_of("\r\n");
++    if (end2 == std::string::npos)
++      line2.clear();
++    else if (end2 + 1 < line2.length())
++      line2.erase(end2 + 1);
++
++    if (line1 != line2)
++      return false;
++  } while (!file1.eof() || !file2.eof());
++
++  return true;
++}
++
+ bool ReadFileToString(const FilePath& path, std::string* contents) {
+   FILE* file = OpenFile(path, "rb");
+   if (!file) {
+@@ -207,6 +211,14 @@ bool GetFileSize(const FilePath& file_path, int64* file_size) {
+   return true;
+ }
+ 
++bool IsDot(const FilePath& path) {
++  return FILE_PATH_LITERAL(".") == path.BaseName().value();
++}
++
++bool IsDotDot(const FilePath& path) {
++  return FILE_PATH_LITERAL("..") == path.BaseName().value();
++}
++
+ bool CloseFile(FILE* file) {
+   if (file == NULL)
+     return true;
+@@ -258,6 +270,23 @@ bool ContainsPath(const FilePath &parent, const FilePath& child) {
+   return true;
+ }
+ 
++int64 ComputeDirectorySize(const FilePath& root_path) {
++  int64 running_size = 0;
++  FileEnumerator file_iter(root_path, true, FileEnumerator::FILES);
++  for (FilePath current = file_iter.Next(); !current.empty();
++       current = file_iter.Next()) {
++    FileEnumerator::FindInfo info;
++    file_iter.GetFindInfo(&info);
++#if defined(OS_WIN)
++    LARGE_INTEGER li = { info.nFileSizeLow, info.nFileSizeHigh };
++    running_size += li.QuadPart;
++#else
++    running_size += info.stat.st_size;
++#endif
++  }
++  return running_size;
++}
++
+ ///////////////////////////////////////////////
+ // MemoryMappedFile
+ 
+@@ -265,6 +294,20 @@ MemoryMappedFile::~MemoryMappedFile() {
+   CloseHandles();
+ }
+ 
++bool MemoryMappedFile::Initialize(base::PlatformFile file) {
++  if (IsValid())
++    return false;
++
++  file_ = file;
++
++  if (!MapFileToMemoryInternal()) {
++    CloseHandles();
++    return false;
++  }
++
++  return true;
++}
++
+ bool MemoryMappedFile::Initialize(const FilePath& file_name) {
+   if (IsValid())
+     return false;
+@@ -277,6 +320,19 @@ bool MemoryMappedFile::Initialize(const FilePath& file_name) {
+   return true;
+ }
+ 
++bool MemoryMappedFile::MapFileToMemory(const FilePath& file_name) {
++  file_ = base::CreatePlatformFile(file_name.ToWStringHack(),
++      base::PLATFORM_FILE_OPEN | base::PLATFORM_FILE_READ,
++      NULL);
++
++  if (file_ == base::kInvalidPlatformFileValue) {
++    LOG(ERROR) << "Couldn't open " << file_name.value();
++    return false;
++  }
++
++  return MapFileToMemoryInternal();
++}
++
+ bool MemoryMappedFile::IsValid() {
+   return data_ != NULL;
+ }
+@@ -294,73 +350,33 @@ bool AbsolutePath(std::wstring* path_str) {
+   *path_str = path.ToWStringHack();
+   return true;
+ }
++
++#if defined(OS_WIN)
++// This function is deprecated; see file_util_deprecated.h for details.
+ void AppendToPath(std::wstring* path, const std::wstring& new_ending) {
+   if (!path) {
+     NOTREACHED();
+     return;  // Don't crash in this function in release builds.
+   }
+ 
+-  if (!EndsWithSeparator(path))
++  if (!EndsWithSeparator(*path))
+     path->push_back(FilePath::kSeparators[0]);
+   path->append(new_ending);
+ }
++#endif
++
+ bool CopyDirectory(const std::wstring& from_path, const std::wstring& to_path,
+                    bool recursive) {
+   return CopyDirectory(FilePath::FromWStringHack(from_path),
+                        FilePath::FromWStringHack(to_path),
+                        recursive);
+ }
+-bool ContentsEqual(const std::wstring& filename1,
+-                   const std::wstring& filename2) {
+-  return ContentsEqual(FilePath::FromWStringHack(filename1),
+-                       FilePath::FromWStringHack(filename2));
+-}
+-bool CopyFile(const std::wstring& from_path, const std::wstring& to_path) {
+-  return CopyFile(FilePath::FromWStringHack(from_path),
+-                  FilePath::FromWStringHack(to_path));
+-}
+-bool CreateDirectory(const std::wstring& full_path) {
+-  return CreateDirectory(FilePath::FromWStringHack(full_path));
+-}
+-bool CreateNewTempDirectory(const std::wstring& prefix,
+-                            std::wstring* new_temp_path) {
+-#if defined(OS_WIN)
+-  FilePath::StringType dir_prefix(prefix);
+-#elif defined(OS_POSIX)
+-  FilePath::StringType dir_prefix = WideToUTF8(prefix);
+-#endif
+-  FilePath temp_path;
+-  if (!CreateNewTempDirectory(dir_prefix, &temp_path))
+-    return false;
+-  *new_temp_path = temp_path.ToWStringHack();
+-  return true;
+-}
+-bool CreateTemporaryFileName(std::wstring* temp_file) {
+-  FilePath temp_file_path;
+-  if (!CreateTemporaryFileName(&temp_file_path))
+-    return false;
+-  *temp_file = temp_file_path.ToWStringHack();
+-  return true;
+-}
+ bool Delete(const std::wstring& path, bool recursive) {
+   return Delete(FilePath::FromWStringHack(path), recursive);
+ }
+-bool DirectoryExists(const std::wstring& path) {
+-  return DirectoryExists(FilePath::FromWStringHack(path));
+-}
+-bool EndsWithSeparator(std::wstring* path) {
+-  return EndsWithSeparator(FilePath::FromWStringHack(*path));
+-}
+ bool EndsWithSeparator(const std::wstring& path) {
+   return EndsWithSeparator(FilePath::FromWStringHack(path));
+ }
+-bool GetCurrentDirectory(std::wstring* path_str) {
+-  FilePath path;
+-  if (!GetCurrentDirectory(&path))
+-    return false;
+-  *path_str = path.ToWStringHack();
+-  return true;
+-}
+ std::wstring GetFileExtensionFromPath(const std::wstring& path) {
+   FilePath::StringType extension =
+       GetFileExtensionFromPath(FilePath::FromWStringHack(path));
+@@ -370,44 +386,18 @@ std::wstring GetFileExtensionFromPath(const std::wstring& path) {
+   return UTF8ToWide(extension);
+ #endif
+ }
+-bool GetFileInfo(const std::wstring& file_path, FileInfo* results) {
+-  return GetFileInfo(FilePath::FromWStringHack(file_path), results);
+-}
+ std::wstring GetFilenameFromPath(const std::wstring& path) {
+   if (path.empty() || EndsWithSeparator(path))
+     return std::wstring();
+ 
+   return FilePath::FromWStringHack(path).BaseName().ToWStringHack();
+ }
+-bool GetFileSize(const std::wstring& file_path, int64* file_size) {
+-  return GetFileSize(FilePath::FromWStringHack(file_path), file_size);
+-}
+-bool GetTempDir(std::wstring* path_str) {
+-  FilePath path;
+-  if (!GetTempDir(&path))
+-    return false;
+-  *path_str = path.ToWStringHack();
+-  return true;
+-}
+-bool Move(const std::wstring& from_path, const std::wstring& to_path) {
+-  return Move(FilePath::FromWStringHack(from_path),
+-              FilePath::FromWStringHack(to_path));
+-}
+ FILE* OpenFile(const std::wstring& filename, const char* mode) {
+   return OpenFile(FilePath::FromWStringHack(filename), mode);
+ }
+-bool PathExists(const std::wstring& path) {
+-  return PathExists(FilePath::FromWStringHack(path));
+-}
+-bool PathIsWritable(const std::wstring& path) {
+-  return PathIsWritable(FilePath::FromWStringHack(path));
+-}
+ int ReadFile(const std::wstring& filename, char* data, int size) {
+   return ReadFile(FilePath::FromWStringHack(filename), data, size);
+ }
+-bool SetCurrentDirectory(const std::wstring& directory) {
+-  return SetCurrentDirectory(FilePath::FromWStringHack(directory));
+-}
+ void UpOneDirectory(std::wstring* dir) {
+   FilePath path = FilePath::FromWStringHack(*dir);
+   FilePath directory = path.DirName();
+@@ -429,4 +419,15 @@ void UpOneDirectoryOrEmpty(std::wstring* dir) {
+ int WriteFile(const std::wstring& filename, const char* data, int size) {
+   return WriteFile(FilePath::FromWStringHack(filename), data, size);
+ }
++
++///////////////////////////////////////////////
++// FileEnumerator
++//
++// Note: the main logic is in file_util_<platform>.cc
++
++bool FileEnumerator::ShouldSkip(const FilePath& path) {
++  FilePath::StringType basename = path.BaseName().value();
++  return IsDot(path) || (IsDotDot(path) && !(INCLUDE_DOT_DOT & file_type_));
++}
++
+ }  // namespace
+diff --git a/ipc/chromium/src/base/file_version_info.h b/ipc/chromium/src/base/file_version_info.h
+index f38d23f..065e9ac 100644
+--- a/ipc/chromium/src/base/file_version_info.h
++++ b/ipc/chromium/src/base/file_version_info.h
+@@ -86,7 +86,7 @@ class FileVersionInfo {
+   explicit FileVersionInfo(NSBundle *bundle);
+ 
+   NSBundle *bundle_;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   FileVersionInfo();
+ #endif
+ 
+diff --git a/ipc/chromium/src/base/float_util.h b/ipc/chromium/src/base/float_util.h
+index 5909995..905080b 100644
+--- a/ipc/chromium/src/base/float_util.h
++++ b/ipc/chromium/src/base/float_util.h
+@@ -8,6 +8,9 @@
+ #include "build/build_config.h"
+ 
+ #include <float.h>
++#ifdef OS_SOLARIS
++#include <ieeefp.h>
++#endif 
+ #include <math.h>
+ 
+ namespace base {
+diff --git a/ipc/chromium/src/base/gfx/native_widget_types.h b/ipc/chromium/src/base/gfx/native_widget_types.h
+index d43db5c..2f4ab87 100644
+--- a/ipc/chromium/src/base/gfx/native_widget_types.h
++++ b/ipc/chromium/src/base/gfx/native_widget_types.h
+@@ -46,7 +46,7 @@ class NSView;
+ class NSWindow;
+ class NSTextField;
+ #endif  // __OBJC__
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ typedef struct _GtkWidget GtkWidget;
+ typedef struct _GtkWindow GtkWindow;
+ typedef struct _cairo_surface cairo_surface_t;
+@@ -64,7 +64,7 @@ typedef NSView* NativeView;
+ typedef NSWindow* NativeWindow;
+ typedef NSTextField* NativeEditView;
+ typedef CGContext* NativeDrawingContext;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ typedef GtkWidget* NativeView;
+ typedef GtkWindow* NativeWindow;
+ typedef GtkWidget* NativeEditView;
+@@ -86,7 +86,7 @@ typedef intptr_t NativeViewId;
+ static inline NativeView NativeViewFromId(NativeViewId id) {
+   return reinterpret_cast<NativeView>(id);
+ }
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ // A NativeView on Linux is a GtkWidget*. However, we can't go directly from an
+ // X window ID to a GtkWidget. Thus, functions which handle NativeViewIds from
+ // the renderer have to use Xlib. This is fine since these functions are
+@@ -94,7 +94,7 @@ static inline NativeView NativeViewFromId(NativeViewId id) {
+ 
+ #define NativeViewFromId(x) NATIVE_VIEW_FROM_ID_NOT_AVAILIBLE_ON_LINUX
+ 
+-#endif  // defined(OS_LINUX)
++#endif  // defined(OS_LINUX) || defined(OS_SOLARIS)
+ 
+ // Convert a NativeView to a NativeViewId. See the comments above
+ // NativeViewFromId.
+@@ -102,10 +102,10 @@ static inline NativeView NativeViewFromId(NativeViewId id) {
+ static inline NativeViewId IdFromNativeView(NativeView view) {
+   return reinterpret_cast<NativeViewId>(view);
+ }
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ // Not inlined because it involves pulling too many headers.
+ NativeViewId IdFromNativeView(NativeView view);
+-#endif  // defined(OS_LINUX)
++#endif  // defined(OS_LINUX) || defined(OS_SOLARIS)
+ 
+ }  // namespace gfx
+ 
+diff --git a/ipc/chromium/src/base/gfx/rect.cc b/ipc/chromium/src/base/gfx/rect.cc
+index e0226f3..3c89c2c 100755
+--- a/ipc/chromium/src/base/gfx/rect.cc
++++ b/ipc/chromium/src/base/gfx/rect.cc
+@@ -8,7 +8,7 @@
+ #include <windows.h>
+ #elif defined(OS_MACOSX)
+ #include <CoreGraphics/CGGeometry.h>
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include <gdk/gdk.h>
+ #endif
+ 
+@@ -74,7 +74,7 @@ Rect& Rect::operator=(const CGRect& r) {
+   set_height(r.size.height);
+   return *this;
+ }
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ Rect::Rect(const GdkRectangle& r)
+     : origin_(r.x, r.y) {
+   set_width(r.width);
+@@ -126,7 +126,7 @@ RECT Rect::ToRECT() const {
+   r.bottom = bottom();
+   return r;
+ }
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ GdkRectangle Rect::ToGdkRectangle() const {
+   GdkRectangle r = {x(), y(), width(), height()};
+   return r;
+diff --git a/ipc/chromium/src/base/gfx/rect.h b/ipc/chromium/src/base/gfx/rect.h
+index 6da1b55..e866398 100644
+--- a/ipc/chromium/src/base/gfx/rect.h
++++ b/ipc/chromium/src/base/gfx/rect.h
+@@ -19,7 +19,7 @@
+ 
+ #if defined(OS_WIN)
+ typedef struct tagRECT RECT;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ typedef struct _GdkRectangle GdkRectangle;
+ #endif
+ 
+@@ -34,7 +34,7 @@ class Rect {
+   explicit Rect(const RECT& r);
+ #elif defined(OS_MACOSX)
+   explicit Rect(const CGRect& r);
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOALRIS)
+   explicit Rect(const GdkRectangle& r);
+ #endif
+   Rect(const gfx::Point& origin, const gfx::Size& size);
+@@ -45,7 +45,7 @@ class Rect {
+   Rect& operator=(const RECT& r);
+ #elif defined(OS_MACOSX)
+   Rect& operator=(const CGRect& r);
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   Rect& operator=(const GdkRectangle& r);
+ #endif
+ 
+@@ -97,7 +97,7 @@ class Rect {
+ #if defined(OS_WIN)
+   // Construct an equivalent Win32 RECT object.
+   RECT ToRECT() const;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   GdkRectangle ToGdkRectangle() const;
+ #elif defined(OS_MACOSX)
+   // Construct an equivalent CoreGraphics object.
+diff --git a/ipc/chromium/src/base/icu_util.cc b/ipc/chromium/src/base/icu_util.cc
+index 701dc73..1732c74 100644
+--- a/ipc/chromium/src/base/icu_util.cc
++++ b/ipc/chromium/src/base/icu_util.cc
+@@ -30,7 +30,7 @@
+ #define ICU_UTIL_DATA_IMPL ICU_UTIL_DATA_SHARED
+ #elif defined(OS_MACOSX)
+ #define ICU_UTIL_DATA_IMPL ICU_UTIL_DATA_STATIC
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ #define ICU_UTIL_DATA_IMPL ICU_UTIL_DATA_FILE
+ #endif
+ 
+diff --git a/ipc/chromium/src/base/idle_timer.cc b/ipc/chromium/src/base/idle_timer.cc
+index de980f1..34ee461 100644
+--- a/ipc/chromium/src/base/idle_timer.cc
++++ b/ipc/chromium/src/base/idle_timer.cc
+@@ -7,13 +7,13 @@
+ // We may not want to port idle_timer to Linux, but we have implemented it
+ // anyway.  Define this to 1 to enable the Linux idle timer and then add the
+ // libs that need to be linked (Xss).
+-#define ENABLE_XSS_SUPPORT 0
++#define ENABLE_XSS_SUPPORT 1
+ 
+ #if defined(OS_MACOSX)
+ #include <ApplicationServices/ApplicationServices.h>
+ #endif
+ 
+-#if defined(OS_LINUX) && ENABLE_XSS_SUPPORT
++#if (defined(OS_LINUX) || defined(OS_SOLARIS)) && ENABLE_XSS_SUPPORT
+ // We may not want to port idle_timer to Linux, but we have implemented it
+ // anyway.  Remove the 0 above if we want it.
+ #include <gdk/gdkx.h>
+@@ -54,7 +54,7 @@ bool OSIdleTimeSource(int32 *milliseconds_interval_since_last_event) {
+           kCGAnyInputEventType) * 1000.0;
+   return true;
+ }
+-#elif defined(OS_LINUX) && ENABLE_XSS_SUPPORT
++#elif (defined(OS_LINUX) || defined(OS_SOLARIS)) && ENABLE_XSS_SUPPORT
+ class IdleState {
+  public:
+   IdleState() {
+diff --git a/ipc/chromium/src/base/message_loop.cc b/ipc/chromium/src/base/message_loop.cc
+index 6e62692..66b96ae 100644
+--- a/ipc/chromium/src/base/message_loop.cc
++++ b/ipc/chromium/src/base/message_loop.cc
+@@ -19,7 +19,7 @@
+ #if defined(OS_POSIX)
+ #include "base/message_pump_libevent.h"
+ #endif
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+ #ifdef MOZ_WIDGET_GTK2
+ #include "base/message_pump_glib.h"
+ #endif
+@@ -120,9 +120,9 @@ MessageLoop::MessageLoop(Type type)
+   if (type_ == TYPE_UI) {
+ #if defined(OS_MACOSX)
+     pump_ = base::MessagePumpMac::Create();
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+     pump_ = new base::MessagePumpForUI();
+-#endif  // OS_LINUX
++#endif  // OS_LINUX || OS_SOLARIS
+   } else if (type_ == TYPE_IO) {
+     pump_ = new base::MessagePumpLibevent();
+   } else {
+diff --git a/ipc/chromium/src/base/message_pump_glib.cc b/ipc/chromium/src/base/message_pump_glib.cc
+index 630c2f9..980bccd 100644
+--- a/ipc/chromium/src/base/message_pump_glib.cc
++++ b/ipc/chromium/src/base/message_pump_glib.cc
+@@ -5,6 +5,7 @@
+ #include "base/message_pump_glib.h"
+ 
+ #include <fcntl.h>
++#include <sys/stat.h>
+ #include <math.h>
+ 
+ #include <gtk/gtk.h>
+@@ -304,6 +305,11 @@ void MessagePumpForUI::ScheduleWork() {
+   // variables as we would then need locks all over.  This ensures that if
+   // we are sleeping in a poll that we will wake up.
+   char msg = '!';
++  struct stat pipe_stat;
++  fstat(wakeup_pipe_read_, &pipe_stat);
++  if (pipe_stat.st_size > 254)
++    return;
++
+   if (HANDLE_EINTR(write(wakeup_pipe_write_, &msg, 1)) != 1) {
+     NOTREACHED() << "Could not write to the UI message loop wakeup pipe!";
+   }
+diff --git a/ipc/chromium/src/base/native_library.h b/ipc/chromium/src/base/native_library.h
+index ce85c23..81d54a1 100644
+--- a/ipc/chromium/src/base/native_library.h
++++ b/ipc/chromium/src/base/native_library.h
+@@ -26,7 +26,7 @@ typedef char* NativeLibraryFunctionNameType;
+ #elif defined(OS_MACOSX)
+ typedef CFBundleRef NativeLibrary;
+ typedef CFStringRef NativeLibraryFunctionNameType;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ typedef void* NativeLibrary;
+ typedef const char* NativeLibraryFunctionNameType;
+ #endif  // OS_*
+diff --git a/ipc/chromium/src/base/observer_list.h b/ipc/chromium/src/base/observer_list.h
+index f67df14..3f26f93 100644
+--- a/ipc/chromium/src/base/observer_list.h
++++ b/ipc/chromium/src/base/observer_list.h
+@@ -82,7 +82,7 @@ class ObserverList {
+ 
+   // Add an observer to the list.
+   void AddObserver(ObserverType* obs) {
+-    DCHECK(find(observers_.begin(), observers_.end(), obs) == observers_.end())
++    DCHECK(std::find(observers_.begin(), observers_.end(), obs) == observers_.end())
+         << "Observers can only be added once!";
+     observers_.push_back(obs);
+   }
+diff --git a/ipc/chromium/src/base/path_service.cc b/ipc/chromium/src/base/path_service.cc
+index f625c98..3228de7 100644
+--- a/ipc/chromium/src/base/path_service.cc
++++ b/ipc/chromium/src/base/path_service.cc
+@@ -24,7 +24,7 @@ namespace base {
+   bool PathProviderWin(int key, FilePath* result);
+ #elif defined(OS_MACOSX)
+   bool PathProviderMac(int key, FilePath* result);
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   bool PathProviderLinux(int key, FilePath* result);
+ #endif
+ }
+@@ -80,7 +80,7 @@ static Provider base_provider_mac = {
+ };
+ #endif
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+ static Provider base_provider_linux = {
+   base::PathProviderLinux,
+   &base_provider,
+@@ -92,6 +92,17 @@ static Provider base_provider_linux = {
+ };
+ #endif
+ 
++#if 0//defined(OS_SOLARIS)
++static Provider base_provider_posix = {
++  base::PathProviderPosix,
++  &base_provider,
++#ifndef NDEBUG
++  0,
++  0,
++#endif
++  true
++};
++#endif
+ 
+ struct PathData {
+   Lock      lock;
+@@ -104,7 +115,7 @@ struct PathData {
+     providers = &base_provider_win;
+ #elif defined(OS_MACOSX)
+     providers = &base_provider_mac;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+     providers = &base_provider_linux;
+ #endif
+   }
+@@ -206,6 +217,24 @@ bool PathService::IsOverridden(int key) {
+   return path_data->overrides.find(key) != path_data->overrides.end();
+ }
+ 
++#ifdef OS_SOLARIS
++bool PathService::Override(int key, const FilePath& path) {
++  PathData* path_data = GetPathData();
++  DCHECK(path_data);
++  DCHECK(key > base::DIR_CURRENT) << "invalid path key";
++
++  FilePath file_path = path;
++
++  // make sure the directory exists:
++  if (!file_util::CreateDirectory(file_path))
++    return false;
++
++  AutoLock scoped_lock(path_data->lock);
++  path_data->cache[key] = file_path;
++  path_data->overrides.insert(key);
++  return true;
++}
++#else
+ bool PathService::Override(int key, const std::wstring& path) {
+   PathData* path_data = GetPathData();
+   DCHECK(path_data);
+@@ -231,8 +260,13 @@ bool PathService::Override(int key, const std::wstring& path) {
+   path_data->overrides.insert(key);
+   return true;
+ }
++#endif
+ 
++#ifdef OS_SOLARIS
++bool PathService::SetCurrentDirectory(const FilePath& current_directory) {
++#else
+ bool PathService::SetCurrentDirectory(const std::wstring& current_directory) {
++#endif
+   return file_util::SetCurrentDirectory(current_directory);
+ }
+ 
+diff --git a/ipc/chromium/src/base/path_service.h b/ipc/chromium/src/base/path_service.h
+index 86d6a4a..41a7d56 100644
+--- a/ipc/chromium/src/base/path_service.h
++++ b/ipc/chromium/src/base/path_service.h
+@@ -48,13 +48,21 @@ class PathService {
+   //
+   // WARNING: Consumers of PathService::Get may expect paths to be constant
+   // over the lifetime of the app, so this method should be used with caution.
++#ifdef OS_SOLARIS  
++  static bool Override(int key, const FilePath& path);
++#else
+   static bool Override(int key, const std::wstring& path);
++#endif
+ 
+   // Return whether a path was overridden.
+   static bool IsOverridden(int key);
+ 
+   // Sets the current directory.
++#ifdef OS_SOLARIS  
++  static bool SetCurrentDirectory(const FilePath& current_directory);
++#else  
+   static bool SetCurrentDirectory(const std::wstring& current_directory);
++#endif
+ 
+   // To extend the set of supported keys, you can register a path provider,
+   // which is just a function mirroring PathService::Get.  The ProviderFunc
+diff --git a/ipc/chromium/src/base/pickle.cc b/ipc/chromium/src/base/pickle.cc
+index da42457..214caee 100644
+--- a/ipc/chromium/src/base/pickle.cc
++++ b/ipc/chromium/src/base/pickle.cc
+@@ -8,6 +8,7 @@
+ 
+ #include <limits>
+ #include <string>
++#include <algorithm>
+ 
+ //------------------------------------------------------------------------------
+ 
+@@ -102,29 +103,23 @@ bool Pickle::ReadBool(void** iter, bool* result) const {
+ 
+ bool Pickle::ReadInt16(void** iter, int16* result) const {
+   DCHECK(iter);
+-  if (!*iter)
+-    *iter = const_cast<char*>(payload());
+ 
+-  if (!IteratorHasRoomFor(*iter, sizeof(*result)))
++  int tmp;
++  if (!ReadInt(iter, &tmp))
+     return false;
+ 
+-  memcpy(result, *iter, sizeof(*result));
+-
+-  UpdateIter(iter, sizeof(*result));
++  *result = tmp;
+   return true;
+ }
+ 
+ bool Pickle::ReadUInt16(void** iter, uint16* result) const {
+   DCHECK(iter);
+-  if (!*iter)
+-    *iter = const_cast<char*>(payload());
+ 
+-  if (!IteratorHasRoomFor(*iter, sizeof(*result)))
++  int tmp;
++  if (!ReadInt(iter, &tmp))
+     return false;
+ 
+-  memcpy(result, *iter, sizeof(*result));
+-
+-  UpdateIter(iter, sizeof(*result));
++  *result = tmp;
+   return true;
+ }
+ 
+diff --git a/ipc/chromium/src/base/platform_file_posix.cc b/ipc/chromium/src/base/platform_file_posix.cc
+index 57cb6e3..5dad416 100644
+--- a/ipc/chromium/src/base/platform_file_posix.cc
++++ b/ipc/chromium/src/base/platform_file_posix.cc
+@@ -8,6 +8,8 @@
+ #include <errno.h>
+ #ifdef ANDROID
+ #include <linux/stat.h>
++#elif defined(OS_SOLARIS)
++#include <sys/stat.h>
+ #endif
+ 
+ #include "base/logging.h"
+diff --git a/ipc/chromium/src/base/platform_thread.h b/ipc/chromium/src/base/platform_thread.h
+index 4a2d507..8a124f6 100644
+--- a/ipc/chromium/src/base/platform_thread.h
++++ b/ipc/chromium/src/base/platform_thread.h
+@@ -22,7 +22,7 @@ typedef void* PlatformThreadHandle;  // HANDLE
+ #elif defined(OS_POSIX)
+ #include <pthread.h>
+ typedef pthread_t PlatformThreadHandle;
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include <unistd.h>
+ typedef pid_t PlatformThreadId;
+ #elif defined(OS_MACOSX)
+diff --git a/ipc/chromium/src/base/shared_memory_posix.cc b/ipc/chromium/src/base/shared_memory_posix.cc
+index 3a26550..006672e 100644
+--- a/ipc/chromium/src/base/shared_memory_posix.cc
++++ b/ipc/chromium/src/base/shared_memory_posix.cc
+@@ -136,9 +136,15 @@ bool SharedMemory::FilenameForMemoryName(const std::wstring &memname,
+   if (file_util::GetShmemTempDir(&temp_dir) == false)
+     return false;
+ 
++#ifndef OS_SOLARIS    
+   mem_filename = UTF8ToWide(temp_dir.value());
+   file_util::AppendToPath(&mem_filename, L"com.google.chrome.shmem." + memname);
+   *filename = mem_filename;
++#else  
++  *filename = (temp_dir.Append("com.google.chrome.shmem." +
++                               WideToUTF8(memname))).ToWStringHack();
++#endif                               
++
+   return true;
+ }
+ 
+@@ -256,7 +262,7 @@ bool SharedMemory::Unmap() {
+   if (memory_ == NULL)
+     return false;
+ 
+-  munmap(memory_, max_size_);
++  munmap((caddr_t)memory_, max_size_);
+   memory_ = NULL;
+   max_size_ = 0;
+   return true;
+diff --git a/ipc/chromium/src/base/stack_container.h b/ipc/chromium/src/base/stack_container.h
+index 1b325b1..379a614 100644
+--- a/ipc/chromium/src/base/stack_container.h
++++ b/ipc/chromium/src/base/stack_container.h
+@@ -96,12 +96,17 @@ class StackAllocator : public std::allocator<T> {
+   // and the size requested fits. Otherwise, fall through to the standard
+   // allocator.
+   pointer allocate(size_type n, void* hint = 0) {
++#ifdef COMPILER_SUNPRO  
++    if (source_ != NULL && !source_->used_stack_buffer_
++        && (n/sizeof(T)) <= stack_capacity) {
++#else
+     if (source_ != NULL && !source_->used_stack_buffer_
+         && n <= stack_capacity) {
++#endif
+       source_->used_stack_buffer_ = true;
+       return source_->stack_buffer();
+     } else {
+-      return std::allocator<T>::allocate(n, hint);
++      return (pointer)std::allocator<T>::allocate(n, hint);
+     }
+   }
+ 
+diff --git a/ipc/chromium/src/base/string16.h b/ipc/chromium/src/base/string16.h
+index 28cf3d8..80d5e68 100644
+--- a/ipc/chromium/src/base/string16.h
++++ b/ipc/chromium/src/base/string16.h
+@@ -162,7 +162,9 @@ struct string16_char_traits {
+ //
+ // TODO(mark): File this bug with Apple and update this note with a bug number.
+ 
++#ifndef COMPILER_SUNPRO
+ extern template class std::basic_string<char16, base::string16_char_traits>;
++#endif
+ 
+ typedef std::basic_string<char16, base::string16_char_traits> string16;
+ 
+diff --git a/ipc/chromium/src/base/string_piece.h b/ipc/chromium/src/base/string_piece.h
+index fe10806..ae3106d 100644
+--- a/ipc/chromium/src/base/string_piece.h
++++ b/ipc/chromium/src/base/string_piece.h
+@@ -113,8 +113,13 @@ class StringPiece {
+   static const size_type npos;
+   typedef const char* const_iterator;
+   typedef const char* iterator;
++#ifdef COMPILER_SUNPRO
++  typedef std::reverse_iterator<const_iterator, std::random_access_iterator_tag, const value_type> const_reverse_iterator;
++  typedef std::reverse_iterator<iterator, std::random_access_iterator_tag, value_type> reverse_iterator;
++#else
+   typedef std::reverse_iterator<const_iterator> const_reverse_iterator;
+   typedef std::reverse_iterator<iterator> reverse_iterator;
++#endif
+   iterator begin() const { return ptr_; }
+   iterator end() const { return ptr_ + length_; }
+   const_reverse_iterator rbegin() const {
+diff --git a/ipc/chromium/src/base/sys_info_posix.cc b/ipc/chromium/src/base/sys_info_posix.cc
+index 33ed0f7..b5bd350 100644
+--- a/ipc/chromium/src/base/sys_info_posix.cc
++++ b/ipc/chromium/src/base/sys_info_posix.cc
+@@ -96,7 +96,7 @@ std::wstring SysInfo::GetEnvVar(const wchar_t* var) {
+ 
+ // static
+ std::string SysInfo::OperatingSystemName() {
+-  utsname info;
++  struct utsname info;
+   if (uname(&info) < 0) {
+     NOTREACHED();
+     return "";
+@@ -106,7 +106,7 @@ std::string SysInfo::OperatingSystemName() {
+ 
+ // static
+ std::string SysInfo::OperatingSystemVersion() {
+-  utsname info;
++  struct utsname info;
+   if (uname(&info) < 0) {
+     NOTREACHED();
+     return "";
+@@ -116,7 +116,7 @@ std::string SysInfo::OperatingSystemVersion() {
+ 
+ // static
+ std::string SysInfo::CPUArchitecture() {
+-  utsname info;
++  struct utsname info;
+   if (uname(&info) < 0) {
+     NOTREACHED();
+     return "";
+diff --git a/ipc/chromium/src/base/time.h b/ipc/chromium/src/base/time.h
+index 0625bfb..a62f20d 100644
+--- a/ipc/chromium/src/base/time.h
++++ b/ipc/chromium/src/base/time.h
+@@ -62,6 +62,10 @@ class TimeDelta {
+     return delta_;
+   }
+ 
++#if defined(OS_POSIX)
++  struct timespec ToTimeSpec() const;
++#endif
++
+   // Returns the time delta in some unit. The F versions return a floating
+   // point value, the "regular" versions return a rounded-down value.
+   int InDays() const;
+@@ -224,6 +228,10 @@ class Time {
+   static Time FromDoubleT(double dt);
+   double ToDoubleT() const;
+ 
++#if defined(OS_POSIX)
++  struct timeval ToTimeVal() const;
++#endif
++
+ 
+ #if defined(OS_WIN)
+   static Time FromFileTime(FILETIME ft);
+diff --git a/ipc/chromium/src/base/tracked_objects.cc b/ipc/chromium/src/base/tracked_objects.cc
+index 7506df7..63cd557 100644
+--- a/ipc/chromium/src/base/tracked_objects.cc
++++ b/ipc/chromium/src/base/tracked_objects.cc
+@@ -804,7 +804,11 @@ void Comparator::SetSubgroupTiebreaker(Selector selector) {
+ }
+ 
+ void Comparator::ParseKeyphrase(const std::string key_phrase) {
++#if defined(COMPILER_SUNPRO)
++  static std::map<std::string, Selector> key_map;
++#else
+   static std::map<const std::string, Selector> key_map;
++#endif
+   static bool initialized = false;
+   if (!initialized) {
+     initialized = true;
+diff --git a/ipc/chromium/src/chrome/common/chrome_constants.cc b/ipc/chromium/src/chrome/common/chrome_constants.cc
+index 2ca8f0c..162b57f 100644
+--- a/ipc/chromium/src/chrome/common/chrome_constants.cc
++++ b/ipc/chromium/src/chrome/common/chrome_constants.cc
+@@ -14,7 +14,7 @@ namespace chrome {
+ // for system strings only. UI changes should be made in the GRD.
+ #if defined(OS_WIN)
+ const wchar_t kBrowserProcessExecutableName[] = L"chrome.exe";
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ const wchar_t kBrowserProcessExecutableName[] = L"chrome";
+ #elif defined(OS_MACOSX)
+ const wchar_t kBrowserProcessExecutableName[] =
+@@ -26,7 +26,7 @@ const wchar_t kBrowserProcessExecutableName[] =
+ #endif  // OS_*
+ #if defined(OS_WIN)
+ const wchar_t kBrowserProcessExecutablePath[] = L"chrome.exe";
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ const wchar_t kBrowserProcessExecutablePath[] = L"chrome";
+ #elif defined(OS_MACOSX)
+ const wchar_t kBrowserProcessExecutablePath[] =
+diff --git a/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc b/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc
+index 49d8199..006b483 100644
+--- a/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc
++++ b/ipc/chromium/src/chrome/common/file_descriptor_set_posix.cc
+@@ -4,6 +4,10 @@
+ 
+ #include "chrome/common/file_descriptor_set_posix.h"
+ 
++#if defined(OS_SOLARIS)
++#include <unistd.h>
++#endif
++
+ #include "base/eintr_wrapper.h"
+ #include "base/logging.h"
+ 
+diff --git a/ipc/chromium/src/chrome/common/ipc_channel_posix.h b/ipc/chromium/src/chrome/common/ipc_channel_posix.h
+index 1302d58..0d450d6 100644
+--- a/ipc/chromium/src/chrome/common/ipc_channel_posix.h
++++ b/ipc/chromium/src/chrome/common/ipc_channel_posix.h
+@@ -92,7 +92,7 @@ class Channel::ChannelImpl : public MessageLoopForIO::Watcher {
+   };
+ 
+   // This is a control message buffer large enough to hold kMaxReadFDs
+-#if defined(OS_MACOSX)
++#if defined(OS_MACOSX) || defined(OS_SOLARIS)
+   // TODO(agl): OSX appears to have non-constant CMSG macros!
+   char input_cmsg_buf_[1024];
+ #else
+diff --git a/ipc/chromium/src/chrome/common/native_web_keyboard_event.h b/ipc/chromium/src/chrome/common/native_web_keyboard_event.h
+index 0400b41..a462baf 100644
+--- a/ipc/chromium/src/chrome/common/native_web_keyboard_event.h
++++ b/ipc/chromium/src/chrome/common/native_web_keyboard_event.h
+@@ -16,7 +16,7 @@
+ #else
+ class NSEvent;
+ #endif  // __OBJC__
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include <gdk/gdk.h>
+ #endif
+ 
+@@ -29,8 +29,8 @@ struct NativeWebKeyboardEvent : public WebKit::WebKeyboardEvent {
+   NativeWebKeyboardEvent(HWND hwnd, UINT message, WPARAM wparam, LPARAM lparam);
+ #elif defined(OS_MACOSX)
+   explicit NativeWebKeyboardEvent(NSEvent *event);
+-#elif defined(OS_LINUX)
+-  explicit NativeWebKeyboardEvent(const GdkEventKey* event);
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
++  explicit NativeWebKeyboardEvent(c onst GdkEventKey* event);
+ #endif
+ 
+   NativeWebKeyboardEvent(const NativeWebKeyboardEvent& event);
+@@ -42,7 +42,7 @@ struct NativeWebKeyboardEvent : public WebKit::WebKeyboardEvent {
+   MSG os_event;
+ #elif defined(OS_MACOSX)
+   NSEvent* os_event;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   GdkEventKey* os_event;
+ #endif
+ };
+diff --git a/ipc/chromium/src/chrome/common/temp_scaffolding_stubs.cc b/ipc/chromium/src/chrome/common/temp_scaffolding_stubs.cc
+index b4d87c8..e49e9e4 100644
+--- a/ipc/chromium/src/chrome/common/temp_scaffolding_stubs.cc
++++ b/ipc/chromium/src/chrome/common/temp_scaffolding_stubs.cc
+@@ -121,7 +121,7 @@ void AutomationProvider::OnMessageFromExternalHost(
+ 
+ //--------------------------------------------------------------------------
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+ bool ShellIntegration::SetAsDefaultBrowser() {
+   NOTIMPLEMENTED();
+   return true;
+diff --git a/ipc/chromium/src/chrome/common/transport_dib.h b/ipc/chromium/src/chrome/common/transport_dib.h
+index 33c0649..c690f89 100644
+--- a/ipc/chromium/src/chrome/common/transport_dib.h
++++ b/ipc/chromium/src/chrome/common/transport_dib.h
+@@ -13,7 +13,7 @@
+ 
+ #if defined(OS_WIN)
+ #include <windows.h>
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include "chrome/common/x11_util.h"
+ #endif
+ 
+@@ -70,7 +70,7 @@ class TransportDIB {
+   typedef base::SharedMemoryHandle Handle;
+   // On Mac, the inode number of the backing file is used as an id.
+   typedef base::SharedMemoryId Id;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   typedef int Handle;  // These two ints are SysV IPC shared memory keys
+   typedef int Id;
+ #endif
+@@ -100,7 +100,7 @@ class TransportDIB {
+   // wire to give this transport DIB to another process.
+   Handle handle() const;
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   // Map the shared memory into the X server and return an id for the shared
+   // segment.
+   XID MapToX(Display* connection);
+@@ -112,7 +112,7 @@ class TransportDIB {
+   explicit TransportDIB(base::SharedMemoryHandle dib);
+   base::SharedMemory shared_memory_;
+   uint32 sequence_num_;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   int key_;  // SysV shared memory id
+   void* address_;  // mapped address
+   XID x_shm_;  // X id for the shared segment
+diff --git a/ipc/chromium/src/third_party/libevent/linux/config.h b/ipc/chromium/src/third_party/libevent/linux/config.h
+index 9af92cc..fd92ec9 100644
+--- a/ipc/chromium/src/third_party/libevent/linux/config.h
++++ b/ipc/chromium/src/third_party/libevent/linux/config.h
+@@ -16,11 +16,13 @@
+ /* Define to 1 if you have the <dlfcn.h> header file. */
+ #define HAVE_DLFCN_H 1
+ 
++#ifndef OS_SOLARIS
+ /* Define if your system supports the epoll system calls */
+ #define HAVE_EPOLL 1
+ 
+ /* Define to 1 if you have the `epoll_ctl' function. */
+ #define HAVE_EPOLL_CTL 1
++#endif
+ 
+ /* Define if your system supports event ports */
+ /* #undef HAVE_EVENT_PORTS */
+diff --git a/ipc/glue/BrowserProcessSubThread.cpp b/ipc/glue/BrowserProcessSubThread.cpp
+index e51db3c..6c0eb32 100644
+--- a/ipc/glue/BrowserProcessSubThread.cpp
++++ b/ipc/glue/BrowserProcessSubThread.cpp
+@@ -57,7 +57,7 @@ static const char* kBrowserThreadNames[BrowserProcessSubThread::ID_COUNT] = {
+ //  "Chrome_FileThread",  // FILE
+ //  "Chrome_DBThread",  // DB
+ //  "Chrome_HistoryThread",  // HISTORY
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   "Gecko_Background_X11Thread",  // BACKGROUND_X11
+ #endif
+ };
+@@ -68,7 +68,7 @@ BrowserProcessSubThread* BrowserProcessSubThread::sBrowserThreads[ID_COUNT] = {
+ //  NULL,  // FILE
+ //  NULL,  // DB
+ //  NULL,  // HISTORY
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   NULL,  // BACKGROUND_X11
+ #endif
+ };
+diff --git a/ipc/glue/BrowserProcessSubThread.h b/ipc/glue/BrowserProcessSubThread.h
+index 68c8973..26bf0b3 100644
+--- a/ipc/glue/BrowserProcessSubThread.h
++++ b/ipc/glue/BrowserProcessSubThread.h
+@@ -60,7 +60,7 @@ public:
+       //FILE,
+       //DB,
+       //HISTORY,
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+       // This thread has a second connection to the X server and is used
+       // to process UI requests when routing the request to the UI
+       // thread would risk deadlock.
+diff --git a/ipc/ipdl/test/cxx/TestShutdown.cpp b/ipc/ipdl/test/cxx/TestShutdown.cpp
+index 217aabc..6fe4dbd 100644
+--- a/ipc/ipdl/test/cxx/TestShutdown.cpp
++++ b/ipc/ipdl/test/cxx/TestShutdown.cpp
+@@ -184,6 +184,8 @@ TestShutdownChild::RecvStart()
+         // detectors
+         _exit(0);
+     }
++
++    return false;
+ }
+ 
+ void
+diff --git a/ipc/chromium/src/base/file_util_deprecated.h b/ipc/chromium/src/base/file_util_deprecated.h
+new file mode 100644
+index 0000000..9a8c5bf
+--- /dev/null
++++ b/ipc/chromium/src/base/file_util_deprecated.h
+@@ -0,0 +1,74 @@
++// Copyright (c) 2010 The Chromium Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style license that can be
++// found in the LICENSE file.
++
++// We're trying to transition away from paths as wstrings into using
++// FilePath objects.  This file contains declarations of deprecated
++// functions.  By hiding them here rather in the main header, we hope
++// to discourage callers.
++
++// See file_util.h for documentation on all functions that don't have
++// documentation here.
++
++#ifndef BASE_FILE_UTIL_DEPRECATED_H_
++#define BASE_FILE_UTIL_DEPRECATED_H_
++
++#include "build/build_config.h"
++
++namespace file_util {
++
++bool EndsWithSeparator(std::wstring* path);
++bool EndsWithSeparator(const std::wstring& path);
++
++// Use FilePath::DirName instead.
++void UpOneDirectory(std::wstring* dir);
++// Use FilePath::DirName instead.
++void UpOneDirectoryOrEmpty(std::wstring* dir);
++
++// Use FilePath::BaseName instead.
++std::wstring GetFilenameFromPath(const std::wstring& path);
++
++// Use FilePath::Extension instead.
++FilePath::StringType GetFileExtensionFromPath(const FilePath& path);
++std::wstring GetFileExtensionFromPath(const std::wstring& path);
++
++bool AbsolutePath(std::wstring* path);
++
++// Use FilePath::InsertBeforeExtension.
++void InsertBeforeExtension(FilePath* path, const FilePath::StringType& suffix);
++
++// Use FilePath::ReplaceExtension.
++void ReplaceExtension(FilePath* file_name,
++                      const FilePath::StringType& extension);
++
++bool Delete(const std::wstring& path, bool recursive);
++bool CopyDirectory(const std::wstring& from_path, const std::wstring& to_path,
++                   bool recursive);
++bool ReadFileToString(const std::wstring& path, std::string* contents);
++FILE* OpenFile(const std::string& filename, const char* mode);
++FILE* OpenFile(const std::wstring& filename, const char* mode);
++int ReadFile(const std::wstring& filename, char* data, int size);
++int WriteFile(const std::wstring& filename, const char* data, int size);
++
++// Functions successfully deprecated on non-Windows, but Win-specific
++// callers remain.
++#if defined(OS_WIN)
++// Returns the directory component of a path, without the trailing
++// path separator, or an empty string on error. The function does not
++// check for the existence of the path, so if it is passed a directory
++// without the trailing \, it will interpret the last component of the
++// path as a file and chomp it. This does not support relative paths.
++// Examples:
++// path == "C:\pics\jojo.jpg",     returns "C:\pics"
++// path == "C:\Windows\system32\", returns "C:\Windows\system32"
++// path == "C:\Windows\system32",  returns "C:\Windows"
++// Deprecated. Use FilePath's DirName() instead.
++std::wstring GetDirectoryFromPath(const std::wstring& path);
++
++// Appends new_ending to path, adding a separator between the two if necessary.
++void AppendToPath(std::wstring* path, const std::wstring& new_ending);
++#endif
++
++}
++
++#endif  // BASE_FILE_UTIL_DEPRECATED_H_
+diff --git a/ipc/chromium/src/third_party/libevent/solaris/config.h b/ipc/chromium/src/third_party/libevent/solaris/config.h
+new file mode 100644
+index 0000000..2e2a78a
+--- /dev/null
++++ b/ipc/chromium/src/third_party/libevent/solaris/config.h
+@@ -0,0 +1,254 @@
++/* config.h.  Generated from config.h.in by configure.  */
++/* config.h.in.  Generated from configure.in by autoheader.  */
++
++/* Define if clock_gettime is available in libc */
++#define DNS_USE_CPU_CLOCK_FOR_ID 1
++
++/* Define is no secure id variant is available */
++/* #undef DNS_USE_GETTIMEOFDAY_FOR_ID */
++
++/* Define to 1 if you have the `clock_gettime' function. */
++#define HAVE_CLOCK_GETTIME 1
++
++/* Define if /dev/poll is available */
++#define HAVE_DEVPOLL 1
++
++/* Define to 1 if you have the <dlfcn.h> header file. */
++#define HAVE_DLFCN_H 1
++
++/* Define if your system supports the epoll system calls */
++/* #undef HAVE_EPOLL */
++
++/* Define to 1 if you have the `epoll_ctl' function. */
++/* #undef HAVE_EPOLL_CTL */
++
++/* Define if your system supports event ports */
++#define HAVE_EVENT_PORTS 1
++
++/* Define to 1 if you have the `fcntl' function. */
++#define HAVE_FCNTL 1
++
++/* Define to 1 if you have the <fcntl.h> header file. */
++#define HAVE_FCNTL_H 1
++
++/* Define to 1 if you have the `getaddrinfo' function. */
++#define HAVE_GETADDRINFO 1
++
++/* Define to 1 if you have the `getnameinfo' function. */
++#define HAVE_GETNAMEINFO 1
++
++/* Define to 1 if you have the `gettimeofday' function. */
++#define HAVE_GETTIMEOFDAY 1
++
++/* Define to 1 if you have the `inet_ntop' function. */
++#define HAVE_INET_NTOP 1
++
++/* Define to 1 if you have the <inttypes.h> header file. */
++#define HAVE_INTTYPES_H 1
++
++/* Define to 1 if you have the `kqueue' function. */
++/* #undef HAVE_KQUEUE */
++
++/* Define to 1 if you have the `nsl' library (-lnsl). */
++#define HAVE_LIBNSL 1
++
++/* Define to 1 if you have the `resolv' library (-lresolv). */
++#define HAVE_LIBRESOLV 1
++
++/* Define to 1 if you have the `rt' library (-lrt). */
++#define HAVE_LIBRT 1
++
++/* Define to 1 if you have the `socket' library (-lsocket). */
++#define HAVE_LIBSOCKET 1
++
++/* Define to 1 if you have the <memory.h> header file. */
++#define HAVE_MEMORY_H 1
++
++/* Define to 1 if you have the <netinet/in6.h> header file. */
++/* #undef HAVE_NETINET_IN6_H */
++
++/* Define to 1 if you have the `poll' function. */
++#define HAVE_POLL 1
++
++/* Define to 1 if you have the <poll.h> header file. */
++#define HAVE_POLL_H 1
++
++/* Define to 1 if you have the `port_create' function. */
++#define HAVE_PORT_CREATE 1
++
++/* Define to 1 if you have the <port.h> header file. */
++#define HAVE_PORT_H 1
++
++/* Define to 1 if you have the `select' function. */
++#define HAVE_SELECT 1
++
++/* Define if F_SETFD is defined in <fcntl.h> */
++#define HAVE_SETFD 1
++
++/* Define to 1 if you have the `sigaction' function. */
++#define HAVE_SIGACTION 1
++
++/* Define to 1 if you have the `signal' function. */
++#define HAVE_SIGNAL 1
++
++/* Define to 1 if you have the <signal.h> header file. */
++#define HAVE_SIGNAL_H 1
++
++/* Define to 1 if you have the <stdarg.h> header file. */
++#define HAVE_STDARG_H 1
++
++/* Define to 1 if you have the <stdint.h> header file. */
++#define HAVE_STDINT_H 1
++
++/* Define to 1 if you have the <stdlib.h> header file. */
++#define HAVE_STDLIB_H 1
++
++/* Define to 1 if you have the <strings.h> header file. */
++#define HAVE_STRINGS_H 1
++
++/* Define to 1 if you have the <string.h> header file. */
++#define HAVE_STRING_H 1
++
++/* Define to 1 if you have the `strlcpy' function. */
++#define HAVE_STRLCPY 1
++
++/* Define to 1 if you have the `strsep' function. */
++#define HAVE_STRSEP 1
++
++/* Define to 1 if you have the `strtok_r' function. */
++#define HAVE_STRTOK_R 1
++
++/* Define to 1 if you have the `strtoll' function. */
++#define HAVE_STRTOLL 1
++
++/* Define to 1 if the system has the type `struct in6_addr'. */
++#define HAVE_STRUCT_IN6_ADDR 1
++
++/* Define to 1 if you have the <sys/devpoll.h> header file. */
++#define HAVE_SYS_DEVPOLL_H 1
++
++/* Define to 1 if you have the <sys/epoll.h> header file. */
++/* #undef HAVE_SYS_EPOLL_H */
++
++/* Define to 1 if you have the <sys/event.h> header file. */
++/* #undef HAVE_SYS_EVENT_H */
++
++/* Define to 1 if you have the <sys/ioctl.h> header file. */
++#define HAVE_SYS_IOCTL_H 1
++
++/* Define to 1 if you have the <sys/param.h> header file. */
++#define HAVE_SYS_PARAM_H 1
++
++/* Define to 1 if you have the <sys/queue.h> header file. */
++#define HAVE_SYS_QUEUE_H 1
++
++/* Define to 1 if you have the <sys/select.h> header file. */
++#define HAVE_SYS_SELECT_H 1
++
++/* Define to 1 if you have the <sys/socket.h> header file. */
++#define HAVE_SYS_SOCKET_H 1
++
++/* Define to 1 if you have the <sys/stat.h> header file. */
++#define HAVE_SYS_STAT_H 1
++
++/* Define to 1 if you have the <sys/time.h> header file. */
++#define HAVE_SYS_TIME_H 1
++
++/* Define to 1 if you have the <sys/types.h> header file. */
++#define HAVE_SYS_TYPES_H 1
++
++/* Define if TAILQ_FOREACH is defined in <sys/queue.h> */
++#define HAVE_TAILQFOREACH 1
++
++/* Define if timeradd is defined in <sys/time.h> */
++#define HAVE_TIMERADD 1
++
++/* Define if timerclear is defined in <sys/time.h> */
++#define HAVE_TIMERCLEAR 1
++
++/* Define if timercmp is defined in <sys/time.h> */
++#define HAVE_TIMERCMP 1
++
++/* Define if timerisset is defined in <sys/time.h> */
++#define HAVE_TIMERISSET 1
++
++/* Define to 1 if the system has the type `uint16_t'. */
++#define HAVE_UINT16_T 1
++
++/* Define to 1 if the system has the type `uint32_t'. */
++#define HAVE_UINT32_T 1
++
++/* Define to 1 if the system has the type `uint64_t'. */
++#define HAVE_UINT64_T 1
++
++/* Define to 1 if the system has the type `uint8_t'. */
++#define HAVE_UINT8_T 1
++
++/* Define to 1 if you have the <unistd.h> header file. */
++#define HAVE_UNISTD_H 1
++
++/* Define to 1 if you have the `vasprintf' function. */
++#define HAVE_VASPRINTF 1
++
++/* Define if kqueue works correctly with pipes */
++/* #undef HAVE_WORKING_KQUEUE */
++
++/* Name of package */
++#define PACKAGE "libevent"
++
++/* Define to the address where bug reports for this package should be sent. */
++#define PACKAGE_BUGREPORT ""
++
++/* Define to the full name of this package. */
++#define PACKAGE_NAME ""
++
++/* Define to the full name and version of this package. */
++#define PACKAGE_STRING ""
++
++/* Define to the one symbol short name of this package. */
++#define PACKAGE_TARNAME ""
++
++/* Define to the version of this package. */
++#define PACKAGE_VERSION ""
++
++/* The size of `int', as computed by sizeof. */
++#define SIZEOF_INT 4
++
++/* The size of `long', as computed by sizeof. */
++#define SIZEOF_LONG 4
++
++/* The size of `long long', as computed by sizeof. */
++#define SIZEOF_LONG_LONG 8
++
++/* The size of `short', as computed by sizeof. */
++#define SIZEOF_SHORT 2
++
++/* Define to 1 if you have the ANSI C header files. */
++#define STDC_HEADERS 1
++
++/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
++#define TIME_WITH_SYS_TIME 1
++
++/* Version number of package */
++#define VERSION "1.4.7-stable"
++
++/* Define to appropriate substitue if compiler doesnt have __func__ */
++/* #undef __func__ */
++
++/* Define to empty if `const' does not conform to ANSI C. */
++/* #undef const */
++
++/* Define to `__inline__' or `__inline' if that's what the C compiler
++   calls it, or to nothing if 'inline' is not supported under any name.  */
++#ifndef __cplusplus
++/* #undef inline */
++#endif
++
++/* Define to `int' if <sys/types.h> does not define. */
++/* #undef pid_t */
++
++/* Define to `unsigned int' if <sys/types.h> does not define. */
++/* #undef size_t */
++
++/* Define to unsigned int if you dont have it */
++/* #undef socklen_t */
+diff -r 9f8e09d29a0d ipc/chromium/chromium-config.mk
+--- a/ipc/chromium/chromium-config.mk	Fri Apr 29 10:03:40 2011 +1200
++++ b/ipc/chromium/chromium-config.mk	Thu Apr 28 15:35:31 2011 -0700
+@@ -95,6 +95,21 @@
+ 
+ else # } {
+ 
++ifeq ($(OS_ARCH),SunOS) # {
++
++OS_SOLARIS = 1
++OS_POSIX = 1
++
++DEFINES += \
++  -DOS_SOLARIS=1 \
++  -DOS_POSIX=1 \
++  $(NULL)
++
++# NB: to stop gcc warnings about exporting template instantiation
++OS_CXXFLAGS := $(filter-out -pedantic,$(OS_CXXFLAGS))
++
++else # } {
++
+ OS_LINUX = 1
+ OS_POSIX = 1
+ 
+@@ -108,4 +123,5 @@
+ 
+ endif # }
+ endif # }
++endif # }
+ 
+diff --git a/ipc/chromium/src/base/string_util.cc b/ipc/chromium/src/base/string_util.cc
+--- a/ipc/chromium/src/base/string_util.cc
++++ b/ipc/chromium/src/base/string_util.cc
+@@ -498,32 +498,56 @@ std::wstring CollapseWhitespace(const st
+   }
+ 
+   result.resize(chars_written);
+   return result;
+ }
+ 
+ std::string WideToASCII(const std::wstring& wide) {
+   DCHECK(IsStringASCII(wide));
++#ifdef COMPILER_SUNPRO
++  std::string str(wide.length(), ' ');
++  std::copy(wide.begin(), wide.end(), str.begin());
++  return str;
++#else
+   return std::string(wide.begin(), wide.end());
++#endif
+ }
+ 
+ std::wstring ASCIIToWide(const std::string& ascii) {
+   DCHECK(IsStringASCII(ascii));
++#ifdef COMPILER_SUNPRO
++  std::wstring wstr(ascii.length(), L' ');
++  std::copy(ascii.begin(), ascii.end(), wstr.begin());
++  return wstr;
++#else
+   return std::wstring(ascii.begin(), ascii.end());
++#endif
+ }
+ 
+ std::string UTF16ToASCII(const string16& utf16) {
+   DCHECK(IsStringASCII(utf16));
++#ifdef COMPILER_SUNPRO
++  std::string str(utf16.length(), ' ');
++  std::copy(utf16.begin(), utf16.end(), str.begin());
++  return str;
++#else
+   return std::string(utf16.begin(), utf16.end());
++#endif
+ }
+ 
+ string16 ASCIIToUTF16(const std::string& ascii) {
+   DCHECK(IsStringASCII(ascii));
++#ifdef COMPILER_SUNPRO
++  string16 str(ascii.length(), ' ');
++  std::copy(ascii.begin(), ascii.end(), str.begin());
++  return str;
++#else
+   return string16(ascii.begin(), ascii.end());
++#endif
+ }
+ 
+ // Latin1 is just the low range of Unicode, so we can copy directly to convert.
+ bool WideToLatin1(const std::wstring& wide, std::string* latin1) {
+   std::string output;
+   output.resize(wide.size());
+   latin1->clear();
+   for (size_t i = 0; i < wide.size(); i++) {
+@@ -730,17 +754,17 @@ bool LowerCaseEqualsASCII(std::string::c
+ }
+ 
+ bool LowerCaseEqualsASCII(std::wstring::const_iterator a_begin,
+                           std::wstring::const_iterator a_end,
+                           const char* b) {
+   return DoLowerCaseEqualsASCII(a_begin, a_end, b);
+ }
+ 
+-#ifndef ANDROID
++#if !defined(COMPILER_SUNPRO) && !defined(ANDROID)
+ bool LowerCaseEqualsASCII(const char* a_begin,
+                           const char* a_end,
+                           const char* b) {
+   return DoLowerCaseEqualsASCII(a_begin, a_end, b);
+ }
+ bool LowerCaseEqualsASCII(const wchar_t* a_begin,
+                           const wchar_t* a_end,
+                           const char* b) {
+diff --git a/ipc/chromium/src/base/port.h b/ipc/chromium/src/base/port.h
+--- a/ipc/chromium/src/base/port.h
++++ b/ipc/chromium/src/base/port.h
+@@ -40,24 +40,24 @@ namespace base {
+ // for this purpose.  MSVC does not provide va_copy, so define an
+ // implementation here.  It is not guaranteed that assignment is a copy, so the
+ // StringUtil.VariableArgsFunc unit test tests this capability.
+ 
+ // The C standard says that va_copy is a "macro", not a function.  Trying to 
+ // use va_list as ref args to a function, as above, breaks some machines.
+ #  if defined(COMPILER_GCC)
+ #    define base_va_copy(_a, _b) ::va_copy(_a, _b)
+-#  elif defined(COMPILER_MSVC)
++#  elif defined(COMPILER_MSVC) || defined(COMPILER_SUNPRO)
+ #    define base_va_copy(_a, _b) (_a = _b)
+ #  else
+ #    error No va_copy for your compiler
+ #  endif
+ 
+ }  // namespace base
+ 
+ // Define an OS-neutral wrapper for shared library entry points
+ #if defined(OS_WIN)
+ #define API_CALL __stdcall
+-#elif defined(OS_LINUX) || defined(OS_MACOSX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS) || defined(OS_MACOSX)
+ #define API_CALL
+ #endif
+ 
+ #endif  // BASE_PORT_H_
+diff --git a/ipc/chromium/src/base/time_posix.cc b/ipc/chromium/src/base/time_posix.cc
+--- a/ipc/chromium/src/base/time_posix.cc
++++ b/ipc/chromium/src/base/time_posix.cc
+@@ -62,11 +62,13 @@
+   timestruct.tm_wday   = exploded.day_of_week;  // mktime/timegm ignore this
+   timestruct.tm_yday   = 0;     // mktime/timegm ignore this
+   timestruct.tm_isdst  = -1;    // attempt to figure it out
++#ifndef OS_SOLARIS
+   timestruct.tm_gmtoff = 0;     // not a POSIX field, so mktime/timegm ignore
+   timestruct.tm_zone   = NULL;  // not a POSIX field, so mktime/timegm ignore
+-
++#endif
++  
+   time_t seconds;
+-#ifdef ANDROID
++#if defined(ANDROID) || defined(OS_SOLARIS)
+     seconds = mktime(&timestruct);
+ #else
+   if (is_local)
+@@ -164,7 +166,7 @@
+   // With numer and denom = 1 (the expected case), the 64-bit absolute time
+   // reported in nanoseconds is enough to last nearly 585 years.
+ 
+-#elif defined(__OpenBSD__) || defined(OS_POSIX) && \
++#elif defined(__OpenBSD__) || defined(OS_SOLARIS) || defined(OS_POSIX) && \
+       defined(_POSIX_MONOTONIC_CLOCK) && _POSIX_MONOTONIC_CLOCK >= 0
+ 
+   struct timespec ts;
+@@ -189,4 +191,25 @@
+   return Now();
+ }
+ 
++struct timespec TimeDelta::ToTimeSpec() const {
++  int64 microseconds = InMicroseconds();
++  time_t seconds = 0;
++  if (microseconds >= Time::kMicrosecondsPerSecond) {
++    seconds = InSeconds();
++    microseconds -= seconds * Time::kMicrosecondsPerSecond;
++  }
++  struct timespec result =
++      {seconds,
++       microseconds * Time::kNanosecondsPerMicrosecond};
++  return result;
++}
++
++struct timeval Time::ToTimeVal() const {
++  struct timeval result;
++  int64 us = us_ - kTimeTToMicrosecondsOffset;
++  result.tv_sec = us / Time::kMicrosecondsPerSecond;
++  result.tv_usec = us % Time::kMicrosecondsPerSecond;
++  return result;
++}
++
+ }  // namespace base
+diff --git a/ipc/chromium/src/build/build_config.h b/ipc/chromium/src/build/build_config.h
+--- a/ipc/chromium/src/build/build_config.h
++++ b/ipc/chromium/src/build/build_config.h
+@@ -4,9 +4,9 @@
+ 
+ // This file adds defines about the platform we're currently building on.
+ //  Operating System:
+-//    OS_WIN / OS_MACOSX / OS_LINUX / OS_POSIX (MACOSX or LINUX)
++//    OS_WIN / OS_MACOSX / OS_LINUX / OS_SOLARIS / OS_POSIX (MACOSX or LINUX)
+ //  Compiler:
+-//    COMPILER_MSVC / COMPILER_GCC
++//    COMPILER_MSVC / COMPILER_GCC / COMPILER_SUNPRO
+ //  Processor:
+ //    ARCH_CPU_X86 / ARCH_CPU_X86_64 / ARCH_CPU_X86_FAMILY (X86 or X86_64)
+ //    ARCH_CPU_32_BITS / ARCH_CPU_64_BITS
+@@ -21,6 +21,8 @@
+ #define OS_LINUX 1
+ #elif defined(__OpenBSD__)
+ #define OS_OPENBSD 1
++#elif defined(__sun__) || defined(__sun)
++#define OS_SOLARIS 1
+ #elif defined(_WIN32)
+ #define OS_WIN 1
+ #else
+@@ -29,13 +31,15 @@
+ 
+ // For access to standard POSIX features, use OS_POSIX instead of a more
+ // specific macro.
+-#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_OPENBSD)
++#if defined(OS_MACOSX) || defined(OS_LINUX) || defined(OS_OPENBSD) || defined(OS_SOLARIS)
+ #define OS_POSIX 1
+ #endif
+ 
+ // Compiler detection.
+ #if defined(__GNUC__)
+ #define COMPILER_GCC 1
++#elif defined(__SUNPRO_C) || defined(__SUNPRO_CC)
++#define COMPILER_SUNPRO 1
+ #elif defined(_MSC_VER)
+ #define COMPILER_MSVC 1
+ #else
+@@ -46,11 +50,11 @@
+ //   http://msdn.microsoft.com/en-us/library/b0084kay.aspx
+ //   http://www.agner.org/optimize/calling_conventions.pdf
+ //   or with gcc, run: "echo | gcc -E -dM -"
+-#if defined(_M_X64) || defined(__x86_64__)
++#if defined(_M_X64) || defined(__x86_64__) || defined(__x86_64)
+ #define ARCH_CPU_X86_FAMILY 1
+ #define ARCH_CPU_X86_64 1
+ #define ARCH_CPU_64_BITS 1
+-#elif defined(_M_IX86) || defined(__i386__)
++#elif defined(_M_IX86) || defined(__i386__) || defined(__i386)
+ #define ARCH_CPU_X86_FAMILY 1
+ #define ARCH_CPU_X86 1
+ #define ARCH_CPU_32_BITS 1
+@@ -68,7 +72,7 @@
+ #elif defined(__sparc64__)
+ #define ARCH_CPU_SPARC 1
+ #define ARCH_CPU_64_BITS 1
+-#elif defined(__sparc__)
++#elif defined(__sparc__) || defined(__sparc)
+ #define ARCH_CPU_SPARC 1
+ #define ARCH_CPU_32_BITS 1
+ #elif defined(__mips__)
+diff --git a/ipc/chromium/src/chrome/common/ipc_message_utils.h b/ipc/chromium/src/chrome/common/ipc_message_utils.h
+--- a/ipc/chromium/src/chrome/common/ipc_message_utils.h
++++ b/ipc/chromium/src/chrome/common/ipc_message_utils.h
+@@ -195,7 +195,7 @@
+ };
+ #endif
+ 
+-#if !(defined(OS_MACOSX) || defined(OS_OPENBSD) || defined(OS_WIN) || (defined(OS_LINUX) && defined(ARCH_CPU_64_BITS)) || defined(ARCH_CPU_S390))
++#if !(defined(OS_MACOSX) || defined(OS_OPENBSD) || defined(OS_WIN) || ((defined(OS_LINUX) || defined(OS_SOLARIS)) && defined(ARCH_CPU_64_BITS)) || defined(ARCH_CPU_S390))
+ // There size_t is a synonym for |unsigned long| ...
+ template <>
+ struct ParamTraits<size_t> {
+@@ -228,7 +228,7 @@
+   }
+ };
+ 
+-#endif // if !(defined(OS_LINUX) && defined(ARCH_CPU_64_BITS))
++#endif // if !((defined(OS_LINUX) || defined(OS_SOLARIS))&& defined(ARCH_CPU_64_BITS))
+ 
+ #if defined(OS_MACOSX)
+ // On Linux size_t & uint32 can be the same type.
+@@ -248,7 +248,7 @@
+ };
+ #endif  // defined(OS_MACOSX)
+ 
+-#if !(defined(OS_LINUX) && defined(ARCH_CPU_64_BITS))
++#if !((defined(OS_LINUX) || defined(OS_SOLARIS)) && defined(ARCH_CPU_64_BITS))
+ // int64 is |long int| on 64-bit systems, uint64 is |unsigned long|
+ template <>
+ struct ParamTraits<int64> {
+@@ -277,7 +277,7 @@
+     l->append(StringPrintf(L"%" PRIu64L, p));
+   }
+ };
+-#endif // if !(defined(OS_LINUX) && defined(ARCH_CPU_64_BITS))
++#endif // if !((defined(OS_LINUX) || defined(OS_SOLARIS)) && defined(ARCH_CPU_64_BITS))
+ 
+ template <>
+ struct ParamTraits<double> {
+diff --git a/ipc/chromium/src/base/process_util_posix.cc b/ipc/chromium/src/base/process_util_posix.cc
+--- a/ipc/chromium/src/base/process_util_posix.cc
++++ b/ipc/chromium/src/base/process_util_posix.cc
+@@ -110,7 +110,7 @@
+ #if defined(ANDROID)
+   static const rlim_t kSystemDefaultMaxFds = 1024;
+   static const char kFDDir[] = "/proc/self/fd";
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   static const rlim_t kSystemDefaultMaxFds = 8192;
+   static const char kFDDir[] = "/proc/self/fd";
+ #elif defined(OS_MACOSX)
+@@ -197,7 +197,7 @@
+ // TODO(agl): Remove this function. It's fundamentally broken for multithreaded
+ // apps.
+ void SetAllFDsToCloseOnExec() {
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   const char fd_dir[] = "/proc/self/fd";
+ #elif defined(OS_MACOSX)
+   const char fd_dir[] = "/dev/fd";
+diff --git a/ipc/chromium/src/base/atomicops.h b/ipc/chromium/src/base/atomicops.h
+--- a/ipc/chromium/src/base/atomicops.h
++++ b/ipc/chromium/src/base/atomicops.h
+@@ -129,16 +129,20 @@ Atomic64 Release_Load(volatile const Ato
+ 
+ // Include our platform specific implementation.
+ #if defined(OS_WIN) && defined(ARCH_CPU_X86_FAMILY)
+ #include "base/atomicops_internals_x86_msvc.h"
+ #elif defined(OS_MACOSX) && defined(ARCH_CPU_X86_FAMILY)
+ #include "base/atomicops_internals_x86_macosx.h"
+ #elif defined(COMPILER_GCC) && defined(ARCH_CPU_X86_FAMILY)
+ #include "base/atomicops_internals_x86_gcc.h"
++#elif defined(COMPILER_SUNPRO) && defined(ARCH_CPU_X86_FAMILY)
++#define __asm__ asm
++#define __volatile__ volatile
++#include "base/atomicops_internals_x86_gcc.h"
+ #elif defined(COMPILER_GCC) && defined(ARCH_CPU_ARM_FAMILY)
+ #include "base/atomicops_internals_arm_gcc.h"
+ #elif defined(COMPILER_GCC) && defined(ARCH_CPU_MIPS)
+ #include "base/atomicops_internals_mips_gcc.h"
+ #else
+ #include "base/atomicops_internals_mutex.h"
+ #endif
+ 
+diff --git a/ipc/chromium/src/chrome/common/ipc_message.h b/ipc/chromium/src/chrome/common/ipc_message.h
+--- a/ipc/chromium/src/chrome/common/ipc_message.h
++++ b/ipc/chromium/src/chrome/common/ipc_message.h
+@@ -273,32 +273,40 @@ class Message : public Pickle {
+     REPLY_ERROR_BIT = 0x0010,
+     UNBLOCK_BIT     = 0x0020,
+     PUMPING_MSGS_BIT= 0x0040,
+     HAS_SENT_TIME_BIT = 0x0080,
+     RPC_BIT         = 0x0100,
+     COMPRESS_BIT    = 0x0200
+   };
+ 
++#if defined(COMPILER_SUNPRO)
++#pragma pack (2)
++#else
+ #pragma pack(push, 2)
++#endif
+   struct Header : Pickle::Header {
+     int32 routing;  // ID of the view that this message is destined for
+     msgid_t type;   // specifies the user-defined message type
+     uint32 flags;   // specifies control flags for the message
+ #if defined(OS_POSIX)
+     uint32 num_fds; // the number of descriptors included with this message
+ #endif
+     // For RPC messages, a guess at what the *other* side's stack depth is.
+     uint32 rpc_remote_stack_depth_guess;
+     // The actual local stack depth.
+     uint32 rpc_local_stack_depth;
+     // Sequence number
+     int32 seqno;
+   };
++#if defined(COMPILER_SUNPRO)
++#pragma pack (0)
++#else
+ #pragma pack(pop)
++#endif
+ 
+   Header* header() {
+     return headerT<Header>();
+   }
+   const Header* header() const {
+     return headerT<Header>();
+   }
+ 
+diff --git a/ipc/chromium/src/base/message_pump_libevent.cc b/ipc/chromium/src/base/message_pump_libevent.cc
+--- a/ipc/chromium/src/base/message_pump_libevent.cc
++++ b/ipc/chromium/src/base/message_pump_libevent.cc
+@@ -1,16 +1,20 @@
+ // Copyright (c) 2008 The Chromium Authors. All rights reserved.
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+ #include "base/message_pump_libevent.h"
+ 
+ #include <errno.h>
+ #include <fcntl.h>
++#if defined(OS_SOLARIS)
++#include <unistd.h>
++#include <sys/stat.h>
++#endif
+ #if defined(ANDROID) || defined(OS_POSIX)
+ #include <unistd.h>
+ #endif
+ 
+ #include "eintr_wrapper.h"
+ #include "base/logging.h"
+ #include "base/scoped_nsautorelease_pool.h"
+ #include "base/scoped_ptr.h"
+diff --git a/dom/plugins/ipc/PluginMessageUtils.cpp b/dom/plugins/ipc/PluginMessageUtils.cpp
+--- a/dom/plugins/ipc/PluginMessageUtils.cpp
++++ b/dom/plugins/ipc/PluginMessageUtils.cpp
+@@ -109,17 +109,17 @@ MediateRace(const RPCChannel::Message& p
+     // reflows
+     return RPCChannel::RRPParentWins;
+ 
+   default:
+     return RPCChannel::RRPChildWins;
+   }
+ }
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+ static string
+ ReplaceAll(const string& haystack, const string& needle, const string& with)
+ {
+   string munged = haystack;
+   string::size_type i = 0;
+ 
+   while (string::npos != (i = munged.find(needle, i))) {
+     munged.replace(i, needle.length(), with);
+@@ -128,28 +128,28 @@ ReplaceAll(const string& haystack, const
+ 
+   return munged;
+ }
+ #endif
+ 
+ string
+ MungePluginDsoPath(const string& path)
+ {
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   // https://bugzilla.mozilla.org/show_bug.cgi?id=519601
+   return ReplaceAll(path, "netscape", "netsc@pe");
+ #else
+   return path;
+ #endif
+ }
+ 
+ string
+ UnmungePluginDsoPath(const string& munged)
+ {
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+   return ReplaceAll(munged, "netsc@pe", "netscape");
+ #else
+   return munged;
+ #endif
+ }
+ 
+ 
+ PRLogModuleInfo* gPluginLog = PR_NewLogModule("IPCPlugins");
+diff --git a/ipc/chromium/src/base/platform_thread_posix.cc b/ipc/chromium/src/base/platform_thread_posix.cc
+--- a/ipc/chromium/src/base/platform_thread_posix.cc
++++ b/ipc/chromium/src/base/platform_thread_posix.cc
+@@ -13,16 +13,21 @@
+ #include <sys/syscall.h>
+ #if !defined(__FreeBSD__) && !defined(__NetBSD__) && !defined(__OpenBSD__) && !defined(__DragonFly__)
+ #include <sys/prctl.h>
+ #elif !defined(__NetBSD__)
+ #include <pthread_np.h>
+ #endif
+ #include <unistd.h>
+ #endif
++#if defined(OS_SOLARIS)
++#include <sys/syscall.h>
++#include <unistd.h>
++#include <thread.h>
++#endif
+ 
+ #if defined(OS_MACOSX)
+ namespace base {
+ void InitThreading();
+ }  // namespace
+ #endif
+ 
+ static void* ThreadFunc(void* closure) {
+@@ -38,16 +43,18 @@ PlatformThreadId PlatformThread::Current
+   // into the kernel.
+ #if defined(OS_MACOSX)
+   return mach_thread_self();
+ #elif defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+   // TODO(BSD): find a better thread ID
+   return (intptr_t)(pthread_self());
+ #elif defined(OS_LINUX)
+   return syscall(__NR_gettid);
++#elif defined(OS_SOLARIS)
++  return thr_self();
+ #endif
+ }
+ 
+ // static
+ void PlatformThread::YieldCurrentThread() {
+   sched_yield();
+ }
+ 
+@@ -66,16 +73,17 @@ void PlatformThread::Sleep(int duration_
+     sleep_time = remaining;
+ }
+ 
+ #ifndef OS_MACOSX
+ // Mac is implemented in platform_thread_mac.mm.
+ 
+ // static
+ void PlatformThread::SetName(const char* name) {
++#ifndef OS_SOLARIS
+   // On linux we can get the thread names to show up in the debugger by setting
+   // the process name for the LWP.  We don't want to do this for the main
+   // thread because that would rename the process, causing tools like killall
+   // to stop working.
+   if (PlatformThread::CurrentId() == getpid())
+     return;
+ 
+   // http://0pointer.de/blog/projects/name-your-threads.html
+@@ -85,16 +93,17 @@ void PlatformThread::SetName(const char*
+   // that it can set the name of threads other than the current thread.
+ #if defined(__FreeBSD__) || defined(__OpenBSD__) || defined(__DragonFly__)
+   pthread_set_name_np(pthread_self(), name);
+ #elif defined(__NetBSD__)
+   pthread_setname_np(pthread_self(), "%s", (void *)name);
+ #else
+   prctl(PR_SET_NAME, reinterpret_cast<uintptr_t>(name), 0, 0, 0); 
+ #endif
++#endif // !OS_SOLARIS
+ }
+ #endif // !OS_MACOSX
+ 
+ namespace {
+ 
+ bool CreateThread(size_t stack_size, bool joinable,
+                   PlatformThread::Delegate* delegate,
+                   PlatformThreadHandle* thread_handle) {
+diff --git a/dom/plugins/ipc/PluginModuleChild.cpp b/dom/plugins/ipc/PluginModuleChild.cpp
+--- a/dom/plugins/ipc/PluginModuleChild.cpp
++++ b/dom/plugins/ipc/PluginModuleChild.cpp
+@@ -191,17 +191,17 @@ PluginModuleChild::Init(const std::strin
+         return false;
+ 
+     memset((void*) &mFunctions, 0, sizeof(mFunctions));
+     mFunctions.size = sizeof(mFunctions);
+     mFunctions.version = (NP_VERSION_MAJOR << 8) | NP_VERSION_MINOR;
+ 
+     // TODO: use PluginPRLibrary here
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+     mShutdownFunc =
+         (NP_PLUGINSHUTDOWN) PR_FindFunctionSymbol(mLibrary, "NP_Shutdown");
+ 
+     // create the new plugin handler
+ 
+     mInitializeFunc =
+         (NP_PLUGINUNIXINIT) PR_FindFunctionSymbol(mLibrary, "NP_Initialize");
+     NS_ASSERTION(mInitializeFunc, "couldn't find NP_Initialize()");
+@@ -229,19 +229,21 @@ PluginModuleChild::Init(const std::strin
+         mozilla::plugins::PluginUtilsOSX::SetProcessName(info.fName);
+     }
+ #endif
+ 
+     return true;
+ }
+ 
+ #if defined(MOZ_WIDGET_GTK)
++extern "C" {
+ typedef void (*GObjectDisposeFn)(GObject*);
+ typedef gboolean (*GtkWidgetScrollEventFn)(GtkWidget*, GdkEventScroll*);
+ typedef void (*GtkPlugEmbeddedFn)(GtkPlug*);
++}
+ 
+ static GObjectDisposeFn real_gtk_plug_dispose;
+ static GtkPlugEmbeddedFn real_gtk_plug_embedded;
+ 
+ static void
+ undo_bogus_unref(gpointer data, GObject* object, gboolean is_last_ref) {
+     if (!is_last_ref) // recursion in g_object_ref
+         return;
+@@ -1822,17 +1824,17 @@ void NP_CALLBACK
+ //-----------------------------------------------------------------------------
+ 
+ bool
+ PluginModuleChild::AnswerNP_GetEntryPoints(NPError* _retval)
+ {
+     PLUGIN_LOG_DEBUG_METHOD;
+     AssertPluginThread();
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+     return true;
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     *_retval = mGetEntryPointsFunc(&mFunctions);
+     return true;
+ #else
+ #  error Please implement me for your platform
+ #endif
+ }
+@@ -1851,17 +1853,17 @@ PluginModuleChild::AnswerNP_Initialize(c
+ 
+ #ifdef MOZ_X11
+     // Send the parent our X socket to act as a proxy reference for our X
+     // resources.
+     int xSocketFd = ConnectionNumber(DefaultXDisplay());
+     SendBackUpXResources(FileDescriptor(xSocketFd));
+ #endif
+ 
+-#if defined(OS_LINUX)
++#if defined(OS_LINUX) || defined(OS_SOLARIS)
+     *_retval = mInitializeFunc(&sBrowserFuncs, &mFunctions);
+     return true;
+ #elif defined(OS_WIN) || defined(OS_MACOSX)
+     *_retval = mInitializeFunc(&sBrowserFuncs);
+     return true;
+ #else
+ #  error Please implement me for your platform
+ #endif
+diff -r 08428deb1e89 ipc/glue/GeckoChildProcessHost.cpp
+--- a/ipc/glue/GeckoChildProcessHost.cpp	Thu Jul 26 12:36:15 2012 -0700
++++ b/ipc/glue/GeckoChildProcessHost.cpp	Sat Jul 28 06:18:44 2012 +0800
+@@ -422,11 +422,14 @@
+   // and passing wstrings from one config to the other is unsafe.  So
+   // we split the logic here.
+ 
+-#if defined(OS_LINUX) || defined(OS_MACOSX)
+-  base::environment_map newEnvVars;
++#if defined(OS_LINUX) || defined(OS_MACOSX) || defined(OS_SOLARIS)
+   base::ChildPrivileges privs = kLowRightsSubprocesses ?
+                                 base::UNPRIVILEGED :
+                                 base::SAME_PRIVILEGES_AS_PARENT;
++#endif
++
++#if defined(OS_LINUX) || defined(OS_MACOSX)
++  base::environment_map newEnvVars;
+   // XPCOM may not be initialized in some subprocesses.  We don't want
+   // to initialize XPCOM just for the directory service, especially
+   // since LD_LIBRARY_PATH is already set correctly in subprocesses
+@@ -554,7 +557,7 @@
+   childArgv.push_back(pidstring);
+ 
+ #if defined(MOZ_CRASHREPORTER)
+-#  if defined(OS_LINUX)
++#  if defined(OS_LINUX) || defined(OS_SOLARIS)
+   int childCrashFd, childCrashRemapFd;
+   if (!CrashReporter::CreateNotificationPipeForChild(
+         &childCrashFd, &childCrashRemapFd))
+@@ -570,7 +573,7 @@
+   }
+ #  elif defined(MOZ_WIDGET_COCOA)
+   childArgv.push_back(CrashReporter::GetChildNotificationPipe());
+-#  endif  // OS_LINUX
++#  endif  // OS_LINUX || defined(OS_SOLARIS)
+ #endif
+ 
+ #ifdef MOZ_WIDGET_COCOA
+@@ -593,6 +596,8 @@
+   base::LaunchApp(childArgv, mFileMap,
+ #if defined(OS_LINUX) || defined(OS_MACOSX)
+                   newEnvVars, privs,
++#elif defined(OS_SOLARIS)
++                  base::environment_map(), privs,
+ #endif
+                   false, &process, arch);
+ 
+diff --git a/ipc/chromium/src/base/file_util.h b/ipc/chromium/src/base/file_util.h
+index 71124ed..d4d7e1a 100644
+--- a/ipc/chromium/src/base/file_util.h
++++ b/ipc/chromium/src/base/file_util.h
+@@ -1,4 +1,4 @@
+-// Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
++// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+@@ -12,7 +12,7 @@
+ 
+ #if defined(OS_WIN)
+ #include <windows.h>
+-#elif defined(ANDROID)
++#elif defined(ANDROID) || defined(OS_SOLARIS)
+ #include <sys/stat.h>
+ #elif defined(OS_POSIX) 
+ #include <sys/types.h>
+@@ -27,8 +27,18 @@
+ #include <vector>
+ 
+ #include "base/basictypes.h"
+-#include "base/scoped_ptr.h"
+ #include "base/file_path.h"
++#include "base/platform_file.h"
++#include "base/scoped_ptr.h"
++#include "base/string16.h"
++#include "base/time.h"
++
++#include "unistd.h"
++
++#if defined(OS_POSIX)
++#include "base/eintr_wrapper.h"
++#include "base/file_descriptor_posix.h"
++#endif
+ 
+ namespace base {
+ class Time;
+@@ -39,99 +49,25 @@ namespace file_util {
+ //-----------------------------------------------------------------------------
+ // Functions that operate purely on a path string w/o touching the filesystem:
+ 
+-// Returns a vector of all of the components of the provided path.
+-void PathComponents(const FilePath& path,
+-                    std::vector<FilePath::StringType>* components);
+-#if defined(OS_WIN)
+-// Deprecated temporary compatibility function.
+-void PathComponents(const std::wstring& path,
+-                    std::vector<std::wstring>* components);
+-#endif
+-
+ // Returns true if the given path ends with a path separator character.
+ bool EndsWithSeparator(const FilePath& path);
+-// These two versions are both deprecated. TODO(estade): remove them.
+-bool EndsWithSeparator(std::wstring* path);
+-bool EndsWithSeparator(const std::wstring& path);
+ 
+ // Makes sure that |path| ends with a separator IFF path is a directory that
+ // exists. Returns true if |path| is an existing directory, false otherwise.
+ bool EnsureEndsWithSeparator(FilePath* path);
+ 
+-// Modifies a string by trimming all trailing separators from the end.
+-// Deprecated. FilePath does this automatically, and if it's constructed from a
+-// path with a trailing separator, StripTrailingSeparators() may be used.
+-void TrimTrailingSeparator(std::wstring* dir);
+-
+-// Strips the topmost directory from the end of 'dir'.  Assumes 'dir' does not
+-// refer to a file.
+-// If 'dir' is a root directory, return without change.
+-// Deprecated. Use FilePath::DirName instead.
+-void UpOneDirectory(std::wstring* dir);
+-// Strips the topmost directory from the end of 'dir'.  Assumes 'dir' does not
+-// refer to a file.
+-// If 'dir' is a root directory, the result becomes empty string.
+-// Deprecated. Use FilePath::DirName instead.
+-void UpOneDirectoryOrEmpty(std::wstring* dir);
+-
+-// Returns the filename portion of 'path', without any leading \'s or /'s.
+-// Deprecated. Use FilePath::BaseName instead.
+-std::wstring GetFilenameFromPath(const std::wstring& path);
+-
+-// Deprecated compatibility function.  Use FilePath::Extension.
+-FilePath::StringType GetFileExtensionFromPath(const FilePath& path);
+-// Deprecated temporary compatibility function.
+-std::wstring GetFileExtensionFromPath(const std::wstring& path);
+-
+-// Returns the directory component of a path, without the trailing
+-// path separator, or an empty string on error. The function does not
+-// check for the existence of the path, so if it is passed a directory
+-// without the trailing \, it will interpret the last component of the
+-// path as a file and chomp it. This does not support relative paths.
+-// Examples:
+-// path == "C:\pics\jojo.jpg",     returns "C:\pics"
+-// path == "C:\Windows\system32\", returns "C:\Windows\system32"
+-// path == "C:\Windows\system32",  returns "C:\Windows"
+-std::wstring GetDirectoryFromPath(const std::wstring& path);
+-
+-// Appends new_ending to path, adding a separator between the two if necessary.
+-void AppendToPath(std::wstring* path, const std::wstring& new_ending);
+-
+ // Convert provided relative path into an absolute path.  Returns false on
+ // error. On POSIX, this function fails if the path does not exist.
+ bool AbsolutePath(FilePath* path);
+-// Deprecated temporary compatibility function.
+-bool AbsolutePath(std::wstring* path);
+ 
+ // Returns true if |parent| contains |child|. Both paths are converted to
+ // absolute paths before doing the comparison.
+ bool ContainsPath(const FilePath& parent, const FilePath& child);
+ 
+-// Deprecated compatibility function.  Use FilePath::InsertBeforeExtension.
+-void InsertBeforeExtension(FilePath* path, const FilePath::StringType& suffix);
+-
+-// Deprecated compatibility function.  Use FilePath::ReplaceExtension.
+-void ReplaceExtension(FilePath* file_name,
+-                      const FilePath::StringType& extension);
+-
+-#if defined(OS_WIN)
+-// Deprecated temporary compatibility functions.
+-void InsertBeforeExtension(std::wstring* path, const std::wstring& suffix);
+-void ReplaceExtension(std::wstring* file_name, const std::wstring& extension);
+-#endif
+-
+-// Replaces characters in 'file_name' that are illegal for file names with
+-// 'replace_char'. 'file_name' must not be a full or relative path, but just the
+-// file name component. Any leading or trailing whitespace in 'file_name' is
+-// removed.
+-// Example:
+-//   file_name == "bad:file*name?.txt", changed to: "bad-file-name-.txt" when
+-//   'replace_char' is '-'.
+-void ReplaceIllegalCharacters(std::wstring* file_name, int replace_char);
+-
+ //-----------------------------------------------------------------------------
+ // Functions that involve filesystem access or modification:
+ 
++// Returns the number of files matching the current path that were
+ // created on or after the given |file_time|.  Doesn't count ".." or ".".
+ //
+ // Note for POSIX environments: a file created before |file_time|
+@@ -142,6 +78,13 @@ void ReplaceIllegalCharacters(std::wstring* file_name, int replace_char);
+ int CountFilesCreatedAfter(const FilePath& path,
+                            const base::Time& file_time);
+ 
++// Returns the total number of bytes used by all the files under |root_path|.
++// If the path does not exist the function returns 0.
++//
++// This function is implemented using the FileEnumerator class so it is not
++// particularly speedy in any platform.
++int64 ComputeDirectorySize(const FilePath& root_path);
++
+ // Deletes the given path, whether it's a file or a directory.
+ // If it's a directory, it's perfectly happy to delete all of the
+ // directory's contents.  Passing true to recursive deletes
+@@ -151,50 +94,51 @@ int CountFilesCreatedAfter(const FilePath& path,
+ // WARNING: USING THIS WITH recursive==true IS EQUIVALENT
+ //          TO "rm -rf", SO USE WITH CAUTION.
+ bool Delete(const FilePath& path, bool recursive);
+-// Deprecated temporary compatibility function.
+-bool Delete(const std::wstring& path, bool recursive);
++
++#if defined(OS_WIN)
++// Schedules to delete the given path, whether it's a file or a directory, until
++// the operating system is restarted.
++// Note:
++// 1) The file/directory to be deleted should exist in a temp folder.
++// 2) The directory to be deleted must be empty.
++bool DeleteAfterReboot(const FilePath& path);
++#endif
+ 
+ // Moves the given path, whether it's a file or a directory.
+ // If a simple rename is not possible, such as in the case where the paths are
+ // on different volumes, this will attempt to copy and delete. Returns
+ // true for success.
+ bool Move(const FilePath& from_path, const FilePath& to_path);
+-// Deprecated temporary compatibility function.
+-bool Move(const std::wstring& from_path, const std::wstring& to_path);
++
++// Renames file |from_path| to |to_path|. Both paths must be on the same
++// volume, or the function will fail. Destination file will be created
++// if it doesn't exist. Prefer this function over Move when dealing with
++// temporary files. On Windows it preserves attributes of the target file.
++// Returns true on success.
++bool ReplaceFile(const FilePath& from_path, const FilePath& to_path);
+ 
+ // Copies a single file. Use CopyDirectory to copy directories.
+ bool CopyFile(const FilePath& from_path, const FilePath& to_path);
+-// Deprecated temporary compatibility function.
+-bool CopyFile(const std::wstring& from_path, const std::wstring& to_path);
+ 
+ // Copies the given path, and optionally all subdirectories and their contents
+ // as well.
+ // If there are files existing under to_path, always overwrite.
+ // Returns true if successful, false otherwise.
+-// Dont't use wildcards on the names, it may stop working without notice.
++// Don't use wildcards on the names, it may stop working without notice.
+ //
+ // If you only need to copy a file use CopyFile, it's faster.
+ bool CopyDirectory(const FilePath& from_path, const FilePath& to_path,
+                    bool recursive);
+-// Deprecated temporary compatibility function.
+-bool CopyDirectory(const std::wstring& from_path, const std::wstring& to_path,
+-                   bool recursive);
+ 
+ // Returns true if the given path exists on the local filesystem,
+ // false otherwise.
+ bool PathExists(const FilePath& path);
+-// Deprecated temporary compatibility function.
+-bool PathExists(const std::wstring& path);
+ 
+ // Returns true if the given path is writable by the user, false otherwise.
+ bool PathIsWritable(const FilePath& path);
+-// Deprecated temporary compatibility function.
+-bool PathIsWritable(const std::wstring& path);
+ 
+ // Returns true if the given path exists and is a directory, false otherwise.
+ bool DirectoryExists(const FilePath& path);
+-// Deprecated temporary compatibility function.
+-bool DirectoryExists(const std::wstring& path);
+ 
+ #if defined(OS_WIN)
+ // Gets the creation time of the given file (expressed in the local timezone),
+@@ -212,15 +156,14 @@ bool GetFileCreationLocalTimeFromHandle(HANDLE file_handle,
+ // otherwise.  If either file can't be read, returns false.
+ bool ContentsEqual(const FilePath& filename1,
+                    const FilePath& filename2);
+-// Deprecated temporary compatibility function.
+-bool ContentsEqual(const std::wstring& filename1,
+-                   const std::wstring& filename2);
++
++// Returns true if the contents of the two text files given are equal, false
++// otherwise.  This routine treats "\r\n" and "\n" as equivalent.
++bool TextContentsEqual(const FilePath& filename1, const FilePath& filename2);
+ 
+ // Read the file at |path| into |contents|, returning true on success.
+ // Useful for unit tests.
+ bool ReadFileToString(const FilePath& path, std::string* contents);
+-// Deprecated version.
+-bool ReadFileToString(const std::wstring& path, std::string* contents);
+ 
+ #if defined(OS_POSIX)
+ // Read exactly |bytes| bytes from file descriptor |fd|, storing the result
+@@ -231,11 +174,10 @@ bool ReadFromFD(int fd, char* buffer, size_t bytes);
+ 
+ #if defined(OS_WIN)
+ // Resolve Windows shortcut (.LNK file)
+-// Argument path specifies a valid LNK file. On success, return true and put
+-// the URL into path. If path is a invalid .LNK file, return false.
++// This methods tries to resolve a shortcut .LNK file. If the |path| is valid
++// returns true and puts the target into the |path|, otherwise returns
++// false leaving the path as it is.
+ bool ResolveShortcut(FilePath* path);
+-// Deprecated temporary compatibility function.
+-bool ResolveShortcut(std::wstring* path);
+ 
+ // Create a Windows shortcut (.LNK file)
+ // This method creates a shortcut link using the information given. Ensure
+@@ -244,24 +186,32 @@ bool ResolveShortcut(std::wstring* path);
+ // 'source' is the existing file, 'destination' is the new link file to be
+ // created; for best results pass the filename with the .lnk extension.
+ // The 'icon' can specify a dll or exe in which case the icon index is the
+-// resource id.
++// resource id. 'app_id' is the app model id for the shortcut on Win7.
+ // Note that if the shortcut exists it will overwrite it.
+ bool CreateShortcutLink(const wchar_t *source, const wchar_t *destination,
+                         const wchar_t *working_dir, const wchar_t *arguments,
+                         const wchar_t *description, const wchar_t *icon,
+-                        int icon_index);
++                        int icon_index, const wchar_t* app_id);
+ 
+ // Update a Windows shortcut (.LNK file). This method assumes the shortcut
+ // link already exists (otherwise false is returned). Ensure you have
+ // initialized COM before calling into this function. Only 'destination'
+ // parameter is required, everything else can be NULL (but if everything else
+ // is NULL no changes are made to the shortcut). 'destination' is the link
+-// file to be updated. For best results pass the filename with the .lnk
+-// extension.
++// file to be updated. 'app_id' is the app model id for the shortcut on Win7.
++// For best results pass the filename with the .lnk extension.
+ bool UpdateShortcutLink(const wchar_t *source, const wchar_t *destination,
+                         const wchar_t *working_dir, const wchar_t *arguments,
+                         const wchar_t *description, const wchar_t *icon,
+-                        int icon_index);
++                        int icon_index, const wchar_t* app_id);
++
++// Pins a shortcut to the Windows 7 taskbar. The shortcut file must already
++// exist and be a shortcut that points to an executable.
++bool TaskbarPinShortcutLink(const wchar_t* shortcut);
++
++// Unpins a shortcut from the Windows 7 taskbar. The shortcut must exist and
++// already be pinned to the taskbar.
++bool TaskbarUnpinShortcutLink(const wchar_t* shortcut);
+ 
+ // Return true if the given directory is empty
+ bool IsDirectoryEmpty(const std::wstring& dir_path);
+@@ -276,21 +226,18 @@ bool CopyAndDeleteDirectory(const FilePath& from_path,
+ 
+ // Get the temporary directory provided by the system.
+ bool GetTempDir(FilePath* path);
+-// Deprecated temporary compatibility function.
+-bool GetTempDir(std::wstring* path);
+ // Get a temporary directory for shared memory files.
+ // Only useful on POSIX; redirects to GetTempDir() on Windows.
+ bool GetShmemTempDir(FilePath* path);
+ 
++// Get the home directory.  This is more complicated than just getenv("HOME")
++// as it knows to fall back on getpwent() etc.
++FilePath GetHomeDir();
++
+ // Creates a temporary file. The full path is placed in |path|, and the
+ // function returns true if was successful in creating the file. The file will
+ // be empty and all handles closed after this function returns.
+-// TODO(erikkay): rename this function and track down all of the callers.
+-// (Clarification of erik's comment: the intent is to rename the BlahFileName()
+-//  calls into BlahFile(), since they create temp files (not temp filenames).)
+-bool CreateTemporaryFileName(FilePath* path);
+-// Deprecated temporary compatibility function.
+-bool CreateTemporaryFileName(std::wstring* temp_file);
++bool CreateTemporaryFile(FilePath* path);
+ 
+ // Create and open a temporary file.  File is opened for read/write.
+ // The full path is placed in |path|, and the function returns true if
+@@ -302,9 +249,16 @@ FILE* CreateAndOpenTemporaryShmemFile(FilePath* path);
+ // Similar to CreateAndOpenTemporaryFile, but the file is created in |dir|.
+ FILE* CreateAndOpenTemporaryFileInDir(const FilePath& dir, FilePath* path);
+ 
+-// Same as CreateTemporaryFileName but the file is created in |dir|.
+-bool CreateTemporaryFileNameInDir(const std::wstring& dir,
+-                                  std::wstring* temp_file);
++// Same as CreateTemporaryFile but the file is created in |dir|.
++bool CreateTemporaryFileInDir(const FilePath& dir,
++                              FilePath* temp_file);
++
++// Create a directory within another directory.
++// Extra characters will be appended to |name_tmpl| to ensure that the
++// new directory does not have the same name as an existing directory.
++bool CreateTemporaryDirInDir(const FilePath& base_dir,
++                             const FilePath::StringType& prefix,
++                             FilePath* new_dir);
+ 
+ // Create a new directory under TempPath. If prefix is provided, the new
+ // directory name is in the format of prefixyyyy.
+@@ -313,21 +267,20 @@ bool CreateTemporaryFileNameInDir(const std::wstring& dir,
+ // If success, return true and output the full path of the directory created.
+ bool CreateNewTempDirectory(const FilePath::StringType& prefix,
+                             FilePath* new_temp_path);
+-// Deprecated temporary compatibility function.
+-bool CreateNewTempDirectory(const std::wstring& prefix,
+-                            std::wstring* new_temp_path);
+ 
+ // Creates a directory, as well as creating any parent directories, if they
+ // don't exist. Returns 'true' on successful creation, or if the directory
+-// already exists.
++// already exists.  The directory is only readable by the current user.
+ bool CreateDirectory(const FilePath& full_path);
+-// Deprecated temporary compatibility function.
+-bool CreateDirectory(const std::wstring& full_path);
+ 
+ // Returns the file size. Returns true on success.
+ bool GetFileSize(const FilePath& file_path, int64* file_size);
+-// Deprecated temporary compatibility function.
+-bool GetFileSize(const std::wstring& file_path, int64* file_size);
++
++// Returns true if the given path's base name is ".".
++bool IsDot(const FilePath& path);
++
++// Returns true if the given path's base name is "..".
++bool IsDotDot(const FilePath& path);
+ 
+ // Used to hold information about a given file path.  See GetFileInfo below.
+ struct FileInfo {
+@@ -337,19 +290,25 @@ struct FileInfo {
+   // True if the file corresponds to a directory.
+   bool is_directory;
+ 
++  // The last modified time of a file.
++  base::Time last_modified;
++
+   // Add additional fields here as needed.
+ };
+ 
+ // Returns information about the given file path.
+ bool GetFileInfo(const FilePath& file_path, FileInfo* info);
+-// Deprecated temporary compatibility function.
+-bool GetFileInfo(const std::wstring& file_path, FileInfo* info);
++
++// Set the time of the last modification. Useful for unit tests.
++bool SetLastModifiedTime(const FilePath& file_path, base::Time last_modified);
++
++#if defined(OS_POSIX)
++// Store inode number of |path| in |inode|. Return true on success.
++bool GetInode(const FilePath& path, ino_t* inode);
++#endif
+ 
+ // Wrapper for fopen-like calls. Returns non-NULL FILE* on success.
+ FILE* OpenFile(const FilePath& filename, const char* mode);
+-// Deprecated temporary compatibility functions.
+-FILE* OpenFile(const std::string& filename, const char* mode);
+-FILE* OpenFile(const std::wstring& filename, const char* mode);
+ 
+ // Closes file opened by OpenFile. Returns true on success.
+ bool CloseFile(FILE* file);
+@@ -361,24 +320,20 @@ bool TruncateFile(FILE* file);
+ // Reads the given number of bytes from the file into the buffer.  Returns
+ // the number of read bytes, or -1 on error.
+ int ReadFile(const FilePath& filename, char* data, int size);
+-// Deprecated temporary compatibility function.
+-int ReadFile(const std::wstring& filename, char* data, int size);
+ 
+ // Writes the given buffer into the file, overwriting any data that was
+ // previously there.  Returns the number of bytes written, or -1 on error.
+ int WriteFile(const FilePath& filename, const char* data, int size);
+-// Deprecated temporary compatibility function.
+-int WriteFile(const std::wstring& filename, const char* data, int size);
++#if defined(OS_POSIX)
++// Append the data to |fd|. Does not close |fd| when done.
++int WriteFileDescriptor(const int fd, const char* data, int size);
++#endif
+ 
+ // Gets the current working directory for the process.
+ bool GetCurrentDirectory(FilePath* path);
+-// Deprecated temporary compatibility function.
+-bool GetCurrentDirectory(std::wstring* path);
+ 
+ // Sets the current working directory for the process.
+ bool SetCurrentDirectory(const FilePath& path);
+-// Deprecated temporary compatibility function.
+-bool SetCurrentDirectory(const std::wstring& current_directory);
+ 
+ // A class to handle auto-closing of FILE*'s.
+ class ScopedFILEClose {
+@@ -392,6 +347,20 @@ class ScopedFILEClose {
+ 
+ typedef scoped_ptr_malloc<FILE, ScopedFILEClose> ScopedFILE;
+ 
++#if defined(OS_POSIX)
++// A class to handle auto-closing of FDs.
++class ScopedFDClose {
++ public:
++  inline void operator()(int* x) const {
++    if (x && *x >= 0) {
++      HANDLE_EINTR(close(*x));
++    }
++  }
++};
++
++typedef scoped_ptr_malloc<int, ScopedFDClose> ScopedFD;
++#endif  // OS_POSIX
++
+ // A class for enumerating the files in a provided path. The order of the
+ // results is not guaranteed.
+ //
+@@ -409,9 +378,12 @@ class FileEnumerator {
+ #endif
+ 
+   enum FILE_TYPE {
+-    FILES                 = 0x1,
+-    DIRECTORIES           = 0x2,
+-    FILES_AND_DIRECTORIES = 0x3
++    FILES                 = 1 << 0,
++    DIRECTORIES           = 1 << 1,
++    INCLUDE_DOT_DOT       = 1 << 2,
++#if defined(OS_POSIX)
++    SHOW_SYM_LINKS        = 1 << 4,
++#endif
+   };
+ 
+   // |root_path| is the starting directory to search for. It may or may not end
+@@ -449,11 +421,40 @@ class FileEnumerator {
+   // Write the file info into |info|.
+   void GetFindInfo(FindInfo* info);
+ 
++  // Looks inside a FindInfo and determines if it's a directory.
++  static bool IsDirectory(const FindInfo& info);
++
++  static FilePath GetFilename(const FindInfo& find_info);
++
+  private:
++  // Returns true if the given path should be skipped in enumeration.
++  bool ShouldSkip(const FilePath& path);
++
++
++#if defined(OS_WIN)
++  WIN32_FIND_DATA find_data_;
++  HANDLE find_handle_;
++#elif defined(OS_POSIX)
++  typedef struct {
++    FilePath filename;
++    struct stat stat;
++  } DirectoryEntryInfo;
++
++  // Read the filenames in source into the vector of DirectoryEntryInfo's
++  static bool ReadDirectory(std::vector<DirectoryEntryInfo>* entries,
++                            const FilePath& source, bool show_links);
++
++  // The files in the current directory
++  std::vector<DirectoryEntryInfo> directory_entries_;
++
++  // The next entry to use from the directory_entries_ vector
++  size_t current_directory_entry_;
++#endif
++
+   FilePath root_path_;
+   bool recursive_;
+   FILE_TYPE file_type_;
+-  FilePath pattern_;  // Empty when we want to find everything.
++  FilePath::StringType pattern_;  // Empty when we want to find everything.
+ 
+   // Set to true when there is a find operation open. This way, we can lazily
+   // start the operations when the caller calls Next().
+@@ -463,17 +464,7 @@ class FileEnumerator {
+   // enumerate in the breadth-first search.
+   std::stack<FilePath> pending_paths_;
+ 
+-#if defined(OS_WIN)
+-  WIN32_FIND_DATA find_data_;
+-  HANDLE find_handle_;
+-#elif defined(ANDROID)
+-  void *fts_;
+-#elif defined(OS_POSIX)
+-  FTS* fts_;
+-  FTSENT* fts_ent_;
+-#endif
+-
+-  DISALLOW_EVIL_CONSTRUCTORS(FileEnumerator);
++  DISALLOW_COPY_AND_ASSIGN(FileEnumerator);
+ };
+ 
+ class MemoryMappedFile {
+@@ -488,6 +479,9 @@ class MemoryMappedFile {
+   // the file does not exist, or the memory mapping fails, it will return false.
+   // Later we may want to allow the user to specify access.
+   bool Initialize(const FilePath& file_name);
++  // As above, but works with an already-opened file. MemoryMappedFile will take
++  // ownership of |file| and close it when done.
++  bool Initialize(base::PlatformFile file);
+ 
+   const uint8* data() const { return data_; }
+   size_t length() const { return length_; }
+@@ -496,19 +490,19 @@ class MemoryMappedFile {
+   bool IsValid();
+ 
+  private:
++  // Open the given file and pass it to MapFileToMemoryInternal().
++  bool MapFileToMemory(const FilePath& file_name);
++
+   // Map the file to memory, set data_ to that memory address. Return true on
+   // success, false on any kind of failure. This is a helper for Initialize().
+-  bool MapFileToMemory(const FilePath& file_name);
++  bool MapFileToMemoryInternal();
+ 
+   // Closes all open handles. Later we may want to make this public.
+   void CloseHandles();
+ 
++  base::PlatformFile file_;
+ #if defined(OS_WIN)
+-  HANDLE file_;
+   HANDLE file_mapping_;
+-#elif defined(OS_POSIX)
+-  // The file descriptor.
+-  int file_;
+ #endif
+   uint8* data_;
+   size_t length_;
+@@ -522,6 +516,66 @@ bool RenameFileAndResetSecurityDescriptor(
+     const FilePath& source_file_path,
+     const FilePath& target_file_path);
+ 
++// Returns whether the file has been modified since a particular date.
++bool HasFileBeenModifiedSince(const FileEnumerator::FindInfo& find_info,
++                              const base::Time& cutoff_time);
++
++#ifdef UNIT_TEST
++
++inline bool MakeFileUnreadable(const FilePath& path) {
++#if defined(OS_POSIX)
++  struct stat stat_buf;
++  if (stat(path.value().c_str(), &stat_buf) != 0)
++    return false;
++  stat_buf.st_mode &= ~(S_IRUSR | S_IRGRP | S_IROTH);
++
++  return chmod(path.value().c_str(), stat_buf.st_mode) == 0;
++
++#elif defined(OS_WIN)
++  PACL old_dacl;
++  PSECURITY_DESCRIPTOR security_descriptor;
++  if (GetNamedSecurityInfo(const_cast<wchar_t*>(path.value().c_str()),
++                           SE_FILE_OBJECT,
++                           DACL_SECURITY_INFORMATION, NULL, NULL, &old_dacl,
++                           NULL, &security_descriptor) != ERROR_SUCCESS)
++    return false;
++
++  // Deny Read access for the current user.
++  EXPLICIT_ACCESS change;
++  change.grfAccessPermissions = GENERIC_READ;
++  change.grfAccessMode = DENY_ACCESS;
++  change.grfInheritance = 0;
++  change.Trustee.pMultipleTrustee = NULL;
++  change.Trustee.MultipleTrusteeOperation = NO_MULTIPLE_TRUSTEE;
++  change.Trustee.TrusteeForm = TRUSTEE_IS_NAME;
++  change.Trustee.TrusteeType = TRUSTEE_IS_USER;
++  change.Trustee.ptstrName = L"CURRENT_USER";
++
++  PACL new_dacl;
++  if (SetEntriesInAcl(1, &change, old_dacl, &new_dacl) != ERROR_SUCCESS) {
++    LocalFree(security_descriptor);
++    return false;
++  }
++
++  DWORD rc = SetNamedSecurityInfo(const_cast<wchar_t*>(path.value().c_str()),
++                                  SE_FILE_OBJECT, DACL_SECURITY_INFORMATION,
++                                  NULL, NULL, new_dacl, NULL);
++  LocalFree(security_descriptor);
++  LocalFree(new_dacl);
++
++  return rc == ERROR_SUCCESS;
++#else
++  NOTIMPLEMENTED();
++  return false;
++#endif
++}
++
++#endif  // UNIT_TEST
++
+ }  // namespace file_util
+ 
++// Deprecated functions have been moved to this separate header file,
++// which must be included last after all the above definitions.
++#include "base/file_util_deprecated.h"
++
+ #endif  // BASE_FILE_UTIL_H_
+diff --git a/ipc/chromium/src/base/hash_tables.h b/ipc/chromium/src/base/hash_tables.h
+index cd2fd4e..da4a534 100644
+--- a/ipc/chromium/src/base/hash_tables.h
++++ b/ipc/chromium/src/base/hash_tables.h
+@@ -31,6 +31,15 @@ using stdext::hash_map;
+ using stdext::hash_set;
+ #endif
+ }
++#elif defined(COMPILER_SUNPRO)
++#include <map>
++#include <set>
++namespace base {
++using std::map;
++using std::set;
++}
++#define hash_map map
++#define hash_set set
+ #elif defined(COMPILER_GCC)
+ // This is a hack to disable the gcc 4.4 warning about hash_map and hash_set
+ // being deprecated.  We can get rid of this when we upgrade to VS2008 and we
+diff --git a/ipc/chromium/src/base/process_util.h b/ipc/chromium/src/base/process_util.h
+index 698cf36..9d8f8df 100644
+--- a/ipc/chromium/src/base/process_util.h
++++ b/ipc/chromium/src/base/process_util.h
+@@ -13,7 +13,7 @@
+ #if defined(OS_WIN)
+ #include <windows.h>
+ #include <tlhelp32.h>
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ #include <dirent.h>
+ #include <limits.h>
+ #include <sys/types.h>
+@@ -21,6 +21,10 @@
+ #include <mach/mach.h>
+ #endif
+ 
++#if defined(OS_SOLARIS)
++#define NAME_MAX 14
++#endif
++
+ #include <map>
+ #include <string>
+ #include <vector>
+@@ -62,7 +66,8 @@ enum ProcessArchitecture {
+   PROCESS_ARCH_I386 = 0x1,
+   PROCESS_ARCH_X86_64 = 0x2,
+   PROCESS_ARCH_PPC = 0x4,
+-  PROCESS_ARCH_ARM = 0x8
++  PROCESS_ARCH_ARM = 0x8,
++  PROCESS_ARCH_SPARC = 0x10
+ };
+ 
+ inline ProcessArchitecture GetCurrentProcessArchitecture()
+@@ -76,6 +81,8 @@ inline ProcessArchitecture GetCurrentProcessArchitecture()
+   currentArchitecture = base::PROCESS_ARCH_PPC;
+ #elif defined(ARCH_CPU_ARMEL)
+   currentArchitecture = base::PROCESS_ARCH_ARM;
++#elif defined(ARCH_CPU_SPARC)
++  currentArchitecture = base::PROCESS_ARCH_SPARC;
+ #endif
+   return currentArchitecture;
+ }
+@@ -307,7 +314,7 @@ class NamedProcessIterator {
+ #if defined(OS_WIN)
+   HANDLE snapshot_;
+   bool started_iteration_;
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+   DIR *procfs_dir_;
+ #elif defined(OS_MACOSX)
+   std::vector<kinfo_proc> kinfo_procs_;
+diff --git a/ipc/glue/SharedMemorySysV.h b/ipc/glue/SharedMemorySysV.h
+index 596b134..f2990cd 100644
+--- a/ipc/glue/SharedMemorySysV.h
++++ b/ipc/glue/SharedMemorySysV.h
+@@ -8,7 +8,7 @@
+ #ifndef mozilla_ipc_SharedMemorySysV_h
+ #define mozilla_ipc_SharedMemorySysV_h
+ 
+-#if defined(OS_LINUX) && !defined(ANDROID)
++#if (defined(OS_LINUX) || defined(OS_SOLARIS)) && !defined(ANDROID)
+ 
+ // SysV shared memory isn't available on Windows, but we define the
+ // following macro so that #ifdefs are clearer (compared to #ifdef
+@@ -55,6 +55,9 @@ public:
+   virtual ~SharedMemorySysV()
+   {
+     shmdt(mData);
++#ifdef OS_SOLARIS    
++    shmctl(mHandle, IPC_RMID, 0);
++#endif    
+     mHandle = -1;
+     mData = nullptr;
+   }
+@@ -94,7 +97,9 @@ public:
+ 
+     // Mark the handle as deleted so that, should this process go away, the
+     // segment is cleaned up.
++#ifndef OS_SOLARIS
+     shmctl(mHandle, IPC_RMID, 0);
++#endif
+ 
+     mData = mem;
+ 
+@@ -145,6 +150,6 @@ private:
+ } // namespace ipc
+ } // namespace mozilla
+ 
+-#endif // OS_LINUX
++#endif // OS_LINUX || OS_SOLARIS
+ 
+ #endif // ifndef mozilla_ipc_SharedMemorySysV_h
+diff --git a/ipc/ipdl/test/cxx/Makefile.in b/ipc/ipdl/test/cxx/Makefile.in
+index 03ce15d..57e3ff0 100644
+--- a/ipc/ipdl/test/cxx/Makefile.in
++++ b/ipc/ipdl/test/cxx/Makefile.in
+@@ -65,6 +65,10 @@ EXTRA_PROTOCOLS = \
+   TestBridgeSub \
+   $(NULL)
+ 
++ifeq ($(OS_ARCH),SunOS)
++IPDLTESTS += TestSysVShmem
++endif
++
+ IPDLTESTSRCS = $(addsuffix .cpp,$(IPDLTESTS))
+ IPDLTESTHDRS = $(addprefix $(srcdir)/,$(addsuffix .h,$(IPDLTESTS)))
+ 
+diff --git a/ipc/chromium/src/base/debug_util_posix.cc b/ipc/chromium/src/base/debug_util_posix.cc
+index 72a4ebf..9326989 100644
+--- a/ipc/chromium/src/base/debug_util_posix.cc
++++ b/ipc/chromium/src/base/debug_util_posix.cc
+@@ -17,8 +17,10 @@
+ #include <unistd.h>
+ #if MOZ_HAVE_EXECINFO_H
+ #include <execinfo.h>
++#ifndef OS_SOLARIS
+ #include <sys/sysctl.h>
+ #endif
++#endif
+ 
+ #include "base/basictypes.h"
+ #include "base/eintr_wrapper.h"
+@@ -75,7 +77,7 @@ bool DebugUtil::BeingDebugged() {
+   return being_debugged;
+ }
+ 
+-#elif defined(OS_LINUX)
++#elif defined(OS_LINUX) || defined(OS_SOLARIS)
+ 
+ // We can look in /proc/self/status for TracerPid.  We are likely used in crash
+ // handling, so we are careful not to use the heap or have side effects.
+@@ -110,13 +112,17 @@ bool DebugUtil::BeingDebugged() {
+   return pid_index < status.size() && status[pid_index] != '0';
+ }
+ 
+-#endif  // OS_LINUX
++#endif  // OS_LINUX || OS_SOLARIS
+ 
+ // static
+ void DebugUtil::BreakDebugger() {
+ #if defined(ARCH_CPU_X86_FAMILY)
++#if defined(COMPILER_SUNPRO)
++  asm ("int $3");
++#else
+   asm ("int3");
+ #endif
++#endif
+ }
+ 
+ StackTrace::StackTrace() {
+diff --git a/ipc/chromium/src/base/file_util_posix.cc b/ipc/chromium/src/base/file_util_posix.cc
+--- a/ipc/chromium/src/base/file_util_posix.cc
++++ b/ipc/chromium/src/base/file_util_posix.cc
+@@ -1,92 +1,130 @@
+-// Copyright (c) 2006-2008 The Chromium Authors. All rights reserved.
++// Copyright (c) 2010 The Chromium Authors. All rights reserved.
+ // Use of this source code is governed by a BSD-style license that can be
+ // found in the LICENSE file.
+ 
+ #include "base/file_util.h"
+ 
+ #include <dirent.h>
+ #include <errno.h>
+ #include <fcntl.h>
+ #include <fnmatch.h>
+-#ifndef ANDROID
+-#include <fts.h>
+-#endif
+ #include <libgen.h>
+ #include <stdio.h>
++#include <stdlib.h>
+ #include <string.h>
+ #include <sys/errno.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
++#include <sys/time.h>
+ #include <sys/types.h>
+ #include <time.h>
+ #include <unistd.h>
+ 
++#if defined(OS_MACOSX)
++#include <AvailabilityMacros.h>
++#else
++#include <glib.h>
++#endif
++
+ #include <fstream>
+ #include <string>
+ #include <vector>
+ 
+ #include "base/basictypes.h"
+ #include "base/eintr_wrapper.h"
+ #include "base/file_path.h"
++#include "base/lock.h"
+ #include "base/logging.h"
++#include "base/scoped_ptr.h"
++#include "base/singleton.h"
+ #include "base/string_util.h"
++#include "base/sys_string_conversions.h"
+ #include "base/time.h"
+ 
+ // FreeBSD/OpenBSD lacks stat64, but its stat handles files >2GB just fine
+ #if defined(OS_FREEBSD) || defined(OS_OPENBSD)
+ #define stat64 stat
+ #endif
+ 
+ namespace file_util {
+ 
++#if defined(OS_OPENBSD) || defined(OS_FREEBSD) || \
++    (defined(OS_MACOSX) && \
++     MAC_OS_X_VERSION_MIN_REQUIRED < MAC_OS_X_VERSION_10_5)
++typedef struct stat stat_wrapper_t;
++static int CallStat(const char *path, stat_wrapper_t *sb) {
++  return stat(path, sb);
++}
++#else
++typedef struct stat64 stat_wrapper_t;
++static int CallStat(const char *path, stat_wrapper_t *sb) {
++  return stat64(path, sb);
++}
++#endif
++
+ #if defined(GOOGLE_CHROME_BUILD)
+ static const char* kTempFileName = "com.google.chrome.XXXXXX";
+ #else
+ static const char* kTempFileName = "org.chromium.XXXXXX";
+ #endif
+ 
++#ifndef OS_SOLARIS
+ std::wstring GetDirectoryFromPath(const std::wstring& path) {
+   if (EndsWithSeparator(path)) {
+     std::wstring dir = path;
+     TrimTrailingSeparator(&dir);
+     return dir;
+   } else {
+     char full_path[PATH_MAX];
+     base::strlcpy(full_path, WideToUTF8(path).c_str(), arraysize(full_path));
+     return UTF8ToWide(dirname(full_path));
+   }
+ }
++#endif
+ 
+ bool AbsolutePath(FilePath* path) {
+   char full_path[PATH_MAX];
+   if (realpath(path->value().c_str(), full_path) == NULL)
+     return false;
+   *path = FilePath(full_path);
+   return true;
+ }
+ 
+ int CountFilesCreatedAfter(const FilePath& path,
+                            const base::Time& comparison_time) {
+   int file_count = 0;
+ 
+   DIR* dir = opendir(path.value().c_str());
+   if (dir) {
++#if !defined(OS_LINUX) && !defined(OS_MACOSX) && !defined(OS_FREEBSD) && \
++    !defined(OS_OPENBSD) && !defined(OS_SOLARIS)
++  #error Port warning: depending on the definition of struct dirent, \
++         additional space for pathname may be needed
++#endif
++
++#ifdef OS_SOLARIS    
++    struct {
++            dirent dent_buffer;
++            char chars[MAXNAMLEN];
++    } ent_buf;
++#else  
+     struct dirent ent_buf;
++#endif  
+     struct dirent* ent;
+-    while (readdir_r(dir, &ent_buf, &ent) == 0 && ent) {
++    while (readdir_r(dir, (dirent *)&ent_buf, &ent) == 0 && ent) {
+       if ((strcmp(ent->d_name, ".") == 0) ||
+           (strcmp(ent->d_name, "..") == 0))
+         continue;
+ 
+-      struct stat64 st;
+-      int test = stat64(path.Append(ent->d_name).value().c_str(), &st);
++      stat_wrapper_t st;
++      int test = CallStat(path.Append(ent->d_name).value().c_str(), &st);
+       if (test != 0) {
+-        LOG(ERROR) << "stat64 failed: " << strerror(errno);
++        LOG(ERROR) << "stat64 failed";
+         continue;
+       }
+       // Here, we use Time::TimeT(), which discards microseconds. This
+       // means that files which are newer than |comparison_time| may
+       // be considered older. If we don't discard microseconds, it
+       // introduces another issue. Suppose the following case:
+       //
+       // 1. Get |comparison_time| by Time::Now() and the value is 10.1 (secs).
+@@ -108,223 +146,205 @@ int CountFilesCreatedAfter(const FilePat
+ }
+ 
+ // TODO(erikkay): The Windows version of this accepts paths like "foo/bar/*"
+ // which works both with and without the recursive flag.  I'm not sure we need
+ // that functionality. If not, remove from file_util_win.cc, otherwise add it
+ // here.
+ bool Delete(const FilePath& path, bool recursive) {
+   const char* path_str = path.value().c_str();
+-  struct stat64 file_info;
+-  int test = stat64(path_str, &file_info);
++  stat_wrapper_t file_info;
++  int test = CallStat(path_str, &file_info);
+   if (test != 0) {
+     // The Windows version defines this condition as success.
+     bool ret = (errno == ENOENT || errno == ENOTDIR);
+     return ret;
+   }
+   if (!S_ISDIR(file_info.st_mode))
+     return (unlink(path_str) == 0);
+   if (!recursive)
+     return (rmdir(path_str) == 0);
+ 
+-#ifdef ANDROID
+-  // XXX Need ftsless impl for bionic
+-  return false;
+-#else
+   bool success = true;
+-  int ftsflags = FTS_PHYSICAL | FTS_NOSTAT;
+-  char top_dir[PATH_MAX];
+-  if (base::strlcpy(top_dir, path_str,
+-                    arraysize(top_dir)) >= arraysize(top_dir)) {
+-    return false;
++  std::stack<std::string> directories;
++  directories.push(path.value());
++  FileEnumerator traversal(path, true, static_cast<FileEnumerator::FILE_TYPE>(
++        FileEnumerator::FILES | FileEnumerator::DIRECTORIES |
++        FileEnumerator::SHOW_SYM_LINKS));
++  for (FilePath current = traversal.Next(); success && !current.empty();
++       current = traversal.Next()) {
++    FileEnumerator::FindInfo info;
++    traversal.GetFindInfo(&info);
++
++    if (S_ISDIR(info.stat.st_mode))
++      directories.push(current.value());
++    else
++      success = (unlink(current.value().c_str()) == 0);
+   }
+-  char* dir_list[2] = { top_dir, NULL };
+-  FTS* fts = fts_open(dir_list, ftsflags, NULL);
+-  if (fts) {
+-    FTSENT* fts_ent = fts_read(fts);
+-    while (success && fts_ent != NULL) {
+-      switch (fts_ent->fts_info) {
+-        case FTS_DNR:
+-        case FTS_ERR:
+-          // log error
+-          success = false;
+-          continue;
+-          break;
+-        case FTS_DP:
+-          success = (rmdir(fts_ent->fts_accpath) == 0);
+-          break;
+-        case FTS_D:
+-          break;
+-        case FTS_NSOK:
+-        case FTS_F:
+-        case FTS_SL:
+-        case FTS_SLNONE:
+-          success = (unlink(fts_ent->fts_accpath) == 0);
+-          break;
+-        default:
+-          DCHECK(false);
+-          break;
+-      }
+-      fts_ent = fts_read(fts);
+-    }
+-    fts_close(fts);
++
++  while (success && !directories.empty()) {
++    FilePath dir = FilePath(directories.top());
++    directories.pop();
++    success = (rmdir(dir.value().c_str()) == 0);
+   }
++
+   return success;
+-#endif
+ }
+ 
+ bool Move(const FilePath& from_path, const FilePath& to_path) {
++  // Windows compatibility: if to_path exists, from_path and to_path
++  // must be the same type, either both files, or both directories.
++  stat_wrapper_t to_file_info;
++  if (CallStat(to_path.value().c_str(), &to_file_info) == 0) {
++    stat_wrapper_t from_file_info;
++    if (CallStat(from_path.value().c_str(), &from_file_info) == 0) {
++      if (S_ISDIR(to_file_info.st_mode) != S_ISDIR(from_file_info.st_mode))
++        return false;
++    } else {
++      return false;
++    }
++  }
++
+   if (rename(from_path.value().c_str(), to_path.value().c_str()) == 0)
+     return true;
+ 
+   if (!CopyDirectory(from_path, to_path, true))
+     return false;
+ 
+   Delete(from_path, true);
+   return true;
+ }
+ 
++bool ReplaceFile(const FilePath& from_path, const FilePath& to_path) {
++  return (rename(from_path.value().c_str(), to_path.value().c_str()) == 0);
++}
++
+ bool CopyDirectory(const FilePath& from_path,
+                    const FilePath& to_path,
+                    bool recursive) {
+   // Some old callers of CopyDirectory want it to support wildcards.
+   // After some discussion, we decided to fix those callers.
+   // Break loudly here if anyone tries to do this.
+   // TODO(evanm): remove this once we're sure it's ok.
+   DCHECK(to_path.value().find('*') == std::string::npos);
+   DCHECK(from_path.value().find('*') == std::string::npos);
+ 
+   char top_dir[PATH_MAX];
+   if (base::strlcpy(top_dir, from_path.value().c_str(),
+                     arraysize(top_dir)) >= arraysize(top_dir)) {
+     return false;
+   }
+ 
+-#ifdef ANDROID
+-  // XXX Need ftsless impl for bionic
+-  return false;
+-#else
+-  char* dir_list[] = { top_dir, NULL };
+-  FTS* fts = fts_open(dir_list, FTS_PHYSICAL | FTS_NOSTAT, NULL);
+-  if (!fts) {
+-    LOG(ERROR) << "fts_open failed: " << strerror(errno);
++  // This function does not properly handle destinations within the source
++  FilePath real_to_path = to_path;
++  if (PathExists(real_to_path)) {
++    if (!AbsolutePath(&real_to_path))
++      return false;
++  } else {
++    real_to_path = real_to_path.DirName();
++    if (!AbsolutePath(&real_to_path))
++      return false;
++  }
++  FilePath real_from_path = from_path;
++  if (!AbsolutePath(&real_from_path))
+     return false;
++  if (real_to_path.value().size() >= real_from_path.value().size() &&
++      real_to_path.value().compare(0, real_from_path.value().size(),
++      real_from_path.value()) == 0)
++    return false;
++
++  bool success = true;
++  FileEnumerator::FILE_TYPE traverse_type =
++      static_cast<FileEnumerator::FILE_TYPE>(FileEnumerator::FILES |
++      FileEnumerator::SHOW_SYM_LINKS);
++  if (recursive)
++    traverse_type = static_cast<FileEnumerator::FILE_TYPE>(
++        traverse_type | FileEnumerator::DIRECTORIES);
++  FileEnumerator traversal(from_path, recursive, traverse_type);
++
++  // We have to mimic windows behavior here. |to_path| may not exist yet,
++  // start the loop with |to_path|.
++  FileEnumerator::FindInfo info;
++  FilePath current = from_path;
++  if (stat(from_path.value().c_str(), &info.stat) < 0) {
++    LOG(ERROR) << "CopyDirectory() couldn't stat source directory: " <<
++        from_path.value() << " errno = " << errno;
++    success = false;
++  }
++  struct stat to_path_stat;
++  FilePath from_path_base = from_path;
++  if (recursive && stat(to_path.value().c_str(), &to_path_stat) == 0 &&
++      S_ISDIR(to_path_stat.st_mode)) {
++    // If the destination already exists and is a directory, then the
++    // top level of source needs to be copied.
++    from_path_base = from_path.DirName();
+   }
+ 
+-  int error = 0;
+-  FTSENT* ent;
+-  while (!error && (ent = fts_read(fts)) != NULL) {
+-    // ent->fts_path is the source path, including from_path, so paste
++  // The Windows version of this function assumes that non-recursive calls
++  // will always have a directory for from_path.
++  DCHECK(recursive || S_ISDIR(info.stat.st_mode));
++
++  while (success && !current.empty()) {
++    // current is the source path, including from_path, so paste
+     // the suffix after from_path onto to_path to create the target_path.
+-    std::string suffix(&ent->fts_path[from_path.value().size()]);
++    std::string suffix(&current.value().c_str()[from_path_base.value().size()]);
+     // Strip the leading '/' (if any).
+     if (!suffix.empty()) {
+       DCHECK_EQ('/', suffix[0]);
+       suffix.erase(0, 1);
+     }
+     const FilePath target_path = to_path.Append(suffix);
+-    switch (ent->fts_info) {
+-      case FTS_D:  // Preorder directory.
+-        // If we encounter a subdirectory in a non-recursive copy, prune it
+-        // from the traversal.
+-        if (!recursive && ent->fts_level > 0) {
+-          if (fts_set(fts, ent, FTS_SKIP) != 0)
+-            error = errno;
+-          continue;
+-        }
+ 
+-        // Try creating the target dir, continuing on it if it exists already.
+-        // Rely on the user's umask to produce correct permissions.
+-        if (mkdir(target_path.value().c_str(), 0777) != 0) {
+-          if (errno != EEXIST)
+-            error = errno;
+-        }
+-        break;
+-      case FTS_F:     // Regular file.
+-      case FTS_NSOK:  // File, no stat info requested.
+-        errno = 0;
+-        if (!CopyFile(FilePath(ent->fts_path), target_path))
+-          error = errno ? errno : EINVAL;
+-        break;
+-      case FTS_DP:   // Postorder directory.
+-      case FTS_DOT:  // "." or ".."
+-        // Skip it.
+-        continue;
+-      case FTS_DC:   // Directory causing a cycle.
+-        // Skip this branch.
+-        if (fts_set(fts, ent, FTS_SKIP) != 0)
+-          error = errno;
+-        break;
+-      case FTS_DNR:  // Directory cannot be read.
+-      case FTS_ERR:  // Error.
+-      case FTS_NS:   // Stat failed.
+-        // Abort with the error.
+-        error = ent->fts_errno;
+-        break;
+-      case FTS_SL:      // Symlink.
+-      case FTS_SLNONE:  // Symlink with broken target.
+-        LOG(WARNING) << "CopyDirectory() skipping symbolic link: " <<
+-            ent->fts_path;
+-        continue;
+-      case FTS_DEFAULT:  // Some other sort of file.
+-        LOG(WARNING) << "CopyDirectory() skipping file of unknown type: " <<
+-            ent->fts_path;
+-        continue;
+-      default:
+-        NOTREACHED();
+-        continue;  // Hope for the best!
++    if (S_ISDIR(info.stat.st_mode)) {
++      if (mkdir(target_path.value().c_str(), info.stat.st_mode & 01777) != 0 &&
++          errno != EEXIST) {
++        LOG(ERROR) << "CopyDirectory() couldn't create directory: " <<
++            target_path.value() << " errno = " << errno;
++        success = false;
++      }
++    } else if (S_ISREG(info.stat.st_mode)) {
++      if (!CopyFile(current, target_path)) {
++        LOG(ERROR) << "CopyDirectory() couldn't create file: " <<
++            target_path.value();
++        success = false;
++      }
++    } else {
++      LOG(WARNING) << "CopyDirectory() skipping non-regular file: " <<
++          current.value();
+     }
+-  }
+-  // fts_read may have returned NULL and set errno to indicate an error.
+-  if (!error && errno != 0)
+-    error = errno;
+ 
+-  if (!fts_close(fts)) {
+-    // If we already have an error, let's use that error instead of the error
+-    // fts_close set.
+-    if (!error)
+-      error = errno;
++    current = traversal.Next();
++    traversal.GetFindInfo(&info);
+   }
+ 
+-  if (error) {
+-    LOG(ERROR) << "CopyDirectory(): " << strerror(error);
+-    return false;
+-  }
+-  return true;
+-#endif
++  return success;
+ }
+ 
+ bool PathExists(const FilePath& path) {
+-  struct stat64 file_info;
+-  return (stat64(path.value().c_str(), &file_info) == 0);
++  stat_wrapper_t file_info;
++  return CallStat(path.value().c_str(), &file_info) == 0;
+ }
+ 
+ bool PathIsWritable(const FilePath& path) {
+   FilePath test_path(path);
+-  struct stat64 file_info;
+-  if (stat64(test_path.value().c_str(), &file_info) != 0) {
+-    // If the path doesn't exist, test the parent dir.
+-    test_path = test_path.DirName();
+-    // If the parent dir doesn't exist, then return false (the path is not
+-    // directly writable).
+-    if (stat64(test_path.value().c_str(), &file_info) != 0)
+-      return false;
+-  }
++  stat_wrapper_t file_info;
++  if (CallStat(test_path.value().c_str(), &file_info) != 0)
++    return false;
+   if (S_IWOTH & file_info.st_mode)
+     return true;
+   if (getegid() == file_info.st_gid && (S_IWGRP & file_info.st_mode))
+     return true;
+   if (geteuid() == file_info.st_uid && (S_IWUSR & file_info.st_mode))
+     return true;
+   return false;
+ }
+ 
+ bool DirectoryExists(const FilePath& path) {
+-  struct stat64 file_info;
+-  if (stat64(path.value().c_str(), &file_info) == 0)
++  stat_wrapper_t file_info;
++  if (CallStat(path.value().c_str(), &file_info) == 0)
+     return S_ISDIR(file_info.st_mode);
+   return false;
+ }
+ 
+ // TODO(erikkay): implement
+ #if 0
+ bool GetFileCreationLocalTimeFromHandle(int fd,
+                                         LPSYSTEMTIME creation_time) {
+@@ -360,30 +380,28 @@ bool ReadFromFD(int fd, char* buffer, si
+     if (bytes_read <= 0)
+       break;
+     total_read += bytes_read;
+   }
+   return total_read == bytes;
+ }
+ 
+ // Creates and opens a temporary file in |directory|, returning the
+-// file descriptor.  |path| is set to the temporary file path.
+-// Note TODO(erikkay) comment in header for BlahFileName() calls; the
+-// intent is to rename these files BlahFile() (since they create
+-// files, not filenames).  This function does NOT unlink() the file.
++// file descriptor. |path| is set to the temporary file path.
++// This function does NOT unlink() the file.
+ int CreateAndOpenFdForTemporaryFile(FilePath directory, FilePath* path) {
+   *path = directory.Append(kTempFileName);
+   const std::string& tmpdir_string = path->value();
+   // this should be OK since mkstemp just replaces characters in place
+   char* buffer = const_cast<char*>(tmpdir_string.c_str());
+ 
+   return mkstemp(buffer);
+ }
+ 
+-bool CreateTemporaryFileName(FilePath* path) {
++bool CreateTemporaryFile(FilePath* path) {
+   FilePath directory;
+   if (!GetTempDir(&directory))
+     return false;
+   int fd = CreateAndOpenFdForTemporaryFile(directory, path);
+   if (fd < 0)
+     return false;
+   close(fd);
+   return true;
+@@ -400,41 +418,54 @@ FILE* CreateAndOpenTemporaryShmemFile(Fi
+ FILE* CreateAndOpenTemporaryFileInDir(const FilePath& dir, FilePath* path) {
+   int fd = CreateAndOpenFdForTemporaryFile(dir, path);
+   if (fd < 0)
+     return NULL;
+ 
+   return fdopen(fd, "a+");
+ }
+ 
+-bool CreateTemporaryFileNameInDir(const std::wstring& dir,
+-                                  std::wstring* temp_file) {
+-  // Not implemented yet.
+-  NOTREACHED();
+-  return false;
++bool CreateTemporaryFileInDir(const FilePath& dir, FilePath* temp_file) {
++  int fd = CreateAndOpenFdForTemporaryFile(dir, temp_file);
++  return ((fd >= 0) && !close(fd));
++}
++
++static bool CreateTemporaryDirInDirImpl(const FilePath& base_dir,
++                                        const FilePath::StringType& name_tmpl,
++                                        FilePath* new_dir) {
++  CHECK(name_tmpl.find("XXXXXX") != FilePath::StringType::npos)
++    << "Directory name template must contain \"XXXXXX\".";
++
++  FilePath sub_dir = base_dir.Append(name_tmpl);
++  std::string sub_dir_string = sub_dir.value();
++
++  // this should be OK since mkdtemp just replaces characters in place
++  char* buffer = const_cast<char*>(sub_dir_string.c_str());
++  char* dtemp = mkdtemp(buffer);
++  if (!dtemp)
++    return false;
++  *new_dir = FilePath(dtemp);
++  return true;
++}
++
++bool CreateTemporaryDirInDir(const FilePath& base_dir,
++                             const FilePath::StringType& prefix,
++                             FilePath* new_dir) {
++  FilePath::StringType mkdtemp_template = prefix;
++  mkdtemp_template.append(FILE_PATH_LITERAL("XXXXXX"));
++  return CreateTemporaryDirInDirImpl(base_dir, mkdtemp_template, new_dir);
+ }
+ 
+ bool CreateNewTempDirectory(const FilePath::StringType& prefix,
+                             FilePath* new_temp_path) {
+   FilePath tmpdir;
+   if (!GetTempDir(&tmpdir))
+     return false;
+-  tmpdir = tmpdir.Append(kTempFileName);
+-  std::string tmpdir_string = tmpdir.value();
+-  // this should be OK since mkdtemp just replaces characters in place
+-  char* buffer = const_cast<char*>(tmpdir_string.c_str());
+-#ifdef ANDROID
+-  char* dtemp = NULL;
+-#else
+-  char* dtemp = mkdtemp(buffer);
+-#endif
+-  if (!dtemp)
+-    return false;
+-  *new_temp_path = FilePath(dtemp);
+-  return true;
++
++  return CreateTemporaryDirInDirImpl(tmpdir, kTempFileName, new_temp_path);
+ }
+ 
+ bool CreateDirectory(const FilePath& full_path) {
+   std::vector<FilePath> subpaths;
+ 
+   // Collect a list of all parent directories.
+   FilePath last_path = full_path;
+   subpaths.push_back(full_path);
+@@ -442,70 +473,99 @@ bool CreateDirectory(const FilePath& ful
+        path.value() != last_path.value(); path = path.DirName()) {
+     subpaths.push_back(path);
+     last_path = path;
+   }
+ 
+   // Iterate through the parents and create the missing ones.
+   for (std::vector<FilePath>::reverse_iterator i = subpaths.rbegin();
+        i != subpaths.rend(); ++i) {
+-    if (!DirectoryExists(*i)) {
+-      if (mkdir(i->value().c_str(), 0777) != 0)
+-        return false;
+-    }
++    if (DirectoryExists(*i))
++      continue;
++    if (mkdir(i->value().c_str(), 0700) == 0)
++      continue;
++    // Mkdir failed, but it might have failed with EEXIST, or some other error
++    // due to the the directory appearing out of thin air. This can occur if
++    // two processes are trying to create the same file system tree at the same
++    // time. Check to see if it exists and make sure it is a directory.
++    if (!DirectoryExists(*i))
++      return false;
+   }
+   return true;
+ }
+ 
+ bool GetFileInfo(const FilePath& file_path, FileInfo* results) {
+-  struct stat64 file_info;
+-  if (stat64(file_path.value().c_str(), &file_info) != 0)
++  stat_wrapper_t file_info;
++  if (CallStat(file_path.value().c_str(), &file_info) != 0)
+     return false;
+   results->is_directory = S_ISDIR(file_info.st_mode);
+   results->size = file_info.st_size;
++  results->last_modified = base::Time::FromTimeT(file_info.st_mtime);
++  return true;
++}
++
++bool SetLastModifiedTime(const FilePath& file_path, base::Time last_modified) {
++  struct timeval times[2];
++  times[0] = last_modified.ToTimeVal();
++  times[1] = last_modified.ToTimeVal();
++  return (utimes(file_path.value().c_str(), times) == 0);
++}
++
++bool GetInode(const FilePath& path, ino_t* inode) {
++  struct stat buffer;
++  int result = stat(path.value().c_str(), &buffer);
++  if (result < 0)
++    return false;
++
++  *inode = buffer.st_ino;
+   return true;
+ }
+ 
+ FILE* OpenFile(const std::string& filename, const char* mode) {
+   return OpenFile(FilePath(filename), mode);
+ }
+ 
+ FILE* OpenFile(const FilePath& filename, const char* mode) {
+   return fopen(filename.value().c_str(), mode);
+ }
+ 
+ int ReadFile(const FilePath& filename, char* data, int size) {
+   int fd = open(filename.value().c_str(), O_RDONLY);
+   if (fd < 0)
+     return -1;
+ 
+-  int ret_value = HANDLE_EINTR(read(fd, data, size));
+-  HANDLE_EINTR(close(fd));
+-  return ret_value;
++  ssize_t bytes_read = HANDLE_EINTR(read(fd, data, size));
++  if (int ret = HANDLE_EINTR(close(fd)) < 0)
++    return ret;
++  return bytes_read;
+ }
+ 
+ int WriteFile(const FilePath& filename, const char* data, int size) {
+   int fd = creat(filename.value().c_str(), 0666);
+   if (fd < 0)
+     return -1;
+ 
+-  // Allow for partial writes
++  int bytes_written = WriteFileDescriptor(fd, data, size);
++  if (int ret = HANDLE_EINTR(close(fd)) < 0)
++    return ret;
++  return bytes_written;
++}
++
++int WriteFileDescriptor(const int fd, const char* data, int size) {
++  // Allow for partial writes.
+   ssize_t bytes_written_total = 0;
+-  do {
+-    ssize_t bytes_written_partial =
+-      HANDLE_EINTR(write(fd, data + bytes_written_total,
+-                         size - bytes_written_total));
+-    if (bytes_written_partial < 0) {
+-      HANDLE_EINTR(close(fd));
++  for (ssize_t bytes_written_partial = 0; bytes_written_total < size;
++       bytes_written_total += bytes_written_partial) {
++    bytes_written_partial =
++        HANDLE_EINTR(write(fd, data + bytes_written_total,
++                           size - bytes_written_total));
++    if (bytes_written_partial < 0)
+       return -1;
+-    }
+-    bytes_written_total += bytes_written_partial;
+-  } while (bytes_written_total < size);
++  }
+ 
+-  HANDLE_EINTR(close(fd));
+   return bytes_written_total;
+ }
+ 
+ // Gets the current working directory for the process.
+ bool GetCurrentDirectory(FilePath* dir) {
+   char system_buffer[PATH_MAX] = "";
+   if (!getcwd(system_buffer, sizeof(system_buffer))) {
+     NOTREACHED();
+@@ -522,17 +582,21 @@ bool SetCurrentDirectory(const FilePath&
+ }
+ 
+ #if !defined(OS_MACOSX)
+ bool GetTempDir(FilePath* path) {
+   const char* tmp = getenv("TMPDIR");
+   if (tmp)
+     *path = FilePath(tmp);
+   else
++#if defined(OS_SOLARIS)
++    *path = FilePath("/var/tmp");
++#else
+     *path = FilePath("/tmp");
++#endif
+   return true;
+ }
+ 
+ bool GetShmemTempDir(FilePath* path) {
+ #if defined(OS_LINUX) && !defined(ANDROID)
+   *path = FilePath("/dev/shm");
+   return true;
+ #else
+@@ -588,152 +652,209 @@ bool CopyFile(const FilePath& from_path,
+ #endif // !defined(OS_MACOSX)
+ 
+ ///////////////////////////////////////////////
+ // FileEnumerator
+ 
+ FileEnumerator::FileEnumerator(const FilePath& root_path,
+                                bool recursive,
+                                FileEnumerator::FILE_TYPE file_type)
+-    : recursive_(recursive),
++    : current_directory_entry_(0),
++      root_path_(root_path),
++      recursive_(recursive),
+       file_type_(file_type),
+-      is_in_find_op_(false),
+-      fts_(NULL) {
++      is_in_find_op_(false) {
++  // INCLUDE_DOT_DOT must not be specified if recursive.
++  DCHECK(!(recursive && (INCLUDE_DOT_DOT & file_type_)));
+   pending_paths_.push(root_path);
+ }
+ 
+ FileEnumerator::FileEnumerator(const FilePath& root_path,
+                                bool recursive,
+                                FileEnumerator::FILE_TYPE file_type,
+                                const FilePath::StringType& pattern)
+-    : recursive_(recursive),
++    : current_directory_entry_(0),
++      root_path_(root_path),
++      recursive_(recursive),
+       file_type_(file_type),
+-      pattern_(root_path.value()),
+-      is_in_find_op_(false),
+-      fts_(NULL) {
+-  // The Windows version of this code only matches against items in the top-most
+-  // directory, and we're comparing fnmatch against full paths, so this is the
+-  // easiest way to get the right pattern.
+-  pattern_ = pattern_.Append(pattern);
++      pattern_(root_path.Append(pattern).value()),
++      is_in_find_op_(false) {
++  // INCLUDE_DOT_DOT must not be specified if recursive.
++  DCHECK(!(recursive && (INCLUDE_DOT_DOT & file_type_)));
++  // The Windows version of this code appends the pattern to the root_path,
++  // potentially only matching against items in the top-most directory.
++  // Do the same here.
++  if (pattern.size() == 0)
++    pattern_ = FilePath::StringType();
+   pending_paths_.push(root_path);
+ }
+ 
+ FileEnumerator::~FileEnumerator() {
+-#ifndef ANDROID
+-  if (fts_)
+-    fts_close(fts_);
+-#endif
+ }
+ 
+ void FileEnumerator::GetFindInfo(FindInfo* info) {
+   DCHECK(info);
+ 
+-  if (!is_in_find_op_)
++  if (current_directory_entry_ >= directory_entries_.size())
+     return;
+ 
+-#ifndef ANDROID
+-  memcpy(&(info->stat), fts_ent_->fts_statp, sizeof(info->stat));
+-  info->filename.assign(fts_ent_->fts_name);
+-#endif
++  DirectoryEntryInfo* cur_entry = &directory_entries_[current_directory_entry_];
++  memcpy(&(info->stat), &(cur_entry->stat), sizeof(info->stat));
++  info->filename.assign(cur_entry->filename.value());
+ }
+ 
+-// As it stands, this method calls itself recursively when the next item of
+-// the fts enumeration doesn't match (type, pattern, etc.).  In the case of
+-// large directories with many files this can be quite deep.
+-// TODO(erikkay) - get rid of this recursive pattern
++bool FileEnumerator::IsDirectory(const FindInfo& info) {
++  return S_ISDIR(info.stat.st_mode);
++}
++
++// static
++FilePath FileEnumerator::GetFilename(const FindInfo& find_info) {
++  return FilePath(find_info.filename);
++}
++
+ FilePath FileEnumerator::Next() {
+-#ifdef ANDROID
+-  return FilePath();
+-#else
+-  if (!is_in_find_op_) {
++  ++current_directory_entry_;
++
++  // While we've exhausted the entries in the current directory, do the next
++  while (current_directory_entry_ >= directory_entries_.size()) {
+     if (pending_paths_.empty())
+       return FilePath();
+ 
+-    // The last find FindFirstFile operation is done, prepare a new one.
+     root_path_ = pending_paths_.top();
+     root_path_ = root_path_.StripTrailingSeparators();
+     pending_paths_.pop();
+ 
+-    // Start a new find operation.
+-    int ftsflags = FTS_LOGICAL;
+-    char top_dir[PATH_MAX];
+-    base::strlcpy(top_dir, root_path_.value().c_str(), arraysize(top_dir));
+-    char* dir_list[2] = { top_dir, NULL };
+-    fts_ = fts_open(dir_list, ftsflags, NULL);
+-    if (!fts_)
+-      return Next();
+-    is_in_find_op_ = true;
+-  }
++    std::vector<DirectoryEntryInfo> entries;
++    if (!ReadDirectory(&entries, root_path_, file_type_ & SHOW_SYM_LINKS))
++      continue;
+ 
+-  fts_ent_ = fts_read(fts_);
+-  if (fts_ent_ == NULL) {
+-    fts_close(fts_);
+-    fts_ = NULL;
+-    is_in_find_op_ = false;
+-    return Next();
+-  }
++    directory_entries_.clear();
++    current_directory_entry_ = 0;
++    for (std::vector<DirectoryEntryInfo>::const_iterator
++        i = entries.begin(); i != entries.end(); ++i) {
++      FilePath full_path = root_path_.Append(i->filename);
++      if (ShouldSkip(full_path))
++        continue;
+ 
+-  // Level 0 is the top, which is always skipped.
+-  if (fts_ent_->fts_level == 0)
+-    return Next();
++      if (pattern_.size() &&
++          fnmatch(pattern_.c_str(), full_path.value().c_str(), FNM_NOESCAPE))
++        continue;
+ 
+-  // Patterns are only matched on the items in the top-most directory.
+-  // (see Windows implementation)
+-  if (fts_ent_->fts_level == 1 && pattern_.value().length() > 0) {
+-    if (fnmatch(pattern_.value().c_str(), fts_ent_->fts_path, 0) != 0) {
+-      if (fts_ent_->fts_info == FTS_D)
+-        fts_set(fts_, fts_ent_, FTS_SKIP);
+-      return Next();
++      if (recursive_ && S_ISDIR(i->stat.st_mode))
++        pending_paths_.push(full_path);
++
++      if ((S_ISDIR(i->stat.st_mode) && (file_type_ & DIRECTORIES)) ||
++          (!S_ISDIR(i->stat.st_mode) && (file_type_ & FILES)))
++        directory_entries_.push_back(*i);
+     }
+   }
+ 
+-  FilePath cur_file(fts_ent_->fts_path);
+-  if (fts_ent_->fts_info == FTS_D) {
+-    // If not recursive, then prune children.
+-    if (!recursive_)
+-      fts_set(fts_, fts_ent_, FTS_SKIP);
+-    return (file_type_ & FileEnumerator::DIRECTORIES) ? cur_file : Next();
+-  } else if (fts_ent_->fts_info == FTS_F) {
+-    return (file_type_ & FileEnumerator::FILES) ? cur_file : Next();
++  return root_path_.Append(directory_entries_[current_directory_entry_
++      ].filename);
++}
++
++bool FileEnumerator::ReadDirectory(std::vector<DirectoryEntryInfo>* entries,
++                                   const FilePath& source, bool show_links) {
++
++  DIR* dir = opendir(source.value().c_str());
++  if (!dir)
++    return false;
++#ifdef OS_SOLARIS    
++  struct {
++          dirent dent_buffer;
++          char chars[MAXNAMLEN];
++  } dent_buf;
++#else  
++  struct dirent dent_buf;
++#endif  
++  struct dirent* dent;
++
++#if !defined(OS_LINUX) && !defined(OS_MACOSX) && !defined(OS_FREEBSD) && \
++    !defined(OS_OPENBSD) && !defined(OS_SOLARIS)
++  #error Port warning: depending on the definition of struct dirent, \
++         additional space for pathname may be needed
++#endif
++
++  while (readdir_r(dir, (dirent *)&dent_buf, &dent) == 0 && dent) {
++    DirectoryEntryInfo info;
++    info.filename = FilePath(dent->d_name);
++
++    FilePath full_name = source.Append(dent->d_name);
++    int ret;
++    if (show_links)
++      ret = lstat(full_name.value().c_str(), &info.stat);
++    else
++      ret = stat(full_name.value().c_str(), &info.stat);
++    if (ret < 0) {
++      // Print the stat() error message unless it was ENOENT and we're
++      // following symlinks.
++      if (!(errno == ENOENT && !show_links)) {
++        LOG(ERROR) << "Couldn't stat "
++                   << source.Append(dent->d_name).value();
++      }
++      memset(&info.stat, 0, sizeof(info.stat));
++    }
++    entries->push_back(info);
+   }
+-  // TODO(erikkay) - verify that the other fts_info types aren't interesting
+-  return Next();
+-#endif
++
++  closedir(dir);
++  return true;
+ }
+ 
+ ///////////////////////////////////////////////
+ // MemoryMappedFile
+ 
+ MemoryMappedFile::MemoryMappedFile()
+-    : file_(-1),
++    : file_(base::kInvalidPlatformFileValue),
+       data_(NULL),
+       length_(0) {
+ }
+ 
+-bool MemoryMappedFile::MapFileToMemory(const FilePath& file_name) {
+-  file_ = open(file_name.value().c_str(), O_RDONLY);
+-  if (file_ == -1)
++bool MemoryMappedFile::MapFileToMemoryInternal() {
++  struct stat file_stat;
++  if (fstat(file_, &file_stat) == base::kInvalidPlatformFileValue) {
++    LOG(ERROR) << "Couldn't fstat " << file_ << ", errno " << errno;
+     return false;
+-
+-  struct stat file_stat;
+-  if (fstat(file_, &file_stat) == -1)
+-    return false;
++  }
+   length_ = file_stat.st_size;
+ 
+   data_ = static_cast<uint8*>(
+-      mmap(NULL, length_, PROT_READ, MAP_SHARED, file_, 0));
++      (void*)mmap(NULL, length_, PROT_READ, MAP_SHARED, file_, 0));
+   if (data_ == MAP_FAILED)
+-    data_ = NULL;
+-  return data_ != NULL;
++    LOG(ERROR) << "Couldn't mmap " << file_ << ", errno " << errno;
++
++  return data_ != MAP_FAILED;
+ }
+ 
+ void MemoryMappedFile::CloseHandles() {
+   if (data_ != NULL)
+-    munmap(data_, length_);
+-  if (file_ != -1)
++    munmap((caddr_t)data_, length_);
++  if (file_ != base::kInvalidPlatformFileValue)
+     close(file_);
+ 
+   data_ = NULL;
+   length_ = 0;
+-  file_ = -1;
++  file_ = base::kInvalidPlatformFileValue;
++}
++
++bool HasFileBeenModifiedSince(const FileEnumerator::FindInfo& find_info,
++                              const base::Time& cutoff_time) {
++  return find_info.stat.st_mtime >= cutoff_time.ToTimeT();
++}
++
++FilePath GetHomeDir() {
++  const char* home_dir = getenv("HOME");
++  if (home_dir && home_dir[0])
++    return FilePath(home_dir);
++
++  home_dir = g_get_home_dir();
++  if (home_dir && home_dir[0])
++    return FilePath(home_dir);
++
++  FilePath rv;
++  if (file_util::GetTempDir(&rv))
++    return rv;
++
++  // Last resort.
++  return FilePath("/tmp");
+ }
+ 
+ } // namespace file_util
+--- mozilla-esr17/layout/base/nsPresArena.cpp.~1~	2013-12-20 15:38:34.630994169 +0400
++++ mozilla-esr17/layout/base/nsPresArena.cpp	2013-12-20 15:41:06.334318572 +0400
+@@ -144,7 +144,11 @@
+ static bool
+ ProbeRegion(uintptr_t region, uintptr_t size)
+ {
++#if !defined(__sun__)
+   if (madvise((caddr_t)region, size, MADV_NORMAL)) {
++#else
++  if (posix_madvise((void*)region, size, MADV_NORMAL)) {
++#endif
+     return true;
+   } else {
+     return false;

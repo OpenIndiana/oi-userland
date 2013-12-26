@@ -1,0 +1,22 @@
+diff --git a/js/src/assembler/jit/ExecutableAllocator.h b/js/src/assembler/jit/ExecutableAllocator.h
+--- a/js/src/assembler/jit/ExecutableAllocator.h
++++ b/js/src/assembler/jit/ExecutableAllocator.h
+@@ -224,17 +224,17 @@ private:
+     static size_t roundUpAllocationSize(size_t request, size_t granularity)
+     {
+         // Something included via windows.h defines a macro with this name,
+         // which causes the function below to fail to compile.
+         #ifdef _MSC_VER
+         # undef max
+         #endif
+ 
+-        if ((std::numeric_limits<size_t>::max() - granularity) <= request)
++        if ((::std::numeric_limits<size_t>::max() - granularity) <= request)
+             return OVERSIZE_ALLOCATION;
+         
+         // Round up to next page boundary
+         size_t size = request + (granularity - 1);
+         size = size & ~(granularity - 1);
+         JS_ASSERT(size >= request);
+         return size;
+     }

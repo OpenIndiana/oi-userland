@@ -1,0 +1,30 @@
+diff -r 32c911bc2579 xpcom/base/nsStackWalk.cpp
+--- a/xpcom/base/nsStackWalk.cpp	Thu Jul 12 15:09:18 2012 -0700
++++ b/xpcom/base/nsStackWalk.cpp	Fri Jul 13 12:48:06 2012 +0800
+@@ -838,7 +838,7 @@
+ #include <sys/regset.h>
+ #include <sys/stack.h>
+ 
+-static int    load_address ( void * pc, void * arg );
++static int    load_address ( void * pc, void * sp, void * arg );
+ static struct bucket * newbucket ( void * pc );
+ static struct frame * cs_getmyframeptr ( void );
+ static void   cs_walk_stack ( void * (*read_func)(char * address),
+@@ -911,7 +911,7 @@
+ 
+ 
+ static int
+-load_address(void * pc, void * arg )
++load_address(void * pc, void * sp, void * arg )
+ {
+     static struct bucket table[2048];
+     static mutex_t lock;
+@@ -932,7 +932,7 @@
+     if (ptr->next) {
+         mutex_unlock(&lock);
+     } else {
+-        (args->callback)(pc, args->closure);
++        (args->callback)(pc, NULL, args->closure);
+ 
+         ptr->next = newbucket(pc);
+         mutex_unlock(&lock);

@@ -1,0 +1,23 @@
+diff --git a/content/base/src/nsObjectLoadingContent.cpp b/content/base/src/nsObjectLoadingContent.cpp
+index b857452..1dab089 100644
+--- a/content/base/src/nsObjectLoadingContent.cpp
++++ b/content/base/src/nsObjectLoadingContent.cpp
+@@ -2225,7 +2225,8 @@ DoDelayedStop(nsPluginInstanceOwner* aInstanceOwner,
+ #endif
+ 
+   // Don't delay stopping QuickTime (bug 425157), Flip4Mac (bug 426524),
+-  // XStandard (bug 430219), CMISS Zinc (bug 429604).
++  // XStandard (bug 430219), CMISS Zinc (bug 429604),
++  // RealPlayer/Helix (bug 451007).
+   if (aDelayedStop
+ #if !(defined XP_WIN || defined MOZ_X11)
+       && !aInstanceOwner->MatchPluginName("QuickTime")
+@@ -2233,6 +2234,8 @@ DoDelayedStop(nsPluginInstanceOwner* aInstanceOwner,
+       && !aInstanceOwner->MatchPluginName("XStandard plugin")
+       && !aInstanceOwner->MatchPluginName("CMISS Zinc Plugin")
+ #endif
++      && !aInstanceOwner->MatchPluginName("RealPlayer")
++      && !aInstanceOwner->MatchPluginName("Helix")
+       ) {
+     nsCOMPtr<nsIRunnable> evt =
+       new nsStopPluginRunnable(aInstanceOwner, aContent);

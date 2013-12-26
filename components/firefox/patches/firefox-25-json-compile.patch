@@ -1,0 +1,18 @@
+--- a/js/src/jsonparser.h	2011-06-20 18:23:00.974613601 +0800
++++ b/js/src/jsonparser.h	2011-06-20 18:23:11.084373098 +0800
+@@ -57,6 +57,7 @@
+   public:
+     enum ErrorHandling { RaiseError, NoError };
+     enum ParsingMode { StrictJSON, LegacyJSON };
++    enum StringType { PropertyName, LiteralValue };
+ 
+   private:
+     /* Data members */
+@@ -159,7 +160,6 @@
+         return Number;
+     }
+ 
+-    enum StringType { PropertyName, LiteralValue };
+     template<StringType ST> Token readString();
+ 
+     Token readNumber();

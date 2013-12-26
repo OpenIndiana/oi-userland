@@ -1,0 +1,12 @@
+diff --git a/xpcom/glue/standalone/nsGlueLinkingDlopen.cpp b/xpcom/glue/standalone/nsGlueLinkingDlopen.cpp
+--- a/xpcom/glue/standalone/nsGlueLinkingDlopen.cpp
++++ b/xpcom/glue/standalone/nsGlueLinkingDlopen.cpp
+@@ -258,6 +258,8 @@
+         }
+     }
+ 
++    static void* gthreadso = dlopen("libgthread-2.0.so.0", RTLD_GLOBAL | RTLD_LAZY);
++
+     GetFrozenFunctionsFunc sym =
+         (GetFrozenFunctionsFunc) dlsym(libHandle,
+                                        LEADING_UNDERSCORE "NS_GetFrozenFunctions");

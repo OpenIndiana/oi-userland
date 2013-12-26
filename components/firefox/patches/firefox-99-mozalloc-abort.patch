@@ -1,0 +1,14 @@
+--- mozilla-esr17/memory/mozalloc/mozalloc_abort.cpp.~1~	2013-05-09 22:12:41.000000000 +0400
++++ mozilla-esr17/memory/mozalloc/mozalloc_abort.cpp	2013-12-20 11:38:40.227970248 +0400
+@@ -27,7 +27,11 @@
+ // Define abort() here, so that it is used instead of the system abort(). This
+ // lets us control the behavior when aborting, in order to get better results
+ // on *NIX platforms. See mozalloc_abort for details.
++#if defined(SOLARIS)
++void std::abort(void)
++#else
+ void abort(void)
++#endif
+ {
+     mozalloc_abort("Redirecting call to abort() to mozalloc_abort\n");
+ }
