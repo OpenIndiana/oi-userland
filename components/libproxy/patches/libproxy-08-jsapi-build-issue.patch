@@ -1,0 +1,36 @@
+--- libproxy-0.3.1/src/modules/pacrunner_mozjs.c.orig	2013-07-17 09:20:57.571558936 +0530
++++ libproxy-0.3.1/src/modules/pacrunner_mozjs.c	2013-07-17 10:27:56.699656011 +0530
+@@ -89,12 +89,12 @@ static JSBool dnsResolve_(JSContext *cx,
+ 		return true;
+ }
+ 
+-static JSBool dnsResolve(JSContext *cx, uintN argc, jsval *vp){
++static JSBool dnsResolve(JSContext *cx, unsigned argc, jsval *vp){
+ 	jsval *argv = JS_ARGV(cx, vp);
+ 	return dnsResolve_(cx, argv[0], vp);
+ }
+ 
+-static JSBool myIpAddress(JSContext *cx, uintN argc, jsval *vp) {
++static JSBool myIpAddress(JSContext *cx, unsigned argc, jsval *vp) {
+ 	char *hostname = (char *)JS_malloc(cx, 1024);
+ 	if(!gethostname(hostname, 1023)) {
+ 		JSString *myhost = JS_NewStringCopyN(cx, hostname, strlen(hostname));
+@@ -121,8 +121,7 @@ static void ctxs_free(ctxStore *self)
+ static JSClass cls = {
+                 "global", JSCLASS_GLOBAL_FLAGS,
+                 JS_PropertyStub, JS_PropertyStub, JS_PropertyStub, JS_StrictPropertyStub,
+-                JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub, JS_FinalizeStub,
+-		JSCLASS_NO_OPTIONAL_MEMBERS
++                JS_EnumerateStub, JS_ResolveStub, JS_ConvertStub  
+ };
+ 
+ static ctxStore *ctxs_new(pxPAC *pac)
+@@ -135,7 +134,7 @@ static ctxStore *ctxs_new(pxPAC *pac)
+ 	// Initialize Javascript runtime environment
+ 	if (!(self->run = JS_NewRuntime(1024 * 1024)))                   goto error;
+ 	if (!(self->ctx = JS_NewContext(self->run, 1024 * 1024)))        goto error;
+-	if (!(self->cls = JS_NewCompartmentAndGlobalObject(self->ctx, &cls, NULL))) goto error;
++	if (!(self->cls = JS_NewGlobalObject (self->ctx, &cls, NULL))) goto error;
+ 	if(!JS_InitStandardClasses(self->ctx, self->cls)) goto error;
+ 
+ 	// Define Javascript functions
