@@ -1,0 +1,19 @@
+commit 6836a24b21063c6f45728addde4348b3453f53eb
+Author: Halton Huo <halton.huo@sun.com>
+Date:   Wed Aug 12 11:48:20 2009 +0800
+
+    Fix gtk-vnc breaks strings in copy/paste because it removes the end of '\0'. Closes #591523.
+
+diff --git a/src/vncdisplay.c b/src/vncdisplay.c
+index e587dfb..d54cbe9 100644
+--- a/src/vncdisplay.c
++++ b/src/vncdisplay.c
+@@ -2129,7 +2129,7 @@ void vnc_display_client_cut_text(VncDisplay *obj, const gchar *text)
+ 	g_return_if_fail (VNC_IS_DISPLAY (obj));
+ 
+ 	if (!obj->priv->read_only)
+-		gvnc_client_cut_text(obj->priv->gvnc, text, strlen (text));
++		gvnc_client_cut_text(obj->priv->gvnc, text, strlen (text) + 1);
+ }
+ 
+ void vnc_display_set_lossy_encoding(VncDisplay *obj, gboolean enable)
