@@ -45,17 +45,17 @@ license python27.license license=PSFv2
 #dir path=usr/lib/$(MACH64)/python2.7
 #dir path=usr/lib/$(MACH64)/python2.7/config
 
-file usr/bin/2to3 path=usr/bin/2to3-2.7
-file usr/bin/idle path=usr/bin/idle-2.7
-file usr/bin/pydoc path=usr/bin/pydoc-2.7
+file usr/bin/2to3 path=usr/bin/2to3-2.7 pkg.depend.bypass-generate=.*
+file usr/bin/idle path=usr/bin/idle-2.7 pkg.depend.bypass-generate=.*
+file usr/bin/pydoc path=usr/bin/pydoc-2.7 pkg.depend.bypass-generate=.*
 #file path=usr/bin/smtpd.py pkg.tmp.autopyc=false
 #file path=usr/bin/$(MACH64)/smtpd.py pkg.tmp.autopyc=false
 
 file usr/bin/python2.7           path=usr/bin/$(MACH32)/isapython2.7
 file usr/bin/$(MACH64)/python2.7 path=usr/bin/$(MACH64)/isapython2.7
 
-file path=usr/bin/$(MACH64)/python2.7-config
-file path=usr/bin/python2.7-config
+file path=usr/bin/$(MACH64)/python2.7-config pkg.depend.bypass-generate=.*
+file path=usr/bin/python2.7-config pkg.depend.bypass-generate=.*
 file path=usr/include/python2.7/Python-ast.h
 file path=usr/include/python2.7/Python.h
 file path=usr/include/python2.7/abstract.h
@@ -152,7 +152,6 @@ file path=usr/include/python2.7/warnings.h
 file path=usr/include/python2.7/weakrefobject.h
 file path=usr/lib/$(MACH64)/libpython2.7.so.1.0
 file path=usr/lib/$(MACH64)/libpython2.7_db.so.1.0
-file $(MACH64)/llib-lpython27.ln path=usr/lib/$(MACH64)/llib-lpython2.7.ln
 file path=usr/lib/$(MACH64)/pkgconfig/python-2.7.pc
 #file path=usr/lib/$(MACH64)/python2.7/config/Makefile
 #file path=usr/lib/$(MACH64)/python2.7/config/Setup
@@ -165,8 +164,6 @@ file path=usr/lib/$(MACH64)/pkgconfig/python-2.7.pc
 #file path=usr/lib/$(MACH64)/python2.7/config/python.o
 file path=usr/lib/libpython2.7.so.1.0
 file path=usr/lib/libpython2.7_db.so.1.0
-file llib-lpython27 path=usr/lib/llib-lpython2.7
-file $(MACH32)/llib-lpython27.ln path=usr/lib/llib-lpython2.7.ln
 file path=usr/lib/pkgconfig/python-2.7.pc
 file path=usr/lib/python2.7/BaseHTTPServer.py
 file path=usr/lib/python2.7/Bastion.py
@@ -1004,7 +1001,7 @@ file path=usr/lib/python2.7/xmlrpclib.py
 file path=usr/lib/python2.7/zipfile.py
 file path=usr/share/man/man1/python2.7.1
 
-hardlink path=usr/bin/isapython2.7 target=../lib/isaexec
+hardlink path=usr/bin/isapython2.7 target=../lib/isaexec pkg.linted.userland.action002.0=true
 
 link path=usr/bin/$(MACH32)/python2.7 target=isapython2.7
 link path=usr/bin/$(MACH64)/python2.7 target=isapython2.7
@@ -1015,18 +1012,18 @@ link path=usr/lib/libpython2.7.so target=libpython2.7.so.1.0
 link path=usr/lib/libpython2.7_db.so target=libpython2.7_db.so.1.0
 
 link path=usr/bin/2to3 target=2to3-2.7 mediator=python mediator-version=2.7
-link path=usr/bin/idle target=idle-2.7 mediator=python mediator-version=2.7
-link path=usr/bin/pydoc target=pydoc-2.7 mediator=python mediator-version=2.7
+#link path=usr/bin/idle target=idle-2.7 mediator=python mediator-version=2.7
+#link path=usr/bin/pydoc target=pydoc-2.7 mediator=python mediator-version=2.7
 link path=usr/bin/python target=python2.7 mediator=python mediator-version=2.7
 link path=usr/bin/python-config target=python2.7-config mediator=python mediator-version=2.7
 link path=usr/bin/$(MACH64)/python target=python2.7 mediator=python mediator-version=2.7
 link path=usr/bin/$(MACH64)/python-config target=python2.7-config mediator=python mediator-version=2.7
 link path=usr/lib/pkgconfig/python.pc target=python-2.7.pc mediator=python mediator-version=2.7
 link path=usr/lib/$(MACH64)/pkgconfig/python.pc target=python-2.7.pc mediator=python mediator-version=2.7
-link path=usr/share/man/man1/python.1 target=python2.7.1 mediator=python mediator-version=2.7
+#link path=usr/share/man/man1/python.1 target=python2.7.1 mediator=python mediator-version=2.7
 
 # This optionally brings in the python tk support if tk is installed
 depend type=conditional fmri=library/python-2/tkinter-27 predicate=runtime/tk-8
 
 # If 2.6 is installed, bump it up to the current version to avoid conflicts.
-depend type=optional fmri=runtime/python-26@2.6.4,$(BUILD_VERSION)
+depend type=optional fmri=runtime/python-26@2.6.9,$(BUILD_VERSION)

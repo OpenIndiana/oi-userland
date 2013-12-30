@@ -136,6 +136,7 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 	#pkgrepo -s $(ON_REPO) list -H -F tsv | awk '{ print $2 }' | sort -u
 	#pkgrecv -s illumos-gate/packages/i386/nightly-nd/repo.redist --newest
 	
+	pkgrepo -s $(ON_REPO) rebuild
 	pkgrecv -s $(ON_REPO) -d $(@D)/pkgrecv.dir --raw \
 	  $$(pkgrecv -s $(ON_REPO) --newest | sed -f packages.ignore)
 

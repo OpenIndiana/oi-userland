@@ -62,7 +62,7 @@ CONFIGURE_OPTIONS+=	--enable-mpe
 
 COMPONENT_TEST_TARGETS = test
 
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
 $(BUILD_DIR)/modulefile.%:		files/modulefile
 	/bin/sed -e "s#%%BITS%%#$*#g" \
