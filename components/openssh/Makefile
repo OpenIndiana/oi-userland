@@ -18,15 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	6.0
-COMPONENT_PORTABLE_VERSION = $(COMPONENT_VERSION)p1
-COMPONENT_PROJECT_URL=  http://www.openssh.org/
-COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_PORTABLE_VERSION)
+COMPONENT_VERSION=	6.0p1
+HUMAN_VERSION=		$(COMPONENT_VERSION)
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+
+# Version for IPS.  The encoding rules are:
+#   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
+#   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
+IPS_COMPONENT_VERSION=	6.0.0.1
+
+COMPONENT_PROJECT_URL=	http://www.openssh.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:589d48e952d6c017e667873486b5df63222f9133d417d0002bd6429d9bd882de
 COMPONENT_ARCHIVE_URL=	http://mirror.team-cymru.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
