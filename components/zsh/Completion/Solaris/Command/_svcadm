@@ -23,14 +23,16 @@ _svcadm() {
 	(enable)
 		_arguments -A "-*" \
 			'-r[Recursively enable dependencies]' \
-			'-s[Wait for service to come online]' \
+			'-s[Synchronous mode: wait for service to come online]' \
+			'-T[Timeout for synchronous mode]:seconds:' \
 			'-t[State change is temporary]' \
 			'*:instance FMRI:_svcs_fmri -i'
 		;;
 
 	(disable)
 		_arguments -A "-*" \
-			'-s[Wait for service to become disabled]' \
+			'-s[Synchronous mode: wait for service to become disabled]' \
+			'-T[Timeout for synchronous mode]:seconds:' \
 			'-t[State change is temporary]' \
 			'*:instance FMRI:_svcs_fmri -i'
 		;;
@@ -38,6 +40,8 @@ _svcadm() {
 	(mark)
 		_arguments -A "-*" \
 			'-I[Change state immediately]' \
+			"-s[Synchronous mode: wait for service to reach the new state]" \
+			'-T[Timeout for synchronous mode]:seconds:' \
 			'-t[State change is temporary]' \
 			':state:(degraded maintenance)' \
 			':instance FMRI:_svcs_fmri -i'
@@ -45,12 +49,15 @@ _svcadm() {
 
 	(restart|refresh|clear)
 		_arguments \
+			"-s[Synchronous mode: wait for service to $service]" \
+			'-T[Timeout for synchronous mode]:seconds:' \
 			'*:instance FMRI:_svcs_fmri -i'
 		;;
 
 	(delegate)
 		_arguments -A "-*" \
-			'-s[Wait for instances to come online]' \
+			'-s[Synchronous mode: wait for instances to come online]' \
+			'-T[Timeout for synchronous mode]:seconds:' \
 			':restarter FMRI:_svcs_fmri -r' \
 			'*:FMRI:_svcs_fmri -i'
 		;;
@@ -58,6 +65,8 @@ _svcadm() {
 	(milestone)
 		_arguments -A "-*" \
 			'-d[Make milestone the default]' \
+			'-s[Synchronous mode: wait for the transition to the new milestone]' \
+			'-T[Timeout for synchronous mode]:seconds:' \
 			'*:milestone FMRI:_svcs_fmri -m'
 		;;
 
