@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -163,7 +163,7 @@ CONFIGURE_OPTIONS +=	--with-logfilebase=/var/samba/log
 CONFIGURE_OPTIONS +=	--enable-shared=yes
 CONFIGURE_OPTIONS +=	--enable-static=no
 CONFIGURE_OPTIONS.32 +=	--with-static-modules=vfs_solarisacl
-CONFIGURE_OPTIONS.32 += --with-shared-modules=vfs_zfsacl,vfs_samfs,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
+CONFIGURE_OPTIONS.32 += --with-shared-modules=vfs_worm,vfs_zfsacl,vfs_samfs,vfs_prealloc,vfs_cacheprime,vfs_commit,idmap_ldap,idmap_tdb2,idmap_rid,idmap_ad,idmap_hash,idmap_adex
 CONFIGURE_OPTIONS.64 +=	--with-static-modules=
 CONFIGURE_OPTIONS.64 += --with-shared-modules=
 CONFIGURE_OPTIONS +=	--with-readline
