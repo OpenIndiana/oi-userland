@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -47,8 +47,15 @@ ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 COMPILER =      gcc3
 endif
 
+CXX += $(CC_BITS)
+
 CFLAGS += -I/usr/include/kerberosv5
 CFLAGS += $(CPP_LARGEFILES)
+
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
+CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
+CONFIGURE_OPTIONS.64 += LIBS="-m64"
 
 # Squid has own prefix
 CONFIGURE_PREFIX =	/usr/squid
@@ -59,6 +66,7 @@ CONFIGURE_OPTIONS += --localstatedir=/var/squid
 CONFIGURE_OPTIONS += --sharedstatedir=/var/squid
 CONFIGURE_OPTIONS += --sysconfdir=$(ETCDIR)/squid
 CONFIGURE_OPTIONS += --mandir=$(CONFIGURE_PREFIX)/man
+CONFIGURE_OPTIONS += --sbindir=$(CONFIGURE_PREFIX)/sbin
 CONFIGURE_OPTIONS += --enable-arp-acl
 CONFIGURE_OPTIONS += --enable-auth='basic,digest,negotiate,ntlm'
 CONFIGURE_OPTIONS += --enable-basic-auth-helpers='DB,NCSA,YP,LDAP,PAM,getpwnam,MSNT,POP3,multi-domain-NTLM,SMB,SASL'
@@ -95,10 +103,12 @@ COMPONENT_POST_BUILD_ACTION= \
                 (cd $(COMPONENT_DIR) ; \
                  $(CP) files/squid.conf.default $(@D)/src)
 
-# common targets
-build:		$(BUILD_32) 
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32) 
+# common targets
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 # configure says it needs cppunit to test with.
 # After some work I can get cppunit to build but it quickly
