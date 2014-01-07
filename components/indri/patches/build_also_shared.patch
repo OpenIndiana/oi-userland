@@ -1,0 +1,19 @@
+Add support for building shared libraries
+--- indri-5.4/src/Makefile	2013-09-04 06:16:24.212280233 -0700
++++ indri-5.4/src/Makefile	2013-09-04 06:15:35.997458620 -0700
+@@ -17,6 +17,7 @@
+ # how to make a library from object files
+ $(OBJLIB): $(SPECHEADERS) $(OBJ) $(SPECOBJS)
+ 	rm -f $@; $(AR) -rs $@ $(OBJ)
++	$(CC) $(CFLAGS) -shared -o $(OBJLIB:.a=.so).1 -h $(OBJLIB:.a=.so).1 $(OBJ) -Wl,-z -Wl,allextract ../contrib/lemur/obj/liblemur.a -Wl,-z -Wl,allextract ../contrib/antlr/obj/libantlr.a
+ 
+ #check this.
+ $(SPECHEADERS): $(QUERYSPEC)
+@@ -40,6 +41,7 @@
+ install:
+ 	$(INSTALL_DATA) $(ALLHEADER) $(pkgincludedir)
+ 	$(AR) -rs $(libdir)/$(INDRILIB) $(OBJ)
++	cp $(OBJLIB:.a=.so).1 $(libdir)
+ 
+ stamp:
+ 	awk -f ../src/version-stamper "stamp=`date`" ../include/indri/indri-platform.h > ../include/indri/indri-platform.h2
