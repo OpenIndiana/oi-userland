@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -66,6 +66,8 @@ CONFIGURE_OPTIONS +=	c_cv_type_u_int64_t=yes
 
 # Needed to correctly build that 64-bit library.
 LDFLAGS += $(CC_BITS)
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:          $(BUILD_64)

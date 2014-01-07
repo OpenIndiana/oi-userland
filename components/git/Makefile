@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -44,6 +44,9 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
+CONFIGURE_LIBDIR.64 =	$(CONFIGURE_PREFIX)/lib
+
 CONFIGURE_PREFIX    =	/usr
 CONFIGURE_OPTIONS  +=	--without-openssl
 CONFIGURE_OPTIONS  +=	--libexecdir=/usr/lib
@@ -65,12 +68,14 @@ COMPONENT_TEST_TARGETS = test
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
 
-build:		$(BUILD_32)
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32) $(BUILD_DIR)/.manpages
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64) $(BUILD_DIR)/.manpages
 
 # There are some known issues around I18N.
-test:	$(TEST_32)
+test:		$(TEST_64)
 
 # These man pages come in a separate archive with no Makefile
 # and Solaris likes some of them moved around hence we'll just

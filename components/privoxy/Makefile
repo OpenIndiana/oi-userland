@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -47,15 +47,20 @@ COMPONENT_PREP_ACTION = \
             autoheader; \
             autoconf )
 
+CC += $(CC_BITS)
+
 # Needed to installed most of the files into the proto area.
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc
 CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--sbindir=$(CONFIGURE_PREFIX)/lib
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
-	$(CP) $(BUILD_DIR_32)/templates/* $(PROTOETCDIR)/templates
+install:	$(INSTALL_64)
+	$(CP) $(BUILD_DIR_64)/templates/* $(PROTOETCDIR)/templates
 
 test:		$(NO_TESTS)
 
