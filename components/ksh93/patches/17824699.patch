@@ -1,0 +1,30 @@
+http://lists.research.att.com/pipermail/ast-developers/2014q1/003807.html
+---
+diff --git a/src/cmd/ksh93/edit/edit.c b/src/cmd/ksh93/edit/edit.c
+index 769ba2e..4f6330e 100644
+--- a/src/cmd/ksh93/edit/edit.c
++++ b/src/cmd/ksh93/edit/edit.c
+@@ -651,7 +651,8 @@ void	ed_setup(register Edit_t *ep, int fd, int reedit)
+ 			{
+ 				int skip=0;
+ 				ep->e_crlf = 0;
+-				*pp++ = c;
++				if (pp < ppmax)
++					*pp++ = c;
+ 				for(n=1; c = *last++; n++)
+ 				{
+ 					if(pp < ppmax)
+diff --git a/src/cmd/ksh93/include/edit.h b/src/cmd/ksh93/include/edit.h
+index 795777d..145066d 100644
+--- a/src/cmd/ksh93/include/edit.h
++++ b/src/cmd/ksh93/include/edit.h
+@@ -59,7 +59,7 @@
+ #endif /* SHOPT_MULTIBYTE */
+ 
+ #define TABSIZE	8
+-#define PRSIZE	160
++#define PRSIZE	256
+ #define MAXLINE	1024		/* longest edit line permitted */
+ 
+ typedef struct _edit_pos
+
