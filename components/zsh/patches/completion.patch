@@ -1,0 +1,87 @@
+diff -ru zsh-5.0.5/Completion/Solaris/Command/_svcadm zsh-5.0.5/Completion/Solaris/Command/_svcadm
+--- zsh-5.0.5/Completion/Solaris/Command/_svcadm	Thu Jan  2 14:23:56 2014
++++ zsh-5.0.5/Completion/Solaris/Command/_svcadm	Tue Jan  7 16:11:20 2014
+@@ -23,8 +23,8 @@
+ 	(enable)
+ 		_arguments -A "-*" \
+ 			'-r[Recursively enable dependencies]' \
+-			'-s[Wait for service to come online]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for service to come online]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+@@ -31,8 +31,8 @@
+ 
+ 	(disable)
+ 		_arguments -A "-*" \
+-			'-s[Wait for service to become disabled]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for service to become disabled]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+@@ -40,8 +40,8 @@
+ 	(mark)
+ 		_arguments -A "-*" \
+ 			'-I[Change state immediately]' \
+-			"-s[Wait for service to reach the new state]" \
+-			'-T[Timeout for -s]:seconds:' \
++			"-s[Synchronous mode: wait for service to reach the new state]" \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'-t[State change is temporary]' \
+ 			':state:(degraded maintenance)' \
+ 			':instance FMRI:_svcs_fmri -i'
+@@ -49,15 +49,15 @@
+ 
+ 	(restart|refresh|clear)
+ 		_arguments \
+-			"-s[Wait for service to $service]" \
+-			'-T[Timeout for -s]:seconds:' \
++			"-s[Synchronous mode: wait for service to $service]" \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'*:instance FMRI:_svcs_fmri -i'
+ 		;;
+ 
+ 	(delegate)
+ 		_arguments -A "-*" \
+-			'-s[Wait for instances to come online]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for instances to come online]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			':restarter FMRI:_svcs_fmri -r' \
+ 			'*:FMRI:_svcs_fmri -i'
+ 		;;
+@@ -65,8 +65,8 @@
+ 	(milestone)
+ 		_arguments -A "-*" \
+ 			'-d[Make milestone the default]' \
+-			'-s[Wait for the transition to the new milestone]' \
+-			'-T[Timeout for -s]:seconds:' \
++			'-s[Synchronous mode: wait for the transition to the new milestone]' \
++			'-T[Timeout for synchronous mode]:seconds:' \
+ 			'*:milestone FMRI:_svcs_fmri -m'
+ 		;;
+ 
+diff -ru zsh-5.0.5/Completion/Unix/Command/_zpool zsh-5.0.5/Completion/Unix/Command/_zpool
+--- zsh-5.0.5/Completion/Unix/Command/_zpool	Tue Jan  7 16:11:20 2014
++++ zsh-5.0.5/Completion/Unix/Command/_zpool	Thu Jan  2 14:23:56 2014
+@@ -105,7 +105,7 @@
+ 			':command/property:($subcmds ${fields%%\[*} properties)' \
+ 			- set2 \
+ 			'-l[Display property information]' \
+-			': :(properties)'
++			':help topics:(properties)'
+ 		;;
+ 
+ 	(clear)
+@@ -241,7 +241,6 @@
+ 			'*:pool name or id:_zfs_pool' \
+ 			'::new pool name:' \
+ 			- set2 \
+-			'-N[Do not mount any filesystems]' \
+ 			'-a[All pools]'
+ 		;;
+ 

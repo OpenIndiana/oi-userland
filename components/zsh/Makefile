@@ -20,20 +20,20 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
 
 COMPONENT_NAME=		zsh
-COMPONENT_VERSION=	4.3.17
+COMPONENT_VERSION=	5.0.5
 COMPONENT_PROJECT_URL=	http://www.zsh.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:054e0452afd9c742c9f1489465175e1d4d7db50d88b602d132551d850cf7a704
-COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh-dev/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:6624d2fb6c8fa4e044d2b009f86ed1617fe8583c83acfceba7ec82826cfa8eaf
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/zsh/zsh/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/zsh
 
 include ../../make-rules/prep.mk
@@ -41,29 +41,33 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS += -n
+CONFIGURE_OPTIONS += --bindir=/usr/bin
+CONFIGURE_OPTIONS += --libdir=/usr/lib
 CONFIGURE_OPTIONS += --enable-cppflags="$(CPP_LARGEFILES)"
 CONFIGURE_OPTIONS += --enable-dynamic
 CONFIGURE_OPTIONS += --enable-etcdir=/etc
 CONFIGURE_OPTIONS += --enable-function-subdirs
-CONFIGURE_OPTIONS += --enable-ldflags="-zignore"
+# Zsh uses the compiler to link, so we need to pass CC_BITS, not LD_BITS.
+CONFIGURE_OPTIONS += --enable-ldflags="$(CC_BITS) -zignore"
 CONFIGURE_OPTIONS += --enable-libs="-lnsl"
 CONFIGURE_OPTIONS += --enable-maildir-support
 CONFIGURE_OPTIONS += --enable-multibyte
 CONFIGURE_OPTIONS += --enable-pcre
 CONFIGURE_OPTIONS += --with-tcsetpgrp
 CONFIGURE_OPTIONS += --disable-gdbm
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
-# pcre-config --libs unnecessarily emits "-L/usr/lib -R/usr/lib"; we remove it
-# so that it doesn't end up in the binaries.
+# pcre-config --libs unnecessarily emits "-R/usr/lib"; we remove it so that it
+# doesn't end up in the binaries.
 COMPONENT_POST_CONFIGURE_ACTION = \
 	(cd $(@D); \
-	sed -e 's,-L/usr/lib -R/usr/lib,,' \
+	sed -e 's,-R/usr/lib,,' \
 		config.status > config.status.new; \
 	mv config.status.new config.status; \
 	chmod 755 config.status; \
 	./config.status)
 
-COMPOVERRIDES = $(shell find Completion -type f -print)
+COMPOVERRIDES = $(shell test -d find && find Completion -type f -print)
 
 $(PROTOETCDIR)/%: % $(PROTOETCDIR)
 	$(INS.file)
@@ -76,23 +80,31 @@ $(PROTOETCDIR)/zprofile: $(PROTOETCDIR)
 # the language.
 COMPONENT_BUILD_ENV += LC_ALL=C
 
+# The configure test for NIS tests to make sure that NIS is working, not whether
+# it's available to compile against.  We actually want to go through the switch
+# in all cases, so we force it off, regardless of whether the build environment
+# has it enabled.
+CONFIGURE_ENV += zsh_cv_sys_nis=no
+
 $(COMPONENT_SRC)/Completion/%: Completion/%
 	$(CP) $< $@
 
 $(COMPONENT_SRC)/LICENCE: prep
 
 license: $(COMPONENT_SRC)/LICENCE
-	iconv -f 8859-1 -t utf-8 $< > $@
+	tail +13 $< > $@
 
 CLEAN_PATHS += license
 
-# common targets
-build:		$(BUILD_32) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	build $(INSTALL_32) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
+# common targets
+build:		$(BUILD_64) $(COMPOVERRIDES:%=$(COMPONENT_SRC)/%)
+
+install:	build $(INSTALL_64) $(PROTOETCDIR)/zprofile $(PROTOETCDIR)/zshrc license
 
 # build does this always
-test:		$(TEST_32)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability volatile>
@@ -39,6 +39,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir path=usr/share/zsh/site-functions
 file path=etc/zshrc mode=0644 overlay=allow preserve=true
 file path=usr/bin/zsh-$(COMPONENT_VERSION)
+# Prevent "64-bit binary in 32-bit path" errors, which don't apply here.
+<transform file path=usr/lib/zsh/$(COMPONENT_VERSION)/zsh/.*\.so -> \
+	set pkg.linted.userland.action001.2 true>
 file path=usr/lib/zsh/$(COMPONENT_VERSION)/zsh/cap.so
 file path=usr/lib/zsh/$(COMPONENT_VERSION)/zsh/clone.so
 file path=usr/lib/zsh/$(COMPONENT_VERSION)/zsh/compctl.so
@@ -170,6 +173,8 @@ file \
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_combination
 file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_comp_locale
+file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_complete
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_complete_debug
@@ -234,8 +239,6 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_regex_arguments
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_regex_words
-file \
-    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_remote_files
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Base/_requested
 file \
@@ -318,6 +321,8 @@ file \
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_dchroot-dsa
 file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_dcut
+file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_deb_packages
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_debchange
@@ -351,8 +356,6 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_invoke-rc.d
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_lighttpd
-file \
-    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_linda
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Debian/_lintian
 file \
@@ -395,6 +398,7 @@ file \
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_analyseplugin
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_brctl
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_btrfs
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_chrt
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Linux/_cryptsetup
@@ -539,6 +543,7 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_calendar
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_canonical_paths
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_cat
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ccal
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_cdcd
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_cdrdao
@@ -548,6 +553,7 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_chkconfig
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_chmod
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_chown
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_clay
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_comm
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_compress
@@ -562,11 +568,12 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ctags_tags
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_cut
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_cvs
-file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_darcs
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_date
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_dbus
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_dd
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_devtodo
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_df
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_dhclient
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_dict
@@ -598,6 +605,7 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_enscript
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_env
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_espeak
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_etags
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_fakeroot
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_feh
@@ -636,10 +644,12 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gnu_generic
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gnupod
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gnutls
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_go
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gpg
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gphoto2
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gprof
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_gradle
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_graphicsmagick
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_grep
@@ -680,6 +690,7 @@ file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ld_debug
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ldd
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_less
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_lha
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_links
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_list_files
@@ -711,6 +722,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mkdir
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_module
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_monotone
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mosh
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mount
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mpc
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_mt
@@ -730,13 +742,13 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_netcat
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_newsgroups
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nice
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nkf
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nm
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nmap
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_notmuch
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_npm
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_nslookup
-file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_osc
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_other_accounts
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_pack
@@ -774,12 +786,15 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_pon
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ports
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_postfix
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_postscript
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_prcs
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_printenv
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_printers
-file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ps
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_prove
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ps1234
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_pspdf
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_psutils
@@ -793,6 +808,8 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_rake
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ranlib
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_rar
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_rcs
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_remote_files
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_renice
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_ri
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_rlogin
@@ -837,8 +854,6 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_sudo
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_surfraw
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_sysctl
-file \
-    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_systemctl
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_tar
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_tar_archive
@@ -908,6 +923,7 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_xargs
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_xmlsoft
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_xmms2
+file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_xz
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_yafc
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_yodl
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Unix/_yp
@@ -1044,7 +1060,11 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_kill
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_limit
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_limits
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_math
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_math_params
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_mere
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_module_math_func
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_options
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_options_set
@@ -1061,6 +1081,8 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_prompt
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_read
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_redirect
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_run-help
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_sched
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_set
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_setopt
@@ -1079,6 +1101,8 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_ulimit
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_unhash
 file \
     path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_unsetopt
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_user_math_func
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_value
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_vared
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/Zsh/_vars
@@ -1106,6 +1130,12 @@ file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/compaudit
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/compdump
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/compinit
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/compinstall
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/openSUSE/_SuSEconfig
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/openSUSE/_hwinfo
+file \
+    path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Completion/openSUSE/_yast2
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Exceptions/catch
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Exceptions/throw
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/MIME/pick-web-browser
@@ -1374,6 +1404,114 @@ file \
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/url-quote-magic
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/which-command
 file path=usr/share/zsh/$(COMPONENT_VERSION)/functions/Zle/zed-set-file-name
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/alias
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/autoload target=functions
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/bg
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/bindkey
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/break
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/builtin
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/bye target=exit
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/cap
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/cd
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/chdir target=cd
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/clone
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/colon
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/command
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/comparguments
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/compcall
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/compctl
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/compdescribe
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/compfiles
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/compgroups
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/compquote
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/comptags
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/comptry
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/compvalues
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/continue
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/declare target=typeset
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/dirs
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/disable
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/disown
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/dot
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/echo
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/echotc
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/echoti
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/emulate
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/enable
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/eval
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/exec
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/exit
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/export
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/false
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/fc
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/fg
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/float target=typeset
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/functions
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/getcap
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/getln
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/getopts
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/hash
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/history target=fc
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/integer target=typeset
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/jobs
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/kill
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/let
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/limit
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/local target=typeset
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/log
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/logout target=exit
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/noglob
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/popd
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/print
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/printf
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/pushd
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/pushln target=print
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/pwd
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/r target=fc
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/read
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/readonly target=typeset
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/rehash target=hash
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/return
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/sched
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/set
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/setcap
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/setopt
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/shift
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/source
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/stat
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/suspend
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/test
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/times
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/trap
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/true
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/ttyctl
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/type target=whence
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/typeset
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/ulimit
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/umask
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/unalias target=unhash
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/unfunction target=unhash
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/unhash
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/unlimit
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/unset
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/unsetopt
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/vared
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/wait
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/whence
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/where target=whence
+link path=usr/share/zsh/$(COMPONENT_VERSION)/help/which target=whence
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zcompile
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zformat
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zftp
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zle
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zmodload
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zparseopts
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zprof
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zpty
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zregexparse
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zsocket
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/zstyle
+file path=usr/share/zsh/$(COMPONENT_VERSION)/help/ztcp
 file path=usr/share/zsh/$(COMPONENT_VERSION)/scripts/newuser
 hardlink path=usr/bin/zsh target=zsh-$(COMPONENT_VERSION)
 link path=etc/zprofile target=profile
