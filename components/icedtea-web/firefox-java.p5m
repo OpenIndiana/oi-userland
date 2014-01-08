@@ -1,0 +1,37 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/web/browser/firefox/plugin/firefox-java@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Plug-ins and Run-times"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license icedtea-web.license license="GPLv2"
+
+file usr/bin/javaws path=usr/jdk/instances/openjdk1.7.0/jre/bin/javaws mode=0555
+link path=usr/lib/firefox/plugins/IcedTeaPlugin.so target=../../IcedTeaPlugin.so
+
+depend type=require fmri=pkg:/runtime/java/openjdk7
+
+# Generated section:
+file path=usr/bin/itweb-settings mode=0555
+#file path=usr/bin/javaws mode=0555
+file path=usr/lib/IcedTeaPlugin.so mode=0555
+file path=usr/share/icedtea-web/javaws_splash.png
+file path=usr/share/icedtea-web/netx.jar
+file path=usr/share/icedtea-web/plugin.jar
+file path=usr/share/man/man1/javaws.1

@@ -1,0 +1,140 @@
+--- gnome-python-extras-2.25.3/configure.ac.~1~	2009-02-16 01:20:23.000000000 +0300
++++ gnome-python-extras-2.25.3/configure.ac	2013-12-19 02:29:31.866834681 +0400
+@@ -19,6 +19,8 @@
+ m4_define(mozilla_required_version,           1.2b)
+ m4_define(firefox_required_version,           1.0)
+ m4_define(xulrunner_required_version,         1.8)
++m4_define(xulrunner19_required_version,       1.9)
++m4_define(firefoxxpcom_required_version,      3.0)
+ m4_define(libgda_required_version,            3.99.11)
+ m4_define(gksu_required_version,              1.2.5)
+ m4_define(gksu2_required_version,             2.0.4)
+@@ -78,6 +80,8 @@
+ AC_MSG_RESULT([$os_win32])
+ AM_CONDITIONAL(OS_WIN32, test "$os_win32" = "yes")
+ 
++AC_PROG_CXX
++
+ AC_DISABLE_STATIC
+ AC_LIBTOOL_WIN32_DLL
+ AC_PROG_LIBTOOL
+@@ -230,53 +234,70 @@
+ dnl should we build the gtkmozembed module?
+ AC_ARG_BINDING([gtkmozembed], [ON], [gtkmozembed])
+ AC_ARG_WITH(gtkmozembed, AS_HELP_STRING(
+-                         [--with-gtkmozembed=mozilla|firefox|xulrunner],
++                         [--with-gtkmozembed=mozilla|firefox|firefox-xpcom|xulrunner|xulrunner-1.9],
+                          [package that provides libgtkmozembed]),
+             [mozpackage=$withval], [mozpackage=any])
+ 
+ if "$build_gtkmozembed"; then
+ if test $mozpackage = any ; then
+-
++PKG_CHECK_MODULES(GTKMOZEMBED, [libxul-embedding >= xulrunner19_required_version
++                               gtk+-2.0         >= gtk_required_version],
++  [build_gtkmozembed=true; mozpackage=xulrunner-1.9; mozpkgconfig=libxul-embedding],
++  [
+ PKG_CHECK_MODULES(GTKMOZEMBED, [xulrunner-gtkmozembed >= xulrunner_required_version
+                                 gtk+-2.0              >= gtk_required_version],
+-  [build_gtkmozembed=true; mozpackage=xulrunner],
++  [build_gtkmozembed=true; mozpackage=xulrunner; mozpkgconfig=$mozpackage-gtkmozembed],
++  [
++PKG_CHECK_MODULES(GTKMOZEMBED, [firefox-xpcom >= firefoxxpcom_required_version
++                               gtk+-2.0         >= gtk_required_version],
++  [build_gtkmozembed=true; mozpackage=firefox-xpcom; mozpkgconfig=firefox-xpcom],
+   [
+ PKG_CHECK_MODULES(GTKMOZEMBED, [firefox-gtkmozembed >= firefox_required_version
+                                 gtk+-2.0            >= gtk_required_version],
+-  [build_gtkmozembed=true; mozpackage=firefox],
++  [build_gtkmozembed=true; mozpackage=mozilla; mozpkgconfig=$mozpackage-gtkmozembed],
+   [
+ PKG_CHECK_MODULES(GTKMOZEMBED, [mozilla-gtkmozembed >= mozilla_required_version
+                                 gtk+-2.0            >= gtk_required_version],
+-  [build_gtkmozembed=true; mozpackage=mozilla],
++  [build_gtkmozembed=true; mozpackage=mozilla; mozpkgconfig=$mozpackage-gtkmozembed],
++
+   build_gtkmozembed=false)
+   ])
+   ])
++  ])
++  ])
++
+ 
+ else
+ 
+ case $mozpackage in
+-     xulrunner) mozpackage_required_version=xulrunner_required_version ;;
+-     firefox) mozpackage_required_version=firefox_required_version ;;
+-     mozilla)
+-         mozpackage_required_version=mozilla_required_version
+-         AC_MSG_CHECKING([for extra gtkmozembed code generation flags])
+-         PKG_CHECK_MODULES(XUL19, mozilla-gtkmozembed >= 0.21 gtk+-2.0,
+-                           GTKMOZEMBED_CODEGEN_DEFINES="-DHAVE_XUL19",
+-                           GTKMOZEMBED_CODEGEN_DEFINES="")
+-         AC_MSG_RESULT([$GTKMOZEMBED_CODEGEN_DEFINES])
+-         ;;
+-     *) AC_MSG_ERROR([--with-gtkmozembed argument must be either 'mozilla', 'firefox', or 'xulrunner'])
++     xulrunner-1.9) mozpackage_required_version=xulrunner19_required_version ; mozpkgconfig=libxul-embedding ;;
++     xulrunner) mozpackage_required_version=xulrunner_required_version ; mozpkgconfig=$mozpackage-gtkmozembed ;;
++     firefox-xpcom) mozpackage_required_version=firefoxxpcom_required_version ; mozpkgconfig=firefox-xpcom ;;
++     firefox) mozpackage_required_version=firefox_required_version ; mozpkgconfig=$mozpackage-gtkmozembed ;;
++     mozilla) mozpackage_required_version=mozilla_required_version ; mozpkgconfig=$mozpackage-gtkmozembed ;;
++     *) AC_MSG_ERROR([--with-gtkmozembed argument must be either 'mozilla', 'firefox', 'firefox-xpcom', 'xulrunner-1.9' or 'xulrunner'])
+ esac
+ AC_SUBST(GTKMOZEMBED_CODEGEN_DEFINES)
+ 
+-PKG_CHECK_MODULES(GTKMOZEMBED, [$mozpackage-gtkmozembed >= $mozpackage_required_version,
+-                                gtk+-2.0                >= gtk_required_version],
++PKG_CHECK_MODULES(GTKMOZEMBED, [$mozpkgconfig >= $mozpackage_required_version,
++                                gtk+-2.0      >= gtk_required_version],
+   build_gtkmozembed=true,
+   build_gtkmozembed=false)
+ 
+ fi
+ 
+-AM_CONDITIONAL(BUILD_GTKMOZEMBED, $build_gtkmozembed)
++if test $mozpackage = xulrunner-1.9; then
++GTKMOZEMBED_CFLAGS="$GTKMOZEMBED_CFLAGS $(pkg-config --cflags --define-variable=includetype=unstable libxul-embedding)"
++GTKMOZEMBED_LIBS="$GTKMOZEMBED_LIBS $(pkg-config --libs libxul-embedding)"
++MOZILLA_HOME="`$PKG_CONFIG --variable=sdkdir libxul-embedding`"
++
++elif test $mozpackage = firefox-xpcom; then
++GTKMOZEMBED_CFLAGS="$GTKMOZEMBED_CFLAGS $(pkg-config --cflags firefox-xpcom)"
++GTKMOZEMBED_LIBS="$GTKMOZEMBED_LIBS $(pkg-config --libs firefox-xpcom)"
++MOZILLA_HOME="`$PKG_CONFIG --variable=libdir firefox-xpcom`"
++
++else
++
+ if test -n "$export_dynamic"; then
+   GTKMOZEMBED_LIBS=`echo $GTKMOZEMBED_LIBS | sed -e "s/$export_dynamic//"`
+ fi
+@@ -285,6 +305,29 @@
+    MOZILLA_HOME="`$PKG_CONFIG --variable=sdkdir $mozpackage-gtkmozembed`/lib"
+ fi
+ AC_SUBST(MOZILLA_HOME)
++fi
++AM_CONDITIONAL(BUILD_GTKMOZEMBED, $build_gtkmozembed)
++
++AC_LANG_PUSH(C++)
++_SAVE_CPPFLAGS=$CPPFLAGS
++_SAVE_CXXFLAGS=$CXXFLAGS
++CXXFLAGS=$GTKMOZEMBED_CFLAGS
++CPPFLAGS=
++AC_COMPILE_IFELSE([AC_LANG_SOURCE(
++[[#ifndef XPCOM_GLUE
++#error "no xpcom glue"
++#endif]])],
++[have_xpcom_glue=yes], [have_xpcom_glue=yes]
++)
++CPPFLAGS=$_SAVE_CPPFLAGS
++CXXFLAGS=$_SAVE_CXXFLAGS
++AC_LANG_POP(C++)
++
++AM_CONDITIONAL(HAVE_XPCOM_GLUE, [test $have_xpcom_glue=yes])
++if test "$have_xpcom_glue" = "yes"; then
++  AC_DEFINE(HAVE_XPCOM_GLUE, 1,
++    [Define to 1 if libxpcomglue is being used.])
++fi
+ 
+ fi # if build_gtkmozembed
+ 

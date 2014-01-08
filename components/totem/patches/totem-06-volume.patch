@@ -1,0 +1,14 @@
+--- totem-2.30.2/src/backend/bacon-video-widget-gst-0.10.c-orig	2010-09-30 17:07:33.403839225 -0500
++++ totem-2.30.2/src/backend/bacon-video-widget-gst-0.10.c	2010-09-30 17:08:53.900892622 -0500
+@@ -4622,6 +4622,11 @@ bacon_video_widget_get_volume (BaconVide
+   g_return_val_if_fail (BACON_IS_VIDEO_WIDGET (bvw), 0.0);
+   g_return_val_if_fail (GST_IS_ELEMENT (bvw->priv->play), 0.0);
+ 
++  /* If the value hasn't been loaded, get the value. */
++  if (bvw->priv->volume == -1.0) {
++     notify_volume_idle_cb (bvw);
++  }
++
+   return bvw->priv->volume;
+ }
+ 

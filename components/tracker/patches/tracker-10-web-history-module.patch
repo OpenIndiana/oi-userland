@@ -1,0 +1,580 @@
+--- tracker-0.6.95-orig/data/modules/Makefile.am	2009-07-02 13:37:17.847605000 +0800
++++ tracker-0.6.95/data/modules/Makefile.am	2009-06-11 16:16:47.941854000 +0800
+@@ -6,6 +6,7 @@
+ 	applications.module				\
+ 	evolution.module				\
+ 	files.module					\
+-	gaim-conversations.module
++	gaim-conversations.module			\
++	web-history.module
+ 
+ EXTRA_DIST = $(config_DATA)
+--- /dev/null	2009-07-02 13:16:20.000000000 +0800
++++ tracker-0.6.95/data/modules/web-history.module	2009-06-11 16:16:47.942036000 +0800
+@@ -0,0 +1,22 @@
++[General]
++Description=Web History
++Enabled=true
++
++[Monitors]
++Directories=
++RecurseDirectories=$HOME/.xesam/Firefox/ToIndex/;
++
++[Ignored]
++Directories=
++Files=
++DirectoriesWithContent=
++
++[Index]
++Service=WebHistory
++MimeTypes=
++Files=
++ScanTimeout=6000
++CacheTimeout=120
++
++[Specific]
++# Options specific to this module
+--- tracker-0.6.95-orig/src/tracker-indexer/modules/Makefile.am	2009-07-02 13:37:17.558151000 +0800
++++ tracker-0.6.95/src/tracker-indexer/modules/Makefile.am	2009-06-11 16:16:42.324761000 +0800
+@@ -24,7 +24,8 @@
+ indexer_modules_LTLIBRARIES = 						\
+ 	libtracker-module-applications.la				\
+ 	libtracker-module-files.la					\
+-	libtracker-module-gaim-conversations.la
++	libtracker-module-gaim-conversations.la				\
++	libtracker-module-web-history.la
+ 
+ # Applications module
+ libtracker_module_applications_la_SOURCES = applications.c
+@@ -53,6 +54,15 @@
+ 	$(GCOV_LIBS)							\
+ 	$(GLIB2_LIBS)
+ 
++# WebHistory module
++libtracker_module_web_history_la_SOURCES = web-history.c
++libtracker_module_web_history_la_LDFLAGS = $(module_flags)
++libtracker_module_web_history_la_LIBADD = 			\
++	$(GMODULE_LIBS)							\
++	$(GIO_LIBS)							\
++	$(GCOV_LIBS)							\
++	$(GLIB2_LIBS)
++
+ if HAVE_GCONF
+ 
+ indexer_modules_LTLIBRARIES += 						\
+--- /dev/null	2009-07-02 13:16:20.000000000 +0800
++++ tracker-0.6.95/src/tracker-indexer/modules/web-history.c	2009-06-11 16:16:42.440289000 +0800
+@@ -0,0 +1,400 @@
++/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
++/*
++ * Copyright (C) 2006, Mr Jamie McCracken (jamiemcc@gnome.org)
++ * Copyright (C) 2008, Nokia
++
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * General Public License for more details.
++ *
++ * You should have received a copy of the GNU General Public
++ * License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++ * Boston, MA  02110-1301, USA.
++ */
++
++#include <sys/stat.h>
++#include "config.h"
++
++#include <tracker-indexer/tracker-module.h>
++#define TEXT_MAX_SIZE		1048576  /* bytes */
++#define TEXT_CHECK_SIZE 	65535
++#define METADATA_WEBHISTORY_URL 		"Doc:URL"
++#define METADATA_WEBHISTORY_PAGE_CONTENTTYPE 	"Web:PageContentType"
++#define METADATA_WEBHISTORY_CHARACTERSET 	"Web:CharacterSet"
++#define METADATA_WEBHISTORY_REFERRER 		"Web:Referrer"
++#define METADATA_WEBHISTORY_KEYWORD		"User:Keywords"
++#define METADATA_WEBHISTORY_ACCESSED 		"File:Accessed"
++#define METADATA_WEBHISTORY_TITLE		"Doc:Title"
++
++#define TRACKER_TYPE_WEB_FILE    (tracker_web_file_get_type ())
++#define TRACKER_WEB_FILE(module) (G_TYPE_CHECK_INSTANCE_CAST ((module), TRACKER_TYPE_WEB_FILE, TrackerWebFile))
++
++typedef struct TrackerWebFile TrackerWebFile;
++typedef struct TrackerWebFileClass TrackerWebFileClass;
++
++struct TrackerWebFile {
++        TrackerModuleFile parent_instance;
++};
++
++struct TrackerWebFileClass {
++        TrackerModuleFileClass parent_class;
++};
++
++static GType                   	tracker_web_file_get_type      (void) G_GNUC_CONST;
++static gchar *       		tracker_web_file_get_text      (TrackerModuleFile *file);
++static TrackerModuleMetadata * 	tracker_web_file_get_metadata  (TrackerModuleFile *file);
++
++
++G_DEFINE_DYNAMIC_TYPE (TrackerWebFile, tracker_web_file, TRACKER_TYPE_MODULE_FILE);
++
++
++static void
++tracker_web_file_class_init (TrackerWebFileClass *klass)
++{
++        TrackerModuleFileClass *file_class = TRACKER_MODULE_FILE_CLASS (klass);
++
++        file_class->get_metadata = tracker_web_file_get_metadata;
++	file_class->get_text = tracker_web_file_get_text;
++}
++
++static void
++tracker_web_file_class_finalize (TrackerWebFileClass *klass)
++{
++}
++
++static void
++tracker_web_file_init (TrackerWebFile *file)
++{
++}
++
++static gchar *
++tracker_web_file_get_text (TrackerModuleFile *file)
++{
++	return tracker_module_metadata_utils_get_text (tracker_module_file_get_file (file));
++}
++static gboolean
++get_file_is_utf8 (GString *s,
++		  gssize  *bytes_valid)
++{
++	const gchar *end;
++
++	/* Check for UTF-8 validity, since we may
++	 * have cut off the end.
++	 */
++	if (g_utf8_validate (s->str, s->len, &end)) {
++		*bytes_valid = (gssize) s->len;
++		return TRUE;
++	}
++
++	*bytes_valid = end - s->str;
++
++	/* 4 is the maximum bytes for a UTF-8 character. */
++	if (*bytes_valid > 4) {
++		return FALSE;
++	}
++
++	if (g_utf8_get_char_validated (end, *bytes_valid) == (gunichar) -1) {
++		return FALSE;
++	}
++
++	return TRUE;
++}
++
++#ifdef TRY_LOCALE_TO_UTF8_CONVERSION
++
++static GString *
++get_file_in_locale (GString *s)
++{
++	GError *error = NULL;
++	gchar  *str;
++	gsize	bytes_read;
++	gsize	bytes_written;
++
++	str = g_locale_to_utf8 (s->str,
++				s->len,
++				&bytes_read,
++				&bytes_written,
++				&error);
++	if (error) {
++		g_debug ("  Conversion to UTF-8 read %d bytes, wrote %d bytes",
++			 bytes_read,
++			 bytes_written);
++		g_message ("Could not convert file from locale to UTF-8, %s",
++			   error->message);
++		g_error_free (error);
++		g_free (str);
++	} else {
++		g_string_assign (s, str);
++		g_free (str);
++	}
++
++	return s;
++}
++
++#endif /* TRY_LOCALE_TO_UTF8_CONVERSION */
++static gchar *
++get_file_content (const gchar *path)
++{
++	GFile		 *file;
++	GFileInputStream *stream;
++	GError		 *error = NULL;
++	GString		 *s;
++	gssize		  bytes;
++	gssize		  bytes_valid;
++	gssize		  bytes_read_total;
++	gssize		  buf_size;
++	gchar		  buf[TEXT_CHECK_SIZE];
++	gboolean	  has_more_data;
++	gboolean	  has_reached_max;
++	gboolean	  is_utf8;
++
++	file = g_file_new_for_path (path);
++	stream = g_file_read (file, NULL, &error);
++
++	if (error) {
++		g_message ("Could not get read file:'%s', %s",
++			   path,
++			   error->message);
++		g_error_free (error);
++		g_object_unref (file);
++
++		return NULL;
++	}
++
++	s = g_string_new ("");
++	has_reached_max = FALSE;
++	has_more_data = TRUE;
++	bytes_read_total = 0;
++	buf_size = TEXT_CHECK_SIZE - 1;
++
++	g_debug ("  Starting read...");
++
++	while (has_more_data && !has_reached_max && !error) {
++		gssize bytes_read;
++		gssize bytes_remaining;
++
++		/* Leave space for NULL termination and make sure we
++		 * add it at the end now.
++		 */
++		bytes_remaining = buf_size;
++		bytes_read = 0;
++
++		/* Loop until we hit the maximum */
++		for (bytes = -1; bytes != 0 && !error; ) {
++			bytes = g_input_stream_read (G_INPUT_STREAM (stream),
++						     buf,
++						     bytes_remaining,
++						     NULL,
++						     &error);
++
++			bytes_read += bytes;
++			bytes_remaining -= bytes;
++
++			g_debug ("  Read %" G_GSSIZE_FORMAT " bytes", bytes);
++		}
++
++		/* Set the NULL termination after the last byte read */
++		buf[buf_size - bytes_remaining] = '\0';
++
++		/* First of all, check if this is the first time we
++		 * have tried to read the file up to the TEXT_CHECK_SIZE
++		 * limit. Then make sure that we read the maximum size
++		 * of the buffer. If we don't do this, there is the
++		 * case where we read 10 bytes in and it is just one
++		 * line with no '\n'. Once we have confirmed this we
++		 * check that the buffer has a '\n' to make sure the
++		 * file is worth indexing. Similarly if the file has
++		 * <= 3 bytes then we drop it.
++		 */
++		if (bytes_read_total == 0) {
++			if (bytes_read == buf_size &&
++			    strchr (buf, '\n') == NULL) {
++				g_debug ("  No '\\n' in the first %" G_GSSIZE_FORMAT " bytes, not indexing file",
++					 buf_size);
++				break;
++			} else if (bytes_read <= 2) {
++				g_debug ("  File has less than 3 characters in it, not indexing file");
++				break;
++			}
++		}
++
++		/* Here we increment the bytes read total to evaluate
++		 * the next states. We don't do this before the
++		 * previous condition so we can know when we have
++		 * iterated > 1.
++		 */
++		bytes_read_total += bytes_read;
++
++		if (bytes_read != buf_size || bytes_read == 0) {
++			has_more_data = FALSE;
++		}
++
++		if (bytes_read_total >= TEXT_MAX_SIZE) {
++			has_reached_max = TRUE;
++		}
++
++		g_debug ("  Read "
++			 "%" G_GSSIZE_FORMAT " bytes total, "
++			 "%" G_GSSIZE_FORMAT " bytes this time, "
++			 "more data:%s, reached max:%s",
++			 bytes_read_total,
++			 bytes_read,
++			 has_more_data ? "yes" : "no",
++			 has_reached_max ? "yes" : "no");
++
++		/* The + 1 is for the NULL terminating byte */
++		s = g_string_append_len (s, buf, bytes_read + 1);
++	}
++
++	if (has_reached_max) {
++		g_debug ("  Maximum indexable limit reached");
++	}
++
++	if (error) {
++		g_message ("Could not read input stream for:'%s', %s",
++			   path,
++			   error->message);
++		g_error_free (error);
++		g_string_free (s, TRUE);
++		g_object_unref (stream);
++		g_object_unref (file);
++
++		return NULL;
++	}
++
++	/* Check for UTF-8 Validity, if not try to convert it to the
++	 * locale we are in.
++	 */
++	is_utf8 = get_file_is_utf8 (s, &bytes_valid);
++
++	/* Make sure the string is NULL terminated and in the case
++	 * where the string is valid UTF-8 up to the last character
++	 * which was cut off, NULL terminate to the last most valid
++	 * character.
++	 */
++#ifdef TRY_LOCALE_TO_UTF8_CONVERSION
++	if (!is_utf8) {
++		s = get_file_in_locale (s);
++	} else {
++		g_debug ("  Truncating to last valid UTF-8 character (%d/%d bytes)",
++			 bytes_valid,
++			 s->len);
++		s = g_string_truncate (s, bytes_valid);
++	}
++#else	/* TRY_LOCALE_TO_UTF8_CONVERSION */
++	g_debug ("  Truncating to last valid UTF-8 character (%" G_GSSIZE_FORMAT "/%" G_GSSIZE_FORMAT " bytes)",
++		 bytes_valid,
++		 s->len);
++	s = g_string_truncate (s, bytes_valid);
++#endif	/* TRY_LOCALE_TO_UTF8_CONVERSION */
++
++	g_object_unref (stream);
++	g_object_unref (file);
++
++	if (s->len < 1) {
++		g_string_free (s, TRUE);
++		s = NULL;
++	}
++
++	return s ? g_string_free (s, FALSE) : NULL;
++}
++
++static TrackerModuleMetadata *
++tracker_web_file_get_metadata (TrackerModuleFile *file)
++{
++	TrackerModuleMetadata *metadata = NULL;
++	gchar *content_path, *metadata_path, *metadata_content;
++	gchar *base_name, *dir_name;
++	gchar **metadata_array;
++	gchar **temp_array;
++	guint len;
++	struct stat st;
++
++	content_path = g_file_get_path (tracker_module_file_get_file (file));
++	base_name = g_path_get_basename (content_path);
++	if (g_strrstr (base_name, "firefox-xesam-web") == NULL){
++		g_free (content_path);
++		g_free (base_name);
++		return NULL;
++	}
++	dir_name = g_path_get_dirname (content_path);
++	metadata_path = g_strconcat  (dir_name, "/.", base_name, NULL);
++
++	if (!g_file_test (metadata_path, G_FILE_TEST_EXISTS)){
++		g_free (content_path);
++		g_free (metadata_path);
++		return NULL;
++	}
++	metadata_content = get_file_content (metadata_path);
++	metadata_array = g_strsplit (metadata_content, "\n", -1);
++	len = g_strv_length (metadata_array);
++	if (len < 4){
++		g_debug (" Is Metadata file right? The file is %s\n", metadata_path);
++		g_strfreev (metadata_array);
++		g_free (metadata_path);
++		g_free (content_path);
++		return NULL;
++	}
++	metadata = tracker_module_metadata_new ();
++	
++	tracker_module_metadata_add_string (metadata, METADATA_WEBHISTORY_URL, metadata_array[0]);
++	tracker_module_metadata_add_string (metadata, METADATA_WEBHISTORY_TITLE, metadata_array[1]);
++	tracker_module_metadata_add_string (metadata,METADATA_WEBHISTORY_PAGE_CONTENTTYPE, metadata_array[3]);
++
++	temp_array = g_strsplit (metadata_array[4], "=", 2);
++	if (g_strrstr (temp_array[0], "encoding") != NULL){
++		tracker_module_metadata_add_string (metadata,METADATA_WEBHISTORY_CHARACTERSET, temp_array[1]);
++	}
++	g_strfreev (temp_array);
++	if (len > 6){
++		temp_array = g_strsplit (metadata_array[5], "=", 2);
++		if (g_strrstr (temp_array[0], "referrer") != NULL){
++			tracker_module_metadata_add_string (metadata, METADATA_WEBHISTORY_REFERRER, temp_array[1]);
++		} 
++		if (g_strrstr (temp_array[0], "keyword") != NULL){
++			tracker_module_metadata_add_string (metadata, METADATA_WEBHISTORY_KEYWORD, temp_array[1]);
++		}
++		g_strfreev (temp_array);
++		temp_array = g_strsplit (metadata_array[6], "=", 2);
++		if (g_strrstr (temp_array[0], "keyword") != NULL){
++			tracker_module_metadata_add_string (metadata, METADATA_WEBHISTORY_KEYWORD, temp_array[1]);		
++		}
++		g_strfreev (temp_array);
++	}
++
++	if(g_lstat (content_path, &st) >=0){
++		tracker_module_metadata_add_date (metadata, METADATA_WEBHISTORY_ACCESSED, st.st_mtim.tv_nsec);
++	}
++        g_free (content_path);
++	g_free (metadata_path);
++	g_strfreev (metadata_array);
++
++	return metadata;
++}
++
++
++void
++indexer_module_initialize (GTypeModule *module)
++{
++        tracker_web_file_register_type (module);
++}
++
++void
++indexer_module_shutdown (void)
++{
++}
++
++TrackerModuleFile *
++indexer_module_create_file (GFile *file)
++{
++        return g_object_new (TRACKER_TYPE_WEB_FILE,
++                             "file", file,
++                             NULL);
++}
+--- tracker-0.6.95-orig/data/services/Makefile.am	2009-07-02 13:37:17.846918000 +0800
++++ tracker-0.6.95/data/services/Makefile.am	2009-06-11 16:16:47.880119000 +0800
+@@ -13,6 +13,7 @@
+ 	file.metadata 			\
+ 	image.metadata 			\
+ 	video.metadata 			\
+-	playlist.metadata		
++	playlist.metadata		\
++	webhistory.metadata	
+ 
+ EXTRA_DIST = $(config_DATA)
+--- tracker-0.6.95-orig/data/services/default.service	2009-07-02 13:37:17.847003000 +0800
++++ tracker-0.6.95/data/services/default.service	2009-06-11 16:16:47.880203000 +0800
+@@ -52,6 +52,7 @@
+ KeyMetadata2=Doc:URL
+ KeyMetadata3=Doc:Keywords
+ KeyMetadata4=User:Keywords
++KeyMetadata5=File:Accessed
+ TabularMetadata=File:Name;File:Mime;Doc:Title;Doc:URL;Doc:Author;File:Size;File:Modified;Doc:Created;
+ TileMetadata=Doc:Title;Doc:URL;Doc:Subject;Doc:Author;Doc:Created;Doc:PageCount;File:Size;
+ ShowServiceFiles=false
+--- /dev/null	2009-07-02 13:16:20.000000000 +0800
++++ tracker-0.6.95/data/services/webhistory.metadata	2009-06-11 16:16:47.880464000 +0800
+@@ -0,0 +1,56 @@
++[Doc:Title]
++DisplayName=Title
++Description=The title of the web page
++DataType=index
++Parent=DC:Title
++Weight=25
++Filtered=false
++
++[Doc:Keywords]
++DisplayName=Doc Keywords
++Description=keywords embedded in the web page
++DataType=keyword
++Parent=DC:Keywords
++Weight=15
++Filtered=false
++Delimited=true
++
++[User:Keywords]
++DisplayName=Keywords
++Description=keywords user sets
++DataType=keyword
++Weight=30
++Filtered=false
++
++[Web:PageContentType]
++DisplayName=Page Type
++Description=the type of the web page
++DataType=index
++Weight=1
++
++[Web:CharacterSet]
++DisplayName=Character Set
++Description=Number of words in the document
++DataType=index
++Weight=1
++
++[Web:Referrer]
++DisplayName=Referrer
++Description=The link referrer of this web page
++DataType=string
++Weight=1
++
++[Doc:URL]
++DisplayName=URL
++Description=URL to this web page
++DataType=index
++Weight=25
++Filtered=false
++
++[File:Accessed]
++DisplayName=Accessed
++Description=Last acessed date
++DataType=date
++Parent=DC:Date
++FieldName=Accessed
++
+--- tracker-0.6.95-orig/src/libtracker-gtk/tracker-metadata-tile.c	2009-07-02 13:37:17.596886000 +0800
++++ tracker-0.6.95/src/libtracker-gtk/tracker-metadata-tile.c	2009-06-11 16:16:45.052830000 +0800
+@@ -166,6 +166,7 @@
+ 	"File:Size",
+ 	"File:Mime",
+ 	"Doc:Keywords",
++	"File:Accessed",
+ 	NULL
+ };
+ 
+@@ -175,6 +176,7 @@
+ 	WEBHISTORY_SIZE,
+ 	WEBHISTORY_MIME,
+ 	WEBHISTORY_KEYWORDS,
++	WEBHISTORY_ACCESSED,
+ 	WEBHISTORY_N_KEYS
+ };
+ 
+@@ -678,11 +680,11 @@
+ 	priv = TRACKER_METADATA_TILE_GET_PRIVATE (tile);
+ 
+ 	/* create title */
+-	_property_to_label ( priv->title, array[WEBHISTORY_URL] , "<span size='large'><b>%s</b></span>");
++	_property_to_label ( priv->title, array[WEBHISTORY_TITLE] , "<span size='large'><b>%s</b></span>");
+ 
+ 	/* then set the remaining properties */
+-	_property_to_label ( priv->info1, array[WEBHISTORY_TITLE] , _("Subject : <b>%s</b>"));
+-	_property_to_label ( priv->info2, array[WEBHISTORY_KEYWORDS] , "Keywords: <b>%s</b>");
++	_property_to_label ( priv->info1, array[WEBHISTORY_URL] , _("URL: <b>%s</b>"));
++	_date_to_label ( priv->info2, array[WEBHISTORY_ACCESSED] , _("Accessed :<b>%s</b>"));
+ 
+ 	tracker_metadata_tile_show (tile);
+ 	g_strfreev (array);

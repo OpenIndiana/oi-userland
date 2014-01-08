@@ -1,0 +1,14 @@
+--- a/toolkit/mozapps/extensions/content/selectAddons.xml
++++ b/toolkit/mozapps/extensions/content/selectAddons.xml
+@@ -129,6 +129,11 @@
+               else
+                 this.setAttribute("source", this._strings.getString("source.profile"));
+               break;
++            case AddonManager.SCOPE_APPLICATION:
++              // On Solaris, we bundle langpacks and Lightning in application scope.
++              this._keep.checked = !aAddon.userDisabled;
++              this.setAttribute("source", this._strings.getString("source.bundled"));
++              break;
+             default:
+               this._keep.checked = false;
+               this.setAttribute("source", this._strings.getString("source.other"));

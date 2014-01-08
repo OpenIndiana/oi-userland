@@ -1,0 +1,47 @@
+diff --git a/gfx/cairo/cairo/src/cairo-xlib-surface.c b/gfx/cairo/cairo/src/cairo-xlib-surface.c
+--- a/gfx/cairo/cairo/src/cairo-xlib-surface.c
++++ b/gfx/cairo/cairo/src/cairo-xlib-surface.c
+@@ -2319,32 +2319,43 @@ _cairo_xlib_surface_upload(cairo_xlib_su
+ 			   const cairo_pattern_t *pattern,
+ 			   int src_x, int src_y,
+ 			   int dst_x, int dst_y,
+ 			   unsigned int width,
+ 			   unsigned int height,
+ 			   cairo_region_t *clip_region)
+ {
+     cairo_image_surface_t *image;
++    cairo_format_masks_t image_masks;
+     cairo_rectangle_int_t extents;
+     cairo_status_t status;
+     int tx, ty;
+ 
+     if (pattern->type != CAIRO_PATTERN_TYPE_SURFACE)
+ 	return CAIRO_INT_STATUS_UNSUPPORTED;
+ 
+     image = (cairo_image_surface_t *) ((cairo_surface_pattern_t *) pattern)->surface;
+     if (image->base.type != CAIRO_SURFACE_TYPE_IMAGE)
+ 	return CAIRO_INT_STATUS_UNSUPPORTED;
+ 
+     if (! (op == CAIRO_OPERATOR_SOURCE ||
+ 	   (op == CAIRO_OPERATOR_OVER &&
+ 	    (image->base.content & CAIRO_CONTENT_ALPHA) == 0)))
+ 	return CAIRO_INT_STATUS_UNSUPPORTED;
+ 
++    if (image->base.backend->type == CAIRO_SURFACE_TYPE_IMAGE) {
++	if (_pixman_format_to_masks (image->pixman_format, &image_masks)) {
++	    if (! ((image_masks.alpha_mask == surface->a_mask || surface->a_mask == 0) &&
++		   (image_masks.red_mask   == surface->r_mask || surface->r_mask == 0) &&
++		   (image_masks.green_mask == surface->g_mask || surface->g_mask == 0) &&
++		   (image_masks.blue_mask  == surface->b_mask || surface->b_mask == 0)))
++		return CAIRO_INT_STATUS_UNSUPPORTED;
++	}
++    }
++
+     if (image->base.backend->type != CAIRO_SURFACE_TYPE_IMAGE) {
+ 	if (image->base.backend->type == CAIRO_INTERNAL_SURFACE_TYPE_SNAPSHOT) {
+ 	    image = (cairo_image_surface_t *) ((cairo_surface_snapshot_t *) image)->target;
+ 	    extents.x = extents.y = 0;
+ 	    extents.width = image->width;
+ 	    extents.height = image->height;
+ 	} else if (image->base.backend->type == CAIRO_SURFACE_TYPE_SUBSURFACE) {
+ 	    cairo_surface_subsurface_t *sub = (cairo_surface_subsurface_t *) image;

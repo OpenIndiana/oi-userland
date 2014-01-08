@@ -1,0 +1,31 @@
+diff -ur tracker-0.6.92-orig/src/tracker-indexer/modules/evolution.c tracker-0.6.92/src/tracker-indexer/modules/evolution.c
+--- tracker-0.6.92-orig/src/tracker-indexer/modules/evolution.c	2009-03-30 15:27:15.463722000 +0800
++++ tracker-0.6.92/src/tracker-indexer/modules/evolution.c	2009-03-30 15:57:18.162104000 +0800
+@@ -35,6 +35,9 @@
+ 	MAIL_STORAGE_IMAP,
+ };
+ 
++#ifdef __sun 
++char *strcasestr (const char *, const char *);
++#endif
+ static gchar *local_dir = NULL;
+ static gchar *imap_dir = NULL;
+ 
+@@ -109,3 +112,17 @@
+ 
+         return NULL;
+ }
++
++#ifdef __sun
++char *strcasestr (const char *a, const char *b)
++{
++	size_t l;
++	char f[3];
++
++	snprintf (f, sizeof(f), "%c%c", tolower(*b), toupper(*b));
++	for (l = strcspn(a, f); l != strlen(a); l += strcspn(a+l+1, f) + 1)
++		if (strncasecmp(a+l, b, strlen(b)) == 0)
++			return (a + l);
++	return NULL;
++}
++#endif

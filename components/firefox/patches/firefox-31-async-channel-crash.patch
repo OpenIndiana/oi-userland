@@ -1,0 +1,53 @@
+diff --git a/ipc/glue/AsyncChannel.cpp b/ipc/glue/AsyncChannel.cpp
+index b80263f..5fb3c22 100644
+--- a/ipc/glue/AsyncChannel.cpp
++++ b/ipc/glue/AsyncChannel.cpp
+@@ -470,7 +470,7 @@ AsyncChannel::OnDispatchMessage(const Message& msg)
+     // it's OK to dispatch messages if the channel is closed/error'd,
+     // since we don't have a reply to send back
+ 
+-    (void)MaybeHandleError(mListener->OnMessageReceived(msg), "AsyncChannel");
++    (void)MaybeHandleError(mListener ? mListener->OnMessageReceived(msg) : MsgNotKnown, "AsyncChannel");
+ }
+ 
+ bool
+@@ -524,7 +524,8 @@ AsyncChannel::NotifyChannelClosed()
+ 
+     // OK, the IO thread just closed the channel normally.  Let the
+     // listener know about it.
+-    mListener->OnChannelClose();
++    if (mListener)
++      mListener->OnChannelClose();
+ 
+     Clear();
+ }
+@@ -546,7 +547,8 @@ AsyncChannel::NotifyMaybeChannelError()
+ 
+     // Oops, error!  Let the listener know about it.
+     mChannelState = ChannelError;
+-    mListener->OnChannelError();
++    if (mListener)
++      mListener->OnChannelError();
+ 
+     Clear();
+ }
+@@ -610,7 +612,8 @@ AsyncChannel::MaybeHandleError(Result code, const char* channelName)
+ 
+     PrintErrorMessage(mChild, channelName, errorMsg);
+ 
+-    mListener->OnProcessingError(code);
++    if (mListener)
++      mListener->OnProcessingError(code);
+ 
+     return false;
+ }
+@@ -642,7 +645,8 @@ AsyncChannel::ReportConnectionError(const char* channelName) const
+ 
+     PrintErrorMessage(mChild, channelName, errorMsg);
+ 
+-    mListener->OnProcessingError(MsgDropped);
++    if (mListener)
++      mListener->OnProcessingError(MsgDropped);
+ }
+ 
+ void

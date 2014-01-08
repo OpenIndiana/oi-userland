@@ -1,0 +1,14 @@
+--- rhythmbox-0.12.8/plugins/audiocd/sj-metadata-gvfs.c-orig	2010-04-22 14:55:51.256006909 -0500
++++ rhythmbox-0.12.8/plugins/audiocd/sj-metadata-gvfs.c	2010-04-22 14:59:55.773015425 -0500
+@@ -63,7 +63,11 @@ device_to_cdda_uri (const char *device)
+ {
+   if (g_str_has_prefix (device, "/dev/") == FALSE)
+     return NULL;
++#ifdef __sun
++  return g_strdup_printf ("cdda://%s", device + strlen ("/dev/rdsk/"));
++#else
+   return g_strdup_printf ("cdda://%s", device + strlen ("/dev/"));
++#endif
+ }
+ 
+ static GList *

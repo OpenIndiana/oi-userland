@@ -1,0 +1,32 @@
+diff --git a/media/libvpx/Makefile.in b/media/libvpx/Makefile.in
+index a5b455e..9c7d5f1 100644
+--- a/media/libvpx/Makefile.in
++++ b/media/libvpx/Makefile.in
+@@ -96,6 +96,10 @@ ASFLAGS=$(VPX_ASFLAGS) -I. -I$(topsrcdir)/media/libvpx/ -I$(topsrcdir)/media/lib
+ AS_DASH_C_FLAG=$(VPX_DASH_C_FLAG)
+ ASM_SUFFIX=$(VPX_ASM_SUFFIX)
+ 
++#if SOLARIS
++ASFLAGS+=-DSOLARIS=1
++#endif
++
+ EXPORTS_NAMESPACES = vpx
+ 
+ EXPORTS_vpx = \
+diff --git a/media/libvpx/vpx_ports/x86_abi_support.asm b/media/libvpx/vpx_ports/x86_abi_support.asm
+index a872b28..95e2d7a 100644
+--- a/media/libvpx/vpx_ports/x86_abi_support.asm
++++ b/media/libvpx/vpx_ports/x86_abi_support.asm
+@@ -182,7 +182,11 @@
+     %endmacro
+   %endif
+   %endif
+-  %define HIDDEN_DATA(x) x
++  %ifidn SOLARIS,1
++    %define HIDDEN_DATA(x) x:data hidden
++  %else
++    %define HIDDEN_DATA(x) x
++  %endif
+ %else
+   %macro GET_GOT 1
+   %endmacro

@@ -1,0 +1,22 @@
+--- mozilla-esr17/configure.~1~	2013-12-20 11:30:32.498201900 +0400
++++ mozilla-esr17/configure	2013-12-20 11:31:26.610672775 +0400
+@@ -9455,8 +9455,8 @@
+ fi
+ 
+ if test "$GNU_CC"; then
+-    CFLAGS="$CFLAGS -ffunction-sections -fdata-sections"
+-    CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-exceptions"
++    CFLAGS="$CFLAGS"
++    CXXFLAGS="$CXXFLAGS -fno-exceptions"
+ fi
+ 
+ 
+@@ -9484,7 +9484,7 @@
+               'int main() {return foo() - bar();}' > conftest.${ac_ext}
+         # If the linker supports ICF, foo and bar symbols will have
+         # the same address
+-        if { ac_try='${CC-cc} -o conftest${ac_exeext} $LDFLAGS -Wl,--icf=safe -ffunction-sections conftest.${ac_ext} $LIBS 1>&2'; { (eval echo configure:9488: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } &&
++        if { ac_try='${CC-cc} -o conftest${ac_exeext} $LDFLAGS -Wl,--icf=safe  conftest.${ac_ext} $LIBS 1>&2'; { (eval echo configure:9488: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } &&
+            test -s conftest${ac_exeext} &&
+            objdump -t conftest${ac_exeext} | awk '{a[$6] = $1} END {if (a["foo"] && (a["foo"] != a["bar"])) { exit 1 }}'; then
+             LD_SUPPORTS_ICF=yes

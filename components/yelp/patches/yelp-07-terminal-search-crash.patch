@@ -1,0 +1,11 @@
+--- yelp-2.30.2/src/yelp-search-parser.c.orig	2010-08-03 20:41:59.000000000 +0100
++++ yelp-2.30.2/src/yelp-search-parser.c	2011-06-07 15:49:10.602897825 +0100
+@@ -1358,6 +1358,8 @@
+ 
+ 	if (line == NULL || line[0] == NULL || line[1] == NULL)
+ 	    goto done;
++        if (g_strstr_len(line[1], -1, "NAME") == NULL)
++	    goto done;
+ 
+ 	/* RH man inserts rpm references into the whatis database */
+ 	if (g_str_has_prefix (line[1], "rpm)"))
