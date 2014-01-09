@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		tar
-COMPONENT_VERSION=	1.26
+COMPONENT_VERSION=	1.27.1
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/tar/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5a5369f464502a598e938029c310d4b3abd51e6bb8dfd045663e61c8ea9f6d41
+    sha256:9b0fb3ce8512059337add0da5f8f0f7d7647f2201f5ece24581d620ea60337c6
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/tar/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gtar
 
@@ -39,6 +39,9 @@ include ../../make-rules/ips.mk
 # workaround for CR 6998994
 sparc_COPTFLAG = -xO2
 
+# Enforce tar binary to standard path
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
+
 # Use ssh (rather than rsh) for remote commands.
 CONFIGURE_ENV += "RSH=/usr/bin/ssh"
 
@@ -48,11 +51,13 @@ CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
 COMPONENT_BUILD_TARGETS = all
 
-build:		$(BUILD_32)
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
 
-test:		$(TEST_32)
+install:	$(INSTALL_64)
+
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
