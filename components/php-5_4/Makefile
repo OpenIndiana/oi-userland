@@ -98,7 +98,7 @@ CONFIGURE_OPTIONS     +=	--with-imap-ssl
 # Enabled Extensions
 #CONFIGURE_OPTIONS     +=	--with-libxml-dir=$(ECPREFIX)
 #CONFIGURE_OPTIONS     +=	--with-freetype-dir=$(ECPREFIX)
-#CONFIGURE_OPTIONS     +=	--with-jpeg-dir=$(ECPREFIX)
+CONFIGURE_OPTIONS     +=	--with-jpeg-dir=/usr
 #CONFIGURE_OPTIONS     +=	--with-png-dir=$(ECPREFIX)
 #CONFIGURE_OPTIONS     +=	--with-zlib-dir=$(ECPREFIX)
 #CONFIGURE_OPTIONS     +=	--with-xpm-dir=$(ECPREFIX)
