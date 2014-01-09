@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -41,17 +41,21 @@ CONFIGURE_OPTIONS +=	--with-sys-screenrc=/etc/screenrc
 CONFIGURE_OPTIONS +=	--disable-socket-dir
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
+# We need to add CC_BITS or we get ld: fatal: wrong ELF class: ELFCLASS64
+COMPONENT_BUILD_ARGS += LDFLAGS="$(CC_BITS)"
 
 PROTOTERMINFODIR=$(PROTOUSRSHAREDIR)/lib/terminfo
 
 $(PROTOTERMINFODIR):
 	$(MKDIR) $@
 
-$(INSTALL_32):	$(PROTOTERMINFODIR)
+$(INSTALL_64):	$(PROTOTERMINFODIR)
 
-build:		$(BUILD_32)
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
+
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
