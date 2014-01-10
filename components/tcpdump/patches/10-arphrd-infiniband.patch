@@ -1,18 +1,10 @@
-diff -uN tcpdump-4.3.0/Makefile.in tcpdump-4.3.0.new/Makefile.in
---- tcpdump-4.3.0/Makefile.in	2010-04-05 18:18:35.000000000 -0700
-+++ tcpdump-4.3.0.new/Makefile.in	2011-07-14 08:43:36.561637014 -0700
-@@ -78,6 +78,7 @@
- 	print-esp.c print-ether.c print-fddi.c print-fr.c \
- 	print-gre.c print-hsrp.c print-icmp.c print-igmp.c \
- 	print-igrp.c print-ip.c print-ipcomp.c print-ipfc.c print-ipnet.c \
-+	print-ipoib.c \
- 	print-ipx.c print-isoclns.c print-juniper.c print-krb.c \
- 	print-l2tp.c print-lane.c print-ldp.c print-lldp.c print-llc.c \
-         print-lmp.c print-lspping.c print-lwapp.c \
-diff -uN tcpdump-4.3.0/interface.h tcpdump-4.3.0.new/interface.h
---- tcpdump-4.3.0/interface.h	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.3.0.new/interface.h	2011-07-14 08:44:55.908614708 -0700
-@@ -185,6 +185,7 @@
+#
+# InfiniBand support
+#
+diff -N -u -r tcpdump-4.5.1.orig/interface.h tcpdump-4.5.1/interface.h
+--- tcpdump-4.5.1.orig/interface.h	2013-03-24 16:49:18.000000000 -0500
++++ tcpdump-4.5.1/interface.h	2013-12-02 11:48:13.394398375 -0600
+@@ -205,6 +205,7 @@
  extern u_int pflog_if_print(const struct pcap_pkthdr *, const u_char *);
  extern u_int arcnet_if_print(const struct pcap_pkthdr *, const u_char *);
  extern u_int arcnet_linux_if_print(const struct pcap_pkthdr *, const u_char *);
@@ -20,42 +12,50 @@ diff -uN tcpdump-4.3.0/interface.h tcpdump-4.3.0.new/interface.h
  extern u_int token_print(const u_char *, u_int, u_int);
  extern u_int token_if_print(const struct pcap_pkthdr *, const u_char *);
  extern void fddi_print(const u_char *, u_int, u_int);
-Common subdirectories: tcpdump-4.3.0/lbl and tcpdump-4.3.0.new/lbl
-Common subdirectories: tcpdump-4.3.0/missing and tcpdump-4.3.0.new/missing
-diff -uN tcpdump-4.3.0/netdissect.h tcpdump-4.3.0.new/netdissect.h
---- tcpdump-4.3.0/netdissect.h	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.3.0.new/netdissect.h	2011-07-14 08:44:35.643598462 -0700
-@@ -300,6 +300,7 @@
+diff -N -u -r tcpdump-4.5.1.orig/Makefile.in tcpdump-4.5.1/Makefile.in
+--- tcpdump-4.5.1.orig/Makefile.in	2013-03-24 16:49:18.000000000 -0500
++++ tcpdump-4.5.1/Makefile.in	2013-12-02 11:47:25.102106791 -0600
+@@ -83,6 +83,7 @@
+ 	print-esp.c print-ether.c print-fddi.c print-forces.c print-fr.c \
+ 	print-gre.c print-hsrp.c print-icmp.c print-igmp.c \
+ 	print-igrp.c print-ip.c print-ipcomp.c print-ipfc.c print-ipnet.c \
++	print-ipoib.c \
+ 	print-ipx.c print-isoclns.c print-juniper.c print-krb.c \
+ 	print-l2tp.c print-lane.c print-ldp.c print-lldp.c print-llc.c \
+         print-lmp.c print-lspping.c print-lwapp.c \
+diff -N -u -r tcpdump-4.5.1.orig/netdissect.h tcpdump-4.5.1/netdissect.h
+--- tcpdump-4.5.1.orig/netdissect.h	2013-03-24 16:49:18.000000000 -0500
++++ tcpdump-4.5.1/netdissect.h	2013-12-02 11:48:46.057536548 -0600
+@@ -319,6 +319,7 @@
  
- extern u_int ether_if_print(netdissect_options *, 
+ extern u_int ether_if_print(netdissect_options *,
                              const struct pcap_pkthdr *,const u_char *);
 +extern u_int ipoib_if_print(const struct pcap_pkthdr *, const u_char *);
- extern u_int netanalyzer_if_print(netdissect_options *, 
+ extern u_int netanalyzer_if_print(netdissect_options *,
                                    const struct pcap_pkthdr *,const u_char *);
- extern u_int netanalyzer_transparent_if_print(netdissect_options *, 
- 
-diff -uN tcpdump-4.3.0/print-arp.c tcpdump-4.3.0.new/print-arp.c
---- tcpdump-4.3.0/print-arp.c	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.3.0.new/print-arp.c	2011-07-14 09:01:08.965396346 -0700
-@@ -62,6 +62,7 @@
+ extern u_int netanalyzer_transparent_if_print(netdissect_options *,
+diff -N -u -r tcpdump-4.5.1.orig/print-arp.c tcpdump-4.5.1/print-arp.c
+--- tcpdump-4.5.1.orig/print-arp.c	2013-02-20 21:54:34.000000000 -0600
++++ tcpdump-4.5.1/print-arp.c	2013-12-02 11:51:40.229231503 -0600
+@@ -58,6 +58,7 @@
+ #define ARPHRD_ATM2225  19      /* ATM (RFC 2225) */
+ #define ARPHRD_STRIP    23      /* Ricochet Starmode Radio hardware format */
+ #define ARPHRD_IEEE1394 24      /* IEEE 1394 (FireWire) hardware format */
++#define ARPHRD_INFINIBAND 32	/* InfiniBand RFC 4391 */
+         u_short ar_pro;         /* format of protocol address */
          u_char  ar_hln;         /* length of hardware address */
          u_char  ar_pln;         /* length of protocol address */
-         u_short ar_op;          /* one of: */
-+#define ARPHRD_INFINIBAND 32    /* Infiniband RFC 4391 */
- #define ARPOP_REQUEST   1       /* request to resolve address */
- #define ARPOP_REPLY     2       /* response to previous request */
- #define ARPOP_REVREQUEST 3      /* request protocol address given hardware */
 @@ -118,6 +119,7 @@
      { ARPHRD_STRIP, "Strip" },
      { ARPHRD_IEEE1394, "IEEE 1394" },
      { ARPHRD_ATM2225, "ATM" },
-+    { ARPHRD_INFINIBAND, "Infiniband" },
++    { ARPHRD_INFINIBAND, "InfiniBand" },
      { 0, NULL }
  };
  
-diff -uN tcpdump-4.3.0/print-ipoib.c tcpdump-4.3.0.new/print-ipoib.c
---- tcpdump-4.3.0/print-ipoib.c	1969-12-31 16:00:00.000000000 -0800
-+++ tcpdump-4.3.0.new/print-ipoib.c	2011-07-14 08:46:52.029342720 -0700
+diff -N -u -r tcpdump-4.5.1.orig/print-ipoib.c tcpdump-4.5.1/print-ipoib.c
+--- tcpdump-4.5.1.orig/print-ipoib.c	1969-12-31 18:00:00.000000000 -0600
++++ tcpdump-4.5.1/print-ipoib.c	2013-12-02 11:53:24.664773530 -0600
 @@ -0,0 +1,131 @@
 +/*
 + * Copyright (c) 1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 
@@ -124,7 +124,7 @@ diff -uN tcpdump-4.3.0/print-ipoib.c tcpdump-4.3.0.new/print-ipoib.c
 +}
 +
 +/*
-+ * Print an Infiniband frame.
++ * Print an InfiniBand frame.
 + * This might be encapsulated within another frame; we might be passed
 + * a pointer to a function that can print header information for that
 + * frame's protocol, and an argument to pass to that function.
@@ -188,11 +188,10 @@ diff -uN tcpdump-4.3.0/print-ipoib.c tcpdump-4.3.0.new/print-ipoib.c
 + * c-basic-offset: 8
 + * End:
 + */
-+
-diff -uN tcpdump-4.3.0/tcpdump.c tcpdump-4.3.0.new/tcpdump.c
---- tcpdump-4.3.0/tcpdump.c	2010-03-11 17:56:44.000000000 -0800
-+++ tcpdump-4.3.0.new/tcpdump.c	2011-07-14 08:44:25.329300635 -0700
-@@ -299,6 +299,9 @@
+diff -N -u -r tcpdump-4.5.1.orig/tcpdump.c tcpdump-4.5.1/tcpdump.c
+--- tcpdump-4.5.1.orig/tcpdump.c	2013-03-24 16:49:18.000000000 -0500
++++ tcpdump-4.5.1/tcpdump.c	2013-12-02 11:52:41.512481340 -0600
+@@ -311,6 +311,9 @@
  #ifdef DLT_IPV6
  	{ raw_if_print,		DLT_IPV6 },
  #endif
