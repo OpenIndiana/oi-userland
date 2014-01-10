@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -101,6 +101,8 @@ CONFIGURE_ENV  +=   PKG_CONFIG_PATH="$(PKG_CONFIG_PATH_$(BITS))"
 
 PROTOPKGCONFIGDIR32 = $(PROTOUSRLIBDIR)/pkgconfig
 PROTOPKGCONFIGDIR64 = $(PROTOUSRLIBDIR64)/pkgconfig
+
+ASLR_MODE =	$(ASLR_ENABLE)
 
 build: $(BUILD_32_and_64)
 
