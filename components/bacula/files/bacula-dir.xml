@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE service_bundle SYSTEM "/usr/share/lib/xml/dtd/service_bundle.dtd.1">
+
+<service_bundle type='manifest' name='bacula-dir'>
+<service
+        name='application/bacula/bacula-dir'
+        type='service'
+        version='1'>
+
+	<instance name='default' enabled='false'>
+	<dependency
+                name='network'
+                grouping='require_all'
+                restart_on='none'
+                type='service'>
+                <service_fmri value='svc:/milestone/network:default' />
+        </dependency> 
+	
+	<dependency
+                name='filesystem-local'
+                grouping='require_all'
+                restart_on='none'
+                type='service'>
+                <service_fmri value='svc:/system/filesystem/local:default' />
+        </dependency>
+
+         <exec_method
+                type='method'
+                name='start'
+                exec='/usr/sbin/bacula-dir -c %{config} '
+                timeout_seconds='60'>
+		<method_context>
+                        <method_credential user='bacula' group='bacula'/>
+                </method_context>
+         </exec_method>       
+        
+        <exec_method
+                type='method'
+                name='stop'
+                exec=':kill'
+                timeout_seconds='60' />
+
+	<property_group name='startd' type='framework'>
+            <propval name='ignore_error' type='astring'  value='core,signal' />
+        </property_group>                
+	<property_group name='general' type='framework'>
+             <propval name='action_authorization' type='astring' value='solaris.smf.manage.bacula' />
+             <propval name='value_authorization' type='astring' value='solaris.smf.value.bacula' />
+        </property_group>
+        <property_group name='application' type='application'>
+          <propval name='config' type='astring' value='/etc/bacula/bacula-dir.conf'/>
+        </property_group>
+        </instance>
+
+        <stability value='Evolving' />
+
+        <template>
+           <common_name>
+               <loctext xml:lang='C'>
+                     Bacula director service
+               </loctext>
+            </common_name>
+            <documentation>
+             <manpage title='bacula-dir' section='8' manpath='/usr/share/man' />
+             <doc_link name='bacula' uri='http://bacula.org/5.2.x-manuals/en/main/main/index.html' />
+            </documentation>
+        </template>
+
+</service>
+</service_bundle>
