@@ -1,0 +1,17 @@
+http://lists.research.att.com/pipermail/ast-developers/2014q1/003806.html
+
+--- a/src/cmd/ksh93/sh/init.c
++++ b/src/cmd/ksh93/sh/init.c
+@@ -1933,6 +1933,11 @@ static void env_init(Shell_t *shp)
+ 		*dp++ = 0;
+ 		if(mp = dtmatch(shp->var_base,cp))
+ 		{
++                        if(strcmp(cp,VERSIONNOD->nvname)==0)
++                        {
++                                dp[-1] = '=';
++                                continue;
++                        }
+ 			mp->nvenv = (char*)cp;
+ 			dp[-1] = '=';
+ 		}
+
