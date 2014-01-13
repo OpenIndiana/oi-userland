@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -45,6 +45,8 @@ CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
 
 # We have our own pre-Solarified man pages.
 CONFIGURE_OPTIONS +=	--without-man-pages
+
+ASLR_MODE =	$(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)

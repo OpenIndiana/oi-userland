@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # The man pages are all at the top of a "files" directory; setting the hash to
@@ -30,7 +30,7 @@
 # Bypassing the mangler for these files because they are pre-Solarified.
 <transform file path=usr/share/man/.+$ -> \
     add mangler.bypass true >
-
+#
 set name=pkg.fmri \
     value=pkg:/library/libtecla@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Tecla command-line editing library"
@@ -44,7 +44,7 @@ set name=info.upstream value="Martin Shepherd"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2004/330
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file path=usr/bin/enhance
+file usr/bin/$(MACH64)/enhance path=usr/bin/enhance
 file path=usr/include/libtecla.h
 link path=usr/lib/$(MACH64)/libtecla.so target=libtecla.so.1
 file path=usr/lib/$(MACH64)/libtecla.so.1
@@ -139,4 +139,4 @@ file path=usr/share/man/man3tecla/ppc_literal_escapes.3tecla
 file enhance.1.zh_CN.UTF-8 path=usr/share/man/zh_CN.UTF-8/man1/enhance.1
 legacy pkg=SUNWtecla desc="Tecla command-line editing library" \
     name="Tecla command-line editing library"
-license libtecla.license license="MIT-like"
+license libtecla.license license=MIT-like
