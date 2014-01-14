@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -35,6 +35,9 @@ COMPONENT_BUGDB=	utility/wget
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# Enforce wget binary to standard path
+CONFIGURE_BINDIR.64 = $(CONFIGURE_PREFIX)/bin
 
 # Enforce openssl (--with-ssl=openssl) instead of default gnutls
 # (--with-ssl) as wget doesn't work for secure connections with gnutls. 
@@ -61,11 +64,14 @@ CONFIGURE_OPTIONS +=	PATH="$(PATH):/usr/perl5/bin"
 	gtar --get $(WWW)/lib/HTTP $(WWW)/lib/LWP $(WWW)/lib/LWP.pm \
 	     --strip-components=2 -f $(WWW).tar.gz; )
 
-build:		$(BUILD_32)
+# Enable ASLR for this component
+ASLR_MODE = $(ASLR_ENABLE)
 
-install:	$(INSTALL_32)
+build:		$(BUILD_64)
 
-test:		$(TEST_32)
+install:	$(INSTALL_64)
+
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
