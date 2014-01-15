@@ -72,6 +72,7 @@ CONFIGURE_OPTIONS +=	--enable-application=mail
 CONFIGURE_OPTIONS +=	--prefix=/usr
 CONFIGURE_OPTIONS +=	--libdir=/usr/lib
 
+ENV +=  SHELL=/usr/bin/sh
 ENV +=	CC=$(CC)
 ENV +=	CXX=$(CXX)
 ENV +=	MOZILLA_OFFICIAL=1
