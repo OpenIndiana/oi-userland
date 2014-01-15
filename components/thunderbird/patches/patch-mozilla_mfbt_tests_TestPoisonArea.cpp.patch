@@ -1,0 +1,14 @@
+--- mozilla/mfbt/tests/TestPoisonArea.cpp.~1~	2014-01-13 13:00:03.676537954 +0400
++++ mozilla/mfbt/tests/TestPoisonArea.cpp	2014-01-13 13:01:32.513422822 +0400
+@@ -340,7 +340,11 @@
+ static bool
+ ProbeRegion(uintptr_t page)
+ {
++#if !defined(__sun__)
+   if (madvise(reinterpret_cast<void*>(page), PAGESIZE, MADV_NORMAL)) {
++#else
++  if (posix_madvise(reinterpret_cast<void*>(page), PAGESIZE, MADV_NORMAL)) {
++#endif
+     return true;
+   } else {
+     return false;
