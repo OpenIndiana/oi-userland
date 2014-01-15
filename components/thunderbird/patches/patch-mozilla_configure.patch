@@ -1,0 +1,31 @@
+--- mozilla/configure.~1~	2013-12-06 19:45:48.000000000 +0400
++++ mozilla/configure	2014-01-14 16:22:19.332213799 +0400
+@@ -9588,8 +9588,8 @@
+ fi
+ 
+ if test "$GNU_CC"; then
+-    CFLAGS="$CFLAGS -ffunction-sections -fdata-sections"
+-    CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-exceptions"
++    CFLAGS="$CFLAGS"
++    CXXFLAGS="$CXXFLAGS -fno-exceptions"
+ fi
+ 
+ 
+@@ -9617,7 +9617,7 @@
+               'int main() {return foo() - bar();}' > conftest.${ac_ext}
+         # If the linker supports ICF, foo and bar symbols will have
+         # the same address
+-        if { ac_try='${CC-cc} -o conftest${ac_exeext} $LDFLAGS -Wl,--icf=safe -ffunction-sections conftest.${ac_ext} $LIBS 1>&2'; { (eval echo configure:9621: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } &&
++        if { ac_try='${CC-cc} -o conftest${ac_exeext} $LDFLAGS -Wl,--icf=safe conftest.${ac_ext} $LIBS 1>&2'; { (eval echo configure:9621: \"$ac_try\") 1>&5; (eval $ac_try) 2>&5; }; } &&
+            test -s conftest${ac_exeext} &&
+            objdump -t conftest${ac_exeext} | awk '{a[$6] = $1} END {if (a["foo"] && (a["foo"] != a["bar"])) { exit 1 }}'; then
+             LD_SUPPORTS_ICF=yes
+@@ -16339,7 +16339,7 @@
+     _subconfigure_config_args="$ac_configure_args"
+   }
+   tmpscript=`$PYTHON -c 'import os, tempfile; print tempfile.mktemp(prefix="subscript.").replace(os.sep, "/")'` || exit 1
+-  m4 "${srcdir}/build/autoconf/subconfigure.m4" \
++  /usr/gnu/bin/m4 "${srcdir}/build/autoconf/subconfigure.m4" \
+      "${srcdir}/build/autoconf/altoptions.m4" \
+      "${srcdir}/${MOZ_BUILD_APP}/configure.in" > $tmpscript
+   . $tmpscript
