@@ -35,7 +35,7 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2011/269
 
-file gv.ini path=etc/php/5.2/conf.d/gv.ini
+file gv.ini path=etc/php/5.4/conf.d/gv.ini
 file path=usr/lib/graphviz/php/gv.php
 file path=usr/lib/graphviz/php/libgv_php.so
 file path=usr/share/graphviz/demo/modgraph.php
@@ -43,12 +43,12 @@ file usr/share/man/man3/gv.3php path=usr/share/man/man3/gv-php.3
 link path=usr/lib/graphviz/php/gv.so target=libgv_php.so
 # These should go in /var/php, but PHP doesn't seem to be able to pick up
 # a second directory configured in extension_dir.
-link path=usr/php/5.2/include/php/include/gv.php \
-    target=../../../../../lib/graphviz/php/gv.php
-link path=usr/php/5.2/modules/gv.so \
+link path=usr/php/5.4/share/PEAR/gv.php \
+    target=../../../../lib/graphviz/php/gv.php
+link path=usr/php/5.4/extensions/gv.so \
     target=../../../lib/graphviz/php/libgv_php.so
 
 license COPYING license=EPL1.0
 license graphviz.license.extra license="Other Notices"
 
-depend fmri=web/php-52 type=require
+depend fmri=web/php-54/php-common type=require

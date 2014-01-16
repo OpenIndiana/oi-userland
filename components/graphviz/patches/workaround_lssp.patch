@@ -1,0 +1,22 @@
+--- graphviz-2.28.0/tclpkg/gv/Makefile.am.~1~	2014-01-16 18:36:19.766670009 +0400
++++ graphviz-2.28.0/tclpkg/gv/Makefile.am	2014-01-16 18:36:52.010568539 +0400
+@@ -133,7 +133,7 @@
+ 
+ pkgperldir = $(pkglibdir)/perl
+ PERL        ?= perl
+-PERL_CC      = $(shell $(PERL) -MExtUtils::Embed -e ccopts)
++PERL_CC      = $(shell $(PERL) -MExtUtils::Embed -e ccopts| sed -e 's:-fstack-protector::')
+ PERL_LD      = $(shell $(PERL) -MExtUtils::Embed -e ldopts)
+ VENDOR_ARCH  = $(shell $(PERL) -MConfig -e 'print $$Config{installvendorarch};')
+ PERL_data = gv.pm
+--- graphviz-2.28.0/tclpkg/gv/Makefile.in.~1~	2014-01-16 18:36:13.698183548 +0400
++++ graphviz-2.28.0/tclpkg/gv/Makefile.in	2014-01-16 18:36:41.245334132 +0400
+@@ -932,7 +932,7 @@
+ libgv_ocaml_la_LDFLAGS = -module -avoid-version
+ libgv_ocaml_la_CPPFLAGS = $(BASECPPFLAGS) $(OCAML_INCLUDES)
+ pkgperldir = $(pkglibdir)/perl
+-PERL_CC = $(shell $(PERL) -MExtUtils::Embed -e ccopts)
++PERL_CC = $(shell $(PERL) -MExtUtils::Embed -e ccopts| sed -e 's:-fstack-protector::')
+ PERL_LD = $(shell $(PERL) -MExtUtils::Embed -e ldopts)
+ VENDOR_ARCH = $(shell $(PERL) -MConfig -e 'print $$Config{installvendorarch};')
+ PERL_data = gv.pm
