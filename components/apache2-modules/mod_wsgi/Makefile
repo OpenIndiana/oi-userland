@@ -25,13 +25,16 @@
 
 include ../../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 COMPONENT_NAME=		mod_wsgi
-COMPONENT_VERSION=	3.3
+COMPONENT_VERSION=	3.4
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:d96e1078990484cfe5579df1e95dc73f009495e9c3f9a066b0983650bd9e3243
+COMPONENT_ARCHIVE_HASH=	sha256:ae85c98e9e146840ab3c3e4490e6774f9bef0f99b9f679fca786b2adb5b4b6e8
 COMPONENT_ARCHIVE_URL=	http://modwsgi.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
 COMPONENT_BUGDB=	utility/apache
@@ -47,12 +50,12 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 # but since mod_wsgi doesn't use setup.py, we can't just include
 # setup.py.mk
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
-#$(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.installed:	PYTHON_VERSION=2.6
-#$(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-2.7/.installed:  PYTHON_VERSION=2.7
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
