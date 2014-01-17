@@ -1,0 +1,26 @@
+Changes needed to get GnuPG estream.c to compile with the Studio C compiler.
+
+These were legitimate bugs in GnuPG version 2.0.22, but looking at the
+latest version of estream.c in the GnuPG git repository, the problems have
+been resolved by redefining ESTREAM_MUTEX_UNLOCK and ESTREAM_MUTEX_INITIALIZE
+to no longer test against estream_pth_killed and therefore no need for the
+bogusly defined dummy routines.
+
+--- gnupg-2.0.22/common/estream.c.orig	2014-01-15 08:38:06.978672664 -0800
++++ gnupg-2.0.22/common/estream.c	2014-01-15 09:02:39.386197974 -0800
+@@ -181,13 +181,13 @@
+   (estream_pth_killed ? dummy_mutex_call_void ((mutex))         \
+    : (void)pth_mutex_acquire (&(mutex), 0, NULL))
+ # define ESTREAM_MUTEX_UNLOCK(mutex)                            \
+-  (estream_pth_killed ? dummy_mutex_call_void ((mutex))         \
++  (estream_pth_killed ? dummy_mutex_call_int ((mutex))         \
+    : pth_mutex_release (&(mutex)))
+ # define ESTREAM_MUTEX_TRYLOCK(mutex)                                   \
+   (estream_pth_killed ? dummy_mutex_call_int ((mutex))                  \
+    : ((pth_mutex_acquire (&(mutex), 1, NULL) == TRUE)? 0:-1))
+ # define ESTREAM_MUTEX_INITIALIZE(mutex)                        \
+-  (estream_pth_killed ? dummy_mutex_call_void ((mutex))         \
++  (estream_pth_killed ? dummy_mutex_call_int ((mutex))         \
+    : pth_mutex_init (&(mutex)))
+ 
+ #else /*!HAVE_PTH*/
