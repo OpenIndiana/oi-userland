@@ -53,10 +53,6 @@ ifeq ($(MACH), sparc)
 COMPILER = studio
 else
 COMPILER =	gcc
-# Parfait doesn't work with the GNU 4.7 compilers yet.
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-COMPILER =      gcc3
-endif
 endif
 
 include ../../../make-rules/prep.mk

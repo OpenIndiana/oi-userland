@@ -42,10 +42,6 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 COMPILER =	gcc
-# Parfait doesn't work with the GNU 4.7 compilers yet.
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-COMPILER =      gcc3
-endif
 
 CXX += $(CC_BITS)
 

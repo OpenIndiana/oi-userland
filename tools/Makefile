@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -30,6 +30,9 @@ validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
 # with the correct compiler variables from the common makefiles because
 # some things reset the environment which causes lovely infinite
 # loops
+#
+# currently, parfait doesn't support gcc4.7+, so we force the use
+# of gcc3 in both sets of wrappers.
 links:
 	@$(MKDIR) $(PARFAIT_TOOLS)
 	@for i in cc CC gcc g++ ld ; do \
@@ -38,8 +41,8 @@ links:
 		echo "IFS=" >> $(PARFAIT_TOOLS)/$$i ; \
 		echo "export PARFAIT_NATIVESUNCC=$(SPRO_VROOT)/bin/cc" >> $(PARFAIT_TOOLS)/$$i ; \
 		echo "export PARFAIT_NATIVESUNCXX=$(SPRO_VROOT)/bin/CC" >> $(PARFAIT_TOOLS)/$$i ; \
-		echo "export PARFAIT_NATIVEGCC=$(GCC_ROOT)/bin/gcc" >> $(PARFAIT_TOOLS)/$$i ; \
-		echo "export PARFAIT_NATIVEGXX=$(GCC_ROOT)/bin/g++" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "export PARFAIT_NATIVEGCC=$(GCC3_ROOT)/bin/gcc" >> $(PARFAIT_TOOLS)/$$i ; \
+		echo "export PARFAIT_NATIVEGXX=$(GCC3_ROOT)/bin/g++" >> $(PARFAIT_TOOLS)/$$i ; \
 		echo "export PARFAIT_NATIVELD=/usr/bin/ld" >> $(PARFAIT_TOOLS)/$$i ; \
 		echo "exec" $(PARFAIT_ROOT)/$(MACH)/parfait-$$i '$$*' >> $(PARFAIT_TOOLS)/$$i ; \
 		chmod +x $(PARFAIT_TOOLS)/$$i ; \

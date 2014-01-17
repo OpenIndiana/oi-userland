@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -43,10 +43,6 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 COMPILER =	gcc
-# Parfait doesn't work with the GNU 4.7 compilers yet.
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-COMPILER =	gcc3
-endif
 
 PATCH_LEVEL = 1
 

@@ -49,10 +49,6 @@ COMPONENT_PRE_BUILD_ACTION += \
 		$(SOURCE_DIR)/sample.conf
 
 COMPILER =	gcc
-# Parfait doesn't work with the GNU 4.7 compilers yet.
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-COMPILER =	gcc3
-endif
 
 CONFIGURE_OPTIONS +=	--enable-dns
 CONFIGURE_OPTIONS +=	--with-gd=/usr/include/gd2

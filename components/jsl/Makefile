@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -40,10 +40,6 @@ include ../../make-rules/ips.mk
 # some assembler code is required for locking which fails to compile on
 # solaris, when using gcc this is inlined (see jslock.c)
 COMPILER =	gcc
-# Parfait doesn't work with the GNU 4.7 compilers yet.
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-COMPILER =	gcc3
-endif
 
 COMPONENT_BUILD_ARGS += -f src/Makefile
 COMPONENT_BUILD_ARGS += CC="$(CC)"

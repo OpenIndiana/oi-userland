@@ -41,10 +41,6 @@ include ../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION	 = $(CLONEY) $(SOURCE_DIR) $(@D)
 COMPILER			 = gcc
-# Parfait doesn't work with the GNU 4.7 compilers yet.
-ifeq   ($(strip $(PARFAIT_BUILD)),yes)
-COMPILER =      gcc3
-endif
 CONFIGURE_OPTIONS		+= "CFLAGS=$(CFLAGS)"
 CONFIGURE_OPTIONS		+= "CXXFLAGS=$(CXXFLAGS)"
 CONFIGURE_OPTIONS		+= "LDFLAGS=$(LDFLAGS)"
