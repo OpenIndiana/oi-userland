@@ -15,13 +15,16 @@
 
 include ../../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 COMPONENT_NAME= 	argh
-COMPONENT_VERSION= 	0.23.3
+COMPONENT_VERSION= 	0.24.1
 COMPONENT_SUMMARY= 	An unobtrusive argparse wrapper with natural syntax
 COMPONENT_SRC= 		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= 	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:076f27ed25f64339186810075c9eb2aa5121bd330851d42639abde17a9b9774b
+  sha256:4980eb11339c9954885b8e44a1e39a4a1c114b738a7d8942c08494f4902f82a9
 COMPONENT_ARCHIVE_URL= \
   https://pypi.python.org/packages/source/a/argh/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://pypi.python.org/pypi/argh
