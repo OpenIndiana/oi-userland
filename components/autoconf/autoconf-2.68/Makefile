@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		autoconf
 COMPONENT_VERSION=	2.68
