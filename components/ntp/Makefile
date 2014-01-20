@@ -20,26 +20,28 @@
 #
 
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_PATCH_VERSION=	200
-COMPONENT_VERSION=	4.2.5
+COMPONENT_PATCH_VERSION=	411
+COMPONENT_VERSION=	4.2.7
 HUMAN_VERSION=		$(COMPONENT_VERSION)p$(COMPONENT_PATCH_VERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ntp.org/
 COMPONENT_SRC_NAME=	ntp-dev
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:97eeb4e90fba1ae3210e13574a4b3df715957cb9895264c6a455ee97dec87611
+COMPONENT_ARCHIVE_HASH=	 \
+	sha256:72d76985d7ecebf8325652555e596cf5ce236a77c61bf56c188aba4fba4f2725
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-dev/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	service/ntp
+COMPONENT_BUGDB= service/ntp
 
 PATCH_LEVEL = 0
+
+ASLR_MODE= $(ASLR_ENABLE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -58,9 +60,7 @@ CONFIGURE_OPTIONS +=	--disable-optional-args
 CONFIGURE_OPTIONS +=	--enable-parse-clocks
 CONFIGURE_OPTIONS +=	--enable-ignore-dns-errors
 CONFIGURE_OPTIONS +=	--without-ntpsnmpd
-CONFIGURE_OPTIONS +=	--without-lineeditlibs
 CONFIGURE_OPTIONS +=	--with-openssl-libdir=/lib
-CONFIGURE_OPTIONS +=	--disable-getifaddrs
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

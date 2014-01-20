@@ -1,0 +1,15 @@
+This patch reenables support for the ntpdc command's protocol, which
+has been EOL'ed by the community. Once we finish the EOL process
+in Solaris, we can remove this patch. 
+
+--- ntpd/ntp_proto.c.fcs	2012-07-27 13:19:00.241528650 -0500
++++ ntpd/ntp_proto.c	2012-07-27 13:19:16.684268838 -0500
+@@ -99,7 +99,7 @@ u_long	leap_expire;		/* leap information
+ static int leap_vote;		/* leap consensus */
+ keyid_t	sys_private;		/* private value for session seed */
+ int	sys_manycastserver;	/* respond to manycast client pkts */
+-int	ntp_mode7;		/* respond to ntpdc (mode7) */
++int	ntp_mode7 = TRUE;		/* respond to ntpdc (mode7) */
+ int	peer_ntpdate;		/* active peers in ntpdate mode */
+ int	sys_survivors;		/* truest of the truechimers */
+ char	*sys_ident = NULL;	/* identity scheme */
