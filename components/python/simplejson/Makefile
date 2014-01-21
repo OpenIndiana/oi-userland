@@ -25,6 +25,9 @@
 
 include ../../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 COMPONENT_NAME=		simplejson
 COMPONENT_VERSION=	2.1.2
 COMPONENT_PROJECT_URL=	http://undefined.org/python/#simplejson
@@ -39,10 +42,13 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+
+CFLAGS+= -std=c99	
+
 COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
 COMPONENT_TEST_ARGS= ./setup.py test
 
-ASLR_MODE = $(ASLR_ENABLE)
+#ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:          $(BUILD_32_and_64)
