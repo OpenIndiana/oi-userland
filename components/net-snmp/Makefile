@@ -104,7 +104,7 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 
 # After we have configured, make a copy of the python bits so we
 # can build separate python 2.7 support.
-# COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
+COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7)
 
 # for the goofy definition of ARCH in the extra Makefiles
 ARCH=32
@@ -123,7 +123,11 @@ $(INSTALL_32): COMPONENT_INSTALL_ARGS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH)/etc/net-snmp/snmp/mibs; \
-	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install)
+	 cd $(BUILD_DIR)/$(MACH32)/sun ; ls agent; $(CCSMAKE) -e $(CCSMAKE_ARGS) install) ;\
+	(cd $(@D)/python2.7 ; env PYTHON=$(PYTHON.2.7.$(BITS)) \
+	  $(PYTHON.2.7.$(BITS)) ./setup.py install \
+	            --root $(PROTO_DIR) \
+	            --install-lib=$(PYTHON.2.7.VENDOR_PACKAGES))
 
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION= \
 	($(MKDIR) -p $(BUILD_DIR)/prototype/$(MACH64)/etc/net-snmp/snmp/mibs; \
