@@ -25,6 +25,9 @@
 
 include ../../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 COMPONENT_NAME=		nose
 COMPONENT_VERSION=	1.2.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
