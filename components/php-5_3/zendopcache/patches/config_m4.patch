@@ -1,0 +1,24 @@
+Teach it about Solaris. This patch will be pushed upstream.
+
+--- zendopcache-7.0.2/config.m4_orig	2013-06-04 23:28:53.000000000 -0700
++++ zendopcache-7.0.2/config.m4	2013-07-19 11:01:46.373047462 -0700
+@@ -338,7 +338,7 @@
+ # if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || (defined(__APPLE__) && defined(__MACH__)/* Darwin */) || defined(__OpenBSD__) || defined(__NetBSD__)
+ #  define FLOCK_STRUCTURE(name, type, whence, start, len) \
+                 struct flock name = {start, len, -1, type, whence}
+-# elif defined(__svr4__)
++# elif defined(__svr4__) || defined (__SunOS)
+ #  define FLOCK_STRUCTURE(name, type, whence, start, len) \
+                 struct flock name = {type, whence, start, len}
+ # elif defined(__linux__) || defined(__hpux)
+--- zendopcache-7.0.2/ZendAccelerator.h_orig	2013-06-04 23:28:53.000000000 -0700
++++ zendopcache-7.0.2/ZendAccelerator.h	2013-07-19 11:07:03.956873718 -0700
+@@ -97,7 +97,7 @@
+ # if defined(__FreeBSD__) || defined(__FreeBSD_kernel__) || (defined(__APPLE__) && defined(__MACH__)/* Darwin */) || defined(__OpenBSD__) || defined(__NetBSD__)
+ #  define FLOCK_STRUCTURE(name, type, whence, start, len) \
+ 		struct flock name = {start, len, -1, type, whence}
+-# elif defined(__svr4__)
++# elif defined(__svr4__) || defined (__SunOS)
+ #  define FLOCK_STRUCTURE(name, type, whence, start, len) \
+ 		struct flock name = {type, whence, start, len}
+ # elif defined(__linux__) || defined(__hpux)

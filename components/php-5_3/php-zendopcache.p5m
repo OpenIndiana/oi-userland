@@ -1,0 +1,43 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/web/php-53/extension/php-zendopcache@7.0.2,$(BUILD_VERSION)
+set name=pkg.summary value="ZendOpcache extension module for PHP"
+set name=pkg.description \
+    value="The Zend OPcache provides faster PHP execution through opcode caching and optimization. It improves PHP performance by storing precompiled script bytecode in the shared memory. This eliminates the stages of reading code from the disk and compiling it on future access. In addition, it applies a few bytecode optimization patterns that make code execution faster."
+set name=com.oracle.info.description value="the Zend OPcache PHP extension"
+set name=com.oracle.info.tpno value=14926
+set name=info.classification value=org.opensolaris.category.2008:Development/PHP
+set name=info.source-url value=http://pecl.php.net/get/zendopcache-7.0.2.tgz
+set name=info.upstream-url value=http://pecl.php.net/package/ZendOpcache
+set name=org.opensolaris.arc-caseid value=PSARC/2013/306
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file path=etc/php/5.3/conf.d/opcache.ini mode=0644 preserve=renamenew
+file path=etc/php/5.3/zts-conf.d/opcache.ini mode=0644 preserve=renamenew
+file path=usr/php/5.3/modules/opcache.so
+file path=usr/php/5.3/zts-modules/opcache.so
+license php-zendopcache.license license=PHP
+
+# need generic dependency on PHP itself
+depend type=require fmri=web/php-53@5.3.27

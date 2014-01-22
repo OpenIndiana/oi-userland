@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 include ../../make-rules/ips.mk
@@ -115,7 +115,7 @@ include ../../make-rules/ips.mk
 #               looks like i DO NEED the pear patches
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.3.14
+COMPONENT_VERSION=	5.3.27
 COMPONENT_PROJECT_URL=	http://www.php.net/
 COMPONENT_BUGDB=	utility/php
 
@@ -134,6 +134,8 @@ PKG_PROTO_DIRS += tcpwrap/build/prototype/$(MACH)
 PKG_PROTO_DIRS += tcpwrap-zts/build/prototype/$(MACH)
 PKG_PROTO_DIRS += xdebug/build/prototype/$(MACH)
 PKG_PROTO_DIRS += xdebug-zts/build/prototype/$(MACH)
+PKG_PROTO_DIRS += zendopcache/build/prototype/$(MACH)
+PKG_PROTO_DIRS += zendopcache-zts/build/prototype/$(MACH)
 
 # for now, everything with a Makefile should be built
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')
@@ -178,5 +180,7 @@ tcpwrap:	php-sapi
 tcpwrap-zts:	php-sapi php-nsapi
 xdebug:		php-sapi
 xdebug-zts:	php-sapi php-nsapi
+zendopcache:	php-sapi
+zendopcache-zts: php-sapi php-nsapi
 
 FORCE:

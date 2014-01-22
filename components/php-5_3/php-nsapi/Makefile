@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -48,12 +48,13 @@ COMPONENT_ARCHIVE_URL_1= $(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
 
 PATCH_DIR = ../php-sapi/patches
 
+include ../php-sapi/php.mk
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 include ../common.mk
-include ../php-sapi/php.mk
 
 COMPONENT_POST_UNPACK_ACTION += && ( \
 	$(RM) -r $(COMPONENT_DIR)/$(COMPONENT_SRC_1); \
@@ -80,13 +81,13 @@ CONFIGURE_OPTIONS  += \
 	--with-imap=shared,$(IMAP_DIR) \
 	--with-imap-ssl=shared,/usr \
 	--with-ldap=shared \
-	--with-mysql=shared,$(MYSQL_DIR) \
+	--with-mysql=shared,mysqlnd \
 	--with-mysql-sock=/tmp/mysql.sock \
-	--with-mysqli=shared,$(MYSQL_DIR)/bin/mysql_config \
+	--with-mysqli=shared,mysqlnd \
 	--with-nsapi=$(COMPONENT_DIR)/webserver7-spi \
 	--with-openssl=shared \
 	--with-pear=$(PEAR_DIR) \
-	--with-pdo-mysql=shared,$(MYSQL_DIR) \
+	--with-pdo-mysql=shared,mysqlnd \
 	--with-pdo-sqlite=shared \
 	--with-snmp=shared,/usr \
 	--with-sqlite3=shared \
@@ -97,9 +98,9 @@ CONFIGURE_ENV += $(ZTS_CONF_ENVLINE)
 COMPONENT_POST_BUILD_ACTION = ( \
 	cat $(BUILD_DIR_32)/scripts/phpize | \
 	 sed -e "s,^\#!/bin/sh,\#!$(CONFIG_SHELL)," | \
-	 sed -e "s%^prefix=.*%prefix=$(SOURCE_DIR)%" | \
-	 sed -e "s%^includedir=.*%includedir=$(SOURCE_DIR)%" | \
-	 sed -e "s%^phpdir=.*%phpdir=$(SOURCE_DIR)%"  | \
+	 sed -e "s%^prefix=.*%prefix=$(BUILD_DIR_32)%" | \
+	 sed -e "s%^includedir=.*%includedir=$(BUILD_DIR_32)%" | \
+	 sed -e "s%^phpdir=.*%phpdir=$(BUILD_DIR_32)%"  | \
 	 sed -e "s%phpdir/phpize.m4%phpdir/scripts/phpize.m4%" | \
 	 sed -e 's%cd "$$phpdir" && cp $$FILES_BUILD "$$builddir"/build%cd "$$phpdir/build" \&\& cp $$FILES_BUILD "$$builddir"/build%' \
 	 > phpize-proto.zts ; \

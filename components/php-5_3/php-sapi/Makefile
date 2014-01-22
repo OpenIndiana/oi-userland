@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -57,12 +57,14 @@ COMPONENT_ARCHIVE_HASH_1= \
 # will pick it up.
 COMPONENT_ARCHIVE_URL_1=http://us.php.net/get/$(COMPONENT_ARCHIVE_1)/from/this/mirror
 
+include ./php.mk
+
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 include ../common.mk
-include ./php.mk
 
 CONFIGURE_OPTIONS  += \
 	$(COMMON_CONFIG_OPTIONS) \
@@ -83,12 +85,12 @@ CONFIGURE_OPTIONS  += \
 	--with-imap=shared,$(IMAP_DIR) \
 	--with-imap-ssl=shared,/usr \
 	--with-ldap=shared \
-	--with-mysql=shared,$(MYSQL_DIR) \
+	--with-mysql=shared,mysqlnd \
 	--with-mysql-sock=/tmp/mysql.sock \
-	--with-mysqli=shared,$(MYSQL_DIR)/bin/mysql_config \
+	--with-mysqli=shared,mysqlnd \
 	--with-openssl=shared \
 	--with-pear=$(PEAR_DIR) \
-	--with-pdo-mysql=shared,$(MYSQL_DIR) \
+	--with-pdo-mysql=shared,mysqlnd \
 	--with-pdo-sqlite=shared \
 	--with-snmp=shared,/usr \
 	--with-sqlite=shared \
@@ -100,9 +102,9 @@ CONFIGURE_ENV += $(CONF_ENVLINE)
 COMPONENT_POST_BUILD_ACTION = ( \
 	cat $(BUILD_DIR_32)/scripts/phpize | \
 	 sed -e "s,^\#!/bin/sh,\#!$(CONFIG_SHELL)," | \
-	 sed -e "s%^prefix=.*%prefix=$(SOURCE_DIR)%" | \
-	 sed -e "s%^includedir=.*%includedir=$(SOURCE_DIR)%" | \
-	 sed -e "s%^phpdir=.*%phpdir=$(SOURCE_DIR)%"  | \
+	 sed -e "s%^prefix=.*%prefix=$(BUILD_DIR_32)%" | \
+	 sed -e "s%^includedir=.*%includedir=$(BUILD_DIR_32)%" | \
+	 sed -e "s%^phpdir=.*%phpdir=$(BUILD_DIR_32)%"  | \
 	 sed -e "s%phpdir/phpize.m4%phpdir/scripts/phpize.m4%" | \
 	 sed -e "s%$PHP_AUTOCONF   || exit 1%$PHP_AUTOCONF -f   || exit 1%" | \
 	 sed -e "s%$PHP_AUTOHEADER || exit 1%$PHP_AUTOHEADER -f || exit 1%" | \
@@ -112,8 +114,8 @@ COMPONENT_POST_BUILD_ACTION = ( \
 	chmod 755 phpize-proto ) ; \
 	( cat $(BUILD_DIR_32)/scripts/php-config | \
 	 sed -e "s,^\#! /bin/sh,\#!$(CONFIG_SHELL)," | \
-	 sed -e "s%^prefix=.*%prefix=$(SOURCE_DIR)%" | \
-	 sed -e "s%^include_dir=.*%include_dir=$(SOURCE_DIR)%" \
+	 sed -e "s%^prefix=.*%prefix=$(BUILD_DIR_32)%" | \
+	 sed -e "s%^include_dir=.*%include_dir=$(BUILD_DIR_32)%" \
 	 > php-config-proto ; \
 	chmod 755 php-config-proto ) ; \
 	( cat $(BUILD_DIR_32)/scripts/php-config | \
@@ -138,8 +140,8 @@ ADD_APACHE2_MODULE_SUPPORT = ( \
 
 # Ship a default php.ini to simplify ease of use.
 FIX_CONFIG_FILES = ( \
-	cd $(SOURCE_DIR); \
-	$(GPATCH) -p0 -o php.ini-patched -i ../patches-other/php_ini.patch; \
+	cd $(BUILD_DIR_32); \
+	$(GPATCH) -p0 -o php.ini-patched -i ../../patches-other/php_ini.patch; \
 	$(GSED) -e "s@<<VERSION>>@$(PHP_REL)@g" < php.ini-patched > php.ini; \
 	$(INSTALL) -m 644 php.ini $(PROTO_DIR)/$(CONF_DIR)/php.ini; \
 	)

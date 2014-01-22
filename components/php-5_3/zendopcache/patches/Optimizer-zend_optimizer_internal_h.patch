@@ -1,0 +1,16 @@
+Fix Overflown issue on Solaris. For more information, see:
+https://github.com/zendtech/ZendOptimizerPlus/issues/122
+
+--- zendopcache-7.0.2/Optimizer/zend_optimizer_internal.h_orig	2013-06-04 23:28:53.000000000 -0700
++++ zendopcache-7.0.2/Optimizer/zend_optimizer_internal.h	2013-08-28 13:08:44.068188002 -0700
+@@ -28,8 +28,8 @@
+ # define VAR_NUM(v) ((zend_uint)(EX_TMP_VAR_NUM(0, 0) - EX_TMP_VAR(0, v)))
+ # define NUM_VAR(v) ((zend_uint)(zend_uintptr_t)EX_TMP_VAR_NUM(0, v))
+ #else
+-# define VAR_NUM(v) ((v)/(sizeof(temp_variable)))
+-# define NUM_VAR(v) ((v)*(sizeof(temp_variable)))
++# define VAR_NUM(v) ((v)/ZEND_MM_ALIGNED_SIZE(sizeof(temp_variable)))
++# define NUM_VAR(v) ((v)*ZEND_MM_ALIGNED_SIZE(sizeof(temp_variable)))
+ #endif
+ 
+ #define INV_COND(op)       ((op) == ZEND_JMPZ    ? ZEND_JMPNZ    : ZEND_JMPZ)

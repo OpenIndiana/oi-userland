@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPONENT_PRE_INSTALL_ACTION += ( \
@@ -37,12 +37,14 @@ COMPONENT_POST_UNPACK_ACTION += ( \
 	      $(COMPONENT_SRC)/Zend/zend_language_parser.h \
 	      $(COMPONENT_SRC)/Zend/zend_language_parser.output )
 
+PATCHES = $(shell cd $(PATCH_DIR); echo [0-9]* $$(MACH)* )
+
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	cd $(COMPONENT_SRC); $(ENV) -i PATH=/usr/gnu/bin:$(PATH) \
 		MAKE="$(GMAKE)" \
 		$(CONFIG_SHELL) ./buildconf --force ; \
-	$(MV) configure configure.orig; \
+	$(MV) configure configure_orig; \
 	$(GSED) -e "s\#-i -a -n php5\#-i -n php5\#" \
-		< configure.orig > configure; \
+		< configure_orig > configure; \
 	$(CHMOD) 755 configure; \
 	$(CLONEY) $(SOURCE_DIR) $(@D) )

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 PHP_REL=		5.3
@@ -54,8 +54,8 @@ IMAP_DIR = $(COMPONENT_DIR)/../imap/build/$(MACH32)
 IMAP_CLIENT_DIR = $(IMAP_DIR)/c-client
 MODULES_DIR = $(TOP_DIR)/modules
 MODULES_CONF_DIR=$(CONF_DIR)/conf.d
-MYSQL_DIR = /usr/mysql/5.1
-MYSQL_LIBDIR=/usr/mysql/5.1/lib/mysql
+MYSQL_DIR = /usr/mysql
+MYSQL_LIBDIR=/usr/mysql/lib/mysql
 PHP_SAPI_BUILD = $(COMPONENT_DIR)/../php-sapi/build/$(MACH32)
 PEAR_DIR=/var/php/$(PHP_REL)/pear
 

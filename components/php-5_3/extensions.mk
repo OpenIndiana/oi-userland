@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -47,6 +47,7 @@ CONFIGURE_OPTIONS  += \
 
 CONFIGURE_ENV += $(ENVLINE)
 CONFIGURE_SCRIPT = $(BUILD_DIR_32)/configure
+CPPFLAGS += -I$(PHP_SAPI_BUILD)
 CPPFLAGS += -I$(PHP_SAPI_BUILD)/Zend
 CPPFLAGS += -I$(PHP_SAPI_BUILD)/TSRM
 CPPFLAGS += -I$(PHP_SAPI_BUILD)/main
