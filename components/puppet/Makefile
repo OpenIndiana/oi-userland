@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		puppet
-COMPONENT_VERSION=	3.2.4
+COMPONENT_VERSION=	3.4.1
 COMPONENT_PROJECT_URL=	http://puppetlabs.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8b38f4adee6237b8dd7b1956d90af97f2d0091245d6e30b708bbc8e333001358
+    sha256:e6a929699a83c2bc1d1661674172ba7e92b6fb4235fa594cc2f3219925504b93
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/puppet/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/puppet
 
@@ -46,6 +46,10 @@ COMPONENT_INSTALL_ENV	+= RUBYLIB="$(COMPONENT_DIR)/../facter/build/prototype/$(M
 INSTALL_RB_BINDIR =	$(USRSBINDIR)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+# pass Ruby values onto the package manfiest
+PKG_MACROS +=	RUBY_VERSION=$(RUBY_VERSION)
+PKG_MACROS +=	RUBY_LIB_VERSION=$(RUBY_LIB_VERSION)
 
 # common targets
 build:		$(BUILD_64)
