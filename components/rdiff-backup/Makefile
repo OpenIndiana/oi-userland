@@ -24,6 +24,9 @@
 
 include ../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 COMPONENT_NAME=		rdiff-backup
 COMPONENT_VERSION=	1.3.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -37,14 +40,6 @@ COMPONENT_BUGDB=	utility/rdiff-backup
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/setup.py.mk
-
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += LDSHARED="$(LDSHARED)"
-PYTHON_ENV += LD="$(LD)"
-PYTHON_ENV += CFLAGS="$(CFLAGS)"
-PYTHON_ENV += CPPFLAGS="$(CPPFLAGS)"
-PYTHON_ENV += LDFLAGS="$(LDFLAGS)"
-COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 
 # common targets
 
