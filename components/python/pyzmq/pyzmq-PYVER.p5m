@@ -1,0 +1,183 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/library/python-2/pyzmq-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python bindings for zeromq"
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license pyzmq.copyright license=BSD
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the pyzmq package
+depend type=require \
+    fmri=library/python-2/pyzmq@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+depend type=require \
+    fmri=library/python-2/tornado-$(PYV)
+
+# IPS checks seeems to be unhappy by from .X import ...
+<transform file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/.* -> default pkg.depend.bypass-generate .*>
+
+file path=usr/lib/python$(PYVER)/vendor-packages/pyzmq-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/_cffi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/_poll.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/devices.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/error.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/message.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/socket.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cffi/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/_device.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/_poll.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/_version.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/constants.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/context.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/error.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/message.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/socket.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/64/utils.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/_device.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/_poll.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/_version.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/checkrc.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/constants.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/context.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/context.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/error.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/libzmq.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/message.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/message.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/socket.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/socket.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/utils.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/cython/utils.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/backend/select.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/64/monitoredqueue.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/basedevice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/monitoredqueue.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/monitoredqueue.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/monitoredqueue.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/monitoredqueuedevice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/devices/proxydevice.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/error.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/ioloop.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/concurrent.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/ioloop.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/platform/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/platform/auto.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/platform/common.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/platform/interface.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/platform/posix.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/platform/windows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/stack_context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/minitornado/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/eventloop/zmqstream.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/green/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/green/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/green/device.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/green/eventloop/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/green/eventloop/ioloop.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/green/eventloop/zmqstream.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/green/poll.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/log/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/log/handlers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/ssh/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/ssh/forward.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/ssh/tunnel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/attrsettr.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/frame.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/poll.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/socket.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/tracker.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/sugar/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_cffi_backend.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_device.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_error.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_imports.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_ioloop.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_message.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_monitor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_monqueue.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_multipart.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_pair.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_poll.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_pubsub.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_reqrep.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_security.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_socket.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_stopwatch.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_z85.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/tests/test_zmqstream.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/64/initthreads.so \
+    mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/64/rebuffer.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/buffers.pxd
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/constant_names.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/garbage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/getpid_compat.h
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/initthreads.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/ipcmaxlen.h
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/jsonapi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/monitor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/pyversion_compat.h
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/rebuffer.so mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/strtypes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/z85.py
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/zmq_compat.h
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/utils/zmq_constants.h
+file path=usr/lib/python$(PYVER)/vendor-packages/zmq/web.py
