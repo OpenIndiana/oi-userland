@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
@@ -46,7 +46,7 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
                 origin = origin[0..-2]
             end
 
-            if publishers.has_key?(name):
+            if publishers.has_key?(name)
                 # if we've seen this publisher before, simply update the origin
                 # array
                 publishers[name]["origin"] << origin
@@ -57,7 +57,7 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
                 publishers[name]["proxy"] = proxy if proxy != "-"
 
                 index = publisher_order.index(name)
-                if index == 0:
+                if index == 0
                     publishers[name]["searchfirst"] = true
                     publishers[name]["searchafter"] = nil
                 else

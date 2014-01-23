@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:ipmp_interface).provide(:ipmp_interface) do
@@ -31,8 +31,7 @@ Puppet::Type.type(:ipmp_interface).provide(:ipmp_interface) do
 
     def self.instances
         ifaces = []
-        ipadm("show-if", "-p", "-o", "IFNAME,CLASS,OVER").split(
-              "\n").each do |line|
+        ipadm("show-if", "-p", "-o", "IFNAME,CLASS,OVER").each_line do |line|
             name, linkclass, over = line.strip().split(":", 3)
             next if linkclass != "ipmp"
             ifaces << new(:name => name.strip(),
@@ -100,7 +99,7 @@ Puppet::Type.type(:ipmp_interface).provide(:ipmp_interface) do
     end
 
     def destroy
-        for iface in self.interfaces do
+        for iface in self.interfaces.each_line do
             ipadm("remove-ipmp", "-i", iface, @resource[:name])
         end
         ipadm('delete-ipmp', @resource[:name])

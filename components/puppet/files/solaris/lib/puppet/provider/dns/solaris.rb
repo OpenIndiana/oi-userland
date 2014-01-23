@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:dns).provide(:dns) do
@@ -29,12 +29,11 @@ Puppet::Type.type(:dns).provide(:dns) do
     defaultfor :osfamily => :solaris, :kernelrelease => ['5.11', '5.12']
     commands :svccfg => '/usr/sbin/svccfg', :svcprop => '/usr/bin/svcprop'
 
-    class << self; attr_accessor :dns_fmri end
-    @@dns_fmri = "svc:/network/dns/client"
+    Dns_fmri = "svc:/network/dns/client"
 
     def self.instances
         props = {}
-        svcprop("-p", "config", @@dns_fmri).split("\n").each do |line|
+        svcprop("-p", "config", Dns_fmri).split("\n").each do |line|
             fullprop, type, value = line.split(" ", 2)
             pg, prop = fullprop.split("/")
             props[prop] = value \
@@ -48,7 +47,7 @@ Puppet::Type.type(:dns).provide(:dns) do
     Puppet::Type.type(:dns).validproperties.each do |field|
         define_method(field) do
             begin
-                svcprop("-p", "config/" + field.to_s, @@dns_fmri).strip()
+                svcprop("-p", "config/" + field.to_s, Dns_fmri).strip()
             rescue
                 # if the property isn't set, don't raise an error
                 nil
@@ -63,10 +62,10 @@ Puppet::Type.type(:dns).provide(:dns) do
                     should[0] = "(" + should[0]
                     should[-1] = should[-1] + ")"
 
-                    svccfg("-s", @@dns_fmri, "setprop",
+                    svccfg("-s", Dns_fmri, "setprop",
                            "config/" + field.to_s, "=", should)
                 else
-                    svccfg("-s", @@dns_fmri, "setprop",
+                    svccfg("-s", Dns_fmri, "setprop",
                            "config/" + field.to_s, "=", '"' + should + '"')
                 end
             rescue => detail
@@ -78,6 +77,6 @@ Puppet::Type.type(:dns).provide(:dns) do
     end
 
     def flush
-        svccfg("-s", @@dns_fmri, "refresh")
+        svccfg("-s", Dns_fmri, "refresh")
     end
 end

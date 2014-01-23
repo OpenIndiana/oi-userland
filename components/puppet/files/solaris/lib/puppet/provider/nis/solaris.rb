@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:nis).provide(:nis) do
@@ -30,8 +30,8 @@ Puppet::Type.type(:nis).provide(:nis) do
     commands :svccfg => '/usr/sbin/svccfg', :svcprop => '/usr/bin/svcprop'
 
     class << self; attr_accessor :client_fmri, :domain_fmri end
-    @@client_fmri = "svc:/network/nis/client"
-    @@domain_fmri = "svc:/network/nis/domain"
+    Client_fmri = "svc:/network/nis/client"
+    Domain_fmri = "svc:/network/nis/domain"
 
     def initialize(value={})
         super(value)
@@ -43,7 +43,7 @@ Puppet::Type.type(:nis).provide(:nis) do
         props = {}
         validprops = Puppet::Type.type(:nis).validproperties
 
-        [@@client_fmri, @@domain_fmri].each do |svc|
+        [Client_fmri, Domain_fmri].each do |svc|
             svcprop("-p", "config", svc).split("\n").collect do |line|
                 data = line.split()
                 fullprop = data[0]
@@ -66,7 +66,7 @@ Puppet::Type.type(:nis).provide(:nis) do
     [:use_broadcast, :use_ypsetme].each do |field|
         define_method(field) do
             begin
-                svcprop("-p", "config/" + field.to_s, @@client_fmri).strip()
+                svcprop("-p", "config/" + field.to_s, Client_fmri).strip()
             rescue
                 # if the property isn't set, don't raise an error
                 nil
@@ -75,7 +75,7 @@ Puppet::Type.type(:nis).provide(:nis) do
 
         define_method(field.to_s + "=") do |should|
             begin
-                svccfg("-s", @@client_fmri, "setprop", "config/" + field.to_s,
+                svccfg("-s", Client_fmri, "setprop", "config/" + field.to_s,
                        "=", '"' + should.to_s + '"')
             rescue => detail
                 raise Puppet::Error,
@@ -90,7 +90,7 @@ Puppet::Type.type(:nis).provide(:nis) do
     [:domainname, :ypservers, :securenets].each do |field|
         define_method(field) do
             begin
-                svcprop("-p", "config/" + field.to_s, @@domain_fmri).strip()
+                svcprop("-p", "config/" + field.to_s, Domain_fmri).strip()
             rescue
                 # if the property isn't set, don't raise an error
                 nil
@@ -105,10 +105,10 @@ Puppet::Type.type(:nis).provide(:nis) do
                     should[0] = "(" + should[0]
                     should[-1] = should[-1] + ")"
 
-                    svccfg("-s", @@domain_fmri, "setprop",
+                    svccfg("-s", Domain_fmri, "setprop",
                            "config/" + field.to_s, "=", should)
                 else
-                    svccfg("-s", @@domain_fmri, "setprop",
+                    svccfg("-s", Domain_fmri, "setprop",
                            "config/" + field.to_s, "=", '"' + should + '"')
                 end
             rescue => detail
@@ -122,10 +122,10 @@ Puppet::Type.type(:nis).provide(:nis) do
 
     def flush
         if @domain_refresh == true
-            svccfg("-s", @@domain_fmri, "refresh")
+            svccfg("-s", Domain_fmri, "refresh")
         end
         if @client_refresh == true
-            svccfg("-s", @@client_fmri, "refresh")
+            svccfg("-s", Client_fmri, "refresh")
         end
     end
 end

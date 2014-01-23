@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:vni_interface).provide(:vni_interface) do
@@ -51,7 +51,7 @@ Puppet::Type.type(:vni_interface).provide(:vni_interface) do
     def exists?
         p = exec_cmd(command(:ipadm), "show-if", "-p", "-o", "IFNAME,CLASS",
                      @resource[:name])
-        if p[:exit] == 1:
+        if p[:exit] == 1
             return false
         end
 

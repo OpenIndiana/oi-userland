@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 require 'ipaddr'
@@ -71,13 +71,9 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array as long as there's more than 1 entry
+        # ensure should remains an array
         def should
-            if @should.length == 1
-                @should.to_s
-            else
-                @should
-            end
+            @should
         end
         
         def insync?(is)
@@ -104,13 +100,9 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array as long as there's more than 1 entry
+        # ensure should remains an array
         def should
-            if @should.length == 1
-                @should.to_s
-            else
-                @should
-            end
+            @should
         end
         
         def insync?(is)
@@ -158,13 +150,9 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
         
-        # ensure should remains an array as long as there's more than 1 entry
+        # ensure should remains an array
         def should
-            if @should.length == 1
-                @should.to_s
-            else
-                @should
-            end
+            @should
         end
         
         def insync?(is)
@@ -236,13 +224,9 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
         
-        # ensure should remains an array as long as there's more than 1 entry
+        # ensure should remains an array
         def should
-            if @should.length == 1
-                @should.to_s
-            else
-                @should
-            end
+            @should
         end
         
         def insync?(is)
@@ -266,13 +250,9 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array as long as there's more than 1 entry
+        # ensure should remains an array
         def should
-            if @should.length == 1
-                @should.to_s
-            else
-                @should
-            end
+            @should
         end
         
         def insync?(is)
@@ -306,13 +286,9 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "config"
 
-        # ensure should remains an array as long as there's more than 1 entry
+        # ensure should remains an array
         def should
-            if @should.length == 1
-                @should.to_s
-            else
-                @should
-            end
+            @should
         end
         
         def insync?(is)
@@ -335,13 +311,9 @@ Puppet::Type.newtype(:ldap) do
         end
         self.pg = "cred"
 
-        # ensure should remains an array as long as there's more than 1 entry
+        # ensure should remains an array
         def should
-            if @should.length == 1
-                @should.to_s
-            else
-                @should
-            end
+            @should
         end
         
         def insync?(is)

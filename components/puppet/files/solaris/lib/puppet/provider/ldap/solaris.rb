@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:ldap).provide(:ldap) do
@@ -29,8 +29,7 @@ Puppet::Type.type(:ldap).provide(:ldap) do
     defaultfor :osfamily => :solaris, :kernelrelease => ['5.11', '5.12']
     commands :svccfg => '/usr/sbin/svccfg', :svcprop => '/usr/bin/svcprop'
 
-    class << self; attr_accessor :ldap_fmri end
-    @@ldap_fmri = "svc:/network/ldap/client"
+    Ldap_fmri = "svc:/network/ldap/client"
 
     def initialize(resource)
         super
@@ -44,7 +43,7 @@ Puppet::Type.type(:ldap).provide(:ldap) do
         props = {}
         validprops = Puppet::Type.type(:ldap).validproperties
 
-        svcprop("-p", "config", @@ldap_fmri).split("\n").collect do |line|
+        svcprop("-p", "config", Ldap_fmri).split("\n").collect do |line|
             data = line.split()
             fullprop = data[0]
             type = data[1]
@@ -68,7 +67,7 @@ Puppet::Type.type(:ldap).provide(:ldap) do
         pg = Puppet::Type.type(:ldap).propertybyname(field).pg
         define_method(field) do
             begin
-                svcprop("-p", pg + "/" + field.to_s, @@ldap_fmri).strip()
+                svcprop("-p", pg + "/" + field.to_s, Ldap_fmri).strip()
             rescue
                 # if the property isn't set, don't raise an error
                 nil
@@ -85,10 +84,10 @@ Puppet::Type.type(:ldap).provide(:ldap) do
                     should[0] = "(" + should[0]
                     should[-1] = should[-1] + ")"
 
-                    svccfg("-s", @@ldap_fmri, "setprop",
+                    svccfg("-s", Ldap_fmri, "setprop",
                            pg + "/" + field.to_s, "=", should)
                 else
-                    svccfg("-s", @@ldap_fmri, "setprop",
+                    svccfg("-s", Ldap_fmri, "setprop",
                            pg + "/" + field.to_s, "=", should.to_s)
                 end
                 @refresh_needed = true
@@ -102,7 +101,7 @@ Puppet::Type.type(:ldap).provide(:ldap) do
 
     def flush
         if @refresh_needed == true
-            svccfg("-s", @@ldap_fmri, "refresh")
+            svccfg("-s", Ldap_fmri, "refresh")
         end
     end
 end

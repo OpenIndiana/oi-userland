@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:boot_environment).provide(:boot_environment) do
@@ -104,7 +104,7 @@ Puppet::Type.type(:boot_environment).provide(:boot_environment) do
 
         if zp = @resource[:zpool]
             found = false
-            for line in zpool(:list, "-o", "name", "-H") do
+            for line in zpool(:list, "-o", "name", "-H").each_line do
                 if zp == line.strip
                     found = true
                     flags << "-p" << zp
