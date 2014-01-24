@@ -13,6 +13,9 @@
 #
 include ../../../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 COMPONENT_NAME=		instant
 COMPONENT_VERSION=	1.0.1
 COMPONENT_FMRI=		library/python-2/instant
@@ -32,11 +35,12 @@ include $(WS_MAKE_RULES)/setup.py.mk
 include $(WS_MAKE_RULES)/ips.mk
 
 
-COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTOUSRBINDIR)/instant-clean $(PROTOUSRBINDIR)/instant-clean2.6;
-COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTOUSRBINDIR)/instant-showcache $(PROTOUSRBINDIR)/instant-showcache2.6;
+COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTOUSRBINDIR)/instant-clean $(PROTOUSRBINDIR)/instant-clean$(PYTHON_VERSION);
+COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTOUSRBINDIR)/instant-showcache $(PROTOUSRBINDIR)/instant-showcache$(PYTHON_VERSION);
 
 # Man files are misplaced at install
 COMPONENT_POST_INSTALL_ACTION+=$(MV) -f $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)/share $(PROTOUSRDIR);
+COMPONENT_POST_INSTALL_ACTION+=find $(PROTOUSRDIR)/share/man -name \*.gz  -exec gunzip '{}' ';' ;
 
 
 build:          $(BUILD_NO_ARCH)

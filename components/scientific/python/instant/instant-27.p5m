@@ -1,0 +1,64 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python2.7 \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the unversioned package
+depend type=require \
+    fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+link path=usr/bin/instant-clean \
+    target=instant-clean2.7 \
+    mediator=python mediator-version=2.7
+
+link path=usr/bin/instant-showcache \
+    target=instant-showcache2.7 \
+    mediator=python mediator-version=2.7
+
+file path=usr/bin/instant-clean2.7
+file path=usr/bin/instant-showcache2.7
+file path=usr/lib/python2.7/vendor-packages/instant-$(COMPONENT_VERSION)-py2.7.egg-info
+file path=usr/lib/python2.7/vendor-packages/instant/__init__.py
+file path=usr/lib/python2.7/vendor-packages/instant/__init__.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/build.py
+file path=usr/lib/python2.7/vendor-packages/instant/build.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/cache.py
+file path=usr/lib/python2.7/vendor-packages/instant/cache.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/codegeneration.py
+file path=usr/lib/python2.7/vendor-packages/instant/codegeneration.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/config.py
+file path=usr/lib/python2.7/vendor-packages/instant/config.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/inlining.py
+file path=usr/lib/python2.7/vendor-packages/instant/inlining.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/locking.py
+file path=usr/lib/python2.7/vendor-packages/instant/locking.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/output.py
+file path=usr/lib/python2.7/vendor-packages/instant/output.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/paths.py
+file path=usr/lib/python2.7/vendor-packages/instant/paths.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/signatures.py
+file path=usr/lib/python2.7/vendor-packages/instant/signatures.pyc
+file path=usr/lib/python2.7/vendor-packages/instant/swig/numpy.i
