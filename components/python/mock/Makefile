@@ -22,9 +22,6 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-# should be moved to shared-macros.mk later
-PYTHON_VERSIONS =       2.6 2.7
-
 COMPONENT_NAME=		mock
 COMPONENT_VERSION=	1.0.1
 COMPONENT_PROJECT_URL=	http://www.voidspace.org.uk/python/mock/

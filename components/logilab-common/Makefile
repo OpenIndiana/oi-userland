@@ -25,9 +25,6 @@
 
 include ../../make-rules/shared-macros.mk
 
-# should be moved to shared-macros.mk later
-PYTHON_VERSIONS =       2.6 2.7
-
 COMPONENT_NAME=		logilab-common
 COMPONENT_VERSION=	0.58.2
 COMPONENT_PROJECT_URL=	http://www.logilab.org/project/logilab-common/

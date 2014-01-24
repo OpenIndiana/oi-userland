@@ -25,9 +25,6 @@
 
 include ../../../make-rules/shared-macros.mk
 
-# should be moved to shared-macros.mk later
-PYTHON_VERSIONS =       2.6 2.7
-
 COMPONENT_NAME=		zope.interface
 COMPONENT_VERSION=	3.3.0
 COMPONENT_PROJECT_URL=	http://zope.org/Wikis/Interfaces/FrontPage
