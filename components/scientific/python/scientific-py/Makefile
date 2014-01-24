@@ -15,6 +15,9 @@
 
 include ../../../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 COMPONENT_NAME= 	scientific-py
 COMPONENT_VERSION= 	2.8
 COMPONENT_FMRI=		library/python-2/scientific-py
@@ -36,8 +39,8 @@ include $(WS_MAKE_RULES)/ips.mk
 
 PATCH_LEVEL=0
 
-COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTO_DIR)/usr/bin/bsp_virtual $(PROTO_DIR)/usr/bin/bsp_virtual2.6;
-COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTO_DIR)/usr/bin/task_manager $(PROTO_DIR)/usr/bin/task_manager2.6;
+COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTO_DIR)/usr/bin/bsp_virtual $(PROTO_DIR)/usr/bin/bsp_virtual$(PYTHON_VERSION);
+COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTO_DIR)/usr/bin/task_manager $(PROTO_DIR)/usr/bin/task_manager$(PYTHON_VERSION);
 
 build:		$(BUILD_32_and_64)
 
