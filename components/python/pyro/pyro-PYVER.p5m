@@ -1,0 +1,103 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Distributed object middleware for Python (RPC)"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license=MIT
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the unversioned package
+depend type=require \
+    fmri=$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# Disabled until dependencies are satisfied
+# Pyro GUI based on wxWidgets
+#link path=usr/bin/pyro-wxnsc target=pyro-wxnsc$(PYVER) mediator=python mediator-version=$(PYVER)
+#link path=usr/bin/pyro-xnsc target=pyro-xnsc$(PYVER) mediator=python mediator-version=$(PYVER)
+#
+#file path=usr/bin/pyro-wxnsc$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+#file path=usr/bin/pyro-xnsc$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+#file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/wxnsc.py
+#file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/wxnsc.pyc
+#file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/xnsc.py
+#file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/xnsc.pyc
+
+# Pyro
+link path=usr/bin/pyro-es target=pyro-es$(PYVER) mediator=python mediator-version=$(PYVER)
+link path=usr/bin/pyro-esd target=pyro-esd$(PYVER) mediator=python mediator-version=$(PYVER)
+link path=usr/bin/pyro-genguid target=pyro-genguid$(PYVER) mediator=python mediator-version=$(PYVER)
+link path=usr/bin/pyro-ns target=pyro-ns$(PYVER) mediator=python mediator-version=$(PYVER)
+link path=usr/bin/pyro-nsc target=pyro-nsc$(PYVER) mediator=python mediator-version=$(PYVER)
+link path=usr/bin/pyro-nsd target=pyro-nsd$(PYVER) mediator=python mediator-version=$(PYVER)
+link path=usr/bin/pyro-rns target=pyro-rns$(PYVER) mediator=python mediator-version=$(PYVER)
+
+file path=usr/bin/pyro-es$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/bin/pyro-esd$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/bin/pyro-genguid$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/bin/pyro-ns$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/bin/pyro-nsc$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/bin/pyro-nsd$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/bin/pyro-rns$(PYVER) mode=0555 pkg.depend.bypass-generate=.*
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/EventService/Clients.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/EventService/Clients.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/EventService/Server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/EventService/Server.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/EventService/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/EventService/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/configuration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/configuration.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/constants.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/core.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/errors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/errors.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/BasicNTService.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/BasicNTService.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/ES_NtService.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/ES_NtService.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/NS_NtService.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/NS_NtService.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/ServiceTest.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/ServiceTest.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/daemonizer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/daemonizer.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/remote.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/remote.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/remote_nons.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/ext/remote_nons.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/naming.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/naming.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/nsc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/nsc.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/protocol.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/protocol.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/util.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/util2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyro/util2.pyc
