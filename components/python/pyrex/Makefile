@@ -15,6 +15,9 @@
 
 include ../../../make-rules/shared-macros.mk
 
+# should be moved to shared-macros.mk later
+PYTHON_VERSIONS =       2.6 2.7
+
 COMPONENT_NAME= 	Pyrex
 COMPONENT_VERSION= 	0.9.9
 COMPONENT_SUMMARY= 	A language for writing Python extension modules
@@ -35,4 +38,4 @@ build: $(BUILD_32)
 install: $(INSTALL_32)
 
 COMPONENT_POST_INSTALL_ACTION = \
-        (cd $(PROTO_DIR)/usr/bin ; for i in $$(echo *); do $(MV) $$i $$i-$(PYTHON_VERSION); done)
+        (cd $(PROTO_DIR)/usr/bin ; $(MV)  pyrexc pyrexc-$(PYTHON_VERSION); )
