@@ -21,9 +21,16 @@ set name=info.classification \
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
 depend type=conditional \
     fmri=$(COMPONENT_FMRI)-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
     predicate=runtime/python-26
+
+depend type=conditional \
+    fmri=$(COMPONENT_FMRI)-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-27
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
 
 # Force a dependency on SWIG
 depend type=require fmri=pkg:/developer/swig
@@ -31,3 +38,5 @@ depend type=require fmri=pkg:/developer/swig
 # Force a dependency on NUMPY
 depend type=require fmri=pkg:/library/python-2/numpy
 
+file path=usr/share/man/man1/instant-clean.1
+file path=usr/share/man/man1/instant-showcache.1
