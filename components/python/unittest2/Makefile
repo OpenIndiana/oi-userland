@@ -15,9 +15,6 @@
 
 include ../../../make-rules/shared-macros.mk
 
-# should be moved to shared-macros.mk later
-PYTHON_VERSIONS =       2.6 2.7
-
 COMPONENT_NAME= 	unittest2
 COMPONENT_VERSION= 	0.5.1
 COMPONENT_SUMMARY= 	unittest2 is a backport of the new features added to the unittest testing framework in Python 2.7

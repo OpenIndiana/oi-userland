@@ -25,9 +25,6 @@
 
 include ../../../make-rules/shared-macros.mk
 
-# should be moved to shared-macros.mk later
-PYTHON_VERSIONS =       2.6 2.7
-
 COMPONENT_NAME=		TwistedWeb2
 COMPONENT_VERSION=	8.1.0
 COMPONENT_PROJECT_URL=	http://twistedmatrix.com/trac/

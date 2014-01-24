@@ -24,9 +24,6 @@ include ../../../make-rules/shared-macros.mk
 
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
-# should be moved to shared-macros.mk later
-PYTHON_VERSIONS =       2.6 2.7
-
 COMPONENT_NAME=		pycurl
 COMPONENT_VERSION=	7.19.0
 COMPONENT_PROJECT_URL=	http://pycurl.sourceforge.net/

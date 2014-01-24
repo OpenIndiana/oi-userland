@@ -15,9 +15,6 @@
 
 include ../../../make-rules/shared-macros.mk
 
-# should be moved to shared-macros.mk later
-PYTHON_VERSIONS =       2.6 2.7
-
 COMPONENT_NAME= 	Pyrex
 COMPONENT_VERSION= 	0.9.9
 COMPONENT_SUMMARY= 	A language for writing Python extension modules
