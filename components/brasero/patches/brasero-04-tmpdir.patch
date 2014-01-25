@@ -1,0 +1,31 @@
+diff --git a/libbrasero-burn/brasero-session.c b/libbrasero-burn/brasero-session.c
+index 91c0ff2..c491d43 100644
+--- a/libbrasero-burn/brasero-session.c
++++ b/libbrasero-burn/brasero-session.c
+@@ -1190,7 +1190,7 @@ brasero_burn_session_set_tmpdir (BraseroBurnSession *self,
+ 
+ 	priv = BRASERO_BURN_SESSION_PRIVATE (self);
+ 
+-	if (!g_strcmp0 (priv->tmpdir, path))
++	if (g_strcmp0 (priv->tmpdir, path) == 0)
+ 		return BRASERO_BURN_OK;
+ 
+ 	if (priv->tmpdir)
+@@ -1199,7 +1199,7 @@ brasero_burn_session_set_tmpdir (BraseroBurnSession *self,
+ 	if (path)
+ 		priv->tmpdir = g_strdup (path);
+ 	else
+-		priv->tmpdir = NULL;
++		priv->tmpdir = g_get_tmp_dir();
+ 
+ 	client = gconf_client_get_default ();
+ 	gconf_client_set_string (client, BRASERO_TEMPORARY_DIRECTORY_KEY, priv->tmpdir, NULL);
+@@ -2491,6 +2491,8 @@ brasero_burn_session_init (BraseroBurnSession *obj)
+ 
+ 	client = gconf_client_get_default ();
+ 	priv->tmpdir = gconf_client_get_string (client, BRASERO_TEMPORARY_DIRECTORY_KEY, NULL);
++	if (priv->tmpdir == NULL)
++		priv->tmpdir = g_get_tmp_dir();
+ 	g_object_unref (client);
+ }
+ 
