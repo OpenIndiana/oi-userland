@@ -40,6 +40,6 @@ install:
 test:		$(NO_TESTS)
 
 clean:
-	[ -d $(BUILD_DIR) ] && rm -rf $(BUILD_DIR)
+	rm -rf $(BUILD_DIR)
 
 clobber: clean
