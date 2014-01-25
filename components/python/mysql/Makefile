@@ -41,14 +41,19 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS +=	-L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
+CFLAGS.32 =	-L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
+CFLAGS.64 =	-L/usr/mariadb/5.5/lib/$(MACH64) -R/usr/mariadb/5.5/lib/$(MACH64)
+CFLAGS += $(CFLAGS.$(BITS))
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/mariadb/5.5/bin
+PATH.MYSQL.32=/usr/mariadb/5.5/bin
+PATH.MYSQL.64=/usr/mariadb/5.5/bin/$(MACH64)
+
+PATH=$(PATH.MYSQL.$(BITS)):/usr/bin:/usr/gnu/bin
 
 # common targets
-build:          $(BUILD_32)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
