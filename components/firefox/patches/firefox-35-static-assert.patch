@@ -1,0 +1,28 @@
+diff -r f89feda9d997 nsprpub/pr/include/prtypes.h
+--- a/nsprpub/pr/include/prtypes.h	Sun Aug 12 21:28:26 2012 +0300
++++ b/nsprpub/pr/include/prtypes.h	Mon Aug 13 17:19:59 2012 +0800
+@@ -531,8 +531,24 @@
+ ** The macro can be used only in places where an "extern" declaration is
+ ** allowed.
+ */
++#if defined(__SUNPRO_CC)
++     /*
++      * The Sun Studio C++ compiler is buggy when declaring, inside a function,
++      * another extern'd function with an array argument whose length contains a
++      * sizeof, triggering the error message "sizeof expression not accepted as
++      * size of array parameter".  This bug (6688515, not public yet) would hit
++      * defining moz_static_assert as a function, so we always define an extern
++      * array for Sun Studio.
++      *
++      * We include the line number in the symbol name in a best-effort attempt
++      * to avoid conflicts (see below).
++      */
++#define PR_STATIC_ASSERT(condition) \
++    extern char pr_static_assert[(condition) ? 1 : -1]
++#else
+ #define PR_STATIC_ASSERT(condition) \
+     extern void pr_static_assert(int arg[(condition) ? 1 : -1])
++#endif
+ 
+ PR_END_EXTERN_C
+ 

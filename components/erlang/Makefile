@@ -85,6 +85,7 @@ CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 
 CONFIGURE_OPTIONS.64 += LIBS="-m64"
+CONFIGURE_OPTIONS.64 += --with-wx-config=/usr/bin/$(MACH64)/wx-config
 
 # Needed for 'set name=info.source-url' action in erlang-doc.p5m
 PKG_MACROS += COMPONENT_ARCHIVE_URL_2=$(COMPONENT_ARCHIVE_URL_2) 

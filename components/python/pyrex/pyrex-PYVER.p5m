@@ -1,0 +1,145 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python-2/pyrex-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="A language for writing Python extension modules"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license pyrex.license license='Apache v2.0'
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the pyrex package
+depend type=require \
+    fmri=library/python-2/pyrex@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+link path=usr/bin/pyrexc \
+    target=pyrexc-$(PYVER) \
+    mediator=python mediator-version=$(PYVER)
+
+file path=usr/bin/pyrexc-$(PYVER) mode=0555
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex-0.9.9-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Builtin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Builtin.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/CmdLine.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/CmdLine.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Code.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Code.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/DebugFlags.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/DebugFlags.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Errors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Errors.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/ExprNodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/ExprNodes.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Filenames.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Filenames.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Lexicon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Lexicon.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Main.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Main.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/ModuleNode.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/ModuleNode.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Naming.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Naming.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Nodes.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Options.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Options.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Parsing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Parsing.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/PyrexTypes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/PyrexTypes.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Scanning.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Scanning.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Symtab.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Symtab.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/TypeSlots.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/TypeSlots.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/Version.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Compiler/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Debugging.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Debugging.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Distutils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Distutils/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Distutils/build_ext.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Distutils/build_ext.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Distutils/extension.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Distutils/extension.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/DistutilsOld/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/DistutilsOld/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/DistutilsOld/build_ext.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/DistutilsOld/build_ext.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/DarwinSystem.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/DarwinSystem.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/MacSystem.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/MacSystem.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/MacUtils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/MacUtils.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/TS_Misc_Suite.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/TS_Misc_Suite.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/setup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Mac/setup.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Actions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Actions.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/DFA.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/DFA.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Errors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Errors.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Lexicons.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Lexicons.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Machines.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Machines.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Regexps.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Regexps.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Scanners.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Scanners.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Timing.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Timing.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Traditional.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Traditional.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Transitions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/Transitions.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/test_tm.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Plex/test_tm.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Unix/LinuxSystem.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Unix/LinuxSystem.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Unix/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Unix/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/Utils.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/Pyrex/__init__.pyc
+file path=usr/lib/python$(PYVER)/vendor-packages/lib/python$(PYVER)/site-packages/Pyrex/Compiler/Lexicon.pickle

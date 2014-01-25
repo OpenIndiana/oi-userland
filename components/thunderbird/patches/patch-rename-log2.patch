@@ -1,0 +1,90 @@
+__log2 name conflicts with function in libm, 
+and so incorrect function is used.
+
+--- mozilla/security/nss/lib/dbm/include/hash.h.orig	2013-12-14 15:16:20.868211497 +0400
++++ mozilla/security/nss/lib/dbm/include/hash.h	2013-12-14 15:17:49.494233433 +0400
+@@ -184,7 +184,7 @@
+ #define	OADDR_OF(S,O)	((uint32)((uint32)(S) << SPLITSHIFT) + (O))
+ 
+ #define BUCKET_TO_PAGE(B) \
+-	(B) + hashp->HDRPAGES + ((B) ? hashp->SPARES[__log2((uint32)((B)+1))-1] : 0)
++	(B) + hashp->HDRPAGES + ((B) ? hashp->SPARES[__nss_log2((uint32)((B)+1))-1] : 0)
+ #define OADDR_TO_PAGE(B) 	\
+ 	BUCKET_TO_PAGE ( (1 << SPLITNUM((B))) -1 ) + OPAGENUM((B));
+ 
+@@ -320,7 +320,7 @@
+ BUFHEAD * __add_ovflpage(HTAB *hashp, BUFHEAD *bufp);
+ int __big_insert(HTAB *hashp, BUFHEAD *bufp, const DBT *key, const DBT *val);
+ int __expand_table(HTAB *hashp);
+-uint32 __log2(uint32 num);
++uint32 __nss_log2(uint32 num);
+ void __reclaim_buf(HTAB *hashp, BUFHEAD *bp);
+ int __get_page(HTAB *hashp, char * p, uint32 bucket, int is_bucket, int is_disk, int is_bitmap);
+ int __put_page(HTAB *hashp, char *p, uint32 bucket, int is_bucket, int is_bitmap);
+--- mozilla/security/nss/lib/dbm/include/extern.h.orig	2013-12-14 15:16:43.303258311 +0400
++++ mozilla/security/nss/lib/dbm/include/extern.h	2013-12-14 15:19:05.976105317 +0400
+@@ -50,7 +50,7 @@
+ BUFHEAD	*__get_buf (HTAB *, uint32, BUFHEAD *, int);
+ int	 __get_page (HTAB *, char *, uint32, int, int, int);
+ int	 __ibitmap (HTAB *, int, int, int);
+-uint32	 __log2 (uint32);
++uint32	 __nss_log2 (uint32);
+ int	 __put_page (HTAB *, char *, uint32, int, int);
+ void	 __reclaim_buf (HTAB *, BUFHEAD *);
+ int	 __split_page (HTAB *, uint32, uint32);
+--- mozilla/security/nss/lib/dbm/src/hash.c.~1~	2013-11-13 04:09:33.000000000 +0400
++++ mozilla/security/nss/lib/dbm/src/hash.c	2013-12-14 18:00:30.434311858 +0400
+@@ -352,13 +352,13 @@
+ 		if (hashp->BSIZE > MAX_BSIZE)
+ 			hashp->BSIZE = MAX_BSIZE;
+ #endif
+-		hashp->BSHIFT = __log2((uint32)hashp->BSIZE);
++		hashp->BSHIFT = __nss_log2((uint32)hashp->BSIZE);
+ 	}
+ 
+ 	if (info) {
+ 		if (info->bsize) {
+ 			/* Round pagesize up to power of 2 */
+-			hashp->BSHIFT = __log2(info->bsize);
++			hashp->BSHIFT = __nss_log2(info->bsize);
+ 			hashp->BSIZE = 1 << hashp->BSHIFT;
+ 			if (hashp->BSIZE > MAX_BSIZE) {
+ 				errno = EINVAL;
+@@ -405,7 +405,7 @@
+ 	 */
+ 	nelem = (nelem - 1) / hashp->FFACTOR + 1;
+ 
+-	l2 = __log2((uint32)PR_MAX(nelem, 2));
++	l2 = __nss_log2((uint32)PR_MAX(nelem, 2));
+ 	nbuckets = 1 << l2;
+ 
+ 	hashp->SPARES[l2] = l2 + 1;
+@@ -423,7 +423,7 @@
+ 	    hashp->BSHIFT) + 1;
+ 
+ 	nsegs = (nbuckets - 1) / hashp->SGSIZE + 1;
+-	nsegs = 1 << __log2((uint32)nsegs);
++	nsegs = 1 << __nss_log2((uint32)nsegs);
+ 
+ 	if (nsegs > hashp->DSIZE)
+ 		hashp->DSIZE = nsegs;
+@@ -1033,7 +1033,7 @@
+ 	 * * increases), we need to copy the current contents of the spare
+ 	 * split bucket to the next bucket.
+ 	 */
+-	spare_ndx = __log2((uint32)(hashp->MAX_BUCKET + 1));
++	spare_ndx = __nss_log2((uint32)(hashp->MAX_BUCKET + 1));
+ 	if (spare_ndx > hashp->OVFL_POINT) {
+ 		hashp->SPARES[spare_ndx] = hashp->SPARES[hashp->OVFL_POINT];
+ 		hashp->OVFL_POINT = spare_ndx;
+--- mozilla/security/nss/lib/dbm/src/h_log2.c.~1~	2013-11-13 04:09:33.000000000 +0400
++++ mozilla/security/nss/lib/dbm/src/h_log2.c	2013-12-14 18:02:11.776601304 +0400
+@@ -42,7 +42,7 @@
+ #endif
+ #include "mcom_db.h"
+ 
+-uint32 __log2(uint32 num)
++uint32 __nss_log2(uint32 num)
+ {
+ 	register uint32 i, limit;
+ 

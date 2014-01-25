@@ -1,0 +1,20 @@
+--- mozilla-esr17/ipc/glue/AsyncChannel.cpp.~2~	2013-12-20 11:47:01.970986984 +0400
++++ mozilla-esr17/ipc/glue/AsyncChannel.cpp	2013-12-20 13:25:17.409935508 +0400
+@@ -688,7 +688,7 @@
+         mExistingListener = mTransport->set_listener(this);
+ #ifdef DEBUG
+         if (mExistingListener) {
+-            queue<Message> pending;
++            std::queue<Message> pending;
+             mExistingListener->GetQueuedMessages(pending);
+             MOZ_ASSERT(pending.empty());
+         }
+@@ -705,7 +705,7 @@
+ {
+     AssertIOThread();
+ 
+-    queue<Message> pending;
++    std::queue<Message> pending;
+     {
+         MonitorAutoLock lock(*mChan->mMonitor);
+ 

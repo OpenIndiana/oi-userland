@@ -1,0 +1,172 @@
+diff -urN yelp.orig/src/Makefile.am yelp.new/src/Makefile.am
+--- yelp.orig/src/Makefile.am	2009-06-12 11:32:27.311453656 +0100
++++ yelp.new/src/Makefile.am	2009-06-12 11:42:32.735084451 +0100
+@@ -28,7 +28,8 @@
+ 	yelp-info-parser.c 	yelp-info-parser.h		\
+ 	gtkentryaction.c	gtkentryaction.h		\
+ 	yelp-search.c		yelp-search.h			\
+-	yelp-search-parser.c 	yelp-search-parser.h
++	yelp-search-parser.c 	yelp-search-parser.h		\
++	yelp-tx.c		yelp-tx.h
+ 
+ YELP_DEFINES =								\
+ 	-DG_LOG_DOMAIN=\"Yelp\"						\
+diff -urN yelp.orig/src/yelp-main.c yelp.new/src/yelp-main.c
+--- yelp.orig/src/yelp-main.c	2009-06-12 11:32:27.316918730 +0100
++++ yelp.new/src/yelp-main.c	2009-06-12 15:02:32.145926917 +0100
+@@ -30,6 +30,7 @@
+ #include <dbus/dbus-glib-bindings.h>
+ #include <string.h>
+ #include <stdlib.h>
++#include <zone.h>
+ 
+ #ifdef WITH_SMCLIENT
+ #include "eggsmclient.h"
+@@ -38,6 +39,7 @@
+ #include "yelp-window.h"
+ #include "yelp-base.h"
+ #include "yelp-html.h"
++#include "yelp-tx.h"
+ 
+ static gchar       *cache_dir;
+ static gchar       *open_urls;
+@@ -337,6 +339,7 @@
+ 	gboolean       session_started = FALSE;
+ 	gchar *local_id;
+ 	GOptionContext *context;
++	char *command;
+ 
+ 	g_thread_init(NULL);
+ 
+@@ -344,6 +347,15 @@
+         bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+ 	textdomain(GETTEXT_PACKAGE);
+ 
++	if (getzoneid () == 0 && /* global zone */
++	    tx_is_multi_label_session () &&
++	    tx_is_non_global_display_zone ()) {
++		command = g_strdup_printf  ("0:%s", g_strjoinv (" ", argv));
++		tx_proxy_app_launch (command);
++		g_free (command);
++		return 0;
++	}
++
+ 	local_id = (gchar *) g_getenv ("DESKTOP_STARTUP_ID");
+ 
+ 	if (local_id != NULL && *local_id != '\0') {
+diff -urN yelp.orig/src/yelp-tx.c yelp.new/src/yelp-tx.c
+--- yelp.orig/src/yelp-tx.c	1970-01-01 01:00:00.000000000 +0100
++++ yelp.new/src/yelp-tx.c	2009-06-15 08:43:33.465438182 +0100
+@@ -0,0 +1,99 @@
++/*
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
++ */
++
++#include <config.h>
++#include <gdk/gdk.h>
++#include <gdk/gdkx.h>
++#include <X11/Xlib.h>
++#include <stdlib.h>
++#include <strings.h>
++#include <user_attr.h>
++#include <sys/types.h>
++#include <unistd.h>
++
++#define ATOM "_LABEL_EXEC_COMMAND"
++
++gboolean
++tx_is_multi_label_session (void)
++{
++	static int trusted = -1;
++
++	if (trusted < 0) {
++		if (getenv ("TRUSTED_SESSION")) {
++			trusted = 1;
++		} else {
++			trusted = 0;
++		}
++	}
++
++	return trusted ? TRUE : FALSE;
++}
++
++gboolean
++tx_is_non_global_display_zone (void)
++{
++	char *zoneid;
++	Display *xdpy;
++	Window root;
++	Atom atom, utf8_string;
++	unsigned long nitems;
++	unsigned long bytesafter;
++	unsigned char *prop_data = NULL;
++	Atom type = None;
++	int format;
++
++	xdpy = XOpenDisplay (NULL);
++
++	utf8_string = XInternAtom (xdpy, "UTF8_STRING", FALSE);
++
++	root = DefaultRootWindow (xdpy);
++
++	atom = XInternAtom (xdpy, "NAUTILUS_ACTIVE_DESKTOP_ID", FALSE);
++
++	gdk_error_trap_push ();
++
++	XGetWindowProperty (xdpy, root, atom, 0L, (long)1024, FALSE, 
++				utf8_string, &type, &format, &nitems,
++				&bytesafter, (unsigned char **)&prop_data);
++
++	gdk_error_trap_pop ();
++
++	zoneid = strchr (prop_data, '_') + 1;
++	if (strncmp (zoneid, "0", 1) == 0 ){
++		return FALSE;
++	} else {
++		return TRUE;
++	}
++}
++
++void
++tx_proxy_app_launch (char *command)
++{
++	Display *xdpy;
++	Window root;
++	Atom atom, utf8_string;
++
++	if (!command) return;
++
++	xdpy = XOpenDisplay (NULL);
++
++	utf8_string = XInternAtom (xdpy, "UTF8_STRING", FALSE);
++
++	root = DefaultRootWindow (xdpy);
++
++	atom = XInternAtom (xdpy, ATOM, FALSE);
++
++	gdk_error_trap_push ();
++
++	XChangeProperty (xdpy, root, atom, utf8_string, 8, PropModeReplace,
++			 command, strlen (command));
++
++	XSync (xdpy, False);
++
++	gdk_error_trap_pop ();
++
++	XCloseDisplay (xdpy);
++}
++
+diff -urN yelp.orig/src/yelp-tx.h yelp.new/src/yelp-tx.h
+--- yelp.orig/src/yelp-tx.h	1970-01-01 01:00:00.000000000 +0100
++++ yelp.new/src/yelp-tx.h	2009-06-15 08:41:35.454570771 +0100
+@@ -0,0 +1,9 @@
++/*
++ * Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
++ */
++
++gboolean tx_is_multi_label_session (void);
++gboolean tx_is_non_global_display_zone (void);
++void tx_proxy_app_launch (char *command);
++

@@ -32,7 +32,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH= \
     sha256:18f3cffb2ff413e0796d0c9192db3a56f18fe57524cc54edc57d20239614eb87
-COMPONENT_ARCHIVE_URL=	http://cssutils.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/c/cssutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/cssutils
 
 include $(WS_TOP)/make-rules/prep.mk

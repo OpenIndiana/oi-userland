@@ -1,0 +1,26 @@
+--- jdk/make/sun/security/ec/Makefile.~1~	2013-06-26 05:20:54.000000000 +0400
++++ jdk/make/sun/security/ec/Makefile	2014-01-02 11:36:42.232455836 +0400
+@@ -187,13 +187,22 @@
+   #
+   OTHER_CFLAGS += -DMP_API_COMPATIBLE -DNSS_ECC_MORE_THAN_SUITE_B
+ 
++  # gcc on solaris seems to define _POSIX_C_SOURCE or _XOPEN
++  # g++, on the otherhand, does not define either.
++  # It causes problems with g++: _B_FALSE instead of B_FALSE
++  ifeq ($(PLATFORM), solaris)
++    ifeq ($(CC_VERSION), gcc)
++      OTHER_CFLAGS += -D_XOPEN_SOURCE -D_XOPEN_VERSION=4 -D__EXTENSIONS__
++    endif # CC_VERSION
++  endif # PLATFORM
++
+   #
+   # Libraries to link
+   #
+   ifeq ($(PLATFORM), windows)
+     OTHER_LDLIBS += $(JVMLIB)
+   else
+-    OTHER_LDLIBS = $(LIBDL) $(JVMLIB) $(LIBCXX)
++    OTHER_LDLIBS = -L$(LIBDIR)/$(LIBARCH) -R/usr/jdk/instances/openjdk1.7.0/jre/lib/$(LIBARCH) $(LIBDL) $(JVMLIB) $(LIBCXX)
+   endif
+ 
+   include $(BUILDDIR)/common/Mapfile-vers.gmk

@@ -15,15 +15,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pip
-COMPONENT_VERSION=	1.4
+COMPONENT_VERSION=	1.4.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1fd43cbf07d95ddcecbb795c97a1674b3ddb711bb4a67661284a5aa765aa1b97
+    sha256:4e7a06554711a624c35d0c646f63674b7f6bfc7f80221bf1eb1f631bd890d04e
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/p/pip/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://github.com/pypa/pip
-
-PYTHON_VERSIONS = 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

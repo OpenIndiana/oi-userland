@@ -1,0 +1,40 @@
+--- evolution-data-server-2.29.6/camel/camel-folder.c.orig	2010-01-29 23:12:28.636497884 +0800
++++ evolution-data-server-2.29.6/camel/camel-folder.c	2010-01-29 23:17:06.800942479 +0800
+@@ -2051,23 +2051,25 @@
+ 	}
+ 	CAMEL_FOLDER_UNLOCK(folder, change_lock);
+ 
+-	if (session->junk_plugin && changed->uid_changed->len) {
++	if (changed->uid_changed->len) {
+ 		guint32 flags;
+ 
+ 		for (i = 0; i < changed->uid_changed->len; i++) {
+ 			flags = camel_folder_get_message_flags (folder, changed->uid_changed->pdata [i]);
+-			if (flags & CAMEL_MESSAGE_JUNK_LEARN) {
+-				if (flags & CAMEL_MESSAGE_JUNK) {
+-					if (!junk)
+-						junk = g_ptr_array_new();
+-					g_ptr_array_add (junk, g_strdup (changed->uid_changed->pdata [i]));
+-				} else {
+-					if (!notjunk)
+-						notjunk = g_ptr_array_new();
+-					g_ptr_array_add (notjunk, g_strdup (changed->uid_changed->pdata [i]));
++			if (session->junk_plugin) {
++				if (flags & CAMEL_MESSAGE_JUNK_LEARN) {
++					if (flags & CAMEL_MESSAGE_JUNK) {
++						if (!junk)
++							junk = g_ptr_array_new();
++						g_ptr_array_add (junk, g_strdup (changed->uid_changed->pdata [i]));
++					} else {
++						if (!notjunk)
++							notjunk = g_ptr_array_new();
++						g_ptr_array_add (notjunk, g_strdup (changed->uid_changed->pdata [i]));
++					}
++					/* reset junk learn flag so that we don't process it again*/
++					camel_folder_set_message_flags (folder, changed->uid_changed->pdata [i], CAMEL_MESSAGE_JUNK_LEARN, 0);
+ 				}
+-				/* reset junk learn flag so that we don't process it again*/
+-				camel_folder_set_message_flags (folder, changed->uid_changed->pdata [i], CAMEL_MESSAGE_JUNK_LEARN, 0);
+ 			}
+ 		}
+ 	}

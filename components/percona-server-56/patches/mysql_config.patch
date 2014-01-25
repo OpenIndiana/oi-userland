@@ -1,0 +1,16 @@
+--- Percona-Server-5.6.14-rel62.0/scripts/mysql_config.sh.~1~	2013-10-22 11:42:41.000000000 +0400
++++ Percona-Server-5.6.14-rel62.0/scripts/mysql_config.sh	2013-11-07 16:25:16.478742037 +0400
+@@ -110,10 +110,10 @@
+ 
+ # Create options 
+ # We intentionally add a space to the beginning and end of lib strings, simplifies replace later
+-libs=" $ldflags -L$pkglibdir -lmysqlclient @ZLIB_DEPS@ @NON_THREADED_LIBS@"
++libs=" $ldflags -L$pkglibdir -R$pkglibdir -lmysqlclient @ZLIB_DEPS@ @NON_THREADED_LIBS@"
+ libs="$libs @openssl_libs@ @STATIC_NSS_FLAGS@ "
+-libs_r=" $ldflags -L$pkglibdir -lmysqlclient_r @ZLIB_DEPS@ @CLIENT_LIBS@ @openssl_libs@ "
+-embedded_libs=" $ldflags -L$pkglibdir -lmysqld @LIBDL@ @ZLIB_DEPS@ @LIBS@ @WRAPLIBS@ @openssl_libs@ "
++libs_r=" $ldflags -L$pkglibdir -R$pkglibdir -lmysqlclient_r @ZLIB_DEPS@ @CLIENT_LIBS@ @openssl_libs@ "
++embedded_libs=" $ldflags -L$pkglibdir -R$pkglibdir -lmysqld @LIBDL@ @ZLIB_DEPS@ @LIBS@ @WRAPLIBS@ @openssl_libs@ "
+ embedded_libs="$embedded_libs @QUOTED_CMAKE_CXX_LINK_FLAGS@"
+ 
+ cflags="-I$pkgincludedir @CFLAGS@ " #note: end space!

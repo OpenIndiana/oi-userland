@@ -59,7 +59,7 @@ update:
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
 	cd $(SOURCE_DIR); $(GIT) pull $(GIT_REPO); \
-	  [ $$($(GIT) log -1 --format=%H) == $$(cat .downloaded) ] || \
+	  [ "$$($(GIT) log -1 --format=%H)" == "$$(cat .downloaded)" ] || \
 	  $(GIT) log -1 --format=%H > .downloaded
 
 download:: $(SOURCE_DIR)/.downloaded
@@ -136,6 +136,7 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 	#pkgrepo -s $(ON_REPO) list -H -F tsv | awk '{ print $2 }' | sort -u
 	#pkgrecv -s illumos-gate/packages/i386/nightly-nd/repo.redist --newest
 	
+	pkgrepo -s $(ON_REPO) rebuild
 	pkgrecv -s $(ON_REPO) -d $(@D)/pkgrecv.dir --raw \
 	  $$(pkgrecv -s $(ON_REPO) --newest | sed -f packages.ignore)
 

@@ -1,0 +1,125 @@
+--- a/m4/gecko.m4
++++ b/m4/gecko.m4
+@@ -113,7 +116,7 @@
+ 
+ if $PKG_CONFIG --exists  ${gecko_cv_gecko}-xpcom; then
+ 	_GECKO_INCLUDE_ROOT="`$PKG_CONFIG --variable=includedir ${gecko_cv_gecko}-xpcom`"
+-	_GECKO_CFLAGS="-I$_GECKO_INCLUDE_ROOT"
++	_GECKO_CFLAGS="`$PKG_CONFIG --cflags ${gecko_cv_gecko}-xpcom`"
+ 	_GECKO_LIBDIR="`$PKG_CONFIG --variable=libdir ${gecko_cv_gecko}-xpcom`"
+ 	_GECKO_HOME="`$PKG_CONFIG --variable=libdir ${gecko_cv_gecko}-xpcom`"
+ 	_GECKO_PREFIX="`$PKG_CONFIG --variable=prefix ${gecko_cv_gecko}-xpcom`"
+@@ -308,8 +311,10 @@
+ 	version = "1.9";
+ } else if (strncmp (MOZILLA_VERSION, "1.8", strlen ("1.8")) == 0) {
+ 	version = "1.8";
+-} else {
++} else if (strncmp (MOZILLA_VERSION, "1.", strlen ("1.")) == 0) {
+ 	version = "1.7";
++} else {
++	version = "2.0";
+ }
+ #endif
+ fprintf (stream, "%s\n", version);
+@@ -328,7 +333,7 @@
+ 
+ gecko_cv_gecko_version_int="$(echo "$gecko_cv_gecko_version" | $AWK -F . '{print [$]1 * 1000000 + [$]2 * 1000 + [$]3}')"
+ 
+-if test "$gecko_cv_gecko_version_int" -lt "1007000" -o "$gecko_cv_gecko_version_int" -gt "1009000"; then
++if test "$gecko_cv_gecko_version_int" -lt "1007000" -o "$gecko_cv_gecko_version_int" -gt "2000000"; then
+ 	AC_MSG_ERROR([Gecko version $gecko_cv_gecko_version is not supported!])
+ fi
+ 
+@@ -345,6 +347,10 @@
+ 	AC_DEFINE([HAVE_GECKO_1_9],[1],[Define if we have gecko 1.9])
+ 	gecko_cv_have_gecko_1_9=yes
+ fi
++if test "$gecko_cv_gecko_version_int" -ge "2000000"; then
++	AC_DEFINE([HAVE_GECKO_2_0],[1],[Define if we have gecko 2.0])
++	gecko_cv_have_gecko_2_0=yes
++fi
+ 
+ fi # if gecko_cv_have_gecko
+ 
+--- a/src/dh-gecko-utils.cpp	2012-01-29 11:38:00.888131835 +0800
++++ b/src/dh-gecko-utils.cpp	2012-01-29 11:38:20.836033670 +0800
+@@ -78,7 +78,7 @@
+ dh_gecko_utils_get_mouse_event_modifiers (gpointer event)
+ {
+ 	nsIDOMMouseEvent *aMouseEvent;
+-	PRBool            ctrl, alt, shift, meta;
++	bool              ctrl, alt, shift, meta;
+ 	gint              mask;
+ 	
+ 	aMouseEvent = (nsIDOMMouseEvent *) event;
+--- a/src/Yelper.cpp	2012-08-16 13:37:51.698582095 +0800
++++ b/src/Yelper.cpp	2012-08-16 13:38:24.399848446 +0800
+@@ -130,10 +130,10 @@
+ void
+ Yelper::Destroy ()
+ {
+-	mEmbed = nsnull;
+-	mWebBrowser = nsnull;
+-	mDOMWindow = nsnull;
+-	mFinder = nsnull;
++	mEmbed = NULL;
++	mWebBrowser = NULL;
++	mDOMWindow = NULL;
++	mFinder = NULL;
+ 
+ 	mInitialised = PR_FALSE;
+ }
+@@ -146,7 +146,7 @@
+ 	nsCOMPtr<nsICommandManager> cmdManager (do_GetInterface (mWebBrowser));
+ 	if (!cmdManager) return;
+ 
+-	cmdManager->DoCommand (aCommand, nsnull, nsnull);
++	cmdManager->DoCommand (aCommand, NULL, NULL);
+ }
+ 
+ void
+@@ -270,7 +270,7 @@
+ 	/* Mozilla uses 2 as its right mouse button code */
+ 	if (button != 2) return;
+ 
+-	nsCOMPtr<nsIDOMNSEvent> nsEvent (do_QueryInterface (event));
++	nsCOMPtr<nsIDOMEvent> nsEvent (do_QueryInterface (event));
+ 	if (!nsEvent) return;
+ 
+ 	nsresult rv;
+@@ -350,7 +350,7 @@
+   if (!preview)
+     rv = print->Print (settings, listener);
+   else {
+-    rv = print->PrintPreview (settings, mDOMWindow, nsnull);
++    rv = print->PrintPreview (settings, mDOMWindow, NULL);
+     rv |= print->GetPrintPreviewNumPages (prev_pages);
+   }
+   return rv;
+--- a/src/dh-gecko-utils.cpp	2012-08-16 13:38:33.059343951 +0800
++++ b/src/dh-gecko-utils.cpp	2012-08-16 13:39:02.256453233 +0800
+@@ -113,7 +113,7 @@
+ 	
+ 	cmdManager = do_GetInterface (webBrowser);
+ 	
+-	return cmdManager->DoCommand (command, nsnull, nsnull);
++	return cmdManager->DoCommand (command, NULL, NULL);
+ }
+ 
+ void
+@@ -298,13 +298,13 @@
+ 	nsCOMPtr<nsIPrefService> prefService (do_GetService (NS_PREFSERVICE_CONTRACTID, &rv));
+ 	NS_ENSURE_SUCCESS (rv, rv);
+ 
+-	nsCOMPtr<nsILocalFile> file;
++	nsCOMPtr<nsIFile> file;
+ 	rv = NS_NewNativeLocalFile (nsEmbedCString (SHAREDIR "/default-prefs.js"),
+ 				   PR_TRUE, getter_AddRefs (file));
+ 	NS_ENSURE_SUCCESS (rv, rv);
+ 
+ 	rv = prefService->ReadUserPrefs (file);
+-	rv |= prefService->ReadUserPrefs (nsnull);
++	rv |= prefService->ReadUserPrefs (NULL);
+ 	NS_ENSURE_SUCCESS (rv, rv);
+ 
+ 	return rv;

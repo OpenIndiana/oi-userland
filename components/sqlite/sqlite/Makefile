@@ -50,6 +50,9 @@ CFLAGS			+= -DHAVE_STATVFS
 CFLAGS			+= -DSQLITE_ENABLE_UNLOCK_NOTIFY
 CFLAGS			+= -DSQLITE_ENABLE_STAT2
 
+#Fixes firefox crash with new sqlite, don't remove until proper fix
+gcc_OPT                 =  -O2
+
 CONFIGURE_OPTIONS	+= --sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS	+= --enable-threadsafe 
 CONFIGURE_OPTIONS	+= --enable-shared

@@ -1,0 +1,12 @@
+--- evolution-2.30.3/modules/addressbook/addressbook-config.c.orig	2010-09-06 11:27:12.190912067 +0800
++++ evolution-2.30.3/modules/addressbook/addressbook-config.c	2010-09-06 11:30:24.624940679 +0800
+@@ -904,8 +904,7 @@
+ 	gtk_entry_set_text((GtkEntry *)sdialog->search_filter, lud && lud->lud_filter ? lud->lud_filter : "");
+ 	g_signal_connect (sdialog->search_filter, "changed",  G_CALLBACK (search_filter_changed_cb), sdialog);
+ 
+-	g_signal_connect (e_builder_get_widget(builder, "rootdn-button"), "clicked",
+-			  G_CALLBACK(query_for_supported_bases), sdialog);
++        gtk_widget_set_sensitive (e_builder_get_widget(builder, "rootdn-button"), FALSE);
+ 
+ 	if (lud)
+ 		ldap_free_urldesc (lud);

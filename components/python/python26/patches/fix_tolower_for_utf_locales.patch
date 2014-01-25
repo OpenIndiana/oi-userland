@@ -1,0 +1,32 @@
+Without this patch string.lowercase and string.uppercase contain garbage.
+https://www.illumos.org/issues/4411
+
+--- Python-2.6.9/Modules/stropmodule.c.~1~	2013-12-22 00:06:12.365784002 +0400
++++ Python-2.6.9/Modules/stropmodule.c	2013-12-22 00:06:28.247144208 +0400
+@@ -1245,7 +1245,7 @@
+     /* Create 'whitespace' object */
+     n = 0;
+     for (c = 0; c < 256; c++) {
+-        if (isspace(c))
++        if (isascii(c) && isspace(c))
+             buf[n++] = c;
+     }
+     s = PyString_FromStringAndSize(buf, n);
+@@ -1255,7 +1255,7 @@
+     /* Create 'lowercase' object */
+     n = 0;
+     for (c = 0; c < 256; c++) {
+-        if (islower(c))
++        if (isascii(c) && islower(c))
+             buf[n++] = c;
+     }
+     s = PyString_FromStringAndSize(buf, n);
+@@ -1265,7 +1265,7 @@
+     /* Create 'uppercase' object */
+     n = 0;
+     for (c = 0; c < 256; c++) {
+-        if (isupper(c))
++        if (isascii(c) && isupper(c))
+             buf[n++] = c;
+     }
+     s = PyString_FromStringAndSize(buf, n);

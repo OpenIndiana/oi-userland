@@ -86,7 +86,7 @@ COMPILER =		gcc
 LINKER =		gcc
 BITS =			32
 PYTHON_VERSION =	2.6
-PYTHON_VERSIONS =	2.6
+PYTHON_VERSIONS =	2.6 2.7
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -108,10 +108,14 @@ USRDIR =	/usr
 BINDIR =	/bin
 SBINDIR =	/sbin
 LIBDIR =	/lib
+VARDIR =	/var
+KERNELDRVDIR =	/kernel/drv
+KERNELDRVDIR64 =/kernel/drv/$(MACH64)
 USRBINDIR =	$(USRDIR)/bin
 USRBINDIR64 =	$(USRDIR)/bin/$(MACH64)
 USRSBINDIR =	$(USRDIR)/sbin
 USRLIBDIR =	$(USRDIR)/lib
+USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
 USRSHAREDIR =	$(USRDIR)/share
 USRINCDIR =	$(USRDIR)/include
 USRSHARELOCALEDIR =	$(USRSHAREDIR)/locale
@@ -123,12 +127,18 @@ USRSHAREMAN1MDIR =	$(USRSHAREMANDIR)/man1m
 USRSHAREMAN3DIR =	$(USRSHAREMANDIR)/man3
 USRSHAREMAN4DIR =	$(USRSHAREMANDIR)/man4
 USRSHAREMAN5DIR =	$(USRSHAREMANDIR)/man5
-USRLIBDIR64 =	$(USRDIR)/lib/$(MACH64)
-PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
+USRKERNELDRVDIR =	$(USRDIR)/kernel/drv
+USRKERNELDRVDIR64 =	$(USRDIR)/kernel/drv/$(MACH64)
+
 PROTOETCDIR =	$(PROTO_DIR)/$(ETCDIR)
 PROTOETCSECDIR = $(PROTO_DIR)/$(ETCDIR)/security
 PROTOUSRDIR =	$(PROTO_DIR)/$(USRDIR)
+PROTOBINDIR =	$(PROTO_DIR)/$(BINDIR)
+PROTOSBINDIR =	$(PROTO_DIR)/$(SBINDIR)
 PROTOLIBDIR =	$(PROTO_DIR)/$(LIBDIR)
+PROTOVARDIR =	$(PROTO_DIR)/$(VARDIR)
+PROTOKERNELDRVDIR =	$(PROTO_DIR)/$(KERNELDRVDIR)
+PROTOKERNELDRVDIR64 =	$(PROTO_DIR)/$(KERNELDRVDIR64)
 PROTOUSRBINDIR =	$(PROTO_DIR)/$(USRBINDIR)
 PROTOUSRBINDIR64 =	$(PROTO_DIR)/$(USRBINDIR64)
 PROTOUSRSBINDIR =	$(PROTO_DIR)/$(USRSBINDIR)
@@ -145,6 +155,8 @@ PROTOUSRSHAREMAN3DIR =	$(PROTO_DIR)/$(USRSHAREMAN3DIR)
 PROTOUSRSHAREMAN4DIR =	$(PROTO_DIR)/$(USRSHAREMAN4DIR)
 PROTOUSRSHAREMAN5DIR =	$(PROTO_DIR)/$(USRSHAREMAN5DIR)
 PROTOUSRSHARELOCALEDIR =	$(PROTO_DIR)/$(USRSHARELOCALEDIR)
+PROTOUSRKERNELDRVDIR =	$(PROTO_DIR)/$(USRKERNELDRVDIR)
+PROTOUSRKERNELDRVDIR64 =	$(PROTO_DIR)/$(USRKERNELDRVDIR64)
 
 
 SFWBIN =	/usr/sfw/bin
@@ -238,16 +250,23 @@ GCC_ROOT =	/usr/gcc/4.7
 
 CC.studio.32 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.32 =	$(SPRO_VROOT)/bin/CC
-
+F77.studio.32 = $(SPRO_VROOT)/bin/f77
+FC.studio.32 =  $(SPRO_VROOT)/bin/f90
 
 CC.studio.64 =	$(SPRO_VROOT)/bin/cc
 CXX.studio.64 =	$(SPRO_VROOT)/bin/CC
+F77.studio.64 = $(SPRO_VROOT)/bin/f77
+FC.studio.64 =  $(SPRO_VROOT)/bin/f90
 
 CC.gcc.32 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.32 =	$(GCC_ROOT)/bin/g++
+F77.gcc.32 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.32 =	$(GCC_ROOT)/bin/gfortran
 
 CC.gcc.64 =	$(GCC_ROOT)/bin/gcc
 CXX.gcc.64 =	$(GCC_ROOT)/bin/g++
+F77.gcc.64 =	$(GCC_ROOT)/bin/gfortran
+FC.gcc.64 =	$(GCC_ROOT)/bin/gfortran
 
 
 lint.32 =	$(SPRO_VROOT)/bin/lint -m32
@@ -279,6 +298,8 @@ endif
 
 CC =		$(CC.$(COMPILER).$(BITS))
 CXX =		$(CXX.$(COMPILER).$(BITS))
+F77 =		$(F77.$(COMPILER).$(BITS))
+FC =		$(FC.$(COMPILER).$(BITS))
 
 RUBY_VERSION =	1.8
 RUBY.1.8 =	/usr/bin/ruby18
@@ -333,6 +354,23 @@ PERL_ARCH_FUNC=	$(shell $(1) -e 'use Config; print $$Config{archname}')
 PKG_MACROS +=   PERL_ARCH=$(PERL_ARCH)
 PKG_MACROS +=   PERL_VERSION=$(PERL_VERSION)
 
+PG_VERSION ?=   9.3
+PG_VERNUM =     $(subst .,,$(PG_VERSION))
+PG_HOME =       /usr/postgres/$(PG_VERSION)
+PG_BINDIR.32 =  $(PG_HOME)/bin
+PG_BINDIR.64 =  $(PG_HOME)/bin/$(MACH64)
+PG_INCDIR =     $(PG_HOME)/include
+PG_MANDIR =     $(PG_HOME)/man
+PG_SHAREDIR =   $(PG_HOME)/share
+PG_DOCDIR =     $(PG_HOME)/doc
+PG_LIBDIR.32 =  $(PG_HOME)/lib
+PG_LIBDIR.64 =  $(PG_HOME)/lib/$(MACH64)
+PG_CONFIG.32 =  $(PG_BINDIR.32)/pg_config
+PG_CONFIG.64 =  $(PG_BINDIR.64)/pg_config
+
+PKG_MACROS +=   PG_VERSION=$(PG_VERSION)
+PKG_MACROS +=   PG_VERNUM=$(PG_VERNUM)
+
 # This is the default BUILD version of tcl
 # Not necessarily the system's default version, i.e. /usr/bin/tclsh
 TCL_VERSION =  8.5
@@ -384,6 +422,13 @@ PKG_CONFIG_PATH.32 = /usr/lib/pkgconfig
 PKG_CONFIG_PATH.64 = /usr/lib/$(MACH64)/pkgconfig
 PKG_CONFIG_PATH = $(PKG_CONFIG_PATH.$(BITS))
 
+# Set default path for environment modules
+MODULE_VERSION =	3.2.10
+MODULE_PATH =		/usr/share/Modules/modulefiles
+MODULE_VERSIONS_PATH =	/usr/share/Modules/versions
+
+# Path to bash completions
+BASH_COMPLETIONS_PATH =	/usr/share/bash-completion/completions
 
 #
 # C preprocessor flag sets to ease feature selection.  Add the required
@@ -595,6 +640,11 @@ CXXFLAGS +=	$($(COMPILER)_NORUNPATH)
 
 # Build 32 or 64 bit objects in C++ as well.
 CXXFLAGS +=	$(CC_BITS)
+
+# Build 32 or 64 bit objects in FORTRAN as well.
+F77FLAGS +=	$(CC_BITS)
+FCFLAGS +=	$(CC_BITS)
+
 
 #
 # Solaris linker flag sets to ease feature selection.  Add the required

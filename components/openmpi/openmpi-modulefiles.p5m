@@ -1,0 +1,38 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)/modulefiles@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) (Modulefiles)"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/High Performance Computing"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+depend type=require fmri=pkg:/package/environment-modules
+
+dir  path=usr
+dir  path=usr/share
+dir  path=usr/share/Modules
+dir  path=usr/share/Modules/modulefiles
+dir  path=usr/share/Modules/modulefiles/$(COMPONENT_NAME)
+dir  path=usr/share/Modules/modulefiles/$(COMPONENT_NAME)/32
+file path=usr/share/Modules/modulefiles/$(COMPONENT_NAME)/32/$(COMPONENT_VERSION)
+link path=usr/share/Modules/modulefiles/$(COMPONENT_NAME)/32/latest \
+    target=$(COMPONENT_VERSION)
+dir  path=usr/share/Modules/modulefiles/$(COMPONENT_NAME)/64
+file path=usr/share/Modules/modulefiles/$(COMPONENT_NAME)/64/$(COMPONENT_VERSION)
+link path=usr/share/Modules/modulefiles/$(COMPONENT_NAME)/64/latest \
+    target=$(COMPONENT_VERSION)
+

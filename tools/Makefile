@@ -25,7 +25,7 @@ include ../make-rules/shared-macros.mk
 
 #download setup prep build install publish \
 #validate:	links pkglint time-$(MACH32).so time-$(MACH64).so
-download setup prep build install publish validate: pkglint
+download setup prep build install publish validate: pkglint time-$(MACH32).so time-$(MACH64).so
 
 # generate wrappers for parfait. we need to generate them
 # with the correct compiler variables from the common makefiles because
@@ -55,7 +55,7 @@ pkglint:
 
 
 time-$(MACH64).o:			BITS=64
-time-$(MACH32).o time-$(MACH64).o:	CFLAGS += -Kpic
+time-$(MACH32).o time-$(MACH64).o:	CFLAGS += $(CC_PIC)
 
 time-$(MACH32).o time-$(MACH64).o:	time.c
 	@$(CC) $(CFLAGS) -c -o $@ $<

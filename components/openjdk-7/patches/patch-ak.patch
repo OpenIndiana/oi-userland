@@ -1,0 +1,41 @@
+$NetBSD: patch-ak,v 1.6 2013/06/15 09:31:05 jperkin Exp $
+
+Additional rpaths.
+
+--- jdk/make/common/Defs-bsd.gmk.orig	2013-05-29 03:57:57.000000000 +0000
++++ jdk/make/common/Defs-bsd.gmk
+@@ -336,8 +336,8 @@ Z_ORIGIN_FLAG/zero  = -Xlinker -z -Xlink
+ 
+ LDFLAG_Z_ORIGIN = $(Z_ORIGIN_FLAG/$(ARCH_FAMILY))
+ 
+-LDFLAGS_COMMON += $(LDFLAG_Z_ORIGIN) -Xlinker -rpath -Xlinker \$$ORIGIN
+-LDFLAGS_COMMON += $(LD_RUNPATH_EXTRAS:%=$(LDFLAG_Z_ORIGIN) -Xlinker -rpath -Xlinker \$$ORIGIN/%)
++LDFLAGS_COMMON += -Xlinker -rpath -Xlinker ${PREFIX}/jdk/instances/openjdk1.7.0/jre/lib/${LIBARCH}/server -Xlinker -rpath -Xlinker ${PREFIX}/jdk/instances/openjdk1.7.0/jre/lib/${LIBARCH}
++
+ 
+ #
+ # -L paths for finding and -ljava
+@@ -399,7 +399,7 @@ endif
+ # the library itself should not.
+ #
+ VM_NAME         = server
+-JVMLIB          = -L$(LIBDIR)/$(LIBARCH)/$(VM_NAME) -ljvm
++JVMLIB          = -Xlinker -rpath -Xlinker ${PREFIX}/jdk/instances/openjdk1.7.0/jre/lib/${LIBARCH} -L$(LIBDIR)/$(LIBARCH)/$(VM_NAME) -ljvm
+ JAVALIB         = -ljava $(JVMLIB)
+ 
+ #
+@@ -462,6 +462,14 @@ ifeq ($(OS_VENDOR), OpenBSD)
+   SYSTEM_ZLIB = true
+ endif
+ 
++ifeq ($(OS_VENDOR), NetBSD)
++  SYSTEM_ZLIB = true
++endif
++
++ifeq ($(OS_VENDOR), DragonFlyBSD)
++  SYSTEM_ZLIB = true
++endif
++
+ #
+ # Japanese manpages
+ #

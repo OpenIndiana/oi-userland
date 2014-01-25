@@ -1,0 +1,29 @@
+--- tmux-1.8/client.c.~1~	2013-03-17 14:03:37.000000000 +0000
++++ tmux-1.8/client.c	2013-06-07 13:31:23.282270747 +0100
+@@ -78,8 +78,8 @@
+ 	if ((lockfd = open(lockfile, O_WRONLY|O_CREAT, 0600)) == -1)
+ 		fatal("open failed");
+ 
+-	if (flock(lockfd, LOCK_EX|LOCK_NB) == -1 && errno == EWOULDBLOCK) {
+-		while (flock(lockfd, LOCK_EX) == -1 && errno == EINTR)
++	if (lockf(lockfd, F_TLOCK, 0) == -1 && errno == EAGAIN) {
++		while (lockf(lockfd, F_LOCK, 0) == -1 && errno == EINTR)
+ 			/* nothing */;
+ 		close(lockfd);
+ 		return (-1);
+@@ -244,7 +244,15 @@
+ 			    strerror(errno));
+ 			return (1);
+ 		}
++#ifdef __sun
++		tio.c_iflag &= ~(IMAXBEL|IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
++		tio.c_oflag &= ~OPOST;
++		tio.c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
++		tio.c_cflag &= ~(CSIZE|PARENB);
++		tio.c_cflag |= CS8;
++#else
+ 		cfmakeraw(&tio);
++#endif
+ 		tio.c_iflag = ICRNL|IXANY;
+ 		tio.c_oflag = OPOST|ONLCR;
+ #ifdef NOKERNINFO

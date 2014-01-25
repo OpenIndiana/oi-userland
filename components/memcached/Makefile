@@ -42,7 +42,7 @@ include ../../make-rules/ips.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
-    ($(CLONEY) $(SOURCE_DIR) $(@D))
+    ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) && autoconf )
 
 COMPONENT_TEST_TARGETS=	test
 

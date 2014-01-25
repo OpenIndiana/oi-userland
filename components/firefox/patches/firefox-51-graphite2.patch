@@ -1,0 +1,718 @@
+diff --git a/gfx/graphite2/include/graphite2/Font.h b/gfx/graphite2/include/graphite2/Font.h
+--- a/gfx/graphite2/include/graphite2/Font.h
++++ b/gfx/graphite2/include/graphite2/Font.h
+@@ -23,16 +23,19 @@
+     of the Mozilla Public License (http://mozilla.org/MPL) or the GNU
+     General Public License, as published by the Free Software Foundation,
+     either version 2 of the License or (at your option) any later version.
+ */
+ #pragma once
+ 
+ #include "graphite2/Types.h"
+ 
++#ifndef GRAPHITE2_FONTS_H
++#define GRAPHITE2_FONTS_H
++
+ #define GR2_VERSION_MAJOR   1
+ #define GR2_VERSION_MINOR   1
+ #define GR2_VERSION_BUGFIX  3
+ 
+ #ifdef __cplusplus
+ extern "C"
+ {
+ #endif
+@@ -262,8 +265,9 @@ GR2_API gr_feature_val* gr_featureval_cl
+ 
+ /** Destroys a gr_feature_val **/
+ GR2_API void gr_featureval_destroy(gr_feature_val *pfeatures);
+ 
+ #ifdef __cplusplus
+ }
+ #endif
+ 
++#endif
+diff --git a/gfx/graphite2/include/graphite2/Segment.h b/gfx/graphite2/include/graphite2/Segment.h
+--- a/gfx/graphite2/include/graphite2/Segment.h
++++ b/gfx/graphite2/include/graphite2/Segment.h
+@@ -21,19 +21,23 @@
+ 
+     Alternatively, the contents of this file may be used under the terms
+     of the Mozilla Public License (http://mozilla.org/MPL) or the GNU
+     General Public License, as published by the Free Software Foundation,
+     either version 2 of the License or (at your option) any later version.
+ */
+ #pragma once
+ 
++
+ #include "graphite2/Types.h"
+ #include "graphite2/Font.h"
+ 
++#ifndef GRAPHITE2_SEGMENT_H
++#define GRAPHITE2_SEGMENT_H
++
+ #ifdef __cplusplus
+ extern "C"
+ {
+ #endif
+ 
+ enum gr_break_weight {
+     gr_breakNone = 0,
+     /* after break weights */
+@@ -388,8 +392,10 @@ GR2_API int gr_slot_original(const gr_sl
+   * Breaks the slot linked list at the given point in the linked list. It is up
+   * to the application to keep track of the first slot on each line.
+   */
+ GR2_API void gr_slot_linebreak_before(gr_slot *p/*not NULL*/);
+ 
+ #ifdef __cplusplus
+ }
+ #endif
++
++#endif
+diff --git a/gfx/graphite2/include/graphite2/Types.h b/gfx/graphite2/include/graphite2/Types.h
+--- a/gfx/graphite2/include/graphite2/Types.h
++++ b/gfx/graphite2/include/graphite2/Types.h
+@@ -21,16 +21,19 @@
+ 
+     Alternatively, the contents of this file may be used under the terms
+     of the Mozilla Public License (http://mozilla.org/MPL) or the GNU
+     General Public License, as published by the Free Software Foundation,
+     either version 2 of the License or (at your option) any later version.
+ */
+ #pragma once
+ 
++#ifndef GRAPHITE2_TYPES_H
++#define GRAPHITE2_TYPES_H
++
+ #include <stddef.h>
+ 
+ typedef unsigned char   gr_uint8;
+ typedef gr_uint8        gr_byte;
+ typedef signed char     gr_int8;
+ typedef unsigned short  gr_uint16;
+ typedef short           gr_int16;
+ typedef unsigned int    gr_uint32;
+@@ -62,8 +65,10 @@ enum gr_encform {
+   #if __GNUC__ >= 4
+     #define GR2_API      __attribute__ ((visibility("default")))
+     #define GR2_LOCAL       __attribute__ ((visibility("hidden")))
+   #else
+     #define GR2_API
+     #define GR2_LOCAL
+   #endif
+ #endif
++
++#endif
+diff --git a/gfx/graphite2/include/graphite2/XmlLog.h b/gfx/graphite2/include/graphite2/XmlLog.h
+--- a/gfx/graphite2/include/graphite2/XmlLog.h
++++ b/gfx/graphite2/include/graphite2/XmlLog.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+     Alternatively, the contents of this file may be used under the terms
+     of the Mozilla Public License (http://mozilla.org/MPL) or the GNU
+     General Public License, as published by the Free Software Foundation,
+     either version 2 of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_XMLLOG_H
++#define GRAPHITE2_XMLLOG_H
+ 
+ #include <graphite2/Types.h>
+ #include <stdio.h>
+ 
+ typedef enum {
+     GRLOG_NONE = 0x0,
+     GRLOG_FACE = 0x01,
+     GRLOG_SEGMENT = 0x02,
+@@ -48,8 +50,10 @@ extern "C"
+ #endif
+ 
+ GR2_API bool graphite_start_logging(FILE * logFile, GrLogMask mask);		//may not do anthing if disabled in the implementation of the engine.
+ GR2_API void graphite_stop_logging();
+ 
+ #ifdef __cplusplus
+ }
+ #endif
++
++#endif
+diff --git a/gfx/graphite2/src/Bidi.cpp b/gfx/graphite2/src/Bidi.cpp
+--- a/gfx/graphite2/src/Bidi.cpp
++++ b/gfx/graphite2/src/Bidi.cpp
+@@ -25,16 +25,19 @@ License, as published by the Free Softwa
+ of the License or (at your option) any later version.
+ */
+ #include "inc/Main.h"
+ #include "inc/Slot.h"
+ #include "inc/Segment.h"
+ 
+ using namespace graphite2;
+ 
++#undef ES
++#undef CS
++
+ enum DirCode {  // Hungarian: dirc
+         Unk        = -1,
+         N          =  0,   // other neutrals (default) - ON
+         L          =  1,   // left-to-right, strong - L
+         R          =  2,   // right-to-left, strong - R
+         AL         =  3,   // Arabic letter, right-to-left, strong, AR
+         EN         =  4,   // European number, left-to-right, weak - EN
+         ES         =  5,   // European separator, left-to-right, weak - ES
+diff --git a/gfx/graphite2/src/Pass.cpp b/gfx/graphite2/src/Pass.cpp
+--- a/gfx/graphite2/src/Pass.cpp
++++ b/gfx/graphite2/src/Pass.cpp
+@@ -58,17 +58,17 @@ Pass::~Pass()
+     free(m_startStates);
+     free(m_sTable);
+     free(m_states);
+     free(m_ruleMap);
+ 
+     delete [] m_rules;
+ }
+ 
+-bool Pass::readPass(const byte * const pass_start, size_t pass_length, size_t subtable_base, const Face & face)
++bool Pass::readPass(const byte * pass_start, size_t pass_length, size_t subtable_base, const Face & face)
+ {
+     const byte *                p = pass_start,
+                * const pass_end   = p + pass_length;
+     size_t numRanges;
+ 
+     if (pass_length < 40) return false; 
+     // Read in basic values
+     m_immutable = be::read<byte>(p) & 0x1U;
+diff --git a/gfx/graphite2/src/inc/CharInfo.h b/gfx/graphite2/src/inc/CharInfo.h
+--- a/gfx/graphite2/src/inc/CharInfo.h
++++ b/gfx/graphite2/src/inc/CharInfo.h
+@@ -20,16 +20,19 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_CHARINFO_H
++#define GRAPHITE2_SRC_CHARINFO_H
++
+ #include "inc/Main.h"
+ 
+ 
+ namespace graphite2 {
+ 
+ class CharInfo
+ {
+ 
+@@ -60,8 +63,10 @@ private:
+     int8 m_break;	// breakweight coming from lb table
+     uint8 m_flags;  // 0,1 segment split.
+ };
+ 
+ } // namespace graphite2
+ 
+ struct gr_char_info : public graphite2::CharInfo {};
+ 
++#endif
++
+diff --git a/gfx/graphite2/src/inc/Code.h b/gfx/graphite2/src/inc/Code.h
+--- a/gfx/graphite2/src/inc/Code.h
++++ b/gfx/graphite2/src/inc/Code.h
+@@ -25,16 +25,18 @@ License, as published by the Free Softwa
+ of the License or (at your option) any later version.
+ */
+ // This class represents loaded graphite stack machine code.  It performs 
+ // basic sanity checks, on the incoming code to prevent more obvious problems
+ // from crashing graphite.
+ // Author: Tim Eves
+ 
+ #pragma once
++#ifndef GRAPHITE2_SRC_CODE_H
++#define GRAPHITE2_SRC_CODE_H
+ 
+ #include <cassert>
+ #include <graphite2/Types.h>
+ #include "inc/Main.h"
+ #include "inc/Machine.h"
+ 
+ namespace graphite2 {
+ 
+@@ -166,8 +168,10 @@ inline bool Machine::Code::deletes() con
+ 
+ inline size_t Machine::Code::maxRef() const throw()
+ {
+ 	return _max_ref;
+ }
+ 
+ } // namespace vm
+ } // namespace graphite2
++
++#endif
+diff --git a/gfx/graphite2/src/inc/Face.h b/gfx/graphite2/src/inc/Face.h
+--- a/gfx/graphite2/src/inc/Face.h
++++ b/gfx/graphite2/src/inc/Face.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_FACE_H
++#define GRAPHITE2_SRC_FACE_H
+ 
+ #include "inc/Main.h"
+ #include "inc/GlyphFace.h"
+ #include "inc/Silf.h"
+ #include "inc/TtfUtil.h"
+ #include "inc/Main.h"
+ #include "graphite2/Font.h"
+ #include "inc/FeatureMap.h"
+@@ -169,8 +171,10 @@ private:
+ private:        //defensive on m_pGlyphFaceCache, m_pFileFace and m_silfs
+     Face(const Face&);
+     Face& operator=(const Face&);
+ };
+ 
+ } // namespace graphite2
+ 
+ struct gr_face : public graphite2::Face {};
++
++#endif
+diff --git a/gfx/graphite2/src/inc/FeatureMap.h b/gfx/graphite2/src/inc/FeatureMap.h
+--- a/gfx/graphite2/src/inc/FeatureMap.h
++++ b/gfx/graphite2/src/inc/FeatureMap.h
+@@ -20,16 +20,19 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_FEATUREMAP_H
++#define GRAPHITE2_SRC_FEATUREMAP_H
++
+ // #include <cstring>
+ // #include "graphite2/Types.h"
+ #include "graphite2/Font.h"
+ #include "inc/Main.h"
+ #include "inc/FeatureVal.h"
+ 
+ namespace graphite2 {
+ 
+@@ -195,8 +198,10 @@ friend class Face;
+ private:        //defensive on m_langFeats
+     SillMap(const SillMap&);
+     SillMap& operator=(const SillMap&);
+ };
+ 
+ } // namespace graphite2
+ 
+ struct gr_feature_ref : public graphite2::FeatureRef {};
++
++#endif
+diff --git a/gfx/graphite2/src/inc/FeatureVal.h b/gfx/graphite2/src/inc/FeatureVal.h
+--- a/gfx/graphite2/src/inc/FeatureVal.h
++++ b/gfx/graphite2/src/inc/FeatureVal.h
+@@ -20,16 +20,19 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_FEATUREVAL_H
++#define GRAPHITE2_SRC_FEATUREVAL_H
++
+ #include <cstring>
+ #include <cassert>
+ #include "inc/Main.h"
+ #include "inc/List.h"
+ 
+ namespace graphite2 {
+ 
+ class FeatureRef;
+@@ -68,8 +71,10 @@ private:
+ };
+ 
+ typedef FeatureVal Features;
+ 
+ } // namespace graphite2
+ 
+ 
+ struct gr_feature_val : public graphite2::FeatureVal {};
++
++#endif
+diff --git a/gfx/graphite2/src/inc/Font.h b/gfx/graphite2/src/inc/Font.h
+--- a/gfx/graphite2/src/inc/Font.h
++++ b/gfx/graphite2/src/inc/Font.h
+@@ -20,16 +20,19 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_FONT_H
++#define GRAPHITE2_SRC_FONT_H
++
+ #include <cassert>
+ #include "graphite2/Font.h"
+ #include "inc/Main.h"
+ #include "inc/Face.h"
+ 
+ namespace graphite2 {
+ 
+ #define INVALID_ADVANCE -1e38f		// can't be a static const because non-integral
+@@ -86,8 +89,10 @@ private:
+ private:
+     const void* m_appFontHandle/*non-NULL*/;
+     gr_advance_fn m_advance;
+ };
+ 
+ } // namespace graphite2
+ 
+ struct gr_font : public graphite2::Font {};
++
++#endif
+diff --git a/gfx/graphite2/src/inc/GlyphFace.h b/gfx/graphite2/src/inc/GlyphFace.h
+--- a/gfx/graphite2/src/inc/GlyphFace.h
++++ b/gfx/graphite2/src/inc/GlyphFace.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_GLYPHFACE_H
++#define GRAPHITE2_SRC_GLYPHFACE_H
+ 
+ #include "inc/Main.h"
+ #include "inc/Position.h"
+ #include "inc/Sparse.h"
+ 
+ namespace graphite2 {
+ 
+ enum metrics {
+@@ -81,8 +83,10 @@ private:
+ inline GlyphFace::~GlyphFace() throw() {
+ }
+ 
+ inline const Position & GlyphFace::theAdvance() const { 
+     return m_advance;
+ }
+ 
+ } // namespace graphite2
++
++#endif
+diff --git a/gfx/graphite2/src/inc/GlyphFaceCache.h b/gfx/graphite2/src/inc/GlyphFaceCache.h
+--- a/gfx/graphite2/src/inc/GlyphFaceCache.h
++++ b/gfx/graphite2/src/inc/GlyphFaceCache.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_GLYPHFACECACHE_H
++#define GRAPHITE2_SRC_GLYPHFACECACHE_H
+ 
+ #include "inc/GlyphFace.h"
+ #include "graphite2/Font.h"
+ 
+ namespace graphite2 {
+ 
+ class Segment;
+ class Face;
+@@ -96,8 +98,10 @@ private:
+     GlyphFace **glyphPtrDirect(unsigned short glyphid) const { return (GlyphFace **)((const char*)(this)+sizeof(GlyphFaceCache)+sizeof(GlyphFace*)*glyphid);}
+ 
+ private:      //defensive
+     GlyphFaceCache(const GlyphFaceCache&);
+     GlyphFaceCache& operator=(const GlyphFaceCache&);
+ };
+ 
+ } // namespace graphite2
++
++#endif
+diff --git a/gfx/graphite2/src/inc/List.h b/gfx/graphite2/src/inc/List.h
+--- a/gfx/graphite2/src/inc/List.h
++++ b/gfx/graphite2/src/inc/List.h
+@@ -22,16 +22,18 @@
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ 
+ // designed to have a limited subset of the std::vector api
+ #pragma once
++#ifndef GRAPHITE2_SRC_LIST_H
++#define GRAPHITE2_SRC_LIST_H
+ 
+ #include <cassert>
+ #include <cstring>
+ #include <cstdlib>
+ #include <new>
+ 
+ 
+ namespace graphite2 {
+@@ -147,8 +149,10 @@ typename Vector<T>::iterator Vector<T>::
+     for (iterator e = first; e != last; ++e) e->~T();
+     const size_t sz = distance(first, last);
+     if (m_last != last) memmove(first, last, distance(last,end())*sizeof(T));
+     m_last -= sz;
+     return first;
+ }
+ 
+ } // namespace graphite2
++
++#endif
+diff --git a/gfx/graphite2/src/inc/Machine.h b/gfx/graphite2/src/inc/Machine.h
+--- a/gfx/graphite2/src/inc/Machine.h
++++ b/gfx/graphite2/src/inc/Machine.h
+@@ -30,16 +30,19 @@ of the License or (at your option) any l
+ // Build one of direct_machine.cpp or call_machine.cpp to implement this 
+ // interface.
+ 
+ #pragma once
+ #include <cstring>
+ #include <graphite2/Types.h>
+ #include "inc/Main.h"
+ 
++#ifndef GRAPHITE2_SRC_MACHINE_H
++#define GRAPHITE2_SRC_MACHINE_H
++
+ #if defined(__GNUC__)
+ #if defined(__clang__)
+ #define     HOT
+ #if defined(__x86_64)
+ #define     REGPARM(n)      __attribute__((regparm(n)))
+ #else
+ #define     REGPARM(n)
+ #endif
+@@ -188,10 +191,10 @@ inline void Machine::check_final_stack(c
+     if      (sp <  base)    _status = stack_underflow;       // This should be impossible now.
+     else if (sp >= limit)   _status = stack_overflow;        // So should this.
+     else if (sp != base)    _status = stack_not_empty;
+ }
+ 
+ } // namespace vm
+ } // namespace graphite2
+ 
++#endif
+ 
+-
+diff --git a/gfx/graphite2/src/inc/Main.h b/gfx/graphite2/src/inc/Main.h
+--- a/gfx/graphite2/src/inc/Main.h
++++ b/gfx/graphite2/src/inc/Main.h
+@@ -24,16 +24,19 @@ Mozilla Public License (http://mozilla.o
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
+ 
+ #include <cstdlib>
+ #include "graphite2/Types.h"
+ 
++#ifndef GRAPHITE2_SRC_MAIN_H
++#define GRAPHITE2_SRC_MAIN_H
++
+ #ifdef GRAPHITE2_CUSTOM_HEADER
+ #include GRAPHITE2_CUSTOM_HEADER
+ #endif
+ 
+ namespace graphite2 {
+ 
+ typedef gr_uint8        uint8;
+ typedef gr_uint8        byte;
+@@ -68,8 +71,10 @@ template <typename T> T * grzeroalloc(si
+     void operator delete[] (void * p)throw() { free(p); } \
+     void operator delete[] (void *, void *) throw() {}
+ 
+ #ifdef __GNUC__
+ #define GR_MAYBE_UNUSED __attribute__((unused))
+ #else
+ #define GR_MAYBE_UNUSED
+ #endif
++
++#endif
+diff --git a/gfx/graphite2/src/inc/Pass.h b/gfx/graphite2/src/inc/Pass.h
+--- a/gfx/graphite2/src/inc/Pass.h
++++ b/gfx/graphite2/src/inc/Pass.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_PASS_H
++#define GRAPHITE2_SRC_PASS_H
+ 
+ #include <cstdlib>
+ #include "inc/Code.h"
+ 
+ namespace graphite2 {
+ 
+ class Segment;
+ class Face;
+@@ -89,8 +91,10 @@ private:
+     vm::Machine::Code m_cPConstraint;
+     
+ private:		//defensive
+     Pass(const Pass&);
+     Pass& operator=(const Pass&);
+ };
+ 
+ } // namespace graphite2
++
++#endif
+diff --git a/gfx/graphite2/src/inc/Segment.h b/gfx/graphite2/src/inc/Segment.h
+--- a/gfx/graphite2/src/inc/Segment.h
++++ b/gfx/graphite2/src/inc/Segment.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_SEGMENT_H
++#define GRAPHITE2_SRC_SEGMENT_H
+ 
+ #include "inc/Main.h"
+ 
+ #include <cassert>
+ 
+ #include "inc/Slot.h"
+ #include "inc/CharInfo.h"
+ #include "inc/FeatureVal.h"
+@@ -176,8 +178,10 @@ uint16 Segment::getGlyphMetric(Slot *iSl
+     else
+         return m_face->getGlyphMetric(iSlot->gid(), metric);
+ }
+ 
+ } // namespace graphite2
+ 
+ struct gr_segment : public graphite2::Segment {};
+ 
++#endif
++
+diff --git a/gfx/graphite2/src/inc/Silf.h b/gfx/graphite2/src/inc/Silf.h
+--- a/gfx/graphite2/src/inc/Silf.h
++++ b/gfx/graphite2/src/inc/Silf.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_SILF_H
++#define GRAPHITE2_SRC_SILF_H
+ 
+ #include "inc/Main.h"
+ 
+ #include "inc/Pass.h"
+ 
+ namespace graphite2 {
+ 
+ class Face;
+@@ -106,8 +108,10 @@ private:
+     
+     void releaseBuffers() throw();
+     
+     Silf(const Silf&);
+     Silf& operator=(const Silf&);
+ };
+ 
+ } // namespace graphite2
++
++#endif
+diff --git a/gfx/graphite2/src/inc/Slot.h b/gfx/graphite2/src/inc/Slot.h
+--- a/gfx/graphite2/src/inc/Slot.h
++++ b/gfx/graphite2/src/inc/Slot.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_SLOT_H
++#define GRAPHITE2_SRC_SLOT_H
+ 
+ #include "graphite2/Types.h"
+ #include "graphite2/Segment.h"
+ #include "inc/Main.h"
+ #include "inc/Font.h"
+ 
+ 
+ 
+@@ -138,8 +140,10 @@ private:
+ 
+     friend class SegCacheEntry;
+     friend class Segment;
+ };
+ 
+ } // namespace graphite2
+ 
+ struct gr_slot : public graphite2::Slot {};
++
++#endif
+diff --git a/gfx/graphite2/src/inc/TtfUtil.h b/gfx/graphite2/src/inc/TtfUtil.h
+--- a/gfx/graphite2/src/inc/TtfUtil.h
++++ b/gfx/graphite2/src/inc/TtfUtil.h
+@@ -20,16 +20,18 @@
+     internet at http://www.fsf.org/licenses/lgpl.html.
+ 
+ Alternatively, the contents of this file may be used under the terms of the
+ Mozilla Public License (http://mozilla.org/MPL) or the GNU General Public
+ License, as published by the Free Software Foundation, either version 2
+ of the License or (at your option) any later version.
+ */
+ #pragma once
++#ifndef GRAPHITE2_SRC_TTFUTIL_H
++#define GRAPHITE2_SRC_TTFUTIL_H
+ /*--------------------------------------------------------------------*//*:Ignore this sentence.
+ 
+ File: TtfUtil.h
+ Responsibility: Alan Ward
+ Last reviewed: Not yet.
+ 
+ Description:
+     Utility class for handling TrueType font files.
+@@ -200,8 +202,10 @@ public:
+ 
+ 	// utitily method used by high-level GlyfPoints 
+ 	bool SimplifyFlags(char * prgbFlags, int cnPoints);
+ 	bool CalcAbsolutePoints(int * prgnX, int * prgnY, int cnPoints);
+ #endif
+ 
+ } // end of namespace TtfUtil
+ } // end of namespace graphite2
++
++#endif

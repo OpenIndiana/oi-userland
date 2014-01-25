@@ -1,0 +1,62 @@
+diff --git a/toolkit/library/Makefile.in b/toolkit/library/Makefile.in
+index afdcb02..e5204b9 100644
+--- a/toolkit/library/Makefile.in
++++ b/toolkit/library/Makefile.in
+@@ -240,6 +240,10 @@ EXTRA_DSO_LDOPTS += -lbe -ltracker
+ endif
+ 
+ ifeq ($(OS_ARCH),SunOS)
++EXTRA_DSO_LDOPTS += -lvorbis -ltheora -logg
++endif
++
++ifeq ($(OS_ARCH),SunOS)
+ ifdef GNU_CC
+ EXTRA_DSO_LDOPTS += -lelf
+ else
+diff --git a/toolkit/toolkit-tiers.mk b/toolkit/toolkit-tiers.mk
+index 5c381a2..58d900a 100644
+--- a/toolkit/toolkit-tiers.mk
++++ b/toolkit/toolkit-tiers.mk
+@@ -144,7 +144,6 @@ endif
+ 
+ ifdef MOZ_VORBIS
+ tier_platform_dirs += \
+-		media/libvorbis \
+ 		$(NULL)
+ endif
+ 
+@@ -163,8 +162,6 @@ endif
+ 
+ ifdef MOZ_OGG
+ tier_platform_dirs += \
+-		media/libogg \
+-		media/libtheora \
+ 		$(NULL)
+ endif
+ 
+diff --git a/layout/media/Makefile.in b/layout/media/Makefile.in
+index 8e68d73..3ec0263 100644
+--- a/layout/media/Makefile.in
++++ b/layout/media/Makefile.in
+@@ -37,21 +37,17 @@ endif
+ 
+ ifdef MOZ_VORBIS
+ SHARED_LIBRARY_LIBS 	+= \
+-	$(DEPTH)/media/libvorbis/lib/$(LIB_PREFIX)vorbis.$(LIB_SUFFIX) \
+-	$(DEPTH)/media/libogg/src/$(LIB_PREFIX)ogg.$(LIB_SUFFIX) \
+ 	$(NULL)
+ endif
+ 
+ ifdef MOZ_TREMOR
+ SHARED_LIBRARY_LIBS	+= \
+ 	$(DEPTH)/media/libtremor/lib/$(LIB_PREFIX)tremor.$(LIB_SUFFIX) \
+-	$(DEPTH)/media/libogg/src/$(LIB_PREFIX)ogg.$(LIB_SUFFIX) \
+ 	$(NULL)
+ endif
+ 
+ ifdef MOZ_OGG
+ SHARED_LIBRARY_LIBS 	+= \
+-	$(DEPTH)/media/libtheora/lib/$(LIB_PREFIX)theora.$(LIB_SUFFIX) \
+ 	$(NULL)
+ endif
+ 

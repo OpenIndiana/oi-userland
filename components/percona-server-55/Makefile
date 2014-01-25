@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL)". You may
+# Common Development and Distribution License ("CDDL"). You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -17,12 +17,12 @@ include ../../make-rules/shared-macros.mk
 CMAKE= cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.5.32-31.0
-IPS_COMPONENT_VERSION=	5.5.32.31.0
-COMPONENT_SRC=		Percona-Server-5.5.32-rel31.0
+COMPONENT_VERSION=	5.5.33-31.1
+IPS_COMPONENT_VERSION=	5.5.33.31.1
+COMPONENT_SRC=		Percona-Server-5.5.33-rel31.1
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:e34676cea5ceb398258408e31e8527724845f83bbbf1f22308f5069304118e8f
+COMPONENT_ARCHIVE_HASH=	sha256:2039ae974d0973b765a4cdc7ffa1dc75ebd93540769fb134b3a8dc521dfc0b3a
 COMPONENT_ARCHIVE_URL=	http://www.percona.com/redir/downloads/Percona-Server-5.5/Percona-Server-$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk

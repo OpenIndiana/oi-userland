@@ -1,0 +1,46 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/library/python-2/pygtksourceview-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Development/Python"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license pygtksourceview.license license="LGPL v2.1"
+
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+<transform file path=usr/lib/python2.6/vendor-packages/(.+)$ -> set action.hash usr/lib/python2.6/site-packages/%<\1> >
+
+# Generated section:
+file     path=usr/share/pygtk/2.0/defs/gtksourceview2.defs
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourceview2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcemark2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/pygtksourceview2.devhelp
+file     path=usr/share/gtk-doc/html/pygtksourceview2/index.sgml
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcestyleschememanager2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/index.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcelanguagemanager2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcelanguage2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcestyle2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourceprintcompositor2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcebuffer2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcestylescheme2.html
+file     path=usr/share/gtk-doc/html/pygtksourceview2/style.css
+file     path=usr/share/gtk-doc/html/pygtksourceview2/class-gtksourcegutter2.html
+file     path=usr/lib/pkgconfig/pygtksourceview-2.0.pc
+file   mode=0555  path=usr/lib/python2.6/vendor-packages/gtksourceview2.so

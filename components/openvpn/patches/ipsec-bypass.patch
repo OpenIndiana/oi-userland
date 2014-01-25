@@ -1,0 +1,71 @@
+--- src/openvpn/socket.c.~1~	Fri May 31 08:00:25 2013
++++ src/openvpn/socket.c	Thu Nov  7 13:52:41 2013
+@@ -615,7 +615,46 @@
+     }
+ }
+ 
++#ifdef IP_SEC_OPT
+ /*
++ * On Solarish systems (Illumos distros, Oracle Solaris), have the socket
++ * bypass systemwide IPsec policy.  Useful if OpenVPN lives on a server that
++ * is also acting as an IPsec gateway.  (Note the correct capitalization of
++ * IPsec.)
++ */
++static void
++set_ipsec_bypass(int sock)
++{
++  ipsec_req_t ipsr;
++
++  /* Don't bother if the socket is a failure.  Caller never checks... */
++  if (sock == -1)
++    return;
++
++  ipsr.ipsr_ah_req = IPSEC_PREF_NEVER;
++  ipsr.ipsr_esp_req = IPSEC_PREF_NEVER;
++  ipsr.ipsr_self_encap_req = IPSEC_PREF_NEVER;
++  ipsr.ipsr_auth_alg = 0;
++  ipsr.ipsr_esp_alg = 0;
++  ipsr.ipsr_esp_auth_alg = 0;
++
++  if (setsockopt(sock, IPPROTO_IP, IP_SEC_OPT, &ipsr, sizeof (ipsr)) == -1) {
++    switch (errno) {
++    case EPROTONOSUPPORT:
++      dmsg (D_SOCKET_DEBUG, "Not using IPsec.");
++      break;
++    case EPERM:
++      msg (M_ERR, "Need more privilege for IPsec bypass.");
++      break;
++    default:
++      msg (M_ERR|M_ERRNO, "Can't set IPsec bypass.");
++      break;
++    }
++  }
++}	
++#endif /* IP_SEC_OPT */
++
++/*
+  * SOCKET INITALIZATION CODE.
+  * Create a TCP/UDP socket
+  */
+@@ -638,6 +677,10 @@
+   }
+ #endif
+ 
++#ifdef IP_SEC_OPT
++  set_ipsec_bypass(sd);
++#endif
++
+   return sd;
+ }
+ 
+@@ -725,6 +768,10 @@
+     {
+       ASSERT (0);
+     }
++
++#ifdef IP_SEC_OPT
++  set_ipsec_bypass(sock->sd);
++#endif
+ }
+ 
+ /*

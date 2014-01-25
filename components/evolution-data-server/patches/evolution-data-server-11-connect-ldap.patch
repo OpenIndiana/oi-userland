@@ -1,0 +1,46 @@
+--- evolution-data-server-2.30.2/addressbook/backends/ldap/e-book-backend-ldap.c.orig	Mon Jul 19 19:19:34 2010
++++ evolution-data-server-2.30.2/addressbook/backends/ldap/e-book-backend-ldap.c	Tue Jul 20 10:50:38 2010
+@@ -881,10 +881,14 @@
+ 			g_build_path ("/", g_get_home_dir (), ".evolution", NULL);
+ 		ldap_flag = ldapssl_client_init (evolution_dir_path, NULL);
+ 		g_free (evolution_dir_path);
++		blpriv->ldap = ldapssl_init (blpriv->ldap_host, blpriv->ldap_port, 1);
+ 	}
+-#endif
++	else
++		blpriv->ldap = ldap_init (blpriv->ldap_host, blpriv->ldap_port);
++#else
+ 
+ 	blpriv->ldap = ldap_init (blpriv->ldap_host, blpriv->ldap_port);
++#endif
+ 
+ 	if (NULL != blpriv->ldap) {
+ 		gint ldap_error;
+@@ -915,13 +919,7 @@
+ 
+ 			if (bl->priv->ldap_port == LDAPS_PORT && bl->priv->use_tls == E_BOOK_BACKEND_LDAP_TLS_ALWAYS) {
+ #ifdef SUNLDAP
+-				if (ldap_flag >= 0) {
+-					ldap_error = ldapssl_install_routines (blpriv->ldap);
+-				} else
+-					ldap_error = LDAP_NOT_SUPPORTED;
+-
+ 				if (LDAP_SUCCESS == ldap_error) {
+-					ldap_error = ldap_set_option (blpriv->ldap, LDAP_OPT_SSL, LDAP_OPT_ON );
+ 					ldap_set_option(blpriv->ldap, LDAP_OPT_RECONNECT, LDAP_OPT_ON );
+ 				}
+ #else
+@@ -937,13 +935,7 @@
+ 			}
+ 			else if (bl->priv->use_tls) {
+ #ifdef SUNLDAP
+-				if (ldap_flag >= 0) {
+-					ldap_error = ldapssl_install_routines (blpriv->ldap);
+-				} else
+-					ldap_error = LDAP_NOT_SUPPORTED;
+-
+ 				if (LDAP_SUCCESS == ldap_error) {
+-					ldap_error = ldap_set_option (blpriv->ldap, LDAP_OPT_SSL, LDAP_OPT_ON );
+ 					ldap_set_option(blpriv->ldap, LDAP_OPT_RECONNECT, LDAP_OPT_ON );
+ 				}
+ #else

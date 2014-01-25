@@ -1,0 +1,19 @@
+--- evolution-data-server-2.30.3/camel/camel-store.c.orig	2010-12-07 15:29:08.509510560 +0800
++++ evolution-data-server-2.30.3/camel/camel-store.c	2010-12-07 15:29:13.381590033 +0800
+@@ -258,9 +258,14 @@
+ 	}
+ 	g_free (store_db_path);
+ 
+-	if (camel_db_create_folders_table (store->cdb_r, ex))
++	int loop = 3;
++	while (loop && camel_db_create_folders_table (store->cdb_r, ex) ) {
++		usleep (100000);
++		camel_exception_clear (ex);
+ 		g_warning ("something went wrong terribly during db creation \n");
+-	else {
++		loop--;
++	}
++	if (loop) {
+ 		d(printf ("folders table successfully created \n"));
+ 	}
+ 

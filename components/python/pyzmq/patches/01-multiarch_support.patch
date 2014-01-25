@@ -1,0 +1,66 @@
+From f7f87f267bec59afba233a6bfb061bd0d4978660 Mon Sep 17 00:00:00 2001
+From: Alexander Pyhalov <apyhalov@gmail.com>
+Date: Thu, 23 Jan 2014 09:21:25 +0400
+Subject: [PATCH] Allow linking 64-bit executables on Solaris-derived i86
+ platforms
+
+---
+ buildutils/detect.py |    5 +++++
+ setup.py             |   11 ++++++++++-
+ 2 files changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/buildutils/detect.py b/buildutils/detect.py
+index b3dcdaa..b543018 100644
+--- a/buildutils/detect.py
++++ b/buildutils/detect.py
+@@ -56,6 +56,11 @@ def test_compilation(cfile, compiler=None, **compiler_attrs):
+         else:
+             # allow for missing UB arch, since it will still work:
+             lpreargs = ['-undefined', 'dynamic_lookup']
++    if sys.platform == 'sunos5':
++        if platform.architecture()[0]=='32bit':
++            lpreargs = ['-m32']
++        else: 
++            lpreargs = ['-m64']
+     extra = compiler_attrs.get('extra_compile_args', None)
+ 
+     objs = cc.compile([cfile],extra_preargs=cpreargs, extra_postargs=extra)
+diff --git a/setup.py b/setup.py
+index 2ae4dc9..fb9b96a 100755
+--- a/setup.py
++++ b/setup.py
+@@ -31,6 +31,7 @@ import subprocess
+ import sys
+ import time
+ import errno
++import platform
+ from traceback import print_exc
+ 
+ if sys.version_info < (2,6):
+@@ -155,6 +156,7 @@ def settings_from_prefix(prefix=None, bundle_libzmq_dylib=False):
+     settings['include_dirs'] = []
+     settings['library_dirs'] = []
+     settings['runtime_library_dirs'] = []
++    settings['extra_link_args'] = [] 
+     
+     if sys.platform.startswith('win'):
+         settings['libraries'].append('libzmq')
+@@ -191,7 +193,14 @@ def settings_from_prefix(prefix=None, bundle_libzmq_dylib=False):
+         if prefix:
+             settings['include_dirs'] += [pjoin(prefix, 'include')]
+             if not bundle_libzmq_dylib:
+-                settings['library_dirs'] += [pjoin(prefix, 'lib')]
++                if sys.platform == 'sunos5':
++                  if platform.architecture()[0] == '32bit':
++                    settings['library_dirs'] += [pjoin(prefix, 'lib')]
++                  else:
++                    settings['library_dirs'] += [pjoin(prefix, 'lib/amd64')]
++                    settings['extra_link_args'] += ['-m64']
++                else: 
++                   settings['library_dirs'] += [pjoin(prefix, 'lib')]  
+         else:
+             if sys.platform == 'darwin' and os.path.isdir('/opt/local/lib'):
+                 # allow macports default
+-- 
+1.7.9.2
+

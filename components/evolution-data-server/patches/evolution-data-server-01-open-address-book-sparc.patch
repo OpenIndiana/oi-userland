@@ -1,0 +1,18 @@
+--- evolution-data-server-2.27.3/addressbook/backends/file/e-book-backend-file.c.orig	Fri Jun 12 20:20:12 2009
++++ evolution-data-server-2.27.3/addressbook/backends/file/e-book-backend-file.c	Tue Jun 16 17:50:47 2009
+@@ -1110,6 +1110,15 @@
+ 				(gpointer (*)(gpointer , gsize))g_try_realloc,
+ 				g_free);
+ 
++		if ((db_error = (*env->mutex_set_align)(env, 8))) { 
++			env->close(env, 0);
++			g_warning ("db_env_mutex_set_align failed with %s", db_strerror (db_error));
++			G_UNLOCK (global_env);
++			g_free (dirname);
++			g_free (filename);
++			return db_error_to_status (db_error);
++		}
++
+ 		db_error = (*env->open) (env, NULL, DB_CREATE | DB_INIT_MPOOL | DB_PRIVATE | DB_THREAD, 0);
+ 		if (db_error != 0) {
+ 			env->close(env, 0);

@@ -1,0 +1,199 @@
+Rewrite some sections of the documentation to match what we deliver on
+Solaris, or remove sections that are of no relevance to Solaris.
+
+--- mercurial-2.7/hgext/hgk.py	Mon Aug 19 14:57:23 2013
++++ mercurial-2.7/hgext/hgk.py	Mon Aug 19 15:04:11 2013
+@@ -13,13 +13,12 @@
+ 
+ hgk consists of two parts: a Tcl script that does the displaying and
+ querying of information, and an extension to Mercurial named hgk.py,
+-which provides hooks for hgk to get information. hgk can be found in
+-the contrib directory, and the extension is shipped in the hgext
+-repository, and needs to be enabled.
++which provides hooks for hgk to get information.
+ 
+-The :hg:`view` command will launch the hgk Tcl script. For this command
+-to work, hgk must be in your search path. Alternately, you can specify
+-the path to hgk in your configuration file::
++The :hg:`view` command will launch the hgk Tcl script. The script is
++shipped in /usr/demo/mercurial, and hgk needs no configuration to find
++it.  You can specify the path to an alternate hgk in your configuration
++file::
+ 
+   [hgk]
+   path=/location/of/hgk
+--- mercurial-2.7/mercurial/help/hg.1.txt	Thu Aug  1 20:37:39 2013
++++ mercurial-2.7/mercurial/help/hg.1.txt	Mon Aug 19 15:14:00 2013
+@@ -85,6 +85,11 @@
+     repositories. The file format is the same as for ``.hgtags``, but it is
+     encoded using the local system encoding.
+ 
++``/usr/demo/mercurial``
++    This directory contains assorted files which are part of the Mercurial
++    distribution, but not core to its functionality.  They will generally
++    need to be copied elsewhere to be of use.
++
+ Some commands (e.g. revert) produce backup files ending in ``.orig``,
+ if the ``.orig`` file already exists and is not tracked by Mercurial,
+ it will be overwritten.
+--- mercurial-2.7/mercurial/help/config.txt.orig	Thu Aug  1 20:37:39 2013
++++ mercurial-2.7/mercurial/help/config.txt	Mon Aug 19 16:28:22 2013
+@@ -18,8 +18,7 @@
+ Mercurial reads configuration data from several files, if they exist.
+ These files do not exist by default and you will have to create the
+ appropriate configuration files yourself: global configuration like
+-the username setting is typically put into
+-``%USERPROFILE%\mercurial.ini`` or ``$HOME/.hgrc`` and local
++the username setting is typically put into ``$HOME/.hgrc`` and local
+ configuration is put into the per-repository ``<repo>/.hg/hgrc`` file.
+ 
+ The names of these files depend on the system on which Mercurial is
+@@ -28,33 +27,25 @@
+ paths are given below, settings from earlier paths override later
+ ones.
+ 
+-| (All) ``<repo>/.hg/hgrc``
++| ``<repo>/.hg/hgrc``
+ 
+     Per-repository configuration options that only apply in a
+     particular repository. This file is not version-controlled, and
+     will not get transferred during a "clone" operation. Options in
+-    this file override options in all other configuration files. On
+-    Plan 9 and Unix, most of this file will be ignored if it doesn't
++    this file override options in all other configuration files.
++    Most of this file will be ignored if it doesn't
+     belong to a trusted user or to a trusted group. See the documentation
+     for the ``[trusted]`` section below for more details.
+ 
+-| (Plan 9) ``$home/lib/hgrc``
+-| (Unix) ``$HOME/.hgrc``
+-| (Windows) ``%USERPROFILE%\.hgrc``
+-| (Windows) ``%USERPROFILE%\Mercurial.ini``
+-| (Windows) ``%HOME%\.hgrc``
+-| (Windows) ``%HOME%\Mercurial.ini``
++| ``$HOME/.hgrc``
+ 
+-    Per-user configuration file(s), for the user running Mercurial. On
+-    Windows 9x, ``%HOME%`` is replaced by ``%APPDATA%``. Options in these
+-    files apply to all Mercurial commands executed by this user in any
+-    directory. Options in these files override per-system and per-installation
++    Per-user configuration file, for the user running Mercurial. Options in this
++    file apply to all Mercurial commands executed by this user in any
++    directory. Options in this file override per-system and per-installation
+     options.
+ 
+-| (Plan 9) ``/lib/mercurial/hgrc``
+-| (Plan 9) ``/lib/mercurial/hgrc.d/*.rc``
+-| (Unix) ``/etc/mercurial/hgrc``
+-| (Unix) ``/etc/mercurial/hgrc.d/*.rc``
++| ``/etc/mercurial/hgrc``
++| ``/etc/mercurial/hgrc.d/*.rc``
+ 
+     Per-system configuration files, for the system on which Mercurial
+     is running. Options in these files apply to all Mercurial commands
+@@ -61,33 +52,6 @@
+     executed by any user in any directory. Options in these files
+     override per-installation options.
+ 
+-| (Plan 9) ``<install-root>/lib/mercurial/hgrc``
+-| (Plan 9) ``<install-root>/lib/mercurial/hgrc.d/*.rc``
+-| (Unix) ``<install-root>/etc/mercurial/hgrc``
+-| (Unix) ``<install-root>/etc/mercurial/hgrc.d/*.rc``
+-
+-    Per-installation configuration files, searched for in the
+-    directory where Mercurial is installed. ``<install-root>`` is the
+-    parent directory of the **hg** executable (or symlink) being run. For
+-    example, if installed in ``/shared/tools/bin/hg``, Mercurial will look
+-    in ``/shared/tools/etc/mercurial/hgrc``. Options in these files apply
+-    to all Mercurial commands executed by any user in any directory.
+-
+-| (Windows) ``<install-dir>\Mercurial.ini`` **or**
+-| (Windows) ``<install-dir>\hgrc.d\*.rc`` **or**
+-| (Windows) ``HKEY_LOCAL_MACHINE\SOFTWARE\Mercurial``
+-
+-    Per-installation/system configuration files, for the system on
+-    which Mercurial is running. Options in these files apply to all
+-    Mercurial commands executed by any user in any directory. Registry
+-    keys contain PATH-like strings, every part of which must reference
+-    a ``Mercurial.ini`` file or be a directory where ``*.rc`` files will
+-    be read.  Mercurial checks each of these locations in the specified
+-    order until one or more configuration files are detected.
+-
+-.. note:: The registry key ``HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Mercurial``
+-   is used when running 32-bit Python on 64-bit Windows.
+-
+ Syntax
+ ======
+ 
+@@ -362,10 +326,6 @@
+ of an empty temporary file, where the filtered data must be written by
+ the command.
+ 
+-.. note:: The tempfile mechanism is recommended for Windows systems,
+-   where the standard shell I/O redirection operators often have
+-   strange effects and may corrupt the contents of your files.
+-
+ This filter mechanism is used internally by the ``eol`` extension to
+ translate line ending characters between Windows (CRLF) and Unix (LF)
+ format. We suggest you use the ``eol`` extension for convenience.
+@@ -714,11 +674,6 @@
+    Also, hooks like "commit" will be called in all contexts that
+    generate a commit (e.g. tag) and not just the commit command.
+ 
+-.. note:: Environment variables with empty values may not be passed to
+-   hooks on platforms such as Windows. As an example, ``$HG_PARENT2``
+-   will have an empty value under Unix-like platforms for non-merge
+-   changesets, while it will not be available at all under Windows.
+-
+ The syntax for Python hooks is as follows::
+ 
+   hookname = python:modulename.submodule.callable
+@@ -809,7 +764,6 @@
+ 
+   # Define new tool
+   myHtmlTool.args = -m $local $other $base $output
+-  myHtmlTool.regkey = Software\FooSoftware\HtmlMerge
+   myHtmlTool.priority = 1
+ 
+ Supported arguments:
+@@ -819,9 +773,7 @@
+   Default: 0.
+ 
+ ``executable``
+-  Either just the name of the executable or its pathname.  On Windows,
+-  the path can use environment variables with ${ProgramFiles} syntax.
+-  Default: the tool name.
++  Either just the name of the executable or its pathname.  Default: the tool name.
+ 
+ ``args``
+   The arguments to pass to the tool executable. You can refer to the
+@@ -860,29 +812,6 @@
+ ``gui``
+   This tool requires a graphical interface to run. Default: False
+ 
+-``regkey``
+-  Windows registry key which describes install location of this
+-  tool. Mercurial will search for this key first under
+-  ``HKEY_CURRENT_USER`` and then under ``HKEY_LOCAL_MACHINE``.
+-  Default: None
+-
+-``regkeyalt``
+-  An alternate Windows registry key to try if the first key is not
+-  found.  The alternate key uses the same ``regname`` and ``regappend``
+-  semantics of the primary key.  The most common use for this key
+-  is to search for 32bit applications on 64bit operating systems.
+-  Default: None
+-
+-``regname``
+-  Name of value to read from specified registry key. Defaults to the
+-  unnamed (default) value.
+-
+-``regappend``
+-  String to append to the value read from the registry, typically
+-  the executable name of the tool.
+-  Default: None
+-
+-
+ ``patch``
+ ---------
+ 

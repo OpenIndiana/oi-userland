@@ -35,11 +35,13 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)pub/graphviz/stable/SOURCES/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/graphviz
 
+JAVA_HOME=		/usr/jdk/openjdk1.7.0
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.2/bin
+PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.4/bin
 
 # GMP header files for the guile extension (no --with- flag)
 # The guile build is broken with studio (7073649), so we disable this for now.
@@ -48,10 +50,13 @@ PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.2/bin
 CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
 CPPFLAGS +=	$(shell PATH=$(PATH) php-config --includes)
-CXX +=		$(studio_NORUNPATH)
+#CXX +=		$(studio_NORUNPATH)
 
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_ENV +=	PERL=$(PERL)
+# Explicitly use Ruby 1.8.  Allows switching Ruby default without
+# affecting graphviz build.
+CONFIGURE_ENV +=	RUBY=$(RUBY.1.8)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=yes

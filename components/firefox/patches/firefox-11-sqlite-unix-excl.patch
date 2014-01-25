@@ -1,0 +1,16 @@
+diff --git a/storage/src/mozStorageConnection.cpp b/storage/src/mozStorageConnection.cpp
+--- a/storage/src/mozStorageConnection.cpp
++++ b/storage/src/mozStorageConnection.cpp
+@@ -608,6 +608,12 @@
+ Connection::initialize(nsIFile *aDatabaseFile,
+                        const char* aVFSName)
+ {
++#ifdef SOLARIS
++  if (!aVFSName) {
++    aVFSName = "unix-excl";
++  }
++#endif
++
+   NS_ASSERTION (!mDBConn, "Initialize called on already opened database!");
+   SAMPLE_LABEL("storage", "Connection::initialize");
+ 

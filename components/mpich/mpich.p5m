@@ -1,0 +1,171 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification \
+    value="org.opensolaris.category.2008:Development/High Performance Computing"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=.* -> default pkg.depend.bypass-generate perl >
+
+dir  path=usr
+dir  path=usr/include
+dir  path=usr/include/mpich
+file path=usr/include/mpich/mpi.h
+file path=usr/include/mpich/mpi.mod
+file path=usr/include/mpich/mpi_base.mod
+file path=usr/include/mpich/mpi_constants.mod
+file path=usr/include/mpich/mpi_sizeofs.mod
+file path=usr/include/mpich/mpicxx.h
+file path=usr/include/mpich/mpif.h
+file path=usr/include/mpich/mpio.h
+file path=usr/include/mpich/mpiof.h
+file path=usr/include/mpich/opa_config.h
+file path=usr/include/mpich/opa_primitives.h
+file path=usr/include/mpich/opa_queue.h
+file path=usr/include/mpich/opa_util.h
+dir  path=usr/include/mpich/primitives
+file path=usr/include/mpich/primitives/opa_by_lock.h
+file path=usr/include/mpich/primitives/opa_emulated.h
+file path=usr/include/mpich/primitives/opa_gcc_ia64.h
+file path=usr/include/mpich/primitives/opa_gcc_intel_32_64.h
+file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_barrier.h
+file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_ops.h
+file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_p3.h
+file path=usr/include/mpich/primitives/opa_gcc_intel_32_64_p3barrier.h
+file path=usr/include/mpich/primitives/opa_gcc_intrinsics.h
+file path=usr/include/mpich/primitives/opa_gcc_ppc.h
+file path=usr/include/mpich/primitives/opa_gcc_sicortex.h
+file path=usr/include/mpich/primitives/opa_nt_intrinsics.h
+file path=usr/include/mpich/primitives/opa_sun_atomic_ops.h
+file path=usr/include/mpich/primitives/opa_unsafe.h
+dir  path=usr/lib
+dir  path=usr/lib/$(MACH64)
+dir  path=usr/lib/$(MACH64)/mpich
+dir  path=usr/lib/$(MACH64)/mpich/gcc
+dir  path=usr/lib/$(MACH64)/mpich/gcc/bin
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/hydra_nameserver
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/hydra_persist
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/hydra_pmi_proxy
+link path=usr/lib/$(MACH64)/mpich/gcc/bin/mpic++ target=mpicxx
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/mpicc
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/mpichversion
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/mpicxx
+link path=usr/lib/$(MACH64)/mpich/gcc/bin/mpiexec target=mpiexec.hydra
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/mpiexec.hydra
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/mpif77
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/mpif90
+link path=usr/lib/$(MACH64)/mpich/gcc/bin/mpirun target=mpiexec.hydra
+file path=usr/lib/$(MACH64)/mpich/gcc/bin/parkill
+dir  path=usr/lib/$(MACH64)/mpich/gcc/etc
+file path=usr/lib/$(MACH64)/mpich/gcc/etc/mpicc.conf
+file path=usr/lib/$(MACH64)/mpich/gcc/etc/mpicxx.conf
+file path=usr/lib/$(MACH64)/mpich/gcc/etc/mpif77.conf
+file path=usr/lib/$(MACH64)/mpich/gcc/etc/mpif90.conf
+dir  path=usr/lib/$(MACH64)/mpich/gcc/lib
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libfmpich.a
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libfmpich.so \
+    target=libfmpich.so.10.0.4
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libfmpich.so.10 \
+    target=libfmpich.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libfmpich.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpich.a
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpich.so target=libmpich.so.10.0.4
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpich.so.10 \
+    target=libmpich.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpich.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichcxx.a
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichcxx.so \
+    target=libmpichcxx.so.10.0.4
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichcxx.so.10 \
+    target=libmpichcxx.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichcxx.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichf90.a
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichf90.so \
+    target=libmpichf90.so.10.0.4
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichf90.so.10 \
+    target=libmpichf90.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpichf90.so.10.0.4
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpl.a
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpl.so target=libmpl.so.1.0.0
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpl.so.1 target=libmpl.so.1.0.0
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libmpl.so.1.0.0
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libopa.a
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libopa.so target=libopa.so.1.0.0
+link path=usr/lib/$(MACH64)/mpich/gcc/lib/libopa.so.1 target=libopa.so.1.0.0
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/libopa.so.1.0.0
+dir  path=usr/lib/$(MACH64)/mpich/gcc/lib/pkgconfig
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/pkgconfig/mpich.pc
+file path=usr/lib/$(MACH64)/mpich/gcc/lib/pkgconfig/openpa.pc
+dir  path=usr/lib/mpich
+dir  path=usr/lib/mpich/gcc
+dir  path=usr/lib/mpich/gcc/bin
+file path=usr/lib/mpich/gcc/bin/hydra_nameserver
+file path=usr/lib/mpich/gcc/bin/hydra_persist
+file path=usr/lib/mpich/gcc/bin/hydra_pmi_proxy
+link path=usr/lib/mpich/gcc/bin/mpic++ target=mpicxx
+file path=usr/lib/mpich/gcc/bin/mpicc
+file path=usr/lib/mpich/gcc/bin/mpichversion
+file path=usr/lib/mpich/gcc/bin/mpicxx
+link path=usr/lib/mpich/gcc/bin/mpiexec target=mpiexec.hydra
+file path=usr/lib/mpich/gcc/bin/mpiexec.hydra
+file path=usr/lib/mpich/gcc/bin/mpif77
+file path=usr/lib/mpich/gcc/bin/mpif90
+link path=usr/lib/mpich/gcc/bin/mpirun target=mpiexec.hydra
+file path=usr/lib/mpich/gcc/bin/parkill
+dir  path=usr/lib/mpich/gcc/etc
+file path=usr/lib/mpich/gcc/etc/mpicc.conf
+file path=usr/lib/mpich/gcc/etc/mpicxx.conf
+file path=usr/lib/mpich/gcc/etc/mpif77.conf
+file path=usr/lib/mpich/gcc/etc/mpif90.conf
+dir  path=usr/lib/mpich/gcc/lib
+file path=usr/lib/mpich/gcc/lib/libfmpich.a
+link path=usr/lib/mpich/gcc/lib/libfmpich.so target=libfmpich.so.10.0.4
+link path=usr/lib/mpich/gcc/lib/libfmpich.so.10 target=libfmpich.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libfmpich.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libmpich.a
+link path=usr/lib/mpich/gcc/lib/libmpich.so target=libmpich.so.10.0.4
+link path=usr/lib/mpich/gcc/lib/libmpich.so.10 target=libmpich.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libmpich.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libmpichcxx.a
+link path=usr/lib/mpich/gcc/lib/libmpichcxx.so target=libmpichcxx.so.10.0.4
+link path=usr/lib/mpich/gcc/lib/libmpichcxx.so.10 target=libmpichcxx.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libmpichcxx.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libmpichf90.a
+link path=usr/lib/mpich/gcc/lib/libmpichf90.so target=libmpichf90.so.10.0.4
+link path=usr/lib/mpich/gcc/lib/libmpichf90.so.10 target=libmpichf90.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libmpichf90.so.10.0.4
+file path=usr/lib/mpich/gcc/lib/libmpl.a
+link path=usr/lib/mpich/gcc/lib/libmpl.so target=libmpl.so.1.0.0
+link path=usr/lib/mpich/gcc/lib/libmpl.so.1 target=libmpl.so.1.0.0
+file path=usr/lib/mpich/gcc/lib/libmpl.so.1.0.0
+file path=usr/lib/mpich/gcc/lib/libopa.a
+link path=usr/lib/mpich/gcc/lib/libopa.so target=libopa.so.1.0.0
+link path=usr/lib/mpich/gcc/lib/libopa.so.1 target=libopa.so.1.0.0
+file path=usr/lib/mpich/gcc/lib/libopa.so.1.0.0
+dir  path=usr/lib/mpich/gcc/lib/pkgconfig
+file path=usr/lib/mpich/gcc/lib/pkgconfig/mpich.pc
+file path=usr/lib/mpich/gcc/lib/pkgconfig/openpa.pc
+dir  path=usr/share
+dir  path=usr/share/doc
+dir  path=usr/share/doc/mpich
+file path=usr/share/doc/mpich/install.pdf
+file path=usr/share/doc/mpich/logging.pdf
+file path=usr/share/doc/mpich/smpd_pmi.pdf
+file path=usr/share/doc/mpich/user.pdf

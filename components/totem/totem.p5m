@@ -1,0 +1,669 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/gnome/media/totem@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Sound and Video"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+<transform dir path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+
+license totem.license license="GPLv2 with plugins exception, LGPLv2"
+
+# Generated section:
+file path=etc/gconf/schemas/totem-handlers.schemas
+file path=etc/gconf/schemas/totem-video-thumbnail.schemas
+file path=etc/gconf/schemas/totem.schemas
+file path=usr/bin/totem mode=0555
+file path=usr/bin/totem-audio-preview mode=0555
+file path=usr/bin/totem-video-indexer mode=0555
+file path=usr/bin/totem-video-thumbnailer mode=0555
+file path=usr/lib/firefox/plugins/libtotem-cone-plugin.so mode=0555
+file path=usr/lib/firefox/plugins/libtotem-gmp-plugin.so mode=0555
+file path=usr/lib/firefox/plugins/libtotem-mully-plugin.so mode=0555
+file path=usr/lib/firefox/plugins/libtotem-narrowspace-plugin.so \
+    mode=0555
+file path=usr/lib/nautilus/extensions-2.0/libtotem-properties-page.so mode=0555
+file path=usr/lib/totem-plugin-viewer mode=0555
+file path=usr/lib/totem/plugins/brasero-disc-recorder/brasero-disc-recorder.totem-plugin
+file \
+    path=usr/lib/totem/plugins/brasero-disc-recorder/libbrasero-disc-recorder.so \
+    mode=0555
+file path=usr/lib/totem/plugins/coherence_upnp/coherence_upnp.py
+file path=usr/lib/totem/plugins/coherence_upnp/coherence_upnp.pyc
+file path=usr/lib/totem/plugins/coherence_upnp/coherence_upnp.totem-plugin
+file path=usr/lib/totem/plugins/dbus/dbus-service.py
+file path=usr/lib/totem/plugins/dbus/dbus-service.pyc
+file path=usr/lib/totem/plugins/dbus/dbus-service.totem-plugin
+file path=usr/lib/totem/plugins/gromit/gromit.totem-plugin
+file path=usr/lib/totem/plugins/gromit/libgromit.so mode=0555
+file path=usr/lib/totem/plugins/iplayer/iplayer.py
+file path=usr/lib/totem/plugins/iplayer/iplayer.pyc
+file path=usr/lib/totem/plugins/iplayer/iplayer.totem-plugin
+file path=usr/lib/totem/plugins/iplayer/iplayer.ui
+file path=usr/lib/totem/plugins/iplayer/iplayer2.py
+file path=usr/lib/totem/plugins/iplayer/iplayer2.pyc
+file path=usr/lib/totem/plugins/iplayer/listparser.py
+file path=usr/lib/totem/plugins/iplayer/listparser.pyc
+file path=usr/lib/totem/plugins/jamendo/jamendo.py
+file path=usr/lib/totem/plugins/jamendo/jamendo.pyc
+file path=usr/lib/totem/plugins/jamendo/jamendo.totem-plugin
+file path=usr/lib/totem/plugins/jamendo/jamendo.ui
+file path=usr/lib/totem/plugins/media-player-keys/libmedia_player_keys.so \
+    mode=0555
+file path=usr/lib/totem/plugins/media-player-keys/media-player-keys.totem-plugin
+file path=usr/lib/totem/plugins/ontop/libontop.so mode=0555
+file path=usr/lib/totem/plugins/ontop/ontop.totem-plugin
+file path=usr/lib/totem/plugins/opensubtitles/hash.py
+file path=usr/lib/totem/plugins/opensubtitles/hash.pyc
+file path=usr/lib/totem/plugins/opensubtitles/opensubtitles.py
+file path=usr/lib/totem/plugins/opensubtitles/opensubtitles.pyc
+file path=usr/lib/totem/plugins/opensubtitles/opensubtitles.totem-plugin
+file path=usr/lib/totem/plugins/opensubtitles/opensubtitles.ui
+file path=usr/lib/totem/plugins/properties/libmovie-properties.so mode=0555
+file path=usr/lib/totem/plugins/properties/movie-properties.totem-plugin
+file path=usr/lib/totem/plugins/pythonconsole/console.py
+file path=usr/lib/totem/plugins/pythonconsole/console.pyc
+file path=usr/lib/totem/plugins/pythonconsole/pythonconsole.py
+file path=usr/lib/totem/plugins/pythonconsole/pythonconsole.pyc
+file path=usr/lib/totem/plugins/pythonconsole/pythonconsole.totem-plugin
+file path=usr/lib/totem/plugins/screensaver/libscreensaver.so mode=0555
+file path=usr/lib/totem/plugins/screensaver/screensaver.totem-plugin
+file path=usr/lib/totem/plugins/screenshot/gallery.ui
+file path=usr/lib/totem/plugins/screenshot/gnome-screenshot.ui
+file path=usr/lib/totem/plugins/screenshot/libscreenshot.so mode=0555
+file path=usr/lib/totem/plugins/screenshot/screenshot.totem-plugin
+file path=usr/lib/totem/plugins/skipto/libskipto.so mode=0555
+file path=usr/lib/totem/plugins/skipto/skipto.totem-plugin
+file path=usr/lib/totem/plugins/skipto/skipto.ui
+file path=usr/lib/totem/plugins/thumbnail/libthumbnail.so mode=0555
+file path=usr/lib/totem/plugins/thumbnail/thumbnail.totem-plugin
+file path=usr/lib/totem/plugins/totem/__init__.py
+file path=usr/lib/totem/plugins/totem/__init__.pyc
+file path=usr/lib/totem/plugins/youtube/libyoutube.so mode=0555
+file path=usr/lib/totem/plugins/youtube/youtube.totem-plugin
+file path=usr/lib/totem/plugins/youtube/youtube.ui
+file path=usr/lib/totem/totem-bugreport.py mode=0555 pkg.tmp.autopyc=false
+file path=usr/share/applications/totem.desktop
+file path=usr/share/gnome/help/totem/C/figures/totem_next_button.png
+file path=usr/share/gnome/help/totem/C/figures/totem_pause_button.png
+file path=usr/share/gnome/help/totem/C/figures/totem_play_button.png
+file path=usr/share/gnome/help/totem/C/figures/totem_previous_button.png
+file path=usr/share/gnome/help/totem/C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/C/figures/totem_start_window.png
+file path=usr/share/gnome/help/totem/C/figures/totem_volume_maximum_button.png
+file path=usr/share/gnome/help/totem/C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/C/legal.xml
+file path=usr/share/gnome/help/totem/C/totem.xml
+link path=usr/share/gnome/help/totem/bg/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/bg/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/bg/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/bg/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/bg/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/bg/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/bg/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/bg/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/bg/totem.xml
+link path=usr/share/gnome/help/totem/ca/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/ca/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/ca/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/ca/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/ca/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/ca/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/ca/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/ca/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/ca/totem.xml
+link path=usr/share/gnome/help/totem/cs/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/cs/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/cs/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/cs/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/cs/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/cs/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/cs/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/cs/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/cs/totem.xml
+link path=usr/share/gnome/help/totem/da/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/da/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/da/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/da/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/da/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/da/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/da/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/da/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/da/totem.xml
+link path=usr/share/gnome/help/totem/de/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/de/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/de/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/de/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/de/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/de/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/de/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/de/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/de/totem.xml
+link path=usr/share/gnome/help/totem/el/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/el/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/el/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/el/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/el/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/el/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/el/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/el/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/el/totem.xml
+link path=usr/share/gnome/help/totem/en_GB/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/en_GB/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/en_GB/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/en_GB/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link \
+    path=usr/share/gnome/help/totem/en_GB/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/en_GB/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/en_GB/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link \
+    path=usr/share/gnome/help/totem/en_GB/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/en_GB/totem.xml
+link path=usr/share/gnome/help/totem/es/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/es/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/es/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/es/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/es/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/es/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/es/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/es/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/es/totem.xml
+link path=usr/share/gnome/help/totem/eu/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/eu/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/eu/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/eu/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/eu/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/eu/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/eu/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/eu/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/eu/totem.xml
+link path=usr/share/gnome/help/totem/fi/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/fi/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/fi/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/fi/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/fi/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/fi/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/fi/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/fi/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/fi/totem.xml
+file path=usr/share/gnome/help/totem/fr/figures/totem_next_button.png
+file path=usr/share/gnome/help/totem/fr/figures/totem_pause_button.png
+file path=usr/share/gnome/help/totem/fr/figures/totem_play_button.png
+file path=usr/share/gnome/help/totem/fr/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/fr/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/fr/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/fr/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/fr/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/fr/totem.xml
+link path=usr/share/gnome/help/totem/it/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/it/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/it/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/it/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/it/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/it/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/it/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/it/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/it/totem.xml
+link path=usr/share/gnome/help/totem/ja/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/ja/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/ja/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/ja/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/ja/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/ja/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/ja/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/ja/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/ja/totem.xml
+link path=usr/share/gnome/help/totem/oc/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/oc/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/oc/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/oc/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/oc/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/oc/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/oc/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/oc/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/oc/totem.xml
+link path=usr/share/gnome/help/totem/pa/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/pa/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/pa/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/pa/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/pa/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/pa/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/pa/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/pa/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/pa/totem.xml
+link path=usr/share/gnome/help/totem/pl/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/pl/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/pl/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/pl/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+file path=usr/share/gnome/help/totem/pl/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/pl/figures/totem_start_window.png
+file path=usr/share/gnome/help/totem/pl/figures/totem_volume_maximum_button.png
+file path=usr/share/gnome/help/totem/pl/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/pl/totem.xml
+link path=usr/share/gnome/help/totem/pt_BR/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/pt_BR/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/pt_BR/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/pt_BR/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link \
+    path=usr/share/gnome/help/totem/pt_BR/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/pt_BR/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/pt_BR/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link \
+    path=usr/share/gnome/help/totem/pt_BR/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/pt_BR/totem.xml
+link path=usr/share/gnome/help/totem/ru/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/ru/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/ru/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/ru/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/ru/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/ru/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/ru/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/ru/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/ru/totem.xml
+link path=usr/share/gnome/help/totem/sv/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/sv/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/sv/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/sv/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/sv/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/sv/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/sv/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/sv/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/sv/totem.xml
+link path=usr/share/gnome/help/totem/uk/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/uk/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/uk/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/uk/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link path=usr/share/gnome/help/totem/uk/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+file path=usr/share/gnome/help/totem/uk/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/uk/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link path=usr/share/gnome/help/totem/uk/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/uk/totem.xml
+link path=usr/share/gnome/help/totem/zh_CN/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/zh_CN/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/zh_CN/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/zh_CN/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link \
+    path=usr/share/gnome/help/totem/zh_CN/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/zh_CN/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/zh_CN/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link \
+    path=usr/share/gnome/help/totem/zh_CN/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/zh_CN/totem.xml
+link path=usr/share/gnome/help/totem/zh_HK/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/zh_HK/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/zh_HK/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/zh_HK/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link \
+    path=usr/share/gnome/help/totem/zh_HK/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/zh_HK/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/zh_HK/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link \
+    path=usr/share/gnome/help/totem/zh_HK/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/zh_HK/totem.xml
+link path=usr/share/gnome/help/totem/zh_TW/figures/totem_next_button.png \
+    target=../../C/figures/totem_next_button.png
+link path=usr/share/gnome/help/totem/zh_TW/figures/totem_pause_button.png \
+    target=../../C/figures/totem_pause_button.png
+link path=usr/share/gnome/help/totem/zh_TW/figures/totem_play_button.png \
+    target=../../C/figures/totem_play_button.png
+link path=usr/share/gnome/help/totem/zh_TW/figures/totem_previous_button.png \
+    target=../../C/figures/totem_previous_button.png
+link \
+    path=usr/share/gnome/help/totem/zh_TW/figures/totem_show_playlist_button.png \
+    target=../../C/figures/totem_show_playlist_button.png
+link path=usr/share/gnome/help/totem/zh_TW/figures/totem_start_window.png \
+    target=../../C/figures/totem_start_window.png
+link \
+    path=usr/share/gnome/help/totem/zh_TW/figures/totem_volume_maximum_button.png \
+    target=../../C/figures/totem_volume_maximum_button.png
+link \
+    path=usr/share/gnome/help/totem/zh_TW/figures/totem_volume_mute_button.png \
+    target=../../C/figures/totem_volume_mute_button.png
+file path=usr/share/gnome/help/totem/zh_TW/totem.xml
+file path=usr/share/gtk-doc/html/totem/BaconVideoWidget.html
+file path=usr/share/gtk-doc/html/totem/TotemCellRendererVideo.html
+file path=usr/share/gtk-doc/html/totem/TotemObject.html
+file path=usr/share/gtk-doc/html/totem/TotemPlugin.html
+file path=usr/share/gtk-doc/html/totem/TotemVideoList.html
+file path=usr/share/gtk-doc/html/totem/api-index-deprecated.html
+file path=usr/share/gtk-doc/html/totem/api-index-full.html
+file path=usr/share/gtk-doc/html/totem/core-api.html
+file path=usr/share/gtk-doc/html/totem/home.png
+file path=usr/share/gtk-doc/html/totem/index.html
+file path=usr/share/gtk-doc/html/totem/index.sgml
+file path=usr/share/gtk-doc/html/totem/left.png
+file path=usr/share/gtk-doc/html/totem/right.png
+file path=usr/share/gtk-doc/html/totem/style.css
+file path=usr/share/gtk-doc/html/totem/totem-Interface.html
+file path=usr/share/gtk-doc/html/totem/totem-plugins.html
+file path=usr/share/gtk-doc/html/totem/totem.devhelp
+file path=usr/share/gtk-doc/html/totem/totem.devhelp2
+file path=usr/share/gtk-doc/html/totem/tutorials.html
+file path=usr/share/gtk-doc/html/totem/up.png
+file path=usr/share/gtk-doc/html/totem/widget-api.html
+file path=usr/share/icons/hicolor/16x16/apps/totem.png
+file path=usr/share/icons/hicolor/16x16/devices/totem-tv.png
+file path=usr/share/icons/hicolor/22x22/apps/totem.png
+file path=usr/share/icons/hicolor/22x22/devices/totem-tv.png
+file path=usr/share/icons/hicolor/24x24/apps/totem.png
+file path=usr/share/icons/hicolor/24x24/devices/totem-tv.png
+file path=usr/share/icons/hicolor/32x32/apps/totem.png
+file path=usr/share/icons/hicolor/32x32/devices/totem-tv.png
+file path=usr/share/icons/hicolor/48x48/apps/totem.png
+file path=usr/share/icons/hicolor/48x48/devices/totem-tv.png
+file path=usr/share/icons/hicolor/scalable/apps/totem.svg
+file path=usr/share/icons/hicolor/scalable/devices/totem-tv.svg
+file path=usr/share/locale/am/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ar/LC_MESSAGES/totem.mo
+file path=usr/share/locale/as/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ast/LC_MESSAGES/totem.mo
+file path=usr/share/locale/az/LC_MESSAGES/totem.mo
+file path=usr/share/locale/be/LC_MESSAGES/totem.mo
+file path=usr/share/locale/be@latin/LC_MESSAGES/totem.mo
+file path=usr/share/locale/bg/LC_MESSAGES/totem.mo
+file path=usr/share/locale/bn/LC_MESSAGES/totem.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/totem.mo
+file path=usr/share/locale/br/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ca/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/totem.mo
+file path=usr/share/locale/crh/LC_MESSAGES/totem.mo
+file path=usr/share/locale/cs/LC_MESSAGES/totem.mo
+file path=usr/share/locale/cy/LC_MESSAGES/totem.mo
+file path=usr/share/locale/da/LC_MESSAGES/totem.mo
+file path=usr/share/locale/de/LC_MESSAGES/totem.mo
+file path=usr/share/locale/dz/LC_MESSAGES/totem.mo
+file path=usr/share/locale/el/LC_MESSAGES/totem.mo
+file path=usr/share/locale/en@shaw/LC_MESSAGES/totem.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/totem.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/totem.mo
+file path=usr/share/locale/es/LC_MESSAGES/totem.mo
+file path=usr/share/locale/et/LC_MESSAGES/totem.mo
+file path=usr/share/locale/eu/LC_MESSAGES/totem.mo
+file path=usr/share/locale/fa/LC_MESSAGES/totem.mo
+file path=usr/share/locale/fi/LC_MESSAGES/totem.mo
+file path=usr/share/locale/fr/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ga/LC_MESSAGES/totem.mo
+file path=usr/share/locale/gl/LC_MESSAGES/totem.mo
+file path=usr/share/locale/gu/LC_MESSAGES/totem.mo
+file path=usr/share/locale/he/LC_MESSAGES/totem.mo
+file path=usr/share/locale/hi/LC_MESSAGES/totem.mo
+file path=usr/share/locale/hr/LC_MESSAGES/totem.mo
+file path=usr/share/locale/hu/LC_MESSAGES/totem.mo
+file path=usr/share/locale/id/LC_MESSAGES/totem.mo
+file path=usr/share/locale/is/LC_MESSAGES/totem.mo
+file path=usr/share/locale/it/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ja/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ka/LC_MESSAGES/totem.mo
+file path=usr/share/locale/kn/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ko/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ku/LC_MESSAGES/totem.mo
+file path=usr/share/locale/lt/LC_MESSAGES/totem.mo
+file path=usr/share/locale/lv/LC_MESSAGES/totem.mo
+file path=usr/share/locale/mai/LC_MESSAGES/totem.mo
+file path=usr/share/locale/mg/LC_MESSAGES/totem.mo
+file path=usr/share/locale/mk/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ml/LC_MESSAGES/totem.mo
+file path=usr/share/locale/mr/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ms/LC_MESSAGES/totem.mo
+file path=usr/share/locale/nb/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ne/LC_MESSAGES/totem.mo
+file path=usr/share/locale/nl/LC_MESSAGES/totem.mo
+file path=usr/share/locale/nn/LC_MESSAGES/totem.mo
+file path=usr/share/locale/oc/LC_MESSAGES/totem.mo
+file path=usr/share/locale/or/LC_MESSAGES/totem.mo
+file path=usr/share/locale/pa/LC_MESSAGES/totem.mo
+file path=usr/share/locale/pl/LC_MESSAGES/totem.mo
+file path=usr/share/locale/pt/LC_MESSAGES/totem.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ro/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ru/LC_MESSAGES/totem.mo
+file path=usr/share/locale/rw/LC_MESSAGES/totem.mo
+file path=usr/share/locale/si/LC_MESSAGES/totem.mo
+file path=usr/share/locale/sk/LC_MESSAGES/totem.mo
+file path=usr/share/locale/sl/LC_MESSAGES/totem.mo
+file path=usr/share/locale/sq/LC_MESSAGES/totem.mo
+file path=usr/share/locale/sr/LC_MESSAGES/totem.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/totem.mo
+file path=usr/share/locale/sv/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ta/LC_MESSAGES/totem.mo
+file path=usr/share/locale/te/LC_MESSAGES/totem.mo
+file path=usr/share/locale/th/LC_MESSAGES/totem.mo
+file path=usr/share/locale/tr/LC_MESSAGES/totem.mo
+file path=usr/share/locale/ug/LC_MESSAGES/totem.mo
+file path=usr/share/locale/uk/LC_MESSAGES/totem.mo
+file path=usr/share/locale/vi/LC_MESSAGES/totem.mo
+file path=usr/share/locale/wa/LC_MESSAGES/totem.mo
+file path=usr/share/locale/xh/LC_MESSAGES/totem.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/totem.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/totem.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/totem.mo
+file path=usr/share/man/man1/totem-video-thumbnailer.1
+file path=usr/share/man/man1/totem.1
+file path=usr/share/omf/totem/totem-C.omf
+file path=usr/share/omf/totem/totem-bg.omf
+file path=usr/share/omf/totem/totem-ca.omf
+file path=usr/share/omf/totem/totem-cs.omf
+file path=usr/share/omf/totem/totem-da.omf
+file path=usr/share/omf/totem/totem-de.omf
+file path=usr/share/omf/totem/totem-el.omf
+file path=usr/share/omf/totem/totem-en_GB.omf
+file path=usr/share/omf/totem/totem-es.omf
+file path=usr/share/omf/totem/totem-eu.omf
+file path=usr/share/omf/totem/totem-fi.omf
+file path=usr/share/omf/totem/totem-fr.omf
+file path=usr/share/omf/totem/totem-it.omf
+file path=usr/share/omf/totem/totem-ja.omf
+file path=usr/share/omf/totem/totem-oc.omf
+file path=usr/share/omf/totem/totem-pa.omf
+file path=usr/share/omf/totem/totem-pl.omf
+file path=usr/share/omf/totem/totem-pt_BR.omf
+file path=usr/share/omf/totem/totem-ru.omf
+file path=usr/share/omf/totem/totem-sv.omf
+file path=usr/share/omf/totem/totem-uk.omf
+file path=usr/share/omf/totem/totem-zh_CN.omf
+file path=usr/share/omf/totem/totem-zh_HK.omf
+file path=usr/share/omf/totem/totem-zh_TW.omf
+file path=usr/share/totem/filmholes-big-left.png
+file path=usr/share/totem/filmholes-big-right.png
+file path=usr/share/totem/filmholes.png
+file path=usr/share/totem/fullscreen.ui
+file path=usr/share/totem/mozilla-viewer.ui
+file path=usr/share/totem/playlist.ui
+file path=usr/share/totem/plugins.ui
+file path=usr/share/totem/properties.ui
+file path=usr/share/totem/totem.ui
+file path=usr/share/totem/uri.ui
+file path=usr/share/totem/video-list.ui

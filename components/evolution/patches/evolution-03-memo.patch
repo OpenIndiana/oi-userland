@@ -1,0 +1,101 @@
+diff -ur evolution-2.29.92.1/calendar/conduits/memo/memo-conduit.c evolution-2.29.92.1-new/calendar/conduits/memo/memo-conduit.c
+--- evolution-2.29.92.1/calendar/conduits/memo/memo-conduit.c	2010-03-09 03:15:53.000000000 +0800
++++ evolution-2.29.92.1-new/calendar/conduits/memo/memo-conduit.c	2010-03-15 15:40:45.723022000 +0800
+@@ -515,7 +515,9 @@
+ 	const gchar *uid;
+ 	GSList *d_list = NULL;
+ 	ECalComponentText *description;
++	ECalComponentText summary;
+ 	ECalComponentClassification classif;
++	char *textstr = NULL;
+ 
+ 	LOG (g_message ( "local_record_from_comp\n" ));
+ 
+@@ -583,19 +585,32 @@
+ 	/* STOP: don't replace these with g_strdup, since free_Memo
+ 	   uses free to deallocate */
+ 
++	e_cal_component_get_summary (comp, &summary);
++	if (summary.value)
++		textstr = g_strdup (summary.value);
++
+ 	e_cal_component_get_description_list (comp, &d_list);
+ 	if (d_list) {
+ 		description = (ECalComponentText *) d_list->data;
+ 		if (description && description->value) {
+-			local->memo->text = e_pilot_utf8_to_pchar (description->value, ctxt->pilot_charset);
+-		}
+-		else{
+-			local->memo->text = NULL;
++			if (textstr) {
++				char *tmp = textstr;
++				textstr = g_strconcat (textstr, "\n", description->value, NULL);
++				g_free (tmp);
++			} else 
++				textstr = g_strdup (description->value);
+ 		}
+ 	} else {
+-		local->memo->text = NULL;
++		e_cal_component_free_text_list (d_list);
+ 	}
+ 
++	if (textstr)
++		local->memo->text = e_pilot_utf8_to_pchar (textstr, ctxt->pilot_charset);
++	else
++		local->memo->text = NULL;
++
++	g_free (textstr);
++
+ 	e_cal_component_get_classification (comp, &classif);
+ 
+ 	if (classif == E_CAL_COMPONENT_CLASS_PRIVATE)
+@@ -701,36 +716,27 @@
+ 		e_cal_component_set_summary(comp, NULL);
+ 	} else {
+ 		gint idxToUse = -1, ntext = strlen(memo.text);
+-		gboolean foundNL = FALSE;
++		gchar * NLchar = NULL;
+ 		GSList l;
+ 		ECalComponentText text, sumText;
+ 
+-		for (i = 0; i<ntext && i<50; i++) {
+-			if (memo.text[i] == '\n') {
+-				idxToUse = i;
+-				foundNL = TRUE;
+-				break;
+-			}
+-		}
+-
+-		if (foundNL == FALSE) {
+-			if (ntext > 50) {
+-				txt2 = g_strndup(memo.text, 50);
+-			}
+-			else{
+-				txt2 = g_strdup(memo.text);
+-
+-			}
+-		}
+-		else{
+-			txt2 = g_strndup(memo.text, idxToUse); /* cuts off '\n' */
+-
++		NLchar = strchr(memo.text, '\n');
++		if (NLchar) {
++			txt2 = g_strndup(memo.text, NLchar - memo.text);
++			txt = g_strdup (NLchar + 1);
++		} else {
++			txt2 = g_strdup(memo.text);
++			txt = NULL;
+ 		}
+ 
+ 		sumText.value = txt3 = e_pilot_utf8_from_pchar(txt2, pilot_charset);
+ 		sumText.altrep = NULL;
+ 
+-		text.value = txt = e_pilot_utf8_from_pchar (memo.text, pilot_charset);
++		if (txt)
++			text.value = e_pilot_utf8_from_pchar (txt, pilot_charset);
++		else
++			text.value = g_strdup("");
++
+ 		text.altrep = NULL;
+ 		l.data = &text;
+ 		l.next = NULL;

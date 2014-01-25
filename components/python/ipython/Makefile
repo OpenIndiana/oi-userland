@@ -26,12 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ipython
-COMPONENT_VERSION=	0.10
+COMPONENT_VERSION=	1.1.0
 COMPONENT_PROJECT_URL=	http://ipython.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:60d602637dc5f078b083a4ca5ab64364ba816bd72439844012ed11a30f88228c
+    sha256:6c4e4a65225ab45be923f6bd0b71b604ddf8acd769c4e2818fac89793cdf91be
 COMPONENT_ARCHIVE_URL=	http://archive.ipython.org/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/ipython
 
@@ -45,8 +45,10 @@ COMPONENT_PRE_BUILD_ACTION = \
 		-exec $(GSED) -i -e 's/env python/python$(PYTHON_VERSION)/' "{}" \; ;
 
 # Unpack the ipython man pages.
-COMPONENT_POST_UNPACK_ACTION = \
-	(cd $(SOURCE_DIR)/docs/man; /usr/bin/gunzip * )
+#COMPONENT_POST_UNPACK_ACTION = \
+#	(cd $(SOURCE_DIR)/docs/man; /usr/bin/gunzip * )
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:          $(BUILD_32)

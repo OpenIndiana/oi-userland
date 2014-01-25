@@ -1,0 +1,24 @@
+$NetBSD: patch-ao,v 1.4 2013/06/23 17:39:43 jperkin Exp $
+
+Support rhino.
+
+--- jdk/make/common/Release.gmk.orig	2013-06-21 13:12:13.781215177 +0000
++++ jdk/make/common/Release.gmk
+@@ -842,6 +842,7 @@ initial-image-jre:: initial-image-jre-se
+ 	$(CP) $(RT_JAR) $(JRE_IMAGE_DIR)/lib/rt.jar
+ 	$(CP) $(RESOURCES_JAR) $(JRE_IMAGE_DIR)/lib/resources.jar
+ 	$(CP) $(JSSE_JAR) $(JRE_IMAGE_DIR)/lib/jsse.jar
++	$(CP) $(RHINO_JAR) $(JRE_IMAGE_DIR)/lib/rhino.jar
+ ifneq ($(JFR_JAR),)
+ 	$(CP) $(JFR_JAR) $(JRE_IMAGE_DIR)/lib/jfr.jar
+ endif
+@@ -1170,7 +1171,8 @@ initial-image-jdk:: initial-image-jdk-se
+ 	@#
+ 	@# Swing BeanInfo generation
+ 	@#
+-	$(CD) javax/swing/beaninfo && $(MAKE) swing-1.2-beans
++	@# XXX javadoc
++	@# $(CD) javax/swing/beaninfo && $(MAKE) swing-1.2-beans
+ ifneq ($(PLATFORM), windows)
+ 	$(call copy-man-pages,$(JDK_IMAGE_DIR),$(JDK_MAN_PAGES))
+ endif # !windows

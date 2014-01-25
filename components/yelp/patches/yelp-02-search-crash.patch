@@ -1,0 +1,12 @@
+--- yelp-2.21.1.old/src/yelp-search-parser.c	2007-12-04 16:30:24.861963000 +0000
++++ yelp-2.21.1/src/yelp-search-parser.c	2007-12-04 16:31:46.203271000 +0000
+@@ -1061,6 +1061,9 @@
+ 	fname = reg->uri;
+     }
+ 
++	if (!fname || (fname && strlen(fname) == 0))
++		return FALSE;
++
+     while (fname[0] == '/' && fname[1] == '/') {
+ 	fname++;
+     }

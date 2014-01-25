@@ -1,0 +1,20 @@
+diff --git a/gfx/thebes/gfxAlphaRecoverySSE2.cpp b/gfx/thebes/gfxAlphaRecoverySSE2.cpp
+index 8fbe01e..a51e822 100644
+--- a/gfx/thebes/gfxAlphaRecoverySSE2.cpp
++++ b/gfx/thebes/gfxAlphaRecoverySSE2.cpp
+@@ -20,10 +20,12 @@
+     { 0x0000ff00, 0x0000ff00, 0x0000ff00, 0x0000ff00 };
+ static uint32_t alphaMaski[] __attribute__ ((aligned (16))) =
+     { 0xff000000, 0xff000000, 0xff000000, 0xff000000 };
+-#elif defined(__SUNPRO_CC) && (defined(__i386) || defined(__x86_64__))
++#elif defined(__SUNPRO_CC) && (defined(__i386) || defined(__x86_64))
+ #pragma align 16 (greenMaski, alphaMaski)
+-static uint32_t greenMaski[] = { 0x0000ff00, 0x0000ff00, 0x0000ff00, 0x0000ff00 };
+-static uint32_t alphaMaski[] = { 0xff000000, 0xff000000, 0xff000000, 0xff000000 };
++static uint32_t greenMaski[] __attribute__ ((aligned (16))) =
++    { 0x0000ff00, 0x0000ff00, 0x0000ff00, 0x0000ff00 };
++static uint32_t alphaMaski[] __attribute__ ((aligned (16))) =
++    { 0xff000000, 0xff000000, 0xff000000, 0xff000000 };
+ #endif
+ 
+ bool

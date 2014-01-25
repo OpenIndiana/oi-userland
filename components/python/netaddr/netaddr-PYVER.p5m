@@ -41,10 +41,10 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 link path=usr/bin/netaddr target=netaddr-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 #
-# since we have IPython < 0.11, skip dependencies for
-# IPython.frontend.terminal.embed
+# since we have IPython > 0.11, skip dependencies for
+# IPython.Shell
 file path=usr/bin/netaddr-$(PYVER) \
-    pkg.depend.bypass-generate=.*(frontend|terminal|embed).*
+    pkg.depend.bypass-generate=.*Shell.*
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr-$(IPS_COMPONENT_VERSION)-py$(PYVER).egg-info
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/netaddr/compat.py

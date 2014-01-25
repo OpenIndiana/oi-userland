@@ -1,0 +1,608 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Aurelien Larcher. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/$(COMPONENT_FMRI)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value=org.opensolaris.category.2008:System/Shells
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+<transform file path=.*\.py$ -> default pkg.tmp.autopyc false>
+
+depend type=require fmri=pkg:/shell/bash
+
+dir  path=etc
+dir  path=etc/profile.d
+file path=etc/profile.d/bash_completion.sh mode=0644 preserve=true
+dir  path=usr
+dir  path=usr/share
+dir  path=usr/share/bash-completion
+file path=usr/share/bash-completion/bash_completion
+dir  path=usr/share/bash-completion/completions
+file path=usr/share/bash-completion/completions/a2x
+file path=usr/share/bash-completion/completions/abook
+file path=usr/share/bash-completion/completions/aclocal
+link path=usr/share/bash-completion/completions/aclocal-1.11 target=aclocal
+file path=usr/share/bash-completion/completions/acpi
+file path=usr/share/bash-completion/completions/add_members
+file path=usr/share/bash-completion/completions/alias
+link path=usr/share/bash-completion/completions/alpine target=pine
+link path=usr/share/bash-completion/completions/alternatives \
+    target=update-alternatives
+link path=usr/share/bash-completion/completions/animate target=convert
+file path=usr/share/bash-completion/completions/ant
+file path=usr/share/bash-completion/completions/apache2ctl
+link path=usr/share/bash-completion/completions/apropos target=man
+file path=usr/share/bash-completion/completions/apt-build
+file path=usr/share/bash-completion/completions/apt-cache
+file path=usr/share/bash-completion/completions/apt-get
+file path=usr/share/bash-completion/completions/aptitude
+file path=usr/share/bash-completion/completions/arch
+link path=usr/share/bash-completion/completions/arm-koji target=koji
+file path=usr/share/bash-completion/completions/arping
+file path=usr/share/bash-completion/completions/arpspoof
+file path=usr/share/bash-completion/completions/asciidoc
+link path=usr/share/bash-completion/completions/asciidoc.py target=asciidoc
+file path=usr/share/bash-completion/completions/aspell
+file path=usr/share/bash-completion/completions/autoconf
+link path=usr/share/bash-completion/completions/autoheader target=autoreconf
+file path=usr/share/bash-completion/completions/automake
+link path=usr/share/bash-completion/completions/automake-1.11 target=automake
+file path=usr/share/bash-completion/completions/autoreconf
+file path=usr/share/bash-completion/completions/autorpm
+file path=usr/share/bash-completion/completions/autoscan
+link path=usr/share/bash-completion/completions/autossh target=ssh
+link path=usr/share/bash-completion/completions/autoupdate target=autoscan
+file path=usr/share/bash-completion/completions/avctrl
+file path=usr/share/bash-completion/completions/badblocks
+file path=usr/share/bash-completion/completions/bk
+file path=usr/share/bash-completion/completions/brctl
+link path=usr/share/bash-completion/completions/btdownloadcurses.py \
+    target=btdownloadheadless.py
+link path=usr/share/bash-completion/completions/btdownloadgui.py \
+    target=btdownloadheadless.py
+file path=usr/share/bash-completion/completions/btdownloadheadless.py
+file path=usr/share/bash-completion/completions/bzip2
+link path=usr/share/bash-completion/completions/c++ target=gcc
+file path=usr/share/bash-completion/completions/cal
+file path=usr/share/bash-completion/completions/cancel
+file path=usr/share/bash-completion/completions/cardctl
+link path=usr/share/bash-completion/completions/cc target=gcc
+file path=usr/share/bash-completion/completions/ccache
+link path=usr/share/bash-completion/completions/cdrecord target=wodim
+file path=usr/share/bash-completion/completions/cfagent
+file path=usr/share/bash-completion/completions/cfrun
+file path=usr/share/bash-completion/completions/chage
+file path=usr/share/bash-completion/completions/change_pw
+file path=usr/share/bash-completion/completions/check_db
+file path=usr/share/bash-completion/completions/check_perms
+file path=usr/share/bash-completion/completions/chgrp
+file path=usr/share/bash-completion/completions/chkconfig
+file path=usr/share/bash-completion/completions/chown
+file path=usr/share/bash-completion/completions/chpasswd
+file path=usr/share/bash-completion/completions/chronyc
+file path=usr/share/bash-completion/completions/chrpath
+file path=usr/share/bash-completion/completions/chsh
+link path=usr/share/bash-completion/completions/ci target=rcs
+link path=usr/share/bash-completion/completions/ciptool target=hcitool
+link path=usr/share/bash-completion/completions/civclient target=freeciv-gtk2
+link path=usr/share/bash-completion/completions/civserver target=freeciv-server
+file path=usr/share/bash-completion/completions/cksfv
+file path=usr/share/bash-completion/completions/cleanarch
+file path=usr/share/bash-completion/completions/clisp
+file path=usr/share/bash-completion/completions/clone_member
+link path=usr/share/bash-completion/completions/clzip target=lzip
+link path=usr/share/bash-completion/completions/co target=rcs
+link path=usr/share/bash-completion/completions/colormake target=make
+link path=usr/share/bash-completion/completions/compare target=convert
+link path=usr/share/bash-completion/completions/compgen target=complete
+file path=usr/share/bash-completion/completions/complete
+link path=usr/share/bash-completion/completions/composite target=convert
+file path=usr/share/bash-completion/completions/config_list
+file path=usr/share/bash-completion/completions/configure
+link path=usr/share/bash-completion/completions/conjure target=convert
+file path=usr/share/bash-completion/completions/convert
+file path=usr/share/bash-completion/completions/cowsay
+link path=usr/share/bash-completion/completions/cowthink target=cowsay
+file path=usr/share/bash-completion/completions/cpan2dist
+file path=usr/share/bash-completion/completions/cpio
+file path=usr/share/bash-completion/completions/cppcheck
+link path=usr/share/bash-completion/completions/createdb target=psql
+file path=usr/share/bash-completion/completions/crontab
+file path=usr/share/bash-completion/completions/cryptsetup
+file path=usr/share/bash-completion/completions/curl
+file path=usr/share/bash-completion/completions/cvs
+file path=usr/share/bash-completion/completions/cvsps
+link path=usr/share/bash-completion/completions/dcop target=qdbus
+file path=usr/share/bash-completion/completions/dd
+link path=usr/share/bash-completion/completions/declare target=function
+file path=usr/share/bash-completion/completions/desktop-file-validate
+link path=usr/share/bash-completion/completions/dfutool target=hcitool
+file path=usr/share/bash-completion/completions/dhclient
+file path=usr/share/bash-completion/completions/dict
+link path=usr/share/bash-completion/completions/display target=convert
+file path=usr/share/bash-completion/completions/dmesg
+file path=usr/share/bash-completion/completions/dnsspoof
+file path=usr/share/bash-completion/completions/dot
+file path=usr/share/bash-completion/completions/dpkg
+link path=usr/share/bash-completion/completions/dpkg-deb target=dpkg
+link path=usr/share/bash-completion/completions/dpkg-query target=dpkg
+link path=usr/share/bash-completion/completions/dpkg-reconfigure target=dpkg
+file path=usr/share/bash-completion/completions/dpkg-source
+link path=usr/share/bash-completion/completions/dropdb target=psql
+file path=usr/share/bash-completion/completions/dselect
+file path=usr/share/bash-completion/completions/dsniff
+file path=usr/share/bash-completion/completions/dumpdb
+file path=usr/share/bash-completion/completions/dumpe2fs
+file path=usr/share/bash-completion/completions/e2freefrag
+file path=usr/share/bash-completion/completions/e2label
+link path=usr/share/bash-completion/completions/edquota target=quota
+file path=usr/share/bash-completion/completions/eject
+file path=usr/share/bash-completion/completions/eog
+file path=usr/share/bash-completion/completions/ether-wake
+file path=usr/share/bash-completion/completions/evince
+file path=usr/share/bash-completion/completions/explodepkg
+file path=usr/share/bash-completion/completions/export
+file path=usr/share/bash-completion/completions/faillog
+file path=usr/share/bash-completion/completions/fbgs
+file path=usr/share/bash-completion/completions/fbi
+file path=usr/share/bash-completion/completions/feh
+file path=usr/share/bash-completion/completions/file
+file path=usr/share/bash-completion/completions/file-roller
+link path=usr/share/bash-completion/completions/filebucket target=puppet
+file path=usr/share/bash-completion/completions/filefrag
+file path=usr/share/bash-completion/completions/filesnarf
+file path=usr/share/bash-completion/completions/find
+file path=usr/share/bash-completion/completions/find_member
+file path=usr/share/bash-completion/completions/freeciv-gtk2
+link path=usr/share/bash-completion/completions/freeciv-sdl target=freeciv-gtk2
+file path=usr/share/bash-completion/completions/freeciv-server
+link path=usr/share/bash-completion/completions/freeciv-xaw target=freeciv-gtk2
+file path=usr/share/bash-completion/completions/function
+file path=usr/share/bash-completion/completions/fusermount
+link path=usr/share/bash-completion/completions/g++ target=gcc
+link path=usr/share/bash-completion/completions/g4 target=p4
+link path=usr/share/bash-completion/completions/g77 target=gcc
+file path=usr/share/bash-completion/completions/gcc
+link path=usr/share/bash-completion/completions/gcj target=gcc
+file path=usr/share/bash-completion/completions/gcl
+file path=usr/share/bash-completion/completions/gdb
+file path=usr/share/bash-completion/completions/genaliases
+file path=usr/share/bash-completion/completions/gendiff
+file path=usr/share/bash-completion/completions/genisoimage
+file path=usr/share/bash-completion/completions/getent
+file path=usr/share/bash-completion/completions/gkrellm
+link path=usr/share/bash-completion/completions/gkrellm2 target=gkrellm
+link path=usr/share/bash-completion/completions/gmake target=make
+link path=usr/share/bash-completion/completions/gmplayer target=mplayer
+file path=usr/share/bash-completion/completions/gnatmake
+file path=usr/share/bash-completion/completions/gnome-mplayer
+link path=usr/share/bash-completion/completions/gnumake target=make
+file path=usr/share/bash-completion/completions/gpasswd
+link path=usr/share/bash-completion/completions/gpc target=gcc
+file path=usr/share/bash-completion/completions/gpg
+file path=usr/share/bash-completion/completions/gpg2
+file path=usr/share/bash-completion/completions/gphoto2
+file path=usr/share/bash-completion/completions/gprof
+file path=usr/share/bash-completion/completions/groupadd
+file path=usr/share/bash-completion/completions/groupdel
+file path=usr/share/bash-completion/completions/groupmems
+file path=usr/share/bash-completion/completions/groupmod
+file path=usr/share/bash-completion/completions/growisofs
+file path=usr/share/bash-completion/completions/grpck
+file path=usr/share/bash-completion/completions/gzip
+link path=usr/share/bash-completion/completions/hciattach target=hcitool
+link path=usr/share/bash-completion/completions/hciconfig target=hcitool
+file path=usr/share/bash-completion/completions/hcitool
+link path=usr/share/bash-completion/completions/hd target=hexdump
+file path=usr/share/bash-completion/completions/hddtemp
+file path=usr/share/bash-completion/completions/hexdump
+file path=usr/share/bash-completion/completions/hid2hci
+link path=usr/share/bash-completion/completions/host target=nslookup
+link path=usr/share/bash-completion/completions/hping target=hping2
+file path=usr/share/bash-completion/completions/hping2
+link path=usr/share/bash-completion/completions/hping3 target=hping2
+file path=usr/share/bash-completion/completions/htop
+file path=usr/share/bash-completion/completions/htpasswd
+file path=usr/share/bash-completion/completions/hwclock
+file path=usr/share/bash-completion/completions/iconv
+file path=usr/share/bash-completion/completions/id
+link path=usr/share/bash-completion/completions/identify target=convert
+file path=usr/share/bash-completion/completions/idn
+link path=usr/share/bash-completion/completions/ifdown target=ifup
+link path=usr/share/bash-completion/completions/ifstatus target=ifup
+file path=usr/share/bash-completion/completions/iftop
+file path=usr/share/bash-completion/completions/ifup
+link path=usr/share/bash-completion/completions/import target=convert
+file path=usr/share/bash-completion/completions/info
+file path=usr/share/bash-completion/completions/inject
+file path=usr/share/bash-completion/completions/insmod
+link path=usr/share/bash-completion/completions/insmod.static target=insmod
+file path=usr/share/bash-completion/completions/installpkg
+file path=usr/share/bash-completion/completions/interdiff
+file path=usr/share/bash-completion/completions/invoke-rc.d
+file path=usr/share/bash-completion/completions/ionice
+file path=usr/share/bash-completion/completions/ip
+file path=usr/share/bash-completion/completions/iperf
+file path=usr/share/bash-completion/completions/ipmitool
+file path=usr/share/bash-completion/completions/ipsec
+file path=usr/share/bash-completion/completions/iptables
+file path=usr/share/bash-completion/completions/ipv6calc
+file path=usr/share/bash-completion/completions/iscsiadm
+file path=usr/share/bash-completion/completions/isql
+file path=usr/share/bash-completion/completions/iwconfig
+file path=usr/share/bash-completion/completions/iwlist
+file path=usr/share/bash-completion/completions/iwpriv
+file path=usr/share/bash-completion/completions/iwspy
+file path=usr/share/bash-completion/completions/jar
+file path=usr/share/bash-completion/completions/jarsigner
+file path=usr/share/bash-completion/completions/java
+link path=usr/share/bash-completion/completions/javac target=java
+link path=usr/share/bash-completion/completions/javadoc target=java
+file path=usr/share/bash-completion/completions/javaws
+file path=usr/share/bash-completion/completions/jps
+file path=usr/share/bash-completion/completions/k3b
+file path=usr/share/bash-completion/completions/kcov
+file path=usr/share/bash-completion/completions/kill
+file path=usr/share/bash-completion/completions/killall
+file path=usr/share/bash-completion/completions/kldload
+file path=usr/share/bash-completion/completions/kldunload
+file path=usr/share/bash-completion/completions/koji
+link path=usr/share/bash-completion/completions/kplayer target=mplayer
+file path=usr/share/bash-completion/completions/ktutil
+link path=usr/share/bash-completion/completions/l2ping target=hcitool
+file path=usr/share/bash-completion/completions/larch
+file path=usr/share/bash-completion/completions/lastlog
+link path=usr/share/bash-completion/completions/lbzip2 target=bzip2
+link path=usr/share/bash-completion/completions/ldapadd target=ldapsearch
+link path=usr/share/bash-completion/completions/ldapcompare target=ldapsearch
+link path=usr/share/bash-completion/completions/ldapdelete target=ldapsearch
+link path=usr/share/bash-completion/completions/ldapmodify target=ldapsearch
+link path=usr/share/bash-completion/completions/ldapmodrdn target=ldapsearch
+link path=usr/share/bash-completion/completions/ldappasswd target=ldapsearch
+file path=usr/share/bash-completion/completions/ldapsearch
+file path=usr/share/bash-completion/completions/ldapvi
+link path=usr/share/bash-completion/completions/ldapwhoami target=ldapsearch
+file path=usr/share/bash-completion/completions/lftp
+file path=usr/share/bash-completion/completions/lftpget
+file path=usr/share/bash-completion/completions/lilo
+file path=usr/share/bash-completion/completions/links
+file path=usr/share/bash-completion/completions/lintian
+link path=usr/share/bash-completion/completions/lintian-info target=lintian
+file path=usr/share/bash-completion/completions/lisp
+file path=usr/share/bash-completion/completions/list_admins
+file path=usr/share/bash-completion/completions/list_lists
+file path=usr/share/bash-completion/completions/list_members
+file path=usr/share/bash-completion/completions/list_owners
+file path=usr/share/bash-completion/completions/look
+file path=usr/share/bash-completion/completions/lpq
+file path=usr/share/bash-completion/completions/lpr
+file path=usr/share/bash-completion/completions/lrzip
+file path=usr/share/bash-completion/completions/lsof
+file path=usr/share/bash-completion/completions/lua
+file path=usr/share/bash-completion/completions/luac
+file path=usr/share/bash-completion/completions/luseradd
+file path=usr/share/bash-completion/completions/luserdel
+link path=usr/share/bash-completion/completions/lusermod target=luseradd
+link path=usr/share/bash-completion/completions/lvchange target=lvm
+link path=usr/share/bash-completion/completions/lvcreate target=lvm
+link path=usr/share/bash-completion/completions/lvdisplay target=lvm
+link path=usr/share/bash-completion/completions/lvextend target=lvm
+file path=usr/share/bash-completion/completions/lvm
+link path=usr/share/bash-completion/completions/lvmdiskscan target=lvm
+link path=usr/share/bash-completion/completions/lvreduce target=lvm
+link path=usr/share/bash-completion/completions/lvremove target=lvm
+link path=usr/share/bash-completion/completions/lvrename target=lvm
+link path=usr/share/bash-completion/completions/lvresize target=lvm
+link path=usr/share/bash-completion/completions/lvs target=lvm
+link path=usr/share/bash-completion/completions/lvscan target=lvm
+file path=usr/share/bash-completion/completions/lzip
+file path=usr/share/bash-completion/completions/lzma
+file path=usr/share/bash-completion/completions/lzop
+file path=usr/share/bash-completion/completions/macof
+file path=usr/share/bash-completion/completions/mailmanctl
+link path=usr/share/bash-completion/completions/mailsnarf target=filesnarf
+file path=usr/share/bash-completion/completions/make
+file path=usr/share/bash-completion/completions/makepkg
+file path=usr/share/bash-completion/completions/man
+file path=usr/share/bash-completion/completions/mc
+file path=usr/share/bash-completion/completions/mcrypt
+file path=usr/share/bash-completion/completions/mdadm
+link path=usr/share/bash-completion/completions/mdecrypt target=mcrypt
+file path=usr/share/bash-completion/completions/mdtool
+file path=usr/share/bash-completion/completions/medusa
+link path=usr/share/bash-completion/completions/mencoder target=mplayer
+file path=usr/share/bash-completion/completions/mii-diag
+file path=usr/share/bash-completion/completions/mii-tool
+file path=usr/share/bash-completion/completions/minicom
+file path=usr/share/bash-completion/completions/mkinitrd
+link path=usr/share/bash-completion/completions/mkisofs target=genisoimage
+file path=usr/share/bash-completion/completions/mktemp
+file path=usr/share/bash-completion/completions/mmsitepass
+file path=usr/share/bash-completion/completions/modinfo
+file path=usr/share/bash-completion/completions/modprobe
+link path=usr/share/bash-completion/completions/mogrify target=convert
+file path=usr/share/bash-completion/completions/monodevelop
+link path=usr/share/bash-completion/completions/montage target=convert
+file path=usr/share/bash-completion/completions/mount
+file path=usr/share/bash-completion/completions/mount.linux
+file path=usr/share/bash-completion/completions/mplayer
+link path=usr/share/bash-completion/completions/mplayer2 target=mplayer
+link path=usr/share/bash-completion/completions/msgsnarf target=filesnarf
+file path=usr/share/bash-completion/completions/msynctool
+file path=usr/share/bash-completion/completions/mtx
+file path=usr/share/bash-completion/completions/munin-node-configure
+file path=usr/share/bash-completion/completions/munin-run
+file path=usr/share/bash-completion/completions/munin-update
+file path=usr/share/bash-completion/completions/munindoc
+file path=usr/share/bash-completion/completions/mussh
+file path=usr/share/bash-completion/completions/mutt
+link path=usr/share/bash-completion/completions/muttng target=mutt
+file path=usr/share/bash-completion/completions/mysql
+file path=usr/share/bash-completion/completions/mysqladmin
+file path=usr/share/bash-completion/completions/nc
+link path=usr/share/bash-completion/completions/ncal target=cal
+file path=usr/share/bash-completion/completions/ncftp
+file path=usr/share/bash-completion/completions/nethogs
+file path=usr/share/bash-completion/completions/newgrp
+file path=usr/share/bash-completion/completions/newlist
+file path=usr/share/bash-completion/completions/newusers
+file path=usr/share/bash-completion/completions/ngrep
+file path=usr/share/bash-completion/completions/nmap
+file path=usr/share/bash-completion/completions/nmcli
+file path=usr/share/bash-completion/completions/nslookup
+file path=usr/share/bash-completion/completions/ntpdate
+file path=usr/share/bash-completion/completions/openssl
+file path=usr/share/bash-completion/completions/opera
+file path=usr/share/bash-completion/completions/p4
+file path=usr/share/bash-completion/completions/pack200
+file path=usr/share/bash-completion/completions/passwd
+file path=usr/share/bash-completion/completions/patch
+link path=usr/share/bash-completion/completions/pbzip2 target=bzip2
+link path=usr/share/bash-completion/completions/pccardctl target=cardctl
+link path=usr/share/bash-completion/completions/pdlzip target=lzip
+file path=usr/share/bash-completion/completions/perl
+link path=usr/share/bash-completion/completions/perldoc target=perl
+file path=usr/share/bash-completion/completions/pgrep
+link path=usr/share/bash-completion/completions/phing target=ant
+file path=usr/share/bash-completion/completions/pidof
+link path=usr/share/bash-completion/completions/pigz target=gzip
+file path=usr/share/bash-completion/completions/pine
+link path=usr/share/bash-completion/completions/pinfo target=info
+file path=usr/share/bash-completion/completions/ping
+link path=usr/share/bash-completion/completions/ping6 target=ping
+file path=usr/share/bash-completion/completions/pkg-config
+file path=usr/share/bash-completion/completions/pkg-get
+link path=usr/share/bash-completion/completions/pkg_deinstall target=pkg_delete
+file path=usr/share/bash-completion/completions/pkg_delete
+link path=usr/share/bash-completion/completions/pkg_info target=pkg_delete
+file path=usr/share/bash-completion/completions/pkgadd
+file path=usr/share/bash-completion/completions/pkgrm
+file path=usr/share/bash-completion/completions/pkgtool
+file path=usr/share/bash-completion/completions/pkgutil
+link path=usr/share/bash-completion/completions/pkill target=pgrep
+file path=usr/share/bash-completion/completions/plague-client
+link path=usr/share/bash-completion/completions/plzip target=lzip
+file path=usr/share/bash-completion/completions/pm-hibernate
+file path=usr/share/bash-completion/completions/pm-is-supported
+file path=usr/share/bash-completion/completions/pm-powersave
+link path=usr/share/bash-completion/completions/pm-suspend target=pm-hibernate
+link path=usr/share/bash-completion/completions/pm-suspend-hybrid \
+    target=pm-hibernate
+link path=usr/share/bash-completion/completions/pmake target=make
+file path=usr/share/bash-completion/completions/portinstall
+file path=usr/share/bash-completion/completions/portupgrade
+link path=usr/share/bash-completion/completions/postalias target=postmap
+file path=usr/share/bash-completion/completions/postcat
+file path=usr/share/bash-completion/completions/postconf
+file path=usr/share/bash-completion/completions/postfix
+file path=usr/share/bash-completion/completions/postmap
+file path=usr/share/bash-completion/completions/postsuper
+file path=usr/share/bash-completion/completions/povray
+link path=usr/share/bash-completion/completions/ppc-koji target=koji
+file path=usr/share/bash-completion/completions/prelink
+file path=usr/share/bash-completion/completions/protoc
+file path=usr/share/bash-completion/completions/psql
+file path=usr/share/bash-completion/completions/puppet
+link path=usr/share/bash-completion/completions/puppetca target=puppet
+link path=usr/share/bash-completion/completions/puppetd target=puppet
+link path=usr/share/bash-completion/completions/puppetdoc target=puppet
+link path=usr/share/bash-completion/completions/puppetmasterd target=puppet
+link path=usr/share/bash-completion/completions/puppetqd target=puppet
+link path=usr/share/bash-completion/completions/puppetrun target=puppet
+link path=usr/share/bash-completion/completions/pvchange target=lvm
+link path=usr/share/bash-completion/completions/pvcreate target=lvm
+link path=usr/share/bash-completion/completions/pvdisplay target=lvm
+link path=usr/share/bash-completion/completions/pvmove target=lvm
+link path=usr/share/bash-completion/completions/pvremove target=lvm
+link path=usr/share/bash-completion/completions/pvs target=lvm
+link path=usr/share/bash-completion/completions/pvscan target=lvm
+file path=usr/share/bash-completion/completions/pwck
+file path=usr/share/bash-completion/completions/pwd
+file path=usr/share/bash-completion/completions/pwdx
+file path=usr/share/bash-completion/completions/pwgen
+link path=usr/share/bash-completion/completions/pxz target=xz
+file path=usr/share/bash-completion/completions/pydoc
+link path=usr/share/bash-completion/completions/pydoc3 target=pydoc
+file path=usr/share/bash-completion/completions/pylint
+file path=usr/share/bash-completion/completions/python
+link path=usr/share/bash-completion/completions/python2 target=python
+link path=usr/share/bash-completion/completions/python3 target=python
+file path=usr/share/bash-completion/completions/qdbus
+file path=usr/share/bash-completion/completions/qemu
+file path=usr/share/bash-completion/completions/qrunner
+file path=usr/share/bash-completion/completions/querybts
+file path=usr/share/bash-completion/completions/quota
+link path=usr/share/bash-completion/completions/quotacheck target=quota
+link path=usr/share/bash-completion/completions/quotaoff target=quota
+link path=usr/share/bash-completion/completions/quotaon target=quota
+link path=usr/share/bash-completion/completions/ralsh target=puppet
+file path=usr/share/bash-completion/completions/rcs
+link path=usr/share/bash-completion/completions/rcsdiff target=rcs
+file path=usr/share/bash-completion/completions/rdesktop
+link path=usr/share/bash-completion/completions/rdict target=dict
+file path=usr/share/bash-completion/completions/remove_members
+file path=usr/share/bash-completion/completions/removepkg
+file path=usr/share/bash-completion/completions/renice
+file path=usr/share/bash-completion/completions/reportbug
+link path=usr/share/bash-completion/completions/repquota target=quota
+file path=usr/share/bash-completion/completions/reptyr
+file path=usr/share/bash-completion/completions/resolvconf
+link path=usr/share/bash-completion/completions/rfcomm target=hcitool
+file path=usr/share/bash-completion/completions/rfkill
+file path=usr/share/bash-completion/completions/ri
+link path=usr/share/bash-completion/completions/rlog target=rcs
+file path=usr/share/bash-completion/completions/rmlist
+file path=usr/share/bash-completion/completions/rmmod
+file path=usr/share/bash-completion/completions/route
+file path=usr/share/bash-completion/completions/rpcdebug
+file path=usr/share/bash-completion/completions/rpm
+link path=usr/share/bash-completion/completions/rpm2targz target=rpm2tgz
+file path=usr/share/bash-completion/completions/rpm2tgz
+link path=usr/share/bash-completion/completions/rpm2txz target=rpm2tgz
+link path=usr/share/bash-completion/completions/rpmbuild target=rpm
+link path=usr/share/bash-completion/completions/rpmbuild-md5 target=rpm
+file path=usr/share/bash-completion/completions/rpmcheck
+file path=usr/share/bash-completion/completions/rrdtool
+file path=usr/share/bash-completion/completions/rsync
+file path=usr/share/bash-completion/completions/rtcwake
+link path=usr/share/bash-completion/completions/s390-koji target=koji
+file path=usr/share/bash-completion/completions/sbcl
+link path=usr/share/bash-completion/completions/sbcl-mt target=sbcl
+file path=usr/share/bash-completion/completions/sbopkg
+link path=usr/share/bash-completion/completions/scp target=ssh
+file path=usr/share/bash-completion/completions/screen
+link path=usr/share/bash-completion/completions/sdptool target=hcitool
+link path=usr/share/bash-completion/completions/setquota target=quota
+link path=usr/share/bash-completion/completions/sftp target=ssh
+file path=usr/share/bash-completion/completions/sh
+file path=usr/share/bash-completion/completions/sitecopy
+file path=usr/share/bash-completion/completions/slackpkg
+file path=usr/share/bash-completion/completions/slapt-get
+file path=usr/share/bash-completion/completions/slapt-src
+link path=usr/share/bash-completion/completions/slogin target=ssh
+file path=usr/share/bash-completion/completions/smartctl
+link path=usr/share/bash-completion/completions/smbcacls target=smbclient
+file path=usr/share/bash-completion/completions/smbclient
+link path=usr/share/bash-completion/completions/smbcquotas target=smbclient
+link path=usr/share/bash-completion/completions/smbget target=smbclient
+link path=usr/share/bash-completion/completions/smbpasswd target=smbclient
+link path=usr/share/bash-completion/completions/smbtar target=smbclient
+link path=usr/share/bash-completion/completions/smbtree target=smbclient
+file path=usr/share/bash-completion/completions/snownews
+link path=usr/share/bash-completion/completions/sparc-koji target=koji
+link path=usr/share/bash-completion/completions/spovray target=povray
+file path=usr/share/bash-completion/completions/sqlite3
+file path=usr/share/bash-completion/completions/ss
+file path=usr/share/bash-completion/completions/ssh
+file path=usr/share/bash-completion/completions/ssh-add
+file path=usr/share/bash-completion/completions/ssh-copy-id
+file path=usr/share/bash-completion/completions/sshfs
+file path=usr/share/bash-completion/completions/sshmitm
+file path=usr/share/bash-completion/completions/sshow
+file path=usr/share/bash-completion/completions/strace
+link path=usr/share/bash-completion/completions/stream target=convert
+file path=usr/share/bash-completion/completions/strings
+file path=usr/share/bash-completion/completions/su
+file path=usr/share/bash-completion/completions/sudo
+link path=usr/share/bash-completion/completions/sudoedit target=sudo
+file path=usr/share/bash-completion/completions/svcadm
+file path=usr/share/bash-completion/completions/svk
+file path=usr/share/bash-completion/completions/sync_members
+file path=usr/share/bash-completion/completions/sysbench
+file path=usr/share/bash-completion/completions/sysctl
+file path=usr/share/bash-completion/completions/tar
+file path=usr/share/bash-completion/completions/tcpdump
+file path=usr/share/bash-completion/completions/tcpkill
+file path=usr/share/bash-completion/completions/tcpnice
+link path=usr/share/bash-completion/completions/tightvncviewer target=vncviewer
+file path=usr/share/bash-completion/completions/tracepath
+link path=usr/share/bash-completion/completions/tracepath6 target=tracepath
+file path=usr/share/bash-completion/completions/tshark
+file path=usr/share/bash-completion/completions/tune2fs
+link path=usr/share/bash-completion/completions/typeset target=function
+file path=usr/share/bash-completion/completions/umount
+file path=usr/share/bash-completion/completions/umount.linux
+file path=usr/share/bash-completion/completions/unace
+file path=usr/share/bash-completion/completions/unpack200
+file path=usr/share/bash-completion/completions/unrar
+file path=usr/share/bash-completion/completions/unshunt
+file path=usr/share/bash-completion/completions/update-alternatives
+file path=usr/share/bash-completion/completions/update-rc.d
+file path=usr/share/bash-completion/completions/upgradepkg
+file path=usr/share/bash-completion/completions/urlsnarf
+file path=usr/share/bash-completion/completions/useradd
+file path=usr/share/bash-completion/completions/userdel
+file path=usr/share/bash-completion/completions/usermod
+file path=usr/share/bash-completion/completions/valgrind
+link path=usr/share/bash-completion/completions/vgcfgbackup target=lvm
+link path=usr/share/bash-completion/completions/vgcfgrestore target=lvm
+link path=usr/share/bash-completion/completions/vgchange target=lvm
+link path=usr/share/bash-completion/completions/vgck target=lvm
+link path=usr/share/bash-completion/completions/vgconvert target=lvm
+link path=usr/share/bash-completion/completions/vgcreate target=lvm
+link path=usr/share/bash-completion/completions/vgdisplay target=lvm
+link path=usr/share/bash-completion/completions/vgexport target=lvm
+link path=usr/share/bash-completion/completions/vgextend target=lvm
+link path=usr/share/bash-completion/completions/vgimport target=lvm
+link path=usr/share/bash-completion/completions/vgmerge target=lvm
+link path=usr/share/bash-completion/completions/vgmknodes target=lvm
+link path=usr/share/bash-completion/completions/vgreduce target=lvm
+link path=usr/share/bash-completion/completions/vgremove target=lvm
+link path=usr/share/bash-completion/completions/vgrename target=lvm
+link path=usr/share/bash-completion/completions/vgs target=lvm
+link path=usr/share/bash-completion/completions/vgscan target=lvm
+link path=usr/share/bash-completion/completions/vgsplit target=lvm
+link path=usr/share/bash-completion/completions/vigr target=vipw
+file path=usr/share/bash-completion/completions/vipw
+file path=usr/share/bash-completion/completions/vmstat
+file path=usr/share/bash-completion/completions/vncviewer
+file path=usr/share/bash-completion/completions/vpnc
+file path=usr/share/bash-completion/completions/watch
+file path=usr/share/bash-completion/completions/webmitm
+file path=usr/share/bash-completion/completions/wget
+link path=usr/share/bash-completion/completions/whatis target=man
+file path=usr/share/bash-completion/completions/wine
+file path=usr/share/bash-completion/completions/withlist
+file path=usr/share/bash-completion/completions/wodim
+file path=usr/share/bash-completion/completions/wol
+file path=usr/share/bash-completion/completions/wsimport
+file path=usr/share/bash-completion/completions/wtf
+file path=usr/share/bash-completion/completions/wvdial
+file path=usr/share/bash-completion/completions/xfreerdp
+file path=usr/share/bash-completion/completions/xgamma
+file path=usr/share/bash-completion/completions/xhost
+file path=usr/share/bash-completion/completions/xm
+file path=usr/share/bash-completion/completions/xmllint
+file path=usr/share/bash-completion/completions/xmlwf
+file path=usr/share/bash-completion/completions/xmms
+file path=usr/share/bash-completion/completions/xmodmap
+link path=usr/share/bash-completion/completions/xpovray target=povray
+file path=usr/share/bash-completion/completions/xrandr
+file path=usr/share/bash-completion/completions/xrdb
+file path=usr/share/bash-completion/completions/xsltproc
+link path=usr/share/bash-completion/completions/xvnc4viewer target=vncviewer
+file path=usr/share/bash-completion/completions/xxd
+file path=usr/share/bash-completion/completions/xz
+file path=usr/share/bash-completion/completions/xzdec
+link path=usr/share/bash-completion/completions/ypcat target=ypmatch
+file path=usr/share/bash-completion/completions/ypmatch
+file path=usr/share/bash-completion/completions/yum-arch
+dir  path=usr/share/bash-completion/helpers
+file path=usr/share/bash-completion/helpers/perl
+dir  path=usr/share/pkgconfig
+file path=usr/share/pkgconfig/bash-completion.pc

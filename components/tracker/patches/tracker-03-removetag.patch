@@ -1,0 +1,22 @@
+--- tracker-0.6.6/src/libtracker-gtk/tracker-tag-bar.c.old	Mon Feb 25 09:21:19 2008
++++ tracker-0.6.6/src/libtracker-gtk/tracker-tag-bar.c	Fri Aug 22 16:52:18 2008
+@@ -165,13 +165,14 @@
+ {
+ 	TrackerTagBarPrivate *priv;
+ 	GError *error = NULL;
+-	char *args[1];
+-
++	char *args[2] ;
++	
+ 	priv = TRACKER_TAG_BAR_GET_PRIVATE (bar);
+-
++	
+ 	args[0] = g_strdup (priv->active_tag);
+-
+-	tracker_keywords_remove(priv->client, priv->type, priv->uri,
++        args[1] = NULL;
++	
++	tracker_keywords_remove(priv->client, priv->type, priv->uri, 
+ 				 args, &error);
+ 	if (error) {
+ 		g_print ("Tag Removal Error : %s", error->message);

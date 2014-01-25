@@ -1,0 +1,20 @@
+--- bacula-5.2.13/manpages/Makefile.in.orig	2013-12-13 20:11:43.378133499 +0400
++++ bacula-5.2.13/manpages/Makefile.in	2013-12-13 20:16:04.149001310 +0400
+@@ -21,15 +21,11 @@
+ install:
+ 	$(MKDIR) $(DESTDIR)/$(mandir)/man8
+ 	for I in ${MAN8}; \
+-	  do ($(RMF) $$I.gz; gzip -c $$I >$$I.gz; \
+-	     $(INSTALL_DATA) $$I.gz $(DESTDIR)$(mandir)/man8/$$I.gz; \
+-	     rm -f $$I.gz); \
++	  do ( $(INSTALL_DATA) $$I $(DESTDIR)$(mandir)/man8/$$I; ); \
+ 	done
+ 	$(MKDIR) $(DESTDIR)/$(mandir)/man1
+ 	for I in ${MAN1}; \
+-	  do ($(RMF) $$I.gz; gzip -c $$I >$$I.gz; \
+-	     $(INSTALL_DATA) $$I.gz $(DESTDIR)$(mandir)/man1/$$I.gz; \
+-	     rm -f $$I.gz); \
++	  do ( $(INSTALL_DATA) $$I $(DESTDIR)$(mandir)/man1/$$I; ); \
+ 	done
+ 
+ uninstall:

@@ -22,28 +22,37 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+PATH=/usr/bin:/usr/sbin
 
 COMPONENT_NAME=		pyOpenSSL
-COMPONENT_VERSION=	0.11
-COMPONENT_PROJECT_URL=	http://pyopenssl.sourceforge.net/
+COMPONENT_VERSION=	0.13
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:42ae2dc29a5ebf5088521cb8df2b1bdf039d28e14845fd9df4ab59658b565cfd
-COMPONENT_ARCHIVE_URL=	http://launchpad.net/pyopenssl/main/0.11/+download/$(COMPONENT_ARCHIVE)
+    sha256:21e12b03abaa0e04ecc8cd9c251598f71bae11c9f385304234e4ea5618c6163b
+COMPONENT_ARCHIVE_URL=  $(call pypi_url)
+COMPONENT_PROJECT_URL=  https://launchpad.net/pyopenssl
 COMPONENT_BUGDB=	python-mod/pyopenssl
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_TEST_DIR = $(COMPONENT_SRC)/OpenSSL/test
+# The .so files are under ./OpenSSL/64 not ./64/OpenSSL so the
+# $(PYTHON_VENDOR_PACKAGES) variable for 64bit Python is wrong.
+# Everything works fine if we just add the 32bit path.
+COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
+COMPONENT_TEST_CMD = $(SHELL)
+COMPONENT_TEST_ARGS = $(COMPONENT_DIR)/files/runtests
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

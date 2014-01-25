@@ -38,26 +38,11 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 
-# Needed to get around a broken /usr/lib/python2.7/config/Makefile
-# See CR #16837431.
-LD=$(CC)
-LDSHARED=$(CC) -G $(CC_BITS)
-CFLAGS= $(CC_BITS)
-CPPFLAGS=
-LDFLAGS=
-PYTHON_ENV += CC="$(CC)"
-PYTHON_ENV += LDSHARED="$(LDSHARED)"
-PYTHON_ENV += LD="$(LD)"
-PYTHON_ENV += CFLAGS="$(CFLAGS)"
-PYTHON_ENV += CPPFLAGS="$(CPPFLAGS)"
-PYTHON_ENV += LDFLAGS="$(LDFLAGS)"
-COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
-
 # common targets
 
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 

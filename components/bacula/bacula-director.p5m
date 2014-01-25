@@ -1,0 +1,79 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/backup/bacula/bacula-director@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY) - director"
+set name=info.classification value="org.opensolaris.category.2008:Applications/System Utilities"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license bacula.license license="AGPLv3 with exceptions"
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/bin/+ -> default mode 0555>
+
+file files/bacula-dir.conf path=etc/bacula/bacula-dir.conf group=bacula mode=0640 preserve=true
+# Store locally, generated file contains 64-bit paths
+file files/make_catalog_backup.pl path=etc/bacula/scripts/make_catalog_backup.pl mode=0555
+
+hardlink path=usr/sbin/bacula-dir target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/sbin/bregex target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/sbin/bwild target=../lib/isaexec pkg.linted.userland.action002.0=true
+hardlink path=usr/sbin/dbcheck target=../lib/isaexec pkg.linted.userland.action002.0=true
+
+file files/bacula-dir.xml path=lib/svc/manifest/application/bacula/bacula-dir.xml restart_fmri=svc:/system/manifest-import:default
+
+# Generated section:
+
+file path=etc/bacula/scripts/create_bacula_database mode=0555
+file path=etc/bacula/scripts/create_mysql_database mode=0555
+file path=etc/bacula/scripts/create_postgresql_database mode=0555
+file path=etc/bacula/scripts/create_sqlite3_database mode=0555
+file path=etc/bacula/scripts/delete_catalog_backup mode=0555
+file path=etc/bacula/scripts/drop_bacula_database mode=0555
+file path=etc/bacula/scripts/drop_bacula_tables mode=0555
+file path=etc/bacula/scripts/drop_mysql_database mode=0555
+file path=etc/bacula/scripts/drop_mysql_tables mode=0555
+file path=etc/bacula/scripts/drop_postgresql_database mode=0555
+file path=etc/bacula/scripts/drop_postgresql_tables mode=0555
+file path=etc/bacula/scripts/drop_sqlite3_database mode=0555
+file path=etc/bacula/scripts/drop_sqlite3_tables mode=0555
+file path=etc/bacula/scripts/grant_bacula_privileges mode=0555
+file path=etc/bacula/scripts/grant_mysql_privileges mode=0555
+file path=etc/bacula/scripts/grant_postgresql_privileges mode=0555
+file path=etc/bacula/scripts/grant_sqlite3_privileges mode=0555
+file path=etc/bacula/scripts/make_bacula_tables mode=0555
+file path=etc/bacula/scripts/make_catalog_backup mode=0555
+file path=etc/bacula/scripts/make_mysql_tables mode=0555
+file path=etc/bacula/scripts/make_postgresql_tables mode=0555
+file path=etc/bacula/scripts/make_sqlite3_tables mode=0555
+file path=etc/bacula/scripts/update_bacula_tables mode=0555
+file path=etc/bacula/scripts/update_mysql_tables mode=0555
+file path=etc/bacula/scripts/update_postgresql_tables mode=0555
+file path=etc/bacula/scripts/update_sqlite3_tables mode=0555
+file path=etc/bacula/scripts/query.sql
+file path=usr/sbin/$(MACH64)/bacula-dir mode=0555
+file path=usr/sbin/$(MACH64)/bregex mode=0555
+file path=usr/sbin/$(MACH64)/bwild mode=0555
+file path=usr/sbin/$(MACH64)/dbcheck mode=0555
+file usr/sbin/bacula-dir path=usr/sbin/$(MACH32)/bacula-dir mode=0555
+file usr/sbin/bregex path=usr/sbin/$(MACH32)/bregex mode=0555
+file usr/sbin/bwild path=usr/sbin/$(MACH32)/bwild mode=0555
+file usr/sbin/dbcheck path=usr/sbin/$(MACH32)/dbcheck mode=0555
+file path=usr/share/man/man8/bacula-dir.8
+file path=usr/share/man/man8/bregex.8
+file path=usr/share/man/man8/bwild.8
+file path=usr/share/man/man8/dbcheck.8

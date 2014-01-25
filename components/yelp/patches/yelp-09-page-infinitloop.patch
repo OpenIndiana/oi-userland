@@ -1,0 +1,16 @@
+diff -urN yelp-2.30.2/src/yelp-page.c yelp-2.30.2.new/src/yelp-page.c
+--- yelp-2.30.2/src/yelp-page.c	2010-08-04 03:41:38.000000000 +0800
++++ yelp-2.30.2.new/src/yelp-page.c	2011-08-19 16:11:52.025509249 +0800
+@@ -104,10 +104,12 @@
+ 
+     if (page->content_offset == page->content_len) {
+ 	/* FIXME: set the error */
++	*bytes_read = 0;
+ 	return G_IO_STATUS_EOF;
+     }
+     else if (page->content_offset > page->content_len) {
+ 	/* FIXME: set the error */
++	*bytes_read = 0;
+ 	return G_IO_STATUS_ERROR;
+     }
+     else if (page->content_offset + real_count <= page->content_len) {
