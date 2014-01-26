@@ -1,0 +1,274 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/text/idzebra@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Text Tools"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license idzebra.license license="GPLv2"
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+<transform file path=usr/share/idzebra-2.0/examples/(.+)$ -> set action.hash usr/share/idzebra-2.0-examples/%<\1> >
+
+file usr/bin/$(MACH64)/idzebra-config-2.0 path=usr/bin/$(MACH64)/idzebra-config mode=0555
+file usr/bin/$(MACH64)/zebraidx-2.0 path=usr/bin/$(MACH64)/zebraidx mode=0555
+file usr/bin/$(MACH64)/zebrasrv-2.0 path=usr/bin/$(MACH64)/zebrasrv mode=0555
+file usr/bin/idzebra-config-2.0 path=usr/bin/idzebra-config mode=0555
+file usr/bin/zebraidx-2.0 path=usr/bin/zebraidx mode=0555
+file usr/bin/zebrasrv-2.0 path=usr/bin/zebrasrv mode=0555
+
+file usr/share/man/man1/idzebra-config-2.0.1 path=usr/share/man/man1/idzebra-config.1
+file usr/share/man/man1/zebraidx-2.0.1 path=usr/share/man/man1/zebraidx.1
+file usr/share/man/man8/zebrasrv-2.0.8 path=usr/share/man/man8/zebrasrv.8
+
+# Generated section:
+file path=usr/bin/$(MACH64)/idzebra-abs2dom mode=0555
+file path=usr/bin/idzebra-abs2dom mode=0555
+file path=usr/include/idzebra-2.0/idzebra/api.h
+file path=usr/include/idzebra-2.0/idzebra/bfile.h
+file path=usr/include/idzebra-2.0/idzebra/data1.h
+file path=usr/include/idzebra-2.0/idzebra/dict.h
+file path=usr/include/idzebra-2.0/idzebra/flock.h
+file path=usr/include/idzebra-2.0/idzebra/isam-codec.h
+file path=usr/include/idzebra-2.0/idzebra/isamb.h
+file path=usr/include/idzebra-2.0/idzebra/isamc.h
+file path=usr/include/idzebra-2.0/idzebra/isams.h
+file path=usr/include/idzebra-2.0/idzebra/recctrl.h
+file path=usr/include/idzebra-2.0/idzebra/recgrs.h
+file path=usr/include/idzebra-2.0/idzebra/res.h
+file path=usr/include/idzebra-2.0/idzebra/snippet.h
+file path=usr/include/idzebra-2.0/idzebra/util.h
+file path=usr/include/idzebra-2.0/idzebra/version.h
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-alvis.so mode=0555
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-dom.so mode=0555
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-marc.so mode=0555
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-regx.so mode=0555
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-grs-xml.so mode=0555
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-safari.so mode=0555
+file path=usr/lib/$(MACH64)/idzebra-2.0/modules/mod-text.so mode=0555
+link path=usr/lib/$(MACH64)/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.1
+link path=usr/lib/$(MACH64)/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.1
+file path=usr/lib/$(MACH64)/libidzebra-2.0.so.0.0.1 mode=0555
+file path=usr/lib/idzebra-2.0/modules/mod-alvis.so mode=0555
+file path=usr/lib/idzebra-2.0/modules/mod-dom.so mode=0555
+file path=usr/lib/idzebra-2.0/modules/mod-grs-marc.so mode=0555
+file path=usr/lib/idzebra-2.0/modules/mod-grs-regx.so mode=0555
+file path=usr/lib/idzebra-2.0/modules/mod-grs-xml.so mode=0555
+file path=usr/lib/idzebra-2.0/modules/mod-safari.so mode=0555
+file path=usr/lib/idzebra-2.0/modules/mod-text.so mode=0555
+link path=usr/lib/libidzebra-2.0.so target=libidzebra-2.0.so.0.0.1
+link path=usr/lib/libidzebra-2.0.so.0 target=libidzebra-2.0.so.0.0.1
+file path=usr/lib/libidzebra-2.0.so.0.0.1 mode=0555
+file path=usr/share/aclocal/idzebra-2.0.m4
+file path=usr/share/doc/idzebra-2.0/administration-extended-services.html
+file path=usr/share/doc/idzebra-2.0/administration-ranking.html
+file path=usr/share/doc/idzebra-2.0/administration.html
+file path=usr/share/doc/idzebra-2.0/architecture-maincomponents.html
+file path=usr/share/doc/idzebra-2.0/architecture-workflow.html
+file path=usr/share/doc/idzebra-2.0/architecture.html
+file path=usr/share/doc/idzebra-2.0/character-map-files.html
+file path=usr/share/doc/idzebra-2.0/common/id.png
+file path=usr/share/doc/idzebra-2.0/common/style1.css
+file path=usr/share/doc/idzebra-2.0/domfilter.png
+file path=usr/share/doc/idzebra-2.0/features.html
+file path=usr/share/doc/idzebra-2.0/fields-and-charsets.html
+file path=usr/share/doc/idzebra-2.0/file-ids.html
+file path=usr/share/doc/idzebra-2.0/generic-ids.html
+file path=usr/share/doc/idzebra-2.0/gpl-2.html
+file path=usr/share/doc/idzebra-2.0/gpl-3.html
+file path=usr/share/doc/idzebra-2.0/gpl.html
+file path=usr/share/doc/idzebra-2.0/grs-conf.html
+file path=usr/share/doc/idzebra-2.0/grs-exchange-formats.html
+file path=usr/share/doc/idzebra-2.0/grs-extended-marc-indexing.html
+file path=usr/share/doc/idzebra-2.0/grs-internal-representation.html
+file path=usr/share/doc/idzebra-2.0/grs.html
+file path=usr/share/doc/idzebra-2.0/icuchain-files.html
+file path=usr/share/doc/idzebra-2.0/idzebra-abs2dom.html
+file path=usr/share/doc/idzebra-2.0/idzebra-config.html
+file path=usr/share/doc/idzebra-2.0/index.html
+file path=usr/share/doc/idzebra-2.0/indexdata.html
+file path=usr/share/doc/idzebra-2.0/installation-debian.html
+file path=usr/share/doc/idzebra-2.0/installation-upgrade.html
+file path=usr/share/doc/idzebra-2.0/installation-win32.html
+file path=usr/share/doc/idzebra-2.0/installation.html
+file path=usr/share/doc/idzebra-2.0/introduction-apps.html
+file path=usr/share/doc/idzebra-2.0/introduction-support.html
+file path=usr/share/doc/idzebra-2.0/introduction.html
+file path=usr/share/doc/idzebra-2.0/license.html
+file path=usr/share/doc/idzebra-2.0/locating-records.html
+file path=usr/share/doc/idzebra-2.0/querymodel-cql-to-pqf.html
+file path=usr/share/doc/idzebra-2.0/querymodel-rpn.html
+file path=usr/share/doc/idzebra-2.0/querymodel-zebra.html
+file path=usr/share/doc/idzebra-2.0/querymodel.html
+file path=usr/share/doc/idzebra-2.0/record-model-alvisxslt-conf.html
+file path=usr/share/doc/idzebra-2.0/record-model-alvisxslt.html
+file path=usr/share/doc/idzebra-2.0/record-model-domxml-conf.html
+file path=usr/share/doc/idzebra-2.0/record-model-domxml-pipeline.html
+file path=usr/share/doc/idzebra-2.0/record-model-domxml.html
+file path=usr/share/doc/idzebra-2.0/reference.html
+file path=usr/share/doc/idzebra-2.0/register-location.html
+file path=usr/share/doc/idzebra-2.0/shadow-registers.html
+file path=usr/share/doc/idzebra-2.0/simple-indexing.html
+file path=usr/share/doc/idzebra-2.0/special-retrieval.html
+file path=usr/share/doc/idzebra-2.0/tutorial-oai-sru-pqf.html
+file path=usr/share/doc/idzebra-2.0/tutorial-oai-sru-present.html
+file path=usr/share/doc/idzebra-2.0/tutorial-oai-sru-searches.html
+file path=usr/share/doc/idzebra-2.0/tutorial-oai-sru-yazfrontend.html
+file path=usr/share/doc/idzebra-2.0/tutorial-oai-sru-zebra-indexes.html
+file path=usr/share/doc/idzebra-2.0/tutorial-oai-z3950.html
+file path=usr/share/doc/idzebra-2.0/tutorial.html
+file path=usr/share/doc/idzebra-2.0/zebra-cfg.html
+file path=usr/share/doc/idzebra-2.0/zebra.png
+file path=usr/share/doc/idzebra-2.0/zebraidx.html
+file path=usr/share/doc/idzebra-2.0/zebrasrv.html
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0006.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0007.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0008.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0030.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0031.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0032.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0033.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0034.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0035.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0036.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0037.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0038.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0039.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0040.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0041.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0042.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0044.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0045.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0046.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0047.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0048.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0049.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0050.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0051.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0052.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0053.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0054.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0055.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0056.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0057.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0058.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0059.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0062.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0063.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0064.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0065.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0066.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0067.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0070.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0071.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0072.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0073.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0074.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0075.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0076.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0077.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0078.grs
+file path=usr/share/idzebra-2.0/examples/gils/records/esdd0079.grs
+file path=usr/share/idzebra-2.0/examples/gils/zebra.cfg
+file path=usr/share/idzebra-2.0/examples/marc21/sample-marc
+file path=usr/share/idzebra-2.0/examples/marc21/zebra.cfg
+file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2INDEX.xsl
+file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2MADS.xsl
+file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2MODS3-1.xsl
+file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slim2SRWDC.xsl
+file path=usr/share/idzebra-2.0/examples/marcxml/MARC21slimUtils.xsl
+file path=usr/share/idzebra-2.0/examples/marcxml/README
+file path=usr/share/idzebra-2.0/examples/marcxml/collection-2.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/collection-clasmrc.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/collection-namemrc.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/collection-opera-43.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/collection-sandburg-1.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/collection-subjmrc.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/dom-config.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/identity.xsl
+file path=usr/share/idzebra-2.0/examples/marcxml/yazgfs.xml
+file path=usr/share/idzebra-2.0/examples/marcxml/zebra.cfg
+file path=usr/share/idzebra-2.0/examples/marcxml/zebra.xsl
+file path=usr/share/idzebra-2.0/examples/oai-pmh/README
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/cql2pqf.txt
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/dom-conf.xml
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/explain.xml
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/explain2cqlpqftxt.xsl
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/oai2dc.xsl
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/oai2index.xsl
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/oai2zebra.xsl
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/yazserver.xml
+file path=usr/share/idzebra-2.0/examples/oai-pmh/conf/zebra.cfg
+file path=usr/share/idzebra-2.0/examples/oai-pmh/data/debug-record.xml
+file path=usr/share/idzebra-2.0/examples/oai-pmh/data/debug-utf8-record.xml
+file path=usr/share/idzebra-2.0/examples/oai-pmh/data/fetch_OAI_data.sh
+file path=usr/share/idzebra-2.0/examples/oai-pmh/data/oai-caltech.xml
+file path=usr/share/idzebra-2.0/tab/bib1.att
+file path=usr/share/idzebra-2.0/tab/dan1.att
+file path=usr/share/idzebra-2.0/tab/danmarc.abs
+file path=usr/share/idzebra-2.0/tab/danmarc.mar
+file path=usr/share/idzebra-2.0/tab/default.idx
+file path=usr/share/idzebra-2.0/tab/explain.abs
+file path=usr/share/idzebra-2.0/tab/explain.att
+file path=usr/share/idzebra-2.0/tab/explain.tag
+file path=usr/share/idzebra-2.0/tab/generic.tag
+file path=usr/share/idzebra-2.0/tab/gils-a.est
+file path=usr/share/idzebra-2.0/tab/gils-b.est
+file path=usr/share/idzebra-2.0/tab/gils-f.est
+file path=usr/share/idzebra-2.0/tab/gils-g.est
+file path=usr/share/idzebra-2.0/tab/gils-summary.map
+file path=usr/share/idzebra-2.0/tab/gils-usmarc.map
+file path=usr/share/idzebra-2.0/tab/gils-variant.est
+file path=usr/share/idzebra-2.0/tab/gils.abs
+file path=usr/share/idzebra-2.0/tab/gils.att
+file path=usr/share/idzebra-2.0/tab/gils.tag
+file path=usr/share/idzebra-2.0/tab/hci.flt
+file path=usr/share/idzebra-2.0/tab/icu.idx
+file path=usr/share/idzebra-2.0/tab/idxpath.att
+file path=usr/share/idzebra-2.0/tab/mail.flt
+file path=usr/share/idzebra-2.0/tab/marc21.abs
+file path=usr/share/idzebra-2.0/tab/meta-b.est
+file path=usr/share/idzebra-2.0/tab/meta-usmarc.map
+file path=usr/share/idzebra-2.0/tab/meta.abs
+file path=usr/share/idzebra-2.0/tab/meta.tag
+file path=usr/share/idzebra-2.0/tab/news.flt
+file path=usr/share/idzebra-2.0/tab/numeric.chr
+file path=usr/share/idzebra-2.0/tab/nwi.flt
+file path=usr/share/idzebra-2.0/tab/phrases-icu.xml
+file path=usr/share/idzebra-2.0/tab/refer.flt
+file path=usr/share/idzebra-2.0/tab/scan.chr
+file path=usr/share/idzebra-2.0/tab/sgml.flt
+file path=usr/share/idzebra-2.0/tab/soif.flt
+file path=usr/share/idzebra-2.0/tab/string.chr
+file path=usr/share/idzebra-2.0/tab/summary.abs
+file path=usr/share/idzebra-2.0/tab/summary.tag
+file path=usr/share/idzebra-2.0/tab/tagsetg.tag
+file path=usr/share/idzebra-2.0/tab/tagsetm.tag
+file path=usr/share/idzebra-2.0/tab/urx.chr
+file path=usr/share/idzebra-2.0/tab/usmarc-b.est
+file path=usr/share/idzebra-2.0/tab/usmarc.abs
+file path=usr/share/idzebra-2.0/tab/usmarc.flt
+file path=usr/share/idzebra-2.0/tab/usmarc.mar
+file path=usr/share/idzebra-2.0/tab/usmarc.tag
+file path=usr/share/idzebra-2.0/tab/var1.var
+file path=usr/share/idzebra-2.0/tab/wais-b.est
+file path=usr/share/idzebra-2.0/tab/wais-variant.est
+file path=usr/share/idzebra-2.0/tab/wais.abs
+file path=usr/share/idzebra-2.0/tab/words-icu-da.xml
+file path=usr/share/idzebra-2.0/tab/words-icu.xml
+file path=usr/share/man/man1/idzebra-abs2dom.1

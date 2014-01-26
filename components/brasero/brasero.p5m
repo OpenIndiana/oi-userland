@@ -1,0 +1,452 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/cd-burning/brasero@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license brasero.license license="GPL v2"
+
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - / filesystem" name="$(COMPONENT_SUMMARY) - / filesystem" pkg=SUNWgnome-cd-burner-root
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - developer files" name="$(COMPONENT_SUMMARY) - developer files" pkg=SUNWgnome-cd-burner-devel
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY)" name="$(COMPONENT_SUMMARY)" pkg=SUNWgnome-cd-burner
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - l10n files" name="$(COMPONENT_SUMMARY) - l10n files" pkg=SUNWgnome-cd-burner-l10n
+
+# Generated section:
+file path=etc/gconf/schemas/brasero.schemas preserve=renamenew
+file path=usr/bin/brasero mode=0555
+file path=usr/include/brasero/brasero-blank-dialog.h
+file path=usr/include/brasero/brasero-burn-dialog.h
+file path=usr/include/brasero/brasero-burn-lib.h
+file path=usr/include/brasero/brasero-burn-options.h
+file path=usr/include/brasero/brasero-burn.h
+file path=usr/include/brasero/brasero-drive-selection.h
+file path=usr/include/brasero/brasero-drive.h
+file path=usr/include/brasero/brasero-enums.h
+file path=usr/include/brasero/brasero-error.h
+file path=usr/include/brasero/brasero-media.h
+file path=usr/include/brasero/brasero-medium-monitor.h
+file path=usr/include/brasero/brasero-medium-selection.h
+file path=usr/include/brasero/brasero-medium.h
+file path=usr/include/brasero/brasero-session-cfg.h
+file path=usr/include/brasero/brasero-session-span.h
+file path=usr/include/brasero/brasero-session.h
+file path=usr/include/brasero/brasero-status.h
+file path=usr/include/brasero/brasero-sum-dialog.h
+file path=usr/include/brasero/brasero-tags.h
+file path=usr/include/brasero/brasero-tool-dialog.h
+file path=usr/include/brasero/brasero-track-data-cfg.h
+file path=usr/include/brasero/brasero-track-data.h
+file path=usr/include/brasero/brasero-track-disc.h
+file path=usr/include/brasero/brasero-track-image-cfg.h
+file path=usr/include/brasero/brasero-track-image.h
+file path=usr/include/brasero/brasero-track-stream-cfg.h
+file path=usr/include/brasero/brasero-track-stream.h
+file path=usr/include/brasero/brasero-track-type.h
+file path=usr/include/brasero/brasero-track.h
+file path=usr/include/brasero/brasero-units.h
+file path=usr/include/brasero/brasero-volume.h
+file path=usr/lib/brasero/plugins/libbrasero-audio2cue.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-burn-uri.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-cdda2wav.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-cdrdao.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-cdrecord.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-checksum-file.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-checksum.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-dvdauthor.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-dvdcss.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-dvdrwformat.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-genisoimage.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-growisofs.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-local-track.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-mkisofs.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-normalize.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-readcd.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-readom.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-transcode.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-vcdimager.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-vob.so mode=0555
+file path=usr/lib/brasero/plugins/libbrasero-wodim.so mode=0555
+file path=usr/lib/girepository-1.0/BraseroBurn-1.0.typelib
+file path=usr/lib/girepository-1.0/BraseroMedia-1.0.typelib
+link path=usr/lib/libbrasero-burn.so target=libbrasero-burn.so.0.2.0
+link path=usr/lib/libbrasero-burn.so.0 target=libbrasero-burn.so.0.2.0
+file path=usr/lib/libbrasero-burn.so.0.2.0 mode=0555
+link path=usr/lib/libbrasero-media.so target=libbrasero-media.so.0.2.0
+link path=usr/lib/libbrasero-media.so.0 target=libbrasero-media.so.0.2.0
+file path=usr/lib/libbrasero-media.so.0.2.0 mode=0555
+link path=usr/lib/libbrasero-utils.so target=libbrasero-utils.so.0.2.0
+link path=usr/lib/libbrasero-utils.so.0 target=libbrasero-utils.so.0.2.0
+file path=usr/lib/libbrasero-utils.so.0.2.0 mode=0555
+file path=usr/lib/nautilus/extensions-2.0/libnautilus-brasero-extension.so \
+    mode=0555
+file path=usr/lib/pkgconfig/libbrasero-burn.pc
+file path=usr/lib/pkgconfig/libbrasero-media.pc
+file path=usr/share/applications/brasero-copy-medium.desktop
+file path=usr/share/applications/brasero-nautilus.desktop
+file path=usr/share/applications/brasero.desktop
+file path=usr/share/brasero/icons/hicolor/16x16/actions/insert-pause.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/iso-image-burn.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/iso-image-new.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/media-optical-audio-new.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/media-optical-blank.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/media-optical-burn.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/media-optical-copy.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/media-optical-data-new.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/media-optical-video-new.png
+file path=usr/share/brasero/icons/hicolor/16x16/actions/transform-crop-and-resize.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-00.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-05.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-10.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-100.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-15.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-20.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-25.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-30.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-35.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-40.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-45.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-50.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-55.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-60.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-65.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-70.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-75.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-80.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-85.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-90.png
+file path=usr/share/brasero/icons/hicolor/16x16/status/brasero-disc-95.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/insert-pause.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/iso-image-burn.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/iso-image-new.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/media-optical-audio-new.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/media-optical-blank.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/media-optical-burn.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/media-optical-copy.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/media-optical-data-new.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/media-optical-video-new.png
+file path=usr/share/brasero/icons/hicolor/22x22/actions/transform-crop-and-resize.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-00.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-05.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-10.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-100.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-15.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-20.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-25.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-30.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-35.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-40.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-45.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-50.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-55.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-60.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-65.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-70.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-75.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-80.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-85.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-90.png
+file path=usr/share/brasero/icons/hicolor/22x22/status/brasero-disc-95.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/insert-pause.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/iso-image-burn.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/iso-image-new.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/media-optical-audio-new.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/media-optical-blank.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/media-optical-burn.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/media-optical-copy.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/media-optical-data-new.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/media-optical-video-new.png
+file path=usr/share/brasero/icons/hicolor/24x24/actions/transform-crop-and-resize.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-00.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-05.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-10.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-100.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-15.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-20.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-25.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-30.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-35.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-40.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-45.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-50.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-55.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-60.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-65.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-70.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-75.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-80.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-85.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-90.png
+file path=usr/share/brasero/icons/hicolor/24x24/status/brasero-disc-95.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/insert-pause.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/iso-image-burn.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/iso-image-new.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/media-optical-audio-new.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/media-optical-blank.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/media-optical-burn.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/media-optical-copy.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/media-optical-data-new.png
+file path=usr/share/brasero/icons/hicolor/32x32/actions/media-optical-video-new.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-00.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-05.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-10.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-100.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-15.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-20.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-25.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-30.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-35.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-40.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-45.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-50.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-55.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-60.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-65.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-70.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-75.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-80.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-85.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-90.png
+file path=usr/share/brasero/icons/hicolor/32x32/status/brasero-disc-95.png
+file path=usr/share/brasero/icons/hicolor/48x48/actions/media-optical-video-new.png
+file path=usr/share/brasero/icons/hicolor/scalable/actions/insert-pause.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/iso-image-burn.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/iso-image-new.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/media-optical-audio-new.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/media-optical-blank.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/media-optical-burn.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/media-optical-copy.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/media-optical-data-new.svg
+file path=usr/share/brasero/icons/hicolor/scalable/actions/transform-crop-and-resize.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-00.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-05.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-10.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-100.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-15.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-20.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-25.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-30.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-35.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-40.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-45.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-50.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-55.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-60.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-65.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-70.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-75.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-80.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-85.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-90.svg
+file path=usr/share/brasero/icons/hicolor/scalable/status/brasero-disc-95.svg
+file path=usr/share/brasero/logo.png
+file path=usr/share/gir-1.0/BraseroBurn-1.0.gir
+file path=usr/share/gir-1.0/BraseroMedia-1.0.gir
+file path=usr/share/gnome/help/brasero/C/brasero.xml
+file path=usr/share/gnome/help/brasero/C/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/C/legal.xml
+file path=usr/share/gnome/help/brasero/bg/brasero.xml
+file path=usr/share/gnome/help/brasero/bg/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/ca/brasero.xml
+link path=usr/share/gnome/help/brasero/ca/figures/brasero_main.png \
+    target=../../C/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/cs/brasero.xml
+file path=usr/share/gnome/help/brasero/cs/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/de/brasero.xml
+file path=usr/share/gnome/help/brasero/de/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/el/brasero.xml
+file path=usr/share/gnome/help/brasero/el/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/en_GB/brasero.xml
+link path=usr/share/gnome/help/brasero/en_GB/figures/brasero_main.png \
+    target=../../C/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/es/brasero.xml
+file path=usr/share/gnome/help/brasero/es/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/fi/brasero.xml
+file path=usr/share/gnome/help/brasero/fi/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/fr/brasero.xml
+file path=usr/share/gnome/help/brasero/fr/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/it/brasero.xml
+file path=usr/share/gnome/help/brasero/it/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/pl/brasero.xml
+file path=usr/share/gnome/help/brasero/pl/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/ru/brasero.xml
+link path=usr/share/gnome/help/brasero/ru/figures/brasero_main.png \
+    target=../../C/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/sv/brasero.xml
+file path=usr/share/gnome/help/brasero/sv/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/zh_CN/brasero.xml
+link path=usr/share/gnome/help/brasero/zh_CN/figures/brasero_main.png \
+    target=../../C/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/zh_HK/brasero.xml
+link path=usr/share/gnome/help/brasero/zh_HK/figures/brasero_main.png \
+    target=../../C/figures/brasero_main.png
+file path=usr/share/gnome/help/brasero/zh_TW/brasero.xml
+file path=usr/share/gnome/help/brasero/zh_TW/figures/brasero_main.png
+file path=usr/share/gtk-doc/html/libbrasero-burn/annotation-glossary.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/api-index-full.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/ch01.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/home.png
+file path=usr/share/gtk-doc/html/libbrasero-burn/index.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/index.sgml
+file path=usr/share/gtk-doc/html/libbrasero-burn/left.png
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroBlankDialog.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroBurn.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroBurnDialog.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroBurnOptions.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroBurnSession.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroSessionCfg.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroSessionSpan.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroSumDialog.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroToolDialog.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroTrack.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroTrackDisc.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroTrackImage.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroTrackImageCfg.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroTrackStream.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-BraseroTrackStreamCfg.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-burn-lib.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-enums.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-error.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-status.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-tags.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-track-data-cfg.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-track-data.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn-brasero-track-type.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn.devhelp
+file path=usr/share/gtk-doc/html/libbrasero-burn/libbrasero-burn.devhelp2
+file path=usr/share/gtk-doc/html/libbrasero-burn/object-tree.html
+file path=usr/share/gtk-doc/html/libbrasero-burn/right.png
+file path=usr/share/gtk-doc/html/libbrasero-burn/style.css
+file path=usr/share/gtk-doc/html/libbrasero-burn/up.png
+file path=usr/share/gtk-doc/html/libbrasero-media/annotation-glossary.html
+file path=usr/share/gtk-doc/html/libbrasero-media/api-index-full.html
+file path=usr/share/gtk-doc/html/libbrasero-media/ch01.html
+file path=usr/share/gtk-doc/html/libbrasero-media/home.png
+file path=usr/share/gtk-doc/html/libbrasero-media/index.html
+file path=usr/share/gtk-doc/html/libbrasero-media/index.sgml
+file path=usr/share/gtk-doc/html/libbrasero-media/left.png
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-BraseroDriveSelection.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-BraseroMedium.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-BraseroMediumMonitor.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-BraseroMediumSelection.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-BraseroVolume.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-brasero-drive.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-brasero-media.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media-brasero-units.html
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media.devhelp
+file path=usr/share/gtk-doc/html/libbrasero-media/libbrasero-media.devhelp2
+file path=usr/share/gtk-doc/html/libbrasero-media/object-tree.html
+file path=usr/share/gtk-doc/html/libbrasero-media/right.png
+file path=usr/share/gtk-doc/html/libbrasero-media/style.css
+file path=usr/share/gtk-doc/html/libbrasero-media/up.png
+file path=usr/share/icons/hicolor/16x16/apps/brasero.png
+file path=usr/share/icons/hicolor/22x22/apps/brasero.png
+file path=usr/share/icons/hicolor/24x24/apps/brasero.png
+file path=usr/share/icons/hicolor/32x32/apps/brasero.png
+file path=usr/share/icons/hicolor/48x48/apps/brasero.png
+file path=usr/share/icons/hicolor/scalable/apps/brasero.svg
+file path=usr/share/locale/af/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ar/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/as/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ast/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/be/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/bg/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/bn/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/br/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ca/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/cs/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/da/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/de/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/dz/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/el/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/en@shaw/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/es/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/et/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/eu/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/fi/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/fr/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ga/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/gl/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/gu/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/he/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/hi/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/hu/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/id/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/it/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ja/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/kn/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ko/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ku/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/lt/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/lv/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/mai/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/mk/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ml/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/mr/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/nb/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/nds/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/nl/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/nn/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/oc/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/or/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/pa/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/pl/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/pt/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ro/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ru/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/sl/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/sr/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/sv/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/ta/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/te/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/th/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/tr/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/uk/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/vi/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/brasero.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/brasero.mo
+file path=usr/share/man/man1/brasero.1
+file path=usr/share/mime/packages/brasero.xml
+file path=usr/share/omf/brasero/brasero-C.omf
+file path=usr/share/omf/brasero/brasero-bg.omf
+file path=usr/share/omf/brasero/brasero-ca.omf
+file path=usr/share/omf/brasero/brasero-cs.omf
+file path=usr/share/omf/brasero/brasero-de.omf
+file path=usr/share/omf/brasero/brasero-el.omf
+file path=usr/share/omf/brasero/brasero-en_GB.omf
+file path=usr/share/omf/brasero/brasero-es.omf
+file path=usr/share/omf/brasero/brasero-fi.omf
+file path=usr/share/omf/brasero/brasero-fr.omf
+file path=usr/share/omf/brasero/brasero-it.omf
+file path=usr/share/omf/brasero/brasero-pl.omf
+file path=usr/share/omf/brasero/brasero-ru.omf
+file path=usr/share/omf/brasero/brasero-sv.omf
+file path=usr/share/omf/brasero/brasero-zh_CN.omf
+file path=usr/share/omf/brasero/brasero-zh_HK.omf
+file path=usr/share/omf/brasero/brasero-zh_TW.omf
