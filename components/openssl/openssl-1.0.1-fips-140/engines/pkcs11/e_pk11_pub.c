@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  */
 
@@ -127,7 +127,7 @@ static int pk11_RSA_finish(RSA *rsa);
 static int pk11_RSA_sign(int type, const unsigned char *m, unsigned int m_len,
 	unsigned char *sigret, unsigned int *siglen, const RSA *rsa);
 static int pk11_RSA_verify(int dtype, const unsigned char *m,
-	unsigned int m_len, unsigned char *sigbuf, unsigned int siglen,
+	unsigned int m_len, const unsigned char *sigbuf, unsigned int siglen,
 	const RSA *rsa);
 EVP_PKEY *pk11_load_privkey(ENGINE*, const char *privkey_id,
 	UI_METHOD *ui_method, void *callback_data);
@@ -1103,7 +1103,7 @@ err:
 	}
 
 static int pk11_RSA_verify(int type, const unsigned char *m,
-	unsigned int m_len, unsigned char *sigbuf, unsigned int siglen,
+	unsigned int m_len, const unsigned char *sigbuf, unsigned int siglen,
 	const RSA *rsa)
 	{
 	X509_SIG sig;
@@ -1197,8 +1197,8 @@ static int pk11_RSA_verify(int type, const unsigned char *m,
 			    rv);
 			goto err;
 			}
-		rv = pFuncList->C_Verify(sp->session, s, i, sigbuf,
-			(CK_ULONG)siglen);
+		rv = pFuncList->C_Verify(sp->session, s, i,
+			(CK_BYTE_PTR)sigbuf, (CK_ULONG)siglen);
 
 		if (rv != CKR_OK)
 			{

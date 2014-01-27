@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/e_pk11.c */
@@ -3099,8 +3099,10 @@ pk11_choose_slots(int *any_slot_found)
 		pk11_choose_pubkey_slot(mech_info, token_info, current_slot,
 			rv, best_number_of_mechs, best_pubkey_slot_sofar);
 
-		pk11_choose_cipher_digest(&local_cipher_nids,
-			&local_digest_nids, pFuncList, current_slot);
+		(void) memset(local_cipher_nids, 0, sizeof (local_cipher_nids));
+		(void) memset(local_digest_nids, 0, sizeof (local_digest_nids));
+		pk11_choose_cipher_digest(local_cipher_nids,
+			local_digest_nids, pFuncList, current_slot);
 		}
 
 	if (best_number_of_mechs == 0)
@@ -3249,9 +3251,6 @@ static void pk11_choose_cipher_digest(int *local_cipher_nids,
 
 	DEBUG_SLOT_SEL("%s: checking cipher/digest\n", PK11_DBG);
 
-	(void) memset(local_cipher_nids, 0, sizeof (local_cipher_nids));
-	(void) memset(local_digest_nids, 0, sizeof (local_digest_nids));
-
 	pk11_find_symmetric_ciphers(pFuncList, current_slot,
 	    &current_slot_n_cipher, local_cipher_nids);
 
@@ -3275,10 +3274,12 @@ static void pk11_choose_cipher_digest(int *local_cipher_nids,
 		SLOTID = current_slot;
 		cipher_count = current_slot_n_cipher;
 		digest_count = current_slot_n_digest;
+		OPENSSL_assert(cipher_count <= PK11_CIPHER_MAX);
+		OPENSSL_assert(digest_count <= PK11_DIGEST_MAX);
 		(void) memcpy(cipher_nids, local_cipher_nids,
-			sizeof (local_cipher_nids));
+			sizeof (int) * cipher_count);
 		(void) memcpy(digest_nids, local_digest_nids,
-			sizeof (local_digest_nids));
+			sizeof (int) * digest_count);
 		}
 	}
 
@@ -3289,6 +3290,8 @@ static void pk11_get_symmetric_cipher(CK_FUNCTION_LIST_PTR pflist,
 	static CK_MECHANISM_INFO mech_info;
 	static CK_RV rv;
 	static CK_MECHANISM_TYPE last_checked_mech = (CK_MECHANISM_TYPE)-1;
+
+	OPENSSL_assert(cipher->mech_type != (CK_MECHANISM_TYPE)-1);
 
 	DEBUG_SLOT_SEL("%s: checking mech: %x", PK11_DBG, cipher->mech_type);
 	if (cipher->mech_type != last_checked_mech)
