@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
 <transform dir path=etc$ -> default group sys>
@@ -143,3 +144,10 @@ set name=variant.arch value=$(MACH)
 <transform depend tmp.fmri=.*-> delete tmp.fmri .* >
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+<transform set name=pkg.fmri -> emit set name=userland.info.git-remote \
+             value=$(USERLAND_GIT_REMOTE)>
+<transform set name=pkg.fmri -> emit set name=userland.info.git-branch \
+             value=$(USERLAND_GIT_BRANCH)>
+<transform set name=pkg.fmri -> emit set name=userland.info.git-rev \
+             value=$(USERLAND_GIT_REV)>

@@ -19,67 +19,42 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
 
 # The package branch version scheme is:
 #
-#       release_major.release_minor.update.SRU.platform.buildid.nightlyid
-#
-# where
-#       update   : 0 for FCS, 1 for update 1, etc.
-#       SRU      : SRU (support repository update) number for this update
-#       platform : reserved for future use.
-#       buildid  : the build number of the last non-zero element from above
-#	nightlyid: nightly build identifier
-#
-# This scheme is used below.
+#       release_major.release_minor.update.component_revision
 #
 
 #
-# The Solaris Update number. This will be set by the gatekeepers.
-# The value must match the update number of the release.
+# Release major number: 2014, 2015, etc.
+#
+RELEASE_MAJOR ?= 2014
+
+#
+# Release minor number: 0, 1, 2, etc.
+#
+RELEASE_MINOR ?= 0
+
+#
+# Release update number: 0, 1, 2, etc.
 #
 UPDATENUM ?= 0
 
 #
-# Support Respository Update number. This is here to reserve space within the
-# version string. Typically it should not be set unless all the packages
-# are being delivered within an SRU.
+# Component revision. Should be specified in the component's Makefile
 #
-SRUNUM ?= 0
 
-#
-# Platform number. This is here to reserve space within the version
-# string. It should not be set unless there is a specific need to
-# release a platform update while the Solaris Update is being built.
-#
-PLATNUM ?= 0
-
-#
-# Build Identifier. Used to indicate which build (or respin for
-# the development build) of the Solaris Update is being built.
-# This is set by the gatekeepers.
-#
-BUILDID ?= 23
-
-# Each (nightly) build of the code that produces packages needs to
-# be uniquely identified so that packages produced by different
-# builds can't be mixed.  Mixing packages from different builds can
-# easily result in broken global and nonglobal zones. Or at least
-# that's the case in ON, which this is copied from. We keep it simple,
-# though you could use something like this if you want:
-#
-#NIGHTLYID ?= $(shell hg tip --template '{rev}\n')
-#
-NIGHTLYID ?= 0
+COMPONENT_REVISION ?= 0
 
 #
 # Branch Identifier.  Used in the version section of the package name to
 # identify the operating system branch that the package was produced for.
 #
-#BRANCHID ?= \
-#    $(PKG_SOLARIS_VERSION).$(UPDATENUM).$(SRUNUM).$(PLATNUM).$(BUILDID).$(NIGHTLYID)
+# XXX don't use new versioning scheme just yet
+#BRANCHID ?= $(RELEASE_MAJOR).$(RELEASE_MINOR).$(UPDATENUM).$(COMPONENT_REVISION)
 BRANCHID ?= 0.151.1.8.1
 
 #
@@ -92,3 +67,7 @@ BUILD_VERSION ?=  $(PKG_SOLARIS_VERSION)-$(BRANCHID)
 # hasn't been set in the environment.
 #CANONICAL_REPO ?=		http://ipkg.us.oracle.com/solaris12/dev/
 
+# Pre-set some variables with GIT repo details
+USERLAND_GIT_REMOTE ?= $(shell git remote -v | awk '/origin.*fetch/ { print $$2 }')
+USERLAND_GIT_BRANCH ?= $(shell git rev-parse --abbrev-ref HEAD)
+USERLAND_GIT_REV ?= $(shell git rev-parse HEAD)
