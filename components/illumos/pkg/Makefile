@@ -83,4 +83,6 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	$(TOUCH) $@
 
-publish: $(BUILD_DIR)/$(MACH)/.published
+.NOTPARALLEL:
+
+publish: update $(BUILD_DIR)/$(MACH)/.published
