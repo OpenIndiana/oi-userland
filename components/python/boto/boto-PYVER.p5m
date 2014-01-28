@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/boto-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/boto-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="An Amazon Web Services library for Python"
 set name=pkg.description \
     value="Boto is a Python package that provides interfaces to Amazon Web Services (AWS).  In addition, boto provides support for other public services such as Google Storage in, as well as private cloud systems like Eucalyptus, OpenStack and Nebula."
@@ -431,6 +431,9 @@ file path=usr/lib/python$(PYVER)/vendor-packages/boto/vpc/vpnconnection.py
 file path=usr/lib/python$(PYVER)/vendor-packages/boto/vpc/vpngateway.py
 license boto.license license="MIT, Apache v2.0, LGPLv2.1"
 
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/boto-$(PYV)@2.9.9,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the boto package
 depend type=require \
-    fmri=library/python-2/boto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/boto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

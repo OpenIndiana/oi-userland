@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/pytest-cov-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/pytest-cov-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="A pytest plugin for coverage reporting"
 set name=pkg.description \
     value="A pytest plugin that produces coverage reports. It supports centralised testing and distributed testing in both load and each modes. It also supports coverage of subprocesses."
@@ -44,16 +44,20 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytest_cov-$(COMPONENT_VERSION)
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_cov.py
 license LICENSE.txt license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pytest-cov-$(PYV)@1.6,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on cov-core; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/cov-core-$(PYV)
+depend type=require fmri=library/python/cov-core-$(PYV)
 
 # force a dependency on pytest
-depend type=require fmri=library/python-2/pytest-$(PYV)
+depend type=require fmri=library/python/pytest-$(PYV)
 
 # force a dependency on the pytest-cov package
 depend type=require \
-    fmri=library/python-2/pytest-cov@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/pytest-cov@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

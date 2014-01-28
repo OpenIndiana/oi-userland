@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/ordereddict@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/ordereddict@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python ordereddict library"
 set name=com.oracle.info.description \
     value="Drop-in substitute for Py2.7's new collections.OrderedDict. The recipe has big-oh performance that matches regular dictionaries (amortized O(1) insertion/deletion/lookup and O(n) iteration/repr/copy/equality_testing)."
@@ -34,5 +34,8 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/280
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 depend type=conditional \
-    fmri=library/python-2/ordereddict-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    fmri=library/python/ordereddict-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
     predicate=runtime/python-26
+
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/ordereddict@1.1,5.12-5.12.0.0.0.41.0

@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/alembic-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/alembic-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="A database migration tool for SQLAlchemy."
 set name=pkg.description \
     value="The Python alembic module is a new database migrations tool, offering the following functionality: 1) Can emit ALTER statements to a database in order to change the structure of tables and other constructs. 2) Provides a system whereby 'migration scripts' may be constructed; each script indicates a particular series of steps that can 'upgrade' a target database to a new version, and optionally a series of steps that can 'downgrade' similarly, doing the same steps in reverse. 3) Allows the scripts to execute in some sequential manner."
@@ -76,13 +76,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/alembic/templates/pylons/script
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic/util.py
 license alembic.license license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python/alembic-$(PYV)@0.6.0,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on the alembic package
 depend type=require \
-    fmri=library/python-2/alembic@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/alembic@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # force a dependency on mako; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/mako-$(PYV)
+depend type=require fmri=library/python/mako-$(PYV)

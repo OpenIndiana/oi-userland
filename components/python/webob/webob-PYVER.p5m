@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/webob-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/webob-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="WSGI request and response objects"
 set name=pkg.description \
     value="WebOb provides wrappers around the WSGI request environment, and an object to help create WSGI responses.  The objects map much of the specified behavior of HTTP, including header parsing, content negotiation, and correct handling of conditional and range requests.  This helps you create rich applications and valid middleware without knowing all the complexities of WSGI and HTTP."
@@ -66,8 +66,12 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on paste; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/paste-$(PYV)
+depend type=require fmri=library/python/paste-$(PYV)
 
 # force a dependency on the webob package
 depend type=require \
-    fmri=library/python-2/webob@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/webob@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/webob-$(PYV)@1.2.3,5.12-5.12.0.0.0.41.0

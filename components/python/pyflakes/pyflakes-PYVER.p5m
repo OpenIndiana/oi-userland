@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/pyflakes-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/pyflakes-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="passive checker of Python programs"
 set name=pkg.description \
     value="Pyflakes analyzes programs and detects various errors. It works by parsing the source file, not importing it, so it is safe to use on modules with side effects. It's also much faster."
@@ -52,6 +52,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pyflakes/scripts/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pyflakes/scripts/pyflakes.py
 license LICENSE license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pyflakes-$(PYV)@0.7.2,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the pyflakes package
 depend type=require \
-    fmri=library/python-2/pyflakes@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/pyflakes@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

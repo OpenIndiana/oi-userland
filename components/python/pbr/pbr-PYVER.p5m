@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/pbr-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/pbr-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python Build Reasonableness"
 set name=pkg.description \
     value="pbr is a library that injects some useful and sensible default behaviors into your setuptools run. It builds on top of d2to1 to provide for declarative configuration. It then filters the setup.cfg data through a setup hook to fill in default values and provide more sensible behaviors."
@@ -63,4 +63,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the pbr package
 depend type=require \
-    fmri=library/python-2/pbr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/pbr@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pbr-$(PYV)@0.5.21,5.12-5.12.0.0.0.41.0

@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/mako-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/mako-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Template library written in Python"
 set name=pkg.description \
     value="Mako is a template library written in Python. It provides a familiar, non-XML syntax which compiles into Python modules for maximum performance. Mako's syntax and API borrow from the best ideas of many others, including Django templates, Cheetah, Myghty, and Genshi. Conceptually, Mako is an embedded Python (i.e., Python Server Page) language, which refines the familiar ideas of componentized layout and inheritance to produce one of the most straightforward and flexible models available while also maintaining close ties to Python calling and scoping semantics."
@@ -67,10 +67,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mako/util.py
 #
 license LICENSE license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/mako-$(PYV)@0.4.1,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on the mako package
 depend type=require \
-    fmri=library/python-2/mako@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/mako@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

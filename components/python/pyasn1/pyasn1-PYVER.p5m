@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/pyasn1-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/pyasn1-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python ASN.1 implementation"
 set name=pkg.description \
     value="pyasn1 is an implementation of ASN.1 types and codecs written in Python. It was initially written to support the SNMP protocol but then generalized to be suitable for a wide range of protocols based on the ASN.1 specification."
@@ -75,4 +75,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the pyasn1 package
 depend type=require \
-    fmri=library/python-2/pyasn1@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/pyasn1@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pyasn1-$(PYV)@0.1.7,5.12-5.12.0.0.0.41.0

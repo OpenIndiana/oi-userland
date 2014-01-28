@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/cheetah-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/cheetah-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="A template engine and code generation tool"
 set name=pkg.description \
     value="Cheetah is a template engine and code generation too.  It can be used standalone or combined with other tools and frameworks.  At its core, Cheetah is a domain-specific language for markup generation and templating which allows for full integration with existing Python code but also offers extensions to traditional Python syntax to allow for easier text generation.  Web development is its principal use, but Cheetah is very flexible and can be used to geenrate C++ game code, Java, SQL, form emails, and even Python code."
@@ -112,12 +112,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/Cheetah/_namemapper.so
 file path=usr/lib/python$(PYVER)/vendor-packages/Cheetah/convertTmplPathToModuleName.py
 license cheetah.license license="MIT, BSD-style, LGPLv2.1"
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/cheetah-$(PYV)@2.4.4,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the cheetah package
 depend type=require \
-    fmri=library/python-2/cheetah@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/cheetah@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # force a dependency on markdown; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/markdown-$(PYV)
+depend type=require fmri=library/python/markdown-$(PYV)
 
 # force a dependency on pygments; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/pygments-$(PYV)
+depend type=require fmri=library/python/pygments-$(PYV)

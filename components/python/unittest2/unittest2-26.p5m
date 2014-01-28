@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/unittest2-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/unittest2-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python unit testing framework"
 set name=pkg.description \
     value="Many new features were added to unittest in Python 2.7, including test discovery. unittest2 allows you to use these features with earlier versions of Python."
@@ -59,4 +59,8 @@ license license.txt license="BSD, PSF"
 
 # force a dependency on the unittest2 package
 depend type=require \
-    fmri=library/python-2/unittest2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/unittest2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/unittest2-26@0.5.1,5.12-5.12.0.0.0.41.0

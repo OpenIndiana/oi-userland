@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/argparse@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/argparse@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python argparse command-line parsing library"
 set name=pkg.description \
     value="The argparse module makes it easy to write user-friendly command-line interfaces. The program defines what arguments it requires, and argparse will figure out how to parse those out of sys.argv. The argparse module also automatically generates help and usage messages and issues errors when users give the program invalid arguments."
@@ -36,5 +36,8 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/096
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 depend type=conditional \
-    fmri=library/python-2/argparse-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    fmri=library/python/argparse-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
     predicate=runtime/python-26
+
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/argparse@1.2.1,5.12-5.12.0.0.0.41.0

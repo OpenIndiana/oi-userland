@@ -18,10 +18,10 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/library/python-2/pycups-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/library/python/pycups-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python language bindings for CUPS"
 set name=com.oracle.info.description value="Python 2.7 bindings for CUPS"
 set name=com.oracle.info.tpno value=9025
@@ -36,6 +36,8 @@ file path=usr/lib/python2.7/vendor-packages/cups.so
 license pycups.copyright license=LGPLv2.1
 
 # force a dependency on the pycups package
-depend fmri=library/python-2/pycups@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+depend fmri=library/python/pycups@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
     type=require
 
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/pycups-27@1.9.46,5.12-5.12.0.0.0.41.0

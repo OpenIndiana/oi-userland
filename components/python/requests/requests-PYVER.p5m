@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/requests-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/requests-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python HTTP for Humans."
 set name=pkg.description \
     value="The Python requests module is an HTTP library, for human beings. It allow you to send HTTP/1.1 requests. You can add headers, form data, multipart files, and parameters with simple Python dictionaries, and access the response data in the same way. It's powered by httplib and urllib3."
@@ -115,8 +115,12 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on pyopenssl; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/pyopenssl-$(PYV)
+depend type=require fmri=library/python/pyopenssl-$(PYV)
 
 # force a dependency on the requests package
 depend type=require \
-    fmri=library/python-2/requests@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/requests@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/requests-$(PYV)@1.2.3,5.12-5.12.0.0.0.41.0

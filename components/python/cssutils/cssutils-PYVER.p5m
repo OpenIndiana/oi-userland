@@ -20,11 +20,11 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/cssutils-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/cssutils-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
     value="A Python package to parse and build CSS Cascading Style Sheets."
 set name=com.oracle.info.description value="the cssutils Python module"
@@ -133,9 +133,13 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the cssutils package
 depend type=require \
-    fmri=library/python-2/cssutils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/cssutils@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # cssutils was previously in the 'desktop' consolidation. This optional
 # dependency is here to facilitate the safe transfer of the package 
 # to the 'userland' consolidation.
 depend type=optional fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/cssutils-$(PYV)@0.9.6,5.12-5.12.0.0.0.41.0

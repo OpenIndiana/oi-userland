@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/filechunkio-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/filechunkio-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="filechunkio represents a chunk of an OS-level file"
 set name=pkg.description \
     value="FileChunkIO is a Python library that allows representation of chunks of files. It can be used to segment large files into multiple parts without having to split them physically up front or for creating in-memory chunks as StringIO instances."
@@ -46,4 +46,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the filechunkio package
 depend type=require \
-    fmri=library/python-2/filechunkio@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/filechunkio@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/filechunkio-$(PYV)@1.5,5.12-5.12.0.0.0.41.0

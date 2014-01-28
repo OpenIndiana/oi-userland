@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/tox-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/tox-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="virtualenv-based automation of test activities"
 set name=pkg.description \
     value="Tox as is a generic virtualenv management and test command line tool you can use for: checking your package installs correctly with different Python versions and interpreters; running your tests in each of the environments; configuring your test tool of choice; acting as a frontend to Continuous Integration servers, greatly reducing boilerplate and merging CI and shell-based testing."
@@ -57,15 +57,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/tox/_venv.py
 file path=usr/lib/python$(PYVER)/vendor-packages/tox/_verlib.py
 license tox.license license="GPLv2 BSD, MIT, PSF"
 
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/tox-$(PYV)@1.4.3,5.12-5.12.0.0.0.41.0
+
 # force a dependency on argparse; pkgdepend work is needed to flush this out.
-$(PYTHON_2.6_ONLY)depend type=require fmri=library/python-2/argparse-26
+$(PYTHON_2.6_ONLY)depend type=require fmri=library/python/argparse-26
 
 # force a dependency on py; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/py-$(PYV)
+depend type=require fmri=library/python/py-$(PYV)
 
 # force a dependency on pytest; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/pytest-$(PYV)
+depend type=require fmri=library/python/pytest-$(PYV)
 
 # force a dependency on the tox package
 depend type=require \
-    fmri=library/python-2/tox@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/tox@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

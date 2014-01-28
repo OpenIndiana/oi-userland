@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/webtest-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/webtest-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Helper to test WSGI applications"
 set name=pkg.description \
     value="The Python webtest module wraps any WSGI application and makes it easy to send test requests to that application, without starting up an HTTP server."
@@ -55,33 +55,37 @@ file path=usr/lib/python$(PYVER)/vendor-packages/webtest/sel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/webtest/utils.py
 license docs/license.txt license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/webtest-$(PYV)@2.0.6,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on beautifulsoup4; pkgdepend work is needed to flush this
 # out.
-depend type=require fmri=library/python-2/beautifulsoup4-$(PYV)
+depend type=require fmri=library/python/beautifulsoup4-$(PYV)
 
 # force a dependency on lxml; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/lxml-$(PYV)
+depend type=require fmri=library/python/lxml-$(PYV)
 
 # force a dependency on ordereddict; pkgdepend work is needed to flush this out.
-$(PYTHON_2.6_ONLY)depend type=require fmri=library/python-2/ordereddict-26
+$(PYTHON_2.6_ONLY)depend type=require fmri=library/python/ordereddict-26
 
 # force a dependency on paste.deploy; pkgdepend work is needed to flush this
 # out.
-depend type=require fmri=library/python-2/paste.deploy-$(PYV)
+depend type=require fmri=library/python/paste.deploy-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/six-$(PYV)
+depend type=require fmri=library/python/six-$(PYV)
 
 # force a dependency on waitress; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/waitress-$(PYV)
+depend type=require fmri=library/python/waitress-$(PYV)
 
 # force a dependency on webob; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/webob-$(PYV)
+depend type=require fmri=library/python/webob-$(PYV)
 
 # force a dependency on the webtest package
 depend type=require \
-    fmri=library/python-2/webtest@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/webtest@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

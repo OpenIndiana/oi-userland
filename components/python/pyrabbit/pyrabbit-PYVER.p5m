@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/pyrabbit-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/pyrabbit-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
     value="Pythonic interface to the RabbitMQ Management HTTP API"
 set name=pkg.description \
@@ -53,8 +53,12 @@ license pyrabbit.license license=MIT
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
-depend type=require fmri=library/python-2/httplib2-$(PYV)
+depend type=require fmri=library/python/httplib2-$(PYV)
 
 # force a dependency on the pyrabbit package
 depend type=require \
-    fmri=library/python-2/pyrabbit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/pyrabbit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pyrabbit-$(PYV)@1.0.1,5.12-5.12.0.0.0.41.0

@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/stevedore-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/stevedore-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Manage dynamic plugins for Python applications"
 set name=pkg.description \
     value="Python makes loading code dynamically easy, allowing you to configure and extend your application by discovering and loading extensions ('plugins') at runtime. Many applications implement their own library for doing this, using __import__ or importlib. stevedore avoids creating yet another extension mechanism by building on top of setuptools entry points. The code for managing entry points tends to be repetitive, though, so stevedore provides manager classes for implementing common patterns for using dynamically loaded extensions."
@@ -64,4 +64,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the stevedore package
 depend type=require \
-    fmri=library/python-2/stevedore@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/stevedore@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/stevedore-$(PYV)@0.10,5.12-5.12.0.0.0.41.0

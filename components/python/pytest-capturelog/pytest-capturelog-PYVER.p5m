@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/pytest-capturelog-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/pytest-capturelog-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="A pytest plugin to capture log messages"
 set name=pkg.description \
     value="The capturelog pytest plugin when installed will cause log messages to be captured by default and for each failed test, standard output and error will be captured in the same manner. By default, each captured log message shows the module, line number, log level, and message. If desired, the log format and date format can be specified to anything that the logging module supports."
@@ -44,13 +44,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytest_capturelog-$(COMPONENT_V
 file path=usr/lib/python$(PYVER)/vendor-packages/pytest_capturelog.py
 license pytest-capturelog.license license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pytest-capturelog-$(PYV)@0.7,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on pytest
-depend type=require fmri=library/python-2/pytest-$(PYV)
+depend type=require fmri=library/python/pytest-$(PYV)
 
 # force a dependency on the pytest-capturelog package
 depend type=require \
-    fmri=library/python-2/pytest-capturelog@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/pytest-capturelog@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/python-ldap-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/python-ldap-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="LDAP client library for Python"
 set name=pkg.description \
     value="python-ldap provides an object-oriented API to access LDAP directory servers from Python programs. Mainly it wraps the OpenLDAP 2.x library for that purpose."
@@ -74,9 +74,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/python_ldap-$(COMPONENT_VERSION
 license python-ldap.license license=PSF
 
 # force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
+#depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+#    pkg.debug.depend.path=usr/bin
 
 # force a dependency on the python-ldap package
 depend type=require \
-    fmri=library/python-2/python-ldap@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/python-ldap@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/python-ldap-$(PYV)@2.4.10,5.12-5.12.0.0.0.41.0

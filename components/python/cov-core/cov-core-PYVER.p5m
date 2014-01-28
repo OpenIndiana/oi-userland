@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/cov-core-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/cov-core-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
     value="plugin core for use by pytest-cov, nose-cov and nose2-cov"
 set name=pkg.description \
@@ -45,13 +45,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cov_core.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cov_core_init.py
 license LICENSE.txt license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/cov-core-$(PYV)@1.7,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
 # force a dependency on the cov-core package
 depend type=require \
-    fmri=library/python-2/cov-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/cov-core@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # force a dependency on coverage; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python-2/coverage-$(PYV)
+depend type=require fmri=library/python/coverage-$(PYV)

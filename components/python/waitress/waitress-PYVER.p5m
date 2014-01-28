@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/waitress-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/waitress-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Waitress WSGI server"
 set name=pkg.description \
     value="Waitress is meant to be a production-quality pure-Python WSGI server with very acceptable performance. It has no dependencies except ones which live in the Python standard library. It supports HTTP/1.0 and HTTP/1.1."
@@ -58,6 +58,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/waitress/trigger.py
 file path=usr/lib/python$(PYVER)/vendor-packages/waitress/utilities.py
 license waitress.license license=ZPL
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/waitress-$(PYV)@0.8.5,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the waitress package
 depend type=require \
-    fmri=library/python-2/waitress@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/waitress@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

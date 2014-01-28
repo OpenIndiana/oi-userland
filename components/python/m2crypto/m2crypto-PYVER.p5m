@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/m2crypto-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/m2crypto-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Python interface for OpenSSL"
 set name=pkg.description \
     value="M2Crypto is a complete Python wrapper for OpenSSL featuring RSA, DSA, DH, HMACs, message digests, symmetric ciphers (including AES); SSL functionality to implement clients and servers; HTTPS extensions to Python's httplib, urllib, and xmlrpclib; unforgeable HMAC'ing AuthCookies for web session management; FTP/TLS client and server; S/MIME; ZServerSSL: an HTTPS server for Zope; and ZSmime: an S/MIME messenger for Zope. M2Crypto can also be used to provide SSL for Twisted."
@@ -93,4 +93,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the m2crypto package
 depend type=require \
-    fmri=library/python-2/m2crypto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/m2crypto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/m2crypto-$(PYV)@0.21.1,5.12-5.12.0.0.0.41.0

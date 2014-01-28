@@ -22,7 +22,7 @@
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/net-snmp-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/net-snmp-27@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="The Net-SNMP - Python 2.7 bindings"
 set name=com.oracle.info.description value="Python 2.7 bindings for Net-SNMP"
 set name=com.oracle.info.tpno value=13120
@@ -46,3 +46,7 @@ file \
 file \
     path=usr/lib/python2.7/vendor-packages/netsnmp_python-1.0a1-py2.7.egg-info/top_level.txt
 license COPYING license="BSD, BSD-like"
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/net-snmp-27@5.7.2,5.12-5.12.0.0.0.41.0

@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
-    value=pkg:/library/python-2/suds-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    value=pkg:/library/python/suds-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Lightweight SOAP client"
 set name=pkg.description \
     value="The Python suds module is a lightweight SOAP-based client, providing an RPC-like interface into SOAP-based web services. This means that in most cases, users do not need to be concerned with the complexities of the WSDL and referenced schemas. Regardless of which SOAP message style is specified, the signature of the service methods remain the same."
@@ -102,4 +102,7 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 
 # force a dependency on the suds package
 depend type=require \
-    fmri=library/python-2/suds@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+    fmri=library/python/suds@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/suds-$(PYV)@0.4,5.12-5.12.0.0.0.41.0
