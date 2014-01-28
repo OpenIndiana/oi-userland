@@ -32,6 +32,10 @@ include $(WS_TOP)/make-rules/prep.mk
 
 #export CC 
 
+COMPONENT_ENV = CC=$(CC)
+COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
+COMPONENT_INSTALL_ENV = $(COMPONENT_ENV)
+
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
 	$(GIT) clone -b $(GIT_BRANCH) $(GIT_REPO) $(SOURCE_DIR)
@@ -50,7 +54,7 @@ download:: $(SOURCE_DIR)/.downloaded
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded 
 	$(MKDIR) $(@D) && \
 	cd $(SOURCE_DIR)/src && \
-	$(MAKE) && $(MAKE) install && \
+	$(ENV) $(COMPONENT_BUILD_ENV) $(MAKE) && $(ENV) $(COMPONENT_INSTALL_ENV) $(MAKE) install && \
 	cd pkg && \
 	$(MAKE) BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) publish-pkgs BUILD_VERSION=$(BUILD_VERSION) && \
