@@ -1,0 +1,32 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2013 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/gnome/gnome-common@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license gnome-common.license license="GPL v3"
+
+depend type=optional fmri=pkg:/developer/gnome/gettext@2.30.0,5.11-0.151.1.8.1
+
+file path=usr/bin/gnome-autogen.sh mode=0555
+file path=usr/bin/gnome-doc-common mode=0555
+file path=usr/share/aclocal/gnome-common.m4
+file path=usr/share/aclocal/gnome-compiler-flags.m4
+file path=usr/share/gnome-common/data/omf.make
+file path=usr/share/gnome-common/data/xmldocs.make
