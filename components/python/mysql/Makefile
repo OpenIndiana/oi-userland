@@ -20,12 +20,15 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/mysql/5.1/bin:/usr/bin:/usr/gnu/bin
+PATH_32=/usr/mysql/5.5/bin/$(MACH32):/usr/bin
+PATH_64=/usr/mysql/5.5/bin:/usr/bin
+COMPONENT_BUILD_ENV   += PATH=$(PATH_$(BITS))
+COMPONENT_INSTALL_ENV += PATH=$(PATH_$(BITS))
 
 COMPONENT_NAME=		MySQL-python
 COMPONENT_VERSION=	1.2.2
@@ -41,14 +44,26 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-CFLAGS +=	-L/usr/mysql/5.1/lib/mysql -R/usr/mysql/5.1/lib/mysql
+CFLAGS_32=	-L/usr/mysql/5.5/lib -R/usr/mysql/5.5/lib
+CFLAGS_64=	-L/usr/mysql/5.5/lib/$(MACH64) -R/usr/mysql/5.5/lib/$(MACH64)
+CFLAGS +=	$(CFLAGS_$(BITS))
+
+# Needed to get around a broken /usr/lib/python2.7/config/Makefile
+# See CR #16837431.
+LD=$(CC)
+LDSHARED=$(CC) -G
+PYTHON_ENV += CC="$(CC)"
+PYTHON_ENV += LDSHARED="$(LDSHARED)"
+PYTHON_ENV += LD="$(LD)"
+PYTHON_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
-build:          $(BUILD_32)
+build:          $(BUILD_32_and_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_32_and_64)
 
 test:           $(NO_TESTS)
 
