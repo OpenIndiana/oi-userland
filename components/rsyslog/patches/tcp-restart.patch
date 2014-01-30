@@ -2,10 +2,13 @@
 # 16134419 rsyslogd forwarding over TCP does not detect server restart
 # which was fixed in upstream version 6.4.1; this patch is a minor variant
 # on the upstream patch, adapted for 6.2.0 .  This can go away once we
-# upgrade to 6.4.1 or later.
+# upgrade to 6.4.1 or later, except for the CheckConnection() part in
+# runtime/netstrm.c which needs to make sure to return a value, as there
+# was a bug in the 6.4.1 code that failed to do this:
+# http://bugzilla.adiscon.com/show_bug.cgi?id=511
 --- rsyslog/runtime/netstrm.c.orig	2012-01-09 06:05:45.000000000 -0800
-+++ rsyslog/runtime/netstrm.c	2013-12-02 09:14:19.766000221 -0800
-@@ -250,7 +250,7 @@
++++ rsyslog/runtime/netstrm.c	2014-01-29 10:16:47.131765870 -0800
+@@ -250,11 +250,13 @@
  
  
  /* check connection - slim wrapper for NSD driver function */
@@ -13,7 +16,14 @@
 +static rsRetVal
  CheckConnection(netstrm_t *pThis)
  {
++	DEFiRet;
  	ISOBJ_TYPE_assert(pThis, netstrm);
+-	pThis->Drvr.CheckConnection(pThis->pDrvrData);
++	iRet = pThis->Drvr.CheckConnection(pThis->pDrvrData);
++	RETiRet;
+ }
+ 
+ 
 --- rsyslog/runtime/netstrm.h~	2011-12-01 02:26:19.000000000 -0800
 +++ rsyslog/runtime/netstrm.h	2013-12-02 09:30:45.155766988 -0800
 @@ -53,7 +53,7 @@
