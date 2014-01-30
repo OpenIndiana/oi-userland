@@ -1,0 +1,11 @@
+In house, Solaris specific patch to remove path to X11R6/lib as this gets added to LD_RUN_PATH and causes pkg lint warnings of 32-bit runpath in 64-bit binary.
+--- Tk-804.031/myConfig	2013-05-21 06:25:13.000000000 -0700
++++ Tk-804.031/myConfig.new	2014-01-29 23:20:16.182341526 -0800
+@@ -369,6 +369,7 @@
+       $xlib = &lX11(0,split(/\s+/,$Config{'libpth'}))
+     }
+ 
++  $xlib = "";
+   unless(defined $xlib)
+     {
+       warn "Cannot find -lX11 anywhere --- cannot build Perl/Tk\n";

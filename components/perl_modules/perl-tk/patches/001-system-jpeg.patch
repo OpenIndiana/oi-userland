@@ -1,0 +1,65 @@
+In-House patch. 
+Making sure Perl-Tk does not build its own copy of libjpeg, instead links against libjpeg library already present in Solaris in /usr/lib.
+--- Tk-804.031/JPEG/Makefile.PL.orig	2014-01-03 22:04:39.788240812 -0800
++++ Tk-804.031/JPEG/Makefile.PL	2014-01-03 21:57:20.929546011 -0800
+@@ -1,27 +1,6 @@
+ # -*- cperl -*-
+ use Tk::MMutil;
+ use Tk::Config ();
+-use File::Copy;
+-my $l = $Config::Config{'lib_ext'};
+-
+-use Tk::MMtry;
+-
+-if ($Tk::MMtry::VERSION ge '4.007' && try_run("config/has_jpeg.c",['-I/usr/local/include'],['-ljpeg']))
+- {
+-  push(@args, LIBS => ['-ljpeg'],
+-              INC  => '-I/usr/local/include',
+-              DEFINE => '-DHAVE_JPEGLIB_H',
+-      );
+-  warn "Using system's -ljpeg\n";
+-  unlink("jpeg/Makefile.PL");
+- }
+-else
+- {
+-  push(@args, MYEXTLIB  => "jpeg/libjpeg$l",
+-              'INC'     => '-Ijpeg');
+-  copy("Makefile.jpeg.maybe","jpeg/Makefile.PL");
+-  warn "Building jpeg/libjpeg$l\n";
+- }
+ 
+ Tk::MMutil::TkExtMakefile(@args,
+     'NAME'         => 'Tk::JPEG',
+@@ -32,9 +11,9 @@
+     'OBJECT'       => '$(O_FILES)',
+     'VERSION_FROM' => 'JPEG.pm',
+     'XS_VERSION'   => $Tk::Config::VERSION,
+-    'dist'         => { COMPRESS => 'gzip -f9', SUFFIX => '.gz' },
+-    'clean'        => { FILES => 'jpeg/Makefile jpeg/Makefile.PL jpeg/config.status jpeg/jconfig.h' }
+-
++    'LIBS'         => ['-ljpeg'],
++    'DEFINE'       => '-DHAVE_JPEGLIB_H',
++    'dist'         => { COMPRESS => 'gzip -f9', SUFFIX => '.gz' }
+    );
+ 
+ sub MY::test_via_harness
+@@ -45,19 +24,3 @@
+ }
+ 
+ package MY;
+-
+-
+-sub postamble {
+-  if (-f "jpeg/Makefile.PL")
+-   {
+-    return
+-'
+-$(MYEXTLIB)  : FORCE
+-	cd jpeg && $(MAKE) libjpeg'.$l.'
+-';
+-
+-   }
+-}
+-
+-
+-
