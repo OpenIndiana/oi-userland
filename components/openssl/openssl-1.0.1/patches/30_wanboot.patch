@@ -351,3 +351,19 @@
 
  SRC= $(LIBSRC)
 
+--- openssl-1.0.1f/ssl/s3_clnt.c    Thu Jan 30 02:53:33 2014
++++ openssl-1.0.1f/ssl/s3_clnt.c.new   Thu Jan 30 02:57:51 2014
+@@ -681,8 +681,13 @@
+ 
+ 		p=s->s3->client_random;
+ 
++#ifndef	_BOOT
+ 		if (ssl_fill_hello_random(s, 0, p, SSL3_RANDOM_SIZE) <= 0)
+ 			goto err;
++#else
++		if (RAND_pseudo_bytes(p,SSL3_RANDOM_SIZE) <= 0)
++			goto err;
++#endif
+ 
+ 		/* Do the message type and length last */
+ 		d=p= &(buf[4]);
