@@ -28,17 +28,17 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
+PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_PREP_ACTION =        ( cd $(@D) && \
+			                libtoolize --force && \
+					intltoolize --force --copy --automake && \
 					aclocal -I. && \
-				        autoheader && \
-			                libtoolize --automake --copy --force && \
 					automake -a -f -c &&\
 					autoconf )
 
-COMPONENT_PRE_CONFIGURE_ACTION = ( cp -r $(SOURCE_DIR)/* $(@D) && \
-                                        cp -r $(COMPONENT_DIR)/files/po-sun $(@D) && \
+COMPONENT_PRE_CONFIGURE_ACTION = ( cp -rp $(SOURCE_DIR)/* $(@D) && \
+                                        cp -rp $(COMPONENT_DIR)/files/po-sun $(@D) && \
                                         cd $(@D)/po-sun && $(MAKE))
 
 CONFIGURE_SCRIPT=       $(@D)/configure
@@ -56,8 +56,8 @@ CONFIGURE_OPTIONS+=	--disable-meanwhile
 CONFIGURE_OPTIONS+=	--disable-nm
 CONFIGURE_OPTIONS+=	--disable-consoleui
 CONFIGURE_OPTIONS+=	--disable-vv
+CONFIGURE_OPTIONS+=	--enable-perl=$(PERL)
 
-CONFIGURE_ENV+=	PERL=$(PERL)
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
