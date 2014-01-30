@@ -1,42 +1,38 @@
-#
-# The Net-SNMP libraries are built without -zdefs and are missing a large
-# number of dependency specifications (DT_NEEDED).  This makes it
-# impossible to build plugin modules against these libraries using
-# -zdefs, which should work. One such example is FMA in ON gate. 
-#
---- net-snmp-5.7.2/agent/Makefile.in	Tue Oct  9 15:28:58 2012
-+++ net-snmp-5.7.2/agent/Makefile.in	Sun Dec 30 23:58:44 2012
-@@ -274,9 +274,13 @@
+Only in net-snmp-5.4.1.mod: .patches.011.Makefile.in.patch
+diff -ru net-snmp-5.4.1/agent/Makefile.in net-snmp-5.4.1.mod/agent/Makefile.in
+--- net-snmp-5.4.1/agent/Makefile.in	2007-07-05 04:56:56.000000000 +0530
++++ net-snmp-5.4.1.mod/agent/Makefile.in	2009-06-24 06:08:28.858891018 +0530
+@@ -120,8 +120,11 @@
+ OBJS		= $(LIBAGENTOBJS)  $(AGENTOBJS)  mib_modules.o  auto_nlist.o
  LOBJS		= $(LLIBAGENTOBJS) $(LAGENTOBJS) mib_modules.lo auto_nlist.lo
- FTOBJS		= $(LLIBAGENTFTS) $(FTAGENTOBJS) mib_modules.ft auto_nlist.ft
  
-+LIB_LD_ADD_AGENT   =-lnetsnmp -lnetsnmphelpers
-+
-+LIB_LD_ADD_PATH_MIBS   =-Lhelpers -L../snmplib
-+
- FEATUREFILE     = $(top_builddir)/include/net-snmp/agent/features.h
++LIB_LD_ADD_AGENT	=-lnetsnmp -lnetsnmphelpers
++ 
++LIB_LD_ADD_PATH_MIBS	=-Lhelpers -L../snmplib
  
 -all: agentlib subdirs miblib $(INSTALLBINPROGS) $(INSTALLSBINPROGS)
 +all: agentlib subdirs miblib relinklib $(INSTALLBINPROGS) $(INSTALLSBINPROGS)
  
  #
  # build stuff targets
-@@ -306,6 +310,10 @@
+@@ -152,6 +155,10 @@
  
  agentlib: $(AGENTLIB)
  
-+relinklib:	${LLIBAGENTOBJS} $(USELIBS)
++relinklib:     ${LLIBAGENTOBJS} $(USELIBS)
 +	$(LIB_LD_CMD) $(AGENTLIB) $(LIB_LD_ADD_PATH_MIBS) ${LLIBAGENTOBJS} $(USELIBS) ${LAGENTLIBS} $(LDFLAGS) $(PERLLDOPTS_FOR_LIBS) $(LIB_LD_LIBS) $(LIB_LD_ADD_AGENT)
 +	$(RANLIB) $(AGENTLIB) $(LIB_LD_ADD_AGENT)
 +
  miblib: $(MIBLIB)
  
- libs: $(AGENTLIB) $(MIBLIB)
---- net-snmp-5.7.2/agent/helpers/Makefile.in	Sun Dec 30 22:37:05 2012
-+++ net-snmp-5.7.2/agent/helpers/Makefile.in	Mon Dec 31 00:02:37 2012
-@@ -31,8 +31,11 @@
- 
- LOBJS = dummy.lo
+ libs: $(INSTALLLIBS)
+Only in net-snmp-5.4.1.mod/agent: Makefile.in~
+diff -ru net-snmp-5.4.1/agent/helpers/Makefile.in net-snmp-5.4.1.mod/agent/helpers/Makefile.in
+--- net-snmp-5.4.1/agent/helpers/Makefile.in	2007-06-27 03:15:20.000000000 +0530
++++ net-snmp-5.4.1.mod/agent/helpers/Makefile.in	2009-06-24 06:01:35.912702710 +0530
+@@ -137,8 +137,11 @@
+ 	table_tdata.lo \
+ 	watcher.lo
  
 +LIB_LD_ADD	=-lnetsnmp
 +LIB_LD_ADD_PATH	=-L../../snmplib
@@ -44,30 +40,31 @@
  all: standardall
  
  libnetsnmphelpers.$(LIB_EXTENSION)$(LIB_VERSION):    $(LOBJS)
--	$(LIB_LD_CMD) $@ $(LOBJS) @LD_NO_UNDEFINED@ $(LDFLAGS) $(LIB_LD_LIBS)
+-	$(LIB_LD_CMD) $@ $(LOBJS) $(AGENTLIB) $(NETSNMPLIB) $(LDFLAGS) $(LIB_LD_LIBS)
 -	$(RANLIB) $@
-+	$(LIB_LD_CMD) $@ $(LIB_LD_ADD_PATH) $(LOBJS) @LD_NO_UNDEFINED@ $(LDFLAGS) $(LIB_LD_LIBS) $(LIB_LD_ADD)
++	$(LIB_LD_CMD) $@ $(LIB_LD_ADD_PATH) $(LOBJS) $(AGENTLIB) $(NETSNMPLIB) $(LDFLAGS) $(LIB_LD_LIBS) $(LIB_LD_ADD)
 +	$(RANLIB) $@ $(LIB_LD_ADD)
---- net-snmp-5.7.2/snmplib/Makefile.in	Sun Dec 30 22:37:08 2012
-+++ net-snmp-5.7.2/agent/helpers/Makefile.in	Mon Dec 31 00:06:01 2012
-@@ -221,6 +221,9 @@
+diff -ru net-snmp-5.4.1/snmplib/Makefile.in net-snmp-5.4.1.mod/snmplib/Makefile.in
+--- net-snmp-5.4.1/snmplib/Makefile.in	2007-06-19 03:04:43.000000000 +0530
++++ net-snmp-5.4.1.mod/snmplib/Makefile.in	2009-06-24 06:01:35.912972597 +0530
+@@ -181,6 +181,9 @@
  # just in case someone wants to remove libtool, change this to OBJS.
  TOBJS=$(LOBJS)
  
 +# To satisfy -zdefs
-+LIB_LD_ADD =-lnsl -lsocket -L$(libdir)
++LIB_LD_ADD	=-lnsl -lsocket -L$(libdir)
 +
- FEATUREFILE     = $(top_builddir)/include/net-snmp/library/features.h
- 
  # 
-@@ -230,8 +233,8 @@
+ CPPFLAGS = $(TOP_INCLUDES) -I. 	$(SNMPLIB_INCLUDES) @CPPFLAGS@
+ 
+@@ -188,8 +191,8 @@
  
  # how to build the libraries.
  libnetsnmp.$(LIB_EXTENSION)$(LIB_VERSION):    $(TOBJS)
--	$(LIB_LD_CMD) $@ $(TOBJS) @LD_NO_UNDEFINED@ $(LDFLAGS) @LNETSNMPLIBS@
+-	$(LIB_LD_CMD) $@ $(TOBJS) $(LDFLAGS) @LNETSNMPLIBS@
 -	$(RANLIB) $@
-+	$(LIB_LD_CMD) $@ $(TOBJS) @LD_NO_UNDEFINED@ $(LDFLAGS) @LNETSNMPLIBS@ } $(LIB_LD_ADD)
-+	$(RANLIB) $@ $(LIB_LD_ADD)
++	$(LIB_LD_CMD) $@ $(TOBJS) $(LDFLAGS) @LNETSNMPLIBS@ } $(LIB_LD_ADD)
++	$(RANLIB) $@  $(LIB_LD_ADD)
  
  libsnmp.$(LIB_EXTENSION)$(LIB_VERSION):    $(TOBJS)
- 	$(LIB_LD_CMD) $@ $(TOBJS) @LD_NO_UNDEFINED@ $(LDFLAGS) @LNETSNMPLIBS@
+ 	$(LIB_LD_CMD) $@ $(TOBJS) $(LDFLAGS) @LNETSNMPLIBS@
