@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -47,7 +47,7 @@ CFLAGS += `pkg-config --cflags libidn`
 CPPFLAGS += `pkg-config --cflags libidn`
 
 CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
-CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS) -I/usr/include/openldap"
 CONFIGURE_ENV += PKG_CONFIG_PATH="$(PKG_CONFIG_PATH)"
 
 CONFIGURE_OPTIONS += --localstatedir=/var --enable-shared --disable-static
@@ -63,8 +63,8 @@ CONFIGURE_OPTIONS += --disable-sspi --enable-crypto-auth
 CONFIGURE_OPTIONS += --enable-cookies --disable-hidden-symbols
 CONFIGURE_OPTIONS += --disable-soname-bump
 CONFIGURE_OPTIONS += --enable-ldap --with-random=/dev/urandom
-CONFIGURE_OPTIONS += --with-ssl --with-ldap-lib=ldap
-CONFIGURE_OPTIONS += --with-lber-lib=sldap
+CONFIGURE_OPTIONS += --with-ssl --with-ldap-lib=ldap_r-2.4
+CONFIGURE_OPTIONS += --with-lber-lib=lber-2.4
 CONFIGURE_OPTIONS += --with-gssapi-includes=/usr/include/gssapi
 CONFIGURE_OPTIONS += --with-gssapi-libs=$(GSSAPI_LIBDIR_$(BITS))
 CONFIGURE_OPTIONS += --with-gssapi=/usr --without-ca-bundle
