@@ -56,9 +56,11 @@ CONFIGURE_OPTIONS+=	--disable-meanwhile
 CONFIGURE_OPTIONS+=	--disable-nm
 CONFIGURE_OPTIONS+=	--disable-consoleui
 CONFIGURE_OPTIONS+=	--disable-vv
-CONFIGURE_OPTIONS+=	--enable-perl=$(PERL)
+CONFIGURE_OPTIONS+=	--enable-perl=yes
 
 CONFIGURE_ENV+=	INTLTOOL_PERL=$(PERL)
+CONFIGURE_ENV+=	PERL=$(PERL)
+CONFIGURE_ENV+=	perlpath=$(PERL)
 CONFIGURE_ENV+=	PYTHON=$(PYTHON)
 
 # common targets
