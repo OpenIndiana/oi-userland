@@ -70,6 +70,8 @@ COMPONENT_POST_INSTALL_ACTION += \
         $(GSED) -i -e 's?env python?python2.6?' \
                 $(PROTOUSRBINDIR)/uninstall_zenmap
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 # common targets
 build:		$(BUILD_32)
 		

@@ -100,6 +100,8 @@ PKG_PROTO_DIRS += $(WS_TOP)/components/pinentry
 
 MAN8LIST = addgnupghome applygnupgdefaults
 
+ASLR_MODE = $(ASLR_ENABLE)
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)

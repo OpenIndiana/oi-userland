@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -77,6 +77,8 @@ CONFIGURE_OPTIONS  +=		--enable-threading
 CONFIGURE_OPTIONS  +=		--disable-pinentry-gtk
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
 CONFIGURE_OPTIONS  +=		--disable-ncurses
+
+ASLR_MODE = $(ASLR_ENABLE)
 
 build: $(BUILD_32)
 

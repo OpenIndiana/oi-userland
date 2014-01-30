@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we really need to use studio, mostly because that's what
@@ -69,6 +69,7 @@ CONFIGURE_OPTIONS +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=		LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS +=		CXXFLAGS="$(CXXFLAGS)"
 
+ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 build:		$(BUILD_32)
