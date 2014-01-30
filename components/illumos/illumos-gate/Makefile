@@ -121,6 +121,8 @@ $(BUILD_DIR)/$(MACH)/.overlay: $(BUILD_DIR)/$(MACH)/.built
 $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform set name=pkg.fmri -> edit value pkg://[^/]+/ pkg://$(PUBLISHER)/>" > \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform file path=usr/share/lib/zoneinfo/Europe/Tiraspol -> drop> >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
 	for i in $$(cd $(BUILD_DIR)/$(MACH)/overlay; find . -type f | \
 	  cut -c 3- | sort); do \
 	  echo "<transform file path=$$i -> set action.hash $$i >" >> \
