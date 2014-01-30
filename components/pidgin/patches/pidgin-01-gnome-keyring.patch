@@ -1,0 +1,218 @@
+--- pidgin-2.7.11/libpurple/account.c.orig	2011-01-08 23:19:44.000000000 +0800
++++ pidgin-2.7.11/libpurple/account.c	2011-03-14 09:45:48.769619000 +0800
+@@ -49,6 +49,14 @@
+ #define PURPLE_ACCOUNT_GET_PRIVATE(account) \
+ 	((PurpleAccountPrivate *) (account->priv))
+ 
++#ifdef GAIM_ENABLE_KEYRING
++#include <gnome-keyring.h>
++
++static char * gaim_account_get_password_from_keyring (const char *_prpl, const char *_user);
++static gboolean gaim_account_set_password_in_keyring (const char *_prpl, const char *_user, const char *password);
++#endif
++
++
+ /* TODO: Should use PurpleValue instead of this?  What about "ui"? */
+ typedef struct
+ {
+@@ -378,8 +386,14 @@
+ 	if (purple_account_get_remember_password(account) &&
+ 		((tmp = purple_account_get_password(account)) != NULL))
+ 	{
++#ifdef GAIM_ENABLE_KEYRING
++                gaim_account_set_password_in_keyring( purple_account_get_protocol_id(account),
++                                          purple_account_get_username(account), tmp);
++#else
++
+ 		child = xmlnode_new_child(node, "password");
+ 		xmlnode_insert_data(child, tmp, -1);
++#endif
+ 	}
+ 
+ 	if ((tmp = purple_account_get_alias(account)) != NULL)
+@@ -872,17 +886,31 @@
+ 	}
+ 
+ 	ret = purple_account_new(name, _purple_oscar_convert(name, protocol_id)); /* XXX: */
+-	g_free(name);
+-	g_free(protocol_id);
+ 
+-	/* Read the password */
+-	child = xmlnode_get_child(node, "password");
+-	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
+-	{
+-		purple_account_set_remember_password(ret, TRUE);
+-		purple_account_set_password(ret, data);
+-		g_free(data);
+-	}
++        gboolean got_pwd = FALSE;
++#ifdef GAIM_ENABLE_KEYRING
++        data = gaim_account_get_password_from_keyring(protocol_id, name);
++        if (data)
++        {
++                got_pwd = TRUE;
++                purple_account_set_remember_password(ret, TRUE);
++                purple_account_set_password(ret, data);
++                g_free(data);
++        }
++#endif
++        if (!got_pwd)
++        {
++                /* Read the password */
++               child = xmlnode_get_child(node, "password");
++               if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
++               {
++                       purple_account_set_remember_password(ret, TRUE);
++                       purple_account_set_password(ret, data);
++                       g_free(data);
++               }
++        }
++        g_free(name);
++        g_free(protocol_id);
+ 
+ 	/* Read the alias */
+ 	child = xmlnode_get_child(node, "alias");
+@@ -3111,3 +3139,66 @@
+ 	purple_signals_disconnect_by_handle(handle);
+ 	purple_signals_unregister_by_instance(handle);
+ }
++
++#ifdef GAIM_ENABLE_KEYRING
++static char *
++gaim_account_get_password_from_keyring(const char *_prpl, const char *_user)
++{
++  GnomeKeyringNetworkPasswordData *found_item;
++  GnomeKeyringResult               result;
++  GList                           *matches;
++  char                            *password;
++
++  matches = NULL;
++
++  result = gnome_keyring_find_network_password_sync (
++               _user,          /* user     */
++               NULL,           /* domain   */
++               "gaim.local",   /* server   */
++               NULL,           /* object   */
++               _prpl,          /* protocol */
++               NULL,           /* authtype */
++               1863,           /* port     */
++               &matches);
++
++  if (result != GNOME_KEYRING_RESULT_OK)
++    return NULL;
++
++  if (matches == NULL || matches->data == NULL)
++    return NULL;
++
++  found_item = (GnomeKeyringNetworkPasswordData *) matches->data;
++
++  password = g_strdup (found_item->password);
++
++  gnome_keyring_network_password_list_free (matches);
++
++  return password;
++}
++
++void my_GnomeKeyringOperationGetIntCallback(GnomeKeyringResult result, guint32 val, gpointer data)
++{
++  return;
++}
++
++static gboolean
++gaim_account_set_password_in_keyring (const char *_prpl, const char *_user, const char *_password)
++{
++  GnomeKeyringResult result;
++  guint32            item_id;
++
++  gpointer req = gnome_keyring_set_network_password (
++                NULL,           /* default keyring */
++                _user,          /* user            */
++                NULL,           /* domain          */
++                "gaim.local",   /* server          */
++                NULL,           /* object          */
++                _prpl,          /* protocol        */
++                NULL,           /* authtype        */
++                1863,           /* port            */
++                _password,       /* password        */
++                my_GnomeKeyringOperationGetIntCallback, NULL, NULL);
++  return TRUE;
++}
++#endif
++
+--- pidgin-2.7.11/libpurple/Makefile.am.orig	2011-03-11 10:20:27.000000000 +0800
++++ pidgin-2.7.11/libpurple/Makefile.am	2011-03-14 09:45:48.768422314 +0800
+@@ -305,6 +305,7 @@
+ 	$(DBUS_LIBS) \
+ 	$(GLIB_LIBS) \
+ 	$(LIBXML_LIBS) \
++        $(GAIM_KEYRING_LIBS) \
+ 	$(NETWORKMANAGER_LIBS) \
+ 	$(INTLLIBS) \
+ 	$(FARSTREAM_LIBS) \
+@@ -322,6 +323,7 @@
+ 	$(GLIB_CFLAGS) \
+ 	$(DEBUG_CFLAGS) \
+ 	$(DBUS_CFLAGS) \
++        $(GAIM_KEYRING_CFLAGS) \
+ 	$(LIBXML_CFLAGS) \
+ 	$(FARSTREAM_CFLAGS) \
+ 	$(GSTREAMER_CFLAGS) \
+--- pidgin-2.7.11/pidgin/gtkmain.c.orig	2011-03-11 10:20:28.000000000 +0800
++++ pidgin-2.7.11/pidgin/gtkmain.c	2011-03-14 09:45:48.767697192 +0800
+@@ -70,6 +70,10 @@
+ #include "pidginstock.h"
+ #include "gtkwhiteboard.h"
+ 
++#ifdef GAIM_ENABLE_KEYRING
++#include <gnome-keyring.h>
++#endif
++
+ #ifdef HAVE_SIGNAL_H
+ # include <signal.h>
+ #endif
+@@ -742,6 +746,12 @@
+ 	gtk_rc_add_default_file(search_path);
+ 	g_free(search_path);
+ 
++#ifdef  GAIM_ENABLE_KEYRING
++        GnomeKeyringResult rtn = gnome_keyring_unlock_sync(NULL, NULL);
++        // if (rtn == GNOME_KEYRING_RESULT_DENIED)
++        //   return 0;
++#endif
++
+ 	gui_check = gtk_init_check(&argc, &argv);
+ 	if (!gui_check) {
+ 		char *display = gdk_get_display();
+--- pidgin-2.7.11/pidgin/Makefile.am.orig	2011-03-11 10:20:28.000000000 +0800
++++ pidgin-2.7.11/pidgin/Makefile.am	2011-03-14 09:45:48.768028256 +0800
+@@ -177,6 +177,7 @@
+ 	$(GSTREAMER_CFLAGS) \
+ 	$(DEBUG_CFLAGS) \
+ 	$(GTK_CFLAGS) \
++        $(GAIM_KEYRING_CFLAGS) \
+ 	$(DBUS_CFLAGS) \
+ 	$(GTKSPELL_CFLAGS) \
+ 	$(LIBXML_CFLAGS) \
+--- pidgin-2.7.11/configure.ac.orig	2011-03-11 10:20:27.000000000 +0800
++++ pidgin-2.7.11/configure.ac	2011-03-14 09:45:48.770550233 +0800
+@@ -2382,6 +2382,20 @@
+ 	LDFLAGS="$orig_LDFLAGS"
+ fi
+ 
++dnl #######################################################################
++dnl # Check for gnome-keyring
++dnl #--enable-gnome-keyring=(yes|no)
++dnl #######################################################################
++AC_ARG_ENABLE(gnome-keyring,
++              AC_HELP_STRING([--enable-gnome-keyring],
++                             [use gnome keyring for storing password [default=no]]),,
++              enable_gnome_keyring=no)
++if test "x$enable_gnome_keyring" = "xyes"; then
++    PKG_CHECK_MODULES(GAIM_KEYRING,
++                      gnome-keyring-1,
++                      AC_DEFINE(GAIM_ENABLE_KEYRING, [], [Set if we should use gnome-keyring]))
++fi
++
+ AC_MSG_CHECKING(for me pot o' gold)
+ AC_MSG_RESULT(no)
+ AC_CHECK_FUNCS(gethostid lrand48 timegm)
