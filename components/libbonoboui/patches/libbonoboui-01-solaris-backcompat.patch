@@ -1,0 +1,20 @@
+diff -ur libbonoboui-2.16.0/bonobo/bonobo-ui-util.c ../SUNWgnome-libs-2.16.1.hacked/libbonoboui-2.16.0/bonobo/bonobo-ui-util.c
+--- libbonoboui-2.16.0/bonobo/bonobo-ui-util.c	Mon Apr  3 10:17:02 2006
++++ ../SUNWgnome-libs-2.16.1.hacked/libbonoboui-2.16.0/bonobo/bonobo-ui-util.c	Fri Oct 20 17:08:02 2006
+@@ -685,6 +685,16 @@
+ 		return name;
+ 	g_free (name);
+ 
++	/* Check for Solaris 9 install location for files for backwards
++	 * compatibility
++	 */
++	fname = g_strdup_printf ("%s/gnome/gnome-2.0/ui/%s",
++				 BONOBO_DATADIR, file_name);
++
++	if (g_file_test (fname, G_FILE_TEST_EXISTS))
++		return fname;
++	g_free (fname);
++
+ 	if (component_datadir) {
+ 		name = g_build_filename (component_datadir, file_name, NULL);
+ 		if (g_file_test (name, G_FILE_TEST_EXISTS))
