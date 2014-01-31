@@ -18,19 +18,21 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         cdrtools
-COMPONENT_VERSION=      3.00
+COMPONENT_VERSION=      3.01
+IPS_COMPONENT_VERSION=  3.1 # Zero not allowed in front of number
+COMPONENT_SUBVERSION=   a22
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL= 	http://cdrecord.berlios.de/private/cdrecord.html 
-COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=      $(COMPONENT_SRC)$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6326762da8b8281c9a910c66fe698cd4d1bc5f33c37b59e8f1c83343c25f3e98
-COMPONENT_ARCHIVE_URL=  ftp://ftp.berlios.de/pub/cdrecord/$(COMPONENT_ARCHIVE)
+    sha256:facd40dc66f1499dfe936e647b694bee7a12cd63afd901a35bec855d9e3600a5
+COMPONENT_ARCHIVE_URL=  ftp://ftp.berlios.de/pub/cdrecord/alpha/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/cdrtools
 
 PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
