@@ -1,0 +1,238 @@
+diff -rup compiz-plugins-extra-0.8.2/configure.ac compiz-plugins-extra-0.8.2.fix/configure.ac
+--- compiz-plugins-extra-0.8.2/configure.ac	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/configure.ac	2009-09-03 16:07:44.592067817 +0200
+@@ -1,6 +1,6 @@
+ AC_PREREQ(2.57)
+ 
+-m4_define([plugins_extra_version], [esyscmd(. ./VERSION;echo -n $VERSION)])
++m4_define([plugins_extra_version], [esyscmd(. ./VERSION;echo $VERSION | tr -d "\n")])
+ 
+ AC_INIT([compiz-plugins-extra], [plugins_extra_version], [maniac@opencompositing.org])
+ 
+diff -rup compiz-plugins-extra-0.8.2/metadata/addhelper.xml.in compiz-plugins-extra-0.8.2.fix/metadata/addhelper.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/addhelper.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/addhelper.xml.in	2009-09-03 16:07:44.592273740 +0200
+@@ -15,7 +15,7 @@
+         <option name="toggle_key" type="key">
+           <_short>Toggle AddHelper</_short>
+           <_long>Use this to enable/disable AddHelper on the fly.</_long>
+-          <default>&lt;Super&gt;p</default>
++          <default>&lt;Mod4&gt;p</default>
+         </option>
+       </group>
+       <group>
+diff -rup compiz-plugins-extra-0.8.2/metadata/bench.xml.in compiz-plugins-extra-0.8.2.fix/metadata/bench.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/bench.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/bench.xml.in	2009-09-03 16:07:44.592464199 +0200
+@@ -10,7 +10,7 @@
+         <option name="initiate_key" type="key">
+           <_short>Initiate</_short>
+           <_long>Start benchmark</_long>
+-	  <default>&lt;Super&gt;F12</default>
++	  <default>&lt;Mod4&gt;F12</default>
+         </option>
+         <option name="disable_limiter" type="bool">
+           <_short>Disable limiter</_short>
+diff -rup compiz-plugins-extra-0.8.2/metadata/cubeaddon.xml.in compiz-plugins-extra-0.8.2.fix/metadata/cubeaddon.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/cubeaddon.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/cubeaddon.xml.in	2009-09-03 16:07:44.592719502 +0200
+@@ -150,7 +150,7 @@
+ 				<option name="deformation" type="int">
+ 					<_short>Deformation</_short>
+ 					<_long>Deformation mode.</_long>
+-					<default>1</default>
++					<default>0</default>
+ 					<min>0</min>
+ 					<max>2</max>
+ 					<desc>
+diff -rup compiz-plugins-extra-0.8.2/metadata/firepaint.xml.in compiz-plugins-extra-0.8.2.fix/metadata/firepaint.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/firepaint.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/firepaint.xml.in	2009-09-03 16:07:44.592906535 +0200
+@@ -12,12 +12,12 @@
+ 	    <option type="button" name="initiate_button">
+ 		<_short>Initiate (button)</_short>
+ 		<_long>Initiate fire drawing</_long>
+-		<default>&lt;Super&gt;&lt;Shift&gt;Button1</default>
++		<default>&lt;Mod4&gt;&lt;Shift&gt;Button1</default>
+ 	    </option>
+ 	    <option type="key" name="clear_key">
+ 		<_short>Clear (key)</_short>
+ 		<_long>Clear</_long>
+-		<default>&lt;Super&gt;&lt;Shift&gt;c</default>
++		<default>&lt;Mod4&gt;&lt;Shift&gt;c</default>
+ 	    </option>
+ 	    <option type="button" name="clear_button">
+ 		<_short>Clear (button)</_short>
+diff -rup compiz-plugins-extra-0.8.2/metadata/group.xml.in compiz-plugins-extra-0.8.2.fix/metadata/group.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/group.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/group.xml.in	2009-09-03 16:07:44.593298310 +0200
+@@ -23,7 +23,7 @@
+           <option name="select_single_key" type="key">
+             <_short>Select Single Window</_short>
+             <_long>The key for selecting the current window.</_long>
+-            <default>&lt;Super&gt;s</default>
++            <default>&lt;Mod4&gt;s</default>
+           </option>
+         </subgroup>
+       </group>
+@@ -34,27 +34,27 @@
+           <option name="group_key" type="key">
+             <_short>Group Windows</_short>
+             <_long>The key for grouping windows.</_long>
+-            <default>&lt;Super&gt;g</default>
++            <default>&lt;Mod4&gt;g</default>
+           </option>
+           <option name="ungroup_key" type="key">
+             <_short>Ungroup Windows</_short>
+             <_long>The key for ungrouping the current group.</_long>
+-            <default>&lt;Super&gt;u</default>
++            <default>&lt;Mod4&gt;u</default>
+           </option>
+           <option name="remove_key" type="key">
+             <_short>Remove Group Window</_short>
+             <_long>The key for removing the selected window from its group.</_long>
+-            <default>&lt;Super&gt;r</default>
++            <default>&lt;Mod4&gt;r</default>
+           </option>
+           <option name="close_key" type="key">
+             <_short>Close Group</_short>
+             <_long>The key for closing all windows in the group.</_long>
+-            <default>&lt;Super&gt;c</default>
++            <default>&lt;Mod4&gt;c</default>
+           </option>
+           <option name="ignore_key" type="key">
+             <_short>Ignore Group</_short>
+             <_long>The key for ignoring the group. If this key is pressed, you can do actions for a single window in the group only.</_long>
+-            <default>&lt;Super&gt;x</default>
++            <default>&lt;Mod4&gt;x</default>
+           </option>
+         </subgroup>
+       </group>
+@@ -65,17 +65,17 @@
+           <option name="tabmode_key" type="key">
+             <_short>Tab Group</_short>
+             <_long>The key for toggling the tab mode for the current group.</_long>
+-            <default>&lt;Super&gt;t</default>
++            <default>&lt;Mod4&gt;t</default>
+           </option>
+           <option name="change_tab_left_key" type="key">
+             <_short>Change Tab Left</_short>
+             <_long>The key for switching to the tab left of the current one.</_long>
+-            <default>&lt;Super&gt;Left</default>
++            <default>&lt;Mod4&gt;Left</default>
+           </option>
+           <option name="change_tab_right_key" type="key">
+             <_short>Change Tab Right</_short>
+             <_long>The key for switching to the tab right of the current one.</_long>
+-            <default>&lt;Super&gt;Right</default>
++            <default>&lt;Mod4&gt;Right</default>
+           </option>
+         </subgroup>
+       </group>
+diff -rup compiz-plugins-extra-0.8.2/metadata/maximumize.xml.in compiz-plugins-extra-0.8.2.fix/metadata/maximumize.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/maximumize.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/maximumize.xml.in	2009-09-03 16:09:09.367243482 +0200
+@@ -48,7 +48,7 @@
+ 	    <option name="trigger_max_key" type="key">
+ 	      <_short>Maximumize</_short>
+ 	      <_long>Trigger a resize of the window currently focused so it fits as much of the available screenspae as possible.</_long>
+-	      <default>&lt;Super&gt;M</default>
++	      <default>&lt;Mod4&gt;m</default>
+ 	    </option>
+ 	    <option name="trigger_max_left" type="key">
+ 	      <_short>Left-only maximumize</_short>
+diff -rup compiz-plugins-extra-0.8.2/metadata/shelf.xml.in compiz-plugins-extra-0.8.2.fix/metadata/shelf.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/shelf.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/shelf.xml.in	2009-09-03 16:07:44.593875252 +0200
+@@ -15,7 +15,7 @@
+         <option name="trigger_key" type="key">
+           <_short>Trigger scale down</_short>
+           <_long> Scale a window down to a portion of it's size.  </_long>
+-          <default>&lt;Super&gt;l</default>
++          <default>&lt;Mod4&gt;l</default>
+         </option>
+ 	<option name="reset_key" type="key">
+ 	  <_short>Reset the window to original size</_short>
+@@ -24,17 +24,17 @@
+         <option name="triggerscreen_key" type="key">
+           <_short>Trigger scale down to screen</_short>
+           <_long> Scale a window down to a ration of the screen size. Respectively half, a third or a sixth of the screen.</_long>
+-          <default>&lt;Super&gt;p</default>
++          <default>&lt;Mod4&gt;p</default>
+         </option>
+         <option name="dec_button" type="button">
+           <_short>Make the window smaller</_short>
+           <_long> Reduces the scale factor making the window smaller.  </_long>
+-          <default>&lt;Alt&gt;&lt;Super&gt;Button4</default>
++          <default>&lt;Alt&gt;&lt;Mod4&gt;Button4</default>
+         </option>
+         <option name="inc_button" type="button">
+           <_short>Make the window bigger</_short>
+           <_long> Increase the scale factor making the window bigger.  </_long>
+-          <default>&lt;Alt&gt;&lt;Super&gt;Button5</default>
++          <default>&lt;Alt&gt;&lt;Mod4&gt;Button5</default>
+         </option>
+       </group>
+       <option name="animtime" type="int">
+diff -rup compiz-plugins-extra-0.8.2/metadata/showmouse.xml.in compiz-plugins-extra-0.8.2.fix/metadata/showmouse.xml.in
+--- compiz-plugins-extra-0.8.2/metadata/showmouse.xml.in	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/metadata/showmouse.xml.in	2009-09-03 16:10:21.175133402 +0200
+@@ -18,7 +18,7 @@
+ 				<option name="initiate" type="key">
+ 					<_short>Initiate</_short>
+ 					<_long>Toggle the mouse pointer trail.</_long>
+-					<default>&lt;Super&gt;k</default>
++					<default>&lt;Mod4&gt;k</default>
+ 				</option>
+ 				<option name="initiate_button" type="button">
+ 					<_short>Initiate</_short>
+diff -rup compiz-plugins-extra-0.8.2/src/animationaddon/animationaddon.c compiz-plugins-extra-0.8.2.fix/src/animationaddon/animationaddon.c
+--- compiz-plugins-extra-0.8.2/src/animationaddon/animationaddon.c	2009-03-05 04:43:25.000000000 +0100
++++ compiz-plugins-extra-0.8.2.fix/src/animationaddon/animationaddon.c	2009-09-03 16:07:44.594630551 +0200
+@@ -271,16 +271,36 @@ AnimAddonEffectProperties fxFoldExtraPro
+ AnimAddonEffectProperties fxGlide3ExtraProp = {
+     .animStepPolygonFunc = polygonsDeceleratingAnimStepPolygon};
+ 
+-AnimEffect AnimEffectAirplane	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectBeamUp	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectBurn	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectDomino	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectExplode	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectFold	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectGlide3	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectLeafSpread	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectRazr	= &(AnimEffectInfo) {};
+-AnimEffect AnimEffectSkewer	= &(AnimEffectInfo) {};
++AnimEffect AnimEffectAirplane	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectBeamUp	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectBurn	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectDomino	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectExplode	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectFold	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectGlide3	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectLeafSpread	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectRazr	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
++AnimEffect AnimEffectSkewer	= &(AnimEffectInfo) {"",
++	 {TRUE, TRUE, TRUE, TRUE, TRUE},
++	 {NULL, NULL, NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL}};
+ 
+ static void
+ initEffectProperties (AnimAddonDisplay *ad)
