@@ -1,0 +1,580 @@
+diff -rup compiz-plugins-main-0.8.2/configure.ac compiz-plugins-main-0.8.2.fix/configure.ac
+--- compiz-plugins-main-0.8.2/configure.ac	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/configure.ac	2009-09-03 16:28:53.347532732 +0200
+@@ -1,6 +1,6 @@
+ AC_PREREQ(2.57)
+ 
+-m4_define([plugins_main_version], [esyscmd(. ./VERSION;echo -n $VERSION)])
++m4_define([plugins_main_version], [esyscmd(. ./VERSION;echo $VERSION | tr -d "\n")])
+ 
+ AC_INIT([compiz-plugins-main], [plugins_main_version], [maniac@opencompositing.org])
+ 
+diff -rup compiz-plugins-main-0.8.2/include/compiz-animation.h compiz-plugins-main-0.8.2.fix/include/compiz-animation.h
+--- compiz-plugins-main-0.8.2/include/compiz-animation.h	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/include/compiz-animation.h	2009-09-03 16:28:53.353094573 +0200
+@@ -215,7 +215,7 @@ typedef struct _AnimBaseFunctions {
+ 
+ #define OPTION_GETTERS(extensionBaseFunctions,				\
+ 		       extensionPluginInfo, firstEffectOption)		\
+-static inline CompOptionValue *						\
++static CompOptionValue *						\
+ animGetOptVal (CompWindow *w,						\
+ 	       int optionId)						\
+ {									\
+@@ -223,35 +223,35 @@ animGetOptVal (CompWindow *w,						\
+     	(w, (extensionPluginInfo), optionId - (firstEffectOption));	\
+ }						\
+ 						\
+-inline Bool					\
++Bool					\
+ animGetB (CompWindow *w,			\
+ 	  int optionId)				\
+ {						\
+     return animGetOptVal (w, optionId)->b;	\
+ }						\
+ 						\
+-inline int					\
++int					\
+ animGetI (CompWindow *w,			\
+ 	  int optionId)				\
+ {						\
+     return animGetOptVal (w, optionId)->i;	\
+ }						\
+ 						\
+-inline float					\
++float					\
+ animGetF (CompWindow *w,			\
+ 	  int optionId)				\
+ {						\
+     return animGetOptVal (w, optionId)->f;	\
+ }						\
+ 						\
+-inline char *					\
++char *					\
+ animGetS (CompWindow *w,			\
+ 	  int optionId)				\
+ {						\
+     return animGetOptVal (w, optionId)->s;	\
+ }						\
+ 						\
+-inline unsigned short *				\
++unsigned short *				\
+ animGetC (CompWindow *w,			\
+ 	  int optionId)				\
+ {						\
+@@ -260,23 +260,23 @@ animGetC (CompWindow *w,			\
+ 
+ #define OPTION_GETTERS_HDR			\
+ 						\
+-inline Bool					\
++Bool					\
+ animGetB (CompWindow *w,			\
+ 	  int optionId);			\
+ 						\
+-inline int					\
++int					\
+ animGetI (CompWindow *w,			\
+ 	  int optionId);			\
+ 						\
+-inline float					\
++float					\
+ animGetF (CompWindow *w,			\
+ 	  int optionId);			\
+ 						\
+-inline char *					\
++char *					\
+ animGetS (CompWindow *w,			\
+ 	  int optionId);			\
+ 						\
+-inline unsigned short *				\
++unsigned short *				\
+ animGetC (CompWindow *w,			\
+ 	  int optionId);
+ 
+diff -rup compiz-plugins-main-0.8.2/metadata/animation.xml.in compiz-plugins-main-0.8.2.fix/metadata/animation.xml.in
+--- compiz-plugins-main-0.8.2/metadata/animation.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/animation.xml.in	2009-09-03 16:28:53.347953996 +0200
+@@ -294,7 +294,7 @@
+ 	    <min>50</min>
+ 	    <max>4000</max>
+ 	    <default>
+-	      <value>300</value>
++	      <value>200</value>
+ 	    </default>
+ 	  </option>
+ 	  <option name="focus_matches" type="list">
+diff -rup compiz-plugins-main-0.8.2/metadata/colorfilter.xml.in compiz-plugins-main-0.8.2.fix/metadata/colorfilter.xml.in
+--- compiz-plugins-main-0.8.2/metadata/colorfilter.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/colorfilter.xml.in	2009-09-03 16:28:53.348168749 +0200
+@@ -13,17 +13,17 @@
+       <option name="toggle_window_key" type="key">
+         <_short>Toggle window filtering</_short>
+         <_long>Toggle filtering for currently focused window.</_long>
+-        <default>&lt;Super&gt;f</default>
++        <default>&lt;Mod4&gt;f</default>
+       </option>
+       <option name="toggle_screen_key" type="key">
+         <_short>Toggle screen filtering</_short>
+         <_long>Toggle filtering for every window on the screen.</_long>
+-        <default>&lt;Super&gt;d</default>
++        <default>&lt;Mod4&gt;d</default>
+       </option>
+       <option name="switch_filter_key" type="key">
+         <_short>Switch filter</_short>
+         <_long>Select filter to use from filters list : either apply all filters or only one specific filter (triggering this action switches filters one by one and eventually comes back to the "all filters" mode).</_long>
+-        <default>&lt;Control&gt;&lt;Super&gt;s</default>
++        <default>&lt;Control&gt;&lt;Mod4&gt;s</default>
+       </option>
+     </display>
+     <screen>
+diff -rup compiz-plugins-main-0.8.2/metadata/expo.xml.in compiz-plugins-main-0.8.2.fix/metadata/expo.xml.in
+--- compiz-plugins-main-0.8.2/metadata/expo.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/expo.xml.in	2009-09-03 16:28:53.348454925 +0200
+@@ -20,7 +20,7 @@
+ 				<option name="expo_key" type="key">
+ 					<_short>Expo key</_short>
+ 					<_long>Engage wall expo mode key binding</_long>
+-					<default>&lt;Super&gt;e</default>
++					<default>&lt;Mod4&gt;e</default>
+ 				</option>
+ 				<option name="expo_button" type="button">
+ 					<_short>Expo button</_short>
+@@ -110,7 +110,7 @@
+ 				<option name="deform" type="int">
+ 					<_short>Deformation</_short>
+ 					<_long>Deformation of the expo wall</_long>
+-					<default>0</default>
++					<default>2</default>
+ 					<min>0</min>
+ 					<max>2</max>
+ 					<desc>
+@@ -166,7 +166,7 @@
+ 				<option name="mipmaps" type="bool">
+ 					<_short>Mipmaps</_short>
+ 					<_long>Generate mipmaps in expo mode</_long>
+-					<default>false</default>
++					<default>true</default>
+ 				</option>
+ 				<option name="multioutput_mode" type="int">
+ 					<_short>Multi Output Mode</_short>
+diff -rup compiz-plugins-main-0.8.2/metadata/ezoom.xml.in compiz-plugins-main-0.8.2.fix/metadata/ezoom.xml.in
+--- compiz-plugins-main-0.8.2/metadata/ezoom.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/ezoom.xml.in	2009-09-03 16:30:27.772055719 +0200
+@@ -22,7 +22,7 @@
+ 		<option type="button" name="zoom_in_button">
+ 		    <_short>Zoom In</_short>
+ 		    <_long>Zoom In</_long>
+-		    <default>&lt;Super&gt;Button4</default>
++		    <default>&lt;Mod4&gt;Button4</default>
+ 		</option>
+ 		<option type="key" name="zoom_in_key">
+ 		    <_short>Zoom In</_short>
+@@ -31,7 +31,7 @@
+ 		<option type="button" name="zoom_out_button">
+ 		    <_short>Zoom Out</_short>
+ 		    <_long>Zoom Out</_long>
+-		    <default>&lt;Super&gt;Button5</default>
++		    <default>&lt;Mod4&gt;Button5</default>
+ 		</option>
+ 		<option type="key" name="zoom_out_key">
+ 		    <_short>Zoom Out</_short>
+@@ -40,7 +40,7 @@
+ 		<option type="button" name="zoom_box_button">
+ 		    <_short>Zoom Box</_short>
+ 		    <_long>Zoom in on a boxed area</_long>
+-		    <default>&lt;Super&gt;Button2</default>
++		    <default>&lt;Mod4&gt;Button2</default>
+ 		</option>
+ 	    </group>
+ 	    <group>
+@@ -134,7 +134,7 @@
+ 		    <option type="key" name="fit_to_window_key">
+ 			<_short>Fit zoomed area to window</_short>
+ 			<_long>Zooms in/out so the focused window is zoomed to the maximum while still being fully visible.</_long>
+-			<default>&lt;Super&gt;r</default>
++			<default>&lt;Mod4&gt;r</default>
+ 		    </option>
+ 		</subgroup>
+ 	    </group>
+diff -rup compiz-plugins-main-0.8.2/metadata/mag.xml.in compiz-plugins-main-0.8.2.fix/metadata/mag.xml.in
+--- compiz-plugins-main-0.8.2/metadata/mag.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/mag.xml.in	2009-09-03 16:28:53.349531217 +0200
+@@ -18,17 +18,17 @@
+ 				<option name="initiate" type="key">
+ 					<_short>Initiate</_short>
+ 					<_long>Zoom In</_long>
+-					<default>&lt;Super&gt;m</default>
++					<default>&lt;Mod4&gt;m</default>
+ 				</option>
+ 				<option name="zoom_in_button" type="button">
+ 					<_short>Zoom In</_short>
+ 					<_long>Zoom In</_long>
+-					<default>&lt;Super&gt;&lt;Shift&gt;Button4</default>
++					<default>&lt;Mod4&gt;&lt;Shift&gt;Button4</default>
+ 				</option>
+ 				<option name="zoom_out_button" type="button">
+ 					<_short>Zoom Out</_short>
+ 					<_long>Zoom Out</_long>
+-					<default>&lt;Super&gt;&lt;Shift&gt;Button5</default>
++					<default>&lt;Mod4&gt;&lt;Shift&gt;Button5</default>
+ 				</option>
+ 			</group>
+ 		</display>
+diff -rup compiz-plugins-main-0.8.2/metadata/neg.xml.in compiz-plugins-main-0.8.2.fix/metadata/neg.xml.in
+--- compiz-plugins-main-0.8.2/metadata/neg.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/neg.xml.in	2009-09-03 16:28:53.349723579 +0200
+@@ -13,12 +13,12 @@
+ 			<option name="window_toggle_key" type="key">
+ 				<_short>Toggle Window Negative</_short>
+ 				<_long>Toggle active window negative</_long>
+-				<default>&lt;Super&gt;n</default>
++				<default>&lt;Mod4&gt;n</default>
+ 			</option>
+ 			<option name="screen_toggle_key" type="key">
+ 				<_short>Toggle Screen Negative</_short>
+ 				<_long>Toggle screen negative</_long>
+-				<default>&lt;Super&gt;m</default>
++				<default>&lt;Mod4&gt;m</default>
+ 			</option>
+ 		</display>
+ 		<screen>
+diff -rup compiz-plugins-main-0.8.2/metadata/opacify.xml.in compiz-plugins-main-0.8.2.fix/metadata/opacify.xml.in
+--- compiz-plugins-main-0.8.2/metadata/opacify.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/opacify.xml.in	2009-09-03 16:28:53.349919736 +0200
+@@ -15,7 +15,7 @@
+         <option name="toggle_key" type="key">
+           <_short>Toggle Opacify</_short>
+           <_long>Use this to enable/disable Opacify on the fly. Previously opacified windows will not be reset once you disable it like this.</_long>
+-          <default>&lt;Super&gt;o</default>
++          <default>&lt;Mod4&gt;o</default>
+         </option>
+       </group>
+       <group>
+diff -rup compiz-plugins-main-0.8.2/metadata/put.xml.in compiz-plugins-main-0.8.2.fix/metadata/put.xml.in
+--- compiz-plugins-main-0.8.2/metadata/put.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/put.xml.in	2009-09-03 16:28:53.350393476 +0200
+@@ -88,7 +88,7 @@
+ 					<option name="put_center_key" type="key">
+ 						<_short>Put Center</_short>
+ 						<_long>Move window to the center</_long>
+-						<default>&lt;Super&gt;KP_Begin</default>
++						<default>&lt;Mod4&gt;KP_Begin</default>
+ 					</option>
+ 					<option name="put_center_button" type="button">
+ 						<_short>Put Center</_short>
+@@ -97,7 +97,7 @@
+ 					<option name="put_left_key" type="key">
+ 						<_short>Put Left</_short>
+ 						<_long>Move window to the left edge</_long>
+-						<default>&lt;Super&gt;KP_Left</default>
++						<default>&lt;Mod4&gt;KP_Left</default>
+ 					</option>
+ 					<option name="put_left_button" type="button">
+ 						<_short>Put Left</_short>
+@@ -106,7 +106,7 @@
+ 					<option name="put_right_key" type="key">
+ 						<_short>Put Right</_short>
+ 						<_long>Move window to the right edge</_long>
+-						<default>&lt;Super&gt;KP_Right</default>
++						<default>&lt;Mod4&gt;KP_Right</default>
+ 					</option>
+ 					<option name="put_right_button" type="button">
+ 						<_short>Put Right</_short>
+@@ -115,7 +115,7 @@
+ 					<option name="put_top_key" type="key">
+ 						<_short>Put Top</_short>
+ 						<_long>Move window to the top edge</_long>
+-						<default>&lt;Super&gt;KP_Up</default>
++						<default>&lt;Mod4&gt;KP_Up</default>
+ 					</option>
+ 					<option name="put_top_button" type="button">
+ 						<_short>Put Top</_short>
+@@ -124,17 +124,17 @@
+ 					<option name="put_bottom_key" type="key">
+ 						<_short>Put Bottom</_short>
+ 						<_long>Move window to the bottom edge</_long>
+-						<default>&lt;Super&gt;KP_Down</default>
++						<default>&lt;Mod4&gt;KP_Down</default>
+ 					</option>
+ 					<option name="put_bottom_button" type="button">
+ 						<_short>Put Bottom</_short>
+ 						<_long>Move window to the bottom edge</_long>
+-						<default>&lt;Super&gt;KP_Down</default>
++						<default>&lt;Mod4&gt;KP_Down</default>
+ 					</option>
+ 					<option name="put_topleft_key" type="key">
+ 						<_short>Put Top Left</_short>
+ 						<_long>Move window to the top left corner</_long>
+-						<default>&lt;Super&gt;KP_Home</default>
++						<default>&lt;Mod4&gt;KP_Home</default>
+ 					</option>
+ 					<option name="put_topleft_button" type="button">
+ 						<_short>Put Top Left</_short>
+@@ -143,7 +143,7 @@
+ 					<option name="put_topright_key" type="key">
+ 						<_short>Put Top Right</_short>
+ 						<_long>Move window to the top right corner</_long>
+-						<default>&lt;Super&gt;KP_Prior</default>
++						<default>&lt;Mod4&gt;KP_Prior</default>
+ 					</option>
+ 					<option name="put_topright_button" type="button">
+ 						<_short>Put Top Right</_short>
+@@ -152,7 +152,7 @@
+ 					<option name="put_bottomleft_key" type="key">
+ 						<_short>Put Bottom Left</_short>
+ 						<_long>Move window to the bottom left corner</_long>
+-						<default>&lt;Super&gt;KP_End</default>
++						<default>&lt;Mod4&gt;KP_End</default>
+ 					</option>
+ 					<option name="put_bottomleft_button" type="button">
+ 						<_short>Put Bottom Left</_short>
+@@ -161,7 +161,7 @@
+ 					<option name="put_bottomright_key" type="key">
+ 						<_short>Put Bottom Right</_short>
+ 						<_long>Move window to the bottom right corner</_long>
+-						<default>&lt;Super&gt;KP_Next</default>
++						<default>&lt;Mod4&gt;KP_Next</default>
+ 					</option>
+ 					<option name="put_bottomright_button" type="button">
+ 						<_short>Put Bottom Right</_short>
+@@ -171,7 +171,7 @@
+ 				<option name="put_restore_key" type="key">
+ 					<_short>Restore Position</_short>
+ 					<_long>Move window to the last position</_long>
+-					<default>&lt;Super&gt;KP_Insert</default>
++					<default>&lt;Mod4&gt;KP_Insert</default>
+ 				</option>
+ 				<option name="put_restore_button" type="button">
+ 					<_short>Restore Position</_short>
+@@ -180,7 +180,7 @@
+ 				<option name="put_pointer_key" type="key">
+ 					<_short>Put Pointer</_short>
+ 					<_long>Move window to the pointer position</_long>
+-					<default>&lt;Super&gt;z</default>
++					<default>&lt;Mod4&gt;z</default>
+ 				</option>
+ 				<option name="put_pointer_button" type="button">
+ 					<_short>Put Pointer</_short>
+diff -rup compiz-plugins-main-0.8.2/metadata/resizeinfo.xml.in compiz-plugins-main-0.8.2.fix/metadata/resizeinfo.xml.in
+--- compiz-plugins-main-0.8.2/metadata/resizeinfo.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/resizeinfo.xml.in	2009-09-03 16:28:53.350606770 +0200
+@@ -14,7 +14,7 @@
+ 	<option name="fade_time" type="int">
+ 	  <_short>Fade Time</_short>
+ 	  <_long>Fade time (in ms) for popup window</_long>
+-	  <default>500</default>
++	  <default>100</default>
+ 	  <min>10</min>
+ 	  <max>5000</max>
+ 	</option>
+@@ -22,7 +22,7 @@
+ 	  <_short> Show resize info for all windows. </_short>
+ 	  <_long> Show resize info for all windows as opposed to just
+ 	  windows with a resize increment of greater than 1. </_long>
+-	  <default>false</default>
++	  <default>true</default>
+ 	</option>
+ 	<option name="text_color" type="color">
+ 	  <_short> Text color. </_short>
+diff -rup compiz-plugins-main-0.8.2/metadata/ring.xml.in compiz-plugins-main-0.8.2.fix/metadata/ring.xml.in
+--- compiz-plugins-main-0.8.2/metadata/ring.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/ring.xml.in	2009-09-03 16:28:53.350905772 +0200
+@@ -15,7 +15,7 @@
+ 				<option name="next_key" type="key">
+ 					<_short>Next Window</_short>
+ 					<_long>Show switcher if not visible and select next window.</_long>
+-					<default>&lt;Super&gt;Tab</default>
++					<default>&lt;Mod4&gt;Tab</default>
+ 				</option>
+ 				<option name="next_button" type="button">
+ 					<_short>Next Window</_short>
+@@ -24,7 +24,7 @@
+ 				<option name="prev_key" type="key">
+ 					<_short>Previous Window</_short>
+ 					<_long>Show switcher if not visible and select previous window.</_long>
+-					<default>&lt;Super&gt;&lt;Shift&gt;Tab</default>
++					<default>&lt;Mod4&gt;&lt;Shift&gt;Tab</default>
+ 				</option>
+ 				<option name="prev_button" type="button">
+ 					<_short>Previous Window</_short>
+@@ -33,7 +33,7 @@
+ 				<option name="next_all_key" type="key">
+ 					<_short>Next Window (All Workspaces)</_short>
+ 					<_long>Show switcher if not visible and select next window out of all windows.</_long>
+-					<default>&lt;Super&gt;&lt;Alt&gt;Tab</default>
++					<default>&lt;Mod4&gt;&lt;Alt&gt;Tab</default>
+ 				</option>
+ 				<option name="next_all_button" type="button">
+ 					<_short>Next Window (All Workspaces)</_short>
+@@ -42,7 +42,7 @@
+ 				<option name="prev_all_key" type="key">
+ 					<_short>Previous Window (All Workspaces)</_short>
+ 					<_long>Show switcher if not visible and select previous window out of all windows.</_long>
+-					<default>&lt;Super&gt;&lt;Shift&gt;&lt;Alt&gt;Tab</default>
++					<default>&lt;Mod4&gt;&lt;Shift&gt;&lt;Alt&gt;Tab</default>
+ 				</option>
+ 				<option name="prev_all_button" type="button">
+ 					<_short>Previous Window (All Workspaces)</_short>
+diff -rup compiz-plugins-main-0.8.2/metadata/shift.xml.in compiz-plugins-main-0.8.2.fix/metadata/shift.xml.in
+--- compiz-plugins-main-0.8.2/metadata/shift.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/shift.xml.in	2009-09-03 16:28:53.351232099 +0200
+@@ -19,7 +19,7 @@
+ 				<option name="initiate_key" type="key">
+ 					<_short>Initiate</_short>
+ 					<_long>Initiate switcher.</_long>
+-					<default>&lt;Super&gt;&lt;Shift&gt;s</default>
++					<default>&lt;Mod4&gt;&lt;Shift&gt;s</default>
+ 				</option>
+ 				<option name="initiate_button" type="button">
+ 					<_short>Initiate</_short>
+@@ -49,7 +49,7 @@
+ 				<option name="next_key" type="key">
+ 					<_short>Next Window</_short>
+ 					<_long>Show switcher if not visible and select next window.</_long>
+-					<default>&lt;Super&gt;Tab</default>
++					<default>&lt;Alt&gt;Tab</default>
+ 				</option>
+ 				<option name="next_button" type="button">
+ 					<_short>Next Window</_short>
+@@ -58,7 +58,7 @@
+ 				<option name="prev_key" type="key">
+ 					<_short>Previous Window</_short>
+ 					<_long>Show switcher if not visible and select previous window.</_long>
+-					<default>&lt;Super&gt;&lt;Shift&gt;Tab</default>
++					<default>&lt;Alt&gt;&lt;Shift&gt;Tab</default>
+ 				</option>
+ 				<option name="prev_button" type="button">
+ 					<_short>Previous Window</_short>
+@@ -67,7 +67,7 @@
+ 				<option name="next_all_key" type="key">
+ 					<_short>Next Window (All Workspaces)</_short>
+ 					<_long>Show switcher if not visible and select next window out of all windows.</_long>
+-					<default>&lt;Super&gt;&lt;Alt&gt;Tab</default>
++					<default>&lt;Mod4&gt;&lt;Alt&gt;Tab</default>
+ 				</option>
+ 				<option name="next_all_button" type="button">
+ 					<_short>Next Window (All Workspaces)</_short>
+@@ -76,7 +76,7 @@
+ 				<option name="prev_all_key" type="key">
+ 					<_short>Previous Window (All Workspaces)</_short>
+ 					<_long>Show switcher if not visible and select previous window out of all windows.</_long>
+-					<default>&lt;Super&gt;&lt;Shift&gt;&lt;Alt&gt;Tab</default>
++					<default>&lt;Mod4&gt;&lt;Shift&gt;&lt;Alt&gt;Tab</default>
+ 				</option>
+ 				<option name="prev_all_button" type="button">
+ 					<_short>Previous Window (All Workspaces)</_short>
+diff -rup compiz-plugins-main-0.8.2/metadata/thumbnail.xml.in compiz-plugins-main-0.8.2.fix/metadata/thumbnail.xml.in
+--- compiz-plugins-main-0.8.2/metadata/thumbnail.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/thumbnail.xml.in	2009-09-03 16:28:53.351456968 +0200
+@@ -18,7 +18,7 @@
+         <option name="thumb_size" type="int">
+           <_short>Thumbnail Window Size</_short>
+           <_long>Thumbnail window size.</_long>
+-          <default>200</default>
++          <default>300</default>
+           <min>50</min>
+           <max>1500</max>
+         </option>
+@@ -49,7 +49,7 @@
+         <option name="fade_speed" type="float">
+           <_short>Fade In/Out Duration</_short>
+           <_long>Fade In/Out Duration in seconds.</_long>
+-          <default>0.5</default>
++          <default>0.1</default>
+           <min>0.0</min>
+           <max>5.0</max>
+           <precision>0.1</precision>
+@@ -75,7 +75,7 @@
+         <option name="mipmap" type="bool">
+           <_short>Generate Mipmaps</_short>
+           <_long>Generate mipmaps when possible for higher quality scaling.</_long>
+-          <default>false</default>
++          <default>true</default>
+         </option>
+         <subgroup>
+           <_short>Window title</_short>
+diff -rup compiz-plugins-main-0.8.2/metadata/wall.xml.in compiz-plugins-main-0.8.2.fix/metadata/wall.xml.in
+--- compiz-plugins-main-0.8.2/metadata/wall.xml.in	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/metadata/wall.xml.in	2009-09-03 16:28:53.351702111 +0200
+@@ -178,12 +178,12 @@
+ 				<option name="allow_wraparound" type="bool">
+ 					<_short>Allow Wrap-Around</_short>
+ 					<_long>Allow wrap-around when moving the wall up/down/left/right</_long>
+-					<default>false</default>
++					<default>true</default>
+ 				</option>
+ 				<option name="slide_duration" type="float">
+ 					<_short>Wall Sliding Duration</_short>
+ 					<_long>Duration (in s) for wall sliding viewport switching animation</_long>
+-					<default>0.3</default>
++					<default>0.2</default>
+ 					<min>0.0</min>
+ 					<max>5.0</max>
+ 					<precision>0.05</precision>
+diff -rup compiz-plugins-main-0.8.2/src/animation/animation-internal.h compiz-plugins-main-0.8.2.fix/src/animation/animation-internal.h
+--- compiz-plugins-main-0.8.2/src/animation/animation-internal.h	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/src/animation/animation-internal.h	2009-09-03 16:28:53.352497873 +0200
+@@ -426,7 +426,7 @@ applyPerspectiveSkew (CompOutput *output
+ 		      CompTransform *transform,
+ 		      Point *center);
+ 
+-inline void
++void
+ applyTransform (CompTransform *wTransform,
+ 		CompTransform *transform);
+ 
+diff -rup compiz-plugins-main-0.8.2/src/animation/zoomside.c compiz-plugins-main-0.8.2.fix/src/animation/zoomside.c
+--- compiz-plugins-main-0.8.2/src/animation/zoomside.c	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/src/animation/zoomside.c	2009-09-03 16:28:53.352743710 +0200
+@@ -303,7 +303,7 @@ getZoomCenterScaleFull (CompWindow *w,
+ 	*pRotateProgress = rotateProgress;
+ }
+ 
+-inline void
++void
+ getZoomCenterScale (CompWindow *w,
+ 		    Point *pCurCenter, Point *pCurScale)
+ {
+--- compiz-plugins-main-0.8.2.fix/src/session/session.c	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2/src/session/session.c	2009-09-04 16:05:21.074608920 +0200
+@@ -42,6 +42,25 @@
+ #define SESSION_DISPLAY_OPTION_IGNORE_MATCH 1
+ #define SESSION_DISPLAY_OPTION_NUM          2
+ 
++char *strndup ( const char *s, size_t n)
++{
++        size_t nAvail;
++        char *p;
++
++        if ( !s )
++                return 0;
++
++        if ( strlen(s) > n )
++                nAvail = n + 1;
++        else
++                nAvail = strlen(s) + 1;
++        p = malloc ( nAvail );
++        memcpy ( p, s, nAvail );
++	 p[nAvail - 1] = '\0';
++
++	 return p;
++}
++
+ typedef struct _SessionWindowList
+ {
+     struct _SessionWindowList *next;
+diff -rup compiz-plugins-main-0.8.2/src/snap/snap.c compiz-plugins-main-0.8.2.fix/src/snap/snap.c
+--- compiz-plugins-main-0.8.2/src/snap/snap.c	2009-03-05 04:36:21.000000000 +0100
++++ compiz-plugins-main-0.8.2.fix/src/snap/snap.c	2009-09-03 16:28:53.352163745 +0200
+@@ -304,7 +304,11 @@ static void snapAddRegionEdges(SnapWindo
+  * snapping to screen edges, it's considered a snap-window.
+  */
+ 
++#ifdef _GNUC__
+ #define UNLIKELY(x) __builtin_expect(!!(x),0)
++#else
++#define UNLIKELY(x) (x)
++#endif
+ 
+ static inline Bool isSnapWindow(CompWindow * w)
+ {
