@@ -30,6 +30,7 @@ COMPONENT_PROJECT_URL = http://www.pgadmin.org
 PATH=$(PG_BINDIR.$(BITS)):/usr/sbin:/usr/bin
 
 LDFLAGS+=   -L$(PG_LIBDIR.$(BITS))   -R$(PG_LIBDIR.$(BITS))
+LDFLAGS+=   -lsocket -lnsl
 
 CONFIGURE_OPTIONS += --with-pgsql=$(PG_HOME)
 
