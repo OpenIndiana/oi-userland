@@ -18,18 +18,18 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pylxml
-COMPONENT_VERSION=	2.2.8
+COMPONENT_VERSION=	2.3.3
 COMPONENT_PROJECT_URL=	http://lxml.de/
 COMPONENT_SRC_NAME=	lxml
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:89b73925b5e3295dcf4675cb948007a20eb029fe35c9a162ae19ec11f1abafe5
+    sha256:2a3ca34f63b062ee8e059ca2460ac18040ec9622f0a31e143383f0db944ceb36
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/lxml
 
@@ -40,6 +40,8 @@ studio_OPT.i386.64 =
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)
