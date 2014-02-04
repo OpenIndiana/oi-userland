@@ -46,6 +46,7 @@ COMPONENT_BUILD_ENV += \
 
 # The Makefile we want is under unix/Makefile
 COMPONENT_BUILD_ARGS += -f unix/Makefile
+CC += $(CC_BITS) 
 COMPONENT_BUILD_TARGETS += generic CC="$(CC)"
 COMPONENT_INSTALL_ARGS += -f unix/Makefile
 
