@@ -17,6 +17,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		pkg
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
+COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
+
 GIT=git
 GIT_REPO=git://github.com/OpenIndiana/pkg5.git
 GIT_BRANCH=oi
@@ -66,6 +68,15 @@ build install: $(BUILD_DIR)/$(MACH)/.built
 $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.built
 	echo "<transform set name=pkg.fmri -> edit value pkg://[^/]+/ pkg://$(PUBLISHER)/>" > \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> edit value ,.+: ,$(BUILD_VERSION):>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=pkg5.info.git-remote value=$(GIT_REPO)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=pkg5.info.git-branch value=$(GIT_BRANCH)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=pkg5.info.git-rev value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
 
 $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 	if [ -d $(@D)/pkgrecv.dir ]; then $(RM) -r $(@D)/pkgrecv.dir; fi
