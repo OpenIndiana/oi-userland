@@ -25,6 +25,8 @@ GIT_CHANGESET=HEAD
 NIGHTLY_OPTIONS=-nClmprt
 ONNV_BUILDNUM=151.1.8.1
 
+COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
+
 COMPONENT_ARCHIVE_1=		on-closed-bins-nd.$(MACH).tar.bz2
 COMPONENT_ARCHIVE_URL_1= \
     http://dlc.openindiana.org/dlc.sun.com/osol/on/downloads/20100817/$(COMPONENT_ARCHIVE_1)
@@ -121,6 +123,24 @@ $(BUILD_DIR)/$(MACH)/.overlay: $(BUILD_DIR)/$(MACH)/.built
 $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform set name=pkg.fmri -> edit value pkg://[^/]+/ pkg://$(PUBLISHER)/>" > \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	echo "<transform set name=pkg.fmri -> edit value ,.+: ,$(BUILD_VERSION):>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	echo "<transform set name=pkg.fmri -> emit set name=userland.info.git-remote value=$(USERLAND_GIT_REMOTE)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=userland.info.git-branch value=$(USERLAND_GIT_BRANCH)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=userland.info.git-rev value=$(USERLAND_GIT_REV)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
+	echo "<transform set name=pkg.fmri -> emit set name=illumos-gate.info.git-remote value=$(GIT_REPO)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=illumos-gate.info.git-branch value=$(GIT_BRANCH)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=illumos-gate.info.git-rev value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	for i in $$(cd $(BUILD_DIR)/$(MACH)/overlay; find . -type f | \
 	  cut -c 3- | sort); do \
 	  echo "<transform file path=$$i -> set action.hash $$i >" >> \
@@ -149,4 +169,6 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	$(TOUCH) $@
 
-publish: $(BUILD_DIR)/$(MACH)/.published
+.NOTPARALLEL:
+
+publish: update $(BUILD_DIR)/$(MACH)/.published
