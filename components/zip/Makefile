@@ -43,7 +43,8 @@ COMPONENT_PREP_ACTION = rm -f $(SOURCE_DIR)/match.S
 
 # The Makefile we want is under unix/Makefile
 COMPONENT_BUILD_ARGS += -f unix/Makefile
-COMPONENT_BUILD_TARGETS += generic CC=$(CC)
+CC += $(CC_BITS)
+COMPONENT_BUILD_TARGETS += generic CC="$(CC)"
 COMPONENT_INSTALL_ARGS += -f unix/Makefile
 
 # This doesn't respect DESTDIR, so overload BINDIR and MANDIR when we install.
