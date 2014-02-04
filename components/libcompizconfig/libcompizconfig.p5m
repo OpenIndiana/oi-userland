@@ -1,0 +1,38 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/compiz/library/g++/libcompizconfig@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Libraries"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license libcompizconfig.license license="GPLv2"
+
+link path=usr/lib/compiz/libccp.so target=../../g++/lib/compiz/libccp.so
+link path=usr/share/compiz/ccp.xml target=../../g++/share/compiz/ccp.xml
+
+# Generated section:
+file path=etc/compizconfig/config preserve=renamenew
+file path=usr/g++/include/compizconfig/ccs-backend.h
+file path=usr/g++/include/compizconfig/ccs.h
+file path=usr/g++/lib/compiz/libccp.so mode=0555
+file path=usr/g++/lib/compizconfig/backends/libini.so mode=0555
+link path=usr/g++/lib/libcompizconfig.so target=libcompizconfig.so.0.0.0
+link path=usr/g++/lib/libcompizconfig.so.0 target=libcompizconfig.so.0.0.0
+file path=usr/g++/lib/libcompizconfig.so.0.0.0 mode=0555
+file path=usr/g++/lib/pkgconfig/libcompizconfig.pc
+file path=usr/g++/share/compiz/ccp.xml

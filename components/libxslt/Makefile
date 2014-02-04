@@ -38,7 +38,6 @@ COMPONENT_BUGDB=	library/libxslt
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
 
 LINT_FLAGS +=	-I/usr/include/libxml2 
 

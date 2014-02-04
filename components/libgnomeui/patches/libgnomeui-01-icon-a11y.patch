@@ -1,0 +1,499 @@
+--- libgnomeui-2.21.5/libgnomeui/gnome-icon-item.c	2004-01-18 20:19:19.000000000 +0530
++++ libgnomeui-2.21.5-new/libgnomeui/gnome-icon-item.c	2004-10-28 18:46:41.085005808 +0530
+@@ -31,6 +31,10 @@
+ #include <gtk/gtk.h>
+ #include <gdk/gdkkeysyms.h>
+ #include <gdk/gdk.h>
++#include <atk/atk.h>
++#include <libgnomeui-access.h>
++#include <libgail-util/gailtextutil.h>
++#include <libgail-util/gailmisc.h>
+ #include <libart_lgpl/art_rgb_affine.h>
+ #include <libart_lgpl/art_rgb_rgba_affine.h>
+ #include <string.h>
+@@ -65,6 +69,10 @@ struct _GnomeIconTextItemPrivate {
+ 
+ 	GdkGC *cursor_gc;
+ 
++	/* Image description */
++	char *image_description;
++	GdkPixbuf *pixbuf;
++
+ 	/* Whether the user pressed the mouse while the item was unselected */
+ 	guint unselected_click : 1;
+ 
+@@ -103,6 +103,10 @@
+ 
+ static guint iti_signals [LAST_SIGNAL] = { 0 };
+ 
++static GType gnome_icon_text_item_accessible_factory_get_type (void);
++void gnome_icon_text_item_accessible_factory_class_init (AtkObjectFactoryClass *klass);
++static gpointer accessible_parent_class = NULL;
++
+ GNOME_CLASS_BOILERPLATE (GnomeIconTextItem, gnome_icon_text_item,
+ 			 GnomeCanvasItem, GNOME_TYPE_CANVAS_ITEM)
+ 
+@@ -999,12 +1011,406 @@ gnome_icon_text_item_class_init (GnomeIc
+ 	canvas_item_class->event = gnome_icon_text_item_event;
+ 	canvas_item_class->realize = gnome_icon_text_item_realize;
+ 	canvas_item_class->unrealize = gnome_icon_text_item_unrealize;
++
++	atk_registry_set_factory_type (atk_get_default_registry (),
++				       GNOME_TYPE_ICON_TEXT_ITEM,
++				       gnome_icon_text_item_accessible_factory_get_type ());				       
++
++}
++
++static GType
++gnome_icon_text_item_accessible_factory_get_type (void)
++{
++	static GType type = 0;
++	if (!type) {
++		static const GTypeInfo tinfo = {
++			sizeof (AtkObjectFactoryClass),
++			NULL, 
++			NULL, 
++			(GClassInitFunc)  gnome_icon_text_item_accessible_factory_class_init,
++      			NULL,
++			NULL, 
++			sizeof (AtkObjectFactory),
++			0, 
++			(GInstanceInitFunc)NULL,
++			NULL
++		};
++		type = g_type_register_static (
++			ATK_TYPE_OBJECT_FACTORY,
++			"GnomeIconTextItemAccessibilityFactory",
++			&tinfo, 0);
++	}
++	return type;
++}
++
++static G_CONST_RETURN gchar *
++gnome_icon_text_item_accessible_get_name (AtkObject *accessible)
++{
++	GnomeIconTextItem *iti;
++        iti = _accessibility_get_gobject (accessible);
++
++	if (!iti) {
++		return NULL;
++	}
++
++	return iti->text;
++}
++
++static G_CONST_RETURN gchar *
++gnome_icon_text_item_accessible_get_description (AtkObject *accessible)
++{
++	GnomeIconTextItem *iti;
++	iti = _accessibility_get_gobject (accessible);
++
++	if (!iti) {
++		return NULL;
++	}
++
++	return iti->text;
++}
++
++static AtkStateSet *
++gnome_icon_text_item_accessible_ref_state_set (AtkObject *accessible)
++{
++	GnomeIconTextItem *iti;
++	AtkStateSet *state_set;
++
++	iti = _accessibility_get_gobject (accessible);
++
++	state_set = ATK_OBJECT_CLASS (accessible_parent_class)->ref_state_set (accessible);
++
++	if (!iti) {
++		atk_state_set_add_state (state_set, ATK_STATE_DEFUNCT);
++		return state_set;
++	}
++
++	if (iti->selected)
++		atk_state_set_add_state (state_set, ATK_STATE_FOCUSED);
++	return state_set;
++}
++
++static void
++gnome_icon_text_item_accessible_class_init (AtkObjectClass *klass)
++{
++	accessible_parent_class = g_type_class_peek_parent (klass);
++	klass->get_name = gnome_icon_text_item_accessible_get_name;
++	klass->get_description = gnome_icon_text_item_accessible_get_description;
++	klass->ref_state_set = gnome_icon_text_item_accessible_ref_state_set;
++}
++
++static void
++gnome_icon_text_item_accessible_get_image_position (AtkImage  *obj,
++						    gint *x, gint *y,
++						    AtkCoordType coord_type)
++{
++	atk_component_get_position (ATK_COMPONENT (obj), x, y, coord_type);
+ }
+ 
+ static void
++gnome_icon_text_item_accessible_get_image_size (AtkImage *obj,
++						gint *width,
++						gint *height)
++{
++	GnomeIconTextItem *iti;
++	GnomeIconTextItemPrivate *priv;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (obj));
++	priv = iti->_priv;
++
++	if (!priv || !priv->pixbuf) {
++		*width = *height = 0;
++	} else {
++		*width = gdk_pixbuf_get_width (priv->pixbuf);
++		*height = gdk_pixbuf_get_height (priv->pixbuf);
++	}
++}
++
++static gboolean
++gnome_icon_text_item_accessible_set_image_description (AtkImage *obj,
++						       const gchar *description)
++{
++	GnomeIconTextItem *iti;
++	GnomeIconTextItemPrivate *priv;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (obj));
++	priv = iti->_priv;
++
++	if (priv->image_description)
++		g_free (priv->image_description);
++
++	priv->image_description = g_strdup (description);
++
++	return TRUE;
++}
++
++static G_CONST_RETURN gchar *
++gnome_icon_text_item_accessible_get_image_description (AtkImage *obj)
++{
++	GnomeIconTextItem *iti;
++	GnomeIconTextItemPrivate *priv;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (obj));
++	priv = iti->_priv;
++
++	return priv->image_description;
++}
++
++static void
++gnome_icon_text_item_accessible_image_interface_init (AtkImageIface *iface)
++{
++	iface->get_image_description = gnome_icon_text_item_accessible_get_image_description;
++	iface->set_image_description = gnome_icon_text_item_accessible_set_image_description;
++	iface->get_image_size        = gnome_icon_text_item_accessible_get_image_size;
++	iface->get_image_position    = gnome_icon_text_item_accessible_get_image_position;
++}
++
++static gchar*
++gnome_icon_text_item_accessible_get_text (AtkText *text,
++					  gint start_pos,
++					  gint end_pos)
++{
++	GailTextUtil *util;
++	GnomeIconTextItem *iti;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (text));
++	util = gail_text_util_new();
++
++	gail_text_util_text_setup(util, iti->text);
++
++	return gail_text_util_get_substring (util, start_pos, end_pos);
++}
++
++static gunichar
++gnome_icon_text_item_accessible_get_character_at_offset (AtkText *text,
++							 gint offset)
++{
++	GnomeIconTextItem *iti;
++	gchar *index;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (text));
++	index =  g_utf8_offset_to_pointer (iti->text, offset);
++
++	return g_utf8_get_char (index);
++}
++
++static gchar*
++gnome_icon_text_item_accessible_get_text_before_offset (AtkText *text,
++							gint offset,
++							AtkTextBoundary boundary_type,
++							gint *start_offset,
++							gint *end_offset)
++{
++	GailTextUtil *util;
++	GnomeIconTextItem *iti;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (text));
++	util = gail_text_util_new ();
++
++	gail_text_util_text_setup(util, iti->text);
++
++	return gail_text_util_get_text (util, NULL, GAIL_BEFORE_OFFSET,
++					boundary_type, offset, start_offset,
++					end_offset);
++}
++
++static gchar*
++gnome_icon_text_item_accessible_get_text_at_offset (AtkText *text,
++						    gint offset,
++						    AtkTextBoundary boundary_type,
++						    gint *start_offset,
++						    gint *end_offset)
++{
++	GailTextUtil *util;
++	GnomeIconTextItem *iti;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (text));
++	util = gail_text_util_new ();
++
++	gail_text_util_text_setup(util, iti->text);
++
++	return gail_text_util_get_text (util, NULL, GAIL_AT_OFFSET,
++					boundary_type, offset, start_offset,
++					end_offset);
++	return NULL;
++}
++
++static gchar*
++gnome_icon_text_item_accessible_get_text_after_offset (AtkText *text,
++						       gint offset,
++						       AtkTextBoundary boundary_type,
++						       gint *start_offset,
++						       gint *end_offset)
++{
++	GailTextUtil *util;
++	GnomeIconTextItem *iti;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (text));
++	util = gail_text_util_new ();
++
++	gail_text_util_text_setup(util, iti->text);
++
++	return gail_text_util_get_text (util, NULL, GAIL_AFTER_OFFSET,
++					boundary_type, offset, start_offset,
++					end_offset);
++}
++
++static gint
++gnome_icon_text_item_accessible_get_character_count (AtkText *text)
++{
++	GnomeIconTextItem *iti;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (text));
++	return g_utf8_strlen (iti->text, -1);
++}
++
++static gint
++gnome_icon_text_item_accessible_get_offset_at_point (AtkText *text,
++						     gint x,
++						     gint y,
++						     AtkCoordType coords)
++{
++	AtkObject *parent;
++	GtkWidget *widget;
++	GnomeIconTextItem *iti;
++	GnomeIconTextItemPrivate *priv;
++	PangoRectangle logical_rect;
++	gint index;
++
++	parent = atk_object_get_parent (ATK_OBJECT (text));
++	widget = GTK_ACCESSIBLE (parent)->widget;
++
++	iti = _accessibility_get_gobject (ATK_OBJECT (text));
++	priv = iti->_priv;
++
++	pango_layout_get_extents (priv->layout, NULL, &logical_rect);
++
++	index = gail_misc_get_index_at_point_in_layout (widget, priv->layout,
++							logical_rect.x,
++							logical_rect.y,
++							x, y, coords);
++
++	if (index == -1)
++		return index;
++	else
++		return g_utf8_pointer_to_offset (iti->text, iti->text + index);
++
++}
++
++static void
++gnome_icon_text_item_accessible_text_interface_init (AtkTextIface *iface)
++{
++	iface->get_text                = gnome_icon_text_item_accessible_get_text;
++	iface->get_character_at_offset = gnome_icon_text_item_accessible_get_character_at_offset;
++	iface->get_text_before_offset  = gnome_icon_text_item_accessible_get_text_before_offset;
++	iface->get_text_at_offset      = gnome_icon_text_item_accessible_get_text_at_offset;
++	iface->get_text_after_offset   = gnome_icon_text_item_accessible_get_text_after_offset;
++	iface->get_character_count     = gnome_icon_text_item_accessible_get_character_count;
++	iface->get_offset_at_point     = gnome_icon_text_item_accessible_get_offset_at_point;
++}
++
++static GType
++gnome_icon_text_item_accessible_get_type (void)
++{
++	static GType type = 0;
++
++	if (!type) {
++		static const GInterfaceInfo atk_image_info = {
++			(GInterfaceInitFunc) 
++			gnome_icon_text_item_accessible_image_interface_init,
++			(GInterfaceFinalizeFunc) NULL,
++			NULL
++		};
++
++		static const GInterfaceInfo atk_text_info = {
++			(GInterfaceInitFunc) 
++			gnome_icon_text_item_accessible_text_interface_init,
++			(GInterfaceFinalizeFunc) NULL,
++			NULL
++		};
++
++		type = _accessibility_create_derived_type (
++			"GnomeIconTextItemAccessibility",
++			GNOME_TYPE_CANVAS_ITEM,
++			gnome_icon_text_item_accessible_class_init);
++
++		if (type != G_TYPE_INVALID) {
++			g_type_add_interface_static (type, ATK_TYPE_IMAGE,
++						     &atk_image_info);
++			g_type_add_interface_static (type, ATK_TYPE_TEXT,
++						     &atk_text_info);
++		}
++				
++	}
++	return type;
++}
++
++static AtkObject *
++gnome_icon_text_item_accessible_create (GObject *for_object)
++{
++	GType type;
++	AtkObject *accessible;
++	GnomeIconTextItem *iti;
++
++	iti = GNOME_ICON_TEXT_ITEM (for_object);
++	g_return_val_if_fail (iti != NULL, NULL);
++
++	type = gnome_icon_text_item_accessible_get_type ();
++
++	accessible = g_object_new (type, NULL);
++	accessible = _accessibility_set_atk_object_return (for_object,
++                                                           accessible);
++	atk_object_set_role (accessible, ATK_ROLE_ICON);
++	return accessible;
++}
++
++static AtkObject*
++gnome_icon_text_item_accessible_factory_create_accessible (GObject *obj)   
++{
++	AtkObject *accessible;
++	g_return_val_if_fail (G_IS_OBJECT (obj), NULL);
++
++	accessible = gnome_icon_text_item_accessible_create (obj);
++
++	return accessible;
++}
++
++static GType                                                                    
++gnome_icon_text_item_accessible_factory_get_accessible_type (void)
++{
++	return gnome_icon_text_item_accessible_get_type ();
++}
++
++static void
++gnome_icon_text_item_accessible_factory_finalize (GObject *object)
++{
++	GnomeIconTextItem *iti;
++	GnomeIconTextItemPrivate *priv;
++
++        iti = GNOME_ICON_TEXT_ITEM(object);
++	priv = iti->_priv;
++
++	g_free (priv->image_description);
++
++	if (priv->pixbuf)
++		g_object_unref (G_OBJECT (priv->pixbuf));
++}
++
++void
++gnome_icon_text_item_accessible_factory_class_init (AtkObjectFactoryClass *klass)
++{
++  GObjectClass *gobject_class = G_OBJECT_CLASS (klass);
++
++  klass->create_accessible   = gnome_icon_text_item_accessible_factory_create_accessible;
++  klass->get_accessible_type = gnome_icon_text_item_accessible_factory_get_accessible_type;
++  gobject_class->finalize = gnome_icon_text_item_accessible_factory_finalize;
++}
++
++
++static void
+ gnome_icon_text_item_instance_init (GnomeIconTextItem *item)
+ {
+ 	item->_priv = g_new0 (GnomeIconTextItemPrivate, 1);
++	item->_priv->image_description = NULL;
+ }
+ 
+ /**
+@@ -1083,6 +1489,16 @@ gnome_icon_text_item_configure (GnomeIco
+ 	gnome_canvas_item_request_update (GNOME_CANVAS_ITEM (iti));
+ }
+ 
++void 
++gnome_icon_text_item_pixbuf (GnomeIconTextItem *iti, GdkPixbuf *im)
++{
++	GnomeIconTextItemPrivate *priv = iti->_priv;	
++
++	priv->pixbuf = im;
++	if (priv->pixbuf)
++		g_object_ref (priv->pixbuf);
++}
++
+ /**
+  * gnome_icon_text_item_setxy:
+  * @iti:  An icon text item.
+--- libgnomeui-2.6.1.1/libgnomeui/gnome-icon-item.h	2002-02-22 18:40:45.000000000 +0530
++++ libgnomeui-2.6.1.1-new/libgnomeui/gnome-icon-item.h	2004-10-28 18:43:29.958061520 +0530
+@@ -106,6 +106,9 @@ void         gnome_icon_text_item_config
+ 						 gboolean           is_editable,
+ 						 gboolean           is_static);
+ 
++void         gnome_icon_text_item_pixbuf        (GnomeIconTextItem *iti,
++						 GdkPixbuf         *im);
++
+ void         gnome_icon_text_item_setxy         (GnomeIconTextItem *iti,
+ 						 int                x,
+ 						 int                y);
+--- libgnomeui-2.6.1.1/libgnomeui/gnome-icon-list.c	2004-02-24 07:20:11.000000000 +0530
++++ libgnomeui-2.6.1.1-new/libgnomeui/gnome-icon-list.c	2004-10-28 18:43:29.960061216 +0530
+@@ -1006,6 +1006,7 @@ icon_new_from_pixbuf (GnomeIconList *gil
+ 		GNOME_TYPE_ICON_TEXT_ITEM,
+ 		NULL));
+ 
++	gnome_icon_text_item_pixbuf (icon->text, im);
+ 	gnome_icon_text_item_configure (icon->text,
+ 					0, 0, priv->icon_width, NULL,
+ 					text, priv->is_editable, priv->static_text);
+--- libgnomeui-2.22.1/configure.in	2005-03-07 01:42:42.000000000 -1200
++++ libgnomeui-2.22.1-hacked/configure.in	2005-04-28 16:01:01.419756952 -1200
+@@ -29,6 +29,7 @@
+ m4_define([gnomevfs_required_version],       [2.7.3])
+ m4_define([libglade_required_version],       [2.0.0])
+ m4_define([gnome_keyring_required_version],  [0.4])
++m4_define([gail_required_version],           [0.16])
+ 
+ dnl libtool versioning from libgnome
+ 
+@@ -207,6 +208,7 @@
+   glib-2.0 >= glib_required_version
+   gio-2.0 >= gio_required_version
+   gnome-vfs-2.0 >= gnomevfs_required_version dnl
++  gail >= gail_required_version
+   $gnome_keyring_requirement"
+ PKG_CHECK_MODULES(LIBGNOMEUI, [$GNOMEUI_MODULES])
+ LIBGNOMEUI_CFLAGS="$X_CFLAGS $LIBGNOMEUI_CFLAGS"

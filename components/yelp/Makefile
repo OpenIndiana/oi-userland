@@ -33,6 +33,13 @@ include ../../make-rules/ips.mk
 CXXFLAGS+= -DMOZ_DEFAULT_TOOLKIT=\"cairo-gtk2\"
 CXXFLAGS+= -std=gnu++0x
 
+LDFLAGS.32  +=  -L/usr/g++/lib -R/usr/g++/lib
+LDFLAGS.64  +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
+LDFLAGS += $(LDFLAGS.$(BITS))
+
+PKG_CONFIG_PATH.32   = /usr/g++/lib/pkgconfig:/usr/lib/pkgconfig
+PKG_CONFIG_PATH.64   = /usr/g++/lib/$(MACH64)/pkgconfig:/usr/lib/$(MACH64)/pkgconfi
+
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D) && cd $(@D) &&\
 		aclocal -I ./m4 &&\
 		autoheader &&\
