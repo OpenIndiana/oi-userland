@@ -150,9 +150,6 @@ Puppet::Type.newtype(:dns) do
                 raise Puppet::Error, "option #{value} is invalid" \
                     if not simple_opts.include? data[0]
             elsif data.length == 2
-                # XXX
-                raise Puppet::Error, "svccfg is bugged with prop:N options"
-
                 raise Puppet::Error, "option #{value} is invalid" \
                     if not arg_opts.include? data[0]
 

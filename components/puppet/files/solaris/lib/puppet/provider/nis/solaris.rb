@@ -108,8 +108,16 @@ Puppet::Type.type(:nis).provide(:nis) do
                     svccfg("-s", Domain_fmri, "setprop",
                            "config/" + field.to_s, "=", should)
                 else
+                    # Puppet seems to get confused about when to pass an empty
+                    # string or "\"\"".  Catch either condition to handle
+                    # passing values to SMF correctly
+                    if should.to_s.empty? or should.to_s == '""'
+                        value = should.to_s
+                    else
+                        value = "\"" + should.to_s + "\""
+                    end
                     svccfg("-s", Domain_fmri, "setprop",
-                           "config/" + field.to_s, "=", '"' + should + '"')
+                           "config/" + field.to_s, "=", value)
                 end
             rescue => detail
                 raise Puppet::Error,

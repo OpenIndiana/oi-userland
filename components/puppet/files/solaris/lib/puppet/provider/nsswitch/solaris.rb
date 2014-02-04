@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:nsswitch).provide(:nsswitch) do
@@ -30,11 +30,11 @@ Puppet::Type.type(:nsswitch).provide(:nsswitch) do
     commands :svccfg => '/usr/sbin/svccfg', :svcprop => '/usr/bin/svcprop'
 
     class << self; attr_accessor :nsswitch_fmri end
-    @@nsswitch_fmri = "svc:/system/name-service/switch"
+    Nsswitch_fmri = "svc:/system/name-service/switch"
 
     def self.instances
         props = {}
-        svcprop("-p", "config", @@nsswitch_fmri).split("\n").collect do |line|
+        svcprop("-p", "config", Nsswitch_fmri).each_line.collect do |line|
             fullprop, type, value = line.split(" ", 2)
             pg, prop = fullprop.split("/")
             props[prop] = value \
@@ -49,7 +49,7 @@ Puppet::Type.type(:nsswitch).provide(:nsswitch) do
         define_method(field) do
             begin
                 out = svcprop("-p", "config/" + field.to_s,
-                              @@nsswitch_fmri).strip()
+                              Nsswitch_fmri).strip()
                 out = out.delete("\\")
             rescue
                 # if the property isn't set, don't raise an error
@@ -59,7 +59,7 @@ Puppet::Type.type(:nsswitch).provide(:nsswitch) do
 
         define_method(field.to_s + "=") do |should|
             begin
-                svccfg("-s", @@nsswitch_fmri, "setprop",
+                svccfg("-s", Nsswitch_fmri, "setprop",
                        "config/" + field.to_s, "=", '"' + should + '"')
             rescue => detail
                 raise Puppet::Error,
@@ -70,6 +70,6 @@ Puppet::Type.type(:nsswitch).provide(:nsswitch) do
     end
 
     def flush
-        svccfg("-s", @@nsswitch_fmri, "refresh")
+        svccfg("-s", Nsswitch_fmri, "refresh")
     end
 end
