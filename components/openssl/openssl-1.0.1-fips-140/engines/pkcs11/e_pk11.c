@@ -134,7 +134,7 @@ static CK_BBOOL pk11_false = CK_FALSE;
  * uri_struct manipulation, and static token info. All of that is used by the
  * RSA keys by reference feature.
  */
-pthread_mutex_t *uri_lock;
+pthread_mutex_t *uri_lock = NULL;
 
 #ifdef	SOLARIS_HW_SLOT_SELECTION
 /*
@@ -294,7 +294,7 @@ static int pk11_cipher_init(EVP_CIPHER_CTX *ctx, const unsigned char *key,
 	const unsigned char *iv, int enc);
 static int pk11_cipher_final(PK11_SESSION *sp);
 static int pk11_cipher_do_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
-	const unsigned char *in, unsigned int inl);
+	const unsigned char *in, size_t inl);
 static int pk11_cipher_cleanup(EVP_CIPHER_CTX *ctx);
 static int pk11_engine_ciphers(ENGINE *e, const EVP_CIPHER **cipher,
 	const int **nids, int nid);
@@ -807,6 +807,7 @@ static CK_SLOT_ID SLOTID = 0;
 static CK_BBOOL pk11_library_initialized = CK_FALSE;
 static CK_BBOOL pk11_atfork_initialized = CK_FALSE;
 static int pk11_pid = 0;
+static ENGINE* pk11_engine = NULL;
 
 static DSO *pk11_dso = NULL;
 
@@ -895,6 +896,10 @@ static void pk11_free_all_locks(void)
 			session_cache[type].lock = NULL;
 			}
 		}
+	/* Free uri_lock */
+	(void) pthread_mutex_destroy(uri_lock);
+	OPENSSL_free(uri_lock);
+	uri_lock = NULL;
 	}
 
 /*
@@ -915,6 +920,10 @@ static int bind_pk11(ENGINE *e)
 	    !ENGINE_set_ciphers(e, pk11_engine_ciphers) ||
 	    !ENGINE_set_digests(e, pk11_engine_digests))
 		return (0);
+
+	if (!ENGINE_set_pkey_meths(e, pk11_engine_pkey_methods))
+		return (0);
+
 #ifndef OPENSSL_NO_RSA
 	if (pk11_have_rsa == CK_TRUE)
 		{
@@ -1079,6 +1088,24 @@ static int pk11_init(ENGINE *e)
 	}
 
 /*
+ * Helper function that unsets reference to current engine (pk11_engine = NULL).
+ *
+ * Use of local variable only seems clumsy, it needs to be this way!
+ * This is to prevent double free in the unlucky scenario:
+ *     ENGINE_free calls pk11_destroy calls pk11_finish calls ENGINE_free
+ * Setting pk11_engine to NULL prior to ENGINE_free() avoids this.
+ */
+static void pk11_engine_free()
+	{
+	ENGINE* old_engine = pk11_engine;
+
+	if (old_engine)
+		{
+		pk11_engine = NULL;
+		}
+	}
+
+/*
  * Initialization function. Sets up various PKCS#11 library components.
  * It selects a slot based on predefined critiera. In the process, it also
  * count how many ciphers and digests to support. Since the cipher and
@@ -1094,6 +1121,12 @@ static int pk11_library_init(ENGINE *e)
 	CK_ULONG ul_state_len;
 	int any_slot_found;
 	int i;
+
+	if (e != pk11_engine)
+		{
+		pk11_engine_free();
+		pk11_engine = e;
+		}
 
 	/*
 	 * pk11_library_initialized is set to 0 in pk11_finish() which is called
@@ -1124,10 +1157,16 @@ static int pk11_library_init(ENGINE *e)
 			}
 		}
 
-	if (pk11_dso == NULL)
+
+	/* Attempt to load PKCS#11 library */
+	if (!pk11_dso)
 		{
-		PK11err(PK11_F_LOAD, PK11_R_DSO_FAILURE);
-		goto err;
+		pk11_dso = DSO_load(NULL, get_PK11_LIBNAME(), NULL, 0);
+		if (pk11_dso == NULL)
+			{
+			PK11err(PK11_F_LOAD, PK11_R_DSO_FAILURE);
+			goto err;
+			}
 		}
 
 #ifdef	SOLARIS_HW_SLOT_SELECTION
@@ -1242,9 +1281,14 @@ err:
 /* ARGSUSED */
 static int pk11_destroy(ENGINE *e)
 	{
+	int rtn = 1;
+
 	free_PK11_LIBNAME();
 	ERR_unload_pk11_strings();
-	return (1);
+	if (pk11_library_initialized == CK_TRUE)
+		rtn = pk11_finish(e);
+
+	return (rtn);
 	}
 
 /*
@@ -1255,6 +1299,15 @@ static int pk11_destroy(ENGINE *e)
 static int pk11_finish(ENGINE *e)
 	{
 	int i;
+
+	/*
+	 * Make sure, right engine instance is being destroyed.
+	 * Engine e may be the wrong instance if
+	 * 	1) either someone calls ENGINE_load_pk11 twice
+	 * 	2) or last ref. to an already finished engine is being destroyed
+	 */
+	if (e != pk11_engine)
+		goto err;
 
 	if (pk11_dso == NULL)
 		{
@@ -1290,6 +1343,7 @@ static int pk11_finish(ENGINE *e)
 	pFuncList = NULL;
 	pk11_library_initialized = CK_FALSE;
 	pk11_pid = 0;
+	pk11_engine_free();
 	/*
 	 * There is no way how to unregister atfork handlers (other than
 	 * unloading the library) so we just free the locks. For this reason
@@ -2387,7 +2441,7 @@ pk11_cipher_final(PK11_SESSION *sp)
  */
 static int
 pk11_cipher_do_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
-	const unsigned char *in, unsigned int inl)
+	const unsigned char *in, size_t inl)
 	{
 	PK11_CIPHER_STATE *state = (PK11_CIPHER_STATE *) ctx->cipher_data;
 	PK11_SESSION *sp;
@@ -2569,7 +2623,17 @@ pk11_engine_digests(ENGINE *e, const EVP_MD **digest,
 		case NID_md5:
 			*digest = &pk11_md5;
 			break;
+		/*
+		 * A special case. For "openssl dgst -dss1 -engine pkcs11 ...",
+		 * OpenSSL calls EVP_get_digestbyname() on "dss1" which ends up
+		 * calling pk11_engine_digests() for NID_dsa. Internally, if an
+		 * engine is not used, OpenSSL uses SHA1_Init() as expected for
+		 * DSA. So, we must return pk11_sha1() for NID_dsa as well. Note
+		 * that this must have changed between 0.9.8 and 1.0.0 since we
+		 * did not have the problem with the 0.9.8 version.
+		 */
 		case NID_sha1:
+		case NID_dsa:
 			*digest = &pk11_sha1;
 			break;
 		case NID_sha224:
@@ -2771,9 +2835,12 @@ pk11_digest_copy(EVP_MD_CTX *to, const EVP_MD_CTX *from)
 	CK_BYTE_PTR pstate = NULL;
 	CK_ULONG ul_state_len;
 
+	if (from->md_data == NULL || to->digest->ctx_size == 0)
+		return (1);
+
 	/* The copy-from state */
 	state = (PK11_CIPHER_STATE *) from->md_data;
-	if (state == NULL || state->sp == NULL)
+	if (state->sp == NULL)
 		goto err;
 
 	/* Initialize the copy-to state */
@@ -3561,7 +3628,8 @@ err:
 	}
 
 /*
- * Check presence of a NID in the table of NIDs. The table may be NULL (i.e.,
+ * Check presence of a NID in the table of NIDs unless the mechanism is
+ * supported directly in a CPU instruction set. The table may be NULL (i.e.,
  * non-existent).
  */
 static int nid_in_table(int nid, int *nid_table)
@@ -3569,8 +3637,7 @@ static int nid_in_table(int nid, int *nid_table)
 	int i = 0;
 
 	/*
-	 * a special case. NULL means that we are initializing a new
-	 * table.
+	 * Special case first. NULL means that we are initializing a new table.
 	 */
 	if (nid_table == NULL)
 		return (1);
@@ -3590,6 +3657,7 @@ static int nid_in_table(int nid, int *nid_table)
 
 	return (0);
 	}
+
 #endif	/* SOLARIS_HW_SLOT_SELECTION */
 
 #endif	/* OPENSSL_NO_HW_PK11 */

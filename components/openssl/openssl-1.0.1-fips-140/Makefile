@@ -129,7 +129,8 @@ COMPONENT_POST_CONFIGURE_ACTION = \
    ( [ $(BITS) -eq 32 ] && $(GPATCH) -p1 $(@D)/crypto/opensslconf.h \
       patches-post-config/opensslconf.patch; cd $(@D); $(MAKE) depend; )
 
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+# Enable ASLR for this component
+ASLR_MODE =	$(ASLR_ENABLE)
 
 # We must make sure that openssl-fips component is built before this 1.0.1
 # component since in order to build FIPS-140 certified libraries, the canister

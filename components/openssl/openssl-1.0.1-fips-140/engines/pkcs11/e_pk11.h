@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2004, 2013, Oracle and/or its affiliates. All rights reserved.
- *
+ * Copyright (c) 2004, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 /* crypto/engine/e_pk11.h */
@@ -71,7 +70,11 @@
 
 #include "e_pk11_err.h"
 
-/* max byte length of a symetric key we support */
+#ifdef	__cplusplus
+extern "C" {
+#endif
+
+/* max byte length of a symmetric key we support */
 #define	PK11_KEY_LEN_MAX			32
 
 /*
@@ -172,7 +175,7 @@ typedef struct PK11_st_SESSION
  * different groups may be initialized in different slots.
  *
  * To provide locking granularity in multithreaded environment, the groups are
- * further splitted into types with each type having a separate session cache.
+ * further split into types with each type having a separate session cache.
  */
 typedef enum PK11_OPTYPE_ENUM
 	{
@@ -243,6 +246,12 @@ extern int pk11_destroy_dh_object(PK11_SESSION *sp, CK_BBOOL uselock);
 extern DH_METHOD *PK11_DH(void);
 #endif /* OPENSSL_NO_DH */
 
+extern int pk11_engine_pkey_methods(ENGINE *e, EVP_PKEY_METHOD **pmeth,
+    const int **nids, int nid);
+
 extern CK_FUNCTION_LIST_PTR pFuncList;
 
+#ifdef	__cplusplus
+}
+#endif
 #endif /* E_PK11_H */

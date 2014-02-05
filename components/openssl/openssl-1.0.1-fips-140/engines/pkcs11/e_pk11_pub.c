@@ -188,6 +188,8 @@ static int init_template_value(BIGNUM *bn, CK_VOID_PTR *pValue,
 	CK_ULONG *ulValueLen);
 static void attr_to_BN(CK_ATTRIBUTE_PTR attr, CK_BYTE attr_data[], BIGNUM **bn);
 
+static int pk11_pkey_meth_nids[] = {NID_dsa};
+
 /* Read mode string to be used for fopen() */
 #if SOLARIS_OPENSSL
 static char *read_mode_flags = "rF";
@@ -388,7 +390,9 @@ static RSA_METHOD pk11_rsa =
 	RSA_FLAG_SIGN_VER,			/* flags */
 	NULL,					/* app_data */
 	pk11_RSA_sign,				/* rsa_sign */
-	pk11_RSA_verify				/* rsa_verify */
+	pk11_RSA_verify,			/* rsa_verify */
+	/* Internal rsa_keygen will be used if this is NULL. */
+	NULL					/* rsa_keygen */
 	};
 
 RSA_METHOD *
@@ -461,7 +465,7 @@ PK11_DH(void)
 
 #ifndef OPENSSL_NO_RSA
 /*
- * Similiar to OpenSSL to take advantage of the paddings. The goal is to
+ * Similar to OpenSSL to take advantage of the paddings. The goal is to
  * support all paddings in this engine although PK11 library does not
  * support all the paddings used in OpenSSL.
  * The input errors should have been checked in the padding functions.
@@ -515,7 +519,7 @@ err:
 
 /*
  * Similar to Openssl to take advantage of the paddings. The input errors
- * should be catched in the padding functions
+ * should be caught in the padding functions
  */
 static int pk11_RSA_private_encrypt(int flen, const unsigned char *from,
 	unsigned char *to, RSA *rsa, int padding)
@@ -3228,6 +3232,41 @@ find_one_object(PK11_OPTYPE op, CK_SESSION_HANDLE s,
 	return (1);
 err:
 	UNLOCK_OBJSTORE(op);
+	return (0);
+	}
+
+/*
+ * OpenSSL 1.0.0 introduced ENGINE API for the PKEY EVP functions. Sadly,
+ * "openssl dgst -dss1 ..." now uses a new function EVP_DigestSignInit() which
+ * internally needs a PKEY method for DSA even when in the engine. So, to avoid
+ * a regression when moving from 0.9.8 to 1.0.0, we use an internal OpenSSL
+ * structure for the DSA PKEY methods to make it work. It is a future project to
+ * make it work with HW acceleration.
+ *
+ * Note that at the time of 1.0.0d release there is no documentation as to how
+ * the PKEY EVP functions are to be implemented in an engine. There is only one
+ * engine shipped with 1.0.0d that uses the PKEY EVP methods, the GOST engine.
+ * It was used as an example when fixing the above mentioned regression problem.
+ */
+int
+pk11_engine_pkey_methods(ENGINE *e, EVP_PKEY_METHOD **pmeth, const int **nids,
+    int nid)
+	{
+	if (pmeth == NULL)
+		{
+		*nids = pk11_pkey_meth_nids;
+		return (1);
+		}
+
+	switch (nid)
+		{
+		case NID_dsa:
+			*pmeth = (EVP_PKEY_METHOD *)EVP_PKEY_meth_find(nid);
+			return (1);
+		}
+
+	/* Error branch. */
+	*pmeth = NULL;
 	return (0);
 	}
 
