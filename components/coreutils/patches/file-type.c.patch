@@ -1,0 +1,17 @@
+Add support for the Solaris "door" file type with the GNU stat command
+(CR #16575088)
+
+This patch will be submitted upstream.
+
+--- coreutils-8.16/lib/file-type.c.orig	2014-02-04 08:45:32.295255617 -0800
++++ coreutils-8.16/lib/file-type.c	2014-02-04 14:31:27.647845083 -0800
+@@ -55,6 +55,9 @@
+   if (S_ISSOCK (st->st_mode))
+     return _("socket");
+ 
++  if (S_ISDOOR (st->st_mode))
++    return _("door");
++
+   if (S_TYPEISMQ (st))
+     return _("message queue");
+ 
