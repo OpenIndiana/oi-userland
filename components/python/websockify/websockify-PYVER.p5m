@@ -23,7 +23,8 @@
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-<transform depend type=require fmri=library/python/python-extra-27 -> drop>
+# python-extra is part of python 2.6 only
+<transform depend type=require fmri=library/python-2/python-extra-27 -> drop>
 set name=pkg.fmri \
     value=pkg:/library/python/websockify-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="WebSocket to TCP proxy/bridge"
@@ -61,7 +62,7 @@ license websockify.license license="LGPL3, BSD, MIT"
 
 # force a dependency on python-extra; pkgdepend work is needed to flush this
 # out.
-depend type=require fmri=library/python/python-extra-$(PYV)
+depend type=require fmri=library/python-2/python-extra-$(PYV)
 
 # force a dependency on the websockify package
 depend type=require \
