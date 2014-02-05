@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -61,8 +61,8 @@ CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.1/bin/64/mysql_config
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS)"
+CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.5/bin/mysql_config
+CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS) -R/usr/mysql/5.5/lib/$(MACH64)"
 CONFIGURE_OPTIONS +=    PCRECONFIG="/usr/bin/$(MACH64)/pcre-config"
 
 # Enable ASLR for this component
