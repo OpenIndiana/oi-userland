@@ -9,38 +9,28 @@
 #
 
 #
-# Copyright 2013 EveryCity Ltd. All rights reserved.
+# Copyright 2013, EveryCity Ltd. All rights reserved.
 #
-
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		idn
-COMPONENT_FMRI=		web/php-55/extension/php-idn
-COMPONENT_VERSION=	1.2c
-IPS_COMPONENT_VERSION=	1.2.3
-HUMAN_VERSION=		$(COMPONENT_VERSION)
-COMPONENT_LICENSE=	PHP3.01
-COMPONENT_PROJECT_URL=	http://php-idn.bayour.com/
-COMPONENT_SUMMARY=	Binding to the GNU libidn for using Internationalized Domain Names
+COMPONENT_NAME=		php
+COMPONENT_VERSION=      5.5.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:df19830fe61017a874e23d8cf751f44611109622362ef68840a16fdd07f84fee
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/php-idn/$(COMPONENT_ARCHIVE)/d47be0c38ad91e6464e599825b82e6b0/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE_HASH= sha256:67c74a9a2357dc65f5b1701cadb574f1309c4c3a20a2a5c56aeae4c4be90f2f8
+COMPONENT_ARCHIVE_URL=	http://uk3.php.net/get/$(COMPONENT_ARCHIVE)/from/this/mirror
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CLEAN_PATHS +=	package.xml
-
-# PHP Paths
 PHP_PREFIX=/usr/php/5.5
 PHP_SYSCONFDIR=/etc/php/5.5
 PHP_DATADIR=/var/php/5.5
 
-CONFIGURE_OPTIONS      =	--prefix=$(PHP_PREFIX)
-CONFIGURE_OPTIONS.32  +=	--bindir=$(PHP_PREFIX)/bin
-CONFIGURE_OPTIONS.64  +=	--bindir=$(PHP_PREFIX)/bin/$(MACH64)
+CONFIGURE_OPTIONS	=	--prefix=$(PHP_PREFIX)
+CONFIGURE_OPTIONS.32	=	--bindir=$(PHP_PREFIX)/bin
+CONFIGURE_OPTIONS.64	=	--bindir=$(PHP_PREFIX)/bin/$(MACH64)
 CONFIGURE_OPTIONS.32  +=	--sbindir=$(PHP_PREFIX)/bin
 CONFIGURE_OPTIONS.64  +=	--sbindir=$(PHP_PREFIX)/bin/$(MACH64)
 CONFIGURE_OPTIONS.32  +=	--libdir=$(PHP_PREFIX)/lib
@@ -52,27 +42,27 @@ CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 
-CONFIGURE_OPTIONS     +=	--with-idn=/usr/include/idn
-
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 CONFIGURE_OPTIONS.64  +=	--with-php-config=$(PHP_PREFIX)/bin/$(MACH64)/php-config
+CONFIGURE_OPTIONS.32  +=	--with-mysqli=/usr/mariadb/5.5/bin/mysql_config
+CONFIGURE_OPTIONS.64  +=	--with-mysqli=/usr/mariadb/5.5/bin/$(MACH64)/mysql_config
 
 CONFIGURE_OPTIONS     +=	$(CONFIGURE_OPTIONS.$(BITS))
 
-CFLAGS                +=	-I$(PHP_PREFIX)/include $(CC_BITS)
-CPPFLAGS              +=	$(CFLAGS)
-LDFLAGS.32            +=	-L$(PHP_PREFIX)/lib -R$(PHP_PREFIX)/lib
-LDFLAGS.64            +=	-L$(PHP_PREFIX)/lib/$(MACH64) -R$(PHP_PREFIX)/lib/$(MACH64)
+LDFLAGS.32            +=        -L/usr/mariadb/5.5/lib -R/usr/mariadb/5.5/lib
+LDFLAGS.64            +=        -L/usr/mariadb/5.5/lib/$(MACH64) -R/usr/mariadb/5.5/lib/$(MACH64)
 
-CONFIGURE_OPTIONS     +=	CC="$(CC)" CXX="$(CXX)" CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)"
+CFLAGS                  =       $(CC_BITS) -D_POSIX_PTHREAD_SEMANTICS
+CFLAGS                  +=       -I/usr/mariadb/5.5/include
+CPPFLAGS                +=      -I/usr/mariadb/5.5/include
+LDFLAGS                 +=      $(LDFLAGS.$(BITS))
 
 CONFIGURE_SCRIPT       =	$(@D)/configure
 
-COMPONENT_PRE_CONFIGURE_ACTION	 =	cp -R $(SOURCE_DIR)/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize
+COMPONENT_PRE_CONFIGURE_ACTION	=	cp -R $(SOURCE_DIR)/ext/mysqli/* $(@D) ; cd $(@D) ; $(PHP_PREFIX)/bin/phpize
 COMPONENT_INSTALL_ARGS		+=	INSTALL_ROOT=$(PROTO_DIR)
 
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
-

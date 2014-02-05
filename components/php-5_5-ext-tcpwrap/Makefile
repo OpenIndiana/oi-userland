@@ -1,6 +1,6 @@
 #
 # This file and its contents are supplied under the terms of the
-# Common Development and Distribution License ("CDDL"). You may
+# Common Development and Distribution License ("CDDL)". You may
 # only use this file in accordance with the terms of the CDDL.
 #
 # A full copy of the text of the CDDL should have accompanied this
@@ -14,18 +14,16 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		idn
-COMPONENT_FMRI=		web/php-55/extension/php-idn
-COMPONENT_VERSION=	1.2c
-IPS_COMPONENT_VERSION=	1.2.3
-HUMAN_VERSION=		$(COMPONENT_VERSION)
+COMPONENT_NAME=		tcpwrap
+COMPONENT_FMRI=		web/php-55/extension/php-tcpwrap
+COMPONENT_VERSION=	1.1.3
 COMPONENT_LICENSE=	PHP3.01
-COMPONENT_PROJECT_URL=	http://php-idn.bayour.com/
+COMPONENT_PROJECT_URL=	http://pecl.php.net/package/tcpwrap
 COMPONENT_SUMMARY=	Binding to the GNU libidn for using Internationalized Domain Names
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_NAME)_$(COMPONENT_VERSION).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:df19830fe61017a874e23d8cf751f44611109622362ef68840a16fdd07f84fee
-COMPONENT_ARCHIVE_URL=	http://pkgs.fedoraproject.org/repo/pkgs/php-idn/$(COMPONENT_ARCHIVE)/d47be0c38ad91e6464e599825b82e6b0/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE_HASH=	sha256:afd435399724b5032d2e65105a2c85a7fddb22bc5633571257299d32d46d9d54
+COMPONENT_ARCHIVE_URL=  http://pecl.php.net/get/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -52,8 +50,6 @@ CONFIGURE_OPTIONS     +=	--sysconfdir=$(PHP_SYSCONFDIR)
 CONFIGURE_OPTIONS     +=	--datadir=$(PHP_DATADIR)
 CONFIGURE_OPTIONS     +=	--mandir=$(PHP_PREFIX)/share/man
 
-CONFIGURE_OPTIONS     +=	--with-idn=/usr/include/idn
-
 CONFIGURE_OPTIONS.64  +=	--build=x86_64-pc-solaris2.10
 CONFIGURE_OPTIONS.32  +=	--with-php-config=$(PHP_PREFIX)/bin/php-config
 CONFIGURE_OPTIONS.64  +=	--with-php-config=$(PHP_PREFIX)/bin/$(MACH64)/php-config
@@ -62,6 +58,7 @@ CONFIGURE_OPTIONS     +=	$(CONFIGURE_OPTIONS.$(BITS))
 
 CFLAGS                +=	-I$(PHP_PREFIX)/include $(CC_BITS)
 CPPFLAGS              +=	$(CFLAGS)
+LDFLAGS		      +=	-lnsl -lsocket
 LDFLAGS.32            +=	-L$(PHP_PREFIX)/lib -R$(PHP_PREFIX)/lib
 LDFLAGS.64            +=	-L$(PHP_PREFIX)/lib/$(MACH64) -R$(PHP_PREFIX)/lib/$(MACH64)
 
