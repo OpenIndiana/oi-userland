@@ -1,0 +1,80 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+# argparse is part of python 2.7, but separate in 2.6
+<transform depend type=require fmri=library/python/argparse-27 -> drop>
+set name=pkg.fmri \
+    value=pkg:/library/python/lesscpy-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Python LESS Compiler"
+set name=pkg.description \
+    value="A compiler written in Python for the LESS dynamic stylesheet language. LESS extends CSS with dynamic behavior such as variables, mixins, operations, and functions."
+set name=com.oracle.info.description value="the Lesscpy Python LESS compiler"
+set name=com.oracle.info.tpno value=16108
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="Jóhann T Maríusson <jtm@robot.is>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/006
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/lesscpy target=lesscpy-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+file path=usr/bin/lesscpy-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lessc/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lessc/color.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lessc/formatter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lessc/lexer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lessc/parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lessc/scope.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lessc/utility.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lib/colors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lib/css.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/lib/dom.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/block.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/call.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/deferred.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/expression.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/identifier.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/mixin.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/node.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/property.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/statement.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/string.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/plib/variable.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/scripts/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/lesscpy/scripts/compiler.py
+license LICENSE license=MIT
+
+# force a dependency on argparse; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/argparse-$(PYV)
+
+# force a dependency on the lesscpy package
+depend type=require \
+    fmri=library/python/lesscpy@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on ply; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/ply-$(PYV)

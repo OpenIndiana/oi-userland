@@ -1,0 +1,14 @@
+# pass $CC_BITS to link_executable to make sure the linker is called
+# correctly
+--- netifaces-0.8/setup.py.orig   2014-01-03 16:12:47.195304001 -0700
++++ netifaces-0.8/setup.py    2014-01-03 16:13:35.577255946 -0700
+@@ -69,7 +69,8 @@
+                                                   output_dir=self.build_temp,
+                                                   library_dirs=library_dirs,
+                                                   libraries=libraries,
+-                                                  debug=self.debug)
++                                                  debug=self.debug,
++                                                  extra_preargs=[os.environ["CC_BITS"]])
+                     if execute:
+                         abspath = os.path.abspath(os.path.join(self.build_temp,
+                                                                'conftest'))
