@@ -1,0 +1,18 @@
+diff -urN poppler-0.12.2/poppler/TextOutputDev.cc ../SUNWgnome-pdf-viewer-2.28.2.hacked/poppler-0.12.2/poppler/TextOutputDev.cc
+--- poppler-0.12.2/poppler/TextOutputDev.cc	2009-10-04 23:40:39.000000000 +0100
++++ ../SUNWgnome-pdf-viewer-2.28.2.hacked/poppler-0.12.2/poppler/TextOutputDev.cc	2010-01-14 16:19:05.588587805 +0000
+@@ -233,9 +233,11 @@
+   font = fontA;
+   fontSize = fontSizeA;
+   state->transform(x0, y0, &x, &y);
+-  if ((gfxFont = font->gfxFont)) {
+-    ascent = gfxFont->getAscent() * fontSize;
+-    descent = gfxFont->getDescent() * fontSize;
++  if (font) {
++    if ((gfxFont = font->gfxFont)!= NULL) {
++      ascent = gfxFont->getAscent() * fontSize;
++      descent = gfxFont->getDescent() * fontSize;
++    }
+   } else {
+     // this means that the PDF file draws text without a current font,
+     // which should never happen

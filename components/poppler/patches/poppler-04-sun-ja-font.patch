@@ -1,0 +1,22 @@
+diff -urN poppler-0.14.4/poppler/GlobalParams.cc ../SUNWgnome-pdf-viewer-2.30.3.hacked/poppler-0.14.4/poppler/GlobalParams.cc
+--- poppler-0.14.4/poppler/GlobalParams.cc	2010-09-12 17:16:26.000000000 +0000
++++ ../SUNWgnome-pdf-viewer-2.30.3.hacked/poppler-0.14.4/poppler/GlobalParams.cc	2011-07-14 13:35:34.448661213 +0000
+@@ -1202,6 +1202,18 @@
+       ext = strrchr((char*)s,'.');
+       if (!ext)
+         continue;
++#ifdef __sun
++      // system/font/sun-ja-bitmap-unicode has messed up the choice of fonts
++      // to render Japanese PDF doc, so replace it with a TrueType font.
++      if (strstr ((char *)s, "sun-ja") && !strncasecmp(ext,".pcf",4))
++      {
++        dfp = new DisplayFontParam(fontName->copy(), displayFontTT);
++        dfp->tt.fileName = new GooString("/usr/share/fonts/TrueType/ipafont/ipagp.ttf");
++        FcPatternGetInteger(set->fonts[i], FC_INDEX, 0, &(dfp->tt.faceIndex));
++        font->dfp = dfp;
++        break;
++      }
++#endif
+       if (!strncasecmp(ext,".ttf",4) || !strncasecmp(ext, ".ttc", 4))
+       {
+         dfp = new DisplayFontParam(fontName->copy(), displayFontTT);  

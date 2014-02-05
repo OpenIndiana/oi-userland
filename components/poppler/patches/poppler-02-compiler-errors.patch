@@ -1,0 +1,64 @@
+diff -up poppler-0.11.3/goo/gstrtod.cc.orig poppler-0.11.3/goo/gstrtod.cc
+--- poppler-0.11.3/goo/gstrtod.cc.orig	2009-08-16 23:09:57.000000000 +0100
++++ poppler-0.11.3/goo/gstrtod.cc	2009-08-30 22:39:27.440190450 +0100
+@@ -22,6 +22,9 @@
+ 
+ #include "gstrtod.h"
+ 
++#include <stdlib.h>
++#include <strings.h>
++#include <locale.h>
+ #include <clocale>
+ #include <cerrno>
+ #include <cstdlib>
+
+
+diff -up poppler-0.11.3/goo/gmem.cc.orig poppler-0.11.3/goo/gmem.cc
+--- poppler-0.11.3/goo/gmem.cc.orig	2009-08-16 23:07:09.000000000 +0100
++++ poppler-0.11.3/goo/gmem.cc	2009-08-31 00:06:27.657113809 +0100
+@@ -63,7 +63,7 @@ static int gMemInUse = 0;
+ 
+ #endif /* DEBUG_MEM */
+ 
+-inline static void *gmalloc(size_t size, bool checkoverflow) GMEM_EXCEP {
++static void *gmalloc(size_t size, bool checkoverflow) GMEM_EXCEP {
+ #ifdef DEBUG_MEM
+   int size1;
+   char *mem;
+@@ -132,7 +132,7 @@ void *gmalloc_checkoverflow(size_t size)
+   return gmalloc(size, true);
+ }
+ 
+-inline static void *grealloc(void *p, size_t size, bool checkoverflow) GMEM_EXCEP {
++static void *grealloc(void *p, size_t size, bool checkoverflow) GMEM_EXCEP {
+ #ifdef DEBUG_MEM
+   GMemHdr *hdr;
+   void *q;
+@@ -189,7 +189,7 @@ void *grealloc_checkoverflow(void *p, si
+   return grealloc(p, size, true);
+ }
+ 
+-inline static void *gmallocn(int nObjs, int objSize, bool checkoverflow) GMEM_EXCEP {
++static void *gmallocn(int nObjs, int objSize, bool checkoverflow) GMEM_EXCEP {
+   int n;
+ 
+   if (nObjs == 0) {
+@@ -216,7 +216,7 @@ void *gmallocn_checkoverflow(int nObjs, 
+   return gmallocn(nObjs, objSize, true);
+ }
+ 
+-inline static void *gmallocn3(int a, int b, int c, bool checkoverflow) GMEM_EXCEP {
++static void *gmallocn3(int a, int b, int c, bool checkoverflow) GMEM_EXCEP {
+   int n = a * b;
+   if (b <= 0 || a < 0 || a >= INT_MAX / b) {
+ #if USE_EXCEPTIONS
+@@ -238,7 +238,7 @@ void *gmallocn3_checkoverflow(int a, int
+   return gmallocn3(a, b, c, true);
+ }
+ 
+-inline static void *greallocn(void *p, int nObjs, int objSize, bool checkoverflow) GMEM_EXCEP {
++static void *greallocn(void *p, int nObjs, int objSize, bool checkoverflow) GMEM_EXCEP {
+   int n;
+ 
+   if (nObjs == 0) {
+
