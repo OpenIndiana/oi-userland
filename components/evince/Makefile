@@ -36,10 +36,6 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# Don't really build the initial package, publish empty package for now
-GMAKE=/bin/true
-COMPONENT_PRE_INSTALL_ACTION=$(MKDIR) $(PROTO_DIR)
-
 COMPONENT_PREP_ACTION += \
     cd $(@D); autoreconf --install --force
 
