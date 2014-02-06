@@ -24,45 +24,6 @@ This change was developed in-house and has not been submitted upstream.
 +             xccdf-share.xsl \
 +             os-brand.xsl
 
---- openscap-0.9.7/xsl/xccdf-report.xsl.~1~	2013-04-23 06:21:53.014000001 -0700
-+++ openscap-0.9.7/xsl/xccdf-report.xsl	2013-10-17 20:37:01.886707203 -0700
-@@ -40,6 +40,7 @@
- <xsl:import href="security-guide.xsl" />
- <xsl:import href="oval-report.xsl" />
- <xsl:import href="sce-report.xsl" />
-+<xsl:import href="os-brand.xsl" />
- 
- <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
- 
-@@ -134,7 +135,14 @@
-         id='{@id}'
-     >
-     <info>
--        <title>XCCDF test result</title>
-+	<xsl:choose>
-+	  <xsl:when test="$branded='yes'" >
-+	    <title>XCCDF Assessment Report</title>
-+	  </xsl:when>
-+	  <xsl:otherwise>
-+	    <title>XCCDF Test Report</title>
-+	  </xsl:otherwise>
-+	</xsl:choose>
-         <xsl:call-template name='footerinfo'/>
-     </info>
- 
-@@ -348,8 +356,10 @@
-     <xsl:call-template name='idents'/>
-     <!-- overrides (n) -->
-     <!-- messages (n) -->
--    <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
--    <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
-+	<xsl:if test="cdf:result='fail'" >
-+	  <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
-+	  <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
-+        </xsl:if>
-     <xsl:apply-templates select='.' mode='engine-results'/>
-     <xsl:call-template name='references'/>
-   </section>
 --- /dev/null	2013-10-17 20:38:34.000000000 -0700
 +++ openscap-0.9.7/xsl/os-brand.xsl.in	2013-10-17 20:57:48.565359270 -0700
 @@ -0,0 +1,5 @@
@@ -181,51 +142,75 @@ This change was developed in-house and has not been submitted upstream.
      a, a:visited { color:blue; text-decoration:underline; }
      div#content p.link { text-align:right; font-size:.8em; }
      div#footer a { color:white; }
---- openscap-0.9.7/xsl/oval-results-report.xsl.~1~	2013-04-23 06:21:53.012000001 -0700
-+++ openscap-0.9.7/xsl/oval-results-report.xsl	2013-10-21 11:48:29.340966226 -0700
-@@ -63,6 +63,8 @@
- 	xmlns:ind-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:windows-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#windows"
- 	xmlns:unix-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux-def="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux">
- 	<xsl:output method="html" indent="yes" omit-xml-declaration="yes"/>
-+       
-+        <xsl:include href='os-brand.xsl'/>
+--- openscap-1.0.0/xsl/oval-results-report.xsl.~1~	2013-11-09 23:53:15.704238495 -0800
++++ openscap-1.0.0/xsl/oval-results-report.xsl	2013-11-25 09:52:24.057654433 -0800
+@@ -79,6 +79,8 @@
+ 	<xsl:output method="xml" indent="yes" omit-xml-declaration="no" doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"/>
+ 	<xsl:key name="definition-index" use="@id" match="//oval-def:oval_definitions/oval-def:definitions/oval-def:definition"/>
  
- 	<xsl:key name="definition-index" use="@id" match="/oval-res:oval_results/oval-def:oval_definitions/oval-def:definitions/oval-def:definition"/>
- 
-@@ -70,7 +72,15 @@
++        <xsl:include href='os-brand.xsl' />
++
+ 	<!-- Style declarations for pretty formatting -->
  	<xsl:template name="oval_res_style">
  		<style type="text/css">
- 
-+<xsl:choose>
-+    <xsl:when test="$branded='yes'" >
-+TD.title {BACKGROUND-COLOR: #FF0000; COLOR: #ffc; TEXT-ALIGN: left; font: bold 12pt/14pt "Arial"}
-+DIV.header { background-color: red }
-+    </xsl:when>
-+    <xsl:otherwise>
- TD.title {BACKGROUND-COLOR: #000000; COLOR: #ffc; TEXT-ALIGN: left; font: bold 12pt/14pt "Arial"} 
-+    </xsl:otherwise>
-+  </xsl:choose>
- TD.label {BACKGROUND-COLOR: #99cc99; font: 10pt/12pt "Arial"}
- TD.label2 {font: bold 10pt/14pt "Arial"}
- TD.text {font: 10pt/12pt "Arial"}
-@@ -173,6 +183,20 @@
+@@ -202,6 +204,21 @@
  				<xsl:call-template name="oval_res_style"/>
  			</head>
  			<body>
 +                               <xsl:choose>
 +                                 <xsl:when test="$branded='yes'" >
-+				   <div class="header">
-+				      <table width="100%" background-color="red">
-+					  <tr>
-+					      <td>
-+					      <xsl:call-template name='operating-system-logo'/>
-+					      </td>
-+					  </tr>
-+				      </table>
-+				   </div>
-+				   <br/>
++                                  <div class="header">
++                                     <table width="100%" background-color="red">
++                                         <tr>
++                                             <td>
++                                             <xsl:call-template name='operating-system-logo'/>
++                                             </td>
++                                         </tr>
++                                     </table>
++                                  </div>
++                                  <br/>
 +                                 </xsl:when>
 +                               </xsl:choose>
- 								
++
  				<!-- display results and definition generator information -->
- 				<table border="1" cellpadding="0" cellspacing="0" width="100%">
+ 				<table class="noborder nomargin">
+ 					<tr>
+--- openscap-1.0.0/xsl/xccdf-report.xsl.~1~	2013-11-09 23:53:15.704238495 -0800
++++ openscap-1.0.0/xsl/xccdf-report.xsl	2013-12-11 08:28:42.382923806 -0800
+@@ -40,6 +40,7 @@
+ <xsl:import href="security-guide.xsl" />
+ <xsl:import href="oval-report.xsl" />
+ <xsl:import href="sce-report.xsl" />
++<xsl:import href="os-brand.xsl" />
+ 
+ <xsl:output method="xml" encoding="UTF-8" indent="yes"/>
+ 
+@@ -134,7 +135,14 @@
+         id='{@id}'
+     >
+     <info>
+-        <title>XCCDF Test Result</title>
++        <xsl:choose>
++          <xsl:when test="$branded='yes'" >
++            <title>Compliance Report</title>
++          </xsl:when>
++          <xsl:otherwise>
++            <title>XCCDF Test Report</title>
++          </xsl:otherwise>
++        </xsl:choose>
+         <xsl:call-template name='footerinfo'/>
+     </info>
+ 
+@@ -348,8 +356,10 @@
+     <xsl:call-template name='idents'/>
+     <!-- overrides (n) -->
+     <!-- messages (n) -->
+-    <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
+-    <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
++        <xsl:if test="cdf:result='fail'" >
++          <xsl:apply-templates select='$rule/cdf:fixtext[1]'/>
++          <xsl:apply-templates select='($rule/cdf:fix|cdf:fix)[last()]'/>
++        </xsl:if>
+     <xsl:apply-templates select='.' mode='engine-results'/>
+     <xsl:call-template name='references'/>
+   </section>

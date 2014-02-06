@@ -25,18 +25,19 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openscap
-COMPONENT_VERSION=	0.9.7
+COMPONENT_VERSION=	1.0.0
 COMPONENT_PROJECT_URL=  http://www.open-scap.org
 COMPONENT_DOWNLOAD_URL= https://fedorahosted.org/releases/o/p/openscap
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:0d9ae804026d69e60d44e27cf489e65dd1c2865895cde2cb174ff90fd7868a6a
+COMPONENT_ARCHIVE_HASH= sha256:47105500b8b3d80cdf07b277bfab59091de5eadb16d97d27ee663bfbee58cb76
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_DOWNLOAD_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        utility/openscap
 
 COMPILER =		gcc
 CFLAGS+=		-std=c99
 CFLAGS+=		-DNDEBUG
+CFLAGS+=		-DOSCAP_THREAD_SAFE
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
