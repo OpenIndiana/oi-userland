@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		apr
-COMPONENT_VERSION=	1.4.8
+COMPONENT_VERSION=	1.5.0
 COMPONENT_PROJECT_URL=	http://apr.apache.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1689e415bdfab6aaa41f07836b5dd9ed4901d22ddeb99feffdb2cee3124adf49
+    sha256:9879f02054cb22e99f605f6fdbf47f4c028af4cd4f351cf64186a7ee447f35d7
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
@@ -41,6 +41,8 @@ include ../../make-rules/ips.mk
 PATCH_LEVEL=0
 
 CFLAGS += -DSSL_EXPERIMENTAL -DSSL_ENGINE
+
+CONFIGURE_SCRIPT=       $(@D)/configure
 
 CONFIGURE_PREFIX=/usr/apr
 
