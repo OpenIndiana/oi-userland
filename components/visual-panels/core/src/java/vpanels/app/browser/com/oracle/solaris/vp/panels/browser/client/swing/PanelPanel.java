@@ -20,13 +20,13 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.browser.client.swing;
 
 import javax.swing.DefaultListModel;
-import com.oracle.solaris.vp.panel.common.api.panel.*;
+import com.oracle.solaris.vp.panel.common.api.panels.*;
 
 @SuppressWarnings({"serial"})
 public class PanelPanel extends PanelDialog

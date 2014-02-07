@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.api.file;
@@ -32,6 +32,7 @@ import javax.swing.*;
 import javax.swing.filechooser.FileSystemView;
 import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.panel.common.*;
+import com.oracle.solaris.vp.panel.common.api.files.*;
 import com.oracle.solaris.vp.util.misc.IOUtil;
 
 public class RemoteFileSystemView extends FileSystemView {

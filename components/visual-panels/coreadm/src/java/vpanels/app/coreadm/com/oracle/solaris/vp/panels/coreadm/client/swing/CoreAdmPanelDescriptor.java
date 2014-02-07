@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.coreadm.client.swing;
@@ -35,7 +35,7 @@ import com.oracle.solaris.rad.client.Interface;
 import com.oracle.solaris.rad.connect.Connection;
 import com.oracle.solaris.scf.common.ScfException;
 import com.oracle.solaris.vp.panel.common.*;
-import com.oracle.solaris.vp.panel.common.api.file.*;
+import com.oracle.solaris.vp.panel.common.api.files.*;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.common.model.*;
 import com.oracle.solaris.vp.panel.common.smf.*;

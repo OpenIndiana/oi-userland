@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.api.file;
@@ -28,6 +28,7 @@ package com.oracle.solaris.vp.panel.common.api.file;
 import java.io.*;
 import java.util.List;
 import com.oracle.solaris.rad.client.RadObjectException;
+import com.oracle.solaris.vp.panel.common.api.files.*;
 
 @SuppressWarnings({"serial"})
 public class RemoteFile extends File {

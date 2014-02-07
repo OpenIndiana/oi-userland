@@ -20,31 +20,10 @@
 #
 
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-include $(SRC)/make-rules/Makefile.env
+set name=pkg.fmri value=pkg:/system/management/visual-panels/panel-examples@0.5.12-5.12.0.0.0.42.0
+set name=pkg.obsolete value=true
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-CPPFLAGS += -I/usr/include/libxml2
-LDLIBS += -lxml2 -lcrypto
-
-# Compensate for libxml's lint library
-LINTFLAGS += -erroff=E_INCONS_ARG_DECL2
-
-VERS=.1
-MOD_APIS=panel
-MOD_OBJS=mod_panels.o
-MOD_LIBNAME=mod_panels.so$(VERS)
-MOD_INSTALLDIR=$(RADDIR_MODULE)
-
-DTDDIR=$(ROOT)/usr/share/lib/xml/dtd
-APISDIR=../../../../apis
-
-include $(SRC)/make-rules/Makefile.com
-
-install: $(DTDDIR)/vpanel.dtd.1
-
-FILEMODE=444
-$(DTDDIR)/%: %
-	$(INS.file);
-	$(RMCDDL)

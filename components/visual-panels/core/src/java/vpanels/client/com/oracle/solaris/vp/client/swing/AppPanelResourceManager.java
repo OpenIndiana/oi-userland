@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2009, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.client.swing;
@@ -30,7 +30,7 @@ import java.util.logging.*;
 import com.oracle.solaris.vp.client.common.*;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.ActionAbortedException;
-import com.oracle.solaris.vp.panel.common.api.panel.CustomPanel;
+import com.oracle.solaris.vp.panel.common.api.panels.CustomPanel;
 import com.oracle.solaris.vp.panel.common.view.BusyIndicator;
 
 public class AppPanelResourceManager extends PanelResourceManager {

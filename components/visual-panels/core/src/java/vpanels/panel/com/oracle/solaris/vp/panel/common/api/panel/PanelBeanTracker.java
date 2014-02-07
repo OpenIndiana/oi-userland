@@ -20,13 +20,14 @@
  */
 
 /*
- * Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.api.panel;
 
 import com.oracle.solaris.rad.client.ADRName;
 import com.oracle.solaris.vp.panel.common.*;
+import com.oracle.solaris.vp.panel.common.api.panels.*;
 
 public class PanelBeanTracker extends BeanTracker<Panel> {
     //

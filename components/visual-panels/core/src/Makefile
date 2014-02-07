@@ -20,13 +20,12 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include $(SRC)/make-rules/Makefile.env
 
-cmd: java
-doc: java cmd
+doc: java
 
 qinstall:
 	$(MAKE) install ANT='ant -Dquick=true'

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.client.common;
@@ -32,6 +32,9 @@ import java.util.*;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.action.ActionAbortedException;
 import com.oracle.solaris.vp.panel.common.api.panel.*;
+import com.oracle.solaris.vp.panel.common.api.panels.CustomPanel;
+import com.oracle.solaris.vp.panel.common.api.panels.Panel;
+import com.oracle.solaris.vp.panel.common.api.panels.ResourceDescriptor;
 import com.oracle.solaris.vp.util.misc.*;
 import com.oracle.solaris.vp.util.misc.finder.Finder;
 

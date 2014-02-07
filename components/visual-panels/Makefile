@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -54,7 +54,6 @@ $(SUBDIRS):	FORCE
 # dependencies
 apache: 	core smf
 coreadm: 	core
-examples: 	core
 firewall: 	core
 smf: 		core
 sysmon: 	core

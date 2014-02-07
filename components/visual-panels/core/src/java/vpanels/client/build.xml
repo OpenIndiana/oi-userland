@@ -19,7 +19,7 @@
 
   CDDL HEADER END
 
-  Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+  Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
 -->
 
 <project name="vpanels-client" default="jar">
@@ -44,10 +44,6 @@
 			This target can only be used within NetBeans.
 		</fail>
 
-		<nbprofiledirect>
-			<classpath refid="classpath.jar" />
-		</nbprofiledirect>
-
 		<java fork="true" jar="${proj.jarfile}">
 			<jvmarg value="${profiler.info.jvmargs.agent}" />
 		</java>
@@ -61,13 +57,12 @@
 		<fileset refid="proj.extlibs" />
 		<pathelement location="${proj.vpanel}/vpanels-panel.jar" />
 		<pathelement location="${proj.util}/vpanels-util.jar" />
+		<pathelement location="${abs.rad.java}/files.jar" />
+		<pathelement location="${abs.rad.java}/network.jar" />
+		<pathelement location="${abs.rad.java}/panels.jar" />
+		<pathelement location="${abs.rad.java}/smf_old.jar" />
 		<pathelement location="${abs.rad.java}/rad.jar" />
 		<pathelement location="${abs.rad.java}/pam.jar" />
 		<pathelement location="${abs.rad.java}/zonesbridge.jar" />
-	</path>
-
-	<path id="classpath.jar">
-		<path refid="classpath.javac" />
-		<pathelement location="${proto.vpanels}/smf-old.jar" />
 	</path>
 </project>

@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.browser.client.swing;
@@ -31,6 +31,8 @@ import java.util.logging.Level;
 import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.panel.*;
+import com.oracle.solaris.vp.panel.common.api.panels.CustomPanel;
+import com.oracle.solaris.vp.panel.common.api.panels.Panel;
 import com.oracle.solaris.vp.panel.common.control.*;
 import com.oracle.solaris.vp.panel.common.model.*;
 import com.oracle.solaris.vp.panel.swing.control.PanelFrameControl;
