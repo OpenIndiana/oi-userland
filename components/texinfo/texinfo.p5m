@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 # Note for the next texinfo maintainer:
 # if "file path=usr/lib/$(MACH64)/charset.alias" is in your texinfo.p5m file,
@@ -31,7 +31,6 @@ set name=pkg.fmri value=pkg:/text/texinfo@$(IPS_COMPONENT_VERSION),$(BUILD_VERSI
 set name=pkg.summary value="Documentation system for on-line information and printed output"
 set name=pkg.description value="Texinfo is a documentation system that uses a single source file to produce both on-line information and printed output."
 set name=com.oracle.info.description value="Texinfo, the GNU documentation system"
-set name=com.oracle.info.tpno value=7876
 set name=info.classification value="org.opensolaris.category.2008:Development/GNU"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -41,7 +40,12 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend fmri=__TBD pkg.debug.depend.file=usr/bin/python type=require
 
-license texinfo.copyright license="GPLv3, FDLv1.3"
+license texinfo.copyright license="GPLv3, FDLv1.3" \
+	com.oracle.info.description="texinfo" \
+	com.oracle.info.name=texinfo com.oracle.info.tpno=7876
+license texi2html.copyright license="texi2html" \
+	com.oracle.info.description="texi2html" \
+	com.oracle.info.name=texi2html com.oracle.info.tpno=9089
 
 legacy	pkg=SUNWtexi \
 	name="GNU texinfo - Texinfo utilities (texinfo)" \
