@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 PATH=/usr/bin:/usr/gnu/bin
@@ -229,7 +229,7 @@ COMPONENT_TEST_TARGETS =	check
 BUILD_TOOLS ?=	/ws/on12-tools
 
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
-SPRO_VROOT =	$(SPRO_ROOT)/sunstudio12.1
+SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.3
 
 PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.2.0.2
 PARFAIT_TOOLS=	$(WS_TOOLS)/$(MACH)/parfait

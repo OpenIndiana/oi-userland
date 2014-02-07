@@ -99,6 +99,9 @@ LD_Z_IGNORE=
 # the 12.3 compiler
 studio_OPT.i386.64 = -xO3
 
+# sparc build sometimes fails with studio 12.3 because of 17537968.
+studio_OPT.sparc.64 = -xO3
+
 # without this define, config fails frequently on i386 when including 
 # /usr/include/sys/isa_defs.h with error: "ISA not supported";
 # many extensions don't get built and at least one error causes 

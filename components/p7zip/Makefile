@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -43,6 +43,9 @@ COMPONENT_BUGDB=	utility/p7zip
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
+
+# the tests fail horribly with -Bdirect
+LD_B_DIRECT=
 
 COMPONENT_PREP_ACTION = (cd $(@D); cp ../makefile.solaris makefile.machine)
 COMPONENT_BUILD_TARGETS = all3
