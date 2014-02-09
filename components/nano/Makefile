@@ -31,6 +31,9 @@ include ../../make-rules/ips.mk
 CONFIGURE_OPTIONS  +=		--enable-color
 CONFIGURE_OPTIONS  +=		--enable-multibuffer
 CONFIGURE_OPTIONS  +=		--enable-nanorc
+CONFIGURE_OPTIONS  +=		--enable-utf8
+CONFIGURE_OPTIONS  +=		--disable-iberty
+CONFIGURE_OPTIONS  +=		get_wch=getwch
 
 # common targets
 build:		$(BUILD_32)
