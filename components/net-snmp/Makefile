@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # parfait is upset about some inline assembly
@@ -61,6 +61,7 @@ CONFIGURE_OPTIONS  +=	--enable-ipv6
 CONFIGURE_OPTIONS  +=	--enable-mfd-rewrites
 CONFIGURE_OPTIONS  +=	--with-pkcs
 CONFIGURE_OPTIONS  +=	--with-transports="UDP TCP UDPIPv6 TCPIPv6"
+CONFIGURE_OPTIONS  +=   --sysconfdir=/etc/net-snmp
 
 # Which MIB modules do we want to build
 MIB_MOBULES.sparc = ucd-snmp/lmSensors
