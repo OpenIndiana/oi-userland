@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -35,7 +35,9 @@ include ../../make-rules/ips.mk
 # When it's time to update, you can use these rules to download with
 # 'gmake -B pci.ids usb.ids'   After updating the data files, ensure
 # that the header with version/date and license info is still being 
-# correctly extracted and copied into the generated license files.
+# correctly extracted and copied into the generated license files,
+# and run 'gmake test' to verify there are no invalid or control chars
+# in the files.
 
 download::
 	@echo 'No downloads for this component'
@@ -84,7 +86,19 @@ $(BUILD_DIR)/%.license: $(BUILD_DIR)/%.header
 
 install build: $(BUILT_LICENSES)
 
-test:	$(NO_TESTS)
+# Ensure there are no control characters/escape sequences or invalid UTF-8
+# characters in the *.ids text files.
+test: $(BUILD_DIR)
+	@ export LC_ALL='en_US.UTF-8' ; \
+	for f in $(ID_FILES) ; do \
+		tr -cd '[:print:][:space:]' < $$f > $(BUILD_DIR)/$$f.clean \
+		&& diff -u $$f $(BUILD_DIR)/$$f.clean ; \
+		if (( $$? == 0 )) ; then \
+			print $$f PASSED ; \
+		else \
+			print $$f FAILED ; \
+		fi \
+	done
 
 clobber clean::
 	$(RM) -r $(BUILD_DIR)
