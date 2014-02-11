@@ -1,0 +1,50 @@
+--- gnome-vfs-2.6.0/libgnomevfs/gnome-vfs-xfer.c	2005-04-13 09:09:29.000000000 +0530
++++ archana-gnome-vfs-2.6.0/libgnomevfs/gnome-vfs-xfer.c	2005-04-13 10:41:54.819357496 +0530
+@@ -2115,9 +2115,36 @@ gnome_vfs_xfer_uri_internal (const GList
+ 			source_uri != NULL;
+ 			source_uri = source_uri->next, target_uri = target_uri->next) {
+ 			gboolean same_fs;
++			gboolean is_local;
++			char *trash_dir;
++			GnomeVFSURI *trash_uri;
++			GnomeVFSFileInfo *file_info;
+ 
+ 			g_assert (target_dir_uri != NULL);
+ 
++			/* For local uris, don't set the move option to copy/remove where remove
++			 * can't be done
++			 */
++			file_info = gnome_vfs_file_info_new ();
++
++			trash_dir = g_strconcat (g_get_home_dir (), "/.Trash", NULL);
++			trash_uri = gnome_vfs_uri_new (trash_dir);
++
++			result = gnome_vfs_get_file_info_uri ((GnomeVFSURI *)(source_uri->data),
++							      file_info,
++							      GNOME_VFS_FILE_INFO_GET_ACCESS_RIGHTS);
++
++			is_local = gnome_vfs_uri_is_local ((GnomeVFSURI *)(source_uri->data));
++
++			if (result == GNOME_VFS_OK && ! strcmp (target_dir_uri->text, trash_uri->text)) {
++				if (is_local && (file_info->permissions & GNOME_VFS_PERM_ACCESS_WRITABLE) != 0) {
++					goto change_operation_move;
++				}
++				else {
++					goto dont_change_operation_move;
++				}
++			}
++change_operation_move:
+ 			result = gnome_vfs_check_same_fs_uris ((GnomeVFSURI *)source_uri->data, 
+ 				target_dir_uri, &same_fs);
+ 
+@@ -2126,6 +2153,10 @@ gnome_vfs_xfer_uri_internal (const GList
+ 			}
+ 
+ 			move &= same_fs;
++dont_change_operation_move:
++			g_free (trash_dir);
++			gnome_vfs_uri_unref (trash_uri);
++			gnome_vfs_file_info_unref (file_info);
+ 		}
+ 	/*}*/
+ 
