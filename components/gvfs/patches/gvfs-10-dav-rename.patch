@@ -1,0 +1,251 @@
+--- gvfs-1.6.7/client/gdaemonfile.c.orig	2011-11-30 13:50:03.712829325 +0000
++++ gvfs-1.6.7/client/gdaemonfile.c	2011-11-30 13:50:27.727022766 +0000
+@@ -551,6 +551,7 @@
+ 
+ typedef void (*AsyncPathCallCallback) (DBusMessage *reply,
+ 				       DBusConnection *connection,
++				       GMountInfo *mount_info,
+ 				       GSimpleAsyncResult *result,
+ 				       GCancellable *cancellable,
+ 				       gpointer callback_data);
+@@ -565,6 +566,7 @@
+   AsyncPathCallCallback callback;
+   gpointer callback_data;
+   GDestroyNotify notify;
++  GMountInfo *mount_info;
+ } AsyncPathCall;
+ 
+ static void
+@@ -581,6 +583,8 @@
+     g_object_unref (data->cancellable);
+   if (data->args)
+     dbus_message_unref (data->args);
++  if (data->mount_info)
++    g_mount_info_unref (data->mount_info);
+   g_free (data);
+ }
+ 
+@@ -605,7 +609,9 @@
+       g_object_weak_ref (G_OBJECT (result), (GWeakNotify)async_path_call_free, data);
+       data->result = NULL;
+       
+-      data->callback (reply, connection,
++      data->callback (reply,
++		      connection,
++		      data->mount_info,
+ 		      result,
+ 		      data->cancellable,
+ 		      data->callback_data);
+@@ -634,6 +640,7 @@
+       return;
+     }
+ 
++  data->mount_info = g_mount_info_ref (mount_info);
+   message =
+     dbus_message_new_method_call (mount_info->dbus_id,
+ 				  mount_info->object_path,
+@@ -882,6 +889,7 @@
+ static void
+ query_info_async_cb (DBusMessage *reply,
+ 		     DBusConnection *connection,
++		     GMountInfo *mount_info,
+ 		     GSimpleAsyncResult *result,
+ 		     GCancellable *cancellable,
+ 		     gpointer callback_data)
+@@ -999,6 +1007,7 @@
+ static void
+ read_async_cb (DBusMessage *reply,
+ 	       DBusConnection *connection,
++	       GMountInfo *mount_info,
+ 	       GSimpleAsyncResult *result,
+ 	       GCancellable *cancellable,
+ 	       gpointer callback_data)
+@@ -1324,6 +1333,7 @@
+ static void
+ mount_mountable_async_cb (DBusMessage *reply,
+ 			  DBusConnection *connection,
++	  		  GMountInfo *mount_info,
+ 			  GSimpleAsyncResult *result,
+ 			  GCancellable *cancellable,
+ 			  gpointer callback_data)
+@@ -1440,6 +1450,7 @@
+ static void
+ start_mountable_async_cb (DBusMessage *reply,
+ 			  DBusConnection *connection,
++	  		  GMountInfo *mount_info,
+ 			  GSimpleAsyncResult *result,
+ 			  GCancellable *cancellable,
+ 			  gpointer callback_data)
+@@ -1490,6 +1501,7 @@
+ static void
+ stop_mountable_async_cb (DBusMessage *reply,
+                          DBusConnection *connection,
++	  		 GMountInfo *mount_info,
+                          GSimpleAsyncResult *result,
+                          GCancellable *cancellable,
+                          gpointer callback_data)
+@@ -1543,6 +1555,7 @@
+ static void
+ eject_mountable_async_cb (DBusMessage *reply,
+ 			  DBusConnection *connection,
++	  		  GMountInfo *mount_info,
+ 			  GSimpleAsyncResult *result,
+ 			  GCancellable *cancellable,
+ 			  gpointer callback_data)
+@@ -1613,6 +1626,7 @@
+ static void
+ unmount_mountable_async_cb (DBusMessage *reply,
+ 			    DBusConnection *connection,
++	  		    GMountInfo *mount_info,
+ 			    GSimpleAsyncResult *result,
+ 			    GCancellable *cancellable,
+ 			    gpointer callback_data)
+@@ -1665,6 +1679,7 @@
+ static void
+ poll_mountable_async_cb (DBusMessage *reply,
+                          DBusConnection *connection,
++	  		 GMountInfo *mount_info,
+                          GSimpleAsyncResult *result,
+                          GCancellable *cancellable,
+                          gpointer callback_data)
+@@ -1862,6 +1877,7 @@
+ static void
+ query_fs_info_async_cb (DBusMessage *reply,
+ 			DBusConnection *connection,
++	  		GMountInfo *mount_info,
+ 			GSimpleAsyncResult *result,
+ 			GCancellable *cancellable,
+ 			gpointer callback_data)
+@@ -2011,21 +2027,26 @@
+ 				GError **error)
+ {
+   GDaemonFile *daemon_file;
++  GMountInfo *mount_info;
+   DBusMessage *reply;
+   DBusMessageIter iter;
+   char *new_path;
+ 
+   daemon_file = G_DAEMON_FILE (file);
+   
++  mount_info = NULL;
+   reply = do_sync_path_call (file, 
+ 			     G_VFS_DBUS_MOUNT_OP_SET_DISPLAY_NAME,
+-			     NULL, NULL,
++			     &mount_info, NULL,
+ 			     cancellable, error,
+ 			     DBUS_TYPE_STRING, &display_name,
+ 			     0);
+   if (reply == NULL)
+-    return NULL;
+-
++    {
++      if (mount_info)
++        g_mount_info_unref (mount_info);
++      return NULL;
++    }
+ 
+   if (!dbus_message_iter_init (reply, &iter) ||
+       !_g_dbus_message_iter_get_args (&iter, NULL,
+@@ -2037,10 +2058,12 @@
+       goto out;
+     }
+ 
++  g_mount_info_apply_prefix (mount_info, &new_path);
+   file = new_file_for_new_path (daemon_file, new_path);
+   g_free (new_path);
+ 
+  out:
++  g_mount_info_unref (mount_info);
+   dbus_message_unref (reply);
+   return file;
+ }
+@@ -2630,6 +2653,7 @@
+ static void
+ append_to_async_cb (DBusMessage *reply,
+                     DBusConnection *connection,
++                    GMountInfo *mount_info,
+                     GSimpleAsyncResult *result,
+                     GCancellable *cancellable,
+                     gpointer callback_data)
+@@ -2714,6 +2738,7 @@
+ static void
+ create_async_cb (DBusMessage *reply,
+                  DBusConnection *connection,
++                 GMountInfo *mount_info,
+                  GSimpleAsyncResult *result,
+                  GCancellable *cancellable,
+                  gpointer callback_data)
+@@ -2796,6 +2821,7 @@
+ static void
+ enumerate_children_async_cb (DBusMessage *reply,
+                              DBusConnection *connection,
++                             GMountInfo *mount_info,
+                              GSimpleAsyncResult *result,
+                              GCancellable *cancellable,
+                              gpointer callback_data)
+@@ -2977,6 +3003,7 @@
+ static void
+ replace_async_cb (DBusMessage *reply,
+                   DBusConnection *connection,
++                  GMountInfo *mount_info,
+                   GSimpleAsyncResult *result,
+                   GCancellable *cancellable,
+                   gpointer callback_data)
+@@ -3058,6 +3085,7 @@
+ static void
+ set_display_name_async_cb (DBusMessage *reply,
+                            DBusConnection *connection,
++                           GMountInfo *mount_info,
+                            GSimpleAsyncResult *result,
+                            GCancellable *cancellable,
+                            gpointer callback_data)
+@@ -3077,7 +3105,9 @@
+       goto out;
+     }
+ 
++  g_mount_info_apply_prefix (mount_info, &new_path);
+   file = new_file_for_new_path (daemon_file, new_path);
++
+   g_free (new_path);
+ 
+   g_simple_async_result_set_op_res_gpointer (result, file, g_object_unref);
+--- gvfs-1.6.7/common/gmounttracker.c.orig	2011-11-30 13:47:20.816889639 +0000
++++ gvfs-1.6.7/common/gmounttracker.c	2011-11-30 13:48:12.379029145 +0000
+@@ -153,6 +153,26 @@
+   return new_path;
+ }
+ 
++void
++g_mount_info_apply_prefix (GMountInfo *info,
++                          char **path)
++{
++   GMountSpec *spec;
++
++   spec = info->mount_spec;
++
++   if (spec->mount_prefix != NULL &&
++       spec->mount_prefix[0] != 0)
++     {
++         char *path_with_prefix;
++         path_with_prefix = g_build_path ("/", spec->mount_prefix,
++                                          *path, NULL);
++         g_free (*path);
++         *path = path_with_prefix;
++     }
++
++}
++
+ GMountInfo *
+ g_mount_info_from_dbus (DBusMessageIter *iter)
+ {
+--- gvfs-1.6.7/common/gmounttracker.h.orig	2011-11-30 13:47:30.216834715 +0000
++++ gvfs-1.6.7/common/gmounttracker.h	2011-11-30 13:48:09.537242330 +0000
+@@ -73,6 +73,8 @@
+ void        g_mount_info_unref        (GMountInfo *info);
+ const char *g_mount_info_resolve_path (GMountInfo *info,
+ 				       const char *path);
++void        g_mount_info_apply_prefix (GMountInfo *info,
++				       char      **path);
+ 
+ GMountInfo * g_mount_info_from_dbus (DBusMessageIter *iter);
+ 
