@@ -1,0 +1,415 @@
+--- gvfs-1.1.6/configure.ac.old 2009-02-17 12:51:28.708111000 +0800
++++ gvfs-1.1.6/configure.ac     2009-02-17 12:51:51.196942000 +0800
+@@ -311,10 +311,10 @@
+ CDDA_CFLAGS=
+ 
+ if test "x$enable_cdda" != "xno" -a \( "x$msg_hal" = "xyes" -o "x$msg_gudev" = "xyes" \); then
+-  PKG_CHECK_EXISTS(libcdio_paranoia >= 0.78.2, msg_cdda=yes)
++  PKG_CHECK_EXISTS(hal >= $HAL_REQUIRED, msg_cdda=yes)
+ 
+   if test "x$msg_cdda" = "xyes"; then
+-    PKG_CHECK_MODULES(CDDA, libcdio_paranoia)
++    PKG_CHECK_MODULES(CDDA, hal >= $HAL_REQUIRED)
+     AC_DEFINE(HAVE_CDDA, 1, [Define to 1 if CDDA is going to be built])
+   fi
+ fi
+
+diff -urN -x'*.rej' -x'*.orig' gvfs-1.3.2/daemon/cdda.mount.in ../SUNWgnome-gvfs-2.26.1.changed/gvfs-1.3.2/daemon/cdda.mount.in
+--- gvfs-1.3.2/daemon/cdda.mount.in	2009-05-01 20:50:01.000000000 +0100
++++ ../SUNWgnome-gvfs-2.26.1.changed/gvfs-1.3.2/daemon/cdda.mount.in	2009-07-23 18:19:28.188809476 +0100
+@@ -1,4 +1,4 @@
+ [Mount]
+ Type=cdda
+ Exec=@libexecdir@/gvfsd-cdda
+-AutoMount=false
++AutoMount=true
+diff -urN -x'*.rej' -x'*.orig' gvfs-1.3.2/daemon/gvfsbackendcdda.c ../SUNWgnome-gvfs-2.26.1.changed/gvfs-1.3.2/daemon/gvfsbackendcdda.c
+--- gvfs-1.3.2/daemon/gvfsbackendcdda.c	2009-07-08 18:08:27.000000000 +0100
++++ ../SUNWgnome-gvfs-2.26.1.changed/gvfs-1.3.2/daemon/gvfsbackendcdda.c	2009-07-23 18:36:32.145085560 +0100
+@@ -54,9 +54,11 @@
+ #include "gvfsjobqueryinfo.h"
+ #include "gvfsjobenumerate.h"
+ 
++#ifdef HAVE_CDIO
+ #define DO_NOT_WANT_PARANOIA_COMPATIBILITY
+ #include <cdio/paranoia.h>
+ #include <cdio/cdio.h>
++#endif
+ 
+ /* TODO:
+  *
+@@ -109,14 +111,18 @@
+   guint64 size;
+ 
+   char *device_path;
++#ifdef HAVE_CDIO
+   cdrom_drive_t *drive;
++#endif
+   int num_open_files;
+ 
+   /* Metadata from CD-Text */
+   char *album_title;
+   char *album_artist;
++  guint track_num;
+   char *genre;
+   GList *tracks; /* a GList of GVfsBackendCddaTrack */
++ 
+ };
+ 
+ G_DEFINE_TYPE (GVfsBackendCdda, g_vfs_backend_cdda, G_VFS_TYPE_BACKEND)
+@@ -127,11 +133,13 @@
+   g_free (cdda_backend->device_path);
+   cdda_backend->device_path = NULL;
+ 
++#ifdef HAVE_CDIO
+   if (cdda_backend->drive != NULL)
+     {
+       cdio_cddap_close (cdda_backend->drive);
+       cdda_backend->drive = NULL;
+     }
++#endif
+ }
+ 
+ /* Metadata related functions */
+@@ -157,10 +165,73 @@
+   g_list_free (cdda_backend->tracks);
+   cdda_backend->tracks = NULL;
+ }
++static boolean_t
++cdda2wav_read_toc (GVfsBackendCdda *cdda_backend)
++{
++  gchar   *command;
++  char     buf[BUFSIZ];
++  guint    leadout;
++  int      track_num;
++  uint_t   i;
++  FILE	*f;
++
++  /* Open the connection to cdda2wav */
++  gchar* device_path = g_strdup_printf("/dev/rdsk/%s", cdda_backend->device_path + strlen("/dev/dsk/"));
++  command = g_strdup_printf (
++	"/usr/bin/cdda2wav -q dev=%s --info-only -vtoc --no-infofile --gui 2>&1",
++	device_path);
++  f = popen (command, "r");
++  g_free (command);
++  if (f == NULL)
++    return (FALSE);
++
++  track_num = 0;
++  leadout   = 0;
++
++  i = 0;
++  /* the line looks like 
++   T01:       0  3:48.47 audio linear copydenied stereo title '' from ''
++  */
++
++  while (fgets (buf, BUFSIZ, f) != NULL) {
++    char *endptr;
++    g_strchomp (buf);
++    if ((strlen (buf) > 12) &&
++      g_strrstr(buf, "audio") != NULL &&
++      (buf[0] == 'T') &&
++      (g_ascii_isdigit(buf[1])) &&
++      (g_ascii_isdigit(buf[2])) &&
++      (buf[3] == ':')) {
++
++      i++; 
++      track_num = buf[2] - '0' + (buf[1] - '0') * 10;
++      gchar** temp_str = g_strsplit(g_strchug(buf + 12),":",10);
++      guint min  = (guint) (g_ascii_strtod(temp_str[0],&endptr));
++      guint second  = (guint) (g_ascii_strtod(g_strndup(temp_str[1],2),&endptr));
++
++      GVfsBackendCddaTrack *track;
++      track = g_new0 (GVfsBackendCddaTrack, 1);
++      track->title = g_strdup_printf("No %d Track", i);
++      track->duration = min * 60 + second;
++      cdda_backend->tracks = g_list_append (cdda_backend->tracks, track);
++
++    }
++
++  }
++  track_num = i;
++  pclose (f); 
++
++  cdda_backend->track_num = track_num;
++  g_free (device_path);
++
++  return (TRUE);
++}
++
+ 
+ static void
+ fetch_metadata (GVfsBackendCdda *cdda_backend)
+ {
++#ifdef HAVE_CDIO
+   CdIo *cdio;
+   track_t cdtrack, last_cdtrack;
+   const cdtext_t *cdtext;
+@@ -193,6 +264,10 @@
+   }
+ 
+   cdio_destroy (cdio);
++#else
++   /* get CD tracks information using cdda2wav command */
++   cdda2wav_read_toc(cdda_backend);
++#endif
+ }
+ 
+ #ifdef HAVE_GUDEV
+@@ -398,7 +473,11 @@
+       return;
+     }
+ 
++#ifdef __sun
++  cdda_backend->device_path = g_strdup_printf ("/dev/dsk/%s", host);
++#else
+   cdda_backend->device_path = g_strdup_printf ("/dev/%s", host);
++#endif
+ 
+ #ifdef HAVE_GUDEV
+   gudev_device = g_udev_client_query_by_device_file (cdda_backend->gudev_client, cdda_backend->device_path);
+@@ -410,6 +489,7 @@
+   find_udi_for_device (cdda_backend);
+ #endif
+ 
++#ifdef HAVE_CDIO
+   cdda_backend->drive = cdio_cddap_identify (cdda_backend->device_path, 0, NULL);
+   if (cdda_backend->drive == NULL)
+     {
+@@ -435,6 +515,24 @@
+       return;
+     }
+ 
++#else
++  //to prevent gvfs-mount cdda://1 to create a disc icon here
++  if (cdda_backend->hal_udi== NULL)
++    {
++      g_set_error (&error, G_IO_ERROR, G_IO_ERROR_FAILED,
++                   _("Cannot find drive %s"), cdda_backend->device_path);
++      g_vfs_job_failed_from_error (G_VFS_JOB (job), error);
++      g_error_free (error);
++      release_device (cdda_backend);
++      release_metadata (cdda_backend);
++      return;
++    }
++ 
++  fetch_metadata (cdda_backend);
++
++
++#endif
++
+   /* Translator: %s is the device the disc is inserted into */
+   fuse_name = g_strdup_printf (_("cdda mount on %s"), host);
+   display_name = g_strdup_printf (_("Audio Disc"));
+@@ -535,7 +633,9 @@
+ }
+ 
+ typedef struct {
++#ifdef HAVE_CDIO
+   cdrom_paranoia_t *paranoia;
++#endif
+ 
+   long size;           /* size of file being read */
+   long header_size;    /* size of the header */
+@@ -553,15 +653,19 @@
+    * is to avoid seeking back if fewer bytes than whole sector is requested.
+    */
+   long buf_at_sector_num;                     /* the sector that is cached */
++#ifdef HAVE_CDIO
+   char buf_at_sector[CDIO_CD_FRAMESIZE_RAW];  /* the data of the sector */
++#endif
+ 
+ } ReadHandle;
+ 
+ static void
+ free_read_handle (ReadHandle *read_handle)
+ {
++#ifdef HAVE_CDIO
+   if (read_handle->paranoia != NULL)
+     cdio_paranoia_free (read_handle->paranoia);
++#endif
+   g_free (read_handle->header);
+   g_free (read_handle);
+ }
+@@ -595,7 +699,11 @@
+   /* TODO: fill in from metadata */
+   artist = NULL;
+   title = NULL;
++#ifdef HAVE_CDIO
+   software = "gvfs-cdda using libcdio " CDIO_VERSION;
++#else
++  software = "gvfs-cdda not using libcdio ";
++#endif
+ 
+   artist_len = 0;
+   title_len = 0;
+@@ -698,20 +806,25 @@
+       return;
+     }
+ 
+-
++#ifdef HAVE_CDIO
+   read_handle->first_sector = cdio_cddap_track_firstsector (cdda_backend->drive, track_num);
+   read_handle->last_sector = cdio_cddap_track_lastsector (cdda_backend->drive, track_num);
++#endif
+   read_handle->sector_cursor = -1;
+ 
+   read_handle->cursor = 0;
+   read_handle->buf_at_sector_num = -1;
++#ifdef HAVE_CDIO
+   read_handle->content_size  = ((read_handle->last_sector - read_handle->first_sector) + 1) * CDIO_CD_FRAMESIZE_RAW;
++#endif
+ 
+   read_handle->header = create_header (cdda_backend, &(read_handle->header_size), read_handle->content_size);
+   read_handle->size = read_handle->header_size + read_handle->content_size;
+ 
++#ifdef HAVE_CDIO
+   read_handle->paranoia = cdio_paranoia_init (cdda_backend->drive);
+   cdio_paranoia_modeset (read_handle->paranoia, PARANOIA_MODE_DISABLE);
++#endif
+ 
+   cdda_backend->num_open_files++;
+ 
+@@ -721,10 +834,12 @@
+ }
+ 
+ /* We have to pass in a callback to paranoia_read, even though we don't use it */
++#ifdef HAVE_CDIO
+ static void 
+ paranoia_callback (long int inpos, paranoia_cb_mode_t function)
+ {
+ }
++#endif
+ 
+ 
+ static void
+@@ -765,16 +880,20 @@
+ 
+   cursor_in_stream = read_handle->cursor - read_handle->header_size;
+ 
++#ifdef HAVE_CDIO
+   desired_sector = cursor_in_stream / CDIO_CD_FRAMESIZE_RAW + read_handle->first_sector;
++#endif
+ 
+   if (desired_sector == read_handle->buf_at_sector_num)
+     {
+       /* got it cached */
+ 
+       /* skip some bytes */
++#ifdef HAVE_CDIO
+       skip_bytes = cursor_in_stream - (desired_sector - read_handle->first_sector) * CDIO_CD_FRAMESIZE_RAW;
+       readbuf = read_handle->buf_at_sector + skip_bytes;
+       bytes_read = CDIO_CD_FRAMESIZE_RAW - skip_bytes;
++#endif
+ 
+       //g_warning ("read from cache for cursor @ %ld", read_handle->buf_at_sector_num);
+     }
+@@ -783,16 +902,20 @@
+       /* first check that we're at the right sector */
+       if (desired_sector != read_handle->sector_cursor)
+         {
++#ifdef HAVE_CDIO
+           cdio_paranoia_seek (read_handle->paranoia, desired_sector, SEEK_SET);
++#endif
+           read_handle->sector_cursor = desired_sector;
+           //g_warning ("seeking cursor to %ld", read_handle->sector_cursor);
+         }
+       
+       /* skip some bytes */
++#ifdef HAVE_CDIO
+       skip_bytes = cursor_in_stream - (read_handle->sector_cursor - read_handle->first_sector) * CDIO_CD_FRAMESIZE_RAW;
+       //g_warning ("advanced cursor to %ld", read_handle->sector_cursor);
+       
+       readbuf = (char *) cdio_paranoia_read (read_handle->paranoia, paranoia_callback);
++#endif
+ 
+       if (readbuf == NULL)
+         {
+@@ -806,12 +929,14 @@
+         }
+ 
+       read_handle->buf_at_sector_num = read_handle->sector_cursor;
++#ifdef HAVE_CDIO
+       memcpy (read_handle->buf_at_sector, readbuf, CDIO_CD_FRAMESIZE_RAW);
+ 
+       read_handle->sector_cursor++;
+ 
+       readbuf += skip_bytes;
+       bytes_read = CDIO_CD_FRAMESIZE_RAW - skip_bytes;
++#endif
+ 
+ 
+     }
+@@ -904,9 +1029,11 @@
+   GIcon *icon;
+   GVfsBackendCddaTrack *track;
+ 
++#ifdef HAVE_CDIO
+   first = cdio_cddap_track_firstsector (cdda_backend->drive, track_num);
+   last = cdio_cddap_track_lastsector (cdda_backend->drive, track_num);
+   content_size = (last - first + 1) * CDIO_CD_FRAMESIZE_RAW;
++#endif
+ 
+   header = create_header (cdda_backend, &header_size, content_size);
+   g_free (header);
+@@ -954,6 +1081,7 @@
+ 
+   //g_warning ("get_file_info (%s)", filename);
+ 
++
+   if (strcmp (filename, "/") == 0)
+     {
+       GIcon *icon;
+@@ -981,19 +1109,23 @@
+           return;
+         }
+ 
++#ifdef HAVE_CDIO
+       if (track_num > cdda_backend->drive->tracks)
+         {
+           error = g_error_new (G_IO_ERROR, G_IO_ERROR_NOT_FOUND, _("File doesn't exist"));
+           g_vfs_job_failed_from_error (G_VFS_JOB (job), error);
+           return;
+         }
++#endif
+ 
++#ifdef HAVE_CDIO
+       if (! cdio_cddap_track_audiop (cdda_backend->drive, track_num))
+         {
+           error = g_error_new (G_IO_ERROR, G_IO_ERROR_NOT_FOUND, _("The file does not exist or isn't an audio track"));
+           g_vfs_job_failed_from_error (G_VFS_JOB (job), error);
+           return;
+         }
++#endif
+ 
+       set_info_for_track (cdda_backend, info, track_num);
+     }
+@@ -1017,6 +1149,7 @@
+   //g_warning ("enumerate (%s)", filename);
+ 
+   l = NULL;
++#ifdef HAVE_CDIO
+   for (n = 1; n <= cdda_backend->drive->tracks; n++)
+     {
+       char *name;
+@@ -1036,6 +1169,20 @@
+       
+       l = g_list_append (l, info);
+     }
++#else
++    for (n = 1; n <= cdda_backend->track_num; n++)
++    {
++      char *name;
++
++      info = g_file_info_new ();
++      name = g_strdup_printf ("Track %d.wav", n);
++      g_file_info_set_name (info, name);
++      g_file_info_set_display_name (info, name);
++      g_free (name);
++      set_info_for_track (cdda_backend, info, n);
++      l = g_list_append (l, info);
++    }
++#endif
+ 
+   g_vfs_job_succeeded (G_VFS_JOB (job));
+ 
