@@ -1,0 +1,25 @@
+--- gnome-vfs-2.6.0/libgnomevfs/gnome-vfs-volume.c	2004-10-19 14:42:43.072945304 +0530
++++ gnome-vfs-2.6.0-new/libgnomevfs/gnome-vfs-volume.c	2004-10-19 14:42:25.243655768 +0530
+@@ -251,7 +251,21 @@ gnome_vfs_volume_handles_trash (GnomeVFS
+ 		return FALSE;
+ 	}
+ 	if (volume->priv->filesystem_type != NULL) {
+-		return _gnome_vfs_filesystem_use_trash (volume->priv->filesystem_type);
++		GnomeVFSVolume *home_volume = NULL;
++
++		/* $HOME only will contain Trash folder. Get the volume 
++		 * corresponding to user's home directory 
++		 */
++		home_volume = gnome_vfs_volume_monitor_get_volume_for_path (gnome_vfs_get_volume_monitor (), g_get_home_dir ());
++
++		g_return_val_if_fail (home_volume != NULL, FALSE);
++
++		/* Does this volume contain  the ~/.Trash folder? */
++		if (gnome_vfs_volume_compare (home_volume, volume) == 0) {
++			return _gnome_vfs_filesystem_use_trash (volume->priv->filesystem_type);
++		} else {
++			return FALSE;
++		}
+ 	}
+ 	return FALSE;
+ }

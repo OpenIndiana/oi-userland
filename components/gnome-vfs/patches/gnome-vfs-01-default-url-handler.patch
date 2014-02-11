@@ -1,0 +1,89 @@
+diff -urN gnome-vfs-2.16.2/schemas/desktop_gnome_url_handlers.schemas.in gnome-vfs-2.16.2-hacked/schemas/desktop_gnome_url_handlers.schemas.in
+--- gnome-vfs-2.16.2/schemas/desktop_gnome_url_handlers.schemas.in	2004-08-15 02:08:28.000000000 +1200
++++ gnome-vfs-2.16.2-hacked/schemas/desktop_gnome_url_handlers.schemas.in	2006-11-23 13:11:29.159592000 +1300
+@@ -153,7 +153,7 @@
+       <applyto>/desktop/gnome/url-handlers/http/command</applyto>
+       <owner>gnome</owner>
+       <type>string</type>
+-      <default>epiphany %s</default>
++      <default>/usr/lib/firefox/firefox %s</default>
+       <locale name="C">
+         <short>The handler for "http" URLs</short>
+         <long>The command used to handle "http" URLs, if enabled.</long>
+@@ -187,7 +187,7 @@
+       <applyto>/desktop/gnome/url-handlers/https/command</applyto>
+       <owner>gnome</owner>
+       <type>string</type>
+-      <default>epiphany %s</default>
++      <default>/usr/lib/firefox/firefox %s</default>
+       <locale name="C">
+         <short>The handler for "https" URLs</short>
+         <long>The command used to handle "https" URLs, if enabled.</long>
+@@ -221,7 +221,7 @@
+       <applyto>/desktop/gnome/url-handlers/mailto/command</applyto>
+       <owner>gnome</owner>
+       <type>string</type>
+-      <default>evolution %s</default>
++      <default>thunderbird %s</default>
+       <locale name="C">
+         <short>The handler for "mailto" URLs</short>
+         <long>The command used to handle "mailto" URLs, if enabled.</long>
+@@ -289,7 +289,7 @@
+       <applyto>/desktop/gnome/url-handlers/callto/command</applyto>
+       <owner>gnome</owner>
+       <type>string</type>
+-      <default>gnomemeeting -c %s</default>
++      <default>ekiga -c %s</default>
+       <locale name="C">
+         <short>The handler for "callto" URLs</short>
+         <long>The command used to handle "callto" URLs, if enabled.</long>
+@@ -308,6 +308,40 @@
+     </schema>
+ 
+     <schema>
++      <key>/schemas/desktop/gnome/url-handlers/sip/enabled</key>
++      <applyto>/desktop/gnome/url-handlers/callto/enabled</applyto>
++      <owner>gnome</owner>
++      <type>bool</type>
++      <default>true</default>
++      <locale name="C">
++        <short>Whether the specified command should handle "sip" URLs</short>
++        <long>True if the command specified in the "command" key should handle "sip" URLs.</long>
++      </locale>
++    </schema>
++    <schema>
++      <key>/schemas/desktop/gnome/url-handlers/sip/command</key>
++      <applyto>/desktop/gnome/url-handlers/sip/command</applyto>
++      <owner>gnome</owner>
++      <type>string</type>
++      <default>ekiga -c %s</default>
++      <locale name="C">
++        <short>The handler for "sip" URLs</short>
++        <long>The command used to handle "sip" URLs, if enabled.</long>
++      </locale>
++    </schema>
++    <schema>
++      <key>/schemas/desktop/gnome/url-handlers/sip/needs_terminal</key>
++      <applyto>/desktop/gnome/url-handlers/sip/needs_terminal</applyto>
++      <owner>gnome</owner>
++      <type>bool</type>
++      <default>false</default>
++      <locale name="C">
++        <short>Run the command in a terminal</short>
++        <long>True if the command used to handle this type of URL should be run in a terminal.</long>
++      </locale>
++    </schema>
++
++    <schema>
+       <key>/schemas/desktop/gnome/url-handlers/h323/enabled</key>
+       <applyto>/desktop/gnome/url-handlers/h323/enabled</applyto>
+       <owner>gnome</owner>
+@@ -323,7 +357,7 @@
+       <applyto>/desktop/gnome/url-handlers/h323/command</applyto>
+       <owner>gnome</owner>
+       <type>string</type>
+-      <default>gnomemeeting -c %s</default>
++      <default>ekiga -c %s</default>
+       <locale name="C">
+         <short>The handler for "h323" URLs</short>
+         <long>The command used to handle "h323" URLs, if enabled.</long>

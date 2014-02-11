@@ -1,0 +1,13 @@
+--- gnome-vfs-2.6.0/libgnomevfs/gnome-vfs-volume-monitor.c	2003-12-05 01:46:55.000000000 +0530
++++ gnome-vfs-2.6.0-new/libgnomevfs/gnome-vfs-volume-monitor.c	2004-11-10 20:48:37.559906000 +0530
+@@ -659,7 +659,9 @@ gnome_vfs_volume_monitor_get_volume_for_
+ 	g_mutex_lock (volume_monitor->priv->mutex);
+ 	for (l = volume_monitor->priv->mtab_volumes; l != NULL; l = l->next) {
+ 		volume = l->data;
+-		if (volume->priv->unix_device == device) {
++		if (volume->priv->unix_device == device &&
++		    volume->priv->filesystem_type  &&
++		    strcmp (volume->priv->filesystem_type, "lofs")) {
+ 			res = gnome_vfs_volume_ref (volume);
+ 			break;
+ 		}
