@@ -26,11 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.6.15
+COMPONENT_VERSION=	3.6.22
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:42b9acb13f8760a1767829ebaa4c371e462aad5287caf92887e64930cf27da60
+COMPONENT_ARCHIVE_HASH=	sha256:30bdf20e7788785573196a33905e7e27083a32d749285c22958edce0721cdeea
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -45,7 +45,7 @@ COMPONENT_ARCHIVE_URL_1=	http://sourceforge.net/projects/docbook/files/$(COMPONE
 COMPONENT_ARCHIVE_2=		libsam-LGPL.tar
 COMPONENT_ARCHIVE_HASH_2=	\
     sha256:4324f2c4a9ba94f1165c5922f166636621681b09d635257d921f6df654e7191e
-COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/files/libsam%2DLGPL.tar
+COMPONENT_ARCHIVE_URL_2=	http://dlc.openindiana.org/oi-build/source-archives/libsam-LGPL.tar
 
 # Samba does not work properly on i86 when built by studio.
 # Samba on SPARC has serious performance drop when built by gcc.
@@ -113,7 +113,7 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
 		$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
 	$(MKDIR) $(PROTO_DIR)/opt/SUNWsamfs/lib
-	$(CC.studio.32) -G $(studio_PIC) -hlibsam.so Solaris/libsam.c \
+	$(CC) -shared -fPIC -DPIC -Wl,-hlibsam.so Solaris/libsam.c \
 		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
 	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
 

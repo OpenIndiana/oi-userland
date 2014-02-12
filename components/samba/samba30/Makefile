@@ -93,8 +93,8 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 CPPFLAGS +=	-I$(PROTOINCDIR)/samba/ldap6
 LDFLAGS +=	-L $(PROTOUSRLIBDIR)
 LIBS +=		-lrt -lsocket -lnsl
-CFLAGS +=	$(studio_C99_ENABLE)
-CFLAGS +=	$(CFLAGS.studio)
+CFLAGS +=	$(gcc_C99_ENABLE)
+#CFLAGS +=	$(CFLAGS.studio)
 
 CONFIGURE_PREFIX = /usr/sfw
 CONFIGURE_OPTIONS +=	--with-configdir=/etc/sfw
