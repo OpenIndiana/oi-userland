@@ -23,17 +23,17 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.6-ESV-R9-P1
+COMPONENT_VERSION=	9.6-ESV-R10-P2
 # The BIND version number for IPS_COMPONENT_VERSION was accidentaly incremented
 # from 9.6.3 to 9.6.4 in OI 151.1.5.
-IPS_COMPONENT_VERSION=	9.6.4.9.1
+IPS_COMPONENT_VERSION=	9.6.4.10.2
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-    sha256:f7957ada381d09ec8f38155f8d630935072746a75fc51008a175443c13825f78
+    sha256:1b131ef3a3b27a7916815ec5f4a87f0d9f5ac0669df21c7ec75ba18a13238eda
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
