@@ -38,6 +38,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk
 
+# override LIBS so that the Tk.so RunPATH doesn't get set.
+CONFIGURE_OPTIONS += LIBS="-lXft -lX11 -lfontconfig -lm -lc"
+
 # Disbale ASLR for this module.
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
