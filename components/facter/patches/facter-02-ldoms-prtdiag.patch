@@ -1,0 +1,59 @@
+Add LDOMS facter for SPARC and fix prtdiag output so that it doesn't report
+--- facter-1.6.18/lib/facter/virtual.rb.orig	2014-02-04 14:06:17.961499519 -0800
++++ facter-1.6.18/lib/facter/virtual.rb	2014-02-04 14:15:22.888059597 -0800
+@@ -119,9 +119,9 @@
+             result = "hyperv" if pd =~ /Product Name: Virtual Machine/
+           end
+         elsif Facter.value(:kernel) == 'SunOS'
+-          res = Facter::Util::Resolution.new('prtdiag')
++          res = Facter::Util::Resolution.new('/usr/sbin/prtdiag 2>/dev/null')
+           res.timeout = 6
+-          res.setcode('prtdiag')
++          res.setcode('/usr/sbin/prtdiag 2>/dev/null')
+           output = res.value
+           if not output.nil?
+             output.each_line do |pd|
+@@ -210,3 +210,43 @@
+     end
+   end
+ end
++
++
++##
++# Fact: logical_domain
++#
++# Purpose: A facter fact to report logical_domain(ldom) status on a system.
++#      This facter is only available on SPARC
++#
++# Resolution: Provides the following logical_domain information.
++# current: The current environment is ldogical domain.
++# supported: The current environment is control domain which can have logical 
++#      domain
++# unsupported: Logical domain is not supported on the environment
++#
++
++Facter.add("logical_domain") do
++  confine :operatingsystem => :Solaris, :hardwareisa => :sparc
++  setcode do
++    virtinfo = %x{/sbin/virtinfo list -H -o class logical-domain 2>/dev/null}
++    virtinfo = virtinfo.split("\n")
++    virtinfo = virtinfo[0] # Doesn't need to check each logical-domain class
++    
++    case virtinfo
++    when "supported"
++      virtinfo
++    when "current"
++      # Even control domain can have "logical_domain => current"
++      # To verify, control-role property should be examined.
++      ctrl_role = %x{virtinfo -c current get -Ho value control-role logical-domain 2> /dev/null} 
++      case ctrl_role.chomp!
++      when "true"
++        "supported"
++      when "false"
++        virtinfo
++      end
++    else
++      "unsupported"
++    end
++  end
++end
