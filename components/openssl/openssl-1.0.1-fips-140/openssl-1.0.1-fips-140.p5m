@@ -49,11 +49,9 @@ link path=lib/openssl/fips-140/64 target=$(MACH64)
 
 # Commands.
 file $(MACH64)/apps/openssl path=lib/openssl/fips-140/openssl owner=root \
-    group=bin mode=0555 \
-    pkg.depend.runpath=$PKGDEPEND_RUNPATH:lib/openssl/fips-140/$(MACH64)
+    group=bin mode=0555
 file $(MACH32)/apps/openssl path=lib/openssl/fips-140/$(MACH32)/openssl \
-    owner=root group=bin mode=0555 \
-    pkg.depend.runpath=$PKGDEPEND_RUNPATH:lib/openssl/fips-140
+    owner=root group=bin mode=0555
 
 # Mediator links for the commands
 link path=usr/bin/openssl target=../../lib/openssl/fips-140/openssl \
@@ -78,19 +76,18 @@ link path=lib/openssl/fips-140/libssl.so target=libssl.so.1.0.0
 
 # Mediator links for 32-bit libraries
 link path=lib/libcrypto.so.1.0.0 \
-    target=../../lib/openssl/fips-140/libcrypto.so.1.0.0 mediator=openssl \
+    target=openssl/fips-140/libcrypto.so.1.0.0 mediator=openssl \
     mediator-implementation=fips-140
 link path=lib/libssl.so.1.0.0 \
-    target=../../lib/openssl/fips-140/libssl.so.1.0.0 mediator=openssl \
+    target=openssl/fips-140/libssl.so.1.0.0 mediator=openssl \
     mediator-implementation=fips-140
-link path=lib/llib-lcrypto target=../../lib/openssl/fips-140/llib-lcrypto \
+link path=lib/llib-lcrypto target=openssl/fips-140/llib-lcrypto \
     mediator=openssl mediator-implementation=fips-140
-link path=lib/llib-lcrypto.ln \
-    target=../../lib/openssl/fips-140/llib-lcrypto.ln mediator=openssl \
-    mediator-implementation=fips-140
-link path=lib/llib-lssl target=../../lib/openssl/fips-140/llib-lssl \
+link path=lib/llib-lcrypto.ln target=openssl/fips-140/llib-lcrypto.ln \
     mediator=openssl mediator-implementation=fips-140
-link path=lib/llib-lssl.ln target=../../lib/openssl/fips-140/llib-lssl.ln \
+link path=lib/llib-lssl target=openssl/fips-140/llib-lssl \
+    mediator=openssl mediator-implementation=fips-140
+link path=lib/llib-lssl.ln target=openssl/fips-140/llib-lssl.ln \
     mediator=openssl mediator-implementation=fips-140
 link path=lib/openssl/engines/libpk11.so.1 \
     target=../fips-140/engines/libpk11.so.1 mediator=openssl \
