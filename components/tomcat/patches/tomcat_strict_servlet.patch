@@ -1,14 +1,14 @@
---- apache-tomcat-6.0.20-src/bin/catalina.sh.orig	2009-03-30 14:34:02.000000000 -0700
-+++ apache-tomcat-6.0.20-src/bin/catalina.sh	2009-03-30 14:40:38.000000000 -0700
-@@ -233,6 +233,7 @@
+--- apache-tomcat-6.0.37-src/bin/catalina.sh	Wed Jun 12 02:20:24 2013
++++ apache-tomcat-6.0.37-src/bin/catalina.sh	Wed Jun 12 02:20:24 2013
+@@ -287,6 +287,7 @@
          -Dcatalina.base="$CATALINA_BASE" \
          -Dcatalina.home="$CATALINA_HOME" \
          -Djava.io.tmpdir="$CATALINA_TMPDIR" \
 +        -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
          org.apache.catalina.startup.Bootstrap "$@" start
      else
-       exec "$_RUNJDB" $JAVA_OPTS "$LOGGING_CONFIG" $CATALINA_OPTS \
-@@ -241,6 +242,7 @@
+       exec "$_RUNJDB" "$LOGGING_CONFIG" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+@@ -295,6 +296,7 @@
          -Dcatalina.base="$CATALINA_BASE" \
          -Dcatalina.home="$CATALINA_HOME" \
          -Djava.io.tmpdir="$CATALINA_TMPDIR" \
@@ -16,15 +16,15 @@
          org.apache.catalina.startup.Bootstrap "$@" start
      fi
    fi
-@@ -258,6 +260,7 @@
+@@ -314,6 +316,7 @@
        -Dcatalina.base="$CATALINA_BASE" \
        -Dcatalina.home="$CATALINA_HOME" \
        -Djava.io.tmpdir="$CATALINA_TMPDIR" \
 +      -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
        org.apache.catalina.startup.Bootstrap "$@" start
    else
-     exec "$_RUNJAVA" $JAVA_OPTS "$LOGGING_CONFIG" $CATALINA_OPTS \
-@@ -265,6 +268,7 @@
+     exec "$_RUNJAVA" "$LOGGING_CONFIG" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+@@ -321,6 +324,7 @@
        -Dcatalina.base="$CATALINA_BASE" \
        -Dcatalina.home="$CATALINA_HOME" \
        -Djava.io.tmpdir="$CATALINA_TMPDIR" \
@@ -32,27 +32,27 @@
        org.apache.catalina.startup.Bootstrap "$@" start
    fi
  
-@@ -282,6 +286,7 @@
+@@ -378,6 +382,7 @@
        -Dcatalina.base="$CATALINA_BASE" \
        -Dcatalina.home="$CATALINA_HOME" \
        -Djava.io.tmpdir="$CATALINA_TMPDIR" \
 +      -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
        org.apache.catalina.startup.Bootstrap "$@" start \
-       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+       >> "$CATALINA_OUT" 2>&1 &
  
-@@ -294,6 +299,7 @@
+@@ -387,6 +392,7 @@
        -Dcatalina.base="$CATALINA_BASE" \
        -Dcatalina.home="$CATALINA_HOME" \
        -Djava.io.tmpdir="$CATALINA_TMPDIR" \
 +      -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
        org.apache.catalina.startup.Bootstrap "$@" start \
-       >> "$CATALINA_BASE"/logs/catalina.out 2>&1 &
+       >> "$CATALINA_OUT" 2>&1 &
  
-@@ -316,6 +322,7 @@
+@@ -437,6 +443,7 @@
      -Dcatalina.base="$CATALINA_BASE" \
      -Dcatalina.home="$CATALINA_HOME" \
      -Djava.io.tmpdir="$CATALINA_TMPDIR" \
 +    -Dorg.apache.catalina.STRICT_SERVLET_COMPLIANCE=true \
      org.apache.catalina.startup.Bootstrap "$@" stop
  
-   if [ $FORCE -eq 1 ]; then
+   if [ ! -z "$CATALINA_PID" ]; then

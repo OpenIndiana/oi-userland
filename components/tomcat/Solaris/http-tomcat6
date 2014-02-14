@@ -27,9 +27,11 @@
 . /lib/svc/share/smf_include.sh
 
 CATALINA_HOME=/usr/tomcat6
-CATALINA_BASE=/var/tomcat6
+# We allow CATALINA_BASE setting from environment so that we can support
+# multiple Tomcat instances.
+CATALINA_BASE=${CATALINA_BASE:-/var/tomcat6}
 CATALINA_PID=$CATALINA_BASE/logs/pid
-JAVA_HOME=/usr/jdk/instances/jdk1.7.0
+JAVA_HOME=/usr/jdk/instances/openjdk1.7.0
 export CATALINA_HOME CATALINA_BASE CATALINA_PID JAVA_HOME
 
 case "$1" in
