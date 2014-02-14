@@ -37,6 +37,8 @@ COMPONENT_PROJECT_URL = http://www.broadcom.com/support/ethernet_nic/netxtremeii
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+CLEAN_PATHS += $(BUILD_DIR)
+
 $(BUILD_32):	$(SOURCE_DIR)/.prep
 	$(MKDIR) $(@D)
 	$(TOUCH) $@
