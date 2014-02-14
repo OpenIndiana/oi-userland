@@ -1,0 +1,19 @@
+Fixes a warning of:
+
+ /usr/bin/xmlto: line 325: local: can only be used in a function
+
+found by Alan Coopersmith during testing of xmlto with the X.org distribution.
+
+The change will be sent upstream.
+
+--- xmlto-0.0.25/xmlto.in.orig	2014-02-13 13:58:02.220260650 -0800
++++ xmlto-0.0.25/xmlto.in	2014-02-13 14:03:39.275042953 -0800
+@@ -322,7 +322,7 @@
+ 	shift
+ 	;;
+   --searchpath)
+-	local oldIFS="${IFS}"
++	oldIFS="${IFS}"
+ 	IFS=":"
+ 	for asearchpath in "$2"; do
+ 	  # wrangle relative paths into absolute ones so that the user
