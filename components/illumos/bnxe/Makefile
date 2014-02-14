@@ -15,24 +15,24 @@
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME= bnx
+COMPONENT_NAME= bnxe
 
-COMPONENT_VERSION= 7.8.2
+COMPONENT_VERSION= 7.8.11
 IPS_COMPONENT_VERSION= 0.5.11
 HUMAN_VERSION=$(COMPONENT_VERSION)
-COMPONENT_SUMMARY= Broadcom NetXtreme II Gigabit Ethernet Adapter Driver
-COMPONENT_SRC= BRCMbnx
+COMPONENT_SUMMARY= Broadcom NetXtreme II 10GbE NIC Driver
+COMPONENT_SRC= BRCMbnxe
 COMPONENT_ARCHIVE= $(COMPONENT_SRC)-S11-i386-$(COMPONENT_VERSION).tar.Z
 COMPONENT_ARCHIVE_HASH= \
-  sha256:0ef103dd18c96668f968b55f63c6b6c38d1711fd921dffc0d23047a39d708d40
+  sha256:41a710217fa06b7009d6fc4698e367e1b69ee7f22287cb5ac319250f5cdddc66
 # Note, we are not sure if we can distribute this source file, so it is available
 # only from our build servers
 # However, you can manually download Solaris GLDv3 driver from 
-# http://www.broadcom.com/support/ethernet_nic/netxtremeii.php ,
-# extract BRCMbnx-S11-i386-7.8.2.tar.Z and put it in component dir.
+# http://www.broadcom.com/support/ethernet_nic/netxtremeii10.php
+# extract BRCMbnxe-S11-i386-7.8.11.tar.Z and put it in component dir.
 COMPONENT_ARCHIVE_URL= \
-  http://dlc-int.openindiana.org/hipster/broadcom/BRCMbnx-S11-i386-7.8.2.tar.Z
-COMPONENT_PROJECT_URL = http://www.broadcom.com/support/ethernet_nic/netxtremeii.php
+  http://dlc-int.openindiana.org/hipster/broadcom/$(COMPONENT_ARCHIVE)
+COMPONENT_PROJECT_URL = http://www.broadcom.com/support/ethernet_nic/netxtremeii10.php
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
