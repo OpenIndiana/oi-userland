@@ -127,3 +127,5 @@ $(BUILD_DIR)/%/.installed: $(BUILD_DIR)/%/.built cacerts.out
 build: $(BUILD_32_and_64) cacerts.out
 
 install: $(INSTALL_32_and_64)
+
+.NOTPARALLEL:
