@@ -1,0 +1,39 @@
+--- opal-3.6.8/configure.ac.~1~	2014-02-18 11:02:25.949308528 +0400
++++ opal-3.6.8/configure.ac	2014-02-18 11:07:29.025522547 +0400
+@@ -193,10 +193,15 @@
+ case "$target_os" in
+ 	solaris*)
+           SHAREDLIBEXT=so
+-          SHARED_CFLAGS="-KPIC -D__inline=inline"
++          if  test "$GXX"="yes"; then
++		SHARED_CFLAGS="-fPIC";
++		LDSOOPTS="-shared -Wl,-soname,\$(LIB_FILENAME_SHARED_PAT)"
++          else
++	        SHARED_CFLAGS="-KPIC -D__inline=inline"
++                LDSOOPTS="-Bdynamic -G -h \$(LIB_FILENAME_SHARED_PAT)"
++          fi
+           OPAL_DETERMINE_LIBNAMES(DEBUG)
+           OPAL_DETERMINE_LIBNAMES(RELEASE)
+-          LDSOOPTS="-Bdynamic -G -h \$(LIB_FILENAME_SHARED_PAT)"
+ 
+           DEBUG_CFLAGS="-D_DEBUG"
+           HAVE_RANLIB=no
+--- opal-3.6.8/plugins/configure.ac.~1~	2014-02-18 11:41:59.606251205 +0400
++++ opal-3.6.8/plugins/configure.ac	2014-02-18 11:44:56.264268120 +0400
+@@ -60,8 +60,14 @@
+ LDSO=
+ case "$target_os" in
+ 	solaris*)
+-          STDCCFLAGS="$STDCCFLAGS -KPIC"
+-	  LDSO="-Bdynamic -G -h"
++          if  test "$GXX"="yes"; then
++               STDCCFLAGS="$STDCCFLAGS -fPIC"
++               LDSO='-shared -h'
++          else
++               STDCCFLAGS="$STDCCFLAGS -KPIC"
++               LDSO="-Bdynamic -G -h"
++          fi
++
+           PLUGINEXT=so
+           AC_CHECK_HEADERS([sys/time.h sys/file.h netinet/in.h])
+           AC_FUNC_FORK()
