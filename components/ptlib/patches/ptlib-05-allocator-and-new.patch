@@ -1,0 +1,38 @@
+--- ptlib-2.6.7/src/ptlib/common/contain.cxx.old	2010-05-31 14:40:58.715962590 +0800
++++ ptlib-2.6.7/src/ptlib/common/contain.cxx	2010-05-31 14:42:39.778212543 +0800
+@@ -122,7 +122,7 @@
+ 
+ PContainer::PContainer(PINDEX initialSize)
+ {
+-  reference = PContainerReference_new(initialSize);
++  reference = new PContainerReference(initialSize);
+   PAssert(reference != NULL, POutOfMemory);
+ }
+ 
+@@ -134,7 +134,7 @@
+   PAssert(cont != NULL, PInvalidParameter);
+   PAssert2(cont->reference != NULL, cont->GetClass(), "Clone of deleted container");
+ 
+-  reference = PContainerReference_new(*cont->reference);
++  reference = new PContainerReference(*cont->reference);
+   PAssert(reference != NULL, POutOfMemory);
+ }
+ 
+@@ -208,7 +208,7 @@
+     return PTrue;
+ 
+   PContainerReference * oldReference = reference;
+-  reference = PContainerReference_new(*reference);
++  reference = new PContainerReference(*reference);
+   --oldReference->count;
+ 
+   return PFalse;
+@@ -397,7 +397,7 @@
+     }
+ 
+     --reference->count;
+-    reference = PContainerReference_new(newSize);
++    reference = new PContainerReference(newSize);
+ 
+   } else {
+ 
