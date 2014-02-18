@@ -51,6 +51,7 @@ CONFIGURE_OPTIONS += --enable-httpforms
 CONFIGURE_OPTIONS += --enable-httpsvc
 CONFIGURE_OPTIONS += --enable-v4l2
 
+ENV += -i
 
 build: $(BUILD_32)
 
