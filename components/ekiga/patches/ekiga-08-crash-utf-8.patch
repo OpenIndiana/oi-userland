@@ -1,0 +1,35 @@
+--- ekiga-3.2.7/lib/engine/components/opal/opal-call.cpp.orig	2013-02-18 17:53:41.055616792 +0530
++++ ekiga-3.2.7/lib/engine/components/opal/opal-call.cpp	2013-02-18 17:56:55.902947620 +0530
+@@ -282,6 +282,19 @@ Opal::Call::is_outgoing () const
+   return outgoing; 
+ }
+ 
++// if the parameter is not valid utf8, remove from it all the chars
++// after the first invalid utf8 char, so that it becomes valid utf8
++static void
++make_valid_utf8 (string & str)
++{
++ const char *pos;
++ if (!g_utf8_validate (str.c_str(), -1, &pos)) {
++ PTRACE (4, "Ekiga\tTrimming invalid UTF-8 string: " << str.c_str());
++ str = str.substr (0, pos - str.c_str()).append ("...");
++ }
++}
++
++
+ 
+ void
+ Opal::Call::parse_info (OpalConnection & connection)
+@@ -316,6 +329,12 @@ Opal::Call::parse_info (OpalConnection &
+     if (!app.empty ())
+       remote_application = app;
+ 
++
++ make_valid_utf8 (remote_party_name);
++ make_valid_utf8 (remote_application);
++ make_valid_utf8 (remote_uri);
++
++
+     strip_special_chars (remote_party_name, end_special_chars, false);
+     strip_special_chars (remote_application, end_special_chars, false);
+     strip_special_chars (remote_uri, end_special_chars, false);
