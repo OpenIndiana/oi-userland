@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -39,13 +39,13 @@ include $(WS_TOP)/make-rules/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # Regenerate the message object (mo) files for the patched 
-# iso3166 (country) translations.
+# iso3166 (country) and iso3166-2 (country subdivisions) translations.
 COMPONENT_PRE_BUILD_ACTION = \
 	cd $(SOURCE_DIR)/src/$(COMPONENT_NAME)/locales; \
-	for pofile in */LC_MESSAGES/iso3166.po; \
+	for pofile in */LC_MESSAGES/iso3166.po \
+	              */LC_MESSAGES/iso3166_2.po ; \
 	do \
-		dir=`dirname $$pofile`; \
-		mofile=$$dir/iso3166.mo; \
+		mofile=`echo $$pofile | $(GSED) -e 's/\.po$$/\.mo/'` ; \
 		/bin/rm -f $$mofile; \
 		gmsgfmt $$pofile -o $$mofile; \
 	done
