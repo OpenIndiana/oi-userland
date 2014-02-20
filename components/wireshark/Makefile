@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.8.5
+COMPONENT_VERSION=	1.10.5
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d4e4798216974a3c45e74b03644ee33b64481d2fe5c788c002266e5f141ee372
+    sha256:a02190da9573dd381e7598277a31d0c63b05b2af9fe05ab6b7fc058bbea141f5
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
@@ -43,8 +43,9 @@ CONFIGURE_OPTIONS +=	--disable-usr-local
 CONFIGURE_OPTIONS +=	--disable-randpkt
 CONFIGURE_OPTIONS +=	--disable-dftest
 CONFIGURE_OPTIONS +=	--with-krb5
-CONFIGURE_OPTIONS +=	--with-lua=no
 CONFIGURE_OPTIONS +=	PATH="/usr/perl5/bin:/usr/gnu/bin:$(PATH)"
+
+LD_B_DIRECT=
 
 # We need to avoid RPATH=/usr/lib in Wireshark libraries so that we can
 # create successfully IPS package of different Wireshark branch than is
