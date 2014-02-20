@@ -1,0 +1,354 @@
+#
+# Patch out the use of Exception::Class and Try::Tiny since they aren't
+# currently available on Solaris.  Once we add them, this patch can be removed.
+#
+
+diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm
+--- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm.orig	Tue Apr 16 03:24:31 2013
++++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Base.pm	Fri Feb  7 14:19:11 2014
+@@ -5,15 +5,6 @@
+ use Carp;
+ use App::ClusterSSH::L10N;
+ 
+-use Exception::Class (
+-    'App::ClusterSSH::Exception',
+-    'App::ClusterSSH::Exception::Config' => {
+-        fields => 'unknown_config',
+-    },
+-    'App::ClusterSSH::Exception::Cluster',
+-    'App::ClusterSSH::Exception::LoadFile',
+-);
+-
+ # Dont use SVN revision as it can cause problems
+ use version;
+ our $VERSION = version->new('0.02');
+@@ -96,9 +87,7 @@
+     my ( $self, $level ) = @_;
+     if ( !defined $level ) {
+         croak(
+-            App::ClusterSSH::Exception->throw(
+-                error => _translate('Debug level not provided')
+-            )
++            _translate('Debug level not provided')
+         );
+     }
+     if ( $level > 9 ) {
+@@ -138,9 +127,7 @@
+ 
+     if ( !$app_configuration ) {
+         croak(
+-            App::ClusterSSH::Exception->throw(
+-                _translate('config has not yet been set')
+-            )
++            _translate('config has not yet been set')
+         );
+     }
+ 
+@@ -152,17 +139,13 @@
+ 
+     if ($app_configuration) {
+         croak(
+-            App::ClusterSSH::Exception->throw(
+                 _translate('config has already been set')
+-            )
+         );
+     }
+ 
+     if ( !$config ) {
+         croak(
+-            App::ClusterSSH::Exception->throw(
+                 _translate('passed config is empty')
+-            )
+         );
+     }
+ 
+@@ -178,17 +161,13 @@
+ 
+     if ( !$args{filename} ) {
+         croak(
+-            App::ClusterSSH::Exception->throw(
+-                error => '"filename" arg not passed'
+-            )
++                '"filename" arg not passed'
+         );
+     }
+ 
+     if ( !$args{type} || $args{type} !~ m/cluster|config/ ) {
+         croak(
+-            App::ClusterSSH::Exception->throw(
+-                error => '"type" arg invalid'
+-            )
++                '"type" arg invalid'
+         );
+     }
+ 
+@@ -196,12 +175,10 @@
+ 
+     if ( !-e $args{filename} ) {
+         croak(
+-            App::ClusterSSH::Exception::LoadFile->throw(
+-                error => $self->loc(
++                $self->loc(
+                     'Unable to read file [_1]: [_2]' . $/, $args{filename},
+                     $!
+                 ),
+-            ),
+         );
+     }
+ 
+@@ -209,20 +186,16 @@
+         = $args{type} eq 'config'  ? qr/\s*(\S+)\s*=\s*(.*)/
+         : $args{type} eq 'cluster' ? qr/\s*(\S+)\s+(.*)/
+         : croak(
+-        App::ClusterSSH::Exception::LoadFile->throw(
+-            error => 'Unknown arg type: ',
++            'Unknown arg type: ',
+             $args{type}
+-        )
+         );
+ 
+     open( my $fh, '<', $args{filename} )
+         or croak(
+-        App::ClusterSSH::Exception::LoadFile->throw(
+-            error => $self->loc(
++            $self->loc(
+                 "Unable to read file [_1]: [_2]",
+                 $args{filename}, $!
+             )
+-        ),
+         );
+ 
+     my %results;
+@@ -259,9 +232,7 @@
+ 
+     close($fh)
+         or croak(
+-        App::ClusterSSH::Exception::LoadFile->throw(
+-            error => "Could not close $args{filename} after reading: $!"
+-        ),
++            "Could not close $args{filename} after reading: $!"
+         );
+ 
+     return %results;
+diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm
+--- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm.orig	Tue Apr 16 03:24:31 2013
++++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Cluster.pm	Fri Feb  7 14:19:30 2014
+@@ -7,7 +7,6 @@
+ our $VERSION = version->new('0.01');
+ 
+ use Carp;
+-use Try::Tiny;
+ use English qw( -no_match_vars );
+ 
+ use base qw/ App::ClusterSSH::Base /;
+@@ -73,13 +72,11 @@
+ 
+     if ( $return_code != 0 ) {
+         croak(
+-            App::ClusterSSH::Exception::Cluster->throw(
+-                error => $self->loc(
++                $self->loc(
+                     "External command failure.\nCommand: [_1]\nReturn Code: [_2]",
+                     $command,
+                     $return_code,
+                 ),
+-            )
+         );
+     }
+ 
+diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm
+--- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm.orig	Tue Apr 16 03:24:31 2013
++++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Config.pm	Fri Feb  7 14:22:41 2014
+@@ -7,7 +7,6 @@
+ our $VERSION = version->new('0.02');
+ 
+ use Carp;
+-use Try::Tiny;
+ 
+ use FindBin qw($Script);
+ use File::Copy;
+@@ -140,32 +139,25 @@
+ 
+     if (@unknown_config) {
+         croak(
+-            App::ClusterSSH::Exception::Config->throw(
+-                unknown_config => \@unknown_config,
+-                error          => $self->loc(
++                $self->loc(
+                     'Unknown configuration parameters: [_1]' . $/,
+                     join( ',', @unknown_config )
+                 )
+-            )
+         );
+     }
+ 
+     if ( !$self->{comms} ) {
+         croak(
+-            App::ClusterSSH::Exception::Config->throw(
+-                error => $self->loc( 'Invalid variable: comms' . $/ ),
+-            ),
++                $self->loc( 'Invalid variable: comms' . $/ ),
+         );
+     }
+ 
+     if ( !$self->{ $self->{comms} } ) {
+         croak(
+-            App::ClusterSSH::Exception::Config->throw(
+-                error => $self->loc(
++                $self->loc(
+                     'Invalid variable: [_1]' . $/,
+                     $self->{comms}
+                 ),
+-            ),
+         );
+     }
+ 
+@@ -186,12 +178,10 @@
+ 
+     #    if ( !-e $config_file || !-r $config_file ) {
+     #        croak(
+-    #            App::ClusterSSH::Exception::Config->throw(
+-    #                error => $self->loc(
++    #                $self->loc(
+     #                    'File [_1] does not exist or cannot be read' . $/,
+     #                    $config_file
+     #                ),
+-    #            ),
+     #        );
+     #    }
+     #
+@@ -259,10 +249,9 @@
+     }
+ 
+     # write out default config file if necesasry
+-    try {
+-        $self->write_user_config_file();
+-    }
+-    catch {
++    if (
++        $self->write_user_config_file()
++    ) {
+         warn $_, $/;
+     };
+ 
+@@ -288,12 +277,10 @@
+ 
+         if ($@) {
+             croak(
+-                App::ClusterSSH::Exception::Config->throw(
+-                    error => $self->loc(
++                    $self->loc(
+                         'Unable to move [_1] to [_2]: [_3]' . $/,
+                         '$HOME/.csshrc', '$HOME/.csshrc.DISABLED', $@
+                     ),
+-                )
+             );
+         }
+         else {
+@@ -311,12 +298,10 @@
+     if ( !-d "$ENV{HOME}/.clusterssh" ) {
+         if ( !mkdir("$ENV{HOME}/.clusterssh") ) {
+             croak(
+-                App::ClusterSSH::Exception::Config->throw(
+-                    error => $self->loc(
++                    $self->loc(
+                         'Unable to create directory [_1]: [_2]' . $/,
+                         '$HOME/.clusterssh', $!
+                     ),
+-                ),
+             );
+ 
+         }
+@@ -336,13 +321,11 @@
+         }
+         else {
+             croak(
+-                App::ClusterSSH::Exception::Config->throw(
+-                    error => $self->loc(
++                    $self->loc(
+                         'Unable to write [_1]: [_2]' . $/,
+                         '$HOME/.clusterssh/clusters',
+                         $!
+                     ),
+-                ),
+             );
+         }
+     }
+@@ -365,12 +348,10 @@
+     }
+     else {
+         croak(
+-            App::ClusterSSH::Exception::Config->throw(
+-                error => $self->loc(
++                $self->loc(
+                     'Unable to write default [_1]: [_2]' . $/,
+                     '$HOME/.clusterssh/config', $!
+                 ),
+-            ),
+         );
+     }
+ 
+@@ -384,9 +365,7 @@
+ 
+     if ( !$binary ) {
+         croak(
+-            App::ClusterSSH::Exception::Config->throw(
+-                error => $self->loc('argument not provided') . $/,
+-            ),
++                $self->loc('argument not provided') . $/,
+         );
+     }
+ 
+@@ -435,13 +414,11 @@
+     }
+     if ( !$path || !-f $path || !-x $path ) {
+         croak(
+-            App::ClusterSSH::Exception::Config->throw(
+-                error => $self->loc(
++                $self->loc(
+                     '"[_1]" binary not found - please amend $PATH or the cssh config file'
+                         . $/,
+                     $binary
+                 ),
+-            ),
+         );
+     }
+ 
+diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm
+--- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm.orig	Tue Apr 16 03:24:31 2013
++++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Helper.pm	Fri Feb  7 14:13:54 2014
+@@ -7,7 +7,6 @@
+ our $VERSION = version->new('0.02');
+ 
+ use Carp;
+-use Try::Tiny;
+ 
+ use base qw/ App::ClusterSSH::Base /;
+ 
+diff -u -r App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm.orig App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm
+--- App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm.orig	Tue Apr 16 03:24:31 2013
++++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH/Host.pm	Fri Feb  7 14:19:57 2014
+@@ -18,9 +18,7 @@
+ 
+     if ( !$args{hostname} ) {
+         croak(
+-            App::ClusterSSH::Exception->throw(
+-                error => $class->loc('hostname is undefined')
+-            )
++                $class->loc('hostname is undefined')
+         );
+     }
+ 
+@@ -265,11 +263,9 @@
+ 
+     # if we got this far, we didnt parse the host_string properly
+     croak(
+-        App::ClusterSSH::Exception->throw(
+-            error => $self->loc(
++            $self->loc(
+                 'Unable to parse hostname from "[_1]"', $host_string
+             )
+-        )
+     );
+ }
+ 

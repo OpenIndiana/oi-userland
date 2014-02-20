@@ -1,0 +1,20 @@
+#
+# Change pod2text to refer to the full path so that the help window works.
+# Ideally, this would be in the default search path. There is a bug that is
+# tracking changes to promote more of the perl distribution commands into
+# the default search path.  Once it has integrated, this patch can be removed.
+# See
+#	15544867 SUNBT6810331 pod2man symlink need to be created in /usr/bin
+#
+
+--- App-ClusterSSH-4.02_01/lib/App/ClusterSSH.pm.orig	Mon Feb 10 08:48:59 2014
++++ App-ClusterSSH-4.02_01/lib/App/ClusterSSH.pm	Mon Feb 10 08:49:30 2014
+@@ -1428,7 +1428,7 @@
+         -class      => 'cssh',
+     );
+ 
+-    my $manpage = `pod2text -l -q=\"\" $0 2>/dev/null`;
++    my $manpage = `/usr/perl5/bin/pod2text -l -q=\"\" $0 2>/dev/null`;
+     if ( !$manpage ) {
+         $manpage
+             = "Help is missing.\nSee that command 'pod2text' is installed and in PATH.";
