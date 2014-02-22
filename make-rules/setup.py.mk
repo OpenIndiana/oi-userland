@@ -48,6 +48,9 @@ COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
+# Reset arguments specified as environmnent variables
+COMPONENT_BUILD_ARGS =
+
 # if we are building python 2.7 support, build it and install it first
 # so that python 2.6 is installed last and is the canonical version.
 # when we switch to 2.7 as the default, it should go last.
