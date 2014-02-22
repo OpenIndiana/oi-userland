@@ -31,6 +31,8 @@ include $(WS_TOP)/make-rules/ips.mk
 CURL=/usr/bin/curl
 GZIP=/usr/bin/gzip 
 
+download:
+
 prep:
 	$(MKDIR) $(SOURCE_DIR)
 	cd $(SOURCE_DIR); \
