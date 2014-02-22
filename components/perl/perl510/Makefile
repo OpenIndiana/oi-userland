@@ -22,7 +22,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=blah
 
 download::
-	$(IPS2TGZ) $(COMPONENT_SRC) http://pkg.openindiana.org/hipster \
+	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/hipster \
 	pkg://openindiana.org/runtime/perl-510@5.10.0,5.11-0.151.1.8:20130305T141236Z \
 	pkg://openindiana.org/runtime/perl-510/extra@5.10.0,5.11-0.151.1.8:20130305T141244Z
 

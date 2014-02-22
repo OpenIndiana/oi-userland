@@ -22,7 +22,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=blah
 
 download::
-	$(IPS2TGZ) $(COMPONENT_SRC) http://pkg.openindiana.org/legacy \
+	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
 	pkg://opensolaris.org/developer/sunstudio12u1@12.1.1,5.11-0.111:20100306T002245Z
 
 include ../../make-rules/prep.mk

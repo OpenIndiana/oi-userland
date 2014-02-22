@@ -20,10 +20,11 @@
 set -e
 
 PREFIX=$1; shift
+ARCHIVE=$1; shift
 SRCREPO=$1; shift
 PKGLIST="$@"
 
-[ -f $PREFIX.tar.gz ] && exit 0
+[ -f $ARCHIVE ] && exit 0
 
 if [ ! -d $PREFIX.pkgrecv ]; then
     mkdir $PREFIX.pkgrecv
@@ -214,6 +215,6 @@ for i in $PREFIX.pkgrecv/*/*/manifest.license; do
     [ -f $i ] && . $i
 done
 
-tar cf - $PREFIX | gzip -9 >$PREFIX.tar.gz
+tar cf - $PREFIX | gzip -9 >$ARCHIVE
 
 rm -rf $PREFIX.pkgrecv $PREFIX
