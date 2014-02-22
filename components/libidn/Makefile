@@ -85,9 +85,7 @@ DOCLIST = libidn-components.pdf libidn.pdf
 # to force re-generation of the TLD tables after augmenting them
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	( cd $(SOURCE_DIR) ; \
-	    $(CP) $(COMPONENT_DIR)/tld-0.7.tar.gz . ; \
-	    $(GUNZIP) tld-0.7.tar.gz ; \
-	    $(TAR) xvf tld-0.7.tar > /dev/null 2>&1 ; \
+	    $(TAR) zxf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
 	    $(RM) tld-0.7.tar ; \
 	    $(RM) java/libidn-1.19.jar ; \
 	    $(RM) tld/no.tld tld/fr.tld ; \

@@ -89,7 +89,7 @@ $(BUILD_DIR_64)/.installed:	$(BUILD_OLD_DIR_64)/.installed
 # we need to prep the old version too (this should be handled in prep.mk)
 $(SOURCE_DIR_1)/.unpacked:        download Makefile $(PATCHES)
 	$(RM) -r $(SOURCE_DIR_1)
-	$(UNPACK) $(UNPACK_ARGS) $(COMPONENT_ARCHIVE_1)
+	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
 	$(TOUCH) $@
 
 # prep the old version first

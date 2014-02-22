@@ -60,7 +60,9 @@ ASLR_MODE = $(ASLR_ENABLE)
 build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
-	cd $(PROTO_DIR) ; $(UNPACK) ../../../$(COMPONENT_ARCHIVE_1) 
+	$(UNPACK) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) 
+	[ -f $(PROTO_DIR)/doxygen_manual-$(IPS_COMPONENT_VERSION).pdf ] || \
+	  $(MV) doxygen_manual-$(IPS_COMPONENT_VERSION).pdf $(PROTO_DIR)
 
 test:	$(NO_TESTS)
 
