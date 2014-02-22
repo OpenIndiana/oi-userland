@@ -23,7 +23,7 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.mariadb.org/
 COMPONENT_ARCHIVE_HASH=	sha256:cc76d143c60d9f24b551adaf80f694ef9beb4a6a9032c115a06f7b5c5d0ee468
-COMPONENT_ARCHIVE_URL=	https://downloads.mariadb.org/f/$(COMPONENT_SRC)/kvm-tarbake-jaunty-x86/$(COMPONENT_ARCHIVE)/from/http:/mirror.timeweb.ru/mariadb
+COMPONENT_ARCHIVE_URL=	https://downloads.mariadb.org/f/$(COMPONENT_SRC)/kvm-tarbake-jaunty-x86/$(COMPONENT_ARCHIVE)/from/http:/archive.mariadb.org/
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

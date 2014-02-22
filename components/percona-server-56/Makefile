@@ -23,7 +23,7 @@ COMPONENT_SRC=		Percona-Server-5.6.14-rel62.0
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
 COMPONENT_ARCHIVE_HASH=	sha256:69edc04585e72ac94c32598221c0762704e75190c2abe4fa680ad42ce202e280
-COMPONENT_ARCHIVE_URL=	http://www.percona.com/redir/downloads/Percona-Server-5.6/$(COMPONENT_SRC)/release-$(COMPONENT_VERSION)/483/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://www.percona.com/redir/downloads/Percona-Server-5.6/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
