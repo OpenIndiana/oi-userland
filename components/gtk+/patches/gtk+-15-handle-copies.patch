@@ -1,0 +1,17 @@
+diff -urN gtk+-2.19.0/gtk/gtkprintoperation-unix.c ../../SUNWgtk2-2.19.0.hacked/i386/gtk+-2.19.0/gtk/gtkprintoperation-unix.c
+--- gtk+-2.19.0/gtk/gtkprintoperation-unix.c	2010-01-07 14:45:55.518849788 +0000
++++ ../../SUNWgtk2-2.19.0.hacked/i386/gtk+-2.19.0/gtk/gtkprintoperation-unix.c	2010-01-07 14:54:43.597755579 +0000
+@@ -578,7 +578,12 @@
+           priv->page_ranges = job->page_ranges;
+           priv->num_page_ranges = job->num_page_ranges;
+ 	  
+-          priv->manual_num_copies = job->num_copies;
++          if (gtk_printer_get_capabilities (gtk_print_job_get_printer (job)) & 
++                                            GTK_PRINT_CAPABILITY_COPIES)
++            priv->manual_num_copies = 1;
++          else
++            priv->manual_num_copies = job->num_copies;
++
+           priv->manual_collation = job->collate;
+           priv->manual_reverse = job->reverse;
+           priv->manual_page_set = job->page_set;
