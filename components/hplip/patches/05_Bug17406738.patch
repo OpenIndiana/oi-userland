@@ -1,0 +1,94 @@
+Description: fix for CVE-2013-0200 (insecure temporary files)
+Origin: vendor, http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=701185
+Original Bug: https://bugzilla.redhat.com/show_bug.cgi?id=902163
+
+-----------------------------------------------------------------------
+--- a/prnt/hpps/hppsfilter.c	Tue Apr 10 01:32:37 2012
++++ b/prnt/hpps/hppsfilter.c	Tue Jan 28 03:25:00 2014
+@@ -93,8 +93,11 @@
+     if (g_savepsfile & SAVE_PS_FILE)
+     {
+         char    sfile_name[FILE_NAME_SIZE] = {0};
+-        sprintf(sfile_name, DBG_PSFILE, szjob_id);
+-        g_fp_outdbgps= fopen(sfile_name, "w");
++        int fd;
++        sprintf(sfile_name, DBG_PSFILE ".XXXXXX", szjob_id);
++        fd = mkstemp (sfile_name);
++        if (fd != -1)
++            g_fp_outdbgps = fdopen(fd, "w");
+         chmod(sfile_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+     }
+ }
+--- a/prnt/hpcups/SystemServices.cpp	Tue Apr 10 01:32:37 2012
++++ b/prnt/hpcups/SystemServices.cpp	Tue Jan 28 03:22:40 2014
+@@ -36,9 +36,12 @@
+     m_fp = NULL;
+     if (iLogLevel & SAVE_PCL_FILE)
+     {
+-        char    fname[32];
+-        sprintf(fname, "/tmp/hpcups_job%d.out", job_id);
+-        m_fp = fopen(fname, "w");
++        char    fname[40];
++        int fd;
++        sprintf(fname, "/tmp/hpcups_job%d.out.XXXXXX", job_id);
++        fd = mkstemp (fname);
++        if (fd != -1)
++            m_fp = fdopen(fd, "w");
+         chmod(fname, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+     }
+ }
+--- a/prnt/hpijs/hpijs.cpp	Tue Apr 10 01:32:39 2012
++++ b/prnt/hpijs/hpijs.cpp	Tue Jan 28 03:20:35 2014
+@@ -97,12 +97,13 @@
+     if (pSS->m_iLogLevel & SAVE_PCL_FILE)
+     {
+         char    szFileName[32];
+-	sprintf (szFileName, "/tmp/hpijs_%d.out", getpid());
+-	pSS->outfp = fopen (szFileName, "w");
+-	if (pSS->outfp)
+-	{
+-	    chmod (szFileName, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+-	}
++        int fd;
++        sprintf (szFileName, "/tmp/hpijs_%d.out.XXXXXX", getpid());
++        fd = mkstemp (szFileName);
++        if (fd != -1)
++            pSS->outfp = fdopen (fd, "w");
++        if (pSS->outfp)
++            chmod (szFileName, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+     }
+ }
+ 
+--- a/prnt/hpcups/HPCupsFilter.cpp	Tue Jan 28 03:06:22 2014
++++ b/prnt/hpcups/HPCupsFilter.cpp	Tue Jan 28 03:17:49 2014
+@@ -650,20 +650,25 @@
+         
+         if (m_iLogLevel & SAVE_INPUT_RASTERS)
+         {
+-            char    szFileName[32];
++            char    szFileName[44];
+             memset(szFileName, 0, sizeof(szFileName));
+-            snprintf (szFileName, sizeof(szFileName), "/tmp/hpcupsfilterc_%d.bmp", current_page_number);
++            snprintf (szFileName, sizeof(szFileName), "/tmp/hpcupsfilterc_%d.bmp.XXXXXX", current_page_number);
+             if (cups_header.cupsColorSpace == CUPS_CSPACE_RGBW ||
+                 cups_header.cupsColorSpace == CUPS_CSPACE_RGB)
+             {
+-                cfp = fopen (szFileName, "w");
++                int fd = mkstemp (szFileName);
++                if (fd != -1)
++                    cfp = fdopen (fd, "w");
+                 chmod (szFileName, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+             }
+             if (cups_header.cupsColorSpace == CUPS_CSPACE_RGBW ||
+                 cups_header.cupsColorSpace == CUPS_CSPACE_K)
+             {
+-                szFileName[17] = 'k';
+-                kfp = fopen (szFileName, "w");
++                int fd;
++                snprintf (szFileName, sizeof(szFileName), "/tmp/hpcupsfilterk_%d.bmp.XXXXXX", current_page_number);
++                fd = mkstemp (szFileName);
++                if (fd != -1)
++                    kfp = fdopen (fd, "w");
+                 chmod (szFileName, S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH);
+             }
+ 
