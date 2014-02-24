@@ -1,0 +1,33 @@
+--- gtk+-2.20.1/gtk/Makefile.am-orig	2010-10-21 12:10:04.055770255 -0500
++++ gtk+-2.20.1/gtk/Makefile.am	2010-10-21 12:10:20.807724715 -0500
+@@ -984,7 +984,7 @@ introspection_files = \
+     gtktypebuiltins.c
+ 
+ Gtk-2.0.gir: $(INTROSPECTION_SCANNER) $(gtktargetlib) $(top_builddir)/gdk/Gdk-2.0.gir Makefile
+-Gtk_2_0_gir_SCANNERFLAGS = --strip-prefix=Gtk
++Gtk_2_0_gir_SCANNERFLAGS = --identifier-prefix=Gtk --symbol-prefix=gtk
+ Gtk_2_0_gir_INCLUDES = Atk-1.0 Gdk-2.0
+ Gtk_2_0_gir_CFLAGS = \
+ 		$(INCLUDES) \
+--- gtk+-2.20.1/gdk/Makefile.am-orig	2010-10-21 12:10:45.008086021 -0500
++++ gtk+-2.20.1/gdk/Makefile.am	2010-10-21 12:11:03.208126667 -0500
+@@ -202,7 +202,7 @@ introspection_files = \
+         $(srcdir)/x11/*.c
+ 
+ Gdk-2.0.gir: $(gdktargetlib) Makefile
+-Gdk_2_0_gir_SCANNERFLAGS = --strip-prefix=Gdk --add-include-path=../gdk-pixbuf
++Gdk_2_0_gir_SCANNERFLAGS = --identifier-prefix=Gdk --symbol-prefix=gdk
+ Gdk_2_0_gir_INCLUDES = Gio-2.0 GdkPixbuf-2.0 Pango-1.0
+ Gdk_2_0_gir_LIBS = $(gdktargetlib)
+ Gdk_2_0_gir_FILES = $(addprefix $(srcdir)/,$(introspection_files))
+--- gtk+-2.20.1/gdk-pixbuf/Makefile.am-orig	2010-10-21 12:09:16.885970417 -0500
++++ gtk+-2.20.1/gdk-pixbuf/Makefile.am	2010-10-21 12:09:51.398507685 -0500
+@@ -692,7 +692,7 @@ EXTRA_DIST +=					\
+ if HAVE_INTROSPECTION
+ 
+ GdkPixbuf-2.0.gir: libgdk_pixbuf-2.0.la Makefile
+-GdkPixbuf_2_0_gir_SCANNERFLAGS = --strip-prefix=Gdk
++GdkPixbuf_2_0_gir_SCANNERFLAGS = --identifier-prefix=Gdk --symbol-prefix=gdk
+ GdkPixbuf_2_0_gir_INCLUDES = GModule-2.0 Gio-2.0
+ GdkPixbuf_2_0_gir_LIBS = libgdk_pixbuf-2.0.la
+ GdkPixbuf_2_0_gir_CFLAGS = $(INCLUDES)

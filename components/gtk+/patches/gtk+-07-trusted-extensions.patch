@@ -1,0 +1,378 @@
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/configure.in gtk+-2.19.6/configure.in
+--- ../amd64/gtk+-2.19.6/configure.in	2010-02-23 05:39:16.000000000 +0100
++++ gtk+-2.19.6/configure.in	2010-03-02 16:57:31.541365910 +0100
+@@ -1771,7 +1771,15 @@
+ if test "x$gdktarget" = "xx11"; then
+   GTK_PACKAGES="$GTK_PACKAGES pangoft2"
+ fi
+-GTK_EXTRA_LIBS=
++
++case "$host" in
++        *-*-solaris*)
++		GTK_EXTRA_LIBS="-lsecdb -ltsol"
++            ;;
++        *)
++		GTK_EXTRA_LIBS=
++            ;;
++      esac
+ GTK_EXTRA_CFLAGS= 
+ GTK_DEP_LIBS="$GDK_EXTRA_LIBS $GTK_DEP_LIBS_FOR_X `$PKG_CONFIG --libs $GDK_PIXBUF_PACKAGES $PANGO_PACKAGES $GTK_PACKAGES_FOR_X $GTK_PACKAGES` $GTK_EXTRA_LIBS $GDK_PIXBUF_EXTRA_LIBS"
+ GTK_DEP_CFLAGS="`$PKG_CONFIG --cflags  gthread-2.0 $GDK_PIXBUF_PACKAGES $GDK_PACKAGES $GTK_PACKAGES` $GDK_PIXBUF_EXTRA_CFLAGS $GDK_EXTRA_CFLAGS $GTK_EXTRA_CFLAGS"
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gdk/x11/gdkmain-x11.c gtk+-2.19.6/gdk/x11/gdkmain-x11.c
+--- ../amd64/gtk+-2.19.6/gdk/x11/gdkmain-x11.c	2009-11-26 10:05:07.000000000 +0100
++++ gtk+-2.19.6/gdk/x11/gdkmain-x11.c	2010-03-02 16:57:31.541731616 +0100
+@@ -438,6 +438,8 @@
+ {
+   if (error->error_code)
+     {
++      if (error->error_code == 3)
++        return 1;
+       if (_gdk_error_warnings)
+ 	{
+ 	  gchar buf[64];
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/Makefile.am gtk+-2.19.6/gtk/Makefile.am
+--- ../amd64/gtk+-2.19.6/gtk/Makefile.am	2010-02-23 05:39:18.000000000 +0100
++++ gtk+-2.19.6/gtk/Makefile.am	2010-03-02 16:57:31.542242114 +0100
+@@ -407,6 +407,7 @@
+ 	gtktoolpaletteprivate.h	\
+ 	gtktreedatalist.h	\
+ 	gtktreeprivate.h	\
++	gtktrustedutils.h	\
+ 	gtkwindow-decorate.h	\
+ 	$(gtk_clipboard_dnd_h_sources)
+ 
+@@ -614,6 +615,7 @@
+ 	gtktreestore.c		\
+ 	gtktreeview.c		\
+ 	gtktreeviewcolumn.c	\
++	gtktrustedutils.c	\
+ 	gtktypebuiltins.c	\
+ 	gtktypeutils.c		\
+ 	gtkuimanager.c		\
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkaboutdialog.c gtk+-2.19.6/gtk/gtkaboutdialog.c
+--- ../amd64/gtk+-2.19.6/gtk/gtkaboutdialog.c	2010-02-23 05:39:18.000000000 +0100
++++ gtk+-2.19.6/gtk/gtkaboutdialog.c	2010-03-02 16:57:31.543217714 +0100
+@@ -229,6 +229,26 @@
+   GError *error = NULL;
+ 
+   screen = gtk_widget_get_screen (GTK_WIDGET (about));
++	
++  if (gtk_trusted_path_is_restricted () ) {
++    GtkWidget *dialog;
++
++    dialog = gtk_message_dialog_new (GTK_WINDOW (about),
++                                     GTK_DIALOG_DESTROY_WITH_PARENT |
++                                     GTK_DIALOG_MODAL,
++                                     GTK_MESSAGE_ERROR,
++                                     GTK_BUTTONS_CLOSE,
++                                     "%s", _("Could not show link"));
++    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
++                                              "%s", _("You do not have sufficient clearance to invoke this link"));
++
++    g_signal_connect (dialog, "response",
++                      G_CALLBACK (gtk_widget_destroy), NULL);
++
++    gtk_window_present (GTK_WINDOW (dialog));
++
++    return;
++  }
+ 
+   if (!gtk_show_uri (screen, uri, gtk_get_current_event_time (), &error))
+     {
+@@ -823,7 +843,7 @@
+ 
+   gtk_widget_show (priv->website_label);
+ 
+-  if (priv->website_url && (!activate_url_hook_set || activate_url_hook != NULL))
++  if (priv->website_url && (!activate_url_hook_set || activate_url_hook != NULL) && !gtk_trusted_path_is_restricted ())
+     {
+       gchar *markup;
+ 
+@@ -2350,7 +2370,11 @@
+   old = activate_email_hook;
+ 
+   activate_email_hook_set = TRUE;
+-  activate_email_hook = func;
++  if (gtk_trusted_path_is_restricted ()) {
++    activate_email_hook = NULL;
++  } else {
++    activate_email_hook = func;
++  }
+   activate_email_hook_data = data;
+   activate_email_hook_destroy = destroy;
+ 
+@@ -2386,7 +2410,11 @@
+   old = activate_url_hook;
+ 
+   activate_url_hook_set = TRUE;
+-  activate_url_hook = func;
++  if (gtk_trusted_path_is_restricted ()) {
++    activate_url_hook = NULL;
++  } else {
++    activate_url_hook = func;
++  }
+   activate_url_hook_data = data;
+   activate_url_hook_destroy = destroy;
+ 
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.c gtk+-2.19.6/gtk/gtkfilechooserdefault.c
+--- ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdefault.c	2010-02-23 05:39:18.000000000 +0100
++++ gtk+-2.19.6/gtk/gtkfilechooserdefault.c	2010-03-02 16:57:31.546257922 +0100
+@@ -72,6 +72,10 @@
+ 
+ #include "gtkalias.h"
+ 
++#ifdef sun
++#include "gtktrustedutils.h"
++#endif
++
+ #include <errno.h>
+ #include <string.h>
+ #include <time.h>
+@@ -5201,6 +5205,13 @@
+   impl->browse_widgets = browse_widgets_create (impl);
+   gtk_box_pack_start (GTK_BOX (impl), impl->browse_widgets, TRUE, TRUE, 0);
+ 
++#ifdef sun
++  /* trusted path restriction label */
++  /* SUN_BRANDING */
++  impl->trustedpathlabel = gtk_label_new (_("You do not have sufficient clearance to use this file chooser"));
++  gtk_box_pack_start (GTK_BOX (impl), impl->trustedpathlabel, FALSE, FALSE, 0);
++#endif
++
+   /* Alignment to hold extra widget */
+   impl->extra_align = gtk_alignment_new (0.0, 0.5, 1.0, 1.0);
+   gtk_box_pack_start (GTK_BOX (impl), impl->extra_align, FALSE, FALSE, 0);
+@@ -5235,7 +5246,13 @@
+   if (impl->extra_widget)
+     {
+       gtk_container_add (GTK_CONTAINER (impl->extra_align), impl->extra_widget);
++#ifdef sun
++      if (!gtk_trusted_path_is_restricted ()) {
++        gtk_widget_show (impl->extra_align);
++      }
++#else
+       gtk_widget_show (impl->extra_align);
++#endif
+     }
+   else
+     gtk_widget_hide (impl->extra_align);
+@@ -5351,6 +5368,10 @@
+ static void
+ update_appearance (GtkFileChooserDefault *impl)
+ {
++#ifdef sun
++  gtk_widget_hide (impl->trustedpathlabel);
++#endif
++
+   if (impl->action == GTK_FILE_CHOOSER_ACTION_SAVE ||
+       impl->action == GTK_FILE_CHOOSER_ACTION_CREATE_FOLDER)
+     {
+@@ -5405,6 +5426,16 @@
+   else
+     gtk_widget_show (impl->browse_new_folder_button);
+ 
++#ifdef sun
++  if (gtk_trusted_path_is_restricted ())
++    {
++      gtk_widget_hide (impl->location_button);
++      gtk_widget_hide (impl->browse_widgets);
++      if (impl->save_widgets) gtk_widget_hide (impl->save_widgets);
++      gtk_widget_show (impl->trustedpathlabel);
++    }
++#endif
++
+   /* This *is* needed; we need to redraw the file list because the "sensitivity"
+    * of files may change depending whether we are in a file or folder-only mode.
+    */
+@@ -8008,9 +8039,10 @@
+ 
+   impl = GTK_FILE_CHOOSER_DEFAULT (chooser_embed);
+ 
+-  if (impl->action == GTK_FILE_CHOOSER_ACTION_OPEN
++  if ( !gtk_trusted_path_is_restricted () && 
++      (  impl->action == GTK_FILE_CHOOSER_ACTION_OPEN
+       || impl->action == GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
+-      || impl->expand_folders)
++      || impl->expand_folders)) 
+     {
+       GtkFileChooserSettings *settings;
+       int x, y, width, height;
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdialog.c gtk+-2.19.6/gtk/gtkfilechooserdialog.c
+--- ../amd64/gtk+-2.19.6/gtk/gtkfilechooserdialog.c	2010-02-23 05:39:18.000000000 +0100
++++ gtk+-2.19.6/gtk/gtkfilechooserdialog.c	2010-03-02 16:57:31.546665214 +0100
+@@ -30,6 +30,10 @@
+ #include "gtktypebuiltins.h"
+ #include "gtkintl.h"
+ #include "gtkalias.h"
++#include "gtkstock.h"
++#ifdef sun
++#include "gtktrustedutils.h"
++#endif
+ 
+ #include <stdarg.h>
+ 
+@@ -336,6 +340,14 @@
+   GtkFileChooserDialog *dialog = GTK_FILE_CHOOSER_DIALOG (data);
+   int response_id;
+ 
++#ifdef sun
++  if (gtk_trusted_path_is_restricted ())
++    { 
++      gtk_widget_hide (widget);
++      return;
++    }
++#endif
++
+   response_id = gtk_dialog_get_response_for_widget (GTK_DIALOG (dialog), widget);
+   if (is_stock_accept_response_id (response_id))
+     gtk_dialog_set_default_response (GTK_DIALOG (dialog), response_id);
+@@ -347,6 +359,14 @@
+   gtk_container_foreach (GTK_CONTAINER (GTK_DIALOG (dialog)->action_area),
+ 			 foreach_ensure_default_response_cb,
+ 			 dialog);
++
++#ifdef sun
++  if (gtk_trusted_path_is_restricted ())
++    {
++      gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CLOSE, GTK_RESPONSE_DELETE_EVENT);
++      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_DELETE_EVENT);
++    }
++#endif
+ }
+ 
+ /* GtkWidget::map handler */
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtkfilechooserprivate.h gtk+-2.19.6/gtk/gtkfilechooserprivate.h
+--- ../amd64/gtk+-2.19.6/gtk/gtkfilechooserprivate.h	2010-02-18 00:28:09.000000000 +0100
++++ gtk+-2.19.6/gtk/gtkfilechooserprivate.h	2010-03-02 16:57:31.546921223 +0100
+@@ -210,6 +210,10 @@
+   GtkWidget *extra_align;
+   GtkWidget *extra_widget;
+ 
++#ifdef sun
++  GtkWidget *trustedpathlabel;
++#endif
++
+   GtkWidget *location_button;
+   GtkWidget *location_entry_box;
+   GtkWidget *location_label;
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtktrustedutils.c gtk+-2.19.6/gtk/gtktrustedutils.c
+--- ../amd64/gtk+-2.19.6/gtk/gtktrustedutils.c	1970-01-01 01:00:00.000000000 +0100
++++ gtk+-2.19.6/gtk/gtktrustedutils.c	2010-03-02 16:57:31.547129569 +0100
+@@ -0,0 +1,82 @@
++/* GTK - The GIMP Toolkit
++ * gtktrustedutils.c: Private utility functions useful for
++ *                        Trusted Path checks
++ * Copyright (C) 2009, Sun Microsystems, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ */
++
++#include "config.h"
++#include <glib.h>
++#include <user_attr.h>
++#include <secdb.h>
++#include <tsol/label.h>
++#include <zone.h>
++
++gboolean
++gtk_trusted_path_is_restricted (void)
++{
++  static int restricted = -1;
++  m_label_t *adminhigh = NULL;
++  m_label_t *clearance = NULL;
++  char *value = NULL;
++  int err;
++  userattr_t *uattr;
++
++  if (restricted == -1) 
++    {
++      if (!is_system_labeled () || getzoneid () != 0)
++        { /* Not trusted system or not running in global zone = no restriction*/
++          restricted = 0;
++        }
++      else if (str_to_label (ADMIN_HIGH,  &adminhigh, USER_CLEAR, L_DEFAULT,
++			     &err)) 
++        { /* string translation of ADMIN_HIGH failed so user is restricted */
++          restricted = 1;
++        }
++      else 
++        {
++          if (uattr = getuseruid (getuid ())) 
++	    {
++              value = kva_match (uattr->attr, USERATTR_CLEARANCE);
++              if (value == NULL)
++                { /* no value defined for users clearance, assume restricted */
++                  restricted = 1;
++                }
++              else if (str_to_label (value, &clearance, USER_CLEAR, L_DEFAULT, 
++  				   &err))
++                { /*string translation, this shouldn't happen */
++                  restricted = 1;
++                }
++              else if (blequal (adminhigh, clearance)) 
++                {
++                  restricted = 0;
++  	        } 
++              else 
++                {
++	          restricted = 1;
++                }
++            free_userattr (uattr);
++	  }
++	    else
++	  {
++	      restricted = 1;
++	  }
++        }
++    }
++
++  return restricted ? TRUE : FALSE;
++}
+diff -urN -x '*.orig' -x '*.rej' ../amd64/gtk+-2.19.6/gtk/gtktrustedutils.h gtk+-2.19.6/gtk/gtktrustedutils.h
+--- ../amd64/gtk+-2.19.6/gtk/gtktrustedutils.h	1970-01-01 01:00:00.000000000 +0100
++++ gtk+-2.19.6/gtk/gtktrustedutils.h	2010-03-02 16:57:31.547289333 +0100
+@@ -0,0 +1,31 @@
++/* GTK - The GIMP Toolkit
++ * gtktrustedutils.h: Private utility functions useful for
++ *                        Trusted Path checks
++ * Copyright (C) 2009, Sun Microsystems, Inc.
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Lesser General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Lesser General Public License for more details.
++ *
++ * You should have received a copy of the GNU Lesser General Public
++ * License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ */
++
++#ifndef __GTK_TRUSTED_UTILS_H__
++#define __GTK_TRUSTED_UTILS_H__
++
++G_BEGIN_DECLS
++
++gboolean gtk_trusted_path_is_restricted (void);
++
++G_END_DECLS
++
++#endif /* __GTK_TRUSTED_UTILS_H__ */
