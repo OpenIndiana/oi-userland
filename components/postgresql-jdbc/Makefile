@@ -33,6 +33,7 @@ include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
 JAVA_HOME=	$(JAVA6_HOME)
+COMPONENT_BUILD_ARGS =
 
 build: $(BUILD_32)
 
