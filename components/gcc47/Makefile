@@ -47,21 +47,24 @@ PKG_MACROS +=   GNU_ARCH="$(GNU_ARCH)"
 # This product bootstraps itself.  The gcc flags are not the same
 # as Studio flags. -O2 means different things for the two compilers
 CFLAGS=-g -O2 
-CFLAGS_FOR_BUILD=$(CFLAGS)
+CXXFLAGS=-g -O2 
 
-# CC_BITS may get in the way
-CC_BITS=
+# direct binding cause various testsuite failures
+LD_B_DIRECT=
 
-# LD_OPTIONS
-# /usr/lib/ld/map.noexbss  destroys SPARC
 # /usr/lib/ld/map.noexdata destroys Intel
-GCC_LD_OPTIONS.sparc=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.pagealign -z ignore
-GCC_LD_OPTIONS.i386=-M /usr/lib/ld/map.noexstk -M /usr/lib/ld/map.pagealign -z ignore
-GCC_LD_OPTIONS = $(GCC_LD_OPTIONS.$(MACH))
-LD_OPTIONS := $(GCC_LD_OPTIONS)
+LD_MAP_NOEXDATA.i386=
 
+# /usr/lib/ld/map.noexbss  destroys SPARC
+ifeq ($(MACH),sparc)
+LD_MAP_NOEXBSS=
+endif
+
+# for some reason the fixincludes target fails with bash on Solaris.
 CONFIG_SHELL = /bin/sh
 MAKESHELL = /bin/sh
+COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
+COMPONENT_BUILD_ENV += MAKESHELL=$(MAKESHELL)
 
 CONFIGURE_PREFIX = /usr/gcc/4.7
 
@@ -74,7 +77,6 @@ CONFIGURE_OPTIONS +=	--with-mpfr-include=/usr/include/mpfr
 CONFIGURE_OPTIONS +=	--without-gnu-ld --with-ld=/usr/bin/ld
 
 CONFIGURE_ENV     += PYTHON="$(PYTHON)"
-CONFIGURE_ENV     += LD_OPTIONS="$(LD_OPTIONS)"
 
 # sparc and x86 use different assemblers
 CONFIGURE_OPTIONS.sparc +=	--without-gnu-as --with-as=/usr/bin/as
@@ -82,25 +84,18 @@ CONFIGURE_OPTIONS.i386 +=	--with-gnu-as --with-as=/usr/gnu/bin/as
 CONFIGURE_OPTIONS +=    $(CONFIGURE_OPTIONS.$(MACH))
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
-COMPONENT_BUILD_ENV += MAKESHELL=$(MAKESHELL)
+CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 
 COMPONENT_BUILD_TARGETS=bootstrap
 
+# compile python modules
 COMPONENT_POST_INSTALL_ACTION = \
-    ( cd $(PROTOUSRDIR)/gcc/4.7/lib  ; \
-	$(PYTHON) -m compileall . ; \
-      cd $(PROTOUSRDIR)/gcc/4.7/lib/$(MACH64) ; \
-	$(PYTHON) -m compileall . ; \
-      cd $(PROTOUSRDIR)/gcc/4.7/share/gcc-4.7.3/python/libstdcxx ; \
-	$(PYTHON) -m compileall . ; \
-      cd $(PROTOUSRDIR)/gcc/4.7/share/gcc-4.7.3/python/libstdcxx/v6 ; \
-	$(PYTHON) -m compileall . ; \
-      cd $(COMPONENT_DIR) ; \
-	chmod 0755 ./gcc_post_install_processing.sh ; \
-	$(SHELL) ./gcc_post_install_processing.sh -protodir=$(PROTO_DIR) \
-	  -python=$(PYTHON) -gccversion=$(COMPONENT_VERSION) )
+    ( gfind $(PROTOUSRDIR) -name '*.py' | xargs -n 1 dirname | sort -u | \
+        xargs $(PYTHON) -m compileall )
+# strip elves, strip ignores non-elf files
+COMPONENT_POST_INSTALL_ACTION += ; \
+    ( gfind $(PROTOUSRDIR) -type f -perm /0111 | xargs /usr/bin/strip -x \
+        2>/dev/null ; exit 0 )
 
 # ASLR has side-effects with libitm and libgomp.
 # Disable ASLR for now.
@@ -111,17 +106,16 @@ build:		$(BUILD_32)
 install:	$(INSTALL_32)
 
 # To ensure that all tests that are expected to pass actually
-# pass, we have to increase the stacksize limit to at least 
-# 16384 Kb. Otherwise we'll get spurious failures in the test
+# pass, we have to increase the stacksize limit to at least
+# 16MB. Otherwise we'll get spurious failures in the test
 # harness (gcc.c-torture/compile/limits-exprparen.c and others).
-# With the soft stacksize limit set to 16384 we get very good
+# With the soft stacksize limit set to 16384 we get reasonably good
 # test results.
-test:
-	( cd $(BUILD_DIR_32)/gcc ; \
-	    ulimit -Ss 16384 ; \
-	    env - LD_OPTIONS=$(LD_OPTIONS) $(GMAKE) -k -i check ; \
-	    cd $(BUILD_DIR_32) ; \
-	    env - LD_OPTIONS=$(LD_OPTIONS) $(GMAKE) -k -i check-target )
+COMPONENT_PRE_TEST_ACTION = ulimit -Ss 16384
+COMPONENT_TEST_ARGS = -k -i
+COMPONENT_TEST_TARGETS = check check-target
+
+test:	$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
