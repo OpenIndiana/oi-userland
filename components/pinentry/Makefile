@@ -77,12 +77,13 @@ CONFIGURE_OPTIONS  +=		--enable-threading
 CONFIGURE_OPTIONS  +=		--disable-pinentry-gtk
 CONFIGURE_OPTIONS  +=		--disable-pinentry-qt
 CONFIGURE_OPTIONS  +=		--disable-ncurses
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 	$(MKDIR) $(PROTOUSRLIBDIR)
 	if test -f $(PROTOUSRBINDIR)/pinentry-curses ; then \
 	$(MV) $(PROTOUSRBINDIR)/pinentry-curses $(PROTOUSRLIBDIR)/ ; fi

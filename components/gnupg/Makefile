@@ -80,6 +80,8 @@ CONFIGURE_OPTIONS  +=		--with-libintl-prefix=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-bzip2=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS  +=		--with-readline=$(CONFIGURE_PREFIX)
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+CONFIGURE_SBINDIR.64 =  $(CONFIGURE_PREFIX)/sbin
 
 LIBKSBA_MANIFEST = 	manifest-$(MACH)-libksba.depend
 LIBASSUAN_MANIFEST =	manifest-$(MACH)-libassuan.depend
@@ -102,9 +104,9 @@ MAN8LIST = addgnupghome applygnupgdefaults
 
 ASLR_MODE = $(ASLR_ENABLE)
 
-build: $(BUILD_32)
+build: $(BUILD_64)
 
-install: $(INSTALL_32)
+install: $(INSTALL_64)
 	( cd $(PROTOUSRSHARELOCALEDIR) ; \
 	    $(CP) -R 'en@boldquot' en )
 	( cd $(PROTOUSRSHAREMANDIR) ; \
@@ -116,7 +118,7 @@ install: $(INSTALL_32)
 	    $(MV) $$f.8 $$f.1m ; fi ; \
 	    done )
 
-test: $(TEST_32)
+test: $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 

@@ -57,13 +57,13 @@ COMPONENT_PREP_ACTION = \
 # this is needed or we can't compile the rak headers
 CC=$(CXX)
 
-LDFLAGS += -L/usr/gnu/lib -R/usr/gnu/lib -lnsl -lsocket
+LDFLAGS += -L/usr/gnu/lib/$(MACH64) -R/usr/gnu/lib/$(MACH64)
 
 CXXFLAGS +=	-i
 CXXFLAGS +=	-xspace
 CXXFLAGS +=	$(studio_XREGS)
 CXXFLAGS +=	-I/usr/include/ncurses
-CONFIGURE_OPTIONS.32 +=		--srcdir=$(BUILD_DIR_32)
+CONFIGURE_OPTIONS.64 +=         --srcdir=$(BUILD_DIR_64)
 CONFIGURE_OPTIONS +=		--disable-debug
 CONFIGURE_OPTIONS +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=		LDFLAGS="$(LDFLAGS)"
@@ -72,9 +72,9 @@ CONFIGURE_OPTIONS +=		CXXFLAGS="$(CXXFLAGS)"
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
