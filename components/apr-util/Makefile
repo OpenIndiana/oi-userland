@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -42,7 +42,7 @@ PATCH_LEVEL=0
 
 CONFIGURE_PREFIX=/usr/apr-util/1.3
 
-CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.1
+CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.5
 CONFIGURE_OPTIONS +=	--with-expat=/usr
 CONFIGURE_OPTIONS +=	--with-sqlite3=/usr
 CONFIGURE_OPTIONS +=	--with-ldap=ldap_r-2.4
@@ -53,7 +53,7 @@ CONFIGURE_OPTIONS.32 +=	--enable-layout=OpenSolaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=OpenSolaris-$(MACH64)
 CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/1.3/bin/apr-1-config
 CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/1.3/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.64 +=	MYSQL_CONFIG=/usr/mysql/5.1/bin/$(MACH64)/mysql_config
+CONFIGURE_OPTIONS.32 +=	MYSQL_CONFIG=/usr/mysql/5.5/bin/$(MACH32)/mysql_config
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
@@ -78,6 +78,11 @@ docs: $(BUILD_DIR)/$(MACH32)/.built
 build: $(BUILD_32_and_64) docs
 
 install: $(INSTALL_32_and_64)
+	# workaround for 18195512
+	elfedit -e "dyn:runpath /usr/mysql/5.5/lib/" \
+	  $(PROTO_DIR)/usr/apr-util/1.3/lib/apr-util-1/apr_dbd_mysql-1.so
+	elfedit -e "dyn:runpath /usr/mysql/5.5/lib/$(MACH64)" \
+	  $(PROTO_DIR)/usr/apr-util/1.3/lib/$(MACH64)/apr-util-1/apr_dbd_mysql-1.so
 
 test: $(TEST_32_and_64)
 
