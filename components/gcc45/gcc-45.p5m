@@ -1,4 +1,4 @@
-
+#
 # CDDL HEADER START
 #
 # The contents of this file are subject to the terms of the
@@ -18,28 +18,45 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
-set name=pkg.fmri value=pkg:/developer/gcc-45@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.fmri \
+    value=pkg:/developer/gcc-45@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GCC - 4.5 Compilers"
 set name=com.oracle.info.description value="the GNU Compiler Collection"
 set name=com.oracle.info.tpno value=4456
-set name=info.classification value="org.opensolaris.category.2008:Development/C" \
-    value="org.opensolaris.category.2008:Development/C++" \
-    value="org.opensolaris.category.2008:Development/Fortran" \
-    value="org.opensolaris.category.2008:Development/GNU" \
+set name=info.classification value=org.opensolaris.category.2008:Development/C \
+    value=org.opensolaris.category.2008:Development/C++ \
+    value=org.opensolaris.category.2008:Development/Fortran \
+    value=org.opensolaris.category.2008:Development/GNU \
     value="org.opensolaris.category.2008:Development/Objective C"
-set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
-set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2011/256
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
-license gcc45.license license='GPLv3 with Runtime Exception, FDLv1.2'
-
+# Mediated links for gcc binaries in /usr/bin
+link path=usr/bin/c++ target=../gcc/4.5/bin/c++ mediator=gcc \
+    mediator-version=4.5
+link path=usr/bin/g++ target=../gcc/4.5/bin/g++ mediator=gcc \
+    mediator-version=4.5
+link path=usr/bin/gcc target=../gcc/4.5/bin/gcc mediator=gcc \
+    mediator-version=4.5
+link path=usr/bin/gcov target=../gcc/4.5/bin/gcov mediator=gcc \
+    mediator-version=4.5
+link path=usr/bin/gcpp target=../gcc/4.5/bin/cpp mediator=gcc \
+    mediator-version=4.5
+link path=usr/bin/gfortran target=../gcc/4.5/bin/gfortran mediator=gcc \
+    mediator-version=4.5
+hardlink path=usr/gcc/4.5/bin/$(GNU_ARCH)-c++ target=$(GNU_ARCH)-g++
 file path=usr/gcc/4.5/bin/$(GNU_ARCH)-g++
+hardlink path=usr/gcc/4.5/bin/$(GNU_ARCH)-gcc target=gcc
+hardlink path=usr/gcc/4.5/bin/$(GNU_ARCH)-gfortran target=gfortran
+hardlink path=usr/gcc/4.5/bin/c++ target=$(GNU_ARCH)-g++
 file path=usr/gcc/4.5/bin/cpp
+hardlink path=usr/gcc/4.5/bin/g++ target=$(GNU_ARCH)-g++
 file path=usr/gcc/4.5/bin/gcc
 file path=usr/gcc/4.5/bin/gcov
 file path=usr/gcc/4.5/bin/gfortran
@@ -432,201 +449,104 @@ file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pairing_
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/child_iterator.hpp
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/cond_dtor_entry_dealtor.hpp
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/const_child_iterator.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/constructors_destructor_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/debug_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/erase_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/find_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/head.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/info_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/insert_join_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/internal_node.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/iterators_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/leaf.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/node_base.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/node_iterators.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/node_metadata_base.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/pat_trie_.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/point_iterators.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/policy_access_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/r_erase_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/rotate_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/split_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/split_join_branch_bag.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/synth_e_access_traits.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/trace_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/traits.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/update_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/priority_queue_base_dispatch.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/constructors_destructor_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/debug_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/erase_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/find_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/info_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/insert_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/node.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/rb_tree_.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/split_join_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/traits.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/constructors_destructor_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/debug_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/erase_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/insert_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/rc.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/rc_binomial_heap_.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/split_join_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/trace_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/cc_hash_max_collision_check_resize_trigger_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_exponential_size_policy_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_load_check_resize_trigger_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_load_check_resize_trigger_size_base.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_prime_size_policy_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_standard_resize_policy_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/sample_resize_policy.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/sample_resize_trigger.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/sample_size_policy.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/constructors_destructor_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/debug_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/erase_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/find_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/info_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/insert_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/node.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/splay_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/splay_tree_.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/split_join_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/traits.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/standard_policies.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/constructors_destructor_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/debug_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/erase_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/find_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/insert_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/split_join_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/thin_heap_.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/trace_fn_imps.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/node_metadata_selector.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/null_node_update_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/order_statistics_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/sample_tree_node_update.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_trace_base.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/node_metadata_selector.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/null_node_update_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/order_statistics_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/prefix_search_node_update_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/sample_trie_e_access_traits.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/sample_trie_node_update.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/string_trie_e_access_traits_imp.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/trie_policy_base.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/type_utils.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/types_traits.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/const_iterator.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/const_point_iterator.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/iterator.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/point_iterator.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/constructors_destructor_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/debug_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/erase_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/find_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/head.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/info_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/insert_join_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/internal_node.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/iterators_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/leaf.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/node_base.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/node_iterators.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/node_metadata_base.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/pat_trie_.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/point_iterators.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/policy_access_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/r_erase_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/rotate_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/split_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/split_join_branch_bag.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/synth_e_access_traits.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/trace_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/traits.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/pat_trie_/update_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/priority_queue_base_dispatch.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/constructors_destructor_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/debug_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/erase_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/find_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/info_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/insert_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/node.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/rb_tree_.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/split_join_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rb_tree_map_/traits.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/constructors_destructor_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/debug_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/erase_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/insert_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/rc.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/rc_binomial_heap_.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/split_join_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/rc_binomial_heap_/trace_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/cc_hash_max_collision_check_resize_trigger_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_exponential_size_policy_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_load_check_resize_trigger_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_load_check_resize_trigger_size_base.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_prime_size_policy_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/hash_standard_resize_policy_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/sample_resize_policy.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/sample_resize_trigger.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/resize_policy/sample_size_policy.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/constructors_destructor_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/debug_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/erase_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/find_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/info_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/insert_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/node.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/splay_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/splay_tree_.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/split_join_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/splay_tree_/traits.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/standard_policies.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/constructors_destructor_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/debug_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/erase_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/find_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/insert_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/split_join_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/thin_heap_.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/thin_heap_/trace_fn_imps.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/node_metadata_selector.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/null_node_update_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/order_statistics_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_policy/sample_tree_node_update.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/tree_trace_base.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/node_metadata_selector.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/null_node_update_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/order_statistics_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/prefix_search_node_update_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/sample_trie_e_access_traits.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/sample_trie_node_update.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/string_trie_e_access_traits_imp.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/trie_policy/trie_policy_base.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/type_utils.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/types_traits.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/const_iterator.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/const_point_iterator.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/iterator.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/unordered_iterator/point_iterator.hpp
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/exception.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/hash_policy.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/list_update_policy.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/priority_queue.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/tag_and_trait.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/tree_policy.hpp
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/trie_policy.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/hash_policy.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/list_update_policy.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/priority_queue.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/tag_and_trait.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/tree_policy.hpp
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/trie_policy.hpp
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pod_char_traits.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pointer.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/pool_allocator.h
@@ -637,10 +557,8 @@ file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/ropeimpl.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/slist
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/sso_string_base.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/stdio_filebuf.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/stdio_sync_filebuf.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/string_conversions.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/stdio_sync_filebuf.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/string_conversions.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/throw_allocator.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/type_traits.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/ext/typelist.h
@@ -674,54 +592,39 @@ file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/algo.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/algobase.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/algorithm
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/algorithmfwd.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/balanced_quicksort.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/balanced_quicksort.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/base.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/basic_iterator.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/basic_iterator.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/checkers.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/compatibility.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/compiletime_settings.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/equally_split.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/compatibility.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/compiletime_settings.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/equally_split.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/features.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/find.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/find_selectors.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/find_selectors.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/for_each.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/for_each_selectors.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/for_each_selectors.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/iterator.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/list_partition.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/list_partition.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/losertree.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/merge.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/multiseq_selection.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/multiway_merge.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/multiway_mergesort.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/multiseq_selection.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/multiway_merge.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/multiway_mergesort.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/numeric
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/numericfwd.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/omp_loop.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/omp_loop_static.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/omp_loop_static.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/par_loop.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/parallel.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/partial_sum.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/partition.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/queue.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/quicksort.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/random_number.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/random_shuffle.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/random_number.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/random_shuffle.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/search.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/set_operations.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/set_operations.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/settings.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/sort.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/parallel/tags.h
@@ -732,30 +635,18 @@ file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/base.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/bitset
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/deque
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_container_size.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_hash_func.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_hashtable_size.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_list_to_slist.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_list_to_vector.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_map_to_unordered_map.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_node.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_state.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_trace.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_vector_size.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_vector_to_list.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/iterator_tracker.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_container_size.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_hash_func.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_hashtable_size.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_list_to_slist.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_list_to_vector.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_map_to_unordered_map.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_node.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_state.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_trace.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_vector_size.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/impl/profiler_vector_to_list.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/iterator_tracker.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/list
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/map
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/profile/map.h
@@ -813,13 +704,11 @@ file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/hashtable.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/hashtable_policy.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/hypergeometric.tcc
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/inttypes.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/legendre_function.tcc
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/legendre_function.tcc
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/limits.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/math.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/memory
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/modified_bessel_func.tcc
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/modified_bessel_func.tcc
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/poly_hermite.tcc
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/poly_laguerre.tcc
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/random
@@ -828,8 +717,7 @@ file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/random.tcc
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/regex
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/riemann_zeta.tcc
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/shared_ptr.h
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/special_function_util.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/special_function_util.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/stdarg.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/stdbool.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/stdint.h
@@ -846,8 +734,7 @@ file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/utility
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/wchar.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1/wctype.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1_impl/array
-file \
-    path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1_impl/boost_sp_counted_base.h
+file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1_impl/boost_sp_counted_base.h
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1_impl/cctype
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1_impl/cfenv
 file path=usr/gcc/4.5/include/c++/$(COMPONENT_VERSION)/tr1_impl/cinttypes
@@ -880,10 +767,8 @@ file path=usr/gcc/4.5/lib/$(MACH64)/libsupc++.a
 file \
     path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/crt1.o \
     variant.arch=sparc
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/crtbegin.o
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/crtend.o
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/crtbegin.o
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/crtend.o
 file \
     path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/crtfastmath.o \
     variant.arch=sparc
@@ -896,463 +781,307 @@ file \
 file \
     path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/gcrt1.o \
     variant.arch=sparc
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/gmon.o
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcc.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcc_eh.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcov.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgfortranbegin.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1 mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1obj mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1plus mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/collect2 mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crt1.o \
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/gmon.o
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcc.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcc_eh.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgcov.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/$(MACH64)/libgfortranbegin.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1 mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1obj mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/cc1plus mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/collect2 \
+    mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crt1.o \
     variant.arch=sparc
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtbegin.o
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtend.o
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtfastmath.o \
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtbegin.o
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtend.o
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtfastmath.o \
     variant.arch=sparc
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crti.o \
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crti.o \
     variant.arch=sparc
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtn.o \
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/crtn.o \
     variant.arch=sparc
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/f951 mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib.f90
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib.mod
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib_kinds.mod
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/gcrt1.o \
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/f951 mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib.f90
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib.mod
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/finclude/omp_lib_kinds.mod
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/gcrt1.o \
     variant.arch=sparc
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/gmon.o
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/README
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/limits.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/syslimits.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/abmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ammintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/avxintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/bmmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/cpuid.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/cross-stdarg.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/emmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/float.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/fma4intrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ia32intrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/immintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/iso646.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/lwpintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/mm3dnow.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/mm_malloc.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/mmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/nmmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/NXConstStr.h 
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/Object.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/Protocol.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/encoding.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/hash.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc-api.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc-decls.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc-list.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/sarray.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/thr.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/typedstream.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/omp.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/pmmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/popcntintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/smmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/ssp.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/stdio.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/string.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/unistd.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdarg.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdbool.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stddef.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdfix.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdint-gcc.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdint.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/tgmath.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/tmmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/unwind.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/varargs.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/wmmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/x86intrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xmmintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xopintrin.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixinc.sh mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixinc_list
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixincl mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/gsyslimits.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/include/README
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/include/limits.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/macro_list
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkheaders mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkheaders.conf
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkinstalldirs mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcc.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcc_eh.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcov.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgfortranbegin.a
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto-wrapper mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto1 mode=0555
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ada/gcc-interface/ada-tree.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/alias.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/all-tree.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ansidecl.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/auto-host.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/b-header-vars
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/basic-block.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/bitmap.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/builtins.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/bversion.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-common.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-common.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-pragma.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-pretty-print.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cfghooks.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cfgloop.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cgraph.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cif-code.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/att.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/i386-protos.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/i386.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sol2-10.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sol2.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sysv4.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/unix.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/x86-64.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/dbxelf.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/elfos.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2-10.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2-protos.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/svr4.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/tm-dwarf2.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/vxworks-dummy.h variant.arch=i386
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/configargs.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/coretypes.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/cp-tree.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/cp-tree.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/cxx-pretty-print.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/name-lookup.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cppdefault.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cpplib.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/debug.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/defaults.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/diagnostic.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/diagnostic.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/double-int.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/emit-rtl.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/except.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/filenames.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/fixed-value.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/flags.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/function.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gcc-plugin.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/genrtl.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ggc.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gimple.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gimple.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gsstruct.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gtype-desc.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/hard-reg-set.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/hashtab.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/highlev-plugin-common.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/hwint.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/incpath.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/input.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-constants.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-flags.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-modes.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-notes.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/intl.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-prop.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-reference.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-utils.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/java/java-tree.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/langhooks.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/libiberty.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/line-map.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/machmode.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/md5.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/mode-classes.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/objc/objc-tree.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/obstack.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/omp-builtins.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/options.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/opts.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/output.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/params.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/params.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/partition.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/plugin-version.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/plugin.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/plugin.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/pointer-set.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/predict.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/predict.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/prefix.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/pretty-print.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/real.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/reg-notes.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/rtl.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/rtl.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/safe-ctype.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/sbitmap.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/splay-tree.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/statistics.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/symtab.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/sync-builtins.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/system.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/target.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/timevar.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/timevar.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tm-preds.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tm.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tm_p.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/toplev.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-check.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-dump.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-flow-inline.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-flow.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-inline.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-iterator.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-pass.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-ssa-alias.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-ssa-operands.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-ssa-sccvn.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/treestruct.def
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/varray.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/vec.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/vecprim.h
-file \
-    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/version.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/gmon.o
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/README
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/limits.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/syslimits.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/abmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ammintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/avxintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/bmmintrin.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/cpuid.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/cross-stdarg.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/emmintrin.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/float.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/fma4intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ia32intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/immintrin.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/iso646.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/lwpintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/mm3dnow.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/mm_malloc.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/mmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/nmmintrin.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/NXConstStr.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/Object.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/Protocol.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/encoding.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/hash.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc-api.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc-decls.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc-list.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/objc.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/sarray.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/thr.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/objc/typedstream.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/omp.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/pmmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/popcntintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/smmintrin.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/ssp.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/stdio.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/string.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ssp/unistd.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdarg.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdbool.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stddef.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdfix.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdint-gcc.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/stdint.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/tgmath.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/tmmintrin.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/unwind.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/varargs.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/wmmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/x86intrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xmmintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xopintrin.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixinc.sh \
+    mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixinc_list
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixincl \
+    mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/gsyslimits.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/include/README
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/include/limits.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/macro_list
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkheaders \
+    mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkheaders.conf
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkinstalldirs \
+    mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcc.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcc_eh.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcov.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgfortranbegin.a
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto-wrapper \
+    mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto1 mode=0555
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ada/gcc-interface/ada-tree.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/alias.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/all-tree.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ansidecl.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/auto-host.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/b-header-vars
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/basic-block.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/bitmap.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/builtins.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/bversion.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-common.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-common.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-pragma.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-pretty-print.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cfghooks.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cfgloop.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cgraph.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cif-code.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/att.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/i386-protos.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/i386.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sol2-10.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sol2.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sysv4.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/unix.h \
+    variant.arch=i386
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/x86-64.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/dbxelf.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/elfos.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2-10.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2-protos.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/svr4.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/tm-dwarf2.h
+file \
+    path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/vxworks-dummy.h \
+    variant.arch=i386
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/configargs.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/coretypes.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/cp-tree.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/cp-tree.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/cxx-pretty-print.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/name-lookup.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cppdefault.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cpplib.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/debug.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/defaults.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/diagnostic.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/diagnostic.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/double-int.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/emit-rtl.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/except.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/filenames.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/fixed-value.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/flags.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/function.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gcc-plugin.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/genrtl.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ggc.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gimple.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gimple.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gsstruct.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/gtype-desc.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/hard-reg-set.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/hashtab.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/highlev-plugin-common.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/hwint.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/incpath.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/input.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-constants.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-flags.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-modes.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/insn-notes.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/intl.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-prop.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-reference.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-utils.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/java/java-tree.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/langhooks.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/libiberty.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/line-map.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/machmode.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/md5.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/mode-classes.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/objc/objc-tree.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/obstack.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/omp-builtins.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/options.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/opts.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/output.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/params.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/params.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/partition.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/plugin-version.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/plugin.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/plugin.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/pointer-set.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/predict.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/predict.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/prefix.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/pretty-print.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/real.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/reg-notes.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/rtl.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/rtl.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/safe-ctype.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/sbitmap.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/splay-tree.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/statistics.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/symtab.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/sync-builtins.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/system.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/target.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/timevar.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/timevar.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tm-preds.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tm.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tm_p.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/toplev.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-check.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-dump.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-flow-inline.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-flow.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-inline.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-iterator.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-pass.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-ssa-alias.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-ssa-operands.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree-ssa-sccvn.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/treestruct.def
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/varray.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/vec.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/vecprim.h
+file path=usr/gcc/4.5/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/version.h
 file path=usr/gcc/4.5/lib/libgfortran.a
 file path=usr/gcc/4.5/lib/libgomp.a
 file path=usr/gcc/4.5/lib/libgomp.spec
@@ -1361,7 +1090,6 @@ file path=usr/gcc/4.5/lib/libssp.a
 file path=usr/gcc/4.5/lib/libssp_nonshared.a
 file path=usr/gcc/4.5/lib/libstdc++.a
 file path=usr/gcc/4.5/lib/libsupc++.a
-
 file path=usr/gcc/4.5/share/info/cpp.info
 file path=usr/gcc/4.5/share/info/cppinternals.info
 file path=usr/gcc/4.5/share/info/gcc.info
@@ -1492,6 +1220,8 @@ depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xs.o type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-Xt.o type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-xpg4.o type=require
 depend fmri=__TBD pkg.debug.depend.file=usr/lib/values-xpg6.o type=require
-depend fmri=__TBD pkg.debug.depend.file=usr/lib/libstdc++.so type=require
 depend fmri=pkg:/system/header type=require
 depend type=optional fmri=developer/gcc-3@3.4.3-0.175
+depend type=require fmri=system/library/gcc-45-runtime@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+license gcc45.license license="GPLv3 with Runtime Exception"

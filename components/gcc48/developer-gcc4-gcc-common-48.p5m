@@ -28,7 +28,7 @@ set name=pkg.fmri \
 set name=pkg.summary value="GCC Common Development Files - $(GCC_VERSION)"
 set name=com.oracle.info.description \
     value="the GNU Compiler Collection - Common Development Files"
-set name=com.oracle.info.tpno value=14467
+set name=com.oracle.info.tpno value=15448
 set name=info.classification value=org.opensolaris.category.2008:Development/GNU
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -46,6 +46,7 @@ file path=$(GCC_BASEDIR)/bin/gcc-ar
 file path=$(GCC_BASEDIR)/bin/gcc-nm
 file path=$(GCC_BASEDIR)/bin/gcc-ranlib
 file path=$(GCC_BASEDIR)/bin/gcov
+file path=$(GCC_BASEDIR)/lib/$(MACH64)/libatomic.a
 file path=$(GCC_BASEDIR)/lib/$(MACH64)/libgfortran.spec
 file path=$(GCC_BASEDIR)/lib/$(MACH64)/libgomp.a
 file path=$(GCC_BASEDIR)/lib/$(MACH64)/libgomp.spec
@@ -104,6 +105,9 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/gmon.o
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/limits.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include-fixed/syslimits.h
 file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/adxintrin.h \
+    variant.arch=i386
+file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ammintrin.h \
     variant.arch=i386
 file \
@@ -140,6 +144,9 @@ file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/fmaintrin.h \
     variant.arch=i386
 file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/fxsrintrin.h \
+    variant.arch=i386
+file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/ia32intrin.h \
     variant.arch=i386
 file \
@@ -172,10 +179,19 @@ file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/popcntintrin.h \
     variant.arch=i386
 file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/prfchwintrin.h \
+    variant.arch=i386
+file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/quadmath.h \
     variant.arch=i386
 file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/quadmath_weak.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/rdseedintrin.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/rtmintrin.h \
     variant.arch=i386
 file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/smmintrin.h \
@@ -202,6 +218,9 @@ file \
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/unwind.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/varargs.h
 file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/visintrin.h \
+    variant.arch=sparc
+file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/wmmintrin.h \
     variant.arch=i386
 file \
@@ -213,16 +232,33 @@ file \
 file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xopintrin.h \
     variant.arch=i386
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixinc.sh
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xsaveintrin.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xsaveoptintrin.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/include/xtestintrin.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixinc.sh \
+    mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixinc_list
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixincl
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/fixincl \
+    mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/gsyslimits.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/include/README
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/include/limits.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/macro_list
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkheaders
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkheaders \
+    mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkheaders.conf
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkinstalldirs
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/install-tools/mkinstalldirs \
+    mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libcaf_single.a
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcc.a
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/libgcc_eh.a
@@ -233,8 +269,7 @@ link \
 link \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/liblto_plugin.so.0 \
     target=liblto_plugin.so.0.0.0
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/liblto_plugin.so.0.0.0
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/liblto_plugin.so.0.0.0
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto-wrapper \
     mode=0555
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/lto1 mode=0555
@@ -243,6 +278,7 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/gengtyp
 file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/gtype.state \
     mode=0555
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ada/gcc-interface/ada-tree.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/alias.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/all-tree.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/alloc-pool.h
@@ -259,62 +295,71 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-family/c-pragma.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-family/c-pretty-print.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/c-tree.h
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cfg-flags.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cfghooks.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cfgloop.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cgraph.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cif-code.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config.h
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/att.h \
-    variant.arch=i386
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/biarch64.h \
-    variant.arch=sparc
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/i386-opts.h \
-    variant.arch=i386
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/i386-protos.h \
-    variant.arch=i386
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/i386.h \
-    variant.arch=i386
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sol2-bi.h \
-    variant.arch=i386
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sol2.h
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sol2.h \
-    variant.arch=sparc
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sparc-opts.h \
-    variant.arch=sparc
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sparc-protos.h \
-    variant.arch=sparc
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sparc.h \
-    variant.arch=sparc
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/sysv4.h
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/tso.h \
-    variant.arch=sparc
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/unix.h \
-    variant.arch=i386
-file \
-    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/$(MACH)/x86-64.h \
-    variant.arch=i386
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/dbxelf.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/elfos.h
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/att.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/i386-opts.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/i386-protos.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/i386.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/sol2-bi.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/sol2.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/sysv4.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/unix.h \
+    variant.arch=i386
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/i386/x86-64.h \
+    variant.arch=i386
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/initfini-array.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2-10.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2-bi.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2-protos.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sol2.h
 file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sparc/biarch64.h \
+    variant.arch=sparc
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sparc/sol2.h \
+    variant.arch=sparc
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sparc/sparc-opts.h \
+    variant.arch=sparc
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sparc/sparc-protos.h \
+    variant.arch=sparc
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sparc/sparc.h \
+    variant.arch=sparc
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sparc/sysv4.h \
+    variant.arch=sparc
+file \
+    path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/sparc/tso.h \
+    variant.arch=sparc
+file \
     path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/usegas.h \
     variant.arch=i386
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/config/vxworks-dummy.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/configargs.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/coretypes.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/cp/cp-tree.def
@@ -329,6 +374,7 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/diagnostic.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/diagnostic.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/double-int.h
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/dumpfile.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/emit-rtl.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/except.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/filenames.h
@@ -363,6 +409,8 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-ref.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-reference.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/ipa-utils.h
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/is-a.h
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/java/java-tree.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/langhooks.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/libiberty.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/line-map.h
@@ -391,6 +439,7 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/rtl.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/rtl.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/safe-ctype.h
+file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/sanitizer.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/sbitmap.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/splay-tree.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/statistics.h
@@ -421,9 +470,8 @@ file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/tree.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/treestruct.def
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/vec.h
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/vecir.h
-file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/vecprim.h
 file path=$(GCC_BASEDIR)/lib/gcc/$(GNU_ARCH)/$(COMPONENT_VERSION)/plugin/include/version.h
+file path=$(GCC_BASEDIR)/lib/libatomic.a
 file path=$(GCC_BASEDIR)/lib/libgfortran.spec
 file path=$(GCC_BASEDIR)/lib/libgomp.a
 file path=$(GCC_BASEDIR)/lib/libgomp.spec
@@ -479,7 +527,6 @@ link path=usr/share/man/man7/gfdl.7 \
 link path=usr/share/man/man7/gpl.7 \
     target=../../../gcc/$(GCC_VERSION)/share/man/man7/gpl.7 mediator=gcc \
     mediator-version=$(GCC_VERSION)
-
 file $(GCC_BASEDIR)/share/info/dir path=var/info/usr_gcc_$(GCC_VERSION)_share_info_dir mode=0644 preserve=true
 
 license gcc$(GCC_V).license license="GPLv3 with Runtime Exception"

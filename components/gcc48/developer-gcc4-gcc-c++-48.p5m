@@ -18,16 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
 set name=pkg.fmri \
     value=pkg:/developer/gcc-4/gcc-c++-$(GCC_V)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="GCC C++ Compiler - $(GCC_VERSION)"
 set name=com.oracle.info.description \
     value="the GNU Compiler Collection - C++ Compiler"
-set name=com.oracle.info.tpno value=14467
+set name=com.oracle.info.tpno value=15448
 set name=info.classification value=org.opensolaris.category.2008:Development/C \
     value=org.opensolaris.category.2008:Development/C++ \
     value=org.opensolaris.category.2008:Development/GNU
@@ -43,6 +44,9 @@ hardlink path=$(GCC_BASEDIR)/bin/$(GNU_ARCH)-c++ target=c++
 hardlink path=$(GCC_BASEDIR)/bin/$(GNU_ARCH)-g++ target=g++
 file path=$(GCC_BASEDIR)/bin/c++
 file path=$(GCC_BASEDIR)/bin/g++
+#
+# GNU C++ Standard Library header files
+#
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/atomic_word.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/basic_file.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/c++allocator.h
@@ -60,10 +64,12 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/gthr-single.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/gthr.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/messages_members.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/opt_random.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/os_defines.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/stdc++.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/stdtr1c++.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/bits/time_members.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/$(MACH64)/ext/opt_random.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/atomic_word.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/basic_file.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/c++allocator.h
@@ -81,14 +87,12 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/gthr-
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/gthr-single.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/gthr.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/messages_members.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/opt_random.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/os_defines.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/stdc++.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/stdtr1c++.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/bits/time_members.h
-
-#
-# GNU C++ Standard Library header files
-#
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/$(GNU_ARCH)/ext/opt_random.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/algorithm
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/array
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/atomic
@@ -141,6 +145,7 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/locale_facets_non
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/locale_facets_nonio.tcc
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/localefwd.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/mask_array.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/memoryfwd.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/move.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/nested_exception.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/bits/ostream.tcc
@@ -232,6 +237,7 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ctime
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/cwchar
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/cwctype
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/cxxabi.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/debug/array
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/debug/bitset
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/debug/debug.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/debug/deque
@@ -270,6 +276,7 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/array_allocator.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/atomicity.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/bitmap_allocator.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/cast.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/cmath
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/codecvt_specializations.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/concurrence.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/debug_allocator.h
@@ -355,7 +362,6 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/cc_ha
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/cc_hash_table_map_/resize_no_store_hash_fn_imps.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/cc_hash_table_map_/resize_store_hash_fn_imps.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/cc_hash_table_map_/size_fn_imps.hpp
-file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/cc_hash_table_map_/standard_policies.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/cc_hash_table_map_/trace_fn_imps.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/cond_dealtor.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/container_base_dispatch.hpp
@@ -384,7 +390,6 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/gp_ha
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/gp_hash_table_map_/resize_fn_imps.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/gp_hash_table_map_/resize_no_store_hash_fn_imps.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/gp_hash_table_map_/resize_store_hash_fn_imps.hpp
-file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/gp_hash_table_map_/standard_policies.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/gp_hash_table_map_/trace_fn_imps.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/hash_fn/direct_mask_range_hashing_imp.hpp
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/detail/hash_fn/direct_mod_range_hashing_imp.hpp
@@ -533,6 +538,8 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pb_ds/trie_policy.
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pod_char_traits.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pointer.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/pool_allocator.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/random
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/random.tcc
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/rb_tree
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/rc_string_base.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/ext/rope
@@ -613,6 +620,7 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/parallel/tags.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/parallel/types.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/parallel/unique_copy.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/parallel/workstealing.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/array
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/base.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/bitset
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/deque
@@ -638,6 +646,7 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/multimap.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/multiset.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/set
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/set.h
+file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/unordered_base.h
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/unordered_map
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/unordered_set
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/profile/vector
@@ -731,17 +740,17 @@ file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/unordered_set
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/utility
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/valarray
 file path=$(GCC_BASEDIR)/include/c++/$(COMPONENT_VERSION)/vector
-file path=$(GCC_BASEDIR)/lib/$(MACH64)/libstdc++.a
-file path=$(GCC_BASEDIR)/lib/$(MACH64)/libstdc++.so.6.0.17-gdb.py
-file path=$(GCC_BASEDIR)/lib/$(MACH64)/libsupc++.a
 #
 # GNU C++ Standard Library Archive Libraries
 #
+file path=$(GCC_BASEDIR)/lib/$(MACH64)/libstdc++.a
+file path=$(GCC_BASEDIR)/lib/$(MACH64)/libstdc++.so.6.0.18-gdb.py
+file path=$(GCC_BASEDIR)/lib/$(MACH64)/libsupc++.a
 file path=$(GCC_BASEDIR)/lib/libstdc++.a
 #
 # GNU C++ Standard Library Python gdb support
 #
-file path=$(GCC_BASEDIR)/lib/libstdc++.so.6.0.17-gdb.py
+file path=$(GCC_BASEDIR)/lib/libstdc++.so.6.0.18-gdb.py
 file path=$(GCC_BASEDIR)/lib/libsupc++.a
 file path=$(GCC_BASEDIR)/share/gcc-$(COMPONENT_VERSION)/python/libstdcxx/__init__.py
 file path=$(GCC_BASEDIR)/share/gcc-$(COMPONENT_VERSION)/python/libstdcxx/v6/__init__.py
@@ -756,8 +765,8 @@ file path=$(GCC_BASEDIR)/share/man/man1/g++.1
 file path=usr/share/gcc-$(COMPONENT_VERSION)/python/libstdcxx/__init__.py
 file path=usr/share/gcc-$(COMPONENT_VERSION)/python/libstdcxx/v6/__init__.py
 file path=usr/share/gcc-$(COMPONENT_VERSION)/python/libstdcxx/v6/printers.py
-file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libstdc++.so.6.0.17-gdb.py
-file path=usr/share/gdb/auto-load/usr/lib/libstdc++.so.6.0.17-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/$(MACH64)/libstdc++.so.6.0.18-gdb.py
+file path=usr/share/gdb/auto-load/usr/lib/libstdc++.so.6.0.18-gdb.py
 link path=usr/share/man/man1/c++.1 \
     target=../../../gcc/$(GCC_VERSION)/share/man/man1/g++.1 mediator=gcc \
     mediator-version=$(GCC_VERSION)
@@ -769,4 +778,3 @@ depend type=require fmri=pkg:/developer/gcc-4/gcc-c-$(GCC_V)
 depend type=require fmri=pkg:/developer/gcc-4/gcc-common-$(GCC_V)
 depend type=require fmri=pkg:/system/library/gcc/gcc-c++-runtime
 depend type=require fmri=pkg:/system/library/gcc/gcc-c-runtime
-

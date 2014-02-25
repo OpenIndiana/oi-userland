@@ -18,23 +18,27 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
 #
+export PARFAIT_BUILD=no
+
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gcc
-COMPONENT_VERSION=	4.7.3
+COMPONENT_VERSION=	4.8.2
 COMPONENT_PROJECT_URL=	http://gcc.gnu.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:34a273937eb63ee710784b65bcf9fb3cfcd79d02848f80c75f8254abd14c79c8
+    sha256:2ea77114344a06c45dd5791275311e91d306545aa5ec9db31d24174f6965e880
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/gcc/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=        utility/gnu-compiler
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+COMPILER=gcc
 
 # The GNU compiler wants the GNU utilities.
 PATH=/usr/gnu/bin:/usr/bin:/usr/perl5/bin
@@ -50,13 +54,14 @@ PKG_MACROS +=	GCC_VERSION=$(GCC_VERSION)
 PKG_MACROS +=	GCC_V=$(word 1,$(VERSION_NUMBERS))$(word 2,$(VERSION_NUMBERS))
 PKG_MACROS +=	GCC_BASEDIR=usr/gcc/$(GCC_VERSION)
 
+CFLAGS.i386 = -mtune=opteron -march=opteron
+CFLAGS.sparc = -mtune=ultrasparc -mcpu=ultrasparc -mno-unaligned-doubles
+CFLAGS = -g -O2 
+CFLAGS += $(CFLAGS.$(MACH))
+CXXFLAGS = -g -O2
+CXXFLAGS += $(CFLAGS.$(MACH))
 
-# This product bootstraps itself.  The gcc flags are not the same
-# as Studio flags. -O2 means different things for the two compilers
-CFLAGS=-g -O2 
-CXXFLAGS=-g -O2 
-
-# direct binding cause various testsuite failures
+# direct binding causes various testsuite failures
 LD_B_DIRECT=
 
 # /usr/lib/ld/map.noexdata destroys Intel
@@ -67,13 +72,14 @@ ifeq ($(MACH),sparc)
 LD_MAP_NOEXBSS=
 endif
 
+
 # for some reason the fixincludes target fails with bash on Solaris.
 CONFIG_SHELL = /bin/sh
 MAKESHELL = /bin/sh
 COMPONENT_BUILD_ENV += SHELL=$(CONFIG_SHELL)
 COMPONENT_BUILD_ENV += MAKESHELL=$(MAKESHELL)
 
-CONFIGURE_PREFIX = /usr/gcc/4.7
+CONFIGURE_PREFIX = /usr/gcc/4.8
 
 CONFIGURE_OPTIONS +=	--infodir=$(CONFIGURE_PREFIX)/share/info
 CONFIGURE_OPTIONS +=	--libexecdir=$(CONFIGURE_PREFIX)/lib
