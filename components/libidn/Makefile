@@ -81,7 +81,7 @@ HTMLDOCDIR = $(IDNDOCDIR)/html
 HTMLDOCLIST = libidn-components.png libidn.html
 DOCLIST = libidn-components.pdf libidn.pdf
 
-ifeq ($(strip $(USERLAND_ARVHIVES)),)
+ifeq ($(strip $(USERLAND_ARCHIVES)),)
   TLD_FILE=$(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1)
 else 
   TLD_FILE=$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
