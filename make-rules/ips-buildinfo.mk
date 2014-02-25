@@ -53,9 +53,7 @@ COMPONENT_REVISION ?= 0
 # Branch Identifier.  Used in the version section of the package name to
 # identify the operating system branch that the package was produced for.
 #
-# XXX don't use new versioning scheme just yet
-#BRANCHID ?= $(RELEASE_MAJOR).$(RELEASE_MINOR).$(UPDATENUM).$(COMPONENT_REVISION)
-BRANCHID ?= 0.151.1.8.1
+BRANCHID ?= $(RELEASE_MAJOR).$(RELEASE_MINOR).$(UPDATENUM).$(COMPONENT_REVISION)
 
 #
 # Build Version.  Used in the version section of the package name to identify

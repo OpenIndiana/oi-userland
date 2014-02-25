@@ -23,7 +23,7 @@ GIT_BRANCH=master
 GIT_CHANGESET=HEAD
 
 NIGHTLY_OPTIONS=-nClmprt
-ONNV_BUILDNUM=151.1.8.1
+ONNV_BUILDNUM=$(BRANCHID)
 
 COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
 
@@ -87,7 +87,8 @@ $(BUILD_DIR)/$(MACH)/.built: $(BUILD_DIR)/$(MACH)/.closed-binaries
 	  echo export CW_NO_SHADOW=1; \
 	  echo export __GNUC=\"\"; \
 	  echo export ONLY_LINT_DEFS=-I\$$SPRO_ROOT/sunstudio12.1/prod/include/lint; \
-	  echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM)) > \
+	  echo export ONNV_BUILDNUM=$(ONNV_BUILDNUM); \
+	  echo export PKGVERS_BRANCH=$(ONNV_BUILDNUM)) > \
 	  illumos.sh && \
 	  time /opt/onbld/bin/nightly illumos.sh
 	$(TOUCH) $@
