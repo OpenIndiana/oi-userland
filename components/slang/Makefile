@@ -44,6 +44,8 @@ CONFIGURE_SCRIPT = $(@D)/configure
 
 CONFIGURE_OPTIONS  +=		--sysconfdir=$(ETCDIR)/slsh
 
+COMPONENT_BUILD_ARGS=
+
 # common targets
 build:		$(BUILD_32_and_64)
 

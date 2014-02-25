@@ -51,6 +51,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/configure.mk
 
+COMPONENT_BUILD_ARGS=
+
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
 # First change the separator '.' to ' ', so we can use "word" to pull the 

@@ -44,6 +44,8 @@ COMPONENT_BUGDB=	utility/samba
 
 include ../../../make-rules/prep.mk
 
+COMPONENT_BUILD_ARGS=
+
 SRC_OFFSET =	source
 BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 

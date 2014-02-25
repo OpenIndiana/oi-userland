@@ -41,6 +41,8 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_BUILD_ARGS=
+
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
 
 CONFIGURE_ENV      +=   PERLPROG=$(PERL)

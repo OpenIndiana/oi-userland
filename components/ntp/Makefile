@@ -47,6 +47,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+COMPONENT_BUILD_ARGS=
+
 CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 
 CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
