@@ -57,6 +57,12 @@ endif
 
 include ../../../make-rules/prep.mk
 
+ifeq ($(strip $(USERLAND_ARCHIVES)),)
+  DISTFILES_LOCATION=../
+else 
+  DISTFILES_LOCATION=$(USERLAND_ARCHIVES)
+endif
+
 SRC_OFFSET =	source3
 # Now we override paths to .built
 BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
@@ -111,11 +117,11 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 
 # Depend on $(PROTO_DIR)/.mozldap because this target creates $(PROTO_DIR).
 $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
-		$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
+		$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
 	$(MKDIR) $(PROTO_DIR)/opt/SUNWsamfs/lib
 	$(CC) -shared -fPIC -DPIC -Wl,-hlibsam.so Solaris/libsam.c \
 		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
+	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(DISTFILES_LOCATION)$(COMPONENT_ARCHIVE_2)
 
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
 CFLAGS.gcc	+=	-std=c99
@@ -184,9 +190,9 @@ CONFIGURE_OPTIONS +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_OPTIONS.32 +=	SAMFS_LIBS="-R/opt/SUNWsamfs/lib -lsam"
 
 # download recent docbook-xsl and unpack it
-$(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep: $(COMPONENT_ARCHIVE_1) \
+$(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep: $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) \
 		$(SOURCE_DIR)/.prep $(PROTO_DIR)/.mozldap
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1)
+	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(DISTFILES_LOCATION)$(COMPONENT_ARCHIVE_1)
 	cd $(DOCS-XML_DIR) ; $(GMAKE) clobber
 	$(TOUCH) $@
 
