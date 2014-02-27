@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # man pages
@@ -28,11 +28,22 @@
     default facet.doc.man all>
 
 # texinfo docs
-<transform dir file link hardlink path=usr/.*/info(/.+){0,1}$ -> \
+
+# tag texinfo directory links
+<transform link path=.*/info/dir$ -> default facet.doc.info all>
+# tag files directly under .../share/info/
+<transform file link hardlink path=.*/share/info/[^/]+$ -> \
     default facet.doc.info all>
-<transform file path=usr/.*/info/.+$ -> \
+# tag files in .../info/ that look like *.info[-#][.gz]
+<transform file link hardlink path=.*/info/[^/]+\.info(-\d+){0,1}(\.gz){0,1}$ -> \
+    default facet.doc.info all>
+# if there are tagged files, we want to restart the texinfo-update service so
+# that the directories get updated.
+<transform file facet.doc.info=all -> \
     add restart_fmri svc:/application/texinfo-update:default>
-<transform file path=usr/.*/info/dir$ -> exit 1 "Error: packaged texinfo directory file (%<action.path>)" >
+# there shouldn't be any texinfo directory files in /usr.
+<transform file path=usr/.*/info/dir$ -> \
+    exit 1 "Error: packaged texinfo directory file (%<action.path>)" >
 
 # html docs
 <transform dir file link hardlink path=usr/.*/doc/.*(html?|css).* -> \
