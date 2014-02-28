@@ -24,6 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_dtrace
 COMPONENT_VERSION=	0.3.1
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		src
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 COMPONENT_BUGDB=	utility/apache
@@ -31,14 +32,32 @@ COMPONENT_BUGDB=	utility/apache
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+VARIANT_APACHE22 =       $(BUILD_DIR)/apache-22
+VARIANT_APACHE24 =       $(BUILD_DIR)/apache-24
+
+VARIANTS = $(VARIANT_APACHE22) $(VARIANT_APACHE24)
+
+BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
+BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+
+INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+
+$(VARIANTS:%=%/$(MACH32)/.built): Makefile
+$(VARIANTS:%=%/$(MACH64)/.built): Makefile
+
+$(VARIANT_APACHE22)/$(MACH32)/.built: COMPONENT_BUILD_ARGS += APXS=/usr/apache2/2.2/bin/apxs
+$(VARIANT_APACHE22)/$(MACH32)/.built: COMPONENT_BUILD_ARGS += DTRACE="/usr/sbin/dtrace -32"
+$(VARIANT_APACHE22)/$(MACH64)/.built: COMPONENT_BUILD_ARGS += APXS=/usr/apache2/2.2/bin/$(MACH64)/apxs
+$(VARIANT_APACHE22)/$(MACH64)/.built: COMPONENT_BUILD_ARGS += DTRACE="/usr/sbin/dtrace -64"
+$(VARIANT_APACHE22)/$(MACH64)/.built: BITS=64
+$(VARIANT_APACHE24)/$(MACH32)/.built: COMPONENT_BUILD_ARGS += APXS=/usr/apache2/2.4/bin/apxs
+$(VARIANT_APACHE24)/$(MACH32)/.built: COMPONENT_BUILD_ARGS += DTRACE="/usr/sbin/dtrace -32"
+$(VARIANT_APACHE24)/$(MACH64)/.built: COMPONENT_BUILD_ARGS += APXS=/usr/apache2/2.4/bin/$(MACH64)/apxs
+$(VARIANT_APACHE24)/$(MACH64)/.built: COMPONENT_BUILD_ARGS += DTRACE="/usr/sbin/dtrace -64"
+$(VARIANT_APACHE24)/$(MACH64)/.built: BITS=64
 
 COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
-
-$(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/apxs
-$(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
-$(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -32"
-$(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -64"
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
@@ -53,6 +72,7 @@ clean::
 	$(RM) $(SOURCE_DIR)/.prep
 
 build: $(BUILD_32_and_64)
+	$(TOUCH) $(BUILD_DIR)
 
 test: $(NO_TESTS)
 
