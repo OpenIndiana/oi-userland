@@ -22,34 +22,37 @@
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mod_fcgid
-COMPONENT_VERSION=	2.3.9
-COMPONENT_PROJECT_URL=	http://httpd.apache.org/mod_fcgid/
-COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	\
-    sha256:1cbad345e3376b5d7c8f9a62b471edd7fa892695b90b79502f326b4692a679cf
-COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/mod_fcgid/$(COMPONENT_ARCHIVE)
+COMPONENT_NAME=		mod_dtrace
+COMPONENT_VERSION=	0.3.1
+COMPONENT_SRC=		src
+COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 COMPONENT_BUGDB=	utility/apache
 
-include ../../../make-rules/prep.mk
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk
 
-PATCH_LEVEL=0
+APACHE_USR_PREFIX=/usr/apache2/2.4
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+COMPONENT_BUILD_ENV +=	CFLAGS="$(CFLAGS)"
 
-$(BUILD_DIR_32)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/apxs
-$(BUILD_DIR_64)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
-
-COMPONENT_PRE_BUILD_ACTION= ( cd $(@D); APXS=$(APXS) ./configure.apxs )
+$(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/apxs
+$(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
+$(BUILD_DIR_32)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -32"
+$(BUILD_DIR_64)/.built:	COMPONENT_BUILD_ARGS +=	DTRACE="/usr/sbin/dtrace -64"
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
-build: $(BUILD_32_and_64)
+download:
 
-install: $(INSTALL_32_and_64)
+clobber: clean
+
+$(SOURCE_DIR)/.prep:
+	$(TOUCH) $@
+
+clean::
+	$(RM) $(SOURCE_DIR)/.prep
+
+build: $(BUILD_32_and_64)
 
 test: $(NO_TESTS)
 

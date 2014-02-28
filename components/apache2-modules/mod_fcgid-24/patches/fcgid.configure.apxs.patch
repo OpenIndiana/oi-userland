@@ -1,0 +1,14 @@
+--- configure.apxs.orig	Wed Jun  2 10:55:51 2010
++++ configure.apxs	Tue May 10 09:48:15 2011
+@@ -24,8 +24,9 @@
+ # scripts expect them to be the parent of the build directory
+ # they fail to use the $installbuilddir path.
+ exp_installbuilddir=`$APXS -q exp_installbuilddir`
+-top_installbuilddir=`cd $exp_installbuilddir/..; pwd`
+-top_installbuilddir=`echo $exp_installbuilddir | sed -e "s#/[^/]*\\\$##;"`
++# Better to set top_builddir and top_srcdir to Apache prefix in order 64
++# bits module is built (to avoid problem with $(MACH64) directory in path).
++top_installbuilddir=`$APXS -q prefix`
+ 
+ builddir=`pwd`
+ srcdir=$builddir

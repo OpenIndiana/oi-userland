@@ -18,41 +18,40 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		mod_security2
-COMPONENT_VERSION=	2.7.7
-COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
-COMPONENT_SRC_NAME=	modsecurity-apache
-COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
+COMPONENT_NAME=		mod_fcgid
+COMPONENT_VERSION=	2.3.9
+COMPONENT_PROJECT_URL=	http://httpd.apache.org/mod_fcgid/
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:11e05cfa6b363c2844c6412a40ff16f0021e302152b38870fd1f2f44b204379b
-COMPONENT_ARCHIVE_URL= \
-    $(COMPONENT_PROJECT_URL)tarball/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+    sha256:1cbad345e3376b5d7c8f9a62b471edd7fa892695b90b79502f326b4692a679cf
+COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/mod_fcgid/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
 include ../../../make-rules/prep.mk
-include ../../../make-rules/configure.mk
+include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+PATCH_LEVEL=0
 
-APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
-APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
+APACHE_USR_PREFIX=/usr/apache2/2.4
 
-CONFIGURE_OPTIONS += LTFLAGS="--silent --tag=CC"
-CONFIGURE_OPTIONS += --with-apxs=$(APXS.$(BITS))
-CONFIGURE_OPTIONS += --with-apr=`$(APXS.$(BITS)) -q APR_CONFIG`
-CONFIGURE_OPTIONS += --with-apu=`$(APXS.$(BITS)) -q APU_CONFIG`
+$(BUILD_DIR_32)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/apxs
+$(BUILD_DIR_64)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
 
-COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
+COMPONENT_PRE_BUILD_ACTION= ( cd $(@D); APXS=$(APXS) ./configure.apxs )
+
+PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
 build: $(BUILD_32_and_64)
 
-test: $(TEST_32_and_64)
+install: $(INSTALL_32_and_64)
+
+test: $(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

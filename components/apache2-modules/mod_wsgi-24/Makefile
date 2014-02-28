@@ -40,7 +40,7 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+APACHE_USR_PREFIX=/usr/apache2/2.4
 
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	($(CLONEY) $(SOURCE_DIR) $(@D))
@@ -68,11 +68,11 @@ $(BUILD_32): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/apxs --wi
 $(BUILD_64): CONFIGURE_OPTIONS += --with-apxs=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs --with-python=$(PYTHON.64)
 
 $(INSTALL_32): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec ; \
+	(cd $(PROTO_DIR)/usr/apache2/2.4/libexec ; \
 		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
 
 $(INSTALL_64): COMPONENT_POST_INSTALL_ACTION = \
-	(cd $(PROTO_DIR)/usr/apache2/2.2/libexec/$(MACH64) ; \
+	(cd $(PROTO_DIR)/usr/apache2/2.4/libexec/$(MACH64) ; \
 		$(MV) mod_wsgi.so mod_wsgi-$(PYTHON_VERSION).so)
 
 # common targets

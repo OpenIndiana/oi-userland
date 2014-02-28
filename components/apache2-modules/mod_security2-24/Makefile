@@ -38,7 +38,7 @@ include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+APACHE_USR_PREFIX=/usr/apache2/2.4
 
 APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
 APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
