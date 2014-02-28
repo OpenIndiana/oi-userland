@@ -1,0 +1,26 @@
+Allows to run test suite when it's configured and build outside of
+source directory.
+
+--- modsecurity-apache_2.7.2/tests/run-unit-tests.pl.in	Tue Jan 22 18:47:08 2013
++++ modsecurity-apache_2.7.2/tests/run-unit-tests.pl.in	Wed Mar 13 08:23:44 2013
+@@ -16,7 +16,7 @@
+ my @TYPES = qw(tfn op action);
+ my $TEST = "./msc_test";
+ my $SCRIPT = basename($0);
+-my $SCRIPTDIR = dirname($0);
++my $SCRIPTDIR = "@srcdir@";
+ my $PASSED = 0;
+ my $TOTAL = 0;
+ my $DEBUG = $ENV{MSC_TEST_DEBUG} || 0;
+@@ -85,7 +85,10 @@
+             $param = escape($t{output});
+         }
+         elsif ($t{type} eq "op") {
+-            $param = escape($t{param});
++            $param = escape($t{param}); 
++            if ($t{name} eq "pmFromFile") {
++                $param = "$SCRIPTDIR/$param";
++            }
+         }
+         elsif ($t{type} eq "action") {
+             $param = escape($t{param});

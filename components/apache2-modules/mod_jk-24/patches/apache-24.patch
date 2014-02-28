@@ -1,0 +1,20 @@
+--- tomcat-connectors-1.2.31-src/native/apache-2.0/mod_jk.c.~1~	2014-02-27 12:01:17.324628718 +0400
++++ tomcat-connectors-1.2.31-src/native/apache-2.0/mod_jk.c	2014-02-27 12:05:33.344819994 +0400
+@@ -732,7 +732,7 @@
+     if (conf->options & JK_OPT_FWDLOCAL)
+         s->remote_addr = r->connection->local_ip;
+     else
+-        s->remote_addr = r->connection->remote_ip;
++        s->remote_addr = r->connection->client_ip;
+     s->remote_addr = get_env_string(r, s->remote_addr,
+                                     conf->remote_addr_indicator, 1);
+     if (conf->options & JK_OPT_FLUSHPACKETS)
+@@ -996,7 +996,7 @@
+                STRNULL_FOR_NULL(s->auth_type),
+                STRNULL_FOR_NULL(s->remote_user),
+                STRNULL_FOR_NULL(r->connection->local_ip),
+-               STRNULL_FOR_NULL(r->connection->remote_ip),
++               STRNULL_FOR_NULL(r->connection->client_ip),
+                STRNULL_FOR_NULL(s->req_uri));
+     }
+ 
