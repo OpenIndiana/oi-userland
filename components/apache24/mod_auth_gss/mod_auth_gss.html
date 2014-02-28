@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta name="generator" content="HTML Tidy, see www.w3.org" />
+
+    <title>Apache module mod_auth_gss</title>
+  </head>
+  <!-- Background white, links blue (unvisited), navy (visited), red (active) -->
+
+  <body bgcolor="#FFFFFF" text="#000000" link="#0000FF"
+  vlink="#000080" alink="#FF0000">
+        <div align="CENTER">
+      <img src="../images/sub.gif" alt="[APACHE DOCUMENTATION]" /> 
+
+      <h3>Apache HTTP Server Version 1.3</h3>
+    </div>
+
+    <h1 align="CENTER">Module mod_auth_gss</h1>
+    <p>This module provides for user authentication using GSSAPI Authentication.</p>
+
+    <p><a href="module-dict.html#Status"
+    rel="Help"><strong>Status:</strong></a> Extension<br />
+     <a href="module-dict.html#SourceFile"
+    rel="Help"><strong>Source File:</strong></a> mod_auth_gss.c<br />
+     <a href="module-dict.html#ModuleIdentifier"
+    rel="Help"><strong>Module Identifier:</strong></a>
+    auth_gss_module<br />
+
+    <h2>Summary</h2>
+
+    <p>This module implements GSSAPI authentication using the
+    "WWW-Authenticate: Negotiate" protocol.   This typically
+    requires the client and the server systems to have support for
+    GSSAPI and a properly configured security mechanism (usually 
+    Kerberos V5) to be used by GSSAPI.
+
+    <h2>Directives</h2>
+
+    <ul>
+      <li><a href="#authgssservicename">AuthGSSServiceName</a></li>
+      <li><a href="#authgsskeytabfile">AuthGSSKeytabFile</a></li>
+      <li><a href="#aughgssdebug">AuthGSSDebug</a></li>
+    </ul>
+
+    <h2>Using GSSAPI Authentication</h2>
+
+    <p>Before using GSSAPI authentication with Apache, the
+    system must already have been configured to use Kerberos V5
+    authentication.   All of the major Kerberos V5
+    implementation (MIT KRB5, Heimdal, Sun, IBM, HP, Microsoft)
+    currently support Kerberos V5 GSSAPI mechanisms.  
+    Configuring Kerberos is beyond the scope of this document.
+    Adding GSSAPI authentication support to the web extends
+    Single sign on capabilities to the intranet and reduces
+    the risks involved in having users constantly entering
+    username/password combinations when accessing websites.
+    <p>
+    <h3>Configure a Service Principal</h3>
+    <p>The default service principal that mod_auth_gss will
+    try to use is "HTTP/f.q.d.n".  The key for this principal
+    must be stored in a keytab file that is readable by the
+    Apache server, but it should be protected from access
+    by anyone else, and should <b>definitely not</b> be
+    stored in an area that can be browsed by clients.
+    <p>
+    Example:  the Apache server is on host "www.foo.com".
+    Create a principal called "HTTP/www.foo.com".
+    Store the key for this principal in a protected keytab
+    file.   Using MIT Kerberos V5:
+    <br>
+    <pre>
+    $ kadmin
+    $ kadmin> ktadd -k /var/apache/http.keytab  HTTP/www.foo.com
+    $ kadmin> quit
+    </pre>
+
+    <p>Once the keys are created and stored, using GSSAPI
+    authentication is very simple.  Set up the authentication
+    type for the directories being protected to be "GSSAPI".
+    If the keytab or service name chosen is not the defaults
+    ("HTTP" and "/var/apache/http.keytab", respectively), then
+    you may use the above mentioned directives to override
+    the default values. Example:
+<br>
+<pre>
+&lt;Directory /var/apache/htdocs/krb5&gt;
+	AuthType    GSSAPI
+	ServiceName HTTP
+	KeytabFile  /var/apache/http.keytab
+	GssDebug    0
+	Require valid-user
+	AllowOverride All
+&lt;/Directory&gt;
+</pre>
+
+    <p>GSSAPI authentication provides a more secure authentication
+    system, but only works with supporting browsers. As of this writing
+    (April 2004), the only major browsers which support digest
+    authentication are <a href="http://www.mozilla.org">Mozilla 1.7
+    (and later)</a>, and <a href="http://www.microsoft.com/windows/ie/">MS Internet 
+    Explorer 5.0</a>. 
+   
+    <p>It is recommended that this authentication method be combined
+    with TLS security (mod_ssl, for example) to further secure the
+    authentication data being exchanged. 
+
+    <h2><a id="authgssservicename"
+    name="authgssservicename">AuthGSSServiceName</a> directive</h2>
+    <a href="directive-dict.html#Syntax"
+    rel="Help"><strong>Syntax:</strong></a> AuthGSSServiceName
+    <em>name</em><br />
+     <a href="directive-dict.html#Context"
+    rel="Help"><strong>Context:</strong></a> directory,
+    .htaccess<br />
+     <a href="directive-dict.html#Override"
+    rel="Help"><strong>Override:</strong></a> FileInfo, Indexes, Limit, Options<br />
+     <a href="directive-dict.html#Status"
+    rel="Help"><strong>Status:</strong></a> Extension<br />
+     <a href="directive-dict.html#Module"
+    rel="Help"><strong>Module:</strong></a> mod_auth_gss
+
+    <p>The AuthGSSServiceName directive sets the name of Kerberos service
+    principal that the server uses to authenticate the client requests.
+    The name given is appended with the fully qualified host name to
+    make the complete service principal name. Ex:  <b>HTTP/www.fooc.om</b>
+    </p>
+
+    <h2><a id="authgsskeytabfile"
+    name="authgsskeytabfile">AuthGSSKeytabFile</a> directive</h2>
+    <a href="directive-dict.html#Syntax"
+    rel="Help"><strong>Syntax:</strong></a> AuthGSSKeytabFile
+    <em>filename</em><br />
+     <a href="directive-dict.html#Context"
+    rel="Help"><strong>Context:</strong></a> directory,
+    .htaccess<br />
+     <a href="directive-dict.html#Override"
+    rel="Help"><strong>Override:</strong></a> FileInfo, Indexes, Limit, Options<br />
+     <a href="directive-dict.html#Status"
+    rel="Help"><strong>Status:</strong></a> Extension<br />
+     <a href="directive-dict.html#Module"
+    rel="Help"><strong>Module:</strong></a> mod_auth_gss
+
+    <p>The AuthGSSKeytabFile directive sets the filename of the
+    file where the Apache server's Kerberos credentials are stored.
+
+    <h2><a id="authgssdebug"
+    name="authgsskeytabfile">AuthGSSDebug</a> directive</h2>
+    <a href="directive-dict.html#Syntax"
+    rel="Help"><strong>Syntax:</strong></a> AuthGSSDebug
+    <em>0 | 1</em><br />
+     <a href="directive-dict.html#Context"
+    rel="Help"><strong>Context:</strong></a> directory,
+    .htaccess<br />
+     <a href="directive-dict.html#Override"
+    rel="Help"><strong>Override:</strong></a> FileInfo, Indexes, Limit, Options<br />
+     <a href="directive-dict.html#Status"
+    rel="Help"><strong>Status:</strong></a> Extension<br />
+     <a href="directive-dict.html#Module"
+    rel="Help"><strong>Module:</strong></a> mod_auth_gss
+
+    <p>The AuthGSSDebug directive toggles the debug logging
+    facility used by the GSSAPI authentication module.  0 disables
+    debug logging, 1 enables it.
+
+        <hr />
+    <h3 align="CENTER">Apache HTTP Server Version 1.3</h3>
+    <a href="./"><img src="../images/index.gif" alt="Index" /></a>
+    <a href="../"><img src="../images/home.gif" alt="Home" /></a>
+
+  </body>
+</html>
+
