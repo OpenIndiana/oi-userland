@@ -1,0 +1,271 @@
+This is a combined patch taken from the community merging 2 patches
+for issues related to incorrect reporting of interface details when 
+interfaces are changed dynamically. 
+
+The following are the community bug/patch details.
+snmpd: BUG: 1400101: remove deleted interfaces from ifTable
+http://sourceforge.net/p/net-snmp/patches/640/
+
+snmpd: PATCH: 1849903: from jsafranek: do not spam log with asserts when XEN is used
+http://sourceforge.net/p/net-snmp/patches/872/
+
+--- net-snmp-5.4.1.old/agent/mibgroup/if-mib/data_access/interface.c	2007-01-22 08:18:29.000000000 -0800
++++ net-snmp-5.4.1/agent/mibgroup/if-mib/data_access/interface.c	2013-07-11 13:27:55.792579500 -0700
+@@ -465,8 +465,13 @@
+         DEBUGMSGTL(("access:interface:ifIndex", "saved ifIndex %d for %s\n",
+                     index, name));
+     }
+-    else
+-        netsnmp_assert(index == tmp);
++    else {
++       if(index != tmp) {
++         se_remove_value_from_slist("interfaces", name);
++         se_add_pair_to_slist("interfaces", strdup(name), index);
++         DEBUGMSGTL(("access:interface:ifIndex", "ifname %s, old index %d, already existing, replaced with %d\n", name, tmp, index));
++       }      
++    }
+ }
+ 
+ /**
+--- net-snmp-5.4.1.old/agent/mibgroup/if-mib/ifTable/ifTable_data_access.c	2007-02-05 07:10:28.000000000 -0800
++++ net-snmp-5.4.1/agent/mibgroup/if-mib/ifTable/ifTable_data_access.c	2013-07-11 14:39:08.458138600 -0700
+@@ -23,6 +23,12 @@
+ #   include "mibgroup/ip-mib/ipv4InterfaceTable/ipv4InterfaceTable.h"
+ #endif
+ 
++typedef struct cd_container_s {
++    netsnmp_container *current;
++    netsnmp_container *deleted;
++} cd_container;
++
++
+ /*
+  * flag so we know not to set row/table last change times
+  * during startup.
+@@ -158,9 +164,11 @@
+  */
+ static void
+ _check_interface_entry_for_updates(ifTable_rowreq_ctx * rowreq_ctx,
+-                                   netsnmp_container *ifcontainer)
++                                   cd_container *cdc)
+ {
+     char            oper_changed = 0;
++    u_long lastchange = rowreq_ctx->data.ifLastChange;
++    netsnmp_container *ifcontainer = cdc->current;
+ 
+     /*
+      * check for matching entry. We can do this directly, since
+@@ -192,17 +200,32 @@
+          * deleted (and thus need to update ifTableLastChanged)?
+          */
+         if (!rowreq_ctx->known_missing) {
+-            DEBUGMSGTL(("ifTable:access", "updating missing entry\n"));
+             rowreq_ctx->known_missing = 1;
++            DEBUGMSGTL(("ifTable:access", "updating missing entry %s\n",rowreq_ctx->data.ifName));
+             rowreq_ctx->data.ifAdminStatus = IFADMINSTATUS_DOWN;
+-            if ((!(rowreq_ctx->data.ifentry->ns_flags & NETSNMP_INTERFACE_FLAGS_HAS_LASTCHANGE))
+-                && (rowreq_ctx->data.ifOperStatus != IFOPERSTATUS_DOWN))
+-                oper_changed = 1;
+             rowreq_ctx->data.ifOperStatus = IFOPERSTATUS_DOWN;
++            rowreq_ctx->data.ifOperStatus = IFOPERSTATUS_DOWN;
++            oper_changed = 1;
++        } else {
++            time_t now = netsnmp_get_agent_uptime();
++            u_long diff = (now - rowreq_ctx->data.ifLastChange) / 100;
++            DEBUGMSGTL(("verbose:ifTable:access", "missing entry for %ld seconds\n", diff));
++            if (diff > IFTABLE_REMOVE_MISSING_AFTER) {
++                DEBUGMSGTL(("ifTable:access", "marking missing entry %s for "
++                            "removal after %d seconds\n", rowreq_ctx->data.ifName,
++                            IFTABLE_REMOVE_MISSING_AFTER));
++                if (NULL == cdc->deleted)
++                   cdc->deleted = netsnmp_container_find("ifTable_deleted:linked_list");
++                if (NULL == cdc->deleted)
++                   snmp_log(LOG_ERR, "couldn't create container for deleted interface\n");
++                else {
++                   CONTAINER_INSERT(cdc->deleted, rowreq_ctx);
++                }
++            }
+         }
+     } else {
+-        DEBUGMSGTL(("ifTable:access", "updating existing entry\n"));
+-
++        DEBUGMSGTL(("ifTable:access", "updating existing entry %s\n",
++                    rowreq_ctx->data.ifName));
+ #ifdef USING_IF_MIB_IFXTABLE_IFXTABLE_MODULE
+         {
+             int rc = strcmp(rowreq_ctx->data.ifName,
+@@ -245,6 +268,8 @@
+      */
+     if (oper_changed)
+         rowreq_ctx->data.ifLastChange = netsnmp_get_agent_uptime();
++    else
++        rowreq_ctx->data.ifLastChange = lastchange;
+ 
+ }
+ 
+@@ -255,8 +280,21 @@
+ _add_new_interface(netsnmp_interface_entry *ifentry,
+                    netsnmp_container *container)
+ {
+-    ifTable_rowreq_ctx *rowreq_ctx;
+-
++    ifTable_rowreq_ctx *rowreq_ctx, *container_entry;
++    netsnmp_iterator *ctxit;
++    ctxit = CONTAINER_ITERATOR(container);
++    container_entry = ITERATOR_FIRST(ctxit);
++
++    for(; container_entry; container_entry = ITERATOR_NEXT(ctxit)) {
++	if(!strcmp(ifentry->name, container_entry->data.ifName) && \
++	    ifentry->index != container_entry->data.ifentry->index) {
++		DEBUGMSGTL(("ifTable:access", "removing old entry %s (index %d != %d)\n",
++		    container_entry->data.ifName, container_entry->data.ifentry->index, ifentry->index));
++		    se_remove_value_from_slist("interfaces", container_entry->data.ifName);
++		CONTAINER_REMOVE(container, container_entry);
++		ifTable_release_rowreq_ctx(container_entry);
++		}
++    }
+     DEBUGMSGTL(("ifTable:access", "creating new entry\n"));
+ 
+     /*
+@@ -300,6 +338,21 @@
+         }
+     }
+ }
++ 
++/**
++ * delete removed entry
++ */
++static void
++_delete_missing_interface(ifTable_rowreq_ctx *rowreq_ctx,
++                          netsnmp_container *container)
++{
++    DEBUGMSGTL(("ifTable:access", "removing missing entry %s\n",
++                rowreq_ctx->data.ifName));
++
++    CONTAINER_REMOVE(container, rowreq_ctx);
++
++    ifTable_release_rowreq_ctx(rowreq_ctx);
++}
+ 
+ /**
+  * container shutdown
+@@ -365,8 +418,7 @@
+ int
+ ifTable_container_load(netsnmp_container *container)
+ {
+-    netsnmp_container *ifcontainer;
+-
++    cd_container cdc;	
+     DEBUGMSGTL(("verbose:ifTable:ifTable_container_load", "called\n"));
+ 
+     /*
+@@ -378,31 +430,42 @@
+     /*
+      * ifTable gets its data from the netsnmp_interface API.
+      */
+-    ifcontainer =
++    cdc.current =
+         netsnmp_access_interface_container_load(NULL,
+                                                 NETSNMP_ACCESS_INTERFACE_INIT_NOFLAGS);
+-    if (NULL == ifcontainer)
++    if (NULL == cdc.current)
+         return MFD_RESOURCE_UNAVAILABLE;        /* msg already logged */
+ 
++    cdc.deleted = NULL; /* created as needed */
++
+     /*
+      * we just got a fresh copy of interface data. compare it to
+      * what we've already got, and make any adjustements...
+      */
+     CONTAINER_FOR_EACH(container, (netsnmp_container_obj_func *)
+-                       _check_interface_entry_for_updates, ifcontainer);
++                       _check_interface_entry_for_updates, &cdc);
+ 
+     /*
+      * now add any new interfaces
+      */
+-    CONTAINER_FOR_EACH(ifcontainer,
++    CONTAINER_FOR_EACH(cdc.current,
+                        (netsnmp_container_obj_func *) _add_new_interface,
+                        container);
+ 
++
++     /*
++     * now remove any missing interfaces
++     */
++    if (NULL != cdc.deleted)
++       CONTAINER_FOR_EACH(cdc.deleted,
++                          (netsnmp_container_obj_func *) _delete_missing_interface,
++                          container);
++
+     /*
+      * free the container. we've either claimed each ifentry, or released it,
+      * so the dal function doesn't need to clear the container.
+      */
+-    netsnmp_access_interface_container_free(ifcontainer,
++    netsnmp_access_interface_container_free(cdc.current,
+                                             NETSNMP_ACCESS_INTERFACE_FREE_DONT_CLEAR);
+ 
+     DEBUGMSGT(("verbose:ifTable:ifTable_cache_load",
+--- net-snmp-5.4.1.old/agent/mibgroup/if-mib/ifTable/ifTable_data_access.h	2006-04-09 21:59:10.000000000 -0700
++++ net-snmp-5.4.1/agent/mibgroup/if-mib/ifTable/ifTable_data_access.h	2013-07-11 13:58:33.862743400 -0700
+@@ -48,6 +48,8 @@
+      */
+ #define IFTABLE_CACHE_TIMEOUT   15
+ 
++#define IFTABLE_REMOVE_MISSING_AFTER     (5 * 60) /* seconds */
++
+     void            ifTable_container_init(netsnmp_container
+                                            **container_ptr_ptr,
+                                            netsnmp_cache * cache);
+--- net-snmp-5.4.1.old/snmplib/snmp_enum.c	2005-02-09 11:46:35.000000000 -0800
++++ net-snmp-5.4.1/snmplib/snmp_enum.c	2013-07-10 04:08:50.542006500 -0700
+@@ -213,6 +213,28 @@
+     return SE_DNE;              /* XXX: um, no good solution here */
+ }
+ 
++int se_remove_value_from_list(struct snmp_enum_list **list, const char *label)
++{
++   struct snmp_enum_list *lastlist;
++   if(!list)
++     return SE_DNE;
++
++   lastlist = NULL;
++   while(*list) {
++      if(strcmp((*list)->label, label) == 0) {
++	 free((*list)->label);
++	 if(lastlist)
++	   lastlist->next = (*list)->next;
++	 free(*list);
++	 *list = NULL;
++	 return 0;
++      }
++      lastlist = *list;
++      (*list) = (*list)->next;
++   }
++   
++}
++
+ int
+ se_find_free_value_in_list(struct snmp_enum_list *list)
+ {
+@@ -337,6 +359,19 @@
+     return (se_find_free_value_in_list(se_find_slist(listname)));
+ }
+ 
++void se_remove_value_from_slist(const char *listname, const char *label)
++{
++   struct snmp_enum_list_str *sptr, *lastp = NULL;
++   struct snmp_enum_list *list;
++   if (!listname)
++     return;
++
++   for (sptr = sliststorage;
++	sptr != NULL; lastp = sptr, sptr = sptr->next)
++     if (sptr->name && strcmp(sptr->name, listname) == 0)
++       se_remove_value_from_list(&sptr->list, label);
++}
++
+ int
+ se_add_pair_to_slist(const char *listname, char *label, int value)
+ {
