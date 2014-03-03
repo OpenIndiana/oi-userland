@@ -43,6 +43,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/netifaces-$(COMPONENT_VERSION)-
 file path=usr/lib/python$(PYVER)/vendor-packages/netifaces.so
 license netifaces.license license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/netifaces-$(PYV)@0.8,5.12-5.12.0.0.0.42.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
