@@ -51,18 +51,32 @@ link path=usr/bin/ssh-keygen target=../lib/openssh/bin/ssh-keygen mediator=ssh \
     mediator-implementation=openssh
 link path=usr/bin/ssh-keyscan target=../lib/openssh/bin/ssh-keyscan \
     mediator=ssh mediator-implementation=openssh
-file usr/bin/scp path=usr/lib/openssh/bin/scp mode=0555
-file usr/bin/sftp path=usr/lib/openssh/bin/sftp mode=0555
-file usr/bin/ssh path=usr/lib/openssh/bin/ssh mode=0555
-file usr/bin/ssh-add path=usr/lib/openssh/bin/ssh-add mode=0555
-file usr/bin/ssh-agent path=usr/lib/openssh/bin/ssh-agent mode=2555
-file usr/bin/ssh-keygen path=usr/lib/openssh/bin/ssh-keygen mode=0555
-file usr/bin/ssh-keyscan path=usr/lib/openssh/bin/ssh-keyscan mode=0555
-file usr/lib/ssh/sftp-server path=usr/lib/openssh/lib/sftp-server mode=0555
-file usr/lib/ssh/ssh-keysign path=usr/lib/openssh/lib/ssh-keysign mode=4555
-file usr/lib/ssh/ssh-pkcs11-helper path=usr/lib/openssh/lib/ssh-pkcs11-helper \
-    mode=0555
-file usr/lib/ssh/sshd path=usr/lib/openssh/lib/sshd mode=0555
+# RUNPATH pkglint checking (userland.action001.3) ERRORs on these ELF files
+# are changed to INFO messages; remove this bypass when
+# usr/local/lib is removed from their runpaths
+file usr/bin/scp path=usr/lib/openssh/bin/scp mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/bin/sftp path=usr/lib/openssh/bin/sftp mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/bin/ssh path=usr/lib/openssh/bin/ssh mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/bin/ssh-add path=usr/lib/openssh/bin/ssh-add mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/bin/ssh-agent path=usr/lib/openssh/bin/ssh-agent mode=2555 \
+    pkg.linted.userland.action001.3=true
+file usr/bin/ssh-keygen path=usr/lib/openssh/bin/ssh-keygen mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/bin/ssh-keyscan path=usr/lib/openssh/bin/ssh-keyscan mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/lib/ssh/sftp-server path=usr/lib/openssh/lib/sftp-server mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/lib/ssh/ssh-keysign path=usr/lib/openssh/lib/ssh-keysign mode=4555 \
+    pkg.linted.userland.action001.3=true
+file usr/lib/ssh/ssh-pkcs11-helper path=usr/lib/openssh/lib/ssh-pkcs11-helper \ 
+    mode=0555 \
+    pkg.linted.userland.action001.3=true
+file usr/lib/ssh/sshd path=usr/lib/openssh/lib/sshd mode=0555 \
+    pkg.linted.userland.action001.3=true
 link path=usr/lib/ssh/sftp-server target=../openssh/lib/sftp-server \
     mediator=ssh mediator-implementation=openssh
 link path=usr/lib/ssh/ssh-keysign target=../openssh/lib/ssh-keysign \

@@ -21,7 +21,7 @@
 #
 
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Some userland consolidation specific lint checks
@@ -238,7 +238,7 @@ class UserlandActionChecker(base.ActionChecker):
 		# aslr_tag_string will get stdout; err will get stderr
 		aslr_tag_string, err = aslr_tag_process.communicate()
 
-		# No ASLR tag was found; everthing must be tagged
+		# No ASLR tag was found; everything must be tagged
 		if aslr_tag_process.returncode != 0:
 			engine.error(
 				_("'%s' is not tagged for aslr") % (path),
@@ -273,6 +273,45 @@ class UserlandActionChecker(base.ActionChecker):
 
 			if match == False:
 				list.append(dir)
+			# Make sure RUNPATH matches against a packaged path.
+			# Don't check runpaths starting with $ORIGIN, which
+			# is specially handled by the linker.
+
+			elif not dir.startswith('$ORIGIN/'):
+
+			# Strip out leading and trailing '/' in the 
+			# runpath, since the reference paths don't start 
+			# with '/' and trailing '/' could cause mismatches.
+			# Check first if there is an exact match, then check
+			# if any reference path starts with this runpath
+			# plus a trailing slash, since it may still be a link
+			# to a directory that has no action because it uses
+			# the default attributes.
+
+				relative_dir = dir.strip('/')
+				if not relative_dir in self.ref_paths and \
+				    not any(key.startswith(relative_dir + '/')
+				        for key in self.ref_paths):
+
+			# If still no match, if the runpath contains
+			# an embedded symlink, emit a warning; it may or may
+			# not resolve to a legitimate path.
+			# E.g., for usr/openwin/lib, usr/openwin->X11 and
+			# usr/X11/lib are packaged, but usr/openwin/lib is not.
+			# Otherwise, runpath is bad; add it to list.
+					embedded_link = False
+					pdir = os.path.dirname(relative_dir)
+					while pdir != '':
+						if (pdir in self.ref_paths and 
+						    self.ref_paths[pdir][0][1].name == "link"):
+							embedded_link = True
+							engine.warning(
+								_("runpath '%s' in '%s' not found in reference paths but contains symlink at '%s'") % (dir, path, pdir),
+								msgid="%s%s.3" % (self.name, "001"))
+							break
+						pdir = os.path.dirname(pdir)
+					if not embedded_link:
+						list.append(dir)
 
 			if bits == 32:
 				for expr in self.runpath_64_re:

@@ -51,7 +51,13 @@ studio_OPT = -xO5
 CFLAGS += -D__ATTRIBUTE_DISABLED
 
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/lib/$(MACH64)
-CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/${MACH64}
+CONFIGURE_OPTIONS.64 +=	--with-libevent=/usr/lib/$(MACH64)
+# The below works around a bug in configure/configure.ac that sets
+# an incorrect runpath.
+# Setting ac_cv_libevent bypasses libevent checks in configure,
+# including setting the runpath (-R), which is currently ok
+# because libevent is in a default library directory.
+CONFIGURE_OPTIONS.64 +=	"ac_cv_libevent_dir=/usr/lib/$(MACH64)"
 CONFIGURE_OPTIONS +=	--enable-dtrace --disable-docs --disable-coverage
 CONFIGURE_OPTIONS +=	--localstatedir=/var
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
