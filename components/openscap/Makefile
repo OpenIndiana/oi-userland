@@ -69,10 +69,14 @@ CONFIGURE_OPTIONS +=	am_cv_python_pyexecdir=$(PYTHON_VENDOR_PACKAGES)
 CONFIGURE_OPTIONS +=	LIBS="-lldap_r -lscf -ldlpi -lsec"
 CONFIGURE_OPTIONS +=	--with-report-branding="/usr/share/lib/xml/style/os-logo.xsl"
 
+DOCS_DIR = $(PROTO_DIR)/usr/share/docs/openscap/html/
+
 # common targets
 build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
+		$(MKDIR) $(DOCS_DIR)
+		$(CP) $(SOURCE_DIR)/docs/html/* $(DOCS_DIR)
 
 test:		$(TEST_32)
 
