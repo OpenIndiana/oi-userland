@@ -83,6 +83,8 @@ CONFIGURE_OPTIONS += --enable-hipe
 CONFIGURE_OPTIONS += --with-ssl
 CONFIGURE_OPTIONS += --enable-dynamic-ssl-lib
 
+CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
+
 CONFIGURE_OPTIONS.64 += LDFLAGS="$(LDFLAGS) -m64"
 CONFIGURE_OPTIONS.64 += LIBS="-m64"
 
@@ -100,12 +102,15 @@ CONFIGURE_SCRIPT =	$(@D)/configure
 
 COMPONENT_INSTALL_ARGS += INSTALL_PREFIX=$(PROTO_DIR)
 
+COMPONENT_TEST_ENV +=		ERL_TOP=$(BUILD_DIR_64)
+COMPONENT_TEST_TARGETS =	tests
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:	$(BUILD_32_and_64)
+build:	$(BUILD_64)
 
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_64)
 	# Undelivered useless files:
 	#    erlang/lib/crypto-*/priv/obj
 	#    erlang/lib/ssl-*/priv/obj
@@ -118,15 +123,14 @@ install:	$(INSTALL_32_and_64)
 	$(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1) && \
 	$(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
 	# remove INSTALL_PREFIX from path
-	$(PERL) -pi -e "s|$(PROTO_DIR)||g" $(PROTO_DIR)/usr/lib/erlang/bin/erl \
+	$(PERL) -pi -e "s|$(PROTO_DIR)||g" \
 		$(PROTO_DIR)/usr/lib/$(MACH64)/erlang/bin/erl \
-		$(PROTO_DIR)/usr/lib/erlang/releases/RELEASES \
 		$(PROTO_DIR)/usr/lib/$(MACH64)/erlang/releases/RELEASES
 
 clean::
 	$(RM) -r documentation
 
-test:	$(NO_TESTS)
+test:	$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
