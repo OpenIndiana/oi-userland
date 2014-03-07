@@ -1868,7 +1868,66 @@ diff -r -u /tmp/infiniband-diags-1.5.8/src/ibportstate.c infiniband-diags-1.5.8/
 diff -r -u /tmp/infiniband-diags-1.5.8/src/ibstat.c infiniband-diags-1.5.8/src/ibstat.c
 --- /tmp/infiniband-diags-1.5.8/src/ibstat.c	Wed Feb 16 02:13:21 2011
 +++ infiniband-diags-1.5.8/src/ibstat.c	Fri Feb 25 03:09:28 2011
-@@ -245,7 +245,7 @@
+@@ -46,6 +46,7 @@
+ 
+ #include <infiniband/umad.h>
+ #include <infiniband/mad.h>
++#include <infiniband/verbs.h>
+ 
+ #include <ibdiag_common.h>
+ 
+@@ -78,7 +79,7 @@
+ }
+ 
+ static char *port_state_str[] = {
+-	"???",
++	"Unknown",
+ 	"Down",
+ 	"Initializing",
+ 	"Armed",
+@@ -96,6 +97,19 @@
+ 	"PhyTest"
+ };
+ 
++static const char *port_link_layer_str(uint8_t link_layer)
++{
++	switch (link_layer) {
++		case IBV_LINK_LAYER_UNSPECIFIED:
++		case IBV_LINK_LAYER_INFINIBAND:
++			return "IB";
++		case IBV_LINK_LAYER_ETHERNET:
++			return "Ethernet";
++		default:
++			return "Unknown";
++        }
++};
++
+ static int port_dump(umad_port_t * port, int alone)
+ {
+ 	char *pre = "";
+@@ -112,10 +126,10 @@
+ 	printf("%sPort %d:\n", hdrpre, port->portnum);
+ 	printf("%sState: %s\n", pre,
+ 	       (unsigned)port->state <=
+-	       4 ? port_state_str[port->state] : "???");
++	       4 ? port_state_str[port->state] : "Unknown");
+ 	printf("%sPhysical state: %s\n", pre,
+ 	       (unsigned)port->phys_state <=
+-	       7 ? port_phy_state_str[port->phys_state] : "???");
++	       7 ? port_phy_state_str[port->phys_state] : "Unknown");
+ 	printf("%sRate: %d\n", pre, port->rate);
+ 	printf("%sBase lid: %d\n", pre, port->base_lid);
+ 	printf("%sLMC: %d\n", pre, port->lmc);
+@@ -122,7 +136,7 @@
+ 	printf("%sSM lid: %d\n", pre, port->sm_lid);
+ 	printf("%sCapability mask: 0x%08x\n", pre, ntohl(port->capmask));
+ 	printf("%sPort GUID: 0x%016" PRIx64 "\n", pre, ntohll(port->port_guid));
+-	printf("%sLink layer: %s\n", pre, port->link_layer);
++	printf("%sLink layer: %s\n", pre, port_link_layer_str(atoi(port->link_layer)));
+ 	return 0;
+ }
+ 
+@@ -245,7 +259,7 @@
  		if (i >= n)
  			IBPANIC("'%s' IB device can't be found", argv[0]);
  

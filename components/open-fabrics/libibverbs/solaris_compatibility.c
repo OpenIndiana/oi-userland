@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -1143,6 +1143,8 @@ infiniband_ports(char *path, char *buf, size_t size, char *dev_name)
 		} else if (strcmp(path, "cap_mask") == 0) {
 			len = 1 + sprintf(buf, "0x%08x",
 			    port_attr.port_cap_flags);
+		} else if (strcmp(path, "link_layer") == 0) {
+			len = 1 + sprintf(buf, "%d", port_attr.link_layer);
 		}
 	}
 exit:
