@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -51,7 +51,11 @@ build:		$(BUILD_32)
 # The install target in the rabbitmq makefile isn't useful to us.
 install:
 
-test:		$(TEST_32)
+# We delegate the running of the tests to a script because it's easier to find
+# and use unique free ports in a single process, and it's easier to make sure
+# that we don't leave any servers running if the tests themselves fail.
+test:
+	$(PYTHON) test.py $(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
