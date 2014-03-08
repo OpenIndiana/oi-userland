@@ -1,5 +1,6 @@
 #
 # This file adds inline T4 instruction support to OpenSSL upstream code.
+# The change was brought in from OpenSSL 1.0.2.
 #
 Index: Configure
 ===================================================================
@@ -204,7 +205,7 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
 +.size	_sparcv9_vis1_instrument_bus2,.-_sparcv9_vis1_instrument_bus2
 +
  .section	".init",#alloc,#execinstr
- 	call	OPENSSL_cpuid_setup
+ 	call	solaris_locking_setup
  	nop
 Index: crypto/sparcv9cap.c
 ===================================================================

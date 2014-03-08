@@ -1,0 +1,161 @@
+#
+# This file adds the code to setup internal mutexes and callback function.
+#	PSARC/2014/077
+# This change was implemented in-house.  The issue was brought up to
+# the upstream engineers, but there was no commitment.
+#
+--- openssl-1.0.1f/crypto/cryptlib.c.~1~	Fri Feb  7 10:41:36 2014
++++ openssl-1.0.1f/crypto/cryptlib.c	Thu Feb  6 16:03:58 2014
+@@ -116,6 +116,7 @@
+ 
+ #include "cryptlib.h"
+ #include <openssl/safestack.h>
++#include <pthread.h>
+ 
+ #if defined(OPENSSL_SYS_WIN32) || defined(OPENSSL_SYS_WIN16)
+ static double SSLeay_MSVC5_hack=0.0; /* and for VC1.5 */
+@@ -181,6 +182,7 @@
+    numbers.  */
+ static STACK_OF(CRYPTO_dynlock) *dyn_locks=NULL;
+ 
++static pthread_mutex_t *solaris_openssl_locks;
+ 
+ static void (MS_FAR *locking_callback)(int mode,int type,
+ 	const char *file,int line)=0;
+@@ -406,6 +409,79 @@
+ 	return(add_lock_callback);
+ 	}
+
++/*
++ * This is the locking callback function which all applications will be
++ * using when CRYPTO_lock() is called.
++ */ 
++static void solaris_locking_callback(int mode, int type, const char *file,
++    int line)
++	{
++	if (mode & CRYPTO_LOCK)
++		{
++		pthread_mutex_lock(&solaris_openssl_locks[type]);
++		}
++	else
++		{
++		pthread_mutex_unlock(&solaris_openssl_locks[type]);
++		}
++	}
++
++
++/*
++ * This function is called when a child process is forked to setup its own
++ * global locking callback function ptr and mutexes.
++ */
++static void solaris_fork_child(void)
++	{
++		/*
++		 * clear locking_callback to indicate that locks should
++		 * be reinitialized.
++		 */
++		locking_callback = NULL;
++		solaris_locking_setup();
++	}
++
++/*
++ * This function allocates and initializes the global mutex array, and
++ * sets the locking callback.
++ */
++void solaris_locking_setup()
++	{
++	int i;
++	int num_locks;
++
++	/* locking callback is already setup. Nothing to do */
++	if (locking_callback != NULL)
++		{
++		return;
++		}
++
++	/*
++	 * Set atfork handler so that child can setup its own mutexes and
++	 * locking callbacks when it is forked
++	 */
++	(void) pthread_atfork(NULL, NULL, solaris_fork_child);
++
++	/* allocate locks needed by OpenSSL  */
++	num_locks = CRYPTO_num_locks();
++	solaris_openssl_locks =
++	    OPENSSL_malloc(sizeof (pthread_mutex_t) * num_locks);
++	if (solaris_openssl_locks == NULL)
++		{
++		fprintf(stderr,
++			"solaris_locking_setup: memory allocation failure.\n");
++		abort();
++		}
++
++	/* initialize openssl mutexes */
++	for (i = 0; i < num_locks; i++)
++		{
++		pthread_mutex_init(&solaris_openssl_locks[i], NULL);
++		}
++	locking_callback = solaris_locking_callback;
++
++	}
++
+ void CRYPTO_set_locking_callback(void (*func)(int mode,int type,
+ 					      const char *file,int line))
+ 	{
+@@ -413,7 +478,11 @@
+ 	 * are started.
+ 	 */
+ 	OPENSSL_init();
+-	locking_callback=func;
++
++	/*
++	 * we now setup our own locking callback and mutexes, and disallow
++	 * setting of another locking callback.
++	 */
+ 	}
+ 
+ void CRYPTO_set_add_lock_callback(int (*func)(int *num,int mount,int type,
+--- openssl-1.0.1f/crypto/cryptlib.h.~1~	Fri Feb  7 10:41:42 2014
++++ openssl-1.0.1f/crypto/cryptlib.h	Thu Feb  6 16:04:16 2014
+@@ -104,6 +104,8 @@
+ void *OPENSSL_stderr(void);
+ extern int OPENSSL_NONPIC_relocated;
+ 
++void solaris_locking_setup();
++
+ #ifdef  __cplusplus
+ }
+ #endif
+--- openssl-1.0.1f/crypto/sparccpuid.S.~1~	Fri Feb  7 10:41:37 2014
++++ openssl-1.0.1f/crypto/sparccpuid.S	Thu Feb  6 16:04:14 2014
+@@ -398,5 +398,7 @@
+ .size	OPENSSL_cleanse,.-OPENSSL_cleanse
+
+ .section	".init",#alloc,#execinstr
++	call	solaris_locking_setup
++	nop
+ 	call	OPENSSL_cpuid_setup
+ 	nop
+--- openssl-1.0.1f/crypto/x86_64cpuid.pl.~1~	Wed Feb 12 13:20:09 2014
++++ openssl-1.0.1f/crypto/x86_64cpuid.pl	Wed Feb 12 13:21:20 2014
+@@ -20,7 +20,10 @@
+ print<<___;
+ .extern		OPENSSL_cpuid_setup
+ .hidden		OPENSSL_cpuid_setup
++.extern		solaris_locking_setup
++.hidden		solaris_locking_setup
+ .section	.init
++	call	solaris_locking_setup
+ 	call	OPENSSL_cpuid_setup
+ 
+ .hidden	OPENSSL_ia32cap_P
+--- openssl-1.0.1f/crypto/x86cpuid.pl.~1~	Wed Feb 12 13:38:03 2014
++++ openssl-1.0.1f/crypto/x86cpuid.pl	Wed Feb 12 13:38:31 2014
+@@ -353,6 +353,7 @@
+ 	&ret	();
+ &function_end_B("OPENSSL_ia32_rdrand");
+ 
++&initseg("solaris_locking_setup");
+ &initseg("OPENSSL_cpuid_setup");
+ 
+ &asm_finish();
