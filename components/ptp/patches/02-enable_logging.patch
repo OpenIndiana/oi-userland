@@ -1,0 +1,19 @@
+18340629 ptpd needs a way to enable or disable logging
+
+Following patch adds the capability to enable or disable logging via SMF service
+
+diff -ur ptpd-2.2.0/src/ptpd2.8 /builds/pjalan/ptp-userland/components/ptp/ptpd-2.2.0/src/ptpd2.8
+--- ptpd-2.2.0/src/ptpd2.8	Mon Mar 10 01:46:23 2014
++++ /builds/pjalan/ptp-userland/components/ptp/ptpd-2.2.0/src/ptpd2.8	Fri Mar  7 11:01:09 2014
+@@ -133,6 +133,11 @@
+ A string specifying the location of the file  used  for
+ log output. The default is /var/log/ptp.log
+ .TP
++.BR config/enable_logging
++A boolean which when true, instructs ptpd to log
++synchronization and other related information in the file
++specified by config/logfile. Default value is false.
++.TP
+ .BR  config/other_options
+ A string specifying other command line options mentioned
+ below to be passed to svc:/network/ptp:default at startup.

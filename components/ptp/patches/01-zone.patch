@@ -1,0 +1,125 @@
+18301028 ptpd in {kernel, native} Zone may conflict with hw mode ptpd in global zone
+
+Following patch prevents ptpd from running in a zone.
+
+diff -ur ptpd-2.2.0/src/Makefile /builds/pjalan/ptp-userland/components/ptp/ptpd-2.2.0/src/Makefile
+--- ptpd-2.2.0/src/Makefile	Fri Mar  7 10:29:54 2014
++++ /builds/pjalan/ptp-userland/components/ptp/ptpd-2.2.0/src/Makefile	Fri Mar  7 10:41:20 2014
+@@ -46,7 +46,7 @@
+ #CFLAGS += -DPTP_EXPERIMENTAL
+ 
+ LDFLAGS+= -lm -lrt
+-LDFLAGS += -lnsl -lsocket -m64
++LDFLAGS += -lnsl -lsocket -lv12n -m64
+ 
+ PROG = ptpd
+ SRCS = ptpd.c arith.c bmc.c protocol.c display.c\
+diff -ur ptpd-2.2.0/src/ptpd2.8 /builds/pjalan/ptp-userland/components/ptp/ptpd-2.2.0/src/ptpd2.8
+--- ptpd-2.2.0/src/ptpd2.8	Fri Mar  7 11:11:33 2014
++++ /builds/pjalan/n2ptp-userland/components/ptp/ptpd-2.2.0/src/ptpd2.8	Fri Mar  7 11:04:51 2014
+@@ -1,6 +1,6 @@
+ .\" -*- nroff -*"
+ .\"
+-.\" Copyright (c) 2009, 2011, Oracle and/or its affiliates. All rights reserved.
++.\" Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+ .\"
+ .TH ptpd "1M" "January, 2012" "version 2.2.0" "System Administration Commands"
+ .SH NAME
+@@ -316,10 +316,7 @@
+ generate upto 40 MB of data in a window of 24 hours and many
+ times more if enabled with -P option.
+ .P
+-Solaris does not allow creation of a vnic on a network
+-interface which is providing hardware assistance to ptpd.
+-Vice versa, ptpd cannot get hardware assistance from an
+-interfac which has pre-existing vnic(s).
++Solaris does not allow ptpd to run inside a zones(5).
+ 
+ .SH SEE ALSO
+ svcs(1), svcadm(1M), attributes(5), smf(5)
+diff -ur ptpd-2.2.0/src/dep/startup.c /builds/pjalan/ptp-userland/components/ptp/ptpd-2.2.0/src/dep/startup.c
+--- ptpd-2.2.0/src/dep/startup.c	Fri Mar  7 10:29:54 2014
++++ /builds/pjalan/ptp-userland/components/ptp/ptpd-2.2.0/src/dep/startup.c	Fri Mar  7 10:41:20 2014
+@@ -1,5 +1,5 @@
+ /*-
+- * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
++ * Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+  * Copyright (c) 2011-2012 Solarflare Communications Inc
+  * Copyright (c) 2009-2011 George V. Neville-Neil, Steven Kreuzer, 
+  *                         Martin Burnicki, Gael Mace, Alexandre Van Kempen
+@@ -40,6 +40,7 @@
+  */
+ 
+ #include "../ptpd.h"
++#include <libv12n.h>
+ 
+ PtpClock *ptpClock;
+ 
+@@ -615,8 +616,25 @@
+ 		);
+ }
+ 
++Boolean
++is_zone(void) {
++	v12n_env_t *env;
++	Boolean       is_zone = FALSE;
++	char            *name;
+ 
++	if ((env = v12n_get_current_env()) == NULL)
++		return (is_zone);
+ 
++	name = v12n_get_env_prop(env, V12N_PROP_NAME);
++	if (name != NULL && strstr(name, "zone") != NULL) {
++		INFO("Inside %s\n", name);
++		is_zone = TRUE;
++	}
++	free(name);
++	v12n_free_env(env);
++	return (is_zone);
++}
++
+ PtpClock *
+ ptpdStartup(int argc, char **argv, Integer16 * ret, RunTimeOpts * rtOpts)
+ {
+@@ -632,6 +650,7 @@
+   Boolean time_mode_specified = FALSE;
+   TimeMode default_time_mode;
+   Boolean use_hardware_assist = FALSE;
++  Boolean allow_inside_zone = FALSE;
+   Boolean is_error;
+ 
+   dump_command_line_parameters(argc, argv);
+@@ -643,7 +662,7 @@
+ #endif
+ */
+ 
+-   const char *getopt_string = "?HgGWb:cCf:ST:dDPR:xO:tM:a:w:u:ehzl:o:i:n:N:y:m:v:r:s:p:q:Y:BjLV:XZK";
++   const char *getopt_string = "?HgGWb:cCf:ST:dDPR:xO:tM:a:w:u:ehzl:o:i:n:N:y:m:v:r:s:p:q:Y:BjLV:XZKF";
+ 
+   /* parse command line arguments */
+   while ((c = getopt(argc, argv, getopt_string)) != -1) {
+@@ -831,6 +850,10 @@
+       rtOpts->verboseStats = TRUE;
+       rtOpts->csvStats = TRUE;
+       break;
++
++    case 'F':
++      allow_inside_zone = TRUE;
++      break;
+     case 'P':
+       rtOpts->displayPackets = TRUE;
+       break;
+@@ -1181,6 +1204,13 @@
+       rtOpts->time_mode = default_time_mode;
+     }
+ 
++   /* If insize a zone, fail to start unless forced */
++    if (is_zone() && !allow_inside_zone) {
++	    ERROR("Not allowed to run inside a zone\n");
++	    *ret = 4;
++	    return 0;
++    }
++
+   ptpClock = (PtpClock *) calloc(1, sizeof(PtpClock));
+   if (!ptpClock) {
+     PERROR("failed to allocate memory for protocol engine data");

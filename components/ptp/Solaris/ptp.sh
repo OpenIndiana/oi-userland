@@ -20,7 +20,7 @@
 # CDDL HEADER END
 #
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Standard prolog
@@ -92,8 +92,9 @@ if [ "$SYNC_INTVL" -gt 0 -a "$SYNC_INTVL" -ne 1 ]; then
 	CMD_LINE_ARGS="$CMD_LINE_ARGS -y $SYNC_INTVL"
 fi
 
+ENABLE_LOGGING="`get_prop enable_logging`"
 LOGFILE="`get_prop logfile`"
-if [ -n "$LOGFILE" -a "$LOGFILE" != "/var/log/ptp.log" ]; then
+if [ -n "$LOGFILE" -a "$ENABLE_LOGGING" = "true" ]; then
 	CMD_LINE_ARGS="$CMD_LINE_ARGS -f $LOGFILE"
 fi
 
