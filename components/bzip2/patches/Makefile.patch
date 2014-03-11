@@ -28,8 +28,8 @@
 -	fi
 +libbz2.so: $(OBJS)
 +	rm -f libbz2.so libbz2.so.1
-+	$(CC) $(CFLAGS) -G -h libbz2.so.1 -o libbz2.so.1 \
-+	    -z defs -z text -zcombreloc $(OBJS) -M ../../mapfile -L. \
++	$(CC) $(CFLAGS) -shared -h libbz2.so.1 -o libbz2.so.1 \
++	    -Wl,-zdefs -Wl,-ztext -zcombreloc $(OBJS) -Wl,-M../../mapfile -L. \
 +	    -lc
 +	ln -s libbz2.so.1 libbz2.so
  
