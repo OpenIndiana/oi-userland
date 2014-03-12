@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -35,8 +35,9 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 license mysql-55.license license=GPLv2
 
 # added dependency on mysql-51/library package
-depend fmri=pkg:/database/mysql-51/library@5.1.37,$(BUILD_VERSION) type=optional
+depend fmri=pkg:/database/mysql-51/library@5.1.37,5.12-5.12.0.0.0.35.0 type=optional
 
+link path=usr/mysql/5.5/lib/64 target=$(MACH64)
 link path=usr/mysql/5.5/lib/libmysqlclient.so \
      target=libmysqlclient.so.18
 link path=usr/mysql/5.5/lib/libmysqlclient.so.18 \

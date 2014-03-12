@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -39,6 +39,7 @@ license mysql-55.license license=GPLv2
 
 # added dependency on mysql-55
 depend fmri=__TBD pkg.debug.depend.file=usr/mysql/5.5/bin/mysql type=require
+depend fmri=database/mysql-55@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) type=require
 
 file path=usr/mysql/5.5/mysql-test/CTestTestfile.cmake
 file path=usr/mysql/5.5/mysql-test/Makefile
@@ -472,7 +473,7 @@ file path=usr/mysql/5.5/mysql-test/lib/My/Options.pm
 file path=usr/mysql/5.5/mysql-test/lib/My/Platform.pm
 file path=usr/mysql/5.5/mysql-test/lib/My/SafeProcess.pm
 file path=usr/mysql/5.5/mysql-test/lib/My/SafeProcess/Base.pm
-file path=usr/mysql/5.5/mysql-test/lib/My/SafeProcess/my_safe_process mode=0500
+file path=usr/mysql/5.5/mysql-test/lib/My/SafeProcess/my_safe_process mode=0555
 file path=usr/mysql/5.5/mysql-test/lib/My/SysInfo.pm
 file path=usr/mysql/5.5/mysql-test/lib/My/Test.pm
 file path=usr/mysql/5.5/mysql-test/lib/mtr_cases.pm
@@ -500,12 +501,12 @@ file path=usr/mysql/5.5/mysql-test/lib/v1/mtr_report.pl
 file path=usr/mysql/5.5/mysql-test/lib/v1/mtr_stress.pl
 file path=usr/mysql/5.5/mysql-test/lib/v1/mtr_timer.pl
 file path=usr/mysql/5.5/mysql-test/lib/v1/mtr_unique.pl
-file path=usr/mysql/5.5/mysql-test/lib/v1/mysql-test-run.pl
+file path=usr/mysql/5.5/mysql-test/lib/v1/mysql-test-run.pl mode=0555
 file path=usr/mysql/5.5/mysql-test/lib/v1/ndb_config_1_node.ini
 file path=usr/mysql/5.5/mysql-test/lib/v1/ndb_config_2_node.ini
 link path=usr/mysql/5.5/mysql-test/mtr target=./mysql-test-run.pl
-file path=usr/mysql/5.5/mysql-test/mysql-stress-test.pl
-file path=usr/mysql/5.5/mysql-test/mysql-test-run.pl mode=0500
+file path=usr/mysql/5.5/mysql-test/mysql-stress-test.pl mode=0555
+file path=usr/mysql/5.5/mysql-test/mysql-test-run.pl mode=0555
 link path=usr/mysql/5.5/mysql-test/mysql-test-run target=./mysql-test-run.pl
 file path=usr/mysql/5.5/mysql-test/purify.supp
 file path=usr/mysql/5.5/mysql-test/r/1st.result
@@ -6149,18 +6150,18 @@ file path=usr/mysql/5.5/sql-bench/Data/ATIS/transport.txt
 file path=usr/mysql/5.5/sql-bench/Data/Wisconsin/onek.data
 file path=usr/mysql/5.5/sql-bench/Data/Wisconsin/tenk.data
 file path=usr/mysql/5.5/sql-bench/README
-file path=usr/mysql/5.5/sql-bench/bench-count-distinct
-file path=usr/mysql/5.5/sql-bench/bench-init.pl
-file path=usr/mysql/5.5/sql-bench/compare-results
-file path=usr/mysql/5.5/sql-bench/copy-db
-file path=usr/mysql/5.5/sql-bench/crash-me
-file path=usr/mysql/5.5/sql-bench/graph-compare-results
-file path=usr/mysql/5.5/sql-bench/innotest1
-file path=usr/mysql/5.5/sql-bench/innotest1a
-file path=usr/mysql/5.5/sql-bench/innotest1b
-file path=usr/mysql/5.5/sql-bench/innotest2
-file path=usr/mysql/5.5/sql-bench/innotest2a
-file path=usr/mysql/5.5/sql-bench/innotest2b
+file path=usr/mysql/5.5/sql-bench/bench-count-distinct mode=0555
+file path=usr/mysql/5.5/sql-bench/bench-init.pl mode=0555
+file path=usr/mysql/5.5/sql-bench/compare-results mode=0555
+file path=usr/mysql/5.5/sql-bench/copy-db mode=0555
+file path=usr/mysql/5.5/sql-bench/crash-me mode=0555 
+file path=usr/mysql/5.5/sql-bench/graph-compare-results mode=0555
+file path=usr/mysql/5.5/sql-bench/innotest1 mode=0555
+file path=usr/mysql/5.5/sql-bench/innotest1a mode=0555
+file path=usr/mysql/5.5/sql-bench/innotest1b mode=0555
+file path=usr/mysql/5.5/sql-bench/innotest2 mode=0555
+file path=usr/mysql/5.5/sql-bench/innotest2a mode=0555
+file path=usr/mysql/5.5/sql-bench/innotest2b mode=0555
 file path=usr/mysql/5.5/sql-bench/limits/Adabas.cfg
 file path=usr/mysql/5.5/sql-bench/limits/Informix.cfg
 file path=usr/mysql/5.5/sql-bench/limits/access.cfg
@@ -6186,14 +6187,15 @@ file path=usr/mysql/5.5/sql-bench/limits/pg.cfg
 file path=usr/mysql/5.5/sql-bench/limits/solid-nt4.cfg
 file path=usr/mysql/5.5/sql-bench/limits/solid.cfg
 file path=usr/mysql/5.5/sql-bench/limits/sybase.cfg
-file path=usr/mysql/5.5/sql-bench/run-all-tests
-file path=usr/mysql/5.5/sql-bench/server-cfg
-file path=usr/mysql/5.5/sql-bench/test-ATIS
-file path=usr/mysql/5.5/sql-bench/test-alter-table
-file path=usr/mysql/5.5/sql-bench/test-big-tables
-file path=usr/mysql/5.5/sql-bench/test-connect
-file path=usr/mysql/5.5/sql-bench/test-create
-file path=usr/mysql/5.5/sql-bench/test-insert
-file path=usr/mysql/5.5/sql-bench/test-select
-file path=usr/mysql/5.5/sql-bench/test-transactions
-file path=usr/mysql/5.5/sql-bench/test-wisconsin
+file path=usr/mysql/5.5/sql-bench/run-all-tests mode=0555
+file path=usr/mysql/5.5/sql-bench/server-cfg mode=0555
+file path=usr/mysql/5.5/sql-bench/test-ATIS mode=0555
+file path=usr/mysql/5.5/sql-bench/test-alter-table mode=0555
+file path=usr/mysql/5.5/sql-bench/test-big-tables mode=0555
+file path=usr/mysql/5.5/sql-bench/test-connect mode=0555
+file path=usr/mysql/5.5/sql-bench/test-create mode=0555
+file path=usr/mysql/5.5/sql-bench/test-insert mode=0555
+file path=usr/mysql/5.5/sql-bench/test-select mode=0555
+file path=usr/mysql/5.5/sql-bench/test-transactions mode=0555
+file path=usr/mysql/5.5/sql-bench/test-wisconsin mode=0555
+
