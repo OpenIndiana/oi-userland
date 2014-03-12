@@ -18,15 +18,15 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-set name=pkg.fmri value=pkg:/web/php-53/extension/php-mysql@5.3.27,$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/web/php-53/extension/php-mysql@$(COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="MySQL extension module for PHP"
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/PHP"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=info.source-url value=http://us.php.net/get/php-5.3.27.tar.gz/from/this/mirror
+set name=info.source-url value=http://us.php.net/get/php-$(COMPONENT_VERSION).tar.gz/from/this/mirror
 set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
@@ -37,7 +37,7 @@ set pkg.linted.pkglint.manifest004=true
 license php-mysql.license license='PHP, LGPLv2' \
     com.oracle.info.description="the MySQL extension module for PHP" \
     com.oracle.info.name=php-mysql \
-    com.oracle.info.version=5.3.27
+    com.oracle.info.version=$(COMPONENT_VERSION)
 
 file path=etc/php/5.3/conf.d/mysql.ini mode=0644 preserve=renameold
 file path=etc/php/5.3/conf.d/mysqli.ini mode=0644 preserve=renameold
@@ -53,4 +53,4 @@ file path=usr/php/5.3/zts-modules/mysqli.so
 file path=usr/php/5.3/zts-modules/pdo_mysql.so
 
 # need generic dependency on PHP itself
-depend fmri=web/php-53@5.3.27 type=require
+depend fmri=web/php-53@$(COMPONENT_VERSION) type=require

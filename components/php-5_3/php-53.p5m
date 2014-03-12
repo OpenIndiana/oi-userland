@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -26,7 +26,7 @@
 <transform file path=etc/php/.* -> default mode 0644>
 <transform file path=etc/php/.* -> default preserve renamenew>
 
-set name=pkg.fmri value=pkg:/web/php-53@5.3.27,$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/web/php-53@$(COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description \
     value="A general-purpose scripting language originally designed for web development to produce dynamic web pages."
 set name=pkg.summary value="PHP Server"
@@ -34,14 +34,14 @@ set name=info.classification \
     value="org.opensolaris.category.2008:Development/PHP"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=info.source-url \
-    value=http://us.php.net/get/php-5.3.27.tar.bz2/from/this/mirror
+    value=http://us.php.net/get/php-$(COMPONENT_VERSION).tar.bz2/from/this/mirror
 set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 license php-53.license license='PHP, GPLv2, LGPLv2, Apache v2.0' \
     com.oracle.info.description="the PHP scripting language" \
     com.oracle.info.name=php-53 \
-    com.oracle.info.version=5.3.27
+    com.oracle.info.version=$(COMPONENT_VERSION)
 
 dir path=var/php/5.3/sessions owner=webservd mode=0750
 file path=etc/php/5.3/conf.d/bz2.ini
@@ -226,6 +226,23 @@ file path=usr/php/5.3/include/php/ext/mbstring/oniguruma/oniguruma.h
 file path=usr/php/5.3/include/php/ext/mbstring/php_mbregex.h
 file path=usr/php/5.3/include/php/ext/mbstring/php_onig_compat.h
 file path=usr/php/5.3/include/php/ext/mysqli/php_mysqli_structs.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/config-win.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_block_alloc.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_charset.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_debug.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_enum_n_def.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_libmysql_compat.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_net.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_portability.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_priv.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_result.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_result_meta.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_statistics.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_structs.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/mysqlnd_wireprotocol.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/php_mysqlnd.h
+file path=usr/php/5.3/include/php/ext/mysqlnd/php_mysqlnd_config.h
 file path=usr/php/5.3/include/php/ext/pcre/pcrelib/config.h
 file path=usr/php/5.3/include/php/ext/pcre/pcrelib/pcre.h
 file path=usr/php/5.3/include/php/ext/pcre/pcrelib/pcre_internal.h
@@ -430,7 +447,7 @@ depend fmri=pkg:/web/php-53/extension/php-xdebug type=require
 depend fmri=pkg:/web/php-common type=require
 
 # if php5.2 is present drag forward because of /usr/php/* mediated links
-depend fmri=pkg:/web/php-52@5.2.17,$(BUILD_VERSION) type=optional
+depend fmri=pkg:/web/php-52@5.2.17 type=optional
 
 # if php5.2's apache module is present then make sure
 # php5.3's apache module is installed

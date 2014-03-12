@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # All the files under /var/php are mode=0644
@@ -26,13 +26,13 @@
 <transform file path=var/php/.* -> default group bin>
 <transform file path=var/php/.* -> default preserve renamenew>
 
-set name=pkg.fmri value=pkg:/web/php-53/extension/php-pear@5.3.27,$(BUILD_VERSION)
+set name=pkg.fmri value=pkg:/web/php-53/extension/php-pear@$(COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.description \
     value="Framework and reusable PHP components from PEAR repository for PHP"
 set name=pkg.summary value="PHP Extension and Application Repository"
 set name=info.classification \
     value="org.opensolaris.category.2008:Development/PHP"
-set name=info.source-url value=http://us.php.net/get/php-5.3.27.tar.gz/from/this/mirror
+set name=info.source-url value=http://us.php.net/get/php-$(COMPONENT_VERSION).tar.gz/from/this/mirror
 set name=info.upstream-url value=http://pear.php.net/
 set name=org.opensolaris.arc-caseid value=PSARC/2012/067
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
@@ -44,7 +44,7 @@ set pkg.linted.pkglint.manifest004=true
 license php-pear.license license='PHP, LGPLv2.1' \
     com.oracle.info.description="the PEAR extension module for PHP" \
     com.oracle.info.name=php-pear \
-    com.oracle.info.version=5.3.27
+    com.oracle.info.version=$(COMPONENT_VERSION)
 
 dir path=var/php/5.3/include/php
 dir path=var/php/5.3/modules
@@ -247,4 +247,4 @@ file path=var/php/5.3/pear/test/XML_Util/tests/testBug_4950.phpt
 file path=var/php/5.3/pear/test/XML_Util/tests/testBug_5392.phpt
 
 # need generic dependency on PHP itself
-depend fmri=web/php-53@5.3.27 type=require
+depend fmri=web/php-53@$(COMPONENT_VERSION) type=require

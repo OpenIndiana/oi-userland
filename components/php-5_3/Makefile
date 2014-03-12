@@ -115,7 +115,7 @@ include ../../make-rules/ips.mk
 #               looks like i DO NEED the pear patches
 
 COMPONENT_NAME=		php
-COMPONENT_VERSION=	5.3.27
+COMPONENT_VERSION=	5.3.28
 COMPONENT_PROJECT_URL=	http://www.php.net/
 COMPONENT_BUGDB=	utility/php
 

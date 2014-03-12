@@ -1,0 +1,51 @@
+Fix for CVE-2013-6712
+Patch:
+http://git.php.net/?p=php-src.git;a=patch;h=12fe4e90be7bfa2a763197079f68f5568a14e071
+Code:
+http://git.php.net/?p=php-src.git;a=commitdiff;h=12fe4e90be7bfa2a763197079f68f5568a14e071
+This patch is for php 5.4 code but works well enough on php 5.3 code.
+Verified by hand that it patches the correct code.
+Slightly modified by hand to remove unnecessary parts that fail to patch.
+
+
+From 12fe4e90be7bfa2a763197079f68f5568a14e071 Mon Sep 17 00:00:00 2001
+From: Remi Collet <remi@php.net>
+Date: Wed, 27 Nov 2013 11:13:16 +0100
+Subject: [PATCH] Fixed bug #66060 (Heap buffer over-read in DateInterval)
+
+---
+ NEWS                                | 3 +++
+ ext/date/lib/parse_iso_intervals.c  | 4 ++--
+ ext/date/lib/parse_iso_intervals.re | 2 +-
+ 3 files changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/ext/date/lib/parse_iso_intervals.c b/ext/date/lib/parse_iso_intervals.c
+index bd1ad05..480ea38 100644
+--- a/ext/date/lib/parse_iso_intervals.c
++++ b/ext/date/lib/parse_iso_intervals.c
+@@ -415,7 +415,7 @@ yy6:
+ 					break;
+ 			}
+ 			ptr++;
+-		} while (*ptr);
++		} while (!s->errors->error_count && *ptr);
+ 		s->have_period = 1;
+ 		TIMELIB_DEINIT;
+ 		return TIMELIB_PERIOD;
+diff --git a/ext/date/lib/parse_iso_intervals.re b/ext/date/lib/parse_iso_intervals.re
+index 56aa34d..c5e9f67 100644
+--- a/ext/date/lib/parse_iso_intervals.re
++++ b/ext/date/lib/parse_iso_intervals.re
+@@ -383,7 +383,7 @@ isoweek          = year4 "-"? "W" weekofyear;
+ 					break;
+ 			}
+ 			ptr++;
+-		} while (*ptr);
++		} while (!s->errors->error_count && *ptr);
+ 		s->have_period = 1;
+ 		TIMELIB_DEINIT;
+ 		return TIMELIB_PERIOD;
+-- 
+1.8.4.3
+
+
