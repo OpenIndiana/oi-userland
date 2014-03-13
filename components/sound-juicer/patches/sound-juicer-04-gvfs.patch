@@ -1,0 +1,14 @@
+--- sound-juicer-2.28.0-old/libjuicer/sj-metadata-gvfs.c	2009-09-23 15:35:02.342698000 +0800
++++ sound-juicer-2.28.0/libjuicer/sj-metadata-gvfs.c	2009-09-23 16:34:01.084099000 +0800
+@@ -63,7 +63,11 @@
+ {
+   if (g_str_has_prefix (device, "/dev/") == FALSE)
+     return NULL;
++#ifdef __sun    
++  return g_strdup_printf ("cdda://%s", device + strlen ("/dev/rdsk/"));
++#else  
+   return g_strdup_printf ("cdda://%s", device + strlen ("/dev/"));
++#endif   
+ }
+ 
+ static GList *
