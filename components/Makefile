@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../make-rules/shared-macros.mk
@@ -149,7 +149,9 @@ publish:
 # pkglint all of the published manifests in one batch.
 ifdef CANONICAL_REPO
 	@echo 'pkglinting all package manifests...'
-	@$(ENV) PYTHONPATH=$(WS_TOOLS)/python $(PKGLINT) \
+	@$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
+			SOLARIS_VERSION=$(SOLARIS_VERSION) \
+			$(PKGLINT) \
 			-c $(WS_LINT_CACHE) -f $(WS_TOOLS)/pkglintrc \
 			$(shell find . -name 'manifest-*.published')
 endif
