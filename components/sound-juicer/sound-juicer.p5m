@@ -1,0 +1,232 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/cd-ripping/sound-juicer@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Sound and Video"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license="GPL v2"
+
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+<transform file path=usr/share/gnome/help/sound-juicer/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+
+link path=usr/bin/gnome-cd target=sound-juicer
+file files/solaris-cdda.schemas path=etc/gconf/schemas/solaris-cdda.schemas preserve=renamenew
+file files/desktop-cd-ripping-sound-juicer path=etc/security/exec_attr.d/desktop-cd-ripping-sound-juicer preserve=renamenew
+
+
+file path=etc/gconf/schemas/sound-juicer.schemas preserve=renamenew
+file path=usr/bin/sound-juicer mode=0555
+file path=usr/share/applications/sound-juicer.desktop
+file path=usr/share/gnome/help/sound-juicer/C/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/C/legal.xml
+file path=usr/share/gnome/help/sound-juicer/C/sound-juicer.xml
+link path=usr/share/gnome/help/sound-juicer/ar/figures/prefs.png \
+    target=../../C/figures/prefs.png
+link path=usr/share/gnome/help/sound-juicer/ar/figures/startup.png \
+    target=../../C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/ar/legal.xml
+file path=usr/share/gnome/help/sound-juicer/ar/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/ca/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/ca/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/ca/legal.xml
+file path=usr/share/gnome/help/sound-juicer/ca/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/cs/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/cs/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/cs/legal.xml
+file path=usr/share/gnome/help/sound-juicer/cs/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/de/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/de/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/de/legal.xml
+file path=usr/share/gnome/help/sound-juicer/de/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/el/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/el/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/el/legal.xml
+file path=usr/share/gnome/help/sound-juicer/el/sound-juicer.xml
+link path=usr/share/gnome/help/sound-juicer/en_GB/figures/prefs.png \
+    target=../../C/figures/prefs.png
+link path=usr/share/gnome/help/sound-juicer/en_GB/figures/startup.png \
+    target=../../C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/en_GB/legal.xml
+file path=usr/share/gnome/help/sound-juicer/en_GB/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/es/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/es/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/es/legal.xml
+file path=usr/share/gnome/help/sound-juicer/es/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/eu/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/eu/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/eu/legal.xml
+file path=usr/share/gnome/help/sound-juicer/eu/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/fr/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/fr/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/fr/legal.xml
+file path=usr/share/gnome/help/sound-juicer/fr/sound-juicer.xml
+link path=usr/share/gnome/help/sound-juicer/ja/figures/prefs.png \
+    target=../../C/figures/prefs.png
+link path=usr/share/gnome/help/sound-juicer/ja/figures/startup.png \
+    target=../../C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/ja/legal.xml
+file path=usr/share/gnome/help/sound-juicer/ja/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/nl/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/nl/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/nl/legal.xml
+file path=usr/share/gnome/help/sound-juicer/nl/sound-juicer.xml
+link path=usr/share/gnome/help/sound-juicer/oc/figures/prefs.png \
+    target=../../C/figures/prefs.png
+link path=usr/share/gnome/help/sound-juicer/oc/figures/startup.png \
+    target=../../C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/oc/legal.xml
+file path=usr/share/gnome/help/sound-juicer/oc/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/pl/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/pl/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/pl/legal.xml
+file path=usr/share/gnome/help/sound-juicer/pl/sound-juicer.xml
+link path=usr/share/gnome/help/sound-juicer/pt_BR/figures/prefs.png \
+    target=../../C/figures/prefs.png
+link path=usr/share/gnome/help/sound-juicer/pt_BR/figures/startup.png \
+    target=../../C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/pt_BR/legal.xml
+file path=usr/share/gnome/help/sound-juicer/pt_BR/sound-juicer.xml
+link path=usr/share/gnome/help/sound-juicer/ru/figures/prefs.png \
+    target=../../C/figures/prefs.png
+link path=usr/share/gnome/help/sound-juicer/ru/figures/startup.png \
+    target=../../C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/ru/legal.xml
+file path=usr/share/gnome/help/sound-juicer/ru/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/sv/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/sv/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/sv/legal.xml
+file path=usr/share/gnome/help/sound-juicer/sv/sound-juicer.xml
+file path=usr/share/gnome/help/sound-juicer/uk/figures/prefs.png
+file path=usr/share/gnome/help/sound-juicer/uk/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/uk/legal.xml
+file path=usr/share/gnome/help/sound-juicer/uk/sound-juicer.xml
+link path=usr/share/gnome/help/sound-juicer/zh_CN/figures/prefs.png \
+    target=../../C/figures/prefs.png
+link path=usr/share/gnome/help/sound-juicer/zh_CN/figures/startup.png \
+    target=../../C/figures/startup.png
+file path=usr/share/gnome/help/sound-juicer/zh_CN/legal.xml
+file path=usr/share/gnome/help/sound-juicer/zh_CN/sound-juicer.xml
+file path=usr/share/icons/hicolor/16x16/apps/sound-juicer.png
+file path=usr/share/icons/hicolor/22x22/apps/sound-juicer.png
+file path=usr/share/icons/hicolor/24x24/apps/sound-juicer.png
+file path=usr/share/icons/hicolor/32x32/apps/sound-juicer.png
+file path=usr/share/icons/hicolor/48x48/apps/sound-juicer.png
+file path=usr/share/icons/hicolor/scalable/apps/sound-juicer.svg
+file path=usr/share/locale/ar/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/as/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ast/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/az/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/be/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/be@latin/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/bg/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/bn/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/br/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ca/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ca@valencia/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/cs/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/cy/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/da/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/de/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/dz/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/el/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/en@shaw/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/es/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/et/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/eu/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/fa/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/fi/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/fr/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ga/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/gl/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/gu/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/he/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/hi/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/hr/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/hu/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/id/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/it/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ja/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ka/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/kn/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ko/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ku/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/lt/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/lv/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/mai/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/mk/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ml/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/mn/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/mr/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ms/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/nb/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ne/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/nl/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/nn/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/oc/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/or/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/pa/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/pl/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/pt/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ro/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ru/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/rw/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/si/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/sk/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/sl/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/sq/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/sr/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/sv/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ta/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/te/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/th/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/tr/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/ug/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/uk/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/vi/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/xh/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/sound-juicer.mo
+file path=usr/share/man/man1/sound-juicer.1
+file path=usr/share/omf/sound-juicer/sound-juicer-C.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-ar.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-ca.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-cs.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-de.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-el.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-en_GB.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-es.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-eu.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-fr.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-ja.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-nl.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-oc.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-pl.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-pt_BR.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-ru.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-sv.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-uk.omf
+file path=usr/share/omf/sound-juicer/sound-juicer-zh_CN.omf
+file path=usr/share/sound-juicer/sound-juicer.ui
