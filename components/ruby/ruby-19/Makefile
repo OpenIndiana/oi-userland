@@ -53,7 +53,7 @@ RUBY_VER=$(word 1,$(RUBY_VER_WORDS)).$(word 2,$(RUBY_VER_WORDS))
 RUBY_LIB_VER=1.9.1
 
 PROTORUBYDIR=$(PROTO_DIR)/usr/ruby/$(RUBY_VER)
-PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/$(MACH64)/ruby/$(RUBY_LIB_VER)/$(MACH)-solaris$(SOLARIS_VERSION)/rbconfig.rb
+PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(MACH64)-solaris$(SOLARIS_VERSION)/rbconfig.rb
 
 # these macros are used in the package manifest
 PKG_MACROS+=	RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
@@ -71,7 +71,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	$(GSED) -e "s/MACH64/$(MACH64)/" -e "s/RUBY_VER/$(RUBY_VER)/" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/gem.1-generic \
 	    > Solaris/gem.1 ; \
-	$(GSED) -e "s/MACH64/$(MACH64)/" -e "s/RUBY_VER/$(RUBY_VER)/" \
+	$(GSED) -e "s/RUBY_VER/$(RUBY_VER)/" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/ruby.1.sedscript \
 	    > Solaris/ruby.1.sedscript.mod ; \
 	$(GSED) -e "s/MACH64/$(MACH64)/" -e "s/RUBY_VER/$(RUBY_VER)/" \
@@ -116,6 +116,13 @@ CONFIGURE_BINDIR.64 =   $(CONFIGURE_BINDIR.32)
 # not strictly needed, since ruby doesn't use sbin, but
 # change this as well, for consistency with BINDIR
 CONFIGURE_SBINDIR.64 =   $(CONFIGURE_SBINDIR.32)
+
+# we are building 64-bit, but most of the ruby libraries (*.rb files)
+# are non-bit-specfic text files, so don't put them under lib/$(MACH64).
+# The 64-bit *.so libraries will be in the $(MACH64)-solaris$(SOLARIS_VERSION)
+# arch directories under lib
+
+CONFIGURE_OPTIONS +=	--with-rubylibprefix=$(CONFIGURE_LIBDIR.32)/ruby
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--enable-rpath
 CONFIGURE_OPTIONS +=	--enable-install-doc

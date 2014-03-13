@@ -302,12 +302,7 @@ RUBY.1.8 =	/usr/ruby/1.8/bin/ruby
 RUBY.1.9 =	/usr/ruby/1.9/bin/ruby
 RUBY =		$(RUBY.$(RUBY_VERSION))
 
-# Note: Ruby 1.9 is 64-bit only; there is no 32-bit ruby 1.9.
-VENDOR_RUBY.32 = \
-    /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
-VENDOR_RUBY.64 = \
-    /usr/ruby/$(RUBY_VERSION)/lib/$(MACH64)/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
-VENDOR_RUBY = $(VENDOR_RUBY.$(BITS))
+VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
 
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64

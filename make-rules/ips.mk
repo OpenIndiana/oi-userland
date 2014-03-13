@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -286,6 +286,7 @@ $(BUILD_DIR)/.resolved-$(MACH):	$(DEPENDED)
 $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
 	@echo "VALIDATING MANIFEST CONTENT: $(RESOLVED)"
 	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)"\
+		SOLARIS_VERSION=$(SOLARIS_VERSION)\
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 			-f $(WS_TOOLS)/pkglintrc $(RESOLVED)
 	$(TOUCH) $@
@@ -293,6 +294,7 @@ $(BUILD_DIR)/.linted-$(MACH):	$(BUILD_DIR)/.resolved-$(MACH)
 lintme: FRC
 	@echo "VALIDATING MANIFEST CONTENT: $(RESOLVED)"
 	$(ENV) PYTHONPATH=$(WS_TOOLS)/python PROTO_PATH="$(PKG_PROTO_DIRS)"\
+		SOLARIS_VERSION=$(SOLARIS_VERSION)\
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 			-f $(WS_TOOLS)/pkglintrc $(RESOLVED)
 

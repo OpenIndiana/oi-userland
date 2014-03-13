@@ -46,6 +46,7 @@ class UserlandActionChecker(base.ActionChecker):
 			self.proto_path = path.split()
 		else:
 			self.proto_path = None
+		solaris_ver = os.getenv('SOLARIS_VERSION')
 		#
 		# These lists are used to check if a 32/64-bit binary
 		# is in a proper 32/64-bit directory.
@@ -55,14 +56,18 @@ class UserlandActionChecker(base.ActionChecker):
 			"sparcv7",
 			"32",
 			"i86pc-solaris-64int",  # perl path
-			"sun4-solaris-64int"    # perl path
+			"sun4-solaris-64int",   # perl path
+			"i386-solaris" + solaris_ver,	# ruby path
+			"sparc-solaris"	+ solaris_ver	# ruby path
 		]
 		self.pathlist64 = [
 			"amd64",
 			"sparcv9",
 			"64",
 			"i86pc-solaris-64",     # perl path
-			"sun4-solaris-64"       # perl path
+			"sun4-solaris-64",      # perl path
+			"amd64-solaris" + solaris_ver,	# ruby path
+			"sparcv9-solaris" + solaris_ver	# ruby path
 		]
 		self.runpath_re = [
 			re.compile('^/lib(/.*)?$'),
@@ -74,7 +79,11 @@ class UserlandActionChecker(base.ActionChecker):
 			re.compile('^.*/amd64(/.*)?$'),
 			re.compile('^.*/sparcv9(/.*)?$'),
 			re.compile('^.*/i86pc-solaris-64(/.*)?$'), # perl path
-			re.compile('^.*/sun4-solaris-64(/.*)?$')   # perl path
+			re.compile('^.*/sun4-solaris-64(/.*)?$'),  # perl path
+			re.compile('^.*/amd64-solaris2\.[0-9]+(/.*)?$'),
+				# ruby path
+			re.compile('^.*/sparcv9-solaris2\.[0-9]+(/.*)?$')
+				# ruby path
 		]
 		self.initscript_re = re.compile("^etc/(rc.|init)\.d")
 
