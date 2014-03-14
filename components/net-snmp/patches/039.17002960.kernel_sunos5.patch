@@ -1,0 +1,11 @@
+--- net-snmp-5.4.1.old/agent/mibgroup/kernel_sunos5.c	2014-02-26 05:32:10.697219080 -0500
++++ net-snmp-5.4.1/agent/mibgroup/kernel_sunos5.c	2014-02-26 05:31:28.588532860 -0500
+@@ -296,7 +296,7 @@
+ 	goto Return;
+     }
+    
+-    if ((ks = kstat_lookup(ksc, statname, 0, "link")) != NULL)
++    if ((ks = kstat_lookup(ksc, statname, -1, "link")) != NULL)
+     {
+         kid = kstat_read(ksc, ks, NULL);
+         if (kid == -1) {
