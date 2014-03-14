@@ -1,0 +1,65 @@
+This patch fixes the issue related to delayed response
+of the snmpd agent when monitors are used.
+
+This patch is taken from the community for the following bug. 
+snmpd: PATCH: 1918383: Fix DisMan monitoring of AgentX subagents
+http://sourceforge.net/p/net-snmp/patches/897/
+--- net-snmp-5.4.1.old/agent/mibgroup/utilities/iquery.c	2006-10-12 15:21:28.000000000 -0700
++++ net-snmp-5.4.1/agent/mibgroup/utilities/iquery.c	2013-07-09 14:39:34.856060200 -0700
+@@ -159,6 +159,8 @@
+             memdup( &(ss->community), secName, strlen(secName));
+             ss->community_len = strlen(secName);
+         }
++        ss->myvoid = netsnmp_check_outstanding_agent_requests;
++        ss->flags |= SNMP_FLAGS_RESP_CALLBACK | SNMP_FLAGS_DONT_PROBE;
+     }
+ #endif
+ 
+--- net-snmp-5.4.1.old/include/net-snmp/library/snmp_api.h	2007-03-23 02:44:49.000000000 -0700
++++ net-snmp-5.4.1/include/net-snmp/library/snmp_api.h	2013-05-08 02:17:51.242309300 -0700
+@@ -300,7 +300,10 @@
+     void           *securityInfo;
+ 
+     /**
+-     * use as you want data 
++     * use as you want data
++     *
++     *     used by 'SNMP_FLAGS_RESP_CALLBACK' handling in the agent
++     * XXX: or should we add a new field into this structure? 
+      */
+     void           *myvoid;
+ };
+@@ -394,6 +397,7 @@
+ 
+ #define SNMP_DETAIL_SIZE        512
+ 
++#define SNMP_FLAGS_RESP_CALLBACK   0x400      /* Additional callback on response */
+ #define SNMP_FLAGS_USER_CREATED    0x200      /* USM user has been created */
+ #define SNMP_FLAGS_DONT_PROBE      0x100      /* don't probe for an engineID */
+ #define SNMP_FLAGS_STREAM_SOCKET   0x80
+--- net-snmp-5.4.1.old/snmplib/snmp_client.c	2007-07-03 15:36:42.000000000 -0700
++++ net-snmp-5.4.1/snmplib/snmp_client.c	2013-07-09 14:48:09.041945100 -0700
+@@ -1014,7 +1014,7 @@
+         count = select(numfds, &fdset, 0, 0, tvp);
+         if (count > 0) {
+             snmp_read(&fdset);
+-        } else
++        } else {
+             switch (count) {
+             case 0:
+                 snmp_timeout();
+@@ -1040,6 +1040,14 @@
+                 state->status = STAT_ERROR;
+                 state->waiting = 0;
+             }
++        }
++
++        if ( ss->flags & SNMP_FLAGS_RESP_CALLBACK ) {
++            void (*cb)(void);
++            cb = ss->myvoid;
++            cb();        /* Used to invoke 'netsnmp_check_outstanding_agent_requests();'
++                            on internal AgentX queries.  */
++        }
+     }
+     *response = state->pdu;
+     ss->callback = cbsav;

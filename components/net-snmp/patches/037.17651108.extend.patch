@@ -1,0 +1,19 @@
+This patch fixes the issue of the net-snmp agent
+crashing when duplicate entries are added for "exec"
+entries in snmpd.conf.
+The bug/patch details are given below.
+snmpd: PATCH: 1744157: Report duplicate "extend/exec" identifiers.
+http://sourceforge.net/p/net-snmp/patches/825/
+
+--- net-snmp-5.4.1.old/agent/mibgroup/agent/extend.c	2007-07-06 08:32:59.000000000 -0700
++++ net-snmp-5.4.1/agent/mibgroup/agent/extend.c	2013-12-05 03:09:26.546468801 -0800
+@@ -450,6 +450,9 @@
+         extension->command  = strdup( exec_command );
+         if (cptr)
+             extension->args = strdup( cptr );
++        } else {
++           snmp_log(LOG_ERR, "Duplicate MIBOID '%s' detected in exec statement, only the first one will be used.\n", exec_name);
++           return;
+     }
+ 
+ #ifndef USING_UCD_SNMP_EXTENSIBLE_MODULE
