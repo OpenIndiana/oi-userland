@@ -20,51 +20,50 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
-PATH=/usr/xpg4/bin:/usr/bin
+# for ginstall and tail -n
+PATH=/usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		ejabberd
-COMPONENT_VERSION=	2.1.8
+COMPONENT_VERSION=	2.1.13
 COMPONENT_PROJECT_URL=	http://www.ejabberd.im/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:dedf7684f9e96efbbc12f08f175096ef50b3f75b284bd27d172eaf75cecded7f
+    sha256:a80d1c72e435da31758261cb0c04fe750ac71fc3e33a3b606123efd3b3abc86d
 COMPONENT_ARCHIVE_URL=	http://www.process-one.net/downloads/ejabberd/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/ejabberd
 
 include ../../make-rules/prep.mk
 
-SRC_OFFSET =	src
-# Now we override paths to .built
-BUILD_DIR_32 = $(BUILD_DIR)/$(MACH32)/$(SRC_OFFSET)
 
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-# tail with -n is needed
-CONFIGURE_ENV += "PATH=/usr/xpg4/bin:/usr/bin"
+CONFIGURE_SCRIPT = $(SOURCE_DIR)/src/configure
+BUILD_DIR_64 =	$(BUILD_DIR)/$(MACH64)/src
+COMPONENT_PRE_CONFIGURE_ACTION = \
+	($(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH64))
 
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS +=	--sysconfdir=$(ETCDIR)
 CONFIGURE_OPTIONS +=	--with-erlang=$(USRBINDIR)
 CONFIGURE_OPTIONS +=	--localstatedir=/var
+CONFIGURE_OPTIONS +=	--enable-odbc
 
-COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CLONEY) $(SOURCE_DIR) $(BUILD_DIR)/$(MACH32))
+COMPONENT_BUILD_TARGETS = all
 
-CONFIGURE_SCRIPT = ./configure
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-build:	$(BUILD_32)
+build:	$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
