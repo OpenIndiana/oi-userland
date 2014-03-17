@@ -1,0 +1,169 @@
+In-house patch for the temporary removal of Paramiko dependency in
+Cinder.  This patch is Solaris-specific and not suitable for upstream
+
+--- cinder-2013.1.4/cinder/utils.py.orig	2013-10-17 11:21:37.000000000 -0700
++++ cinder-2013.1.4/cinder/utils.py	2014-03-08 11:55:09.044072461 -0800
+@@ -27,7 +27,6 @@
+ import inspect
+ import itertools
+ import os
+-import paramiko
+ import pyclbr
+ import random
+ import re
+@@ -233,135 +232,6 @@
+     return out, err
+ 
+ 
+-def ssh_execute(ssh, cmd, process_input=None,
+-                addl_env=None, check_exit_code=True):
+-    LOG.debug(_('Running cmd (SSH): %s'), cmd)
+-    if addl_env:
+-        raise exception.Error(_('Environment not supported over SSH'))
+-
+-    if process_input:
+-        # This is (probably) fixable if we need it...
+-        raise exception.Error(_('process_input not supported over SSH'))
+-
+-    stdin_stream, stdout_stream, stderr_stream = ssh.exec_command(cmd)
+-    channel = stdout_stream.channel
+-
+-    #stdin.write('process_input would go here')
+-    #stdin.flush()
+-
+-    # NOTE(justinsb): This seems suspicious...
+-    # ...other SSH clients have buffering issues with this approach
+-    stdout = stdout_stream.read()
+-    stderr = stderr_stream.read()
+-    stdin_stream.close()
+-    stdout_stream.close()
+-    stderr_stream.close()
+-
+-    exit_status = channel.recv_exit_status()
+-
+-    # exit_status == -1 if no exit code was returned
+-    if exit_status != -1:
+-        LOG.debug(_('Result was %s') % exit_status)
+-        if check_exit_code and exit_status != 0:
+-            raise exception.ProcessExecutionError(exit_code=exit_status,
+-                                                  stdout=stdout,
+-                                                  stderr=stderr,
+-                                                  cmd=cmd)
+-    channel.close()
+-    return (stdout, stderr)
+-
+-
+-def create_channel(client, width, height):
+-    """Invoke an interactive shell session on server."""
+-    channel = client.invoke_shell()
+-    channel.resize_pty(width, height)
+-    return channel
+-
+-
+-class SSHPool(pools.Pool):
+-    """A simple eventlet pool to hold ssh connections."""
+-
+-    def __init__(self, ip, port, conn_timeout, login, password=None,
+-                 privatekey=None, *args, **kwargs):
+-        self.ip = ip
+-        self.port = port
+-        self.login = login
+-        self.password = password
+-        self.conn_timeout = conn_timeout if conn_timeout else None
+-        self.privatekey = privatekey
+-        super(SSHPool, self).__init__(*args, **kwargs)
+-
+-    def create(self):
+-        try:
+-            ssh = paramiko.SSHClient()
+-            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+-            if self.password:
+-                ssh.connect(self.ip,
+-                            port=self.port,
+-                            username=self.login,
+-                            password=self.password,
+-                            timeout=self.conn_timeout)
+-            elif self.privatekey:
+-                pkfile = os.path.expanduser(self.privatekey)
+-                privatekey = paramiko.RSAKey.from_private_key_file(pkfile)
+-                ssh.connect(self.ip,
+-                            port=self.port,
+-                            username=self.login,
+-                            pkey=privatekey,
+-                            timeout=self.conn_timeout)
+-            else:
+-                msg = _("Specify a password or private_key")
+-                raise exception.CinderException(msg)
+-
+-            # Paramiko by default sets the socket timeout to 0.1 seconds,
+-            # ignoring what we set thru the sshclient. This doesn't help for
+-            # keeping long lived connections. Hence we have to bypass it, by
+-            # overriding it after the transport is initialized. We are setting
+-            # the sockettimeout to None and setting a keepalive packet so that,
+-            # the server will keep the connection open. All that does is send
+-            # a keepalive packet every ssh_conn_timeout seconds.
+-            if self.conn_timeout:
+-                transport = ssh.get_transport()
+-                transport.sock.settimeout(None)
+-                transport.set_keepalive(self.conn_timeout)
+-            return ssh
+-        except Exception as e:
+-            msg = _("Error connecting via ssh: %s") % e
+-            LOG.error(msg)
+-            raise paramiko.SSHException(msg)
+-
+-    def get(self):
+-        """
+-        Return an item from the pool, when one is available.  This may
+-        cause the calling greenthread to block. Check if a connection is active
+-        before returning it. For dead connections create and return a new
+-        connection.
+-        """
+-        if self.free_items:
+-            conn = self.free_items.popleft()
+-            if conn:
+-                if conn.get_transport().is_active():
+-                    return conn
+-                else:
+-                    conn.close()
+-            return self.create()
+-        if self.current_size < self.max_size:
+-            created = self.create()
+-            self.current_size += 1
+-            return created
+-        return self.channel.get()
+-
+-    def remove(self, ssh):
+-        """Close an ssh client and remove it if in free_items."""
+-        ssh.close()
+-        if ssh in self.free_items:
+-            self.free_items.pop(ssh)
+-        ssh = None
+-
+-        if self.current_size > 0:
+-            self.current_size -= 1
+-
+-
+ def cinderdir():
+     import cinder
+     return os.path.abspath(cinder.__file__).split('cinder/__init__.py')[0]
+--- cinder-2013.1.4/cinder.egg-info/requires.txt.orig	Wed Feb 26 10:56:39 2014
++++ cinder-2013.1.4/cinder.egg-info/requires.txt	Wed Feb 26 10:58:01 2014
+@@ -14,7 +14,6 @@
+ sqlalchemy-migrate>=0.7.2
+ stevedore>=0.8.0
+ suds>=0.4
+-paramiko
+ Babel>=0.9.6
+ iso8601>=0.1.4
+ setuptools_git>=0.4
+--- cinder-2013.1.4/tools/pip-requires.orig	Wed Feb 26 10:56:38 2014
++++ cinder-2013.1.4/tools/pip-requires	Wed Feb 26 10:58:25 2014
+@@ -14,7 +14,6 @@
+ sqlalchemy-migrate>=0.7.2
+ stevedore>=0.8.0
+ suds>=0.4
+-paramiko
+ Babel>=0.9.6
+ iso8601>=0.1.4
+ setuptools_git>=0.4

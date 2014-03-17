@@ -1,0 +1,84 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import ConfigParser
+import os
+import sys
+
+import smf_include
+
+from subprocess import CalledProcessError, Popen, PIPE, check_call
+
+
+def start():
+    """ retrieves the setting for 'zfs_volume_base' from Cinder's conf file in
+    order to set it up properly for Cinder to use.
+
+    """
+    parser = ConfigParser.ConfigParser()
+    parser.read("/etc/cinder/cinder.conf")
+
+    # set up the top-level dataset with the proper permissions for cinder
+    top_ds = parser.get("DEFAULT", "zfs_volume_base")
+
+    # look to see if the dataset exists
+    cmd = ["/usr/sbin/zfs", "list", top_ds]
+    try:
+        check_call(cmd, stdout=PIPE, stderr=PIPE)
+    except CalledProcessError as err:
+        # the dataset doesn't exist, so go create it
+        try:
+            check_call(["/usr/sbin/zfs", "create", "-p", top_ds])
+        except CalledProcessError as err:
+            print "unable to create %s:  %s" % (top_ds, err)
+            return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # get the mountpoint
+    cmd = ["/usr/sbin/zfs", "get", "-H", "-o", "value", "mountpoint", top_ds]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    mountpoint, error = p.communicate()
+    if p.returncode != 0:
+        print "unable to determine mountpoint of %s:  %s" % (top_ds, error)
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
+    p = Popen(["/usr/bin/ls", "-dv", mountpoint], stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+
+    if "user:cinder:add_subdirectory/append_data:allow" not in output:
+        # set an ACL to all mountpoint access
+        try:
+            check_call(["/usr/bin/chmod",
+                        "A+user:cinder:add_subdirectory:allow",
+                        mountpoint.strip()])
+        except CalledProcessError as err:
+            print "ACL creation for mountpoint access of "
+            print "%s to 'cinder' failed:  %s" % (top_ds, err)
+            return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # set delegation
+    cmd = ["/usr/sbin/zfs", "allow", "cinder",
+           "clone,create,destroy,mount,snapshot", top_ds]
+    try:
+        check_call(cmd)
+    except CalledProcessError as err:
+        print "delegation of %s to 'cinder' failed:  %s" % (top_ds, err)
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
+    return smf_include.SMF_EXIT_OK
+
+if __name__ == "__main__":
+    os.putenv("LC_ALL", "C")
+    smf_include.smf_main()

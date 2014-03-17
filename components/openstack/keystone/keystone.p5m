@@ -1,0 +1,254 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/cloud/openstack/keystone@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenStack Keystone"
+set name=pkg.description \
+    value="OpenStack Keystone is a service that provides Identity, Token, Catalog, and Policy services for use specifically by projects in the OpenStack family."
+set name=pkg.human-version value="Grizzly $(COMPONENT_VERSION)"
+set name=com.oracle.info.description \
+    value="Keystone, the OpenStack identity service"
+set name=com.oracle.info.tpno value=16293
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management" \
+    value=org.opensolaris.category.2008:System/Virtualization \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/048
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+dir  path=etc/keystone owner=keystone group=keystone mode=0700
+file etc/default_catalog.templates path=etc/keystone/default_catalog.templates \
+    owner=keystone group=keystone mode=0644 overlay=allow preserve=true
+file files/keystone.conf path=etc/keystone/keystone.conf owner=keystone \
+    group=keystone mode=0644 overlay=allow preserve=true
+file etc/logging.conf.sample path=etc/keystone/logging.conf owner=keystone \
+    group=keystone mode=0644 overlay=allow preserve=true
+file etc/policy.json path=etc/keystone/policy.json owner=keystone \
+    group=keystone mode=0644 overlay=allow preserve=true
+file files/keystone.xml path=lib/svc/manifest/application/openstack/keystone.xml
+file files/keystone path=lib/svc/method/keystone
+file path=usr/bin/keystone-manage
+file tools/sample_data.sh path=usr/demo/openstack/keystone/sample_data.sh \
+    mode=0555
+file usr/bin/keystone-all path=usr/lib/keystone/keystone-all mode=0555 \
+    pkg.depend.bypass-generate=.*/paste.*
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/password.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/plugins/token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/auth/token_factory.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/kvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/backends/templated.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/catalog/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/clean.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/cli.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/bufferedhttp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/cms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/controller.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/dependency.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/kvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/ldap/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/ldap/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/ldap/fakeldap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/logging.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/openssl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/router.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/serializer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/legacy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/README
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/manage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/migrate.cfg
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/001_add_initial_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/002_sqlite_downgrade.sql
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/002_sqlite_upgrade.sql
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/002_token_id_hash.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/003_sqlite_upgrade.sql
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/003_token_valid.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/004_undo_token_id_hash.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/005_set_utf8_character_set.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/006_add_policy_table.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/007_add_domain_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/008_create_default_domain.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/009_normalize_identity.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/010_normalize_identity_migration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/011_endpoints_v3.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/012_populate_endpoint_type.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/013_drop_legacy_endpoints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/014_add_group_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/015_tenant_to_project.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/016_normalize_domain_ids.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/017_membership_role.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/018_add_trust_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/019_fixup_role.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/020_migrate_metadata_table_roles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/021_add_trust_to_token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/022_move_legacy_endpoint_id.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migrate_repo/versions/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/migration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/nova.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/sql/util.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/systemd.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/common/wsgi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/config.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/access/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/access/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/admin_crud/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/admin_crud/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/ec2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/ec2/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/ec2/backends/kvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/ec2/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/ec2/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/s3/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/s3/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/stats/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/stats/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/stats/backends/kvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/stats/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/user_crud/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/contrib/user_crud/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/backends/kvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/backends/ldap/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/backends/ldap/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/backends/pam.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/identity/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/locale/ca/LC_MESSAGES/keystone.po
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/locale/hu/LC_MESSAGES/keystone.po
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/locale/ja/LC_MESSAGES/keystone.po
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/locale/keystone.pot
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/auth_token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/ec2_token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/middleware/s3_token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/README
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/gettextutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/importutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/jsonutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/setup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/timeutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/openstack/common/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/backends/rules.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/policy/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/service.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/test.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/backends/kvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/backends/memcache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/token/routers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/backends/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/backends/kvs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/backends/sql.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/controllers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystone/trust/routers.py
+dir  path=var/lib/keystone owner=keystone group=keystone mode=0700
+dir  path=var/log/keystone owner=keystone group=keystone mode=0700
+group groupname=keystone gid=83
+user username=keystone ftpuser=false gcos-field="OpenStack Keystone" \
+    group=keystone home-dir=/var/lib/keystone uid=83
+license keystone.license license="Apache v2.0"
+
+# force a group dependency on the optional anyjson; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/anyjson-26
+
+# force a dependency on iso8601; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/iso8601-26
+
+# force a dependency on keystoneclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneclient-26
+
+# force a dependency on lxml; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/lxml-26
+
+# force a dependency on oslo.config; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.config-26
+
+# force a dependency on passlib; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/passlib-26
+
+# force a dependency on paste.deploy; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/paste.deploy-26
+
+# force a dependency on routes; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/routes-26
+
+# force a dependency on setuptools; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/setuptools-26
+
+# force a dependency on webob; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/webob-26

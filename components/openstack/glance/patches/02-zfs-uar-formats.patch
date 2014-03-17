@@ -1,0 +1,40 @@
+In-house patch to add 'uar' and 'zfs' container and disk formats to
+registered image types.  Patch has not yet been submitted upstream.
+
+diff --git a/glance/api/v1/images.py b/glance/api/v1/images.py
+index 4993a28..a4efe16 100644
+--- a/glance/api/v1/images.py
++++ b/glance/api/v1/images.py
+@@ -55,9 +55,9 @@ CONF = cfg.CONF
+ LOG = logging.getLogger(__name__)
+ SUPPORTED_PARAMS = glance.api.v1.SUPPORTED_PARAMS
+ SUPPORTED_FILTERS = glance.api.v1.SUPPORTED_FILTERS
+-CONTAINER_FORMATS = ['ami', 'ari', 'aki', 'bare', 'ovf']
++CONTAINER_FORMATS = ['ami', 'ari', 'aki', 'bare', 'ovf', 'uar']
+ DISK_FORMATS = ['ami', 'ari', 'aki', 'vhd', 'vmdk', 'raw', 'qcow2', 'vdi',
+-                'iso']
++                'iso', 'zfs']
+ 
+ 
+ def validate_image_meta(req, values):
+diff --git a/glance/api/v2/images.py b/glance/api/v2/images.py
+index 3121b25..32090c9 100644
+--- a/glance/api/v2/images.py
++++ b/glance/api/v2/images.py
+@@ -520,14 +520,14 @@ _BASE_PROPERTIES = {
+         'type': 'string',
+         'description': _(''),
+         'type': 'string',
+-        'enum': ['bare', 'ovf', 'ami', 'aki', 'ari'],
++        'enum': ['bare', 'ovf', 'ami', 'aki', 'ari', 'uar'],
+     },
+     'disk_format': {
+         'type': 'string',
+         'description': _(''),
+         'type': 'string',
+         'enum': ['raw', 'vhd', 'vmdk', 'vdi', 'iso', 'qcow2',
+-                 'aki', 'ari', 'ami'],
++                 'aki', 'ari', 'ami', 'zfs'],
+     },
+     'created_at': {
+         'type': 'string',

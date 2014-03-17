@@ -1,0 +1,826 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+# the static dashboard files need to be written by the webserver, so
+# change their ownership
+<transform dir file \
+    path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/.+ \
+    -> default owner webservd>
+<transform dir file \
+    path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/.+ \
+    -> default group webservd>
+
+# move the openstack_dashboard to var as portions of it need to be writeable
+<transform dir file -> edit path \
+    usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static \
+    var/lib/openstack_dashboard/static>
+<transform dir file path=var/lib/openstack_dashboard/static/(.+) \
+    -> set action.hash \
+    usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/%<1>>
+#
+set name=pkg.fmri \
+    value=pkg:/cloud/openstack/horizon@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenStack Horizon"
+set name=pkg.description \
+    value="OpenStack Horizon is the canonical implementation of Openstack's Dashboard, which provides a web based user interface to OpenStack services including Nova, Swift, Keystone, etc."
+set name=pkg.human-version value="Grizzly $(COMPONENT_VERSION)"
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management" \
+    value=org.opensolaris.category.2008:System/Virtualization \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/058
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+file files/openstack-dashboard.conf \
+    path=etc/apache2/2.2/conf.d/openstack-dashboard.conf \
+    refresh_fmri=svc:/network/http:apache22
+file files/local_settings.py path=etc/openstack_dashboard/local_settings.py \
+    mode=0644 overlay=allow pkg.tmp.autopyc=false preserve=true
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/browsers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/browsers/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/browsers/breadcrumb.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/browsers/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/dash_template/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/dash_template/dashboard.py.tmpl
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/dash_template/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/dash_template/static/dash_name/css/dash_name.css
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/dash_template/static/dash_name/js/dash_name.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/dash_template/templates/dash_name/base.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/default.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/panel_template/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/panel_template/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/panel_template/panel.py.tmpl
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/panel_template/templates/panel_name/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/panel_template/tests.py.tmpl
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/panel_template/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/conf/panel_template/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/context_processors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/decorators.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/forms/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/forms/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/forms/fields.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/forms/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/loaders.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/bg_BG/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/bg_BG/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ca/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/cs/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/en/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/en/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/en_GB/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/es/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/es/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/fi_FI/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/fr/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/fr/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/hu/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/it/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/it/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ja/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ja/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ka_GE/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ko_KR/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ko_KR/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/nl_NL/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/nl_NL/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/pl/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/pl/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/pt/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/pt/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/pt_BR/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/pt_BR/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ru/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/ru/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/vi_VN/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/zh_CN/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/zh_CN/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/zh_HK/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/zh_TW/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/locale/zh_TW/LC_MESSAGES/djangojs.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/management/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/management/commands/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/management/commands/startdash.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/management/commands/startpanel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/messages.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/middleware.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/site_urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/bootstrap/js/bootstrap.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/bootstrap/js/bootstrap.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.communication.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.conf.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.cookies.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.forms.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.instances.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.messages.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.modals.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.networktopology.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.projects.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.quota.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.tables.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.tabs.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.templates.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.users.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/js/horizon.utils.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/hogan-2.0.0.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/jquery/jquery-ui-1.9.2.custom.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/jquery/jquery.cookie.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/jquery/jquery.min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/jquery/jquery.quicksearch.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/jquery/jquery.table-sorter.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/json2.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/qunit/qunit.css
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/qunit/qunit.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/spin.jquery.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/spin.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/lib/underscore/underscore-min.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/tests/messages.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/tests/modals.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/tests/tables.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon/tests/templates.js
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/tables/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/tables/actions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/tables/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/tables/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/tabs/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/tabs/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/tabs/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/_header.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/_stylesheets.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/auth/_login.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/auth/login.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/base.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/_conf.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/_messages.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/_nav_list.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/_scripts.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/_subnav_list.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/_alert_message.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/_loading.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/_modal.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/_project_user.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/_script_loader.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/_table_row.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/template.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/client_side/templates.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_breadcrumb.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_data_table.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_data_table_row.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_data_table_row_action.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_data_table_row_actions.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_data_table_table_actions.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_detail_table.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_form_fields.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_modal.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_modal_form.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_page_header.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_progress_bar.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_quota_summary.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_region_selector.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_resource_browser.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_sidebar.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_sidebar_module.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_tab_group.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_usage_summary.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_workflow.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_workflow_step.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/common/_workflow_step_update_members.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/horizon/qunit.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templates/splash.html
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templatetags/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templatetags/branding.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templatetags/horizon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templatetags/parse_date.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templatetags/sizeformat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/templatetags/truncate_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/fields.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/filters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/functions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/html.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/memoized.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/secret_key.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/utils/validators.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/workflows/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/workflows/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/horizon/workflows/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/cinder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/glance.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/keystone.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/lbaas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/network.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/nova.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/quantum.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/api/swift.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/context_processors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/dashboard.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/extras/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/extras/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/extras/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/extras/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/extras/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/extras/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/_edit.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/edit.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/extras/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/extras/_edit.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/extras/_index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/extras/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/extras/edit.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/extras/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/templates/flavors/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/flavors/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/templates/images/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/templates/images/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/templates/images/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/templates/images/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/templates/images/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/images/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/templates/info/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/info/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/instances/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/instances/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/instances/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/instances/templates/instances/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/instances/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/instances/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/instances/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/ports/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/ports/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/ports/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/ports/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/ports/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/ports/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/subnets/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/subnets/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/subnets/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/subnets/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/subnets/workflows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/ports/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/ports/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/ports/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/ports/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/subnets/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/subnets/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/subnets/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/templates/networks/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/networks/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/overview/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/overview/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/overview/templates/overview/usage.csv
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/overview/templates/overview/usage.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/overview/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/overview/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/overview/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/_add_user.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/_create_user.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/_quotas.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/_update_members.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/add_user.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/create_user.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/quotas.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/usage.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/templates/projects/users.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/projects/workflows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/ports/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/ports/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/ports/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/ports/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/ports/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/templates/routers/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/templates/routers/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/templates/routers/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/routers/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/templates/users/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/templates/users/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/templates/users/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/templates/users/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/templates/users/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/users/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/templates/volumes/_create_volume_type.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/templates/volumes/create_volume_type.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/templates/volumes/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/templates/volumes/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/admin/volumes/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/api_access/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/api_access/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/api_access/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/api_access/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/api_access/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/floating_ips/workflows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/keypairs/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/keypairs/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/keypairs/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/keypairs/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/keypairs/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/keypairs/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/security_groups/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/security_groups/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/security_groups/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/security_groups/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/security_groups/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/security_groups/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/api_access/ec2rc.sh.template
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/api_access/openrc.sh.template
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/floating_ips/_allocate.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/floating_ips/allocate.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/floating_ips/associate.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/_import.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/download.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/keypairs/import.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/security_groups/_add_rule.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/security_groups/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/security_groups/add_rule.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/security_groups/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/templates/access_and_security/security_groups/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/access_and_security/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/browsers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/templates/containers/_copy.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/templates/containers/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/templates/containers/_upload.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/templates/containers/copy.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/templates/containers/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/templates/containers/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/templates/containers/upload.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/containers/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/dashboard.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/images/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/images/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/images/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/images/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/images/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/images/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/images/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/snapshots/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/snapshots/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/snapshots/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/snapshots/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/snapshots/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/snapshots/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/images/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/images/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/images/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/images/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/images/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/images/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/snapshots/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/snapshots/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/snapshots/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/templates/images_and_snapshots/snapshots/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/volume_snapshots/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/volume_snapshots/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/volume_snapshots/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/images_and_snapshots/volume_snapshots/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_detail_console.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_detail_log.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_instance_ips.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_launch_customize_help.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_launch_details_help.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_launch_network_help.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_launch_volumes_help.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/_update_networks.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/launch.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/templates/instances/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/workflows/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/instances/workflows/update_instance.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/_member_details.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/_members_tab.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/_monitor_details.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/_monitors_tab.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/_pool_details.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/_pools_tab.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/_vip_details.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/addmember.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/addmonitor.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/addpool.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/addvip.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/templates/loadbalancers/details_tabs.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/loadbalancers/workflows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/network_topology/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/network_topology/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/network_topology/templates/network_topology/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/network_topology/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/network_topology/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/ports/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/ports/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/ports/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/ports/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/ports/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/ports/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/subnets/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/subnets/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/subnets/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/subnets/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/subnets/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/subnets/workflows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/_network_ips.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/ports/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/ports/_port_ips.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/ports/_update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/ports/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/ports/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/subnets/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/subnets/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/subnets/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/subnets/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/subnets/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/templates/networks/update.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/networks/workflows.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/overview/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/overview/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/overview/templates/overview/usage.csv
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/overview/templates/overview/usage.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/overview/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/overview/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/overview/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/ports/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/ports/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/ports/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/ports/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/ports/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/ports/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/ports/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/ports/_setgateway.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/ports/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/templates/routers/ports/setgateway.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/routers/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/tabs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/_attach.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/_create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/_create_snapshot.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/_detail_overview.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/attach.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/create.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/create_snapshot.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/detail.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/templates/volumes/index.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/project/volumes/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/dashboard.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/models.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/forms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/panel.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/templates/user/_settings.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/templates/user/settings.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/dashboards/settings/user/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/local/__init__.py
+link \
+    path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/local/local_settings.py \
+    target=../../../../../../etc/openstack_dashboard/local_settings.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/bg_BG/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/ca/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/cs/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/en/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/en_GB/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/es/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/fi_FI/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/fr/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/hu/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/it/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/ja/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/ka_GE/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/ko_KR/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/nl_NL/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/pl/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/pt/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/pt_BR/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/ru/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/vi_VN/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/zh_CN/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/locale/zh_TW/LC_MESSAGES/django.mo
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/openstack/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/openstack/common/setup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/openstack/common/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/settings.py
+dir  path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static \
+    owner=webservd group=webservd
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/img/glyphicons-halflings-white.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/img/glyphicons-halflings.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/accordion.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/alerts.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/bootstrap.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/breadcrumbs.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/button-groups.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/buttons.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/carousel.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/close.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/code.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/component-animations.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/dropdowns.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/forms.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/grid.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/hero-unit.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/labels.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/layouts.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/mixins.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/modals.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/navbar.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/navs.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/pager.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/pagination.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/popovers.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/progress-bars.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/reset.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/responsive.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/scaffolding.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/sprites.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/tables.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/thumbnails.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/tooltip.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/type.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/utilities.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/variables.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/bootstrap/less/wells.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/fonts/Anivers_Regular-webfont.eot
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/fonts/Anivers_Regular-webfont.svg
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/fonts/Anivers_Regular-webfont.ttf
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/fonts/Anivers_Regular-webfont.woff
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/action_required.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/drag.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/drop_arrow.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/favicon.ico
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/loading.gif
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/logo-splash.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/logo.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/right_droparrow.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/router.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/search.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/server.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/img/up_arrow.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/dashboard/less/horizon.less
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/css/solaris.css
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/OpenStack_Dashboard_txt.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/Openstack_banner.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/OracleSolaris_Logo.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/OracleSolaris_login_banner.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/Oracle_Logo.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/content_tab_bkgd_selected.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/dots.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/favicon-solaris.ico
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/header_shadow.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/tab_bkgd_deselected.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/img/tab_bkgd_selected.png
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/static/solaris/theme/_stylesheets.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/templates/403.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/templates/404.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/templates/500.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/templates/_header.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/templates/_stylesheets.html
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/urls.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/usage/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/usage/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/usage/quotas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/usage/tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/usage/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/views.py
+file path=usr/lib/python$(PYVER)/vendor-packages/openstack_dashboard/wsgi/django.wsgi
+link path=var/lib/openstack_dashboard/static/horizon \
+    target=../../../../../usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon
+license horizon.license license="Apache v2.0" \
+    com.oracle.info.description="Horizon, the OpenStack web based user interface service" \
+    com.oracle.info.tpno=16292 com.oracle.info.version=$(IPS_COMPONENT_VERSION)
+license solaris.css.license license="Apache v2.0 (Solaris theme)" \
+    com.oracle.info.description="the Solaris theme for the OpenStack Dashboard" \
+    com.oracle.info.tpno=16775 com.oracle.info.version=1.0
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force dependency on cinderclient; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/cinderclient-26
+
+# force dependency on django; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/django-26
+
+# force dependency on django_compressor; one of the applications defined in
+# settings.py
+depend type=require fmri=library/python/django_compressor-26
+
+# force dependency on django_openstack_auth; pkgdepend work is needed to flush
+# this out
+depend type=require fmri=library/python/django_openstack_auth-26
+
+# force dependency on glanceclient; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/glanceclient-26
+
+# force dependency on keystoneclient; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/keystoneclient-26
+
+# force dependency on lesscpy; one of the filters defined in settings.py
+depend type=require fmri=library/python/lesscpy-26
+
+# force dependency on lockfile; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/lockfile-26
+
+# force dependency on netaddr; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/netaddr-26
+
+# force dependency on novaclient; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/novaclient-26
+
+# force dependency on pytz; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/pytz-26
+
+# force dependency on quantumclient; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/quantumclient-26
+
+# force dependency on setuptools; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/setuptools-26
+
+# force dependency on swiftclient; pkgdepend work is needed to flush this out
+depend type=require fmri=library/python/swiftclient-26
+
+# force a dependency on the Apache web server
+depend type=require fmri=web/server/apache-22
+
+# force dependency on the apache-wsgi module
+depend type=require fmri=web/server/apache-22/module/apache-wsgi-26

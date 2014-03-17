@@ -1,0 +1,84 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import ConfigParser
+import os
+import sys
+
+import smf_include
+
+from subprocess import CalledProcessError, check_call, PIPE, Popen
+
+from sqlalchemy import create_engine
+
+
+def db_sync():
+    """ function to create the database schema
+    """
+
+    cmd = ["/usr/bin/keystone-manage", "db_sync"]
+    try:
+        check_call(cmd)
+    except CalledProcessError as err:
+        print "Unable to create database for Keystone:  %s" % err
+        sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
+
+
+def start():
+    # read the options from the config file
+    parser = ConfigParser.ConfigParser()
+    parser.read("/etc/keystone/keystone.conf")
+
+    # get the database type
+    db_engine = create_engine(parser.get("sql", "connection"))
+    db_type = db_engine.name
+
+    if db_type == "sqlite":
+        # look to see if file exists or if it's zero length
+        abspath = os.path.abspath(db_engine.url.database)
+        if not os.path.exists(abspath) or os.path.getsize(abspath) == 0:
+            db_sync()
+
+    elif db_type == "mysql":
+        mysql_svc = "svc:/application/database/mysql:version_55"
+        cmd = ["/usr/bin/svcs", "-H", "-o", "state", mysql_svc]
+
+        try:
+            p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+            output, error = p.communicate()
+        except CalledProcessError:
+            print "mysql service not found.  Is it installed?"
+            return smf_include.SMF_EXIT_ERR_CONFIG
+
+        if output.strip() != "online":
+            # attempt to start mysql
+            cmd = ["/usr/sbin/svcadm", "enable", "-rs", mysql_svc]
+
+            try:
+                check_call(cmd)
+            except CalledProcessError as err:
+                print "starting mysql service failed:  %s" % err
+                return smf_include.SMF_EXIT_ERR_CONFIG
+
+        # not sure how to check if the database is valid, so just create
+        # the database every time for now
+        db_sync()
+
+    smf_include.smf_subprocess("/usr/lib/keystone/keystone-all")
+
+if __name__ == "__main__":
+    os.putenv("LC_ALL", "C")
+    smf_include.smf_main()

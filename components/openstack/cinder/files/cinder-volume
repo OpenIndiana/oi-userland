@@ -1,0 +1,55 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import ConfigParser
+import os
+
+import smf_include
+
+from subprocess import CalledProcessError, Popen, PIPE, check_call
+
+
+def start():
+    """ checks cinder's conf file for the ZFSISCSIDriver.  If it's found, make
+    sure svc:/network/iscsi/target:default is online.
+
+    """
+    parser = ConfigParser.ConfigParser()
+    parser.read("/etc/cinder/cinder.conf")
+    driver = parser.get("DEFAULT", "volume_driver")
+    if driver == "cinder.volume.drivers.solaris.zfs.ZFSISCSIDriver":
+        iscsi_svc = "svc:/network/iscsi/target:default"
+        cmd = ["/usr/bin/svcs", "-H", "-o", "state", iscsi_svc]
+        try:
+            p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+            output, error = p.communicate()
+        except CalledProcessError:
+            print "%s not found.  Is it installed?" % iscsi_svc
+            return smf_include.SMF_EXIT_ERR_CONFIG
+
+        if output.strip() != "online":
+            cmd = ["/usr/sbin/svcadm", "enable", "-rs", iscsi_svc]
+            try:
+                check_call(cmd)
+            except CalledProcessError as err:
+                print "enabling %s failed:  %s" % (iscsi_svc, err)
+                return smf_include.SMF_EXIT_ERR_CONFIG
+
+    smf_include.smf_subprocess("/usr/bin/pfexec /usr/lib/cinder/cinder-volume")
+
+if __name__ == "__main__":
+    os.putenv("LC_ALL", "C")
+    smf_include.smf_main()

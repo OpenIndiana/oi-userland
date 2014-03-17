@@ -1,0 +1,40 @@
+In-house patch to increase the size of the form field for Flavor Names, Flavor
+Keys, and Flavor Values from to 50 characters.  Patch has not yet been
+submitted upstream
+
+--- horizon-2013.1.4/openstack_dashboard/dashboards/admin/flavors/forms.py.orig   2014-03-04 14:05:10.040319808 -0700
++++ horizon-2013.1.4/openstack_dashboard/dashboards/admin/flavors/forms.py    2014-03-04 14:05:14.940287716 -0700
+@@ -34,7 +34,7 @@
+
+ class CreateFlavor(forms.SelfHandlingForm):
+     name = forms.RegexField(label=_("Name"),
+-                            max_length=25,
++                            max_length=50,
+                             regex=r'^[\w\.\- ]+$',
+                             error_messages={'invalid': _('Name may only '
+                                 'contain letters, numbers, underscores, '
+
+--- horizon-2013.1.4/openstack_dashboard/dashboards/admin/flavors/extras/forms.py.orig   2014-03-04 14:06:58.958564688 -0700
++++ horizon-2013.1.4/openstack_dashboard/dashboards/admin/flavors/extras/forms.py    2014-03-04 14:07:08.193582887 -0700
+@@ -31,8 +31,8 @@
+
+
+ class CreateExtraSpec(forms.SelfHandlingForm):
+-    key = forms.CharField(max_length="25", label=_("Key"))
+-    value = forms.CharField(max_length="25", label=_("Value"))
++    key = forms.CharField(max_length="50", label=_("Key"))
++    value = forms.CharField(max_length="50", label=_("Value"))
+     flavor_id = forms.CharField(widget=forms.widgets.HiddenInput)
+
+     def handle(self, request, data):
+@@ -49,8 +49,8 @@
+
+
+ class EditExtraSpec(forms.SelfHandlingForm):
+-    key = forms.CharField(max_length="25", label=_("Key"))
+-    value = forms.CharField(max_length="25", label=_("Value"))
++    key = forms.CharField(max_length="50", label=_("Key"))
++    value = forms.CharField(max_length="50", label=_("Value"))
+     flavor_id = forms.CharField(widget=forms.widgets.HiddenInput)
+
+     def handle(self, request, data):

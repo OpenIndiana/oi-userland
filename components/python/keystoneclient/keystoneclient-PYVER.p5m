@@ -1,0 +1,153 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+# argparse is part of python 2.7, but separate in 2.6
+<transform depend type=require fmri=library/python/argparse-27 -> drop>
+set name=pkg.fmri \
+    value=pkg:/library/python/keystoneclient-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary \
+    value="Python and command-line clients for the OpenStack Keystone API"
+set name=pkg.description \
+    value="A client for the OpenStack Identity API, implemented by Keystone. There's a Python API (the 'keystoneclient' module), and a command-line script ('keystone')."
+set name=com.oracle.info.description \
+    value="keystoneclient, the Python bindings to the OpenStack Identity API"
+set name=com.oracle.info.tpno value=16349
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/007
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/keystone target=keystone-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+file path=usr/bin/keystone-$(PYVER)
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/access.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/apiclient/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/apiclient/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/common/cms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/bootstrap/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/bootstrap/shell.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/ec2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/ec2/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/generic/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/generic/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/generic/shell.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/httpclient.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/locale/keystoneclient.pot
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/middleware/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/middleware/auth_token.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/middleware/memcache_crypt.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/gettextutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/importutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/jsonutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/memorycache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/py3kcompat/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/py3kcompat/urlutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/strutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/timeutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/service_catalog.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/shell.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/ec2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/endpoints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/roles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/services.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/shell.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/tenants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/tokens.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/users.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/trusts.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/credentials.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/domains.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/endpoints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/groups.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/policies.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/projects.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/roles.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/services.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/users.py
+file path=usr/lib/python$(PYVER)/vendor-packages/python_keystoneclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/python_keystoneclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/python_keystoneclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/python_keystoneclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/python_keystoneclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/python_keystoneclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/python_keystoneclient-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+license keystoneclient.license license="Apache v2.0"
+
+# force a group dependency on the optional anyjson; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/anyjson-$(PYV)
+
+# force a group dependency on the optional eventlet; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/eventlet-$(PYV)
+
+# force a dependency on argparse; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/argparse-$(PYV)
+
+# force a dependency on babel; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/babel-$(PYV)
+
+# force a dependency on iso8601; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/iso8601-$(PYV)
+
+# force a dependency on the keystoneclient package
+depend type=require \
+    fmri=library/python/keystoneclient@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on netaddr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/netaddr-$(PYV)
+
+# force a dependency on oslo.config; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/oslo.config-$(PYV)
+
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-$(PYV)
+
+# force a dependency on prettytable; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/prettytable-$(PYV)
+
+# force a dependency on requests; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/requests-$(PYV)
+
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-$(PYV)

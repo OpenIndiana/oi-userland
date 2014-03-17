@@ -1,0 +1,46 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import os
+import sys
+
+import smf_include
+
+from oslo.config import cfg
+
+
+# name to script mapping for nova API
+MAPPING = {
+    "ec2": "/usr/lib/nova/nova-api-ec2",
+    "metadata": "/usr/lib/nova/nova-api-metadata",
+    "osapi_compute": "/usr/lib/nova/nova-api-os-compute"
+}
+
+
+def start():
+    conf = cfg.CONF
+    conf.import_opt("enabled_apis", "nova.service")
+
+    if sys.argv[2] in conf.enabled_apis:
+        smf_include.smf_subprocess(MAPPING[sys.argv[2]])
+    else:
+        print "Not starting %s.  'enabled_apis' does not include %s" % \
+              (os.environ["SMF_FMRI"], sys.argv[2])
+        return smf_include.SMF_EXIT_TEMP_DISABLE
+
+if __name__ == "__main__":
+    os.putenv("LC_ALL", "C")
+    smf_include.smf_main()
