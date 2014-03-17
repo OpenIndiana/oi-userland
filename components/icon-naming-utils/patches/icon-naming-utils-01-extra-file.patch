@@ -1,0 +1,41 @@
+diff -u icon-naming-utils-0.8.1-orig/icon-name-mapping.pl.in icon-naming-utils-0.8.1/icon-name-mapping.pl.in
+--- icon-naming-utils-0.8.1-orig/icon-name-mapping.pl.in	Tue Sep 19 09:59:27 2006
++++ icon-naming-utils-0.8.1/icon-name-mapping.pl.in	Tue Sep 19 10:04:25 2006
+@@ -16,6 +16,7 @@
+ my $condir;
+ my $LN_S = ($^O eq 'MSWin32' ? 'cp' : 'ln -s');
+ my $mapdir = $ENV{INU_DATA_DIR} || "@DATADIR@";
++my $extrafile;
+ 
+ ############################################################################
+ my @default_getopt_config = ("permute", "pass_through", "bundling",
+@@ -27,9 +28,9 @@
+ 
+ Getopt::Long::Configure (@default_getopt_config);
+ GetOptions ("help|h" => \&usage,
+-	    "context|c=s" => \$condir);
++	    "context|c=s" => \$condir,
++	    "extrafile|e=s" => \$extrafile);
+ 
+-
+ ############################################################################
+ 
+ sub tls_load_mapping {
+@@ -75,6 +76,7 @@
+     print "Usage: $PROGRAM [OPTIONS] ...
+ 
+   -c, --context=<dirname>       Set up mapping for Context <dirname>
++  -e, --extrafile=<file>        Specify an extra mapping file <file>
+ 
+ This utility must be run from the <theme>/<size> directory, with a
+ context passsed in as the argument.
+@@ -86,4 +87,9 @@
+ } else {
+     my $iconmap = tls_load_mapping ("$mapdir/legacy-icon-mapping.xml");
+     tls_map_icons ($iconmap, $condir);
++    if (defined $extrafile)
++    {
++      my $tmpiconmap = tls_load_mapping ("$extrafile");
++      tls_map_icons ($tmpiconmap, $condir);
++    }
+ }
