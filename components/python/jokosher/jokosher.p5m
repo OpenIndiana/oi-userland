@@ -1,0 +1,177 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/studio/jokosher@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Jokosher is a multi-track studio application"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license="GPLv2"
+
+depend fmri=desktop/studio/jokosher-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION) \
+    predicate=runtime/python-26 \
+    type=conditional
+
+depend fmri=library/audio/gstreamer/plugin/gnonlin type=require
+
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+file path=usr/share/applications/jokosher.desktop
+file path=usr/share/gnome/help/jokosher/C/figures/add_instrument.png
+file path=usr/share/gnome/help/jokosher/C/figures/extension_manager.png
+file path=usr/share/gnome/help/jokosher/C/figures/instrument_effects.png
+file path=usr/share/gnome/help/jokosher/C/figures/instrument_features.png
+file path=usr/share/gnome/help/jokosher/C/figures/main_window.png
+file path=usr/share/gnome/help/jokosher/C/figures/mixing_window.png
+file path=usr/share/gnome/help/jokosher/C/figures/volume_fades.png
+file path=usr/share/gnome/help/jokosher/C/figures/welcome_dialog.png
+file path=usr/share/gnome/help/jokosher/C/jokosher.xml
+file path=usr/share/gnome/help/jokosher/C/legal.xml
+file path=usr/share/icons/hicolor/48x48/apps/jokosher.png
+file path=usr/share/jokosher/Instruments/acousticguitar.instr
+file path=usr/share/jokosher/Instruments/audiofile.instr
+file path=usr/share/jokosher/Instruments/bassdrum.instr
+file path=usr/share/jokosher/Instruments/bassguitar.instr
+file path=usr/share/jokosher/Instruments/cello.instr
+file path=usr/share/jokosher/Instruments/cymbal.instr
+file path=usr/share/jokosher/Instruments/drumkit.instr
+file path=usr/share/jokosher/Instruments/effect.instr
+file path=usr/share/jokosher/Instruments/electricguitar.instr
+file path=usr/share/jokosher/Instruments/harmonica.instr
+file path=usr/share/jokosher/Instruments/images/acousticguitar.png
+file path=usr/share/jokosher/Instruments/images/audiofile.png
+file path=usr/share/jokosher/Instruments/images/bassdrum.png
+file path=usr/share/jokosher/Instruments/images/bassguitar.png
+file path=usr/share/jokosher/Instruments/images/cello.png
+file path=usr/share/jokosher/Instruments/images/cymbal.png
+file path=usr/share/jokosher/Instruments/images/drumkit.png
+file path=usr/share/jokosher/Instruments/images/effect.png
+file path=usr/share/jokosher/Instruments/images/electricguitar.png
+file path=usr/share/jokosher/Instruments/images/harmonica.png
+file path=usr/share/jokosher/Instruments/images/keyboard.png
+file path=usr/share/jokosher/Instruments/images/other.png
+file path=usr/share/jokosher/Instruments/images/saxophone.png
+file path=usr/share/jokosher/Instruments/images/snare.png
+file path=usr/share/jokosher/Instruments/images/tomtom.png
+file path=usr/share/jokosher/Instruments/images/trumpet.png
+file path=usr/share/jokosher/Instruments/images/violin.png
+file path=usr/share/jokosher/Instruments/images/vocal.png
+file path=usr/share/jokosher/Instruments/keyboard.instr
+file path=usr/share/jokosher/Instruments/other.instr
+file path=usr/share/jokosher/Instruments/saxophone.instr
+file path=usr/share/jokosher/Instruments/snare.instr
+file path=usr/share/jokosher/Instruments/tomtom.instr
+file path=usr/share/jokosher/Instruments/trumpet.instr
+file path=usr/share/jokosher/Instruments/violin.instr
+file path=usr/share/jokosher/Instruments/vocal.instr
+file path=usr/share/jokosher/Jokosher.glade
+file path=usr/share/jokosher/extensions/ExtensionConsole-0.2-py2.5.egg
+file path=usr/share/jokosher/extensions/FreesoundSearch-0.3-py2.6.egg
+file path=usr/share/jokosher/extensions/Fullscreen.py pkg.tmp.autopyc=false
+file path=usr/share/jokosher/extensions/GNOMEAudioProfiles.py pkg.tmp.autopyc=false
+file path=usr/share/jokosher/extensions/InstrumentTypeManager-0.2-py2.4.egg
+file path=usr/share/jokosher/extensions/Minimal-0.9-py2.4.egg
+file path=usr/share/jokosher/extensions/PidginExtension-0.1-py2.5.egg
+file path=usr/share/jokosher/extensions/SetTempo-0.1-py2.4.egg
+file path=usr/share/jokosher/extensions/jokosher-dbus.py pkg.tmp.autopyc=false
+file path=usr/share/jokosher/jokosher-logo.png
+file path=usr/share/jokosher/pixmaps/effect_amplifiers.png
+file path=usr/share/jokosher/pixmaps/effect_broken.png
+file path=usr/share/jokosher/pixmaps/effect_chorus.png
+file path=usr/share/jokosher/pixmaps/effect_compressors.png
+file path=usr/share/jokosher/pixmaps/effect_delays.png
+file path=usr/share/jokosher/pixmaps/effect_distortion.png
+file path=usr/share/jokosher/pixmaps/effect_equalizers.png
+file path=usr/share/jokosher/pixmaps/effect_filters.png
+file path=usr/share/jokosher/pixmaps/effect_flangers.png
+file path=usr/share/jokosher/pixmaps/effect_miscellaneous.png
+file path=usr/share/jokosher/pixmaps/effect_modulators.png
+file path=usr/share/jokosher/pixmaps/effect_oscillators.png
+file path=usr/share/jokosher/pixmaps/effect_phasers.png
+file path=usr/share/jokosher/pixmaps/effect_reverbs.png
+file path=usr/share/jokosher/pixmaps/effect_simulators.png
+file path=usr/share/jokosher/pixmaps/effect_stock_volume.png
+file path=usr/share/jokosher/pixmaps/effect_unclassified.png
+file path=usr/share/jokosher/pixmaps/icon_arm.png
+file path=usr/share/jokosher/pixmaps/icon_cancel.png
+file path=usr/share/jokosher/pixmaps/icon_click.png
+file path=usr/share/jokosher/pixmaps/icon_disarm.png
+file path=usr/share/jokosher/pixmaps/icon_effectsapply.png
+file path=usr/share/jokosher/pixmaps/icon_fpdelete.png
+file path=usr/share/jokosher/pixmaps/icon_fpsnap.png
+file path=usr/share/jokosher/pixmaps/icon_group.png
+file path=usr/share/jokosher/pixmaps/icon_mix.png
+file path=usr/share/jokosher/pixmaps/icon_record.png
+file path=usr/share/jokosher/pixmaps/icon_solo.png
+file path=usr/share/jokosher/pixmaps/icon_split.png
+file path=usr/share/jokosher/pixmaps/icon_trim.png
+file path=usr/share/jokosher/pixmaps/jokosher-logo.png
+file path=usr/share/jokosher/pixmaps/jokosher.png
+file path=usr/share/jokosher/pixmaps/newproject.png
+file path=usr/share/jokosher/pixmaps/stock_volume-mute.png
+file path=usr/share/jokosher/pixmaps/stock_volume.png
+file path=usr/share/jokosher/pixmaps/welcomeheader.png
+file path=usr/share/locale/ace/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/ar/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/bg/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/ca/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/cs/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/cy/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/da/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/de/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/el/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/en_AU/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/en_CA/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/en_PH/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/eo/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/es/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/fa/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/fi/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/fr/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/gl/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/gu/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/he/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/hi/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/hu/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/id/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/it/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/ja/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/kk/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/lt/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/lv/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/mk/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/ml/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/mr/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/ms/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/nb/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/nl/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/pl/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/pt/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/ro/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/ru/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/sk/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/sl/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/sv/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/tl/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/tr/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/uk/LC_MESSAGES/jokosher.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/jokosher.mo
+file path=usr/share/mime/packages/jokosher.xml
+file path=usr/share/omf/jokosher/jokosher-C.omf
+file path=usr/share/pixmaps/jokosher.png
