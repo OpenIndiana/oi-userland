@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -61,6 +61,7 @@ $(MANIFEST_BASE)-%.published: $(MANIFEST_BASE)-%.mogrified $(BUILD_DIR)
 
 $(BUILD_DIR)/.linted-$(MACH): $(MOGRIFIED) $(BUILD_DIR)
 	$(ENV) PYTHONPATH=$(WS_TOOLS)/python \
+		SOLARIS_VERSION=$(SOLARIS_VERSION) \
 		$(PKGLINT) $(CANONICAL_REPO:%=-c $(WS_LINT_CACHE)) \
 			-f $(WS_TOOLS)/pkglintrc $(MOGRIFIED)
 	$(TOUCH) $@
