@@ -56,9 +56,10 @@ set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/058
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
-file files/openstack-dashboard.conf \
-    path=etc/apache2/2.2/conf.d/openstack-dashboard.conf \
-    refresh_fmri=svc:/network/http:apache22
+file files/openstack-dashboard-http.conf \
+    path=etc/apache2/2.2/samples-conf.d/openstack-dashboard-http.conf
+file files/openstack-dashboard-tls.conf \
+    path=etc/apache2/2.2/samples-conf.d/openstack-dashboard-tls.conf
 file files/local_settings.py path=etc/openstack_dashboard/local_settings.py \
     mode=0644 overlay=allow pkg.tmp.autopyc=false preserve=true
 file path=usr/lib/python$(PYVER)/vendor-packages/horizon-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
@@ -766,12 +767,12 @@ link path=var/lib/openstack_dashboard/static/horizon \
     target=../../../../../usr/lib/python$(PYVER)/vendor-packages/horizon/static/horizon
 license horizon.license license="Apache v2.0" \
     com.oracle.info.description="Horizon, the OpenStack web based user interface service" \
-    com.oracle.info.name=$(COMPONENT_NAME) \
-    com.oracle.info.tpno=16292 com.oracle.info.version=$(IPS_COMPONENT_VERSION)
+    com.oracle.info.name=$(COMPONENT_NAME) com.oracle.info.tpno=16292 \
+    com.oracle.info.version=$(IPS_COMPONENT_VERSION)
 license solaris.css.license license="Apache v2.0 (Solaris theme)" \
     com.oracle.info.description="the Solaris theme for the OpenStack Dashboard" \
-    com.oracle.info.name=$(COMPONENT_NAME) \
-    com.oracle.info.tpno=16775 com.oracle.info.version=1.0
+    com.oracle.info.name=$(COMPONENT_NAME) com.oracle.info.tpno=16775 \
+    com.oracle.info.version=1.0
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
