@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -51,13 +51,12 @@ CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 COMPONENT_BUILD_ARGS  +=	AM_CXXFLAGS=""
 COMPONENT_BUILD_ARGS  +=	AM_CFLAGS=""
 
-# Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
 test:		$(NO_TESTS)
 
