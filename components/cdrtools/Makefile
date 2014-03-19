@@ -45,16 +45,22 @@ include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
 
 COMPONENT_INSTALL_ARGS +=  GMAKE_NOWARN=true
+COMPONENT_INSTALL_ARGS +=  CCOM=cc64
 COMPONENT_BUILD_ARGS += GMAKE_NOWARN=true
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 COMPONENT_BUILD_ENV +=	"ac_cv_exeext=no"
 COMPONENT_BUILD_ENV +=	"ac_cv_objext=o"
 endif
+COMPONENT_BUILD_ARGS += CCOM=cc64
+# cdrtools doesn't work with gmake for sparc 64-bit compile.
+GMAKE = $(CCSMAKE)
 
+# Enable ASLR for this component
+ASLR_MODE =    $(ASLR_ENABLE)
 
-build:          $(BUILD_32)
+build:          $(BUILD_64)
 
-install:        $(INSTALL_32)
+install:        $(INSTALL_64)
 
 test:		$(NO_TESTS)
 
