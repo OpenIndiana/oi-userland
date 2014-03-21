@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panels.usermgr.client.swing;
@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.logging.Level;
 import javax.swing.Icon;
 import com.oracle.solaris.rad.client.ADRUinteger;
-import com.oracle.solaris.rad.client.ADRName;
 import com.oracle.solaris.rad.client.RadObjectException;
 import com.oracle.solaris.rad.client.RadPrivilegeException;
 import com.oracle.solaris.vp.panel.common.*;

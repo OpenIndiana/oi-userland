@@ -25,7 +25,6 @@
 
 package com.oracle.solaris.vp.panel.common.api.panel;
 
-import com.oracle.solaris.rad.client.ADRName;
 import com.oracle.solaris.vp.panel.common.*;
 import com.oracle.solaris.vp.panel.common.api.panels.*;
 

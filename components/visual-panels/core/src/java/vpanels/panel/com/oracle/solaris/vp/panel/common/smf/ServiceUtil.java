@@ -20,7 +20,7 @@
  */
 
 /*
- * Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
  */
 
 package com.oracle.solaris.vp.panel.common.smf;
@@ -48,13 +48,11 @@ public class ServiceUtil {
 
     public static ADRName getServiceObjectName(
 	String service, String instance) {
-
-	String namestr = String.format("%s:type=ServiceInfo,service=%s",
-	    SERVICE_DOMAIN, service);
-	if (instance != null)
-	    namestr = String.format("%s,instance=%s", namestr, instance);
-
-	return (new ADRName(namestr));
+	Map<String, String> kvs = new HashMap<String, String>();
+	kvs.put("type", "ServiceInfo");
+	kvs.put("service", service);
+	kvs.put("instance", instance == null ? "" : instance);
+	return (new ADRName(SERVICE_DOMAIN, kvs));
     }
 
     public static ADRName toADRName(String service, String instance) {
@@ -77,43 +75,20 @@ public class ServiceUtil {
     }
 
     public static String toFMRI(ADRName an) {
-
-	String name = an.toString();
-	String[] pieces = name.split(":", 2);
-        String[] kvpairs = pieces[1].split(",");
-	String domain = pieces[0];
-
-	Map<String, String> kvs = new HashMap<String, String>();
-	for (String s : kvpairs) {
-		String[] kv = s.split("=");
-		kvs.put(kv[0], kv[1]);
-	}
-
+	String domain = an.getDomain();
+	Map<String, String> kvs = an.getKVPairs();
 	String service = kvs.get("service");
 	String instance = kvs.get("instance");
 	if (!domain.equals(SERVICE_DOMAIN) || service == null)
 		throw new IllegalArgumentException("Not an SMF Object name");
-
-	return ("svc:/" + (instance == null ?
+	return ("svc:/" + (instance.equals("") ?
 	    service : service + ":" + instance));
     }
 
     public static String toService(ADRName an) {
-
-	String name = an.toString();
-	String[] pieces = name.split(":", 2);
-	String[] kvpairs = pieces[1].split(",");
-	String domain = pieces[0];
-	String service = null;
-
-	for (int i = 0; i < kvpairs.length; i++) {
-		if (kvpairs[i].startsWith("service=")) {
-			String[] kv = kvpairs[i].split("=");
-			service = kv[1];
-			break;
-		}
-	}
-
+	String domain = an.getDomain();
+	Map<String, String> kvs = an.getKVPairs();
+	String service = kvs.get("service");
 	if (domain.equals(SERVICE_DOMAIN) && service != null)
 		return service;
 	else
