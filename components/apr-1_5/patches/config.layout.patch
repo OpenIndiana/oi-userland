@@ -1,0 +1,93 @@
+Patch origin: in-house
+Patch status: Part 1: Solaris-specific; not suitable for upstream
+Patch status: Part 2: https://issues.apache.org/bugzilla/show_bug.cgi?id=56090
+
+--- config.layout	2004-11-24 14:51:51.000000000 -0800
++++ config.layout	2014-01-27 06:21:54.767926309 -0800
+@@ -179,21 +179,56 @@
+     runtimedir:    ${localstatedir}/run
+ </Layout>
+ 
+-#   Solaris 8 Layout
++#   Solaris Layout
+ <Layout Solaris>
+-    prefix:        /usr/apr
++    prefix:        /usr/apr/1.5
+     exec_prefix:   ${prefix}
+     bindir:        ${exec_prefix}/bin
+     sbindir:       ${exec_prefix}/bin
+     libdir:        ${exec_prefix}/lib
+     libexecdir:    ${exec_prefix}/libexec
+     mandir:        ${exec_prefix}/man
+-    sysconfdir:    /etc/apr
+-    datadir:       /var/apr
+-    installbuilddir: ${datadir}/build
++    sysconfdir:    /etc/apr/1.5
++    datadir:       /var/apr/1.5
++    installbuilddir: ${prefix}/build
+     includedir:    ${exec_prefix}/include
+     localstatedir: ${prefix}
+-    runtimedir:    /var/run
++    runtimedir:    /var/run/apr/1.5
++    libsuffix:     -${APR_MAJOR_VERSION}
++</Layout>
++
++<Layout Solaris-amd64>
++    prefix:        /usr/apr/1.5
++    exec_prefix:   ${prefix}
++    bindir:        ${exec_prefix}/bin/amd64
++    sbindir:       ${exec_prefix}/bin/amd64
++    libdir:        ${exec_prefix}/lib/amd64
++    libexecdir:    ${exec_prefix}/libexec/amd64
++    mandir:        ${exec_prefix}/man
++    sysconfdir:    /etc/apr/1.5
++    datadir:       /var/apr/1.5
++    installbuilddir: ${prefix}/build/amd64
++    includedir:    ${exec_prefix}/include
++    localstatedir: ${prefix}
++    runtimedir:    /var/run/apr/1.5
++    libsuffix:     -${APR_MAJOR_VERSION}
++</Layout>
++
++<Layout Solaris-sparcv9>
++    prefix:        /usr/apr/1.5
++    exec_prefix:   ${prefix}
++    bindir:        ${exec_prefix}/bin/sparcv9
++    sbindir:       ${exec_prefix}/bin/sparcv9
++    libdir:        ${exec_prefix}/lib/sparcv9
++    libexecdir:    ${exec_prefix}/libexec/sparcv9
++    mandir:        ${exec_prefix}/man
++    sysconfdir:    /etc/apr/1.5
++    datadir:       /var/apr/1.5
++    installbuilddir: ${prefix}/build/sparcv9
++    includedir:    ${exec_prefix}/include
++    localstatedir: ${prefix}
++    runtimedir:    /var/run/apr/1.5
++    libsuffix:     -${APR_MAJOR_VERSION}
+ </Layout>
+ 
+ #   OpenBSD Layout
+--- configure.in	2013-11-13 04:15:56.000000000 -0800
++++ configure.in	2014-01-30 04:26:55.991256430 -0800
+@@ -167,6 +167,10 @@
+ 
+ echo "APR Version: ${APR_DOTTED_VERSION}"
+ 
++AC_ARG_WITH(installbuilddir, [  --with-installbuilddir=DIR location to store APR build files (defaults to '${datadir}/build')],
++  [ installbuilddir=$withval ], [ installbuilddir="${datadir}/build-${APR_MAJOR_VERSION}" ] )
++AC_SUBST(installbuilddir)
++
+ dnl Enable the layout handling code, then reparse the prefix-style
+ dnl arguments due to autoconf being a PITA.
+ APR_ENABLE_LAYOUT(apr)
+@@ -272,10 +276,6 @@
+     ;;
+ esac
+ 
+-AC_ARG_WITH(installbuilddir, [  --with-installbuilddir=DIR location to store APR build files (defaults to '${datadir}/build')],
+-  [ installbuilddir=$withval ], [ installbuilddir="${datadir}/build-${APR_MAJOR_VERSION}" ] )
+-AC_SUBST(installbuilddir)
+-
+ AC_ARG_WITH(libtool, [  --without-libtool       avoid using libtool to link the library],
+   [ use_libtool=$withval ], [ use_libtool="yes" ] )
+ 

@@ -1,0 +1,42 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+--- Makefile.in.orig	Fri Apr 15 07:23:41 2011
++++ Makefile.in	Fri Apr 15 07:23:53 2011
+@@ -62,11 +62,19 @@
+ 
+ # Create apr-config script suitable for the install tree
+ apr-config.out: $(APR_CONFIG)
+-	sed 's,^\(location=\).*$$,\1installed,' < $(APR_CONFIG) > $@
++	sed -e 's,^\(location=\).*$$,\1installed,' \
++	    -e '/^CC=/s,/.*/,,' \
++	    -e '/^CPP=/s,/.*/,,' \
++	    -e '/^APR_SOURCE_DIR=/s,/.*",/usr/apr/1.5",' \
++	    -e '/^APR_BUILD_DIR=/s,/.*",/usr/apr/1.5",' \
++	    < $(APR_CONFIG) > $@
+ 
+ # Create apr_rules.mk suitable for the install tree
+ build/apr_rules.out: build/apr_rules.mk
+-	sed -e 's,^\(apr_build.*=\).*$$,\1$(installbuilddir),' -e 's,^\(top_build.*=\).*$$,\1$(installbuilddir),' < build/apr_rules.mk > $@
++	sed -e 's,^\(apr_build.*=\).*$$,\1$(installbuilddir),' -e 's,^\(top_build.*=\).*$$,\1$(installbuilddir),' \
++	    -e '/^CC=/s,/.*/,,' \
++	    -e '/^MKDEP            = /s,/.*/,,' \
++	     < build/apr_rules.mk > $@
+ 
+ install: $(TARGETS)
+ 	$(APR_MKDIR) $(DESTDIR)$(libdir) $(DESTDIR)$(bindir) $(DESTDIR)$(installbuilddir) \
+@@ -79,7 +87,13 @@
+ 	$(INSTALL_DATA) apr.exp $(DESTDIR)$(libdir)/apr.exp
+ 	$(INSTALL_DATA) apr.pc $(DESTDIR)$(libdir)/pkgconfig/$(APR_PCFILE)
+ 	for f in libtool shlibtool; do \
+-	    if test -f $${f}; then $(INSTALL) -m 755 $${f} $(DESTDIR)$(installbuilddir); fi; \
++	    if test -f $${f}; then \
++		sed -e '/^LTCC=/s,/.*/,,' \
++		    -e '/^CC=/s,/.*/,,' \
++		    < $${f} > $${f}.out; \
++		$(INSTALL) -m 755 $${f}.out $(DESTDIR)$(installbuilddir)/$${f}; \
++		rm $${f}.out; \
++	    fi; \
+ 	done
+ 	$(INSTALL) -m 755 $(top_srcdir)/build/mkdir.sh $(DESTDIR)$(installbuilddir)
+ 	for f in make_exports.awk make_var_export.awk; do \
