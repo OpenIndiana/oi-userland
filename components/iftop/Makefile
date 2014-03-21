@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -47,7 +47,7 @@ PATCH_LEVEL=	0
 # without this we bus error on sparc. sadly I don't see any patches
 # that might relate from the upstream (though maybe that's really
 # "happily", as this is simpler)
-studio_ALIGN.sparc.32=	-xmemalign=1i
+studio_ALIGN.sparc.64=	-xmemalign=1i
 
 
 IFTOP_LIBDIR=	/usr/gnu/lib
