@@ -1,0 +1,202 @@
+#
+# This patch modifies code for storing delegated GSS-API credentials to work
+# with Solaris Kerberos.
+#
+# Default credential cache is used instead of per-session credentials cache
+# because on Solaris gssd cannot use credentials from non-default cred store.
+# A downside of this solution is, that the default credential cache file
+# cannot be deleted upon logout and hence GSSAPICleanupCredentials is
+# unsupported for now.
+#
+# To store the credentials a standardized GSS-API function gss_store_cred() is
+# used instead of gss_krb5_copy_ccache(), because (unlike MIT Kerberos
+# libgssapi_krb5) Solaris Kerberos libgss does not have Kerberos mechanism
+# directly built in the library and this function is not directly accessible.
+#
+# The patch is implemented as Solaris-specific using USE_GSS_STORE_CRED 
+# and GSSAPI_STORECREDS_NEEDS_RUID macros.
+#
+diff -ur old/config.h.in new/config.h.in
+--- old/config.h.in	2012-04-19 22:03:32.000000000 -0700
++++ new/config.h.in	2014-03-12 06:47:38.667166593 -0700
+@@ -1465,6 +1465,12 @@
+ /* Use btmp to log bad logins */
+ #undef USE_BTMP
+ 
++/* Store delegated credentials in default cred. store using gss_store_cred */
++#undef USE_GSS_STORE_CRED
++
++/* Set real uid prior to storing delegated credentials */
++#undef GSSAPI_STORECREDS_NEEDS_RUID
++
+ /* Use libedit for sftp */
+ #undef USE_LIBEDIT
+ 
+diff -ur old/configure new/configure
+--- old/configure	2014-03-12 04:01:33.320409426 -0700
++++ new/configure	2014-03-12 06:47:48.510155481 -0700
+@@ -7201,6 +7201,9 @@
+ 
+ fi
+ 
++	$as_echo "#define USE_GSS_STORE_CRED 1" >>confdefs.h
++	$as_echo "#define GSSAPI_STORECREDS_NEEDS_RUID 1" >>confdefs.h
++
+ 	;;
+ *-*-sunos4*)
+ 	CPPFLAGS="$CPPFLAGS -DSUNOS4"
+diff -ur old/configure.ac new/configure.ac
+--- old/configure.ac	2014-03-12 04:01:33.310743659 -0700
++++ new/configure.ac	2014-03-12 06:47:59.218730468 -0700
+@@ -802,6 +802,8 @@
+ 			SP_MSG="yes" ], )
+ 		],
+ 	)
++	AC_DEFINE([USE_GSS_STORE_CRED])
++	AC_DEFINE([GSSAPI_STORECREDS_NEEDS_RUID])
+ 	;;
+ *-*-sunos4*)
+ 	CPPFLAGS="$CPPFLAGS -DSUNOS4"
+diff -ur old/gss-serv-krb5.c new/gss-serv-krb5.c
+--- old/gss-serv-krb5.c	2006-08-31 22:38:36.000000000 -0700
++++ new/gss-serv-krb5.c	2014-03-17 06:25:36.218227736 -0700
+@@ -109,6 +109,7 @@
+ }
+ 
+ 
++#ifndef USE_GSS_STORE_CRED
+ /* This writes out any forwarded credentials from the structure populated
+  * during userauth. Called after we have setuid to the user */
+ 
+@@ -183,6 +184,7 @@
+ 
+ 	return;
+ }
++#endif	/* #ifndef USE_GSS_STORE_CRED */
+ 
+ ssh_gssapi_mech gssapi_kerberos_mech = {
+ 	"toWM5Slw5Ew8Mqkay+al2g==",
+@@ -191,7 +193,11 @@
+ 	NULL,
+ 	&ssh_gssapi_krb5_userok,
+ 	NULL,
++#ifdef USE_GSS_STORE_CRED
++	NULL
++#else
+ 	&ssh_gssapi_krb5_storecreds
++#endif
+ };
+ 
+ #endif /* KRB5 */
+diff -ur old/gss-serv.c new/gss-serv.c
+--- old/gss-serv.c	2011-08-05 13:16:46.000000000 -0700
++++ new/gss-serv.c	2014-03-12 05:55:42.368676287 -0700
+@@ -292,22 +292,66 @@
+ void
+ ssh_gssapi_cleanup_creds(void)
+ {
++#ifdef USE_GSS_STORE_CRED
++	debug("removing gssapi cred file not implemented");
++#else
+ 	if (gssapi_client.store.filename != NULL) {
+ 		/* Unlink probably isn't sufficient */
+ 		debug("removing gssapi cred file\"%s\"",
+ 		    gssapi_client.store.filename);
+ 		unlink(gssapi_client.store.filename);
+ 	}
++#endif /* USE_GSS_STORE_CRED */
+ }
+ 
+ /* As user */
+ void
+ ssh_gssapi_storecreds(void)
+ {
++#ifdef USE_GSS_STORE_CRED
++	OM_uint32 maj_status, min_status;
++
++	if (gssapi_client.creds == NULL) {
++		debug("No credentials stored");
++		return;
++	}
++
++	maj_status = gss_store_cred(&min_status, gssapi_client.creds,
++	    GSS_C_INITIATE, &gssapi_client.mech->oid, 1, 1, NULL, NULL);
++
++	if (GSS_ERROR(maj_status)) {
++		Buffer b;
++		gss_buffer_desc msg;
++		OM_uint32 lmin;
++		OM_uint32 more = 0;
++		buffer_init(&b);
++		/* GSS-API error */
++		do {
++			gss_display_status(&lmin, maj_status, GSS_C_GSS_CODE,
++			    GSS_C_NULL_OID, &more, &msg);
++			buffer_append(&b, msg.value, msg.length);
++			buffer_put_char(&b, '\n');
++			gss_release_buffer(&lmin, &msg);
++		} while (more != 0);
++		/* Mechanism specific error */
++		do {
++			gss_display_status(&lmin, min_status, GSS_C_MECH_CODE,
++			    &gssapi_client.mech->oid, &more, &msg);
++			buffer_append(&b, msg.value, msg.length);
++			buffer_put_char(&b, '\n');
++			gss_release_buffer(&lmin, &msg);
++		} while (more != 0);
++		buffer_put_char(&b, '\0');
++		error("GSS-API error while storing delegated credentials: %s",
++		    buffer_ptr(&b));
++		buffer_free(&b);
++	}
++#else	/* #ifdef USE_GSS_STORE_CRED */
+ 	if (gssapi_client.mech && gssapi_client.mech->storecreds) {
+ 		(*gssapi_client.mech->storecreds)(&gssapi_client);
+ 	} else
+ 		debug("ssh_gssapi_storecreds: Not a GSSAPI mechanism");
++#endif	/* #ifdef USE_GSS_STORE_CRED */
+ }
+ 
+ /* This allows GSSAPI methods to do things to the childs environment based
+diff -ur old/servconf.c new/servconf.c
+--- old/servconf.c	2014-03-12 04:01:33.343205265 -0700
++++ new/servconf.c	2014-03-12 04:01:33.400368192 -0700
+@@ -386,7 +386,11 @@
+ 	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
+ #ifdef GSSAPI
+ 	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
++#ifdef USE_GSS_STORE_CRED
++	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
++#else	/* USE_GSS_STORE_CRED*/
+ 	{ "gssapicleanupcredentials", sGssCleanupCreds, SSHCFG_GLOBAL },
++#endif	/* USE_GSS_STORE_CRED*/
+ #else
+ 	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
+ 	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
+diff -ur old/sshd.c new/sshd.c
+--- old/sshd.c	2014-03-12 04:01:33.321603394 -0700
++++ new/sshd.c	2014-03-12 06:48:16.296909610 -0700
+@@ -2041,9 +2041,23 @@
+ 
+ #ifdef GSSAPI
+ 	if (options.gss_authentication) {
++#ifdef GSSAPI_STORECREDS_NEEDS_RUID
++		if (setreuid(authctxt->pw->pw_uid, -1) != 0) {
++			debug("setreuid %u: %.100s",
++			    (u_int) authctxt->pw->pw_uid, strerror(errno));
++			goto bail_storecred;
++		}
++#endif
+ 		temporarily_use_uid(authctxt->pw);
+ 		ssh_gssapi_storecreds();
+ 		restore_uid();
++#ifdef GSSAPI_STORECREDS_NEEDS_RUID
++		if (setuid(geteuid()) != 0) {
++			fatal("setuid %u: %.100s", (u_int) geteuid(),
++			    strerror(errno));
++		}
++ bail_storecred:
++#endif
+ 	}
+ #endif
+ #ifdef USE_PAM
