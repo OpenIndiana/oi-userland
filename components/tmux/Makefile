@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -45,7 +45,7 @@ CONFIGURE_OPTIONS  +=	CXXFLAGS="$(CXXFLAGS)"
 # nroff does not work with -mandoc using groff
 MANDIR_PREFORMATED= $(PROTO_DIR)/usr/share/man/cat1
 COMPONENT_POST_INSTALL_ACTION += \
-        /usr/bin/groff -Tascii -mandoc $(SOURCE_DIR)/tmux.1>tmux.1.mod ; \
+        /usr/bin/gnroff -c -Tascii -mandoc $(SOURCE_DIR)/tmux.1>tmux.1.mod ; \
         mkdir -p $(MANDIR_PREFORMATED) ; \
         $(MV) tmux.1.mod $(MANDIR_PREFORMATED)/tmux.1
 
