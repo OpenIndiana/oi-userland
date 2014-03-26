@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -53,7 +53,7 @@ CONFIGURE_OPTIONS +=	--with-tty-tickets
 CONFIGURE_OPTIONS +=	--without-insults
 CONFIGURE_OPTIONS +=	--without-lecture
 CONFIGURE_OPTIONS +=	--with-ignore-dot
-CONFIGURE_OPTIONS +=	--with-bsm-audit
+CONFIGURE_OPTIONS +=	--with-solaris-audit
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/sudo
 CONFIGURE_OPTIONS +=	"sudo_cv_var_nroff_opt_Tascii=no"
 
