@@ -1,0 +1,117 @@
+--- percona-server-5.5.36-34.2/mysys/CMakeLists.txt.~1~	2014-03-26 08:06:17.472424727 +0400
++++ percona-server-5.5.36-34.2/mysys/CMakeLists.txt	2014-03-26 08:08:29.839334164 +0400
+@@ -76,6 +76,7 @@
+ 
+ ADD_EXECUTABLE(thr_lock thr_lock.c)
+ TARGET_LINK_LIBRARIES(thr_lock mysys)
++TARGET_LINK_LIBRARIES(thr_lock "-lsocket")
+ SET_TARGET_PROPERTIES(thr_lock PROPERTIES COMPILE_FLAGS "-DMAIN")
+ 
+ INSTALL_DEBUG_SYMBOLS(mysys)
+--- percona-server-5.5.36-34.2/unittest/mysys/CMakeLists.txt.~1~	2014-03-26 08:17:38.856627323 +0400
++++ percona-server-5.5.36-34.2/unittest/mysys/CMakeLists.txt	2014-03-26 08:18:42.070897543 +0400
+@@ -23,6 +23,7 @@
+ MACRO (MY_ADD_TEST name)
+   ADD_EXECUTABLE(${name}-t ${name}-t.c)
+   TARGET_LINK_LIBRARIES(${name}-t mytap mysys strings)
++  TARGET_LINK_LIBRARIES(${name}-t "-lsocket")
+   ADD_TEST(${name} ${name}-t)
+ ENDMACRO()
+ 
+--- percona-server-5.5.36-34.2/sql/CMakeLists.txt.~1~	2014-03-26 08:33:59.016060776 +0400
++++ percona-server-5.5.36-34.2/sql/CMakeLists.txt	2014-03-26 08:34:24.202807245 +0400
+@@ -219,6 +219,7 @@
+ MYSQL_ADD_EXECUTABLE(mysql_tzinfo_to_sql tztime.cc)
+ SET_TARGET_PROPERTIES(mysql_tzinfo_to_sql PROPERTIES COMPILE_FLAGS "-DTZINFO2SQL")
+ TARGET_LINK_LIBRARIES(mysql_tzinfo_to_sql mysys)
++TARGET_LINK_LIBRARIES(mysql_tzinfo_to_sql "-lsocket")
+ 
+ ADD_CUSTOM_TARGET( 
+         GenServerSource
+--- percona-server-5.5.36-34.2/extra/CMakeLists.txt.~1~	2014-03-25 17:10:46.000000000 +0400
++++ percona-server-5.5.36-34.2/extra/CMakeLists.txt	2014-03-26 08:38:54.922153822 +0400
+@@ -29,6 +29,7 @@
+ IF(NOT CMAKE_CROSSCOMPILING)
+  ADD_EXECUTABLE(comp_err comp_err.c)
+  TARGET_LINK_LIBRARIES(comp_err mysys)
++ TARGET_LINK_LIBRARIES(comp_err "-lsocket")
+ ENDIF()
+ 
+ ADD_CUSTOM_COMMAND(OUTPUT ${PROJECT_BINARY_DIR}/include/mysqld_error.h 
+@@ -52,13 +53,16 @@
+ 
+ MYSQL_ADD_EXECUTABLE(my_print_defaults my_print_defaults.c)
+ TARGET_LINK_LIBRARIES(my_print_defaults  mysys)
++TARGET_LINK_LIBRARIES(my_print_defaults  "-lsocket")
+ 
+ MYSQL_ADD_EXECUTABLE(perror perror.c)
+ ADD_DEPENDENCIES(perror GenError)
+ TARGET_LINK_LIBRARIES(perror mysys)
++TARGET_LINK_LIBRARIES(perror "-lsocket")
+ 
+ MYSQL_ADD_EXECUTABLE(resolveip resolveip.c)
+ TARGET_LINK_LIBRARIES(resolveip mysys)
++TARGET_LINK_LIBRARIES(resolveip "-lsocket")
+ IF(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+   INCLUDE(CheckFunctionExists)
+   INCLUDE(CheckLibraryExists)
+@@ -69,13 +73,16 @@
+ 
+ MYSQL_ADD_EXECUTABLE(replace replace.c)
+ TARGET_LINK_LIBRARIES(replace mysys)
++TARGET_LINK_LIBRARIES(replace "-lsocket")
+ IF(UNIX)
+   MYSQL_ADD_EXECUTABLE(innochecksum innochecksum.c)
+ 
+   MYSQL_ADD_EXECUTABLE(resolve_stack_dump resolve_stack_dump.c)
+   TARGET_LINK_LIBRARIES(resolve_stack_dump mysys)
++  TARGET_LINK_LIBRARIES(resolve_stack_dump "-lsocket")
+ 
+   MYSQL_ADD_EXECUTABLE(mysql_waitpid mysql_waitpid.c)
+   TARGET_LINK_LIBRARIES(mysql_waitpid mysys)
++  TARGET_LINK_LIBRARIES(mysql_waitpid "-lsocket")
+ ENDIF()
+ 
+--- percona-server-5.5.36-34.2/storage/heap/CMakeLists.txt.~1~	2014-03-26 08:50:39.649301023 +0400
++++ percona-server-5.5.36-34.2/storage/heap/CMakeLists.txt	2014-03-26 08:51:09.248603115 +0400
+@@ -28,6 +28,8 @@
+ 
+ ADD_EXECUTABLE(hp_test1 hp_test1.c)
+ TARGET_LINK_LIBRARIES(hp_test1 mysys heap dbug strings)
++TARGET_LINK_LIBRARIES(hp_test1 "-lsocket")
+ 
+ ADD_EXECUTABLE(hp_test2 hp_test2.c)
+ TARGET_LINK_LIBRARIES(hp_test2 mysys heap dbug strings)
++TARGET_LINK_LIBRARIES(hp_test2 "-lsocket")
+--- percona-server-5.5.36-34.2/storage/myisam/CMakeLists.txt.~1~	2014-03-25 17:10:46.000000000 +0400
++++ percona-server-5.5.36-34.2/storage/myisam/CMakeLists.txt	2014-03-26 09:05:21.093640235 +0400
+@@ -36,15 +36,19 @@
+ 
+ MYSQL_ADD_EXECUTABLE(myisam_ftdump myisam_ftdump.c)
+ TARGET_LINK_LIBRARIES(myisam_ftdump myisam)
++TARGET_LINK_LIBRARIES(myisam_ftdump "-lsocket")
+ 
+ MYSQL_ADD_EXECUTABLE(myisamchk myisamchk.c)
+ TARGET_LINK_LIBRARIES(myisamchk myisam)
++TARGET_LINK_LIBRARIES(myisamchk "-lsocket")
+ 
+ MYSQL_ADD_EXECUTABLE(myisamlog myisamlog.c)
+ TARGET_LINK_LIBRARIES(myisamlog myisam)
++TARGET_LINK_LIBRARIES(myisamlog "-lsocket")
+ 
+ MYSQL_ADD_EXECUTABLE(myisampack myisampack.c)
+ TARGET_LINK_LIBRARIES(myisampack myisam)
++TARGET_LINK_LIBRARIES(myisampack "-lsocket")
+ 
+ IF(WITH_UNIT_TESTS AND FALSE)
+   ADD_EXECUTABLE(mi_test1 mi_test1.c)
+--- percona-server-5.5.36-34.2/storage/perfschema/unittest/CMakeLists.txt.~1~	2014-03-26 09:02:04.701076498 +0400
++++ percona-server-5.5.36-34.2/storage/perfschema/unittest/CMakeLists.txt	2014-03-26 09:02:34.862387535 +0400
+@@ -27,6 +27,7 @@
+ MACRO (PFS_ADD_TEST name)
+   ADD_EXECUTABLE(${name}-t ${name}-t.cc)
+   TARGET_LINK_LIBRARIES(${name}-t mytap perfschema mysys)
++  TARGET_LINK_LIBRARIES(${name}-t "-lsocket")
+   ADD_TEST(${name} ${name}-t)
+ ENDMACRO()
+ 
