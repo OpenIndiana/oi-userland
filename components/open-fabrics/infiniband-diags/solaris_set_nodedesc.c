@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * This software is available to you under a choice of one of two
  * licenses.  You may choose to be licensed under the terms of the GNU
@@ -54,6 +54,7 @@
 
 #include <infiniband/verbs.h>
 #include <infiniband/arch.h>
+#include <infiniband/umad.h>
 
 #include <sys/ib/adapters/hermon/hermon_ioctl.h>
 
@@ -87,7 +88,6 @@ static char *ib_hca_driver_list[] = {
 static di_node_t	di_rootnode;
 char *argv0 = "solaris_set_nodedesc";
 
-#define	MAX_HCAS	32
 static struct nodedesc_read_info_s {
 	boolean_t	info_valid;
 	uint64_t	guid;

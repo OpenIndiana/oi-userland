@@ -99,8 +99,6 @@ typedef struct hermon_hw_info_ioctl_s {
 #define	RDMA_USER_CM_MAX_ABI_VERSION	4 /* rdma_cma_abi.h */
 
 #define	MLX4	0
-#define	MAX_HCAS				260
-#define	MAX_HCA_PORTS				16
 #define	HW_DRIVER_MAX_NAME_LEN			20
 #define	UVERBS_KERNEL_SYSFS_NAME_BASE		"uverbs"
 #define	UMAD_KERNEL_SYSFS_NAME_BASE		"umad"
@@ -116,6 +114,9 @@ typedef struct hermon_hw_info_ioctl_s {
 #define	PCI_DEVICE_ID_MELLANOX_HERMON_QDR_PCIE2	0x673c
 #define	INFINIHOST_DEVICE_ID_2			0x5a45
 #define	INFINIHOST_DEVICE_ID_4			0x6279
+
+#define	MAX_HCAS				(64*16)
+#define	MAX_PORTS				(MAX_HCAS*2)
 
 /*
  * sol_uverbs_drv_status is the status of what libibverbs knows
@@ -162,7 +163,7 @@ typedef struct ibdev_cache_info_s {
 	char		ibd_node_guid_external_str[20];
 	char		ibd_sys_image_guid[20];
 	char		ibd_fw_ver[16];
-	char		ibd_name[8];
+	char		ibd_name[16];
 	int		ibd_boardid_index;
 	uint_t		ibd_device_id;
 } ibdev_cache_info_t;
@@ -176,7 +177,7 @@ typedef struct uverbs_cache_info_s {
 	uint_t		uvc_vendor_id;
 	uint_t		uvc_device_id;
 	int		uvc_hca_instance;
-	char		uvc_ibdev_name[8];
+	char		uvc_ibdev_name[16];
 	char		uvc_ibdev_hca_path[MAXPATHLEN];
 } uverbs_cache_info_t;
 static uverbs_cache_info_t	uverbs_dev_cache[MAX_HCAS];
@@ -187,7 +188,7 @@ typedef struct umad_cache_info_s {
 	int		umc_port;
 	char		umc_ib_dev[16];
 } umad_cache_info_t;
-static umad_cache_info_t	umad_dev_cache[MAX_HCAS * MAX_HCA_PORTS];
+static umad_cache_info_t	umad_dev_cache[MAX_PORTS];
 static int			umad_abi_version = -1;
 
 pthread_once_t		oneTimeInit = PTHREAD_ONCE_INIT;
@@ -228,8 +229,7 @@ solaris_fini(void)
 static int
 umad_cache_add(uint_t dev_num, int port, char *ibdev)
 {
-	if ((dev_num >= (MAX_HCAS  * MAX_HCA_PORTS)) ||
-	    (umad_cache_cnt >= (MAX_HCAS  * MAX_HCA_PORTS))) {
+	if ((dev_num >= MAX_PORTS) || (umad_cache_cnt >= MAX_PORTS)) {
 		fprintf(stderr, "dev %d: exceeds umad cache size\n", dev_num);
 		return (1);
 	}
@@ -485,7 +485,7 @@ umad_cache_init()
 	sol_umad_ioctl_info_t		*umad_infop;
 	sol_umad_ioctl_port_info_t	*port_infop;
 
-	for (minor = 0; minor < MAX_HCAS * MAX_HCA_PORTS; minor++) {
+	for (minor = 0; minor < MAX_PORTS; minor++) {
 		snprintf(umad_devpath, MAXPATHLEN, "%s/%s%d",
 		    IB_OFS_DEVPATH_PREFIX, UMAD_KERNEL_SYSFS_NAME_BASE,
 		    minor);
@@ -497,7 +497,7 @@ umad_cache_init()
 			save_errno = errno;
 	}
 
-	if ((minor == MAX_HCAS * MAX_HCA_PORTS) && (fd < 0)) {
+	if ((minor == MAX_PORTS) && (fd < 0)) {
 		if (! save_errno)
 			save_errno = errno;
 		fprintf(stderr, "failed to open sol_umad: %s\n",
@@ -506,12 +506,12 @@ umad_cache_init()
 	}
 
 	bufsize = sizeof (sol_umad_ioctl_info_t) +
-	    (sizeof (sol_umad_ioctl_port_info_t) * MAX_HCAS * MAX_HCA_PORTS);
+	    (sizeof (sol_umad_ioctl_port_info_t) * MAX_PORTS);
 
 	buf = malloc(bufsize);
 	memset(buf, 0, bufsize);
 	umad_infop = (sol_umad_ioctl_info_t *)buf;
-	umad_infop->umad_port_cnt = MAX_HCAS * MAX_HCA_PORTS;
+	umad_infop->umad_port_cnt = MAX_PORTS;
 
 	if (ioctl(fd, IB_USER_MAD_GET_PORT_INFO, umad_infop) != 0) {
 		fprintf(stderr, "sol_umad ioctl failed: %s\n",
@@ -594,7 +594,7 @@ initialize(void)
 	memset(&uverbs_dev_cache, 0, (sizeof (uverbs_cache_info_t) * MAX_HCAS));
 	memset(&ibdev_cache, 0, (sizeof (ibdev_cache_info_t) * MAX_HCAS * 2));
 	memset(&umad_dev_cache, 0,
-	    (sizeof (umad_cache_info_t) * MAX_HCAS * MAX_HCA_PORTS));
+	    (sizeof (umad_cache_info_t) * MAX_PORTS));
 
 	initialized = B_TRUE;
 }
@@ -1144,7 +1144,18 @@ infiniband_ports(char *path, char *buf, size_t size, char *dev_name)
 			len = 1 + sprintf(buf, "0x%08x",
 			    port_attr.port_cap_flags);
 		} else if (strcmp(path, "link_layer") == 0) {
-			len = 1 + sprintf(buf, "%d", port_attr.link_layer);
+			switch (port_attr.link_layer) {
+				case IBV_LINK_LAYER_UNSPECIFIED:
+				case IBV_LINK_LAYER_INFINIBAND:
+					len = 1 + sprintf(buf, "%s", "IB");
+					break;
+				case IBV_LINK_LAYER_ETHERNET:
+					len =
+					    1 + sprintf(buf, "%s", "Ethernet");
+					break;
+				default:
+					len = 1 + sprintf(buf, "%s", "Unknown");
+			}
 		}
 	}
 exit:
@@ -1395,7 +1406,7 @@ infiniband_mad(char *path, char *buf, size_t size)
 	(void) pthread_mutex_unlock(&umad_cache_mutex);
 
 	if (check_path(path, CP_UMAD, &dev_num)) {
-		if (dev_num >= MAX_HCAS * MAX_HCA_PORTS) {
+		if (dev_num >= MAX_PORTS) {
 			fprintf(stderr, "Invalid Path: %s\n", path);
 			goto exit;
 		}

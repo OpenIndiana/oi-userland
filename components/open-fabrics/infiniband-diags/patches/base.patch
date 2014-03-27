@@ -1803,16 +1803,17 @@ diff -r -u /tmp/infiniband-diags-1.5.8/src/ibnetdiscover.c infiniband-diags-1.5.
 diff -r -u /tmp/infiniband-diags-1.5.8/src/saquery.c infiniband-diags-1.5.8/src/saquery.c
 --- /tmp/infiniband-diags-1.5.8/src/saquery.c	Wed Feb 16 02:13:21 2011
 +++ infiniband-diags-1.5.8/src/saquery.c	Thu Jun 23 10:36:40 2011
-@@ -105,7 +105,7 @@
+@@ -104,8 +104,7 @@
+ /**
   * Declare some globals because I don't want this to be too complex.
   */
- #define MAX_PORTS (8)
+-#define MAX_PORTS (8)
 -#define DEFAULT_SA_TIMEOUT_MS (1000)
 +#define DEFAULT_SA_TIMEOUT_MS (10000)
  static struct query_res result;
  
  enum {
-@@ -1757,7 +1757,7 @@
+@@ -1757,7 +1756,7 @@
  			requested_lid = (uint16_t) strtoul(argv[0], NULL, 0);
  			requested_lid_flag++;
  		} else if (node_print_desc == NAME_OF_GUID) {
@@ -1885,27 +1886,7 @@ diff -r -u /tmp/infiniband-diags-1.5.8/src/ibstat.c infiniband-diags-1.5.8/src/i
  	"Down",
  	"Initializing",
  	"Armed",
-@@ -96,6 +97,19 @@
- 	"PhyTest"
- };
- 
-+static const char *port_link_layer_str(uint8_t link_layer)
-+{
-+	switch (link_layer) {
-+		case IBV_LINK_LAYER_UNSPECIFIED:
-+		case IBV_LINK_LAYER_INFINIBAND:
-+			return "IB";
-+		case IBV_LINK_LAYER_ETHERNET:
-+			return "Ethernet";
-+		default:
-+			return "Unknown";
-+        }
-+};
-+
- static int port_dump(umad_port_t * port, int alone)
- {
- 	char *pre = "";
-@@ -112,10 +126,10 @@
+@@ -112,10 +113,10 @@
  	printf("%sPort %d:\n", hdrpre, port->portnum);
  	printf("%sState: %s\n", pre,
  	       (unsigned)port->state <=
@@ -1918,16 +1899,24 @@ diff -r -u /tmp/infiniband-diags-1.5.8/src/ibstat.c infiniband-diags-1.5.8/src/i
  	printf("%sRate: %d\n", pre, port->rate);
  	printf("%sBase lid: %d\n", pre, port->base_lid);
  	printf("%sLMC: %d\n", pre, port->lmc);
-@@ -122,7 +136,7 @@
- 	printf("%sSM lid: %d\n", pre, port->sm_lid);
- 	printf("%sCapability mask: 0x%08x\n", pre, ntohl(port->capmask));
- 	printf("%sPort GUID: 0x%016" PRIx64 "\n", pre, ntohll(port->port_guid));
--	printf("%sLink layer: %s\n", pre, port->link_layer);
-+	printf("%sLink layer: %s\n", pre, port_link_layer_str(atoi(port->link_layer)));
- 	return 0;
- }
+@@ -167,13 +168,13 @@
  
-@@ -245,7 +259,7 @@
+ static int ports_list(char names[][UMAD_CA_NAME_LEN], int n)
+ {
+-	uint64_t guids[64];
++	uint64_t guids[MAX_PORTS];
+ 	int found, ports, i;
+ 
+-	for (i = 0, found = 0; i < n && found < 64; i++) {
++	for (i = 0, found = 0; i < n && found < MAX_PORTS; i++) {
+ 		if ((ports =
+ 		     umad_get_ca_portguids(names[i], guids + found,
+-					   64 - found)) < 0)
++					   MAX_PORTS - found)) < 0)
+ 			return -1;
+ 		found += ports;
+ 	}
+@@ -245,7 +246,7 @@
  		if (i >= n)
  			IBPANIC("'%s' IB device can't be found", argv[0]);
  
