@@ -30,6 +30,11 @@
       <service_fmri value='svc:/milestone/multi-user:default' />
     </dependency>
 
+    <dependency name='ipfilter' grouping='require_all' restart_on='error'
+      type='service'>
+      <service_fmri value='svc:/network/ipfilter:default' />
+    </dependency>
+
     <exec_method timeout_seconds="60" type="method" name="start"
       exec="/lib/svc/method/neutron-l3-agent %m %{config/config_path} %{config/l3_config_path}">
       <method_context>

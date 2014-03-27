@@ -487,16 +487,26 @@ class EVSQuantumPluginV2(quantum_plugin_base_v2.QuantumPluginBaseV2,
     def get_subnets_count(self, context, filters=None):
         return len(self.get_ipnets(context, filters))
 
-    def _release_subnet_dhcp_port(self, context, subnet):
+    def _release_subnet_dhcp_port(self, context, subnet, delete_network):
         """Release any dhcp port associated with the subnet"""
         filters = dict(evs=subnet['network_id'])
         portlist = self.get_ports(context, filters)
-        if len(portlist) == 1:
+
+        if delete_network:
+            # One can delete a network if there is only one port that has a
+            # VNIC attached to it and that port happens to be a DHCP port.
+            ports_with_deviceid = [port for port in portlist
+                                   if port['device_id'] != '']
+            update_subnet = len(ports_with_deviceid) == 1
+        else:
+            # One can delete a subnet if there is only one port and that
+            # port happens to be a DHCP port.
+            update_subnet = len(portlist) == 1
+        if update_subnet:
             # the lone port is a dhcp port created by dhcp agent
             # it must be released before we can delete the subnet
-            assert portlist[0]['device_owner'] == 'network:dhcp'
             subnet_update = {'subnet': {'enable_dhcp': False},
-                             'evs_rpccall_sync': True}
+                                        'evs_rpccall_sync': True}
             self.update_subnet(context, subnet['id'], subnet_update)
 
     def delete_subnet(self, context, id):
@@ -515,7 +525,7 @@ class EVSQuantumPluginV2(quantum_plugin_base_v2.QuantumPluginBaseV2,
             # False that in turn sends a subnet.udpate notification. This
             # results in DHCP agent releasing the port.
             if subnet['enable_dhcp']:
-                self._release_subnet_dhcp_port(context, subnet)
+                self._release_subnet_dhcp_port(context, subnet, False)
             evs.removeIPnet(id)
         except radcli.ObjectError as oe:
             raise EVSControllerError(oe.get_payload().errmsg)
@@ -649,7 +659,7 @@ class EVSQuantumPluginV2(quantum_plugin_base_v2.QuantumPluginBaseV2,
             subnets = self.get_subnets(context, filters=filters)
             dhcp_subnets = [s for s in subnets if s['enable_dhcp']]
             for subnet in dhcp_subnets:
-                self._release_subnet_dhcp_port(context, subnet)
+                self._release_subnet_dhcp_port(context, subnet, True)
             self._evsc.deleteEVS(id, context.tenant_id)
         except radcli.ObjectError as oe:
             raise EVSControllerError(oe.get_payload().errmsg)

@@ -19,6 +19,8 @@ import sys
 
 import smf_include
 
+from subprocess import Popen, PIPE
+
 
 def start():
     # verify paths are valid
@@ -26,6 +28,31 @@ def start():
         if not os.path.exists(f) or not os.access(f, os.R_OK):
             print '%s does not exist or is not readable' % f
             return smf_include.SMF_EXIT_ERR_CONFIG
+
+    # System-wide forwarding (either ipv4 or ipv6 or both) must be enabled
+    # before neutron-l3-agent can be started.
+    cmd = ["/usr/sbin/ipadm", "show-prop", "-c", "-p", "forwarding",
+           "-o", "current", "ipv4"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to determine if IPv4 forwarding is enabled or not"
+        return smf_include.SMF_EXIT_ERR_FATAL
+    v4fwding = "on" in output
+
+    cmd = ["/usr/sbin/ipadm", "show-prop", "-c", "-p", "forwarding",
+           "-o", "current", "ipv6"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to determine if IPv6 forwarding is enabled or not"
+        return smf_include.SMF_EXIT_ERR_FATAL
+    v6fwding = "on" in output
+
+    if not any((v4fwding, v6fwding)):
+        print "System-wide IPv4 or IPv6 (or both) forwarding must be enabled " \
+            "before enabling %s" % os.getenv("SMF_FMRI")
+        return smf_include.SMF_EXIT_ERR_CONFIG
 
     cmd = "/usr/lib/neutron/neutron-l3-agent --config-file %s " \
         "--config-file %s" % tuple(sys.argv[2:4])
