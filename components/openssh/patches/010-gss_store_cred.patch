@@ -13,13 +13,12 @@
 # libgssapi_krb5) Solaris Kerberos libgss does not have Kerberos mechanism
 # directly built in the library and this function is not directly accessible.
 #
-# The patch is implemented as Solaris-specific using USE_GSS_STORE_CRED 
+# The patch is implemented as Solaris-specific using USE_GSS_STORE_CRED
 # and GSSAPI_STORECREDS_NEEDS_RUID macros.
 #
-diff -ur old/config.h.in new/config.h.in
---- old/config.h.in	2012-04-19 22:03:32.000000000 -0700
-+++ new/config.h.in	2014-03-12 06:47:38.667166593 -0700
-@@ -1465,6 +1465,12 @@
+--- orig/config.h.in	Fri Mar 21 11:42:17 2014
++++ new/config.h.in	Fri Mar 21 11:46:26 2014
+@@ -1616,6 +1616,12 @@
  /* Use btmp to log bad logins */
  #undef USE_BTMP
  
@@ -32,51 +31,49 @@ diff -ur old/config.h.in new/config.h.in
  /* Use libedit for sftp */
  #undef USE_LIBEDIT
  
-diff -ur old/configure new/configure
---- old/configure	2014-03-12 04:01:33.320409426 -0700
-+++ new/configure	2014-03-12 06:47:48.510155481 -0700
-@@ -7201,6 +7201,9 @@
+--- orig/configure	Fri Mar 21 11:42:24 2014
++++ new/configure	Fri Mar 21 11:49:51 2014
+@@ -7797,6 +7797,9 @@
  
  fi
  
-+	$as_echo "#define USE_GSS_STORE_CRED 1" >>confdefs.h
-+	$as_echo "#define GSSAPI_STORECREDS_NEEDS_RUID 1" >>confdefs.h
++        $as_echo "#define USE_GSS_STORE_CRED 1" >>confdefs.h
++        $as_echo "#define GSSAPI_STORECREDS_NEEDS_RUID 1" >>confdefs.h
 +
+ 	TEST_SHELL=$SHELL	# let configure find us a capable shell
  	;;
  *-*-sunos4*)
- 	CPPFLAGS="$CPPFLAGS -DSUNOS4"
-diff -ur old/configure.ac new/configure.ac
---- old/configure.ac	2014-03-12 04:01:33.310743659 -0700
-+++ new/configure.ac	2014-03-12 06:47:59.218730468 -0700
-@@ -802,6 +802,8 @@
- 			SP_MSG="yes" ], )
+--- orig/configure.ac	Fri Mar 21 11:42:28 2014
++++ new/configure.ac	Fri Mar 21 16:32:28 2014
+@@ -866,6 +866,8 @@
  		],
  	)
-+	AC_DEFINE([USE_GSS_STORE_CRED])
-+	AC_DEFINE([GSSAPI_STORECREDS_NEEDS_RUID])
+ 	TEST_SHELL=$SHELL	# let configure find us a capable shell
++        AC_DEFINE([USE_GSS_STORE_CRED])
++        AC_DEFINE([GSSAPI_STORECREDS_NEEDS_RUID])
  	;;
  *-*-sunos4*)
  	CPPFLAGS="$CPPFLAGS -DSUNOS4"
-diff -ur old/gss-serv-krb5.c new/gss-serv-krb5.c
---- old/gss-serv-krb5.c	2006-08-31 22:38:36.000000000 -0700
-+++ new/gss-serv-krb5.c	2014-03-17 06:25:36.218227736 -0700
-@@ -109,6 +109,7 @@
+--- orig/gss-serv-krb5.c	Fri Mar 21 11:42:46 2014
++++ new/gss-serv-krb5.c	Fri Mar 21 11:54:48 2014
+@@ -109,7 +109,7 @@
+ 	return retval;
  }
  
- 
+-
 +#ifndef USE_GSS_STORE_CRED
  /* This writes out any forwarded credentials from the structure populated
   * during userauth. Called after we have setuid to the user */
  
-@@ -183,6 +184,7 @@
+@@ -195,6 +195,7 @@
  
  	return;
  }
-+#endif	/* #ifndef USE_GSS_STORE_CRED */
++#endif /* #ifndef USE_GSS_STORE_CRED */
  
  ssh_gssapi_mech gssapi_kerberos_mech = {
  	"toWM5Slw5Ew8Mqkay+al2g==",
-@@ -191,7 +193,11 @@
+@@ -203,7 +204,11 @@
  	NULL,
  	&ssh_gssapi_krb5_userok,
  	NULL,
@@ -88,10 +85,9 @@ diff -ur old/gss-serv-krb5.c new/gss-serv-krb5.c
  };
  
  #endif /* KRB5 */
-diff -ur old/gss-serv.c new/gss-serv.c
---- old/gss-serv.c	2011-08-05 13:16:46.000000000 -0700
-+++ new/gss-serv.c	2014-03-12 05:55:42.368676287 -0700
-@@ -292,22 +292,66 @@
+--- orig/gss-serv.c	Fri Mar 21 11:42:53 2014
++++ new/gss-serv.c	Fri Mar 21 15:59:43 2014
+@@ -292,6 +292,9 @@
  void
  ssh_gssapi_cleanup_creds(void)
  {
@@ -101,6 +97,7 @@ diff -ur old/gss-serv.c new/gss-serv.c
  	if (gssapi_client.store.filename != NULL) {
  		/* Unlink probably isn't sufficient */
  		debug("removing gssapi cred file\"%s\"",
+@@ -298,6 +301,7 @@
  		    gssapi_client.store.filename);
  		unlink(gssapi_client.store.filename);
  	}
@@ -108,6 +105,7 @@ diff -ur old/gss-serv.c new/gss-serv.c
  }
  
  /* As user */
+@@ -304,10 +308,50 @@
  void
  ssh_gssapi_storecreds(void)
  {
@@ -158,25 +156,23 @@ diff -ur old/gss-serv.c new/gss-serv.c
  }
  
  /* This allows GSSAPI methods to do things to the childs environment based
-diff -ur old/servconf.c new/servconf.c
---- old/servconf.c	2014-03-12 04:01:33.343205265 -0700
-+++ new/servconf.c	2014-03-12 04:01:33.400368192 -0700
-@@ -386,7 +386,11 @@
+--- orig/servconf.c	Fri Mar 21 11:43:02 2014
++++ new/servconf.c	Fri Mar 21 16:02:54 2014
+@@ -409,7 +409,11 @@
  	{ "afstokenpassing", sUnsupported, SSHCFG_GLOBAL },
  #ifdef GSSAPI
  	{ "gssapiauthentication", sGssAuthentication, SSHCFG_ALL },
 +#ifdef USE_GSS_STORE_CRED
 +	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
-+#else	/* USE_GSS_STORE_CRED*/
++#else /* USE_GSS_STORE_CRED */
  	{ "gssapicleanupcredentials", sGssCleanupCreds, SSHCFG_GLOBAL },
-+#endif	/* USE_GSS_STORE_CRED*/
++#endif /* USE_GSS_STORE_CRED */
  #else
  	{ "gssapiauthentication", sUnsupported, SSHCFG_ALL },
  	{ "gssapicleanupcredentials", sUnsupported, SSHCFG_GLOBAL },
-diff -ur old/sshd.c new/sshd.c
---- old/sshd.c	2014-03-12 04:01:33.321603394 -0700
-+++ new/sshd.c	2014-03-12 06:48:16.296909610 -0700
-@@ -2041,9 +2041,23 @@
+--- orig/sshd.c	Fri Mar 21 11:43:08 2014
++++ new/sshd.c	Mon Mar 24 15:05:30 2014
+@@ -2126,9 +2126,23 @@
  
  #ifdef GSSAPI
  	if (options.gss_authentication) {

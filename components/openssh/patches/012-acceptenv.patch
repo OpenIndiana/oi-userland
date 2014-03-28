@@ -1,0 +1,33 @@
+#
+# This is to fix a security bug (CVE-2014-2532) when using environment passing
+# with a sshd_config(5) AcceptEnv pattern with a wildcard. OpenSSH prior to 6.6
+# could be tricked into accepting any enviornment variable that contains the
+# characters before the wildcard character.  The bug fix code came from 
+# OpenSSH.org.  When we upgrade OpenSSH to version 6.6 or later, we will remove
+# this patch file.
+#
+--- orig/session.c	Tue Mar 18 18:37:57 2014
++++ new/session.c	Tue Mar 18 18:41:17 2014
+@@ -978,6 +978,11 @@
+ 	u_int envsize;
+ 	u_int i, namelen;
+ 
++	if (strchr(name, '=') != NULL) {
++	        error("Invalid environment variable \"%.100s\"", name);
++                return;
++	}
++
+ 	/*
+ 	 * If we're passed an uninitialized list, allocate a single null
+ 	 * entry before continuing.
+@@ -2225,8 +2230,8 @@
+ 	char *name, *val;
+ 	u_int name_len, val_len, i;
+ 
+-	name = packet_get_string(&name_len);
+-	val = packet_get_string(&val_len);
++	name = packet_get_cstring(&name_len);
++	val = packet_get_cstring(&val_len);
+ 	packet_check_eom();
+ 
+ 	/* Don't set too many environment variables */

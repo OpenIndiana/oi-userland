@@ -23,18 +23,18 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssh
-COMPONENT_VERSION=	6.0p1
+COMPONENT_VERSION=	6.5p1
 HUMAN_VERSION=		$(COMPONENT_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 
 # Version for IPS.  The encoding rules are:
 #   OpenSSH <x>.<y>p<n>     => IPS <x>.<y>.0.<n>
 #   OpenSSH <x>.<y>.<z>p<n> => IPS <x>.<y>.<z>.<n>
-IPS_COMPONENT_VERSION=	6.0.0.1
+IPS_COMPONENT_VERSION=	6.5.0.1
 
 COMPONENT_PROJECT_URL=	http://www.openssh.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:589d48e952d6c017e667873486b5df63222f9133d417d0002bd6429d9bd882de
+COMPONENT_ARCHIVE_HASH=	sha256:a1195ed55db945252d5a1730d4a2a2a5c1c9a6aa01ef2e5af750a962623d9027
 COMPONENT_ARCHIVE_URL=	http://mirror.team-cymru.org/pub/OpenBSD/OpenSSH/portable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=utility/openssh
 
@@ -63,6 +63,7 @@ CONFIGURE_OPTIONS += --with-solaris-projects
 CONFIGURE_OPTIONS += --with-tcp-wrappers
 CONFIGURE_OPTIONS += --with-4in6
 CONFIGURE_OPTIONS += --enable-strip=no
+CONFIGURE_OPTIONS += --without-rpath
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
