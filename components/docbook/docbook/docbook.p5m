@@ -1,0 +1,30 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/data/docbook@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Documentation"
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license docbook.license license='docbook'
+
+file files/docbook-catalog-uninstall.sh path=usr/share/sgml/docbook/docbook-catalog-uninstall.sh mode=0555
+file files/docbook-catalog-install.sh path=usr/share/sgml/docbook/docbook-catalog-install.sh mode=0555
+file files/docbook-catalog-update.sh path=lib/svc/method/docbook-catalog-update.sh mode=0555
+file files/docbook-catalog-update.xml path=var/svc/manifest/application/desktop-cache/docbook-catalog-update.xml
+
+depend fmri=data/docbook/sgml-common@0.6.3 type=require
+depend fmri=data/docbook/dtds@1.0 type=require
+depend fmri=data/docbook/dsssl@1.79 type=require
+depend fmri=data/docbook/xsl@1.69.1 type=require
