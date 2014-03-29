@@ -744,7 +744,7 @@ PERL_OPTIMIZE =$(gcc_OPT)
 # We need this to overwrite options of perl used to compile illumos-gate
 PERL_STUDIO_OVERWRITE = cc="$(CC)" cccdlflags="$(CC_PIC)" ld="$(CC)" ccname="$(shell basename $(CC))" optimize="$(gcc_OPT)"
 
-# Allow user to verride default maximum number of archives
+# Allow user to override default maximum number of archives
 NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9 10
 
 # Add any bit-specific settings
