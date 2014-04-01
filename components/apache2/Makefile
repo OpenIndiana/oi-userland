@@ -93,6 +93,7 @@ CONFIGURE_OPTIONS +=	--enable-authnz-ldap
 CONFIGURE_OPTIONS +=	--enable-ldap
 CONFIGURE_OPTIONS +=	--enable-ssl
 CONFIGURE_OPTIONS +=	--enable-exception-hook
+CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
