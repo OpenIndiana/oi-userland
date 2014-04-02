@@ -38,6 +38,8 @@ include ../../make-rules/ips.mk
 
 # fix my alignment issues instead of falling over on sparc
 studio_ALIGN.sparc.64=-xmemalign=16i
+CONFIGURE_OPTIONS.sparc += ac_cv___attribute__=no
+CONFIGURE_OPTIONS += $(CONFIGURE_OPTIONS.$(MACH))
 
 # lazyloading (indirectly enabled by -Bdirect) seems to cause problems with
 # libpcap device enumeration.
