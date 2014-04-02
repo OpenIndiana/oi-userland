@@ -23,15 +23,15 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
-COMPONENT_VERSION=	9.6-ESV-R10-P2
-IPS_COMPONENT_VERSION=	9.6.3.10.2
+COMPONENT_VERSION=	9.6-ESV-R11
+IPS_COMPONENT_VERSION=	9.6.3.11.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.isc.org/software/bind/
 
 # hash from: sha256sum $(COMPONENT_ARCHIVE) | sed 's/\(.[^ ]*\).*/sha256:\1/'
 COMPONENT_ARCHIVE_HASH=	 \
-    sha256:1b131ef3a3b27a7916815ec5f4a87f0d9f5ac0669df21c7ec75ba18a13238eda
+    sha256:4f052195a62218c05a05033774452e6a9e329b865c01e594cc20a6adf11e0d0f
 COMPONENT_ARCHIVE_URL=	\
 	http://ftp.isc.org/isc/bind9/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/dns-server
@@ -100,7 +100,9 @@ install: $(INSTALL_32)
 # /^I:/ = Info from a test;  colleced for possible use later.
 # /^A:/ = About: summary of the test - not used here.
 # /^R:/ = Result: If 'PASS' then continue, else print line and collected info.
-# Known issues may then be accounted for.
+# Known issues may then be accounted for by adding tests, for example:
+# 		/^R:UNTESTED/ && name ~ /^T:dst:2:A/ {known++;}\
+#		/^R:UNRESOLVED/ && name ~ /^T:dst:1:A/ {known++;}\
 # @ EOF = Display count of RESULTS: i.e. R:PASS=124 R:UNTESTED=26 Total=150
 # if not 100% pass rate and issue is not known the word 'issues!' is appended
 # to resulting string.
@@ -110,8 +112,6 @@ summarize=	'\
 		/^R:/ {test++; result[$$1]++;}\
 		/^R:PASS/ {next;}\
 		/^R:/ {printf("%s: %s\n%s\n", $$1, name, info);}\
-		/^R:UNTESTED/ && name ~ /^T:dst:2:A/ {known++;}\
-		/^R:UNRESOLVED/ && name ~ /^T:dst:1:A/ {known++;}\
 		END{for (item in result)\
 				printf("%s=%d ", item, result[item]);\
 			printf("(known=%d) Total=%d%s\n", known, test, \
@@ -126,19 +126,20 @@ test: build $(TEST_32)
 
 # fulltest requires sufficient privileges to configures IP addresses
 # 10.53.0.1 through 10.53.0.5 as aliases on the loopback interface.
+# Note PATH is being set so that isc_ifconfig can find ifconfig.
 FULL_TEST_32=	$(TEST_32:%=%_FULL)
 
 .PHONY: fulltest
 fulltest: build $(FULL_TEST_32)
 
 $(FULL_TEST_32):
-	cd $(COMPONENT_SRC) && $(SHELL)  $(isc_ifconfig) up
+	cd $(COMPONENT_SRC) && PATH=/sbin:$(PATH) $(SHELL) $(isc_ifconfig) up
 	-cd $(@D) && $(MAKE) test 2>&1 | $(TEE) $@
-	cd $(COMPONENT_SRC) && $(SHELL) $(isc_ifconfig) down
+	-cd $(COMPONENT_SRC) && PATH=/sbin:$(PATH) $(SHELL) $(isc_ifconfig) down
 	$(NAWK) $(summarize) $@
 
 $(TEST_32):
-	-cd $(@D) && $(MAKE) test 2>&1 | $(TEE) $@
+	-cd $(@D) && $(MAKE) force-test 2>&1 | $(TEE) $@
 	$(NAWK) $(summarize) $@
 
 # test-summary shows summary for targets test and fulltest. Use target
