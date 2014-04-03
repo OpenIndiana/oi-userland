@@ -1,0 +1,2535 @@
+--- libgksu-2.0.12/libgksu/Makefile.am-orig	2010-12-09 23:59:11.491180288 -0600
++++ libgksu-2.0.12/libgksu/Makefile.am	2010-12-10 00:00:22.035013955 -0600
+@@ -3,7 +3,7 @@ INCLUDES = ${LIBGKSU_CFLAGS}
+ AM_CPPFLAGS = -DLOCALEDIR=\"$(datadir)/locale\" -DDATA_DIR=\"$(datadir)\" -DPREFIX=\"$(prefix)\"
+ 
+ lib_LTLIBRARIES = libgksu2.la
+-libgksu2_la_SOURCES = libgksu.c libgksu.h
++libgksu2_la_SOURCES = libgksu.c libgksu.h libgksu-solaris.c
+ # 0.0.0 -> major.minor.micro
+ # major -> breaks backward compatibility (changes to existing ABI)
+ # minor -> keeps compatibility (additions to the API)
+--- libgksu-2.0.12/libgksu/libgksu.h-orig	2010-12-09 23:57:13.917357883 -0600
++++ libgksu-2.0.12/libgksu/libgksu.h	2010-12-09 23:59:22.607325443 -0600
+@@ -21,9 +21,22 @@
+ #ifndef __LIBGKSU_H__
+ #define __LIBGKSU_H__
+ 
++#ifdef __sun
++#include <exec_attr.h>
++#include <user_attr.h>
++#include <auth_attr.h>
++#include <prof_attr.h>
++#define ES_SUCCESS 1
++#define ES_ERROR 2
++#define ES_PASSWORD 3
++#define ES_CONTINUE 4
++#endif
++
+ #include <glib.h>
+ #include <glib-object.h>
+ 
++#include <security/pam_appl.h>
++
+ #define SN_API_NOT_YET_FROZEN
+ #include <libsn/sn.h>
+ 
+@@ -71,6 +84,25 @@ struct _GksuContext
+   gint ref_count;
+ 
+   gboolean debug;
++
++  int msg_type;
++  int msg_num;
++  struct pam_message *pam_message;
++  struct pam_response *pam_response;
++  gchar *privspec;
++  gboolean pfexec_mode;
++  gboolean elevated_privilege;
++  gboolean elevated_role;
++  gboolean wait_for_child_to_exit;
++  gboolean need_pipe;
++  int child_pid;
++  int stdin_fd;
++  int stdout_fd;
++  FILE *stdin_file;
++  FILE *stdout_file;
++  gchar *saved_home;
++  gboolean sn_context_initiated;
++  gboolean child_no_a11y;
+ };
+ 
+ #define GKSU_TYPE_CONTEXT gksu_context_get_type()
+@@ -130,11 +162,13 @@ gksu_context_set_login_shell (GksuContex
+ gboolean
+ gksu_context_get_login_shell (GksuContext *context);
+ 
++#ifndef __sun
+ void
+ gksu_context_set_keep_env (GksuContext *context, gboolean value);
+ 
+ gboolean
+ gksu_context_get_keep_env (GksuContext *context);
++#endif
+ 
+ void
+ gksu_context_set_description (GksuContext *context, gchar *description);
+@@ -252,6 +286,93 @@ gksu_ask_password_full (GksuContext *con
+ gchar*
+ gksu_ask_password (GError **error);
+ 
++#ifdef __sun
++gboolean
++gksu_context_embedded_su_try_need_password (GksuContext *context);
++#endif
++
++gboolean
++gksu_context_embedded_su_run (GksuContext *context,
++                              GksuAskPassFunc ask_pass,
++                              gpointer ask_pass_data,
++                              GError **error);
++
++gboolean
++gksu_context_pfexec_try_run (GksuContext *context);
++
++gboolean
++gksu_context_pfexec_run (GksuContext *context, GError **error);
++
++gboolean
++gksu_context_set_role (GksuContext *context);
++
++int 
++gksu_context_get_child_stdin_fd (GksuContext *context);
++
++int 
++gksu_context_get_child_stdout_fd (GksuContext *context);
++
++FILE* 
++gksu_context_get_child_stdin_file (GksuContext *context);
++
++FILE*  
++gksu_context_get_child_stdout_file (GksuContext *context);
++
++pid_t
++gksu_context_get_child_pid (GksuContext *context);
++
++void
++gksu_context_set_wait_for_child_to_exit (GksuContext *context, gboolean value);
++
++gboolean
++gksu_context_get_wait_for_child_to_exit (GksuContext *context);
++
++void
++gksu_context_set_elevated_privilege (GksuContext *context, gboolean value);
++
++gboolean
++gksu_context_get_elevated_privilege (GksuContext *context);
++
++void
++gksu_context_set_elevated_role (GksuContext *context, gboolean value);
++
++gboolean
++gksu_context_get_elevated_role (GksuContext *context);
++
++void
++gksu_context_set_privspec (GksuContext *context, gchar *privspec);
++
++const gchar*
++gksu_context_get_privspec (GksuContext *context);
++
++gint
++gksu_context_get_num_msg (GksuContext *context);
++
++const gchar*
++gksu_context_get_pam_message (GksuContext *context, gint index);
++
++const gchar*
++gksu_context_get_pam_response (GksuContext *context, gint index);
++
++void
++gksu_context_set_pam_response (GksuContext *context, gint index, gchar *response);
++
++gboolean
++gksu_context_get_pfexec_mode (GksuContext *context);
++
++void
++gksu_context_set_need_pipe (GksuContext *context, gboolean value);
++
++void
++gksu_context_set_child_no_a11y (GksuContext *context, gboolean value);
++
++gboolean
++gksu_context_get_need_pipe (GksuContext *context);
++
++gboolean sudo_prepare_xauth (GksuContext *context);
++
++void sudo_reset_xauth (GksuContext *context, gchar *xauth, gchar *xauth_env);
++
+ G_END_DECLS
+ 
+ #endif
+--- libgksu-2.0.12/libgksu/libgksu.c.~2~	2014-04-02 18:37:03.132754025 +0400
++++ libgksu-2.0.12/libgksu/libgksu.c	2014-04-02 18:38:37.231662620 +0400
+@@ -24,13 +24,19 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <fcntl.h>
++#ifdef __sun
++#include <sys/stropts.h>
++#else
+ #include <pty.h>
++#endif
+ #include <pwd.h>
+ #include <sys/types.h>
+ #include <sys/wait.h>
+ #include <sys/stat.h>
+ #include <sys/select.h>
+ #include <errno.h>
++#include <termios.h>
++#include <strings.h>
+ 
+ #include <glibtop.h>
+ #include <glibtop/procstate.h>
+@@ -44,8 +50,10 @@
+ #include <gtk/gtk.h>
+ #include <locale.h>
+ 
++#if 0
+ #include <gconf/gconf-client.h>
+ #include <gnome-keyring.h>
++#endif
+ 
+ #include "defines.h"
+ #include "../config.h"
+@@ -532,7 +540,7 @@
+ }
+ 
+ int
+-grab_keyboard_and_mouse (GtkWidget *dialog)
++grab_keyboard_and_mouse (GksuContext *context, GtkWidget *dialog)
+ {
+   GdkGrabStatus status;
+   gint grab_tries = 0;
+@@ -541,7 +549,7 @@
+ 
+   gchar *fname = g_strdup (getenv ("GKSU_LOCK_FILE"));
+   if (fname == NULL)
+-    fname = g_strdup_printf ("%s/.gksu.lock", getenv ("HOME"));
++    fname = g_strdup_printf ("%s/.gksu.lock", context->saved_home);
+ 
+   pid = test_lock (fname);
+ 
+@@ -628,6 +636,7 @@
+   close(lock);
+ }
+ 
++#if 0
+ static gchar*
+ get_gnome_keyring_password (GksuContext *context)
+ {
+@@ -805,10 +814,12 @@
+ 	}
+     }
+ }
++#endif
+ 
+ void
+ get_configuration_options (GksuContext *context)
+ {
++#if 0
+   GConfClient *gconf_client = context->gconf_client;
+   gboolean force_grab;
+ 
+@@ -821,6 +832,10 @@
+ 
+   context->sudo_mode = gconf_client_get_bool (gconf_client, BASE_PATH "sudo-mode",
+ 					      NULL);
++#endif
++
++  context->grab = TRUE;
++  context->sudo_mode = FALSE;
+ }
+ 
+ /**
+@@ -910,7 +925,7 @@
+     gksuui_dialog_set_alert (GKSUUI_DIALOG(dialog), context->alert);
+ 
+   if (context->grab)
+-    lock = grab_keyboard_and_mouse (dialog);
++    lock = grab_keyboard_and_mouse (context, dialog);
+   retvalue = gtk_dialog_run (GTK_DIALOG(dialog));
+   gtk_widget_hide (dialog);
+   if (context->grab)
+@@ -953,6 +968,7 @@
+ static void
+ cb_toggled_cb (GtkWidget *button, gpointer data)
+ {
++#if 0
+   GConfClient *gconf_client;
+   gchar *key;
+   gboolean toggled;
+@@ -981,6 +997,7 @@
+   g_object_unref (gconf_client);
+ 
+   g_free (key);
++#endif
+ }
+ 
+ void
+@@ -1084,235 +1101,6 @@
+   return strdup(buf.cmd);
+ }
+ 
+-static gchar *
+-get_xauth_token (GksuContext *context, gchar *display)
+-{
+-  gchar *xauth_bin = NULL;
+-  FILE *xauth_output;
+-  gchar *tmp = NULL;
+-  gchar *xauth = g_new0 (gchar, 256);
+-
+-  /* find out where the xauth binary is located */
+-  if (g_file_test ("/usr/bin/xauth", G_FILE_TEST_IS_EXECUTABLE))
+-    xauth_bin = "/usr/bin/xauth";
+-  else if (g_file_test ("/usr/X11R6/bin/xauth", G_FILE_TEST_IS_EXECUTABLE))
+-    xauth_bin = "/usr/X11R6/bin/xauth";
+-  else
+-    {
+-      fprintf (stderr,
+-	       "Failed to obtain xauth key: xauth binary not found "
+-	       "at usual locations");
+-
+-      return NULL;
+-    }
+-
+-  /* get the authorization token */
+-  tmp = g_strdup_printf ("%s list %s | "
+-			 "head -1 | awk '{ print $3 }'",
+-			 xauth_bin,
+-			 display);
+-  if ((xauth_output = popen (tmp, "r")) == NULL)
+-    {
+-      fprintf (stderr,
+-	       "Failed to obtain xauth key: %s",
+-	       strerror(errno));
+-      return NULL;
+-    }
+-  fread (xauth, sizeof(char), 255, xauth_output);
+-  pclose (xauth_output);
+-  g_free (tmp);
+-
+-  if (context->debug)
+-    {
+-      fprintf(stderr,
+-	      "xauth: -%s-\n"
+-	      "display: -%s-\n",
+-	      xauth, display);
+-    }
+-
+-  return xauth;
+-}
+-
+-/**
+- * prepare_xauth:
+- *
+- * Sets up the variables with values for the $DISPLAY
+- * environment variable and xauth-related stuff. Also
+- * creates a temporary directory to hold a .Xauthority
+- *
+- * Returns: TRUE if it suceeds, FALSE if it fails.
+- */
+-static int
+-prepare_xauth (GksuContext *context)
+-{
+-  gchar *display = NULL;
+-  gchar *xauth = NULL;
+-
+-  display = g_strdup (getenv ("DISPLAY"));
+-  xauth = get_xauth_token (context, display);
+-  if (xauth == NULL)
+-    {
+-      g_free (display);
+-      return FALSE;
+-    }
+-
+-  /* If xauth is the empty string, then try striping the
+-   * hostname part of the DISPLAY string for getting the
+-   * auth token; this is needed for ssh-forwarded usage
+-   */
+-  if (!strcmp ("", xauth))
+-    {
+-      gchar *cut_display = NULL;
+-
+-      g_free (xauth);
+-      cut_display = g_strdup (g_strrstr (display, ":"));
+-      xauth = get_xauth_token (context, cut_display);
+-
+-      g_free (display);
+-      display = cut_display;
+-    }
+-
+-  context->xauth = xauth;
+-  context->display = display;
+-
+-  if (context->debug)
+-    {
+-      fprintf(stderr,
+-	      "final xauth: -%s-\n"
+-	      "final display: -%s-\n",
+-	      context->xauth, context->display);
+-    }
+-
+-  return TRUE;
+-}
+-
+-/* Write all of buf, even if write(2) is interrupted. */
+-static ssize_t
+-full_write (int d, const char *buf, size_t nbytes)
+-{
+-  ssize_t r, w = 0;
+-
+-  /* Loop until nbytes of buf have been written. */
+-  while (w < nbytes) {
+-    /* Keep trying until write succeeds without interruption. */
+-    do {
+-      r = write(d, buf + w, nbytes - w);
+-    } while (r < 0 && errno == EINTR);
+-
+-    if (r < 0) {
+-      return -1;
+-    }
+-
+-    w += r;
+-  }
+-
+-  return w;
+-}
+-
+-static gboolean
+-copy (const char *fn, const char *dir)
+-{
+-  int in, out;
+-  int r;
+-  char *newfn;
+-  char buf[BUFSIZ] = "";
+-
+-  newfn = g_strdup_printf("%s/.Xauthority", dir);
+-
+-  out = open(newfn, O_WRONLY | O_CREAT | O_EXCL, 0600);
+-  if (out == -1)
+-    {
+-      if (errno == EEXIST)
+-	fprintf (stderr,
+-		 "Impossible to create the .Xauthority file: a file "
+-		 "already exists. This might be a security issue; "
+-		 "please investigate.");
+-      else
+-	fprintf (stderr,
+-		 "Error copying '%s' to '%s': %s",
+-		 fn, dir, strerror(errno));
+-
+-      return FALSE;
+-    }
+-
+-  in = open(fn, O_RDONLY);
+-  if (in == -1)
+-    {
+-      fprintf (stderr,
+-	       "Error copying '%s' to '%s': %s",
+-	       fn, dir, strerror(errno));
+-      return FALSE;
+-    }
+-
+-  while ((r = read(in, buf, BUFSIZ)) > 0)
+-    {
+-      if (full_write(out, buf, r) == -1)
+-	{
+-	  fprintf (stderr,
+-		   "Error copying '%s' to '%s': %s",
+-		   fn, dir, strerror(errno));
+-	  return FALSE;
+-	}
+-    }
+-
+-  if (r == -1)
+-    {
+-      fprintf (stderr,
+-	       "Error copying '%s' to '%s': %s",
+-	       fn, dir, strerror(errno));
+-      return FALSE;
+-    }
+-
+-  return TRUE;
+-}
+-
+-static gboolean
+-sudo_prepare_xauth (GksuContext *context)
+-{
+-  gchar template[] = "/tmp/" PACKAGE "-XXXXXX";
+-  gboolean error_copying = FALSE;
+-  gchar *xauth = NULL;
+-
+-  context->dir = g_strdup (mkdtemp(template));
+-  if (!context->dir)
+-    {
+-      fprintf (stderr, strerror(errno));
+-      return FALSE;
+-    }
+-
+-  xauth = g_strdup(g_getenv ("XAUTHORITY"));
+-  if (xauth == NULL)
+-    xauth = g_strdup_printf ("%s/.Xauthority", g_get_home_dir());
+-
+-  error_copying = !copy (xauth, context->dir);
+-  g_free (xauth);
+-
+-  if (error_copying)
+-    return FALSE;
+-
+-  return TRUE;
+-}
+-
+-static void
+-sudo_reset_xauth (GksuContext *context, gchar *xauth,
+-		  gchar *xauth_env)
+-{
+-  /* reset the env var as it was before or clean it  */
+-  if (xauth_env)
+-    setenv ("XAUTHORITY", xauth_env, TRUE);
+-  else
+-    unsetenv ("XAUTHORITY");
+-
+-  if (context->debug)
+-    fprintf (stderr, "xauth: %s\nxauth_env: %s\ndir: %s\n",
+-	     xauth, xauth_env, context->dir);
+-
+-  unlink (xauth);
+-  rmdir (context->dir);
+-
+-  g_free (xauth);
+-}
+-
+ static void
+ startup_notification_initialize (GksuContext *context)
+ {
+@@ -1344,11 +1132,13 @@
+   context->dir = NULL;
+   context->display = NULL;
+ 
++#if 0
+   context->gconf_client = gconf_client_get_default ();
++#endif
+ 
+   context->sudo_mode = FALSE;
+ 
+-  context->user = g_strdup ("root");
++  context->user = NULL;
+   context->command = NULL;
+ 
+   context->login_shell = FALSE;
+@@ -1362,10 +1152,27 @@
+ 
+   context->debug = FALSE;
+ 
++  context->pam_message = NULL;
++  context->pam_response = NULL;
++  context->privspec = NULL;
++  context->msg_type = 0;
++  context->msg_num = 0;
++  context->pfexec_mode = FALSE;
++  context->elevated_privilege = TRUE;
++  context->elevated_role = TRUE;
++  context->wait_for_child_to_exit = TRUE;
++  context->need_pipe = TRUE;
++  context->child_pid = 0;
++  context->stdin_fd = 0;
++  context->stdout_fd = 0;
++
+   context->sn_context = NULL;
+   context->sn_id = NULL;
+   
+   context->ref_count = 1;
++  context->saved_home = NULL;
++  context->sn_context_initiated = FALSE;
++  context->child_no_a11y = FALSE;
+ 
+   get_configuration_options (context);
+   startup_notification_initialize (context);
+@@ -1485,7 +1292,9 @@
+ void
+ gksu_context_set_keep_env (GksuContext *context, gboolean value)
+ {
++#ifndef __sun
+   context->keep_env = value;
++#endif
+ }
+ 
+ /**
+@@ -1737,6 +1546,7 @@
+ 				g_get_prgname (),
+ 				gksu_context_get_command (context),
+ 				launch_time);
++  context->sn_context_initiated = TRUE;
+ 
+   sid = g_strdup_printf ("%s", sn_launcher_context_get_startup_id (context->sn_context));
+   gksu_context_set_launcher_id (context, sid);
+@@ -1757,7 +1567,10 @@
+ static void
+ gksu_context_launch_complete (GksuContext *context)
+ {
+-  sn_launcher_context_complete(context->sn_context);
++  if (context->sn_context_initiated)
++    {
++      sn_launcher_context_complete(context->sn_context);
++    }
+ }
+ 
+ /**
+@@ -1797,11 +1610,14 @@
+ void
+ gksu_context_free (GksuContext *context)
+ {
++  int i;
+   g_free (context->xauth);
+   g_free (context->dir);
+   g_free (context->display);
+ 
++#if 0
+   g_object_unref (context->gconf_client);
++#endif
+ 
+   g_free (context->description);
+   g_free (context->message);
+@@ -1810,6 +1626,14 @@
+   g_free (context->command);
+
++
++  for ( i = 0; i<context->msg_num; i++ ) {
++       g_free (context->pam_message[i].msg);
++       g_free (context->pam_response[i].resp);
++  }
++  g_free (context->pam_message);
++  g_free (context->pam_response);
++  g_free (context->privspec);
+   g_free (context);
+ }
+ 
+ /**
+@@ -1855,6 +1679,45 @@
+   return type_gksu_context;
+ }
+ 
++/* xauth functions */
++static void
++setup_xauth (XHostAddress *host_entry, XServerInterpretedAddress *si_entry, char *rolename)
++{
++  si_entry->type        = "localuser";
++  si_entry->typelength  = strlen ("localuser");
++  si_entry->value       = rolename;
++  si_entry->valuelength = strlen (rolename);
++  host_entry->family    = FamilyServerInterpreted;
++  host_entry->address   = (char *) si_entry;
++  host_entry->length    = sizeof (XServerInterpretedAddress);
++}
++
++gboolean
++prepare_xauth (GksuContext *context)
++{
++  Display *display;
++  XServerInterpretedAddress si_entry;
++  XHostAddress              host_entry;
++
++  display = gdk_x11_get_default_xdisplay ();
++  setup_xauth (&host_entry, &si_entry, context->user);
++  XAddHost (display, &host_entry);
++  XSync (display, False);
++  return TRUE;
++}
++
++void
++reset_xauth (GksuContext *context)
++{
++  Display *display;
++  XServerInterpretedAddress si_entry;
++  XHostAddress              host_entry;
++
++  display = gdk_x11_get_default_xdisplay ();
++  setup_xauth (&host_entry, &si_entry, context->user);
++  XRemoveHost (display, &host_entry);
++  XSync (display, False);
++}
+ 
+ /**
+  * gksu_su_full:
+@@ -1934,6 +1797,10 @@
+ 	        GError **error)
+ {
+   GQuark gksu_quark;
++#ifdef __sun
++  gchar *home_env;
++  gboolean rc;
++#else
+   int i = 0;
+ 
+   gchar auxcommand[] = PREFIX "/lib/" PACKAGE "/gksu-run-helper";
+@@ -1942,10 +1809,11 @@
+   pid_t pid;
+ 
+   context->sudo_mode = FALSE;
++#endif
+ 
+   gksu_quark = g_quark_from_string (PACKAGE);
+ 
+-  if (!context->command)
++  if (!context->command || context->command[0] == '\0')
+     {
+       g_set_error (error, gksu_quark, GKSU_ERROR_NOCOMMAND,
+ 		   _("gksu_run needs a command to be run, "
+@@ -1953,9 +1821,54 @@
+       return FALSE;
+     }
+ 
+-  if (!context->user)
+-    context->user = g_strdup ("root");
++  if (context->saved_home == NULL)
++    {
++      home_env = getenv ("HOME");
++      context->saved_home = home_env;
++   }
++
++#ifdef __sun
++  if (!prepare_xauth (context))
++    {
++      g_set_error (error, gksu_quark, GKSU_ERROR_XAUTH,
++		   _("Unable to copy the user's Xauthorization file."));
++      return FALSE;
++    }
++
++  if (context->pfexec_mode) {
++        rc = gksu_context_pfexec_run (context, error);
++  } else {
++    gint count;
++
++    for (count = 0; count < 3; count++)
++      {
++        if (*error) /* wrong password was given */
++          {
++            if (context->alert == NULL) {
++                gksu_context_set_alert (context, (*error)->message);
++            }
++            g_error_free (*error);
++            *error = NULL;
++          }
++
++          if (ask_pass == NULL)
++            {
++              rc = gksu_context_embedded_su_run (context, su_ask_password, NULL, error);
++            }
++          else
++            {
++              rc = gksu_context_embedded_su_run (context, ask_pass, ask_pass_data, error);
++            }
++
++          if ((*error == NULL) || ((*error)->code != GKSU_ERROR_WRONGPASS))
++            break;
++        }
++  }
+ 
++  reset_xauth (context);
++
++  return rc;
++#else
+   if (!g_file_test (auxcommand, G_FILE_TEST_IS_EXECUTABLE))
+     {
+       g_set_error (error, gksu_quark, GKSU_ERROR_HELPER,
+@@ -2347,6 +2260,7 @@
+     return FALSE;
+ 
+   return TRUE;
++#endif
+ }
+ 
+ /**
+@@ -2368,8 +2282,15 @@
+   GksuContext *context = gksu_context_new ();
+   gboolean retval;
+ 
+-  context->command = g_strdup (command_line);
++  /* Set defaults to use embedded_su */
+   context->user = g_strdup ("root");
++  context->command = g_strdup (command_line);
++  context->elevated_privilege = FALSE;
++  context->elevated_role = TRUE;
++  context->wait_for_child_to_exit = FALSE;
++  context->grab = FALSE;
++  context->privspec = g_strdup ("All");
++
+   retval = gksu_su_full (context,
+ 			 NULL, NULL,
+ 			 NULL, NULL,
+@@ -2433,6 +2354,29 @@
+ 			  NULL, error);
+ }
+ 
++static char *
++get_sudo_tok (GksuContext *context, FILE *inf, const char *delimiter)
++{
++        GString *token;
++        char c[2];
++
++        token = g_string_new ("");
++
++        c[0] = '\n';
++        c[1] = '\0';
++
++        while ((c[0] = fgetc(inf)) != EOF) {
++                token = g_string_append (token, c);
++
++               if (g_strrstr (token->str, delimiter) ||
++	            strncmp (token->str, "GNOME_SUDO_PASS", 15) == 0) {
++                        break;
++                }
++        }
++
++        return g_string_free (token, FALSE);
++}
++
+ /**
+  * gksu_sudo_fuller:
+  * @context: a #GksuContext
+@@ -2472,7 +2416,7 @@
+ 		  GError **error)
+ {
+   char **cmd;
+-  char buffer[256] = {0};
++  char *buffer;
+   char *child_stderr = NULL;
+   /* This command is used to gain a token */
+   char *const verifycmd[] =
+@@ -2481,22 +2425,21 @@
+     };
+   int argcount = 8;
+   int i, j;
++  int parent_pipe[2];   /* For talking to the parent */
++  int child_pipe[2];    /* For talking to the child */
++  FILE *infile, *outfile;
+ 
+   GQuark gksu_quark;
+ 
+-  gchar *xauth = NULL,
+-    *xauth_env = NULL;
+-
+   pid_t pid;
+   int status;
+-  FILE *fdfile = NULL;
+-  int fdpty = -1;
++  gchar *home_env;
+ 
+   context->sudo_mode = TRUE;
+ 
+   gksu_quark = g_quark_from_string (PACKAGE);
+ 
+-  if (!context->command)
++  if (!context->command || context->command[0] == '\0')
+     {
+       g_set_error (error, gksu_quark, GKSU_ERROR_NOCOMMAND,
+ 		   _("gksu_sudo_run needs a command to be run, "
+@@ -2504,8 +2447,11 @@
+       return FALSE;
+     }
+ 
+-  if (!context->user)
+-    context->user = g_strdup ("root");
++  if (context->saved_home == NULL)
++    {
++      home_env = getenv ("HOME");
++      context->saved_home = home_env;
++   }
+ 
+   if (ask_pass == NULL)
+     {
+@@ -2524,24 +2470,16 @@
+        g_spawn_command_line_sync("/usr/bin/sudo -K", NULL, NULL, &exit_status, NULL);
+     }
+ 
+-
+   /*
+      FIXME: need to set GError in a more detailed way
+   */
+-  if (!sudo_prepare_xauth (context))
++  if (!prepare_xauth (context))
+     {
+       g_set_error (error, gksu_quark, GKSU_ERROR_XAUTH,
+-		   _("Unable to copy the user's Xauthorization file."));
++		   _("Unable to setup the user's Xauthorization file."));
+       return FALSE;
+     }
+ 
+-  /* sets XAUTHORITY */
+-  xauth = g_strdup_printf ("%s/.Xauthority", context->dir);
+-  xauth_env = getenv ("XAUTHORITY");
+-  setenv ("XAUTHORITY", xauth, TRUE);
+-  if (context->debug)
+-    fprintf (stderr, "xauth: %s\n", xauth);
+-
+   /* set startup id */
+   if (context->sn_context)
+     gksu_context_launch_initiate (context);
+@@ -2647,18 +2585,39 @@
+ 	fprintf (stderr, "cmd[%d]: %s\n", i, cmd[i]);
+     }
+ 
+-  pid = forkpty(&fdpty, NULL, NULL, NULL);
+-  if (pid == 0)
++  if ((pipe(parent_pipe)) == -1)
++    {
++      reset_xauth (context);
++      return FALSE;
++    }
++
++  if ((pipe(child_pipe)) == -1)
++    {
++      reset_xauth (context);
++      return FALSE;
++    }
++
++  pid = fork();
++  if (pid == -1)
++    {
++      reset_xauth (context);
++      return FALSE;
++    }
++  else if (pid == 0)
+     {
+       // Child
+       setsid();   // make us session leader
+ 
++      close(child_pipe[1]);
++      dup2(child_pipe[0], STDIN_FILENO);
++      dup2(parent_pipe[1], STDERR_FILENO);
++
+       execv(verifycmd[0], verifycmd);
+ 
+       g_set_error (error, gksu_quark, GKSU_ERROR_EXEC,
+ 		   _("Failed to exec new process: %s"),
+ 		   strerror(errno));
+-      sudo_reset_xauth (context, xauth, xauth_env);
++      reset_xauth (context);
+       return FALSE;
+     }
+   else if (pid == -1)
+@@ -2666,29 +2625,45 @@
+       g_set_error (error, gksu_quark, GKSU_ERROR_FORK,
+ 		   _("Failed to fork new process: %s"),
+ 		   strerror(errno));
+-      sudo_reset_xauth (context, xauth, xauth_env);
++      reset_xauth (context);
+       return FALSE;
+     }
+ 
+   else
+     {
++      // Parent
+       gint counter = 0;
+       gchar *cmdline = NULL;
+       struct termios tio;
++      gboolean had_error = FALSE;
+ 
+-      // Parent
+-      fdfile = fdopen(fdpty, "w+");
++      close(parent_pipe[1]);
+ 
++      infile = fdopen(parent_pipe[0], "r");
++      if (!infile)
++        {
++          reset_xauth (context);
++          return FALSE;
++        }
++
++      outfile = fdopen(child_pipe[1], "w");
++      if (!outfile)
++        {
++          reset_xauth (context);
++          return FALSE;
++        }
++
++#if 0
+       /* make sure we notice that ECHO is turned off, if it gets
+          turned off */
+-      tcgetattr (fdpty, &tio);
++      tcgetattr (parent_pipe[0], &tio);
+       for (counter = 0; (tio.c_lflag & ECHO) && counter < 15; counter++)
+       {
+         usleep (1000);
+-        tcgetattr (fdpty, &tio);
++        tcgetattr (parent_pipe[0], &tio);
+       }
+ 
+-      fcntl (fdpty, F_SETFL, O_NONBLOCK);
++      fcntl (parent_pipe[0], F_SETFL, O_NONBLOCK);
+ 
+       { /* no matter if we can read, since we're using
+ 	   O_NONBLOCK; this is just to avoid the prompt
+@@ -2697,12 +2672,17 @@
+ 	struct timeval tv;
+ 
+ 	FD_ZERO(&rfds);
+-	FD_SET(fdpty, &rfds);
++	FD_SET(parent_pipe[0], &rfds);
+ 	tv.tv_sec = 1;
+ 	tv.tv_usec = 0;
+ 
+-	select (fdpty + 1, &rfds, NULL, NULL, &tv);
++	select (parent_pipe[0] + 1, &rfds, NULL, NULL, &tv);
+       }
++#endif
++
++      while (1)
++        {
++          buffer = get_sudo_tok (context, infile, "\n");
+ 
+       /* Try hard to find the prompt; it may happen that we're
+        * seeing sudo's lecture, or that some pam module is spitting
+@@ -2710,30 +2690,42 @@
+        */
+       for (counter = 0; counter < 50; counter++)
+ 	{
++	  if (context->debug)
++	    fprintf (stderr, "buffer: -%s-\n", buffer);
++
++          if (g_str_has_prefix (buffer, "Sorry, try again."))
++             had_error = TRUE;
++
+ 	  if (strncmp (buffer, "GNOME_SUDO_PASS", 15) == 0)
+ 	    break;
+ 
+-	  read_line (fdpty, buffer, 256);
+-
+-	  if (context->debug)
+-	    fprintf (stderr, "buffer: -%s-\n", buffer);
++          buffer = get_sudo_tok (context, infile, "\n");
+ 
+ 	  usleep(1000);
+ 	}
+ 
+       if (context->debug)
+-	fprintf (stderr, "brute force GNOME_SUDO_PASS ended...\n");
++	fprintf (stderr, "brute force GNOME_SUDO_PASS ended - count %d...\n", counter);
++
++      /* If we tried 50 times, stop trying. */
++      if (counter == 50)
++        break;
+ 
+       if (strncmp(buffer, "GNOME_SUDO_PASS", 15) == 0)
+ 	{
+ 	  gchar *password = NULL;
+ 	  gboolean prompt_grab;
+ 
++          had_error = FALSE;
++
+ 	  if (context->debug)
+-	    fprintf (stderr, "Yeah, we're in...\n");
++	    fprintf (stderr, "Asking for password.\n");
+ 
++#if 0
+ 	  prompt_grab = gconf_client_get_bool (context->gconf_client, BASE_PATH "prompt",
+ 						   NULL);
++#endif
++	  prompt_grab = FALSE;
+ 	  if (prompt_grab)
+ 	    gksu_prompt_grab (context);
+ 
+@@ -2742,22 +2734,28 @@
+ 	  if (password == NULL || (*error))
+ 	    {
+ 	      nullify_password (password);
++	      reset_xauth (context);
+ 	      return FALSE;
+ 	    }
+ 
+ 	  usleep (1000);
+ 
+-	  write (fdpty, password, strlen(password) + 1);
+-	  write (fdpty, "\n", 1);
++	  write (child_pipe[1], password, strlen(password));
++	  write (child_pipe[1], "\n", strlen("\n"));
+ 
+ 	  nullify_password (password);
+ 
+-	  fcntl(fdpty, F_SETFL, fcntl(fdpty, F_GETFL) & ~O_NONBLOCK);
++#if 0
++	  fcntl(parent_pipe[0], F_SETFL, fcntl(parent_pipe[0], F_GETFL) & ~O_NONBLOCK);
+ 	  /* ignore the first newline that comes right after sudo receives
+ 	     the password */
+-	  fgets (buffer, 255, fdfile);
+-	  /* this is the status we are interested in */
+-	  fgets (buffer, 255, fdfile);
++	  read_line (parent_pipe[0], buffer, 256);
++          if (context->debug)
++	    fprintf (stderr, "buffer: -%s-\n", buffer);
++	  read_line (parent_pipe[0], buffer, 256);
++          if (context->debug)
++	    fprintf (stderr, "buffer: -%s-\n", buffer);
++#endif
+ 	}
+       else
+ 	{
+@@ -2766,10 +2764,15 @@
+ 	    fprintf (stderr, "No password prompt found; we'll assume we don't need a password.\n");
+ 
+           /* turn NONBLOCK off, also if have no prompt */
+-          fcntl(fdpty, F_SETFL, fcntl(fdpty, F_GETFL) & ~O_NONBLOCK);
++/*
++          fcntl(parent_pipe[0], F_SETFL, fcntl(infile, F_GETFL) & ~O_NONBLOCK);
++*/
+ 
++#if 0
+ 	  should_display = gconf_client_get_bool (context->gconf_client,
+ 						  BASE_PATH "display-no-pass-info", NULL);
++#endif
++	  should_display = FALSE;
+ 
+ 	  /* configuration tells us to show this message */
+ 	  if (should_display)
+@@ -2784,30 +2787,17 @@
+ 
+ 	  fprintf (stderr, "%s", buffer);
+ 	}
+-
+-      if (g_str_has_prefix (buffer, "Sorry, try again."))
+-	g_set_error (error, gksu_quark, GKSU_ERROR_WRONGPASS,
+-		     _("Wrong password."));
+-      else
+-	{
+-	  gchar *haystack = buffer;
+-	  gchar *needle;
+-
+-	  needle = g_strstr_len (haystack, strlen (haystack), " ");
+-	  if (needle && (needle + 1))
+-	    {
+-	      needle += 1;
+-	      if (!strncmp (needle, "is not in", 9))
+-		g_set_error (error, gksu_quark, GKSU_ERROR_NOT_ALLOWED,
+-			     _("The underlying authorization mechanism (sudo) "
+-			       "does not allow you to run this program. Contact "
+-			       "the system administrator."));
+-	    }
+ 	}
+ 
++      if (*error == NULL && had_error == TRUE)
++        {
++	  g_set_error (error, gksu_quark, GKSU_ERROR_WRONGPASS,
++		       _("Wrong password."));
++        }
++
+       /* If we have an error, let's just stop sudo right there. */
+       if (error)
+-        close(fdpty);
++        close(parent_pipe[0]);
+ 
+       cmdline = g_strdup("sudo");
+       /* wait for the child process to end or become something other
+@@ -2828,7 +2818,6 @@
+       /* if the process is still active waitpid() on it */
+       if (pid_exited != pid)
+ 	waitpid(pid, &status, 0);
+-      sudo_reset_xauth (context, xauth, xauth_env);
+ 
+       /*
+        * Did token acquisition succeed? If so, spawn sudo in
+@@ -2841,6 +2830,11 @@
+                        NULL, &child_stderr, &status,
+                        error);
+         }
++      else if (buffer)
++        {
++		g_set_error (error, gksu_quark, GKSU_ERROR_NOT_ALLOWED,
++			     buffer);
++        }
+ 
+       if (exit_status)
+       {
+@@ -2853,7 +2847,7 @@
+ 
+       if (WEXITSTATUS(status))
+ 	{
+-          if (g_str_has_prefix(child_stderr, "Sorry, user "))
++          if (child_stderr != NULL && g_str_has_prefix(child_stderr, "Sorry, user "))
+             {
+               g_set_error (error, gksu_quark, GKSU_ERROR_NOT_ALLOWED,
+                            _("The underlying authorization mechanism (sudo) "
+@@ -2869,6 +2863,7 @@
+ 		{
+ 		  g_free (cmdline);
+ 		  g_free (child_stderr);
++	          reset_xauth (context);
+ 		  return FALSE;
+ 		}
+ 	      g_free (cmdline);
+@@ -2881,7 +2876,7 @@
+ 	}
+     }
+ 
+-  fprintf(stderr, child_stderr);
++  reset_xauth (context);
+   g_free(child_stderr);
+ 
+   /* if error is set we have found an error condition */
+@@ -2908,8 +2903,14 @@
+   GksuContext *context = gksu_context_new ();
+   gboolean retval;
+ 
+-  context->command = g_strdup (command_line);
+   context->user = g_strdup ("root");
++  context->command = g_strdup (command_line);
++  context->elevated_privilege = FALSE;
++  context->elevated_role = TRUE;
++  context->wait_for_child_to_exit = FALSE;
++  context->grab = FALSE;
++  context->privspec = g_strdup ("All");
++
+   retval = gksu_sudo_full (context,
+ 			   NULL, NULL,
+ 			   NULL, NULL,
+@@ -2989,13 +2990,18 @@
+ 		 gint8 *exit_status,
+ 	         GError **error)
+ {
++#if 0
+   GConfClient *gconf_client;
++#endif
+   gboolean sudo_mode;
+ 
++#if 0
+   gconf_client = gconf_client_get_default ();
+   sudo_mode = gconf_client_get_bool (gconf_client, BASE_PATH "sudo-mode",
+ 				     NULL);
+   g_object_unref (gconf_client);
++#endif
++  sudo_mode = FALSE;
+ 
+   if (sudo_mode)
+     return gksu_sudo_fuller (context, ask_pass, ask_pass_data,
+@@ -3024,13 +3030,18 @@
+ gksu_run (gchar *command_line,
+ 	  GError **error)
+ {
++#if 0
+   GConfClient *gconf_client;
++#endif
+   gboolean sudo_mode;
+ 
++#if 0
+   gconf_client = gconf_client_get_default ();
+   sudo_mode = gconf_client_get_bool (gconf_client, BASE_PATH "sudo-mode",
+ 				     NULL);
+   g_object_unref (gconf_client);
++#endif
++  sudo_mode = FALSE;
+ 
+   if (sudo_mode)
+     return gksu_sudo (command_line, error);
+--- libgksu-2.0.12/libgksu/test-gksu.c-orig	2010-12-10 00:27:16.598159280 -0600
++++ libgksu-2.0.12/libgksu/test-gksu.c	2010-12-10 00:27:50.606354260 -0600
+@@ -46,6 +46,9 @@ main (int argc, char **argv)
+   gboolean try_su = TRUE;
+   gboolean try_sudo = TRUE;
+   gboolean try_run = TRUE;
++  int stdin_fd, stdout_fd;
++  FILE *infile, *outfile;
++  pid_t child_pid;
+ 
+   if (argc > 1)
+     {
+@@ -62,13 +65,25 @@ main (int argc, char **argv)
+ 
+   context = gksu_context_new ();
+ 
+-  context->debug = TRUE;
+-  context->command = g_strdup ("/usr/bin/xterm");
++  gksu_context_set_user (context, "root");
++  gksu_context_set_debug (context, TRUE);
++  gksu_context_set_command (context, "/usr/bin/X11/xterm");
++  gksu_context_set_elevated_privilege (context, FALSE);
++  gksu_context_set_elevated_role (context, TRUE);
++  gksu_context_set_wait_for_child_to_exit (context, FALSE);
++  gksu_context_set_privspec (context, "All");
++  gksu_context_set_command (context, "/usr/bin/ids");
++  if ( gksu_context_get_wait_for_child_to_exit (context) ) {
++    gksu_context_set_command (context, "/usr/bin/ids");
++  } else {
++    gksu_context_set_command (context, "/usr/bin/ids --nowait");
++  }
+ 
+   if (try_su)
+     {
++      error = NULL;
+       printf ("Testing gksu_su...\n");
+-      gksu_su ("/usr/bin/xterm", &error);
++      gksu_su ("/usr/bin/ids", &error);
+       if (error)
+ 	fprintf (stderr, "gksu_su failed: %s\n", error->message);
+ 
+@@ -80,6 +95,7 @@ main (int argc, char **argv)
+ 		    &error);
+     }
+ 
++#if 0
+   /* of course you need to set up /etc/sudoers for this to work */
+   if (try_sudo)
+     {
+@@ -116,6 +132,7 @@ main (int argc, char **argv)
+       if (error)
+ 	fprintf (stderr, "gksu_run_full failed: %s\n", error->message);
+     }
++#endif
+ 
+   return 0;
+ }
+--- /dev/null	2014-04-02 17:58:14.000000000 +0400
++++ libgksu-2.0.12/libgksu/libgksu-solaris.c	2014-04-02 18:04:05.751459180 +0400
+@@ -0,0 +1,1244 @@
++#include "libgksu.h"
++#include "config.h"
++
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/wait.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <unistd.h>
++#include <signal.h>
++#include <stropts.h>
++#include <strings.h>
++#include <pwd.h>
++#include <errno.h>
++#include <dlfcn.h>
++
++#include <glib.h>
++#include <glib/gi18n.h>
++
++#define MAX_BUFFER_SIZE 1024
++#define CONTEXT_DEBUG_ON(context) (context->debug)
++
++static gchar *
++sudo_get_home_dir (GksuContext *context)
++{
++  struct passwd *pwentry;
++
++  pwentry = getpwnam (gksu_context_get_user (context));
++  return g_strdup (pwentry->pw_dir);
++}
++
++static void
++sudo_reset_home_dir (gchar *home_env)
++{
++  /* reset the env var as it was before or clear it */
++  if (home_env)
++    setenv ("HOME", home_env, TRUE);
++  else
++    unsetenv("HOME");
++}
++
++char *
++get_tok (GksuContext *context, FILE *inf, const char *delimiter)
++{
++	GString *token;
++	char c[2];
++
++	token = g_string_new ("");
++
++	c[0] = '\n';
++	c[1] = '\0';
++
++	while ((c[0] = fgetc(inf)) != EOF) {
++		token = g_string_append (token, c);
++
++		/*
++		 * Fixed http://defect.opensolaris.org/bz/show_bug.cgi?id=11495 
++		 *
++		 * If embedded_su returns SUCCESS, then turn off a11y in gksu
++		 * immediatly so that a11y works for child.  We cannot wait
++		 * for the while loop to exit since this loop hangs until the
++		 * the child process completes to get any stdout from child.
++		 */
++		if (strcmp (token->str, "SUCCESS\n") == 0) {
++			if (atk_get_root() != NULL &&
++			    context->child_no_a11y == FALSE)
++			{
++				void *handle;
++				void (*exit_func)(void);
++
++				handle = dlopen("/usr/lib/gtk-2.0/modules/libatk-bridge.so", RTLD_LAZY);
++				if (handle)
++				{
++					exit_func = (void (*)(void))dlsym(handle,
++						"gnome_accessibility_module_shutdown");
++					if (exit_func)
++						(*exit_func)();
++					dlclose(handle);
++				}
++			}
++		}
++
++		if (g_strrstr (token->str, delimiter)) {
++			break;
++		}
++	}
++
++	return g_string_free (token, FALSE);
++}
++
++void
++set_embedded_su_alert (GksuContext *context)
++{
++	gchar *msg;
++
++	if (strncmp (context->pam_message->msg, "embedded_su: ", strlen ("embedded_su: ")) == 0) {
++		msg = g_strdup_printf ("<b>%s %s</b>",
++			/* SUN_BRANDING */
++			_("Issue with password."),
++			context->pam_message->msg + strlen ("embedded_su: "));
++	} else {
++		msg = g_strdup_printf ("<b>%s %s</b>",
++		/* SUN_BRANDING */
++		_("Issue with password."),
++		context->pam_message->msg);
++	}
++
++	gksu_context_set_alert (context, msg);
++}
++
++gboolean
++parse_embedded_su_output (GksuContext *context, FILE *infile)
++{
++	const char *block_delimiter = ".\n";
++	char *block = NULL;
++	char *message;
++	int num = 0;
++
++	while ((block = get_tok (context, infile, block_delimiter)) != NULL) {
++		char *message_p = NULL;
++		char *childoutput;
++		const char *message_delimiter = "\n";
++
++		message = NULL;
++
++		if (CONTEXT_DEBUG_ON(context))
++			fprintf (stderr, "Output from Child: %s\n", block);
++
++		childoutput = g_strdup (block);
++
++		/* Split block. */
++		message = strtok_r(block, message_delimiter, &message_p);
++
++		if (message == NULL) {
++			if (context->msg_type == ES_ERROR)
++				return FALSE;
++			continue;
++		}
++
++		if (strncmp (message, "SUCCESS", strlen("SUCCESS")) == 0) {
++			context->msg_type = ES_SUCCESS;
++
++			/* The message contains "SUCCESS\n" followed by the
++			 * command output so if you run "gksu ls" this will
++			 * cause the ls output to echo to the terminal.
++			 */
++			message = childoutput + strlen ("SUCCESS\n");
++			context->msg_num = 1;
++			context->pam_message = (struct pam_message *)g_malloc (sizeof(struct pam_message));
++			context->pam_message->msg_style = PAM_TEXT_INFO;
++			context->pam_message->msg = strdup(message);
++			break;
++
++		} else if (strncmp(message, "ERROR", strlen("ERROR")) == 0) {
++			if (CONTEXT_DEBUG_ON(context))
++				fprintf (stderr, "There are errors...\n");
++			context->msg_type = ES_ERROR;
++			/* Due embedded_su(1M) there is one TEXT BLOCK
++			 * need be parsed.
++			 */
++			message = strtok_r(NULL, message_delimiter, &message_p);
++			context->msg_num = 1;
++			context->pam_message = (struct pam_message *)g_malloc (sizeof(struct pam_message));
++			/* Consider all other output as a message. We
++			 * treat it like an error message because we
++			 * show error messages to users.
++			 */
++			context->pam_message->msg_style = PAM_ERROR_MSG;
++			context->pam_message->msg = strdup(message);
++			if (context->alert == NULL) {
++				set_embedded_su_alert (context);
++			}
++			break;
++
++		} else if (strncmp (message, "CONV", strlen("CONV")) == 0) {
++			char *message_header;
++			int i;
++			/* Get message number, then parse CONV block. */
++			/* Ignore all other info in the same
++			 * line according to the manpage.
++			 */
++			sscanf(message, "CONV %d", &(context->msg_num));
++			/* Read all messages. */
++			context->pam_message = (struct pam_message *)g_malloc ( sizeof(struct pam_message)*context->msg_num );
++			context->pam_response = (struct pam_response *)g_malloc ( sizeof(struct pam_response)*context->msg_num );
++
++			for (i = 0; i < context->msg_num; i++) {
++				/* Get header line. */
++				message_header = strtok_r(NULL, message_delimiter, &message_p);
++				message = strtok_r(NULL, message_delimiter, &message_p);
++
++				context->pam_message[i].msg = strdup(message);
++
++				if (CONTEXT_DEBUG_ON(context)) {
++					fprintf (stderr, "Got message %d: %s\n", i, message);
++				}
++
++				if (strncmp(message_header, "PAM_PROMPT_ECHO_ON", strlen("PAM_PROMPT_ECHO_ON")) == 0) {
++					context->pam_message[i].msg_style = PAM_PROMPT_ECHO_ON;
++					context->msg_type = ES_PASSWORD;
++
++				} else if (strncmp(message_header, "PAM_PROMPT_ECHO_OFF", strlen("PAM_PROMPT_ECHO_OFF")) == 0) {
++					context->pam_message[i].msg_style = PAM_PROMPT_ECHO_OFF;
++					context->msg_type = ES_PASSWORD;
++
++				} else if (strncmp(message_header, "PAM_ERROR_MSG", strlen("PAM_ERROR_MSG")) == 0) {
++					context->pam_message[i].msg_style = PAM_ERROR_MSG;
++					if (context->alert == NULL) {
++						set_embedded_su_alert (context);
++					}
++
++				} else if (strncmp(message_header, "PAM_TEXT_INFO", strlen("PAM_TEXT_INFO")) == 0) {
++					context->pam_message[i].msg_style = PAM_TEXT_INFO;
++				}
++			}
++			break;
++		} else  {
++			if (CONTEXT_DEBUG_ON(context)) {
++				fprintf (stderr, "Output: %s\n", message);
++			}
++		}
++		g_free (childoutput);
++		bzero(block, strlen(block));
++
++		free(block);
++	}
++
++	return TRUE;
++}
++
++/**
++ * try_embedded_su_validation
++ * @context: a #GksuContext
++ *
++ * Checks if we need to ask for a password or if we have ways of
++ * getting the password for ourselves or we simply don't need it.
++ *
++ * Returns: TRUE if requesting a password is needed, FALSE otherwise.
++ *
++ */
++static gboolean
++try_embedded_su_validation (GksuContext *context)
++{
++	char **cmd;
++	int argcount = 4;
++	char buffer[MAX_BUFFER_SIZE];
++
++	pid_t pid;
++	int status;
++	size_t r;
++	FILE *infile, *outfile;
++	int parent_pipe[2];	/* For talking to the parent */
++	int child_pipe[2];	/* For talking to the child */
++
++	gboolean need_pass = TRUE;
++
++	bzero(buffer, MAX_BUFFER_SIZE);
++
++	if ((pipe(parent_pipe)) == -1)
++		return TRUE;
++
++	if ((pipe(child_pipe)) == -1)
++		return TRUE;
++
++	cmd = g_new (gchar *, argcount + 1);
++
++	argcount = 0;
++
++	/* embedded_su binary */
++	cmd[argcount] = g_strdup("/usr/lib/embedded_su");
++	argcount++;
++
++	if (context->login_shell)
++	{
++		cmd[argcount] = g_strdup ("-"); argcount++;
++	}
++
++	cmd[argcount] = g_strdup (context->user);
++	argcount++;
++
++	cmd[argcount] = g_strdup ("-c");
++	argcount++;
++
++	cmd[argcount] = g_strdup ("echo > /dev/null");
++	argcount++;
++
++	cmd[argcount] = NULL;
++
++	pid = fork ();
++	if (pid == -1)
++		return TRUE;
++	else if (pid == 0) 
++	{
++		// Child
++		close(child_pipe[1]);
++		dup2(child_pipe[0], STDIN_FILENO);
++		dup2(parent_pipe[1], STDOUT_FILENO);
++
++		execv(cmd[0], cmd);
++
++		return TRUE;
++	} 
++	else 
++	{
++		// Parent
++		close(parent_pipe[1]);
++
++		infile = fdopen(parent_pipe[0], "r");
++		if (!infile)
++			return TRUE;
++
++		outfile = fdopen(child_pipe[1], "w");
++		if (!outfile)
++			return TRUE;
++
++		// start conversation with embedded_su 
++		write (child_pipe[1], ".\n", 2);
++
++		/*
++		  we are expecting to receive a GNOME_SUDO_PASS
++		  if we don't there are two possibilities: an error
++		  or a password is not needed
++		*/
++		parse_embedded_su_output(context, infile);
++
++		switch (context->msg_type) {
++		case ES_SUCCESS:
++			if (CONTEXT_DEBUG_ON(context))
++				fprintf (stderr, "Success!\n");
++			
++			need_pass = FALSE;
++			break;
++
++		case ES_ERROR:
++			break;
++
++		case ES_PASSWORD:
++			if (CONTEXT_DEBUG_ON(context))
++				fprintf (stderr, "Asking for password...\n");
++			break;
++
++		default:
++			break;
++		}
++
++		/* Busy wait. */
++		while (!waitpid (pid, &status, WNOHANG)) {
++			write (child_pipe[1], "\n", 1);
++			kill (pid, SIGKILL);
++			fgetc(infile);
++		}
++
++		close(parent_pipe[0]);
++		close(child_pipe[1]);
++	}
++
++	return need_pass;
++}
++
++/**
++ * gksu_context_embedded_su_run:
++ * @context: a #GksuContext
++ * @error: a #GError object to be filled with the error code or NULL
++ *
++ * This could be considered one of the main functions in GKSu.
++ * it is responsible for doing the 'user changing' magic by
++ * calling gksu_ask_password() if it needs the user's password
++ * it behaves like sudo.
++ *
++ * Returns: the child's error status, TRUE if all went fine, FALSE if failed
++ */
++gboolean
++gksu_context_embedded_su_run (GksuContext *context,
++			      GksuAskPassFunc ask_pass,
++			      gpointer ask_pass_data,
++			      GError **error)
++
++{
++	char **cmd;
++	char buffer[MAX_BUFFER_SIZE];
++	int argcount = 8;
++	int i, j;
++
++	GQuark gksu_quark;
++
++	gchar *home = NULL, *home_env = NULL;
++	pid_t pid;
++	int status;
++	size_t r;
++	FILE *infile, *outfile;
++	int parent_pipe[2];	/* For talking to the parent */
++	int child_pipe[2];	/* For talking to the child */
++
++	gksu_quark = g_quark_from_string (PACKAGE_NAME);
++
++	if (!context->command)
++	{
++		g_set_error (error, gksu_quark, GKSU_ERROR_NOCOMMAND,
++		    _("gksu_sudo_run needs a command to be run, "
++			"none was provided."));
++		return FALSE;
++	}
++
++	/*
++	 * Check if the HOME environment variable is set in the user's
++	 * environment. If so unset it:
++	 * This will ensure that apps that require write
++	 * permission eg. gconf client applications, will work.
++	 */
++	home_env = getenv ("HOME");
++	home = sudo_get_home_dir (context);
++	setenv ("HOME", home, TRUE);
++ 
++	if (CONTEXT_DEBUG_ON(context))
++	{
++		fprintf (stderr, "HOME: %s\n", home);
++	}
++
++	g_free(home);
++	cmd = g_new (gchar *, argcount + 1);
++
++	argcount = 0;
++
++	/* embedded_su binary */
++	cmd[argcount] = g_strdup("/usr/lib/embedded_su");
++	argcount++;
++
++	if (context->login_shell)
++	{
++		cmd[argcount] = g_strdup("-");
++		argcount++;
++	}
++
++	/* user */
++	cmd[argcount] = g_strdup(context->user);
++	argcount++;
++
++	/* command */
++	cmd[argcount] = g_strdup("-c");
++	argcount++;
++
++	cmd[argcount] = g_strdup_printf("%s", context->command);
++	argcount++;
++
++
++	cmd[argcount] = NULL;
++
++	if (CONTEXT_DEBUG_ON(context))
++	{
++		for (i = 0; cmd[i] != NULL; i++)
++			fprintf (stderr, "cmd[%d]: %s\n", i, cmd[i]);
++	}
++
++	if ((pipe(parent_pipe)) == -1)
++	{
++		g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++		    _("Error creating pipe: %s"),
++		    strerror(errno));
++		sudo_reset_home_dir (home_env);
++		return FALSE;
++	}
++
++	if ((pipe(child_pipe)) == -1)
++	{
++		g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++		    _("Error creating pipe: %s"),
++		    strerror(errno));
++		sudo_reset_home_dir (home_env);
++		return FALSE;
++	}
++
++	pid = fork ();
++	if (pid == -1)
++	{
++		g_set_error (error, gksu_quark, GKSU_ERROR_FORK,
++		    _("Failed to fork new process: %s"),
++		    strerror(errno));
++		sudo_reset_home_dir (home_env);
++		return FALSE;
++	}
++	else if (pid == 0) 
++	{
++		// Child
++		setsid();   // make us session leader
++		close(child_pipe[1]);
++		dup2(child_pipe[0], STDIN_FILENO);
++		dup2(parent_pipe[1], STDERR_FILENO);
++		dup2(parent_pipe[1], STDOUT_FILENO);
++
++		execv(cmd[0], cmd);
++
++		g_set_error (error, gksu_quark, GKSU_ERROR_EXEC,
++		    _("Failed to exec new process: %s"),
++		    strerror(errno));
++		sudo_reset_home_dir (home_env);
++		return FALSE;
++	} 
++	else 
++	{
++		gboolean more_data = TRUE;
++
++		// Parent
++		close(parent_pipe[1]);
++
++		infile = fdopen(parent_pipe[0], "r");
++		if (!infile)
++		{
++			g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++			    _("Error opening pipe: %s"),
++			    strerror(errno));
++			sudo_reset_home_dir (home_env);
++			return FALSE;
++		}
++
++		outfile = fdopen(child_pipe[1], "w");
++		if (!outfile)
++		{
++			g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++			    _("Error opening pipe: %s"),
++			    strerror(errno));
++			sudo_reset_home_dir (home_env);
++			return FALSE;
++		}
++		context->stdin_fd = parent_pipe[0];
++		context->stdout_fd = child_pipe[1];
++		context->stdin_file = infile;
++		context->stdout_file = outfile;
++		setvbuf (context->stdin_file, NULL, _IONBF, 0);
++		fcntl (context->stdin_fd, F_SETFL, 0);
++		context->child_pid = pid;
++
++		// start conversation with embedded_su 
++		write (child_pipe[1], ".\n", 2);
++
++		/*
++		  we are expecting to receive a GNOME_SUDO_PASS
++		  if we don't there are two possibilities: an error
++		  or a password is not needed
++		*/
++		/* 6995127 Gksu does not report expired password. We are in PAM
++		 * conversation, we need handle change the expired password. */
++		do {
++			gchar *password, *buf;
++
++			password = NULL;
++
++			more_data = parse_embedded_su_output(context, infile);
++
++			switch (context->msg_type) {
++			case ES_SUCCESS:
++				if (CONTEXT_DEBUG_ON(context))
++					fprintf (stderr, "Success!\n");
++				break;
++
++			case ES_ERROR:
++				break;
++
++			case ES_PASSWORD:
++				if (CONTEXT_DEBUG_ON(context))
++					fprintf (stderr, "Asking for password...\n");
++
++				if ( context->pam_message[0].msg != NULL ) {
++					buf = context->pam_message[0].msg;
++				}
++
++				password = ask_pass (context, buf, ask_pass_data, error);
++				context->alert = NULL;
++
++				if (password == NULL || (!strcmp (password, ""))) {
++					return FALSE;
++				}
++
++				password = g_strchomp (password);
++				write (child_pipe[1], password, strlen(password));
++				write (child_pipe[1], "\n", strlen("\n"));
++
++				/* Reset flag so it does not get stuck */
++				context->msg_type = 0;
++
++				usleep(500);
++				break;
++
++			default:
++				break;
++			}
++		} while (context->msg_type != ES_SUCCESS && more_data);
++
++		if (CONTEXT_DEBUG_ON(context))
++			fprintf (stderr, "Done parsing embedded_su output!\n");
++
++		if (context->msg_type == ES_ERROR && context->msg_num > 0 && context->pam_message[0].msg != NULL)
++		{
++			gchar *utf8 = NULL;
++
++			utf8 = g_locale_to_utf8 (context->pam_message[0].msg, -1,
++				NULL, NULL, NULL);
++			if (utf8 == NULL)
++				utf8 = g_strdup (context->pam_message[0].msg);
++			*error = NULL;
++			g_set_error (error, gksu_quark, GKSU_ERROR_WRONGPASS,
++				utf8);
++			g_free (utf8);
++		}
++		if (context->msg_type == ES_SUCCESS && context->pam_message[0].msg)
++		fprintf (stdout, "%s", context->pam_message[0].msg);
++
++		if (!context->wait_for_child_to_exit) {
++			return FALSE; 
++		}
++
++		/* make sure we did read everything */
++		while (!waitpid (pid, &status, WNOHANG)) {
++			if (context->msg_type == ES_ERROR) {
++				write (child_pipe[1], "\n", 1);
++				kill (pid, SIGKILL);
++			}
++			fgetc(infile);
++		}
++
++		sudo_reset_home_dir (home_env);
++
++		/* Do not reset error if already set to WRONGPASS */
++		if (*error == NULL || (*error)->code != GKSU_ERROR_WRONGPASS)
++		{
++			if (WIFEXITED(status))
++			{
++				if (WEXITSTATUS(status))
++				{
++					*error = NULL;
++					g_set_error (error, gksu_quark, GKSU_ERROR_CHILDFAILED,
++					    _("Child terminated with %d status"),
++					    WEXITSTATUS(status));
++
++					return FALSE;
++				}
++			}
++		}
++
++	}
++
++	return TRUE;
++}
++
++gboolean
++gksu_context_try_need_password (GksuContext *context)
++{
++	if ((context->elevated_privilege) && (gksu_context_pfexec_try_run (context)))
++	{
++		if (CONTEXT_DEBUG_ON(context))
++			fprintf (stderr, "Enter pfexec mode!\n");
++		context->pfexec_mode = TRUE;
++		return FALSE;
++	}
++	else
++	{
++		context->pfexec_mode = FALSE;
++		if (CONTEXT_DEBUG_ON(context))
++			fprintf (stderr, "Enter embedded_su mode!\n");
++		if (context->user != NULL) {
++			if (CONTEXT_DEBUG_ON(context))
++				fprintf (stderr, "Current user/role = %s\n", context->user);
++			return try_embedded_su_validation (context);
++		} else {
++			return TRUE;
++		}
++	}
++}
++
++static gchar *
++get_stripped_exec (const gchar *full_exec)
++{
++	gchar *str1, *str2, *retval, *p;
++
++	str1 = g_strdup (full_exec);
++	p = strtok (str1, " ");
++
++	if (p != NULL)
++		str2 = g_strdup (p);
++	else
++		str2 = g_strdup (full_exec);
++
++	g_free (str1);
++
++	if (g_path_is_absolute (str2))
++		retval = g_strdup (str2);
++	else
++		retval = g_strdup (g_find_program_in_path ((const gchar *)str2));
++	g_free (str2);
++
++	return retval;
++}
++
++gboolean
++gksu_context_pfexec_try_run (GksuContext *context)
++{
++	userattr_t *user;
++	struct passwd *pwd;
++	gint ruid;
++	char command_line[MAX_BUFFER_SIZE];
++	char *path, *dir;
++	char *stripped_cmd;
++	int i;
++	execattr_t *exec;
++
++	exec = NULL;
++	ruid = getuid();
++	pwd = getpwuid(ruid);
++	if (pwd == NULL) {
++		/* fail if we cannot get password entry */
++		return FALSE;
++	}
++
++	stripped_cmd = get_stripped_exec (context->command);
++	if (stripped_cmd == NULL)
++		return FALSE;
++
++	path = g_find_program_in_path (g_strstrip (stripped_cmd));
++	if (path == NULL)
++		return FALSE;
++
++	exec = getexecuser (pwd->pw_name, KV_COMMAND, stripped_cmd, GET_ONE);
++
++	if (exec == NULL) {
++		if (CONTEXT_DEBUG_ON(context))
++			fprintf (stderr, "Error getting exec attr\n");
++		return FALSE;
++	}
++	
++	while (exec != NULL) {
++		if (CONTEXT_DEBUG_ON(context)) {
++			fprintf (stderr, "Exec Name: %s\n", exec->name);
++			fprintf (stderr, "Policy Name: %s\n", exec->policy);
++			fprintf (stderr, "Exec Type: %s\n", exec->type);
++			fprintf (stderr, "Exec Id: %s\n", exec->id);
++		}
++
++		if (exec->attr != NULL) {
++			if (CONTEXT_DEBUG_ON(context)) {
++				fprintf (stderr, "User has access, using pfexec\n");
++			}
++			/* Set user value to the existing user */
++			if (context->user == NULL) {
++				context->user = g_strdup (g_get_user_name ());
++			}
++	
++			free_execattr (exec);
++			return TRUE;
++		}
++		exec = exec->next;
++	}
++
++	free_execattr (exec);
++
++	/*
++	 * If no user was specified, try to fill in the user with the role value that can
++	 * run this command.
++	 */
++	if (context->elevated_role) {
++		gksu_context_set_role (context);
++	}
++
++	return FALSE;
++}
++
++gboolean
++gksu_context_set_role (GksuContext *context)
++{
++	struct passwd *pwd;
++	gint ruid;
++	execattr_t    *exec;
++
++	char           *rolelist = NULL;
++	userattr_t     *user;
++	char	       *username;
++	char 	       *rolename;
++	char	       *stripped_cmd;
++	char           *path;
++	int i;
++
++	if (context->user != NULL)
++		return TRUE;
++
++	user = getusernam (g_get_user_name ());
++
++        if (user == NULL) {
++		if (CONTEXT_DEBUG_ON(context)) {
++			fprintf (stderr, "No roles\n");
++		}
++		return FALSE;	
++        }
++
++	rolelist = kva_match (user->attr, USERATTR_ROLES_KW);
++	if (rolelist == NULL) {
++		if (CONTEXT_DEBUG_ON(context)) {
++			fprintf (stderr, "No roles\n");
++		}
++		return FALSE;	
++	}
++
++	stripped_cmd = get_stripped_exec (context->command);
++	path = g_find_program_in_path (g_strstrip (stripped_cmd));
++	if (path == NULL)
++		return FALSE;
++
++	/* Parse the rolename from the list and check execution profiles for
++	 * each role 
++	 */	
++	rolename = strtok (rolelist, ",");
++	while (rolename) {
++		if (strcmp (rolename, "root") == 0) {
++			if (CONTEXT_DEBUG_ON(context)) {
++				fprintf (stderr, "User has root access.\n", rolename);
++			}
++			context->user = g_strdup (rolename);
++			return TRUE;
++		}
++
++		if (CONTEXT_DEBUG_ON(context)) {
++			fprintf (stderr, "Checking role %s\n", rolename);
++		}
++			
++		exec = getexecuser (rolename, KV_COMMAND, stripped_cmd, GET_ONE);
++		while (exec != NULL) {
++			if (CONTEXT_DEBUG_ON(context)) {
++				fprintf (stderr, "Exec Name: %s\n", exec->name);
++				fprintf (stderr, "Policy Name: %s\n", exec->policy);
++				fprintf (stderr, "Exec Type: %s\n", exec->type);
++				fprintf (stderr, "Exec Id: %s\n", exec->id);
++			}
++
++			if (exec->attr != NULL) {
++				if (CONTEXT_DEBUG_ON(context)) {
++					fprintf (stderr, "Using role %s\n", rolename);
++				}
++				context->user = g_strdup (rolename);
++				free_execattr (exec);
++				return TRUE;
++			}
++			exec = exec->next;
++		}
++		free_execattr (exec);
++
++		rolename = strtok (NULL, ",");
++	}
++}
++
++gboolean
++gksu_context_pfexec_run (GksuContext *context, GError **error)
++{
++	GQuark gksu_quark;
++	char **cmd;
++	char buffer[MAX_BUFFER_SIZE];
++	int argcount = 8;
++	int i, j;
++	gchar *home = NULL, *home_env = NULL;
++
++	pid_t pid;
++	int status;
++	size_t r;
++	FILE *infile, *outfile;
++	int parent_pipe[2];	/* For talking to the parent */
++	int child_pipe[2];	/* For talking to the child */
++	int was_quoted = FALSE;
++
++	gksu_quark = g_quark_from_string (PACKAGE_NAME);
++
++	if (!context->command)
++	{
++		g_set_error (error, gksu_quark, GKSU_ERROR_NOCOMMAND,
++		    _("gksu_sudo_run needs a command to be run, "
++			"none was provided."));
++		return FALSE;
++	}
++
++	/*
++	 * Check if the HOME environment variable is set in the user's
++	 * environment. If so unset it:
++	 * This will ensure that apps that require write
++	 * permission eg. gconf client applications, will work.
++	 */
++	home_env = getenv ("HOME");
++	home = sudo_get_home_dir (context);
++	setenv ("HOME", home, TRUE);
++
++	if (CONTEXT_DEBUG_ON(context))
++	{
++		fprintf (stderr, "HOME: %s\n", home);
++	}
++
++	g_free(home);
++	cmd = g_new (gchar *, argcount + 1);
++
++	argcount = 0;
++
++	/* pfexec binary */
++	cmd[argcount] = g_strdup("/usr/bin/pfexec");
++	argcount++;
++
++	if (context->privspec != NULL)
++	{
++		cmd[argcount] = g_strdup ("-P");
++		argcount++;
++		cmd[argcount] = g_strdup (context->privspec);
++		argcount++;
++	}
++
++	for (i = j = 0; ; i++)
++	{
++		if (context->command[i] == ' ' || context->command[i] == '\0')
++		{
++			buffer[j] = '\0';
++			/* Strip the previously added quoting '<arg>' */
++			if (was_quoted && j > 1 && buffer[j-1] == '\'')
++			{
++				buffer[j-1] = '\0';
++				was_quoted = FALSE;
++			}
++			cmd = g_realloc (cmd, sizeof(gchar*) * (argcount + 1));
++			cmd[argcount] = g_strdup (buffer);
++			bzero (buffer, MAX_BUFFER_SIZE);
++			argcount = argcount + 1;
++			j = 0;
++
++			if (context->command[i] == '\0')
++				break;
++		}
++		else if ( j == 0 && context->command[i] == '\'' )
++		{
++			was_quoted = TRUE;
++			/* Skip initial quote */
++		}
++		else
++		{
++			if (context->command[i] == '\\')
++				i = i + 1;
++			buffer[j] = context->command[i];
++			j = j + 1;
++		}
++	}
++	cmd = g_realloc (cmd, sizeof(gchar*) * (argcount + 1));
++	cmd[argcount] = NULL;
++
++
++	if (CONTEXT_DEBUG_ON(context))
++	{
++		for (i = 0; cmd[i] != NULL; i++)
++			fprintf (stderr, "cmd[%d]: %s\n", i, cmd[i]);
++	}
++
++	if (context->need_pipe)
++	{
++		if ((pipe(parent_pipe)) == -1)
++		{
++			g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++			    _("Error creating pipe: %s"),
++			    strerror(errno));
++			sudo_reset_home_dir (home_env);
++			return FALSE;
++		}
++
++		if ((pipe(child_pipe)) == -1)
++		{
++			g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++			    _("Error creating pipe: %s"),
++			    strerror(errno));
++			sudo_reset_home_dir (home_env);
++			return FALSE;
++		}
++	}
++
++	pid = fork();
++	if (pid == -1)
++	{
++		g_set_error (error, gksu_quark, GKSU_ERROR_FORK,
++		    _("Failed to fork new process: %s"),
++		    strerror(errno));
++		sudo_reset_home_dir (home_env);
++		return FALSE;
++	}
++	else if (pid == 0) 
++	{
++		// Child
++		setsid();   // make us session leader
++		if (context->need_pipe)
++		{
++			close(child_pipe[1]);
++			dup2(child_pipe[0], STDIN_FILENO);
++			dup2(parent_pipe[1], STDERR_FILENO);
++			dup2(parent_pipe[1], STDOUT_FILENO);
++		}
++
++		execv(cmd[0], cmd);
++
++		sudo_reset_home_dir (home_env);
++		return FALSE;
++	} 
++	else 
++	{
++		if (!context->need_pipe)
++			return FALSE;
++
++		// Parent
++		close(parent_pipe[1]);
++
++		infile = fdopen(parent_pipe[0], "r");
++		if (!infile)
++		{
++			g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++			    _("Error opening pipe: %s"),
++			    strerror(errno));
++			sudo_reset_home_dir (home_env);
++			return FALSE;
++		}
++
++		outfile = fdopen(child_pipe[1], "w");
++		if (!outfile)
++		{
++			g_set_error (error, gksu_quark, GKSU_ERROR_PIPE,
++			    _("Error opening pipe: %s"),
++			    strerror(errno));
++			sudo_reset_home_dir (home_env);
++			return FALSE;
++		}
++
++		context->stdin_fd = parent_pipe[0];
++		context->stdout_fd = child_pipe[1];
++		context->stdin_file = infile;
++		context->stdout_file = outfile;
++		setvbuf (context->stdin_file, NULL, _IONBF, 0);
++		fcntl (context->stdin_fd, F_SETFL, 0);	
++		context->child_pid = pid;
++
++		if (!context->wait_for_child_to_exit)
++			return FALSE;
++
++		/* make sure we did read everything */
++		while (1)
++		{
++			bzero(buffer, MAX_BUFFER_SIZE);
++			if(!fread (buffer, sizeof(gchar), MAX_BUFFER_SIZE-1, infile))
++				break;
++			fprintf (stderr, "%s", buffer);
++			fflush (stderr);
++		}
++
++		sudo_reset_home_dir (home_env);
++
++		if (WIFEXITED(status))
++		{
++			if (WEXITSTATUS(status))
++			{
++				*error = NULL;
++				g_set_error (error, gksu_quark, GKSU_ERROR_CHILDFAILED,
++				    _("Child terminated with %d status"),
++				    WEXITSTATUS(status));
++
++				return FALSE;
++			}
++		}
++	}
++
++	return TRUE;
++}
++
++int 
++gksu_context_get_child_stdin_fd (GksuContext *context)
++{
++	return context->stdin_fd;
++}
++
++int 
++gksu_context_get_child_stdout_fd (GksuContext *context)
++{
++	return context->stdout_fd;
++}
++
++FILE* 
++gksu_context_get_child_stdin_file (GksuContext *context)
++{
++	return context->stdin_file;
++}
++
++FILE*
++gksu_context_get_child_stdout_file (GksuContext *context)
++{
++	return context->stdout_file;
++}
++
++pid_t
++gksu_context_get_child_pid (GksuContext *context)
++{
++	return context->child_pid;
++}
++
++void
++gksu_context_set_wait_for_child_to_exit (GksuContext *context, gboolean value)
++{
++	context->wait_for_child_to_exit = value;
++}
++
++gboolean
++gksu_context_get_wait_for_child_to_exit (GksuContext *context)
++{
++	return context->wait_for_child_to_exit;
++}
++
++void
++gksu_context_set_elevated_privilege (GksuContext *context, gboolean value)
++{
++	context->elevated_privilege = value;
++}
++
++gboolean
++gksu_context_get_elevated_privilege (GksuContext *context)
++{
++	return context->elevated_privilege;
++}
++
++void
++gksu_context_set_elevated_role (GksuContext *context, gboolean value)
++{
++	context->elevated_role = value;
++}
++
++gboolean
++gksu_context_get_elevated_role (GksuContext *context)
++{
++	return context->elevated_role;
++}
++
++/**
++ * gksu_context_set_privspec:
++ * @context: the #GksuContext you want to modify
++ * @privspec: the target privileges specification
++ *
++ * Sets up privileges specification used by pfexec .
++ *
++ */
++void
++gksu_context_set_privspec (GksuContext *context, gchar *privspec)
++{
++	g_assert (privspec != NULL);
++
++	if (context->privspec)
++		g_free (context->privspec);
++	context->privspec = g_strdup (privspec);
++}
++
++/**
++ * gksu_context_get_privspec:
++ * @context: the #GksuContext from which to grab the information
++ *
++ * Gets the privileges specification used by pfexec, as set 
++ * by gksu_context_set_privspec.
++ *
++ * Returns: a pointer to the string containing the privileges specification.
++ */
++const gchar*
++gksu_context_get_privspec (GksuContext *context)
++{
++	return context->privspec;
++}
++
++/**
++ * gksu_context_get_pam_num_msg:
++ * @context: the #GksuContext from which to grab the information
++ *
++ * Gets the privileges specificddation used by pfexec, as set 
++ * by gksu_context_set_privspec.
++ *
++ * Returns: number of pam conversation.
++ */
++const gint
++gksu_context_get_pam_msg_num (GksuContext *context)
++{
++	return context->msg_num;
++}
++
++/**
++ * gksu_context_get_pam_message:
++ * @context: the #GksuContext from which to grab the information
++ *
++ * 
++ *
++ * Returns: a pointer to the string containing the specific pam message.
++ */
++const gchar*
++gksu_context_get_pam_message (GksuContext *context, gint index)
++{
++	return context->pam_message[index].msg;
++}
++
++/**
++ * gksu_context_get_pam_response:
++ * @context: the #GksuContext from which to grab the information
++ *
++ * 
++ *
++ * Returns: a pointer to the string containing the specified pam response.
++ */
++const gchar*
++gksu_context_get_pam_response (GksuContext *context, gint index)
++{
++	return context->pam_response[index].resp;
++}
++
++/**
++ * gksu_context_set_pam_response:
++ * @context: the #GksuContext from which to grab the information
++ *
++ * 
++ *
++ * Returns: void.
++ */
++
++void
++gksu_context_set_pam_response (GksuContext *context, gint index, gchar *response)
++{
++	context->pam_response[index].resp = g_strdup (response);
++}
++
++gboolean
++gksu_context_get_pfexec_mode (GksuContext *context)
++{
++	return context->pfexec_mode;
++}
++
++void
++gksu_context_set_need_pipe (GksuContext *context, gboolean value)
++{
++	context->need_pipe = value;
++}
++
++gboolean
++gksu_context_get_need_pipe (GksuContext *context)
++{
++	return context->need_pipe;
++}
++
++void
++gksu_context_set_child_no_a11y (GksuContext *context, gboolean value)
++{
++	context->child_no_a11y = value;
++}
