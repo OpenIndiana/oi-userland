@@ -1,0 +1,15 @@
+https://www.illumos.org/issues/4319
+
+--- libgksu-2.0.12/libgksu/libgksu.c.orig	2014-04-02 23:37:47.377394439 +0400
++++ libgksu-2.0.12/libgksu/libgksu.c	2014-04-02 23:39:38.674104554 +0400
+@@ -1628,7 +1628,9 @@
+ 
+   for ( i = 0; i<context->msg_num; i++ ) {
+        g_free (context->pam_message[i].msg);
+-       g_free (context->pam_response[i].resp);
++       if(context->pam_response) {
++         g_free (context->pam_response[i].resp);
++       }
+   }
+   g_free (context->pam_message);
+   g_free (context->pam_response);
