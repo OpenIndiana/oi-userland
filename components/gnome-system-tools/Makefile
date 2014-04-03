@@ -55,8 +55,6 @@ CFLAGS += -D NOPTY -D USE_AUTHEN_PAM
 CFLAGS += -I/usr/include/gnome-vfs-2.0 -I/usr/lib/gnome-vfs-2.0/include
 LDFLAGS += -lgnomevfs-2
 
-gcc_OPT = -O0
-
 COMPONENT_INSTALL_ENV += GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
 # common targets
