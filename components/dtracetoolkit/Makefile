@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		DTraceToolkit
 COMPONENT_VERSION=	0.99
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.brendangregg.com/dtracetoolkit.html
 COMPONENT_SUMMARY=	A collection of opensource dtrace scripts
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
