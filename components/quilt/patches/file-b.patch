@@ -1,0 +1,22 @@
+--- quilt/scripts/inspect.in.~1~	2014-04-07 21:11:15.095383589 +0400
++++ quilt/scripts/inspect.in	2014-04-07 21:12:10.676632169 +0400
+@@ -104,7 +104,7 @@
+ 			filetype="xz"
+ 			;;
+ 		*)
+-			filetype="$(file -b "$file")"
++			filetype="$(file "$file" | cut -d : -f 2)"
+ 			;;
+ 	esac
+ 
+--- quilt/setup.in.~1~	2014-04-07 21:28:24.746414813 +0400
++++ quilt/setup.in	2014-04-07 21:28:51.897595739 +0400
+@@ -191,7 +191,7 @@
+ 		"# Source: "*)
+ 			shift 2
+ 			source="$@"
+-			filetype="$(file -b "$source")"
++			filetype="$(file "$source" |cut -d : -f 2)"
+ 			case "$filetype" in
+ 			Zip*)
+ 				echo "unzip ${tar_dir:-.} ${source// /\\ }"
