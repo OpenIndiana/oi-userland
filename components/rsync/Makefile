@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsync
-COMPONENT_VERSION=	3.0.9
+COMPONENT_VERSION=	3.1.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://rsync.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:30f10f8dd5490d28240d4271bb652b1da7a60b22ed2b9ae28090668de9247c05
+    sha256:81ca23f77fc9b957eb9845a6024f41af0ff0c619b7f38576887c63fa38e2394e
 COMPONENT_ARCHIVE_URL=	http://rsync.samba.org/ftp/rsync/src/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rsync
 
@@ -40,8 +40,10 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS  +=		--prefix=/usr
+CONFIGURE_OPTIONS  +=		SHELL_PATH=/bin/sh
+CONFIGURE_OPTIONS  +=		--bindir=$(CONFIGURE_BINDIR.32)
 CONFIGURE_OPTIONS  +=		--with-included-popt
+CONFIGURE_OPTIONS  +=		--enable-xattr-support
 
 # Enable ASLR for this component
 ASLR_MODE =	$(ASLR_ENABLE)
@@ -51,7 +53,7 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
