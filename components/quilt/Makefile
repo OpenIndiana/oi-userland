@@ -80,7 +80,6 @@ build:		$(BUILD_32)
 
 install:	$(INSTALL_32)
 
-# test/setup.test fails on files with spaces in names
 test:		$(TEST_32)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
