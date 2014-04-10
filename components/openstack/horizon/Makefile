@@ -54,7 +54,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/img; \
 	 $(CP) files/branding/img/* $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/img; \
 	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/theme; \
-	 $(CP) files/branding/theme/_stylesheets.html $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/theme)
+	 $(CP) files/branding/theme/_stylesheets.html $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/theme; \
+	 $(CP) files/overrides.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard); \
+	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets
 build:		$(BUILD_NO_ARCH)

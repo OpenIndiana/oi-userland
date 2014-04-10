@@ -14,68 +14,22 @@
 #    License for the specific language governing permissions and limitations
 #    under the License.
 
-import ConfigParser
 import os
 import sys
 
 import smf_include
 
-from subprocess import CalledProcessError, check_call, PIPE, Popen
-
-from sqlalchemy import create_engine
+from subprocess import CalledProcessError, check_call
 
 
-def db_sync():
-    """ function to create the database schema
-    """
-
+def start():
+    # sync the database to make sure it's ready
     cmd = ["/usr/bin/nova-manage", "db", "sync"]
     try:
         check_call(cmd)
     except CalledProcessError as err:
         print "Unable to create database for Nova:  %s" % err
         sys.exit(smf_include.SMF_EXIT_ERR_CONFIG)
-
-
-def start():
-    # read the options from the config file
-    parser = ConfigParser.ConfigParser()
-    parser.read("/etc/nova/nova.conf")
-
-    # get the database type
-    db_engine = create_engine(parser.get("DEFAULT", "sql_connection"))
-    db_type = db_engine.name
-
-    if db_type == "sqlite":
-        # look to see if file exists or if it's zero length
-        abspath = os.path.abspath(db_engine.url.database)
-        if not os.path.exists(abspath) or os.path.getsize(abspath) == 0:
-            db_sync()
-
-    elif db_type == "mysql":
-        mysql_svc = "svc:/application/database/mysql:version_55"
-        cmd = ["/usr/bin/svcs", "-H", "-o", "state", mysql_svc]
-
-        try:
-            p = Popen(cmd, stdout=PIPE, stderr=PIPE)
-            output, error = p.communicate()
-        except CalledProcessError:
-            print "mysql service not found.  Is it installed?"
-            return smf_include.SMF_EXIT_ERR_CONFIG
-
-        if output.strip() != "online":
-            # attempt to start mysql
-            cmd = ["/usr/sbin/svcadm", "enable", "-rs", mysql_svc]
-
-            try:
-                check_call(cmd)
-            except CalledProcessError as err:
-                print "starting mysql service failed:  %s" % err
-                return smf_include.SMF_EXIT_ERR_CONFIG
-
-        # not sure how to check if the database is valid, so just create
-        # the database every time for now
-        db_sync()
 
     smf_include.smf_subprocess("/usr/lib/nova/nova-conductor")
 
