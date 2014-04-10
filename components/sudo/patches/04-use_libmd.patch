@@ -1,0 +1,2430 @@
+Taken from http://www.sudo.ws/repos/sudo/rev/cd02732f0704 and backported to
+sudo 1.9.5p5. The fix will be available in sudo 1.8.10p3.
+
+Patching of configure script was removed as we regenerate it by autotools
+anyway.
+
+diff -urN sudo-1.8.9p5.old/common/Makefile.in sudo-1.8.9p5/common/Makefile.in
+--- sudo-1.8.9p5.old/common/Makefile.in	2014-01-07 19:09:02.000000000 +0100
++++ sudo-1.8.9p5/common/Makefile.in	2014-04-10 15:20:34.447046660 +0200
+@@ -186,8 +186,8 @@
+             $(top_builddir)/config.h $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/atomode.c
+ conf_test.lo: $(srcdir)/regress/sudo_conf/conf_test.c $(incdir)/missing.h \
+-              $(incdir)/queue.h $(incdir)/sudo_conf.h $(top_builddir)/config.h \
+-              $(top_srcdir)/compat/stdbool.h
++              $(incdir)/queue.h $(incdir)/sudo_conf.h $(incdir)/sudo_util.h \
++              $(top_builddir)/config.h $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/regress/sudo_conf/conf_test.c
+ event.lo: $(srcdir)/event.c $(incdir)/alloc.h $(incdir)/fatal.h \
+           $(incdir)/missing.h $(incdir)/queue.h $(incdir)/sudo_debug.h \
+@@ -223,8 +223,8 @@
+             $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/gidlist.c
+ hltq_test.lo: $(srcdir)/regress/tailq/hltq_test.c $(incdir)/fatal.h \
+-              $(incdir)/missing.h $(incdir)/queue.h $(top_builddir)/config.h \
+-              $(top_srcdir)/compat/stdbool.h
++              $(incdir)/missing.h $(incdir)/queue.h $(incdir)/sudo_util.h \
++              $(top_builddir)/config.h $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/regress/tailq/hltq_test.c
+ lbuf.lo: $(srcdir)/lbuf.c $(incdir)/alloc.h $(incdir)/fatal.h $(incdir)/lbuf.h \
+          $(incdir)/missing.h $(incdir)/sudo_debug.h $(top_builddir)/config.h
+@@ -233,7 +233,7 @@
+                 $(incdir)/gettext.h $(incdir)/missing.h $(top_builddir)/config.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(top_srcdir)/src/locale_stub.c
+ parseln_test.lo: $(srcdir)/regress/sudo_parseln/parseln_test.c \
+-                 $(incdir)/fileops.h $(incdir)/missing.h \
++                 $(incdir)/fileops.h $(incdir)/missing.h $(incdir)/sudo_util.h \
+                  $(top_builddir)/config.h $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/regress/sudo_parseln/parseln_test.c
+ progname.lo: $(srcdir)/progname.c $(incdir)/missing.h $(incdir)/sudo_util.h \
+diff -urN sudo-1.8.9p5.old/compat/Makefile.in sudo-1.8.9p5/compat/Makefile.in
+--- sudo-1.8.9p5.old/compat/Makefile.in	2014-01-07 19:08:52.000000000 +0100
++++ sudo-1.8.9p5/compat/Makefile.in	2014-04-10 15:20:34.447431545 +0200
+@@ -178,7 +178,9 @@
+ getcwd.lo: $(srcdir)/getcwd.c $(incdir)/missing.h $(top_builddir)/config.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/getcwd.c
+ getgrouplist.lo: $(srcdir)/getgrouplist.c $(incdir)/missing.h \
+-                 $(top_builddir)/config.h $(top_srcdir)/compat/nss_dbdefs.h
++                 $(incdir)/sudo_util.h $(top_builddir)/config.h \
++                 $(top_srcdir)/compat/nss_dbdefs.h \
++                 $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/getgrouplist.c
+ getline.lo: $(srcdir)/getline.c $(incdir)/missing.h $(top_builddir)/config.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c -o $@ $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/getline.c
+diff -urN sudo-1.8.9p5.old/compat/sha2.c sudo-1.8.9p5/compat/sha2.c
+--- sudo-1.8.9p5.old/compat/sha2.c	1970-01-01 01:00:00.000000000 +0100
++++ sudo-1.8.9p5/compat/sha2.c	2014-04-10 15:20:34.448122160 +0200
+@@ -0,0 +1,526 @@
++/*
++ * Copyright (c) 2013 Todd C. Miller <Todd.Miller@courtesan.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++/*
++ * Implementation of SHA-224, SHA-256, SHA-384 and SHA-512
++ * as per FIPS 180-4: Secure Hash Standard (SHS)
++ * http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf
++ *
++ * Derived from the public domain SHA-1 and SHA-2 implementations
++ * by Steve Reid and Wei Dai respectively.
++ */
++
++#include <config.h>
++
++#include <stdio.h>
++#ifdef STDC_HEADERS
++# include <stdlib.h>
++# include <stddef.h>
++#else
++# ifdef HAVE_STDLIB_H
++#  include <stdlib.h>
++# endif
++#endif /* STDC_HEADERS */
++#ifdef HAVE_STRING_H
++# if defined(HAVE_MEMORY_H) && !defined(STDC_HEADERS)
++#  include <memory.h>
++# endif
++# include <string.h>
++#endif /* HAVE_STRING_H */
++#ifdef HAVE_STRINGS_H
++# include <strings.h>
++#endif /* HAVE_STRINGS_H */
++#if defined(HAVE_STDINT_H)
++# include <stdint.h>
++#elif defined(HAVE_INTTYPES_H)
++# include <inttypes.h>
++#endif
++#if defined(HAVE_ENDIAN_H)
++# include <endian.h>
++#elif defined(HAVE_SYS_ENDIAN_H)
++# include <sys/endian.h>
++#elif defined(HAVE_MACHINE_ENDIAN_H)
++# include <machine/endian.h>
++#else
++# include "compat/endian.h"
++#endif
++
++#include "missing.h"
++#include "sha2.h"
++
++/*
++ * SHA-2 operates on 32-bit and 64-bit words in big endian byte order.
++ * The following macros convert between character arrays and big endian words.
++ */
++#define BE8TO32(x, y) do {				\
++	(x) = (((uint32_t)((y)[0] & 255) << 24) |	\
++	       ((uint32_t)((y)[1] & 255) << 16) |	\
++	       ((uint32_t)((y)[2] & 255) << 8)  |	\
++	       ((uint32_t)((y)[3] & 255)));		\
++} while (0)
++
++#define BE8TO64(x, y) do {				\
++	(x) = (((uint64_t)((y)[0] & 255) << 56) |	\
++	       ((uint64_t)((y)[1] & 255) << 48) |	\
++	       ((uint64_t)((y)[2] & 255) << 40) |	\
++	       ((uint64_t)((y)[3] & 255) << 32) |	\
++	       ((uint64_t)((y)[4] & 255) << 24) |	\
++	       ((uint64_t)((y)[5] & 255) << 16) |	\
++	       ((uint64_t)((y)[6] & 255) << 8)  |	\
++	       ((uint64_t)((y)[7] & 255)));		\
++} while (0)
++
++#define BE32TO8(x, y) do {			\
++	(x)[0] = (uint8_t)(((y) >> 24) & 255);	\
++	(x)[1] = (uint8_t)(((y) >> 16) & 255);	\
++	(x)[2] = (uint8_t)(((y) >> 8) & 255);	\
++	(x)[3] = (uint8_t)((y) & 255);		\
++} while (0)
++
++#define BE64TO8(x, y) do {			\
++	(x)[0] = (uint8_t)(((y) >> 56) & 255);	\
++	(x)[1] = (uint8_t)(((y) >> 48) & 255);	\
++	(x)[2] = (uint8_t)(((y) >> 40) & 255);	\
++	(x)[3] = (uint8_t)(((y) >> 32) & 255);	\
++	(x)[4] = (uint8_t)(((y) >> 24) & 255);	\
++	(x)[5] = (uint8_t)(((y) >> 16) & 255);	\
++	(x)[6] = (uint8_t)(((y) >> 8) & 255);	\
++	(x)[7] = (uint8_t)((y) & 255);		\
++} while (0)
++
++#define rotrFixed(x,y) (y ? ((x>>y) | (x<<(sizeof(x)*8-y))) : x)
++
++#define blk0(i) (W[i])
++#define blk2(i) (W[i&15]+=s1(W[(i-2)&15])+W[(i-7)&15]+s0(W[(i-15)&15]))
++
++#define Ch(x,y,z) (z^(x&(y^z)))
++#define Maj(x,y,z) (y^((x^y)&(y^z)))
++
++#define a(i) T[(0-i)&7]
++#define b(i) T[(1-i)&7]
++#define c(i) T[(2-i)&7]
++#define d(i) T[(3-i)&7]
++#define e(i) T[(4-i)&7]
++#define f(i) T[(5-i)&7]
++#define g(i) T[(6-i)&7]
++#define h(i) T[(7-i)&7]
++
++void
++SHA224Init(SHA2_CTX *ctx)
++{
++	memset(ctx, 0, sizeof(*ctx));
++	ctx->state.st32[0] = 0xc1059ed8UL;
++	ctx->state.st32[1] = 0x367cd507UL;
++	ctx->state.st32[2] = 0x3070dd17UL;
++	ctx->state.st32[3] = 0xf70e5939UL;
++	ctx->state.st32[4] = 0xffc00b31UL;
++	ctx->state.st32[5] = 0x68581511UL;
++	ctx->state.st32[6] = 0x64f98fa7UL;
++	ctx->state.st32[7] = 0xbefa4fa4UL;
++}
++
++void
++SHA224Transform(uint32_t state[8], const uint8_t buffer[SHA224_BLOCK_LENGTH])
++{
++	SHA256Transform(state, buffer);
++}
++
++void
++SHA224Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
++{
++	SHA256Update(ctx, data, len);
++}
++
++void
++SHA224Pad(SHA2_CTX *ctx)
++{
++	SHA256Pad(ctx);
++}
++
++void
++SHA224Final(uint8_t digest[SHA224_DIGEST_LENGTH], SHA2_CTX *ctx)
++{
++	SHA256Pad(ctx);
++	if (digest != NULL) {
++#if BYTE_ORDER == BIG_ENDIAN
++		memcpy(digest, ctx->state.st32, SHA224_DIGEST_LENGTH);
++#else
++		unsigned int i;
++
++		for (i = 0; i < 7; i++)
++			BE32TO8(digest + (i * 4), ctx->state.st32[i]);
++#endif
++		memset(ctx, 0, sizeof(*ctx));
++	}
++}
++
++static const uint32_t SHA256_K[64] = {
++	0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL,
++	0x3956c25bUL, 0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL,
++	0xd807aa98UL, 0x12835b01UL, 0x243185beUL, 0x550c7dc3UL,
++	0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL, 0xc19bf174UL,
++	0xe49b69c1UL, 0xefbe4786UL, 0x0fc19dc6UL, 0x240ca1ccUL,
++	0x2de92c6fUL, 0x4a7484aaUL, 0x5cb0a9dcUL, 0x76f988daUL,
++	0x983e5152UL, 0xa831c66dUL, 0xb00327c8UL, 0xbf597fc7UL,
++	0xc6e00bf3UL, 0xd5a79147UL, 0x06ca6351UL, 0x14292967UL,
++	0x27b70a85UL, 0x2e1b2138UL, 0x4d2c6dfcUL, 0x53380d13UL,
++	0x650a7354UL, 0x766a0abbUL, 0x81c2c92eUL, 0x92722c85UL,
++	0xa2bfe8a1UL, 0xa81a664bUL, 0xc24b8b70UL, 0xc76c51a3UL,
++	0xd192e819UL, 0xd6990624UL, 0xf40e3585UL, 0x106aa070UL,
++	0x19a4c116UL, 0x1e376c08UL, 0x2748774cUL, 0x34b0bcb5UL,
++	0x391c0cb3UL, 0x4ed8aa4aUL, 0x5b9cca4fUL, 0x682e6ff3UL,
++	0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
++	0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL
++};
++
++void
++SHA256Init(SHA2_CTX *ctx)
++{
++	memset(ctx, 0, sizeof(*ctx));
++	ctx->state.st32[0] = 0x6a09e667UL;
++	ctx->state.st32[1] = 0xbb67ae85UL;
++	ctx->state.st32[2] = 0x3c6ef372UL;
++	ctx->state.st32[3] = 0xa54ff53aUL;
++	ctx->state.st32[4] = 0x510e527fUL;
++	ctx->state.st32[5] = 0x9b05688cUL;
++	ctx->state.st32[6] = 0x1f83d9abUL;
++	ctx->state.st32[7] = 0x5be0cd19UL;
++}
++
++/* Round macros for SHA256 */
++#define R(i) do {							     \
++	h(i)+=S1(e(i))+Ch(e(i),f(i),g(i))+SHA256_K[i+j]+(j?blk2(i):blk0(i)); \
++	d(i)+=h(i);							     \
++	h(i)+=S0(a(i))+Maj(a(i),b(i),c(i));				     \
++} while (0)
++
++#define S0(x) (rotrFixed(x,2)^rotrFixed(x,13)^rotrFixed(x,22))
++#define S1(x) (rotrFixed(x,6)^rotrFixed(x,11)^rotrFixed(x,25))
++#define s0(x) (rotrFixed(x,7)^rotrFixed(x,18)^(x>>3))
++#define s1(x) (rotrFixed(x,17)^rotrFixed(x,19)^(x>>10))
++
++void
++SHA256Transform(uint32_t state[8], const uint8_t data[SHA256_BLOCK_LENGTH])
++{
++	uint32_t W[16];
++	uint32_t T[8];
++	unsigned int j;
++
++	/* Copy context state to working vars. */
++	memcpy(T, state, sizeof(T));
++	/* Copy data to W in big endian format. */
++#if BYTE_ORDER == BIG_ENDIAN
++	memcpy(W, data, sizeof(W));
++#else
++	for (j = 0; j < 16; j++) {
++	    BE8TO32(W[j], data);
++	    data += 4;
++	}
++#endif
++	/* 64 operations, partially loop unrolled. */
++	for (j = 0; j < 64; j += 16)
++	{
++		R( 0); R( 1); R( 2); R( 3);
++		R( 4); R( 5); R( 6); R( 7);
++		R( 8); R( 9); R(10); R(11);
++		R(12); R(13); R(14); R(15);
++	}
++	/* Add the working vars back into context state. */
++	state[0] += a(0);
++	state[1] += b(0);
++	state[2] += c(0);
++	state[3] += d(0);
++	state[4] += e(0);
++	state[5] += f(0);
++	state[6] += g(0);
++	state[7] += h(0);
++	/* Cleanup */
++	memset_s(T, sizeof(T), 0, sizeof(T));
++	memset_s(W, sizeof(W), 0, sizeof(W));
++}
++
++#undef S0
++#undef S1
++#undef s0
++#undef s1
++#undef R
++
++void
++SHA256Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
++{
++	size_t i = 0, j;
++
++	j = (size_t)((ctx->count[0] >> 3) & (SHA256_BLOCK_LENGTH - 1));
++	ctx->count[0] += (len << 3);
++	if ((j + len) > SHA256_BLOCK_LENGTH - 1) {
++		memcpy(&ctx->buffer[j], data, (i = SHA256_BLOCK_LENGTH - j));
++		SHA256Transform(ctx->state.st32, ctx->buffer);
++		for ( ; i + SHA256_BLOCK_LENGTH - 1 < len; i += SHA256_BLOCK_LENGTH)
++			SHA256Transform(ctx->state.st32, (uint8_t *)&data[i]);
++		j = 0;
++	}
++	memcpy(&ctx->buffer[j], &data[i], len - i);
++}
++
++void
++SHA256Pad(SHA2_CTX *ctx)
++{
++	uint8_t finalcount[8];
++
++	/* Store unpadded message length in bits in big endian format. */
++	BE64TO8(finalcount, ctx->count[0]);
++
++	/* Append a '1' bit (0x80) to the message. */
++	SHA256Update(ctx, (uint8_t *)"\200", 1);
++
++	/* Pad message such that the resulting length modulo 512 is 448. */
++	while ((ctx->count[0] & 504) != 448)
++		SHA256Update(ctx, (uint8_t *)"\0", 1);
++
++	/* Append length of message in bits and do final SHA256Transform(). */
++	SHA256Update(ctx, finalcount, sizeof(finalcount));
++}
++
++void
++SHA256Final(uint8_t digest[SHA256_DIGEST_LENGTH], SHA2_CTX *ctx)
++{
++	SHA256Pad(ctx);
++	if (digest != NULL) {
++#if BYTE_ORDER == BIG_ENDIAN
++		memcpy(digest, ctx->state.st32, SHA256_DIGEST_LENGTH);
++#else
++		unsigned int i;
++
++		for (i = 0; i < 8; i++)
++			BE32TO8(digest + (i * 4), ctx->state.st32[i]);
++#endif
++		memset(ctx, 0, sizeof(*ctx));
++	}
++}
++
++void
++SHA384Init(SHA2_CTX *ctx)
++{
++	memset(ctx, 0, sizeof(*ctx));
++	ctx->state.st64[0] = 0xcbbb9d5dc1059ed8ULL;
++	ctx->state.st64[1] = 0x629a292a367cd507ULL;
++	ctx->state.st64[2] = 0x9159015a3070dd17ULL;
++	ctx->state.st64[3] = 0x152fecd8f70e5939ULL;
++	ctx->state.st64[4] = 0x67332667ffc00b31ULL;
++	ctx->state.st64[5] = 0x8eb44a8768581511ULL;
++	ctx->state.st64[6] = 0xdb0c2e0d64f98fa7ULL;
++	ctx->state.st64[7] = 0x47b5481dbefa4fa4ULL;
++}
++
++void
++SHA384Transform(uint64_t state[8], const uint8_t data[SHA384_BLOCK_LENGTH])
++{
++	SHA512Transform(state, data);
++}
++
++void
++SHA384Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
++{
++	SHA512Update(ctx, data, len);
++}
++
++void
++SHA384Pad(SHA2_CTX *ctx)
++{
++	SHA512Pad(ctx);
++}
++
++void
++SHA384Final(uint8_t digest[SHA384_DIGEST_LENGTH], SHA2_CTX *ctx)
++{
++	SHA384Pad(ctx);
++	if (digest != NULL) {
++#if BYTE_ORDER == BIG_ENDIAN
++		memcpy(digest, ctx->state.st64, SHA384_DIGEST_LENGTH);
++#else
++		unsigned int i;
++
++		for (i = 0; i < 6; i++)
++			BE64TO8(digest + (i * 8), ctx->state.st64[i]);
++#endif
++		memset(ctx, 0, sizeof(*ctx));
++	}
++}
++
++static const uint64_t SHA512_K[80] = {
++	0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL,
++	0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL,
++	0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
++	0x923f82a4af194f9bULL, 0xab1c5ed5da6d8118ULL,
++	0xd807aa98a3030242ULL, 0x12835b0145706fbeULL,
++	0x243185be4ee4b28cULL, 0x550c7dc3d5ffb4e2ULL,
++	0x72be5d74f27b896fULL, 0x80deb1fe3b1696b1ULL,
++	0x9bdc06a725c71235ULL, 0xc19bf174cf692694ULL,
++	0xe49b69c19ef14ad2ULL, 0xefbe4786384f25e3ULL,
++	0x0fc19dc68b8cd5b5ULL, 0x240ca1cc77ac9c65ULL,
++	0x2de92c6f592b0275ULL, 0x4a7484aa6ea6e483ULL,
++	0x5cb0a9dcbd41fbd4ULL, 0x76f988da831153b5ULL,
++	0x983e5152ee66dfabULL, 0xa831c66d2db43210ULL,
++	0xb00327c898fb213fULL, 0xbf597fc7beef0ee4ULL,
++	0xc6e00bf33da88fc2ULL, 0xd5a79147930aa725ULL,
++	0x06ca6351e003826fULL, 0x142929670a0e6e70ULL,
++	0x27b70a8546d22ffcULL, 0x2e1b21385c26c926ULL,
++	0x4d2c6dfc5ac42aedULL, 0x53380d139d95b3dfULL,
++	0x650a73548baf63deULL, 0x766a0abb3c77b2a8ULL,
++	0x81c2c92e47edaee6ULL, 0x92722c851482353bULL,
++	0xa2bfe8a14cf10364ULL, 0xa81a664bbc423001ULL,
++	0xc24b8b70d0f89791ULL, 0xc76c51a30654be30ULL,
++	0xd192e819d6ef5218ULL, 0xd69906245565a910ULL,
++	0xf40e35855771202aULL, 0x106aa07032bbd1b8ULL,
++	0x19a4c116b8d2d0c8ULL, 0x1e376c085141ab53ULL,
++	0x2748774cdf8eeb99ULL, 0x34b0bcb5e19b48a8ULL,
++	0x391c0cb3c5c95a63ULL, 0x4ed8aa4ae3418acbULL,
++	0x5b9cca4f7763e373ULL, 0x682e6ff3d6b2b8a3ULL,
++	0x748f82ee5defb2fcULL, 0x78a5636f43172f60ULL,
++	0x84c87814a1f0ab72ULL, 0x8cc702081a6439ecULL,
++	0x90befffa23631e28ULL, 0xa4506cebde82bde9ULL,
++	0xbef9a3f7b2c67915ULL, 0xc67178f2e372532bULL,
++	0xca273eceea26619cULL, 0xd186b8c721c0c207ULL,
++	0xeada7dd6cde0eb1eULL, 0xf57d4f7fee6ed178ULL,
++	0x06f067aa72176fbaULL, 0x0a637dc5a2c898a6ULL,
++	0x113f9804bef90daeULL, 0x1b710b35131c471bULL,
++	0x28db77f523047d84ULL, 0x32caab7b40c72493ULL,
++	0x3c9ebe0a15c9bebcULL, 0x431d67c49c100d4cULL,
++	0x4cc5d4becb3e42b6ULL, 0x597f299cfc657e2aULL,
++	0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL
++};
++
++void
++SHA512Init(SHA2_CTX *ctx)
++{
++	memset(ctx, 0, sizeof(*ctx));
++	ctx->state.st64[0] = 0x6a09e667f3bcc908ULL;
++	ctx->state.st64[1] = 0xbb67ae8584caa73bULL;
++	ctx->state.st64[2] = 0x3c6ef372fe94f82bULL;
++	ctx->state.st64[3] = 0xa54ff53a5f1d36f1ULL;
++	ctx->state.st64[4] = 0x510e527fade682d1ULL;
++	ctx->state.st64[5] = 0x9b05688c2b3e6c1fULL;
++	ctx->state.st64[6] = 0x1f83d9abfb41bd6bULL;
++	ctx->state.st64[7] = 0x5be0cd19137e2179ULL;
++}
++
++/* Round macros for SHA512 */
++#define R(i) do {							     \
++	h(i)+=S1(e(i))+Ch(e(i),f(i),g(i))+SHA512_K[i+j]+(j?blk2(i):blk0(i)); \
++	d(i)+=h(i);							     \
++	h(i)+=S0(a(i))+Maj(a(i),b(i),c(i));				     \
++} while (0)
++
++#define S0(x) (rotrFixed(x,28)^rotrFixed(x,34)^rotrFixed(x,39))
++#define S1(x) (rotrFixed(x,14)^rotrFixed(x,18)^rotrFixed(x,41))
++#define s0(x) (rotrFixed(x,1)^rotrFixed(x,8)^(x>>7))
++#define s1(x) (rotrFixed(x,19)^rotrFixed(x,61)^(x>>6))
++
++void
++SHA512Transform(uint64_t state[8], const uint8_t data[SHA512_BLOCK_LENGTH])
++{
++	uint64_t W[16];
++	uint64_t T[8];
++	unsigned int j;
++
++	/* Copy context state to working vars. */
++	memcpy(T, state, sizeof(T));
++	/* Copy data to W in big endian format. */
++#if BYTE_ORDER == BIG_ENDIAN
++	memcpy(W, data, sizeof(W));
++#else
++	for (j = 0; j < 16; j++) {
++	    BE8TO64(W[j], data);
++	    data += 8;
++	}
++#endif
++	/* 80 operations, partially loop unrolled. */
++	for (j = 0; j < 80; j += 16)
++	{
++		R( 0); R( 1); R( 2); R( 3);
++		R( 4); R( 5); R( 6); R( 7);
++		R( 8); R( 9); R(10); R(11);
++		R(12); R(13); R(14); R(15);
++	}
++	/* Add the working vars back into context state. */
++	state[0] += a(0);
++	state[1] += b(0);
++	state[2] += c(0);
++	state[3] += d(0);
++	state[4] += e(0);
++	state[5] += f(0);
++	state[6] += g(0);
++	state[7] += h(0);
++	/* Cleanup. */
++	memset_s(T, sizeof(T), 0, sizeof(T));
++	memset_s(W, sizeof(W), 0, sizeof(W));
++}
++
++void
++SHA512Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
++{
++	size_t i = 0, j;
++
++	j = (size_t)((ctx->count[0] >> 3) & (SHA512_BLOCK_LENGTH - 1));
++	ctx->count[0] += (len << 3);
++	if (ctx->count[0] < (len << 3))
++		ctx->count[1]++;
++	if ((j + len) > SHA512_BLOCK_LENGTH - 1) {
++		memcpy(&ctx->buffer[j], data, (i = SHA512_BLOCK_LENGTH - j));
++		SHA512Transform(ctx->state.st64, ctx->buffer);
++		for ( ; i + SHA512_BLOCK_LENGTH - 1 < len; i += SHA512_BLOCK_LENGTH)
++			SHA512Transform(ctx->state.st64, (uint8_t *)&data[i]);
++		j = 0;
++	}
++	memcpy(&ctx->buffer[j], &data[i], len - i);
++}
++
++void
++SHA512Pad(SHA2_CTX *ctx)
++{
++	uint8_t finalcount[16];
++
++	/* Store unpadded message length in bits in big endian format. */
++	BE64TO8(finalcount, ctx->count[1]);
++	BE64TO8(finalcount + 8, ctx->count[0]);
++
++	/* Append a '1' bit (0x80) to the message. */
++	SHA512Update(ctx, (uint8_t *)"\200", 1);
++
++	/* Pad message such that the resulting length modulo 1024 is 896. */
++	while ((ctx->count[0] & 1008) != 896)
++		SHA512Update(ctx, (uint8_t *)"\0", 1);
++
++	/* Append length of message in bits and do final SHA512Transform(). */
++	SHA512Update(ctx, finalcount, sizeof(finalcount));
++}
++
++void
++SHA512Final(uint8_t digest[SHA512_DIGEST_LENGTH], SHA2_CTX *ctx)
++{
++	SHA512Pad(ctx);
++	if (digest != NULL) {
++#if BYTE_ORDER == BIG_ENDIAN
++		memcpy(digest, ctx->state.st64, SHA512_DIGEST_LENGTH);
++#else
++		unsigned int i;
++
++		for (i = 0; i < 8; i++)
++			BE64TO8(digest + (i * 8), ctx->state.st64[i]);
++#endif
++		memset(ctx, 0, sizeof(*ctx));
++	}
++}
+diff -urN sudo-1.8.9p5.old/compat/sha2.h sudo-1.8.9p5/compat/sha2.h
+--- sudo-1.8.9p5.old/compat/sha2.h	1970-01-01 01:00:00.000000000 +0100
++++ sudo-1.8.9p5/compat/sha2.h	2014-04-10 15:20:34.448517327 +0200
+@@ -0,0 +1,74 @@
++/*
++ * Copyright (c) 2013 Todd C. Miller <Todd.Miller@courtesan.com>
++ *
++ * Permission to use, copy, modify, and distribute this software for any
++ * purpose with or without fee is hereby granted, provided that the above
++ * copyright notice and this permission notice appear in all copies.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
++ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
++ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
++ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
++ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
++ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
++ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ */
++
++/*
++ * Derived from the public domain SHA-1 and SHA-2 implementations
++ * by Steve Reid and Wei Dai respectively.
++ */
++
++#ifndef _SUDOERS_SHA2_H
++#define _SUDOERS_SHA2_H
++
++#define	SHA224_BLOCK_LENGTH		64
++#define	SHA224_DIGEST_LENGTH		28
++#define	SHA224_DIGEST_STRING_LENGTH	(SHA224_DIGEST_LENGTH * 2 + 1)
++
++#define	SHA256_BLOCK_LENGTH		64
++#define	SHA256_DIGEST_LENGTH		32
++#define	SHA256_DIGEST_STRING_LENGTH	(SHA256_DIGEST_LENGTH * 2 + 1)
++
++#define	SHA384_BLOCK_LENGTH		128
++#define	SHA384_DIGEST_LENGTH		48
++#define	SHA384_DIGEST_STRING_LENGTH	(SHA384_DIGEST_LENGTH * 2 + 1)
++
++#define	SHA512_BLOCK_LENGTH		128
++#define	SHA512_DIGEST_LENGTH		64
++#define	SHA512_DIGEST_STRING_LENGTH	(SHA512_DIGEST_LENGTH * 2 + 1)
++
++typedef struct {
++    union {
++	uint32_t st32[8];	/* sha224 and sha256 */
++	uint64_t st64[8];	/* sha384 and sha512 */
++    } state;
++    uint64_t count[2];
++    uint8_t buffer[SHA512_BLOCK_LENGTH];
++} SHA2_CTX;
++
++void SHA224Init(SHA2_CTX *ctx);
++void SHA224Pad(SHA2_CTX *ctx);
++void SHA224Transform(uint32_t state[8], const uint8_t buffer[SHA224_BLOCK_LENGTH]);
++void SHA224Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
++void SHA224Final(uint8_t digest[SHA224_DIGEST_LENGTH], SHA2_CTX *ctx);
++
++void SHA256Init(SHA2_CTX *ctx);
++void SHA256Pad(SHA2_CTX *ctx);
++void SHA256Transform(uint32_t state[8], const uint8_t buffer[SHA256_BLOCK_LENGTH]);
++void SHA256Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
++void SHA256Final(uint8_t digest[SHA256_DIGEST_LENGTH], SHA2_CTX *ctx);
++
++void SHA384Init(SHA2_CTX *ctx);
++void SHA384Pad(SHA2_CTX *ctx);
++void SHA384Transform(uint64_t state[8], const uint8_t buffer[SHA384_BLOCK_LENGTH]);
++void SHA384Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
++void SHA384Final(uint8_t digest[SHA384_DIGEST_LENGTH], SHA2_CTX *ctx);
++
++void SHA512Init(SHA2_CTX *ctx);
++void SHA512Pad(SHA2_CTX *ctx);
++void SHA512Transform(uint64_t state[8], const uint8_t buffer[SHA512_BLOCK_LENGTH]);
++void SHA512Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
++void SHA512Final(uint8_t digest[SHA512_DIGEST_LENGTH], SHA2_CTX *ctx);
++
++#endif /* _SUDOERS_SHA2_H */
+diff -urN sudo-1.8.9p5.old/config.h.in sudo-1.8.9p5/config.h.in
+--- sudo-1.8.9p5.old/config.h.in	2014-04-10 15:19:56.000000000 +0200
++++ sudo-1.8.9p5/config.h.in	2014-04-10 15:20:34.449144378 +0200
+@@ -521,6 +521,9 @@
+ /* Define to 1 if you have the `set_auth_parameters' function. */
+ #undef HAVE_SET_AUTH_PARAMETERS
+ 
++/* Define to 1 if you have the `SHA224Update' function. */
++#undef HAVE_SHA224UPDATE
++
+ /* Define to 1 if you have the `shl_load' function. */
+ #undef HAVE_SHL_LOAD
+ 
+@@ -983,6 +989,10 @@
+ /* Define to 1 to send mail when the user is not in the sudoers file. */
+ #undef SEND_MAIL_WHEN_NO_USER
+ 
++/* Define to 1 if the sha2 functions use `const void *' instead of `const
++   unsigned char'. */
++#undef SHA2_VOID_PTR
++
+ /* Define to 1 if you want sudo to start a shell if given no arguments. */
+ #undef SHELL_IF_NO_ARGS
+ 
+diff -urN sudo-1.8.9p5.old/configure.ac sudo-1.8.9p5/configure.ac
+--- sudo-1.8.9p5.old/configure.ac	2014-04-10 15:19:47.156138496 +0200
++++ sudo-1.8.9p5/configure.ac	2014-04-10 15:20:34.458422206 +0200
+@@ -77,6 +77,7 @@
+ AC_SUBST([LIBDL])
+ AC_SUBST([LT_STATIC])
+ AC_SUBST([LIBINTL])
++AC_SUBST([LIBMD])
+ AC_SUBST([SUDO_NLS])
+ AC_SUBST([LOCALEDIR_SUFFIX])
+ AC_SUBST([COMPAT_TEST_PROGS])
+@@ -194,6 +195,7 @@
+ PSMAN=0
+ SEMAN=0
+ LIBINTL=
++LIBMD=
+ ZLIB=
+ ZLIB_SRC=
+ AUTH_OBJS=
+@@ -2445,6 +2447,16 @@
+ 	[AC_CHECK_MEMBER([struct stat.st_mtim.st__tim], AC_DEFINE(HAVE_ST__TIM))],
+ 	[AC_CHECK_MEMBER([struct stat.st_mtimespec], AC_DEFINE([HAVE_ST_MTIMESPEC]))])
+ fi
++AC_CHECK_HEADER([sha2.h], [
++    AC_CHECK_FUNCS(SHA224Update, [SUDO_FUNC_SHA2_VOID_PTR], [
++	# On some systems, SHA224Update is in libmd
++	AC_CHECK_LIB(md, SHA224Update, [
++	    AC_DEFINE(HAVE_SHA224UPDATE)
++	    SUDO_FUNC_SHA2_VOID_PTR
++	    LIBMD="-lmd"
++	], [AC_LIBOBJ(sha2)])
++    ])
++], [AC_LIBOBJ(sha2)])
+ dnl
+ dnl Function checks for sudo_noexec
+ dnl
+diff -urN sudo-1.8.9p5.old/MANIFEST sudo-1.8.9p5/MANIFEST
+--- sudo-1.8.9p5.old/MANIFEST	2014-04-10 15:19:47.157886371 +0200
++++ sudo-1.8.9p5/MANIFEST	2014-04-10 15:20:58.300108720 +0200
+@@ -88,6 +88,8 @@
+ compat/regress/glob/files
+ compat/regress/glob/globtest.c
+ compat/regress/glob/globtest.in
++compat/sha2.c
++compat/sha2.h
+ compat/sig2str.c
+ compat/siglist.in
+ compat/snprintf.c
+@@ -367,8 +369,6 @@
+ plugins/sudoers/regress/visudo/test5.out.ok
+ plugins/sudoers/regress/visudo/test5.sh
+ plugins/sudoers/set_perms.c
+-plugins/sudoers/sha2.c
+-plugins/sudoers/sha2.h
+ plugins/sudoers/solaris_audit.c
+ plugins/sudoers/solaris_audit.h
+ plugins/sudoers/sssd.c
+diff -urN sudo-1.8.9p5.old/m4/sudo.m4 sudo-1.8.9p5/m4/sudo.m4
+--- sudo-1.8.9p5.old/m4/sudo.m4	2014-01-07 19:08:52.000000000 +0100
++++ sudo-1.8.9p5/m4/sudo.m4	2014-04-10 15:20:34.458820769 +0200
+@@ -264,6 +264,24 @@
+ ])
+ 
+ dnl
++dnl Check if the data argument for the sha2 functions is void * or u_char *
++dnl
++AC_DEFUN([SUDO_FUNC_SHA2_VOID_PTR],
++[AC_CACHE_CHECK([whether the data argument of SHA224Update() is void *],
++sudo_cv_func_sha2_void_ptr,
++[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([AC_INCLUDES_DEFAULT
++#include <sha2.h>
++void SHA224Update(SHA2_CTX *context, const void *data, size_t len) {return;}], [])],
++    [sudo_cv_func_sha2_void_ptr=yes],
++    [sudo_cv_func_sha2_void_ptr=no])
++  ])
++  if test $sudo_cv_func_sha2_void_ptr = yes; then
++    AC_DEFINE(SHA2_VOID_PTR, 1,
++      [Define to 1 if the sha2 functions use `const void *' instead of `const unsigned char'.])
++  fi
++])
++
++dnl
+ dnl check for sa_len field in struct sockaddr
+ dnl
+ AC_DEFUN([SUDO_SOCK_SA_LEN], [
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/gram.c sudo-1.8.9p5/plugins/sudoers/gram.c
+--- sudo-1.8.9p5.old/plugins/sudoers/gram.c	2014-01-07 19:08:53.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/gram.c	2014-04-10 15:20:34.460695182 +0200
+@@ -179,10 +179,10 @@
+ #define PRIVS 289
+ #define LIMITPRIVS 290
+ #define MYSELF 291
+-#define SHA224 292
+-#define SHA256 293
+-#define SHA384 294
+-#define SHA512 295
++#define SHA224_TOK 292
++#define SHA256_TOK 293
++#define SHA384_TOK 294
++#define SHA512_TOK 295
+ #define YYERRCODE 256
+ #if defined(__cplusplus) || defined(__STDC__)
+ const short sudoerslhs[] =
+@@ -550,7 +550,7 @@
+ "NOPASSWD","PASSWD","NOEXEC","EXEC","SETENV","NOSETENV","LOG_INPUT",
+ "NOLOG_INPUT","LOG_OUTPUT","NOLOG_OUTPUT","ALL","COMMENT","HOSTALIAS",
+ "CMNDALIAS","USERALIAS","RUNASALIAS","ERROR","TYPE","ROLE","PRIVS","LIMITPRIVS",
+-"MYSELF","SHA224","SHA256","SHA384","SHA512",
++"MYSELF","SHA224_TOK","SHA256_TOK","SHA384_TOK","SHA512_TOK",
+ };
+ #if defined(__cplusplus) || defined(__STDC__)
+ const char * const sudoersrule[] =
+@@ -594,10 +594,10 @@
+ "cmndspeclist : cmndspec",
+ "cmndspeclist : cmndspeclist ',' cmndspec",
+ "cmndspec : runasspec selinux solarisprivs cmndtag digcmnd",
+-"digest : SHA224 ':' DIGEST",
+-"digest : SHA256 ':' DIGEST",
+-"digest : SHA384 ':' DIGEST",
+-"digest : SHA512 ':' DIGEST",
++"digest : SHA224_TOK ':' DIGEST",
++"digest : SHA256_TOK ':' DIGEST",
++"digest : SHA384_TOK ':' DIGEST",
++"digest : SHA512_TOK ':' DIGEST",
+ "digcmnd : opcmnd",
+ "digcmnd : digest opcmnd",
+ "opcmnd : cmnd",
+@@ -1089,12 +1089,12 @@
+         goto yyreduce;
+     }
+     if (yyerrflag) goto yyinrecovery;
+-#if defined(lint) || defined(__GNUC__)
++#if defined(__GNUC__)
+     goto yynewerror;
+ #endif
+ yynewerror:
+     yyerror("syntax error");
+-#if defined(lint) || defined(__GNUC__)
++#if defined(__GNUC__)
+     goto yyerrlab;
+ #endif
+ yyerrlab:
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/gram.h sudo-1.8.9p5/plugins/sudoers/gram.h
+--- sudo-1.8.9p5.old/plugins/sudoers/gram.h	2014-01-07 19:08:53.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/gram.h	2014-04-10 15:20:34.461102773 +0200
+@@ -33,10 +33,10 @@
+ #define PRIVS 289
+ #define LIMITPRIVS 290
+ #define MYSELF 291
+-#define SHA224 292
+-#define SHA256 293
+-#define SHA384 294
+-#define SHA512 295
++#define SHA224_TOK 292
++#define SHA256_TOK 293
++#define SHA384_TOK 294
++#define SHA512_TOK 295
+ #ifndef YYSTYPE_DEFINED
+ #define YYSTYPE_DEFINED
+ typedef union {
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/gram.y sudo-1.8.9p5/plugins/sudoers/gram.y
+--- sudo-1.8.9p5.old/plugins/sudoers/gram.y	2014-01-07 19:08:53.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/gram.y	2014-04-10 15:20:34.461582432 +0200
+@@ -142,10 +142,10 @@
+ %token <tok>	 PRIVS			/* Solaris privileges */
+ %token <tok>	 LIMITPRIVS		/* Solaris limit privileges */
+ %token <tok>	 MYSELF			/* run as myself, not another user */
+-%token <tok>	 SHA224			/* sha224 digest */
+-%token <tok>	 SHA256			/* sha256 digest */
+-%token <tok>	 SHA384			/* sha384 digest */
+-%token <tok>	 SHA512			/* sha512 digest */
++%token <tok>	 SHA224_TOK		/* sha224 token */
++%token <tok>	 SHA256_TOK		/* sha256 token */
++%token <tok>	 SHA384_TOK		/* sha384 token */
++%token <tok>	 SHA512_TOK		/* sha512 token */
+ 
+ %type <cmndspec>  cmndspec
+ %type <cmndspec>  cmndspeclist
+@@ -370,16 +370,16 @@
+ 			}
+ 		;
+ 
+-digest		:	SHA224 ':' DIGEST {
++digest		:	SHA224_TOK ':' DIGEST {
+ 			    $$ = new_digest(SUDO_DIGEST_SHA224, $3);
+ 			}
+-		|	SHA256 ':' DIGEST {
++		|	SHA256_TOK ':' DIGEST {
+ 			    $$ = new_digest(SUDO_DIGEST_SHA256, $3);
+ 			}
+-		|	SHA384 ':' DIGEST {
++		|	SHA384_TOK ':' DIGEST {
+ 			    $$ = new_digest(SUDO_DIGEST_SHA384, $3);
+ 			}
+-		|	SHA512 ':' DIGEST {
++		|	SHA512_TOK ':' DIGEST {
+ 			    $$ = new_digest(SUDO_DIGEST_SHA512, $3);
+ 			}
+ 		;
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/Makefile.in sudo-1.8.9p5/plugins/sudoers/Makefile.in
+--- sudo-1.8.9p5.old/plugins/sudoers/Makefile.in	2014-04-10 15:19:47.160183439 +0200
++++ sudo-1.8.9p5/plugins/sudoers/Makefile.in	2014-04-10 15:20:34.459914018 +0200
+@@ -49,8 +49,10 @@
+ LT_LIBS = $(top_builddir)/common/libsudo_util.la $(LIBOBJDIR)libreplace.la
+ LIBS = $(LT_LIBS) @LIBINTL@
+ NET_LIBS = @NET_LIBS@
+-SUDOERS_LIBS = @SUDOERS_LIBS@ @AFS_LIBS@ @GETGROUPS_LIB@ $(LIBS) $(NET_LIBS) @ZLIB@ @LIBDL@
++SUDOERS_LIBS = @SUDOERS_LIBS@ @AFS_LIBS@ @GETGROUPS_LIB@ $(LIBS) $(NET_LIBS) @ZLIB@ @LIBMD@ @LIBDL@
+ REPLAY_LIBS = @REPLAY_LIBS@ @ZLIB@
++VISUDO_LIBS = $(NET_LIBS) @LIBMD@
++TESTSUDOERS_LIBS = $(NET_LIBS) @LIBMD@ @LIBDL@
+ 
+ # C preprocessor flags
+ CPPFLAGS = -I$(incdir) -I$(top_builddir) -I$(devdir) -I$(srcdir) -I$(top_srcdir) -DLIBDIR=\"$(libdir)\" @CPPFLAGS@
+@@ -130,7 +132,7 @@
+ 
+ LIBPARSESUDOERS_OBJS = alias.lo audit.lo base64.lo defaults.lo hexchar.lo \
+ 		       gram.lo match.lo match_addr.lo pwutil.lo pwutil_impl.lo \
+-		       timestr.lo toke.lo toke_util.lo redblack.lo sha2.lo
++		       timestr.lo toke.lo toke_util.lo redblack.lo
+ 
+ SUDOERS_OBJS = $(AUTH_OBJS) boottime.lo check.lo env.lo find_path.lo \
+ 	       goodpath.lo group_plugin.lo interfaces.lo iolog.lo \
+@@ -149,7 +151,7 @@
+ 
+ CHECK_BASE64_OBJS = check_base64.o base64.o locale.o
+ 
+-CHECK_DIGEST_OBJS = check_digest.o sha2.o
++CHECK_DIGEST_OBJS = check_digest.o
+ 
+ CHECK_FILL_OBJS = check_fill.o hexchar.o locale.o toke_util.o
+ 
+@@ -196,13 +198,13 @@
+ 	$(LIBTOOL) @LT_STATIC@ --mode=link $(CC) $(LDFLAGS) $(LT_LDFLAGS) -o $@ $(SUDOERS_OBJS) libparsesudoers.la $(SUDOERS_LIBS) -module -avoid-version -rpath $(plugindir)
+ 
+ visudo: libparsesudoers.la $(VISUDO_OBJS) $(LT_LIBS)
+-	$(LIBTOOL) --mode=link $(CC) -o $@ $(VISUDO_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) libparsesudoers.la $(LIBS) $(NET_LIBS)
++	$(LIBTOOL) --mode=link $(CC) -o $@ $(VISUDO_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) libparsesudoers.la $(VISUDO_LIBS) $(LIBS)
+ 
+ sudoreplay: timestr.lo $(REPLAY_OBJS) $(LT_LIBS)
+ 	$(LIBTOOL) --mode=link $(CC) -o $@ $(REPLAY_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) timestr.lo $(REPLAY_LIBS) $(LIBS)
+ 
+ testsudoers: libparsesudoers.la $(TEST_OBJS) $(LT_LIBS)
+-	$(LIBTOOL) --mode=link $(CC) -o $@ $(TEST_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) libparsesudoers.la $(LIBS) $(NET_LIBS) @LIBDL@
++	$(LIBTOOL) --mode=link $(CC) -o $@ $(TEST_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) libparsesudoers.la $(TESTSUDOERS_LIBS) $(LIBS)
+ 
+ check_addr: $(CHECK_ADDR_OBJS) $(LT_LIBS)
+ 	$(LIBTOOL) --mode=link $(CC) -o $@ $(CHECK_ADDR_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) $(LIBS) $(NET_LIBS)
+@@ -211,7 +213,7 @@
+ 	$(LIBTOOL) --mode=link $(CC) -o $@ $(CHECK_BASE64_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) $(LIBS)
+ 
+ check_digest: $(CHECK_DIGEST_OBJS) $(LT_LIBS)
+-	$(LIBTOOL) --mode=link $(CC) -o $@ $(CHECK_DIGEST_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) $(LIBS)
++	$(LIBTOOL) --mode=link $(CC) -o $@ $(CHECK_DIGEST_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) $(LIBS) @LIBMD@
+ 
+ check_fill: $(CHECK_FILL_OBJS) $(LT_LIBS)
+ 	$(LIBTOOL) --mode=link $(CC) -o $@ $(CHECK_FILL_OBJS) $(LDFLAGS) $(PIE_LDFLAGS) $(SSP_LDFLAGS) $(LIBS)
+@@ -501,12 +503,12 @@
+                 $(top_builddir)/config.h
+ 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/regress/parser/check_base64.c
+ check_digest.o: $(srcdir)/regress/parser/check_digest.c $(incdir)/missing.h \
+-                $(srcdir)/sha2.h $(top_builddir)/config.h
++                $(top_builddir)/config.h
+ 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/regress/parser/check_digest.c
+ check_fill.o: $(srcdir)/regress/parser/check_fill.c $(devdir)/gram.h \
+               $(incdir)/missing.h $(incdir)/queue.h $(incdir)/sudo_plugin.h \
+-              $(srcdir)/parse.h $(srcdir)/toke.h $(top_builddir)/config.h \
+-              $(top_srcdir)/compat/stdbool.h
++              $(incdir)/sudo_util.h $(srcdir)/parse.h $(srcdir)/toke.h \
++              $(top_builddir)/config.h $(top_srcdir)/compat/stdbool.h
+ 	$(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/regress/parser/check_fill.c
+ check_iolog_path.o: $(srcdir)/regress/iolog_path/check_iolog_path.c \
+                     $(devdir)/def_data.c $(devdir)/def_data.h \
+@@ -607,8 +609,8 @@
+                  $(top_builddir)/pathnames.h $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/group_plugin.c
+ group_plugin.o: group_plugin.lo
+-hexchar.lo: $(srcdir)/hexchar.c $(incdir)/fatal.h $(incdir)/missing.h \
+-            $(incdir)/sudo_debug.h $(top_builddir)/config.h
++hexchar.lo: $(srcdir)/hexchar.c $(incdir)/missing.h $(incdir)/sudo_debug.h \
++            $(top_builddir)/config.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/hexchar.c
+ hexchar.o: hexchar.lo
+ interfaces.lo: $(srcdir)/interfaces.c $(devdir)/def_data.h $(incdir)/alloc.h \
+@@ -689,9 +691,9 @@
+           $(incdir)/gettext.h $(incdir)/missing.h $(incdir)/queue.h \
+           $(incdir)/sudo_debug.h $(incdir)/sudo_plugin.h $(incdir)/sudo_util.h \
+           $(srcdir)/defaults.h $(srcdir)/logging.h $(srcdir)/parse.h \
+-          $(srcdir)/sha2.h $(srcdir)/sudo_nss.h $(srcdir)/sudoers.h \
+-          $(top_builddir)/config.h $(top_builddir)/pathnames.h \
+-          $(top_srcdir)/compat/fnmatch.h $(top_srcdir)/compat/glob.h \
++          $(srcdir)/sudo_nss.h $(srcdir)/sudoers.h $(top_builddir)/config.h \
++          $(top_builddir)/pathnames.h $(top_srcdir)/compat/fnmatch.h \
++          $(top_srcdir)/compat/glob.h $(top_srcdir)/compat/sha2.h \
+           $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/match.c
+ match_addr.lo: $(srcdir)/match_addr.c $(devdir)/def_data.h $(incdir)/alloc.h \
+@@ -806,10 +808,6 @@
+               $(srcdir)/sudoers.h $(top_builddir)/config.h \
+               $(top_builddir)/pathnames.h $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/set_perms.c
+-sha2.lo: $(srcdir)/sha2.c $(incdir)/missing.h $(srcdir)/sha2.h \
+-         $(top_builddir)/config.h $(top_srcdir)/compat/endian.h
+-	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/sha2.c
+-sha2.o: sha2.lo
+ sia.lo: $(authdir)/sia.c $(devdir)/def_data.h $(incdir)/alloc.h \
+         $(incdir)/fatal.h $(incdir)/fileops.h $(incdir)/gettext.h \
+         $(incdir)/missing.h $(incdir)/queue.h $(incdir)/sudo_debug.h \
+@@ -891,9 +889,9 @@
+          $(incdir)/gettext.h $(incdir)/lbuf.h $(incdir)/missing.h \
+          $(incdir)/queue.h $(incdir)/secure_path.h $(incdir)/sudo_debug.h \
+          $(incdir)/sudo_plugin.h $(incdir)/sudo_util.h $(srcdir)/defaults.h \
+-         $(srcdir)/logging.h $(srcdir)/parse.h $(srcdir)/sha2.h \
+-         $(srcdir)/sudo_nss.h $(srcdir)/sudoers.h $(srcdir)/toke.h \
+-         $(top_builddir)/config.h $(top_builddir)/pathnames.h \
++         $(srcdir)/logging.h $(srcdir)/parse.h $(srcdir)/sudo_nss.h \
++         $(srcdir)/sudoers.h $(srcdir)/toke.h $(top_builddir)/config.h \
++         $(top_builddir)/pathnames.h $(top_srcdir)/compat/sha2.h \
+          $(top_srcdir)/compat/stdbool.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(devdir)/toke.c
+ toke_util.lo: $(srcdir)/toke_util.c $(devdir)/def_data.h $(devdir)/gram.h \
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/match.c sudo-1.8.9p5/plugins/sudoers/match.c
+--- sudo-1.8.9p5.old/plugins/sudoers/match.c	2014-01-07 19:08:54.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/match.c	2014-04-10 15:21:59.050793404 +0200
+@@ -88,7 +88,11 @@
+ 
+ #include "sudoers.h"
+ #include "parse.h"
+-#include "sha2.h"
++#ifdef HAVE_SHA224UPDATE
++# include <sha2.h>
++#else
++# include "compat/sha2.h"
++#endif
+ #include <gram.h>
+ 
+ static struct member_list empty = TAILQ_HEAD_INITIALIZER(empty);
+@@ -562,8 +566,13 @@
+     const char *digest_name;
+     const unsigned int digest_len;
+     void (*init)(SHA2_CTX *);
++#ifdef SHA2_VOID_PTR
++    void (*update)(SHA2_CTX *, const void *, size_t);
++    void (*final)(void *, SHA2_CTX *);
++#else
+     void (*update)(SHA2_CTX *, const unsigned char *, size_t);
+     void (*final)(unsigned char *, SHA2_CTX *);
++#endif
+ } digest_functions[] = {
+     {
+ 	"SHA224",
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/regress/parser/check_digest.c sudo-1.8.9p5/plugins/sudoers/regress/parser/check_digest.c
+--- sudo-1.8.9p5.old/plugins/sudoers/regress/parser/check_digest.c	2014-01-07 19:08:52.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/regress/parser/check_digest.c	2014-04-10 15:20:34.462897872 +0200
+@@ -39,9 +39,13 @@
+ #elif defined(HAVE_INTTYPES_H)
+ # include <inttypes.h>
+ #endif
++#ifdef HAVE_SHA224UPDATE
++# include <sha2.h>
++#else
++# include "compat/sha2.h"
++#endif
+ 
+ #include "missing.h"
+-#include "sha2.h"
+ 
+ __dso_public int main(int argc, char *argv[]);
+ 
+@@ -49,8 +53,13 @@
+     const char *digest_name;
+     const int digest_len;
+     void (*init)(SHA2_CTX *);
++#ifdef SHA2_VOID_PTR
++    void (*update)(SHA2_CTX *, const void *, size_t);
++    void (*final)(void *, SHA2_CTX *);
++#else
+     void (*update)(SHA2_CTX *, const unsigned char *, size_t);
+     void (*final)(unsigned char *, SHA2_CTX *);
++#endif
+ } digest_functions[] = {
+     {
+ 	"SHA224",
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/regress/sudoers/test14.toke.ok sudo-1.8.9p5/plugins/sudoers/regress/sudoers/test14.toke.ok
+--- sudo-1.8.9p5.old/plugins/sudoers/regress/sudoers/test14.toke.ok	2014-01-07 19:08:52.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/regress/sudoers/test14.toke.ok	2014-04-10 15:20:34.463272107 +0200
+@@ -1,4 +1,4 @@
+-CMNDALIAS ALIAS = SHA224 : DIGEST COMMAND 
+-CMNDALIAS ALIAS = SHA256 : DIGEST COMMAND 
++CMNDALIAS ALIAS = SHA224_TOK : DIGEST COMMAND 
++CMNDALIAS ALIAS = SHA256_TOK : DIGEST COMMAND 
+ 
+-WORD(5) ALL = ALIAS , ALIAS , SHA512 : DIGEST COMMAND 
++WORD(5) ALL = ALIAS , ALIAS , SHA512_TOK : DIGEST COMMAND 
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/sha2.c sudo-1.8.9p5/plugins/sudoers/sha2.c
+--- sudo-1.8.9p5.old/plugins/sudoers/sha2.c	2014-01-07 19:08:54.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/sha2.c	1970-01-01 01:00:00.000000000 +0100
+@@ -1,526 +0,0 @@
+-/*
+- * Copyright (c) 2013 Todd C. Miller <Todd.Miller@courtesan.com>
+- *
+- * Permission to use, copy, modify, and distribute this software for any
+- * purpose with or without fee is hereby granted, provided that the above
+- * copyright notice and this permission notice appear in all copies.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+- */
+-
+-/*
+- * Implementation of SHA-224, SHA-256, SHA-384 and SHA-512
+- * as per FIPS 180-4: Secure Hash Standard (SHS)
+- * http://csrc.nist.gov/publications/fips/fips180-4/fips-180-4.pdf
+- *
+- * Derived from the public domain SHA-1 and SHA-2 implementations
+- * by Steve Reid and Wei Dai respectively.
+- */
+-
+-#include <config.h>
+-
+-#include <stdio.h>
+-#ifdef STDC_HEADERS
+-# include <stdlib.h>
+-# include <stddef.h>
+-#else
+-# ifdef HAVE_STDLIB_H
+-#  include <stdlib.h>
+-# endif
+-#endif /* STDC_HEADERS */
+-#ifdef HAVE_STRING_H
+-# if defined(HAVE_MEMORY_H) && !defined(STDC_HEADERS)
+-#  include <memory.h>
+-# endif
+-# include <string.h>
+-#endif /* HAVE_STRING_H */
+-#ifdef HAVE_STRINGS_H
+-# include <strings.h>
+-#endif /* HAVE_STRINGS_H */
+-#if defined(HAVE_STDINT_H)
+-# include <stdint.h>
+-#elif defined(HAVE_INTTYPES_H)
+-# include <inttypes.h>
+-#endif
+-#if defined(HAVE_ENDIAN_H)
+-# include <endian.h>
+-#elif defined(HAVE_SYS_ENDIAN_H)
+-# include <sys/endian.h>
+-#elif defined(HAVE_MACHINE_ENDIAN_H)
+-# include <machine/endian.h>
+-#else
+-# include "compat/endian.h"
+-#endif
+-
+-#include "missing.h"
+-#include "sha2.h"
+-
+-/*
+- * SHA-2 operates on 32-bit and 64-bit words in big endian byte order.
+- * The following macros convert between character arrays and big endian words.
+- */
+-#define BE8TO32(x, y) do {				\
+-	(x) = (((uint32_t)((y)[0] & 255) << 24) |	\
+-	       ((uint32_t)((y)[1] & 255) << 16) |	\
+-	       ((uint32_t)((y)[2] & 255) << 8)  |	\
+-	       ((uint32_t)((y)[3] & 255)));		\
+-} while (0)
+-
+-#define BE8TO64(x, y) do {				\
+-	(x) = (((uint64_t)((y)[0] & 255) << 56) |	\
+-	       ((uint64_t)((y)[1] & 255) << 48) |	\
+-	       ((uint64_t)((y)[2] & 255) << 40) |	\
+-	       ((uint64_t)((y)[3] & 255) << 32) |	\
+-	       ((uint64_t)((y)[4] & 255) << 24) |	\
+-	       ((uint64_t)((y)[5] & 255) << 16) |	\
+-	       ((uint64_t)((y)[6] & 255) << 8)  |	\
+-	       ((uint64_t)((y)[7] & 255)));		\
+-} while (0)
+-
+-#define BE32TO8(x, y) do {			\
+-	(x)[0] = (uint8_t)(((y) >> 24) & 255);	\
+-	(x)[1] = (uint8_t)(((y) >> 16) & 255);	\
+-	(x)[2] = (uint8_t)(((y) >> 8) & 255);	\
+-	(x)[3] = (uint8_t)((y) & 255);		\
+-} while (0)
+-
+-#define BE64TO8(x, y) do {			\
+-	(x)[0] = (uint8_t)(((y) >> 56) & 255);	\
+-	(x)[1] = (uint8_t)(((y) >> 48) & 255);	\
+-	(x)[2] = (uint8_t)(((y) >> 40) & 255);	\
+-	(x)[3] = (uint8_t)(((y) >> 32) & 255);	\
+-	(x)[4] = (uint8_t)(((y) >> 24) & 255);	\
+-	(x)[5] = (uint8_t)(((y) >> 16) & 255);	\
+-	(x)[6] = (uint8_t)(((y) >> 8) & 255);	\
+-	(x)[7] = (uint8_t)((y) & 255);		\
+-} while (0)
+-
+-#define rotrFixed(x,y) (y ? ((x>>y) | (x<<(sizeof(x)*8-y))) : x)
+-
+-#define blk0(i) (W[i])
+-#define blk2(i) (W[i&15]+=s1(W[(i-2)&15])+W[(i-7)&15]+s0(W[(i-15)&15]))
+-
+-#define Ch(x,y,z) (z^(x&(y^z)))
+-#define Maj(x,y,z) (y^((x^y)&(y^z)))
+-
+-#define a(i) T[(0-i)&7]
+-#define b(i) T[(1-i)&7]
+-#define c(i) T[(2-i)&7]
+-#define d(i) T[(3-i)&7]
+-#define e(i) T[(4-i)&7]
+-#define f(i) T[(5-i)&7]
+-#define g(i) T[(6-i)&7]
+-#define h(i) T[(7-i)&7]
+-
+-void
+-SHA224Init(SHA2_CTX *ctx)
+-{
+-	memset(ctx, 0, sizeof(*ctx));
+-	ctx->state.st32[0] = 0xc1059ed8UL;
+-	ctx->state.st32[1] = 0x367cd507UL;
+-	ctx->state.st32[2] = 0x3070dd17UL;
+-	ctx->state.st32[3] = 0xf70e5939UL;
+-	ctx->state.st32[4] = 0xffc00b31UL;
+-	ctx->state.st32[5] = 0x68581511UL;
+-	ctx->state.st32[6] = 0x64f98fa7UL;
+-	ctx->state.st32[7] = 0xbefa4fa4UL;
+-}
+-
+-void
+-SHA224Transform(uint32_t state[8], const uint8_t buffer[SHA224_BLOCK_LENGTH])
+-{
+-	SHA256Transform(state, buffer);
+-}
+-
+-void
+-SHA224Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
+-{
+-	SHA256Update(ctx, data, len);
+-}
+-
+-void
+-SHA224Pad(SHA2_CTX *ctx)
+-{
+-	SHA256Pad(ctx);
+-}
+-
+-void
+-SHA224Final(uint8_t digest[SHA224_DIGEST_LENGTH], SHA2_CTX *ctx)
+-{
+-	SHA256Pad(ctx);
+-	if (digest != NULL) {
+-#if BYTE_ORDER == BIG_ENDIAN
+-		memcpy(digest, ctx->state.st32, SHA224_DIGEST_LENGTH);
+-#else
+-		unsigned int i;
+-
+-		for (i = 0; i < 7; i++)
+-			BE32TO8(digest + (i * 4), ctx->state.st32[i]);
+-#endif
+-		memset(ctx, 0, sizeof(*ctx));
+-	}
+-}
+-
+-static const uint32_t SHA256_K[64] = {
+-	0x428a2f98UL, 0x71374491UL, 0xb5c0fbcfUL, 0xe9b5dba5UL,
+-	0x3956c25bUL, 0x59f111f1UL, 0x923f82a4UL, 0xab1c5ed5UL,
+-	0xd807aa98UL, 0x12835b01UL, 0x243185beUL, 0x550c7dc3UL,
+-	0x72be5d74UL, 0x80deb1feUL, 0x9bdc06a7UL, 0xc19bf174UL,
+-	0xe49b69c1UL, 0xefbe4786UL, 0x0fc19dc6UL, 0x240ca1ccUL,
+-	0x2de92c6fUL, 0x4a7484aaUL, 0x5cb0a9dcUL, 0x76f988daUL,
+-	0x983e5152UL, 0xa831c66dUL, 0xb00327c8UL, 0xbf597fc7UL,
+-	0xc6e00bf3UL, 0xd5a79147UL, 0x06ca6351UL, 0x14292967UL,
+-	0x27b70a85UL, 0x2e1b2138UL, 0x4d2c6dfcUL, 0x53380d13UL,
+-	0x650a7354UL, 0x766a0abbUL, 0x81c2c92eUL, 0x92722c85UL,
+-	0xa2bfe8a1UL, 0xa81a664bUL, 0xc24b8b70UL, 0xc76c51a3UL,
+-	0xd192e819UL, 0xd6990624UL, 0xf40e3585UL, 0x106aa070UL,
+-	0x19a4c116UL, 0x1e376c08UL, 0x2748774cUL, 0x34b0bcb5UL,
+-	0x391c0cb3UL, 0x4ed8aa4aUL, 0x5b9cca4fUL, 0x682e6ff3UL,
+-	0x748f82eeUL, 0x78a5636fUL, 0x84c87814UL, 0x8cc70208UL,
+-	0x90befffaUL, 0xa4506cebUL, 0xbef9a3f7UL, 0xc67178f2UL
+-};
+-
+-void
+-SHA256Init(SHA2_CTX *ctx)
+-{
+-	memset(ctx, 0, sizeof(*ctx));
+-	ctx->state.st32[0] = 0x6a09e667UL;
+-	ctx->state.st32[1] = 0xbb67ae85UL;
+-	ctx->state.st32[2] = 0x3c6ef372UL;
+-	ctx->state.st32[3] = 0xa54ff53aUL;
+-	ctx->state.st32[4] = 0x510e527fUL;
+-	ctx->state.st32[5] = 0x9b05688cUL;
+-	ctx->state.st32[6] = 0x1f83d9abUL;
+-	ctx->state.st32[7] = 0x5be0cd19UL;
+-}
+-
+-/* Round macros for SHA256 */
+-#define R(i) do {							     \
+-	h(i)+=S1(e(i))+Ch(e(i),f(i),g(i))+SHA256_K[i+j]+(j?blk2(i):blk0(i)); \
+-	d(i)+=h(i);							     \
+-	h(i)+=S0(a(i))+Maj(a(i),b(i),c(i));				     \
+-} while (0)
+-
+-#define S0(x) (rotrFixed(x,2)^rotrFixed(x,13)^rotrFixed(x,22))
+-#define S1(x) (rotrFixed(x,6)^rotrFixed(x,11)^rotrFixed(x,25))
+-#define s0(x) (rotrFixed(x,7)^rotrFixed(x,18)^(x>>3))
+-#define s1(x) (rotrFixed(x,17)^rotrFixed(x,19)^(x>>10))
+-
+-void
+-SHA256Transform(uint32_t state[8], const uint8_t data[SHA256_BLOCK_LENGTH])
+-{
+-	uint32_t W[16];
+-	uint32_t T[8];
+-	unsigned int j;
+-
+-	/* Copy context state to working vars. */
+-	memcpy(T, state, sizeof(T));
+-	/* Copy data to W in big endian format. */
+-#if BYTE_ORDER == BIG_ENDIAN
+-	memcpy(W, data, sizeof(W));
+-#else
+-	for (j = 0; j < 16; j++) {
+-	    BE8TO32(W[j], data);
+-	    data += 4;
+-	}
+-#endif
+-	/* 64 operations, partially loop unrolled. */
+-	for (j = 0; j < 64; j += 16)
+-	{
+-		R( 0); R( 1); R( 2); R( 3);
+-		R( 4); R( 5); R( 6); R( 7);
+-		R( 8); R( 9); R(10); R(11);
+-		R(12); R(13); R(14); R(15);
+-	}
+-	/* Add the working vars back into context state. */
+-	state[0] += a(0);
+-	state[1] += b(0);
+-	state[2] += c(0);
+-	state[3] += d(0);
+-	state[4] += e(0);
+-	state[5] += f(0);
+-	state[6] += g(0);
+-	state[7] += h(0);
+-	/* Cleanup */
+-	memset_s(T, sizeof(T), 0, sizeof(T));
+-	memset_s(W, sizeof(W), 0, sizeof(W));
+-}
+-
+-#undef S0
+-#undef S1
+-#undef s0
+-#undef s1
+-#undef R
+-
+-void
+-SHA256Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
+-{
+-	size_t i = 0, j;
+-
+-	j = (size_t)((ctx->count[0] >> 3) & (SHA256_BLOCK_LENGTH - 1));
+-	ctx->count[0] += (len << 3);
+-	if ((j + len) > SHA256_BLOCK_LENGTH - 1) {
+-		memcpy(&ctx->buffer[j], data, (i = SHA256_BLOCK_LENGTH - j));
+-		SHA256Transform(ctx->state.st32, ctx->buffer);
+-		for ( ; i + SHA256_BLOCK_LENGTH - 1 < len; i += SHA256_BLOCK_LENGTH)
+-			SHA256Transform(ctx->state.st32, (uint8_t *)&data[i]);
+-		j = 0;
+-	}
+-	memcpy(&ctx->buffer[j], &data[i], len - i);
+-}
+-
+-void
+-SHA256Pad(SHA2_CTX *ctx)
+-{
+-	uint8_t finalcount[8];
+-
+-	/* Store unpadded message length in bits in big endian format. */
+-	BE64TO8(finalcount, ctx->count[0]);
+-
+-	/* Append a '1' bit (0x80) to the message. */
+-	SHA256Update(ctx, (uint8_t *)"\200", 1);
+-
+-	/* Pad message such that the resulting length modulo 512 is 448. */
+-	while ((ctx->count[0] & 504) != 448)
+-		SHA256Update(ctx, (uint8_t *)"\0", 1);
+-
+-	/* Append length of message in bits and do final SHA256Transform(). */
+-	SHA256Update(ctx, finalcount, sizeof(finalcount));
+-}
+-
+-void
+-SHA256Final(uint8_t digest[SHA256_DIGEST_LENGTH], SHA2_CTX *ctx)
+-{
+-	SHA256Pad(ctx);
+-	if (digest != NULL) {
+-#if BYTE_ORDER == BIG_ENDIAN
+-		memcpy(digest, ctx->state.st32, SHA256_DIGEST_LENGTH);
+-#else
+-		unsigned int i;
+-
+-		for (i = 0; i < 8; i++)
+-			BE32TO8(digest + (i * 4), ctx->state.st32[i]);
+-#endif
+-		memset(ctx, 0, sizeof(*ctx));
+-	}
+-}
+-
+-void
+-SHA384Init(SHA2_CTX *ctx)
+-{
+-	memset(ctx, 0, sizeof(*ctx));
+-	ctx->state.st64[0] = 0xcbbb9d5dc1059ed8ULL;
+-	ctx->state.st64[1] = 0x629a292a367cd507ULL;
+-	ctx->state.st64[2] = 0x9159015a3070dd17ULL;
+-	ctx->state.st64[3] = 0x152fecd8f70e5939ULL;
+-	ctx->state.st64[4] = 0x67332667ffc00b31ULL;
+-	ctx->state.st64[5] = 0x8eb44a8768581511ULL;
+-	ctx->state.st64[6] = 0xdb0c2e0d64f98fa7ULL;
+-	ctx->state.st64[7] = 0x47b5481dbefa4fa4ULL;
+-}
+-
+-void
+-SHA384Transform(uint64_t state[8], const uint8_t data[SHA384_BLOCK_LENGTH])
+-{
+-	SHA512Transform(state, data);
+-}
+-
+-void
+-SHA384Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
+-{
+-	SHA512Update(ctx, data, len);
+-}
+-
+-void
+-SHA384Pad(SHA2_CTX *ctx)
+-{
+-	SHA512Pad(ctx);
+-}
+-
+-void
+-SHA384Final(uint8_t digest[SHA384_DIGEST_LENGTH], SHA2_CTX *ctx)
+-{
+-	SHA384Pad(ctx);
+-	if (digest != NULL) {
+-#if BYTE_ORDER == BIG_ENDIAN
+-		memcpy(digest, ctx->state.st64, SHA384_DIGEST_LENGTH);
+-#else
+-		unsigned int i;
+-
+-		for (i = 0; i < 6; i++)
+-			BE64TO8(digest + (i * 8), ctx->state.st64[i]);
+-#endif
+-		memset(ctx, 0, sizeof(*ctx));
+-	}
+-}
+-
+-static const uint64_t SHA512_K[80] = {
+-	0x428a2f98d728ae22ULL, 0x7137449123ef65cdULL,
+-	0xb5c0fbcfec4d3b2fULL, 0xe9b5dba58189dbbcULL,
+-	0x3956c25bf348b538ULL, 0x59f111f1b605d019ULL,
+-	0x923f82a4af194f9bULL, 0xab1c5ed5da6d8118ULL,
+-	0xd807aa98a3030242ULL, 0x12835b0145706fbeULL,
+-	0x243185be4ee4b28cULL, 0x550c7dc3d5ffb4e2ULL,
+-	0x72be5d74f27b896fULL, 0x80deb1fe3b1696b1ULL,
+-	0x9bdc06a725c71235ULL, 0xc19bf174cf692694ULL,
+-	0xe49b69c19ef14ad2ULL, 0xefbe4786384f25e3ULL,
+-	0x0fc19dc68b8cd5b5ULL, 0x240ca1cc77ac9c65ULL,
+-	0x2de92c6f592b0275ULL, 0x4a7484aa6ea6e483ULL,
+-	0x5cb0a9dcbd41fbd4ULL, 0x76f988da831153b5ULL,
+-	0x983e5152ee66dfabULL, 0xa831c66d2db43210ULL,
+-	0xb00327c898fb213fULL, 0xbf597fc7beef0ee4ULL,
+-	0xc6e00bf33da88fc2ULL, 0xd5a79147930aa725ULL,
+-	0x06ca6351e003826fULL, 0x142929670a0e6e70ULL,
+-	0x27b70a8546d22ffcULL, 0x2e1b21385c26c926ULL,
+-	0x4d2c6dfc5ac42aedULL, 0x53380d139d95b3dfULL,
+-	0x650a73548baf63deULL, 0x766a0abb3c77b2a8ULL,
+-	0x81c2c92e47edaee6ULL, 0x92722c851482353bULL,
+-	0xa2bfe8a14cf10364ULL, 0xa81a664bbc423001ULL,
+-	0xc24b8b70d0f89791ULL, 0xc76c51a30654be30ULL,
+-	0xd192e819d6ef5218ULL, 0xd69906245565a910ULL,
+-	0xf40e35855771202aULL, 0x106aa07032bbd1b8ULL,
+-	0x19a4c116b8d2d0c8ULL, 0x1e376c085141ab53ULL,
+-	0x2748774cdf8eeb99ULL, 0x34b0bcb5e19b48a8ULL,
+-	0x391c0cb3c5c95a63ULL, 0x4ed8aa4ae3418acbULL,
+-	0x5b9cca4f7763e373ULL, 0x682e6ff3d6b2b8a3ULL,
+-	0x748f82ee5defb2fcULL, 0x78a5636f43172f60ULL,
+-	0x84c87814a1f0ab72ULL, 0x8cc702081a6439ecULL,
+-	0x90befffa23631e28ULL, 0xa4506cebde82bde9ULL,
+-	0xbef9a3f7b2c67915ULL, 0xc67178f2e372532bULL,
+-	0xca273eceea26619cULL, 0xd186b8c721c0c207ULL,
+-	0xeada7dd6cde0eb1eULL, 0xf57d4f7fee6ed178ULL,
+-	0x06f067aa72176fbaULL, 0x0a637dc5a2c898a6ULL,
+-	0x113f9804bef90daeULL, 0x1b710b35131c471bULL,
+-	0x28db77f523047d84ULL, 0x32caab7b40c72493ULL,
+-	0x3c9ebe0a15c9bebcULL, 0x431d67c49c100d4cULL,
+-	0x4cc5d4becb3e42b6ULL, 0x597f299cfc657e2aULL,
+-	0x5fcb6fab3ad6faecULL, 0x6c44198c4a475817ULL
+-};
+-
+-void
+-SHA512Init(SHA2_CTX *ctx)
+-{
+-	memset(ctx, 0, sizeof(*ctx));
+-	ctx->state.st64[0] = 0x6a09e667f3bcc908ULL;
+-	ctx->state.st64[1] = 0xbb67ae8584caa73bULL;
+-	ctx->state.st64[2] = 0x3c6ef372fe94f82bULL;
+-	ctx->state.st64[3] = 0xa54ff53a5f1d36f1ULL;
+-	ctx->state.st64[4] = 0x510e527fade682d1ULL;
+-	ctx->state.st64[5] = 0x9b05688c2b3e6c1fULL;
+-	ctx->state.st64[6] = 0x1f83d9abfb41bd6bULL;
+-	ctx->state.st64[7] = 0x5be0cd19137e2179ULL;
+-}
+-
+-/* Round macros for SHA512 */
+-#define R(i) do {							     \
+-	h(i)+=S1(e(i))+Ch(e(i),f(i),g(i))+SHA512_K[i+j]+(j?blk2(i):blk0(i)); \
+-	d(i)+=h(i);							     \
+-	h(i)+=S0(a(i))+Maj(a(i),b(i),c(i));				     \
+-} while (0)
+-
+-#define S0(x) (rotrFixed(x,28)^rotrFixed(x,34)^rotrFixed(x,39))
+-#define S1(x) (rotrFixed(x,14)^rotrFixed(x,18)^rotrFixed(x,41))
+-#define s0(x) (rotrFixed(x,1)^rotrFixed(x,8)^(x>>7))
+-#define s1(x) (rotrFixed(x,19)^rotrFixed(x,61)^(x>>6))
+-
+-void
+-SHA512Transform(uint64_t state[8], const uint8_t data[SHA512_BLOCK_LENGTH])
+-{
+-	uint64_t W[16];
+-	uint64_t T[8];
+-	unsigned int j;
+-
+-	/* Copy context state to working vars. */
+-	memcpy(T, state, sizeof(T));
+-	/* Copy data to W in big endian format. */
+-#if BYTE_ORDER == BIG_ENDIAN
+-	memcpy(W, data, sizeof(W));
+-#else
+-	for (j = 0; j < 16; j++) {
+-	    BE8TO64(W[j], data);
+-	    data += 8;
+-	}
+-#endif
+-	/* 80 operations, partially loop unrolled. */
+-	for (j = 0; j < 80; j += 16)
+-	{
+-		R( 0); R( 1); R( 2); R( 3);
+-		R( 4); R( 5); R( 6); R( 7);
+-		R( 8); R( 9); R(10); R(11);
+-		R(12); R(13); R(14); R(15);
+-	}
+-	/* Add the working vars back into context state. */
+-	state[0] += a(0);
+-	state[1] += b(0);
+-	state[2] += c(0);
+-	state[3] += d(0);
+-	state[4] += e(0);
+-	state[5] += f(0);
+-	state[6] += g(0);
+-	state[7] += h(0);
+-	/* Cleanup. */
+-	memset_s(T, sizeof(T), 0, sizeof(T));
+-	memset_s(W, sizeof(W), 0, sizeof(W));
+-}
+-
+-void
+-SHA512Update(SHA2_CTX *ctx, const uint8_t *data, size_t len)
+-{
+-	size_t i = 0, j;
+-
+-	j = (size_t)((ctx->count[0] >> 3) & (SHA512_BLOCK_LENGTH - 1));
+-	ctx->count[0] += (len << 3);
+-	if (ctx->count[0] < (len << 3))
+-		ctx->count[1]++;
+-	if ((j + len) > SHA512_BLOCK_LENGTH - 1) {
+-		memcpy(&ctx->buffer[j], data, (i = SHA512_BLOCK_LENGTH - j));
+-		SHA512Transform(ctx->state.st64, ctx->buffer);
+-		for ( ; i + SHA512_BLOCK_LENGTH - 1 < len; i += SHA512_BLOCK_LENGTH)
+-			SHA512Transform(ctx->state.st64, (uint8_t *)&data[i]);
+-		j = 0;
+-	}
+-	memcpy(&ctx->buffer[j], &data[i], len - i);
+-}
+-
+-void
+-SHA512Pad(SHA2_CTX *ctx)
+-{
+-	uint8_t finalcount[16];
+-
+-	/* Store unpadded message length in bits in big endian format. */
+-	BE64TO8(finalcount, ctx->count[1]);
+-	BE64TO8(finalcount + 8, ctx->count[0]);
+-
+-	/* Append a '1' bit (0x80) to the message. */
+-	SHA512Update(ctx, (uint8_t *)"\200", 1);
+-
+-	/* Pad message such that the resulting length modulo 1024 is 896. */
+-	while ((ctx->count[0] & 1008) != 896)
+-		SHA512Update(ctx, (uint8_t *)"\0", 1);
+-
+-	/* Append length of message in bits and do final SHA512Transform(). */
+-	SHA512Update(ctx, finalcount, sizeof(finalcount));
+-}
+-
+-void
+-SHA512Final(uint8_t digest[SHA512_DIGEST_LENGTH], SHA2_CTX *ctx)
+-{
+-	SHA512Pad(ctx);
+-	if (digest != NULL) {
+-#if BYTE_ORDER == BIG_ENDIAN
+-		memcpy(digest, ctx->state.st64, SHA512_DIGEST_LENGTH);
+-#else
+-		unsigned int i;
+-
+-		for (i = 0; i < 8; i++)
+-			BE64TO8(digest + (i * 8), ctx->state.st64[i]);
+-#endif
+-		memset(ctx, 0, sizeof(*ctx));
+-	}
+-}
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/sha2.h sudo-1.8.9p5/plugins/sudoers/sha2.h
+--- sudo-1.8.9p5.old/plugins/sudoers/sha2.h	2014-01-07 19:08:54.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/sha2.h	1970-01-01 01:00:00.000000000 +0100
+@@ -1,74 +0,0 @@
+-/*
+- * Copyright (c) 2013 Todd C. Miller <Todd.Miller@courtesan.com>
+- *
+- * Permission to use, copy, modify, and distribute this software for any
+- * purpose with or without fee is hereby granted, provided that the above
+- * copyright notice and this permission notice appear in all copies.
+- *
+- * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+- * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+- * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+- * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+- * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+- * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+- * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+- */
+-
+-/*
+- * Derived from the public domain SHA-1 and SHA-2 implementations
+- * by Steve Reid and Wei Dai respectively.
+- */
+-
+-#ifndef _SUDOERS_SHA2_H
+-#define _SUDOERS_SHA2_H
+-
+-#define	SHA224_BLOCK_LENGTH		64
+-#define	SHA224_DIGEST_LENGTH		28
+-#define	SHA224_DIGEST_STRING_LENGTH	(SHA224_DIGEST_LENGTH * 2 + 1)
+-
+-#define	SHA256_BLOCK_LENGTH		64
+-#define	SHA256_DIGEST_LENGTH		32
+-#define	SHA256_DIGEST_STRING_LENGTH	(SHA256_DIGEST_LENGTH * 2 + 1)
+-
+-#define	SHA384_BLOCK_LENGTH		128
+-#define	SHA384_DIGEST_LENGTH		48
+-#define	SHA384_DIGEST_STRING_LENGTH	(SHA384_DIGEST_LENGTH * 2 + 1)
+-
+-#define	SHA512_BLOCK_LENGTH		128
+-#define	SHA512_DIGEST_LENGTH		64
+-#define	SHA512_DIGEST_STRING_LENGTH	(SHA512_DIGEST_LENGTH * 2 + 1)
+-
+-typedef struct {
+-    union {
+-	uint32_t st32[8];	/* sha224 and sha256 */
+-	uint64_t st64[8];	/* sha384 and sha512 */
+-    } state;
+-    uint64_t count[2];
+-    uint8_t buffer[SHA512_BLOCK_LENGTH];
+-} SHA2_CTX;
+-
+-void SHA224Init(SHA2_CTX *ctx);
+-void SHA224Pad(SHA2_CTX *ctx);
+-void SHA224Transform(uint32_t state[8], const uint8_t buffer[SHA224_BLOCK_LENGTH]);
+-void SHA224Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
+-void SHA224Final(uint8_t digest[SHA224_DIGEST_LENGTH], SHA2_CTX *ctx);
+-
+-void SHA256Init(SHA2_CTX *ctx);
+-void SHA256Pad(SHA2_CTX *ctx);
+-void SHA256Transform(uint32_t state[8], const uint8_t buffer[SHA256_BLOCK_LENGTH]);
+-void SHA256Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
+-void SHA256Final(uint8_t digest[SHA256_DIGEST_LENGTH], SHA2_CTX *ctx);
+-
+-void SHA384Init(SHA2_CTX *ctx);
+-void SHA384Pad(SHA2_CTX *ctx);
+-void SHA384Transform(uint64_t state[8], const uint8_t buffer[SHA384_BLOCK_LENGTH]);
+-void SHA384Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
+-void SHA384Final(uint8_t digest[SHA384_DIGEST_LENGTH], SHA2_CTX *ctx);
+-
+-void SHA512Init(SHA2_CTX *ctx);
+-void SHA512Pad(SHA2_CTX *ctx);
+-void SHA512Transform(uint64_t state[8], const uint8_t buffer[SHA512_BLOCK_LENGTH]);
+-void SHA512Update(SHA2_CTX *ctx, const uint8_t *data, size_t len);
+-void SHA512Final(uint8_t digest[SHA512_DIGEST_LENGTH], SHA2_CTX *ctx);
+-
+-#endif /* _SUDOERS_SHA2_H */
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/toke.c sudo-1.8.9p5/plugins/sudoers/toke.c
+--- sudo-1.8.9p5.old/plugins/sudoers/toke.c	2014-01-07 19:08:50.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/toke.c	2014-04-10 15:20:34.466936711 +0200
+@@ -1997,6 +1997,11 @@
+ #  include <ndir.h>
+ # endif
+ #endif
++#ifdef HAVE_SHA224UPDATE
++# include <sha2.h>
++#else
++# include "compat/sha2.h"
++#endif
+ #include <errno.h>
+ #include <ctype.h>
+ #include "sudoers.h"
+@@ -2004,7 +2009,6 @@
+ #include "toke.h"
+ #include <gram.h>
+ #include "lbuf.h"
+-#include "sha2.h"
+ #include "secure_path.h"
+ 
+ int sudolineno;			/* current sudoers line number. */
+@@ -2050,7 +2054,7 @@
+ 
+ #define WANTDIGEST 6
+ 
+-#line 2053 "lex.sudoers.c"
++#line 2057 "lex.sudoers.c"
+ 
+ /* Macros after this point can all be overridden by user definitions in
+  * section 1.
+@@ -2204,9 +2208,9 @@
+ 	register char *yy_cp, *yy_bp;
+ 	register int yy_act;
+ 
+-#line 137 "toke.l"
++#line 141 "toke.l"
+ 
+-#line 2209 "lex.sudoers.c"
++#line 2213 "lex.sudoers.c"
+ 
+ 	if ( yy_init )
+ 		{
+@@ -2292,7 +2296,7 @@
+ 
+ case 1:
+ YY_RULE_SETUP
+-#line 138 "toke.l"
++#line 142 "toke.l"
+ {
+ 			    LEXTRACE(", ");
+ 			    LEXRETURN(',');
+@@ -2300,12 +2304,12 @@
+ 	YY_BREAK
+ case 2:
+ YY_RULE_SETUP
+-#line 143 "toke.l"
++#line 147 "toke.l"
+ BEGIN STARTDEFS;
+ 	YY_BREAK
+ case 3:
+ YY_RULE_SETUP
+-#line 145 "toke.l"
++#line 149 "toke.l"
+ {
+ 			    BEGIN INDEFS;
+ 			    LEXTRACE("DEFVAR ");
+@@ -2317,7 +2321,7 @@
+ 
+ case 4:
+ YY_RULE_SETUP
+-#line 154 "toke.l"
++#line 158 "toke.l"
+ {
+ 			    BEGIN STARTDEFS;
+ 			    LEXTRACE(", ");
+@@ -2326,7 +2330,7 @@
+ 	YY_BREAK
+ case 5:
+ YY_RULE_SETUP
+-#line 160 "toke.l"
++#line 164 "toke.l"
+ {
+ 			    LEXTRACE("= ");
+ 			    LEXRETURN('=');
+@@ -2334,7 +2338,7 @@
+ 	YY_BREAK
+ case 6:
+ YY_RULE_SETUP
+-#line 165 "toke.l"
++#line 169 "toke.l"
+ {
+ 			    LEXTRACE("+= ");
+ 			    LEXRETURN('+');
+@@ -2342,7 +2346,7 @@
+ 	YY_BREAK
+ case 7:
+ YY_RULE_SETUP
+-#line 170 "toke.l"
++#line 174 "toke.l"
+ {
+ 			    LEXTRACE("-= ");
+ 			    LEXRETURN('-');
+@@ -2350,7 +2354,7 @@
+ 	YY_BREAK
+ case 8:
+ YY_RULE_SETUP
+-#line 175 "toke.l"
++#line 179 "toke.l"
+ {
+ 			    LEXTRACE("BEGINSTR ");
+ 			    sudoerslval.string = NULL;
+@@ -2360,7 +2364,7 @@
+ 	YY_BREAK
+ case 9:
+ YY_RULE_SETUP
+-#line 182 "toke.l"
++#line 186 "toke.l"
+ {
+ 			    LEXTRACE("WORD(2) ");
+ 			    if (!fill(sudoerstext, sudoersleng))
+@@ -2372,7 +2376,7 @@
+ 
+ case 10:
+ YY_RULE_SETUP
+-#line 191 "toke.l"
++#line 195 "toke.l"
+ {
+ 			    /* Line continuation char followed by newline. */
+ 			    sudolineno++;
+@@ -2381,7 +2385,7 @@
+ 	YY_BREAK
+ case 11:
+ YY_RULE_SETUP
+-#line 197 "toke.l"
++#line 201 "toke.l"
+ {
+ 			    LEXTRACE("ENDSTR ");
+ 			    BEGIN prev_state;
+@@ -2416,7 +2420,7 @@
+ 	YY_BREAK
+ case 12:
+ YY_RULE_SETUP
+-#line 229 "toke.l"
++#line 233 "toke.l"
+ {
+ 			    LEXTRACE("BACKSLASH ");
+ 			    if (!append(sudoerstext, sudoersleng))
+@@ -2425,7 +2429,7 @@
+ 	YY_BREAK
+ case 13:
+ YY_RULE_SETUP
+-#line 235 "toke.l"
++#line 239 "toke.l"
+ {
+ 			    LEXTRACE("STRBODY ");
+ 			    if (!append(sudoerstext, sudoersleng))
+@@ -2436,7 +2440,7 @@
+ 
+ case 14:
+ YY_RULE_SETUP
+-#line 243 "toke.l"
++#line 247 "toke.l"
+ {
+ 			    /* quoted fnmatch glob char, pass verbatim */
+ 			    LEXTRACE("QUOTEDCHAR ");
+@@ -2447,7 +2451,7 @@
+ 	YY_BREAK
+ case 15:
+ YY_RULE_SETUP
+-#line 251 "toke.l"
++#line 255 "toke.l"
+ {
+ 			    /* quoted sudoers special char, strip backslash */
+ 			    LEXTRACE("QUOTEDCHAR ");
+@@ -2458,7 +2462,7 @@
+ 	YY_BREAK
+ case 16:
+ YY_RULE_SETUP
+-#line 259 "toke.l"
++#line 263 "toke.l"
+ {
+ 			    BEGIN INITIAL;
+ 			    yyless(0);
+@@ -2467,7 +2471,7 @@
+ 	YY_BREAK
+ case 17:
+ YY_RULE_SETUP
+-#line 265 "toke.l"
++#line 269 "toke.l"
+ {
+ 			    LEXTRACE("ARG ");
+ 			    if (!fill_args(sudoerstext, sudoersleng, sawspace))
+@@ -2478,7 +2482,7 @@
+ 
+ case 18:
+ YY_RULE_SETUP
+-#line 273 "toke.l"
++#line 277 "toke.l"
+ {
+ 			    /* Only return DIGEST if the length is correct. */
+ 			    if (sudoersleng == digest_len * 2) {
+@@ -2494,7 +2498,7 @@
+ 	YY_BREAK
+ case 19:
+ YY_RULE_SETUP
+-#line 286 "toke.l"
++#line 290 "toke.l"
+ {
+ 			    /* Only return DIGEST if the length is correct. */
+ 			    int len;
+@@ -2518,7 +2522,7 @@
+ 	YY_BREAK
+ case 20:
+ YY_RULE_SETUP
+-#line 307 "toke.l"
++#line 311 "toke.l"
+ {
+ 			    char *path;
+ 
+@@ -2539,7 +2543,7 @@
+ 	YY_BREAK
+ case 21:
+ YY_RULE_SETUP
+-#line 325 "toke.l"
++#line 329 "toke.l"
+ {
+ 			    char *path;
+ 
+@@ -2563,7 +2567,7 @@
+ 	YY_BREAK
+ case 22:
+ YY_RULE_SETUP
+-#line 346 "toke.l"
++#line 350 "toke.l"
+ {
+ 			    char deftype;
+ 			    int n;
+@@ -2606,7 +2610,7 @@
+ 	YY_BREAK
+ case 23:
+ YY_RULE_SETUP
+-#line 386 "toke.l"
++#line 390 "toke.l"
+ {
+ 			    int n;
+ 
+@@ -2635,7 +2639,7 @@
+ 	YY_BREAK
+ case 24:
+ YY_RULE_SETUP
+-#line 412 "toke.l"
++#line 416 "toke.l"
+ {
+ 				/* cmnd does not require passwd for this user */
+ 			    	LEXTRACE("NOPASSWD ");
+@@ -2644,7 +2648,7 @@
+ 	YY_BREAK
+ case 25:
+ YY_RULE_SETUP
+-#line 418 "toke.l"
++#line 422 "toke.l"
+ {
+ 				/* cmnd requires passwd for this user */
+ 			    	LEXTRACE("PASSWD ");
+@@ -2653,7 +2657,7 @@
+ 	YY_BREAK
+ case 26:
+ YY_RULE_SETUP
+-#line 424 "toke.l"
++#line 428 "toke.l"
+ {
+ 			    	LEXTRACE("NOEXEC ");
+ 			    	LEXRETURN(NOEXEC);
+@@ -2661,7 +2665,7 @@
+ 	YY_BREAK
+ case 27:
+ YY_RULE_SETUP
+-#line 429 "toke.l"
++#line 433 "toke.l"
+ {
+ 			    	LEXTRACE("EXEC ");
+ 			    	LEXRETURN(EXEC);
+@@ -2669,7 +2673,7 @@
+ 	YY_BREAK
+ case 28:
+ YY_RULE_SETUP
+-#line 434 "toke.l"
++#line 438 "toke.l"
+ {
+ 			    	LEXTRACE("SETENV ");
+ 			    	LEXRETURN(SETENV);
+@@ -2677,7 +2681,7 @@
+ 	YY_BREAK
+ case 29:
+ YY_RULE_SETUP
+-#line 439 "toke.l"
++#line 443 "toke.l"
+ {
+ 			    	LEXTRACE("NOSETENV ");
+ 			    	LEXRETURN(NOSETENV);
+@@ -2685,7 +2689,7 @@
+ 	YY_BREAK
+ case 30:
+ YY_RULE_SETUP
+-#line 444 "toke.l"
++#line 448 "toke.l"
+ {
+ 			    	LEXTRACE("LOG_OUTPUT ");
+ 			    	LEXRETURN(LOG_OUTPUT);
+@@ -2693,7 +2697,7 @@
+ 	YY_BREAK
+ case 31:
+ YY_RULE_SETUP
+-#line 449 "toke.l"
++#line 453 "toke.l"
+ {
+ 			    	LEXTRACE("NOLOG_OUTPUT ");
+ 			    	LEXRETURN(NOLOG_OUTPUT);
+@@ -2701,7 +2705,7 @@
+ 	YY_BREAK
+ case 32:
+ YY_RULE_SETUP
+-#line 454 "toke.l"
++#line 458 "toke.l"
+ {
+ 			    	LEXTRACE("LOG_INPUT ");
+ 			    	LEXRETURN(LOG_INPUT);
+@@ -2709,7 +2713,7 @@
+ 	YY_BREAK
+ case 33:
+ YY_RULE_SETUP
+-#line 459 "toke.l"
++#line 463 "toke.l"
+ {
+ 			    	LEXTRACE("NOLOG_INPUT ");
+ 			    	LEXRETURN(NOLOG_INPUT);
+@@ -2717,7 +2721,7 @@
+ 	YY_BREAK
+ case 34:
+ YY_RULE_SETUP
+-#line 464 "toke.l"
++#line 468 "toke.l"
+ {
+ 			    /* empty group or netgroup */
+ 			    LEXTRACE("ERROR ");
+@@ -2726,7 +2730,7 @@
+ 	YY_BREAK
+ case 35:
+ YY_RULE_SETUP
+-#line 470 "toke.l"
++#line 474 "toke.l"
+ {
+ 			    /* netgroup */
+ 			    if (!fill(sudoerstext, sudoersleng))
+@@ -2737,7 +2741,7 @@
+ 	YY_BREAK
+ case 36:
+ YY_RULE_SETUP
+-#line 478 "toke.l"
++#line 482 "toke.l"
+ {
+ 			    /* group */
+ 			    if (!fill(sudoerstext, sudoersleng))
+@@ -2748,7 +2752,7 @@
+ 	YY_BREAK
+ case 37:
+ YY_RULE_SETUP
+-#line 486 "toke.l"
++#line 490 "toke.l"
+ {
+ 			    if (!fill(sudoerstext, sudoersleng))
+ 				yyterminate();
+@@ -2758,7 +2762,7 @@
+ 	YY_BREAK
+ case 38:
+ YY_RULE_SETUP
+-#line 493 "toke.l"
++#line 497 "toke.l"
+ {
+ 			    if (!fill(sudoerstext, sudoersleng))
+ 				yyterminate();
+@@ -2768,7 +2772,7 @@
+ 	YY_BREAK
+ case 39:
+ YY_RULE_SETUP
+-#line 500 "toke.l"
++#line 504 "toke.l"
+ {
+ 			    if (!ipv6_valid(sudoerstext)) {
+ 				LEXTRACE("ERROR ");
+@@ -2782,7 +2786,7 @@
+ 	YY_BREAK
+ case 40:
+ YY_RULE_SETUP
+-#line 511 "toke.l"
++#line 515 "toke.l"
+ {
+ 			    if (!ipv6_valid(sudoerstext)) {
+ 				LEXTRACE("ERROR ");
+@@ -2796,7 +2800,7 @@
+ 	YY_BREAK
+ case 41:
+ YY_RULE_SETUP
+-#line 522 "toke.l"
++#line 526 "toke.l"
+ {
+ 			    LEXTRACE("ALL ");
+ 			    LEXRETURN(ALL);
+@@ -2805,7 +2809,7 @@
+ 	YY_BREAK
+ case 42:
+ YY_RULE_SETUP
+-#line 528 "toke.l"
++#line 532 "toke.l"
+ {
+ #ifdef HAVE_SELINUX
+ 			    LEXTRACE("ROLE ");
+@@ -2817,7 +2821,7 @@
+ 	YY_BREAK
+ case 43:
+ YY_RULE_SETUP
+-#line 537 "toke.l"
++#line 541 "toke.l"
+ {
+ #ifdef HAVE_SELINUX
+ 			    LEXTRACE("TYPE ");
+@@ -2829,7 +2833,7 @@
+ 	YY_BREAK
+ case 44:
+ YY_RULE_SETUP
+-#line 545 "toke.l"
++#line 549 "toke.l"
+ {
+ #ifdef HAVE_PRIV_SET
+ 			    LEXTRACE("PRIVS ");
+@@ -2841,7 +2845,7 @@
+ 	YY_BREAK
+ case 45:
+ YY_RULE_SETUP
+-#line 554 "toke.l"
++#line 558 "toke.l"
+ {
+ #ifdef HAVE_PRIV_SET
+ 			    LEXTRACE("LIMITPRIVS ");
+@@ -2853,7 +2857,7 @@
+ 	YY_BREAK
+ case 46:
+ YY_RULE_SETUP
+-#line 563 "toke.l"
++#line 567 "toke.l"
+ {
+ 			got_alias:
+ 			    if (!fill(sudoerstext, sudoersleng))
+@@ -2864,7 +2868,7 @@
+ 	YY_BREAK
+ case 47:
+ YY_RULE_SETUP
+-#line 571 "toke.l"
++#line 575 "toke.l"
+ {
+ 			    /* XXX - no way to specify digest for command */
+ 			    /* no command args allowed for Defaults!/path */
+@@ -2876,47 +2880,47 @@
+ 	YY_BREAK
+ case 48:
+ YY_RULE_SETUP
+-#line 580 "toke.l"
++#line 584 "toke.l"
+ {
+ 			    digest_len = SHA224_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA224 ");
+-			    LEXRETURN(SHA224);
++			    LEXTRACE("SHA224_TOK ");
++			    LEXRETURN(SHA224_TOK);
+ 			}
+ 	YY_BREAK
+ case 49:
+ YY_RULE_SETUP
+-#line 587 "toke.l"
++#line 591 "toke.l"
+ {
+ 			    digest_len = SHA256_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA256 ");
+-			    LEXRETURN(SHA256);
++			    LEXTRACE("SHA256_TOK ");
++			    LEXRETURN(SHA256_TOK);
+ 			}
+ 	YY_BREAK
+ case 50:
+ YY_RULE_SETUP
+-#line 594 "toke.l"
++#line 598 "toke.l"
+ {
+ 			    digest_len = SHA384_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA384 ");
+-			    LEXRETURN(SHA384);
++			    LEXTRACE("SHA384_TOK ");
++			    LEXRETURN(SHA384_TOK);
+ 			}
+ 	YY_BREAK
+ case 51:
+ YY_RULE_SETUP
+-#line 601 "toke.l"
++#line 605 "toke.l"
+ {
+ 			    digest_len = SHA512_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA512 ");
+-			    LEXRETURN(SHA512);
++			    LEXTRACE("SHA512_TOK ");
++			    LEXRETURN(SHA512_TOK);
+ 			}
+ 	YY_BREAK
+ case 52:
+ YY_RULE_SETUP
+-#line 608 "toke.l"
++#line 612 "toke.l"
+ {
+ 			    BEGIN GOTCMND;
+ 			    LEXTRACE("COMMAND ");
+@@ -2926,7 +2930,7 @@
+ 	YY_BREAK
+ case 53:
+ YY_RULE_SETUP
+-#line 615 "toke.l"
++#line 619 "toke.l"
+ {
+ 			    /* directories can't have args... */
+ 			    if (sudoerstext[sudoersleng - 1] == '/') {
+@@ -2944,7 +2948,7 @@
+ 	YY_BREAK
+ case 54:
+ YY_RULE_SETUP
+-#line 630 "toke.l"
++#line 634 "toke.l"
+ {
+ 			    LEXTRACE("BEGINSTR ");
+ 			    sudoerslval.string = NULL;
+@@ -2954,7 +2958,7 @@
+ 	YY_BREAK
+ case 55:
+ YY_RULE_SETUP
+-#line 637 "toke.l"
++#line 641 "toke.l"
+ {
+ 			    /* a word */
+ 			    if (!fill(sudoerstext, sudoersleng))
+@@ -2965,7 +2969,7 @@
+ 	YY_BREAK
+ case 56:
+ YY_RULE_SETUP
+-#line 645 "toke.l"
++#line 649 "toke.l"
+ {
+ 			    LEXTRACE("( ");
+ 			    LEXRETURN('(');
+@@ -2973,7 +2977,7 @@
+ 	YY_BREAK
+ case 57:
+ YY_RULE_SETUP
+-#line 650 "toke.l"
++#line 654 "toke.l"
+ {
+ 			    LEXTRACE(") ");
+ 			    LEXRETURN(')');
+@@ -2981,7 +2985,7 @@
+ 	YY_BREAK
+ case 58:
+ YY_RULE_SETUP
+-#line 655 "toke.l"
++#line 659 "toke.l"
+ {
+ 			    LEXTRACE(", ");
+ 			    LEXRETURN(',');
+@@ -2989,7 +2993,7 @@
+ 	YY_BREAK
+ case 59:
+ YY_RULE_SETUP
+-#line 660 "toke.l"
++#line 664 "toke.l"
+ {
+ 			    LEXTRACE("= ");
+ 			    LEXRETURN('=');
+@@ -2997,7 +3001,7 @@
+ 	YY_BREAK
+ case 60:
+ YY_RULE_SETUP
+-#line 665 "toke.l"
++#line 669 "toke.l"
+ {
+ 			    LEXTRACE(": ");
+ 			    LEXRETURN(':');
+@@ -3005,7 +3009,7 @@
+ 	YY_BREAK
+ case 61:
+ YY_RULE_SETUP
+-#line 670 "toke.l"
++#line 674 "toke.l"
+ {
+ 			    if (sudoersleng & 1) {
+ 				LEXTRACE("!");
+@@ -3015,7 +3019,7 @@
+ 	YY_BREAK
+ case 62:
+ YY_RULE_SETUP
+-#line 677 "toke.l"
++#line 681 "toke.l"
+ {
+ 			    if (YY_START == INSTR) {
+ 				LEXTRACE("ERROR ");
+@@ -3030,14 +3034,14 @@
+ 	YY_BREAK
+ case 63:
+ YY_RULE_SETUP
+-#line 689 "toke.l"
++#line 693 "toke.l"
+ {			/* throw away space/tabs */
+ 			    sawspace = true;	/* but remember for fill_args */
+ 			}
+ 	YY_BREAK
+ case 64:
+ YY_RULE_SETUP
+-#line 693 "toke.l"
++#line 697 "toke.l"
+ {
+ 			    sawspace = true;	/* remember for fill_args */
+ 			    sudolineno++;
+@@ -3046,7 +3050,7 @@
+ 	YY_BREAK
+ case 65:
+ YY_RULE_SETUP
+-#line 699 "toke.l"
++#line 703 "toke.l"
+ {
+ 			    if (sudoerstext[sudoersleng - 1] == '\n') {
+ 				/* comment ending in a newline */
+@@ -3063,7 +3067,7 @@
+ 	YY_BREAK
+ case 66:
+ YY_RULE_SETUP
+-#line 713 "toke.l"
++#line 717 "toke.l"
+ {
+ 			    LEXTRACE("ERROR ");
+ 			    LEXRETURN(ERROR);
+@@ -3076,7 +3080,7 @@
+ case YY_STATE_EOF(INDEFS):
+ case YY_STATE_EOF(INSTR):
+ case YY_STATE_EOF(WANTDIGEST):
+-#line 718 "toke.l"
++#line 722 "toke.l"
+ {
+ 			    if (YY_START != INITIAL) {
+ 			    	BEGIN INITIAL;
+@@ -3089,10 +3093,10 @@
+ 	YY_BREAK
+ case 67:
+ YY_RULE_SETUP
+-#line 728 "toke.l"
++#line 732 "toke.l"
+ ECHO;
+ 	YY_BREAK
+-#line 3095 "lex.sudoers.c"
++#line 3099 "lex.sudoers.c"
+ 
+ 	case YY_END_OF_BUFFER:
+ 		{
+@@ -3983,7 +3987,7 @@
+ 	return 0;
+ 	}
+ #endif
+-#line 728 "toke.l"
++#line 732 "toke.l"
+ 
+ struct path_list {
+     SLIST_ENTRY(path_list) entries;
+diff -urN sudo-1.8.9p5.old/plugins/sudoers/toke.l sudo-1.8.9p5/plugins/sudoers/toke.l
+--- sudo-1.8.9p5.old/plugins/sudoers/toke.l	2014-01-07 19:08:50.000000000 +0100
++++ sudo-1.8.9p5/plugins/sudoers/toke.l	2014-04-10 15:20:34.467610395 +0200
+@@ -69,6 +69,11 @@
+ #  include <ndir.h>
+ # endif
+ #endif
++#ifdef HAVE_SHA224UPDATE
++# include <sha2.h>
++#else
++# include "compat/sha2.h"
++#endif
+ #include <errno.h>
+ #include <ctype.h>
+ #include "sudoers.h"
+@@ -76,7 +81,6 @@
+ #include "toke.h"
+ #include <gram.h>
+ #include "lbuf.h"
+-#include "sha2.h"
+ #include "secure_path.h"
+ 
+ int sudolineno;			/* current sudoers line number. */
+@@ -580,29 +584,29 @@
+ sha224			{
+ 			    digest_len = SHA224_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA224 ");
+-			    LEXRETURN(SHA224);
++			    LEXTRACE("SHA224_TOK ");
++			    LEXRETURN(SHA224_TOK);
+ 			}
+ 
+ sha256			{
+ 			    digest_len = SHA256_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA256 ");
+-			    LEXRETURN(SHA256);
++			    LEXTRACE("SHA256_TOK ");
++			    LEXRETURN(SHA256_TOK);
+ 			}
+ 
+ sha384			{
+ 			    digest_len = SHA384_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA384 ");
+-			    LEXRETURN(SHA384);
++			    LEXTRACE("SHA384_TOK ");
++			    LEXRETURN(SHA384_TOK);
+ 			}
+ 
+ sha512			{
+ 			    digest_len = SHA512_DIGEST_LENGTH;
+ 			    BEGIN WANTDIGEST;
+-			    LEXTRACE("SHA512 ");
+-			    LEXRETURN(SHA512);
++			    LEXTRACE("SHA512_TOK ");
++			    LEXRETURN(SHA512_TOK);
+ 			}
+ 
+ sudoedit		{

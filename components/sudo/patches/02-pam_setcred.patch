@@ -1,21 +1,35 @@
 Fix for
 17617070 sudo does not use pam_setcred correctly to set the audit context
 
-This fix will be submitted upstream to the latest sudo release,
-currently 1.8.10p2.
+This fix is submitted as http://www.sudo.ws/bugs/show_bug.cgi?id=642
 
-diff -ru sudo-1.8.6p7-orig//plugins/sudoers/auth/pam.c sudo-1.8.6p7/plugins/sudoers/auth/pam.c
---- sudo-1.8.6p7-orig//plugins/sudoers/auth/pam.c	Mon Feb 25 11:42:44 2013
-+++ sudo-1.8.6p7/plugins/sudoers/auth/pam.c	Mon Oct 21 13:32:27 2013
-@@ -229,8 +229,10 @@
-      * for the setcred module.  Because we haven't called pam_authenticate(),
-      * this is not set and so pam_setcred() returns PAM_PERM_DENIED.
-      * We can't call pam_acct_mgmt() with Linux-PAM for a similar reason.
+Sudo 1.8.9p5 has another problem, pam_setcred configuration option is not
+enabled by default despite what is said in sudoers(4). Fix for that is
+accumulated in this patch as it will be submitted together with the
+PAM_REINITIALIZE_CRED fix.
+
+--- sudo-1.8.9p5/plugins/sudoers/auth/pam.c	2014-02-07 10:25:08.979359126 +0100
++++ sudo-1.8.9p5/plugins/sudoers/auth/pam.c	2014-02-07 10:24:43.823180676 +0100
+@@ -236,9 +236,11 @@
+      * PAM_SUCCESS from another.  For example, given a non-local user,
+      * pam_unix will fail but pam_ldap or pam_sss may succeed, but if
+      * pam_unix is first in the stack, pam_setcred() will fail.
 +     *
-+     * Reinitialize credentials when changing a user. 
++     * Reinitialize credentials when changing a user.
       */
--    (void) pam_setcred(pamh, PAM_ESTABLISH_CRED);
-+    (void) pam_setcred(pamh, PAM_REINITIALIZE_CRED);
+     if (def_pam_setcred)
+-	(void) pam_setcred(pamh, PAM_ESTABLISH_CRED);
++	(void) pam_setcred(pamh, PAM_REINITIALIZE_CRED);
  
- #ifdef HAVE_PAM_GETENVLIST
-     /*
+     if (def_pam_session) {
+ 	*pam_status = pam_open_session(pamh, 0);
+--- sudo-1.8.9p5/plugins/sudoers/defaults.c	2014-03-28 15:33:41.941482037 -0700
++++ sudo-1.8.9p5/plugins/sudoers/defaults.c	2014-03-28 15:22:36.457133334 -0700
+@@ -485,6 +485,7 @@ init_defaults(void)
+ #endif
+     def_editor = estrdup(EDITOR);
+     def_set_utmp = true;
++    def_pam_setcred = true;
+ 
+     /* Finally do the lists (currently just environment tables). */
+     init_envtables();

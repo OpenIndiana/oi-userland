@@ -1,0 +1,120 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Open second terminal with root shell. Keep this as a possibility to assume
+# root privileges if you loose the ability to do so via sudo during testing.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Make sure we are looking at the correct version
+sudo -V | grep version
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Test digest feature
+
+openssl dgst -sha224 /usr/bin/ls # make note of the hash
+
+# Add this line to sudoers (replace UID by your user ID and HASH by the ls
+# hash):
+<UID> ALL = sha224:<HASH> /usr/bin/ls
+
+# This should work (asking you a password first)
+sudo /usr/bin/ls /
+
+# Now change the hash so that it is wrong and make sure it does not work this
+# time
+sudo /usr/bin/ls /
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# add this line to sudoers
+ALL ALL=(ALL:ALL) NOPASSWD: ALL
+
+# Make sure it gives you root account
+sudo id
+
+# Make sure this changes just your group
+sudo -g sol_src id
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Test creating a file in etc
+sudoedit /etc/test
+...
+cat /etc/test # Make sure the text is there
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Auditing
+cd /var/audit
+sudo /usr/sbin/audit -t
+sudo rm *
+sudo /usr/sbin/audit -s
+sudo auditreduce * | praudit -s
+> file,1970-01-01 00:00:00.000 +00:00,
+> file,2014-03-27 10:34:23.000 +00:00,
+
+# Make sure that since the first run we can see new auditing record
+sudo auditreduce * | praudit -s
+> file,2014-03-27 10:34:23.000 +00:00,
+> header,158,2,AUE_sudo,,10.0.2.15,2014-03-27 10:34:23.735 +00:00
+> subject,vmarek,root,staff,vmarek,staff,2295,3108723863,5096 202240 10.0.2.2
+> path,/var/share/audit
+> path,/usr/sbin/auditreduce
+> cmd,argcnt,1,20140327103420.not_terminated.S12-43,envcnt,0,
+> return,success,0
+> file,2014-03-27 10:34:23.000 +00:00,
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# PAM credentials
+
+# Make sure that 'root' is a role
+sudo usermod -K type=role root
+
+# Note the preselection mask, it should probably be 'lo(0x1000,0x1000)'
+sudo bash -c 'auditconfig -getpinfo $$'
+
+# Add audit flags to root
+sudo rolemod -K audit_flags=lo,ex:no root
+
+# Make sure that the preselection mask now shows new entries (lo,ex)
+sudo bash -c 'auditconfig -getpinfo $$'
+
+# Disable PAM credentials in sudo by adding this line to sudoers:
+Defaults !pam_setcred
+
+# Make sure that the preselection mask now shows only previous entry
+sudo bash -c 'auditconfig -getpinfo $$'
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+# Solaris privileges
+
+# Add this to the end sudoers keeping the 'ALL ALL=(ALL:ALL) NOPASSWD: ALL' above
+<UID> ALL = () PRIVS="basic,dtrace_kernel,dtrace_proc,dtrace_user" NOPASSWD: /usr/sbin/dtrace, /usr/bin/bash
+
+# Just your regular id
+id
+> uid=157888(vmarek) gid=10(staff)
+
+# Sudo normally turning you into root via the 'ALL ALL=(ALL:ALL) NOPASSWD: ALL' line
+sudo id
+> uid=0(root) gid=0(root)
+
+# For bash it should leave your ID and just grant dtrace privileges
+sudo bash -c 'id; ppriv $$'
+uid=157888(vmarek) gid=10(staff)
+> 2296:   bash -c id; ppriv $$
+> flags = <none>
+>         E: basic,dtrace_kernel,dtrace_proc,dtrace_user
+>         I: basic,dtrace_kernel,dtrace_proc,dtrace_user
+>         P: basic,dtrace_kernel,dtrace_proc,dtrace_user
+>         L: basic,dtrace_kernel,dtrace_proc,dtrace_user
+
+# dtrace functionality
+sudo dtrace -l -n 'syscall::b*:entry'
+>    ID   PROVIDER            MODULE                          FUNCTION NAME
+> 11282    syscall                                                 brk entry
+> 11550    syscall                                            brandsys entry
+> 11642    syscall                                                bind entry

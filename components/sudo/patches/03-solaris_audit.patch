@@ -3,10 +3,9 @@ Code was developed in-house.
 Plan is to contribute these changes upstream to
 the latest sudo release, currently 1.8.10p2.
 
-diff -rupN sudo-1.8.6p7-orig/config.h.in sudo-1.8.6p7/config.h.in
---- sudo-1.8.6p7-orig/config.h.in	2013-02-25 11:46:09.000000000 -0800
-+++ sudo-1.8.6p7/config.h.in	2013-12-18 13:23:28.000000000 -0800
-@@ -506,6 +506,9 @@
+--- sudo-1.8.9p5/config.h.in	2014-03-26 22:54:30.317626194 +0100
++++ sudo-1.8.9p5/config.h.in	2014-03-26 22:54:07.840975014 +0100
+@@ -542,6 +542,9 @@
  /* Define to 1 if you have the `snprintf' function. */
  #undef HAVE_SNPRINTF
  
@@ -16,64 +15,9 @@ diff -rupN sudo-1.8.6p7-orig/config.h.in sudo-1.8.6p7/config.h.in
  /* Define to 1 if you have the <spawn.h> header file. */
  #undef HAVE_SPAWN_H
  
-diff -rupN sudo-1.8.6p7-orig/configure sudo-1.8.6p7/configure
---- sudo-1.8.6p7-orig/configure	2013-02-25 11:48:02.000000000 -0800
-+++ sudo-1.8.6p7/configure	2014-03-18 15:42:42.364654000 -0700
-@@ -761,6 +761,7 @@ PROGS
- CFLAGS
- LIBTOOL
- HAVE_BSM_AUDIT
-+HAVE_SOLARIS_AUDIT
- target_alias
- host_alias
- build_alias
-@@ -810,6 +811,7 @@ with_rpath
- with_blibpath
- with_bsm_audit
- with_linux_audit
-+with_solaris_audit
- with_sssd
- with_sssd_lib
- with_incpath
-@@ -1590,6 +1592,7 @@ Optional Packages:
-   --with-blibpath=PATH    pass -blibpath flag to ld for additional lib paths
-   --with-bsm-audit        enable BSM audit support
-   --with-linux-audit      enable Linux audit support
-+  --with-solaris-audit    enable Solaris audit support
-   --with-sssd             enable SSSD support
-   --with-sssd-lib         path to the SSSD library
-   --with-incpath          additional places to look for include files
-@@ -3097,6 +3100,26 @@ esac
- fi
- 
- 
-+
-+# Check whether --with-solaris-audit was given.
-+if test "${with_solaris_audit+set}" = set; then :
-+  if test "${with_bsm_audit+set}" = set || test "${with_linux_audit+set}" = set; then
-+	as_fn_error $? "BSM/Linux and Solaris auditing options are mutually exclusive." "$LINENO" 5
-+  fi
-+  withval=$with_solaris_audit; case $with_solaris_audit in
-+    yes)	$as_echo "#define HAVE_SOLARIS_AUDIT 1" >>confdefs.h
-+
-+		SUDOERS_LIBS="${SUDOERS_LIBS} -lbsm"
-+		SUDOERS_OBJS="${SUDOERS_OBJS} solaris_audit.lo"
-+		;;
-+    no)		;;
-+    *)		as_fn_error $? "\"--with-solaris-audit does not take an argument.\"" "$LINENO" 5
-+		;;
-+esac
-+fi
-+
-+
-+
- ac_ext=c
- ac_cpp='$CPP $CPPFLAGS'
- ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-diff -rupN sudo-1.8.6p7-orig/configure.in sudo-1.8.6p7/configure.in
---- sudo-1.8.6p7-orig/configure.in	2013-02-25 11:47:48.000000000 -0800
-+++ sudo-1.8.6p7/configure.in	2013-12-18 13:44:14.000000000 -0800
-@@ -13,6 +13,7 @@ dnl
+--- sudo-1.8.9p5/configure.ac	2014-04-02 15:08:32.733744734 -0700
++++ sudo-1.8.9p5/configure.ac	2014-04-02 15:01:57.931070340 -0700
+@@ -15,6 +15,7 @@ dnl
  dnl Variables that get substituted in the Makefile and man pages
  dnl
  AC_SUBST([HAVE_BSM_AUDIT])
@@ -81,7 +25,7 @@ diff -rupN sudo-1.8.6p7-orig/configure.in sudo-1.8.6p7/configure.in
  AC_SUBST([SHELL])
  AC_SUBST([LIBTOOL])
  AC_SUBST([CFLAGS])
-@@ -305,6 +306,20 @@ AC_ARG_WITH(linux-audit, [AS_HELP_STRING
+@@ -322,6 +323,28 @@ AC_ARG_WITH(linux-audit, [AS_HELP_STRING
  esac])
  
  dnl
@@ -99,23 +43,30 @@ diff -rupN sudo-1.8.6p7-orig/configure.in sudo-1.8.6p7/configure.in
 +esac])
 +
 +dnl
++dnl Check for use of Solaris audit with BSM or Linux audit
++dnl
++if test -n "$with_solaris_audit" && (test -n "$with_bsm_audit" || test -n "$with_linux_audit"); then
++	AC_MSG_ERROR([BSM/Linux and Solaris auditing options are mutually exclusive.])
++fi
++
++
++dnl
  dnl Handle SSSD support.
  dnl
  AC_ARG_WITH(sssd, [AS_HELP_STRING([--with-sssd], [enable SSSD support])],
-@@ -3622,6 +3637,7 @@ AH_TEMPLATE(HAVE_SHL_LOAD, [Define to 1
+@@ -3820,6 +3843,7 @@ AH_TEMPLATE(HAVE_SHL_LOAD, [Define to 1
  AH_TEMPLATE(HAVE_SKEY, [Define to 1 if you use S/Key.])
  AH_TEMPLATE(HAVE_SKEYACCESS, [Define to 1 if your S/Key library has skeyaccess().])
- AH_TEMPLATE(HAVE_RFC1938_SKEYCHALLENGE, [Define to 1 if the skeychallenge() function is RFC1938-compliant and takes 4 arguments])
+ AH_TEMPLATE(HAVE_RFC1938_SKEYCHALLENGE, [Define to 1 if the skeychallenge() function is RFC1938-compliant and takes 4 arguments.])
 +AH_TEMPLATE(HAVE_SOLARIS_AUDIT, [Define to 1 to enable Solaris audit support.])
- AH_TEMPLATE(HAVE_ST__TIM, [Define to 1 if your struct stat uses an st__tim union])
- AH_TEMPLATE(HAVE_ST_MTIM, [Define to 1 if your struct stat has an st_mtim member])
- AH_TEMPLATE(HAVE_ST_MTIMESPEC, [Define to 1 if your struct stat has an st_mtimespec member])
-diff -rupN sudo-1.8.6p7-orig/INSTALL sudo-1.8.6p7/INSTALL
---- sudo-1.8.6p7-orig/INSTALL	2013-02-25 11:42:43.000000000 -0800
-+++ sudo-1.8.6p7/INSTALL	2013-12-18 14:06:38.000000000 -0800
-@@ -159,6 +159,9 @@ Special features/options:
- 	DIR should contain include and lib directories with skey.h
- 	and libskey.a respectively.
+ AH_TEMPLATE(HAVE_ST__TIM, [Define to 1 if your struct stat uses an st__tim union.])
+ AH_TEMPLATE(HAVE_ST_MTIM, [Define to 1 if your struct stat has an st_mtim member.])
+ AH_TEMPLATE(HAVE_ST_MTIMESPEC, [Define to 1 if your struct stat has an st_mtimespec member.])
+--- sudo-1.8.9p5/INSTALL	2014-03-26 22:55:50.218196304 +0100
++++ sudo-1.8.9p5/INSTALL	2014-03-26 22:55:37.278167183 +0100
+@@ -386,6 +386,9 @@
+         the user name (separated by a slash) when creating the
+         principal name.
  
 +  --with-solaris-audit
 +	Enable audit support for Solaris systems.
@@ -123,33 +74,30 @@ diff -rupN sudo-1.8.6p7-orig/INSTALL sudo-1.8.6p7/INSTALL
    --with-opie[=DIR]
  	Enable NRL OPIE OTP (One Time Password) support.  If specified,
  	DIR should contain include and lib directories with opie.h
-diff -rupN sudo-1.8.6p7-orig/MANIFEST sudo-1.8.6p7/MANIFEST
---- sudo-1.8.6p7-orig/MANIFEST	2013-02-25 11:42:43.000000000 -0800
-+++ sudo-1.8.6p7/MANIFEST	2013-12-18 13:46:06.000000000 -0800
-@@ -261,6 +261,8 @@ plugins/sudoers/regress/sudoers/test8.to
- plugins/sudoers/regress/testsudoers/test1.out.ok
- plugins/sudoers/regress/testsudoers/test1.sh
+--- sudo-1.8.9p5/MANIFEST	2014-03-26 22:57:04.778504180 +0100
++++ sudo-1.8.9p5/MANIFEST	2014-03-26 22:56:53.268979852 +0100
+@@ -369,6 +369,8 @@
  plugins/sudoers/set_perms.c
+ plugins/sudoers/sha2.c
+ plugins/sudoers/sha2.h
 +plugins/sudoers/solaris_audit.c
 +plugins/sudoers/solaris_audit.h
  plugins/sudoers/sssd.c
  plugins/sudoers/sudo_nss.c
  plugins/sudoers/sudo_nss.h
-diff -rupN sudo-1.8.6p7-orig/mkdep.pl sudo-1.8.6p7/mkdep.pl
---- sudo-1.8.6p7-orig/mkdep.pl	2013-02-25 11:42:44.000000000 -0800
-+++ sudo-1.8.6p7/mkdep.pl	2013-12-18 14:03:37.000000000 -0800
-@@ -52,7 +52,7 @@ sub mkdep {
+--- sudo-1.8.9p5/mkdep.pl	2014-03-26 22:58:36.454013953 +0100
++++ sudo-1.8.9p5/mkdep.pl	2014-03-26 22:58:24.406067303 +0100
+@@ -67,7 +67,7 @@
      $makefile =~ s:\@DEV\@::g;
-     $makefile =~ s:\@COMMON_OBJS\@:aix.lo:;
-     $makefile =~ s:\@SUDO_OBJS\@:preload.o selinux.o sesh.o sudo_noexec.lo:;
--    $makefile =~ s:\@SUDOERS_OBJS\@:bsm_audit.lo linux_audit.lo ldap.lo plugin_error.lo sssd.lo:;
-+    $makefile =~ s:\@SUDOERS_OBJS\@:bsm_audit.lo linux_audit.lo ldap.lo plugin_error.lo solaris_audit.lo sssd.lo:;
+     $makefile =~ s:\@COMMON_OBJS\@:aix.lo event_poll.lo event_select.lo:;
+     $makefile =~ s:\@SUDO_OBJS\@:openbsd.o preload.o selinux.o sesh.o solaris.o sudo_noexec.lo:;
+-    $makefile =~ s:\@SUDOERS_OBJS\@:bsm_audit.lo linux_audit.lo ldap.lo sssd.lo:;
++    $makefile =~ s:\@SUDOERS_OBJS\@:bsm_audit.lo linux_audit.lo ldap.lo solaris_audit.lo sssd.lo:;
      # XXX - fill in AUTH_OBJS from contents of the auth dir instead
      $makefile =~ s:\@AUTH_OBJS\@:afs.lo aix_auth.lo bsdauth.lo dce.lo fwtk.lo getspwuid.lo kerb5.lo pam.lo passwd.lo rfc1938.lo secureware.lo securid5.lo sia.lo:;
-     $makefile =~ s:\@LTLIBOBJS\@:closefrom.lo dlopen.lo fnmatch.lo getcwd.lo getgrouplist.lo getline.lo getprogname.lo glob.lo isblank.lo memrchr.lo mksiglist.lo mksigname.lo mktemp.lo nanosleep.lo pw_dup.lo sig2str.lo siglist.lo signame.lo snprintf.lo strlcat.lo strlcpy.lo strsignal.lo utimes.lo globtest.o fnm_test.o:;
-diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/audit.c sudo-1.8.6p7/plugins/sudoers/audit.c
---- sudo-1.8.6p7-orig/plugins/sudoers/audit.c	2013-02-25 11:46:09.000000000 -0800
-+++ sudo-1.8.6p7/plugins/sudoers/audit.c	2013-12-18 13:48:56.000000000 -0800
+     $makefile =~ s:\@LTLIBOBJS\@:closefrom.lo fnmatch.lo getaddrinfo.lo getcwd.lo getgrouplist.lo getline.lo getopt_long.lo glob.lo isblank.lo memrchr.lo memset_s.lo mksiglist.lo mksigname.lo mktemp.lo pw_dup.lo sig2str.lo siglist.lo signame.lo snprintf.lo strlcat.lo strlcpy.lo strsignal.lo strtonum.lo utimes.lo globtest.o fnm_test.o:;
+--- sudo-1.8.9p5/plugins/sudoers/audit.c	2014-03-26 22:59:28.211242562 +0100
++++ sudo-1.8.9p5/plugins/sudoers/audit.c	2014-03-26 22:59:08.314263649 +0100
 @@ -43,6 +43,9 @@
  #ifdef HAVE_LINUX_AUDIT
  # include "linux_audit.h"
@@ -158,9 +106,9 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/audit.c sudo-1.8.6p7/plugins/sudoer
 +# include "solaris_audit.h"
 +#endif
  
- void
- audit_success(char *exec_args[])
-@@ -56,6 +59,9 @@ audit_success(char *exec_args[])
+ #define DEFAULT_TEXT_DOMAIN	"sudoers"
+ #include "gettext.h"
+@@ -59,6 +62,9 @@
  #ifdef HAVE_LINUX_AUDIT
  	linux_audit_command(exec_args, 1);
  #endif
@@ -170,7 +118,7 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/audit.c sudo-1.8.6p7/plugins/sudoer
      }
  
      debug_return;
-@@ -75,6 +81,9 @@ audit_failure(char *exec_args[], char co
+@@ -82,6 +88,9 @@
  #ifdef HAVE_LINUX_AUDIT
  	linux_audit_command(exec_args, 0);
  #endif
@@ -180,29 +128,27 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/audit.c sudo-1.8.6p7/plugins/sudoer
  	va_end(ap);
      }
  
-diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/Makefile.in sudo-1.8.6p7/plugins/sudoers/Makefile.in
---- sudo-1.8.6p7-orig/plugins/sudoers/Makefile.in	2013-02-25 11:46:09.000000000 -0800
-+++ sudo-1.8.6p7/plugins/sudoers/Makefile.in	2013-12-17 15:32:03.000000000 -0800
-@@ -432,7 +432,7 @@ alias.lo: $(srcdir)/alias.c $(top_buildd
+--- sudo-1.8.9p5/plugins/sudoers/Makefile.in	2014-03-26 23:02:57.999081022 +0100
++++ sudo-1.8.9p5/plugins/sudoers/Makefile.in	2014-03-26 23:02:48.982043568 +0100
+@@ -457,7 +457,7 @@
  	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/alias.c
- audit.lo: $(srcdir)/audit.c $(top_builddir)/config.h $(incdir)/missing.h \
-           $(srcdir)/logging.h $(incdir)/sudo_debug.h $(srcdir)/bsm_audit.h \
--          $(srcdir)/linux_audit.h
-+          $(srcdir)/linux_audit.h $(srcdir)/solaris_audit.h
+ audit.lo: $(srcdir)/audit.c $(incdir)/gettext.h $(incdir)/missing.h \
+           $(incdir)/sudo_debug.h $(srcdir)/bsm_audit.h $(srcdir)/linux_audit.h \
+-          $(srcdir)/logging.h $(top_builddir)/config.h \
++          $(srcdir)/solaris_audit.h $(srcdir)/logging.h $(top_builddir)/config.h \
+           $(top_srcdir)/compat/stdbool.h
  	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/audit.c
- boottime.lo: $(srcdir)/boottime.c $(top_builddir)/config.h $(incdir)/missing.h \
-              $(incdir)/sudo_debug.h
-@@ -728,6 +728,10 @@ sia.lo: $(authdir)/sia.c $(top_builddir)
-         $(devdir)/def_data.h $(srcdir)/logging.h $(srcdir)/sudo_nss.h \
-         $(incdir)/sudo_plugin.h $(incdir)/sudo_debug.h $(incdir)/gettext.h
- 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(authdir)/sia.c
+ base64.lo: $(srcdir)/base64.c $(incdir)/missing.h $(incdir)/sudo_debug.h \
+@@ -659,6 +659,9 @@
+                 $(incdir)/gettext.h $(incdir)/missing.h $(incdir)/sudo_debug.h \
+                 $(srcdir)/linux_audit.h $(top_builddir)/config.h
+ 	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/linux_audit.c
 +solaris_audit.lo: $(srcdir)/solaris_audit.c $(top_builddir)/config.h \
-+              $(incdir)/error.h $(incdir)/sudo_debug.h \
-+              $(srcdir)/solaris_audit.h
++              $(srcdir)/sudoers.h $(incdir)/sudo_debug.h $(srcdir)/solaris_audit.h
 +	$(LIBTOOL) --mode=compile $(CC) -c $(CPPFLAGS) $(CFLAGS) $(PIE_CFLAGS) $(SSP_CFLAGS) $(DEFS) $(srcdir)/solaris_audit.c
- sssd.lo: $(srcdir)/sssd.c $(top_builddir)/config.h \
-          $(top_srcdir)/compat/dlfcn.h $(srcdir)/sudoers.h \
-          $(top_srcdir)/compat/stdbool.h $(top_builddir)/pathnames.h \
+ locale.lo: $(srcdir)/locale.c $(incdir)/alloc.h $(incdir)/fatal.h \
+            $(incdir)/gettext.h $(incdir)/missing.h $(srcdir)/logging.h \
+            $(top_builddir)/config.h $(top_srcdir)/compat/stdbool.h
 diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/solaris_audit.c sudo-1.8.6p7/plugins/sudoers/solaris_audit.c
 --- sudo-1.8.6p7-orig/plugins/sudoers/solaris_audit.c	1969-12-31 16:00:00.000000000 -0800
 +++ sudo-1.8.6p7/plugins/sudoers/solaris_audit.c	2014-03-18 12:09:27.850924000 -0700
@@ -235,13 +181,13 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/solaris_audit.c sudo-1.8.6p7/plugin
 +	int	argc;
 +
 +	if (adt_start_session(&ah, NULL, ADT_USE_PROC_DATA) != 0) {
-+		log_error(USE_ERRNO | NO_STDERR, _("sudo: adt_start_session"));
++		log_warning(USE_ERRNO | NO_STDERR, _("sudo: adt_start_session"));
 +	}
 +	if ((event = adt_alloc_event(ah, ADT_sudo)) == NULL) {
-+		log_error(USE_ERRNO | NO_STDERR, _("sudo: alloc_event"));
++		log_warning(USE_ERRNO | NO_STDERR, _("sudo: alloc_event"));
 +	}
 +	if ((event->adt_sudo.cwdpath = getcwd(cwd, sizeof (cwd))) == NULL) {
-+		log_error(USE_ERRNO | NO_STDERR, _("sudo: can't add cwd path"));
++		log_warning(USE_ERRNO | NO_STDERR, _("sudo: can't add cwd path"));
 +	}
 +	for (argc = 0; exec_args[argc] != NULL; argc++) {
 +		continue;
@@ -251,14 +197,14 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/solaris_audit.c sudo-1.8.6p7/plugin
 +	if (user_cmnd != NULL) {
 +		if (strlcpy(cmdpath, (const char *)user_cmnd,
 +		    sizeof (cmdpath)) >= sizeof (cmdpath)) {
-+			log_error(NO_STDERR,
++			log_warning(NO_STDERR,
 +			    _("sudo: truncated audit path " "user_cmnd: %s"),
 +			    user_cmnd);
 +		}
 +	} else {
 +		if (strlcpy(cmdpath, (const char *)exec_args[0],
 +		    sizeof (cmdpath)) >= sizeof (cmdpath)) {
-+			log_error(NO_STDERR,
++			log_warning(NO_STDERR,
 +			    _("sudo: truncated audit path " "argv[0]: %s"),
 +			    exec_args[0]);
 +		}
@@ -278,7 +224,7 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/solaris_audit.c sudo-1.8.6p7/plugin
 +	adt_sudo_common(exec_args);
 +
 +	if (adt_put_event(event, ADT_SUCCESS, ADT_SUCCESS) != 0) {
-+		log_error(USE_ERRNO | NO_STDERR,
++		log_warning(USE_ERRNO | NO_STDERR,
 +		    _("sudo: adt_put_event(success)"));
 +	}
 +	adt_free_event(event);
@@ -291,11 +237,11 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/solaris_audit.c sudo-1.8.6p7/plugin
 +	adt_sudo_common(exec_args);
 +
 +	if (vasprintf(&event->adt_sudo.errmsg, fmt, ap) == -1) {
-+		log_error(USE_ERRNO | NO_STDERR,
++		log_warning(USE_ERRNO | NO_STDERR,
 +		    _("sudo: audit_failure message too long"));
 +	}
 +	if (adt_put_event(event, ADT_FAILURE, ADT_FAIL_VALUE_PROGRAM) != 0) {
-+		log_error(USE_ERRNO | NO_STDERR,
++		log_warning(USE_ERRNO | NO_STDERR,
 +		    _("sudo: adt_put_event(failure)"));
 +	}
 +	free(event->adt_sudo.errmsg);
@@ -317,3 +263,4 @@ diff -rupN sudo-1.8.6p7-orig/plugins/sudoers/solaris_audit.h sudo-1.8.6p7/plugin
 +void	solaris_audit_failure(char **, char const * const, va_list);
 +
 +#endif /* _SUDO_SOLARIS_AUDIT_H */
+

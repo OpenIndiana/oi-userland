@@ -25,13 +25,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sudo
-SRC_VERSION=	1.8.6
-SRC_PATCH_VERSION=	7
+SRC_VERSION=	1.8.9
+SRC_PATCH_VERSION=	5
 COMPONENT_VERSION=	$(SRC_VERSION).$(SRC_PATCH_VERSION)
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(SRC_VERSION)p$(SRC_PATCH_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:301089edb22356f59d097f6abbe1303f03927a38691b02959d618546c2125036
+    sha256:bc9d5c96de5f8b4d2b014f87a37870aef60d2891c869202454069150a21a5c21
 COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
 COMPONENT_BUGDB=	utility/sudo
@@ -40,10 +40,13 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+COMPONENT_PREP_ACTION = ( cd $(@D) ; $(AUTORECONF) -f -I m4 )
+
 CONFIGURE_ENV +=	"CC=$(CC)"
 CONFIGURE_ENV +=	"CFLAGS=$(CFLAGS)"
 CONFIGURE_ENV +=	"CXX=$(CXX)"
 CONFIGURE_ENV +=	"MAKE=$(GMAKE)"
+CONFIGURE_ENV +=	"LDFLAGS=$(LDFLAGS) -m64"
 
 CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-project
@@ -61,17 +64,37 @@ COMPONENT_BUILD_ENV +=	CC=$(CC) CXX=$(CXX)
 COMPONENT_BUILD_ENV +=	"CFLAGS=$(CFLAGS)"
 
 COMPONENT_INSTALL_TARGETS = install
+COMPONENT_INSTALL_ARGS += bindir=$(USRBINDIR)
+COMPONENT_INSTALL_ARGS += sbindir=$(USRSBINDIR)
+
 
 # Enable aslr for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
 
-build:		$(BUILD_32)
+build:		$(BUILD_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_64)
 
-test:		$(NO_TESTS)
+VISUDO=$(BUILD_DIR_64)/plugins/sudoers/visudo
+test:
+	# Since linking with libmd.so (which provides sha2 capability on
+	# Solaris) is optional, we have a check here to make sure that the
+	# configure script found it correctly.
+	# http://www.sudo.ws/bugs/show_bug.cgi?id=641
+
+	# Make sure that sudo is NOT built with it's internal sha2 implementation
+	if [[ -n $$( elfdump -s "$(VISUDO)" | grep SHA256Init | grep -v UNDEF ) ]]; then \
+		echo "SHA256Init is not an undefined symbol in $(VISUDO)"; \
+		exit 1; \
+	fi
+	# ... but is linked with libmd instead
+	if [[ -z $$( elfdump -d "$(VISUDO)" | grep 'NEEDED .* libmd.so' ) ]]; then \
+		echo "$(VISUDO) is not linked against libmd.so"; \
+		exit 1; \
+	fi
+
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
