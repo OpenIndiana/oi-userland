@@ -1,0 +1,70 @@
+http://www.sisyphus.ru/ru/srpm/Branch3/ORBit2/patches/0 (modified)
+libname-server-2 is used by  libbonobo, so make it shared
+
+--- ORBit2-2.14.19/src/services/name/Makefile.am.~1~	2010-02-09 15:05:35.000000000 +0300
++++ ORBit2-2.14.19/src/services/name/Makefile.am	2014-04-09 15:13:18.846618028 +0400
+@@ -6,12 +6,10 @@
+ 
+ libORBitservicesincludedir = $(includedir)/orbit-2.0/ORBitservices
+ 
+-lib_LTLIBRARIES=libORBitCosNaming-2.la
++lib_LTLIBRARIES=libORBitCosNaming-2.la libname-server-2.la
+ 
+ noinst_PROGRAMS = name-client-2 orbit-name-server-2
+ 
+-lib_LIBRARIES = libname-server-2.a
+-
+ libORBitCosNaming_2_la_SOURCES = 					\
+ 	CosNaming-common.c 						\
+ 	CosNaming-stubs.c
+@@ -26,6 +24,14 @@
+ 	$(ORBIT_NAME_LIBS)						\
+ 	$(top_builddir)/src/orb/libORBit-2.la
+ 
++libname_server_2_la_SOURCES = \
++	orbit-name-server.c CosNaming-skels.c \
++	name-support.c name-support.h
++
++libname_server_2_la_DEPENDENCIES = $(DEPS) CosNaming.h
++
++libname_server_2_la_LDFLAGS = -no-undefined
++
+ INCLUDES =				\
+ 	-I.				\
+ 	-I$(top_builddir)/include	\
+@@ -49,7 +55,8 @@
+ CLEANFILES=my_cosnaming_built $(BUILT_SOURCES)
+ 
+ DEPS = 	$(top_builddir)/src/orb/libORBit-2.la			\
+-	libORBitCosNaming-2.la
++	libORBitCosNaming-2.la					\
++	libname-server-2.la
+ 
+ LDADDS =                                                        \
+ 	$(top_builddir)/src/orb/libORBit-2.la			\
+@@ -57,21 +64,17 @@
+ 	$(libm)							\
+ 	$(ORBIT_NAME_LIBS)
+ 
+-name_client_2_SOURCES = name-client.c name-support.c name-support.h
++name_client_2_SOURCES = name-client.c name-support.h
+ name_client_2_LDFLAGS = $(FLAGS)
+ name_client_2_DEPENDENCIES = $(DEPS) CosNaming.h
+-name_client_2_LDADD = $(LDADDS)
+-
+-libname_server_2_a_SOURCES = orbit-name-server.c CosNaming-skels.c \
+-			   name-support.c name-support.h
+-libname_server_2_a_DEPENDENCIES = $(DEPS) CosNaming.h
++name_client_2_LDADD =  libname-server-2.la $(LDADDS)
+ 
+ orbit_name_server_2_SOURCES = boot.c
+ orbit_name_server_2_LDFLAGS = $(FLAGS)
+ orbit_name_server_2_DEPENDENCIES = $(DEPS) CosNaming.h
+-orbit_name_server_2_LDADD = libname-server-2.a $(LDADDS)
++orbit_name_server_2_LDADD = libname-server-2.la $(LDADDS)
+ 
+-$(libname_server_2_a_OBJECTS) $(name_client_2_OBJECTS) $(orbit_name_server_2_OBJECTS) : CosNaming.h
++$(libname_server_2_la_OBJECTS) $(name_client_2_OBJECTS) $(orbit_name_server_2_OBJECTS) : CosNaming.h
+ 
+ EXTRA_DIST = $(idl_DATA)
+ 

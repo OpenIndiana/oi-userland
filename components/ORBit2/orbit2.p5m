@@ -1,0 +1,139 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/library/orbit2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license orbit2.license license='GPLv2, LGPLv2'
+
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+
+file files/orbitrc path=etc/orbitrc preserve=rename-new
+file files/orbitrc path=etc/$(MACH64)/orbitrc preserve=rename-new
+
+file path=usr/bin/$(MACH64)/ior-decode-2
+file path=usr/bin/$(MACH64)/linc-cleanup-sockets
+file path=usr/bin/$(MACH64)/orbit-idl-2
+file path=usr/bin/$(MACH64)/orbit2-config
+file path=usr/bin/$(MACH64)/typelib-dump
+file path=usr/bin/ior-decode-2
+file path=usr/bin/linc-cleanup-sockets
+file path=usr/bin/orbit-idl-2
+file path=usr/bin/orbit2-config
+file path=usr/bin/typelib-dump
+file path=usr/include/orbit-2.0/ORBitservices/CosNaming.h
+file path=usr/include/orbit-2.0/ORBitservices/CosNaming_impl.h
+file path=usr/include/orbit-2.0/ORBitservices/orbit-imodule.h
+file path=usr/include/orbit-2.0/orbit-idl/orbit-idl-backend.h
+file path=usr/include/orbit-2.0/orbit/dynamic/dynamic-defs.h
+file path=usr/include/orbit-2.0/orbit/dynamic/dynamic.h
+file path=usr/include/orbit-2.0/orbit/orb-core/allocators.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-any-type.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-any.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-context-type.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-context.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-defs.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-environment-type.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-environment.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-nvlist.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-object-type.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-object.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-orb-type.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-orb.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-pobj.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-policy-type.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-string.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-typecode-type.h
+file path=usr/include/orbit-2.0/orbit/orb-core/corba-typecode.h
+file path=usr/include/orbit-2.0/orbit/orb-core/iop-defs.h
+file path=usr/include/orbit-2.0/orbit/orb-core/orb-core-types.h
+file path=usr/include/orbit-2.0/orbit/orb-core/orb-core.h
+file path=usr/include/orbit-2.0/orbit/orb-core/orb-types.h
+file path=usr/include/orbit-2.0/orbit/orb-core/orbit-interface.h
+file path=usr/include/orbit-2.0/orbit/orb-core/orbit-object.h
+file path=usr/include/orbit-2.0/orbit/orb-core/orbit-small.h
+file path=usr/include/orbit-2.0/orbit/orbit-config.h
+file path=usr/include/orbit-2.0/orbit/orbit-types.h
+file path=usr/include/orbit-2.0/orbit/orbit.h
+file path=usr/include/orbit-2.0/orbit/poa/orbit-adaptor.h
+file path=usr/include/orbit-2.0/orbit/poa/poa-basics.h
+file path=usr/include/orbit-2.0/orbit/poa/poa-defs.h
+file path=usr/include/orbit-2.0/orbit/poa/poa-policy.h
+file path=usr/include/orbit-2.0/orbit/poa/poa-types.h
+file path=usr/include/orbit-2.0/orbit/poa/poa.h
+file path=usr/include/orbit-2.0/orbit/poa/portableserver-current-type.h
+file path=usr/include/orbit-2.0/orbit/poa/portableserver-poa-type.h
+file path=usr/include/orbit-2.0/orbit/util/basic_types.h
+file path=usr/include/orbit-2.0/orbit/util/orbit-genrand.h
+file path=usr/include/orbit-2.0/orbit/util/orbit-util.h
+link path=usr/lib/$(MACH64)/libORBit-2.so target=libORBit-2.so.0.1.0
+link path=usr/lib/$(MACH64)/libORBit-2.so.0 target=libORBit-2.so.0.1.0
+file path=usr/lib/$(MACH64)/libORBit-2.so.0.1.0
+link path=usr/lib/$(MACH64)/libORBit-imodule-2.so \
+    target=libORBit-imodule-2.so.0.0.0
+link path=usr/lib/$(MACH64)/libORBit-imodule-2.so.0 \
+    target=libORBit-imodule-2.so.0.0.0
+file path=usr/lib/$(MACH64)/libORBit-imodule-2.so.0.0.0
+link path=usr/lib/$(MACH64)/libORBitCosNaming-2.so \
+    target=libORBitCosNaming-2.so.0.1.0
+link path=usr/lib/$(MACH64)/libORBitCosNaming-2.so.0 \
+    target=libORBitCosNaming-2.so.0.1.0
+file path=usr/lib/$(MACH64)/libORBitCosNaming-2.so.0.1.0
+link path=usr/lib/$(MACH64)/libname-server-2.so target=libname-server-2.so.0.0.0
+link path=usr/lib/$(MACH64)/libname-server-2.so.0 \
+    target=libname-server-2.so.0.0.0
+file path=usr/lib/$(MACH64)/libname-server-2.so.0.0.0
+#file path=usr/lib/$(MACH64)/libname-server-2.a
+file path=usr/lib/$(MACH64)/orbit-2.0/Everything_module.so
+file path=usr/lib/$(MACH64)/pkgconfig/ORBit-2.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/ORBit-CosNaming-2.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/ORBit-idl-2.0.pc
+file path=usr/lib/$(MACH64)/pkgconfig/ORBit-imodule-2.0.pc
+link path=usr/lib/libORBit-2.so target=libORBit-2.so.0.1.0
+link path=usr/lib/libORBit-2.so.0 target=libORBit-2.so.0.1.0
+file path=usr/lib/libORBit-2.so.0.1.0
+link path=usr/lib/libORBit-imodule-2.so target=libORBit-imodule-2.so.0.0.0
+link path=usr/lib/libORBit-imodule-2.so.0 target=libORBit-imodule-2.so.0.0.0
+file path=usr/lib/libORBit-imodule-2.so.0.0.0
+link path=usr/lib/libORBitCosNaming-2.so target=libORBitCosNaming-2.so.0.1.0
+link path=usr/lib/libORBitCosNaming-2.so.0 target=libORBitCosNaming-2.so.0.1.0
+file path=usr/lib/libORBitCosNaming-2.so.0.1.0
+link path=usr/lib/libname-server-2.so target=libname-server-2.so.0.0.0
+link path=usr/lib/libname-server-2.so.0 target=libname-server-2.so.0.0.0
+file path=usr/lib/libname-server-2.so.0.0.0
+#file path=usr/lib/libname-server-2.a
+file path=usr/lib/orbit-2.0/Everything_module.so
+file path=usr/lib/pkgconfig/ORBit-2.0.pc
+file path=usr/lib/pkgconfig/ORBit-CosNaming-2.0.pc
+file path=usr/lib/pkgconfig/ORBit-idl-2.0.pc
+file path=usr/lib/pkgconfig/ORBit-imodule-2.0.pc
+file path=usr/share/aclocal/ORBit2.m4
+file path=usr/share/gtk-doc/html/ORBit2/ORBit2-orbit2-allocators.html
+file path=usr/share/gtk-doc/html/ORBit2/ORBit2-orbit2-small.html
+file path=usr/share/gtk-doc/html/ORBit2/ORBit2.devhelp
+file path=usr/share/gtk-doc/html/ORBit2/ORBit2.devhelp2
+file path=usr/share/gtk-doc/html/ORBit2/general.html
+file path=usr/share/gtk-doc/html/ORBit2/home.png
+file path=usr/share/gtk-doc/html/ORBit2/index.html
+file path=usr/share/gtk-doc/html/ORBit2/index.sgml
+file path=usr/share/gtk-doc/html/ORBit2/left.png
+file path=usr/share/gtk-doc/html/ORBit2/right.png
+file path=usr/share/gtk-doc/html/ORBit2/style.css
+file path=usr/share/gtk-doc/html/ORBit2/up.png
+file path=usr/share/idl/orbit-2.0/CosNaming.idl
