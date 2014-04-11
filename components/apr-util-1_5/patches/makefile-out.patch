@@ -1,0 +1,26 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+--- Makefile.in	Thu Nov 20 22:32:58 2008
++++ Makefile.in	Thu Nov 10 05:02:25 2011
+@@ -10,7 +10,7 @@
+ srcdir = @srcdir@
+ VPATH = @srcdir@
+ 
+-INCLUDES = @APRUTIL_PRIV_INCLUDES@ @APR_INCLUDES@ @APRUTIL_INCLUDES@
++INCLUDES = -I/usr/include/openldap @APRUTIL_PRIV_INCLUDES@ @APR_INCLUDES@ @APRUTIL_INCLUDES@
+ APRUTIL_LDFLAGS = @APRUTIL_LDFLAGS@
+ APRUTIL_LIBS = @APRUTIL_LIBS@
+ 
+@@ -71,7 +71,10 @@
+ 
+ # Create apu-config script suitable for the install tree
+ apu-config.out: $(APU_CONFIG)
+-	sed 's,^\(location=\).*$$,\1installed,' < $(APU_CONFIG) > $@
++	sed -e 's,^\(location=\).*$$,\1installed,' \
++	    -e '/^APU_SOURCE_DIR=/s,/.*",/usr/apr-util/1.5",' \
++	    -e '/^APU_BUILD_DIR=/s,/.*",/usr/apr-util/1.5",' \
++	     < $(APU_CONFIG) > $@
+ 
+ install: $(TARGETS) install-modules
+ 	$(APR_MKDIR) $(DESTDIR)$(includedir) $(DESTDIR)$(libdir)/pkgconfig \

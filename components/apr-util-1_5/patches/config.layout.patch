@@ -1,0 +1,71 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+--- config.layout	2005-02-09 04:18:43.000000000 -0800
++++ config.layout	2014-04-01 06:11:52.176952015 -0700
+@@ -179,21 +179,59 @@
+     runtimedir:    ${localstatedir}/run
+ </Layout>
+ 
+-#   Solaris 8 Layout
++#   Solaris Layout
+ <Layout Solaris>
+-    prefix:        /usr/apr
++    prefix:        /usr/apr-util/1.5
+     exec_prefix:   ${prefix}
+     bindir:        ${exec_prefix}/bin
+     sbindir:       ${exec_prefix}/bin
+     libdir:        ${exec_prefix}/lib
+     libexecdir:    ${exec_prefix}/libexec
+     mandir:        ${exec_prefix}/man
+-    sysconfdir:    /etc/apr
+-    datadir:       /var/apr
+-    installbuilddir: ${datadir}/build
++    sysconfdir:    /etc/apr-util/1.5
++    datadir:       /var/apr-util/1.5
+     includedir:    ${exec_prefix}/include
+     localstatedir: ${prefix}
+-    runtimedir:    /var/run
++    installbuilddir: ${prefix}/build
++    manualdir:     ${prefix}/manual
++    runtimedir:    /var/run/apr-util/1.5
++    libsuffix:     -${APRUTIL_MAJOR_VERSION}
++</Layout>
++
++<Layout Solaris-amd64>
++    prefix:        /usr/apr-util/1.5
++    exec_prefix:   ${prefix}
++    bindir:        ${exec_prefix}/bin/amd64
++    sbindir:       ${exec_prefix}/bin/amd64
++    libdir:        ${exec_prefix}/lib/amd64
++    libexecdir:    ${exec_prefix}/libexec/amd64
++    mandir:        ${exec_prefix}/man
++    sysconfdir:    /etc/apr-util/1.5
++    datadir:       /var/apr-util/1.5
++    includedir:    ${exec_prefix}/include
++    localstatedir: ${prefix}
++    installbuilddir: ${prefix}/build/amd64
++    manualdir:     ${prefix}/manual
++    runtimedir:    /var/run/apr-util/1.5
++    libsuffix:     -${APRUTIL_MAJOR_VERSION}
++</Layout>
++
++<Layout Solaris-sparcv9>
++    prefix:        /usr/apr-util/1.5
++    exec_prefix:   ${prefix}
++    bindir:        ${exec_prefix}/bin/sparcv9
++    sbindir:       ${exec_prefix}/bin/sparcv9
++    libdir:        ${exec_prefix}/lib/sparcv9
++    libexecdir:    ${exec_prefix}/libexec/sparcv9
++    mandir:        ${exec_prefix}/man
++    sysconfdir:    /etc/apr-util/1.5
++    datadir:       /var/apr-util/1.5
++    includedir:    ${exec_prefix}/include
++    localstatedir: ${prefix}
++    installbuilddir: ${prefix}/build/sparcv9
++    manualdir:     ${prefix}/manual
++    runtimedir:    /var/run/apr-util/1.5
++    libsuffix:     -${APRUTIL_MAJOR_VERSION}
+ </Layout>
+ 
+ #   OpenBSD Layout
