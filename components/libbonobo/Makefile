@@ -14,16 +14,16 @@
 
 include ../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		libIDL
-COMPONENT_VERSION=	0.8.14
-COMPONENT_REVISION=	1
+COMPONENT_NAME=		libbonobo
+COMPONENT_VERSION=	2.32.1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	IDL parsing library
+COMPONENT_SUMMARY=	Bonobo Base Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c5d24d8c096546353fbc7cedf208392d5a02afe9d56ebcc1cccb258d7c4d2220
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.8/$(COMPONENT_ARCHIVE)
+	sha256:9160d4f277646400d3bb6b4fa73636cc6d1a865a32b9d0760e1e9e6ee624976b
+    
+COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -32,7 +32,12 @@ include $(WS_TOP)/make-rules/ips.mk
 PATH=/usr/gnu/bin:/usr/bin
 
 CONFIGURE_OPTIONS.32 += --sysconfdir=/etc
+CONFIGURE_OPTIONS.32 += --libexecdir=/usr/lib
 CONFIGURE_OPTIONS.64 += --sysconfdir=/etc/$(MACH64)
+CONFIGURE_OPTIONS.64 += --libexecdir=/usr/lib/$(MACH64)
+
+CONFIGURE_OPTIONS += --enable-bonobo-activation-debug
+CONFIGURE_OPTIONS += --enable-debug
 
 # common targets
 build:		$(BUILD_32_and_64)

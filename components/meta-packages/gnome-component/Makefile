@@ -17,6 +17,7 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		gnome-component
 # gnome-component version is based on libbonobo version
 COMPONENT_VERSION=	2.32.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY=	GNOME CORBA ORB and component framework
 
 include ../../../make-rules/ips.mk
