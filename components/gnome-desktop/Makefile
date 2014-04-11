@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-desktop
 COMPONENT_VERSION=	2.30.2
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Gnome Desktop Library
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
