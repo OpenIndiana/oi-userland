@@ -1,3 +1,9 @@
+#
+# tspi_ps_tspps.c.patch
+# This change implements Solaris-specific locations for the
+# TSS PS (persistent storage), aka TPM keystore.
+# It is not suitable for upstream use.  This change was implemented in-house.
+#
 --- src/tspi/ps/tspps.c.orig	2011-03-24 13:06:14.607907754 -0700
 +++ src/tspi/ps/tspps.c	2011-03-24 13:07:30.668528209 -0700
 @@ -70,9 +70,12 @@
@@ -14,22 +20,21 @@
  	struct stat stat_buf;
  	char buf[PASSWD_BUFSIZE];
  	uid_t euid;
-@@ -94,9 +97,16 @@
+@@ -94,9 +97,15 @@
           * in the user's home directory, which may be shared
           * by multiple systems.
           *
 -         * The directory path on Solaris is /var/tpm/userps/[EUID]/
-+         * The directory path on Solaris is /var/user[USERNAME]/tpm/userps
++         * The directory path on Solaris is /var/user/[USERNAME]/tpm/userps
           */
 -        rc = snprintf(buf, sizeof (buf), "%s/%d", TSS_USER_PS_DIR, euid);
-+
-+	pwp = getpwuid_r(euid, &pw, pwbuf, sizeof (pwbuf));
-+	if (pwp != NULL) {
-+		rc = snprintf(buf, sizeof (buf), "/var/user/%s/tpm/userps",
-+		    pwp->pw_name);
-+	} else {
++	rc = getpwuid_r(euid, &pw, pwbuf, sizeof (pwbuf), &pwp);
++	if ((rc != 0) || (pwp == NULL)) {
 +		return TSPERR(TSS_E_INTERNAL_ERROR);
 +	}
++	rc = snprintf(buf, sizeof (buf), "/var/user/%s/tpm/userps",
++	    pwp->pw_name);
++
  #else
  	setpwent();
  	while (1) {

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -41,6 +41,8 @@ include ../../make-rules/lint-libraries.mk
 PATCH_LEVEL=0
 
 LIBS=-lnsl -lsocket -lgen
+
+CFLAGS += "-D_POSIX_PTHREAD_SEMANTICS"
 
 CONFIGURE_OPTIONS += --sbindir=/usr/lib
 CONFIGURE_OPTIONS += --with-gui=openssl
