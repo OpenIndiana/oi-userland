@@ -30,6 +30,7 @@ set name=pkg.description \
     value="cssh opens an administration console and a separate terminal window to each specified hosts. Any text typed into the administration console is replicated across all terminal windows.  Each terminal window may also be typed into separately."
 set name=com.oracle.info.description \
     value="Perl CPAN utility to administer cluster of servers."
+set name=pkg.human-version value=$(HUMAN_VERSION)
 set name=com.oracle.info.tpno value=13257
 set name=info.classification \
     value="org.opensolaris.category.2008:Applications/System Utilities"
@@ -59,7 +60,19 @@ file path=usr/perl5/vendor_perl/$(PERLVER)/App/ClusterSSH/L10N/en.pm
 #
 link path=usr/bin/cssh target=../perl5/$(PERLVER)/bin/cssh mediator=perl \
     mediator-version=$(PERLVER)
+# Since crsh and ctel are same as cssh create links instead of duplicates.
+link path=usr/bin/crsh target=../perl5/$(PERLVER)/bin/cssh mediator=perl \
+    mediator-version=$(PERLVER)
+link path=usr/bin/ctel target=../perl5/$(PERLVER)/bin/cssh mediator=perl \
+    mediator-version=$(PERLVER)
 link path=usr/share/man/man1/cssh.1 \
+    target=../../../perl5/$(PERLVER)/man/man1/cssh.1 mediator=perl \
+    mediator-version=$(PERLVER)
+# Also man page of crsh and ctel same as cssh.
+link path=usr/share/man/man1/crsh.1 \
+    target=../../../perl5/$(PERLVER)/man/man1/cssh.1 mediator=perl \
+    mediator-version=$(PERLVER)
+link path=usr/share/man/man1/ctel.1 \
     target=../../../perl5/$(PERLVER)/man/man1/cssh.1 mediator=perl \
     mediator-version=$(PERLVER)
 #
