@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2005, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2005, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -27,12 +27,12 @@ COMPONENT_NAME= 	timezone
 
 COMPONENT_BUGDB=	utility/timezone
 
-HUMAN_VERSION=		2013d
+HUMAN_VERSION=		2014b
 
 # "etcetera" must be listed before "backward" because it sets up links that
 # "backward" needs.
 TZFILES= africa antarctica asia australasia etcetera europe \
-	 factory northamerica pacificnew solar87 solar88 solar89 \
+	 factory northamerica pacificnew \
 	 southamerica backward
 
 include ../../make-rules/ips.mk
