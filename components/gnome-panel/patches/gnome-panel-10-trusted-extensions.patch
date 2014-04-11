@@ -1,0 +1,1058 @@
+diff -urN -x '*.orig' -x '*.rej' panel.orig/applets/wncklet/GNOME_WorkspaceSwitcherApplet.xml panel.new/applets/wncklet/GNOME_WorkspaceSwitcherApplet.xml
+--- panel.orig/applets/wncklet/GNOME_WorkspaceSwitcherApplet.xml	2010-02-15 19:27:58.463477583 +0000
++++ panel.new/applets/wncklet/GNOME_WorkspaceSwitcherApplet.xml	2010-02-15 19:28:16.590786693 +0000
+@@ -1,6 +1,9 @@
+ <Root>
+   <popups>
+     <popup name="button3">
++      <!-- SUN_BRANDING -->
++      <menuitem name="Workspace Label Item" verb="ChangeWorkspaceLabel" _label="_Change Workspace Label..."/>
++      <separator/>
+       <menuitem name="Pager Preferences Item" verb="PagerPreferences" _label="_Preferences"
+     		    pixtype="stock" pixname="gtk-properties"/>
+       <menuitem name="Pager Help Item" verb="PagerHelp" _label="_Help"
+diff -urN -x '*.orig' -x '*.rej' panel.orig/applets/wncklet/Makefile.am panel.new/applets/wncklet/Makefile.am
+--- panel.orig/applets/wncklet/Makefile.am	2010-02-15 19:27:58.465882253 +0000
++++ panel.new/applets/wncklet/Makefile.am	2010-02-15 19:28:16.591528599 +0000
+@@ -5,6 +5,7 @@
+ 	-I$(top_builddir)/libpanel-applet \
+ 	$(WNCKLET_CFLAGS) \
+ 	$(LIBPANEL_APPLET_CFLAGS) \
++	$(LIBGNOMETSOL_CFLAGS) \
+ 	$(DISABLE_DEPRECATED_CFLAGS) \
+ 	$(WARN_CFLAGS) \
+ 	-DGNOMELOCALEDIR=\""$(prefix)/$(DATADIRNAME)/locale"\" \
+@@ -18,6 +19,8 @@
+ WNCKLET_SOURCES = \
+ 	wncklet.c \
+ 	wncklet.h \
++	wnck-tsol.c \
++	wnck-tsol.h \
+ 	window-menu.c \
+ 	window-menu.h \
+ 	window-list.c \
+diff -urN -x '*.orig' -x '*.rej' panel.orig/applets/wncklet/wnck-tsol.c panel.new/applets/wncklet/wnck-tsol.c
+--- panel.orig/applets/wncklet/wnck-tsol.c	1970-01-01 01:00:00.000000000 +0100
++++ panel.new/applets/wncklet/wnck-tsol.c	2010-02-15 19:28:16.592361615 +0000
+@@ -0,0 +1,217 @@
++#include  <config.h>
++#ifdef HAVE_LIBGNOMETSOL
++
++#include <stdlib.h>
++#include <string.h>
++#include <dlfcn.h>
++#include <link.h>
++#include <glib.h>
++#include <panel-applet.h>
++#include "wnck-tsol.h"
++#define WNCK_I_KNOW_THIS_IS_UNSTABLE
++#include <libwnck/libwnck.h>
++
++static
++void * dlopen_tsol (void)
++{
++   void  *handle = NULL;
++
++   /*
++    * No 64-bit version of libwnck so we can get away with hardcoding
++    * to a single path on this occasion
++    */
++   if ((handle = dlopen ("/usr/lib/libtsol.so.2", RTLD_LAZY)) != NULL)
++       return handle;
++   
++   return handle;
++}
++
++static
++void * dlopen_xtsol (void)
++{
++   void  *handle = NULL;
++
++   if ((handle = dlopen ("/usr/lib/libXtsol.so.1", RTLD_LAZY)) != NULL)
++       return handle;
++   if ((handle = dlopen ("/usr/openwin/lib/libXtsol.so.1", RTLD_LAZY)) != NULL)
++       return handle;
++
++   return handle;
++}
++
++static
++void * dlopen_gnometsol (void)
++{
++   void  *handle = NULL;
++
++   if ((handle = dlopen ("/usr/lib/libgnometsol.so", RTLD_LAZY)) != NULL)
++       return handle;
++   
++   return handle;
++}
++
++
++gboolean
++_wnck_use_trusted_extensions (void)
++{
++  static int trusted = -1;
++
++  /*
++   * Sun Trusted Extensions (tm) for Solaris (tm) support. (Damn I should be a lawyer).
++   *
++   * It is necessary to use dlopen because the label aware extensions to libwnck work
++   * only on systems with the trusted extensions installed and with the SUN_TSOL
++   * xserver extension present
++   */
++
++    if (trusted < 0) {
++        static gpointer tsol_handle = NULL;
++        static gpointer xtsol_handle = NULL;
++        static gpointer gnometsol_handle = NULL;
++
++      if (getenv ("TRUSTED_SESSION") == NULL) {
++        trusted = 0;
++        return 0;
++      }   	
++
++        tsol_handle = dlopen_tsol ();
++        if (tsol_handle != NULL)
++            xtsol_handle = dlopen_xtsol ();
++        if (tsol_handle && xtsol_handle) {
++
++           /* libtsol functions */
++           libtsol_blequal = (tsol_blequal) dlsym (tsol_handle, "blequal");
++           libtsol_label_to_str = (tsol_label_to_str) dlsym (tsol_handle, "label_to_str");
++           libtsol_str_to_label = (tsol_str_to_label) dlsym (tsol_handle, "str_to_label");
++           libtsol_m_label_dup = (tsol_m_label_dup) dlsym (tsol_handle, "m_label_dup");
++           libtsol_m_label_free = (tsol_m_label_free) dlsym (tsol_handle, "m_label_free");
++
++           /* Other misc. libtsol functions */
++           libtsol_blminimum = (tsol_blminimum) dlsym (tsol_handle, "blminimum");
++           libtsol_blmaximum = (tsol_blmaximum) dlsym (tsol_handle, "blmaximum");
++           libtsol_blinrange = (tsol_blinrange) dlsym (tsol_handle, "blinrange");
++           libtsol_getuserrange = (tsol_getuserrange) dlsym (tsol_handle, "getuserrange");
++           libtsol_blabel_alloc = (tsol_blabel_alloc) dlsym (tsol_handle, "blabel_alloc");
++           libtsol_blabel_free  = (tsol_blabel_free)  dlsym (tsol_handle, "blabel_free");
++           libtsol_bsllow  = (tsol_bsllow)  dlsym (tsol_handle, "bsllow");
++           libtsol_bslhigh = (tsol_bslhigh) dlsym (tsol_handle, "bslhigh");
++
++           /* libXtsol functions */
++           libxtsol_XTSOLgetClientLabel = (xtsol_XTSOLgetClientLabel) dlsym (xtsol_handle,
++                                     "XTSOLgetClientLabel");
++           libxtsol_XTSOLIsWindowTrusted = (xtsol_XTSOLIsWindowTrusted) dlsym (xtsol_handle,
++                                      "XTSOLIsWindowTrusted");
++
++           if (libtsol_label_to_str == NULL ||
++               libtsol_str_to_label == NULL ||
++               libtsol_m_label_dup == NULL ||
++               libtsol_m_label_free == NULL ||
++               libtsol_blminimum == NULL ||
++               libtsol_blmaximum == NULL ||
++               libtsol_blinrange == NULL ||
++               libtsol_getuserrange == NULL ||
++               libtsol_blabel_alloc == NULL ||
++               libtsol_blabel_free  == NULL ||
++               libtsol_bsllow  == NULL ||
++               libtsol_bslhigh == NULL ||
++               libxtsol_XTSOLgetClientLabel == NULL ||
++               libxtsol_XTSOLIsWindowTrusted == NULL) {
++               dlclose (tsol_handle);
++               dlclose (xtsol_handle);
++               tsol_handle = NULL;
++               xtsol_handle = NULL;
++            }
++        }
++		gnometsol_handle = dlopen_gnometsol ();
++		if (gnometsol_handle != NULL) {
++			libgnometsol_gnome_label_builder_new = 
++				(gnometsol_gnome_label_builder_new) dlsym (gnometsol_handle, 
++				"gnome_label_builder_new");
++			libgnometsol_gnome_label_builder_get_type =
++				(gnometsol_gnome_label_builder_get_type) dlsym (gnometsol_handle,
++				"gnome_label_builder_get_type");
++			if (libgnometsol_gnome_label_builder_new == NULL ||
++			libgnometsol_gnome_label_builder_get_type == NULL)
++				gnometsol_handle = NULL;
++		}
++    trusted = ((tsol_handle != NULL) && (xtsol_handle != NULL) && (gnometsol_handle != NULL)) ? 1 : 0;
++    }
++    return trusted ? TRUE : FALSE;
++}
++
++const char *
++_wnck_get_min_label ()
++{
++    static char *min_label = NULL;
++
++    if (!min_label) {
++        min_label = (char *) getenv ("USER_MIN_SL");
++    }
++    return min_label;
++}
++
++const char*
++_wnck_get_max_label()
++{
++    static char *max_label = NULL;
++
++    if (!max_label) {
++        max_label = (char *) getenv ("USER_MAX_SL");
++    }
++    return max_label;
++}
++
++
++/* window selector part */
++
++static gboolean tsol_win_selector_label_expose_event (GtkWidget        *widget,
++						      GdkEventExpose   *event,
++						      gpointer          data)
++{
++  WnckWindow *window = (WnckWindow *) data;
++
++  GdkGC *tmp_gc = gdk_gc_new (widget->window);
++  gdk_gc_set_rgb_fg_color (tmp_gc, wnck_window_get_label_color (window));
++
++  gdk_draw_rectangle (widget->window, 
++		      widget->style->black_gc,
++		      FALSE,
++		      event->area.x, event->area.y,
++		      event->area.width - 1, event->area.height - 1);
++  
++  gdk_draw_rectangle (widget->window, 
++		      tmp_gc,
++		      TRUE,
++		      event->area.x + 1, event->area.y + 1,
++		      event->area.width - 2, event->area.height - 2);
++
++  g_object_unref (tmp_gc);
++
++  return FALSE;
++}
++
++GtkWidget *
++window_menu_create_label_indicator (WnckWindow *window, 
++				    GtkWidget  *image)
++{
++  GtkWidget *da, *hbox;
++  da = gtk_drawing_area_new ();
++  
++  g_signal_connect (G_OBJECT (da), "expose_event",  
++		    G_CALLBACK (tsol_win_selector_label_expose_event), 
++		    window);
++  
++  gtk_widget_set_size_request (da, 5, -1);
++  
++  hbox = gtk_hbox_new (FALSE, 4);
++  
++  gtk_container_add (GTK_CONTAINER (hbox), da);
++  gtk_container_add (GTK_CONTAINER (hbox), image);
++  
++  gtk_widget_show (da);
++  gtk_widget_show (hbox);
++  gtk_widget_show (image);
++
++  return hbox;
++}
++#endif /* HAVE_LIBGNOMETSOL */
+diff -urN -x '*.orig' -x '*.rej' panel.orig/applets/wncklet/wnck-tsol.h panel.new/applets/wncklet/wnck-tsol.h
+--- panel.orig/applets/wncklet/wnck-tsol.h	1970-01-01 01:00:00.000000000 +0100
++++ panel.new/applets/wncklet/wnck-tsol.h	2010-02-15 19:28:16.593166334 +0000
+@@ -0,0 +1,83 @@
++#ifndef __WNCK_TSOL_H__
++#define __WNCK_TSOL_H__
++
++#include <config.h>
++
++#ifdef HAVE_LIBGNOMETSOL
++#include <glib-2.0/glib.h>
++#include <panel-applet.h>
++#include <tsol/label.h>
++#include <sys/tsol/label_macro.h>
++#include <X11/Xlib.h>
++#include <X11/extensions/Xtsol.h>
++#include <libgnometsol/label_builder.h>
++#define WNCK_I_KNOW_THIS_IS_UNSTABLE
++#include <libwnck/libwnck.h>
++
++/* Libtsol functions */
++
++typedef int     (*tsol_blequal) (const m_label_t *label1, const m_label_t *label2);
++typedef int     (*tsol_label_to_str) (const m_label_t *label, char **string,
++                 const m_label_str_t conversion_type,
++                 uint_t flags);
++typedef int		(*tsol_str_to_label) (const char *string, m_label_t **label,
++                 const m_label_type_t label_type, uint_t flags,
++                 int *error);
++typedef void (*tsol_m_label_dup) (m_label_t **dst, const m_label_t *src);
++typedef void	(*tsol_m_label_free) (m_label_t *label);
++
++/* Other misc. libtsol functions that seem to be stable */
++typedef blrange_t*		(*tsol_getuserrange) (const char *username);
++typedef int				(*tsol_blinrange) (const m_label_t *label,
++                         const blrange_t *range);
++typedef void			(*tsol_blminimum) (m_label_t *minimum_label,
++                         const m_label_t *bounding_label);
++typedef void			(*tsol_blmaximum) (m_label_t *maximum_label,
++                         const m_label_t *bounding_label);
++typedef m_label_t*		(*tsol_blabel_alloc) (void);
++typedef void			(*tsol_blabel_free)  (m_label_t *label_p);
++typedef void			(*tsol_bsllow)  (m_label_t *label);
++typedef void			(*tsol_bslhigh) (m_label_t *label);
++
++/* libXtsol functions */
++typedef Status	(*xtsol_XTSOLgetClientLabel) (Display *dpy, XID xid,
++                 bslabel_t *sl);
++typedef Bool	(*xtsol_XTSOLIsWindowTrusted) (Display *dpy, Window win);
++
++extern gboolean _trusted_extensions_initialised;
++
++/* libgnometsol functions */
++typedef GtkWidget*	(*gnometsol_gnome_label_builder_new) (char *msg,
++              blevel_t *upper, blevel_t *lower, int mode);
++typedef GType     	(*gnometsol_gnome_label_builder_get_type) (void);
++
++/* libtsol functions */
++tsol_blequal		libtsol_blequal;
++tsol_label_to_str	libtsol_label_to_str;
++tsol_str_to_label	libtsol_str_to_label;
++tsol_m_label_dup libtsol_m_label_dup;
++tsol_m_label_free	libtsol_m_label_free;
++/* Other misc. libtsol functions */
++tsol_blminimum		libtsol_blminimum;
++tsol_blmaximum		libtsol_blmaximum;
++tsol_blinrange      libtsol_blinrange;
++tsol_getuserrange	libtsol_getuserrange;
++tsol_blabel_alloc	libtsol_blabel_alloc;
++tsol_blabel_free	libtsol_blabel_free;
++tsol_bsllow			libtsol_bsllow;
++tsol_bslhigh		libtsol_bslhigh;
++
++xtsol_XTSOLgetClientLabel	libxtsol_XTSOLgetClientLabel;
++xtsol_XTSOLIsWindowTrusted	libxtsol_XTSOLIsWindowTrusted;
++
++gnometsol_gnome_label_builder_new libgnometsol_gnome_label_builder_new;
++gnometsol_gnome_label_builder_get_type libgnometsol_gnome_label_builder_get_type;
++
++gboolean _wnck_use_trusted_extensions ();
++const char* _wnck_get_min_label ();
++const char* _wnck_get_max_label ();
++
++GtkWidget* window_menu_create_label_indicator (WnckWindow *window, 
++					       GtkWidget  *image);
++#endif /* HAVE_LIBGNOMETSOL */
++#endif
+diff -urN -x '*.orig' -x '*.rej' panel.orig/applets/wncklet/workspace-switcher.c panel.new/applets/wncklet/workspace-switcher.c
+--- panel.orig/applets/wncklet/workspace-switcher.c	2010-02-15 19:27:58.463897275 +0000
++++ panel.new/applets/wncklet/workspace-switcher.c	2010-02-15 19:28:16.595192177 +0000
+@@ -26,6 +26,10 @@
+ #include <libwnck/libwnck.h>
+ #include <gconf/gconf-client.h>
+ 
++#ifdef HAVE_LIBGNOMETSOL
++#include "wnck-tsol.h"
++#endif
++
+ #include "workspace-switcher.h"
+ 
+ #include "wncklet.h"
+@@ -40,6 +44,8 @@
+ 
+ #define WORKSPACE_SWITCHER_ICON "gnome-panel-workspace-switcher"
+ 
++gboolean ugly_showing_lbuilder_global_which_sucks_fix_me = FALSE;
++
+ typedef enum {
+ 	PAGER_WM_METACITY,
+ 	PAGER_WM_COMPIZ,
+@@ -79,6 +85,20 @@
+ 	guint listeners [3];
+ } PagerData;
+ 
++#ifdef HAVE_LIBGNOMETSOL
++static void tsol_workspace_created (WnckScreen *screen,
++				       WnckWorkspace *workspace,
++				       gpointer  data);
++static void role_changed (WnckWorkspace *workspace,
++				       gpointer data);
++static void changed_workspace (WnckScreen *screen,
++				       WnckWorkspace *previously_active_space,
++				       gpointer data);
++static void workspace_label_dialog    (BonoboUIComponent *uic,
++				       PagerData         *pager,
++				       const gchar       *verbname);
++#endif
++
+ static void display_properties_dialog (BonoboUIComponent *uic,
+ 				       PagerData         *pager,
+ 				       const gchar       *verbname);
+@@ -175,6 +195,44 @@
+ 				     G_CALLBACK (window_manager_changed),
+ 				     pager,
+ 				     pager->applet);
++#ifdef HAVE_LIBGNOMETSOL
++	if (_wnck_use_trusted_extensions ()) {
++		/*
++		 * Monitor all events that might require the workspace label menu
++		 * to be hidden/unhidden.
++		 */
++		int i, wscount;
++		WnckWorkspace *space;
++		wscount = wnck_screen_get_workspace_count (pager->screen);
++		for (i = 0; i < wscount; i++) {
++			space = wnck_screen_get_workspace (pager->screen, i);
++			wncklet_connect_while_alive (G_OBJECT (space), "role_changed",
++						     G_CALLBACK (role_changed),
++						     (gpointer) pager,
++						     pager->applet);
++		}
++
++		wncklet_connect_while_alive (G_OBJECT (pager->screen),
++					     "workspace_created",
++					     G_CALLBACK (tsol_workspace_created),
++					     (gpointer) pager,
++					     pager->applet);
++		wncklet_connect_while_alive (G_OBJECT (pager->screen),
++					     "active_workspace_changed",
++					     G_CALLBACK (changed_workspace),
++					     (gpointer) pager,
++					     pager->applet);
++	}
++
++	/* 
++	 * Trigger the active_workspace_changed callback function manually
++	 * to set up the initial hidden/unhidden state of the ChangeWorkspaceLabel
++	 * menu item.
++	 */
++	changed_workspace (pager->screen,
++			   wnck_screen_get_active_workspace (pager->screen),
++			   (gpointer) pager);
++#endif
+ }
+ 
+ static void
+@@ -339,6 +397,9 @@
+ }
+ 
+ static const BonoboUIVerb pager_menu_verbs [] = {
++#ifdef HAVE_LIBGNOMETSOL
++	BONOBO_UI_UNSAFE_VERB ("ChangeWorkspaceLabel", workspace_label_dialog),
++#endif
+ 	BONOBO_UI_UNSAFE_VERB ("PagerPreferences", display_properties_dialog),
+ 	BONOBO_UI_UNSAFE_VERB ("PagerHelp",        display_help_dialog),
+ 	BONOBO_UI_UNSAFE_VERB ("PagerAbout",       display_about_dialog),
+@@ -590,6 +651,16 @@
+ 					      NULL);
+ 	}
+ 
++#ifdef HAVE_LIBGNOMETSOL
++	if (!_wnck_use_trusted_extensions ()) {
++		BonoboUIComponent *popup_component;
++		popup_component = panel_applet_get_popup_component (PANEL_APPLET (pager->applet));
++		bonobo_ui_component_set_prop (popup_component,
++					      "/commands/ChangeWorkspaceLabel",
++					      "hidden", "1",
++					      NULL);
++        }
++#endif
+ 	return TRUE;
+ }
+ 
+@@ -1034,6 +1105,239 @@
+ 	update_properties_for_wm (pager);
+ }
+ 
++#ifdef HAVE_LIBGNOMETSOL
++/* WARNING
++ * DON'T ever call this from outside any code that has first done
++ * a runtime trusted extension check!!! There is no point anyway.
++ */
++
++void
++lbuilder_response_cb (GtkDialog *dialog, gint id, gpointer data)
++{
++	int error;
++	m_label_t *sl = NULL;
++	char *label;
++    WnckWorkspace *space;
++
++	if (!_wnck_use_trusted_extensions ())
++		return;
++/* 
++ * Stops the GNOME_LABEL_BUILDER cast calling 
++ * gnome_label_builder_get_type() directly
++ */
++#define GNOME_TYPE_LABEL_BUILDER (libgnometsol_gnome_label_builder_get_type ())
++
++	GnomeLabelBuilder *lbuilder = GNOME_LABEL_BUILDER (dialog);
++	space = WNCK_WORKSPACE (data);
++
++	switch (id) {
++		case GTK_RESPONSE_OK:
++			g_object_get (G_OBJECT (lbuilder), "sl", &sl, NULL);
++
++			/* I should probably check the return code here but the label is
++			 * coming from an internal function */
++			error = libtsol_label_to_str (sl, &label, M_INTERNAL, LONG_NAMES);
++			if (label != NULL) {
++				wnck_workspace_change_label (space, label);
++			}
++			g_free (label);
++			libtsol_m_label_free (sl);
++			gtk_widget_destroy (GTK_WIDGET (lbuilder));
++			ugly_showing_lbuilder_global_which_sucks_fix_me = FALSE;
++			break;
++		case GTK_RESPONSE_HELP:
++			/* show help and return control */
++			break;
++		case GTK_RESPONSE_CANCEL:
++			/* We dont want to change the workspace label so bye-bye */
++			gtk_widget_destroy (GTK_WIDGET (lbuilder));
++			ugly_showing_lbuilder_global_which_sucks_fix_me = FALSE;
++			break;
++		default:
++			/* We shouldn't really have got here */
++			break;	
++	}
++		
++    return;
++}
++
++static void
++tsol_workspace_created (WnckScreen *screen,
++			   WnckWorkspace *space,
++			   gpointer data)
++{
++	if (!_wnck_use_trusted_extensions ())
++		return;
++	g_signal_connect (G_OBJECT (space), "role_changed",
++				G_CALLBACK (role_changed),
++				data);
++}
++
++static void
++role_changed (WnckWorkspace *workspace,
++			   gpointer data)
++{
++	PagerData *pager;
++	int rolewsindex;
++	int activewsindex;
++
++	if (!_wnck_use_trusted_extensions ())
++		return;
++
++	pager = (PagerData *) data;
++	rolewsindex = wnck_workspace_get_number (workspace);
++	activewsindex = wnck_workspace_get_number (wnck_screen_get_active_workspace (pager->screen));
++	/*
++	 * Ignore role changes that occured outside the active workspace. 
++	 * The menu item is always relative to the active workspace
++	 */
++	if (rolewsindex == activewsindex)
++	        changed_workspace (pager->screen,
++                        wnck_screen_get_active_workspace (pager->screen),
++                        pager); 
++}
++
++static void
++changed_workspace (WnckScreen *screen,
++                           WnckWorkspace *previously_active_space,
++			   gpointer data)
++{
++	BonoboUIComponent *popup_component;
++	PagerData *pager;
++	WnckWorkspace *workspace;
++	m_label_t *lower_sl = NULL;
++	m_label_t *upper_clear = NULL;
++	char *lower_bound = NULL;
++	char *upper_bound = NULL;
++	int error;
++	int menusensitivity  = 1;
++
++	if (!_wnck_use_trusted_extensions ())
++		return;
++
++	pager = (PagerData *) data;
++
++	workspace = wnck_screen_get_active_workspace (screen);
++	error = wnck_workspace_get_label_range (workspace, &lower_bound,
++							&upper_bound);
++	if (error != 0)
++		return;
++
++	/* Convert the lower and upper bounds to internal binary labels */
++	if (libtsol_str_to_label (lower_bound, &lower_sl, MAC_LABEL, L_DEFAULT,
++	  	  &error) < 0) {
++        g_warning ("Workspace has invalid label range min value");
++		g_free (lower_bound);
++		g_free (upper_bound);
++		return;
++	}
++	g_free (lower_bound);
++
++	if (libtsol_str_to_label (upper_bound, &upper_clear, USER_CLEAR, L_DEFAULT, 
++	    	&error) < 0) {
++		g_warning ("Workspace has invalid label range clearance value");
++		g_free (upper_bound);
++		libtsol_m_label_free (lower_sl);
++		return;
++	}
++	g_free (upper_bound);
++
++	/* Hide/Unhide the "Change Workspace Label" menu */
++	popup_component = panel_applet_get_popup_component (PANEL_APPLET (pager->applet));
++	if (libtsol_blequal (lower_sl, upper_clear))
++		menusensitivity = 0;
++
++	libtsol_m_label_free (lower_sl);
++	libtsol_m_label_free (upper_clear);
++	bonobo_ui_component_set_prop (popup_component,
++				      "/commands/ChangeWorkspaceLabel",
++				      "sensitive", menusensitivity ? "1" : "0",
++				      NULL);
++}
++static void
++workspace_label_dialog (BonoboUIComponent *uic,
++			   PagerData         *pager,
++			   const gchar       *verbname)
++{
++	int error = 0;
++	const char *cur_ws_label;
++	char *lower_bound = NULL;
++	char *upper_bound = NULL;
++
++	m_label_t *ws_sl = NULL;
++	m_label_t *lower_sl = NULL;
++	m_label_t *upper_clear = NULL;
++	GtkWidget *lbuilder = NULL;
++	WnckWorkspace *wspace = NULL;
++	WnckScreen *screen = pager->screen;
++
++	if (ugly_showing_lbuilder_global_which_sucks_fix_me) return;
++    
++	if (!_wnck_use_trusted_extensions ())
++		return;
++
++	wspace = wnck_screen_get_active_workspace (screen);
++	error = wnck_workspace_get_label_range (wspace, &lower_bound,
++							&upper_bound);
++	if (error != 0)
++		return;
++
++	/* Convert the lower and upper bounds to internal binary labels */
++	if (libtsol_str_to_label (lower_bound, &lower_sl, MAC_LABEL, L_DEFAULT,
++	    	&error) < 0) {
++        g_warning ("Workspace has invalid label range minimum label");
++		g_free (lower_bound);
++		g_free (upper_bound);
++		return;
++	}
++	g_free (lower_bound);
++
++	if (libtsol_str_to_label (upper_bound, &upper_clear, USER_CLEAR, L_DEFAULT, 
++	    	&error) < 0) {
++		g_warning ("Workspace has invalid label range");
++		g_free (upper_bound);
++		libtsol_m_label_free (lower_sl);
++		return;
++	}
++	g_free (upper_bound);
++    
++	/* Get the current workspace label. */
++	cur_ws_label = wnck_workspace_get_label (wspace);
++	if (cur_ws_label != NULL) {
++		/* Convert the workspace's current label to binary type */
++    	if (libtsol_str_to_label (cur_ws_label, &ws_sl, MAC_LABEL, L_DEFAULT,
++		    	&error) < 0) {
++			g_warning ("Workspace has an invalid label");
++			return;
++		}
++	} else {
++		g_warning ("No workspace label - defaulting to lowest in range");
++		libtsol_m_label_dup (&ws_sl, lower_sl);
++	}
++
++	/* SUN_BRANDING */
++	lbuilder = libgnometsol_gnome_label_builder_new(_("Changing Workspace Label"),
++					   upper_clear, lower_sl,
++					   LBUILD_MODE_SL);
++	if (gtk_widget_has_screen (pager->applet)) {
++		gtk_window_set_screen (GTK_WINDOW (lbuilder),
++				gtk_widget_get_screen (pager->applet));
++	}
++
++	g_signal_connect (G_OBJECT (lbuilder), "response",
++		    G_CALLBACK (lbuilder_response_cb), (gpointer) wspace);
++
++	gtk_widget_show_all (lbuilder);
++	ugly_showing_lbuilder_global_which_sucks_fix_me = TRUE;
++
++	/* GAH, why do I have to do this after the show? */
++	g_object_set (G_OBJECT (lbuilder), "sl", ws_sl, NULL);
++	libtsol_m_label_free (ws_sl);
++	libtsol_m_label_free (lower_sl);
++	libtsol_m_label_free (upper_clear);
++}
++#endif
++
+ static void 
+ display_properties_dialog (BonoboUIComponent *uic,
+ 			   PagerData         *pager,
+diff -urN -x '*.orig' -x '*.rej' panel.orig/config.h.in panel.new/config.h.in
+--- panel.orig/config.h.in	2010-02-15 19:27:58.321853559 +0000
++++ panel.new/config.h.in	2010-02-15 19:28:16.595825192 +0000
+@@ -107,6 +107,9 @@
+ /* Define to 1 if you have the <unistd.h> header file. */
+ #undef HAVE_UNISTD_H
+ 
++/* Define when GNOME Trusted Solaris Extension lib libgnometsol detected. */
++#undef HAVE_LIBGNOMETSOL
++
+ /* Define to 1 if you have the `_NSGetEnviron' function. */
+ #undef HAVE__NSGETENVIRON
+ 
+diff -urN -x '*.orig' -x '*.rej' panel.orig/configure.in panel.new/configure.in
+--- panel.orig/configure.in	2010-02-15 19:27:58.439791936 +0000
++++ panel.new/configure.in	2010-02-15 19:28:16.596511232 +0000
+@@ -79,6 +79,8 @@
+ AC_SUBST(LIBPANEL_APPLET_CFLAGS)
+ AC_SUBST(LIBPANEL_APPLET_LIBS)
+ 
++PKG_CHECK_EXISTS(libgnometsol >= 0.5, AC_DEFINE(HAVE_LIBGNOMETSOL,,[Building with GNOMETSOL support]),,)
++
+ PKG_CHECK_MODULES(FISH, gtk+-2.0 >= $GTK_REQUIRED cairo >= $CAIRO_REQUIRED)
+ AC_SUBST(FISH_CFLAGS)
+ AC_SUBST(FISH_LIBS)
+diff -urN -x '*.orig' -x '*.rej' panel.orig/gnome-panel/libpanel-util/panel-launch.c panel.new/gnome-panel/libpanel-util/panel-launch.c
+--- panel.orig/gnome-panel/libpanel-util/panel-launch.c	2010-02-15 19:27:58.432185223 +0000
++++ panel.new/gnome-panel/libpanel-util/panel-launch.c	2010-02-15 19:28:16.597170714 +0000
+@@ -98,9 +98,17 @@
+ 	gdk_app_launch_context_set_timestamp (context, timestamp);
+ 
+ 	local_error = NULL;
+-	retval = g_app_info_launch_uris (appinfo, uris,
++	if (gnome_desktop_tsol_is_multi_label_session ()) {
++		char *cmd = g_strdup_printf ("%d:%s", 
++					gdk_screen_get_number (screen), 
++					g_app_info_get_commandline (appinfo));
++            	gnome_desktop_tsol_proxy_app_launch (cmd);
++            	g_free (cmd);
++	} else {
++		retval = g_app_info_launch_uris (appinfo, uris,
+ 					 (GAppLaunchContext *) context,
+ 					 &local_error);
++	}
+ 
+ 	g_object_unref (context);
+ 
+diff -urN -x '*.orig' -x '*.rej' panel.orig/gnome-panel/libpanel-util/panel-show.c panel.new/gnome-panel/libpanel-util/panel-show.c
+--- panel.orig/gnome-panel/libpanel-util/panel-show.c	2010-02-15 19:27:58.431990170 +0000
++++ panel.new/gnome-panel/libpanel-util/panel-show.c	2010-02-15 19:36:29.887665815 +0000
+@@ -187,6 +187,15 @@
+ 						       timestamp, error);
+ 	}
+ 
++	if (gnome_desktop_tsol_is_multi_label_session ()) {
++        	char *cmd = g_strdup_printf ("%d:[URI]%s", 
++					gdk_screen_get_number (screen), 
++					uri);
++        	gnome_desktop_tsol_proxy_app_launch (cmd);
++        	g_free (cmd);
++		return TRUE;
++	}
++
+ 	gtk_show_uri (screen, uri, timestamp, &local_error);
+ 
+ 	return _panel_show_handle_error (uri, screen, local_error, error);
+@@ -284,6 +293,15 @@
+ 	else
+ 		uri = g_strdup_printf ("ghelp:%s", doc);
+ 
++	if (gnome_desktop_tsol_is_multi_label_session ()) {
++        	char *cmd = g_strdup_printf ("%d:[URI]%s", 
++					gdk_screen_get_number (screen), 
++					uri);
++        	gnome_desktop_tsol_proxy_app_launch (cmd);
++        	g_free (cmd);
++		return TRUE;
++	}
++
+ 	gtk_show_uri (screen, uri, gtk_get_current_event_time (), &local_error);
+ 
+ 	g_free (uri);
+diff -urN -x '*.orig' -x '*.rej' panel.orig/gnome-panel/panel-action-button.c panel.new/gnome-panel/panel-action-button.c
+--- panel.orig/gnome-panel/panel-action-button.c	2010-02-15 19:27:58.436425780 +0000
++++ panel.new/gnome-panel/panel-action-button.c	2010-02-15 19:28:16.598393225 +0000
+@@ -31,6 +31,7 @@
+ #include "panel-action-button.h"
+ 
+ #include <glib/gi18n.h>
++#include <libgnome/gnome-desktop-tsol-extensions.h>
+ 
+ #include <libpanel-util/panel-error.h>
+ #include <libpanel-util/panel-launch.h>
+@@ -99,7 +100,8 @@
+ screensaver_properties_enabled (void)
+ {
+ 	if (panel_lockdown_get_locked_down () ||
+-	    panel_lockdown_get_disable_lock_screen ())
++	    panel_lockdown_get_disable_lock_screen () ||
++	    gnome_desktop_tsol_is_multi_label_session ()) 
+ 		return FALSE;
+ 
+ 	return panel_lock_screen_action_available ("prefs");
+@@ -222,6 +224,14 @@
+ 	GdkScreen *screen;
+ 
+ 	screen = gtk_widget_get_screen (widget);
++
++    if (gnome_desktop_tsol_is_multi_label_session ()) {
++        char *cmd = g_strdup_printf ("%d:gnome-search-tool", gdk_screen_get_number (screen));
++        gnome_desktop_tsol_proxy_app_launch (cmd);
++        g_free (cmd);
++        return;
++    }
++
+ 	panel_launch_desktop_file_with_fallback ("gnome-search-tool.desktop",
+ 						 "gnome-search-tool",
+ 						 screen, NULL);
+@@ -247,6 +257,13 @@
+ 	screen = gtk_widget_get_screen (GTK_WIDGET (widget));
+ 	error = NULL;
+ 
++    if (gnome_desktop_tsol_is_multi_label_session ()) {
++        char *cmd = g_strdup_printf ("%d:nautilus-connect-server", gdk_screen_get_number (screen));
++        gnome_desktop_tsol_proxy_app_launch (cmd);
++        g_free (cmd);
++        return;
++    }
++
+ 	gdk_spawn_command_line_on_screen (screen, "nautilus-connect-server",
+ 					  &error);
+ 
+diff -urN -x '*.orig' -x '*.rej' panel.orig/gnome-panel/panel-addto.c panel.new/gnome-panel/panel-addto.c
+--- panel.orig/gnome-panel/panel-addto.c	2010-02-15 19:27:58.420678805 +0000
++++ panel.new/gnome-panel/panel-addto.c	2010-02-15 19:28:16.599865814 +0000
+@@ -26,6 +26,7 @@
+ #include <string.h>
+ 
+ #include <libbonobo.h>
++#include <libgnome/gnome-desktop-tsol-extensions.h>
+ 
+ #include <glib/gi18n.h>
+ 
+@@ -448,6 +449,34 @@
+ 			continue;
+ 		}
+ 
++		/* TJDS - if MLS and has not admin_high clearance do not
++		 * display the following applets in the mnenu list.
++		 */
++		if (gnome_desktop_tsol_is_multi_label_session () && 
++		    !gnome_desktop_tsol_is_clearance_admin_high() && 
++		    (strcmp (info->iid, "OAFIID:GNOME_StickyNotesApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:Deskbar_Applet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_WebEyes")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_MailcheckApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_Panel_TrashApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_TSClientApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_QuickLoungeApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_FastUserSwitchApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_VinagreApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:Hamster_Applet")==0 ||
++		     strcmp (info->iid, "OAFIID:CommandAssistantApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_MultiLoadApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_NetstatusApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_Panel_WirelessApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_DictionaryApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_MixerApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_GWeatherApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_NotificationAreaApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:Invest_Applet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_ContactLookupApplet")==0 ||
++		     strcmp (info->iid, "OAFIID:GNOME_PilotApplet")==0))
++			continue;
++
+ 		applet = g_new0 (PanelAddtoItemInfo, 1);
+ 		applet->type = PANEL_ADDTO_APPLET;
+ 		applet->name = g_strdup (name);
+diff -urN -x '*.orig' -x '*.rej' panel.orig/gnome-panel/panel-applet-frame.c panel.new/gnome-panel/panel-applet-frame.c
+--- panel.orig/gnome-panel/panel-applet-frame.c	2010-02-15 19:27:58.416731791 +0000
++++ panel.new/gnome-panel/panel-applet-frame.c	2010-02-15 19:28:16.601134396 +0000
+@@ -384,8 +384,37 @@
+ 	if (!applet_iid || !applet_iid[0])
+ 		return;
+ 
+-	panel_applet_frame_load (applet_iid, panel_widget,
+-				 locked, position, TRUE, id);
++	/* TJDS - This is to make sure that when user is logged into Multilevel 
++	 * Trusted session, these applets will not be loaded onto the panel.
++	 */
++	if (gnome_desktop_tsol_is_multi_label_session () &&
++	    !gnome_desktop_tsol_is_clearance_admin_high() &&
++	    (strcmp (applet_iid, "OAFIID:GNOME_StickyNotesApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:Deskbar_Applet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_WebEyes")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_MailcheckApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_Panel_TrashApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_TSClientApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_QuickLoungeApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_FastUserSwitchApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_VinagreApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:Hamster_Applet")==0 ||
++	     strcmp (applet_iid, "OAFIID:CommandAssistantApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_MultiLoadApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_NetstatusApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_Panel_WirelessApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_DictionaryApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_MixerApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_GWeatherApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_NotificationAreaApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:Invest_Applet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_ContactLookupApplet")==0 ||
++	     strcmp (applet_iid, "OAFIID:GNOME_PilotApplet")==0))
++		/* do nothing */
++		;
++	else
++		panel_applet_frame_load (applet_iid, panel_widget,
++					 locked, position, TRUE, id);
+ 
+ 	g_free (applet_iid);
+ }
+diff -urN -x '*.orig' -x '*.rej' panel.orig/gnome-panel/panel-menu-items.c panel.new/gnome-panel/panel-menu-items.c
+--- panel.orig/gnome-panel/panel-menu-items.c	2010-02-15 19:27:58.427521316 +0000
++++ panel.new/gnome-panel/panel-menu-items.c	2010-02-15 19:28:16.604460526 +0000
+@@ -39,6 +39,7 @@
+ #include <string.h>
+ #include <glib/gi18n.h>
+ #include <gio/gio.h>
++#include <libgnome/gnome-desktop-tsol-extensions.h>
+ 
+ #include <libpanel-util/panel-error.h>
+ #include <libpanel-util/panel-glib.h>
+@@ -129,6 +130,19 @@
+ activate_home_uri (GtkWidget *menuitem,
+ 		   gpointer   data)
+ {
++	char *cmd;
++    GdkScreen *screen; 
++
++    if (gnome_desktop_tsol_is_multi_label_session ()) {
++        screen = gtk_window_get_screen (GTK_WINDOW (menuitem));
++        cmd = g_strdup_printf ("%d:nautilus file://%s",
++                             gdk_screen_get_number (screen),
++                             g_get_home_dir ());
++        gnome_desktop_tsol_proxy_app_launch (cmd);
++        g_free (cmd);
++        return;
++    }
++
+ 	activate_path (menuitem, g_get_home_dir ());
+ }
+ 
+@@ -136,6 +150,19 @@
+ activate_desktop_uri (GtkWidget *menuitem,
+ 		      gpointer   data)
+ {
++	char *cmd;
++	GdkScreen *screen;
++
++	if (gnome_desktop_tsol_is_multi_label_session ()) {
++		screen = gtk_window_get_screen (GTK_WINDOW (menuitem));
++		cmd = g_strdup_printf ("%d:nautilus file://%s",
++			     gdk_screen_get_number (screen),
++			     g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
++		gnome_desktop_tsol_proxy_app_launch (cmd);
++		g_free (cmd);
++		return;
++	}
++		
+ 	activate_path (menuitem,
+ 		       g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
+ }
+@@ -1079,8 +1106,10 @@
+ 		g_free (uri);
+ 	}
+ 
+-	panel_place_menu_item_append_gtk_bookmarks (places_menu);
+-	add_menu_separator (places_menu);
++	if (!gnome_desktop_tsol_is_multi_label_session ()) {
++		panel_place_menu_item_append_gtk_bookmarks (places_menu);
++		add_menu_separator (places_menu);
++	}
+ 
+ 	gconf_name = gconf_client_get_string (panel_gconf_get_client (),
+ 					      COMPUTER_NAME_KEY,
+@@ -1092,8 +1121,10 @@
+ 	if (gconf_name)
+ 		g_free (gconf_name);
+ 
+-	panel_place_menu_item_append_local_gio (place_item, places_menu);
+-	add_menu_separator (places_menu);
++	if (!gnome_desktop_tsol_is_multi_label_session ()) {
++		panel_place_menu_item_append_local_gio (place_item, places_menu);
++		add_menu_separator (places_menu);
++	}
+ 
+ 	panel_menu_items_append_from_desktop (places_menu,
+ 					      "network-scheme.desktop",
+@@ -1627,6 +1658,7 @@
+ 				       const char *path)
+ {
+ 	GnomeDesktopItem *ditem;
++	char *cmd, *stripped;
+  
+ 	if (g_path_is_absolute (path))
+ 		ditem = gnome_desktop_item_new_from_file (path, 0, NULL);
+@@ -1637,10 +1669,22 @@
+ 		gnome_desktop_item_unref (ditem);
+ 		return;		/* Don't launch as it's a forbidden desktop file */
+ 	}
+- 
++
++	if (gnome_desktop_tsol_is_multi_label_session ()) {
++		GError *error=NULL;
++
++		if (ditem)
++			gnome_desktop_item_launch (ditem, NULL, GNOME_DESKTOP_ITEM_LAUNCH_ONLY_ONE, &error);
++		if (error) {
++			g_warning ("Failed to launch for %s: %s\n",
++				    path, error->message);
++			g_error_free (error);
++		}
++	} else {
++		panel_launch_desktop_file (path, menuitem_to_screen (menuitem), NULL);
++	}
++
+ 	if (ditem != NULL) {
+ 		gnome_desktop_item_unref (ditem);
+ 	}
+-
+-	panel_launch_desktop_file (path, menuitem_to_screen (menuitem), NULL);
+ }
+diff -urN -x '*.orig' -x '*.rej' panel.orig/gnome-panel/panel-run-dialog.c panel.new/gnome-panel/panel-run-dialog.c
+--- panel.orig/gnome-panel/panel-run-dialog.c	2010-02-15 19:27:58.415709992 +0000
++++ panel.new/gnome-panel/panel-run-dialog.c	2010-02-15 19:28:16.606086913 +0000
+@@ -40,6 +40,7 @@
+ #include <glib/gi18n.h>
+ #include <gio/gio.h>
+ #include <gdk/gdkkeysyms.h>
++#include <libgnome/gnome-desktop-tsol-extensions.h>
+ #include <gconf/gconf-client.h>
+ #include <gmenu-tree.h>
+ 
+@@ -366,6 +367,17 @@
+ 	GError     *error = NULL;
+ 	char      **argv;
+ 	int         argc;
++    char       *tsolcmd;
++
++    screen = gtk_window_get_screen (GTK_WINDOW (dialog->run_dialog));
++
++    if (gnome_desktop_tsol_is_multi_label_session ()) {
++            tsolcmd = g_strdup_printf ("%d:%s",
++                                       gdk_screen_get_number (screen), command);
++            gnome_desktop_tsol_proxy_app_launch (tsolcmd);
++            g_free (tsolcmd);
++            return TRUE;
++    }
+ 	
+ 	if (!command_is_executable (locale_command, &argc, &argv))
+ 		return FALSE;

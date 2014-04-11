@@ -1,0 +1,355 @@
+/jds/bin/diff -uprN gnome-desktop-2.27.91.old/gnome-about/contributors.list gnome-desktop-2.27.91/gnome-about/contributors.list
+--- gnome-desktop-2.27.91.old/gnome-about/contributors.list	2009-08-26 16:52:03.564205000 +0100
++++ gnome-desktop-2.27.91/gnome-about/contributors.list	2009-08-26 16:54:14.870164000 +0100
+@@ -555,3 +555,96 @@ Simon Zheng
+ Sascha Ziemann
+ Michael Zucchi
+ Jason van Zyl
++Alfred Peng
++Alvaro Lopez Ortega
++Amith Yamasani
++Anand Subramanian
++Antonio Xu 
++Archana Shah
++Ashish Mukharji
++Balamurali Viswanathan
++Biswa Lal
++Bolian Yin
++Brian Lu
++Brian Nitz
++Calvin Liu
++Carl Gadener
++Chandrashekhar BK
++Curtis Sasaki
++Dan Baigent
++Darren Kenny
++Dave Lin
++Deirdre Williams
++Derek Rafter
++Dermot McCluskey
++Dinoop Thomas
++Dirk Grobler
++Ervin Yan
++Evan Yan
++Gary Little
++Geoff Baysinger
++Ghee Teo
++Ginn Chen
++Girish Kulkarni
++Halton Huo
++Hema Seetharamaiah
++Henry Jia
++Ii Gyoung Park
++Jack Jia
++Jedy Wang
++Jeff McMeekin
++Jerry Tan
++Jessie Li
++Jijun Yu
++John Fischer
++John Rice
++Joshua Xia
++Kalpesh Shah
++Kaveri Murthy
++Kyle Yuan
++Lalith Kumar
++Laszlo Kovacs
++Laszlo Peter
++Leena Gunda
++Leo Binchy
++Leon Sha
++Leon Zhang
++Louie Zhao
++Louise Siu
++Luke Shi
++Mark Duggan
++Mark Yang
++Martin Damboldt
++Michael Krivoruchko
++Michael Twomey
++Michal Pryc
++Mike Lei
++Muktha Narayan
++Nancy Lee
++Narayana Pattipati
++Neo Liu
++Niall Power
++Olaf Felka
++Oliver Braun
++Partha Pratim
++Patrick Gu
++Pete Zha
++Rick Ju
++Robert Kinsella
++Robert O'Dea
++Robin Lu
++Simford Dong
++Sowmya Adiga
++Srirama Sharma
++Suresh Chandrasekharan
++Susan Jefferies
++Takao Fujiwara
++Terry Ponce
++Thorsten Laux
++Vijay Anand
++Vijaykumar Patwari
++Vinay M R
++Vishnu Kumar
++Yan Dong Yao
++Yogeesh MB
++Young J. Song
+/jds/bin/diff -uprN gnome-desktop-2.27.91.old/gnome-about/gnome-about.desktop.in.in gnome-desktop-2.27.91/gnome-about/gnome-about.desktop.in.in
+--- gnome-desktop-2.27.91.old/gnome-about/gnome-about.desktop.in.in	2009-08-26 16:52:03.596334000 +0100
++++ gnome-desktop-2.27.91/gnome-about/gnome-about.desktop.in.in	2009-08-26 16:55:00.686659000 +0100
+@@ -1,6 +1,7 @@
+ [Desktop Entry]
+ _Name=About GNOME
+-_Comment=Learn more about GNOME
++# SUN_BRANDING
++_Comment=GNOME version, licence and useful links
+ Exec=gnome-about
+ Icon=gnome-logo-icon-transparent
+ Terminal=false
+/jds/bin/diff -uprN gnome-desktop-2.27.91.old/configure.in gnome-desktop-2.27.91/configure.in
+--- gnome-desktop-2.27.91.old/configure.in	2009-08-26 16:52:03.667194000 +0100
++++ gnome-desktop-2.27.91/configure.in	2009-08-26 16:56:43.460999000 +0100
+@@ -40,12 +40,17 @@ GNOME_MICRO=91
+ GNOME_DISTRIBUTOR="GNOME.Org"
+ GNOME_DATE=`date +"%Y-%m-%d"`
+ 
+-AC_ARG_WITH(gnome_distributor, [  --with-gnome-distributor=DISTRIBUTOR  Specify name of GNOME distributor])
+-
++AC_ARG_WITH(gnome_distributor_version, [  --with-gnome-distributor-version=DISTRIBUTOR  Specify version of GNOME distributor
++])
++ 
+ if test "x$with_gnome_distributor" != x ; then
+   GNOME_DISTRIBUTOR=$with_gnome_distributor
+ fi
+ 
++if test "x$with_gnome_distributor_version" != x ; then
++  GNOME_DISTRIBUTOR_VERSION=$with_gnome_distributor_version
++fi
++
+ AC_ARG_ENABLE([date-in-gnome-version],
+ 	[AS_HELP_STRING([--disable-date-in-gnome-version],[do not put the build date in gnome-version.xml])],
+ 	[],[enable_date_in_gnome_version=yes])
+@@ -62,6 +67,7 @@ AC_SUBST(GNOME_PLATFORM)
+ AC_SUBST(GNOME_MINOR)
+ AC_SUBST(GNOME_MICRO)
+ AC_SUBST(GNOME_DISTRIBUTOR)
++AC_SUBST(GNOME_DISTRIBUTOR_VERSION)
+ AC_SUBST(GNOME_DATE)
+ AC_SUBST(GNOME_DATE_COMMENT_START)
+ AC_SUBST(GNOME_DATE_COMMENT_END)
+/jds/bin/diff -uprN gnome-desktop-2.27.91.old/Makefile.am gnome-desktop-2.27.91/Makefile.am
+--- gnome-desktop-2.27.91.old/Makefile.am	2009-08-26 16:52:03.828642000 +0100
++++ gnome-desktop-2.27.91/Makefile.am	2009-08-26 17:04:15.716264000 +0100
+@@ -9,17 +9,21 @@ SUBDIRS =			\
+ 	docs			\
+ 	man
+ 
++XML_IN_FILES=gnome-version.xml.in
++XML_FILES=$(XML_IN_FILES:.xml.in=.xml)
++versiondir=$(datadir)/gnome-about
++version_DATA=$(XML_FILES)
++
+ EXTRA_DIST =			\
+ 	MAINTAINERS		\
+ 	ChangeLog.pre-git	\
+-	gnome-version.xml.in.in	\
++	$(XML_IN_FILES)		\
++	$(XML_FILES)		\
+ 	gnome-version.xml	\
+ 	COPYING-DOCS		\
+ 	HACKING			\
+ 	gnome-doc-utils.make
+ 
+-versiondir=$(datadir)/gnome-about
+-version_DATA=gnome-version.xml
+ @INTLTOOL_XML_RULE@
+ 
+ DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --disable-scrollkeeper
+/jds/bin/diff -uprN gnome-desktop-2.28.0.old/gnome-about/gnome-about.in gnome-desktop-2.28.0/gnome-about/gnome-about.in
+--- gnome-desktop-2.28.0.old/gnome-about/gnome-about.in	2009-10-08 15:01:51.073593799 +0100
++++ gnome-desktop-2.28.0/gnome-about/gnome-about.in	2009-10-08 15:03:11.026274982 +0100
+@@ -33,11 +33,12 @@ pygtk.require ('2.0')
+ import gobject
+ from gobject.option import OptionParser, make_option
+ import gtk
++import gnome
+ 
+ import cairo
+ from math import pi
+ 
+-import os, sys, random, time, gettext, locale
++import os, sys, random, time, gettext, locale, string
+ 
+ import xml.dom.minidom
+ 
+@@ -57,11 +58,18 @@ LOGO_FILE        = "gnome-64.png"
+ gettext.install (GETTEXT_PACKAGE, LOCALEDIR, unicode = True)
+ 
+ header_links = [
+-    (_("About GNOME"), "http://www.gnome.org/about/"),
+-    (_("News"), "http://news.gnome.org/"),
+-    (_("GNOME Library"), "http://library.gnome.org/"),
+-    (_("Friends of GNOME"), "http://www.gnome.org/friends/"),
+-    (_("Contact"), "http://www.gnome.org/contact/"),
++    # SUN_BRANDING #
++    (_("About OpenIndiana"), "http://www.openindiana.org/", True),
++    # SUN_BRANDING #
++    (_("About GNOME"), "http://www.gnome.org/about/", True),
++    # SUN_BRANDING #
++    (_("OpenIndiana Wiki"), "http://wiki.openindiana.org/", True),
++    # SUN_BRANDING #
++    (_("Bug reports"), "http://bugs.openindiana.org/", True),
++    # SUN_BRANDING #
++    (_("GNOME Library"), "http://library.gnome.org/", True),
++    # SUN_BRANDING #
++    (_("Contact"), "http://www.openindiana.org/contact/", True),
+ ]
+ 
+ translated_contributors = [
+@@ -81,6 +89,12 @@ def locate_file (file):
+             return filename
+     return False
+ 
++def locate_program (program):
++    for dir in string.split(os.environ['PATH'], os.pathsep):
++        if os.access(os.path.join(dir, program), os.X_OK):
++            return os.path.join(dir, program)
++    return None
++
+ def cleanup_date (date):
+     '''Parse a date as found in gnome-version.xml and nicely format it'''
+     try:
+@@ -543,14 +557,16 @@ class HyperLink (WindowedLabel):
+     url       = ""
+     menu      = None
+     selection = None
++    is_link   = False
+ 
+-    def __init__ (self, label, url):
++    def __init__ (self, label, url, is_link):
+         '''Initialize object'''
+         super (HyperLink, self).__init__ ()
+         markup = "<b><u>%s</u></b>" % label
+         self.set_markup (markup)
+         self.set_selectable (True)
+         self.url = url
++        self.is_link = is_link
+         self.create_menu ()
+         link_color = self.style_get_property ("link-color") 
+         if not link_color:
+@@ -559,10 +575,16 @@ class HyperLink (WindowedLabel):
+ 
+     def open_url (self, *args):
+         '''Use GNOME API to open the url'''
+-        try:
+-            gtk.show_uri (self.get_screen(), self.url, 0)
+-        except Exception, e:
+-            print '''Warning: could not open "%s": %s''' % (self.url, e)
++        if self.is_link != False:
++            try:
++                gnome.url_show (self.url)
++            except Exception, e:
++                print '''Warning: could not open "%s": %s''' % (self.url, e)
++        else:
++            try:
++                os.system (self.url)
++            except Exception, e:
++                print '''Warning: could not launch "%s": %s''' % (self.url, e)
+ 
+     def copy_url (self, *args):
+         '''Copy URL to Clipboard'''
+@@ -730,22 +752,33 @@ class GnomeAboutHeader (gtk.Layout):
+ 
+         def make_link_widget (link):
+             '''Helper function which makes an HyperLink and shows it'''
+-            label = HyperLink (link[0], link[1])
+-            label.show_all ()
+-            return label
++            '''if link[2] is False, then a program, so check if on path'''
++            if link[2] == True:
++                label = HyperLink (link[0], link[1], link[2])
++                label.show_all ()
++                return label
++            else:
++                path = locate_program(link[1])
++                if path:
++                    label = HyperLink (link[0], link[1], link[2])
++                    label.show_all ()
++                    return label
++                else:
++                    return None
+ 
+         widgets = map (make_link_widget, self.links)
+         put_widgets = 0
+         for widget in widgets:
+-            if put_widgets > 0:
+-                if dot:
+-                    image = gtk.Image ()
+-                    image.set_from_pixmap (dot, None)
+-                    self.put (image, current_x + 5, base_y + 6)
+-                current_x += 16
+-            self.put (widget, current_x, base_y)
+-            current_x += widget.size_request ()[0]
+-            put_widgets += 1
++            if widget:
++                if put_widgets > 0:
++                    if dot:
++                        image = gtk.Image ()
++                        image.set_from_pixmap (dot, None)
++                        self.put (image, current_x + 5, base_y + 6)
++                    current_x += 16
++                self.put (widget, current_x, base_y)
++                current_x += widget.size_request ()[0]
++                put_widgets += 1
+ 
+         self.width = current_x + 10
+         self.height = current_y
+@@ -882,7 +915,7 @@ class GnomeAbout (gtk.Dialog):
+         main_box.pack_start (welcome_label)
+ 
+         descriptions_label = VertAnimatedLabel (self.description_messages,
+-                                                300, 120,
++                                                402, 184,
+                                                 DESCRIPTION_DELAY, "%s")
+         welcome_label.connect ("button-press-event",
+                                descriptions_label.on_button_press)
+@@ -956,6 +989,7 @@ contributors list) correctly positionned
+                     "minor" : "",
+                     "micro" : "",
+                     "distributor" : "",
++                    "distributor-version" : "",
+                     "date" : ""
+                 }
+ 
+@@ -966,15 +1000,19 @@ contributors list) correctly positionned
+                 self.load_description_messages (node)
+ 
+         '''Format version'''
+-        if not len (infos["platform"]):
+-            version = ""
+-        elif not len (infos["minor"]):
+-            version = infos["platform"]
+-        elif not len (infos["micro"]):
+-            version = "%s.%s" % (infos["platform"], infos["minor"])
++        if infos["distributor-version"]:
++            '''Use Distributor's version over gnome version'''
++            version = infos["distributor-version"]
+         else:
+-            version = "%s.%s.%s" % (infos["platform"], infos["minor"],
+-                                    infos["micro"])
++            if not len (infos["platform"]):
++                version = ""
++            elif not len (infos["minor"]):
++                version = infos["platform"]
++            elif not len (infos["micro"]):
++                version = "%s.%s" % (infos["platform"], infos["minor"])
++            else:
++                version = "%s.%s.%s" % (infos["platform"], infos["minor"],
++                                        infos["micro"])
+ 
+         date = cleanup_date (infos["date"])
+ 
