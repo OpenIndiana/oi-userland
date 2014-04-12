@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -39,8 +39,24 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
 
+# Make sure we use the specially modified versions of grails and grails-debug
+COMPONENT_POST_UNPACK_ACTION = \
+	$(CP) $(COMPONENT_DIR)/files/grails $(SOURCE_DIR)/bin; \
+	$(CP) $(COMPONENT_DIR)/files/grails-debug $(SOURCE_DIR)/bin
+
 COMPONENT_PRE_BUILD_ACTION = $(MKDIR) $(@D)/tmp 
 COMPONENT_BUILD_ENV += "ANT_OPTS=-Djava.io.tmpdir=$(BUILD_DIR_32)/tmp"
+
+COMPONENT_BUILD_ARGS=
+
+# Need to package the .jar files we've built, not the ones included in
+# the source tarball.
+PKG_PROTO_DIRS = $(BUILD_DIR_32) $(MANGLED_DIR) $(PROTO_DIR) $(@D) \
+	$(COMPONENT_DIR) $(COMPONENT_SRC)
+
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+JAVA_HOME=/usr/jdk/openjdk1.7.0
 
 # common targets
 build:		$(BUILD_32)
