@@ -1,0 +1,75 @@
+diff -urN system-config-printer-1.0.12/cupshelpers/cupshelpers.py ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/cupshelpers/cupshelpers.py
+--- system-config-printer-1.0.12/cupshelpers/cupshelpers.py	2008-11-30 22:47:27.000000000 +0000
++++ ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/cupshelpers/cupshelpers.py	2009-01-07 15:25:36.377795000 +0000
+@@ -20,7 +20,13 @@
+ 
+ import cups, pprint, os, tempfile, re
+ import locale
+-from . import _debugprint
++#from cupshelpers import _debugprint
++
++#python 2.4 does not define os.SEEK_SET
++SEEK_SET = 0
++
++def _debugprint (x):
++    return
+ 
+ class Printer:
+     _flags_blacklist = ["options", "local"]
+@@ -790,7 +796,7 @@
+         (tmpfd, tmpfname) = tempfile.mkstemp ()
+         os.unlink (tmpfname)
+         ppd.writeFd (tmpfd)
+-        os.lseek (tmpfd, 0, os.SEEK_SET)
++        os.lseek (tmpfd, 0, SEEK_SET)
+         f = os.fdopen (tmpfd, "r")
+         search = "*cupsFilter:"
+         for line in f.readlines ():
+diff -urN system-config-printer-1.0.12/cupshelpers/openprinting.py ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/cupshelpers/openprinting.py
+--- system-config-printer-1.0.12/cupshelpers/openprinting.py	2008-11-26 17:56:40.000000000 +0000
++++ ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/cupshelpers/openprinting.py	2009-01-07 15:25:36.378142000 +0000
+@@ -21,8 +21,10 @@
+ 
+ import urllib, httplib, platform, threading, tempfile, traceback
+ import os, sys
+-from xml.etree.ElementTree import XML
+-from . import Device
++import xml.dom.minidom
++#from xml.etree.ElementTree import XML
++#from . import Device
++from cupshelpers import Device
+ 
+ __all__ = ['OpenPrinting']
+ 
+diff -urN system-config-printer-1.0.12/cupshelpers/ppds.py ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/cupshelpers/ppds.py
+--- system-config-printer-1.0.12/cupshelpers/ppds.py	2008-11-26 17:56:40.000000000 +0000
++++ ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/cupshelpers/ppds.py	2009-01-07 15:25:36.378769000 +0000
+@@ -21,12 +21,14 @@
+ ## Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ 
+ import cups
+-from .cupshelpers import parseDeviceID
++#from .cupshelpers import parseDeviceID
++from cupshelpers import parseDeviceID
+ import string
+ import locale
+ import os.path
+ import re
+-from . import _debugprint
++#from . import _debugprint
++from cupshelpers import _debugprint
+ 
+ __all__ = ['ppdMakeModelSplit',
+            'PPDs']
+diff -urN system-config-printer-1.0.12/system-config-printer.glade ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/system-config-printer.glade
+--- system-config-printer-1.0.12/system-config-printer.glade	2008-11-30 22:47:27.000000000 +0000
++++ ../SUNWcups-manager-2.25.2.hacked/system-config-printer-1.0.12/system-config-printer.glade	2009-01-07 15:35:57.458262000 +0000
+@@ -3245,7 +3245,7 @@
+ 
+ 		  <child>
+ 		    <widget class="GtkRadioButton" id="rbtnNPDownloadableDriverSearch">
+-		      <property name="visible">True</property>
++		      <property name="visible">False</property>
+ 		      <property name="can_focus">True</property>
+ 		      <property name="label" translatable="yes">Search for a printer driver to download</property>
+ 		      <property name="use_underline">True</property>

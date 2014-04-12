@@ -1,0 +1,15 @@
+diff -urN system-config-printer-1.0.16/monitor.py ../SUNWcups-manager-1.0.16.hacked/system-config-printer-1.0.16/monitor.py
+--- system-config-printer-1.0.16/monitor.py	2012-05-02 17:30:01.418559010 +0100
++++ ../SUNWcups-manager-1.0.16.hacked/system-config-printer-1.0.16/monitor.py	2012-05-02 17:44:13.680545637 +0100
+@@ -574,8 +574,9 @@
+                 # Filter out completed jobs.
+                 filtered = {}
+                 for jobid, job in jobs.iteritems ():
+-                    if job['job-state'] < cups.IPP_JOB_CANCELED:
+-                        filtered[jobid] = job
++                        if job.get ('job-state',
++				    cups.IPP_JOB_CANCELED) < cups.IPP_JOB_CANCELED:
++                            filtered[jobid] = job
+                 jobs = filtered
+ 
+             self.fetch_first_job_id = 1
