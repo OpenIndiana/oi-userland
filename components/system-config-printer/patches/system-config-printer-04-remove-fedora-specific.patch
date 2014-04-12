@@ -1,0 +1,74 @@
+diff -urN system-config-printer-1.0.12/system-config-printer.py ../SUNWcups-manager-2.24.2.hacked/system-config-printer-1.0.12/system-config-printer.py
+--- system-config-printer-1.0.12/system-config-printer.py	2008-12-12 15:24:32.495607000 +0000
++++ ../SUNWcups-manager-2.24.2.hacked/system-config-printer-1.0.12/system-config-printer.py	2008-12-12 15:26:09.842560000 +0000
+@@ -100,10 +100,6 @@
+ ready_cursor = gtk.gdk.Cursor(gtk.gdk.LEFT_PTR)
+ ellipsis = unichr(0x2026)
+ 
+-TEXT_start_firewall_tool = _("To do this, select "
+-                             "System->Administration->Firewall "
+-                             "from the main menu.")
+-
+ try:
+     try_CUPS_SERVER_REMOTE_ANY = cups.CUPS_SERVER_REMOTE_ANY
+ except AttributeError:
+@@ -2495,25 +2491,6 @@
+         self.changed = set()
+         self.setDataButtonState()
+ 
+-        old_setting = self.server_settings.get (cups.CUPS_SERVER_SHARE_PRINTERS,
+-                                                '0')
+-        new_setting = setting_dict.get (cups.CUPS_SERVER_SHARE_PRINTERS, '0')
+-        if (old_setting == '0' and new_setting != '0'):
+-            # We have just enabled print queue sharing.
+-            # Ideally, this is the time we would check the firewall
+-            # settings on this machine and request that the IPP TCP port
+-            # be unblocked.  Unfortunately, this is not yet possible
+-            # (bug #440469).  However, we can display a dialog to suggest
+-            # that now might be a good time to review the firewall settings.
+-            show_info_dialog (_("Review Firewall"),
+-                              _("You may need to adjust the firewall "
+-                                "to allow network printing to this "
+-                                "computer.") + '\n\n' +
+-                              TEXT_start_firewall_tool,
+-                              parent=self.ServerSettingsDialog)
+-
+-        time.sleep(1) # give the server a chance to process our request
+-
+         # Now reconnect, in case the server needed to reload.
+         self.reconnect ()
+ 
+diff -urN system-config-printer-1.0.12/troubleshoot/SchedulerNotRunning.py ../SUNWcups-manager-2.24.2.hacked/system-config-printer-1.0.12/troubleshoot/SchedulerNotRunning.py
+--- system-config-printer-1.0.12/troubleshoot/SchedulerNotRunning.py	2008-11-30 12:49:45.000000000 +0000
++++ ../SUNWcups-manager-2.24.2.hacked/system-config-printer-1.0.12/troubleshoot/SchedulerNotRunning.py	2008-12-12 15:47:02.904322000 +0000
+@@ -25,11 +25,12 @@ class SchedulerNotRunning(Question):
+     def __init__ (self, troubleshooter):
+         Question.__init__ (self, troubleshooter, "Scheduler not running?")
+         page = self.initial_vbox (_("CUPS Service Stopped"),
++                                  # SUN_BRANDING
+                                   _("The CUPS print spooler does not appear "
+-                                    "to be running.  To correct this, choose "
+-                                    "System->Administration->Services from "
+-                                    "the main menu and look for the `cups' "
+-                                    "service."))
++                                    "to be running.  To correct this, "
++				    "run '/usr/sbin/print-service -s cups' "
++				    "as a privileged user "
++				    "in a terminal."))
+         troubleshooter.new_page (page, self)
+ 
+     def display (self):
+diff -urN system-config-printer-1.0.12/troubleshoot/base.py ../SUNWcups-manager-2.24.2.hacked/system-config-printer-1.0.12/troubleshoot/base.py
+--- system-config-printer-1.0.12/troubleshoot/base.py	2008-11-30 12:49:45.000000000 +0000
++++ ../SUNWcups-manager-2.24.2.hacked/system-config-printer-1.0.12/troubleshoot/base.py	2008-12-12 15:28:16.269370000 +0000
+@@ -30,8 +30,9 @@
+             'Multichoice',
+             'TEXT_start_print_admin_tool' ]
+ 
++                              # SUN_BRANDING
+ TEXT_start_print_admin_tool = _("To start this tool, select "
+-                                "System->Administration->Printing "
++                                "System->Administration->Print Manager "
+                                 "from the main menu.")
+ 
+ class Question:
