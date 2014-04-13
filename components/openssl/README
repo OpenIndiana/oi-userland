@@ -18,17 +18,17 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2009, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2009, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 
 Build Layout
 ---
 
-OpenSSL build is run four times. Once for regular dynamic 1.0.0 non-fips, once 
-for static 1.0.0 bits to link with standalone wanboot binary, once for 0.9.8
-fips-140, and once for 0.9.8 FIPS-140 canister (in the openssl-fips component)
-needed to build 0.9.8 FIPS-140 certified libraries. All builds apart from 
+OpenSSL build is run four times. Once for regular dynamic 1.0.1 non-fips, once 
+for static 1.0.1 bits to link with standalone wanboot binary, once for 1.0.1
+fips-140, and once for 1.0.1 FIPS-140 canister (in the openssl-fips component)
+needed to build 1.0.1 FIPS-140 certified libraries. All builds apart from 
 static libraries for wanboot are done for 32 and 64 bits. So, in total, OpenSSL
 is built seven times. OpenSSL for wanboot is only build on sparc.
 
@@ -37,19 +37,21 @@ See also comments in all the Makefiles for more information.
 OpenSSL Version
 ---
 
-For non-FIPS build, we currently deliver OpenSSL 1.0.1e with some updates
+For non-FIPS build, we currently deliver OpenSSL 1.0.1 with some updates
 from OpenSSL 1.0.2 to make T4 instructions embedded in the OpenSSL
 upstream code.  As of April 2013, 1.0.2 is not yet released, and therefore,
 we have decided to patch the code.
 The following files/code are copied in from 1.0.2.
 added:
+   components/openssl/openssl-1.0.1/inline-t4/aest4-sparcv9.pl
+   components/openssl/openssl-1.0.1/inline-t4/dest4-sparcv9.pl
    components/openssl/openssl-1.0.1/inline-t4/md5-sparcv9.pl
    components/openssl/openssl-1.0.1/inline-t4/sparc_arch.h
+   components/openssl/openssl-1.0.1/inline-t4/sparct4-mont.pl
+   components/openssl/openssl-1.0.1/inline-t4/sparcv9_modes.pl
+   components/openssl/openssl-1.0.1/inline-t4/sparcv9-gf2m.pl
+   components/openssl/openssl-1.0.1/inline-t4/vis3-mont.pl
    components/openssl/openssl-1.0.1/patches/openssl-t4-inline.sparc-patch
-TPNO for OpenSSL 1.0.1e is 13003.
-
-For FIPS build, we currently deliver OpenSSL 0.9.8y with OpenSSL FIPS module 2.1.
-TPNO for OpenSSL 0.9.8y is 13019.
 
 
 The non-fips Build.
@@ -72,7 +74,7 @@ more information.
 Force openssl to install man pages into man[1357]openssl instead of man[1357].
 
 15-pkcs11_engine-0.9.8a.patch
-Patch which adds the pkcs11 engine. See also the pkcs11-engine/
+Patch which adds the pkcs11 engine. See also the engine/pkcs11
 sub-directory. 
 
 18-compiler_opts.patch
@@ -98,10 +100,6 @@ Modifies Makefile.shared so that libssl is built with -znodelete.
 Adds a new "enginesdir" option to the Configure script which allows a user to
 specify the engines directory.
 
-29-devcrypto_engine.patch
-Modifies engines/Makefile so that the devcrypto engine will be built in the
-"engines" directory. 
-
 30_wanboot.patch:
 Wanboot specific patches.
 - modified Makefiles not to build in engines apps test tools
@@ -116,14 +114,7 @@ Wanboot specific patches.
     - results in not using FPU for big numbers multiplication
     - should be ok - original detection seems broken, FPU gets never used
 - implementation of atoi()
-
-31_dtls_version.patch
-Fix DTLS_BAD_VER bug reported after OpenSSL 1.0.1e is released.
-
-openssl-1.0.0d-t4-engine.sparc-patch
-SPARC-only patch.
-Add a built-in engine, t4, to support SPARC T4 crypto instructions.
-along with files in directory engines/t4.
+- avoid using ssl_fill_hello_random() in s3_clnt.c
 
 openssl-t4-inline.sparc-patch
 SPARC-only patch.
@@ -138,23 +129,18 @@ and 64bit builds.
 The fips Build
 ---
 
-FIPS-140 certified libraries for Solaris private use. We wait for OpenSSL 1.0.0
-to be FIPS-140 certified in which time we can ship only 1.0.0 with S11 and make
-it a public interface.
+We are now shipping FIPS-140 certified OpenSSL 1.0.1 with S12 and S11.2.
+The admin may choose to activate 'openssl-fips' implementation using 'pkg mediator'.
+The change will come soon.
+
 
 Patches
 ---
 
-All the patches from 1.0.0 are used in 0.9.8 as well aside from
-14-manpage_openssl.patch which is not needed since we do not deliver 0.9.8 man
-pages. Additional patches:
-
-01-7009105.patch
-Fixing a bug introduces in 0.9.8q and fixed in 0.9.8r.
-
-sparc-01-ccwrap.patch
-Workaround so that fingerprinting the canister during runtime and comparing it
-with the saved fingerprint works correctly.
+All the patches from 1.0.1 (non-fips) are used in 1.0.1(fips) as well aside from
+14-manpage_openssl.patch which is not needed since we do not deliver 1.0.1(fips) man
+pages.  Once we make fips version public, we should deliver man page.
+(coming soon)
 
 The wanboot Build
 ----
@@ -186,7 +172,7 @@ In order to determine which openssl object files are required for wanboot,
 first build static standalone openssl bits in Userland. As a site effect,
 static libraries libssl.a and libcrypto.a are created in build/sparcv9-wanboot.
 
-    $ cd $USERLAND/components/openssl/openssl-1.0.0 ; gmake build
+    $ cd $USERLAND/components/openssl/openssl-1.0.1 ; gmake build
 
 Next, collect some information from linking wanboot static libraries in ON.
 This can be done by the following hack.
@@ -194,16 +180,16 @@ This can be done by the following hack.
     $ cd $ON/usr/src/psm/stand/boot/sparcv9/sun4
     $ touch wanboot.o
     $ LD_OPTIONS="-Dfiles,symbols,output=ld.dbg \
-        -L$USERLAND/components/openssl/openssl-1.0.0/build/sparcv9-wanboot " \
+        -L$USERLAND/components/openssl/openssl-1.0.1/build/sparcv9-wanboot " \
         WAN_OPENSSL=" -lwanboot -lssl -lcrypto" dmake all
 
 The following sort of information ends up in ld.dbg (note that the debugging
 output from the link-editor is not considered a 'stable interface' and may
 change in the future):
 
-    debug: file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-1.0.0/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
+    debug: file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-1.0.1/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
     debug:
-    debug: symbol table processing; file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-1.0.0/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
+    debug: symbol table processing; file=/builds/tkuthan/ul-wanboot-rebuilt/components/openssl/openssl-1.0.1/build/sparcv9-wanboot/libcrypto.a(sparcv9cap.o)  [ ET_REL ]
     debug: symbol[1]=sparcv9cap.c
     ....
 
@@ -215,7 +201,7 @@ Now run the following script in Userland:
     USERLAND=/builds/tkuthan/ul-wanboot-rebuilt
     ON=/builds/tkuthan/on11u1-wanboot-rti
  
-    BUILD=$USERLAND/components/openssl/openssl-1.0.0/build/sparcv9-wanboot
+    BUILD=$USERLAND/components/openssl/openssl-1.0.1/build/sparcv9-wanboot
     LD_DBG=$ON/usr/src/psm/stand/boot/sparcv9/sun4/ld.dbg
  
     for i in `find $BUILD/crypto $BUILD/ssl -name '*.o'`

@@ -1,0 +1,222 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+# This line is needed temporarily to workaround the link check error due to
+# change of action type.  It should be removed once non-FIPS version becomes
+# available in the reference repository
+set name=pkg.linted.pkglint.dupaction010.1 value=true
+
+set name=pkg.fmri \
+    value=pkg:/library/security/openssl/openssl-fips-140@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="FIPS 140-2 Capable OpenSSL libraries"
+set name=pkg.human-version value=$(COMPONENT_VERSION)
+set name=com.oracle.info.description \
+    value="the FIPS 140-2 Capable OpenSSL libraries"
+set name=com.oracle.info.tpno value=17171
+set name=info.classification value=org.opensolaris.category.2008:System/Security
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2009/507
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+# Basic directories and a configuration file.
+file etc/openssl/openssl.cnf path=etc/openssl/fips-140/openssl.cnf group=sys \
+    mode=0644 preserve=true
+link path=lib/openssl/fips-140/64 target=$(MACH64)
+
+# Commands.
+file $(MACH64)/apps/openssl path=lib/openssl/fips-140/openssl owner=root \
+    group=bin mode=0555
+file $(MACH32)/apps/openssl path=lib/openssl/fips-140/$(MACH32)/openssl \
+    owner=root group=bin mode=0555
+
+# Mediator links for the commands
+link path=usr/bin/openssl target=../../lib/openssl/fips-140/openssl \
+    mediator=openssl mediator-implementation=fips-140
+link path=usr/bin/$(MACH32)/openssl \
+    target=../../../lib/openssl/fips-140/$(MACH32)/openssl mediator=openssl \
+    mediator-implementation=fips-140
+link path=usr/bin/CA.pl target=../../lib/openssl/fips-140/CA.pl \
+    mediator=openssl mediator-implementation=fips-140
+
+# 32 bit libraries, lint libraries, and engines.
+file $(MACH32)/engines/libpk11.so path=lib/openssl/fips-140/engines/libpk11.so.1
+file $(MACH32)/libcrypto.so.1.0.0 path=lib/openssl/fips-140/libcrypto.so.1.0.0
+file $(MACH32)/libssl.so.1.0.0 path=lib/openssl/fips-140/libssl.so.1.0.0
+file $(MACH32)/llib-lcrypto.ln path=lib/openssl/fips-140/llib-lcrypto.ln
+file $(MACH32)/llib-lssl.ln path=lib/openssl/fips-140/llib-lssl.ln
+file llib-lcrypto path=lib/openssl/fips-140/llib-lcrypto
+file llib-lssl path=lib/openssl/fips-140/llib-lssl
+link path=lib/openssl/fips-140/engines/libpk11.so target=libpk11.so.1
+link path=lib/openssl/fips-140/libcrypto.so target=libcrypto.so.1.0.0
+link path=lib/openssl/fips-140/libssl.so target=libssl.so.1.0.0
+
+# Mediator links for 32-bit libraries
+link path=lib/libcrypto.so.1.0.0 \
+    target=openssl/fips-140/libcrypto.so.1.0.0 mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/libssl.so.1.0.0 \
+    target=openssl/fips-140/libssl.so.1.0.0 mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/llib-lcrypto target=openssl/fips-140/llib-lcrypto \
+    mediator=openssl mediator-implementation=fips-140
+link path=lib/llib-lcrypto.ln target=openssl/fips-140/llib-lcrypto.ln \
+    mediator=openssl mediator-implementation=fips-140
+link path=lib/llib-lssl target=openssl/fips-140/llib-lssl \
+    mediator=openssl mediator-implementation=fips-140
+link path=lib/llib-lssl.ln target=openssl/fips-140/llib-lssl.ln \
+    mediator=openssl mediator-implementation=fips-140
+link path=lib/openssl/engines/libpk11.so.1 \
+    target=../fips-140/engines/libpk11.so.1 mediator=openssl \
+    mediator-implementation=fips-140
+
+# 64 bit libraries, lint libraries, and engines.
+file $(MACH64)/libcrypto.so.1.0.0 \
+    path=lib/openssl/fips-140/$(MACH64)/libcrypto.so.1.0.0
+file $(MACH64)/libssl.so.1.0.0 \
+    path=lib/openssl/fips-140/$(MACH64)/libssl.so.1.0.0
+file $(MACH64)/llib-lcrypto.ln \
+    path=lib/openssl/fips-140/$(MACH64)/llib-lcrypto.ln
+file $(MACH64)/llib-lssl.ln path=lib/openssl/fips-140/$(MACH64)/llib-lssl.ln
+file etc/openssl/misc/CA.pl path=lib/openssl/fips-140/CA.pl
+file $(MACH64)/engines/libpk11.so \
+    path=lib/openssl/fips-140/engines/$(MACH64)/libpk11.so.1
+file llib-lcrypto path=lib/openssl/fips-140/$(MACH64)/llib-lcrypto
+file llib-lssl path=lib/openssl/fips-140/$(MACH64)/llib-lssl
+link path=lib/openssl/fips-140/$(MACH64)/libcrypto.so target=libcrypto.so.1.0.0
+link path=lib/openssl/fips-140/$(MACH64)/libssl.so target=libssl.so.1.0.0
+link path=lib/openssl/fips-140/engines/$(MACH64)/libpk11.so target=libpk11.so.1
+
+# Mediator links for 64-bit libraries
+link path=lib/openssl/engines/$(MACH64)/libpk11.so.1 \
+    target=../../fips-140/engines/$(MACH64)/libpk11.so.1 mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/$(MACH64)/libcrypto.so.1.0.0 \
+    target=../openssl/fips-140/$(MACH64)/libcrypto.so.1.0.0 mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/$(MACH64)/libssl.so.1.0.0 \
+    target=../openssl/fips-140/$(MACH64)/libssl.so.1.0.0 mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/$(MACH64)/llib-lcrypto \
+    target=../openssl/fips-140/$(MACH64)/llib-lcrypto mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/$(MACH64)/llib-lcrypto.ln \
+    target=../openssl/fips-140/$(MACH64)/llib-lcrypto.ln mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/$(MACH64)/llib-lssl \
+    target=../openssl/fips-140/$(MACH64)/llib-lssl mediator=openssl \
+    mediator-implementation=fips-140
+link path=lib/$(MACH64)/llib-lssl.ln \
+    target=../openssl/fips-140/$(MACH64)/llib-lssl.ln mediator=openssl \
+    mediator-implementation=fips-140
+
+# Header files.
+#
+# Take header files from the 32-bit build. This build has the patched
+# opensslconf.h (64-bit build does not). We cannot take header files from the
+# proto area since it could contain headers installed for the 64-bit build.
+<transform file path=usr/include/openssl/fips-140/openssl/(.+\.h)$ -> \
+    set action.hash $(MACH32)/include/openssl/%<1> >
+file path=usr/include/openssl/fips-140/openssl/aes.h
+file path=usr/include/openssl/fips-140/openssl/asn1.h
+file path=usr/include/openssl/fips-140/openssl/asn1_mac.h
+file path=usr/include/openssl/fips-140/openssl/asn1t.h
+file path=usr/include/openssl/fips-140/openssl/bio.h
+file path=usr/include/openssl/fips-140/openssl/blowfish.h
+file path=usr/include/openssl/fips-140/openssl/bn.h
+file path=usr/include/openssl/fips-140/openssl/buffer.h
+file path=usr/include/openssl/fips-140/openssl/cast.h
+file path=usr/include/openssl/fips-140/openssl/cmac.h
+file path=usr/include/openssl/fips-140/openssl/cms.h
+file path=usr/include/openssl/fips-140/openssl/comp.h
+file path=usr/include/openssl/fips-140/openssl/conf.h
+file path=usr/include/openssl/fips-140/openssl/conf_api.h
+file path=usr/include/openssl/fips-140/openssl/crypto.h
+file path=usr/include/openssl/fips-140/openssl/des.h
+file path=usr/include/openssl/fips-140/openssl/des_old.h
+file path=usr/include/openssl/fips-140/openssl/dh.h
+file path=usr/include/openssl/fips-140/openssl/dsa.h
+file path=usr/include/openssl/fips-140/openssl/dso.h
+file path=usr/include/openssl/fips-140/openssl/dtls1.h
+file path=usr/include/openssl/fips-140/openssl/e_os2.h
+file path=usr/include/openssl/fips-140/openssl/ebcdic.h
+file path=usr/include/openssl/fips-140/openssl/ec.h
+file path=usr/include/openssl/fips-140/openssl/ecdh.h
+file path=usr/include/openssl/fips-140/openssl/ecdsa.h
+file path=usr/include/openssl/fips-140/openssl/engine.h
+file path=usr/include/openssl/fips-140/openssl/err.h
+file path=usr/include/openssl/fips-140/openssl/evp.h
+file path=usr/include/openssl/fips-140/openssl/fips.h
+file path=usr/include/openssl/fips-140/openssl/fips_rand.h
+file path=usr/include/openssl/fips-140/openssl/hmac.h
+file path=usr/include/openssl/fips-140/openssl/krb5_asn.h
+file path=usr/include/openssl/fips-140/openssl/kssl.h
+file path=usr/include/openssl/fips-140/openssl/lhash.h
+file path=usr/include/openssl/fips-140/openssl/md2.h
+file path=usr/include/openssl/fips-140/openssl/md4.h
+file path=usr/include/openssl/fips-140/openssl/md5.h
+file path=usr/include/openssl/fips-140/openssl/modes.h
+file path=usr/include/openssl/fips-140/openssl/obj_mac.h
+file path=usr/include/openssl/fips-140/openssl/objects.h
+file path=usr/include/openssl/fips-140/openssl/ocsp.h
+file path=usr/include/openssl/fips-140/openssl/opensslconf.h
+file path=usr/include/openssl/fips-140/openssl/opensslv.h
+file path=usr/include/openssl/fips-140/openssl/ossl_typ.h
+file path=usr/include/openssl/fips-140/openssl/pem.h
+file path=usr/include/openssl/fips-140/openssl/pem2.h
+file path=usr/include/openssl/fips-140/openssl/pkcs12.h
+file path=usr/include/openssl/fips-140/openssl/pkcs7.h
+file path=usr/include/openssl/fips-140/openssl/pqueue.h
+file path=usr/include/openssl/fips-140/openssl/rand.h
+file path=usr/include/openssl/fips-140/openssl/rc2.h
+file path=usr/include/openssl/fips-140/openssl/rc4.h
+file path=usr/include/openssl/fips-140/openssl/ripemd.h
+file path=usr/include/openssl/fips-140/openssl/rsa.h
+file path=usr/include/openssl/fips-140/openssl/safestack.h
+file path=usr/include/openssl/fips-140/openssl/sha.h
+file path=usr/include/openssl/fips-140/openssl/srp.h
+file path=usr/include/openssl/fips-140/openssl/srtp.h
+file path=usr/include/openssl/fips-140/openssl/ssl.h
+file path=usr/include/openssl/fips-140/openssl/ssl2.h
+file path=usr/include/openssl/fips-140/openssl/ssl23.h
+file path=usr/include/openssl/fips-140/openssl/ssl3.h
+file path=usr/include/openssl/fips-140/openssl/stack.h
+file path=usr/include/openssl/fips-140/openssl/symhacks.h
+file path=usr/include/openssl/fips-140/openssl/tls1.h
+file path=usr/include/openssl/fips-140/openssl/ts.h
+file path=usr/include/openssl/fips-140/openssl/txt_db.h
+file path=usr/include/openssl/fips-140/openssl/ui.h
+file path=usr/include/openssl/fips-140/openssl/ui_compat.h
+file path=usr/include/openssl/fips-140/openssl/whrlpool.h
+file path=usr/include/openssl/fips-140/openssl/x509.h
+file path=usr/include/openssl/fips-140/openssl/x509_vfy.h
+file path=usr/include/openssl/fips-140/openssl/x509v3.h
+license openssl-1.0.1-fips-140.license license="OpenSSL, SSLeay"
+
+# OpenSSL packages are now managed by 'pkg mediator', and the installation
+# of 'openssl-fips-140' package requires 'openssl' package with the mediator
+# change (s12_build42 or later)
+depend type=optional \
+	fmri=library/security/openssl@1.0.1.6,5.12-5.12.0.0.0.42.0
