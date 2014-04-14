@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Since we are building these as a set and not packaging them individually at
@@ -36,7 +36,7 @@ endif
 
 
 CPPFLAGS += "-Wformat=2"
-CFLAGS += -D_REENTRANT
+CFLAGS += -D_REENTRANT -D__USE_SUNOS_SOCKETS__
 
 # Since we are not currently packaging the various OFED components separately
 # and we still need headers and to link with the components that we are
