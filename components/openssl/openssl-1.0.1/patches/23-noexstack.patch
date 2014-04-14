@@ -13,9 +13,9 @@
  		LDFLAGS="$(CFLAGS)"; \
  	fi; \
 +	if expr $(PLATFORM) : '.*x86.*' > /dev/null; then \
-+		LDFLAGS="$${LDFLAGS} -M/usr/lib/ld/map.noexdata"; \
++		LDFLAGS="$${LDFLAGS} -Wl,-M/usr/lib/ld/map.noexdata"; \
 +	fi; \
-+	LDFLAGS="$${LDFLAGS} -M/usr/lib/ld/map.noexstk -M/usr/lib/ld/map.pagealign"; \
++	LDFLAGS="$${LDFLAGS} -Wl,-M/usr/lib/ld/map.noexstk -Wl,-M/usr/lib/ld/map.pagealign"; \
  	$(LINK_APP)
  
  # OpenServer 5 native compilers used

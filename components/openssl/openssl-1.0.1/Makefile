@@ -49,10 +49,13 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/lint-libraries.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/perl5/bin
 endif
+
+# This component doesn't like parallel building
+COMPONENT_BUILD_ARGS=
 
 # Variant of OpenSSL for wanboot is built in build/sparcv9-wanboot.
 BUILD_DIR_WANBOOT = $(BUILD_DIR)/$(MACH64)-wanboot
@@ -114,9 +117,9 @@ CONFIGURE_OPTIONS += --enginesdir=$(ENGINESDIR_$(BITS))
 
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
-CONFIGURE_OPTIONS32_i386 =	solaris-x86-cc-sunw
+CONFIGURE_OPTIONS32_i386 =	solaris-x86-gcc-sunw
 CONFIGURE_OPTIONS32_sparc =	solaris-sparcv9-cc-sunw
-CONFIGURE_OPTIONS64_i386 =	solaris64-x86_64-cc-sunw
+CONFIGURE_OPTIONS64_i386 =	solaris64-x86_64-gcc-sunw
 CONFIGURE_OPTIONS64_sparc =	solaris64-sparcv9-cc-sunw
 
 # Options specific to regular build.
@@ -185,6 +188,21 @@ COMPONENT_PRE_BUILD_ACTION = \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/vis3-mont.pl		$(@D)/crypto/bn/asm; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9-gf2m.pl	$(@D)/crypto/bn/asm; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparct4-mont.pl	$(@D)/crypto/bn/asm; )
+
+# Build openssl-0.9.8 if not yet built.
+$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.built \
+$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/.built:
+	$(GMAKE) -C $(COMPONENT_DIR)/../openssl-0.9.8 build
+
+$(PROTO_DIR)/.openssl-0.9.8:	$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.built \
+				$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/.built
+	$(MKDIR) $(PROTO_DIR)/lib/$(MACH64)
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/libssl.so.0.9.8 $(PROTO_DIR)/lib
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/libcrypto.so.0.9.8 $(PROTO_DIR)/lib
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/libssl.so.0.9.8 $(PROTO_DIR)/lib/$(MACH64)
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/libcrypto.so.0.9.8 $(PROTO_DIR)/lib/$(MACH64)
+	$(TOUCH) $@
+	
 
 # Enable ASLR for this component
 ASLR_MODE =	$(ASLR_ENABLE)
@@ -383,7 +401,7 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR_WANBOOT)/.built
 	$(MKDIR) -p $(WANBOOT_TO);
 	$(CP) $(BUILD_DIR_WANBOOT)/wanboot-openssl.o $(WANBOOT_TO);
 else
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64) $(PROTO_DIR)/.openssl-0.9.8
 endif
 
 # We need to modify the default lint flags to include patched opensslconf.h from
