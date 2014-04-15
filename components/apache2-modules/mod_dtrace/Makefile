@@ -24,7 +24,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_dtrace
 COMPONENT_VERSION=	0.3.1
-COMPONENT_REVISION=	1
+COMPONENT_REVISION=	2
 COMPONENT_SRC=		src
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 COMPONENT_BUGDB=	utility/apache

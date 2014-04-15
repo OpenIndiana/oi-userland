@@ -74,7 +74,7 @@ done
 sed "s/::ISAINFO::/\/${MACH64}/" Solaris/http-apache24 > ${PROTO}/lib/svc/method/http-apache24
 
 # Add "-D 64" argument into 64 bit apachectl (if it's not there yet).
-grep OPTS_64 ${APACHECTL64} > /dev/null || ( sed -e '/^case $ARGV in/i\
+grep OPTS_64 ${APACHECTL64} > /dev/null || ( sed -e '/^case $ACMD in/i\
 OPTS_64="-D 64bit"\
 HTTPD="$HTTPD $OPTS_64"\
 ' ${APACHECTL64} > ${APACHECTL64}.new && mv ${APACHECTL64}.new ${APACHECTL64} )
