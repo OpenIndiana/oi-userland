@@ -27,6 +27,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		Imaging
 COMPONENT_VERSION=	1.1.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.pythonware.com/products/pil/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
