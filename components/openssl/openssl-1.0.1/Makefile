@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -28,21 +28,20 @@ COMPONENT_NAME =	openssl
 # When upgrading OpenSSL, please, DON'T FORGET TO TEST WANBOOT too. 
 # For more information about wanboot-openssl testing, please refer to
 # ../README.
-COMPONENT_VERSION =	1.0.1e
+COMPONENT_VERSION =	1.0.1g
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.1.5
+IPS_COMPONENT_VERSION = 1.0.1.7
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f74f15e8c8ff11aa3d5bb5f276d202ec18d7246e95f961db76054199c69c1ae3
+    sha256:53cb818c3b90e507a8348f4f5eaedb05d8bfe5358aabb508b7263cc670c3e028
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/openssl
 
 # Architecture-specific patches
 EXTRA_PATCHES.sparc = $(PATCH_DIR)/openssl-t4-inline.sparc-patch
-EXTRA_PATCHES.sparc += $(PATCH_DIR)/openssl-1.0.1e-t4-engine.sparc-patch
 EXTRA_PATCHES = $(EXTRA_PATCHES.$(MACH))
 
 include $(WS_TOP)/make-rules/prep.mk
@@ -50,7 +49,13 @@ include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/lint-libraries.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+PATH=/usr/bin:/usr/gnu/bin:/usr/perl5/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/perl5/bin
+endif
+
+# This component doesn't like parallel building
+COMPONENT_BUILD_ARGS=
 
 # Variant of OpenSSL for wanboot is built in build/sparcv9-wanboot.
 BUILD_DIR_WANBOOT = $(BUILD_DIR)/$(MACH64)-wanboot
@@ -112,9 +117,9 @@ CONFIGURE_OPTIONS += --enginesdir=$(ENGINESDIR_$(BITS))
 
 # We define our own compiler and linker option sets for Solaris. See Configure
 # for more information.
-CONFIGURE_OPTIONS32_i386 =	solaris-x86-cc-sunw
+CONFIGURE_OPTIONS32_i386 =	solaris-x86-gcc-sunw
 CONFIGURE_OPTIONS32_sparc =	solaris-sparcv9-cc-sunw
-CONFIGURE_OPTIONS64_i386 =	solaris64-x86_64-cc-sunw
+CONFIGURE_OPTIONS64_i386 =	solaris64-x86_64-gcc-sunw
 CONFIGURE_OPTIONS64_sparc =	solaris64-sparcv9-cc-sunw
 
 # Options specific to regular build.
@@ -173,16 +178,34 @@ COMPONENT_POST_CONFIGURE_ACTION = \
 # not available in the stand-alone environment of wanboot.
 COMPONENT_PRE_BUILD_ACTION = \
     ( echo "Cloning engines..."; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/devcrypto/*.[ch]	$(@D)/engines; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/crypto/engine; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/eng_t4*.[ch]	$(@D)/crypto/engine; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_aes.S		$(@D)/crypto/aes/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_des.S		$(@D)/crypto/des/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_md5.S		$(@D)/crypto/md5/asm; \
-      $(LN) -fs $(COMPONENT_DIR)/engines/t4/t4_sha?.S		$(@D)/crypto/sha/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*.[ch]		$(@D)/engines; \
       $(LN) -fs $(COMPONENT_DIR)/wanboot-openssl/wanboot-stubs.c	$(@D)/crypto; \
       $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparc_arch.h		$(@D)/crypto/; \
-      $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; )
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/md5-sparcv9.pl		$(@D)/crypto/md5/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/aest4-sparcv9.pl		$(@D)/crypto/aes/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/dest4-sparcv9.pl		$(@D)/crypto/des/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9_modes.pl		$(@D)/crypto/perlasm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/vis3-mont.pl		$(@D)/crypto/bn/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparcv9-gf2m.pl	$(@D)/crypto/bn/asm; \
+      $(LN) -fs $(COMPONENT_DIR)/inline-t4/sparct4-mont.pl	$(@D)/crypto/bn/asm; )
+
+# Build openssl-0.9.8 if not yet built.
+$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.built \
+$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/.built:
+	$(GMAKE) -C $(COMPONENT_DIR)/../openssl-0.9.8 build
+
+$(PROTO_DIR)/.openssl-0.9.8:	$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/.built \
+				$(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/.built
+	$(MKDIR) $(PROTO_DIR)/lib/$(MACH64)
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/libssl.so.0.9.8 $(PROTO_DIR)/lib
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH32)/libcrypto.so.0.9.8 $(PROTO_DIR)/lib
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/libssl.so.0.9.8 $(PROTO_DIR)/lib/$(MACH64)
+	$(CP) -a $(COMPONENT_DIR)/../openssl-0.9.8/build/$(MACH64)/libcrypto.so.0.9.8 $(PROTO_DIR)/lib/$(MACH64)
+	$(TOUCH) $@
+	
+
+# Enable ASLR for this component
+ASLR_MODE =	$(ASLR_ENABLE)
 
 # OpenSSL for wanboot is built on sparc only.
 ifeq ($(MACH), sparc)
@@ -194,7 +217,8 @@ build:		$(BUILD_32_and_64)
 # Object files for wanboot-openssl.o have to be listed explicitly.
 WANBOOT_OBJS =  \
     crypto/aes/aes-sparcv9.o crypto/aes/aes_cbc.o crypto/aes/aes_core.o \
-    crypto/aes/aes_misc.o crypto/aes/aes_wrap.o crypto/asn1/a_bitstr.o \
+    crypto/aes/aes_misc.o crypto/aes/aes_wrap.o crypto/aes/aest4-sparcv9.o \
+    crypto/asn1/a_bitstr.o \
     crypto/asn1/a_bool.o crypto/asn1/a_bytes.o crypto/asn1/a_d2i_fp.o \
     crypto/asn1/a_digest.o crypto/asn1/a_dup.o crypto/asn1/a_enum.o \
     crypto/asn1/a_gentm.o crypto/asn1/a_i2d_fp.o crypto/asn1/a_int.o \
@@ -229,6 +253,7 @@ WANBOOT_OBJS =  \
     crypto/bn/bn_prime.o crypto/bn/bn_print.o crypto/bn/bn_rand.o \
     crypto/bn/bn_recp.o crypto/bn/bn_shift.o crypto/bn/bn_sqr.o \
     crypto/bn/bn_word.o crypto/bn/sparcv9-mont.o crypto/bn/sparcv9a-mont.o \
+    crypto/bn/sparct4-mont.o crypto/bn/vis3-mont.o \
     crypto/buffer/buf_err.o crypto/buffer/buf_str.o crypto/buffer/buffer.o \
     crypto/camellia/camellia.o crypto/camellia/cmll_cbc.o \
     crypto/camellia/cmll_cfb.o crypto/camellia/cmll_ecb.o \
@@ -243,7 +268,8 @@ WANBOOT_OBJS =  \
     crypto/conf/conf_mod.o crypto/cpt_err.o crypto/cryptlib.o \
     crypto/des/cfb64ede.o crypto/des/cfb64enc.o crypto/des/cfb_enc.o \
     crypto/des/des_enc-sparc.o crypto/des/ecb3_enc.o crypto/des/ecb_enc.o \
-    crypto/des/ofb64ede.o crypto/des/ofb64enc.o crypto/des/set_key.o \
+    crypto/des/ofb64ede.o crypto/des/ofb64enc.o crypto/des/dest4-sparcv9.o \
+    crypto/des/set_key.o \
     crypto/des/xcbc_enc.o crypto/dh/dh_ameth.o crypto/dh/dh_asn1.o \
     crypto/dh/dh_check.o crypto/dh/dh_err.o crypto/dh/dh_gen.o \
     crypto/dh/dh_key.o crypto/dh/dh_lib.o crypto/dh/dh_pmeth.o \
@@ -375,7 +401,7 @@ install:	$(INSTALL_32_and_64) $(BUILD_DIR_WANBOOT)/.built
 	$(MKDIR) -p $(WANBOOT_TO);
 	$(CP) $(BUILD_DIR_WANBOOT)/wanboot-openssl.o $(WANBOOT_TO);
 else
-install:	$(INSTALL_32_and_64)
+install:	$(INSTALL_32_and_64) $(PROTO_DIR)/.openssl-0.9.8
 endif
 
 # We need to modify the default lint flags to include patched opensslconf.h from

@@ -1,5 +1,6 @@
 #
-# This file addds inline T4 instruction support to OpenSSL upstream code.
+# This file adds inline T4 instruction support to OpenSSL upstream code.
+# The change was brought in from OpenSSL 1.0.2.
 #
 Index: Configure
 ===================================================================
@@ -11,7 +12,7 @@ diff -ru openssl-1.0.1e/Configure openssl-1.0.1e/Configure
  my $x86_64_asm="x86_64cpuid.o:x86_64-gcc.o x86_64-mont.o x86_64-mont5.o x86_64-gf2m.o modexp512-x86_64.o::aes-x86_64.o vpaes-x86_64.o bsaes-x86_64.o aesni-x86_64.o aesni-sha1-x86_64.o::md5-x86_64.o:sha1-x86_64.o sha256-x86_64.o sha512-x86_64.o::rc4-x86_64.o rc4-md5-x86_64.o:::wp-x86_64.o:cmll-x86_64.o cmll_misc.o:ghash-x86_64.o:";
  my $ia64_asm="ia64cpuid.o:bn-ia64.o ia64-mont.o::aes_core.o aes_cbc.o aes-ia64.o::md5-ia64.o:sha1-ia64.o sha256-ia64.o sha512-ia64.o::rc4-ia64.o rc4_skey.o:::::ghash-ia64.o::void";
 -my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o:::sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
-+my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o:des_enc-sparc.o fcrypt_b.o:aes_core.o aes_cbc.o aes-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
++my $sparcv9_asm="sparcv9cap.o sparccpuid.o:bn-sparcv9.o sparcv9-mont.o sparcv9a-mont.o vis3-mont.o sparct4-mont.o sparcv9-gf2m.o:des_enc-sparc.o fcrypt_b.o dest4-sparcv9.o:aes_core.o aes_cbc.o aes-sparcv9.o aest4-sparcv9.o::md5-sparcv9.o:sha1-sparcv9.o sha256-sparcv9.o sha512-sparcv9.o:::::::ghash-sparcv9.o::void";
  my $sparcv8_asm=":sparcv8.o:des_enc-sparc.o fcrypt_b.o:::::::::::::void";
  my $alpha_asm="alphacpuid.o:bn_asm.o alpha-mont.o:::::sha1-alpha.o:::::::ghash-alpha.o::void";
  my $mips32_asm=":bn-mips.o::aes_cbc.o aes-mips.o:::sha1-mips.o sha256-mips.o::::::::";
@@ -20,19 +21,50 @@ Index: crypto/sparccpuid.S
 diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
 --- openssl-1.0.1e/crypto/sparccpuid.S 2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.1e/crypto/sparccpuid.S 2011-07-27 10:48:17.817470000 -0700
-@@ -251,6 +251,11 @@
+@@ -1,3 +1,7 @@
++#ifdef OPENSSL_FIPSCANISTER
++#include <openssl/fipssyms.h>
++#endif
++
+ #if defined(__SUNPRO_C) && defined(__sparcv9)
+ # define ABI64  /* They've said -xarch=v9 at command line */
+ #elif defined(__GNUC__) && defined(__arch64__)
+@@ -123,7 +127,7 @@
+ 			fmovs	%f1,%f3
+ 			fmovs	%f0,%f2
+ 
+-	add	%fp,BIAS,%i0	! return pointer to caller´s top of stack
++	add	%fp,BIAS,%i0	! return pointer to caller?s top of stack
+ 
+ 	ret
+ 	restore
+@@ -235,10 +239,10 @@
+ .global	_sparcv9_vis1_probe
+ .align	8
+ _sparcv9_vis1_probe:
++	.word	0x81b00d80	!fxor	%f0,%f0,%f0
+ 	add	%sp,BIAS+2,%o1
+-	.word	0xc19a5a40	!ldda	[%o1]ASI_FP16_P,%f0
+ 	retl
+-	.word	0x81b00d80	!fxor	%f0,%f0,%f0
++	.word	0xc19a5a40	!ldda	[%o1]ASI_FP16_P,%f0
+ .type	_sparcv9_vis1_probe,#function
+ .size	_sparcv9_vis1_probe,.-_sparcv9_vis1_probe
+ 
+@@ -251,7 +255,12 @@
  !	UltraSPARC IIe		7
  !	UltraSPARC III		7
  !	UltraSPARC T1		24
 +!	SPARC T4		65(*)
-+!
+ !
 +! (*)	result has lesser to do with VIS instruction latencies, rdtick
 +!	appears that slow, but it does the trick in sense that FP and
 +!	VIS code paths are still slower than integer-only ones.
- !
++!
  ! Numbers for T2 and SPARC64 V-VII are more than welcomed.
  !
-@@ -260,6 +265,8 @@
+ ! It would be possible to detect specifically US-T1 by instrumenting
+@@ -260,6 +269,8 @@
  .global	_sparcv9_vis1_instrument
  .align	8
  _sparcv9_vis1_instrument:
@@ -41,7 +73,7 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  	.word	0x91410000	!rd	%tick,%o0
  	.word	0x81b00d80	!fxor	%f0,%f0,%f0
  	.word	0x85b08d82	!fxor	%f2,%f2,%f2
-@@ -314,6 +321,30 @@
+@@ -314,6 +325,30 @@
  .type	_sparcv9_fmadd_probe,#function
  .size	_sparcv9_fmadd_probe,.-_sparcv9_fmadd_probe
  
@@ -72,14 +104,119 @@ diff -ru openssl-1.0.1e/crypto/sparccpuid.S openssl-1.0.1e/crypto/sparccpuid.S
  .global	OPENSSL_cleanse
  .align	32
  OPENSSL_cleanse:
-
+@@ -398,6 +433,102 @@
+ .size	OPENSSL_cleanse,.-OPENSSL_cleanse
+ 
+ #ifndef _BOOT
++.global	_sparcv9_vis1_instrument_bus
++.align	8
++_sparcv9_vis1_instrument_bus:
++	mov	%o1,%o3					! save cnt
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	mov	%o4,%o5					! lasttick = tick
++	set	0,%g4					! diff
++
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++
++.Loop:	.word	0x99410000	!rd	%tick,%o4
++	sub	%o4,%o5,%g4				! diff=tick-lasttick
++	mov	%o4,%o5					! lasttick=tick
++
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++	subcc	%o1,1,%o1				! --$cnt
++	bnz	.Loop
++	add	%o0,4,%o0				! ++$out
++
++	retl
++	mov	%o3,%o0
++.type	_sparcv9_vis1_instrument_bus,#function
++.size	_sparcv9_vis1_instrument_bus,.-_sparcv9_vis1_instrument_bus
++
++.global	_sparcv9_vis1_instrument_bus2
++.align	8
++_sparcv9_vis1_instrument_bus2:
++	mov	%o1,%o3					! save cnt
++	sll	%o1,2,%o1				! cnt*=4
++
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	mov	%o4,%o5					! lasttick = tick
++	set	0,%g4					! diff
++
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	sub	%o4,%o5,%g4				! diff=tick-lasttick
++	mov	%o4,%o5					! lasttick=tick
++	mov	%g4,%g5					! lastdiff=diff
++.Loop2:
++	andn	%o0,63,%g1
++	.word	0xc1985e00	!ldda	[%g1]0xf0,%f0	! block load
++	.word	0x8143e040	!membar	#Sync
++	.word	0xc1b85c00	!stda	%f0,[%g1]0xe0	! block store and commit
++	.word	0x8143e040	!membar	#Sync
++	ld	[%o0],%o4
++	add	%o4,%g4,%g4
++	.word	0xc9e2100c	!cas	[%o0],%o4,%g4
++
++	subcc	%o2,1,%o2				! --max
++	bz	.Ldone2
++	nop
++
++	.word	0x99410000	!rd	%tick,%o4	! tick
++	sub	%o4,%o5,%g4				! diff=tick-lasttick
++	mov	%o4,%o5					! lasttick=tick
++	cmp	%g4,%g5
++	mov	%g4,%g5					! lastdiff=diff
++
++	.word	0x83408000	!rd	%ccr,%g1
++	and	%g1,4,%g1				! isolate zero flag
++	xor	%g1,4,%g1				! flip zero flag
++
++	subcc	%o1,%g1,%o1				! conditional --$cnt
++	bnz	.Loop2
++	add	%o0,%g1,%o0				! conditional ++$out
++
++.Ldone2:
++	srl	%o1,2,%o1
++	retl
++	sub	%o3,%o1,%o0
++.type	_sparcv9_vis1_instrument_bus2,#function
++.size	_sparcv9_vis1_instrument_bus2,.-_sparcv9_vis1_instrument_bus2
++
+ .section	".init",#alloc,#execinstr
+ 	call	solaris_locking_setup
+ 	nop
 Index: crypto/sparcv9cap.c
 ===================================================================
 diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 --- openssl-1.0.1e/crypto/sparcv9cap.c 2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.1e/crypto/sparcv9cap.c 2011-07-27 10:48:17.817470000 -0700
-@@ -6,16 +6,15 @@
+@@ -4,31 +4,55 @@
+ #include <setjmp.h>
+ #include <signal.h>
  #include <sys/time.h>
++#include <unistd.h>
  #include <openssl/bn.h>
  
 -#define SPARCV9_TICK_PRIVILEGED	(1<<0)
@@ -101,24 +238,60 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #endif
  
  int bn_mul_mont(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num)
-@@ -24,7 +23,7 @@
+ 	{
++	int bn_mul_mont_vis3(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
+ 	int bn_mul_mont_fpu(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
  	int bn_mul_mont_int(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0, int num);
  
- 	if (num>=8 && !(num&1) &&
+-	if (num>=8 && !(num&1) &&
 -	    (OPENSSL_sparcv9cap_P&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
-+	    (OPENSSL_sparcv9cap_P[0]&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
- 		(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
- 		return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
- 	else
-@@ -36,11 +35,16 @@
+-		(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
+-		return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
+-	else
+-		return bn_mul_mont_int(rp,ap,bp,np,n0,num);
++	if (!(num&1) && num>=6)
++		{
++		if ((num&15)==0 && num<=64 &&
++		    (OPENSSL_sparcv9cap_P[1]&(CFR_MONTMUL|CFR_MONTSQR))== 
++		    			     (CFR_MONTMUL|CFR_MONTSQR))
++			{
++			typedef int (*bn_mul_mont_f)(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_8(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_16(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_24(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			int bn_mul_mont_t4_32(BN_ULONG *rp, const BN_ULONG *ap, const BN_ULONG *bp, const BN_ULONG *np,const BN_ULONG *n0);
++			static const bn_mul_mont_f funcs[4] = {
++				bn_mul_mont_t4_8,	bn_mul_mont_t4_16,
++				bn_mul_mont_t4_24,	bn_mul_mont_t4_32 };
++			bn_mul_mont_f worker = funcs[num/16-1];
++
++			if ((*worker)(rp,ap,bp,np,n0)) return 1;
++			/* retry once and fall back */
++			if ((*worker)(rp,ap,bp,np,n0)) return 1;
++			return bn_mul_mont_vis3(rp,ap,bp,np,n0,num);
++			}
++		if ((OPENSSL_sparcv9cap_P[0]&SPARCV9_VIS3))
++			return bn_mul_mont_vis3(rp,ap,bp,np,n0,num);
++		else if (num>=8 &&
++			(OPENSSL_sparcv9cap_P[0]&(SPARCV9_PREFER_FPU|SPARCV9_VIS1)) ==
++			(SPARCV9_PREFER_FPU|SPARCV9_VIS1))
++			return bn_mul_mont_fpu(rp,ap,bp,np,n0,num);
++		}
++	return bn_mul_mont_int(rp,ap,bp,np,n0,num);
+ 	}
+ 
+ unsigned long	_sparcv9_rdtick(void);
+@@ -36,11 +60,18 @@
  unsigned long	_sparcv9_vis1_instrument(void);
  void		_sparcv9_vis2_probe(void);
  void		_sparcv9_fmadd_probe(void);
 +unsigned long	_sparcv9_rdcfr(void);
 +void		_sparcv9_vis3_probe(void);
 +unsigned long	_sparcv9_random(void);
-+size_t 		_sparcv9_vis1_instrument_bus(unsigned int *,size_t);
++#ifndef _BOOT
++size_t 	_sparcv9_vis1_instrument_bus(unsigned int *,size_t);
 +size_t		_sparcv9_vis1_instrument_bus2(unsigned int *,size_t,size_t);
++#endif
  
  #ifndef _BOOT
  unsigned long OPENSSL_rdtsc(void)
@@ -128,13 +301,14 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  #if defined(__sun) && defined(__SVR4)
  		return gethrtime();
  #else
-@@ -51,6 +55,25 @@
+@@ -49,6 +80,24 @@
+ 	else
+ 		return _sparcv9_rdtick();
  	}
- #endif
- 
++
 +size_t OPENSSL_instrument_bus(unsigned int *out,size_t cnt)
 +	{
-+	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++	if ((OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK)) ==
 +			SPARCV9_BLK)
 +		return _sparcv9_vis1_instrument_bus(out,cnt);
 +	else
@@ -143,18 +317,16 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
 +
 +size_t OPENSSL_instrument_bus2(unsigned int *out,size_t cnt,size_t max)
 +	{
-+	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK) ==
++	if ((OPENSSL_sparcv9cap_P[0]&(SPARCV9_TICK_PRIVILEGED|SPARCV9_BLK)) ==
 +			SPARCV9_BLK)
 +		return _sparcv9_vis1_instrument_bus2(out,cnt,max);
 +	else
 +		return 0;
 +	}
-+
-+
+ #endif
+
  #if defined(_BOOT)
- /*
-  * Hardcoding sparc capabilities for wanboot.
-@@ -58,7 +81,7 @@
+@@ -58,7 +107,7 @@
   */
  void OPENSSL_cpuid_setup(void)
  	{
@@ -163,7 +335,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  	}
  
  #elif 0 && defined(__sun) && defined(__SVR4)
-@@ -85,11 +108,11 @@
+@@ -85,11 +116,11 @@
  	if (!strcmp (name,"SUNW,UltraSPARC") ||
  	    !strncmp(name,"SUNW,UltraSPARC-I",17))  /* covers II,III,IV */
  		{
@@ -177,7 +349,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  		return DI_WALK_TERMINATE;
  		}
-@@ -96,7 +119,7 @@
+@@ -96,7 +127,7 @@
  	/* This is expected to catch remaining UltraSPARCs, such as T1 */
  	else if (!strncmp(name,"SUNW,UltraSPARC",15))
  		{
@@ -186,7 +358,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  		return DI_WALK_TERMINATE;
  		}
-@@ -115,7 +138,7 @@
+@@ -115,7 +146,7 @@
  
  	if ((e=getenv("OPENSSL_sparcv9cap")))
  		{
@@ -195,7 +367,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  		return;
  		}
  
-@@ -123,17 +146,17 @@
+@@ -123,17 +154,17 @@
  		{
  		if (strcmp(si,"sun4v"))
  			/* FPU is preferred for all CPUs, but US-T1/2 */
@@ -217,7 +389,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  			return;
  			}
  		}
-@@ -193,12 +216,14 @@
+@@ -193,12 +224,14 @@
   
  	if ((e=getenv("OPENSSL_sparcv9cap")))
  		{
@@ -234,7 +406,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  
  	sigfillset(&all_masked);
  	sigdelset(&all_masked,SIGILL);
-@@ -221,20 +246,20 @@
+@@ -221,20 +254,20 @@
  	if (sigsetjmp(common_jmp,1) == 0)
  		{
  		_sparcv9_rdtick();
@@ -259,7 +431,7 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  			}
  		}
  
-@@ -241,9 +266,37 @@
+@@ -241,13 +274,53 @@
  	if (sigsetjmp(common_jmp,1) == 0)
  		{
  		_sparcv9_fmadd_probe();
@@ -298,6 +470,22 @@ diff -ru openssl-1.0.1e/crypto/sparcv9cap.c openssl-1.0.1e/crypto/sparcv9cap.c
  	sigaction(SIGBUS,&bus_oact,NULL);
  	sigaction(SIGILL,&ill_oact,NULL);
  
+ 	sigprocmask(SIG_SETMASK,&oset,NULL);
++
++	if (sizeof(size_t)==8)
++		OPENSSL_sparcv9cap_P[0] |= SPARCV9_64BIT_STACK;
++#ifdef __linux
++	else
++		{
++		int ret = syscall(340);
++
++		if (ret>=0 && ret&1)
++			OPENSSL_sparcv9cap_P[0] |= SPARCV9_64BIT_STACK;
++		}
++#endif
+ 	}
+ 
+ #endif
 Index: crypto/md5/Makefile
 ===================================================================
 diff -ru openssl-1.0.1e/crypto/md5/Makefile openssl-1.0.1e/crypto/md5/Makefile
@@ -332,7 +520,7 @@ Index: crypto/sha/Makefile
 diff -ru openssl-1.0.1e/crypto/sha/Makefile openssl-1.0.1e/crypto/sha/Makefile
 --- openssl-1.0.1e/crypto/sha/Makefile    2011-05-24 17:02:24.000000000 -0700
 +++ openssl-1.0.1e/crypto/sha/Makefile    2011-07-27 10:48:17.817470000 -0700
-@@ -66,9 +66,9 @@
+@@ -68,9 +68,9 @@
  sha1-x86_64.s:	asm/sha1-x86_64.pl;	$(PERL) asm/sha1-x86_64.pl $(PERLASM_SCHEME) > $@
  sha256-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
  sha512-x86_64.s:asm/sha512-x86_64.pl;	$(PERL) asm/sha512-x86_64.pl $(PERLASM_SCHEME) $@
@@ -829,6 +1017,626 @@ diff -ru openssl-1.0.1e/crypto/sha/asm/sha512-sparcv9.pl openssl-1.0.1e/crypto/s
 +}
 +
  close STDOUT;
+Index: crypto/des/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/des/Makefile.orig openssl-1.0.1e/crypto/des/Makefile
+--- a/crypto/des/Makefile
++++ b/crypto/des/Makefile
+@@ -61,6 +61,8 @@ des: des.o cbc3_enc.o lib
+ 
+ des_enc-sparc.S:	asm/des_enc.m4
+ 	m4 -B 8192 asm/des_enc.m4 > des_enc-sparc.S
++dest4-sparcv9.s:	asm/dest4-sparcv9.pl
++	$(PERL) asm/dest4-sparcv9.pl $(CFLAGS) > $@
+ 
+ des-586.s:	asm/des-586.pl ../perlasm/x86asm.pl ../perlasm/cbc.pl
+ 	$(PERL) asm/des-586.pl $(PERLASM_SCHEME) $(CFLAGS) > $@
+Index: crypto/evp/e_des.c
+===================================================================
+diff -ru openssl-1.0.1e/crypto/evp/e_des.c.orig openssl-1.0.1e/crypto/evp/e_des.c
+--- a/crypto/evp/e_des.c
++++ b/crypto/evp/e_des.c
+@@ -65,6 +65,30 @@
+ #include <openssl/des.h>
+ #include <openssl/rand.h>
+ 
++typedef struct
++	{
++	union { double align; DES_key_schedule ks; } ks;
++	union {
++		void (*cbc)(const void *,void *,size_t,const void *,void *);
++	} stream;
++	} EVP_DES_KEY;
++
++#if defined(AES_ASM) && (defined(__sparc) || defined(__sparc__))
++/* ---------^^^ this is not a typo, just a way to detect that
++ * assembler support was in general requested... */
++#include "sparc_arch.h"
++
++extern unsigned int OPENSSL_sparcv9cap_P[];
++
++#define SPARC_DES_CAPABLE	(OPENSSL_sparcv9cap_P[1] & CFR_DES)
++
++void	des_t4_key_expand(const void *key, DES_key_schedule *ks);
++void	des_t4_cbc_encrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++void	des_t4_cbc_decrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++#endif
++
+ static int des_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			const unsigned char *iv, int enc);
+ static int des_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr);
+@@ -99,6 +123,13 @@ static int des_ofb_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ static int des_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ 			  const unsigned char *in, size_t inl)
+ {
++	EVP_DES_KEY *dat = (EVP_DES_KEY *)ctx->cipher_data;
++
++	if (dat->stream.cbc)
++		{
++		(*dat->stream.cbc)(in,out,inl,&dat->ks.ks,ctx->iv);
++		return 1;
++		}
+ 	while(inl>=EVP_MAXCHUNK)
+ 		{
+ 		DES_ncbc_encrypt(in, out, (long)EVP_MAXCHUNK, ctx->cipher_data,
+@@ -176,18 +207,18 @@
+     return 1;
+     }
+ 
+-BLOCK_CIPHER_defs(des, DES_key_schedule, NID_des, 8, 8, 8, 64,
++BLOCK_CIPHER_defs(des, EVP_DES_KEY, NID_des, 8, 8, 8, 64,
+ 			EVP_CIPH_RAND_KEY, des_init_key, NULL,
+ 			EVP_CIPHER_set_asn1_iv,
+ 			EVP_CIPHER_get_asn1_iv,
+ 			des_ctrl)
+ 
+-BLOCK_CIPHER_def_cfb(des,DES_key_schedule,NID_des,8,8,1,
++BLOCK_CIPHER_def_cfb(des,EVP_DES_KEY,NID_des,8,8,1,
+ 		     EVP_CIPH_RAND_KEY, des_init_key,NULL,
+ 		     EVP_CIPHER_set_asn1_iv,
+ 		     EVP_CIPHER_get_asn1_iv,des_ctrl)
+ 
+-BLOCK_CIPHER_def_cfb(des,DES_key_schedule,NID_des,8,8,8,
++BLOCK_CIPHER_def_cfb(des,EVP_DES_KEY,NID_des,8,8,8,
+ 		     EVP_CIPH_RAND_KEY,des_init_key,NULL,
+ 		     EVP_CIPHER_set_asn1_iv,
+ 		     EVP_CIPHER_get_asn1_iv,des_ctrl)
+@@ -196,8 +227,25 @@ static int des_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			const unsigned char *iv, int enc)
+ 	{
+ 	DES_cblock *deskey = (DES_cblock *)key;
++	EVP_DES_KEY *dat = (EVP_DES_KEY *)ctx->cipher_data;
++
++	dat->stream.cbc = NULL;
++#if defined(SPARC_DES_CAPABLE)
++	if (SPARC_DES_CAPABLE)
++		{
++		int mode = ctx->cipher->flags & EVP_CIPH_MODE;
++
++		if (mode == EVP_CIPH_CBC_MODE)
++			{
++			des_t4_key_expand(key,&dat->ks.ks);
++			dat->stream.cbc = enc ? des_t4_cbc_encrypt :
++						des_t4_cbc_decrypt;
++			return 1;
++			}
++		}
++#endif
+ #ifdef EVP_CHECK_DES_KEY
+-	if(DES_set_key_checked(deskey,ctx->cipher_data) != 0)
++	if(DES_set_key_checked(deskey,dat->ks.ks) != 0)
+ 		return 0;
+ #else
+ 	DES_set_key_unchecked(deskey,ctx->cipher_data);
+Index: crypto/evp/e_des3.c
+===================================================================
+diff -ru openssl-1.0.1e/crypto/evp/e_des3.c.orig openssl-1.0.1e/crypto/evp/e_des3.c
+--- a/crypto/evp/e_des3.c
++++ b/crypto/evp/e_des3.c
+@@ -65,6 +65,33 @@
+ #include <openssl/des.h>
+ #include <openssl/rand.h>
+ 
++typedef struct
++	{
++	union { double align; DES_key_schedule ks[3]; } ks;
++	union {
++		void (*cbc)(const void *,void *,size_t,const void *,void *);
++	} stream;
++	} DES_EDE_KEY;
++#define ks1 ks.ks[0]
++#define ks2 ks.ks[1]
++#define ks3 ks.ks[2]
++
++#if defined(AES_ASM) && (defined(__sparc) || defined(__sparc__))
++/* ---------^^^ this is not a typo, just a way to detect that
++ * assembler support was in general requested... */
++#include "sparc_arch.h"
++
++extern unsigned int OPENSSL_sparcv9cap_P[];
++
++#define SPARC_DES_CAPABLE	(OPENSSL_sparcv9cap_P[1] & CFR_DES)
++
++void	des_t4_key_expand(const void *key, DES_key_schedule *ks);
++void	des_t4_ede3_cbc_encrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++void	des_t4_ede3_cbc_decrypt(const void *inp,void *out,size_t len,
++				DES_key_schedule *ks,unsigned char iv[8]);
++#endif
++
+ #ifndef OPENSSL_FIPS
+ 
+ static int des_ede_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+@@ -75,13 +100,6 @@ static int des_ede3_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 
+ static int des3_ctrl(EVP_CIPHER_CTX *c, int type, int arg, void *ptr);
+ 
+-typedef struct
+-    {
+-    DES_key_schedule ks1;/* key schedule */
+-    DES_key_schedule ks2;/* key schedule (for ede) */
+-    DES_key_schedule ks3;/* key schedule (for ede3) */
+-    } DES_EDE_KEY;
+-
+ #define data(ctx) ((DES_EDE_KEY *)(ctx)->cipher_data)
+ 
+ /* Because of various casts and different args can't use IMPLEMENT_BLOCK_CIPHER */
+@@ -121,6 +141,8 @@ static int des_ede_ofb_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ static int des_ede_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ 			      const unsigned char *in, size_t inl)
+ {
++	DES_EDE_KEY *dat = data(ctx);
++
+ #ifdef KSSL_DEBUG
+ 	{
+         int i;
+@@ -132,10 +154,16 @@
+ 	printf("\n");
+ 	}
+ #endif    /* KSSL_DEBUG */
++	if (dat->stream.cbc)
++		{
++		(*dat->stream.cbc)(in,out,inl,&dat->ks,ctx->iv);
++		return 1;
++		}
++
+ 	while (inl>=EVP_MAXCHUNK)
+ 		{
+ 		DES_ede3_cbc_encrypt(in, out, (long)EVP_MAXCHUNK,
+-			     &data(ctx)->ks1, &data(ctx)->ks2, &data(ctx)->ks3,
++			     &dat->ks1, &dat->ks2, &dat->ks3,
+ 			     (DES_cblock *)ctx->iv, ctx->encrypt);
+ 		inl-=EVP_MAXCHUNK;
+ 		in +=EVP_MAXCHUNK;
+@@ -143,7 +169,7 @@ static int des_ede_cbc_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+ 		}
+ 	if (inl)
+ 		DES_ede3_cbc_encrypt(in, out, (long)inl,
+-			     &data(ctx)->ks1, &data(ctx)->ks2, &data(ctx)->ks3,
++			     &dat->ks1, &dat->ks2, &dat->ks3,
+                              (DES_cblock *)ctx->iv, ctx->encrypt);
+ 	return 1;
+ }
+@@ -208,9 +234,8 @@ static int des_ede3_cfb8_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
+     }
+ 
+ BLOCK_CIPHER_defs(des_ede, DES_EDE_KEY, NID_des_ede, 8, 16, 8, 64,
+-			EVP_CIPH_RAND_KEY, des_ede_init_key, NULL, 
+-			EVP_CIPHER_set_asn1_iv,
+-			EVP_CIPHER_get_asn1_iv,
++			EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_DEFAULT_ASN1,
++			des_ede_init_key, NULL, NULL, NULL,
+ 			des3_ctrl)
+ 
+ #define des_ede3_cfb64_cipher des_ede_cfb64_cipher
+@@ -219,37 +246,53 @@
+ #define des_ede3_ecb_cipher des_ede_ecb_cipher
+ 
+ BLOCK_CIPHER_defs(des_ede3, DES_EDE_KEY, NID_des_ede3, 8, 24, 8, 64,
+-			EVP_CIPH_RAND_KEY, des_ede3_init_key, NULL, 
+-			EVP_CIPHER_set_asn1_iv,
+-			EVP_CIPHER_get_asn1_iv,
+-			des3_ctrl)
++		EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_FIPS|EVP_CIPH_FLAG_DEFAULT_ASN1,
++		des_ede3_init_key, NULL, NULL, NULL,
++		des3_ctrl)
+ 
+ BLOCK_CIPHER_def_cfb(des_ede3,DES_EDE_KEY,NID_des_ede3,24,8,1,
+-		     EVP_CIPH_RAND_KEY, des_ede3_init_key,NULL,
+-		     EVP_CIPHER_set_asn1_iv,
+-		     EVP_CIPHER_get_asn1_iv,
+-		     des3_ctrl)
++		EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_FIPS|EVP_CIPH_FLAG_DEFAULT_ASN1,
++		des_ede3_init_key, NULL, NULL, NULL,
++		des3_ctrl)
+ 
+ BLOCK_CIPHER_def_cfb(des_ede3,DES_EDE_KEY,NID_des_ede3,24,8,8,
+-		     EVP_CIPH_RAND_KEY, des_ede3_init_key,NULL,
+-		     EVP_CIPHER_set_asn1_iv,
+-		     EVP_CIPHER_get_asn1_iv,
+-		     des3_ctrl)
++		EVP_CIPH_RAND_KEY|EVP_CIPH_FLAG_FIPS|EVP_CIPH_FLAG_DEFAULT_ASN1,
++		des_ede3_init_key, NULL, NULL, NULL,
++		des3_ctrl)
+ 
+ static int des_ede_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			    const unsigned char *iv, int enc)
+ 	{
+ 	DES_cblock *deskey = (DES_cblock *)key;
++	DES_EDE_KEY *dat = data(ctx);
++
++	dat->stream.cbc = NULL;
++#if defined(SPARC_DES_CAPABLE)
++	if (SPARC_DES_CAPABLE)
++		{
++		int mode = ctx->cipher->flags & EVP_CIPH_MODE;
++
++		if (mode == EVP_CIPH_CBC_MODE)
++			{
++			des_t4_key_expand(&deskey[0],&dat->ks1);
++			des_t4_key_expand(&deskey[1],&dat->ks2);
++			memcpy(&dat->ks3,&dat->ks1,sizeof(dat->ks1));
++			dat->stream.cbc = enc ? des_t4_ede3_cbc_encrypt :
++						des_t4_ede3_cbc_decrypt;
++			return 1;
++			}
++		}
++#endif
+ #ifdef EVP_CHECK_DES_KEY
+-	if (DES_set_key_checked(&deskey[0],&data(ctx)->ks1)
+-		!! DES_set_key_checked(&deskey[1],&data(ctx)->ks2))
++	if (DES_set_key_checked(&deskey[0],&dat->ks1)
++		!! DES_set_key_checked(&deskey[1],&dat->ks2))
+ 		return 0;
+ #else
+-	DES_set_key_unchecked(&deskey[0],&data(ctx)->ks1);
+-	DES_set_key_unchecked(&deskey[1],&data(ctx)->ks2);
++	DES_set_key_unchecked(&deskey[0],&dat->ks1);
++	DES_set_key_unchecked(&deskey[1],&dat->ks2);
+ #endif
+-	memcpy(&data(ctx)->ks3,&data(ctx)->ks1,
+-	       sizeof(data(ctx)->ks1));
++	memcpy(&dat->ks3,&dat->ks1,
++		sizeof(dat->ks1));
+ 	return 1;
+ 	}
+ 
+@@ -257,6 +300,8 @@ static int des_ede3_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 			     const unsigned char *iv, int enc)
+ 	{
+ 	DES_cblock *deskey = (DES_cblock *)key;
++	DES_EDE_KEY *dat = data(ctx);
++
+ #ifdef KSSL_DEBUG
+ 	{
+         int i;
+@@ -268,15 +313,32 @@ static int des_ede3_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
+ 	}
+ #endif	/* KSSL_DEBUG */
+ 
++	dat->stream.cbc = NULL;
++#if defined(SPARC_DES_CAPABLE)
++	if (SPARC_DES_CAPABLE)
++		{
++		int mode = ctx->cipher->flags & EVP_CIPH_MODE;
++
++		if (mode == EVP_CIPH_CBC_MODE)
++			{
++			des_t4_key_expand(&deskey[0],&dat->ks1);
++			des_t4_key_expand(&deskey[1],&dat->ks2);
++			des_t4_key_expand(&deskey[2],&dat->ks3);
++			dat->stream.cbc = enc ? des_t4_ede3_cbc_encrypt :
++						des_t4_ede3_cbc_decrypt;
++			return 1;
++			}
++		}
++#endif
+ #ifdef EVP_CHECK_DES_KEY
+-	if (DES_set_key_checked(&deskey[0],&data(ctx)->ks1)
+-		|| DES_set_key_checked(&deskey[1],&data(ctx)->ks2)
+-		|| DES_set_key_checked(&deskey[2],&data(ctx)->ks3))
++	if (DES_set_key_checked(&deskey[0],&dat->ks1)
++		|| DES_set_key_checked(&deskey[1],&dat->ks2)
++		|| DES_set_key_checked(&deskey[2],&dat->ks3))
+ 		return 0;
+ #else
+-	DES_set_key_unchecked(&deskey[0],&data(ctx)->ks1);
+-	DES_set_key_unchecked(&deskey[1],&data(ctx)->ks2);
+-	DES_set_key_unchecked(&deskey[2],&data(ctx)->ks3);
++	DES_set_key_unchecked(&deskey[0],&dat->ks1);
++	DES_set_key_unchecked(&deskey[1],&dat->ks2);
++	DES_set_key_unchecked(&deskey[2],&dat->ks3);
+ #endif
+ 	return 1;
+ 	}
+Index: openssl/crypto/bn/Makefile
+===================================================================
+diff -ru openssl-1.0.1e/crypto/bn/Makefile openssl-1.0.1e/crypto/bn/Makefile.new
+--- openssl-1.0.1e/crypto/bn/Makefile 2011-05-24 17:02:24.000000000 -0700
++++ openssl-1.0.1e/crypto/bn/Makefile 2011-07-27 10:48:17.817470000 -0700
+@@ -77,6 +77,12 @@
+ 	$(PERL) asm/sparcv9a-mont.pl $(CFLAGS) > $@
+ sparcv9-mont.s:		asm/sparcv9-mont.pl
+ 	$(PERL) asm/sparcv9-mont.pl $(CFLAGS) > $@
++vis3-mont.s:		asm/vis3-mont.pl
++	$(PERL) asm/vis3-mont.pl $(CFLAGS) > $@
++sparct4-mont.S:	asm/sparct4-mont.pl
++	$(PERL) asm/sparct4-mont.pl $(CFLAGS) > $@
++sparcv9-gf2m.S:	asm/sparcv9-gf2m.pl
++	$(PERL) asm/sparcv9-gf2m.pl $(CFLAGS) > $@
+ 
+ bn-mips3.o:	asm/mips3.s
+ 	@if [ "$(CC)" = "gcc" ]; then \
+Index: openssl/crypto/bn/bn_exp.c
+===================================================================
+diff -ru openssl-1.0.1e/crypto/bn/bn_exp.c openssl-1.0.1e/crypto/bn/bn_exp.c.new
+--- bn_exp.c	2011/10/29 19:25:13	1.38
++++ bn_exp.c	2012/11/17 10:34:11	1.39
+@@ -123,8 +123,15 @@
+ # ifndef alloca
+ #  define alloca(s) __builtin_alloca((s))
+ # endif
++#else
++#include <alloca.h>
+ #endif
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++# include "sparc_arch.h"
++extern unsigned int OPENSSL_sparcv9cap_P[];
++#endif
++
+ /* maximum precomputation table size for *variable* sliding windows */
+ #define TABLE_SIZE	32
+ 
+@@ -467,7 +467,15 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 	wstart=bits-1;	/* The top bit of the window */
+ 	wend=0;		/* The bottom bit of the window */
+ 
++#if 1	/* by Shay Gueron's suggestion */
++	j = mont->N.top;	/* borrow j */
++	if (bn_wexpand(r,j) == NULL) goto err;
++	r->d[0] = (0-m->d[0])&BN_MASK2;		/* 2^(top*BN_BITS2) - m */
++	for(i=1;i<j;i++) r->d[i] = (~m->d[i])&BN_MASK2;
++	r->top = j;
++#else
+ 	if (!BN_to_montgomery(r,BN_value_one(),mont,ctx)) goto err;
++#endif
+ 	for (;;)
+ 		{
+ 		if (BN_is_bit_set(p,wstart) == 0)
+@@ -519,6 +527,17 @@ int BN_mod_exp_mont(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 		start=0;
+ 		if (wstart < 0) break;
+ 		}
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_VIS3|SPARCV9_PREFER_FPU))
++ 	{
++ 		j = mont->N.top;	/* borrow j */
++ 		val[0]->d[0] = 1;	/* borrow val[0] */
++ 		for (i=1;i<j;i++) val[0]->d[i] = 0;
++ 		val[0]->top = j;
++ 		if (!BN_mod_mul_montgomery(rr,r,val[0],mont,ctx)) goto err;
++ 		}
++ 	else
++#endif
+ 	if (!BN_from_montgomery(rr,r,mont,ctx)) goto err;
+ 	ret=1;
+ err:
+@@ -528,6 +547,28 @@ err:
+ 	return(ret);
+ 	}
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++static BN_ULONG bn_get_bits(const BIGNUM *a, int bitpos)
++	{
++	BN_ULONG ret=0;
++	int wordpos;
++
++	wordpos = bitpos/BN_BITS2;
++	bitpos %= BN_BITS2;
++	if (wordpos>=0 && wordpos < a->top)
++		{
++		ret = a->d[wordpos]&BN_MASK2;
++		if (bitpos)
++			{
++			ret >>= bitpos;
++			if (++wordpos < a->top)
++				ret |= a->d[wordpos]<<(BN_BITS2-bitpos);
++			}
++		}
++
++	return ret&BN_MASK2;
++}
++#endif
+ 
+ /* BN_mod_exp_mont_consttime() stores the precomputed powers in a specific layout
+  * so that accessing any of these table values shows the same access pattern as far
+@@ -587,6 +592,9 @@
+ 	int powerbufLen = 0;
+ 	unsigned char *powerbuf=NULL;
+ 	BIGNUM tmp, am;
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++	unsigned int t4=0;
++#endif
+ 
+ 	bn_check_top(a);
+ 	bn_check_top(p);
+@@ -621,9 +629,18 @@
+ 
+ 	/* Get the window size to use with size of p. */
+ 	window = BN_window_bits_for_ctime_exponent_size(bits);
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++	if (window>=5 && (top&15)==0 && top<=64 &&
++	    (OPENSSL_sparcv9cap_P[1]&(CFR_MONTMUL|CFR_MONTSQR))==
++	    			     (CFR_MONTMUL|CFR_MONTSQR) &&
++	    (t4=OPENSSL_sparcv9cap_P[0]))
++		window=5;
++	else
++#endif
+ #if defined(OPENSSL_BN_ASM_MONT5)
+ 	if (window==6 && bits<=1024) window=5;	/* ~5% improvement of 2048-bit RSA sign */
+ #endif
++	(void)0;
+ 
+ 	/* Allocate a buffer large enough to hold all of the pre-computed
+ 	 * powers of am, am itself and tmp.
+@@ -656,13 +715,13 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 	tmp.flags = am.flags = BN_FLG_STATIC_DATA;
+ 
+ 	/* prepare a^0 in Montgomery domain */
+-#if 1
+- 	if (!BN_to_montgomery(&tmp,BN_value_one(),mont,ctx))	goto err;
+-#else
++#if 1	/* by Shay Gueron's suggestion */
+ 	tmp.d[0] = (0-m->d[0])&BN_MASK2;	/* 2^(top*BN_BITS2) - m */
+ 	for (i=1;i<top;i++)
+ 		tmp.d[i] = (~m->d[i])&BN_MASK2;
+ 	tmp.top = top;
++#else
++	if (!BN_to_montgomery(&tmp,BN_value_one(),mont,ctx))	goto err;
+ #endif
+ 
+ 	/* prepare a^1 in Montgomery domain */
+@@ -673,6 +690,121 @@
+ 		}
+ 	else	if (!BN_to_montgomery(&am,a,mont,ctx))		goto err;
+ 
++#if defined(OPENSSL_BN_ASM_MONT) && defined(__sparc)
++    if (t4)
++	{
++	typedef int (*bn_pwr5_mont_f)(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_8(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_16(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_24(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	int bn_pwr5_mont_t4_32(BN_ULONG *tp,const BN_ULONG *np,
++			const BN_ULONG *n0,const void *table,int power,int bits);
++	static const bn_pwr5_mont_f pwr5_funcs[4] = {
++			bn_pwr5_mont_t4_8,	bn_pwr5_mont_t4_16,
++			bn_pwr5_mont_t4_24,	bn_pwr5_mont_t4_32 };
++	bn_pwr5_mont_f pwr5_worker = pwr5_funcs[top/16-1];
++
++	typedef int (*bn_mul_mont_f)(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_8(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_16(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_24(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	int bn_mul_mont_t4_32(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,const BN_ULONG *n0);
++	static const bn_mul_mont_f mul_funcs[4] = {
++			bn_mul_mont_t4_8,	bn_mul_mont_t4_16,
++			bn_mul_mont_t4_24,	bn_mul_mont_t4_32 };
++	bn_mul_mont_f mul_worker = mul_funcs[top/16-1];
++
++	void bn_mul_mont_vis3(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,
++			const BN_ULONG *n0,int num);
++	void bn_mul_mont_t4(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *bp,const BN_ULONG *np,
++			const BN_ULONG *n0,int num);
++	void bn_mul_mont_gather5_t4(BN_ULONG *rp,const BN_ULONG *ap,
++			const void *table,const BN_ULONG *np,
++			const BN_ULONG *n0,int num,int power);
++	void bn_flip_n_scatter5_t4(const BN_ULONG *inp,size_t num,
++			void *table,size_t power);
++	void bn_gather5_t4(BN_ULONG *out,size_t num,
++			void *table,size_t power);
++	void bn_flip_t4(BN_ULONG *dst,BN_ULONG *src,size_t num);
++
++	BN_ULONG *np=mont->N.d, *n0=mont->n0;
++	int stride = 5*(6-(top/16-1));	/* multiple of 5, but less than 32 */
++
++	/* BN_to_montgomery can contaminate words above .top
++	 * [in BN_DEBUG[_DEBUG] build]... */
++	for (i=am.top; i<top; i++)	am.d[i]=0;
++	for (i=tmp.top; i<top; i++)	tmp.d[i]=0;
++
++	bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,0);
++	bn_flip_n_scatter5_t4(am.d,top,powerbuf,1);
++	if (!(*mul_worker)(tmp.d,am.d,am.d,np,n0) &&
++	    !(*mul_worker)(tmp.d,am.d,am.d,np,n0))
++		bn_mul_mont_vis3(tmp.d,am.d,am.d,np,n0,top);
++	bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,2);
++
++	for (i=3; i<32; i++)
++		{
++		/* Calculate a^i = a^(i-1) * a */
++		if (!(*mul_worker)(tmp.d,tmp.d,am.d,np,n0) &&
++		    !(*mul_worker)(tmp.d,tmp.d,am.d,np,n0))
++			bn_mul_mont_vis3(tmp.d,tmp.d,am.d,np,n0,top);
++		bn_flip_n_scatter5_t4(tmp.d,top,powerbuf,i);
++		}
++
++	/* switch to 64-bit domain */ 
++	np = alloca(top*sizeof(BN_ULONG));
++	top /= 2;
++	bn_flip_t4(np,mont->N.d,top);
++
++	bits--;
++	for (wvalue=0, i=bits%5; i>=0; i--,bits--)
++		wvalue = (wvalue<<1)+BN_is_bit_set(p,bits);
++	bn_gather5_t4(tmp.d,top,powerbuf,wvalue);
++
++	/* Scan the exponent one window at a time starting from the most
++	 * significant bits.
++	 */
++	while (bits >= 0)
++		{
++		if (bits < stride) stride = bits+1;
++		bits -= stride;
++		wvalue = (bn_get_bits(p,bits+1));
++
++		if ((*pwr5_worker)(tmp.d,np,n0,powerbuf,wvalue,stride)) continue;
++		/* retry once and fall back */
++		if ((*pwr5_worker)(tmp.d,np,n0,powerbuf,wvalue,stride)) continue;
++
++		bits += stride-5;
++		wvalue >>= stride-5;
++		wvalue &= 31;
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_t4(tmp.d,tmp.d,tmp.d,np,n0,top);
++		bn_mul_mont_gather5_t4(tmp.d,tmp.d,powerbuf,np,n0,top,wvalue);
++		}
++
++	bn_flip_t4(tmp.d,tmp.d,top);
++	top *= 2;
++	/* back to 32-bit domain */
++	tmp.top=top;
++	bn_correct_top(&tmp);
++	OPENSSL_cleanse(np,top*sizeof(BN_ULONG));
++	}
++    else
++#endif
+ #if defined(OPENSSL_BN_ASM_MONT5)
+     /* This optimization uses ideas from http://eprint.iacr.org/2011/239,
+      * specifically optimization of cache-timing attack countermeasures
+@@ -816,6 +990,15 @@ int BN_mod_exp_mont_consttime(BIGNUM *rr, const BIGNUM *a, const BIGNUM *p,
+ 	}
+ 
+  	/* Convert the final result from montgomery to standard format */
++#if defined(OPENSSL_BN_ASM_MONT) && (defined(__sparc__) || defined(__sparc))
++	if (OPENSSL_sparcv9cap_P[0]&(SPARCV9_VIS3|SPARCV9_PREFER_FPU))
++		{
++		am.d[0] = 1;	/* borrow am */
++		for (i=1;i<top;i++) am.d[i] = 0;
++		if (!BN_mod_mul_montgomery(rr,&tmp,&am,mont,ctx)) goto err;
++		}
++	else
++#endif
+ 	if (!BN_from_montgomery(rr,&tmp,mont,ctx)) goto err;
+ 	ret=1;
+ err:
 Index: openssl/apps/speed.c
 ===================================================================
 diff -ru openssl-1.0.1e/apps/spped.c openssl-1.0.1e/apps/speed.c
@@ -852,3 +1660,664 @@ diff -ru openssl-1.0.1e/apps/spped.c openssl-1.0.1e/apps/speed.c
  			d=Time_F(STOP);
  			print_result(D_SHA1,j,count,d);
  			}
+Index: openssl/crypto/aes/Makefile
+===================================================================
+--- Makefile    Thu May  2 13:42:37 2013
++++ Makefile.orig       Thu May  2 13:41:51 2013
+@@ -69,6 +69,9 @@
+ aes-sparcv9.s: asm/aes-sparcv9.pl
+ 	$(PERL) asm/aes-sparcv9.pl $(CFLAGS) > $@
+ 
++aest4-sparcv9.s: asm/aest4-sparcv9.pl
++	$(PERL) asm/aest4-sparcv9.pl $(CFLAGS) > $@
++
+ aes-ppc.s:	asm/aes-ppc.pl
+ 	$(PERL) asm/aes-ppc.pl $(PERLASM_SCHEME) $@
+
+Index: openssl/crypto/evp/e_aes.c
+===================================================================
+--- e_aes.c	Mon Feb 11 07:26:04 2013
++++ e_aes.c.56	Thu May  2 14:26:35 2013
+@@ -56,13 +58,12 @@
+ #include <assert.h>
+ #include <openssl/aes.h>
+ #include "evp_locl.h"
+-#ifndef OPENSSL_FIPS
+ #include "modes_lcl.h"
+ #include <openssl/rand.h>
+ 
+ typedef struct
+ 	{
+-	AES_KEY ks;
++	union { double align; AES_KEY ks; } ks;
+ 	block128_f block;
+ 	union {
+ 		cbc128_f cbc;
+@@ -72,7 +73,7 @@
+ 
+ typedef struct
+ 	{
+-	AES_KEY ks;		/* AES key schedule to use */
++	union { double align; AES_KEY ks; } ks;	/* AES key schedule to use */
+ 	int key_set;		/* Set if key initialised */
+ 	int iv_set;		/* Set if an iv is set */
+ 	GCM128_CONTEXT gcm;
+@@ -86,7 +87,7 @@
+ 
+ typedef struct
+ 	{
+-	AES_KEY ks1, ks2;	/* AES key schedules to use */
++	union { double align; AES_KEY ks; } ks1, ks2;	/* AES key schedules to use */
+ 	XTS128_CONTEXT xts;
+ 	void     (*stream)(const unsigned char *in,
+ 			unsigned char *out, size_t length,
+@@ -96,7 +97,7 @@
+ 
+ typedef struct
+ 	{
+-	AES_KEY ks;		/* AES key schedule to use */
++	union { double align; AES_KEY ks; } ks;	/* AES key schedule to use */
+ 	int key_set;		/* Set if key initialised */
+ 	int iv_set;		/* Set if an iv is set */
+ 	int tag_set;		/* Set if tag is valid */
+@@ -160,7 +161,7 @@
+ 	defined(_M_AMD64)	|| defined(_M_X64)	|| \
+ 	defined(__INTEL__)				)
+ 
+-extern unsigned int OPENSSL_ia32cap_P[2];
++extern unsigned int OPENSSL_ia32cap_P[];
+ 
+ #ifdef VPAES_ASM
+ #define VPAES_CAPABLE	(OPENSSL_ia32cap_P[1]&(1<<(41-32)))
+@@ -310,7 +311,7 @@
+ 		return 1;
+ 	if (key)
+ 		{
+-		aesni_set_encrypt_key(key, ctx->key_len * 8, &gctx->ks);
++		aesni_set_encrypt_key(key, ctx->key_len * 8, &gctx->ks.ks);
+ 		CRYPTO_gcm128_init(&gctx->gcm, &gctx->ks,
+ 				(block128_f)aesni_encrypt);
+ 		gctx->ctr = (ctr128_f)aesni_ctr32_encrypt_blocks;
+@@ -355,19 +356,19 @@
+ 		/* key_len is two AES keys */
+ 		if (enc)
+ 			{
+-			aesni_set_encrypt_key(key, ctx->key_len * 4, &xctx->ks1);
++			aesni_set_encrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
+ 			xctx->xts.block1 = (block128_f)aesni_encrypt;
+ 			xctx->stream = aesni_xts_encrypt;
+ 			}
+ 		else
+ 			{
+-			aesni_set_decrypt_key(key, ctx->key_len * 4, &xctx->ks1);
++			aesni_set_decrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
+ 			xctx->xts.block1 = (block128_f)aesni_decrypt;
+ 			xctx->stream = aesni_xts_decrypt;
+ 			}
+ 
+ 		aesni_set_encrypt_key(key + ctx->key_len/2,
+-						ctx->key_len * 4, &xctx->ks2);
++						ctx->key_len * 4, &xctx->ks2.ks);
+ 		xctx->xts.block2 = (block128_f)aesni_encrypt;
+ 
+ 		xctx->xts.key1 = &xctx->ks1;
+@@ -394,7 +395,7 @@
+ 		return 1;
+ 	if (key)
+ 		{
+-		aesni_set_encrypt_key(key, ctx->key_len * 8, &cctx->ks);
++		aesni_set_encrypt_key(key, ctx->key_len * 8, &cctx->ks.ks);
+ 		CRYPTO_ccm128_init(&cctx->ccm, cctx->M, cctx->L,
+ 					&cctx->ks, (block128_f)aesni_encrypt);
+ 		cctx->str = enc?(ccm128_f)aesni_ccm64_encrypt_blocks :
+@@ -456,6 +457,379 @@
+ const EVP_CIPHER *EVP_aes_##keylen##_##mode(void) \
+ { return AESNI_CAPABLE?&aesni_##keylen##_##mode:&aes_##keylen##_##mode; }
+ 
++#elif	defined(AES_ASM) && (defined(__sparc) || defined(__sparc__))
++
++#include "sparc_arch.h"
++
++extern unsigned int OPENSSL_sparcv9cap_P[];
++
++#define	SPARC_AES_CAPABLE	(OPENSSL_sparcv9cap_P[1] & CFR_AES)
++
++void	aes_t4_set_encrypt_key (const unsigned char *key, int bits,
++				AES_KEY *ks);
++void	aes_t4_set_decrypt_key (const unsigned char *key, int bits,
++				AES_KEY *ks);
++void	aes_t4_encrypt (const unsigned char *in, unsigned char *out,
++				const AES_KEY *key);
++void	aes_t4_decrypt (const unsigned char *in, unsigned char *out,
++				const AES_KEY *key);
++/*
++ * Key-length specific subroutines were chosen for following reason.
++ * Each SPARC T4 core can execute up to 8 threads which share core's
++ * resources. Loading as much key material to registers allows to
++ * minimize references to shared memory interface, as well as amount
++ * of instructions in inner loops [much needed on T4]. But then having
++ * non-key-length specific routines would require conditional branches
++ * either in inner loops or on subroutines' entries. Former is hardly
++ * acceptable, while latter means code size increase to size occupied
++ * by multiple key-length specfic subroutines, so why fight?
++ */
++void	aes128_t4_cbc_encrypt (const unsigned char *in, unsigned char *out,
++				size_t len, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes128_t4_cbc_decrypt (const unsigned char *in, unsigned char *out,
++				size_t len, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes192_t4_cbc_encrypt (const unsigned char *in, unsigned char *out,
++				size_t len, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes192_t4_cbc_decrypt (const unsigned char *in, unsigned char *out,
++				size_t len, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes256_t4_cbc_encrypt (const unsigned char *in, unsigned char *out,
++				size_t len, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes256_t4_cbc_decrypt (const unsigned char *in, unsigned char *out,
++				size_t len, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes128_t4_ctr32_encrypt (const unsigned char *in, unsigned char *out,
++				size_t blocks, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes192_t4_ctr32_encrypt (const unsigned char *in, unsigned char *out,
++				size_t blocks, const AES_KEY *key,
++				unsigned char *ivec);
++void	aes256_t4_ctr32_encrypt (const unsigned char *in, unsigned char *out,
++				size_t blocks, const AES_KEY *key,
++				unsigned char *ivec);
++
++static int aes_t4_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
++		   const unsigned char *iv, int enc)
++	{
++	int ret, mode, bits;
++	EVP_AES_KEY *dat = (EVP_AES_KEY *)ctx->cipher_data;
++
++	mode = ctx->cipher->flags & EVP_CIPH_MODE;
++	bits = ctx->key_len*8;
++	if ((mode == EVP_CIPH_ECB_MODE || mode == EVP_CIPH_CBC_MODE)
++	    && !enc)
++		{
++		    ret = 0;
++		    aes_t4_set_decrypt_key(key, bits, ctx->cipher_data);
++		    dat->block	= (block128_f)aes_t4_decrypt;
++		    switch (bits) {
++		    case 128:
++			dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
++						(cbc128_f)aes128_t4_cbc_decrypt :
++						NULL;
++			break;
++		    case 192:
++			dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
++						(cbc128_f)aes192_t4_cbc_decrypt :
++						NULL;
++			break;
++		    case 256:
++			dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
++						(cbc128_f)aes256_t4_cbc_decrypt :
++						NULL;
++			break;
++		    default:
++			ret = -1;
++		    }
++		}
++	else	{
++		    ret = 0;
++		    aes_t4_set_encrypt_key(key, bits, ctx->cipher_data);
++		    dat->block	= (block128_f)aes_t4_encrypt;
++		    switch (bits) {
++		    case 128:
++			if (mode==EVP_CIPH_CBC_MODE)
++				dat->stream.cbc	= (cbc128_f)aes128_t4_cbc_encrypt;
++			else if (mode==EVP_CIPH_CTR_MODE)
++				dat->stream.ctr = (ctr128_f)aes128_t4_ctr32_encrypt;
++			else
++				dat->stream.cbc = NULL;
++			break;
++		    case 192:
++			if (mode==EVP_CIPH_CBC_MODE)
++				dat->stream.cbc	= (cbc128_f)aes192_t4_cbc_encrypt;
++			else if (mode==EVP_CIPH_CTR_MODE)
++				dat->stream.ctr = (ctr128_f)aes192_t4_ctr32_encrypt;
++			else
++				dat->stream.cbc = NULL;
++			break;
++		    case 256:
++			if (mode==EVP_CIPH_CBC_MODE)
++				dat->stream.cbc	= (cbc128_f)aes256_t4_cbc_encrypt;
++			else if (mode==EVP_CIPH_CTR_MODE)
++				dat->stream.ctr = (ctr128_f)aes256_t4_ctr32_encrypt;
++			else
++				dat->stream.cbc = NULL;
++			break;
++		    default:
++			ret = -1;
++		    }
++		}
++
++	if(ret < 0)
++		{
++		EVPerr(EVP_F_AES_T4_INIT_KEY,EVP_R_AES_KEY_SETUP_FAILED);
++		return 0;
++		}
++
++	return 1;
++	}
++
++#define aes_t4_cbc_cipher aes_cbc_cipher
++static int aes_t4_cbc_cipher(EVP_CIPHER_CTX *ctx,unsigned char *out,
++	const unsigned char *in, size_t len);
++
++#define aes_t4_ecb_cipher aes_ecb_cipher 
++static int aes_t4_ecb_cipher(EVP_CIPHER_CTX *ctx,unsigned char *out,
++	const unsigned char *in, size_t len);
++
++#define aes_t4_ofb_cipher aes_ofb_cipher
++static int aes_t4_ofb_cipher(EVP_CIPHER_CTX *ctx,unsigned char *out,
++	const unsigned char *in,size_t len);
++
++#define aes_t4_cfb_cipher aes_cfb_cipher
++static int aes_t4_cfb_cipher(EVP_CIPHER_CTX *ctx,unsigned char *out,
++	const unsigned char *in,size_t len);
++
++#define aes_t4_cfb8_cipher aes_cfb8_cipher
++static int aes_t4_cfb8_cipher(EVP_CIPHER_CTX *ctx,unsigned char *out,
++	const unsigned char *in,size_t len);
++
++#define aes_t4_cfb1_cipher aes_cfb1_cipher
++static int aes_t4_cfb1_cipher(EVP_CIPHER_CTX *ctx,unsigned char *out,
++	const unsigned char *in,size_t len);
++
++#define aes_t4_ctr_cipher aes_ctr_cipher
++static int aes_t4_ctr_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
++		const unsigned char *in, size_t len);
++
++static int aes_t4_gcm_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
++                        const unsigned char *iv, int enc)
++	{
++	EVP_AES_GCM_CTX *gctx = ctx->cipher_data;
++	if (!iv && !key)
++		return 1;
++	if (key)
++		{
++		int bits = ctx->key_len * 8;
++		aes_t4_set_encrypt_key(key, bits, &gctx->ks.ks);
++		CRYPTO_gcm128_init(&gctx->gcm, &gctx->ks,
++				(block128_f)aes_t4_encrypt);
++		switch (bits) {
++		    case 128:
++			gctx->ctr = (ctr128_f)aes128_t4_ctr32_encrypt;
++			break;
++		    case 192:
++			gctx->ctr = (ctr128_f)aes192_t4_ctr32_encrypt;
++			break;
++		    case 256:
++			gctx->ctr = (ctr128_f)aes256_t4_ctr32_encrypt;
++			break;
++		    default:
++			return 0;
++		}
++		/* If we have an iv can set it directly, otherwise use
++		 * saved IV.
++		 */
++		if (iv == NULL && gctx->iv_set)
++			iv = gctx->iv;
++		if (iv)
++			{
++			CRYPTO_gcm128_setiv(&gctx->gcm, iv, gctx->ivlen);
++			gctx->iv_set = 1;
++			}
++		gctx->key_set = 1;
++		}
++	else
++		{
++		/* If key set use IV, otherwise copy */
++		if (gctx->key_set)
++			CRYPTO_gcm128_setiv(&gctx->gcm, iv, gctx->ivlen);
++		else
++			memcpy(gctx->iv, iv, gctx->ivlen);
++		gctx->iv_set = 1;
++		gctx->iv_gen = 0;
++		}
++	return 1;
++	}
++
++#define aes_t4_gcm_cipher aes_gcm_cipher
++static int aes_t4_gcm_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
++		const unsigned char *in, size_t len);
++
++static int aes_t4_xts_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
++                        const unsigned char *iv, int enc)
++	{
++	EVP_AES_XTS_CTX *xctx = ctx->cipher_data;
++	if (!iv && !key)
++		return 1;
++
++	if (key)
++		{
++		int bits = ctx->key_len * 4;
++		/* key_len is two AES keys */
++		if (enc)
++			{
++			aes_t4_set_encrypt_key(key, bits, &xctx->ks1.ks);
++			xctx->xts.block1 = (block128_f)aes_t4_encrypt;
++#if 0 /* not yet */
++			switch (bits) {
++			    case 128:
++				xctx->stream = aes128_t4_xts_encrypt;
++				break;
++			    case 192:
++				xctx->stream = aes192_t4_xts_encrypt;
++				break;
++			    case 256:
++				xctx->stream = aes256_t4_xts_encrypt;
++				break;
++			    default:
++				return 0;
++			    }
++#endif
++			}
++		else
++			{
++			aes_t4_set_decrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
++			xctx->xts.block1 = (block128_f)aes_t4_decrypt;
++#if 0 /* not yet */
++			switch (bits) {
++			    case 128:
++				xctx->stream = aes128_t4_xts_decrypt;
++				break;
++			    case 192:
++				xctx->stream = aes192_t4_xts_decrypt;
++				break;
++			    case 256:
++				xctx->stream = aes256_t4_xts_decrypt;
++				break;
++			    default:
++				return 0;
++			    }
++#endif
++			}
++
++		aes_t4_set_encrypt_key(key + ctx->key_len/2,
++						ctx->key_len * 4, &xctx->ks2.ks);
++		xctx->xts.block2 = (block128_f)aes_t4_encrypt;
++
++		xctx->xts.key1 = &xctx->ks1;
++		}
++
++	if (iv)
++		{
++		xctx->xts.key2 = &xctx->ks2;
++		memcpy(ctx->iv, iv, 16);
++		}
++
++	return 1;
++	}
++
++#define aes_t4_xts_cipher aes_xts_cipher
++static int aes_t4_xts_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
++		const unsigned char *in, size_t len);
++
++static int aes_t4_ccm_init_key(EVP_CIPHER_CTX *ctx, const unsigned char *key,
++                        const unsigned char *iv, int enc)
++	{
++	EVP_AES_CCM_CTX *cctx = ctx->cipher_data;
++	if (!iv && !key)
++		return 1;
++	if (key)
++		{
++		int bits = ctx->key_len * 8;
++		aes_t4_set_encrypt_key(key, bits, &cctx->ks.ks);
++		CRYPTO_ccm128_init(&cctx->ccm, cctx->M, cctx->L,
++					&cctx->ks, (block128_f)aes_t4_encrypt);
++#if 0 /* not yet */
++		switch (bits) {
++		    case 128:
++			cctx->str = enc?(ccm128_f)aes128_t4_ccm64_encrypt :
++				(ccm128_f)ae128_t4_ccm64_decrypt;
++			break;
++		    case 192:
++			cctx->str = enc?(ccm128_f)aes192_t4_ccm64_encrypt :
++				(ccm128_f)ae192_t4_ccm64_decrypt;
++			break;
++		    case 256:
++			cctx->str = enc?(ccm128_f)aes256_t4_ccm64_encrypt :
++				(ccm128_f)ae256_t4_ccm64_decrypt;
++			break;
++		    default:
++			return 0;
++		    }
++#endif
++		cctx->key_set = 1;
++		}
++	if (iv)
++		{
++		memcpy(ctx->iv, iv, 15 - cctx->L);
++		cctx->iv_set = 1;
++		}
++	return 1;
++	}
++
++#define aes_t4_ccm_cipher aes_ccm_cipher
++static int aes_t4_ccm_cipher(EVP_CIPHER_CTX *ctx, unsigned char *out,
++		const unsigned char *in, size_t len);
++
++#define BLOCK_CIPHER_generic(nid,keylen,blocksize,ivlen,nmode,mode,MODE,flags) \
++static const EVP_CIPHER aes_t4_##keylen##_##mode = { \
++	nid##_##keylen##_##nmode,blocksize,keylen/8,ivlen, \
++	flags|EVP_CIPH_##MODE##_MODE,	\
++	aes_t4_init_key,		\
++	aes_t4_##mode##_cipher,		\
++	NULL,				\
++	sizeof(EVP_AES_KEY),		\
++	NULL,NULL,NULL,NULL }; \
++static const EVP_CIPHER aes_##keylen##_##mode = { \
++	nid##_##keylen##_##nmode,blocksize,	\
++	keylen/8,ivlen, \
++	flags|EVP_CIPH_##MODE##_MODE,	\
++	aes_init_key,			\
++	aes_##mode##_cipher,		\
++	NULL,				\
++	sizeof(EVP_AES_KEY),		\
++	NULL,NULL,NULL,NULL }; \
++const EVP_CIPHER *EVP_aes_##keylen##_##mode(void) \
++{ return SPARC_AES_CAPABLE?&aes_t4_##keylen##_##mode:&aes_##keylen##_##mode; }
++
++#define BLOCK_CIPHER_custom(nid,keylen,blocksize,ivlen,mode,MODE,flags) \
++static const EVP_CIPHER aes_t4_##keylen##_##mode = { \
++	nid##_##keylen##_##mode,blocksize, \
++	(EVP_CIPH_##MODE##_MODE==EVP_CIPH_XTS_MODE?2:1)*keylen/8, ivlen, \
++	flags|EVP_CIPH_##MODE##_MODE,	\
++	aes_t4_##mode##_init_key,	\
++	aes_t4_##mode##_cipher,		\
++	aes_##mode##_cleanup,		\
++	sizeof(EVP_AES_##MODE##_CTX),	\
++	NULL,NULL,aes_##mode##_ctrl,NULL }; \
++static const EVP_CIPHER aes_##keylen##_##mode = { \
++	nid##_##keylen##_##mode,blocksize, \
++	(EVP_CIPH_##MODE##_MODE==EVP_CIPH_XTS_MODE?2:1)*keylen/8, ivlen, \
++	flags|EVP_CIPH_##MODE##_MODE,	\
++	aes_##mode##_init_key,		\
++	aes_##mode##_cipher,		\
++	aes_##mode##_cleanup,		\
++	sizeof(EVP_AES_##MODE##_CTX),	\
++	NULL,NULL,aes_##mode##_ctrl,NULL }; \
++const EVP_CIPHER *EVP_aes_##keylen##_##mode(void) \
++{ return SPARC_AES_CAPABLE?&aes_t4_##keylen##_##mode:&aes_##keylen##_##mode; }
++
+ #else
+ 
+ #define BLOCK_CIPHER_generic(nid,keylen,blocksize,ivlen,nmode,mode,MODE,flags) \
+@@ -505,7 +879,7 @@
+ #ifdef BSAES_CAPABLE
+ 	    if (BSAES_CAPABLE && mode==EVP_CIPH_CBC_MODE)
+ 		{
+-		ret = AES_set_decrypt_key(key,ctx->key_len*8,&dat->ks);
++		ret = AES_set_decrypt_key(key,ctx->key_len*8,&dat->ks.ks);
+ 		dat->block	= (block128_f)AES_decrypt;
+ 		dat->stream.cbc	= (cbc128_f)bsaes_cbc_encrypt;
+ 		}
+@@ -514,7 +888,7 @@
+ #ifdef VPAES_CAPABLE
+ 	    if (VPAES_CAPABLE)
+ 		{
+-		ret = vpaes_set_decrypt_key(key,ctx->key_len*8,&dat->ks);
++		ret = vpaes_set_decrypt_key(key,ctx->key_len*8,&dat->ks.ks);
+ 		dat->block	= (block128_f)vpaes_decrypt;
+ 		dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
+ 					(cbc128_f)vpaes_cbc_encrypt :
+@@ -523,7 +897,7 @@
+ 	    else
+ #endif
+ 		{
+-		ret = AES_set_decrypt_key(key,ctx->key_len*8,&dat->ks);
++		ret = AES_set_decrypt_key(key,ctx->key_len*8,&dat->ks.ks);
+ 		dat->block	= (block128_f)AES_decrypt;
+ 		dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
+ 					(cbc128_f)AES_cbc_encrypt :
+@@ -533,7 +907,7 @@
+ #ifdef BSAES_CAPABLE
+ 	    if (BSAES_CAPABLE && mode==EVP_CIPH_CTR_MODE)
+ 		{
+-		ret = AES_set_encrypt_key(key,ctx->key_len*8,&dat->ks);
++		ret = AES_set_encrypt_key(key,ctx->key_len*8,&dat->ks.ks);
+ 		dat->block	= (block128_f)AES_encrypt;
+ 		dat->stream.ctr	= (ctr128_f)bsaes_ctr32_encrypt_blocks;
+ 		}
+@@ -542,7 +916,7 @@
+ #ifdef VPAES_CAPABLE
+ 	    if (VPAES_CAPABLE)
+ 		{
+-		ret = vpaes_set_encrypt_key(key,ctx->key_len*8,&dat->ks);
++		ret = vpaes_set_encrypt_key(key,ctx->key_len*8,&dat->ks.ks);
+ 		dat->block	= (block128_f)vpaes_encrypt;
+ 		dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
+ 					(cbc128_f)vpaes_cbc_encrypt :
+@@ -551,7 +925,7 @@
+ 	    else
+ #endif
+ 		{
+-		ret = AES_set_encrypt_key(key,ctx->key_len*8,&dat->ks);
++		ret = AES_set_encrypt_key(key,ctx->key_len*8,&dat->ks.ks);
+ 		dat->block	= (block128_f)AES_encrypt;
+ 		dat->stream.cbc	= mode==EVP_CIPH_CBC_MODE ?
+ 					(cbc128_f)AES_cbc_encrypt :
+@@ -828,7 +1202,7 @@
+ #ifdef BSAES_CAPABLE
+ 		if (BSAES_CAPABLE)
+ 			{
+-			AES_set_encrypt_key(key,ctx->key_len*8,&gctx->ks);
++			AES_set_encrypt_key(key,ctx->key_len*8,&gctx->ks.ks);
+ 			CRYPTO_gcm128_init(&gctx->gcm,&gctx->ks,
+ 					(block128_f)AES_encrypt);
+ 			gctx->ctr = (ctr128_f)bsaes_ctr32_encrypt_blocks;
+@@ -839,7 +1213,7 @@
+ #ifdef VPAES_CAPABLE
+ 		if (VPAES_CAPABLE)
+ 			{
+-			vpaes_set_encrypt_key(key,ctx->key_len*8,&gctx->ks);
++			vpaes_set_encrypt_key(key,ctx->key_len*8,&gctx->ks.ks);
+ 			CRYPTO_gcm128_init(&gctx->gcm,&gctx->ks,
+ 					(block128_f)vpaes_encrypt);
+ 			gctx->ctr = NULL;
+@@ -849,7 +1223,7 @@
+ #endif
+ 		(void)0;	/* terminate potentially open 'else' */
+ 
+-		AES_set_encrypt_key(key, ctx->key_len * 8, &gctx->ks);
++		AES_set_encrypt_key(key, ctx->key_len * 8, &gctx->ks.ks);
+ 		CRYPTO_gcm128_init(&gctx->gcm, &gctx->ks, (block128_f)AES_encrypt);
+ #ifdef AES_CTR_ASM
+ 		gctx->ctr = (ctr128_f)AES_ctr32_encrypt;
+@@ -1080,17 +1454,17 @@
+ 		    {
+ 		    if (enc)
+ 			{
+-			vpaes_set_encrypt_key(key, ctx->key_len * 4, &xctx->ks1);
++			vpaes_set_encrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
+ 			xctx->xts.block1 = (block128_f)vpaes_encrypt;
+ 			}
+ 		    else
+ 			{
+-			vpaes_set_decrypt_key(key, ctx->key_len * 4, &xctx->ks1);
++			vpaes_set_decrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
+ 			xctx->xts.block1 = (block128_f)vpaes_decrypt;
+ 			}
+ 
+ 		    vpaes_set_encrypt_key(key + ctx->key_len/2,
+-						ctx->key_len * 4, &xctx->ks2);
++						ctx->key_len * 4, &xctx->ks2.ks);
+ 		    xctx->xts.block2 = (block128_f)vpaes_encrypt;
+ 
+ 		    xctx->xts.key1 = &xctx->ks1;
+@@ -1102,17 +1476,17 @@
+ 
+ 		if (enc)
+ 			{
+-			AES_set_encrypt_key(key, ctx->key_len * 4, &xctx->ks1);
++			AES_set_encrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
+ 			xctx->xts.block1 = (block128_f)AES_encrypt;
+ 			}
+ 		else
+ 			{
+-			AES_set_decrypt_key(key, ctx->key_len * 4, &xctx->ks1);
++			AES_set_decrypt_key(key, ctx->key_len * 4, &xctx->ks1.ks);
+ 			xctx->xts.block1 = (block128_f)AES_decrypt;
+ 			}
+ 
+ 		AES_set_encrypt_key(key + ctx->key_len/2,
+-						ctx->key_len * 4, &xctx->ks2);
++						ctx->key_len * 4, &xctx->ks2.ks);
+ 		xctx->xts.block2 = (block128_f)AES_encrypt;
+ 
+ 		xctx->xts.key1 = &xctx->ks1;
+@@ -1223,7 +1597,7 @@
+ #ifdef VPAES_CAPABLE
+ 		if (VPAES_CAPABLE)
+ 			{
+-			vpaes_set_encrypt_key(key, ctx->key_len*8, &cctx->ks);
++			vpaes_set_encrypt_key(key, ctx->key_len*8, &cctx->ks.ks);
+ 			CRYPTO_ccm128_init(&cctx->ccm, cctx->M, cctx->L,
+ 					&cctx->ks, (block128_f)vpaes_encrypt);
+ 			cctx->str = NULL;
+@@ -1231,7 +1605,7 @@
+ 			break;
+ 			}
+ #endif
+-		AES_set_encrypt_key(key, ctx->key_len * 8, &cctx->ks);
++		AES_set_encrypt_key(key, ctx->key_len * 8, &cctx->ks.ks);
+ 		CRYPTO_ccm128_init(&cctx->ccm, cctx->M, cctx->L,
+ 					&cctx->ks, (block128_f)AES_encrypt);
+ 		cctx->str = NULL;
+@@ -1319,5 +1693,4 @@
+ BLOCK_CIPHER_custom(NID_aes,192,1,12,ccm,CCM,EVP_CIPH_FLAG_FIPS|CUSTOM_FLAGS)
+ BLOCK_CIPHER_custom(NID_aes,256,1,12,ccm,CCM,EVP_CIPH_FLAG_FIPS|CUSTOM_FLAGS)
+ 
+-#endif
+ #endif
+Index: openssl/crypto/evp/evp.h
+===================================================================
+--- evp.h	Mon Feb 11 07:26:04 2013
++++ evp.h.new	Thu May  2 14:31:55 2013
+@@ -1256,6 +1256,7 @@
+ #define EVP_F_AESNI_INIT_KEY				 165
+ #define EVP_F_AESNI_XTS_CIPHER				 176
+ #define EVP_F_AES_INIT_KEY				 133
++#define EVP_F_AES_T4_INIT_KEY				 178
+ #define EVP_F_AES_XTS					 172
+ #define EVP_F_AES_XTS_CIPHER				 175
+ #define EVP_F_ALG_MODULE_INIT				 177
+Index: openssl/crypto/evp/evp_err.c
+===================================================================
+--- evp_err.c	Mon Feb 11 07:26:04 2013
++++ evp_err.c.new	Thu May  2 14:33:24 2013
+@@ -73,6 +73,7 @@
+ {ERR_FUNC(EVP_F_AESNI_INIT_KEY),	"AESNI_INIT_KEY"},
+ {ERR_FUNC(EVP_F_AESNI_XTS_CIPHER),	"AESNI_XTS_CIPHER"},
+ {ERR_FUNC(EVP_F_AES_INIT_KEY),	"AES_INIT_KEY"},
++{ERR_FUNC(EVP_F_AES_T4_INIT_KEY),	"AES_T4_INIT_KEY"},
+ {ERR_FUNC(EVP_F_AES_XTS),	"AES_XTS"},
+ {ERR_FUNC(EVP_F_AES_XTS_CIPHER),	"AES_XTS_CIPHER"},
+ {ERR_FUNC(EVP_F_ALG_MODULE_INIT),	"ALG_MODULE_INIT"},
