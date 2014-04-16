@@ -1,0 +1,15 @@
+--- totem-2.30.2/configure.in.1 2014-04-16 09:57:55.208281276 +0400
++++ totem-2.30.2/configure.in   2014-04-16 10:00:21.299792299 +0400
+@@ -103,7 +103,11 @@
+ 
+ dnl Check for required plugins
+ gst010_toolsdir=`$PKG_CONFIG --variable=toolsdir gstreamer-0.10`
+-gst010_inspect="$gst010_toolsdir/gst-inspect-0.10"
++if [ -x "$gst010_toolsdir/gst-inspect-0.10" ]; then
++  gst010_inspect="$gst010_toolsdir/gst-inspect-0.10" 
++else 
++  gst010_inspect="$gst010_toolsdir/gst-inspect"
++fi 
+ 
+ dnl Give error and exit if we don't have the gst_inspect tool
+ AC_MSG_CHECKING([GStreamer 0.10 inspection tool])
