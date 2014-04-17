@@ -16,6 +16,7 @@
 #
 # @author: Girish Moodalbail, Oracle, Inc.
 
+import netaddr
 import rad.client as radcli
 import rad.connect as radcon
 import rad.bindings.com.oracle.solaris.rad.evscntl_1 as evsbind
@@ -269,8 +270,27 @@ class EVSQuantumPluginV2(quantum_plugin_base_v2.QuantumPluginBaseV2,
                 for i in range(0, len(vlist), 2):
                     hrlist.append({vlist[i]: vlist[i + 1]})
                 subnetdict['host_routes'] = hrlist
-        subnetdict['allocation_pools'] = \
-            [{'start': ipnet.start, 'end': ipnet.end}]
+        # EVS Controller returns a pool that includes gateway_ip as-well,
+        # however neutron expects pool without gateway_ip. So, we determine
+        # the pool ourselves here.
+        assert 'gateway_ip' in subnetdict
+        start_ip = netaddr.IPAddress(ipnet.start)
+        end_ip = netaddr.IPAddress(ipnet.end)
+        gw_ip = netaddr.IPAddress(subnetdict['gateway_ip'])
+        pools = []
+        if gw_ip == start_ip:
+            pools.append({'start' : str(netaddr.IPAddress(start_ip + 1)),
+                          'end': str(netaddr.IPAddress(end_ip))})
+        elif gw_ip == end_ip:
+            pools.append({'start' : str(netaddr.IPAddress(start_ip)),
+                          'end': str(netaddr.IPAddress(end_ip - 1))})
+        else:
+            pools.append({'start': str(netaddr.IPAddress(start_ip)),
+                          'end' : str(netaddr.IPAddress(gw_ip - 1))})
+            pools.append({'start': str(netaddr.IPAddress(gw_ip + 1)),
+                          'end' : str(netaddr.IPAddress(end_ip))})
+
+        subnetdict['allocation_pools'] = pools
         subnetdict['shared'] = False
 
         return subnetdict
@@ -862,6 +882,7 @@ class EVSQuantumPluginV2(quantum_plugin_base_v2.QuantumPluginBaseV2,
         if l3_port_check:
             self.prevent_l3_port_deletion(context, id)
         try:
+            self.disassociate_floatingips(context, id)
             port = self.get_port(context, id)
             if not port:
                 return
