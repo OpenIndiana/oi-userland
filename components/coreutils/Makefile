@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -43,6 +43,9 @@ CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
+# Recreate configure and src/Makefile to pick up stat birthtime changes.
+COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
@@ -62,9 +65,8 @@ unexport SHELLOPTS
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
 
-# There are two known test failures:
+# There is one known test failure:
 # misc/stdbuf             - see CR #15941179
-# misc/timeout-parameters - see CR #17425658
 test:		install $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)

@@ -1,3 +1,16 @@
+The tests/misc/expr test is broken by default in version 8.16.
+
+Looking at the ChangeLog for GNU coreutils 8.19, I found:
+
+2012-04-03  Jim Meyering  <meyering@redhat.com>
+...
+        tests: avoid spurious misc/expr failure on AIX 6.1
+        * tests/misc/expr: Avoid spurious failure on AIX 6.1 due to
+        differing regexp diagnostic.  Reported by Michael Felt.
+
+If I use the .../tests/misc/expr test script from 8.19, it works fine.
+So I've added the 'tests-misc-expr.patch' file to do just that.
+
 ---  coreutils-8.16/tests/misc/expr.orig	2012-09-03 07:18:28.214998564 -0700
 +++  coreutils-8.16/tests/misc/expr	2012-09-03 07:22:12.547808280 -0700
 @@ -140,7 +140,11 @@
