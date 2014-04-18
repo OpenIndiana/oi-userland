@@ -20,8 +20,11 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
+
+# 14275946 parfait doesn't know about i, _imaginary_i
+PARFAIT_BUILD=no
 
 include ../../make-rules/shared-macros.mk
 

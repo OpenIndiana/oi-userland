@@ -231,7 +231,7 @@ BUILD_TOOLS ?=	/ws/on12-tools
 SPRO_ROOT =	$(BUILD_TOOLS)/SUNWspro
 SPRO_VROOT =	$(SPRO_ROOT)/solarisstudio12.3
 
-PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.2.0.2
+PARFAIT_ROOT =	$(BUILD_TOOLS)/parfait/parfait-tools-1.4
 PARFAIT_TOOLS=	$(WS_TOOLS)/$(MACH)/parfait
 PARFAIT_TOOLS_GCC3=	$(PARFAIT_TOOLS)/gcc3
 PARFAIT= $(PARFAIT_ROOT)/bin/parfait
