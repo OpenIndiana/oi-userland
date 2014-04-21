@@ -17,15 +17,16 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= ca-certificates
 
-COMPONENT_VERSION= 3.16
+COMPONENT_VERSION= 3.15.5
+COMPONENT_REVISION=1
 IPS_COMPONENT_VERSION=	1.0 
 COMPONENT_SUMMARY= Common CA certificates
 COMPONENT_SRC= nss-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:2bb4faa200962caacf0454f1e870e74aa9a543809e5c440f7978bcce58e0bfe8
+  sha256:1442c85624b7de74c7745132a65aa0de47d280c4f01f293d111bc0b6d8271f43
 COMPONENT_ARCHIVE_URL= \
-  ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_16_RTM/src/$(COMPONENT_ARCHIVE)
+  ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_3_15_5_RTM/src/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = https://developer.mozilla.org/ru/docs/NSS
 
 include ../../make-rules/prep.mk
