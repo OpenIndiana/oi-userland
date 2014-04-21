@@ -1599,13 +1599,36 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """Restore the specified instance."""
         raise NotImplementedError()
 
+    def _get_zpool_property(self, prop, zpool):
+        """Get the value of property from the zpool."""
+        try:
+            value = None
+            (out, _err) = utils.execute('/usr/sbin/zpool', 'get', prop, zpool)
+        except exception.ProcessExecutionError as err:
+            LOG.error(_("Failed to get property '%s' from zpool '%s': %s")
+                      % (prop, zpool, err.stderr))
+            return value
+
+        zpool_prop = out.splitlines()[1].split()
+        if zpool_prop[1] == prop:
+            value = zpool_prop[2]
+
+        return value
+
     def _update_host_stats(self):
         """Update currently known host stats."""
         host_stats = {}
         host_stats['vcpus'] = os.sysconf('SC_NPROCESSORS_ONLN')
         pages = os.sysconf('SC_PHYS_PAGES')
         host_stats['memory_mb'] = self._pages_to_kb(pages) / 1024
-        host_stats['local_gb'] = 0
+
+        out, err = utils.execute('/usr/sbin/zfs', 'list', '-Ho', 'name', '/')
+        root_zpool = out.split('/')[0]
+        size = self._get_zpool_property('size', root_zpool)
+        if size is None:
+            host_stats['local_gb'] = 0
+        else:
+            host_stats['local_gb'] = utils.to_bytes(size)/(1024 ** 3)
 
         # Account for any existing processor sets by looking at the the
         # number of CPUs not assigned to any processor sets.
