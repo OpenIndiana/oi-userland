@@ -32,7 +32,7 @@ COMPONENT_PROJECT_URL = https://developer.mozilla.org/ru/docs/NSS
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 
-CLEAN_PATHS += $(BUILD_DIR)
+CLEAN_PATHS += $(BUILD_DIR) $(PROTO_DIR)
 
 $(BUILD_32): $(BUILD_DIR_32)/.certs_renamed
 
@@ -71,7 +71,7 @@ $(INSTALL_32):	$(BUILD_32)
 	cd $(PROTO_DIR)/etc/certs/CA &&\
 	for i in *.pem ; do  \
 	   HASH=$$(openssl x509 -noout -hash -in $$i); \
-           ln -s ../../certs/CA/$${i} ../../openssl/certs/$${HASH}.0; \
+           ln -fs ../../certs/CA/$${i} ../../openssl/certs/$${HASH}.0; \
 	done; 
 	touch $@
 	
