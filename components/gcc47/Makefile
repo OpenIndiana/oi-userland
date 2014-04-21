@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= gcc
 COMPONENT_VERSION= 4.7.3
+COMPONENT_REVISION=1
 MPFR_NAME= mpfr
 MPFR_VERSION=3.1.2
 MPC_NAME=mpc
@@ -98,10 +99,13 @@ CONFIGURE_OPTIONS+= --enable-plugins
 CONFIGURE_OPTIONS+= --enable-objc-gc
 CONFIGURE_OPTIONS+= --enable-languages=c,c++,fortran,lto,objc
 CONFIGURE_OPTIONS+= --enable-ld=no
-CONFIGURE_OPTIONS+= --with-as=/usr/bin/gas
-CONFIGURE_OPTIONS+= --with-gnu-as
 CONFIGURE_OPTIONS+= --with-build-time-tools=/usr/gnu/$(GNU_ARCH)/bin
 CONFIGURE_OPTIONS+= --disable-libitm
+
+# On SPARC systems, use Sun Assembler
+CONFIGURE_OPTIONS.sparc+= --without-gnu-as --with-as=/usr/bin/as
+CONFIGURE_OPTIONS.i386+= --with-gnu-as --with-as=/usr/bin/gas
+CONFIGURE_OPTIONS+= $(CONFIGURE_OPTIONS.$(MACH))
 
 CONFIGURE_OPTIONS+= LDFLAGS="-R$(CONFIGURE_PREFIX)/lib"
 
