@@ -51,19 +51,19 @@ link path=lib/openssl/default/64 target=$(MACH64)
 link path=lib/openssl/engines/64 target=$(MACH64)
 
 # Commands.
-file $(MACH32)/apps/openssl path=lib/openssl/default/$(MACH32)/openssl \
+file $(MACH32)/apps/openssl path=lib/openssl/default/openssl \
     owner=root group=bin mode=0555
-file $(MACH64)/apps/openssl path=lib/openssl/default/openssl owner=root \
+file $(MACH64)/apps/openssl path=lib/openssl/default/$(MACH64)/openssl owner=root \
     group=bin mode=0555
 file etc/openssl/misc/CA.pl path=lib/openssl/default/CA.pl
-link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/openssl
+link path=usr/sfw/bin/$(MACH64)/openssl target=../../../bin/$(MACH64)/openssl
 link path=usr/sfw/bin/openssl target=../../bin/openssl
 
 # Mediator links for the commands
 link path=usr/bin/openssl target=../../lib/openssl/default/openssl \
     mediator=openssl mediator-implementation=default mediator-priority=vendor
-link path=usr/bin/$(MACH32)/openssl \
-    target=../../../lib/openssl/default/$(MACH32)/openssl mediator=openssl \
+link path=usr/bin/$(MACH64)/openssl \
+    target=../../../lib/openssl/default/$(MACH64)/openssl mediator=openssl \
     mediator-implementation=default mediator-priority=vendor
 link path=usr/bin/CA.pl target=../../lib/openssl/default/CA.pl \
     mediator=openssl mediator-implementation=default mediator-priority=vendor
