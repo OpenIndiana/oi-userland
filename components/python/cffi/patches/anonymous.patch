@@ -1,0 +1,96 @@
+# HG changeset patch
+# User Armin Rigo <arigo@tunes.org>
+# Date 1396624834 -7200
+# Node ID facaf5de29c9e8cdaa148112ece17a4205cf2d84
+# Parent  0457fbb2d45243a93cb8ed242646d7487bd36dc4
+Issue #142: don't generate C files that use '$' in identifiers.
+
+diff --git a/cffi/vengine_cpy.py b/cffi/vengine_cpy.py
+--- a/cffi/vengine_cpy.py
++++ b/cffi/vengine_cpy.py
+@@ -632,13 +632,18 @@
+     # ----------
+     # enums
+ 
++    def _enum_funcname(self, prefix, name):
++        # "$enum_$1" => "___D_enum____D_1"
++        name = name.replace('$', '___D_')
++        return '_cffi_e_%s_%s' % (prefix, name)
++
+     def _generate_cpy_enum_decl(self, tp, name, prefix='enum'):
+         if tp.partial:
+             for enumerator in tp.enumerators:
+                 self._generate_cpy_const(True, enumerator, delayed=False)
+             return
+         #
+-        funcname = '_cffi_e_%s_%s' % (prefix, name)
++        funcname = self._enum_funcname(prefix, name)
+         prnt = self._prnt
+         prnt('static int %s(PyObject *lib)' % funcname)
+         prnt('{')
+diff --git a/cffi/vengine_gen.py b/cffi/vengine_gen.py
+--- a/cffi/vengine_gen.py
++++ b/cffi/vengine_gen.py
+@@ -410,13 +410,18 @@
+     # ----------
+     # enums
+ 
++    def _enum_funcname(self, prefix, name):
++        # "$enum_$1" => "___D_enum____D_1"
++        name = name.replace('$', '___D_')
++        return '_cffi_e_%s_%s' % (prefix, name)
++
+     def _generate_gen_enum_decl(self, tp, name, prefix='enum'):
+         if tp.partial:
+             for enumerator in tp.enumerators:
+                 self._generate_gen_const(True, enumerator)
+             return
+         #
+-        funcname = '_cffi_e_%s_%s' % (prefix, name)
++        funcname = self._enum_funcname(prefix, name)
+         self.export_symbols.append(funcname)
+         prnt = self._prnt
+         prnt('int %s(char *out_error)' % funcname)
+@@ -453,7 +458,7 @@
+         else:
+             BType = self.ffi._typeof_locked("char[]")[0]
+             BFunc = self.ffi._typeof_locked("int(*)(char*)")[0]
+-            funcname = '_cffi_e_%s_%s' % (prefix, name)
++            funcname = self._enum_funcname(prefix, name)
+             function = module.load_function(BFunc, funcname)
+             p = self.ffi.new(BType, 256)
+             if function(p) < 0:
+diff --git a/testing/test_verify.py b/testing/test_verify.py
+--- a/testing/test_verify.py
++++ b/testing/test_verify.py
+@@ -1,4 +1,4 @@
+-import py
++import py, re
+ import sys, os, math, weakref
+ from cffi import FFI, VerificationError, VerificationMissing, model
+ from testing.support import *
+@@ -29,6 +29,24 @@
+ def setup_module():
+     import cffi.verifier
+     cffi.verifier.cleanup_tmpdir()
++    #
++    # check that no $ sign is produced in the C file; it used to be the
++    # case that anonymous enums would produce '$enum_$1', which was
++    # used as part of a function name.  GCC accepts such names, but it's
++    # apparently non-standard.
++    _r_comment = re.compile(r"/\*.*?\*/|//.*?$", re.DOTALL | re.MULTILINE)
++    _r_string = re.compile(r'\".*?\"')
++    def _write_source_and_check(self, file=None):
++        base_write_source(self, file)
++        if file is None:
++            f = open(self.sourcefilename)
++            data = f.read()
++            f.close()
++            data = _r_comment.sub(' ', data)
++            data = _r_string.sub('"skipped"', data)
++            assert '$' not in data
++    base_write_source = cffi.verifier.Verifier._write_source
++    cffi.verifier.Verifier._write_source = _write_source_and_check
+ 
+ 
+ def test_module_type():

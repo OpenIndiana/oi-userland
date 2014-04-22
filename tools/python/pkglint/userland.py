@@ -29,9 +29,12 @@
 import pkg.lint.base as base
 from pkg.lint.engine import lint_fmri_successor
 import pkg.elf as elf
+import pkg.fmri
+import platform
 import re
 import os.path
 import subprocess
+import sys
 
 class UserlandActionChecker(base.ActionChecker):
         """An opensolaris.org-specific class to check actions."""
@@ -46,7 +49,7 @@ class UserlandActionChecker(base.ActionChecker):
 			self.proto_path = path.split()
 		else:
 			self.proto_path = None
-		solaris_ver = os.getenv('SOLARIS_VERSION')
+		solaris_ver = os.getenv('SOLARIS_VERSION', '')
 		#
 		# These lists are used to check if a 32/64-bit binary
 		# is in a proper 32/64-bit directory.
@@ -516,7 +519,7 @@ class UserlandManifestChecker(base.ManifestChecker):
 			engine.error( _("missing ARC data (org.opensolaris.arc-caseid)"),
 				msgid="%s%s.0" % (self.name, pkglint_id))
 
-	component_check.pkglint_dest = _(
+	component_check.pkglint_desc = _(
 		"license actions and ARC information are required if you deliver files.")
 
         def publisher_in_fmri(self, manifest, engine, pkglint_id="002"):
@@ -529,3 +532,69 @@ class UserlandManifestChecker(base.ManifestChecker):
                         engine.error(_("package %s has a publisher set!") %
                             manifest.fmri,
                             msgid="%s%s.2" % (self.name, pkglint_id))
+
+        publisher_in_fmri.pkglint_desc = _(
+            "Publishers mentioned in package FMRIs must be in fixed set.")
+
+        # CFFI names the modules it creates with a hash that includes the
+        # version of CFFI (since the schema may change from one version to
+        # another).  This means that if a package depends on CFFI, then it must
+        # also incorporate the version it builds with, which should be the
+        # version in the gate.
+        def uses_cffi(self, manifest, engine, pkglint_id="003"):
+                cffi_match = {"fmri": "*/cffi*"}
+                cffi_require = None
+                cffi_incorp = None
+                for action in manifest.gen_actions_by_type("depend"):
+                        if not any(
+                            f
+                            for f in action.attrlist("fmri")
+                            if "/cffi-" in pkg.fmri.PkgFmri(f).pkg_name):
+                                continue
+                        if action.attrs["type"] in ("require", "require-any"):
+                                cffi_require = action
+                        elif action.attrs["type"] == "incorporate":
+                                cffi_incorp = action
+
+                try:
+                        sys.path[0:0] = [os.path.join(os.getenv("WS_TOP", ""),
+                            "components/python/cffi/build/prototype/"
+                            "%s/usr/lib/python%d.%d/vendor-packages" %
+                            ((platform.processor(),) + sys.version_info[:2]))]
+                        import cffi
+                        cffi_version = cffi.__version__
+                        del sys.path[0]
+                except ImportError:
+                        cffi_version = None
+
+                if not cffi_require:
+                        return
+
+                if not cffi_version:
+                        engine.warning(_("package %s depends on CFFI, but we "
+                            "cannot determine the version of CFFI needed") %
+                            manifest.fmri,
+                            msgid="%s%s.1" % (self.name, pkglint_id))
+
+                if not cffi_incorp:
+                        engine.error(_("package %(pkg)s depends on CFFI, but "
+                            "does not incorporate it (should be at %(should)s)")
+                            % {"pkg": manifest.fmri, "should": cffi_version},
+                            msgid="%s%s.2" % (self.name, pkglint_id))
+
+                # The final check can only be done if neither of the previous
+                # checks have fired.
+                if not cffi_version or not cffi_incorp:
+                    return
+
+                cffi_incorp_ver = str(pkg.fmri.PkgFmri(
+                    cffi_incorp.attrs["fmri"]).version.release)
+                if cffi_incorp_ver != cffi_version:
+                        engine.error(_("package %(pkg)s depends on CFFI, but "
+                            "incorporates it at the wrong version (%(actual)s "
+                            "instead of %(should)s)") % {"pkg": manifest.fmri,
+                            "actual": cffi_incorp_ver, "should": cffi_version},
+                            msgid="%s%s.3" % (self.name, pkglint_id))
+
+        uses_cffi.pkglint_desc = _(
+            "Packages using CFFI incorporate CFFI at the correct version.")
