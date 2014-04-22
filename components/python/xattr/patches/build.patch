@@ -1,0 +1,21 @@
+cffi leaves __pycache__ around in the *source* directory, so when we build
+64-bit after 32-bit (or vice versa), the modules already exist, but are of the
+wrong ELF class.  Ideally, the entire build would happen outside the source
+directory, but for the time being, this patch at least makes sure distutils'
+build_base directory (plus an extraneous directory structure) is used for the
+object files and shared objects.
+
+There's probably a better way, but it will likely involve deep distutils magic
+and maybe some patches to cffi.
+
+--- xattr-0.7.4/setup.py	Mon Mar  3 10:13:29 2014
++++ xattr-0.7.4/setup.py	Mon Apr 14 14:09:58 2014
+@@ -12,6 +12,8 @@
+     setup_requires hasn't run yet.
+     """
+     def finalize_options(self):
++        import cffi.verifier
++        cffi.verifier.set_tmpdir(self.build_base)
+         from xattr.lib import ffi
+         self.distribution.ext_modules = [ffi.verifier.get_extension()]
+         build.finalize_options(self)
