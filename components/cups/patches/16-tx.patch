@@ -19,7 +19,7 @@
 -	$(CC) $(LDFLAGS) -o $@ bannertops.o pstext.o common.o $(LINKCUPSIMAGE) \
 -		$(IMGLIBS) $(LIBS)
 +	$(CC) $(LDFLAGS) -o $@ bannertops.o pstext.o common.o tsol_labeled_banner.o $(LINKCUPSIMAGE) \
-+		$(IMGLIBS) $(LIBS) -ltsol
++		$(IMGLIBS) $(LIBS) -ltsol -lsecdb
  
  
  #
@@ -34,7 +34,7 @@
 -	$(CC) $(LDFLAGS) -o $@ imagetops.o common.o $(LINKCUPSIMAGE) \
 -		$(IMGLIBS) $(LIBS)
 +	$(CC) $(LDFLAGS) -o $@ imagetops.o common.o tsol_labeled_banner.o $(LINKCUPSIMAGE) \
-+		$(IMGLIBS) $(LIBS) -ltsol
++		$(IMGLIBS) $(LIBS) -ltsol -lsecdb
  
  
  #
@@ -46,7 +46,7 @@
 +pstops:	pstops.o common.o tsol_labeled_banner.o ../cups/$(LIBCUPS)
  	echo Linking $@...
 -	$(CC) $(LDFLAGS) -o $@ pstops.o common.o $(LIBS) -lm
-+	$(CC) $(LDFLAGS) -o $@ pstops.o common.o tsol_labeled_banner.o $(LIBS) -lm -ltsol
++	$(CC) $(LDFLAGS) -o $@ pstops.o common.o tsol_labeled_banner.o $(LIBS) -lm -ltsol -lsecdb
  
  
  #
