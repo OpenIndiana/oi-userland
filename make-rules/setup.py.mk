@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
@@ -30,6 +30,11 @@ $(BUILD_DIR)/%-2.6/.installed:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.installed:		PYTHON_VERSION=2.7
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
+
+$(BUILD_DIR)/%-2.6/.tested:		PYTHON_VERSION=2.6
+$(BUILD_DIR)/%-2.7/.tested:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
+$(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
 
 BUILD_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
