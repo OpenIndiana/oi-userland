@@ -1,0 +1,51 @@
+--- GConf-2.31.7/gconf/gconf-internals.c.~1~	2010-02-09 15:14:05.000000000 +0300
++++ GConf-2.31.7/gconf/gconf-internals.c	2014-04-23 12:06:25.238657513 +0400
+@@ -2428,11 +2428,12 @@
+         DBusConnection *connection;
+         DBusError bus_error;
+         char *ior;
++        const char *dbus_address = NULL;
+ 
+         /* if the bus isn't running and we don't want to start gconfd then
+          * we don't want to autolaunch the bus either, so bail early.
+          */
+-        if (g_getenv ("DBUS_SESSION_BUS_ADDRESS") == NULL &&
++        if ( (dbus_address = g_getenv ("DBUS_SESSION_BUS_ADDRESS")) == NULL &&
+            (!start_if_not_found || g_getenv ("DISPLAY") == NULL)) {
+                 if (failure_log)
+                     g_string_append_printf (failure_log,
+@@ -2440,6 +2441,34 @@
+                 return NULL;
+         }
+ 
++        if ( dbus_address != NULL ) {
++            DBusAddressEntry    **address_entries;
++            int                   address_entries_len = 0;
++            const char          *method = NULL;
++
++            if ( dbus_parse_address( dbus_address, &address_entries, &address_entries_len, NULL ) ) {
++                int i;
++
++                for (i = 0; i < address_entries_len; i++ ) {
++                    method = dbus_address_entry_get_method( address_entries[i] );
++
++                    if ( method != NULL && strcmp( method, "unix" ) == 0 ) {
++                        struct stat s;
++
++                        const char *path =  dbus_address_entry_get_value(address_entries[i], "path");
++                        if ( path != NULL && stat( path, &s ) == 0 && 
++                             s.st_uid != geteuid() ) {
++                            /* The session bus isn't the same as the effective uid so
++                             * it's highly likely to fail to connect to the server so
++                             * don't use it, unset the environment variable.
++                             */
++                            g_unsetenv("DBUS_SESSION_BUS_ADDRESS");
++                        }
++                    }
++                }
++            }
++        }
++
+         dbus_error_init (&bus_error);
+         connection = dbus_bus_get (DBUS_BUS_SESSION, &bus_error);
+ 

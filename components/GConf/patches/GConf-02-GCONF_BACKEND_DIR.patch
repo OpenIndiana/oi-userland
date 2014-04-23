@@ -1,0 +1,24 @@
+--- GConf-2.14.0/gconf/gconf-backend.c.orig	2006-06-29 09:58:43.388598000 -0400
++++ GConf-2.14.0/gconf/gconf-backend.c	2006-06-29 10:06:43.973291000 -0400
+@@ -171,6 +171,7 @@
+   gchar* back;
+   gchar* file;
+   gchar* retval;
++  gchar* gconf_backend_dir;
+ 
+   g_return_val_if_fail(address != NULL, NULL);
+ 
+@@ -181,7 +182,12 @@
+ 
+   file = g_strconcat("gconfbackend-", back, NULL);
+   
+-  retval = g_module_build_path(GCONF_BACKEND_DIR, file);
++  gconf_backend_dir = g_getenv ("GCONF_BACKEND_DIR");
++  if (gconf_backend_dir == NULL)
++    {
++      gconf_backend_dir = GCONF_BACKEND_DIR;
++    }
++  retval = g_module_build_path(gconf_backend_dir, file);
+ 
+   g_free(back);
+ 
