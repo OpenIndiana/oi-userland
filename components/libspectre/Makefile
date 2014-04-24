@@ -25,6 +25,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libspectre
 COMPONENT_VERSION=	0.2.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/libspectre
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/libspectre/
