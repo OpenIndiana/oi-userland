@@ -1,6 +1,6 @@
 /*
  * ProFTPD - FTP server daemon
- * Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,6 +111,7 @@ static void audit_failure(pool *p, char *authuser) {
   const char *how;
   int saved_errno = 0;
   struct passwd pwd;
+  struct passwd *result = NULL;
   char *pwdbuf = NULL;
   size_t pwdbuf_len;
   long pwdbuf_len_max;
@@ -133,7 +134,8 @@ static void audit_failure(pool *p, char *authuser) {
   }
 
   if ((authuser != NULL) && (authuser[0] != NULL) &&
-    (getpwnam_r(authuser, &pwd, pwdbuf, pwdbuf_len) != NULL)) {
+    (getpwnam_r(authuser, &pwd, pwdbuf, pwdbuf_len, &result) == 0) &&
+    (result != NULL)) {
     uid = pwd.pw_uid;
     gid = pwd.pw_gid;
   } 
