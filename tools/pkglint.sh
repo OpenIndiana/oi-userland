@@ -19,14 +19,13 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 IFS=
-export WS_TOP=WS_TOP_XXX
 
 SLEEPTIME=60
 
-LOCKFILE=${WS_TOP}/pkglint.lock
+LOCKFILE=WS_TOP_XXX/pkglint.lock
 
 lockfile -${SLEEPTIME} ${LOCKFILE}
 
