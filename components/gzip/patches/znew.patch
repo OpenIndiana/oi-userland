@@ -7,7 +7,7 @@ Reported by Rich Burridge in <http://bugs.gnu.org/15522>.
 * znew.in: Rewrite to avoid the need for a temporary file in /tmp.
 That way, we avoid the need for set -C
 and worrying about denial of service.
-Use touch -r and chmod --reference rather than cpmod.
+Use touch -r and python rather than cpmod.
 Assume cp -p works, as it's now universal.
 Quote 'echo' args better, while we're at it.
 (warn, tmp, cpmod, cpmodarg): Remove.
@@ -42,10 +42,8 @@ index dcdf84f..2a7e5e1 100644
 +does not support the
 +.B \-\-reference
 +option.
-diff --git a/znew.in b/znew.in
-index 9bd3ce9..d16311a 100644
---- a/znew.in
-+++ b/znew.in
+--- gzip-1.5/znew.in	2014-04-24 14:54:00.798820086 +0200
++++ gzip-1.5/znew.in	2014-04-24 14:53:49.388094138 +0200
 @@ -21,7 +21,7 @@
  case $1 in
  --__bindir) bindir=${2?}; shift; shift;;
@@ -92,7 +90,7 @@ index 9bd3ce9..d16311a 100644
  
  for arg
  do
-@@ -116,26 +92,27 @@ if test -n "$opt"; then
+@@ -116,26 +92,32 @@ if test -n "$opt"; then
  fi
  
  for i do
@@ -109,7 +107,12 @@ index 9bd3ce9..d16311a 100644
        # Copy file attributes from old file to new one, if possible.
 -      test -n "$cpmod" && $cpmod $cpmodarg "$n.Z" "$n$ext" 2> /dev/null
 +      touch -r"$n.Z" -- "$n$ext" 2>/dev/null
-+      chmod --reference="$n.Z" -- "$n$ext" 2>/dev/null
++      python -c '
++	      import os
++	      import sys
++	      mode = os.stat(sys.argv[1]).st_mode & 07777
++	      os.chmod(sys.argv[2], mode)
++      ' "$n.Z" "$n$ext"
      else
 -      echo error while recompressing $n.Z
 +      echo "error while recompressing $n.Z"
@@ -126,7 +129,7 @@ index 9bd3ce9..d16311a 100644
          res=1; continue
        fi
      fi
-@@ -143,7 +120,7 @@ for i do
+@@ -143,7 +125,7 @@ for i do
        :
      else
        test $check -eq 1 && mv "$n.$$" "$n.Z"
@@ -135,7 +138,7 @@ index 9bd3ce9..d16311a 100644
        res=1; continue
      fi
      if gzip $opt "$n"; then
-@@ -151,10 +128,10 @@ for i do
+@@ -151,10 +133,10 @@ for i do
      else
        if test $check -eq 1; then
          mv "$n.$$" "$n.Z" && rm -f "$n"
@@ -148,7 +151,7 @@ index 9bd3ce9..d16311a 100644
        fi
        res=1; continue
      fi
-@@ -175,7 +152,7 @@ for i do
+@@ -175,7 +157,7 @@ for i do
      else
        test $pipe -eq 0 && mv "$n.$$" "$n.Z"
        rm -f "$n$ext"
@@ -157,5 +160,3 @@ index 9bd3ce9..d16311a 100644
        res=1; continue
      fi
    elif test $pipe -eq 1; then
--- 
-1.8.3.1
