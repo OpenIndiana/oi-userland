@@ -1,0 +1,64 @@
+# Changes to fix "gmake test" failures.
+#
+# There are three known failures:
+#
+# FAIL: instspc.test
+# FAIL: silent-many-gcc.test
+# FAIL: silent-many-generic.test
+#
+# For instspc:
+# The Korn shell doesn't seem to like a directory called "...". Fixed by
+# using bash. See CR #18633442 for more details.
+#
+# For silent-many-gcc and silent-many-generic:
+# Linking against the libfl.so library when you don't have a yylex() routine
+# causes an Undefined Symbol error. See CR #18620525 for more details.
+#
+# These patches will not be submitted upstream because they are workarounds
+# for broken versions of flex and ksh93 on Solaris. It will be up to those
+# two component owners to determine if they need to submit their fixes upstream.
+
+--- automake-1.11.2/tests/instspc.test.orig	2014-04-18 14:51:51.287627135 -0700
++++ automake-1.11.2/tests/instspc.test	2014-04-21 14:46:54.459937549 -0700
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#! /bin/bash
+ # Copyright (C) 2004, 2005, 2011 Free Software Foundation, Inc.
+ #
+ # This program is free software; you can redistribute it and/or modify
+--- automake-1.11.2/tests/silent-many-gcc.test.orig	2014-04-18 09:10:39.993584044 -0700
++++ automake-1.11.2/tests/silent-many-gcc.test	2014-04-18 11:33:41.312452525 -0700
+@@ -121,6 +121,7 @@
+ SUBDIRS = sub
+ AM_YFLAGS = -d
+ LDADD = $(LEXLIB)
++bar_LDADD =
+ BUILT_SOURCES = foo6.h
+ EOF
+ 
+@@ -136,6 +137,7 @@
+ ba2_FCFLAGS = $(AM_FCFLAGS)
+ AM_YFLAGS = -d
+ LDADD = $(LEXLIB)
++bla_LDADD =
+ BUILT_SOURCES = baz6.h
+ EOF
+ 
+--- automake-1.11.2/tests/silent-many-generic.test.orig	2014-04-18 09:11:13.481486031 -0700
++++ automake-1.11.2/tests/silent-many-generic.test	2014-04-18 11:36:09.225575076 -0700
+@@ -123,6 +123,7 @@
+ SUBDIRS = sub
+ AM_YFLAGS = -d
+ LDADD = $(LEXLIB)
++bar_LDADD =
+ BUILT_SOURCES = foo6.h
+ EOF
+ 
+@@ -138,6 +139,7 @@
+ ba2_FCFLAGS = $(AM_FCFLAGS)
+ AM_YFLAGS = -d
+ LDADD = $(LEXLIB)
++bla_LDADD =
+ BUILT_SOURCES = baz6.h
+ EOF
+ 
