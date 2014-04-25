@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -56,7 +56,8 @@ include ../../make-rules/ips.mk
 # instead of 'e'.
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION).0.7
 
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER"
+# Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS"
 # Force immediate binding because of chroot().
 CONFIGURE_OPTIONS +=	LDFLAGS="-z guidance=nolazyload -z nolazyload -lbsm"
 CONFIGURE_OPTIONS +=	install_user=`id -nu`
