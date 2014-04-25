@@ -1,0 +1,123 @@
+#
+# This patch converts libsigsegv from using the obsolete (since Solaris 2.6,
+# 1997) ioctl-based version of the /proc interface to using the structured
+# /proc interface as described in the proc(4) manual page.
+# See libsigsegv bug: https://savannah.gnu.org/bugs/?42187
+#
+diff -r -u libsigsegv-2.6/configure.orig libsigsegv-2.6/configure
+--- libsigsegv-2.6/configure.orig	2008-08-24 15:58:15.000000000 -0700
++++ libsigsegv-2.6/configure	2014-04-10 11:02:03.212637829 -0700
+@@ -15596,8 +15596,8 @@
+ _ACEOF
+ 
+ 
+-{ $as_echo "$as_me:$LINENO: checking for PIOCMAP in sys/procfs.h" >&5
+-$as_echo_n "checking for PIOCMAP in sys/procfs.h... " >&6; }
++{ $as_echo "$as_me:$LINENO: checking for prmap_t in procfs.h" >&5
++$as_echo_n "checking for prmap_t in procfs.h... " >&6; }
+ if test "${sv_cv_procfsvma+set}" = set; then
+   $as_echo_n "(cached) " >&6
+ else
+@@ -15608,12 +15608,11 @@
+ cat confdefs.h >>conftest.$ac_ext
+ cat >>conftest.$ac_ext <<_ACEOF
+ /* end confdefs.h.  */
+-#include <sys/procfs.h>
++#include <procfs.h>
+ int
+ main ()
+ {
+-int x = PIOCNMAP + PIOCMAP; prmap_t y;
+-  ;
++  prmap_t y;
+   return 0;
+ }
+ _ACEOF
+diff -r -u libsigsegv-2.6/configure.ac.orig libsigsegv-2.6/configure.ac
+--- libsigsegv-2.6/configure.ac.orig	2014-04-10 10:55:23.907673765 -0700
++++ libsigsegv-2.6/configure.ac	2014-04-10 11:02:35.810560742 -0700
+@@ -619,9 +619,9 @@
+    STACK_DIRECTION = 0 => spaghetti stack.])
+ 
+ dnl Determination of the stack's virtual memory area.
+-AC_CACHE_CHECK([for PIOCMAP in sys/procfs.h], sv_cv_procfsvma, [
+-  AC_TRY_LINK([#include <sys/procfs.h>],
+-    [int x = PIOCNMAP + PIOCMAP; prmap_t y;],
++AC_CACHE_CHECK([for prmap_t in procfs.h], sv_cv_procfsvma, [
++  AC_TRY_LINK([#include <procfs.h>],
++    [ prmap_t y;],
+     sv_cv_procfsvma=yes, sv_cv_procfsvma=no)
+ ])
+ AC_CHECK_FUNCS([mincore])
+diff -r -u libsigsegv-2.6/src/stackvma-procfs.c.orig libsigsegv-2.6/src/stackvma-procfs.c
+--- libsigsegv-2.6/src/stackvma-procfs.c.orig	2014-04-10 11:05:58.957104341 -0700
++++ libsigsegv-2.6/src/stackvma-procfs.c	2014-04-10 10:49:41.584900672 -0700
+@@ -19,8 +19,9 @@
+ #include <unistd.h> /* open, close */
+ #include <fcntl.h> /* open */
+ #include <sys/types.h>
++#include <sys/stat.h>
+ #include <sys/mman.h> /* mmap, munmap */
+-#include <sys/procfs.h> /* PIOC*, prmap_t */
++#include <procfs.h> /* prmap_t */
+ 
+ #include "stackvma-simple.c"
+ 
+@@ -43,10 +44,7 @@
+ int
+ sigsegv_get_vma (unsigned long address, struct vma_struct *vma)
+ {
+-  char fnamebuf[6+10+1];
+-  char *fname;
+   int fd;
+-  int nmaps;
+   size_t memneed;
+ #if HAVE_MMAP_ANON
+ # define zero_fd -1
+@@ -58,6 +56,7 @@
+   int zero_fd;
+ # define map_flags 0
+ #endif
++  struct stat statb;
+   void *auxmap;
+   unsigned long auxmap_start;
+   unsigned long auxmap_end;
+@@ -71,26 +70,14 @@
+   if (pagesize == 0)
+     init_pagesize ();
+ 
+-  /* Construct fname = sprintf (fnamebuf+i, "/proc/%u", getpid ()).  */
+-  fname = fnamebuf + sizeof (fnamebuf) - 1;
+-  *fname = '\0';
+-  {
+-    unsigned int value = getpid ();
+-    do
+-      *--fname = (value % 10) + '0';
+-    while ((value = value / 10) > 0);
+-  }
+-  fname -= 6;
+-  memcpy (fname, "/proc/", 6);
+-
+-  fd = open (fname, O_RDONLY);
++  fd = open ("/proc/self/map", O_RDONLY);
+   if (fd < 0)
+     goto failed;
+ 
+-  if (ioctl (fd, PIOCNMAP, &nmaps) < 0)
++  if (fstat(fd, &statb) == -1)
+     goto fail2;
+ 
+-  memneed = (nmaps + 10) * sizeof (prmap_t);
++  memneed = statb.st_size + 10 * sizeof (prmap_t);
+   /* Allocate memneed bytes of memory.
+      We cannot use alloca here, because we are low on stack space.
+      We also cannot use malloc here, because a malloc() call may have been
+@@ -112,7 +99,7 @@
+   auxmap_end = auxmap_start + memneed;
+   maps = (prmap_t *) auxmap;
+ 
+-  if (ioctl (fd, PIOCMAP, maps) < 0)
++  if (read(fd, (void *)maps, memneed) <= 0)
+     goto fail1;
+ 
+ #if STACK_DIRECTION < 0
