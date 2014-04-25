@@ -26,25 +26,18 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
-COMPONENT_VERSION=	1.19.2
+COMPONENT_VERSION=	1.22.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d864fbd0bf6dea24e4f71736da9902a1cae86d0a1a893b5fe17118927257ec3e
+    sha256:380864dac4772e0c0d7b1282d25d0c5fd7f63baf45c87c4657afed22a13d2076
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/groff
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
-
-COMPONENT_PREP_ACTION = \
-	( cd $(@D) ; \
-		libtoolize -force ; \
-		aclocal -I. ; \
-		autoconf ; \
-		autoheader )
 
 # The grog.sh script needs GNU awk not the Solaris one.
 COMPONENT_PRE_CONFIGURE_ACTION = \
@@ -54,25 +47,17 @@ COMPONENT_PRE_CONFIGURE_ACTION = \
 CONFIGURE_OPTIONS += \
     --with-appresdir=$(CONFIGURE_PREFIX)/X11/lib/X11/app-defaults
 
-CONFIGURE_OPTIONS +=	CXX="$(CXX)"
-CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-
-COMPONENT_INSTALL_ARGS += prefix=$(PROTOUSRDIR)
-COMPONENT_INSTALL_ARGS += bindir=$(PROTOUSRBINDIR)
-COMPONENT_INSTALL_ARGS += libdir=$(PROTOUSRLIBDIR)
-COMPONENT_INSTALL_ARGS += mandir=$(PROTOUSRSHAREMANDIR)
-COMPONENT_INSTALL_ARGS += legacyfontdir=$(PROTOUSRLIBDIR)/font
-COMPONENT_INSTALL_ARGS += appresdir=$(PROTOUSRDIR)/X11/lib/X11/app-defaults
-COMPONENT_INSTALL_ARGS += sys_tmac_prefix=$(PROTOUSRSHARELIBDIR)/tmac/
+COMPONENT_INSTALL_ARGS += legacyfontdir=/usr/lib/font
+COMPONENT_INSTALL_ARGS += appresdir=/usr/X11/lib/X11/app-defaults
+COMPONENT_INSTALL_ARGS += sys_tmac_prefix=/usr/share/lib/tmac/
 
 COMPONENT_PRE_INSTALL_ACTION = \
 	($(MKDIR) $(PROTOUSRBINDIR) )
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 # groff tests use dejagnu which isn't currently included in Solaris.
 test:		$(NO_TESTS)
