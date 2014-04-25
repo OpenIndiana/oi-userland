@@ -1,0 +1,27 @@
+Author: Sergey B Kirpichev <skirpichev@gmail.com>
+Description: Allow change $NBOFLASTUPDATELOOKUPTOSAVE
+ via CGI/CLI arguments.
+Bug-Debian: http://bugs.debian.org/600225
+
+---
+ wwwroot/cgi-bin/awstats.pl |    2 ++
+ 1 file changed, 2 insertions(+)
+
+--- a/wwwroot/cgi-bin/awstats.pl
++++ b/wwwroot/cgi-bin/awstats.pl
+@@ -16504,6 +16504,7 @@
+ 	'showsteps',          'showdropped',
+ 	'showcorrupted',      'showunknownorigin',
+ 	'showdirectorigin',   'limitflush',
++    'nboflastupdatelookuptosave',
+ 	'confdir',            'updatefor',
+ 	'hostfilter',         'hostfilterex',
+ 	'urlfilter',          'urlfilterex',
+@@ -16719,6 +16720,7 @@
+ 	foreach ( split( /,/, $2 ) ) { $NoLoadPlugin{ &Sanitize( "$_", 1 ) } = 1; }
+ }
+ if ( $QueryString =~ /(^|&|&amp;)limitflush=(\d+)/i ) { $LIMITFLUSH = $2; }
++if ( $QueryString =~ /(^|&|&amp;)nboflastupdatelookuptosave=(\d+)/i ) { $NBOFLASTUPDATELOOKUPTOSAVE = $2; }
+ 
+ # Get/Define output
+ if ( $QueryString =~

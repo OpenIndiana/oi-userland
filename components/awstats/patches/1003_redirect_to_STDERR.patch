@@ -1,0 +1,99 @@
+Description: Redirect errors of offline scripts to STDERR.
+Author: Charles Fry <debian@frogcircus.org>
+Bug-Debian: http://bugs.debian.org/296435
+
+---
+ tools/awstats_buildstaticpages.pl |    4 ++--
+ tools/awstats_configure.pl        |    2 +-
+ tools/awstats_exportlib.pl        |    4 ++--
+ tools/awstats_updateall.pl        |    2 +-
+ tools/logresolvemerge.pl          |    4 ++--
+ tools/maillogconvert.pl           |    2 +-
+ 6 files changed, 9 insertions(+), 9 deletions(-)
+
+--- a/tools/awstats_buildstaticpages.pl
++++ b/tools/awstats_buildstaticpages.pl
+@@ -80,7 +80,7 @@
+ # Return:		None
+ #------------------------------------------------------------------------------
+ sub error {
+-	print "Error: $_[0].\n";
++	print STDERR "Error: $_[0].\n";
+     exit 1;
+ }
+ 
+@@ -100,7 +100,7 @@
+ #    		print "$messagestring<br />\n";
+ #    	}
+ #    	else {
+-	    	print "$messagestring\n";
++	    	print STDERR "$messagestring\n";
+ #    	}
+ #	}
+ }
+--- a/tools/awstats_configure.pl
++++ b/tools/awstats_configure.pl
+@@ -88,7 +88,7 @@
+ # error
+ #-------------------------------------------------------
+ sub error {
+-	print "Error: $_[0].\n";
++	print STDERR "Error: $_[0].\n";
+     exit 1;
+ }
+ 
+--- a/tools/awstats_exportlib.pl
++++ b/tools/awstats_exportlib.pl
+@@ -93,8 +93,8 @@
+ 	my $thirdmessage=shift||"";
+ 	my $donotshowsetupinfo=shift||0;
+ 	if ($Debug) { debug("$message $secondmessage $thirdmessage",1); }
+-	print "$message";
+-	print "\n";
++	print STDERR "$message";
++	print STDERR "\n";
+ 	exit 1;
+ }
+ 
+--- a/tools/awstats_updateall.pl
++++ b/tools/awstats_updateall.pl
+@@ -37,7 +37,7 @@
+ # Return:		None
+ #------------------------------------------------------------------------------
+ sub error {
+-	print "Error: $_[0].\n";
++	print STDERR "Error: $_[0].\n";
+     exit 1;
+ }
+ 
+--- a/tools/logresolvemerge.pl
++++ b/tools/logresolvemerge.pl
+@@ -111,7 +111,7 @@
+ # Return:		None
+ #------------------------------------------------------------------------------
+ sub error {
+-	print "Error: $_[0].\n";
++	print STDERR "Error: $_[0].\n";
+     exit 1;
+ }
+ 
+@@ -140,7 +140,7 @@
+ sub warning {
+ 	my $messagestring=shift;
+ 	if ($Debug) { debug("$messagestring",1); }
+-   	print "$messagestring\n";
++   	print STDERR "$messagestring\n";
+ }
+ 
+ #-----------------------------------------------------------------------------
+--- a/tools/maillogconvert.pl
++++ b/tools/maillogconvert.pl
+@@ -56,7 +56,7 @@
+ #-------------------------------------------------------
+ 
+ sub error {
+-	print "Error: $_[0].\n";
++	print STDERR "Error: $_[0].\n";
+     exit 1;
+ }
+ 

@@ -1,0 +1,62 @@
+--- awstats-7.3/tools/httpd_conf.~1~	2014-04-25 18:00:59.327347799 +0400
++++ awstats-7.3/tools/httpd_conf	2014-04-25 18:03:16.188157271 +0400
+@@ -12,16 +12,16 @@
+ # Directives to add to your Apache conf file to allow use of AWStats as a CGI.
+ # Note that path "/usr/local/awstats/" must reflect your AWStats install path.
+ #
+-Alias /awstatsclasses "/usr/local/awstats/wwwroot/classes/"
+-Alias /awstatscss "/usr/local/awstats/wwwroot/css/"
+-Alias /awstatsicons "/usr/local/awstats/wwwroot/icon/"
+-ScriptAlias /awstats/ "/usr/local/awstats/wwwroot/cgi-bin/"
++Alias /awstatsclasses "/usr/share/awstats/classes/"
++Alias /awstatscss "/usr/share/awstats/css/"
++Alias /awstatsicons "/usr/share/awstats/icon/"
++ScriptAlias /awstats/ "/usr/share/awstats/cgi-bin/"
+ 
+ 
+ #
+ # This is to permit URL access to scripts/files in AWStats directory.
+ #
+-<Directory "/usr/local/awstats/wwwroot">
++<Directory "/usr/share/awstats">
+     Options None
+     AllowOverride None
+     Order allow,deny
+--- awstats-7.3/wwwroot/cgi-bin/awstats.model.conf.~1~	2014-01-28 14:06:53.000000000 +0400
++++ awstats-7.3/wwwroot/cgi-bin/awstats.model.conf	2014-04-25 19:36:47.531178784 +0400
+@@ -47,7 +47,7 @@
+ # If there are several log files from load balancing servers :
+ # Example: "/pathtotools/logresolvemerge.pl *.log |"
+ #
+-LogFile="/var/log/httpd/mylog.log"
++LogFile="/var/apache2/2.2/logs/access_log"
+ 
+ 
+ # Enter the log file type you want to analyze.
+@@ -119,7 +119,7 @@
+ # Example for IIS:
+ # LogFormat = 2
+ #
+-LogFormat=1
++LogFormat=4
+ 
+ 
+ # If your log field's separator is not a space, you can change this parameter.
+@@ -185,7 +185,7 @@
+ # 2 - DNS Lookup is made only from static DNS cache file (if it exists)
+ # Default: 2
+ # 
+-DNSLookup=2
++DNSLookup=1
+ 
+ 
+ # When AWStats updates its statistics, it stores results of its analysis in 
+@@ -200,7 +200,7 @@
+ # Example: "C:/awstats_data_dir"
+ # Default: "."          (means same directory as awstats.pl)
+ #
+-DirData="."
++DirData="/var/lib/awstats"
+ 
+ 
+ # Relative or absolute web URL of your awstats cgi-bin directory.
