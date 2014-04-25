@@ -58,8 +58,7 @@ PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/ruby/$(RUBY_LIB_VER)/$(MACH64)-solaris$(
 # these macros are used in the package manifest
 PKG_MACROS+=	RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
 
-# Apply some of the edits here--including to the sed scripts themselves
-# --so we can expand $(MACH64) to the appropriate value.
+# Apply some of the edits here--including to the sed scripts themselves.
 # These modifications of ruby.1 must occur after ruby
 # is installed, not before.  Although there are some other patches
 # to ruby.1 that occur before, the ruby installation does some 
@@ -68,13 +67,13 @@ PKG_MACROS+=	RUBY_VER=$(RUBY_VER) RUBY_LIB_VER=$(RUBY_LIB_VER)
 # Fix generated rbconfig.rb using /usr/bin/sed; gsed doesn't 
 # work for some of the commands in rbconfig.sedscript.
 COMPONENT_POST_INSTALL_ACTION += \
-	$(GSED) -e "s/MACH64/$(MACH64)/" -e "s/RUBY_VER/$(RUBY_VER)/" \
+	$(GSED) -e "s/RUBY_VER/$(RUBY_VER)/" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/gem.1-generic \
 	    > Solaris/gem.1 ; \
 	$(GSED) -e "s/RUBY_VER/$(RUBY_VER)/" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/ruby.1.sedscript \
 	    > Solaris/ruby.1.sedscript.mod ; \
-	$(GSED) -e "s/MACH64/$(MACH64)/" -e "s/RUBY_VER/$(RUBY_VER)/" \
+	$(GSED) -e  "s/RUBY_VER/$(RUBY_VER)/" \
 	    -e "s/RUBY_LIB_VER/$(RUBY_LIB_VER)/" Solaris/rbconfig.sedscript \
 	    > Solaris/rbconfig.sedscript.mod ; \
 	$(GSED) -i -f Solaris/ruby.1.sedscript.mod \
@@ -125,7 +124,8 @@ CONFIGURE_SBINDIR.64 =   $(CONFIGURE_SBINDIR.32)
 CONFIGURE_OPTIONS +=	--with-rubylibprefix=$(CONFIGURE_LIBDIR.32)/ruby
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--enable-rpath
-CONFIGURE_OPTIONS +=	--enable-install-doc
+# Don't need docs for ruby C source files
+CONFIGURE_OPTIONS +=	--disable-install-capi
 CONFIGURE_OPTIONS +=	--disable-option-checking
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
