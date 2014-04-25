@@ -1,0 +1,111 @@
+--- src/util.c	2008-07-02 19:28:32.000000000 +0800
++++ src/util-new.c	2009-02-17 11:06:04.312668000 +0800
+@@ -313,43 +313,78 @@
+  */
+ 
+ #ifndef HAVE_GETLINE
+-#define GLSTEP 512
+ 
+-/* suboptimal implementation of glibc's getline() */
+-ssize_t getline(char **line, size_t *n, FILE *f)
++# ifndef SIZE_MAX
++#  define SIZE_MAX ((size_t) -1)
++# endif
++# ifndef SSIZE_MAX
++#  define SSIZE_MAX ((ssize_t) (SIZE_MAX / 2))
++# endif
++
++ssize_t
++getline (char **lineptr, size_t *n, FILE *fp)
+ {
+-	char *p;
+-	size_t len;
+-	
+-	if (*line == NULL || *n < 2) {
+-		p = realloc(*line, GLSTEP);
+-		if (!p)
+-			return -1;
+-		*line = p;
+-		*n = GLSTEP;
+-	}
+-	
+-	p = fgets(*line, *n, f);
+-	if (!p)
++	ssize_t result;
++	size_t cur_len = 0;
++
++	if (lineptr == NULL || n == NULL || fp == NULL) {
++		errno = EINVAL;
+ 		return -1;
+-	
+-	len = strlen(p);
+-	while ((*line)[len - 1] != '\n') {
+-		p = realloc(*line, *n + GLSTEP);
+-		if (!p)
+-			return -1;
+-		*line = p;
+-		*n += GLSTEP;
+-		
+-		p = fgets(p + len, *n - len, f);
+-		if (!p)
++	}
++
++	if (*lineptr == NULL || *n == 0) {
++		*n = 120;
++		*lineptr = (char *) malloc (*n);
++		if (*lineptr == NULL) {
++			result = -1;
++			goto unlock_return;
++		}
++	}
++
++	for (;;) {
++		int i;
++
++		i = getc (fp);
++		if (i == EOF) {
++			result = -1;
+ 			break;
++		}
++
++		if (cur_len + 1 >= *n) {
++			size_t needed_max =
++			    SSIZE_MAX < SIZE_MAX ? (size_t) SSIZE_MAX + 1 : SIZE_MAX;
++			size_t needed = 2 * *n + 1;
++			char *new_lineptr;
++
++			if (needed_max < needed)
++				needed = needed_max;
++			if (cur_len + 1 >= needed) {
++				result = -1;
++				goto unlock_return;
++			}
++
++			new_lineptr = (char *) realloc (*lineptr, needed);
++			if (new_lineptr == NULL) {
++				result = -1;
++				goto unlock_return;
++			}
++
++			*lineptr = new_lineptr;
++			*n = needed;
++		}
++
++		(*lineptr)[cur_len] = i;
++		cur_len++;
+ 
+-		len = len + strlen(p);
++		if (i == '\n')
++			break;
+ 	}
+-	return (ssize_t) len;
+-}
++	(*lineptr)[cur_len] = '\0';
++	result = cur_len ? cur_len : result;
+ 
++	unlock_return:
++		return result;
++}
+ #endif
+ 
+ char *progname = "(null)"; /* for error() */
