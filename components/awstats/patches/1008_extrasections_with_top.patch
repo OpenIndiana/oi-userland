@@ -1,0 +1,28 @@
+Description: Include the words (Top XXX) in the ExtraSection headings.
+Author: Patrick Collins <pcollins1@users.sourceforge.net>
+Bug: http://sourceforge.net/tracker/index.php?func=detail&aid=1844793&group_id=13764&atid=313764
+
+---
+ wwwroot/cgi-bin/awstats.pl |    4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+--- a/wwwroot/cgi-bin/awstats.pl
++++ b/wwwroot/cgi-bin/awstats.pl
+@@ -11423,7 +11423,7 @@
+ 			if ($Debug) { debug( "ExtraName$extranum", 2 ); }
+ 			print "$Center<a name=\"extra$extranum\">&nbsp;</a><br />";
+ 			my $title = $ExtraName[$extranum];
+-			&tab_head( "$title", 19, 0, "extra$extranum" );
++			&tab_head( "$title ($Message[77] $MaxNbOfExtra[$extranum])", 19, 0, "extra$extranum");
+ 			print "<tr bgcolor=\"#$color_TableBGRowTitle\">";
+ 			print "<th>" . $ExtraFirstColumnTitle[$extranum] . "</th>";
+ 
+@@ -16291,7 +16291,7 @@
+ 	if ($Debug) { debug( "ExtraName$extranum", 2 ); }
+ 	print "$Center<a name=\"extra$extranum\">&nbsp;</a><br />";
+ 	my $title = $ExtraName[$extranum];
+-	&tab_head( "$title", 19, 0, "extra$extranum" );
++	&tab_head( "$title ($Message[77] $MaxNbOfExtra[$extranum])", 19, 0, "extra$extranum");
+ 	print "<tr bgcolor=\"#$color_TableBGRowTitle\">";
+ 	print "<th>" . $ExtraFirstColumnTitle[$extranum];
+ 	print "&nbsp; - &nbsp; <a href=\""
