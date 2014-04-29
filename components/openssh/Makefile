@@ -45,7 +45,7 @@ include ../../make-rules/ips.mk
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) -DSET_USE_PAM -DDEPRECATE_SUNSSH_OPT -DLASTLOG_FIX -DKRB5_BUILD_FIX -DAUE_openssh=6172"
+CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) -DSET_USE_PAM -DDEPRECATE_SUNSSH_OPT -DLASTLOG_FIX -DKRB5_BUILD_FIX -DAUE_openssh=6172 -DDTRACE_SFTP"
 
 # We need to disable lazyloading of dynamic dependent libraries. During the
 # pre-authentication phase, sshd will chroot to /var/empty which doesn't
@@ -67,6 +67,12 @@ CONFIGURE_OPTIONS += --without-rpath
 CONFIGURE_OPTIONS += --libexecdir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sbindir=/usr/lib/ssh
 CONFIGURE_OPTIONS += --sysconfdir=/etc/ssh
+
+# Copy the sftp dtrace provider file and the header file to source directory
+COMPONENT_PRE_BUILD_ACTION = \
+    ( echo "Copying dtrace sftp files..."; \
+      $(LN) -fs $(COMPONENT_DIR)/dtrace_sftp/*.[dh] $(SOURCE_DIR); \
+    )
 
 # common targets
 build:		$(BUILD_32)

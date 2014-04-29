@@ -1,0 +1,148 @@
+#
+# This patch is to provide a SFTP DTrace provider which offers an administrator
+# some observability of SFTP data transfer. This was developed in-house. 
+# Because this is Solaris-specific and not suitable for upstream, we will not
+# contribute the changes to the upstream community.
+#
+--- orig/Makefile.in	Wed Apr 16 17:10:03 2014
++++ new/Makefile.in	Wed Apr 23 11:00:05 2014
+@@ -76,7 +76,8 @@
+ 	jpake.o schnorr.o ssh-pkcs11.o krl.o smult_curve25519_ref.o \
+ 	kexc25519.o kexc25519c.o poly1305.o chacha.o cipher-chachapoly.o \
+ 	ssh-ed25519.o digest.o \
+-	sc25519.o ge25519.o fe25519.o ed25519.o verify.o hash.o blocks.o
++	sc25519.o ge25519.o fe25519.o ed25519.o verify.o hash.o blocks.o \
++	sftp_provider.o
+ 
+ SSHOBJS= ssh.o readconf.o clientloop.o sshtty.o \
+ 	sshconnect.o sshconnect1.o sshconnect2.o mux.o \
+@@ -96,7 +97,7 @@
+ 	sftp-server.o sftp-common.o \
+ 	roaming_common.o roaming_serv.o \
+ 	sandbox-null.o sandbox-rlimit.o sandbox-systrace.o sandbox-darwin.o \
+-	sandbox-seccomp-filter.o sandbox-capsicum.o
++	sandbox-seccomp-filter.o sandbox-capsicum.o sftp_provider.o
+ 
+ MANPAGES	= moduli.5.out scp.1.out ssh-add.1.out ssh-agent.1.out ssh-keygen.1.out ssh-keyscan.1.out ssh.1.out sshd.8.out sftp-server.8.out sftp.1.out ssh-keysign.8.out ssh-pkcs11-helper.8.out sshd_config.5.out ssh_config.5.out
+ MANPAGES_IN	= moduli.5 scp.1 ssh-add.1 ssh-agent.1 ssh-keygen.1 ssh-keyscan.1 ssh.1 sshd.8 sftp-server.8 sftp.1 ssh-keysign.8 ssh-pkcs11-helper.8 sshd_config.5 ssh_config.5
+@@ -173,8 +174,8 @@
+ ssh-keyscan$(EXEEXT): $(LIBCOMPAT) libssh.a ssh-keyscan.o roaming_dummy.o
+ 	$(LD) -o $@ ssh-keyscan.o roaming_dummy.o $(LDFLAGS) -lssh -lopenbsd-compat -lssh $(LIBS)
+ 
+-sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o
+-	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
++sftp-server$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-common.o sftp-server.o sftp-server-main.o sftp_provider.o
++	$(LD) -o $@ sftp-server.o sftp-common.o sftp-server-main.o sftp_provider.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS)
+ 
+ sftp$(EXEEXT): $(LIBCOMPAT) libssh.a sftp.o sftp-client.o sftp-common.o sftp-glob.o progressmeter.o
+ 	$(LD) -o $@ progressmeter.o sftp.o sftp-client.o sftp-common.o sftp-glob.o $(LDFLAGS) -lssh -lopenbsd-compat $(LIBS) $(LIBEDIT)
+@@ -211,9 +212,18 @@
+ 	    -Dumac_update=umac128_update -Dumac_final=umac128_final \
+ 	    -Dumac_delete=umac128_delete
+ 
++# dtrace sftp
++sftp_provider.h: $(srcdir)/sftp_provider.d
++	/usr/sbin/dtrace -xnolibs -h -s $(srcdir)/sftp_provider.d \
++	    -o $(srcdir)/sftp_provider.h
++
++sftp_provider.o: sftp_provider.d sftp_provider.h sftp-server.o
++	/usr/sbin/dtrace -G -32 -xnolibs -s $(srcdir)/sftp_provider.d \
++            sftp-server.o -o sftp_provider.o
++
+ clean:	regressclean
+ 	rm -f *.o *.a $(TARGETS) logintest config.cache config.log
+-	rm -f *.out core survey
++	rm -f *.out core survey sftp_provider.h
+ 	(cd openbsd-compat && $(MAKE) clean)
+ 
+ distclean:	regressclean
+--- orig/sftp-server.c	Wed Apr 16 18:44:37 2014
++++ new/sftp-server.c	Thu Apr 17 11:53:54 2014
+@@ -51,6 +51,9 @@
+ 
+ #include "sftp.h"
+ #include "sftp-common.h"
++#ifdef DTRACE_SFTP
++#include "sftp_provider_impl.h"
++#endif
+ 
+ /* helper */
+ #define get_int64()			buffer_get_int64(&iqueue);
+@@ -721,13 +724,24 @@
+ 	u_int32_t len;
+ 	int handle, fd, ret, status = SSH2_FX_FAILURE;
+ 	u_int64_t off;
++#ifdef DTRACE_SFTP
++	char *fpath;
++#endif
+ 
+ 	handle = get_handle();
+ 	off = get_int64();
+ 	len = get_int();
++#ifdef DTRACE_SFTP
++	fpath = handle_to_name(handle);
++#endif
+ 
++#ifdef DTRACE_SFTP
+ 	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
++	    id, fpath, handle, (unsigned long long)off, len);
++#else
++	debug("request %u: read \"%s\" (handle %d) off %llu len %d",
+ 	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
++#endif
+ 	if (len > sizeof buf) {
+ 		len = sizeof buf;
+ 		debug2("read change len %d", len);
+@@ -738,7 +752,13 @@
+ 			error("process_read: seek failed");
+ 			status = errno_to_portable(errno);
+ 		} else {
++#ifdef DTRACE_SFTP
++		        SFTP_TRANSFER_START_OP("read", fd, fpath, len);
++#endif
+ 			ret = read(fd, buf, len);
++#ifdef DTRACE_SFTP
++                        SFTP_TRANSFER_DONE_OP("read", fd, fpath, ret);
++#endif
+ 			if (ret < 0) {
+ 				status = errno_to_portable(errno);
+ 			} else if (ret == 0) {
+@@ -761,13 +781,22 @@
+ 	u_int len;
+ 	int handle, fd, ret, status;
+ 	char *data;
++#ifdef DTRACE_SFTP
++	char *fpath;
++#endif
+ 
+ 	handle = get_handle();
+ 	off = get_int64();
+ 	data = get_string(&len);
+-
++#ifdef DTRACE_SFTP
++	fpath = handle_to_name(handle);
+ 	debug("request %u: write \"%s\" (handle %d) off %llu len %d",
++	    id, fpath, handle, (unsigned long long)off, len);
++#else
++	debug("request %u: write \"%s\" (handle %d) off %llu len %d",
+ 	    id, handle_to_name(handle), handle, (unsigned long long)off, len);
++#endif
++
+ 	fd = handle_to_fd(handle);
+ 	
+ 	if (fd < 0)
+@@ -779,7 +808,14 @@
+ 			error("process_write: seek failed");
+ 		} else {
+ /* XXX ATOMICIO ? */
++#ifdef DTRACE_SFTP
++		        SFTP_TRANSFER_START_OP("write", fd, fpath, len);
++#endif
+ 			ret = write(fd, data, len);
++#ifdef DTRACE_SFTP
++			SFTP_TRANSFER_DONE_OP("write", fd, fpath, ret);
++#endif
++
+ 			if (ret < 0) {
+ 				error("process_write: write failed");
+ 				status = errno_to_portable(errno);
