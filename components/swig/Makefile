@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -45,8 +45,6 @@ CONFIGURE_ENV += JAVA_HOME="$(JAVA_HOME)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	--with-javaincl="$(JAVA_HOME)/include"
-# keep swig building with ruby 1.8 for now
-CONFIGURE_OPTIONS +=	--with-ruby=$(RUBY.1.8)
 
 ASLR_MODE = $(ASLR_ENABLE)
 
