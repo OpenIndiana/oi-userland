@@ -1,0 +1,130 @@
+# Copyright (c) 2006, 2010, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+diff -urp -x '*~' -x '*.orig' Makefile.am Makefile.am
+--- Makefile.am	2009-11-24 21:25:15.000000000 -0800
++++ Makefile.am	2009-12-02 18:57:55.879547825 -0800
+@@ -36,6 +36,7 @@ SUBDIRS = \
+ 	damageext \
+ 	$(COMPOSITE_DIR) \
+ 	$(GLX_DIR) \
++	IA \
+ 	exa \
+ 	config \
+ 	hw \
+diff -urp -x '*~' -x '*.orig' configure.ac configure.ac
+--- configure.ac	2009-12-02 18:57:54.176548474 -0800
++++ configure.ac	2009-12-02 18:57:55.880850520 -0800
+@@ -1082,6 +1082,10 @@ MIEXT_DAMAGE_INC='-I$(top_srcdir)/miext/
+ XI_LIB='$(top_builddir)/Xi/libXi.la'
+ XI_INC='-I$(top_srcdir)/Xi'
+ 
++# SolarisIA extension
++IA_LIB='$(top_builddir)/IA/libIA.la'
++XEXT_LIB="${XEXT_LIB} ${IA_LIB}"
++
+ AM_CONDITIONAL(XF86UTILS, test "x$XF86UTILS" = xyes)
+ AM_CONDITIONAL(XAA, test "x$XAA" = xyes)
+ AM_CONDITIONAL(VGAHW, test "x$VGAHW" = xyes)
+@@ -2115,3 +2119,6 @@ test/Makefile
+ test/xi2/Makefile
+ xorg-server.pc
+ ])
++
++# Add Sun IA extension
++AC_OUTPUT([IA/Makefile])
+diff -urp -x '*~' -x '*.orig' hw/xfree86/common/xf86Config.c hw/xfree86/common/xf86Config.c
+--- hw/xfree86/common/xf86Config.c	2009-12-02 18:57:53.999906206 -0800
++++ hw/xfree86/common/xf86Config.c	2009-12-02 18:57:55.881970262 -0800
+@@ -123,6 +123,7 @@ static ModuleDefault ModuleDefaults[] = 
+ #ifdef DRI2
+     {.name = "dri2",     .toLoad = TRUE,    .load_opt=NULL},
+ #endif
++    {.name = "ia",       .toLoad = TRUE,    .load_opt=NULL},
+     {.name = NULL,       .toLoad = FALSE,   .load_opt=NULL}
+ };
+ 
+diff -urp -x '*~' -x '*.orig' hw/xfree86/dixmods/Makefile.am hw/xfree86/dixmods/Makefile.am
+--- hw/xfree86/dixmods/Makefile.am	2009-10-30 21:19:51.000000000 -0700
++++ hw/xfree86/dixmods/Makefile.am	2009-12-02 18:57:55.882261006 -0800
+@@ -66,3 +66,11 @@ libdixmods_la_CFLAGS = -DXFree86LOADER $
+ 
+ libxorgxkb_la_SOURCES = xkbVT.c xkbPrivate.c xkbKillSrv.c
+ libxorgxkb_la_LIBADD = $(top_builddir)/dix/libdix.la
++
++
++# Sun IA extension module additions
++extsmodule_LTLIBRARIES += libia.la
++libia_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_builddir)/IA
++libia_la_LDFLAGS = -avoid-version
++libia_la_LIBADD = $(top_builddir)/IA/libIA.la
++libia_la_SOURCES = iamodule.c
+diff -urp -x '*~' -x '*.orig' mi/miinitext.c mi/miinitext.c
+--- mi/miinitext.c	2009-11-22 16:33:40.000000000 -0800
++++ mi/miinitext.c	2009-12-02 18:57:55.882784783 -0800
+@@ -95,6 +95,7 @@ SOFTWARE.
+ #include "micmap.h"
+ #include "globals.h"
+ 
++#define SolarisIAExtension
+ 
+ extern Bool noTestExtensions;
+ 
+@@ -159,6 +160,9 @@ extern Bool noSELinuxExtension;
+ extern Bool noXvExtension;
+ #endif
+ extern Bool noGEExtension;
++#ifdef SolarisIAExtension
++Bool noIAExtension;
++#endif
+ 
+ #ifndef XFree86LOADER
+ #define INITARGS void
+@@ -190,6 +194,10 @@ typedef void (*InitExtension)(INITARGS);
+ #ifdef RES
+ #include <X11/extensions/XResproto.h>
+ #endif
++#ifdef SolarisIAExtension
++#include <X11/extensions/interactive.h>
++#include "../IA/interactive_srv.h"
++#endif
+ 
+ /* FIXME: this whole block of externs should be from the appropriate headers */
+ #ifdef MITSHM
+@@ -320,6 +330,9 @@ static ExtensionToggle ExtensionToggleLi
+ #ifdef XCSECURITY
+     { "SECURITY", &noSecurityExtension },
+ #endif
++#ifdef SolarisIAExtension
++    { IANAME /* "SolarisIA" */, &noIAExtension },
++#endif    
+ #ifdef RES
+     { "X-Resource", &noResExtension },
+ #endif
+@@ -493,6 +506,9 @@ InitExtensions(int argc, char *argv[])
+ 	GlxPushProvider(&__glXDRISWRastProvider);
+     if (!noGlxExtension) GlxExtensionInit();
+ #endif
++#ifdef SolarisIAExtension
++    if (!noIAExtension) IAExtensionInit();
++#endif
+ }
+ 
+ #else /* XFree86LOADER */

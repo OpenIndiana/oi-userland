@@ -1,0 +1,13 @@
+diff -urp -x '*~' -x '*.orig' hw/xfree86/common/xf86Globals.c hw/xfree86/common/xf86Globals.c
+--- hw/xfree86/common/xf86Globals.c	2009-11-22 16:35:01.000000000 -0800
++++ hw/xfree86/common/xf86Globals.c	2009-12-02 18:57:45.196668578 -0800
+@@ -143,7 +143,8 @@ xf86InfoRec xf86Info = {
+ #endif
+ };
+ const char *xf86ConfigFile = NULL;
+-const char *xf86ModulePath = DEFAULT_MODULE_PATH;
++/* Sun: add old module path for compatibility with out-of-tree driver packages */
++const char *xf86ModulePath = DEFAULT_MODULE_PATH ",/usr/X11/lib/modules/";
+ MessageType xf86ModPathFrom = X_DEFAULT;
+ const char *xf86LogFile = DEFAULT_LOGPREFIX;
+ MessageType xf86LogFileFrom = X_DEFAULT;

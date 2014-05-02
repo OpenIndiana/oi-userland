@@ -1,0 +1,89 @@
+
+Based on Xorg upstream git commit b07602014061cb41540f6a7e74e4132e67aa1117 
+From: Alan Coopersmith <Alan.Coopersmith@sun.com>
+Date: Mon, 22 Aug 2005 21:47:59 +0000
+
+If MAKE_XKM_OUTPUT_DIR is defined, call trans_mkdir to create directory if
+it doesn't already exist. (ported from Solaris Xsun bug #5039004)
+
+[Xorg has since dropped upstream, but we still use.]
+
+Updated to include changes to ensure xkb directory & files are writable
+by gid 0, to fix bug:
+6916317 Changing xkb settings after login not working on snv130
+
+diff -urp -x '*~' -x '*.orig' xkb/Makefile.am xkb/Makefile.am
+--- xkb/Makefile.am	2009-10-21 14:52:56.000000000 -0700
++++ xkb/Makefile.am	2009-11-03 22:28:52.978880918 -0800
+@@ -1,6 +1,7 @@
+ noinst_LTLIBRARIES = libxkb.la libxkbstubs.la
+ 
+ AM_CFLAGS = $(DIX_CFLAGS) \
++	-DMAKE_XKM_OUTPUT_DIR \
+ 	-DHAVE_XKB_CONFIG_H
+ 
+ DDX_SRCS = \
+diff -urp -x '*~' -x '*.orig' xkb/ddxLoad.c xkb/ddxLoad.c
+--- xkb/ddxLoad.c	2010-01-07 14:44:57.000000000 -0800
++++ xkb/ddxLoad.c	2010-01-12 14:52:06.919527180 -0800
+@@ -152,6 +152,18 @@ Win32System(const char *cmdline)
+ #define System(x) Win32System(x)
+ #endif
+ 
++#ifdef MAKE_XKM_OUTPUT_DIR
++/* Borrow trans_mkdir from Xtransutil.c to more safely make directories */
++# undef X11_t
++# define TRANS_SERVER
++# define PRMSG(lvl,x,a,b,c) \
++	if (lvl <= 1) { LogMessage(X_ERROR,x,a,b,c); } else ((void)0)
++# include <X11/Xtrans/Xtransutil.c>
++# ifndef XKM_OUTPUT_DIR_MODE
++#  define XKM_OUTPUT_DIR_MODE 0775
++# endif
++#endif
++
+ static void
+ OutputDirectory(
+     char* outdir,
+@@ -159,7 +171,11 @@ OutputDirectory(
+ {
+ #ifndef WIN32
+     /* Can we write an xkm and then open it too? */
+-    if (access(XKM_OUTPUT_DIR, W_OK | X_OK) == 0 && (strlen(XKM_OUTPUT_DIR) < size))
++    if ( ( (access(XKM_OUTPUT_DIR, W_OK | X_OK) == 0)
++#ifdef MAKE_XKM_OUTPUT_DIR    
++	   || (trans_mkdir(XKM_OUTPUT_DIR, XKM_OUTPUT_DIR_MODE) == 0)
++#endif
++	     ) && (strlen(XKM_OUTPUT_DIR) < size))
+     {
+ 	(void) strcpy (outdir, XKM_OUTPUT_DIR);
+     } else
+@@ -201,6 +217,15 @@ XkbDDXCompileKeymapByNames(	XkbDescPtr		
+     const char *xkmfile = "-";
+ #endif
+ 
++    /* save gid and reset to gid 0 before making xkm_output_dir or
++       running xkbcomp to create the xkm file in it. */
++    gid_t	usr_gid = getgid();
++
++    if (setregid(0, usr_gid) < 0)
++        Error("Error in setting regid to 0");
++    if (setegid(0) < 0)
++        Error("Error in setting egid to 0");
++    
+     snprintf(keymap, sizeof(keymap), "server-%s", display);
+ 
+     OutputDirectory(xkm_output_dir, sizeof(xkm_output_dir));
+@@ -245,7 +270,12 @@ XkbDDXCompileKeymapByNames(	XkbDescPtr		
+ #else
+     out= fopen(tmpname, "w");
+ #endif
++
++    if (setregid(usr_gid, 0) < 0)
++        Error("Error in resetting regid");
++    if (setegid(usr_gid) < 0)
++        Error("Error in resetting egid");
+     
+     if (out!=NULL) {
+ #ifdef DEBUG
+
