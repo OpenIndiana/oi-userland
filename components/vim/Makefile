@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -114,11 +114,7 @@ CONFIGURE_OPTIONS +=	--enable-luainterp=dynamic
 # CONFIGURE_OPTIONS +=	--enable-perlinterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-pythoninterp=dynamic
 CONFIGURE_OPTIONS +=	--enable-rubyinterp=dynamic
-
-# Below option keeps using ruby 1.8, no matter which ruby version is the default.
-# When ruby 1.9 becomes available, we may change
-# the below to explicitly call $(RUBY.1.9).
-CONFIGURE_OPTIONS +=	--with-ruby-command=$(RUBY.1.8)
+CONFIGURE_OPTIONS +=	--with-ruby-command=$(RUBY.1.9)
 
 # We build two variants: with and without X support.
 $(NOX_VARIANT)/.configured:	CONFIGURE_OPTIONS += --without-x

@@ -1,0 +1,39 @@
+# Apply ruby 2.0 fix to ruby 1.9 as well.  Needed to allow
+# vim to build with ruby 1.9.
+# This patch has been applied upstream to vim 7.4.224.  See
+# https://groups.google.com/forum/#!msg/vim_dev/r8wzUVNYIfQ/m0DM8Wt97vkJ
+
+--- src/if_ruby.c	Sat Aug 10 06:00:24 2013
++++ src/if_ruby.c	Tue Apr 29 14:17:02 2014
+@@ -88,9 +88,9 @@
+ # define rb_int2big rb_int2big_stub
+ #endif
+ 
+-#if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 20 \
++#if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 19 \
+ 	&& SIZEOF_INT < SIZEOF_LONG
+-/* Ruby 2.0 defines a number of static functions which use rb_fix2int and
++/* Ruby 1.9 defines a number of static functions which use rb_fix2int and
+  * rb_num2int if SIZEOF_INT < SIZEOF_LONG (64bit) */
+ # define rb_fix2int rb_fix2int_stub
+ # define rb_num2int rb_num2int_stub
+@@ -197,8 +197,10 @@
+ # define rb_inspect			dll_rb_inspect
+ # define rb_int2inum			dll_rb_int2inum
+ # if SIZEOF_INT < SIZEOF_LONG /* 64 bits only */
++# if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER <= 18
+ #  define rb_fix2int			dll_rb_fix2int
+ #  define rb_num2int			dll_rb_num2int
++# endif
+ #  define rb_num2uint			dll_rb_num2uint
+ # endif
+ # define rb_lastline_get			dll_rb_lastline_get
+@@ -382,7 +384,7 @@
+ {
+     return dll_rb_int2big(x);
+ }
+-#  if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 20 \
++#  if defined(DYNAMIC_RUBY_VER) && DYNAMIC_RUBY_VER >= 19 \
+ 	&& SIZEOF_INT < SIZEOF_LONG
+ long rb_fix2int_stub(VALUE x)
+ {
