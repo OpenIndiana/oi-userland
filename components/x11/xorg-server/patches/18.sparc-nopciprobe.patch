@@ -1,0 +1,39 @@
+# Copyright (c) 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+#
+
+Omit Bus probing on sparc. It is terribly slow and we get the same info thru /dev/fb
+
+*** hw/xfree86/common/xf86Init.c.orig	Thu Dec 18 18:01:47 2008
+diff -urp -x '*~' -x '*.orig' hw/xfree86/common/xf86Init.c hw/xfree86/common/xf86Init.c
+--- hw/xfree86/common/xf86Init.c	2009-10-08 21:08:28.000000000 -0700
++++ hw/xfree86/common/xf86Init.c	2009-11-03 22:29:02.592675371 -0800
+@@ -604,7 +604,10 @@ InitOutput(ScreenInfo *pScreenInfo, int 
+     xf86OpenConsole();
+ 
+     /* Do a general bus probe.  This will be a PCI probe for x86 platforms */
++#if (!defined(__sparc__) && !defined(__sparc))
+     xf86BusProbe();
++#endif
++
+ 
+     if (xf86DoConfigure)
+ 	DoConfigure();

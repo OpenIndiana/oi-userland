@@ -1,0 +1,591 @@
+# Copyright (c) 2006, 2010, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+diff -urp -x '*~' -x '*.orig' Makefile.am Makefile.am
+--- Makefile.am	2010-01-07 18:14:14.864775261 -0800
++++ Makefile.am	2010-01-07 18:14:16.389557045 -0800
+@@ -17,6 +17,10 @@ if RECORD
+ RECORD_DIR=record
+ endif
+ 
++if BUILD_TSOL_MODULE
++TSOL_DIR=tsol
++endif
++
+ SUBDIRS = \
+ 	doc \
+ 	include \
+@@ -37,6 +41,7 @@ SUBDIRS = \
+ 	$(COMPOSITE_DIR) \
+ 	$(GLX_DIR) \
+ 	IA \
++	$(TSOL_DIR) \
+ 	exa \
+ 	config \
+ 	hw \
+diff -urp -x '*~' -x '*.orig' Xext/security.c Xext/security.c
+--- Xext/security.c	2010-01-07 14:44:56.000000000 -0800
++++ Xext/security.c	2010-01-07 18:14:16.390294231 -0800
+@@ -1152,3 +1152,27 @@ SecurityExtensionInit(INITARGS)
+     /* Label objects that were created before we could register ourself */
+     SecurityLabelInitial();
+ }
++
++/* API needed for Xtsol module to get/set client trustLevel */
++_X_EXPORT unsigned int
++getClientTrustLevel(ClientPtr client)
++{
++    SecurityStateRec *state;
++
++    state = dixLookupPrivate(&client->devPrivates, stateKey);
++
++    return state->trustLevel;
++}
++
++_X_EXPORT unsigned int
++setClientTrustLevel(ClientPtr client, unsigned int newLevel)
++{
++    SecurityStateRec *state;
++    unsigned int oldLevel;
++
++    state = dixLookupPrivate(&client->devPrivates, stateKey);
++    oldLevel = state->trustLevel;
++    state->trustLevel = newLevel;
++    
++    return oldLevel;
++}
+diff -urp -x '*~' -x '*.orig' Xext/securitysrv.h Xext/securitysrv.h
+--- Xext/securitysrv.h	2009-10-27 23:56:18.000000000 -0700
++++ Xext/securitysrv.h	2010-01-07 18:14:16.390609284 -0800
+@@ -80,4 +80,8 @@ typedef struct {
+ /* Give this value or higher to the -audit option to get security messages */
+ #define SECURITY_AUDIT_LEVEL 4
+ 
++/* API needed for Xtsol module to get/set client trustLevel */
++extern _X_EXPORT unsigned int getClientTrustLevel(ClientPtr client);
++extern _X_EXPORT unsigned int setClientTrustLevel(ClientPtr client, unsigned int newLevel);
++
+ #endif /* _SECURITY_SRV_H */
+diff -urp -x '*~' -x '*.orig' configure.ac configure.ac
+--- configure.ac	2010-01-07 18:14:14.865470331 -0800
++++ configure.ac	2010-01-07 18:14:16.392132857 -0800
+@@ -225,6 +225,14 @@ dnl Find the math libary
+ AC_CHECK_LIB(m, sqrt)
+ AC_CHECK_LIB(m, cbrt, AC_DEFINE(HAVE_CBRT, 1, [Have the 'cbrt' function]))
+ 
++dnl Check for libtsol for Solaris Trusted Extensions module
++AC_CHECK_LIB(tsol, bsllow, [BUILD_TSOL_MODULE=yes], [BUILD_TSOL_MODULE=no])
++AM_CONDITIONAL(BUILD_TSOL_MODULE, [test x$BUILD_TSOL_MODULE = xyes])
++if test "x$BUILD_TSOL_MODULE" = xyes; then
++	TSOL_LIB='$(top_builddir)/tsol/libxtsol.la'
++	TSOL_SYS_LIBS='-ltsol -ltsnet -lsecdb -lbsm'
++fi
++
+ AC_CHECK_HEADERS([ndbm.h dbm.h rpcsvc/dbm.h])
+ 
+ dnl AGPGART headers
+@@ -1387,6 +1395,8 @@ AM_CONDITIONAL(XVFB, [test "x$XVFB" = xy
+ if test "x$XVFB" = xyes; then
+ 	XVFB_LIBS="$FB_LIB $FIXES_LIB $XEXT_LIB $CONFIG_LIB $DBE_LIB $RECORD_LIB $GLX_LIBS $RANDR_LIB $RENDER_LIB $DAMAGE_LIB $MIEXT_DAMAGE_LIB $MIEXT_SHADOW_LIB $XI_LIB $XKB_LIB $XKB_STUB_LIB $COMPOSITE_LIB"
+ 	XVFB_SYS_LIBS="$XVFBMODULES_LIBS $GLX_SYS_LIBS"
++	XVFB_LIBS="$XVFB_LIBS $TSOL_LIB"
++	XVFB_SYS_LIBS="$XVFB_SYS_LIBS $TSOL_SYS_LIBS"
+ 	AC_SUBST([XVFB_LIBS])
+ 	AC_SUBST([XVFB_SYS_LIBS])
+ fi
+@@ -1408,6 +1418,8 @@ if test "x$XNEST" = xyes; then
+ 	fi
+ 	XNEST_LIBS="$FB_LIB $FIXES_LIB $MI_LIB $XEXT_LIB $DBE_LIB $RECORD_LIB $GLX_LIBS $RANDR_LIB $RENDER_LIB $DAMAGE_LIB $MIEXT_DAMAGE_LIB $MIEXT_SHADOW_LIB $XI_LIB $XKB_LIB $XKB_STUB_LIB $COMPOSITE_LIB $DIX_LIB $MAIN_LIB $OS_LIB $CONFIG_LIB"
+ 	XNEST_SYS_LIBS="$XNESTMODULES_LIBS $GLX_SYS_LIBS"
++	XNEST_LIBS="$XNEST_LIBS $TSOL_LIB"
++	XNEST_SYS_LIBS="$XNEST_SYS_LIBS $TSOL_SYS_LIBS"
+ 	AC_SUBST([XNEST_LIBS])
+ 	AC_SUBST([XNEST_SYS_LIBS])
+ fi
+@@ -1976,6 +1988,7 @@ if test "$KDRIVE" = yes; then
+     KDRIVE_CFLAGS="$XSERVER_CFLAGS -DHAVE_KDRIVE_CONFIG_H $TSLIB_CFLAGS"
+ 
+     KDRIVE_PURE_LIBS="$FB_LIB $MI_LIB $FIXES_LIB $XEXT_LIB $DBE_LIB $RECORD_LIB $GLX_LIBS $RANDR_LIB $RENDER_LIB $DAMAGE_LIB $MIEXT_DAMAGE_LIB $MIEXT_SHADOW_LIB $XI_LIB $XKB_LIB $XKB_STUB_LIB $COMPOSITE_LIB $OS_LIB"
++    KDRIVE_PURE_LIBS="$KDRIVE_PURE_LIBS $TSOL_LIB"
+     KDRIVE_LIB='$(top_builddir)/hw/kdrive/src/libkdrive.la'
+     case $host_os in
+ 	*linux*)
+@@ -2139,3 +2152,6 @@ xorg-server.pc
+ 
+ # Add Sun IA extension
+ AC_OUTPUT([IA/Makefile])
++
++# Add Sun Trusted Extensions extension
++AC_OUTPUT([tsol/Makefile])
+diff -urp -x '*~' -x '*.orig' dix/dispatch.c dix/dispatch.c
+--- dix/dispatch.c	2010-01-03 19:17:33.000000000 -0800
++++ dix/dispatch.c	2010-01-07 18:14:16.394483902 -0800
+@@ -74,8 +74,8 @@ Equipment Corporation.
+ 
+ ******************************************************************/
+ 
+-/* XSERVER_DTRACE additions:
+- * Copyright 2005-2006 Sun Microsystems, Inc.  All rights reserved.
++/* 
++ * Copyright (c) 2005, 2006, Oracle and/or its affiliates. All rights reserved.
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the "Software"),
+@@ -162,6 +162,10 @@ int connBlockScreenStart;
+ 
+ static void KillAllClients(void);
+ 
++#ifdef TSOL
++SecurityHookPtr pSecHook = NULL;
++#endif /* TSOL */
++
+ static int nextFreeClientID; /* always MIN free client ID */
+ 
+ static int	nClients;	/* number of authorized clients */
+@@ -931,7 +935,12 @@ ProcCirculateWindow(ClientPtr client)
+     return(client->noClientException);
+ }
+ 
+-static int
++#ifdef TSOL
++_X_EXPORT
++#else
++static
++#endif
++int
+ GetGeometry(ClientPtr client, xGetGeometryReply *rep)
+ {
+     DrawablePtr pDraw;
+@@ -2071,7 +2080,12 @@ ProcPutImage(ClientPtr client)
+      return (client->noClientException);
+ }
+ 
+-static int
++#ifdef TSOL
++_X_EXPORT
++#else
++static
++#endif
++int
+ DoGetImage(ClientPtr client, int format, Drawable drawable, 
+            int x, int y, int width, int height, 
+            Mask planemask, xGetImageReply **im_return)
+diff -urp -x '*~' -x '*.orig' dix/events.c dix/events.c
+--- dix/events.c	2010-01-07 14:44:56.000000000 -0800
++++ dix/events.c	2010-01-07 18:14:16.397086083 -0800
+@@ -75,7 +75,7 @@ Equipment Corporation.
+ ******************************************************************/
+ 
+ /*
+- * Copyright © 2003-2005 Sun Microsystems, Inc.  All rights reserved.
++ * Copyright (c) 2003-2005, 2007, Oracle and/or its affiliates. All rights reserved.
+  *
+  * Permission is hereby granted, free of charge, to any person obtaining a
+  * copy of this software and associated documentation files (the "Software"),
+@@ -360,7 +360,12 @@ IsMaster(DeviceIntPtr dev)
+     return (dev->type == MASTER_POINTER || dev->type == MASTER_KEYBOARD);
+ }
+ 
+-static WindowPtr XYToWindow(
++#ifdef TSOL
++_X_EXPORT
++#else
++static
++#endif
++WindowPtr XYToWindow(
+     DeviceIntPtr pDev,
+     int x,
+     int y
+@@ -2631,7 +2636,12 @@ PointInBorderSize(WindowPtr pWin, int x,
+  *
+  * @returns the window at the given coordinates.
+  */
+-static WindowPtr
++#ifdef TSOL
++_X_EXPORT
++#else
++static
++#endif
++WindowPtr
+ XYToWindow(DeviceIntPtr pDev, int x, int y)
+ {
+     WindowPtr  pWin;
+diff -urp -x '*~' -x '*.orig' dix/window.c dix/window.c
+--- dix/window.c	2009-10-27 23:56:19.000000000 -0700
++++ dix/window.c	2010-01-07 18:14:16.398779526 -0800
+@@ -97,6 +97,33 @@ Equipment Corporation.
+ 
+ ******************************************************************/
+ 
++/* Copyright (c) 2006, Oracle and/or its affiliates. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the
++ * "Software"), to deal in the Software without restriction, including
++ * without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, and/or sell copies of the Software, and to permit persons
++ * to whom the Software is furnished to do so, provided that the above
++ * copyright notice(s) and this permission notice appear in all copies of
++ * the Software and that both the above copyright notice(s) and this
++ * permission notice appear in supporting documentation.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
++ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
++ * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
++ * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
++ * INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
++ * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
++ * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
++ * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ *
++ * Except as contained in this notice, the name of a copyright holder
++ * shall not be used in advertising or otherwise to promote the sale, use
++ * or other dealings in this Software without prior written authorization
++ * of the copyright holder.
++ */ 
+ 
+ #ifdef HAVE_DIX_CONFIG_H
+ #include <dix-config.h>
+@@ -179,6 +206,11 @@ static Bool TileScreenSaver(int i, int k
+ 
+ #define SubStrSend(pWin,pParent) (StrSend(pWin) || SubSend(pParent))
+ 
++#ifdef TSOL
++#include "extnsionst.h"
++extern SecurityHookPtr pSecHook;
++#endif /* TSOL */
++
+ #ifdef DEBUG
+ /******
+  * PrintWindowTree
+@@ -1825,7 +1857,12 @@ IsSiblingAboveMe(
+     return(Below);
+ }
+ 
+-static BoxPtr
++#ifdef TSOL
++_X_EXPORT
++#else
++static
++#endif
++BoxPtr
+ WindowExtents(
+     WindowPtr pWin,
+     BoxPtr pBox)
+@@ -1861,7 +1898,12 @@ MakeBoundingRegion (
+     return pRgn;
+ }
+ 
+-static Bool
++#ifdef TSOL
++_X_EXPORT
++#else
++static
++#endif
++Bool
+ ShapeOverlap (
+     WindowPtr	pWin,
+     BoxPtr	pWinBox,
+@@ -2065,7 +2107,12 @@ WhereDoIGoInTheStack(
+     }
+ }
+ 
+-static void
++#ifdef TSOL
++_X_EXPORT
++#else
++static
++#endif
++void
+ ReflectStackChange(
+     WindowPtr pWin,
+     WindowPtr pSib,
+diff -urp -x '*~' -x '*.orig' hw/dmx/Makefile.am hw/dmx/Makefile.am
+--- hw/dmx/Makefile.am	2009-10-27 23:56:20.000000000 -0700
++++ hw/dmx/Makefile.am	2010-01-07 18:14:16.399094652 -0800
+@@ -84,6 +84,7 @@ XDMX_LIBS = \
+ 	@XDMX_LIBS@ \
+ 	$(GLX_LIBS) \
+         input/libdmxinput.a \
++	$(top_builddir)/tsol/libxtsol.la \
+         config/libdmxconfig.a
+ 
+ Xdmx_LDFLAGS = $(LD_EXPORT_SYMBOLS_FLAG)
+diff -urp -x '*~' -x '*.orig' hw/xfree86/common/xf86Config.c hw/xfree86/common/xf86Config.c
+--- hw/xfree86/common/xf86Config.c	2010-01-07 18:14:14.866096681 -0800
++++ hw/xfree86/common/xf86Config.c	2010-01-07 18:14:16.400356732 -0800
+@@ -117,6 +117,7 @@ static ModuleDefault ModuleDefaults[] = 
+     {.name = "dri2",     .toLoad = TRUE,    .load_opt=NULL},
+ #endif
+     {.name = "ia",       .toLoad = TRUE,    .load_opt=NULL},
++    {.name = "xtsol",    .toLoad = TRUE,    .load_opt=NULL},
+     {.name = NULL,       .toLoad = FALSE,   .load_opt=NULL}
+ };
+ 
+diff -urp -x '*~' -x '*.orig' hw/xfree86/dixmods/Makefile.am hw/xfree86/dixmods/Makefile.am
+--- hw/xfree86/dixmods/Makefile.am	2010-01-07 18:14:14.866255080 -0800
++++ hw/xfree86/dixmods/Makefile.am	2010-01-07 18:14:16.400667347 -0800
+@@ -73,3 +73,11 @@ extsmodule_LTLIBRARIES += libia.la
+ libia_la_LDFLAGS = -avoid-version
+ libia_la_LIBADD = $(top_builddir)/IA/libIA.la
+ libia_la_SOURCES = iamodule.c
++
++if BUILD_TSOL_MODULE
++# Sun Trusted Extensions extension module additions
++extsmodule_LTLIBRARIES += libxtsol.la
++libxtsol_la_LDFLAGS = -avoid-version
++libxtsol_la_LIBADD = $(top_builddir)/tsol/libxtsol.la
++libxtsol_la_SOURCES = tsolmodule.c
++endif
+diff -urp -x '*~' -x '*.orig' include/dix.h include/dix.h
+--- include/dix.h	2010-01-07 14:44:57.000000000 -0800
++++ include/dix.h	2010-01-07 18:14:16.401101717 -0800
+@@ -171,6 +171,15 @@ extern _X_EXPORT void MarkClientExceptio
+     ClientPtr /*client*/);
+ 
+ extern _X_HIDDEN Bool CreateConnectionBlock(void);
++ 
++#ifdef TSOL
++extern _X_EXPORT int DoGetImage(ClientPtr client, int format, Drawable drawable, 
++		      int x, int y, int width, int height, 
++		      Mask planemask, xGetImageReply **im_return);
++
++extern _X_EXPORT int GetGeometry(ClientPtr client, xGetGeometryReply *rep);
++#endif
++
+ /* dixutils.c */
+ 
+ extern _X_EXPORT void CopyISOLatin1Lowered(
+diff -urp -x '*~' -x '*.orig' include/dixevents.h include/dixevents.h
+--- include/dixevents.h	2009-08-10 21:00:25.000000000 -0700
++++ include/dixevents.h	2010-01-07 18:14:16.401388928 -0800
+@@ -88,4 +88,8 @@ extern _X_EXPORT void PostSyntheticMotio
+                                 unsigned long time);
+ #endif
+ 
++#ifdef TSOL
++extern _X_EXPORT WindowPtr XYToWindow(DeviceIntPtr pDev, int x, int y);
++#endif
++
+ #endif /* DIXEVENTS_H */
+diff -urp -x '*~' -x '*.orig' include/extnsionst.h include/extnsionst.h
+--- include/extnsionst.h	2009-08-10 21:00:25.000000000 -0700
++++ include/extnsionst.h	2010-01-07 18:14:16.401772630 -0800
+@@ -45,6 +45,34 @@ SOFTWARE.
+ 
+ ******************************************************************/
+ 
++/* Copyright (c) 2006, 2007, Oracle and/or its affiliates. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the
++ * "Software"), to deal in the Software without restriction, including
++ * without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, and/or sell copies of the Software, and to permit persons
++ * to whom the Software is furnished to do so, provided that the above
++ * copyright notice(s) and this permission notice appear in all copies of
++ * the Software and that both the above copyright notice(s) and this
++ * permission notice appear in supporting documentation.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
++ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
++ * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
++ * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
++ * INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
++ * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
++ * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
++ * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ *
++ * Except as contained in this notice, the name of a copyright holder
++ * shall not be used in advertising or otherwise to promote the sale, use
++ * or other dealings in this Software without prior written authorization
++ * of the copyright holder.
++ */ 
++
+ #ifndef EXTENSIONSTRUCT_H
+ #define EXTENSIONSTRUCT_H 
+ 
+@@ -55,6 +83,10 @@ SOFTWARE.
+ #include "gc.h"
+ #include "privates.h"
+ 
++#ifdef TSOL
++#include "inputstr.h"
++#endif /* TSOL */
++
+ typedef struct _ExtensionEntry {
+     int index;
+     void (* CloseDown)(	/* called at server shutdown */
+@@ -108,5 +140,21 @@ extern _X_EXPORT Bool AddExtensionAlias(
+ extern _X_EXPORT ExtensionEntry *CheckExtension(const char *extname);
+ extern _X_EXPORT ExtensionEntry *GetExtensionEntry(int major);
+ 
++#ifdef TSOL
++typedef struct
++{
++    XID (*CheckAuthorization)(unsigned int, char *, unsigned int,
++        char *, ClientPtr , char **);
++    int (*ChangeWindowProperty)(ClientPtr, WindowPtr, Atom, Atom, int, int,
++        unsigned long, pointer, Bool);
++    int (*DeleteProperty)(ClientPtr, WindowPtr, Atom);
++    void (*DeleteClientFromAnySelections)(ClientPtr);
++    void (*DeleteWindowFromAnySelections)(WindowPtr);
++} SecurityHook, *SecurityHookPtr;
++
++extern _X_EXPORT SecurityHookPtr pSecHook;
++
++#endif /* TSOL */
++
+ #endif /* EXTENSIONSTRUCT_H */
+ 
+diff -urp -x '*~' -x '*.orig' include/window.h include/window.h
+--- include/window.h	2009-10-27 23:56:24.000000000 -0700
++++ include/window.h	2010-01-07 18:14:16.402098271 -0800
+@@ -266,4 +266,9 @@ extern _X_EXPORT void DisableMapUnmapEve
+ extern _X_EXPORT void EnableMapUnmapEvents(
+     WindowPtr /* pWin */ );
+ 
++#ifdef TSOL
++# include "validate.h" /* needed for VTKind enum definition */
++extern _X_EXPORT void ReflectStackChange(WindowPtr pWin, WindowPtr pSib, VTKind  kind);
++#endif
++
+ #endif /* WINDOW_H */
+diff -urp -x '*~' -x '*.orig' mi/miinitext.c mi/miinitext.c
+--- mi/miinitext.c	2010-01-07 18:14:14.866528563 -0800
++++ mi/miinitext.c	2010-01-07 18:14:16.402610999 -0800
+@@ -163,6 +163,9 @@ extern Bool noGEExtension;
+ #ifdef SolarisIAExtension
+ Bool noIAExtension;
+ #endif
++#ifdef TSOL
++Bool noXTSolExtension;
++#endif
+ 
+ #ifndef XFree86LOADER
+ #define INITARGS void
+@@ -197,6 +200,9 @@ typedef void (*InitExtension)(INITARGS);
+ #ifdef SolarisIAExtension
+ #include <X11/extensions/interactive.h>
+ #endif
++#ifdef TSOL
++#include "../tsol/tsol.h"
++#endif
+ 
+ /* FIXME: this whole block of externs should be from the appropriate headers */
+ #ifdef MITSHM
+@@ -333,6 +339,9 @@ static ExtensionToggle ExtensionToggleLi
+ #ifdef SolarisIAExtension
+     { IANAME /* "SolarisIA" */, &noIAExtension },
+ #endif    
++#ifdef TSOL
++    { TSOLNAME /* "SUN_TSOL" */, &noXTSolExtension },
++#endif    
+ #ifdef RES
+     { "X-Resource", &noResExtension },
+ #endif
+@@ -509,6 +518,11 @@ InitExtensions(int argc, char *argv[])
+ #ifdef SolarisIAExtension
+     if (!noIAExtension) IAExtensionInit();
+ #endif
++#ifdef TSOL
++    if (!noXTSolExtension) {
++	TsolExtensionInit();
++    }
++#endif
+ }
+ 
+ #else /* XFree86LOADER */
+diff -urp -x '*~' -x '*.orig' os/connection.c os/connection.c
+--- os/connection.c	2009-10-27 23:56:24.000000000 -0700
++++ os/connection.c	2010-01-07 18:14:16.403367950 -0800
+@@ -44,6 +44,33 @@ ARISING OUT OF OR IN CONNECTION WITH THE
+ SOFTWARE.
+ 
+ ******************************************************************/
++/* Copyright (c) 2006, Oracle and/or its affiliates. All rights reserved.
++ *
++ * Permission is hereby granted, free of charge, to any person obtaining a
++ * copy of this software and associated documentation files (the
++ * "Software"), to deal in the Software without restriction, including
++ * without limitation the rights to use, copy, modify, merge, publish,
++ * distribute, and/or sell copies of the Software, and to permit persons
++ * to whom the Software is furnished to do so, provided that the above
++ * copyright notice(s) and this permission notice appear in all copies of
++ * the Software and that both the above copyright notice(s) and this
++ * permission notice appear in supporting documentation.
++ *
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
++ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
++ * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
++ * OF THIRD PARTY RIGHTS. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
++ * HOLDERS INCLUDED IN THIS NOTICE BE LIABLE FOR ANY CLAIM, OR ANY SPECIAL
++ * INDIRECT OR CONSEQUENTIAL DAMAGES, OR ANY DAMAGES WHATSOEVER RESULTING
++ * FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT,
++ * NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION
++ * WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
++ *
++ * Except as contained in this notice, the name of a copyright holder
++ * shall not be used in advertising or otherwise to promote the sale, use
++ * or other dealings in this Software without prior written authorization
++ * of the copyright holder.
++ */
+ /*****************************************************************
+  *  Stuff to create connections --- OS dependent
+  *
+@@ -256,6 +283,11 @@ static int		ListenTransCount;
+ 
+ static void ErrorConnMax(XtransConnInfo /* trans_conn */);
+ 
++#ifdef TSOL
++#include "extnsionst.h"
++extern SecurityHookPtr pSecHook;
++#endif /* TSOL */
++
+ static XtransConnInfo
+ lookup_trans_conn (int fd)
+ {
+@@ -651,6 +683,12 @@ ClientAuthorized(ClientPtr client, 
+     priv = (OsCommPtr)client->osPrivate;
+     trans_conn = priv->trans_conn;
+ 
++#ifdef TSOL
++    if (pSecHook)
++	auth_id = (*pSecHook->CheckAuthorization) (proto_n, auth_proto,
++				   string_n, auth_string, client, &reason);
++    else
++#endif /* TSOL */
+     /* Allow any client to connect without authorization on a launchd socket,
+        because it is securely created -- this prevents a race condition on launch */
+     if(trans_conn->flags & TRANS_NOXAUTH) {
+
+--- include/input.h	Thu Jan  7 14:44:57 2010
++++ include/input.h.new	Fri Jan 29 14:27:49 2010
+@@ -383,7 +383,7 @@
+     int /*led*/,
+     Bool /*on*/);
+ 
+-extern void MaybeStopHint(
++extern _X_EXPORT void MaybeStopHint(
+     DeviceIntPtr /*device*/,
+     ClientPtr /*client*/);
+ 

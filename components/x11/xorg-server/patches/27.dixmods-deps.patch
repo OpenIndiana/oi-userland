@@ -1,0 +1,46 @@
+diff -urp -x '*~' -x '*.orig' hw/xfree86/dixmods/Makefile.am hw/xfree86/dixmods/Makefile.am
+--- hw/xfree86/dixmods/Makefile.am	2009-05-08 17:45:57.848078000 -0700
++++ hw/xfree86/dixmods/Makefile.am	2009-05-08 17:46:07.162324000 -0700
+@@ -36,6 +36,7 @@ libdbe_la_SOURCES = dbemodule.c
+ 
+ libfb_la_LDFLAGS = -avoid-version
+ libfb_la_LIBADD = $(top_builddir)/fb/libfb.la
++libfb_la_LIBADD += -lpixman-1
+ libfb_la_SOURCES = $(top_builddir)/fb/fbcmap_mi.c fbmodule.c
+ libfb_la_CFLAGS = $(AM_CFLAGS)
+ 
+@@ -47,6 +48,8 @@ libwfb_la_CFLAGS = $(AM_CFLAGS) -DFB_ACC
+ libglx_la_LDFLAGS = -avoid-version -mimpure-text
+ if AIGLX
+ GLXDRI_LIBRARY = $(top_builddir)/glx/libglxdri.la
++libglx_la_LDFLAGS += -R$(extsmoduledir:amd64/extensions=extensions/amd64)
++libglx_la_LDFLAGS += -Wl,-N,libdri.so -Wl,-N,libdri2.so
+ endif
+ libglx_la_LIBADD = \
+ 	$(top_builddir)/glx/libglx.la \
+diff -urp -x '*~' -x '*.orig' hw/xfree86/int10/Makefile.am hw/xfree86/int10/Makefile.am
+--- hw/xfree86/int10/Makefile.am	2007-10-17 07:01:23.000000000 -0700
++++ hw/xfree86/int10/Makefile.am	2009-05-08 17:46:07.162854000 -0700
+@@ -42,3 +42,5 @@ libint10_la_SOURCES = stub.c xf86int10mo
+ endif
+ 
+ EXTRA_DIST = xf86x86emu.h INT10.HOWTO
++
++libint10_la_LIBADD = $(PCIACCESS_LIBS)
+--- hw/xfree86/shadowfb/Makefile.am~	Tue Apr 15 23:14:18 2008
++++ hw/xfree86/shadowfb/Makefile.am	Wed Apr  7 07:33:34 2010
+@@ -7,3 +7,5 @@
+ INCLUDES = $(XORG_INCS)
+ 
+ AM_CFLAGS = $(DIX_CFLAGS) $(XORG_CFLAGS)
++
++libshadowfb_la_LIBADD = -lXfont
+
+--- hw/xfree86/vbe/Makefile.am~	Tue Apr 15 23:14:18 2008
++++ hw/xfree86/vbe/Makefile.am	Tue Apr 20 16:01:20 2010
+@@ -8,3 +8,5 @@
+ 
+ INCLUDES = $(XORG_INCS) -I$(srcdir)/../ddc -I$(srcdir)/../i2c \
+            -I$(srcdir)/../int10
++
++libvbe_la_LIBADD = ../int10/libint10.la

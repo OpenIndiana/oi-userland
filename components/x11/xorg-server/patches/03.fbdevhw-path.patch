@@ -1,0 +1,32 @@
+From 0a4cc50c3e86104316e19e166737e2ad83fc38bb Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Wed, 2 Jun 2010 14:24:24 -0700
+Subject: [PATCH] Install fbdevhw module in normal module directory instead of linux/
+
+Since we no longer support OS-independent custom elfloader modules,
+we don't need to put the OS-dependent modules into os-specific subdirs
+any more.
+
+We do however still need to install the stubs version of this module
+on non-Linux platforms, since a number of drivers link to functions
+in it, even when built on non-Linux platforms.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ hw/xfree86/fbdevhw/Makefile.am |    3 +--
+ 1 files changed, 1 insertions(+), 2 deletions(-)
+
+diff --git a/hw/xfree86/fbdevhw/Makefile.am b/hw/xfree86/fbdevhw/Makefile.am
+index 0663525..76a69c1 100644
+--- hw/xfree86/fbdevhw/Makefile.am
++++ hw/xfree86/fbdevhw/Makefile.am
+@@ -1,5 +1,4 @@
+-linuxmoduledir = $(moduledir)/linux
+-linuxmodule_LTLIBRARIES = libfbdevhw.la
++module_LTLIBRARIES = libfbdevhw.la
+ 
+ libfbdevhw_la_LDFLAGS = -avoid-version
+ 
+-- 
+1.5.6.5
+

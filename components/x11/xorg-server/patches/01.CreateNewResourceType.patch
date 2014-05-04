@@ -1,0 +1,291 @@
+From eb750f8b5e14751d4c40b50499baec5d2ba79db9 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@sun.com>
+Date: Fri, 11 Dec 2009 00:46:22 -0800
+Subject: [PATCH] Check for failures from CreateNewResourceType
+
+Make sure to check return value before setting bitmask flags.
+For most calls, just fails to init the extension.   Since Xinput
+already calls FatalError() on initialization failure, so does
+failure to allocate Xinput's resource type.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@sun.com>
+Reviewed-by: Keith Packard <keithp@keithp.com>
+---
+ Xext/mbuf.c                   |    4 +++-
+ Xext/panoramiX.c              |   16 ++++++++++------
+ Xext/sync.c                   |    8 ++++++--
+ Xext/xvdisp.c                 |    4 ++--
+ Xi/extinit.c                  |    2 ++
+ dbe/dbe.c                     |    9 ++++++++-
+ glx/glxext.c                  |    3 +++
+ hw/dmx/glxProxy/glxext.c      |    4 ++++
+ hw/kdrive/ephyr/ephyrdriext.c |    4 ++++
+ hw/xfree86/dri/dri.c          |    3 +++
+ hw/xfree86/dri2/dri2ext.c     |    6 +++++-
+ hw/xquartz/xpr/dri.c          |    2 +-
+ xfixes/cursor.c               |    2 +-
+ xfixes/region.c               |    3 ++-
+ xkb/xkb.c                     |    5 ++++-
+ 15 files changed, 58 insertions(+), 17 deletions(-)
+
+diff --git a/Xext/mbuf.c b/Xext/mbuf.c
+index 1f24974..af31221 100644
+--- Xext/mbuf.c
++++ Xext/mbuf.c
+@@ -467,7 +467,9 @@ MultibufferExtensionInit()
+      * create the resource types
+      */
+     MultibufferDrawableResType =
+-	CreateNewResourceType(MultibufferDrawableDelete)|RC_DRAWABLE;
++	CreateNewResourceType(MultibufferDrawableDelete);
++    if (MultiBufferDrawableResType)
++	MultibufferDrawableResType |= RC_DRAWABLE;
+     MultibufferResType = CreateNewResourceType(MultibufferDelete);
+     MultibuffersResType = CreateNewResourceType(MultibuffersDelete);
+     OtherClientResType = CreateNewResourceType(OtherClientDelete);
+diff --git a/Xext/panoramiX.c b/Xext/panoramiX.c
+index 4b7b07e..f48bd36 100644
+--- Xext/panoramiX.c
++++ Xext/panoramiX.c
+@@ -503,15 +503,19 @@ void PanoramiXExtensionInit(int argc, char *argv[])
+ 	}
+ 
+ 	XRC_DRAWABLE = CreateNewResourceClass();
+-	XRT_WINDOW = CreateNewResourceType(XineramaDeleteResource) | 
+-						XRC_DRAWABLE;
+-	XRT_PIXMAP = CreateNewResourceType(XineramaDeleteResource) | 
+-						XRC_DRAWABLE;
++	XRT_WINDOW = CreateNewResourceType(XineramaDeleteResource);
++	if (XRT_WINDOW)
++	    XRT_WINDOW |= XRC_DRAWABLE;
++	XRT_PIXMAP = CreateNewResourceType(XineramaDeleteResource);
++	if (XRT_PIXMAP)
++	    XRT_PIXMAP |= XRC_DRAWABLE;
+ 	XRT_GC = CreateNewResourceType(XineramaDeleteResource);
+ 	XRT_COLORMAP = CreateNewResourceType(XineramaDeleteResource);
+ 
+-	panoramiXGeneration = serverGeneration;
+-	success = TRUE;
++	if (XRT_WINDOW && XRT_PIXMAP && XRT_GC && XRT_COLORMAP) {
++	    panoramiXGeneration = serverGeneration;
++	    success = TRUE;
++	}
+     }
+ 
+     if (!success) {
+diff --git a/Xext/sync.c b/Xext/sync.c
+index 667f8ab..d8a2b15 100644
+--- Xext/sync.c
++++ Xext/sync.c
+@@ -2113,8 +2113,12 @@ SyncExtensionInit(void)
+ 	RTCounter = CreateNewResourceType(FreeCounter);
+     }
+     RTAlarm = CreateNewResourceType(FreeAlarm);
+-    RTAwait = CreateNewResourceType(FreeAwait)|RC_NEVERRETAIN;
+-    RTAlarmClient = CreateNewResourceType(FreeAlarmClient)|RC_NEVERRETAIN;
++    RTAwait = CreateNewResourceType(FreeAwait);
++    if (RTAwait)
++	RTAwait |= RC_NEVERRETAIN;
++    RTAlarmClient = CreateNewResourceType(FreeAlarmClient);
++    if (RTAlarmClient)
++	RTAlarmClient |= RC_NEVERRETAIN;
+ 
+     if (RTCounter == 0 || RTAwait == 0 || RTAlarm == 0 ||
+ 	RTAlarmClient == 0 ||
+diff --git a/Xext/xvdisp.c b/Xext/xvdisp.c
+index 5229916..1f3fc0f 100644
+--- Xext/xvdisp.c
++++ Xext/xvdisp.c
+@@ -1865,8 +1865,8 @@ void XineramifyXv(void)
+ 
+    XvXRTPort = CreateNewResourceType(XineramaDeleteResource);
+ 
+-   if(!xvsp0) return;
+-   
++   if (!xvsp0 || !XvXRTPort) return;
++
+    for(i = 0; i < xvsp0->nAdaptors; i++) {
+       refAdapt = xvsp0->pAdaptors + i;
+ 
+diff --git a/Xi/extinit.c b/Xi/extinit.c
+index 0c12919..372f77f 100644
+--- Xi/extinit.c
++++ Xi/extinit.c
+@@ -1270,6 +1270,8 @@ XInputExtensionInit(void)
+ 	XIVersion = thisversion;
+ 	MakeDeviceTypeAtoms();
+ 	RT_INPUTCLIENT = CreateNewResourceType((DeleteType) InputClientGone);
++	if (!RT_INPUTCLIENT)
++	    FatalError("Failed to add resource type for XI.\n");
+ 	RegisterResourceName(RT_INPUTCLIENT, "INPUTCLIENT");
+ 	FixExtensionEvents(extEntry);
+ 	ReplySwapVector[IReqCode] = (ReplySwapPtr) SReplyIDispatch;
+diff --git a/dbe/dbe.c b/dbe/dbe.c
+index a4f853d..8d2a343 100644
+--- dbe/dbe.c
++++ dbe/dbe.c
+@@ -1573,9 +1573,16 @@ DbeExtensionInit(void)
+ 
+     /* Create the resource types. */
+     dbeDrawableResType =
+-        CreateNewResourceType(DbeDrawableDelete) | RC_DRAWABLE;
++        CreateNewResourceType(DbeDrawableDelete);
++    if (!dbeDrawableResType)
++	return;
++    dbeDrawableResType |= RC_DRAWABLE;
++
+     dbeWindowPrivResType =
+         CreateNewResourceType(DbeWindowPrivDelete);
++    if (!dbeWindowPrivResType)
++	return;
++
+     if (!dixRegisterPrivateOffset(dbeDrawableResType,
+ 				  offsetof(PixmapRec, devPrivates)))
+ 	return;
+diff --git a/glx/glxext.c b/glx/glxext.c
+index 9f9c0ed..546d968 100644
+--- glx/glxext.c
++++ glx/glxext.c
+@@ -347,6 +347,9 @@ void GlxExtensionInit(void)
+     __glXDrawableRes = CreateNewResourceType((DeleteType)DrawableGone);
+     __glXSwapBarrierRes = CreateNewResourceType((DeleteType)SwapBarrierGone);
+ 
++    if (!__glXContextRes || !__glXDrawableRes || !__glXSwapBarrierRes)
++	return;
++
+     RegisterResourceName(__glXContextRes, "GLXContext");
+     RegisterResourceName(__glXDrawableRes, "GLXDrawable");
+     RegisterResourceName(__glXSwapBarrierRes, "GLXSwapBarrier");
+diff --git a/hw/dmx/glxProxy/glxext.c b/hw/dmx/glxProxy/glxext.c
+index b30d144..0c39068 100644
+--- hw/dmx/glxProxy/glxext.c
++++ hw/dmx/glxProxy/glxext.c
+@@ -299,6 +299,10 @@ void GlxExtensionInit(void)
+     __glXWindowRes = CreateNewResourceType((DeleteType)WindowGone);
+     __glXPbufferRes = CreateNewResourceType((DeleteType)PbufferGone);
+ 
++    if (!__glXContextRes || !__glXClientRes || !__glXPixmapRes ||
++	!__glXWindowRes || !__glXPbufferRes)
++	return;
++
+     /*
+     ** Add extension to server extensions.
+     */
+diff --git a/hw/kdrive/ephyr/ephyrdriext.c b/hw/kdrive/ephyr/ephyrdriext.c
+index 231b098..ba1733b 100644
+--- hw/kdrive/ephyr/ephyrdriext.c
++++ hw/kdrive/ephyr/ephyrdriext.c
+@@ -141,6 +141,10 @@ ephyrDRIExtensionInit (ScreenPtr a_screen)
+ 
+ #ifdef XF86DRI_EVENTS
+     EventType = CreateNewResourceType (XF86DRIFreeEvents);
++    if (!EventType) {
++        EPHYR_LOG_ERROR ("failed to register DRI event resource type\n") ;
++        goto out ;
++    }
+ #endif
+ 
+     if ((extEntry = AddExtension(XF86DRINAME,
+diff --git a/hw/xfree86/dri/dri.c b/hw/xfree86/dri/dri.c
+index 0de9be6..1a6cb4d 100644
+--- hw/xfree86/dri/dri.c
++++ hw/xfree86/dri/dri.c
+@@ -792,6 +792,9 @@ DRIExtensionInit(void)
+     DRIDrawablePrivResType = CreateNewResourceType(DRIDrawablePrivDelete);
+     DRIContextPrivResType = CreateNewResourceType(DRIContextPrivDelete);
+ 
++    if (!DRIDrawablePrivResType || !DRIContextPrivResType)
++	return FALSE;
++
+     RegisterBlockAndWakeupHandlers(DRIBlockHandler, DRIWakeupHandler, NULL);
+ 
+     return TRUE;
+diff --git a/hw/xfree86/dri2/dri2ext.c b/hw/xfree86/dri2/dri2ext.c
+index dc07b47..8acf267 100644
+--- hw/xfree86/dri2/dri2ext.c
++++ hw/xfree86/dri2/dri2ext.c
+@@ -416,6 +416,11 @@ static int DRI2DrawableGone(pointer p, XID id)
+ static void
+ DRI2ExtensionInit(void)
+ {
++    dri2DrawableRes = CreateNewResourceType(DRI2DrawableGone);
++
++    if (!dri2DrawableRes)
++	return;
++
+     dri2Extension = AddExtension(DRI2_NAME,
+ 				 DRI2NumberEvents,
+ 				 DRI2NumberErrors,
+@@ -424,7 +429,6 @@ DRI2ExtensionInit(void)
+ 				 NULL,
+ 				 StandardMinorOpcode);
+ 
+-    dri2DrawableRes = CreateNewResourceType(DRI2DrawableGone);
+ }
+ 
+ extern Bool noDRI2Extension;
+diff --git a/hw/xquartz/xpr/dri.c b/hw/xquartz/xpr/dri.c
+index f570bee..a9c0f22 100644
+--- hw/xquartz/xpr/dri.c
++++ hw/xquartz/xpr/dri.c
+@@ -279,7 +279,7 @@ DRIExtensionInit(void)
+ {
+     DRIDrawablePrivResType = CreateNewResourceType(DRIDrawablePrivDelete);
+ 
+-    return TRUE;
++    return (DRIDrawablePrivResType != 0);
+ }
+ 
+ void
+diff --git a/xfixes/cursor.c b/xfixes/cursor.c
+index 60d4222..c3e1e35 100644
+--- xfixes/cursor.c
++++ xfixes/cursor.c
+@@ -1095,6 +1095,6 @@ XFixesCursorInit (void)
+ 	}
+     }
+ 
+-    return CursorClientType && CursorWindowType;
++    return CursorClientType && CursorHideCountType && CursorWindowType;
+ }
+ 
+diff --git a/xfixes/region.c b/xfixes/region.c
+index 966eda0..59d8cee 100644
+--- xfixes/region.c
++++ xfixes/region.c
+@@ -64,7 +64,8 @@ Bool
+ XFixesRegionInit (void)
+ {
+     RegionResType = CreateNewResourceType(RegionResFree);
+-    return TRUE;
++
++    return (RegionResType != 0);
+ }
+ 
+ int
+diff --git a/xkb/xkb.c b/xkb/xkb.c
+index 35f8d1c..c490f8b 100644
+--- xkb/xkb.c
++++ xkb/xkb.c
+@@ -6704,6 +6704,10 @@ XkbExtensionInit(void)
+ {
+     ExtensionEntry *extEntry;
+ 
++    RT_XKBCLIENT = CreateNewResourceType(XkbClientGone);
++    if (!RT_XKBCLIENT)
++	return;
++
+     if ((extEntry = AddExtension(XkbName, XkbNumberEvents, XkbNumberErrors,
+ 				 ProcXkbDispatch, SProcXkbDispatch,
+ 				 NULL, StandardMinorOpcode))) {
+@@ -6711,7 +6715,6 @@ XkbExtensionInit(void)
+ 	XkbEventBase = (unsigned char)extEntry->eventBase;
+ 	XkbErrorBase = (unsigned char)extEntry->errorBase;
+ 	XkbKeyboardErrorCode = XkbErrorBase+XkbKeyboard;
+-	RT_XKBCLIENT = CreateNewResourceType(XkbClientGone);
+     }
+     return;
+ }
+-- 
+1.5.6.5
+

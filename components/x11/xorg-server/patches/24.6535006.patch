@@ -1,0 +1,64 @@
+diff -urp -x '*~' -x '*.orig' hw/xfree86/common/xf86Mode.c hw/xfree86/common/xf86Mode.c
+--- hw/xfree86/common/xf86Mode.c	2009-12-02 18:58:15.014804225 -0800
++++ hw/xfree86/common/xf86Mode.c	2009-12-02 18:58:16.870675175 -0800
+@@ -1397,7 +1397,45 @@ xf86ValidateModes(ScrnInfoPtr scrp, Disp
+ 	virtX = virtualX;
+ 	virtY = virtualY;
+ 	scrp->virtualFrom = X_CONFIG;
+-    } else if (!modeNames || !*modeNames) {
++    } 
++
++    if  ((modeNames == NULL) || (*modeNames == NULL)) {
++	if (UseDefaultRate) {
++	    modeNames = xnfcalloc(2, sizeof(char *));
++	    modeNames[0] = strdup("1024x768");
++	    modeNames[1] = NULL;
++	} else {
++	    char *mode_pref = NULL;
++	    const int types[] = {
++            	M_T_BUILTIN | M_T_PREFERRED,
++            	M_T_USERDEF | M_T_PREFERRED,
++            	M_T_DRIVER | M_T_PREFERRED
++		};
++	    const int ntypes = sizeof(types) / sizeof(int);
++	    int n, type;
++	    DisplayModePtr modes = scrp->modePool ? scrp->modePool : availModes;
++
++	    for (n = 0; n < ntypes; n++) {
++	        type = types[n];
++		
++	    	for (p = modes;  p != NULL;  p = p->next) {
++	    	    if ((p->type & type) == type) {
++		    	mode_pref = strdup(p->name);
++		    	break;
++	    	    }
++	    	}
++	    	if (mode_pref)
++		    break;
++	    }
++	    if (mode_pref) {
++	    	modeNames = xnfcalloc(2, sizeof(char *));
++	    	modeNames[0] = strdup(mode_pref);
++	    	modeNames[1] = NULL;
++	    }
++	}
++    }
++
++    if ((virtualY <= 0) && (!modeNames || !*modeNames)) {
+ 	/* No virtual size given in the config, try to infer */
+ 	/* XXX this doesn't take m{in,ax}Pitch into account; oh well */
+ 	inferred_virtual = inferVirtualSize(scrp, availModes, &virtX, &virtY);
+@@ -1462,12 +1500,7 @@ xf86ValidateModes(ScrnInfoPtr scrp, Disp
+ 	xf86DeleteMode(&scrp->modes, scrp->modes);
+     endp = &scrp->modes;
+     last = NULL;
+-    if (UseDefaultRate && ((modeNames == NULL) || (*modeNames == NULL))) {
+-	modeNames = xnfcalloc(2, sizeof(char *));
+-	modeNames[0] = strdup("1024x768");
+-	modeNames[1] = NULL;
+-    }
+-    if (modeNames != NULL) {
++    if ((modeNames != NULL) && (*modeNames != NULL)) {
+ 	for (i = 0; modeNames[i] != NULL; i++) {
+ 	    userModes = TRUE;
+ 	    new = xnfcalloc(1, sizeof(DisplayModeRec));

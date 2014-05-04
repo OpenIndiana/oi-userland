@@ -1,0 +1,775 @@
+[Adjusted to apply to xorg-server 1.7.6]
+
+From a11c58fa0c5809f918b36b84be53385cb2d8ea59 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@sun.com>
+Date: Fri, 11 Dec 2009 00:58:25 -0800
+Subject: [PATCH] Ensure all resource types created have names registered
+
+Calls RegisterResourceName to record the type name for
+use by X-Resource, XACE/SELinux/XTsol, and DTrace.
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@sun.com>
+Reviewed-by: Keith Packard <keithp@keithp.com>
+---
+ Xext/mbuf.c                           |    7 +++++++
+ Xext/panoramiX.c                      |    6 ++++++
+ Xext/saver.c                          |    4 ++++
+ Xext/shape.c                          |    3 +++
+ Xext/shm.c                            |    2 ++
+ Xext/sleepuntil.c                     |    2 ++
+ Xext/sync.c                           |    6 ++++++
+ Xext/xvdisp.c                         |    3 +++
+ Xext/xvmain.c                         |   15 +++++++++++----
+ Xext/xvmc.c                           |    4 ++++
+ composite/compext.c                   |    6 ++++++
+ damageext/damageext.c                 |    3 +++
+ dbe/dbe.c                             |    3 +++
+ hw/dmx/glxProxy/glxext.c              |    7 +++++++
+ hw/kdrive/ephyr/ephyrdriext.c         |    2 ++
+ hw/xfree86/dixmods/extmod/xf86vmode.c |    2 ++
+ hw/xfree86/dri/dri.c                  |    3 +++
+ hw/xfree86/dri/xf86dri.c              |    4 ++++
+ hw/xfree86/dri2/dri2ext.c             |    3 +++
+ hw/xquartz/applewm.c                  |    3 +++
+ hw/xquartz/xpr/dri.c                  |    4 ++++
+ hw/xwin/winwindowswm.c                |    3 +++
+ mi/miarc.c                            |    2 ++
+ randr/randr.c                         |    4 ++++
+ record/record.c                       |    2 ++
+ render/render.c                       |    4 ++++
+ xfixes/cursor.c                       |    7 +++++++
+ xfixes/region.c                       |    4 ++++
+ xfixes/select.c                       |    6 ++++++
+ xkb/xkb.c                             |    2 ++
+ 30 files changed, 122 insertions(+), 4 deletions(-)
+
+diff --git a/Xext/mbuf.c b/Xext/mbuf.c
+index af31221..02354b0 100644
+--- Xext/mbuf.c
++++ Xext/mbuf.c
+@@ -42,6 +42,8 @@ in this Software without prior written authorization from The Open Group.
+ #include "opaque.h"
+ #include "sleepuntil.h"
+ #include "inputstr.h"
++#include "registry.h"
++
+ #include <X11/extensions/multibufconst.h>
+ #include <X11/extensions/multibufproto.h>
+ 
+@@ -481,6 +483,11 @@ MultibufferExtensionInit()
+ 				 ProcMultibufferDispatch, SProcMultibufferDispatch,
+ 				 MultibufferResetProc, StandardMinorOpcode)))
+     {
++	RegisterResourceName(MultibufferDrawableResType,
++			     "MultibufferDrawable");
++	RegisterResourceName(MultibufferResType, "MultibufferBuffer");
++	RegisterResourceName(MultibuffersResType, "MultibufferWindow");
++	RegisterResourceName(OtherClientResType, "MultibufferOtherClient");
+ 	MultibufferEventBase = extEntry->eventBase;
+ 	MultibufferErrorBase = extEntry->errorBase;
+ 	EventSwapVector[MultibufferEventBase + MultibufferClobberNotify] = (EventSwapPtr) SClobberNotifyEvent;
+diff --git a/Xext/panoramiX.c b/Xext/panoramiX.c
+index f48bd36..2a950ee 100644
+--- Xext/panoramiX.c
++++ Xext/panoramiX.c
+@@ -52,6 +52,7 @@ Equipment Corporation.
+ #include "globals.h"
+ #include "servermd.h"
+ #include "resource.h"
++#include "registry.h"
+ #ifdef RENDER
+ #include "picturestr.h"
+ #endif
+@@ -513,6 +514,11 @@ void PanoramiXExtensionInit(int argc, char *argv[])
+ 	XRT_COLORMAP = CreateNewResourceType(XineramaDeleteResource);
+ 
+ 	if (XRT_WINDOW && XRT_PIXMAP && XRT_GC && XRT_COLORMAP) {
++	    RegisterResourceName(XRT_WINDOW, "XineramaWindow");
++	    RegisterResourceName(XRT_PIXMAP, "XineramaPixmap");
++	    RegisterResourceName(XRT_GC, "XineramaGC");
++	    RegisterResourceName(XRT_COLORMAP, "XineramaColormap");
++
+ 	    panoramiXGeneration = serverGeneration;
+ 	    success = TRUE;
+ 	}
+diff --git a/Xext/saver.c b/Xext/saver.c
+index 04e6497..5757f85 100644
+--- Xext/saver.c
++++ Xext/saver.c
+@@ -47,6 +47,7 @@ in this Software without prior written authorization from the X Consortium.
+ #include "cursorstr.h"
+ #include "colormapst.h"
+ #include "xace.h"
++#include "registry.h"
+ #ifdef PANORAMIX
+ #include "panoramiX.h"
+ #include "panoramiXsrv.h"
+@@ -266,6 +267,9 @@ ScreenSaverExtensionInit(INITARGS)
+ 				 ProcScreenSaverDispatch, SProcScreenSaverDispatch,
+ 				 NULL, StandardMinorOpcode)))
+     {
++	RegisterResourceName(AttrType, "SaverAttr");
++	RegisterResourceName(SaverEventType, "SaverEvent");
++	RegisterResourceName(SuspendType, "SaverSuspend");
+ 	ScreenSaverEventBase = extEntry->eventBase;
+ 	EventSwapVector[ScreenSaverEventBase] = (EventSwapPtr) SScreenSaverNotifyEvent;
+     }
+diff --git a/Xext/shape.c b/Xext/shape.c
+index 700fe76..247f21b 100644
+--- Xext/shape.c
++++ Xext/shape.c
+@@ -40,6 +40,7 @@ in this Software without prior written authorization from The Open Group.
+ #include "extnsionst.h"
+ #include "dixstruct.h"
+ #include "resource.h"
++#include "registry.h"
+ #include "opaque.h"
+ #include <X11/extensions/shapeproto.h>
+ #include "regionstr.h"
+@@ -134,6 +135,8 @@ ShapeExtensionInit(void)
+ 				 ProcShapeDispatch, SProcShapeDispatch,
+ 				 NULL, StandardMinorOpcode)))
+     {
++	RegisterResourceName(ClientType, "ShapeClient");
++	RegisterResourceName(ShapeEventType, "ShapeEvent");
+ 	ShapeEventBase = extEntry->eventBase;
+ 	EventSwapVector[ShapeEventBase] = (EventSwapPtr) SShapeNotifyEvent;
+     }
+diff --git a/Xext/shm.c b/Xext/shm.c
+index 9e462f2..589155d 100644
+--- Xext/shm.c
++++ Xext/shm.c
+@@ -52,6 +52,7 @@ in this Software without prior written authorization from The Open Group.
+ #include "servermd.h"
+ #include "shmint.h"
+ #include "xace.h"
++#include "registry.h"
+ #include <X11/extensions/shmproto.h>
+ #include <X11/Xfuncproto.h>
+ #include "protocol-versions.h"
+@@ -283,6 +284,7 @@ ShmExtensionInit(INITARGS)
+ 				 ProcShmDispatch, SProcShmDispatch,
+ 				 ShmResetProc, StandardMinorOpcode)))
+     {
++	RegisterResourceName(ShmSegType, "ShmSeg");
+ 	ShmReqCode = (unsigned char)extEntry->base;
+ 	ShmCompletionCode = extEntry->eventBase;
+ 	BadShmSegCode = extEntry->errorBase;
+diff --git a/Xext/sleepuntil.c b/Xext/sleepuntil.c
+index 2616a5e..6b5964e 100644
+--- Xext/sleepuntil.c
++++ Xext/sleepuntil.c
+@@ -39,6 +39,7 @@ in this Software without prior written authorization from The Open Group.
+ #include "dixstruct.h"
+ #include "pixmapstr.h"
+ #include "scrnintstr.h"
++#include "registry.h"
+ 
+ typedef struct _Sertafied {
+     struct _Sertafied	*next;
+@@ -90,6 +91,7 @@ ClientSleepUntil (ClientPtr client,
+ 	SertafiedResType = CreateNewResourceType (SertafiedDelete);
+ 	if (!SertafiedResType)
+ 	    return FALSE;
++	RegisterResourceName(SertafiedResType, "ClientSleep");
+ 	SertafiedGeneration = serverGeneration;
+ 	BlockHandlerRegistered = FALSE;
+     }
+diff --git a/Xext/sync.c b/Xext/sync.c
+index d8a2b15..b3bba17 100644
+--- Xext/sync.c
++++ Xext/sync.c
+@@ -64,6 +64,7 @@ PERFORMANCE OF THIS SOFTWARE.
+ #include "extnsionst.h"
+ #include "dixstruct.h"
+ #include "resource.h"
++#include "registry.h"
+ #include "opaque.h"
+ #include <X11/extensions/syncproto.h>
+ #include "syncsrv.h"
+@@ -878,6 +879,7 @@ SyncCreateSystemCounter(
+ 	{
+ 	    return NULL;
+ 	}
++	RegisterResourceName(RTCounter, "SyncCounter");
+     }
+ 
+     pCounter = SyncCreateCounter(NULL, FakeClientID(0), initial);
+@@ -2133,6 +2135,10 @@ SyncExtensionInit(void)
+ 	return;
+     }
+ 
++    RegisterResourceName(RTCounter, "SyncCounter");
++    RegisterResourceName(RTAlarm, "SyncAlarm");
++    RegisterResourceName(RTAwait, "SyncAwait");
++    RegisterResourceName(RTAlarmClient, "SyncAlarmClient");
+     SyncEventBase = extEntry->eventBase;
+     SyncErrorBase = extEntry->errorBase;
+     EventSwapVector[SyncEventBase + XSyncCounterNotify] = (EventSwapPtr) SCounterNotifyEvent;
+diff --git a/Xext/xvdisp.c b/Xext/xvdisp.c
+index 1f3fc0f..e674dfd 100644
+--- Xext/xvdisp.c
++++ Xext/xvdisp.c
+@@ -36,6 +36,7 @@ SOFTWARE.
+ #include "gcstruct.h"
+ #include "dixstruct.h"
+ #include "resource.h"
++#include "registry.h"
+ #include "opaque.h"
+ 
+ #include <X11/extensions/Xv.h>
+@@ -1867,6 +1868,8 @@ void XineramifyXv(void)
+ 
+    if (!xvsp0 || !XvXRTPort) return;
+ 
++   RegisterResourceName(XvXRTPort, "XvXRTPort");
++
+    for(i = 0; i < xvsp0->nAdaptors; i++) {
+       refAdapt = xvsp0->pAdaptors + i;
+ 
+diff --git a/Xext/xvmain.c b/Xext/xvmain.c
+index 7c8a3c3..c33c209 100644
+--- Xext/xvmain.c
++++ Xext/xvmain.c
+@@ -90,6 +90,7 @@ SOFTWARE.
+ #include "extnsionst.h"
+ #include "dixstruct.h"
+ #include "resource.h"
++#include "registry.h"
+ #include "opaque.h"
+ #include "input.h"
+ 
+@@ -213,36 +214,42 @@ CreateResourceTypes(void)
+       ErrorF("CreateResourceTypes: failed to allocate port resource.\n");
+       return FALSE;
+     }
+-  
++  RegisterResourceName(XvRTPort, "XvRTPort");
++
+   if (!(XvRTGrab = CreateNewResourceType(XvdiDestroyGrab)))
+     {
+       ErrorF("CreateResourceTypes: failed to allocate grab resource.\n");
+       return FALSE;
+     }
+-  
++  RegisterResourceName(XvRTGrab, "XvRTGrab");
++
+   if (!(XvRTEncoding = CreateNewResourceType(XvdiDestroyEncoding)))
+     {
+       ErrorF("CreateResourceTypes: failed to allocate encoding resource.\n");
+       return FALSE;
+     }
+-  
++  RegisterResourceName(XvRTEncoding, "XvRTEncoding");
++
+   if (!(XvRTVideoNotify = CreateNewResourceType(XvdiDestroyVideoNotify)))
+     {
+       ErrorF("CreateResourceTypes: failed to allocate video notify resource.\n");
+       return FALSE;
+     }
+-  
++  RegisterResourceName(XvRTVideoNotify, "XvRTVideoNotify");
++
+   if (!(XvRTVideoNotifyList = CreateNewResourceType(XvdiDestroyVideoNotifyList)))
+     {
+       ErrorF("CreateResourceTypes: failed to allocate video notify list resource.\n");
+       return FALSE;
+     }
++  RegisterResourceName(XvRTVideoNotifyList, "XvRTVideoNotifyList");
+ 
+   if (!(XvRTPortNotify = CreateNewResourceType(XvdiDestroyPortNotify)))
+     {
+       ErrorF("CreateResourceTypes: failed to allocate port notify resource.\n");
+       return FALSE;
+     }
++  RegisterResourceName(XvRTPortNotify, "XvRTPortNotify");
+ 
+   return TRUE;
+ 
+diff --git a/Xext/xvmc.c b/Xext/xvmc.c
+index c17a4b1..0a233b1 100644
+--- Xext/xvmc.c
++++ Xext/xvmc.c
+@@ -11,6 +11,7 @@
+ #include "os.h"
+ #include "dixstruct.h"
+ #include "resource.h"
++#include "registry.h"
+ #include "scrnintstr.h"
+ #include "extnsionst.h"
+ #include "servermd.h"
+@@ -676,12 +677,15 @@ XvMCExtensionInit(void)
+ 
+    if(!(XvMCRTContext = CreateNewResourceType(XvMCDestroyContextRes)))
+ 	return;
++   RegisterResourceName(XvMCRTContext, "XvMCRTContext");
+ 
+    if(!(XvMCRTSurface = CreateNewResourceType(XvMCDestroySurfaceRes)))
+ 	return;
++   RegisterResourceName(XvMCRTSurface, "XvMCRTSurface");
+ 
+    if(!(XvMCRTSubpicture = CreateNewResourceType(XvMCDestroySubpictureRes)))
+ 	return;
++   RegisterResourceName(XvMCRTSubpicture, "XvMCRTSubpicture");
+ 
+    extEntry = AddExtension(XvMCName, XvMCNumEvents, XvMCNumErrors, 
+                               ProcXvMCDispatch, SProcXvMCDispatch,
+diff --git a/composite/compext.c b/composite/compext.c
+index b5afdd3..74f0309 100644
+--- composite/compext.c
++++ composite/compext.c
+@@ -47,6 +47,7 @@
+ 
+ #include "compint.h"
+ #include "xace.h"
++#include "registry.h"
+ #include "protocol-versions.h"
+ 
+ static CARD8	CompositeReqCode;
+@@ -549,14 +550,19 @@ CompositeExtensionInit (void)
+     CompositeClientWindowType = CreateNewResourceType (FreeCompositeClientWindow);
+     if (!CompositeClientWindowType)
+ 	return;
++    RegisterResourceName(CompositeClientWindowType, "CompositeClientWindow");
+ 
+     CompositeClientSubwindowsType = CreateNewResourceType (FreeCompositeClientSubwindows);
+     if (!CompositeClientSubwindowsType)
+ 	return;
++    RegisterResourceName(CompositeClientSubwindowsType,
++			 "CompositeClientSubwindows");
+ 
+     CompositeClientOverlayType = CreateNewResourceType (FreeCompositeClientOverlay);
+     if (!CompositeClientOverlayType)
+ 	return;
++    RegisterResourceName(CompositeClientOverlayType,
++			 "CompositeClientOverlay");
+ 
+     if (!dixRequestPrivate(CompositeClientPrivateKey,
+ 			   sizeof(CompositeClientRec)))
+diff --git a/damageext/damageext.c b/damageext/damageext.c
+index 449c2fd..044e8ef 100644
+--- damageext/damageext.c
++++ damageext/damageext.c
+@@ -24,6 +24,7 @@
+ #include <dix-config.h>
+ #endif
+ 
++#include "registry.h"
+ #include "damageextint.h"
+ #include "protocol-versions.h"
+ 
+@@ -500,10 +501,12 @@ DamageExtensionInit(void)
+     DamageExtType = CreateNewResourceType (FreeDamageExt);
+     if (!DamageExtType)
+ 	return;
++    RegisterResourceName(DamageExtType, "DamageExt");
+ 
+     DamageExtWinType = CreateNewResourceType (FreeDamageExtWin);
+     if (!DamageExtWinType)
+ 	return;
++    RegisterResourceName(DamageExtWinType, "DamageExtWin");
+ 
+     if (!dixRequestPrivate(DamageClientPrivateKey, sizeof (DamageClientRec)))
+ 	return;
+diff --git a/dbe/dbe.c b/dbe/dbe.c
+index 8d2a343..7af8736 100644
+--- dbe/dbe.c
++++ dbe/dbe.c
+@@ -54,6 +54,7 @@
+ #include "dbestruct.h"
+ #include "midbe.h"
+ #include "xace.h"
++#include "registry.h"
+ 
+ /* GLOBALS */
+ 
+@@ -1577,11 +1578,13 @@ DbeExtensionInit(void)
+     if (!dbeDrawableResType)
+ 	return;
+     dbeDrawableResType |= RC_DRAWABLE;
++    RegisterResourceName(dbeDrawableResType, "dbeDrawable");
+ 
+     dbeWindowPrivResType =
+         CreateNewResourceType(DbeWindowPrivDelete);
+     if (!dbeWindowPrivResType)
+ 	return;
++    RegisterResourceName(dbeWindowPrivResType, "dbeWindow");
+ 
+     if (!dixRegisterPrivateOffset(dbeDrawableResType,
+ 				  offsetof(PixmapRec, devPrivates)))
+diff --git a/hw/dmx/glxProxy/glxext.c b/hw/dmx/glxProxy/glxext.c
+index 0c39068..c00ae6e 100644
+--- hw/dmx/glxProxy/glxext.c
++++ hw/dmx/glxProxy/glxext.c
+@@ -44,6 +44,7 @@
+ #include "glxvisuals.h"
+ #include "micmap.h"
+ #include "glxswap.h"
++#include "registry.h"
+ 
+ /*
+ ** Stubs to satisfy miinitext.c references.
+@@ -303,6 +304,12 @@ void GlxExtensionInit(void)
+ 	!__glXWindowRes || !__glXPbufferRes)
+ 	return;
+ 
++    RegisterResourceName(__glXContextRes, "GLXContext");
++    RegisterResourceName(__glXClientRes, "GLXClient");
++    RegisterResourceName(__glXPixmapRes, "GLXPixmap");
++    RegisterResourceName(__glXWindowRes, "GLXWindow");
++    RegisterResourceName(__glXPbufferRes, "GLXPbuffer");
++
+     /*
+     ** Add extension to server extensions.
+     */
+diff --git a/hw/kdrive/ephyr/ephyrdriext.c b/hw/kdrive/ephyr/ephyrdriext.c
+index ba1733b..a2839ea 100644
+--- hw/kdrive/ephyr/ephyrdriext.c
++++ hw/kdrive/ephyr/ephyrdriext.c
+@@ -43,6 +43,7 @@
+ #include "privates.h"
+ #include "dixstruct.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "colormapst.h"
+ #include "cursorstr.h"
+ #include "scrnintstr.h"
+@@ -145,6 +146,7 @@ ephyrDRIExtensionInit (ScreenPtr a_screen)
+         EPHYR_LOG_ERROR ("failed to register DRI event resource type\n") ;
+         goto out ;
+     }
++    RegisterResourceName(EventType, "DRIEvents");
+ #endif
+ 
+     if ((extEntry = AddExtension(XF86DRINAME,
+diff --git a/hw/xfree86/dixmods/extmod/xf86vmode.c b/hw/xfree86/dixmods/extmod/xf86vmode.c
+index 4920115..c35a83f 100644
+--- hw/xfree86/dixmods/extmod/xf86vmode.c
++++ hw/xfree86/dixmods/extmod/xf86vmode.c
+@@ -39,6 +39,7 @@ from Kaleb S. KEITHLEY
+ #include "misc.h"
+ #include "dixstruct.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "scrnintstr.h"
+ #include "servermd.h"
+ #include <X11/extensions/xf86vmproto.h>
+@@ -201,6 +202,7 @@ XFree86VidModeExtensionInit(void)
+ #endif
+ 	VidModeErrorBase = extEntry->errorBase;
+ #ifdef XF86VIDMODE_EVENTS
++	RegisterResourceName(EventType, "VidModeEvent");
+ 	XF86VidModeEventBase = extEntry->eventBase;
+ 	EventSwapVector[XF86VidModeEventBase] = (EventSwapPtr)SXF86VidModeNotifyEvent;
+ #endif
+diff --git a/hw/xfree86/dri/dri.c b/hw/xfree86/dri/dri.c
+index 1a6cb4d..be0604e 100644
+--- hw/xfree86/dri/dri.c
++++ hw/xfree86/dri/dri.c
+@@ -51,6 +51,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ #include "misc.h"
+ #include "dixstruct.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "colormapst.h"
+ #include "cursorstr.h"
+ #include "scrnintstr.h"
+@@ -794,6 +795,8 @@ DRIExtensionInit(void)
+ 
+     if (!DRIDrawablePrivResType || !DRIContextPrivResType)
+ 	return FALSE;
++    RegisterResourceName(DRIDrawablePrivResType, "DRIDrawable");
++    RegisterResourceName(DRIContextPrivResType, "DRIContext");
+ 
+     RegisterBlockAndWakeupHandlers(DRIBlockHandler, DRIWakeupHandler, NULL);
+ 
+diff --git a/hw/xfree86/dri/xf86dri.c b/hw/xfree86/dri/xf86dri.c
+index 035057b..2da9767 100644
+--- hw/xfree86/dri/xf86dri.c
++++ hw/xfree86/dri/xf86dri.c
+@@ -47,6 +47,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ #include "misc.h"
+ #include "dixstruct.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "colormapst.h"
+ #include "cursorstr.h"
+ #include "scrnintstr.h"
+@@ -111,6 +112,9 @@ XFree86DRIExtensionInit(void)
+ 				 StandardMinorOpcode))) {
+ 	DRIReqCode = (unsigned char)extEntry->base;
+ 	DRIErrorBase = extEntry->errorBase;
++#ifdef XF86DRI_EVENTS
++	RegisterResourceName(EventType, "DRIEvent");
++#endif
+     }
+ }
+ 
+diff --git a/hw/xfree86/dri2/dri2ext.c b/hw/xfree86/dri2/dri2ext.c
+index 8acf267..112e76c 100644
+--- hw/xfree86/dri2/dri2ext.c
++++ hw/xfree86/dri2/dri2ext.c
+@@ -42,6 +42,7 @@
+ #include "scrnintstr.h"
+ #include "pixmapstr.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "xf86drm.h"
+ #include "xfixes.h"
+ #include "dri2.h"
+@@ -421,6 +422,8 @@ DRI2ExtensionInit(void)
+     if (!dri2DrawableRes)
+ 	return;
+ 
++    RegisterResourceName(dri2DrawableRes, "DRI2Drawable");
++
+     dri2Extension = AddExtension(DRI2_NAME,
+ 				 DRI2NumberEvents,
+ 				 DRI2NumberErrors,
+diff --git a/hw/xquartz/applewm.c b/hw/xquartz/applewm.c
+index d1a6175..26cf5d2 100644
+--- hw/xquartz/applewm.c
++++ hw/xquartz/applewm.c
+@@ -37,6 +37,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ #include "dixstruct.h"
+ #include "globals.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "colormapst.h"
+ #include "cursorstr.h"
+ #include "scrnintstr.h"
+@@ -129,6 +130,8 @@ AppleWMExtensionInit(
+         WMEventBase = extEntry->eventBase;
+         EventSwapVector[WMEventBase] = (EventSwapPtr) SNotifyEvent;
+         appleWMProcs = procsPtr;
++	RegisterResourceName(ClientType, "WMClient");
++	RegisterResourceName(EventType, "WMEvent");
+     }
+ }
+ 
+diff --git a/hw/xquartz/xpr/dri.c b/hw/xquartz/xpr/dri.c
+index a9c0f22..b59f5d3 100644
+--- hw/xquartz/xpr/dri.c
++++ hw/xquartz/xpr/dri.c
+@@ -55,6 +55,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ #include "misc.h"
+ #include "dixstruct.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "colormapst.h"
+ #include "cursorstr.h"
+ #include "scrnintstr.h"
+@@ -279,6 +280,9 @@ DRIExtensionInit(void)
+ {
+     DRIDrawablePrivResType = CreateNewResourceType(DRIDrawablePrivDelete);
+ 
++    if (DRIDrawablePrivResType != 0)
++	RegisterResourceName(DRIDrawablePrivResType, "DRIDrawable");
++
+     return (DRIDrawablePrivResType != 0);
+ }
+ 
+diff --git a/hw/xwin/winwindowswm.c b/hw/xwin/winwindowswm.c
+index 3d4d8c2..2383c59 100755
+--- hw/xwin/winwindowswm.c
++++ hw/xwin/winwindowswm.c
+@@ -34,6 +34,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ #include "misc.h"
+ #include "dixstruct.h"
+ #include "extnsionst.h"
++#include "registry.h"
+ #include "colormapst.h"
+ #include "cursorstr.h"
+ #include "scrnintstr.h"
+@@ -102,6 +103,8 @@ winWindowsWMExtensionInit ()
+       WMErrorBase = extEntry->errorBase;
+       WMEventBase = extEntry->eventBase;
+       EventSwapVector[WMEventBase] = (EventSwapPtr) SNotifyEvent;
++      RegisterResourceName(ClientType, "WMClient");
++      RegisterResourceName(eventResourceType, "WMEvent");
+     }
+ }
+ 
+diff --git a/mi/miarc.c b/mi/miarc.c
+index a3e2580..b4b684b 100644
+--- mi/miarc.c
++++ mi/miarc.c
+@@ -62,6 +62,7 @@ SOFTWARE.
+ #include "mifpoly.h"
+ #include "mi.h"
+ #include "mifillarc.h"
++#include "registry.h"
+ #include <X11/Xfuncproto.h>
+ 
+ static double miDsin(double a);
+@@ -867,6 +868,7 @@ miComputeWideEllipse(
+ 	if (!cacheType)
+ 	{
+ 	    cacheType = CreateNewResourceType(miFreeArcCache);
++	    RegisterResourceName(cacheType, "miArcCache");
+ 	    (void) AddResource(FakeClientID(0), cacheType, NULL);
+ 	}
+     } else {
+diff --git a/randr/randr.c b/randr/randr.c
+index 5944564..7d59a68 100644
+--- randr/randr.c
++++ randr/randr.c
+@@ -29,6 +29,8 @@
+ #include <dix-config.h>
+ #endif
+ 
++#include "registry.h"
++
+ #include "randrstr.h"
+ 
+ /* From render.h */
+@@ -339,9 +341,11 @@ RRExtensionInit (void)
+     RRClientType = CreateNewResourceType(RRFreeClient);
+     if (!RRClientType)
+ 	return;
++    RegisterResourceName(RRClientType, "RandRClient");
+     RREventType = CreateNewResourceType(RRFreeEvents);
+     if (!RREventType)
+ 	return;
++    RegisterResourceName(RREventType, "RandREvent");
+     extEntry = AddExtension (RANDR_NAME, RRNumberEvents, RRNumberErrors,
+ 			     ProcRRDispatch, SProcRRDispatch,
+ 			     NULL, StandardMinorOpcode);
+diff --git a/record/record.c b/record/record.c
+index b94b4ae..649f4b2 100644
+--- record/record.c
++++ record/record.c
+@@ -44,6 +44,7 @@ and Jim Haggerty of Metheus.
+ #include "inputstr.h"
+ #include "eventconvert.h"
+ 
++#include "registry.h"
+ 
+ #include <stdio.h>
+ #include <assert.h>
+@@ -2878,6 +2879,7 @@ RecordExtensionInit(void)
+     RTContext = CreateNewResourceType(RecordDeleteContext);
+     if (!RTContext)
+ 	return;
++    RegisterResourceName(RTContext, "RecordContext");
+ 
+     ppAllContexts = NULL;
+     numContexts = numEnabledContexts = numEnabledRCAPs = 0;
+diff --git a/render/render.c b/render/render.c
+index a32d797..53bb555 100644
+--- render/render.c
++++ render/render.c
+@@ -46,6 +46,7 @@
+ #include "cursorstr.h"
+ #include "xace.h"
+ #include "protocol-versions.h"
++#include "registry.h"
+ 
+ #if HAVE_STDINT_H
+ #include <stdint.h>
+@@ -3241,6 +3242,9 @@ PanoramiXRenderInit (void)
+     int	    i;
+     
+     XRT_PICTURE = CreateNewResourceType (XineramaDeleteResource);
++    if (XRT_PICTURE)
++	RegisterResourceName(XRT_PICTURE, "XineramaPicture");
++
+     for (i = 0; i < RenderNumberRequests; i++)
+ 	PanoramiXSaveRenderVector[i] = ProcRenderVector[i];
+     /*
+diff --git a/xfixes/cursor.c b/xfixes/cursor.c
+index c3e1e35..0ef3e3a 100644
+--- xfixes/cursor.c
++++ xfixes/cursor.c
+@@ -53,6 +53,7 @@
+ #include "inputstr.h"
+ #include "windowstr.h"
+ #include "xace.h"
++#include "registry.h"
+ 
+ static RESTYPE		CursorClientType;
+ static RESTYPE		CursorHideCountType;
+@@ -1085,8 +1086,14 @@ XFixesCursorInit (void)
+ 	SetCursorScreen (pScreen, cs);
+     }
+     CursorClientType = CreateNewResourceType(CursorFreeClient);
++    if (CursorClientType)
++	RegisterResourceName(CursorClientType, "XFixesCursorClient");
+     CursorHideCountType = CreateNewResourceType(CursorFreeHideCount);
++    if (CursorHideCountType)
++	RegisterResourceName(CursorClientType, "XFixesCursorClient");
+     CursorWindowType = CreateNewResourceType(CursorFreeWindow);
++    if (CursorWindowType)
++	RegisterResourceName(CursorWindowType, "XFixesCursorWindow");
+ 
+     if (pInvisibleCursor == NULL) {
+ 	pInvisibleCursor = createInvisibleCursor();
+diff --git a/xfixes/region.c b/xfixes/region.c
+index 59d8cee..3942c9d 100644
+--- xfixes/region.c
++++ xfixes/region.c
+@@ -33,6 +33,7 @@ extern int RenderErrBase;
+ #include <regionstr.h>
+ #include <gcstruct.h>
+ #include <window.h>
++#include "registry.h"
+ 
+ RESTYPE RegionResType;
+ 
+@@ -65,6 +66,9 @@ XFixesRegionInit (void)
+ {
+     RegionResType = CreateNewResourceType(RegionResFree);
+ 
++    if (RegionResType)
++	RegisterResourceName(RegionResType, "XFixesRegion");
++
+     return (RegionResType != 0);
+ }
+ 
+diff --git a/xfixes/select.c b/xfixes/select.c
+index a5811bd..5a00ea8 100644
+--- xfixes/select.c
++++ xfixes/select.c
+@@ -26,6 +26,7 @@
+ 
+ #include "xfixesint.h"
+ #include "xace.h"
++#include "registry.h"
+ 
+ static RESTYPE		SelectionClientType, SelectionWindowType;
+ static Bool		SelectionCallbackRegistered = FALSE;
+@@ -285,6 +286,11 @@ Bool
+ XFixesSelectionInit (void)
+ {
+     SelectionClientType = CreateNewResourceType(SelectionFreeClient);
++    if (SelectionClientType)
++	RegisterResourceName(SelectionClientType, "XFixesSelectionClient");
+     SelectionWindowType = CreateNewResourceType(SelectionFreeWindow);
++    if (SelectionWindowType)
++	RegisterResourceName(SelectionWindowType, "XFixesSelectionWindow");
++
+     return SelectionClientType && SelectionWindowType;
+ }
+diff --git a/xkb/xkb.c b/xkb/xkb.c
+index c490f8b..f5ccd16 100644
+--- xkb/xkb.c
++++ xkb/xkb.c
+@@ -39,6 +39,7 @@ THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ #include "xace.h"
+ #include "xkb.h"
+ #include "protocol-versions.h"
++#include "registry.h"
+ 
+ #include <X11/extensions/XI.h>
+ #include <X11/extensions/XKMformat.h>
+@@ -6707,6 +6708,7 @@ XkbExtensionInit(void)
+     RT_XKBCLIENT = CreateNewResourceType(XkbClientGone);
+     if (!RT_XKBCLIENT)
+ 	return;
++    RegisterResourceName(RT_XKBCLIENT, "XkbClient");
+ 
+     if ((extEntry = AddExtension(XkbName, XkbNumberEvents, XkbNumberErrors,
+ 				 ProcXkbDispatch, SProcXkbDispatch,
+-- 
+1.5.6.5
+
