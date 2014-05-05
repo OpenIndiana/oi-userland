@@ -83,9 +83,6 @@ ENV +=	MOZILLA_PKG_NAME=thunderbird
 CONFIGURE_ENV =	$(ENV)
 COMPONENT_BUILD_ENV =	$(ENV)
 
-CPUS=$(shell /usr/sbin/psrinfo | grep on-line | wc -l | tr -d ' ')
-COMPONENT_BUILD_GMAKE_ARGS= -j $(CPUS)
-
 LANG_FILES=$(addsuffix .xpi,$(LANG_LIST))
 
 CLEAN_PATHS += $(LANG_FILES)

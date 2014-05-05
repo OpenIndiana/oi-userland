@@ -1,0 +1,22 @@
+--- /usr/tmp/clean/gvfs-1.5.5/daemon/trashlib/trashwatcher.c	2010-03-08 13:21:20.000000000 +0000
++++ gvfs-1.5.5/daemon/trashlib/trashwatcher.c	2010-03-25 10:08:16.777306290 +0000
+@@ -255,9 +255,7 @@
+   watcher->root = root;
+   watcher->mounts = NULL;
+   watcher->watching = FALSE;
+-  watcher->mount_monitor = g_unix_mount_monitor_new ();
+-  g_signal_connect_swapped (watcher->mount_monitor, "mounts_changed",
+-                            G_CALLBACK (trash_watcher_remount), watcher);
++  watcher->mount_monitor = NULL;
+ 
+   user_datadir = g_file_new_for_path (g_get_user_data_dir ());
+   homedir_trashdir = g_file_get_child (user_datadir, "Trash/files");
+@@ -272,8 +270,6 @@
+   g_object_unref (homedir_trashdir);
+   g_object_unref (user_datadir);
+ 
+-  trash_watcher_remount (watcher);
+-
+   return watcher;
+ }
+ 

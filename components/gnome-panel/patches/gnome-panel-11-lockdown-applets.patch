@@ -1,0 +1,494 @@
+--- gnome-panel-2.25.5.1.old/gnome-panel/panel-applet-frame.h	2009-01-29 18:11:25.530025000 +0000
++++ gnome-panel-2.25.5.1/gnome-panel/panel-applet-frame.h	2009-01-29 18:12:31.992992000 +0000
+@@ -77,6 +77,13 @@ void       panel_applet_frame_load_from_
+ 
+ void            panel_applet_frame_set_panel (PanelAppletFrame *frame,
+ 					      PanelWidget      *panel);
++/**
++  * Checks whether the applet has been disabled or reenabled and if necessary
++  * rebuilds the applet.
++  * Returns true if the applet frame was rebuilt as a result of its restriction
++  * status changing.
++  */
++gboolean        panel_applet_frame_refresh (PanelAppletFrame *frame);
+ 
+ G_END_DECLS
+ 
+/jds/bin/diff -uprN gnome-panel-2.26.3.old/gnome-panel/applet.c gnome-panel-2.26.3/gnome-panel/applet.c
+--- gnome-panel-2.26.3.old/gnome-panel/applet.c	2009-06-28 15:16:20.000000000 +0100
++++ gnome-panel-2.26.3/gnome-panel/applet.c	2009-07-01 20:36:42.852019000 +0100
+@@ -160,6 +160,31 @@ panel_applet_recreate_menu (AppletInfo	*
+ 	info->menu = panel_applet_create_menu (info);
+ }
+ 
++static void panel_applet_check_visibility(AppletInfo *info)
++{
++    if (info->type == PANEL_OBJECT_LAUNCHER) {
++        if (panel_lockdown_is_forbidden_launcher (info->data)) {
++            gtk_widget_hide(info->widget) ;
++        }
++        else { gtk_widget_show(info->widget) ; }
++    }
++}
++
++static void panel_applet_refresh_state(AppletInfo *info)
++{
++    if (info->type == PANEL_OBJECT_BONOBO) {
++        if (!panel_applet_frame_refresh(info->data)) {
++            /* If the applet frame was rebuilt, no point in 
++               recreating the menu. */
++            panel_applet_recreate_menu(info) ;
++        }
++    }
++    else {
++        panel_applet_check_visibility(info) ;
++        panel_applet_recreate_menu(info) ;
++    }
++}
++
+ static void
+ panel_applet_locked_change_notify (GConfClient *client,
+ 				   guint        cnxn_id,
+@@ -753,8 +778,7 @@ panel_applet_destroy (GtkWidget  *widget
+ 		}
+ 	}
+ 
+-	if (info->type != PANEL_OBJECT_BONOBO)
+-		panel_lockdown_notify_remove (G_CALLBACK (panel_applet_recreate_menu),
++	panel_lockdown_notify_remove (G_CALLBACK (panel_applet_recreate_menu),
+ 					      info);
+ 
+ 	if (info->menu)
+@@ -1266,8 +1290,7 @@ panel_applet_register (GtkWidget       *
+ 
+ 	g_object_set_data (G_OBJECT (applet), "applet_info", info);
+ 
+-	if (type != PANEL_OBJECT_BONOBO)
+-		panel_lockdown_notify_add (G_CALLBACK (panel_applet_recreate_menu),
++	panel_lockdown_notify_add (G_CALLBACK (panel_applet_recreate_menu),
+ 					   info);
+ 
+ 	key = panel_gconf_full_key ((type == PANEL_OBJECT_BONOBO) ?
+/jds/bin/diff -uprN gnome-panel-2.26.3.old/gnome-panel/panel-applet-frame.c gnome-panel-2.26.3/gnome-panel/panel-applet-frame.c
+--- gnome-panel-2.26.3.old/gnome-panel/panel-applet-frame.c	2009-07-01 20:33:01.341801000 +0100
++++ gnome-panel-2.26.3/gnome-panel/panel-applet-frame.c	2009-07-01 20:36:42.854780000 +0100
+@@ -118,6 +118,10 @@ panel_applet_frame_sync_menu_state (Pane
+ 	movable = panel_applet_can_freely_move (frame->priv->applet_info);
+ 	removable = panel_profile_id_lists_are_writable ();
+ 
++	/* If the applet is currently in a disabled state, no need for a menu */
++	if (frame->priv->ui_component == NULL)
++		return;
++
+ 	locked = panel_widget_get_applet_locked (panel_widget, GTK_WIDGET (frame));
+ 
+ 	bonobo_ui_component_set_prop (frame->priv->ui_component,
+@@ -342,9 +346,6 @@ panel_applet_frame_load (const gchar *ii
+ 				 (GCompareFunc) strcmp))
+ 		return;
+ 
+-	if (panel_lockdown_is_applet_disabled (iid))
+-		return;
+-
+ 	frame = g_object_new (PANEL_TYPE_APPLET_FRAME, NULL);
+ 	frame->priv->panel = panel;
+ 	frame->priv->iid   = g_strdup (iid);
+@@ -356,13 +357,21 @@ panel_applet_frame_load (const gchar *ii
+ 	frame_act->exactpos = exactpos;
+ 	frame_act->id       = g_strdup (id);
+ 
+-	CORBA_exception_init (&ev);
+-
+-	bonobo_activation_activate_from_id_async (frame->priv->iid, 0,
+-						  (BonoboActivationCallback) panel_applet_frame_activated,
+-						  frame_act, &ev);
++	/* If the applet is disabled, we don't actually load the bonobo component,
++       but keep the objects around so that, should the disabled state change,
++       we'll be able to reload the applet in its proper state. */
++	if (panel_lockdown_is_applet_disabled (iid)) { 
++		panel_applet_frame_activated (NULL, "LOCKED", frame_act); 
++	}
++	else {
++	    CORBA_exception_init (&ev);
++
++	    bonobo_activation_activate_from_id_async (frame->priv->iid, 0,
++					  (BonoboActivationCallback) panel_applet_frame_activated,
++					  frame_act, &ev);
+ 
+-	CORBA_exception_free (&ev);
++	    CORBA_exception_free (&ev);
++    }
+ }
+ 
+ void
+@@ -429,6 +438,19 @@ panel_applet_frame_create (PanelToplevel
+ 	g_free (id);
+ }
+ 
++static void panel_applet_frame_reload (PanelAppletFrame *frame);
++
++gboolean
++panel_applet_frame_refresh (PanelAppletFrame *frame)
++{
++	if ((frame->priv->ui_component == NULL) !=
++		panel_lockdown_is_applet_disabled (frame->priv->iid)) {
++		panel_applet_frame_reload (frame);
++		return TRUE;
++	}
++	return FALSE;
++}
++
+ void
+ panel_applet_frame_change_orientation (PanelAppletFrame *frame,
+ 				       PanelOrientation  orientation)
+@@ -873,6 +895,33 @@ panel_applet_frame_button_changed (GtkWi
+ 	return handled;
+ }
+ 
++static void 
++panel_applet_frame_reload (PanelAppletFrame *frame)
++{
++	PanelWidget *panel;
++	char        *iid;
++	char        *id = NULL;
++	int          position = -1;
++	gboolean     locked = FALSE;
++	AppletInfo  *info = NULL;
++
++	info = frame->priv->applet_info;
++	panel = frame->priv->panel;
++	iid   = g_strdup (frame->priv->iid);
++
++	if (info) {
++        id = g_strdup (info->id);
++        position  = panel_applet_get_position (info);
++        locked = panel_widget_get_applet_locked (panel, info->widget);
++        panel_applet_clean (info);
++	}
++
++	panel_applet_frame_load (iid, panel, locked, position, TRUE, id);
++
++	g_free (iid);
++	g_free (id);
++}
++
+ static void
+ panel_applet_frame_reload_response (GtkWidget        *dialog,
+ 				    int               response,
+@@ -891,28 +940,7 @@ panel_applet_frame_reload_response (GtkW
+ 	info = frame->priv->applet_info;
+ 
+ 	if (response == GTK_RESPONSE_YES) {
+-		PanelWidget *panel;
+-		char        *iid;
+-		char        *id = NULL;
+-		int          position = -1;
+-		gboolean     locked = FALSE;
+-
+-		panel = frame->priv->panel;
+-		iid   = g_strdup (frame->priv->iid);
+-
+-		if (info) {
+-			id = g_strdup (info->id);
+-			position  = panel_applet_get_position (info);
+-			locked = panel_widget_get_applet_locked (panel, info->widget);
+-			panel_applet_clean (info);
+-		}
+-
+-		panel_applet_frame_load (iid, panel, locked,
+-					 position, TRUE, id);
+-
+-		g_free (iid);
+-		g_free (id);
+-
++		panel_applet_frame_reload (frame);
+ 	} else if (info) {
+ 		/* if we can't write to applets list we can't really delete
+ 		   it, so we'll just ignore this.  FIXME: handle this
+@@ -1282,140 +1310,145 @@ panel_applet_frame_activated (CORBA_Obje
+ 	frame_act = (PanelAppletFrameActivating *) data;
+ 	frame = frame_act->frame;
+ 
+-	/* according to the source of bonobo control == NULL && no
+-	   exception can happen, so handle it */
+-	if (error_reason != NULL || object == CORBA_OBJECT_NIL) {
+-		g_warning (G_STRLOC ": failed to load applet %s:\n%s",
+-			   frame->priv->iid, error_reason);
+-		goto error_out;
+-	}
+-
+-	CORBA_exception_init (&corba_ev);
+-
+-	item_name = panel_applet_frame_construct_item (frame,
+-						       frame->priv->panel,
+-						       frame_act->id);
+-
+-	frame->priv->control = CORBA_OBJECT_NIL;
+-	container = Bonobo_Unknown_queryInterface (object,
+-						   "IDL:Bonobo/ItemContainer:1.0",
+-						   &corba_ev);
+-	if (!BONOBO_EX (&corba_ev) && container != CORBA_OBJECT_NIL) {
+-		Bonobo_Unknown containee;
+-
+-		containee = Bonobo_ItemContainer_getObjectByName (container,
+-								  item_name,
+-								  TRUE,
+-								  &corba_ev);
+-		bonobo_object_release_unref (container, NULL);
+-
+-		if (!BONOBO_EX (&corba_ev) && containee != CORBA_OBJECT_NIL) {
+-			frame->priv->control =
+-				Bonobo_Unknown_queryInterface (containee,
+-							       "IDL:Bonobo/Control:1.0",
+-							       &corba_ev);
+-
+-			bonobo_object_release_unref (containee, NULL);
+-		}
+-	}
+-	g_free (item_name);
+-
+-	if (frame->priv->control == CORBA_OBJECT_NIL) {
+-		error = bonobo_exception_get_text (&corba_ev);
+-		g_warning (G_STRLOC ": failed to get Bonobo/Control interface on applet %s:\n%s",
+-                           frame->priv->iid, error);
+-		CORBA_exception_free (&corba_ev);
+-		bonobo_object_release_unref (object, NULL);
+-		g_free (error);
+-		goto error_out;
+-	}
+-
+-	widget = bonobo_widget_new_control_from_objref (frame->priv->control,
+-							CORBA_OBJECT_NIL);
+-
+-	CORBA_exception_free (&corba_ev);
+-	bonobo_object_release_unref (object, NULL);
+-
+-	if (!widget) {
+-		g_warning (G_STRLOC ": failed to load applet %s",
+-			   frame->priv->iid);
+-		goto error_out;
+-	}
++    if (error_reason == NULL ||
++        (error_reason != NULL && strncmp (error_reason, "LOCKED", 6) != 0)) {
++	    /* according to the source of bonobo control == NULL && no
++	    exception can happen, so handle it */
++	    if (error_reason != NULL || object == CORBA_OBJECT_NIL) {
++		    g_warning (G_STRLOC ": failed to load applet %s:\n%s",
++			    frame->priv->iid, error_reason);
++		    goto error_out;
++	    }
++
++	    CORBA_exception_init (&corba_ev);
++
++	    item_name = panel_applet_frame_construct_item (frame,
++						        frame->priv->panel,
++						        frame_act->id);
++
++	    frame->priv->control = CORBA_OBJECT_NIL;
++	    container = Bonobo_Unknown_queryInterface (object,
++						    "IDL:Bonobo/ItemContainer:1.0",
++						    &corba_ev);
++	    if (!BONOBO_EX (&corba_ev) && container != CORBA_OBJECT_NIL) {
++		    Bonobo_Unknown containee;
++
++		    containee = Bonobo_ItemContainer_getObjectByName (container,
++								    item_name,
++								    TRUE,
++								    &corba_ev);
++		    bonobo_object_release_unref (container, NULL);
++
++		    if (!BONOBO_EX (&corba_ev) && containee != CORBA_OBJECT_NIL) {
++			    frame->priv->control =
++				    Bonobo_Unknown_queryInterface (containee,
++							        "IDL:Bonobo/Control:1.0",
++							        &corba_ev);
++
++			    bonobo_object_release_unref (containee, NULL);
++		    }
++	    }
++	    g_free (item_name);
++
++	    if (frame->priv->control == CORBA_OBJECT_NIL) {
++		    error = bonobo_exception_get_text (&corba_ev);
++		    g_warning (G_STRLOC ": failed to get Bonobo/Control interface on applet %s:\n%s",
++                            frame->priv->iid, error);
++		    CORBA_exception_free (&corba_ev);
++		    bonobo_object_release_unref (object, NULL);
++		    g_free (error);
++		    goto error_out;
++	    }
++
++	    widget = bonobo_widget_new_control_from_objref (frame->priv->control,
++							    CORBA_OBJECT_NIL);
++
++	    CORBA_exception_free (&corba_ev);
++	    bonobo_object_release_unref (object, NULL);
++
++	    if (!widget) {
++		    g_warning (G_STRLOC ": failed to load applet %s",
++			    frame->priv->iid);
++		    goto error_out;
++	    }
++
++	    control_frame = bonobo_widget_get_control_frame (BONOBO_WIDGET (widget));
++	    if (control_frame == NULL) {
++		    g_warning (G_STRLOC ": failed to load applet %s "
++			    "(cannot get control frame)", frame->priv->iid);
++		    goto error_out;
++	    }
+ 
+-	control_frame = bonobo_widget_get_control_frame (BONOBO_WIDGET (widget));
+-	if (control_frame == NULL) {
+-		g_warning (G_STRLOC ": failed to load applet %s "
+-			   "(cannot get control frame)", frame->priv->iid);
+-		goto error_out;
+-	}
+-
+-	frame->priv->property_bag = 
+-		bonobo_control_frame_get_control_property_bag (control_frame,
++	    frame->priv->property_bag = 
++		    bonobo_control_frame_get_control_property_bag (control_frame,
+ 							       &corba_ev);
+-	if (frame->priv->property_bag == NULL || BONOBO_EX (&corba_ev)) {
+-		error = bonobo_exception_get_text (&corba_ev);
+-		CORBA_exception_free (&corba_ev);
+-		g_warning (G_STRLOC ": failed to load applet %s "
+-			   "(cannot get property bag):\n%s",
+-			   frame->priv->iid, error);
+-		g_free (error);
+-		goto error_out;
+-	}
+-
+-	bonobo_event_source_client_add_listener (frame->priv->property_bag,
+-						 (BonoboListenerCallbackFn) panel_applet_frame_event_listener,
+-						 "Bonobo/Property:change:panel-applet",
+-						 NULL,
+-						 frame);
++	    if (frame->priv->property_bag == NULL || BONOBO_EX (&corba_ev)) {
++		    error = bonobo_exception_get_text (&corba_ev);
++		    CORBA_exception_free (&corba_ev);
++		    g_warning (G_STRLOC ": failed to load applet %s "
++			    "(cannot get property bag):\n%s",
++			    frame->priv->iid, error);
++		    g_free (error);
++		    goto error_out;
++	    }
++
++	    bonobo_event_source_client_add_listener (frame->priv->property_bag,
++						    (BonoboListenerCallbackFn) panel_applet_frame_event_listener,
++						    "Bonobo/Property:change:panel-applet",
++						    NULL,
++						    frame);
+ 	
+-	frame->priv->ui_component =
+-		bonobo_control_frame_get_popup_component (control_frame,
+-							  &corba_ev);
+-	if (frame->priv->ui_component == NULL || BONOBO_EX (&corba_ev)) {
+-		error = bonobo_exception_get_text (&corba_ev);
+-		CORBA_exception_free (&corba_ev);
+-		g_warning (G_STRLOC ": failed to load applet %s "
+-			   "(cannot get popup component):\n%s",
+-			   frame->priv->iid, error);
+-		g_free (error);
+-		goto error_out;
+-	}
+-
+-	bonobo_ui_util_set_ui (frame->priv->ui_component, DATADIR,
+-			       "GNOME_Panel_Popup.xml", "panel", NULL);
+-
+-	bonobo_ui_component_add_listener (frame->priv->ui_component,
+-					  "LockAppletToPanel",
+-					  listener_popup_handle_lock,
+-					  frame);
+-
+-	bonobo_ui_component_add_verb_list_with_data (
+-		frame->priv->ui_component, popup_verbs, frame);
+-
+-	control = bonobo_control_frame_get_control (control_frame);
+-	if (!control) {
+-		CORBA_exception_free (&corba_ev);
+-		g_warning (G_STRLOC ": failed to load applet %s "
+-			   "(cannot get control)", frame->priv->iid);
+-		goto error_out;
+-	}
+-
+-	frame->priv->applet_shell = panel_applet_frame_get_applet_shell (control);
+-	if (frame->priv->applet_shell == CORBA_OBJECT_NIL) {
+-		CORBA_exception_free (&corba_ev);
+-		g_warning (G_STRLOC ": failed to load applet %s "
+-			   "(cannot get applet shell)", frame->priv->iid);
+-		goto error_out;
+-	}
+-
+-	CORBA_exception_free (&corba_ev);
+-
+-	ORBit_small_listen_for_broken (object,
+-				       G_CALLBACK (panel_applet_frame_cnx_broken),
+-				       frame);
++	    frame->priv->ui_component =
++		    bonobo_control_frame_get_popup_component (control_frame,
++							    &corba_ev);
++	    if (frame->priv->ui_component == NULL || BONOBO_EX (&corba_ev)) {
++		    error = bonobo_exception_get_text (&corba_ev);
++		    CORBA_exception_free (&corba_ev);
++		    g_warning (G_STRLOC ": failed to load applet %s "
++			    "(cannot get popup component):\n%s",
++			    frame->priv->iid, error);
++		    g_free (error);
++		    goto error_out;
++	    }
++
++	    bonobo_ui_util_set_ui (frame->priv->ui_component, DATADIR,
++			        "GNOME_Panel_Popup.xml", "panel", NULL);
++
++	    bonobo_ui_component_add_listener (frame->priv->ui_component,
++					    "LockAppletToPanel",
++					    listener_popup_handle_lock,
++					    frame);
++
++	    bonobo_ui_component_add_verb_list_with_data (
++		    frame->priv->ui_component, popup_verbs, frame);
++
++	    control = bonobo_control_frame_get_control (control_frame);
++	    if (!control) {
++		    CORBA_exception_free (&corba_ev);
++		    g_warning (G_STRLOC ": failed to load applet %s "
++			    "(cannot get control)", frame->priv->iid);
++		    goto error_out;
++	    }
++
++	    frame->priv->applet_shell = panel_applet_frame_get_applet_shell (control);
++	    if (frame->priv->applet_shell == CORBA_OBJECT_NIL) {
++		    CORBA_exception_free (&corba_ev);
++		    g_warning (G_STRLOC ": failed to load applet %s "
++			    "(cannot get applet shell)", frame->priv->iid);
++		    goto error_out;
++	    }
++
++	    CORBA_exception_free (&corba_ev);
++
++	    ORBit_small_listen_for_broken (object,
++				        G_CALLBACK (panel_applet_frame_cnx_broken),
++				        frame);
+ 
+-	gtk_container_add (GTK_CONTAINER (frame), widget);
++	    gtk_container_add (GTK_CONTAINER (frame), widget);
++    }
+ 
++    /* Regardless of whether the object was loaded, the corresponding
++       applet is created to handle lockdown state changes */
+ 	gtk_widget_show_all (GTK_WIDGET (frame));
+ 
+ 	info = panel_applet_register (GTK_WIDGET (frame), GTK_WIDGET (frame),
+@@ -1429,7 +1462,10 @@ panel_applet_frame_activated (CORBA_Obje
+ 						  GTK_WIDGET (frame), TRUE);
+ 
+ 	panel_applet_frame_sync_menu_state (frame);
+-	panel_applet_frame_init_properties (frame);
++
++    if (frame->priv->property_bag) {
++	    panel_applet_frame_init_properties (frame);
++    }
+ 
+ 	panel_lockdown_notify_add (G_CALLBACK (panel_applet_frame_sync_menu_state),
+ 				   frame);

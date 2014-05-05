@@ -34,6 +34,9 @@ set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid \
     value=PSARC/2007/635
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+depend type=optional fmri=pkg:/developer/gnome/gettext@2.30.0,5.11-0.151.1.8.1
+
 file path=usr/bin/autopoint
 file path=usr/bin/envsubst
 file path=usr/bin/gettext.sh
@@ -56,10 +59,31 @@ file path=usr/bin/msgunfmt
 file path=usr/bin/msguniq
 file path=usr/bin/ngettext
 file path=usr/bin/recode-sr-latin
+#file path=usr/lib/charset.alias
 file path=usr/lib/gettext/hostname mode=0555
 file path=usr/lib/gettext/project-id mode=0555
 file path=usr/lib/gettext/urlget mode=0555
 file path=usr/lib/gettext/user-email mode=0555
+file path=usr/lib/libgettextlib-0.16.1.so mode=0555
+link path=usr/lib/libgettextlib.so target=libgettextlib-0.16.1.so
+link path=usr/lib/libgettextpo.so target=libgettextpo.so.0.3.0
+link path=usr/lib/libgettextpo.so.0 target=libgettextpo.so.0.3.0
+file path=usr/lib/libgettextpo.so.0.3.0 mode=0555
+file path=usr/lib/libgettextsrc-0.16.1.so mode=0555
+link path=usr/lib/libgettextsrc.so target=libgettextsrc-0.16.1.so
+
+# Compatibility 
+dir  path=usr/lib/intltool/gettext-tools
+dir  path=usr/lib/intltool/gettext-tools/lib
+file usr/lib/charset.alias path=usr/lib/intltool/gettext-tools/lib/charset.alias
+link path=usr/lib/intltool/gettext-tools/lib/libgettextlib.so target=../../../libgettextlib-0.16.1.so
+link path=usr/lib/intltool/gettext-tools/lib/libgettextlib-0.16.1.so target=../../../libgettextlib-0.16.1.so
+link path=usr/lib/intltool/gettext-tools/lib/libgettextsrc.so target=../../../libgettextsrc-0.16.1.so
+link path=usr/lib/intltool/gettext-tools/lib/libgettextsrc-0.16.1.so target=../../../libgettextsrc-0.16.1.so
+link path=usr/lib/intltool/gettext-tools/msgmerge target=../../../bin/msgmerge
+link path=usr/lib/intltool/gettext-tools/recode-sr-latin target=../../../bin/recode-sr-latin
+link path=usr/lib/intltool/gettext-tools/xgettext target=../../../gnu/bin/xgettext
+
 file path=usr/share/aclocal/codeset.m4
 file path=usr/share/aclocal/gettext.m4
 file path=usr/share/aclocal/glibc2.m4

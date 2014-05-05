@@ -1,0 +1,1475 @@
+diff --git a/autogen.sh b/autogen.sh
+old mode 100755
+new mode 100644
+diff --git a/ekiga.schemas.in.in b/ekiga.schemas.in.in
+index 822270f..4eb5b28 100644
+--- a/ekiga.schemas.in.in
++++ b/ekiga.schemas.in.in
+@@ -991,5 +991,38 @@
+ 	<long>Automatically reject or forward incoming calls if no answer is given after the specified amount of time (in seconds)</long>
+       </locale>
+     </schema>
++    <schema>
++      <key>/schemas/apps/@PACKAGE_NAME@/protocols/t140/enable_realtime</key>
++      <applyto>/apps/@PACKAGE_NAME@/protocols/t140/enable_realtime</applyto>
++      <owner>Ekiga</owner>
++      <type>bool</type>
++      <default>true</default>
++      <locale name="C">
++        <short>Enable Realtime</short>
++        <long>Enable Realtime</long>
++      </locale>
++    </schema>
++    <schema>
++      <key>/schemas/apps/@PACKAGE_NAME@/protocols/t140/buffer_time</key>
++      <applyto>/apps/@PACKAGE_NAME@/protocols/t140/buffer_time</applyto>
++      <owner>Ekiga</owner>
++      <type>int</type>
++      <default>300</default>
++      <locale name="C">
++        <short>Buffer time</short>
++        <long>Buffer time (in ms)</long>
++      </locale>
++    </schema>
++    <schema>
++      <key>/schemas/apps/@PACKAGE_NAME@/protocols/t140/character_per_second</key>
++      <applyto>/apps/@PACKAGE_NAME@/protocols/t140/character_per_second</applyto>
++      <owner>Ekiga</owner>
++      <type>int</type>
++      <default>30</default>
++      <locale name="C">
++        <short>Character per Second</short>
++        <long>Character per Second</long>
++      </locale>
++    </schema>
+   </schemalist>
+ </gconfschemafile>
+diff --git a/help/sv/sv.po b/help/sv/sv.po
+old mode 100755
+new mode 100644
+diff --git a/lib/engine/chat/chat.h b/lib/engine/chat/chat.h
+index 94e8de8..5fd2aae 100644
+--- a/lib/engine/chat/chat.h
++++ b/lib/engine/chat/chat.h
+@@ -58,7 +58,8 @@ namespace Ekiga
+      *
+      */
+     virtual void message (const std::string to,
+-			  const std::string msg) = 0;
++			  const std::string msg,
++                          bool flag) = 0;
+ 
+     /** Tell the observer about a new service message, like :
+      * observer.notice ("Snark just disconnected");
+@@ -109,6 +110,8 @@ namespace Ekiga
+      * @return True if it was valid to send a message
+      */
+     virtual bool send_message (const std::string msg) = 0;
++    
++    virtual void display_message (const std::string msg) = 0;
+ 
+     /** This signal is emitted when the Chat has been updated.
+      */
+@@ -130,6 +133,12 @@ namespace Ekiga
+     /** This chain allows the Chat to present forms to the user.
+      */
+     ChainOfResponsibility<FormRequest*> questions;
++
++    /** True if the chat is enabled real-time text.
++     */
++    virtual bool is_real_time_text_enabled () = 0;
++
++    virtual int real_time_buffering_time () { return 300; }
+   };
+ 
+ };
+diff --git a/lib/engine/components/echo/echo-simple.cpp b/lib/engine/components/echo/echo-simple.cpp
+index 6e3789b..1b41dc3 100644
+--- a/lib/engine/components/echo/echo-simple.cpp
++++ b/lib/engine/components/echo/echo-simple.cpp
+@@ -83,11 +83,20 @@ Echo::SimpleChat::send_message (const std::string msg)
+   for (std::list<gmref_ptr<Ekiga::ChatObserver> >::iterator iter = observers.begin ();
+        iter != observers.end ();
+        ++iter)
+-    (*iter)->message ("Echo", msg);
++    (*iter)->message ("Echo", msg, false);
+ 
+   return true;
+ }
+ 
++void
++Echo::SimpleChat::display_message (const std::string msg)
++{
++  for (std::list<gmref_ptr<Ekiga::ChatObserver> >::iterator iter = observers.begin ();
++       iter != observers.end ();
++       ++iter)
++    (*iter)->message ("Echo", msg, false);
++}
++
+ const std::string
+ Echo::SimpleChat::get_title() const
+ {
+diff --git a/lib/engine/components/echo/echo-simple.h b/lib/engine/components/echo/echo-simple.h
+index 1c6a307..4c94946 100644
+--- a/lib/engine/components/echo/echo-simple.h
++++ b/lib/engine/components/echo/echo-simple.h
+@@ -56,11 +56,15 @@ namespace Echo
+     void disconnect (gmref_ptr<Ekiga::ChatObserver> observer);
+ 
+     bool send_message (const std::string msg);
++    
++    void display_message (const std::string msg);
+ 
+     Ekiga::PresentityPtr get_presentity () const;
+ 
+     bool populate_menu (Ekiga::MenuBuilder &builder);
+ 
++    bool is_real_time_text_enabled () { return false; }
++
+   private:
+ 
+     std::list<gmref_ptr<Ekiga::ChatObserver> > observers;
+diff --git a/lib/engine/components/opal/opal-call-manager.cpp b/lib/engine/components/opal/opal-call-manager.cpp
+index 2961d8a..0771175 100644
+--- a/lib/engine/components/opal/opal-call-manager.cpp
++++ b/lib/engine/components/opal/opal-call-manager.cpp
+@@ -141,6 +141,13 @@ CallManager::CallManager (Ekiga::ServiceCore & _core)
+   queue = g_async_queue_new ();
+ 
+   PInterfaceMonitor::GetInstance().SetRefreshInterval (15000);
++
++  // IM media format
++  using_im = false;
++  using_im_media_format = OpalT140;
++  im_media_format = OpalMediaFormat();
++  t140_buffer_time = 300;
++  t140_cps = 30;
+ }
+ 
+ 
+@@ -156,7 +163,7 @@ void CallManager::set_display_name (const std::string & name)
+ {
+   display_name = name;
+ 
+-  SetDefaultDisplayName (display_name);
++  SetDefaultDisplayName ("");
+ }
+ 
+ 
+@@ -357,7 +364,8 @@ void CallManager::set_codecs (Ekiga::CodecList & _codecs)
+   }
+   codecs = _codecs;
+ 
+-
++  // T140 is the first order and not in the mask, otherwise setup t140 session will fail.
++  order += OpalT140;
+   //
+   // Update OPAL
+   //
+@@ -496,6 +504,28 @@ bool CallManager::dial (const std::string & uri)
+   return false;
+ }
+ 
++bool
++CallManager::make_im_connection (const std::string & uri)
++{
++  std::stringstream ustr;
++
++  if (uri.find ("sip:") == 0 || uri.find (":") == string::npos) {
++
++    if (uri.find (":") == string::npos)
++      ustr << "sip:" << uri;
++    else
++      ustr << uri;
++
++    PSafePtr<OpalCall> call = FindCallWithLock(tokens[uri]);
++    if (call) {
++      OpalConnection::StringOptions * options = new OpalConnection::StringOptions();
++      //options->SetAt(OPAL_OPT_AUTO_START, get_im_media_format().GetMediaType() + ":exclusive");
++      options->SetAt(OPAL_OPT_AUTO_START, get_im_media_format().GetMediaType());
++      return MakeConnection(*call, ustr.str(), (void*) ustr.str().c_str(), 0, options);
++    }
++  }
++  return false;
++}
+ 
+ void CallManager::set_video_options (const CallManager::VideoOptions & options)
+ {
+@@ -616,6 +646,45 @@ void CallManager::get_video_options (CallManager::VideoOptions & options) const
+   }
+ }
+ 
++bool CallManager::is_using_im (void)
++{
++  return using_im;
++}
++
++const OpalMediaFormat &CallManager::get_using_im_media_format (void)
++{
++  return using_im_media_format;
++}
++
++void CallManager::set_im_media_format (OpalMediaFormat media_format)
++{
++  im_media_format = media_format;
++}
++
++OpalMediaFormat &CallManager::get_im_media_format (void)
++{
++  return im_media_format;
++}
++
++void CallManager::set_t140_buffer_time (int buffer_time)
++{
++  t140_buffer_time = buffer_time;
++}
++
++int CallManager::get_t140_buffer_time () const
++{
++  return t140_buffer_time;
++}
++
++void CallManager::set_t140_cps (int cps)
++{
++  t140_cps = cps;
++}
++
++int CallManager::get_t140_cps () const
++{
++  return t140_cps;
++}
+ 
+ OpalCall *CallManager::CreateCall (void *uri)
+ {
+@@ -644,11 +713,16 @@ CallManager::DestroyCall (OpalCall *_call)
+ void
+ CallManager::OnClosedMediaStream (const OpalMediaStream & stream)
+ {
++  if (stream.GetMediaFormat() == OpalT140) {
++    using_im = false;
++  }
++
+   OpalMediaFormatList list = pcssEP->GetMediaFormats ();
+   OpalManager::OnClosedMediaStream (stream);
+ 
+   if (list.FindFormat(stream.GetMediaFormat()) != list.end ())
+     dynamic_cast <Opal::Call &> (stream.GetConnection ().GetCall ()).OnClosedMediaStream ((OpalMediaStream &) stream);
++
+ }
+ 
+ 
+@@ -658,14 +732,50 @@ CallManager::OnOpenMediaStream (OpalConnection & connection,
+ {
+   OpalMediaFormatList list = pcssEP->GetMediaFormats ();
+   if (!OpalManager::OnOpenMediaStream (connection, stream))
+-    return FALSE;
++    return false;
+ 
+   if (list.FindFormat(stream.GetMediaFormat()) == list.end ())
+     dynamic_cast <Opal::Call &> (connection.GetCall ()).OnOpenMediaStream (stream);
+ 
+-  return TRUE;
++  if (stream.GetMediaFormat() == OpalT140) {
++    // Do not enable T140
++    if (im_media_format != OpalT140) {
++      PTRACE(1, "CallManager\tOnOpenMediaStream disable t140.");
++      return false;
++    }
++    PTRACE(1, "CallManager\tOnOpenMediaStream enable t140.");
++    using_im = true;
++    using_im_media_format = OpalT140;
++//  stream.GetMediaFormat().PrintOptions(cout);
++//  cout << endl;
++//  stream.GetMediaFormat().SetOptionInteger("cps", get_t140_cps());
++//  stream.GetMediaFormat().PrintOptions(cout);
++//  cout << endl;
++  }
++
++  return true;
++}
++
++
++void CallManager::OnEstablished(OpalConnection &connection)
++{
++    std::string disp_name = (const char *) connection.GetRemotePartyName ();
++    std::string uri = (const char *) "sip:" + disp_name;
++    // For T.140
++    tokens[uri] = connection.GetCall().GetToken();
++
++    OpalManager::OnEstablished(connection);
+ }
+ 
++void CallManager::OnReleased(OpalConnection &connection)
++{
++    std::string disp_name = (const char *) connection.GetRemotePartyName ();
++    std::string uri = (const char *) "sip:" + disp_name;
++    tokens.erase (uri);
++
++    using_im = false;
++    OpalManager::OnReleased(connection);
++}
+ 
+ void CallManager::GetAllowedFormats (OpalMediaFormatList & full_list)
+ {
+@@ -755,3 +865,4 @@ CallManager::ReportSTUNError (const std::string error)
+ 				 10);
+   }
+ }
++
+diff --git a/lib/engine/components/opal/opal-call-manager.h b/lib/engine/components/opal/opal-call-manager.h
+index 421502e..75fa340 100644
+--- a/lib/engine/components/opal/opal-call-manager.h
++++ b/lib/engine/components/opal/opal-call-manager.h
+@@ -88,6 +88,8 @@ public:
+     /** Call Manager **/
+     bool dial (const std::string & uri); 
+ 
++    bool make_im_connection (const std::string & uri);
++
+     void set_display_name (const std::string & name);
+     const std::string & get_display_name () const;
+ 
+@@ -151,6 +153,21 @@ public:
+     void set_video_options (const VideoOptions & options);
+     void get_video_options (VideoOptions & options) const;
+ 
++    /* T140 */
++    bool is_using_im (void);
++    const OpalMediaFormat &get_using_im_media_format (void);
++
++    void set_im_media_format (OpalMediaFormat im_media_format);
++    OpalMediaFormat &get_im_media_format (void);
++
++    void set_t140_buffer_time (int buffer_time);
++    int get_t140_buffer_time () const;
++
++    void set_t140_cps (int cps);
++    int get_t140_cps () const;
++
++    PString &find_token_with_uri (const PString &uri) { return tokens[uri]; }
++
+ private:
+     OpalCall *CreateCall (void *uri);
+     void DestroyCall (OpalCall *);
+@@ -160,6 +177,10 @@ private:
+ 
+     void OnClosedMediaStream (const OpalMediaStream &);
+ 
++    void OnEstablished (OpalConnection &connection);
++
++    void OnReleased (OpalConnection &connection);
++
+     void GetAllowedFormats (OpalMediaFormatList & full_list);
+ 
+     void HandleSTUNResult ();
+@@ -187,6 +208,15 @@ private:
+     bool unconditional_forward;
+     bool forward_on_no_answer;
+     bool stun_enabled;
++
++    std::map<std::string, PString> tokens; // <uri, token>
++
++    /* which im format to use */
++    bool using_im;
++    OpalMediaFormat using_im_media_format;
++    OpalMediaFormat im_media_format;
++    int t140_buffer_time;
++    int t140_cps;
+   };
+ };
+ #endif
+diff --git a/lib/engine/components/opal/opal-gmconf-bridge.cpp b/lib/engine/components/opal/opal-gmconf-bridge.cpp
+index baf5d8b..aef24a7 100644
+--- a/lib/engine/components/opal/opal-gmconf-bridge.cpp
++++ b/lib/engine/components/opal/opal-gmconf-bridge.cpp
+@@ -60,6 +60,7 @@
+ #define SIP_KEY "/apps/" PACKAGE_NAME "/protocols/sip/"
+ #define PORTS_KEY "/apps/" PACKAGE_NAME "/protocols/ports/"
+ #define CALL_FORWARDING_KEY "/apps/" PACKAGE_NAME "/protocols/call_forwarding/"
++#define TEXT_KEY  "/apps/" PACKAGE_NAME "/protocols/t140/"
+ #define AUDIO_CODECS_KEY "/apps/" PACKAGE_NAME "/codecs/audio/"
+ #define VIDEO_CODECS_KEY  "/apps/" PACKAGE_NAME "/codecs/video/"
+ 
+@@ -78,6 +79,10 @@ ConfBridge::ConfBridge (Ekiga::Service & _service)
+   keys.push_back (AUDIO_CODECS_KEY "enable_silence_detection");
+   keys.push_back (AUDIO_CODECS_KEY "enable_echo_cancelation");
+ 
++  keys.push_back (TEXT_KEY "enable_realtime");
++  keys.push_back (TEXT_KEY "buffer_time");
++  keys.push_back (TEXT_KEY "character_per_second");
++
+   keys.push_back (AUDIO_CODECS_KEY "media_list");
+   keys.push_back (VIDEO_CODECS_KEY "media_list");
+ 
+@@ -289,6 +294,31 @@ void ConfBridge::on_property_changed (std::string key, GmConfEntry *entry)
+   }
+ 
+   //
++  // TEXT related keys
++  // 
++  else if (key.find (TEXT_KEY) != string::npos) {
++
++      if (key == TEXT_KEY "buffer_time") {
++
++          manager.set_t140_buffer_time (gm_conf_entry_get_int (entry));
++      }
++      else if (key == TEXT_KEY "character_per_second") {
++
++          manager.set_t140_cps (gm_conf_entry_get_int (entry));
++      }
++      else if (key == TEXT_KEY "enable_realtime") {
++        if (gm_conf_entry_get_bool (entry)) {
++
++          PTRACE(1, "opal-gmconf-bridge\tEnable t140.");
++          manager.set_im_media_format(OpalT140);
++        } else {
++          PTRACE(1, "opal-gmconf-bridge\tDisable t140.");
++          manager.set_im_media_format(OpalMediaFormat ());
++        }
++      }
++  }
++
++  //
+   // H.323 keys
+   //
+ #ifdef HAVE_H323
+diff --git a/lib/engine/components/opal/pcss-endpoint.cpp b/lib/engine/components/opal/pcss-endpoint.cpp
+index 8727fb1..68099b2 100644
+--- a/lib/engine/components/opal/pcss-endpoint.cpp
++++ b/lib/engine/components/opal/pcss-endpoint.cpp
+@@ -40,10 +40,10 @@
+ 
+ #include "pcss-endpoint.h"
+ #include "opal-call-manager.h"
++#include "sip-endpoint.h"
+ 
+ #include "call.h"
+ 
+-
+ GMPCSSEndpoint::GMPCSSEndpoint (Opal::CallManager & ep,
+                                 Ekiga::ServiceCore & _core) 
+ :   OpalPCSSEndPoint (ep),
+@@ -54,16 +54,32 @@ GMPCSSEndpoint::GMPCSSEndpoint (Opal::CallManager & ep,
+ #else
+   SetSoundChannelBufferDepth (5);
+ #endif
++
+ }
+ 
+ 
+-bool GMPCSSEndpoint::OnShowIncoming (const OpalPCSSConnection & /*connection*/)
++bool GMPCSSEndpoint::OnShowIncoming (const OpalPCSSConnection & connection)
+ {
++  ((OpalConnection &)connection).AddIMListener(PCREATE_NOTIFIER(OnReceiveIM));
+   return true;
+ }
+ 
+ 
+-bool GMPCSSEndpoint::OnShowOutgoing (const OpalPCSSConnection & /*connection*/)
++bool GMPCSSEndpoint::OnShowOutgoing (const OpalPCSSConnection & connection)
+ {
++  ((OpalConnection &)connection).AddIMListener(PCREATE_NOTIFIER(OnReceiveIM));
+   return true;
+ }
++
++void GMPCSSEndpoint::OnReceiveIM(OpalConnection::IMInfo & im, INT conn)
++{
++  OpalConnection *connection = (OpalConnection *) conn;
++
++  std::string display_name = (const char *) connection->GetRemotePartyName ();
++  std::string message_uri = (const char *) "sip:" + display_name;
++  std::string message = (const char *)im.body.GetPointer();
++
++  OpalEndPoint *sip = GetManager().FindEndPoint ("sip");
++  dynamic_cast<Opal::Sip::EndPoint*>(sip)->OnReceivedIM(message_uri, display_name, message, (void *)conn);
++}
++
+diff --git a/lib/engine/components/opal/pcss-endpoint.h b/lib/engine/components/opal/pcss-endpoint.h
+index 4ee2ea3..300c381 100644
+--- a/lib/engine/components/opal/pcss-endpoint.h
++++ b/lib/engine/components/opal/pcss-endpoint.h
+@@ -45,6 +45,8 @@
+ #include <opal/opal.h>
+ #include <opal/pcss.h>
+ 
++#include "chat-core.h"
++
+ namespace Opal {
+   class CallManager;
+ }
+@@ -60,7 +62,10 @@ public:
+ 
+   bool OnShowOutgoing (const OpalPCSSConnection &connection);  
+ 
++  PDECLARE_NOTIFIER(OpalConnection::IMInfo, GMPCSSEndpoint, OnReceiveIM);
++
+ private:
++
+   Ekiga::ServiceCore & core;
+ };
+ 
+diff --git a/lib/engine/components/opal/sip-chat-simple.cpp b/lib/engine/components/opal/sip-chat-simple.cpp
+index aa23eff..d99a6aa 100644
+--- a/lib/engine/components/opal/sip-chat-simple.cpp
++++ b/lib/engine/components/opal/sip-chat-simple.cpp
+@@ -47,6 +47,7 @@ SIP::SimpleChat::SimpleChat (Ekiga::ServiceCore& core_,
+ {
+   presentity = gmref_ptr<Ekiga::URIPresentity> (new Ekiga::URIPresentity (core, name, uri,
+ 									  std::set<std::string>()));
++  call_manager = core.get ("opal-component");
+ }
+ 
+ SIP::SimpleChat::~SimpleChat ()
+@@ -85,13 +86,20 @@ bool
+ SIP::SimpleChat::send_message (const std::string msg)
+ {
+   bool result;
+-  gmref_ptr<Ekiga::PersonalDetails> personal = core.get ("personal-details");
++  //gmref_ptr<Ekiga::PersonalDetails> personal = core.get ("personal-details");
+   result = sender (msg);
++
++  return result;
++}
++
++void
++SIP::SimpleChat::display_message (const std::string msg)
++{
++  gmref_ptr<Ekiga::PersonalDetails> personal = core.get ("personal-details");
+   for (std::list<gmref_ptr<Ekiga::ChatObserver> >::iterator iter = observers.begin ();
+        iter != observers.end ();
+        ++iter)
+-    (*iter)->message (personal->get_display_name (), msg);
+-  return result;
++    (*iter)->message (personal->get_display_name (), msg, false);
+ }
+ 
+ void
+@@ -100,7 +108,7 @@ SIP::SimpleChat::receive_message (const std::string msg)
+   for (std::list<gmref_ptr<Ekiga::ChatObserver> >::iterator iter = observers.begin ();
+        iter != observers.end ();
+        ++iter)
+-    (*iter)->message (presentity->get_name (), msg);
++    (*iter)->message (presentity->get_name (), msg, true);
+ }
+ 
+ void
+@@ -123,3 +131,15 @@ SIP::SimpleChat::populate_menu (Ekiga::MenuBuilder& /*builder*/)
+ {
+   return false;
+ }
++
++bool
++SIP::SimpleChat::is_real_time_text_enabled ()
++{
++    return call_manager->is_using_im();
++}
++
++int
++SIP::SimpleChat::real_time_buffering_time ()
++{
++    return call_manager->get_t140_buffer_time();
++}
+diff --git a/lib/engine/components/opal/sip-chat-simple.h b/lib/engine/components/opal/sip-chat-simple.h
+index 7a3de61..5e15814 100644
+--- a/lib/engine/components/opal/sip-chat-simple.h
++++ b/lib/engine/components/opal/sip-chat-simple.h
+@@ -40,6 +40,7 @@
+ 
+ #include "chat-simple.h"
+ #include "services.h"
++#include "opal-call-manager.h"
+ 
+ namespace SIP
+ {
+@@ -63,6 +64,8 @@ namespace SIP
+ 
+     bool send_message (const std::string msg);
+ 
++    void display_message (const std::string msg);
++    
+     void receive_message (const std::string msg);
+ 
+     void receive_notice (const std::string msg);
+@@ -71,6 +74,10 @@ namespace SIP
+ 
+     bool populate_menu (Ekiga::MenuBuilder& builder);
+ 
++    bool is_real_time_text_enabled ();
++
++    int real_time_buffering_time ();
++
+   private:
+ 
+     Ekiga::ServiceCore& core;
+@@ -78,6 +85,7 @@ namespace SIP
+     std::list<gmref_ptr<Ekiga::ChatObserver> > observers;
+     Ekiga::PresentityPtr presentity;
+     std::string uri;
++    gmref_ptr<Opal::CallManager> call_manager;
+   };
+ 
+   typedef gmref_ptr<SimpleChat> SimpleChatPtr;
+diff --git a/lib/engine/components/opal/sip-endpoint.cpp b/lib/engine/components/opal/sip-endpoint.cpp
+index ece5f98..85d1171 100644
+--- a/lib/engine/components/opal/sip-endpoint.cpp
++++ b/lib/engine/components/opal/sip-endpoint.cpp
+@@ -352,15 +352,24 @@ Opal::Sip::EndPoint::send_message (const std::string & _uri,
+ {
+   if (!_uri.empty () && (_uri.find ("sip:") == 0 || _uri.find (':') == string::npos) && !_message.empty ()) {
+ 
+-    SIPEndPoint::Message (_uri, _message);
+-
++    if (manager.is_using_im()) {
++        PSafePtr<OpalCall> call = manager.FindCallWithLock(manager.find_token_with_uri(_uri));
++
++        if (call != NULL) {
++            PSafePtr<OpalPCSSConnection> conn = call->GetConnectionAs<OpalPCSSConnection>();
++            if (conn != NULL) {
++                conn->SendIM(manager.get_using_im_media_format(), T140String(_message));
++            }
++        }
++    } else {
++        SIPEndPoint::Message (_uri, _message);
++    }
+     return true;
+   }
+ 
+   return false;
+ }
+ 
+-
+ bool
+ Opal::Sip::EndPoint::dial (const std::string & uri)
+ {
+@@ -373,8 +382,14 @@ Opal::Sip::EndPoint::dial (const std::string & uri)
+     else
+       ustr << uri;
+ 
+-    PString token;
+-    manager.SetUpCall("pc:*", ustr.str(), token, (void*) ustr.str().c_str());
++    OpalConnection::StringOptions *options = NULL;
++
++    if (manager.get_im_media_format() == OpalT140) {
++      options = new OpalConnection::StringOptions();
++      options->SetAt(OPAL_OPT_AUTO_START, manager.get_im_media_format().GetMediaType());
++    }
++
++    manager.SetUpCall("pc:*", ustr.str(), manager.find_token_with_uri(uri), (void*) ustr.str().c_str(), 0, options);
+ 
+     return true;
+   }
+@@ -382,7 +397,6 @@ Opal::Sip::EndPoint::dial (const std::string & uri)
+   return false;
+ }
+ 
+-
+ const std::string&
+ Opal::Sip::EndPoint::get_protocol_name () const
+ {
+@@ -890,6 +904,7 @@ Opal::Sip::EndPoint::OnIncomingConnection (OpalConnection &connection,
+   else {
+ 
+     Opal::Call *call = dynamic_cast<Opal::Call *> (&connection.GetCall ());
++
+     if (call) {
+ 
+       if (!forward_uri.empty () && manager.get_forward_on_no_answer ())
+@@ -911,7 +926,6 @@ Opal::Sip::EndPoint::OnReceivedMESSAGE (OpalTransport & transport,
+ {
+   PString *last = NULL;
+   PString *val = NULL;
+-
+   PString from = pdu.GetMIME().GetFrom();
+   PINDEX j = from.Find (';');
+   if (j != P_MAX_INDEX)
+@@ -939,6 +953,14 @@ Opal::Sip::EndPoint::OnReceivedMESSAGE (OpalTransport & transport,
+   return SIPEndPoint::OnReceivedMESSAGE (transport, pdu);
+ }
+ 
++void
++Opal::Sip::EndPoint::OnReceivedIM (std::string &uri,
++                                   std::string &display_name,
++                                   std::string &message,
++                                   void *conn)
++{
++    Ekiga::Runtime::run_in_main (sigc::bind (sigc::mem_fun (this, &Opal::Sip::EndPoint::push_message_in_main), uri, display_name, message));
++}
+ 
+ void
+ Opal::Sip::EndPoint::OnMessageFailed (const SIPURL & messageUrl,
+@@ -954,7 +976,6 @@ Opal::Sip::EndPoint::OnMessageFailed (const SIPURL & messageUrl,
+ 					   _("Could not send message")));
+ }
+ 
+-
+ SIPURL
+ Opal::Sip::EndPoint::GetRegisteredPartyName (const SIPURL & aor,
+ 					     const OpalTransport & transport)
+diff --git a/lib/engine/components/opal/sip-endpoint.h b/lib/engine/components/opal/sip-endpoint.h
+index 7fbd6b2..5c6598c 100644
+--- a/lib/engine/components/opal/sip-endpoint.h
++++ b/lib/engine/components/opal/sip-endpoint.h
+@@ -114,7 +114,6 @@ namespace Opal {
+       bool send_message (const std::string & uri,
+                          const std::string & message);
+ 
+-
+       /* CallProtocolManager */
+       bool dial (const std::string & uri);
+ 
+@@ -180,13 +179,17 @@ namespace Opal {
+       bool OnReceivedMESSAGE (OpalTransport & transport,
+                               SIP_PDU & pdu);
+ 
++      void OnReceivedIM (std::string &uri,
++                         std::string &display_name,
++                         std::string &message,
++                         void *conn);
++
+       void OnMessageFailed (const SIPURL & messageUrl,
+                             SIP_PDU::StatusCodes reason);
+ 
+       SIPURL GetRegisteredPartyName (const SIPURL & host,
+ 				     const OpalTransport & transport);
+ 
+-
+       /* Callbacks */
+     private:
+       void on_dial (std::string uri);
+diff --git a/lib/engine/gui/gtk-frontend/chat-area.cpp b/lib/engine/gui/gtk-frontend/chat-area.cpp
+index 663ee68..14ea57a 100644
+--- a/lib/engine/gui/gtk-frontend/chat-area.cpp
++++ b/lib/engine/gui/gtk-frontend/chat-area.cpp
+@@ -55,6 +55,12 @@
+ 
+ class ChatAreaHelper;
+ 
++struct _HistoryMessage
++{
++  gint number;
++  GSList* next;
++};
++
+ struct _ChatAreaPrivate
+ {
+   Ekiga::Chat* chat;
+@@ -67,6 +73,15 @@ struct _ChatAreaPrivate
+   GtkWidget* scrolled_text_window;
+   GtkWidget* text_view;
+   GtkWidget* message;
++  GTimeVal buffering_timer_stop_time;
++  guint buffering_timer_id;
++  gint buffering_time;
++  gint bp;
++  gint cp_min;
++  gint line_number;
++  GHashTable* hash;
++  GSList* list;
++  gchar* local_name;
+ };
+ 
+ enum {
+@@ -84,13 +99,23 @@ static GObjectClass* parent_class = NULL;
+ 
+ /* declaration of internal api */
+ 
++static gboolean message_send_after_buffering (gpointer data);
++
++static void start_buffering_timer (ChatArea* self);
++
++static gboolean buffering_timer_is_started (ChatArea* self);
++
+ static void chat_area_add_notice (ChatArea* self,
+ 				  const gchar* txt);
+ 
+-static void chat_area_add_message (ChatArea* self,
++static void chat_area_add_local_message (ChatArea* self,
+ 				   const gchar* from,
+ 				   const gchar* txt);
+ 
++static void chat_area_add_remote_message (ChatArea* self,
++                                   const gchar* from,
++                                   const gchar* txt);
++
+ /* declaration of the helping observer */
+ class ChatAreaHelper: public Ekiga::ChatObserver
+ {
+@@ -102,8 +127,15 @@ public:
+   {}
+ 
+   void message (const std::string from,
+-		const std::string msg)
+-  { chat_area_add_message (area, from.c_str (), msg.c_str ()); }
++		const std::string msg,
++                bool flag)
++  {
++    if (flag) { 
++      chat_area_add_remote_message (area, from.c_str (), msg.c_str ()); 
++    } else {
++      chat_area_add_local_message (area, from.c_str (), msg.c_str ()); 
++    }
++  }
+ 
+   void notice (const std::string msg)
+   { chat_area_add_notice (area, msg.c_str ()); }
+@@ -154,6 +186,12 @@ static gboolean message_activated_cb (GtkWidget *w,
+                                       GdkEventKey *key,
+                                       gpointer data);
+ 
++static void message_changed_cb (GtkTextBuffer *textbuffer,
++    gpointer user_data);
++
++static void backspace_activated_cb (GtkTextView *textview,
++    gpointer user_data);
++
+ static void on_chat_removed (ChatArea* self);
+ 
+ static void on_chat_area_grab_focus (GtkWidget*,
+@@ -210,6 +248,90 @@ gm_chat_area_define_simple_text_tag (GtkTextBuffer* buffer,
+    * owned by the buffer's tag table */
+ }
+ 
++static gboolean
++message_send_after_buffering (gpointer data)
++{
++  ChatArea *self = CHAT_AREA (data);
++  GtkTextIter cp_min_iter, end_iter;
++  GtkTextBuffer *buffer = NULL;
++  gchar* body = NULL;
++  gint cp = 0;      // cursor point
++
++  g_return_val_if_fail (data != NULL, FALSE);
++  
++  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->message));
++  gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end_iter);
++  cp = gtk_text_iter_get_offset(&end_iter);
++
++  if (self->priv->cp_min != self->priv->bp || self->priv->bp != cp) {
++
++    if (self->priv->buffering_timer_id > 0) {
++    send_immediately:
++      gchar *backspace_str = NULL;
++      gchar *message = NULL;
++
++      gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER (buffer), &cp_min_iter, self->priv->cp_min);
++
++      body = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (buffer), &cp_min_iter, &end_iter, TRUE);
++
++      if (self->priv->cp_min < self->priv->bp) {
++        backspace_str = g_strnfill(self->priv->bp - self->priv->cp_min, '\b');
++        message = g_strconcat (backspace_str, body, NULL);
++        g_free(body);
++        g_free(backspace_str);
++      } else {
++        message = body;
++      }
++
++      if (self->priv->chat->send_message (message)) {
++        self->priv->bp = cp;
++        self->priv->cp_min = cp;
++      }
++
++      g_free(message);
++
++    } else {
++      GTimeVal now;
++      GTimeVal last = self->priv->buffering_timer_stop_time;
++      /* Detect if it is after an idle period time (a buffering time) */
++      g_get_current_time(&now);
++      g_time_val_add(&last, self->priv->buffering_time);
++      // Start buffer timer anyway
++      start_buffering_timer(self);
++      if (now.tv_sec > last.tv_sec
++			 || (now.tv_sec == last.tv_sec && now.tv_usec == last.tv_usec)) {
++        // Send at once
++        goto send_immediately;
++				// } else {
++        // postpone to the next buffering time
++      }
++    }
++  } else {
++    // No changes
++    /* Update timer stop time */
++    g_get_current_time(&self->priv->buffering_timer_stop_time);
++    self->priv->buffering_timer_id = 0;
++    return FALSE;
++  }
++
++  return TRUE;
++}
++
++static void
++start_buffering_timer (ChatArea* self)
++{
++  if (self->priv->buffering_timer_id == 0) {
++    self->priv->buffering_timer_id = g_timeout_add (self->priv->buffering_time,
++     (GSourceFunc)message_send_after_buffering,
++     self);
++  }
++}
++
++static gboolean
++buffering_timer_is_started (ChatArea* self)
++{
++  return self->priv->buffering_timer_id != 0;
++}
+ 
+ static void
+ chat_area_add_notice (ChatArea* self,
+@@ -235,25 +357,188 @@ chat_area_add_notice (ChatArea* self,
+ }
+ 
+ static void
+-chat_area_add_message (ChatArea* self,
+-		       const gchar* from,
+-		       const gchar* txt)
++chat_area_add_local_message (ChatArea* self,
++ const gchar* from,
++ const gchar* txt)
+ {
+   gchar* str = NULL;
+   GtkTextMark *mark = NULL;
+   GtkTextBuffer* buffer = NULL;
+   GtkTextIter iter;
+ 
+-  str = g_strdup_printf ("<b><i>%s %s</i></b>\n%s\n", from, _("says:"), txt);
++  str = g_strdup_printf ("<b><i>%s %s</i></b>\n%s", from, _("says:"), txt);
+   buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->text_view));
+   gtk_text_buffer_get_end_iter (buffer, &iter);
+-  gm_text_buffer_enhancer_insert_text (self->priv->enhancer, &iter,
+-				       str, -1);
++
++  if (self->priv->chat->is_real_time_text_enabled()) {
++    gtk_text_iter_set_line (&iter, self->priv->line_number);
++    gm_text_buffer_enhancer_insert_text (self->priv->enhancer, &iter,
++	 str, -1);
++  
++    self->priv->line_number = gtk_text_iter_get_line (&iter); 
++    g_free (self->priv->local_name);
++    self->priv->local_name = g_strdup (from);
++
++    _HistoryMessage* history_message = g_new (_HistoryMessage, 1);
++    history_message->number = self->priv->line_number;
++    history_message->next = (GSList*)g_hash_table_lookup (self->priv->hash, from);
++  
++    self->priv->list = g_slist_prepend (self->priv->list, history_message);
++
++    g_hash_table_insert (self->priv->hash, (gpointer)g_strdup(from), (gpointer)(self->priv->list));
++
++  } else {
++    gm_text_buffer_enhancer_insert_text (self->priv->enhancer, &iter,
++            str, -1);
++
++  }
++
+   g_free (str);
+ 
+   mark = gtk_text_buffer_get_mark (buffer, "current-position");
+   gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (self->priv->text_view), mark,
+-                                0.0, FALSE, 0,0);
++	 0.0, FALSE, 0,0);
++
++  g_signal_emit (self, signals[MESSAGE_NOTICE_EVENT], 0);
++
++}
++
++static void
++chat_area_add_remote_message (ChatArea* self,
++ const gchar* from,
++ const gchar* txt)
++{
++#define ZERO_WIDTH_NO_BREAK 0xfeff
++  GtkTextMark *mark = NULL;
++  GtkTextBuffer* buffer = NULL;
++  GtkTextIter start_iter, end_iter;
++  gchar* str = NULL;
++  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->text_view));
++  gtk_text_buffer_get_end_iter (buffer, &end_iter);
++ 
++  if (self->priv->chat->is_real_time_text_enabled()) {
++  
++    g_return_if_fail(g_utf8_validate(txt, -1, NULL));
++    gchar *iter = (gchar *)txt;
++    glong len = g_utf8_strlen(txt, -1);
++    glong i = 0;
++    gunichar uc;
++
++    while(i < len) {
++      uc = g_utf8_get_char(iter);
++      g_message("Get unichar 0x%x", uc);
++
++      if (uc == '\n') {
++        gboolean flag;
++        gchar *body = NULL;
++
++        gtk_text_buffer_get_end_iter (buffer, &start_iter);
++        gtk_text_iter_set_line (&start_iter, -1);
++     
++        body = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter, TRUE); 
++        flag = gtk_text_iter_backward_line(&start_iter);
++
++        gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter);
++        str = g_strdup_printf ("<b><i>%s %s</i></b>\n%s\n", from, _("says:"), body);
++        gm_text_buffer_enhancer_insert_text (self->priv->enhancer, &end_iter,
++         str, -1);
++
++        gtk_text_buffer_get_end_iter (buffer, &end_iter);
++        self->priv->line_number = gtk_text_iter_get_line (&end_iter);
++ 
++        _HistoryMessage* history_message = g_new (_HistoryMessage, 1);
++        history_message->number = self->priv->line_number;
++        history_message->next = (GSList*)g_hash_table_lookup (self->priv->hash, from);
++                          
++        self->priv->list = g_slist_prepend (self->priv->list, history_message);
++
++        g_hash_table_insert(self->priv->hash, (gpointer)g_strdup(from), (gpointer)(self->priv->list));
++  
++        g_free (body);
++
++      } else if(uc == '\b') {
++                         
++        GSList* lookup_ptr = (GSList*)g_hash_table_lookup (self->priv->hash, from);
++ 
++        if (0 == gtk_text_iter_get_line_offset (&end_iter) && (lookup_ptr != NULL)) {
++
++          _HistoryMessage* _historymessage = (_HistoryMessage*)(lookup_ptr->data);
++          gint from_number = (_historymessage)->number;
++          gboolean flag;
++          gchar* body = NULL;
++          GSList* ptr = NULL;
++
++          gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &start_iter);
++          gtk_text_iter_set_line (&start_iter, from_number-1);
++                               
++          gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end_iter);
++          gtk_text_iter_set_line (&end_iter, from_number-1);
++          gtk_text_iter_forward_to_line_end (&end_iter);
++
++          body = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter, TRUE);  
++          flag = gtk_text_iter_backward_line (&start_iter);
++          flag = gtk_text_iter_forward_char (&end_iter);
++          gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter);
++
++          for (ptr = self->priv->list; 
++               ptr!= lookup_ptr;
++               ptr = g_slist_next (ptr)) {
++            ((_HistoryMessage*)(ptr->data))->number -= 2; 
++          }                             
++                              
++          gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end_iter);
++          str = g_strdup_printf ("<b>%s %s</b>\n%s", from, _("is typing:"), body);
++          gm_text_buffer_enhancer_insert_text (self->priv->enhancer, &end_iter,
++           str, -1);
++          g_free (body);
++   
++          self->priv->line_number -= 2;
++                                
++          g_hash_table_insert (self->priv->hash, (gpointer)g_strdup (from), (gpointer)(_historymessage->next));
++          g_free (_historymessage);                    
++          self->priv->list = g_slist_delete_link (self->priv->list, lookup_ptr);
++                          
++        } else {
++          gtk_text_buffer_get_end_iter (buffer, &start_iter);
++          gtk_text_iter_backward_char (&start_iter);
++          gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter);
++
++          if (0 == gtk_text_iter_get_line_offset (&end_iter)){
++            gtk_text_iter_backward_line (&start_iter);
++            gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter);
++          }
++        }   
++      } else if (uc == ZERO_WIDTH_NO_BREAK) {
++        ;                                                                                               // Ignore
++      } else {
++        gchar out[7];
++
++        out[g_unichar_to_utf8(uc, out)] = '\0';
++        gtk_text_buffer_get_start_iter (buffer, &start_iter);  
++    
++        if (self->priv->line_number == gtk_text_iter_get_line (&end_iter)) {
++          str = g_strdup_printf ("<b>%s %s</b>\n%s", from, _("is typing:"), out);
++        } else {
++          str = g_strdup(out);
++        }
++
++        gm_text_buffer_enhancer_insert_text (self->priv->enhancer, &end_iter,
++         str, -1);
++      }
++
++      iter = g_utf8_next_char(iter);
++      i++;
++    }
++  } else {
++    str = g_strdup_printf ("<b><i>%s %s</i></b>\n%s", from, _("says:"), txt);
++    gm_text_buffer_enhancer_insert_text (self->priv->enhancer, &end_iter,
++     str, -1);
++  }
++  g_free (str);
++
++  mark = gtk_text_buffer_get_mark (buffer, "current-position");
++  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (self->priv->text_view), mark,
++   0.0, FALSE, 0,0);
+ 
+   g_signal_emit (self, signals[MESSAGE_NOTICE_EVENT], 0);
+ }
+@@ -547,32 +832,150 @@ message_activated_cb (G_GNUC_UNUSED GtkWidget *w,
+                       gpointer data)
+ {
+   ChatArea *self = CHAT_AREA (data);
+-  GtkTextIter start_iter, end_iter;
++  GtkTextIter end_iter;
+   GtkTextBuffer *buffer = NULL;
+-  gchar *body = NULL;
+-  std::string message;
+ 
+   g_return_val_if_fail (data != NULL, false);
+ 
+-  if (key->keyval == GDK_Return) {
+-
++  if (self->priv->chat->is_real_time_text_enabled()) {
+     buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->message));
+-    gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &start_iter);
+     gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end_iter);
++    gtk_text_buffer_place_cursor (GTK_TEXT_BUFFER (buffer), &end_iter);
++  }
++
++  return false;
++}
++
++static void
++message_changed_cb (GtkTextBuffer *buffer, gpointer data)
++{
++  ChatArea *self = CHAT_AREA (data);
++  GtkTextIter start_iter, end_iter, last_iter;
++  gchar* body = NULL;
++  gunichar keyval;
++  gboolean realtime_im = self->priv->chat->is_real_time_text_enabled();
++
++  g_return_if_fail (data != NULL);
++
++  buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->message));
++  gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end_iter);
++  last_iter = end_iter;
++  gint offset = gtk_text_iter_get_offset(&end_iter);
++
++  if (gtk_text_iter_backward_char(&last_iter)) {
++    keyval = gtk_text_iter_get_char (&last_iter);
++
++    if (keyval == '\n') {
++
++      gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &start_iter);
++
++      if (offset == 1) {
++        // Only a Return
++        gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter);
++        return;
++      }
+ 
+-    /* if nothing to send - send nothing ;-) */
+-    if (gtk_text_iter_get_offset (&end_iter) == 0)
+-      return TRUE;
++      body = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter, TRUE);
++  
++      self->priv->chat->display_message (body);
+ 
+-    body = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter, TRUE);
++      if (!realtime_im) {
++        self->priv->chat->send_message (body);
++      } else {
++        // Start buffer timer anyway, so we can make sure message must
++        // be sent.
++        start_buffering_timer(self);
++        message_send_after_buffering(data);
++
++        // Reset pointer since we are clean the input buffer.
++        self->priv->bp = 0;
++        self->priv->cp_min = 0;
++      }
+ 
+-    if (self->priv->chat->send_message (body))
+       gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter);
+ 
+-    return true;
++      g_free (body);
++
++      return;
++    }
+   }
+ 
+-  return false;
++  if (realtime_im) {
++    if (self->priv->cp_min > offset) {
++      self->priv->cp_min = offset;
++    }
++
++    gtk_text_buffer_place_cursor(buffer, &end_iter);
++
++    if (!buffering_timer_is_started(self)) {
++      message_send_after_buffering(data);
++    }
++  }
++}
++
++static void
++backspace_activated_cb (GtkTextView *textview, gpointer data)
++{
++  ChatArea *self = CHAT_AREA (data);
++  GtkTextIter start_iter, end_iter, last_iter;
++  gchar* body = NULL;
++  g_return_if_fail (data != NULL);
++
++  GtkTextBuffer* buffer = gtk_text_view_get_buffer (textview);
++  gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end_iter);
++  last_iter = end_iter;
++  gint offset = gtk_text_iter_get_offset (&end_iter);
++
++  if (self->priv->chat->is_real_time_text_enabled()) { 
++    GSList* lookup_ptr = (GSList*)g_hash_table_lookup (self->priv->hash, self->priv->local_name); 
++
++    if ((offset == 0) && (lookup_ptr != NULL)) {
++
++      _HistoryMessage* _historymessage = (_HistoryMessage*)(lookup_ptr->data);
++      gint from_number = _historymessage->number;
++      gboolean flag;
++      GSList* ptr = NULL;
++      glong len = 0;
++
++      buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->text_view));
++      gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &start_iter);
++      gtk_text_iter_set_line (&start_iter, from_number-1);
++
++      gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end_iter);
++      gtk_text_iter_set_line (&end_iter, from_number-1);
++      gtk_text_iter_forward_to_line_end (&end_iter);
++
++      body = gtk_text_buffer_get_text (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter, TRUE);
++      // len does not contain "\n"
++      len = g_utf8_strlen (body, -1); 
++
++      flag = gtk_text_iter_forward_char (&end_iter);
++      flag = gtk_text_iter_backward_line (&start_iter);
++      gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &start_iter, &end_iter);
++
++      for(ptr = self->priv->list;
++       	  ptr!= lookup_ptr;
++	  ptr = g_slist_next (ptr)) {
++          ((_HistoryMessage*)(ptr->data))->number -= 2; 
++      }                             
++
++      self->priv->line_number -= 2;
++
++      g_hash_table_insert(self->priv->hash, (gpointer)g_strdup (self->priv->local_name), (gpointer)(_historymessage->next));
++
++      g_free (_historymessage);
++      self->priv->list = g_slist_delete_link (self->priv->list, lookup_ptr);
++
++      self->priv->cp_min = len;
++      self->priv->bp += len + 1;
++
++      buffer = gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->message));
++      gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &start_iter);
++      gtk_text_buffer_insert (buffer, &start_iter, body, -1);
++
++      g_free (body);
++    }
++  }
+ }
+ 
+ static void
+@@ -637,6 +1040,10 @@ chat_area_finalize (GObject* obj)
+ 
+   self = (ChatArea*)obj;
+ 
++  if (self->priv->buffering_timer_id > 0) {
++    g_source_remove (self->priv->buffering_timer_id);
++  }
++
+   if (self->priv->chat) {
+ 
+     self->priv->connection.disconnect ();
+@@ -647,6 +1054,11 @@ chat_area_finalize (GObject* obj)
+     self->priv->chat = NULL;
+   }
+ 
++  g_free (self->priv->local_name);
++  g_slist_foreach (self->priv->list, (GFunc) g_free, NULL);
++  g_slist_free (self->priv->list);
++  g_hash_table_destroy(self->priv->hash); 
++
+   parent_class->finalize (obj);
+ }
+ 
+@@ -691,6 +1103,7 @@ chat_area_set_property (GObject* obj,
+     self->priv->connection = self->priv->chat->removed.connect (sigc::bind (sigc::ptr_fun (on_chat_removed), self));
+     self->priv->helper = gmref_ptr<ChatAreaHelper>(new ChatAreaHelper (self));
+     self->priv->chat->connect (self->priv->helper);
++    self->priv->buffering_time = self->priv->chat->real_time_buffering_time();
+     break;
+ 
+   default:
+@@ -757,6 +1170,15 @@ chat_area_init (GTypeInstance* instance,
+ 					    TYPE_CHAT_AREA,
+ 					    ChatAreaPrivate);
+   self->priv->chat = NULL;
++  self->priv->buffering_timer_id = 0;
++  self->priv->buffering_time = 300;
++  self->priv->local_name = g_strdup ("");
++  self->priv->bp = 0;
++  self->priv->cp_min = 0;
++  self->priv->line_number = 0;
++  self->priv->hash = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, NULL);
++  self->priv->list = NULL;
++ 
+ 
+   /* first the area has a text view to display
+      the GtkScrolledWindow is there to make
+@@ -778,7 +1200,7 @@ chat_area_init (GTypeInstance* instance,
+   gtk_text_view_set_justification (GTK_TEXT_VIEW (self->priv->text_view),
+ 				   GTK_JUSTIFY_LEFT);
+   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (self->priv->text_view),
+-			       GTK_WRAP_WORD);
++			       GTK_WRAP_WORD_CHAR);
+   gtk_text_view_set_left_margin (GTK_TEXT_VIEW (self->priv->text_view),
+ 				 2);
+   gtk_text_view_set_right_margin (GTK_TEXT_VIEW (self->priv->text_view),
+@@ -959,11 +1381,22 @@ chat_area_init (GTypeInstance* instance,
+   gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
+ 
+   self->priv->message = gtk_text_view_new ();
++ 
+   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (self->priv->message),
+                                GTK_WRAP_WORD_CHAR);
+-  gtk_text_view_set_cursor_visible  (GTK_TEXT_VIEW (self->priv->message), true);
++  gtk_text_view_set_cursor_visible  (GTK_TEXT_VIEW (self->priv->message), TRUE);
++
+   g_signal_connect (GTK_OBJECT (self->priv->message), "key-press-event",
+                     G_CALLBACK (message_activated_cb), self);
++
++  g_signal_connect (gtk_text_view_get_buffer (GTK_TEXT_VIEW (self->priv->message)),
++      "changed",
++      G_CALLBACK (message_changed_cb), self);
++
++  g_signal_connect (GTK_TEXT_VIEW (self->priv->message),
++      "backspace",
++      G_CALLBACK (backspace_activated_cb), self);
++
+   gtk_box_pack_start (GTK_BOX (vbox), self->priv->message,
+ 		      TRUE, TRUE, 2);
+ 
+diff --git a/lib/pixops/convert b/lib/pixops/convert
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/128x128/multimedia-headset.png b/pixmaps/128x128/multimedia-headset.png
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/128x128/multimedia-headset.svg b/pixmaps/128x128/multimedia-headset.svg
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/16x16/multimedia-headset.png b/pixmaps/16x16/multimedia-headset.png
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/16x16/multimedia-headset.svg b/pixmaps/16x16/multimedia-headset.svg
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/22x22/multimedia-headset.png b/pixmaps/22x22/multimedia-headset.png
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/22x22/multimedia-headset.svg b/pixmaps/22x22/multimedia-headset.svg
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/256x256/multimedia-headset.png b/pixmaps/256x256/multimedia-headset.png
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/32x32/multimedia-headset.png b/pixmaps/32x32/multimedia-headset.png
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/32x32/multimedia-headset.svg b/pixmaps/32x32/multimedia-headset.svg
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/48x48/multimedia-headset.png b/pixmaps/48x48/multimedia-headset.png
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/conv-icon.pl b/pixmaps/conv-icon.pl
+old mode 100755
+new mode 100644
+diff --git a/pixmaps/scalable/multimedia-headset.svg b/pixmaps/scalable/multimedia-headset.svg
+old mode 100755
+new mode 100644
+diff --git a/src/common.h b/src/common.h
+index 5c3183a..b9407a8 100644
+--- a/src/common.h
++++ b/src/common.h
+@@ -69,6 +69,7 @@
+ #define PORTS_KEY "/apps/" PACKAGE_NAME "/protocols/ports/"
+ #define CALL_FORWARDING_KEY "/apps/" PACKAGE_NAME "/protocols/call_forwarding/"
+ #define LDAP_KEY "/apps/" PACKAGE_NAME "/protocols/ldap/"
++#define TEXT_KEY "/apps/" PACKAGE_NAME "/protocols/t140/"
+ #define CODECS_KEY "/apps/" PACKAGE_NAME "/codecs/"
+ #define AUDIO_CODECS_KEY "/apps/" PACKAGE_NAME "/codecs/audio/"
+ #define VIDEO_CODECS_KEY  "/apps/" PACKAGE_NAME "/codecs/video/"
+diff --git a/src/ekiga-debug-analyser b/src/ekiga-debug-analyser
+index f0f680f..10eae4e 100755
+--- a/src/ekiga-debug-analyser
++++ b/src/ekiga-debug-analyser
+@@ -1,4 +1,4 @@
+-#!/usr/bin/awk -f
++#!/usr/bin/gawk -f
+ 
+ # Usage: ekiga-debug-analyser <ekigaDebugOutput
+ #   where the output comes from ekiga -d 4 (or 5).
+diff --git a/src/gui/preferences.cpp b/src/gui/preferences.cpp
+index 595359c..b715a3c 100644
+--- a/src/gui/preferences.cpp
++++ b/src/gui/preferences.cpp
+@@ -204,7 +204,8 @@ static void gm_pw_init_audio_codecs_page (GtkWidget *prefs_window,
+                                           GtkWidget *container);
+ static void gm_pw_init_video_codecs_page (GtkWidget *prefs_window,
+                                           GtkWidget *container);
+-
++static void gm_pw_init_text_parameter_page (GtkWidget *prefs_window,
++                                           GtkWidget *container);
+ 
+ 
+ /* GTK Callbacks */
+@@ -945,6 +946,29 @@ gm_pw_init_video_devices_page (GtkWidget *prefs_window,
+ 
+ }
+ 
++static void
++gm_pw_init_text_parameter_page (GtkWidget *prefs_window,
++                                GtkWidget *container)
++{
++  GtkWidget *subsection = NULL;
++  GmPreferencesWindow *pw = NULL;
++
++  pw = gm_pw_get_pw (prefs_window);
++
++ /* Here we add text parameter options */
++  subsection =
++    gnome_prefs_subsection_new (prefs_window, container,
++                                _("Real time"), 3, 1);
++
++  /* Translators: the full sentence is Automatically adjust jitter buffer
++     between X and Y ms */
++  gnome_prefs_toggle_new (subsection, _("Enable Realtime"), TEXT_KEY "enable_realtime", _("If enabled, use realtime preview with the chat."), 1);
++
++  gnome_prefs_spin_new (subsection, _("Buffer time (ms):"), TEXT_KEY "buffer_time", _("The buffer size for text reception (in ms)."), 0.0, 2000.0, 1.0, 2, NULL, true);
++
++  // gnome_prefs_spin_new (subsection, _("Max incoming CPS :"), TEXT_KEY "character_per_second", _("The maximum incoming speed for text reception."), 0.0, 2000.0, 1.0, 3, NULL, true);
++
++}
+ 
+ static void
+ gm_pw_init_audio_codecs_page (GtkWidget *prefs_window,
+@@ -1397,6 +1421,11 @@ gm_prefs_window_new (Ekiga::ServiceCore *core)
+   gm_pw_init_video_codecs_page (window, container);
+   gtk_widget_show_all (GTK_WIDGET (container));
+ 
++  gnome_prefs_window_section_new (window, _("Text"));
++  container = gnome_prefs_window_subsection_new (window, _("Text settings"));
++  gm_pw_init_text_parameter_page (window, container);
++  gtk_widget_show_all (GTK_WIDGET (container));
++
+ 
+   /* That's an usual GtkWindow, connect it to the signals */
+   g_signal_connect_swapped (GTK_OBJECT (window), 

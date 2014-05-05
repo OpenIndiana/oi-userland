@@ -1,0 +1,76 @@
+--- gnome-menus-2.30.4/desktop-directories/Makefile.am-orig	2010-11-12 19:04:03.379582442 -0600
++++ gnome-menus-2.30.4/desktop-directories/Makefile.am	2010-11-12 19:05:15.879065181 -0600
+@@ -24,7 +24,8 @@ directory_in_files =				\
+ 	X-GNOME-Other.directory.in		\
+ 	X-GNOME-Menu-Applications.directory.in	\
+ 	X-GNOME-Menu-System.directory.in	\
+-	$(directory_in_controlcenterfiles)
++	$(directory_in_controlcenterfiles)	\
++	QuickStart.directory.in
+ 
+ directory_DATA = $(directory_in_files:.directory.in=.directory)
+ 
+--- gnome-menus-2.23.1.old/desktop-directories/QuickStart.directory.in	1970-01-01 01:00:00.000000000 +0100
++++ gnome-menus-2.23.1/desktop-directories/QuickStart.directory.in	2008-05-29 13:13:49.713966000 +0100
+@@ -0,0 +1,8 @@
++[Desktop Entry]
++# SUN_BRANDING
++_Name=Quick Start Applications
++# SUN_BRANDING
++_Comment=Quick Start Applications
++Icon=gnome-favorites
++Type=Directory
++Encoding=UTF-8
+--- gnome-menus-2.30.4/layout/Makefile.am-orig	2010-11-12 19:04:12.528899711 -0600
++++ gnome-menus-2.30.4/layout/Makefile.am	2010-11-12 19:05:37.794879488 -0600
+@@ -2,7 +2,8 @@ menudir = $(sysconfdir)/xdg/menus
+ 
+ menu_DATA =			\
+ 	applications.menu	\
+-	settings.menu
++	settings.menu		\
++	quickstart.menu
+ 
+ EXTRA_DIST= $(menu_DATA)
+ 
+--- gnome-menus-2.23.1.old/layout/quickstart.menu	1970-01-01 01:00:00.000000000 +0100
++++ gnome-menus-2.23.1/layout/quickstart.menu	2008-05-29 13:20:56.988665000 +0100
+@@ -0,0 +1,27 @@
++<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN"
++ "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
++
++<Menu>
++
++  <Name>Quick Start</Name>
++  <Directory>QuickStart.directory</Directory>
++
++  <!-- Scan legacy dirs first, as later items take priority -->
++  <KDELegacyDirs/>
++  <LegacyDir>/etc/X11/applnk</LegacyDir>
++  <LegacyDir>/usr/share/gnome/apps</LegacyDir>
++
++  <!-- Read standard .directory and .desktop file locations -->
++  <DefaultAppDirs/>
++  <DefaultDirectoryDirs/>
++
++  <!-- Read in overrides and child menus from applications-merged/ -->
++  <DefaultMergeDirs/>
++
++    <Include>
++      <And>
++        <Category>X-Sun-Quick-Start</Category>
++      </And>
++    </Include>
++
++</Menu> <!-- End Quick Start -->
+--- gnome-menus-2.30.4/simple-editor/GMenuSimpleEditor/menutreemodel.py-orig	2010-11-12 19:04:26.623557987 -0600
++++ gnome-menus-2.30.4/simple-editor/GMenuSimpleEditor/menutreemodel.py	2010-11-12 19:06:32.575757151 -0600
+@@ -104,7 +104,7 @@ class MenuTreeModel (gtk.TreeStore):
+         self.icon_theme = gtk.icon_theme_get_default ()
+ 
+         if (len (menu_files) < 1):
+-            menu_files = ["applications.menu", "settings.menu"]
++            menu_files = ["quickstart.menu", "applications.menu", "settings.menu"]
+ 
+         for menu_file in menu_files:
+             if menu_file == "applications.menu" and os.environ.has_key ("XDG_MENU_PREFIX"):

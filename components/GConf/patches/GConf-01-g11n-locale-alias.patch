@@ -1,0 +1,88 @@
+diff -ur GConf-2.6.1/gconf/gconf-locale.c GConf-2.6.1.hacked/gconf/gconf-locale.c
+--- GConf-2.6.1/gconf/gconf-locale.c.orig	2004-08-02 13:19:41.166861000 -0700
++++ GConf-2.6.1/gconf/gconf-locale.c	2004-08-02 13:20:49.947469000 -0700
+@@ -22,6 +22,7 @@
+ #include <sys/time.h>
+ #include <time.h>
+ #include <string.h>
++#include <stdio.h>
+ 
+ static void
+ gconf_locale_cache_add (GConfLocaleCache* cache,
+@@ -189,7 +190,66 @@
+  * Big mess o' cut-and-pasted code
+  */
+ 
+-/* --------------------------------------------------------------- */
++static GHashTable *alias_table = NULL;
++
++/*read an alias file for the locales*/
++static void
++read_aliases (char *file)
++{
++  FILE *fp;
++  char buf[256];
++  if (!alias_table)
++    alias_table = g_hash_table_new (g_str_hash, g_str_equal);
++  fp = fopen (file,"r");
++  if (!fp)
++    return;
++  while (fgets (buf,256,fp))
++    {
++      char *p;
++      g_strstrip(buf);
++      if (buf[0]=='#' || buf[0]=='\0')
++        continue;
++      p = strtok (buf,"\t ");
++      if (!p)
++	continue;
++      p = strtok (NULL,"\t ");
++      if(!p)
++	continue;
++      if (!g_hash_table_lookup (alias_table, buf))
++	g_hash_table_insert (alias_table, g_strdup(buf), g_strdup(p));
++    }
++  fclose (fp);
++}
++
++/*return the un-aliased language as a newly allocated string*/
++static char *
++unalias_lang (char *lang)
++{
++  char *p;
++  int i;
++  if (!alias_table)
++    {
++      read_aliases ("/usr/share/locale/locale.alias");
++      read_aliases ("/usr/local/share/locale/locale.alias");
++      read_aliases ("/usr/lib/X11/locale/locale.alias");
++      read_aliases ("/usr/openwin/lib/locale/locale.alias");
++    }
++  i = 0;
++  while ((p=g_hash_table_lookup(alias_table,lang)) && strcmp(p, lang))
++    {
++      lang = p;
++      if (i++ == 30)
++        {
++          static gboolean said_before = FALSE;
++	  if (!said_before)
++            g_warning (_("Too many alias levels for a locale, "
++			 "may indicate a loop"));
++	  said_before = TRUE;
++	  return lang;
++	}
++    }
++  return lang;
++}
+ 
+ /* Mask for components of locale spec. The ordering here is from
+  * least significant to most significant
+@@ -360,6 +420,8 @@
+           category_memory[0]= '\0'; 
+           category_memory++;
+           
++	  cp = unalias_lang (cp); /* add locale alias support */
++
+           if (strcmp (cp, "C") == 0)
+             c_locale_defined= TRUE;
+           

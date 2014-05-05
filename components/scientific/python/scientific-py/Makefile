@@ -17,6 +17,7 @@ include ../../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	scientific-py
 COMPONENT_VERSION= 	2.8
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=		library/python-2/scientific-py
 COMPONENT_SRC_NAME=	ScientificPython
 COMPONENT_SRC= 		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
@@ -38,6 +39,8 @@ PATCH_LEVEL=0
 
 COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTO_DIR)/usr/bin/bsp_virtual $(PROTO_DIR)/usr/bin/bsp_virtual$(PYTHON_VERSION);
 COMPONENT_POST_INSTALL_ACTION+=$(CP) $(PROTO_DIR)/usr/bin/task_manager $(PROTO_DIR)/usr/bin/task_manager$(PYTHON_VERSION);
+
+$(INSTALL_32):	$(INSTALL_64)
 
 build:		$(BUILD_32_and_64)
 

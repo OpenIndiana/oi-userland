@@ -21,6 +21,7 @@
 
 #
 # Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright 2014 Andrzej Szeszo. All rights reserved.
 #
 
 <transform dir path=etc$ -> default group sys>
@@ -34,8 +35,10 @@
 <transform dir path=usr/lib/pkgconfig$ -> default group other>
 <transform dir path=usr/lib/.*/pkgconfig$ -> default group other>
 <transform dir path=usr/share$ -> default group sys>
+<transform dir path=usr/share/application-registry$ -> default group other>
 <transform dir path=usr/share/aclocal$ -> default group other>
 <transform dir path=usr/share/doc$ -> default group other>
+<transform dir path=usr/share/gnome$ -> default group other>
 <transform dir path=usr/share/lib$ -> default group sys>
 <transform dir path=usr/share/lib/java$ -> default group sys>
 <transform dir path=usr/share/lib/java/javadoc$ -> default group other>
@@ -132,6 +135,11 @@ set name=variant.arch value=$(MACH)
 <transform link mediator=python mediator-version=2.6 -> default mediator-priority vendor>
 
 #
+# Set the default Apache for mediated links
+#
+<transform link mediator=apache mediator-version=2.2 -> default mediator-priority vendor>
+
+#
 # Add a facet.version-lock.{package} to each 'optional' consolidation
 # incorporation dependency so that we can install without having to
 # mangle the system in some way.
@@ -143,3 +151,10 @@ set name=variant.arch value=$(MACH)
 <transform depend tmp.fmri=.*-> delete tmp.fmri .* >
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+<transform set name=pkg.fmri -> emit set name=userland.info.git-remote \
+             value=$(USERLAND_GIT_REMOTE)>
+<transform set name=pkg.fmri -> emit set name=userland.info.git-branch \
+             value=$(USERLAND_GIT_BRANCH)>
+<transform set name=pkg.fmri -> emit set name=userland.info.git-rev \
+             value=$(USERLAND_GIT_REV)>

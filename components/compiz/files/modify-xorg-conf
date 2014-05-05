@@ -1,0 +1,715 @@
+#!/usr/perl5/bin/perl 
+#
+# Copyright (c) 2008 by Sun Microsystems, Inc.
+# All rights reserved.
+#
+# Erwann Chenede - <erwann.chenede@sun.com>
+#ident  "%Z%%M% %I%     %E% SMI"
+#
+# modify /etc/X11/xorg.conf to add extension needed by compiz for nvidia,
+# intel and ati
+#
+require 5.6.1;
+use strict;
+use warnings;
+use locale;
+use POSIX qw(strftime);
+use File::Copy;
+
+#
+# list of supported intel video card supported 
+# from SUNWdrmr/postinstall
+#
+
+my @intel_cards = (
+		"pci8086,2562",
+		"pci8086,2572",
+		"pci8086,2582",
+		"pci8086,2592",
+		"pci8086,2772",
+		"pci8086,27a2",
+		"pci8086,2972",
+		"pci8086,2982",
+		"pci8086,2992",
+		"pci8086,29a2",
+		"pci8086,2a02",
+		"pci8086,2a12");
+#
+# list of supported ATI video card supported 
+# minskey install.sh script in the radeon tarball
+# see http://opensolaris.org/os/project/dri/files/
+my @ati_cards = (
+		"pci1002,4136",
+		"pci1002,4137",
+		"pci1002,4144",
+		"pci1002,4145",
+		"pci1002,4146",
+		"pci1002,4147",
+		"pci1002,4150",
+		"pci1002,4151",
+		"pci1002,4152",
+		"pci1002,4153",
+		"pci1002,4154",
+		"pci1002,4156",
+		"pci1002,4237",
+		"pci1002,4242",
+		"pci1002,4243",
+		"pci1002,4336",
+		"pci1002,4337",
+		"pci1002,4437",
+		"pci1002,4966",
+		"pci1002,4967",
+		"pci1002,4a49",
+		"pci1002,4a4b",
+		"pci1002,4c57",
+		"pci1002,4c58",
+		"pci1002,4c59",
+		"pci1002,4c5a",
+		"pci1002,4c64",
+		"pci1002,4c65",
+		"pci1002,4c66",
+		"pci1002,4c67",
+		"pci1002,4e44",
+		"pci1002,4e45",
+		"pci1002,4e46",
+		"pci1002,4e47",
+		"pci1002,4e48",
+		"pci1002,4e49",
+		"pci1002,4e4a",
+		"pci1002,4e4b",
+		"pci1002,4e50",
+		"pci1002,4e51",
+		"pci1002,4e54",
+		"pci1002,4e56",
+		"pci1002,5144",
+		"pci1002,5145",
+		"pci1002,5146",
+		"pci1002,5147",
+		"pci1002,5148",
+		"pci1002,5149",
+		"pci1002,514a",
+		"pci1002,514b",
+		"pci1002,514c",
+		"pci1002,514d",
+		"pci1002,514e",
+		"pci1002,514f",
+		"pci1002,5157",
+		"pci1002,5158",
+		"pci1002,5159",
+		"pci1002,515a",
+		"pci1002,515e",
+		"pci1002,5168",
+		"pci1002,5169",
+		"pci1002,516a",
+		"pci1002,516b",
+		"pci1002,516c",
+		"pci1002,5460",
+		"pci1002,554f",
+		"pci1002,5653",
+		"pci1002,5834",
+		"pci1002,5835",
+		"pci1002,5836",
+		"pci1002,5837",
+		"pci1002,5960",
+		"pci1002,5961",
+		"pci1002,5962",
+		"pci1002,5963",
+		"pci1002,5964",
+		"pci1002,5969",
+		"pci1002,596a",
+		"pci1002,596b",
+		"pci1002,5b60",
+		"pci1002,5c61",
+		"pci1002,5c62",
+		"pci1002,5c63",
+		"pci1002,5c64",
+		"pci1002,5d4d");
+
+my $card_type = "none";
+
+#
+# retrieve the video card type
+#
+
+sub card_check {
+
+	my $PRTCONF = '/usr/sbin/prtconf';
+
+	open (OUT, "$PRTCONF -v |") or die ("ERROR:\ncannot exec prtconf: $!");
+
+	while (<OUT>) 
+	{
+		chomp;
+		if ($_ =~ m/nvidia/) 
+		{
+			if ( -e "/usr/X11/bin/constype")
+			{
+				my $console_type = `/usr/X11/bin/constype`;
+				chomp ($console_type);
+				if ($console_type eq "NVDAnvda")
+				{
+					$card_type = "nvidia";
+					last;
+				}
+			}
+			else
+			{
+				$card_type = "nvidia";
+				last;
+			}
+		}
+		foreach my $card (@intel_cards) 
+		{
+			if ($_ =~ /$card/)
+			{
+				$card_type = "i915";
+				last;
+			}
+		}
+		foreach my $card (@ati_cards) 
+		{
+			if ($_ =~ /$card/)
+			{
+				$card_type = "radeon";
+				last;
+			}
+		}
+
+	}
+	close OUT; 
+
+	if ($card_type eq "none")
+	{
+		return 0;
+	}
+	return 1;
+}
+
+#
+# add the options required to run compiz with an intel based card in the xorg.conf configuration file 
+#
+
+sub configure_xorg_conf_intel {
+
+	if (! -e "/etc/X11/xorg.conf")
+	{
+		if (! -e "/etc/X11/.xorg.conf")
+		{
+			print "ERROR\n";
+			print "Compiz will not run without a proper xorg.conf configuration file\n\n";
+			print "Can you generate it by running from the console (without the Xserver running on the system):\n";
+			print "/usr/X11/bin/Xorg -configure then place and rename\n";
+			print "the resulting file in /etc/X11/xorg.conf\n";
+			print "And restart this script\n";
+			exit 1;
+		}	  
+		else
+		{
+			copy ("/etc/X11/.xorg.conf", "/etc/X11/xorg.conf") or die ("ERROR:\n could not copy /etc/X11/.xorg.conf : $!"); 
+		}
+	}
+# check if xorg.conf has the right settings (yes, I should really parse xorg.conf instead)
+	my $RenderAccel = "False";
+	my $AllowGLXWithComposite = "False";
+	my $AddARGBGLXVisuals = "False";
+	my $Composite = "Disable";
+
+
+	open (OUT, "/usr/bin/nvidia-xconfig -t |") or die ("ERROR:\ncannot exec nvidia-xconfig : $!");
+	while (<OUT>) {
+		chomp;
+		if ($_ =~ m/RenderAccel/ && $_ =~ m/True/) 
+		{
+			$RenderAccel = "True";
+		}
+		if ($_ =~ m/AllowGLXWithComposite/ && $_ =~ m/True/) 
+		{
+			$AllowGLXWithComposite= "True";
+		}
+		if ($_ =~ m/AddARGBGLXVisuals/ && $_ =~ m/True/) 
+		{
+			$AddARGBGLXVisuals = "True";
+		}
+		if ($_ =~ m/Composite/ && $_ =~ m/Enable/) 
+		{
+			$Composite = "Enable";
+		}
+
+	}
+	close OUT; 
+
+	open (IN, "/etc/X11/xorg.conf") or die "ERROR:\ncannot open /etc/X11/xorg.conf for reading : $!";
+	my $xorg_conf = "";
+	my $in_screen_section = "False";
+	while (<IN>)
+	{
+		$xorg_conf .= $_;
+		if (/Section "Screen"/)
+		{
+			$in_screen_section = "True";
+
+			if ($RenderAccel ne "True")
+			{
+				$xorg_conf .= "\tOption \"RenderAccel\" \"True\"\n";
+				$RenderAccel = "True";
+			}
+			if ($AllowGLXWithComposite ne "True")
+			{
+				$xorg_conf .= "\tOption \"AllowGLXWithComposite\" \"True\"\n";
+				$AllowGLXWithComposite =  "True";
+			}
+			if ($AddARGBGLXVisuals ne "True")
+			{
+				$xorg_conf .= "\tOption \"AddARGBGLXVisuals\" \"True\"\n";
+				$AddARGBGLXVisuals = "True";
+			}
+		}
+		if ((/EndSection/) && ($in_screen_section eq "True") && ($Composite ne "Enable"))
+		{
+			$xorg_conf .= "Section \"Extensions\"\n";
+			$xorg_conf .= "\tOption \"Composite\" \"Enable\"\n";
+			$xorg_conf .= "EndSection\n";
+			$Composite = "Enable";
+			$in_screen_section = "FALSE";
+		}
+	}
+	my $date = strftime("%d-%m-%y-%H:%M:%S",localtime(time));
+	move ("/etc/X11/xorg.conf", "/etc/X11/xorg.conf.backup.b4.compiz.$date") or die "ERROR:\ncannot rename file /etc/X11/xorg.conf : $!";
+	print "previous /etc/X11/xorg.conf file backed up as /etc/X11/xorg.conf.backup.b4.compiz.$date\n";
+	open (OUT, ">/etc/X11/xorg.conf") or die "ERROR:\ncannot open /etc/X11/xorg.conf for writing : $!";
+	print OUT $xorg_conf;
+	close OUT;
+}
+
+#
+# add the options required to run compiz with an intel based card in the xorg.conf configuration file 
+#
+
+sub configure_xorg_conf_ati {
+
+	if (! -e "/etc/X11/xorg.conf")
+	{
+		if (! -e "/etc/X11/.xorg.conf")
+		{
+			print "ERROR\n";
+			print "Compiz will not run without a proper xorg.conf configuration file\n\n";
+			print "Can you generate it by running from the console (without the Xserver running on the system):\n";
+			print "/usr/X11/bin/Xorg -configure then place and rename\n";
+			print "the resulting file in /etc/X11/xorg.conf\n";
+			print "And restart this script\n";
+			exit 1;
+		}	  
+		else
+		{
+			copy ("/etc/X11/.xorg.conf", "/etc/X11/xorg.conf") or die ("ERROR:\n could not copy /etc/X11/.xorg.conf : $!"); 
+		}
+	}
+# check if xorg.conf has the right settings 
+	my $in_section_module = "False";
+	my $in_section_device = "False";
+	my $in_section_Server_Layout = "False";
+
+	my $AIGLX = "False";
+
+	my $GLcore = "not loaded";
+	my $glx = "not loaded";
+	my $dri = "not loaded";
+
+	my $GARTSize = "undefined"; 
+	my $AGPFastWrite = "undefined"; 
+	my $EnablePageFlip = "undefined"; 
+	my $AGPMode = "undefined"; 
+	my $DynamicClocks = "undefined"; 
+	my $EnableDepthMoves = "undefined"; 
+	my $ColorTiling = "undefined"; 
+	my $DMAForXv = "undefined"; 
+	my $AccelDFS = "undefined"; 
+	my $AccelMethod = "undefined"; 
+	my $XAANoOffscreenPixmaps = "undefined"; 
+	my $driver = "undefined"; 
+	my $Composite = "Disable"; 
+	my $xorg_conf = "";
+
+# now parse xorg.conf 
+	open (IN, "/etc/X11/xorg.conf") or die "ERROR:\ncannot open /etc/X11/xorg.conf for reading : $!";
+	while (<IN>)
+	{
+		chomp;
+#skip comments
+		next if (/^\s*#/);
+
+		if ($in_section_Server_Layout eq "True")
+		{
+			if (/EndSection/)
+			{
+				$in_section_Server_Layout = "False";
+			}
+			if (/Option.*AIGLX/ &&  (/true/i || /on/i || "1"))
+			{
+				$AIGLX = "True";
+			}
+		}
+		else 
+		{ 
+			if (/Section "ServerLayout"/)
+			{
+				$in_section_Server_Layout = "True";
+			}
+		}
+
+		if ($in_section_module eq "True")
+		{
+			if (/EndSection/)
+			{
+				$in_section_module = "False";
+			}
+			if (/GLcore/)
+			{
+				$GLcore = "loaded";
+			}
+			if (/glx/)
+			{
+				$glx= "loaded";
+			}
+			if (/dri/)
+			{
+				$dri = "loaded";
+			}
+		}
+		else 
+		{ 
+			if (/Section "Module"/)
+			{
+				$in_section_module = "True";
+			}
+		}
+
+		if ($in_section_device eq "True")
+		{
+			if (/EndSection/)
+			{
+				$in_section_device = "False";
+			}
+			if (/GARTSize.*"(.*)"/)
+			{
+				$GARTSize = $1;
+			}
+			if (/AGPFastWrite/ && (/true/i || /on/i || "1"))
+			{
+				$AGPFastWrite = "True";
+			}
+			if (/EnablePageFlip/ && (/true/i || /on/i || "1"))
+			{
+				$EnablePageFlip= "True";
+			}
+			if (/AGPMode.*"(.*)"/)
+			{
+				$AGPMode = $1;
+			}
+			if (/DynamicClocks/ && (/true/i || /on/i || "1"))
+			{
+				$DynamicClocks= "True";
+			}
+			if (/EnableDepthMoves/ && (/true/i || /on/i || "1"))
+			{
+				$EnableDepthMoves = "True";
+			}
+			if (/ColorTiling/ && (/true/i || /on/i || "1"))
+			{
+				$ColorTiling = "True";
+			}
+			if (/DMAForXv/ && (/true/i || /on/i || "1"))
+			{
+				$DMAForXv = "True";
+			}
+			if (/AccelDFS/ && (/true/i || /on/i || "1"))
+			{
+				$AccelDFS = "True";
+			}
+			if (/AccelMethod/ && /XAA/)
+			{
+				$AccelMethod = "XAA";
+			}
+			if (/XAANoOffscreenPixmaps/ && /true/i)
+			{
+				$XAANoOffscreenPixmaps = "True";
+			}
+			if (/Driver/ && /ati/)
+			{
+				$driver= "ati";
+			}
+		}
+		else 
+		{ 
+			if (/Section "Device"/)
+			{
+				$in_section_device = "True";
+			}
+			elsif (/Option.*Composite.*Enable/)
+			{
+				$Composite = "Enable";
+			}
+		}
+	}
+
+	close (IN);
+
+#  if ($AIGLX eq "True" &&
+#      $Composite ne "Disable" &&
+#      $GLcore ne "not loaded" &&
+#      $glx ne  "not loaded" &&
+#      $dri ne  "not loaded" &&
+#      $GARTSize eq 64 &&
+#      $AGPFastWrite eq "True" &&
+#      $EnablePageFlip eq "True" &&
+#      $AGPMode eq 4 &&
+#      $DynamicClocks eq "True" &&
+#      $EnableDepthMoves eq "True" &&
+#      $ColorTiling eq "True" &&
+#      $DMAForXv eq "True" &&
+#      $AccelDFS eq "True" &&
+#      $AccelMethod eq "XAA" &&
+#      $XAANoOffscreenPixmaps eq "True" &&
+#      $driver eq "ati")
+# {
+#    print "xorg.conf is properly configured\n";
+#  }
+#  else
+#  {
+#    print "xorg.conf isn't configured for compiz support see details below :\n";
+#    print "=-=-=-=-= Extension Section =-=-=-=-=-=-=\n";
+#    print "Composite             :\t $Composite\n";
+#    
+#    print "=-=-=-=-= Server Layout Section =-=-=-=-=-=-=\n";
+#    print "AIGLX                 :\t $AIGLX\n";
+#
+#    print "=-=-=-=-= Module Section =-=-=-=-=-=-=\n";
+#    print "GLcore                :\t $GLcore\n";
+#
+#    print "=-=-=-=-= Module Section =-=-=-=-=-=-=\n";
+#    print "GLcore                :\t $GLcore\n";
+#    print "glx                   :\t $glx\n";
+#    print "dri                   :\t $dri\n";
+#
+#    print "=-=-=-=-= Module Device =-=-=-=-=-=-=\n";
+#    print "GARTSize              :\t $GARTSize\n";
+#    print "AGPFastWrite          :\t $AGPFastWrite\n";
+#    print "EnablePageFlip        :\t $EnablePageFlip\n";
+#    print "AGPMode               :\t $AGPMode\n";
+#    print "DynamicClocks         :\t $DynamicClocks\n";
+#    print "EnableDepthMoves      :\t $EnableDepthMoves\n";
+#    print "ColorTiling           :\t $ColorTiling\n";
+#    print "DMAForXv              :\t $DMAForXv\n";
+#    print "AccelDFS              :\t $AccelDFS\n";
+#    print "AccelMethod           :\t $AccelMethod\n";
+#    print "XAANoOffscreenPixmaps :\t $XAANoOffscreenPixmaps\n";
+#    print "driver                :\t $driver\n"; 
+#  }
+
+# Modifying xorg.conf now 
+
+	$in_section_module = "False";
+	$in_section_device = "False";
+	$in_section_Server_Layout = "False";
+	$xorg_conf = "";
+
+
+	open (IN, "/etc/X11/xorg.conf") or die "ERROR:\ncannot open /etc/X11/xorg.conf for reading : $!";
+
+	while (<IN>)
+	{
+		$xorg_conf .= $_;
+
+		if (/EndSection/ && $Composite eq "Disable")
+		{ 
+			$xorg_conf .= "Section \"Extensions\"\n";
+			$xorg_conf .= "\tOption \"Composite\" \"Enable\"\n";
+			$xorg_conf .= "EndSection\n";
+			$Composite = "Enable";
+
+		}
+		if ($in_section_Server_Layout eq "True")
+		{
+			if (/EndSection/)
+			{
+				$in_section_Server_Layout = "False";
+			}
+			if ($AIGLX eq "False")
+			{
+				$xorg_conf .= "\tOption\t\"AIGLX\"\t\"True\"\n";
+				$AIGLX = "True";
+			}
+		}
+		else 
+		{ 
+			if (/Section "ServerLayout"/)
+			{
+				$in_section_Server_Layout = "True";
+			}
+		}
+
+		if ($in_section_module eq "True")
+		{
+			if (/EndSection/)
+			{
+				$in_section_module = "False";
+			}
+			if ($GLcore eq "not loaded")
+			{
+				$xorg_conf .= "\tLoad \"GLcore\"\n";
+				$GLcore = "loaded";
+			}
+			if ($glx eq "not loaded")
+			{
+				$xorg_conf .= "\tLoad \"glx\"\n";
+				$glx = "loaded";
+			}
+			if ($dri eq "not loaded")
+			{
+				$xorg_conf .= "\tLoad \"dri\"\n";
+				$dri = "loaded";
+			}
+		}
+		else 
+		{ 
+			if (/Section "Module"/)
+			{
+				$in_section_module = "True";
+			}
+		}
+		if ($in_section_device eq "True")
+		{
+			if (/EndSection/)
+			{
+				$in_section_device = "False";
+			}
+			if ($GARTSize ne 64)
+			{
+				$xorg_conf .= "\tOption \"GARTSize\" \"64\"\n";
+				$GARTSize = 64;
+			}
+			if ($AGPFastWrite ne "True")
+			{
+				$xorg_conf .= "\tOption \"AGPFastWrite\" \"True\"\n";
+				$AGPFastWrite = "True";
+			}
+			if ($EnablePageFlip ne "True")
+			{
+				$xorg_conf .= "\tOption \"EnablePageFlip\" \"True\"\n";
+				$EnablePageFlip = "True";
+			}
+			if ($AGPMode ne 4)
+			{
+				$xorg_conf .= "\tOption \"AGPMode\" \"4\"\n";
+				$AGPMode = 4;
+			}
+			if ($DynamicClocks ne "True")
+			{
+				$xorg_conf .= "\tOption \"DynamicClocks\" \"True\"\n";
+				$DynamicClocks = "True";
+			}
+			if ($EnableDepthMoves ne "True")
+			{
+				$xorg_conf .= "\tOption \"EnableDepthMoves\" \"True\"\n";
+				$EnableDepthMoves = "True";
+			}
+			if ($ColorTiling ne "True")
+			{
+				$xorg_conf .= "\tOption \"ColorTiling\" \"True\"\n";
+				$ColorTiling = "True";
+			}
+			if ($DMAForXv ne "True")
+			{
+				$xorg_conf .= "\tOption \"DMAForXv\" \"True\"\n";
+				$DMAForXv = "True";
+			}
+			if ($AccelDFS ne "True")
+			{
+				$xorg_conf .= "\tOption \"AccelDFS\" \"True\"\n";
+				$AccelDFS = "True";
+			}
+			if ($AccelMethod ne "XAA")
+			{
+				$xorg_conf .= "\tOption \"AccelMethod\" \"XAA\"\n";
+				$AccelMethod = "XAA";
+			}
+			if ($XAANoOffscreenPixmaps ne "True")
+			{
+				$xorg_conf .= "\tOption \"XAANoOffscreenPixmaps\" \"True\"\n";
+				$XAANoOffscreenPixmaps = "True";
+			}
+			if ($driver ne "ati")
+			{
+				$xorg_conf .= "\tDriver \"ati\"\n";
+				$driver = "ati";
+			}
+		}
+		else 
+		{ 
+			if (/Section "Device"/)
+			{
+				$in_section_device = "True";
+			}
+		}
+	}
+
+	close (IN);
+	my $date = strftime("%d-%m-%y-%H:%M:%S",localtime(time));
+	move ("/etc/X11/xorg.conf", "/etc/X11/xorg.conf.backup.b4.compiz.$date") or die "ERROR:\ncannot rename file /etc/X11/xorg.conf : $!";
+	print "previous /etc/X11/xorg.conf file backed up as /etc/X11/xorg.conf.backup.b4.compiz.$date\n";
+	open (OUT, ">/etc/X11/xorg.conf") or die "ERROR:\ncannot open /etc/X11/xorg.conf for writing : $!";
+	print OUT $xorg_conf;
+	close OUT;
+}
+
+#
+# Main routine of the script
+#
+
+my $ati_support = "False";
+foreach (@ARGV)
+{
+	if (/--with-experimental-ati-support/)
+	{
+		$ati_support = "True";
+	}
+	else
+	{
+		print "ERROR:\nUnrecognized argument $_\n";
+		print "Compiz /etc/X11/xorg.conf configurator\n";
+		print "\nAvailable option:\n";
+		print "--with-experimental-ati-support: Enable experimental ati support\n";
+	}
+
+}
+
+card_check ();
+
+if ($card_type eq "none")
+{
+	print "ERROR:\nunknown card. not modifying /etc/X11/xorg.conf\n";
+	exit 1;
+}
+
+if ($card_type eq "nvidia")
+{
+	system "/usr/bin/nvidia-xconfig --mode=nvidia-auto-select --allow-glx-with-composite --render-accel --add-argb-glx-visuals --composite";
+	if ($? == -1) {
+		print "ERROR:\nfailed to execute: $!\n";
+		exit 1;
+	}
+
+} elsif ($card_type eq "i915")
+{
+	configure_xorg_conf_intel ();
+} elsif ($card_type eq "radeon" && $ati_support eq "True")
+{
+  if ($ati_support eq "True")
+  {
+    configure_xorg_conf_ati();
+  }
+  else
+  {
+    print "ERROR:\nexperimental ati support disabled NOT modifying /etc/X11/xorg.conf\n";
+  } 
+}

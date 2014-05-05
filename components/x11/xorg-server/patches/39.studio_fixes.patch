@@ -1,0 +1,33 @@
+--- randr/rrcrtc.c.~1~	2014-04-29 15:54:55.375665431 +0400
++++ randr/rrcrtc.c	2014-04-29 15:55:11.550816192 +0400
+@@ -542,7 +542,7 @@
+ void
+ RRCrtcGetScanoutSize(RRCrtcPtr crtc, int *width, int *height)
+ {
+-    return RRModeGetScanoutSize (crtc->mode, &crtc->transform, width, height);
++    RRModeGetScanoutSize (crtc->mode, &crtc->transform, width, height);
+ }
+ 
+ /*
+--- glx/glxdri.c.~1~	2014-04-29 15:56:44.504273046 +0400
++++ glx/glxdri.c	2014-04-29 15:57:02.767549322 +0400
+@@ -886,7 +886,7 @@
+ 
+     glxSuspendClients();
+ 
+-    return (*screen->leaveVT) (index, flags);
++    (*screen->leaveVT) (index, flags);
+ }
+ 
+ static void
+--- glx/glxdri2.c.~1~	2014-04-29 15:57:26.430705685 +0400
++++ glx/glxdri2.c	2014-04-29 15:57:38.827953548 +0400
+@@ -535,7 +535,7 @@
+ 
+     glxSuspendClients();
+ 
+-    return (*screen->leaveVT) (index, flags);
++    (*screen->leaveVT) (index, flags);
+ }
+ 
+ static void

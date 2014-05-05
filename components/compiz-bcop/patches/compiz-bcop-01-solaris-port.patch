@@ -1,0 +1,83 @@
+diff -rup compiz-bcop-0.7.8-clean/Makefile.am compiz-bcop-0.7.8/Makefile.am
+--- compiz-bcop-0.7.8-clean/Makefile.am	2008-09-17 14:32:41.000000000 +0200
++++ compiz-bcop-0.7.8/Makefile.am	2009-03-02 17:46:45.443640620 +0100
+@@ -3,5 +3,5 @@ SUBDIRS = src
+ 
+ EXTRA_DIST = VERSION
+ 
+-pkgconfigdir = $(datadir)/pkgconfig
++pkgconfigdir = $(libdir)/pkgconfig
+ pkgconfig_DATA = bcop.pc
+diff -rup compiz-bcop-0.7.8-clean/configure.ac compiz-bcop-0.7.8/configure.ac
+--- compiz-bcop-0.7.8-clean/configure.ac	2008-09-17 14:32:41.000000000 +0200
++++ compiz-bcop-0.7.8/configure.ac	2009-03-02 17:46:45.443970715 +0100
+@@ -1,6 +1,6 @@
+ AC_PREREQ(2.57)
+ 
+-AC_INIT([compiz-bcop],esyscmd(. ./VERSION;echo -n $VERSION), [onestone@beryl-project.org])
++AC_INIT([compiz-bcop],esyscmd(. ./VERSION;echo $VERSION | tr -d "\n"), [onestone@beryl-project.org])
+ 
+ AC_DEFINE_UNQUOTED(VERSION,"$VERSION",[Version])
+ 
+@@ -16,6 +16,13 @@ AC_C_BIGENDIAN
+ 
+ PKG_CHECK_MODULES(LIBXSLT, libxslt)
+ 
++AC_MSG_CHECKING(for getopt program)
++GETOPT=getopt
++AC_ARG_WITH(getopt, [  --with-getopt=GETOPT    name of the getopt program],
++  GETOPT=$withval)
++AC_MSG_RESULT($GETOPT)
++AC_SUBST(GETOPT)
++
+ xsltdir=$datadir/bcop
+ AC_SUBST(xsltdir)
+ 
+diff -rup compiz-bcop-0.7.8-clean/src/bcop.in compiz-bcop-0.7.8/src/bcop.in
+--- compiz-bcop-0.7.8-clean/src/bcop.in	2008-09-17 14:32:41.000000000 +0200
++++ compiz-bcop-0.7.8/src/bcop.in	2009-03-02 17:46:45.444454427 +0100
+@@ -17,6 +17,8 @@
+ #  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ #  GNU General Public License for more details.
+ #
++# Utilities that we need that aren't everywhere
++GETOPT=@GETOPT@
+ 
+ xsltdir=@prefix@/share/bcop
+ 
+@@ -34,7 +36,7 @@ function usage
+ srcfile=
+ hdrfile=
+ 
+-set -- `getopt -quo "hv" -l "help,version,source:,header:" -- "$@"`
++set -- `${GETOPT} -quo "hv" -l "help,version,source:,header:" -- "$@"`
+ [ $# -lt 2 ] && usage
+ 
+ while [ $# -gt 0 ]
+Only in compiz-bcop-0.7.8/src: bcop.in.orig
+diff -rup compiz-bcop-0.7.8-clean/src/bcop.xslt compiz-bcop-0.7.8/src/bcop.xslt
+--- compiz-bcop-0.7.8-clean/src/bcop.xslt	2008-09-17 14:32:41.000000000 +0200
++++ compiz-bcop-0.7.8/src/bcop.xslt	2009-03-02 17:46:45.445742663 +0100
+@@ -267,7 +267,8 @@ typedef struct _</xsl:text>
+         <xsl:text>OptionsScreen
+ {
+ </xsl:text>
+-        <xsl:if test="plugin[@name=$pName]/screen/descendant-or-self::option">
++        <xsl:choose>
++	<xsl:when test="plugin[@name=$pName]/screen/descendant-or-self::option">
+             <xsl:text>    CompOption opt[</xsl:text>
+             <xsl:value-of select="$Plugin"/>
+             <xsl:text>ScreenOptionNum];
+@@ -283,7 +284,11 @@ typedef struct _</xsl:text>
+                 <xsl:text>;
+ </xsl:text>
+             </xsl:for-each>
+-        </xsl:if>
++        </xsl:when>
++        <xsl:otherwise>
++            <xsl:text>    int dummy;</xsl:text>
++        </xsl:otherwise>
++	</xsl:choose>
+         <xsl:text>} </xsl:text>
+         <xsl:value-of select="$Plugin"/>
+         <xsl:text>OptionsScreen;

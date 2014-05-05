@@ -1,0 +1,1041 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/developer/dtrace/toolkit@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Development/System"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license License license='CDDL v1.0'
+
+<transform file path=opt/DTT/.*\.d$ -> default mode 0555>
+<transform file path=opt/DTT/.*\.py$ -> default pkg.tmp.autopyc false>
+<transform file path=opt/DTT/Code/.*\.pl$ -> default mode 0555>
+<transform file path=opt/DTT/Code/.*\.py$ -> default mode 0555>
+<transform file path=opt/DTT/Code/.*\.rb$ -> default mode 0555>
+<transform file path=opt/DTT/Code/.*\.sh$ -> default mode 0555>
+
+# We don't depend on particular python version for examples
+<transform file path=opt/DTT/.*\.py$ -> default pkg.depend.bypass-generate .*>
+depend fmri=__TBD pkg.debug.depend.file=usr/bin/python type=require
+
+file path=opt/DTT/Apps/Readme
+file path=opt/DTT/Apps/httpdstat.d
+file path=opt/DTT/Apps/nfswizard.d
+file path=opt/DTT/Apps/shellsnoop mode=0555
+file path=opt/DTT/Apps/weblatency.d
+link path=opt/DTT/Bin/anonpgpid.d target=../Mem/anonpgpid.d
+link path=opt/DTT/Bin/bitesize.d target=../Disk/bitesize.d
+link path=opt/DTT/Bin/connections target=../Net/connections
+link path=opt/DTT/Bin/cpudists target=../Kernel/cpudists
+link path=opt/DTT/Bin/cputimes target=../Kernel/cputimes
+link path=opt/DTT/Bin/cputypes.d target=../Cpu/cputypes.d
+link path=opt/DTT/Bin/cpuwalk.d target=../Cpu/cpuwalk.d
+link path=opt/DTT/Bin/crash.d target=../Proc/crash.d
+link path=opt/DTT/Bin/creatbyproc.d target=../Proc/creatbyproc.d
+link path=opt/DTT/Bin/cswstat.d target=../Kernel/cswstat.d
+link path=opt/DTT/Bin/dappprof target=../Proc/dappprof
+link path=opt/DTT/Bin/dapptrace target=../Proc/dapptrace
+link path=opt/DTT/Bin/dexplorer target=../dexplorer
+link path=opt/DTT/Bin/diskhits target=../Disk/diskhits
+link path=opt/DTT/Bin/dispqlen.d target=../Cpu/dispqlen.d
+link path=opt/DTT/Bin/dnlcps.d target=../Kernel/dnlcps.d
+link path=opt/DTT/Bin/dnlcsnoop.d target=../Kernel/dnlcsnoop.d
+link path=opt/DTT/Bin/dnlcstat target=../Kernel/dnlcstat
+link path=opt/DTT/Bin/dtruss target=../dtruss
+link path=opt/DTT/Bin/dvmstat target=../dvmstat
+link path=opt/DTT/Bin/errinfo target=../errinfo
+link path=opt/DTT/Bin/execsnoop target=../execsnoop
+link path=opt/DTT/Bin/fddist target=../Proc/fddist
+link path=opt/DTT/Bin/filebyproc.d target=../Proc/filebyproc.d
+link path=opt/DTT/Bin/fspaging.d target=../FS/fspaging.d
+link path=opt/DTT/Bin/fsrw.d target=../FS/fsrw.d
+link path=opt/DTT/Bin/guess.d target=../Misc/guess.d
+link path=opt/DTT/Bin/hotkernel target=../hotkernel
+link path=opt/DTT/Bin/hotspot.d target=../Disk/hotspot.d
+link path=opt/DTT/Bin/hotuser target=../hotuser
+link path=opt/DTT/Bin/httpdstat.d target=../Apps/httpdstat.d
+link path=opt/DTT/Bin/icmpstat.d target=../Net/icmpstat.d
+link path=opt/DTT/Bin/intbycpu.d target=../Cpu/intbycpu.d
+link path=opt/DTT/Bin/intoncpu.d target=../Cpu/intoncpu.d
+link path=opt/DTT/Bin/inttimes.d target=../Cpu/inttimes.d
+link path=opt/DTT/Bin/iofile.d target=../Disk/iofile.d
+link path=opt/DTT/Bin/iofileb.d target=../Disk/iofileb.d
+link path=opt/DTT/Bin/iopattern target=../iopattern
+link path=opt/DTT/Bin/iopending target=../Disk/iopending
+link path=opt/DTT/Bin/iosnoop target=../iosnoop
+link path=opt/DTT/Bin/iotop target=../iotop
+link path=opt/DTT/Bin/j_calldist.d target=../Java/j_calldist.d
+link path=opt/DTT/Bin/j_calls.d target=../Java/j_calls.d
+link path=opt/DTT/Bin/j_calltime.d target=../Java/j_calltime.d
+link path=opt/DTT/Bin/j_classflow.d target=../Java/j_classflow.d
+link path=opt/DTT/Bin/j_cpudist.d target=../Java/j_cpudist.d
+link path=opt/DTT/Bin/j_cputime.d target=../Java/j_cputime.d
+link path=opt/DTT/Bin/j_events.d target=../Java/j_events.d
+link path=opt/DTT/Bin/j_flow.d target=../Java/j_flow.d
+link path=opt/DTT/Bin/j_flowtime.d target=../Java/j_flowtime.d
+link path=opt/DTT/Bin/j_methodcalls.d target=../Java/j_methodcalls.d
+link path=opt/DTT/Bin/j_objnew.d target=../Java/j_objnew.d
+link path=opt/DTT/Bin/j_package.d target=../Java/j_package.d
+link path=opt/DTT/Bin/j_profile.d target=../Java/j_profile.d
+link path=opt/DTT/Bin/j_stat.d target=../Java/j_stat.d
+link path=opt/DTT/Bin/j_syscalls.d target=../Java/j_syscalls.d
+link path=opt/DTT/Bin/j_syscolors.d target=../Java/j_syscolors.d
+link path=opt/DTT/Bin/j_thread.d target=../Java/j_thread.d
+link path=opt/DTT/Bin/j_who.d target=../Java/j_who.d
+link path=opt/DTT/Bin/js_calldist.d target=../JavaScript/js_calldist.d
+link path=opt/DTT/Bin/js_calls.d target=../JavaScript/js_calls.d
+link path=opt/DTT/Bin/js_calltime.d target=../JavaScript/js_calltime.d
+link path=opt/DTT/Bin/js_cpudist.d target=../JavaScript/js_cpudist.d
+link path=opt/DTT/Bin/js_cputime.d target=../JavaScript/js_cputime.d
+link path=opt/DTT/Bin/js_execs.d target=../JavaScript/js_execs.d
+link path=opt/DTT/Bin/js_flow.d target=../JavaScript/js_flow.d
+link path=opt/DTT/Bin/js_flowinfo.d target=../JavaScript/js_flowinfo.d
+link path=opt/DTT/Bin/js_flowtime.d target=../JavaScript/js_flowtime.d
+link path=opt/DTT/Bin/js_objcpu.d target=../JavaScript/js_objcpu.d
+link path=opt/DTT/Bin/js_objgc.d target=../JavaScript/js_objgc.d
+link path=opt/DTT/Bin/js_objnew.d target=../JavaScript/js_objnew.d
+link path=opt/DTT/Bin/js_stat.d target=../JavaScript/js_stat.d
+link path=opt/DTT/Bin/js_who.d target=../JavaScript/js_who.d
+link path=opt/DTT/Bin/kill.d target=../Proc/kill.d
+link path=opt/DTT/Bin/kstat_types.d target=../Kernel/kstat_types.d
+link path=opt/DTT/Bin/lastwords target=../Proc/lastwords
+link path=opt/DTT/Bin/loads.d target=../Cpu/loads.d
+link path=opt/DTT/Bin/lockbydist.d target=../Locks/lockbydist.d
+link path=opt/DTT/Bin/lockbyproc.d target=../Locks/lockbyproc.d
+link path=opt/DTT/Bin/minfbypid.d target=../Mem/minfbypid.d
+link path=opt/DTT/Bin/minfbyproc.d target=../Mem/minfbyproc.d
+link path=opt/DTT/Bin/mmapfiles.d target=../Proc/mmapfiles.d
+link path=opt/DTT/Bin/modcalls.d target=../Kernel/modcalls.d
+link path=opt/DTT/Bin/newproc.d target=../Proc/newproc.d
+link path=opt/DTT/Bin/nfswizard.d target=../Apps/nfswizard.d
+link path=opt/DTT/Bin/opensnoop target=../opensnoop
+link path=opt/DTT/Bin/pathopens.d target=../Proc/pathopens.d
+link path=opt/DTT/Bin/pfilestat target=../Proc/pfilestat
+link path=opt/DTT/Bin/pgpginbypid.d target=../Mem/pgpginbypid.d
+link path=opt/DTT/Bin/pgpginbyproc.d target=../Mem/pgpginbyproc.d
+link path=opt/DTT/Bin/php_calldist.d target=../Php/php_calldist.d
+link path=opt/DTT/Bin/php_calltime.d target=../Php/php_calltime.d
+link path=opt/DTT/Bin/php_cpudist.d target=../Php/php_cpudist.d
+link path=opt/DTT/Bin/php_cputime.d target=../Php/php_cputime.d
+link path=opt/DTT/Bin/php_flow.d target=../Php/php_flow.d
+link path=opt/DTT/Bin/php_flowinfo.d target=../Php/php_flowinfo.d
+link path=opt/DTT/Bin/php_flowtime.d target=../Php/php_flowtime.d
+link path=opt/DTT/Bin/php_funccalls.d target=../Php/php_funccalls.d
+link path=opt/DTT/Bin/php_malloc.d target=../Php/php_malloc.d
+link path=opt/DTT/Bin/php_syscalls.d target=../Php/php_syscalls.d
+link path=opt/DTT/Bin/php_syscolors.d target=../Php/php_syscolors.d
+link path=opt/DTT/Bin/php_who.d target=../Php/php_who.d
+link path=opt/DTT/Bin/pidpersec.d target=../Proc/pidpersec.d
+link path=opt/DTT/Bin/pl_calldist.d target=../Perl/pl_calldist.d
+link path=opt/DTT/Bin/pl_calltime.d target=../Perl/pl_calltime.d
+link path=opt/DTT/Bin/pl_cpudist.d target=../Perl/pl_cpudist.d
+link path=opt/DTT/Bin/pl_cputime.d target=../Perl/pl_cputime.d
+link path=opt/DTT/Bin/pl_flow.d target=../Perl/pl_flow.d
+link path=opt/DTT/Bin/pl_flowinfo.d target=../Perl/pl_flowinfo.d
+link path=opt/DTT/Bin/pl_flowtime.d target=../Perl/pl_flowtime.d
+link path=opt/DTT/Bin/pl_malloc.d target=../Perl/pl_malloc.d
+link path=opt/DTT/Bin/pl_subcalls.d target=../Perl/pl_subcalls.d
+link path=opt/DTT/Bin/pl_syscalls.d target=../Perl/pl_syscalls.d
+link path=opt/DTT/Bin/pl_syscolors.d target=../Perl/pl_syscolors.d
+link path=opt/DTT/Bin/pl_who.d target=../Perl/pl_who.d
+link path=opt/DTT/Bin/priclass.d target=../Kernel/priclass.d
+link path=opt/DTT/Bin/pridist.d target=../Kernel/pridist.d
+link path=opt/DTT/Bin/procsystime target=../procsystime
+link path=opt/DTT/Bin/putnexts.d target=../Kernel/putnexts.d
+link path=opt/DTT/Bin/py_calldist.d target=../Python/py_calldist.d
+link path=opt/DTT/Bin/py_calltime.d target=../Python/py_calltime.d
+link path=opt/DTT/Bin/py_cpudist.d target=../Python/py_cpudist.d
+link path=opt/DTT/Bin/py_cputime.d target=../Python/py_cputime.d
+link path=opt/DTT/Bin/py_flow.d target=../Python/py_flow.d
+link path=opt/DTT/Bin/py_flowinfo.d target=../Python/py_flowinfo.d
+link path=opt/DTT/Bin/py_flowtime.d target=../Python/py_flowtime.d
+link path=opt/DTT/Bin/py_funccalls.d target=../Python/py_funccalls.d
+link path=opt/DTT/Bin/py_malloc.d target=../Python/py_malloc.d
+link path=opt/DTT/Bin/py_mallocstk.d target=../Python/py_mallocstk.d
+link path=opt/DTT/Bin/py_profile.d target=../Python/py_profile.d
+link path=opt/DTT/Bin/py_syscalls.d target=../Python/py_syscalls.d
+link path=opt/DTT/Bin/py_syscolors.d target=../Python/py_syscolors.d
+link path=opt/DTT/Bin/py_who.d target=../Python/py_who.d
+link path=opt/DTT/Bin/rb_calldist.d target=../Ruby/rb_calldist.d
+link path=opt/DTT/Bin/rb_calls.d target=../Ruby/rb_calls.d
+link path=opt/DTT/Bin/rb_calltime.d target=../Ruby/rb_calltime.d
+link path=opt/DTT/Bin/rb_cpudist.d target=../Ruby/rb_cpudist.d
+link path=opt/DTT/Bin/rb_cputime.d target=../Ruby/rb_cputime.d
+link path=opt/DTT/Bin/rb_flow.d target=../Ruby/rb_flow.d
+link path=opt/DTT/Bin/rb_flowinfo.d target=../Ruby/rb_flowinfo.d
+link path=opt/DTT/Bin/rb_flowtime.d target=../Ruby/rb_flowtime.d
+link path=opt/DTT/Bin/rb_funccalls.d target=../Ruby/rb_funccalls.d
+link path=opt/DTT/Bin/rb_lines.d target=../Ruby/rb_lines.d
+link path=opt/DTT/Bin/rb_malloc.d target=../Ruby/rb_malloc.d
+link path=opt/DTT/Bin/rb_objcpu.d target=../Ruby/rb_objcpu.d
+link path=opt/DTT/Bin/rb_objnew.d target=../Ruby/rb_objnew.d
+link path=opt/DTT/Bin/rb_stat.d target=../Ruby/rb_stat.d
+link path=opt/DTT/Bin/rb_syscalls.d target=../Ruby/rb_syscalls.d
+link path=opt/DTT/Bin/rb_syscolors.d target=../Ruby/rb_syscolors.d
+link path=opt/DTT/Bin/rb_who.d target=../Ruby/rb_who.d
+link path=opt/DTT/Bin/readbytes.d target=../Proc/readbytes.d
+link path=opt/DTT/Bin/readdist.d target=../Proc/readdist.d
+link path=opt/DTT/Bin/rfileio.d target=../FS/rfileio.d
+link path=opt/DTT/Bin/rfsio.d target=../FS/rfsio.d
+link path=opt/DTT/Bin/runocc.d target=../Cpu/runocc.d
+link path=opt/DTT/Bin/rwbbypid.d target=../Proc/rwbbypid.d
+link path=opt/DTT/Bin/rwbypid.d target=../Proc/rwbypid.d
+link path=opt/DTT/Bin/rwbytype.d target=../Proc/rwbytype.d
+link path=opt/DTT/Bin/rwsnoop target=../rwsnoop
+link path=opt/DTT/Bin/rwtop target=../rwtop
+link path=opt/DTT/Bin/sampleproc target=../Proc/sampleproc
+link path=opt/DTT/Bin/sar-c.d target=../System/sar-c.d
+link path=opt/DTT/Bin/seeksize.d target=../Disk/seeksize.d
+link path=opt/DTT/Bin/setuids.d target=../User/setuids.d
+link path=opt/DTT/Bin/sh_calldist.d target=../Shell/sh_calldist.d
+link path=opt/DTT/Bin/sh_calls.d target=../Shell/sh_calls.d
+link path=opt/DTT/Bin/sh_calltime.d target=../Shell/sh_calltime.d
+link path=opt/DTT/Bin/sh_cpudist.d target=../Shell/sh_cpudist.d
+link path=opt/DTT/Bin/sh_cputime.d target=../Shell/sh_cputime.d
+link path=opt/DTT/Bin/sh_flow.d target=../Shell/sh_flow.d
+link path=opt/DTT/Bin/sh_flowinfo.d target=../Shell/sh_flowinfo.d
+link path=opt/DTT/Bin/sh_flowtime.d target=../Shell/sh_flowtime.d
+link path=opt/DTT/Bin/sh_lines.d target=../Shell/sh_lines.d
+link path=opt/DTT/Bin/sh_pidcolors.d target=../Shell/sh_pidcolors.d
+link path=opt/DTT/Bin/sh_stat.d target=../Shell/sh_stat.d
+link path=opt/DTT/Bin/sh_syscalls.d target=../Shell/sh_syscalls.d
+link path=opt/DTT/Bin/sh_syscolors.d target=../Shell/sh_syscolors.d
+link path=opt/DTT/Bin/sh_wasted.d target=../Shell/sh_wasted.d
+link path=opt/DTT/Bin/sh_who.d target=../Shell/sh_who.d
+link path=opt/DTT/Bin/shellsnoop target=../Apps/shellsnoop
+link path=opt/DTT/Bin/shortlived.d target=../Proc/shortlived.d
+link path=opt/DTT/Bin/sigdist.d target=../Proc/sigdist.d
+link path=opt/DTT/Bin/stacksize.d target=../Proc/stacksize.d
+link path=opt/DTT/Bin/statsnoop target=../statsnoop
+link path=opt/DTT/Bin/swapinfo.d target=../Mem/swapinfo.d
+link path=opt/DTT/Bin/sysbypid.d target=../Proc/sysbypid.d
+link path=opt/DTT/Bin/syscallbypid.d target=../Proc/syscallbypid.d
+link path=opt/DTT/Bin/syscallbyproc.d target=../Proc/syscallbyproc.d
+link path=opt/DTT/Bin/syscallbysysc.d target=../System/syscallbysysc.d
+link path=opt/DTT/Bin/tcl_calldist.d target=../Tcl/tcl_calldist.d
+link path=opt/DTT/Bin/tcl_calls.d target=../Tcl/tcl_calls.d
+link path=opt/DTT/Bin/tcl_calltime.d target=../Tcl/tcl_calltime.d
+link path=opt/DTT/Bin/tcl_cpudist.d target=../Tcl/tcl_cpudist.d
+link path=opt/DTT/Bin/tcl_cputime.d target=../Tcl/tcl_cputime.d
+link path=opt/DTT/Bin/tcl_flow.d target=../Tcl/tcl_flow.d
+link path=opt/DTT/Bin/tcl_flowtime.d target=../Tcl/tcl_flowtime.d
+link path=opt/DTT/Bin/tcl_ins.d target=../Tcl/tcl_ins.d
+link path=opt/DTT/Bin/tcl_insflow.d target=../Tcl/tcl_insflow.d
+link path=opt/DTT/Bin/tcl_proccalls.d target=../Tcl/tcl_proccalls.d
+link path=opt/DTT/Bin/tcl_procflow.d target=../Tcl/tcl_procflow.d
+link path=opt/DTT/Bin/tcl_stat.d target=../Tcl/tcl_stat.d
+link path=opt/DTT/Bin/tcl_syscalls.d target=../Tcl/tcl_syscalls.d
+link path=opt/DTT/Bin/tcl_syscolors.d target=../Tcl/tcl_syscolors.d
+link path=opt/DTT/Bin/tcl_who.d target=../Tcl/tcl_who.d
+link path=opt/DTT/Bin/tcpsnoop target=../Net/tcpsnoop
+link path=opt/DTT/Bin/tcpsnoop.d target=../Net/tcpsnoop.d
+link path=opt/DTT/Bin/tcpsnoop_snv target=../Net/tcpsnoop_snv
+link path=opt/DTT/Bin/tcpsnoop_snv.d target=../Net/tcpsnoop_snv.d
+link path=opt/DTT/Bin/tcpstat.d target=../Net/tcpstat.d
+link path=opt/DTT/Bin/tcptop target=../Net/tcptop
+link path=opt/DTT/Bin/tcptop_snv target=../Net/tcptop_snv
+link path=opt/DTT/Bin/tcpwdist.d target=../Net/tcpwdist.d
+link path=opt/DTT/Bin/threaded.d target=../Proc/threaded.d
+link path=opt/DTT/Bin/topsyscall target=../System/topsyscall
+link path=opt/DTT/Bin/topsysproc target=../Proc/topsysproc
+link path=opt/DTT/Bin/udpstat.d target=../Net/udpstat.d
+link path=opt/DTT/Bin/uname-a.d target=../System/uname-a.d
+link path=opt/DTT/Bin/vmbypid.d target=../Mem/vmbypid.d
+link path=opt/DTT/Bin/vmstat-p.d target=../Mem/vmstat-p.d
+link path=opt/DTT/Bin/vmstat.d target=../Mem/vmstat.d
+link path=opt/DTT/Bin/vopstat target=../FS/vopstat
+link path=opt/DTT/Bin/weblatency.d target=../Apps/weblatency.d
+link path=opt/DTT/Bin/whatexec.d target=../Kernel/whatexec.d
+link path=opt/DTT/Bin/woof.d target=../Misc/woof.d
+link path=opt/DTT/Bin/wpm.d target=../Misc/wpm.d
+link path=opt/DTT/Bin/writebytes.d target=../Proc/writebytes.d
+link path=opt/DTT/Bin/writedist.d target=../Proc/writedist.d
+link path=opt/DTT/Bin/xcallsbypid.d target=../Cpu/xcallsbypid.d
+link path=opt/DTT/Bin/xvmstat target=../Mem/xvmstat
+link path=opt/DTT/Bin/zvmstat target=../Zones/zvmstat
+file path=opt/DTT/Code/Java/Func_abc.java
+file path=opt/DTT/Code/Java/Func_loop.java
+file path=opt/DTT/Code/JavaScript/func_clock.html
+file path=opt/DTT/Code/JavaScript/func_slow.html
+file path=opt/DTT/Code/Perl/func_abc.pl
+file path=opt/DTT/Code/Perl/func_malloc.pl
+file path=opt/DTT/Code/Perl/func_slow.pl
+file path=opt/DTT/Code/Perl/hello.pl
+file path=opt/DTT/Code/Perl/hello_strict.pl
+file path=opt/DTT/Code/Php/func_abc.php
+file path=opt/DTT/Code/Python/func_abc.py
+file path=opt/DTT/Code/Python/func_slow.py
+file path=opt/DTT/Code/Readme
+file path=opt/DTT/Code/Ruby/func_abc.rb
+file path=opt/DTT/Code/Ruby/func_slow.rb
+file path=opt/DTT/Code/Shell/func_abc.sh
+file path=opt/DTT/Code/Shell/func_slow.sh
+file path=opt/DTT/Code/Shell/func_waste.sh
+file path=opt/DTT/Code/Tcl/func_abc.tcl
+file path=opt/DTT/Code/Tcl/func_slow.tcl
+file path=opt/DTT/Cpu/Readme
+file path=opt/DTT/Cpu/cputypes.d
+file path=opt/DTT/Cpu/cpuwalk.d
+file path=opt/DTT/Cpu/dispqlen.d
+file path=opt/DTT/Cpu/intbycpu.d
+file path=opt/DTT/Cpu/intoncpu.d
+file path=opt/DTT/Cpu/inttimes.d
+file path=opt/DTT/Cpu/loads.d
+file path=opt/DTT/Cpu/runocc.d
+file path=opt/DTT/Cpu/xcallsbypid.d
+file path=opt/DTT/Disk/Readme
+file path=opt/DTT/Disk/bitesize.d
+file path=opt/DTT/Disk/diskhits mode=0555
+file path=opt/DTT/Disk/hotspot.d
+file path=opt/DTT/Disk/iofile.d
+file path=opt/DTT/Disk/iofileb.d
+file path=opt/DTT/Disk/iopending mode=0555
+file path=opt/DTT/Disk/seeksize.d
+file path=opt/DTT/Docs/Contents
+link path=opt/DTT/Docs/Examples target=../Examples
+file path=opt/DTT/Docs/Faq
+file path=opt/DTT/Docs/History
+link path=opt/DTT/Docs/Index target=Contents
+file path=opt/DTT/Docs/Links
+file path=opt/DTT/Docs/Maintainer
+link path=opt/DTT/Docs/Notes target=../Notes
+file path=opt/DTT/Docs/Readme
+file path=opt/DTT/Docs/ToDo
+file path=opt/DTT/Docs/Who
+file path=opt/DTT/Docs/cddl1.txt
+file path=opt/DTT/Docs/oneliners.txt
+file path=opt/DTT/Examples/Copyright
+file path=opt/DTT/Examples/Readme
+file path=opt/DTT/Examples/anonpgpid_example.txt
+file path=opt/DTT/Examples/bitesize_example.txt
+file path=opt/DTT/Examples/connections_example.txt
+file path=opt/DTT/Examples/cpudists_example.txt
+file path=opt/DTT/Examples/cputimes_example.txt
+file path=opt/DTT/Examples/cputypes_example.txt
+file path=opt/DTT/Examples/cpuwalk_example.txt
+file path=opt/DTT/Examples/crash_example.txt
+file path=opt/DTT/Examples/creatbyproc_example.txt
+file path=opt/DTT/Examples/cswstat_example.txt
+file path=opt/DTT/Examples/dappprof_example.txt
+file path=opt/DTT/Examples/dapptrace_example.txt
+file path=opt/DTT/Examples/dexplorer_example.txt
+file path=opt/DTT/Examples/diskhits_example.txt
+file path=opt/DTT/Examples/dispqlen_example.txt
+file path=opt/DTT/Examples/dnlcps_example.txt
+file path=opt/DTT/Examples/dnlcsnoop_example.txt
+file path=opt/DTT/Examples/dnlcstat_example.txt
+file path=opt/DTT/Examples/dtruss_example.txt
+file path=opt/DTT/Examples/dvmstat_example.txt
+file path=opt/DTT/Examples/errinfo_example.txt
+file path=opt/DTT/Examples/execsnoop_example.txt
+file path=opt/DTT/Examples/fddist_example.txt
+file path=opt/DTT/Examples/filebyproc_example.txt
+file path=opt/DTT/Examples/fspaging_example.txt
+file path=opt/DTT/Examples/fsrw_example.txt
+file path=opt/DTT/Examples/guess_example.txt
+file path=opt/DTT/Examples/hotkernel_example.txt
+file path=opt/DTT/Examples/hotspot_example.txt
+file path=opt/DTT/Examples/hotuser_example.txt
+file path=opt/DTT/Examples/httpdstat_example.txt
+file path=opt/DTT/Examples/icmpstat_example.txt
+file path=opt/DTT/Examples/intbycpu_example.txt
+file path=opt/DTT/Examples/intoncpu_example.txt
+file path=opt/DTT/Examples/inttimes_example.txt
+file path=opt/DTT/Examples/iofile_example.txt
+file path=opt/DTT/Examples/iofileb_example.txt
+file path=opt/DTT/Examples/iopattern_example.txt
+file path=opt/DTT/Examples/iopending_example.txt
+file path=opt/DTT/Examples/iosnoop_example.txt
+file path=opt/DTT/Examples/iotop_example.txt
+file path=opt/DTT/Examples/j_calldist_example.txt
+file path=opt/DTT/Examples/j_calls_example.txt
+file path=opt/DTT/Examples/j_calltime_example.txt
+file path=opt/DTT/Examples/j_classflow_example.txt
+file path=opt/DTT/Examples/j_cpudist_example.txt
+file path=opt/DTT/Examples/j_cputime_example.txt
+file path=opt/DTT/Examples/j_events_example.txt
+file path=opt/DTT/Examples/j_flow_example.txt
+file path=opt/DTT/Examples/j_flowtime_example.txt
+file path=opt/DTT/Examples/j_methodcalls_example.txt
+file path=opt/DTT/Examples/j_objnew_example.txt
+file path=opt/DTT/Examples/j_package_example.txt
+file path=opt/DTT/Examples/j_profile_example.txt
+file path=opt/DTT/Examples/j_stat_example.txt
+file path=opt/DTT/Examples/j_syscalls_example.txt
+file path=opt/DTT/Examples/j_syscolors_example.txt
+file path=opt/DTT/Examples/j_thread_example.txt
+file path=opt/DTT/Examples/j_who_example.txt
+file path=opt/DTT/Examples/js_calldist_example.txt
+file path=opt/DTT/Examples/js_calls_example.txt
+file path=opt/DTT/Examples/js_calltime_example.txt
+file path=opt/DTT/Examples/js_cpudist_example.txt
+file path=opt/DTT/Examples/js_cputime_example.txt
+file path=opt/DTT/Examples/js_execs_example.txt
+file path=opt/DTT/Examples/js_flow_example.txt
+file path=opt/DTT/Examples/js_flowinfo_example.txt
+file path=opt/DTT/Examples/js_flowtime_example.txt
+file path=opt/DTT/Examples/js_objcpu_example.txt
+file path=opt/DTT/Examples/js_objgc_example.txt
+file path=opt/DTT/Examples/js_objnew_example.txt
+file path=opt/DTT/Examples/js_stat_example.txt
+file path=opt/DTT/Examples/js_who_example.txt
+file path=opt/DTT/Examples/kill_example.txt
+file path=opt/DTT/Examples/kstat_types_example.txt
+file path=opt/DTT/Examples/lastwords_example.txt
+file path=opt/DTT/Examples/loads_example.txt
+file path=opt/DTT/Examples/lockbydist_example.txt
+file path=opt/DTT/Examples/lockbyproc_example.txt
+file path=opt/DTT/Examples/minfbypid_example.txt
+file path=opt/DTT/Examples/minfbyproc_example.txt
+file path=opt/DTT/Examples/mmapfiles_example.txt
+file path=opt/DTT/Examples/modcalls_example.txt
+file path=opt/DTT/Examples/newproc_example.txt
+file path=opt/DTT/Examples/nfswizard_example.txt
+file path=opt/DTT/Examples/oneliners_examples.txt
+file path=opt/DTT/Examples/opensnoop_example.txt
+file path=opt/DTT/Examples/pathopens_example.txt
+file path=opt/DTT/Examples/pfilestat_example.txt
+file path=opt/DTT/Examples/pgpginbypid_example.txt
+file path=opt/DTT/Examples/pgpginbyproc_example.txt
+file path=opt/DTT/Examples/php_calldist_example.txt
+file path=opt/DTT/Examples/php_calltime_example.txt
+file path=opt/DTT/Examples/php_cpudist_example.txt
+file path=opt/DTT/Examples/php_cputime_example.txt
+file path=opt/DTT/Examples/php_flow_example.txt
+file path=opt/DTT/Examples/php_flowinfo_example.txt
+file path=opt/DTT/Examples/php_flowtime_example.txt
+file path=opt/DTT/Examples/php_funccalls_example.txt
+file path=opt/DTT/Examples/php_malloc_example.txt
+file path=opt/DTT/Examples/php_syscalls_example.txt
+file path=opt/DTT/Examples/php_syscolors_example.txt
+file path=opt/DTT/Examples/php_who_example.txt
+file path=opt/DTT/Examples/pidpersec_example.txt
+file path=opt/DTT/Examples/pl_calldist_example.txt
+file path=opt/DTT/Examples/pl_calltime_example.txt
+file path=opt/DTT/Examples/pl_cpudist_example.txt
+file path=opt/DTT/Examples/pl_cputime_example.txt
+file path=opt/DTT/Examples/pl_flow_example.txt
+file path=opt/DTT/Examples/pl_flowinfo_example.txt
+file path=opt/DTT/Examples/pl_flowtime_example.txt
+file path=opt/DTT/Examples/pl_malloc_example.txt
+file path=opt/DTT/Examples/pl_subcalls_example.txt
+file path=opt/DTT/Examples/pl_syscalls_example.txt
+file path=opt/DTT/Examples/pl_syscolors_example.txt
+file path=opt/DTT/Examples/pl_who_example.txt
+file path=opt/DTT/Examples/priclass_example.txt
+file path=opt/DTT/Examples/pridist_example.txt
+file path=opt/DTT/Examples/procsystime_example.txt
+file path=opt/DTT/Examples/putnexts_example.txt
+file path=opt/DTT/Examples/py_calldist_example.txt
+file path=opt/DTT/Examples/py_calltime_example.txt
+file path=opt/DTT/Examples/py_cpudist_example.txt
+file path=opt/DTT/Examples/py_cputime_example.txt
+file path=opt/DTT/Examples/py_flow_example.txt
+file path=opt/DTT/Examples/py_flowinfo_example.txt
+file path=opt/DTT/Examples/py_flowtime_example.txt
+file path=opt/DTT/Examples/py_funccalls_example.txt
+file path=opt/DTT/Examples/py_malloc_example.txt
+file path=opt/DTT/Examples/py_mallocstk_example.txt
+file path=opt/DTT/Examples/py_profile_example.txt
+file path=opt/DTT/Examples/py_syscalls_example.txt
+file path=opt/DTT/Examples/py_syscolors_example.txt
+file path=opt/DTT/Examples/py_who_example.txt
+file path=opt/DTT/Examples/rb_calldist_example.txt
+file path=opt/DTT/Examples/rb_calls_example.txt
+file path=opt/DTT/Examples/rb_calltime_example.txt
+file path=opt/DTT/Examples/rb_cpudist_example.txt
+file path=opt/DTT/Examples/rb_cputime_example.txt
+file path=opt/DTT/Examples/rb_flow_example.txt
+file path=opt/DTT/Examples/rb_flowinfo_example.txt
+file path=opt/DTT/Examples/rb_flowtime_example.txt
+file path=opt/DTT/Examples/rb_funccalls_example.txt
+file path=opt/DTT/Examples/rb_lines_example.txt
+file path=opt/DTT/Examples/rb_malloc_example.txt
+file path=opt/DTT/Examples/rb_objcpu_example.txt
+file path=opt/DTT/Examples/rb_objnew_example.txt
+file path=opt/DTT/Examples/rb_stat_example.txt
+file path=opt/DTT/Examples/rb_syscalls_example.txt
+file path=opt/DTT/Examples/rb_syscolors_example.txt
+file path=opt/DTT/Examples/rb_who_example.txt
+file path=opt/DTT/Examples/readbytes_example.txt
+file path=opt/DTT/Examples/readdist_example.txt
+file path=opt/DTT/Examples/rfileio_example.txt
+file path=opt/DTT/Examples/rfsio_example.txt
+file path=opt/DTT/Examples/runocc_example.txt
+file path=opt/DTT/Examples/rwbbypid_example.txt
+file path=opt/DTT/Examples/rwbypid_example.txt
+file path=opt/DTT/Examples/rwbytype_example.txt
+file path=opt/DTT/Examples/rwsnoop_example.txt
+file path=opt/DTT/Examples/rwtop_example.txt
+file path=opt/DTT/Examples/sampleproc_example.txt
+file path=opt/DTT/Examples/sar-c_example.txt
+file path=opt/DTT/Examples/seeksize_example.txt
+file path=opt/DTT/Examples/setuids_example.txt
+file path=opt/DTT/Examples/sh_calldist_example.txt
+file path=opt/DTT/Examples/sh_calls_example.txt
+file path=opt/DTT/Examples/sh_calltime_example.txt
+file path=opt/DTT/Examples/sh_cpudist_example.txt
+file path=opt/DTT/Examples/sh_cputime_example.txt
+file path=opt/DTT/Examples/sh_flow_example.txt
+file path=opt/DTT/Examples/sh_flowinfo_example.txt
+file path=opt/DTT/Examples/sh_flowtime_example.txt
+file path=opt/DTT/Examples/sh_lines_example.txt
+file path=opt/DTT/Examples/sh_pidcolors_example.txt
+file path=opt/DTT/Examples/sh_stat_example.txt
+file path=opt/DTT/Examples/sh_syscalls_example.txt
+file path=opt/DTT/Examples/sh_syscolors_example.txt
+file path=opt/DTT/Examples/sh_wasted_example.txt
+file path=opt/DTT/Examples/sh_who_example.txt
+file path=opt/DTT/Examples/shellsnoop_example.txt
+file path=opt/DTT/Examples/shortlived_example.txt
+file path=opt/DTT/Examples/sigdist_example.txt
+file path=opt/DTT/Examples/stacksize_example.txt
+file path=opt/DTT/Examples/statsnoop_example.txt
+file path=opt/DTT/Examples/swapinfo_example.txt
+file path=opt/DTT/Examples/sysbypid_example.txt
+file path=opt/DTT/Examples/syscallbypid_example.txt
+file path=opt/DTT/Examples/syscallbyproc_example.txt
+file path=opt/DTT/Examples/syscallbysysc_example.txt
+file path=opt/DTT/Examples/tcl_calldist_example.txt
+file path=opt/DTT/Examples/tcl_calls_example.txt
+file path=opt/DTT/Examples/tcl_calltime_example.txt
+file path=opt/DTT/Examples/tcl_cpudist_example.txt
+file path=opt/DTT/Examples/tcl_cputime_example.txt
+file path=opt/DTT/Examples/tcl_flow_example.txt
+file path=opt/DTT/Examples/tcl_flowtime_example.txt
+file path=opt/DTT/Examples/tcl_ins_example.txt
+file path=opt/DTT/Examples/tcl_insflow_example.txt
+file path=opt/DTT/Examples/tcl_proccalls_example.txt
+file path=opt/DTT/Examples/tcl_procflow_example.txt
+file path=opt/DTT/Examples/tcl_stat_example.txt
+file path=opt/DTT/Examples/tcl_syscalls_example.txt
+file path=opt/DTT/Examples/tcl_syscolors_example.txt
+file path=opt/DTT/Examples/tcl_who_example.txt
+file path=opt/DTT/Examples/tcpsnoop_d_example.txt
+file path=opt/DTT/Examples/tcpsnoop_example.txt
+link path=opt/DTT/Examples/tcpsnoop_snv_d_example.txt \
+    target=tcpsnoop_d_example.txt
+link path=opt/DTT/Examples/tcpsnoop_snv_example.txt target=tcpsnoop_example.txt
+file path=opt/DTT/Examples/tcpstat_example.txt
+file path=opt/DTT/Examples/tcptop_example.txt
+link path=opt/DTT/Examples/tcptop_snv_example.txt target=tcptop_example.txt
+file path=opt/DTT/Examples/tcpwdist_example.txt
+file path=opt/DTT/Examples/threaded_example.txt
+file path=opt/DTT/Examples/topsyscall_example.txt
+file path=opt/DTT/Examples/topsysproc_example.txt
+file path=opt/DTT/Examples/udpstat_example.txt
+file path=opt/DTT/Examples/uname-a_example.txt
+file path=opt/DTT/Examples/vmbypid_example.txt
+file path=opt/DTT/Examples/vmstat-p_example.txt
+file path=opt/DTT/Examples/vmstat_example.txt
+file path=opt/DTT/Examples/vopstat_example.txt
+file path=opt/DTT/Examples/weblatency_example.txt
+file path=opt/DTT/Examples/whatexec_example.txt
+file path=opt/DTT/Examples/woof_example.txt
+file path=opt/DTT/Examples/wpm_example.txt
+file path=opt/DTT/Examples/writebytes_example.txt
+file path=opt/DTT/Examples/writedist_example.txt
+file path=opt/DTT/Examples/xcallsbypid_example.txt
+file path=opt/DTT/Examples/xvmstat_example.txt
+file path=opt/DTT/Examples/zvmstat_example.txt
+file path=opt/DTT/FS/Readme
+file path=opt/DTT/FS/fspaging.d
+file path=opt/DTT/FS/fsrw.d
+file path=opt/DTT/FS/rfileio.d
+file path=opt/DTT/FS/rfsio.d
+file path=opt/DTT/FS/vopstat mode=0555
+file path=opt/DTT/Guide
+file path=opt/DTT/Include/Readme
+file path=opt/DTT/Include/test.ksh
+file path=opt/DTT/Include/time.h
+file path=opt/DTT/Include/tostr.h
+file path=opt/DTT/Java/Readme
+file path=opt/DTT/Java/j_calldist.d
+file path=opt/DTT/Java/j_calls.d
+file path=opt/DTT/Java/j_calltime.d
+file path=opt/DTT/Java/j_classflow.d
+file path=opt/DTT/Java/j_cpudist.d
+file path=opt/DTT/Java/j_cputime.d
+file path=opt/DTT/Java/j_events.d
+file path=opt/DTT/Java/j_flow.d
+file path=opt/DTT/Java/j_flowtime.d
+file path=opt/DTT/Java/j_methodcalls.d
+file path=opt/DTT/Java/j_objnew.d
+file path=opt/DTT/Java/j_package.d
+file path=opt/DTT/Java/j_profile.d
+file path=opt/DTT/Java/j_stat.d
+file path=opt/DTT/Java/j_syscalls.d
+file path=opt/DTT/Java/j_syscolors.d
+file path=opt/DTT/Java/j_thread.d
+file path=opt/DTT/Java/j_who.d
+file path=opt/DTT/JavaScript/Readme
+file path=opt/DTT/JavaScript/js_calldist.d
+file path=opt/DTT/JavaScript/js_calls.d
+file path=opt/DTT/JavaScript/js_calltime.d
+file path=opt/DTT/JavaScript/js_cpudist.d
+file path=opt/DTT/JavaScript/js_cputime.d
+file path=opt/DTT/JavaScript/js_execs.d
+file path=opt/DTT/JavaScript/js_flow.d
+file path=opt/DTT/JavaScript/js_flowinfo.d
+file path=opt/DTT/JavaScript/js_flowtime.d
+file path=opt/DTT/JavaScript/js_objcpu.d
+file path=opt/DTT/JavaScript/js_objgc.d
+file path=opt/DTT/JavaScript/js_objnew.d
+file path=opt/DTT/JavaScript/js_stat.d
+file path=opt/DTT/JavaScript/js_who.d
+file path=opt/DTT/Kernel/Readme
+file path=opt/DTT/Kernel/cpudists mode=0555
+file path=opt/DTT/Kernel/cputimes mode=0555
+file path=opt/DTT/Kernel/cswstat.d
+file path=opt/DTT/Kernel/dnlcps.d
+file path=opt/DTT/Kernel/dnlcsnoop.d
+file path=opt/DTT/Kernel/dnlcstat mode=0555
+file path=opt/DTT/Kernel/kstat_types.d
+file path=opt/DTT/Kernel/modcalls.d
+file path=opt/DTT/Kernel/priclass.d
+file path=opt/DTT/Kernel/pridist.d
+file path=opt/DTT/Kernel/putnexts.d
+file path=opt/DTT/Kernel/whatexec.d
+link path=opt/DTT/License target=Docs/cddl1.txt
+file path=opt/DTT/Locks/lockbydist.d
+file path=opt/DTT/Locks/lockbyproc.d
+file path=opt/DTT/Man/Readme
+file path=opt/DTT/Man/man1m/anonpgpid.d.1m
+file path=opt/DTT/Man/man1m/bitesize.d.1m
+file path=opt/DTT/Man/man1m/connections.1m
+file path=opt/DTT/Man/man1m/cpudists.1m
+file path=opt/DTT/Man/man1m/cputimes.1m
+file path=opt/DTT/Man/man1m/cputypes.d.1m
+file path=opt/DTT/Man/man1m/cpuwalk.d.1m
+file path=opt/DTT/Man/man1m/crash.d.1m
+file path=opt/DTT/Man/man1m/creatbyproc.d.1m
+file path=opt/DTT/Man/man1m/cswstat.d.1m
+file path=opt/DTT/Man/man1m/dappprof.1m
+file path=opt/DTT/Man/man1m/dapptrace.1m
+file path=opt/DTT/Man/man1m/dexplorer.1m
+file path=opt/DTT/Man/man1m/diskhits.1m
+file path=opt/DTT/Man/man1m/dispqlen.d.1m
+file path=opt/DTT/Man/man1m/dnlcps.d.1m
+file path=opt/DTT/Man/man1m/dnlcsnoop.d.1m
+file path=opt/DTT/Man/man1m/dnlcstat.1m
+file path=opt/DTT/Man/man1m/dtruss.1m
+file path=opt/DTT/Man/man1m/dvmstat.1m
+file path=opt/DTT/Man/man1m/errinfo.1m
+file path=opt/DTT/Man/man1m/execsnoop.1m
+file path=opt/DTT/Man/man1m/fddist.1m
+file path=opt/DTT/Man/man1m/filebyproc.d.1m
+file path=opt/DTT/Man/man1m/fspaging.d.1m
+file path=opt/DTT/Man/man1m/fsrw.d.1m
+file path=opt/DTT/Man/man1m/guess.d.1m
+file path=opt/DTT/Man/man1m/hotkernel.1m
+file path=opt/DTT/Man/man1m/hotspot.d.1m
+file path=opt/DTT/Man/man1m/hotuser.1m
+file path=opt/DTT/Man/man1m/httpdstat.d.1m
+file path=opt/DTT/Man/man1m/icmpstat.d.1m
+file path=opt/DTT/Man/man1m/intbycpu.d.1m
+file path=opt/DTT/Man/man1m/intoncpu.d.1m
+file path=opt/DTT/Man/man1m/inttimes.d.1m
+file path=opt/DTT/Man/man1m/iofile.d.1m
+file path=opt/DTT/Man/man1m/iofileb.d.1m
+file path=opt/DTT/Man/man1m/iopattern.1m
+file path=opt/DTT/Man/man1m/iopending.1m
+file path=opt/DTT/Man/man1m/iosnoop.1m
+file path=opt/DTT/Man/man1m/iotop.1m
+file path=opt/DTT/Man/man1m/j_calldist.d.1m
+file path=opt/DTT/Man/man1m/j_calls.d.1m
+file path=opt/DTT/Man/man1m/j_calltime.d.1m
+file path=opt/DTT/Man/man1m/j_classflow.d.1m
+file path=opt/DTT/Man/man1m/j_cpudist.d.1m
+file path=opt/DTT/Man/man1m/j_cputime.d.1m
+file path=opt/DTT/Man/man1m/j_events.d.1m
+file path=opt/DTT/Man/man1m/j_flow.d.1m
+file path=opt/DTT/Man/man1m/j_flowtime.d.1m
+file path=opt/DTT/Man/man1m/j_methodcalls.d.1m
+file path=opt/DTT/Man/man1m/j_objnew.d.1m
+file path=opt/DTT/Man/man1m/j_package.d.1m
+file path=opt/DTT/Man/man1m/j_profile.d.1m
+file path=opt/DTT/Man/man1m/j_stat.d.1m
+file path=opt/DTT/Man/man1m/j_syscalls.d.1m
+file path=opt/DTT/Man/man1m/j_syscolors.d.1m
+file path=opt/DTT/Man/man1m/j_thread.d.1m
+file path=opt/DTT/Man/man1m/j_who.d.1m
+file path=opt/DTT/Man/man1m/js_calldist.d.1m
+file path=opt/DTT/Man/man1m/js_calls.d.1m
+file path=opt/DTT/Man/man1m/js_calltime.d.1m
+file path=opt/DTT/Man/man1m/js_cpudist.d.1m
+file path=opt/DTT/Man/man1m/js_cputime.d.1m
+file path=opt/DTT/Man/man1m/js_execs.d.1m
+file path=opt/DTT/Man/man1m/js_flow.d.1m
+file path=opt/DTT/Man/man1m/js_flowinfo.d.1m
+file path=opt/DTT/Man/man1m/js_flowtime.d.1m
+file path=opt/DTT/Man/man1m/js_objcpu.d.1m
+file path=opt/DTT/Man/man1m/js_objgc.d.1m
+file path=opt/DTT/Man/man1m/js_objnew.d.1m
+file path=opt/DTT/Man/man1m/js_stat.d.1m
+file path=opt/DTT/Man/man1m/js_who.d.1m
+file path=opt/DTT/Man/man1m/kill.d.1m
+file path=opt/DTT/Man/man1m/kstat_types.d.1m
+file path=opt/DTT/Man/man1m/lastwords.1m
+file path=opt/DTT/Man/man1m/loads.d.1m
+file path=opt/DTT/Man/man1m/lockbydist.d.1m
+file path=opt/DTT/Man/man1m/lockbyproc.d.1m
+file path=opt/DTT/Man/man1m/minfbypid.d.1m
+file path=opt/DTT/Man/man1m/minfbyproc.d.1m
+file path=opt/DTT/Man/man1m/mmapfiles.d.1m
+file path=opt/DTT/Man/man1m/modcalls.d.1m
+file path=opt/DTT/Man/man1m/newproc.d.1m
+file path=opt/DTT/Man/man1m/nfswizard.d.1m
+file path=opt/DTT/Man/man1m/opensnoop.1m
+file path=opt/DTT/Man/man1m/pathopens.d.1m
+file path=opt/DTT/Man/man1m/pfilestat.1m
+file path=opt/DTT/Man/man1m/pgpginbypid.d.1m
+file path=opt/DTT/Man/man1m/pgpginbyproc.d.1m
+file path=opt/DTT/Man/man1m/php_calldist.d.1m
+file path=opt/DTT/Man/man1m/php_calltime.d.1m
+file path=opt/DTT/Man/man1m/php_cpudist.d.1m
+file path=opt/DTT/Man/man1m/php_cputime.d.1m
+file path=opt/DTT/Man/man1m/php_flow.d.1m
+file path=opt/DTT/Man/man1m/php_flowinfo.d.1m
+file path=opt/DTT/Man/man1m/php_flowtime.d.1m
+file path=opt/DTT/Man/man1m/php_funccalls.d.1m
+file path=opt/DTT/Man/man1m/php_malloc.d.1m
+file path=opt/DTT/Man/man1m/php_syscalls.d.1m
+file path=opt/DTT/Man/man1m/php_syscolors.d.1m
+file path=opt/DTT/Man/man1m/php_who.d.1m
+file path=opt/DTT/Man/man1m/pidpersec.d.1m
+file path=opt/DTT/Man/man1m/pl_calldist.d.1m
+file path=opt/DTT/Man/man1m/pl_calltime.d.1m
+file path=opt/DTT/Man/man1m/pl_cpudist.d.1m
+file path=opt/DTT/Man/man1m/pl_cputime.d.1m
+file path=opt/DTT/Man/man1m/pl_flow.d.1m
+file path=opt/DTT/Man/man1m/pl_flowinfo.d.1m
+file path=opt/DTT/Man/man1m/pl_flowtime.d.1m
+file path=opt/DTT/Man/man1m/pl_malloc.d.1m
+file path=opt/DTT/Man/man1m/pl_subcalls.d.1m
+file path=opt/DTT/Man/man1m/pl_syscalls.d.1m
+file path=opt/DTT/Man/man1m/pl_syscolors.d.1m
+file path=opt/DTT/Man/man1m/pl_who.d.1m
+file path=opt/DTT/Man/man1m/priclass.d.1m
+file path=opt/DTT/Man/man1m/pridist.d.1m
+file path=opt/DTT/Man/man1m/procsystime.1m
+file path=opt/DTT/Man/man1m/putnexts.d.1m
+file path=opt/DTT/Man/man1m/py_calldist.d.1m
+file path=opt/DTT/Man/man1m/py_calltime.d.1m
+file path=opt/DTT/Man/man1m/py_cpudist.d.1m
+file path=opt/DTT/Man/man1m/py_cputime.d.1m
+file path=opt/DTT/Man/man1m/py_flow.d.1m
+file path=opt/DTT/Man/man1m/py_flowinfo.d.1m
+file path=opt/DTT/Man/man1m/py_flowtime.d.1m
+file path=opt/DTT/Man/man1m/py_funccalls.d.1m
+file path=opt/DTT/Man/man1m/py_malloc.d.1m
+file path=opt/DTT/Man/man1m/py_mallocstk.d.1m
+file path=opt/DTT/Man/man1m/py_profile.d.1m
+file path=opt/DTT/Man/man1m/py_syscalls.d.1m
+file path=opt/DTT/Man/man1m/py_syscolors.d.1m
+file path=opt/DTT/Man/man1m/py_who.d.1m
+file path=opt/DTT/Man/man1m/rb_calldist.d.1m
+file path=opt/DTT/Man/man1m/rb_calls.d.1m
+file path=opt/DTT/Man/man1m/rb_calltime.d.1m
+file path=opt/DTT/Man/man1m/rb_cpudist.d.1m
+file path=opt/DTT/Man/man1m/rb_cputime.d.1m
+file path=opt/DTT/Man/man1m/rb_flow.d.1m
+file path=opt/DTT/Man/man1m/rb_flowinfo.d.1m
+file path=opt/DTT/Man/man1m/rb_flowtime.d.1m
+file path=opt/DTT/Man/man1m/rb_funccalls.d.1m
+file path=opt/DTT/Man/man1m/rb_lines.d.1m
+file path=opt/DTT/Man/man1m/rb_malloc.d.1m
+file path=opt/DTT/Man/man1m/rb_objcpu.d.1m
+file path=opt/DTT/Man/man1m/rb_objnew.d.1m
+file path=opt/DTT/Man/man1m/rb_stat.d.1m
+file path=opt/DTT/Man/man1m/rb_syscalls.d.1m
+file path=opt/DTT/Man/man1m/rb_syscolors.d.1m
+file path=opt/DTT/Man/man1m/rb_who.d.1m
+file path=opt/DTT/Man/man1m/readbytes.d.1m
+file path=opt/DTT/Man/man1m/readdist.d.1m
+file path=opt/DTT/Man/man1m/rfileio.d.1m
+file path=opt/DTT/Man/man1m/rfsio.d.1m
+file path=opt/DTT/Man/man1m/runocc.d.1m
+file path=opt/DTT/Man/man1m/rwbbypid.d.1m
+file path=opt/DTT/Man/man1m/rwbypid.d.1m
+file path=opt/DTT/Man/man1m/rwbytype.d.1m
+file path=opt/DTT/Man/man1m/rwsnoop.1m
+file path=opt/DTT/Man/man1m/rwtop.1m
+file path=opt/DTT/Man/man1m/sampleproc.1m
+file path=opt/DTT/Man/man1m/sar-c.d.1m
+file path=opt/DTT/Man/man1m/seeksize.d.1m
+file path=opt/DTT/Man/man1m/setuids.d.1m
+file path=opt/DTT/Man/man1m/sh_calldist.d.1m
+file path=opt/DTT/Man/man1m/sh_calls.d.1m
+file path=opt/DTT/Man/man1m/sh_calltime.d.1m
+file path=opt/DTT/Man/man1m/sh_cpudist.d.1m
+file path=opt/DTT/Man/man1m/sh_cputime.d.1m
+file path=opt/DTT/Man/man1m/sh_flow.d.1m
+file path=opt/DTT/Man/man1m/sh_flowinfo.d.1m
+file path=opt/DTT/Man/man1m/sh_flowtime.d.1m
+file path=opt/DTT/Man/man1m/sh_lines.d.1m
+file path=opt/DTT/Man/man1m/sh_pidcolors.d.1m
+file path=opt/DTT/Man/man1m/sh_stat.d.1m
+file path=opt/DTT/Man/man1m/sh_syscalls.d.1m
+file path=opt/DTT/Man/man1m/sh_syscolors.d.1m
+file path=opt/DTT/Man/man1m/sh_wasted.d.1m
+file path=opt/DTT/Man/man1m/sh_who.d.1m
+file path=opt/DTT/Man/man1m/shellsnoop.1m
+file path=opt/DTT/Man/man1m/shortlived.d.1m
+file path=opt/DTT/Man/man1m/sigdist.d.1m
+file path=opt/DTT/Man/man1m/stacksize.d.1m
+file path=opt/DTT/Man/man1m/statsnoop.1m
+file path=opt/DTT/Man/man1m/swapinfo.d.1m
+file path=opt/DTT/Man/man1m/sysbypid.d.1m
+file path=opt/DTT/Man/man1m/syscallbypid.d.1m
+file path=opt/DTT/Man/man1m/syscallbyproc.d.1m
+file path=opt/DTT/Man/man1m/syscallbysysc.d.1m
+file path=opt/DTT/Man/man1m/tcl_calldist.d.1m
+file path=opt/DTT/Man/man1m/tcl_calls.d.1m
+file path=opt/DTT/Man/man1m/tcl_calltime.d.1m
+file path=opt/DTT/Man/man1m/tcl_cpudist.d.1m
+file path=opt/DTT/Man/man1m/tcl_cputime.d.1m
+file path=opt/DTT/Man/man1m/tcl_flow.d.1m
+file path=opt/DTT/Man/man1m/tcl_flowtime.d.1m
+file path=opt/DTT/Man/man1m/tcl_ins.d.1m
+file path=opt/DTT/Man/man1m/tcl_insflow.d.1m
+file path=opt/DTT/Man/man1m/tcl_proccalls.d.1m
+file path=opt/DTT/Man/man1m/tcl_procflow.d.1m
+file path=opt/DTT/Man/man1m/tcl_stat.d.1m
+file path=opt/DTT/Man/man1m/tcl_syscalls.d.1m
+file path=opt/DTT/Man/man1m/tcl_syscolors.d.1m
+file path=opt/DTT/Man/man1m/tcl_who.d.1m
+file path=opt/DTT/Man/man1m/tcpsnoop.1m
+file path=opt/DTT/Man/man1m/tcpsnoop.d.1m
+file path=opt/DTT/Man/man1m/tcpsnoop_snv.1m
+file path=opt/DTT/Man/man1m/tcpsnoop_snv.d.1m
+file path=opt/DTT/Man/man1m/tcpstat.d.1m
+file path=opt/DTT/Man/man1m/tcptop.1m
+file path=opt/DTT/Man/man1m/tcptop_snv.1m
+file path=opt/DTT/Man/man1m/tcpwdist.d.1m
+file path=opt/DTT/Man/man1m/threaded.d.1m
+file path=opt/DTT/Man/man1m/topsyscall.1m
+file path=opt/DTT/Man/man1m/topsysproc.1m
+file path=opt/DTT/Man/man1m/udpstat.d.1m
+file path=opt/DTT/Man/man1m/uname-a.d.1m
+file path=opt/DTT/Man/man1m/vmbypid.d.1m
+file path=opt/DTT/Man/man1m/vmstat-p.d.1m
+file path=opt/DTT/Man/man1m/vmstat.d.1m
+file path=opt/DTT/Man/man1m/vopstat.1m
+file path=opt/DTT/Man/man1m/weblatency.d.1m
+file path=opt/DTT/Man/man1m/whatexec.d.1m
+file path=opt/DTT/Man/man1m/woof.d.1m
+file path=opt/DTT/Man/man1m/wpm.d.1m
+file path=opt/DTT/Man/man1m/writebytes.d.1m
+file path=opt/DTT/Man/man1m/writedist.d.1m
+file path=opt/DTT/Man/man1m/xcallsbypid.d.1m
+file path=opt/DTT/Man/man1m/xvmstat.1m
+file path=opt/DTT/Man/man1m/zvmstat.1m
+file path=opt/DTT/Mem/Readme
+file path=opt/DTT/Mem/anonpgpid.d
+file path=opt/DTT/Mem/minfbypid.d
+file path=opt/DTT/Mem/minfbyproc.d
+file path=opt/DTT/Mem/pgpginbypid.d
+file path=opt/DTT/Mem/pgpginbyproc.d
+file path=opt/DTT/Mem/swapinfo.d
+file path=opt/DTT/Mem/vmbypid.d
+file path=opt/DTT/Mem/vmstat-p.d
+file path=opt/DTT/Mem/vmstat.d
+file path=opt/DTT/Mem/xvmstat mode=0555
+file path=opt/DTT/Misc/Readme
+file path=opt/DTT/Misc/guess.d
+file path=opt/DTT/Misc/woof.d
+file path=opt/DTT/Misc/wpm.d
+file path=opt/DTT/Net/Readme
+file path=opt/DTT/Net/connections mode=0555
+file path=opt/DTT/Net/icmpstat.d
+file path=opt/DTT/Net/tcpsnoop mode=0555
+file path=opt/DTT/Net/tcpsnoop.d
+file path=opt/DTT/Net/tcpsnoop_snv mode=0555
+file path=opt/DTT/Net/tcpsnoop_snv.d
+file path=opt/DTT/Net/tcpstat.d
+file path=opt/DTT/Net/tcptop mode=0555
+file path=opt/DTT/Net/tcptop_snv mode=0555
+file path=opt/DTT/Net/tcpwdist.d
+file path=opt/DTT/Net/udpstat.d
+file path=opt/DTT/Notes/ALLcolors_notes.txt
+file path=opt/DTT/Notes/ALLelapsed_notes.txt
+file path=opt/DTT/Notes/ALLexclusive_notes.txt
+file path=opt/DTT/Notes/ALLfbt_notes.txt
+file path=opt/DTT/Notes/ALLflow_notes.txt
+file path=opt/DTT/Notes/ALLinclusive_notes.txt
+file path=opt/DTT/Notes/ALLjava_notes.txt
+file path=opt/DTT/Notes/ALLoncpu_notes.txt
+file path=opt/DTT/Notes/ALLoverhead.txt
+file path=opt/DTT/Notes/ALLperl_notes.txt
+file path=opt/DTT/Notes/ALLsnoop_notes.txt
+file path=opt/DTT/Notes/Readme
+file path=opt/DTT/Notes/cputimes_notes.txt
+file path=opt/DTT/Notes/dappprof_notes.txt
+file path=opt/DTT/Notes/dapptrace_notes.txt
+file path=opt/DTT/Notes/dtruss_notes.txt
+file path=opt/DTT/Notes/iosnoop_notes.txt
+file path=opt/DTT/Notes/iotop_notes.txt
+file path=opt/DTT/Notes/procsystime_notes.txt
+file path=opt/DTT/Perl/Readme
+file path=opt/DTT/Perl/pl_calldist.d
+file path=opt/DTT/Perl/pl_calltime.d
+file path=opt/DTT/Perl/pl_cpudist.d
+file path=opt/DTT/Perl/pl_cputime.d
+file path=opt/DTT/Perl/pl_flow.d
+file path=opt/DTT/Perl/pl_flowinfo.d
+file path=opt/DTT/Perl/pl_flowtime.d
+file path=opt/DTT/Perl/pl_malloc.d
+file path=opt/DTT/Perl/pl_subcalls.d
+file path=opt/DTT/Perl/pl_syscalls.d
+file path=opt/DTT/Perl/pl_syscolors.d
+file path=opt/DTT/Perl/pl_who.d
+file path=opt/DTT/Php/Readme
+file path=opt/DTT/Php/php_calldist.d
+file path=opt/DTT/Php/php_calltime.d
+file path=opt/DTT/Php/php_cpudist.d
+file path=opt/DTT/Php/php_cputime.d
+file path=opt/DTT/Php/php_flow.d
+file path=opt/DTT/Php/php_flowinfo.d
+file path=opt/DTT/Php/php_flowtime.d
+file path=opt/DTT/Php/php_funccalls.d
+file path=opt/DTT/Php/php_malloc.d
+file path=opt/DTT/Php/php_syscalls.d
+file path=opt/DTT/Php/php_syscolors.d
+file path=opt/DTT/Php/php_who.d
+file path=opt/DTT/Proc/Readme
+file path=opt/DTT/Proc/crash.d
+file path=opt/DTT/Proc/creatbyproc.d
+file path=opt/DTT/Proc/dappprof mode=0555
+file path=opt/DTT/Proc/dapptrace mode=0555
+file path=opt/DTT/Proc/fddist mode=0555
+file path=opt/DTT/Proc/filebyproc.d
+file path=opt/DTT/Proc/kill.d
+file path=opt/DTT/Proc/lastwords mode=0555
+file path=opt/DTT/Proc/mmapfiles.d
+file path=opt/DTT/Proc/newproc.d
+file path=opt/DTT/Proc/pathopens.d
+file path=opt/DTT/Proc/pfilestat mode=0555
+file path=opt/DTT/Proc/pidpersec.d
+file path=opt/DTT/Proc/readbytes.d
+file path=opt/DTT/Proc/readdist.d
+file path=opt/DTT/Proc/rwbbypid.d
+file path=opt/DTT/Proc/rwbypid.d
+file path=opt/DTT/Proc/rwbytype.d
+file path=opt/DTT/Proc/sampleproc mode=0555
+file path=opt/DTT/Proc/shortlived.d
+file path=opt/DTT/Proc/sigdist.d
+file path=opt/DTT/Proc/stacksize.d
+file path=opt/DTT/Proc/sysbypid.d
+file path=opt/DTT/Proc/syscallbypid.d
+file path=opt/DTT/Proc/syscallbyproc.d
+file path=opt/DTT/Proc/threaded.d
+file path=opt/DTT/Proc/topsysproc mode=0555
+file path=opt/DTT/Proc/writebytes.d
+file path=opt/DTT/Proc/writedist.d
+file path=opt/DTT/Python/Readme
+file path=opt/DTT/Python/py_calldist.d
+file path=opt/DTT/Python/py_calltime.d
+file path=opt/DTT/Python/py_cpudist.d
+file path=opt/DTT/Python/py_cputime.d
+file path=opt/DTT/Python/py_flow.d
+file path=opt/DTT/Python/py_flowinfo.d
+file path=opt/DTT/Python/py_flowtime.d
+file path=opt/DTT/Python/py_funccalls.d
+file path=opt/DTT/Python/py_malloc.d
+file path=opt/DTT/Python/py_mallocstk.d
+file path=opt/DTT/Python/py_profile.d
+file path=opt/DTT/Python/py_syscalls.d
+file path=opt/DTT/Python/py_syscolors.d
+file path=opt/DTT/Python/py_who.d
+link path=opt/DTT/README target=Guide
+file path=opt/DTT/Ruby/Readme
+file path=opt/DTT/Ruby/rb_calldist.d
+file path=opt/DTT/Ruby/rb_calls.d
+file path=opt/DTT/Ruby/rb_calltime.d
+file path=opt/DTT/Ruby/rb_cpudist.d
+file path=opt/DTT/Ruby/rb_cputime.d
+file path=opt/DTT/Ruby/rb_flow.d
+file path=opt/DTT/Ruby/rb_flowinfo.d
+file path=opt/DTT/Ruby/rb_flowtime.d
+file path=opt/DTT/Ruby/rb_funccalls.d
+file path=opt/DTT/Ruby/rb_lines.d
+file path=opt/DTT/Ruby/rb_malloc.d
+file path=opt/DTT/Ruby/rb_objcpu.d
+file path=opt/DTT/Ruby/rb_objnew.d
+file path=opt/DTT/Ruby/rb_stat.d
+file path=opt/DTT/Ruby/rb_syscalls.d
+file path=opt/DTT/Ruby/rb_syscolors.d
+file path=opt/DTT/Ruby/rb_who.d
+file path=opt/DTT/Shell/Readme
+file path=opt/DTT/Shell/sh_calldist.d
+file path=opt/DTT/Shell/sh_calls.d
+file path=opt/DTT/Shell/sh_calltime.d
+file path=opt/DTT/Shell/sh_cpudist.d
+file path=opt/DTT/Shell/sh_cputime.d
+file path=opt/DTT/Shell/sh_flow.d
+file path=opt/DTT/Shell/sh_flowinfo.d
+file path=opt/DTT/Shell/sh_flowtime.d
+file path=opt/DTT/Shell/sh_lines.d
+file path=opt/DTT/Shell/sh_pidcolors.d
+file path=opt/DTT/Shell/sh_stat.d
+file path=opt/DTT/Shell/sh_syscalls.d
+file path=opt/DTT/Shell/sh_syscolors.d
+file path=opt/DTT/Shell/sh_wasted.d
+file path=opt/DTT/Shell/sh_who.d
+file path=opt/DTT/Snippits/Readme
+file path=opt/DTT/Snippits/fd2pathname.txt
+file path=opt/DTT/System/Readme
+file path=opt/DTT/System/sar-c.d
+file path=opt/DTT/System/syscallbysysc.d
+file path=opt/DTT/System/topsyscall mode=0555
+file path=opt/DTT/System/uname-a.d
+file path=opt/DTT/Tcl/Readme
+file path=opt/DTT/Tcl/tcl_calldist.d
+file path=opt/DTT/Tcl/tcl_calls.d
+file path=opt/DTT/Tcl/tcl_calltime.d
+file path=opt/DTT/Tcl/tcl_cpudist.d
+file path=opt/DTT/Tcl/tcl_cputime.d
+file path=opt/DTT/Tcl/tcl_flow.d
+file path=opt/DTT/Tcl/tcl_flowtime.d
+file path=opt/DTT/Tcl/tcl_ins.d
+file path=opt/DTT/Tcl/tcl_insflow.d
+file path=opt/DTT/Tcl/tcl_proccalls.d
+file path=opt/DTT/Tcl/tcl_procflow.d
+file path=opt/DTT/Tcl/tcl_stat.d
+file path=opt/DTT/Tcl/tcl_syscalls.d
+file path=opt/DTT/Tcl/tcl_syscolors.d
+file path=opt/DTT/Tcl/tcl_who.d
+file path=opt/DTT/User/Readme
+file path=opt/DTT/User/setuids.d
+file path=opt/DTT/Version
+file path=opt/DTT/Zones/Readme
+file path=opt/DTT/Zones/zvmstat mode=0555
+file path=opt/DTT/dexplorer mode=0555
+file path=opt/DTT/dtruss mode=0555
+file path=opt/DTT/dvmstat mode=0555
+file path=opt/DTT/errinfo mode=0555
+file path=opt/DTT/execsnoop mode=0555
+file path=opt/DTT/hotkernel mode=0555
+file path=opt/DTT/hotuser mode=0555
+file path=opt/DTT/iopattern mode=0555
+file path=opt/DTT/iosnoop mode=0555
+file path=opt/DTT/iotop mode=0555
+file path=opt/DTT/opensnoop mode=0555
+file path=opt/DTT/procsystime mode=0555
+file path=opt/DTT/rwsnoop mode=0555
+file path=opt/DTT/rwtop mode=0555
+file path=opt/DTT/statsnoop mode=0555

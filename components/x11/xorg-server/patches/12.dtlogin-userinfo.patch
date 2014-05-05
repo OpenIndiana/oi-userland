@@ -1,0 +1,115 @@
+# Copyright (c) 2006, 2009, Oracle and/or its affiliates. All rights reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining a
+# copy of this software and associated documentation files (the "Software"),
+# to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense,
+# and/or sell copies of the Software, and to permit persons to whom the
+# Software is furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice (including the next
+# paragraph) shall be included in all copies or substantial portions of the
+# Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+diff -urp -x '*~' -x '*.orig' configure.ac configure.ac
+--- configure.ac	2009-11-03 22:28:52.912813822 -0800
++++ configure.ac	2009-11-03 22:28:54.304262174 -0800
+@@ -1328,6 +1328,7 @@ PKG_CHECK_MODULES([XSERVERLIBS], [$REQUI
+ XSERVER_CFLAGS="${XSERVERCFLAGS_CFLAGS} ${SHA1_CFLAGS}"
+ XSERVER_LIBS="$DIX_LIB $CONFIG_LIB $MI_LIB $OS_LIB"
+ XSERVER_SYS_LIBS="${XSERVERLIBS_LIBS} ${SYS_LIBS} ${LIBS} ${SHA1_LIB}"
++XSERVER_SYS_LIBS="${XSERVER_SYS_LIBS} -lproject"
+ AC_SUBST([XSERVER_LIBS])
+ AC_SUBST([XSERVER_SYS_LIBS])
+ 
+diff -urp -x '*~' -x '*.orig' dix/main.c dix/main.c
+--- dix/main.c	2009-10-19 19:45:37.000000000 -0700
++++ dix/main.c	2009-11-03 22:28:54.304577823 -0800
+@@ -116,6 +116,11 @@ Equipment Corporation.
+ #include "dpmsproc.h"
+ #endif
+ 
++#ifdef SUNSOFT
++extern void DtloginInit(void);
++extern void DtloginCloseDown(void);
++#endif /* SUNSOFT */
++
+ extern void Dispatch(void);
+ 
+ extern void InitProcVectors(void);
+@@ -169,6 +174,13 @@ int main(int argc, char *argv[], char *e
+ 	/* Perform any operating system dependent initializations you'd like */
+ 	OsInit();
+         config_init();
++
++#ifdef SUNSOFT
++	/* Create pipe for dtlogin authentication info before we tell dtlogin 
++	   we're done and ready for it to run. */
++	DtloginInit ();
++#endif
++
+ 	if(serverGeneration == 1)
+ 	{
+ 	    CreateWellKnownSockets();
+@@ -284,6 +296,11 @@ int main(int argc, char *argv[], char *e
+ 
+ 	Dispatch();
+ 
++#ifdef SUNSOFT
++	/* Return to root privs before calling the rest of close down */
++	DtloginCloseDown ();
++#endif
++
+         UndisplayDevices();
+ 
+ 	/* Now free up whatever must be freed */
+diff -urp -x '*~' -x '*.orig' os/Makefile.am os/Makefile.am
+--- os/Makefile.am	2009-10-21 14:52:56.000000000 -0700
++++ os/Makefile.am	2009-11-03 22:28:54.304721381 -0800
+@@ -24,6 +24,7 @@ libos_la_SOURCES = 	\
+ 	xdmauth.c	\
+ 	xstrans.c	\
+ 	xprintf.c	\
++	dtlogin.c	\
+ 	$(XORG_SRCS)
+ 
+ if SECURE_RPC
+@@ -38,6 +39,8 @@ if NEED_STRLCAT
+ libos_la_SOURCES += $(STRLCAT_SRCS)
+ endif
+ 
++libos_la_LIBADD = -lproject
++
+ EXTRA_DIST = $(SECURERPC_SRCS) $(INTERNALMALLOC_SRCS) \
+      $(XDMCP_SRCS) $(STRLCAT_SRCS)
+ 
+diff -urp -x '*~' -x '*.orig' os/auth.c os/auth.c
+--- os/auth.c	2009-07-09 21:05:36.000000000 -0700
++++ os/auth.c	2009-11-03 22:28:54.304879545 -0800
+@@ -289,6 +289,19 @@ AddAuthorization (unsigned name_length, 
+     return 0;
+ }
+ 
++#ifdef SUNSOFT
++/* This function is called from dtlogin.c 
++ * This is added to do "chmod authorization_file" since
++ * this file is owned by root and we need to change this
++ * to user logged on.  
++ */
++const char *
++GetAuthFilename(void)
++{
++    return (authorization_file);
++}
++#endif
++
+ #ifdef XCSECURITY
+ 
+ XID

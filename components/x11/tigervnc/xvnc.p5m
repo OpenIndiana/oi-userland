@@ -1,0 +1,43 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/x11/server/xvnc@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/X11"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license $(COMPONENT_LICENSE_FILE) license='$(COMPONENT_LICENSE)'
+
+file files/xvnc-inetd.xml path=lib/svc/manifest/application/x11/xvnc-inetd.xml
+link path=usr/lib/mdb/proc/Xvnc.so target=Xserver.so pkg.linted.userland.action002.0=true
+depend fmri=__TBD pkg.debug.depend.file=usr/lib/mdb/proc/Xserver.so type=require
+
+file path=usr/bin/Xvnc owner=root group=root mode=2555
+file path=usr/bin/vncconfig
+file path=usr/bin/vncpasswd
+file path=usr/bin/vncserver
+file path=usr/bin/x0vncserver
+file path=usr/share/man/man1/Xvnc.1
+file path=usr/share/man/man1/vncconfig.1
+file path=usr/share/man/man1/vncpasswd.1
+file path=usr/share/man/man1/vncserver.1
+file path=usr/share/man/man1/x0vncserver.1
+file path=usr/share/vnc/classes/LICENCE.TXT
+file path=usr/share/vnc/classes/README
+file path=usr/share/vnc/classes/VncViewer.jar
+file path=usr/share/vnc/classes/index.html
+file path=usr/share/vnc/classes/index.vnc
+file path=usr/share/vnc/classes/tigervnc_16.gif

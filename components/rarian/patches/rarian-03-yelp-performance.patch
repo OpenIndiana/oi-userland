@@ -1,0 +1,71 @@
+/jds/bin/diff -uprN rarian-0.8.1.old/librarian/rarian-man.c rarian-0.8.1/librarian/rarian-man.c
+--- rarian-0.8.1.old/librarian/rarian-man.c	2008-10-02 16:21:42.493360000 +0100
++++ rarian-0.8.1/librarian/rarian-man.c	2008-10-02 16:21:50.105663000 +0100
+@@ -84,33 +84,29 @@ setup_man_path ()
+ {
+   int outfd[2];
+   int infd[2];
+-  
+-  int oldstdin, oldstdout;
++  pid_t manpath_pid; 
+   fflush(stdin);
+   fflush(stdout);
+   fflush(stderr);
+ 
+   pipe(outfd); // Where the parent is going to write to
+   pipe(infd); // From where parent is going to read
+-  
+-  oldstdin = dup(0); // Save current stdin
+-  oldstdout = dup(1); // Save stdout
+-  
+-  close(0);
+-  close(1);
+-  
+-  dup2(outfd[0], 0); // Make the read end of outfd pipe as stdin
+-  dup2(infd[1],1); // Make the write end of infd as stdout
+ 
+-  if(!fork()) {
++  manpath_pid = fork();
++  if(manpath_pid == 0) { /* child */
+     /* Child process */
+     char *argv[]={"manpath"};
+-    close(outfd[0]); // Not required for the child
+-    close(outfd[1]);
++
+     close(infd[0]);
++    dup2(infd[1], STDOUT_FILENO); // Make the write end of infd as stdout
++
++    close(outfd[1]);
++    dup2(outfd[0], STDIN_FILENO); // Make the read end of outfd as stdin
++
+     close(infd[1]);
++    close(outfd[0]); // Not required for the child
+     execlp("manpath", "manpath", (char *) 0);
+-    exit (0);
++    _exit (0);
+   } else {
+     /* Parent process */
+     char *input = NULL;
+@@ -118,16 +114,18 @@ setup_man_path ()
+     char *next = NULL;
+     int i, count = 0;
+     input = malloc(sizeof(char) * 256);
+-    close(0); // Restore the original std fds of parent
+-    close(1);
+-    dup2(oldstdin, 0);
+-    dup2(oldstdout, 1);
+     
+     close(outfd[0]); // These are being used by the child
+     close(infd[1]);
+     memset(input, 0, sizeof(char)*255);
+     
+     input[read(infd[0],input,255)] = 0; // Read from child's stdout
++
++    // Read done so waitpid on parent or will end up with defunct process
++    waitpid (manpath_pid, NULL, 0);
++    close(outfd[1]); // Finished with these now
++    close(infd[0]);
++
+     if (*input != '\0') {
+       int i;
+       i = strlen(input);

@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bzip2
 COMPONENT_VERSION=	1.0.6
+COMPONENT_REVISION=	2
 COMPONENT_PROJECT_URL=	http://www.bzip.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -38,12 +39,12 @@ COMPONENT_BUGDB=	utility/bzip
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
 include ../../make-rules/ips.mk
-include ../../make-rules/lint-libraries.mk
+#include ../../make-rules/lint-libraries.mk
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
-LINT_FLAGS +=	-I.
+#LINT_FLAGS +=	-I.
 
 # we need to enable large file support and build PIC for our shared libraries
 CFLAGS += $(CPP_LARGEFILES) $(CC_PIC)
@@ -70,7 +71,7 @@ install:	build $(INSTALL_32_and_64)
 	cd $(PROTOUSRLIBDIR); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
 	$(INSTALL) $(BUILD_DIR_64)/libbz2.so.1 $(PROTOUSRLIBDIR64)
 	cd $(PROTOUSRLIBDIR64); rm -f libbz2.so; ln -s libbz2.so.1 libbz2.so
-	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
+#	$(INSTALL) $(BUILD_DIR_64)/llib-lbz2.ln $(PROTOUSRLIBDIR64)
 
 # build does this always
 test:		$(TEST_32_and_64)

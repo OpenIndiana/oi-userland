@@ -1,0 +1,110 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/editor/blog/drivel@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Applications/Internet"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license='GPLv2'
+
+<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+file path=etc/gconf/schemas/drivel.schemas preserve=rename-new
+file path=usr/bin/drivel
+file path=usr/share/application-registry/drivel.applications
+file path=usr/share/applications/gnome-drivel.desktop
+file path=usr/share/drivel/glade/advogato.png
+file path=usr/share/drivel/glade/atom.png
+file path=usr/share/drivel/glade/blogger.png
+file path=usr/share/drivel/glade/checkbutton.xpm
+file path=usr/share/drivel/glade/combobox.xpm
+file path=usr/share/drivel/glade/community.png
+file path=usr/share/drivel/glade/doublearrow.png
+file path=usr/share/drivel/glade/drivel-24.png
+file path=usr/share/drivel/glade/drivel-gtk.glade
+file path=usr/share/drivel/glade/drivel_splash.png
+file path=usr/share/drivel/glade/entry.xpm
+file path=usr/share/drivel/glade/feed.png
+file path=usr/share/drivel/glade/hscale.xpm
+file path=usr/share/drivel/glade/insert_image.png
+file path=usr/share/drivel/glade/insert_object.png
+file path=usr/share/drivel/glade/leftarrow.png
+file path=usr/share/drivel/glade/livejournal.png
+file path=usr/share/drivel/glade/mt.png
+file path=usr/share/drivel/glade/private.png
+file path=usr/share/drivel/glade/protected.png
+file path=usr/share/drivel/glade/public.png
+file path=usr/share/drivel/glade/radiobutton.xpm
+file path=usr/share/drivel/glade/rightarrow.png
+file path=usr/share/drivel/glade/tray_livejournal.png
+file path=usr/share/drivel/glade/user.png
+file path=usr/share/drivel/glade/xmms.xpm
+file path=usr/share/gnome/help/drivel/C/drivel.xml
+file path=usr/share/gnome/help/drivel/C/legal.xml
+file path=usr/share/gnome/help/drivel/cs/drivel.xml
+file path=usr/share/gnome/help/drivel/de/drivel.xml
+file path=usr/share/gnome/help/drivel/pt/drivel.xml
+file path=usr/share/icons/gnome/16x16/mimetypes/gnome-mime-application-x-drivel.png
+file path=usr/share/icons/gnome/22x22/mimetypes/gnome-mime-application-x-drivel.png
+file path=usr/share/icons/gnome/24x24/mimetypes/gnome-mime-application-x-drivel.png
+file path=usr/share/icons/gnome/32x32/mimetypes/gnome-mime-application-x-drivel.png
+file path=usr/share/icons/gnome/48x48/mimetypes/gnome-mime-application-x-drivel.png
+file path=usr/share/locale/ar/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/bg/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/ca/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/cs/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/de/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/dz/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/el/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/es/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/fi/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/fr/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/it/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/ja/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/lt/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/nb/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/ne/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/nl/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/no/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/oc/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/pa/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/pl/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/pt/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/ru/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/rw/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/sq/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/sr/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/sr@Latn/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/sv/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/te/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/th/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/vi/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/zh_HK/LC_MESSAGES/drivel.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/drivel.mo
+file path=usr/share/mime-info/drivel.keys
+file path=usr/share/mime-info/drivel.mime
+file path=usr/share/mime/packages/drivel.xml
+file path=usr/share/omf/drivel/drivel-C.omf
+file path=usr/share/omf/drivel/drivel-cs.omf
+file path=usr/share/omf/drivel/drivel-de.omf
+file path=usr/share/omf/drivel/drivel-pt.omf
+file path=usr/share/pixmaps/drivel-48.png

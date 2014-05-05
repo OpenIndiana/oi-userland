@@ -1,0 +1,54 @@
+--- gtk+-2.10.6/gtk/gtkmessagedialog.c.orig	2006-05-14 05:25:29.000000000 +0100
++++ gtk+-2.10.6/gtk/gtkmessagedialog.c	2006-12-14 10:16:04.369253000 +0000
+@@ -303,6 +303,24 @@
+ }
+ 
+ static void
++set_window_icon_from_stock (GtkMessageDialog *dialog,
++                            const gchar      *stock_id)
++{
++  GdkPixbuf *icon;
++
++  icon = gtk_widget_render_icon (GTK_WIDGET (dialog),
++                                stock_id,
++                                GTK_ICON_SIZE_DIALOG,
++                                NULL);
++
++  if (icon) {
++     gtk_window_set_icon (GTK_WINDOW (dialog), icon);
++
++     g_object_unref (icon);
++  }
++}
++
++static void
+ setup_type (GtkMessageDialog *dialog,
+ 	    GtkMessageType    type)
+ {
+@@ -836,20 +854,22 @@
+ {
+   GtkMessageDialog *dialog = GTK_MESSAGE_DIALOG (widget);
+   gboolean use_separator;
+-  GtkWidget *parent;
++  GtkWidget *image;
+   gint border_width;
+ 
+-  parent = GTK_WIDGET (GTK_MESSAGE_DIALOG (widget)->image->parent);
++  image = GTK_MESSAGE_DIALOG (widget)->image;
+ 
+-  if (parent)
++  if (image->parent)
+     {
+       gtk_widget_style_get (widget, "message-border",
+                             &border_width, NULL);
+       
+-      gtk_container_set_border_width (GTK_CONTAINER (parent),
++      gtk_container_set_border_width (GTK_CONTAINER (image->parent),
+                                       MAX (0, border_width - 7));
+     }
+ 
++  set_window_icon_from_stock (GTK_MESSAGE_DIALOG (widget),
++                              GTK_IMAGE (image)->data.stock.stock_id);
+   gtk_widget_style_get (widget,
+ 			"use-separator", &use_separator,
+ 			NULL);

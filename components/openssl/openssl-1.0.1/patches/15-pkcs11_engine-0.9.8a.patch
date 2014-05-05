@@ -83,38 +83,107 @@
  # Do not edit this manually. Use Configure --openssldir=DIR do change this!
  OPENSSLDIR=/usr/local/ssl
  
---- /tmp/Makefile	Fri Feb 11 14:42:03 2011
-+++ openssl-1.0.0d/crypto/engine/Makefile	Fri Feb 11 14:45:43 2011
-@@ -22,13 +22,13 @@
-	tb_rsa.c tb_dsa.c tb_ecdsa.c tb_dh.c tb_ecdh.c tb_rand.c tb_store.c \
-	tb_cipher.c tb_digest.c tb_pkmeth.c tb_asnmth.c \
-	eng_openssl.c eng_cnf.c eng_dyn.c eng_cryptodev.c \
--	eng_rsax.c eng_rdrand.c
-+	eng_rsax.c eng_rdrand.c hw_pk11.c hw_pk11_pub.c hw_pk11_uri.c
- LIBOBJ= eng_err.o eng_lib.o eng_list.o eng_init.o eng_ctrl.o \
-	eng_table.o eng_pkey.o eng_fat.o eng_all.o \
-	tb_rsa.o tb_dsa.o tb_ecdsa.o tb_dh.o tb_ecdh.o tb_rand.o tb_store.o \
-	tb_cipher.o tb_digest.o tb_pkmeth.o tb_asnmth.o \
-	eng_openssl.o eng_cnf.o eng_dyn.o eng_cryptodev.o \
--	eng_rsax.o eng_rdrand.o
-+	eng_rsax.o eng_rdrand.o hw_pk11.o hw_pk11_pub.o hw_pk11_uri.o
-
+--- /tmp/Makefile	Mon Feb 14 14:59:22 2011
++++ openssl-1.0.0d/engines/Makefile	Mon Feb 14 15:00:35 2011
+@@ -26,7 +26,8 @@
+ APPS=
+ 
+ LIB=$(TOP)/libcrypto.a
+-LIBNAMES= 4758cca aep atalla cswift gmp chil nuron sureware ubsec padlock capi
++LIBNAMES= 4758cca aep atalla cswift gmp chil nuron sureware ubsec padlock capi \
++	  pk11
+ 
+ LIBSRC=	e_4758cca.c \
+ 	e_aep.c \
+@@ -38,7 +39,8 @@
+ 	e_sureware.c \
+ 	e_ubsec.c \
+ 	e_padlock.c \
+-	e_capi.c
++	e_capi.c \
++	e_pk11.c
+ LIBOBJ= e_4758cca.o \
+ 	e_aep.o \
+ 	e_atalla.o \
+@@ -49,7 +51,8 @@
+ 	e_sureware.o \
+ 	e_ubsec.o \
+ 	e_padlock.o \
+-	e_capi.o
++	e_capi.o \
++	e_pk11.o
+ 
  SRC= $(LIBSRC)
+ 
+@@ -63,7 +66,8 @@
+ 	e_nuron_err.c e_nuron_err.h \
+ 	e_sureware_err.c e_sureware_err.h \
+ 	e_ubsec_err.c e_ubsec_err.h \
+-	e_capi_err.c e_capi_err.h
++	e_capi_err.c e_capi_err.h \
++	e_pk11.h e_pk11_uri.h e_pk11_err.h e_pk11_pub.c e_pk11_uri.c e_pk11_err.c
+ 
+ ALL=    $(GENERAL) $(SRC) $(HEADER)
+ 
+@@ -78,7 +82,7 @@
+ 		for l in $(LIBNAMES); do \
+ 			$(MAKE) -f ../Makefile.shared -e \
+ 				LIBNAME=$$l LIBEXTRAS=e_$$l.o \
+-				LIBDEPS='-L.. -lcrypto $(EX_LIBS)' \
++				LIBDEPS='-L.. -lcrypto -lcryptoutil $(EX_LIBS)' \
+ 				link_o.$(SHLIB_TARGET); \
+ 		done; \
+ 	else \
+--- crypto/engine/eng_all.c Thu Sep  5 12:59:50 2013
++++ openssl-1.0.1e/crypto/engine/eng_all.c Thu Sep  5 12:59:50 2013
+@@ -59,6 +59,16 @@
+ #include "cryptlib.h"
+ #include "eng_int.h"
 
---- /tmp/eng_all.c	Fri Feb 11 14:46:11 2011
-+++ openssl-1.0.0d/crypto/engine/eng_all.c	Fri Feb 11 14:38:01 2011
-@@ -80,6 +80,9 @@
-	ENGINE_load_rdrand();
- #endif
-	ENGINE_load_dynamic();
-+#ifndef OPENSSL_NO_HW_PKCS11
-+	ENGINE_load_pk11();
++/*
++ * pkcs11 engine no longer is a built-in engine, and ENGINE_load_pk11() needs to be
++ * defined in libcrypto.so for ssh.  Instead of load pkcs11 engine, it load dynamic
++ * engines.
++ */
++void ENGINE_load_pk11(void)
++	{
++	ENGINE_load_dynamic();
++	}
++
+ void ENGINE_load_builtin_engines(void)
+ 	{
+ 	/* Some ENGINEs need this */
+--- crypto/dso/dso_lib.c Thu Sep  5 12:59:50 2013
++++ openssl-1.0.1e/crypto/dso/dso_lib.c Thu Sep  5 12:59:50 2013
+@@ -426,6 +426,26 @@
+ 		DSOerr(DSO_F_DSO_CONVERT_FILENAME,DSO_R_NO_FILENAME);
+ 		return(NULL);
+ 		}
++	/*
++	 * For pkcs11 engine, use libpk11.so (instead of libpkcs11.so) to
++	 * avoid the name collision with PKCS#11 library.
++	 */
++	if (strcmp(filename, "pkcs11") == 0)
++		{
++#ifdef	_LP64
++		char *fullpath = "/lib/openssl/engines/64/libpk11.so";
++#else
++		char *fullpath = "/lib/openssl/engines/libpk11.so";
 +#endif
- #ifndef OPENSSL_NO_STATIC_ENGINE
- #ifndef OPENSSL_NO_HW
- #ifndef OPENSSL_NO_HW_4758_CCA
---- /tmp/engine.h	Fri Feb 11 14:46:24 2011
-+++ openssl-1.0.0d/crypto/engine/engine.h	Fri Feb 11 14:47:32 2011
++		result = OPENSSL_malloc(strlen(fullpath) + 1);
++		if(result == NULL)
++			{
++			DSOerr(DSO_F_DSO_CONVERT_FILENAME, ERR_R_MALLOC_FAILURE);
++			return(NULL);
++			}
++		BUF_strlcpy(result, fullpath, strlen(fullpath) + 1);
++		return (result);
++		}
+ 	if((dso->flags & DSO_FLAG_NO_NAME_TRANSLATION) == 0)
+ 		{
+ 		if(dso->name_converter != NULL)
+--- /tmp/engine.h       Fri Feb 11 14:46:24 2011
++++ openssl-1.0.0d/crypto/engine/engine.h       Fri Feb 11 14:47:32 2011
 @@ -351,6 +351,7 @@
  #endif
  #endif

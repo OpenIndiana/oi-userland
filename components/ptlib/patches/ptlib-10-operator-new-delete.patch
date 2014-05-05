@@ -1,0 +1,56 @@
+--- ptlib-2.6.7/src/ptlib/common/object.cxx.orig	2011-01-28 10:22:49.734324998 +0800
++++ ptlib-2.6.7/src/ptlib/common/object.cxx	2011-01-28 11:01:21.888191316 +0800
+@@ -243,7 +243,7 @@
+ #undef realloc
+ #undef free
+ 
+-#if (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
++#if (__SUNPRO_CC >= 0x5110) || (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
+ void * operator new(size_t nSize) throw (std::bad_alloc)
+ #else
+ void * operator new(size_t nSize)
+@@ -253,7 +253,7 @@
+ }
+ 
+ 
+-#if (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
++#if (__SUNPRO_CC >= 0x5110) || (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
+ void * operator new[](size_t nSize) throw (std::bad_alloc)
+ #else
+ void * operator new[](size_t nSize)
+@@ -263,7 +263,7 @@
+ }
+ 
+ 
+-#if (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
++#if (__SUNPRO_CC >= 0x5110) || (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
+ void operator delete(void * ptr) throw()
+ #else
+ void operator delete(void * ptr)
+@@ -273,7 +273,7 @@
+ }
+ 
+ 
+-#if (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
++#if (__SUNPRO_CC >= 0x5110) || (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
+ void operator delete[](void * ptr) throw()
+ #else
+ void operator delete[](void * ptr)
+@@ -937,7 +937,7 @@
+ 
+ #if !defined(P_VXWORKS) && !defined(_WIN32_WCE)
+ 
+-#if (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
++#if (__SUNPRO_CC >= 0x5110) || (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
+ void * operator new[](size_t nSize) throw (std::bad_alloc)
+ #else
+ void * operator new[](size_t nSize)
+@@ -946,7 +946,7 @@
+   return malloc(nSize);
+ }
+ 
+-#if (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
++#if (__SUNPRO_CC >= 0x5110) || (__GNUC__ >= 3) || ((__GNUC__ == 2)&&(__GNUC_MINOR__ >= 95)) //2.95.X & 3.X
+ void operator delete[](void * ptr) throw ()
+ #else
+ void operator delete[](void * ptr)

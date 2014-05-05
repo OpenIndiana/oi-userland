@@ -24,7 +24,8 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:47b703ed22dce46a08f11ddd7d67d52e4f7ad8df844bdf956431069a0db36797
-COMPONENT_ARCHIVE_URL=	http://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
+#COMPONENT_ARCHIVE_URL=	http://www.jwz.org/xscreensaver/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/xscreensaver/$(COMPONENT_ARCHIVE)
 
 PATCH_LEVEL=		0
 

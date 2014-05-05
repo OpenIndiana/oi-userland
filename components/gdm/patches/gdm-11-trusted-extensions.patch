@@ -1,0 +1,117 @@
+--- gdm-2.28.0/configure.ac	2009-10-13 14:49:22.278998977 +1100
++++ gdm-2.28.0-tsol/configure.ac	2009-10-13 13:19:52.494593995 +1100
+@@ -878,6 +878,24 @@
+ fi
+ 
+ dnl ---------------------------------------------------------------------------
++dnl - Check for Solaris Trusted Extensions
++dnl ---------------------------------------------------------------------------
++
++case "$host" in
++*solaris*)
++        AC_CHECK_HEADERS(sys/tsol/label_macro.h,
++                AC_DEFINE(HAVE_SUNTSOL, ,[Building with TSOL support]) found_tsol=yes,)
++        ;;
++*)
++        ;;
++esac
++
++AM_CONDITIONAL(TSOL_DEFINED, test x$found_tsol = xyes)
++if test "x$found_tsol" = "xyes" ; then
++	EXTRA_DAEMON_LIBS="$EXTRA_DAEMON_LIBS -lsecdb"
++fi
++
++dnl ---------------------------------------------------------------------------
+ dnl - Check for ConsoleKit support
+ dnl ---------------------------------------------------------------------------
+ 
+@@ -1464,6 +1482,7 @@
+ "        Xinerama support:         ${XINERAMA_SUPPORT}
+         XDMCP support:            ${XDMCP_SUPPORT}
+         SELinux support:          ${with_selinux}
++        Sun TSOL support:         ${found_tsol}
+         ConsoleKit support:       ${use_console_kit}
+         Build with RBAC:          ${msg_rbac_shutdown}
+ "
+--- gdm-2.29.0/daemon/gdm-session-direct.c	2009-11-24 13:18:46.028179764 +1100
++++ gdm-2.29.0-tsol/daemon/gdm-session-direct.c	2009-11-24 13:17:50.614501837 +1100
+@@ -35,6 +35,10 @@
+ #include <pwd.h>
+ #include <grp.h>
+ 
++#ifdef HAVE_SUNTSOL
++#include <tsol/label.h>
++#endif
++
+ #include <locale.h>
+ 
+ #include <glib.h>
+@@ -476,6 +480,20 @@
+                 NULL
+         };
+ 
++#ifdef HAVE_SUNTSOL
++        /*
++         * Solaris trusted extensions has a special directory for
++         * multi-label aware desktop sessions such as Trusted GNOME.
++         * Non-multi-label aware sessions are prevented.
++         */
++        static const char *tsol_search_dirs[] = {
++                DATADIR "/xsessions/multilabel/",
++                NULL
++        };
++        if (is_system_labeled())
++                return tsol_search_dirs;
++#endif /* HAVE_SUNTSOL */
++
+         return search_dirs;
+ }
+ 
+@@ -2055,6 +2073,16 @@
+         if (gdm_session_direct_bypasses_xsession (impl)) {
+                 program = g_strdup (command);
+         } else {
++#ifdef HAVE_SUNTSOL
++                /*
++                 * On Solaris Trusted Extensions systems we have to enforce
++                 * clearance label selection for the session before it can
++                 * be executed. tsoljdslabel takes care of this
++                 */
++                if (is_system_labeled())
++                        program = g_strdup_printf (GDMCONFDIR "/Xsession \"/usr/bin/tsoljdslabel %s\"", command);
++                else /* Not a labelled system - use standard session */
++#endif /* HAVE_SUNTSOL */   
+                 program = g_strdup_printf (GDMCONFDIR "/Xsession \"%s\"", command);
+         }
+ 
+--- gdm-2.28.0/gui/simple-greeter/gdm-sessions.c	2009-10-13 14:49:22.285255732 +1100
++++ gdm-2.28.0-tsol/gui/simple-greeter/gdm-sessions.c	2009-10-13 15:05:29.194430470 +1100
+@@ -31,6 +31,10 @@
+ #include <dirent.h>
+ #include <sys/stat.h>
+ 
++#ifdef HAVE_SUNTSOL
++#include <tsol/label.h>
++#endif
++
+ #include <glib.h>
+ #include <glib/gi18n.h>
+ #include <glib/gstdio.h>
+@@ -215,6 +219,17 @@
+                                                                     g_free, g_free);
+         }
+ 
++#ifdef HAVE_SUNTSOL
++        /*
++         * On Solaris Trusted Extensions systems only collect
++         * trusted sessions which are in the "multilabel" subdir
++         */
++        if(is_system_labeled()) {
++                collect_sessions_from_directory ((const char *) DATADIR "/xsessions/multilabel/");
++                return;
++        }
++#endif /* HAVE_SUNTSOL */
++
+         for (i = 0; search_dirs [i] != NULL; i++) {
+                 collect_sessions_from_directory (search_dirs [i]);
+         }

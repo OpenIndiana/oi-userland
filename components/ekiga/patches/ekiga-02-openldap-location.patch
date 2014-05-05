@@ -1,0 +1,51 @@
+--- ekiga-3.2.5/configure.ac.orig	2009-07-07 03:09:34.000000000 +0800
++++ ekiga-3.2.5/configure.ac	2009-07-13 10:50:41.167182000 +0800
+@@ -319,6 +319,7 @@
+ 
+   AC_ARG_WITH(ldap-dir, AS_HELP_STRING([--with-ldap-dir=PFX],[location of LDAP]), with_ldap_dir="$withval", with_ldap_dir="/usr")
+ 
++  if test "x${gm_platform}" != "xsolaris"; then
+   dnl Check for the includes presence
+   AC_MSG_CHECKING(for LDAP includes in ${with_ldap_dir}/include/)
+   AC_MSG_RESULT()
+@@ -344,6 +345,31 @@
+   else
+   	AC_MSG_ERROR(You need the LDAP library to compile Ekiga with LDAP support)
+   fi
++  else dnl solaris
++  dnl Check for the includes presence
++  AC_MSG_CHECKING(for LDAP includes in /usr/include/openldap)
++  AC_MSG_RESULT()
++
++
++  if test -f /usr/include/openldap/ldap.h; then
++  	LDAP_CFLAGS="-I/usr/include/openldap"
++  else
++  	AC_MSG_ERROR(You need the LDAP headers to compile Ekiga with LDAP support)
++  fi
++
++  dnl Checking for the library presence
++  LIBS_save="$LIBS"
++  LIBS="-L/usr/${libname}/ -lldap-2.4 -llber-2.4"
++  AC_CHECK_LIB(ldap, ldap_initialize, ldap_libs="yes", ldap_libs="no")
++  LIBS="${LIBS_save}"
++
++  if test "x${ldap_libs}" != "xno"; then
++  	LDAP_LIBS="-L/usr/${libname} -lldap-2.4 -llber-2.4"
++  else
++  	AC_MSG_ERROR(You need the LDAP library to compile Ekiga with LDAP support)
++  fi
++  fi dnl solaris 
++
+ 
+   dnl Checking for libsasl2
+   AC_ARG_WITH(libsasl2-dir, AS_HELP_STRING([--with-libsasl2-dir=PFX],[location of LIBSASL2]), with_libsasl2_dir="$withval", with_libsasl2_dir="/usr")
+@@ -357,7 +383,7 @@
+   else
+   	AC_MSG_ERROR(*** libsasl2 headers not found)
+   fi
+-  LDAP_LIBS="$LDAP_LIBS -lsasl2"
++  LDAP_LIBS="$LDAP_LIBS -lsasl"
+ 
+   dnl Checking for libresolv
+   if test ${gm_platform} = "linux" ; then

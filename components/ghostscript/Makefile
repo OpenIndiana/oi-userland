@@ -42,7 +42,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/configure.mk
 
-PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+PATH=/usr/bin:/usr/gnu/bin
 
 # configure(1) options to use
 CONFIGURE_OPTIONS +=	--with-drivers=ALL
@@ -61,7 +61,7 @@ $(BUILD_DIR)/$(MACH64)/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m64"
 $(BUILD_DIR)/$(MACH64)/ijs/.configured: CONFIGURE_OPTIONS += CC="$(CC) -m64"
 
 # config env
-CONFIGURE_ENV += LDFLAGS_SO="-G"
+CONFIGURE_ENV += LDFLAGS_SO="-shared "
 CONFIGURE_ENV += CUPSCONFIG=/usr/bin/cups-config
 
 GS_VARIANT = $(BUILD_DIR)/$(MACH32)

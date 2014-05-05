@@ -1,0 +1,42 @@
+diff -x '*.out' -x '*.*~' -x '*.orig' -x '*.rej' -rup ../compiz-0.8.4/metadata/decoration.xml.in compiz-0.8.4/metadata/decoration.xml.in
+--- ../compiz-0.8.4/metadata/decoration.xml.in	2009-10-14 15:28:57.100052463 +0200
++++ compiz-0.8.4/metadata/decoration.xml.in	2009-10-14 15:29:19.105380457 +0200
+@@ -16,7 +16,7 @@
+ 	    <option name="shadow_radius" type="float">
+ 		<_short>Shadow Radius</_short>
+ 		<_long>Drop shadow radius</_long>
+-		<default>8.0</default>
++		<default>9.0</default>
+ 		<min>0.1</min>
+ 		<max>18.0</max>
+ 		<precision>0.1</precision>
+diff -x '*.out' -x '*.*~' -x '*.orig' -x '*.rej' -rup ../compiz-0.8.4/metadata/place.xml.in compiz-0.8.4/metadata/place.xml.in
+--- ../compiz-0.8.4/metadata/place.xml.in	2009-10-14 15:28:57.098599661 +0200
++++ compiz-0.8.4/metadata/place.xml.in	2009-10-14 15:29:19.105729230 +0200
+@@ -12,7 +12,7 @@
+ 	    <option name="mode" type="int">
+ 		<_short>Placement Mode</_short>
+ 		<_long>Algorithm to use for window placement</_long>
+-		<default>0</default>
++		<default>2</default>
+ 		<min>0</min>
+ 		<max>5</max>
+ 		<desc>
+diff -ruN compiz-0.8.4.orig/gtk/window-decorator/gtk-window-decorator.c compiz-0.8.4/gtk/window-decorator/gtk-window-decorator.c
+--- compiz-0.8.4.orig/gtk/window-decorator/gtk-window-decorator.c	2010-03-14 07:13:57.575898869 +0000
++++ compiz-0.8.4/gtk/window-decorator/gtk-window-decorator.c	2010-03-14 07:14:50.693731615 +0000
+@@ -31,14 +31,6 @@
+ #include <X11/extensions/Xrender.h>
+ #include <X11/Xregion.h>
+ 
+-#ifndef GDK_DISABLE_DEPRECATED
+-#define GDK_DISABLE_DEPRECATED
+-#endif
+-
+-#ifndef GTK_DISABLE_DEPRECATED
+-#define GTK_DISABLE_DEPRECATED
+-#endif
+-
+ #include <gtk/gtk.h>
+ #include <gdk/gdkx.h>
+ #include <glib/gi18n.h>

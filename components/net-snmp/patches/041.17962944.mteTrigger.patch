@@ -1,0 +1,36 @@
+# This comes from upstream:
+# http://sourceforge.net/p/net-snmp/code/ci/22bfcd5e555097796e08b2a453ecaa3fafc31266/
+
+--- a/agent/mibgroup/disman/event/mteTrigger.c
++++ b/agent/mibgroup/disman/event/mteTrigger.c
+@@ -336,7 +336,7 @@
+                     if (vp1_prev) {
+                         vp1_prev->next_variable = vtmp;
+                     } else {
+-                        entry->old_results      = vtmp;
++                        var                     = vtmp;
+                     }
+                     vp1_prev = vtmp;
+                     vp2_prev = vp2;
+@@ -433,7 +433,7 @@
+              */
+             if (entry->mteTExTest & entry->mteTExStartup & MTE_EXIST_ABSENT) {
+                 if (!(entry->flags & MTE_TRIGGER_FLAG_VWILD) &&
+-                    vp1->type == ASN_NULL ) {
++                    var->type == ASN_NULL ) {
+                     DEBUGMSGTL(( "disman:event:trigger:fire",
+                                  "Firing initial existence test: "));
+                     DEBUGMSGOID(("disman:event:trigger:fire",
+@@ -449,10 +449,10 @@
+                      *  to report a NULL value, but this clashes with
+                      * the syntax of the mteHotValue MIB object.
+                      */
+-                    entry->mteTriggerFired    = vp1;
++                    entry->mteTriggerFired    = var;
+                     n = entry->mteTriggerValueID_len;
+                     mteEvent_fire(entry->mteTExEvOwner, entry->mteTExEvent, 
+-                                  entry, vp1->name+n, vp1->name_length-n);
++                                  entry, var->name+n, var->name_length-n);
+                 }
+             }
+         } /* !old_results */

@@ -21,56 +21,17 @@ set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 
 depend fmri=database/mariadb-55 type=require
 
-depend fmri=web/php-54/php-cgi type=require
-depend fmri=web/php-54/php-cli type=require
-depend fmri=web/php-54/php-fpm type=require
-depend fmri=web/php-54/php-pear type=require
-depend fmri=web/php-54/extension/php-apc type=require
-depend fmri=web/php-54/extension/php-bcmath type=require
-depend fmri=web/php-54/extension/php-bz2 type=require
-depend fmri=web/php-54/extension/php-calendar type=require
-depend fmri=web/php-54/extension/php-ctype type=require
-depend fmri=web/php-54/extension/php-curl type=require
-depend fmri=web/php-54/extension/php-dom type=require
-depend fmri=web/php-54/extension/php-exif type=require
-depend fmri=web/php-54/extension/php-ftp type=require
-depend fmri=web/php-54/extension/php-gd type=require
-depend fmri=web/php-54/extension/php-gettext type=require
-depend fmri=web/php-54/extension/php-iconv type=require
-depend fmri=web/php-54/extension/php-idn type=require
-depend fmri=web/php-54/extension/php-imap type=require
-depend fmri=web/php-54/extension/php-intl type=require
-depend fmri=web/php-54/extension/php-json type=require
-depend fmri=web/php-54/extension/php-ldap type=require
-depend fmri=web/php-54/extension/php-mbstring type=require
-depend fmri=web/php-54/extension/php-mcrypt type=require
-depend fmri=web/php-54/extension/php-memcache type=require
-depend fmri=web/php-54/extension/php-memcached type=require
-depend fmri=web/php-54/extension/php-mysql type=require
-depend fmri=web/php-54/extension/php-mysqli type=require
-depend fmri=web/php-54/extension/php-openssl type=require
-depend fmri=web/php-54/extension/php-pdo type=require
-depend fmri=web/php-54/extension/php-pdo_mysql type=require
-depend fmri=web/php-54/extension/php-pdo_sqlite type=require             
-depend fmri=web/php-54/extension/php-pgsql type=require
-depend fmri=web/php-54/extension/php-pspell type=require
-depend fmri=web/php-54/extension/php-readline type=require
-depend fmri=web/php-54/extension/php-soap type=require
-depend fmri=web/php-54/extension/php-sockets type=require
-depend fmri=web/php-54/extension/php-tcpwrap type=require
-depend fmri=web/php-54/extension/php-tidy type=require
-depend fmri=web/php-54/extension/php-tokenizer type=require
-depend fmri=web/php-54/extension/php-wddx type=require
-depend fmri=web/php-54/extension/php-xdebug type=require
-depend fmri=web/php-54/extension/php-xmlreader type=require
-depend fmri=web/php-54/extension/php-xmlrpc type=require
-depend fmri=web/php-54/extension/php-xmlwriter type=require
-depend fmri=web/php-54/extension/php-xsl type=require
-depend fmri=web/php-54/extension/php-zip type=require
-depend fmri=web/php-54/extension/php-zlib type=require                   
+depend fmri=web/server/apache-22/module/apache-php54 fmri=web/server/apache-22/module/apache-php55 type=require-any
+
+depend fmri=web/php-54 \
+    predicate=web/server/apache-22/module/apache-php54 \
+    type=conditional
+
+depend fmri=web/php-55 \
+    predicate=web/server/apache-22/module/apache-php55 \
+    type=conditional
 
 depend fmri=web/server/apache-22 type=require
 depend fmri=web/server/apache-22/module/apache-dtrace type=require
 depend fmri=web/server/apache-22/module/apache-fcgid type=require
 depend fmri=web/server/apache-22/module/apache-perl type=require
-depend fmri=web/server/apache-22/module/apache-php54 type=require

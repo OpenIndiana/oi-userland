@@ -45,7 +45,7 @@ CONFIGURE_OPTIONS  +=		--disable-libasprintf
 CONFIGURE_OPTIONS  +=		--without-emacs
 CONFIGURE_OPTIONS  +=		--disable-openmp
 CONFIGURE_OPTIONS  +=		--disable-static
-CONFIGURE_OPTIONS  +=		--disable-shared
+#CONFIGURE_OPTIONS  +=		--disable-shared
 
 # common targets
 build:		$(BUILD_32)

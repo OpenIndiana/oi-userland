@@ -1,0 +1,66 @@
+--- gvfs-1.4.3/monitor/hal/hal-device.c.orig	2009-11-27 22:13:48.000000000 +0800
++++ gvfs-1.4.3/monitor/hal/hal-device.c	2010-01-11 16:13:35.423555462 +0800
+@@ -44,8 +44,11 @@
+ static void
+ hal_device_finalize (HalDevice *device)
+ {
++
++  DBusError error;
++  dbus_error_init(&error);
+   libhal_device_remove_property_watch (device->priv->hal_ctx,
+-      device->priv->udi, NULL);
++      device->priv->udi, &error);
+   
+   if (device->priv->properties != NULL)
+     libhal_free_property_set (device->priv->properties);
+@@ -53,6 +56,8 @@
+   
+   if (G_OBJECT_CLASS (hal_device_parent_class)->finalize)
+     (* G_OBJECT_CLASS (hal_device_parent_class)->finalize) (G_OBJECT (device));
++  
++  dbus_error_free (&error);
+ }
+ 
+ static void
+@@ -226,12 +231,18 @@
+ {
+   HalDevice *device;
+ 
+-  libhal_device_add_property_watch (hal_ctx, udi, NULL);
++  DBusError error;
++  dbus_error_init (&error);
++
++  libhal_device_add_property_watch (hal_ctx, udi, &error);
+   
+   device = HAL_DEVICE (g_object_new (HAL_TYPE_DEVICE, NULL));
+   device->priv->udi = g_strdup (udi);
+   device->priv->hal_ctx = hal_ctx;
+   device->priv->properties = libhal_device_get_all_properties (hal_ctx, udi, NULL);
++
++  dbus_error_free (&error);
++
+   return device;
+ }
+ 
+@@ -241,13 +252,19 @@
+                                         LibHalPropertySet *properties)
+ {
+   HalDevice *device;
+-  
+-  libhal_device_add_property_watch (hal_ctx, udi, NULL);
++
++  DBusError error;
++  dbus_error_init (&error);
++
++  libhal_device_add_property_watch (hal_ctx, udi, &error);
+   
+   device = HAL_DEVICE (g_object_new (HAL_TYPE_DEVICE, NULL));
+   device->priv->udi = g_strdup (udi);
+   device->priv->hal_ctx = hal_ctx;
+   device->priv->properties = properties;
++
++  dbus_error_free (&error);
++
+   return device;
+ }
+ 

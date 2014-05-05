@@ -20,19 +20,22 @@ COMPONENT_NAME= icu
 COMPONENT_VERSION= 4.6
 COMPONENT_SUMMARY= International Components for Unicode
 COMPONENT_SRC= $(COMPONENT_NAME)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tgz
+COMPONENT_ARCHIVE= $(COMPONENT_SRC)-$(COMPONENT_VERSION)-svn.tar.gz
 COMPONENT_PROJECT_URL = http://icu-project.org
 COMPONENT_ARCHIVE_URL = http://source.icu-project.org/repos/icu/icu/tags/release-4-6-1
 
 download::
-	if [ ! -f $(COMPONENT_ARCHIVE) ]; then \
+	if [ ! -f $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) ]; then \
            svn export --force $(COMPONENT_ARCHIVE_URL) $(COMPONENT_SRC) ; \
-	   tar czf $(COMPONENT_SRC).tgz $(COMPONENT_SRC)  ; \
+	   tar czf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) $(COMPONENT_SRC)  ; \
 	fi
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# prevent userland-fetch from overwriting icu-X.X-svn.tar.gz file
+FETCH = /usr/bin/true
 
 COMPONENT_POST_UNPACK_ACTION += ( chmod +x $(@D)/source/configure  $(@D)/source/runConfigureICU )
 

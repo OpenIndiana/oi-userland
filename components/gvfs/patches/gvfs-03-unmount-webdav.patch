@@ -1,0 +1,27 @@
+--- gvfs-1.3.3/daemon/gvfsbackenddav.c.orig	2009-08-07 15:43:41.662781000 +0800
++++ gvfs-1.3.3/daemon/gvfsbackenddav.c	2009-08-07 15:45:12.580734000 +0800
+@@ -2304,13 +2304,11 @@
+   soup_uri_free (source);
+ }
+ 
+-static gboolean
+-try_unmount (GVfsBackend    *backend,
+-             GVfsJobUnmount *job,
+-             GMountUnmountFlags flags,
+-             GMountSource *mount_source)
++static void 
++do_unmount (GVfsBackend    *backend,
++             GVfsJobUnmount *job)
+ {
+-  _exit (0);
++  g_vfs_job_succeeded (G_VFS_JOB (job));
+ }
+ 
+ /* ************************************************************************* */
+@@ -2338,5 +2336,5 @@
+   backend_class->make_directory    = do_make_directory;
+   backend_class->delete            = do_delete;
+   backend_class->set_display_name  = do_set_display_name;
+-  backend_class->try_unmount       = try_unmount;
++  backend_class->unmount           = do_unmount;
+ }

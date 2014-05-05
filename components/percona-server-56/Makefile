@@ -17,13 +17,13 @@ include ../../make-rules/shared-macros.mk
 CMAKE= cmake
 
 COMPONENT_NAME=		percona-server
-COMPONENT_VERSION=	5.6.14-62.0
-IPS_COMPONENT_VERSION=	5.6.14.62.0
-COMPONENT_SRC=		Percona-Server-5.6.14-rel62.0
+COMPONENT_VERSION=	5.6.16-64.2
+IPS_COMPONENT_VERSION=	5.6.16.64.2
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.percona.com/
-COMPONENT_ARCHIVE_HASH=	sha256:69edc04585e72ac94c32598221c0762704e75190c2abe4fa680ad42ce202e280
-COMPONENT_ARCHIVE_URL=	http://www.percona.com/redir/downloads/Percona-Server-5.6/$(COMPONENT_SRC)/release-$(COMPONENT_VERSION)/483/source/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_HASH=	sha256:841eb00ac9178c56f37ef621742ffe4ca43867637236f061321bafc7e64d8e8d
+COMPONENT_ARCHIVE_URL=	http://www.percona.com/downloads/Percona-Server-5.6/Percona-Server-$(COMPONENT_VERSION)/source/tarball/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -64,9 +64,6 @@ CMAKE_OPTIONS+= -DMYSQL_DATADIR=$(DATA_PREFIX)/data
 CMAKE_OPTIONS+= -DSYSCONFDIR=$(CONFDIR)
 CMAKE_OPTIONS+= -DENABLE_DTRACE=on
 CMAKE_OPTIONS+= -DINSTALL_SUPPORTFILESDIR=share/mysql
-
-#LDFLAGS.32	+=	-L/usr/lib/mysql/5.5/lib -R/usr/lib/mysql/5.5/lib
-#LDFLAGS.64	+=	-L/usr/lib/mysql/5.5/lib/$(MACH64) -R/usr/lib/mysql/5.5/lib/$(MACH64)
 
 # gcc invocation in some link.txt file is missing -m$(BITS) parameter
 # and it makes 64-bit build to fail, this is a quick hack to make it build

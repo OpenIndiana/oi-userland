@@ -1,0 +1,17 @@
+diff -ur gst-plugins-good-0.10.16-old/sys/sunaudio/gstsunaudiomixer.c gst-plugins-good-0.10.16/sys/sunaudio/gstsunaudiomixer.c
+--- gst-plugins-good-0.10.16-old/sys/sunaudio/gstsunaudiomixer.c	2009-08-11 06:15:55.000000000 +0800
++++ gst-plugins-good-0.10.16/sys/sunaudio/gstsunaudiomixer.c	2009-09-03 15:17:21.106331729 +0800
+@@ -79,6 +79,13 @@
+     case GST_STATE_CHANGE_NULL_TO_READY:
+       if (!this->mixer) {
+         const char *audiodev;
++	const char *utaudiodev;
++
++	utaudiodev = g_getenv ("UTAUDIODEV");
++	if (utaudiodev == NULL) {
++		//We are not on a Sun Ray, use OSS v4
++		return GST_STATE_CHANGE_FAILURE;
++	}
+ 
+         audiodev = g_getenv ("AUDIODEV");
+         if (audiodev == NULL) {

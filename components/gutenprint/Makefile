@@ -23,20 +23,19 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gutenprint
-COMPONENT_VERSION=	5.2.7
+COMPONENT_VERSION=	5.2.9
 COMPONENT_PROJECT_URL=	http://www.gutenprint.org/software/gutenprint/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:114c899227e3ebb0753c1db503e6a5c1afaa4b1f1235fdfe02fb6bbd533beed1
-COMPONENT_ARCHIVE_URL=	http://voxel.dl.sourceforge.net/project/gimp-print/gutenprint-5.2/5.2.7/$(COMPONENT_ARCHIVE)
+    sha256:4b27e4f06f32d30271df89ecb6089bb11bcf2caec5f60b0909e083095354bca0
+COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/gimp-print/gutenprint-5.2/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gutenprint
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_ENV += CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	 --infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS +=    --enable-escputil
 CONFIGURE_OPTIONS +=    --without-gimp2

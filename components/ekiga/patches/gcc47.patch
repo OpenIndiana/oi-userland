@@ -1,0 +1,103 @@
+diff -ur ekiga-3.2.7-bcp/lib/engine/account/bank-impl.h ekiga-3.2.7/lib/engine/account/bank-impl.h
+--- ekiga-3.2.7-bcp/lib/engine/account/bank-impl.h	2010-05-31 01:58:01.000000000 +0400
++++ ekiga-3.2.7/lib/engine/account/bank-impl.h	2014-02-18 13:38:00.688884554 +0400
+@@ -212,7 +212,7 @@
+ void
+ Ekiga::BankImpl<AccountType>::add_account (gmref_ptr<AccountType> account)
+ {
+-  add_object (account);
++  this->add_object (account);
+ 
+   account->questions.add_handler (questions.make_slot ());
+   account->registration_event.connect (sigc::bind (sigc::mem_fun (this, &Ekiga::BankImpl<AccountType>::on_registration_event), account));
+@@ -223,7 +223,7 @@
+ void
+ Ekiga::BankImpl<AccountType>::remove_account (gmref_ptr<AccountType> account)
+ {
+-  remove_object (account);
++  this->remove_object (account);
+ }
+ 
+ 
+diff -ur ekiga-3.2.7-bcp/lib/engine/addressbook/book-impl.h ekiga-3.2.7/lib/engine/addressbook/book-impl.h
+--- ekiga-3.2.7-bcp/lib/engine/addressbook/book-impl.h	2010-05-31 01:58:01.000000000 +0400
++++ ekiga-3.2.7/lib/engine/addressbook/book-impl.h	2014-02-18 13:37:12.645199024 +0400
+@@ -204,7 +204,7 @@
+ Ekiga::BookImpl<ContactType>::add_contact (gmref_ptr<ContactType> contact)
+ {
+   contact->questions.add_handler (questions.make_slot ());
+-  add_object (contact);
++  this->add_object (contact);
+ }
+ 
+ 
+@@ -212,7 +212,7 @@
+ void
+ Ekiga::BookImpl<ContactType>::remove_contact (gmref_ptr<ContactType> contact)
+ {
+-  remove_object (contact);
++  this->remove_object (contact);
+ }
+ 
+ #endif
+diff -ur ekiga-3.2.7-bcp/lib/engine/addressbook/source-impl.h ekiga-3.2.7/lib/engine/addressbook/source-impl.h
+--- ekiga-3.2.7-bcp/lib/engine/addressbook/source-impl.h	2010-05-31 01:58:01.000000000 +0400
++++ ekiga-3.2.7/lib/engine/addressbook/source-impl.h	2014-02-18 13:37:34.531530475 +0400
+@@ -206,7 +206,7 @@
+ void
+ Ekiga::SourceImpl<BookType>::add_book (gmref_ptr<BookType> book)
+ {
+-  add_object (book);
++  this->add_object (book);
+ 
+   add_connection (book, book->contact_added.connect (sigc::bind<0> (contact_added.make_slot (), book)));
+ 
+@@ -222,7 +222,7 @@
+ void
+ Ekiga::SourceImpl<BookType>::remove_book (gmref_ptr<BookType> book)
+ {
+-  remove_object (book);
++  this->remove_object (book);
+ }
+ 
+ template<typename BookType>
+diff -ur ekiga-3.2.7-bcp/lib/engine/presence/cluster-impl.h ekiga-3.2.7/lib/engine/presence/cluster-impl.h
+--- ekiga-3.2.7-bcp/lib/engine/presence/cluster-impl.h	2010-05-31 01:58:01.000000000 +0400
++++ ekiga-3.2.7/lib/engine/presence/cluster-impl.h	2014-02-18 13:35:26.230275518 +0400
+@@ -147,14 +147,14 @@
+ 
+   add_connection (heap, heap->questions.add_handler (questions.make_slot ()));
+ 
+-  add_object (heap);
++  this->add_object (heap);
+ }
+ 
+ template<typename HeapType>
+ void
+ Ekiga::ClusterImpl<HeapType>::remove_heap (gmref_ptr<HeapType> heap)
+ {
+-  remove_object (heap);
++  this->remove_object (heap);
+ }
+ 
+ template<typename HeapType>
+diff -ur ekiga-3.2.7-bcp/lib/engine/presence/heap-impl.h ekiga-3.2.7/lib/engine/presence/heap-impl.h
+--- ekiga-3.2.7-bcp/lib/engine/presence/heap-impl.h	2010-05-31 01:58:01.000000000 +0400
++++ ekiga-3.2.7/lib/engine/presence/heap-impl.h	2014-02-18 13:34:16.650065722 +0400
+@@ -160,14 +160,14 @@
+ {
+   presentity->questions.add_handler (questions.make_slot ());
+ 
+-  add_object (presentity);
++  this->add_object (presentity);
+ }
+ 
+ template<typename PresentityType>
+ void
+ Ekiga::HeapImpl<PresentityType>::remove_presentity (gmref_ptr<PresentityType> presentity)
+ {
+-  remove_object (presentity);
++  this->remove_object (presentity);
+ }
+ 
+ #endif

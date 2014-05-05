@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		lftp
-COMPONENT_VERSION=	4.3.1
+COMPONENT_VERSION=	4.3.8
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://lftp.yar.ru/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a3df26383053081e67b8101aa9e1705ee8274e14a5938746a944b0a2d97948e3
-COMPONENT_ARCHIVE_URL=	http://ftp.yars.free.net/pub/source/lftp/$(COMPONENT_ARCHIVE)
+    sha256:39643be125a05eb1c316ea4f42ba4d73c331695a2e3654f4d34f85d4d63c37ad
+COMPONENT_ARCHIVE_URL=	http://lftp.cybermirror.org/old/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lftp
 
 include ../../make-rules/prep.mk
@@ -45,12 +45,14 @@ CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		CXXFLAGS="$(CXXFLAGS)"
 
+CFLAGS += -D_XPG6
+
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
+build:		$(BUILD_32)
 
-install:	$(INSTALL_64)
+install:	$(INSTALL_32)
 
 test:		$(NO_TESTS)
 

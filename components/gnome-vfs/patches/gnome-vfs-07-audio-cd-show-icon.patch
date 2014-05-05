@@ -1,0 +1,31 @@
+diff -ur gnome-vfs-2.16.1/libgnomevfs/gnome-vfs-volume-monitor-daemon.c ../SUNWgnome-vfs-2.16.1.hacked/gnome-vfs-2.16.1/libgnomevfs/gnome-vfs-volume-monitor-daemon.c
+--- gnome-vfs-2.16.1/libgnomevfs/gnome-vfs-volume-monitor-daemon.c	2006-10-20 15:36:40.235990000 +0000
++++ ../SUNWgnome-vfs-2.16.1.hacked/gnome-vfs-2.16.1/libgnomevfs/gnome-vfs-volume-monitor-daemon.c	2006-10-20 15:38:58.945481000 +0000
+@@ -934,6 +934,11 @@
+ 		vol->priv->device_type = GNOME_VFS_DEVICE_TYPE_HARDDRIVE;
+ 	}
+ 
++	/* Nautilus is not refreshing the desktop because floppy and cd devices are mounted as subfs
++	 * So we dont want to show different label for different media devices.
++	 * Let icon represent drive and not the media. For more info, please see #6228176
++	 */
++#if 0
+ 	if (vol->priv->device_type == GNOME_VFS_DEVICE_TYPE_CDROM) {
+ 		fd = 0;
+ 		disctype = _gnome_vfs_get_cdrom_type (mount->device_path, &fd);
+@@ -965,6 +970,7 @@
+ 			close (fd);
+ 		}
+ 	}
++#endif
+ 
+ 	if (display_name == NULL) {
+ 		display_name = make_volume_name_from_path_and_fs (mount->mount_path, mount->filesystem_type);
+@@ -990,6 +996,7 @@
+ 	vol->priv->is_user_visible = 0;
+ 	switch (vol->priv->device_type) {
+ 	case GNOME_VFS_DEVICE_TYPE_CDROM:
++	case GNOME_VFS_DEVICE_TYPE_AUDIO_CD:
+ 	case GNOME_VFS_DEVICE_TYPE_FLOPPY:
+ 	case GNOME_VFS_DEVICE_TYPE_ZIP:
+ 	case GNOME_VFS_DEVICE_TYPE_JAZ:

@@ -1,0 +1,210 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"), version 1.0.
+# You may only use this file in accordance with the terms of version
+# 1.0 of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source.  A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/compiz@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:Desktop (GNOME)/Window Managers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license compiz.license license="MIT, LGPLv2.1, GPLv2"
+
+<transform file path=usr/share/doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/.* ->  default facet.doc true>
+<transform file path=usr/share/gtk-doc/html/.* ->  default facet.doc.html true>
+<transform file path=etc/gconf/.* ->  default restart_fmri svc:/application/desktop-cache/gconf-cache:default>
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+file files/compiz.png path=usr/share/pixmaps/compiz.png
+file files/compiz-configure path=usr/lib/compiz/compiz-configure
+file files/modify-xorg-conf path=usr/lib/compiz/modify-xorg-conf
+file files/compiz.desktop path=usr/share/applications/compiz.desktop
+file files/compiz-config.glade path=usr/share/compiz/compiz-config.glade
+file files/compiz path=usr/bin/compiz mode=0555
+file usr/bin/compiz path=usr/bin/compiz-bin mode=0555 pkg.depend.bypass-generate=libGL\.so\.1
+
+depend fmri=service/opengl/ogl-select type=require
+
+# Generated section:
+file path=etc/gconf/schemas/compiz-annotate.schemas
+file path=etc/gconf/schemas/compiz-blur.schemas
+file path=etc/gconf/schemas/compiz-clone.schemas
+file path=etc/gconf/schemas/compiz-commands.schemas
+file path=etc/gconf/schemas/compiz-core.schemas
+file path=etc/gconf/schemas/compiz-cube.schemas
+file path=etc/gconf/schemas/compiz-dbus.schemas
+file path=etc/gconf/schemas/compiz-decoration.schemas
+file path=etc/gconf/schemas/compiz-fade.schemas
+file path=etc/gconf/schemas/compiz-fs.schemas
+file path=etc/gconf/schemas/compiz-gconf.schemas
+file path=etc/gconf/schemas/compiz-glib.schemas
+file path=etc/gconf/schemas/compiz-gnomecompat.schemas
+file path=etc/gconf/schemas/compiz-ini.schemas
+file path=etc/gconf/schemas/compiz-inotify.schemas
+file path=etc/gconf/schemas/compiz-kconfig.schemas
+file path=etc/gconf/schemas/compiz-minimize.schemas
+file path=etc/gconf/schemas/compiz-move.schemas
+file path=etc/gconf/schemas/compiz-obs.schemas
+file path=etc/gconf/schemas/compiz-place.schemas
+file path=etc/gconf/schemas/compiz-png.schemas
+file path=etc/gconf/schemas/compiz-regex.schemas
+file path=etc/gconf/schemas/compiz-resize.schemas
+file path=etc/gconf/schemas/compiz-rotate.schemas
+file path=etc/gconf/schemas/compiz-scale.schemas
+file path=etc/gconf/schemas/compiz-screenshot.schemas
+file path=etc/gconf/schemas/compiz-svg.schemas
+file path=etc/gconf/schemas/compiz-switcher.schemas
+file path=etc/gconf/schemas/compiz-video.schemas
+file path=etc/gconf/schemas/compiz-water.schemas
+file path=etc/gconf/schemas/compiz-wobbly.schemas
+file path=etc/gconf/schemas/compiz-zoom.schemas
+file path=etc/gconf/schemas/gwd.schemas
+file path=usr/bin/gtk-window-decorator mode=0555
+file path=usr/include/compiz/compiz-common.h
+file path=usr/include/compiz/compiz-core.h
+file path=usr/include/compiz/compiz-cube.h
+file path=usr/include/compiz/compiz-plugin.h
+file path=usr/include/compiz/compiz-scale.h
+file path=usr/include/compiz/compiz.h
+file path=usr/include/compiz/decoration.h
+file path=usr/lib/compiz/libannotate.so mode=0555
+file path=usr/lib/compiz/libblur.so mode=0555
+file path=usr/lib/compiz/libclone.so mode=0555
+file path=usr/lib/compiz/libcommands.so mode=0555
+file path=usr/lib/compiz/libcube.so mode=0555
+file path=usr/lib/compiz/libdbus.so mode=0555
+file path=usr/lib/compiz/libdecoration.so mode=0555
+file path=usr/lib/compiz/libfade.so mode=0555
+file path=usr/lib/compiz/libgconf.so mode=0555
+file path=usr/lib/compiz/libglib.so mode=0555
+file path=usr/lib/compiz/libgnomecompat.so mode=0555
+file path=usr/lib/compiz/libini.so mode=0555
+file path=usr/lib/compiz/libminimize.so mode=0555
+file path=usr/lib/compiz/libmove.so mode=0555
+file path=usr/lib/compiz/libobs.so mode=0555
+file path=usr/lib/compiz/libplace.so mode=0555
+file path=usr/lib/compiz/libpng.so mode=0555
+file path=usr/lib/compiz/libregex.so mode=0555
+file path=usr/lib/compiz/libresize.so mode=0555
+file path=usr/lib/compiz/librotate.so mode=0555
+file path=usr/lib/compiz/libscale.so mode=0555
+file path=usr/lib/compiz/libscreenshot.so mode=0555
+file path=usr/lib/compiz/libsvg.so mode=0555
+file path=usr/lib/compiz/libswitcher.so mode=0555
+file path=usr/lib/compiz/libvideo.so mode=0555
+file path=usr/lib/compiz/libwater.so mode=0555
+file path=usr/lib/compiz/libwobbly.so mode=0555
+file path=usr/lib/compiz/libzoom.so mode=0555
+link path=usr/lib/libdecoration.so target=libdecoration.so.0.0.0
+link path=usr/lib/libdecoration.so.0 target=libdecoration.so.0.0.0
+file path=usr/lib/libdecoration.so.0.0.0 mode=0555
+file path=usr/lib/pkgconfig/compiz-cube.pc
+file path=usr/lib/pkgconfig/compiz-gconf.pc
+file path=usr/lib/pkgconfig/compiz-scale.pc
+file path=usr/lib/pkgconfig/compiz.pc
+file path=usr/lib/pkgconfig/libdecoration.pc
+file path=usr/share/compiz/annotate.xml
+file path=usr/share/compiz/blur.xml
+file path=usr/share/compiz/clone.xml
+file path=usr/share/compiz/commands.xml
+file path=usr/share/compiz/core.xml
+file path=usr/share/compiz/cube.xml
+file path=usr/share/compiz/dbus.xml
+file path=usr/share/compiz/decoration.xml
+file path=usr/share/compiz/fade.xml
+file path=usr/share/compiz/freedesktop.png
+file path=usr/share/compiz/fs.xml
+file path=usr/share/compiz/gconf.xml
+file path=usr/share/compiz/glib.xml
+file path=usr/share/compiz/gnomecompat.xml
+file path=usr/share/compiz/icon.png
+file path=usr/share/compiz/ini.xml
+file path=usr/share/compiz/inotify.xml
+file path=usr/share/compiz/kconfig.xml
+file path=usr/share/compiz/minimize.xml
+file path=usr/share/compiz/move.xml
+file path=usr/share/compiz/obs.xml
+file path=usr/share/compiz/place.xml
+file path=usr/share/compiz/png.xml
+file path=usr/share/compiz/regex.xml
+file path=usr/share/compiz/resize.xml
+file path=usr/share/compiz/rotate.xml
+file path=usr/share/compiz/scale.xml
+file path=usr/share/compiz/schemas.xslt
+file path=usr/share/compiz/screenshot.xml
+file path=usr/share/compiz/svg.xml
+file path=usr/share/compiz/switcher.xml
+file path=usr/share/compiz/video.xml
+file path=usr/share/compiz/water.xml
+file path=usr/share/compiz/wobbly.xml
+file path=usr/share/compiz/zoom.xml
+file path=usr/share/locale/af/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ar/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/bg/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/bn/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/bs/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ca/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/cs/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/cy/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/da/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/de/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/el/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/en_US/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/es/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/et/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/eu/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/fi/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/fr/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/gl/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/gu/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/he/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/hi/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/hr/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/hu/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/id/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/it/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ja/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ka/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/km/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ko/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/lo/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/lt/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/mk/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/mr/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/nb/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/nl/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/or/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/pa/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/pl/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/pt/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ro/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ru/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/sk/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/sl/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/sr/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/sv/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/ta/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/tr/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/uk/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/vi/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/xh/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/compiz.mo
+file path=usr/share/locale/zu/LC_MESSAGES/compiz.mo

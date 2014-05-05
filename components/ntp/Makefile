@@ -28,6 +28,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=		ntp
 COMPONENT_PATCH_VERSION=	411
 COMPONENT_VERSION=	4.2.7
+COMPONENT_REVISION=	1
 HUMAN_VERSION=		$(COMPONENT_VERSION)p$(COMPONENT_PATCH_VERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ntp.org/
@@ -46,6 +47,8 @@ ASLR_MODE= $(ASLR_ENABLE)
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+COMPONENT_BUILD_ARGS=
 
 CFLAGS +=	-std=c99 -D_XOPEN_SOURCE=600 -D__EXTENSIONS__
 

@@ -17,6 +17,8 @@ include ../../../make-rules/shared-macros.mk
 COMPONENT_NAME=		pkg
 COMPONENT_SRC=		$(COMPONENT_NAME)
 
+COMPONENT_REVISION=$(shell cd $(COMPONENT_SRC); git rev-list HEAD --count)
+
 GIT=git
 GIT_REPO=git://github.com/OpenIndiana/pkg5.git
 GIT_BRANCH=oi
@@ -31,6 +33,10 @@ CLEAN_PATHS += $(BUILD_DIR)
 include $(WS_TOP)/make-rules/prep.mk
 
 #export CC 
+
+COMPONENT_ENV = CC=$(CC)
+COMPONENT_BUILD_ENV = $(COMPONENT_ENV)
+COMPONENT_INSTALL_ENV = $(COMPONENT_ENV)
 
 $(SOURCE_DIR)/.downloaded: $(ARCHIVES:%=$(USERLAND_ARCHIVES)%)
 	@[ -d $(SOURCE_DIR) ] || \
@@ -50,7 +56,7 @@ download:: $(SOURCE_DIR)/.downloaded
 $(BUILD_DIR)/$(MACH)/.built: $(SOURCE_DIR)/.downloaded 
 	$(MKDIR) $(@D) && \
 	cd $(SOURCE_DIR)/src && \
-	$(MAKE) && $(MAKE) install && \
+	$(ENV) $(COMPONENT_BUILD_ENV) $(MAKE) && $(ENV) $(COMPONENT_INSTALL_ENV) $(MAKE) install && \
 	cd pkg && \
 	$(MAKE) BUILD_VERSION=$(BUILD_VERSION) && \
 	$(MAKE) publish-pkgs BUILD_VERSION=$(BUILD_VERSION) && \
@@ -62,6 +68,15 @@ build install: $(BUILD_DIR)/$(MACH)/.built
 $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.built
 	echo "<transform set name=pkg.fmri -> edit value pkg://[^/]+/ pkg://$(PUBLISHER)/>" > \
 	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> edit value ,.+: ,$(BUILD_VERSION):>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=pkg5.info.git-remote value=$(GIT_REPO)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=pkg5.info.git-branch value=$(GIT_BRANCH)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+	echo "<transform set name=pkg.fmri -> emit set name=pkg5.info.git-rev value=$(shell cd $(COMPONENT_SRC); git rev-parse HEAD)>" >> \
+	  $(BUILD_DIR)/$(MACH)/publish.transforms
+
 
 $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 	if [ -d $(@D)/pkgrecv.dir ]; then $(RM) -r $(@D)/pkgrecv.dir; fi
@@ -79,4 +94,6 @@ $(BUILD_DIR)/$(MACH)/.published: $(BUILD_DIR)/$(MACH)/publish.transforms
 
 	$(TOUCH) $@
 
-publish: $(BUILD_DIR)/$(MACH)/.published
+.NOTPARALLEL:
+
+publish: update $(BUILD_DIR)/$(MACH)/.published

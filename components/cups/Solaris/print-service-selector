@@ -1,0 +1,76 @@
+#!/bin/ksh
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+#
+# Copyright 2009 Sun Microsystems, Inc.  All rights reserved.
+# Use is subject to license terms.
+#
+#ident	"@(#)print-service-selector	1.1	09/10/23 SMI"
+
+. /lib/svc/share/smf_include.sh
+
+CUPS_SVC='cups/scheduler'
+CUPS_BIN='/usr/lib/cups/bin/lp'
+LP_BIN='/usr/lib/lp/bin/lp'
+ACTIVE_SVC_PROP='general/active'
+
+is_cups_active()
+{
+    ACTIVE=$( /usr/bin/svcprop -C -p "$ACTIVE_SVC_PROP" "${CUPS_SVC}:default" \
+            2>/dev/null )
+    [[ "$ACTIVE" == 'true' ]]
+}
+
+is_lp_installed()
+{
+    [[ -f "$LP_BIN" ]]
+}
+
+is_cups_installed()
+{
+    [[ -f "$CUPS_BIN" ]]
+}
+
+set_cups_active()
+{
+    if ! /usr/sbin/print-service -s cups
+    then
+        echo "ERROR: Unable to set CUPS as the default print service" >&2
+        exit $SMF_EXIT_ERR_FATAL
+    fi
+}
+
+if is_lp_installed
+then
+    # Do nothing.  They either upgraded, installed LP only, or both.
+    # In any of these cases, we either want the default or the previously
+    # selected behaviour.
+    true
+elif is_cups_installed
+then
+    # LP is not installed -- make CUPS the default if it is not already
+    is_cups_active || set_cups_active
+else
+    echo "ERROR: Neither CUPS nor LP packages installed" >&2
+	exit $SMF_EXIT_ERR_FATAL
+fi
+
+exit $SMF_EXIT_OK

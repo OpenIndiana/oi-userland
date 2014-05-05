@@ -1,0 +1,11 @@
+--- pidgin-2.10.8/configure.ac.~1~	2014-01-30 11:37:37.032615286 +0400
++++ pidgin-2.10.8/configure.ac	2014-01-30 11:38:15.064105528 +0400
+@@ -1593,7 +1593,7 @@
+ 	looked_for_perl="yes"
+ 	AC_PATH_PROG(perlpath, perl)
+ 	AC_MSG_CHECKING(for Perl compile flags)
+-	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
++	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null | sed -e 's:-fstack-protector::'`
+ 	if test "_$PERL_CFLAGS" = _ ; then
+ 		AC_MSG_RESULT([not found, building without perl.])
+ 		enable_perl=no

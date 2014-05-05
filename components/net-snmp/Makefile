@@ -28,6 +28,7 @@ DOXYGEN=/usr/bin/doxygen
 COMPONENT_NAME=		net-snmp
 COMPONENT_VERSION=	5.4.1
 COMPONENT_PATCHLEVEL=	2
+COMPONENT_REVISION=	3
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION).$(COMPONENT_PATCHLEVEL)
 COMPONENT_PROJECT_URL=	http://www.net-snmp.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION).$(COMPONENT_PATCHLEVEL)
@@ -40,6 +41,8 @@ COMPONENT_BUGDB=	service/net-snmp utility/net-snmp library/net-snmp
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
+
+COMPONENT_BUILD_ARGS=
 
 CPPFLAGS += "-DFALSE_SHARING_ALIGN=64"
 
