@@ -17,6 +17,8 @@
 # @author: Girish Moodalbail, Oracle, Inc.
 #
 
+import netaddr
+
 from quantum.agent.linux import utils
 
 
@@ -72,10 +74,7 @@ class IPInterface(CommandBase):
             val.append(addr)
         return result
 
-    #TODO(gmoodalb): - might not work for IPv6
-    def create_address(self, ipaddr, addrobjname=None,
-                       addrtype='static', temp=True):
-
+    def create_address(self, ipaddr, addrobjname=None, temp=True):
         if not self.ifname_exists(self._ifname):
             # create ip interface
             cmd = ['/usr/sbin/ipadm', 'create-ip', self._ifname]
@@ -86,7 +85,25 @@ class IPInterface(CommandBase):
         if self.ipaddr_exists(self._ifname, ipaddr):
             return
 
-        cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', addrtype, '-a',
+        # If an address is IPv6, then to create a static IPv6 address
+        # we need to create link-local address first
+        if netaddr.IPNetwork(ipaddr).version == 6:
+            # check if link-local address already exists
+            cmd = ['/usr/sbin/dladm', 'show-linkprop', '-co', 'value',
+                   '-p', 'mac-address', self._ifname]
+            stdout = self.execute(cmd)
+            mac_addr = stdout.splitlines()[0].strip()
+            ll_addr = netaddr.EUI(mac_addr).ipv6_link_local()
+
+            if not self.ipaddr_exists(self._ifname, str(ll_addr)):
+                # create a link-local address
+                cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'static', '-a',
+                       str(ll_addr), self._ifname]
+                if temp:
+                    cmd.append('-t')
+                self.execute_with_pfexec(cmd)
+
+        cmd = ['/usr/sbin/ipadm', 'create-addr', '-T', 'static', '-a',
                ipaddr, self._ifname]
         if temp:
             cmd.append('-t')
@@ -109,9 +126,9 @@ class IPInterface(CommandBase):
             self.execute_with_pfexec(cmd)
             break
 
-        if len(aobj_addrs) == 1:
+        isV6 = netaddr.IPNetwork(ipaddr).version == 6
+        if len(aobj_addrs) == 1 or (isV6 and len(aobj_addrs) == 2):
             # delete the interface as well
-            # TODO(gmoodalb): might not work for ipv6
             cmd = ['/usr/sbin/ipadm', 'delete-ip', self._ifname]
             self.execute_with_pfexec(cmd)
 

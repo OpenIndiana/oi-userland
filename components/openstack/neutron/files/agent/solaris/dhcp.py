@@ -252,11 +252,11 @@ class Dnsmasq(DhcpLocalProcess):
             '--except-interface=lo0',
             '--pid-file=%s' % self.get_conf_file_name(
                 'pid', ensure_conf_dir=True),
-            #TODO(gmoodalb): calculate value from cidr (defaults to 150)
-            #'--dhcp-lease-max=%s' % ?,
+            # TODO(gmoodalb): calculate value from cidr (defaults to 150)
+            # '--dhcp-lease-max=%s' % ?,
             '--dhcp-hostsfile=%s' % self._output_hosts_file(),
             '--dhcp-optsfile=%s' % self._output_opts_file(),
-            #'--dhcp-script=%s' % self._lease_relay_script_path(),
+            # '--dhcp-script=%s' % self._lease_relay_script_path(),
             '--leasefile-ro',
         ]
 
@@ -267,8 +267,17 @@ class Dnsmasq(DhcpLocalProcess):
             if subnet.ip_version == 4:
                 mode = 'static'
             else:
-                #TODO(gmoodalb): how do we indicate other options
-                #ra-only, slaac, ra-nameservers, and ra-stateless.
+                # TODO(gmoodalb): how do we indicate other options
+                # ra-only, slaac, ra-nameservers, and ra-stateless.
+                # We need to also set the DUID for DHCPv6 server to use
+                macaddr_cmd = ['/usr/sbin/dladm', 'show-linkprop',
+                               '-co', 'value', '-p', 'mac-address',
+                               self.interface_name]
+                stdout = utils.execute(macaddr_cmd)
+                uid = stdout.splitlines()[0].strip()
+                # IANA assigned ID for Oracle
+                enterprise_id = '111'
+                cmd.append('--dhcp-duid=%s,%s' % (enterprise_id, uid))
                 mode = 'static'
             cmd.append('--dhcp-range=set:%s,%s,%s,%ss' %
                        (self._TAG_PREFIX % i,
