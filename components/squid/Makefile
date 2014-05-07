@@ -29,6 +29,7 @@ PATH=/usr/bin:/usr/gnu/bin:/usr/sbin:/usr/perl5/bin
 
 COMPONENT_NAME=         squid
 COMPONENT_VERSION=      3.1.23
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=  http://www.squid-cache.org/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.xz

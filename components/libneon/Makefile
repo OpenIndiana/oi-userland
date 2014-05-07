@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME = libneon
 COMPONENT_VERSION = 0.29.6
+COMPONENT_REVISION = 1
 COMPONENT_PROJECT_URL=	http://www.webdav.org/neon/
 COMPONENT_SRC_NAME = neon
 COMPONENT_SRC = $(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
