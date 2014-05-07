@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gobject-introspection
 
 COMPONENT_VERSION= 0.9.12
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Introspection for GObject libraries
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
