@@ -1,0 +1,167 @@
+#
+# This patch was developed in house.
+# This is Solaris-specific: not suitable for upstream.
+#
+--- openssl-1.0.1g/crypto/sparcv9cap.c.~1~	Fri May  2 15:08:47 2014
++++ openssl-1.0.1g/crypto/sparcv9cap.c	Fri May  2 15:08:32 2014
+@@ -2,9 +2,9 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <setjmp.h>
+-#include <signal.h>
+ #include <sys/time.h>
+ #include <openssl/bn.h>
++#include <sys/auxv.h>
+ 
+ #define SPARCV9_TICK_PRIVILEGED	(1<<0)
+ #define SPARCV9_PREFER_FPU	(1<<1)
+@@ -11,6 +11,7 @@
+ #define SPARCV9_VIS1		(1<<2)
+ #define SPARCV9_VIS2		(1<<3)	/* reserved */
+ #define SPARCV9_FMADD		(1<<4)	/* reserved for SPARC64 V */
++#define SPARCV9_BLK		(1<<5)
+ 
+ static int OPENSSL_sparcv9cap_P=SPARCV9_TICK_PRIVILEGED;
+ 
+@@ -28,10 +29,7 @@
+ 	}
+ 
+ unsigned long	_sparcv9_rdtick(void);
+-void		_sparcv9_vis1_probe(void);
+ unsigned long	_sparcv9_vis1_instrument(void);
+-void		_sparcv9_vis2_probe(void);
+-void		_sparcv9_fmadd_probe(void);
+ 
+ unsigned long OPENSSL_rdtsc(void)
+ 	{
+@@ -162,15 +160,11 @@
+ 
+ #else
+ 
+-static sigjmp_buf common_jmp;
+-static void common_handler(int sig) { siglongjmp(common_jmp,sig); }
+-
+ void OPENSSL_cpuid_setup(void)
+ 	{
+ 	char *e;
+-	struct sigaction	common_act,ill_oact,bus_oact;
+-	sigset_t		all_masked,oset;
+ 	static int trigger=0;
++	uint_t ui = 0;
+ 
+ 	if (trigger) return;
+ 	trigger=1;
+@@ -181,57 +175,27 @@
+ 		return;
+ 		}
+ 
++	(void) getisax(&ui, 1);
++
+ 	/* Initial value, fits UltraSPARC-I&II... */
+-	OPENSSL_sparcv9cap_P = SPARCV9_PREFER_FPU|SPARCV9_TICK_PRIVILEGED;
++	OPENSSL_sparcv9cap_P = SPARCV9_BLK;
+ 
+-	sigfillset(&all_masked);
+-	sigdelset(&all_masked,SIGILL);
+-	sigdelset(&all_masked,SIGTRAP);
+-#ifdef SIGEMT
+-	sigdelset(&all_masked,SIGEMT);
+-#endif
+-	sigdelset(&all_masked,SIGFPE);
+-	sigdelset(&all_masked,SIGBUS);
+-	sigdelset(&all_masked,SIGSEGV);
+-	sigprocmask(SIG_SETMASK,&all_masked,&oset);
+-
+-	memset(&common_act,0,sizeof(common_act));
+-	common_act.sa_handler = common_handler;
+-	common_act.sa_mask    = all_masked;
+-
+-	sigaction(SIGILL,&common_act,&ill_oact);
+-	sigaction(SIGBUS,&common_act,&bus_oact);/* T1 fails 16-bit ldda [on Linux] */
+-
+-	if (sigsetjmp(common_jmp,1) == 0)
++	if (ui & AV_SPARC_VIS)
+ 		{
+-		_sparcv9_rdtick();
+-		OPENSSL_sparcv9cap_P &= ~SPARCV9_TICK_PRIVILEGED;
+-		}
+-
+-	if (sigsetjmp(common_jmp,1) == 0)
+-		{
+-		_sparcv9_vis1_probe();
+-		OPENSSL_sparcv9cap_P |= SPARCV9_VIS1;
+-		/* detect UltraSPARC-Tx, see sparccpud.S for details... */
+-		if (_sparcv9_vis1_instrument() >= 12)
+-			OPENSSL_sparcv9cap_P &= ~(SPARCV9_VIS1|SPARCV9_PREFER_FPU);
+-		else
++		/* detect UltraSPARC-Tx, see sparccpuid.S for details... */
++		if (_sparcv9_vis1_instrument() < 7)
++			OPENSSL_sparcv9cap_P |= SPARCV9_TICK_PRIVILEGED;
++		if (_sparcv9_vis1_instrument() < 12)
+ 			{
+-			_sparcv9_vis2_probe();
+-			OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
++			OPENSSL_sparcv9cap_P |= SPARCV9_VIS1|SPARCV9_PREFER_FPU;
++			if (ui & AV_SPARC_VIS2)
++				OPENSSL_sparcv9cap_P |= SPARCV9_VIS2;
+ 			}
+ 		}
+ 
+-	if (sigsetjmp(common_jmp,1) == 0)
+-		{
+-		_sparcv9_fmadd_probe();
++	if (ui & AV_SPARC_FMAF)
+ 		OPENSSL_sparcv9cap_P |= SPARCV9_FMADD;
+-		}
+ 
+-	sigaction(SIGBUS,&bus_oact,NULL);
+-	sigaction(SIGILL,&ill_oact,NULL);
+-
+-	sigprocmask(SIG_SETMASK,&oset,NULL);
+ 	}
+ 
+ #endif
+--- openssl-1.0.1g/crypto/sparccpuid.S.~1~	Fri May  2 11:23:54 2014
++++ openssl-1.0.1g/crypto/sparccpuid.S	Fri May  2 11:24:23 2014
+@@ -232,16 +232,6 @@
+ .type	_sparcv9_rdtick,#function
+ .size	_sparcv9_rdtick,.-_sparcv9_rdtick
+ 
+-.global	_sparcv9_vis1_probe
+-.align	8
+-_sparcv9_vis1_probe:
+-	add	%sp,BIAS+2,%o1
+-	.word	0xc19a5a40	!ldda	[%o1]ASI_FP16_P,%f0
+-	retl
+-	.word	0x81b00d80	!fxor	%f0,%f0,%f0
+-.type	_sparcv9_vis1_probe,#function
+-.size	_sparcv9_vis1_probe,.-_sparcv9_vis1_probe
+-
+ ! Probe and instrument VIS1 instruction. Output is number of cycles it
+ ! takes to execute rdtick and pair of VIS1 instructions. US-Tx VIS unit
+ ! is slow (documented to be 6 cycles on T2) and the core is in-order
+@@ -296,24 +286,6 @@
+ .type	_sparcv9_vis1_instrument,#function
+ .size	_sparcv9_vis1_instrument,.-_sparcv9_vis1_instrument
+ 
+-.global	_sparcv9_vis2_probe
+-.align	8
+-_sparcv9_vis2_probe:
+-	retl
+-	.word	0x81b00980	!bshuffle	%f0,%f0,%f0
+-.type	_sparcv9_vis2_probe,#function
+-.size	_sparcv9_vis2_probe,.-_sparcv9_vis2_probe
+-
+-.global	_sparcv9_fmadd_probe
+-.align	8
+-_sparcv9_fmadd_probe:
+-	.word	0x81b00d80	!fxor	%f0,%f0,%f0
+-	.word	0x85b08d82	!fxor	%f2,%f2,%f2
+-	retl
+-	.word	0x81b80440	!fmaddd	%f0,%f0,%f2,%f0
+-.type	_sparcv9_fmadd_probe,#function
+-.size	_sparcv9_fmadd_probe,.-_sparcv9_fmadd_probe
+-
+ .global	OPENSSL_cleanse
+ .align	32
+ OPENSSL_cleanse:

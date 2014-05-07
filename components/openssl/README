@@ -116,7 +116,7 @@ Wanboot specific patches.
 - implementation of atoi()
 - avoid using ssl_fill_hello_random() in s3_clnt.c
 
-openssl-t4-inline.sparc-patch
+37_openssl_t4_inline.patch
 SPARC-only patch.
 Add patch to support inline T4 instruction in OpenSSL upstream code until
 OpenSSL 1.0.2 is released.
@@ -125,6 +125,11 @@ opensslconf.patch
 Modifies opensslconf.h so that it is suitable for both 32bit and 64bit installs.
 OpenSSL either builds for 32bit or 64bit - it doesn't allow for combined 32bit
 and 64bit builds.
+
+38_remove_illegal_instruction_calls.patch
+SPARC patch. Solaris-only patch.
+For instructions in sparcv9cap.c, remove if not supported on any platforms.
+Otherwise modify them to call getisax() to check for HW capability instead. 
 
 The fips Build
 ---

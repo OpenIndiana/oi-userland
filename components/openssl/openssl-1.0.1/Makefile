@@ -40,10 +40,6 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/openssl
 
-# Architecture-specific patches
-EXTRA_PATCHES.sparc = $(PATCH_DIR)/openssl-t4-inline.sparc-patch
-EXTRA_PATCHES = $(EXTRA_PATCHES.$(MACH))
-
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
