@@ -61,8 +61,9 @@ CONFIGURE_OPTIONS +=	--with-pic
 CONFIGURE_OPTIONS +=	--with-lua
 CONFIGURE_OPTIONS +=	--with-openssl
 CONFIGURE_OPTIONS +=	--with-pcre
+CONFIGURE_OPTIONS +=	--with-ldap
 CONFIGURE_OPTIONS +=	--with-mysql=/usr/mysql/5.5/bin/mysql_config
-CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS) -R/usr/mysql/5.5/lib/$(MACH64)"
+CONFIGURE_OPTIONS +=    CFLAGS="$(CFLAGS) -I/usr/include/openldap -lldap_r-2.4"
 CONFIGURE_OPTIONS +=    PCRECONFIG="/usr/bin/$(MACH64)/pcre-config"
 
 # Enable ASLR for this component
