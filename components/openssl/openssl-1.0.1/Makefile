@@ -32,7 +32,7 @@ COMPONENT_VERSION =	1.0.1g
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
 IPS_COMPONENT_VERSION = 1.0.1.7
-COMPONENT_REVISION =	1
+COMPONENT_REVISION =	2
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz

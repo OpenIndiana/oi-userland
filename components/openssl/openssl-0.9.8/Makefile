@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openssl
 COMPONENT_VERSION=	0.9.8y
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://openssl.org
 COMPONENT_SUMMARY=	Toolkit for SSL/TLS and general purpose cryptographic library.
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
