@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		bind
 COMPONENT_VERSION=	9.6-ESV-R10-P2
+COMPONENT_REVISION=	1
 # The BIND version number for IPS_COMPONENT_VERSION was accidentaly incremented
 # from 9.6.3 to 9.6.4 in OI 151.1.5.
 IPS_COMPONENT_VERSION=	9.6.4.10.2
