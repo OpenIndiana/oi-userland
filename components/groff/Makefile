@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		groff
-COMPONENT_VERSION=	1.19.2
+COMPONENT_VERSION=	1.22.2
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/groff/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:d864fbd0bf6dea24e4f71736da9902a1cae86d0a1a893b5fe17118927257ec3e
+    sha256:380864dac4772e0c0d7b1282d25d0c5fd7f63baf45c87c4657afed22a13d2076
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/groff
 
@@ -39,17 +39,22 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-COMPONENT_PREP_ACTION = \
-	( cd $(@D) ; \
-		libtoolize -force ; \
-		aclocal -I. ; \
-		autoconf ; \
-		autoheader )
-
 # The grog.sh script needs GNU awk not the Solaris one.
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	$(GSED) -i -e 's?awk?/usr/gnu/bin/awk?' \
 		$(SOURCE_DIR)/src/roff/grog/grog.sh
+
+# There are _GL_INLINE_HEADER_BEGIN and _GL_INLINE_HEADER_END definitions in
+# .../src/libs/gnulib/lib/wctype.h that are not being processed. There is
+# code in .../src/libs/gnulib/config.h that would do this, but this header
+# files is not included by wctype.h (or the C++ files that use it and fail
+# to build with the Studio compilers:
+# .../src/roff/troff/[env.cpp, input.cpp, node.cpp]
+# See CR #17959391 for more details.
+COMPONENT_POST_CONFIGURE_ACTION = \
+	$(GSED) -i -e 's/_GL_INLINE_HEADER_BEGIN//' \
+		-e 's/_GL_INLINE_HEADER_END//' \
+		$(SOURCE_DIR)/src/libs/gnulib/lib/wctype.in.h
 
 # Everything is under /usr/bin and /usr/lib so set bindir and libdir correctly.
 CONFIGURE_BINDIR.64 =	$(CONFIGURE_PREFIX)/bin
@@ -62,12 +67,14 @@ CONFIGURE_OPTIONS +=	CXX="$(CXX)"
 CONFIGURE_OPTIONS +=	CXXFLAGS="$(CXXFLAGS)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 
-COMPONENT_INSTALL_ARGS += prefix=$(PROTOUSRDIR)
-COMPONENT_INSTALL_ARGS += bindir=$(PROTOUSRBINDIR)
-COMPONENT_INSTALL_ARGS += libdir=$(PROTOUSRLIBDIR)
-COMPONENT_INSTALL_ARGS += mandir=$(PROTOUSRSHAREMANDIR)
+# Don't generate tmac wrappers for the Solaris troff macro packages.
+# Some man pages (such as groff.1) use long macro name definitions
+# which fail in compatibility mode. See:
+# http://osdir.com/ml/printing.groff.general/2003-07/msg00088.html
+# for more details.
+COMPONENT_INSTALL_ARGS += tmac_wrap=""
+
 COMPONENT_INSTALL_ARGS += legacyfontdir=$(PROTOUSRLIBDIR)/font
-COMPONENT_INSTALL_ARGS += appresdir=$(PROTOUSRDIR)/X11/lib/X11/app-defaults
 COMPONENT_INSTALL_ARGS += sys_tmac_prefix=$(PROTOUSRSHARELIBDIR)/tmac/
 
 COMPONENT_PRE_INSTALL_ACTION = \
@@ -80,7 +87,6 @@ build:		$(BUILD_64)
 
 install:	$(INSTALL_64)
 
-# groff tests use dejagnu which isn't currently included in Solaris.
 test:		$(NO_TESTS)
 
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
