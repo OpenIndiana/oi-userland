@@ -1,0 +1,71 @@
+#!/sbin/sh
+#
+
+#
+#
+# Copyright (c) 2008, 2012, Oracle and/or its affiliates. All rights reserved.
+#
+
+. /lib/svc/share/smf_include.sh
+
+APACHE_USR_ROOT=/usr/apache
+APACHE_ETC_ROOT=/etc/apache
+APACHE_VAR_ROOT=/var/apache
+
+#if startup options contain multiple arguments separated by a blank,
+#then they should be specified as below
+#e.g., %> svccfg -s apache13 setprop 'httpd/startup_options=("-f" "/etc/apache/new.conf")' 
+#
+STARTUP_OPTIONS=
+
+PLATFORM_DIR=
+
+getprop() {
+    PROPVAL=""
+    svcprop -q -p $1 ${SMF_FMRI}
+    if [ $? -eq 0 ] ; then
+        PROPVAL=`svcprop -p $1 ${SMF_FMRI}`
+        if [ "${PROPVAL}" = "\"\"" ] ; then
+            PROPVAL=""
+        fi
+        return
+    fi
+    return
+}
+
+APACHE_USER_ENVVARS=${APACHE_ETC_ROOT}/envvars
+
+APACHE_HOME=${APACHE_USR_ROOT}
+APACHE_BIN=${APACHE_HOME}/bin${PLATFORM_DIR}
+
+getprop httpd/startup_options
+if [ "${PROPVAL}" != "" ] ; then
+	echo startupoptions set
+	echo val=${PROPVAL}
+	STARTUP_OPTIONS="${PROPVAL} -k"
+fi
+
+case "$1" in
+start)
+	cmd="start"
+	;;
+refresh)
+	cmd="graceful"
+	;;
+stop)
+	cmd="stop"
+	;;
+*)
+	echo "Usage: $0 {start|stop|refresh}"
+	exit $SMF_EXIT_ERR_CONFIG
+	;;
+esac
+
+APACHE_USER_ENVVARS="${APACHE_USER_ENVVARS}" ${APACHE_BIN}/apachectl ${STARTUP_OPTIONS} ${cmd} 2>&1
+
+if [ $? -ne 0 ]; then
+    echo "Server failed to start. Check the error log (defaults to ${APACHE_VAR_ROOT}/logs/error_log) for more information, if any."
+    exit $SMF_EXIT_ERR_FATAL
+fi
+
+exit $SMF_EXIT_OK

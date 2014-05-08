@@ -1,0 +1,21 @@
+*** apache_1.3.34/src/support/apachectl.orig	Mon Dec  6 18:30:45 2004
+--- apache_1.3.34/src/support/apachectl	Mon Dec  6 18:32:17 2004
+***************
+*** 60,65 ****
+--- 60,75 ----
+      ARGS="help"
+  fi
+  
++ mkdir -p /var/run/apache
++ 
++ NCAKMODCONF=/etc/nca/ncakmod.conf
++ if [ -f $NCAKMODCONF ]; then
++ 	. $NCAKMODCONF
++ 	if [ "x$status" = "xenabled" ]; then
++ 		GOOP="env LD_PRELOAD=/usr/lib/ncad_addr.so $HTTPD"
++ 	fi
++ fi
++ 
+  for ARG in $@ $ARGS
+  do
+      # check for pidfile

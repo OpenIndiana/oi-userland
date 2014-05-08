@@ -1,0 +1,455 @@
+diff -ur mod_perl-1.31/apache-modlist.html mod_perl-1.x/apache-modlist.html
+--- mod_perl-1.31/apache-modlist.html	2002-03-25 05:57:59.000000000 +0300
++++ mod_perl-1.x/apache-modlist.html	2014-05-07 20:11:28.142120641 +0400
+@@ -6,7 +6,7 @@
+ <h1>The Apache/Perl Module List</h1>
+ 
+ Maintained by <a href="mailto:dougm@pobox.com">Doug MacEachern</a>,
+-<br><i> $Revision: 177689 $ $Date: 2002-03-24 21:57:59 -0500 (Sun, 24 Mar 2002) $</i>
++<br><i> $Revision: 177689 $ $Date: 2002-03-25 05:57:59 +0400 (Mon, 25 Mar 2002) $</i>
+ 
+ <h3>Contents</h3>
+ <a href="#intro">Introduction</a><br>
+diff -ur mod_perl-1.31/Changes mod_perl-1.x/Changes
+--- mod_perl-1.31/Changes	2009-05-12 05:59:47.000000000 +0400
++++ mod_perl-1.x/Changes	2014-05-07 20:11:29.110668629 +0400
+@@ -8,6 +8,25 @@
+ 
+ =over 3
+ 
++=item 1.32-dev
++
++Fix breakage caused by removal of PL_uid et al from perl 5.16.0. Patch from
++RT 79977.
++[Andreas Koenig <andreas.koenig.7os6VVqR@franz.ak.mind.de>]
++
++Post RT 64999 typo spot in CvGV macro
++[Salvador Ortiz Garcia <sog@msg.com.mx>]
++
++RT 64999, perl 5.14 compatibility, GvCV and GvGP lvalue changes in perl core
++[Todd Wade <sendwade@hotmail.com>]
++
++RT 40918, fix issue with sigils in perl binary path
++[Slaven Rezic <SREZIC@cpan.org>]
++
++Work around a gcc optimization specific bug which
++cuased seg faults on FreeBSD 7.x during mod_perl startup.
++[Tim Zingelman <zingelman@fnal.gov>]
++
+ =item 1.31 May 11, 2009
+ 
+ Fix static APACI build on Mac OS X. [Gozer]
+diff -ur mod_perl-1.31/CREDITS mod_perl-1.x/CREDITS
+--- mod_perl-1.31/CREDITS	2002-03-25 05:57:59.000000000 +0300
++++ mod_perl-1.x/CREDITS	2014-05-07 20:11:28.139943422 +0400
+@@ -340,4 +340,4 @@
+ 
+ =head1 REVISION
+ 
+-$Revision: 177689 $ $Date: 2002-03-24 21:57:59 -0500 (Sun, 24 Mar 2002) $
++$Revision: 177689 $ $Date: 2002-03-25 05:57:59 +0400 (Mon, 25 Mar 2002) $
+diff -ur mod_perl-1.31/faq/mod_perl_api.pod mod_perl-1.x/faq/mod_perl_api.pod
+--- mod_perl-1.31/faq/mod_perl_api.pod	2000-03-05 14:57:55.000000000 +0300
++++ mod_perl-1.x/faq/mod_perl_api.pod	2014-05-07 20:11:28.713846041 +0400
+@@ -1,6 +1,6 @@
+ =head1 NAME
+ 
+-Mod_perl_api - accessing the Apache API via mod_perl ($Date: 2000-03-05 06:57:55 -0500 (Sun, 05 Mar 2000) $)
++Mod_perl_api - accessing the Apache API via mod_perl ($Date: 2000-03-05 14:57:55 +0400 (Sun, 05 Mar 2000) $)
+ 
+ =head1 DESCRIPTION
+ 
+diff -ur mod_perl-1.31/faq/mod_perl_cgi.pod mod_perl-1.x/faq/mod_perl_cgi.pod
+--- mod_perl-1.31/faq/mod_perl_cgi.pod	2000-03-05 14:57:55.000000000 +0300
++++ mod_perl-1.x/faq/mod_perl_cgi.pod	2014-05-07 20:11:28.710637211 +0400
+@@ -1,6 +1,6 @@
+ =head1 NAME
+ 
+-Mod_perl_cgi - running CGI scripts under mod_perl ($Date: 2000-03-05 06:57:55 -0500 (Sun, 05 Mar 2000) $)
++Mod_perl_cgi - running CGI scripts under mod_perl ($Date: 2000-03-05 14:57:55 +0400 (Sun, 05 Mar 2000) $)
+ 
+ =head1 DESCRIPTION
+ 
+diff -ur mod_perl-1.31/faq/mod_perl_faq.pod mod_perl-1.x/faq/mod_perl_faq.pod
+--- mod_perl-1.31/faq/mod_perl_faq.pod	2002-03-25 05:57:59.000000000 +0300
++++ mod_perl-1.x/faq/mod_perl_faq.pod	2014-05-07 20:11:28.712795808 +0400
+@@ -1,6 +1,6 @@
+ =head1 NAME
+ 
+-Mod_perl_faq - frequently asked questions about mod_perl ($Date: 2002-03-24 21:57:59 -0500 (Sun, 24 Mar 2002) $)
++Mod_perl_faq - frequently asked questions about mod_perl ($Date: 2002-03-25 05:57:59 +0400 (Mon, 25 Mar 2002) $)
+ 
+ =head1 DESCRIPTION
+ 
+diff -ur mod_perl-1.31/lib/Apache/SizeLimit.pm mod_perl-1.x/lib/Apache/SizeLimit.pm
+--- mod_perl-1.31/lib/Apache/SizeLimit.pm	2014-05-07 20:14:59.595772840 +0400
++++ mod_perl-1.x/lib/Apache/SizeLimit.pm	2014-05-07 20:11:28.644703253 +0400
+@@ -174,9 +174,8 @@
+ }
+ 
+ BEGIN {
+-    my ($major,$minor) = split(/\./, $Config{'osvers'});
+     if (   $Config{'osname'} eq 'solaris'
+-        && (($major > 2) || ($major == 2 && $minor >= 6))) {
++        && $Config{'osvers'} >= 2.6 ) {
+         *_platform_check_size   = \&_solaris_2_6_size_check;
+         *_platform_getppid = \&_perl_getppid;
+     }
+Only in mod_perl-1.31/lib/Apache: SizeLimit.pm.~1~
+diff -ur mod_perl-1.31/lib/mod_perl.pm mod_perl-1.x/lib/mod_perl.pm
+--- mod_perl-1.31/lib/mod_perl.pm	2007-03-30 09:56:31.000000000 +0400
++++ mod_perl-1.x/lib/mod_perl.pm	2014-05-07 20:11:28.252904562 +0400
+@@ -4,7 +4,7 @@
+ use DynaLoader ();
+ 
+ BEGIN {
+-    $mod_perl::VERSION = "1.31";
++    $mod_perl::VERSION = "1.32";
+ }
+ 
+ sub boot {
+diff -ur mod_perl-1.31/Makefile.PL mod_perl-1.x/Makefile.PL
+--- mod_perl-1.31/Makefile.PL	2008-01-10 12:14:22.000000000 +0300
++++ mod_perl-1.x/Makefile.PL	2014-05-07 20:11:29.659335702 +0400
+@@ -786,7 +786,7 @@
+     setup_for_static() unless $USE_APXS;
+ 
+     iedit "$APACHE_SRC/modules/perl/Makefile",
+-        "s!^PERL\\s*=.*!PERL=$Config{'perlpath'}!" unless $USE_APACI or $USE_APXS;
++        "BEGIN { require Config; Config->import } s!^PERL\\s*=.*!PERL=\$Config{'perlpath'}!" unless $USE_APACI or $USE_APXS;
+ 
+     for (@callback_hooks) {
+         ($k,$v) = ($_,$callback_hooks{$_});
+diff -ur mod_perl-1.31/MANIFEST mod_perl-1.x/MANIFEST
+--- mod_perl-1.31/MANIFEST	2009-05-12 06:04:29.000000000 +0400
++++ mod_perl-1.x/MANIFEST	2014-05-07 20:11:28.242105022 +0400
+@@ -239,4 +239,3 @@
+ t/net/perl/uri.pl
+ t/net/perl/util.pl
+ t/report.PL
+-META.yml                                 Module meta-data (added by MakeMaker)
+Only in mod_perl-1.x/: MANIFEST.SKIP
+Only in mod_perl-1.31/: META.yml
+diff -ur mod_perl-1.31/mod_perl_tuning.pod mod_perl-1.x/mod_perl_tuning.pod
+--- mod_perl-1.31/mod_perl_tuning.pod	2002-03-25 05:57:59.000000000 +0300
++++ mod_perl-1.x/mod_perl_tuning.pod	2014-05-07 20:11:30.511011568 +0400
+@@ -420,4 +420,4 @@
+ for explanations of the configuration options.
+ 
+ $Revision: 177689 $
+-$Date: 2002-03-24 21:57:59 -0500 (Sun, 24 Mar 2002) $
++$Date: 2002-03-25 05:57:59 +0400 (Mon, 25 Mar 2002) $
+diff -ur mod_perl-1.31/RELEASE mod_perl-1.x/RELEASE
+--- mod_perl-1.31/RELEASE	2007-03-30 10:16:17.000000000 +0400
++++ mod_perl-1.x/RELEASE	2014-05-07 20:11:29.429564361 +0400
+@@ -14,7 +14,7 @@
+       http://people.apache.org/~geoff/gpghowto.html
+ 
+     Copy the KEYS file into place:
+-    % scp KEYS perl.apache.org:/www/www.apache.org/dist/perl/KEYS
++    % scp KEYS people.apache.org:/www/www.apache.org/dist/perl/KEYS
+ 
+     If this is your first release, ask someone with APML karma on PAUSE 
+     to verify you have the appropriate permissions.  Likely someone on 
+@@ -30,7 +30,7 @@
+        make sure you give the correct permissions to them.
+ 
+ 1. 'make dist' - to make sure nothing is missing from the manifest,
+-   etc. Now test this generated package mod_perl-1.31-dev.tar.gz (not
++   etc. Now test this generated package mod_perl-1.32-dev.tar.gz (not
+    the current build) with as many
+    configurations as possible on as many platforms as possible,
+    unpacking the package each time afresh.  
+@@ -51,7 +51,7 @@
+    to the modperl/dev list (may be longer to give most people a chance
+    to catch up). no need to tag this package
+ 
+-   Subject: [RELEASE CANDIDATE]: mod_perl-1.31 RC\d+
++   Subject: [RELEASE CANDIDATE]: mod_perl-1.32 RC\d+
+ 
+ 2a. if problems are detected during stage 2, repeat stages 1 and 2.
+ 
+@@ -78,34 +78,34 @@
+ 
+   f. test the final package again at least once
+ 
+-4. Release the package and update links (e.g. mod_perl-1.31.tar.gz)
++4. Release the package and update links (e.g. mod_perl-1.32.tar.gz)
+ 
+-  a. upload to perl.apache.org:/www/perl.apache.org/dist/
++  a. upload to people.apache.org:/www/perl.apache.org/dist/
+ 
+-    %  scp mod_perl-1.31.tar.gz perl.apache.org:/www/perl.apache.org/dist/
++    %  scp mod_perl-1.32.tar.gz people.apache.org:/www/perl.apache.org/dist/
+ 
+-  b. ssh to perl.apache.org, unpack the package, update symlinks to the
++  b. ssh to people.apache.org, unpack the package, update symlinks to the
+      tar ball and unpacked distro:
+ 
+-    % ssh perl.apache.org
++    % ssh people.apache.org
+     % cd /www/perl.apache.org/dist/
+-    % ln -sf mod_perl-1.31.tar.gz mod_perl-1.1-current.tar.gz
+-    % tar -xzvf mod_perl-1.31.tar.gz
+-    % rm /www/perl.apache.org/dist/mod_perl-1.1-current
+-    % ln -sf  mod_perl-1.31 mod_perl-1.1-current
++    % ln -sf mod_perl-1.32.tar.gz mod_perl-1.2-current.tar.gz
++    % tar -xzvf mod_perl-1.32.tar.gz
++    % rm /www/perl.apache.org/dist/mod_perl-1.2-current
++    % ln -sf  mod_perl-1.32 mod_perl-1.2-current
+ 
+   c. archive older releases (keep current + one prior release)
+ 
+-    % mv /www/perl.apache.org/dist/mod_perl-1.29.tar.gz \
++    % mv /www/perl.apache.org/dist/mod_perl-1.30.tar.gz \
+          /www/perl.apache.org/dist/old
+-    % mv /www/perl.apache.org/dist/mod_perl-1.30.tar.gz.asc \
++    % mv /www/perl.apache.org/dist/mod_perl-1.31.tar.gz.asc \
+          /www/perl.apache.org/dist/old
+-    % rm -rf /www/perl.apache.org/dist/mod_perl-1.29
++    % rm -rf /www/perl.apache.org/dist/mod_perl-1.30
+ 
+   d. update the version and release date
+      modperl-docs/src/download/index_top.html and commit. It'll be
+      automatically updated within 6 hours. Alternatively you can do a
+-     manual update by logging into perl.apache.org and running:
++     manual update by logging into people.apache.org and running:
+ 
+     % /home/perlwww/apache.org/modperl-docs/bin/site_build
+ 
+@@ -123,27 +123,27 @@
+ 
+   a. sign your local copy of the tarball:
+ 
+-    % gpg --detach-sign --armor mod_perl-1.31.tar.gz
++    % gpg --detach-sign --armor mod_perl-1.32.tar.gz
+ 
+-    % pgps -b --armor mod_perl-1.31.tar.gz
++    % pgps -b --armor mod_perl-1.32.tar.gz
+ 
+-  b. upload the generated sig file to perl.apache.org:
++  b. upload the generated sig file to people.apache.org:
+ 
+-    % scp mod_perl-1.31.tar.gz.asc perl.apache.org:/www/perl.apache.org/dist/
+-    % ssh perl.apache.org
++    % scp mod_perl-1.32.tar.gz.asc people.apache.org:/www/perl.apache.org/dist/
++    % ssh people.apache.org
+     % cd /www/perl.apache.org/dist/
+-    % chmod 0664 mod_perl-1.31.tar.gz.asc
+-    % ln -sf mod_perl-1.31.tar.gz.asc mod_perl-1.1-current.tar.gz.asc
++    % chmod 0664 mod_perl-1.32.tar.gz.asc
++    % ln -sf mod_perl-1.32.tar.gz.asc mod_perl-1.2-current.tar.gz.asc
+ 
+   c. ask one of the other developers to double check the signature file
+      and tarball: download both files and verify the signature:
+ 
+-    http://perl.apache.org/dist/mod_perl-1.31.tar.gz.asc
+-    http://perl.apache.org/dist/mod_perl-1.31.tar.gz
++    http://perl.apache.org/dist/mod_perl-1.32.tar.gz.asc
++    http://perl.apache.org/dist/mod_perl-1.32.tar.gz
+ 
+-    % gpg --verify mod_perl-1.31.tar.gz.asc
++    % gpg --verify mod_perl-1.32.tar.gz.asc
+ 
+-    % pgpv mod_perl-1.31.tar.gz.asc
++    % pgpv mod_perl-1.32.tar.gz.asc
+ 
+   d. make sure that the files you just created are group rw so
+      all the dist admins can make changes:
+@@ -157,10 +157,10 @@
+   a. unpack the package, update symlinks to the tarball and unpacked distro:
+ 
+    % cd /www/www.apache.org/dist/perl/
+-   % cp /www/perl.apache.org/dist/mod_perl-1.31.tar.gz* .
+-   % tar -xzvf mod_perl-1.31.tar.gz
+-   % mv mod_perl-1.29.tar.gz* /www/archive.apache.org/dist/perl/
+-   % rm -rf mod_perl-1.29
++   % cp /www/perl.apache.org/dist/mod_perl-1.32.tar.gz* .
++   % tar -xzvf mod_perl-1.32.tar.gz
++   % mv mod_perl-1.30.tar.gz* /www/archive.apache.org/dist/perl/
++   % rm -rf mod_perl-1.30
+ 
+   b. make sure that the files you just created are group rw so
+ 
+@@ -173,11 +173,11 @@
+ 
+   a. post ... to the modperl, announce lists
+   Note, to post to announce@, you must be sending from an apache.org address.
+-  Subject: [ANNOUNCE] mod_perl 1.31 
++  Subject: [ANNOUNCE] mod_perl 1.32 
+      include 
+   - link at perl.apache.org:
+-    http://apache.org/dist/perl/mod_perl-1.31.tar.gz
+-    http://apache.org/dist/perl/mod_perl-1.31.tar.gz.asc (pgp sig)
++    http://apache.org/dist/perl/mod_perl-1.32.tar.gz
++    http://apache.org/dist/perl/mod_perl-1.32.tar.gz.asc (pgp sig)
+   - MD5 sig (as it comes from CPAN upload announce).
+   - the latest Changes
+ 
+@@ -188,7 +188,7 @@
+   b. edit ./Changes:
+      - start a new item with incremented version + '-dev'
+ 
+-  =item 1.32-dev
++  =item 1.33-dev
+ 
+   c. add a release entry in STATUS
+ 
+@@ -199,7 +199,7 @@
+ 
+   e. commit the changed files
+ 
+-     % svn ci -m "start 1.32-dev cycle" Changes lib/mod_perl.pm \
++     % svn ci -m "start 1.33-dev cycle" Changes lib/mod_perl.pm \
+        STATUS RELEASE
+ 
+ 10. Old Versions
+diff -ur mod_perl-1.31/src/modules/perl/Constants.xs mod_perl-1.x/src/modules/perl/Constants.xs
+--- mod_perl-1.31/src/modules/perl/Constants.xs	2003-03-14 07:39:39.000000000 +0300
++++ mod_perl-1.x/src/modules/perl/Constants.xs	2014-05-07 20:11:27.920925611 +0400
+@@ -20,7 +20,7 @@
+ 	    SvPVX(caller), sub, SvPVX(pclass), sub);
+ #endif
+     gv = gv_fetchpv(form("%_::%s", caller, sub), TRUE, SVt_PVCV);
+-    GvCV(gv) = perl_get_cv(form("%_::%s", pclass, sub), TRUE);
++    GvCV_set(gv, perl_get_cv(form("%_::%s", pclass, sub), TRUE));
+     GvIMPORTED_CV_on(gv);
+ }
+ 
+diff -ur mod_perl-1.31/src/modules/perl/Log.xs mod_perl-1.x/src/modules/perl/Log.xs
+--- mod_perl-1.31/src/modules/perl/Log.xs	2001-01-25 10:43:05.000000000 +0300
++++ mod_perl-1.x/src/modules/perl/Log.xs	2014-05-07 20:11:27.927952078 +0400
+@@ -10,7 +10,7 @@
+ static void perl_cv_alias(char *to, char *from)
+ {
+     GV *gp = gv_fetchpv(to, TRUE, SVt_PVCV);
+-    GvCV(gp) = perl_get_cv(from, TRUE);
++    GvCV_set(gp, perl_get_cv(from, TRUE));
+ }
+ 
+ static void ApacheLog(int level, SV *sv, SV *msg)
+diff -ur mod_perl-1.31/src/modules/perl/mod_perl.c mod_perl-1.x/src/modules/perl/mod_perl.c
+--- mod_perl-1.31/src/modules/perl/mod_perl.c	2008-11-20 21:12:31.000000000 +0300
++++ mod_perl-1.x/src/modules/perl/mod_perl.c	2014-05-07 20:11:27.903673406 +0400
+@@ -593,9 +593,15 @@
+ #endif
+ }
+ 
++/*
++ * XXX: temp_argv is required to work around a bug in gcc
++ *      present in at least FreeBSD 7.x which causes
++ *      sefaults during mod_perl startup.
++ */
+ void perl_startup (server_rec *s, pool *p)
+ {
+     char *argv[] = { NULL, NULL, NULL, NULL, NULL, NULL, NULL };
++    char **temp_argv = argv;
+     char **entries, *dstr;
+     int status, i, argc=1;
+     dPSRV(s);
+@@ -679,7 +685,7 @@
+     MP_TRACE_g(fprintf(stderr, "..."));
+ 
+ #ifdef PERL_SYS_INIT
+-    PERL_SYS_INIT(&argc,(char***)&argv);
++    PERL_SYS_INIT(&argc,(char***)&temp_argv);
+ #endif
+ 
+ #ifndef perl_init_i18nl10n
+@@ -785,8 +791,8 @@
+     /* *CORE::GLOBAL::exit = \&Apache::exit */
+     if(gv_stashpv("CORE::GLOBAL", FALSE)) {
+ 	GV *exitgp = gv_fetchpv("CORE::GLOBAL::exit", TRUE, SVt_PVCV);
+-	GvCV(exitgp) = perl_get_cv("Apache::exit", TRUE);
+-	GvIMPORTED_CV_on(exitgp);
++	GvCV_set(exitgp, perl_get_cv("Apache::exit", TRUE));
++ 	GvIMPORTED_CV_on(exitgp);
+     }
+ 
+     ENTER_SAFE(s,p);
+diff -ur mod_perl-1.31/src/modules/perl/mod_perl.h mod_perl-1.x/src/modules/perl/mod_perl.h
+--- mod_perl-1.31/src/modules/perl/mod_perl.h	2008-11-20 21:21:18.000000000 +0300
++++ mod_perl-1.x/src/modules/perl/mod_perl.h	2014-05-07 20:11:27.908051775 +0400
+@@ -1026,6 +1026,14 @@
+ #define PERL_HEADER_PARSER_CREATE(s)
+ #endif
+ 
++#ifndef GvCV_set
++#define GvCV_set(gv, cv) (GvCV(gv) = (cv))
++#endif
++
++#ifndef CvGV_set
++#define CvGV_set(cv, gv) (CvGV(cv) = (gv))
++#endif
++
+ typedef struct {
+     array_header *PerlPassEnv;
+     array_header *PerlRequire;
+diff -ur mod_perl-1.31/src/modules/perl/perl_config.c mod_perl-1.x/src/modules/perl/perl_config.c
+--- mod_perl-1.31/src/modules/perl/perl_config.c	2003-03-14 07:55:59.000000000 +0300
++++ mod_perl-1.x/src/modules/perl/perl_config.c	2014-05-07 20:11:27.923471622 +0400
+@@ -1720,7 +1720,7 @@
+ 	if((cv = GvCV((GV*)val)) && (GvSTASH((GV*)val) == GvSTASH(CvGV(cv)))) {
+             GV *gv = CvGV(cv);
+             cv_undef(cv);
+-            CvGV(cv) = gv;
++            CvGV_set(cv, gv);
+             GvCVGEN(gv) = 1; /* invalidate method cache */
+         }
+     }
+diff -ur mod_perl-1.31/src/modules/perl/perl_util.c mod_perl-1.x/src/modules/perl/perl_util.c
+--- mod_perl-1.31/src/modules/perl/perl_util.c	2007-12-03 10:19:59.000000000 +0300
++++ mod_perl-1.x/src/modules/perl/perl_util.c	2014-05-07 20:11:27.899690026 +0400
+@@ -670,6 +670,7 @@
+     if(set_ids++) return;
+     sv_setiv(GvSV(gv_fetchpv("$", TRUE, SVt_PV)), (I32)getpid());
+ #ifndef WIN32
++#if (PERL_REVISION == 5) && (PERL_VERSION <= 15)
+     uid  = (int)getuid(); 
+     euid = (int)geteuid(); 
+     gid  = (int)getgid(); 
+@@ -678,6 +679,7 @@
+ 		     "perl_init_ids: uid=%d, euid=%d, gid=%d, egid=%d\n",
+ 		     uid, euid, gid, egid));
+ #endif
++#endif
+ }
+ 
+ int perl_eval_ok(server_rec *s)
+diff -ur mod_perl-1.31/STATUS mod_perl-1.x/STATUS
+--- mod_perl-1.31/STATUS	2007-03-30 09:53:43.000000000 +0400
++++ mod_perl-1.x/STATUS	2014-05-07 20:11:27.278504901 +0400
+@@ -1,8 +1,9 @@
+ mod_perl 1.3 STATUS:
+-   Last modified at [$Date: 2007-03-30 01:53:43 -0400 (Fri, 30 Mar 2007) $]
++   Last modified at [$Date: 2009-05-12 06:02:15 +0500 (Tue, 12 May 2009) $]
+ 
+ 
+ Release:
++       1.31: Released May 11, 2009.
+        1.30: Released March 29, 2007.
+        1.29: Released Oct 7, 2003.
+        1.28: Released July 2, 2003.
+diff -ur mod_perl-1.31/Symbol/Symbol.xs mod_perl-1.x/Symbol/Symbol.xs
+--- mod_perl-1.31/Symbol/Symbol.xs	2000-12-22 09:02:32.000000000 +0300
++++ mod_perl-1.x/Symbol/Symbol.xs	2014-05-07 20:11:28.148338920 +0400
+@@ -2,6 +2,10 @@
+ #include "perl.h"
+ #include "XSUB.h"
+ 
++#ifndef CvGV_set
++# define CvGV_set(cv, val) (CvGV(cv) = val)
++#endif
++
+ #ifdef PERL_OBJECT
+ #define sv_name(svp) svp
+ #define undef(ref) 
+@@ -30,7 +34,7 @@
+ 	    has_proto = TRUE;
+ 
+ 	cv_undef(cv);
+-	CvGV(cv) = gv;   /* let user-undef'd sub keep its identity */
++        CvGV_set(cv, gv); /* let user-undef'd sub keep its identity */
+         if(has_proto) 
+             SvPOK_on(cv); /* otherwise we get `Prototype mismatch:' */
+ 
