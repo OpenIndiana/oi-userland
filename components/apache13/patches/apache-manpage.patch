@@ -1,0 +1,190 @@
+*** apache_1.3.34/src/support/ab.8.orig	Mon Dec  6 16:28:17 2004
+--- apache_1.3.34/src/support/ab.8	Mon Dec  6 16:28:51 2004
+***************
+*** 226,232 ****
+  some 'expected' forms of responses.
+  .P
+  The rather heavy use of 
+! .BR strstr(3)
+  by the program may skew performance results, since it uses significant
+  CPU resources.  Make sure that performance limits are not hit by
+  .B ab
+--- 226,233 ----
+  some 'expected' forms of responses.
+  .P
+  The rather heavy use of 
+! .\" section number changed for solaris - kene@eng.sun.com
+! .BR strstr(3C)
+  by the program may skew performance results, since it uses significant
+  CPU resources.  Make sure that performance limits are not hit by
+  .B ab
+*** apache_1.3.34/src/support/apxs.8.orig	Mon Dec  6 16:29:01 2004
+--- apache_1.3.34/src/support/apxs.8	Mon Dec  6 16:29:33 2004
+***************
+*** 421,426 ****
+  
+  .PD
+  .SH SEE ALSO
+! .BR apachectl(1),
+  .BR httpd(8).
+  .
+--- 421,427 ----
+  
+  .PD
+  .SH SEE ALSO
+! .\" fixed section number - kene@eng.sun.com
+! .BR apachectl(8),
+  .BR httpd(8).
+  .
+*** apache_1.3.34/src/support/httpd.8.orig	Mon Dec  6 16:29:46 2004
+--- apache_1.3.34/src/support/httpd.8	Mon Dec  6 16:34:09 2004
+***************
+*** 70,76 ****
+  this process is written to a file as given in the configuration file.
+  Alternatively 
+  .B httpd 
+! may be invoked by the Internet daemon inetd(8) each
+  time a connection to the HTTP service is made.
+  .PP
+  This manual page only lists the command line arguments. For details
+--- 70,77 ----
+  this process is written to a file as given in the configuration file.
+  Alternatively 
+  .B httpd 
+! .\" section number changed for solaris - kene@eng.sun.com
+! may be invoked by the Internet daemon inetd(1M) each
+  time a connection to the HTTP service is made.
+  .PP
+  This manual page only lists the command line arguments. For details
+***************
+*** 91,106 ****
+  placed into a dynamic shared object (DSO) file. This file
+  is searched in a hardcoded path under ServerRoot per default. Use this
+  option if you want to override it.
+  .TP 12
+  .BI \-d " serverroot"
+  Set the initial value for the ServerRoot directive to \fIserverroot\fP. This
+  can be overridden by the ServerRoot command in the configuration file. The
+! default is \fB/usr/local/apache\fP.
+  .TP
+  .BI \-f " config"
+  Execute the commands in the file \fIconfig\fP on startup. If \fIconfig\fP
+  does not begin with a /, then it is taken to be a path relative to
+! the ServerRoot. The default is \fBconf/httpd.conf\fP.
+  .TP
+  .BI \-C " directive"
+  Process the configuration \fIdirective\fP before reading config files.
+--- 92,109 ----
+  placed into a dynamic shared object (DSO) file. This file
+  is searched in a hardcoded path under ServerRoot per default. Use this
+  option if you want to override it.
++ .\" fix serverroot for solaris - kene@eng.sun.com
+  .TP 12
+  .BI \-d " serverroot"
+  Set the initial value for the ServerRoot directive to \fIserverroot\fP. This
+  can be overridden by the ServerRoot command in the configuration file. The
+! default is \fB/usr/apache\fP.
+! .\" fix conf file location for solaris - kene@eng.sun.com
+  .TP
+  .BI \-f " config"
+  Execute the commands in the file \fIconfig\fP on startup. If \fIconfig\fP
+  does not begin with a /, then it is taken to be a path relative to
+! the ServerRoot. The default is \fB/etc/apcahe/httpd.conf\fP.
+  .TP
+  .BI \-C " directive"
+  Process the configuration \fIdirective\fP before reading config files.
+***************
+*** 151,173 ****
+  Print the version and build parameters of 
+  .B httpd
+  , and then exit.
+  .SH FILES
+  .PD 0
+! .B /usr/local/apache/conf/httpd.conf
+  .br
+! .B /usr/local/apache/conf/srm.conf
+  .br
+! .B /usr/local/apache/conf/access.conf
+  .br
+! .B /usr/local/apache/conf/mime.types
+  .br
+! .B /usr/local/apache/conf/magic
+  .br
+! .B /usr/local/apache/logs/error_log
+  .br
+! .B /usr/local/apache/logs/access_log
+  .br
+! .B /usr/local/apache/logs/httpd.pid
+  .PD
+  .SH SEE ALSO
+! .BR inetd (8).
+--- 154,177 ----
+  Print the version and build parameters of 
+  .B httpd
+  , and then exit.
++ .\" fix pathnames for solaris - kene@eng.sun.com
+  .SH FILES
+  .PD 0
+! .B /etc/apache/httpd.conf
+  .br
+! .B /etc/apache/srm.conf
+  .br
+! .B /etc/apache/access.conf
+  .br
+! .B /etc/apache/mime.types
+  .br
+! .B /etc/apache/magic
+  .br
+! .B /var/apache/logs/error_log
+  .br
+! .B /var/apache/logs/access_log
+  .br
+! .B /var/run/apache/httpd.pid
+  .PD
+  .SH SEE ALSO
+! .BR inetd (1M).
+*** apache_1.3.34/src/support/suexec.8.orig	Mon Dec  6 16:34:22 2004
+--- apache_1.3.34/src/support/suexec.8	Mon Dec  6 16:36:00 2004
+***************
+*** 13,18 ****
+--- 13,21 ----
+  .\" See the License for the specific language governing permissions and
+  .\" limitations under the License.
+  .\"
++ .\" modified to include solaris notes about suexec being shipped
++ .\" disabled and how to enable it.  kene@eng.sun.com
++ .\"
+  .SH NAME
+  suexec \- Switch User For Exec
+  .SH SYNOPSIS
+***************
+*** 34,38 ****
+--- 37,64 ----
+  Display the list of compile-time settings used when \fBsuexec\fP
+  was built.  No other action is taken.
+  .PD
++ .SH NOTES
++ Because some sites may not wish to run \fBsuexec\fP, it is
++ disabled by default.  The \fBsuexec\fP binary is installed
++ as \fB/usr/apache/bin/suexec.disabled\fP.
++ .PP
++ To enable \fBsuexec\fP operation, do the following (as root):
++ .PP
++ .RS
++ .nf
++ .ft 4
++ .ta +.5i +1i
++ # cd /usr/apache/bin
++ # cp suexec.disabled suexec
++ # chmod 4711 suexec
++ # chown root suexec
++ .fi
++ .ta
++ .ft 1
++ .RE
++ .PP
++ Then stop and start the http server (you must fully stop and start
++ it - restart is not sufficient).
++ 
+  .SH SEE ALSO
+  .BR httpd(8)

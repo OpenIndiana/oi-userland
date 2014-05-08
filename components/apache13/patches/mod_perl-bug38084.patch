@@ -1,0 +1,13 @@
+--- mod_perl-1.31/lib/Apache/SizeLimit.pm.orig	Mon Nov 23 02:34:21 2009
++++ mod_perl-1.31/lib/Apache/SizeLimit.pm	Mon Nov 23 04:09:45 2009
+@@ -174,8 +174,9 @@
+ }
+ 
+ BEGIN {
++    my ($major,$minor) = split(/\./, $Config{'osvers'});
+     if (   $Config{'osname'} eq 'solaris'
+-        && $Config{'osvers'} >= 2.6 ) {
++        && (($major > 2) || ($major == 2 && $minor >= 6))) {
+         *_platform_check_size   = \&_solaris_2_6_size_check;
+         *_platform_getppid = \&_perl_getppid;
+     }
