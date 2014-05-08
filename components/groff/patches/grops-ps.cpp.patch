@@ -1,0 +1,19 @@
+Prevent /usr/bin/grops from dumping core with given an invalid argument value
+with something such as
+
+ $ /usr/bin/grops -c a
+
+Fix has been submitted upstream:
+http://savannah.gnu.org/bugs/?42190
+
+--- groff-1.22.2/src/devices/grops/ps.cpp.orig	2014-04-24 06:01:32.421674773 -0700
++++ groff-1.22.2/src/devices/grops/ps.cpp	2014-04-24 09:27:56.445423217 -0700
+@@ -1803,7 +1803,7 @@
+       break;
+     case 'c':
+       if (sscanf(optarg, "%d", &ncopies) != 1 || ncopies <= 0) {
+-	error("bad number of copies `%s'", optarg);
++	error("bad number of copies `%1'", optarg);
+ 	ncopies = 1;
+       }
+       break;
