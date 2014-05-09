@@ -53,7 +53,13 @@ CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS) -DSET_USE_PAM -DDEPRECATE_SUNSSH_OPT -DLA
 # libraries that it needs.
 CONFIGURE_OPTIONS += LDFLAGS="$(LDFLAGS) -B direct -z nolazyload"
 
+# Build with BSM audit. Do not check if getaudit and getaudit_addr are in
+# libbsm, because they are no longer in libbsm and not needed any way.
 CONFIGURE_OPTIONS += --with-audit=bsm
+CONFIGURE_OPTIONS += "ac_cv_lib_bsm_getaudit=yes"       
+CONFIGURE_OPTIONS += "ac_cv_func_getaudit=yes"
+CONFIGURE_OPTIONS += "ac_cv_func_getaudit_addr=yes"
+     
 CONFIGURE_OPTIONS += --with-libedit
 CONFIGURE_OPTIONS += --with-kerberos5
 CONFIGURE_OPTIONS += --with-pam
