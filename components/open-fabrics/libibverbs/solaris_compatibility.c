@@ -56,6 +56,8 @@
 #include <alloca.h>
 #include "../include/infiniband/arch.h"
 #include "../include/infiniband/verbs.h"
+#include "../include/infiniband/kern-abi.h"
+#include "../include/infiniband/driver.h"
 #include <errno.h>
 #include <pthread.h>
 #include <kstat.h>
@@ -208,6 +210,12 @@ int sol_ibv_query_pkey(struct ibv_context *, uint8_t, int, uint16_t *);
 void __attribute__((constructor))solaris_init(void);
 void __attribute__((destructor))solaris_fini(void);
 
+int sol_ibv_query_device(struct ibv_device *device,
+    struct ibv_device_attr *device_attr);
+
+int sol_ibv_query_port(struct ibv_context *, uint8_t, struct ibv_port_attr *);
+
+
 void
 solaris_init(void)
 {
@@ -283,7 +291,6 @@ ibdev_cache_init()
 {
 	ibdev_cache_info_t	info;
 	struct ibv_device	**root_dev_list, **dev_list = NULL;
-	struct ibv_context	*ctx = NULL;
 	struct ibv_device_attr	device_attr;
 	int			i, num_dev, dev_num, ret = 1;
 	uint64_t		guid;
@@ -298,15 +305,10 @@ ibdev_cache_init()
 
 	for (i = 0; i < num_dev; i++, dev_list++) {
 
-		if (!(ctx = ibv_open_device(*dev_list))) {
-			fprintf(stderr, "failed to open device %p\n",
+		if (sol_ibv_query_device(*dev_list, &device_attr)) {
+			fprintf(stderr, "failed to query device %p\n",
 			    *dev_list);
 			goto error_exit2;
-		}
-
-		if (ibv_query_device(ctx, &device_attr)) {
-			fprintf(stderr, "failed to query device %p\n", ctx);
-			goto error_exit3;
 		}
 
 		guid = ntohll(device_attr.node_guid);
@@ -339,7 +341,7 @@ ibdev_cache_init()
 			p = ibdev + (strlen("mlx4_"));
 		} else {
 			fprintf(stderr, "Invalid device %s\n", ibdev);
-			goto error_exit3;
+			goto error_exit2;
 		}
 		dev_num = atoi(p);
 		(void) strcpy(info.ibd_name, ibdev);
@@ -349,16 +351,13 @@ ibdev_cache_init()
 		if (ibdev_cache_add(dev_num, &info)) {
 			fprintf(stderr, "failed to add dev %d to ibdev cache\n",
 			    dev_num);
-			goto error_exit3;
+			goto error_exit2;
 		}
 	}
 
 	ret = 0;
 
 	/* clean up and Return */
-error_exit3:
-	if (ctx)
-		ibv_close_device(ctx);
 error_exit2:
 	if (root_dev_list)
 		ibv_free_device_list(root_dev_list);
@@ -747,10 +746,11 @@ get_port_info(const char *devname, uint8_t port_num,
     uint16_t **pkey_table)
 {
 	struct ibv_device 	**root_dev_list, **dev_list = NULL;
-	struct ibv_context 	*ctx = NULL;
+	struct ibv_context	ctx;
 	union ibv_gid 		*gids = NULL;
 	uint16_t		*pkeys = NULL;
 	int 			i, num_dev, rv, ret = 1;
+	char			uverbs_devpath[MAXPATHLEN];
 
 	root_dev_list = dev_list = ibv_get_device_list(&num_dev);
 	if (!dev_list) {
@@ -769,14 +769,17 @@ get_port_info(const char *devname, uint8_t port_num,
 		goto error_exit2;
 	}
 
-	if (!(ctx = ibv_open_device(*dev_list))) {
-		fprintf(stderr, "failed to open device %p\n", *dev_list);
-		goto error_exit2;
-	}
+	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
+	    (*dev_list)->dev_name);
 
-	if (ibv_query_port(ctx, port_num, port_attr)) {
+	ctx.device = *dev_list;
+
+	if ((ctx.cmd_fd = open(uverbs_devpath, O_RDWR)) < 0)
+		goto error_exit2;
+
+	if (sol_ibv_query_port(&ctx, port_num, port_attr)) {
 		fprintf(stderr, "failed to query dev %p, port %d\n",
-		    ctx, port_num);
+		    &ctx, port_num);
 		goto error_exit3;
 	}
 
@@ -789,7 +792,7 @@ get_port_info(const char *devname, uint8_t port_num,
 		 * set high bit of port_num to get all gids in one shot.
 		 */
 		port_num |= 0x80;
-		rv = sol_ibv_query_gid(ctx, port_num, port_attr->gid_tbl_len,
+		rv = sol_ibv_query_gid(&ctx, port_num, port_attr->gid_tbl_len,
 		    gids);
 		if (rv != 0)
 			goto error_exit4;
@@ -808,7 +811,7 @@ get_port_info(const char *devname, uint8_t port_num,
 		 * set high bit of port_num to get all pkeys in one shot.
 		 */
 		port_num |= 0x80;
-		rv = sol_ibv_query_pkey(ctx, port_num, port_attr->pkey_tbl_len,
+		rv = sol_ibv_query_pkey(&ctx, port_num, port_attr->pkey_tbl_len,
 		    pkeys);
 		if (rv != 0)
 			goto error_exit5;
@@ -829,8 +832,8 @@ error_exit4:
 	if (gids)
 		free(gids);
 error_exit3:
-	if (ctx)
-		ibv_close_device(ctx);
+	if (ctx.cmd_fd > 0)
+		close(ctx.cmd_fd);
 error_exit2:
 	if (root_dev_list)
 		ibv_free_device_list(root_dev_list);
@@ -1626,22 +1629,14 @@ int
 sol_ibv_query_gid(struct ibv_context *context, uint8_t port_num, int index,
     union ibv_gid *gid)
 {
-	char uverbs_devpath[MAXPATHLEN];
-	int uverbs_fd;
-	int count, start;
-	sol_uverbs_gid_t *uverbs_gidp;
+	int			count, start;
+	sol_uverbs_gid_t	*uverbs_gidp;
 
 	/*
 	 * Not exported via sysfs, use ioctl.
 	 */
 	if (!context || !gid || (index < 0) ||
 	    ((port_num & 0x80) && (index == 0)))
-		return (-1);
-
-	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
-	    context->device->dev_name);
-
-	if ((uverbs_fd = open(uverbs_devpath, O_RDWR)) < 0)
 		return (-1);
 
 	if (port_num & 0x80) {
@@ -1655,7 +1650,6 @@ sol_ibv_query_gid(struct ibv_context *context, uint8_t port_num, int index,
 	uverbs_gidp = (sol_uverbs_gid_t *)malloc(count *
 	    sizeof (union ibv_gid) + sizeof (sol_uverbs_gid_t));
 	if (uverbs_gidp == NULL) {
-		close(uverbs_fd);
 		return (-1);
 	}
 
@@ -1663,7 +1657,7 @@ sol_ibv_query_gid(struct ibv_context *context, uint8_t port_num, int index,
 	uverbs_gidp->uverbs_gid_cnt = count;
 	uverbs_gidp->uverbs_gid_start_index = start;
 
-	if (ioctl(uverbs_fd, UVERBS_IOCTL_GET_GIDS, uverbs_gidp) != 0) {
+	if (ioctl(context->cmd_fd, UVERBS_IOCTL_GET_GIDS, uverbs_gidp) != 0) {
 #ifdef	DEBUG
 		fprintf(stderr, "UVERBS_IOCTL_GET_GIDS failed: %s\n",
 		    strerror(errno));
@@ -1682,12 +1676,10 @@ sol_ibv_query_gid(struct ibv_context *context, uint8_t port_num, int index,
 	}
 	memcpy(gid, uverbs_gidp->uverbs_gids, sizeof (union ibv_gid) * count);
 	free(uverbs_gidp);
-	close(uverbs_fd);
 	return (0);
 
 gid_error_exit:
 	free(uverbs_gidp);
-	close(uverbs_fd);
 	return (-1);
 }
 
@@ -1695,10 +1687,8 @@ int
 sol_ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
     int index, uint16_t *pkey)
 {
-	char uverbs_devpath[MAXPATHLEN];
-	int uverbs_fd;
-	int count, start;
-	sol_uverbs_pkey_t *uverbs_pkeyp;
+	int			count, start;
+	sol_uverbs_pkey_t	*uverbs_pkeyp;
 
 	/*
 	 * Not exported via sysfs, use ioctl.
@@ -1707,9 +1697,7 @@ sol_ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
 	    ((port_num & 0x80) && (index == 0)))
 		return (-1);
 
-	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
-	    context->device->dev_name);
-	if ((uverbs_fd = open(uverbs_devpath, O_RDWR)) < 0)
+	if (context->cmd_fd < 0)
 		return (-1);
 
 	if (port_num & 0x80) {
@@ -1723,7 +1711,6 @@ sol_ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
 	uverbs_pkeyp = (sol_uverbs_pkey_t *)malloc(count *
 	    sizeof (uint16_t) + sizeof (sol_uverbs_pkey_t));
 	if (uverbs_pkeyp == NULL) {
-		close(uverbs_fd);
 		return (-1);
 	}
 
@@ -1731,7 +1718,7 @@ sol_ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
 	uverbs_pkeyp->uverbs_pkey_cnt = count;
 	uverbs_pkeyp->uverbs_pkey_start_index = start;
 
-	if (ioctl(uverbs_fd, UVERBS_IOCTL_GET_PKEYS, uverbs_pkeyp) != 0) {
+	if (ioctl(context->cmd_fd, UVERBS_IOCTL_GET_PKEYS, uverbs_pkeyp) != 0) {
 #ifdef	DEBUG
 		fprintf(stderr, "UVERBS_IOCTL_GET_PKEYS failed: %s\n",
 		    strerror(errno));
@@ -1750,12 +1737,57 @@ sol_ibv_query_pkey(struct ibv_context *context, uint8_t port_num,
 	}
 	memcpy(pkey, uverbs_pkeyp->uverbs_pkey, sizeof (uint16_t) * count);
 	free(uverbs_pkeyp);
-	close(uverbs_fd);
 	return (0);
 
 pkey_error_exit:
 	free(uverbs_pkeyp);
-	close(uverbs_fd);
 	return (-1);
+}
+
+int
+sol_ibv_query_device(struct ibv_device *device, struct ibv_device_attr *attr)
+{
+	struct ibv_query_device cmd;
+	struct ibv_context	context;
+	char			uverbs_devpath[MAXPATHLEN];
+	int			uverbs_fd, ret;
+	uint64_t		raw_fw_ver;
+	unsigned		major, minor, sub_minor;
+
+	context.device = device;
+
+	if (!device || !attr)
+		return (-1);
+
+	snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s", IB_OFS_DEVPATH_PREFIX,
+	    device->dev_name);
+
+	if ((context.cmd_fd = open(uverbs_devpath, O_RDWR)) <  0)
+		return (-1);
+
+	ret = ibv_cmd_query_device(&context, attr, &raw_fw_ver, &cmd,
+	    sizeof (cmd));
+
+	if (ret)
+		return (ret);
+
+	major	  = (raw_fw_ver >> 32) & 0xffff;
+	minor	  = (raw_fw_ver >> 16) & 0xffff;
+	sub_minor = raw_fw_ver & 0xffff;
+
+	snprintf(attr->fw_ver, sizeof (attr->fw_ver),
+	    "%d.%d.%03d", major, minor, sub_minor);
+
+	close(context.cmd_fd);
+	return (0);
+}
+
+int
+sol_ibv_query_port(struct ibv_context *context, uint8_t port,
+    struct ibv_port_attr *attr)
+{
+	struct	ibv_query_port cmd;
+
+	return (ibv_cmd_query_port(context, port, attr, &cmd, sizeof (cmd)));
 }
 #endif
