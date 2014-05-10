@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -63,17 +65,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pyasn1_modules/rfc4210.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pyasn1_modules/rfc5208.py
 license LICENSE license=BSD-like
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pyasn1-modules-$(PYV)@0.0.5,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
-# force dependency on pyasn1; pkgdepend work is needed to flush these out
+# force a dependency on pyasn1; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pyasn1-$(PYV)
 
 # force a dependency on the pyasn1-modules package
 depend type=require \
     fmri=library/python/pyasn1-modules@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/pyasn1-modules-$(PYV)@0.0.5,5.12-5.12.0.0.0.41.0

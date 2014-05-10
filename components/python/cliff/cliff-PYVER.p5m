@@ -18,12 +18,11 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
-# argparse is part of python 2.7, but separate in 2.6
-<transform depend type=require fmri=library/python/argparse-27 -> drop>
-#
 set name=pkg.fmri \
     value=pkg:/library/python/cliff-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="Command Line Interface Formulation Framework"
@@ -62,6 +61,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cliff/lister.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cliff/show.py
 license cliff.license license="Apache v2.0, MIT"
 
+# force a group dependency on the optional prettytable; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/prettytable-$(PYV)
+
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/cliff-$(PYV)@1.4.5,5.12-5.12.0.0.0.41.0
@@ -80,5 +83,5 @@ depend type=require \
 # force a dependency on cmd2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/cmd2-$(PYV)
 
-# force a dependency on prettytable; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/prettytable-$(PYV)
+# force a dependency on setuptools; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/setuptools-$(PYV)

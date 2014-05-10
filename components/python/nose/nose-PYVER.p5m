@@ -18,13 +18,16 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
     value=pkg:/library/python/nose-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-set name=pkg.summary \
-    value="A unittest-based testing framework for python that makes writing and running tests easier"
+set name=pkg.summary value="Nicer testing for Python"
+set name=pkg.description \
+    value="nose extends the test loading and running features of unittest, making it easier to write, find and run tests. By default, nose will run tests in files or directories under the current working directory whose names include 'test' or 'Test' at a word boundary. Test output is similar to that of unittest, but also includes captured stdout output from failing tests, for easy print-style debugging. These features, and many more, are customizable through the use of plugins. Plugins included with nose provide support for doctest, code coverage and profiling, flexible attribute-based test selection, output capture and more."
 set name=com.oracle.info.description value="the Python nose unit test framework"
 set name=com.oracle.info.tpno value=12933
 set name=info.classification \
@@ -91,13 +94,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/nose/usage.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/nose/util.py
 license nose.license license=LGPLv2.1
 
-# force a dependency on the Python runtime
-depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
-    pkg.debug.depend.path=usr/bin
+# force a group dependency on the optional coverage; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/coverage-$(PYV)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/nose-$(PYV)@1.2.1,5.12-5.12.0.0.0.41.0
 
 # force a dependency on the nose package
 depend type=require \
     fmri=library/python/nose@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional fmri=library/python-2/nose-$(PYV)@1.2.1,5.12-5.12.0.0.0.41.0

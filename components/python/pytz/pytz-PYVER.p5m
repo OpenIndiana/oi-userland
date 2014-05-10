@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -50,6 +52,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytz/tzfile.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytz/tzinfo.py
 #
 license LICENSE.txt license=MIT
+
+# force a group dependency on the optional setuptools; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/setuptools-$(PYV)
 
 # force the rename with an optional dependency on the old name
 depend type=optional \

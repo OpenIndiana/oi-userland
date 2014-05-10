@@ -30,7 +30,7 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e4ccf489159f0c2b1932ea282f7663daada0a7f8309edc4c34904605a98cf9f2
 COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
-COMPONENT_BUGDB=	python-mod/osol.config
+COMPONENT_BUGDB=	python-mod/oslo.config
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

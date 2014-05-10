@@ -18,11 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
-
-PATH=/usr/bin:/usr/sbin
 
 COMPONENT_NAME=		pyOpenSSL
 COMPONENT_VERSION=	0.13
@@ -38,6 +38,18 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
+ASLR_MODE = $(ASLR_NOT_APPLICABLE)
+
+# Needed to get around a broken /usr/lib/python2.7/config/Makefile
+# See CR #16837431.
+LD=$(CC)
+LDSHARED=$(CC) -G
+PYTHON_ENV += CC="$(CC)"
+PYTHON_ENV += LDSHARED="$(LDSHARED)"
+PYTHON_ENV += LD="$(LD)"
+PYTHON_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
+
 COMPONENT_TEST_DIR = $(COMPONENT_SRC)/OpenSSL/test
 # The .so files are under ./OpenSSL/64 not ./64/OpenSSL so the
 # $(PYTHON_VENDOR_PACKAGES) variable for 64bit Python is wrong.
@@ -45,7 +57,6 @@ COMPONENT_TEST_DIR = $(COMPONENT_SRC)/OpenSSL/test
 COMPONENT_TEST_ENV += PYTHONPATH=$(PROTO_DIR)$(PYTHON_VENDOR_PACKAGES.32)
 COMPONENT_TEST_CMD = $(SHELL)
 COMPONENT_TEST_ARGS = $(COMPONENT_DIR)/files/runtests
-ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
 build:		$(BUILD_32_and_64)

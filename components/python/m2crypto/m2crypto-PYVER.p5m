@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -29,7 +31,8 @@ set name=pkg.description \
 set name=com.oracle.info.description value="Python bindings for OpenSSL"
 set name=com.oracle.info.tpno value=4424
 set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
+    value=org.opensolaris.category.2008:Development/Python \
+    value=org.opensolaris.category.2008:System/Security
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream value="Heikki Toivonen <heikki@osafoundation.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -87,6 +90,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/M2Crypto/util.py
 #
 license LICENCE license=BSD
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/m2crypto-$(PYV)@0.21.1,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
@@ -94,7 +101,3 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # force a dependency on the m2crypto package
 depend type=require \
     fmri=library/python/m2crypto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/m2crypto-$(PYV)@0.21.1,5.12-5.12.0.0.0.41.0

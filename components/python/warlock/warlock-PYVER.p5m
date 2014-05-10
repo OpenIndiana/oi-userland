@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -50,14 +52,20 @@ file path=usr/lib/python$(PYVER)/vendor-packages/warlock/model.py
 #
 license warlock.license license=Apache
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/warlock-$(PYV)@1.0.1,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
 
+# force a dependency on jsonpatch; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/jsonpatch-$(PYV)
+
+# force a dependency on jsonschema; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/jsonschema-$(PYV)
+
 # force a dependency on the warlock package
 depend type=require \
     fmri=library/python/warlock@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/warlock-$(PYV)@1.0.1,5.12-5.12.0.0.0.41.0

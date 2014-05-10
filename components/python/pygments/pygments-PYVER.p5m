@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -123,9 +125,14 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pygments/unistring.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pygments/util.py
 license pygments.license license="BSD, GPLv2, GPLv3, LGPLv2.1, CPLv1.1"
 
+# force a group dependency on the optional python-imaging; pkgdepend work is
+# needed to flush this out.
+depend type=group fmri=library/python/python-imaging-$(PYV)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/pygments-$(PYV)@1.6,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the pygments package
 depend type=require \
     fmri=library/python/pygments@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional fmri=library/python-2/pygments-$(PYV)@1.6,5.12-5.12.0.0.0.41.0

@@ -18,7 +18,9 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+
+#
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
@@ -30,7 +32,8 @@ set name=com.oracle.info.description \
     value="ldtp, the Linux Desktop Testing Project for Python"
 set name=com.oracle.info.tpno value=10015
 set name=info.classification \
-    value="org.opensolaris.category.2008:Development/Distribution Tools"
+    value="org.opensolaris.category.2008:Development/Distribution Tools" \
+    value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2011/261
@@ -68,6 +71,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/ooldtp/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/ooldtp/_context.py
 #
 license COPYING license=LGPLv2.1
+
+# force a dependency on python-twisted; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/python-twisted-$(PYV)
 
 # force a dependency on the ldtp package
 depend type=require \

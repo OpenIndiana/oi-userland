@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -119,6 +121,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/eventlet/websocket.py
 file path=usr/lib/python$(PYVER)/vendor-packages/eventlet/wsgi.py
 license eventlet.license license="MIT, Apache 2.0, BSD"
 
+# force a group dependency on the optional pyopenssl; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/pyopenssl-$(PYV)
+
+# force a group dependency on the optional setuptools; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/setuptools-$(PYV)
+
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/eventlet-$(PYV)@0.13.0,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
@@ -129,7 +143,3 @@ depend type=require \
 
 # force a dependency on greenlet; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/greenlet-$(PYV)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/eventlet-$(PYV)@0.13.0,5.12-5.12.0.0.0.41.0

@@ -18,11 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-#
-include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+#
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pycups
 COMPONENT_VERSION=	1.9.46
@@ -43,12 +44,25 @@ CFLAGS += -DVERSION=\\\"$(COMPONENT_VERSION)\\\"
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+# Needed to get around a broken /usr/lib/python2.7/config/Makefile
+# See CR #16837431.
+LD=$(CC)
+LDSHARED=$(CC) -G
+PYTHON_ENV += CC="$(CC)"
+PYTHON_ENV += LDSHARED="$(LDSHARED)"
+PYTHON_ENV += LD="$(LD)"
+PYTHON_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
+
+COMPONENT_TEST_ARGS=	test.py
+COMPONENT_TEST_DIR=	$(COMPONENT_SRC)
+
 # common targets
 build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-test:		$(NO_TESTS)
+test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

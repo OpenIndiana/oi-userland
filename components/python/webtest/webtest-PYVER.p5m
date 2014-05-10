@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -55,6 +57,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/webtest/sel.py
 file path=usr/lib/python$(PYVER)/vendor-packages/webtest/utils.py
 license docs/license.txt license=MIT
 
+# force a group dependency on the optional lxml; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/lxml-$(PYV)
+
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/webtest-$(PYV)@2.0.6,5.12-5.12.0.0.0.41.0
@@ -67,11 +73,8 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # out.
 depend type=require fmri=library/python/beautifulsoup4-$(PYV)
 
-# force a dependency on lxml; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/lxml-$(PYV)
-
 # force a dependency on ordereddict; pkgdepend work is needed to flush this out.
-$(PYTHON_2.6_ONLY)depend type=require fmri=library/python/ordereddict-26
+depend type=require fmri=library/python/ordereddict-$(PYV)
 
 # force a dependency on paste.deploy; pkgdepend work is needed to flush this
 # out.

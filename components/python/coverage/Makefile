@@ -18,11 +18,12 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
-#
-include ../../../make-rules/shared-macros.mk
 
-PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
+#
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coverage
 COMPONENT_VERSION=	3.5
@@ -40,13 +41,23 @@ include $(WS_TOP)/make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
+# Needed to get around a broken /usr/lib/python2.7/config/Makefile
+# See CR #16837431.
+LD=$(CC)
+LDSHARED=$(CC) -G
+PYTHON_ENV += CC="$(CC)"
+PYTHON_ENV += LDSHARED="$(LDSHARED)"
+PYTHON_ENV += LD="$(LD)"
+PYTHON_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
+
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
 COMPONENT_POST_INSTALL_ACTION =	\
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f coverage coverage$(PYTHON_VERSION))
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

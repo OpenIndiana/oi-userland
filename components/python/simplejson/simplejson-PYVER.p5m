@@ -26,7 +26,9 @@
 set name=pkg.fmri \
     value=pkg:/library/python/simplejson-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary \
-    value="JSON (Java Script Object Notation) encoder/decoder for Python"
+    value="JSON (JavaScript Object Notation) encoder/decoder for Python"
+set name=pkg.description \
+    value="The simplejson module is a simple, fast, complete, correct, and extensible JSON encoder and decoder for Python. The encoder can be specialized to provide serialization in any kind of situation, without any special support by the objects to be serialized (somewhat like pickle). The decoder can handle incoming JSON strings of any specified encoding (UTF-8 by default). It can also be specialized to post-process JSON objects, which is particularly useful for implementing protocols such as JSON-RPC that have a richer type system than JSON itself."
 set name=com.oracle.info.description value="the JSON encoder/decoder for Python"
 set name=com.oracle.info.tpno value=5929
 set name=info.classification \
@@ -76,6 +78,10 @@ license simplejson.license license=MIT
 depend type=optional \
     fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/simplejson-$(PYV)@2.1.2,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
@@ -83,7 +89,3 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # force a dependency on the simplejson package
 depend type=require \
     fmri=library/python/simplejson@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/simplejson-$(PYV)@2.1.2,5.12-5.12.0.0.0.41.0

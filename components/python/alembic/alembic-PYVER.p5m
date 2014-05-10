@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -35,6 +37,9 @@ set name=info.upstream value="Mike Bayer <mike@zzzcomputing.com>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2013/254
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+link path=usr/bin/alembic target=alembic-$(PYVER) mediator=python \
+    mediator-version=$(PYVER)
+file path=usr/bin/alembic-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/alembic-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
@@ -88,5 +93,11 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 depend type=require \
     fmri=library/python/alembic@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
+# force a dependency on argparse; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/argparse-$(PYV)
+
 # force a dependency on mako; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/mako-$(PYV)
+
+# force a dependency on sqlalchemy; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/sqlalchemy-$(PYV)

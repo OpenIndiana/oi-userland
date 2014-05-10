@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -40,15 +40,25 @@ include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
 
 COMPONENT_TEST_DIR= $(COMPONENT_SRC) 
-COMPONENT_TEST_CMD= $(@D)/scripts-2.6/trial twisted
+COMPONENT_TEST_CMD= $(@D)/scripts-$(PYTHON_VERSION)/trial twisted
 COMPONENT_TEST_ARGS=""
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-# common targets
-build:          $(BUILD_32_and_64)
+# Needed to get around a broken /usr/lib/python2.7/config/Makefile
+# See CR #16837431.
+LD=$(CC)
+LDSHARED=$(CC) -G
+PYTHON_ENV += CC="$(CC)"
+PYTHON_ENV += LDSHARED="$(LDSHARED)"
+PYTHON_ENV += LD="$(LD)"
+PYTHON_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 
-install:        $(INSTALL_32_and_64)
+# common targets
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 
 # There are no automated tests yet, but the built-in unit tests can be run
 # manually with:
@@ -57,8 +67,8 @@ install:        $(INSTALL_32_and_64)
 # $ ../build/i86-2.6/scripts-2.6/trial twisted
 # $ ../build/i86-2.7/scripts-2.7/trial twisted
 #
-test:           $(TEST_32_and_64)
+test:		$(TEST_32_and_64)
 
-BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
+BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include $(WS_TOP)/make-rules/depend.mk

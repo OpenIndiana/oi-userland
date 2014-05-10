@@ -18,6 +18,8 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
@@ -67,8 +69,21 @@ file path=usr/lib/python$(PYVER)/vendor-packages/mako/util.py
 #
 license LICENSE license=MIT
 
+# force a group dependency on the optional babel; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/babel-$(PYV)
+
+# force a group dependency on the optional markupsafe; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/markupsafe-$(PYV)
+
+# force a group dependency on the optional pygments; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/pygments-$(PYV)
+
 # force the rename with an optional dependency on the old name
-depend type=optional fmri=library/python-2/mako-$(PYV)@0.4.1,5.12-5.12.0.0.0.41.0
+depend type=optional \
+    fmri=library/python-2/mako-$(PYV)@0.4.1,5.12-5.12.0.0.0.41.0
 
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \

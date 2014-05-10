@@ -18,14 +18,18 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 set name=pkg.fmri \
     value=pkg:/library/python/pip-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="A tool for installing and managing Python packages"
-set name=com.oracle.info.description \
+set name=pkg.description \
     value="Pip is a tool which can install Python packages from a variety of sources including PyPI (and other indexes) using requirement specifiers, VCS project URLs, local project directories, local or remote source archives and requirement files which provide an easy way to specify a whole installation environment."
+set name=com.oracle.info.description \
+    value="pip, a tool for installing and managing Python packages"
 set name=com.oracle.info.tpno value=15181
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
@@ -136,9 +140,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pip/vendor/six.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pip/wheel.py
 license pip.license license="MIT, LGPL2.1"
 
+# force the rename with an optional dependency on the old name
+depend type=optional fmri=library/python-2/pip-$(PYV)@1.4.1,5.12-5.12.0.0.0.41.0
+
+# force a dependency on lxml; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/lxml-$(PYV)
+
+# force a dependency on ordereddict; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/ordereddict-$(PYV)
+
 # force a dependency on the pip package
 depend type=require \
     fmri=library/python/pip@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional fmri=library/python-2/pip-$(PYV)@1.4.1,5.12-5.12.0.0.0.41.0

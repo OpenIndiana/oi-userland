@@ -42,8 +42,7 @@ file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pilconvert.py \
 link path=usr/bin/pilconvert.py target=pilconvert-$(PYVER).py mediator=python \
     mediator-version=$(PYVER)
 file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pildriver.py \
-    path=usr/bin/pildriver-$(PYVER).py pkg.depend.bypass-generate=.* \
-    pkg.tmp.autopyc=false
+    path=usr/bin/pildriver-$(PYVER).py pkg.tmp.autopyc=false
 link path=usr/bin/pildriver.py target=pildriver-$(PYVER).py mediator=python \
     mediator-version=$(PYVER)
 file build/$(MACH32)-$(PYVER)/scripts-$(PYVER)/pilfile.py \
@@ -155,6 +154,10 @@ license imaging.license license="Historical Permission Notice and Disclaimer"
 depend type=optional \
     fmri=consolidation/desktop/desktop-incorporation@5.12-5.12.0.0.0.14.0
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/python-imaging-$(PYV)@1.1.7,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
@@ -162,7 +165,3 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # force a dependency on the python-imaging package
 depend type=require \
     fmri=library/python/python-imaging@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/python-imaging-$(PYV)@1.1.7,5.12-5.12.0.0.0.41.0

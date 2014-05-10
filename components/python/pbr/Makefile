@@ -18,8 +18,11 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+
 #
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pbr
@@ -38,17 +41,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
-COMPONENT_TEST_DIR =    $(SOURCE_DIR)
-COMPONENT_TEST_ARGS =   setup.py test
-
-# required until d2to1 is added to the CBE
-D2TO1 = $(WS_COMPONENTS)/python/d2to1/build/prototype/$(MACH)/$(PYTHON_LIB)
-
-$(D2TO1):
-	(cd ../d2to1 ; gmake install)
-
-PYTHON_ENV += PYTHONPATH=$(D2TO1)
-$(BUILD_32):	$(D2TO1)
+COMPONENT_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_TEST_ARGS =	setup.py test
 
 # common targets
 build:		$(BUILD_NO_ARCH)
