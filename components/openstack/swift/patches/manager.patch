@@ -1,0 +1,32 @@
+We want to put the swift server executables in /usr/lib/swift, which means
+that we need to be able to call them from there.  We do so by using the
+"executable" keyword argument to subprocess.Popen() (and allow for it to be
+mocked out during testing).
+
+This patch is not suitable for pushing upstream.
+
+diff --git a/swift/common/manager.py b/swift/common/manager.py
+--- a/swift/common/manager.py
++++ b/swift/common/manager.py
+@@ -532,7 +532,8 @@ class Server():
+                 re_out = subprocess.PIPE
+             else:
+                 re_out = open(os.devnull, 'w+b')
+-        proc = subprocess.Popen(args, stdout=re_out, stderr=re_err)
++        proc = subprocess.Popen(args, stdout=re_out, stderr=re_err,
++            executable='/usr/lib/swift/' + self.cmd)
+         pid_file = self.get_pid_file_name(conf_file)
+         write_file(pid_file, proc.pid)
+         self.procs.append(proc)
+diff --git a/test/unit/common/test_manager.py b/test/unit/common/test_manager.py
+--- a/test/unit/common/test_manager.py
++++ b/test/unit/common/test_manager.py
+@@ -816,7 +816,7 @@ class TestServer(unittest.TestCase):
+         class MockProc():
+ 
+             def __init__(self, pid, args, stdout=MockProcess.NOTHING,
+-                         stderr=MockProcess.NOTHING):
++                         stderr=MockProcess.NOTHING, executable=None):
+                 self.pid = pid
+                 self.args = args
+                 self.stdout = stdout

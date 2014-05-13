@@ -1,0 +1,29 @@
+Convert the calls to ps in swift-orphans to calls that will work on
+Solaris.
+
+diff --git a/bin/swift-orphans b/bin/swift-orphans
+--- a/bin/swift-orphans
++++ b/bin/swift-orphans
+@@ -42,12 +42,12 @@ Example (sends SIGTERM to all orphaned S
+             if name.endswith('.pid'):
+                 pids.append(open(os.path.join(root, name)).read().strip())
+                 pids.extend(subprocess.Popen(
+-                    ['ps', '--ppid', pids[-1], '-o', 'pid', '--no-headers'],
++                    ['pgrep', '-P', pids[-1]],
+                     stdout=subprocess.PIPE).communicate()[0].split())
+ 
+     listing = []
+     for line in subprocess.Popen(
+-            ['ps', '-eo', 'etime,pid,args', '--no-headers'],
++            ['ps', '-eo', 'etime=', '-o' 'pid=', '-o' 'args='],
+             stdout=subprocess.PIPE).communicate()[0].split('\n'):
+         if not line:
+             continue
+@@ -58,6 +58,7 @@ Example (sends SIGTERM to all orphaned S
+             sys.exit('Could not process ps line %r' % line)
+         if pid in pids:
+             continue
++        # XXX Do we get enough of the arguments to get "once"?
+         if (not args.startswith('/usr/bin/python /usr/bin/swift-') and
+             not args.startswith('/usr/bin/python /usr/local/bin/swift-')) or \
+                 'swift-orphans' in args or \

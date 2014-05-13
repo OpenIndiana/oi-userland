@@ -1,0 +1,76 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import errno
+import os
+import sys
+
+import smf_include
+
+rings = {
+    "account-reaper": ["account", "container", "object"],
+    "account-replicator": ["account"],
+    "container-replicator": ["container"],
+    "container-sync": ["container", "object"],
+    "container-updater": ["account"],
+    "object-expirer": ["object"],
+    "object-replicator": ["object"],
+    "object-updater": ["container"],
+    "proxy-server": ["account", "container", "object"]
+}
+
+def start():
+    # All the Swift services do essentially the same thing, so there's no need
+    # to have different method executables.  Just look at the FMRI and run the
+    # appropriate executable from /usr/lib/swift.
+    fmri = os.environ["SMF_FMRI"]
+    exefile = os.path.basename(fmri.split(":")[1])
+    exepath = os.path.join("/usr/lib/swift", exefile)
+
+    # Try to find a config file that matches the executable name (minus the
+    # leading "swift-".  If that fails, try using the -server config file.
+    cfgfile = "/etc/swift/%s.conf" % exepath.split("-", 1)[1]
+    if not os.path.isfile(cfgfile):
+        cfgfile = "/etc/swift/%s-server.conf" % exepath.split("-")[1]
+    if not os.path.isfile(cfgfile):
+        print >> sys.stderr, "Missing configuration file"
+        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_CONFIG,
+          "missing_config", "Missing configuration file")
+
+    missing_rings = []
+    for ring in rings.get(exepath.split("-", 1)[1], ()):
+        ringfile = "/etc/swift/%s.ring.gz" % ring
+        if not os.path.isfile(ringfile):
+            missing_rings.append(ringfile)
+    if missing_rings:
+        print >> sys.stderr, "Missing ring(s): " + ", ".join(missing_rings)
+        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_CONFIG,
+          "missing_ring",
+          "Missing ring(s): " + ", ".join(missing_rings))
+
+    # This is the default recon_cache_path (from the config files) as well as
+    # the default run_dir (from the code).
+    try:
+        os.mkdir("/var/run/swift")
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    smf_include.smf_subprocess("%s %s" % (exepath, cfgfile))
+
+if __name__ == "__main__":
+    os.putenv("LC_ALL", "C")
+    smf_include.smf_main()

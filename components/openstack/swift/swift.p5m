@@ -1,0 +1,258 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+
+set name=pkg.fmri \
+    value=pkg:/cloud/openstack/swift@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="OpenStack Swift"
+set name=pkg.description \
+    value="The OpenStack Object Store project, known as Swift, offers cloud storage software so that you can store and retrieve data in virtual containers"
+set name=pkg.human-version value="Grizzly 2013.1.4"
+set name=com.oracle.info.description \
+    value="Swift, the OpenStack object storage service"
+set name=com.oracle.info.tpno value=14503
+set name=info.classification \
+    value="org.opensolaris.category.2008:System/Administration and Configuration" \
+    value="org.opensolaris.category.2008:System/Enterprise Management" \
+    value=org.opensolaris.category.2008:System/Virtualization \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/050
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+<transform file path=.*/(.*_attr)\.d -> set action.hash files/swift.%<1>>
+<transform file path=.*/(.*_attr)\.d -> default group sys>
+file path=etc/security/auth_attr.d/cloud:openstack:swift
+file path=etc/security/exec_attr.d/cloud:openstack:swift
+file path=etc/security/prof_attr.d/cloud:openstack:swift
+<transform file path=etc/swift/(.*) -> set action.hash etc/%<1>-sample>
+<transform file path=etc/swift/rsyncd.conf -> set action.hash files/rsyncd.conf>
+<transform dir file path=etc/swift/? -> default owner swift>
+<transform dir file path=etc/swift/? -> default group swift>
+<transform file path=etc/swift/ -> default mode 0644>
+<transform file path=etc/swift/ -> default overlay allow>
+<transform file path=etc/swift/ -> default preserve true>
+dir  path=etc/swift mode=0700
+file path=etc/swift/account-server.conf
+file path=etc/swift/container-server.conf
+file path=etc/swift/dispersion.conf
+file path=etc/swift/memcache.conf
+file path=etc/swift/mime.types
+file path=etc/swift/object-expirer.conf
+file path=etc/swift/object-server.conf
+file path=etc/swift/proxy-server.conf
+file path=etc/swift/rsyncd.conf
+file path=etc/swift/swift-bench.conf
+file path=etc/swift/swift.conf
+<transform file path=lib/svc/.*/([^/]*) -> set action.hash files/%<1>>
+<transform file path=lib/svc/method/swift-proxy-server -> set action.hash files/swift-smf-method>
+file path=lib/svc/manifest/application/openstack/swift-account-auditor.xml
+file path=lib/svc/manifest/application/openstack/swift-account-reaper.xml
+file path=lib/svc/manifest/application/openstack/swift-account-replicator.xml
+file path=lib/svc/manifest/application/openstack/swift-account-server.xml
+file path=lib/svc/manifest/application/openstack/swift-container-auditor.xml
+file path=lib/svc/manifest/application/openstack/swift-container-replicator.xml
+file path=lib/svc/manifest/application/openstack/swift-container-server.xml
+file path=lib/svc/manifest/application/openstack/swift-container-sync.xml
+file path=lib/svc/manifest/application/openstack/swift-container-updater.xml
+file path=lib/svc/manifest/application/openstack/swift-object-auditor.xml
+file path=lib/svc/manifest/application/openstack/swift-object-expirer.xml
+file path=lib/svc/manifest/application/openstack/swift-object-replicator.xml
+file path=lib/svc/manifest/application/openstack/swift-object-server.xml
+file path=lib/svc/manifest/application/openstack/swift-object-updater.xml
+file path=lib/svc/manifest/application/openstack/swift-proxy-server.xml
+file path=lib/svc/manifest/application/openstack/swift-replicator-rsync.xml
+<transform hardlink path=lib/svc/method -> default target swift-proxy-server>
+hardlink path=lib/svc/method/swift-account-auditor
+hardlink path=lib/svc/method/swift-account-reaper
+hardlink path=lib/svc/method/swift-account-replicator
+hardlink path=lib/svc/method/swift-account-server
+hardlink path=lib/svc/method/swift-container-auditor
+hardlink path=lib/svc/method/swift-container-replicator
+hardlink path=lib/svc/method/swift-container-server
+hardlink path=lib/svc/method/swift-container-sync
+hardlink path=lib/svc/method/swift-container-updater
+hardlink path=lib/svc/method/swift-object-auditor
+hardlink path=lib/svc/method/swift-object-expirer
+hardlink path=lib/svc/method/swift-object-replicator
+hardlink path=lib/svc/method/swift-object-server
+hardlink path=lib/svc/method/swift-object-updater
+file path=lib/svc/method/swift-proxy-server
+file path=lib/svc/method/swift-replicator-rsync
+file path=usr/bin/swift-account-audit
+file path=usr/bin/swift-bench
+file path=usr/bin/swift-bench-client
+file path=usr/bin/swift-dispersion-populate
+file path=usr/bin/swift-dispersion-report
+file path=usr/bin/swift-form-signature
+file path=usr/bin/swift-get-nodes
+file path=usr/bin/swift-object-info
+file path=usr/bin/swift-recon
+file path=usr/bin/swift-ring-builder
+file path=usr/bin/swift-temp-url
+file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/swift-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/account/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/account/auditor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/account/reaper.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/account/replicator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/account/server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/bench.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/bufferedhttp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/constraints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/daemon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/db.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/db_replicator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/direct_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/http.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/internal_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/manager.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/memcached.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/account_quotas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/acl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/bulk.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/catch_errors.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/cname_lookup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/container_quotas.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/domain_remap.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/formpost.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/healthcheck.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/keystoneauth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/list_endpoints.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/memcache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/name_check.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/proxy_logging.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/ratelimit.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/recon.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/slo.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/staticweb.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/tempauth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/middleware/tempurl.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/ring/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/ring/builder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/ring/ring.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/ring/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/swob.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/common/wsgi.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/auditor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/replicator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/sync.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/container/updater.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/auditor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/expirer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/replicator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/server.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/obj/updater.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/account.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/container.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/controllers/obj.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swift/proxy/server.py
+<transform file path=usr/lib/swift/(.*) -> set action.hash usr/bin/%<1>>
+<transform file path=usr/lib/swift/(.*) -> default mode 0555>
+file path=usr/lib/swift/swift-account-auditor
+file path=usr/lib/swift/swift-account-reaper
+file path=usr/lib/swift/swift-account-replicator
+file path=usr/lib/swift/swift-account-server
+file path=usr/lib/swift/swift-container-auditor
+file path=usr/lib/swift/swift-container-replicator
+file path=usr/lib/swift/swift-container-server
+file path=usr/lib/swift/swift-container-sync
+file path=usr/lib/swift/swift-container-updater
+file path=usr/lib/swift/swift-init
+file path=usr/lib/swift/swift-object-auditor
+file path=usr/lib/swift/swift-object-expirer
+file path=usr/lib/swift/swift-object-replicator
+file path=usr/lib/swift/swift-object-server
+file path=usr/lib/swift/swift-object-updater
+file path=usr/lib/swift/swift-proxy-server
+file path=usr/lib/swift/swift-recon-cron
+<transform file path=usr/share/man/man1/(.+) -> set action.hash doc/manpages/%<1>>
+<transform file path=usr/share/man/man4/(.+)\.4 -> set action.hash doc/manpages/%<1>.5>
+file path=usr/share/man/man1/swift-account-auditor.1
+file path=usr/share/man/man1/swift-account-reaper.1
+file path=usr/share/man/man1/swift-account-replicator.1
+file path=usr/share/man/man1/swift-account-server.1
+file path=usr/share/man/man1/swift-container-auditor.1
+file path=usr/share/man/man1/swift-container-replicator.1
+file path=usr/share/man/man1/swift-container-server.1
+file path=usr/share/man/man1/swift-container-sync.1
+file path=usr/share/man/man1/swift-container-updater.1
+file path=usr/share/man/man1/swift-dispersion-populate.1
+file path=usr/share/man/man1/swift-dispersion-report.1
+file path=usr/share/man/man1/swift-get-nodes.1
+file path=usr/share/man/man1/swift-init.1
+file path=usr/share/man/man1/swift-object-auditor.1
+file path=usr/share/man/man1/swift-object-expirer.1
+file path=usr/share/man/man1/swift-object-info.1
+file path=usr/share/man/man1/swift-object-replicator.1
+file path=usr/share/man/man1/swift-object-server.1
+file path=usr/share/man/man1/swift-object-updater.1
+file path=usr/share/man/man1/swift-proxy-server.1
+file path=usr/share/man/man1/swift-recon.1
+file path=usr/share/man/man1/swift-ring-builder.1
+file path=usr/share/man/man4/account-server.conf.4
+file path=usr/share/man/man4/container-server.conf.4
+file path=usr/share/man/man4/dispersion.conf.4
+file path=usr/share/man/man4/object-expirer.conf.4
+file path=usr/share/man/man4/object-server.conf.4
+file path=usr/share/man/man4/proxy-server.conf.4
+dir  path=var/lib/swift owner=swift group=swift mode=0700
+dir  path=var/lib/swift/recon-cache owner=swift group=swift
+dir  path=var/log/swift owner=swift group=swift
+#
+group groupname=swift gid=86
+user username=swift ftpuser=false gcos-field="Openstack Swift" group=swift \
+    home-dir=/var/lib/swift uid=86
+#
+license LICENSE license="Apache v2.0"
+
+# force a dependency on netifaces; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/netifaces-26
+
+# force a dependency on paste.deploy; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/paste.deploy-26
+
+# force a dependency on xattr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/xattr-26

@@ -1,0 +1,58 @@
+#!/usr/bin/python2.6
+
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+
+import errno
+import os
+import subprocess
+import sys
+
+import smf_include
+
+
+def start():
+    cfgfile = "/etc/swift/rsyncd.conf"
+    if not os.path.isfile(cfgfile):
+        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_CONFIG,
+          "missing_config", "Missing configuration file")
+
+    # This is the default delivered in /etc/swift/rsyncd.conf
+    try:
+        os.mkdir("/var/run/swift")
+    except OSError as e:
+        if e.errno != errno.EEXIST:
+            raise
+
+    cmdline = ["/usr/bin/rsync", "--daemon", "--config", cfgfile]
+    try:
+        proc = subprocess.Popen(cmdline)
+    except OSError as err:
+        print >> sys.stderr, "Error executing rsync: %s" % err
+        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_FATAL,
+          "exec_error", "Error executing rsync: %s" % err)
+
+    ret = proc.wait()
+    if ret != 0:
+        print >> sys.stderr, "rsync daemon failed to start (see message above)"
+        print >> sys.stderr, "commandline:", " ".join(cmdline)
+        print >> sys.stderr, "exit code:", ret
+        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_FATAL,
+          "exec_fail", "rsync daemon failed to start (see service log)")
+
+    return smf_include.SMF_EXIT_OK
+
+if __name__ == "__main__":
+    os.putenv("LC_ALL", "C")
+    smf_include.smf_main()

@@ -1,0 +1,150 @@
+Various testing fixes:
+
+  - Tests involving large (5GB+) bodies are mocked, but on 32-bit python,
+    len() is limited to returning a ssize_t, which can represent 2GB.
+
+  - Solaris doesn't yet support syslog logging to /dev/log.
+
+  - Solaris doesn't have TCP_KEEPIDLE.
+
+  - Three tests make connections to 127.0.0.[234], which take minutes to
+    timeout (and one test fails).  Mock the connections to make the return
+    success immediately.
+
+The last has already been fixed upstream, as of 1.9.1.  The middle two are
+Solaris-only, and not suitable for upstream.  The first, while potentially
+useful elsewhere, is really only an issue on Solaris because Linux runs
+almost exclusively 64-bit, which makes this a non-issue.
+
+diff --git a/test/unit/__init__.py b/test/unit/__init__.py
+--- a/test/unit/__init__.py
++++ b/test/unit/__init__.py
+@@ -315,7 +315,7 @@ def fake_http_connect(*code_iter, **kwar
+                 else:
+                     etag = '"68b329da9893e34099c7d8ad5cb9c940"'
+ 
+-            headers = {'content-length': len(self.body),
++            headers = {'content-length': self.body.__len__(),
+                        'content-type': 'x-application/test',
+                        'x-timestamp': self.timestamp,
+                        'last-modified': self.timestamp,
+diff --git a/test/unit/proxy/test_server.py b/test/unit/proxy/test_server.py
+--- a/test/unit/proxy/test_server.py
++++ b/test/unit/proxy/test_server.py
+@@ -2310,6 +2310,9 @@ class TestObjectController(unittest.Test
+ 
+             class LargeResponseBody(object):
+ 
++                def __nonzero__(self):
++                    return True
++
+                 def __len__(self):
+                     return MAX_FILE_SIZE + 1
+ 
+@@ -2439,6 +2442,9 @@ class TestObjectController(unittest.Test
+ 
+             class LargeResponseBody(object):
+ 
++                def __nonzero__(self):
++                    return True
++
+                 def __len__(self):
+                     return MAX_FILE_SIZE + 1
+ 
+diff --git a/test/unit/common/test_utils.py b/test/unit/common/test_utils.py
+--- a/test/unit/common/test_utils.py
++++ b/test/unit/common/test_utils.py
+@@ -425,9 +425,15 @@ class TestUtils(unittest.TestCase):
+             logger = utils.get_logger({
+                 'log_facility': 'LOG_LOCAL3',
+             }, 'server', log_route='server')
++            if sys.platform == 'sunos5':
++                extra = [
++                  ((), {'facility': orig_sysloghandler.LOG_LOCAL3})
++                ]
++            else:
++                extra = []
+             self.assertEquals([
+                 ((), {'address': '/dev/log',
+-                      'facility': orig_sysloghandler.LOG_LOCAL3})],
++                      'facility': orig_sysloghandler.LOG_LOCAL3})] + extra,
+                 syslog_handler_args)
+ 
+             syslog_handler_args = []
+diff --git a/test/unit/common/test_wsgi.py b/test/unit/common/test_wsgi.py
+--- a/test/unit/common/test_wsgi.py
++++ b/test/unit/common/test_wsgi.py
+@@ -116,11 +116,12 @@ class TestWSGI(unittest.TestCase):
+                 socket.SOL_SOCKET: {
+                     socket.SO_REUSEADDR: 1,
+                     socket.SO_KEEPALIVE: 1,
+-                },
+-                socket.IPPROTO_TCP: {
++                }
++            }
++            if hasattr(socket, 'TCP_KEEPIDLE'):
++                expected_socket_opts[socket.IPPROTO_TCP] = {
+                     socket.TCP_KEEPIDLE: 600,
+-                },
+-            }
++                }
+             self.assertEquals(sock.opts, expected_socket_opts)
+             # test ssl
+             sock = wsgi.get_socket(ssl_conf)
+diff --git a/test/unit/obj/test_replicator.py b/test/unit/obj/test_replicator.py
+--- a/test/unit/obj/test_replicator.py
++++ b/test/unit/obj/test_replicator.py
+@@ -17,6 +17,7 @@ from __future__ import with_statement
+ 
+ import unittest
+ import os
++from mock import patch as mockpatch
+ from gzip import GzipFile
+ from shutil import rmtree
+ import cPickle as pickle
+@@ -482,14 +483,16 @@ class TestObjectReplicator(unittest.Test
+             self.replicator.logger.log_dict['warning'])
+ 
+     def test_delete_partition(self):
+-        df = DiskFile(self.devices, 'sda', '0', 'a', 'c', 'o', FakeLogger())
+-        mkdirs(df.datadir)
+-        ohash = hash_path('a', 'c', 'o')
+-        data_dir = ohash[-3:]
+-        part_path = os.path.join(self.objects, '1')
+-        self.assertTrue(os.access(part_path, os.F_OK))
+-        self.replicator.replicate()
+-        self.assertFalse(os.access(part_path, os.F_OK))
++        with mockpatch('swift.obj.replicator.http_connect',
++                        mock_http_connect(200)):
++            df = DiskFile(self.devices, 'sda', '0', 'a', 'c', 'o', FakeLogger())
++            mkdirs(df.datadir)
++            ohash = hash_path('a', 'c', 'o')
++            data_dir = ohash[-3:]
++            part_path = os.path.join(self.objects, '1')
++            self.assertTrue(os.access(part_path, os.F_OK))
++            self.replicator.replicate()
++            self.assertFalse(os.access(part_path, os.F_OK))
+ 
+     def test_delete_partition_override_params(self):
+         df = DiskFile(self.devices, 'sda', '0', 'a', 'c', 'o', FakeLogger())
+@@ -613,12 +616,16 @@ class TestObjectReplicator(unittest.Test
+             tpool.execute = was_execute
+ 
+     def test_run(self):
+-        with _mock_process([(0, '')] * 100):
+-            self.replicator.replicate()
++        with mockpatch('swift.obj.replicator.http_connect',
++                        mock_http_connect(200)):
++            with _mock_process([(0, '')] * 100):
++                self.replicator.replicate()
+ 
+     def test_run_withlog(self):
+-        with _mock_process([(0, "stuff in log")] * 100):
+-            self.replicator.replicate()
++        with mockpatch('swift.obj.replicator.http_connect',
++                        mock_http_connect(200)):
++            with _mock_process([(0, "stuff in log")] * 100):
++                self.replicator.replicate()
+ 
+ if __name__ == '__main__':
+     unittest.main()
