@@ -65,8 +65,6 @@ unexport SHELLOPTS
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
 
-# There is one known test failure:
-# misc/stdbuf             - see CR #15941179
 test:		install $(TEST_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
