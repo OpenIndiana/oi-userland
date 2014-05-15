@@ -1,0 +1,15 @@
+These changes have not been passed upstream. It's really a Studio compiler
+bug CR #18752073.
+
+--- coreutils-8.16/src/Makefile.am.orig	2014-05-15 10:13:19.739717905 -0700
++++ coreutils-8.16/src/Makefile.am	2014-05-15 10:13:51.751658970 -0700
+@@ -178,6 +178,9 @@
+ # Tell the linker to omit references to unused shared libraries.
+ AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
+ 
++# for chroot to work correctly for root (CR #18744156)
++chroot_LDFLAGS =  -mt=no -D_REENTRANT -z now
++
+ # Sometimes, the expansion of $(LIBINTL) includes -lc which may
+ # include modules defining variables like 'optind', so libcoreutils.a
+ # must precede $(LIBINTL) in order to ensure we use GNU getopt.

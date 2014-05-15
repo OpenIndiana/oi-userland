@@ -46,6 +46,9 @@ CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 # Recreate configure and src/Makefile to pick up stat birthtime changes.
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 
+# Always show the build and link lines for easier debugging.
+GMAKE =                /usr/gnu/bin/make V=1
+
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
 
