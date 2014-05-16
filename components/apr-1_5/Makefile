@@ -47,7 +47,7 @@ CONFIGURE_OPTIONS +=	--enable-other-child
 CONFIGURE_OPTIONS +=	--enable-nonportable-atomics
 CONFIGURE_OPTIONS +=	--enable-shared
 CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) $(CPP_LARGEFILES)"
+CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS +=	LTFLAGS="--tag=CC --silent"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-$(MACH64)
