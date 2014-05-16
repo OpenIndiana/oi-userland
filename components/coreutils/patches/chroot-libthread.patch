@@ -2,13 +2,19 @@ These changes have not been passed upstream. It's really a Studio compiler
 bug CR #18752073.
 
 --- coreutils-8.16/src/Makefile.am.orig	2014-05-15 10:13:19.739717905 -0700
-+++ coreutils-8.16/src/Makefile.am	2014-05-15 10:13:51.751658970 -0700
-@@ -178,6 +178,9 @@
++++ coreutils-8.16/src/Makefile.am	2014-05-16 10:39:39.250671691 -0700
+@@ -178,6 +178,15 @@
  # Tell the linker to omit references to unused shared libraries.
  AM_LDFLAGS = $(IGNORE_UNUSED_LIBRARIES_CFLAGS)
  
 +# for chroot to work correctly for root (CR #18744156)
-+chroot_LDFLAGS =  -mt=no -D_REENTRANT -z now
++# add '-z now' to disable lazy loading since we need to bring in
++# dependencies before we chroot(2) to an environment that may not
++# be able to satisfy them.
++chroot_LDFLAGS =  -z now
++# add '-mt=no' so that we don't end up with an unnecessary dependency on
++# libthread.so.
++chroot_LDFLAGS +=  -mt=no
 +
  # Sometimes, the expansion of $(LIBINTL) includes -lc which may
  # include modules defining variables like 'optind', so libcoreutils.a

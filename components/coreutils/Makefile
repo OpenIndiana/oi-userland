@@ -47,7 +47,7 @@ CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 
 # Always show the build and link lines for easier debugging.
-GMAKE =                /usr/gnu/bin/make V=1
+COMPONENT_BUILD_ARGS +=		V=1
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
