@@ -9,21 +9,20 @@
 #
 
 #
-# Copyright (c) 2013 Alexander Pyhalov
+# Copyright (c) 2014 Alexander Pyhalov
 #
 
 include ../../../make-rules/shared-macros.mk
 
-COMPONENT_NAME=		pygtk2
-COMPONENT_VERSION=	2.17.0
-COMPONENT_REVISION=	1
-COMPONENT_PROJECT_URL=	http://www.gnome.org
-COMPONENT_SUMMARY=	Python bindings for GTK+
-COMPONENT_SRC=		pygtk-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_NAME=		dbus-python
+COMPONENT_VERSION=	0.84.0
+COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/DBusBindings/
+COMPONENT_SUMMARY=	Python bindings for D-Bus
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:6a61817a2e765c6209c72ecdf44389ec134c1ebed1d842408bf001c9321f1400
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/pygtk/2.17/$(COMPONENT_ARCHIVE)
+    sha256:b85bc7aaf1a976627ca461b1ca7b0c4ddddff709f52fe44c9b2d1d7d8fac5906
+COMPONENT_ARCHIVE_URL=	http://dbus.freedesktop.org/releases/dbus-python/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -31,12 +30,12 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CFLAGS.$(BITS)+=	-I$(PYTHON_VENDOR_PACKAGES.$(BITS))/numpy/core/include
-CFLAGS+=	$(CFLAGS.$(BITS))
-
 gcc_OPT		= -O2
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
+CONFIGURE_OPTIONS+=	--with-dbus-user=root
+CONFIGURE_OPTIONS+=	--with-dbus-daemondir=/usr/lib
+CONFIGURE_OPTIONS+=	--disable-static
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 CONFIGURE_ENV+=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
 CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"

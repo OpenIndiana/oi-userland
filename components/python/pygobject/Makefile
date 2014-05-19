@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygobject
 COMPONENT_VERSION=	2.21.5
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GObject
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,10 +44,14 @@ COMPONENT_POST_UNPACK_ACTION = \
 	/usr/bin/find $(SOURCE_DIR) -name *.py \
 		-exec $(GSED) -i -e 's:/usr/bin/env python:$(PYTHON):' "{}" \; ;
 
-# common targets
-build:		$(BUILD_32)
+CONFIGURE_ENV+=         PYTHON=$(PYTHON)
+CONFIGURE_ENV+=         am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV+=         am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
-install:	$(INSTALL_32)
+# common targets
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 
