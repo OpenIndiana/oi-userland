@@ -1,0 +1,112 @@
+The following patch is adopted from ISC DHCP version 4.3.0.
+http://ftp.isc.org/isc/dhcp/4.3.0/dhcp-4.3.0.tar.gz
+
+--- dhcp-4.1-ESV-R7/server/stables.c.orig	Thu Aug 23 19:23:54 2012
++++ dhcp-4.1-ESV-R7/server/stables.c	Mon Apr 28 16:37:14 2014
+@@ -244,6 +244,7 @@
+ 	{ "delayed-ack", "S",			&server_universe,  58, 1 },
+ 	{ "max-ack-delay", "L",			&server_universe,  59, 1 },
+ #endif
++	{ "ignore-client-uids", "f",		&server_universe,  60, 1 },
+ 	{ NULL, NULL, NULL, 0, 0 }
+ };
+ 
+--- dhcp-4.1-ESV-R7/server/dhcp.c.orig	Thu Aug 23 19:23:54 2012
++++ dhcp-4.1-ESV-R7/server/dhcp.c	Mon Apr 28 16:36:18 2014
+@@ -2304,31 +2304,40 @@
+ 	/* Update Client Last Transaction Time. */
+ 	lt->cltt = cur_time;
+ 
+-	/* Record the uid, if given... */
+-	oc = lookup_option (&dhcp_universe, packet -> options,
+-			    DHO_DHCP_CLIENT_IDENTIFIER);
+-	if (oc &&
+-	    evaluate_option_cache (&d1, packet, lease,
+-				   (struct client_state *)0,
+-				   packet -> options, state -> options,
+-				   &lease -> scope, oc, MDL)) {
+-		if (d1.len <= sizeof lt -> uid_buf) {
+-			memcpy (lt -> uid_buf, d1.data, d1.len);
+-			lt -> uid = lt -> uid_buf;
+-			lt -> uid_max = sizeof lt -> uid_buf;
+-			lt -> uid_len = d1.len;
+-		} else {
+-			unsigned char *tuid;
+-			lt -> uid_max = d1.len;
+-			lt -> uid_len = d1.len;
+-			tuid = (unsigned char *)dmalloc (lt -> uid_max, MDL);
+-			/* XXX inelegant */
+-			if (!tuid)
+-				log_fatal ("no memory for large uid.");
+-			memcpy (tuid, d1.data, lt -> uid_len);
+-			lt -> uid = tuid;
++	/* See if we want to record the uid for this client */
++	oc = lookup_option(&server_universe, state->options,
++	    SV_IGNORE_CLIENT_UIDS);
++	if ((oc == NULL) ||
++	    !evaluate_boolean_option_cache(&ignorep, packet, lease, NULL,
++		packet->options, state->options,
++		&lease->scope, oc, MDL)) {
++
++		/* Record the uid, if given... */
++		oc = lookup_option (&dhcp_universe, packet -> options,
++		    DHO_DHCP_CLIENT_IDENTIFIER);
++		if (oc &&
++		    evaluate_option_cache (&d1, packet, lease,
++			(struct client_state *)0,
++			packet -> options, state -> options,
++			&lease -> scope, oc, MDL)) {
++			if (d1.len <= sizeof lt -> uid_buf) {
++				memcpy (lt -> uid_buf, d1.data, d1.len);
++				lt -> uid = lt -> uid_buf;
++				lt -> uid_max = sizeof lt -> uid_buf;
++				lt -> uid_len = d1.len;
++			} else {
++				unsigned char *tuid;
++				lt -> uid_max = d1.len;
++				lt -> uid_len = d1.len;
++				tuid = (unsigned char *)dmalloc (lt -> uid_max, MDL);
++				/* XXX inelegant */
++				if (!tuid)
++					log_fatal ("no memory for large uid.");
++				memcpy (tuid, d1.data, lt -> uid_len);
++				lt -> uid = tuid;
++			}
++			data_string_forget (&d1, MDL);
+ 		}
+-		data_string_forget (&d1, MDL);
+ 	}
+ 
+ 	if (host) {
+--- dhcp-4.1-ESV-R7/server/dhcpd.conf.5.orig	Wed May  7 18:37:36 2014
++++ dhcp-4.1-ESV-R7/server/dhcpd.conf.5	Wed May  7 18:38:46 2014
+@@ -2302,6 +2302,19 @@
+ must be a constant value.
+ .RE
+ .PP
++The
++.I ignore-client-uids
++statement
++.RS 0.25i
++.PP
++.B ignore-client-uids \fIflag\fB;\fR
++.PP
++If the \fIignore-client-uids\fR statement is present and has a value of
++\fItrue\fR or \fIon\fR, the UID for clients will not be recorded.
++If this statement is not present or has a value of \fIfalse\fR or
++\fIoff\fR, then client UIDs will be recorded.
++.RE
++.PP
+ The
+ .I infinite-is-reserved
+ statement
+--- dhcp-4.1-ESV-R7/includes/dhcpd.h.orig	Thu Aug 23 19:23:53 2012
++++ dhcp-4.1-ESV-R7/includes/dhcpd.h	Mon Apr 28 16:11:17 2014
+@@ -627,6 +627,7 @@
+ #define SV_LIMIT_PREFS_PER_IA		57
+ #define SV_DELAYED_ACK			58
+ #define SV_MAX_ACK_DELAY		59
++#define SV_IGNORE_CLIENT_UIDS		60
+ 
+ #if !defined (DEFAULT_PING_TIMEOUT)
+ # define DEFAULT_PING_TIMEOUT 1
