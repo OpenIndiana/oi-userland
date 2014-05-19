@@ -903,21 +903,21 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # find all XML files in sc_dir
         for root, dirs, files in os.walk(sc_dir):
             for fname in [f for f in files if f.endswith(".xml")]:
-                root = etree.parse(os.path.join(root, fname))
+                fileroot = etree.parse(os.path.join(root, fname))
 
                 # look for config-user properties
-                if filter(usercheck, root.findall('service')):
+                if filter(usercheck, fileroot.findall('service')):
                     # a service element was found for config-user.  Verify
                     # root's password is set, the admin account name is set and
                     # the admin's password is set
-                    pgs = root.iter('property_group')
+                    pgs = fileroot.iter('property_group')
                     for pg in pgs:
                         if pg.attrib.get('name') == 'root_account':
                             root_account_needed = False
 
                 # look for identity properties
-                if filter(hostcheck, root.findall('service')):
-                    for props in root.iter('propval'):
+                if filter(hostcheck, fileroot.findall('service')):
+                    for props in fileroot.iter('propval'):
                         if props.attrib.get('name') == 'nodename':
                             hostname_needed = False
 
