@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -35,6 +35,9 @@ COMPONENT_ARCHIVE_URL=	http://download.cherrypy.org/cherrypy/$(COMPONENT_VERSION
 COMPONENT_BUGDB=	python-mod/cherrypy
 
 PATCH_LEVEL=0
+
+# This module is not Python 3 ready: syntax issues.
+PYTHON_VERSIONS = 2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

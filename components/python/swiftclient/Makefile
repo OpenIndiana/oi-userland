@@ -34,6 +34,9 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-swiftclient
 COMPONENT_BUGDB=	service/swift
 
+# Syntax issues: not Python 3 ready.
+PYTHON_VERSIONS=	2.7 2.6
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

@@ -89,8 +89,15 @@ include $(WS_MAKE_RULES)/ips-buildinfo.mk
 
 COMPILER =		studio
 BITS =			32
+
+# If we are building multiple versions of python, make sure that python 2.6
+# is installed last and is the canonical version.  When we change defaults,
+# the new default should go last.  For now, this is most easily done by
+# listing version in descending order.
 PYTHON_VERSION =	2.6
-PYTHON_VERSIONS =	2.7 2.6
+PYTHON2_VERSIONS =	2.7 2.6
+PYTHON3_VERSIONS =	3.4
+PYTHON_VERSIONS =	$(PYTHON3_VERSIONS) $(PYTHON2_VERSIONS)
 
 BASS_O_MATIC =	$(WS_TOOLS)/bass-o-matic
 
@@ -277,6 +284,9 @@ PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
 PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
 PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
 
+PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
+PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
+
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(PARFAIT_TOOLS)/cc
 CXX.studio.32 =	$(PARFAIT_TOOLS)/CC
@@ -313,6 +323,11 @@ PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
 
 PYTHON.2.7.32 =	/usr/bin/python2.7
 PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
+
+# Although we build Python 3 64-bit only, the BUILD_NO_ARCH macro is written
+# in such a way that we still need the .32 macro below.
+PYTHON.3.4.32 = /usr/bin/python3.4
+PYTHON.3.4.64 = /usr/bin/$(MACH64)/python3.4
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)

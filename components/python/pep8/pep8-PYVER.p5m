@@ -21,6 +21,8 @@
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
+<transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
+#
 set name=pkg.fmri \
     value=pkg:/library/python/pep8-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="pep8 - Python style guide checker"
@@ -34,6 +36,7 @@ set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
 set name=org.opensolaris.arc-caseid value=PSARC/2012/301
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
 link path=usr/bin/pep8 target=pep8-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/pep8-$(PYVER)
@@ -46,14 +49,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pep8-$(COMPONENT_VERSION)-py$(P
 file path=usr/lib/python$(PYVER)/vendor-packages/pep8-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pep8-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/pep8.py \
-    pkg.depend.bypass-generate=.*/configparser.* \
+    pkg.depend.bypass-generate=.*/[Cc]onfig[Pp]arser.* \
     pkg.depend.bypass-generate=.*/test_pep8.*
+file usr/share/man/man1/pep8.1 path=usr/share/man/man1/pep8-$(PYVER).1
+link path=usr/share/man/man1/pep8.1 target=pep8-$(PYVER).1 mediator=python \
+    mediator-version=$(PYVER)
+#
 license pep8.license license="expat license"
-
-# force a dependency on the pep8 package
-depend type=require \
-    fmri=library/python/pep8@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
     fmri=library/python-2/pep8-$(PYV)@1.4.4,5.12-5.12.0.0.0.41.0
+
+# force a dependency on the pep8 package
+depend type=require \
+    fmri=library/python/pep8@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

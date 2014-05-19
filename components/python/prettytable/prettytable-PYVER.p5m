@@ -40,9 +40,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/prettytable-$(COMPONENT_VERSION
 file path=usr/lib/python$(PYVER)/vendor-packages/prettytable-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/prettytable-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/prettytable-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
-# When and only when running under Python 3.x, PrettyTable imports "html".
+# Python 2.x & 3.x, import "html" modules with slightly different syntax:
+# 2.x uses lower-case; 3.x uses upper-case; hence the expression below.
 file path=usr/lib/python$(PYVER)/vendor-packages/prettytable.py \
-    pkg.depend.bypass-generate=.*html.*
+    pkg.depend.bypass-generate=.*[Hh][Tt][Mm][Ll].*
 license prettytable.license license=BSD
 
 # force the rename with an optional dependency on the old name

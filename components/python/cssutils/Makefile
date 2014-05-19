@@ -20,20 +20,23 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cssutils
 COMPONENT_VERSION=	0.9.6
-COMPONENT_PROJECT_URL=	http://code.google.com/p/cssutils/
+COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cssutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).zip
 COMPONENT_ARCHIVE_HASH= \
     sha256:18f3cffb2ff413e0796d0c9192db3a56f18fe57524cc54edc57d20239614eb87
-COMPONENT_ARCHIVE_URL=	http://cssutils.googlecode.com/files/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/c/cssutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/cssutils
+
+# This module is not Python 3 ready: syntax issues.
+PYTHON_VERSIONS = 2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

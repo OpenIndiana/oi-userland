@@ -32,6 +32,10 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/python-greenlet/greenlet
 COMPONENT_BUGDB=	python-mod/greenlet
 
+# This module is not Python 3 ready: strange build failures that need more
+# investigation.
+PYTHON_VERSIONS = 2.7 2.6
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

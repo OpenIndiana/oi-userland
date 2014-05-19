@@ -23,30 +23,42 @@
 
 $(BUILD_DIR)/%-2.6/.built:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.built:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.built:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.built:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.built:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.installed:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.installed:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.installed:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.installed:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.installed:	BITS=64
 
 $(BUILD_DIR)/%-2.6/.tested:		PYTHON_VERSION=2.6
 $(BUILD_DIR)/%-2.7/.tested:		PYTHON_VERSION=2.7
+$(BUILD_DIR)/%-3.4/.tested:		PYTHON_VERSION=3.4
 $(BUILD_DIR)/$(MACH32)-%/.tested:	BITS=32
 $(BUILD_DIR)/$(MACH64)-%/.tested:	BITS=64
 
-BUILD_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
+BUILD_32 = $(PYTHON2_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.built)
 BUILD_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.built)
 BUILD_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.built)
+ifeq ($(PYTHON_VERSION),3.4)
+BUILD_32_and_64 = $(BUILD_64)
+endif
 
-INSTALL_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
+INSTALL_32 = $(PYTHON2_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.installed)
 INSTALL_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.installed)
 INSTALL_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.installed)
+ifeq ($(PYTHON_VERSION),3.4)
+INSTALL_32_and_64 = $(INSTALL_64)
+endif
 
-TEST_32 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
+TEST_32 = $(PYTHON2_VERSIONS:%=$(BUILD_DIR)/$(MACH32)-%/.tested)
 TEST_64 = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH64)-%/.tested)
 TEST_NO_ARCH = $(PYTHON_VERSIONS:%=$(BUILD_DIR)/$(MACH)-%/.tested)
+ifeq ($(PYTHON_VERSION),3.4)
+TEST_32_and_64 = $(TEST_64)
+endif
 
 PYTHON_ENV =	CC="$(CC)"
 PYTHON_ENV +=	CFLAGS="$(CFLAGS)"
@@ -55,12 +67,16 @@ COMPONENT_BUILD_ENV += $(PYTHON_ENV)
 COMPONENT_INSTALL_ENV += $(PYTHON_ENV)
 COMPONENT_TEST_ENV += $(PYTHON_ENV)
 
-# if we are building python 2.7 support, build it and install it first
-# so that python 2.6 is installed last and is the canonical version.
-# when we switch to 2.7 as the default, it should go last.
+# If we are building Python 2.7 or 3.4 support, build them and install them
+# before Python 2.6, so 2.6 is installed last and is the canonical version.
+# When we change the default, the new default should go last.
 ifneq ($(findstring 2.7,$(PYTHON_VERSIONS)),)
-$(BUILD_DIR)/%-2.6/.build:	$(BUILD_DIR)/%-2.7/.build
-$(BUILD_DIR)/%-2.6/.installed:	$(BUILD_DIR)/%-2.7/.installed
+$(BUILD_DIR)/%-2.6/.built:     $(BUILD_DIR)/%-2.7/.built
+$(BUILD_DIR)/%-2.6/.installed: $(BUILD_DIR)/%-2.7/.installed
+endif
+ifneq ($(findstring 3.4,$(PYTHON_VERSIONS)),)
+$(BUILD_DIR)/%-2.6/.built:     $(BUILD_DIR)/%-3.4/.built
+$(BUILD_DIR)/%-2.6/.installed: $(BUILD_DIR)/%-3.4/.installed
 endif
 
 # Create a distutils config file specific to the combination of build

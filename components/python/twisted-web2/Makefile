@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,9 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:0f016d498b1db0216861e9b8fbf8ad49b5b587fa64a18f1640095c1e4f93e391
 COMPONENT_ARCHIVE_URL=	http://tmrc.mit.edu/mirror/twisted/Web2/8.1/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/twisted-web2
+
+# Depends on twisted, which is not Python 3 ready.
+PYTHON_VERSIONS = 2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

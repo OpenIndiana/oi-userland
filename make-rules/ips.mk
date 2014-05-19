@@ -72,6 +72,7 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/devel
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/standard-libraries-past-py2.6
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-rename
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 
@@ -96,6 +97,7 @@ PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
 PKG_MACROS +=		TPNO=$(TPNO)
 PKG_MACROS +=		PYTHON_2.6_ONLY=\#
 PKG_MACROS +=		PYTHON_2.7_ONLY=\#
+PKG_MACROS +=		PYTHON_3.4_ONLY=\#
 
 PKG_OPTIONS +=		$(PKG_MACROS:%=-D %)
 
@@ -109,7 +111,7 @@ CANONICAL_MANIFESTS =	$(wildcard *.p5m)
 
 # Look for manifests which need to be duplicated for each version of python.
 ifeq ($(findstring -PYVER,$(CANONICAL_MANIFESTS)),-PYVER)
-UNVERSIONED_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PYVER.p5m,$(CANONICAL_MANIFESTS)))
+UNVERSIONED_MANIFESTS = $(filter-out %GENFRAG.p5m,$(filter-out %-PYVER.p5m,$(CANONICAL_MANIFESTS)))
 PY_MANIFESTS = $(filter %-PYVER.p5m,$(CANONICAL_MANIFESTS))
 PYV_MANIFESTS = $(foreach v,$(shell echo $(PYTHON_VERSIONS) | tr -d .),$(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER.p5m/-$(v).p5m/g'))
 PYNV_MANIFESTS = $(shell echo $(PY_MANIFESTS) | sed -e 's/-PYVER//')
@@ -119,7 +121,7 @@ endif
 
 # Look for manifests which need to be duplicated for each version of perl.
 ifeq ($(findstring -PERLVER,$(UNVERSIONED_MANIFESTS)),-PERLVER)
-NOPERL_MANIFESTS = $(filter-out %-GENFRAG.p5m,$(filter-out %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS)))
+NOPERL_MANIFESTS = $(filter-out %GENFRAG.p5m,$(filter-out %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS)))
 PERL_MANIFESTS = $(filter %-PERLVER.p5m,$(UNVERSIONED_MANIFESTS))
 PERLV_MANIFESTS = $(foreach v,$(shell echo $(PERL_VERSIONS) | tr -d .),$(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER.p5m/-$(v).p5m/g'))
 PERLNV_MANIFESTS = $(shell echo $(PERL_MANIFESTS) | sed -e 's/-PERLVER//')
@@ -171,16 +173,19 @@ $(MANIFEST_BASE)-%.generate:	%.p5m canonical-manifests
 # runtime-version-specific version of the package we're operating on.  $(1) is
 # the name of the runtime package, and $(2) is the version suffix.
 mkgeneric = \
-	echo "<transform set name=pkg.fmri value=(?:pkg:/)?(.+)-\#\#\#@(.*)" \
+	echo "<transform set name=pkg.fmri value=(?:pkg:/)?(.+)-\#\#\#PYV\#\#\#@(.*)" \
 		"-> emit depend nodrop=true type=conditional" \
 		"predicate=$(1)-$(2) fmri=%<1>-$(2)@%<2>>" >> $@;
 
 # Define and execute a macro that generates a rule to create a manifest for a
 # python module specific to a particular version of the python runtime.
+# Creates build/manifest-*-modulename-##.p5m file where ## is replaced with
+# the version number.
 define python-manifest-rule
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).mogrified: PKG_MACROS += PYTHON_$(1)_ONLY=
 
 $(MANIFEST_BASE)-%-$(shell echo $(1) | tr -d .).p5m: %-PYVER.p5m
+	if [ -f $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m ]; then cat $$*-$(shell echo $(1) | tr -d .)GENFRAG.p5m >> $$@; fi
 	$(PKGMOGRIFY) -D PYVER=$(1) -D PYV=$(shell echo $(1) | tr -d .) $$< > $$@
 endef
 $(foreach ver,$(PYTHON_VERSIONS),$(eval $(call python-manifest-rule,$(ver))))
@@ -195,8 +200,9 @@ $(BUILD_DIR)/mkgeneric-python: $(WS_TOP)/make-rules/shared-macros.mk
 		$(call mkgeneric,runtime/python,$(ver)))
 
 # Build Python version-wrapping manifests from the generic version.
+# Creates build/manifest-*-modulename.p5m file.
 $(MANIFEST_BASE)-%.p5m: %-PYVER.p5m $(BUILD_DIR)/mkgeneric-python
-	$(PKGMOGRIFY) -D PYV=### $(BUILD_DIR)/mkgeneric-python \
+	$(PKGMOGRIFY) -D PYV=###PYV### $(BUILD_DIR)/mkgeneric-python \
 		$(WS_TOP)/transforms/mkgeneric $< > $@
 	if [ -f $*-GENFRAG.p5m ]; then cat $*-GENFRAG.p5m >> $@; fi
 
@@ -247,7 +253,8 @@ $(MANIFEST_BASE)-%.mangled:	$(MANIFEST_BASE)-%.mogrified $(MANGLED_DIR)
 # generate dependencies
 PKGDEPEND_GENERATE_OPTIONS = -m $(PKG_PROTO_DIRS:%=-d %)
 $(MANIFEST_BASE)-%.depend:	$(MANIFEST_BASE)-%.mangled
-	$(PKGDEPEND) generate $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
+	$(ENV) $(COMPONENT_PUBLISH_ENV) $(PKGDEPEND) generate \
+	    $(PKGDEPEND_GENERATE_OPTIONS) $< >$@
 
 # These files should contain a list of packages that the component is known to
 # depend on.  Using resolve.deps is not required, but significantly speeds up

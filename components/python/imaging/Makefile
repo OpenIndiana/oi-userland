@@ -35,6 +35,9 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	http://effbot.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pil
 
+# Syntax issues: not Python 3 ready.
+PYTHON_VERSIONS = 2.7 2.6
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

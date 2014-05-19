@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -31,6 +31,11 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://code.google.com/p/httplib2/
 COMPONENT_BUGDB=	python-mod/httplib2
+
+# Depends on SocksiPy; for Python 2.x, the module is part of httplib2, but
+# for Python 3.x, it is separate.  Once we add this module, httplib2 will
+# most likely work with Python 3.
+PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

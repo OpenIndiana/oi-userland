@@ -162,6 +162,15 @@ Manifest Validation
     Content validation is performed by extension to pkglint(1) in
     $(WS_TOP)/tools/python/userland-lint
 
+    Note that when integrating new packages, and one or more of them depends
+    on or more of the others, then this may result:
+        WARNING pkglint.action005.1      obsolete dependency check skipped:
+            unable to find dependency (target pkg) for (source pkg)
+    This means that the target package was not found in the reference repo,
+    which was the source of the pkglint cache that was created when 'gmake
+    setup' was run after the workspace was created; thus the warning is
+    harmless and can be ignored in this circumstance.
+
 Publication.
     Once manifest validation has occurred, the package(s) is/are finally
     published to the workspace package repository.

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,9 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:c92db7d6bbac880969a439027a8239827a02a90815dbfba6bd4c031d85f4cd61
 COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/common/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-common
+
+# Syntax issues: not Python 3 ready.
+PYTHON_VERSIONS=	2.7 2.6
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,10 @@ COMPONENT_ARCHIVE_HASH=	\
 	sha256:2d9413fa338ccf8b3f4b86520b385e9d35e848117dc7602b3994972a3163647f
 COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/astng/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-astng
+
+# logilab-astng depends on logilab-common, which is not Python 3 ready, so mark
+# this likewise.
+PYTHON_VERSIONS=	2.7 2.6
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk

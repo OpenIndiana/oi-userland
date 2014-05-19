@@ -35,6 +35,11 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/c/coverage/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/coverage
 
+# Not Python 3 ready: weird build issues (tries to download & install
+# "distribute").  But coverage version 3.7.1 has fixed these issues; it
+# builds and publishes fine with Python 3.
+PYTHON_VERSIONS = 2.7 2.6
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -31,6 +31,14 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/virtualenv
 COMPONENT_BUGDB=	python-mod/virtualenv
+
+# virtualenv includes bundled versions of setuptools and a couple of other
+# modules, versioned for older versions of Python only.  This appears to be
+# deliberate, as 'pyvenv' in Python 3.4 appears to subsume this module.  Thus
+# we are setting PYTHON_VERSIONS below to indicate that the (apparent) lack
+# of need to build this module with Python 3, but the module owner needs to
+# confirm this.
+PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

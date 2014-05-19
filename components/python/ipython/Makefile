@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,9 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:60d602637dc5f078b083a4ca5ab64364ba816bd72439844012ed11a30f88228c
 COMPONENT_ARCHIVE_URL=	http://archive.ipython.org/release/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/ipython
+
+# Syntax issues: not Python 3 ready.
+PYTHON_VERSIONS = 2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

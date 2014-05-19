@@ -56,6 +56,9 @@ test, they can be specified via the following.
   calling environment, like PATH.
 * COMPONENT_INSTALL_ARGS is mainly used for altering target directories.
 * COMPONENT_INSTALL_ENV is mainly used for altering target directories.
+* COMPONENT_PUBLISH_ENV is so far only used to work around Python issues when
+  used by "pkgdepend generate", though the variable may be extended in the
+  future for general "gmake publish" usage.
 * COMPONENT_TEST_ARGS is little used.
 * COMPONENT_TEST_ENV is mainly used for altering PATH and friends.
 
@@ -94,3 +97,20 @@ test, they can be specified via the following.
   have been found which have required altering this to "-xO3".  There are also
   studio_OPT.$(MACH).$(BITS) versions of this available if greater specificity
   is needed.
+
+---
+
+Now switching from explaining the function of specific variables to a more
+general discussion about how to use them to solve problems.  One method that
+has served time and again is adding a level of indirection.  For example,
+when Python 3 came along, we decided to build it 64-bit only, which meant
+its various modules also needed to be built 64-bit only.  But many of them
+had BUILD_32_and_64 in their native Makefile.  So how to tweak that macro
+to do one thing for Python 2.x but another for 3.x?  JBeck spent an entire
+day trying various combinations that seemed right, but none of them worked.
+Then Norm pointed out that changing PYTHON_VERSIONS from "3.4 2.7 2.6" to
+$(PYTHON3_VERSIONS) and $(PYTHON2_VERSIONS) which in turn were "3.4" and
+"2.7 2.6" would do the trick.  I.e., adding a level of indirection solved
+the problem, as it allowed $(PYTHON_VERSIONS) to be used to specify 64-bit
+macros but $(PYTHON2_VERSIONS) to specify 32-bit macros.  There are many
+other places where constructs like this are used.

@@ -48,7 +48,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/pytz/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytz/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytz/lazy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/pytz/reference.py
-file path=usr/lib/python$(PYVER)/vendor-packages/pytz/tzfile.py
+# Python 3 has a newer library to replace cStringIO.  The code is written
+# properly, but pkgdepend is not (yet) smart enough to grok the difference.
+file path=usr/lib/python$(PYVER)/vendor-packages/pytz/tzfile.py \
+    pkg.depend.bypass-generate=.*cStringIO.*
 file path=usr/lib/python$(PYVER)/vendor-packages/pytz/tzinfo.py
 #
 license LICENSE.txt license=MIT

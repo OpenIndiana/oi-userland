@@ -66,7 +66,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/recwarn.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/resultlog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/runner.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/skipping.py
-file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/standalonetemplate.py
+# Python 3 has pickle instead of cPickle. The code is written properly, but
+# pkgdepend is not (yet) smart enough to grok the difference; see 18697587.
+file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/standalonetemplate.py \
+    pkg.depend.bypass-generate=.*cPickle.*
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/terminal.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/tmpdir.py
 file path=usr/lib/python$(PYVER)/vendor-packages/_pytest/unittest.py
