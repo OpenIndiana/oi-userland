@@ -30,6 +30,8 @@ from cinder.image import image_utils
 from cinder.openstack.common import log as logging
 from cinder.volume import driver
 
+from solaris_install.target.size import Size
+
 FLAGS = flags.FLAGS
 LOG = logging.getLogger(__name__)
 
@@ -207,10 +209,10 @@ class ZFSVolumeDriver(driver.VolumeDriver):
                                   image_meta,
                                   self.local_path(volume))
 
-    def _get_zfs_property(self, prop, vol_snap):
-        """Get the value of property for the volume or snapshot."""
+    def _get_zfs_property(self, prop, dataset):
+        """Get the value of property for the dataset."""
         (out, _err) = self._execute('/usr/sbin/zfs', 'get', '-H', '-o',
-                                    'value', prop, vol_snap)
+                                    'value', prop, dataset)
         return out.rstrip()
 
     def _get_zfs_snap_name(self, snapshot):
@@ -222,23 +224,6 @@ class ZFSVolumeDriver(driver.VolumeDriver):
         """Add the pool name to get the ZFS volume."""
         return "%s/%s" % (self.configuration.zfs_volume_base,
                           volume['name'])
-
-    def _get_zpool_property(self, prop):
-        """Get the value of property from the zpool."""
-        zpool = self.configuration.zfs_volume_base.split('/')[0]
-        try:
-            value = None
-            (out, _err) = self._execute('/usr/sbin/zpool', 'get', prop, zpool)
-        except exception.ProcessExecutionError as err:
-            LOG.error(_("Failed to get property '%s': %s")
-                      % (prop, err.stderr))
-            return value
-
-        zpool_prop = out.splitlines()[1].split()
-        if zpool_prop[1] == prop:
-            value = zpool_prop[2]
-
-        return value
 
     def _get_zvol_path(self, volume):
         """Get the ZFS volume path."""
@@ -256,16 +241,12 @@ class ZFSVolumeDriver(driver.VolumeDriver):
         stats["vendor_name"] = 'Oracle'
         stats['QoS_support'] = False
 
-        total = self._get_zpool_property("size")
-        free = self._get_zpool_property("free")
-        if total is not None:
-            stats['total_capacity_gb'] = float(total.split('G')[0])
-        else:
-            stats['total_capacity_gb'] = 0
-        if free is not None:
-            stats['free_capacity_gb'] = float(free.split('G')[0])
-        else:
-            stats['free_capacity_gb'] = 0
+        dataset = self.configuration.zfs_volume_base
+        used_size = self._get_zfs_property('used', dataset)
+        avail_size = self._get_zfs_property('avail', dataset)
+        stats['total_capacity_gb'] = \
+            (Size(used_size) + Size(avail_size)).get(Size.gb_units)
+        stats['free_capacity_gb'] = Size(avail_size).get(Size.gb_units)
         stats['reserved_percentage'] = self.configuration.reserved_percentage
 
         self._stats = stats
