@@ -268,24 +268,27 @@ Testing wanboot with new openssl
 ----
 
 With every upgrade of OpenSSL, it is necessary to make sure wanboot builds and
-works well with the new bits.
+works well with the new bits (post lullaby).
 
 Provided you have a freshly built ON workspace, you can link wanboot with new
-OpenSSL bits by redefining WAN_OPENSSL macro:
+OpenSSL bits as follows:
 
     # copy wanboot-openssl.o to ON build machine
     cp wanboot-openssl.o /var/tmp/
 
     # prepare to rebuild wanboot
     cd $ON
-    bldenv developer.sh
     cd usr/src/psm/stand/boot/sparcv9/sun4
 
     # hack to force a rebuild
-    touch wanboot.o
+    touch $ON/build.sparc/usr/src/psm/stand/boot/sparcv9/sun4/wanboot.o
 
-    # link new OpenSSL to wanboot
-    WAN_OPENSSL=/var/tmp/wanboot-openssl.o dmake all
+    # modify Makefile and assign the WAN_OPENSSL macro to your binary
+    # something like
+    WAN_OPENSSL    = /var/tmp/wanboot-openssl.o
+
+    # build a wanboot binary
+    build -i dmake all
 
 Wanboot should build without warning.
 
