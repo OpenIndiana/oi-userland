@@ -32,6 +32,9 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/robotis/Lesscpy
 COMPONENT_BUGDB=	python-mod/lesscpy
 
+# Depends on ply which is not Python 3 ready.
+PYTHON_VERSIONS=	2.7 2.6
+
 # convert the 'j' in COMPONENT_VERSION to 10
 IPS_COMPONENT_VERSION = 0.9.10
 
