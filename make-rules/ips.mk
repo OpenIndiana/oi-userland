@@ -73,6 +73,7 @@ PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/docs
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/locale
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/standard-libraries-past-py2.6
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-rename
+PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/python-3-groups
 PUBLISH_TRANSFORMS +=	$(PKGMOGRIFY_TRANSFORMS)
 PUBLISH_TRANSFORMS +=	$(WS_TOP)/transforms/publish-cleanup
 

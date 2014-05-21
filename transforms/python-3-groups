@@ -1,0 +1,43 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+# We have various group dependencies between Python modules to express the
+# intent "if installing A, also install B if possible".  This is for cases
+# where module A uses module B if it is available.  But in some cases, B
+# is not Python 3 ready even though A is.  These group dependencies would
+# prevent A-34 from being installed because B-34 does not exist.  So drop
+# such group dependencies.
+
+<transform depend fmri=library/python/boto-34 type=group -> drop>
+<transform depend fmri=library/python/coverage-34 type=group -> drop>
+<transform depend fmri=library/python/django-34 type=group -> drop>
+<transform depend fmri=library/python/eventlet-34 type=group -> drop>
+<transform depend fmri=library/python/keystoneclient-34 type=group -> drop>
+<transform depend fmri=library/python/librabbitmq-34 type=group -> drop>
+<transform depend fmri=library/python/m2crypto-34 type=group -> drop>
+<transform depend fmri=library/python/paste-34 type=group -> drop>
+<transform depend fmri=library/python/python-imaging-34 type=group -> drop>
+<transform depend fmri=library/python/simplejson-34 type=group -> drop>
+<transform depend fmri=library/python/sqlalchemy-34 type=group -> drop>
