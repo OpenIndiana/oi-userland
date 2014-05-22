@@ -3,9 +3,9 @@ Studio instead of gcc.  The unfortunate repetition of options seen below
 is a workaround for build peculiarities and to meet Studio's requirement
 that the profiling options be used at all steps of the build -- not just
 compilation.
---- Python-2.6.4/Makefile.pre.in.orig	Thu Nov  3 15:14:03 2011
-+++ Python-2.6.4/Makefile.pre.in	Thu Nov  3 15:14:11 2011
-@@ -360,9 +360,9 @@
+--- Python-2.7.6/Makefile.pre.in.~2~	2014-05-14 13:29:26.322546831 -0700
++++ Python-2.7.6/Makefile.pre.in	2014-05-14 13:32:23.601766216 -0700
+@@ -413,28 +413,37 @@
  profile-opt:
  	@echo "Building with support for profile generation:"
  	$(MAKE) clean
@@ -16,7 +16,6 @@ compilation.
  	$(MAKE) run_profile_task
  	@echo "Rebuilding with profile guided optimizations:"
  	$(MAKE) clean
-@@ -369,18 +369,27 @@
  	$(MAKE) build_all_use_profile
  
  build_all_generate_profile:
@@ -27,6 +26,7 @@ compilation.
 +	    BLDSHARED="$(BLDSHARED) -xprofile=collect:$(XPROFILE_DIR)"
  
  run_profile_task:
+ 	: # FIXME: can't run for a cross build
 -	./$(BUILDPYTHON) $(PROFILE_TASK)
 +	LD_LIBRARY_PATH=. ./$(BUILDPYTHON) $(PROFILE_TASK)
  
@@ -48,19 +48,7 @@ compilation.
  
  
  # Build the interpreter
-@@ -395,10 +404,7 @@
- 
- # Build the shared modules
- sharedmods: $(BUILDPYTHON)
--	@case $$MAKEFLAGS in \
--	*s*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py -q build;; \
--	*) $(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py build;; \
--	esac
-+	$(RUNSHARED) CC='$(CC)' LDSHARED='$(BLDSHARED)' OPT='$(OPT)' ./$(BUILDPYTHON) -E $(srcdir)/setup.py build
- 
- # Build static library
- # avoid long command lines, same as LIBRARY_OBJS
-@@ -1173,7 +1179,7 @@
+@@ -1293,7 +1302,7 @@
  	-rm -f Lib/lib2to3/*Grammar*.pickle
  
  profile-removal:
