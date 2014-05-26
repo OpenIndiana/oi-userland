@@ -93,15 +93,16 @@ CONFIGURE_OPTIONS +=	--enable-authnz-ldap
 CONFIGURE_OPTIONS +=	--enable-ldap
 CONFIGURE_OPTIONS +=	--enable-ssl
 CONFIGURE_OPTIONS +=	--enable-exception-hook
-CONFIGURE_OPTIONS +=	--with-pcre
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -DSSL_EXPERIMENTAL -DSSL_ENGINE"
 CONFIGURE_OPTIONS +=	LTFLAGS="--silent --tag=CC"
 CONFIGURE_OPTIONS.32 +=	--enable-layout=Solaris-Apache2
 CONFIGURE_OPTIONS.64 +=	--enable-layout=Solaris-Apache2-$(MACH64)
-CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/1.3/bin/apr-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/1.3/bin/$(MACH64)/apr-1-config
-CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/1.3/bin/apu-1-config
-CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/1.3/bin/$(MACH64)/apu-1-config
+CONFIGURE_OPTIONS.32 +=	--with-apr=/usr/apr/1.5/bin/apr-1-config
+CONFIGURE_OPTIONS.64 +=	--with-apr=/usr/apr/1.5/bin/$(MACH64)/apr-1-config
+CONFIGURE_OPTIONS.32 +=	--with-apr-util=/usr/apr-util/1.5/bin/apu-1-config
+CONFIGURE_OPTIONS.64 +=	--with-apr-util=/usr/apr-util/1.5/bin/$(MACH64)/apu-1-config
+CONFIGURE_OPTIONS.32 +=	--with-pcre=/usr/bin/pcre-config
+CONFIGURE_OPTIONS.64 +=	--with-pcre=/usr/bin/$(MACH64)/pcre-config
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
