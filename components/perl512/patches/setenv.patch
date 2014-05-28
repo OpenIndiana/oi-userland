@@ -1,0 +1,15 @@
+This is in-house developed patch reported at
+https://rt.perl.org/Ticket/Display.html?id=121972
+
+Expectation is that future perl versions will contain the fix.
+--- perl-5.12.5/util.c	2014-05-28 12:10:02.250325812 +0200
++++ perl-5.12.5/util.c	2014-05-28 12:09:34.437338588 +0200
+@@ -1712,7 +1712,7 @@ Perl_my_setenv(pTHX_ const char *nam, co
+        my_setenv_format(environ[i], nam, nlen, val, vlen);
+     } else {
+ # endif
+-#   if defined(__CYGWIN__) || defined(EPOC) || defined(__SYMBIAN32__) || defined(__riscos__)
++#   if defined(__CYGWIN__) || defined(EPOC) || defined(__SYMBIAN32__) || defined(__riscos__) || defined(__sun)
+ #       if defined(HAS_UNSETENV)
+         if (val == NULL) {
+             (void)unsetenv(nam);
