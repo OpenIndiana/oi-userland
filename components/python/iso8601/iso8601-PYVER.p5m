@@ -28,7 +28,7 @@ set name=pkg.description \
     value="This Python module parses the most common forms of ISO 8601 date strings into datetime objects."
 set name=com.oracle.info.description \
     value="the Python iso8601 date parsing module"
-set name=com.oracle.info.tpno value=14503
+set name=com.oracle.info.tpno value=16616
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
@@ -44,6 +44,10 @@ file path=usr/lib/python$(PYVER)/vendor-packages/iso8601/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/iso8601/iso8601.py
 license LICENSE license=MIT
 
+# force the rename with an optional dependency on the old name
+depend type=optional \
+    fmri=library/python-2/iso8601-$(PYV)@0.1.4,5.12-5.12.0.0.0.41.0
+
 # force a dependency on the Python runtime
 depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
     pkg.debug.depend.path=usr/bin
@@ -51,7 +55,3 @@ depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
 # force a dependency on the iso8601 package
 depend type=require \
     fmri=library/python/iso8601@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
-
-# force the rename with an optional dependency on the old name
-depend type=optional \
-    fmri=library/python-2/iso8601-$(PYV)@0.1.4,5.12-5.12.0.0.0.41.0

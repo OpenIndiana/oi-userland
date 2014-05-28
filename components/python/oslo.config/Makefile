@@ -18,16 +18,18 @@
 #
 # CDDL HEADER END
 #
+
+#
 # Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		oslo.config
-COMPONENT_VERSION=	1.2.1
+COMPONENT_VERSION=	1.3.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e4ccf489159f0c2b1932ea282f7663daada0a7f8309edc4c34904605a98cf9f2
+    sha256:1fa44f663f7109ccc3ddd393fbc5a7a077208e116f94e41ada7fbd977f27cbab
 COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	python-mod/oslo.config

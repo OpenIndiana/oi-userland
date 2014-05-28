@@ -18,16 +18,16 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012-2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso8601
-COMPONENT_VERSION=	0.1.4
+COMPONENT_VERSION=	0.1.10
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:7a28ccdfb316960431aa7f589f71cb10e0675917e36f6d718d9c03ec6e97f60d
+    sha256:e712ff3a18604833f5073e836aad795b21170b19bbef70947c441ed89d0ac0e1
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://code.google.com/p/pyiso8601/
 COMPONENT_BUGDB=	python-mod/iso8601
