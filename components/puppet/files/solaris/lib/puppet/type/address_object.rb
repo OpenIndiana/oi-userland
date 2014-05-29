@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:address_object) do
@@ -35,7 +35,7 @@ Puppet::Type.newtype(:address_object) do
 
     newparam(:temporary) do
         desc "Optional parameter that specifies that the address object is
-              temporary.  Temporary aggreation links last until the next
+              temporary.  Temporary aggregation links last until the next
               reboot."
         newvalues(:true, :false)
     end
@@ -48,8 +48,7 @@ Puppet::Type.newtype(:address_object) do
     end
 
     newproperty(:enable) do
-        desc "Specifies the address object should be enabled or disabled.
-              Valid values are true, false"
+        desc "Specifies the address object should be enabled or disabled."
         newvalues(:true, :false)
     end
 
@@ -67,8 +66,7 @@ Puppet::Type.newtype(:address_object) do
 
     newproperty(:down) do
         desc "Specifies that the configured address should be marked down.
-              Only valid with an address_type of 'static'.  Valid values are
-              true, false"
+              Only valid with an address_type of 'static'."
         newvalues(:true, :false)
     end
 
@@ -99,13 +97,13 @@ Puppet::Type.newtype(:address_object) do
 
     newproperty(:stateful) do
         desc "Specifies if stateful auto-configuration should be enabled or
-              not.  Valid values are yes, no"
+              not."
         newvalues(:yes, :no)
     end
 
     newproperty(:stateless) do
         desc "Specifies if stateless auto-configuration should be enabled or
-              not.  Valid values are yes, no"
+              not."
         newvalues(:yes, :no)
     end
 end

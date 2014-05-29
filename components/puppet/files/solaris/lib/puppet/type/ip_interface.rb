@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:ip_interface) do
@@ -33,7 +33,7 @@ Puppet::Type.newtype(:ip_interface) do
         isnamevar
 
         validate do |name|
-            cmd = Array["/usr/sbin/dladm", "show-phys", "-p", "-o", "link"]
+            cmd = Array["/usr/sbin/dladm", "show-link", "-p", "-o", "link"]
             output = Puppet::Util::Execution.execute(cmd).split("\n")
             raise Puppet::Error, "Invalid IP interface name: #{name}" \
                 if not output.include?(name)

@@ -20,11 +20,11 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:link_properties) do
-    @doc = "Manage Oralce Solaris link properties"
+    @doc = "Manage Oracle Solaris link properties"
 
     ensurable
 

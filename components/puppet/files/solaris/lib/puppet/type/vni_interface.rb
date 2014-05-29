@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:vni_interface) do
@@ -35,8 +35,7 @@ Puppet::Type.newtype(:vni_interface) do
 
     newparam(:temporary)  do
         desc "Optional parameter that specifies that the VNI interface is
-              temporary.  Temporary interfaces last until the next reboot.  
-              Defaults to `false`."
+              temporary.  Temporary interfaces last until the next reboot."
         newvalues(:true, :false)
     end
 end

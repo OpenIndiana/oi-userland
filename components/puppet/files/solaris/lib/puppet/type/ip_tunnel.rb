@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:ip_tunnel) do
@@ -40,8 +40,7 @@ Puppet::Type.newtype(:ip_tunnel) do
     end
 
     newproperty(:tunnel_type) do
-        desc "Specifies the type of tunnel to be created.  Valid values are
-              ipv4, ipv6, 6to4"
+        desc "Specifies the type of tunnel to be created."
         newvalues("ipv4", "ipv6", "6to4")
     end
 

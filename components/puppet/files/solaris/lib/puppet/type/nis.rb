@@ -82,18 +82,18 @@ Puppet::Type.newtype(:nis) do
         desc "Entries for /var/yp/securenets.  Each entry must be a hash.
               The first element in the hash is either a host or a netmask.
               The second element must be an IP network address.  Specify
-              multiple entires as separate entries in the hash."
+              multiple entries as separate entries in the hash."
     end
 
     newproperty(:use_broadcast) do
         desc "Send a broadcast datagram requesting needed bind information for
-              a specific NIS server.  Valid vales are true, false"
+              a specific NIS server."
         newvalues(:true, :false)
     end
 
     newproperty(:use_ypsetme) do
         desc "Only allow root on the client to change the binding to a desired
-              server.  Valid values are true, false"
+              server."
         newvalues(:true, :false)
     end
 end

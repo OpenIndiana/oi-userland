@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:link_aggregation).provide(:link_aggregation) do
@@ -37,7 +37,7 @@ Puppet::Type.type(:link_aggregation).provide(:link_aggregation) do
                 line.split(":")
 
             links = []
-            dladm("show-aggr", "-x", "-p", "-o", "port").split(
+            dladm("show-aggr", "-x", "-p", "-o", "port", "link").split(
                   "\n").each do |portline|
                 next if portline.strip() == ""
                 links << portline.strip()

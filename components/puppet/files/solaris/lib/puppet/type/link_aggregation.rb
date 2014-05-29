@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 require 'puppet/property/list'
@@ -37,7 +37,7 @@ Puppet::Type.newtype(:link_aggregation) do
 
     newparam(:temporary) do
         desc "Optional parameter that specifies that the aggreation is
-              temporary.  Temporary aggreation links last until the next
+              temporary.  Temporary aggregation links last until the next
               reboot."
         newvalues(:true, :false)
     end
@@ -63,8 +63,7 @@ Puppet::Type.newtype(:link_aggregation) do
     end
 
     newproperty(:mode) do
-        desc "Specifies which mode to set.  Valid values are trunk or dlmp.
-              Defaults to :trunk"
+        desc "Specifies which mode to set."
         newvalues(:trunk, :dlmp)
     end
 

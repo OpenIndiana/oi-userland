@@ -20,21 +20,19 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:ip_interface).provide(:ip_interface) do
     desc "Provider for management of IP interfaces for Oracle Solaris"
     confine :operatingsystem => [:solaris]
     defaultfor :osfamily => :solaris, :kernelrelease => ['5.11', '5.12']
-    commands :ipadm => '/usr/sbin/ipadm'
+    commands :ipadm => '/usr/sbin/ipadm', :dladm => '/usr/sbin/dladm'
 
     def self.instances
-        # iterate over all interfaces, skipping loopback interfaces
-        ipadm("show-if", "-p", "-o", "IFNAME,CLASS").split(
-              "\n").reject{ |line| line.include? "loopback"}.collect do |line|
-            name, ip_class = line.split(":")
-            new(:name => name,
+        (dladm("show-link", "-p", "-o", "link").split("\n") &
+         ipadm("show-if", "-p", "-o", "ifname").split("\n")).collect do |ifname|
+            new(:name => ifname,
                 :ensure => :present)
         end
     end

@@ -130,8 +130,7 @@ Puppet::Type.newtype(:ldap) do
     end
 
     newproperty(:search_scope) do
-        desc "The default search scope for the client's search operations.
-              Valid values are base, one, sub."
+        desc "The default search scope for the client's search operations."
         newvalues("base", "one", "sub")
         class << self
             attr_accessor :pg
@@ -141,9 +140,7 @@ Puppet::Type.newtype(:ldap) do
 
     newproperty(:authentication_method, :parent => Puppet::Property::List) do
         desc "The default authentication method(s).  Specify multiple methods
-              as an array.  Valid values are none, simple, sasl/CRAM-MD5,
-              sasl/DIGEST-MD5, sasl/GSSAPI, tls:simple, tls:sasl/CRAM-MD5,
-              tls:sasl/DIGEST-MD5"
+              as an array."
 
         class << self
             attr_accessor :pg
@@ -172,7 +169,7 @@ Puppet::Type.newtype(:ldap) do
 
     newproperty(:credential_level) do
         desc "The credential level the client should use to contact the
-              directory.  Valid values are anonymous, proxy, self"
+              directory."
         newvalues("anonymous", "proxy", "self")
         class << self
             attr_accessor :pg
@@ -199,7 +196,7 @@ Puppet::Type.newtype(:ldap) do
     end
 
     newproperty(:follow_referrals) do
-        desc "The referral setting.  Valid values are true, false"
+        desc "The referral setting."
         newvalues(:true, :false)
         class << self
             attr_accessor :pg
@@ -267,8 +264,7 @@ Puppet::Type.newtype(:ldap) do
     end
 
     newproperty(:service_credential_level) do
-        desc "The credential level to be used by a service.  Value values are
-              anonymous, proxy"
+        desc "The credential level to be used by a service."
         newvalues("anonymous", "proxy")
         class << self
             attr_accessor :pg
@@ -337,7 +333,7 @@ Puppet::Type.newtype(:ldap) do
 
     newproperty(:enable_shadow_update) do
         desc "Specify whether the client is allowed to update shadow
-              information.  Valid values are true, false"
+              information."
         newvalues(:true, :false)
         class << self
             attr_accessor :pg
@@ -346,7 +342,7 @@ Puppet::Type.newtype(:ldap) do
     end
 
     newproperty(:admin_bind_dn) do
-        desc "The Bind Distinguised Name for the administrator identity that
+        desc "The Bind Distinguished Name for the administrator identity that
               is used for shadow information update"
         class << self
             attr_accessor :pg

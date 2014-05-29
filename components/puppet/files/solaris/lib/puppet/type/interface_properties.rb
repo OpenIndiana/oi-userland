@@ -20,11 +20,11 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:interface_properties) do
-    @doc = "Manage Oralce Solaris interface properties"
+    @doc = "Manage Oracle Solaris interface properties"
 
     ensurable do
         # remove the ability to specify :absent.  New values must be set.
