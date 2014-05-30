@@ -6,13 +6,12 @@
 # changed from deprecated to supported. Since this is for Solaris only, we will
 # not contribute back this change to the upstream community.
 #
---- orig/readconf.c	Wed Feb  5 17:16:20 2014
-+++ new/readconf.c	Fri Mar 14 09:52:42 2014
-@@ -267,7 +267,25 @@
- 	{ "canonicalizemaxdots", oCanonicalizeMaxDots },
+--- orig/readconf.c	Fri May 23 09:56:00 2014
++++ new/readconf.c	Fri May 23 09:59:57 2014
+@@ -268,6 +268,25 @@
  	{ "canonicalizepermittedcnames", oCanonicalizePermittedCNAMEs },
  	{ "ignoreunknown", oIgnoreUnknown },
--
+ 
 +#ifdef DEPRECATE_SUNSSH_OPT
 +        /*
 +         * On Solaris, to make the transition from SunSSH to OpenSSH as smooth
@@ -24,7 +23,6 @@
 +         * smoother.  If a deprecated SunSSH-only option is migrated to OpenSSH
 +         * later, then it will be changed from deprecated to supported.
 +         */
-+        { "disablebanner", oDeprecated },
 +        { "gssapikeyexchange", oDeprecated },
 +        { "kmfpolicydatabase", oDeprecated },
 +        { "kmfpolicyname", oDeprecated },
@@ -32,6 +30,7 @@
 +        { "usefips140", oDeprecated },
 +        { "useopensslengine", oDeprecated },
 +#endif
++
  	{ NULL, oBadOption }
  };
  
