@@ -1,0 +1,19 @@
+--- totem-pl-parser-2.28.2/plparse/totem-disc.c.old	2009-12-14 16:22:43.662388768 +0800
++++ totem-pl-parser-2.28.2/plparse/totem-disc.c	2009-12-14 16:26:10.975976171 +0800
+@@ -296,7 +296,16 @@
+   gboolean found, self_mounted;
+ 
+   if (dev[0] == '/') {
++#ifdef __sun
++    if (strstr(dev, "/dev/rdsk/") != NULL) {
++      local = g_strdup_printf("/dev/dsk/%s", dev+strlen("/dev/rdsk/"));
++    }
++    else {
++      local = g_strdup (dev);
++    }
++#else    
+     local = g_strdup (dev);
++#endif    
+     file = g_file_new_for_path (dev);
+   } else {
+     file = g_file_new_for_commandline_arg (dev);
