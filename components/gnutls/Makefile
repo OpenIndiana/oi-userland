@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gnutls
 
 COMPONENT_VERSION= 2.8.6
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= GNU transport layer security library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
