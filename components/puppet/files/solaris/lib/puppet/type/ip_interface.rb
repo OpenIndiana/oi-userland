@@ -31,13 +31,6 @@ Puppet::Type.newtype(:ip_interface) do
     newparam(:name) do
         desc "The name of the IP interface"
         isnamevar
-
-        validate do |name|
-            cmd = Array["/usr/sbin/dladm", "show-link", "-p", "-o", "link"]
-            output = Puppet::Util::Execution.execute(cmd).split("\n")
-            raise Puppet::Error, "Invalid IP interface name: #{name}" \
-                if not output.include?(name)
-        end
     end
 
     newparam(:temporary)  do
