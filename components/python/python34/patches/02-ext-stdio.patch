@@ -1,0 +1,43 @@
+This patch provides extended file stdio support.
+As it is Solaris-specific, it is not suitable for upstream.
+Note that this patch is no longer needed, since is we build Python 3 64-bit
+only, but we are keeping it around as a precaution in case we need to add
+32-bit support back in at some point.  If a time comes when we are certain
+we will never need 32-bit support, then the patch can be removed.
+
+--- Python-3.4.0/Modules/python.c.~1~	2014-03-16 19:31:31.000000000 -0700
++++ Python-3.4.0/Modules/python.c	2014-03-17 11:08:20.154195402 -0700
+@@ -15,6 +15,13 @@
+ }
+ #else
+ 
++#if defined(sun) && defined(__SVR4) && !defined(_LP64)
++#define USE_EXTENDED_FILE_STDIO 1
++#include <stdio.h>
++#include <stdio_ext.h>
++#include <signal.h>
++#endif
++
+ int
+ main(int argc, char **argv)
+ {
+@@ -44,6 +51,19 @@
+     fpsetmask(m & ~FP_X_OFL);
+ #endif
+ 
++#ifdef USE_EXTENDED_FILE_STDIO
++    /*
++     * enable extended FILE facility on Solaris so that Python
++     * apps can keep more than 256 file descriptors open
++     */
++    struct rlimit rlp;
++    (void) getrlimit(RLIMIT_NOFILE, &rlp);
++    rlp.rlim_cur = rlp.rlim_max;
++    if (setrlimit(RLIMIT_NOFILE, &rlp) != -1) {
++            enable_extended_FILE_stdio(-1, 0);
++    }
++#endif
++
+     oldloc = _PyMem_RawStrdup(setlocale(LC_ALL, NULL));
+     if (!oldloc) {
+         fprintf(stderr, "out of memory\n");
