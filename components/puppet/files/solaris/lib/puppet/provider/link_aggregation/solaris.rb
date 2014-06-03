@@ -37,7 +37,7 @@ Puppet::Type.type(:link_aggregation).provide(:link_aggregation) do
                 line.split(":")
 
             links = []
-            dladm("show-aggr", "-x", "-p", "-o", "port", "link").split(
+            dladm("show-aggr", "-x", "-p", "-o", "port", link).split(
                   "\n").each do |portline|
                 next if portline.strip() == ""
                 links << portline.strip()
