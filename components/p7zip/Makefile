@@ -69,7 +69,9 @@ install:	build $(INSTALL_32) $(EXTRATARGETS)
 
 # When p7zip's install target is run, it creates all its directories mode 555,
 # so they're impossible to remove without adding the write bit first.
-COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR)
+COMPONENT_POST_INSTALL_ACTION += $(CHMOD) -R u+w $(PROTO_DIR);
+# 7zr.1 is in DOS format for some reason, and geqn can't handle it.
+COMPONENT_POST_INSTALL_ACTION += $(GSED) -i -e 's/\r//' $(PROTO_DIR)/usr/man/man1/7zr.1
 
 # build does this always
 test:	$(BUILD_32)
