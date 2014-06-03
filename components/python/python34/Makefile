@@ -74,19 +74,8 @@ LDFLAGS =	$(CC_BITS) $(CC_PIC)
 # build pic
 CFLAGS +=	$(CC_PIC)
 
-# The python build is profile-guided for studio; to see the benefits of that,
-# Python must be compiled with -xO5 and a different build target must be used.
-# Use of xprofile requires that the same options be used during compilation and
-# linking.  The targets chosen are based on Solaris 11 minimum supported system
-# requirements.
-COMPONENT_BUILD_TARGETS = profile-opt
-XPROFILE_DIR = $(BUILD_DIR_$(BITS))/.profile
-PYFLAGS.i386 = -xtarget=opteron -xarch=sse2 -xcache=generic
-PYFLAGS.sparc =
-CFLAGS += -xO5 $(PYFLAGS.$(MACH))
-LDFLAGS += -xO5 $(PYFLAGS.$(MACH))
-
 # add /usr/gnu/lib to the library search/run path
+LDFLAGS.32 = -R/usr/gnu/lib -L/usr/gnu/lib
 LDFLAGS.64 = -R/usr/gnu/lib/$(MACH64) -L/usr/gnu/lib/$(MACH64)
 LDFLAGS += $(LDFLAGS.$(BITS))
 
@@ -108,23 +97,22 @@ CONFIGURE_OPTIONS  +=		CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS  +=		LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 CONFIGURE_OPTIONS  +=		DFLAGS="-$(BITS)"
-CONFIGURE_OPTIONS  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 COMPONENT_BUILD_ENV  +=		DFLAGS="-$(BITS)"
-COMPONENT_BUILD_ENV  +=		XPROFILE_DIR="$(XPROFILE_DIR)"
 
 # Some tests have non-ASCII characters encoded for international domain names;
 # the publish step will fail in 'pkgdepend generate' without this:
 COMPONENT_PUBLISH_ENV  +=	LC_ALL=en_US.UTF-8
 
 # 64 bit shared objects need to go in a 64-bit directory
-COMPONENT_INSTALL_ARGS.64 += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.4/lib-dynload
+COMPONENT_INSTALL_ARGS += DESTSHARED=$(CONFIGURE_PREFIX)/lib/python3.4/lib-dynload
 
 ASLR_MODE = $(ASLR_ENABLE)
 
 # common targets
-build:		$(BUILD_64)
-install:	$(INSTALL_64)
+$(INSTALL_32):	$(INSTALL_64)
+build:		$(BUILD_32_and_64)
+install:	$(INSTALL_32_and_64)
 
 # Using "-uall,-network" ensures all tests are run except the network tests.
 # The network tests contain many expected failures when run behind a firewall.
@@ -139,7 +127,7 @@ COMPONENT_TEST_ENV = EXTRATESTOPTS="-v -uall,-network $(TESTOPTS_PYTHON_TEST)"
 # Prevent the tests from getting stuck waiting for input.
 COMPONENT_TEST_TARGETS = test < /dev/null
 
-test:				$(TEST_64)
+test:				$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 

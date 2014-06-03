@@ -1171,9 +1171,6 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +{
 +	PyObject *mod;
 +
-+	if (PyType_Ready(&pylink_type) < 0)
-+		return NULL;
-+
 +	static struct PyModuleDef moduledef = {
 +	    PyModuleDef_HEAD_INIT,
 +	    "dlpi",
@@ -1185,6 +1182,9 @@ some point, but the suitability (or lack thereof) has not yet been determined.
 +	    NULL,
 +	    NULL,
 +	};
++
++	if (PyType_Ready(&pylink_type) < 0)
++		return NULL;
 +
 +	mod = PyModule_Create(&moduledef);
 +	if (mod == NULL)

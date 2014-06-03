@@ -5,7 +5,7 @@ diff --git Python-2.6.4/Modules/authattr.c Python-2.6.4/Modules/authattr.c
 new file mode 100644
 --- /dev/null
 +++ Python-2.6.4/Modules/authattr.c
-@@ -0,0 +1,261 @@
+@@ -0,0 +1,264 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -55,12 +55,15 @@ new file mode 100644
 +pyrbac_getauthnamattr(PyObject* self, char* authname, int mode) {
 +	
 +
++	PyObject *kv_data; 
++	authattr_t *ret_authattr;
++	PyObject *retval;
 +	
-+	authattr_t * ret_authattr = (mode == PYRBAC_NAM_MODE) ? getauthnam(authname) : getauthattr();
++	ret_authattr = (mode == PYRBAC_NAM_MODE) ? getauthnam(authname) : getauthattr();
 +	if (ret_authattr == NULL)
 +		return Py_None;
 +		
-+	PyObject* kv_data = PyDict_New();
++	kv_data = PyDict_New();
 +	if (kv_data == NULL) {
 +		free_authattr(ret_authattr);
 +		return NULL;
@@ -71,7 +74,7 @@ new file mode 100644
 +		for(len = 0; len < ret_authattr->attr->length; len++) {
 +			kv_t current = ret_authattr->attr->data[len];
 +
-+			PyObject* set = PyList_New(NULL);
++			PyObject* set = PyList_New(0);
 +			char* saveptr;
 +			char* item = strtok_r(current.value, ",", &saveptr);
 +			PyList_Append(set, PyBytes_FromString(item));
@@ -90,7 +93,7 @@ new file mode 100644
 +			}
 +		}
 +	}
-+	PyObject * retval = Py_BuildValue("{s:s,s:s,s:s,s:s,s:s,s:O}",
++	retval = Py_BuildValue("{s:s,s:s,s:s,s:s,s:s,s:O}",
 +		"name",ret_authattr->name,
 +		"res1",ret_authattr->res1,
 +		"res2",ret_authattr->res2,
@@ -320,12 +323,13 @@ new file mode 100644
 +PyObject *
 +pyrbac_getexecuserprofattr(PyObject* self, char* userprofname, char* type, char* id, int mode) {
 +
++	execattr_t *execprof;
++	execattr_t *execprof_head = execprof;
 +	PyObject* ep_data = (mode == PYRBAC_ATTR_MODE) ? NULL : PyList_New(0);
 +	
 +	if (ep_data == NULL && mode != PYRBAC_ATTR_MODE )
 +		return NULL;
 +	
-+	execattr_t *execprof;
 +	if (mode == PYRBAC_USER_MODE)
 +		execprof = getexecuser(userprofname, type, id, GET_ALL);
 +	else if (mode == PYRBAC_PROF_MODE)
@@ -337,11 +341,10 @@ new file mode 100644
 +
 +	if (execprof == NULL)
 +		return Py_None;
-+	
-+	execattr_t *execprof_head = execprof;
 +
 +	while(execprof != NULL) {
 +		
++		PyObject* entry;
 +		PyObject* kv_data = PyDict_New();
 +
 +		if(execprof->attr != NULL) {
@@ -349,7 +352,7 @@ new file mode 100644
 +			for(len = 0; len < execprof->attr->length; len++) {
 +				kv_t current = execprof->attr->data[len];
 +
-+				PyObject* set = PyList_New(NULL);
++				PyObject* set = PyList_New(0);
 +				char* saveptr;
 +				char* item = strtok_r(current.value, ",", &saveptr);
 +				PyList_Append(set, PyBytes_FromString(item));
@@ -368,7 +371,7 @@ new file mode 100644
 +				}
 +			}
 +		}
-+		PyObject* entry = Py_BuildValue("{s:s,s:s,s:s,s:s,s:s,s:s,s:O}",
++		entry = Py_BuildValue("{s:s,s:s,s:s,s:s,s:s,s:s,s:O}",
 +			"name", execprof->name,
 +			"type", execprof->type,
 +			"policy", execprof->policy,
@@ -589,7 +592,7 @@ diff --git Python-2.6.4/Modules/privileges.c Python-2.6.4/Modules/privileges.c
 new file mode 100644
 --- /dev/null
 +++ Python-2.6.4/Modules/privileges.c
-@@ -0,0 +1,243 @@
+@@ -0,0 +1,250 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -627,9 +630,13 @@ new file mode 100644
 +	priv_op_t op = -1 ; 
 +	priv_ptype_t which = NULL;
 +
-+	PyObject* set_list = NULL;
++	PyObject *set_list = NULL, *set_string = NULL;
 +
 +	priv_set_t * set = NULL;
++
++	int i;
++
++	long ret;
 +
 +	if(!PyArg_ParseTuple(args, "iiO:setppriv", &op, &which, &set_list))
 +		return NULL;
@@ -639,8 +646,7 @@ new file mode 100644
 +		which != PRIV_INHERITABLE && which != PRIV_LIMIT))
 +		return NULL;
 +	
-+	PyObject* set_string = PyList_GetItem(set_list, 0);
-+	int i;
++	set_string = PyList_GetItem(set_list, 0);
 +	for (i = 1; i < PyList_Size(set_list); ++i) {
 +		PyBytes_Concat(&set_string, PyBytes_FromString(","));
 +		PyBytes_Concat(&set_string, PyList_GetItem(set_list, i));
@@ -651,7 +657,7 @@ new file mode 100644
 +	if ( set == NULL )
 +		return NULL;
 +
-+	long ret = (long) setppriv(op, which, set);
++	ret = (long) setppriv(op, which, set);
 +	priv_freeset(set);	
 +	// Python inverts true & false
 +	if(ret)
@@ -666,6 +672,9 @@ new file mode 100644
 +	char* set_str = NULL;
 +	priv_ptype_t which = NULL;
 +	priv_set_t * set = priv_allocset();
++	PyObject *set_list;
++	char *saveptr,*item;
++
 +	if (set == NULL)
 +		return NULL;
 +
@@ -682,9 +691,8 @@ new file mode 100644
 +	set_str = priv_set_to_str(set, ',', PRIV_STR_LIT);
 +	priv_freeset(set);
 +	
-+	PyObject* set_list = PyList_New(NULL);
-+	char* saveptr;
-+	char* item = strtok_r(set_str, ",", &saveptr);
++	set_list = PyList_New(0);
++	item = strtok_r(set_str, ",", &saveptr);
 +	PyList_Append(set_list, PyBytes_FromString(item));
 +
 +	while((item = strtok_r(NULL, ",", &saveptr)) != NULL) {
@@ -700,27 +708,29 @@ new file mode 100644
 +static PyObject *
 +pyprivileges_priv_inverse( PyObject *self, PyObject *args ) {
 +
-+	PyObject* set_list_in = NULL;
++	PyObject *set_string, *set_list_out, *set_list_in = NULL;
++	priv_set_t * set;
++	int i;
++	char *ret_str, *saveptr, *item;
++
 +	if(!PyArg_ParseTuple(args, "O:priv_inverse", &set_list_in))
 +		return NULL;
 +
-+	PyObject* set_string = PyList_GetItem(set_list_in, 0);
-+	int i;
++	set_string = PyList_GetItem(set_list_in, 0);
 +	for (i = 1; i < PyList_Size(set_list_in); ++i) {
 +		PyBytes_Concat(set_string, PyBytes_FromString(","));
 +		PyBytes_Concat(set_string, PyList_GetItem(set_list_in, i));
 +	}
 +
-+	priv_set_t * set = priv_str_to_set(PyBytes_AsString(set_string), ",", NULL);
++	set = priv_str_to_set(PyBytes_AsString(set_string), ",", NULL);
 +	if (set == NULL)
 +		return NULL;
 +	priv_inverse(set);
-+	char * ret_str = priv_set_to_str(set, ',', PRIV_STR_LIT);
++	ret_str = priv_set_to_str(set, ',', PRIV_STR_LIT);
 +	priv_freeset(set);
 +	
-+	PyObject* set_list_out = PyList_New(NULL);
-+	char* saveptr;
-+	char* item = strtok_r(ret_str, ",", &saveptr);
++	set_list_out = PyList_New(0);
++	item = strtok_r(ret_str, ",", &saveptr);
 +	PyList_Append(set_list_out, PyBytes_FromString(item));
 +
 +	while((item = strtok_r(NULL, ",", &saveptr)) != NULL) {
@@ -800,7 +810,7 @@ new file mode 100644
 +#endif
 +PyMODINIT_FUNC
 +PyInit_privileges (void) {
-+	PyObject* m;
++	PyObject *m, *d;
 +
 +	static struct PyModuleDef moduledef = {
 +	    PyModuleDef_HEAD_INIT,
@@ -818,7 +828,7 @@ new file mode 100644
 +	if ( m == NULL )
 +		return m;
 +		
-+	PyObject* d = PyModule_GetDict(m);
++	d = PyModule_GetDict(m);
 +	if (d == NULL)
 +		return m;
 +
@@ -887,11 +897,6 @@ new file mode 100644
 +PyInit_rbac (void) {
 +	PyObject* m;
 +
-+	if (PyType_Ready(&AuthattrType) < 0 || 
-+		PyType_Ready(&ExecattrType) < 0 ||
-+		PyType_Ready(&UserattrType) < 0 )
-+		return NULL;
-+
 +       static struct PyModuleDef moduledef = {
 +           PyModuleDef_HEAD_INIT,
 +           "rbac",
@@ -903,6 +908,11 @@ new file mode 100644
 +           NULL,
 +           NULL,
 +       };
++
++	if (PyType_Ready(&AuthattrType) < 0 || 
++		PyType_Ready(&ExecattrType) < 0 ||
++		PyType_Ready(&UserattrType) < 0 )
++		return NULL;
 +
 +       m = PyModule_Create(&moduledef);
 +	if ( m == NULL )
@@ -974,7 +984,7 @@ diff --git Python-2.6.4/Modules/userattr.c Python-2.6.4/Modules/userattr.c
 new file mode 100644
 --- /dev/null
 +++ Python-2.6.4/Modules/userattr.c
-@@ -0,0 +1,308 @@
+@@ -0,0 +1,309 @@
 +/*
 + * CDDL HEADER START
 + *
@@ -1025,6 +1035,7 @@ new file mode 100644
 +pyrbac_getuseruidnamattr(PyObject* self, void* arg, int mode, char* filename) {
 +	
 +	userattr_t *ret_userattr;
++	PyObject *entry, *kv_data;
 +
 +	if (mode == PYRBAC_ATTR_MODE) {
 +	    if (filename != NULL) {
@@ -1046,20 +1057,20 @@ new file mode 100644
 +	if (ret_userattr == NULL)
 +		return Py_None;
 +	
-+	PyObject* entry = PyTuple_New(5);
++	entry = PyTuple_New(5);
 +	if (entry == NULL) {
 +		free_userattr(ret_userattr);
 +		return NULL;
 +	}
 +	
-+	PyObject* kv_data = PyDict_New();
++	kv_data = PyDict_New();
 +
 +	if(ret_userattr->attr != NULL) {
 +		int len;
 +		for(len = 0; len < ret_userattr->attr->length; len++) {
 +			kv_t current = ret_userattr->attr->data[len];
 +
-+			PyObject* set = PyList_New(NULL);
++			PyObject* set = PyList_New(0);
 +			char* saveptr;
 +			char* item = strtok_r(current.value, ",", &saveptr);
 +			PyList_Append(set, PyBytes_FromString(item));
