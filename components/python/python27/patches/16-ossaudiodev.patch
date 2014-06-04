@@ -46,14 +46,16 @@ Some OSS ioctls are not supported on Solaris, so they are commented out.
      _EXPORT_INT(m, SNDCTL_TMR_TIMEBASE);
 +#endif
  }
---- Python-2.7.3/setup.py-orig	2012-12-20 12:26:17.244961277 -0600
-+++ Python-2.7.3/setup.py	2012-12-20 12:27:23.938119947 -0600
-@@ -1509,7 +1509,7 @@ class PyBuildExt(build_ext):
+--- Python-2.7.6/setup.py.~5~	2014-05-14 13:37:59.287142508 -0700
++++ Python-2.7.6/setup.py	2014-05-14 13:40:01.472280298 -0700
+@@ -1632,8 +1632,8 @@
          else:
              missing.append('linuxaudiodev')
  
--        if (platform in ('linux2', 'freebsd4', 'freebsd5', 'freebsd6',
-+        if (platform in ('sunos5', 'linux2', 'freebsd4', 'freebsd5', 'freebsd6',
-                         'freebsd7', 'freebsd8')
-             or platform.startswith("gnukfreebsd")):
+-        if (host_platform in ('linux2', 'freebsd4', 'freebsd5', 'freebsd6',
+-                        'freebsd7', 'freebsd8')
++        if (host_platform in ('sunos5', 'linux2', 'freebsd4', 'freebsd5',
++                        'freebsd6', 'freebsd7', 'freebsd8')
+             or host_platform.startswith("gnukfreebsd")):
              exts.append( Extension('ossaudiodev', ['ossaudiodev.c']) )
+         else:
