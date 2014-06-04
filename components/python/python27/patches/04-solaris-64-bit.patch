@@ -1,6 +1,6 @@
---- Python-2.7.1/Lib/distutils/command/build_ext.py.orig	Fri Jul 15 15:32:28 2011
-+++ Python-2.7.1/Lib/distutils/command/build_ext.py	Fri Jul 15 15:37:00 2011
-@@ -637,6 +637,10 @@
+--- Python-2.7.6/Lib/distutils/command/build_ext.py.~1~	2013-11-09 23:36:40.000000000 -0800
++++ Python-2.7.6/Lib/distutils/command/build_ext.py	2014-05-14 12:47:04.342901439 -0700
+@@ -634,6 +634,10 @@
          filename = self.get_ext_filename(ext_name)
          filename = os.path.split(filename)[-1]
  
@@ -11,7 +11,7 @@
          if not self.inplace:
              # no further work needed
              # returning :
-@@ -677,7 +681,14 @@
+@@ -674,7 +678,14 @@
          so_ext = get_config_var('SO')
          if os.name == 'nt' and self.debug:
              return os.path.join(*ext_path) + '_d' + so_ext
@@ -27,9 +27,9 @@
  
      def get_export_symbols (self, ext):
          """Return the list of symbols that a shared extension has to
---- Python-2.7.1/Python/import.c.orig	Fri Jul 15 15:41:33 2011
-+++ Python-2.7.1/Python/import.c	Fri Jul 15 15:46:55 2011
-@@ -1197,6 +1197,57 @@
+--- Python-2.7.6/Python/import.c.~1~	2013-11-09 23:36:41.000000000 -0800
++++ Python-2.7.6/Python/import.c	2014-05-14 12:53:34.233016586 -0700
+@@ -1288,6 +1288,57 @@
  static int find_init_module(char *); /* Forward */
  static struct filedescr importhookdescr = {"", "", IMP_HOOK};
  
@@ -87,10 +87,10 @@
  static struct filedescr *
  find_module(char *fullname, char *subname, PyObject *path, char *buf,
              size_t buflen, FILE **p_fp, PyObject **p_loader)
-@@ -1214,11 +1265,10 @@
+@@ -1302,11 +1353,10 @@
      static struct filedescr fd_builtin = {"", "", C_BUILTIN};
      static struct filedescr fd_package = {"", "", PKG_DIRECTORY};
-     char name[MAXPATHLEN+1];
+     char *name;
 -#if defined(PYOS_OS2)
      size_t saved_len;
      size_t saved_namelen;
@@ -100,15 +100,14 @@
      if (p_loader != NULL)
          *p_loader = NULL;
  
-@@ -1437,7 +1487,6 @@
+@@ -1513,15 +1563,17 @@
+                 }
+             }
          }
- #endif
- #endif
 -#if defined(PYOS_OS2)
          /* take a snapshot of the module spec for restoration
           * after the 8 character DLL hackery
           */
-@@ -1444,8 +1493,11 @@
          saved_buf = strdup(buf);
          saved_len = len;
          saved_namelen = namelen;
@@ -121,7 +120,7 @@
  #if defined(PYOS_OS2) && defined(HAVE_DYNAMIC_LOADING)
              /* OS/2 limits DLLs to 8 character names (w/o
                 extension)
-@@ -1486,14 +1538,13 @@
+@@ -1562,21 +1614,20 @@
                      fp = NULL;
                  }
              }
@@ -138,7 +137,6 @@
          /* don't need/want the module name snapshot anymore */
          if (saved_buf)
          {
-@@ -1500,7 +1551,7 @@
              free(saved_buf);
              saved_buf = NULL;
          }
