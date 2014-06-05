@@ -1,0 +1,91 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python/jinja2-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Full featured template engine for Python"
+set name=pkg.description \
+    value="Jinja2 is one of the most used template engines for Python. It is inspired by Django's templating system but extends it with an expressive language that gives template authors a more powerful set of tools. On top of that it adds sandboxed execution and optional automatic escaping for applications where security is important. It is internally based on Unicode and runs on a wide range of Python versions."
+set name=com.oracle.info.description \
+    value="Jinja2, the template engine for Python"
+set name=com.oracle.info.tpno value=17235
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="Armin Ronacher <armin.ronacher@active-4.com>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/179
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/lib/python$(PYVER)/vendor-packages/Jinja2-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
+file path=usr/lib/python$(PYVER)/vendor-packages/Jinja2-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Jinja2-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Jinja2-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Jinja2-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
+file path=usr/lib/python$(PYVER)/vendor-packages/Jinja2-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/Jinja2-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/_compat.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/_stringdefs.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/bccache.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/compiler.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/constants.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/debug.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/defaults.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/environment.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/ext.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/filters.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/lexer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/loaders.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/meta.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/nodes.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/optimizer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/runtime.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/sandbox.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/tests.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/jinja2/visitor.py
+#
+license LICENSE license=BSD
+
+# force a group dependency on the optional babel; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/babel-$(PYV)
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the jinja2 package
+depend type=require \
+    fmri=library/python/jinja2@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on markupsafe; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/markupsafe-$(PYV)
+
+# force a dependency on setuptools; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/setuptools-$(PYV)
