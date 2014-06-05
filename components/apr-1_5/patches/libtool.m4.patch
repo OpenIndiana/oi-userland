@@ -23,3 +23,23 @@ Patch status: Solaris-specific; not suitable for upstream
    # ldd complains unless libraries are executable
    postinstall_cmds='chmod +x $lib'
    ;;
+@@ -5439,18 +5452,12 @@
+ 	  $CC -shared $pic_flag ${wl}-z ${wl}text ${wl}-M ${wl}$lib.exp ${wl}-h ${wl}$soname -o $lib $libobjs $deplibs $compiler_flags~$RM $lib.exp'
+       else
+ 	case `$CC -V 2>&1` in
+-	*"Compilers 5.0"*)
++	*)
+ 	  wlarc=''
+ 	  _LT_TAGVAR(archive_cmds, $1)='$LD -G${allow_undefined_flag} -h $soname -o $lib $libobjs $deplibs $linker_flags'
+ 	  _LT_TAGVAR(archive_expsym_cmds, $1)='echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~echo "local: *; };" >> $lib.exp~
+ 	  $LD -G${allow_undefined_flag} -M $lib.exp -h $soname -o $lib $libobjs $deplibs $linker_flags~$RM $lib.exp'
+ 	  ;;
+-	*)
+-	  wlarc='${wl}'
+-	  _LT_TAGVAR(archive_cmds, $1)='$CC -G${allow_undefined_flag} -h $soname -o $lib $libobjs $deplibs $compiler_flags'
+-	  _LT_TAGVAR(archive_expsym_cmds, $1)='echo "{ global:" > $lib.exp~cat $export_symbols | $SED -e "s/\(.*\)/\1;/" >> $lib.exp~echo "local: *; };" >> $lib.exp~
+-	  $CC -G${allow_undefined_flag} -M $lib.exp -h $soname -o $lib $libobjs $deplibs $compiler_flags~$RM $lib.exp'
+-	  ;;
+ 	esac
+       fi
+       _LT_TAGVAR(hardcode_libdir_flag_spec, $1)='-R$libdir'
