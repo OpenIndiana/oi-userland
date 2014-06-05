@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -150,6 +150,10 @@ CONFIGURE_OPTIONS += --with-tk-dir=/usr
 CONFIGURE_OPTIONS += --with-curses-dir=/usr
 CONFIGURE_OPTIONS += CFLAGS="$(CFLAGS)"
 
+# Also check rubygems source directory for files, since files in 
+# lib/rubygems/ssl_cert are not installed into the proto area.
+PKG_PROTO_DIRS += $(SOURCE_DIR_1)
+
 include $(WS_TOP)/make-rules/shared-targets.mk
 
 # common targets
@@ -162,6 +166,24 @@ install:	build $(INSTALL_32) $(RUBYGEMS_INSTALL_TARGET)
 # also possibly test_endblockwarn(TestBeginEndBlock), 
 # test_step_ruby_core_35753(TestRange)
 test:	$(TEST_32)
+
+# Note: testing rubygems requires the ruby 1.8 gems rake (v0.8.7+),
+# hoe (v2.4.0+), and minitest (v1.3.1+), which are not in Solaris,
+# so, as a normal user, first install the ruby 1.8 gems locally 
+# (in your ~/.gem directory):
+# gem18 install --user-install rake -v0.8.7
+# gem18 install --user-install hoe -v2.4.0
+# gem18 install --user-install minitest -v1.3.1
+#
+# Go to the rubygems source directory just below this component directory:
+# cd rubygems-1.3.5
+#
+# And call the locally-installed rake to run the rubygems tests:
+# ~/.gem/ruby/1.8/bin/rake
+#
+# There is one expected Error for the rubygems tests:
+# test_handle_options_port(TestGemCommandsServerCommand):
+# OptionParser::InvalidArgument: invalid argument: -p http: no such named service
 
 # install rubygems using ruby installed in proto area
 $(RUBYGEMS_INSTALL_TARGET):	$(INSTALL_32)
