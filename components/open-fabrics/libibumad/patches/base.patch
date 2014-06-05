@@ -104,18 +104,19 @@ diff -r -u /tmp/libibumad-1.3.7/src/sysfs.c libibumad-1.3.7/src/sysfs.c
 diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
 --- /tmp/libibumad-1.3.7/src/umad.c	Mon Feb 14 01:08:29 2011
 +++ libibumad-1.3.7/src/umad.c	Fri May  6 05:18:47 2011
-@@ -50,6 +50,10 @@
+@@ -50,6 +50,11 @@
  
  #include "umad.h"
  
 +#if defined(__SVR4) && defined(__sun)
 +#include <infiniband/verbs.h>
++#define IB_OFS_DEVPATH_PREFIX	"/dev/infiniband/ofs"
 +#endif
 +
  #define IB_OPENIB_OUI                 (0x001405)
  
  #ifdef HAVE_VALGRIND_MEMCHECK_H
-@@ -82,7 +86,7 @@
+@@ -82,7 +87,7 @@
  extern int sys_read_uint64(char *dir_name, char *file_name, uint64_t * u);
  extern int sys_read_uint(char *dir_name, char *file_name, unsigned *u);
  
@@ -124,7 +125,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  
  #define TRACE	if (umaddebug)	IBWARN
  #define DEBUG	if (umaddebug)	IBWARN
-@@ -126,7 +130,12 @@
+@@ -126,7 +131,12 @@
  	return *p ? 0 : 1;
  }
  
@@ -137,7 +138,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  {
  	char port_dir[256];
  	uint8_t gid[16];
-@@ -172,6 +181,39 @@
+@@ -172,6 +182,39 @@
  	memcpy(&port->port_guid, gid + 8, sizeof port->port_guid);
  
  	snprintf(port_dir + len, sizeof(port_dir) - len, "/pkeys");
@@ -146,7 +147,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
 +	{
 +		struct ibv_port_attr	port_attr;
 +
-+		if (ibv_query_port(ctx, portnum, &port_attr)) {
++		if (sol_ibv_query_port(ctx, portnum, &port_attr)) {
 +			IBWARN("Could not query \"%s\" port %d", ca_name,
 +			       portnum);
 +			goto clean;
@@ -177,7 +178,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	num_pkeys = scandir(port_dir, &namelist, check_for_digit_name, NULL);
  	if (num_pkeys <= 0) {
  		IBWARN("no pkeys found for %s:%u (at dir %s)...",
-@@ -193,6 +235,8 @@
+@@ -193,6 +236,8 @@
  	port->pkeys_size = num_pkeys;
  	free(namelist);
  	namelist = NULL;
@@ -186,7 +187,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	port_dir[len] = '\0';
  
  	/* FIXME: handle gids */
-@@ -384,6 +428,7 @@
+@@ -384,6 +429,7 @@
  	snprintf(dir_name, sizeof(dir_name), "%s/%s/%s",
  		 SYS_INFINIBAND, ca->ca_name, SYS_CA_PORTS_DIR);
  
@@ -194,17 +195,18 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	if (!(dir = opendir(dir_name)))
  		return -ENOENT;
  
-@@ -425,15 +470,91 @@
+@@ -425,15 +471,100 @@
  	free(namelist);
  
  	closedir(dir);
 +#else
 +	{
 +		struct ibv_device	**root_dev_list, **dev_list = NULL;
-+		struct ibv_context	*ctx = NULL;
++		struct ibv_context	ctx;
 +		struct ibv_device_attr  dev_attr;
 +		int			num_dev;
 +		int                     ret;
++		char			uverbs_devpath[MAXPATHLEN];
 +
 +		root_dev_list = dev_list = ibv_get_device_list(&num_dev);
 +		if (!dev_list) {
@@ -226,7 +228,12 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
 +			goto clean;
 +		}
 +
-+		if (!(ctx = ibv_open_device(*dev_list))) {
++		snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s",
++		    IB_OFS_DEVPATH_PREFIX, (*dev_list)->dev_name);
++
++		ctx.device = *dev_list;
++
++		if ((ctx.cmd_fd = open(uverbs_devpath, O_RDWR)) < 0) {
 +			IBWARN("failed to open device \"%s\"", ca_name);
 +			ibv_free_device_list(root_dev_list);
 +			ret = -EIO;
@@ -235,10 +242,11 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
 +
 +		/* Get port count */
 +		memset(&dev_attr, 0, sizeof (struct ibv_device_attr));
-+		if (ibv_query_device(ctx, &dev_attr) != 0) {
++		if (sol_ibv_query_device(*dev_list, &dev_attr) != 0) {
 +			IBWARN("failed to query device \"%s\"", ca_name);
-+			ibv_close_device(ctx);
 +			ibv_free_device_list(root_dev_list);
++			if (ctx.cmd_fd > 0)
++				close(ctx.cmd_fd);
 +			ret = -EIO;
 +			goto clean;
 +		}
@@ -251,17 +259,19 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
 +		        if (!(ca->ports[portnum] = calloc(1,
 +			    sizeof(*ca->ports[portnum])))) {
 +			        ret = -ENOMEM;
-+				ibv_close_device(ctx);
 +				ibv_free_device_list(root_dev_list);
++				if (ctx.cmd_fd > 0)
++					close(ctx.cmd_fd);
 +				goto clean;
 +			}
-+			if (get_port(ca_name, dir_name, portnum, ctx,
++			if (get_port(ca_name, dir_name, portnum, &ctx,
 +			    ca->ports[portnum]) < 0) {
 +			        free(ca->ports[portnum]);
 +				ca->ports[portnum] = NULL;
 +				ret = -EIO;
-+				ibv_close_device(ctx);
 +				ibv_free_device_list(root_dev_list);
++				if (ctx.cmd_fd > 0)
++					close(ctx.cmd_fd);
 +				goto clean;
 +			}
 +			if (ca->numports < portnum)
@@ -286,7 +296,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	release_ca(ca);
  
  	return ret;
-@@ -484,6 +605,11 @@
+@@ -484,6 +615,11 @@
  int umad_init(void)
  {
  	TRACE("umad_init");
@@ -298,7 +308,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	if (sys_read_uint(IB_UMAD_ABI_DIR, IB_UMAD_ABI_FILE, &abi_version) < 0) {
  		IBWARN
  		    ("can't read ABI version from %s/%s (%m): is ib_umad module loaded?",
-@@ -522,6 +648,28 @@
+@@ -522,6 +658,28 @@
  
  int umad_get_cas_names(char cas[][UMAD_CA_NAME_LEN], int max)
  {
@@ -327,7 +337,7 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	struct dirent **namelist;
  	int n, i, j = 0;
  
-@@ -547,6 +695,7 @@
+@@ -547,6 +705,7 @@
  	}
  	if (n >= 0)
  		free(namelist);
@@ -335,15 +345,16 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
  	return j;
  }
  
-@@ -673,7 +822,46 @@
+@@ -673,7 +832,52 @@
  	snprintf(dir_name, sizeof(dir_name), "%s/%s/%s",
  		 SYS_INFINIBAND, ca_name, SYS_CA_PORTS_DIR);
  
 +#if defined(__SVR4) && defined(__sun)
 +	{
 +		struct ibv_device	**root_dev_list, **dev_list = NULL;
-+		struct ibv_context	*ctx = NULL;
++		struct ibv_context	ctx;
 +		int			num_dev, ret, i;
++		char			uverbs_devpath[MAXPATHLEN];
 +
 +		root_dev_list = dev_list = ibv_get_device_list(&num_dev);
 +		if (!dev_list) {
@@ -364,15 +375,20 @@ diff -r -u /tmp/libibumad-1.3.7/src/umad.c libibumad-1.3.7/src/umad.c
 +			return -EIO;
 +		}
 +
-+		if (!(ctx = ibv_open_device(*dev_list))) {
++
++		snprintf(uverbs_devpath, MAXPATHLEN, "%s/%s",
++		    IB_OFS_DEVPATH_PREFIX, (*dev_list)->dev_name);
++
++		if ((ctx.cmd_fd = open(uverbs_devpath, O_RDWR)) < 0) {
 +			IBWARN("failed to open device \"%s\"", ca_name);
 +			ibv_free_device_list(root_dev_list);
 +			return -EIO;
 +		}
 +
-+		if ((ret = get_port(ca_name, dir_name, portnum, ctx, port)) != 0) {
-+		        ibv_close_device(ctx);
++		if ((ret = get_port(ca_name, dir_name, portnum, &ctx, port)) != 0) {
 +		        ibv_free_device_list(root_dev_list);
++			if (ctx.cmd_fd > 0)
++				close(ctx.cmd_fd);
 +		}
 +		return ret;
 +	}
