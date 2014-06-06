@@ -1,0 +1,22 @@
+diff -rupN ruby-1.8.7-p374.orig/marshal.c ruby-1.8.7-p374/marshal.c
+--- ruby-1.8.7-p374.orig/marshal.c	2012-03-01 18:45:35.000000000 -0800
++++ ruby-1.8.7-p374/marshal.c	2013-08-10 16:45:24.260126000 -0700
+@@ -756,7 +756,7 @@ marshal_dump(argc, argv)
+     VALUE obj, port, a1, a2;
+     int limit = -1;
+     struct dump_arg *arg;
+-    VALUE wrapper;
++    volatile VALUE wrapper;
+ 
+     port = Qnil;
+     rb_scan_args(argc, argv, "12", &obj, &a1, &a2);
+@@ -1450,7 +1450,8 @@ marshal_load(argc, argv)
+ {
+     VALUE port, proc;
+     int major, minor, taint = Qfalse;
+-    VALUE v, wrapper;
++    VALUE v;
++    volatile VALUE wrapper;
+     struct load_arg *arg;
+ 
+     rb_scan_args(argc, argv, "11", &port, &proc);

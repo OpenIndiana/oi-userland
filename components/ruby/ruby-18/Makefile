@@ -23,7 +23,7 @@
 # Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
 #
 
-include ../../make-rules/shared-macros.mk
+include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ruby
 COMPONENT_VERSION=	1.8.7
@@ -52,8 +52,6 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/configure.mk
 
-COMPONENT_BUILD_ARGS=
-
 # COMPONENT_VERSION <major>.<minor>.<teeny>
 # is transformed into <major>.<minor> for RUBY_VER.
 # First change the separator '.' to ' ', so we can use "word" to pull the 
@@ -71,12 +69,19 @@ PROTO_RBCONFIG_FILE=$(PROTORUBYDIR)/lib/ruby/$(RUBY_VER)/$(MACH)-solaris$(SOLARI
 # these macros are used in the package manifest
 PKG_MACROS+=	RUBY_VER=$(RUBY_VER)
 
+# patches to rubygems are in a separate directory from the ruby patches
+PATCH_DIR_1 = rubygems-patches
+PATCHES_1 = $(shell find $(PATCH_DIR_1) -type f -name $(PATCH_PATTERN) \
+    2>/dev/null | sort)
+
 # Since configure.in is patched, we need to autoconf after the patch.
 # Also, unpack the 2nd archive for rubygems.
-# Rubygems does not have patches, nor does it use configure nor make.
+# Rubygems has patches, but it does not use configure nor make.
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoconf); \
 	$(RM) -r $(SOURCE_DIR_1); \
-	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
+	$(UNPACK) $(UNPACK_ARGS) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1); \
+	$(foreach patch,$(PATCHES_1), \
+	$(GPATCH) -d $(SOURCE_DIR_1) $(GPATCH_FLAGS) < $(patch); )
 
 # These modifications of ruby.1 must occur after ruby
 # is installed, not before.  Although there are some other patches
@@ -98,7 +103,7 @@ POST_RUBYGEMS_INSTALL_ACTION += \
 	/bin/sed -f Solaris/rbconfig.sedscript $(PROTO_RBCONFIG_FILE) \
 	> rbconfig.rb.mod ; \
 	$(MV) rbconfig.rb.mod $(PROTO_RBCONFIG_FILE) ; \
-	/bin/sed -e '1s;^\#!/.*;\#!/usr/bin/ruby;' $(PROTORUBYDIR)/bin/gem \
+	/bin/sed -e '1s;^\#!/.*;\#!/usr/ruby/$(RUBY_VER)/bin/ruby;' $(PROTORUBYDIR)/bin/gem \
 	> gem.mod ; \
 	$(MV) gem.mod $(PROTORUBYDIR)/bin/gem
 
@@ -127,6 +132,15 @@ LD_Z_IGNORE=
 # core dump on sparc with ASLR enabled
 ASLR_MODE = $(ASLR_DISABLE)
 
+# Several of the drb tests will leave stray ruby processes behind;
+# move these tests aside so they won't be run by the test target.
+# They aren't needed by the build or packages, so we keep them 
+# renamed.
+COMPONENT_PRE_TEST_ACTION += \
+	if [ -e $(SOURCE_DIR)/test/drb/test_drbssl.rb ]; then \
+		$(MV) $(SOURCE_DIR)/test/drb/test_drbssl.rb $(SOURCE_DIR)/test/drb/test_drbssl.rb-save; \
+	fi
+
 CONFIGURE_PREFIX =	$(USRDIR)/$(COMPONENT_NAME)/$(RUBY_VER)
 CONFIGURE_OPTIONS += $(DTRACE_FLAG)
 CONFIGURE_OPTIONS += --enable-shared
@@ -136,9 +150,10 @@ CONFIGURE_OPTIONS += --with-openssl
 CONFIGURE_OPTIONS += --with-tk-dir=/usr
 CONFIGURE_OPTIONS += --with-curses-dir=/usr
 
+
 include $(WS_TOP)/make-rules/shared-targets.mk
 
-COMPONENT_BUILD_GMAKE_ARGS = -j1
+COMPONENT_BUILD_ARGS=
 
 # common targets
 
