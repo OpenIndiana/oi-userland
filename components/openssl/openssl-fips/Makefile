@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -113,8 +113,8 @@ install:	$(BUILD_DIR_32)/.verified $(BUILD_DIR_64)/.verified
 # used and that we used the correct tarball.
 $(BUILD_DIR)/%/.verified:	$(BUILD_DIR)/%/.installed
 	(printf x; \
-	$(ENV) - LD_LIBRARY_PATH=$(@D) \
-	openssl sha1 -hmac $(OPENSSL_FIPS_HMAC_KEY) \
+	$(ENV) - OPENSSL_FIPS=1 LD_LIBRARY_PATH=$(@D) \
+	/lib/openssl/fips-140/openssl sha1 -hmac $(OPENSSL_FIPS_HMAC_KEY) \
 	    $(COMPONENT_ARCHIVE)) | \
 	    $(NAWK) '{ if ($$2 != "$(OPENSSL_FIPS_HMAC)") exit 1 }'
 	@echo Basic FIPS-140 mode verification passed.
