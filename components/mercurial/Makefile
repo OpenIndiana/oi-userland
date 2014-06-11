@@ -25,12 +25,12 @@ include ../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		mercurial
-COMPONENT_VERSION=	2.8.2
+COMPONENT_VERSION=	3.0.1
 COMPONENT_PROJECT_URL=	http://mercurial.selenic.com/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:c8a5baa21140c6cd6749c3b52b5e5e4a14b6b8ee7c518d9d9de09b1952efbe6f
+    sha256:36e48b59a84ef5a222d06596971e955ac8217e56b076dfb94c8ce5a0c29fd705
 COMPONENT_ARCHIVE_URL=	http://www.selenic.com/mercurial/release/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hg
 
@@ -82,13 +82,12 @@ install:	$(INSTALL_32)
 
 # Use bash in sh mode for the tests; using /bin/sh on Solaris hasn't always
 # worked, and using /bin/bash doesn't always work, either.  Also skip the
-# check-code test, since that ends up trying to check all the code in the
-# userland gate.  And finally, test the bits from the proto area, rather than
-# rebuilding.  Given the way the test suite works, the hg executable must be
-# named "hg".
+# tests which try to check all the code in the userland gate.  And finally,
+# test the bits from the proto area, rather than rebuilding.  Given the way the
+# test suite works, the hg executable must be named "hg".
 test:	$(INSTALL_32)
 	(cd $(BUILD_DIR); rm -f sh; ln -s /bin/bash sh; \
-	 echo test-check-code-hg.t > blacklist)
+	 echo "test-check-code-hg.t\ntest-module-imports.t" > blacklist)
 	(cd $(PROTOUSRBINDIR); ln -s hg-$(PYTHON_VERSION) hg)
 	(cd $(COMPONENT_SRC)/tests ; \
 	 PYTHONPATH=$(PROTO_DIR)/$(PYTHON_LIB) TERM=dumb \
