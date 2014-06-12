@@ -1,0 +1,57 @@
+diff -rup glib-2.28.6/gio/tests/de.po ../amd64/glib-2.28.6/gio/tests/de.po
+--- glib-2.28.6/gio/tests/de.po	2010-09-27 20:48:33.000000000 +0200
++++ ../amd64/glib-2.28.6/gio/tests/de.po	2011-04-18 10:56:45.263772192 +0200
+@@ -12,6 +12,5 @@ msgstr ""
+ msgid "\"Unnamed\""
+ msgstr "\"Unbenannt\""
+ 
+-msgctxt "keyboard label"
+ msgid "\"BackSpace\""
+ msgstr "\"Löschen\""
+diff -rup glib-2.28.6/glib/Makefile.am ../amd64/glib-2.28.6/glib/Makefile.am
+--- glib-2.28.6/glib/Makefile.am	2011-04-14 00:55:29.000000000 +0200
++++ ../amd64/glib-2.28.6/glib/Makefile.am	2011-04-18 10:56:31.979293844 +0200
+@@ -346,10 +346,10 @@ INSTALL_PROGS=
+ 
+ if ENABLE_DTRACE
+ glib_probes.h: glib_probes.d Makefile
+-	$(DTRACE) -C -h -s $< -o $@.tmp
++	$(DTRACE) $(DFLAGS) -C -h -s $< -o $@.tmp
+ 	sed -e "s,define STAP_HAS_SEMAPHORES 1,undef STAP_HAS_SEMAPHORES," < $@.tmp > $@ && rm -f $@.tmp
+ glib_probes.o: glib_probes.d Makefile
+-	$(DTRACE) -G -s $< -o $@
++	$(DTRACE) $(DFLAGS) -G -s $< -o $@
+ BUILT_SOURCES += glib_probes.h glib_probes.o
+ CLEANFILES += glib_probes.h glib_probes.h.tmp
+ libglib_2_0_la_LIBADD += glib_probes.o
+Only in ../amd64/glib-2.28.6/glib: Makefile.am~
+diff -rup glib-2.28.6/glib/tests/mem-overflow.c ../amd64/glib-2.28.6/glib/tests/mem-overflow.c
+--- glib-2.28.6/glib/tests/mem-overflow.c	2010-09-27 20:48:33.000000000 +0200
++++ ../amd64/glib-2.28.6/glib/tests/mem-overflow.c	2011-04-18 10:56:45.264447403 +0200
+@@ -99,7 +99,7 @@ mem_overflow (void)
+   CHECK_PASS (g_renew (X, q, b));
+   free (q);
+ }
+-
++#ifndef sun
+ typedef struct
+ {
+ } Empty;
+@@ -121,6 +121,7 @@ empty_alloc (void)
+     }
+   g_test_trap_assert_passed ();
+ }
++#endif
+ 
+ int
+ main (int   argc,
+@@ -131,7 +132,9 @@ main (int   argc,
+   g_test_bug_base ("http://bugzilla.gnome.org/");
+ 
+   g_test_add_func ("/mem/overflow", mem_overflow);
++#ifndef sun
+   g_test_add_func ("/mem/empty-alloc", empty_alloc);
++#endif
+ 
+   return g_test_run();
+ }
