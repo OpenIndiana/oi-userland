@@ -20,12 +20,12 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		openstack
-COMPONENT_VERSION=	2013.1.4
+COMPONENT_VERSION=	2013.2.3
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 IPS_COMPONENT_VERSION=  0.$(COMPONENT_VERSION)
 

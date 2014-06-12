@@ -25,14 +25,14 @@ import os
 from oslo.config import cfg
 
 from cinder import exception
-from cinder import flags
 from cinder.image import image_utils
 from cinder.openstack.common import log as logging
+from cinder.openstack.common import processutils
 from cinder.volume import driver
 
 from solaris_install.target.size import Size
 
-FLAGS = flags.FLAGS
+FLAGS = cfg.CONF
 LOG = logging.getLogger(__name__)
 
 solaris_zfs_opts = [
@@ -73,7 +73,7 @@ class ZFSVolumeDriver(driver.VolumeDriver):
                                    "from that of the snapshot, '%s'.")
                                  % (volume['name'], volume['size'],
                                     snapshot['volume_size']))
-            raise exception.VolumeBackendAPIException(data=exception_message)
+            raise exception.InvalidInput(reason=exception_message)
 
         # Create a ZFS clone
         zfs_snapshot = self._get_zfs_snap_name(snapshot)
@@ -172,18 +172,20 @@ class ZFSVolumeDriver(driver.VolumeDriver):
                                         volume['id'])
         return {
             'driver_volume_type': 'local',
-            'volume_path': volume_path
+            'volume_path': volume_path,
+            'data': {}
         }
 
     def terminate_connection(self, volume, connector, **kwargs):
         """Disconnection from the connector."""
         pass
 
-    def attach_volume(self, context, volume_id, instance_uuid, mountpoint):
-        """ Callback for volume attached to instance."""
+    def attach_volume(self, context, volume, instance_uuid, host_name,
+                      mountpoint):
+        """Callback for volume attached to instance or host."""
         pass
 
-    def detach_volume(self, context, volume_id):
+    def detach_volume(self, context, volume):
         """ Callback for volume detached."""
         pass
 
@@ -250,6 +252,17 @@ class ZFSVolumeDriver(driver.VolumeDriver):
         stats['reserved_percentage'] = self.configuration.reserved_percentage
 
         self._stats = stats
+
+    def extend_volume(self, volume, new_size):
+        """Extend an existing volume's size."""
+        volsize_str = 'volsize=%sg' % new_size
+        zfs_volume = self._get_zfs_volume_name(volume)
+        try:
+            self._execute('/usr/sbin/zfs', 'set', volsize_str, zfs_volume)
+        except Exception:
+            msg = (_("Failed to extend volume size to %(new_size)s GB.")
+                   % {'new_size': new_size})
+            raise exception.VolumeBackendAPIException(data=msg)
 
 
 class STMFDriver(ZFSVolumeDriver):
@@ -327,11 +340,11 @@ class STMFDriver(ZFSVolumeDriver):
     def _get_view_and_lun(self, lu):
         """Check the view entry of the LU and then get the lun and view."""
         view_and_lun = {}
-        view_and_lun['valid_value'] = False
+        view_and_lun['view'] = view_and_lun['lun'] = None
         try:
             (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-view',
-                                        '-l', lu)
-        except exception.ProcessExecutionError as error:
+                                        '-l', lu, '-v')
+        except processutils.ProcessExecutionError as error:
             if 'no views found' in error.stderr:
                 LOG.debug(_("No view is found for LU '%s'") % lu)
                 return view_and_lun
@@ -341,15 +354,19 @@ class STMFDriver(ZFSVolumeDriver):
         for line in [l.strip() for l in out.splitlines()]:
             if line.startswith("View Entry:"):
                 view_and_lun['view'] = line.split()[-1]
-                view_and_lun['valid_value'] = True
-            if line.startswith("LUN"):
-                view_and_lun['lun'] = line.split()[-1]
+            if line.startswith("LUN") and 'Auto' not in line.split()[-1]:
+                view_and_lun['lun'] = int(line.split()[-1])
+                break
+            if line.startswith("Lun"):
+                view_and_lun['lun'] = int(line.split()[2])
 
-        if view_and_lun['lun'] == 'Auto':
-            view_and_lun['lun'] = 0
-
-        LOG.debug(_("The view_entry and LUN of LU '%s' are '%s' and '%s'.")
-                  % (lu, view_and_lun['view'], view_and_lun['lun']))
+        if view_and_lun['view'] is None or view_and_lun['lun'] is None:
+            LOG.error(_("Failed to get the view_entry or LUN of the LU '%s'.")
+                      % lu)
+            raise
+        else:
+            LOG.debug(_("The view_entry and LUN of LU '%s' are '%s' and '%d'.")
+                      % (lu, view_and_lun['view'], view_and_lun['lun']))
 
         return view_and_lun
 
@@ -385,9 +402,9 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         self._execute('/usr/sbin/itadm', 'create-target', '-n', target_name)
         assert self._check_target(target_name, 'iSCSI')
 
-        # Add a logical unit view entry
+        # Add a view entry to the logical unit with the specified LUN, 8776
         if luid is not None:
-            self._execute('/usr/sbin/stmfadm', 'add-view', '-t',
+            self._execute('/usr/sbin/stmfadm', 'add-view', '-n', 8776, '-t',
                           target_group, luid)
 
     def remove_export(self, context, volume):
@@ -404,7 +421,7 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         # Remove the view entry
         if luid is not None:
             view_lun = self._get_view_and_lun(luid)
-            if view_lun['valid_value']:
+            if view_lun['view']:
                 self._execute('/usr/sbin/stmfadm', 'remove-view', '-l',
                               luid, view_lun['view'])
 
@@ -452,9 +469,9 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
         properties['target_iqn'] = target_name
         properties['target_portal'] = ('%s:%d' %
                                        (self.configuration.iscsi_ip_address,
-                                       self.configuration.iscsi_port))
+                                        self.configuration.iscsi_port))
         view_lun = self._get_view_and_lun(luid)
-        if view_lun['valid_value']:
+        if view_lun['lun']:
             properties['target_lun'] = view_lun['lun']
         properties['volume_id'] = volume['id']
 
@@ -508,3 +525,210 @@ class ZFSISCSIDriver(STMFDriver, driver.ISCSIDriver):
                     'for volume %(volume_name)s')
                   % {'initiator_name': initiator_name,
                      'volume_name': volume_name})
+
+
+class ZFSFCDriver(STMFDriver, driver.FibreChannelDriver):
+    """ZFS volume operations in FC mode."""
+    protocol = 'FC'
+
+    def __init__(self, *args, **kwargs):
+        super(ZFSFCDriver, self).__init__(*args, **kwargs)
+
+    def check_for_setup_error(self):
+        """Check the setup error."""
+        wwns = self._get_wwns()
+        if not wwns:
+            msg = (_("Could not determine fibre channel world wide "
+                     "node names."))
+            raise exception.VolumeBackendAPIException(data=msg)
+
+    def _get_wwns(self):
+        """Get the FC port WWNs of the host."""
+        (out, _err) = self._execute('/usr/sbin/fcinfo', 'hba-port', '-t')
+
+        wwns = []
+        for line in [l.strip() for l in out.splitlines()]:
+            if line.startswith("HBA Port WWN:"):
+                wwn = line.split()[-1]
+                LOG.debug(_("Got the FC port WWN '%s'") % wwn)
+                wwns.append(wwn)
+
+        return wwns
+
+    def _check_wwn_tg(self, wwn):
+        """Check if the target group 'tg-wwn-xxx' exists."""
+        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg')
+
+        for line in [l.strip() for l in out.splitlines()]:
+            if line.startswith("Target Group:") and wwn in line:
+                tg = line.split()[-1]
+                break
+        else:
+            LOG.debug(_("The target group 'tg-wwn-%s' doesn't exist.") % wwn)
+            tg = None
+
+        return tg
+
+    def _only_lu(self, lu):
+        """Check if the LU is the only one."""
+        (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-lu', '-v')
+        linecount = 0
+
+        for line in [l.strip() for l in out.splitlines()]:
+            if line.startswith("LU Name:"):
+                luid = line.split()[-1]
+                linecount += 1
+
+        if linecount == 1 and luid == lu:
+            LOG.debug(_("The LU '%s' is the only one.") % lu)
+            return True
+        else:
+            return False
+
+    def _target_in_tg(self, wwn, tg):
+        """Check if the target has been added into a target group."""
+        target = 'wwn.%s' % wwn.upper()
+
+        if tg is not None:
+            (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg',
+                                        '-v', tg)
+        else:
+            (out, _err) = self._execute('/usr/sbin/stmfadm', 'list-tg', '-v')
+
+        for line in [l.strip() for l in out.splitlines()]:
+            if line.startswith("Member:") and target in line:
+                return True
+        LOG.debug(_("The target '%s' is not in any target group.") % target)
+        return False
+
+    def create_export(self, context, volume):
+        """Export the volume."""
+        zvol = self._get_zvol_path(volume)
+
+        # Create a Logical Unit (LU)
+        self._execute('/usr/sbin/stmfadm', 'create-lu', zvol)
+        luid = self._get_luid(volume)
+        if not luid:
+            msg = (_("Failed to create logic unit for volume '%s'")
+                   % volume['name'])
+            raise exception.VolumeBackendAPIException(data=msg)
+
+        wwns = self._get_wwns()
+        wwn = wwns[0]
+        target_group = self._check_wwn_tg(wwn)
+        if target_group is None:
+            target_group = 'tg-wwn-%s' % wwn
+            if self._target_in_tg(wwn, None):
+                msg = (_("Target WWN '%s' has been found in another"
+                         "target group, so it will not be added "
+                         "into the expected target group '%s'.") %
+                       (wwn, target_group))
+                raise exception.VolumeBackendAPIException(data=msg)
+
+            # Create a target group for the wwn
+            self._execute('/usr/sbin/stmfadm', 'create-tg', target_group)
+
+            # Enable the target and add it to the 'tg-wwn-xxx' group
+            self._execute('/usr/sbin/stmfadm', 'offline-target',
+                          'wwn.%s' % wwn)
+            self._execute('/usr/sbin/stmfadm', 'add-tg-member', '-g',
+                          target_group, 'wwn.%s' % wwn)
+            self._execute('/usr/sbin/stmfadm', 'online-target', 'wwn.%s' % wwn)
+        assert self._target_in_tg(wwn, target_group)
+
+        # Add a logical unit view entry
+        # TODO(Strony): replace the auto assigned LUN with '-n' option
+        if luid is not None:
+            self._execute('/usr/sbin/stmfadm', 'add-view', '-t',
+                          target_group, luid)
+
+    def remove_export(self, context, volume):
+        """Remove an export for a volume."""
+        luid = self._get_luid(volume)
+
+        if luid is not None:
+            wwns = self._get_wwns()
+            wwn = wwns[0]
+            target_wwn = 'wwn.%s' % wwn
+            target_group = 'tg-wwn-%s' % wwn
+            view_lun = self._get_view_and_lun(luid)
+            if view_lun['view']:
+                self._execute('/usr/sbin/stmfadm', 'remove-view', '-l',
+                              luid, view_lun['view'])
+
+            # Remove the target group when only one LU exists.
+            if self._only_lu(luid):
+                if self._check_target(target_wwn, 'Channel'):
+                    self._execute('/usr/sbin/stmfadm', 'offline-target',
+                                  target_wwn)
+                if self._check_tg(target_group):
+                    self._execute('/usr/sbin/stmfadm', 'delete-tg',
+                                  target_group)
+
+            # Remove the LU
+            self._execute('/usr/sbin/stmfadm', 'delete-lu', luid)
+
+    def _get_fc_properties(self, volume):
+        """Get Fibre Channel configuration.
+
+        :target_discovered:    boolean indicating whether discovery was used
+        :target_wwn:           the world wide name of the FC port target
+        :target_lun:           the lun assigned to the LU for the view entry
+
+        """
+        wwns = self._get_wwns()
+        if not wwns:
+            msg = (_("Could not determine fibre channel world wide "
+                     "node names."))
+            raise exception.VolumeBackendAPIException(data=msg)
+
+        luid = self._get_luid(volume)
+        if not luid:
+            msg = (_("Failed to get logic unit for volume '%s'")
+                   % volume['name'])
+            raise exception.VolumeBackendAPIException(data=msg)
+
+        properties = {}
+
+        properties['target_discovered'] = True
+        properties['target_wwn'] = wwns
+        view_lun = self._get_view_and_lun(luid)
+        if view_lun['lun']:
+            properties['target_lun'] = view_lun['lun']
+        return properties
+
+    def initialize_connection(self, volume, connector):
+        """Initializes the connection and returns connection info.
+
+        The  driver returns a driver_volume_type of 'fibre_channel'.
+        The target_wwn can be a single entry or a list of wwns that
+        correspond to the list of remote wwn(s) that will export the volume.
+        Example return values:
+
+            {
+                'driver_volume_type': 'fibre_channel'
+                'data': {
+                    'target_discovered': True,
+                    'target_lun': 1,
+                    'target_wwn': '1234567890123',
+                }
+            }
+
+            or
+
+             {
+                'driver_volume_type': 'fibre_channel'
+                'data': {
+                    'target_discovered': True,
+                    'target_lun': 1,
+                    'target_wwn': ['1234567890123', '0987654321321'],
+                }
+            }
+
+        """
+        fc_properties = self._get_fc_properties(volume)
+
+        return {
+            'driver_volume_type': 'fibre_channel',
+            'data': fc_properties
+        }

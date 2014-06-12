@@ -30,6 +30,13 @@
       <service_fmri value='svc:/milestone/multi-user:default' />
     </dependency>
 
+    <dependency name='ntp' grouping='optional_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/network/ntp'/>
+    </dependency>
+
+    <logfile_attributes permissions='600'/>
+
     <exec_method timeout_seconds="60" type="method" name="start"
       exec="/usr/bin/glance-manage db_sync">
       <method_context>

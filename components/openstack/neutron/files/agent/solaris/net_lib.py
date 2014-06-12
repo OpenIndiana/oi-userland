@@ -19,7 +19,7 @@
 
 import netaddr
 
-from quantum.agent.linux import utils
+from neutron.agent.linux import utils
 
 
 class CommandBase(object):
@@ -60,18 +60,19 @@ class IPInterface(CommandBase):
         return ipaddr in stdout
 
     def ipaddr_list(self, filters=None):
-        cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'type,addr,',
+        cmd = ['/usr/sbin/ipadm', 'show-addr', '-po', 'type,addr',
                self._ifname]
         stdout = self.execute(cmd)
         atype_addrs = stdout.strip().split('\n')
         result = {}
         for atype_addr in atype_addrs:
-            atype, addr = atype_addr.split(':')
+            atype, addr = atype_addr.split(':', 1)
             val = result.get(atype)
             if val is None:
                 result[atype] = []
                 val = result.get(atype)
-            val.append(addr)
+            # in the case of IPv6 addresses remove any escape '\' character
+            val.append(addr.replace("\\", ""))
         return result
 
     def create_address(self, ipaddr, addrobjname=None, temp=True):
@@ -167,12 +168,22 @@ class Datalink(CommandBase):
 
         return self.execute_with_pfexec(cmd)
 
-    def create_vnic(self, lower_link, mac_address=None, temp=True):
+    def create_vnic(self, lower_link, mac_address=None, vid=None, temp=True):
         if self.datalink_exists(self._dlname):
             return
 
+        if vid:
+            # If the default_tag of lower_link is same as vid, then there
+            # is no need to set vid
+            cmd = ['/usr/sbin/dladm', 'show-linkprop', '-co', 'value',
+                   '-p', 'default_tag', lower_link]
+            stdout = utils.execute(cmd)
+            if stdout.splitlines()[0].strip() == vid:
+                vid = '0'
+        else:
+            vid = '0'
         cmd = ['/usr/sbin/dladm', 'create-vnic', '-l', lower_link,
-               '-m', mac_address, self._dlname]
+               '-m', mac_address, '-v', vid, self._dlname]
         if temp:
             cmd.append('-t')
 
@@ -186,7 +197,7 @@ class Datalink(CommandBase):
         return self.execute_with_pfexec(cmd)
 
 
-class IppoolCommand(CommandBase):
+class IPpoolCommand(CommandBase):
     '''Wrapper around Solaris ippool(1m) command'''
 
     def __init__(self, pool_name, role='ipf', pool_type='tree'):
@@ -248,7 +259,7 @@ class IppoolCommand(CommandBase):
         self.execute_with_pfexec(cmd)
 
 
-class IpfilterCommand(CommandBase):
+class IPfilterCommand(CommandBase):
     '''Wrapper around Solaris ipf(1m) command'''
 
     def split_rules(self, rules):
@@ -282,7 +293,7 @@ class IpfilterCommand(CommandBase):
         return self.execute_with_pfexec(cmd, process_input=process_input)
 
 
-class IpnatCommand(CommandBase):
+class IPnatCommand(CommandBase):
     '''Wrapper around Solaris ipnat(1m) command'''
 
     def add_rules(self, rules):

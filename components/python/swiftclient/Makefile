@@ -25,16 +25,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-swiftclient
-COMPONENT_VERSION=	2.0.2
+COMPONENT_VERSION=	2.1.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bad3902187b0eeb0a7371d54d5789a8e0c745ca2acca5ca4d86961952e37888a
+    sha256:e5304cc2fc58e5f9fec87c0910109b524b3634f49a6dd82a35a28cbdf1515de8
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-swiftclient
 COMPONENT_BUGDB=	service/swift
 
-# Syntax issues: not Python 3 ready.
+# depends on keystoneclient which is not Python 3 ready
 PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk

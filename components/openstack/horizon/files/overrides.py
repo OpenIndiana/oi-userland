@@ -16,7 +16,6 @@
 Solaris-specific customizations for Horizon
 """
 
-from horizon import tabs
 from openstack_dashboard.dashboards.admin.networks.forms import CreateNetwork
 from openstack_dashboard.dashboards.admin.networks.ports.forms import \
     CreatePort
@@ -26,6 +25,8 @@ from openstack_dashboard.dashboards.admin.networks.subnets.tables import \
     DeleteSubnet, SubnetsTable
 from openstack_dashboard.dashboards.admin.networks.tables import \
     DeleteNetwork, NetworksTable
+from openstack_dashboard.dashboards.project.access_and_security.tabs import \
+    AccessAndSecurityTabs, APIAccessTab, FloatingIPsTab, KeypairsTab
 from openstack_dashboard.dashboards.project.instances.tabs import \
     InstanceDetailTabs, LogTab, OverviewTab
 from openstack_dashboard.dashboards.project.instances.workflows import \
@@ -45,12 +46,15 @@ from openstack_dashboard.dashboards.project.networks.tables import \
 from openstack_dashboard.dashboards.project.networks.workflows import \
     CreateNetworkInfoAction, CreateSubnetDetailAction, CreateSubnetInfoAction
 
-# remove PostCreationStep from LaunchInstance
+# remove VolumeOptions and PostCreationStep from LaunchInstance
 create_instance.LaunchInstance.default_steps = \
     (create_instance.SelectProjectUser,
      create_instance.SetInstanceDetails,
      create_instance.SetAccessControls,
      create_instance.SetNetwork)
+
+# Remove the Security Groups tab from Project/Access and Security
+AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
 
 # remove the 'Console' tab from Instance Detail
 InstanceDetailTabs.tabs = (OverviewTab, LogTab)

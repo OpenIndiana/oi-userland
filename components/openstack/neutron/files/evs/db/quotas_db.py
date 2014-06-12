@@ -22,9 +22,9 @@
 
 import sqlalchemy as sa
 
-from quantum.db import quota_db
-from quantum.openstack.common import uuidutils
-from quantum.plugins.evs.db import api as evs_db
+from neutron.db import quota_db
+from neutron.openstack.common import uuidutils
+from neutron.plugins.evs.db import api as evs_db
 
 
 class Quota(evs_db.EVS_DB_BASE):

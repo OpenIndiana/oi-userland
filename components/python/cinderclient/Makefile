@@ -25,14 +25,17 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-cinderclient
-COMPONENT_VERSION=	1.0.7
+COMPONENT_VERSION=	1.0.9
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:8ad67a35e7370fe1379703738050deeae0da33ad6c1e1466dd0cf51c82d4255b
+    sha256:e146e370c9a6e4aa44e8f0662fd33aec532f3965bae9fd564360c279bee03f97
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-cinderclient
 COMPONENT_BUGDB=	service/cinder
+
+# depends on keystoneclient which is not Python 3 ready
+PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

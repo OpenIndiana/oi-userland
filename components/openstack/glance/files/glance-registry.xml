@@ -29,12 +29,20 @@
       type='service'>
       <service_fmri value='svc:/milestone/multi-user:default' />
     </dependency>
+
     <!-- create a dependency on the glance_db service so the glance-api and
          glance-registry services do not collide when creating the database -->
     <dependency name='glance_db' grouping='optional_all' restart_on='error'
       type='service'>
       <service_fmri value='svc:/application/openstack/glance/glance-db'/>
     </dependency>
+
+    <dependency name='ntp' grouping='optional_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/network/ntp'/>
+    </dependency>
+
+    <logfile_attributes permissions='600'/>
 
     <exec_method timeout_seconds="60" type="method" name="start"
       exec="/lib/svc/method/glance-registry %m">

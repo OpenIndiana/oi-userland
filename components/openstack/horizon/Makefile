@@ -25,12 +25,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		horizon
-COMPONENT_CODENAME=	grizzly
-COMPONENT_VERSION=	2013.1.4
+COMPONENT_CODENAME=	havana
+COMPONENT_VERSION=	2013.2.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:fb24b6d8b38d199a8ab0174335df63c7612e74a02e4f0883ee8a3181ce07b4ab
+    sha256:de9b87ee62d8b28792399be0fc867ba99618eaaad289cf9842b5c7084e12620f
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	utility/horizon
@@ -57,7 +57,7 @@ COMPONENT_POST_INSTALL_ACTION += \
 	 $(CP) files/branding/theme/_stylesheets.html $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard/static/solaris/theme; \
 	 $(CP) files/overrides.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/openstack_dashboard); \
 	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
-
+	
 # common targets
 build:		$(BUILD_NO_ARCH)
 

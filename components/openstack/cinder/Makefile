@@ -25,12 +25,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cinder
-COMPONENT_CODENAME=	grizzly
-COMPONENT_VERSION=	2013.1.4
+COMPONENT_CODENAME=	havana
+COMPONENT_VERSION=	2013.2.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:b3466dbc2ea88eef67f73db2b12ec2e8b66047b2bfa0eea31392e155657bee00
+    sha256:a2740f0a0481139ae21cdb0868bebcce01b9f19832439b7f3056435e75791194
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/cinder
@@ -60,7 +60,13 @@ COMPONENT_POST_INSTALL_ACTION += \
          $(CP) files/cinder-volume.xml $(PROTO_DIR)/lib/svc/manifest/application/openstack/; \
          $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris; \
 	 $(TOUCH) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris/__init__.py; \
-	 $(CP) files/solaris/zfs.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris); \
+	 $(CP) files/solaris/zfs.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/solaris; \
+         $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
+         $(CP) files/zfssa/__init__.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
+         $(CP) files/zfssa/cinder.akwf $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
+         $(CP) files/zfssa/restclient.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
+         $(CP) files/zfssa/zfssaiscsi.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa; \
+         $(CP) files/zfssa/zfssarest.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/cinder/volume/drivers/zfssa); \
 	 $(PYTHON) -m compileall $(PROTO_DIR)/$(PYTHON_VENDOR_PACKAGES)
 
 # common targets

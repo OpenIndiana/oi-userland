@@ -19,10 +19,10 @@
 
 """Implements ipfilter and ipnat rules using Solaris utilities."""
 
-from quantum.agent.solaris import net_lib
+from neutron.agent.solaris import net_lib
 
 
-class IpfiltersManager(object):
+class IPfiltersManager(object):
     """Wrapper for Solaris IPF commands -- ipf(1m), ipnat(1m),
     and ippool(1m)."""
 
@@ -31,14 +31,14 @@ class IpfiltersManager(object):
         self.ipv6 = {'filter': [], 'nat': []}
 
     def add_ippool(self, number, ip_cidrs):
-        ippool = net_lib.IppoolCommand(number)
+        ippool = net_lib.IPpoolCommand(number)
         if ip_cidrs:
             ippool.add_pool_nodes(ip_cidrs)
         else:
             ippool.add_pool()
 
     def remove_ippool(self, number, ip_cidrs):
-        ippool = net_lib.IppoolCommand(number)
+        ippool = net_lib.IPpoolCommand(number)
         if ip_cidrs:
             ippool.remove_pool_nodes(ip_cidrs)
         else:
@@ -47,7 +47,7 @@ class IpfiltersManager(object):
     def add_nat_rules(self, rules, version='4'):
         # Solaris doesn't support IPv6 NAT rules
         assert version == '4'
-        ipnat = net_lib.IpnatCommand()
+        ipnat = net_lib.IPnatCommand()
         ipnat.add_rules(rules)
         # we successfully added the nat rules, update the local copy
         for rule in rules:
@@ -56,14 +56,14 @@ class IpfiltersManager(object):
     def remove_nat_rules(self, rules, version='4'):
         # Solaris doesn't support IPv6 NAT rules
         assert version == '4'
-        ipnat = net_lib.IpnatCommand()
+        ipnat = net_lib.IPnatCommand()
         ipnat.remove_rules(rules)
         # we successfully removed the nat rules, update the local copy
         for rule in rules:
             self.ipv4['nat'].remove(rule)
 
     def add_ipf_rules(self, rules, version='4'):
-        ipf = net_lib.IpfilterCommand()
+        ipf = net_lib.IPfilterCommand()
         ipf.add_rules(rules, version)
         version_rules = (self.ipv4['filter'] if version == '4' else
                          self.ipv6['filter'])
@@ -71,7 +71,7 @@ class IpfiltersManager(object):
             version_rules.append(rule)
 
     def remove_ipf_rules(self, rules, version='4'):
-        ipf = net_lib.IpfilterCommand()
+        ipf = net_lib.IPfilterCommand()
         ipf.remove_rules(rules, version)
         version_rules = (self.ipv4['filter'] if version == '4' else
                          self.ipv6['filter'])

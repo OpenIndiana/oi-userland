@@ -1,0 +1,49 @@
+Although the following patch has been addressed in Icehouse 2014.1, it
+still has not yet been released for Havana.  It has been modified to
+apply cleanly into our current Havana implementation
+
+commit 5b61df1f539d78cf9d164a142d731e471aa18d4e
+Author: Maru Newby <marun@redhat.com>
+Date:   Wed Nov 27 07:57:48 2013 +0000
+
+    Stop logging unnecessary warning on context create
+    
+    The context was previously logging at the 'warn' level when unknown
+    kwargs were being passed to its __init__().  Since the agents were
+    passing tenant=None with each rpc request, this was generating an
+    unreasonable amount of log chatter that would not be useful to an
+    operator.  The fix is to log at the debug level instead so that
+    the operators don't see the output by default but developers can
+    still choose to.
+    
+    Change-Id: I5c328f628c597eb949c1fe67b23120d2b5d1c7da
+    Related-Bug: #1254530
+    Partial-Bug: #1255441
+
+--- neutron-2013.2.3/neutron/context.py.~1~	2014-04-03 11:49:01.000000000 -0700
++++ neutron-2013.2.3/neutron/context.py	2014-06-08 12:01:16.420520735 -0700
+@@ -46,8 +46,8 @@
+             *only* deleted records are visible.
+         """
+         if kwargs:
+-            LOG.warn(_('Arguments dropped when creating '
+-                       'context: %s'), kwargs)
++            LOG.debug(_('Arguments dropped when creating '
++                        'context: %s'), kwargs)
+         super(ContextBase, self).__init__(user=user_id, tenant=tenant_id,
+                                           is_admin=is_admin)
+         self.read_deleted = read_deleted
+--- neutron-2013.2.3/neutron/tests/unit/test_neutron_context.py.~1~	2014-04-03 11:49:01.000000000 -0700
++++ neutron-2013.2.3/neutron/tests/unit/test_neutron_context.py	2014-06-08 12:10:04.483779074 -0700
+@@ -35,6 +35,11 @@
+         self.assertEqual('user_id', cxt.user_id)
+         self.assertEqual('tenant_id', cxt.project_id)
+ 
++    def test_neutron_context_create_logs_unknown_kwarg(self):
++        with mock.patch.object(context.LOG, 'debug') as mock_log:
++            context.Context('user_id', 'tenant_id', foo=None)
++        self.assertEqual(mock_log.call_count, 1)
++
+     def test_neutron_context_to_dict(self):
+         cxt = context.Context('user_id', 'tenant_id')
+         cxt_dict = cxt.to_dict()

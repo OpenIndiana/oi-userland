@@ -32,6 +32,7 @@ rings = {
     "proxy-server": ["account", "container", "object"]
 }
 
+
 def start():
     # All the Swift services do essentially the same thing, so there's no need
     # to have different method executables.  Just look at the FMRI and run the
@@ -47,8 +48,9 @@ def start():
         cfgfile = "/etc/swift/%s-server.conf" % exepath.split("-")[1]
     if not os.path.isfile(cfgfile):
         print >> sys.stderr, "Missing configuration file"
-        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_CONFIG,
-          "missing_config", "Missing configuration file")
+        smf_include.smf_method_exit(
+            smf_include.SMF_EXIT_ERR_CONFIG, "missing_config",
+            "Missing configuration file")
 
     missing_rings = []
     for ring in rings.get(exepath.split("-", 1)[1], ()):
@@ -57,9 +59,9 @@ def start():
             missing_rings.append(ringfile)
     if missing_rings:
         print >> sys.stderr, "Missing ring(s): " + ", ".join(missing_rings)
-        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_CONFIG,
-          "missing_ring",
-          "Missing ring(s): " + ", ".join(missing_rings))
+        smf_include.smf_method_exit(
+            smf_include.SMF_EXIT_ERR_CONFIG, "missing_ring",
+            "Missing ring(s): " + ", ".join(missing_rings))
 
     # This is the default recon_cache_path (from the config files) as well as
     # the default run_dir (from the code).

@@ -29,14 +29,23 @@
       type='service'>
       <service_fmri value='svc:/milestone/multi-user:default' />
     </dependency>
+
     <dependency name='evs' grouping='require_all' restart_on='error'
       type='service'>
       <service_fmri value='svc:/network/evs:default' />
     </dependency>
+
     <dependency name='conductor' grouping='optional_all' restart_on='error'
       type='service'>
       <service_fmri value='svc:/application/openstack/nova/nova-conductor' />
     </dependency>
+
+    <dependency name='ntp' grouping='optional_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/network/ntp'/>
+    </dependency>
+
+    <logfile_attributes permissions='600'/>
 
     <!-- increase the timeout to 120 seconds.  Nova's RPC calls have a timeout
          of 60 seconds so the start method needs to extend past that -->

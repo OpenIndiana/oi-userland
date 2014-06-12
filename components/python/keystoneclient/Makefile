@@ -25,11 +25,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		python-keystoneclient
-COMPONENT_VERSION=	0.4.1
+COMPONENT_VERSION=	0.8.0
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bc9b27000e5bbfbb06030a69af81e08ced99568d97fd257972ef80637f6e0704
+    sha256:6a34e10e67f375c82fefbb787072767da976520b302021b5d7237bd78e93f8cf
 COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-keystoneclient
 COMPONENT_BUGDB=	service/keystone

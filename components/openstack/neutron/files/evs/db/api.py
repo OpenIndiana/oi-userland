@@ -23,11 +23,11 @@ from sqlalchemy import orm
 
 from oslo.config import cfg
 
-from quantum.context import ContextBase
-from quantum.db import model_base
+from neutron.context import ContextBase
+from neutron.db import model_base
 
 
-EVS_DB_BASE = declarative.declarative_base(cls=model_base.QuantumBaseV2)
+EVS_DB_BASE = declarative.declarative_base(cls=model_base.NeutronBaseV2)
 EVS_DB_ENGINE = None
 EVS_DB_MAKER = None
 
@@ -46,9 +46,7 @@ def configure_db():
     global EVS_DB_ENGINE
     if not EVS_DB_ENGINE:
         sql_connection = cfg.CONF.DATABASE.sql_connection
-        if not sql_connection:
-            sql_connection = 'sqlite:////var/lib/quantum/quantum.sqlite'
-        EVS_DB_ENGINE = sa.create_engine(sql_connection, echo=True)
+        EVS_DB_ENGINE = sa.create_engine(sql_connection, echo=False)
         EVS_DB_BASE.metadata.create_all(EVS_DB_ENGINE)
 
 
@@ -63,7 +61,7 @@ def get_session(autocommit=True, expire_on_commit=False):
 
 
 def get_evs_context(context):
-    """Overrides the Quantum DB session with EVS DB session"""
+    """Overrides the Neutron DB session with EVS DB session"""
 
     evs_context = EVSContext.from_dict(context.to_dict())
     evs_context.session = get_session()

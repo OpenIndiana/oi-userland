@@ -1,0 +1,181 @@
+Although the following patch has been addressed in Icehouse 2014.1, it
+still has not yet been released for Havana.
+
+From c1fca7affc22dc756f07f604f03c2343eeac9d15 Mon Sep 17 00:00:00 2001
+From: "Jay S. Bryant" <jsbryant@us.ibm.com>
+Date: Fri, 15 Nov 2013 19:01:58 -0600
+Subject: [PATCH] Add default quota class into DB during migration
+
+For some time now use_default_quota_class has been the
+default setting for Cinder.  Cinder, however, has not been putting
+any defaults for the default quota class into the database.  This
+resulted in any command that queried for the default quotas to cause
+the message "Deprecated: Default quota for resource: <resource> is set
+by the default quota flag: <quota flag>, it is now deprecated.  Please use
+the default quota class for default quota."
+
+This commit resolves this issue by setting the default value for volumes,
+snapshots and gigabytes in the quota_class table at migration time if there
+is not already a class_name of 'default' in the quota_classes table.
+
+Unit tests are included with this commit.
+
+Closes-bug 1233763
+Change-Id: I457ed8a9b78492eda22e31dfc198b2ee051d3ece
+(cherry picked from commit 7d2641688454d9064b691e4aab4b5d8b14d75305)
+---
+ .../versions/021_add_default_quota_class.py        |   85 ++++++++++++++++++++
+ cinder/tests/test_migrations.py                    |   31 +++++++
+ cinder/tests/test_quota.py                         |    5 ++
+ 3 files changed, 121 insertions(+)
+ create mode 100644 cinder/db/sqlalchemy/migrate_repo/versions/021_add_default_quota_class.py
+
+diff --git a/cinder/db/sqlalchemy/migrate_repo/versions/021_add_default_quota_class.py b/cinder/db/sqlalchemy/migrate_repo/versions/021_add_default_quota_class.py
+new file mode 100644
+index 0000000..5c06e9c
+--- /dev/null
++++ b/cinder/db/sqlalchemy/migrate_repo/versions/021_add_default_quota_class.py
+@@ -0,0 +1,85 @@
++#    Copyright 2013 IBM Corp.
++#
++#    Licensed under the Apache License, Version 2.0 (the "License"); you may
++#    not use this file except in compliance with the License. You may obtain
++#    a copy of the License at
++#
++#         http://www.apache.org/licenses/LICENSE-2.0
++#
++#    Unless required by applicable law or agreed to in writing, software
++#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
++#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
++#    License for the specific language governing permissions and limitations
++#    under the License.
++
++import datetime
++
++from cinder.openstack.common import log as logging
++from oslo.config import cfg
++from sqlalchemy import MetaData, Table
++
++# Get default values via config.  The defaults will either
++# come from the default values set in the quota option
++# configuration or via cinder.conf if the user has configured
++# default values for quotas there.
++CONF = cfg.CONF
++CONF.import_opt('quota_volumes', 'cinder.quota')
++CONF.import_opt('quota_snapshots', 'cinder.quota')
++CONF.import_opt('quota_gigabytes', 'cinder.quota')
++LOG = logging.getLogger(__name__)
++
++CLASS_NAME = 'default'
++CREATED_AT = datetime.datetime.now()
++
++
++def upgrade(migrate_engine):
++    """Add default quota class data into DB."""
++    meta = MetaData()
++    meta.bind = migrate_engine
++
++    quota_classes = Table('quota_classes', meta, autoload=True)
++
++    rows = quota_classes.count().\
++        where(quota_classes.c.class_name == 'default').execute().scalar()
++
++    # Do not add entries if there are already 'default' entries.  We don't
++    # want to write over something the user added.
++    if rows:
++        LOG.info(_("Found existing 'default' entries in the quota_classes "
++                   "table.  Skipping insertion of default values."))
++        return
++
++    try:
++        #Set default volumes
++        qci = quota_classes.insert()
++        qci.execute({'created_at': CREATED_AT,
++                     'class_name': CLASS_NAME,
++                     'resource': 'volumes',
++                     'hard_limit': CONF.quota_volumes,
++                     'deleted': False, })
++        #Set default snapshots
++        qci.execute({'created_at': CREATED_AT,
++                     'class_name': CLASS_NAME,
++                     'resource': 'snapshots',
++                     'hard_limit': CONF.quota_snapshots,
++                     'deleted': False, })
++        #Set default gigabytes
++        qci.execute({'created_at': CREATED_AT,
++                     'class_name': CLASS_NAME,
++                     'resource': 'gigabytes',
++                     'hard_limit': CONF.quota_gigabytes,
++                     'deleted': False, })
++        LOG.info(_("Added default quota class data into the DB."))
++    except Exception:
++        LOG.error(_("Default quota class data not inserted into the DB."))
++        raise
++
++
++def downgrade(migrate_engine):
++    """Don't delete the 'default' entries at downgrade time.
++
++    We don't know if the user had default entries when we started.
++    If they did, we wouldn't want to remove them.  So, the safest
++    thing to do is just leave the 'default' entries at downgrade time.
++    """
++    pass
+diff --git a/cinder/tests/test_migrations.py b/cinder/tests/test_migrations.py
+index 257c3e8..2ef5bff 100644
+--- a/cinder/tests/test_migrations.py
++++ b/cinder/tests/test_migrations.py
+@@ -1002,3 +1002,34 @@ class TestMigrations(test.TestCase):
+ 
+             self.assertFalse(engine.dialect.has_table(engine.connect(),
+                                                       "volume_admin_metadata"))
++
++    def test_migration_021(self):
++        """Test adding default data for quota classes works correctly."""
++        for (key, engine) in self.engines.items():
++            migration_api.version_control(engine,
++                                          TestMigrations.REPOSITORY,
++                                          migration.INIT_VERSION)
++            migration_api.upgrade(engine, TestMigrations.REPOSITORY, 20)
++            metadata = sqlalchemy.schema.MetaData()
++            metadata.bind = engine
++
++            migration_api.upgrade(engine, TestMigrations.REPOSITORY, 21)
++
++            quota_class_metadata = sqlalchemy.Table('quota_classes',
++                                                    metadata,
++                                                    autoload=True)
++
++            num_defaults = quota_class_metadata.count().\
++                where(quota_class_metadata.c.class_name == 'default').\
++                execute().scalar()
++
++            self.assertEqual(3, num_defaults)
++
++            migration_api.downgrade(engine, TestMigrations.REPOSITORY, 20)
++
++            # Defaults should not be deleted during downgrade
++            num_defaults = quota_class_metadata.count().\
++                where(quota_class_metadata.c.class_name == 'default').\
++                execute().scalar()
++
++            self.assertEqual(3, num_defaults)
+diff --git a/cinder/tests/test_quota.py b/cinder/tests/test_quota.py
+index 99b2ed2..ae79b39 100644
+--- a/cinder/tests/test_quota.py
++++ b/cinder/tests/test_quota.py
+@@ -62,6 +62,11 @@ class QuotaIntegrationTestCase(test.TestCase):
+ 
+         self.stubs.Set(rpc, 'call', rpc_call_wrapper)
+ 
++        # Destroy the 'default' quota_class in the database to avoid
++        # conflicts with the test cases here that are setting up their own
++        # defaults.
++        db.quota_class_destroy_all_by_name(self.context, 'default')
++
+     def tearDown(self):
+         db.volume_type_destroy(context.get_admin_context(),
+                                self.volume_type['id'])
+-- 
+1.7.9.2
+

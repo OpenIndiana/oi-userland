@@ -16,8 +16,8 @@
 
 from oslo.config import cfg
 
-from quantum.agent.linux import utils
-from quantum.agent.solaris import net_lib
+from neutron.agent.linux import utils
+from neutron.agent.solaris import net_lib
 
 
 OPTS = [

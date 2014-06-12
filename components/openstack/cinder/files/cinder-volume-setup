@@ -28,11 +28,19 @@ def start():
     order to set it up properly for Cinder to use.
 
     """
-    parser = ConfigParser.ConfigParser()
-    parser.read("/etc/cinder/cinder.conf")
+    cinder_conf = "/etc/cinder/cinder.conf"
+    if not os.path.exists(cinder_conf):
+        print "%s doesn't exist" % cinder_conf
+        return smf_include.SMF_EXIT_ERR_CONFIG
 
-    # set up the top-level dataset with the proper permissions for cinder
-    top_ds = parser.get("DEFAULT", "zfs_volume_base")
+    parser = ConfigParser.ConfigParser()
+    parser.read(cinder_conf)
+
+    # retrieve the top-level dataset or just get the default (rpool/cinder)
+    try:
+        top_ds = parser.get("DEFAULT", "zfs_volume_base")
+    except ConfigParser.NoOptionError:
+        top_ds = "rpool/cinder"
 
     # look to see if the dataset exists
     cmd = ["/usr/sbin/zfs", "list", top_ds]

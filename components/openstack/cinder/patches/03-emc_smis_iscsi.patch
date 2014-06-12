@@ -1,17 +1,18 @@
 In-house patch to adopt EMC driver to use Solaris' iscsiadm(1M) rather
 than that from Linux.  Patch has not yet been submitted upstream.
 
---- cinder-2013.1.4/cinder/volume/drivers/emc/emc_smis_iscsi.py.~1~	2013-10-17 11:21:37.000000000 -0700
-+++ cinder-2013.1.4/cinder/volume/drivers/emc/emc_smis_iscsi.py	2014-03-12 17:07:06.500560732 -0700
-@@ -21,6 +21,7 @@
+--- cinder-2013.2.3/cinder/volume/drivers/emc/emc_smis_iscsi.py.~1~	2014-04-03 11:42:36.000000000 -0700
++++ cinder-2013.2.3/cinder/volume/drivers/emc/emc_smis_iscsi.py	2014-04-09 01:30:22.894010750 -0700
+@@ -21,6 +21,8 @@
  """
  
- import os
-+import sys
- import time
  
++import sys
++
  from cinder import exception
-@@ -118,13 +119,41 @@
+ from cinder.openstack.common import log as logging
+ from cinder.volume import driver
+@@ -114,13 +116,41 @@
  
          LOG.warn(_("ISCSI provider_location not stored, using discovery"))
  

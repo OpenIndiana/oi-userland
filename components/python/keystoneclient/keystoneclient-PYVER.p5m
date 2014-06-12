@@ -31,7 +31,7 @@ set name=pkg.description \
     value="A client for the OpenStack Identity API, implemented by Keystone. There's a Python API (the 'keystoneclient' module), and a command-line script ('keystone')."
 set name=com.oracle.info.description \
     value="keystoneclient, the Python bindings to the OpenStack Identity API"
-set name=com.oracle.info.tpno value=16349
+set name=com.oracle.info.tpno value=17870
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python \
     value="org.opensolaris.category.2008:System/Administration and Configuration" \
@@ -48,7 +48,15 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/access.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/apiclient/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/apiclient/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/auth/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/auth/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/auth/identity/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/auth/identity/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/auth/identity/v2.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/auth/identity/v3.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/auth/token_endpoint.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/baseclient.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/common/cms.py
@@ -57,26 +65,37 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/bootstra
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/bootstrap/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/ec2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/contrib/ec2/utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/discover.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/fixture/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/fixture/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/fixture/v2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/generic/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/generic/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/generic/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/httpclient.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/locale/keystoneclient.pot
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/middleware/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/middleware/auth_token.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/middleware/memcache_crypt.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/middleware/s3_token.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/apiclient/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/apiclient/auth.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/apiclient/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/apiclient/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/apiclient/exceptions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/apiclient/fake_client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/fixture/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/fixture/config.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/gettextutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/importutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/jsonutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/memorycache.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/py3kcompat/__init__.py
-file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/py3kcompat/urlutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/openstack/common/timeutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/service_catalog.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/session.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/shell.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/__init__.py
@@ -92,6 +111,11 @@ file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v2_0/users.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/endpoint_filter.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/federation/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/federation/core.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/federation/identity_providers.py
+file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/federation/mappings.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/contrib/trusts.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/credentials.py
 file path=usr/lib/python$(PYVER)/vendor-packages/keystoneclient/v3/domains.py
@@ -118,6 +142,10 @@ depend type=group fmri=library/python/anyjson-$(PYV)
 # force a group dependency on the optional eventlet; pkgdepend work is needed to
 # flush this out.
 depend type=group fmri=library/python/eventlet-$(PYV)
+
+# force a group dependency on the optional simplejson; pkgdepend work is needed
+# to flush this out.
+depend type=group fmri=library/python/simplejson-$(PYV)
 
 # force a dependency on argparse; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/argparse-$(PYV)
@@ -149,3 +177,9 @@ depend type=require fmri=library/python/requests-$(PYV)
 
 # force a dependency on six; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/six-$(PYV)
+
+# force a dependency on stevedore; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/stevedore-$(PYV)
+
+# force a dependency on webob; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/webob-$(PYV)

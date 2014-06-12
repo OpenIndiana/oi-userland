@@ -25,13 +25,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		neutron
-COMPONENT_OLDNAME=	quantum
-COMPONENT_CODENAME=	grizzly
-COMPONENT_VERSION=	2013.1.4
-COMPONENT_SRC=		$(COMPONENT_OLDNAME)-$(COMPONENT_VERSION)
+COMPONENT_CODENAME=	havana
+COMPONENT_VERSION=	2013.2.3
+COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3bd26ae7dabe6093a3cbe701ac8d7022fbdbe1d8231ab1c6866de388684e272c
+    sha256:116cc2ce9f2f5b2dcbd5a314d78a496b180a148dadd02a076ff664b0f3c20cd3
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/neutron
@@ -51,25 +50,22 @@ PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 
 # move all the proper files into place and construct .pyc files for them
 COMPONENT_POST_BUILD_ACTION += \
-	 ($(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent; \
-	 $(CP) files/agent/evs_l3_agent.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/linux; \
-	 $(CP) files/agent/linux/device.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/linux; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/solaris; \
-	 $(CP) files/agent/solaris/__init__.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/solaris; \
-	 $(CP) files/agent/solaris/device.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/solaris; \
-	 $(CP) files/agent/solaris/dhcp.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/solaris; \
-	 $(CP) files/agent/solaris/interface.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/solaris; \
-	 $(CP) files/agent/solaris/ipfilters_manager.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/solaris; \
-	 $(CP) files/agent/solaris/net_lib.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/agent/solaris; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs; \
-	 $(TOUCH) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs/__init__.py; \
-	 $(CP) files/evs/plugin.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs; \
-	 $(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs/db; \
-	 $(TOUCH) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs/db/__init__.py; \
-	 $(CP) files/evs/db/api.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs/db; \
-	 $(CP) files/evs/db/l3nat.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs/db; \
-	 $(CP) files/evs/db/quotas_db.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/quantum/plugins/evs/db)
+	 ($(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent; \
+	 $(CP) files/agent/evs_l3_agent.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent; \
+	 $(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent/solaris; \
+	 $(CP) files/agent/solaris/__init__.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent/solaris; \
+	 $(CP) files/agent/solaris/dhcp.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent/solaris; \
+	 $(CP) files/agent/solaris/interface.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent/solaris; \
+	 $(CP) files/agent/solaris/ipfilters_manager.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent/solaris; \
+	 $(CP) files/agent/solaris/net_lib.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/agent/solaris; \
+	 $(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs; \
+	 $(TOUCH) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs/__init__.py; \
+	 $(CP) files/evs/plugin.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs; \
+	 $(MKDIR) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs/db; \
+	 $(TOUCH) $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs/db/__init__.py; \
+	 $(CP) files/evs/db/api.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs/db; \
+	 $(CP) files/evs/db/l3nat.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs/db; \
+	 $(CP) files/evs/db/quotas_db.py $(PROTO_DIR)/usr/lib/python$(PYTHON_VERSION)/vendor-packages/neutron/plugins/evs/db)
 
 
 COMPONENT_POST_INSTALL_ACTION += \

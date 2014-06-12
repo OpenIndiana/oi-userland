@@ -29,7 +29,6 @@ import tempfile
 import uuid
 
 import rad.bindings.com.oracle.solaris.rad.kstat as kstat
-import rad.bindings.com.oracle.solaris.rad.zonesbridge as zonesbridge
 import rad.bindings.com.oracle.solaris.rad.zonemgr as zonemgr
 import rad.client
 import rad.connect
@@ -37,6 +36,7 @@ from solaris_install.archive.checkpoints import InstantiateUnifiedArchive
 from solaris_install.archive import LOGFILE as ARCHIVE_LOGFILE
 from solaris_install.archive import UnifiedArchive
 from solaris_install.engine import InstallEngine
+from solaris_install.target.size import Size
 
 from eventlet import greenthread
 from lxml import etree
@@ -44,16 +44,19 @@ from oslo.config import cfg
 
 from nova.compute import power_state
 from nova.compute import task_states
-from nova.compute import vm_mode
+from nova.compute import vm_states
 from nova import conductor
 from nova import context as nova_context
 from nova import exception
 from nova.image import glance
-from nova.network import quantumv2
+from nova.network import neutronv2
 from nova.openstack.common import fileutils
+from nova.openstack.common.gettextutils import _
 from nova.openstack.common import jsonutils
 from nova.openstack.common import log as logging
-from nova import paths
+from nova.openstack.common import loopingcall
+from nova.openstack.common import processutils
+from nova.openstack.common import strutils
 from nova import utils
 from nova.virt import driver
 from nova.virt import event as virtevent
@@ -132,7 +135,7 @@ def lookup_resource_property(zone, resource, prop, filter=None):
 
 def lookup_resource_property_value(zone, resource, prop, value):
     """Lookup specified property with value from specified Solaris Zone
-       resource. Returns property if matching value is found, else None
+    resource. Returns property if matching value is found, else None
     """
     try:
         resources = zone.getResources(zonemgr.Resource(resource))
@@ -149,20 +152,19 @@ def lookup_resource_property_value(zone, resource, prop, value):
 
 
 class ZoneConfig(object):
-    """ ZoneConfig - context manager for access zone configurations.
+    """ZoneConfig - context manager for access zone configurations.
     Automatically opens the configuration for a zone and commits any changes
     before exiting
     """
     def __init__(self, zone):
-        """ zone is a zonemgr object representing either a kernel zone or
+        """zone is a zonemgr object representing either a kernel zone or
         non-glboal zone.
         """
         self.zone = zone
         self.editing = False
 
     def __enter__(self):
-        """ enables the editing of the zone.
-        """
+        """enables the editing of the zone."""
         try:
             self.zone.editConfig()
             self.editing = True
@@ -173,7 +175,7 @@ class ZoneConfig(object):
             raise
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        """ looks for any kind of exception before exiting.  If one is found,
+        """looks for any kind of exception before exiting.  If one is found,
         cancel any configuration changes and reraise the exception.  If not,
         commit the new configuration.
         """
@@ -192,7 +194,7 @@ class ZoneConfig(object):
                 raise
 
     def setprop(self, resource, prop, value):
-        """ sets a property for an existing resource OR creates a new resource
+        """sets a property for an existing resource OR creates a new resource
         with the given property(s).
         """
         current = lookup_resource_property(self.zone, resource, prop)
@@ -215,8 +217,7 @@ class ZoneConfig(object):
             raise
 
     def addresource(self, resource, props=None):
-        """ creates a new resource with an optional property list.
-        """
+        """creates a new resource with an optional property list."""
         if props is None:
             props = []
 
@@ -229,8 +230,8 @@ class ZoneConfig(object):
             raise
 
     def removeresources(self, resource, props=None):
-        """ removes resources whose properties include the optional property
-            list specified in props.
+        """removes resources whose properties include the optional property
+        list specified in props.
         """
         if props is None:
             props = []
@@ -283,6 +284,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         self.virtapi = virtapi
         self._compute_event_callback = None
         self._conductor_api = conductor.API()
+        self._fc_hbas = None
+        self._fc_wwnns = None
+        self._fc_wwpns = None
         self._host_stats = {}
         self._initiator = None
         self._install_engine = None
@@ -312,10 +316,79 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def init_host(self, host):
         """Initialize anything that is necessary for the driver to function,
-        including catching up with currently running VM's on the given host."""
+        including catching up with currently running VM's on the given host.
+        """
         # TODO(Vek): Need to pass context in for access to auth_token
-
         self._init_rad()
+
+    def _get_fc_hbas(self):
+        """Get Fibre Channel HBA information."""
+        if self._fc_hbas:
+            return self._fc_hbas
+
+        out = None
+        try:
+            out, err = utils.execute('/usr/sbin/fcinfo', 'hba-port')
+        except processutils.ProcessExecutionError as err:
+            return []
+
+        if out is None:
+            raise RuntimeError(_("Cannot find any Fibre Channel HBAs"))
+
+        hbas = []
+        hba = {}
+        for line in out.splitlines():
+            line = line.strip()
+            # Collect the following hba-port data:
+            # 1: Port WWN
+            # 2: State (online|offline)
+            # 3: Node WWN
+            if line.startswith("HBA Port WWN:"):
+                # New HBA port entry
+                hba = {}
+                wwpn = line.split()[-1]
+                hba['port_name'] = wwpn
+                continue
+            elif line.startswith("Port Mode:"):
+                mode = line.split()[-1]
+                # Skip Target mode ports
+                if mode != 'Initiator':
+                    break
+            elif line.startswith("State:"):
+                state = line.split()[-1]
+                hba['port_state'] = state
+                continue
+            elif line.startswith("Node WWN:"):
+                wwnn = line.split()[-1]
+                hba['node_name'] = wwnn
+                continue
+            if len(hba) == 3:
+                hbas.append(hba)
+                hba = {}
+        self._fc_hbas = hbas
+        return self._fc_hbas
+
+    def _get_fc_wwnns(self):
+        """Get Fibre Channel WWNNs from the system, if any."""
+        hbas = self._get_fc_hbas()
+
+        wwnns = []
+        for hba in hbas:
+            if hba['port_state'] == 'online':
+                wwnn = hba['node_name']
+                wwnns.append(wwnn)
+        return wwnns
+
+    def _get_fc_wwpns(self):
+        """Get Fibre Channel WWPNs from the system, if any."""
+        hbas = self._get_fc_hbas()
+
+        wwpns = []
+        for hba in hbas:
+            if hba['port_state'] == 'online':
+                wwpn = hba['port_name']
+                wwpns.append(wwpn)
+        return wwpns
 
     def _get_iscsi_initiator(self):
         """ Return the iSCSI initiator node name IQN for this host """
@@ -327,6 +400,19 @@ class SolarisZonesDriver(driver.ComputeDriver):
         initiator_iqn = initiator_name_line.rsplit(' ', 1)[1]
         return initiator_iqn
 
+    def _get_zone_auto_install_state(self, zone_name):
+        """Returns the SMF state of the auto-installer service,
+           or None if auto-installer service is non-existent
+        """
+        try:
+            out, err = utils.execute('/usr/sbin/zlogin', '-S', zone_name,
+                                     '/usr/bin/svcs', '-H', '-o', 'state',
+                                     'auto-installer:default')
+            return out.strip()
+        except processutils.ProcessExecutionError as err:
+            # No auto-installer instance most likely.
+            return None
+
     def _get_zone_by_name(self, name):
         """Return a Solaris Zones object via RAD by name."""
         try:
@@ -336,7 +422,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
             return None
         except Exception:
             raise
-
         return zone
 
     def _get_state(self, zone):
@@ -351,7 +436,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """Return the maximum memory in KBytes allowed."""
         max_mem = lookup_resource_property(zone, 'capped-memory', 'physical')
         if max_mem is not None:
-            return utils.to_bytes(max_mem) / 1024
+            return strutils.to_bytes(max_mem) / 1024
 
         # If physical property in capped-memory doesn't exist, this may
         # represent a non-global zone so just return the system's total
@@ -422,7 +507,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         for named in kstat_object.fresh_snapshot().data.NAMED:
             kstat_data[named.name] = getattr(named.value,
                                              str(named.value.discriminant))
-
         return kstat_data
 
     def _get_cpu_time(self, zone):
@@ -455,7 +539,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.error(_("Unable to find instance '%s' via zonemgr(3RAD)")
                       % name)
             raise exception.InstanceNotFound(instance_id=name)
-
         return {
             'state':    self._get_state(zone),
             'max_mem':  self._get_max_mem(zone),
@@ -495,6 +578,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
             efficient.
         """
         return instance_id in self.list_instances()
+
+    def estimate_instance_overhead(self, instance_info):
+        """Estimate the virtualization overhead required to build an instance
+        of the given flavor.
+
+        Defaults to zero, drivers should override if per-instance overhead
+        calculations are desired.
+
+        :param instance_info: Instance/flavor to calculate overhead for.
+        :returns: Dict of estimated overhead values.
+        """
+        return {'memory_mb': 0}
 
     def _get_list_zone_object(self):
         """Return a list of all Solaris Zones objects via RAD."""
@@ -538,7 +633,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.error(_("Unable to fetch Glance image: id %s: %s")
                       % (instance['image_ref'], reason))
             raise
-
         return image
 
     def _validate_image(self, image, instance):
@@ -602,10 +696,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _suri_from_volume_info(self, connection_info):
         """Returns a suri(5) formatted string based on connection_info
-           Currently supports local ZFS volume and iSCSI driver types.
+        Currently supports local ZFS volume and iSCSI driver types.
         """
         driver_type = connection_info['driver_volume_type']
-        if driver_type not in ['iscsi', 'local']:
+        if driver_type not in ['iscsi', 'fibre_channel', 'local']:
             raise exception.VolumeDriverNotFound(driver_type=driver_type)
         if driver_type == 'local':
             suri = 'dev:/dev/zvol/dsk/%s' % connection_info['volume_path']
@@ -621,7 +715,42 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                                     data['target_iqn'],
                                                     data['target_lun'])
             # TODO(npower): need to handle CHAP authentication also
+        elif driver_type == 'fibre_channel':
+            data = connection_info['data']
+            target_wwn = data['target_wwn']
+            # Check for multiple target_wwn values in a list
+            if isinstance(target_wwn, list):
+                target_wwn = target_wwn[0]
+            # Ensure there's a fibre channel HBA.
+            hbas = self._get_fc_hbas()
+            if not hbas:
+                LOG.error(_("Cannot attach Fibre Channel volume '%s' because "
+                          "no Fibre Channel HBA initiators were found")
+                          % (target_wwn))
+                raise exception.InvalidVolume(reason="No host FC initiator")
 
+            target_lun = data['target_lun']
+            # If the volume was exported just a few seconds previously then
+            # it will probably not be visible to the local adapter yet.
+            # Invoke 'fcinfo remote-port' on all local HBA ports to trigger
+            # a refresh.
+            for wwpn in self._get_fc_wwpns():
+                utils.execute('/usr/sbin/fcinfo', 'remote-port',
+                              '-p', wwpn)
+
+            # Use suriadm(1M) to generate a Fibre Channel storage URI.
+            try:
+                out, err = utils.execute('/usr/sbin/suriadm', 'lookup-uri',
+                                         '-p', 'target=naa.%s' % target_wwn,
+                                         '-p', 'lun=%s' % target_lun)
+            except processutils.ProcessExecutionError as err:
+                LOG.error(_("Lookup failure of Fibre Channel volume '%s', lun "
+                          "%s: %s") % (target_wwn, target_lun, err.stderr))
+                raise
+
+            lines = out.split('\n')
+            # Use the long form SURI on the second output line.
+            suri = lines[1].strip()
         return suri
 
     def _set_global_properties(self, name, extra_specs, brand):
@@ -677,11 +806,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 greenthread.sleep(1)
 
         except Exception as reason:
-            LOG.error(_("Unable to create root zpool volume for instance '%s':"
-                        "%s") % (instance['name'], reason))
+            LOG.error(_("Unable to create root zpool volume for instance '%s'"
+                        ": %s") % (instance['name'], reason))
             raise
 
         instance_uuid = instance['uuid']
+        volume_id = volume['id']
         # TODO(npower): Adequate for default boot device. We currently
         # ignore this value, but cinder gets stroppy about this if we set it to
         # None
@@ -689,9 +819,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         try:
             connector = self.get_volume_connector(instance)
-            connection_info = self._volume_api.initialize_connection(context,
-                                                                     volume,
-                                                                     connector)
+            connection_info = self._volume_api.initialize_connection(
+                context, volume_id, connector)
             # Check connection_info to determine if the provided volume is
             # local to this compute node. If it is, then don't use it for
             # Solaris branded zones in order to avoid a know ZFS deadlock issue
@@ -725,7 +854,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                                     "as a boot device for 'solaris' branded "
                                     "zones."))
                         delete_boot_volume = True
-                else:
+                # Assuming that fibre_channel is non-local
+                elif driver_type != 'fibre_channel':
                     # Some other connection type that we don't understand
                     # Let zone use some local fallback instead.
                     LOG.warning(_("Unsupported volume driver type '%s' "
@@ -735,11 +865,12 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
             if delete_boot_volume:
                 LOG.warning(_("Volume '%s' is being discarded") % volume['id'])
-                self._volume_api.delete(context, volume)
+                self._volume_api.delete(context, volume_id)
                 return None
 
             # Notify Cinder DB of the volume attachment.
-            self._volume_api.attach(context, volume, instance_uuid, mountpoint)
+            self._volume_api.attach(context, volume_id, instance_uuid,
+                                    mountpoint)
             values = {
                 'instance_uuid': instance['uuid'],
                 'connection_info': jsonutils.dumps(connection_info),
@@ -749,7 +880,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 'delete_on_termination': True,
                 'virtual_name': None,
                 'snapshot_id': None,
-                'volume_id': volume['id'],
+                'volume_id': volume_id,
                 'volume_size': instance['root_gb'],
                 'no_device': None}
             self._conductor_api.block_device_mapping_update_or_create(context,
@@ -758,10 +889,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
         except Exception as reason:
             LOG.error(_("Unable to attach root zpool volume '%s' to instance "
                         "%s: %s") % (volume['id'], instance['name'], reason))
-            self._volume_api.detach(context, volume)
-            self._volume_api.delete(context, volume)
+            self._volume_api.detach(context, volume_id)
+            self._volume_api.delete(context, volume_id)
             raise
-
         return connection_info
 
     def _set_boot_device(self, name, connection_info, brand):
@@ -821,8 +951,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def _set_network(self, context, name, instance, network_info, brand,
                      sc_dir):
-        """ add networking information to the zone.
-        """
+        """add networking information to the zone."""
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
@@ -865,7 +994,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
                     linkname = 'net%s' % id
 
             # create the required sysconfig file
-            network_plugin = quantumv2.get_client(context)
+            network_plugin = neutronv2.get_client(context)
             port = network_plugin.show_port(port_uuid)['port']
             subnet_uuid = port['fixed_ips'][0]['subnet_id']
             subnet = network_plugin.show_subnet(subnet_uuid)['subnet']
@@ -887,10 +1016,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 zc.setprop('global', 'tenant', tenant_id)
 
     def _verify_sysconfig(self, sc_dir, instance):
-        """ verify the SC profile(s) passed in contain an entry for
+        """verify the SC profile(s) passed in contain an entry for
         system/config-user to configure the root account.  If an SSH key is
         specified, configure root's profile to use it.
-
         """
         usercheck = lambda e: e.attrib.get('name') == 'system/config-user'
         hostcheck = lambda e: e.attrib.get('name') == 'system/identity'
@@ -1103,17 +1231,74 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # Attempt to provision a (Cinder) volume service backed boot volume
         connection_info = self._connect_boot_volume(context, instance,
                                                     extra_specs)
+        name = instance['name']
+
+        def _ai_health_check(zone):
+            # TODO(npower) A hung kernel zone installation will not always
+            # be detected by zoneadm in the host global zone, which locks
+            # out other zoneadm commands.
+            # Workaround:
+            # Check the state of the auto-installer:default SMF service in
+            # the kernel zone. If installation failed, it should be in the
+            # 'maintenance' state. Unclog zoneadm by executing a shutdown
+            # inside the kernel zone if that's the case.
+            # Eventually we'll be able to pass a boot option to the zone
+            # to have it automatically shutdown if the installation fails.
+            if instance['vm_state'] == vm_states.BUILDING:
+                if self._get_zone_auto_install_state(name) == 'maintenance':
+                    # Poweroff the zone. This will cause the current call to
+                    # self._install() to catch an exception and tear down
+                    # the kernel zone.
+                    LOG.error(_("Automated installation of instance '%s' "
+                              "failed. Powering off the kernel zone '%s'.")
+                              % (instance['display_name'], name))
+                    try:
+                        utils.execute('/usr/sbin/zlogin', '-S', name,
+                                      '/usr/sbin/poweroff')
+                    except processutils.ProcessExecutionError as err:
+                        # poweroff pulls the rug from under zlogin, so ignore
+                        # the anticipated error.
+                        pass
+                    finally:
+                        raise loopingcall.LoopingCallDone()
+                else:
+                    # Looks like it installed OK
+                    if zone.state == ZONE_STATE_INSTALLED:
+                        LOG.debug(_("Kernel zone '%s' (%s) state: %s.")
+                                  % (name, instance['display_name'],
+                                     zone.state))
+                        raise loopingcall.LoopingCallDone()
+                    else:
+                        return
+            else:
+                # Can't imagine why we'd get here under normal circumstances
+                LOG.warning(_("Unexpected vm_state during installation of "
+                            "'%s' (%s): %s. Zone state: %s")
+                            % (name, instance['display_name'],
+                               instance['vm_state'], zone.state))
+                raise loopingcall.LoopingCallDone()
 
         LOG.debug(_("creating zone configuration for '%s' (%s)") %
-                  (instance['name'], instance['display_name']))
+                  (name, instance['display_name']))
         self._create_config(context, instance, network_info,
                             connection_info, extra_specs, sc_dir)
         try:
-            self._install(instance, image, extra_specs, sc_dir)
+            zone = self._get_zone_by_name(name)
+            is_kz = lookup_resource_property_value(zone, "global", "brand",
+                                                   ZONE_BRAND_SOLARIS_KZ)
+            # Monitor kernel zone installation explicitly
+            if is_kz:
+                monitor = loopingcall.FixedIntervalLoopingCall(
+                    _ai_health_check, zone)
+                monitor.start(interval=15, initial_delay=60)
+                self._install(instance, image, extra_specs, sc_dir)
+                monitor.wait()
+            else:
+                self._install(instance, image, extra_specs, sc_dir)
             self._power_on(instance)
         except Exception as reason:
             LOG.error(_("Unable to spawn instance '%s' via zonemgr(3RAD): %s")
-                      % (instance['name'], reason))
+                      % (name, reason))
             self._uninstall(instance)
             self._delete_config(instance)
             raise
@@ -1129,7 +1314,24 @@ class SolarisZonesDriver(driver.ComputeDriver):
             if halt_type == 'SOFT':
                 zone.shutdown()
             else:
-                zone.halt()
+                # 'HARD'
+                # TODO(npower) See comments for _ai_health_check() for why
+                # it is sometimes necessary to poweroff from within the zone,
+                # until zoneadm and auto-install can perform this internally.
+                zprop = lookup_resource_property_value(zone, "global", "brand",
+                                                       ZONE_BRAND_SOLARIS_KZ)
+                if zprop and self._get_zone_auto_install_state(name):
+                    # Don't really care what state the install service is in.
+                    # Just shut it down ASAP.
+                    try:
+                        utils.execute('/usr/sbin/zlogin', '-S', name,
+                                      '/usr/sbin/poweroff')
+                    except processutils.ProcessExecutionError as err:
+                        # Poweroff pulls the rug from under zlogin, so ignore
+                        # the anticipated error.
+                        return
+                else:
+                    zone.halt()
             return
         except rad.client.ObjectError as reason:
             result = reason.get_payload()
@@ -1144,7 +1346,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
             raise exception.InstancePowerOffFailure(reason=reason)
 
     def destroy(self, instance, network_info, block_device_info=None,
-                destroy_disks=True):
+                destroy_disks=True, context=None):
         """Destroy (shutdown and delete) the specified instance.
 
         If the instance is not found (for example if networking failed), this
@@ -1253,7 +1455,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 for line in log.readlines():
                     fragment += line
                 console_str = fragment + console_str
-
         return console_str
 
     def get_console_output(self, instance):
@@ -1297,7 +1498,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
             for key in kstat_data.keys():
                 if key not in ('class', 'crtime', 'snaptime'):
                     diagnostics[key] = kstat_data[key]
-
         return diagnostics
 
     def get_diagnostics(self, instance):
@@ -1309,17 +1509,18 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.error(_("Unable to find instance '%s' via zonemgr(3RAD)")
                       % name)
             raise exception.InstanceNotFound(instance_id=name)
-
         return self._get_zone_diagnostics(zone)
 
     def get_all_bw_counters(self, instances):
         """Return bandwidth usage counters for each interface on each
-           running VM"""
+           running VM.
+        """
         raise NotImplementedError()
 
     def get_all_volume_usage(self, context, compute_host_bdms):
         """Return usage info for volumes attached to vms on
-           a given host"""
+           a given host.-
+        """
         raise NotImplementedError()
 
     def get_host_ip_addr(self):
@@ -1329,7 +1530,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # TODO(Vek): Need to pass context in for access to auth_token
         return CONF.my_ip
 
-    def attach_volume(self, connection_info, instance, mountpoint):
+    def attach_volume(self, context, connection_info, instance, mountpoint,
+                      encryption=None):
         """Attach the disk to the instance at mountpoint using info."""
         # TODO(npower): Apply mountpoint in a meaningful way to the zone
         # (I don't think this is even possible for Solaris brand zones)
@@ -1349,7 +1551,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         with ZoneConfig(zone) as zc:
             zc.addresource("device", [zonemgr.Property("storage", suri)])
 
-    def detach_volume(self, connection_info, instance, mountpoint):
+    def detach_volume(self, connection_info, instance, mountpoint,
+                      encryption=None):
         """Detach the disk attached to the instance."""
         name = instance['name']
         zone = self._get_zone_by_name(name)
@@ -1374,11 +1577,16 @@ class SolarisZonesDriver(driver.ComputeDriver):
         with ZoneConfig(zone) as zc:
             zc.removeresources("device", [zonemgr.Property("storage", suri)])
 
-    def attach_interface(self, instance, image_meta, network_info):
+    def swap_volume(self, old_connection_info, new_connection_info,
+                    instance, mountpoint):
+        """Replace the disk attached to the instance."""
+        raise NotImplementedError()
+
+    def attach_interface(self, instance, image_meta, vif):
         """Attach an interface to the instance."""
         raise NotImplementedError()
 
-    def detach_interface(self, instance, network_info):
+    def detach_interface(self, instance, vif):
         """Detach an interface from the instance."""
         raise NotImplementedError()
 
@@ -1388,6 +1596,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         Transfers the disk of a running instance in multiple phases, turning
         off the instance before the end.
+        """
+        raise NotImplementedError()
+
+    def live_snapshot(self, context, instance, image_id, update_task_state):
+        """
+        Live-snapshots the specified instance (includes ram and proc state).
+
+        :param context: security context
+        :param instance: Instance object as returned by DB layer.
+        :param image_id: Reference to a pre-created image that will
+                         hold the snapshot.
         """
         raise NotImplementedError()
 
@@ -1485,14 +1704,23 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def finish_migration(self, context, migration, instance, disk_info,
                          network_info, image_meta, resize_instance,
-                         block_device_info=None):
-        """Completes a resize, turning on the migrated instance
+                         block_device_info=None, power_on=True):
+        """Completes a resize.
 
+        :param context: the context for the migration/resize
+        :param migration: the migrate/resize information
+        :param instance: the instance being migrated/resized
+        :param disk_info: the newly transferred disk information
         :param network_info:
            :py:meth:`~nova.network.manager.NetworkManager.get_instance_nw_info`
         :param image_meta: image object returned by nova.image.glance that
                            defines the image from which this instance
                            was created
+        :param resize_instance: True if the instance is being resized,
+                                False otherwise
+        :param block_device_info: instance volume block device info
+        :param power_on: True if the instance should be powered on, False
+                         otherwise
         """
         raise NotImplementedError()
 
@@ -1502,8 +1730,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
         raise NotImplementedError()
 
     def finish_revert_migration(self, instance, network_info,
-                                block_device_info=None):
-        """Finish reverting a resize, powering back on the instance."""
+                                block_device_info=None, power_on=True):
+        """
+        Finish reverting a resize.
+
+        :param instance: the instance being migrated/resized
+        :param network_info:
+           :py:meth:`~nova.network.manager.NetworkManager.get_instance_nw_info`
+        :param block_device_info: instance volume block device info
+        :param power_on: True if the instance should be powered on, False
+                         otherwise
+        """
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
@@ -1517,44 +1754,22 @@ class SolarisZonesDriver(driver.ComputeDriver):
         # TODO(Vek): Need to pass context in for access to auth_token
         raise NotImplementedError()
 
-    def _suspend(self, instance):
-        """Suspend a Solaris Zone."""
-        name = instance['name']
-        zone = self._get_zone_by_name(name)
-        if zone is None:
-            raise exception.InstanceNotFound(instance_id=name)
-
-        if self._uname[4] != 'i86pc':
-            # Only x86 platforms are currently supported.
-            raise NotImplementedError()
-
-        zprop = lookup_resource_property_value(zone, "global", "brand",
-                                               ZONE_BRAND_SOLARIS_KZ)
-        if not zprop:
-            # Only Solaris Kernel zones are currently supported.
-            raise NotImplementedError()
-
-        try:
-            zone.suspend()
-        except Exception as reason:
-            # TODO(dcomay): Try to recover in cases where zone has been
-            # resumed automatically.
-            LOG.error(_("Unable to suspend instance '%s' via zonemgr(3RAD): "
-                        "%s") % (name, reason))
-            raise exception.InstanceSuspendFailure(reason=reason)
-
     def suspend(self, instance):
         """suspend the specified instance."""
         # TODO(Vek): Need to pass context in for access to auth_token
-        self._suspend(instance)
+        raise NotImplementedError()
 
-    def resume(self, instance, network_info, block_device_info=None):
-        """resume the specified instance."""
-        # TODO(Vek): Need to pass context in for access to auth_token
-        try:
-            self._power_on(instance)
-        except Exception as reason:
-            raise exception.InstanceResumeFailure(reason=reason)
+    def resume(self, context, instance, network_info, block_device_info=None):
+        """
+        resume the specified instance.
+
+        :param context: the context for the resume
+        :param instance: the instance being resumed
+        :param network_info:
+           :py:meth:`~nova.network.manager.NetworkManager.get_instance_nw_info`
+        :param block_device_info: instance volume block device info
+        """
+        raise NotImplementedError()
 
     def resume_state_on_host_boot(self, context, instance, network_info,
                                   block_device_info=None):
@@ -1604,7 +1819,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         try:
             value = None
             (out, _err) = utils.execute('/usr/sbin/zpool', 'get', prop, zpool)
-        except exception.ProcessExecutionError as err:
+        except processutils.ProcessExecutionError as err:
             LOG.error(_("Failed to get property '%s' from zpool '%s': %s")
                       % (prop, zpool, err.stderr))
             return value
@@ -1612,7 +1827,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         zpool_prop = out.splitlines()[1].split()
         if zpool_prop[1] == prop:
             value = zpool_prop[2]
-
         return value
 
     def _update_host_stats(self):
@@ -1625,10 +1839,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         out, err = utils.execute('/usr/sbin/zfs', 'list', '-Ho', 'name', '/')
         root_zpool = out.split('/')[0]
         size = self._get_zpool_property('size', root_zpool)
-        if size is None:
-            host_stats['local_gb'] = 0
+        if size is not None:
+            host_stats['local_gb'] = Size(size).get(Size.gb_units)
         else:
-            host_stats['local_gb'] = utils.to_bytes(size)/(1024 ** 3)
+            host_stats['local_gb'] = 0
 
         # Account for any existing processor sets by looking at the the
         # number of CPUs not assigned to any processor sets.
@@ -1644,26 +1858,39 @@ class SolarisZonesDriver(driver.ComputeDriver):
         kstat_data = self._get_kstat_by_name('pages', 'unix', '0',
                                              'system_pages')
         if kstat_data is not None:
+            free_ram_mb = self._pages_to_kb(kstat_data['freemem']) / 1024
             host_stats['memory_mb_used'] = \
-                self._pages_to_kb((pages - kstat_data['freemem'])) / 1024
+                host_stats['memory_mb'] - free_ram_mb
         else:
             host_stats['memory_mb_used'] = 0
 
-        host_stats['local_gb_used'] = 0
+        free = self._get_zpool_property('free', root_zpool)
+        if free is not None:
+            free_disk_gb = Size(free).get(Size.gb_units)
+        else:
+            free_disk_gb = 0
+        host_stats['local_gb_used'] = host_stats['local_gb'] - free_disk_gb
+
         host_stats['hypervisor_type'] = 'solariszones'
         host_stats['hypervisor_version'] = int(self._uname[2].replace('.', ''))
         host_stats['hypervisor_hostname'] = self._uname[1]
+
         if self._uname[4] == 'i86pc':
             architecture = 'x86_64'
         else:
             architecture = 'sparc64'
-        host_stats['cpu_info'] = str({'arch': architecture})
+        cpu_info = {
+            'arch': architecture
+        }
+        host_stats['cpu_info'] = jsonutils.dumps(cpu_info)
+
         host_stats['disk_available_least'] = 0
 
         supported_instances = [
-            (architecture, 'solariszones', 'zones')
+            (architecture, 'solariszones', 'solariszones')
         ]
-        host_stats['supported_instances'] = supported_instances
+        host_stats['supported_instances'] = \
+            jsonutils.dumps(supported_instances)
 
         self._host_stats = host_stats
 
@@ -1671,7 +1898,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """Retrieve resource information.
 
         This method is called when nova-compute launches, and
-        as part of a periodic task
+        as part of a periodic task that records the results in the DB.
 
         :param nodename:
             node which the caller want to get resources from
@@ -1693,7 +1920,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         resources['hypervisor_hostname'] = host_stats['hypervisor_hostname']
         resources['cpu_info'] = host_stats['cpu_info']
         resources['disk_available_least'] = host_stats['disk_available_least']
-
+        resources['supported_instances'] = host_stats['supported_instances']
         return resources
 
     def pre_live_migration(self, ctxt, instance_ref, block_device_info,
@@ -1731,6 +1958,15 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
+    def post_live_migration(self, ctxt, instance_ref, block_device_info):
+        """Post operation of live migration at source host.
+
+        :param ctxt: security contet
+        :instance_ref: instance object that was migrated
+        :block_device_info: instance block device information
+        """
+        pass
+
     def post_live_migration_at_destination(self, ctxt, instance_ref,
                                            network_info,
                                            block_migration=False,
@@ -1743,6 +1979,33 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param block_migration: if true, post operation of block_migration.
         """
         raise NotImplementedError()
+
+    def check_instance_shared_storage_local(self, ctxt, instance):
+        """Check if instance files located on shared storage.
+
+        This runs check on the destination host, and then calls
+        back to the source host to check the results.
+
+        :param ctxt: security context
+        :param instance: nova.db.sqlalchemy.models.Instance
+        """
+        raise NotImplementedError()
+
+    def check_instance_shared_storage_remote(self, ctxt, data):
+        """Check if instance files located on shared storage.
+
+        :param context: security context
+        :param data: result of check_instance_shared_storage_local
+        """
+        raise NotImplementedError()
+
+    def check_instance_shared_storage_cleanup(self, ctxt, data):
+        """Do cleanup on host after check_instance_shared_storage calls
+
+        :param ctxt: security context
+        :param data: result of check_instance_shared_storage_local
+        """
+        pass
 
     def check_can_live_migrate_destination(self, ctxt, instance_ref,
                                            src_compute_info, dst_compute_info,
@@ -1759,6 +2022,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param dst_compute_info: Info about the receiving machine
         :param block_migration: if true, prepare for block migration
         :param disk_over_commit: if true, allow disk over commit
+        :returns: a dict containing migration info (hypervisor-dependent)
         """
         raise NotImplementedError()
 
@@ -1781,6 +2045,7 @@ class SolarisZonesDriver(driver.ComputeDriver):
         :param context: security context
         :param instance_ref: nova.db.sqlalchemy.models.Instance
         :param dest_check_data: result of check_can_live_migrate_destination
+        :returns: a dict containing migration info (hypervisor-dependent)
         """
         raise NotImplementedError()
 
@@ -1951,7 +2216,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
     def host_maintenance_mode(self, host, mode):
         """Start/Stop host maintenance window. On start, it triggers
-        guest VMs evacuation."""
+        guest VMs evacuation.
+        """
         raise NotImplementedError()
 
     def set_host_enabled(self, host, enabled):
@@ -1974,10 +2240,20 @@ class SolarisZonesDriver(driver.ComputeDriver):
         raise NotImplementedError()
 
     def get_host_stats(self, refresh=False):
-        """Return currently known host stats."""
-        if refresh:
-            self._update_host_stats()
+        """Return currently known host stats.
 
+        If the hypervisor supports pci passthrough, the returned
+        dictionary includes a key-value pair for it.
+        The key of pci passthrough device is "pci_passthrough_devices"
+        and the value is a json string for the list of assignable
+        pci devices. Each device is a dictionary, with mandatory
+        keys of 'address', 'vendor_id', 'product_id', 'dev_type',
+        'dev_id', 'label' and other optional device specific information.
+
+        Refer to the objects/pci_device.py for more idea of these keys.
+        """
+        if refresh or not self._host_stats:
+            self._update_host_stats()
         return self._host_stats
 
     def block_stats(self, instance_name, disk_id):
@@ -2020,12 +2296,6 @@ class SolarisZonesDriver(driver.ComputeDriver):
         """
         raise NotImplementedError()
 
-    def legacy_nwinfo(self):
-        """True if the driver requires the legacy network_info format."""
-        # TODO(tr3buchet): update all subclasses and remove this method and
-        # related helpers.
-        return False
-
     def macs_for_instance(self, instance):
         """What MAC addresses must this instance have?
 
@@ -2054,6 +2324,30 @@ class SolarisZonesDriver(driver.ComputeDriver):
             MAC addresses'.
         """
         return None
+
+    def dhcp_options_for_instance(self, instance):
+        """Get DHCP options for this instance.
+
+        Some hypervisors (such as bare metal) require that instances boot from
+        the network, and manage their own TFTP service. This requires passing
+        the appropriate options out to the DHCP service. Most hypervisors can
+        use the default implementation which returns None.
+
+        This is called during spawn_instance by the compute manager.
+
+        Note that the format of the return value is specific to Quantum
+        client API.
+
+        :return: None, or a set of DHCP options, eg:
+                 [{'opt_name': 'bootfile-name',
+                   'opt_value': '/tftpboot/path/to/config'},
+                  {'opt_name': 'server-ip-address',
+                   'opt_value': '1.2.3.4'},
+                  {'opt_name': 'tftp-server',
+                   'opt_value': '1.2.3.4'}
+                 ]
+        """
+        pass
 
     def manage_image_cache(self, context, all_instances):
         """
@@ -2085,11 +2379,14 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         Connector information is a dictionary representing the ip of the
         machine that will be making the connection, the name of the iscsi
-        initiator and the hostname of the machine as follows::
+        initiator, the WWPN and WWNN values of the Fibre Channel initiator,
+        and the hostname of the machine as follows:
 
             {
                 'ip': ip,
                 'initiator': initiator,
+                'wwnns': wwnns,
+                'wwpns': wwpns,
                 'host': hostname
             }
         """
@@ -2104,9 +2401,26 @@ class SolarisZonesDriver(driver.ComputeDriver):
             LOG.warning(_("Could not determine iSCSI initiator name"),
                         instance=instance)
 
+        if not self._fc_wwnns:
+            self._fc_wwnns = self._get_fc_wwnns()
+            if not self._fc_wwnns or len(self._fc_wwnns) == 0:
+                LOG.debug(_('Could not determine Fibre Channel '
+                          'World Wide Node Names'),
+                          instance=instance)
+
+        if not self._fc_wwpns:
+            self._fc_wwpns = self._get_fc_wwpns()
+            if not self._fc_wwpns or len(self._fc_wwpns) == 0:
+                LOG.debug(_('Could not determine Fibre channel '
+                          'World Wide Port Names'),
+                          instance=instance)
+
+        if self._fc_wwnns and self._fc_wwpns:
+            connector["wwnns"] = self._fc_wwnns
+            connector["wwpns"] = self._fc_wwpns
         return connector
 
-    def get_available_nodes(self):
+    def get_available_nodes(self, refresh=False):
         """Returns nodenames of all nodes managed by the compute service.
 
         This method is for multi compute-nodes support. If a driver supports
@@ -2114,10 +2428,17 @@ class SolarisZonesDriver(driver.ComputeDriver):
         by the service. Otherwise, this method should return
         [hypervisor_hostname].
         """
-        stats = self.get_host_stats(refresh=True)
+        stats = self.get_host_stats(refresh=refresh)
         if not isinstance(stats, list):
             stats = [stats]
         return [s['hypervisor_hostname'] for s in stats]
+
+    def node_is_available(self, nodename):
+        """Return whether this compute service manages a particular node."""
+        if nodename in self.get_available_nodes():
+            return True
+        # Refresh and check again.
+        return nodename in self.get_available_nodes(refresh=True)
 
     def get_per_instance_usage(self):
         """Get information about instance resource usage.
@@ -2146,7 +2467,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
         Register a callback to receive asynchronous event
         notifications from hypervisors. The callback will
         be invoked with a single parameter, which will be
-        an instance of the nova.virt.event.Event class."""
+        an instance of the nova.virt.event.Event class.
+        """
 
         self._compute_event_callback = callback
 
@@ -2155,10 +2477,11 @@ class SolarisZonesDriver(driver.ComputeDriver):
 
         Invokes the event callback registered by the
         compute manager to dispatch the event. This
-        must only be invoked from a green thread."""
+        must only be invoked from a green thread.
+        """
 
         if not self._compute_event_callback:
-            LOG.debug("Discarding event %s" % str(event))
+            LOG.debug(_("Discarding event %s") % str(event))
             return
 
         if not isinstance(event, virtevent.Event):
@@ -2166,8 +2489,67 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 _("Event must be an instance of nova.virt.event.Event"))
 
         try:
-            LOG.debug("Emitting event %s" % str(event))
+            LOG.debug(_("Emitting event %s") % str(event))
             self._compute_event_callback(event)
         except Exception as ex:
-            LOG.error(_("Exception dispatching event %(event)s: %(ex)s")
-                      % locals())
+            LOG.error(_("Exception dispatching event %(event)s: %(ex)s"),
+                      {'event': event, 'ex': ex})
+
+    def delete_instance_files(self, instance):
+        """Delete any lingering instance files for an instance.
+
+        :returns: True if the instance was deleted from disk, False otherwise.
+        """
+        return True
+
+    @property
+    def need_legacy_block_device_info(self):
+        """Tell the caller if the driver requires legacy block device info.
+
+        Tell the caller weather we expect the legacy format of block
+        device info to be passed in to methods that expect it.
+        """
+        return True
+
+    def volume_snapshot_create(self, context, instance, volume_id,
+                               create_info):
+        """
+        Snapshots volumes attached to a specified instance.
+
+        :param context: request context
+        :param instance: Instance object that has the volume attached
+        :param volume_id: Volume to be snapshotted
+        :param create_info: The data needed for nova to be able to attach
+               to the volume.  This is the same data format returned by
+               Cinder's initialize_connection() API call.  In the case of
+               doing a snapshot, it is the image file Cinder expects to be
+               used as the active disk after the snapshot operation has
+               completed.  There may be other data included as well that is
+               needed for creating the snapshot.
+        """
+        raise NotImplementedError()
+
+    def volume_snapshot_delete(self, context, instance, volume_id,
+                               snapshot_id, delete_info):
+        """
+        Snapshots volumes attached to a specified instance.
+
+        :param context: request context
+        :param instance: Instance object that has the volume attached
+        :param volume_id: Attached volume associated with the snapshot
+        :param snapshot_id: The snapshot to delete.
+        :param delete_info: Volume backend technology specific data needed to
+               be able to complete the snapshot.  For example, in the case of
+               qcow2 backed snapshots, this would include the file being
+               merged, and the file being merged into (if appropriate).
+        """
+        raise NotImplementedError()
+
+    def default_root_device_name(self, instance, image_meta, root_bdm):
+        """Provide a default root device name for the driver."""
+        raise NotImplementedError()
+
+    def default_device_names_for_instance(self, instance, root_device_name,
+                                          *block_device_lists):
+        """Default the missing device names in the block device mapping."""
+        raise NotImplementedError()

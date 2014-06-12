@@ -21,19 +21,20 @@
 #
 
 """
-Based off generic l3_agent (quantum/agent/l3_agent) code
+Based off generic l3_agent (neutron/agent/l3_agent) code
 """
 
 import sqlalchemy as sa
 
-from quantum.api.v2 import attributes
-from quantum.common import constants as l3_constants
-from quantum.common import exceptions as q_exc
-from quantum.db import l3_db
-from quantum.extensions import l3
-from quantum.openstack.common import log as logging
-from quantum.openstack.common import uuidutils
-from quantum.plugins.evs.db import api as evs_db
+from neutron.api.v2 import attributes
+from neutron.common import constants as l3_constants
+from neutron.common import exceptions as q_exc
+from neutron.db import l3_db
+from neutron.extensions import l3
+from neutron.extensions import external_net
+from neutron.openstack.common import log as logging
+from neutron.openstack.common import uuidutils
+from neutron.plugins.evs.db import api as evs_db
 
 
 LOG = logging.getLogger(__name__)
@@ -44,7 +45,7 @@ DEVICE_OWNER_FLOATINGIP = l3_constants.DEVICE_OWNER_FLOATINGIP
 
 
 class Router(evs_db.EVS_DB_BASE):
-    """Represents a v2 quantum router."""
+    """Represents a v2 neutron router."""
 
     id = sa.Column(sa.String(36), primary_key=True,
                    default=uuidutils.generate_uuid)
@@ -57,9 +58,11 @@ class Router(evs_db.EVS_DB_BASE):
 
 
 class FloatingIP(evs_db.EVS_DB_BASE):
-    """Represents a floating IP, which may or many not be
-       allocated to a tenant, and may or may not be associated with
-       an internal port/ip address/router."""
+    """Represents a floating IP address.
+
+    This IP address may or may not be allocated to a tenant, and may or
+    may not be associated with an internal port/ip address/router.
+    """
 
     id = sa.Column(sa.String(36), primary_key=True,
                    default=uuidutils.generate_uuid)
@@ -78,16 +81,21 @@ class EVS_L3_NAT_db_mixin(l3_db.L3_NAT_db_mixin):
     Router = Router
     FloatingIP = FloatingIP
 
-    def _make_router_dict(self, router, fields=None):
+    def _make_router_dict(self, router, fields=None,
+                          process_extensions=True):
         res = {'id': router['id'],
                'name': router['name'],
                'tenant_id': router['tenant_id'],
                'admin_state_up': router['admin_state_up'],
                'status': router['status'],
-               'external_gateway_info': None}
+               'external_gateway_info': None,
+               'gw_port_id': router['gw_port_id']}
         if router['gw_port_id']:
             nw_id = router['gw_port_network_id']
             res['external_gateway_info'] = {'network_id': nw_id}
+        if process_extensions:
+            self._apply_dict_extend_functions(
+                l3.ROUTERS, res, router)
         return self._fields(res, fields)
 
     def create_router(self, context, router):
@@ -98,13 +106,14 @@ class EVS_L3_NAT_db_mixin(l3_db.L3_NAT_db_mixin):
         return super(EVS_L3_NAT_db_mixin, self).\
             update_router(evs_db.get_evs_context(context), id, router)
 
-    def _update_router_gw_info(self, context, router_id, info):
+    def _update_router_gw_info(self, context, router_id, info, router=None):
         """This method overrides the base class method and it's contents
         are exactly same as the base class method except that the Router
         DB columns are different for EVS and OVS"""
 
-        router = self._get_router(context, router_id)
+        router = router or self._get_router(context, router_id)
         gw_port_id = router['gw_port_id']
+        # network_id attribute is required by API, so it must be present
         gw_port_network_id = router['gw_port_network_id']
 
         network_id = info.get('network_id', None) if info else None
@@ -139,7 +148,7 @@ class EVS_L3_NAT_db_mixin(l3_db.L3_NAT_db_mixin):
                                                   subnet['cidr'])
 
             # Port has no 'tenant-id', as it is hidden from user
-            gw_port = self.create_port(context.elevated(), {
+            gw_port = self._core_plugin.create_port(context.elevated(), {
                 'port':
                 {'tenant_id': '',  # intentionally not set
                  'network_id': network_id,
@@ -150,9 +159,10 @@ class EVS_L3_NAT_db_mixin(l3_db.L3_NAT_db_mixin):
                  'admin_state_up': True,
                  'name': ''}})
 
-            if not len(gw_port['fixed_ips']):
-                self.delete_port(context.elevated(), gw_port['id'],
-                                 l3_port_check=False)
+            if not gw_port['fixed_ips']:
+                self._core_plugin.delete_port(context.elevated(),
+                                              gw_port['id'],
+                                              l3_port_check=False)
                 msg = (_('No IPs available for external network %s') %
                        network_id)
                 raise q_exc.BadRequest(resource='router', msg=msg)
@@ -195,7 +205,7 @@ class EVS_L3_NAT_db_mixin(l3_db.L3_NAT_db_mixin):
                                  router_id, interface_info)
 
     def remove_router_interface(self, context, router_id, interface_info):
-        super(EVS_L3_NAT_db_mixin, self).\
+        return super(EVS_L3_NAT_db_mixin, self).\
             remove_router_interface(evs_db.get_evs_context(context),
                                     router_id, interface_info)
 
@@ -254,50 +264,13 @@ class EVS_L3_NAT_db_mixin(l3_db.L3_NAT_db_mixin):
         super(EVS_L3_NAT_db_mixin, self).\
             disassociate_floatingips(evs_db.get_evs_context(context), port_id)
 
-    def _network_is_external(self, context, net_id):
-        try:
-            evs = self.get_network(context, net_id)
-            return evs[l3.EXTERNAL]
-        except:
-            return False
-
     def get_sync_data(self, context, router_ids=None, active=None):
         return super(EVS_L3_NAT_db_mixin, self).\
             get_sync_data(evs_db.get_evs_context(context), router_ids, active)
 
-    def get_external_network_id(self, context):
-        return super(EVS_L3_NAT_db_mixin, self).\
-            get_external_network_id(evs_db.get_evs_context(context))
-
-    def _get_tenant_id_for_create(self, context, resource):
-        if context.is_admin and 'tenant_id' in resource:
-            tenant_id = resource['tenant_id']
-        elif ('tenant_id' in resource and
-              resource['tenant_id'] != context.tenant_id):
-            reason = _('Cannot create resource for another tenant')
-            raise q_exc.AdminRequired(reason=reason)
-        else:
-            tenant_id = context.tenant_id
-        return tenant_id
-
     def _get_by_id(self, context, model, id):
         return context.session.query(model).\
             filter(model.id == id).one()
-
-    def _get_network(self, context, network_id):
-        return self.get_network(context, network_id)
-
-    def _get_subnet(self, context, subnet_id):
-        return self.get_subnet(context, subnet_id)
-
-    def _get_port(self, context, port_id):
-        return self.get_port(context, port_id)
-
-    def _delete_port(self, context, port_id):
-        return self.delete_port(context, port_id)
-
-    def _get_subnets_by_network(self, context, network_id):
-        return self.get_subnets(context, filters={'network_id': network_id})
 
     def allow_l3_port_deletion(self, context, port_id):
         """ If an L3 agent is using this port, then we need to send

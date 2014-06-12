@@ -25,8 +25,9 @@ import smf_include
 def start():
     cfgfile = "/etc/swift/rsyncd.conf"
     if not os.path.isfile(cfgfile):
-        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_CONFIG,
-          "missing_config", "Missing configuration file")
+        smf_include.smf_method_exit(
+            smf_include.SMF_EXIT_ERR_CONFIG, "missing_config",
+            "Missing configuration file")
 
     # This is the default delivered in /etc/swift/rsyncd.conf
     try:
@@ -40,16 +41,18 @@ def start():
         proc = subprocess.Popen(cmdline)
     except OSError as err:
         print >> sys.stderr, "Error executing rsync: %s" % err
-        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_FATAL,
-          "exec_error", "Error executing rsync: %s" % err)
+        smf_include.smf_method_exit(
+            smf_include.SMF_EXIT_ERR_FATAL, "exec_error",
+            "Error executing rsync: %s" % err)
 
     ret = proc.wait()
     if ret != 0:
         print >> sys.stderr, "rsync daemon failed to start (see message above)"
         print >> sys.stderr, "commandline:", " ".join(cmdline)
         print >> sys.stderr, "exit code:", ret
-        smf_include.smf_method_exit(smf_include.SMF_EXIT_ERR_FATAL,
-          "exec_fail", "rsync daemon failed to start (see service log)")
+        smf_include.smf_method_exit(
+            smf_include.SMF_EXIT_ERR_FATAL, "exec_fail",
+            "rsync daemon failed to start (see service log)")
 
     return smf_include.SMF_EXIT_OK
 

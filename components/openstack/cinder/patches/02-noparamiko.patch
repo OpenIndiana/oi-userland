@@ -1,56 +1,53 @@
 In-house patch for the temporary removal of Paramiko dependency in
 Cinder.  This patch is Solaris-specific and not suitable for upstream
 
---- cinder-2013.1.4/cinder/utils.py.orig	2013-10-17 11:21:37.000000000 -0700
-+++ cinder-2013.1.4/cinder/utils.py	2014-03-08 11:55:09.044072461 -0800
-@@ -27,7 +27,6 @@
- import inspect
- import itertools
- import os
+--- cinder-2013.2.3/cinder/utils.py.orig	2014-04-03 11:42:36.000000000 -0700
++++ cinder-2013.2.3/cinder/utils.py	2014-04-09 00:14:56.141352333 -0700
+@@ -43,7 +43,6 @@
+ from eventlet import greenthread
+ from eventlet import pools
+ from oslo.config import cfg
 -import paramiko
- import pyclbr
- import random
- import re
-@@ -233,135 +232,6 @@
-     return out, err
+ 
+ from cinder.brick.initiator import connector
+ from cinder import exception
+@@ -142,125 +141,6 @@
+     return processutils.execute(*cmd, **kwargs)
  
  
--def ssh_execute(ssh, cmd, process_input=None,
--                addl_env=None, check_exit_code=True):
--    LOG.debug(_('Running cmd (SSH): %s'), cmd)
--    if addl_env:
--        raise exception.Error(_('Environment not supported over SSH'))
+-def check_ssh_injection(cmd_list):
+-    ssh_injection_pattern = ['`', '$', '|', '||', ';', '&', '&&', '>', '>>',
+-                             '<']
 -
--    if process_input:
--        # This is (probably) fixable if we need it...
--        raise exception.Error(_('process_input not supported over SSH'))
+-    # Check whether injection attacks exist
+-    for arg in cmd_list:
+-        arg = arg.strip()
 -
--    stdin_stream, stdout_stream, stderr_stream = ssh.exec_command(cmd)
--    channel = stdout_stream.channel
+-        # Check for matching quotes on the ends
+-        is_quoted = re.match('^(?P<quote>[\'"])(?P<quoted>.*)(?P=quote)$', arg)
+-        if is_quoted:
+-            # Check for unescaped quotes within the quoted argument
+-            quoted = is_quoted.group('quoted')
+-            if quoted:
+-                if (re.match('[\'"]', quoted) or
+-                        re.search('[^\\\\][\'"]', quoted)):
+-                    raise exception.SSHInjectionThreat(command=str(cmd_list))
+-        else:
+-            # We only allow spaces within quoted arguments, and that
+-            # is the only special character allowed within quotes
+-            if len(arg.split()) > 1:
+-                raise exception.SSHInjectionThreat(command=str(cmd_list))
 -
--    #stdin.write('process_input would go here')
--    #stdin.flush()
+-        # Second, check whether danger character in command. So the shell
+-        # special operator must be a single argument.
+-        for c in ssh_injection_pattern:
+-            if arg == c:
+-                continue
 -
--    # NOTE(justinsb): This seems suspicious...
--    # ...other SSH clients have buffering issues with this approach
--    stdout = stdout_stream.read()
--    stderr = stderr_stream.read()
--    stdin_stream.close()
--    stdout_stream.close()
--    stderr_stream.close()
--
--    exit_status = channel.recv_exit_status()
--
--    # exit_status == -1 if no exit code was returned
--    if exit_status != -1:
--        LOG.debug(_('Result was %s') % exit_status)
--        if check_exit_code and exit_status != 0:
--            raise exception.ProcessExecutionError(exit_code=exit_status,
--                                                  stdout=stdout,
--                                                  stderr=stderr,
--                                                  cmd=cmd)
--    channel.close()
--    return (stdout, stderr)
+-            result = arg.find(c)
+-            if not result == -1:
+-                if result == 0 or not arg[result - 1] == '\\':
+-                    raise exception.SSHInjectionThreat(command=cmd_list)
 -
 -
 -def create_channel(client, width, height):
@@ -119,27 +116,20 @@ Cinder.  This patch is Solaris-specific and not suitable for upstream
 -        before returning it. For dead connections create and return a new
 -        connection.
 -        """
--        if self.free_items:
--            conn = self.free_items.popleft()
--            if conn:
--                if conn.get_transport().is_active():
--                    return conn
--                else:
--                    conn.close()
--            return self.create()
--        if self.current_size < self.max_size:
--            created = self.create()
--            self.current_size += 1
--            return created
--        return self.channel.get()
+-        conn = super(SSHPool, self).get()
+-        if conn:
+-            if conn.get_transport().is_active():
+-                return conn
+-            else:
+-                conn.close()
+-        return self.create()
 -
 -    def remove(self, ssh):
--        """Close an ssh client and remove it if in free_items."""
+-        """Close an ssh client and remove it from free_items."""
 -        ssh.close()
+-        ssh = None
 -        if ssh in self.free_items:
 -            self.free_items.pop(ssh)
--        ssh = None
--
 -        if self.current_size > 0:
 -            self.current_size -= 1
 -
@@ -147,23 +137,4 @@ Cinder.  This patch is Solaris-specific and not suitable for upstream
  def cinderdir():
      import cinder
      return os.path.abspath(cinder.__file__).split('cinder/__init__.py')[0]
---- cinder-2013.1.4/cinder.egg-info/requires.txt.orig	Wed Feb 26 10:56:39 2014
-+++ cinder-2013.1.4/cinder.egg-info/requires.txt	Wed Feb 26 10:58:01 2014
-@@ -14,7 +14,6 @@
- sqlalchemy-migrate>=0.7.2
- stevedore>=0.8.0
- suds>=0.4
--paramiko
- Babel>=0.9.6
- iso8601>=0.1.4
- setuptools_git>=0.4
---- cinder-2013.1.4/tools/pip-requires.orig	Wed Feb 26 10:56:38 2014
-+++ cinder-2013.1.4/tools/pip-requires	Wed Feb 26 10:58:25 2014
-@@ -14,7 +14,6 @@
- sqlalchemy-migrate>=0.7.2
- stevedore>=0.8.0
- suds>=0.4
--paramiko
- Babel>=0.9.6
- iso8601>=0.1.4
- setuptools_git>=0.4
+

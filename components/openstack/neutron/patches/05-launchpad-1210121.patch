@@ -1,0 +1,102 @@
+This proposed upstream patch addresses Launchpad bug 1210121. Although
+it's been addressed in Icehouse 2014.1, the patch below is still not
+yet released for Havana.
+
+From dbbc8338770d2c340903e006dcb3c90c4aad7b29 Mon Sep 17 00:00:00 2001
+From: armando-migliaccio <armamig@gmail.com>
+Date: Thu, 13 Mar 2014 12:40:01 -0700
+Subject: [PATCH] Kill 'Skipping unknown group key: firewall_driver' log trace
+
+This is done by trying to import the option first. If this
+does not work, emit a warning instead as in most cases this is
+harmless for a number of reasons: a) the service might not
+even need the opt; b) if things do break down the line, we'll
+see bigger traces; c) it's not gonna be long for this legacy
+quantum/neutron stuff to be removed altogether.
+
+Closes-bug: 1210121
+
+Change-Id: I34917da9cb6117ee1d42140621c742f503279b6b
+(cherry picked from commit b5ee49623982530bfb3c3fe2eefb9d8ddb6353bc)
+---
+ neutron/common/legacy.py          |   20 ++++++++++++++++----
+ neutron/quota.py                  |    2 +-
+ neutron/tests/unit/test_legacy.py |    2 +-
+ 3 files changed, 18 insertions(+), 6 deletions(-)
+
+diff --git a/neutron/common/legacy.py b/neutron/common/legacy.py
+index cf37281..d387aa2 100644
+--- a/neutron/common/legacy.py
++++ b/neutron/common/legacy.py
+@@ -17,6 +17,8 @@
+ 
+ # @author Mark McClain (DreamHost)
+ 
++from oslo.config import cfg
++
+ from neutron.openstack.common import log as logging
+ 
+ LOG = logging.getLogger(__name__)
+@@ -45,11 +47,19 @@ def override_config(config, config_keys=None):
+         group = None
+         if not isinstance(key, basestring):
+             try:
+-                group, key = key
++                group, key, module_str = key
+                 old_value = getattr(getattr(config, group), key, None)
+             except AttributeError:
+-                LOG.error(_('Skipping unknown group key: %s'), key)
+-                continue
++                try:
++                    config.import_opt(key, module_str, group)
++                    old_value = getattr(getattr(config, group), key, None)
++                except (cfg.NoSuchOptError,
++                        cfg.NoSuchGroupError,
++                        AttributeError):
++                    LOG.warn(_('Key %(key)s in group %(group)s is unknown. '
++                               'It may not be defined or needed by this '
++                               'service.') % {'key': key, 'group': group})
++                    continue
+         else:
+             old_value = getattr(config, key, None)
+         if not old_value:
+@@ -77,7 +87,9 @@ def modernize_quantum_config(config):
+         'router_scheduler_driver',
+         'rpc_backend',
+         'service_plugins',
+-        ('SECURITYGROUP', 'firewall_driver'),
++        ('SECURITYGROUP',
++         'firewall_driver',
++         'neutron.agent.securitygroups_rpc'),
+     ]
+ 
+     override_config(config, config_keys)
+diff --git a/neutron/quota.py b/neutron/quota.py
+index 4111078..105be06 100644
+--- a/neutron/quota.py
++++ b/neutron/quota.py
+@@ -58,7 +58,7 @@ quota_opts = [
+ ]
+ # Register the configuration options
+ cfg.CONF.register_opts(quota_opts, 'QUOTAS')
+-legacy.override_config(cfg.CONF, [('QUOTAS', 'quota_driver')])
++legacy.override_config(cfg.CONF, [('QUOTAS', 'quota_driver', 'neutron.quota')])
+ 
+ 
+ class ConfDriver(object):
+diff --git a/neutron/tests/unit/test_legacy.py b/neutron/tests/unit/test_legacy.py
+index 539f7de..6723d06 100644
+--- a/neutron/tests/unit/test_legacy.py
++++ b/neutron/tests/unit/test_legacy.py
+@@ -71,7 +71,7 @@ class TestLegacyConfigOverride(base.BaseTestCase):
+ 
+     def test_override_config_group_key(self):
+         self.cfg(args=['--bar-baz=quantum'])
+-        legacy.override_config(self.cfg, [('bar', 'baz')])
++        legacy.override_config(self.cfg, [('bar', 'baz', 'mod')])
+         self.assertEqual(self.cfg.bar.baz, 'neutron')
+ 
+     def test_override_config_list_value(self):
+-- 
+1.7.9.2
+

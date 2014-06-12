@@ -28,9 +28,9 @@ set name=pkg.fmri \
 set name=pkg.summary value="OpenStack Glance"
 set name=pkg.description \
     value="OpenStack Glance provides services for discovering, registering, and retrieving virtual machine images. Glance has a RESTful API that allows querying of VM image metadata as well as retrieval of the actual image. VM images made available through Glance can be stored in a variety of locations from simple file systems to object-storage systems like OpenStack Swift."
-set name=pkg.human-version value="Grizzly $(COMPONENT_VERSION)"
+set name=pkg.human-version value="Havana $(COMPONENT_VERSION)"
 set name=com.oracle.info.description value="Glance, the OpenStack image service"
-set name=com.oracle.info.tpno value=16269
+set name=com.oracle.info.tpno value=17717
 set name=info.classification \
     value="org.opensolaris.category.2008:System/Administration and Configuration" \
     value="org.opensolaris.category.2008:System/Enterprise Management" \
@@ -39,25 +39,26 @@ set name=info.classification \
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream value="OpenStack <openstack-dev@lists.openstack.org>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
-set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/055
+set name=org.opensolaris.arc-caseid value=PSARC/2013/350 value=PSARC/2014/055 \
+    value=PSARC/2014/207
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 dir  path=etc/glance owner=glance group=glance mode=0700
 file etc/glance-api-paste.ini path=etc/glance/glance-api-paste.ini \
-    owner=glance group=glance mode=0644 overlay=allow preserve=true
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
 file files/glance-api.conf path=etc/glance/glance-api.conf owner=glance \
-    group=glance mode=0644 overlay=allow preserve=true
+    group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/glance-cache.conf path=etc/glance/glance-cache.conf owner=glance \
-    group=glance mode=0644 overlay=allow preserve=true
+    group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/glance-registry-paste.ini path=etc/glance/glance-registry-paste.ini \
-    owner=glance group=glance mode=0644 overlay=allow preserve=true
-file etc/glance-registry.conf path=etc/glance/glance-registry.conf \
-    owner=glance group=glance mode=0644 overlay=allow preserve=true
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
+file files/glance-registry.conf path=etc/glance/glance-registry.conf \
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
 file files/glance-scrubber.conf path=etc/glance/glance-scrubber.conf \
-    owner=glance group=glance mode=0644 overlay=allow preserve=true
+    owner=glance group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/logging.cnf.sample path=etc/glance/logging.conf owner=glance \
-    group=glance mode=0644 overlay=allow preserve=true
+    group=glance mode=0644 overlay=allow preserve=renamenew
 file etc/policy.json path=etc/glance/policy.json owner=glance group=glance \
-    mode=0644 overlay=allow preserve=true
+    mode=0644 overlay=allow preserve=renamenew
 file etc/schema-image.json path=etc/glance/schema-image.json owner=glance \
     group=glance
 file files/glance.auth_attr \
@@ -88,6 +89,8 @@ file usr/bin/glance-scrubber path=usr/lib/glance/glance-scrubber mode=0555
 file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/PKG-INFO
 file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/SOURCES.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/dependency_links.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/entry_points.txt
+file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/not-zip-safe
 file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/requires.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/glance-$(COMPONENT_VERSION)-py$(PYVER).egg-info/top_level.txt
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/__init__.py
@@ -99,14 +102,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/__init__.
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/cache.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/cache_manage.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/gzip.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/middleware/version_negotiation.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/policy.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/property_protections.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v1/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v1/controller.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v1/filters.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v1/images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v1/members.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v1/router.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v1/upload_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/image_data.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/image_members.py
@@ -115,6 +121,17 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/router.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/v2/schemas.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/api/versions.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_cleaner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_manage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_prefetcher.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/cache_pruner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/control.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/manage.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/registry.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/replicator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/cmd/scrubber.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/auth.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/client.py
@@ -122,11 +139,16 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/config.py \
     pkg.depend.bypass-generate=.*/paste.*
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/crypt.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/exception.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/ordereddict.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/property_utils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/rpc.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/common/wsgi.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/context.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/migration.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/registry/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/registry/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/simple/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/simple/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/__init__.py
@@ -168,6 +190,13 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_re
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/020_drop_images_table_location.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/021_set_engine_mysql_innodb.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/022_image_member_index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/023_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/024_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/025_placeholder.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/026_add_location_storage_information.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/027_checksum_index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/028_owner_index.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/029_location_meta_data_pickle_to_string.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migrate_repo/versions/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/migration.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/db/sqlalchemy/models.py
@@ -184,24 +213,53 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/drivers/sqli
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/drivers/xattr.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/prefetcher.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/image_cache/pruner.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ar/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/bg_BG/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/bs/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ca/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/cs/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/da/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/de/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/en_AU/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/en_GB/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/en_US/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/es/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/es_MX/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/fi_FI/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/fil/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/fr/LC_MESSAGES/glance.po
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/glance.pot
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/hi/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/hr/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/hu/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/id/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/it/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/it_IT/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ja/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ka_GE/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/kn/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ko/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ko_KR/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ms/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/nb/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ne/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/nl_NL/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/pl_PL/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/pt/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/pt_BR/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ro/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ru/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/ru_RU/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/sk/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/sl_SI/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/sw_KE/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/tl/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/tl_PH/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/tr/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/tr_TR/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/uk/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/vi_VN/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/zh_CN/LC_MESSAGES/glance.po
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/zh_HK/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/locale/zh_TW/LC_MESSAGES/glance.po
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/notifier/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/notifier/notify_kombu.py
@@ -212,11 +270,18 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/notifier/strategy.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/README
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/context.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/eventlet_backdoor.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/excutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/fileutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/gettextutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/importutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/jsonutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/local.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/lockutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/log.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/loopingcall.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/network_utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/notifier/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/notifier/api.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/notifier/log_notifier.py
@@ -226,26 +291,39 @@ file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/notifie
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/notifier/rpc_notifier2.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/notifier/test_notifier.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/policy.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/setup.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/processutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/service.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/strutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/threadgroup.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/timeutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/uuidutils.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/openstack/common/version.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/quota/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/api/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/api/v1/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/api/v1/images.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/api/v1/members.py
-file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/api/v2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/api/v2/rpc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v1/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v1/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v1/client.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v2/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v2/api.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/registry/client/v2/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/schema.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/__init__.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/base.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/cinder.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/filesystem.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/gridfs.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/http.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/location.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/rbd.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/s3.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/scrubber.py
+file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/sheepdog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/store/swift.py
 file path=usr/lib/python$(PYVER)/vendor-packages/glance/version.py
 dir  path=var/lib/glance owner=glance group=glance mode=0700
@@ -263,8 +341,18 @@ depend type=group fmri=library/python/anyjson-26
 # to flush this out.
 depend type=group fmri=library/python/swiftclient-26
 
+# force a dependency on argparse; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/argparse-26
+
 # force a dependency on boto; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/boto-26
+
+# force a dependency on cinderclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/cinderclient-26
+
+# force a dependency on greenlet; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/greenlet-26
 
 # force a dependency on httplib2; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/httplib2-26
@@ -274,6 +362,9 @@ depend type=require fmri=library/python/iso8601-26
 
 # force a dependency on jsonschema; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/jsonschema-26
+
+# force a dependency on keystoneclient; used via a paste.deploy filter
+depend type=require fmri=library/python/keystoneclient-26
 
 # force a dependency on kombu; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/kombu-26
@@ -285,11 +376,17 @@ depend type=require fmri=library/python/paste-26
 # out.
 depend type=require fmri=library/python/paste.deploy-26
 
+# force a dependency on pbr; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pbr-26
+
+# force a dependency on pyopenssl; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/pyopenssl-26
+
 # force a dependency on routes; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/routes-26
 
-# force a dependency on setuptools; pkgdepend work is needed to flush this out.
-depend type=require fmri=library/python/setuptools-26
+# force a dependency on six; pkgdepend work is needed to flush this out.
+depend type=require fmri=library/python/six-26
 
 # force a dependency on sqlalchemy; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/sqlalchemy-26

@@ -31,7 +31,7 @@ set name=pkg.description \
     value="A python client for the OpenStack Object Storage API. There's a Python API (the 'swiftclient' module), and a command-line script ('swift')."
 set name=com.oracle.info.description \
     value="swiftclient, the Python bindings to the OpenStack Object Storage API"
-set name=com.oracle.info.tpno value=16617
+set name=com.oracle.info.tpno value=17873
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python \
     value="org.opensolaris.category.2008:System/Administration and Configuration" \
@@ -55,6 +55,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/command_helpers.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/exceptions.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/multithreading.py
+file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/shell.py \
+    pkg.depend.bypass-generate=.*/six.*
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/utils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/swiftclient/version.py
 license swiftclient.license license="Apache v2.0"
@@ -62,6 +64,14 @@ license swiftclient.license license="Apache v2.0"
 # force a group dependency on the optional keystoneclient; pkgdepend work is
 # needed to flush this out.
 depend type=group fmri=library/python/keystoneclient-$(PYV)
+
+# force a group dependency on the optional pbr; pkgdepend work is needed to
+# flush this out.
+depend type=group fmri=library/python/pbr-$(PYV)
+
+# force a group dependency on the optional simplejson; pkgdepend work is
+# needed to flush this out.
+depend type=group fmri=library/python/simplejson-$(PYV)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/requests-$(PYV)

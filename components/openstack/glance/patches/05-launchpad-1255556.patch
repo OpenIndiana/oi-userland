@@ -1,0 +1,119 @@
+Although the following patch has been addressed in Icehouse 2014.1, it
+still has not yet been released for Havana.  It has been modified to
+apply cleanly into our current Havana implementation
+
+commit 1f6381a73f5c99f1f731d6c4f9defb91bd2d042d
+Author: Flavio Percoco <flaper87@gmail.com>
+Date:   Thu Nov 28 16:17:13 2013 +0100
+
+    Don't enable all stores by default
+    
+    Glance currently enables all stores by default. This patch changes that
+    by removing all stores that require manual configuration and leaving
+    those that work right out of the box.
+    
+    Current behavior causes a lot of confusion to users since most of those
+    stores print errors when they're not configured correctly. All extra
+    stores should be enabled explicitly by users.
+    
+    This fix makes tests use http locations. All other locations besides the
+    default ones should be tested in their own test suites.
+    
+    DocImpact
+    Closes-bug: #1255556
+    Change-Id: I82073352641d3eb2ab3d6e9a6b64afc99a30dcc7
+
+--- glance-2013.2.3/etc/glance-api.conf.~1~	2014-04-03 11:43:55.000000000 -0700
++++ glance-2013.2.3/etc/glance-api.conf	2014-05-29 13:47:44.689586507 -0700
+@@ -13,13 +13,14 @@
+ 
+ # List of which store classes and store class locations are
+ # currently known to glance at startup.
++# Existing but disabled stores:
++#      glance.store.rbd.Store,
++#      glance.store.s3.Store,
++#      glance.store.swift.Store,
++#      glance.store.sheepdog.Store,
++#      glance.store.cinder.Store,
+ #known_stores = glance.store.filesystem.Store,
+-#               glance.store.http.Store,
+-#               glance.store.rbd.Store,
+-#               glance.store.s3.Store,
+-#               glance.store.swift.Store,
+-#               glance.store.sheepdog.Store,
+-#               glance.store.cinder.Store,
++#               glance.store.http.Store
+ 
+ 
+ # Maximum image size (in bytes) that may be uploaded through the
+--- glance-2013.2.3/glance/store/__init__.py.~1~	2014-04-03 11:43:55.000000000 -0700
++++ glance-2013.2.3/glance/store/__init__.py	2014-05-29 13:53:14.827604452 -0700
+@@ -38,12 +38,7 @@
+     cfg.ListOpt('known_stores',
+                 default=[
+                     'glance.store.filesystem.Store',
+-                    'glance.store.http.Store',
+-                    'glance.store.rbd.Store',
+-                    'glance.store.s3.Store',
+-                    'glance.store.swift.Store',
+-                    'glance.store.sheepdog.Store',
+-                    'glance.store.cinder.Store',
++                    'glance.store.http.Store'
+                 ],
+                 help=_('List of which store classes and store class locations '
+                        'are currently known to glance at startup.')),
+--- glance-2013.2.3/glance/tests/unit/test_s3_store.py.~1~	2014-04-03 11:43:55.000000000 -0700
++++ glance-2013.2.3/glance/tests/unit/test_s3_store.py	2014-05-29 13:43:01.104336073 -0700
+@@ -41,7 +41,8 @@
+            's3_store_access_key': 'user',
+            's3_store_secret_key': 'key',
+            's3_store_host': 'localhost:8080',
+-           's3_store_bucket': 'glance'}
++           's3_store_bucket': 'glance',
++           'known_stores': ['glance.store.s3.Store']}
+ 
+ 
+ # We stub out as little as possible to ensure that the code paths
+--- glance-2013.2.3/glance/tests/unit/test_store_image.py.~1~	2014-04-03 11:43:55.000000000 -0700
++++ glance-2013.2.3/glance/tests/unit/test_store_image.py	2014-05-29 13:43:01.104846210 -0700
+@@ -20,7 +20,7 @@
+ from glance.tests import utils
+ 
+ 
+-BASE_URI = 'swift+http://storeurl.com/container'
++BASE_URI = 'http://storeurl.com/container'
+ UUID1 = 'c80a1a6c-bd1f-41c5-90ee-81afedb1d58d'
+ UUID2 = '971ec09a-8067-4bc8-a91f-ae3557f1c4c7'
+ USER1 = '54492ba0-f4df-4e4e-be62-27f4d76b29cf'
+--- glance-2013.2.3/glance/tests/unit/test_store_location.py.~2~	2014-05-29 13:43:01.087604346 -0700
++++ glance-2013.2.3/glance/tests/unit/test_store_location.py	2014-05-29 15:38:15.306762870 -0700
+@@ -30,6 +30,18 @@
+ 
+     def setUp(self):
+         self.config(default_store='file')
++
++        # NOTE(flaper87): Each store should test
++        # this in their test suite.
++        self.config(known_stores=[
++            "glance.store.filesystem.Store",
++            "glance.store.http.Store",
++            "glance.store.rbd.Store",
++            "glance.store.s3.Store",
++            "glance.store.swift.Store",
++            "glance.store.sheepdog.Store",
++            "glance.store.cinder.Store",
++        ])
+         super(TestStoreLocation, self).setUp()
+ 
+     def test_get_location_from_uri_back_to_uri(self):
+--- glance-2013.2.3/glance/tests/unit/utils.py.~1~	2014-04-03 11:43:55.000000000 -0700
++++ glance-2013.2.3/glance/tests/unit/utils.py	2014-05-29 13:43:01.105795472 -0700
+@@ -36,7 +36,7 @@
+ USER2 = '0b3b3006-cb76-4517-ae32-51397e22c754'
+ USER3 = '2hss8dkl-d8jh-88yd-uhs9-879sdjsd8skd'
+ 
+-BASE_URI = 'swift+http://storeurl.com/container'
++BASE_URI = 'http://storeurl.com/container'
+ 
+ 
+ def get_fake_request(path='', method='POST', is_admin=False, user=USER1,

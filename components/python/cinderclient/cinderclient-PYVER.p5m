@@ -31,7 +31,7 @@ set name=pkg.description \
     value="A client for the OpenStack Block Storage API. There's a Python API (the 'cinderclient' module), and a command-line script ('cinder'). Each implements 100% of the OpenStack Block Storage API."
 set name=com.oracle.info.description \
     value="cinderclient, the Python bindings to the OpenStack Block Storage API"
-set name=com.oracle.info.tpno value=16347
+set name=com.oracle.info.tpno value=17869
 set name=info.classification \
     value=org.opensolaris.category.2008:Development/Python \
     value="org.opensolaris.category.2008:System/Administration and Configuration" \
@@ -45,6 +45,7 @@ link path=usr/bin/cinder target=cinder-$(PYVER) mediator=python \
     mediator-version=$(PYVER)
 file path=usr/bin/cinder-$(PYVER)
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/auth_plugin.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/base.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/exceptions.py
@@ -59,6 +60,8 @@ file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/a
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/apiclient/fake_client.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/gettextutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/importutils.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/py3kcompat/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/py3kcompat/urlutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/openstack/common/strutils.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/service_catalog.py
 file path=usr/lib/python$(PYVER)/vendor-packages/cinderclient/shell.py
@@ -125,6 +128,10 @@ depend type=require fmri=library/python/babel-$(PYV)
 # force a dependency on the cinderclient package
 depend type=require \
     fmri=library/python/cinderclient@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+# force a dependency on keystoneclient; pkgdepend work is needed to flush this
+# out.
+depend type=require fmri=library/python/keystoneclient-$(PYV)
 
 # force a dependency on pbr; pkgdepend work is needed to flush this out.
 depend type=require fmri=library/python/pbr-$(PYV)

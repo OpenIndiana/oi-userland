@@ -32,40 +32,37 @@
 
     <!-- neutron-dhcp-agent uses dnsmasq which is incompatible with running
          BIND, ISC DHCP, and TFTP -->
-    <dependency name='exclude-bind'
-                grouping='exclude_all'
-                restart_on='none'
-                type='service'>
+    <dependency name='exclude-bind' grouping='exclude_all' restart_on='none'
+      type='service'>
       <service_fmri value='svc:/network/dns/server'/>
     </dependency>
 
-    <dependency name='exclude-dhcp-relay'
-                grouping='exclude_all'
-                restart_on='none'
-                type='service'>
+    <dependency name='exclude-dhcp-relay' grouping='exclude_all'
+      restart_on='none' type='service'>
       <service_fmri value='svc:/network/dhcp/relay'/>
     </dependency>
 
-    <dependency name='exclude-dhcp-server'
-                grouping='exclude_all'
-                restart_on='none'
-                type='service'>
+    <dependency name='exclude-dhcp-server' grouping='exclude_all'
+      restart_on='none' type='service'>
       <service_fmri value='svc:/network/dhcp/server'/>
     </dependency>
 
-    <dependency name='exclude-tftp'
-                grouping='exclude_all'
-                restart_on='none'
-                type='service'>
+    <dependency name='exclude-tftp' grouping='exclude_all' restart_on='none'
+      type='service'>
       <service_fmri value='svc:/network/tftp/udp6'/>
     </dependency>
 
-    <dependency name='exclude-dnsmasq'
-                grouping='exclude_all'
-                restart_on='none'
-                type='service'>
+    <dependency name='exclude-dnsmasq' grouping='exclude_all' restart_on='none'
+      type='service'>
       <service_fmri value='svc:/network/dnsmasq'/>
     </dependency>
+
+    <dependency name='ntp' grouping='optional_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/network/ntp'/>
+    </dependency>
+
+    <logfile_attributes permissions='600'/>
 
     <exec_method timeout_seconds="60" type="method" name="start"
       exec="/lib/svc/method/neutron-dhcp-agent %m %{config/config_path} %{config/dhcp_config_path}">
@@ -74,8 +71,12 @@
           privileges='basic,{net_privaddr}:53/udp,{net_privaddr}:53/tcp,{net_privaddr}:67/udp,{net_privaddr}:69/udp,{net_privaddr}:547/udp,net_icmpaccess,sys_ip_config' />
       </method_context>
     </exec_method>
-    <exec_method timeout_seconds="60" type="method" name="stop"
-      exec=":kill"/>
+    <exec_method timeout_seconds="600" type="method" name="stop"
+      exec="/lib/svc/method/neutron-dhcp-agent %m %{restarter/contract}">
+      <method_context>
+        <method_credential user='neutron' group='neutron' />
+      </method_context>
+    </exec_method>
 
     <instance name='default' enabled='false'>
       <!-- to start/stop/refresh the service -->
@@ -88,7 +89,7 @@
 
       <property_group name='config' type='application'>
         <propval name='config_path' type='astring'
-          value='/etc/neutron/quantum.conf'/>
+          value='/etc/neutron/neutron.conf'/>
         <propval name='dhcp_config_path' type='astring'
           value='/etc/neutron/dhcp_agent.ini'/>
       </property_group>

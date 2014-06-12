@@ -15,9 +15,12 @@
 #    under the License.
 
 import os
+import re
 import sys
 
 import smf_include
+
+from subprocess import CalledProcessError, Popen, PIPE, check_call
 
 
 def start():
@@ -30,6 +33,42 @@ def start():
     cmd = "/usr/lib/neutron/neutron-dhcp-agent --config-file %s " \
         "--config-file %s" % tuple(sys.argv[2:4])
     smf_include.smf_subprocess(cmd)
+
+
+def stop():
+    try:
+        # first kill the SMF contract
+        check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
+    except CalledProcessError as err:
+        print "failed to kill the SMF contract: %s" % err
+        return smf_include.SMF_EXIT_ERR_FATAL
+
+    cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve IP interface names"
+        return smf_include.SMF_EXIT_ERR_FATAL
+
+    ifnames = output.splitlines()
+    # DHCP agent datalinks are always 15 characters in length. They start with
+    # 'evs', end with '_0', and in between they are hexadecimal digits.
+    prog = re.compile('evs[0-9A-Fa-f\_]{10}_0')
+    for ifname in ifnames:
+        if not prog.search(ifname):
+            continue
+
+        try:
+            # first remove the IP
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
+                        ifname])
+            # next remove the VNIC
+            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
+                        ifname])
+        except CalledProcessError as err:
+            print "failed to remove datalinks used by DHCP agent: %s" % err
+            return smf_include.SMF_EXIT_ERR_FATAL
+    return smf_include.SMF_EXIT_OK
 
 if __name__ == "__main__":
     os.putenv("LC_ALL", "C")

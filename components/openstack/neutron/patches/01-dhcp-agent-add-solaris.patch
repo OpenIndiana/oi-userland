@@ -1,0 +1,76 @@
+--- neutron-2013.2.3/neutron/agent/dhcp_agent.py.orig	2014-04-03 11:49:01.000000000 -0700
++++ neutron-2013.2.3/neutron/agent/dhcp_agent.py	2014-05-29 14:07:12.811163548 -0700
+@@ -3,6 +3,8 @@
+ # Copyright 2012 OpenStack Foundation
+ # All Rights Reserved.
+ #
++# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
++#
+ #    Licensed under the Apache License, Version 2.0 (the "License"); you may
+ #    not use this file except in compliance with the License. You may obtain
+ #    a copy of the License at
+@@ -16,15 +18,14 @@
+ #    under the License.
+ 
+ import os
++import platform
+ 
+ import eventlet
+ import netaddr
+ from oslo.config import cfg
+ 
+ from neutron.agent.common import config
+-from neutron.agent.linux import dhcp
+ from neutron.agent.linux import external_process
+-from neutron.agent.linux import interface
+ from neutron.agent import rpc as agent_rpc
+ from neutron.common import constants
+ from neutron.common import exceptions
+@@ -42,6 +43,9 @@
+ from neutron import service as neutron_service
+ 
+ LOG = logging.getLogger(__name__)
++# dynamic module import
++dhcp = None
++interface = None
+ 
+ 
+ class DhcpAgent(manager.Manager):
+@@ -602,6 +606,16 @@
+     cfg.CONF.register_opts(DhcpAgent.OPTS)
+     config.register_agent_state_opts_helper(cfg.CONF)
+     config.register_root_helper(cfg.CONF)
++    global dhcp
++    global interface
++    if platform.system() == "SunOS":
++        dhcp = importutils.import_module("neutron.agent.solaris.dhcp")
++        interface = \
++            importutils.import_module("neutron.agent.solaris.interface")
++    else:
++        dhcp = importutils.import_module("neutron.agent.linux.dhcp")
++        interface = \
++            importutils.import_module("neutron.agent.linux.interface")
+     cfg.CONF.register_opts(dhcp.OPTS)
+     cfg.CONF.register_opts(interface.OPTS)
+ 
+--- neutron-2013.2.3/neutron/db/dhcp_rpc_base.py.orig	2014-04-03 11:49:01.000000000 -0700
++++ neutron-2013.2.3/neutron/db/dhcp_rpc_base.py	2014-05-29 14:07:45.666828914 -0700
+@@ -131,11 +131,13 @@
+                 for fixed_ip in port['fixed_ips']:
+                     if fixed_ip['subnet_id'] in dhcp_enabled_subnet_ids:
+                         dhcp_enabled_subnet_ids.remove(fixed_ip['subnet_id'])
+-                port['fixed_ips'].extend(
+-                    [dict(subnet_id=s) for s in dhcp_enabled_subnet_ids])
+-
+-                retval = plugin.update_port(context, port['id'],
+-                                            dict(port=port))
++                if dhcp_enabled_subnet_ids:
++                    port['fixed_ips'].extend(
++                        [dict(subnet_id=s) for s in dhcp_enabled_subnet_ids])
++                    retval = plugin.update_port(context, port['id'],
++                                                dict(port=port))
++                else:
++                    retval = port
+ 
+         except n_exc.NotFound as e:
+             LOG.warning(e)

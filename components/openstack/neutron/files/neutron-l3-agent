@@ -15,11 +15,13 @@
 #    under the License.
 
 import os
+import re
 import sys
 
+import netaddr
 import smf_include
 
-from subprocess import Popen, PIPE
+from subprocess import CalledProcessError, Popen, PIPE, check_call
 
 
 def start():
@@ -50,13 +52,111 @@ def start():
     v6fwding = "on" in output
 
     if not any((v4fwding, v6fwding)):
-        print "System-wide IPv4 or IPv6 (or both) forwarding must be enabled " \
-            "before enabling %s" % os.getenv("SMF_FMRI")
+        print "System-wide IPv4 or IPv6 (or both) forwarding must be " \
+              "enabled before enabling neutron-l3-agent"
         return smf_include.SMF_EXIT_ERR_CONFIG
 
     cmd = "/usr/lib/neutron/neutron-l3-agent --config-file %s " \
         "--config-file %s" % tuple(sys.argv[2:4])
     smf_include.smf_subprocess(cmd)
+
+
+def stop():
+    try:
+        # first kill the SMF contract
+        check_call(["/usr/bin/pkill", "-c", sys.argv[2]])
+    except CalledProcessError as err:
+        print "failed to kill the SMF contract: %s" % (err)
+        return smf_include.SMF_EXIT_ERR_FATAL
+    # remove VNICs associated with L3 agent
+    cmd = ["/usr/sbin/ipadm", "show-if", "-p", "-o", "ifname"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve IP interface names"
+        return smf_include.SMF_EXIT_ERR_CONFIG
+
+    ifnames = output.splitlines()
+    # L3 agent datalinks are always 15 characters in length. They start
+    # with either 'l3i' or 'l3e', end with '_0', and in between they are
+    # hexadecimal digits.
+    prog = re.compile('l3[ie][0-9A-Fa-f\_]{10}_0')
+    for ifname in ifnames:
+        if not prog.search(ifname):
+            continue
+        try:
+            # first remove the IP
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ipadm", "delete-ip",
+                        ifname])
+            # next remove the VNIC
+            check_call(["/usr/bin/pfexec", "/usr/sbin/dladm", "delete-vnic",
+                        ifname])
+        except CalledProcessError as err:
+            print "failed to remove datalinks used by L3 agent: %s" % (err)
+            return smf_include.SMF_EXIT_ERR_FATAL
+
+    # remove IP Filter rules added by neutron-l3-agent
+    cmd = ["/usr/bin/pfexec", "/usr/sbin/ipfstat", "-io"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve IP Filter rules"
+        return smf_include.SMF_EXIT_ERR_FATAL
+
+    ipfilters = output.splitlines()
+    # L3 agent IP Filter rules are of the form
+    # block in quick on l3i64cbb496_a_0 from ... to pool/15417332
+    prog = re.compile('on l3i[0-9A-Fa-f\_]{10}_0')
+    ippool_names = []
+    for ipf in ipfilters:
+        if not prog.search(ipf):
+            continue
+        # capture the IP pool name
+        ippool_names.append(ipf.split('pool/')[1])
+
+        try:
+            # remove the IP Filter rule
+            p = Popen(["echo", ipf], stdout=PIPE)
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ipf", "-r", "-f", "-"],
+                       stdin=p.stdout)
+        except CalledProcessError as err:
+            print "failed to remove IP Filter rule %s: %s" % (ipf, err)
+            return smf_include.SMF_EXIT_ERR_FATAL
+
+    # remove IP Pools added by neutron-l3-agent
+    for ippool_name in ippool_names:
+        try:
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ippool", "-R",
+                        "-m", ippool_name, "-t", "tree"])
+        except CalledProcessError as err:
+            print "failed to remove IP Pool %s: %s" % (ippool_name, err)
+            return smf_include.SMF_EXIT_ERR_FATAL
+
+    # remove IP NAT rules added by neutron-l3-agent
+    cmd = ["/usr/bin/pfexec", "/usr/sbin/ipnat", "-lR"]
+    p = Popen(cmd, stdout=PIPE, stderr=PIPE)
+    output, error = p.communicate()
+    if p.returncode != 0:
+        print "failed to retrieve IP NAT rules"
+        return smf_include.SMF_EXIT_ERR_FATAL
+
+    ipnat_rules = output.splitlines()
+    # L3 agent IP NAT rules are of the form
+    # bimap l3e64ccc496_a_0 192.168.1.3/32 -> 172.16.10.3/32
+    prog = re.compile('l3e[0-9A-Fa-f\_]{10}_0')
+    for ipnat_rule in ipnat_rules:
+        if not prog.search(ipnat_rule):
+            continue
+        # remove the IP NAT rule
+        try:
+            p = Popen(["echo", ipnat_rule], stdout=PIPE)
+            check_call(["/usr/bin/pfexec", "/usr/sbin/ipnat", "-r", "-f", "-"],
+                       stdin=p.stdout)
+        except CalledProcessError as err:
+            print "failed to remove IP NAT rule %s: %s" % (ipnat_rule, err)
+            return smf_include.SMF_EXIT_ERR_FATAL
+
+    return smf_include.SMF_EXIT_OK
 
 if __name__ == "__main__":
     os.putenv("LC_ALL", "C")

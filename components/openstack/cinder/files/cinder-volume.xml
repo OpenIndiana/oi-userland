@@ -42,6 +42,8 @@
       <service_fmri value='svc:/application/openstack/cinder/cinder-db'/>
     </dependency>
 
+    <logfile_attributes permissions='600'/>
+
     <instance name='setup' enabled='false'>
 
       <exec_method timeout_seconds="60" type="method" name="start"
@@ -60,6 +62,11 @@
       <dependency name='cinder_volume_setup' grouping='require_all'
         restart_on='error' type='service'>
         <service_fmri value='svc:/application/openstack/cinder/cinder-volume:setup' />
+      </dependency>
+
+      <dependency name='ntp' grouping='optional_all' restart_on='none'
+        type='service'>
+        <service_fmri value='svc:/network/ntp'/>
       </dependency>
 
       <exec_method timeout_seconds="60" type="method" name="start"

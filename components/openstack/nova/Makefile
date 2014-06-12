@@ -25,12 +25,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nova
-COMPONENT_CODENAME=	grizzly
-COMPONENT_VERSION=	2013.1.4
+COMPONENT_CODENAME=	havana
+COMPONENT_VERSION=	2013.2.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:0491ec81552b9c407021941ea1c477d5bcd93ec1dcc66d5fc0c1cef594dac760
+    sha256:02902cb65b5adb0419c69cdb03ea2a0cfdfe8f7df342be44f3760d66cdecb61e
 COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENAME)/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/nova
@@ -48,8 +48,10 @@ PYTHON_VERSIONS=	2.6
 
 PKG_MACROS +=		PYVER=$(PYTHON_VERSIONS)
 
+# Replace the standard nova/virt/libvirt/__init__.py with an empty file.
 COMPONENT_POST_INSTALL_ACTION += \
-	($(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
+	($(CP) /dev/null $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/libvirt/__init__.py; \
+	 $(MKDIR) $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
 	 $(CP) files/solariszones/__init__.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
 	 $(CP) files/solariszones/driver.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones; \
 	 $(CP) files/solariszones/sysconfig.py $(PROTO_DIR)/usr/lib/python2.6/vendor-packages/nova/virt/solariszones); \

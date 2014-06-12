@@ -1,0 +1,45 @@
+Although the following patch has been addressed in Icehouse 2014.1, it
+still has not yet been released for Havana.  It has been modified to
+apply cleanly into our current Havana implementation
+
+commit 3badd1ffbe8796d27b924f882ed05b8d3f4f0f11
+Author: Dan Prince <dprince@redhat.com>
+Date:   Tue Dec 10 14:51:32 2013 -0500
+
+    Lazy log the fixed_key warnings
+    
+    Cinder currently spews quite a bit of WARNINGs like this with
+    the default settings:
+    
+    WARNING cinder.keymgr.conf_key_mgr [-] config option keymgr.fixed_key
+    has not been defined: some operations may fail unexpectedly
+    
+    Many users may not be using features that require key manager...
+    so logging the WARNING message a bit more lazily seems reasonable.
+    
+    Change-Id: I5ab72285c7d4bc2ec3196dd94fabf977b3a4ebaf
+    Closes-bug: 1252512
+
+diff --git a/cinder/keymgr/conf_key_mgr.py b/cinder/keymgr/conf_key_mgr.py
+index f000c44..ee4fbc3 100644
+--- cinder-2013.2.3/cinder/keymgr/conf_key_mgr.py.~2~	2014-05-29 11:02:58.846311952 -0700
++++ cinder-2013.2.3/cinder/keymgr/conf_key_mgr.py	2014-05-29 11:02:58.855843284 -0700
+@@ -67,9 +67,6 @@
+         super(ConfKeyManager, self).__init__()
+ 
+         self.key_id = '00000000-0000-0000-0000-000000000000'
+-        if CONF.keymgr.fixed_key is None:
+-            LOG.warn(_('config option keymgr.fixed_key has not been defined: '
+-                       'some operations may fail unexpectedly'))
+ 
+     def _generate_key(self, **kwargs):
+         _hex = self._generate_hex_key(**kwargs)
+@@ -78,6 +75,8 @@
+ 
+     def _generate_hex_key(self, **kwargs):
+         if CONF.keymgr.fixed_key is None:
++            LOG.warn(_('config option keymgr.fixed_key has not been defined: '
++                       'some operations may fail unexpectedly'))
+             raise ValueError(_('keymgr.fixed_key not defined'))
+         return CONF.keymgr.fixed_key
+ 

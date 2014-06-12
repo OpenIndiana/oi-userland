@@ -1,8 +1,8 @@
 In-house patch to update the default flavors for use with Solaris.
 This patch has not yet been submitted upstream.
 
---- nova-2013.1.4/nova/db/sqlalchemy/migrate_repo/versions/133_folsom.py.orig	2014-02-11 08:54:04.148157965 -0700
-+++ nova-2013.1.4/nova/db/sqlalchemy/migrate_repo/versions/133_folsom.py	2014-02-11 08:54:09.036798132 -0700
+--- nova-2013.2.3/nova/db/sqlalchemy/migrate_repo/versions/133_folsom.py.~1~	2014-04-03 11:49:46.000000000 -0700
++++ nova-2013.2.3/nova/db/sqlalchemy/migrate_repo/versions/133_folsom.py	2014-05-19 04:14:17.367917095 -0700
 @@ -2,6 +2,8 @@
  
  # Copyright 2012 OpenStack Foundation
@@ -12,49 +12,49 @@ This patch has not yet been submitted upstream.
  #    Licensed under the Apache License, Version 2.0 (the "License"); you may
  #    not use this file except in compliance with the License. You may obtain
  #    a copy of the License at
-@@ -36,17 +38,45 @@
+@@ -37,17 +39,45 @@
      return Text().with_variant(dialects.mysql.MEDIUMTEXT(), 'mysql')
  
  
 -def _populate_instance_types(instance_types_table):
 +def _populate_instance_types(instance_types_table, instance_type_extra_specs):
      default_inst_types = {
--        'm1.tiny': dict(mem=512, vcpus=1, root_gb=0, eph_gb=0, flavid=1),
+-        'm1.tiny': dict(mem=512, vcpus=1, root_gb=1, eph_gb=0, flavid=1),
 -        'm1.small': dict(mem=2048, vcpus=1, root_gb=20, eph_gb=0, flavid=2),
 -        'm1.medium': dict(mem=4096, vcpus=2, root_gb=40, eph_gb=0, flavid=3),
 -        'm1.large': dict(mem=8192, vcpus=4, root_gb=80, eph_gb=0, flavid=4),
 -        'm1.xlarge': dict(mem=16384, vcpus=8, root_gb=160, eph_gb=0, flavid=5)
-+        'Oracle Solaris kernel zone - tiny':
-+            dict(mem=2048, vcpus=1, root_gb=10, eph_gb=0, flavid=1,
-+                 extra='solaris-kz'),
-+        'Oracle Solaris kernel zone - small':
-+            dict(mem=4096, vcpus=4, root_gb=20, eph_gb=0, flavid=2,
-+                 extra='solaris-kz'),
-+        'Oracle Solaris kernel zone - medium':
-+            dict(mem=8192, vcpus=8, root_gb=40, eph_gb=0, flavid=3,
-+                 extra='solaris-kz'),
-+        'Oracle Solaris kernel zone - large':
-+            dict(mem=16384, vcpus=16, root_gb=40, eph_gb=0, flavid=4,
-+                 extra='solaris-kz'),
-+        'Oracle Solaris kernel zone - xlarge':
-+            dict(mem=32768, vcpus=32, root_gb=80, eph_gb=0, flavid=5,
-+                 extra='solaris-kz'),
++        'Oracle Solaris kernel zone - tiny': dict(
++            mem=2048, vcpus=1, root_gb=10, eph_gb=0, flavid=1,
++            extra='solaris-kz'),
++        'Oracle Solaris kernel zone - small': dict(
++            mem=4096, vcpus=4, root_gb=20, eph_gb=0, flavid=2,
++            extra='solaris-kz'),
++        'Oracle Solaris kernel zone - medium': dict(
++            mem=8192, vcpus=8, root_gb=40, eph_gb=0, flavid=3,
++            extra='solaris-kz'),
++        'Oracle Solaris kernel zone - large': dict(
++            mem=16384, vcpus=16, root_gb=40, eph_gb=0, flavid=4,
++            extra='solaris-kz'),
++        'Oracle Solaris kernel zone - xlarge': dict(
++            mem=32768, vcpus=32, root_gb=80, eph_gb=0, flavid=5,
++            extra='solaris-kz'),
 +
-+        'Oracle Solaris non-global zone - tiny':
-+            dict(mem=2048, vcpus=1, root_gb=10, eph_gb=0, flavid=6,
-+                 extra='solaris'),
-+        'Oracle Solaris non-global zone - small':
-+            dict(mem=3072, vcpus=4, root_gb=20, eph_gb=0, flavid=7,
-+                 extra='solaris'),
-+        'Oracle Solaris non-global zone - medium':
-+            dict(mem=4096, vcpus=8, root_gb=40, eph_gb=0, flavid=8,
-+                 extra='solaris'),
-+        'Oracle Solaris non-global zone - large':
-+            dict(mem=8192, vcpus=16, root_gb=40, eph_gb=0, flavid=9,
-+                 extra='solaris'),
-+        'Oracle Solaris non-global zone - xlarge':
-+            dict(mem=16384, vcpus=32, root_gb=80, eph_gb=0, flavid=10,
-+                 extra='solaris')
++        'Oracle Solaris non-global zone - tiny': dict(
++            mem=2048, vcpus=1, root_gb=10, eph_gb=0, flavid=6,
++            extra='solaris'),
++        'Oracle Solaris non-global zone - small': dict(
++            mem=3072, vcpus=4, root_gb=20, eph_gb=0, flavid=7,
++            extra='solaris'),
++        'Oracle Solaris non-global zone - medium': dict(
++            mem=4096, vcpus=8, root_gb=40, eph_gb=0, flavid=8,
++            extra='solaris'),
++        'Oracle Solaris non-global zone - large': dict(
++            mem=8192, vcpus=16, root_gb=40, eph_gb=0, flavid=9,
++            extra='solaris'),
++        'Oracle Solaris non-global zone - xlarge': dict(
++            mem=16384, vcpus=32, root_gb=80, eph_gb=0, flavid=10,
++            extra='solaris')
          }
  
      try:
@@ -64,7 +64,7 @@ This patch has not yet been submitted upstream.
          for name, values in default_inst_types.iteritems():
              i.execute({'name': name, 'memory_mb': values["mem"],
                          'vcpus': values["vcpus"], 'deleted': False,
-@@ -57,6 +87,10 @@
+@@ -58,6 +88,10 @@
                          'flavorid': values["flavid"],
                          'disabled': False,
                          'is_public': True})
@@ -75,7 +75,7 @@ This patch has not yet been submitted upstream.
      except Exception:
          LOG.info(repr(instance_types_table))
          LOG.exception(_('Exception while seeding instance_types table'))
-@@ -1218,7 +1252,7 @@
+@@ -1219,7 +1253,7 @@
                           name='instance_info_caches_instance_id_key').create()
  
      # populate initial instance types
