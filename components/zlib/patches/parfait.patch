@@ -1,0 +1,20 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+ZLIB renames *.o file into *.lo before it links them info shared
+library. We need to do same to *.o.bc files so they are recognized by
+Parfait during linking.
+
+Downside of it is that Parfait will analyze also these separate object
+files.
+
+--- zlib-1.2.8/Makefile.in	2013-04-28 15:57:11.000000000 -0700
++++ zlib-1.2.8/Makefile.in	2014-05-07 07:30:58.047571894 -0700
+@@ -158,6 +158,7 @@
+ 	-@mkdir objs 2>/dev/null || test -d objs
+ 	$(CC) $(SFLAGS) -DPIC -c -o objs/$*.o $<
+ 	-@mv objs/$*.o $@
++	-@if [ -f objs/$*.o.bc ]; then mv objs/$*.o.bc $@.bc; fi
+ 
+ placebo $(SHAREDLIBV): $(PIC_OBJS) libz.a
+ 	$(LDSHARED) $(SFLAGS) -o $@ $(PIC_OBJS) $(LDSHAREDLIBC) $(LDFLAGS)

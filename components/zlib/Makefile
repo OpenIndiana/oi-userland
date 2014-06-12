@@ -20,18 +20,18 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		zlib
-COMPONENT_VERSION=	1.2.3
+COMPONENT_VERSION=	1.2.8
 COMPONENT_PROJECT_URL=	http://www.zlib.net/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1795c7d067a43174113fdf03447532f373e1c6c57c08d61d9e4e9be5e244b05e
+    sha256:36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/libpng/zlib/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libz
 
@@ -65,15 +65,18 @@ COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(RM) $(@D)/Makefile $(@D)/zconf.h; \
 	$(CP) $(SOURCE_DIR)/zconf.h $(@D) )
 CFLAGS_EXTRA = -DUNALIGNED_OK -DORIG_LONGEST_MATCH_GLOBAL
-PIC_OBJS =
+PIC_OBJA=
 else
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	$(CLONEY) $(SOURCE_DIR) $(@D); \
 	$(RM) $(@D)/Makefile $(@D)/zconf.h; \
 	$(CP) $(SOURCE_DIR)/zconf.h $(@D) )
 CFLAGS_EXTRA = -DORIG_LONGEST_MATCH_GLOBAL -xinline=%auto,no%longest_match
-PIC_OBJS=$(CAP_OBJS)
+PIC_OBJA=$(CAP_OBJS)
 endif
+
+# Avoid *.lo.bc from Parfait analyze (see also parfait.patch).
+PARFAIT += -X *.lo.bc
 
 CFLAGS += $(CC_PIC)
 
@@ -93,11 +96,11 @@ CONFIGURE_ENV += LDSHARED="$(CC) $(CFLAGS) -G"
 # This LDSHARED definitions is forced to get all required options plus
 # mapfile for result linking. While the one used with configure is just
 # to allow Zlib detect capability of creating shared libraries.
-COMPONENT_BUILD_ARGS = LDSHARED="$(CC) $(CFLAGS) -G -h libz.so.1 $(LD_OPTIONS_SO) -M ../../mapfile -L." PIC_OBJS=$(PIC_OBJS)
+COMPONENT_BUILD_ARGS = LDSHARED="$(CC) $(CFLAGS) -G -h libz.so.1 $(LD_OPTIONS_SO) -M ../../mapfile -L." PIC_OBJA=$(PIC_OBJA)
 
 $(BUILD_DIR)/sparc%/.built: COMPONENT_PRE_BUILD_ACTION = ( \
 	cd capabilities; \
-	$(ENV) SUBDIRS="sun4v" BUILD_ARCH=$* $(GMAKE) build )
+	$(ENV) SUBDIRS="sun4v" BUILD_ARCH=$* CC=$(CC) $(GMAKE) build )
 
 COMPONENT_TEST_TARGETS = test
 
@@ -108,7 +111,7 @@ install:	$(INSTALL_32_and_64)
 test:		$(TEST_32_and_64)
 
 clean::
-	$(RM) -r $(BUILD_DIR) $(PROTO_DIR) capabilities/*/*/*.o
+	$(RM) -r $(BUILD_DIR) $(PROTO_DIR) capabilities/*/*/*.o capabilities/*/$(MACH32)/*.s
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
