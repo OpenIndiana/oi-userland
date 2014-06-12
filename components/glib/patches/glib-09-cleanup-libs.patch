@@ -1,0 +1,21 @@
+diff -urN -x'*.orig' glib-2.25.1/configure.ac ../../SUNWglib2-2.25.1.hacked/i386/glib-2.25.1/configure.in
+--- glib-2.25.1/configure.ac	2011-03-09 12:24:06.163132159 +0000
++++ ../../SUNWglib2-2.25.1.hacked/i386/glib-2.25.1/configure.in	2011-03-09 15:04:15.489034284 +0000
+@@ -1052,7 +1052,7 @@
+ #include <resolv.h>],
+                            [res_query("test", 0, 0, (void *)0, 0);],
+                            [AC_MSG_RESULT([in -lresolv])
+-                            LIBASYNCNS_LIBADD="-lresolv"],
++                            LIBASYNCNS_LIBADD="-lresolv -lsocket"],
+                            [LIBS="-lbind $save_libs"
+                             AC_TRY_LINK([#include <resolv.h>],
+                                         [res_query("test", 0, 0, (void *)0, 0);],
+@@ -1964,7 +1964,7 @@
+ 	# Sun Studio expands -mt to -D_REENTRANT and -lthread
+ 	# gcc expands -pthreads to -D_REENTRANT -D_PTHREADS -lpthread
+         G_THREAD_CFLAGS="-D_REENTRANT -D_PTHREADS"
+-        G_THREAD_LIBS="-lpthread -lthread"
++        G_THREAD_LIBS="-lpthread"
+         ;;
+       *)
+         for flag in pthread pthreads mt; do
