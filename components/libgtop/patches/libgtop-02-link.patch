@@ -1,0 +1,24 @@
+diff -urN libgtop-2.26.0/sysdeps/solaris/netlist.c ../SUNWlibgtop-2.26.0.hacked/libgtop-2.26.0/sysdeps/solaris/netlist.c
+--- libgtop-2.26.0/sysdeps/solaris/netlist.c	2008-05-23 23:13:24.000000000 +0100
++++ ../SUNWlibgtop-2.26.0.hacked/libgtop-2.26.0/sysdeps/solaris/netlist.c	2009-03-24 12:43:48.926721000 +0000
+@@ -57,7 +57,7 @@
+ 	
+ 	for (ksp = kc->kc_chain; ksp; ksp = ksp->ks_next)
+ 	{
+-		if (strcmp(ksp->ks_class, "net") != 0)
++		if (strcmp(ksp->ks_module, "link") != 0)
+ 			continue;
+ 
+ 		g_ptr_array_add(devices, g_strdup(ksp->ks_name));
+diff -urN libgtop-2.26.0/sysdeps/solaris/netload.c ../SUNWlibgtop-2.26.0.hacked/libgtop-2.26.0/sysdeps/solaris/netload.c
+--- libgtop-2.26.0/sysdeps/solaris/netload.c	2009-03-24 12:42:59.537454000 +0000
++++ ../SUNWlibgtop-2.26.0.hacked/libgtop-2.26.0/sysdeps/solaris/netload.c	2009-03-24 14:02:48.458602000 +0000
+@@ -182,7 +182,7 @@
+ 	/*
+ 	 *  chop off the trailing interface
+ 	 */
+-	module = strdup( name );
++	module = strdup( "link" );
+ 	ptr = module + strlen( module ) - 1;
+ 	while( (ptr > module) && isdigit( (int) *ptr ) ) {
+ 		*ptr = '\0';

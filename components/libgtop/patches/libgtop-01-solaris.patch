@@ -1,0 +1,1564 @@
+diff -urN libgtop-2.25.91/include/glibtop/procstate.h ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/include/glibtop/procstate.h
+--- libgtop-2.25.91/include/glibtop/procstate.h	2008-05-23 22:13:20.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/include/glibtop/procstate.h	2009-02-25 17:16:38.052247000 +0000
+@@ -69,6 +69,13 @@
+     int has_cpu;
+     int processor;
+     int last_processor;
++
++        gint32  nice;           /*zhua: used to store nice */
++        guint64 start_time;     /* start time of process -- */
++        guint64 vsize;          /* number of pages of virtual memory ... */
++        guint64 resident;       /* number of resident set */
++        guint   load;           /* cpu load for process */
++        gint32  ppid;           /* pid of parent process */
+ };
+ 
+ void glibtop_get_proc_state(glibtop_proc_state *buf, pid_t pid);
+diff -urN libgtop-2.25.91/procmap.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/procmap.c
+--- libgtop-2.25.91/procmap.c	1970-01-01 00:00:00.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/procmap.c	2009-02-25 17:16:38.053079000 +0000
+@@ -0,0 +1,252 @@
++/* Copyright (C) 1998-99 Martin Baulig
++   This file is part of LibGTop 1.0.
++
++   Contributed by Martin Baulig <martin@home-of-linux.org>, April 1998.
++
++   LibGTop is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2 of the License,
++   or (at your option) any later version.
++
++   LibGTop is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++   for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with LibGTop; see the file COPYING. If not, write to the
++   Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.
++*/
++
++
++#include <config.h>
++#include <glibtop.h>
++#include <glibtop/error.h>
++#include <glibtop/procmap.h>
++
++#include <errno.h>
++
++#include "safeio.h"
++
++
++static const unsigned long _glibtop_sysdeps_proc_map =
++(1L << GLIBTOP_PROC_MAP_NUMBER) + (1L << GLIBTOP_PROC_MAP_TOTAL) +
++(1L << GLIBTOP_PROC_MAP_SIZE);
++static const unsigned long _glibtop_sysdeps_map_entry =
++(1L << GLIBTOP_MAP_ENTRY_START) + (1L << GLIBTOP_MAP_ENTRY_END) +
++(1L << GLIBTOP_MAP_ENTRY_OFFSET) + (1L << GLIBTOP_MAP_ENTRY_PERM);
++static const unsigned long _glibtop_sysdeps_map_device =
++(1L << GLIBTOP_MAP_ENTRY_DEVICE) + (1L << GLIBTOP_MAP_ENTRY_INODE);
++
++
++/* Init function. */
++
++void
++_glibtop_init_proc_map_s (glibtop *server)
++{
++	server->sysdeps.proc_map = _glibtop_sysdeps_proc_map;
++}
++
++/* Provides detailed information about a process. */
++
++glibtop_map_entry *
++glibtop_get_proc_map_s (glibtop *server, glibtop_proc_map *buf,	pid_t pid)
++{
++   	int fd, i, nmaps, pr_err, heap;
++
++        char filename [BUFSIZ];
++	/* use flags as a check condition, if it is 1, check, or, not check... zhua */
++	int check = buf->flags;
++	/* set flags back to 0 */
++	buf->flags = 0;
++
++#if GLIBTOP_SOLARIS_RELEASE >= 50600
++	prxmap_t *maps;
++//	struct ps_prochandle *Pr = NULL;
++#else
++	prmap_t *maps;
++#endif
++
++	/* A few defines, to make it shorter down there */
++
++#ifdef HAVE_PROCFS_H
++# define OFFSET  pr_offset
++#else
++# define OFFSET  pr_off
++#endif
++
++	glibtop_map_entry *entry;
++	struct stat inode;
++	char buffer[BUFSIZ];
++
++	memset (buf, 0, sizeof (glibtop_proc_map));
++
++#ifdef HAVE_PROCFS_H
++	sprintf(buffer, "/proc/%d/xmap", (int)pid);
++#else
++	sprintf(buffer, "/proc/%d", (int)pid);
++#endif
++	if((fd = s_open(buffer, O_RDONLY)) < 0)
++	{
++	   	if (errno != EPERM && errno != EACCES)
++		   	glibtop_warn_io_r(server, "open (%s)", buffer);
++		return NULL;
++	}
++#ifdef HAVE_PROCFS_H
++	if(fstat(fd, &inode) < 0)
++	{
++	   	if(errno != EOVERFLOW)
++		   	glibtop_warn_io_r(server, "fstat (%s)", buffer);
++		/* else call daemon for 64-bit support */
++		s_close(fd);
++		return NULL;
++	}
++	maps = g_alloca(inode.st_size);
++	nmaps = inode.st_size / sizeof(prxmap_t);
++	if(s_pread(fd, maps, inode.st_size, 0) != inode.st_size)
++	{
++	   	glibtop_warn_io_r(server, "pread (%s)", buffer);
++		s_close(fd);
++		return NULL;
++	}
++#else
++	if(ioctl(fd, PIOCNMAP, &nmaps) < 0)
++	{
++	   	glibtop_warn_io_r(server, "ioctl(%s, PIOCNMAP)", buffer);
++		s_close(fd);
++		return NULL;
++	}
++	maps = g_alloca((nmaps + 1) * sizeof(prmap_t));
++	if(ioctl(fd, PIOCMAP, maps) < 0)
++	{
++	   	glibtop_warn_io_r(server, "ioctl(%s, PIOCMAP)", buffer);
++		s_close(fd);
++		return NULL;
++	}
++#endif
++	buf->number = nmaps;
++	buf->size = sizeof(glibtop_map_entry);
++	buf->total = nmaps * sizeof(glibtop_map_entry);
++	entry = g_malloc0(buf->total);
++
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
++
++//	if(server->machine.objname && server->machine.pgrab &&
++//	   server->machine.pfree)
++//	   Pr = (server->machine.pgrab)(pid, 1, &pr_err);
++//#endif
++	for(heap = 0,i = 0; i < nmaps; ++i)
++	{
++	   	int len;
++
++		/* take a check to see if we need all information, if not, just get what we need.. 
++		   Also please see comments in get_process_memory_writable() of gnome-system-monitor zhua */
++		if (check == 1)
++		{
++			if(maps[i].pr_mflags & MA_WRITE){
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_WRITE;
++		   	entry[i].size = maps[i].pr_size;
++			}
++                if(maps[i].pr_mflags & MA_SHARED){
++                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
++			/* here use shared_clean to store Shared Memory */
++                        entry[i].shared_clean = maps[i].pr_size; 
++                	}
++		}
++                else
++                if (check == 2)
++                {
++                       if(maps[i].pr_mflags & MA_SHARED){
++                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
++                       /* here use shared_clean to store Shared Memory */
++                        entry[i].shared_clean = maps[i].pr_size;
++                       }
++                }
++		else {
++		
++	   	int len, rv;
++ 
++
++	   	entry[i].start = maps[i].pr_vaddr;
++		entry[i].end = maps[i].pr_vaddr + maps[i].pr_size;
++
++#if GLIBTOP_SOLARIS_RELEASE >= 50600
++
++		if(maps[i].pr_dev != PRNODEV)
++		{
++		   entry[i].device = maps[i].pr_dev;
++		   entry[i].inode = maps[i].pr_ino;
++		   entry[i].flags |= _glibtop_sysdeps_map_device;
++		}
++#endif
++		entry[i].offset = maps[i].OFFSET;
++		if(maps[i].pr_mflags & MA_READ)
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_READ;
++		if(maps[i].pr_mflags & MA_WRITE){
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_WRITE;
++		   	entry[i].size = maps[i].pr_size;
++		}
++		if(maps[i].pr_mflags & MA_EXEC)
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_EXECUTE;
++		if(maps[i].pr_mflags & MA_SHARED)
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
++		else
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_PRIVATE;
++		entry[i].flags = _glibtop_sysdeps_map_entry;
++
++#if GLIBTOP_SOLARIS_RELEASE >= 50600
++
++		if(maps[i].pr_mflags & MA_ANON)
++		{
++		   if(!heap)
++		   {
++		      ++heap;
++		      strcpy(entry[i].filename, "[ heap ]");
++		   }
++		   else
++		      if(i == nmaps - 1)
++			 strcpy(entry[i].filename, "[ stack ]");
++		      else
++			 strcpy(entry[i].filename, "[ anon ]");
++		   entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
++		}
++		else
++//		   if(Pr)
++//		   {
++//		      server->machine.objname(Pr, maps[i].pr_vaddr, buffer,
++//					      BUFSIZ);
++//		      if((len = resolvepath(buffer, entry[i].filename,
++//					    GLIBTOP_MAP_FILENAME_LEN)) > 0)
++//		      {
++//			 entry[i].filename[len] = 0;
++//			 entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
++//		      }
++//		   }
++               {
++                        g_strlcpy(buffer, maps[i].pr_mapname,  sizeof buffer);
++                        /* from /path get file name */
++                        g_snprintf(filename, sizeof filename, "/proc/%d/path/%s",
++                                pid, buffer);
++ 
++                        rv = readlink(filename, entry[i].filename, sizeof(entry[i].filename) - 1);
++                        /* read object, if have not, set it as NULL */
++                        if(rv < 0)
++                                rv = 0;
++                        entry[i].filename[rv] = '\0';
++                        /* now set the flags */
++                        entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
++                }
++#endif
++	}
++	}
++
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
++
++//	if(Pr)
++//	   	server->machine.pfree(Pr);
++//#endif
++	buf->flags = _glibtop_sysdeps_proc_map;
++	s_close(fd);
++	return entry;
++}
+diff -urN libgtop-2.25.91/sysdeps/common/fsusage.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/common/fsusage.c
+--- libgtop-2.25.91/sysdeps/common/fsusage.c	2008-05-23 22:13:22.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/common/fsusage.c	2009-02-25 17:25:57.183257000 +0000
+@@ -149,6 +149,15 @@
+ #define _glibtop_get_fsusage_read_write(S, B, P) \
+ 	_glibtop_openbsd_get_fsusage_read_write(S, B, P)
+ 
++#elif (defined(sun) || defined(__sun))
++G_GNUC_INTERNAL void
++_glibtop_sun_get_fsusage_read_write(glibtop *server,
++					glibtop_fsusage *buf,
++					const char *path);
++
++#define _glibtop_get_fsusage_read_write(S, B, P) \
++	_glibtop_sun_get_fsusage_read_write(S, B, P)
++
+ #else /* default fallback */
+ #warning glibtop_get_fsusage .read .write are not implemented.
+ static inline void
+diff -urN libgtop-2.25.91/sysdeps/common/mountlist.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/common/mountlist.c
+--- libgtop-2.25.91/sysdeps/common/mountlist.c	2008-05-23 22:13:22.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/common/mountlist.c	2009-02-25 17:16:38.053543000 +0000
+@@ -591,6 +591,17 @@
+ 
+ 	for (cur = &entries[0]; cur != NULL; cur = next) {
+ 
++                /*zhua: delete these 2 type of fs: objfs,ctfs */
++                if (!strcmp(cur->me_type, "objfs") || !strcmp(cur->me_type,"ctfs")){
++                /* free current mount_entry and move to the next */
++                        next = cur->me_next;
++                        g_free(cur->me_devname);
++                        g_free(cur->me_mountdir);
++                        g_free(cur->me_type);
++                        g_free(cur);
++                        continue;
++                }
++
+ 		if(all_fs || !ignore_mount_entry(cur)) {
+ 			/* add a new glibtop_mountentry */
+ 			glibtop_mountentry e;
+diff -urN libgtop-2.25.91/sysdeps/solaris/Makefile.am ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/Makefile.am
+--- libgtop-2.25.91/sysdeps/solaris/Makefile.am	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/Makefile.am	2009-02-25 17:27:23.462319000 +0000
+@@ -8,7 +8,8 @@
+ 				  proclist.c procstate.c procuid.c \
+ 				  proctime.c procmem.c procsignal.c \
+ 				  prockernel.c procsegment.c procargs.c \
+-				  procopenfiles.c \
++				  procopenfiles.c sysinfo.c fsusage.c procwd.c \
++				  glibtop_private.c procaffinity.c \
+ 				  procmap.c netload.c ppp.c procdata.c netlist.c
+ 
+ libgtop_sysdeps_2_0_la_LDFLAGS	= $(LT_VERSION_INFO)
+diff -urN libgtop-2.25.91/sysdeps/solaris/cpu.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/cpu.c
+--- libgtop-2.25.91/sysdeps/solaris/cpu.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/cpu.c	2009-02-25 17:16:38.055204000 +0000
+@@ -34,6 +34,7 @@
+ 
+ static const unsigned long _glibtop_sysdeps_cpu_all =
+ (1L << GLIBTOP_CPU_TOTAL) + (1L << GLIBTOP_CPU_USER) +
++(1L << GLIBTOP_CPU_NICE) + /* this value is needed by multiload */
+ (1L << GLIBTOP_CPU_SYS) + (1L << GLIBTOP_CPU_IDLE) +
+ (1L << GLIBTOP_XCPU_TOTAL) + (1L << GLIBTOP_XCPU_USER) +
+ (1L << GLIBTOP_XCPU_SYS) + (1L << GLIBTOP_XCPU_IDLE) +
+diff -urN libgtop-2.25.91/sysdeps/solaris/fsusage.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/fsusage.c
+--- libgtop-2.25.91/sysdeps/solaris/fsusage.c	1970-01-01 00:00:00.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/fsusage.c	2009-02-25 17:20:33.608888000 +0000
+@@ -0,0 +1,99 @@
++#include <config.h>
++#include <glibtop.h>
++#include <glibtop/error.h>
++#include <glibtop/fsusage.h>
++#include <glibtop/union.h>
++
++#include "glibtop_private.h"
++
++#include <glib.h>
++
++#include <unistd.h>
++#include <kstat.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/statvfs.h>
++
++#include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
++
++G_GNUC_INTERNAL void 
++_glibtop_sun_get_fsusage_read_write(glibtop *server,
++				      glibtop_fsusage *buf,
++				      const char *path)
++{
++        struct statvfs64       statvfsbuf;
++        char            ksname[KSTAT_STRLEN + 1];
++    	kstat_ctl_t * const kctl = server->machine.kc;
++	kstat_t		*ksp;
++     	kstat_io_t     	kio;
++	kstat_named_t   *kread, *kwrite;
++	int i;
++	
++        /*
++         *  get a kstat handle and update the user's kstat chain
++         */
++        if( kctl == NULL ){ 
++                glibtop_warn_io_r (server, "kstat_open ()");
++                return;
++        }
++	
++        /* make sure we have current data */  
++	while( kstat_chain_update( kctl ) != 0 )
++                ;
++		
++         for (ksp = kctl->kc_chain, i =0; ksp != NULL; ksp = ksp->ks_next, i++) {  
++		if (ksp->ks_type == KSTAT_TYPE_IO && strcmp(ksp->ks_class,"disk") == 0) { 
++              		kstat_read(kctl, ksp, &kio);  
++               		buf->read +=  kio.nread;       
++			buf->write +=  kio.nwritten;
++		}  
++	}
++#if 0
++	/* these codes keep here, because they are a good way to get the 
++	   fsusage information, but at the moment, the interfaces used 
++	   are not public or stable. so let's use them when public...
++	  */
++        /*
++         *  get a kstat handle and update the user's kstat chain
++         */
++        if( kctl == NULL ){
++                glibtop_warn_io_r (server, "kstat_open ()");
++                return;
++        }
++	   
++	while( kstat_chain_update( kctl ) != 0 )
++                ;
++
++	if (statvfs64(path, &statvfsbuf) != 0) {
++                glibtop_warn_io_r (server, "kstat_open ()");
++		return;
++	}        
++	snprintf(ksname, KSTAT_STRLEN, "%s%lx", VOPSTATS_STR,
++                        	statvfsbuf.f_fsid);
++
++       	/*
++         *  traverse the kstat chain
++         *  to find the appropriate statistics
++         */
++        if( (ksp = kstat_lookup( kctl,
++                       "unix", 0, ksname )) == NULL ) {
++               	return;
++        }
++        if( kstat_read( kctl, ksp, NULL ) == -1 ) {
++               	return;
++        }
++
++	kread = (kstat_named_t *)kstat_data_lookup(ksp,"read_bytes");
++        if( kread != NULL ) {
++               	buf->read = kread->value.ull;
++        }
++
++        kwrite = (kstat_named_t *)kstat_data_lookup(ksp,"write_bytes");
++        if( kwrite != NULL ) {
++               	buf->write = kwrite->value.ull;
++        }
++#endif
++        buf->flags |= (1 << GLIBTOP_FSUSAGE_READ) | (1 << GLIBTOP_FSUSAGE_WRITE);
++}
+diff -urN libgtop-2.25.91/sysdeps/solaris/glibtop_machine.h ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_machine.h
+--- libgtop-2.25.91/sysdeps/solaris/glibtop_machine.h	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_machine.h	2009-02-25 17:16:38.055426000 +0000
+@@ -61,14 +61,14 @@
+     int pagesize;		/* in bits to shift, ie. 2^pagesize gives Kb */
+     int ticks;			/* clock ticks, as returned by sysconf() */
+     unsigned long long boot;	/* boot time, although it's ui32 in kstat */
+-    void *libproc;		/* libproc handle */
+-#if GLIBTOP_SOLARIS_RELEASE >= 50600
+-    void (*objname)(void *, uintptr_t, const char *, size_t);
+-    struct ps_prochandle *(*pgrab)(pid_t, int, int *);
+-    void (*pfree)(void *);
+-#else
++//    void *libproc;		/* libproc handle */
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
++//    void (*objname)(void *, uintptr_t, const char *, size_t);
++//    struct ps_prochandle *(*pgrab)(pid_t, int, int *);
++//    void (*pfree)(void *);
++//#else
+     void *filler[3];
+-#endif
++//#endif
+ };
+ 
+ G_END_DECLS
+diff -urN libgtop-2.25.91/sysdeps/solaris/glibtop_private.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_private.c
+--- libgtop-2.25.91/sysdeps/solaris/glibtop_private.c	1970-01-01 00:00:00.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_private.c	2009-02-25 17:16:38.055744000 +0000
+@@ -0,0 +1,203 @@
++#include <config.h>
++#include <glibtop.h>
++#include <glibtop/error.h>
++
++#include "glibtop_private.h"
++
++#include <glib.h>
++
++#include <string.h>
++#include <stdlib.h>
++#include <stdarg.h>
++
++#include <fcntl.h>
++#include <unistd.h>
++
++#if 0
++unsigned long long
++get_scaled(const char *buffer, const char *key)
++{
++	const char    *ptr;
++	char	      *next;
++	unsigned long long value = 0;
++
++	if (G_LIKELY((ptr = strstr(buffer, key))))
++	{
++		ptr += strlen(key);
++		value = strtoull(ptr, &next, 0);
++
++		for ( ; *next; ++next) {
++			if (*next == 'k') {
++				value *= 1024;
++				break;
++			} else if (*next == 'M') {
++				value *= 1024 * 1024;
++				break;
++			}
++		}
++	} else
++		g_warning("Could not read key '%s' in buffer '%s'",
++			  key, buffer);
++
++	return value;
++}
++
++
++char *
++skip_token (const char *p)
++{
++	p = next_token(p);
++	while (*p && !isspace(*p)) p++;
++	p = next_token(p);
++	return (char *)p;
++}
++
++
++/*
++ * Read functions
++ */
++enum TRY_FILE_TO_BUFFER
++{
++	TRY_FILE_TO_BUFFER_OK = 0,
++	TRY_FILE_TO_BUFFER_OPEN = -1,
++	TRY_FILE_TO_BUFFER_READ = -2
++};
++
++int try_file_to_buffer(char *buffer, const char *format, ...)
++{
++	char path[4096];
++	int fd;
++	ssize_t len;
++	va_list pa;
++
++	va_start(pa, format);
++
++	/* C99 also provides vsnprintf */
++	g_vsnprintf(path, sizeof path, format, pa);
++
++	va_end(pa);
++
++	buffer [0] = '\0';
++
++	if((fd = open (path, O_RDONLY)) < 0)
++		return TRY_FILE_TO_BUFFER_OPEN;
++
++	len = read (fd, buffer, BUFSIZ-1);
++	close (fd);
++
++	if (len < 0)
++		return TRY_FILE_TO_BUFFER_READ;
++
++	buffer [len] = '\0';
++
++	return TRY_FILE_TO_BUFFER_OK;
++}
++
++
++void
++file_to_buffer(glibtop *server, char *buffer, const char *filename)
++{
++	switch(try_file_to_buffer(buffer, filename))
++	{
++	case TRY_FILE_TO_BUFFER_OPEN:
++		glibtop_error_io_r (server, "open (%s)", filename);
++	case TRY_FILE_TO_BUFFER_READ:
++		glibtop_error_io_r (server, "read (%s)", filename);
++	}
++}
++
++
++
++
++static unsigned long
++read_boot_time(glibtop *server)
++{
++	char buffer[BUFSIZ];
++	char *btime;
++
++	file_to_buffer(server, buffer, "/proc/stat");
++
++	btime = strstr(buffer, "btime");
++
++	if (!btime) {
++		glibtop_warn_io_r(server, "cannot find btime in /proc/stat");
++		return 0UL;
++	}
++
++	btime = skip_token(btime);
++	return strtoul(btime, NULL, 10);
++}
++
++
++
++unsigned long
++get_boot_time(glibtop *server)
++{
++	static unsigned long boot_time = 0UL;
++
++	if(G_UNLIKELY(!boot_time))
++	{
++		boot_time = read_boot_time(server);
++	}
++
++	return boot_time;
++}
++
++
++size_t
++get_page_size(void)
++{
++	static size_t pagesize = 0;
++
++	if(G_UNLIKELY(!pagesize))
++	{
++		pagesize = getpagesize();
++	}
++
++	return pagesize;
++}
++
++
++
++gboolean
++check_cpu_line(glibtop *server, const char *line, unsigned i)
++{
++	char start[10];
++
++	g_snprintf(start, sizeof start, "cpu%u", i);
++
++	return g_str_has_prefix(line, start);
++}
++
++
++
++gboolean
++has_sysfs(void)
++{
++	static gboolean init;
++	static gboolean sysfs;
++
++	if (G_UNLIKELY(!init)) {
++		sysfs = g_file_test("/sys", G_FILE_TEST_IS_DIR);
++		init = TRUE;
++	}
++
++	return sysfs;
++}
++#endif
++
++
++gboolean safe_readlink(const char *path, char *buf, size_t bufsiz)
++{
++	ssize_t ret;
++
++	ret = readlink(path, buf, bufsiz - 1);
++
++	if (ret == -1) {
++		g_warning("Could not read link %s : %s", path, strerror(errno));
++		return FALSE;
++	}
++
++	buf[ret] = '\0';
++	return TRUE;
++}
+diff -urN libgtop-2.25.91/sysdeps/solaris/glibtop_private.h ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_private.h
+--- libgtop-2.25.91/sysdeps/solaris/glibtop_private.h	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_private.h	2009-02-25 17:16:38.057019000 +0000
+@@ -60,6 +60,8 @@
+ /* Reread kstat chains */
+ void glibtop_get_kstats(glibtop *);
+ 
++gboolean safe_readlink(const char *path, char *buf, size_t bufsiz);
++
+ G_END_DECLS
+ 
+ #endif /* __GLIBTOP_PRIVATE_H__ */
+diff -urN libgtop-2.25.91/sysdeps/solaris/glibtop_server.h ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_server.h
+--- libgtop-2.25.91/sysdeps/solaris/glibtop_server.h	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/glibtop_server.h	2009-02-25 17:16:38.057265000 +0000
+@@ -29,9 +29,15 @@
+ #define GLIBTOP_SUID_SWAP		0
+ #define GLIBTOP_SUID_UPTIME		0
+ #define GLIBTOP_SUID_LOADAVG		0
++#if GLIBTOP_SOLARIS_RELEASE < 51000
+ #define GLIBTOP_SUID_SHM_LIMITS		(1L << GLIBTOP_SYSDEPS_SHM_LIMITS)
+ #define GLIBTOP_SUID_MSG_LIMITS		(1L << GLIBTOP_SYSDEPS_MSG_LIMITS)
+ #define GLIBTOP_SUID_SEM_LIMITS		(1L << GLIBTOP_SYSDEPS_SEM_LIMITS)
++#else
++#define GLIBTOP_SUID_SHM_LIMITS         0
++#define GLIBTOP_SUID_MSG_LIMITS         0
++#define GLIBTOP_SUID_SEM_LIMITS         0
++#endif
+ #define GLIBTOP_SUID_PROCLIST		0
+ #define GLIBTOP_SUID_PROC_STATE		0
+ #define GLIBTOP_SUID_PROC_UID		0
+@@ -44,7 +50,10 @@
+ #define GLIBTOP_SUID_PROC_MAP		0
+ #define GLIBTOP_SUID_NETLOAD		0
+ #define GLIBTOP_SUID_NETLIST		0
++#define GLIBTOP_SUID_PROC_WD		0
+ #define GLIBTOP_SUID_PPP		0
++#define GLIBTOP_SUID_PROC_AFFINITY	0
++
+ 
+ G_END_DECLS
+ 
+diff -urN libgtop-2.25.91/sysdeps/solaris/msg_limits.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/msg_limits.c
+--- libgtop-2.25.91/sysdeps/solaris/msg_limits.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/msg_limits.c	2009-02-25 17:16:38.058081000 +0000
+@@ -37,14 +37,24 @@
+ (1L << GLIBTOP_IPC_MSGMNB) + (1L << GLIBTOP_IPC_MSGMNI) +
+ (1L << GLIBTOP_IPC_MSGTQL);
+ #else
+-static const unsigned long _glibtop_sysdeps_msg_limits = 0;
++static const unsigned long _glibtop_sysdeps_msg_limits = 
++(1L << GLIBTOP_IPC_MSGMNB) +
++(1L << GLIBTOP_IPC_MSGMNI) +
++(1L << GLIBTOP_IPC_MSGMAX) +
++(1L << GLIBTOP_IPC_MSGPOOL) +
++(1L << GLIBTOP_IPC_MSGTQL);
+ #endif
+ 
+ 
+ /* Init function. */
+ 
++#if GLIBTOP_SUID_MSG_LIMITS
+ void
+ _glibtop_init_msg_limits_p (glibtop *server)
++#else
++void
++_glibtop_init_msg_limits_s (glibtop *server)
++#endif
+ {
+ #if GLIBTOP_SOLARIS_RELEASE < 51000
+ 
+@@ -59,8 +69,13 @@
+ 
+ /* Provides information about sysv ipc limits. */
+ 
++#if GLIBTOP_SUID_MSG_LIMITS
+ void
+ glibtop_get_msg_limits_p (glibtop *server, glibtop_msg_limits *buf)
++#else
++void
++glibtop_get_msg_limits_s (glibtop *server, glibtop_msg_limits *buf)
++#endif
+ {
+ #if GLIBTOP_SOLARIS_RELEASE < 51000
+ 
+diff -urN libgtop-2.25.91/sysdeps/solaris/netload.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/netload.c
+--- libgtop-2.25.91/sysdeps/solaris/netload.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/netload.c	2009-02-25 17:16:38.059013000 +0000
+@@ -37,6 +37,17 @@
+ 
+ #include <net/if.h>
+ 
++#ifdef HAVE_IFADDRS_H
++/* needed for IPV6 support */
++
++#include <ifaddrs.h>
++
++#ifndef IN6_IS_ADDR_GLOBAL
++#define IN6_IS_ADDR_GLOBAL(a) \
++   (((((__const uint8_t *) (a))[0] & 0xff) == 0x3f   \
++     || (((__const uint8_t *) (a))[0] & 0xff) == 0x20))
++#endif
++#endif /* HAVE_IFADDRS_H */
+ 
+ static const unsigned long _glibtop_sysdeps_netload =
+ (1L << GLIBTOP_NETLOAD_ERRORS_IN) +
+@@ -89,6 +100,72 @@
+ 	_glibtop_sysdeps_netload_packets;
+ }
+ 
++#ifdef HAVE_IFADDRS_H
++
++static void get_ipv6(glibtop *server, glibtop_netload *buf,
++		     const char *interface)
++{
++/* 
++  * remove this code, because they are not available at Solaris, but keep them here for reference.
++  * in fact, the function will not be called at Solaris, because HAVE_IFADDRS_H don't def.
++  *
++*/
++#if 0
++	struct ifaddrs *ifa0, *ifr6;
++
++	if(getifaddrs (&ifa0) != 0)
++	{
++		glibtop_warn_r(server, "getifaddrs failed : %s", g_strerror(errno));
++		return;
++	}
++
++	for (ifr6 = ifa0; ifr6; ifr6 = ifr6->ifa_next) {
++		if (strcmp (ifr6->ifa_name, interface) == 0
++		    && ifr6->ifa_addr != NULL
++		    && ifr6->ifa_addr->sa_family == AF_INET6)
++			break;
++	}
++
++	if(!ifr6) goto free_ipv6;
++
++	memcpy(buf->address6,
++	       &((struct sockaddr_in6 *) ifr6->ifa_addr)->sin6_addr,
++	       16);
++
++	memcpy(buf->prefix6,
++	       &((struct sockaddr_in6 *) ifr6->ifa_netmask)->sin6_addr,
++	       16);
++
++
++	if (IN6_IS_ADDR_LINKLOCAL (buf->address6))
++		buf->scope6 = GLIBTOP_IF_IN6_SCOPE_LINK;
++
++	else if (IN6_IS_ADDR_SITELOCAL (buf->address6))
++		buf->scope6 = GLIBTOP_IF_IN6_SCOPE_SITE;
++
++	else if (IN6_IS_ADDR_GLOBAL (buf->address6)
++		 || IN6_IS_ADDR_MC_ORGLOCAL (buf->address6)
++		 || IN6_IS_ADDR_V4COMPAT (buf->address6)
++		 || IN6_IS_ADDR_MULTICAST (buf->address6)
++		 || IN6_IS_ADDR_UNSPECIFIED (buf->address6)
++		)
++		buf->scope6 = GLIBTOP_IF_IN6_SCOPE_GLOBAL;
++
++	else if (IN6_IS_ADDR_LOOPBACK (buf->address6))
++		buf->scope6 = GLIBTOP_IF_IN6_SCOPE_HOST;
++
++	else
++		buf->scope6 = GLIBTOP_IF_IN6_SCOPE_UNKNOWN;
++
++	buf->flags |= _glibtop_sysdeps_netload_6;
++
++ free_ipv6:
++	freeifaddrs(ifa0);
++#endif
++}
++
++#endif /* HAVE_IFADDRS_H */
++
+ static int
+ solaris_stats(glibtop *server,
+ 		glibtop_netload *buf,
+@@ -245,6 +322,13 @@
+ 	    buf->subnet = ((struct sockaddr_in *) &ifr.ifr_addr)->sin_addr.s_addr;
+ 	    buf->flags |= (1L << GLIBTOP_NETLOAD_SUBNET);
+ 	}
++
++/*	g_strlcpy (ifr.ifr_name, interface, sizeof ifr.ifr_name);
++	if (!ioctl (skfd, SIOCGIFHWADDR, &ifr)) {
++	    memcpy(buf->hwaddress, &ifr.ifr_hwaddr.sa_data, 8);
++	    buf->flags |= (1L << GLIBTOP_NETLOAD_HWADDRESS);
++	}*/
++
+ 	close (skfd);
+     }
+ 
+@@ -254,4 +338,7 @@
+      
+     solaris_stats(server, buf, interface);
+ 
++#ifdef HAVE_IFADDRS_H
++    get_ipv6(server, buf, interface);
++#endif /* HAVE_IFADDRS_H */
+ }
+diff -urN libgtop-2.25.91/sysdeps/solaris/open.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/open.c
+--- libgtop-2.25.91/sysdeps/solaris/open.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/open.c	2009-02-25 17:16:38.060014000 +0000
+@@ -209,34 +209,34 @@
+ 	    }
+     }
+ 
+-    /* Now let's have a bit of magic dust... */
++// /* Now let's have a bit of magic dust... */
+ 
+-#if GLIBTOP_SOLARIS_RELEASE >= 50600
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
+ 
+-    dl = dlopen("/usr/lib/libproc.so", RTLD_LAZY);
+-    if(server->machine.libproc)
+-    	dlclose(server->machine.libproc);
+-    server->machine.libproc = dl;
+-    if(dl)
+-    {
+-       void *func;
++ //   dl = dlopen("/usr/lib/libproc.so", RTLD_LAZY);
++  //  if(server->machine.libproc)
++//   // 	dlclose(server->machine.libproc);
++ //   server->machine.libproc = dl;
++  //  if(dl)
++   // {
++    //   void *func;
+ 
+-       func = dlsym(dl, "Pobjname");		/* Solaris 8 */
+-       if(!func)
+-	  func = dlsym(dl, "proc_objname");	/* Solaris 7 */
+-       server->machine.objname = (void (*)
+-				 (void *, uintptr_t, const char *, size_t))func;
+-       server->machine.pgrab = (struct ps_prochandle *(*)(pid_t, int, int *))
+-	  		       dlsym(dl, "Pgrab");
+-       server->machine.pfree = (void (*)(void *))dlsym(dl, "Pfree");
+-       
+-    }
+-    else
+-    {
+-       server->machine.objname = NULL;
+-       server->machine.pgrab = NULL;
+-       server->machine.pfree = NULL;
+-    }
+-#endif
++     //  func = dlsym(dl, "Pobjname");		/* Solaris 8 */
++      // if(!func)
++//	  func = dlsym(dl, "proc_objname");	/* Solaris 7 */
++ //      server->machine.objname = (void (*)
++//				 (void *, uintptr_t, const char *, size_t))func;
++ //      server->machine.pgrab = (struct ps_prochandle *(*)(pid_t, int, int *))
++//	  		       dlsym(dl, "Pgrab");
++ //      server->machine.pfree = (void (*)(void *))dlsym(dl, "Pfree");
++  //     
++   // }
++   // else
++   // {
++   //    server->machine.objname = NULL;
++   //    server->machine.pgrab = NULL;
++   //    server->machine.pfree = NULL;
++   // }
++//#endif
+     server->machine.me = getpid();
+ }
+diff -urN libgtop-2.25.91/sysdeps/solaris/procaffinity.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procaffinity.c
+--- libgtop-2.25.91/sysdeps/solaris/procaffinity.c	1970-01-01 00:00:00.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procaffinity.c	2009-02-25 17:16:38.060320000 +0000
+@@ -0,0 +1,84 @@
++/* Copyright (C) 2007 Joe Marcus Clarke <marcus@FreeBSD.org>
++   This file is part of LibGTop 2.
++
++   LibGTop is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2 of the License,
++   or (at your option) any later version.
++
++   LibGTop is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++   for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with LibGTop; see the file COPYING. If not, write to the
++   Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.
++*/
++
++#include <config.h>
++#include <glibtop/procaffinity.h>
++#include <glibtop/error.h>
++
++#include <glibtop_private.h>
++
++#include <sys/param.h>
++
++void
++_glibtop_init_proc_affinity_s(glibtop *server)
++{
++/* 
++  server->sysdeps.proc_affinity =
++    (1 << GLIBTOP_PROC_AFFINITY_NUMBER) |
++    (1 << GLIBTOP_PROC_AFFINITY_ALL);
++*/
++}
++
++
++guint16 *
++glibtop_get_proc_affinity_s(glibtop *server, glibtop_proc_affinity *buf, pid_t pid)
++{
++/*
++#if __FreeBSD_version > 800024
++  id_t id;
++  cpulevel_t level;
++  cpuwhich_t which;
++  cpuset_t mask;
++  size_t i;
++  GArray* cpus;
++
++  memset(buf, 0, sizeof *buf);
++
++  which = CPU_WHICH_PID;
++  level = CPU_LEVEL_WHICH;
++  id = pid;
++
++  if (cpuset_getaffinity(level, which, id, sizeof(mask), &mask) != 0) {
++    glibtop_error_r(server, "cpuset_getaffinity failed");
++    return NULL;
++  }
++
++  cpus = g_array_new(FALSE, FALSE, sizeof(guint16));
++
++  for (i = 0; i < MIN(CPU_SETSIZE, (size_t)(server->ncpu + 1)); i++) {
++    if (CPU_ISSET(i, &mask)) {
++      guint16 n = i;
++      g_array_append_val(cpus, n);
++    }
++  }
++
++  buf->number = cpus->len;
++  buf->all = (cpus->len == (size_t)(server->ncpu + 1));
++  buf->flags = (1 << GLIBTOP_PROC_AFFINITY_NUMBER)
++    | (1 << GLIBTOP_PROC_AFFINITY_ALL);
++
++  return (guint16*) g_array_free(cpus, FALSE);
++#else
++  memset(buf, 0, sizeof *buf);
++
++  return NULL;
++#endif
++*/
++}
++
+diff -urN libgtop-2.25.91/sysdeps/solaris/procmap.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmap.c
+--- libgtop-2.25.91/sysdeps/solaris/procmap.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmap.c	2009-02-25 17:16:38.061314000 +0000
+@@ -54,9 +54,16 @@
+ glibtop_get_proc_map_s (glibtop *server, glibtop_proc_map *buf,	pid_t pid)
+ {
+    	int fd, i, nmaps, pr_err, heap;
++
++        char filename [BUFSIZ];
++	/* use flags as a check condition, if it is 1, check, or, not check... zhua */
++	int check = buf->flags;
++	/* set flags back to 0 */
++	buf->flags = 0;
++
+ #if GLIBTOP_SOLARIS_RELEASE >= 50600
+ 	prxmap_t *maps;
+-	struct ps_prochandle *Pr = NULL;
++//	struct ps_prochandle *Pr = NULL;
+ #else
+ 	prmap_t *maps;
+ #endif
+@@ -123,16 +130,44 @@
+ 	buf->total = nmaps * sizeof(glibtop_map_entry);
+ 	entry = g_malloc0(buf->total);
+ 
+-#if GLIBTOP_SOLARIS_RELEASE >= 50600
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
+ 
+-	if(server->machine.objname && server->machine.pgrab &&
+-	   server->machine.pfree)
+-	   Pr = (server->machine.pgrab)(pid, 1, &pr_err);
+-#endif
++//	if(server->machine.objname && server->machine.pgrab &&
++//	   server->machine.pfree)
++//	   Pr = (server->machine.pgrab)(pid, 1, &pr_err);
++//#endif
+ 	for(heap = 0,i = 0; i < nmaps; ++i)
+ 	{
+ 	   	int len;
+ 
++		/* take a check to see if we need all information, if not, just get what we need.. 
++		   Also please see comments in get_process_memory_writable() of gnome-system-monitor zhua */
++		if (check == 1)
++		{
++			if(maps[i].pr_mflags & MA_WRITE){
++		   	entry[i].perm |= GLIBTOP_MAP_PERM_WRITE;
++		   	entry[i].size = maps[i].pr_size;
++			}
++                if(maps[i].pr_mflags & MA_SHARED){
++                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
++			/* here use shared_clean to store Shared Memory */
++                        entry[i].shared_clean = maps[i].pr_size; 
++                	}
++		}
++                else
++                if (check == 2)
++                {
++                       if(maps[i].pr_mflags & MA_SHARED){
++                        entry[i].perm |= GLIBTOP_MAP_PERM_SHARED;
++                       /* here use shared_clean to store Shared Memory */
++                        entry[i].shared_clean = maps[i].pr_size;
++                       }
++                }
++		else {
++		
++	   	int len, rv;
++ 
++
+ 	   	entry[i].start = maps[i].pr_vaddr;
+ 		entry[i].end = maps[i].pr_vaddr + maps[i].pr_size;
+ 
+@@ -177,25 +212,40 @@
+ 		   entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
+ 		}
+ 		else
+-		   if(Pr)
+-		   {
+-		      server->machine.objname(Pr, maps[i].pr_vaddr, buffer,
+-					      BUFSIZ);
+-		      if((len = resolvepath(buffer, entry[i].filename,
+-					    GLIBTOP_MAP_FILENAME_LEN)) > 0)
+-		      {
+-			 entry[i].filename[len] = 0;
+-			 entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
+-		      }
+-		   }
+-#endif
+-	}
+-
+-#if GLIBTOP_SOLARIS_RELEASE >= 50600
+-
+-	if(Pr)
+-	   	server->machine.pfree(Pr);
+-#endif
++//		   if(Pr)
++//		   {
++//		      server->machine.objname(Pr, maps[i].pr_vaddr, buffer,
++//					      BUFSIZ);
++//		      if((len = resolvepath(buffer, entry[i].filename,
++//					    GLIBTOP_MAP_FILENAME_LEN)) > 0)
++//		      {
++//			 entry[i].filename[len] = 0;
++//			 entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
++//		      }
++//		   }
++               {
++                        g_strlcpy(buffer, maps[i].pr_mapname,  sizeof buffer);
++                        /* from /path get file name */
++                        g_snprintf(filename, sizeof filename, "/proc/%d/path/%s",
++                                pid, buffer);
++ 
++                        rv = readlink(filename, entry[i].filename, sizeof(entry[i].filename) - 1);
++                        /* read object, if have not, set it as NULL */
++                        if(rv < 0)
++                                rv = 0;
++                        entry[i].filename[rv] = '\0';
++                        /* now set the flags */
++                        entry[i].flags |= (1L << GLIBTOP_MAP_ENTRY_FILENAME);
++                }
++#endif
++	}
++        }
++
++//#if GLIBTOP_SOLARIS_RELEASE >= 50600
++
++//	if(Pr)
++//	   	server->machine.pfree(Pr);
++//#endif
+ 	buf->flags = _glibtop_sysdeps_proc_map;
+ 	s_close(fd);
+ 	return entry;
+diff -urN libgtop-2.25.91/sysdeps/solaris/procmem.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmem.c
+--- libgtop-2.25.91/sysdeps/solaris/procmem.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procmem.c	2009-02-25 17:16:38.061600000 +0000
+@@ -22,12 +22,14 @@
+ #include <config.h>
+ #include <glibtop.h>
+ #include <glibtop/procmem.h>
++#include <glibtop/procmap.h>
+ 
+ #include "glibtop_private.h"
+ 
+ static const unsigned long _glibtop_sysdeps_proc_mem =
+ (1L << GLIBTOP_PROC_MEM_SIZE) + (1L << GLIBTOP_PROC_MEM_VSIZE) +
+-(1L << GLIBTOP_PROC_MEM_RESIDENT) + (1L << GLIBTOP_PROC_MEM_RSS);
++(1L << GLIBTOP_PROC_MEM_RESIDENT) + (1L << GLIBTOP_PROC_MEM_RSS) +
++(1L << GLIBTOP_PROC_MEM_SHARE);
+ 
+ /* Init function. */
+ 
+@@ -61,5 +63,31 @@
+ 	buf->size = buf->vsize = psinfo.pr_size << pagesize << 10;
+ 	buf->resident = buf->rss = psinfo.pr_rssize << pagesize << 10;
+ #endif
++/* get Shared Memory  */
++        glibtop_proc_map mapbuf;
++        glibtop_map_entry *maps;
++        unsigned i;
++        buf->share = 0;
++	
++	/* we have to optimize the performance of libgtop, because update the information will occupy too much cpu.
++ 
++           here I would like to make a little update:set glibtop_proc_map.flags=1,so as to let glibtop_get_proc_map_s()
++           only return the ones this function need: memwritable
++ 
++           we do the check in glibtop_get_proc_map_s(), don't run the others part which don't need by this function,
++	   I think this will accelerate the transaction lots,
++           Also this will not affect the existing codes, because when nobody set glibtop_proc_map.flags,
++           glibtop_get_proc_map() will return all as before. zhua
++	*/
++	mapbuf.flags = 2;
++ 
++        maps = glibtop_get_proc_map_s(server, &mapbuf, pid);
++ 
++        for (i = 0; i < mapbuf.number; ++i) {
++                if (maps[i].perm & GLIBTOP_MAP_PERM_SHARED)
++                        buf->share += maps[i].shared_clean;
++        }
++        g_free(maps);
++ 
+ 	buf->flags = _glibtop_sysdeps_proc_mem;
+ }
+diff -urN libgtop-2.25.91/sysdeps/solaris/procstate.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procstate.c
+--- libgtop-2.25.91/sysdeps/solaris/procstate.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procstate.c	2009-02-25 17:16:38.062411000 +0000
+@@ -62,6 +62,26 @@
+ 	buf->gid = psinfo.pr_egid;
+ 	buf->ruid = psinfo.pr_uid;
+ 	buf->rgid = psinfo.pr_gid;
++       /* zhua: get some value here, so that we don't need run open/pread/close psinfo later,
++                 and can delete some other call for psinfo open/pread/close. it will save lots of time*/
++#ifdef HAVE_PROCFS_H
++        buf->nice = psinfo.pr_lwp.pr_nice - NZERO;
++#else
++        buf->nice = psinfo.pr_nice - NZERO;
++#endif
++        buf->start_time = psinfo.pr_start.tv_sec; 
++        buf->ppid = psinfo.pr_ppid;
++   
++#ifdef HAVE_PROCFS_H
++        buf->vsize = psinfo.pr_size << 10;
++        buf->resident= psinfo.pr_rssize << 10;
++        buf->load = (guint) psinfo.pr_lwp.pr_pctcpu * 100 / (guint) 0x8000;
++#else
++        buf->vsize = psinfo.pr_size << pagesize << 10;
++        buf->resident = psinfo.pr_rssize << pagesize << 10;
++        buf->load = (guint) psinfo.pr_lwp.pr_pctcpu * 100 / (guint) 0x8000;
++#endif
++	
+ 
+ #ifdef HAVE_PROCFS_H
+ 	switch(psinfo.pr_lwp.pr_state)
+diff -urN libgtop-2.25.91/sysdeps/solaris/proctime.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/proctime.c
+--- libgtop-2.25.91/sysdeps/solaris/proctime.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/proctime.c	2009-02-25 17:16:38.062715000 +0000
+@@ -43,6 +43,11 @@
+ glibtop_get_proc_time_s (glibtop *server, glibtop_proc_time *buf,
+ 			 pid_t pid)
+ {
++#ifdef HAVE_PROCFS_H
++       struct psinfo pinfo;
++#else
++       struct prpsinfo pinfo;
++#endif
+ 	struct prusage prusage;
+         GTimeVal time;
+ 
+@@ -52,19 +57,27 @@
+ 
+ 	if(pid)
+ 	{
++  /* zhua remove this function call, because we can change to get start_time in
++        glibtop_get_proc_state(), it don't need open psinfo again here */
++
++                if (glibtop_get_proc_data_psinfo_s(server, &pinfo, pid))
++                        return;
++                buf->start_time = pinfo.pr_start.tv_sec; 
++
+ 		if (glibtop_get_proc_data_usage_s (server, &prusage, pid))
+ 			return;
+ 
+-                g_get_current_time (&time);
+-		/* prusage.pr_rtime.tv_sec is the during that the process existed */
+-                buf->start_time = time.tv_sec - prusage.pr_rtime.tv_sec;
++//                g_get_current_time (&time);
++//		/* prusage.pr_rtime.tv_sec is the during that the process existed */
++ //               buf->start_time = time.tv_sec - prusage.pr_rtime.tv_sec;
+ 
+-		buf->rtime = prusage.pr_rtime.tv_sec * 1E+6 +
+-			prusage.pr_rtime.tv_nsec / 1E+3;
++//		buf->rtime = prusage.pr_rtime.tv_sec * 1E+6 +
++//			prusage.pr_rtime.tv_nsec / 1E+3;
+ 		buf->utime = prusage.pr_utime.tv_sec * 1E+6 +
+ 			prusage.pr_utime.tv_nsec / 1E+3;
+ 		buf->stime = prusage.pr_stime.tv_sec * 1E+6 +
+ 			prusage.pr_stime.tv_nsec / 1E+3;
++		buf->rtime = (buf->utime + buf->stime) / 10000;
+ 	}
+ 
+ 	buf->flags = _glibtop_sysdeps_proc_time;
+diff -urN libgtop-2.25.91/sysdeps/solaris/procwd.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procwd.c
+--- libgtop-2.25.91/sysdeps/solaris/procwd.c	1970-01-01 00:00:00.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/procwd.c	2009-02-25 17:16:38.062977000 +0000
+@@ -0,0 +1,98 @@
++/* Copyright (C) 2007 Benoît Dejean
++   This file is part of LibGTop 2.
++
++   LibGTop is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2 of the License,
++   or (at your option) any later version.
++
++   LibGTop is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++   for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with LibGTop; see the file COPYING. If not, write to the
++   Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.
++*/
++
++#include <config.h>
++#include <glibtop/procwd.h>
++#include <glibtop/error.h>
++
++#include <glibtop_private.h>
++
++#include <unistd.h>
++#include <dirent.h>
++#include <sys/types.h>
++
++
++void
++_glibtop_init_proc_wd_s(glibtop *server)
++{
++	server->sysdeps.proc_wd =
++	(1 << GLIBTOP_PROC_WD_EXE) +
++	(1 << GLIBTOP_PROC_WD_ROOT) +
++	(1 << GLIBTOP_PROC_WD_NUMBER);
++
++}
++
++static gboolean is_in(GPtrArray *array, const char *str)
++{
++	guint i;
++
++	for (i = 0; i != array->len; ++i) {
++		if (strcmp(g_ptr_array_index(array, i), str) == 0)
++			return TRUE;
++	}
++
++	return FALSE;
++}
++
++
++char**
++glibtop_get_proc_wd_s(glibtop *server, glibtop_proc_wd *buf, pid_t pid)
++{
++	GPtrArray *dirs;
++	char path[80];
++	char dir[256];
++	DIR *task;
++
++	glibtop_init_s(&server, GLIBTOP_SYSDEPS_PROC_WD, 0);
++
++	memset(buf, 0, sizeof(glibtop_proc_wd));
++
++	g_snprintf(path, sizeof path, "/proc/%u/root", pid);
++	if (safe_readlink(path, buf->root, sizeof buf->root))
++		buf->flags |= (1 << GLIBTOP_PROC_WD_ROOT);
++
++	g_snprintf(path, sizeof path, "/proc/%u/exe", pid);
++	if (safe_readlink(path, buf->exe, sizeof buf->exe))
++		buf->flags |= (1 << GLIBTOP_PROC_WD_EXE);
++
++	dirs = g_ptr_array_sized_new(2);
++
++	g_snprintf(path, sizeof path, "/proc/%u/cwd", pid);
++	if (safe_readlink(path, dir, sizeof dir))
++		g_ptr_array_add(dirs, g_strdup(dir));
++
++	g_snprintf(path, sizeof path, "/proc/%u/task", pid);
++	if ((task = opendir(path)) != NULL) {
++		struct dirent *sub;
++		while ((sub = readdir(task)) != NULL) {
++			g_snprintf(path, sizeof path, "/proc/%u/task/%s/cwd", pid, sub->d_name);
++			if (safe_readlink(path, dir, sizeof dir) && !is_in(dirs, dir))
++				g_ptr_array_add(dirs, g_strdup(dir));
++		}
++		closedir(task);
++	}
++
++	buf->number = dirs->len;
++	buf->flags |= (1 << GLIBTOP_PROC_WD_NUMBER);
++
++	g_ptr_array_add(dirs, NULL);
++
++	return (char**) g_ptr_array_free(dirs, FALSE);
++}
++
+diff -urN libgtop-2.25.91/sysdeps/solaris/sem_limits.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/sem_limits.c
+--- libgtop-2.25.91/sysdeps/solaris/sem_limits.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/sem_limits.c	2009-02-25 17:16:38.063802000 +0000
+@@ -39,14 +39,22 @@
+ (1L << GLIBTOP_IPC_SEMUSZ) + (1L << GLIBTOP_IPC_SEMVMX) +
+ (1L << GLIBTOP_IPC_SEMAEM);
+ #else
+-static const unsigned long _glibtop_sysdeps_sem_limits = 0;
++static const unsigned long _glibtop_sysdeps_sem_limits = 
++(1L << GLIBTOP_IPC_SEMMNI) +
++(1L << GLIBTOP_IPC_SEMMSL) +
++(1L << GLIBTOP_IPC_SEMOPM);
+ #endif
+ 
+ 
+ /* Init function. */
+ 
++#if GLIBTOP_SUID_SEM_LIMITS
+ void
+ _glibtop_init_sem_limits_p (glibtop *server)
++#else
++void
++_glibtop_init_sem_limits_s (glibtop *server)
++#endif
+ {
+ #if GLIBTOP_SOLARIS_RELEASE < 51000
+ 
+@@ -61,8 +69,13 @@
+ 
+ /* Provides information about sysv sem limits. */
+ 
++#if GLIBTOP_SUID_SEM_LIMITS
+ void
+ glibtop_get_sem_limits_p (glibtop *server, glibtop_sem_limits *buf)
++#else
++void
++glibtop_get_sem_limits_s (glibtop *server, glibtop_sem_limits *buf)
++#endif
+ {
+ #if GLIBTOP_SOLARIS_RELEASE < 51000
+    	kvm_t *kd = server->machine.kd;
+diff -urN libgtop-2.25.91/sysdeps/solaris/shm_limits.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/shm_limits.c
+--- libgtop-2.25.91/sysdeps/solaris/shm_limits.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/shm_limits.c	2009-02-25 17:16:38.064069000 +0000
+@@ -30,7 +30,9 @@
+ static const struct nlist nlst[] = { {"glibtop_shm_limits"}, {NULL} };
+ 
+ #if GLIBTOP_SOLARIS_RELEASE >=51000
+-static const unsigned long _glibtop_sysdeps_shm_limits = 0;
++static const unsigned long _glibtop_sysdeps_shm_limits = 
++(1L << GLIBTOP_IPC_SHMMAX) +
++(1L << GLIBTOP_IPC_SHMMIN);
+ #else
+ # if GLIBTOP_SOLARIS_RELEASE < 50900
+ static const unsigned long _glibtop_sysdeps_shm_limits =
+@@ -45,8 +47,13 @@
+ 
+ /* Init function. */
+ 
++#if GLIBTOP_SUID_SHM_LIMITS
+ void
+ _glibtop_init_shm_limits_p (glibtop *server)
++#else
++void
++_glibtop_init_shm_limits_s (glibtop *server)
++#endif
+ {
+ #if GLIBTOP_SOLARIS_RELEASE < 51000
+ 
+@@ -61,8 +68,13 @@
+ 
+ /* Provides information about sysv ipc limits. */
+ 
++#if GLIBTOP_SUID_SHM_LIMITS
+ void
+ glibtop_get_shm_limits_p (glibtop *server, glibtop_shm_limits *buf)
++#else
++void
++glibtop_get_shm_limits_s (glibtop *server, glibtop_shm_limits *buf)
++#endif
+ {
+ #if GLIBTOP_SOLARIS_RELEASE < 51000
+ 
+diff -urN libgtop-2.25.91/sysdeps/solaris/siglist.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/siglist.c
+--- libgtop-2.25.91/sysdeps/solaris/siglist.c	2008-05-23 22:13:24.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/siglist.c	2009-02-25 17:16:38.064867000 +0000
+@@ -61,6 +61,7 @@
+    { 35, "SIGTHAW", "Checkpoint Thaw" },
+    { 36, "SIGCANCEL","Thread Cancelation" },
+    { 37, "SIGLOST", "Resource Lost" },
++#if GLIBTOP_SOLARIS_RELEASE < 50900    /* S8 */   
+    { 38, "SIGRTMIN","First Realtime Signal" },
+    { 39, "SIGRTMIN+1", "Second Realtime Signal" },
+    { 40, "SIGRTMIN+2", "Third Realtime Signal" },
+@@ -69,5 +70,30 @@
+    { 43, "SIGRTMAX-2", "Third Last Realtime Signal" },
+    { 44, "SIGRTMAX-1", "Second Last Realtime Signal" },
+    { 45, "SIGRTMAX", "Last Realtime Signal" },
++#endif
++#if GLIBTOP_SOLARIS_RELEASE >= 50900
++   { 38, "SIGXRES","Resource Control Exceeded" },
++#if GLIBTOP_SOLARIS_RELEASE <51000	/* signal here existed in s9 */
++   { 39, "SIGRTMIN","First Realtime Signal" },
++   { 40, "SIGRTMIN+1", "Second Realtime Signal" },
++   { 41, "SIGRTMIN+2", "Third Realtime Signal" },
++   { 42, "SIGRTMIN+3", "Fourth Realtime Signal" },
++   { 43, "SIGRTMAX-3", "Fourth Last Realtime Signal" },
++   { 44, "SIGRTMAX-2", "Third Last Realtime Signal" },
++   { 45, "SIGRTMAX-1", "Second Last Realtime Signal" },
++   { 46, "SIGRTMAX", "Last Realtime Signal" },
++#else /*  signal here existed in s10 and s11 */
++   { 39, "SIGJVM1","Reserved signal for Java Virtual Machine" },
++   { 40, "SIGJVM1","Reserved signal for Java Virtual Machine" },
++   { 41, "SIGRTMIN","First Realtime Signal" },
++   { 42, "SIGRTMIN+1", "Second Realtime Signal" },
++   { 43, "SIGRTMIN+2", "Third Realtime Signal" },
++   { 44, "SIGRTMIN+3", "Fourth Realtime Signal" },
++   { 45, "SIGRTMAX-3", "Fourth Last Realtime Signal" },
++   { 46, "SIGRTMAX-2", "Third Last Realtime Signal" },
++   { 47, "SIGRTMAX-1", "Second Last Realtime Signal" },
++   { 48, "SIGRTMAX", "Last Realtime Signal" },
++#endif
++#endif
+    {  0, NULL, NULL }
+ };
+diff -urN libgtop-2.25.91/sysdeps/solaris/sysinfo.c ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/sysinfo.c
+--- libgtop-2.25.91/sysdeps/solaris/sysinfo.c	1970-01-01 00:00:00.000000000 +0000
++++ ../SUNWlibgtop-2.25.91.hacked/libgtop-2.25.91/sysdeps/solaris/sysinfo.c	2009-02-25 17:16:38.065095000 +0000
+@@ -0,0 +1,48 @@
++/* $Id: sysinfo.c,v 1.22 2004/11/28 01:32:55 bdejean Exp $ */
++
++/* Copyright (C) 1998-99 Martin Baulig
++   This file is part of LibGTop 1.0.
++
++   Contributed by Martin Baulig <martin@home-of-linux.org>, April 1998.
++
++   LibGTop is free software; you can redistribute it and/or modify it
++   under the terms of the GNU General Public License as published by
++   the Free Software Foundation; either version 2 of the License,
++   or (at your option) any later version.
++
++   LibGTop is distributed in the hope that it will be useful, but WITHOUT
++   ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++   FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
++   for more details.
++
++   You should have received a copy of the GNU General Public License
++   along with LibGTop; see the file COPYING. If not, write to the
++   Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++   Boston, MA 02111-1307, USA.
++*/
++
++#include <config.h>
++#include <glibtop/error.h>
++#include <glibtop/cpu.h>
++#include <glibtop/sysinfo.h>
++
++#include "glibtop_private.h"
++
++
++static const unsigned long _glibtop_sysdeps_sysinfo =
++(1L << GLIBTOP_SYSINFO_CPUINFO);
++
++static glibtop_sysinfo sysinfo = { .flags = 0 };
++
++static void
++init_sysinfo (glibtop *server)
++{
++
++}
++
++const glibtop_sysinfo *
++glibtop_get_sysinfo_s (glibtop *server)
++{
++	init_sysinfo (server);
++	return &sysinfo;
++}

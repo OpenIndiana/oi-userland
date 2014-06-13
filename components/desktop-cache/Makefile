@@ -23,8 +23,7 @@ COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
   sha256:9cf7328ffddbf86945bef630d8b8fdd61ffcfcac3972b9d0af8668642735de0d
 COMPONENT_ARCHIVE_URL= \
-  http://dlc.sun.com/osol/jds/downloads/extras/desktop-cache/$(COMPONENT_ARCHIVE)
-COMPONENT_PROJECT_URL = http://cairographics.org
+  http://dlc.openindiana.org/oi/jds/downloads/sources/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
