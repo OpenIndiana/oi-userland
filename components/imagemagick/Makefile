@@ -40,6 +40,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://image_magick.veidrodis.com/image_magick/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/imagemagick
 
+TPNO=			17708
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

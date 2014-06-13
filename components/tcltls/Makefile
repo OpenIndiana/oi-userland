@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:adec50143a9ad634a671d24f7c7bbf2455487eb5f12d290f41797c32a98b93f3
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tls/files/tls/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/libtls
+
+TPNO=			5697
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

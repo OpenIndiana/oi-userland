@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	python-mod/django_openstack_auth
 
+TPNO=			16306
+
 # Depends on django, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

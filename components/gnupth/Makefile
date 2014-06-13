@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:72353660c5a2caafd601b20e12e75d865fd88f6cf1a088b306a3963f0bc77232
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/pth/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/pth
+
+TPNO=			8899
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -78,4 +80,3 @@ test: $(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

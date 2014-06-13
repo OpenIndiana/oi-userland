@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -33,6 +33,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:c339e3871d6595620760725da61de02cf1c293af8a05b14592d6587ac39ce546
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/automake/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/automake
+
+TPNO=			7253
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

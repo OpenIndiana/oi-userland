@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:afa61b476a222ba43fc7cca2d24849ab0bbd940124400cb699915d3c60e46301
 COMPONENT_ARCHIVE_URL=	http://cloud.github.com/downloads/libevent/libevent/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libevent
+
+TPNO=			5581
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

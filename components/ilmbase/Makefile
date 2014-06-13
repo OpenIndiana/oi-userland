@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:4f14fc7b26a37a391ec5f979697148e6774bc36bc052de26e40ffabe401e397d
 COMPONENT_ARCHIVE_URL=  http://download.savannah.nongnu.org/releases/openexr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openexr
+
+TPNO=			5574
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -69,4 +71,3 @@ test:	 $(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

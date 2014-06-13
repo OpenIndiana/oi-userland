@@ -44,6 +44,8 @@ COMPONENT_ARCHIVE_HASH = \
 COMPONENT_ARCHIVE_URL = http://www2.research.att.com/~gsf/download/tgz/$(COMPONENT_ARCHIVE) 
 COMPONENT_PATCHES = 
 
+TPNO=		9000
+
 # Patch only required if building ksh93 only and not ast-base
 # package-pax-suid.patch
 

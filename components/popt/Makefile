@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:4e75cb28793f0d44134f71fae53057d5f250805e6268fbd9c9780654b73b0dc1
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/cross-stuff/files/cross-stuff/1.0/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/popt
+
+TPNO=			7904
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

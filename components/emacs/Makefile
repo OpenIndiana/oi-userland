@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0098ca3204813d69cd8412045ba33e8701fa2062f4bff56bedafc064979eef41
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/emacs/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/emacs
+
+TPNO=			15684
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

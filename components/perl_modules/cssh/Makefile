@@ -34,6 +34,8 @@ COMPONENT_PROJECT_URL=	http://sourceforge.net/projects/clusterssh/
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/clusterssh/2.%20ClusterSSH%20Series%204/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/cssh
 
+TPNO=			13257
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk

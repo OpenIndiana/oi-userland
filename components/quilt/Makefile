@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3d72a292e432beb9a73f9d0acfe3a77c9b4d7e42209919bb244e9958c7cfe64b
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/quilt
+
+TPNO=			9108
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

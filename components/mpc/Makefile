@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:fd3efe422f0d454592059e80f2c00d1a2e381bf2beda424c5094abd4deb049ac
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)mpc/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/mpc
+
+TPNO=			4706
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

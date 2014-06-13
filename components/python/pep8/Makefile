@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:a39adf83fdeab6072117087dd5b7daa8b6a5ec254730e1c4756f1d5687145258
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/p/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pep8
+
+TPNO=			12771
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

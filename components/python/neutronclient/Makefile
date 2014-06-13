@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-neutronclient
 COMPONENT_BUGDB=	service/neutron
 
+TPNO=			17871
+
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

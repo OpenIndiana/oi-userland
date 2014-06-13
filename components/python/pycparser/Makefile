@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/eliben/pycparser
 COMPONENT_BUGDB=	python-mod/pycparser
 
+TPNO=			16938
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

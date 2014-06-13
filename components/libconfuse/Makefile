@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:e8d653159b152f3850a7224b3eb604955795dbd3fd6603816ee46411ea53e84a
 COMPONENT_ARCHIVE_URL=	http://bzero.se/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libconfuse
+
+TPNO=			6306
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

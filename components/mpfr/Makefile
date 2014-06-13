@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:246d7e184048b1fc48d3696dd302c9774e24e921204221540745e5464022b637
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libmpfr
+
+TPNO=			17709
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -133,4 +135,3 @@ test: $(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

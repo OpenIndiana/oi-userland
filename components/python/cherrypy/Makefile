@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.cherrypy.org/cherrypy/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/cherrypy
 
+TPNO=			5881
+
 PATCH_LEVEL=0
 
 # This module is not Python 3 ready: syntax issues.

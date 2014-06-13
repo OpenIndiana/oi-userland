@@ -32,8 +32,10 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.python-ldap.org/
 COMPONENT_BUGDB=	python-mod/python-ldap
 
-# This module has syntax issues and this is not Python 3 ready.
-PYTHON_VERSIONS = 2.7 2.6
+TPNO=			14503
+
+# This module has syntax issues and thus is not Python 3 ready.
+PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

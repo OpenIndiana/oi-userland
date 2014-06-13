@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.berlios.de/fetchmail/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://fetchmail.berlios.de/
 COMPONENT_BUGDB=	utility/fetchmail
+
+TPNO=			8416
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

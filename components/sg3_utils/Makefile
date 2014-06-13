@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:3034a4e798404cc963fc46437b0ceeb0edc635e02471ab13aa18acd8b716a27b
 COMPONENT_ARCHIVE_URL=	http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/sg3utils
+
+TPNO=			17711
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

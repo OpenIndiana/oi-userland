@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://babel.pocoo.org/
 COMPONENT_BUGDB=	python-mod/babel
 
+TPNO=			15897
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

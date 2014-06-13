@@ -39,6 +39,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ghostscript
 
+TPNO=			3796
+
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/configure.mk

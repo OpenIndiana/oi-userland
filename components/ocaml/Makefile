@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -54,6 +54,8 @@ COMPONENT_ARCHIVE_HASH_3= \
 COMPONENT_ARCHIVE_URL_3= http://caml.inria.fr/distrib/ocaml-3.11/$(COMPONENT_ARCHIVE_3)
 
 COMPONENT_BUGDB=	utility/ocaml
+
+TPNO=			9233
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

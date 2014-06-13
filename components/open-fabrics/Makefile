@@ -18,11 +18,8 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
-include ../../make-rules/shared-macros.mk
-include ../../make-rules/ips.mk
-include ofed.mk
 
 LD_Z_IGNORE =
 
@@ -31,6 +28,24 @@ COMPONENT_VERSION=1.5.3
 
 COMPONENT_PROJECT_URL=	http://www.openfabrics.org/
 COMPONENT_BUGDB=	library/ofuv_lib utility/ofuv_tools
+
+TPNO_OPEN_FABRICS=	3369
+TPNO_IBUTILS=		5084
+TPNO_INFINIBAND_DIAGS=	5085
+TPNO_LIBIBMAD=		5086
+TPNO_LIBIBUMAD=		5087
+TPNO_LIBIBVERBS=	5082
+TPNO_LIBMLX4=		5088
+TPNO_LIBRDMACM=		5089
+TPNO_LIBSDP=		5080
+TPNO_OPENSM=		5091
+TPNO_PERFTEST=		5081
+TPNO_QPERF=		5083
+TPNO_RDS_TOOLS=		5092
+
+include ../../make-rules/shared-macros.mk
+include ../../make-rules/ips.mk
+include ofed.mk
 
 # for now, everything with a Makefile should be built
 SUBDIRS =	$(shell echo */Makefile | sed -e 's;/Makefile;;g')

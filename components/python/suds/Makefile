@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://fedorahosted.org/suds/
 COMPONENT_BUGDB=	python-mod/suds
 
+TPNO=			14503
+
 # Import/syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

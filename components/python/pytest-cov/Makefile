@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/pytest-cov
 COMPONENT_BUGDB=	python-mod/pytest-plugins
 
+TPNO=			14503
+
 # pytest-cov itself is Python 3 ready (builds & publishes cleanly with usual
 # changes applied) but it depends on cov-core which depends on coverage which
 # needs to be upgraded.  Thus, skip Python 3 until then.

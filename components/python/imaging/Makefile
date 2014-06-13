@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	http://effbot.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pil
 
+TPNO=			7909
+
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS = 2.7 2.6
 

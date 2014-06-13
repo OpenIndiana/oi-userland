@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 #
@@ -38,6 +38,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:8e3ec24d51be03ebb7357ad9a2f3554056b86dafbc9e48d1d491aeda1efa566f
 COMPONENT_ARCHIVE_URL=	http://groups.csail.mit.edu/mac/ftpdir/scm/OLD/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/slib
+
+TPNO=			5839
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ips.mk

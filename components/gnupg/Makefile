@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnupg.org/gcrypt/gnupg/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnupg
 
+TPNO=			17706
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -123,4 +125,3 @@ test: $(TEST_64)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

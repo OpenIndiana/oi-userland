@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/S/SR/SREZIC/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	perl-mod/tk
 
+TPNO=			13259
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk

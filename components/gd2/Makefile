@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gd2
 
+TPNO=			8786
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

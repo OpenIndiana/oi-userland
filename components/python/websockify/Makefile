@@ -34,6 +34,8 @@ COMPONENT_PROJECT_URL=	https://github.com/kanaka/websockify
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)/archive/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/websockify
 
+TPNO=			16167
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

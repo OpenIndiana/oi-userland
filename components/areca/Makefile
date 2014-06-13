@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,6 +40,8 @@ COMPONENT_ARCHIVE_HASH=	 \
 COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/areca
+
+TPNO=			6138
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk

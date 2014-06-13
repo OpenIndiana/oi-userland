@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://dist.codehaus.org/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/grails
 
+TPNO=			8709
+
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk

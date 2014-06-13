@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -33,6 +33,8 @@ COMPONENT_ARCHIVE_URL=	\
     http://www.cpan.org/modules/by-module/Authen/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~nikip/
 COMPONENT_BUGDB=	perl-mod/authen-pam
+
+TPNO=			9303
 
 # build threaded 5.12 support too
 PERL_VERSIONS += 5.12-mt

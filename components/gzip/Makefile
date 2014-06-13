@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b5d56e8ffc9918e8c941fab56e04121194f9870adeeb859e09c09eac264035a3
 COMPONENT_ARCHIVE_URL=	ftp://ftp.gnu.org/gnu/gzip/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gzip
+
+TPNO=			17904
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

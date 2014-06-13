@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:d81ca27851f3e8545666399b4bcf25433e602a195113b3f7c73886fef84c9fa8
 COMPONENT_ARCHIVE_URL=	ftp://ftp.astron.com/pub/tcsh/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tcsh
+
+TPNO=			5688
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

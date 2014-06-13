@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,7 +33,9 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tgz
 COMPONENT_ARCHIVE_HASH= \
     sha256:0e10d304cfa8789bcf16537e8f72d9afdf8838fca20ae68103c317432d00915b
 COMPONENT_ARCHIVE_URL=	http://sg.danny.cz/sg/p/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=    utility/smputils
+COMPONENT_BUGDB=	utility/smputils
+
+TPNO=			11065
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://cdnetworks-us-2.dl.sourceforge.net/project/libnet-dev/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libnet
 
+TPNO=			17724
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

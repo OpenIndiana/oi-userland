@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://search.cpan.org/CPAN/authors/id/P/PE/PERIGRIN/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	http://search.cpan.org/~perigrin/XML-NamespaceSupport-1.11/lib/XML/NamespaceSupport.pm
 COMPONENT_BUGDB=	perl-mod/xml-namespacesupport
+
+TPNO=			12996
 
 # build threaded 5.12 support too
 PERL_VERSIONS += 5.12-mt

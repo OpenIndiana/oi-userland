@@ -39,6 +39,8 @@ COMPONENT_ARCHIVE_URL=	\
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_BUGDB=	utility/ruby
 
+TPNO=			15969
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/configure.mk

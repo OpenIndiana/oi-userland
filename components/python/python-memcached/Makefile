@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_URL=	https://github.com/linsomniac/$(COMPONENT_NAME)/archive/r
 COMPONENT_PROJECT_URL=	https://github.com/linsomniac/python-memcached
 COMPONENT_BUGDB=	python-mod/memcached
 
+TPNO=			17839
+
 # Syntax errors: not Python 3 ready
 PYTHON_VERSIONS=	2.7 2.6
 

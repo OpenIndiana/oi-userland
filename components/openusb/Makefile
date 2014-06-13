@@ -33,6 +33,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/openusb/files/$(COMPONENT_NAME)/libopenusb%201.0.1/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	library/libopenusb
 
+TPNO=			8843
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -60,4 +62,3 @@ test: $(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

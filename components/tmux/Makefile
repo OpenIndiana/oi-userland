@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/tmux/files/tmux/$(COMPONENT_SRC)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/tmux
 
+TPNO=			14287
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

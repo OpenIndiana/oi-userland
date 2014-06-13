@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=https://github.com/joshmarshall/jsonrpclib/tarball/$(COMPONENT_HASH)
 COMPONENT_BUGDB=	python-mod/jsonrpclib
 
+TPNO=			8061
+
 # This module builds with Python 3, but depends on simplejson.  The following
 # line can be removed when simplejson supports Python 3.
 PYTHON_VERSIONS=	2.7 2.6

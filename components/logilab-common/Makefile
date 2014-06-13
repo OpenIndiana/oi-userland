@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/common/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-common
 
+TPNO=			8268
+
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

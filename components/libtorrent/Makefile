@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we really need to use studio, mostly because that's what
@@ -38,6 +38,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:cf9d2cd667fd6939a3e0bd27e48d0c7f35d9ab2f7affbb3214da03fd2c1360a8
 COMPONENT_ARCHIVE_URL=	http://libtorrent.rakshasa.no/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/rtorrent
+
+TPNO=			9038
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/m/mock/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/mock
 
+TPNO=			12679
+
 # mock has been subsumed into Python starting with 3.3, so no need to build
 # it for Python 3.
 PYTHON_VERSIONS=	2.7 2.6

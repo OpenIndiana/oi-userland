@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH = \
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bash/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bash
 
+TPNO=			7265
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -142,4 +144,3 @@ test:
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

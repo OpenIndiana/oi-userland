@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	http://www.dabeaz.com/ply/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.dabeaz.com/ply/
 COMPONENT_BUGDB=	python-mod/ply
 
+TPNO=			10013
+
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_URL=	ftp://space.mit.edu/pub/davis/slang/v2.2/$(COMPONENT_ARCH
 COMPONENT_PROJECT_URL=	http://www.jedsoft.org/slang/
 COMPONENT_BUGDB=	utility/slang
 
+TPNO=			8995
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

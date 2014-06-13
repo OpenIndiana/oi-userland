@@ -96,6 +96,12 @@ PKG_MACROS +=		COMPONENT_HG_URL=$(COMPONENT_HG_URL)
 PKG_MACROS +=		COMPONENT_HG_REV=$(COMPONENT_HG_REV)
 PKG_MACROS +=		COMPONENT_NAME=$(COMPONENT_NAME)
 PKG_MACROS +=		TPNO=$(TPNO)
+
+# Add any TPNO_* Makefile macros to the pkgmogrify arguments.
+$(foreach macro, $(filter TPNO_%, $(.VARIABLES)), \
+    $(eval PKG_MACROS += $(macro)=$$($(macro))) \
+)
+
 PKG_MACROS +=		PYTHON_2.6_ONLY=\#
 PKG_MACROS +=		PYTHON_2.7_ONLY=\#
 PKG_MACROS +=		PYTHON_3.4_ONLY=\#

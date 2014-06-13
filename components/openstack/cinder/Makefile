@@ -36,6 +36,8 @@ COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	service/cinder
 IPS_COMPONENT_VERSION=	0.$(COMPONENT_VERSION) 
 
+TPNO=			17714
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

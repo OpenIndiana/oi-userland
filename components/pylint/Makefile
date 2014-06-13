@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/$(COMPONENT_NAME)/$(COMPO
 COMPONENT_PROJECT_URL=  http://www.logilab.org/project/pylint/
 COMPONENT_BUGDB=	utility/pylint
 
+TPNO=			9026
+
 # Depends on logilab-common which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

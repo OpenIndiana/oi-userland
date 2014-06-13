@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -39,6 +39,8 @@ COMPONENT_ARCHIVE_URL=	$(EXTERNAL_ARCHIVE_MIRROR)/$(SOURCE_ARCHIVE)
 COMPONENT_BUGDB=	utility/beanshell
 
 IPS_COMPONENT_VERSION=	2.0
+
+TPNO=			6200
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk

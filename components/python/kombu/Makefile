@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://kombu.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/kombu
 
+TPNO=			14503
+
 # Depends on pyrabbit which depends on httplib2 which has its own dependency
 # issues (see its Makefile for details).  So don't build for Python 3 until
 # dependencies resolved.

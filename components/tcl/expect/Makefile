@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b28dca90428a3b30e650525cdc16255d76bb6ccd65d448be53e620d95d5cc040
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/expect/files/Expect/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/expect
+
+TPNO=			5552
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk

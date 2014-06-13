@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:12cd30af53ad3ebfe4ec5e094c2b855a186f15bf8b46fce3d655cacd55f1e860
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/wdiff/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wdiff
+
+TPNO=			7092
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

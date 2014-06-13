@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_URL=	http://launchpad.net/$(COMPONENT_NAME)/$(COMPONENT_CODENA
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUG_DB=	service/swift
 
+TPNO=			17868
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://pythonpaste.org/
 COMPONENT_BUGDB=	python-mod/paste
 
+TPNO=			14503
+
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

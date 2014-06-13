@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/lighttpd
 
+TPNO=			17006
+
 LIGHTTPD_INSTALLDIR=/usr/lighttpd/1.4
 
 include ../../make-rules/prep.mk

@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_URL=	http://www.sudo.ws/sudo/dist/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://www.sudo.ws/
 COMPONENT_BUGDB=	utility/sudo
 
+TPNO=			16733
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk

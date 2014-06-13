@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:52f78aa4761a74ceb7fdf770f3554dd84308c3b93c4255e3a5c17558ecda293e
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/bison/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/bison
+
+TPNO=			6254
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

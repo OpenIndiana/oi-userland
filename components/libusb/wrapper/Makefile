@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -28,6 +28,8 @@ IPS_COMPONENT_VERSION=	0.5.11
 COMPONENT_PROJECT_URL=	http://libusb.sf.net/
 COMPONENT_SRC=		src
 COMPONENT_BUGDB=	library/libusb
+
+TPNO=			9184
 
 include $(WS_TOP)/make-rules/justmake.mk
 include $(WS_TOP)/make-rules/ips.mk

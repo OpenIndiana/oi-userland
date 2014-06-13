@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://www.ex-parrot.com/~pdw/iftop/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/iftop
 
+TPNO=			9256
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

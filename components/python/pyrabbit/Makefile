@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://github.com/bkjones/pyrabbit
 COMPONENT_BUGDB=	python-mod/pyrabbit
 
+TPNO=			14503
+
 # pyrabbit itself is Python 3 ready: builds & publishes cleanly.  But it
 # depends on httplib2 which has its own dependency issues (see its Makefile
 # for details).  So don't build for Python 3 until dependencies resolved.

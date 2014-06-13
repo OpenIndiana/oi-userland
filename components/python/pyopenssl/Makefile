@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=  $(call pypi_url)
 COMPONENT_PROJECT_URL=  https://launchpad.net/pyopenssl
 COMPONENT_BUGDB=	python-mod/pyopenssl
 
+TPNO=			9207
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

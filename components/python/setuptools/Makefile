@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:d3c46aff70a246c21b957a60dff39645f643999b9693dfabf04c0639c12fa399
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/s/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/setuptools
+
+TPNO=			17692
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

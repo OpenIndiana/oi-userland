@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../../make-rules/shared-macros.mk
@@ -38,6 +38,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:d96e1078990484cfe5579df1e95dc73f009495e9c3f9a066b
 COMPONENT_ARCHIVE_URL=	http://modwsgi.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=  http://code.google.com/p/modwsgi/
 COMPONENT_BUGDB=	utility/apache
+
+TPNO=			7687
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

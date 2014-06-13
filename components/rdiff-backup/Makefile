@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/$(COMPONENT_NAM
 COMPONENT_PROJECT_URL=  http://www.nongnu.org/rdiff-backup/
 COMPONENT_BUGDB=	utility/rdiff-backup
 
+TPNO=			9055
+
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:32443c6f011216a8a43ed0806d9d23c1defdd19bc4b021ee00cda197782e175a
 COMPONENT_ARCHIVE_URL=	http://www.jikos.cz/~mikulas/$(COMPONENT_NAME)/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/links
+
+TPNO=			9049
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

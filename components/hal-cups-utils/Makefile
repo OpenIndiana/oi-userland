@@ -19,7 +19,7 @@
 # CDDL HEADER END
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -33,6 +33,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:f40a7ebd1453d471a8a6bfd8c635708dd739a6160bb661813f936d936ba85618
 COMPONENT_ARCHIVE_URL=	http://fedorahosted.org/releases/h/a/hal-cups-utils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hal-cups
+
+TPNO=			8957
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

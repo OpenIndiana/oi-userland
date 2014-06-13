@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:18a63a04a32713c52270000c548fd1fcdf66e30e8ec29ace65225f12f5517f2b
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/facter/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/puppet
+
+TPNO=			15127
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/install.rb.mk

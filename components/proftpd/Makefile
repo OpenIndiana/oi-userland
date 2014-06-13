@@ -46,6 +46,9 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:bd1cb3f8ba0668981beb54d8b4de10ab204199327a464debd9da19196bbb23c4
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARCHIVE_1)
 
+TPNO_PROFTPD=		13478
+TPNO_MOD_GSS=		13480
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

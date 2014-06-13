@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:bcffbf3d128516cc4e1da64485866fbb5f62754f2af8327e7a527855186ba10f
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hexedit
+
+TPNO=			8957
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -59,3 +61,4 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
+TPNO=			9060

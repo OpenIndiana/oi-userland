@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:cc29931d50b3be11608dc79d1c7d8a20919dbe6313b1ba5dc88ecf99cffd171a
 COMPONENT_ARCHIVE_URL=	http://www-e.uni-magdeburg.de/jschulen/ocr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gocr
+
+TPNO=			8587
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

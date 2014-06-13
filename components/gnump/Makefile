@@ -19,7 +19,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:7be3ad1641b99b17f6a8be6a976f1f954e997c41e919ad7e0c418fe848c13c97
 COMPONENT_ARCHIVE_URL=  http://ftp.gnu.org/gnu/gmp/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/gnump
+
+TPNO=			16955
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -160,4 +162,3 @@ test: $(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:3770b8872a4322b9502937b4781d523303bf193962c4822899fd3a210878fc80
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/xz
+
+TPNO=			4463
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -52,4 +54,3 @@ test:		$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

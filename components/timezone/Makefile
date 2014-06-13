@@ -29,6 +29,8 @@ COMPONENT_BUGDB=	utility/timezone
 
 HUMAN_VERSION=		2014c
 
+TPNO=			17794
+
 # "etcetera" must be listed before "backward" because it sets up links that
 # "backward" needs.
 TZFILES= africa antarctica asia australasia etcetera europe \
@@ -65,4 +67,3 @@ clean:
 clobber: clean
 
 include ../../make-rules/depend.mk
-

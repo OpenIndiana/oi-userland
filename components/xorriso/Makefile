@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:1f26880eaacf7bd806520a458963d2374ad6bf90353e08ed0de271b6d45c5b8a
 COMPONENT_ARCHIVE_URL=  http://scdbackup.sourceforge.net/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/xorriso
+
+TPNO=			3504
 
 CPPFLAGS+=		-I./test
 

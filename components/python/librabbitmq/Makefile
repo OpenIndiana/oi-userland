@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://github.com/celery/librabbitmq
 COMPONENT_BUGDB=	python-mod/librabbitmq
 
+TPNO=			14503
+
 # This module is not Python 3 ready: syntax work needed.
 PYTHON_VERSIONS=	2.7 2.6
 

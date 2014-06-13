@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -27,6 +27,8 @@ COMPONENT_VERSION=	0.3.1
 COMPONENT_SRC=		src
 COMPONENT_PROJECT_URL=	http://prefetch.net/projects/apache_modtrace/
 COMPONENT_BUGDB=	utility/apache
+
+TPNO=			8876
 
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk

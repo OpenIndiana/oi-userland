@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0b5ec9aa41faff761cda7819add93e9d8cb9c0bad85e65a686475e8375ac8a71
 COMPONENT_ARCHIVE_URL=	http://www.thrysoee.dk/editline/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libedit
+
+TPNO=			7013
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

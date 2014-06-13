@@ -39,6 +39,8 @@ COMPONENT_ARCHIVE_HASH_1 = \
     sha256:7423f48d15fb1377ee0050c3e1f22e8a91668c2f158afed57b8ead3fed908785
 COMPONENT_ARCHIVE_URL_1 = http://download.berlios.de/tldchk/$(COMPONENT_ARCHIVE_1)
 
+TPNO=			8079
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -139,4 +141,3 @@ test: $(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

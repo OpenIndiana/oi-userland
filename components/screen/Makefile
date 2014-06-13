@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/screen/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/screen
 
+TPNO=			8940
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

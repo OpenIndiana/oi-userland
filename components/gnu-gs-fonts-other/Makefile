@@ -19,7 +19,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:8146cccc4699fe9dab841446bdd17039f4769c903eceb54409188b920754aab3
 COMPONENT_ARCHIVE_URL=  http://softlayer.dl.sourceforge.net/sourceforge/gs-fonts/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ghostscript
+
+TPNO=			8517
 
 # set relocate_to option while unpacking the tar ball
 UNPACK_ARGS= -r $(COMPONENT_SRC)

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:61598c9e3a0f7eb2e7367d4ecc71522c4f16a7d41ed31db29e3afee8d9843454
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/pwgen/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)	
 COMPONENT_BUGDB=	utility/pwgen
+
+TPNO=			9020
 
 CONFIGURE_OPTIONS += LDFLAGS="$(CC_BITS)"
 

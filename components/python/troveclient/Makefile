@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-troveclient
 COMPONENT_BUGDB=	service/trove
 
+TPNO=			17305
+
 # Syntax errors: not Python 3 ready
 PYTHON_VERSIONS=        2.7 2.6
 

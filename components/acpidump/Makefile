@@ -37,6 +37,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://www.lesswatts.org/patches/linux_acpi/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/acpidump
 
+TPNO=			8848
+
 # we're i386-only
 ifeq ($(MACH), sparc)
 PUBLISH_STAMP= 

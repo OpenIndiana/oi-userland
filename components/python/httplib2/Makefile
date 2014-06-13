@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://code.google.com/p/httplib2/
 COMPONENT_BUGDB=	python-mod/httplib2
 
+TPNO=			14503
+
 # Depends on SocksiPy; for Python 2.x, the module is part of httplib2, but
 # for Python 3.x, it is separate.  Once we add this module, httplib2 will
 # most likely work with Python 3.

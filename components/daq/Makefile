@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0159865b5dc127ed2faf8d6732d781939f27e38b7c7deabcd369a22ea9e42f26
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/1525
 COMPONENT_BUGDB=	library/daq
+
+TPNO=			11060
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

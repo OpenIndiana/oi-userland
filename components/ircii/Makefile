@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:629a0a335c790aa5fa9f327532d1d45fd37d2fcd1902e8b0ee28b51994dcf604
 COMPONENT_ARCHIVE_URL=	ftp://ircii.warped.com/pub/ircII/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ircii
+
+TPNO=			12675
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

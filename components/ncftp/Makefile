@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 # though 3.2.3 is mysteriously missing from the upstream site, it would be here.
 COMPONENT_ARCHIVE_URL=	ftp://ftp.ncftp.com/ncftp/older_versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ncftp-client
+
+TPNO=			9255
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

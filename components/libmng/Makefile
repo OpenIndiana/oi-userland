@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -55,6 +55,8 @@ COMPONENT_ARCHIVE_HASH_5 = \
 COMPONENT_ARCHIVE_URL_5 = http://www.libpng.org/pub/mng/spec/index.html
 
 COMPONENT_BUGDB=	library/libmng
+
+TPNO=			5583
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -107,4 +109,3 @@ test:	$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

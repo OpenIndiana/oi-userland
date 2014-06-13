@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	sha256:f8869a1c25d0dd9ff04468743969ffc9ff89c6f7afa3046f7
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
 
+TPNO=			7585
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

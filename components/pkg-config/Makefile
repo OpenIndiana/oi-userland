@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:08a0e072d6a05419a58124db864f0685e6ac96e71b2875bf15ac12714e983b53
 COMPONENT_ARCHIVE_URL=	http://pkgconfig.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pkg-config
+
+TPNO=			9421
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

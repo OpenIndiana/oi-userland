@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -37,6 +37,8 @@ COMPONENT_ARCHIVE_1 =	$(COMPONENT_NAME)_manual-$(COMPONENT_VERSION).pdf.zip
 COMPONENT_ARCHIVE_HASH_1 =	\
     sha256:abe8ea7db00fe68632edeb2d6e44f94ad96a0dc798702b044afbc1752c7b2a61
 COMPONENT_ARCHIVE_URL_1 =	ftp://ftp.stack.nl/pub/users/dimitri/$(COMPONENT_ARCHIVE_1)
+
+TPNO=			6511
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

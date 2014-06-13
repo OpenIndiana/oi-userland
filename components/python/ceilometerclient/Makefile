@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-cinderclient
 COMPONENT_BUGDB=	service/ceilometer
 
+TPNO=			17306
+
 # Depends on keystoneclient which is not Python 3 ready. 
 PYTHON_VERSIONS=	2.7 2.6
 

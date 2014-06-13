@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2010, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH= \
     sha256:6e60adb5039a3541f407c2ade670004178b376754c424c13f0be24c7960c17be
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/gnuplot
+
+TPNO=			8452
 
 COMPONENT_BUILD_TARGETS = all info
 

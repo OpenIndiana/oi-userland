@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/virtualenv
 COMPONENT_BUGDB=	python-mod/virtualenv
 
+TPNO=			15853
+
 # virtualenv includes bundled versions of setuptools and a couple of other
 # modules, versioned for older versions of Python only.  This appears to be
 # deliberate, as 'pyvenv' in Python 3.4 appears to subsume this module.  Thus

@@ -37,6 +37,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/subversion/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/svn
 
+TPNO=			9086
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -167,4 +169,3 @@ test:		$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

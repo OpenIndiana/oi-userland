@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/mod_fcgid/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
+TPNO=			8878
+
 include ../../../make-rules/prep.mk
 include ../../../make-rules/justmake.mk
 include ../../../make-rules/ips.mk

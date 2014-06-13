@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/apr/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
+TPNO=			16531
+
 CONFIGURE_DEFAULT_DIRS=no
 
 include ../../make-rules/prep.mk

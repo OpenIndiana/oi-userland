@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH	= \
 COMPONENT_ARCHIVE_URL	= http://sourceforge.net/projects/lemur/files/lemur/$(COMPONENT_SRC)/$(COMPONENT_SRC).tar.gz/download
 COMPONENT_BUGDB		= library/indri
 
+TPNO=			13668
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

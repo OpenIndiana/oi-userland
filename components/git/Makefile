@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://git-core.googlecode.com/files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/git
 
+TPNO=			8436
+
 #
 # man pages are a separate archive
 #

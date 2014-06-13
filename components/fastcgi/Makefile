@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:66fc45c6b36a21bf2fbbb68e90f780cc21a9da1fffbae75e76d2b4402d3f05b9
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dist/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/fcgi
+
+TPNO=			8415
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -61,4 +63,3 @@ test:		$(NO_TESTS)
 BUILD_PKG_DEPENDENCIES =        $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

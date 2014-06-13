@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:c18b3b0975ec7e0a6af03a9533d7ffbdc500bb146e0ca338a6174b1346d655bb
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/libsigsegv/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libsigsegv
+
+TPNO=			8453
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

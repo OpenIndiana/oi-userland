@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=	https://pypi.python.org/packages/source/c/cssutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/cssutils
 
+TPNO=			7908
+
 # This module is not Python 3 ready: syntax issues.
 PYTHON_VERSIONS = 2.7 2.6
 

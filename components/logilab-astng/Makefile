@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://download.logilab.org/pub/astng/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/logilab-astng
 
+TPNO=			8267
+
 # logilab-astng depends on logilab-common, which is not Python 3 ready, so mark
 # this likewise.
 PYTHON_VERSIONS=	2.7 2.6

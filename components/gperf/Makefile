@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/pub/gnu/gperf/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gperf
 
+TPNO=			8589
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

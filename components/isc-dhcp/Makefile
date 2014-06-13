@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=  \
 COMPONENT_ARCHIVE_HASH= \
     sha256:25d579291a13ccce39c5dbb0e2f2ce8e974c82015bc4e3ee653cf95a4ed15ca4
 COMPONENT_BUGDB=	service/dhcp-server
+
+TPNO=			10383
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

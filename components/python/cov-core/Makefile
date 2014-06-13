@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/cov-core
 COMPONENT_BUGDB=	python-mod/cov-core
 
+TPNO=			14503
+
 # Depends on coverage, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

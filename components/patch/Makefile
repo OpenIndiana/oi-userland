@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:ecb5c6469d732bcf01d6ec1afe9e64f1668caba5bfdb103c28d7f537ba3cdb8a
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/patch/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gpatch
+
+TPNO=			8588
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

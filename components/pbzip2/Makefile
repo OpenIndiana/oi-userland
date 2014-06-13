@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:86bd6d58e5a6c13cf8c709620ebfe186fca423c2724225bb30431fa7a453aee2
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/pbzip2
+
+TPNO=			11059
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

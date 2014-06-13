@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://launchpad.net/python-glanceclient
 COMPONENT_BUGDB=	service/glance
 
+TPNO=			16348
+
 # Depends on netaddr, which depends on ipython, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

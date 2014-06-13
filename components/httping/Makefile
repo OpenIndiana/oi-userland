@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:b0d3d3e9708b7395b0c47c1c1cfdd17613e631360eaffd1c43edc599911e7411
 COMPONENT_ARCHIVE_URL=	http://www.vanheusden.com/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/httping
+
+TPNO=			9238
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

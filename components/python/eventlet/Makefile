@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://eventlet.net/
 COMPONENT_BUGDB=	python-mod/eventlet
 
+TPNO=			14503
+
 # Depends on greenlet, which is not Python 3 ready.
 PYTHON_VERSIONS=	2.7 2.6
 

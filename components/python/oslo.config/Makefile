@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	http://tarballs.openstack.org/$(COMPONENT_NAME)/$(COMPONE
 COMPONENT_PROJECT_URL=	http://www.openstack.org/
 COMPONENT_BUGDB=	python-mod/oslo.config
 
+TPNO=			17861
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

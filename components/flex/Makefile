@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:0becbd4b2b36b99c67f8c22ab98f7f80c9860aec70f0350a0018f29a88704e7b
 COMPONENT_ARCHIVE_URL=	http://softlayer.dl.sourceforge.net/project/flex/flex/flex-2.5.35/flex-2.5.35.tar.bz2
 COMPONENT_BUGDB=	utility/flex
+
+TPNO=			14883
 
 SONAME=libfl.so.1
 LDFLAGS = $(CC_BITS)
@@ -70,4 +72,3 @@ test:		$(TEST_32_and_64)
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

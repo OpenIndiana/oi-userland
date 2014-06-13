@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)downloads/puppet/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/puppet
 
+TPNO=			16191
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/install.rb.mk
 include $(WS_TOP)/make-rules/ips.mk

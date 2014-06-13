@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:bb39c3d2a9ee2df4a0c8fdde708fbc63740853a7608d2f4c560b488124866fe4
 COMPONENT_ARCHIVE_URL=	http://sourceforge.net/projects/$(COMPONENT_NAME)/files/$(COMPONENT_NAME)/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)/download
 COMPONENT_BUGDB=	utility/nethack
+
+TPNO=			9239
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

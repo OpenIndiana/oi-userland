@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/n/nose/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/nose
 
+TPNO=			12933
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

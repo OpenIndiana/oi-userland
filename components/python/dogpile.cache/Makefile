@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://bitbucket.org/zzzeek/dogpile.cache
 COMPONENT_BUGDB=	python-mod/dogpile.cache
 
+TPNO=			17712
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

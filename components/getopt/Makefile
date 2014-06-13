@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:11893276b94b1629606ab75772143918a5713259950fbf4216288e246f19fbb6
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-getopt
+
+TPNO=			11356
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

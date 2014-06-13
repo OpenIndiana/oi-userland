@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/dnspython
 COMPONENT_BUGDB=	python-mod/dnspython
 
+TPNO=			17630
+
 # dnspython is not Python3 ready.  dnspython3 should be used for
 # Python3
 PYTHON_VERSIONS=	2.7 2.6

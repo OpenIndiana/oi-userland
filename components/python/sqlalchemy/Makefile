@@ -32,9 +32,11 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.sqlalchemy.org/
 COMPONENT_BUGDB=	python-mod/sqlalchemy
 
+TPNO=			14503
+
 # This module appears to be Python 3 ready, but work is needed before we can
 # enable it.  See the README.py3k in the distro for details.
-PYTHON_VERSIONS = 2.7 2.6
+PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

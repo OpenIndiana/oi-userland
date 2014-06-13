@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -31,6 +31,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://www.crummy.com/software/BeautifulSoup/bs4/download/4.2/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://pypi.python.org/pypi/beautifulsoup4
 COMPONENT_BUGDB=	python-mod/beautifulsoup4
+
+TPNO=			14503
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

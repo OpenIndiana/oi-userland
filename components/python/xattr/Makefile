@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://github.com/xattr/xattr
 COMPONENT_BUGDB=	python-mod/xattr
 
+TPNO=			16912
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -36,6 +36,8 @@ COMPONENT_BUGDB=	utility/procmail
 
 # ftp://ftp.procmail.org/pub/procmail/procmail-3.22.tar.gz no longer works.
 COMPONENT_ARCHIVE_URL=	ftp://ftp.ucsb.edu/pub/mirrors/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
+
+TPNO=			9003
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

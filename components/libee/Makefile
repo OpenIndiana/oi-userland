@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2012, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2012, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -30,6 +30,8 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:4e19bf297fb76f18fef773c651767152ebf65ecd4a1f4b06fe1c5f117fa4f81a
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/download/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	service/rsyslog
+
+TPNO=			7585
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -40,6 +40,8 @@ COMPONENT_ARCHIVE_1= xmlts20080827.tar.gz
 COMPONENT_ARCHIVE_HASH_1= \
     sha256:96151685cec997e1f9f3387e3626d61e6284d4d6e66e0e440c209286c03e9cc7
 COMPONENT_ARCHIVE_URL_1= http://www.w3.org/XML/Test/$(COMPONENT_ARCHIVE_1)
+
+TPNO=			17981
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

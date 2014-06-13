@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://www.formencode.org/en/latest/
 COMPONENT_BUGDB=	python-mod/formencode
 
+TPNO=			14503
+
 # Code explicitly checks for sys.version < '3.0'
 PYTHON_VERSIONS=	2.7 2.6
 

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_PROJECT_URL=	http://www.snort.org/
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)dl/snort-current/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/snort
+
+TPNO=			9027
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

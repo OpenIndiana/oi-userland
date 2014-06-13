@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_URL=	$(call pypi_url)
 COMPONENT_PROJECT_URL=	http://cffi.readthedocs.org/
 COMPONENT_BUGDB=	python-mod/cffi
 
+TPNO=			16913
+
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk

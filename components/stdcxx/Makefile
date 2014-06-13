@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # we really need to use studio so we don't like that
@@ -39,6 +39,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:00854223cbd947bf1bd85d9dabd1b2829706d9062e0007d5022082a5e4b7e15e
 COMPONENT_ARCHIVE_URL=	http://www.apache.org/dist/stdcxx/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libstdcxx
+
+TPNO=			9048
 
 CLOBBER_PATHS += install.sh
 
@@ -282,4 +284,3 @@ clean::
 BUILD_PKG_DEPENDENCIES = $(BUILD_TOOLS)
 
 include ../../make-rules/depend.mk
-

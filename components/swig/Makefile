@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	http://downloads.sourceforge.net/project/swig/swig/swig-2.0.8/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/swig
 
+TPNO=			10991
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk

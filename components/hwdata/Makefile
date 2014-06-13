@@ -25,6 +25,9 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME=         hwdata
 COMPONENT_VERSION=      0.5.11
 
+TPNO_PCI=	7530
+TPNO_USB=	7831
+
 include ../../make-rules/ips.mk
 
 # Since upstream only offers the latest snapshot for download, without

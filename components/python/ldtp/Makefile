@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH= \
 COMPONENT_ARCHIVE_URL=  http://download.freedesktop.org/ldtp/$(COMPONENT_MAJOR_VERSION)/$(COMPONENT_MINOR_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/ldtp
 
+TPNO=			10015
+
 # Syntax issues: not Python 3 ready.
 PYTHON_VERSIONS = 2.7 2.6
 

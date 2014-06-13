@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)files/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/lxml
 
+TPNO=			17146
+
 # disable optimization to prevent the Studio compilers from spinning
 studio_OPT.i386.32 =
 studio_OPT.i386.64 =

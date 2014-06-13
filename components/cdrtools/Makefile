@@ -35,6 +35,8 @@ COMPONENT_ARCHIVE_HASH=	\
 COMPONENT_ARCHIVE_URL=  ftp://ftp.berlios.de/pub/cdrecord/alpha/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/cdrtools
 
+TPNO=			6305
+
 PATH=			$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin

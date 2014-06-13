@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -34,6 +34,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:12e88d96aee2cd1192500356f0535540db499282ca7f76339fb4228c31249f45
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/readline/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/readline
+
+TPNO=			9042
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk

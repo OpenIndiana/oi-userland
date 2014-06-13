@@ -47,6 +47,8 @@ COMPONENT_ARCHIVE_HASH_2=	\
     sha256:4324f2c4a9ba94f1165c5922f166636621681b09d635257d921f6df654e7191e
 COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/files/libsam%2DLGPL.tar
 
+TPNO=			16839
+
 # Samba does not work properly on i86 when built by studio.
 # Samba on SPARC has serious performance drop when built by gcc.
 ifeq ($(MACH), sparc)

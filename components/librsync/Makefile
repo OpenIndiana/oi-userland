@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -43,6 +43,9 @@ COMPONENT_ARCHIVE_1=	$(COMPONENT_SRC_1).tar.gz
 COMPONENT_ARCHIVE_HASH_1=	\
     sha256:e805819272f71b06823ee13f2dd7ddb92e75d75de18c33b7fd32133847c52afe
 COMPONENT_ARCHIVE_URL_1=	$(EXTERNAL_ARCHIVE_MIRROR)/$(COMPONENT_ARCHIVE_1)
+
+TPNO=			9087
+
 CLOBBER_PATHS += $(COMPONENT_NAME_1)
 
 include ../../make-rules/prep.mk

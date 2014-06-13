@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2012, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 include ../../make-rules/shared-targets.mk
@@ -36,6 +36,8 @@ COMPONENT_ARCHIVE_URL= http://gd.tuwien.ac.at/publishing/tex/tex-utils/psutils/$
 # I made sure that the tarball is equal to the one present in SFW
 
 COMPONENT_BUGDB=	utility/psutils
+
+TPNO=			9004
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk

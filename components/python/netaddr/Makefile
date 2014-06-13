@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../../make-rules/shared-macros.mk
 
@@ -32,10 +32,12 @@ COMPONENT_PROJECT_URL=  http://github.com/drkjam/netaddr/
 COMPONENT_ARCHIVE_URL=	http://github.com/downloads/drkjam/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/netaddr
 
-# This module depends on iPython and cannot support Python 3.3 until iPython
+TPNO=			13141
+
+# This module depends on iPython and cannot support Python 3 until iPython
 # is also migrated.
 #
-PYTHON_VERSIONS = 2.7 2.6
+PYTHON_VERSIONS=	2.7 2.6
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk

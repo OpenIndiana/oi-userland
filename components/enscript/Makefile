@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -46,6 +46,8 @@ COMPONENT_ARCHIVE_2=    php.st
 COMPONENT_ARCHIVE_HASH_2=	\
     sha256:64d5b1ed1044202cda1ddcd591a966d1faff58d60156c4368d485f0405d7a9ee
 COMPONENT_ARCHIVE_URL_2= http://home.raxnet.net/downloads/viewcvs/php.st
+
+TPNO=			4380
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
