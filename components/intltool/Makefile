@@ -15,14 +15,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		intltool
-COMPONENT_VERSION=	0.40.6
+COMPONENT_VERSION=	0.50.2
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Translation Tools for GNOME Internationalization
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:4d1e5f8561f09c958e303d4faa885079a5e173a61d28437d0013ff5efc9e3b64
-COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/0.40/$(COMPONENT_ARCHIVE)
+    sha256:67f25c5c6fb71d095793a7f895b245e65e829e8bde68c6c8b4c912144ff34406
+COMPONENT_ARCHIVE_URL=	https://launchpad.net/intltool/trunk/$(COMPONENT_VERSION)/+download/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

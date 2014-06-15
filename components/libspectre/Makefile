@@ -19,11 +19,13 @@
 # CDDL HEADER END
 #
 # Copyright (c) 2013, Aurelien Larcher. All rights reserved.
+# Copyright 2014 Andrzej Szeszo.  All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libspectre
 COMPONENT_VERSION=	0.2.6
+COMPONENT_REVISION=	1
 COMPONENT_FMRI=     	library/libspectre
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.freedesktop.org/wiki/Software/libspectre/
@@ -31,17 +33,16 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	sha256:2f637c62322c8040514284c00f63a5c310a28801e7dcfbe2ba2791be4fac0dd3
 COMPONENT_ARCHIVE_URL=	http://libspectre.freedesktop.org/releases/$(COMPONENT_ARCHIVE)
 COMPONENT_LICENSE=      GPLv2
-COMPONENT_LICENSE_FILE= $(COMPONENT_NAME).license
+COMPONENT_LICENSE_FILE= COPYING
 COMPONENT_SUMMARY=      libspectre - A small library for rendering Postscript documents
+COMPONENT_AUTOGEN_MANIFEST=yes
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
 include $(WS_TOP)/make-rules/ips.mk
 
-
 CONFIGURE_OPTIONS+=	--enable-shared
 CONFIGURE_OPTIONS+=	--disable-static
-
 
 build: $(BUILD_32)
 

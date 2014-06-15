@@ -1,0 +1,226 @@
+Index: opal-3.6.8/src/im/im_mf.cxx
+===================================================================
+--- opal-3.6.8/src/im/im_mf.cxx	(revision 25159)
++++ opal-3.6.8/src/im/im_mf.cxx	(working copy)
+@@ -146,7 +146,7 @@
+         : OpalMediaFormat(OPAL_T140, 
+                           "t140", 
+                           RTP_DataFrame::DynamicBase, 
+-                          "text", 
++                          "t140", 
+                           false,  
+                           1440, 
+                           512, 
+Index: opal-3.6.8/src/im/t140.cxx
+===================================================================
+--- opal-3.6.8/src/im/t140.cxx	(revision 25159)
++++ opal-3.6.8/src/im/t140.cxx	(working copy)
+@@ -84,7 +84,8 @@
+ T140String::T140String()
+   : length(0)
+ { 
+-  AppendUnicode16(ZERO_WIDTH_NO_BREAK); 
++  AppendUnicode16(ZERO_WIDTH_NO_BREAK);
++  SetAt(length, '\0');
+ }
+ 
+ T140String::T140String(const PBYTEArray & bytes)
+@@ -96,6 +97,7 @@
+       ch != ZERO_WIDTH_NO_BREAK)
+     AppendUnicode16(ZERO_WIDTH_NO_BREAK);
+   AppendUTF((const BYTE *)bytes, bytes.GetSize());
++  SetAt(length, '\0');
+ }
+ 
+ T140String::T140String(const BYTE * data, PINDEX len)
+@@ -107,6 +109,7 @@
+       ch != ZERO_WIDTH_NO_BREAK)
+     AppendUnicode16(ZERO_WIDTH_NO_BREAK); 
+   AppendUTF((const BYTE *)data, len);
++  SetAt(length, '\0');
+ }
+ 
+ T140String::T140String(const char * chars)
+@@ -118,6 +121,7 @@
+       ch != ZERO_WIDTH_NO_BREAK)
+     AppendUnicode16(ZERO_WIDTH_NO_BREAK); 
+   AppendUTF((const BYTE *)chars, strlen(chars));
++  SetAt(length, '\0');
+ }
+ 
+ T140String::T140String(const PString & str)
+@@ -129,17 +133,11 @@
+       ch != ZERO_WIDTH_NO_BREAK)
+     AppendUnicode16(ZERO_WIDTH_NO_BREAK); 
+   AppendUTF((const BYTE *)(const char *)str, str.GetLength());
++  SetAt(length, '\0');
+ }
+ 
+ PINDEX T140String::AppendUTF(const BYTE * utf, PINDEX utfLen)
+ {
+-  WORD ch;
+-  if (utfLen >= 3 &&
+-      GetUTF(utf, utfLen, ch) == 3 &&
+-      ch == ZERO_WIDTH_NO_BREAK) {
+-    utf += 3; 
+-    utfLen -= 3;
+-  }
+   if (utfLen > 0) {
+     memcpy(GetPointer(length+utfLen)+length, utf, utfLen);
+     length += utfLen;
+@@ -184,8 +182,8 @@
+   }
+ 
+   //if (c <= 0xffff) {
+-  ptr[0] = 0xe0 | (ch >> 4) | (cl >> 6); 
+-  ptr[1] = 0x80 | (ch << 2) | (cl >> 6); 
++  ptr[0] = 0xe0 | (ch >> 4); 
++  ptr[1] = 0x80 | ((ch & 0xf) << 2) | (cl >> 6); 
+   ptr[2] = 0x80 | (cl & 0x3f);
+   return 3;
+ }
+@@ -211,7 +209,7 @@
+ 
+   // 0x80 .. 0x7ff
+   if (ptr[0] <= 0xdf) {
+-    ch = (ptr[0] << 6) | (ptr[1] & 0x3f);
++    ch = ((ptr[0] & 0x1f) << 6) | (ptr[1] & 0x3f);
+     return 2;
+   }
+ 
+@@ -219,7 +217,7 @@
+     return 0;
+ 
+   // 0x800 .. 0xffff
+-  ch = (ptr[0] << 12) | ((ptr[1] & 0x3f) << 6) || (ptr[2] & 0x3f);
++  ch = ((ptr[0] & 0xf) << 12) | ((ptr[1] & 0x3f) << 6) | (ptr[2] & 0x3f);
+ 
+   return 3;
+ }
+Index: opal-3.6.8/src/sip/sipcon.cxx
+===================================================================
+--- opal-3.6.8/src/sip/sipcon.cxx	(revision 25159)
++++ opal-3.6.8/src/sip/sipcon.cxx	(working copy)
+@@ -781,7 +781,10 @@
+       if (rtpSession == NULL) {
+ 
+         // Not already there, so create one
+-        rtpSession = CreateSession(GetTransport(), rtpSessionId, false);
++        // Use default sessionid to create session. Otherwise maybe use the
++        // wrong methon to create session.
++        // rtpSessionId = mediaType.GetDefinition()->GetDefaultSessionId();
++        rtpSession = CreateSession(GetTransport(), rtpSessionId, mediaType.GetDefinition()->GetDefaultSessionId(), false);
+         if (rtpSession == NULL) {
+           PTRACE(1, "SIP\tCould not create RTP session " << rtpSessionId << " for media type " << mediaType << ", released " << *this);
+           Release(OpalConnection::EndedByTransportFail);
+Index: opal-3.6.8/src/sip/sippdu.cxx
+===================================================================
+--- opal-3.6.8/src/sip/sippdu.cxx	(revision 25159)
++++ opal-3.6.8/src/sip/sippdu.cxx	(working copy)
+@@ -2299,13 +2299,13 @@
+ 
+   mime.SetCompactForm(false);
+   PString strPDU = Build();
+-  if (!transport.IsReliable() && strPDU.GetLength() > 1450) {
+-    PTRACE(4, "SIP\tPDU is too large (" << strPDU.GetLength() << " bytes) trying compact form.");
+-    mime.SetCompactForm(true);
+-    strPDU = Build();
+-    PTRACE_IF(2, strPDU.GetLength() > 1450,
+-              "SIP\tPDU is likely too large (" << strPDU.GetLength() << " bytes) for UDP datagram.");
+-  }
++  // if (!transport.IsReliable() && strPDU.GetLength() > 1450) {
++  //   PTRACE(4, "SIP\tPDU is too large (" << strPDU.GetLength() << " bytes) trying compact form.");
++  //   mime.SetCompactForm(true);
++  //   strPDU = Build();
++  //   PTRACE_IF(2, strPDU.GetLength() > 1450,
++  //             "SIP\tPDU is likely too large (" << strPDU.GetLength() << " bytes) for UDP datagram.");
++  // }
+ 
+ #if PTRACING
+   if (PTrace::CanTrace(3)) {
+Index: opal-3.6.8/src/sip/sipep.cxx
+===================================================================
+--- opal-3.6.8/src/sip/sipep.cxx	(revision 25159)
++++ opal-3.6.8/src/sip/sipep.cxx	(working copy)
+@@ -1587,9 +1587,12 @@
+ 
+ void SIPEndPoint::SIP_PDU_Work::OnReceivedPDU()
+ {
++  PTRACE(4, "SIP\tBeing Handled PDU \"" << m_pdu << '"');
+   if (PAssertNULL(m_pdu) == NULL)
+     return;
+ 
++  PTRACE(4, "SIP\tBeing Handled PDU \"" << *m_pdu << '"');
++
+   if (m_pdu->GetMethod() == SIP_PDU::NumMethods) {
+     PString transactionID = m_pdu->GetTransactionID();
+     PTRACE(4, "SIP\tHandling PDU \"" << *m_pdu << "\" for transaction=" << transactionID);
+Index: opal-3.6.8/src/opal/rtpconn.cxx
+===================================================================
+--- opal-3.6.8/src/opal/rtpconn.cxx	(revision 25159)
++++ opal-3.6.8/src/opal/rtpconn.cxx	(working copy)
+@@ -105,7 +105,7 @@
+ {
+   RTP_Session * rtpSession = m_rtpSessions.GetSession(sessionID);
+   if (rtpSession == NULL) {
+-    rtpSession = CreateSession(transport, sessionID, rtpqos);
++    rtpSession = CreateSession(transport, sessionID, mediaType.GetDefinition()->GetDefaultSessionId(), rtpqos);
+     m_rtpSessions.AddSession(rtpSession, mediaType);
+   }
+ 
+@@ -115,6 +115,7 @@
+ 
+ RTP_Session * OpalRTPConnection::CreateSession(const OpalTransport & transport,
+                                                             unsigned sessionID,
++                                                            unsigned preferred_sessionId,
+                                                            RTP_QOS * rtpqos)
+ {
+   // We only support RTP over UDP at this point in time ...
+@@ -132,7 +133,7 @@
+   PNatMethod * natMethod = manager.GetNatMethod(remoteAddress);
+ 
+   // create an RTP session
+-  RTP_UDP * rtpSession = CreateRTPSession(sessionID, remoteIsNAT);
++  RTP_UDP * rtpSession = CreateRTPSession(sessionID, preferred_sessionId, remoteIsNAT);
+   if (rtpSession == NULL) 
+     return NULL;
+ 
+@@ -156,14 +157,16 @@
+ }
+ 
+ 
+-RTP_UDP * OpalRTPConnection::CreateRTPSession(unsigned sessionID, bool remoteIsNAT)
++RTP_UDP * OpalRTPConnection::CreateRTPSession(unsigned sessionID, unsigned preferred_sessionId, bool remoteIsNAT)
+ {
+-  OpalMediaType mediaType = OpalMediaTypeDefinition::GetMediaTypeForSessionId(sessionID);
++  OpalMediaType mediaType = OpalMediaTypeDefinition::GetMediaTypeForSessionId(preferred_sessionId);
+   OpalMediaTypeDefinition * def = mediaType.GetDefinition();
++
+   if (def == NULL) {
+     PTRACE(1, "RTPCon\tNo definition for media type " << mediaType);
+     return NULL;
+   }
++  PTRACE(1, "RTPCon\t Using media type " << mediaType << " to create RTP session.");
+ 
+ #ifdef OPAL_ZRTP
+   // create ZRTP channel if enabled
+Index: opal-3.6.8/include/opal/rtpconn.h
+===================================================================
+--- opal-3.6.8/include/opal/rtpconn.h	(revision 25159)
++++ opal-3.6.8/include/opal/rtpconn.h	(working copy)
+@@ -272,6 +272,7 @@
+     virtual RTP_Session * CreateSession(
+       const OpalTransport & transport,
+       unsigned sessionID,
++      unsigned preferred_sessionId,
+       RTP_QOS * rtpqos
+     );
+ 
+@@ -279,6 +280,7 @@
+       */
+     virtual RTP_UDP * CreateRTPSession(
+       unsigned sessionId,
++      unsigned preferred_sessionId,
+       bool remoteIsNat
+     );
+   //@}

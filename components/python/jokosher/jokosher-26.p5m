@@ -1,0 +1,90 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL)". You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright (c) 2014 Alexander Pyhalov.  All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/desktop/studio/jokosher-26@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Jokosher is a multi-track studio application"
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license="GPLv2"
+
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python2.6 \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the jokosher package
+depend type=require \
+    fmri=desktop/studio/jokosher@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+
+link path=usr/bin/jokosher target=jokosher-2.6 mediator=python \
+	mediator-version=2.6
+
+file path=usr/bin/jokosher-2.6
+file path=usr/lib/python2.6/vendor-packages/Jokosher/AddInstrumentDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/AudioBackend.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/AudioPreview.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/CompactMixView.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ControlsBox.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/EffectPresets.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Event.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/EventLaneViewer.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/EventViewer.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Extension.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ExtensionManager.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ExtensionManagerDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Globals.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/IncrementalSave.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Instrument.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/InstrumentConnectionsDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/InstrumentEffectsDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/InstrumentViewer.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/JokosherApp.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/LevelsList.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/MasterMixerStrip.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/MixdownActions.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/MixdownProfileDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/MixdownProfileManager.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/MixdownProfiles.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/MixerStrip.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/NewProjectDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/PlatformUtils/Unix.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/PlatformUtils/Windows.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/PlatformUtils/__init__.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/PreferencesDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Profiler.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Project.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ProjectManager.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ProjectTemplate.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ProjectTemplateDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/RecordingView.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/TimeLine.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/TimeLineBar.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/TimeView.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/TransportManager.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/UndoSystem.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Utils.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/VUWidget.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/WelcomeDialog.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/Workspace.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/__init__.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/elements/__init__.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/elements/singledecodebin.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ui/EventLaneHSeparator.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ui/MessageArea.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ui/StatusBar.py
+file path=usr/lib/python2.6/vendor-packages/Jokosher/ui/__init__.py
+file path=usr/lib/python2.6/vendor-packages/jokosher-$(COMPONENT_VERSION)-py2.6.egg-info

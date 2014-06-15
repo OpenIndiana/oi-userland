@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
 COMPONENT_VERSION=	2.28.0
+COMPONENT_REVISION=	3
 COMPONENT_PROJECT_URL=	http://www.graphviz.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -49,7 +50,7 @@ PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.4/bin
 # Java header files (--with-javaincludedir allows for only one directory)
 CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
 # PHP header files (no --with- flag)
-CPPFLAGS +=	$(shell PATH=$(PATH) php-config --includes)
+CPPFLAGS +=	$(shell /usr/php/5.4/bin/php-config --includes)
 #CXX +=		$(studio_NORUNPATH)
 
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"

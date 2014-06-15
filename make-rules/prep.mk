@@ -117,7 +117,6 @@ endef
 # Calculate the number of defined archives.
 # Always generate at least the basic prep rules.
 # Work out if there are any other archives to be downloaded and patched.
-NUM_EXTRA_ARCHIVES= 1 2 3 4 5 6 7 8 9
 $(eval $(call archive-rule,))
 ifneq ($(strip $(PATCH_EACH_ARCHIVE)),)
 $(foreach suffix,$(NUM_EXTRA_ARCHIVES), \

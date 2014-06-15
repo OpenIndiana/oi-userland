@@ -22,7 +22,7 @@ COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_URL=blah
 
 download::
-	$(IPS2TGZ) $(COMPONENT_SRC) http://pkg.openindiana.org/legacy \
+	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
 	pkg:/system/library/math@0.5.11,5.11-0.134:20100302T055623Z \
 	system/library/math/header-math@0.5.11,5.11-0.134:20100302T055635Z
 

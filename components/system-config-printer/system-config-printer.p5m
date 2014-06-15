@@ -1,0 +1,150 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/print/cups/system-config-printer@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.classification value="org.opensolaris.category.2008:System/Administration and Configuration"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+
+license COPYING license='GPLv2'
+
+<transform file path=usr/lib/python2.6/vendor-packages/(.+)$ -> set action.hash usr/lib/python2.6/site-packages/%<\1> >
+<transform file path=usr/lib/system-config-printer/(.+)\.py$ -> set action.hash usr/share/system-config-printer/%<\1>\.py >
+<transform file path=usr/lib/system-config-printer/(.+)\.py$ -> set pkg.tmp.autopyc false >
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/desktop-mime-cache:default>
+<transform file path=usr/share/applications/.* ->  default restart_fmri svc:/application/desktop-cache/mime-types-cache:default>
+<transform file path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+file usr/bin/system-config-printer-applet path=usr/lib/system-config-printer/system-config-printer-applet mode=0555
+
+file path=etc/dbus-1/system.d/newprinternotification.conf
+file path=etc/xdg/autostart/print-applet.desktop
+file path=usr/bin/system-config-printer mode=0555
+file path=usr/lib/python2.6/vendor-packages/cupshelpers-1.0-py2.6.egg-info
+file path=usr/lib/python2.6/vendor-packages/cupshelpers/__init__.py
+file path=usr/lib/python2.6/vendor-packages/cupshelpers/cupshelpers.py
+file path=usr/lib/python2.6/vendor-packages/cupshelpers/openprinting.py
+file path=usr/lib/python2.6/vendor-packages/cupshelpers/ppds.py
+file path=usr/lib/system-config-printer/AdvancedServerSettings.py
+file path=usr/lib/system-config-printer/PhysicalDevice.py
+file path=usr/lib/system-config-printer/applet.py mode=0555
+file path=usr/lib/system-config-printer/authconn.py
+file path=usr/lib/system-config-printer/config.py
+file path=usr/lib/system-config-printer/contextmenu.py
+file path=usr/lib/system-config-printer/debug.py
+file path=usr/lib/system-config-printer/errordialogs.py
+file path=usr/lib/system-config-printer/gtk_label_autowrap.py
+file path=usr/lib/system-config-printer/gtk_treeviewtooltips.py
+file path=usr/lib/system-config-printer/jobviewer.py
+file path=usr/lib/system-config-printer/monitor.py
+file path=usr/lib/system-config-printer/options.py
+file path=usr/lib/system-config-printer/optionwidgets.py
+file path=usr/lib/system-config-printer/probe_printer.py
+file path=usr/lib/system-config-printer/pysmb.py mode=0555 pkg.depend.bypass-generate=.*smbc.*
+file path=usr/lib/system-config-printer/smburi.py
+file path=usr/lib/system-config-printer/statereason.py
+file path=usr/lib/system-config-printer/system-config-printer.py mode=0555
+file path=usr/lib/system-config-printer/troubleshoot/CheckLocalServerPublishing.py
+file path=usr/lib/system-config-printer/troubleshoot/CheckNetworkServerSanity.py
+file path=usr/lib/system-config-printer/troubleshoot/CheckPPDSanity.py
+file path=usr/lib/system-config-printer/troubleshoot/CheckPrinterSanity.py
+file path=usr/lib/system-config-printer/troubleshoot/CheckUSBPermissions.py
+file path=usr/lib/system-config-printer/troubleshoot/ChooseNetworkPrinter.py
+file path=usr/lib/system-config-printer/troubleshoot/ChoosePrinter.py
+file path=usr/lib/system-config-printer/troubleshoot/DeviceListed.py
+file path=usr/lib/system-config-printer/troubleshoot/ErrorLogCheckpoint.py
+file path=usr/lib/system-config-printer/troubleshoot/ErrorLogFetch.py
+file path=usr/lib/system-config-printer/troubleshoot/ErrorLogParse.py
+file path=usr/lib/system-config-printer/troubleshoot/LocalOrRemote.py
+file path=usr/lib/system-config-printer/troubleshoot/Locale.py
+file path=usr/lib/system-config-printer/troubleshoot/NetworkCUPSPrinterShared.py
+file path=usr/lib/system-config-printer/troubleshoot/PrintTestPage.py
+file path=usr/lib/system-config-printer/troubleshoot/PrinterStateReasons.py
+file path=usr/lib/system-config-printer/troubleshoot/QueueNotEnabled.py
+file path=usr/lib/system-config-printer/troubleshoot/QueueRejectingJobs.py
+file path=usr/lib/system-config-printer/troubleshoot/RemoteAddress.py
+file path=usr/lib/system-config-printer/troubleshoot/SchedulerNotRunning.py
+file path=usr/lib/system-config-printer/troubleshoot/ServerFirewalled.py
+file path=usr/lib/system-config-printer/troubleshoot/Shrug.py
+file path=usr/lib/system-config-printer/troubleshoot/Welcome.py
+file path=usr/lib/system-config-printer/troubleshoot/__init__.py
+file path=usr/lib/system-config-printer/troubleshoot/base.py
+file path=usr/lib/system-config-printer/userdefault.py
+file path=usr/share/applications/system-config-printer.desktop
+file path=usr/share/locale/ar/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/as/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/bg/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/bn/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/bn_IN/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/bs/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ca/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/cs/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/cy/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/da/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/de/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/el/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/en_GB/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/es/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/et/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/fa/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/fi/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/fr/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/gu/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/he/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/hi/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/hr/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/hu/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/hy/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/id/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/is/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/it/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ja/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ka/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/kn/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ko/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/lo/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/lv/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/mk/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ml/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/mr/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ms/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/my/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/nb/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/nl/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/nn/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/or/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/pa/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/pl/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/pt/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/pt_BR/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ro/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ru/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/si/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/sk/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/sl/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/sr/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/sr@latin/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/sv/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/ta/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/te/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/tr/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/uk/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/vi/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/locale/zh_TW/LC_MESSAGES/system-config-printer.mo
+file path=usr/share/system-config-printer/applet.glade
+file path=usr/share/system-config-printer/icons/i-network-printer.png
+file path=usr/share/system-config-printer/system-config-printer.glade

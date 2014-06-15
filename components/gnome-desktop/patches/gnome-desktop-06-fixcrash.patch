@@ -1,0 +1,56 @@
+From 9c5f91b59a0a17b8bed1a8f83c1de763354bcebc Mon Sep 17 00:00:00 2001
+From: Bastien Nocera <hadess@hadess.net>
+Date: Thu, 11 Nov 2010 13:21:21 +0000
+Subject: Fix possible double-free when destroying private windows
+
+This could cause free'ing random data when the members of ->windows
+were destroyed, but ->windows itself wasn't. As it was != NULL, we'd
+be free memory that wouldn't belong to us anymore.
+
+https://bugzilla.gnome.org/show_bug.cgi?id=634534
+---
+diff --git a/libgnome-desktop/gnome-rr-labeler.c b/libgnome-desktop/gnome-rr-labeler.c
+index 4988fda..da4adbd 100644
+--- a/libgnome-desktop/gnome-rr-labeler.c
++++ b/libgnome-desktop/gnome-rr-labeler.c
+@@ -287,11 +287,16 @@ gnome_rr_labeler_hide (GnomeRRLabeler *labeler)
+ 
+ 	g_return_if_fail (GNOME_IS_RR_LABELER (labeler));
+ 
++	if (labeler->windows == NULL)
++		return;
++
+ 	for (i = 0; i < labeler->num_outputs; i++)
+ 		if (labeler->windows[i] != NULL) {
+ 			gtk_widget_destroy (labeler->windows[i]);
+ 			labeler->windows[i] = NULL;
+ 		}
++	g_free (labeler->windows);
++	labeler->windows = NULL;
+ }
+ 
+ void
+--
+cgit v0.8.3.1
+From 5221124f5809e50e5605729cdad191241c423d8e Mon Sep 17 00:00:00 2001
+From: Federico Mena Quintero <federico@novell.com>
+Date: Tue, 26 Oct 2010 23:18:03 +0000
+Subject: bgo#629168 - Don't read past the end of a string
+
+Signed-off-by: Federico Mena Quintero <federico@novell.com>
+---
+diff --git a/libgnome-desktop/display-name.c b/libgnome-desktop/display-name.c
+index e596da0..9c99d86 100644
+--- a/libgnome-desktop/display-name.c
++++ b/libgnome-desktop/display-name.c
+@@ -209,7 +209,7 @@ read_pnp_ids (void)
+         for (i = 0; lines[i]; i++)
+         {
+              line = lines[i];
+-             if (line[3] == '\t')
++             if (line[0] && line[1] && line[2] && line[3] == '\t' && line[4])
+              {
+                  code = line;
+                  line[3] = '\0';
+--
+cgit v0.8.3.1

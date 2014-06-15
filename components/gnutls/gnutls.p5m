@@ -1,0 +1,61 @@
+#
+# This file and its contents are supplied under the terms of the
+# Common Development and Distribution License ("CDDL"). You may
+# only use this file in accordance with the terms of the CDDL.
+#
+# A full copy of the text of the CDDL should have accompanied this
+# source. A copy of the CDDL is also available via the Internet at
+# http://www.illumos.org/license/CDDL.
+#
+
+#
+# Copyright 2014 Alexander Pyhalov. All rights reserved.
+#
+
+set name=pkg.fmri value=pkg:/library/gnutls@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="$(COMPONENT_SUMMARY)"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+set name=info.classification value="org.opensolaris.category.2008:System/Libraries"
+
+<transform dir path=usr/share/locale/([^/]+)(\..+){0,1}(/.+){0,1} -> default facet.locale.%<\1> true>
+
+license gnutls.license license='GPLv3'
+
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - development files" name="$(COMPONENT_SUMMARY) - development files" pkg=SUNWgnutls-devel
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY) - l10n files" name="$(COMPONENT_SUMMARY) - l10n files" pkg=SUNWgnutls-l10n
+legacy category=GNOME2,application,JDSoi desc="$(COMPONENT_SUMMARY)" hotline="Please contact your local service provider" name="$(COMPONENT_SUMMARY)" pkg=SUNWgnutls
+
+file path=usr/include/gnutls/compat.h
+file path=usr/include/gnutls/crypto.h
+file path=usr/include/gnutls/gnutls.h
+file path=usr/include/gnutls/gnutlsxx.h
+file path=usr/include/gnutls/openpgp.h
+file path=usr/include/gnutls/pkcs12.h
+file path=usr/include/gnutls/x509.h
+link path=usr/lib/$(MACH64)/libgnutls.so target=libgnutls.so.26.14.12
+link path=usr/lib/$(MACH64)/libgnutls.so.26 target=libgnutls.so.26.14.12
+file path=usr/lib/$(MACH64)/libgnutls.so.26.14.12
+link path=usr/lib/$(MACH64)/libgnutlsxx.so target=libgnutlsxx.so.26.14.12
+link path=usr/lib/$(MACH64)/libgnutlsxx.so.26 target=libgnutlsxx.so.26.14.12
+file path=usr/lib/$(MACH64)/libgnutlsxx.so.26.14.12
+file path=usr/lib/$(MACH64)/pkgconfig/gnutls.pc
+link path=usr/lib/libgnutls.so target=libgnutls.so.26.14.12
+link path=usr/lib/libgnutls.so.26 target=libgnutls.so.26.14.12
+file path=usr/lib/libgnutls.so.26.14.12
+link path=usr/lib/libgnutlsxx.so target=libgnutlsxx.so.26.14.12
+link path=usr/lib/libgnutlsxx.so.26 target=libgnutlsxx.so.26.14.12
+file path=usr/lib/libgnutlsxx.so.26.14.12
+file path=usr/lib/pkgconfig/gnutls.pc
+file path=usr/share/locale/cs/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/de/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/en@boldquot/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/en@quot/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/fr/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/ms/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/nl/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/pl/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/sv/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/vi/LC_MESSAGES/libgnutls.mo
+file path=usr/share/locale/zh_CN/LC_MESSAGES/libgnutls.mo

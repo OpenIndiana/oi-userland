@@ -1,0 +1,31 @@
+--- gnome-vfs-2.24.4/libgnomevfs/Makefile.am.orig	2013-11-14 12:49:48.279853168 +0530
++++ gnome-vfs-2.24.4/libgnomevfs/Makefile.am	2013-11-14 12:49:59.748108187 +0530
+@@ -19,7 +19,6 @@ INCLUDES =					\
+ 	-D_LARGEFILE64_SOURCE                   \
+ 	-D_POSIX_PTHREAD_SEMANTICS		\
+ 	-D_REENTRANT				\
+-	-DG_DISABLE_DEPRECATED			\
+ 	-DGNOME_VFS_PREFIX=\"$(prefix)\"	\
+ 	-DGNOME_VFS_BINDIR=\"$(bindir)\"	\
+ 	-DGNOME_VFS_DATADIR=\"$(datadir)\"	\
+--- gnome-vfs-2.24.4/modules/sftp-method.c.orig	2013-11-14 14:37:15.987609491 +0530
++++ gnome-vfs-2.24.4/modules/sftp-method.c	2013-11-14 14:38:43.533972376 +0530
+@@ -1488,7 +1488,7 @@ tty_retry:
+ 			invoke_save_auth (uri, keyring, user_name, object, authtype, password);
+ 		}
+ 
+-		if (!g_thread_supported ()) g_thread_init (NULL);
++		if (!g_thread_get_initialized()) g_thread_init (NULL);
+ 
+ 		*connection = g_new0 (SftpConnection, 1);
+ 		(*connection)->ref_count = 1;
+--- gnome-vfs-2.24.4/daemon/Makefile.am.orig	2013-11-14 14:43:24.421997935 +0530
++++ gnome-vfs-2.24.4/daemon/Makefile.am	2013-11-14 14:43:36.476137558 +0530
+@@ -8,7 +8,6 @@ INCLUDES= \
+ 	-D_LARGEFILE64_SOURCE                   \
+ 	-D_POSIX_PTHREAD_SEMANTICS		\
+ 	-D_REENTRANT				\
+-	-DG_DISABLE_DEPRECATED			\
+ 	-DGNOME_VFS_PREFIX=\"$(prefix)\"	\
+ 	-DGNOME_VFS_DATADIR=\"$(datadir)\"	\
+ 	-DGNOME_VFS_LIBDIR=\"$(libdir)\"	\

@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 <transform file path=usr.*/man/.+ -> default mangler.man.stability uncommitted>
@@ -35,9 +35,9 @@ set name=org.opensolaris.arc-caseid \
     value=PSARC/2007/334
 set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
 file exec_attr.dumpcap path=etc/security/exec_attr.d/diagnostic:wireshark:wireshark-common
-file path=usr/lib/libwireshark.so.2.0.5
-file path=usr/lib/libwiretap.so.2.1.5
-file path=usr/lib/libwsutil.so.2.0.0
+file path=usr/lib/libwireshark.so.3.1.7
+file path=usr/lib/libwiretap.so.3.0.7
+file path=usr/lib/libwsutil.so.3.0.0
 file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/asn1.so
 file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/docsis.so
 file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/ethercat.so
@@ -51,6 +51,7 @@ file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/stats_tree.so
 file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/unistim.so
 file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/wimax.so
 file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/wimaxasncp.so
+file path=usr/lib/wireshark/plugins/$(IPS_COMPONENT_VERSION)/wimaxmacphy.so
 file path=usr/sbin/capinfos
 file path=usr/sbin/dumpcap
 file path=usr/sbin/editcap
@@ -69,12 +70,16 @@ file path=usr/share/wireshark/COPYING
 file path=usr/share/wireshark/capinfos.html
 file path=usr/share/wireshark/cfilters
 file path=usr/share/wireshark/colorfilters
-#file path=usr/share/wireshark/console.lua
+file path=usr/share/wireshark/console.lua
 file path=usr/share/wireshark/dfilters
 file path=usr/share/wireshark/dftest.html
 file path=usr/share/wireshark/diameter/AlcatelLucent.xml
+file path=usr/share/wireshark/diameter/ChinaTelecom.xml
 file path=usr/share/wireshark/diameter/Cisco.xml
 file path=usr/share/wireshark/diameter/Ericsson.xml
+file path=usr/share/wireshark/diameter/Nokia.xml
+file path=usr/share/wireshark/diameter/NokiaSiemensNetworks.xml
+file path=usr/share/wireshark/diameter/SKT.xml
 file path=usr/share/wireshark/diameter/TGPPGmb.xml
 file path=usr/share/wireshark/diameter/TGPPRx.xml
 file path=usr/share/wireshark/diameter/TGPPS9.xml
@@ -92,7 +97,7 @@ file path=usr/share/wireshark/diameter/mobileipv6.xml
 file path=usr/share/wireshark/diameter/nasreq.xml
 file path=usr/share/wireshark/diameter/sip.xml
 file path=usr/share/wireshark/diameter/sunping.xml
-#file path=usr/share/wireshark/dtd_gen.lua
+file path=usr/share/wireshark/dtd_gen.lua
 file path=usr/share/wireshark/dtds/dc.dtd
 file path=usr/share/wireshark/dtds/itunes.dtd
 file path=usr/share/wireshark/dtds/mscml.dtd
@@ -114,12 +119,15 @@ file path=usr/share/wireshark/help/faq.txt
 file path=usr/share/wireshark/help/getting_started.txt
 file path=usr/share/wireshark/help/overview.txt
 file path=usr/share/wireshark/help/toc
-#file path=usr/share/wireshark/init.lua
+file path=usr/share/wireshark/init.lua
 file path=usr/share/wireshark/ipmap.html
 file path=usr/share/wireshark/manuf
 file path=usr/share/wireshark/mergecap.html
 file path=usr/share/wireshark/pdml2html.xsl
+file path=usr/share/wireshark/profiles/Bluetooth/colorfilters
+file path=usr/share/wireshark/profiles/Classic/colorfilters
 file path=usr/share/wireshark/radius/README.radius_dictionary
+file path=usr/share/wireshark/radius/custom.includes
 file path=usr/share/wireshark/radius/dictionary
 file path=usr/share/wireshark/radius/dictionary.3com
 file path=usr/share/wireshark/radius/dictionary.3gpp
@@ -228,9 +236,12 @@ file path=usr/share/wireshark/radius/dictionary.rfc4818
 file path=usr/share/wireshark/radius/dictionary.rfc4849
 file path=usr/share/wireshark/radius/dictionary.rfc5090
 file path=usr/share/wireshark/radius/dictionary.rfc5176
+file path=usr/share/wireshark/radius/dictionary.rfc5447
 file path=usr/share/wireshark/radius/dictionary.rfc5580
 file path=usr/share/wireshark/radius/dictionary.rfc5607
 file path=usr/share/wireshark/radius/dictionary.rfc5904
+file path=usr/share/wireshark/radius/dictionary.rfc6519
+file path=usr/share/wireshark/radius/dictionary.rfc6572
 file path=usr/share/wireshark/radius/dictionary.riverstone
 file path=usr/share/wireshark/radius/dictionary.roaringpenguin
 file path=usr/share/wireshark/radius/dictionary.shasta
@@ -274,12 +285,12 @@ file path=usr/share/wireshark/wireshark.html
 file path=usr/share/wireshark/ws.css
 
 license wireshark.license license=GPLv2
-link path=usr/lib/libwireshark.so target=libwireshark.so.2.0.5
-link path=usr/lib/libwireshark.so.2 target=libwireshark.so.2.0.5
-link path=usr/lib/libwiretap.so target=libwiretap.so.2.1.5
-link path=usr/lib/libwiretap.so.2 target=libwiretap.so.2.1.5
-link path=usr/lib/libwsutil.so target=libwsutil.so.2.0.0
-link path=usr/lib/libwsutil.so.2 target=libwsutil.so.2.0.0
+link path=usr/lib/libwireshark.so target=libwireshark.so.3.1.7
+link path=usr/lib/libwireshark.so.3 target=libwireshark.so.3.1.7
+link path=usr/lib/libwiretap.so target=libwiretap.so.3.0.7
+link path=usr/lib/libwiretap.so.3 target=libwiretap.so.3.0.7
+link path=usr/lib/libwsutil.so target=libwsutil.so.3.0.0
+link path=usr/lib/libwsutil.so.3 target=libwsutil.so.3.0.0
 
-depend type=optional fmri=diagnostic/wireshark/wireshark@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+depend type=optional fmri=diagnostic/wireshark@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 depend type=optional fmri=diagnostic/wireshark/tshark@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)

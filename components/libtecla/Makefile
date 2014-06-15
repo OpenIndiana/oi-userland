@@ -37,6 +37,8 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 include ../../make-rules/lint-libraries.mk
 
+COMPONENT_BUILD_ARGS=
+
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
 

@@ -26,11 +26,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.6.15
+COMPONENT_VERSION=	3.6.23
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:42b9acb13f8760a1767829ebaa4c371e462aad5287caf92887e64930cf27da60
+COMPONENT_ARCHIVE_HASH=	sha256:25bbfa81b9a26609a0be744240b63e1f5030bbcfab684cf7aea3b86ed0db2dd0
 COMPONENT_ARCHIVE_URL=	http://us1.samba.org/samba/ftp/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -45,7 +45,7 @@ COMPONENT_ARCHIVE_URL_1=	http://sourceforge.net/projects/docbook/files/$(COMPONE
 COMPONENT_ARCHIVE_2=		libsam-LGPL.tar
 COMPONENT_ARCHIVE_HASH_2=	\
     sha256:4324f2c4a9ba94f1165c5922f166636621681b09d635257d921f6df654e7191e
-COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/files/libsam%2DLGPL.tar
+COMPONENT_ARCHIVE_URL_2=	http://dlc.openindiana.org/oi-build/source-archives/libsam-LGPL.tar
 
 # Samba does not work properly on i86 when built by studio.
 # Samba on SPARC has serious performance drop when built by gcc.
@@ -56,6 +56,12 @@ COMPILER = gcc
 endif
 
 include ../../../make-rules/prep.mk
+
+ifeq ($(strip $(USERLAND_ARCHIVES)),)
+  DISTFILES_LOCATION=../
+else 
+  DISTFILES_LOCATION=$(USERLAND_ARCHIVES)
+endif
 
 SRC_OFFSET =	source3
 # Now we override paths to .built
@@ -111,11 +117,11 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 
 # Depend on $(PROTO_DIR)/.mozldap because this target creates $(PROTO_DIR).
 $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
-		$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
+		$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
 	$(MKDIR) $(PROTO_DIR)/opt/SUNWsamfs/lib
-	$(CC.studio.32) -G $(studio_PIC) -hlibsam.so Solaris/libsam.c \
+	$(CC) -shared -fPIC -DPIC -Wl,-hlibsam.so Solaris/libsam.c \
 		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
+	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(DISTFILES_LOCATION)$(COMPONENT_ARCHIVE_2)
 
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
 CFLAGS.gcc	+=	-std=c99
@@ -184,9 +190,9 @@ CONFIGURE_OPTIONS +=	CUPS_CONFIG=$(USRBINDIR)/cups-config
 CONFIGURE_OPTIONS.32 +=	SAMFS_LIBS="-R/opt/SUNWsamfs/lib -lsam"
 
 # download recent docbook-xsl and unpack it
-$(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep: $(COMPONENT_ARCHIVE_1) \
+$(BUILD_DIR)/$(COMPONENT_SRC_1)/.docbook-xsl-prep: $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) \
 		$(SOURCE_DIR)/.prep $(PROTO_DIR)/.mozldap
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1)
+	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) $(DISTFILES_LOCATION)$(COMPONENT_ARCHIVE_1)
 	cd $(DOCS-XML_DIR) ; $(GMAKE) clobber
 	$(TOUCH) $@
 

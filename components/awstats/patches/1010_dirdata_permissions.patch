@@ -1,0 +1,19 @@
+Description: Set $DirData permissions to 0755.
+Author: Charles Fry <debian@frogcircus.org>
+Bug-Debian: http://bugs.debian.org/299148
+
+---
+ wwwroot/cgi-bin/awstats.pl |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/wwwroot/cgi-bin/awstats.pl
++++ b/wwwroot/cgi-bin/awstats.pl
+@@ -2972,7 +2972,7 @@
+ 	if ( !$MigrateStats && !-d $DirData ) {
+ 		if ($CreateDirDataIfNotExists) {
+ 			if ($Debug) { debug( " Make directory $DirData", 2 ); }
+-			my $mkdirok = mkdir "$DirData", 0766;
++			my $mkdirok = mkdir "$DirData", 0755;
+ 			if ( !$mkdirok ) {
+ 				error(
+ "$PROG failed to create directory DirData (DirData=\"$DirData\", CreateDirDataIfNotExists=$CreateDirDataIfNotExists)."

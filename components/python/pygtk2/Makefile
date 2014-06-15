@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pygtk2
 COMPONENT_VERSION=	2.17.0
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Python bindings for GTK+
 COMPONENT_SRC=		pygtk-$(COMPONENT_VERSION)
@@ -30,20 +31,20 @@ include $(WS_TOP)/make-rules/ips.mk
 
 PATH=/usr/gnu/bin:/usr/bin
 
-CFLAGS+=	-I$(PYTHON_VENDOR_PACKAGES.32)/numpy/core/include
+CFLAGS.$(BITS)+=	-I$(PYTHON_VENDOR_PACKAGES.$(BITS))/numpy/core/include
+CFLAGS+=	$(CFLAGS.$(BITS))
 
 gcc_OPT		= -O2
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
-
-COMPONENT_POST_INSTALL_ACTION =  $(GSED) -i -e 's:site-packages:vendor-packages:' \
-					 $(PROTO_DIR)/usr/lib/pkgconfig/pygtk-2.0.pc
+CONFIGURE_ENV+=		am_cv_python_pythondir="$(PYTHON_VENDOR_PACKAGES)"
+CONFIGURE_ENV+=		am_cv_python_pyexecdir="$(PYTHON_VENDOR_PACKAGES)"
 
 # common targets
-build:		$(BUILD_32)
+build:		$(BUILD_32_and_64)
 
-install:	$(INSTALL_32)
+install:	$(INSTALL_32_and_64)
 
 test:		$(NO_TESTS)
 

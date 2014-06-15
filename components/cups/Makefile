@@ -26,19 +26,23 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		cups
 COMPONENT_VERSION=	1.4.5
+COMPONENT_REVISION=	3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.cups.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-source.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
     sha256:0450d6d8e6e8af225d2a3319c848737d76473a6c7579cf97c52086d0371c0efe
-COMPONENT_ARCHIVE_URL=	http://ftp.easysw.com/pub/cups/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	https://www.cups.org/software/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/cups
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CXX +=	$(studio_NORUNPATH)
+#CXX +=	$(studio_NORUNPATH)
+
+# We build both 32-bit and 64-bit binaries at $(BUILD_32)
+CC_BITS=
 
 # don't use LD_Z_IGNORE: causes linker problems
 LD_Z_IGNORE=
@@ -55,6 +59,7 @@ CONFIGURE_OPTIONS +=	--with-smfmanifestdir=/lib/svc/manifest/application
 CONFIGURE_OPTIONS +=	--with-printcap=/etc/printers.conf
 CONFIGURE_OPTIONS +=	--with-cups-user=lp
 CONFIGURE_OPTIONS +=	--with-cups-group=lp
+CONFIGURE_OPTIONS +=	--with-php=no
 CONFIGURE_OPTIONS +=	--disable-static
 CONFIGURE_OPTIONS +=	--disable-gnutls
 CONFIGURE_OPTIONS +=	--disable-libusb
@@ -63,10 +68,9 @@ CONFIGURE_OPTIONS +=	--enable-openssl
 CONFIGURE_OPTIONS +=	--enable-dbus
 CONFIGURE_OPTIONS +=	--enable-threads
 CONFIGURE_OPTIONS +=	--enable-64bit
-CONFIGURE_OPTIONS +=	--enable-auditing
 
 CONFIGURE_OPTIONS += 	ARCH64FLAGS=-m64
-CONFIGURE_OPTIONS += 	DSO64FLAGS="$(LDLIBS) -G"
+CONFIGURE_OPTIONS += 	DSO64FLAGS="$(LDLIBS) -shared"
 CONFIGURE_OPTIONS += 	"ac_cv_search_getifaddrs=no"
 CONFIGURE_OPTIONS += 	"ac_cv_func_statfs=no"
 

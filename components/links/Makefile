@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		links
 COMPONENT_VERSION=	1.03
+COMPONENT_REVISION=	1
 IPS_COMPONENT_VERSION=	1.0.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://jikos.cz/~mikulas/links/

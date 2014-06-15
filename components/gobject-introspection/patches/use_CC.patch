@@ -1,0 +1,12 @@
+--- gobject-introspection-0.9.12/giscanner/sourcescanner.py	2014-05-07 09:35:26.404487160 +0400
++++ gobject-introspection-0.9.12/giscanner/sourcescanner.py	2014-05-07 09:34:11.837443980 +0400
+@@ -270,7 +274,8 @@
+ 
+         defines = ['__GI_SCANNER__']
+         undefs = []
+-        cpp_args = ['cc', '-E', '-C', '-I.', '-']
++        cpp_args = os.environ.get('CC', 'cc').split()
++        cpp_args += ['-E', '-C', '-I.', '-']
+ 
+         cpp_args += self._cpp_options
+         proc = subprocess.Popen(cpp_args,

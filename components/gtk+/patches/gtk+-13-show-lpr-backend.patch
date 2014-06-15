@@ -1,0 +1,31 @@
+diff -urN gtk+-2.18.0/gtk/Makefile.am ../../SUNWgtk2-2.18.0.hacked/i386/gtk+-2.18.0/gtk/Makefile.am
+--- gtk+-2.18.0/gtk/Makefile.am	2009-09-12 03:58:37.000000000 +0100
++++ ../../SUNWgtk2-2.18.0.hacked/i386/gtk+-2.18.0/gtk/Makefile.am	2009-09-25 16:27:48.551708158 +0100
+@@ -11,13 +11,13 @@
+ DIST_SUBDIRS=theme-bits tests
+ 
+ if HAVE_PAPI_CUPS
+-GTK_PRINT_BACKENDS=file,papi,cups
++GTK_PRINT_BACKENDS=file,papi,cups,lpr
+ else
+ if HAVE_CUPS
+-GTK_PRINT_BACKENDS=file,cups
++GTK_PRINT_BACKENDS=file,cups,lpr
+ else
+ if HAVE_PAPI
+-GTK_PRINT_BACKENDS=file,papi
++GTK_PRINT_BACKENDS=file,papi,lpr
+ else
+ GTK_PRINT_BACKENDS=file,lpr
+ endif
+diff -urN gtk+-2.20.1/modules/printbackends/lpr/gtkprintbackendlpr.c ../../SUNWgtk2-2.20.1.hacked/i386/gtk+-2.20.1/modules/printbackends/lpr/gtkprintbackendlpr.c
+--- gtk+-2.20.1/modules/printbackends/lpr/gtkprintbackendlpr.c	2010-04-09 04:07:00.000000000 +0000
++++ ../../SUNWgtk2-2.20.1.hacked/i386/gtk+-2.20.1/modules/printbackends/lpr/gtkprintbackendlpr.c	2011-02-24 16:53:33.622853892 +0000
+@@ -398,7 +398,6 @@
+   gtk_printer_set_has_details (printer, TRUE);
+   gtk_printer_set_icon_name (printer, "gtk-print");
+   gtk_printer_set_is_active (printer, TRUE);
+-  gtk_printer_set_is_default (printer, TRUE);
+ 
+   gtk_print_backend_add_printer (GTK_PRINT_BACKEND (backend), printer);
+   g_object_unref (printer);

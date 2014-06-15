@@ -89,6 +89,8 @@ COMPONENT_PREP_ACTION = \
 		    libtoolize --force --copy ; aclocal ; \
 		    automake --add-missing --copy ; autoconf )
 
+PKG_PROTO_DIRS += $(USERLAND_ARCHIVES)
+
 $(BUILD_DIR)/libmng-64.pc:	Solaris/libmng-64.pc
 	/bin/sed -e "s#MACH64#$(MACH64)#g" <$< >$@
 

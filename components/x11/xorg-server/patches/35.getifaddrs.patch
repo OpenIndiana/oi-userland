@@ -1,0 +1,61 @@
+From 59906b99a15a356101ec6ee8045df2227be07979 Mon Sep 17 00:00:00 2001
+From: Alan Coopersmith <alan.coopersmith@oracle.com>
+Date: Thu, 29 Apr 2010 18:45:34 -0700
+Subject: [PATCH] Fix compiler issues with getifaddrs() call on OpenSolaris
+
+OpenSolaris recently added support for the getifaddrs() API.
+
+Building with that uncovered two compiler issues (one warning, one error)
+in the code that was now being built for the first time in our builds:
+
+"access.c", line 768: warning: argument #1 is incompatible with prototype:
+        prototype: pointer to struct sockaddr {unsigned short sa_family, array[14] of char sa_data} : "access.c", line 213
+        argument : pointer to struct sockaddr_storage {unsigned short ss_family, array[6] of char _ss_pad1, double _ss_align, array[240] of char _ss_pad2}
+
+"access.c", line 838: assignment type mismatch:
+        struct sockaddr {unsigned short sa_family, array[14] of char sa_data} "=" struct sockaddr_storage {unsigned short ss_family, array[6] of char _ss_pad1, double _ss_align, array[240] of char _ss_pad2}
+
+Signed-off-by: Alan Coopersmith <alan.coopersmith@oracle.com>
+---
+ os/access.c |    9 ++++-----
+ 1 files changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/os/access.c b/os/access.c
+index 74c340a..3572da0 100644
+--- os/access.c
++++ os/access.c
+@@ -765,7 +765,8 @@ DefineSelf (int fd)
+ 	    continue;
+ #endif /* DNETCONN */
+ 	len = sizeof(*(ifr->ifa_addr));
+-	family = ConvertAddr(ifr->ifa_addr, &len, (pointer *)&addr);
++	family = ConvertAddr((struct sockaddr *) ifr->ifa_addr, &len,
++			     (pointer *)&addr);
+ 	if (family == -1 || family == FamilyLocal) 
+ 	    continue;
+ #if defined(IPv6) && defined(AF_INET6)
+@@ -789,7 +790,6 @@ DefineSelf (int fd)
+ 	}
+ #ifdef XDMCP
+ 	{
+-	    struct sockaddr broad_addr;
+ 	    /*
+ 	     * If this isn't an Internet Address, don't register it.
+ 	     */
+@@ -835,11 +835,10 @@ DefineSelf (int fd)
+ 	    if ((ifr->ifa_flags & IFF_BROADCAST) &&
+ 		(ifr->ifa_flags & IFF_UP) &&
+                 ifr->ifa_broadaddr)
+-		broad_addr = *ifr->ifa_broadaddr;
++		XdmcpRegisterBroadcastAddress(
++		    (struct sockaddr_in *) ifr->ifa_broadaddr);
+ 	    else
+ 		continue;
+-	    XdmcpRegisterBroadcastAddress((struct sockaddr_in *)
+-					  &broad_addr);
+ 	}
+ #endif /* XDMCP */
+ 		
+-- 
+1.5.6.5
+

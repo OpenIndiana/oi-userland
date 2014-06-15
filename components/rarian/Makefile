@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= rarian
 
 COMPONENT_VERSION= 0.8.1
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= Documentation meta-data library
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -44,6 +45,7 @@ LDFLAGS += $(LDFLAGS.$(BITS))
 
 CONFIGURE_OPTIONS += --localstatedir=/var 
 CONFIGURE_OPTIONS += --disable-skdb-update
+CONFIGURE_OPTIONS += --with-convert-dir=/usr/share/omf
 
 build: $(BUILD_32_and_64)
 

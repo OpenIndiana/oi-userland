@@ -1,0 +1,243 @@
+--- gnome-desktop-2.21.2/configure.in.orig	2007-11-13 14:16:58.522935817 +0000
++++ gnome-desktop-2.21.2/configure.in	2007-11-13 14:18:35.457698128 +0000
+@@ -108,6 +108,23 @@
+ dnl for gnome-about
+ AM_PATH_PYTHON
+ 
++#
++# Solaris Trusted Extensions stuff
++#
++case "$host" in
++*solaris*)
++	AC_CHECK_HEADERS(sys/tsol/label_macro.h,
++	  AC_DEFINE(HAVE_TSOL, ,[Building with TSOL support]) found_tsol=yes,)
++	;;
++*)
++	;;
++esac
++
++AM_CONDITIONAL(TSOL_DEFINED, test x$found_tsol = xyes)
++if test "x$found_tsol" = "xyes" ; then
++	GNOME_DESKTOP_LIBS="$GNOME_DESKTOP_LIBS -lsecdb"
++fi
++
+ dnl gnome-doc-utils stuff
+ 
+ GNOME_DOC_INIT
+diff -urN -x '*~' -x '*.rej*' gnome-desktop.orig/libgnome-desktop/gnome-desktop-tsol-extensions.c gnome-desktop.new/libgnome-desktop/gnome-desktop-tsol-extensions.c
+--- gnome-desktop.orig/libgnome-desktop/gnome-desktop-tsol-extensions.c	1970-01-01 01:00:00.000000000 +0100
++++ gnome-desktop.new/libgnome-desktop/gnome-desktop-tsol-extensions.c	2007-09-19 22:17:22.377451000 +0100
+@@ -0,0 +1,116 @@
++/*
++ * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
++ */
++
++#include <config.h>
++#include <gdk/gdk.h>
++#include <gdk/gdkx.h>
++#include <X11/Xlib.h>
++#include <stdlib.h>
++#include <strings.h>
++#include <user_attr.h>
++#include <sys/types.h>
++#include <unistd.h>
++#include <dlfcn.h>
++#include <link.h>
++
++#define ATOM "_LABEL_EXEC_COMMAND"
++
++typedef Status (*xtsol_XTSOLgetWorkstationOwner) (Display *xpdy, uid_t *uidp);
++
++gboolean
++gnome_desktop_tsol_user_is_workstation_owner (void)
++{
++	uid_t uid;
++	gpointer handle;
++	Display *xdpy;
++	static int ret = -1;
++	xtsol_XTSOLgetWorkstationOwner libxtsol_XTSOLgetWorkstationOwner= NULL;
++
++	if (ret == -1) {
++		if (!(handle = dlopen ("/usr/lib/libXtsol.so.1", RTLD_LAZY)) ||
++		    !(libxtsol_XTSOLgetWorkstationOwner =
++			(xtsol_XTSOLgetWorkstationOwner) dlsym (handle,
++						"XTSOLgetWorkstationOwner"))) {
++			ret = 0;
++			return FALSE;
++		}
++
++		xdpy = GDK_DISPLAY_XDISPLAY (gdk_display_get_default ());
++
++		libxtsol_XTSOLgetWorkstationOwner (xdpy, &uid);
++
++		if (uid == getuid ()) {
++			ret = 1;
++		} else {
++			ret = 0;
++		}
++	}
++
++	return ret ? TRUE : FALSE;
++}
++
++gboolean 
++gnome_desktop_tsol_is_clearance_admin_high (void)
++{
++        userattr_t      *uattr;
++        char            *value = NULL;
++
++        uattr = getuseruid (getuid ());
++
++        if (uattr) {
++                value = kva_match (uattr->attr, USERATTR_CLEARANCE);
++                if (value)
++                        if (strncasecmp ("admin_high", value, 10) == 0 ||
++                            strncasecmp ("ADMIN_HIGH", value, 10) == 0)
++                                return TRUE;
++        }
++        return FALSE;
++}
++
++gboolean
++gnome_desktop_tsol_is_multi_label_session (void)
++{
++	static int trusted = -1;
++
++	if (trusted < 0) {
++		if (getenv ("TRUSTED_SESSION")) {
++			trusted = 1;
++		} else {
++			trusted = 0;
++		}
++	}
++
++	return trusted ? TRUE : FALSE;
++}
++
++void
++gnome_desktop_tsol_proxy_app_launch (char *command)
++{
++	GdkDisplay *dpy;
++	Display *xdpy;
++	Window root;
++	Atom atom, utf8_string;
++
++	if (!command) return;
++
++	dpy = gdk_display_get_default ();
++	xdpy = GDK_DISPLAY_XDISPLAY (dpy);
++
++	utf8_string = XInternAtom (xdpy, "UTF8_STRING", FALSE);
++
++	root = DefaultRootWindow (xdpy);
++
++	atom = XInternAtom (xdpy, ATOM, FALSE);
++
++	gdk_error_trap_push ();
++
++	XChangeProperty (xdpy, root, atom, utf8_string, 8, PropModeReplace,
++			 command, strlen (command));
++
++	XSync (xdpy, False);
++
++	gdk_error_trap_pop ();
++}
++
+diff -urN -x '*~' -x '*.rej*' gnome-desktop.orig/libgnome-desktop/libgnome/Makefile.am gnome-desktop.new/libgnome-desktop/libgnome/Makefile.am
+diff -urN -x '*~' -x '*.rej*' gnome-desktop.orig/libgnome-desktop/libgnome/gnome-desktop-tsol-extensions.h gnome-desktop.new/libgnome-desktop/libgnome/gnome-desktop-tsol-extensions.h
+--- gnome-desktop.orig/libgnome-desktop/libgnome/gnome-desktop-tsol-extensions.h	1970-01-01 01:00:00.000000000 +0100
++++ gnome-desktop.new/libgnome-desktop/libgnome/gnome-desktop-tsol-extensions.h	2007-09-19 21:54:08.669028000 +0100
+@@ -0,0 +1,10 @@
++/*
++ * Copyright 2005 Sun Microsystems, Inc.  All rights reserved.
++ * Use is subject to license terms.
++ */
++
++gboolean gnome_desktop_tsol_is_clearance_admin_high (void);
++gboolean gnome_desktop_tsol_is_multi_label_session (void);
++void gnome_desktop_tsol_proxy_app_launch (char *command);
++gboolean gnome_desktop_tsol_user_is_workstation_owner (void);
++
+--- gnome-desktop-2.25.2/libgnome-desktop/Makefile.am.ori	2008-12-10 06:56:26.211081440 +0000
++++ gnome-desktop-2.25.2/libgnome-desktop/Makefile.am	2008-12-10 06:57:08.915616350 +0000
+@@ -18,6 +18,7 @@
+ 
+ libgnome_desktop_2_la_SOURCES = \
+ 	gnome-desktop-item.c	\
++	gnome-desktop-tsol-extensions.c \
+ 	gnome-desktop-utils.c	\
+ 	gnome-desktop-thumbnail.c \
+ 	gnome-thumbnail-pixbuf-utils.c \
+--- gnome-desktop-2.25.2/libgnome-desktop/libgnome/Makefile.am.ori	2008-12-10 06:58:48.957248389 +0000
++++ gnome-desktop-2.25.2/libgnome-desktop/libgnome/Makefile.am	2008-12-10 06:59:16.104630627 +0000
+@@ -1,6 +1,7 @@
+ libgnome_desktopdir = $(includedir)/gnome-desktop-2.0/libgnome
+ libgnome_desktop_HEADERS = \
+ 	gnome-desktop-utils.h \
+-	gnome-desktop-item.h
++	gnome-desktop-item.h \
++	gnome-desktop-tsol-extensions.h
+ 
+ -include $(top_srcdir)/git.mk
+--- gnome-desktop-2.25.92/libgnome-desktop/gnome-desktop-item.c.ori	2009-03-13 08:09:32.130714679 +0000
++++ gnome-desktop-2.25.92/libgnome-desktop/gnome-desktop-item.c	2009-03-13 08:10:58.807107686 +0000
+@@ -41,6 +41,7 @@
+ #include <glib/gi18n-lib.h>
+ #include <locale.h>
+ #include <stdlib.h>
++#include <zone.h>
+ 
+ #include <gio/gio.h>
+ 
+@@ -58,6 +59,7 @@
+ #undef GNOME_DISABLE_DEPRECATED
+ #include <libgnome/gnome-desktop-item.h>
+ #include <libgnome/gnome-desktop-utils.h>
++#include <libgnome/gnome-desktop-tsol-extensions.h>
+ 
+ #include "private.h"
+ 
+@@ -1746,6 +1748,7 @@
+ 	char *new_exec, *uris, *temp;
+ 	char *exec_locale;
+ 	int launched = 0;
++	char *command;
+ #ifdef HAVE_STARTUP_NOTIFICATION
+ 	SnLauncherContext *sn_context;
+ 	SnDisplay *sn_display;
+@@ -1944,7 +1947,15 @@
+ #endif
+ 		
+ 		
+-		if ( ! g_spawn_async (working_dir,
++
++		if (gnome_desktop_tsol_is_multi_label_session () &&
++			gnome_desktop_tsol_user_is_workstation_owner () &&
++			getzoneid () == 0) {
++			command = g_strdup_printf ("%d:%s", gdk_screen_get_number (screen), g_strjoinv (" ", real_argv));
++			gnome_desktop_tsol_proxy_app_launch (command);
++			g_free (command);
++		} else {
++			if ( ! g_spawn_async (working_dir,
+ 				      real_argv,
+ 				      envp,
+ 				      (do_not_reap_child ? G_SPAWN_DO_NOT_REAP_CHILD : 0) | G_SPAWN_SEARCH_PATH /* flags */,
+@@ -1952,11 +1963,12 @@
+ 				      NULL, /* child_setup_func_data */
+ 				      &ret /* child_pid */,
+ 				      error)) {
+-			/* The error was set for us,
+-			 * we just can't launch this thingie */
+-			ret = -1;
+-			g_strfreev (real_argv);
+-			break;
++				/* The error was set for us,
++			 	* we just can't launch this thingie */
++				ret = -1;
++				g_strfreev (real_argv);
++				break;
++			}
+ 		}
+ 		launched ++;
+ 

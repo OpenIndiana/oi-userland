@@ -1,0 +1,962 @@
+--- gst-plugins-good-0.10.13/configure.ac-orig	2009-01-23 10:02:53.003952000 -0600
++++ gst-plugins-good-0.10.13/configure.ac	2009-01-23 10:03:03.048601000 -0600
+@@ -660,6 +668,24 @@ AG_GST_CHECK_FEATURE(CAIRO_GOBJECT,
+   AG_GST_PKG_CHECK_MODULES(CAIRO_GOBJECT, cairo-gobject >= 1.10.0)
+ ])
+ 
++dnl *** cdda2wav ***
++translit(dnm, m, l) AM_CONDITIONAL(USE_CDDA2WAV, true)
++AG_GST_CHECK_FEATURE(CDDA2WAV, [HAL libraries], cdda2wav, [
++  AG_GST_PKG_CHECK_MODULES(CDDA2WAV, [hal >= 0.5.8, hal-storage >= 0.5.8, dbus-1 >= 0.32])
++  AC_PATH_PROG(CDDA2WAVBIN, cdda2wav, no)
++  if test x$CDDA2WAVBIN = xno; then
++    HAVE_CDDA2WAV="no"
++  else
++    CDDA_VERSION=`$CDDA2WAVBIN --version | grep Schilling`
++    if test -z "$CDDA_VERSION"; then
++      HAVE_CDDA2WAV="no"
++    else
++      HAVE_CDDA2WAV="yes"
++    fi
++  fi
++  AC_SUBST(HAVE_CDDA2WAV)
++])
++
+ dnl **** ESound ****
+ translit(dnm, m, l) AM_CONDITIONAL(USE_ESD, true)
+ AG_GST_CHECK_FEATURE(ESD, [ESounD sound daemon], esdsink, [
+@@ -928,6 +954,7 @@ AM_CONDITIONAL(USE_DIRECTDRAW, false)
+ AM_CONDITIONAL(USE_DIRECTSOUND, false)
+ AM_CONDITIONAL(USE_DV1394, false)
+ AM_CONDITIONAL(USE_ESD, false)
++AM_CONDITIONAL(USE_CDDA2WAV, false)
+ AM_CONDITIONAL(USE_FLAC, false)
+ AM_CONDITIONAL(USE_GCONF, false)
+ AM_CONDITIONAL(USE_GCONFTOOL, false)
+@@ -1055,6 +1083,7 @@ ext/Makefile
+ ext/aalib/Makefile
+ ext/annodex/Makefile
+ ext/cairo/Makefile
++ext/cdda2wav/Makefile
+ ext/dv/Makefile
+ ext/esd/Makefile
+ ext/flac/Makefile
+--- gst-plugins-good-0.10.10/ext/Makefile.am-orig	2008-08-27 23:56:51.987944000 -0500
++++ gst-plugins-good-0.10.10/ext/Makefile.am	2008-08-27 23:57:20.124741000 -0500
+@@ -16,6 +16,12 @@ else
+ CAIRO_DIR =
+ endif
+ 
++if USE_CDDA2WAV
++CDDA2WAV_DIR = cdda2wav
++else
++CDDA2WAV_DIR =
++endif
++
+ if USE_ESD
+ ESD_DIR = esd
+ else
+@@ -131,6 +137,7 @@ SUBDIRS = \
+ 	$(CAIRO_DIR) \
+ 	$(DV1394_DIR) \
+ 	$(ESD_DIR) \
++	$(CDDA2WAV_DIR) \
+ 	$(FLAC_DIR) \
+ 	$(GCONF_DIR) \
+ 	$(GDK_PIXBUF_DIR) \
+--- /dev/null	2007-03-19 01:47:57.000000000 +0800
++++ gst-plugins-good-0.10.6/ext/cdda2wav/Makefile.am	2007-03-19 01:46:41.639278000 +0800
+@@ -0,0 +1,20 @@
++plugin_LTLIBRARIES = libgstcdda2wav.la
++
++libgstcdda2wav_la_SOURCES = \
++	gstcdda2wav.c
++
++libgstcdda2wav_la_CFLAGS = \
++	$(GST_PLUGINS_BASE_CFLAGS) \
++	$(GST_BASE_CFLAGS) \
++	$(GST_CFLAGS) \
++	$(CDDA2WAV_CFLAGS)
++
++libgstcdda2wav_la_LIBADD = \
++	$(GST_PLUGINS_BASE_LIBS) -lgstcdda-$(GST_MAJORMINOR) \
++	$(GST_BASE_LIBS) \
++	$(CDDA2WAV_LIBS)
++
++libgstcdda2wav_la_LDFLAGS = $(GST_PLUGIN_LDFLAGS) 
++
++noinst_HEADERS = \
++	gstcdda2wav.h
+--- /dev/null	2008-12-19 17:50:06.000000000 -0600
++++ gst-plugins-good-0.10.6/ext/cdda2wav/gstcdda2wav.h	2008-07-17 07:48:57.000000000 -0500
+@@ -0,0 +1,72 @@
++/* GStreamer
++ * Copyright (C) 2007 Brian Cameron <Brian.Cameron@sun.com> and
++ *                    Artem Kachitchkine <Artem.Kachitchkine@sun.com>
++ * Copyright (C) 2008 J÷rg Schilling <Joerg.Schilling@fokus.fraunhofer.de>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Library General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Library General Public License for more details.
++ *
++ * You should have received a copy of the GNU Library General Public
++ * License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ */
++
++#ifndef __GST_CDDA2WAV_H__
++#define __GST_CDDA2WAV_H__
++
++#include <sys/types.h>
++#include "gst/cdda/gstcddabasesrc.h"
++
++#define CDDA2WAV_BSIZE   2352
++
++G_BEGIN_DECLS
++
++#define GST_TYPE_CDDA2WAV           (gst_cdda2wav_get_type())
++#define GST_CDDA2WAV(obj)           (G_TYPE_CHECK_INSTANCE_CAST((obj),GST_TYPE_CDDA2WAV,GstCdda2Wav))
++#define GST_CDDA2WAV_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST((klass),GST_TYPE_CDDA2WAV,GstCdda2WavClass))
++#define GST_IS_CDDA2WAV(obj)         (G_TYPE_CHECK_INSTANCE_TYPE((obj),GST_TYPE_CDDA2WAV))
++#define GST_IS_CDDA2WAV_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE((klass),GST_TYPE_CDDA2WAV))
++#define GST_CDDA2WAV_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), GST_TYPE_CDDA2WAV, GstCdda2WavClass))
++
++typedef struct _GstCdda2Wav GstCdda2Wav;
++typedef struct _GstCdda2WavClass GstCdda2WavClass;
++
++#define CDDA2WAV_BSIZE   2352
++
++/**
++ * GstCdda2Wav::
++ *
++ * The cdda2wav object structure.
++ */
++struct _GstCdda2Wav {
++  GstCddaBaseSrc   cddabasesrc;
++
++  /*< private >*/
++  FILE            *cdda2wav_in;
++  FILE            *cdda2wav_out;
++  FILE            *cdda2wav_err;
++  pid_t		  cdda2wav_pid;
++  uint_t          track_count;
++  char            **devices;
++  char            *current_device;
++  boolean_t       *has_audio;
++};
++
++struct _GstCdda2WavClass {
++  GstCddaBaseSrcClass parent_class;
++};
++
++GType    gst_cdda2wav_get_type (void);
++
++G_END_DECLS
++
++#endif /* __GST_CDDA2WAV_H__ */
++
+--- /dev/null	2009-01-08 02:18:21.000000000 -0600
++++ gst-plugins-good-0.10.11/ext/cdda2wav/gstcdda2wav.c	2009-01-08 02:17:15.164536000 -0600
+@@ -0,0 +1,795 @@
++/* GStreamer
++ * Copyright (C) <2007> Brian Cameron <Brian.Cameron@sun.com> and
++ *                      Artem Kachitchkine <Artem.Kachitchkine@sun.com>
++ * Copyright (C) 2008	J÷rg Schilling <Joerg.Schilling@fokus.fraunhofer.de>
++ *
++ * This library is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU Library General Public
++ * License as published by the Free Software Foundation; either
++ * version 2 of the License, or (at your option) any later version.
++ *
++ * This library is distributed in the hope that it will be useful,
++ * but WITHOUT ANY WARRANTY; without even the implied warranty of
++ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
++ * Library General Public License for more details.
++ *
++ * You should have received a copy of the GNU Library General Public
++ * License along with this library; if not, write to the
++ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
++ * Boston, MA 02111-1307, USA.
++ */
++
++/**
++ * SECTION:element-cdda2wav
++ * @short_description: Reads raw audio from an Audio CD
++ * @see_also: GstCddaBaseSrc
++ *
++ * <refsect2>
++ * <para>
++ * cdda2wav reads and extracts raw audio from Audio CDs using cdda2wav.
++ * </para>
++ * <title>Example launch line</title>
++ * <para>
++ * <programlisting>
++ * gst-launch cdda2wav track=5 ! audioconvert ! vorbisenc ! oggmux ! filesink location=track5.ogg
++ * </programlisting>
++ * This pipeline extracts track 5 of the audio CD and encodes it into an
++ * Ogg/Vorbis file.
++ * </para>
++ * </refsect2>
++ */
++
++#ifdef HAVE_CONFIG_H
++#include "config.h"
++#endif
++
++#include <stdio.h>
++#include <stdlib.h>
++#include <fcntl.h>
++#include <string.h>
++#include <libintl.h>
++#include <errno.h>
++#include <unistd.h>
++#include <sys/filio.h>
++#include <signal.h>
++#define	HAVE_POLL		/* XXX Need autoconf test */
++#ifdef	HAVE_POLL
++#include <poll.h>
++#endif
++#include <sys/byteorder.h>
++#include <hal/libhal.h>
++#include <hal/libhal-storage.h>
++
++#include "gstcdda2wav.h"
++#include "gst/gst-i18n-plugin.h"
++
++enum
++{
++  PROP0 = 0,
++};
++
++GST_DEBUG_CATEGORY_STATIC (gst_cdda2wav_debug);
++#define GST_CAT_DEFAULT gst_cdda2wav_debug
++
++GST_BOILERPLATE (GstCdda2Wav, gst_cdda2wav, GstCddaBaseSrc,
++    GST_TYPE_CDDA_BASE_SRC)
++
++static void gst_cdda2wav_finalize (GObject * obj);
++static GstBuffer *gst_cdda2wav_read_sector (GstCddaBaseSrc * src,
++    gint sector);
++static gboolean gst_cdda2wav_open (GstCddaBaseSrc * src,
++    const gchar * device);
++static void gst_cdda2wav_close (GstCddaBaseSrc * src);
++static gchar **gst_cdda2wav_probe_devices (GstCddaBaseSrc * cddabasesrc);
++static gchar *gst_cdda2wav_get_default_device (GstCddaBaseSrc * cddabasesrc);
++static void gst_cdda2wav_set_property (GObject * object, guint prop_id,
++    const GValue * value, GParamSpec * pspec);
++static void gst_cdda2wav_get_property (GObject * object, guint prop_id,
++    GValue * value, GParamSpec * pspec);
++
++static void gst_cdda2wav_hal_find_cdroms (GstCdda2Wav *);
++
++static pid_t xpopen(FILE **pfpin, FILE **pfpout, FILE **pfperr, const char *cmd);
++static int xpclose(FILE *fpin, FILE *fpout, FILE *fperr, pid_t child);
++
++
++static const GstElementDetails cdda2wav_details =
++GST_ELEMENT_DETAILS ("CD Audio (cdda) Source",
++    "Source/File",
++    "Read audio from CD",
++    "Brian Cameron <Brian.Cameron@sun.com>, " "Artem Kachitchkine <Artem.Kachitchkine@sun.com>, "
++    "Joerg Schilling <Joerg.Schilling@fokus.fraunhofer.de>");
++
++static void
++gst_cdda2wav_base_init (gpointer g_class)
++{
++  GstElementClass *element_class = GST_ELEMENT_CLASS (g_class);
++
++  gst_element_class_set_details (element_class, &cdda2wav_details);
++}
++
++static void
++gst_cdda2wav_init (GstCdda2Wav * src, GstCdda2WavClass * klass)
++{
++  src->devices        = NULL;
++  src->current_device = NULL;
++  src->cdda2wav_in    = NULL;
++  src->cdda2wav_out   = NULL;
++  src->cdda2wav_err   = NULL;
++  src->cdda2wav_pid   = 0;
++}
++
++static void
++gst_cdda2wav_class_init (GstCdda2WavClass * klass)
++{
++  GstCddaBaseSrcClass *cddabasesrc_class = GST_CDDA_BASE_SRC_CLASS (klass);
++  GObjectClass *gobject_class            = G_OBJECT_CLASS (klass);
++
++  gobject_class->set_property            = gst_cdda2wav_set_property;
++  gobject_class->get_property            = gst_cdda2wav_get_property;
++  gobject_class->finalize                = gst_cdda2wav_finalize;
++
++  cddabasesrc_class->open                = gst_cdda2wav_open;
++  cddabasesrc_class->close               = gst_cdda2wav_close;
++  cddabasesrc_class->read_sector         = gst_cdda2wav_read_sector;
++  cddabasesrc_class->get_default_device  = gst_cdda2wav_get_default_device;
++  cddabasesrc_class->probe_devices       = gst_cdda2wav_probe_devices;
++}
++
++static gchar **
++gst_cdda2wav_probe_devices (GstCddaBaseSrc * cddabasesrc)
++{
++  GstCdda2Wav *src = GST_CDDA2WAV (cddabasesrc);
++
++  if (src->devices != NULL) {
++     free (src->devices);
++     free (src->has_audio);
++
++     src->devices = NULL;
++     src->has_audio = NULL;
++  }
++  gst_cdda2wav_hal_find_cdroms (src);
++
++  return (src->devices);
++}
++
++static gchar *
++gst_cdda2wav_get_default_device (GstCddaBaseSrc * cddabasesrc)
++{
++  GstCdda2Wav *src;
++  gchar *ret = NULL;
++  int i;
++
++  src = GST_CDDA2WAV (cddabasesrc);
++
++  if (src->devices == NULL) {
++     gst_cdda2wav_probe_devices (cddabasesrc);
++     if (src->devices == NULL) {
++        return (NULL);
++     }
++  }
++
++  /* prefer a drive with an audio disc, otherwise pick first */
++  for (i = 0; src->devices[i] != NULL; i++) {
++      if (src->has_audio[i]) {
++         ret = src->devices[i];
++         break;
++      }
++  }
++
++  if (ret == NULL)
++     ret = src->devices[0];
++
++  GST_LOG_OBJECT (src, "returning default device: %s", GST_STR_NULL (ret));
++
++  return (ret);
++}
++
++static boolean_t
++cdda2wav_read_toc (GstCdda2Wav *src)
++{
++  gchar   *command;
++  char     buf[BUFSIZ];
++  guint    leadout;
++  int      track_num;
++  uint_t   i;
++  GstCddaBaseSrcTrack tracks[100];
++  FILE	*f;
++
++  /* Open the connection to cdda2wav */
++  command = g_strdup_printf (
++	"/usr/bin/cdda2wav -q dev=%s --info-only -vtoc --no-infofile --gui 2>&1",
++	src->current_device);
++  f = popen (command, "r");
++  g_free (command);
++	if (f == NULL)
++		return (FALSE);
++
++  track_num = 0;
++  leadout   = 0;
++
++  i = 0;
++  while (fgets (buf, BUFSIZ, f) != NULL) {
++     char *endptr;
++     g_strchomp (buf);
++
++     if ((strlen (buf) > 12) &&
++         (buf[0] == 'T') &&
++         (g_ascii_isdigit(buf[1])) &&
++         (g_ascii_isdigit(buf[2])) &&
++         (buf[3] == ':')) {
++
++	track_num = buf[2] - '0' + (buf[1] - '0') * 10;
++	tracks[i].is_audio = strstr((buf + 4), "audio") != 0;
++	tracks[i].num      = buf[2] - '0' + (buf[1] - '0') * 10;
++	tracks[i].tags     = NULL;
++	tracks[i].start    = (guint) (g_ascii_strtod ((buf + 4), &endptr));
++#ifdef	DEBUG
++	fprintf(stderr, "Track %2.2d %2.2d audio %d start %u\n",
++		i, tracks[i].num, tracks[i].is_audio, tracks[i].start);
++#endif
++	i++;
++     }
++
++     if (strncmp (buf, "Leadout:", 8) == 0) {
++         leadout = (guint) (g_ascii_strtod ((buf + 8), &endptr));
++     }
++  }
++  track_num = i;
++
++  for (i=0; i < track_num; i++) {
++     GstCddaBaseSrcTrack track = { 0, };
++
++     track.is_audio = tracks[i].is_audio;
++     track.num      = tracks[i].num;
++     track.tags     = NULL;
++     track.start    = tracks[i].start;
++
++     if (i < (track_num - 1))
++        track.end = tracks[i+1].start - 1;
++     else
++        track.end = leadout;
++
++     gst_cdda_base_src_add_track (GST_CDDA_BASE_SRC (src), &track);
++  }
++
++  src->track_count = track_num + 1;
++
++  pclose (f);
++
++  return (TRUE);
++}
++
++static gboolean
++gst_cdda2wav_open (GstCddaBaseSrc * cddabasesrc, const gchar * device)
++{
++  GstCdda2Wav *src = GST_CDDA2WAV (cddabasesrc);
++  gchar       *command;
++  gboolean     ret;
++
++  g_assert (device != NULL);
++
++  GST_LOG_OBJECT (src, "Trying to open device %s", device);
++  src->current_device = g_strdup (device);
++
++  ret = cdda2wav_read_toc (src);
++
++  return ret;
++}
++
++static int
++gst_cdda_close (GstCdda2Wav  * src)
++{
++  int rc = 0;
++
++  if (src->cdda2wav_pid != 0) {
++     rc = xpclose (src->cdda2wav_in, src->cdda2wav_out, src->cdda2wav_err,
++		src->cdda2wav_pid);
++  }
++  src->cdda2wav_in  = NULL;
++  src->cdda2wav_out = NULL;
++  src->cdda2wav_err = NULL;
++  src->cdda2wav_pid = 0;
++
++  return rc;
++}
++
++static void
++gst_cdda2wav_close (GstCddaBaseSrc * cddabasesrc)
++{
++  GstCdda2Wav *src = GST_CDDA2WAV (cddabasesrc);
++
++  gst_cdda_close (src);
++}
++
++static gboolean
++getans(GstCdda2Wav *src)
++{
++	char	buf[1024];
++	char	*p;
++	int	ret;
++#ifdef	HAVE_POLL
++	struct pollfd	pfd[1];
++#endif
++
++#ifdef	DEBUG
++	fprintf(stderr, "getans\n");
++#endif
++	if (src->cdda2wav_err == NULL)
++		return (FALSE);
++	do {
++		buf[0] = '\0';
++#ifdef	HAVE_POLL
++		pfd[0].fd = fileno(src->cdda2wav_err);
++		pfd[0].events = POLLIN;
++		pfd[0].revents = 0;
++        	if (poll(pfd, 1, 5000) < 1)	/* Give up after 5s */
++			break;
++#else
++		insert select code here
++#endif
++		p = fgets(buf, sizeof (buf), src->cdda2wav_err);
++#ifdef	DEBUG
++		fprintf(stderr, "ERR: '%s'\n", buf);
++#endif
++		if (buf[0] >= '0' && buf[0] <= '9' &&
++		    buf[1] >= '0' && buf[1] <= '9' &&
++		    buf[2] >= '0' && buf[2] <= '9' &&
++		    buf[3] == ' ')
++			break;
++	} while (p);
++	ret = atoi(buf);
++	if (ret != 200) {
++		fprintf(stderr, "ERR: %s\n", buf);
++		gst_cdda_close (src);
++		return (FALSE);
++	}
++	return (TRUE);
++}
++
++static void
++flushpipe(FILE *f)
++{
++	int	nread;
++	char	fbuf[5120];
++
++	do {
++		ioctl(fileno(f), FIONREAD, &nread);
++		if (nread > 0) {
++			int	amt;
++
++			amt = nread;
++			if (amt > sizeof (fbuf))
++				amt = sizeof (fbuf);
++			if (fread(fbuf, amt, 1, f) != 1)
++				break;
++		}
++	} while (nread > 0);
++}
++
++static gboolean
++sendcmd(GstCdda2Wav *src, const char *fmt, uint_t addr)
++{
++	struct sigaction old;
++	struct sigaction my;
++
++	sigemptyset(&my.sa_mask);
++	my.sa_handler == SIG_IGN;
++	my.sa_flags = 0;
++	sigaction(SIGPIPE, &my, &old);
++
++	clearerr(src->cdda2wav_in);
++	fprintf(src->cdda2wav_in, fmt, addr);
++	fflush(src->cdda2wav_in);
++
++	sigaction(SIGPIPE, &old, NULL);
++
++	if (ferror(src->cdda2wav_in)) {
++		gst_cdda_close(src);
++		return (FALSE);
++	}
++	return (TRUE);
++}
++
++#if G_BYTE_ORDER == G_LITTLE_ENDIAN
++#define CDDA2WAV_BYTE_ORDER "little"
++#elif G_BYTE_ORDER == G_BIG_ENDIAN
++#define CDDA2WAV_BYTE_ORDER "big"
++#else
++#error "G_BYTE_ORDER should be big or little endian."
++#endif
++
++static gboolean
++cdda2wav_read (GstCdda2Wav *src, void *buf, uint_t addr, uint_t len)
++{
++  static int last_addr = -1; 
++  char * command;
++  int		did_retry = -1;
++  gboolean	do_paranoia = FALSE;	/* Need to be parameterized from elsewhere */
++
++retry:
++  if (++did_retry > 1)
++	return (FALSE);
++
++  if (src->cdda2wav_pid == 0) {
++     command = g_strdup_printf (
++	"/usr/bin/cdda2wav -q --output-endianess=%s dev=%s -Oraw %s -interactive -",
++        CDDA2WAV_BYTE_ORDER, src->current_device,
++        do_paranoia ? "-paranoia -paraopts=minoverlap=2":"");
++     src->cdda2wav_pid = xpopen (&src->cdda2wav_in, &src->cdda2wav_out,
++						&src->cdda2wav_err, command);
++#ifdef	DEBUG
++     fprintf(stderr, "PID %d\n", src->cdda2wav_pid);
++#endif
++     g_free (command);
++	if (!sendcmd(src, "read sectors %u\n", addr))
++		goto retry;
++	if (!getans(src))
++		goto retry;
++	last_addr = addr;
++  } else if (addr != (last_addr + 1)) {	/* Check whether we need to seek */
++	int	nread;
++
++	if (!sendcmd(src, "stop\n", 0))
++		goto retry;
++	flushpipe(src->cdda2wav_out);
++	if (!getans(src))
++		goto retry;
++	do {
++		if (!sendcmd(src, "stop\n", 0))
++			goto retry;
++		flushpipe(src->cdda2wav_out);
++		if (!getans(src))
++			goto retry;
++		ioctl(fileno(src->cdda2wav_out), FIONREAD, &nread);
++	} while (nread > 0);
++	if (!sendcmd(src, "read sectors %u\n", addr))
++		goto retry;
++	if (!getans(src))
++		goto retry;
++  }
++  last_addr = addr;
++
++  if (fread (buf, CDDA2WAV_BSIZE, len, src->cdda2wav_out) != len) {
++	if (feof(src->cdda2wav_out)) {
++		if (gst_cdda_close (src) == 0)
++			return (TRUE);
++		goto retry;
++	}
++	return (FALSE);
++  }
++
++  return (TRUE);
++}
++
++static GstBuffer *
++gst_cdda2wav_read_sector (GstCddaBaseSrc * cddabasesrc, gint sector)
++{
++  GstCdda2Wav *src = GST_CDDA2WAV (cddabasesrc);
++  size_t       len = CDDA2WAV_BSIZE;
++  GstBuffer   *buf;
++
++  buf = gst_buffer_new_and_alloc (CDDA2WAV_BSIZE);
++
++  if (!cdda2wav_read (src, GST_BUFFER_DATA (buf), sector, 1)) {
++     free (buf);
++     buf = NULL;
++     return NULL;
++  }
++
++  return (buf);
++}
++
++static void
++gst_cdda2wav_finalize (GObject * obj)
++{
++  GstCdda2Wav *src = GST_CDDA2WAV (obj);
++
++  gst_cdda_close (src);
++
++  g_free (src->devices);
++  g_free (src->current_device);
++
++  G_OBJECT_CLASS (parent_class)->finalize (obj);
++}
++
++static gboolean
++plugin_init (GstPlugin * plugin)
++{
++  GST_DEBUG_CATEGORY_INIT (gst_cdda2wav_debug, "cdda2wav", 0,
++      "CDDA Source");
++
++  if (!gst_element_register (plugin, "cdda2wav", GST_RANK_SECONDARY,
++          GST_TYPE_CDDA2WAV))
++    return FALSE;
++
++#ifdef ENABLE_NLS
++  GST_DEBUG ("binding text domain %s to locale dir %s", GETTEXT_PACKAGE,
++      LOCALEDIR);
++  bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
++#endif
++
++  return TRUE;
++}
++
++static void
++gst_cdda2wav_set_property (GObject * object, guint prop_id,
++    const GValue * value, GParamSpec * pspec)
++{
++  GstCdda2Wav *src = GST_CDDA2WAV (object);
++
++  switch (prop_id) {
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++      break;
++  }
++}
++
++static void
++gst_cdda2wav_get_property (GObject * object, guint prop_id,
++    GValue * value, GParamSpec * pspec)
++{
++  GstCdda2Wav *src = GST_CDDA2WAV (object);
++
++  switch (prop_id) {
++    default:
++      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
++      break;
++  }
++}
++
++GST_PLUGIN_DEFINE (GST_VERSION_MAJOR,
++    GST_VERSION_MINOR,
++    "cdda2wav",
++    "Read audio from CD",
++    plugin_init, VERSION, "GPL", GST_PACKAGE_NAME, GST_PACKAGE_ORIGIN)
++
++/* ===== HAL stuff ===== */
++
++static LibHalContext *
++gst_cdda2wav_hal_init (GstCdda2Wav *src)
++{
++  DBusError error;
++  LibHalContext *hal_ctx = NULL;
++
++  dbus_error_init (&error);
++  if ((hal_ctx = libhal_ctx_new ()) == NULL) {
++     GST_ELEMENT_ERROR (src, LIBRARY, INIT,
++        ("failed to initialize HAL"), ("failed to initialize HAL"));
++     goto out;
++  }
++  if (!libhal_ctx_set_dbus_connection(hal_ctx,
++      dbus_bus_get (DBUS_BUS_SYSTEM, &error))) {
++
++     GST_ELEMENT_ERROR (src, LIBRARY, INIT,
++        ("DBus connection failed"),
++        ("libhal_ctx_set_dbus_connection: %s %s", error.name, error.message));
++     libhal_ctx_free (hal_ctx);
++     goto out;
++  }
++  if (!libhal_ctx_init(hal_ctx, &error)) {
++    GST_ELEMENT_ERROR (src, LIBRARY, INIT,
++       ("HAL context init failed"),
++       ("libhal_ctx_init: %s: %s", error.name, error.message));
++    libhal_ctx_free (hal_ctx);
++    goto out;
++  }
++out:
++  dbus_error_free (&error);
++
++  return (hal_ctx);
++}
++
++static void
++gst_cdda2wav_hal_fini (LibHalContext *hal_ctx)
++{
++  DBusError error;
++
++  dbus_error_init (&error);
++  libhal_ctx_shutdown (hal_ctx, &error);
++  libhal_ctx_free (hal_ctx);
++  dbus_error_free (&error);
++}
++
++static void
++gst_cdda2wav_hal_find_cdroms (GstCdda2Wav *src)
++{
++  DBusError       error;
++  LibHalContext   *hal_ctx;
++  int             i, j, k;
++  char            **drive_udis, **volume_udis;
++  int             num_drives, num_volumes;
++  char            *raw_device;
++  LibHalDrive     *drive;
++  dbus_bool_t     has_audio;
++
++  if ((hal_ctx = gst_cdda2wav_hal_init (src)) == NULL) {
++     return;
++  }
++  dbus_error_init (&error);
++
++  drive_udis = libhal_find_device_by_capability (hal_ctx, "storage.cdrom",
++    &num_drives, &error);
++
++  if (dbus_error_is_set (&error) || drive_udis == NULL) {
++     goto out;
++  }
++
++  src->devices   = calloc (num_drives + 1, sizeof (char *));
++  src->has_audio = calloc (num_drives + 1, sizeof (boolean_t));
++
++  for (i = j = 0; i < num_drives; i++) {
++     raw_device = libhal_device_get_property_string (hal_ctx,
++        drive_udis[i], "block.solaris.raw_device", &error);
++     dbus_error_free (&error);
++
++     if ((raw_device == NULL) || (strlen (raw_device) == 0)) {
++        libhal_free_string (raw_device);
++        continue;
++     }
++
++     src->devices[j] = strdup (raw_device);
++     libhal_free_string (raw_device);
++
++     /* check for audio disc in this drive */
++     if ((drive = libhal_drive_from_udi (hal_ctx, drive_udis[i])) != NULL) {
++        if ((volume_udis = libhal_drive_find_all_volumes (hal_ctx,
++             drive, &num_volumes)) != NULL) {
++
++           for (k = 0; k < num_volumes; k++) {
++               src->has_audio[j] = (boolean_t)
++               libhal_device_get_property_bool (hal_ctx,
++                  volume_udis[k], "volume.disc.has_audio", &error);
++               dbus_error_free (&error);
++               if (src->has_audio[j]) {
++                  break;
++               }
++           }
++           libhal_free_string_array (volume_udis);
++        }
++        libhal_drive_free (drive);
++     }
++
++     j++;
++  }
++
++out:
++  libhal_free_string_array (drive_udis);
++  dbus_error_free (&error);
++
++  gst_cdda2wav_hal_fini (hal_ctx);
++}
++
++#define	HAVE_SYS_FORK_H		/* XXX Need autoconf test */
++#ifdef	HAVE_SYS_FORK_H
++#include <sys/fork.h>
++#endif
++#include <wait.h>
++
++static pid_t
++xpopen(FILE **pfpin, FILE **pfpout, FILE **pfperr, const char *cmd)
++{
++	int	in[2];
++	int	out[2];
++	int	err[2];
++	pid_t	pid;
++ 
++	in[0]  = STDIN_FILENO;
++	out[1] = STDOUT_FILENO;
++	err[1] = STDERR_FILENO;
++	if (pfpin) {
++		if (pipe(in) < 0)
++			return ((pid_t)-1);
++	}
++	if (pfpout) {
++		if (pipe(out) < 0) {
++			close(in[0]);
++			close(in[1]);
++			return ((pid_t)-1);
++		}
++	}
++	if (pfperr) {
++		if (pipe(err) < 0) {
++			close(in[0]);
++			close(in[1]);
++			close(out[0]);
++			close(out[1]);
++			return ((pid_t)-1);
++		}
++	}
++
++#ifdef	FORK_NOSIGCHLD
++	pid = vforkx(FORK_NOSIGCHLD|FORK_WAITPID);
++#else
++	pid = vfork();	/* Need to find a way to deal with SIGCHLD and wait */
++#endif
++	if (pid == (pid_t)-1) {
++		return ((pid_t)-1);
++	} else if (pid > 0) {
++		if (pfpin) {
++			close(in[0]);
++			*pfpin = fdopen(in[1], "w");
++			if (*pfpin == NULL) {
++				close(in[1]);
++				close(out[0]);
++				close(out[1]);
++				close(err[0]);
++				close(err[1]);
++				kill(pid, SIGKILL);
++				xpclose(NULL, NULL, NULL, pid);
++				return ((pid_t)-1);
++			}
++		}
++		if (pfpout) {
++			close(out[1]);
++			*pfpout = fdopen(out[0], "r");
++			if (*pfpout == NULL) {
++				close(out[0]);
++				close(err[0]);
++				close(err[1]);
++				kill(pid, SIGKILL);
++				xpclose(*pfpin, NULL, NULL, pid);
++				return ((pid_t)-1);
++			}
++		}
++		if (pfperr) {
++			close(err[1]);
++			*pfperr = fdopen(err[0], "r");
++			if (*pfperr == NULL) {
++				close(err[0]);
++				kill(pid, SIGKILL);
++				xpclose(*pfpin, *pfpout, NULL, pid);
++				return ((pid_t)-1);
++			}
++		}
++	} else {
++		if (pfpin)
++			close(in[1]);
++		if (pfpout)
++			close(out[0]);
++		if (pfperr)
++			close(err[0]);
++		if (in[0] != STDIN_FILENO) {
++			dup2(in[0], STDIN_FILENO);
++			close(in[0]);
++		}
++		if (out[1] != STDOUT_FILENO) { 
++			dup2(out[1], STDOUT_FILENO); 
++			close(out[1]); 
++		} 
++		if (err[1] != STDERR_FILENO) {
++			dup2(err[1], STDERR_FILENO);
++			close(err[1]);
++		}
++		execl("/bin/sh", "sh", "-c", cmd, (char *)0);
++		_exit(1);
++	}
++	return (pid);
++}
++
++static int
++xpclose(FILE *fpin, FILE *fpout, FILE *fperr, pid_t child)
++{
++	int	status = 0;
++
++	if (fpin)
++		fclose(fpin);
++	if (fpout)
++		fclose(fpout);
++	if (fperr)
++		fclose(fperr);
++
++	if (child <= 0) {
++		errno = ECHILD;
++		return (-1);
++	}
++	if (waitpid(child, &status, WNOHANG) == child)
++		return (status);
++	while (waitpid(child, &status, 0) < 0) {
++		if (errno != EINTR) {
++			status = -1;
++			break;
++		}
++	}
++	return (status);
++}

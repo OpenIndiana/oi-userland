@@ -1,0 +1,283 @@
+diff -Nurp -x '*~' -x '*.orig' cpprules.in cpprules.in
+diff -urp -x '*~' -x '*.orig' cpprules.in cpprules.in
+--- cpprules.in	2010-03-12 12:38:21.000000000 +0800
++++ cpprules.in	2010-04-21 15:37:09.527675889 +0800
+@@ -25,7 +25,7 @@ XORGRELSTRING = @PACKAGE_STRING@
+   XORGMANNAME = X Version 11
+   XSERVERNAME = Xorg
+ 
+-MANDEFS = \
++MANDEFS = -D__SUNSOFT__ -D__distroname__="$${DISTRO_NAME}" \
+         -D__vendorversion__="\"$(XORGRELSTRING)\" \"$(XORGMANNAME)\"" \
+         -D__xorgversion__="\"$(XORGRELSTRING)\" \"$(XORGMANNAME)\"" \
+ 	-D__appmansuffix__=$(APP_MAN_SUFFIX) \
+diff -urp -x '*~' -x '*.orig' doc/Xserver.man.pre doc/Xserver.man.pre
+--- doc/Xserver.man.pre	2010-03-12 12:38:21.000000000 +0800
++++ doc/Xserver.man.pre	2010-04-21 15:37:09.528520653 +0800
+@@ -1,3 +1,25 @@
++.\" 
++.\" Copyright (c) 2007, 2010, Oracle and/or its affiliates. All rights reserved.
++.\" 
++.\" Permission is hereby granted, free of charge, to any person obtaining a
++.\" copy of this software and associated documentation files (the "Software"),
++.\" to deal in the Software without restriction, including without limitation
++.\" the rights to use, copy, modify, merge, publish, distribute, sublicense,
++.\" and/or sell copies of the Software, and to permit persons to whom the
++.\" Software is furnished to do so, subject to the following conditions:
++.\"
++.\" The above copyright notice and this permission notice (including the next
++.\" paragraph) shall be included in all copies or substantial portions of the
++.\" Software.
++.\"
++.\" THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++.\" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++.\" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
++.\" THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++.\" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
++.\" FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
++.\" DEALINGS IN THE SOFTWARE.
++.\"
+ .\" $Xorg: Xserver.man,v 1.4 2001/02/09 02:04:07 xorgcvs Exp $
+ .\" $XdotOrg: xserver/xorg/doc/Xserver.man.pre,v 1.4 2005/12/23 20:11:12 alanc Exp $
+ .\" Copyright 1984 - 1991, 1993, 1994, 1998  The Open Group
+@@ -32,14 +54,31 @@ Xserver \- X Window System display serve
+ .SH SYNOPSIS
+ .B X
+ [option ...]
++#ifdef __SUNSOFT__ 
++\fB/usr/bin/Xserver\fP [\fB-c\fP \fIclass\fP] \fB:\fP\fIdisplaynumber\fP [\fIX server arguments\fP]
++#endif
++.PP
+ .SH DESCRIPTION
+ .I X
+ is the generic name for the X Window System display server.  It is
+ frequently a link or a copy of the appropriate server binary for
+ driving the most frequently used server on a given machine.
++#ifdef __SUNSOFT__
++In this release of __distroname__, /usr/bin/X is a link to the 
++Xserver program which starts the appropriate X server based on properties
++set for the service management facility, under the service identifier
++\fIsvc:/application/x11/x11-server\fP.  The properties are described in the
++SMF PROPERTIES section below.
++#endif
+ .SH "STARTING THE SERVER"
++#ifdef __SUNSOFT__
++On __distroname__, the X server is usually started from the GNOME
++Display Manager program \fIgdm\fP(1m).   This role may also be performed
++by the X Display Manager program \fIxdm\fP(1), or another display manager. 
++#else
+ The X server is usually started from the X Display Manager program 
+ \fIxdm\fP(1) or a similar display manager program.
++#endif
+ This utility is run from the system boot files and takes care of keeping
+ the server running, prompting for usernames and passwords, and starting up
+ the user sessions.
+@@ -183,6 +222,35 @@ causes all remaining command line argume
+ sets the maximum big request to
+ .I size
+ MB.
++#ifdef __SUNSOFT__
++.TP 8
++.B \-nolisten \fItransport\fP
++disables listening for client connections on the named transport. The 
++current transport names supported are as follows: 
++.sp
++.nf 
++tcp     TCP over IPv4 or IPv6
++unix    UNIX Domain Sockets (/tmp/.x11-unix)
++pipe    Named pipes (/tmp/.x11-pipe/) and shared memory
++.fi
++.PP
++.in +8
++By default each of the above servers opens listeners on each of the 
++above transports. The -nolisten command line argument disables listening 
++on the named transports. You can disable multiple transports by listing 
++this option multiple times, for example: 
++.sp
++.nf 
++-nolisten pipe -nolisten tcp
++.fi
++.PP
++.in -8
++.in +13
++If all available transports are disabled, then the commands issue a fatal 
++error message and exit. A server not listening for any clients is of little 
++value.
++.in -13
++#else 
+ .TP 8
+ .B \-nolisten \fItrans-type\fP
+ disables a transport type.  For example, TCP/IP connections can be disabled
+@@ -190,6 +258,7 @@ with
+ .BR "\-nolisten tcp" .
+ This option may be issued multiple times to disable listening to different
+ transport types.
++#endif
+ .TP 8
+ .B \-noreset
+ prevents a server reset when the last client connection is closed.  This
+@@ -389,7 +458,7 @@ located in the XKB base directory or a s
+ relative path from the XKB base directory.  The default XKB base directory is
+ .IR __projectroot__/lib/X11/xkb .
+ .TP 8
+-.BR [+-]accessx " [ \fItimeout\fP [ \fItimeout_mask\fP [ \fIfeedback\fP [ \fIoptions_mask\fP ] ] ] ]"
++.BR [+-]accessx " [\fItimeout\fP[\fItimeout_mask\fP[\fIfeedback\fP[\fIoptions_mask\fP]]]]"
+ enables(+) or disables(-) AccessX key sequences.
+ .TP 8
+ .B \-xkbdir \fIdirectory\fP
+@@ -545,6 +614,102 @@ the following font path:
+     /usr/share/fonts/default/Type1,
+     /usr/share/fonts/default/ghostscript
+ .fi
++#ifdef __SUNSOFT__
++ 
++.SH SMF PROPERTIES
++.PP
++Configuration properties for the \fB/usr/bin/Xserver\fP program are
++managed by the service management facility, \fBsmf\fR(5), under the service 
++identifier:
++.PP
++.nf
++svc:/application/x11/x11-server
++.fi
++Use \fBsvccfg\fR(1M) to make configuration changes and to view configuration 
++information for this service\&. 
++.PP
++\fB/usr/bin/Xserver\fP will look for configuration options in the 
++instances in this order, stopping at the first match for the given
++property:
++.TP
++1.
++\fB:display\fP\fIN\fP (where \fIN\fP is the display number of the X server, 
++i.e. \fB:display0\fP for :0)
++.TP
++2.
++Any class names provided via the \fB-c\fP options to
++\fB/usr/bin/Xserver\fP.  Multiple \fB-c\fP options may be provided, if so,
++they are searched in the order found on the command line.
++.TP
++3.
++If any XDMCP options are provided to open a remote display connection,
++\fB:remote\fP, otherwise \fB:local\fP
++.TP
++4.
++The default properties for the service
++.PP
++Class names may be any valid FMRI instance name.   Sun reserves all class names
++beginning with lowercase letters for its own use - customers wishing to create
++their own class names may use names beginning with an uppercase letter.
++
++.PP
++These properties may be set in any instance of x11-server or for the service
++itself:
++.TP
++.B options/server 
++(Type astring) The absolute path to the X server binary to run, currently
++must be one of:
++.sp
++.nf
++\fB/usr/openwin/bin/Xsun\fP
++\fB/usr/openwin/bin/Xvfb\fP
++\fB/usr/bin/Xorg\fP
++\fB/usr/bin/i86/Xorg\fP
++\fB/usr/bin/amd64/Xorg\fP
++\fB/usr/bin/Xvfb\fP
++\fB/usr/bin/i86/Xvfb\fP
++\fB/usr/bin/amd64/Xvfb\fP
++\fB/usr/bin/Xvnc\fP
++.fi
++.TP
++.B options/tcp_listen
++(Type boolean) Setting this to false disables listening for incoming TCP/IP 
++connections (see \fB-nolisten tcp\fP option above).
++.TP
++.B options/default_depth
++(Type int) Sets the depth of the default visual of the X server started.
++.TP
++.B options/server_args
++(Type astring) Sets additional arguments to pass to the X server started.  Care
++must be used when using options specific to a particular X server as then it
++may cause failure to start the X server if the server to be started is later
++changed to one that does not support those options.
++.TP
++.B options/display_0_on_console
++(Type boolean) Setting this to true starts the X server with a DISPLAY ":0.0"
++on "/dev/console" rather than the first available "/dev/vt/#", see vt(7i),
++this preserves backward compatibility with programs such as "xterm -C"
++that expect have access to "/dev/console".  X servers with any other DISPLAY
++are not affected. The default is false.
++.SS "Example: Allow remote access"
++.PP
++The following command allows access from remote clients.
++.sp
++.nf
++svccfg -s svc:/application/x11/x11-server setprop options/tcp_listen = true
++.fi
++.sp
++Restart the Xserver by either logging out and logging back in, or manually 
++if the Xserver was started from the command line.
++.sp
++.SS "Example: Enables the XINERAMA extension"
++.PP
++The following command enables the XINERAMA extension.
++.sp
++.nf
++svccfg -s svc:/application/x11/x11-server setprop options/server_args=+xinerama
++.fi
++#endif
+ 
+ .SH FILES
+ .TP 30
+@@ -559,12 +724,23 @@ Outline font directories
+ .TP 30
+ .I /tmp/.X11-unix/X\fBn\fP
+ Unix domain socket for display number \fBn\fP
++#ifdef __SUNSOFT__
++.TP 30
++.I /tmp/.X11-pipe/X\fBn\fP
++Named pipe (FIFO) for display number \fBn\fP
++#endif
+ .TP 30
+ .I /usr/adm/X\fBn\fPmsgs
+ Error log file for display number \fBn\fP if run from \fIinit\fP(__adminmansuffix__)
+ .TP 30
+ .I __projectroot__/lib/X11/xdm/xdm-errors
+ Default error log file if the server is run from \fIxdm\fP(1)
++#ifdef __SUNSOFT__
++.TP 30
++.I /var/log/gdm/:\fBn\fP.log
++Default error log file for display number \fBn\fP if the server is run 
++from \fIgdm\fP(1m)
++#endif
+ .SH "SEE ALSO"
+ General information: \fIX\fP(__miscmansuffix__)
+ .PP
+@@ -581,14 +757,28 @@ Security: \fIXsecurity\fP(__miscmansuffi
+ \fIxdm\fP(1), \fIxhost\fP(1), \fIxfwp\fP(1),
+ .I "Security Extension Specification"
+ .PP
++#ifdef __SUNSOFT__
++Starting the server: \fIgdm\fP(1m), \fIstartx\fP(1), \fIxdm\fP(1), \fIxinit\fP(1)
++#else
+ Starting the server: \fIstartx\fP(1), \fIxdm\fP(1), \fIxinit\fP(1)
++#endif
+ .PP
+ Controlling the server once started: \fIxset\fP(1), \fIxsetroot\fP(1),
+ \fIxhost\fP(1)
++#ifdef __SUNSOFT__ 
++.\" Only list the servers shipped on Solaris
++.PP
++Server-specific man pages:
++\fIXorg\fP(1), \fIXephyr\fP(1), \fIXvfb\fP(1), \fIXvnc\fP(1)
++.PP
++Service management framework:
++\fIsmf\fP(5), \fIsvcadm\fP(1M), \fIsvccfg\fP(1M)
++#else
+ .PP
+ Server-specific man pages:
+ \fIXorg\fP(1), \fIXdmx\fP(1), \fIXephyr\fP(1), \fIXnest\fP(1),
+ \fIXvfb\fP(1), \fIXDarwin\fP(1), \fIXWin\fP(1).
++#endif
+ .PP
+ Server internal documentation:
+ .I "Definition of the Porting Layer for the X v11 Sample Server"

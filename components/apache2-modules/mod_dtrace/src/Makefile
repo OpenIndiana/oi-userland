@@ -37,7 +37,7 @@ apache.o: .libs/mod_dtrace.o apache.d
 	$(DTRACE) -G -o apache.o -s apache.d .libs/mod_dtrace.o
 
 .libs/mod_dtrace.so: apache.o mapfile .libs/mod_dtrace.o
-	$(CC) -Wl,-M -Wl,mapfile $(CFLAGS) -fPIC -G $(LDFLAGS_SHLIB) -o .libs/mod_dtrace.so .libs/mod_dtrace.o apache.o
+	$(CC) -Wl,-M -Wl,mapfile $(CFLAGS) -fPIC -shared $(LDFLAGS_SHLIB) -o .libs/mod_dtrace.so .libs/mod_dtrace.o apache.o
 	
 clean:
 	-rm -f *.o *.so *.lo *.la *.slo

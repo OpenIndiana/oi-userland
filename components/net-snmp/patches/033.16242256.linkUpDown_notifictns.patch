@@ -1,0 +1,136 @@
+Source : http://net-snmp.svn.sourceforge.net/viewvc/net-snmp?revision=16984&view=revision
+
+------------------------------------------------------------------------------------------
+--- a/agent/mibgroup/disman/event/mteObjects.h	Wed Sep 28 16:36:38 2005
++++ b/agent/mibgroup/disman/event/mteObjects.h	Fri Mar 29 07:56:26 2013
+@@ -53,6 +53,7 @@
+                                  char *owner,   char   *oname,
+                                  oid  *suffix,  size_t  sfx_len );
+ int  mteObjects_internal_vblist( netsnmp_variable_list *vblist,
+-                                 char *oname,   struct mteTrigger *trigger);
++                                 char *oname,   struct mteTrigger *trigger,
++								  netsnmp_session *s);
+ 
+ #endif                          /* MTEOBJECTS_H */
+--- a/agent/mibgroup/disman/event/mteObjects.c	Tue Sep 19 12:06:06 2006
++++ b/agent/mibgroup/disman/event/mteObjects.c	Fri Mar 29 08:06:13 2013
+@@ -335,7 +335,9 @@
+ 
+ int
+ mteObjects_internal_vblist( netsnmp_variable_list *vblist,
+-                            char   *oname, struct mteTrigger *trigger)
++                            char   *oname,
++							 struct mteTrigger *trigger,
++							 netsnmp_session   *sess)
+ {
+     netsnmp_variable_list *var = NULL, *vp;
+     oid mteHotTrigger[] = {1, 3, 6, 1, 2, 1, 88, 2, 1, 1, 0};
+@@ -343,7 +345,12 @@
+     oid mteHotContext[] = {1, 3, 6, 1, 2, 1, 88, 2, 1, 3, 0};
+     oid mteHotOID[]     = {1, 3, 6, 1, 2, 1, 88, 2, 1, 4, 0};
+     oid mteHotValue[]   = {1, 3, 6, 1, 2, 1, 88, 2, 1, 5, 0};
++	oid ifIndexOid[]    = {1, 3, 6, 1, 2, 1, 2, 2, 1, 1, 0};
++	oid ifAdminStatus[] = {1, 3, 6, 1, 2, 1, 2, 2, 1, 7, 0};
++	oid ifOperStatus[]  = {1, 3, 6, 1, 2, 1, 2, 2, 1, 8, 0};
+ 
++	oid if_index;
++
+     /*
+      * Construct the varbinds for this (internal) event...
+      */
+@@ -370,6 +377,40 @@
+                               trigger->mteTriggerFired->type,
+                               trigger->mteTriggerFired->val.string,
+                               trigger->mteTriggerFired->val_len);
++	} else if ((!strcmp(oname, "_linkUpDown"  ))) {
++		/*
++		 * The ifOperStatus varbind that triggered this entry
++		 * is held in the trigger->mteTriggerFired field
++		 *
++		 * We can retrieve the ifIndex and ifOperStatus values
++		 * from this varbind.  But first we need to tweak the
++		 * static ifXXX OID arrays to include the correct index.
++		 * (or this could be passed in from the calling routine?)
++		 *
++		 * Unfortunately we don't have the current AdminStatus value,
++		 * so we'll need to make another query to retrieve that.
++		 */
++		if_index = trigger->mteTriggerFired->name[10];
++		ifIndexOid[10] = if_index;
++		ifAdminStatus[10] = if_index;
++		ifOperStatus[10] = if_index;
++		snmp_varlist_add_variable( &var,
++				ifIndexOid, OID_LENGTH(ifIndexOid),
++				ASN_INTEGER, &if_index, sizeof(if_index));
++
++		/* Set up a dummy varbind for ifAdminStatus... */
++		snmp_varlist_add_variable( &var,
++				ifAdminStatus, OID_LENGTH(ifAdminStatus),
++				ASN_INTEGER,
++				trigger->mteTriggerFired->val.integer,
++				trigger->mteTriggerFired->val_len);
++		/* ... then retrieve the actual value */
++		netsnmp_query_get(var->next_variable, sess);
++		snmp_varlist_add_variable( &var,
++				ifOperStatus, OID_LENGTH(ifOperStatus),
++				ASN_INTEGER,
++				trigger->mteTriggerFired->val.integer,
++				trigger->mteTriggerFired->val_len);
+     } else {
+         DEBUGMSGTL(("disman:event:objects",
+                     "Unknown internal objects tag (%s)\n", oname));
+--- a/agent/mibgroup/disman/event/mteEvent.c	Mon Jul  2 07:02:29 2007
++++ b/agent/mibgroup/disman/event/mteEvent.c	Fri Mar 29 09:46:24 2013
+@@ -266,7 +266,7 @@
+     return fired;
+ }
+ 
+-
++#ifdef __NOT_NEEDED
+ void
+ _insert_internal_objects( netsnmp_variable_list *vblist, char *oname,
+                           struct mteTrigger *trigger)
+@@ -322,6 +322,7 @@
+     vp->next_variable     = vblist->next_variable;
+     vblist->next_variable = var;
+ }
++#endif
+ 
+ int
+ _mteEvent_fire_notify( struct mteEvent   *entry,     /* The event to fire  */
+@@ -331,6 +332,8 @@
+     netsnmp_variable_list *var, *v2;
+     oid    snmptrap_oid[]   = { 1,3,6,1,6,3,1,1,4,1,0 };
+     size_t snmptrap_oid_len = OID_LENGTH(snmptrap_oid);
++	netsnmp_session *s;
++
+          /*
+           * The Event-MIB specification says that objects from the
+           *   mteEventTable should come after those from the trigger,
+@@ -394,9 +397,10 @@
+      */
+     v2 = var->next_variable;
+     if (entry->session)
+-        netsnmp_query_get( v2, entry->session );
++		s = entry->session;
+     else
+-        netsnmp_query_get( v2, trigger->session );
++		s = trigger->session;
++	netsnmp_query_get( v2, s );
+ 
+     /*
+      * ... add any "internal" objects...
+@@ -405,11 +409,11 @@
+     if (strcmp(entry->mteNotifyOwner, "_snmpd") == 0) {
+         DEBUGMSGTL(("disman:event:fire", "Adding event objects (internal)\n"));
+         if ( !strictOrdering ) {
+-            mteObjects_internal_vblist(var, entry->mteNotifyObjects, trigger);
++            mteObjects_internal_vblist(var, entry->mteNotifyObjects, trigger, s);
+         } else {
+             for (v2 = var; v2 && v2->next_variable; v2=v2->next_variable)
+                 ;
+-            mteObjects_internal_vblist(v2, entry->mteNotifyObjects, trigger);
++            mteObjects_internal_vblist(v2, entry->mteNotifyObjects, trigger, s);
+         }
+     }
+ 

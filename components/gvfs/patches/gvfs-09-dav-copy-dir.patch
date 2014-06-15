@@ -1,0 +1,152 @@
+--- gvfs-1.6.7/daemon/gvfsbackenddav.c.orig	2011-11-24 11:19:38.485609221 +0000
++++ gvfs-1.6.7/daemon/gvfsbackenddav.c	2011-11-24 11:51:11.252259216 +0000
+@@ -1911,6 +1911,84 @@
+ /* ************************************************************************* */
+ /*  */
+ 
++/* *** open () *** */
++static void
++try_open_stat_done (SoupSession *session,
++                   SoupMessage *msg,
++                   gpointer     user_data)
++{
++  GVfsJob         *job = G_VFS_JOB (user_data);
++  GVfsBackend     *backend = job->backend_data;
++  GFileType        target_type;
++  SoupURI         *uri;
++  gboolean         res;
++  guint            status;
++
++  status = msg->status_code;
++
++  if (status != 207)
++    {
++      g_vfs_job_failed_literal (job,
++                               G_IO_ERROR,
++                               http_error_code_from_status (status),
++                               msg->reason_phrase);
++      return;
++    }
++
++   res = stat_location_finish (msg, &target_type, NULL);
++
++   if (res == FALSE)
++     {
++       g_vfs_job_failed (job,
++                        G_IO_ERROR, G_IO_ERROR_FAILED,
++                        _("Response invalid"));
++       return;
++     }
++
++   if (target_type == G_FILE_TYPE_DIRECTORY)
++     {
++       g_vfs_job_failed (job,
++                        G_IO_ERROR, G_IO_ERROR_IS_DIRECTORY,
++                        _("File is directory"));
++       return;
++     }
++
++   uri = soup_message_get_uri (msg);
++
++   http_backend_open_for_read (backend, job, uri);
++}
++
++
++static gboolean
++try_open_for_read (GVfsBackend        *backend,
++                   GVfsJobOpenForRead *job,
++                   const char         *filename)
++{
++  SoupMessage     *msg;
++  SoupURI         *uri;
++
++  uri = http_backend_uri_for_filename (backend, filename, FALSE);
++  msg = stat_location_begin (uri, FALSE);
++  soup_uri_free (uri);
++
++  if (msg == NULL)
++    {
++      g_vfs_job_failed (G_VFS_JOB (job),
++                        G_IO_ERROR, G_IO_ERROR_FAILED,
++                        _("Could not create request"));
++
++      return FALSE;
++   }
++
++  g_vfs_job_set_backend_data (G_VFS_JOB (job), backend, NULL);
++  http_backend_queue_message (backend, msg, try_open_stat_done, job);
++
++  return TRUE;
++}
++
++
++
++
+ /* *** create () *** */
+ static void
+ try_create_tested_existence (SoupSession *session, SoupMessage *msg,
+@@ -2329,6 +2407,7 @@
+   backend_class->try_query_info    = NULL;
+   backend_class->query_info        = do_query_info;
+   backend_class->enumerate         = do_enumerate;
++  backend_class->try_open_for_read = try_open_for_read;
+   backend_class->try_create        = try_create;
+   backend_class->try_replace       = try_replace;
+   backend_class->try_write         = try_write;
+--- gvfs-1.6.7/daemon/gvfsbackendhttp.c.orig	2011-11-24 11:23:01.053974107 +0000
++++ gvfs-1.6.7/daemon/gvfsbackendhttp.c	2011-11-24 11:52:34.502796327 +0000
+@@ -378,15 +378,27 @@
+                    GVfsJobOpenForRead *job,
+                    const char         *filename)
+ {
++  SoupURI *uri;
++
++  uri = http_backend_uri_for_filename (backend, filename, FALSE);
++
++  http_backend_open_for_read (backend, G_VFS_JOB (job), uri);
++  soup_uri_free (uri);
++
++  return TRUE;
++}
++
++void
++http_backend_open_for_read (GVfsBackend *backend,
++                            GVfsJob     *job,
++                            SoupURI      *uri)
++{
+   GVfsBackendHttp *op_backend;
+   GInputStream    *stream;
+   SoupMessage     *msg;
+-  SoupURI         *uri;
+ 
+   op_backend = G_VFS_BACKEND_HTTP (backend);
+-  uri = http_backend_uri_for_filename (backend, filename, FALSE);
+   msg = soup_message_new_from_uri (SOUP_METHOD_GET, uri);
+-  soup_uri_free (uri);
+ 
+   soup_message_body_set_accumulate (msg->response_body, FALSE);
+ 
+@@ -395,10 +407,9 @@
+ 
+   soup_input_stream_send_async (stream,
+                                 G_PRIORITY_DEFAULT,
+-                                G_VFS_JOB (job)->cancellable,
++                                job->cancellable,
+                                 open_for_read_ready,
+                                 job);
+-  return TRUE;
+ }
+ 
+ /* *** read () *** */
+--- gvfs-1.6.7/daemon/gvfsbackendhttp.h.orig	2011-11-24 11:25:41.466046797 +0000
++++ gvfs-1.6.7/daemon/gvfsbackendhttp.h	2011-11-24 11:52:48.660514702 +0000
+@@ -73,6 +73,9 @@
+                                               SoupMessage         *msg,
+                                               SoupSessionCallback  callback,
+                                               gpointer             user_data);
++void          http_backend_open_for_read     (GVfsBackend         *backend,
++                                              GVfsJob             *job,
++                                              SoupURI             *uri);
+ 
+ G_END_DECLS
+ 

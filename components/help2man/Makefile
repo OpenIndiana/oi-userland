@@ -15,10 +15,10 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		help2man
-COMPONENT_VERSION=	1.43.3
+COMPONENT_VERSION=	1.45.1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH=	sha256:67978d118980ebd9f0c60be5db129527900a7b997b9568fc795ba9bdb341d303
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:c70fc791e6d13240327955de355244371b00bb1c9e247d5693ed601b716467c2
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/help2man/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL=	https://www.gnu.org/software/help2man/	
 
@@ -27,6 +27,7 @@ include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--infodir=$(CONFIGURE_INFODIR)
+CONFIGURE_ENV  +=	PERL="$(PERL)"
 
 # common targets
 build:		$(BUILD_32)

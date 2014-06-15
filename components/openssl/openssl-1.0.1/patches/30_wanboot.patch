@@ -1,3 +1,7 @@
+#
+# This patch file makes the changes neccessary to build wanboot-openssl.o
+# binary. This is Solaris-specific: not suitable for upstream.
+#
 --- openssl-1.0.0g/Makefile.org	2010-01-27 08:06:58.000000000 -0800
 +++ openssl-1.0.0g-1/Makefile.org	2012-03-26 03:04:08.440194448 -0700
 @@ -138,7 +138,13 @@
@@ -32,7 +36,45 @@
 
 --- openssl-1.0.0e/crypto/cryptlib.c	2011-06-22 08:39:00.000000000 -0700
 +++ openssl-1.0.0e_patched/crypto/cryptlib.c	2011-12-12 06:17:45.422476900 -0800
-@@ -900,6 +900,10 @@
+@@ -415,6 +415,7 @@
+ static void solaris_locking_callback(int mode, int type, const char *file,
+     int line)
+ 	{
++#ifndef	_BOOT
+ 	if (mode & CRYPTO_LOCK)
+ 		{
+ 		pthread_mutex_lock(&solaris_openssl_locks[type]);
+@@ -423,6 +424,7 @@
+ 		{
+ 		pthread_mutex_unlock(&solaris_openssl_locks[type]);
+ 		}
++#endif
+ 	}
+
+
+@@ -456,6 +458,12 @@
+ 		}
+ 
+ 	/*
++	 * pthread_* can't be used in wanboot.
++	 * wanboot needs not be thread-safe and mutexes and locking callback
++	 * function will not be setup for wanboot.
++	 */
++#ifndef	_BOOT
++	/*
+ 	 * Set atfork handler so that child can setup its own mutexes and
+ 	 * locking callbacks when it is forked
+ 	 */
+@@ -478,7 +486,7 @@
+ 		pthread_mutex_init(&solaris_openssl_locks[i], NULL);
+ 		}
+ 	locking_callback = solaris_locking_callback;
+-
++#endif
+ 	}
+ 
+ void CRYPTO_set_locking_callback(void (*func)(int mode,int type,
+@@ -979,6 +979,10 @@
  	MessageBox (NULL,buf,_T("OpenSSL: FATAL"),MB_OK|MB_ICONSTOP);
  }
  #else
@@ -43,7 +85,7 @@
  void OPENSSL_showfatal (const char *fmta,...)
  { va_list ap;
  
-@@ -907,14 +911,21 @@
+@@ -986,14 +990,21 @@
      vfprintf (stderr,fmta,ap);
      va_end (ap);
  }
@@ -325,12 +367,14 @@
   */
 --- openssl-1.0.0e/crypto/sparccpuid.S	2010-09-05 12:48:01.000000000 -0700
 +++ openssl-1.0.0e_patched/crypto/sparccpuid.S	2012-02-13 07:42:58.259478325 -0800
-@@ -397,6 +397,11 @@
+@@ -397,8 +397,13 @@
  .type	OPENSSL_cleanse,#function
  .size	OPENSSL_cleanse,.-OPENSSL_cleanse
  
 +#ifndef _BOOT
  .section	".init",#alloc,#execinstr
+ 	call	solaris_locking_setup
+ 	nop
 	call	OPENSSL_cpuid_setup
 	nop
 +#else
@@ -351,3 +395,19 @@
 
  SRC= $(LIBSRC)
 
+--- openssl-1.0.1f/ssl/s3_clnt.c    Thu Jan 30 02:53:33 2014
++++ openssl-1.0.1f/ssl/s3_clnt.c.new   Thu Jan 30 02:57:51 2014
+@@ -681,8 +681,13 @@
+ 
+ 		p=s->s3->client_random;
+ 
++#ifndef	_BOOT
+ 		if (ssl_fill_hello_random(s, 0, p, SSL3_RANDOM_SIZE) <= 0)
+ 			goto err;
++#else
++		if (RAND_pseudo_bytes(p,SSL3_RANDOM_SIZE) <= 0)
++			goto err;
++#endif
+ 
+ 		/* Do the message type and length last */
+ 		d=p= &(buf[4]);

@@ -73,6 +73,11 @@ file group=lp mode=0640 path=etc/cups/cupsd.conf preserve=true
 file path=lib/svc/manifest/application/cups.xml mode=0444 \
      restart_fmri=svc:/system/manifest-import:default
 
+file Solaris/service-selector.xml path=lib/svc/manifest/application/print/service-selector.xml mode=0444 \
+     restart_fmri=svc:/system/manifest-import:default
+
+file Solaris/print-service-selector path=lib/svc/method/print-service-selector
+
 # SMF service start method script
 file Solaris/svc-cupsd path=lib/svc/method/svc-cupsd
 
@@ -80,23 +85,23 @@ file Solaris/svc-cupsd path=lib/svc/method/svc-cupsd
 file Solaris/ManageCUPS.html mode=0444 \
      path=usr/lib/help/auths/locale/C/ManageCUPS.html
 
-file path=usr/bin/cancel
-file path=usr/bin/lp
-file path=usr/bin/lpr
-file path=usr/bin/lpstat
-file path=usr/bin/lpq
-file path=usr/bin/lprm
-file path=usr/sbin/cupsaccept
-file path=usr/sbin/lpc
-file path=usr/sbin/lpmove
-file path=usr/sbin/lpadmin
+file usr/bin/cancel path=usr/lib/cups/bin/cancel mode=0555
+file usr/bin/lp path=usr/lib/cups/bin/lp mode=0555
+file usr/bin/lpr path=usr/lib/cups/bin/lpr mode=0555
+file usr/bin/lpstat path=usr/lib/cups/bin/lpstat mode=0555
+file usr/bin/lpq path=usr/lib/cups/bin/lpq mode=0555
+file usr/bin/lprm path=usr/lib/cups/bin/lprm mode=0555
+file usr/sbin/cupsaccept path=usr/lib/cups/bin/cupsaccept mode=0555
+file usr/sbin/lpc path=usr/lib/cups/bin/lpc mode=0555
+file usr/sbin/lpmove path=usr/lib/cups/bin/lpmove mode=0555
+file usr/sbin/lpadmin path=usr/lib/cups/bin/lpadmin mode=0555
 file path=usr/sbin/lpinfo
 
 # install the desktop menu related bits
 file Solaris/desktop-print-management mode=0555 \
-     path=usr/bin/desktop-print-management
+     path=usr/lib/cups/bin/desktop-print-management
 file Solaris/desktop-print-management-applet mode=0555 \
-     path=usr/bin/desktop-print-management-applet
+     path=usr/lib/cups/bin/desktop-print-management-applet
 file Solaris/smb mode=0555 \
      path=usr/lib/cups/backend/smb
 
@@ -1026,51 +1031,36 @@ file path=usr/share/locale/pt_BR/cups_pt_BR.po
 file path=usr/share/locale/ru/cups_ru.po
 file path=usr/share/locale/sv/cups_sv.po
 file path=usr/share/locale/zh_TW/cups_zh_TW.po
-file path=usr/share/man/man1/cancel.1
-file path=usr/share/man/man1/cups-config.1
-file path=usr/share/man/man1/cupstestdsc.1
-file path=usr/share/man/man1/cupstestppd.1
-file path=usr/share/man/man1/lp.1
-file path=usr/share/man/man1/lpoptions.1
-file path=usr/share/man/man1/lppasswd.1
-file path=usr/share/man/man1/lpq.1
-file path=usr/share/man/man1/lpr.1
-file path=usr/share/man/man1/lprm.1
-file path=usr/share/man/man1/lpstat.1
-file path=usr/share/man/man1/ppdc.1
-file path=usr/share/man/man1/ppdhtml.1
-file path=usr/share/man/man1/ppdi.1
-file path=usr/share/man/man1/ppdmerge.1
-file path=usr/share/man/man1/ppdpo.1
-file path=usr/share/man/man1m/cups-deviced.1m
-file path=usr/share/man/man1m/cups-driverd.1m
-file path=usr/share/man/man1m/cups-lpd.1m
-file path=usr/share/man/man1m/cups-polld.1m 
-file path=usr/share/man/man1m/cupsaccept.1m
-file path=usr/share/man/man1m/cupsaddsmb.1m
-file path=usr/share/man/man1m/cupsctl.1m
-file path=usr/share/man/man1m/cupsd.1m
-file path=usr/share/man/man1m/cupsenable.1m
-file path=usr/share/man/man1m/cupsfilter.1m
-file path=usr/share/man/man1m/lpadmin.1m
-file path=usr/share/man/man1m/lpc.1m
-file path=usr/share/man/man1m/lpinfo.1m
-file path=usr/share/man/man1m/lpmove.1m
-# Pages for cups from "1m" sections should also be copied to "8" section.
-file usr/share/man/man1m/cups-deviced.1m path=usr/share/man/man8/cups-deviced.8
-file usr/share/man/man1m/cups-driverd.1m path=usr/share/man/man8/cups-driverd.8
-file usr/share/man/man1m/cups-lpd.1m path=usr/share/man/man8/cups-lpd.8
-file usr/share/man/man1m/cups-polld.1m path=usr/share/man/man8/cups-polld.8
-file usr/share/man/man1m/cupsaccept.1m path=usr/share/man/man8/cupsaccept.8
-file usr/share/man/man1m/cupsaddsmb.1m path=usr/share/man/man8/cupsaddsmb.8
-file usr/share/man/man1m/cupsctl.1m path=usr/share/man/man8/cupsctl.8
-file usr/share/man/man1m/cupsd.1m path=usr/share/man/man8/cupsd.8
-file usr/share/man/man1m/cupsenable.1m path=usr/share/man/man8/cupsenable.8
-file usr/share/man/man1m/cupsfilter.1m path=usr/share/man/man8/cupsfilter.8
-file usr/share/man/man1m/lpadmin.1m path=usr/share/man/man8/lpadmin.8
-file usr/share/man/man1m/lpc.1m path=usr/share/man/man8/lpc.8
-file usr/share/man/man1m/lpinfo.1m path=usr/share/man/man8/lpinfo.8
-file usr/share/man/man1m/lpmove.1m path=usr/share/man/man8/lpmove.8
+file usr/share/man/man1/cancel.1 path=usr/share/man/man1cups/cancel.1cups
+file usr/share/man/man1/cups-config.1 path=usr/share/man/man1cups/cups-config.1cups
+file usr/share/man/man1/cupstestdsc.1 path=usr/share/man/man1cups/cupstestdsc.1cups
+file usr/share/man/man1/cupstestppd.1 path=usr/share/man/man1cups/cupstestppd.1cups
+file usr/share/man/man1/lp.1 path=usr/share/man/man1cups/lp.1cups
+file usr/share/man/man1/lpoptions.1 path=usr/share/man/man1cups/lpoptions.1cups
+file usr/share/man/man1/lppasswd.1 path=usr/share/man/man1cups/lppasswd.1cups
+file usr/share/man/man1/lpq.1 path=usr/share/man/man1cups/lpq.1cups
+file usr/share/man/man1/lpr.1 path=usr/share/man/man1cups/lpr.1cups
+file usr/share/man/man1/lprm.1 path=usr/share/man/man1cups/lprm.1cups
+file usr/share/man/man1/lpstat.1 path=usr/share/man/man1cups/lpstat.1cups
+file usr/share/man/man1/ppdc.1 path=usr/share/man/man1cups/ppdc.1cups
+file usr/share/man/man1/ppdhtml.1 path=usr/share/man/man1cups/ppdhtml.1cups
+file usr/share/man/man1/ppdi.1 path=usr/share/man/man1cups/ppdi.1cups
+file usr/share/man/man1/ppdmerge.1 path=usr/share/man/man1cups/ppdmerge.1cups
+file usr/share/man/man1/ppdpo.1 path=usr/share/man/man1cups/ppdpo.1cups
+file usr/share/man/man1m/cups-deviced.1m path=usr/share/man/man1cups/cups-deviced.1cups
+file usr/share/man/man1m/cups-driverd.1m path=usr/share/man/man1cups/cups-driverd.1cups
+file usr/share/man/man1m/cups-lpd.1m path=usr/share/man/man1cups/cups-lpd.1cups
+file usr/share/man/man1m/cups-polld.1m path=usr/share/man/man1cups/cups-polld.1cups
+file usr/share/man/man1m/cupsaccept.1m path=usr/share/man/man1cups/cupsaccept.1cups
+file usr/share/man/man1m/cupsaddsmb.1m path=usr/share/man/man1cups/cupsaddsmb.1cups
+file usr/share/man/man1m/cupsctl.1m path=usr/share/man/man1cups/cupsctl.1cups
+file usr/share/man/man1m/cupsd.1m path=usr/share/man/man1cups/cupsd.1cups
+file usr/share/man/man1m/cupsenable.1m path=usr/share/man/man1cups/cupsenable.1cups
+file usr/share/man/man1m/cupsfilter.1m path=usr/share/man/man1cups/cupsfilter.1cups
+file usr/share/man/man1m/lpadmin.1m path=usr/share/man/man1cups/lpadmin.1cups
+file usr/share/man/man1m/lpc.1m path=usr/share/man/man1cups/lpc.1cups
+file usr/share/man/man1m/lpinfo.1m path=usr/share/man/man1cups/lpinfo.1cups
+file usr/share/man/man1m/lpmove.1m path=usr/share/man/man1cups/lpmove.1cups
 file path=usr/share/man/man5/classes.conf.5
 file path=usr/share/man/man5/client.conf.5
 file path=usr/share/man/man5/cups-snmp.conf.5
@@ -1095,15 +1085,10 @@ link path=usr/lib/libcupsdriver.so target=libcupsdriver.so.1
 link path=usr/lib/libcupsmime.so target=libcupsmime.so.1
 link path=usr/lib/libcupsppdc.so target=libcupsppdc.so.1
 
-link path=usr/sbin/accept target=cupsaccept
-link path=usr/sbin/cupsdisable target=cupsaccept
-link path=usr/bin/disable target=../sbin/cupsaccept
-link path=usr/sbin/cupsenable target=cupsaccept
-link path=usr/bin/enable target=../sbin/cupsaccept
-link path=usr/sbin/cupsreject target=cupsaccept
-link path=usr/sbin/reject target=cupsaccept
-
-link path=usr/share/man/man1/accept.1 target=../man1m/cupsaccept.1m
-link path=usr/share/man/man1/cupsdisable.1 target=../man1m/cupsenable.1m
-link path=usr/share/man/man1/cupsreject.1 target=../man1m/cupsaccept.1m
-link path=usr/share/man/man1/reject.1 target=../man1m/cupsaccept.1m
+link path=usr/lib/cups/bin/accept target=cupsaccept
+link path=usr/lib/cups/bin/cupsdisable target=cupsaccept
+link path=usr/lib/cups/bin/disable target=cupsaccept
+link path=usr/lib/cups/bin/cupsenable target=cupsaccept
+link path=usr/lib/cups/bin/enable target=cupsaccept
+link path=usr/lib/cups/bin/cupsreject target=cupsaccept
+link path=usr/lib/cups/bin/reject target=cupsaccept

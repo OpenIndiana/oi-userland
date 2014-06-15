@@ -1,0 +1,35 @@
+From d11ec091a9eaa2a96b277af0e18677df5b544589 Mon Sep 17 00:00:00 2001
+From: Brian Lu <brian.lu@sun.com>
+Date: Sun, 13 Jun 2010 11:57:58 +0800
+Subject: [PATCH] Fix the bug bgo#621419
+
+---
+ src/gui/assistant.cpp |    4 +---
+ 1 files changed, 1 insertions(+), 3 deletions(-)
+
+diff --git a/src/gui/assistant.cpp b/src/gui/assistant.cpp
+index ab187d4..600483a 100644
+--- a/src/gui/assistant.cpp
++++ b/src/gui/assistant.cpp
+@@ -1562,8 +1562,8 @@ ekiga_assistant_cancel (GtkAssistant *gtkassistant)
+ 
+   main_window = GnomeMeeting::Process ()->GetMainWindow ();
+ 
+-  gtk_widget_hide (GTK_WIDGET (gtkassistant));
+   gtk_assistant_set_current_page (gtkassistant, 0);
++  gtk_widget_hide (GTK_WIDGET (gtkassistant));
+   gtk_widget_show (main_window);
+ }
+ 
+@@ -1619,8 +1619,6 @@ ekiga_assistant_new (Ekiga::ServiceCore *core)
+   assistant->priv->core = core;
+ 
+   /* FIXME: move this into the caller */
+-  g_signal_connect (assistant, "cancel",
+-                    G_CALLBACK (gtk_widget_hide), NULL);
+   g_signal_connect (assistant, "key-press-event",
+                     G_CALLBACK (ekiga_assistant_key_press_cb), NULL);
+ 
+-- 
+1.5.6.5
+

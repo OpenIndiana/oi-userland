@@ -1,0 +1,17 @@
+--- gnome-vfs-2.17.2/configure.in.orig	2007-01-11 11:28:54.973624000 +0000
++++ gnome-vfs-2.17.2/configure.in	2007-01-11 11:30:09.608263000 +0000
+@@ -443,8 +443,12 @@
+ AC_PATH_PROG([KRB5_CONFIG], krb5-config, none, $PATH:/usr/kerberos/bin)
+ 					   
+ if test "x$KRB5_CONFIG" != "xnone"; then
+-   GSSAPI_LIBS="`${KRB5_CONFIG} --libs gssapi`"
+-   GSSAPI_CFLAGS="`${KRB5_CONFIG} --cflags gssapi`"
++   case $host in
++       *solaris*) GSSAPI_LIBS="`${KRB5_CONFIG} --libs`"
++                  GSSAPI_CFLAGS="`${KRB5_CONFIG} --cflags`" ;;
++       *) GSSAPI_LIBS="`${KRB5_CONFIG} --libs gssapi`"
++          GSSAPI_CFLAGS="`${KRB5_CONFIG} --cflags gssapi`" ;;
++   esac
+    
+    saved_CPPFLAGS="$CPPFLAGS"
+    saved_LIBS="$LIBS"

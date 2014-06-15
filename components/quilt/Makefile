@@ -28,12 +28,12 @@ include ../../make-rules/shared-macros.mk
 PATH = /usr/gnu/bin:/usr/bin
 
 COMPONENT_NAME=		quilt
-COMPONENT_VERSION=	0.60
+COMPONENT_VERSION=	0.61
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://savannah.nongnu.org/projects/quilt/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3d72a292e432beb9a73f9d0acfe3a77c9b4d7e42209919bb244e9958c7cfe64b
+    sha256:1eec0a270ac4d41eea0fd5823603c9d2a35ab6b8ab73a90dd92ce1291b2a9fc3
 COMPONENT_ARCHIVE_URL=	http://download.savannah.gnu.org/releases/quilt/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/quilt
 

@@ -1,0 +1,37 @@
+--- desktop-cache-smf-services-0.2.2/gconf-cache/gconf-cache.orig	Sat Mar 15 19:06:03 2014
++++ desktop-cache-smf-services-0.2.2/gconf-cache/gconf-cache	Sat Mar 15 19:14:29 2014
+@@ -52,8 +52,25 @@
+ # generate/merge schema files in the gconf cache
+ #
+ 
++redo_gsettings_schemas ()
++{
++if [ -a "/usr/share/glib-2.0/schemas/gschemas.compiled" ]; then
++  SCHEMAS=`${FIND_NEWER} -f -m -c --name '*.xml' \
++      --newer /usr/share/glib-2.0/schemas/gschemas.compiled \
++      /usr/share/glib-2.0/schemas 2>/dev/null`
++else
++  SCHEMAS="NEW"
++fi
++
++if [ -n "$SCHEMAS" ]; then
++  /usr/bin/glib-compile-schemas /usr/share/glib-2.0/schemas/ 2>/dev/null
++fi
++}
++
+ start_gconf_cache ()
+ {
++redo_gsettings_schemas
++
+ if [ -a "/etc/gconf/gconf.xml.defaults/%gconf-tree.xml" ]; then
+   SCHEMAS=`${FIND_NEWER} -f -m -c --name '*.schemas' \
+       --newer /etc/gconf/gconf.xml.defaults/%gconf-tree.xml \
+@@ -108,6 +125,8 @@
+ 
+ refresh_gconf_cache ()
+ {
++redo_gsettings_schemas
++
+ if [ -a "/etc/gconf/gconf.xml.defaults/%gconf-tree.xml" ]; then
+   SCHEMAS=`/usr/bin/find /etc/gconf/schemas ! -type d -follow \
+     -name '*.schemas' 2>/dev/null`

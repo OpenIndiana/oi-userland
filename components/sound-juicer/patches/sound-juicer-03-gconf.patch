@@ -1,0 +1,14 @@
+--- sound-juicer-2.28.0-old/src/sj-main.c	2009-09-23 16:28:15.261130000 +0800
++++ sound-juicer-2.28.0/src/sj-main.c	2009-09-23 16:23:58.164921000 +0800
+@@ -1671,6 +1671,11 @@
+     bacon_message_connection_set_callback (connection, on_message_received, NULL);
+   }
+ 
++  /*
++      add special setting for brasero media library init
++  */
++  g_setenv ("DBUS_SESSION_BUS_ADDRESS", "autolaunch:", TRUE);
++
+   brasero_media_library_start ();
+ 
+   metadata = sj_metadata_getter_new ();

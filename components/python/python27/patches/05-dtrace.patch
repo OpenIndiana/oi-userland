@@ -2,9 +2,9 @@ This patch adds Python dtrace support.  Note it is necessary to modify
 test_sys.py to add an integer to the frameobject structure size since this
 patch adds "int f_calllineno" to the structure, so this test does not fail.
 
---- Python-2.7.1/Makefile.pre.in.~1~	Thu Oct 14 06:37:30 2010
-+++ Python-2.7.1/Makefile.pre.in	Mon Jul 18 14:53:46 2011
-@@ -198,6 +198,7 @@
+--- Python-2.7.6/Makefile.pre.in.~1~	2013-11-09 23:36:41.000000000 -0800
++++ Python-2.7.6/Makefile.pre.in	2014-05-14 12:54:43.824219677 -0700
+@@ -218,6 +218,7 @@
  # Used of signalmodule.o is not available
  SIGNAL_OBJS=	@SIGNAL_OBJS@
  
@@ -12,7 +12,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
  
  ##########################################################################
  # Grammar
-@@ -298,6 +299,7 @@
+@@ -341,6 +342,7 @@
  		Python/formatter_unicode.o \
  		Python/formatter_string.o \
  		Python/$(DYNLOADFILE) \
@@ -20,7 +20,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
  		$(LIBOBJS) \
  		$(MACHDEP_OBJS) \
  		$(THREADOBJ)
-@@ -599,6 +601,18 @@
+@@ -664,6 +666,18 @@
  Python/formatter_string.o: $(srcdir)/Python/formatter_string.c \
  				$(STRINGLIB_HEADERS)
  
@@ -39,8 +39,8 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
  ############################################################################
  # Header files
  
---- Python-2.7.1/Include/frameobject.h.~1~	Fri May  8 17:23:21 2009
-+++ Python-2.7.1/Include/frameobject.h	Mon Jul 18 14:53:46 2011
+--- Python-2.7.6/Include/frameobject.h.~1~	2013-11-09 23:36:39.000000000 -0800
++++ Python-2.7.6/Include/frameobject.h	2014-05-14 13:03:19.938777249 -0700
 @@ -44,6 +44,7 @@
         PyCode_Addr2Line to calculate the line from the current
         bytecode index. */
@@ -49,10 +49,9 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
      int f_iblock;		/* index in f_blockstack */
      PyTryBlock f_blockstack[CO_MAXBLOCKS]; /* for try and loop blocks */
      PyObject *f_localsplus[1];	/* locals+stack, dynamically sized */
-
---- Python-2.7.1/Objects/frameobject.c.~1~	Sun May  9 09:46:46 2010
-+++ Python-2.7.1/Objects/frameobject.c	Mon Jul 18 15:03:52 2011
-@@ -736,6 +736,7 @@
+--- Python-2.7.6/Objects/frameobject.c.~1~	2013-11-09 23:36:41.000000000 -0800
++++ Python-2.7.6/Objects/frameobject.c	2014-05-14 12:56:06.970076859 -0700
+@@ -738,6 +738,7 @@
      f->f_tstate = tstate;
  
      f->f_lasti = -1;
@@ -60,8 +59,8 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
      f->f_lineno = code->co_firstlineno;
      f->f_iblock = 0;
  
---- Python-2.7.1/Python/ceval.c.~1~	Fri Sep 24 22:27:12 2010
-+++ Python-2.7.1/Python/ceval.c	Mon Jul 18 15:15:35 2011
+--- Python-2.7.6/Python/ceval.c.~1~	2013-11-09 23:36:41.000000000 -0800
++++ Python-2.7.6/Python/ceval.c	2014-05-14 13:04:01.334853206 -0700
 @@ -19,6 +19,11 @@
  
  #include <ctype.h>
@@ -74,7 +73,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
  #ifndef WITH_TSC
  
  #define READ_TIMESTAMP(var)
-@@ -671,7 +676,56 @@
+@@ -672,6 +677,55 @@
                        NULL);
  }
  
@@ -89,7 +88,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
 +	filename = PyString_AsString(f->f_code->co_filename);
 +	fname = PyString_AsString(f->f_code->co_name);
 +	lineno = PyCode_Addr2Line(f->f_code, f->f_lasti);
- 
++
 +	PYTHON_FUNCTION_ENTRY((char *)filename, (char *)fname, lineno);
 +
 +	/*
@@ -127,11 +126,10 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
 +#define	dtrace_entry()
 +#define	dtrace_return()
 +#endif
-+
+ 
  /* Interpreter main loop */
  
- PyObject *
-@@ -682,9 +736,84 @@
+@@ -683,9 +737,84 @@
      return PyEval_EvalFrameEx(f, 0);
  }
  
@@ -165,9 +163,9 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
 +
 +
 +
- PyObject *
- PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
- {
++PyObject *
++PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
++{
 +	volatile PyObject *f2;
 +	f2 = PyEval_EvalFrameExReal(0, 0, 0, 0, 0, 0, f, throwflag);
 +	return (PyObject *)f2;
@@ -199,9 +197,9 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
 +
 +#else /* __amd64 || __sparc */
 +
-+PyObject *
-+PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
-+{
+ PyObject *
+ PyEval_EvalFrameEx(PyFrameObject *f, int throwflag)
+ {
 +
 +#endif /* __amd64 || __sparc */
 +
@@ -216,7 +214,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
  #ifdef DXPAIRS
      int lastopcode = 0;
  #endif
-@@ -909,6 +1038,11 @@
+@@ -910,6 +1039,11 @@
          }
      }
  
@@ -228,7 +226,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
      co = f->f_code;
      names = co->co_names;
      consts = co->co_consts;
-@@ -2659,6 +2793,9 @@
+@@ -2660,6 +2794,9 @@
              PyObject **sp;
              PCALL(PCALL_ALL);
              sp = stack_pointer;
@@ -238,7 +236,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
  #ifdef WITH_TSC
              x = call_function(&sp, oparg, &intr0, &intr1);
  #else
-@@ -2700,6 +2837,9 @@
+@@ -2701,6 +2838,9 @@
              } else
                  Py_INCREF(func);
              sp = stack_pointer;
@@ -248,7 +246,7 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
              READ_TIMESTAMP(intr0);
              x = ext_do_call(func, &sp, flags, na, nk);
              READ_TIMESTAMP(intr1);
-@@ -3000,6 +3140,10 @@
+@@ -3001,6 +3141,10 @@
  
      /* pop frame */
  exit_eval_frame:
@@ -259,8 +257,6 @@ patch adds "int f_calllineno" to the structure, so this test does not fail.
      Py_LeaveRecursiveCall();
      tstate->frame = f->f_back;
  
-diff --git Python-2.6.4/Python/phelper.d Python-2.6.4/Python/phelper.d
-new file mode 100644
 --- /dev/null
 +++ Python-2.6.4/Python/phelper.d
 @@ -0,0 +1,139 @@
@@ -418,14 +414,14 @@ new file mode 100644
 +#pragma D attributes Private/Private/Common provider python function
 +#pragma D attributes Evolving/Evolving/Common provider python name
 +#pragma D attributes Evolving/Evolving/Common provider python args
---- Python-2.7.3/Lib/test/test_sys.py-orig	2012-12-13 06:50:00.472682534 -0800
-+++ Python-2.7.3/Lib/test/test_sys.py	2012-12-13 06:50:20.099858756 -0800
-@@ -645,7 +645,7 @@ class SizeofTest(unittest.TestCase):
+--- Python-2.7.6/Lib/test/test_sys.py.~1~	2013-11-09 23:36:40.000000000 -0800
++++ Python-2.7.6/Lib/test/test_sys.py	2014-05-14 13:07:05.332748121 -0700
+@@ -612,7 +612,7 @@
          nfrees = len(x.f_code.co_freevars)
          extras = x.f_code.co_stacksize + x.f_code.co_nlocals +\
                   ncells + nfrees - 1
--        check(x, size(vh + '12P3i' + CO_MAXBLOCKS*'3i' + 'P' + extras*'P'))
-+        check(x, size(vh + '12P4i' + CO_MAXBLOCKS*'3i' + 'P' + extras*'P'))
+-        check(x, vsize('12P3i' + CO_MAXBLOCKS*'3i' + 'P' + extras*'P'))
++        check(x, vsize('12P4i' + CO_MAXBLOCKS*'3i' + 'P' + extras*'P'))
          # function
          def func(): pass
-         check(func, size(h + '9P'))
+         check(func, size('9P'))

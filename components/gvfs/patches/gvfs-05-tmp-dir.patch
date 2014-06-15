@@ -1,0 +1,19 @@
+--- gvfs-1.2.2/daemon/gvfsdaemon.c.orig	2009-05-12 11:31:04.492541412 +0800
++++ gvfs-1.2.2/daemon/gvfsdaemon.c	2009-05-12 11:36:34.445483149 +0800
+@@ -463,8 +463,15 @@
+   NewConnectionData *data = memory;
+   
+   /* Remove the socket and dir after connected */
+-  if (data->socket_dir) 
++  if (data->socket_dir) {
++    gchar *address1 = g_strdup_printf ("%s/socket1", data->socket_dir);
++    gchar *address2 = g_strdup_printf ("%s/socket2", data->socket_dir);
++    unlink(address1);
++    unlink(address2);
+     rmdir (data->socket_dir);
++    g_free (address1);
++    g_free (address2);
++  }
+ 
+   if (data->io_watch)
+     g_source_remove (data->io_watch);

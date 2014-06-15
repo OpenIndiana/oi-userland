@@ -1,0 +1,101 @@
+diff -urN ekiga-3.2.7_old/lib/engine/gui/gtk-frontend/chat-area.cpp ekiga-3.2.7/lib/engine/gui/gtk-frontend/chat-area.cpp
+--- ekiga-3.2.7_old/lib/engine/gui/gtk-frontend/chat-area.cpp	2011-07-07 15:47:55.898867468 +0800
++++ ekiga-3.2.7/lib/engine/gui/gtk-frontend/chat-area.cpp	2011-07-07 15:48:20.617227559 +0800
+@@ -97,6 +97,7 @@
+ 
+ static GObjectClass* parent_class = NULL;
+ 
++static GtkWidget* tab_message = NULL;
+ /* declaration of internal api */
+ 
+ static gboolean message_send_after_buffering (gpointer data);
+@@ -1381,7 +1382,7 @@
+   gtk_box_pack_start (GTK_BOX (vbox), sep, FALSE, FALSE, 0);
+ 
+   self->priv->message = gtk_text_view_new ();
+- 
++
+   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (self->priv->message),
+                                GTK_WRAP_WORD_CHAR);
+   gtk_text_view_set_cursor_visible  (GTK_TEXT_VIEW (self->priv->message), TRUE);
+@@ -1408,8 +1409,40 @@
+   g_signal_connect (G_OBJECT (self), "grab-focus",
+ 		    G_CALLBACK (on_chat_area_grab_focus), self->priv->message);
+   gtk_widget_grab_focus (self->priv->message);
++  tab_switch (NULL, (GtkWidget*)self->priv->message);
++}
++
++static gboolean on_key_press_tab (G_GNUC_UNUSED GtkWidget *w, 
++                              GdkEventKey *event, 
++                              gpointer* data)
++{ 
++  if (event->state & GDK_CONTROL_MASK) {
++    switch (event->keyval) {
++      case GDK_Tab:
++      case GDK_KP_Tab:
++      case GDK_ISO_Left_Tab:
++
++      if (gtk_notebook_get_n_pages (GTK_NOTEBOOK (data)) == gtk_notebook_get_current_page (GTK_NOTEBOOK (data))+1)
++        gtk_notebook_set_current_page (GTK_NOTEBOOK (data), 0);
++      else 
++        gtk_notebook_next_page (GTK_NOTEBOOK (data));
++    }
++  }
+ }
+ 
++void tab_switch (GtkNotebook* notebook, 
++                 GtkWidget* message)
++{
++  if (notebook == NULL && message != NULL)
++  {
++    tab_message = message;
++
++  } else if (notebook != NULL && message == NULL && tab_message != NULL){
++    g_signal_connect (GTK_OBJECT(tab_message), "key-press-event",
++                      G_CALLBACK (on_key_press_tab), notebook);
++
++  }
++}
+ 
+ GType
+ chat_area_get_type ()
+diff -urN ekiga-3.2.7_old/lib/engine/gui/gtk-frontend/chat-area.h ekiga-3.2.7/lib/engine/gui/gtk-frontend/chat-area.h
+--- ekiga-3.2.7_old/lib/engine/gui/gtk-frontend/chat-area.h	2011-07-07 15:47:55.899257762 +0800
++++ ekiga-3.2.7/lib/engine/gui/gtk-frontend/chat-area.h	2011-07-07 15:50:24.747737561 +0800
+@@ -69,6 +69,8 @@
+ 
+ const std::string chat_area_get_title (ChatArea* chat);
+ 
++void tab_switch (GtkNotebook* notebook, GtkWidget* message);
++
+ /* GObject thingies */
+ 
+ #define TYPE_CHAT_AREA (chat_area_get_type ())
+diff -urN ekiga-3.2.7_old/lib/engine/gui/gtk-frontend/chat-window.cpp ekiga-3.2.7/lib/engine/gui/gtk-frontend/chat-window.cpp
+--- ekiga-3.2.7_old/lib/engine/gui/gtk-frontend/chat-window.cpp	2011-07-07 15:47:55.897707730 +0800
++++ ekiga-3.2.7/lib/engine/gui/gtk-frontend/chat-window.cpp	2011-07-07 15:48:51.313533126 +0800
+@@ -39,6 +39,7 @@
+ #include <glib/gi18n.h>
+ 
+ #include "chat-window.h"
++#include "chat-area.h"
+ #include "simple-chat-page.h"
+ #include "multiple-chat-page.h"
+ 
+@@ -315,6 +316,7 @@
+ 
+   num = gtk_notebook_append_page (GTK_NOTEBOOK (self->priv->notebook),
+ 				  page, hbox);
++  tab_switch (GTK_NOTEBOOK (self->priv->notebook), NULL);
+   gtk_widget_show (page);
+   g_signal_connect (page, "message-notice-event",
+ 		    G_CALLBACK (on_message_notice_event), self);
+@@ -484,6 +486,8 @@
+   gtk_window_add_accel_group (GTK_WINDOW (result), accel);
+   gtk_accel_group_connect (accel, GDK_Escape, (GdkModifierType) 0, GTK_ACCEL_LOCKED,
+                            g_cclosure_new_swap (G_CALLBACK (on_escaped), (gpointer) result, NULL));
++  gtk_accel_group_connect (accel, GDK_w, GDK_CONTROL_MASK, GTK_ACCEL_LOCKED,
++                           g_cclosure_new_swap (G_CALLBACK (on_escaped), (gpointer) result, NULL));
+   g_object_unref (accel);
+ 
+   g_signal_connect (result, "focus-in-event",

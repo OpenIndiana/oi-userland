@@ -1,0 +1,19 @@
+--- gtk+-2.4.9.orig/gdk/gdkdisplay.c	2004-09-17 13:30:29.800956000 +0100
++++ gtk+-2.4.9/gdk/gdkdisplay.c	2004-09-17 13:34:38.288070000 +0100
+@@ -524,6 +524,16 @@
+   return window;
+ }
+ 
++/* Backward compatibility with Sun's GNOME 2.0.0 release */
++GdkWindow *
++gdk_screen_get_window_at_pointer (GdkScreen  *screen,
++                                  gint       *win_x,
++                                  gint       *win_y)
++{
++  return gdk_display_get_window_at_pointer (gdk_screen_get_display (screen),
++                                            win_x, win_y);
++}
++
+ /**
+  * gdk_display_set_pointer_hooks:
+  * @display: a #GdkDisplay

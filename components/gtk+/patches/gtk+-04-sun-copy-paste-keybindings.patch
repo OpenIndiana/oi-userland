@@ -1,0 +1,34 @@
+--- gtk+-2.4.1/gtk/gtkrc.default	2004-08-11 17:29:45.000000000 +0530
++++ gtk+-2.4.1-new/gtk/gtkrc.default	2004-08-11 17:29:10.000000000 +0530
+@@ -1,3 +1,4 @@
+ #
+ # This theme is the default theme if no other theme is selected.
+ #
++include "../../Default/gtk-2.0-key/gtkrc"
+--- gtk+-2.4.1/gtk/gtkrc.key.default	2004-08-11 17:30:05.000000000 +0530
++++ gtk+-2.4.1-new/gtk/gtkrc.key.default	2004-08-11 17:32:11.000000000 +0530
+@@ -1,3 +1,23 @@
+ #
+-# Default keybinding set. Empty because it is implemented inline in the code.
++# Copy, Paste, Cut keybindings for SUN keyboard.
+ #
++
++binding "sun-text-entry"
++{
++  bind "XF86Cut" { "cut-clipboard" () }
++  bind "XF86Paste" { "paste-clipboard" () }
++  bind "XF86Copy" { "copy-clipboard" () }
++}
++
++#
++# Bindings for GtkTreeView
++#
++binding "sun-tree-view"
++{
++  bind "Find" { "start-interactive-search" () }
++}
++
++class "GtkEntry" binding "sun-text-entry"
++class "GtkTextView" binding "sun-text-entry"
++class "GtkTreeView" binding "sun-tree-view"
++

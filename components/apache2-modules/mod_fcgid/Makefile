@@ -23,12 +23,13 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_fcgid
-COMPONENT_VERSION=	2.3.6
+COMPONENT_VERSION=	2.3.9
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://httpd.apache.org/mod_fcgid/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e831795498d91cf27a519ea1332c2a92a2a9920b0844d817b2ea7f079056d12b
+    sha256:1cbad345e3376b5d7c8f9a62b471edd7fa892695b90b79502f326b4692a679cf
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/httpd/mod_fcgid/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
@@ -38,18 +39,36 @@ include ../../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
-APACHE_USR_PREFIX=/usr/apache2/2.2
+VARIANT_APACHE22 =       $(BUILD_DIR)/apache-22
+VARIANT_APACHE24 =       $(BUILD_DIR)/apache-24
 
-$(BUILD_DIR_32)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/apxs
-$(BUILD_DIR_64)/.built:	APXS=$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
+VARIANTS = $(VARIANT_APACHE22) $(VARIANT_APACHE24)
+
+BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
+BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+
+INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+
+$(VARIANT_APACHE22)/$(MACH64)/.configured: BITS=64
+$(VARIANT_APACHE24)/$(MACH64)/.configured:  BITS=64
+
+$(VARIANT_APACHE22)/$(MACH32)/.built: APXS=/usr/apache2/2.2/bin/apxs
+$(VARIANT_APACHE22)/$(MACH64)/.built: APXS=/usr/apache2/2.2/bin/$(MACH64)/apxs
+$(VARIANT_APACHE24)/$(MACH32)/.built: APXS=/usr/apache2/2.4/bin/apxs
+$(VARIANT_APACHE24)/$(MACH64)/.built: APXS=/usr/apache2/2.4/bin/$(MACH64)/apxs
 
 COMPONENT_PRE_BUILD_ACTION= ( cd $(@D); APXS=$(APXS) ./configure.apxs )
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_32_and_64) $(SOURCE_DIR)/fcgid.conf-24
+
+$(SOURCE_DIR)/fcgid.conf-24: $(SOURCE_DIR)/.prep
+	$(GSED) -e 's:apache2/2\.2:apache2/2.4:g' $(COMPONENT_DIR)/fcgid.conf > $@
 
 install: $(INSTALL_32_and_64)
+	$(TOUCH) $(BUILD_DIR)
 
 test: $(NO_TESTS)
 

@@ -1,0 +1,16 @@
+Index: opal/src/opal/patch.cxx
+===================================================================
+--- opal/src/opal/patch.cxx	(revision 21499)
++++ opal/src/opal/patch.cxx	(working copy)
+@@ -458,6 +458,11 @@
+       PTRACE(4, "Patch\tThread ended because source read failed");
+       break;
+     }
++
++    if (sourceFrame.GetPayloadSize() == 0)  {
++      PThread::Sleep(15);
++      continue;
++    } 
+  
+     inUse.StartRead();
+     bool written = DispatchFrame(sourceFrame);

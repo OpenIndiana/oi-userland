@@ -81,14 +81,17 @@ HTMLDOCDIR = $(IDNDOCDIR)/html
 HTMLDOCLIST = libidn-components.png libidn.html
 DOCLIST = libidn-components.pdf libidn.pdf
 
+ifeq ($(strip $(USERLAND_ARCHIVES)),)
+  TLD_FILE=$(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1)
+else 
+  TLD_FILE=$(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1)
+endif
+
 # We must unpack the TLD database and touch the perl scripts in order
 # to force re-generation of the TLD tables after augmenting them
 COMPONENT_PRE_CONFIGURE_ACTION = \
 	( cd $(SOURCE_DIR) ; \
-	    $(CP) $(COMPONENT_DIR)/tld-0.7.tar.gz . ; \
-	    $(GUNZIP) tld-0.7.tar.gz ; \
-	    $(TAR) xvf tld-0.7.tar > /dev/null 2>&1 ; \
-	    $(RM) tld-0.7.tar ; \
+	    $(TAR) zxf $(TLD_FILE); \
 	    $(RM) java/libidn-1.19.jar ; \
 	    $(RM) tld/no.tld tld/fr.tld ; \
 	    $(CP) doc/tld/fr.tld tld/ ; \

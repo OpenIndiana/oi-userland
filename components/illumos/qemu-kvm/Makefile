@@ -35,6 +35,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 CC=/opt/gcc/4.4.4/bin/gcc
 
+COMPONENT_BUILD_ARGS=
+
 COMPONENT_PREP_ACTION = \
 	($(MKDIR) $(SOURCE_DIR)/kvm/include/sys; \
 	$(LN) $(COMPONENT_DIR)/illumos-kvm/*.h $(SOURCE_DIR)/kvm/include/sys; )

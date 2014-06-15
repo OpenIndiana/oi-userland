@@ -35,6 +35,8 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
+COMPONENT_BUILD_ARGS=
+
 # Userland default includes -mt which links with libthread which we don't need.
 studio_MT =
 

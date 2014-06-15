@@ -1,0 +1,15 @@
+https://bugs.mageia.org/show_bug.cgi?id=2352
+Fix is taken from Mageia. 
+
+--- epan/wslua/template-init.lua.~1~	2014-02-20 17:31:06.358733465 +0400
++++ epan/wslua/template-init.lua	2014-02-20 17:31:39.595231628 +0400
+@@ -83,5 +83,9 @@
+ DATA_DIR = datafile_path()
+ USER_DIR = persconffile_path()
+ 
++if running_superuser then
++    return
++end
++
+ dofile(DATA_DIR.."console.lua")
+ --dofile(DATA_DIR.."dtd_gen.lua")

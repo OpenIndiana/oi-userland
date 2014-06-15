@@ -16,13 +16,14 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		sunstudio12u1
 COMPONENT_VERSION=	12.1.1
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 # below is required for userland-fetch to bahave
 COMPONENT_ARCHIVE_URL=blah
 
 download::
-	$(IPS2TGZ) $(COMPONENT_SRC) http://pkg.openindiana.org/legacy \
+	$(IPS2TGZ) $(COMPONENT_SRC) $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE) http://pkg.openindiana.org/legacy \
 	pkg://opensolaris.org/developer/sunstudio12u1@12.1.1,5.11-0.111:20100306T002245Z
 
 include ../../make-rules/prep.mk

@@ -20,7 +20,8 @@ COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	sha256:408d1b8bbbd0c496c70e1a94093bc1f88495a7c6f6135c65c1cd53bdb1c62d90
 COMPONENT_PROJECT_URL=	http://alioth.debian.org/projects/pkg-isocodes
-COMPONENT_ARCHIVE_URL=	http://pkg-isocodes.alioth.debian.org/downloads/$(COMPONENT_ARCHIVE)
+#COMPONENT_ARCHIVE_URL=	http://pkg-isocodes.alioth.debian.org/downloads/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/iso-codes/$(COMPONENT_ARCHIVE)
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

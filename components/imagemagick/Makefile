@@ -27,6 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=			ImageMagick
 COMPONENT_VERSION=		6.8.3
+COMPONENT_REVISION=		1
 COMPONENT_SUBVERSION=		5
 HUMAN_VERSION=			$(COMPONENT_VERSION)-$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=		http://www.imagemagick.org/
@@ -34,7 +35,7 @@ COMPONENT_SRC=			$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=		$(COMPONENT_SRC)-$(COMPONENT_SUBVERSION).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:daead80170bc6d44cf6a54b4817446cbb7211b8ee445532b64033af190265fe3
-COMPONENT_ARCHIVE_URL=	http://image_magick.veidrodis.com/image_magick/$(COMPONENT_ARCHIVE)
+COMPONENT_ARCHIVE_URL=	ftp://ftp.awm.jp/pub/ImageMagick/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/imagemagick
 
 include ../../make-rules/prep.mk

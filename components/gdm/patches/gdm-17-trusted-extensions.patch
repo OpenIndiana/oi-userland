@@ -1,0 +1,174 @@
+commit 310cdf6456ea1a6d2661048dd7251b9014e02a44
+Author: Halton Huo <halton.huo@sun.com>
+Date:   Fri Mar 26 14:20:18 2010 +0800
+
+    gdm-19-trusted-extensions.diff
+
+diff --git a/daemon/Makefile.am b/daemon/Makefile.am
+index 2afb2fb..aa78458 100644
+--- a/daemon/Makefile.am
++++ b/daemon/Makefile.am
+@@ -137,7 +137,7 @@ gdm_simple_slave_SOURCES = 		\
+ 
+ gdm_simple_slave_LDFLAGS =		\
+ 	$(PAM_LIBS)			\
+-	$(NULL)
++	$(NULL) -lXtsol
+ 
+ gdm_simple_slave_LDADD = 			\
+ 	$(top_builddir)/common/libgdmcommon.la	\
+@@ -172,7 +172,7 @@ gdm_factory_slave_SOURCES = 		\
+ 
+ gdm_factory_slave_LDFLAGS =		\
+ 	$(PAM_LIBS)			\
+-	$(NULL)
++	$(NULL) -lXtsol
+ 
+ gdm_factory_slave_LDADD = 			\
+ 	$(top_builddir)/common/libgdmcommon.la	\
+@@ -201,7 +201,7 @@ gdm_product_slave_SOURCES = 		\
+ 
+ gdm_product_slave_LDFLAGS =		\
+ 	$(PAM_LIBS)			\
+-	$(NULL)
++	$(NULL) -lXtsol
+ 
+ gdm_product_slave_LDADD = 			\
+ 	$(top_builddir)/common/libgdmcommon.la	\
+@@ -232,7 +232,7 @@ gdm_xdmcp_chooser_slave_LDADD = 		\
+ 	$(DAEMON_LIBS)				\
+ 	$(EXTRA_DAEMON_LIBS)                    \
+ 	$(top_builddir)/common/libgdmcommon.la	\
+-	$(NULL)
++	$(NULL) -lXtsol
+ 
+ gdm_session_worker_SOURCES = 			\
+ 	session-worker-main.c 			\
+diff --git a/daemon/gdm-simple-slave.c b/daemon/gdm-simple-slave.c
+index 9e8b0a2..d13a105 100644
+--- a/daemon/gdm-simple-slave.c
++++ b/daemon/gdm-simple-slave.c
+@@ -370,6 +370,7 @@ start_session_timeout (GdmSimpleSlave *s
+ 
+         char    *auth_file;
+         gboolean migrated;
++        char    *username;
+ 
+         g_debug ("GdmSimpleSlave: accredited");
+ 
+@@ -406,7 +407,13 @@ start_session_timeout (GdmSimpleSlave *s
+ 
+         gdm_session_start_session (GDM_SESSION (slave->priv->session));
+         gdm_slave_unblock_console_session_requests_on_display (GDM_SLAVE (slave));
++
++        username = gdm_session_direct_get_username (slave->priv->session);
++        gdm_slave_tsol_start_session (GDM_SLAVE (slave), username);
++        g_free (username);
++
+  out:
++
+         slave->priv->start_session_id = 0;
+         return FALSE;
+ }
+diff --git a/daemon/gdm-slave.c b/daemon/gdm-slave.c
+index 852538f..998d252 100644
+--- a/daemon/gdm-slave.c
++++ b/daemon/gdm-slave.c
+@@ -31,6 +31,7 @@
+ #include <pwd.h>
+ #include <grp.h>
+ #include <signal.h>
++#include <X11/extensions/Xtsol.h>
+ 
+ #include <glib.h>
+ #include <glib/gstdio.h>
+@@ -1016,6 +1017,33 @@ _get_uid_and_gid_for_user (const char *username,
+         return TRUE;
+ }
+ 
++/* Trusted Solaris - start */
++void 
++gdm_slave_tsol_start_session (GdmSlave *slave, const char *username)
++{
++        uid_t    uid;
++        Atom     prop;
++        Status   status;
++
++        if (! _get_uid_and_gid_for_user (username, &uid, NULL)) {
++                g_debug ("GdmSlave: unable to determine uid for user: %s", username);
++        } else {
++                prop = XInternAtom (slave->priv->server_display, "RESOURCE_MANAGER", True);
++                if (prop == None) {
++                        g_debug ("no RESOURCE_MANAGER atom");
++                } else {
++                        g_debug ("Setting property UID to %s", username);
++                        status = XTSOLsetPropUID (slave->priv->server_display,
++                                DefaultRootWindow (slave->priv->server_display),
++                                prop,
++                                &uid);
++                        g_debug ("Called XTSOLsetPropUID, status=%d", status);
++                        XSync (slave->priv->server_display, False);
++                }
++        }
++}
++/* Trusted Solaris - end */
++
+ static gboolean
+ x11_session_is_on_seat (GdmSlave        *slave,
+                         const char      *session_id,
+diff --git a/daemon/gdm-slave.h b/daemon/gdm-slave.h
+index 3783c2a..7ae3061 100644
+--- a/daemon/gdm-slave.h
++++ b/daemon/gdm-slave.h
+@@ -83,6 +83,8 @@ gboolean            gdm_slave_run_script             (GdmSlave   *slave,
+ void                gdm_slave_stopped                (GdmSlave   *slave);
+ void                gdm_slave_set_console_session_id (GdmSlave   *slave,
+                                                       const char *session_id);
++void                gdm_slave_tsol_start_session     (GdmSlave   *slave,
++                                                      const char *username);
+ G_END_DECLS
+ 
+ #endif /* __GDM_SLAVE_H */
+diff --git a/daemon/gdm-welcome-session.c b/daemon/gdm-welcome-session.c
+index d2ccde9..2eee281 100644
+--- a/daemon/gdm-welcome-session.c
++++ b/daemon/gdm-welcome-session.c
+@@ -32,6 +32,7 @@
+ #include <pwd.h>
+ #include <grp.h>
+ #include <signal.h>
++#include <X11/extensions/Xtsol.h>
+ 
+ #include <glib.h>
+ #include <glib/gi18n.h>
+@@ -554,6 +555,7 @@ spawn_child_setup (SpawnChildData *data)
+ {
+         struct passwd *pwent;
+         struct group  *grent;
++        priv_set_t    *pset;
+         int            res;
+ 
+         if (data->user_name == NULL) {
+@@ -602,6 +604,22 @@ spawn_child_setup (SpawnChildData *data)
+                            g_strerror (errno));
+         }
+ 
++        /* Trusted Solaris - start */
++        pset = priv_allocset();
++
++        (void) setpflags (PRIV_AWARE, 1);
++        if (getppriv (PRIV_INHERITABLE, pset) != 0) {
++            g_debug ("getppriv(inheritable) failed");
++        }
++
++        priv_addset(pset, PRIV_WIN_DAC_READ);
++        priv_addset(pset, PRIV_WIN_DAC_WRITE);
++
++        if (setppriv (PRIV_SET, PRIV_INHERITABLE, pset) != 0) {
++            g_debug ("setppriv(inheritable) failed");
++        }
++        /* Trusted Solaris - end */
++
+         g_debug ("GdmWelcomeSession: Changing (uid:gid) for child process to (%d:%d)",
+                  pwent->pw_uid,
+                  grent->gr_gid);

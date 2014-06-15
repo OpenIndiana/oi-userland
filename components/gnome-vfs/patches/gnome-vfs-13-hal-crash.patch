@@ -1,0 +1,32 @@
+--- /usr/tmp/clean/gnome-vfs-2.20.1/libgnomevfs/gnome-vfs-hal-mounts.c	2007-11-12 08:36:48.000000000 +0000
++++ gnome-vfs-2.20.1/libgnomevfs/gnome-vfs-hal-mounts.c	2007-11-23 10:49:55.844493000 +0000
+@@ -1469,8 +1469,12 @@
+ 						 _hal_device_property_modified);
+ 
+ 	if (!libhal_ctx_init (volume_monitor_daemon->hal_ctx, &error)) {
+-		g_warning ("libhal_ctx_init failed: %s\n", error.message);
+-		dbus_error_free (&error);
++		if (dbus_error_is_set (&error)) {
++			g_warning ("libhal_ctx_init failed: %s\n", error.message);
++			dbus_error_free (&error);
++		} else {
++			g_warning ("libhal_ctx_init failed but dbus error is not set\n");
++		}
+ 		return FALSE;
+ 	}
+ 
+@@ -1499,8 +1503,12 @@
+ 
+ 	dbus_error_init (&error);
+ 	if (!libhal_ctx_shutdown (volume_monitor_daemon->hal_ctx, &error)) {
+-		g_warning ("hal_shutdown failed: %s\n", error.message);
+-		dbus_error_free (&error);
++		if (dbus_error_is_set (&error)) {
++			g_warning ("hal_shutdown failed: %s\n", error.message);
++			dbus_error_free (&error);
++		} else {
++			g_warning ("hal_shutdown failed but dbus error is not set\n");
++		}
+ 		return;
+ 	}
+ 

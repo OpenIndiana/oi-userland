@@ -1,0 +1,66 @@
+--- /tmp/opensslconf.h	Thu Mar 10 06:46:57 2011
++++ /tmp/opensslconf.h.new	Thu Mar 10 06:47:41 2011
+@@ -2,9 +2,12 @@
+ /* WARNING: Generated automatically from opensslconf.h.in by Configure. */
+ 
+ /* OpenSSL was configured with the following options: */
++#if defined(__sparcv9)
+ #ifndef OPENSSL_SYSNAME_ULTRASPARC
+ # define OPENSSL_SYSNAME_ULTRASPARC
+ #endif
++#endif
++
+ #ifndef OPENSSL_DOING_MAKEDEPEND
+ 
+ 
+@@ -185,10 +188,14 @@
+ 
+ #if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
+ #if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
++#if defined(__sparcv9) || defined(__x86_64)
++#define ENGINESDIR "/lib/openssl/engines/64"
++#else
+ #define ENGINESDIR "/lib/openssl/engines"
+ #define OPENSSLDIR "/etc/openssl"
+ #endif
+ #endif
++#endif
+ 
+ #undef OPENSSL_UNISTD
+ #define OPENSSL_UNISTD <unistd.h>
+@@ -232,21 +239,34 @@
+ /* If this is set to 'unsigned int' on a DEC Alpha, this gives about a
+  * %20 speed up (longs are 8 bytes, int's are 4). */
+ #ifndef DES_LONG
++#if defined(__sparcv9) || defined(__x86_64)
++#define DES_LONG unsigned int
++#else
+ #define DES_LONG unsigned long
+ #endif
+ #endif
++#endif
+ 
+ #if defined(HEADER_BN_H) && !defined(CONFIG_HEADER_BN_H)
+ #define CONFIG_HEADER_BN_H
++#if defined(__sparcv9) || defined(__x86_64)
++#undef BN_LLONG
++#else
+ #define BN_LLONG
++#endif
+ 
+ /* Should we define BN_DIV2W here? */
+ 
+ /* Only one for the following should be defined */
++#if defined(__sparcv9) || defined(__x86_64)
++#define SIXTY_FOUR_BIT_LONG
++#undef THIRTY_TWO_BIT
++#else
+ #undef SIXTY_FOUR_BIT_LONG
+-#undef SIXTY_FOUR_BIT
+ #define THIRTY_TWO_BIT
+ #endif
++#undef SIXTY_FOUR_BIT
++ #endif
+ 
+ #if defined(HEADER_RC4_LOCL_H) && !defined(CONFIG_HEADER_RC4_LOCL_H)
+ #define CONFIG_HEADER_RC4_LOCL_H

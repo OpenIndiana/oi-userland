@@ -23,22 +23,38 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
-COMPONENT_VERSION=	2.7.4
+COMPONENT_VERSION=	2.7.7
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
 COMPONENT_SRC_NAME=	modsecurity-apache
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:605d6f1b03e648001ef1c7db7b18d51c01edd443b57cbbd4e298770ffdcd0eb9
+    sha256:11e05cfa6b363c2844c6412a40ff16f0021e302152b38870fd1f2f44b204379b
 COMPONENT_ARCHIVE_URL= \
     $(COMPONENT_PROJECT_URL)tarball/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
+VARIANT_APACHE22 =       $(BUILD_DIR)/apache-22
+VARIANT_APACHE24 =       $(BUILD_DIR)/apache-24
+
+VARIANTS = $(VARIANT_APACHE22) $(VARIANT_APACHE24)
+
+BUILD_32 = $(VARIANTS:%=%/$(MACH32)/.built)
+BUILD_64 = $(VARIANTS:%=%/$(MACH64)/.built)
+
+INSTALL_32 = $(VARIANTS:%=%/$(MACH32)/.installed)
+INSTALL_64 = $(VARIANTS:%=%/$(MACH64)/.installed)
+
+$(VARIANT_APACHE22)/$(MACH64)/.configured: BITS=64
+$(VARIANT_APACHE24)/$(MACH64)/.configured:  BITS=64
+
+$(VARIANT_APACHE22)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.2
+$(VARIANT_APACHE24)/%/.configured: APACHE_USR_PREFIX=/usr/apache2/2.4
+
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
 include ../../../make-rules/ips.mk
-
-APACHE_USR_PREFIX=/usr/apache2/2.2
 
 APXS.32=	$(APACHE_USR_PREFIX)/bin/apxs
 APXS.64=	$(APACHE_USR_PREFIX)/bin/$(MACH64)/apxs
@@ -50,7 +66,11 @@ CONFIGURE_OPTIONS += --with-apu=`$(APXS.$(BITS)) -q APU_CONFIG`
 
 COMPONENT_TEST_ARGS += CFLAGS="$(CFLAGS) -DMSC_TEST"
 
-build: $(BUILD_32_and_64)
+build: $(BUILD_32_and_64) $(SOURCE_DIR)/modsecurity.conf-recommended-24
+	$(TOUCH) $(BUILD_DIR)
+
+$(SOURCE_DIR)/modsecurity.conf-recommended-24: $(SOURCE_DIR)/.prep
+	$(GSED) -e 's:apache2/2\.2:apache2/2.4:g' $(SOURCE_DIR)/modsecurity.conf-recommended > $@
 
 test: $(TEST_32_and_64)
 
