@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 include ../../make-rules/shared-macros.mk
 
@@ -39,6 +39,7 @@ include ../../make-rules/ips.mk
 # Enable ASLR for this component
 ASLR_MODE           = $(ASLR_ENABLE)
 
+
 # This component uses cmake to generate Makefiles and thus does not
 # run any configure script
 CMAKE               = $(shell which cmake)
@@ -52,8 +53,10 @@ CMAKE_LIBDIR.32     = lib
 CMAKE_LIBDIR.64     = lib/$(MACH64)
 CMAKE_PLUGINDIR.32  = lib/plugin
 CMAKE_PLUGINDIR.64  = lib/$(MACH64)/plugin
-CMAKE_CFLAGS.64     = -m64
-CMAKE_CXXFLAGS.64   = -m64
+CMAKE_CFLAGS.64     = "-m64 -norunpath"
+CMAKE_CXXFLAGS.64   = "-m64 -norunpath"
+CMAKE_CFLAGS.32     = -norunpath
+CMAKE_CXXFLAGS.32   = -norunpath
 
 # Providing component specific build options to cmake
 CMAKE_OPTIONS += -DBUILD_CONFIG=mysql_release
@@ -76,6 +79,9 @@ CMAKE_OPTIONS += -DWITH_BLACKHOLE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_EXAMPLE_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_FEDERATED_STORAGE_ENGINE=1
 CMAKE_OPTIONS += -DWITH_INNOBASE_STORAGE_ENGINE=1
+CMAKE_OPTIONS += -DCMAKE_CXX_COMPILER=$(CXX) 
+CMAKE_OPTIONS += -DCMAKE_C_COMPILER=$(CC)
+CMAKE_OPTIONS += -DCMAKE_EXE_LINKER_FLAGS="-norunpath"
 CMAKE_OPTIONS += -DCMAKE_C_FLAGS=$(CMAKE_CFLAGS.$(BITS))
 CMAKE_OPTIONS += -DCMAKE_CXX_FLAGS=$(CMAKE_CXXFLAGS.$(BITS))
 CMAKE_OPTIONS += '-DCOMPILATION_COMMENT=MySQL Community Server (GPL)'
