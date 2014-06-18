@@ -429,6 +429,39 @@ diff -r -u /tmp/librdmacm-1.0.14.1/man/rdma_create_qp.3 librdmacm-1.0.14.1/man/r
  a send or receive completion queue is not specified, then a CQ will be
  allocated by the rdma_cm for the QP, along with corresponding completion
  channels.  Completion channels and CQ data created by the rdma_cm are
+diff -r -u /tmp/librdmacm-1.0.14.1/man/rdma_set_option.3 librdmacm-1.0.14.1/man/rdma_set_option.3
+--- /tmp/librdmacm-1.0.14.1/man/rdma_set_option.3	Mon Oct  4 17:00:18 2010
++++ librdmacm-1.0.14.1/man/rdma_set_option.3	Fri Jun 13 09:07:41 2014
+@@ -14,16 +14,26 @@
+ .IP "id" 12
+ RDMA identifier.
+ .IP "level" 12
+-Protocol level of the option to set.
++Protocol level of the option to set.  Currently level RDMA_OPTION_ID is supported.
+ .IP "optname" 12
+-Name of the option, relative to the level, to set.
++Name of the option, relative to the level, to set.  The only supported option isRDMA_OPTION_ID_REUSEADDR for level RDMA_OPTION_ID.
+ .IP "optval" 12
+-Reference to the option data.  The data is dependent on the level and optname.
++Reference to the option data.  The data is dependent on the level and optname.  For the option RDMA_OPTION_ID_REUSEADDR, an integer is passed.
+ .IP "optlen" 12
+ The size of the %optval buffer.
+ .SH "DESCRIPTION"
+ Sets communication options for an rdma_cm_id.  This call is used to override
+ the default system settings.
++.sp
++The RDMA_OPTION_ID_REUSEADDR option can be used to enable or
++disable REUSEADDR option for a CMID. A value of 0 disables
++the option and a non-zero value enables the option. This
++option can be set before calling rdma_bind_addr(3) or the
++rdma_resolve_addr(3) API. Listening for connection requests,
++using rdma_listen(3), is not supported for CMIDs set with
++this option. This option enables multiple connections to share
++the same source IP Port on the active side of the connection.
++.sp
+ .SH "RETURN VALUE"
+ Returns 0 on success, or -1 on error.  If an error occurs, errno will be
+ set to indicate the failure reason.
 diff -r -u /tmp/librdmacm-1.0.14.1/man/rdma_cm.7 librdmacm-1.0.14.1/man/rdma_cm.7
 --- /tmp/librdmacm-1.0.14.1/man/rdma_cm.7	Mon Oct  4 17:00:18 2010
 +++ librdmacm-1.0.14.1/man/rdma_cm.7	Mon Mar 28 03:11:47 2011
@@ -534,6 +567,21 @@ diff -r -u /tmp/librdmacm-1.0.14.1/include/rdma/rdma_cma_abi.h librdmacm-1.0.14.
  };
  
  struct ucma_abi_join_mcast {
+diff -r -u /tmp/librdmacm-1.0.14.1/include/rdma/rdma_cma.h librdmacm-1.0.14.1/include/rdma/rdma_cma.h
+--- /tmp/librdmacm-1.0.14.1/include/rdma/rdma_cma.h	Fri Dec 10 12:05:34 2010
++++ librdmacm-1.0.14.1/include/rdma/rdma_cma.h	Tue Jun  3 21:54:14 2014
+@@ -639,8 +639,9 @@
+ 
+ /* Option details */
+ enum {
+-	RDMA_OPTION_ID_TOS	= 0,	/* uint8_t: RFC 2474 */
+-	RDMA_OPTION_IB_PATH	= 1	/* struct ibv_path_data[] */
++	RDMA_OPTION_ID_TOS		= 0,	/* uint8_t: RFC 2474 */
++	RDMA_OPTION_IB_PATH		= 1,	/* struct ibv_path_data[] */
++	RDMA_OPTION_ID_REUSEADDR	= 1	/* int: ~SO_REUSEADDR */
+ };
+ 
+ /**
 diff -r -u /tmp/librdmacm-1.0.14.1/examples/udaddy.c librdmacm-1.0.14.1/examples/udaddy.c
 --- /tmp/librdmacm-1.0.14.1/examples/udaddy.c	Mon Oct  4 17:00:18 2010
 +++ librdmacm-1.0.14.1/examples/udaddy.c	Fri Feb 11 04:08:48 2011
