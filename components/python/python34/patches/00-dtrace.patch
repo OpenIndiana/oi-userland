@@ -1011,9 +1011,9 @@ new file mode 100755
 +if __name__ == '__main__':
 +    test_main()
 +
---- Python-3.4.0/Lib/test/test_sys.py
-+++ Python-3.4.0/Lib/test/test_sys.py
-@@ -729,6 +729,7 @@
+--- Python-3.4.1/Lib/test/test_sys.py.~1~	2014-05-18 22:19:38.000000000 -0700
++++ Python-3.4.1/Lib/test/test_sys.py	2014-05-27 10:34:04.212950775 -0700
+@@ -728,6 +728,7 @@
          self.assertEqual(sys.getsizeof(True, -1), size('') + self.longdigit)
  
      def test_objecttypes(self):
@@ -1021,7 +1021,7 @@ new file mode 100755
          # check all types defined in Objects/
          size = test.support.calcobjsize
          vsize = test.support.calcvobjsize
-@@ -754,13 +755,17 @@
+@@ -753,13 +754,17 @@
              return inner
          check(get_cell().__closure__[0], size('P'))
          # code
@@ -1042,8 +1042,8 @@ new file mode 100755
          # complex
          check(complex(0,1), size('2d'))
          # method_descriptor (descriptor object)
---- Python-3.4.0/Makefile.pre.in
-+++ Python-3.4.0/Makefile.pre.in
+--- Python-3.4.1/Makefile.pre.in.~1~	2014-05-18 22:19:39.000000000 -0700
++++ Python-3.4.1/Makefile.pre.in	2014-05-27 10:34:04.213739956 -0700
 @@ -52,6 +52,13 @@
  # Use this to make a link between python$(VERSION) and python in $(BINDIR)
  LN=		@LN@
@@ -1145,7 +1145,7 @@ new file mode 100755
  ############################################################################
  # Header files
  
-@@ -1515,6 +1567,11 @@
+@@ -1516,6 +1568,11 @@
  	find build -name '*.py[co]' -exec rm -f {} ';' || true
  	-rm -f pybuilddir.txt
  	-rm -f Lib/lib2to3/*Grammar*.pickle
@@ -1157,7 +1157,7 @@ new file mode 100755
  	-rm -f Modules/_testembed Modules/_freeze_importlib
  
  profile-removal:
-@@ -1546,6 +1603,11 @@
+@@ -1547,6 +1604,11 @@
  				     -o -name '*.orig' -o -name '*.rej' \
  				     -o -name '*.bak' ')' \
  				     -exec rm -f {} ';'
@@ -1219,8 +1219,8 @@ new file mode 100755
 +    }
 +    return m;
 +}
---- Python-3.4.0/Modules/gcmodule.c
-+++ Python-3.4.0/Modules/gcmodule.c
+--- Python-3.4.1/Modules/gcmodule.c.~1~	2014-05-18 22:19:39.000000000 -0700
++++ Python-3.4.1/Modules/gcmodule.c	2014-05-27 10:34:04.215193143 -0700
 @@ -26,6 +26,10 @@
  #include "Python.h"
  #include "frameobject.h"        /* for PyFrame_ClearFreeList */
@@ -1232,7 +1232,7 @@ new file mode 100755
  /* Get an object's GC head */
  #define AS_GC(o) ((PyGC_Head *)(o)-1)
  
-@@ -905,7 +909,12 @@
+@@ -917,7 +921,12 @@
  /* This is the main function.  Read this to understand how the
   * collection process works. */
  static Py_ssize_t
@@ -1246,7 +1246,7 @@ new file mode 100755
          int nofail)
  {
      int i;
-@@ -1080,6 +1089,50 @@
+@@ -1092,6 +1101,50 @@
      return n+m;
  }
  
@@ -1770,7 +1770,7 @@ new file mode 100755
    --with-fpectl           enable SIGFPE catching
    --with-libm=STRING      math library
    --with-libc=STRING      C library
-@@ -10391,6 +10398,174 @@
+@@ -10368,6 +10375,174 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
@@ -1945,9 +1945,9 @@ new file mode 100755
  # -I${DLINCLDIR} is added to the compile rule for importdl.o
  
  DLINCLDIR=.
---- Python-3.4.0/configure.ac
-+++ Python-3.4.0/configure.ac
-@@ -2868,6 +2868,62 @@
+--- Python-3.4.1/configure.ac.~1~	2014-05-18 22:19:40.000000000 -0700
++++ Python-3.4.1/configure.ac	2014-05-27 10:34:04.224755986 -0700
+@@ -2857,6 +2857,62 @@
      OPT="-DDYNAMIC_ANNOTATIONS_ENABLED=1 $OPT"
  fi
  
