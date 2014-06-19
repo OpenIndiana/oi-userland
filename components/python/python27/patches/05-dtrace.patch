@@ -1,6 +1,11 @@
 This patch adds Python dtrace support.  Note it is necessary to modify
 test_sys.py to add an integer to the frameobject structure size since this
 patch adds "int f_calllineno" to the structure, so this test does not fail.
+The patch comes from upstream:
+http://www.jcea.es/artic/python_dtrace-2_7_7_af8ecf2352e1.txt
+http://www.jcea.es/artic/python_dtrace.htm
+Follow http://bugs.python.org/issue13405 for plans to get it
+integrated into the main tree.
 
 --- Python-2.7.6/Makefile.pre.in.~1~	2013-11-09 23:36:41.000000000 -0800
 +++ Python-2.7.6/Makefile.pre.in	2014-05-14 12:54:43.824219677 -0700
@@ -414,9 +419,9 @@ new file mode 100644
 +#pragma D attributes Private/Private/Common provider python function
 +#pragma D attributes Evolving/Evolving/Common provider python name
 +#pragma D attributes Evolving/Evolving/Common provider python args
---- Python-2.7.6/Lib/test/test_sys.py.~1~	2013-11-09 23:36:40.000000000 -0800
-+++ Python-2.7.6/Lib/test/test_sys.py	2014-05-14 13:07:05.332748121 -0700
-@@ -612,7 +612,7 @@
+--- Python-2.7.7/Lib/test/test_sys.py.~1~	2014-05-31 11:58:39.000000000 -0700
++++ Python-2.7.7/Lib/test/test_sys.py	2014-06-02 10:44:39.318709539 -0700
+@@ -594,7 +594,7 @@
          nfrees = len(x.f_code.co_freevars)
          extras = x.f_code.co_stacksize + x.f_code.co_nlocals +\
                   ncells + nfrees - 1

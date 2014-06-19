@@ -2,9 +2,10 @@ This changes Python's standard profile-guided build target to work with
 Studio instead of gcc.  The unfortunate repetition of options seen below
 is a workaround for build peculiarities and to meet Studio's requirement
 that the profiling options be used at all steps of the build -- not just
-compilation.
---- Python-2.7.6/Makefile.pre.in.~2~	2014-05-14 13:29:26.322546831 -0700
-+++ Python-2.7.6/Makefile.pre.in	2014-05-14 13:32:23.601766216 -0700
+compilation.  As it is Solaris-specific, it is not suitable for upstream.
+
+--- Python-2.7.7/Makefile.pre.in.~2~	2014-06-02 10:52:35.405443508 -0700
++++ Python-2.7.7/Makefile.pre.in	2014-06-02 10:52:35.532782735 -0700
 @@ -413,28 +413,37 @@
  profile-opt:
  	@echo "Building with support for profile generation:"
@@ -48,7 +49,7 @@ compilation.
  
  
  # Build the interpreter
-@@ -1293,7 +1302,7 @@
+@@ -1297,7 +1306,7 @@
  	-rm -f Lib/lib2to3/*Grammar*.pickle
  
  profile-removal:

@@ -26,16 +26,16 @@ include ../../../make-rules/shared-macros.mk
 PATH=/usr/bin:/usr/gnu/bin:/usr/sbin
 
 COMPONENT_NAME=		Python
-COMPONENT_VERSION=	2.7.6
+COMPONENT_VERSION=	2.7.7
 COMPONENT_PROJECT_URL=	http://python.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:1fd68e81f8bf7386ff239b7faee9ba387129d2cf34eab13350bd8503a0bff6a1
+    sha256:2983e3cd089b30c50e2b2234f07c2ac4fb8a5df230ab8f2e1133a1d8b208da78
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)ftp/python/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/python
 
-TPNO=			17755
+TPNO=			18024
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk

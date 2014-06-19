@@ -1,9 +1,10 @@
 This patch is needed to make Python understand it can build the OSS plugin.  
-Some OSS ioctls are not supported on Solaris, so they are commented out.
+Some OSS ioctls are not supported on Solaris, so they are ifdef'f out.  As
+the patch is Solaris-specific, it is not suitable for upstream.
 
---- Python-2.7.3/Modules/ossaudiodev.c-orig	2012-12-20 12:26:23.028233427 -0600
-+++ Python-2.7.3/Modules/ossaudiodev.c	2012-12-20 12:26:33.130986175 -0600
-@@ -1044,6 +1044,7 @@ initossaudiodev(void)
+--- Python-2.7.7/Modules/ossaudiodev.c.~1~	2014-05-31 11:58:40.000000000 -0700
++++ Python-2.7.7/Modules/ossaudiodev.c	2014-06-02 10:58:12.132478970 -0700
+@@ -1037,6 +1037,7 @@
      _EXPORT_INT(m, SOUND_MIXER_MONITOR);
  #endif
  
@@ -11,7 +12,7 @@ Some OSS ioctls are not supported on Solaris, so they are commented out.
      /* Expose all the ioctl numbers for masochists who like to do this
         stuff directly. */
      _EXPORT_INT(m, SNDCTL_COPR_HALT);
-@@ -1056,6 +1057,7 @@ initossaudiodev(void)
+@@ -1049,6 +1050,7 @@
      _EXPORT_INT(m, SNDCTL_COPR_SENDMSG);
      _EXPORT_INT(m, SNDCTL_COPR_WCODE);
      _EXPORT_INT(m, SNDCTL_COPR_WDATA);
@@ -19,7 +20,7 @@ Some OSS ioctls are not supported on Solaris, so they are commented out.
  #ifdef SNDCTL_DSP_BIND_CHANNEL
      _EXPORT_INT(m, SNDCTL_DSP_BIND_CHANNEL);
  #endif
-@@ -1077,8 +1079,12 @@ initossaudiodev(void)
+@@ -1070,8 +1072,12 @@
      _EXPORT_INT(m, SNDCTL_DSP_GETSPDIF);
  #endif
      _EXPORT_INT(m, SNDCTL_DSP_GETTRIGGER);
@@ -32,7 +33,7 @@ Some OSS ioctls are not supported on Solaris, so they are commented out.
      _EXPORT_INT(m, SNDCTL_DSP_NONBLOCK);
      _EXPORT_INT(m, SNDCTL_DSP_POST);
  #ifdef SNDCTL_DSP_PROFILE
-@@ -1098,6 +1104,7 @@ initossaudiodev(void)
+@@ -1091,6 +1097,7 @@
      _EXPORT_INT(m, SNDCTL_DSP_STEREO);
      _EXPORT_INT(m, SNDCTL_DSP_SUBDIVIDE);
      _EXPORT_INT(m, SNDCTL_DSP_SYNC);
@@ -40,15 +41,15 @@ Some OSS ioctls are not supported on Solaris, so they are commented out.
      _EXPORT_INT(m, SNDCTL_FM_4OP_ENABLE);
      _EXPORT_INT(m, SNDCTL_FM_LOAD_INSTR);
      _EXPORT_INT(m, SNDCTL_MIDI_INFO);
-@@ -1139,4 +1146,5 @@ initossaudiodev(void)
+@@ -1132,4 +1139,5 @@
      _EXPORT_INT(m, SNDCTL_TMR_STOP);
      _EXPORT_INT(m, SNDCTL_TMR_TEMPO);
      _EXPORT_INT(m, SNDCTL_TMR_TIMEBASE);
 +#endif
  }
---- Python-2.7.6/setup.py.~5~	2014-05-14 13:37:59.287142508 -0700
-+++ Python-2.7.6/setup.py	2014-05-14 13:40:01.472280298 -0700
-@@ -1632,8 +1632,8 @@
+--- Python-2.7.7/setup.py.~5~	2014-06-02 10:59:28.977687415 -0700
++++ Python-2.7.7/setup.py	2014-06-02 10:59:29.059824583 -0700
+@@ -1636,8 +1636,8 @@
          else:
              missing.append('linuxaudiodev')
  
