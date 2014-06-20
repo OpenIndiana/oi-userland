@@ -241,7 +241,7 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
                 return
             vid = stdout.splitlines()[0].strip()
             if vid == "":
-                LOG.error(_("External Network does not has a VLAN ID "
+                LOG.error(_("External Network does not have a VLAN ID "
                             "associated with it, and it is required to "
                             "create external gateway port"))
                 return

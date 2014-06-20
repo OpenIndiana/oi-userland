@@ -432,10 +432,8 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         if proplist:
             propstr = ",".join(proplist)
 
-        # TODO(gmoodalb): extract the tenant id if an admin is creating for
-        # someone else
         evsname = subnet['subnet']['network_id']
-        tenantname = subnet['subnet']['tenant_id']
+        tenantname = self._get_tenant_id_for_create(context, subnet['subnet'])
         ipnet = self.evs_controller_addIPnet(tenantname, evsname, ipnetname,
                                              propstr)
         retval = self._convert_ipnet_to_subnet(ipnet)
@@ -626,7 +624,8 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         if not evsname:
             evsname = None
 
-        tenantname = network['network']['tenant_id']
+        tenantname = self._get_tenant_id_for_create(context,
+                                                    network['network'])
         proplist = []
         network_type = network['network'][providernet.NETWORK_TYPE]
         if attributes.is_attr_set(network_type):
@@ -817,10 +816,11 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             propstr = ",".join(proplist)
 
         evsname = port['port']['network_id']
-        tenantname = port['port']['tenant_id']
-        # TODO(gmoodalb): -- pull it from the network_id!!
-        if not tenantname:
-            tenantname = context.tenant_id
+        tenantname = self._get_tenant_id_for_create(context, port['port'])
+        if (not tenantname and port['port']['device_owner'] ==
+                l3_constants.DEVICE_OWNER_FLOATINGIP):
+            network = self.get_network(context, evsname)
+            tenantname = network['tenant_id']
         vport = self.evs_controller_addVPort(tenantname, evsname, vportname,
                                              propstr)
         retval = self._convert_vport_to_port(context, vport)
@@ -952,9 +952,10 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
         a notification to L3 agent to release the port before we can
         delete the port"""
 
-        if port['device_owner'] not in [l3_constants.DEVICE_OWNER_ROUTER_INTF,
-                                        l3_constants.DEVICE_OWNER_ROUTER_GW,
-                                        l3_constants.DEVICE_OWNER_FLOATINGIP]:
+        device_owner = port['device_owner']
+        if device_owner not in [l3_constants.DEVICE_OWNER_ROUTER_INTF,
+                                l3_constants.DEVICE_OWNER_ROUTER_GW,
+                                l3_constants.DEVICE_OWNER_FLOATINGIP]:
             return
         router_id = port['device_id']
         port_update = {
@@ -964,10 +965,12 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
             }
         }
         self.update_port(context, port['id'], port_update)
-        msg = l3_rpc_agent_api.L3AgentNotify.make_msg("routers_updated",
-                                                      routers=[router_id])
-        l3_rpc_agent_api.L3AgentNotify.call(context, msg,
-                                            topic=topics.L3_AGENT)
+        if device_owner in [l3_constants.DEVICE_OWNER_ROUTER_INTF,
+                            l3_constants.DEVICE_OWNER_ROUTER_GW]:
+            msg = l3_rpc_agent_api.L3AgentNotify.make_msg("routers_updated",
+                                                          routers=[router_id])
+            l3_rpc_agent_api.L3AgentNotify.call(context, msg,
+                                                topic=topics.L3_AGENT)
 
     @lockutils.synchronized('evs-plugin', 'neutron-')
     def evs_controller_removeVPort(self, tenantname, evsname, vportuuid):
