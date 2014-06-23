@@ -161,8 +161,12 @@ OPENSTACK_KEYSTONE_BACKEND = {
     'can_edit_role': True
 }
 
+# The Xen Hypervisor has the ability to set the mount point for volumes
+# attached to instances (other Hypervisors currently do not). Setting
+# can_set_mount_point to True will add the option to set the mount point
+# from the UI.
 OPENSTACK_HYPERVISOR_FEATURES = {
-    'can_set_mount_point': True,
+    'can_set_mount_point': False,
 }
 
 # The OPENSTACK_NEUTRON_NETWORK settings can be used to enable optional
