@@ -817,8 +817,7 @@ class EVSNeutronPluginV2(db_base_plugin_v2.NeutronDbPluginV2,
 
         evsname = port['port']['network_id']
         tenantname = self._get_tenant_id_for_create(context, port['port'])
-        if (not tenantname and port['port']['device_owner'] ==
-                l3_constants.DEVICE_OWNER_FLOATINGIP):
+        if not tenantname:
             network = self.get_network(context, evsname)
             tenantname = network['tenant_id']
         vport = self.evs_controller_addVPort(tenantname, evsname, vportname,
