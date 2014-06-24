@@ -16,6 +16,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-games
 COMPONENT_VERSION=	2.32.1
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	https://wiki.gnome.org/action/show/Apps/Games
 COMPONENT_SUMMARY=	GNOME games
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
