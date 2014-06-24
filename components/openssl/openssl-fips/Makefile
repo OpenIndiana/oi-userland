@@ -35,7 +35,7 @@ COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
     sha256:f1abdd0ca1a9467a3eba15564fc2b3447114d1d63020c33cd3210f2a43a5ff4d
 COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
-COMPONENT_BUGDB=	utility/openssl
+COMPONENT_BUGDB=	library/openssl
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
