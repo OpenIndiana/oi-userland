@@ -16,6 +16,8 @@
 Solaris-specific customizations for Horizon
 """
 
+from openstack_dashboard.dashboards.admin.instances import tables \
+    as admin_tables
 from openstack_dashboard.dashboards.admin.networks.forms import CreateNetwork
 from openstack_dashboard.dashboards.admin.networks.ports.forms import \
     CreatePort
@@ -27,6 +29,8 @@ from openstack_dashboard.dashboards.admin.networks.tables import \
     DeleteNetwork, NetworksTable
 from openstack_dashboard.dashboards.project.access_and_security.tabs import \
     AccessAndSecurityTabs, APIAccessTab, FloatingIPsTab, KeypairsTab
+from openstack_dashboard.dashboards.project.instances import tables \
+    as project_tables
 from openstack_dashboard.dashboards.project.instances.tabs import \
     InstanceDetailTabs, LogTab, OverviewTab
 from openstack_dashboard.dashboards.project.instances.workflows import \
@@ -47,17 +51,34 @@ from openstack_dashboard.dashboards.project.networks.workflows import \
     CreateNetworkInfoAction, CreateSubnetDetailAction, CreateSubnetInfoAction
 
 # remove VolumeOptions and PostCreationStep from LaunchInstance
-create_instance.LaunchInstance.default_steps = \
-    (create_instance.SelectProjectUser,
-     create_instance.SetInstanceDetails,
-     create_instance.SetAccessControls,
-     create_instance.SetNetwork)
+create_instance.LaunchInstance.default_steps = (
+    create_instance.SelectProjectUser,
+    create_instance.SetInstanceDetails,
+    create_instance.SetAccessControls,
+    create_instance.SetNetwork
+)
 
 # Remove the Security Groups tab from Project/Access and Security
 AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
 
 # remove the 'Console' tab from Instance Detail
 InstanceDetailTabs.tabs = (OverviewTab, LogTab)
+
+# remove the 'Console' option in the Admin Instances pulldown by removing the
+# action for project_tables.ConsoleLink
+admin_tables.AdminInstancesTable._meta.row_actions = (
+    project_tables.ConfirmResize,
+    project_tables.RevertResize,
+    admin_tables.AdminEditInstance,
+    project_tables.LogLink,
+    project_tables.CreateSnapshot,
+    project_tables.TogglePause,
+    project_tables.ToggleSuspend,
+    admin_tables.MigrateInstance,
+    project_tables.SoftRebootInstance,
+    project_tables.RebootInstance,
+    project_tables.TerminateInstance
+)
 
 # Disable 'admin_state' and 'shared' checkboxes on Create Networks
 CreateNetwork.base_fields['admin_state'].widget.attrs['disabled'] = True
