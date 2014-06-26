@@ -23,18 +23,18 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		mod_security2
-COMPONENT_VERSION=	2.7.5
+COMPONENT_VERSION=	2.8.0
 COMPONENT_PROJECT_URL=	http://www.modsecurity.org/
 COMPONENT_SRC_NAME=	modsecurity-apache
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)_$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9e907536278d8da80d3dbb29aeffe9c4ec37ce9b641035b2da64e993135647a2
+    sha256:95de6ec30982e5bde7981929ba89be89488e9f237ee8c4236e064b074bbb6f28
 COMPONENT_ARCHIVE_URL= \
     $(COMPONENT_PROJECT_URL)tarball/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/apache
 
-TPNO=			14454
+TPNO=			18233
 
 include ../../../make-rules/prep.mk
 include ../../../make-rules/configure.mk
