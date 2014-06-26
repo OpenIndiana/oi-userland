@@ -52,6 +52,11 @@ LOCALEDIR=$(PROTO_DIR)/$(CONFIGURE_LOCALEDIR)
 
 CONFIGURE_BINDIR.64 =   $(CONFIGURE_PREFIX)/bin
 
+# since we patch out AM_ICONV so we can run autoconf,
+# the new configure doesn't look for iconv(3C), so
+# we'll tell it here.
+CFLAGS += -DHAVE_ICONV -DICONV_CONST=
+
 CONFIGURE_OPTIONS  +=		--localedir=$(CONFIGURE_LOCALEDIR)
 CONFIGURE_OPTIONS  +=		CFLAGS="$(CFLAGS)"
 
