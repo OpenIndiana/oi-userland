@@ -53,7 +53,9 @@ CONFIGURE_OPTIONS += --program-suffix=""
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
 COMPONENT_INSTALL_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_INSTALL_ENV += CC="$(CC)"
 
 build: $(BUILD_32_and_64)
 
