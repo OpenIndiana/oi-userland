@@ -27,11 +27,12 @@ set name=pkg.fmri \
     value=pkg:/library/python/boto-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 set name=pkg.summary value="An Amazon Web Services library for Python"
 set name=pkg.description \
-    value="Boto is a Python package that provides interfaces to Amazon Web Services (AWS).  In addition, boto provides support for other public services such as Google Storage in, as well as private cloud systems like Eucalyptus, OpenStack and Nebula."
+    value="Boto is a Python package that provides interfaces to Amazon Web Services (AWS). In addition, boto provides support for other public services such as Google Storage as well private cloud systems like Eucalyptus, OpenStack and Open Nebula."
 set name=com.oracle.info.description value="the Python boto module"
 set name=com.oracle.info.tpno value=$(TPNO)
 set name=info.classification \
-    value=org.opensolaris.category.2008:Development/Python
+    value=org.opensolaris.category.2008:Development/Python \
+    value="org.opensolaris.category.2008:Web Services/Application and Web Servers"
 set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
 set name=info.upstream value="Mitch Garnaat <mitch@garnaat.com>"
 set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
@@ -436,11 +437,11 @@ license boto.license license="MIT, Apache v2.0, LGPLv2.1"
 
 # force a group dependency on the optional lxml; pkgdepend work is needed to
 # flush this out.
-#depend type=group fmri=library/python/lxml-$(PYV)
+depend type=group fmri=library/python/lxml-$(PYV)
 
 # force a group dependency on the optional simplejson; pkgdepend work is needed
 # to flush this out.
-#depend type=group fmri=library/python/simplejson-$(PYV)
+depend type=group fmri=library/python/simplejson-$(PYV)
 
 # force the rename with an optional dependency on the old name
 depend type=optional \
@@ -451,4 +452,4 @@ depend type=require \
     fmri=library/python/boto@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
 
 # force a dependency on requests; pkgdepend work is needed to flush this out.
-#depend type=require fmri=library/python/requests-$(PYV)
+depend type=require fmri=library/python/requests-$(PYV)
