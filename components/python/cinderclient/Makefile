@@ -36,9 +36,6 @@ COMPONENT_BUGDB=	service/cinder
 
 TPNO=			17869
 
-# depends on keystoneclient which is not Python 3 ready
-PYTHON_VERSIONS=	2.7 2.6
-
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
 include $(WS_TOP)/make-rules/ips.mk
