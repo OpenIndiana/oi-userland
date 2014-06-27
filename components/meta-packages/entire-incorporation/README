@@ -1,0 +1,6 @@
+Contents of the entire-201X.X.X.X manifests can be generated using the command below:
+
+pkgrecv -s http://pkg.openindiana.org/hipster-2014.1 --newest | \
+  awk '{ gsub("pkg://openindiana.org","pkg:"); printf("depend fmri=%s type=incorporate\n",$1) }' | \
+  grep -v pkg:/entire | \
+  sort
