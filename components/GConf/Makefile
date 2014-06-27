@@ -47,6 +47,7 @@ CONFIGURE_ENV+= INTLTOOL_PERL=$(PERL)
 
 # CFLAGS are not passed to compiler when g-ir-scanner is used
 COMPONENT_BUILD_ENV += CFLAGS="$(CFLAGS)"
+COMPONENT_BUILD_ENV += CC="$(CC)"
 
 $(INSTALL_32): $(INSTALL_64)
 
