@@ -262,9 +262,11 @@ class IPpoolCommand(CommandBase):
 class IPfilterCommand(CommandBase):
     '''Wrapper around Solaris ipf(1m) command'''
 
-    def split_rules(self, rules):
+    def _split_rules(self, rules, version):
         # assumes that rules are inbound!
         cmd = ['/usr/sbin/ipfstat', '-i']
+        if version == 6:
+            cmd.insert(1, '-6')
         stdout = self.execute_with_pfexec(cmd)
         existing_rules = []
         non_existing_rules = []
@@ -276,20 +278,20 @@ class IPfilterCommand(CommandBase):
 
         return existing_rules, non_existing_rules
 
-    def add_rules(self, rules, version='4'):
-        rules = self.split_rules(rules)[1]
+    def add_rules(self, rules, version=4):
+        rules = self._split_rules(rules, version)[1]
         process_input = '\n'.join(rules)
         cmd = ['/usr/sbin/ipf', '-f', '-']
-        if version == '6':
-            cmd.append('-6')
+        if version == 6:
+            cmd.insert(1, '-6')
         return self.execute_with_pfexec(cmd, process_input=process_input)
 
-    def remove_rules(self, rules, version='4'):
-        rules = self.split_rules(rules)[0]
+    def remove_rules(self, rules, version=4):
+        rules = self._split_rules(rules, version)[0]
         process_input = '\n'.join(rules)
         cmd = ['/usr/sbin/ipf', '-r', '-f', '-']
-        if version == '6':
-            cmd.append('-6')
+        if version == 6:
+            cmd.insert(1, '-6')
         return self.execute_with_pfexec(cmd, process_input=process_input)
 
 

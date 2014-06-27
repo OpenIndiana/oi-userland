@@ -306,7 +306,8 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         # now setup the IPF rule
         rules = ['block in quick on %s from %s to pool/%d' %
                  (internal_dlname, subnet_cidr, new_ippool_name)]
-        ri.ipfilters_manager.add_ipf_rules(rules)
+        ipversion = netaddr.IPNetwork(subnet_cidr).version
+        ri.ipfilters_manager.add_ipf_rules(rules, ipversion)
 
     def internal_network_removed(self, ri, port):
         internal_dlname = self.get_internal_device_name(port['id'])
@@ -318,7 +319,8 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         ippool_name = self._get_ippool_name(port['mac_address'])
         rules = ['block in quick on %s from %s to pool/%d' %
                  (internal_dlname, port['subnet']['cidr'], ippool_name)]
-        ri.ipfilters_manager.remove_ipf_rules(rules)
+        ipversion = netaddr.IPNetwork(port['subnet']['cidr']).version
+        ri.ipfilters_manager.remove_ipf_rules(rules, ipversion)
         # remove the ippool
         ri.ipfilters_manager.remove_ippool(ippool_name, None)
         for internal_port in ri.internal_ports:
