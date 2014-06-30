@@ -1,0 +1,21 @@
+--- binutils-2.23.2/binutils/strings.c.~1~	2014-06-30 23:30:08.653521547 +0400
++++ binutils-2.23.2/binutils/strings.c	2014-06-30 23:31:00.945499204 +0400
+@@ -457,6 +457,7 @@
+   int c, i;
+   long r = EOF;
+   unsigned char buf[4];
++  bzero(buf,4*sizeof(unsigned char));
+ 
+   for (i = 0; i < encoding_bytes; i++)
+     {
+--- binutils-2.23.2/ld/ldfile.c.~1~	2014-06-30 23:34:09.198275668 +0400
++++ binutils-2.23.2/ld/ldfile.c	2014-06-30 23:35:39.496965194 +0400
+@@ -594,7 +594,7 @@
+ ldfile_open_command_file_1 (const char *name, bfd_boolean default_only)
+ {
+   FILE *ldlex_input_stack;
+-  bfd_boolean sysrooted;
++  bfd_boolean sysrooted=FALSE;
+ 
+   ldlex_input_stack = ldfile_find_command_file (name, default_only, &sysrooted);
+ 
