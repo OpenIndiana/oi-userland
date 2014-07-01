@@ -1,0 +1,64 @@
+#
+# This patch contains an important bug fix for the PAM password userauth
+# conversation function. This bug fix was contributed back to the upstream in 
+# 2009, but it was not accepted by the upstream.  For more information, see
+# https://bugzilla.mindrot.org/show_bug.cgi?id=1681.
+#
+--- orig/auth-pam.c	Fri Jun 20 14:55:27 2014
++++ new/auth-pam.c	Fri Jun 20 14:54:39 2014
+@@ -1111,11 +1111,13 @@
+ 	free(env);
+ }
+ 
++#ifndef PAM_BUGFIX
+ /*
+  * "Blind" conversation function for password authentication.  Assumes that
+  * echo-off prompts are for the password and stores messages for later
+  * display.
+  */
++#endif
+ static int
+ sshpam_passwd_conv(int n, sshpam_const struct pam_message **msg,
+     struct pam_response **resp, void *data)
+@@ -1137,6 +1139,17 @@
+ 	for (i = 0; i < n; ++i) {
+ 		switch (PAM_MSG_MEMBER(msg, i, msg_style)) {
+ 		case PAM_PROMPT_ECHO_OFF:
++#ifdef PAM_BUGFIX
++                       /*
++                        * PAM conversation function for the password userauth
++			* method (non-interactive) really cannot do any 
++			* prompting.  We set the PAM_AUTHTOK item in 
++                        * sshpam_auth_passwd()to avoid conversation. If some
++			* modules still try to converse, then the password
++			* userauth will fail.
++			*/
++			goto fail;
++#else
+ 			if (sshpam_password == NULL)
+ 				goto fail;
+ 			if ((reply[i].resp = strdup(sshpam_password)) == NULL)
+@@ -1143,6 +1156,7 @@
+ 				goto fail;
+ 			reply[i].resp_retcode = PAM_SUCCESS;
+ 			break;
++#endif
+ 		case PAM_ERROR_MSG:
+ 		case PAM_TEXT_INFO:
+ 			len = strlen(PAM_MSG_MEMBER(msg, i, msg));
+@@ -1197,6 +1211,15 @@
+ 	    options.permit_root_login != PERMIT_YES))
+ 		sshpam_password = badpw;
+ 
++#ifdef PAM_BUGFIX
++  	sshpam_err = pam_set_item(sshpam_handle, PAM_AUTHTOK, password);
++	if (sshpam_err != PAM_SUCCESS) {
++		debug("PAM: %s: failed to set PAM_AUTHTOK: %s", __func__,
++		    pam_strerror(sshpam_handle, sshpam_err));
++		return 0;
++	}
++#endif
++
+ 	sshpam_err = pam_set_item(sshpam_handle, PAM_CONV,
+ 	    (const void *)&passwd_conv);
+ 	if (sshpam_err != PAM_SUCCESS)
