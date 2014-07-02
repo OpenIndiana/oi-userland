@@ -17,14 +17,13 @@ include ../../make-rules/shared-macros.mk
 CMAKE= cmake
 
 COMPONENT_NAME=		mariadb
-COMPONENT_VERSION=	5.5.36
-COMPONENT_REVISION=	1
-IPS_COMPONENT_VERSION=	5.5.36
+COMPONENT_VERSION=	5.5.38
+IPS_COMPONENT_VERSION=	5.5.38
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_PROJECT_URL=	http://www.mariadb.org/
-COMPONENT_ARCHIVE_HASH=	sha256:16f2cc9c219b4fbe0b3e97f14d1ed6fd8b7d377b22b95f31adae91965e36bb0c
-COMPONENT_ARCHIVE_URL=	https://downloads.mariadb.org/f/$(COMPONENT_SRC)/kvm-tarbake-jaunty-x86/$(COMPONENT_ARCHIVE)/from/http:/mirror.timeweb.ru/mariadb?serve
+COMPONENT_ARCHIVE_HASH=	sha256:efc839e6627064b3b5c6c39854198f0d34907f48937804758d4c09c7717be8d3
+COMPONENT_ARCHIVE_URL=	http://mirrors.coreix.net/$(COMPONENT_NAME)/$(COMPONENT_SRC)/source/$(COMPONENT_ARCHIVE)
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
