@@ -16,13 +16,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	thunderbird
-COMPONENT_VERSION= 	24.2.0
-IPS_COMPONENT_VERSION=	24.2.0
+COMPONENT_VERSION= 	24.6.0
+IPS_COMPONENT_VERSION=	24.6.0
 COMPONENT_SUMMARY= 	Mozilla Thunderbird Email/Newsgroup Client
 COMPONENT_SRC= 		comm-esr24
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:66474132bd6ebbb8a913c3f4acd4ecc9bec011e4c7ee49475f29558801a905cf
+  sha256:ae9a7cbc8dc195bd9f4b7b4edcd33599fa08c5388a0690f77221e6c5566629ea
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.mozilla.org/pub/thunderbird/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/thunderbird/
