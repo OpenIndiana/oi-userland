@@ -24,6 +24,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		rsyslog
 COMPONENT_VERSION=	6.2.0
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://rsyslog.com/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
@@ -42,7 +43,7 @@ CONFIGURE_LIBDIR.64 =	$(CONFIGURE_LIBDIR.32)
 
 CONFIGURE_OPTIONS +=    --enable-imsolaris
 CONFIGURE_OPTIONS +=    --enable-mail
-CONFIGURE_OPTIONS +=    --enable-gssapi_krb5
+#CONFIGURE_OPTIONS +=    --enable-gssapi_krb5
 CONFIGURE_OPTIONS +=    --enable-gnutls
 CONFIGURE_OPTIONS +=    --disable-klog
 CONFIGURE_OPTIONS +=    --sbindir=/usr/lib/rsyslog
