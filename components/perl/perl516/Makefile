@@ -48,6 +48,8 @@ include $(WS_TOP)/make-rules/ips.mk
 
 LD_B_DIRECT=		""
 
+COMPONENT_BUILD_ARGS =
+
 #
 # Override these compiler settings because they are causing problems
 # in the ON build of the contrib components.
