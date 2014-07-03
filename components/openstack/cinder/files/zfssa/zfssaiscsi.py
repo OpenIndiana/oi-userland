@@ -342,19 +342,6 @@ class ZFSSAISCSIDriver(driver.ISCSIDriver):
                                 volume['name'],
                                 new_size * SIZE_GB)
 
-    def _get_iscsi_properties(self, volume):
-        lcfg = self.configuration
-        lun = self.zfssa.get_lun(lcfg.zfssa_pool,
-                                 lcfg.zfssa_project,
-                                 volume['name'])
-        iqn = self.zfssa.get_target(self._get_target_alias())
-
-        return {'target_discovered': True,
-                'target_iqn': iqn,
-                'target_portal': lcfg.zfssa_target_portal,
-                'volume_id': lun['number'],
-                'access_mode': 'rw'}
-
     def create_cloned_volume(self, volume, src_vref):
         """Create a clone of the specified volume."""
         zfssa_snapshot = {'volume_name': src_vref['name'],
