@@ -29,7 +29,6 @@ COMPONENT_PRE_INSTALL_ACTION += ( \
 #
 COMPONENT_POST_UNPACK_ACTION += ( \
 	echo $(PATH); \
-	$(CP) /usr/include/zlib.h $(COMPONENT_SRC)/ext/zlib/my_zlib.h; \
 	$(RM) $(COMPONENT_SRC)/Zend/zend_ini_parser.c \
 	      $(COMPONENT_SRC)/Zend/zend_ini_parser.h \
 	      $(COMPONENT_SRC)/Zend/zend_ini_parser.output \

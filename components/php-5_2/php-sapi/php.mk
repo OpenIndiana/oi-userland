@@ -18,15 +18,14 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 COMPONENT_PRE_INSTALL_ACTION += ( \
 	$(MKDIR) $(INSTALL_ROOT)/$(PHP_PEAR_CACHE_DIR) )
 
 COMPONENT_POST_UNPACK_ACTION += ( \
-	echo $(PATH); \
-	cp /usr/include/zlib.h $(COMPONENT_SRC)/ext/zlib/my_zlib.h )
+	echo $(PATH); )
 
 COMPONENT_PRE_CONFIGURE_ACTION = ( \
 	cd $(COMPONENT_SRC); $(ENV) -i PATH=/usr/gnu/bin:$(PATH) \
