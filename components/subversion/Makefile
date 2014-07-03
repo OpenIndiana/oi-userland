@@ -106,10 +106,10 @@ CONFIGURE_ENV += LD_OPTIONS="$(LD_OPTIONS)"
 LIBSVNDIR.32 = $(CONFIGURE_PREFIX)/lib/svn
 LIBSVNDIR.64 = $(CONFIGURE_PREFIX)/lib/svn/$(MACH64)
 
-APR-CONFIG.32 = /usr/apr/1.3/bin/apr-1-config
-APR-CONFIG.64 = /usr/apr/1.3/bin/$(MACH64)/apr-1-config
-APU-CONFIG.32 = /usr/apr-util/1.3/bin/apu-1-config
-APU-CONFIG.64 = /usr/apr-util/1.3/bin/$(MACH64)/apu-1-config
+APR-CONFIG.32 = /usr/apr/1.5/bin/apr-1-config
+APR-CONFIG.64 = /usr/apr/1.5/bin/$(MACH64)/apr-1-config
+APU-CONFIG.32 = /usr/apr-util/1.5/bin/apu-1-config
+APU-CONFIG.64 = /usr/apr-util/1.5/bin/$(MACH64)/apu-1-config
 APXS.32 = /usr/apache2/2.2/bin/apxs
 APXS.64 = /usr/apache2/2.2/bin/$(MACH64)/apxs
 
@@ -129,8 +129,8 @@ CONFIGURE_OPTIONS += --with-apxs=/usr/apache2/2.2/bin/apxs
 CONFIGURE_OPTIONS += --with-ssl 
 CONFIGURE_OPTIONS += --with-zlib=$(CONFIGURE_PREFIX)
 CONFIGURE_OPTIONS += --with-jdk=$(JAVA_ROOT)
-CONFIGURE_OPTIONS += --with-apr=/usr/apr/1.3
-CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util/1.3
+CONFIGURE_OPTIONS += --with-apr=/usr/apr/1.5
+CONFIGURE_OPTIONS += --with-apr-util=/usr/apr-util/1.5
 CONFIGURE_OPTIONS += --enable-nls
 CONFIGURE_OPTIONS += --disable-mod-activation
 CONFIGURE_OPTIONS += --enable-javahl
