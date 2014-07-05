@@ -20,6 +20,7 @@ LLVM_NAME=llvm
 CLANG_NAME=cfe
 
 COMPONENT_VERSION= 3.3
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= LLVM tools and Clang compiler
 COMPONENT_SRC= $(LLVM_NAME)-$(COMPONENT_VERSION).src
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -55,6 +56,11 @@ COMPONENT_POST_INSTALL_ACTION =  for file in `echo $(PROTO_DIR)/usr/clang/$(COMP
 				  elfedit -e 'dyn:delete RPATH' $$file ; \
 				done
 
+COMPONENT_TEST_TARGETS = check-all
+COMPONENT_TEST_ENV += PATH=/usr/gnu/bin:/usr/bin
+
 build: $(BUILD_32)
 
 install: $(INSTALL_32)
+
+test: $(TEST_32)
