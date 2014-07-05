@@ -1,0 +1,63 @@
+This patch addes pam_chauthtok(3PAM) and PAM_NO_AUTHTOK_CHECK features.
+Also refer to pam_authtok_check(5).
+
+--- /usr/tmp/clean/Authen-PAM-0.16/PAM.xs	Thu Jun 30 11:16:30 2005
++++ Authen-PAM-0.16/PAM.xs	Fri Apr  7 10:57:51 2006
+@@ -292,6 +292,12 @@
+       #else
+ 	  goto not_there;
+       #endif
++      else if (strcmp(name, "NO_AUTHTOK_CHECK") == 0)
++      #if defined(HAVE_PAM_NO_AUTHTOK_CHECK)
++	  return PAM_NO_AUTHTOK_CHECK;
++      #else
++	  goto not_there;
++      #endif
+       else if (strcmp(name, "MODULE_UNKNOWN") == 0)
+       #if defined(HAVE_PAM_MODULE_UNKNOWN)  /* Linux-PAM only */
+ 	  return PAM_MODULE_UNKNOWN;
+--- /usr/tmp/clean/Authen-PAM-0.16/PAM.pm.in	Thu Jun 30 11:10:14 2005
++++ Authen-PAM-0.16/PAM.pm.in	Fri Apr  7 10:57:51 2006
+@@ -49,6 +49,7 @@
+ 
+ 	PAM_ESTABLISH_CRED PAM_DELETE_CRED PAM_REINITIALIZE_CRED
+ 	PAM_REFRESH_CRED PAM_CHANGE_EXPIRED_AUTHTOK
++	PAM_NO_AUTHTOK_CHECK
+ 
+ 	PAM_PROMPT_ECHO_OFF PAM_PROMPT_ECHO_ON PAM_ERROR_MSG
+ 	PAM_TEXT_INFO PAM_RADIO_TYPE PAM_BINARY_PROMPT
+@@ -163,6 +164,12 @@
+     return _pam_start($_[0], $_[1], \&pam_default_conv, $_[2]) if @_ == 3;
+     return _pam_start($_[0], undef, \&pam_default_conv, $_[1]) if @_ == 2;
+     croak("Wrong number of arguments in pam_start function");
++}
++
++sub pam_chauthtok {
++    return _pam_chauthtok(@_) if @_ == 2;
++    return _pam_chauthtok($_[0], 0) if @_ == 1;
++    croak("Wrong number of arguments in pam_chauthtok function");
+ }
+ 
+ # Autoload methods go after =cut, and are processed by the autosplit program.
+--- /usr/tmp/clean/Authen-PAM-0.16/PAM_config.h.in	Mon Jun  6 14:29:13 2005
++++ Authen-PAM-0.16/PAM_config.h.in	Fri Apr  7 10:57:51 2006
+@@ -60,6 +60,9 @@
+ /* Is the symbol PAM_REINITIALIZE_CRED defined? */
+ #undef HAVE_PAM_REINITIALIZE_CRED
+ 
++/* Is the symbol PAM_NO_AUTHTOK_CHECK defined? */
++#undef HAVE_PAM_NO_AUTHTOK_CHECK
++
+ /* pam_appl.h in /usr/include/security */
+ #undef HAVE_SECURITY_PAM_APPL_H
+ 
+--- /usr/tmp/clean/Authen-PAM-0.16/configure.ac	Thu Jun 30 11:25:59 2005
++++ Authen-PAM-0.16/configure.ac	Fri Apr  7 10:57:51 2006
+@@ -75,6 +75,7 @@
+ AC_CHECK_PAM_CONST(PAM_MODULE_UNKNOWN)
+ AC_CHECK_PAM_CONST(PAM_RADIO_TYPE)
+ AC_CHECK_PAM_CONST(PAM_BINARY_PROMPT)
++AC_CHECK_PAM_CONST(PAM_NO_AUTHTOK_CHECK)
+ 
+ # Checks if the dl library supports the RTLD_GLOBAL flag
+ # but only if perl was compiled with the dl_open library
