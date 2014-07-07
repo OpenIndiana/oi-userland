@@ -372,8 +372,11 @@ class Dnsmasq(DhcpLocalProcess):
         utils.execute(cmd, self.root_helper)
 
     def release_lease(self, mac_address, removed_ips):
-        # TODO(gmoodalb): we need to support dnsmasq's dhcp_release
-        pass
+        """Release a DHCP lease."""
+        for ip in removed_ips or []:
+            cmd = ['/usr/lib/inet/dhcp_release', self.interface_name,
+                   ip, mac_address]
+            utils.execute(cmd, self.root_helper)
 
     def reload_allocations(self):
         """Rebuild the dnsmasq config and signal the dnsmasq to reload."""

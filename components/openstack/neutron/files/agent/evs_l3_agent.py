@@ -180,26 +180,29 @@ class EVSL3NATAgent(l3_agent.L3NATAgent):
         ipintf = net_lib.IPInterface(ifname)
         ipaddr_list = ipintf.ipaddr_list()['static']
 
-        # Clear out all ipnat rules for floating ips
-        ri.ipfilters_manager.remove_nat_rules(ri.ipfilters_manager.ipv4['nat'])
-
         existing_cidrs = set([addr for addr in ipaddr_list])
         new_cidrs = set()
+
+        existing_nat_rules = [nat_rule for nat_rule in
+                              ri.ipfilters_manager.ipv4['nat']]
+        new_nat_rules = []
 
         # Loop once to ensure that floating ips are configured.
         for fip in ri.router.get(l3_constants.FLOATINGIP_KEY, []):
             fip_ip = fip['floating_ip_address']
             fip_cidr = str(fip_ip) + FLOATING_IP_CIDR_SUFFIX
-
             new_cidrs.add(fip_cidr)
+            fixed_cidr = str(fip['fixed_ip_address']) + '/32'
+            nat_rule = 'bimap %s %s -> %s' % (ifname, fixed_cidr, fip_cidr)
 
             if fip_cidr not in existing_cidrs:
                 ipintf.create_address(fip_cidr)
+                ri.ipfilters_manager.add_nat_rules([nat_rule])
+            new_nat_rules.append(nat_rule)
 
-            # Rebuild iptables rules for the floating ip.
-            fixed_cidr = str(fip['fixed_ip_address']) + '/32'
-            nat_rules = ['bimap %s %s -> %s' % (ifname, fixed_cidr, fip_cidr)]
-            ri.ipfilters_manager.add_nat_rules(nat_rules)
+        # remove all the old NAT rules
+        ri.ipfilters_manager.remove_nat_rules(list(set(existing_nat_rules) -
+                                              set(new_nat_rules)))
 
         # Clean up addresses that no longer belong on the gateway interface.
         for ip_cidr in existing_cidrs - new_cidrs:
