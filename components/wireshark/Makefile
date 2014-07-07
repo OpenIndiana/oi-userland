@@ -23,20 +23,24 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.10.7
+COMPONENT_VERSION=	1.10.8
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:d98d263b31dd904a0337ba2db6d1a80bb495b4ac419a304f0f25c551d50cafc6
+    sha256:27d9cf4f0ca1ac436104b7f27caf8ad65f73db09edc8df0742ce9688c7d38763
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
-TPNO=			17414
+TPNO=			18282
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# Micro version for easy libraries packaging
+MICRO_VERSION:= $(shell echo $(COMPONENT_VERSION) | awk -F. '{ print $$3 }')
+PKG_MACROS+= MICRO_VERSION=$(MICRO_VERSION)
 
 # Enable ASLR for this component
 ASLR_MODE = $(ASLR_ENABLE)
