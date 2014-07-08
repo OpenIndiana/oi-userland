@@ -95,7 +95,7 @@ ZONE_STATE_MOUNTED = 'mounted'
 # Mapping between zone state and Nova power_state.
 SOLARISZONES_POWER_STATE = {
     ZONE_STATE_CONFIGURED:      power_state.NOSTATE,
-    ZONE_STATE_INCOMPLETE:      power_state.BUILDING,
+    ZONE_STATE_INCOMPLETE:      power_state.NOSTATE,
     ZONE_STATE_UNAVAILABLE:     power_state.NOSTATE,
     ZONE_STATE_INSTALLED:       power_state.SHUTDOWN,
     ZONE_STATE_READY:           power_state.RUNNING,
@@ -498,9 +498,9 @@ class SolarisZonesDriver(driver.ComputeDriver):
             kstat_object = self._rad_instance.get_object(
                 kstat.Kstat(), rad.client.ADRGlobPattern(pattern))
         except Exception as reason:
-            LOG.warning(_("Unable to retrieve kstat object '%s:%s:%s' of "
-                          "class '%s' via kstat(3RAD): %s")
-                        % (module, instance, name, kstat_class, reason))
+            LOG.info(_("Unable to retrieve kstat object '%s:%s:%s' of class "
+                       "'%s' via kstat(3RAD): %s")
+                     % (module, instance, name, kstat_class, reason))
             return None
 
         kstat_data = {}
@@ -727,7 +727,8 @@ class SolarisZonesDriver(driver.ComputeDriver):
                 LOG.error(_("Cannot attach Fibre Channel volume '%s' because "
                           "no Fibre Channel HBA initiators were found")
                           % (target_wwn))
-                raise exception.InvalidVolume(reason="No host FC initiator")
+                raise exception.InvalidVolume(
+                    reason="No host Fibre Channel initiator found")
 
             target_lun = data['target_lun']
             # If the volume was exported just a few seconds previously then
@@ -1403,6 +1404,10 @@ class SolarisZonesDriver(driver.ComputeDriver):
         zone = self._get_zone_by_name(name)
         if zone is None:
             raise exception.InstanceNotFound(instance_id=name)
+
+        if self._get_state(zone) == power_state.SHUTDOWN:
+            self._power_on(instance)
+            return
 
         try:
             if reboot_type == 'SOFT':

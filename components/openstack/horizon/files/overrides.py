@@ -38,6 +38,8 @@ from openstack_dashboard.dashboards.project.instances.tabs import \
     InstanceDetailTabs, LogTab, OverviewTab
 from openstack_dashboard.dashboards.project.instances.workflows import \
     create_instance
+from openstack_dashboard.dashboards.project.instances.workflows import \
+    update_instance
 from openstack_dashboard.dashboards.project.networks.ports.tables import \
     PortsTable as projectPortsTable
 from openstack_dashboard.dashboards.project.networks.subnets.tables import \
@@ -53,7 +55,7 @@ from openstack_dashboard.dashboards.project.networks.tables import \
 from openstack_dashboard.dashboards.project.networks.workflows import \
     CreateNetworkInfoAction, CreateSubnetDetailAction, CreateSubnetInfoAction
 
-# remove VolumeOptions and PostCreationStep from LaunchInstance
+# Remove 'PostCreationStep' from Project/Instances/Launch Instance
 create_instance.LaunchInstance.default_steps = (
     create_instance.SelectProjectUser,
     create_instance.SetInstanceDetails,
@@ -61,59 +63,80 @@ create_instance.LaunchInstance.default_steps = (
     create_instance.SetNetwork
 )
 
-# Remove the Security Groups tab from Project/Access and Security
+# Remove 'UpdateInstanceSecurityGroups' from
+# Project/Instances/Actions/Edit Instance
+update_instance.UpdateInstance.default_steps = (
+    update_instance.UpdateInstanceInfo,
+)
+
+# Remove 'SecurityGroupsTab' tab from Project/Access & Security
 AccessAndSecurityTabs.tabs = (KeypairsTab, FloatingIPsTab, APIAccessTab)
 
-# remove the 'Console' tab from Instance Detail
+# Remove 'ConsoleTab' tab from Project/Instances/Instance Name
 InstanceDetailTabs.tabs = (OverviewTab, LogTab)
 
-# remove the 'Console' option in the Admin Instances pulldown by removing the
-# action for project_tables.ConsoleLink
+# Remove 'ConfirmResize', 'RevertResize', 'ConsoleLink', 'TogglePause',
+# 'ToggleSuspend', 'MigrateInstance' actions from Admin/Instances/Actions
 admin_tables.AdminInstancesTable._meta.row_actions = (
-    project_tables.ConfirmResize,
-    project_tables.RevertResize,
     admin_tables.AdminEditInstance,
     project_tables.LogLink,
     project_tables.CreateSnapshot,
-    project_tables.TogglePause,
-    project_tables.ToggleSuspend,
-    admin_tables.MigrateInstance,
     project_tables.SoftRebootInstance,
     project_tables.RebootInstance,
     project_tables.TerminateInstance
 )
 
-# Disable 'admin_state' and 'shared' checkboxes on Create Networks
+# Remove 'ConfirmResize', 'RevertResize', 'EditInstanceSecurityGroups',
+# 'ConsoleLink', 'TogglePause', 'ToggleSuspend', 'ResizeLink',
+# 'RebuildInstance' actions from Project/Instances/Actions
+project_tables.InstancesTable._meta.row_actions = (
+    project_tables.StartInstance,
+    project_tables.CreateSnapshot,
+    project_tables.SimpleAssociateIP,
+    project_tables.AssociateIP,
+    project_tables.SimpleDisassociateIP,
+    project_tables.EditInstance,
+    project_tables.LogLink,
+    project_tables.SoftRebootInstance,
+    project_tables.RebootInstance,
+    project_tables.StopInstance,
+    project_tables.TerminateInstance
+)
+
+# Disable 'admin_state' and 'shared' checkboxes in
+# Admin/Networks/Create Network
 CreateNetwork.base_fields['admin_state'].widget.attrs['disabled'] = True
 CreateNetwork.base_fields['shared'].widget.attrs['disabled'] = True
 
-# Disable 'admin_state' checkbox on Create Port
+# Disable 'admin_state' checkbox in
+# Admin/Networks/Network Name/Create Port
 CreatePort.base_fields['admin_state'].widget.attrs['disabled'] = True
 
-# Remove the ability to Update Ports
+# Remove 'UpdatePort' action from Admin/Networks/Network Name/Actions
 PortsTable._meta.row_actions = (DeletePort,)
 
-# Remove the ability to Update Subnets
+# Remove 'UpdateSubnet' action from Admin/Networks/Network Name/Actions
 SubnetsTable._meta.row_actions = (DeleteSubnet,)
 
-# Remove the ability to Edit Networks
+# Remove the 'EditNetwork' action from Admin/Networks/Actions
 NetworksTable._meta.row_actions = (DeleteNetwork,)
 
-# Remove the ability to Update project Ports
+# Remove the 'UpdatePort' action from Project/Networks/Name/Ports/Actions
 projectPortsTable._meta.row_actions = ()
 
-# Remove the ability to Update project Subnets
+# Remove the 'UpdateSubnet' action from
+# Project/Networks/Name/Subnets/Actions
 projectSubnetsTable._meta.row_actions = (projectDeleteSubnet,)
 
-# Remove the ability to Edit project Networks
+# Remove the 'EditNetwork' action from Project/Networks/Actions
 projectNetworksTable._meta.row_actions = (projectCreateSubnet,
                                           projectDeleteNetwork)
 
-# Disable 'admin_state' checkbox on Create project Networks
+# Disable 'admin_state' checkboxes in Project/Networks/Create Network/Network
 CreateNetworkInfoAction.base_fields['admin_state'].widget.attrs['disabled'] = \
     True
 
-# Disable 'no_gateway' checkbox on Create project Networks
+# Disable 'no_gateway' checkboxes in Project/Networks/Create Network/Subnet
 CreateSubnetInfoAction.base_fields['no_gateway'].widget.attrs['disabled'] = \
     True
 
@@ -121,7 +144,8 @@ CreateSubnetInfoAction.base_fields['no_gateway'].widget.attrs['disabled'] = \
 # Project/Images & Snapshots/Actions
 ImagesTable._meta.row_actions = (LaunchImage, EditImage, DeleteImage,)
 
-# change 'allocation_pools' and 'host_routes' to readonly
+# Change 'allocation_pools' and 'host_routes' fields to read-only in
+# Project/Networks/Create Network/Subnet Detail
 base_fields = CreateSubnetDetailAction.base_fields
 base_fields['allocation_pools'].widget.attrs['readonly'] = 'readonly'
 base_fields['host_routes'].widget.attrs['readonly'] = 'readonly'
