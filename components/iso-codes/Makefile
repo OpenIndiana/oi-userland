@@ -10,15 +10,16 @@
 
 #
 # Copyright 2013 Adam Stevko. All rights reserved.
+# Copyright 2014 Ken Mays. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		iso-codes
-COMPONENT_VERSION=	3.37
+COMPONENT_VERSION=	3.55
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
-COMPONENT_ARCHIVE_HASH=	sha256:408d1b8bbbd0c496c70e1a94093bc1f88495a7c6f6135c65c1cd53bdb1c62d90
+COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
+COMPONENT_ARCHIVE_HASH=	sha256:6c48f417160fa5f9e6874c19a07b220654974594a838460fdba06965c77e94e6
 COMPONENT_PROJECT_URL=	http://alioth.debian.org/projects/pkg-isocodes
 #COMPONENT_ARCHIVE_URL=	http://pkg-isocodes.alioth.debian.org/downloads/$(COMPONENT_ARCHIVE)
 COMPONENT_ARCHIVE_URL=	http://ftp.lfs-matrix.net/pub/blfs/conglomeration/iso-codes/$(COMPONENT_ARCHIVE)
