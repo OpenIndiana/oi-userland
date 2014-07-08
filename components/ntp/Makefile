@@ -20,15 +20,15 @@
 #
 
 #
-# Copyright (c) 2010, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2010, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ntp
-COMPONENT_PATCH_VERSION=	411
+COMPONENT_PATCH_VERSION=	447
 COMPONENT_VERSION=	4.2.7
-COMPONENT_REVISION=	2
+COMPONENT_REVISION=	3
 HUMAN_VERSION=		$(COMPONENT_VERSION)p$(COMPONENT_PATCH_VERSION)
 IPS_COMPONENT_VERSION=	$(COMPONENT_VERSION).$(COMPONENT_PATCH_VERSION)
 COMPONENT_PROJECT_URL=	http://www.ntp.org/
@@ -36,7 +36,7 @@ COMPONENT_SRC_NAME=	ntp-dev
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(HUMAN_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	 \
-	sha256:72d76985d7ecebf8325652555e596cf5ce236a77c61bf56c188aba4fba4f2725
+	sha256:4f866071a627cba56e08acca95363ca87da0ba0cfe3f94dfe749054357302477
 COMPONENT_ARCHIVE_URL=	http://archive.ntp.org/ntp4/ntp-dev/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB= service/ntp
 
@@ -56,6 +56,7 @@ CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
 CONFIGURE_OPTIONS +=	--with-binsubdir=sbin
 CONFIGURE_OPTIONS +=	--libexecdir=/usr/lib/inet
 CONFIGURE_OPTIONS +=	--sysconfdir=/etc/inet
+CONFIGURE_OPTIONS +=	--enable-getifaddrs
 CONFIGURE_OPTIONS +=	--enable-all-clocks
 CONFIGURE_OPTIONS +=	--enable-debugging
 CONFIGURE_OPTIONS +=	--enable-debug-timing
