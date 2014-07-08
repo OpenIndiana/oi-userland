@@ -29,6 +29,9 @@ from openstack_dashboard.dashboards.admin.networks.tables import \
     DeleteNetwork, NetworksTable
 from openstack_dashboard.dashboards.project.access_and_security.tabs import \
     AccessAndSecurityTabs, APIAccessTab, FloatingIPsTab, KeypairsTab
+from \
+    openstack_dashboard.dashboards.project.images_and_snapshots.images.tables \
+    import EditImage, DeleteImage, ImagesTable, LaunchImage
 from openstack_dashboard.dashboards.project.instances import tables \
     as project_tables
 from openstack_dashboard.dashboards.project.instances.tabs import \
@@ -113,6 +116,10 @@ CreateNetworkInfoAction.base_fields['admin_state'].widget.attrs['disabled'] = \
 # Disable 'no_gateway' checkbox on Create project Networks
 CreateSubnetInfoAction.base_fields['no_gateway'].widget.attrs['disabled'] = \
     True
+
+# Remove 'CreateVolumeFromImage' checkbox from
+# Project/Images & Snapshots/Actions
+ImagesTable._meta.row_actions = (LaunchImage, EditImage, DeleteImage,)
 
 # change 'allocation_pools' and 'host_routes' to readonly
 base_fields = CreateSubnetDetailAction.base_fields

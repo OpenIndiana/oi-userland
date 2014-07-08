@@ -1,0 +1,28 @@
+Internal patch to only enable the current supported boot source (Boot from Image).
+This patch will not be committed upsteam.
+
+--- horizon-2013.2.3/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py.orig	2014-04-03 11:45:53.000000000 -0700
++++ horizon-2013.2.3/openstack_dashboard/dashboards/project/instances/workflows/create_instance.py	2014-07-07 14:53:44.291365109 -0700
+@@ -137,22 +137,7 @@
+         source_type_choices = [
+             ('', _("--- Select source ---")),
+             ("image_id", _("Boot from image")),
+-            ("instance_snapshot_id", _("Boot from snapshot")),
+         ]
+-        if base.is_service_enabled(request, 'volume'):
+-            source_type_choices.append(("volume_id", _("Boot from volume")))
+-
+-            try:
+-                if api.nova.extension_supported("BlockDeviceMappingV2Boot",
+-                                                request):
+-                    source_type_choices.append(("volume_image_id",
+-                            _("Boot from image (creates a new volume).")))
+-            except Exception:
+-                exceptions.handle(request, _('Unable to retrieve extensions '
+-                                            'information.'))
+-
+-            source_type_choices.append(("volume_snapshot_id",
+-                    _("Boot from volume snapshot (creates a new volume).")))
+         self.fields['source_type'].choices = source_type_choices
+ 
+     def clean(self):
