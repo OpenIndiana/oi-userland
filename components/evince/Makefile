@@ -19,6 +19,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		evince
 COMPONENT_VERSION=	2.30.3
+COMPONENT_REVISION=	1
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH= \
@@ -41,6 +42,8 @@ COMPONENT_PREP_ACTION += \
 
 # For GNU gettext
 CONFIGURE_ENV += PATH=/usr/gnu/bin:$(PATH)
+
+CONFIGURE_OPTIONS+= --libexecdir=/usr/lib
 
 build:		$(BUILD_32)
 
