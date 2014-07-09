@@ -43,6 +43,9 @@ include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/ips.mk
 include $(WS_TOP)/make-rules/makemaker.mk
 
+# Pick up the patch to configure.ac in the 01-solaris.patch file
+COMPONENT_PREP_ACTION += (cd $(@D); autoreconf -fiv);
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # man pages go in the common area
