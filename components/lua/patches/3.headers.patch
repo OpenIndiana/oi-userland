@@ -1,5 +1,6 @@
 Patch to src/luaconf.h is to adjust lua's default path for where it 
 looks for .lua and lua related .so's
+OI-specific: If GCC hides symbols luac and lua binary can't be compiled.
 
 --- src/lua.h.~1~	Fri Apr 20 06:18:26 2012
 +++ src/lua.h	Tue Oct 16 16:37:24 2012
@@ -70,8 +71,8 @@ looks for .lua and lua related .so's
 +#endif
 
 
---- src/luaconf.h.orig	2012-10-25 08:39:30.502881780 -0700
-+++ src/luaconf.h	2012-10-25 08:40:00.726463215 -0700
+--- src/luaconf.h.~1~	2013-03-17 01:10:18.000000000 +0400
++++ src/luaconf.h	2014-07-10 09:54:41.072127770 +0400
 @@ -100,7 +100,7 @@
  #else			/* }{ */
  
@@ -81,3 +82,12 @@ looks for .lua and lua related .so's
  #define LUA_LDIR	LUA_ROOT "share/lua/" LUA_VDIR
  #define LUA_CDIR	LUA_ROOT "lib/lua/" LUA_VDIR
  #define LUA_PATH_DEFAULT  \
+@@ -176,7 +176,7 @@
+ */
+ #if defined(__GNUC__) && ((__GNUC__*100 + __GNUC_MINOR__) >= 302) && \
+     defined(__ELF__)		/* { */
+-#define LUAI_FUNC	__attribute__((visibility("hidden"))) extern
++#define LUAI_FUNC	extern
+ #define LUAI_DDEC	LUAI_FUNC
+ #define LUAI_DDEF	/* empty */
+ 
