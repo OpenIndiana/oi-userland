@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 include ../../make-rules/shared-macros.mk
@@ -32,6 +32,8 @@ COMPONENT_ARCHIVE_HASH=	\
     sha256:429a0d0408464f623d25e351adc387ff4ed92813b8760d1c16700cb3180f9303
 COMPONENT_ARCHIVE_URL=	http://ftp.gnome.org/pub/gnome/sources/meld/1.4/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/meld
+
+TPNO=			16990
 
 include ../../make-rules/prep.mk
 include ../../make-rules/justmake.mk
