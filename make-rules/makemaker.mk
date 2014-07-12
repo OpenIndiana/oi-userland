@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Perl 5.12 and older are 32-bit only.
@@ -40,6 +40,13 @@ $(BUILD_DIR)/$(MACH32)-5.12-mt/.configured:	PERL_VERSION=5.12-mt
 $(BUILD_DIR)/$(MACH32)-5.12-mt/.configured:	BITS=32
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	PERL_VERSION=5.16
 $(BUILD_DIR)/$(MACH64)-5.16/.configured:	BITS=64
+
+$(BUILD_DIR)/$(MACH32)-5.12/.tested:	PERL_VERSION=5.12
+$(BUILD_DIR)/$(MACH32)-5.12/.tested:	BITS=32
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.tested:	PERL_VERSION=5.12-mt
+$(BUILD_DIR)/$(MACH32)-5.12-mt/.tested:	BITS=32
+$(BUILD_DIR)/$(MACH64)-5.16/.tested:	PERL_VERSION=5.16
+$(BUILD_DIR)/$(MACH64)-5.16/.tested:	BITS=64
 
 BUILD_32 =	$(BUILD_DIR)/$(MACH32)-5.12/.built
 BUILD_32 +=	$(BUILD_DIR)/$(MACH32)-5.12-mt/.built

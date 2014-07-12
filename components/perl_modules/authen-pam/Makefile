@@ -57,6 +57,9 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
+COMPONENT_POST_TEST_ACTION= \
+    PERL5LIB=$(@D)/blib/lib:$(@D)/blib/arch $(PERL) test/PAM_NO_AUTHTOK_CHECK.pl
+
 #
 # Must have xml-parser installed for these tests to pass.
 #
