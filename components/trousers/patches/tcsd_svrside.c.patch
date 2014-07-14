@@ -1,5 +1,5 @@
 --- src/tcsd/svrside.c	2010-06-09 13:19:00.000000000 -0700
-+++ src/tcsd/svrside.c	2012-04-19 11:27:31.232524632 -0700
++++ src/tcsd/svrside.c	2014-07-10 14:53:38.347867637 -0700
 @@ -27,6 +27,15 @@
  #include <arpa/inet.h>
  #include <errno.h>
@@ -280,15 +280,21 @@
  		LogError("Failed bind: %s", strerror(errno));
  		return -1;
  	}
-@@ -285,7 +482,6 @@
+@@ -285,7 +482,12 @@
  		LogError("Failed listen: %s", strerror(errno));
  		return -1;
  	}
 -	client_len = (unsigned)sizeof(client_addr);
++
++	if (chmod(serv_addr.un.sun_path, 0666) < 0) {
++		LogError("Failed chmod %s: %s", serv_addr.un.sun_path,
++		    strerror(errno));
++		return -1;
++	}
  	
  	if (getenv("TCSD_FOREGROUND") == NULL) {
  		if (daemon(0, 0) == -1) {
-@@ -295,6 +491,12 @@
+@@ -295,6 +497,12 @@
  		}
  	}
  
@@ -301,7 +307,7 @@
  	LogInfo("%s: TCSD up and running.", PACKAGE_STRING);
  	do {
  		newsd = accept(sd, (struct sockaddr *) &client_addr, &client_len);
-@@ -314,20 +516,22 @@
+@@ -314,20 +522,22 @@
  		}
  		LogDebug("accepted socket %i", newsd);
  
