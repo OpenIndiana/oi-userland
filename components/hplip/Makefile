@@ -24,12 +24,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=         hplip
-COMPONENT_VERSION=      3.12.4
+COMPONENT_VERSION=      3.12.6
 COMPONENT_PROJECT_URL=	http://hplipopensource.com/hplip-web/
 COMPONENT_SRC=          $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=      $(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH= \
-    sha256:350375c78d79adf635a59a448b27b3fe9ab7ac622637c47125fe5f7d8a537fff
+    sha256:54578000792969adb583e75efeacb9c46ab69659ec7e9424de390613f3595775
 COMPONENT_ARCHIVE_URL=  http://sourceforge.net/projects/hplip/files/hplip/$(COMPONENT_VERSION)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hplip
 
@@ -65,6 +65,7 @@ $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-udev-acl-rules
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpcups-install
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-new-hpcups
 $(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-cups-drv-install
+$(HPLIP_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-libusb01_build
 
 # use these options for the HPIJS only support
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-foomatic-ppd-install
@@ -74,6 +75,7 @@ $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-hpcups-install
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --disable-doc-build
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-only-build
 $(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-hpijs-install
+$(HPIJS_VARIANT)/.built: CONFIGURE_OPTIONS += --enable-libusb01_build
 
 install: COMPONENT_INSTALL_ENV += halpredir=/etc/hal/fdi/preprobe/10osvendor
 
