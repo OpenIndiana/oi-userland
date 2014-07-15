@@ -372,26 +372,6 @@
  {
     int oldStuff = (hpaio->preDenali || hpaio->fromDenali || hpaio->denali) ? 1 : 0;
  
---- a/scan/sane/hpaio.c	Tue Aug  4 16:36:06 2009
-+++ b/scan/sane/hpaio.c	Fri Sep  4 01:04:29 2009
-@@ -326,7 +326,7 @@
-     return NULL;
- }
- 
--SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneError( hpaioScanner_t hpaio )
-+SANE_Status hpaioScannerToSaneError( hpaioScanner_t hpaio )
- {
-     SANE_Status retcode;
- 
-@@ -440,7 +440,7 @@
- }
- 
- 
--SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneStatus( hpaioScanner_t hpaio )
-+SANE_Status hpaioScannerToSaneStatus( hpaioScanner_t hpaio )
- {
- //BREAKPOINT;
-     
 --- a/scan/sane/xml.h	Tue Aug  4 16:36:06 2009
 +++ b/scan/sane/xml.h	Fri Sep  4 01:07:05 2009
 @@ -27,10 +27,10 @@
@@ -1732,4 +1712,24 @@
 -	chgrp "lp" -R $(DESTDIR)$(hplip_Logdir)
  	chmod 774 $(DESTDIR)$(hplip_Logdir)
  endif	#FULL_BUILD
+ 
+--- hplip-3.12.6/scan/sane/sclpml.c.~1~	2014-07-15 10:36:15.993093694 +0400
++++ hplip-3.12.6/scan/sane/sclpml.c	2014-07-15 10:37:11.111416926 +0400
+@@ -54,7 +54,7 @@
+ 
+ static struct hpaioScanner_s * session;
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneError( hpaioScanner_t hpaio )
++SANE_Status hpaioScannerToSaneError( hpaioScanner_t hpaio )
+ {
+     SANE_Status retcode;
+ 
+@@ -167,7 +167,7 @@
+ }
+ 
+ 
+-SANE_Status __attribute__ ((visibility ("hidden"))) hpaioScannerToSaneStatus( hpaioScanner_t hpaio )
++SANE_Status hpaioScannerToSaneStatus( hpaioScanner_t hpaio )
+ {
+     SANE_Status retcode;
  
