@@ -16,14 +16,14 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= libsoup
-COMPONENT_VERSION= 2.32.2
+COMPONENT_VERSION= 2.34.3
 COMPONENT_SUMMARY= Libsoup is an HTTP client/server library for GNOME
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
-COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
+COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH= \
-  sha256:96e6973c8b7459523c0f44e7aec69528ff2fbd388e8ddc415f91bcc42f50777f
+  sha256:c43f8865a9f7016c618b481bea3dd9ea65d9200685d4a94cddc54f8663704a1c
 COMPONENT_ARCHIVE_URL= \
-  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.32/$(COMPONENT_ARCHIVE)
+  http://ftp.gnome.org/pub/GNOME/sources/$(COMPONENT_NAME)/2.34/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.gnome.org
 
 include ../../make-rules/prep.mk
