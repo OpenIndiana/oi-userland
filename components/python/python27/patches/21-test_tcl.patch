@@ -1,0 +1,35 @@
+This patch comes from upstream: http://bugs.python.org/issue21881
+
+--- Python-2.7.8/Lib/test/test_tcl.py.~1~	2014-06-29 19:05:37.000000000 -0700
++++ Python-2.7.8/Lib/test/test_tcl.py	2014-07-17 20:50:53.804037105 -0700
+@@ -420,10 +420,9 @@
+             self.assertEqual(passValue(float('inf')), float('inf'))
+             self.assertEqual(passValue(-float('inf')), -float('inf'))
+         else:
+-            f = float(passValue(float('nan')))
+-            self.assertNotEqual(f, f)
+             self.assertEqual(float(passValue(float('inf'))), float('inf'))
+             self.assertEqual(float(passValue(-float('inf'))), -float('inf'))
++            # XXX NaN representation can be not parsable by float()
+         self.assertEqual(passValue((1, '2', (3.4,))),
+                          (1, '2', (3.4,)) if self.wantobjects else '1 2 3.4')
+ 
+@@ -448,9 +447,6 @@
+             expected = float(expected)
+             self.assertAlmostEqual(float(actual), expected,
+                                    delta=abs(expected) * 1e-10)
+-        def nan_eq(actual, expected):
+-            actual = float(actual)
+-            self.assertNotEqual(actual, actual)
+ 
+         check(True, '1')
+         check(False, '0')
+@@ -474,7 +470,7 @@
+             check(f, f, eq=float_eq)
+         check(float('inf'), 'Inf', eq=float_eq)
+         check(-float('inf'), '-Inf', eq=float_eq)
+-        check(float('nan'), 'NaN', eq=nan_eq)
++        # XXX NaN representation can be not parsable by float()
+         check((), '')
+         check((1, (2,), (3, 4), '5 6', ()), '1 2 {3 4} {5 6} {}')
+ 
