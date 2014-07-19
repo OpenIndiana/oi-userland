@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= gtk-vnc
 
 COMPONENT_VERSION= 0.3.10
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= gtk-vnc - A GTK widget for VNC client
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -33,6 +34,8 @@ include ../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
+CPPFLAGS= -I/usr/include/firefox -I/usr/include/firefox/nspr
+
 CONFIGURE_OPTIONS+= --sysconfdir=/etc
 CONFIGURE_OPTIONS+= --enable-plugin=yes
 CONFIGURE_OPTIONS+= --localstatedir=/var/lib
@@ -40,6 +43,7 @@ CONFIGURE_ENV    += XGETTEXT=/usr/gnu/bin/xgettext
 CONFIGURE_ENV    += MSGFMT=/usr/gnu/bin/msgfmt
 CONFIGURE_ENV    += PERL=$(PERL)
 CONFIGURE_ENV    += PYTHON="$(PYTHON.$(BITS))"
+CONFIGURE_ENV    += CPPFLAGS="$(CPPFLAGS)"
 
 COMPONENT_INSTALL_ENV+= GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 
