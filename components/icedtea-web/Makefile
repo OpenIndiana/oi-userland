@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	icedtea-web
 COMPONENT_VERSION= 	1.4.1
+COMPONENT_REVISION=	1
 COMPONENT_SUMMARY= 	Java browser plugin and Web Start launcher
 COMPONENT_SRC= 		$(COMPONENT_NAME)-6ec72d653144
 COMPONENT_ARCHIVE= 	6ec72d653144.tar.bz2
