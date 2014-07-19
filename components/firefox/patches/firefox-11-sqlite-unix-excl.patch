@@ -1,16 +1,12 @@
-diff --git a/storage/src/mozStorageConnection.cpp b/storage/src/mozStorageConnection.cpp
---- a/storage/src/mozStorageConnection.cpp
-+++ b/storage/src/mozStorageConnection.cpp
-@@ -608,6 +608,12 @@
- Connection::initialize(nsIFile *aDatabaseFile,
-                        const char* aVFSName)
- {
-+#ifdef SOLARIS
-+  if (!aVFSName) {
-+    aVFSName = "unix-excl";
-+  }
-+#endif
+--- a/browser/app/profile/firefox.js	2013-02-20 16:25:20.562753000 +0800
++++ b/browser/app/profile/firefox.js	2013-02-20 16:27:17.785465000 +0800
+@@ -793,6 +793,9 @@
+ // allow META refresh by default
+ pref("accessibility.blockautorefresh", false);
+ 
++// Whether profile is on NFS
++pref("storage.nfs_filesystem", true);
 +
-   NS_ASSERTION (!mDBConn, "Initialize called on already opened database!");
-   SAMPLE_LABEL("storage", "Connection::initialize");
+ // Whether history is enabled or not.
+ pref("places.history.enabled", true);
  

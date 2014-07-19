@@ -2,7 +2,7 @@ diff --git a/embedding/browser/gtk/Makefile.in b/embedding/browser/gtk/Makefile.
 new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/Makefile.in
-@@ -0,0 +1,54 @@
+@@ -0,0 +1,51 @@
 +# 
 +# ***** BEGIN LICENSE BLOCK *****
 +# Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -48,17 +48,12 @@ new file mode 100644
 +
 +include $(DEPTH)/config/autoconf.mk
 +
-+MODULE		= gtkembedmoz
-+
-+DIRS=src
-+
-+ifdef ENABLE_TESTS
-+TOOL_DIRS  += tests
-+endif
++#### !!! defining TOOL_DIRS breaks debug FF 24 build
++#ifdef ENABLE_TESTS
++#TOOL_DIRS  += tests
++#endif
 +
 +include $(topsrcdir)/config/rules.mk
-diff --git a/embedding/browser/gtk/src/EmbedCertificates.cpp b/embedding/browser/gtk/src/EmbedCertificates.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedCertificates.cpp
 @@ -0,0 +1,253 @@
@@ -315,8 +310,6 @@ new file mode 100644
 +  return NS_OK;
 +}
 +
-diff --git a/embedding/browser/gtk/src/EmbedCertificates.h b/embedding/browser/gtk/src/EmbedCertificates.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedCertificates.h
 @@ -0,0 +1,84 @@
@@ -404,8 +397,6 @@ new file mode 100644
 +  nsCOMPtr<nsIStringBundle> mPIPStringBundle;
 +};
 +#endif /* __EmbedCertificates_h */
-diff --git a/embedding/browser/gtk/src/EmbedContentListener.cpp b/embedding/browser/gtk/src/EmbedContentListener.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedContentListener.cpp
 @@ -0,0 +1,156 @@
@@ -481,7 +472,7 @@ new file mode 100644
 +{
 +  nsresult rv;
 +
-+  nsCAutoString specString;
++  nsAutoCString specString;
 +  rv = aURI->GetSpec(specString);
 +
 +  if (NS_FAILED(rv))
@@ -565,8 +556,6 @@ new file mode 100644
 +  return NS_ERROR_NOT_IMPLEMENTED;
 +}
 +
-diff --git a/embedding/browser/gtk/src/EmbedContentListener.h b/embedding/browser/gtk/src/EmbedContentListener.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedContentListener.h
 @@ -0,0 +1,66 @@
@@ -636,8 +625,6 @@ new file mode 100644
 +};
 +
 +#endif /* __EmbedContentListener_h */
-diff --git a/embedding/browser/gtk/src/EmbedContextMenuInfo.cpp b/embedding/browser/gtk/src/EmbedContextMenuInfo.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedContextMenuInfo.cpp
 @@ -0,0 +1,618 @@
@@ -1259,8 +1246,6 @@ new file mode 100644
 +  mEmbedCtxType |= GTK_MOZ_EMBED_CTX_DOCUMENT;
 +  return NS_OK;
 +}
-diff --git a/embedding/browser/gtk/src/EmbedContextMenuInfo.h b/embedding/browser/gtk/src/EmbedContextMenuInfo.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedContextMenuInfo.h
 @@ -0,0 +1,101 @@
@@ -1365,8 +1350,6 @@ new file mode 100644
 +  nsString                mCtxDocTitle;
 +}; // class EmbedContextMenuInfo
 +#endif // EmbedContextMenuInfo_h__
-diff --git a/embedding/browser/gtk/src/EmbedEventListener.cpp b/embedding/browser/gtk/src/EmbedEventListener.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedEventListener.cpp
 @@ -0,0 +1,304 @@
@@ -1674,8 +1657,6 @@ new file mode 100644
 +  }
 +  return NS_OK;
 +}
-diff --git a/embedding/browser/gtk/src/EmbedEventListener.h b/embedding/browser/gtk/src/EmbedEventListener.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedEventListener.h
 @@ -0,0 +1,90 @@
@@ -1769,8 +1750,6 @@ new file mode 100644
 +};
 +
 +#endif /* __EmbedEventListener_h */
-diff --git a/embedding/browser/gtk/src/EmbedGtkTools.cpp b/embedding/browser/gtk/src/EmbedGtkTools.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedGtkTools.cpp
 @@ -0,0 +1,88 @@
@@ -1862,8 +1841,6 @@ new file mode 100644
 +  NS_ENSURE_TRUE(docShell, NS_ERROR_FAILURE);
 +  return docShell->GetContentViewer(aViewer);
 +}
-diff --git a/embedding/browser/gtk/src/EmbedGtkTools.h b/embedding/browser/gtk/src/EmbedGtkTools.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedGtkTools.h
 @@ -0,0 +1,67 @@
@@ -1934,8 +1911,6 @@ new file mode 100644
 +GetContentViewer(nsIWebBrowser *webBrowser, nsIContentViewer **aViewer);
 +
 +#endif /* __EmbedTools_h */
-diff --git a/embedding/browser/gtk/src/EmbedPrivate.cpp b/embedding/browser/gtk/src/EmbedPrivate.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedPrivate.cpp
 @@ -0,0 +1,983 @@
@@ -2922,8 +2897,6 @@ new file mode 100644
 +  gtk_widget_destroy(sOffscreenWindow);
 +  sOffscreenWindow = 0;
 +}
-diff --git a/embedding/browser/gtk/src/EmbedPrivate.h b/embedding/browser/gtk/src/EmbedPrivate.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedPrivate.h
 @@ -0,0 +1,188 @@
@@ -3115,8 +3088,6 @@ new file mode 100644
 +};
 +
 +#endif /* __EmbedPrivate_h */
-diff --git a/embedding/browser/gtk/src/EmbedProgress.h b/embedding/browser/gtk/src/EmbedProgress.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedProgress.h
 @@ -0,0 +1,66 @@
@@ -3186,8 +3157,6 @@ new file mode 100644
 +};
 +
 +#endif /* __EmbedProgress_h */
-diff --git a/embedding/browser/gtk/src/EmbedPrompter.cpp b/embedding/browser/gtk/src/EmbedPrompter.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedPrompter.cpp
 @@ -0,0 +1,411 @@
@@ -3602,8 +3571,6 @@ new file mode 100644
 +        }
 +    }
 +}
-diff --git a/embedding/browser/gtk/src/EmbedPrompter.h b/embedding/browser/gtk/src/EmbedPrompter.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedPrompter.h
 @@ -0,0 +1,113 @@
@@ -3720,8 +3687,6 @@ new file mode 100644
 +    GtkWidget   *mComboBox;
 +    GtkWidget   *mCheckBox;
 +};
-diff --git a/embedding/browser/gtk/src/EmbedWindow.h b/embedding/browser/gtk/src/EmbedWindow.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedWindow.h
 @@ -0,0 +1,101 @@
@@ -3826,8 +3791,6 @@ new file mode 100644
 +  
 +
 +#endif /* __EmbedWindow_h */
-diff --git a/embedding/browser/gtk/src/EmbedWindowCreator.cpp b/embedding/browser/gtk/src/EmbedWindowCreator.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedWindowCreator.cpp
 @@ -0,0 +1,106 @@
@@ -3937,8 +3900,6 @@ new file mode 100644
 +
 +  return NS_ERROR_FAILURE;
 +}
-diff --git a/embedding/browser/gtk/src/EmbedWindowCreator.h b/embedding/browser/gtk/src/EmbedWindowCreator.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedWindowCreator.h
 @@ -0,0 +1,54 @@
@@ -3996,8 +3957,6 @@ new file mode 100644
 +};
 +
 +#endif /* __EmbedWindowCreator_h */
-diff --git a/embedding/browser/gtk/src/GtkPromptService.cpp b/embedding/browser/gtk/src/GtkPromptService.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/GtkPromptService.cpp
 @@ -0,0 +1,349 @@
@@ -4350,8 +4309,6 @@ new file mode 100644
 +        NS_WARNING("Unexpected button flags");
 +    }
 +}
-diff --git a/embedding/browser/gtk/src/GtkPromptService.h b/embedding/browser/gtk/src/GtkPromptService.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/GtkPromptService.h
 @@ -0,0 +1,59 @@
@@ -4414,11 +4371,9 @@ new file mode 100644
 +    void GetButtonLabel(PRUint32 aFlags, PRUint32 aPos,
 +                        const PRUnichar* aStringValue, nsAString &aLabel);
 +};
-diff --git a/embedding/browser/gtk/src/Makefile.in b/embedding/browser/gtk/src/Makefile.in
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/Makefile.in
-@@ -0,0 +1,112 @@
+@@ -0,0 +1,101 @@
 +# 
 +# ***** BEGIN LICENSE BLOCK *****
 +# Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -4464,7 +4419,6 @@ new file mode 100644
 +
 +include $(DEPTH)/config/autoconf.mk
 +
-+MODULE		= gtkembedmoz
 +LIBRARY_NAME	= gtkembedmoz
 +LIBXUL_LIBRARY	= 1
 +FORCE_STATIC_LIB = 1
@@ -4503,16 +4457,6 @@ new file mode 100644
 +
 +include $(topsrcdir)/config/rules.mk
 +
-+ifeq ($(OS_ARCH), SunOS)
-+ifndef GNU_CC
-+# When using Sun's WorkShop compiler, including
-+# /wherever/workshop-5.0/SC5.0/include/CC/std/time.h
-+# causes most of these compiles to fail with:
-+# line 29: Error: Multiple declaration for std::tm.
-+# So, this gets around the problem.
-+DEFINES         += -D_TIME_H=1
-+endif
-+endif
 +
 +CXXFLAGS        += $(MOZ_GTK_CFLAGS) $(MOZ_GTK2_CFLAGS)
 +CFLAGS          += $(MOZ_GTK_CFLAGS) $(MOZ_GTK2_CFLAGS)
@@ -4531,8 +4475,6 @@ new file mode 100644
 +
 +GARBAGE += $(MARSHAL_FILE).h $(MARSHAL_FILE).c
 +
-diff --git a/embedding/browser/gtk/src/gtkmozembed.h b/embedding/browser/gtk/src/gtkmozembed.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/gtkmozembed.h
 @@ -0,0 +1,287 @@
@@ -4823,8 +4765,6 @@ new file mode 100644
 +#endif /* __cplusplus */
 +
 +#endif /* gtkmozembed_h */
-diff --git a/embedding/browser/gtk/src/gtkmozembed2.cpp b/embedding/browser/gtk/src/gtkmozembed2.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/gtkmozembed2.cpp
 @@ -0,0 +1,1132 @@
@@ -5960,8 +5900,6 @@ new file mode 100644
 +                aNewEmbed, aChromeFlags);
 +
 +}
-diff --git a/embedding/browser/gtk/src/gtkmozembed_glue.cpp b/embedding/browser/gtk/src/gtkmozembed_glue.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/gtkmozembed_glue.cpp
 @@ -0,0 +1,116 @@
@@ -6081,8 +6019,6 @@ new file mode 100644
 +  return XPCOMGlueLoadXULFunctions(GtkSymbolsInternal);
 +}
 +
-diff --git a/embedding/browser/gtk/src/gtkmozembed_internal.h b/embedding/browser/gtk/src/gtkmozembed_internal.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/gtkmozembed_internal.h
 @@ -0,0 +1,70 @@
@@ -6156,8 +6092,6 @@ new file mode 100644
 +
 +#endif /* gtkmozembed_internal_h */
 +
-diff --git a/embedding/browser/gtk/src/gtkmozembedmarshal.list b/embedding/browser/gtk/src/gtkmozembedmarshal.list
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/gtkmozembedmarshal.list
 @@ -0,0 +1,34 @@
@@ -6195,8 +6129,6 @@ new file mode 100644
 +BOOL:POINTER
 +VOID:POINTER
 +BOOL:STRING,STRING,POINTER
-diff --git a/embedding/browser/gtk/src/gtkmozembedprivate.h b/embedding/browser/gtk/src/gtkmozembedprivate.h
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/gtkmozembedprivate.h
 @@ -0,0 +1,91 @@
@@ -6291,11 +6223,9 @@ new file mode 100644
 +#endif /* __cplusplus */
 +
 +#endif /* gtkmozembedprivate_h */
-diff --git a/embedding/browser/gtk/tests/Makefile.in b/embedding/browser/gtk/tests/Makefile.in
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/tests/Makefile.in
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,90 @@
 +# 
 +# ***** BEGIN LICENSE BLOCK *****
 +# Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -6341,7 +6271,6 @@ new file mode 100644
 +
 +include $(DEPTH)/config/autoconf.mk
 +
-+MODULE		= gtkembedmoz
 +
 +CPPSRCS         = \
 +		TestGtkEmbed.cpp \
@@ -6387,18 +6316,6 @@ new file mode 100644
 +		$(TK_LIBS) \
 +		$(NULL)
 +
-+ifeq ($(OS_ARCH), SunOS)
-+ifndef GNU_CC
-+# When using Sun's WorkShop compiler, including
-+# /wherever/workshop-5.0/SC5.0/include/CC/std/time.h
-+# causes most of these compiles to fail with:
-+# line 29: Error: Multiple declaration for std::tm.
-+# So, this gets around the problem.
-+DEFINES           += -D_TIME_H=1
-+endif
-+endif
-diff --git a/embedding/browser/gtk/tests/TestGtkEmbed.cpp b/embedding/browser/gtk/tests/TestGtkEmbed.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/tests/TestGtkEmbed.cpp
 @@ -0,0 +1,1145 @@
@@ -7547,8 +7464,6 @@ new file mode 100644
 +    gtk_widget_set_sensitive(browser->forwardButton, FALSE);
 + }
 +
-diff --git a/embedding/browser/gtk/tests/TestGtkEmbedChild.cpp b/embedding/browser/gtk/tests/TestGtkEmbedChild.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/tests/TestGtkEmbedChild.cpp
 @@ -0,0 +1,185 @@
@@ -7737,8 +7652,6 @@ new file mode 100644
 +  gtk_moz_embed_load_url(GTK_MOZ_EMBED(embed), text);
 +  g_free(text);
 +}
-diff --git a/embedding/browser/gtk/tests/TestGtkEmbedMDI.cpp b/embedding/browser/gtk/tests/TestGtkEmbedMDI.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/tests/TestGtkEmbedMDI.cpp
 @@ -0,0 +1,142 @@
@@ -7884,8 +7797,6 @@ new file mode 100644
 +    gtk_main_quit();
 +    return(0);
 +}
-diff --git a/embedding/browser/gtk/tests/TestGtkEmbedNotebook.cpp b/embedding/browser/gtk/tests/TestGtkEmbedNotebook.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/tests/TestGtkEmbedNotebook.cpp
 @@ -0,0 +1,86 @@
@@ -7975,8 +7886,6 @@ new file mode 100644
 +	
 +	return 0;
 +}
-diff --git a/embedding/browser/gtk/tests/TestGtkEmbedSocket.cpp b/embedding/browser/gtk/tests/TestGtkEmbedSocket.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/tests/TestGtkEmbedSocket.cpp
 @@ -0,0 +1,109 @@
@@ -8089,36 +7998,6 @@ new file mode 100644
 +    fprintf(stderr, "Can't fork.\n");
 +  }
 +}
-diff --git a/toolkit/toolkit-makefiles.sh b/toolkit/toolkit-makefiles.sh
---- a/toolkit/toolkit-makefiles.sh
-+++ b/toolkit/toolkit-makefiles.sh
-@@ -554,6 +554,9 @@
-   embedding/browser/Makefile
-   embedding/browser/build/Makefile
-   embedding/browser/webBrowser/Makefile
-+  embedding/browser/gtk/Makefile
-+  embedding/browser/gtk/src/Makefile
-+  embedding/browser/gtk/tests/Makefile
-   embedding/components/Makefile
-   embedding/components/appstartup/src/Makefile
-   embedding/components/build/Makefile
-diff --git a/toolkit/toolkit-tiers.mk b/toolkit/toolkit-tiers.mk
---- a/toolkit/toolkit-tiers.mk
-+++ b/toolkit/toolkit-tiers.mk
-@@ -218,6 +218,12 @@
- 
- tier_platform_dirs += services/crypto/component
- 
-+ifndef BUILD_STATIC_LIBS
-+ifneq (,$(MOZ_ENABLE_GTK2))
-+tier_platform_dirs += embedding/browser/gtk
-+endif
-+endif
-+
- tier_platform_dirs += startupcache
- 
- tier_platform_dirs += js/ductwork/debugger
-diff --git a/embedding/browser/gtk/src/EmbedEventListener.cpp b/embedding/browser/gtk/src/EmbedEventListener.cpp
 --- a/embedding/browser/gtk/src/EmbedEventListener.cpp
 +++ b/embedding/browser/gtk/src/EmbedEventListener.cpp
 @@ -53,15 +53,7 @@
@@ -8196,7 +8075,6 @@ diff --git a/embedding/browser/gtk/src/EmbedEventListener.cpp b/embedding/browse
    return NS_OK;
  }
  
-diff --git a/embedding/browser/gtk/src/EmbedEventListener.h b/embedding/browser/gtk/src/EmbedEventListener.h
 --- a/embedding/browser/gtk/src/EmbedEventListener.h
 +++ b/embedding/browser/gtk/src/EmbedEventListener.h
 @@ -38,15 +38,11 @@
@@ -8256,7 +8134,6 @@ diff --git a/embedding/browser/gtk/src/EmbedEventListener.h b/embedding/browser/
  };
  
  #endif /* __EmbedEventListener_h */
-diff --git a/embedding/browser/gtk/src/EmbedPrivate.cpp b/embedding/browser/gtk/src/EmbedPrivate.cpp
 --- a/embedding/browser/gtk/src/EmbedPrivate.cpp
 +++ b/embedding/browser/gtk/src/EmbedPrivate.cpp
 @@ -62,7 +62,6 @@
@@ -8391,13 +8268,11 @@ diff --git a/embedding/browser/gtk/src/EmbedPrivate.cpp b/embedding/browser/gtk/
    mListenersAttached = false;
  }
  
-diff --git a/toolkit/library/Makefile.in b/toolkit/library/Makefile.in
-index efdd67d..3b9370d 100644
 --- a/toolkit/library/Makefile.in
 +++ b/toolkit/library/Makefile.in
-@@ -46,6 +46,13 @@ SHARED_LIBRARY_LIBS += \
-   $(DEPTH)/toolkit/xre/$(LIB_PREFIX)xulapp_s.$(LIB_SUFFIX) \
-   $(NULL)
+@@ -57,6 +57,13 @@ SHARED_LIBRARY_LIBS += $(DEPTH)/accessib
+ endif
+ endif
  
 +# dependent libraries
 +ifneq (,$(MOZ_ENABLE_GTK2))
@@ -8409,11 +8284,9 @@ index efdd67d..3b9370d 100644
  SHARED_LIBRARY_LIBS += \
    $(foreach component,$(COMPONENT_LIBS),$(DEPTH)/staticlib/components/$(LIB_PREFIX)$(component).$(LIB_SUFFIX)) \
    $(foreach lib,$(STATIC_LIBS),$(DEPTH)/staticlib/$(LIB_PREFIX)$(lib).$(LIB_SUFFIX)) \
-diff --git a/embedding/browser/gtk/src/EmbedWindow.cpp b/embedding/browser/gtk/src/EmbedWindow.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedWindow.cpp
-@@ -0,0 +1,480 @@
+@@ -0,0 +1,477 @@
 +/*
 + * vim:ts=2:et:sw=2
 + *
@@ -8475,7 +8348,7 @@ new file mode 100644
 +
 +EmbedWindow::~EmbedWindow(void)
 +{
-+  ExitModalEventLoop(false);
++  ExitModalEventLoop(NS_OK);
 +}
 +
 +nsresult
@@ -8524,7 +8397,7 @@ new file mode 100644
 +void
 +EmbedWindow::ReleaseChildren(void)
 +{
-+  ExitModalEventLoop(false);
++  ExitModalEventLoop(NS_OK);
 +    
 +  mBaseWindow->Destroy();
 +  mBaseWindow = 0;
@@ -8557,9 +8430,6 @@ new file mode 100644
 +      g_signal_emit(G_OBJECT(mOwner->mOwningWidget),
 +                    moz_embed_signals[JS_STATUS], 0);
 +    }
-+    break;
-+  case STATUS_SCRIPT_DEFAULT:
-+    // Gee, that's nice.
 +    break;
 +  case STATUS_LINK:
 +    {
@@ -8894,8 +8764,6 @@ new file mode 100644
 +{
 +  return NS_ERROR_NOT_IMPLEMENTED;
 +}
-diff --git a/embedding/browser/gtk/src/EmbedProgress.cpp b/embedding/browser/gtk/src/EmbedProgress.cpp
-new file mode 100644
 --- /dev/null
 +++ b/embedding/browser/gtk/src/EmbedProgress.cpp
 @@ -0,0 +1,216 @@
@@ -8981,7 +8849,7 @@ new file mode 100644
 +  }
 +
 +  // get the uri for this request
-+  nsCAutoString uriString;
++  nsAutoCString uriString;
 +  RequestToURIString(aRequest, uriString);
 +
 +  // is it the same as the current URI?
@@ -9018,7 +8886,7 @@ new file mode 100644
 +				PRInt32         aMaxTotalProgress)
 +{
 +
-+  nsCAutoString uriString;
++  nsAutoCString uriString;
 +  RequestToURIString(aRequest, uriString);
 +
 +  // is it the same as the current uri?
@@ -9041,7 +8909,7 @@ new file mode 100644
 +				nsIURI         *aLocation,
 +				PRUint32        aFlags)
 +{
-+  nsCAutoString newURI;
++  nsAutoCString newURI;
 +  NS_ENSURE_ARG_POINTER(aLocation);
 +  aLocation->GetSpec(newURI);
 +
@@ -9115,3 +8983,130 @@ new file mode 100644
 +  
 +  uri->GetSpec(aString);
 +}
+--- mozilla-esr24/toolkit/toolkit.mozbuild.orig	2014-01-14 14:20:12.533300480 +0530
++++ mozilla-esr24/toolkit/toolkit.mozbuild	2014-01-14 14:20:52.211536386 +0530
+@@ -194,6 +194,12 @@ add_tier_dir('platform', 'toolkit')
+ if CONFIG['MOZ_PREF_EXTENSIONS']:
+     add_tier_dir('platform', 'extensions/pref')
+ 
++if not CONFIG['BUILD_STATIC_LIBS'] and not CONFIG['MOZ_ENABLE_GTK2'] == '':
++    add_tier_dir('platform', [
++       'embedding/browser/gtk',
++       'embedding/browser/gtk/src',
++    ])
++
+ add_tier_dir('platform', 'services')
+ add_tier_dir('platform', 'startupcache')
+ add_tier_dir('platform', 'js/ductwork/debugger')
+--- /dev/null	2014-01-14 14:07:02.000000000 +0530
++++ mozilla-esr24/embedding/browser/gtk/moz.build	2014-01-14 14:24:05.884544275 +0530
+@@ -0,0 +1,11 @@
++# -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
++# vim: set filetype=python:
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++DIRS += ['src'] 
++TEST_TOOL_DIRS += ['tests']
++
++MODULE ='gtkembedmoz'
++
+--- /dev/null	2014-01-14 14:07:02.000000000 +0530
++++ mozilla-esr24/embedding/browser/gtk/src/moz.build	2014-01-14 14:26:42.596657741 +0530
+@@ -0,0 +1,34 @@
++# -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
++# vim: set filetype=python:
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++MODULE = 'gtkembedmoz'
++LIBRARY_NAME = 'gtkembedmoz'
++
++EXPORTS += [
++         'gtkmozembed.h',
++         'gtkmozembed_glue.cpp',
++         'gtkmozembed_internal.h'
++       ]
++
++CPP_SOURCES += [
++         'gtkmozembed2.cpp',
++         'EmbedPrivate.cpp',
++         'EmbedWindow.cpp',
++         'EmbedProgress.cpp',
++         'EmbedContentListener.cpp',
++         'EmbedEventListener.cpp',
++         'EmbedWindowCreator.cpp',
++       ]
++
++if CONFIG['MOZ_ENABLE_GTK2']:
++       CSRCS += [
++          'gtkmozembedmarshal.c',
++       ]
++       CPP_SOURCES += [
++         'EmbedPrompter.cpp',
++         'GtkPromptService.cpp',
++       ]
++
+--- /dev/null	2014-01-14 14:07:02.000000000 +0530
++++ mozilla-esr24/embedding/browser/gtk/tests/moz.build	2014-01-14 14:28:56.589235215 +0530
+@@ -0,0 +1,24 @@
++# -*- Mode: python; c-basic-offset: 4; indent-tabs-mode: nil; tab-width: 40 -*-
++# vim: set filetype=python:
++# This Source Code Form is subject to the terms of the Mozilla Public
++# License, v. 2.0. If a copy of the MPL was not distributed with this
++# file, You can obtain one at http://mozilla.org/MPL/2.0/.
++
++MODULE = 'gtkembedmoz'
++
++CPP_SOURCES += [
++         'TestGtkEmbed.cpp',
++         'TestGtkEmbedNotebook.cpp',
++       ]
++
++if CONFIG['MOZ_X11']:
++       CPP_SOURCES += [
++         'TestGtkEmbedSocket.cpp',
++         'TestGtkEmbedChild.cpp',
++       ]
++
++if CONFIG['ENABLE_GNOME']:
++       CPP_SOURCES += [
++         'TestGtkEmbedMDI.cpp',
++       ]
++
+--- /dev/null	2014-01-14 17:02:54.000000000 +0530
++++ mozilla-esr24/dom/interfaces/base/nsIDOMBarProp.idl	2014-01-14 17:08:17.701301997 +0530
+@@ -0,0 +1,18 @@
++/* -*- Mode: IDL; tab-width: 2; indent-tabs-mode: nil; c-basic-offset: 2 -*- */
++/* This Source Code Form is subject to the terms of the Mozilla Public
++ * License, v. 2.0. If a copy of the MPL was not distributed with this
++ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
++
++#include "domstubs.idl"
++
++/**
++ * The nsIDOMBarProp interface is the interface for controlling and
++ * accessing the visibility of certain UI items (scrollbars, menubars,
++ * toolbars, ...) through the DOM.
++ */
++
++[scriptable, uuid(9eb2c150-1d56-11d3-8221-0060083a0bcf)]
++interface nsIDOMBarProp : nsISupports
++{
++           attribute boolean          visible;
++};
+--- mozilla-esr24/dom/interfaces/base/moz.build.orig	2014-01-14 19:19:46.105817006 +0530
++++ mozilla-esr24/dom/interfaces/base/moz.build	2014-01-14 19:21:59.615398204 +0530
+@@ -43,6 +43,10 @@ XPIDL_SOURCES += [
+     'nsITabParent.idl',
+ ]
+ 
++XPIDL_SOURCES += [
++    'nsIDOMBarProp.idl',
++]
++
+ if CONFIG['MOZ_DISABLE_CRYPTOLEGACY']:
+     XPIDL_SOURCES += [
+         'nsIDOMCrypto.idl',
