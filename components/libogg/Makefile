@@ -23,12 +23,12 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		libogg
-COMPONENT_VERSION=	1.3.0
+COMPONENT_VERSION=	1.3.2
 COMPONENT_PROJECT_URL=	http://xiph.org/ogg
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a8de807631014615549d2356fd36641833b8288221cea214f8a72750efe93780
+    sha256:e19ee34711d7af328cb26287f4137e70630e7261b17cbe3cd41011d73a654692
 COMPONENT_ARCHIVE_URL=	http://downloads.xiph.org/releases/ogg/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/libogg
 
@@ -38,6 +38,12 @@ include ../../make-rules/ips.mk
 
 CONFIGURE_OPTIONS  +=		--disable-static
 CONFIGURE_OPTIONS  +=		--enable-shared
+
+# Setup config_types.h file to support 32 & 64 bit.
+#
+COMPONENT_POST_INSTALL_ACTION= \
+            (cd $(PROTOUSRDIR) ;  \
+             $(MV) include/ogg/config_types.h include/ogg/config_types-$(BITS).h )
 
 # common targets
 build:		$(BUILD_32_and_64)
