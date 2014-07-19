@@ -10,21 +10,21 @@ diff -r 32c911bc2579 xpcom/base/nsStackWalk.cpp
  static struct bucket * newbucket ( void * pc );
  static struct frame * cs_getmyframeptr ( void );
  static void   cs_walk_stack ( void * (*read_func)(char * address),
-@@ -911,7 +911,7 @@
+@@ -940,7 +940,7 @@ myinit()
  
  
  static int
--load_address(void * pc, void * arg )
+-load_address(void * pc, void * arg)
 +load_address(void * pc, void * sp, void * arg )
  {
      static struct bucket table[2048];
      static mutex_t lock;
-@@ -932,7 +932,7 @@
+@@ -962,7 +962,7 @@ load_address(void * pc, void * arg)
      if (ptr->next) {
          mutex_unlock(&lock);
      } else {
 -        (args->callback)(pc, args->closure);
 +        (args->callback)(pc, NULL, args->closure);
- 
-         ptr->next = newbucket(pc);
-         mutex_unlock(&lock);
+         args->numFrames++;
+         if (args->maxFrames != 0 && args->numFrames == args->maxFrames)
+           stop = 1;   // causes us to stop getting frames

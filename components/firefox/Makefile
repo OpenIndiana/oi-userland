@@ -16,13 +16,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= 	firefox
-COMPONENT_VERSION= 	17.0.11esr
-IPS_COMPONENT_VERSION=	17.0.11
+COMPONENT_VERSION= 	24.6.0esr
+IPS_COMPONENT_VERSION=	24.6.0
 COMPONENT_SUMMARY= 	Mozilla Firefox Web browser
-COMPONENT_SRC= 		mozilla-esr17
+COMPONENT_SRC= 		mozilla-esr24
 COMPONENT_ARCHIVE= 	$(COMPONENT_NAME)-$(COMPONENT_VERSION).source.tar.bz2
 COMPONENT_ARCHIVE_HASH= \
-  sha256:1e722b25d33fa4d68d398a8f29e71e8196d2168820bef5cd3f26116ffc6aaff4
+  sha256:02ee0424ddefd912768a3ae700a4581053ef68f9dea46c34e43e833c119289e4
 COMPONENT_ARCHIVE_URL= \
   ftp://ftp.mozilla.org/pub/firefox/releases/$(COMPONENT_VERSION)/source/$(COMPONENT_ARCHIVE)
 COMPONENT_PROJECT_URL = http://www.mozilla.com/en-US/firefox/
@@ -52,7 +52,7 @@ CONFIGURE_OPTIONS +=    --disable-tests
 CONFIGURE_OPTIONS +=	--disable-debug-symbols
 #CONFIGURE_OPTIONS +=	--enable-debug-symbols
 CONFIGURE_OPTIONS +=	--enable-install-strip
-#CONFIGURE_OPTIONS +=	--enable-optimize=-O2
+CONFIGURE_OPTIONS +=	--enable-optimize=-O2
 CONFIGURE_OPTIONS +=	--disable-webrtc
 CONFIGURE_OPTIONS +=	--enable-dtrace
 CONFIGURE_OPTIONS +=	--enable-official-branding
