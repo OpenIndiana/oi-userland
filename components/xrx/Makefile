@@ -18,6 +18,7 @@ include ../../make-rules/shared-macros.mk
 COMPONENT_NAME= xrx
 
 COMPONENT_VERSION= 1.0.4
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= RX: X Remote eXecution (aka Xweb or Broadway)
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.bz2
@@ -31,7 +32,7 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-CONFIGURE_LIBDIR.32=/usr/lib/firefox/plugins
+CONFIGURE_LIBDIR.32=/usr/lib/firefox/browser/plugins
 
 CONFIGURE_OPTIONS+= PLUGIN_CFLAGS='-I$$(COMPONENT_SRC)/plugin/include'
 CONFIGURE_OPTIONS+= --enable-shared=yes
