@@ -16,6 +16,7 @@ include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		gnome-python-extras
 COMPONENT_VERSION=	2.25.3
+COMPONENT_REVISION=	1
 COMPONENT_PROJECT_URL=	http://www.gnome.org
 COMPONENT_SUMMARY=	Supplemental Python bindings for GNOME
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
@@ -43,7 +44,6 @@ COMPONENT_PREP_ACTION = \
 COMPONENT_PRE_CONFIGURE_ACTION =        ($(CLONEY) $(SOURCE_DIR) $(@D))
 
 CONFIGURE_OPTIONS+=	--sysconfdir=/etc
-CONFIGURE_OPTIONS+=	--with-gtkmozembed=firefox-xpcom
 CONFIGURE_ENV+=		PYTHON=$(PYTHON)
 
 # common targets
