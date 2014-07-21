@@ -56,8 +56,15 @@ Puppet::Type.type(:ldap).provide(:ldap) do
             pg, prop = fullprop.split("/")
             props[prop] = value if validprops.include? prop.to_sym
         end
-        props[:bind_passwd] = svcprop("-p", "cred/bind_passwd",
-                                      "svc:/network/ldap/client").strip
+
+        # attempt to set the cred/bind_passwd value
+        begin
+            props[:bind_passwd] = svcprop("-p", "cred/bind_passwd",
+                                          "svc:/network/ldap/client").strip()
+        rescue
+            props[:bind_passwd] = nil
+        end
+
         props[:name] = "current"
         return Array new(props)
     end

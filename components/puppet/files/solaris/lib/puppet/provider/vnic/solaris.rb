@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:vnic).provide(:vnic) do
@@ -30,14 +30,18 @@ Puppet::Type.type(:vnic).provide(:vnic) do
     commands :dladm => '/usr/sbin/dladm'
 
     def self.instances
+        vnics = []
         dladm("show-vnic", "-p", "-o", "link,over,macaddress").split(
               "\n").collect do |line|
             link, over, mac = line.split(":", 3)
-            new(:name => link,
-                :ensure => :present,
-                :lower_link => over,
-                :mac_address => mac.delete("\\"))  # remove the escape character
+            next if not link =~ /^[[:alpha:]]([\w.]){1,29}([\d])$/i
+            # remove the escape character
+            vnics << new(:name => link,
+                         :ensure => :present,
+                         :lower_link => over,
+                         :mac_address => mac.delete("\\"))
         end
+        vnics
     end
         
     def self.prefetch(resources)
