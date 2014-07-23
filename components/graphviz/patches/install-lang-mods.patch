@@ -1,0 +1,168 @@
+Allow language modules to be installed in the right place.
+
+For Python, ensure the use of the vendor-packages directory, as well as the
+use of a 64-bit-specific directory, as needed.
+
+For Lua, the appropriate variable will need to be set during installation,
+since there's no corresponding config_lua.lua file.
+
+This is an in-house patch, but has not been passed upstream because it's
+against a version of graphviz that is out of date; submission will be
+reconsidered when we upgrade.  Note that at least the Python portion is
+Solaris-specific, and likely will not be accepted.
+
+--- graphviz-2.28.0/config/config_python.py	Sat Mar 26 10:49:00 2005
++++ graphviz-2.28.0/config/config_python.py	Mon Jun 30 14:38:34 2014
+@@ -1,12 +1,20 @@
+ import sys
++import struct
+ from distutils import sysconfig
+ 
++if struct.calcsize('P') == 8:
++    sixtyfour = "/64"
++else:
++    sixtyfour = ""
++
++pyver = ".".join(str(i) for i in sys.version_info[:2])
++
+ if sys.argv[1] == "archlib":
+-    print sysconfig.get_python_lib(1,1)
++    print sysconfig.get_python_lib(1,1) + sixtyfour
+ elif sys.argv[1] == "lib":
+     print sysconfig.get_python_lib(0,1)
+ elif sys.argv[1] == "archsitelib":
+-    print sysconfig.get_python_lib(1,0)
++    print "/usr/lib/python%s/vendor-packages%s" % (pyver, sixtyfour)
+ elif sys.argv[1] == "sitelib":
+     print sysconfig.get_python_lib(0,0)
+ 
+--- graphviz-2.28.0/tclpkg/Makefile.in	Fri May  6 20:27:53 2011
++++ graphviz-2.28.0/tclpkg/Makefile.in	Mon Jun 30 15:30:49 2014
+@@ -878,10 +878,10 @@
+ #    ./configure --prefix=$HOME/graphviz; make; make install
+ # without root priviledges.
+ install-data-hook:
+-@WITH_LUA_TRUE@	-mkdir -p $(DESTDIR)@LUA_INSTALL_DIR@;
+-@WITH_LUA_TRUE@	if test -w $(DESTDIR)@LUA_INSTALL_DIR@; then \
+-@WITH_LUA_TRUE@		(cd $(DESTDIR)@LUA_INSTALL_DIR@; \
+-@WITH_LUA_TRUE@			$(LN_S) -f $(pkgluadir)/libgv_lua.so gv.so;) \
++@WITH_LUA_TRUE@	-mkdir -p $(DESTDIR)$(LUA_INSTALL_DIR);
++@WITH_LUA_TRUE@	if test -w $(DESTDIR)$(LUA_INSTALL_DIR); then \
++@WITH_LUA_TRUE@		(cd $(DESTDIR)$(LUA_INSTALL_DIR); \
++@WITH_LUA_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgluadir)/libgv_lua.so gv.so;) \
+ @WITH_LUA_TRUE@	else \
+ @WITH_LUA_TRUE@		echo "Warning: @LUA_INSTALL_DIR@ is not writable."; \
+ @WITH_LUA_TRUE@		echo "Skipping system installation of lua binding."; \
+@@ -889,8 +889,8 @@
+ @WITH_PERL_TRUE@	-mkdir -p $(DESTDIR)@PERL_INSTALL_DIR@;
+ @WITH_PERL_TRUE@	if test -w $(DESTDIR)@PERL_INSTALL_DIR@; then \
+ @WITH_PERL_TRUE@		(cd $(DESTDIR)@PERL_INSTALL_DIR@; \
+-@WITH_PERL_TRUE@			$(LN_S) -f $(pkgperldir)/libgv_perl.so gv.so; \
+-@WITH_PERL_TRUE@			$(LN_S) -f $(pkgperldir)/gv.pm gv.pm;) \
++@WITH_PERL_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgperldir)/libgv_perl.so gv.so; \
++@WITH_PERL_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgperldir)/gv.pm gv.pm;) \
+ @WITH_PERL_TRUE@	else \
+ @WITH_PERL_TRUE@		echo "Warning: @PERL_INSTALL_DIR@ is not writable."; \
+ @WITH_PERL_TRUE@		echo "Skipping system installation of perl binding."; \
+@@ -898,7 +898,7 @@
+ @WITH_PHP_TRUE@	-mkdir -p $(DESTDIR)@PHP_INSTALL_DIR@;
+ @WITH_PHP_TRUE@	if test -w $(DESTDIR)@PHP_INSTALL_DIR@; then \
+ @WITH_PHP_TRUE@		(cd $(DESTDIR)@PHP_INSTALL_DIR@; \
+-@WITH_PHP_TRUE@			$(LN_S) -f $(pkgphpdir)/libgv_php.so gv.so;) \
++@WITH_PHP_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgphpdir)/libgv_php.so gv.so;) \
+ @WITH_PHP_TRUE@	else \
+ @WITH_PHP_TRUE@		echo "Warning: @PHP_INSTALL_DIR@ is not writable."; \
+ @WITH_PHP_TRUE@		echo "Skipping system installation of php binding."; \
+@@ -906,7 +906,7 @@
+ @WITH_PHP_TRUE@	-mkdir -p $(DESTDIR)@PHP_INSTALL_DATADIR@;
+ @WITH_PHP_TRUE@	if test -w $(DESTDIR)@PHP_INSTALL_DATADIR@; then \
+ @WITH_PHP_TRUE@		(cd $(DESTDIR)@PHP_INSTALL_DATADIR@; \
+-@WITH_PHP_TRUE@			$(LN_S) -f $(pkgphpdir)/gv.php gv.php;) \
++@WITH_PHP_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgphpdir)/gv.php gv.php;) \
+ @WITH_PHP_TRUE@	else \
+ @WITH_PHP_TRUE@		echo "Warning: @PHP_INSTALL_DATADIR@ is not writable."; \
+ @WITH_PHP_TRUE@		echo "Skipping system installation of php binding."; \
+@@ -914,8 +914,8 @@
+ @WITH_PYTHON_TRUE@	-mkdir -p $(DESTDIR)@PYTHON_INSTALL_DIR@;
+ @WITH_PYTHON_TRUE@	if test -w $(DESTDIR)@PYTHON_INSTALL_DIR@; then \
+ @WITH_PYTHON_TRUE@		(cd $(DESTDIR)@PYTHON_INSTALL_DIR@; \
+-@WITH_PYTHON_TRUE@			$(LN_S) -f $(pkgpythondir)/libgv_python.so _gv.so; \
+-@WITH_PYTHON_TRUE@			$(LN_S) -f $(pkgpythondir)/gv.py gv.py;) \
++@WITH_PYTHON_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpythondir)/libgv_python.so _gv.so; \
++@WITH_PYTHON_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpythondir)/gv.py gv.py;) \
+ @WITH_PYTHON_TRUE@	else \
+ @WITH_PYTHON_TRUE@		echo "Warning: @PYTHON_INSTALL_DIR@ is not writable."; \
+ @WITH_PYTHON_TRUE@		echo "Skipping system installation of python binding."; \
+@@ -923,8 +923,8 @@
+ @WITH_PYTHON23_TRUE@	-mkdir -p $(DESTDIR)@PYTHON23_INSTALL_DIR@;
+ @WITH_PYTHON23_TRUE@	if test -w $(DESTDIR)@PYTHON23_INSTALL_DIR@; then \
+ @WITH_PYTHON23_TRUE@		(cd $(DESTDIR)@PYTHON23_INSTALL_DIR@; \
+-@WITH_PYTHON23_TRUE@			$(LN_S) -f $(pkgpython23dir)/libgv_python23.so _gv.so; \
+-@WITH_PYTHON23_TRUE@			$(LN_S) -f $(pkgpython23dir)/gv.py gv.py;) \
++@WITH_PYTHON23_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython23dir)/libgv_python23.so _gv.so; \
++@WITH_PYTHON23_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython23dir)/gv.py gv.py;) \
+ @WITH_PYTHON23_TRUE@	else \
+ @WITH_PYTHON23_TRUE@		echo "Warning: @PYTHON23_INSTALL_DIR@ is not writable."; \
+ @WITH_PYTHON23_TRUE@		echo "Skipping system installation of python23 binding."; \
+@@ -932,8 +932,8 @@
+ @WITH_PYTHON24_TRUE@	-mkdir -p $(DESTDIR)@PYTHON24_INSTALL_DIR@;
+ @WITH_PYTHON24_TRUE@	if test -w $(DESTDIR)@PYTHON24_INSTALL_DIR@; then \
+ @WITH_PYTHON24_TRUE@		(cd $(DESTDIR)@PYTHON24_INSTALL_DIR@; \
+-@WITH_PYTHON24_TRUE@			$(LN_S) -f $(pkgpython24dir)/libgv_python24.so _gv.so; \
+-@WITH_PYTHON24_TRUE@			$(LN_S) -f $(pkgpython24dir)/gv.py gv.py;) \
++@WITH_PYTHON24_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython24dir)/libgv_python24.so _gv.so; \
++@WITH_PYTHON24_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython24dir)/gv.py gv.py;) \
+ @WITH_PYTHON24_TRUE@	else \
+ @WITH_PYTHON24_TRUE@		echo "Warning: @PYTHON24_INSTALL_DIR@ is not writable."; \
+ @WITH_PYTHON24_TRUE@		echo "Skipping system installation of python24 binding."; \
+@@ -941,8 +941,8 @@
+ @WITH_PYTHON25_TRUE@	-mkdir -p $(DESTDIR)@PYTHON25_INSTALL_DIR@;
+ @WITH_PYTHON25_TRUE@	if test -w $(DESTDIR)@PYTHON25_INSTALL_DIR@; then \
+ @WITH_PYTHON25_TRUE@		(cd $(DESTDIR)@PYTHON25_INSTALL_DIR@; \
+-@WITH_PYTHON25_TRUE@			$(LN_S) -f $(pkgpython25dir)/libgv_python25.so _gv.so; \
+-@WITH_PYTHON25_TRUE@			$(LN_S) -f $(pkgpython25dir)/gv.py gv.py;) \
++@WITH_PYTHON25_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython25dir)/libgv_python25.so _gv.so; \
++@WITH_PYTHON25_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython25dir)/gv.py gv.py;) \
+ @WITH_PYTHON25_TRUE@	else \
+ @WITH_PYTHON25_TRUE@		echo "Warning: @PYTHON25_INSTALL_DIR@ is not writable."; \
+ @WITH_PYTHON25_TRUE@		echo "Skipping system installation of python25 binding."; \
+@@ -950,8 +950,8 @@
+ @WITH_PYTHON26_TRUE@	-mkdir -p $(DESTDIR)@PYTHON26_INSTALL_DIR@;
+ @WITH_PYTHON26_TRUE@	if test -w $(DESTDIR)@PYTHON26_INSTALL_DIR@; then \
+ @WITH_PYTHON26_TRUE@		(cd $(DESTDIR)@PYTHON26_INSTALL_DIR@; \
+-@WITH_PYTHON26_TRUE@			$(LN_S) -f $(pkgpython26dir)/libgv_python26.so _gv.so; \
+-@WITH_PYTHON26_TRUE@			$(LN_S) -f $(pkgpython26dir)/gv.py gv.py;) \
++@WITH_PYTHON26_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython26dir)/libgv_python26.so _gv.so; \
++@WITH_PYTHON26_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython26dir)/gv.py gv.py;) \
+ @WITH_PYTHON26_TRUE@	else \
+ @WITH_PYTHON26_TRUE@		echo "Warning: @PYTHON26_INSTALL_DIR@ is not writable."; \
+ @WITH_PYTHON26_TRUE@		echo "Skipping system installation of python26 binding."; \
+@@ -959,8 +959,8 @@
+ @WITH_PYTHON27_TRUE@	-mkdir -p $(DESTDIR)@PYTHON27_INSTALL_DIR@;
+ @WITH_PYTHON27_TRUE@	if test -w $(DESTDIR)@PYTHON27_INSTALL_DIR@; then \
+ @WITH_PYTHON27_TRUE@		(cd $(DESTDIR)@PYTHON27_INSTALL_DIR@; \
+-@WITH_PYTHON27_TRUE@			$(LN_S) -f $(pkgpython27dir)/libgv_python27.so _gv.so; \
+-@WITH_PYTHON27_TRUE@			$(LN_S) -f $(pkgpython27dir)/gv.py gv.py;) \
++@WITH_PYTHON27_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython27dir)/libgv_python27.so _gv.so; \
++@WITH_PYTHON27_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgpython27dir)/gv.py gv.py;) \
+ @WITH_PYTHON27_TRUE@	else \
+ @WITH_PYTHON27_TRUE@		echo "Warning: @PYTHON27_INSTALL_DIR@ is not writable."; \
+ @WITH_PYTHON27_TRUE@		echo "Skipping system installation of python27 binding."; \
+@@ -968,7 +968,7 @@
+ @WITH_RUBY_TRUE@	-mkdir -p $(DESTDIR)@RUBY_INSTALL_DIR@;
+ @WITH_RUBY_TRUE@	if test -w $(DESTDIR)@RUBY_INSTALL_DIR@; then \
+ @WITH_RUBY_TRUE@		(cd $(DESTDIR)@RUBY_INSTALL_DIR@; \
+-@WITH_RUBY_TRUE@			$(LN_S) -f $(pkgrubydir)/libgv_ruby.so gv.so;) \
++@WITH_RUBY_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgrubydir)/libgv_ruby.so gv.so;) \
+ @WITH_RUBY_TRUE@	else \
+ @WITH_RUBY_TRUE@		echo "Warning: @RUBY_INSTALL_DIR@ is not writable."; \
+ @WITH_RUBY_TRUE@		echo "Skipping system installation of ruby binding."; \
+@@ -976,7 +976,7 @@
+ @WITH_TCL_TRUE@	-mkdir -p $(DESTDIR)@TCL_INSTALL_DIR@;
+ @WITH_TCL_TRUE@	if test -w $(DESTDIR)@TCL_INSTALL_DIR@/; then \
+ @WITH_TCL_TRUE@		(cd $(DESTDIR)@TCL_INSTALL_DIR@; \
+-@WITH_TCL_TRUE@			$(LN_S) -f $(pkgtcldir) @PACKAGE_NAME@;) \
++@WITH_TCL_TRUE@			$(LN_S) -r -f $(DESTDIR)/$(pkgtcldir) @PACKAGE_NAME@;) \
+ @WITH_TCL_TRUE@	else \
+ @WITH_TCL_TRUE@		echo "Warning: @TCL_INSTALL_DIR@ is not writable."; \
+ @WITH_TCL_TRUE@		echo "Skipping system installation of tcl bindings."; \

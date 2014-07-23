@@ -23,6 +23,7 @@
 # Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
+PERL_VERSION =		5.16
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		graphviz
@@ -41,10 +42,10 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PATH =		/usr/bin:/usr/gnu/bin:/usr/php/5.2/bin
+PATH =		/usr/php/5.3/bin:/usr/bin:/usr/gnu/bin
 
 # GMP header files for the guile extension (no --with- flag)
-# The guile build is broken with studio (7073649), so we disable this for now.
+# The guile build is broken with studio (15732452), so we disable this for now.
 # CPPFLAGS +=	-I/usr/include/gmp
 # Java header files (--with-javaincludedir allows for only one directory)
 CPPFLAGS +=	-I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/solaris
@@ -53,10 +54,11 @@ CPPFLAGS +=	$(shell PATH=$(PATH) php-config --includes)
 CXX +=		$(studio_NORUNPATH)
 
 CONFIGURE_ENV +=	CPPFLAGS="$(CPPFLAGS)"
-CONFIGURE_ENV +=	PERL=$(PERL)
-# Explicitly use Ruby 1.8.  Allows switching Ruby default without
-# affecting graphviz build.
-CONFIGURE_ENV +=	RUBY=$(RUBY.1.8)
+CONFIGURE_ENV +=	CFLAGS="$(CFLAGS)"
+CONFIGURE_ENV +=	CXXFLAGS="$(CXXFLAGS)"
+# Make sure to use the right python, depending on the 32/64-bit build.
+CONFIGURE_ENV +=	PYTHON26=$(PYTHON.2.6)
+CONFIGURE_ENV +=	PYTHON27=$(PYTHON.2.7)
 CONFIGURE_OPTIONS +=	--without-included-ltdl
 CONFIGURE_OPTIONS +=	--enable-python=no
 CONFIGURE_OPTIONS +=	--enable-python26=yes
@@ -65,13 +67,36 @@ CONFIGURE_OPTIONS +=	--x-libraries=$(CONFIGURE_LIBDIR.$(BITS))
 
 COMPONENT_BUILD_ARGS += 	GREP=/usr/bin/ggrep
 
-# common targets
-build:		$(BUILD_32)
+# Both perl and ruby ship 64-bit only.
+$(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-perl=no
+$(CONFIGURE_32): CONFIGURE_OPTIONS +=	--enable-ruby=no
+$(CONFIGURE_64): CONFIGURE_ENV +=	PERL=$(PERL)
+$(CONFIGURE_64): CONFIGURE_ENV +=	RUBY=$(RUBY.1.9)
+# PHP ships 32-bit only.
+$(CONFIGURE_64): CONFIGURE_OPTIONS +=	--enable-php=no
+$(INSTALL_64): COMPONENT_INSTALL_ARGS += PHP_INSTALL_DIR=$(shell PATH=$(PATH) php-config --extension-dir)
+# tcl ships both 32 and 64 bit, but even though /usr/bin/tclsh is 64-bit, there
+# is no place to stick 64-bit modules, so skip it.  On the other hand, make
+# sure to find the right tcl bits when building 32-bit.
+$(CONFIGURE_64): CONFIGURE_OPTIONS +=	--enable-tcl=no
+$(CONFIGURE_32): CONFIGURE_OPTIONS +=	--with-tclsh=/usr/bin/$(MACH32)/tclsh
+$(CONFIGURE_32): CONFIGURE_ENV += 	TCLCONFIG=/usr/lib/tclConfig.sh
+# Put the 64-bit lua module in a 64-bit directory.
+$(INSTALL_32): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=/usr/lib/lua/5.2
+$(INSTALL_64): COMPONENT_INSTALL_ARGS += LUA_INSTALL_DIR=/usr/lib/lua/5.2/64
+# Use GNU ln, which supports the -r (--relative) option.
+COMPONENT_INSTALL_ARGS += LN_S="gln -s"
 
-install:	$(INSTALL_32)
+ASLR_MODE = $(ASLR_ENABLE)
+
+# We build 32 and 64 bit because we build libraries, and we build modules for
+# runtimes which provide 64 or 32 (or both) bit environments.
+build:		$(BUILD_32_and_64)
+
+install:	$(INSTALL_32_and_64)
 	env LD_LIBRARY_PATH=$(PROTO_DIR)/usr/lib GVBINDIR=$(PROTO_DIR)/usr/lib/graphviz $(PROTO_DIR)/usr/bin/dot -c
-	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python26
-	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/graphviz/python27
+	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/$(PYTHON.2.6.VENDOR_PACKAGES)
+	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/$(PYTHON.2.7.VENDOR_PACKAGES)
 
 # The test infrastructure doesn't run in a VPATHed environment.
 COMPONENT_PRE_TEST_ACTION = \

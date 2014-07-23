@@ -276,17 +276,6 @@ LINT =		$(lint.$(BITS))
 
 LD =		/usr/bin/ld
 
-PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
-PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64
-PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
-
-PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
-PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
-PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
-
-PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
-PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
-
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
 CC.studio.32 =	$(PARFAIT_TOOLS)/cc
 CXX.studio.32 =	$(PARFAIT_TOOLS)/CC
@@ -314,20 +303,38 @@ RUBY =		$(RUBY.$(RUBY_VERSION))
 
 VENDOR_RUBY = /usr/ruby/$(RUBY_VERSION)/lib/ruby/vendor_ruby/$(RUBY_LIB_VERSION)
 
+PYTHON.2.6.VENDOR_PACKAGES.32 = /usr/lib/python2.6/vendor-packages
+PYTHON.2.6.VENDOR_PACKAGES.64 = /usr/lib/python2.6/vendor-packages/64
+PYTHON.2.6.VENDOR_PACKAGES = $(PYTHON.2.6.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.2.7.VENDOR_PACKAGES.32 = /usr/lib/python2.7/vendor-packages
+PYTHON.2.7.VENDOR_PACKAGES.64 = /usr/lib/python2.7/vendor-packages/64
+PYTHON.2.7.VENDOR_PACKAGES = $(PYTHON.2.7.VENDOR_PACKAGES.$(BITS))
+
+PYTHON.3.4.VENDOR_PACKAGES.64 = /usr/lib/python3.4/vendor-packages/64
+PYTHON.3.4.VENDOR_PACKAGES = $(PYTHON.3.4.VENDOR_PACKAGES.$(BITS))
+
 PYTHON_VENDOR_PACKAGES.32 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages
 PYTHON_VENDOR_PACKAGES.64 = /usr/lib/python$(PYTHON_VERSION)/vendor-packages/64
 PYTHON_VENDOR_PACKAGES = $(PYTHON_VENDOR_PACKAGES.$(BITS))
 
-PYTHON.2.6.32 =	/usr/bin/python2.6
-PYTHON.2.6.64 =	/usr/bin/$(MACH64)/python2.6
+USRBIN.32 =	/usr/bin
+USRBIN.64 =	/usr/bin/$(MACH64)
+USRBIN =	$(USRBIN.$(BITS))
 
-PYTHON.2.7.32 =	/usr/bin/python2.7
-PYTHON.2.7.64 =	/usr/bin/$(MACH64)/python2.7
+PYTHON.2.6.32 =	$(USRBIN.32)/python2.6
+PYTHON.2.6.64 =	$(USRBIN.64)/python2.6
+PYTHON.2.6 =	$(USRBIN)/python2.6
+
+PYTHON.2.7.32 =	$(USRBIN.32)/python2.7
+PYTHON.2.7.64 =	$(USRBIN.64)/python2.7
+PYTHON.2.7 =	$(USRBIN)/python2.7
 
 # Although we build Python 3 64-bit only, the BUILD_NO_ARCH macro is written
 # in such a way that we still need the .32 macro below.
-PYTHON.3.4.32 = /usr/bin/python3.4
-PYTHON.3.4.64 = /usr/bin/$(MACH64)/python3.4
+PYTHON.3.4.32 =	$(USRBIN.32)/python3.4
+PYTHON.3.4.64 =	$(USRBIN.64)/python3.4
+PYTHON.3.4 =	$(USRBIN)/python3.4
 
 PYTHON.32 =	$(PYTHON.$(PYTHON_VERSION).32)
 PYTHON.64 =	$(PYTHON.$(PYTHON_VERSION).64)
@@ -345,7 +352,7 @@ JAVA_HOME = $(JAVA7_HOME)
 
 # This is the default BUILD version of perl
 # Not necessarily the system's default version, i.e. /usr/bin/perl
-PERL_VERSION =  5.12
+PERL_VERSION ?=  5.12
 
 PERL_VERSIONS = 5.12 5.16
 
