@@ -2211,9 +2211,14 @@ file path=usr/share/man/man3openssl/threads.3openssl
 file path=usr/share/man/man3openssl/ui.3openssl
 file path=usr/share/man/man3openssl/ui_compat.3openssl
 file path=usr/share/man/man3openssl/x509.3openssl
+# openssl.5 is pre-Solarified, so bypass the mangler.
+file files/openssl.5 path=usr/share/man/man5/openssl.5 mangler.bypass=true
 file path=usr/share/man/man5openssl/config.5openssl
 file path=usr/share/man/man5openssl/x509v3_config.5openssl
 file path=usr/share/man/man7openssl/des_modes.7openssl
 legacy pkg=SUNWopensslr desc="OpenSSL Libraries (Root)" \
     name="OpenSSL Libraries (Root)"
 license openssl-1.0.1.license license="OpenSSL, SSLeay"
+# openssl.5 used to be in system/core-os, so we need an optional dependency
+# on that package @ the first version where that page is no longer there.
+depend type=optional fmri=system/core-os@5.12-5.12.0.0.0.52.0

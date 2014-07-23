@@ -65,5 +65,10 @@ file usr/lib/$(MACH64)/pam_pkcs11/openssh_mapper.so \
 file path=usr/share/locale/fr/LC_MESSAGES/pam_pkcs11.mo
 file doc/pam_pkcs11.html path=usr/share/doc/pam_pkcs11/pam_pkcs11.html
 file doc/mappers_api.html path=usr/share/doc/pam_pkcs11/mappers_api.html
-
+# pam_pkcs11.5 is pre-Solarified, so bypass the mangler.
+file files/pam_pkcs11.5 path=usr/share/man/man5/pam_pkcs11.5 mangler.bypass=true
+#
 license pam_pkcs11.license license=LGPLv2.1
+# pam_pkcs11.5 used to be in system/core-os, so we need an optional dependency
+# on that package @ the first version where that page is no longer there.
+depend type=optional fmri=system/core-os@5.12-5.12.0.0.0.52.0
