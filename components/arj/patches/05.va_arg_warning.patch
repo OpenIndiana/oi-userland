@@ -1,0 +1,11 @@
+--- arj-3.10.22/fardata.c	2014-07-23 19:38:45.836257652 +0400
++++ arj-3.10.22/fardata.c.new2	2014-07-23 19:45:05.895693007 +0400
+@@ -661,6 +661,8 @@
+      num=va_arg(args, int);             /* num=va_arg(args, short);      */
+     else
+      num=va_arg(args, int);             /* num=va_arg(args, unsigned short);*/
++#elif defined(__sun__)
++    num=va_arg(args, int);
+ #else
+     if(flags&SIGN)
+      num=va_arg(args, short);
