@@ -34,6 +34,7 @@ COMPONENT_PREP_ACTION =	(cd $(SOURCE_DIR)/gnu && \
 					autoconf)
 CONFIGURE_SCRIPT = $(SOURCE_DIR)/gnu/configure
 
+COMPONENT_BUILD_ARGS=
 COMPONENT_BUILD_ENV += CC=$(CC)
 
 build: $(BUILD_32)
