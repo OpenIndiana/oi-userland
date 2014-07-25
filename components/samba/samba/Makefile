@@ -26,11 +26,12 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		samba
-COMPONENT_VERSION=	3.6.23
+COMPONENT_VERSION=	3.6.24
+TPNO=			18186
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=	http://www.samba.org/
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
-COMPONENT_ARCHIVE_HASH= sha256:25bbfa81b9a26609a0be744240b63e1f5030bbcfab684cf7aea3b86ed0db2dd0
+COMPONENT_ARCHIVE_HASH= sha256:11d0bd04b734731970259efc6692b8e749ff671a9b56d8cc5fa98c192ab234a7
 COMPONENT_ARCHIVE_URL=	http://ftp.samba.org/pub/samba/stable/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/samba
 
@@ -46,8 +47,6 @@ COMPONENT_ARCHIVE_2=		libsam-LGPL.tar
 COMPONENT_ARCHIVE_HASH_2=	\
     sha256:4324f2c4a9ba94f1165c5922f166636621681b09d635257d921f6df654e7191e
 COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/files/libsam%2DLGPL.tar
-
-TPNO=			16839
 
 # Samba does not work properly on i86 when built by studio.
 # Samba on SPARC has serious performance drop when built by gcc.
