@@ -23,13 +23,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		grep
-COMPONENT_VERSION=	2.14
+COMPONENT_VERSION=	2.20
 COMPONENT_PROJECT_URL=	http://gnu.org/software/grep/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:e70e801d4fbb16e761654a58ae48bf5020621c95c8e35bd864742577685872e1
+    sha256:f0af452bc0d09464b6d089b6d56a0a3c16672e9ed9118fbe37b0b6aeaf069a65
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/grep/$(COMPONENT_ARCHIVE)
 
 COMPONENT_BUGDB=	utility/ggrep
@@ -57,8 +57,8 @@ build:		$(BUILD_32_and_64)
 
 install:	$(INSTALL_32_and_64)
 
-# 3 expected failures in gnulib-tests:
-# test-mbrtowc3.sh, test-mbrtowc4.sh, test-mbsrtowcs4.sh
+# 1 test fails - multibyte-white-space (something with illumos locales?)
+# 
 test:		$(TEST_32_and_64)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
