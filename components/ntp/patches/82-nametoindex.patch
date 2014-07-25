@@ -1,0 +1,26 @@
+This patch modifies the configure script to correctly detect the 
+if_nametoindex function. This fix is integrated in ntp-dev-4.2.7p394.
+This patch may be removed when upgrading NTP to a later version.
+See NTP bug 2256 for details.
+
+--- configure
++++ configure
+@@ -35243,6 +35670,8 @@
+ fi
+
+ esac
++SAVED_LIBS="$LIBS"
++LIBS="$LDADD_LIBNTP $LIBS"
+ for ac_func in if_nametoindex
+ do :
+   ac_fn_c_check_func "$LINENO" "if_nametoindex" "ac_cv_func_if_nametoindex"
+@@ -35254,6 +35683,8 @@
+ fi
+ done
+
++LIBS="$SAVED_LIBS"
++{ SAVED_LIBS=; unset SAVED_LIBS;}
+ case "$ac_cv_func_if_nametoindex" in
+  yes)
+
+
