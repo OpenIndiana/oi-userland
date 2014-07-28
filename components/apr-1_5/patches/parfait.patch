@@ -1,0 +1,84 @@
+Patch origin: in-house
+Patch status: Solaris-specific; not suitable for upstream
+
+Fixes problem where APR-util Parfait build wouldn't analyze mysql and
+sqlite3 modules as apr_dbd_sqlite3.o.bc and apr_dbd_mysql.o.bc were
+removed here.
+
+It also creates bc equivalents for static library archives as used for
+linking Apache httpd binary.
+
+--- build/ltmain.sh
++++ build/ltmain.sh
+@@ -7548,7 +7548,7 @@
+ 	tempremovelist=`$ECHO "$output_objdir/*"`
+ 	for p in $tempremovelist; do
+ 	  case $p in
+-	    *.$objext | *.gcno)
++	    *.$objext | *.$objext.bc | *.gcno)
+ 	       ;;
+ 	    $output_objdir/$outputname | $output_objdir/$libname.* | $output_objdir/${libname}${release}.*)
+ 	       if test "X$precious_files_regex" != "X"; then
+@@ -9123,6 +9123,14 @@
+ 	  func_append oldobjs " $func_extract_archives_result"
+ 	fi
+ 
++	# Create also list of Parfait objects.
++	for obj in $oldobjs
++	do
++	    if test -f $obj.bc; then
++	      oldobjs_bc+=" $obj.bc"
++	fi
++	done
++
+ 	# POSIX demands no paths to be encoded in archives.  We have
+ 	# to avoid creating archives with duplicate basenames if we
+ 	# might have to extract them afterwards, e.g., when creating a
+@@ -9170,12 +9178,19 @@
+ 	fi
+ 	func_to_tool_file "$oldlib" func_convert_file_msys_to_w32
+ 	tool_oldlib=$func_to_tool_file_result
+-	eval cmds=\"$old_archive_cmds\"
++	if test -z "$oldobjs_bc"; then
++	  eval cmds=\"$old_archive_cmds\"
++	else
++	  eval cmds=\"$old_archive_cmds~$old_archive_bc_cmds\"
++	fi
+ 
+ 	func_len " $cmds"
+ 	len=$func_len_result
+ 	if test "$len" -lt "$max_cmd_len" || test "$max_cmd_len" -le -1; then
+ 	  cmds=$old_archive_cmds
++	  if test -n "$oldobjs_bc"; then
++	    cmds+="~$old_archive_bc_cmds"
++	  fi
+ 	elif test -n "$archiver_list_spec"; then
+ 	  func_verbose "using command file archive linking..."
+ 	  for obj in $oldobjs
+--- build/libtool.m4
++++ build/libtool.m4
+@@ -1465,6 +1465,7 @@
+ 
+ # Determine commands to create old-style static archives.
+ old_archive_cmds='$AR $AR_FLAGS $oldlib$oldobjs'
++old_archive_bc_cmds='$AR $AR_FLAGS $oldlib.bc$oldobjs_bc'
+ old_postinstall_cmds='chmod 644 $oldlib'
+ old_postuninstall_cmds=
+ 
+@@ -1478,6 +1479,7 @@
+     ;;
+   esac
+   old_archive_cmds="$old_archive_cmds~\$RANLIB \$tool_oldlib"
++  old_archive_bc_cmds="$old_archive_bc_cmds~\$RANLIB \$tool_oldlib.bc"
+ fi
+ 
+ case $host_os in
+@@ -1490,6 +1492,8 @@
+ _LT_DECL([], [old_postuninstall_cmds], [2])
+ _LT_TAGDECL([], [old_archive_cmds], [2],
+     [Commands used to build an old-style archive])
++_LT_TAGDECL([], [old_archive_bc_cmds], [2],
++    [Commands used to build an old-style archive from Parfait bc files])
+ _LT_DECL([], [lock_old_archive_extraction], [0],
+     [Whether to use a lock for old archive extraction])
+ ])# _LT_CMD_OLD_ARCHIVE

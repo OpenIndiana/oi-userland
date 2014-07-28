@@ -107,6 +107,9 @@ CONFIGURE_OPTIONS.32 +=	--with-pcre=/usr/bin/pcre-config
 CONFIGURE_OPTIONS.64 +=	--with-pcre=/usr/bin/$(MACH64)/pcre-config
 
 PATH=$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+ifeq   ($(strip $(PARFAIT_BUILD)),yes)
+PATH=$(PARFAIT_TOOLS):$(SPRO_VROOT)/bin:/usr/bin:/usr/gnu/bin
+endif
 
 build: $(BUILD_32_and_64)
 

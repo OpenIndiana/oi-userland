@@ -42,6 +42,9 @@ include ../../make-rules/ips.mk
 
 PATCH_LEVEL=0
 
+# CC will be used via libtool for linking (thus need to be bitness aware).
+CC+=$(CC_BITS)
+
 CONFIGURE_PREFIX=/usr/apr/1.5
 
 CONFIGURE_OPTIONS +=	--enable-threads
