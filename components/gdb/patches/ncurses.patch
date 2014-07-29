@@ -1,0 +1,58 @@
+--- gdb-7.6/readline/configure.in.~1~	2014-07-29 11:46:30.868966603 +0400
++++ gdb-7.6/readline/configure.in	2014-07-29 11:47:18.041885391 +0400
+@@ -192,7 +192,7 @@
+ BASH_CHECK_LIB_TERMCAP
+ if test "$TERMCAP_LIB" = "./lib/termcap/libtermcap.a"; then
+ 	if test "$prefer_curses" = yes; then
+-		TERMCAP_LIB=-lcurses
++		TERMCAP_LIB=-lncurses
+ 	else
+ 		TERMCAP_LIB=-ltermcap	#default
+ 	fi
+--- gdb-7.6/config/override.m4.~1~	2014-07-29 11:52:28.445229641 +0400
++++ gdb-7.6/config/override.m4	2014-07-29 11:53:23.062539246 +0400
+@@ -28,8 +28,8 @@
+ 
+ 
+ dnl Ensure exactly this Autoconf version is used
+-m4_ifndef([_GCC_AUTOCONF_VERSION],
+-  [m4_define([_GCC_AUTOCONF_VERSION], [2.64])])
++#m4_ifndef([_GCC_AUTOCONF_VERSION],
++#  [m4_define([_GCC_AUTOCONF_VERSION], [2.64])])
+ 
+ dnl Test for the exact version when AC_INIT is expanded.
+ dnl This allows to update the tree in steps (for testing)
+@@ -38,14 +38,14 @@
+ dnl in configure.ac before AC_INIT,
+ dnl without rewriting this file.
+ dnl Or for updating the whole tree at once with the definition above.
+-AC_DEFUN([_GCC_AUTOCONF_VERSION_CHECK],
+-[m4_if(m4_defn([_GCC_AUTOCONF_VERSION]),
+-  m4_defn([m4_PACKAGE_VERSION]), [],
+-  [m4_fatal([Please use exactly Autoconf ]_GCC_AUTOCONF_VERSION[ instead of ]m4_defn([m4_PACKAGE_VERSION])[.])])
+-])
+-m4_define([AC_INIT], m4_defn([AC_INIT])[
+-_GCC_AUTOCONF_VERSION_CHECK
+-])
++#AC_DEFUN([_GCC_AUTOCONF_VERSION_CHECK],
++#[m4_if(m4_defn([_GCC_AUTOCONF_VERSION]),
++#  m4_defn([m4_PACKAGE_VERSION]), [],
++#  [m4_fatal([Please use exactly Autoconf ]_GCC_AUTOCONF_VERSION[ instead of ]m4_defn([m4_PACKAGE_VERSION])[.])])
++#])
++#m4_define([AC_INIT], m4_defn([AC_INIT])[
++#_GCC_AUTOCONF_VERSION_CHECK
++#])
+ 
+ 
+ dnl Ensure we do not use a buggy M4.
+--- gdb-7.6/readline/aclocal.m4.~1~	2014-07-29 12:04:33.092540729 +0400
++++ gdb-7.6/readline/aclocal.m4	2014-07-29 12:05:05.423271716 +0400
+@@ -984,7 +984,7 @@
+ TERMCAP_LIB=
+ TERMCAP_DEP=
+ else
+-TERMCAP_LIB=-lcurses
++TERMCAP_LIB=-lncurses
+ TERMCAP_DEP=
+ fi
+ ])
