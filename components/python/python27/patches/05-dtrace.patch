@@ -64,8 +64,8 @@ integrated into the main tree.
      f->f_lineno = code->co_firstlineno;
      f->f_iblock = 0;
  
---- Python-2.7.6/Python/ceval.c.~1~	2013-11-09 23:36:41.000000000 -0800
-+++ Python-2.7.6/Python/ceval.c	2014-05-14 13:04:01.334853206 -0700
+--- Python-2.7.8/Python/ceval.c.~1~	2014-06-29 19:05:46.000000000 -0700
++++ Python-2.7.8/Python/ceval.c	2014-07-17 20:39:49.843868592 -0700
 @@ -19,6 +19,11 @@
  
  #include <ctype.h>
@@ -78,7 +78,7 @@ integrated into the main tree.
  #ifndef WITH_TSC
  
  #define READ_TIMESTAMP(var)
-@@ -672,6 +677,55 @@
+@@ -678,6 +683,55 @@
                        NULL);
  }
  
@@ -134,7 +134,7 @@ integrated into the main tree.
  
  /* Interpreter main loop */
  
-@@ -683,9 +737,84 @@
+@@ -689,9 +743,84 @@
      return PyEval_EvalFrameEx(f, 0);
  }
  
@@ -219,7 +219,7 @@ integrated into the main tree.
  #ifdef DXPAIRS
      int lastopcode = 0;
  #endif
-@@ -910,6 +1039,11 @@
+@@ -916,6 +1045,11 @@
          }
      }
  
@@ -231,7 +231,7 @@ integrated into the main tree.
      co = f->f_code;
      names = co->co_names;
      consts = co->co_consts;
-@@ -2660,6 +2794,9 @@
+@@ -2673,6 +2807,9 @@
              PyObject **sp;
              PCALL(PCALL_ALL);
              sp = stack_pointer;
@@ -241,7 +241,7 @@ integrated into the main tree.
  #ifdef WITH_TSC
              x = call_function(&sp, oparg, &intr0, &intr1);
  #else
-@@ -2701,6 +2838,9 @@
+@@ -2714,6 +2851,9 @@
              } else
                  Py_INCREF(func);
              sp = stack_pointer;
@@ -251,7 +251,7 @@ integrated into the main tree.
              READ_TIMESTAMP(intr0);
              x = ext_do_call(func, &sp, flags, na, nk);
              READ_TIMESTAMP(intr1);
-@@ -3001,6 +3141,10 @@
+@@ -3014,6 +3154,10 @@
  
      /* pop frame */
  exit_eval_frame:

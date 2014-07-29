@@ -1,8 +1,8 @@
 This patch modifies the setup script to support Solaris.
 As it is Solaris-specific, it is not suitable for upstream.
 
---- Python-2.7.7/setup.py.~1~	2014-05-31 11:58:40.000000000 -0700
-+++ Python-2.7.7/setup.py	2014-06-02 10:51:15.317252625 -0700
+--- Python-2.7.8/setup.py.~1~	2014-06-29 19:05:48.000000000 -0700
++++ Python-2.7.8/setup.py	2014-07-17 20:37:57.419011542 -0700
 @@ -437,9 +437,9 @@
  
      def detect_modules(self):
@@ -16,7 +16,7 @@ As it is Solaris-specific, it is not suitable for upstream.
          if cross_compiling:
              self.add_gcc_paths()
          self.add_multiarch_paths()
-@@ -761,6 +761,13 @@
+@@ -763,6 +763,13 @@
                                                       ['/usr/lib/termcap'],
                                                       'termcap'):
                  readline_libs.append('termcap')
@@ -30,7 +30,7 @@ As it is Solaris-specific, it is not suitable for upstream.
              exts.append( Extension('readline', ['readline.c'],
                                     library_dirs=['/usr/lib/termcap'],
                                     extra_link_args=readline_extra_link_args,
-@@ -2079,7 +2086,8 @@
+@@ -2081,7 +2088,8 @@
              # this option. If you want to compile ctypes with the Sun
              # compiler, please research a proper solution, instead of
              # finding some -z option for the Sun compiler.
