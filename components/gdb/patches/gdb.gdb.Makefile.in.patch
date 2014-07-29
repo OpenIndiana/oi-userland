@@ -1,0 +1,38 @@
+--- gdb-7.6/gdb/Makefile.in	2013-04-02 10:38:43.000000000 -0700
++++ gdb-7.6/gdb/Makefile.in	2013-08-25 18:37:15.000000000 -0700
+@@ -144,7 +144,7 @@
+ # Where is the READLINE library?  Typically in ../readline.
+ READLINE_DIR = ../readline
+ READLINE_SRC = $(srcdir)/$(READLINE_DIR)
+-READLINE = @READLINE@
++READLINE = $(READLINE_DIR)/libreadline.a $(READLINE_DIR)/libhistory.a
+ READLINE_DEPS = @READLINE_DEPS@
+ READLINE_CFLAGS = @READLINE_CFLAGS@
+ 
+@@ -162,7 +162,7 @@
+ GDB_WARN_CFLAGS_NO_FORMAT = `echo " $(GDB_WARN_CFLAGS) " \
+ 		   | sed "s/ -Wformat-nonliteral / -Wno-format-nonliteral /g"`
+ 
+-RDYNAMIC = @RDYNAMIC@
++RDYNAMIC =
+ 
+ # Where is the INTL library?  Typically in ../intl.
+ INTL = @LIBINTL@
+@@ -408,7 +408,7 @@
+ CONFIG_OBS= @CONFIG_OBS@
+ CONFIG_SRCS= @CONFIG_SRCS@
+ CONFIG_DEPS= @CONFIG_DEPS@
+-CONFIG_LDFLAGS = @CONFIG_LDFLAGS@
++CONFIG_LDFLAGS =
+ ENABLE_CFLAGS= @ENABLE_CFLAGS@
+ CONFIG_ALL= @CONFIG_ALL@
+ CONFIG_CLEAN= @CONFIG_CLEAN@
+@@ -934,7 +934,7 @@
+ 
+ TSOBS = inflow.o
+ 
+-SUBDIRS = doc @subdirs@ data-directory $(GNULIB_BUILDDIR)
++SUBDIRS = @subdirs@ data-directory $(GNULIB_BUILDDIR)
+ CLEANDIRS = $(SUBDIRS)
+ 
+ # List of subdirectories in the build tree that must exist.
