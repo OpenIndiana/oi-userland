@@ -474,7 +474,39 @@ diff -r -u /tmp/librdmacm-1.0.14.1/man/rdma_cm.7 librdmacm-1.0.14.1/man/rdma_cm.
  operation is controlled by the user through the use of the rdma_cm event channel
  parameter in specific calls.  If an event channel is provided, an rdma_cm identifier
  will report its event data (results of connecting, for example), on that channel.
-@@ -63,12 +63,7 @@
+@@ -31,44 +31,10 @@
+ of the more commonly used verbs funcationality.  The full set of abstracted
+ verb calls are:
+ .P
+-rdma_reg_msgs  - register an array of buffers for sending and receiving
+-.P
+-rdma_reg_read  - registers a buffer for RDMA read operations
+-.P
+-rdma_reg_write - registers a buffer for RDMA write operations
+-.P
+-rdma_dereg_mr  - deregisters a memory region
+-.P
+-rdma_post_recv  - post a buffer to receive a message
+-.P
+-rdma_post_send  - post a buffer to send a message
+-.P
+-rdma_post_read  - post an RDMA to read data into a buffer
+-.P
+-rdma_post_write - post an RDMA to send data from a buffer
+-.P
+-rdma_post_recvv  - post a vector of buffers to receive a message
+-.P
+-rdma_post_sendv  - post a vector of buffers to send a message
+-.P
+-rdma_post_readv  - post a vector of buffers to receive an RDMA read
+-.P
+-rdma_post_writev - post a vector of buffers to send an RDMA write
+-.P
+-rdma_post_ud_send - post a buffer to send a message on a UD QP
+-.P
+-rdma_get_send_comp - get completion status for a send or RDMA operation
+-.P
+-rdma_get_recv_comp - get information about a completed receive
  .SH "CLIENT OPERATION"
  This section provides a general overview of the basic operation for the active,
  or client, side of communication.  This flow assume asynchronous operation with
@@ -488,7 +520,7 @@ diff -r -u /tmp/librdmacm-1.0.14.1/man/rdma_cm.7 librdmacm-1.0.14.1/man/rdma_cm.
  code samples.  A general connection flow would be:
  .IP rdma_getaddrinfo
  retrieve address information of the destination
-@@ -178,12 +173,9 @@
+@@ -178,12 +144,9 @@
  rdma_ack_cm_event(3),
  rdma_bind_addr(3),
  rdma_connect(3),
@@ -501,7 +533,7 @@ diff -r -u /tmp/librdmacm-1.0.14.1/man/rdma_cm.7 librdmacm-1.0.14.1/man/rdma_cm.
  rdma_destroy_event_channel(3),
  rdma_destroy_id(3),
  rdma_destroy_qp(3),
-@@ -196,27 +188,11 @@
+@@ -196,27 +159,11 @@
  rdma_get_dst_port(3),
  rdma_get_local_addr(3),
  rdma_get_peer_addr(3),
