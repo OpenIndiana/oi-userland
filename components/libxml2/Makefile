@@ -63,27 +63,49 @@ CONFIGURE_OPTIONS += PYTHON_VENDOR_PACKAGES=$(PYTHON_VENDOR_PACKAGES)
 
 COMPONENT_PREP_ACTION += (cd $(@D) ; cp ../mapfile libxml2.syms ; autoreconf -if)
 
-# After we have configured, make a copy of the python bits so we
-# can build and test separate python 2.7 support.
-COMPONENT_POST_CONFIGURE_ACTION = (cd $(@D) ; cp -rp python python2.7 ; \
-    $(GSED) -i -e 's/2[.]6/2.7/g' `find python2.7 -name Makefile`)
+# After we have configured, make a copy of the python bits so we can build and
+# test separate python 2.7 and 3.4 support.  Note for 3.4: .py files need to
+# go in .../vendor-packages (whether building 32-bit or 64-bit) whereas .so
+# files need to go in .../vendor-packages for 32-bit but .../vendor-packages/64
+# for 64-bit.  For 2.6 and 2.7, Python is built 32- and 64-bit, so .py files
+# end up in both places even though only the 32-bit location is needed, but the
+# superfluous files in the proto area are harmless; meanwhile, the .so files
+# end up in their proper 32- and 64-bit locations.  But Python 3.4 is built
+# 64-bit only, so we have an extra sed edit below to force the .py files into
+# the 32-bit location and we manually specify the 32-bit path in the manifest
+# to correct for the .so file being installed there instead of the 64-bit path
+# where it belongs.
+COMPONENT_POST_CONFIGURE_ACTION = \
+    (cd $(@D) ; cp -rp python python2.7 ; \
+    $(GSED) -i -e 's/2[.]6/2.7/g' `find python2.7 -name Makefile` ; \
+     cd $(@D) ; cp -rp python python3.4 ; \
+    $(GSED) -i -e 's/2[.]6/3.4/g' -e 's|vendor-packages/64|vendor-packages|' \
+     `find python3.4 -name Makefile` ; \
+)
 
 # After we have built/installed libxml2, build/install the python
-# support for python 2.7
+# support for python 2.7 and 3.4
 COMPONENT_POST_INSTALL_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
+    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_INSTALL_ARGS) install ; \
+     [ $(BITS) -eq 64 ] && cd $(@D)/python3.4 ; \
+     $(GMAKE) $(COMPONENT_INSTALL_ARGS) install)
 
-# It's nice to test also python 2.7 module.
+# It's nice to test also python 2.7 and 3.4 modules.
 COMPONENT_POST_TEST_ACTION = \
-    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_TEST_ARGS) test)
+    (cd $(@D)/python2.7 ; $(GMAKE) $(COMPONENT_TEST_ARGS) test ; \
+     [ $(BITS) -eq 64 ] && cd $(@D)/python3.4 ; \
+     $(GMAKE) $(COMPONENT_TEST_ARGS) test)
 
 # We have patched our 64 bit python so it will search for modules only in
 # '64/' directories. Now we need to provide one. Otherwise python will
 # end up using libxml2mod.so installed on system.
 $(BUILD_DIR)/$(MACH64)/.tested: COMPONENT_PRE_TEST_ACTION = ( \
-    $(MKDIR) $(@D)/python/.libs/64 $(@D)/python2.7/.libs/64; \
+    $(MKDIR) $(@D)/python/.libs/64 \
+             $(@D)/python2.7/.libs/64 \
+             $(@D)/python3.4/.libs/64; \
     $(SYMLINK) ../libxml2mod.so $(@D)/python/.libs/64/libxml2mod.so; \
-    $(SYMLINK) ../libxml2mod.so $(@D)/python2.7/.libs/64/libxml2mod.so);
+    $(SYMLINK) ../libxml2mod.so $(@D)/python2.7/.libs/64/libxml2mod.so; \
+    $(SYMLINK) ../libxml2mod.so $(@D)/python3.4/.libs/64/libxml2mod.so);
 
 COMPONENT_PRE_TEST_ACTION += \
     (cd $(@D) ; gtar xf $(COMPONENT_DIR)/$(COMPONENT_ARCHIVE_1));
@@ -94,6 +116,7 @@ build:		$(BUILD_32_and_64)
 install:	$(INSTALL_32_and_64)
 	$(PYTHON.2.6.32) -m compileall $(PROTO_DIR)/usr/lib/python2.6/vendor-packages
 	$(PYTHON.2.7.32) -m compileall $(PROTO_DIR)/usr/lib/python2.7/vendor-packages
+	$(PYTHON.3.4.64) -m compileall $(PROTO_DIR)/usr/lib/python3.4/vendor-packages
 
 test:		$(TEST_32_and_64)
 
