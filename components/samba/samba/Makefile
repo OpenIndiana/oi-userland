@@ -51,11 +51,6 @@ COMPONENT_ARCHIVE_HASH_1=	\
     sha256:d6bdfd76f672c810299c71443e5127431ffb87d2c79d818aee72c86eaccd312c
 COMPONENT_ARCHIVE_URL_1=	http://sourceforge.net/projects/docbook/files/$(COMPONENT_NAME_1)/$(COMPONENT_VERSION_1)/$(COMPONENT_ARCHIVE_1)
 
-COMPONENT_ARCHIVE_2=		libsam-LGPL.tar
-COMPONENT_ARCHIVE_HASH_2=	\
-    sha256:4324f2c4a9ba94f1165c5922f166636621681b09d635257d921f6df654e7191e
-COMPONENT_ARCHIVE_URL_2=	http://hub.opensolaris.org/bin/download/Project+samqfs/files/libsam%2DLGPL.tar
-
 include $(WS_MAKE_RULES)/prep.mk
 
 SRC_OFFSET =	source3
@@ -113,12 +108,11 @@ COMPONENT_PRE_CONFIGURE_ACTION += \
 COMPONENT_PRE_BUILD_ACTION = $(ENV) ; echo $(COMPONENT_BUILD_ENV)
 
 # Depend on $(PROTO_DIR)/.mozldap because this target creates $(PROTO_DIR).
-$(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c \
-		$(COMPONENT_ARCHIVE_2) $(PROTO_DIR)/.mozldap
+$(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so: Solaris/libsam.c $(PROTO_DIR)/.mozldap
 	$(MKDIR) $(PROTO_DIR)/opt/SUNWsamfs/lib
 	$(CC.studio.32) -G $(studio_PIC) -hlibsam.so Solaris/libsam.c \
+		-I$(COMPONENT_DIR)/Solaris/include \
 		-o $(PROTO_DIR)/opt/SUNWsamfs/lib/libsam.so
-	cd $(BUILD_DIR) ; $(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_2)
 
 CFLAGS.studio	+=	$(studio_C99_ENABLE)
 CFLAGS.gcc	+=	-std=c99
@@ -178,7 +172,7 @@ CONFIGURE_OPTIONS +=	--with-winbind
 
 CONFIGURE_OPTIONS += 	LD="$(LD)"
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS)"
-CONFIGURE_OPTIONS.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(BUILD_DIR)/libsam-LGPL/include"
+CONFIGURE_OPTIONS.32 +=	CPPFLAGS="$(CPPFLAGS) -I$(COMPONENT_DIR)/Solaris/include"
 CONFIGURE_OPTIONS.64 +=	CPPFLAGS="$(CPPFLAGS)"
 CONFIGURE_OPTIONS +=	LDFLAGS="$(LDFLAGS)"
 CONFIGURE_OPTIONS.32 +=	LIBS="$(LIBS) $(LIBS32)"
