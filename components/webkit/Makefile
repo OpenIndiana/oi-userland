@@ -17,6 +17,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME= webkit
 COMPONENT_VERSION= 1.2.7
+COMPONENT_REVISION= 1
 COMPONENT_SUMMARY= WebKit rendering engine
 COMPONENT_SRC= $(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE= $(COMPONENT_SRC).tar.gz
@@ -30,14 +31,16 @@ include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
 
-PATH=$(GCC_ROOT)/bin:/usr/gnu/bin:/usr/bin
+PATH=$(GCC_ROOT)/bin:/usr/g++/bin:/usr/gnu/bin:/usr/bin
 
 COMPONENT_BUILD_ARGS =
 
-CPPFLAGS += -D__EXTENSIONS__
+CPPFLAGS += -D__EXTENSIONS__ 
+CPPFLAGS += -I/usr/g++/include
 
-LDFLAGS.32 +=  -L/usr/g++/lib -R/usr/g++/lib
-LDFLAGS.64 +=  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
+LDFLAGS.32  =  -L/usr/g++/lib -R/usr/g++/lib
+LDFLAGS.64  =  -L/usr/g++/lib/$(MACH64) -R/usr/g++/lib/$(MACH64)
+LDFLAGS  +=  $(LDFLAGS.$(BITS))
 
 CONFIGURE_ARGS += --x-includes=/usr/X11/include
 CONFIGURE_ARGS.32 += --x-libraries=/usr/X11/lib
@@ -48,7 +51,9 @@ CONFIGURE_PREFIX = /usr/g++
 CONFIGURE_OPTIONS += --sysconfdir=/etc
 
 CONFIGURE_ENV += PERL=$(PERL)
-CONFIGURE_ENV += CPPFLAGS=$(CPPFLAGS)
+CONFIGURE_ENV += CPPFLAGS="$(CPPFLAGS)"
+
+COMPONENT_BUILD_ENV += LDFLAGS="$(LDFLAGS)"
 
 build: $(BUILD_32)
 
