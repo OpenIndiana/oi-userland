@@ -1,0 +1,518 @@
+diff -ur aoo-4.1.0/main/solenv/gbuild/platform/solaris.mk aoo-4.1.0/main/solenv/gbuild/platform/solaris.mk
+--- aoo-4.1.0/main/solenv/gbuild/platform/solaris.mk	2014-02-25 12:33:29.000000000 +0400
++++ aoo-4.1.0/main/solenv/gbuild/platform/solaris.mk	2014-07-22 14:04:24.071795408 +0400
+@@ -1,34 +1,13 @@
+-#**************************************************************
+-#  
+-#  Licensed to the Apache Software Foundation (ASF) under one
+-#  or more contributor license agreements.  See the NOTICE file
+-#  distributed with this work for additional information
+-#  regarding copyright ownership.  The ASF licenses this file
+-#  to you under the Apache License, Version 2.0 (the
+-#  "License"); you may not use this file except in compliance
+-#  with the License.  You may obtain a copy of the License at
+-#  
+-#    http://www.apache.org/licenses/LICENSE-2.0
+-#  
+-#  Unless required by applicable law or agreed to in writing,
+-#  software distributed under the License is distributed on an
+-#  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+-#  KIND, either express or implied.  See the License for the
+-#  specific language governing permissions and limitations
+-#  under the License.
+-#  
+-#**************************************************************
+-
+-
++#File solaris.mk
+ 
+ GUI := UNX
+-COM := C52
++COM := GCC
+ 
+ gb_MKTEMP := mktemp -t gbuild.XXXXXX
+ 
+-gb_CC := cc
+-gb_CXX := CC
+-gb_GCCP := cc
++gb_CC := gcc
++gb_CXX := g++
++gb_GCCP := gcc
+ gb_AR := ar
+ gb_AWK := /usr/xpg4/bin/awk
+ gb_CLASSPATHSEP := :
+@@ -52,73 +31,76 @@
+ 	-D_POSIX_PTHREAD_SEMANTICS \
+ 	-D_PTHREADS \
+ 	-DUNIX \
++	-DUXN \
+ 
+-gb_COMPILERDEFS := \
+-	-D$(COM) \
+-	-DCPPU_ENV=sunpro5 \
++ifeq ($(CPUNAME),INTEL)
++gb_OSDEFS += -DINTEL
+ 
+-gb_CPUDEFS := -D$(CPUNAME)
+-ifeq ($(CPUNAME),SPARC)
+-gb_CPUDEFS += -D__sparcv8plus
+ endif
+ 
++ifeq ($(GXX_INCLUDE_PATH),)
++GXX_INCLUDE_PATH=$(COMPATH)/include/c++/$(shell gcc -dumpversion)
++endif
++
++gb_COMPILERDEFS := \
++	-D$(COM) \
++	-DCPPU_ENV=gcc3 \
++	-DGXX_INCLUDE_PATH=$(GXX_INCLUDE_PATH) \
++
+ gb_CFLAGS := \
+-	-temp=/tmp \
+-	-KPIC \
+-	-mt \
+-	-xldscope=hidden \
+-	-xCC \
+-	-xc99=none \
++	-Wall \
++	-Wendif-labels \
++	-Wextra \
++	-Wshadow \
++	-fPIC \
++	-fmessage-length=0 \
++	-fno-common \
++	-fno-strict-aliasing \
++	-pipe \
+ 
+ gb_CXXFLAGS := \
+-	-temp=/tmp \
+-	-KPIC \
+-	-mt \
+-	-xldscope=hidden \
+-	-features=no%altspell \
+-	-library=no%Cstd \
+-	+w2 \
+-	-erroff=doubunder,identexpected,inllargeuse,inllargeint,notemsource,reftotemp,truncwarn,wnoretvalue,anonnotype \
++	-Wall \
++	-Wendif-labels \
++	-Wextra \
++	-Wno-ctor-dtor-privacy \
++	-Wno-non-virtual-dtor \
++	-Wshadow \
++	-fPIC \
++	-fmessage-length=0 \
++	-fno-common \
++	-fno-strict-aliasing \
++	-fno-use-cxa-atexit \
++	-pipe \
+ 
+ ifneq ($(EXTERNAL_WARNINGS_NOT_ERRORS),TRUE)
+-gb_CFLAGS_WERROR := -errwarn=%all
+-gb_CXXFLAGS_WERROR := -xwe
++gb_CFLAGS_WERROR := -Werror
++gb_CXXFLAGS_WERROR := -Werror
+ endif
+ 
+ gb_LinkTarget_EXCEPTIONFLAGS := \
+ 	-DEXCEPTIONS_ON \
++	-fexceptions \
++	-fno-enforce-eh-specs \
+ 
+ gb_LinkTarget_NOEXCEPTIONFLAGS := \
+ 	-DEXCEPTIONS_OFF \
+-	-noex \
++	-fno-exceptions \
+ 
+-gb_LinkTarget_LDFLAGS := \
++gb_LinkTarget_LDFLAGS += \
+ 	$(subst -L../lib , ,$(SOLARLIB)) \
+-	-temp=/tmp \
+ 	-w \
+-	-mt \
++	-lpthread  \
+ 	-Bdirect \
+ 	-z defs \
+ 	-z combreloc \
+-	-norunpath \
+-	-PIC \
+-	-library=no%Cstd \
+ 
+ ifeq ($(gb_DEBUGLEVEL),2)
+-gb_COMPILEROPTFLAGS :=
++gb_COMPILEROPTFLAGS := -O0
+ else
+-ifeq ($(CPUNAME),INTEL)
+-gb_COMPILEROPTFLAGS := -xarch=generic -xO3
+-else # ifeq ($(CPUNAME),SPARC)
+-#  -m32 -xarch=sparc        restrict target to 32 bit sparc
+-#  -xO3                     optimization level 3
+-#  -xspace                  don't do optimizations which do increase binary size
+-#  -xprefetch=yes           do prefetching (helps on UltraSparc III)
+-gb_COMPILEROPTFLAGS := -m32 -xarch=sparc -xO3 -xspace -xprefetch=yes
+-endif
++gb_COMPILEROPTFLAGS := -Os
+ endif
+ 
+-gb_COMPILERNOOPTFLAGS :=
++gb_COMPILERNOOPTFLAGS := -O0
+ 
+ # Helper class
+ 
+@@ -131,26 +113,23 @@
+ $(1)
+ endef
+ 
+-
+ # CObject class
+ 
+ define gb_CObject__command
+ $(call gb_Output_announce,$(2),$(true),C  ,3)
+ $(call gb_Helper_abbreviate_dirs,\
+ 	mkdir -p $(dir $(1)) && \
+-	rm -f $(call gb_CObject_get_dep_target,$(2)) && \
+ 	mkdir -p $(dir $(call gb_CObject_get_dep_target,$(2))) && \
+ 	$(gb_CC) \
++		$(DEFS) $(CFLAGS) \
+ 		-c $(3) \
+ 		-o $(1) \
+-		-xMMD \
+-		-xMF $(call gb_CObject_get_dep_target,$(2)) \
+-		$(DEFS) $(CFLAGS) \
++		-MMD -MT $(call gb_CObject_get_target,$(2)) \
++		-MF $(call gb_CObject_get_dep_target,$(2)) \
+ 		-I$(dir $(3)) \
+ 		$(INCLUDE))
+ endef
+ 
+-
+ # CxxObject class
+ 
+ define gb_CxxObject__command
+@@ -162,13 +141,12 @@
+ 		$(DEFS) $(CXXFLAGS) \
+ 		-c $(3) \
+ 		-o $(1) \
+-		-xMMD \
+-		-xMF $(call gb_CxxObject_get_dep_target,$(2)) \
++		-MMD -MT $(call gb_CxxObject_get_target,$(2)) \
++		-MF $(call gb_CxxObject_get_dep_target,$(2)) \
+ 		-I$(dir $(3)) \
+ 		$(INCLUDE_STL) $(INCLUDE))
+ endef
+ 
+-
+ # LinkTarget class
+ 
+ define gb_LinkTarget__get_rpath_for_layer
+@@ -187,8 +165,9 @@
+ gb_LinkTarget_CXXFLAGS := $(gb_CXXFLAGS) $(gb_CXXFLAGS_WERROR)
+ 
+ ifeq ($(gb_DEBUGLEVEL),2)
+-gb_LinkTarget_CXXFLAGS += -g
+-gb_LinkTarget_CFLAGS += -g
++gb_LinkTarget_CXXFLAGS += -ggdb3 -finline-limit=0 -fno-inline -fno-default-inline
++gb_LinkTarget_CFLAGS += -ggdb3 -finline-limit=0 -fno-inline -fno-default-inline
++
+ endif
+ 
+ gb_LinkTarget_INCLUDE := $(filter-out %/stl, $(subst -I. , ,$(SOLARINC)))
+@@ -200,11 +179,11 @@
+ 	$(gb_CXX) \
+ 		$(if $(filter Library CppunitTest,$(TARGETTYPE)),$(gb_Library_TARGETTYPEFLAGS)) \
+ 		$(subst \d,$$,$(RPATH)) $(LDFLAGS) \
+-		$(patsubst lib%.so,-l%,$(foreach lib,$(LINKED_LIBS),$(call gb_Library_get_filename,$(lib)))) \
+-		$(patsubst %,-l%,$(EXTERNAL_LIBS)) \
+ 		$(foreach object,$(COBJECTS),$(call gb_CObject_get_target,$(object))) \
+ 		$(foreach object,$(CXXOBJECTS),$(call gb_CxxObject_get_target,$(object))) \
+ 		$(foreach object,$(GENCXXOBJECTS),$(call gb_GenCxxObject_get_target,$(object))) \
++		$(patsubst lib%.so,-l%,$(foreach lib,$(LINKED_LIBS),$(call gb_Library_get_filename,$(lib)))) \
++		$(patsubst %,-l%,$(EXTERNAL_LIBS)) \
+ 		$(foreach lib,$(LINKED_STATIC_LIBS),$(call gb_StaticLibrary_get_target,$(lib))) \
+ 		-o $(1))
+ endef
+@@ -228,40 +207,39 @@
+ # Library class
+ 
+ gb_Library_DEFS :=
+-gb_Library_TARGETTYPEFLAGS := -Bdynamic -z text -G
++gb_Library_TARGETTYPEFLAGS := -shared
+ gb_Library_SYSPRE := lib
+ gb_Library_UNOVERPRE := $(gb_Library_SYSPRE)uno_
+ gb_Library_PLAINEXT := .so
+-gb_Library_RTEXT := C52$(gb_Library_PLAINEXT)
++gb_Library_RTEXT := gcc3$(gb_Library_PLAINEXT)
+ ifeq ($(gb_PRODUCT),$(true))
+-gb_Library_STLEXT := port_sunpro$(gb_Library_PLAINEXT)
++gb_Library_STLEXT := port_gcc$(gb_Library_PLAINEXT)
+ else
+-gb_Library_STLEXT := port_sunpro_debug$(gb_Library_PLAINEXT)
++gb_Library_STLEXT := port_gcc_stldebug$(gb_Library_PLAINEXT)
+ endif
+ 
+-ifeq ($(CPUNAME),INTEL)
++ifeq ($(CPUNAME),X86_64)
+ gb_Library_OOOEXT := $(gb_Library_PLAINEXT)
+ gb_Library_UNOEXT := .uno$(gb_Library_PLAINEXT)
+-else # ifeq ($(CPUNAME),SPARC)
++else
+ gb_Library_OOOEXT := $(gb_Library_PLAINEXT)
+ gb_Library_UNOEXT := .uno$(gb_Library_PLAINEXT)
+ endif
+ 
+ gb_STDLIBS := \
+-	Crun \
+-	m \
+-	c \
++        m \
++        c \
+ 
+ gb_Library_PLAINLIBS_NONE += \
+ 	$(gb_STDLIBS) \
+ 	dl \
+-    freetype \
++	freetype \
+ 	jpeg \
+ 	pthread \
+ 	X11 \
+-    Xext \
+-    SM \
+-    ICE \
++	Xext \
++	SM \
++	ICE \
+ 	z \
+ 	cppunit
+ 
+@@ -272,19 +250,16 @@
+ 	$(foreach lib,$(gb_Library_PLAINLIBS_OOO),$(lib):$(gb_Library_SYSPRE)$(lib)$(gb_Library_PLAINEXT)) \
+ 	$(foreach lib,$(gb_Library_RTLIBS),$(lib):$(gb_Library_SYSPRE)$(lib)$(gb_Library_RTEXT)) \
+ 	$(foreach lib,$(gb_Library_RTVERLIBS),$(lib):$(gb_Library_SYSPRE)$(lib)$(gb_Library_RTEXT)) \
+-	$(foreach lib,$(gb_Library_STLLIBS),$(lib):$(gb_Library_SYSPRE)$(lib)$(gb_Library_STLEXT)) \
+ 	$(foreach lib,$(gb_Library_UNOLIBS_URE),$(lib):$(lib)$(gb_Library_UNOEXT)) \
+ 	$(foreach lib,$(gb_Library_UNOLIBS_OOO),$(lib):$(lib)$(gb_Library_UNOEXT)) \
+ 	$(foreach lib,$(gb_Library_UNOVERLIBS),$(lib):$(gb_Library_UNOVERPRE)$(lib)$(gb_Library_PLAINEXT)) \
+ 
+-
+ gb_Library_LAYER := \
+ 	$(foreach lib,$(gb_Library_OOOLIBS),$(lib):OOO) \
+ 	$(foreach lib,$(gb_Library_PLAINLIBS_URE),$(lib):URELIB) \
+ 	$(foreach lib,$(gb_Library_PLAINLIBS_OOO),$(lib):OOO) \
+ 	$(foreach lib,$(gb_Library_RTLIBS),$(lib):OOO) \
+ 	$(foreach lib,$(gb_Library_RTVERLIBS),$(lib):URELIB) \
+-	$(foreach lib,$(gb_Library_STLLIBS),$(lib):URELIB) \
+ 	$(foreach lib,$(gb_Library_UNOLIBS_URE),$(lib):URELIB) \
+ 	$(foreach lib,$(gb_Library_UNOLIBS_OOO),$(lib):OOO) \
+ 	$(foreach lib,$(gb_Library_UNOVERLIBS),$(lib):URELIB) \
+@@ -298,7 +273,6 @@
+ 
+ endef
+ 
+-
+ # StaticLibrary class
+ 
+ gb_StaticLibrary_DEFS :=
+@@ -312,7 +286,6 @@
+ 
+ gb_StaticLibrary_StaticLibrary_platform =
+ 
+-
+ # Executable class
+ 
+ gb_Executable_EXT :=
+@@ -324,7 +297,6 @@
+ 	$(foreach exe,$(gb_Executable_BRAND),$(exe):BRAND) \
+ 	$(foreach exe,$(gb_Executable_NONE),$(exe):NONEBIN) \
+ 
+-
+ define gb_Executable_get_rpath
+ '-R$(call gb_LinkTarget__get_rpath_for_layer,$(call gb_Executable_get_layer,$(1)))'
+ endef
+@@ -334,7 +306,6 @@
+ 
+ endef
+ 
+-
+ # CppunitTest class
+ 
+ gb_CppunitTest_CPPTESTPRECOMMAND := LD_LIBRARY_PATH=$(OUTDIR)/lib
+@@ -371,31 +342,19 @@
+ gb_SrsPartTarget_RSCTARGET := $(OUTDIR)/bin/rsc
+ gb_SrsPartTarget_RSCCOMMAND := LD_LIBRARY_PATH=$(OUTDIR)/lib SOLARBINDIR=$(OUTDIR)/bin $(gb_SrsPartTarget_RSCTARGET)
+ 
+-# Sun cc/CC support -xM1/-xMF flags, but unfortunately refuse input files that
+-# do not have the right suffix, so use makedepend here...
+ define gb_SrsPartTarget__command_dep
+-$(call gb_Helper_abbreviate_dirs_native,\
+-	$(OUTDIR)/bin/makedepend$(gb_Executable_EXT) \
++$(call gb_Helper_abbreviate_dirs,\
++	$(gb_GCCP) \
++		-MM -MT $(call gb_SrsPartTarget_get_target,$(1)) \
+ 		$(INCLUDE) \
+ 		$(DEFS) \
+-		$(2) \
+-		-f - \
+-	| $(gb_AWK) -f $(GBUILDDIR)/processdeps.awk \
+-		-v OBJECTFILE=$(call gb_SrsPartTarget_get_target,$(1)) \
+-		-v OUTDIR=$(OUTDIR)/ \
+-		-v WORKDIR=$(WORKDIR)/ \
+-		-v SRCDIR=$(SRCDIR)/ \
+-		-v REPODIR=$(REPODIR)/ \
+-	> $(call gb_SrsPartTarget_get_dep_target,$(1)))
++		-c -x c++-header $(2) \
++		-o $(call gb_SrsPartTarget_get_dep_target,$(1)))
+ endef
+ 
+-
+ # ComponentTarget
+ 
+ gb_XSLTPROCPRECOMMAND := LD_LIBRARY_PATH=$(OUTDIR)/lib
+ gb_Library_COMPONENTPREFIXES := \
+     OOO:vnd.sun.star.expand:\dOOO_BASE_DIR/program/ \
+     URELIB:vnd.sun.star.expand:\dURE_INTERNAL_LIB_DIR/ \
+-
+-
+-# vim: set noet sw=4 ts=4:
+diff -ur aoo-4.1.0/main/solenv/inc/tg_compv.mk aoo-4.1.0/main/solenv/inc/tg_compv.mk
+--- aoo-4.1.0/main/solenv/inc/tg_compv.mk	2014-02-25 12:33:36.000000000 +0400
++++ aoo-4.1.0/main/solenv/inc/tg_compv.mk	2014-07-22 13:10:37.825385902 +0400
+@@ -28,7 +28,10 @@
+ .IF "$(COMNAME)"=="" || "$(COMPATH:s!\!/!)"!="$(COMPATH_STORED)"
+ .IF "$(L10N_framework)"==""
+ 
+-COMNAME:=
++#COMNAME:=
++COM:=GCC
++COMNAME:=gcc3
++COMID:=gcc3
+ 
+ .IF "$(COM)"=="GCC"
+ CFLAGSVERSION=-dumpversion
+@@ -157,3 +160,5 @@
+ 
+ .ENDIF			# "$(L10N_framework)"==""
+ .ENDIF			# "$(COMNAME)"==""
++COMID=gcc3
++SHORTSTDCPP3="6"
+diff -ur aoo-4.1.0/main/solenv/inc/unitools.mk aoo-4.1.0/main/solenv/inc/unitools.mk
+--- aoo-4.1.0/main/solenv/inc/unitools.mk	2014-02-25 12:33:36.000000000 +0400
++++ aoo-4.1.0/main/solenv/inc/unitools.mk	2014-07-22 17:25:54.579862509 +0400
+@@ -116,6 +116,7 @@
+ .IF "$(OS)"=="SOLARIS"
+ AWK*=nawk
+ GNUCOPY*=gnucp
++GNUMAKE=/usr/gnu/bin/make
+ GNUPATCH*=gnupatch
+ GNUTAR*=/usr/sfw/bin/gtar
+ DEREFERENCE=
+diff -ur aoo-4.1.0/main/solenv/inc/unxsogi.mk aoo-4.1.0/main/solenv/inc/unxsogi.mk
+--- aoo-4.1.0/main/solenv/inc/unxsogi.mk	2014-02-25 12:33:36.000000000 +0400
++++ aoo-4.1.0/main/solenv/inc/unxsogi.mk	2014-07-22 16:17:55.787984655 +0400
+@@ -22,8 +22,12 @@
+ 
+ 
+ # mk file for unxsogi
+-ASM=/usr/ccs/bin/as
+-AFLAGS=-P
++#File unxsogi.mk
++
++# mk file for unxsogi
++ASM=/usr/gnu/bin/as
++AFLAGS=
++CDEFAULTOPT*=-O2
+ 
+ SOLAR_JAVA=TRUE
+ JAVAFLAGSDEBUG=-g
+@@ -31,7 +35,6 @@
+ # _PTHREADS is needed for the stl
+ CDEFS+=-D_PTHREADS -D_REENTRANT -DSYSV -DSUN -DSUN4 -D_POSIX_PTHREAD_SEMANTICS -DSTLPORT_VERSION=$(STLPORT_VER) -D_USE_NAMESPACE=1 
+ 
+-
+ .IF "$(SOLAR_JAVA)"!=""
+ JAVADEF=-DSOLAR_JAVA
+ .IF "$(debug)"==""
+@@ -48,12 +51,16 @@
+ CXX*=g++
+ CC*=gcc
+ CFLAGS=-c
+-CFLAGSCC= -pipe $(ARCH_FLAGS)
++CFLAGSCC= -pipe $(ARCH_FLAGS) 
+ 
+ CFLAGSEXCEPTIONS=-fexceptions
+ CFLAGS_NO_EXCEPTIONS=-fno-exceptions
+ 
+-CFLAGSCXX= -pipe $(ARCH_FLAGS)
++CFLAGSCXX= -pipe $(ARCH_FLAGS) -Wno-ctor-dtor-privacy -fno-use-cxa-atexit
++.IF "$(HAVE_GCC_VISIBILITY_FEATURE)" == "TRUE"
++CFLAGSCXX += -fvisibility-inlines-hidden
++.ENDIF # "$(HAVE_GCC_VISIBILITY_FEATURE)" == "TRUE"
++
+ PICSWITCH:=-fPIC
+ 
+ CFLAGSOBJGUIMT=
+@@ -73,17 +80,40 @@
+ LINK*=$(CXX)
+ LINKC*=$(CC)
+ 
+-LINKFLAGS=
++LINKFLAGS=-lstdc++
+ LINKFLAGSAPPGUI=-Wl,-export-dynamic
+ LINKFLAGSSHLGUI=-shared
+ LINKFLAGSAPPCUI=-Wl,-export-dynamic
+ LINKFLAGSSHLCUI=-shared
+ LINKFLAGSTACK=
+ LINKFLAGSPROF=
+-LINKFLAGSDEBUG=-g
+ LINKFLAGSOPT=
+ 
+-LINKVERSIONMAPFLAG=-Wl,--version-script
++LINKFLAGS=
++LINKFLAGSAPPGUI=
++LINKFLAGSSHLGUI=-shared
++LINKFLAGSAPPCUI=
++LINKFLAGSSHLCUI=-shared
++LINKFLAGSTACK=
++LINKFLAGSPROF=
++LINKFLAGSDEBUG=-ggdb3 -finline-limit=0 -fno-inline -fno-default-inline
++LINKFLAGSOPT=
++LINKFLAGSDEFS*=-Wl,-z,defs
++LINKFLAGSRUNPATH_URELIB=-Wl,-rpath,\''$$ORIGIN'\'
++LINKFLAGSRUNPATH_UREBIN=-Wl,-rpath,\''$$ORIGIN'\'
++LINKFLAGSRUNPATH_OOO=-Wl,-rpath,\''$$ORIGIN'\'
++LINKFLAGSRUNPATH_SDK=-Wl,-rpath,\''$$ORIGIN'\'
++LINKFLAGSRUNPATH_BRAND=-Wl,-rpath,\''$$ORIGIN'\'
++LINKFLAGSRUNPATH_OXT=
++LINKFLAGSRUNPATH_BOXT=-Wl,-rpath,\''$$ORIGIN'\'
++LINKFLAGSRUNPATH_NONE=
++LINKFLAGS=-Wl,-z,combreloc $(LINKFLAGSDEFS)
++#LINKVERSIONMAPFLAG=-M
++LINKVERSIONMAPFLAG=-Wl,-M
++#LINKFLAGSNOEXSTK*=-Wl,-M,/usr/lib/ld/map.noexstk 
++LINKFLAGSNOEXSTK*=
++LINKFLAGSAPPGUI+=$(LINKFLAGSNOEXSTK)
++LINKFLAGSAPPCUI+=$(LINKFLAGSNOEXSTK)
+ 
+ # enable visibility define in "sal/types.h"
+ .IF "$(HAVE_GCC_VISIBILITY_FEATURE)" == "TRUE"
+@@ -100,22 +130,12 @@
+ STDOBJCUI=
+ STDSLOCUI=
+ 
+-STDLIBGUIMT=$(DYNAMIC) -lpthread -lthread -lm
+-STDLIBCUIMT=$(DYNAMIC) -lpthread -lthread -lm
+ # libraries for linking shared libraries
+ STDSHLGUIMT=$(DYNAMIC) -lpthread -lthread -lm
+ STDSHLCUIMT=$(DYNAMIC) -lpthread -lthread -lm
+ 
+ STDLIBGUIMT+=-lX11
+ 
+-.IF "$(STLPORT_VER)" >= "500"
+-LIBSTLPORT=$(DYNAMIC) -lstlport
+-LIBSTLPORTST=$(STATIC) -lstlport $(DYNAMIC)
+-.ELSE
+-LIBSTLPORT=$(DYNAMIC) -lstlport_gcc
+-LIBSTLPORTST=$(STATIC) -lstlport_gcc $(DYNAMIC)
+-.ENDIF
+-
+ LIBMGR=ar
+ LIBFLAGS=-r
+ # LIBEXT=.so

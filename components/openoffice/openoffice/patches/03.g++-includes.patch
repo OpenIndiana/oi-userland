@@ -1,0 +1,203 @@
+--- aoo-4.1.0/main/sot/Makefile.~1~	2014-07-23 13:30:24.754110178 +0400
++++ aoo-4.1.0/main/sot/Makefile	2014-07-23 13:32:08.549607460 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/editeng/Makefile.~1~	2014-07-24 13:54:06.620853221 +0400
++++ aoo-4.1.0/main/editeng/Makefile	2014-07-24 13:54:30.174432976 +0400
+@@ -24,6 +24,7 @@
+ endif
+ 
+ gb_PARTIALBUILD := T
++SOLARINC += -I/usr/g++/include
+ GBUILDDIR := $(SOLARENV)/gbuild
+ include $(GBUILDDIR)/gbuild.mk
+ 
+--- aoo-4.1.0/main/padmin/Makefile.~1~	2014-07-24 14:05:23.775493395 +0400
++++ aoo-4.1.0/main/padmin/Makefile	2014-07-24 14:05:07.568042948 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/svgio/Makefile.~1~	2014-07-24 16:36:01.589726607 +0400
++++ aoo-4.1.0/main/svgio/Makefile	2014-07-24 16:36:31.996409736 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/sfx2/Makefile.~1~	2014-07-24 15:03:54.044164421 +0400
++++ aoo-4.1.0/main/sfx2/Makefile	2014-07-24 15:08:50.980852897 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/sw/Makefile.~1~	2014-07-25 18:44:00.867520824 +0400
++++ aoo-4.1.0/main/sw/Makefile	2014-07-25 18:45:23.251751166 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/solenv/inc/target.mk.~1~	2014-07-22 14:22:56.649863996 +0400
++++ aoo-4.1.0/main/solenv/inc/target.mk	2014-07-22 15:19:56.726258252 +0400
+@@ -27,6 +27,7 @@
+ # INCLUDE-Path
+ # ------------------------------------------------------------------
+ 
++
+ .IF "$(TARGET)"==""
+ target_empty=warn_target_empty
+ .ENDIF
+@@ -57,9 +58,9 @@
+ INCLUDE:=
+ .EXPORT : INCLUDE
+ .IF "$(PRJINC)"!=""
+-INCLUDE!:=-I. $(INCPRE:^"-I":s/-I-I/-I/) -I$(INCLOCAL) $(INCLOCPRJ:^"-I":s/-I-I/-I/) -I$(INCPCH) -I$(INC) -I$(INCGUI) -I$(INCCOM) $(SOLARINC) $(null,$(UNOINCLUDES) $(NULL) -I$(UNOINCLUDES)) -I$(INCEXT) -I$(PRJ)/res -I$(INCPOST)
++INCLUDE!:=-I. $(INCPRE:^"-I":s/-I-I/-I/) -I$(INCLOCAL) $(INCLOCPRJ:^"-I":s/-I-I/-I/) -I$(INCPCH) -I$(INC) -I$(INCGUI) -I$(INCCOM) $(SOLARINC) $(null,$(UNOINCLUDES) $(NULL) -I$(UNOINCLUDES)) -I$(INCEXT) -I$(PRJ)/res -I/usr/g++/include -I$(INCPOST)
+ .ELSE		# "$(PRJINC)"!=""
+-INCLUDE!:=-I. $(INCPRE:^"-I":s/-I-I/-I/) -I$(INCLOCAL) -I$(INCPCH) -I$(INC) -I$(INCGUI) -I$(INCCOM) $(SOLARINC) $(null,$(UNOINCLUDES) $(NULL) -I$(UNOINCLUDES)) -I$(INCEXT) -I$(PRJ)/res -I$(INCPOST)
++INCLUDE!:=-I. $(INCPRE:^"-I":s/-I-I/-I/) -I$(INCLOCAL) -I$(INCPCH) -I$(INC) -I$(INCGUI) -I$(INCCOM) $(SOLARINC) $(null,$(UNOINCLUDES) $(NULL) -I$(UNOINCLUDES)) -I$(INCEXT) -I$(PRJ)/res -I/usr/g++/include -I$(INCPOST)
+ .ENDIF		# "$(PRJINC)"!=""
+ INCLUDE_C=$(subst,/stl$(SPACECHAR),dont_use_stl$(SPACECHAR) $(INCLUDE))
+ .EXPORT : LIB
+--- aoo-4.1.0/main/vcl/Makefile.~1~	2014-07-23 19:21:26.113187971 +0400
++++ aoo-4.1.0/main/vcl/Makefile	2014-07-23 19:21:48.566461733 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/tools/Makefile.~1~	2014-07-23 13:22:24.354268011 +0400
++++ aoo-4.1.0/main/tools/Makefile	2014-07-23 13:22:32.397870983 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+######################
+--- aoo-4.1.0/main/comphelper/Makefile.~1~	2014-07-23 11:49:12.032383571 +0400
++++ aoo-4.1.0/main/comphelper/Makefile	2014-07-28 16:39:59.667227360 +0400
+@@ -24,6 +24,7 @@
+ endif
+ 
+ gb_PARTIALBUILD := T
++SOLARINC += -I/usr/g++/include
+ GBUILDDIR := $(SOLARENV)/gbuild
+ include $(GBUILDDIR)/gbuild.mk
+ 
+--- aoo-4.1.0/main/drawinglayer/Makefile.~1~	2014-07-24 16:19:30.093196177 +0400
++++ aoo-4.1.0/main/drawinglayer/Makefile	2014-07-24 16:20:09.723306044 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/svtools/Makefile.~1~	2014-07-23 20:28:48.227897288 +0400
++++ aoo-4.1.0/main/svtools/Makefile	2014-07-23 20:28:54.502526561 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/framework/Makefile.~1~	2014-07-24 13:38:33.910276430 +0400
++++ aoo-4.1.0/main/framework/Makefile	2014-07-24 13:38:53.028311517 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/xmloff/Makefile.~1~	2014-07-23 16:43:49.774264873 +0400
++++ aoo-4.1.0/main/xmloff/Makefile	2014-07-23 16:42:45.698316354 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/vbahelper/Makefile.~1~	2014-07-25 13:16:46.060392168 +0400
++++ aoo-4.1.0/main/vbahelper/Makefile	2014-07-25 13:17:03.821087040 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/unoxml/Makefile.~1~	2014-07-23 12:32:50.676308240 +0400
++++ aoo-4.1.0/main/unoxml/Makefile	2014-07-23 12:34:14.253012061 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/svx/Makefile.~1~	2014-07-24 17:58:26.538436920 +0400
++++ aoo-4.1.0/main/svx/Makefile	2014-07-24 17:58:54.264572252 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/svl/Makefile.~1~	2014-07-23 14:45:12.309099682 +0400
++++ aoo-4.1.0/main/svl/Makefile	2014-07-23 14:45:32.482054798 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
+--- aoo-4.1.0/main/toolkit/Makefile	2014-02-25 12:37:32.000000000 +0400
++++ aoo-4.1.0/main/toolkit/Makefile	2014-07-23 20:05:41.950978654 +0400
+@@ -25,6 +25,7 @@
+ 
+ gb_PARTIALBUILD := T
+ GBUILDDIR := $(SOLARENV)/gbuild
++SOLARINC += -I/usr/g++/include
+ include $(GBUILDDIR)/gbuild.mk
+ 
+ $(eval $(call gb_Module_make_global_targets,$(shell ls $(dir $(realpath $(firstword $(MAKEFILE_LIST))))/Module*.mk)))
