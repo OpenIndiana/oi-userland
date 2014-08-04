@@ -1,0 +1,16 @@
+--- config-scripts/cups-sharedlibs.m4.~1~	2014-08-04 10:34:30.917651790 +0400
++++ config-scripts/cups-sharedlibs.m4	2014-08-04 10:40:41.981175262 +0400
+@@ -29,7 +29,12 @@
+ 			LIBCUPSPPDC="libcupsppdc.so.1"
+ 			DSO="\$(CC)"
+ 			DSOXX="\$(CXX)"
+-			DSOFLAGS="$DSOFLAGS -Wl,-h\`basename \$@\` -G \$(OPTIM)"
++			if [[ "$GCC" = "yes" ]]; then
++				LOCAL_SHAREDFLAG=-shared ;
++			else
++				LOCAL_SHAREDFLAG=-G;
++			fi
++			DSOFLAGS="$DSOFLAGS -Wl,-h\`basename \$@\` $LOCAL_SHAREDFLAG  \$(OPTIM)"
+ 			;;
+ 		UNIX_S*)
+ 			LIBCUPS="libcups.so.2"
