@@ -26,16 +26,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		hexedit
-COMPONENT_VERSION=	1.2.12
+COMPONENT_VERSION=	1.2.13
 COMPONENT_PROJECT_URL=	http://merd.sourceforge.net/pixel/hexedit.html
 COMPONENT_SRC=		$(COMPONENT_NAME)
 COMPONENT_ARCHIVE=	$(COMPONENT_NAME)-$(COMPONENT_VERSION).src.tgz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:bcffbf3d128516cc4e1da64485866fbb5f62754f2af8327e7a527855186ba10f
+    sha256:6a126da30a77f5c0b08038aa7a881d910e3b65d13767fb54c58c983963b88dd7
 COMPONENT_ARCHIVE_URL=	http://rigaux.org/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/hexedit
 
-TPNO=			8957
+TPNO=			18059
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -43,6 +43,10 @@ include ../../make-rules/ips.mk
 
 COMPONENT_PRE_CONFIGURE_ACTION =  \
         ($(CLONEY) $(SOURCE_DIR) $(@D))
+
+# Without this, initscr32 and w32attrset are undefined at link time.
+# The usual Solaris curses.h vs ncurses/curses.h mess.
+CFLAGS +=			-I/usr/include/ncurses
 
 CFLAGS += "-Dinline"
 
