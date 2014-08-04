@@ -175,6 +175,9 @@ $(BUILD_DIR)/$(MACH)/publish.transforms: $(BUILD_DIR)/$(MACH)/.overlay
 	echo "<transform depend fmri=pkg:/driver/network/bnx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/driver/network/bnxe@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 
+	# Drop man pages for sun-solaris perl module to avoid conflicts between different versions
+	echo "<transform file path=usr/share/man/man3perl/.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
+
 	# Drop old obsolete and renamed package dependencies
 	echo "<transform depend fmri=pkg:/avs@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
 	echo "<transform depend fmri=pkg:/BRCMbnx@.* -> drop>" >> $(BUILD_DIR)/$(MACH)/publish.transforms
