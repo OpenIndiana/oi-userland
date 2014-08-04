@@ -232,6 +232,9 @@ $(BUILD_DIR_64)/.tested:       BITS=64
 # set the default target for test of the component
 COMPONENT_TEST_TARGETS =	check
 
+# set the default directory for test of the component
+COMPONENT_TEST_DIR =		$(@D)
+
 # BUILD_TOOLS is the root of all tools not normally installed on the system.
 BUILD_TOOLS ?=	/ws/on12-tools
 
