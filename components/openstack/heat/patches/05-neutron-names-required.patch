@@ -1,0 +1,26 @@
+In-house patch to change the name of Neutron objects to use underscores
+instead of hyphens on Solaris.  This patch has not yet been submitted
+upstream.
+
+--- heat-2013.2.3/heat/engine/resources/neutron/neutron.py.orig     2014-07-22 18:07:26.583195123 -0600
++++ heat-2013.2.3/heat/engine/resources/neutron/neutron.py  2014-07-22 18:08:49.115350165 -0600
+@@ -13,6 +13,8 @@
+ #    License for the specific language governing permissions and limitations
+ #    under the License.
+
++import platform
++
+ from neutronclient.common.exceptions import NeutronClientException
+
+ from heat.common import exception
+@@ -147,3 +149,10 @@
+                     else:
+                         raise
+         return seclist
++
++    def physical_resource_name(self):
++        name = super(NeutronResource, self).physical_resource_name()
++        if platform.uname()[0] == "SunOS":
++            # EVS can not use hyphen characters
++            name = name.replace("-", "_")
++        return name

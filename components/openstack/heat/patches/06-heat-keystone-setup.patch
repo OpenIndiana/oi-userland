@@ -1,0 +1,61 @@
+In-house patch to the heat-keystone-setup script installed in
+/usr/demo/openstack/keystone in order to use the standard Solaris UNIX
+commands rather than the GNU ones. It also includes a corrected fix for
+Launchpad bug 1260556. This is a Solaris-specific patch and is not
+suitable for the upstream.
+
+--- heat-2013.2.3/bin/heat-keystone-setup.~1~	2014-04-03 11:44:49.000000000 -0700
++++ heat-2013.2.3/bin/heat-keystone-setup	2014-07-16 20:28:16.316132723 -0700
+@@ -2,12 +2,14 @@
+ 
+ set +e
+ 
++PATH=/usr/bin
++
+ KEYSTONE_CONF=${KEYSTONE_CONF:-/etc/keystone/keystone.conf}
+ 
+ # Extract some info from Keystone's configuration file
+ if [[ -r "$KEYSTONE_CONF" ]]; then
+-    CONFIG_SERVICE_TOKEN=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep ^admin_token= | cut -d'=' -f2)
+-    CONFIG_ADMIN_PORT=$(sed 's/[[:space:]]//g' $KEYSTONE_CONF | grep ^admin_port= | cut -d'=' -f2)
++    CONFIG_SERVICE_TOKEN=$(tr -d '[\t ]' < $KEYSTONE_CONF | grep ^admin_token= | cut -d'=' -f2)
++    CONFIG_ADMIN_PORT=$(tr -d '[\t ]' < $KEYSTONE_CONF | grep ^admin_port= | cut -d'=' -f2)
+ fi
+ 
+ SERVICE_TOKEN=${SERVICE_TOKEN:-$CONFIG_SERVICE_TOKEN}
+@@ -35,7 +37,7 @@
+     shift 3
+ 
+     echo $("$@" | \
+-           awk -F'|' \
++           nawk -F'|' \
+                "! /^\+/ && \$${match_column} ~ \"^ *${regex} *\$\" \
+                 { print \$${output_column} }")
+ }
+@@ -47,7 +49,7 @@
+ get_column_num() {
+     local name=$1
+     shift
+-    $@ | awk -F'|' "NR == 2 { for (i=2; i<NF; i++) if (\$i ~ \"^ *${name} *\$\") print (i - 1) }"
++    $@ | nawk -F'|' "/^\|/ { for (i=2; i<NF; i++) if (\$i ~ \"^ *${name} *\$\") print (i - 1); exit }"
+ }
+ 
+ get_user() {
+@@ -137,7 +139,7 @@
+ 
+     local url=$(get_data 1 "${service_type}[.]publicURL" 2 \
+                 get_endpoint $service_type 2>/dev/null | \
+-                sed -r "s/[a-f0-9]{32}/$urlsuffix/")
++                sed "s/[a-f0-9]\{32\}/$urlsuffix/")
+ 
+     if [ -n "$url" ]; then
+         local endpoints=$(get_data 3 $url 1 keystone endpoint-list)
+@@ -199,7 +201,7 @@
+ 
+     ADMIN_ROLE=$(get_data 2 admin 1 keystone role-list)
+     SERVICE_TENANT=$(get_data 2 service 1 keystone tenant-list)
+-    SERVICE_PASSWORD=${SERVICE_PASSWORD:-$OS_PASSWORD}
++    SERVICE_PASSWORD=${SERVICE_PASSWORD:-heat}
+     SERVICE_HOST=${SERVICE_HOST:-localhost}
+ 
+     if [[ "$SERVICE_PASSWORD" == "$OS_PASSWORD" ]]; then

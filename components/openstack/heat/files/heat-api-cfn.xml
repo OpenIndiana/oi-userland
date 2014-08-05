@@ -1,0 +1,80 @@
+<?xml version="1.0" ?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<!--
+ Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+
+ Licensed under the Apache License, Version 2.0 (the "License"); you may
+ not use this file except in compliance with the License. You may obtain
+ a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ License for the specific language governing permissions and limitations
+ under the License.
+
+ NOTE:  This service manifest is not editable; its contents will
+ be overwritten by package or patch operations, including
+ operating system upgrade.  Make customizations in a different
+ file.
+-->
+<service_bundle type="manifest" name="heat-api-cfn">
+
+  <service version="1" type="service"
+    name="application/openstack/heat/heat-api-cfn">
+
+    <dependency name='multiuser' grouping='require_all' restart_on='error'
+      type='service'>
+      <service_fmri value='svc:/milestone/multi-user:default' />
+    </dependency>
+
+    <!-- create a dependency on the heat_db service so the Heat
+         services do not collide when creating the database -->
+    <dependency name='heat_db' grouping='optional_all' restart_on='error'
+      type='service'>
+      <service_fmri value='svc:/application/openstack/heat/heat-db'/>
+    </dependency>
+
+    <dependency name='ntp' grouping='optional_all' restart_on='none'
+      type='service'>
+      <service_fmri value='svc:/network/ntp'/>
+    </dependency>
+
+    <logfile_attributes permissions='600'/>
+
+    <exec_method timeout_seconds="60" type="method" name="start"
+      exec="/lib/svc/method/heat-smf-method %m">
+      <method_context>
+        <method_credential user='heat' group='heat' />
+      </method_context>
+    </exec_method>
+    <exec_method timeout_seconds="60" type="method" name="stop"
+      exec=":kill"/>
+
+    <instance name='default' enabled='false'>
+      <!-- to start/stop/refresh the service -->
+      <property_group name='general' type='framework'>
+        <propval name='action_authorization' type='astring'
+                 value='solaris.smf.manage.heat' />
+        <propval name='value_authorization' type='astring'
+                 value='solaris.smf.value.heat' />
+      </property_group>
+    </instance>
+
+    <template>
+      <common_name>
+        <loctext xml:lang="C">
+          OpenStack Heat AWS-style CloudFormation API Service
+        </loctext>
+      </common_name>
+      <description>
+        <loctext xml:lang="C">
+          heat-api-cfn is a server daemon that serves the Heat AWS-style
+          CloudFormation API.
+        </loctext>
+      </description>
+    </template>
+  </service>
+</service_bundle>

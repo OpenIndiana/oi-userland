@@ -1,0 +1,15 @@
+In-house patch to remove /usr/lib64/heat from the default list of
+plugin directories searched by Heat.  This patch is Solaris specific
+and not suitable for upstream contribution.
+
+--- heat-2013.2.3/heat/common/config.py.orig	2014-07-17 12:48:08.249427463 -0600
++++ heat-2013.2.3/heat/common/config.py	2014-07-17 12:48:31.499385628 -0600
+@@ -85,7 +85,7 @@
+                default='heat.engine.nova',
+                help='Driver to use for controlling instances'),
+     cfg.ListOpt('plugin_dirs',
+-                default=['/usr/lib64/heat', '/usr/lib/heat'],
++                default=['/usr/lib/heat'],
+                 help='List of directories to search for Plugins'),
+     cfg.StrOpt('environment_dir',
+                default='/etc/heat/environment.d',

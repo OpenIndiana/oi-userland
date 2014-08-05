@@ -1,0 +1,19 @@
+In-house patch to force the conversion of UUIDs to UUID version 4.
+libuuid in Solaris does not set the version of UUID correctly (bug
+15391420).
+--- heat-2013.2.3/heat/common/short_id.py.orig	2014-06-26 11:03:04.050413825 -0600
++++ heat-2013.2.3/heat/common/short_id.py	2014-06-26 11:04:48.397644826 -0600
+@@ -38,9 +38,10 @@
+     The supplied UUID must be a version 4 UUID object.
+     '''
+     if isinstance(source_uuid, basestring):
+-        source_uuid = uuid.UUID(source_uuid)
+-    if source_uuid.version != 4:
+-        raise ValueError('Invalid UUID version (%d)' % source_uuid.version)
++        try:
++            source_uuid = uuid.UUID(source_uuid, version=4)
++        except ValueError:
++            raise ValueError('Invalid UUID: %s' % source_uuid)
+ 
+     # The "time" field of a v4 UUID contains 60 random bits
+     # (see RFC4122, Section 4.4)
