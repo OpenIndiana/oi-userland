@@ -26,13 +26,13 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		ant
-COMPONENT_VERSION=	1.8.4
+COMPONENT_VERSION=	1.9.3
 COMPONENT_PROJECT_URL=	http://ant.apache.org/
 COMPONENT_SRC_NAME=	apache-ant
 COMPONENT_SRC=		$(COMPONENT_SRC_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC)-src.tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:5de65f7ba3f67e436ffffcdc0a73f591d1006e9fb41af8632c1f1f84d4a3e0b1
+    sha256:eb9306e8b8322bb09b78cc3d8e288398f9cb657d76ffc61ee3fb175e786e8365
 COMPONENT_ARCHIVE_URL=	http://archive.apache.org/dist/ant/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/ant
 
@@ -42,7 +42,7 @@ include ../../make-rules/ips.mk
 
 GMAKE=./build.sh
 
-ANT_ENV+=JAVA_HOME=$(JAVA6_HOME)
+ANT_ENV+=JAVA_HOME=/usr/jdk/instances/openjdk1.7.0
 
 ANT_DIST_DIRS+=-Ddist.dir=$(PROTO_DIR)
 ANT_DIST_DIRS+=-Ddist.bin=$(PROTO_DIR)/usr/bin
