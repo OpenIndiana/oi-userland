@@ -28,13 +28,16 @@ COMPONENT_PROJECT_URL=	https://github.com/junit-team/junit/archive
 COMPONENT_SRC=		$(COMPONENT_NAME)-r$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	r$(COMPONENT_VERSION).zip
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:3048cb3f2b07fada9d85b2c042bbedb93892ef70c1dcfe0594124850418f9ffb
+    sha256:d87f5733ca885a35b5ecbb14aa94dc63425d93c00089353fb2275b106ced09f5
 COMPONENT_ARCHIVE_URL=  $(COMPONENT_PROJECT_URL)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/junit
 
 include ../../make-rules/prep.mk
 include ../../make-rules/ant.mk
 include ../../make-rules/ips.mk
+
+JAVA_HOME=/usr/jdk/instances/openjdk1.7.0
+COMPONENT_BUILD_ARGS=
 
 # These ARGS override what is set in build.xml
 COMPONENT_BUILD_ARGS 	+= -Ddist=${PROTO_DIR}
