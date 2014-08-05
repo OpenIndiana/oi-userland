@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		nose
-COMPONENT_VERSION=	1.2.1
+COMPONENT_VERSION=	1.3.3
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  https://github.com/nose-devs/nose
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2171e9202d118d302d5db1decb52dd862b79e2a626ca19653a6914574a6ca7d9
+    sha256:b40c2ff268beb85356ada25f626ca0dabc89705f31051649772cf00fc9510326
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/n/nose/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/nose
 
-TPNO=			12933
+TPNO=			18083
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -44,7 +44,26 @@ include $(WS_TOP)/make-rules/ips.mk
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 COMPONENT_TEST_DIR =	$(SOURCE_DIR)
-COMPONENT_TEST_ARGS =	setup.py test
+COMPONENT_TEST_ARGS =	selftest.py
+
+# Used to automatically run the Python 2.6 nose tests even though there was
+# an error found when running one of the Python 2.7 ones.
+COMPONENT_TEST_ARGS +=	|| true
+
+# Save an original copy of the test script to be able to edit it correctly
+# for each version of Python and build the tests once.
+COMPONENT_POST_UNPACK_ACTION += \
+	($(CP) $(SOURCE_DIR)/selftest.py $(SOURCE_DIR)/selftest.py.orig ; \
+	cd $(COMPONENT_TEST_DIR); $(COMPONENT_TEST_ENV_CMD) \
+                $(COMPONENT_TEST_ENV) \
+                $(COMPONENT_TEST_CMD) setup.py build_tests)
+
+# We need to adjust the script that is used to run the tests, to pick the
+# appropriate nose in the proto area depending upon which version of Python
+# we are running the tests against.
+COMPONENT_PRE_TEST_ACTION = \
+	$(GSED) -e "s|'build', 'lib\*'|'..', 'build', 'prototype', '$(MACH)', 'usr', 'lib', 'python$(PYTHON_VERSION)', 'vendor-packages\*'|" \
+		$(SOURCE_DIR)/selftest.py.orig > $(SOURCE_DIR)/selftest.py
 
 # common targets
 build:		$(BUILD_NO_ARCH)
