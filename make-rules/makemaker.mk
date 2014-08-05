@@ -18,7 +18,7 @@
 #
 # CDDL HEADER END
 #
-# Copyright (c) 2011, 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2011, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 # Perl 5.12 and older are 32-bit only.
@@ -91,7 +91,7 @@ COMPONENT_TEST_TARGETS =	check
 COMPONENT_TEST_ENV +=	$(COMMON_PERL_ENV)
 $(BUILD_DIR)/%/.tested:	$(BUILD_DIR)/%/.built
 	$(COMPONENT_PRE_TEST_ACTION)
-	(cd $(@D) ; $(ENV) $(COMPONENT_TEST_ENV) $(GMAKE) \
+	(cd $(COMPONENT_TEST_DIR) ; $(ENV) $(COMPONENT_TEST_ENV) $(GMAKE) \
 			$(COMPONENT_TEST_ARGS) $(COMPONENT_TEST_TARGETS))
 	$(COMPONENT_POST_TEST_ACTION)
 ifeq   ($(strip $(PARFAIT_BUILD)),yes)
