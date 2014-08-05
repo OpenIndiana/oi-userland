@@ -1,6 +1,8 @@
-#!/usr/perl5/bin/perl
+#!/usr/bin/perl -w
 
 # Copyright (C) 1997,1998,1999, Roger Espel Llima
+# Copyright (C) 2000, Sergey Babkin
+# Copyright (C) 2009, Alex Kozlov
 # 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and any associated documentation files (the "Software"), to 
@@ -27,64 +29,70 @@
 # required for it, since it uses the same library used to extract RPM's.
 # in particular, it won't build on the HPsUX box i'm on.
 
+use strict;
 
-# add a path if desired
-$gzip = "gzip";
-
-sub printhelp {
-  print <<HERE;
-rpm2cpio, perl version by orabidoo <odar\@pobox.com>
-dumps the contents to stdout as a cpio archive
-
-use: rpm2cpio [file.rpm] > file.cpio
-
-Here's how to use cpio:
-     list of contents:   cpio -t -i < /file/name
-        extract files:   cpio -d -i < /file/name
-HERE
-
-  exit 0;
-}
+my ($f, $rpm, $filter) = ();
 
 if ($#ARGV == -1) {
-  printhelp if -t STDIN;
-  $f = "STDIN";
+	$f = "STDIN";
 } elsif ($#ARGV == 0) {
-  open(F, "< $ARGV[0]") or die "Can't read file $ARGV[0]\n";
-  $f = 'F';
+	open($f, "< $ARGV[0]") or die "Can't read file $ARGV[0]\n";
 } else {
-  printhelp;
+	print "rpm2cpio v1.3, perl version by orabidoo\n";
+	print "use: rpm2cpio [file.rpm]\n";
+	print "dumps the contents to stdout as a GNU cpio archive\n";
+	exit 0;
 }
 
-printhelp if -t STDOUT;
+read $f, $rpm, 96;
 
-# gobble the file up
-undef $/;
-$|=1;
-$rpm = <$f>;
-close ($f);
-
-($magic, $major, $minor, $crap) = unpack("NCC C90", $rpm);
+my ($magic, $major, undef) = unpack("NCC", $rpm);
 
 die "Not an RPM\n" if $magic != 0xedabeedb;
-die "Not a version 3 or 4 RPM\n" if $major != 3 && $major != 4;
+die "Not a version 3 or 4 RPM\n" if $major != 3 and $major != 4;
 
-$rpm = substr($rpm, 96);
+read $f, $rpm, 16 or die "No header\n";
+while(1) {
+	($magic, undef, my $sections, my $bytes) = unpack("N4", $rpm);
+	my ($smagic, $smagic2) = unpack("nN", $rpm);
 
-while ($rpm ne '') {
-  $rpm =~ s/^\c@*//s;
-  ($magic, $crap, $sections, $bytes) = unpack("N4", $rpm);
-  $smagic = unpack("n", $rpm);
-  last if $smagic eq 0x1f8b;
-  die "Error: header not recognized\n" if $magic != 0x8eade801;
-  $rpm = substr($rpm, 16*(1+$sections) + $bytes);
+	#printf(STDERR "0x%x 0x%x 0x%x 0x%x 0x%x\n",
+	#	tell($f)-16, $magic, $sections, $bytes, $smagic);
+
+	if ($smagic == 0x1f8b) {
+		$filter = "gzip -cd";
+		last;
+	}
+	# BZh
+	if ($smagic == 0x425a and ($smagic2 & 0xff000000) == 0x68000000) {
+		$filter = "bzip2 -cd";
+		last;
+	}
+	# 0xFD, '7zXZ', 0x0
+	if ($smagic == 0xfd37 and $smagic2 == 0x7a585a00) {
+		$filter = "xz -cd";
+		last;
+	}
+	# assume lzma if there is no sig
+	if ($magic != 0x8eade801) {
+		$filter = "lzma -cd";
+		last;
+	}
+
+	# skip the headers
+	seek $f, 16 * $sections + $bytes, 1 or die "File is too small\n";
+	do {
+		read $f, $rpm, 1 or die "No header\n" ;
+	} while(0 == unpack("C", $rpm));
+	read $f, $rpm, 15, 1 or die "No header\n" ;
 }
 
-die "bogus RPM\n" if $rpm eq '';
+open(ZCAT, "| $filter") or die "can't pipe to $filter\n";
 
-open(ZCAT, "|gzip -cd") || die "can't pipe to gzip\n";
-print STDERR "CPIO archive found!\n";
+while($rpm ne '') {
+	print ZCAT $rpm;
+	read $f, $rpm, 10240; # read in blocks
+}
 
-print ZCAT $rpm;
 close ZCAT;
-
+close $f;
