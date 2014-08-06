@@ -134,13 +134,6 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
 
     def build_flags
         flags = []
-        if enable = @resource[:enable] and enable != nil
-            if enable == :true
-                flags << "--enable"
-            elsif enable == :false
-                flags << "--disable"
-            end
-        end
 
         if searchfirst = @resource[:searchfirst] and searchfirst != ""
             if searchfirst == :true
@@ -236,6 +229,13 @@ Puppet::Type.type(:pkg_publisher).provide(:pkg_publisher) do
     # required puppet functions
     def create
         pkg("set-publisher", build_flags, build_origin, @resource[:name])
+        # pkg(5) does not allow for a new publisher to be set with the disabled
+        # flag, so check for it after setting the publisher
+        if enable = @resource[:enable] and enable != nil
+            if enable == :false
+                pkg("set-publisher", "--disable", @resource[:name])
+            end
+        end
     end
 
     def destroy

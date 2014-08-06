@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:svccfg) do
@@ -42,7 +42,8 @@ Puppet::Type.newtype(:svccfg) do
 
     newparam(:name) do
         desc "The symbolic name for properties to manipulate.  This name is
-              used for human reference only"
+              meaningful only within Puppet manifests and not expressed to
+              SMF in any way."
         isnamevar
     end
 
@@ -51,7 +52,9 @@ Puppet::Type.newtype(:svccfg) do
     end
 
     newparam(:property) do
-        desc "Name of property - includes Property Group and Propery"
+        desc "Name of property - includes Property Group and Property.  If
+              the service, instance, or property group does not exist, they
+              will be created."
     end
 
     newparam(:type) do
@@ -61,7 +64,9 @@ Puppet::Type.newtype(:svccfg) do
     newparam(:value) do
         desc "Value of the property"
         munge do |value|
-            # cast the value to an array
+            # cast the value to an array.  This is done for the case where a
+            # property needs to be set.  exists? will undo all of this and
+            # revert the value into a simple string for comparisons.
             if not value.is_a? Array
                 value = Array[value]
             end

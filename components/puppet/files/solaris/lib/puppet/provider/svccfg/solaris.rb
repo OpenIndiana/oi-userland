@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:svccfg).provide(:svccfg) do
@@ -35,20 +35,23 @@ Puppet::Type.type(:svccfg).provide(:svccfg) do
             # only test for the existance of the property and not the value
             return p[:exit] == 0
         elsif @resource[:ensure] == :present
-            # if the property doesn't exist at all, the exit code will be 1
+            # if the property group or property doesn't exist at all, the exit
+            # code will be 1
             return false if p[:exit] != 0
 
-            # strip the leading and trailing parens if resource[:property]
-            # contains a slash as this indicates that a value is associated
-            # with it.
+            # turn @resource[:value] into a simple string by dropping the first
+            # and last array elements (the parens) and removing all double
+            # quotes
+            simple = @resource[:value][1..-2].join(" ")[1..-2].gsub(/\"/, "")
+
+            # For properties, check the value against what's in SMF.  For
+            # property groups, svcprop already verified the PG exists by not
+            # failing
             if @resource[:property].include? "/"
-                return p[:out].strip == \
-                    @resource[:value][1..-2].join(" ")[1..-2]
+                return p[:out].strip == simple
+            else
+                return p[:exit] == 0
             end
-            # resource[:property] is a property group, not a property.
-            # There is no value to manipulate, but the property needs to be
-            # created, so return true.
-            return p[:exit] == 0
         end
     end
 
@@ -57,26 +60,32 @@ Puppet::Type.type(:svccfg).provide(:svccfg) do
         cmd = Array[command(:svccfg), "select", @resource[:fmri]]
         svc_exist = exec_cmd(cmd)
 
-        # Create the service instance if it doesn't exist
+        # Raise an error if the entity does not exist
         if svc_exist[:exit] != 0
-            service, instance = \
-                @resource[:fmri].split(":").reject{|n| n == "svc"}
-            svccfg("-s", service, "add", instance)
+            raise Puppet::Error, "SMF entity #{@resource[:fmri]} does not exist"
         end
+        
+        args = ["-s", @resource[:fmri]]
 
-        # Add the property
         if @resource[:property].include? "/"
-            svccfg("-s", @resource[:fmri], "setprop", @resource[:property],
-                   "=", @resource[:type] + ":", @resource[:value])
+            args << "setprop" << @resource[:property] << "="
+            if type = @resource[:type] and type != nil
+                args << @resource[:type] + ":"
+            end
+            args << @resource[:value]
         else
-            svccfg("-s", @resource[:fmri], "addpg", @resource[:property],
-                   @resource[:type])
+            args << "addpg" << @resource[:property] << @resource[:type]
         end
+        svccfg(args)
         svccfg("-s", @resource[:fmri], "refresh")
     end
 
     def destroy
-        svccfg("-s", @resource[:fmri], "delprop", @resource[:property])
+        if @resource[:property].include? "/"
+            svccfg("-s", @resource[:fmri], "delprop", @resource[:property])
+        else
+            svccfg("-s", @resource[:fmri], "delpg", @resource[:property])
+        end
         svccfg("-s", @resource[:fmri], "refresh")
     end
 

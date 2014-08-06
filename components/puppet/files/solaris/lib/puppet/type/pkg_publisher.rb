@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 require 'puppet/property/list'
@@ -50,6 +50,15 @@ Puppet::Type.newtype(:pkg_publisher) do
 
         def retrieve
             provider.origin
+        end
+
+        # for origins with a file:// URI, strip any trailing / character
+        munge do |value|
+            if value.start_with? "file" and value.end_with? "/"
+                value = value.chomp("/")
+            else
+                value
+            end
         end
     end
 
