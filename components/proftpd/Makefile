@@ -27,7 +27,7 @@ include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		proftpd
 COMPONENT_VERSION=	1.3.5
-COMPONENT_SUBVERSION=	 
+COMPONENT_SUBVERSION=
 HUMAN_VERSION=		$(COMPONENT_VERSION)$(COMPONENT_SUBVERSION)
 COMPONENT_PROJECT_URL=	http://www.proftpd.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(HUMAN_VERSION)
@@ -46,9 +46,6 @@ COMPONENT_ARCHIVE_HASH_1= \
     sha256:bd1cb3f8ba0668981beb54d8b4de10ab204199327a464debd9da19196bbb23c4
 COMPONENT_ARCHIVE_URL_1= http://downloads.sourceforge.net/gssmod/$(COMPONENT_ARCHIVE_1)
 
-TPNO_PROFTPD=		17783
-TPNO_MOD_GSS=		13480
-
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
@@ -58,6 +55,9 @@ include ../../make-rules/ips.mk
 # Because the IPS_COMPONENT_VERSION cannot contain letters we used '.0.5'
 # instead of 'e'.
 IPS_COMPONENT_VERSION=  $(COMPONENT_VERSION)
+
+CONFIGURE_BINDIR.32 =   $(USRLIBDIR)/proftpd/bin
+CONFIGURE_SBINDIR.32 =  $(USRLIBDIR)/proftpd/sbin
 
 # Remove -D_POSIX_PTHREAD_SEMANTICS and this comment after move to S12_45.
 CONFIGURE_OPTIONS +=	CFLAGS="$(CFLAGS) -I/usr/include/kerberosv5 -DHAVE_KRB5_H=1 -DKRB5_DLLIMP= -DHAVE__GETGRPSBYMEMBER -D_POSIX_PTHREAD_SEMANTICS"
@@ -75,21 +75,24 @@ CONFIGURE_OPTIONS +=	--enable-nls
 CONFIGURE_OPTIONS +=	--enable-dso
 CONFIGURE_OPTIONS +=	--enable-openssl
 CONFIGURE_OPTIONS +=	--disable-static
-CONFIGURE_OPTIONS +=	--with-modules=mod_solaris_audit:mod_solaris_priv
+#CONFIGURE_OPTIONS +=	--with-modules=mod_solaris_audit:mod_solaris_priv
+CONFIGURE_OPTIONS +=	--with-modules=mod_solaris_priv
 CONFIGURE_OPTIONS +=	--with-shared=mod_facl:mod_wrap:mod_tls:mod_auth_gss:mod_gss
 CONFIGURE_OPTIONS +=	--enable-buffer-size=16384
 
 # Copy Solaris modules and GSSAPI modules to proftpd source tree
 COMPONENT_PRE_CONFIGURE_ACTION = \
-	($(CP) mod_solaris_audit.c $(SOURCE_DIR)/contrib ; \
-	$(CP) mod_solaris_priv.c $(SOURCE_DIR)/contrib ; \
-	cd $(BUILD_DIR) ; \
-	$(UNPACK) $(UNPACK_ARGS) ../$(COMPONENT_ARCHIVE_1) ; \
-	cd $(COMPONENT_SRC_1) ; \
-	./configure CC="$(CC)" CFLAGS="-I/usr/include/kerberosv5" ; \
-	$(CP) mod_gss.c mod_auth_gss.c $(SOURCE_DIR)/contrib ; \
-	$(CP) mod_gss.h $(SOURCE_DIR)/include ; \
-	$(CP) mod_gss.html $(SOURCE_DIR)/doc/contrib ; \
+	($(CP) mod_solaris_audit.c $(SOURCE_DIR)/contrib && \
+	$(CP) mod_solaris_priv.c $(SOURCE_DIR)/contrib && \
+	cd $(BUILD_DIR) && \
+	/usr/gnu/bin/tar xzf $(USERLAND_ARCHIVES)$(COMPONENT_ARCHIVE_1) && \
+	cd $(COMPONENT_SRC_1) && \
+	$(CP) $(COMPONENT_DIR)/krb5-config $(BUILD_DIR) && \
+	chmod u+x $(BUILD_DIR)/krb5-config && \
+	./configure CC="$(CC)" CFLAGS="-I/usr/include/kerberosv5"  --with-krb5-config=$(BUILD_DIR)/krb5-config && \
+	$(CP) mod_gss.c mod_auth_gss.c $(SOURCE_DIR)/contrib && \
+	$(CP) mod_gss.h $(SOURCE_DIR)/include && \
+	$(CP) mod_gss.html $(SOURCE_DIR)/doc/contrib && \
 	$(CLONEY) $(SOURCE_DIR) $(@D))
 
 # proftpd configure and build is not ready for run out of the source tree
