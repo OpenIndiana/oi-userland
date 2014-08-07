@@ -53,5 +53,14 @@ Puppet::Type.newtype(:interface_properties) do
     newproperty(:properties) do
         desc "A hash table of propname=propvalue entries to apply to the
               interface"
+
+        def property_matches?(current, desired)
+            desired.each do |key, value|
+                if current[key] != value
+                    return :false
+                end
+            end
+            return :true
+        end
     end
 end

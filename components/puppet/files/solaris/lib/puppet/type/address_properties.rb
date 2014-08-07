@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.newtype(:address_properties) do
@@ -47,5 +47,14 @@ Puppet::Type.newtype(:address_properties) do
     newproperty(:properties) do
         desc "A hash table of propname=propvalue entries to apply to an
               address object"
+
+        def property_matches?(current, desired)
+            desired.each do |key, value|
+                if current[key] != value
+                    return :false
+                end
+            end
+            return :true
+        end
     end
 end

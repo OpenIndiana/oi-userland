@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:interface_properties).provide(:interface_properties) do
@@ -73,9 +73,15 @@ Puppet::Type.type(:interface_properties).provide(:interface_properties) do
     end
 
     def properties=(value)
-        value.each do |key, value|
-            ipadm("set-ifprop", "-p", "#{key}=#{value}", @resource[:name])
+        ipadm("set-ifprop", add_properties(value), @resource[:name])
+    end
+
+    def add_properties(props)
+        a = []
+        props.each do |key, value|
+            a << "#{key}=#{value}"
         end
+        properties = Array["-p", a.join(",")]
     end
 
     def exists?
@@ -105,9 +111,7 @@ Puppet::Type.type(:interface_properties).provide(:interface_properties) do
 
     def create
         name, proto = @resource[:interface].split("/")
-        @ifprops.each do |key, value|
-            ipadm("set-ifprop", "-m", proto, "-p", "#{key}=#{value}", name)
-        end
+        ipadm("set-ifprop", "-m", proto, add_properties(@ifprops), name)
     end
 
     def exec_cmd(*cmd)

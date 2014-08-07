@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:link_properties).provide(:link_properties) do
@@ -52,23 +52,26 @@ Puppet::Type.type(:link_properties).provide(:link_properties) do
         end
     end
 
+    def self.prefetch(resources)
+        instances.each do |prov|
+            if resource = resources[prov.name]
+                resource.provider = prov
+            end
+        end
+    end
+
     def properties
         @property_hash[:properties]
     end
 
     def properties=(value)
-        value.each do |key, value|
-            dladm("set-linkprop", "-p", "#{key}=#{value}", @resource[:name])
-        end
+        dladm("set-linkprop", add_properties(value), @resource[:name])
     end
 
-    def add_properties
-        return [] if not @linkprops
-        if @linkprops
-            a = []
-            @linkprops.each do |key, value|
-                a << "#{key}=#{value}"
-            end
+    def add_properties(props)
+        a = []
+        props.each do |key, value|
+            a << "#{key}=#{value}"
         end
         properties = Array["-p", a.join(",")]
     end
@@ -96,7 +99,9 @@ Puppet::Type.type(:link_properties).provide(:link_properties) do
     end
 
     def create
-        dladm("set-linkprop", add_properties, @resource[:link])
+        if @linkprops
+            dladm("set-linkprop", add_properties(@linkprops), @resource[:link])
+        end
     end
 
     def exec_cmd(*cmd)
@@ -104,3 +109,4 @@ Puppet::Type.type(:link_properties).provide(:link_properties) do
         {:out => output, :exit => $CHILD_STATUS.exitstatus}
     end
 end
+

@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:address_properties).provide(:address_properties) do
@@ -73,9 +73,15 @@ Puppet::Type.type(:address_properties).provide(:address_properties) do
     end
 
     def properties=(value)
-        value.each do |key, value|
-            ipadm("set-addrprop", "-p", "#{key}=#{value}", @resource[:name])
+        ipadm("set-addrprop", add_properties(value), @resource[:name])
+    end
+
+    def add_properties(props)
+        a = []
+        props.each do |key, value|
+            a << "#{key}=#{value}"
         end
+        properties = Array["-p", a.join(",")]
     end
 
     def exists?
@@ -101,9 +107,7 @@ Puppet::Type.type(:address_properties).provide(:address_properties) do
     end
 
     def create
-        @addrprops.each do |key, value|
-            ipadm("set-addrprop", "-p", "#{key}=#{value}", @resource[:address])
-        end
+        ipadm("set-addrprop", add_properties(@addrprops), @resource[:address])
     end
 
     def exec_cmd(*cmd)

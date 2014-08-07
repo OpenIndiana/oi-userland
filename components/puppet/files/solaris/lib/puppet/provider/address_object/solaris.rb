@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:address_object).provide(:address_object) do
@@ -50,15 +50,20 @@ Puppet::Type.type(:address_object).provide(:address_object) do
                 remote = nil
             end
 
+            down = :false
             if state == "ok"
                 enable = :true
-            else
+            elsif state == "disabled"
                 enable = :false
+            elsif state == "down"
+                down = :true
+                enable = :true
             end
 
             new(:name => addrobj,
                 :ensure => :present,
                 :address_type => type,
+                :down => down,
                 :enable => enable,
                 :address => local,
                 :remote_address => remote)
@@ -85,6 +90,30 @@ Puppet::Type.type(:address_object).provide(:address_object) do
         end
     end
 
+    def enable=(value)
+        if value == :true
+            ipadm("enable-addr", "-t", @resource[:name])
+        elsif value == :false
+            ipadm("disable-addr", "-t", @resource[:name])
+        end
+    end
+    
+    def is_temp
+        temp = []
+        if @resource[:temporary] == :true
+            temp << "-t"
+        end
+        temp
+    end
+    
+    def down=(value)
+        if value == :true
+            ipadm("down-addr", is_temp, @resource[:name])
+        elsif value == :false
+            ipadm("up-addr", is_temp, @resource[:name])
+        end
+    end
+            
     def add_options
         options = []
         if @resource[:temporary] == :true
@@ -103,8 +132,8 @@ Puppet::Type.type(:address_object).provide(:address_object) do
             options << "-a" << "remote=#{remote_address}"
         end
 
-        if down = @resource[:down]
-            options << "-d" << down
+        if @resource[:down] == :true
+            options << "-d"
         end
 
         if seconds = @resource[:seconds]
@@ -139,9 +168,6 @@ Puppet::Type.type(:address_object).provide(:address_object) do
 
     def create
         ipadm("create-addr", add_options, @resource[:name])
-        if @resource[:enable] == :true
-            ipadm("enable-addr", @resource[:name])
-        end
     end
 
     def destroy

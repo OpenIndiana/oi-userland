@@ -20,7 +20,7 @@
 #
 
 #
-# Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved.
+# Copyright (c) 2013, 2014, Oracle and/or its affiliates. All rights reserved.
 #
 
 Puppet::Type.type(:protocol_properties).provide(:protocol_properties) do
@@ -73,11 +73,17 @@ Puppet::Type.type(:protocol_properties).provide(:protocol_properties) do
     end
 
     def properties=(value)
-        value.each do |key, value|
-            ipadm("set-prop", "-p", "#{key}=#{value}", @resource[:name])
-        end
+        ipadm("set-prop", "-p", add_properties(value), @resource[:name])
     end
 
+    def add_properties(props)
+        a = []
+        props.each do |key, value|
+            a << "#{key}=#{value}"
+        end
+        properties = Array["-p", a.join(",")]
+    end
+    
     def exists?
         if @resource[:properties] == nil
             return :false
@@ -101,9 +107,7 @@ Puppet::Type.type(:protocol_properties).provide(:protocol_properties) do
     end
 
     def create
-        @protoprops.each do |key, value|
-            ipadm("set-prop", "-p", "#{key}=#{value}", @resource[:name])
-        end
+        ipadm("set-prop", add_properties(@protoprops), @resource[:name])
     end
 
     def exec_cmd(*cmd)

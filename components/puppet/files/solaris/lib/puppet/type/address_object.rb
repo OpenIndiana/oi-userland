@@ -35,8 +35,7 @@ Puppet::Type.newtype(:address_object) do
 
     newparam(:temporary) do
         desc "Optional parameter that specifies that the address object is
-              temporary.  Temporary aggregation links last until the next
-              reboot."
+              temporary.  Temporary address objects last until the next reboot."
         newvalues(:true, :false)
     end
 
@@ -48,7 +47,8 @@ Puppet::Type.newtype(:address_object) do
     end
 
     newproperty(:enable) do
-        desc "Specifies the address object should be enabled or disabled."
+        desc "Specifies the address object should be enabled or disabled.
+              This property is only applied temporarily, until next reboot."
         newvalues(:true, :false)
     end
 
