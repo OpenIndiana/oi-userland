@@ -29,11 +29,11 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME =	openssl-fips
-COMPONENT_VERSION =	2.0.5
+COMPONENT_VERSION =	2.0.6
 COMPONENT_SRC =		$(COMPONENT_NAME)-ecp-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:f1abdd0ca1a9467a3eba15564fc2b3447114d1d63020c33cd3210f2a43a5ff4d
+    sha256:861b431c625c27daf440041fd67c0866ebb84b44cc672cf1ea8f23e883518897
 COMPONENT_ARCHIVE_URL =	http://www.openssl.org/source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
@@ -64,8 +64,12 @@ CLOBBER_PATHS += $(FAKE_APPS)
 FIPS_PATH_32 = $(COMPONENT_DIR)/32:$(COMPONENT_DIR)/gcc:$(PATH)
 FIPS_PATH_64 = $(COMPONENT_DIR)/gcc:$(PATH)
 
+# HMAC-SHA-1 digest of the OpenSSL FIPS tar file is used for the
+# integrity test requirement for the FIPS-140 validation.
+# Note: COMPONENT_ARCHIVE_HASH is a SHA256 digest used by the Userland
+# Consolidation to check the file integrity.
 OPENSSL_FIPS_HMAC_KEY = etaonrishdlcupfm
-OPENSSL_FIPS_HMAC = 148e4e127ffef1df80c0ed61bae35b07ec7b7b36
+OPENSSL_FIPS_HMAC = 852f43cd9ae1bd2eba60e4f9f1f266d3c16c0319
 
 # There is a broken link in the tarball which causes cp(1) to fail which would
 # fail the whole configure process. It's safer to get rid of the link than

@@ -42,7 +42,7 @@ COMPONENT_BUGDB=	library/openssl
 
 TPNO=			17979
 
-# OpenSSL FIPS 2.0.5 directory
+# OpenSSL FIPS directory
 OPENSSL_FIPS_DIR = $(COMPONENT_DIR)/../openssl-fips
 
 # Note that the SPARC patch above does not fit this pattern. That is intentional
@@ -152,14 +152,14 @@ download clobber clean::
 # update the files which have been under continuous development. We rather copy
 # the files to the right directories and let OpenSSL makefiles build it.
 # We also copy some FIPS specific header files needed to build FIPS version
-# of OpenSSL from FIPS module (openssl-fips-ecp-2.0.5).
+# of OpenSSL from FIPS module.
 COMPONENT_PRE_BUILD_ACTION = \
     ( $(LN) -fs $(COMPONENT_DIR)/engines/pkcs11/*     $(@D)/engines; \
       $(MKDIR) $(@D)/bin; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fips.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fipssyms.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/rand/fips_rand.h $(@D)/include/openssl; \
-      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-2.0.5/fips/fipsld $(@D)/bin/; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/fips.h $(@D)/include/openssl; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/fipssyms.h $(@D)/include/openssl; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/rand/fips_rand.h $(@D)/include/openssl; \
+      $(LN) -fs $(OPENSSL_FIPS_DIR)/openssl-fips-ecp-$(IPS_COMPONENT_VERSION)/fips/fipsld $(@D)/bin/; \
       $(LN) -fs $(OPENSSL_FIPS_DIR)/build/$(MACH$(BITS))/fips/fips_standalone_sha1 $(@D)/bin/; \
       $(LN) -fs $(COMPONENT_DIR)/build/$(MACH$(BITS))/fips_premain_dso $(@D)/bin/;)
 
