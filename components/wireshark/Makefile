@@ -23,16 +23,16 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		wireshark
-COMPONENT_VERSION=	1.10.8
+COMPONENT_VERSION=	1.10.9
 COMPONENT_PROJECT_URL=	http://www.wireshark.org/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.bz2
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:27d9cf4f0ca1ac436104b7f27caf8ad65f73db09edc8df0742ce9688c7d38763
+    sha256:7f985db5ea99f4b285ae2eceab42327058f7ba5272d22338152dd79e7601441c
 COMPONENT_ARCHIVE_URL=	$(COMPONENT_PROJECT_URL)download/src/all-versions/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/wireshark
 
-TPNO=			18282
+TPNO=			18547
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
@@ -46,6 +46,9 @@ PKG_MACROS+= MICRO_VERSION=$(MICRO_VERSION)
 ASLR_MODE = $(ASLR_ENABLE)
 
 PATCH_LEVEL=0
+
+# We don't have automake 1.14 yet. Thus need to reconfigure with older one.
+COMPONENT_PREP_ACTION += ( cd $(@D) ; $(CONFIG_SHELL) autogen.sh );
 
 CONFIGURE_OPTIONS +=	--bindir=/usr/sbin
 CONFIGURE_OPTIONS +=	--disable-usr-local
