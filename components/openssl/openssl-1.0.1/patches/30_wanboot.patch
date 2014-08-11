@@ -237,6 +237,20 @@
  
  #include <errno.h>
  #include <stdio.h>
+@@ -179,6 +181,7 @@
+ 	return(ret);
+ 	}
+ 
++#ifndef	_BOOT
+ int RAND_write_file(const char *file)
+ 	{
+ 	unsigned char buf[BUFSIZE];
+@@ -327,3 +330,5 @@
+ #endif
+ 	return(buf);
+ 	}
++
++#endif /* _BOOT */
 --- openssl-1.0.0e/crypto/x509v3/v3_utl.c	2009-07-27 14:08:53.000000000 -0700
 +++ openssl-1.0.0e_patched/crypto/x509v3/v3_utl.c	2011-12-13 05:10:08.844191400 -0800
 @@ -659,9 +659,52 @@

@@ -28,19 +28,19 @@ COMPONENT_NAME =	openssl
 # When upgrading OpenSSL, please, DON'T FORGET TO TEST WANBOOT too. 
 # For more information about wanboot-openssl testing, please refer to
 # ../README.
-COMPONENT_VERSION =	1.0.1h
+COMPONENT_VERSION =	1.0.1i
 # Version for IPS. It is easier to do it manually than convert the letter to a
 # number while taking into account that there might be no letter at all.
-IPS_COMPONENT_VERSION = 1.0.1.8
+IPS_COMPONENT_VERSION = 1.0.1.9
 COMPONENT_PROJECT_URL=	http://www.openssl.org/
 COMPONENT_SRC =		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE =	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:9d1c8a9836aa63e2c6adb684186cbd4371c9e9dcc01d6e3bb447abf2d4d3d093
+    sha256:3c179f46ca77069a6a0bac70212a9b3b838b2f66129cb52d568837fc79d8fcc7
 COMPONENT_ARCHIVE_URL =	$(COMPONENT_PROJECT_URL)source/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	library/openssl
 
-TPNO=			17979
+TPNO=			18553
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/configure.mk
@@ -332,6 +332,8 @@ WANBOOT_OBJS =  \
     ssl/ssl_algs.o ssl/ssl_asn1.o ssl/ssl_cert.o ssl/ssl_ciph.o ssl/ssl_err.o \
     ssl/ssl_err2.o ssl/ssl_lib.o ssl/ssl_rsa.o ssl/ssl_sess.o ssl/t1_enc.o \
     ssl/t1_lib.o ssl/t1_reneg.o ssl/d1_srtp.o ssl/s3_cbc.o ssl/t1_clnt.o
+
+
 
 # Linking of openssl bits for wanboot.
 # Interface for wanboot is specified in mapfile.wanboot. Object files are
