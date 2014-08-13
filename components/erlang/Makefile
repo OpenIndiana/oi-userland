@@ -58,6 +58,8 @@ COMPONENT_ARCHIVE_HASH_2=	\
     sha256:d06f580f11d1303217a5c1cf8d68a98d7e01c535be934dcd430ecdc254f7572e
 COMPONENT_ARCHIVE_URL_2=	$(COMPONENT_PROJECT_URL)download/$(COMPONENT_ARCHIVE_2)
 
+TPNO=			18548
+
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
