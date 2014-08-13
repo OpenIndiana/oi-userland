@@ -26,16 +26,16 @@
 include ../../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		pep8
-COMPONENT_VERSION=	1.4.4
+COMPONENT_VERSION=	1.4.6
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_PROJECT_URL=  http://pypi.python.org/pypi/pep8
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.gz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:a39adf83fdeab6072117087dd5b7daa8b6a5ec254730e1c4756f1d5687145258
+    sha256:603a46e5c358ce20ac4807a0eeafac7505d1125a4c1bd8378757ada06f61bed8
 COMPONENT_ARCHIVE_URL=	http://pypi.python.org/packages/source/p/$(COMPONENT_NAME)/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	python-mod/pep8
 
-TPNO=			12771
+TPNO=			16771
 
 include $(WS_TOP)/make-rules/prep.mk
 include $(WS_TOP)/make-rules/setup.py.mk
@@ -57,6 +57,9 @@ COMPONENT_POST_INSTALL_ACTION += \
 COMPONENT_POST_INSTALL_ACTION += \
 	(cd $(PROTO_DIR)/usr/bin ; $(MV) -f pep8 pep8-$(PYTHON_VERSION))
 
+COMPONENT_TEST_DIR =	$(SOURCE_DIR)
+COMPONENT_TEST_ARGS =	pep8.py --testsuite testsuite
+
 ASLR_MODE = $(ASLR_NOT_APPLICABLE)
 
 # common targets
@@ -64,7 +67,7 @@ build:		$(BUILD_NO_ARCH)
 
 install:	$(INSTALL_NO_ARCH)
 
-test:		$(NO_TESTS)
+test:		$(TEST_NO_ARCH)
 
 BUILD_PKG_DEPENDENCIES =	$(BUILD_TOOLS)
 
