@@ -1,17 +1,20 @@
 Properly detect remote mounted file systems with /usr/gnu/bin/df on Solaris.
 See the comments in CR# 15595871 for more details.
 
---- coreutils-8.16/lib/mountlist.c.orig	2012-04-18 07:41:27.645801306 -0700
-+++ coreutils-8.16/lib/mountlist.c	2012-04-18 07:42:23.796304225 -0700
-@@ -187,10 +187,11 @@
+This patch has not been passed upstream yet. It needs to be reworked into
+a format that would be acceptable.
+
+--- lib/mountlist.c.orig	2014-07-27 14:40:04.634723388 -0700
++++ lib/mountlist.c	2014-07-27 14:40:58.062935347 -0700
+@@ -212,10 +212,11 @@
  #endif
  
  #ifndef ME_REMOTE
 -/* A file system is "remote" if its Fs_name contains a ':'
 -   or if (it is of type (smbfs or cifs) and its Fs_name starts with '//').  */
-+/* A file system is `remote' if its Fs_name contains a `:' (and isn't of 
-+   type pcfs), or if (it is of type (smbfs or cifs) and its Fs_name starts
-+   with `//').  */
++/* A file system is `remote' if its Fs_name contains a `:' (and isn't of
+++   type pcfs), or if (it is of type (smbfs or cifs) and its Fs_name starts
+++   with `//').  */
  # define ME_REMOTE(Fs_name, Fs_type)            \
 -    (strchr (Fs_name, ':') != NULL              \
 +    ((strchr (Fs_name, ':') != NULL && strcmp (Fs_type, "pcfs") != 0) \

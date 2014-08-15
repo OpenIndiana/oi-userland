@@ -23,20 +23,25 @@
 include ../../make-rules/shared-macros.mk
 
 COMPONENT_NAME=		coreutils
-COMPONENT_VERSION=	8.16
+COMPONENT_VERSION=	8.23
 COMPONENT_PROJECT_URL=	http://www.gnu.org/software/coreutils/
 COMPONENT_SRC=		$(COMPONENT_NAME)-$(COMPONENT_VERSION)
 COMPONENT_ARCHIVE=	$(COMPONENT_SRC).tar.xz
 COMPONENT_ARCHIVE_HASH=	\
-    sha256:2a458fead15d9336f46bb4304cc3eaa6ed9407b9130e7ee2ec533909881d2067
+    sha256:ec43ca5bcfc62242accb46b7f121f6b684ee21ecd7d075059bf650ff9e37b82d
 COMPONENT_ARCHIVE_URL=	http://ftp.gnu.org/gnu/coreutils/$(COMPONENT_ARCHIVE)
 COMPONENT_BUGDB=	utility/gnu-coreutils
 
-TPNO=			8349
+TPNO=			18521
 
 include ../../make-rules/prep.mk
 include ../../make-rules/configure.mk
 include ../../make-rules/ips.mk
+
+# We need the GNU grep command to configure/build.
+PATH=/usr/gnu/bin:/usr/bin
+
+PATCH_LEVEL=		0
 
 CONFIGURE_PREFIX	 =	/usr/gnu
 CONFIGURE_OPTIONS	+=	--bindir=/usr/gnu/bin
@@ -45,7 +50,7 @@ CONFIGURE_OPTIONS	+=	--infodir=$(CONFIGURE_INFODIR)
 CONFIGURE_OPTIONS	+=	CPPFLAGS=-I/usr/include/gmp
 CONFIGURE_OPTIONS	+=	CFLAGS="$(CFLAGS)"
 
-# Recreate configure and src/Makefile to pick up stat birthtime changes.
+# Recreate configure and Makefile to pick up changes in .../src/local.mk
 COMPONENT_PREP_ACTION = (cd $(@D) ; autoreconf -f && automake)
 
 # Always show the build and link lines for easier debugging.
@@ -69,6 +74,26 @@ unexport SHELLOPTS
 
 # Get the binaries to test from the component proto area.
 COMPONENT_TEST_ENV +=   PATH=$(PROTOUSRSBINDIR):/usr/bin
+
+# With coreutils version 8.23, there are currently six tests that are failing:
+# 1/ test-getlogin   - this is a known problem. See:
+#    http://www.linuxfromscratch.org/pipermail/lfs-dev/2012-April/066264.html
+#
+#    After GNU coreutils has been built, it's possible to successfully run
+#    the test manually from a terminal with:
+#
+#    $ cd build/amd64/gnulib-tests && \
+#          gmake NON_ROOT_USERNAME=nobody -k check-TESTS && \
+#          gmake check TESTS=test-get-login
+
+# 2/ test-mbrtowc3
+# 3/ test-mbrtowc4
+# 4/ test-mbsalign
+# 5/ test-mbsrtowcs4 - these four multi-byte problems have been reported to
+#                      the G11N team. CR #19368946 & #19370120 have been filed.
+#
+# 6/ test-posixtm    - this is due to a problem with the Solaris mktime
+#                      utility. CR #19344177 has been filed.
 
 test:		install $(TEST_64)
 
