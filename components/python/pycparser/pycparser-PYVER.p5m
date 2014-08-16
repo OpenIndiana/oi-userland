@@ -1,0 +1,70 @@
+#
+# CDDL HEADER START
+#
+# The contents of this file are subject to the terms of the
+# Common Development and Distribution License (the "License").
+# You may not use this file except in compliance with the License.
+#
+# You can obtain a copy of the license at usr/src/OPENSOLARIS.LICENSE
+# or http://www.opensolaris.org/os/licensing.
+# See the License for the specific language governing permissions
+# and limitations under the License.
+#
+# When distributing Covered Code, include this CDDL HEADER in each
+# file and include the License file at usr/src/OPENSOLARIS.LICENSE.
+# If applicable, add the following below this CDDL HEADER, with the
+# fields enclosed by brackets "[]" replaced with your own identifying
+# information: Portions Copyright [yyyy] [name of copyright owner]
+#
+# CDDL HEADER END
+#
+
+#
+# Copyright (c) 2014, Oracle and/or its affiliates. All rights reserved.
+#
+
+set name=pkg.fmri \
+    value=pkg:/library/python/pycparser-$(PYV)@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
+set name=pkg.summary value="Complete C99 parser in pure Python"
+set name=pkg.description \
+    value="pycparser is a parser for the C language, written in pure Python. It is a module designed to be easily integrated into applications that need to parse C source code."
+set name=com.oracle.info.description value="the pycparser Python module"
+set name=com.oracle.info.tpno value=$(TPNO)
+set name=info.classification \
+    value=org.opensolaris.category.2008:Development/Python \
+    value=org.opensolaris.category.2008:Development/C
+set name=info.source-url value=$(COMPONENT_ARCHIVE_URL)
+set name=info.upstream value="Eli Bendersky <eliben@gmail.com>"
+set name=info.upstream-url value=$(COMPONENT_PROJECT_URL)
+set name=org.opensolaris.arc-caseid value=PSARC/2014/108
+set name=org.opensolaris.consolidation value=$(CONSOLIDATION)
+#
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser-$(COMPONENT_VERSION)-py$(PYVER).egg-info
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/_ast_gen.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/_build_tables.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/_c_ast.cfg
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/ast_transforms.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/c_ast.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/c_generator.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/c_lexer.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/c_parser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/lextab.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/ply/__init__.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/ply/cpp.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/ply/ctokens.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/ply/lex.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/ply/yacc.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/plyparser.py
+file path=usr/lib/python$(PYVER)/vendor-packages/pycparser/yacctab.py
+#
+license LICENSE license=BSD
+license license.ply license=BSD.ply
+#
+# force a dependency on the Python runtime
+depend type=require fmri=__TBD pkg.debug.depend.file=python$(PYVER) \
+    pkg.debug.depend.path=usr/bin
+
+# force a dependency on the pycparser package
+depend type=require \
+    fmri=library/python/pycparser@$(IPS_COMPONENT_VERSION),$(BUILD_VERSION)
